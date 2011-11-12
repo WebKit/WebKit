@@ -1,3 +1,15 @@
+2011-11-12  Patrick Gansterer  <paroga@webkit.org>
+
+        [CMake] Use MAIN_DEPENDENCY in GENERATE_* macros
+        https://bugs.webkit.org/show_bug.cgi?id=71365
+
+        Reviewed by Daniel Bates.
+
+        Use the MAIN_DEPENDENCY instead of DEPENDS in the custom build commands.
+        This adds better IDE support for such targets.
+
+        * Source/cmake/WebKitMacros.cmake:
+
 2011-11-11  Shinya Kawanaka  <shinyak@google.com>
 
         Implement legacy text check emulation in unified text check interface.

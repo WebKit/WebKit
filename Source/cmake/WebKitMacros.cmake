@@ -31,7 +31,8 @@ MACRO (GENERATE_FONT_NAMES _infile)
 
     ADD_CUSTOM_COMMAND(
         OUTPUT  ${_outputfiles}
-        DEPENDS ${NAMES_GENERATOR} ${SCRIPTS_BINDINGS} ${_infile}
+        MAIN_DEPENDENCY ${_infile}
+        DEPENDS ${NAMES_GENERATOR} ${SCRIPTS_BINDINGS}
         COMMAND ${PERL_EXECUTABLE} -I${WEBCORE_DIR}/bindings/scripts ${NAMES_GENERATOR} --outputDir ${DERIVED_SOURCES_WEBCORE_DIR} ${_arguments}
         VERBATIM)
 ENDMACRO ()
@@ -42,7 +43,8 @@ MACRO (GENERATE_EVENT_FACTORY _infile _outfile)
 
     ADD_CUSTOM_COMMAND(
         OUTPUT  ${DERIVED_SOURCES_WEBCORE_DIR}/${_outfile}
-        DEPENDS ${NAMES_GENERATOR} ${SCRIPTS_BINDINGS} ${_infile}
+        MAIN_DEPENDENCY ${_infile}
+        DEPENDS ${NAMES_GENERATOR} ${SCRIPTS_BINDINGS}
         COMMAND ${PERL_EXECUTABLE} -I${WEBCORE_DIR}/bindings/scripts ${NAMES_GENERATOR} --input ${_infile} --outputDir ${DERIVED_SOURCES_WEBCORE_DIR}
         VERBATIM)
 ENDMACRO ()
@@ -53,7 +55,8 @@ MACRO (GENERATE_EXCEPTION_CODE_DESCRIPTION _infile _outfile)
 
     ADD_CUSTOM_COMMAND(
         OUTPUT  ${DERIVED_SOURCES_WEBCORE_DIR}/${_outfile}
-        DEPENDS ${NAMES_GENERATOR} ${SCRIPTS_BINDINGS} ${_infile}
+        MAIN_DEPENDENCY ${_infile}
+        DEPENDS ${NAMES_GENERATOR} ${SCRIPTS_BINDINGS}
         COMMAND ${PERL_EXECUTABLE} -I${WEBCORE_DIR}/bindings/scripts ${NAMES_GENERATOR} --input ${_infile} --outputDir ${DERIVED_SOURCES_WEBCORE_DIR}
         VERBATIM)
 ENDMACRO ()
@@ -143,10 +146,10 @@ MACRO (WEBKIT_WRAP_SOURCELIST)
         GET_FILENAME_COMPONENT(_basename ${_file} NAME_WE)
         GET_FILENAME_COMPONENT(_path ${_file} PATH)
 
-		IF (NOT _file MATCHES "${DERIVED_SOURCES_WEBCORE_DIR}")
+        IF (NOT _file MATCHES "${DERIVED_SOURCES_WEBCORE_DIR}")
             STRING(REGEX REPLACE "/" "\\\\\\\\" _sourcegroup "${_path}")
             SOURCE_GROUP("${_sourcegroup}" FILES ${_file})
-		ENDIF ()
+        ENDIF ()
 
         IF (WTF_PLATFORM_QT)
             SET(_moc_filename ${DERIVED_SOURCES_WEBCORE_DIR}/${_basename}.moc)
