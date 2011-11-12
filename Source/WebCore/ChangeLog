@@ -1,3 +1,13 @@
+2011-11-11  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Remove Duplicate Symbol Exports
+        https://bugs.webkit.org/show_bug.cgi?id=72205
+
+        Reviewed by Dan Bernstein.
+
+        * WebCore.exp.in: Remove duplicate symbols listed.
+        Each dup in this case was already always exported.
+
 2011-11-11  Nico Weber  <thakis@chromium.org>
 
         [chromium] Remove 2 static initializers and 3 exit time destructors. Turn on -Wexit-time-destructors.
