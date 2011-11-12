@@ -88,9 +88,8 @@ void JSLock::lock(JSLockBehavior lockBehavior)
 
     intptr_t currentLockCount = lockCount();
     if (!currentLockCount && lockBehavior == LockForReal) {
-        int result;
-        result = pthread_mutex_lock(&JSMutex);
-        ASSERT(!result);
+        int result = pthread_mutex_lock(&JSMutex);
+        ASSERT_UNUSED(result, !result);
     }
     setLockCount(currentLockCount + 1);
 }
@@ -108,9 +107,8 @@ void JSLock::unlock(JSLockBehavior lockBehavior)
     intptr_t newLockCount = lockCount() - 1;
     setLockCount(newLockCount);
     if (!newLockCount && lockBehavior == LockForReal) {
-        int result;
-        result = pthread_mutex_unlock(&JSMutex);
-        ASSERT(!result);
+        int result = pthread_mutex_unlock(&JSMutex);
+        ASSERT_UNUSED(result, !result);
     }
 }
 

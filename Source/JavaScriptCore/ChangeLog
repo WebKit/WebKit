@@ -1,3 +1,17 @@
+2011-11-12  Patrick Gansterer  <paroga@webkit.org>
+
+        Fix "unused variable" warning in JSLock
+        https://bugs.webkit.org/show_bug.cgi?id=72213
+
+        Reviewed by Anders Carlsson.
+
+        Use ASSERT_UNUSED() instead of ASSERT() to make sure
+        that the variable is also used in the release build.
+
+        * runtime/JSLock.cpp:
+        (JSC::JSLock::lock):
+        (JSC::JSLock::unlock):
+
 2011-11-11  Gavin Barraclough  <barraclough@apple.com>
 
         Update iOS compiler version.
