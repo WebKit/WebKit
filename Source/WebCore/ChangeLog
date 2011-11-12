@@ -1,3 +1,13 @@
+2011-11-11  David Reveman  <reveman@chromium.org>
+
+        [Chromium] Remove unused variable added by r99813.
+        https://bugs.webkit.org/show_bug.cgi?id=72199
+
+        Reviewed by James Robinson.
+
+        * platform/graphics/chromium/TiledLayerChromium.cpp:
+        (WebCore::TiledLayerChromium::prepareToUpdate):
+
 2011-11-11  James Robinson  <jamesr@chromium.org>
 
         Rollout http://trac.webkit.org/changeset/99844

@@ -384,7 +384,6 @@ void TiledLayerChromium::prepareToUpdate(const IntRect& contentRect)
 
             // Calculate content-space rectangle to copy from.
             IntRect sourceRect = m_tiler->tileContentRect(tile);
-            const IntPoint anchor = sourceRect.location();
             sourceRect.intersect(m_tiler->layerRectToContentRect(tile->m_dirtyLayerRect));
             // Paint rect not guaranteed to line up on tile boundaries, so
             // make sure that sourceRect doesn't extend outside of it.
