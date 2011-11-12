@@ -271,12 +271,8 @@ void RenderSVGRoot::layout()
 
 bool RenderSVGRoot::selfWillPaint()
 {
-#if ENABLE(FILTERS)
     SVGResources* resources = SVGResourcesCache::cachedResourcesForRenderObject(this);
     return resources && resources->filter();
-#else
-    return false;
-#endif
 }
 
 void RenderSVGRoot::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)

@@ -84,12 +84,8 @@ void RenderSVGContainer::layout()
 
 bool RenderSVGContainer::selfWillPaint()
 {
-#if ENABLE(FILTERS)
     SVGResources* resources = SVGResourcesCache::cachedResourcesForRenderObject(this);
     return resources && resources->filter();
-#else
-    return false;
-#endif
 }
 
 void RenderSVGContainer::paint(PaintInfo& paintInfo, const LayoutPoint&)

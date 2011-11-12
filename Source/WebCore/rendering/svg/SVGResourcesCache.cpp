@@ -123,10 +123,8 @@ void SVGResourcesCache::clientLayoutChanged(RenderObject* object)
     // or we have filter resources, which could depend on the layout of children.
     if (object->selfNeedsLayout())
         resources->removeClientFromCache(object);
-#if ENABLE(FILTERS)
     else if (resources->filter())
         resources->removeClientFromCache(object);
-#endif
 }
 
 void SVGResourcesCache::clientStyleChanged(RenderObject* renderer, StyleDifference diff, const RenderStyle* newStyle)
@@ -152,11 +150,9 @@ void SVGResourcesCache::clientUpdatedFromElement(RenderObject* renderer, const R
     cache->removeResourcesFromRenderObject(renderer);
     cache->addResourcesFromRenderObject(renderer, newStyle);
 
-#if ENABLE(FILTERS)
     SVGResources* resources = SVGResourcesCache::cachedResourcesForRenderObject(renderer);
     if (resources && resources->filter())
         resources->removeClientFromCache(renderer);
-#endif
 }
 
 void SVGResourcesCache::clientDestroyed(RenderObject* renderer)

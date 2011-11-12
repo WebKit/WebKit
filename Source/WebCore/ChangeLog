@@ -1,3 +1,25 @@
+2011-11-12  Patrick Gansterer  <paroga@webkit.org>
+
+        Add stub implementation for SVGResources::filter()
+        https://bugs.webkit.org/show_bug.cgi?id=72211
+
+        Reviewed by Dirk Schulze.
+
+        Add an empty implementation, which only returns 0 for !ENABLE(FILTERS)
+        to reduce the #if ENABLE(FILTERS) complexity a bit.
+
+        * rendering/svg/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::selfWillPaint):
+        * rendering/svg/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::selfWillPaint):
+        * rendering/svg/SVGRenderSupport.cpp:
+        (WebCore::SVGRenderSupport::filtersForceContainerLayout):
+        * rendering/svg/SVGResources.h:
+        (WebCore::SVGResources::filter):
+        * rendering/svg/SVGResourcesCache.cpp:
+        (WebCore::SVGResourcesCache::clientLayoutChanged):
+        (WebCore::SVGResourcesCache::clientUpdatedFromElement):
+
 2011-11-12  Antti Koivisto  <antti@apple.com>
 
         REGRESSION(r98542): Rendering error on Google maps

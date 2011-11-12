@@ -47,13 +47,19 @@ public:
 
     // Ordinary resources
     RenderSVGResourceClipper* clipper() const { return m_clipperFilterMaskerData ? m_clipperFilterMaskerData->clipper : 0; }
-#if ENABLE(FILTERS)
-    RenderSVGResourceFilter* filter() const { return m_clipperFilterMaskerData ? m_clipperFilterMaskerData->filter : 0; }
-#endif
     RenderSVGResourceMarker* markerStart() const { return m_markerData ? m_markerData->markerStart : 0; }
     RenderSVGResourceMarker* markerMid() const { return m_markerData ? m_markerData->markerMid : 0; }
     RenderSVGResourceMarker* markerEnd() const { return m_markerData ? m_markerData->markerEnd : 0; }
     RenderSVGResourceMasker* masker() const { return m_clipperFilterMaskerData ? m_clipperFilterMaskerData->masker : 0; }
+
+    RenderSVGResourceFilter* filter() const
+    {
+#if ENABLE(FILTERS)
+        if (m_clipperFilterMaskerData)
+            return m_clipperFilterMaskerData->filter;
+#endif
+        return 0;
+    }
 
     // Paint servers
     RenderSVGResourceContainer* fill() const { return m_fillStrokeData ? m_fillStrokeData->fill : 0; }
