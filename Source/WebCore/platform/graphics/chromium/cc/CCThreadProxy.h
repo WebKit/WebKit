@@ -99,7 +99,7 @@ private:
     void initializeImplOnImplThread(CCCompletionEvent*);
     void initializeLayerRendererOnImplThread(GraphicsContext3D*, CCCompletionEvent*, bool* initializeSucceeded, LayerRendererCapabilities*, int* compositorIdentifier);
     void setNeedsAnimateOnImplThread();
-    void didBecomeInvisibleOnImplThread(CCCompletionEvent*);
+    void setVisibleOnImplThread(CCCompletionEvent*, bool visible);
     void layerTreeHostClosedOnImplThread(CCCompletionEvent*);
 
     // Accessed on main thread only.

@@ -1,5 +1,23 @@
 2011-11-11  Iain Merrick  <husky@google.com>
 
+        [chromium] Fix CCThreadProxy::setVisible
+        https://bugs.webkit.org/show_bug.cgi?id=71903
+
+        The behavior is different depending on whether we're showing
+        or hiding the compositor. This patch fixes both code paths.
+
+        Reviewed by James Robinson.
+
+        * platform/graphics/chromium/cc/CCCompletionEvent.h:
+        (WebCore::CCCompletionEvent::CCCompletionEvent):
+        (WebCore::CCCompletionEvent::~CCCompletionEvent):
+        (WebCore::CCCompletionEvent::wait):
+        (WebCore::CCCompletionEvent::signal):
+        * platform/graphics/chromium/cc/CCThreadProxy.cpp:
+        (WebCore::CCThreadProxy::setVisible):
+
+2011-11-11  Iain Merrick  <husky@google.com>
+
         [chromium] CCThreadProxy::finishAllRendering hangs if !visible
         https://bugs.webkit.org/show_bug.cgi?id=71920
 

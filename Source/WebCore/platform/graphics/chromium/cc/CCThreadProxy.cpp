@@ -249,20 +249,20 @@ void CCThreadProxy::setNeedsRedraw()
 void CCThreadProxy::setVisible(bool visible)
 {
     ASSERT(isMainThread());
-    if (!visible) {
-        CCCompletionEvent completion;
-        s_ccThread->postTask(createCCThreadTask(this, &CCThreadProxy::didBecomeInvisibleOnImplThread, AllowCrossThreadAccess(&completion)));
-        return;
-    }
-    setNeedsRedraw();
+    CCCompletionEvent completion;
+    s_ccThread->postTask(createCCThreadTask(this, &CCThreadProxy::setVisibleOnImplThread, AllowCrossThreadAccess(&completion), visible));
+    completion.wait();
 }
 
-void CCThreadProxy::didBecomeInvisibleOnImplThread(CCCompletionEvent* completion)
+void CCThreadProxy::setVisibleOnImplThread(CCCompletionEvent* completion, bool visible)
 {
     ASSERT(isImplThread());
-    m_layerTreeHost->didBecomeInvisibleOnImplThread(m_layerTreeHostImpl.get());
-    m_schedulerOnImplThread->setVisible(false);
-    m_layerTreeHostImpl->setVisible(false);
+    if (!visible)
+        m_layerTreeHost->didBecomeInvisibleOnImplThread(m_layerTreeHostImpl.get());
+    else
+        m_schedulerOnImplThread->setNeedsRedraw();
+    m_schedulerOnImplThread->setVisible(visible);
+    m_layerTreeHostImpl->setVisible(visible);
     completion->signal();
 }
 
@@ -447,8 +447,6 @@ void CCThreadProxy::scheduledActionCommit()
 
     m_layerTreeHost->beginCommitOnImplThread(m_layerTreeHostImpl.get());
     CCTextureUpdater updater(m_layerTreeHostImpl->contentsTextureAllocator());
-    m_layerTreeHostImpl->setVisible(m_layerTreeHost->visible());
-    m_schedulerOnImplThread->setVisible(m_layerTreeHostImpl->visible());
     m_layerTreeHost->finishCommitOnImplThread(m_layerTreeHostImpl.get());
 
     m_layerTreeHostImpl->commitComplete();

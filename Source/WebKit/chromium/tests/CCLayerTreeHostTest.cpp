@@ -209,6 +209,11 @@ public:
         callOnMainThread(CCLayerTreeHostTest::dispatchSetNeedsRedraw, this);
     }
 
+    void postSetVisibleToMainThread(bool visible)
+    {
+        callOnMainThread(visible ? CCLayerTreeHostTest::dispatchSetVisible : CCLayerTreeHostTest::dispatchSetInvisible, this);
+    }
+
     void timeout()
     {
         m_timedOut = true;
@@ -269,6 +274,24 @@ protected:
       ASSERT(test);
       if (test->m_layerTreeHost)
           test->m_layerTreeHost->setNeedsRedraw();
+    }
+
+    static void dispatchSetVisible(void* self)
+    {
+      ASSERT(isMainThread());
+      CCLayerTreeHostTest* test = static_cast<CCLayerTreeHostTest*>(self);
+      ASSERT(test);
+      if (test->m_layerTreeHost)
+          test->m_layerTreeHost->setVisible(true);
+    }
+
+    static void dispatchSetInvisible(void* self)
+    {
+      ASSERT(isMainThread());
+      CCLayerTreeHostTest* test = static_cast<CCLayerTreeHostTest*>(self);
+      ASSERT(test);
+      if (test->m_layerTreeHost)
+          test->m_layerTreeHost->setVisible(false);
     }
 
     class TimeoutTask : public webkit_support::TaskAdaptor {
@@ -762,6 +785,44 @@ private:
 TEST_F(CCLayerTreeHostTestScrollMultipleRedraw, runMultiThread)
 {
     runTestThreaded();
+}
+
+class CCLayerTreeHostTestSetVisible : public CCLayerTreeHostTest {
+public:
+
+    CCLayerTreeHostTestSetVisible()
+        : m_numCommits(0)
+        , m_numDraws(0)
+    {
+    }
+
+    virtual void beginTest()
+    {
+        postSetVisibleToMainThread(false);
+        postSetNeedsRedrawToMainThread(); // This is suppressed while we're invisible.
+        postSetVisibleToMainThread(true); // Triggers the redraw.
+    }
+
+    virtual void drawLayersOnCCThread(CCLayerTreeHostImpl* impl)
+    {
+        EXPECT_TRUE(impl->visible());
+        ++m_numDraws;
+        endTest();
+    }
+
+    virtual void afterTest()
+    {
+        EXPECT_EQ(1, m_numDraws);
+    }
+
+private:
+    int m_numCommits;
+    int m_numDraws;
+};
+
+TEST_F(CCLayerTreeHostTestSetVisible, runMultiThread)
+{
+    runTest(true);
 }
 
 } // namespace
