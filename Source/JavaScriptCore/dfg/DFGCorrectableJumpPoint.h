@@ -26,6 +26,8 @@
 #ifndef DFGCorrectableJumpPoint_h
 #define DFGCorrectableJumpPoint_h
 
+#if ENABLE(DFG_JIT)
+
 #include "LinkBuffer.h"
 #include "MacroAssembler.h"
 
@@ -151,5 +153,7 @@ private:
 };
 
 } } // namespace JSC::DFG
+
+#endif // ENABLE(DFG_JIT)
 
 #endif // DFGCorrectableJumpPoint_h
