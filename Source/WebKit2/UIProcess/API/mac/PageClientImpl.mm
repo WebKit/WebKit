@@ -406,8 +406,7 @@ void PageClientImpl::didPerformDictionaryLookup(const String& text, double scale
     [attributedString.get() addAttribute:NSFontAttributeName value:font range:NSMakeRange(0, [attributedString.get() length])];
 
     NSPoint textBaselineOrigin = dictionaryPopupInfo.origin;
-    textBaselineOrigin.y += [font ascender];
-    
+
 #if !defined(BUILDING_ON_SNOW_LEOPARD)
     // Convert to screen coordinates.
     textBaselineOrigin = [m_wkView convertPoint:textBaselineOrigin toView:nil];

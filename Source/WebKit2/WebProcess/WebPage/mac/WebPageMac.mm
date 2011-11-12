@@ -539,7 +539,7 @@ void WebPage::performDictionaryLookupForRange(DictionaryPopupInfo::Type type, Fr
     
     DictionaryPopupInfo dictionaryPopupInfo;
     dictionaryPopupInfo.type = type;
-    dictionaryPopupInfo.origin = FloatPoint(rangeRect.x(), rangeRect.y());
+    dictionaryPopupInfo.origin = FloatPoint(rangeRect.x(), rangeRect.y() + style->fontMetrics().ascent());
     dictionaryPopupInfo.fontInfo.fontAttributeDictionary = fontDescriptorAttributes;
 #if !defined(BUILDING_ON_SNOW_LEOPARD)
     dictionaryPopupInfo.options = (CFDictionaryRef)options;

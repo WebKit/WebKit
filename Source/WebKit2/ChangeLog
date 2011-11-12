@@ -1,3 +1,17 @@
+2011-11-12  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/10294191> REGRESSION (WebKit2): Lookup bubble sized and positioned incorrectly (vertically off)
+        https://bugs.webkit.org/show_bug.cgi?id=72217
+
+        Reviewed by Dave Hyatt.
+
+        * UIProcess/API/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::didPerformDictionaryLookup): Rather than adding the NSFont’s ascender
+        to the top of the text rect to establish the baseline here...
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::performDictionaryLookupForRange): ...do it here, using the WebCore::Font’s
+        ascender, which is what’s actually used when drawing the text.
+
 2011-11-11  Nayan Kumar K  <nayankk@motorola.com>
 
         [GTK][WEBKIT2] Add font and charset properties to WebKitWebSettings
