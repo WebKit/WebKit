@@ -138,7 +138,7 @@ GraphicsContext3D::~GraphicsContext3D()
 bool GraphicsContext3D::makeContextCurrent()
 {
     if (!m_private)
-        return;
+        return false;
     return m_private->makeContextCurrent();
 }
 

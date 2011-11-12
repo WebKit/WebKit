@@ -1,3 +1,17 @@
+2011-11-12  Nat Duca  <nduca@chromium.org>
+
+        Fixes to GraphicsContext3D::makeCurrent on gtk and mac
+        https://bugs.webkit.org/show_bug.cgi?id=72218
+
+        Unreviewed. Forgot to handle corner cases. Thanks Nico!
+
+        * platform/graphics/gtk/GraphicsContext3DGtk.cpp:
+        (WebCore::GraphicsContext3D::makeContextCurrent):
+        * platform/graphics/gtk/GraphicsContext3DPrivate.cpp:
+        (WebCore::GraphicsContext3DPrivate::makeContextCurrent):
+        * platform/graphics/mac/GraphicsContext3DMac.mm:
+        (WebCore::GraphicsContext3D::makeContextCurrent):
+
 2011-11-12  Patrick Gansterer  <paroga@webkit.org>
 
         Add stub implementation for SVGResources::filter()

@@ -265,7 +265,7 @@ bool GraphicsContext3D::makeContextCurrent()
 
     CGLContextObj currentContext = CGLGetCurrentContext();
     if (currentContext != m_contextObj)
-        CGLSetCurrentContext(m_contextObj);
+        return CGLSetCurrentContext(m_contextObj) == kCGLNoError;
     return true;
 }
 

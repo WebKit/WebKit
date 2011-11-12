@@ -237,16 +237,15 @@ GraphicsContext3DPrivate::~GraphicsContext3DPrivate()
 bool GraphicsContext3DPrivate::makeContextCurrent()
 {
     if (::glXGetCurrentContext() == m_context)
-        return;
+        return true;
     if (!m_context)
-        return;
+        return false;
     if (m_pbuffer) {
-        ::glXMakeCurrent(sharedDisplay(), m_pbuffer, m_context);
-        return;
+        return ::glXMakeCurrent(sharedDisplay(), m_pbuffer, m_context);
     }
 
     ASSERT(m_glxPixmap);
-    ::glXMakeCurrent(sharedDisplay(), m_glxPixmap, m_context);
+    return ::glXMakeCurrent(sharedDisplay(), m_glxPixmap, m_context);
 }
 
 } // namespace WebCore
