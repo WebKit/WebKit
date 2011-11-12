@@ -1,3 +1,11 @@
+2011-11-11  James Robinson  <jamesr@chromium.org>
+
+        Rollout http://trac.webkit.org/changeset/99844
+        Solution is more complicated than the problem it was intended to solve.
+
+        * tests/CCLayerTreeHostImplTest.cpp:
+        (WebKit::TEST_F):
+
 2011-11-11  Iain Merrick  <husky@google.com>
 
         [chromium] CCThreadProxy::finishAllRendering hangs if !visible

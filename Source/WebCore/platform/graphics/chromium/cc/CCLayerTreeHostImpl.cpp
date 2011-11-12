@@ -338,6 +338,10 @@ PassOwnPtr<CCScrollAndScaleSet> CCLayerTreeHostImpl::processScrollDeltas()
     scroll.scrollDelta = m_scrollLayerImpl->scrollDelta();
     scrollInfo->scrolls.append(scroll);
 
+    m_scrollLayerImpl->setScrollPosition(m_scrollLayerImpl->scrollPosition() + m_scrollLayerImpl->scrollDelta());
+    m_scrollLayerImpl->setPosition(m_scrollLayerImpl->position() - m_scrollLayerImpl->scrollDelta());
+    m_scrollLayerImpl->setScrollDelta(IntSize());
+
     return scrollInfo.release();
 }
 

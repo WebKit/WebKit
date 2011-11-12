@@ -433,17 +433,6 @@ static void calculateDrawTransformsAndVisibilityInternal(LayerType* layer, Layer
         sortLayers(&descendants.at(sortingStartIndex), descendants.end(), layerSorter);
 }
 
-template<typename LayerType>
-static void applyScrollAndScaleInternal(LayerType* rootLayer, const CCScrollAndScaleSet& scrollInfo)
-{
-    if (!rootLayer || !scrollInfo.scrolls.size())
-        return;
-
-    // FIXME: apply scroll deltas from layer other than the root.
-    ASSERT(scrollInfo.scrolls.size() == 1 && scrollInfo.scrolls[0].layerId == rootLayer->id());
-    rootLayer->applyScrollAndScale(scrollInfo.scrolls[0].scrollDelta, scrollInfo.pageScale);
-}
-
 void CCLayerTreeHostCommon::calculateDrawTransformsAndVisibility(LayerChromium* layer, LayerChromium* rootLayer, const TransformationMatrix& parentMatrix, const TransformationMatrix& fullHierarchyMatrix, Vector<RefPtr<LayerChromium> >& renderSurfaceLayerList, Vector<RefPtr<LayerChromium> >& layerList, int maxTextureSize)
 {
     return WebCore::calculateDrawTransformsAndVisibilityInternal<LayerChromium, RenderSurfaceChromium, void*>(layer, rootLayer, parentMatrix, fullHierarchyMatrix, renderSurfaceLayerList, layerList, 0, maxTextureSize);
@@ -452,16 +441,6 @@ void CCLayerTreeHostCommon::calculateDrawTransformsAndVisibility(LayerChromium* 
 void CCLayerTreeHostCommon::calculateDrawTransformsAndVisibility(CCLayerImpl* layer, CCLayerImpl* rootLayer, const TransformationMatrix& parentMatrix, const TransformationMatrix& fullHierarchyMatrix, Vector<RefPtr<CCLayerImpl> >& renderSurfaceLayerList, Vector<RefPtr<CCLayerImpl> >& layerList, CCLayerSorter* layerSorter, int maxTextureSize)
 {
     return calculateDrawTransformsAndVisibilityInternal<CCLayerImpl, CCRenderSurface, CCLayerSorter>(layer, rootLayer, parentMatrix, fullHierarchyMatrix, renderSurfaceLayerList, layerList, layerSorter, maxTextureSize);
-}
-
-void CCLayerTreeHostCommon::applyScrollAndScale(LayerChromium* rootLayer, const CCScrollAndScaleSet& scrollInfo)
-{
-    applyScrollAndScaleInternal(rootLayer, scrollInfo);
-}
-
-void CCLayerTreeHostCommon::applyScrollAndScale(CCLayerImpl* rootLayer, const CCScrollAndScaleSet& scrollInfo)
-{
-    applyScrollAndScaleInternal(rootLayer, scrollInfo);
 }
 
 } // namespace WebCore

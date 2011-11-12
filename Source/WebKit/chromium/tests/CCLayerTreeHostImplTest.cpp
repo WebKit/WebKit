@@ -30,7 +30,6 @@
 #include "LayerRendererChromium.h"
 #include "MockWebGraphicsContext3D.h"
 #include "cc/CCLayerImpl.h"
-#include "cc/CCLayerTreeHostCommon.h"
 #include "cc/CCSingleThreadProxy.h"
 #include <gtest/gtest.h>
 
@@ -126,22 +125,22 @@ TEST_F(CCLayerTreeHostImplTest, scrollDeltaRepeatedScrolls)
     OwnPtr<CCScrollAndScaleSet> scrollInfo;
 
     scrollInfo = m_hostImpl->processScrollDeltas();
-    ASSERT_EQ(root->scrollPosition(), scrollPosition);
+    ASSERT_EQ(root->scrollPosition(), scrollPosition + scrollDelta);
     ASSERT_EQ(scrollInfo->scrolls.size(), 1u);
     expectContains(*scrollInfo.get(), root->id(), scrollDelta);
+    expectClearedScrollDeltasRecursive(root.get());
 
     IntSize scrollDelta2(-5, 27);
     root->scrollBy(scrollDelta2);
     scrollInfo = m_hostImpl->processScrollDeltas();
-    ASSERT_EQ(root->scrollPosition(), scrollPosition);
+    ASSERT_EQ(root->scrollPosition(), scrollPosition + scrollDelta + scrollDelta2);
     ASSERT_EQ(scrollInfo->scrolls.size(), 1u);
-    expectContains(*scrollInfo, root->id(), scrollDelta + scrollDelta2);
-    EXPECT_EQ(root->scrollDelta(), scrollDelta + scrollDelta2);
+    expectContains(*scrollInfo.get(), root->id(), scrollDelta2);
+    expectClearedScrollDeltasRecursive(root.get());
 
-    CCLayerTreeHostCommon::applyScrollAndScale(m_hostImpl->rootLayer(), *scrollInfo);
     root->scrollBy(IntSize());
     scrollInfo = m_hostImpl->processScrollDeltas();
-    ASSERT_EQ(root->scrollPosition(), scrollPosition);
+    ASSERT_EQ(root->scrollPosition(), scrollPosition + scrollDelta + scrollDelta2);
     ASSERT_EQ(scrollInfo->scrolls.size(), 0u);
     expectClearedScrollDeltasRecursive(root.get());
 }

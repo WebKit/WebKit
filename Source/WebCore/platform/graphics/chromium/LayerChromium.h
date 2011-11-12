@@ -135,7 +135,6 @@ public:
     void setScrollable(bool scrollable) { m_scrollable = true;  setNeedsCommit(); }
 
     IntSize scrollDelta() const { return IntSize(); }
-    void applyScrollAndScale(const IntSize& scrollDelta, float pageScale);
 
     bool doubleSided() const { return m_doubleSided; }
     void setDoubleSided(bool doubleSided) { m_doubleSided = doubleSided; setNeedsCommit(); }

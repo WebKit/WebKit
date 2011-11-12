@@ -49,16 +49,12 @@ public:
         int layerId;
         IntSize scrollDelta;
     };
-    struct ScrollAndScaleSet {
-        Vector<ScrollUpdateInfo> scrolls;
-        float pageScale;
-    };
-
-    static void applyScrollAndScale(LayerChromium* rootLayer, const ScrollAndScaleSet& scrollInfo);
-    static void applyScrollAndScale(CCLayerImpl* rootLayer, const ScrollAndScaleSet& scrollInfo);
 };
 
-typedef CCLayerTreeHostCommon::ScrollAndScaleSet CCScrollAndScaleSet;
+struct CCScrollAndScaleSet {
+    Vector<CCLayerTreeHostCommon::ScrollUpdateInfo> scrolls;
+    float pageScale;
+};
 
 template<typename LayerType>
 IntRect CCLayerTreeHostCommon::calculateVisibleLayerRect(LayerType* layer)

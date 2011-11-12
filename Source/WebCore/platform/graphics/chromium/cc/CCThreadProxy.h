@@ -93,7 +93,7 @@ private:
     };
     PassOwnPtr<CCMainThread::Task> createBeginFrameAndCommitTaskOnImplThread();
     void obtainBeginFrameAndCommitTaskFromCCThread(CCCompletionEvent*, CCMainThread::Task**);
-    void beginFrameCompleteOnImplThread(CCCompletionEvent*, PassOwnPtr<CCScrollAndScaleSet>);
+    void beginFrameCompleteOnImplThread(CCCompletionEvent*);
     void requestReadbackOnImplThread(ReadbackRequest*);
     void finishAllRenderingOnImplThread(CCCompletionEvent*);
     void initializeImplOnImplThread(CCCompletionEvent*);

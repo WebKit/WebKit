@@ -174,6 +174,7 @@ public:
     void updateLayers();
 
     void updateCompositorResources(GraphicsContext3D*, CCTextureUpdater&);
+    void applyScrollAndScale(const CCScrollAndScaleSet&);
     void startRateLimiter(GraphicsContext3D*);
     void stopRateLimiter(GraphicsContext3D*);
 

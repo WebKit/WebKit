@@ -395,11 +395,6 @@ void CCLayerImpl::setScrollDelta(const IntSize& scrollDelta)
     }
 }
 
-void CCLayerImpl::applyScrollAndScale(const IntSize& scrollDelta, float pageScale)
-{
-    m_scrollDelta -= scrollDelta;
-}
-
 void CCLayerImpl::setDoubleSided(bool doubleSided)
 {
     if (m_doubleSided != doubleSided) {

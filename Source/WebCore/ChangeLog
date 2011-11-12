@@ -1,3 +1,24 @@
+2011-11-11  James Robinson  <jamesr@chromium.org>
+
+        Rollout http://trac.webkit.org/changeset/99844
+        Solution is more complicated than the problem it was intended to solve.
+
+        * platform/graphics/chromium/LayerChromium.cpp:
+        * platform/graphics/chromium/LayerChromium.h:
+        * platform/graphics/chromium/cc/CCLayerImpl.cpp:
+        * platform/graphics/chromium/cc/CCLayerImpl.h:
+        * platform/graphics/chromium/cc/CCLayerTreeHost.cpp:
+        (WebCore::CCLayerTreeHost::applyScrollAndScale):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.h:
+        * platform/graphics/chromium/cc/CCLayerTreeHostCommon.cpp:
+        * platform/graphics/chromium/cc/CCLayerTreeHostCommon.h:
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.cpp:
+        (WebCore::CCLayerTreeHostImpl::processScrollDeltas):
+        * platform/graphics/chromium/cc/CCThreadProxy.cpp:
+        (WebCore::CCThreadProxy::beginFrameAndCommit):
+        (WebCore::CCThreadProxy::beginFrameCompleteOnImplThread):
+        * platform/graphics/chromium/cc/CCThreadProxy.h:
+
 2011-11-11  Levi Weintraub  <leviw@chromium.org>
 
         Revert Page to operate on integers
