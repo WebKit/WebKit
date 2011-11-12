@@ -45,6 +45,30 @@ SET(JavaScriptCore_SOURCES
     bytecompiler/BytecodeGenerator.cpp
     bytecompiler/NodesCodegen.cpp
 
+    dfg/DFGAbstractState.cpp
+    dfg/DFGAssemblyHelpers.cpp
+    dfg/DFGByteCodeParser.cpp
+    dfg/DFGCapabilities.cpp
+    dfg/DFGCorrectableJumpPoint.cpp
+    dfg/DFGDriver.cpp
+    dfg/DFGGraph.cpp
+    dfg/DFGJITCodeGenerator.cpp
+    dfg/DFGJITCodeGenerator32_64.cpp
+    dfg/DFGJITCodeGenerator64.cpp
+    dfg/DFGJITCompiler.cpp
+    dfg/DFGOSREntry.cpp
+    dfg/DFGOSRExit.cpp
+    dfg/DFGOSRExitCompiler.cpp
+    dfg/DFGOSRExitCompiler32_64.cpp
+    dfg/DFGOSRExitCompiler64.cpp
+    dfg/DFGOperations.cpp
+    dfg/DFGPropagator.cpp
+    dfg/DFGRepatch.cpp
+    dfg/DFGSpeculativeJIT.cpp
+    dfg/DFGSpeculativeJIT32_64.cpp
+    dfg/DFGSpeculativeJIT64.cpp
+    dfg/DFGThunks.cpp
+
     heap/AllocationSpace.cpp
     heap/Heap.cpp
     heap/HandleHeap.cpp

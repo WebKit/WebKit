@@ -1,5 +1,18 @@
 2011-11-12  Patrick Gansterer  <paroga@webkit.org>
 
+        [CMake] Move list of DFG source files into correct file
+        https://bugs.webkit.org/show_bug.cgi?id=72212
+
+        Reviewed by Daniel Bates.
+
+        The DFG files are platform independent. So move them from
+        the EFL specific file into the general CMakeLists.txt.
+
+        * CMakeLists.txt:
+        * PlatformEfl.cmake:
+
+2011-11-12  Patrick Gansterer  <paroga@webkit.org>
+
         Fix "unused variable" warning in JSLock
         https://bugs.webkit.org/show_bug.cgi?id=72213
 
