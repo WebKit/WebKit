@@ -68,6 +68,12 @@ void CCScheduler::setNeedsRedraw()
     processScheduledActions();
 }
 
+void CCScheduler::setNeedsForcedRedraw()
+{
+    m_stateMachine.setNeedsForcedRedraw();
+    processScheduledActions();
+}
+
 void CCScheduler::beginFrameComplete()
 {
     TRACE_EVENT("CCScheduler::beginFrameComplete", this, 0);

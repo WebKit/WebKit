@@ -31,6 +31,7 @@ namespace WebCore {
 CCSchedulerStateMachine::CCSchedulerStateMachine()
     : m_commitState(COMMIT_STATE_IDLE)
     , m_needsRedraw(false)
+    , m_needsForcedRedraw(false)
     , m_needsCommit(false)
     , m_updateMoreResourcesPending(false)
     , m_insideVSync(false)
@@ -38,21 +39,22 @@ CCSchedulerStateMachine::CCSchedulerStateMachine()
 
 CCSchedulerStateMachine::Action CCSchedulerStateMachine::nextAction() const
 {
+    bool shouldDraw = (m_needsRedraw && m_insideVSync && m_visible) || m_needsForcedRedraw;
     switch (m_commitState) {
     case COMMIT_STATE_IDLE:
-        if (m_needsRedraw && m_insideVSync && m_visible)
+        if (shouldDraw)
             return ACTION_DRAW;
         if (m_needsCommit && m_visible)
             return ACTION_BEGIN_FRAME;
         return ACTION_NONE;
 
     case COMMIT_STATE_FRAME_IN_PROGRESS:
-        if (m_needsRedraw && m_insideVSync && m_visible)
+        if (shouldDraw)
             return ACTION_DRAW;
         return ACTION_NONE;
 
     case COMMIT_STATE_UPDATING_RESOURCES:
-        if (m_needsRedraw && m_insideVSync && m_visible)
+        if (shouldDraw)
             return ACTION_DRAW;
         if (!m_updateMoreResourcesPending)
             return ACTION_BEGIN_UPDATE_MORE_RESOURCES;
@@ -62,7 +64,7 @@ CCSchedulerStateMachine::Action CCSchedulerStateMachine::nextAction() const
         return ACTION_COMMIT;
 
     case COMMIT_STATE_WAITING_FOR_FIRST_DRAW:
-        if (m_needsRedraw && m_insideVSync && m_visible)
+        if (shouldDraw)
             return ACTION_DRAW;
         return ACTION_NONE;
     }
@@ -97,6 +99,7 @@ void CCSchedulerStateMachine::updateState(Action action)
 
     case ACTION_DRAW:
         m_needsRedraw = false;
+        m_needsForcedRedraw = false;
         if (m_commitState == COMMIT_STATE_WAITING_FOR_FIRST_DRAW) {
             ASSERT(m_needsCommit);
             m_commitState = COMMIT_STATE_IDLE;
@@ -118,6 +121,11 @@ void CCSchedulerStateMachine::setVisible(bool visible)
 void CCSchedulerStateMachine::setNeedsRedraw()
 {
     m_needsRedraw = true;
+}
+
+void CCSchedulerStateMachine::setNeedsForcedRedraw()
+{
+    m_needsForcedRedraw = true;
 }
 
 void CCSchedulerStateMachine::setNeedsCommit()

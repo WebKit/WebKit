@@ -1,3 +1,23 @@
+2011-11-11  Iain Merrick  <husky@google.com>
+
+        [chromium] CCThreadProxy::finishAllRendering hangs if !visible
+        https://bugs.webkit.org/show_bug.cgi?id=71920
+
+        Reviewed by James Robinson.
+
+        * platform/graphics/chromium/cc/CCScheduler.cpp:
+        (WebCore::CCScheduler::setNeedsForcedRedraw):
+        * platform/graphics/chromium/cc/CCScheduler.h:
+        * platform/graphics/chromium/cc/CCSchedulerStateMachine.cpp:
+        (WebCore::CCSchedulerStateMachine::CCSchedulerStateMachine):
+        (WebCore::CCSchedulerStateMachine::nextAction):
+        (WebCore::CCSchedulerStateMachine::updateState):
+        (WebCore::CCSchedulerStateMachine::setNeedsForcedRedraw):
+        * platform/graphics/chromium/cc/CCSchedulerStateMachine.h:
+        * platform/graphics/chromium/cc/CCThreadProxy.cpp:
+        (WebCore::CCThreadProxy::requestReadbackOnImplThread):
+        (WebCore::CCThreadProxy::finishAllRenderingOnImplThread):
+
 2011-11-11  John Knottenbelt  <jknotten@chromium.org>
 
         [Chromium] Enable building without shared workers.

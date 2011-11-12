@@ -78,6 +78,10 @@ public:
     // or the screen being damaged and simply needing redisplay.
     void setNeedsRedraw();
 
+    // As setNeedsRedraw(), but ensures the draw will definitely happen even if
+    // we are not visible.
+    void setNeedsForcedRedraw();
+
     // Indicates that a new commit flow needs to be performed, either to pull
     // updates from the main thread to the impl, or to push deltas from the impl
     // thread to main.
@@ -89,13 +93,14 @@ public:
     void beginFrameComplete();
 
     // Call this only in response to receiving an ACTION_UPDATE_MORE_RESOURCES
-    // from nextState. Indicatest that the specific update request completed.
+    // from nextState. Indicates that the specific update request completed.
     void beginUpdateMoreResourcesComplete(bool morePending);
 
 protected:
     CommitState m_commitState;
 
     bool m_needsRedraw;
+    bool m_needsForcedRedraw;
     bool m_needsCommit;
     bool m_updateMoreResourcesPending;
     bool m_insideVSync;

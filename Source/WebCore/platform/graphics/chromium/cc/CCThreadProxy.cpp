@@ -128,7 +128,7 @@ void CCThreadProxy::requestReadbackOnImplThread(ReadbackRequest* request)
         return;
     }
     m_readbackRequestOnImplThread = request;
-    m_schedulerOnImplThread->setNeedsRedraw();
+    m_schedulerOnImplThread->setNeedsForcedRedraw();
 }
 
 GraphicsContext3D* CCThreadProxy::context()
@@ -308,8 +308,9 @@ void CCThreadProxy::finishAllRenderingOnImplThread(CCCompletionEvent* completion
     TRACE_EVENT("CCThreadProxy::finishAllRenderingOnImplThread", this, 0);
     ASSERT(isImplThread());
     ASSERT(!m_finishAllRenderingCompletionEventOnImplThread);
-    m_schedulerOnImplThread->setNeedsRedraw();
     m_finishAllRenderingCompletionEventOnImplThread = completion;
+
+    m_schedulerOnImplThread->setNeedsForcedRedraw();
 }
 
 void CCThreadProxy::scheduledActionBeginFrame()

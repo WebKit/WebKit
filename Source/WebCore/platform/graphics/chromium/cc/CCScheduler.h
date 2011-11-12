@@ -64,6 +64,9 @@ public:
     void setNeedsCommit();
     void setNeedsRedraw();
 
+    // As setNeedsRedraw(), but ensures the draw will definitely happen even if we are not visible.
+    void setNeedsForcedRedraw();
+
     void beginFrameComplete();
 
     void setMaxFramesPending(int);
