@@ -1,3 +1,13 @@
+2011-11-11  John Knottenbelt  <jknotten@chromium.org>
+
+        [Chromium] Enable building without shared workers.
+        https://bugs.webkit.org/show_bug.cgi?id=72122
+
+        Reviewed by Yury Semikhatsky.
+
+        * bindings/v8/WorkerScriptDebugServer.cpp:
+        (WebCore::retrieveWorkerContext):
+
 2011-11-11  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Crash in styleDidChange when changing a table cell's height.
