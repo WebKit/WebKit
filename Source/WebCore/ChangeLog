@@ -1,3 +1,106 @@
+2011-11-11  Anna Cavender  <annacc@chromium.org>
+
+        Storage and retrieval of TextTrackCues during video playback, including
+        cuechange, enter, and exit events.
+        https://bugs.webkit.org/show_bug.cgi?id=70452
+
+        Reviewed by Eric Carlson.
+
+        Tests: media/track/track-cues-cuechange.html
+               media/track/track-cues-enter-exit.html
+               media/track/track-cues-seeking.html
+
+        Add cuechange, enter, and exit events and make TextTrack and
+        TextTrackCue EventTargets:
+        * dom/EventNames.h:
+        * dom/EventTarget.h:
+        * dom/EventTargetFactory.in:
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::loadTimerFired):
+            Use scheduleLoad() instead of configureTextTracks() to start an async load.
+        (WebCore::HTMLMediaElement::updateActiveTextTrackCues):
+            Updates the list of currently active cues during playback.
+        (WebCore::HTMLMediaElement::textTrackAddCues):
+            Adds cues to cueTree.  Called when cues are discovered/loaded.
+        (WebCore::HTMLMediaElement::textTrackRemoveCues):
+            Removes cues from cueTree.  Called when cues and/or tracks die.
+        (WebCore::HTMLMediaElement::textTrackAddCue):
+            Adds a cue to cueTree.  Called when cues are discovered/loaded.
+        (WebCore::HTMLMediaElement::textTrackRemoveCue):
+            Removes a cue from cueTree.  Called when cues and/or tracks die.
+
+        (WebCore::HTMLMediaElement::playbackProgressTimerFired):
+            Update the active TextTrackCues when playbackProgressTimerFired.
+        (WebCore::HTMLMediaElement::addTrack):
+            Pass along a ScriptExecutionContext to TextTrack::create().
+        (WebCore::HTMLMediaElement::mediaPlayerTimeChanged):
+            Update the active TextTrackCues when the media player time changes.
+        * html/HTMLMediaElement.h:
+            Use a PodIntervalTree cueTree to store and retrieve TextTrackCues
+            during playback.
+
+        * html/HTMLTrackElement.cpp:
+        (WebCore::HTMLTrackElement::ensureTrack):
+            Pass along a ScriptExecutionContext needed for EventTarget interface.
+        * html/LoadableTextTrack.cpp:
+        (WebCore::LoadableTextTrack::LoadableTextTrack):
+            Pass along a ScriptExecutionContext needed for EventTarget interface.
+        (WebCore::LoadableTextTrack::fireCueChangeEvent):
+            Fire a cue change event on this TextTrack's <track>
+        * html/LoadableTextTrack.h:
+        (WebCore::LoadableTextTrack::create):
+            Pass along a ScriptExecutionContext needed for EventTarget interface.
+        * html/TextTrack.cpp:
+        (WebCore::TextTrack::TextTrack):
+            Pass along a ScriptExecutionContext needed for EventTarget interface.
+        (WebCore::TextTrack::cues):
+        (WebCore::TextTrack::activeCues):
+            Return a TextTrackCueList that represents the currently active cues.
+        (WebCore::TextTrack::fireCueChangeEvent):
+            Fires a cue change event.
+        * html/TextTrack.h:
+        (WebCore::TextTrack::create):
+            Pass along a ScriptExecutionContext needed for EventTarget interface.
+        * html/TextTrack.idl:
+            Makes TextTrack extend EventTarget interface and add oncuechange.
+        * html/TextTrackCue.cpp:
+        (WebCore::TextTrackCue::TextTrackCue):
+            TextTrackCue should extend EventTarget, not ActiveDOMObject.
+        (WebCore::TextTrackCue::isActive):
+        (WebCore::TextTrackCue::setIsActive):
+            Dispatch an enter or exit event depending on active state and notify
+            the corresponding track to fire a cuechange event.
+
+        The following are needed for EventTarget interface:
+        (WebCore::TextTrackCue::interfaceName):
+        (WebCore::TextTrackCue::scriptExecutionContext):
+        (WebCore::TextTrackCue::eventTargetData):
+        (WebCore::TextTrackCue::ensureEventTargetData):
+        * html/TextTrackCue.h:
+        (WebCore::TextTrackCue::refEventTarget):
+        (WebCore::TextTrackCue::derefEventTarget):
+
+        * html/TextTrackCue.idl:
+            Extend EventTarget and add onenter and onexit.
+        * html/TextTrackCueList.cpp:
+        (WebCore::TextTrackCueList::activeCues):
+            Update and return the list of currently active cues.
+        (WebCore::TextTrackCueList::clear):
+            Clear the cues from list (needed to return same object each time).
+        * html/TextTrackCueList.h:
+
+        The following are needed for EventTarget interface:
+        * html/track/TrackBase.cpp:
+        (WebCore::TrackBase::TrackBase):
+        (WebCore::TrackBase::interfaceName):
+        (WebCore::TrackBase::scriptExecutionContext):
+        (WebCore::TrackBase::eventTargetData):
+        (WebCore::TrackBase::ensureEventTargetData):
+        * html/track/TrackBase.h:
+        (WebCore::TrackBase::refEventTarget):
+        (WebCore::TrackBase::derefEventTarget):
+
 2011-11-11  David Reveman  <reveman@chromium.org>
 
         [Chromium] Remove unused variable added by r99813.

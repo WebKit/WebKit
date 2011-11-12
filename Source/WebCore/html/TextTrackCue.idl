@@ -30,7 +30,8 @@ module html {
         EnabledAtRuntime=webkitVideoTrack,
         GenerateNativeConverter,
         Constructor(in DOMString id, in double startTime, in double endTime, in DOMString text, in [Optional=CallWithDefaultValue] DOMString settings, in [Optional=CallWithDefaultValue] boolean pauseOnExit),
-        CallWith=ScriptExecutionContext
+        CallWith=ScriptExecutionContext,
+        EventTarget
     ] TextTrackCue {
         readonly attribute TextTrack track;
         readonly attribute DOMString id;
@@ -48,6 +49,19 @@ module html {
 
         DOMString getCueAsSource();
         DocumentFragment getCueAsHTML();
+        
+        attribute EventListener onenter;
+        attribute EventListener onexit;
+        
+        // EventTarget interface
+        void addEventListener(in DOMString type, 
+                              in EventListener listener, 
+                              in [Optional] boolean useCapture);
+        void removeEventListener(in DOMString type, 
+                                 in EventListener listener, 
+                                 in [Optional] boolean useCapture);
+        boolean dispatchEvent(in Event evt)
+            raises(EventException);
     };
 
 }

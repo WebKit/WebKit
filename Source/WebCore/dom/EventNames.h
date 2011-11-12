@@ -146,6 +146,9 @@ namespace WebCore {
     macro(waiting) \
     \
     macro(addtrack) \
+    macro(cuechange) \
+    macro(enter) \
+    macro(exit) \
     \
     macro(webkitbeginfullscreen) \
     macro(webkitendfullscreen) \

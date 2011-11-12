@@ -57,8 +57,11 @@ public:
 private:
     TextTrackCueList();
     void add(PassRefPtr<TextTrackCue>, size_t, size_t);
+    void clear();
     
     Vector<RefPtr<TextTrackCue> > m_list;
+    RefPtr<TextTrackCueList> m_activeCues;
+    
 };
 
 } // namespace WebCore

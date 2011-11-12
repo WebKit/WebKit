@@ -34,14 +34,15 @@
 
 #include "TextTrack.h"
 
+#include "Event.h"
 #include "ExceptionCode.h"
 #include "TextTrackCueList.h"
 #include "TrackBase.h"
 
 namespace WebCore {
 
-TextTrack::TextTrack(TextTrackClient* client, const String& kind, const String& label, const String& language)
-    : TrackBase(TrackBase::TextTrack)
+TextTrack::TextTrack(ScriptExecutionContext* context, TextTrackClient* client, const String& kind, const String& label, const String& language)
+    : TrackBase(context, TrackBase::TextTrack)
     , m_kind(kind)
     , m_label(label)
     , m_language(language)
@@ -109,14 +110,21 @@ TextTrackCueList* TextTrack::cues() const
     // Otherwise, it must return null. When an object is returned, the
     // same object must be returned each time.
     // http://www.whatwg.org/specs/web-apps/current-work/#dom-texttrack-cues
-    if (m_mode != TextTrack::DISABLED)
+    if (m_cues && m_mode != TextTrack::DISABLED)
         return m_cues.get();
     return 0;
 }
 
 TextTrackCueList* TextTrack::activeCues() const
 {
-    // FIXME(62885): Implement.
+    // 4.8.10.12.5 If the text track mode ... is not the text track disabled mode,
+    // then the activeCues attribute must return a live TextTrackCueList object ...
+    // ... whose active flag was set when the script started, in text track cue
+    // order. Otherwise, it must return null. When an object is returned, the
+    // same object must be returned each time.
+    // http://www.whatwg.org/specs/web-apps/current-work/#dom-texttrack-activecues
+    if (m_cues && m_mode != TextTrack::DISABLED)
+        return m_cues->activeCues();
     return 0;
 }
 
@@ -139,6 +147,12 @@ void TextTrack::newCuesLoaded()
 void TextTrack::fetchNewestCues(Vector<TextTrackCue*>&)
 {
     // FIXME(62890): Implement.
+}
+
+void TextTrack::fireCueChangeEvent()
+{
+    ExceptionCode ec = 0;
+    dispatchEvent(Event::create(eventNames().cuechangeEvent, false, false), ec);
 }
 
 } // namespace WebCore

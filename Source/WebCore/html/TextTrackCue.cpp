@@ -34,6 +34,7 @@
 
 #include "TextTrackCue.h"
 
+#include "Event.h"
 #include "DocumentFragment.h"
 #include "TextTrack.h"
 #include "WebVTTParser.h"
@@ -42,8 +43,7 @@
 namespace WebCore {
 
 TextTrackCue::TextTrackCue(ScriptExecutionContext* context, const String& id, double start, double end, const String& content, const String& settings, bool pauseOnExit)
-    : ActiveDOMObject(context, this)
-    , m_id(id)
+    : m_id(id)
     , m_startTime(start)
     , m_endTime(end)
     , m_content(content)
@@ -55,6 +55,7 @@ TextTrackCue::TextTrackCue(ScriptExecutionContext* context, const String& id, do
     , m_cueSize(100)
     , m_cueAlignment(Middle)
     , m_isActive(false)
+    , m_scriptExecutionContext(context)
 {
     parseSettings(settings);
 }
@@ -138,18 +139,21 @@ void TextTrackCue::setCueHTML(PassRefPtr<DocumentFragment> fragment)
 
 bool TextTrackCue::isActive()
 {
-    // FIXME(62885): Implement.
-    return false;
+    return m_isActive;
 }
 
 void TextTrackCue::setIsActive(bool active)
 {
     m_isActive = active;
-}
 
-ScriptExecutionContext* TextTrackCue::scriptExecutionContext() const
-{
-    return ActiveDOMObject::scriptExecutionContext();
+    ExceptionCode ec = 0;
+    if (active)
+        dispatchEvent(Event::create(eventNames().enterEvent, false, false), ec);
+    else
+        dispatchEvent(Event::create(eventNames().exitEvent, false, false), ec);
+
+    if (m_track)
+        m_track->fireCueChangeEvent();
 }
 
 void TextTrackCue::parseSettings(const String& input)
@@ -305,6 +309,26 @@ Otherwise:
         // Collect a sequence of characters that are not space characters and discard them.
         WebVTTParser::collectWord(input, &position);
     }
+}
+
+const AtomicString& TextTrackCue::interfaceName() const
+{
+    return eventNames().interfaceForTextTrackCue;
+}
+
+ScriptExecutionContext* TextTrackCue::scriptExecutionContext() const
+{
+    return m_scriptExecutionContext;
+}
+
+EventTargetData* TextTrackCue::eventTargetData()
+{
+    return &m_eventTargetData;
+}
+
+EventTargetData* TextTrackCue::ensureEventTargetData()
+{
+    return &m_eventTargetData;
 }
 
 } // namespace WebCore

@@ -54,9 +54,9 @@ public:
 
 class TextTrack : public TrackBase {
 public:
-    static PassRefPtr<TextTrack> create(TextTrackClient* client, const String& kind, const String& label, const String& language)
+    static PassRefPtr<TextTrack> create(ScriptExecutionContext* context, TextTrackClient* client, const String& kind, const String& label, const String& language)
     {
-        return adoptRef(new TextTrack(client, kind, label, language));
+        return adoptRef(new TextTrack(context, client, kind, label, language));
     }
     virtual ~TextTrack();
 
@@ -85,9 +85,12 @@ public:
     
     void newCuesLoaded();
     void fetchNewestCues(Vector<TextTrackCue*>&);
+    
+    virtual void fireCueChangeEvent();
+    DEFINE_ATTRIBUTE_EVENT_LISTENER(cuechange);
 
 protected:
-    TextTrack(TextTrackClient*, const String& kind, const String& label, const String& language);
+    TextTrack(ScriptExecutionContext*, TextTrackClient*, const String& kind, const String& label, const String& language);
 
     void setReadyState(ReadyState);
 

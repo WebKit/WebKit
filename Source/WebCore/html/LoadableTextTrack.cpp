@@ -29,14 +29,16 @@
 
 #include "LoadableTextTrack.h"
 
+#include "Event.h"
 #include "HTMLTrackElement.h"
 #include "ScriptEventListener.h"
+#include "ScriptExecutionContext.h"
 #include "TextTrackCueList.h"
 
 namespace WebCore {
 
 LoadableTextTrack::LoadableTextTrack(HTMLTrackElement* track, const String& kind, const String& label, const String& language, bool isDefault)
-    : TextTrack(track, kind, label, language)
+    : TextTrack(track->document(), track, kind, label, language)
     , m_trackElement(track)
     , m_loadTimer(this, &LoadableTextTrack::loadTimerFired)
     , m_isDefault(isDefault)
@@ -109,6 +111,13 @@ void LoadableTextTrack::cueLoadingCompleted(TextTrackLoader* loader, bool loadin
 
     if (m_trackElement)
         m_trackElement->didCompleteLoad(this, loadingFailed);
+}
+
+void LoadableTextTrack::fireCueChangeEvent()
+{
+    TextTrack::fireCueChangeEvent();
+    ExceptionCode ec = 0;
+    m_trackElement->dispatchEvent(Event::create(eventNames().cuechangeEvent, false, false), ec);
 }
 
 } // namespace WebCore

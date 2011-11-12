@@ -56,6 +56,20 @@ TextTrackCue* TextTrackCueList::getCueById(const String& id) const
     return 0;
 }
 
+TextTrackCueList* TextTrackCueList::activeCues()
+{
+    if (!m_activeCues)
+        m_activeCues = create();
+
+    m_activeCues->clear();
+    for (size_t i = 0; i < m_list.size(); ++i) {
+        RefPtr<TextTrackCue> cue = m_list[i];
+        if (cue->isActive())
+            m_activeCues->add(cue);
+    }
+    return m_activeCues.get();
+}
+
 void TextTrackCueList::add(const Vector<RefPtr<TextTrackCue> >& newCues)
 {
     for (size_t i = 0; i < newCues.size(); ++i)
@@ -99,6 +113,11 @@ void TextTrackCueList::remove(TextTrackCue* cue)
 bool TextTrackCueList::contains(TextTrackCue* cue) const
 {
     return m_list.contains(cue);
+}
+
+void TextTrackCueList::clear()
+{
+    m_list.clear();
 }
 
 } // namespace WebCore

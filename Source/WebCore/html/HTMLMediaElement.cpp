@@ -89,6 +89,7 @@
 #if ENABLE(VIDEO_TRACK)
 #include "HTMLTrackElement.h"
 #include "RuntimeEnabledFeatures.h"
+#include "TextTrackCueList.h"
 #include "TextTrackList.h"
 #endif
 
@@ -502,7 +503,7 @@ void HTMLMediaElement::loadTimerFired(Timer<HTMLMediaElement>*)
 
 #if ENABLE(VIDEO_TRACK)
     if (m_pendingLoadFlags & TextTrackResource)
-        configureTextTracks();
+        scheduleLoad(TextTrackResource);
 #endif
 
     m_pendingLoadFlags = 0;
@@ -862,6 +863,27 @@ void HTMLMediaElement::loadResource(const KURL& initialURL, ContentType& content
 }
 
 #if ENABLE(VIDEO_TRACK)
+void HTMLMediaElement::updateActiveTextTrackCues(float movieTime)
+{
+    Vector<CueIntervalTree::IntervalType> previouslyVisibleCues = m_currentlyVisibleCues;
+
+    m_currentlyVisibleCues = m_cueTree.allOverlaps(m_cueTree.createInterval(movieTime, movieTime));
+    
+    // FIXME(72171): Events need to be sorted and filtered before dispatching.
+
+    for (size_t i = 0; i < previouslyVisibleCues.size(); ++i) {
+        if (!m_currentlyVisibleCues.contains(previouslyVisibleCues[i]))
+            previouslyVisibleCues[i].data()->setIsActive(false);
+    }
+    for (size_t i = 0; i < m_currentlyVisibleCues.size(); ++i) {
+        if (!previouslyVisibleCues.contains(m_currentlyVisibleCues[i]))
+            m_currentlyVisibleCues[i].data()->setIsActive(true);
+    }
+    
+    // FIXME(72173): Pause the media element for cues going past their endTime
+    // during a monotonic time increase.
+}
+
 void HTMLMediaElement::textTrackReadyStateChanged(TextTrack*)
 {
     // FIXME(62885): Implement.
@@ -872,24 +894,26 @@ void HTMLMediaElement::textTrackModeChanged(TextTrack*)
     // FIXME(62885): Implement.
 }
 
-void HTMLMediaElement::textTrackAddCues(TextTrack*, const TextTrackCueList*) 
+void HTMLMediaElement::textTrackAddCues(TextTrack*, const TextTrackCueList* cues) 
 {
-    // FIXME(62885): Implement.
+    for (size_t i = 0; i < cues->length(); ++i)
+        textTrackAddCue(cues->item(i)->track(), cues->item(i));
 }
 
-void HTMLMediaElement::textTrackRemoveCues(TextTrack*, const TextTrackCueList*) 
+void HTMLMediaElement::textTrackRemoveCues(TextTrack*, const TextTrackCueList* cues) 
 {
-    // FIXME(62885): Implement.
+    for (size_t i = 0; i < cues->length(); ++i)
+        textTrackRemoveCue(cues->item(i)->track(), cues->item(i));
 }
 
-void HTMLMediaElement::textTrackAddCue(TextTrack*, PassRefPtr<TextTrackCue>)
+void HTMLMediaElement::textTrackAddCue(TextTrack*, PassRefPtr<TextTrackCue> cue)
 {
-    // FIXME(62885): Implement.
+    m_cueTree.add(m_cueTree.createInterval(cue->startTime(), cue->endTime(), cue.get()));
 }
 
-void HTMLMediaElement::textTrackRemoveCue(TextTrack*, PassRefPtr<TextTrackCue>)
+void HTMLMediaElement::textTrackRemoveCue(TextTrack*, PassRefPtr<TextTrackCue> cue)
 {
-    // FIXME(62885): Implement.
+    m_cueTree.remove(m_cueTree.createInterval(cue->startTime(), cue->endTime(), cue.get()));
 }
 
 #endif
@@ -1940,6 +1964,10 @@ void HTMLMediaElement::playbackProgressTimerFired(Timer<HTMLMediaElement>*)
     if (hasMediaControls())
         mediaControls()->playbackProgressed();
     // FIXME: deal with cue ranges here
+    
+#if ENABLE(VIDEO_TRACK)
+    updateActiveTextTrackCues(currentTime());
+#endif
 }
 
 void HTMLMediaElement::scheduleTimeupdateEvent(bool periodicEvent)
@@ -1993,7 +2021,7 @@ PassRefPtr<TextTrack> HTMLMediaElement::addTrack(const String& kind, const Strin
         return 0;
 
     // FIXME(71915): addTrack should throw a SyntaxError exception if 'kind' is an unknown value.
-    RefPtr<TextTrack> textTrack = TextTrack::create(this, kind, label, language);
+    RefPtr<TextTrack> textTrack = TextTrack::create(ActiveDOMObject::scriptExecutionContext(), this, kind, label, language);
     addTextTrack(textTrack);
     return textTrack.release();
 }
@@ -2325,6 +2353,9 @@ void HTMLMediaElement::mediaPlayerTimeChanged(MediaPlayer*)
         m_sentEndEvent = false;
 
     updatePlayState();
+#if ENABLE(VIDEO_TRACK)
+    updateActiveTextTrackCues(now);
+#endif
     endProcessingMediaPlayerCallback();
 }
 

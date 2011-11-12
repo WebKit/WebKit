@@ -33,7 +33,7 @@
 
 #if ENABLE(VIDEO_TRACK)
 
-#include "ActiveDOMObject.h"
+#include "EventTarget.h"
 #include "TextTrack.h"
 #include <wtf/PassOwnPtr.h>
 #include <wtf/RefCounted.h>
@@ -44,7 +44,7 @@ class DocumentFragment;
 class ScriptExecutionContext;
 class TextTrack;
 
-class TextTrackCue : public RefCounted<TextTrackCue>, public ActiveDOMObject {
+class TextTrackCue : public RefCounted<TextTrackCue>, public EventTarget {
 public:
     static PassRefPtr<TextTrackCue> create(ScriptExecutionContext* context, const String& id, double start, double end, const String& content, const String& settings, bool pauseOnExit)
     {
@@ -78,12 +78,27 @@ public:
     bool isActive();
     void setIsActive(bool);
     
+    virtual const AtomicString& interfaceName() const;
     virtual ScriptExecutionContext* scriptExecutionContext() const;
+
+    DEFINE_ATTRIBUTE_EVENT_LISTENER(enter);
+    DEFINE_ATTRIBUTE_EVENT_LISTENER(exit);
+
+    using RefCounted<TextTrackCue>::ref;
+    using RefCounted<TextTrackCue>::deref;
+
+protected:
+
+    virtual EventTargetData* eventTargetData();
+    virtual EventTargetData* ensureEventTargetData();
 
 private:
     TextTrackCue(ScriptExecutionContext*, const String& id, double start, double end, const String& content, const String& settings, bool pauseOnExit);
 
     void parseSettings(const String&);
+    
+    virtual void refEventTarget() { ref(); }
+    virtual void derefEventTarget() { deref(); }
     
     TextTrack* m_track;
     
@@ -101,6 +116,9 @@ private:
     RefPtr<DocumentFragment> m_documentFragment;
 
     bool m_isActive;
+    
+    EventTargetData m_eventTargetData;
+    ScriptExecutionContext* m_scriptExecutionContext;
 };
 
 } // namespace WebCore

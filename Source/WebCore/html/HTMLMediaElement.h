@@ -38,7 +38,9 @@
 #endif
 
 #if ENABLE(VIDEO_TRACK)
+#include "PODIntervalTree.h"
 #include "TextTrack.h"
+#include "TextTrackCue.h"
 #endif
 
 namespace WebCore {
@@ -373,6 +375,7 @@ private:
 
 #if ENABLE(VIDEO_TRACK)
     void configureTextTracks();
+    void updateActiveTextTrackCues(float);
 #endif
 
     // These "internal" functions do not check user gesture restrictions.
@@ -525,8 +528,33 @@ private:
 
 #if ENABLE(VIDEO_TRACK)
     RefPtr<TextTrackList> m_textTracks;
+    
+    typedef PODIntervalTree <double, TextTrackCue*> CueIntervalTree;
+    CueIntervalTree m_cueTree;
+    Vector<CueIntervalTree::IntervalType> m_currentlyVisibleCues;
 #endif
 };
+
+#if ENABLE(VIDEO_TRACK)
+#ifndef NDEBUG
+// Template specializations required by PodIntervalTree in debug mode.
+template <>
+struct ValueToString<double> {
+    static String string(const double value)
+    {
+        return String::number(value);
+    }
+};
+
+template <>
+struct ValueToString<TextTrackCue*> {
+    static String string(TextTrackCue* const& cue)
+    {
+        return String::format("%p id=%s interval=%f-->%f cue=%s)", cue, cue->id().utf8().data(), cue->startTime(), cue->endTime(), cue->getCueAsSource().utf8().data());
+    }
+};
+#endif
+#endif
 
 } //namespace
 

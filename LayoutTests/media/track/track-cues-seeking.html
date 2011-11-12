@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+        <script src=../media-file.js></script>
+        <script src=../video-test.js></script>
+    </head>
+    <body>
+        <p>Tests TextTrack's activeCues are indexed and updated during video playback.</p>
+        <video controls>
+            <track id="testTrack" src="captions-webvtt/cues-overlapping.vtt" kind="subtitles">
+        </video>
+        <script>            
+            
+        var seekedCount = 0;
+        var testTrack;
+
+        function seeked()
+        {
+            ++seekedCount;
+            consoleWrite("");
+
+            activeCues = testTrack.track.activeCues;
+
+            testExpected("video.currentTime", seekedCount * 0.5);
+            testExpected("activeCues.length", seekedCount - 1);
+            run("video.currentTime = " + (seekedCount + 1) * 0.5);
+
+            consoleWrite("");
+
+            if (seekedCount == 4)
+                endTest();
+        }
+    
+        waitForEvent('seeked', seeked );
+
+        waitForEvent('canplaythrough',
+            function () 
+            {
+                testTrack = document.getElementById("testTrack");
+                testExpected("testTrack.track.cues.length", 3);
+                run("video.currentTime = 0.5");
+                consoleWrite("");
+            }
+        );
+
+        findMediaElement();
+        video.src = findMediaFile("video", "../content/test");
+        
+        </script>
+    </body>
+</html>
