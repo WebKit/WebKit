@@ -1,0 +1,20 @@
+<html>
+<body style="margin: 0;">
+<svg xmlns="http://www.w3.org/2000/svg">
+<!-- The FO should be clipped with only the green half visible. -->
+<defs>
+<clipPath id="clip">
+    <rect width="200" height="50"/>
+</clipPath>
+</defs>
+<foreignObject width="200" height="100" clip-path="url(#clip)" opacity=".5">
+    <html xmlns="http://www.w3.org/1999/xhtml">
+    <body style="dmargin: 0;">
+        <div style="background: #00ff00; height: 50px;">&nbsp;</div>
+        <div style="background: red; height: 50px;">&nbsp;</div>
+    </body>
+    </html>
+</foreignObject>
+</svg>
+</body>
+</html>

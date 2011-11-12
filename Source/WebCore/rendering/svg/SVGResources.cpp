@@ -81,6 +81,10 @@ static HashSet<AtomicStringImpl*>& clipperFilterMaskerTags()
         s_tagList.add(SVGNames::trefTag.localName().impl());
         s_tagList.add(SVGNames::tspanTag.localName().impl());
 
+        // Not listed in the definitions is the foreignObject element, but clip-path
+        // is a supported attribute.
+        s_tagList.add(SVGNames::foreignObjectTag.localName().impl());
+
         // Elements that we ignore, as it doesn't make any sense.
         // defs, pattern, switch (FIXME: Mail SVG WG about these)
         // symbol (is converted to a svg element, when referenced by use, we can safely ignore it.)

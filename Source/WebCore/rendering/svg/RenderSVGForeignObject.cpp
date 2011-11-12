@@ -58,29 +58,31 @@ void RenderSVGForeignObject::paint(PaintInfo& paintInfo, const LayoutPoint&)
     if (SVGRenderSupport::isOverflowHidden(this))
         childPaintInfo.context->clip(m_viewport);
 
-    float opacity = style()->opacity();
-    if (opacity < 1.0f)
-        childPaintInfo.context->beginTransparencyLayer(opacity);
+    bool continueRendering = true;
+    if (paintInfo.phase == PaintPhaseForeground)
+        continueRendering = SVGRenderSupport::prepareToRenderSVGContent(this, childPaintInfo);
 
-    // Paint all phases of FO elements atomically, as though the FO element established its
-    // own stacking context.
-    bool preservePhase = paintInfo.phase == PaintPhaseSelection || paintInfo.phase == PaintPhaseTextClip;
-    LayoutPoint childPoint = IntPoint();
-    childPaintInfo.phase = preservePhase ? paintInfo.phase : PaintPhaseBlockBackground;
-    RenderBlock::paint(childPaintInfo, IntPoint());
-    if (!preservePhase) {
-        childPaintInfo.phase = PaintPhaseChildBlockBackgrounds;
-        RenderBlock::paint(childPaintInfo, childPoint);
-        childPaintInfo.phase = PaintPhaseFloat;
-        RenderBlock::paint(childPaintInfo, childPoint);
-        childPaintInfo.phase = PaintPhaseForeground;
-        RenderBlock::paint(childPaintInfo, childPoint);
-        childPaintInfo.phase = PaintPhaseOutline;
-        RenderBlock::paint(childPaintInfo, childPoint);
+    if (continueRendering) {
+        // Paint all phases of FO elements atomically, as though the FO element established its
+        // own stacking context.
+        bool preservePhase = paintInfo.phase == PaintPhaseSelection || paintInfo.phase == PaintPhaseTextClip;
+        LayoutPoint childPoint = IntPoint();
+        childPaintInfo.phase = preservePhase ? paintInfo.phase : PaintPhaseBlockBackground;
+        RenderBlock::paint(childPaintInfo, IntPoint());
+        if (!preservePhase) {
+            childPaintInfo.phase = PaintPhaseChildBlockBackgrounds;
+            RenderBlock::paint(childPaintInfo, childPoint);
+            childPaintInfo.phase = PaintPhaseFloat;
+            RenderBlock::paint(childPaintInfo, childPoint);
+            childPaintInfo.phase = PaintPhaseForeground;
+            RenderBlock::paint(childPaintInfo, childPoint);
+            childPaintInfo.phase = PaintPhaseOutline;
+            RenderBlock::paint(childPaintInfo, childPoint);
+        }
     }
 
-    if (opacity < 1.0f)
-        childPaintInfo.context->endTransparencyLayer();
+    if (paintInfo.phase == PaintPhaseForeground)
+        SVGRenderSupport::finishRenderSVGContent(this, childPaintInfo, paintInfo.context);
 }
 
 LayoutRect RenderSVGForeignObject::clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer) const
