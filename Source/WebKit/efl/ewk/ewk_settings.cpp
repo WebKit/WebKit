@@ -90,13 +90,8 @@ uint64_t ewk_settings_web_database_default_quota_get()
 void ewk_settings_web_database_path_set(const char* path)
 {
 #if ENABLE(SQL_DATABASE)
-    WTF::String corePath = WTF::String::fromUTF8(path);
-    WebCore::DatabaseTracker::tracker().setDatabaseDirectoryPath(corePath);
-    if (!_ewk_default_web_database_path)
-        _ewk_default_web_database_path = eina_stringshare_add(corePath.utf8().data());
-    else
-        eina_stringshare_replace(&_ewk_default_web_database_path, corePath.utf8().data());
-
+    WebCore::DatabaseTracker::tracker().setDatabaseDirectoryPath(WTF::String::fromUTF8(path));
+    eina_stringshare_replace(&_ewk_default_web_database_path, path);
 #endif
 }
 
@@ -139,17 +134,14 @@ Eina_Bool ewk_settings_icon_database_path_set(const char* directory)
 
         WebCore::iconDatabase().setEnabled(true);
         WebCore::iconDatabase().open(WTF::String::fromUTF8(directory), WebCore::IconDatabase::defaultDatabaseFilename());
-        if (!_ewk_icon_database_path)
-            _ewk_icon_database_path = eina_stringshare_add(directory);
-        else
-            eina_stringshare_replace(&_ewk_icon_database_path, directory);
+
+        eina_stringshare_replace(&_ewk_icon_database_path, directory);
     } else {
         WebCore::iconDatabase().setEnabled(false);
         WebCore::iconDatabase().close();
-        if (_ewk_icon_database_path) {
-            eina_stringshare_del(_ewk_icon_database_path);
-            _ewk_icon_database_path = 0;
-        }
+
+        eina_stringshare_del(_ewk_icon_database_path);
+        _ewk_icon_database_path = 0;
     }
     return true;
 }
@@ -257,10 +249,8 @@ Eina_Bool ewk_settings_cache_directory_path_set(const char* path)
         return false;
 
     WebCore::cacheStorage().setCacheDirectory(WTF::String::fromUTF8(path));
-    if (!_ewk_cache_directory_path)
-        _ewk_cache_directory_path = eina_stringshare_add(path);
-    else
-        eina_stringshare_replace(&_ewk_cache_directory_path, path);
+    eina_stringshare_replace(&_ewk_cache_directory_path, path);
+
     return true;
 }
 

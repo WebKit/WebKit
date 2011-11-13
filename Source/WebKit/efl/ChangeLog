@@ -1,3 +1,20 @@
+2011-11-13  Raphael Kubo da Costa  <kubo@profusion.mobi>
+
+        [EFL] Simplify eina_stringshare usage in ewk_settings.
+        https://bugs.webkit.org/show_bug.cgi?id=72127
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Actually use the eina_stringshare functions in a sane way.
+
+        * ewk/ewk_settings.cpp:
+        (ewk_settings_web_database_path_set): Just use
+        eina_stringshare_replace instead of doing needless checks and using
+        eina_stringshare_add.
+        (ewk_settings_cache_directory_path_set): Ditto.
+        (ewk_settings_icon_database_path_set): Ditto and always call
+        eina_stringshare_del, as passing NULL to it is just a NOP.
+
 2011-11-11  JungJik Lee  <jungjik.lee@samsung.com>
 
         [EFL] Remove unused flags in pre-render implementation
