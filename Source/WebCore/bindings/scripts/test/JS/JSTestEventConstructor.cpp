@@ -150,14 +150,14 @@ JSObject* JSTestEventConstructor::createPrototype(ExecState* exec, JSGlobalObjec
 
 bool JSTestEventConstructor::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
-    JSTestEventConstructor* thisObject = static_cast<JSTestEventConstructor*>(cell);
+    JSTestEventConstructor* thisObject = jsCast<JSTestEventConstructor*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
     return getStaticValueSlot<JSTestEventConstructor, Base>(exec, &JSTestEventConstructorTable, thisObject, propertyName, slot);
 }
 
 bool JSTestEventConstructor::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
 {
-    JSTestEventConstructor* thisObject = static_cast<JSTestEventConstructor*>(object);
+    JSTestEventConstructor* thisObject = jsCast<JSTestEventConstructor*>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
     return getStaticValueDescriptor<JSTestEventConstructor, Base>(exec, &JSTestEventConstructorTable, thisObject, propertyName, descriptor);
 }
