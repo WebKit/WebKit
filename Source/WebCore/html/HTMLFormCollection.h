@@ -43,7 +43,6 @@ public:
     virtual Node* nextItem() const;
 
     virtual Node* namedItem(const AtomicString& name) const;
-    virtual Node* nextNamedItem(const AtomicString& name) const;
 
 private:
     HTMLFormCollection(PassRefPtr<HTMLFormElement>);
@@ -54,8 +53,6 @@ private:
     static CollectionCache* formCollectionInfo(HTMLFormElement*);
 
     Element* getNamedItem(const QualifiedName& attrName, const AtomicString& name) const;
-    Element* nextNamedItemInternal(const String& name) const;
-
     Element* getNamedFormItem(const QualifiedName& attrName, const String& name, int duplicateNumber) const;
 
     mutable int currentPos;

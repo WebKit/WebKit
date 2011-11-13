@@ -1,3 +1,34 @@
+2011-11-11  Andreas Kling  <kling@webkit.org>
+
+        Only HTMLAllCollection needs stateful named item traversal.
+        <http://webkit.org/b/71987>
+
+        Reviewed by Antti Koivisto.
+
+        After the ability to call collections (excluding document.all) was removed
+        in <http://webkit.org/b/67579>, chunks of code remained in HTMLCollection
+        and HTMLFormCollection that was only used for this purpose.
+
+        Restrict the nextNamedItem() mechanism to HTMLAllCollection, since it's no
+        longer used by any of the other collections.
+
+        * html/HTMLCollection.h:
+
+            Moved nextNamedItem() to HTMLAllCollection (and made it non-virtual.)
+            Promoted itemAfter() and checkForNameMatch() to protected methods so
+            they can be called from HTMLAllCollection.
+
+        * html/HTMLAllCollection.h:
+        * html/HTMLAllCollection.cpp:
+        (WebCore::HTMLAllCollection::HTMLAllCollection):
+        (WebCore::HTMLAllCollection::nextNamedItem):
+        * html/HTMLCollection.cpp:
+        (WebCore::HTMLCollection::HTMLCollection):
+        (WebCore::HTMLCollection::namedItem):
+        * html/HTMLFormCollection.cpp:
+        (WebCore::HTMLFormCollection::namedItem):
+        * html/HTMLFormCollection.h:
+
 2011-11-13  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         Update binding generator tests to use jsCast

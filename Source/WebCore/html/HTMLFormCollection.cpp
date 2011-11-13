@@ -139,18 +139,6 @@ Node* HTMLFormCollection::nextItem() const
     return item(info()->position + 1);
 }
 
-Element* HTMLFormCollection::nextNamedItemInternal(const String &name) const
-{
-    Element* retval = getNamedFormItem(m_idsDone ? nameAttr : idAttr, name, ++info()->position);
-    if (retval)
-        return retval;
-    if (m_idsDone) // we're done
-        return 0;
-    // After doing id, do name
-    m_idsDone = true;
-    return getNamedItem(nameAttr, name);
-}
-
 Node* HTMLFormCollection::namedItem(const AtomicString& name) const
 {
     // http://msdn.microsoft.com/workshop/author/dhtml/reference/methods/nameditem.asp
@@ -159,27 +147,11 @@ Node* HTMLFormCollection::namedItem(const AtomicString& name) const
     // object with a matching name attribute, but only on those elements
     // that are allowed a name attribute.
     resetCollectionInfo();
-    m_idsDone = false;
     info()->current = getNamedItem(idAttr, name);
     if (info()->current)
         return info()->current;
-    m_idsDone = true;
     info()->current = getNamedItem(nameAttr, name);
     return info()->current;
-}
-
-Node* HTMLFormCollection::nextNamedItem(const AtomicString& name) const
-{
-    // The nextNamedItemInternal function can return the same item twice if it has
-    // both an id and name that are equal to the name parameter. So this function
-    // checks if we are on the nameAttr half of the iteration and skips over any
-    // that also have the same idAttributeName.
-    Element* impl = nextNamedItemInternal(name);
-    if (m_idsDone) {
-        while (impl && impl->getIdAttribute() == name)
-            impl = nextNamedItemInternal(name);
-    }
-    return impl;
 }
 
 void HTMLFormCollection::updateNameCache() const

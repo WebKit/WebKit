@@ -26,7 +26,8 @@
 #include "config.h"
 #include "HTMLAllCollection.h"
 
-#include "Node.h"
+#include "CollectionCache.h"
+#include "Element.h"
 
 namespace WebCore {
 
@@ -37,11 +38,40 @@ PassRefPtr<HTMLAllCollection> HTMLAllCollection::create(PassRefPtr<Node> base)
 
 HTMLAllCollection::HTMLAllCollection(PassRefPtr<Node> base)
     : HTMLCollection(base, DocAll)
+    , m_idsDone(false)
 {
 }
 
 HTMLAllCollection::~HTMLAllCollection()
 {
+}
+
+Node* HTMLAllCollection::nextNamedItem(const AtomicString& name) const
+{
+    resetCollectionInfo();
+    info()->checkConsistency();
+
+    for (Element* e = itemAfter(info()->current); e; e = itemAfter(e)) {
+        if (checkForNameMatch(e, m_idsDone, name)) {
+            info()->current = e;
+            return e;
+        }
+    }
+
+    if (m_idsDone) {
+        info()->current = 0;
+        return 0;
+    }
+    m_idsDone = true;
+
+    for (Element* e = itemAfter(info()->current); e; e = itemAfter(e)) {
+        if (checkForNameMatch(e, m_idsDone, name)) {
+            info()->current = e;
+            return e;
+        }
+    }
+
+    return 0;
 }
 
 } // namespace WebCore

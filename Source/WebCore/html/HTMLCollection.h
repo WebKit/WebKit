@@ -48,7 +48,6 @@ public:
     virtual Node* nextItem() const;
 
     virtual Node* namedItem(const AtomicString& name) const;
-    virtual Node* nextNamedItem(const AtomicString& name) const; // In case of multiple items named the same way
 
     Node* firstItem() const;
 
@@ -66,14 +65,13 @@ protected:
     CollectionCache* info() const { return m_info; }
     void resetCollectionInfo() const;
 
-    mutable bool m_idsDone : 1; // for nextNamedItem()
+    virtual Element* itemAfter(Element*) const;
+    bool checkForNameMatch(Element*, bool checkName, const AtomicString& name) const;
 
 private:
-    virtual Element* itemAfter(Element*) const;
     virtual unsigned calcLength() const;
     virtual void updateNameCache() const;
 
-    bool checkForNameMatch(Element*, bool checkName, const AtomicString& name) const;
     mutable bool m_ownsInfo : 1;
     unsigned m_type : 5; // CollectionType
 
