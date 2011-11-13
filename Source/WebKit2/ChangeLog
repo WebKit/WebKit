@@ -1,3 +1,10 @@
+2011-11-13  Mark Rowe  <mrowe@apple.com>
+
+        Fix the 32-bit build.
+
+        * WebProcess/mac/WebProcessMac.mm:
+        (WebKit::initializeSandbox): Use a format specifier and cast that works on more architectures.
+
 2011-11-12  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         [Qt][Symbian] Remove support for WINSCW compiler
