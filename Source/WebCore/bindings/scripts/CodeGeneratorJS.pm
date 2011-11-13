@@ -3036,7 +3036,7 @@ sub GenerateHashTable
     push(@implContent, "};\n\n");
     push(@implContent, "#undef THUNK_GENERATOR\n");
     my $compactSizeMask = $numEntries - 1;
-    push(@implContent, "static JSC_CONST_HASHTABLE HashTable $name = { $compactSize, $compactSizeMask, $nameEntries, 0 };\n");
+    push(@implContent, "static const HashTable $name = { $compactSize, $compactSizeMask, $nameEntries, 0 };\n");
 }
 
 # Paul Hsieh's SuperFastHash

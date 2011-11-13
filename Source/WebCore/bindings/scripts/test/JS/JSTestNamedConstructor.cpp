@@ -49,7 +49,7 @@ static const HashTableValue JSTestNamedConstructorTableValues[] =
 };
 
 #undef THUNK_GENERATOR
-static JSC_CONST_HASHTABLE HashTable JSTestNamedConstructorTable = { 2, 1, JSTestNamedConstructorTableValues, 0 };
+static const HashTable JSTestNamedConstructorTable = { 2, 1, JSTestNamedConstructorTableValues, 0 };
 /* Hash table for constructor */
 #if ENABLE(JIT)
 #define THUNK_GENERATOR(generator) , generator
@@ -68,7 +68,7 @@ static const HashTableValue JSTestNamedConstructorConstructorTableValues[] =
 };
 
 #undef THUNK_GENERATOR
-static JSC_CONST_HASHTABLE HashTable JSTestNamedConstructorConstructorTable = { 1, 0, JSTestNamedConstructorConstructorTableValues, 0 };
+static const HashTable JSTestNamedConstructorConstructorTable = { 1, 0, JSTestNamedConstructorConstructorTableValues, 0 };
 const ClassInfo JSTestNamedConstructorConstructor::s_info = { "TestNamedConstructorConstructor", &DOMConstructorObject::s_info, &JSTestNamedConstructorConstructorTable, 0, CREATE_METHOD_TABLE(JSTestNamedConstructorConstructor) };
 
 JSTestNamedConstructorConstructor::JSTestNamedConstructorConstructor(Structure* structure, JSDOMGlobalObject* globalObject)
@@ -111,7 +111,7 @@ static const HashTableValue JSTestNamedConstructorPrototypeTableValues[] =
 };
 
 #undef THUNK_GENERATOR
-static JSC_CONST_HASHTABLE HashTable JSTestNamedConstructorPrototypeTable = { 1, 0, JSTestNamedConstructorPrototypeTableValues, 0 };
+static const HashTable JSTestNamedConstructorPrototypeTable = { 1, 0, JSTestNamedConstructorPrototypeTableValues, 0 };
 const ClassInfo JSTestNamedConstructorPrototype::s_info = { "TestNamedConstructorPrototype", &JSC::JSNonFinalObject::s_info, &JSTestNamedConstructorPrototypeTable, 0, CREATE_METHOD_TABLE(JSTestNamedConstructorPrototype) };
 
 JSObject* JSTestNamedConstructorPrototype::self(ExecState* exec, JSGlobalObject* globalObject)

@@ -1,3 +1,25 @@
+2011-11-12  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        [Qt][Symbian] Remove support for WINSCW compiler
+        https://bugs.webkit.org/show_bug.cgi?id=70178
+
+        Reviewed by Chang Shu.
+
+        No new tests as there is no new functionality.
+
+        * config.h: Revert r57076.
+        * loader/cache/CachedResourceHandle.h: Revert r49017 and r49556.
+        (WebCore::CachedResourceHandle::CachedResourceHandle):
+        * rendering/style/RenderStyle.h: Revert r52733.
+        (compareEqual):
+        * bindings/scripts/CodeGeneratorJS.pm: Revert r45553.
+        * bindings/scripts/test/JS/JSTestMediaQueryListListener.cpp: Ditto.
+        * bindings/scripts/test/JS/JSTestEventConstructor.cpp: Ditto.
+        * bindings/scripts/test/JS/JSTestObj.cpp: Ditto.
+        * bindings/scripts/test/JS/JSTestNamedConstructor.cpp: Ditto.
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.cpp: Ditto.
+        * bindings/scripts/test/JS/JSTestInterface.cpp: Ditto.
+
 2011-11-12  Anna Cavender  <annacc@chromium.org>
 
         Add WebVTT parsing layout tests.  Patch also includes creating a TextTrackCueList

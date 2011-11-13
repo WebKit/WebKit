@@ -53,7 +53,7 @@ static const HashTableValue JSTestEventConstructorTableValues[] =
 };
 
 #undef THUNK_GENERATOR
-static JSC_CONST_HASHTABLE HashTable JSTestEventConstructorTable = { 9, 7, JSTestEventConstructorTableValues, 0 };
+static const HashTable JSTestEventConstructorTable = { 9, 7, JSTestEventConstructorTableValues, 0 };
 /* Hash table for constructor */
 #if ENABLE(JIT)
 #define THUNK_GENERATOR(generator) , generator
@@ -72,7 +72,7 @@ static const HashTableValue JSTestEventConstructorConstructorTableValues[] =
 };
 
 #undef THUNK_GENERATOR
-static JSC_CONST_HASHTABLE HashTable JSTestEventConstructorConstructorTable = { 1, 0, JSTestEventConstructorConstructorTableValues, 0 };
+static const HashTable JSTestEventConstructorConstructorTable = { 1, 0, JSTestEventConstructorConstructorTableValues, 0 };
 const ClassInfo JSTestEventConstructorConstructor::s_info = { "TestEventConstructorConstructor", &DOMConstructorObject::s_info, &JSTestEventConstructorConstructorTable, 0, CREATE_METHOD_TABLE(JSTestEventConstructorConstructor) };
 
 JSTestEventConstructorConstructor::JSTestEventConstructorConstructor(Structure* structure, JSDOMGlobalObject* globalObject)
@@ -121,7 +121,7 @@ static const HashTableValue JSTestEventConstructorPrototypeTableValues[] =
 };
 
 #undef THUNK_GENERATOR
-static JSC_CONST_HASHTABLE HashTable JSTestEventConstructorPrototypeTable = { 1, 0, JSTestEventConstructorPrototypeTableValues, 0 };
+static const HashTable JSTestEventConstructorPrototypeTable = { 1, 0, JSTestEventConstructorPrototypeTableValues, 0 };
 const ClassInfo JSTestEventConstructorPrototype::s_info = { "TestEventConstructorPrototype", &JSC::JSNonFinalObject::s_info, &JSTestEventConstructorPrototypeTable, 0, CREATE_METHOD_TABLE(JSTestEventConstructorPrototype) };
 
 JSObject* JSTestEventConstructorPrototype::self(ExecState* exec, JSGlobalObject* globalObject)

@@ -54,7 +54,7 @@ static const HashTableValue JSTestSerializedScriptValueInterfaceTableValues[] =
 };
 
 #undef THUNK_GENERATOR
-static JSC_CONST_HASHTABLE HashTable JSTestSerializedScriptValueInterfaceTable = { 4, 3, JSTestSerializedScriptValueInterfaceTableValues, 0 };
+static const HashTable JSTestSerializedScriptValueInterfaceTable = { 4, 3, JSTestSerializedScriptValueInterfaceTableValues, 0 };
 /* Hash table for constructor */
 #if ENABLE(JIT)
 #define THUNK_GENERATOR(generator) , generator
@@ -73,7 +73,7 @@ static const HashTableValue JSTestSerializedScriptValueInterfaceConstructorTable
 };
 
 #undef THUNK_GENERATOR
-static JSC_CONST_HASHTABLE HashTable JSTestSerializedScriptValueInterfaceConstructorTable = { 1, 0, JSTestSerializedScriptValueInterfaceConstructorTableValues, 0 };
+static const HashTable JSTestSerializedScriptValueInterfaceConstructorTable = { 1, 0, JSTestSerializedScriptValueInterfaceConstructorTableValues, 0 };
 const ClassInfo JSTestSerializedScriptValueInterfaceConstructor::s_info = { "TestSerializedScriptValueInterfaceConstructor", &DOMConstructorObject::s_info, &JSTestSerializedScriptValueInterfaceConstructorTable, 0, CREATE_METHOD_TABLE(JSTestSerializedScriptValueInterfaceConstructor) };
 
 JSTestSerializedScriptValueInterfaceConstructor::JSTestSerializedScriptValueInterfaceConstructor(Structure* structure, JSDOMGlobalObject* globalObject)
@@ -116,7 +116,7 @@ static const HashTableValue JSTestSerializedScriptValueInterfacePrototypeTableVa
 };
 
 #undef THUNK_GENERATOR
-static JSC_CONST_HASHTABLE HashTable JSTestSerializedScriptValueInterfacePrototypeTable = { 1, 0, JSTestSerializedScriptValueInterfacePrototypeTableValues, 0 };
+static const HashTable JSTestSerializedScriptValueInterfacePrototypeTable = { 1, 0, JSTestSerializedScriptValueInterfacePrototypeTableValues, 0 };
 const ClassInfo JSTestSerializedScriptValueInterfacePrototype::s_info = { "TestSerializedScriptValueInterfacePrototype", &JSC::JSNonFinalObject::s_info, &JSTestSerializedScriptValueInterfacePrototypeTable, 0, CREATE_METHOD_TABLE(JSTestSerializedScriptValueInterfacePrototype) };
 
 JSObject* JSTestSerializedScriptValueInterfacePrototype::self(ExecState* exec, JSGlobalObject* globalObject)

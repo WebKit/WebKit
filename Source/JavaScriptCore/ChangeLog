@@ -1,3 +1,30 @@
+2011-11-12  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        [Qt][Symbian] Remove support for WINSCW compiler
+        https://bugs.webkit.org/show_bug.cgi?id=70178
+
+        Reviewed by Chang Shu.
+
+        * API/JSStringRef.h:
+        * create_hash_table: Revert r45553.
+        * runtime/JSGlobalData.cpp: Revert r45553.
+        * runtime/LiteralParser.cpp: Remove WINSCW comment.
+        (JSC::LiteralParser::Lexer::lexString):
+        * runtime/Lookup.h: Revert r45553.
+        * runtime/Structure.h: Revert r48461.
+        * wtf/Alignment.h:
+        * wtf/Assertions.h: Revert r52337.
+        * wtf/Compiler.h:
+        * wtf/ListRefPtr.h: Revert r48988.
+        (WTF::ListRefPtr::~ListRefPtr):
+        * wtf/OwnArrayPtr.h: Revert r45911.
+        (WTF::OwnArrayPtr::operator UnspecifiedBoolType):
+        * wtf/PassOwnArrayPtr.h:
+        (WTF::PassOwnArrayPtr::operator UnspecifiedBoolType):
+        * wtf/PassRefPtr.h:
+        * wtf/StaticConstructors.h:
+        * wtf/unicode/qt4/UnicodeQt4.h:
+
 2011-11-12  Patrick Gansterer  <paroga@webkit.org>
 
         Unreviewed. Add ENABLE(DFG_JIT) around DFGCorrectableJumpPoint code.

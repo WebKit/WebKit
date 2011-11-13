@@ -91,14 +91,6 @@
     #endif /* __MINGW64_VERSION_MAJOR */
 #endif /* __MINGW32__ */
 
-/* COMPILER(WINSCW) - CodeWarrior for Symbian emulator */
-#if defined(__WINSCW__)
-#define WTF_COMPILER_WINSCW 1
-/* cross-compiling, it is not really windows */
-#undef WIN32
-#undef _WIN32
-#endif
-
 /* COMPILER(INTEL) - Intel C++ Compiler */
 #if defined(__INTEL_COMPILER)
 #define WTF_COMPILER_INTEL 1

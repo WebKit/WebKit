@@ -62,12 +62,8 @@ public:
     bool operator!() const { return !m_ptr; }
 
     // This conversion operator allows implicit conversion to bool but not to other integer types.
-#if COMPILER(WINSCW)
-    operator bool() const { return m_ptr; }
-#else
     typedef PtrType PassOwnArrayPtr::*UnspecifiedBoolType;
     operator UnspecifiedBoolType() const { return m_ptr ? &PassOwnArrayPtr::m_ptr : 0; }
-#endif
 
     PassOwnArrayPtr& operator=(const PassOwnArrayPtr&) { COMPILE_ASSERT(!sizeof(T*), PassOwnArrayPtr_should_never_be_assigned_to); return *this; }
 

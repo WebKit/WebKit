@@ -1,3 +1,12 @@
+2011-11-12  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        [Qt][Symbian] Remove support for WINSCW compiler
+        https://bugs.webkit.org/show_bug.cgi?id=70178
+
+        Reviewed by Chang Shu.
+
+        * Shared/API/c/WKString.h:
+
 2011-11-12  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/10294191> REGRESSION (WebKit2): Lookup bubble sized and positioned incorrectly (vertically off)

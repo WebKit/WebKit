@@ -63,12 +63,8 @@ public:
     bool operator!() const { return !m_ptr; }
 
     // This conversion operator allows implicit conversion to bool but not to other integer types.
-#if COMPILER(WINSCW)
-    operator bool() const { return m_ptr; }
-#else
     typedef T* OwnArrayPtr::*UnspecifiedBoolType;
     operator UnspecifiedBoolType() const { return m_ptr ? &OwnArrayPtr::m_ptr : 0; }
-#endif
 
     OwnArrayPtr& operator=(const PassOwnArrayPtr<T>&);
     OwnArrayPtr& operator=(std::nullptr_t) { clear(); return *this; }
