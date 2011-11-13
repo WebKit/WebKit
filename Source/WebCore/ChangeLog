@@ -1,3 +1,29 @@
+2011-11-12  Vincent Scheib  <scheib@chromium.org>
+
+        Mouse Lock Navigator IDL
+        https://bugs.webkit.org/show_bug.cgi?id=72150
+
+        Reviewed by Dimitri Glazkov.
+
+        Tests require mocking (similar to geolocation) that will be built after this.
+
+        * WebCore.gypi:
+        * bindings/generic/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::webkitPointerEnabled):
+        * page/MouseLockable.cpp: Added.
+        (WebCore::MouseLockable::MouseLockable):
+        (WebCore::MouseLockable::~MouseLockable):
+        (WebCore::MouseLockable::webkitLock):
+        (WebCore::MouseLockable::webkitUnlock):
+        (WebCore::MouseLockable::webkitIsLocked):
+        * page/MouseLockable.h: Added.
+        (WebCore::MouseLockable::create):
+        * page/MouseLockable.idl: Added.
+        * page/Navigator.cpp:
+        (WebCore::Navigator::webkitPointer):
+        * page/Navigator.h:
+        * page/Navigator.idl:
+
 2011-11-11  Andreas Kling  <kling@webkit.org>
 
         Only HTMLAllCollection needs stateful named item traversal.
