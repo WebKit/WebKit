@@ -54,7 +54,7 @@ TextTrack::TextTrack(ScriptExecutionContext* context, TextTrackClient* client, c
 
 TextTrack::~TextTrack()
 {
-    if (m_client)
+    if (m_client && m_cues)
         m_client->textTrackRemoveCues(this, m_cues.get());
     clearClient();
 }
@@ -103,8 +103,11 @@ void TextTrack::setMode(unsigned short mode, ExceptionCode& ec)
         ec = INVALID_ACCESS_ERR;
 }
 
-TextTrackCueList* TextTrack::cues() const
+TextTrackCueList* TextTrack::cues()
 {
+    if (!m_cues)
+        m_cues = TextTrackCueList::create();    
+
     // 4.8.10.12.5 If the text track mode ... is not the text track disabled mode,
     // then the cues attribute must return a live TextTrackCueList object ...
     // Otherwise, it must return null. When an object is returned, the

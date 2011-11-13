@@ -1,0 +1,16 @@
+Tests cue size from settings.
+
+
+*** Testing text track 0
+EXPECTED (cues.length == '3') OK
+EXPECTED (cues[0].size == '100') OK
+EXPECTED (cues[1].size == '10') OK
+EXPECTED (cues[2].size == '0') OK
+
+*** Testing text track 1
+EXPECTED (cues.length == '3') OK
+EXPECTED (cues[0].size == '100') OK
+EXPECTED (cues[1].size == '100') OK
+EXPECTED (cues[2].size == '100') OK
+END OF TEST
+

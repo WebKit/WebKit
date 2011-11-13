@@ -1,0 +1,7 @@
+Tests cue without timings are ignored.
+
+
+*** Testing text track 0
+EXPECTED (cues.length == '0') OK
+END OF TEST
+

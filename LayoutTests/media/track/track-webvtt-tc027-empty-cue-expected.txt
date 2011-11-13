@@ -1,0 +1,5 @@
+Tests that empty cues are discarded.
+
+EXPECTED (video.textTracks[0].cues.length == '0') OK
+END OF TEST
+

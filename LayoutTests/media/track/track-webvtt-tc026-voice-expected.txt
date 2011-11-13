@@ -1,0 +1,12 @@
+Tests cues with voice markup <v>.
+
+EXPECTED (video.textTracks[0].cues.length == '3') OK
+EXPECTED (true == 'true') OK
+EXPECTED (true == 'true') OK
+EXPECTED (true == 'true') OK
+EXPECTED (video.textTracks[1].cues.length == '3') OK
+EXPECTED (true == 'true') OK
+EXPECTED (true == 'true') OK
+EXPECTED (true == 'true') OK
+END OF TEST
+

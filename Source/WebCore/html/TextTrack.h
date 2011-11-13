@@ -71,7 +71,7 @@ public:
     Mode mode() const;
     void setMode(unsigned short, ExceptionCode&);
 
-    TextTrackCueList* cues() const;
+    TextTrackCueList* cues();
     TextTrackCueList* activeCues() const;
 
     void readyStateChanged();

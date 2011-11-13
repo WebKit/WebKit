@@ -1,0 +1,12 @@
+Tests cues with <timestamps> tags.
+
+EXPECTED (video.textTracks[0].cues.length == '3') OK
+EXPECTED (video.textTracks[0].cues[0].getCueAsHTML().textContent == 'This cue is painted on.') OK
+EXPECTED (video.textTracks[0].cues[1].getCueAsHTML().textContent == 'I said Bear is coming!!!!') OK
+EXPECTED (video.textTracks[0].cues[2].getCueAsHTML().textContent == 'I said Bear is coming now!!!!') OK
+EXPECTED (video.textTracks[1].cues.length == '3') OK
+EXPECTED (video.textTracks[1].cues[0].getCueAsHTML().textContent == 'This cue is painted on. But since the last two timestamps are out of order, they are ignored.') OK
+EXPECTED (video.textTracks[1].cues[1].getCueAsHTML().textContent == 'I said Bear is coming!!!! All of these timestamps are before the start of the cue, so get ignored.') OK
+EXPECTED (video.textTracks[1].cues[2].getCueAsHTML().textContent == 'I said Bear is coming now!!!! All of these timestamps are after the end of the cue, so get ignored.') OK
+END OF TEST
+

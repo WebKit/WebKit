@@ -1,0 +1,16 @@
+Tests special characters &, <, and > in the cue text.
+
+
+*** Testing text track 0
+EXPECTED (cues.length == '3') OK
+EXPECTED (cues[0].getCueAsHTML().textContent == 'This cue has an amp & character.') OK
+EXPECTED (cues[1].getCueAsHTML().textContent == 'This cue has a less than < character.') OK
+EXPECTED (cues[2].getCueAsHTML().textContent == 'This cue has a greater than > character.') OK
+
+*** Testing text track 1
+EXPECTED (cues.length == '3') OK
+EXPECTED (cues[0].getCueAsHTML().textContent == 'This cue has an amp character. Ampersand is ignored.') OK
+EXPECTED (cues[1].getCueAsHTML().textContent == 'This cue has a less than ') OK
+EXPECTED (cues[2].getCueAsHTML().textContent == 'This cue has a greater than > character. Since it's not related to a < character, it's just interpreted as text.') OK
+END OF TEST
+

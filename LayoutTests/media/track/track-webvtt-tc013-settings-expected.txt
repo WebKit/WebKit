@@ -1,0 +1,42 @@
+Tests WebVTT settings.
+
+
+*** Testing text track 0
+EXPECTED (cues.length == '4') OK
+EXPECTED (cues[0].linePosition == '100') OK
+EXPECTED (cues[0].textPosition == '50') OK
+EXPECTED (cues[0].alignment == 'middle') OK
+EXPECTED (cues[0].direction == 'horizontal') OK
+EXPECTED (cues[1].linePosition == '-1') OK
+EXPECTED (cues[1].textPosition == '50') OK
+EXPECTED (cues[1].alignment == 'middle') OK
+EXPECTED (cues[1].direction == 'horizontal') OK
+EXPECTED (cues[2].linePosition == '-1') OK
+EXPECTED (cues[2].textPosition == '50') OK
+EXPECTED (cues[2].alignment == 'middle') OK
+EXPECTED (cues[2].direction == 'horizontal') OK
+EXPECTED (cues[3].linePosition == '-1') OK
+EXPECTED (cues[3].textPosition == '50') OK
+EXPECTED (cues[3].alignment == 'middle') OK
+EXPECTED (cues[3].direction == 'horizontal') OK
+
+*** Testing text track 1
+EXPECTED (cues.length == '4') OK
+EXPECTED (cues[0].linePosition == '100') OK
+EXPECTED (cues[0].textPosition == '50') OK
+EXPECTED (cues[0].alignment == 'middle') OK
+EXPECTED (cues[0].direction == 'horizontal') OK
+EXPECTED (cues[1].linePosition == '-1') OK
+EXPECTED (cues[1].textPosition == '50') OK
+EXPECTED (cues[1].alignment == 'middle') OK
+EXPECTED (cues[1].direction == 'horizontal') OK
+EXPECTED (cues[2].linePosition == '-1') OK
+EXPECTED (cues[2].textPosition == '50') OK
+EXPECTED (cues[2].alignment == 'middle') OK
+EXPECTED (cues[2].direction == 'horizontal') OK
+EXPECTED (cues[3].linePosition == '-1') OK
+EXPECTED (cues[3].textPosition == '50') OK
+EXPECTED (cues[3].alignment == 'middle') OK
+EXPECTED (cues[3].direction == 'horizontal') OK
+END OF TEST
+

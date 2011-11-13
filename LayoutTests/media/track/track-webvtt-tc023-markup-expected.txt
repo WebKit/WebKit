@@ -1,0 +1,14 @@
+Tests cues with <b>, <i>, <u>, <rt> and <ruby> tags.
+
+EXPECTED (video.textTracks[0].cues.length == '4') OK
+EXPECTED (true == 'true') OK
+EXPECTED (true == 'true') OK
+EXPECTED (true == 'true') OK
+EXPECTED (true == 'true') OK
+EXPECTED (video.textTracks[1].cues.length == '4') OK
+EXPECTED (true == 'true') OK
+EXPECTED (true == 'true') OK
+EXPECTED (true == 'true') OK
+EXPECTED (true == 'true') OK
+END OF TEST
+

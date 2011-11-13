@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+        <script src=../media-file.js></script>
+        <script src=../video-test.js></script>
+        <script>            
+
+            numberOfTrackTests = 2;
+            
+            function trackLoaded(i)
+            {
+                findMediaElement();
+                var expected = 
+                {
+                    length : 4,
+                    tests:
+                    [
+                        {
+                            property : "linePosition",
+                            values : [100, -1, -1, -1],
+                        },
+                        {
+                            property : "textPosition",
+                            values : [50, 50, 50, 50],
+                        },
+                        {
+                            property : "alignment",
+                            values : ["middle", "middle", "middle", "middle"],
+                        },
+                        {
+                            property : "direction",
+                            values : ["horizontal", "horizontal", "horizontal", "horizontal"],
+                        },
+                    ],
+                };
+                testCues(i, expected);
+
+                allTestsEnded();
+            }
+        </script>
+    </head>
+    <body>
+    <p>Tests WebVTT settings.</p>
+        <video>
+            <track src="captions-webvtt/tc013-settings.vtt" onload="trackLoaded(0)">
+            <track src="captions-webvtt/tc013-settings-bad-separation.vtt" onload="trackLoaded(1)">
+        </video>
+    </body>
+</html>

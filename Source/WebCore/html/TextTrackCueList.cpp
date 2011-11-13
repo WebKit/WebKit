@@ -78,6 +78,14 @@ void TextTrackCueList::add(const Vector<RefPtr<TextTrackCue> >& newCues)
 
 void TextTrackCueList::add(PassRefPtr<TextTrackCue> cue)
 {
+    // WebVTT cue timings
+    // 1. The time represented by this WebVTT timestamp must be greater than or equal
+    // to the start time offsets of all previous cues in the file.
+    // http://www.whatwg.org/specs/web-apps/current-work/#webvtt-cue-timings
+    // Note: because this requirement is specific to WebVTT, we may want to check first
+    // whether the cues in this list came from a WebVTT file.
+    if (!m_list.isEmpty() && cue->startTime() < m_list.last()->startTime())
+        return;
     add(cue, 0, m_list.size());
 }
 

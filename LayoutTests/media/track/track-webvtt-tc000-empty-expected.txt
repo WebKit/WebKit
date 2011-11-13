@@ -1,0 +1,5 @@
+Tests that an empty file is not recognized as a WebVTT file.
+
+EXPECTED (video.textTracks[0].cues.length == '0') OK
+END OF TEST
+
