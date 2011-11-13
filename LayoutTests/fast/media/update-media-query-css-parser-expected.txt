@@ -1,0 +1,3 @@
+Bug 72222: NULL-deref in updateLastMediaLine when parsing some media-queries.
+
+This test has passed if it does not crash.

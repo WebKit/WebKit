@@ -579,10 +579,11 @@ media_list:
     }
     | media_list ',' maybe_space media_query {
         $$ = $1;
-        CSSParser* p = static_cast<CSSParser*>(parser);
-        if ($$)
+        if ($$) {
+            CSSParser* p = static_cast<CSSParser*>(parser);
             $$->appendMediaQuery(p->sinkFloatingMediaQuery($4));
-        p->updateLastMediaLine($$);
+            p->updateLastMediaLine($$);
+        }
     }
     | media_list error {
         $$ = 0;
