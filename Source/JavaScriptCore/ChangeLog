@@ -1,3 +1,31 @@
+2011-11-13  Yuqiang Xian  <yuqiang.xian@intel.com>
+
+        Fix silent spilling/filling GPRs in DFG 32_64
+        https://bugs.webkit.org/show_bug.cgi?id=72201
+
+        Reviewed by Gavin Barraclough.
+
+        Current silentSpillGPR/silentFillGPR may not work as expected for some
+        cases in 32_64. If there's a JSValue which was retained by two GPRs,
+        we may end up failing to spill/fill some GPRs or redundantly
+        spilling/filling some GPRs. For example, if we tend to exclude "eax"
+        from spilling while a JSValue is retained by both "eax" and "edx",
+        then "edx" won't be spilled as well (wrong). And if another JSValue is
+        retained by "ecx" and "ebx", both "ecx" and "ebx" will be spilled
+        twice. The similar problem applies to silentFillGPR.
+        The fix is to make silentSpillGPR/silentFillGPR more straightforward,
+        i.e., spilling/filling based on the GPR instead of the virtual
+        register. FPR spilling/filling is also modified accordingly to make it
+        consistent with GPR spilling/filling.
+
+        * dfg/DFGJITCodeGenerator.h:
+        (JSC::DFG::JITCodeGenerator::silentSpillGPR):
+        (JSC::DFG::JITCodeGenerator::silentSpillFPR):
+        (JSC::DFG::JITCodeGenerator::silentFillGPR):
+        (JSC::DFG::JITCodeGenerator::silentFillFPR):
+        (JSC::DFG::JITCodeGenerator::silentSpillAllRegisters):
+        (JSC::DFG::JITCodeGenerator::silentFillAllRegisters):
+
 2011-11-12  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         [Qt][Symbian] Remove support for WINSCW compiler
