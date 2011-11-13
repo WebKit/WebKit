@@ -66,6 +66,7 @@ static const char optionStressOpt[] = "--stress-opt";
 static const char optionStressDeopt[] = "--stress-deopt";
 static const char optionJavaScriptFlags[] = "--js-flags=";
 static const char optionNoTimeout[] = "--no-timeout";
+static const char optionWebCoreLogChannels[] = "--webcore-log-channels=";
 
 class WebKitSupportTestEnvironment {
 public:
@@ -205,7 +206,10 @@ int main(int argc, char* argv[])
             javaScriptFlags = argument.substr(strlen(optionJavaScriptFlags));
         else if (argument == optionNoTimeout)
             noTimeout = true;
-        else if (argument.size() && argument[0] == '-')
+        else if (!argument.find(optionWebCoreLogChannels)) {
+            string channels = argument.substr(strlen(optionWebCoreLogChannels));
+            webkit_support::EnableWebCoreLogChannels(channels);
+        } else if (argument.size() && argument[0] == '-')
             fprintf(stderr, "Unknown option: %s\n", argv[i]);
         else
             tests.append(argument);

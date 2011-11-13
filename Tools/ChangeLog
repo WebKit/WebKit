@@ -1,3 +1,16 @@
+2011-11-13  Gavin Peters  <gavinp@chromium.org>
+
+        command line control of webcore log channels in chromium DumpRenderTree
+        https://bugs.webkit.org/show_bug.cgi?id=72126
+        
+        The option --webcore-log-channels=<foo>,<bar>,<quux> is the same as
+        what chromium takes.
+
+        Reviewed by Kent Tamura.
+
+        * DumpRenderTree/chromium/DumpRenderTree.cpp:
+        (main):
+
 2011-11-12  Ariya Hidayat  <ariya@sencha.com>
 
         [Qt] Fix minor config typo in the build tool documentation
