@@ -163,6 +163,9 @@ public:
     // context to the corresponding texture used by the compositor.
     virtual void prepareTexture() = 0;
 
+    // GL_CHROMIUM_post_sub_buffer - Copies part of the back buffer to the front buffer.
+    virtual void postSubBufferCHROMIUM(int x, int y, int width, int height) = 0;
+
     // Synthesizes an OpenGL error which will be returned from a
     // later call to getError. This is used to emulate OpenGL ES
     // 2.0 behavior on the desktop and to enforce additional error

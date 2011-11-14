@@ -52,6 +52,8 @@ public:
 
     virtual void prepareTexture() { }
 
+    virtual void postSubBufferCHROMIUM(int x, int y, int width, int height) { }
+
     virtual void synthesizeGLError(WGC3Denum) { }
 
     virtual bool isContextLost() { return false; }

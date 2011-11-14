@@ -101,6 +101,9 @@ public:
 
     void prepareTexture();
 
+    // CHROMIUM_post_sub_buffer
+    void postSubBufferCHROMIUM(int x, int y, int width, int height);
+
     bool isGLES2Compliant() const;
 
     void releaseShaderCompiler();

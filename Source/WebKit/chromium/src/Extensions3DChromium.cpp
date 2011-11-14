@@ -77,6 +77,11 @@ void Extensions3DChromium::renderbufferStorageMultisample(unsigned long target, 
     m_private->renderbufferStorageMultisampleCHROMIUM(target, samples, internalformat, width, height);
 }
 
+void Extensions3DChromium::postSubBufferCHROMIUM(int x, int y, int width, int height)
+{
+    m_private->postSubBufferCHROMIUM(x, y, width, height);
+}
+
 void* Extensions3DChromium::mapBufferSubDataCHROMIUM(unsigned target, int offset, int size, unsigned access)
 {
     return m_private->mapBufferSubDataCHROMIUM(target, offset, size, access);

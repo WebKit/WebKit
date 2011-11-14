@@ -1,3 +1,18 @@
+2011-11-14  Jonathan Backer  <backer@chromium.org>
+
+        [chromium] Plumb through partial swap
+        https://bugs.webkit.org/show_bug.cgi?id=72028
+
+        Reviewed by Kenneth Russell.
+
+        * public/WebGraphicsContext3D.h:
+        * src/Extensions3DChromium.cpp:
+        (WebCore::Extensions3DChromium::postSubBufferCHROMIUM):
+        * src/GraphicsContext3DChromium.cpp:
+        * src/GraphicsContext3DPrivate.h:
+        * tests/MockWebGraphicsContext3D.h:
+        (WebKit::MockWebGraphicsContext3D::postSubBufferCHROMIUM):
+
 2011-11-14  Iain Merrick  <husky@google.com>
 
         [chromium] Fix incorrect usage of ASSERT in CCLayerTreeHostTest

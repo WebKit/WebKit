@@ -40,6 +40,7 @@ public:
     // Supported extensions:
     //   GL_CHROMIUM_resource_safe  : indicating that textures/renderbuffers are always initialized before read/write.
     //   GL_CHROMIUM_strict_attribs : indicating a GL error is generated for out-of-bounds buffer accesses.
+    //   GL_CHROMIUM_post_sub_buffer
     //   GL_CHROMIUM_map_sub
     //   GL_CHROMIUM_swapbuffers_complete_callback
     //   GL_CHROMIUM_rate_limit_offscreen_context
@@ -63,6 +64,9 @@ public:
         READ_ONLY = 0x88B8,
         WRITE_ONLY = 0x88B9
     };
+
+    // GL_CHROMIUM_post_sub_buffer
+    void postSubBufferCHROMIUM(int x, int y, int width, int height);
 
     // GL_CHROMIUM_map_sub
     void* mapBufferSubDataCHROMIUM(unsigned target, int offset, int size, unsigned access);

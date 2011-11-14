@@ -85,6 +85,7 @@ struct CCSettings {
 struct LayerRendererCapabilities {
     LayerRendererCapabilities()
         : bestTextureFormat(0)
+        , usingPostSubBuffer(false)
         , usingMapSub(false)
         , usingAcceleratedPainting(false)
         , usingSetVisibility(false)
@@ -92,6 +93,7 @@ struct LayerRendererCapabilities {
         , maxTextureSize(0) { }
 
     GC3Denum bestTextureFormat;
+    bool usingPostSubBuffer;
     bool usingMapSub;
     bool usingAcceleratedPainting;
     bool usingSetVisibility;

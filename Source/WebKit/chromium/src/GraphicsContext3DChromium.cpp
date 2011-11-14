@@ -882,6 +882,8 @@ bool GraphicsContext3DPrivate::isExtensionEnabled(const String& name)
     return m_enabledExtensions.contains(mappedName);
 }
 
+DELEGATE_TO_IMPL_4(postSubBufferCHROMIUM, int, int, int, int)
+
 DELEGATE_TO_IMPL_4R(mapBufferSubDataCHROMIUM, GC3Denum, GC3Dsizeiptr, GC3Dsizei, GC3Denum, void*)
 DELEGATE_TO_IMPL_1(unmapBufferSubDataCHROMIUM, const void*)
 DELEGATE_TO_IMPL_9R(mapTexSubImage2DCHROMIUM, GC3Denum, GC3Dint, GC3Dint, GC3Dint, GC3Dsizei, GC3Dsizei, GC3Denum, GC3Denum, GC3Denum, void*)

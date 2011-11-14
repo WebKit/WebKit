@@ -187,6 +187,10 @@ bool LayerRendererChromium::initialize()
         m_capabilities.usingAcceleratedPainting = true;
 
     WebCore::Extensions3D* extensions = m_context->getExtensions();
+    m_capabilities.usingPostSubBuffer = extensions->supports("GL_CHROMIUM_post_sub_buffer");
+    if (m_capabilities.usingPostSubBuffer)
+        extensions->ensureEnabled("GL_CHROMIUM_post_sub_buffer");
+
     m_capabilities.usingMapSub = extensions->supports("GL_CHROMIUM_map_sub");
     if (m_capabilities.usingMapSub)
         extensions->ensureEnabled("GL_CHROMIUM_map_sub");

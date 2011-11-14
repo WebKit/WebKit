@@ -1,3 +1,16 @@
+2011-11-14  Jonathan Backer  <backer@chromium.org>
+
+        [chromium] Plumb through partial swap
+        https://bugs.webkit.org/show_bug.cgi?id=72028
+
+        Reviewed by Kenneth Russell.
+
+        * platform/graphics/chromium/Extensions3DChromium.h:
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::initialize):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.h:
+        (WebCore::LayerRendererCapabilities::LayerRendererCapabilities):
+
 2011-11-14  Andrey Kosyakov  <caseq@chromium.org>
 
         Web Inspector: expose iframe window to the onShown event handler of panels & sidebars
