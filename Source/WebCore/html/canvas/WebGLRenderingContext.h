@@ -62,6 +62,7 @@ class WebGLShader;
 class WebGLTexture;
 class WebGLUniformLocation;
 class WebGLVertexArrayObjectOES;
+class WebGLExperimentalCompressedTextures;
 class WebKitLoseContext;
 
 typedef int ExceptionCode;
@@ -311,6 +312,7 @@ public:
     friend class WebGLObject;
     friend class OESVertexArrayObject;
     friend class WebGLDebugShaders;
+    friend class WebGLExperimentalCompressedTextures;
 
     WebGLRenderingContext(HTMLCanvasElement*, PassRefPtr<GraphicsContext3D>, GraphicsContext3D::Attributes);
     void initializeNewContext();
@@ -485,6 +487,7 @@ public:
     OwnPtr<WebKitLoseContext> m_webkitLoseContext;
     OwnPtr<WebGLDebugRendererInfo> m_webglDebugRendererInfo;
     OwnPtr<WebGLDebugShaders> m_webglDebugShaders;
+    OwnPtr<WebGLExperimentalCompressedTextures> m_webglExperimentalCompressedTextures;
 
     // Helpers for getParameter and others
     WebGLGetInfo getBooleanParameter(GC3Denum);

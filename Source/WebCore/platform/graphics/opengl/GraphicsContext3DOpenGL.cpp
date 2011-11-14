@@ -1434,6 +1434,18 @@ void GraphicsContext3D::texSubImage2D(GC3Denum target, GC3Dint level, GC3Dint xo
     ::glTexSubImage2D(target, level, xoff, yoff, width, height, format, type, pixels);
 }
 
+void GraphicsContext3D::compressedTexImage2D(GC3Denum target, GC3Dint level, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height, GC3Dint border, GC3Dsizei imageSize, const void* data)
+{
+    makeContextCurrent();
+    ::glCompressedTexImage2D(target, level, internalformat, width, height, border, imageSize, data);
+}
+
+void GraphicsContext3D::compressedTexSubImage2D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset, GC3Dsizei width, GC3Dsizei height, GC3Denum format, GC3Dsizei imageSize, const void* data)
+{
+    makeContextCurrent();
+    ::glCompressedTexSubImage2D(target, level, xoffset, yoffset, width, height, format, imageSize, data);
+}
+
 Platform3DObject GraphicsContext3D::createBuffer()
 {
     makeContextCurrent();

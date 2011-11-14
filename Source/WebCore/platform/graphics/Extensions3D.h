@@ -57,6 +57,10 @@ public:
     //   GL_OES_rgb8_rgba8
     //   GL_OES_vertex_array_object
     //   GL_ANGLE_translated_shader_source
+    //   GL_EXT_texture_compression_dxt1
+    //   GL_EXT_texture_compression_s3tc
+    //   GL_OES_compressed_ETC1_RGB8_texture
+    //   GL_IMG_texture_compression_pvrtc
 
     // Takes full name of extension; for example,
     // "GL_EXT_texture_format_BGRA8888".
@@ -107,6 +111,22 @@ public:
 
         // GL_ANGLE_translated_shader_source
         TRANSLATED_SHADER_SOURCE_LENGTH_ANGLE = 0x93A0,
+
+        // GL_EXT_texture_compression_dxt1
+        // GL_EXT_texture_compression_s3tc
+        COMPRESSED_RGB_S3TC_DXT1_EXT = 0x83F0,
+        COMPRESSED_RGBA_S3TC_DXT1_EXT = 0x83F1,
+        COMPRESSED_RGBA_S3TC_DXT3_EXT = 0x83F2,
+        COMPRESSED_RGBA_S3TC_DXT5_EXT = 0x83F3,
+
+        // GL_OES_compressed_ETC1_RGB8_texture
+        ETC1_RGB8_OES = 0x8D64,
+
+        // GL_IMG_texture_compression_pvrtc
+        COMPRESSED_RGB_PVRTC_4BPPV1_IMG = 0x8C00,
+        COMPRESSED_RGB_PVRTC_2BPPV1_IMG = 0x8C01,
+        COMPRESSED_RGBA_PVRTC_4BPPV1_IMG = 0x8C02,
+        COMPRESSED_RGBA_PVRTC_2BPPV1_IMG = 0x8C03,
     };
 
     // GL_ARB_robustness

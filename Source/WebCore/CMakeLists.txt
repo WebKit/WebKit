@@ -2140,6 +2140,7 @@ IF (ENABLE_WEBGL)
         html/canvas/WebGLContextEvent.cpp
         html/canvas/WebGLDebugRendererInfo.cpp
         html/canvas/WebGLDebugShaders.cpp
+        html/canvas/WebGLExperimentalCompressedTextures.cpp
         html/canvas/WebGLFramebuffer.cpp
         html/canvas/WebGLGetInfo.cpp
         html/canvas/WebGLObject.cpp
@@ -2171,6 +2172,7 @@ IF (ENABLE_WEBGL)
         html/canvas/WebGLContextEvent.idl
         html/canvas/WebGLDebugRendererInfo.idl
         html/canvas/WebGLDebugShaders.idl
+        html/canvas/WebGLExperimentalCompressedTextures.idl
         html/canvas/WebGLFramebuffer.idl
         html/canvas/WebGLProgram.idl
         html/canvas/WebGLRenderbuffer.idl

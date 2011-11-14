@@ -60,6 +60,7 @@
 #include "WebGLBuffer.h"
 #include "WebGLDebugRendererInfo.h"
 #include "WebGLDebugShaders.h"
+#include "WebGLExperimentalCompressedTextures.h"
 #include "WebGLExtension.h"
 #include "WebGLFramebuffer.h"
 #include "WebGLGetInfo.h"
@@ -193,6 +194,8 @@ static JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, WebGLExten
         return toJS(exec, globalObject, static_cast<WebGLDebugRendererInfo*>(extension));
     case WebGLExtension::WebGLDebugShadersName:
         return toJS(exec, globalObject, static_cast<WebGLDebugShaders*>(extension));
+    case WebGLExtension::WebGLExperimentalCompressedTexturesName:
+        return toJS(exec, globalObject, static_cast<WebGLExperimentalCompressedTextures*>(extension));
     }
     ASSERT_NOT_REACHED();
     return jsNull();
