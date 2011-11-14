@@ -1439,6 +1439,7 @@
                         'input_file': '../../WebCore/inspector/front-end/HeapSnapshotWorker.js',
                         'inputs': [
                             '<@(_script_name)',
+                            '<@(_input_file)',
                             '../../WebCore/inspector/front-end/BinarySearch.js',
                             '../../WebCore/inspector/front-end/HeapSnapshot.js',
                             '../../WebCore/inspector/front-end/HeapSnapshotWorkerDispatcher.js',
@@ -1458,6 +1459,7 @@
                         'input_file': '../../WebCore/inspector/front-end/ScriptFormatterWorker.js',
                         'inputs': [
                             '<@(_script_name)',
+                            '<@(_input_file)',
                             '<@(webinspector_uglifyjs_files)'
                         ],
                         'search_path': '../../WebCore/inspector/front-end',

@@ -1,3 +1,15 @@
+2011-11-14  Alexander Pavlov  <apavlov@chromium.org>
+
+        [chromium] r99963 causes inspector/debugger/script-formatter.html to fail text diff
+        https://bugs.webkit.org/show_bug.cgi?id=72204
+
+        The concatenate_script_formatter_worker_js action (along with concatenate_heap_snapshot_worker_js)
+        did not depend on their 'input_file' files and, hence, did not get invoked on their input_file changes.
+
+        Reviewed by Yury Semikhatsky.
+
+        * WebKit.gyp:
+
 2011-11-13  Nat Duca  <nduca@chromium.org>
 
         [chromium] LayerRendererChromium::initialize should fail when GaphicsContext3D::makeCurrent fails
