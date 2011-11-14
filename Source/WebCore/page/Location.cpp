@@ -138,16 +138,6 @@ String Location::hash() const
     return fragmentIdentifier.isEmpty() ? emptyString() : "#" + fragmentIdentifier;
 }
 
-String Location::getParameter(const String& name) const
-{
-    if (!m_frame)
-        return String();
-
-    ParsedURLParameters parameters;
-    url().copyParsedQueryTo(parameters);
-    return parameters.get(name);
-}
-
 void Location::setHref(const String& urlString, DOMWindow* activeWindow, DOMWindow* firstWindow)
 {
     if (!m_frame)

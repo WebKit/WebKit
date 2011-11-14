@@ -55,8 +55,6 @@ module html {
         readonly attribute [ConvertNullToNullString] DOMString origin;
 #endif
 
-        DOMString getParameter(in DOMString name);
-
         readonly attribute DOMString text;
 
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT

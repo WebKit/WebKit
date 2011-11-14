@@ -63,8 +63,6 @@ module window {
                  readonly attribute DOMString origin;
 #endif
 
-        DOMString getParameter(in DOMString name);
-
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
         [DontEnum, Custom, V8OnInstance, V8ReadOnly, ImplementationFunction=toStringFunction] DOMString toString();
 #endif

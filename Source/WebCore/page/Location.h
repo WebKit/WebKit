@@ -73,8 +73,6 @@ public:
 
     String toString() const { return href(); }
 
-    String getParameter(const String&) const;
-
 private:
     Location(Frame*);
 

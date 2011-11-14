@@ -5,7 +5,6 @@ PASS history.length == "LEFTOVER" is false
 PASS history.pushState == "LEFTOVER" is false
 PASS history.replaceState == "LEFTOVER" is false
 PASS location.assign == "LEFTOVER" is false
-PASS location.getParameter == "LEFTOVER" is false
 PASS location.hash == "LEFTOVER" is false
 PASS location.host == "LEFTOVER" is false
 PASS location.hostname == "LEFTOVER" is false

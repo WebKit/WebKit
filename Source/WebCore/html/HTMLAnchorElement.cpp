@@ -452,13 +452,6 @@ String HTMLAnchorElement::origin() const
     return origin->toString();
 }
 
-String HTMLAnchorElement::getParameter(const String& name) const
-{
-    ParsedURLParameters parameters;
-    href().copyParsedQueryTo(parameters);
-    return parameters.get(name);
-}
-
 void HTMLAnchorElement::setSearch(const String& value)
 {
     KURL url = href();

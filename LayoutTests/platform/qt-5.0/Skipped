@@ -2513,7 +2513,6 @@ fast/dom/Window/window-open-pending-url.html
 fast/dom/Window/window-resize-contents.html
 fast/dom/Window/window-xy-properties.html
 fast/dom/access-key-iframe.html
-fast/dom/anchor-getParameter.html
 fast/dom/anchor-text.html
 fast/dom/anchor-toString.html
 fast/dom/attr_dead_doc.html

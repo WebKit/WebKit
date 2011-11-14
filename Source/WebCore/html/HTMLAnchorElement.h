@@ -84,8 +84,6 @@ public:
 
     String origin() const;
 
-    String getParameter(const String&) const;
-
     String text();
 
     String toString() const;
