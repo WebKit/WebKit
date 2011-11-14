@@ -1,5 +1,23 @@
 2011-11-13  Adam Barth  <abarth@webkit.org>
 
+        SecurityPolicy should refer to isUnique rather than isEmpty
+        https://bugs.webkit.org/show_bug.cgi?id=72242
+
+        Reviewed by Eric Seidel.
+
+        It doesn't make sense to tweak the security policy for unique origins
+        because they're different every time.  Previously, this code checked
+        for empty origins, which are technically a subset of unique origins.  I
+        don't think it's possible to call this code in a way that can detect
+        the difference, but we're eventually going to remove the isEmpty
+        function.
+
+        * page/SecurityPolicy.cpp:
+        (WebCore::SecurityPolicy::addOriginAccessWhitelistEntry):
+        (WebCore::SecurityPolicy::removeOriginAccessWhitelistEntry):
+
+2011-11-13  Adam Barth  <abarth@webkit.org>
+
         Move isSecureTransitionTo from SecurityOrigin to SecurityContext
         https://bugs.webkit.org/show_bug.cgi?id=72241
 

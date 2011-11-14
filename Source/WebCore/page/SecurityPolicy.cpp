@@ -99,8 +99,8 @@ bool SecurityPolicy::isAccessToURLWhiteListed(const SecurityOrigin* activeOrigin
 void SecurityPolicy::addOriginAccessWhitelistEntry(const SecurityOrigin& sourceOrigin, const String& destinationProtocol, const String& destinationDomain, bool allowDestinationSubdomains)
 {
     ASSERT(isMainThread());
-    ASSERT(!sourceOrigin.isEmpty());
-    if (sourceOrigin.isEmpty())
+    ASSERT(!sourceOrigin.isUnique());
+    if (sourceOrigin.isUnique())
         return;
 
     String sourceString = sourceOrigin.toString();
@@ -115,8 +115,8 @@ void SecurityPolicy::addOriginAccessWhitelistEntry(const SecurityOrigin& sourceO
 void SecurityPolicy::removeOriginAccessWhitelistEntry(const SecurityOrigin& sourceOrigin, const String& destinationProtocol, const String& destinationDomain, bool allowDestinationSubdomains)
 {
     ASSERT(isMainThread());
-    ASSERT(!sourceOrigin.isEmpty());
-    if (sourceOrigin.isEmpty())
+    ASSERT(!sourceOrigin.isUnique());
+    if (sourceOrigin.isUnique())
         return;
 
     String sourceString = sourceOrigin.toString();
