@@ -1,3 +1,34 @@
+2011-11-14  Geoffrey Garen  <ggaren@apple.com>
+
+        32-bit Build fix: declare virtual register indices to be int rather than
+        unsigned, since they can be positive or negative.
+        
+        For better clarity, explicitly use ReturnPC instead of -1 as the "invalid"
+        state, since we'll never load and operate on the ReturnPC as a JS value.
+
+        * jit/JIT.cpp:
+        (JSC::JIT::JIT):
+        * jit/JIT.h:
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::emitLoadTag):
+        (JSC::JIT::emitLoadPayload):
+        (JSC::JIT::emitLoad):
+        (JSC::JIT::emitLoad2):
+        (JSC::JIT::emitLoadDouble):
+        (JSC::JIT::emitLoadInt32ToDouble):
+        (JSC::JIT::emitStore):
+        (JSC::JIT::emitStoreInt32):
+        (JSC::JIT::emitStoreAndMapInt32):
+        (JSC::JIT::emitStoreCell):
+        (JSC::JIT::emitStoreBool):
+        (JSC::JIT::emitStoreDouble):
+        (JSC::JIT::map):
+        (JSC::JIT::unmap):
+        (JSC::JIT::isMapped):
+        (JSC::JIT::getMappedPayload):
+        (JSC::JIT::getMappedTag):
+        (JSC::JIT::emitJumpSlowCaseIfNotJSCell):
+
 2011-11-14  Michael Saboff  <msaboff@apple.com>
 
         Remove unused m_data member from UStringSourceProvider

@@ -78,7 +78,7 @@ JIT::JIT(JSGlobalData* globalData, CodeBlock* codeBlock)
 #if USE(JSVALUE32_64)
     , m_jumpTargetIndex(0)
     , m_mappedBytecodeOffset((unsigned)-1)
-    , m_mappedVirtualRegisterIndex((unsigned)-1)
+    , m_mappedVirtualRegisterIndex(RegisterFile::ReturnPC)
     , m_mappedTag((RegisterID)-1)
     , m_mappedPayload((RegisterID)-1)
 #else
