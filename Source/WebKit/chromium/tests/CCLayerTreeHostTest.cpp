@@ -116,8 +116,7 @@ private:
     {
         setRootLayer(rootLayer);
         bool success = initialize();
-        ASSERT(success);
-        UNUSED_PARAM(success);
+        EXPECT_TRUE(success);
     }
 
     TestHooks* m_testHooks;
@@ -254,7 +253,7 @@ protected:
         webkit_support::QuitMessageLoop();
         webkit_support::RunAllPendingMessages();
         CCLayerTreeHostTest* test = static_cast<CCLayerTreeHostTest*>(self);
-        ASSERT(test);
+        ASSERT_TRUE(test);
         test->m_layerTreeHost.clear();
     }
 
@@ -262,7 +261,7 @@ protected:
     {
       ASSERT(isMainThread());
       CCLayerTreeHostTest* test = static_cast<CCLayerTreeHostTest*>(self);
-      ASSERT(test);
+      ASSERT_TRUE(test);
       if (test->m_layerTreeHost)
           test->m_layerTreeHost->setNeedsCommit();
     }
@@ -271,7 +270,7 @@ protected:
     {
       ASSERT(isMainThread());
       CCLayerTreeHostTest* test = static_cast<CCLayerTreeHostTest*>(self);
-      ASSERT(test);
+      ASSERT_TRUE(test);
       if (test->m_layerTreeHost)
           test->m_layerTreeHost->setNeedsRedraw();
     }
@@ -334,7 +333,7 @@ protected:
         if (m_timeoutTask)
             m_timeoutTask->clearTest();
 
-        ASSERT(!m_layerTreeHost.get());
+        ASSERT_FALSE(m_layerTreeHost.get());
         m_client.clear();
         if (m_timedOut) {
             FAIL() << "Test timed out";
@@ -366,7 +365,7 @@ void CCLayerTreeHostTest::doBeginTest()
 
     m_rootLayer = LayerChromium::create(0);
     m_layerTreeHost = MockLayerTreeHost::create(this, m_client.get(), m_rootLayer, m_settings);
-    ASSERT(m_layerTreeHost);
+    ASSERT_TRUE(m_layerTreeHost);
     m_rootLayer->setLayerTreeHost(m_layerTreeHost.get());
 
     m_beginning = true;

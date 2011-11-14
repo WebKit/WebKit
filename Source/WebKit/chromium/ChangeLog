@@ -1,3 +1,25 @@
+2011-11-14  Iain Merrick  <husky@google.com>
+
+        [chromium] Fix incorrect usage of ASSERT in CCLayerTreeHostTest
+        https://bugs.webkit.org/show_bug.cgi?id=72026
+
+        ASSERT is stripped out in release builds so it shouldn't be used
+        in unit tests, except when calling debug-only functions like
+        isMainThread().
+
+        Replacing with ASSERT_TRUE (or EXPECT_TRUE in constructors, where
+        we can't return a value).
+
+        Reviewed by Tony Gentilcore.
+
+        * tests/CCLayerTreeHostTest.cpp:
+        (WTF::MockLayerTreeHost::MockLayerTreeHost):
+        (WTF::CCLayerTreeHostTest::onEndTest):
+        (WTF::CCLayerTreeHostTest::dispatchSetNeedsCommit):
+        (WTF::CCLayerTreeHostTest::dispatchSetNeedsRedraw):
+        (WTF::CCLayerTreeHostTest::runTest):
+        (WTF::CCLayerTreeHostTest::doBeginTest):
+
 2011-11-14  Alexander Pavlov  <apavlov@chromium.org>
 
         [chromium] r99963 causes inspector/debugger/script-formatter.html to fail text diff
