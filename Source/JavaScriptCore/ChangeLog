@@ -1,3 +1,15 @@
+2011-11-14  Gavin Barraclough  <barraclough@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=72280
+
+        Rubber stamped by Geoff Garen.
+
+        Fix 32-bit Lion.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * wtf/OSAllocatorPosix.cpp:
+        (WTF::OSAllocator::reserveAndCommit):
+
 2011-11-14  Geoffrey Garen  <ggaren@apple.com>
 
         32-bit Build fix: declare virtual register indices to be int rather than
