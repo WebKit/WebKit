@@ -1,3 +1,13 @@
+2011-11-14  Zalan Bujtas  <zbujtas@gmail.com>
+
+        Build breaks with --no-javascript-debugger --no-inspector
+        https://bugs.webkit.org/show_bug.cgi?id=72228
+
+        Reviewed by Simon Hausmann.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::maybeInitializeSandboxExtensionHandle):
+
 2011-11-13  Mark Rowe  <mrowe@apple.com>
 
         Fix the 32-bit build.

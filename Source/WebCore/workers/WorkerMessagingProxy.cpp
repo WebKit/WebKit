@@ -228,8 +228,10 @@ private:
 
     virtual void performTask(ScriptExecutionContext*)
     {
+#if ENABLE(INSPECTOR)
         if (WorkerContextProxy::PageInspector* pageInspector = m_messagingProxy->m_pageInspector)
             pageInspector->dispatchMessageFromWorker(m_message);
+#endif
     }
 
     WorkerMessagingProxy* m_messagingProxy;
@@ -354,11 +356,13 @@ void WorkerMessagingProxy::workerObjectDestroyed()
 }
 
 #if ENABLE(INSPECTOR)
+#if ENABLE(JAVASCRIPT_DEBUGGER)
 static void connectToWorkerContextInspectorTask(ScriptExecutionContext* context, bool)
 {
     ASSERT(context->isWorkerContext());
     static_cast<WorkerContext*>(context)->workerInspectorController()->connectFrontend();
 }
+#endif
 
 void WorkerMessagingProxy::connectToInspector(WorkerContextProxy::PageInspector* pageInspector)
 {
@@ -366,14 +370,18 @@ void WorkerMessagingProxy::connectToInspector(WorkerContextProxy::PageInspector*
         return;
     ASSERT(!m_pageInspector);
     m_pageInspector = pageInspector;
+#if ENABLE(JAVASCRIPT_DEBUGGER)
     m_workerThread->runLoop().postTaskForMode(createCallbackTask(connectToWorkerContextInspectorTask, true), WorkerDebuggerAgent::debuggerTaskMode);
+#endif
 }
 
+#if ENABLE(JAVASCRIPT_DEBUGGER)
 static void disconnectFromWorkerContextInspectorTask(ScriptExecutionContext* context, bool)
 {
     ASSERT(context->isWorkerContext());
     static_cast<WorkerContext*>(context)->workerInspectorController()->disconnectFrontend();
 }
+#endif
 
 void WorkerMessagingProxy::disconnectFromInspector()
 {
@@ -385,11 +393,13 @@ void WorkerMessagingProxy::disconnectFromInspector()
 #endif
 }
 
+#if ENABLE(JAVASCRIPT_DEBUGGER)
 static void dispatchOnInspectorBackendTask(ScriptExecutionContext* context, const String& message)
 {
     ASSERT(context->isWorkerContext());
     static_cast<WorkerContext*>(context)->workerInspectorController()->dispatchMessageFromFrontend(message);
 }
+#endif
 
 void WorkerMessagingProxy::sendMessageToInspector(const String& message)
 {

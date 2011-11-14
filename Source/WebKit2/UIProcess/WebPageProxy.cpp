@@ -412,9 +412,11 @@ bool WebPageProxy::maybeInitializeSandboxExtensionHandle(const KURL& url, Sandbo
     if (!url.isLocalFile())
         return false;
 
+#if ENABLE(INSPECTOR)
     // Don't give the inspector full access to the file system.
     if (WebInspectorProxy::isInspectorPage(this))
         return false;
+#endif
 
     SandboxExtension::createHandle("/", SandboxExtension::ReadOnly, sandboxExtensionHandle);
     return true;

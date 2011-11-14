@@ -1,3 +1,16 @@
+2011-11-14  Zalan Bujtas  <zbujtas@gmail.com>
+
+        Build breaks with --no-javascript-debugger --no-inspector
+        https://bugs.webkit.org/show_bug.cgi?id=72228
+
+        Reviewed by Simon Hausmann.
+
+        * workers/WorkerMessagingProxy.cpp:
+        (WebCore::PostMessageToPageInspectorTask::performTask):
+        (WebCore::WorkerMessagingProxy::connectToInspector):
+        * workers/WorkerThread.cpp:
+        (WebCore::WorkerThread::workerThread):
+
 2011-11-14  Kentaro Hara  <haraken@chromium.org>
 
         Remove all custom constructors of Events in V8
