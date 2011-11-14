@@ -1821,7 +1821,7 @@ RegisterID* BytecodeGenerator::emitCall(OpcodeID opcodeID, RegisterID* dst, Regi
     emitOpcode(opcodeID);
     instructions().append(func->index()); // func
     instructions().append(callArguments.count()); // argCount
-    instructions().append(callArguments.callFrame()); // registerOffset
+    instructions().append(callArguments.registerOffset()); // registerOffset
     if (dst != ignoredResult()) {
         emitOpcode(op_call_put_result);
         instructions().append(dst->index()); // dst
@@ -1868,8 +1868,7 @@ RegisterID* BytecodeGenerator::emitReturn(RegisterID* src)
         emitOpcode(op_tear_off_activation);
         instructions().append(m_activationRegister->index());
         instructions().append(m_codeBlock->argumentsRegister());
-    } else if (m_codeBlock->usesArguments() && m_codeBlock->m_numParameters > 1
-               && !m_codeBlock->isStrictMode()) { // If there are no named parameters, there's nothing to tear off, since extra / unnamed parameters get copied to the arguments object at construct time.
+    } else if (m_codeBlock->usesArguments() && m_codeBlock->m_numParameters != 1 && !m_codeBlock->isStrictMode()) {
         emitOpcode(op_tear_off_arguments);
         instructions().append(m_codeBlock->argumentsRegister());
     }
@@ -1922,7 +1921,7 @@ RegisterID* BytecodeGenerator::emitConstruct(RegisterID* dst, RegisterID* func, 
     emitOpcode(op_construct);
     instructions().append(func->index()); // func
     instructions().append(callArguments.count()); // argCount
-    instructions().append(callArguments.callFrame()); // registerOffset
+    instructions().append(callArguments.registerOffset()); // registerOffset
     if (dst != ignoredResult()) {
         emitOpcode(op_call_put_result);
         instructions().append(dst->index()); // dst
@@ -2358,14 +2357,12 @@ void BytecodeGenerator::setIsNumericCompareFunction(bool isNumericCompareFunctio
     m_codeBlock->setIsNumericCompareFunction(isNumericCompareFunction);
 }
 
-int BytecodeGenerator::argumentNumberFor(const Identifier& ident)
+bool BytecodeGenerator::isArgumentNumber(const Identifier& ident, int argumentNumber)
 {
-    int parameterCount = m_parameters.size(); // includes 'this'
     RegisterID* registerID = registerFor(ident);
-    if (!registerID)
-        return 0;
-    int index = registerID->index() + RegisterFile::CallFrameHeaderSize + parameterCount;
-    return (index > 0 && index < parameterCount) ? index : 0;
+    if (!registerID || registerID->index() >= 0)
+         return 0;
+    return registerID->index() - m_thisRegister.index() - 1 == argumentNumber;
 }
 
 } // namespace JSC

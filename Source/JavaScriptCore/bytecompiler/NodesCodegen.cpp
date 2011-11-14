@@ -313,19 +313,24 @@ RegisterID* NewExprNode::emitBytecode(BytecodeGenerator& generator, RegisterID* 
     return generator.emitConstruct(generator.finalDestinationOrIgnored(dst), func.get(), callArguments, divot(), startOffset(), endOffset());
 }
 
-CallArguments::CallArguments(BytecodeGenerator& generator, ArgumentsNode* argumentsNode)
+inline CallArguments::CallArguments(BytecodeGenerator& generator, ArgumentsNode* argumentsNode)
     : m_argumentsNode(argumentsNode)
 {
     if (generator.shouldEmitProfileHooks())
         m_profileHookRegister = generator.newTemporary();
-    m_argv.append(generator.newTemporary());
-    if (argumentsNode) {
-        for (ArgumentListNode* n = argumentsNode->m_listNode; n; n = n->m_next) {
-            m_argv.append(generator.newTemporary());
-            // op_call requires the arguments to be a sequential range of registers
-            ASSERT(m_argv[m_argv.size() - 1]->index() == m_argv[m_argv.size() - 2]->index() + 1);
-        }
-    }
+
+    newArgument(generator); // 'this' register.
+    if (!argumentsNode)
+        return;
+    for (ArgumentListNode* n = argumentsNode->m_listNode; n; n = n->m_next)
+        newArgument(generator);
+}
+
+inline void CallArguments::newArgument(BytecodeGenerator& generator)
+{
+    RefPtr<RegisterID> tmp = generator.newTemporary();
+    ASSERT(m_argv.isEmpty() || tmp->index() == m_argv.last()->index() + 1); // Calling convention assumes that all arguments are contiguous.
+    m_argv.append(tmp.release());
 }
 
 // ------------------------------ EvalFunctionCallNode ----------------------------------
@@ -425,7 +430,6 @@ RegisterID* CallFunctionCallDotNode::emitBytecode(BytecodeGenerator& generator, 
             generator.emitJump(end.get());
 
             m_args->m_listNode = oldList;
-
         } else {
             RefPtr<RegisterID> realFunction = generator.emitMove(generator.tempDestination(dst), base.get());
             CallArguments callArguments(generator, m_args);
@@ -2031,9 +2035,12 @@ RegisterID* FunctionBodyNode::emitBytecode(BytecodeGenerator& generator, Registe
         if (returnValueExpression && returnValueExpression->isSubtract()) {
             ExpressionNode* lhsExpression = static_cast<SubNode*>(returnValueExpression)->lhs();
             ExpressionNode* rhsExpression = static_cast<SubNode*>(returnValueExpression)->rhs();
-            if (lhsExpression->isResolveNode() && rhsExpression->isResolveNode()) {
-                generator.setIsNumericCompareFunction(generator.argumentNumberFor(static_cast<ResolveNode*>(lhsExpression)->identifier()) == 1
-                    && generator.argumentNumberFor(static_cast<ResolveNode*>(rhsExpression)->identifier()) == 2);
+            if (lhsExpression->isResolveNode()
+                && rhsExpression->isResolveNode()
+                && generator.isArgumentNumber(static_cast<ResolveNode*>(lhsExpression)->identifier(), 0)
+                && generator.isArgumentNumber(static_cast<ResolveNode*>(rhsExpression)->identifier(), 1)) {
+                
+                generator.setIsNumericCompareFunction(true);
             }
         }
     }

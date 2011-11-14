@@ -55,15 +55,17 @@ namespace JSC {
 
         RegisterID* thisRegister() { return m_argv[0].get(); }
         RegisterID* argumentRegister(unsigned i) { return m_argv[i + 1].get(); }
-        unsigned callFrame() { return thisRegister()->index() + count() + RegisterFile::CallFrameHeaderSize; }
+        unsigned registerOffset() { return thisRegister()->index() + count() + RegisterFile::CallFrameHeaderSize; }
         unsigned count() { return m_argv.size(); }
         RegisterID* profileHookRegister() { return m_profileHookRegister.get(); }
         ArgumentsNode* argumentsNode() { return m_argumentsNode; }
 
     private:
+        void newArgument(BytecodeGenerator&);
+
         RefPtr<RegisterID> m_profileHookRegister;
         ArgumentsNode* m_argumentsNode;
-        Vector<RefPtr<RegisterID>, 16> m_argv;
+        Vector<RefPtr<RegisterID>, 8> m_argv;
     };
 
     struct FinallyContext {
@@ -110,8 +112,7 @@ namespace JSC {
         // require explicit reference counting.
         RegisterID* registerFor(const Identifier&);
 
-        // Returns the agument number if this is an argument, or 0 if not.
-        int argumentNumberFor(const Identifier&);
+        bool isArgumentNumber(const Identifier&, int);
 
         void setIsNumericCompareFunction(bool isNumericCompareFunction);
 

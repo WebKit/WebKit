@@ -1,3 +1,35 @@
+2011-11-14  Geoffrey Garen  <ggaren@apple.com>
+
+        A little bit of function call cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=72314
+
+        Reviewed by Oliver Hunt.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitCall): Renamed callFrame to registerOffset
+        because this value doesn't give you the offset of the callee's call frame.
+
+        (JSC::BytecodeGenerator::emitReturn): Tightened to use equality instead
+        of greater-than. Removed comment since its reasoning was wrong.
+        
+        (JSC::BytecodeGenerator::emitConstruct): Updated for rename mentioned above.
+
+        (JSC::BytecodeGenerator::isArgumentNumber): Provided a more precise way
+        to ask this question, giving the bytecode generator more freedom to change
+        internal implementation details.
+        
+        * bytecompiler/BytecodeGenerator.h: Reduced default vector capacity because
+        16 was overkill.
+        (JSC::CallArguments::registerOffset): Updated for rename mentioned above.
+
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::CallArguments::CallArguments):
+        (JSC::CallArguments::newArgument): Factored out argument allocation into
+        a helper function, so I can change it later.
+
+        (JSC::CallFunctionCallDotNode::emitBytecode):
+        (JSC::FunctionBodyNode::emitBytecode): Use helper function mentioned above.
+
 2011-11-14  Tony Chang  <tony@chromium.org>
 
         Remove the CSS3_FLEXBOX compile time flag and enable on all ports
