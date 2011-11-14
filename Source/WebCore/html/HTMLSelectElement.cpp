@@ -1203,6 +1203,21 @@ void HTMLSelectElement::listBoxDefaultEventHandler(Event* event)
 
             event->setDefaultHandled();
         }
+    } else if (event->type() == eventNames().mousemoveEvent && event->isMouseEvent() && !toRenderBox(renderer())->canBeScrolledAndHasScrollableArea()) {
+        MouseEvent* mouseEvent = static_cast<MouseEvent*>(event);
+        if (mouseEvent->button() != LeftButton || !mouseEvent->buttonDown())
+            return;
+
+        IntPoint localOffset = roundedIntPoint(renderer()->absoluteToLocal(mouseEvent->absoluteLocation(), false, true));
+        int listIndex = toRenderListBox(renderer())->listIndexAtOffset(toSize(localOffset));
+        if (listIndex >= 0) {
+            if (m_multiple) {
+                setActiveSelectionEndIndex(listIndex);
+                updateListBoxSelection(false);
+            } else
+                updateSelectedState(listIndex, false, false);
+            event->setDefaultHandled();
+        }
     } else if (event->type() == eventNames().mouseupEvent && event->isMouseEvent() && static_cast<MouseEvent*>(event)->button() == LeftButton && document()->frame()->eventHandler()->autoscrollRenderer() != renderer()) {
         // This makes sure we fire dispatchFormControlChangeEvent for a single
         // click. For drag selection, onChange will fire when the autoscroll

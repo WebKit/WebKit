@@ -1,3 +1,21 @@
+2011-11-14  Rakesh KN  <rakesh.kn@motorola.com>
+
+        Cannot select multiple options by mouse dragging in <select multiple="multiple" size="7"> list
+        https://bugs.webkit.org/show_bug.cgi?id=70496
+
+        Reviewed by Kent Tamura.
+
+        Select Multiple options in a select element with a mouse drag when no. of options
+        are less than the no. specified in size attribute.
+        Other browsers(IE, Opera, Firefox) support this feature
+
+        Test: fast/forms/select-multiple-elements-with-mouse-drag-with-options-less-than-size.html
+
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::listBoxDefaultEventHandler):
+        Handled mouse move event with Left button pressed. We select the options under mouse
+        when mouse drag happens and the select element cannot autoscroll.
+
 2011-11-14  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: [chromium] list dedicated workers in case inspector opened post-worker creation.
