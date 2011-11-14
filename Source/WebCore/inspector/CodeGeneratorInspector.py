@@ -1085,23 +1085,22 @@ InspectorBackendStub.prototype = {
             }
 
             var callback = this._callbacks[messageObject.id];
-
-            var arguments = [];
-            if (messageObject.result) {
-                var paramNames = this._replyArgs[callback.methodName];
-                if (paramNames) {
-                    for (var i = 0; i < paramNames.length; ++i)
-                        arguments.push(messageObject.result[paramNames[i]]);
-                }
-            }
-
             if (callback) {
+                var argumentsArray = [];
+                if (messageObject.result) {
+                    var paramNames = this._replyArgs[callback.methodName];
+                    if (paramNames) {
+                        for (var i = 0; i < paramNames.length; ++i)
+                            argumentsArray.push(messageObject.result[paramNames[i]]);
+                    }
+                }
+
                 var processingStartTime;
                 if (this.dumpInspectorTimeStats && callback.methodName)
                     processingStartTime = Date.now();
 
-                arguments.unshift(messageObject.error);
-                callback.apply(null, arguments);
+                argumentsArray.unshift(messageObject.error);
+                callback.apply(null, argumentsArray);
                 --this._pendingResponsesCount;
                 delete this._callbacks[messageObject.id];
 
