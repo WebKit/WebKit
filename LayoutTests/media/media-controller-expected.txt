@@ -1,0 +1,25 @@
+ 
+Test presence of MediaController constructor, controller, and mediaGroup attributes:
+EXPECTED (typeof(MediaController) != 'undefined') OK
+EXPECTED (video.controller == 'null') OK
+EXPECTED (video.mediaGroup == '') OK
+
+Test that the presence of a mediaGroup attribute creates a controller:
+EXPECTED (video2.mediaGroup == 'group') OK
+EXPECTED (video2.controller != 'null') OK
+
+Test that setting mediaGroup to an empty string removes the controller:
+RUN(video.mediaGroup = '')
+EXPECTED (video.controller == 'null') OK
+
+Test manually creating and assigning a controller to a media element:
+RUN(controller = new MediaController())
+RUN(video.controller = controller)
+EXPECTED (video.controller == '[object MediaController]') OK
+
+Test that two media elements with the same mediaGroup have the same controller:
+RUN(video.mediaGroup = 'group')
+RUN(video2.mediaGroup = 'group')
+EXPECTED (video.controller === video2.controller == 'true') OK
+END OF TEST
+

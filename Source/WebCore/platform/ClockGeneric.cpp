@@ -36,27 +36,27 @@ ClockGeneric::ClockGeneric()
     , m_rate(1)
     , m_offset(0)
 {
-    m_startTime = m_lastTime = currentTime();
+    m_startTime = m_lastTime = now();
 }
 
 void ClockGeneric::setCurrentTime(float time)
 {
-    m_startTime = m_lastTime = currentTime();
+    m_startTime = m_lastTime = now();
     m_offset = time;
 }
 
 float ClockGeneric::currentTime() const
 {
     if (m_running)
-        m_lastTime = currentTime();
+        m_lastTime = now();
     float time = (narrowPrecisionToFloat(m_lastTime - m_startTime) * m_rate) + m_offset;
     return time;
 }
 
 void ClockGeneric::setPlayRate(float rate)
 {
-    m_offset = currentTime();
-    m_lastTime = m_startTime = currentTime();
+    m_offset = now();
+    m_lastTime = m_startTime = now();
     m_rate = rate;
 }
 
@@ -65,7 +65,7 @@ void ClockGeneric::start()
     if (m_running)
         return;
 
-    m_lastTime = m_startTime = currentTime();
+    m_lastTime = m_startTime = now();
     m_running = true;
 }
 
@@ -74,7 +74,13 @@ void ClockGeneric::stop()
     if (!m_running)
         return;
 
-    m_offset = currentTime();
-    m_lastTime = m_startTime = currentTime();
+    m_offset = now();
+    m_lastTime = m_startTime = now();
     m_running = false;
 }
+
+float ClockGeneric::now() const
+{
+    return WTF::currentTime();
+}
+

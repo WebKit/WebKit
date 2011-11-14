@@ -1,3 +1,176 @@
+2011-11-08  Jer Noble  <jer.noble@apple.com>
+
+        Implement MediaController.
+        https://bugs.webkit.org/show_bug.cgi?id=71408
+
+        Reviewed by Eric Carlson.
+
+        Tests: media/media-controller-playback.html
+               media/media-controller.html
+
+        Adds support for the MediaController DOM object, and the mediagroup and mediacontroller
+        HTMLMediaElement attributes.
+
+        MediaController is an DOM object which synchronizes playback of multiple HTMLMediaElements. It can
+        either be created by a page script and assigned to a HTMLMediaElement using the controller property,
+        or all HTMLMediaElements with identical mediagroup attributes will have a MediaController assigned 
+        automatically.
+
+        Add an abstract interface implemented by both MediaController and HTMLMediaElement.
+        * html/MediaControllerInterface.h: Added.
+        (WebCore::MediaControllerInterface::~MediaControllerInterface):
+
+        Add the MediaController object and IDL.
+        * html/MediaController.cpp: Added.
+        (mediaGroupToMediaControllerMap):
+        (MediaController::mediaControllerForMediaGroup):
+        (MediaController::create):
+        (MediaController::MediaController):
+        (MediaController::~MediaController):
+        (MediaController::addMediaElement):
+        (MediaController::removeMediaElement):
+        (MediaController::containsMediaElement):
+        (MediaController::buffered):
+        (MediaController::seekable):
+        (MediaController::played):
+        (MediaController::duration):
+        (MediaController::currentTime):
+        (MediaController::setCurrentTime):
+        (MediaController::play):
+        (MediaController::pause):
+        (MediaController::setDefaultPlaybackRate):
+        (MediaController::setPlaybackRate):
+        (MediaController::setVolume):
+        (MediaController::setMuted):
+        (MediaController::reportControllerState):
+        (MediaController::updateReadyState):
+        (MediaController::updatePlaybackState):
+        (MediaController::updateMediaElements):
+        (MediaController::scheduleEvent):
+        (MediaController::asyncEventTimerFired):
+        (MediaController::scriptExecutionContext):
+        (MediaController::hasAudio):
+        (MediaController::hasVideo):
+        (MediaController::hasClosedCaptions):
+        (MediaController::setClosedCaptionsVisible):
+        (MediaController::supportsScanning):
+        (MediaController::beginScrubbing):
+        (MediaController::endScrubbing):
+        (MediaController::canPlay):
+        (MediaController::isLiveStream):
+        (MediaController::hasSource):
+        (MediaController::returnToRealtime):
+        (MediaController::isBlocked):
+        (MediaController::hasEnded):
+        * html/MediaController.h: Added.
+        (WebCore::MediaController::mediaGroup):
+        (WebCore::MediaController::paused):
+        (WebCore::MediaController::defaultPlaybackRate):
+        (WebCore::MediaController::playbackRate):
+        (WebCore::MediaController::volume):
+        (WebCore::MediaController::muted):
+        (WebCore::MediaController::readyState):
+        (WebCore::MediaController::playbackState):
+        (WebCore::MediaController::supportsFullscreen):
+        (WebCore::MediaController::isFullscreen):
+        (WebCore::MediaController::enterFullscreen):
+        (WebCore::MediaController::closedCaptionsVisible):
+        (WebCore::MediaController::refEventTarget):
+        (WebCore::MediaController::derefEventTarget):
+        (WebCore::MediaController::toMediaController):
+        (WebCore::MediaController::eventTargetData):
+        (WebCore::MediaController::ensureEventTargetData):
+        * html/MediaController.idl: Added.
+
+        Add convenience functions to TimeRanges which can calculate intersections and
+        unions between TimeRanges objects.
+        * html/TimeRanges.cpp:
+        (TimeRanges::copy):
+        (TimeRanges::invert):
+        (TimeRanges::intersectWith):
+        (TimeRanges::unionWith):
+        * html/TimeRanges.h:
+
+        Add MediaControllerConstructor to the Window object.
+        * page/DOMWindow.idl:
+
+        Add the two new attribute names, mediagroup and controller.
+        * html/HTMLAttributeNames.in:
+
+        Add support for the new attributes, and add overridden behavior when a media element
+        has a current media controller:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::~HTMLMediaElement):
+        (WebCore::HTMLMediaElement::parseMappedAttribute):
+        (WebCore::HTMLMediaElement::prepareForLoad):
+        (WebCore::HTMLMediaElement::setReadyState):
+        (WebCore::HTMLMediaElement::setCurrentTime):
+        (WebCore::HTMLMediaElement::setPlaybackRate):
+        (WebCore::HTMLMediaElement::playInternal):
+        (WebCore::HTMLMediaElement::togglePlayState):
+        (WebCore::HTMLMediaElement::mediaPlayerTimeChanged):
+        (WebCore::HTMLMediaElement::seekable):
+        (WebCore::HTMLMediaElement::potentiallyPlaying):
+        (WebCore::HTMLMediaElement::endedPlayback):
+        (WebCore::HTMLMediaElement::updateVolume):
+        (WebCore::HTMLMediaElement::updatePlayState):
+        (WebCore::HTMLMediaElement::userCancelledLoad):
+        (WebCore::HTMLMediaElement::mediaGroup):
+        (WebCore::HTMLMediaElement::setMediaGroup):
+        (WebCore::HTMLMediaElement::controller):
+        (WebCore::HTMLMediaElement::setController):
+        (WebCore::HTMLMediaElement::updateMediaController):
+        (WebCore::HTMLMediaElement::isBlockedOnMediaController):
+        * html/HTMLMediaElement.h:
+        (WebCore::HTMLMediaElement::hasSource):
+        (WebCore::HTMLMediaElement::isLiveStream):
+        * html/HTMLMediaElement.idl:
+        * bindings/js/JSHTMLMediaElementCustom.cpp: Added.
+        (WebCore::JSHTMLMediaElement::setMediaController):
+
+        Add convenience functions to store a mapping of media-elements-per-document to allow
+        a quick lookup of media elements with the same media group within a given document:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::documentToElementSetMap):
+        (WebCore::addElementToDocumentMap):
+        (WebCore::removeElementFromDocumentMap):
+        
+        Add a function "seekable" which returns a TimeRanges containing the seekable time ranges
+        in a media element.  By default this is a single range of [0, maxTimeSeekable].
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::seekable):
+        * platform/graphics/MediaPlayer.h:
+        * platform/graphics/MediaPlayerPrivate.h:
+        (WebCore::MediaPlayerPrivateInterface::seekable):
+
+        Support functions to cast between MediaController and EventTarget.
+        * bindings/js/JSEventTarget.cpp:
+        (WebCore::toJS):
+        * dom/EventTarget.cpp:
+        (WebCore::EventTarget::toMediaController):
+        * dom/EventTarget.h:
+
+        Fixed an infinite-recursion bug due to a collision between WTF::currentTime and
+        ClockGeneric::currentTime:
+        * platform/ClockGeneric.cpp:
+        (ClockGeneric::ClockGeneric):
+        (ClockGeneric::setCurrentTime):
+        (ClockGeneric::currentTime):
+        (ClockGeneric::setPlayRate):
+        (ClockGeneric::start):
+        (ClockGeneric::stop):
+        (ClockGeneric::now):
+        * platform/ClockGeneric.h:
+
+        Boilerplate to support creating the derived sources for MediaController and adding new sources
+        to the project:
+        * CMakeLists.txt:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * WebCore.xcodeproj/project.pbxproj:
+
 2011-11-14  Florin Malita  <fmalita@google.com>
 
         Multiple foreign objects not rendered

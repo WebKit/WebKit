@@ -1,3 +1,15 @@
+2011-11-11  Jer Noble  <jer.noble@apple.com>
+
+        Implement MediaController.
+        https://bugs.webkit.org/show_bug.cgi?id=71408
+
+        Reviewed by Eric Carlson.
+
+        Change the definition of WTF_USE_COREAUDIO to exclude Windows completely, as 
+        CoreAudioClock.h is not available there.
+
+        * wtf/Platform.h:
+
 2011-11-14  Patrick Gansterer  <paroga@webkit.org>
 
         [WIN] Remove dependency on pthread from FastMalloc

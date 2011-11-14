@@ -31,6 +31,7 @@
 #include "HTMLElement.h"
 #include "ActiveDOMObject.h"
 #include "MediaCanStartListener.h"
+#include "MediaControllerInterface.h"
 #include "MediaPlayer.h"
 
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
@@ -52,6 +53,7 @@ class MediaElementAudioSourceNode;
 class Event;
 class HTMLSourceElement;
 class HTMLTrackElement;
+class MediaController;
 class MediaControls;
 class MediaError;
 class KURL;
@@ -66,7 +68,7 @@ class Widget;
 // But it can't be until the Chromium WebMediaPlayerClientImpl class is fixed so it
 // no longer depends on typecasting a MediaPlayerClient to an HTMLMediaElement.
 
-class HTMLMediaElement : public HTMLElement, public MediaPlayerClient, private MediaCanStartListener, public ActiveDOMObject
+class HTMLMediaElement : public HTMLElement, public MediaPlayerClient, private MediaCanStartListener, public ActiveDOMObject, public MediaControllerInterface
 #if ENABLE(VIDEO_TRACK)
     , private TextTrackClient
 #endif
@@ -112,7 +114,7 @@ public:
 
     enum NetworkState { NETWORK_EMPTY, NETWORK_IDLE, NETWORK_LOADING, NETWORK_NO_SOURCE };
     NetworkState networkState() const;
-    
+
     String preload() const;    
     void setPreload(const String&);
 
@@ -121,7 +123,6 @@ public:
     String canPlayType(const String& mimeType) const;
 
 // ready state
-    enum ReadyState { HAVE_NOTHING, HAVE_METADATA, HAVE_CURRENT_DATA, HAVE_FUTURE_DATA, HAVE_ENOUGH_DATA };
     ReadyState readyState() const;
     bool seeking() const;
 
@@ -136,6 +137,7 @@ public:
     void setDefaultPlaybackRate(float);
     float playbackRate() const;
     void setPlaybackRate(float);
+    void updatePlaybackRate();
     bool webkitPreservesPitch() const;
     void setWebkitPreservesPitch(bool);
     PassRefPtr<TimeRanges> played();
@@ -250,6 +252,12 @@ public:
 
     enum InvalidURLAction { DoNothing, Complain };
     bool isSafeToLoadURL(const KURL&, InvalidURLAction);
+
+    const String& mediaGroup() const;
+    void setMediaGroup(const String&);
+
+    MediaController* controller() const;
+    void setController(PassRefPtr<MediaController>);
 
 protected:
     HTMLMediaElement(const QualifiedName&, Document*);
@@ -404,6 +412,8 @@ private:
     // Pauses playback without changing any states or generating events
     void setPausedInternal(bool);
 
+    void setPlaybackRateInternal(float);
+
     virtual void mediaCanStart();
 
     void setShouldDelayLoadEvent(bool);
@@ -421,6 +431,13 @@ private:
     virtual String itemValueText() const;
     virtual void setItemValueText(const String&, ExceptionCode&);
 #endif
+
+    void updateMediaController();
+    bool isBlocked() const;
+    bool isBlockedOnMediaController() const;
+    bool hasCurrentSrc() const { return !m_currentSrc.isEmpty(); }
+    bool isLiveStream() const { return movieLoadType() == MediaPlayer::LiveStream; }
+    bool isAutoplaying() const { return m_autoplaying; }
 
     Timer<HTMLMediaElement> m_loadTimer;
     Timer<HTMLMediaElement> m_asyncEventTimer;
@@ -533,6 +550,10 @@ private:
     CueIntervalTree m_cueTree;
     Vector<CueIntervalTree::IntervalType> m_currentlyVisibleCues;
 #endif
+
+    String m_mediaGroup;
+    friend class MediaController;
+    RefPtr<MediaController> m_mediaController;
 };
 
 #if ENABLE(VIDEO_TRACK)

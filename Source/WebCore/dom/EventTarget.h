@@ -55,6 +55,7 @@ namespace WebCore {
     class IDBVersionChangeRequest;
     class JavaScriptAudioNode;
     class LocalMediaStream;
+    class MediaController;
     class MediaStream;
     class MessagePort;
     class Node;

@@ -113,6 +113,11 @@ bool RuntimeEnabledFeatures::htmlSourceElementEnabled()
     return MediaPlayer::isAvailable();
 }
 
+bool RuntimeEnabledFeatures::mediaControllerEnabled()
+{
+    return MediaPlayer::isAvailable();
+}
+
 bool RuntimeEnabledFeatures::mediaErrorEnabled()
 {
     return MediaPlayer::isAvailable();

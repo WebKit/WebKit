@@ -26262,6 +26262,22 @@
 				>
 			</File>
 			<File
+				RelativePath="..\platform\Clock.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\platform\Clock.h"
+				>
+			</File>
+			<File
+				RelativePath="..\platform\ClockGeneric.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\platform\ClockGeneric.h"
+				>
+			</File>
+			<File
 				RelativePath="..\platform\ContentType.cpp"
 				>
 			</File>
@@ -57715,6 +57731,14 @@
 			</File>
 			<File
 				RelativePath="..\fileapi\LocalFileSystem.h"
+				>
+			</File>
+			<File
+				RelativePath="..\html\MediaController.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\html\MediaController.h"
 				>
 			</File>
 			<File

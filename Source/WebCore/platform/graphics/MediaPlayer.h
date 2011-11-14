@@ -241,6 +241,7 @@ public:
     void setPreservesPitch(bool);
 
     PassRefPtr<TimeRanges> buffered();
+    PassRefPtr<TimeRanges> seekable();
     float maxTimeSeekable();
 
     unsigned bytesLoaded();

@@ -314,6 +314,7 @@ IDL_BINDINGS += \
     html/HTMLUnknownElement.idl \
     html/HTMLVideoElement.idl \
     html/ImageData.idl \
+    html/MediaController.idl \
     html/MediaError.idl \
     html/TextMetrics.idl \
     html/TimeRanges.idl \

@@ -635,6 +635,7 @@ module window {
         attribute [Conditional=VIDEO, EnabledAtRuntime] MediaErrorConstructor MediaError;
         attribute [Conditional=VIDEO, EnabledAtRuntime] TimeRangesConstructor TimeRanges;
         attribute [Conditional=VIDEO, EnabledAtRuntime] HTMLSourceElementConstructor HTMLSourceElement;
+        attribute [Conditional=VIDEO, EnabledAtRuntime] MediaControllerConstructor MediaController;
 
 #if defined(ENABLE_ANIMATION_API) && ENABLE_ANIMATION_API
         attribute WebKitAnimationConstructor WebKitAnimation;

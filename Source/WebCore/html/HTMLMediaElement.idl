@@ -115,5 +115,8 @@ module html {
     [EnabledAtRuntime=webkitVideoTrack] TextTrack addTrack(in DOMString kind, in [Optional] DOMString label, in [Optional] DOMString language);
     readonly attribute [EnabledAtRuntime=webkitVideoTrack] TextTrackList textTracks;
 #endif
+
+    attribute [Reflect, ConvertNullToNullString, ConvertNullStringToNull] DOMString mediaGroup;
+    attribute [CustomSetter] MediaController controller;
 };
 }

@@ -609,6 +609,11 @@ PassRefPtr<TimeRanges> MediaPlayer::buffered()
     return m_private->buffered();
 }
 
+PassRefPtr<TimeRanges> MediaPlayer::seekable()
+{
+    return m_private->seekable();
+}
+
 float MediaPlayer::maxTimeSeekable()
 {
     return m_private->maxTimeSeekable();

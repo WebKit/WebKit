@@ -277,6 +277,7 @@ DOM_CLASSES = \
     KeyboardEvent \
     Location \
     LowPass2FilterNode \
+    MediaController \
     MediaElementAudioSourceNode \
     MediaError \
     MediaList \

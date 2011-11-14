@@ -45,6 +45,8 @@ private:
     virtual void stop();
     virtual bool isRunning() const { return m_running; }
 
+    float now() const;
+
     bool m_running;
     float m_rate;
     float m_offset;

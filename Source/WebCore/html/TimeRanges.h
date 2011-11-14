@@ -46,7 +46,10 @@ public:
         return adoptRef(new TimeRanges(start, end));
     }
 
-    PassRefPtr<TimeRanges> copy();
+    PassRefPtr<TimeRanges> copy() const;
+    void invert();
+    void intersectWith(const TimeRanges*);
+    void unionWith(const TimeRanges*);
 
     unsigned length() const { return m_ranges.size(); }
     float start(unsigned index, ExceptionCode&) const;

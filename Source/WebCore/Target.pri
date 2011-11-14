@@ -188,6 +188,7 @@ v8 {
         bindings/v8/custom/V8HTMLImageElementConstructor.cpp \
         bindings/v8/custom/V8HTMLInputElementCustom.cpp \
         bindings/v8/custom/V8HTMLLinkElementCustom.cpp \
+        bindings/v8/custom/V8HTMLMediaElementCustom.cpp \
         bindings/v8/custom/V8HTMLOptionsCollectionCustom.cpp \
         bindings/v8/custom/V8HTMLOutputElementCustom.cpp \
         bindings/v8/custom/V8HTMLPlugInElementCustom.cpp \
@@ -298,6 +299,7 @@ v8 {
         bindings/js/JSHTMLFrameSetElementCustom.cpp \
         bindings/js/JSHTMLInputElementCustom.cpp \
         bindings/js/JSHTMLLinkElementCustom.cpp \
+        bindings/js/JSHTMLMediaElementCustom.cpp \
         bindings/js/JSHTMLObjectElementCustom.cpp \
         bindings/js/JSHTMLOptionsCollectionCustom.cpp \
         bindings/js/JSHTMLOutputElementCustom.cpp \
@@ -1014,6 +1016,8 @@ SOURCES += \
     platform/text/LocalizedDateNone.cpp \
     platform/text/LocalizedNumberNone.cpp \
     platform/text/QuotedPrintable.cpp \
+    platform/Clock.cpp \
+    platform/ClockGeneric.cpp \
     platform/ContentType.cpp \
     platform/CrossThreadCopier.cpp \
     platform/DateComponents.cpp \
@@ -1024,7 +1028,6 @@ SOURCES += \
     platform/FileIconLoader.cpp \
     platform/FileStream.cpp \
     platform/FileSystem.cpp \
-    platform/ClockGeneric.cpp \
     platform/GeolocationService.cpp \
     platform/image-decoders/qt/ImageFrameQt.cpp \
     platform/graphics/FontDescription.cpp \
@@ -1858,6 +1861,7 @@ HEADERS += \
     html/LabelsNodeList.h \
     html/LinkRelAttribute.h \
     html/LoadableTextTrack.h \
+    html/MediaController.h \
     html/MediaDocument.h \
     html/MicroDataItemValue.h \
     html/PluginDocument.h \
@@ -2046,6 +2050,8 @@ HEADERS += \
     platform/animation/AnimationList.h \
     platform/Arena.h \
     platform/AsyncFileStream.h \
+    platform/Clock.h \
+    platform/ClockGeneric.h \
     platform/ContentType.h \
     platform/ContextMenu.h \
     platform/CrossThreadCopier.h \
@@ -2064,7 +2070,6 @@ HEADERS += \
     platform/mock/GeolocationServiceMock.h \
     platform/mock/SpeechInputClientMock.h \
     platform/mock/ScrollbarThemeMock.h \
-    platform/ClockGeneric.h \
     platform/graphics/BitmapImage.h \
     platform/graphics/Color.h \
     platform/graphics/filters/FEBlend.h \
@@ -3088,6 +3093,7 @@ contains(DEFINES, ENABLE_VIDEO=1) {
         html/HTMLMediaElement.cpp \
         html/HTMLSourceElement.cpp \
         html/HTMLVideoElement.cpp \
+        html/MediaController.cpp \
         html/shadow/MediaControlElements.cpp \
         html/TimeRanges.cpp \
         platform/graphics/MediaPlayer.cpp \

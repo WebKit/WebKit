@@ -276,6 +276,7 @@ SET(WebCore_IDL_FILES
     html/HTMLUnknownElement.idl
     html/HTMLVideoElement.idl
     html/ImageData.idl
+    html/MediaController.idl
     html/MediaError.idl
     html/TextMetrics.idl
     html/TextTrack.idl

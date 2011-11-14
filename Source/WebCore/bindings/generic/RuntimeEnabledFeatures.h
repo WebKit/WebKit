@@ -92,6 +92,7 @@ public:
     static bool htmlAudioElementEnabled();
     static bool htmlVideoElementEnabled();
     static bool htmlSourceElementEnabled();
+    static bool mediaControllerEnabled();
     static bool mediaErrorEnabled();
     static bool timeRangesEnabled();
 #endif
