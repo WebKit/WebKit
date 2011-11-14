@@ -1,8 +1,8 @@
-layer at (0,0) size 784x2803
+layer at (0,0) size 784x2824
   RenderView at (0,0) size 784x600
-layer at (0,0) size 784x2803
-  RenderBlock {HTML} at (0,0) size 784x2803
-    RenderBody {BODY} at (8,8) size 768x2779
+layer at (0,0) size 784x2824
+  RenderBlock {HTML} at (0,0) size 784x2824
+    RenderBody {BODY} at (8,8) size 768x2800
       RenderBlock {H1} at (0,0) size 768x42
         RenderText {#text} at (0,0) size 489x42
           text run at (0,0) width 489: "Example 4: Some simple tables."
@@ -194,7 +194,7 @@ layer at (0,0) size 784x2803
                 text run at (19,3) width 42: "57-15"
       RenderBlock (anonymous) at (0,880) size 768x21
         RenderBR {BR} at (0,0) size 0x21
-      RenderTable {TABLE} at (0,901) size 210x465
+      RenderTable {TABLE} at (0,901) size 210x486
         RenderBlock {CAPTION} at (0,444) size 210x21
           RenderText {#text} at (1,0) size 208x21
             text run at (1,0) width 208: "Table 5 has a scrolling tbody."
@@ -417,11 +417,14 @@ layer at (0,0) size 784x2803
             RenderTableCell {TD} at (2,2) size 102x17 [r=0 c=0 rs=1 cs=2]
               RenderText {#text} at (1,1) size 47x15
                 text run at (1,1) width 47: "FOOTER"
-      RenderBlock (anonymous) at (0,1366) size 768x42
+        RenderBlock {CAPTION} at (0,465) size 210x21
+          RenderText {#text} at (1,0) size 208x21
+            text run at (1,0) width 208: "Table 5 has a scrolling tbody."
+      RenderBlock (anonymous) at (0,1387) size 768x42
         RenderBR {BR} at (0,0) size 0x21
         RenderText {#text} at (0,21) size 674x21
           text run at (0,21) width 674: "This is a table formed from a list with display of table-row and list items with display of table-cell."
-      RenderTable at (0,1408) size 210x21
+      RenderTable at (0,1429) size 210x21
         RenderTableSection (anonymous) at (0,0) size 210x21
           RenderTableRow {UL} at (0,0) size 210x21 [bgcolor=#FFA500]
             RenderTableCell {LI} at (0,0) size 35x21 [r=0 c=0 rs=1 cs=1]
@@ -439,12 +442,12 @@ layer at (0,0) size 784x2803
             RenderTableCell {LI} at (174,0) size 36x21 [r=0 c=4 rs=1 cs=1]
               RenderText {#text} at (0,0) size 36x21
                 text run at (0,0) width 36: "FIVE"
-      RenderBlock (anonymous) at (0,1429) size 768x42
+      RenderBlock (anonymous) at (0,1450) size 768x42
         RenderBR {BR} at (0,0) size 0x21
         RenderText {#text} at (0,21) size 724x21
           text run at (0,21) width 724: "This is a table formed from a list with display of table-row-group and list items with display of table-cell. "
         RenderBR {BR} at (0,0) size 0x0
-      RenderTable at (0,1471) size 236x21
+      RenderTable at (0,1492) size 236x21
         RenderTableSection {UL} at (0,0) size 236x21
           RenderTableRow (anonymous) at (0,0) size 236x21
             RenderTableCell {LI} at (0,0) size 35x21 [bgcolor=#FFA500] [r=0 c=0 rs=1 cs=1]
@@ -465,11 +468,11 @@ layer at (0,0) size 784x2803
             RenderTableCell {LI} at (210,0) size 26x21 [bgcolor=#FFA500] [r=0 c=5 rs=1 cs=1]
               RenderText {#text} at (0,0) size 26x21
                 text run at (0,0) width 26: "SIX"
-      RenderBlock (anonymous) at (0,1492) size 768x42
+      RenderBlock (anonymous) at (0,1513) size 768x42
         RenderBR {BR} at (0,0) size 0x21
         RenderText {#text} at (0,21) size 452x21
           text run at (0,21) width 452: "This is like the previous table plus the list's overflow property set"
-      RenderTable at (0,1534) size 236x21
+      RenderTable at (0,1555) size 236x21
         RenderTableSection {UL} at (0,0) size 236x21
           RenderTableRow (anonymous) at (0,0) size 236x21
             RenderTableCell {LI} at (0,0) size 35x21 [bgcolor=#FFA500] [r=0 c=0 rs=1 cs=1]
@@ -490,9 +493,9 @@ layer at (0,0) size 784x2803
             RenderTableCell {LI} at (210,0) size 26x21 [bgcolor=#FFA500] [r=0 c=5 rs=1 cs=1]
               RenderText {#text} at (0,0) size 26x21
                 text run at (0,0) width 26: "SIX"
-      RenderBlock (anonymous) at (0,1555) size 768x21
+      RenderBlock (anonymous) at (0,1576) size 768x21
         RenderBR {BR} at (0,0) size 0x21
-      RenderBlock {P} at (0,1592) size 768x254
+      RenderBlock {P} at (0,1613) size 768x254
         RenderBlock (anonymous) at (0,0) size 768x21
           RenderText {#text} at (0,0) size 476x21
             text run at (0,0) width 476: "The following table will have its rows and columns in red collapsed "
@@ -579,7 +582,7 @@ layer at (0,0) size 784x2803
               RenderTableCell {TD} at (74,56) size 74x25 [border: (1px inset #808080)] [r=2 c=2 rs=1 cs=1]
                 RenderText {#text} at (2,2) size 30x21
                   text run at (2,2) width 30: "C33"
-      RenderBlock {P} at (0,1862) size 768x288
+      RenderBlock {P} at (0,1883) size 768x288
         RenderBlock (anonymous) at (0,0) size 768x42
           RenderText {#text} at (0,0) size 760x42
             text run at (0,0) width 760: "The following table will have its 2nd row and 2nd col collapsed. A window resize may be necessary to see it"
@@ -693,7 +696,7 @@ layer at (0,0) size 784x2803
               RenderTableCell {TD} at (170,75) size 34x25 [border: (1px inset #808080)] [r=3 c=3 rs=1 cs=1]
                 RenderText {#text} at (2,2) size 30x21
                   text run at (2,2) width 30: "C44"
-      RenderBlock {P} at (0,2166) size 768x309
+      RenderBlock {P} at (0,2187) size 768x309
         RenderBlock (anonymous) at (0,0) size 768x21
           RenderText {#text} at (0,0) size 504x21
             text run at (0,0) width 504: "The following table will have its 1st row group collapsed (rows 1 and 2) "
@@ -820,7 +823,7 @@ layer at (0,0) size 784x2803
                   text run at (2,2) width 30: "C44"
         RenderBlock (anonymous) at (0,288) size 768x21
           RenderBR {BR} at (0,0) size 0x21
-      RenderBlock {P} at (0,2491) size 768x288
+      RenderBlock {P} at (0,2512) size 768x288
         RenderBlock (anonymous) at (0,0) size 768x42
           RenderText {#text} at (0,0) size 767x42
             text run at (0,0) width 611: "The following table is similar to a previous table except that the direction is right-to-left. "

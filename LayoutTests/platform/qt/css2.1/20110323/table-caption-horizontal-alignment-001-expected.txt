@@ -1,0 +1,15 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x90
+  RenderBlock {HTML} at (0,0) size 800x90
+    RenderBody {BODY} at (8,16) size 784x66
+      RenderBlock {P} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 468x21
+          text run at (0,0) width 468: "Test passes if the \"Filler Text\" below is on the right side of the box."
+      RenderTable {TABLE} at (0,37) size 202x29
+        RenderBlock {CAPTION} at (0,0) size 202x23 [border: (1px solid #000000)]
+          RenderText {#text} at (130,1) size 71x21
+            text run at (130,1) width 71: "Filler Text"
+        RenderTableSection {TBODY} at (0,23) size 202x6
+          RenderTableRow {TR} at (0,2) size 202x2
+            RenderTableCell {TD} at (2,2) size 198x2 [r=0 c=0 rs=1 cs=1]
