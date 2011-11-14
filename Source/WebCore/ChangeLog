@@ -1,3 +1,51 @@
+2011-11-14  Tony Chang  <tony@chromium.org>
+
+        Remove the CSS3_FLEXBOX compile time flag and enable on all ports
+        https://bugs.webkit.org/show_bug.cgi?id=72196
+
+        Reviewed by Ojan Vafai.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/CSSFlexValue.cpp:
+        * css/CSSFlexValue.h:
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::parseFlex):
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        * css/CSSProperty.cpp:
+        (WebCore::CSSProperty::isInheritedProperty):
+        * css/CSSPropertyNames.in:
+        * css/CSSStyleApplyProperty.cpp:
+        (WebCore::ApplyPropertyLength::applyValue):
+        (WebCore::CSSStyleApplyProperty::CSSStyleApplyProperty):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        * css/CSSValue.cpp:
+        (WebCore::CSSValue::cssText):
+        (WebCore::CSSValue::destroy):
+        * css/CSSValue.h:
+        * css/CSSValueKeywords.in:
+        * rendering/RenderFlexibleBox.cpp:
+        * rendering/RenderFlexibleBox.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::createObject):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::isFlexibleBoxIncludingDeprecated):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::RenderStyle):
+        (WebCore::RenderStyle::diff):
+        * rendering/style/RenderStyle.h:
+        * rendering/style/RenderStyleConstants.h:
+        * rendering/style/StyleFlexibleBoxData.cpp:
+        * rendering/style/StyleFlexibleBoxData.h:
+        * rendering/style/StyleRareNonInheritedData.cpp:
+        (WebCore::StyleRareNonInheritedData::StyleRareNonInheritedData):
+        (WebCore::StyleRareNonInheritedData::operator==):
+        * rendering/style/StyleRareNonInheritedData.h:
+
 2011-11-14  Vincent Scheib  <scheib@chromium.org>
 
         Mouse Lock: Renaming to 'Pointer Lock': Runtime Enable Flags

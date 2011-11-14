@@ -31,8 +31,6 @@
 
 #include <wtf/text/StringBuilder.h>
 
-#if ENABLE(CSS3_FLEXBOX)
-
 namespace WebCore {
 
 String CSSFlexValue::customCssText() const
@@ -49,5 +47,3 @@ String CSSFlexValue::customCssText() const
 }
 
 }
-
-#endif // ENABLE(CSS3_FLEXBOX)

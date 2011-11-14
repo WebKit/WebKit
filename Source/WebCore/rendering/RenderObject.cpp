@@ -163,11 +163,9 @@ RenderObject* RenderObject::createObject(Node* node, RenderStyle* style)
         case BOX:
         case INLINE_BOX:
             return new (arena) RenderDeprecatedFlexibleBox(node);
-#if ENABLE(CSS3_FLEXBOX)
         case FLEXBOX:
         case INLINE_FLEXBOX:
             return new (arena) RenderFlexibleBox(node);
-#endif
     }
 
     return 0;

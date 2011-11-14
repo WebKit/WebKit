@@ -34,8 +34,6 @@
 #include "LayoutRepainter.h"
 #include "RenderView.h"
 
-#if ENABLE(CSS3_FLEXBOX)
-
 namespace WebCore {
 
 // Normally, -1 and 0 are not valid in a HashSet, but these are relatively likely flex-order values. Instead,
@@ -747,5 +745,3 @@ void RenderFlexibleBox::alignChildrenBlockDirection(FlexOrderIterator& iterator,
 }
 
 }
-
-#endif // ENABLE(CSS3_FLEXBOX)

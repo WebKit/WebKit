@@ -1060,14 +1060,12 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EDisplay e)
         case INLINE_BOX:
             m_value.ident = CSSValueWebkitInlineBox;
             break;
-#if ENABLE(CSS3_FLEXBOX)
         case FLEXBOX:
             m_value.ident = CSSValueWebkitFlexbox;
             break;
         case INLINE_FLEXBOX:
             m_value.ident = CSSValueWebkitInlineFlexbox;
             break;
-#endif
         case NONE:
             m_value.ident = CSSValueNone;
             break;

@@ -561,12 +561,10 @@ bool CSSProperty::isInheritedProperty(unsigned propertyID)
 #if ENABLE(CSS_FILTERS)
     case CSSPropertyWebkitFilter:
 #endif
-#if ENABLE(CSS3_FLEXBOX)
     case CSSPropertyWebkitFlexOrder:
     case CSSPropertyWebkitFlexPack:
     case CSSPropertyWebkitFlexAlign:
     case CSSPropertyWebkitFlexFlow:
-#endif
     case CSSPropertyWebkitFontSizeDelta:
     case CSSPropertyWebkitLineClamp:
     case CSSPropertyWebkitLogicalWidth:

@@ -142,10 +142,8 @@ String CSSValue::cssText() const
         return static_cast<const WebKitCSSTransformValue*>(this)->customCssText();
     case LineBoxContainClass:
         return static_cast<const CSSLineBoxContainValue*>(this)->customCssText();
-#if ENABLE(CSS3_FLEXBOX)
     case FlexClass:
         return static_cast<const CSSFlexValue*>(this)->customCssText();
-#endif
 #if ENABLE(CSS_FILTERS)
     case WebKitCSSFilterClass:
         return static_cast<const WebKitCSSFilterValue*>(this)->customCssText();
@@ -247,11 +245,9 @@ void CSSValue::destroy()
     case LineBoxContainClass:
         delete static_cast<CSSLineBoxContainValue*>(this);
         return;
-#if ENABLE(CSS3_FLEXBOX)
     case FlexClass:
         delete static_cast<CSSFlexValue*>(this);
         return;
-#endif
 #if ENABLE(CSS_FILTERS)
     case WebKitCSSFilterClass:
         delete static_cast<WebKitCSSFilterValue*>(this);

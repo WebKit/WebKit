@@ -114,7 +114,6 @@
       'enable_touch_events%': 1,
       'use_skia%': 0,
       'enable_touch_icon_loading%' : 0,
-      'enable_css3_flexbox%': 0,
       'enable_mutation_observers%': 0,
     },
     'use_accelerated_compositing%': '<(use_accelerated_compositing)',
@@ -162,11 +161,6 @@
         'feature_defines': [
           'ENABLE_RUBBER_BANDING=1',
           'WTF_USE_SKIA_ON_MAC_CHROMIUM=<(use_skia)',
-        ],
-      }],
-      ['enable_css3_flexbox==1', {
-        'feature_defines': [
-          'ENABLE_CSS3_FLEXBOX=1',
         ],
       }],
     ],

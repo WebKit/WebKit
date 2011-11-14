@@ -33,8 +33,6 @@
 
 #include "RenderBlock.h"
 
-#if ENABLE(CSS3_FLEXBOX)
-
 namespace WebCore {
 
 class RenderFlexibleBox : public RenderBlock {
@@ -107,7 +105,5 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(CSS3_FLEXBOX)
 
 #endif // RenderFlexibleBox_h

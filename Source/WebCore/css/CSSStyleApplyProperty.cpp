@@ -275,7 +275,6 @@ public:
     static void setValue(RenderStyle* style, Length value) { (style->*setterFunction)(value); }
     static void applyValue(CSSStyleSelector* selector, CSSValue* value)
     {
-#if ENABLE(CSS3_FLEXBOX)
         if (!value->isPrimitiveValue()) {
             if (!flexDirection || !value->isFlexValue())
                 return;
@@ -291,10 +290,6 @@ public:
                 selector->style()->setFlexboxHeightNegativeFlex(flexValue->negativeFlex());
             }
         }
-#else
-        if (!value->isPrimitiveValue())
-            return;
-#endif
 
         CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
         if (noneEnabled && primitiveValue->getIdent() == CSSValueNone)
@@ -955,12 +950,10 @@ CSSStyleApplyProperty::CSSStyleApplyProperty()
     setPropertyHandler(CSSPropertyCounterIncrement, ApplyPropertyCounter<Increment>::createHandler());
     setPropertyHandler(CSSPropertyCounterReset, ApplyPropertyCounter<Reset>::createHandler());
 
-#if ENABLE(CSS3_FLEXBOX)
     setPropertyHandler(CSSPropertyWebkitFlexOrder, ApplyPropertyDefault<int, &RenderStyle::flexOrder, int, &RenderStyle::setFlexOrder, int, &RenderStyle::initialFlexOrder>::createHandler());
     setPropertyHandler(CSSPropertyWebkitFlexPack, ApplyPropertyDefault<EFlexPack, &RenderStyle::flexPack, EFlexPack, &RenderStyle::setFlexPack, EFlexPack, &RenderStyle::initialFlexPack>::createHandler());
     setPropertyHandler(CSSPropertyWebkitFlexAlign, ApplyPropertyDefault<EFlexAlign, &RenderStyle::flexAlign, EFlexAlign, &RenderStyle::setFlexAlign, EFlexAlign, &RenderStyle::initialFlexAlign>::createHandler());
     setPropertyHandler(CSSPropertyWebkitFlexFlow, ApplyPropertyDefault<EFlexFlow, &RenderStyle::flexFlow, EFlexFlow, &RenderStyle::setFlexFlow, EFlexFlow, &RenderStyle::initialFlexFlow>::createHandler());
-#endif
 
     setPropertyHandler(CSSPropertyFontStyle, ApplyPropertyFont<FontItalic, &FontDescription::italic, &FontDescription::setItalic, FontItalicOff>::createHandler());
     setPropertyHandler(CSSPropertyFontVariant, ApplyPropertyFont<FontSmallCaps, &FontDescription::smallCaps, &FontDescription::setSmallCaps, FontSmallCapsOff>::createHandler());

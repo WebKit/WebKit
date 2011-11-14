@@ -75,9 +75,7 @@ public:
     bool isTimingFunctionValue() const { return m_classType == CubicBezierTimingFunctionClass || m_classType == LinearTimingFunctionClass || m_classType == StepsTimingFunctionClass; }
     bool isWebKitCSSTransformValue() const { return m_classType == WebKitCSSTransformClass; }
     bool isCSSLineBoxContainValue() const { return m_classType == LineBoxContainClass; }
-#if ENABLE(CSS3_FLEXBOX)
     bool isFlexValue() const { return m_classType == FlexClass; }
-#endif
 #if ENABLE(CSS_FILTERS)
     bool isWebKitCSSFilterValue() const { return m_classType == WebKitCSSFilterClass; }
 #if ENABLE(CSS_SHADERS)
@@ -121,9 +119,7 @@ protected:
         ValueListClass,
         WebKitCSSTransformClass,
         LineBoxContainClass,
-#if ENABLE(CSS3_FLEXBOX)
         FlexClass,
-#endif
 #if ENABLE(CSS_FILTERS)
         WebKitCSSFilterClass,
 #if ENABLE(CSS_SHADERS)

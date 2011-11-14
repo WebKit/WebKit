@@ -79,9 +79,7 @@ StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonInherited
     , m_perspectiveOriginY(o.m_perspectiveOriginY)
     , lineClamp(o.lineClamp)
     , m_deprecatedFlexibleBox(o.m_deprecatedFlexibleBox)
-#if ENABLE(CSS3_FLEXBOX)
     , m_flexibleBox(o.m_flexibleBox)
-#endif
     , m_marquee(o.m_marquee)
     , m_multiCol(o.m_multiCol)
     , m_transform(o.m_transform)
@@ -139,9 +137,7 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
 #endif
         && opacity == o.opacity
         && m_deprecatedFlexibleBox == o.m_deprecatedFlexibleBox
-#if ENABLE(CSS3_FLEXBOX)
         && m_flexibleBox == o.m_flexibleBox
-#endif
         && m_marquee == o.m_marquee
         && m_multiCol == o.m_multiCol
         && m_transform == o.m_transform

@@ -3924,12 +3924,10 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSSPropertyCounterReset:
     case CSSPropertyLetterSpacing:
     case CSSPropertyWordSpacing:
-#if ENABLE(CSS3_FLEXBOX)
     case CSSPropertyWebkitFlexOrder:
     case CSSPropertyWebkitFlexPack:
     case CSSPropertyWebkitFlexAlign:
     case CSSPropertyWebkitFlexFlow:
-#endif
     case CSSPropertyFontStyle:
     case CSSPropertyFontVariant:
     case CSSPropertyTextRendering:

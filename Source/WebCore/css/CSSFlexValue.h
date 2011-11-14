@@ -32,8 +32,6 @@
 #include "CSSPrimitiveValue.h"
 #include "CSSValue.h"
 
-#if ENABLE(CSS3_FLEXBOX)
-
 namespace WebCore {
 
 class CSSFlexValue : public CSSValue {
@@ -64,7 +62,5 @@ private:
 };
 
 }
-
-#endif // ENABLE(CSS3_FLEXBOX)
 
 #endif

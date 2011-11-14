@@ -75,7 +75,6 @@ my (
     $coverageSupport,
     $cssFiltersSupport,
     $cssShadersSupport,
-    $css3FlexboxSupport,
     $sqlDatabaseSupport,
     $datalistSupport,
     $dataTransferItemsSupport,
@@ -162,9 +161,6 @@ my @features = (
 
     { option => "css-shaders", desc => "Toggle CSS Shaders (within CSS Filters) support",
       define => "ENABLE_CSS_SHADERS", default => isAppleWebKit(), value => \$cssShadersSupport },
-
-    { option => "css3-flexbox", desc => "Toggle CSS3 Flexbox support",
-      define => "ENABLE_CSS3_FLEXBOX", default => 0, value => \$css3FlexboxSupport },
 
     { option => "coverage", desc => "Toggle code coverage support",
       define => "", default => 0, value => \$coverageSupport },

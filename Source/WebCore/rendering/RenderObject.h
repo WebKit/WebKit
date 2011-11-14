@@ -804,18 +804,12 @@ public:
     virtual bool isFlexingChildren() const { return false; }
     virtual bool isStretchingChildren() const { return false; }
 
-#if ENABLE(CSS3_FLEXBOX)
     // Virtual function helper for the new FlexibleBox Layout (display: -webkit-flexbox).
     virtual bool isFlexibleBox() const { return false; }
-#endif
 
     bool isFlexibleBoxIncludingDeprecated() const
     {
-#if ENABLE(CSS3_FLEXBOX)
         return isFlexibleBox() || isDeprecatedFlexibleBox();
-#else
-        return isDeprecatedFlexibleBox();
-#endif
     }
 
     virtual bool isCombineText() const { return false; }

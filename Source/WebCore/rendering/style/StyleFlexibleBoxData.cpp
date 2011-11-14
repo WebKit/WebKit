@@ -28,8 +28,6 @@
 
 #include "RenderStyle.h"
 
-#if ENABLE(CSS3_FLEXBOX)
-
 namespace WebCore {
 
 StyleFlexibleBoxData::StyleFlexibleBoxData()
@@ -66,5 +64,3 @@ bool StyleFlexibleBoxData::operator==(const StyleFlexibleBoxData& o) const
 }
 
 }
-
-#endif // ENABLE(CSS3_FLEXBOX)

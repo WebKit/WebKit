@@ -1,3 +1,12 @@
+2011-11-14  Tony Chang  <tony@chromium.org>
+
+        Remove the CSS3_FLEXBOX compile time flag and enable on all ports
+        https://bugs.webkit.org/show_bug.cgi?id=72196
+
+        Reviewed by Ojan Vafai.
+
+        * Scripts/build-webkit:
+
 2011-11-14  John Yani  <vanuan@gmail.com>
 
         new-run-webkit-tests should not be locale dependent https://bugs.webkit.org/show_bug.cgi?id=68691

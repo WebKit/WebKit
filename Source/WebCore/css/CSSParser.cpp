@@ -987,12 +987,9 @@ bool CSSParser::parseValue(int propId, bool important)
         // inline | block | list-item | run-in | inline-block | table |
         // inline-table | table-row-group | table-header-group | table-footer-group | table-row |
         // table-column-group | table-column | table-cell | table-caption | -webkit-box | -webkit-inline-box | none | inherit
-        if ((id >= CSSValueInline && id <= CSSValueWebkitInlineBox) || id == CSSValueNone)
+        // -webkit-flexbox | -webkit-inline-flexbox
+        if ((id >= CSSValueInline && id <= CSSValueWebkitInlineFlexbox) || id == CSSValueNone)
             validPrimitive = true;
-#if ENABLE(CSS3_FLEXBOX)
-        if (id == CSSValueWebkitFlexbox || id == CSSValueWebkitInlineFlexbox)
-            validPrimitive = true;
-#endif
         break;
 
     case CSSPropertyDirection:            // ltr | rtl | inherit
@@ -1602,7 +1599,6 @@ bool CSSParser::parseValue(int propId, bool important)
         }
         break;
 #endif
-#if ENABLE(CSS3_FLEXBOX)
     case CSSPropertyWebkitFlexOrder:
         if (validUnit(value, FInteger, true)) {
             // We restrict the smallest value to int min + 2 because we use int min and int min + 1 as special values in a hash set.
@@ -1621,7 +1617,6 @@ bool CSSParser::parseValue(int propId, bool important)
         // FIXME: -webkit-flex-flow takes a second "wrap" value.
         validPrimitive = id == CSSValueRow || id == CSSValueRowReverse || id == CSSValueColumn || id == CSSValueColumnReverse;
         break;
-#endif
     case CSSPropertyWebkitMarquee: {
         const int properties[5] = { CSSPropertyWebkitMarqueeDirection, CSSPropertyWebkitMarqueeIncrement,
                                     CSSPropertyWebkitMarqueeRepetition,
@@ -5111,7 +5106,6 @@ bool CSSParser::parseReflect(int propId, bool important)
 
 bool CSSParser::parseFlex(int propId, bool important)
 {
-#if ENABLE(CSS3_FLEXBOX)
     CSSParserValue* value = m_valueList->current();
     CSSParserValueList* args = value->function->args.get();
     if (!equalIgnoringCase(value->function->name, "-webkit-flex(") || !args || !args->size() || args->size() > 3 || m_valueList->next())
@@ -5154,11 +5148,6 @@ bool CSSParser::parseFlex(int propId, bool important)
     RefPtr<CSSFlexValue> flex = CSSFlexValue::create(clampToFloat(positiveFlex), clampToFloat(negativeFlex), preferredSize);
     addProperty(propId, flex.release(), important);
     return true;
-#else
-    UNUSED_PARAM(propId);
-    UNUSED_PARAM(important);
-#endif // ENABLE(CSS3_FLEXBOX)
-    return false;
 }
 
 struct BorderImageParseContext {

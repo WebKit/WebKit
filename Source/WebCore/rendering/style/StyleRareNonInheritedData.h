@@ -102,9 +102,7 @@ public:
 #endif
 
     DataRef<StyleDeprecatedFlexibleBoxData> m_deprecatedFlexibleBox; // Flexible box properties
-#if ENABLE(CSS3_FLEXBOX)
     DataRef<StyleFlexibleBoxData> m_flexibleBox;
-#endif
     DataRef<StyleMarqueeData> m_marquee; // Marquee properties
     DataRef<StyleMultiColData> m_multiCol; //  CSS3 multicol properties
     DataRef<StyleTransformData> m_transform; // Transform properties (rotate, scale, skew, etc.)

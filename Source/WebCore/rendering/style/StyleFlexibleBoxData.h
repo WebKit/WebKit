@@ -29,8 +29,6 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
-#if ENABLE(CSS3_FLEXBOX)
-
 namespace WebCore {
 
 class StyleFlexibleBoxData : public RefCounted<StyleFlexibleBoxData> {
@@ -61,7 +59,5 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(CSS3_FLEXBOX)
 
 #endif // StyleFlexibleBoxData_h
