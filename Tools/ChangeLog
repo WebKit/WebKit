@@ -1,3 +1,15 @@
+2011-11-14  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Disable plugins on X11 for WK2
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Currently plugins are in-process and they crash in the likely case of
+        a plugin installation that uses Qt 4, which beautifully clashes with the
+        Qt 5 based QtWebProcess.
+
+        * qmake/mkspecs/features/features.prf:
+
 2011-11-14  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] Add support for config tests for Qt 5
