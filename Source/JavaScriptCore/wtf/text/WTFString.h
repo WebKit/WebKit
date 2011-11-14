@@ -55,19 +55,31 @@ struct StringHash;
 
 bool charactersAreAllASCII(const UChar*, size_t);
 bool charactersAreAllLatin1(const UChar*, size_t);
+WTF_EXPORT_PRIVATE int charactersToIntStrict(const LChar*, size_t, bool* ok = 0, int base = 10);
 WTF_EXPORT_PRIVATE int charactersToIntStrict(const UChar*, size_t, bool* ok = 0, int base = 10);
+WTF_EXPORT_PRIVATE unsigned charactersToUIntStrict(const LChar*, size_t, bool* ok = 0, int base = 10);
 WTF_EXPORT_PRIVATE unsigned charactersToUIntStrict(const UChar*, size_t, bool* ok = 0, int base = 10);
+int64_t charactersToInt64Strict(const LChar*, size_t, bool* ok = 0, int base = 10);
 int64_t charactersToInt64Strict(const UChar*, size_t, bool* ok = 0, int base = 10);
+uint64_t charactersToUInt64Strict(const LChar*, size_t, bool* ok = 0, int base = 10);
 uint64_t charactersToUInt64Strict(const UChar*, size_t, bool* ok = 0, int base = 10);
+intptr_t charactersToIntPtrStrict(const LChar*, size_t, bool* ok = 0, int base = 10);
 intptr_t charactersToIntPtrStrict(const UChar*, size_t, bool* ok = 0, int base = 10);
 
+int charactersToInt(const LChar*, size_t, bool* ok = 0); // ignores trailing garbage
 int charactersToInt(const UChar*, size_t, bool* ok = 0); // ignores trailing garbage
+unsigned charactersToUInt(const LChar*, size_t, bool* ok = 0); // ignores trailing garbage
 unsigned charactersToUInt(const UChar*, size_t, bool* ok = 0); // ignores trailing garbage
+int64_t charactersToInt64(const LChar*, size_t, bool* ok = 0); // ignores trailing garbage
 int64_t charactersToInt64(const UChar*, size_t, bool* ok = 0); // ignores trailing garbage
+uint64_t charactersToUInt64(const LChar*, size_t, bool* ok = 0); // ignores trailing garbage
 uint64_t charactersToUInt64(const UChar*, size_t, bool* ok = 0); // ignores trailing garbage
+intptr_t charactersToIntPtr(const LChar*, size_t, bool* ok = 0); // ignores trailing garbage
 intptr_t charactersToIntPtr(const UChar*, size_t, bool* ok = 0); // ignores trailing garbage
 
+WTF_EXPORT_PRIVATE double charactersToDouble(const LChar*, size_t, bool* ok = 0, bool* didReadNumber = 0);
 WTF_EXPORT_PRIVATE double charactersToDouble(const UChar*, size_t, bool* ok = 0, bool* didReadNumber = 0);
+float charactersToFloat(const LChar*, size_t, bool* ok = 0, bool* didReadNumber = 0);
 float charactersToFloat(const UChar*, size_t, bool* ok = 0, bool* didReadNumber = 0);
 
 template<bool isSpecialCharacter(UChar)> bool isAllSpecialCharacters(const UChar*, size_t);
@@ -409,10 +421,30 @@ inline bool charactersAreAllLatin1(const UChar* characters, size_t length)
 
 WTF_EXPORT_PRIVATE int codePointCompare(const String&, const String&);
 
+inline size_t find(const LChar* characters, unsigned length, LChar matchCharacter, unsigned index = 0)
+{
+    while (index < length) {
+        if (characters[index] == matchCharacter)
+            return index;
+        ++index;
+    }
+    return notFound;
+}
+
 inline size_t find(const UChar* characters, unsigned length, UChar matchCharacter, unsigned index = 0)
 {
     while (index < length) {
         if (characters[index] == matchCharacter)
+            return index;
+        ++index;
+    }
+    return notFound;
+}
+
+inline size_t find(const LChar* characters, unsigned length, CharacterMatchFunctionPtr matchFunction, unsigned index = 0)
+{
+    while (index < length) {
+        if (matchFunction(characters[index]))
             return index;
         ++index;
     }
@@ -427,6 +459,19 @@ inline size_t find(const UChar* characters, unsigned length, CharacterMatchFunct
         ++index;
     }
     return notFound;
+}
+
+inline size_t reverseFind(const LChar* characters, unsigned length, LChar matchCharacter, unsigned index = UINT_MAX)
+{
+    if (!length)
+        return notFound;
+    if (index >= length)
+        index = length - 1;
+    while (characters[index] != matchCharacter) {
+        if (!index--)
+            return notFound;
+    }
+    return index;
 }
 
 inline size_t reverseFind(const UChar* characters, unsigned length, UChar matchCharacter, unsigned index = UINT_MAX)

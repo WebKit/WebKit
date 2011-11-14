@@ -1,3 +1,47 @@
+2011-11-14  Michael Saboff  <msaboff@apple.com>
+
+        Towards 8 bit strings - Add 8 bit paths to StringImpl methods
+        https://bugs.webkit.org/show_bug.cgi?id=72290
+
+        Added 8 bit patchs to StringImpl to number and find methods.
+
+        Reviewed by Oliver Hunt.
+
+        * wtf/text/StringImpl.cpp:
+        (WTF::StringImpl::toIntStrict):
+        (WTF::StringImpl::toUIntStrict):
+        (WTF::StringImpl::toInt64Strict):
+        (WTF::StringImpl::toUInt64Strict):
+        (WTF::StringImpl::toIntPtrStrict):
+        (WTF::StringImpl::toInt):
+        (WTF::StringImpl::toUInt):
+        (WTF::StringImpl::toInt64):
+        (WTF::StringImpl::toUInt64):
+        (WTF::StringImpl::toIntPtr):
+        (WTF::StringImpl::toDouble):
+        (WTF::StringImpl::toFloat):
+        (WTF::StringImpl::find):
+        (WTF::StringImpl::reverseFind):
+        * wtf/text/WTFString.cpp:
+        (WTF::toIntegralType):
+        (WTF::lengthOfCharactersAsInteger):
+        (WTF::charactersToIntStrict):
+        (WTF::charactersToUIntStrict):
+        (WTF::charactersToInt64Strict):
+        (WTF::charactersToUInt64Strict):
+        (WTF::charactersToIntPtrStrict):
+        (WTF::charactersToInt):
+        (WTF::charactersToUInt):
+        (WTF::charactersToInt64):
+        (WTF::charactersToUInt64):
+        (WTF::charactersToIntPtr):
+        (WTF::toDoubleType):
+        (WTF::charactersToDouble):
+        (WTF::charactersToFloat):
+        * wtf/text/WTFString.h:
+        (WTF::find):
+        (WTF::reverseFind):
+
 2011-11-14  Vincent Scheib  <scheib@chromium.org>
 
         Mouse Lock: Renaming to 'Pointer Lock': ENABLE Flags

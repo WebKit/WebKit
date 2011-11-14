@@ -611,63 +611,85 @@ PassRefPtr<StringImpl> StringImpl::simplifyWhiteSpace(IsWhiteSpaceFunctionPtr is
 
 int StringImpl::toIntStrict(bool* ok, int base)
 {
+    if (is8Bit())
+        return charactersToIntStrict(characters8(), m_length, ok, base);
     return charactersToIntStrict(characters16(), m_length, ok, base);
 }
 
 unsigned StringImpl::toUIntStrict(bool* ok, int base)
 {
+    if (is8Bit())
+        return charactersToUIntStrict(characters8(), m_length, ok, base);
     return charactersToUIntStrict(characters16(), m_length, ok, base);
 }
 
 int64_t StringImpl::toInt64Strict(bool* ok, int base)
 {
+    if (is8Bit())
+        return charactersToInt64Strict(characters8(), m_length, ok, base);
     return charactersToInt64Strict(characters16(), m_length, ok, base);
-
 }
 
 uint64_t StringImpl::toUInt64Strict(bool* ok, int base)
 {
+    if (is8Bit())
+        return charactersToUInt64Strict(characters8(), m_length, ok, base);
     return charactersToUInt64Strict(characters16(), m_length, ok, base);
 }
 
 intptr_t StringImpl::toIntPtrStrict(bool* ok, int base)
 {
+    if (is8Bit())
+        return charactersToIntPtrStrict(characters8(), m_length, ok, base);
     return charactersToIntPtrStrict(characters16(), m_length, ok, base);
 }
 
 int StringImpl::toInt(bool* ok)
 {
+    if (is8Bit())
+        return charactersToInt(characters8(), m_length, ok);
     return charactersToInt(characters16(), m_length, ok);
 }
 
 unsigned StringImpl::toUInt(bool* ok)
 {
+    if (is8Bit())
+        return charactersToUInt(characters8(), m_length, ok);
     return charactersToUInt(characters16(), m_length, ok);
 }
 
 int64_t StringImpl::toInt64(bool* ok)
 {
+    if (is8Bit())
+        return charactersToInt64(characters8(), m_length, ok);
     return charactersToInt64(characters16(), m_length, ok);
 }
 
 uint64_t StringImpl::toUInt64(bool* ok)
 {
+    if (is8Bit())
+        return charactersToUInt64(characters8(), m_length, ok);
     return charactersToUInt64(characters16(), m_length, ok);
 }
 
 intptr_t StringImpl::toIntPtr(bool* ok)
 {
+    if (is8Bit())
+        return charactersToIntPtr(characters8(), m_length, ok);
     return charactersToIntPtr(characters16(), m_length, ok);
-
 }
 
 double StringImpl::toDouble(bool* ok, bool* didReadNumber)
 {
+    if (is8Bit())
+        return charactersToDouble(characters8(), m_length, ok, didReadNumber);
     return charactersToDouble(characters16(), m_length, ok, didReadNumber);
 }
 
 float StringImpl::toFloat(bool* ok, bool* didReadNumber)
 {
+    if (is8Bit())
+        return charactersToFloat(characters8(), m_length, ok, didReadNumber);
     return charactersToFloat(characters16(), m_length, ok, didReadNumber);
 }
 
@@ -723,11 +745,15 @@ int codePointCompare(const StringImpl* s1, const StringImpl* s2)
 
 size_t StringImpl::find(UChar c, unsigned start)
 {
+    if (is8Bit())
+        return WTF::find(characters8(), m_length, c, start);
     return WTF::find(characters16(), m_length, c, start);
 }
 
 size_t StringImpl::find(CharacterMatchFunctionPtr matchFunction, unsigned start)
 {
+    if (is8Bit())
+        return WTF::find(characters8(), m_length, matchFunction, start);
     return WTF::find(characters16(), m_length, matchFunction, start);
 }
 
@@ -822,8 +848,11 @@ size_t StringImpl::find(StringImpl* matchString, unsigned index)
         return min(index, length());
 
     // Optimization 1: fast case for strings of length 1.
-    if (matchLength == 1)
-        return WTF::find(characters16(), length(), matchString->characters16()[0], index);
+    if (matchLength == 1) {
+        if (is8Bit() && matchString->is8Bit())
+            return WTF::find(characters8(), length(), matchString->characters8()[0], index);
+        return WTF::find(characters(), length(), matchString->characters()[0], index);
+    }
 
     // Check index & matchLength are in range.
     if (index > length())
@@ -891,6 +920,8 @@ size_t StringImpl::findIgnoringCase(StringImpl* matchString, unsigned index)
 
 size_t StringImpl::reverseFind(UChar c, unsigned index)
 {
+    if (is8Bit())
+        return WTF::reverseFind(characters8(), m_length, c, index);
     return WTF::reverseFind(characters16(), m_length, c, index);
 }
 
@@ -904,8 +935,11 @@ size_t StringImpl::reverseFind(StringImpl* matchString, unsigned index)
         return min(index, length());
 
     // Optimization 1: fast case for strings of length 1.
-    if (matchLength == 1)
-        return WTF::reverseFind(characters16(), length(), matchString->characters()[0], index);
+    if (matchLength == 1) {
+        if (is8Bit() && matchString->is8Bit())
+            return WTF::reverseFind(characters8(), length(), matchString->characters8()[0], index);
+        return WTF::reverseFind(characters(), length(), matchString->characters()[0], index);
+    }
 
     // Check index & matchLength are in range.
     if (matchLength > length())

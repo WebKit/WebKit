@@ -788,8 +788,8 @@ static bool isCharacterAllowedInBase(UChar c, int base)
     return false;
 }
 
-template <typename IntegralType>
-static inline IntegralType toIntegralType(const UChar* data, size_t length, bool* ok, int base)
+template <typename IntegralType, typename CharType>
+static inline IntegralType toIntegralType(const CharType* data, size_t length, bool* ok, int base)
 {
     static const IntegralType integralMax = numeric_limits<IntegralType>::max();
     static const bool isSigned = numeric_limits<IntegralType>::is_signed;
@@ -823,7 +823,7 @@ static inline IntegralType toIntegralType(const UChar* data, size_t length, bool
     while (length && isCharacterAllowedInBase(*data, base)) {
         length--;
         IntegralType digitValue;
-        UChar c = *data;
+        CharType c = *data;
         if (isASCIIDigit(c))
             digitValue = c - '0';
         else if (c >= 'a')
@@ -864,7 +864,8 @@ bye:
     return isOk ? value : 0;
 }
 
-static unsigned lengthOfCharactersAsInteger(const UChar* data, size_t length)
+template <typename CharType>
+static unsigned lengthOfCharactersAsInteger(const CharType* data, size_t length)
 {
     size_t i = 0;
 
@@ -887,57 +888,108 @@ static unsigned lengthOfCharactersAsInteger(const UChar* data, size_t length)
     return i;
 }
 
+int charactersToIntStrict(const LChar* data, size_t length, bool* ok, int base)
+{
+    return toIntegralType<int, LChar>(data, length, ok, base);
+}
+
 int charactersToIntStrict(const UChar* data, size_t length, bool* ok, int base)
 {
-    return toIntegralType<int>(data, length, ok, base);
+    return toIntegralType<int, UChar>(data, length, ok, base);
+}
+
+unsigned charactersToUIntStrict(const LChar* data, size_t length, bool* ok, int base)
+{
+    return toIntegralType<unsigned, LChar>(data, length, ok, base);
 }
 
 unsigned charactersToUIntStrict(const UChar* data, size_t length, bool* ok, int base)
 {
-    return toIntegralType<unsigned>(data, length, ok, base);
+    return toIntegralType<unsigned, UChar>(data, length, ok, base);
+}
+
+int64_t charactersToInt64Strict(const LChar* data, size_t length, bool* ok, int base)
+{
+    return toIntegralType<int64_t, LChar>(data, length, ok, base);
 }
 
 int64_t charactersToInt64Strict(const UChar* data, size_t length, bool* ok, int base)
 {
-    return toIntegralType<int64_t>(data, length, ok, base);
+    return toIntegralType<int64_t, UChar>(data, length, ok, base);
+}
+
+uint64_t charactersToUInt64Strict(const LChar* data, size_t length, bool* ok, int base)
+{
+    return toIntegralType<uint64_t, LChar>(data, length, ok, base);
 }
 
 uint64_t charactersToUInt64Strict(const UChar* data, size_t length, bool* ok, int base)
 {
-    return toIntegralType<uint64_t>(data, length, ok, base);
+    return toIntegralType<uint64_t, UChar>(data, length, ok, base);
+}
+
+intptr_t charactersToIntPtrStrict(const LChar* data, size_t length, bool* ok, int base)
+{
+    return toIntegralType<intptr_t, LChar>(data, length, ok, base);
 }
 
 intptr_t charactersToIntPtrStrict(const UChar* data, size_t length, bool* ok, int base)
 {
-    return toIntegralType<intptr_t>(data, length, ok, base);
+    return toIntegralType<intptr_t, UChar>(data, length, ok, base);
+}
+
+int charactersToInt(const LChar* data, size_t length, bool* ok)
+{
+    return toIntegralType<int, LChar>(data, lengthOfCharactersAsInteger<LChar>(data, length), ok, 10);
 }
 
 int charactersToInt(const UChar* data, size_t length, bool* ok)
 {
-    return toIntegralType<int>(data, lengthOfCharactersAsInteger(data, length), ok, 10);
+    return toIntegralType<int, UChar>(data, lengthOfCharactersAsInteger(data, length), ok, 10);
+}
+
+unsigned charactersToUInt(const LChar* data, size_t length, bool* ok)
+{
+    return toIntegralType<unsigned, LChar>(data, lengthOfCharactersAsInteger<LChar>(data, length), ok, 10);
 }
 
 unsigned charactersToUInt(const UChar* data, size_t length, bool* ok)
 {
-    return toIntegralType<unsigned>(data, lengthOfCharactersAsInteger(data, length), ok, 10);
+    return toIntegralType<unsigned, UChar>(data, lengthOfCharactersAsInteger<UChar>(data, length), ok, 10);
+}
+
+int64_t charactersToInt64(const LChar* data, size_t length, bool* ok)
+{
+    return toIntegralType<int64_t, LChar>(data, lengthOfCharactersAsInteger<LChar>(data, length), ok, 10);
 }
 
 int64_t charactersToInt64(const UChar* data, size_t length, bool* ok)
 {
-    return toIntegralType<int64_t>(data, lengthOfCharactersAsInteger(data, length), ok, 10);
+    return toIntegralType<int64_t, UChar>(data, lengthOfCharactersAsInteger<UChar>(data, length), ok, 10);
+}
+
+uint64_t charactersToUInt64(const LChar* data, size_t length, bool* ok)
+{
+    return toIntegralType<uint64_t, LChar>(data, lengthOfCharactersAsInteger<LChar>(data, length), ok, 10);
 }
 
 uint64_t charactersToUInt64(const UChar* data, size_t length, bool* ok)
 {
-    return toIntegralType<uint64_t>(data, lengthOfCharactersAsInteger(data, length), ok, 10);
+    return toIntegralType<uint64_t, UChar>(data, lengthOfCharactersAsInteger<UChar>(data, length), ok, 10);
+}
+
+intptr_t charactersToIntPtr(const LChar* data, size_t length, bool* ok)
+{
+    return toIntegralType<intptr_t, LChar>(data, lengthOfCharactersAsInteger<LChar>(data, length), ok, 10);
 }
 
 intptr_t charactersToIntPtr(const UChar* data, size_t length, bool* ok)
 {
-    return toIntegralType<intptr_t>(data, lengthOfCharactersAsInteger(data, length), ok, 10);
+    return toIntegralType<intptr_t, UChar>(data, lengthOfCharactersAsInteger<UChar>(data, length), ok, 10);
 }
 
-double charactersToDouble(const UChar* data, size_t length, bool* ok, bool* didReadNumber)
+template <typename CharType>
+static inline double toDoubleType(const CharType* data, size_t length, bool* ok, bool* didReadNumber)
 {
     if (!length) {
         if (ok)
@@ -961,10 +1013,26 @@ double charactersToDouble(const UChar* data, size_t length, bool* ok, bool* didR
     return val;
 }
 
+double charactersToDouble(const LChar* data, size_t length, bool* ok, bool* didReadNumber)
+{
+    return toDoubleType<LChar>(data, length, ok, didReadNumber);
+}
+
+double charactersToDouble(const UChar* data, size_t length, bool* ok, bool* didReadNumber)
+{
+    return toDoubleType<UChar>(data, length, ok, didReadNumber);
+}
+
+float charactersToFloat(const LChar* data, size_t length, bool* ok, bool* didReadNumber)
+{
+    // FIXME: This will return ok even when the string fits into a double but not a float.
+    return static_cast<float>(toDoubleType<LChar>(data, length, ok, didReadNumber));
+}
+
 float charactersToFloat(const UChar* data, size_t length, bool* ok, bool* didReadNumber)
 {
     // FIXME: This will return ok even when the string fits into a double but not a float.
-    return static_cast<float>(charactersToDouble(data, length, ok, didReadNumber));
+    return static_cast<float>(toDoubleType<UChar>(data, length, ok, didReadNumber));
 }
 
 const String& emptyString()
