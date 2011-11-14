@@ -1,3 +1,15 @@
+2011-11-14  Jaehoon Jeong  <jh4u.jeong@samsung.com>
+
+        [CMAKE] Add the UseV8.cmake to WebCore.
+        https://bugs.webkit.org/show_bug.cgi?id=72000
+
+        Reviewed by Daniel Bates.
+
+        Add the UseV8.cmake to WebCore to build bindings of V8 and
+        generate JavaScript codes given IDL input.
+
+        * UseV8.cmake: Added.
+
 2011-11-11  Pierre Rossi  <pierre.rossi@gmail.com>
 
         [Qt] Remove the QStyle dependency in Qt's mobile theme
