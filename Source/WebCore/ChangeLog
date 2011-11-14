@@ -1,3 +1,19 @@
+2011-11-14  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        [Qt] Unbreak the build on Mac OS X
+
+        QMacStyle is guarded by Q_WS_MAC, which is not the case for QPA. Until
+        that's been fixed in Qt we have to use the same guards in WebKit, not
+        Q_OS_MAC.
+
+        * platform/qt/RenderThemeQStyle.cpp:
+        (WebCore::RenderThemeQStyle::RenderThemeQStyle):
+        (WebCore::RenderThemeQStyle::adjustButtonStyle):
+        (WebCore::RenderThemeQStyle::paintMenuList):
+        (WebCore::RenderThemeQStyle::paintInnerSpinButton):
+        * platform/qt/ScrollbarThemeQt.cpp:
+        (WebCore::ScrollbarThemeQt::paint):
+
 2011-11-14  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Replace use of QApplication with QGuiApplication.

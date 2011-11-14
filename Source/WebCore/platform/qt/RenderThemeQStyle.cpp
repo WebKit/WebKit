@@ -138,7 +138,7 @@ RenderThemeQStyle::RenderThemeQStyle(Page* page)
     QPushButton button;
     QFont defaultButtonFont = QApplication::font(&button);
     m_buttonFontFamily = defaultButtonFont.family();
-#ifdef Q_OS_MAC
+#ifdef Q_WS_MAC
     button.setAttribute(Qt::WA_MacSmallSize);
     QFontInfo fontInfo(defaultButtonFont);
     m_buttonFontPixelSize = fontInfo.pixelSize();
@@ -295,7 +295,7 @@ void RenderThemeQStyle::adjustButtonStyle(CSSStyleSelector* selector, RenderStyl
     // Ditch the border.
     style->resetBorder();
 
-#ifdef Q_OS_MAC
+#ifdef Q_WS_MAC
     if (style->appearance() == PushButtonPart) {
         // The Mac ports ignore the specified height for <input type="button"> elements
         // unless a border and/or background CSS property is also specified.
@@ -306,7 +306,7 @@ void RenderThemeQStyle::adjustButtonStyle(CSSStyleSelector* selector, RenderStyl
     FontDescription fontDescription = style->fontDescription();
     fontDescription.setIsAbsoluteSize(true);
 
-#ifdef Q_OS_MAC // Use fixed font size and family on Mac (like Safari does)
+#ifdef Q_WS_MAC // Use fixed font size and family on Mac (like Safari does)
     fontDescription.setSpecifiedSize(m_buttonFontPixelSize);
     fontDescription.setComputedSize(m_buttonFontPixelSize);
 #else
@@ -459,7 +459,7 @@ bool RenderThemeQStyle::paintMenuList(RenderObject* o, const PaintInfo& i, const
 
     IntRect rect = r;
 
-#if defined(Q_OS_MAC) && !defined(QT_NO_STYLE_MAC)
+#if defined(Q_WS_MAC) && !defined(QT_NO_STYLE_MAC)
     // QMacStyle makes the combo boxes a little bit smaller to leave space for the focus rect.
     // Because of it, the combo button is drawn at a point to the left of where it was expect to be and may end up
     // overlapped with the text. This will force QMacStyle to draw the combo box with the expected width.
@@ -711,7 +711,7 @@ bool RenderThemeQStyle::paintInnerSpinButton(RenderObject* o, const PaintInfo& p
     // Default to moving the buttons a little bit within the editor frame.
     int inflateX = -2;
     int inflateY = -2;
-#if defined(Q_OS_MAC) && !defined(QT_NO_STYLE_MAC)
+#if defined(Q_WS_MAC) && !defined(QT_NO_STYLE_MAC)
     // QMacStyle will position the aqua buttons flush to the right.
     // This will move them more within the control for better style, a la
     // Chromium look & feel.

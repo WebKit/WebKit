@@ -41,7 +41,7 @@
 #include "Scrollbar.h"
 
 #include <QApplication>
-#ifdef Q_OS_MAC
+#ifdef Q_WS_MAC
 #include <QMacStyle>
 #endif
 #include <QMenu>
@@ -171,7 +171,7 @@ bool ScrollbarThemeQt::paint(Scrollbar* scrollbar, GraphicsContext* graphicsCont
 
     p.painter->setClipRect(opt->rect.intersected(damageRect), Qt::IntersectClip);
 
-#ifdef Q_OS_MAC
+#ifdef Q_WS_MAC
     // FIXME: We also need to check the widget style but today ScrollbarTheme is not aware of the page so we
     // can't get the widget.
     if (qobject_cast<QMacStyle*>(style()))
