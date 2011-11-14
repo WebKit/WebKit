@@ -1,3 +1,11 @@
+2011-11-14  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        [Qt] Move the QtWebKit module file to match the layout of Qt's mkspecs
+
+        Reviewed by Simon Hausmann.
+
+        * Source/api.pri:
+
 2011-11-12  Patrick Gansterer  <paroga@webkit.org>
 
         [CMake] Use MAIN_DEPENDENCY in GENERATE_* macros

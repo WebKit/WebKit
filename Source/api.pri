@@ -166,7 +166,7 @@ contains(CONFIG, texmap) {
 
 # ------------- Install rules -------------
 
-modulefile.files = $${ROOT_WEBKIT_DIR}/Tools/qmake/qt_webkit.pri
+modulefile.files = $${ROOT_WEBKIT_DIR}/Tools/qmake/mkspecs/modules/qt_webkit.pri
 mkspecs = $$[QMAKE_MKSPECS]
 mkspecs = $$split(mkspecs, :)
 modulefile.path = $$last(mkspecs)/modules
