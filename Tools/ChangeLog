@@ -1,3 +1,9 @@
+2011-11-14  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, build fix after r100104. run-binding-tests broke.
+
+        * Scripts/run-bindings-tests: Explicitely use scm.detection.
+
 2011-11-13  Eric Seidel  <eric@webkit.org>
 
         Add SCMDetector object to make scm detection mockable
