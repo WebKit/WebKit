@@ -63,14 +63,6 @@ WebInspector.ConsoleMessageImpl = function(source, level, message, linkifier, ty
     this._stackTrace = stackTrace;
     this._request = request;
 
-    if (stackTrace && stackTrace.length) {
-        var topCallFrame = stackTrace[0];
-        if (!this.url)
-            this.url = topCallFrame.url;
-        if (!this.line)
-            this.line = topCallFrame.lineNumber;
-    }
-
     this._customFormatters = {
         "object": this._formatParameterAsObject,
         "array":  this._formatParameterAsArray,

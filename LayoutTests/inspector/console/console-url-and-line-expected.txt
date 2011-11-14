@@ -1,0 +1,9 @@
+CONSOLE MESSAGE: line 9: one
+CONSOLE MESSAGE: line 10: two
+CONSOLE MESSAGE: line 11: three
+Tests that console's url and line properties are defiend for console.log entries. Bug 72256.
+
+Message at location: console-url-and-line.html:9
+Message at location: console-url-and-line.html:10
+Message at location: console-url-and-line.html:11
+

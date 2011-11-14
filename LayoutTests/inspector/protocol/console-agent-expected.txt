@@ -56,7 +56,7 @@ event ConsoleAgent.messageAdded
             source : "console-api"
             type : "log"
             level : "log"
-            line : 0
+            line : 1
             url : ""
             repeatCount : 1
             text : "test"

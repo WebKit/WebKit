@@ -39,6 +39,7 @@
 #include "InspectorFrontend.h"
 #include "InspectorValues.h"
 #include "ScriptArguments.h"
+#include "ScriptCallFrame.h"
 #include "ScriptCallStack.h"
 #include "ScriptValue.h"
 
@@ -62,11 +63,16 @@ ConsoleMessage::ConsoleMessage(MessageSource s, MessageType t, MessageLevel l, c
     , m_level(l)
     , m_message(m)
     , m_arguments(arguments)
-    , m_callStack(callStack)
     , m_line(0)
     , m_url()
     , m_repeatCount(1)
 {
+    if (callStack && callStack->size()) {
+        const ScriptCallFrame& frame = callStack->at(0);
+        m_url = frame.sourceURL();
+        m_line = frame.lineNumber();
+    }
+    m_callStack = callStack;
 }
 
 ConsoleMessage::ConsoleMessage(MessageSource s, MessageType t, MessageLevel l, const String& m, const String& responseUrl, const String& requestId)

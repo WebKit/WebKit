@@ -1,0 +1,40 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/console-test.js"></script>
+<script>
+
+function log() {
+    // Fill console.
+    console.log("one");
+    console.log("two");
+    console.log("three");
+}
+
+function test()
+{
+    InspectorTest.addSniffer(WebInspector.ConsoleDispatcher.prototype, "messageAdded", messageAdded, true);
+
+    function messageAdded(payload)
+    {
+        var url = payload.url;
+        var lastSlashIndex = url.lastIndexOf("/");
+        url = url.substring(lastSlashIndex + 1);
+        InspectorTest.addResult("Message at location: " + url + ":" + payload.line);
+        if (payload.line === 10)
+            InspectorTest.completeTest();
+    }
+
+    InspectorTest.evaluateInPage("log()");
+}
+
+</script>
+</head>
+
+<body onload="runTest()">
+<p>
+Tests that console's url and line properties are defiend for console.log entries. Bug 72256.
+</p>
+
+</body>
+</html>
