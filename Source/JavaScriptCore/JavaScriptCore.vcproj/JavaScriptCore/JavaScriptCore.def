@@ -308,6 +308,7 @@ EXPORTS
     ?slowAppend@MarkedArgumentBuffer@JSC@@AAEXVJSValue@2@@Z
     ?slowValidateCell@JSC@@YAXPAVJSCell@1@@Z
     ?slowValidateCell@JSC@@YAXPAVJSGlobalObject@1@@Z
+    ?sourceCode@JSFunction@JSC@@QBEPBVSourceCode@2@XZ
     ?startProfiling@Profiler@JSC@@QAEXPAVExecState@2@ABVUString@2@@Z
     ?startSampling@JSGlobalData@JSC@@QAEXXZ
     ?stopProfiling@Profiler@JSC@@QAE?AV?$PassRefPtr@VProfile@JSC@@@WTF@@PAVExecState@2@ABVUString@2@@Z

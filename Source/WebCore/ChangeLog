@@ -1,3 +1,30 @@
+2011-11-10  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: function remote objetct should provide access to function position in the script
+        https://bugs.webkit.org/show_bug.cgi?id=71808
+
+        Added Debugger.getFunctionLocation command for resolving function location including
+        start line, column and script id.
+
+        Reviewed by Pavel Feldman.
+
+        Test: inspector/debugger/function-location.html
+
+        * bindings/js/JSInjectedScriptHostCustom.cpp:
+        (WebCore::JSInjectedScriptHost::functionLocation):
+        * bindings/v8/custom/V8InjectedScriptHostCustom.cpp:
+        (WebCore::V8InjectedScriptHost::functionLocationCallback):
+        * inspector/InjectedScript.cpp:
+        (WebCore::InjectedScript::getFunctionLocation):
+        * inspector/InjectedScript.h:
+        * inspector/InjectedScriptHost.idl:
+        * inspector/InjectedScriptSource.js:
+        (.):
+        * inspector/Inspector.json:
+        * inspector/InspectorDebuggerAgent.cpp:
+        (WebCore::InspectorDebuggerAgent::getFunctionLocation):
+        * inspector/InspectorDebuggerAgent.h:
+
 2011-11-14  Rakesh KN  <rakesh.kn@motorola.com>
 
         Cannot select multiple options by mouse dragging in <select multiple="multiple" size="7"> list

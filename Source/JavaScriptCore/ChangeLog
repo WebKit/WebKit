@@ -1,3 +1,18 @@
+2011-11-11  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: function remote objetct should provide access to function position in the script
+        https://bugs.webkit.org/show_bug.cgi?id=71808
+
+        Exposed accessor for function source code.
+
+        Reviewed by Pavel Feldman.
+
+        * JavaScriptCore.exp:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::sourceCode):
+        * runtime/JSFunction.h:
+
 2011-11-13  Yuqiang Xian  <yuqiang.xian@intel.com>
 
         Fix silent spilling/filling GPRs in DFG 32_64

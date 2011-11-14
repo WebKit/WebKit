@@ -310,7 +310,8 @@
                     { "name": "className", "type": "string", "optional": true, "description": "Object class (constructor) name. Specified for <code>object</code> type values only." },
                     { "name": "value", "type": "any", "optional": true, "description": "Remote object value (in case of primitive values or JSON values if it was requested)." },
                     { "name": "description", "type": "string", "optional": true, "description": "String representation of the object." },
-                    { "name": "objectId", "$ref": "RemoteObjectId", "optional": true, "description": "Unique object identifier (for non-primitive values)." }
+                    { "name": "objectId", "$ref": "RemoteObjectId", "optional": true, "description": "Unique object identifier (for non-primitive values)." },
+                    { "name": "functionLocation", "$ref": "Debugger.Location", "optional": true, "description": "Function location within owning script." }
                 ]
             },
             {
@@ -1900,6 +1901,16 @@
                     { "name": "scriptSource", "type": "string", "description": "Script source." }
                 ],
                 "description": "Returns source for the script with given id."
+            },
+            {
+                "name": "getFunctionLocation",
+                "parameters": [
+                    { "name": "functionId", "$ref": "Runtime.RemoteObjectId", "description": "Id of the function to get location for." }
+                ],
+                "returns": [
+                    { "name": "location", "$ref": "Location", "description": "Function location." }
+                ],
+                "description": "Returns location of given function."
             },
             {
                 "name": "setPauseOnExceptions",
