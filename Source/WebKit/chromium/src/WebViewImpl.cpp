@@ -2803,9 +2803,16 @@ void WebViewImpl::applyScrollAndScale(const IntSize& scrollDelta, float scaleFac
     }
 }
 
-void WebViewImpl::didCommitAndDrawFrame(int frameNumber)
+void WebViewImpl::didCommitAndDrawFrame()
 {
-    // FIXME: route this up to RenderWidget's didFlushPaint.
+    if (m_client)
+        m_client->didCommitAndDrawCompositorFrame();
+}
+
+void WebViewImpl::didCompleteSwapBuffers()
+{
+    if (m_client)
+        m_client->didCompleteSwapBuffers();
 }
 
 void WebViewImpl::didRecreateGraphicsContext(bool success)

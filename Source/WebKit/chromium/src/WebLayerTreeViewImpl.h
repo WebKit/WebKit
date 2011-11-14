@@ -44,8 +44,9 @@ private:
     virtual void animateAndLayout(double frameBeginTime);
     virtual void applyScrollAndScale(const WebCore::IntSize& scrollDelta, float pageScale);
     virtual PassRefPtr<WebCore::GraphicsContext3D> createLayerTreeHostContext3D();
-    virtual void didCommitAndDrawFrame(int frameNumber);
     virtual void didRecreateGraphicsContext(bool success);
+    virtual void didCommitAndDrawFrame();
+    virtual void didCompleteSwapBuffers();
 
     // Only used in the single threaded path.
     virtual void scheduleComposite();

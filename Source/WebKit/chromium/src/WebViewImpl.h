@@ -224,7 +224,8 @@ public:
     virtual void animateAndLayout(double frameBeginTime);
     virtual void applyScrollAndScale(const WebCore::IntSize&, float);
     virtual PassRefPtr<WebCore::GraphicsContext3D> createLayerTreeHostContext3D();
-    virtual void didCommitAndDrawFrame(int frameNumber);
+    virtual void didCommitAndDrawFrame();
+    virtual void didCompleteSwapBuffers();
     virtual void didRecreateGraphicsContext(bool success);
     virtual void scheduleComposite();
 

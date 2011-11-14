@@ -82,7 +82,8 @@ private:
 
     // Called on CCMainThread
     void beginFrameAndCommit(int sequenceNumber, double frameBeginTime, PassOwnPtr<CCScrollAndScaleSet>);
-    void didCommitAndDrawFrame(int frameNumber);
+    void didCommitAndDrawFrame();
+    void didCompleteSwapBuffers();
 
     // Called on CCThread
     struct ReadbackRequest {

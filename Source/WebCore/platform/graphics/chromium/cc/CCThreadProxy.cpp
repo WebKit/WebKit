@@ -229,6 +229,7 @@ void CCThreadProxy::onSwapBuffersCompleteOnImplThread()
     ASSERT(isImplThread());
     TRACE_EVENT("CCThreadProxy::onSwapBuffersCompleteOnImplThread", this, 0);
     m_schedulerOnImplThread->didSwapBuffersComplete();
+    m_mainThreadProxy->postTask(createMainThreadTask(this, &CCThreadProxy::didCompleteSwapBuffers));
 }
 
 void CCThreadProxy::setNeedsCommitOnImplThread()
@@ -487,16 +488,24 @@ void CCThreadProxy::scheduledActionDrawAndSwap()
     // Tell the main thread that the the newly-commited frame was drawn.
     if (m_nextFrameIsNewlyCommittedFrameOnImplThread) {
         m_nextFrameIsNewlyCommittedFrameOnImplThread = false;
-        m_mainThreadProxy->postTask(createMainThreadTask(this, &CCThreadProxy::didCommitAndDrawFrame, m_layerTreeHostImpl->sourceFrameNumber()));
+        m_mainThreadProxy->postTask(createMainThreadTask(this, &CCThreadProxy::didCommitAndDrawFrame));
     }
 }
 
-void CCThreadProxy::didCommitAndDrawFrame(int frameNumber)
+void CCThreadProxy::didCommitAndDrawFrame()
 {
     ASSERT(isMainThread());
     if (!m_layerTreeHost)
         return;
-    m_layerTreeHost->didCommitAndDrawFrame(frameNumber);
+    m_layerTreeHost->didCommitAndDrawFrame();
+}
+
+void CCThreadProxy::didCompleteSwapBuffers()
+{
+    ASSERT(isMainThread());
+    if (!m_layerTreeHost)
+        return;
+    m_layerTreeHost->didCompleteSwapBuffers();
 }
 
 void CCThreadProxy::initializeImplOnImplThread(CCCompletionEvent* completion)

@@ -165,7 +165,11 @@ public:
         return context;
     }
 
-    virtual void didCommitAndDrawFrame(int frameNumber)
+    virtual void didCommitAndDrawFrame()
+    {
+    }
+
+    virtual void didCompleteSwapBuffers()
     {
     }
 

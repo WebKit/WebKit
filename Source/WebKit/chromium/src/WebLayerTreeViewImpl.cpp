@@ -96,7 +96,12 @@ PassRefPtr<GraphicsContext3D> WebLayerTreeViewImpl::createLayerTreeHostContext3D
     return GraphicsContext3DPrivate::createGraphicsContextFromWebContext(webContext.release(), attributes, 0, style, usage);
 }
 
-void WebLayerTreeViewImpl::didCommitAndDrawFrame(int frameNumber)
+void WebLayerTreeViewImpl::didCommitAndDrawFrame()
+{
+    // FIXME: route this up to the WebLayerTreeView client
+}
+
+void WebLayerTreeViewImpl::didCompleteSwapBuffers()
 {
     // FIXME: route this up to the WebLayerTreeView client
 }

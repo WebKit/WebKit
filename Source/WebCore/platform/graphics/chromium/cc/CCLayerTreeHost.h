@@ -57,7 +57,8 @@ public:
     virtual void applyScrollAndScale(const IntSize& scrollDelta, float pageScale) = 0;
     virtual PassRefPtr<GraphicsContext3D> createLayerTreeHostContext3D() = 0;
     virtual void didRecreateGraphicsContext(bool success) = 0;
-    virtual void didCommitAndDrawFrame(int frameNumber) = 0;
+    virtual void didCommitAndDrawFrame() = 0;
+    virtual void didCompleteSwapBuffers() = 0;
 
     // Used only in the single-threaded path.
     virtual void scheduleComposite() = 0;
@@ -115,7 +116,8 @@ public:
     virtual PassOwnPtr<CCLayerTreeHostImpl> createLayerTreeHostImpl(CCLayerTreeHostImplClient*);
     void didBecomeInvisibleOnImplThread(CCLayerTreeHostImpl*);
     void didRecreateGraphicsContext(bool success);
-    void didCommitAndDrawFrame(int frameNumber) { m_client->didCommitAndDrawFrame(frameNumber); }
+    void didCommitAndDrawFrame() { m_client->didCommitAndDrawFrame(); }
+    void didCompleteSwapBuffers() { m_client->didCompleteSwapBuffers(); }
     void deleteContentsTexturesOnImplThread(TextureAllocator*);
 
     // CCLayerTreeHost interface to WebView.

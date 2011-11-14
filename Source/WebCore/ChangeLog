@@ -1,3 +1,22 @@
+2011-11-14  Adrienne Walker  <enne@google.com>
+
+        [chromium] Pipe compositor commit/swap up to WebWidgetClient
+        https://bugs.webkit.org/show_bug.cgi?id=72041
+
+        Reviewed by Darin Fisher.
+
+        * platform/graphics/chromium/cc/CCLayerTreeHost.h:
+        (WebCore::CCLayerTreeHost::didCommitAndDrawFrame):
+        (WebCore::CCLayerTreeHost::didCompleteSwapBuffers):
+        * platform/graphics/chromium/cc/CCSingleThreadProxy.cpp:
+        (WebCore::CCSingleThreadProxy::doComposite):
+        * platform/graphics/chromium/cc/CCThreadProxy.cpp:
+        (WebCore::CCThreadProxy::onSwapBuffersCompleteOnImplThread):
+        (WebCore::CCThreadProxy::scheduledActionDrawAndSwap):
+        (WebCore::CCThreadProxy::didCommitAndDrawFrame):
+        (WebCore::CCThreadProxy::didCompleteSwapBuffers):
+        * platform/graphics/chromium/cc/CCThreadProxy.h:
+
 2011-11-14  Tony Chang  <tony@chromium.org>
 
         Remove the CSS3_FLEXBOX compile time flag and enable on all ports

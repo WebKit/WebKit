@@ -303,7 +303,7 @@ bool CCSingleThreadProxy::doComposite()
 
     if (m_nextFrameIsNewlyCommittedFrame) {
         m_nextFrameIsNewlyCommittedFrame = false;
-        m_layerTreeHost->didCommitAndDrawFrame(m_layerTreeHostImpl->sourceFrameNumber());
+        m_layerTreeHost->didCommitAndDrawFrame();
     }
 
     return true;

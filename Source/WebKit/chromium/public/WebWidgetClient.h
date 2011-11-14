@@ -60,6 +60,14 @@ public:
     virtual void didActivateCompositor(int compositorIdentifier) { }
     virtual void didDeactivateCompositor() { }
 
+    // Called for compositing mode when the draw commands for a WebKit-side
+    // frame have been issued.
+    virtual void didCommitAndDrawCompositorFrame() { }
+
+    // Called for compositing mode when swapbuffers has been posted in the GPU
+    // process.
+    virtual void didCompleteSwapBuffers() { }
+
     // Called when a call to WebWidget::composite is required
     virtual void scheduleComposite() { }
 
