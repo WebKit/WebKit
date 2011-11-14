@@ -43,7 +43,8 @@ struct CallFrameClosure {
     {
         if (arg < expectedParams)
             newCallFrame[arg - RegisterFile::CallFrameHeaderSize - expectedParams] = value;
-        else
+
+        if (providedParams > expectedParams)
             newCallFrame[arg - RegisterFile::CallFrameHeaderSize - expectedParams - providedParams] = value;
     }
 

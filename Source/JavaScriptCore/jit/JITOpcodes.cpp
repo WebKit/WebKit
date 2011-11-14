@@ -64,84 +64,125 @@ PassRefPtr<ExecutableMemoryHandle> JIT::privateCompileCTIMachineTrampolines(JSGl
     // (3) Trampolines for the slow cases of op_call / op_call_eval / op_construct.
     COMPILE_ASSERT(sizeof(CodeType) == 4, CodeTypeEnumMustBe32Bit);
 
+    JumpList callSlowCase;
+    JumpList constructSlowCase;
+
     // VirtualCallLink Trampoline
-    // regT0 holds callee, regT1 holds argCount.  regT2 will hold the FunctionExecutable.
-    JumpList callLinkFailures;
+    // regT0 holds callee; callFrame is moved and partially initialized.
     Label virtualCallLinkBegin = align();
-    compileOpCallInitializeCallFrame();
+    callSlowCase.append(emitJumpIfNotJSCell(regT0));
+    callSlowCase.append(emitJumpIfNotType(regT0, regT1, JSFunctionType));
+
+    // Finish canonical initialization before JS function call.
+    loadPtr(Address(regT0, OBJECT_OFFSETOF(JSFunction, m_scopeChain)), regT1);
+    emitPutCellToCallFrameHeader(regT1, RegisterFile::ScopeChain);
+
+    // Also initialize ReturnPC for use by lazy linking and exceptions.
     preserveReturnAddressAfterCall(regT3);
     emitPutToCallFrameHeader(regT3, RegisterFile::ReturnPC);
+
     restoreArgumentReference();
     Call callLazyLinkCall = call();
-    callLinkFailures.append(branchTestPtr(Zero, regT0));
     restoreReturnAddressBeforeReturn(regT3);
-    emitGetFromCallFrameHeader32(RegisterFile::ArgumentCount, regT1);
     jump(regT0);
 
     // VirtualConstructLink Trampoline
-    // regT0 holds callee, regT1 holds argCount.  regT2 will hold the FunctionExecutable.
+    // regT0 holds callee; callFrame is moved and partially initialized.
     Label virtualConstructLinkBegin = align();
-    compileOpCallInitializeCallFrame();
+    constructSlowCase.append(emitJumpIfNotJSCell(regT0));
+    constructSlowCase.append(emitJumpIfNotType(regT0, regT1, JSFunctionType));
+
+    // Finish canonical initialization before JS function call.
+    loadPtr(Address(regT0, OBJECT_OFFSETOF(JSFunction, m_scopeChain)), regT1);
+    emitPutCellToCallFrameHeader(regT1, RegisterFile::ScopeChain);
+
+    // Also initialize ReturnPC for use by lazy linking and exeptions.
     preserveReturnAddressAfterCall(regT3);
     emitPutToCallFrameHeader(regT3, RegisterFile::ReturnPC);
+
     restoreArgumentReference();
     Call callLazyLinkConstruct = call();
-    callLinkFailures.append(branchTestPtr(Zero, regT0));
     restoreReturnAddressBeforeReturn(regT3);
-    emitGetFromCallFrameHeader32(RegisterFile::ArgumentCount, regT1);
     jump(regT0);
 
     // VirtualCall Trampoline
-    // regT0 holds callee, regT1 holds argCount.  regT2 will hold the FunctionExecutable.
+    // regT0 holds callee; regT2 will hold the FunctionExecutable.
     Label virtualCallBegin = align();
-    compileOpCallInitializeCallFrame();
+    callSlowCase.append(emitJumpIfNotJSCell(regT0));
+    callSlowCase.append(emitJumpIfNotType(regT0, regT1, JSFunctionType));
+
+    // Finish canonical initialization before JS function call.
+    loadPtr(Address(regT0, OBJECT_OFFSETOF(JSFunction, m_scopeChain)), regT1);
+    emitPutCellToCallFrameHeader(regT1, RegisterFile::ScopeChain);
 
     loadPtr(Address(regT0, OBJECT_OFFSETOF(JSFunction, m_executable)), regT2);
-
-    Jump hasCodeBlock3 = branch32(GreaterThanOrEqual, Address(regT2, OBJECT_OFFSETOF(FunctionExecutable, m_numParametersForCall)), TrustedImm32(0));
+    Jump hasCodeBlock1 = branch32(GreaterThanOrEqual, Address(regT2, OBJECT_OFFSETOF(FunctionExecutable, m_numParametersForCall)), TrustedImm32(0));
     preserveReturnAddressAfterCall(regT3);
     restoreArgumentReference();
     Call callCompileCall = call();
-    callLinkFailures.append(branchTestPtr(Zero, regT0));
-    emitGetFromCallFrameHeader32(RegisterFile::ArgumentCount, regT1);
     restoreReturnAddressBeforeReturn(regT3);
     loadPtr(Address(regT0, OBJECT_OFFSETOF(JSFunction, m_executable)), regT2);
-    hasCodeBlock3.link(this);
 
+    hasCodeBlock1.link(this);
     loadPtr(Address(regT2, OBJECT_OFFSETOF(FunctionExecutable, m_jitCodeForCallWithArityCheck)), regT0);
     jump(regT0);
 
     // VirtualConstruct Trampoline
-    // regT0 holds callee, regT1 holds argCount.  regT2 will hold the FunctionExecutable.
+    // regT0 holds callee; regT2 will hold the FunctionExecutable.
     Label virtualConstructBegin = align();
-    compileOpCallInitializeCallFrame();
+    constructSlowCase.append(emitJumpIfNotJSCell(regT0));
+    constructSlowCase.append(emitJumpIfNotType(regT0, regT1, JSFunctionType));
+
+    // Finish canonical initialization before JS function call.
+    loadPtr(Address(regT0, OBJECT_OFFSETOF(JSFunction, m_scopeChain)), regT1);
+    emitPutCellToCallFrameHeader(regT1, RegisterFile::ScopeChain);
 
     loadPtr(Address(regT0, OBJECT_OFFSETOF(JSFunction, m_executable)), regT2);
-
-    Jump hasCodeBlock4 = branch32(GreaterThanOrEqual, Address(regT2, OBJECT_OFFSETOF(FunctionExecutable, m_numParametersForConstruct)), TrustedImm32(0));
+    Jump hasCodeBlock2 = branch32(GreaterThanOrEqual, Address(regT2, OBJECT_OFFSETOF(FunctionExecutable, m_numParametersForConstruct)), TrustedImm32(0));
     preserveReturnAddressAfterCall(regT3);
     restoreArgumentReference();
     Call callCompileConstruct = call();
-    callLinkFailures.append(branchTestPtr(Zero, regT0));
-    emitGetFromCallFrameHeader32(RegisterFile::ArgumentCount, regT1);
     restoreReturnAddressBeforeReturn(regT3);
     loadPtr(Address(regT0, OBJECT_OFFSETOF(JSFunction, m_executable)), regT2);
-    hasCodeBlock4.link(this);
 
+    hasCodeBlock2.link(this);
     loadPtr(Address(regT2, OBJECT_OFFSETOF(FunctionExecutable, m_jitCodeForConstructWithArityCheck)), regT0);
     jump(regT0);
-    
-    // If the parser fails we want to be able to be able to keep going,
-    // So we handle this as a parse failure.
-    callLinkFailures.link(this);
-    emitGetFromCallFrameHeaderPtr(RegisterFile::ReturnPC, regT1);
-    emitGetFromCallFrameHeaderPtr(RegisterFile::CallerFrame, callFrameRegister);
-    restoreReturnAddressBeforeReturn(regT1);
-    move(TrustedImmPtr(&globalData->exceptionLocation), regT2);
-    storePtr(regT1, regT2);
-    poke(callFrameRegister, 1 + OBJECT_OFFSETOF(struct JITStackFrame, callFrame) / sizeof(void*));
+
+    callSlowCase.link(this);
+    // Finish canonical initialization before JS function call.
+    emitGetFromCallFrameHeaderPtr(RegisterFile::CallerFrame, regT2);
+    emitGetFromCallFrameHeaderPtr(RegisterFile::ScopeChain, regT2, regT2);
+    emitPutCellToCallFrameHeader(regT2, RegisterFile::ScopeChain);
+
+    // Also initialize ReturnPC and CodeBlock, like a JS function would.
+    preserveReturnAddressAfterCall(regT3);
+    emitPutToCallFrameHeader(regT3, RegisterFile::ReturnPC);
+    emitPutImmediateToCallFrameHeader(0, RegisterFile::CodeBlock);
+
     storePtr(callFrameRegister, &m_globalData->topCallFrame);
-    poke(TrustedImmPtr(FunctionPtr(ctiVMThrowTrampoline).value()));
+    restoreArgumentReference();
+    Call callCallNotJSFunction = call();
+    emitGetFromCallFrameHeaderPtr(RegisterFile::CallerFrame, callFrameRegister);
+    restoreReturnAddressBeforeReturn(regT3);
+    ret();
+
+    constructSlowCase.link(this);
+    // Finish canonical initialization before JS function call.
+    emitGetFromCallFrameHeaderPtr(RegisterFile::CallerFrame, regT2);
+    emitGetFromCallFrameHeaderPtr(RegisterFile::ScopeChain, regT2, regT2);
+    emitPutCellToCallFrameHeader(regT2, RegisterFile::ScopeChain);
+
+    // Also initialize ReturnPC and CodeBlock, like a JS function would.
+    preserveReturnAddressAfterCall(regT3);
+    emitPutToCallFrameHeader(regT3, RegisterFile::ReturnPC);
+    emitPutImmediateToCallFrameHeader(0, RegisterFile::CodeBlock);
+
+    storePtr(callFrameRegister, &m_globalData->topCallFrame);
+    restoreArgumentReference();
+    Call callConstructNotJSFunction = call();
+    emitGetFromCallFrameHeaderPtr(RegisterFile::CallerFrame, callFrameRegister);
+    restoreReturnAddressBeforeReturn(regT3);
     ret();
 
     // NativeCall Trampoline
@@ -162,6 +203,8 @@ PassRefPtr<ExecutableMemoryHandle> JIT::privateCompileCTIMachineTrampolines(JSGl
     patchBuffer.link(callLazyLinkConstruct, FunctionPtr(cti_vm_lazyLinkConstruct));
     patchBuffer.link(callCompileCall, FunctionPtr(cti_op_call_jitCompile));
     patchBuffer.link(callCompileConstruct, FunctionPtr(cti_op_construct_jitCompile));
+    patchBuffer.link(callCallNotJSFunction, FunctionPtr(cti_op_call_NotJSFunction));
+    patchBuffer.link(callConstructNotJSFunction, FunctionPtr(cti_op_construct_NotJSConstruct));
 
     CodeRef finalCode = patchBuffer.finalizeCode();
     RefPtr<ExecutableMemoryHandle> executableMemory = finalCode.executableMemory();
@@ -421,12 +464,12 @@ void JIT::emit_op_call(Instruction* currentInstruction)
 
 void JIT::emit_op_call_eval(Instruction* currentInstruction)
 {
-    compileOpCall(op_call_eval, currentInstruction, m_callLinkInfoIndex++);
+    compileOpCall(op_call_eval, currentInstruction, m_callLinkInfoIndex);
 }
 
 void JIT::emit_op_call_varargs(Instruction* currentInstruction)
 {
-    compileOpCallVarargs(currentInstruction);
+    compileOpCall(op_call_varargs, currentInstruction, m_callLinkInfoIndex++);
 }
 
 void JIT::emit_op_construct(Instruction* currentInstruction)
@@ -1383,22 +1426,22 @@ void JIT::emitSlow_op_instanceof(Instruction* currentInstruction, Vector<SlowCas
 
 void JIT::emitSlow_op_call(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
-    compileOpCallSlowCase(currentInstruction, iter, m_callLinkInfoIndex++, op_call);
+    compileOpCallSlowCase(op_call, currentInstruction, iter, m_callLinkInfoIndex++);
 }
 
 void JIT::emitSlow_op_call_eval(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
-    compileOpCallSlowCase(currentInstruction, iter, m_callLinkInfoIndex++, op_call_eval);
+    compileOpCallSlowCase(op_call_eval, currentInstruction, iter, m_callLinkInfoIndex);
 }
-
+ 
 void JIT::emitSlow_op_call_varargs(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
-    compileOpCallVarargsSlowCase(currentInstruction, iter);
+    compileOpCallSlowCase(op_call_varargs, currentInstruction, iter, m_callLinkInfoIndex++);
 }
 
 void JIT::emitSlow_op_construct(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
-    compileOpCallSlowCase(currentInstruction, iter, m_callLinkInfoIndex++, op_construct);
+    compileOpCallSlowCase(op_construct, currentInstruction, iter, m_callLinkInfoIndex++);
 }
 
 void JIT::emitSlow_op_to_jsnumber(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
@@ -1547,76 +1590,6 @@ void JIT::emit_op_new_regexp(Instruction* currentInstruction)
     JITStubCall stubCall(this, cti_op_new_regexp);
     stubCall.addArgument(TrustedImmPtr(m_codeBlock->regexp(currentInstruction[2].u.operand)));
     stubCall.call(currentInstruction[1].u.operand);
-}
-
-void JIT::emit_op_load_varargs(Instruction* currentInstruction)
-{
-    int argCountDst = currentInstruction[1].u.operand;
-    int argsOffset = currentInstruction[2].u.operand;
-    int registerOffset = currentInstruction[3].u.operand;
-    ASSERT(argsOffset <= registerOffset);
-    
-    int expectedParams = m_codeBlock->m_numParameters - 1;
-    // Don't do inline copying if we aren't guaranteed to have a single stream
-    // of arguments
-    if (expectedParams) {
-        JITStubCall stubCall(this, cti_op_load_varargs);
-        stubCall.addArgument(Imm32(argsOffset));
-        stubCall.call();
-        // Stores a naked int32 in the register file.
-        store32(returnValueRegister, Address(callFrameRegister, argCountDst * sizeof(Register)));
-        return;
-    }
-
-#if USE(JSVALUE32_64)
-    addSlowCase(branch32(NotEqual, tagFor(argsOffset), TrustedImm32(JSValue::EmptyValueTag)));
-#else
-    addSlowCase(branchTestPtr(NonZero, addressFor(argsOffset)));
-#endif
-    // Load arg count into regT0
-    emitGetFromCallFrameHeader32(RegisterFile::ArgumentCount, regT0);
-    store32(TrustedImm32(Int32Tag), intTagFor(argCountDst));
-    store32(regT0, intPayloadFor(argCountDst));
-    Jump endBranch = branch32(Equal, regT0, TrustedImm32(1));
-
-    mul32(TrustedImm32(sizeof(Register)), regT0, regT3);
-    addPtr(TrustedImm32(static_cast<unsigned>(sizeof(Register) - RegisterFile::CallFrameHeaderSize * sizeof(Register))), callFrameRegister, regT1);
-    subPtr(regT3, regT1); // regT1 is now the start of the out of line arguments
-    addPtr(Imm32(argsOffset * sizeof(Register)), callFrameRegister, regT2); // regT2 is the target buffer
-    
-    // Bounds check the registerfile
-    addPtr(regT2, regT3);
-    addPtr(Imm32((registerOffset - argsOffset) * sizeof(Register)), regT3);
-    addSlowCase(branchPtr(Below, AbsoluteAddress(m_globalData->interpreter->registerFile().addressOfEnd()), regT3));
-
-    sub32(TrustedImm32(1), regT0);
-    Label loopStart = label();
-    loadPtr(BaseIndex(regT1, regT0, TimesEight, static_cast<unsigned>(0 - 2 * sizeof(Register))), regT3);
-    storePtr(regT3, BaseIndex(regT2, regT0, TimesEight, static_cast<unsigned>(0 - sizeof(Register))));
-#if USE(JSVALUE32_64)
-    loadPtr(BaseIndex(regT1, regT0, TimesEight, static_cast<unsigned>(sizeof(void*) - 2 * sizeof(Register))), regT3);
-    storePtr(regT3, BaseIndex(regT2, regT0, TimesEight, static_cast<unsigned>(sizeof(void*) - sizeof(Register))));
-#endif
-    branchSubPtr(NonZero, TrustedImm32(1), regT0).linkTo(loopStart, this);
-    endBranch.link(this);
-}
-
-void JIT::emitSlow_op_load_varargs(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
-{
-    int argCountDst = currentInstruction[1].u.operand;
-    int argsOffset = currentInstruction[2].u.operand;
-    int expectedParams = m_codeBlock->m_numParameters - 1;
-    if (expectedParams)
-        return;
-    
-    linkSlowCase(iter);
-    linkSlowCase(iter);
-    JITStubCall stubCall(this, cti_op_load_varargs);
-    stubCall.addArgument(Imm32(argsOffset));
-    stubCall.call();
-    
-    store32(TrustedImm32(Int32Tag), intTagFor(argCountDst));
-    store32(returnValueRegister, intPayloadFor(argCountDst));
 }
 
 void JIT::emit_op_new_func(Instruction* currentInstruction)

@@ -63,6 +63,7 @@ void JITCompiler::compileEntry()
     // both normal return code and when jumping to an exception handler).
     preserveReturnAddressAfterCall(GPRInfo::regT2);
     emitPutToCallFrameHeader(GPRInfo::regT2, RegisterFile::ReturnPC);
+    emitPutImmediateToCallFrameHeader(m_codeBlock, RegisterFile::CodeBlock);
 }
 
 void JITCompiler::compileBody(SpeculativeJIT& speculative)
@@ -180,7 +181,7 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
     m_codeBlock->setNumberOfCallLinkInfos(m_jsCalls.size());
     for (unsigned i = 0; i < m_jsCalls.size(); ++i) {
         CallLinkInfo& info = m_codeBlock->callLinkInfo(i);
-        info.isCall = m_jsCalls[i].m_isCall;
+        info.callType = m_jsCalls[i].m_callType;
         info.isDFG = true;
         info.callReturnLocation = CodeLocationLabel(linkBuffer.locationOf(m_jsCalls[i].m_slowCall));
         info.hotPathBegin = linkBuffer.locationOf(m_jsCalls[i].m_targetToCheck);
@@ -208,15 +209,14 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
 
 void JITCompiler::compile(JITCode& entry)
 {
-    // Preserve the return address to the callframe.
     compileEntry();
-    // Generate the body of the program.
     SpeculativeJIT speculative(*this);
     compileBody(speculative);
-    // Link
+
     LinkBuffer linkBuffer(*m_globalData, this);
     link(linkBuffer);
     speculative.linkOSREntries(linkBuffer);
+
     entry = JITCode(linkBuffer.finalizeCode(), JITCode::DFGJIT);
 }
 
@@ -229,8 +229,6 @@ void JITCompiler::compileFunction(JITCode& entry, MacroAssemblerCodePtr& entryWi
     // If we needed to perform an arity check we will already have moved the return address,
     // so enter after this.
     Label fromArityCheck(this);
-    // Setup a pointer to the codeblock in the CallFrameHeader.
-    emitPutImmediateToCallFrameHeader(m_codeBlock, RegisterFile::CodeBlock);
     // Plant a check that sufficient space is available in the RegisterFile.
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=56291
     addPtr(Imm32(m_codeBlock->m_numCalleeRegisters * sizeof(Register)), GPRInfo::callFrameRegister, GPRInfo::regT1);
@@ -263,8 +261,9 @@ void JITCompiler::compileFunction(JITCode& entry, MacroAssemblerCodePtr& entryWi
     // In cases where an arity check is necessary, we enter here.
     // FIXME: change this from a cti call to a DFG style operation (normal C calling conventions).
     Label arityCheck = label();
-    preserveReturnAddressAfterCall(GPRInfo::regT2);
-    emitPutToCallFrameHeader(GPRInfo::regT2, RegisterFile::ReturnPC);
+    compileEntry();
+
+    load32(Address(GPRInfo::callFrameRegister, RegisterFile::ArgumentCount * static_cast<int>(sizeof(Register))), GPRInfo::regT1);
     branch32(Equal, GPRInfo::regT1, Imm32(m_codeBlock->m_numParameters)).linkTo(fromArityCheck, this);
     move(stackPointerRegister, GPRInfo::argumentGPR0);
     poke(GPRInfo::callFrameRegister, OBJECT_OFFSETOF(struct JITStackFrame, callFrame) / sizeof(void*));

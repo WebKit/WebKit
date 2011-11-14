@@ -69,6 +69,7 @@ namespace JSC {
 
         JSValue jsValue() { return JSValue::decode(asEncodedJSValue); }
         JSObject* jsObject() { return static_cast<JSObject*>(asPointer); }
+        Register* reg() { return static_cast<Register*>(asPointer); }
         Identifier& identifier() { return *static_cast<Identifier*>(asPointer); }
         int32_t int32() { return asInt32; }
         CodeBlock* codeBlock() { return static_cast<CodeBlock*>(asPointer); }
@@ -402,7 +403,7 @@ extern "C" {
     int JIT_STUB cti_op_jgreater(STUB_ARGS_DECLARATION);
     int JIT_STUB cti_op_jgreatereq(STUB_ARGS_DECLARATION);
     int JIT_STUB cti_op_jtrue(STUB_ARGS_DECLARATION);
-    int JIT_STUB cti_op_load_varargs(STUB_ARGS_DECLARATION);
+    void* JIT_STUB cti_op_load_varargs(STUB_ARGS_DECLARATION);
     int JIT_STUB cti_timeout_check(STUB_ARGS_DECLARATION);
     int JIT_STUB cti_has_property(STUB_ARGS_DECLARATION);
     void JIT_STUB cti_op_check_has_instance(STUB_ARGS_DECLARATION);

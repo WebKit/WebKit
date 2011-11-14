@@ -103,7 +103,7 @@ namespace JSC {
 
         void fillArgList(ExecState*, MarkedArgumentBuffer&);
 
-        uint32_t numProvidedArguments(ExecState* exec) const 
+        uint32_t length(ExecState* exec) const 
         {
             if (UNLIKELY(d->overrodeLength))
                 return get(exec, exec->propertyNames().length).toUInt32(exec);

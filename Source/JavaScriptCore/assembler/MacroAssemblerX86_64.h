@@ -366,6 +366,10 @@ public:
 
     Jump branchPtr(RelationalCondition cond, RegisterID left, TrustedImmPtr right)
     {
+        if (((cond == Equal) || (cond == NotEqual)) && !right.m_value) {
+            m_assembler.testq_rr(left, left);
+            return Jump(m_assembler.jCC(x86Condition(cond)));
+        }
         move(right, scratchRegister);
         return branchPtr(cond, left, scratchRegister);
     }
@@ -436,6 +440,12 @@ public:
         return Jump(m_assembler.jCC(x86Condition(cond)));
     }
 
+
+    Jump branchAddPtr(ResultCondition cond, TrustedImm32 imm, RegisterID dest)
+    {
+        addPtr(imm, dest);
+        return Jump(m_assembler.jCC(x86Condition(cond)));
+    }
 
     Jump branchAddPtr(ResultCondition cond, RegisterID src, RegisterID dest)
     {

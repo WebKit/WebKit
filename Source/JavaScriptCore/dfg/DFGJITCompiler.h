@@ -251,9 +251,9 @@ public:
         m_methodGets.append(MethodGetRecord(slowCall, structToCompare, protoObj, protoStructToCompare, putFunction));
     }
     
-    void addJSCall(Call fastCall, Call slowCall, DataLabelPtr targetToCheck, bool isCall, CodeOrigin codeOrigin)
+    void addJSCall(Call fastCall, Call slowCall, DataLabelPtr targetToCheck, CallLinkInfo::CallType callType, CodeOrigin codeOrigin)
     {
-        m_jsCalls.append(JSCallRecord(fastCall, slowCall, targetToCheck, isCall, codeOrigin));
+        m_jsCalls.append(JSCallRecord(fastCall, slowCall, targetToCheck, callType, codeOrigin));
     }
     
     void noticeOSREntry(BasicBlock& basicBlock, JITCompiler::Label blockHead, LinkBuffer& linkBuffer)
@@ -324,11 +324,11 @@ private:
     };
     
     struct JSCallRecord {
-        JSCallRecord(Call fastCall, Call slowCall, DataLabelPtr targetToCheck, bool isCall, CodeOrigin codeOrigin)
+        JSCallRecord(Call fastCall, Call slowCall, DataLabelPtr targetToCheck, CallLinkInfo::CallType callType, CodeOrigin codeOrigin)
             : m_fastCall(fastCall)
             , m_slowCall(slowCall)
             , m_targetToCheck(targetToCheck)
-            , m_isCall(isCall)
+            , m_callType(callType)
             , m_codeOrigin(codeOrigin)
         {
         }
@@ -336,7 +336,7 @@ private:
         Call m_fastCall;
         Call m_slowCall;
         DataLabelPtr m_targetToCheck;
-        bool m_isCall;
+        CallLinkInfo::CallType m_callType;
         CodeOrigin m_codeOrigin;
     };
 

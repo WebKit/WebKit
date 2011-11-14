@@ -1225,16 +1225,19 @@ void JITCodeGenerator::nonSpeculativeNonPeepholeStrictEq(Node& node, bool invert
 void JITCodeGenerator::emitCall(Node& node)
 {
     P_DFGOperation_E slowCallFunction;
-    bool isCall;
-    
-    if (node.op == Call) {
+
+    if (node.op == Call)
         slowCallFunction = operationLinkCall;
-        isCall = true;
-    } else {
+    else {
         ASSERT(node.op == Construct);
         slowCallFunction = operationLinkConstruct;
-        isCall = false;
     }
+
+    // For constructors, the this argument is not passed but we have to make space
+    // for it.
+    int dummyThisArgument = node.op == Call ? 0 : 1;
+    
+    CallLinkInfo::CallType callType = node.op == Call ? CallLinkInfo::Call : CallLinkInfo::Construct;
     
     NodeIndex calleeNodeIndex = m_jit.graph().m_varArgChildren[node.firstChild()];
     JSValueOperand callee(this, calleeNodeIndex);
@@ -1245,9 +1248,7 @@ void JITCodeGenerator::emitCall(Node& node)
     // receiver (method call). subsequent children are the arguments.
     int numArgs = node.numChildren() - 1;
     
-    // For constructors, the this argument is not passed but we have to make space
-    // for it.
-    int numPassedArgs = numArgs + (isCall ? 0 : 1);
+    int numPassedArgs = numArgs + dummyThisArgument;
     
     // amount of stuff (in units of sizeof(Register)) that we need to place at the
     // top of the JS stack.
@@ -1268,7 +1269,7 @@ void JITCodeGenerator::emitCall(Node& node)
         GPRReg argGPR = arg.gpr();
         use(argNodeIndex);
         
-        m_jit.storePtr(argGPR, addressOfCallData(-callDataSize + argIdx + (isCall ? 0 : 1)));
+        m_jit.storePtr(argGPR, addressOfCallData(-callDataSize + argIdx + dummyThisArgument));
     }
     
     m_jit.storePtr(calleeGPR, addressOfCallData(RegisterFile::Callee));
@@ -1296,7 +1297,6 @@ void JITCodeGenerator::emitCall(Node& node)
     
     m_jit.addPtr(Imm32(m_jit.codeBlock()->m_numCalleeRegisters * sizeof(Register)), GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
     JITCompiler::Call slowCall = m_jit.addFastExceptionCheck(m_jit.appendCall(slowCallFunction), at(m_compileIndex).codeOrigin);
-    m_jit.move(Imm32(numPassedArgs), GPRInfo::regT1);
     m_jit.addPtr(Imm32(m_jit.codeBlock()->m_numCalleeRegisters * sizeof(Register)), GPRInfo::callFrameRegister);
     m_jit.notifyCall(m_jit.call(GPRInfo::returnValueGPR), at(m_compileIndex).codeOrigin);
     
@@ -1306,7 +1306,7 @@ void JITCodeGenerator::emitCall(Node& node)
     
     jsValueResult(resultGPR, m_compileIndex, DataFormatJS, UseChildrenCalledExplicitly);
     
-    m_jit.addJSCall(fastCall, slowCall, targetToCheck, isCall, at(m_compileIndex).codeOrigin);
+    m_jit.addJSCall(fastCall, slowCall, targetToCheck, callType, at(m_compileIndex).codeOrigin);
 }
 
 #endif

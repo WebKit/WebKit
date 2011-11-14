@@ -164,7 +164,7 @@ namespace JSC {
         MacroAssembler::DataLabelPtr hotPathBegin;
         MacroAssembler::Call hotPathOther;
         MacroAssembler::Call callReturnLocation;
-        bool isCall;
+        CallLinkInfo::CallType callType;
         unsigned bytecodeIndex;
     };
 
@@ -264,7 +264,7 @@ namespace JSC {
             return jit.privateCompilePatchGetArrayLength(returnAddress);
         }
 
-        static void linkFor(JSFunction* callee, CodeBlock* callerCodeBlock, CodeBlock* calleeCodeBlock, CodePtr, CallLinkInfo*, int callerArgCount, JSGlobalData*, CodeSpecializationKind);
+        static void linkFor(JSFunction* callee, CodeBlock* callerCodeBlock, CodeBlock* calleeCodeBlock, CodePtr, CallLinkInfo*, JSGlobalData*, CodeSpecializationKind);
 
     private:
         struct JSRInfo {
@@ -302,11 +302,11 @@ namespace JSC {
         void addJump(Jump, int);
         void emitJumpSlowToHot(Jump, int);
 
-        void compileOpCall(OpcodeID, Instruction* instruction, unsigned callLinkInfoIndex);
-        void compileOpCallVarargs(Instruction* instruction);
-        void compileOpCallInitializeCallFrame();
-        void compileOpCallSlowCase(Instruction* instruction, Vector<SlowCaseEntry>::iterator& iter, unsigned callLinkInfoIndex, OpcodeID opcodeID);
-        void compileOpCallVarargsSlowCase(Instruction* instruction, Vector<SlowCaseEntry>::iterator& iter);
+        void compileOpCall(OpcodeID, Instruction*, unsigned callLinkInfoIndex);
+        void compileOpCallSlowCase(OpcodeID, Instruction*, Vector<SlowCaseEntry>::iterator&, unsigned callLinkInfoIndex);
+        void compileLoadVarargs(Instruction*);
+        void compileCallEval();
+        void compileCallEvalSlowCase(Vector<SlowCaseEntry>::iterator&);
 
         enum CompileOpStrictEqType { OpStrictEq, OpNStrictEq };
         void compileOpStrictEq(Instruction* instruction, CompileOpStrictEqType type);
@@ -814,7 +814,6 @@ namespace JSC {
         void emit_op_jngreatereq(Instruction*);
         void emit_op_jsr(Instruction*);
         void emit_op_jtrue(Instruction*);
-        void emit_op_load_varargs(Instruction*);
         void emit_op_loop(Instruction*);
         void emit_op_loop_hint(Instruction*);
         void emit_op_loop_if_less(Instruction*);
@@ -917,7 +916,6 @@ namespace JSC {
         void emitSlow_op_jngreater(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_jngreatereq(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_jtrue(Instruction*, Vector<SlowCaseEntry>::iterator&);
-        void emitSlow_op_load_varargs(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_loop_if_less(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_loop_if_lesseq(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_loop_if_greater(Instruction*, Vector<SlowCaseEntry>::iterator&);

@@ -492,26 +492,20 @@ RegisterID* ApplyFunctionCallDotNode::emitBytecode(BytecodeGenerator& generator,
             }
         } else {
             ASSERT(m_args->m_listNode && m_args->m_listNode->m_next);
-            RefPtr<RegisterID> realFunction = generator.emitMove(generator.newTemporary(), base.get());
-            RefPtr<RegisterID> argsCountRegister = generator.newTemporary();
-            RefPtr<RegisterID> thisRegister = generator.newTemporary();
-            RefPtr<RegisterID> argsRegister = generator.newTemporary();
-            generator.emitNode(thisRegister.get(), m_args->m_listNode->m_expr);
+            RefPtr<RegisterID> thisRegister = generator.emitNode(m_args->m_listNode->m_expr);
+            RefPtr<RegisterID> argsRegister;
             ArgumentListNode* args = m_args->m_listNode->m_next;
-            bool isArgumentsApply = false;
-            if (args->m_expr->isResolveNode()) {
-                ResolveNode* resolveNode = static_cast<ResolveNode*>(args->m_expr);
-                isArgumentsApply = generator.willResolveToArguments(resolveNode->identifier());
-                if (isArgumentsApply)
-                    generator.emitMove(argsRegister.get(), generator.uncheckedRegisterForArguments());
-            }
-            if (!isArgumentsApply)
-                generator.emitNode(argsRegister.get(), args->m_expr);
+            if (args->m_expr->isResolveNode() && generator.willResolveToArguments(static_cast<ResolveNode*>(args->m_expr)->identifier()))
+                argsRegister = generator.uncheckedRegisterForArguments();
+            else
+                argsRegister = generator.emitNode(args->m_expr);
+
+            // Function.prototype.apply ignores extra arguments, but we still
+            // need to evaluate them for side effects.
             while ((args = args->m_next))
                 generator.emitNode(args->m_expr);
 
-            generator.emitLoadVarargs(argsCountRegister.get(), thisRegister.get(), argsRegister.get());
-            generator.emitCallVarargs(finalDestinationOrIgnored.get(), realFunction.get(), thisRegister.get(), argsCountRegister.get(), divot(), startOffset(), endOffset());
+            generator.emitCallVarargs(finalDestinationOrIgnored.get(), base.get(), thisRegister.get(), argsRegister.get(), generator.newTemporary(), divot(), startOffset(), endOffset());
         }
         generator.emitJump(end.get());
     }

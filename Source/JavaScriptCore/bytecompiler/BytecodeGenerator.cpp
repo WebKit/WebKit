@@ -1835,20 +1835,8 @@ RegisterID* BytecodeGenerator::emitCall(OpcodeID opcodeID, RegisterID* dst, Regi
     return dst;
 }
 
-RegisterID* BytecodeGenerator::emitLoadVarargs(RegisterID* argCountDst, RegisterID* thisRegister, RegisterID* arguments)
+RegisterID* BytecodeGenerator::emitCallVarargs(RegisterID* dst, RegisterID* func, RegisterID* thisRegister, RegisterID* arguments, RegisterID* firstFreeRegister, unsigned divot, unsigned startOffset, unsigned endOffset)
 {
-    ASSERT(argCountDst->index() < arguments->index());
-    emitOpcode(op_load_varargs);
-    instructions().append(argCountDst->index());
-    instructions().append(arguments->index());
-    instructions().append(thisRegister->index() + RegisterFile::CallFrameHeaderSize); // initial registerOffset
-    return argCountDst;
-}
-
-RegisterID* BytecodeGenerator::emitCallVarargs(RegisterID* dst, RegisterID* func, RegisterID* thisRegister, RegisterID* argCountRegister, unsigned divot, unsigned startOffset, unsigned endOffset)
-{
-    ASSERT(func->refCount());
-    ASSERT(thisRegister->refCount());
     ASSERT(dst != func);
     if (m_shouldEmitProfileHooks) {
         emitOpcode(op_profile_will_call);
@@ -1856,15 +1844,16 @@ RegisterID* BytecodeGenerator::emitCallVarargs(RegisterID* dst, RegisterID* func
     }
     
     emitExpressionInfo(divot, startOffset, endOffset);
-    
+
     // Emit call.
     emitOpcode(op_call_varargs);
-    instructions().append(func->index()); // func
-    instructions().append(argCountRegister->index()); // arg count
-    instructions().append(thisRegister->index() + RegisterFile::CallFrameHeaderSize); // initial registerOffset
+    instructions().append(func->index());
+    instructions().append(thisRegister->index());
+    instructions().append(arguments->index());
+    instructions().append(firstFreeRegister->index());
     if (dst != ignoredResult()) {
         emitOpcode(op_call_put_result);
-        instructions().append(dst->index()); // dst
+        instructions().append(dst->index());
     }
     if (m_shouldEmitProfileHooks) {
         emitOpcode(op_profile_did_call);

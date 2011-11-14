@@ -493,6 +493,7 @@ JSObject* FunctionExecutable::compileForCallInternal(ExecState* exec, ScopeChain
 #if !ENABLE(JIT)
     UNUSED_PARAM(exec);
     UNUSED_PARAM(jitType);
+    UNUSED_PARAM(exec);
 #endif
     ASSERT((jitType == JITCode::bottomTierJIT()) == !m_codeBlockForCall);
     JSObject* exception;

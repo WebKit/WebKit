@@ -106,10 +106,21 @@ namespace JSC {
 
 #if ENABLE(JIT)
     struct CallLinkInfo : public BasicRawSentinelNode<CallLinkInfo> {
+        enum CallType { None, Call, CallVarargs, Construct };
+        static CallType callTypeFor(OpcodeID opcodeID)
+        {
+            if (opcodeID == op_call || opcodeID == op_call_eval)
+                return Call;
+            if (opcodeID == op_construct)
+                return Construct;
+            ASSERT(opcodeID == op_call_varargs);
+            return CallVarargs;
+        }
+        
         CallLinkInfo()
             : hasSeenShouldRepatch(false)
-            , isCall(false)
             , isDFG(false)
+            , callType(None)
         {
         }
         
@@ -125,8 +136,8 @@ namespace JSC {
         JITWriteBarrier<JSFunction> callee;
         WriteBarrier<JSFunction> lastSeenCallee;
         bool hasSeenShouldRepatch : 1;
-        bool isCall : 1;
         bool isDFG : 1;
+        CallType callType : 2;
         unsigned bytecodeIndex;
 
         bool isLinked() { return callee; }

@@ -50,6 +50,24 @@ RegisterFile::~RegisterFile()
     m_reservation.deallocate();
 }
 
+bool RegisterFile::growSlowCase(Register* newEnd)
+{
+    if (newEnd <= m_commitEnd) {
+        m_end = newEnd;
+        return true;
+    }
+
+    long delta = roundUpAllocationSize(reinterpret_cast<char*>(newEnd) - reinterpret_cast<char*>(m_commitEnd), commitSize);
+    if (reinterpret_cast<char*>(m_commitEnd) + delta > static_cast<char*>(m_reservation.base()) + m_reservation.size())
+        return false;
+
+    m_reservation.commit(m_commitEnd, delta);
+    addToCommittedByteCount(delta);
+    m_commitEnd = reinterpret_cast_ptr<Register*>(reinterpret_cast<char*>(m_commitEnd) + delta);
+    m_end = newEnd;
+    return true;
+}
+
 void RegisterFile::gatherConservativeRoots(ConservativeRoots& conservativeRoots)
 {
     conservativeRoots.add(begin(), end());

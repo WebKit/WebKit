@@ -587,6 +587,10 @@ static void* handleHostCall(ExecState* execCallee, JSValue callee, CodeSpecializ
 {
     ExecState* exec = execCallee->callerFrame();
     JSGlobalData* globalData = &exec->globalData();
+
+    execCallee->setScopeChain(exec->scopeChain());
+    execCallee->setCodeBlock(0);
+
     if (kind == CodeForCall) {
         CallData callData;
         CallType callType = getCallData(callee, callData);
@@ -594,17 +598,10 @@ static void* handleHostCall(ExecState* execCallee, JSValue callee, CodeSpecializ
         ASSERT(callType != CallTypeJS);
     
         if (callType == CallTypeHost) {
-            if (!globalData->interpreter->registerFile().grow(execCallee->registers())) {
-                globalData->exception = createStackOverflowError(exec);
-                return 0;
-            }
-        
-            execCallee->setScopeChain(exec->scopeChain());
-        
             globalData->hostCallReturnValue = JSValue::decode(callData.native.function(execCallee));
-        
             if (globalData->exception)
                 return 0;
+
             return reinterpret_cast<void*>(getHostCallReturnValue);
         }
     
@@ -621,17 +618,10 @@ static void* handleHostCall(ExecState* execCallee, JSValue callee, CodeSpecializ
     ASSERT(constructType != ConstructTypeJS);
     
     if (constructType == ConstructTypeHost) {
-        if (!globalData->interpreter->registerFile().grow(execCallee->registers())) {
-            globalData->exception = createStackOverflowError(exec);
-            return 0;
-        }
-        
-        execCallee->setScopeChain(exec->scopeChain());
-        
         globalData->hostCallReturnValue = JSValue::decode(constructData.native.function(execCallee));
-        
         if (globalData->exception)
             return 0;
+
         return reinterpret_cast<void*>(getHostCallReturnValue);
     }
     
@@ -648,15 +638,16 @@ inline void* linkFor(ExecState* execCallee, ReturnAddressPtr returnAddress, Code
     JSCell* calleeAsFunctionCell = getJSFunction(calleeAsValue);
     if (!calleeAsFunctionCell)
         return handleHostCall(execCallee, calleeAsValue, kind);
+
     JSFunction* callee = asFunction(calleeAsFunctionCell);
+    execCallee->setScopeChain(callee->scopeUnchecked());
     ExecutableBase* executable = callee->executable();
-    
+
     MacroAssemblerCodePtr codePtr;
     CodeBlock* codeBlock = 0;
     if (executable->isHostFunction())
         codePtr = executable->generatedJITCodeFor(kind).addressForCall();
     else {
-        execCallee->setScopeChain(callee->scope());
         FunctionExecutable* functionExecutable = static_cast<FunctionExecutable*>(executable);
         JSObject* error = functionExecutable->compileFor(execCallee, callee->scope(), kind);
         if (error) {

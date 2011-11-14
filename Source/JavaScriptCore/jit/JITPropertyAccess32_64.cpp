@@ -146,7 +146,7 @@ void JIT::emit_op_method_check(Instruction* currentInstruction)
     match.link(this);
     emitValueProfilingSite(FirstProfilingSite);
     emitStore(dst, regT1, regT0);
-    map(m_bytecodeOffset + OPCODE_LENGTH(op_method_check), dst, regT1, regT0);
+    map(m_bytecodeOffset + OPCODE_LENGTH(op_method_check) + OPCODE_LENGTH(op_get_by_id), dst, regT1, regT0);
     
     // We've already generated the following get_by_id, so make sure it's skipped over.
     m_bytecodeOffset += OPCODE_LENGTH(op_get_by_id);

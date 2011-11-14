@@ -71,8 +71,8 @@ namespace JSC {
         Register* end() const { return m_end; }
         size_t size() const { return end() - begin(); }
 
-        bool grow(Register* newEnd);
-        void shrink(Register* newEnd);
+        bool grow(Register*);
+        void shrink(Register*);
         
         static size_t committedByteCount();
         static void initializeThreading();
@@ -83,6 +83,7 @@ namespace JSC {
         }
 
     private:
+        bool growSlowCase(Register*);
         void releaseExcessCapacity();
         void addToCommittedByteCount(long);
         Register* m_end;
@@ -113,21 +114,7 @@ namespace JSC {
     {
         if (newEnd <= m_end)
             return true;
-            
-        if (newEnd <= m_commitEnd) {
-            m_end = newEnd;
-            return true;
-        }
-
-        long delta = roundUpAllocationSize(reinterpret_cast<char*>(newEnd) - reinterpret_cast<char*>(m_commitEnd), commitSize);
-        if (reinterpret_cast<char*>(m_commitEnd) + delta > static_cast<char*>(m_reservation.base()) + m_reservation.size())
-            return false;
-
-        m_reservation.commit(m_commitEnd, delta);
-        addToCommittedByteCount(delta);
-        m_commitEnd = reinterpret_cast_ptr<Register*>(reinterpret_cast<char*>(m_commitEnd) + delta);
-        m_end = newEnd;
-        return true;
+        return growSlowCase(newEnd);
     }
 
 } // namespace JSC

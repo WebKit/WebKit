@@ -1130,14 +1130,11 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
             break;
         }
         case op_call_varargs: {
-            int func = (++it)->u.operand;
-            int argCount = (++it)->u.operand;
-            int registerOffset = (++it)->u.operand;
-            printf("[%4d] call_varargs\t %s, %s, %d\n", location, registerName(exec, func).data(), registerName(exec, argCount).data(), registerOffset);
-            break;
-        }
-        case op_load_varargs: {
-            printUnaryOp(exec, location, it, "load_varargs");
+            int callee = (++it)->u.operand;
+            int thisValue = (++it)->u.operand;
+            int arguments = (++it)->u.operand;
+            int firstFreeRegister = (++it)->u.operand;
+            printf("[%4d] call_varargs\t %s, %s, %s, %d\n", location, registerName(exec, callee).data(), registerName(exec, thisValue).data(), registerName(exec, arguments).data(), firstFreeRegister);
             break;
         }
         case op_tear_off_activation: {
@@ -1828,12 +1825,12 @@ void CallLinkInfo::unlink(JSGlobalData& globalData, RepatchBuffer& repatchBuffer
     
     if (isDFG) {
 #if ENABLE(DFG_JIT)
-        repatchBuffer.relink(CodeLocationCall(callReturnLocation), isCall ? operationLinkCall : operationLinkConstruct);
+        repatchBuffer.relink(CodeLocationCall(callReturnLocation), callType == Construct ? operationLinkConstruct : operationLinkCall);
 #else
         ASSERT_NOT_REACHED();
 #endif
     } else
-        repatchBuffer.relink(CodeLocationNearCall(callReturnLocation), isCall? globalData.jitStubs->ctiVirtualCallLink() : globalData.jitStubs->ctiVirtualConstructLink());
+        repatchBuffer.relink(CodeLocationNearCall(callReturnLocation), callType == Construct ? globalData.jitStubs->ctiVirtualConstructLink() : globalData.jitStubs->ctiVirtualCallLink());
     hasSeenShouldRepatch = false;
     callee.clear();
 
