@@ -61,6 +61,8 @@ public:
     WEBKIT_EXPORT static const double textSizeMultiplierRatio;
     WEBKIT_EXPORT static const double minTextSizeMultiplier;
     WEBKIT_EXPORT static const double maxTextSizeMultiplier;
+    WEBKIT_EXPORT static const float minPageScaleFactor;
+    WEBKIT_EXPORT static const float maxPageScaleFactor;
 
     // Controls the time that user scripts injected into the document run.
     enum UserScriptInjectAt {
@@ -207,19 +209,23 @@ public:
     WEBKIT_EXPORT static double zoomLevelToZoomFactor(double zoomLevel);
     WEBKIT_EXPORT static double zoomFactorToZoomLevel(double factor);
 
-    // PageScaleFactor will be force-clamped between minPageScale and maxPageScale
-    // (and these values will persist until setPageScaleFactorLimits is called
-    // again).
-    virtual void setPageScaleFactorLimits(float minPageScale, float maxPageScale) = 0;
-
     // Gets the scale factor of the page, where 1.0 is the normal size, > 1.0
     // is scaled up, < 1.0 is scaled down.
     virtual float pageScaleFactor() const = 0;
+
+    // Scales the page and the scroll offset by a given factor, while ensuring
+    // that the new scroll position does not go beyond the edge of the page.
+    virtual void setPageScaleFactorPreservingScrollOffset(float) = 0;
 
     // Scales a page by a factor of scaleFactor and then sets a scroll position to (x, y).
     // setPageScaleFactor() magnifies and shrinks a page without affecting layout.
     // On the other hand, zooming affects layout of the page.
     virtual void setPageScaleFactor(float scaleFactor, const WebPoint& origin) = 0;
+
+    // PageScaleFactor will be force-clamped between minPageScale and maxPageScale
+    // (and these values will persist until setPageScaleFactorLimits is called
+    // again).
+    virtual void setPageScaleFactorLimits(float minPageScale, float maxPageScale) = 0;
 
     // The ratio of the current device's screen DPI to the target device's screen DPI.
     virtual float deviceScaleFactor() const = 0;

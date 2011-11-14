@@ -1,3 +1,29 @@
+2011-11-14  Fady Samuel  <fsamuel@chromium.org>
+
+        [Chromium] setPageScaleFactor and associated methods should take scaling limits into account
+        https://bugs.webkit.org/show_bug.cgi?id=72176
+
+        Reviewed by Darin Fisher.
+ 
+        A couple of changes:
+ 
+        1. setPageScaleFactorLimits now affects the behavior of other scaling methods
+           including setPageScaleFactor.
+        2. setPageScaleFactorPreservingScrollOffset introduced that scales the scroll offset 
+           along with the page, preserving the scroll position within the page bounds.
+ 
+
+        * public/WebView.h:
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::WebViewImpl):
+        (WebKit::WebViewImpl::computePageScaleFactorWithinLimits):
+        (WebKit::WebViewImpl::clampOffsetAtScale):
+        (WebKit::WebViewImpl::setPageScaleFactorPreservingScrollOffset):
+        (WebKit::WebViewImpl::setPageScaleFactor):
+        (WebKit::WebViewImpl::setPageScaleFactorLimits):
+        (WebKit::WebViewImpl::applyScrollAndScale):
+        * src/WebViewImpl.h:
+
 2011-11-14  Vincent Scheib  <scheib@chromium.org>
 
         Mouse Lock: Renaming to 'Pointer Lock': Runtime Enable Flags

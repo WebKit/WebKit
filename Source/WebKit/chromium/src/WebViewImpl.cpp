@@ -199,6 +199,8 @@ namespace WebKit {
 const double WebView::textSizeMultiplierRatio = 1.2;
 const double WebView::minTextSizeMultiplier = 0.5;
 const double WebView::maxTextSizeMultiplier = 3.0;
+const float WebView::minPageScaleFactor = 0.25;
+const float WebView::maxPageScaleFactor = 4.0;
 
 
 // The group name identifies a namespace of pages.  Page group is used on OSX
@@ -338,6 +340,8 @@ WebViewImpl::WebViewImpl(WebViewClient* client)
     , m_zoomLevel(0)
     , m_minimumZoomLevel(zoomFactorToZoomLevel(minTextSizeMultiplier))
     , m_maximumZoomLevel(zoomFactorToZoomLevel(maxTextSizeMultiplier))
+    , m_minimumPageScaleFactor(minPageScaleFactor)
+    , m_maximumPageScaleFactor(maxPageScaleFactor)
     , m_contextMenuAllowed(false)
     , m_doingDragAndDrop(false)
     , m_ignoreInputEvents(false)
@@ -1852,11 +1856,52 @@ float WebViewImpl::pageScaleFactor() const
     return page()->pageScaleFactor();
 }
 
+float WebViewImpl::computePageScaleFactorWithinLimits(float scaleFactor)
+{
+    return min(max(scaleFactor, m_minimumPageScaleFactor), m_maximumPageScaleFactor);
+}
+
+WebPoint WebViewImpl::clampOffsetAtScale(const WebPoint& offset, float scale)
+{
+    // This is the scaled content size. We need to convert it to the new scale factor.
+    WebSize contentSize = mainFrame()->contentsSize();
+    float deltaScale = scale / pageScaleFactor();
+    int docWidthAtNewScale = contentSize.width * deltaScale;
+    int docHeightAtNewScale = contentSize.height * deltaScale;
+    int viewWidth = m_size.width;
+    int viewHeight = m_size.height;
+
+    // Enforce the maximum and minimum scroll positions at the new scale.
+    IntPoint clampedOffset = offset;
+    clampedOffset.clampNegativeToZero();
+    clampedOffset = clampedOffset.shrunkTo(IntPoint(docWidthAtNewScale - viewWidth, docHeightAtNewScale - viewHeight));
+    return clampedOffset;
+}
+
+void WebViewImpl::setPageScaleFactorPreservingScrollOffset(float scaleFactor)
+{
+    // Pick a scale factor that is within the expected limits
+    scaleFactor = computePageScaleFactorWithinLimits(scaleFactor);
+    if (scaleFactor == pageScaleFactor())
+        return;
+
+    IntPoint scrollOffsetAtNewScale(mainFrame()->scrollOffset().width, mainFrame()->scrollOffset().height);
+    float deltaScale = scaleFactor / pageScaleFactor();
+    scrollOffsetAtNewScale.scale(deltaScale, deltaScale);
+
+    WebPoint clampedOffsetAtNewScale = clampOffsetAtScale(scrollOffsetAtNewScale, scaleFactor);
+    setPageScaleFactor(scaleFactor, clampedOffsetAtNewScale);
+}
+
 void WebViewImpl::setPageScaleFactor(float scaleFactor, const WebPoint& origin)
 {
     if (!page())
         return;
 
+    if (!scaleFactor)
+        scaleFactor = 1;
+
+    scaleFactor = computePageScaleFactorWithinLimits(scaleFactor);
     page()->setPageScaleFactor(scaleFactor, origin);
 }
 
@@ -1910,8 +1955,17 @@ void WebViewImpl::enableFixedLayoutMode(bool enable)
 
 void WebViewImpl::setPageScaleFactorLimits(float minPageScale, float maxPageScale)
 {
+    m_minimumPageScaleFactor = min(max(minPageScale, minPageScaleFactor), maxPageScaleFactor) * deviceScaleFactor();
+    m_maximumPageScaleFactor = max(min(maxPageScale, maxPageScaleFactor), minPageScaleFactor) * deviceScaleFactor();
+
+    // Limit page scaling down to the document width.
+    int viewWidth = m_size.width;
+    int unscaledContentWidth = mainFrame()->contentsSize().width / pageScaleFactor();
+    m_minimumPageScaleFactor = max(m_minimumPageScaleFactor,  static_cast<float>(viewWidth) / unscaledContentWidth);
+    ASSERT(minPageScale <= maxPageScale);
 #if USE(ACCELERATED_COMPOSITING)
-    m_layerTreeHost->setPageScaleFactorLimits(minPageScale, maxPageScale);
+    if (m_layerTreeHost)
+        m_layerTreeHost->setPageScaleFactorLimits(m_minimumPageScaleFactor, m_maximumPageScaleFactor);
 #endif
 }
 
@@ -2730,7 +2784,7 @@ void WebViewImpl::applyScrollAndScale(const IntSize& scrollDelta, float scaleFac
 
     float oldScale = pageScaleFactor();
     if (!oldScale)
-        oldScale = 1.0f;
+        oldScale = 1;
 
     if (!scaleFactor || oldScale == scaleFactor)
         mainFrameImpl()->frameView()->scrollBy(scrollDelta);

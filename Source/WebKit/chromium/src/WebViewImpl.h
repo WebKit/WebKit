@@ -158,6 +158,7 @@ public:
     virtual void zoomLimitsChanged(double minimumZoomLevel,
                                    double maximumZoomLevel);
     virtual float pageScaleFactor() const;
+    virtual void setPageScaleFactorPreservingScrollOffset(float);
     virtual void setPageScaleFactor(float scaleFactor, const WebPoint& origin);
     virtual void setPageScaleFactorLimits(float minPageScale, float maxPageScale);
     virtual float deviceScaleFactor() const;
@@ -417,6 +418,9 @@ public:
     void loseCompositorContext(int numTimes);
 
 private:
+    float computePageScaleFactorWithinLimits(float scale);
+    WebPoint clampOffsetAtScale(const WebPoint& offset, float scale);
+
     friend class WebView;  // So WebView::Create can call our constructor
     friend class WTF::RefCounted<WebViewImpl>;
 
@@ -512,6 +516,10 @@ private:
     double m_minimumZoomLevel;
 
     double m_maximumZoomLevel;
+
+    float m_minimumPageScaleFactor;
+
+    float m_maximumPageScaleFactor;
 
     bool m_contextMenuAllowed;
 
