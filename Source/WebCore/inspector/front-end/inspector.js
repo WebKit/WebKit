@@ -828,12 +828,15 @@ WebInspector._showAnchorLocationInPanel = function(anchor, panel)
         anchor.addStyleClass("webkit-html-resource-link");
     }
 
+    this.showPanelForAnchorNavigation(panel);
+    panel.showAnchorLocation(anchor);
+    return true;
+}
+
+WebInspector.showPanelForAnchorNavigation = function(panel)
+{
     WebInspector.searchController.disableSearchUntilExplicitAction();
     WebInspector.inspectorView.setCurrentPanel(panel);
-    if (this.drawer)
-        this.drawer.immediatelyFinishAnimation();
-    WebInspector.inspectorView.currentPanel().showAnchorLocation(anchor);
-    return true;
 }
 
 WebInspector.showProfileForURL = function(url)

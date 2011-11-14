@@ -605,6 +605,13 @@ WebInspector.ScriptsPanel.prototype = {
         this._showSourceLine(anchor.uiSourceCode, anchor.lineNumber);
     },
 
+    showFunctionDefinition: function(functionLocation)
+    {
+        WebInspector.showPanelForAnchorNavigation(this);
+        var uiLocation = this._presentationModel.rawLocationToUILocation(functionLocation);
+        this._showSourceLine(uiLocation.uiSourceCode, uiLocation.lineNumber);
+    },
+
     _showSourceLine: function(uiSourceCode, lineNumber)
     {
         var sourceFrame = this._showSourceFrameAndAddToHistory(uiSourceCode);

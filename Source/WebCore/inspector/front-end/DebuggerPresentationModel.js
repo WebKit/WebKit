@@ -88,6 +88,18 @@ WebInspector.DebuggerPresentationModel.prototype = {
         return new WebInspector.DebuggerPresentationModel.CallFramePlacard(callFrame);
     },
 
+    /*
+     * @param {DebuggerAgent.Location} rawLocation
+     * @return {?WebInspector.UILocation}
+     */
+    rawLocationToUILocation: function(rawLocation)
+    {
+        var rawSourceCode = this._rawSourceCodeForScriptId[rawLocation.scriptId];
+        if (!rawSourceCode.sourceMapping)
+            return null;
+        return rawSourceCode.sourceMapping.rawLocationToUILocation(rawLocation);
+    },
+
     /**
      * @param {WebInspector.Event} event
      */

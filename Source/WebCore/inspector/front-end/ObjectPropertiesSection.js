@@ -218,6 +218,9 @@ WebInspector.ObjectPropertyTreeElement.prototype = {
         } else
             this.valueElement.textContent = description;
 
+        if (this.property.value.type === "function")
+            this.valueElement.addEventListener("contextmenu", this._functionContextMenuEventFired.bind(this), false);
+
         if (this.property.wasThrown)
             this.valueElement.addStyleClass("error");
         if (this.property.value.subtype)
@@ -250,6 +253,27 @@ WebInspector.ObjectPropertyTreeElement.prototype = {
 
         var contextMenu = new WebInspector.ContextMenu();
         contextMenu.appendItem(WebInspector.UIString("Reveal in Elements Panel"), revealElement.bind(this));
+        contextMenu.show(event);
+    },
+
+    _functionContextMenuEventFired: function(event)
+    {
+        function didGetLocation(error, response)
+        {
+            if (error) {
+                console.error(error);
+                return;
+            }
+            WebInspector.panels.scripts.showFunctionDefinition(response);
+        }
+
+        function revealFunction()
+        {
+            DebuggerAgent.getFunctionLocation(this.property.value.objectId, didGetLocation.bind(this));
+        }
+
+        var contextMenu = new WebInspector.ContextMenu();
+        contextMenu.appendItem(WebInspector.UIString("Show function definition"), revealFunction.bind(this));
         contextMenu.show(event);
     },
 

@@ -1,3 +1,24 @@
+2011-11-14  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: add 'Show function definition' context menu item for function values
+        https://bugs.webkit.org/show_bug.cgi?id=72265
+
+        Allow navigating to JavaScript function definition using context menu.
+
+        Reviewed by Pavel Feldman.
+
+        * English.lproj/localizedStrings.js:
+        * inspector/front-end/DebuggerPresentationModel.js:
+        (WebInspector.DebuggerPresentationModel.prototype.rawLocationToUILocation):
+        * inspector/front-end/ObjectPropertiesSection.js:
+        (WebInspector.ObjectPropertyTreeElement.prototype.update):
+        (WebInspector.ObjectPropertyTreeElement.prototype._functionContextMenuEventFired):
+        (WebInspector.ObjectPropertyTreeElement.prototype._functionContextMenuEventFired.revealFunction):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype.showFunctionDefinition):
+        * inspector/front-end/inspector.js:
+        (WebInspector.showPanelForAnchorNavigation):
+
 2011-11-14  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: console's protocol payload does not have url and line properties.
