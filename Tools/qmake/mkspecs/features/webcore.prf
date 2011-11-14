@@ -285,8 +285,6 @@ unix|win32-g++* {
 
 enable_fast_mobile_scrolling: DEFINES += ENABLE_FAST_MOBILE_SCROLLING=1
 
-use_qt_mobile_theme: DEFINES += WTF_USE_QT_MOBILE_THEME=1
-
 config_step {
     pathToWebCoreOutput = $$buildDirForSource(Source/WebCore)/$$WEBCORE_DESTDIR
     linkStaticLibrary($$pathToWebCoreOutput, $$WEBCORE_TARGET)

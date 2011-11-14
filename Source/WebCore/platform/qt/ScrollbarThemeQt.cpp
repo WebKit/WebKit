@@ -26,31 +26,47 @@
  */
 
 #include "config.h"
+
+#if !HAVE(QSTYLE)
+#include "ScrollbarTheme.h"
+
+#else
 #include "ScrollbarThemeQt.h"
 
 #include "GraphicsContext.h"
 #include "PlatformMouseEvent.h"
-#include "RenderThemeQt.h"
+#include "RenderThemeQStyle.h"
+#include "RenderThemeQtMobile.h"
 #include "ScrollView.h"
 #include "Scrollbar.h"
 
 #include <QApplication>
-#ifdef Q_WS_MAC
+#ifdef Q_OS_MAC
 #include <QMacStyle>
 #endif
 #include <QMenu>
 #include <QPainter>
 #include <QStyle>
 #include <QStyleOptionSlider>
+#endif // HAVE(QSTYLE)
 
 namespace WebCore {
 
 ScrollbarTheme* ScrollbarTheme::nativeTheme()
 {
-    static ScrollbarThemeQt theme;
-    return &theme;
+    static ScrollbarTheme* theme = 0;
+    if (theme)
+        return theme;
+#if HAVE(QSTYLE)
+    if (!RenderThemeQt::useMobileTheme())
+        theme = new ScrollbarThemeQt();
+    else
+#endif
+        theme = new ScrollbarTheme();
+    return theme;
 }
 
+#if HAVE(QSTYLE)
 ScrollbarThemeQt::~ScrollbarThemeQt()
 {
 }
@@ -146,7 +162,7 @@ bool ScrollbarThemeQt::paint(Scrollbar* scrollbar, GraphicsContext* graphicsCont
        return false;
     }
 
-    StylePainter p(this, graphicsContext);
+    StylePainterQStyle p(this, graphicsContext);
     if (!p.isValid())
       return true;
 
@@ -155,7 +171,7 @@ bool ScrollbarThemeQt::paint(Scrollbar* scrollbar, GraphicsContext* graphicsCont
 
     p.painter->setClipRect(opt->rect.intersected(damageRect), Qt::IntersectClip);
 
-#ifdef Q_WS_MAC
+#ifdef Q_OS_MAC
     // FIXME: We also need to check the widget style but today ScrollbarTheme is not aware of the page so we
     // can't get the widget.
     if (qobject_cast<QMacStyle*>(style()))
@@ -200,9 +216,6 @@ void ScrollbarThemeQt::invalidatePart(Scrollbar* scrollbar, ScrollbarPart)
 
 int ScrollbarThemeQt::scrollbarThickness(ScrollbarControlSize controlSize)
 {
-#if USE(QT_MOBILE_THEME)
-    return 0;
-#endif
     QStyleOptionSlider o;
     o.orientation = Qt::Vertical;
     o.state &= ~QStyle::State_Horizontal;
@@ -243,7 +256,7 @@ int ScrollbarThemeQt::trackLength(Scrollbar* scrollbar)
 
 void ScrollbarThemeQt::paintScrollCorner(ScrollView*, GraphicsContext* context, const IntRect& rect)
 {
-    StylePainter p(this, context);
+    StylePainterQStyle p(this, context);
     if (!p.isValid())
         return;
 
@@ -257,5 +270,6 @@ QStyle* ScrollbarThemeQt::style() const
     return QApplication::style();
 }
 
+#endif // HAVE(QSTYLE)
 }
 

@@ -27,8 +27,5 @@ haveQt(5) {
     contains(QT_CONFIG, declarative): QT += declarative
 }
 
-# Use the Qt Mobile theme if it is in the CONFIG
-use_qt_mobile_theme: DEFINES += WTF_USE_QT_MOBILE_THEME=1
-
 # This define is used by some tests to look up resources in the source tree
 DEFINES += TESTS_SOURCE_DIR=\\\"$$PWD/\\\"
