@@ -90,6 +90,9 @@ void ChromeClient::chromeDestroyed()
     if (m_closeSoonTimer)
         g_source_remove(m_closeSoonTimer);
 
+    if (m_repaintSoonSourceId)
+        g_source_remove(m_repaintSoonSourceId);
+
     delete this;
 }
 

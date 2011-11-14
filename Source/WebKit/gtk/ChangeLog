@@ -1,3 +1,18 @@
+2011-11-14  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [GTK] Possible crash when destroying after called widgetSizeChanged.
+        https://bugs.webkit.org/show_bug.cgi?id=72237
+
+        Reviewed by Martin Robinson.
+
+        Crash can occur when ChromeclientGtk is removed before calling repaintEverythingSoonTimeout
+        registered by widgetSizeChanged.
+        This patch remove the m_repaintSoonSourceId glib source before destruction
+        of the ChromeClientGtk to prevent the above crash.
+
+        * WebCoreSupport/ChromeClientGtk.cpp:
+        (WebKit::ChromeClient::chromeDestroyed):
+
 2011-11-09  Philippe Normand  <pnormand@igalia.com>
 
         [GTK][DRT] window internals object is not reset after each test
