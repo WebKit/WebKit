@@ -1,5 +1,19 @@
 2011-11-14  Tommy Widenflycht  <tommyw@google.com>
 
+        [chromium] MediaStream API: Adding a sources() method to WebMediaStreamDescriptor
+        https://bugs.webkit.org/show_bug.cgi?id=72116
+
+        Reviewed by Darin Fisher.
+
+        * public/WebMediaStreamDescriptor.h:
+        * public/WebMediaStreamSource.h:
+        * src/WebMediaStreamDescriptor.cpp:
+        (WebKit::WebMediaStreamDescriptor::sources):
+        * src/WebMediaStreamSource.cpp:
+        (WebKit::WebMediaStreamSource::operator=):
+
+2011-11-14  Tommy Widenflycht  <tommyw@google.com>
+
         [chromium] MediaStream API: Allow for null WebPeerConnectionHandler
         https://bugs.webkit.org/show_bug.cgi?id=72114
 

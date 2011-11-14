@@ -57,6 +57,7 @@ public:
 
 #if WEBKIT_IMPLEMENTATION
     WebMediaStreamSource(const WTF::PassRefPtr<WebCore::MediaStreamSource>&);
+    WebMediaStreamSource& operator=(WebCore::MediaStreamSource*);
     operator WTF::PassRefPtr<WebCore::MediaStreamSource>() const;
     operator WebCore::MediaStreamSource*() const;
 #endif

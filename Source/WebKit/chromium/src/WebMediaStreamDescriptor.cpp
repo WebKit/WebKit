@@ -28,6 +28,7 @@
 
 #include "WebMediaStreamDescriptor.h"
 
+#include "MediaStreamComponent.h"
 #include "MediaStreamDescriptor.h"
 #include "MediaStreamSource.h"
 #include "WebMediaStreamSource.h"
@@ -51,6 +52,15 @@ void WebMediaStreamDescriptor::reset()
 WebString WebMediaStreamDescriptor::label() const
 {
     return m_private->label();
+}
+
+void WebMediaStreamDescriptor::sources(WebVector<WebMediaStreamSource>& webSources) const
+{
+    size_t numberOfSources = m_private->numberOfComponents();
+    WebVector<WebMediaStreamSource> result(numberOfSources);
+    for (size_t i = 0; i < numberOfSources; ++i)
+        result[i] =  m_private->component(i)->source();
+    webSources.swap(result);
 }
 
 WebMediaStreamDescriptor& WebMediaStreamDescriptor::operator=(const PassRefPtr<WebCore::MediaStreamDescriptor>& mediaStreamDescriptor)

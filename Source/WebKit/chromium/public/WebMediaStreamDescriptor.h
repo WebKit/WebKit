@@ -49,6 +49,7 @@ public:
     bool isNull() const { return m_private.isNull(); }
 
     WEBKIT_EXPORT WebString label() const;
+    WEBKIT_EXPORT void sources(WebVector<WebMediaStreamSource>&) const;
 
 #if WEBKIT_IMPLEMENTATION
     WebMediaStreamDescriptor(const WTF::PassRefPtr<WebCore::MediaStreamDescriptor>&);

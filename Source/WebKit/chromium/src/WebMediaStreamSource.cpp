@@ -41,6 +41,16 @@ WebMediaStreamSource::WebMediaStreamSource(const PassRefPtr<MediaStreamSource>& 
 {
 }
 
+WebMediaStreamSource& WebMediaStreamSource::operator=(WebCore::MediaStreamSource* mediaStreamSource)
+{
+    m_private.reset();
+    if (mediaStreamSource) {
+        mediaStreamSource->ref();
+        m_private = mediaStreamSource;
+    }
+    return *this;
+}
+
 void WebMediaStreamSource::reset()
 {
     m_private.reset();
