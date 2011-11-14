@@ -22,6 +22,14 @@
 
 #include <QApplication>
 
-typedef QApplication QGuiApplication;
+struct QGuiApplication : public QApplication
+{
+    // Style hints in Qt 5 contain stuff that just used to be in QApplication in Qt 4, hence
+    // this hack.
+    static QApplication* styleHints()
+    {
+        return qApp;
+    }
+};
 
 #endif

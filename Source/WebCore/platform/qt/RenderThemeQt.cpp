@@ -58,11 +58,14 @@
 #include "TimeRanges.h"
 #include "UserAgentStyleSheets.h"
 
-#include <QApplication>
+#include <QGuiApplication>
 #include <QColor>
 #include <QFile>
 #include <QFontMetrics>
 
+#if QT_VERSION >= 0x050000
+#include <QStyleHints>
+#endif
 
 namespace WebCore {
 
@@ -82,7 +85,7 @@ RenderThemeQt::RenderThemeQt(Page* page)
     : RenderTheme()
     , m_page(page)
 {
-    m_buttonFontFamily = QApplication::font().family();
+    m_buttonFontFamily = QGuiApplication::font().family();
 }
 
 bool RenderThemeQt::useMobileTheme()
@@ -204,35 +207,35 @@ void RenderThemeQt::adjustRepaintRect(const RenderObject* o, IntRect& rect)
 
 Color RenderThemeQt::platformActiveSelectionBackgroundColor() const
 {
-    QPalette pal = QApplication::palette();
+    QPalette pal = QGuiApplication::palette();
     setPaletteFromPageClientIfExists(pal);
     return pal.brush(QPalette::Active, QPalette::Highlight).color();
 }
 
 Color RenderThemeQt::platformInactiveSelectionBackgroundColor() const
 {
-    QPalette pal = QApplication::palette();
+    QPalette pal = QGuiApplication::palette();
     setPaletteFromPageClientIfExists(pal);
     return pal.brush(QPalette::Inactive, QPalette::Highlight).color();
 }
 
 Color RenderThemeQt::platformActiveSelectionForegroundColor() const
 {
-    QPalette pal = QApplication::palette();
+    QPalette pal = QGuiApplication::palette();
     setPaletteFromPageClientIfExists(pal);
     return pal.brush(QPalette::Active, QPalette::HighlightedText).color();
 }
 
 Color RenderThemeQt::platformInactiveSelectionForegroundColor() const
 {
-    QPalette pal = QApplication::palette();
+    QPalette pal = QGuiApplication::palette();
     setPaletteFromPageClientIfExists(pal);
     return pal.brush(QPalette::Inactive, QPalette::HighlightedText).color();
 }
 
 Color RenderThemeQt::platformFocusRingColor() const
 {
-    QPalette pal = QApplication::palette();
+    QPalette pal = QGuiApplication::palette();
     setPaletteFromPageClientIfExists(pal);
     return pal.brush(QPalette::Active, QPalette::Highlight).color();
 }
@@ -244,7 +247,7 @@ void RenderThemeQt::systemFont(int, FontDescription&) const
 
 Color RenderThemeQt::systemColor(int cssValueId) const
 {
-    QPalette pal = QApplication::palette();
+    QPalette pal = QGuiApplication::palette();
     setPaletteFromPageClientIfExists(pal);
     switch (cssValueId) {
     case CSSValueButtontext:
@@ -259,7 +262,7 @@ Color RenderThemeQt::systemColor(int cssValueId) const
 int RenderThemeQt::minimumMenuListSize(RenderStyle*) const
 {
     // FIXME: Later we need a way to query the UI process for the dpi
-    const QFontMetrics &fm = QApplication::fontMetrics();
+    const QFontMetrics fm(QGuiApplication::font());
     return fm.width(QLatin1Char('x'));
 }
 
@@ -585,7 +588,7 @@ QColor RenderThemeQt::getMediaControlForegroundColor(RenderObject* o) const
         fgColor = fgColor.lighter();
 
     if (!mediaElementCanPlay(o)) {
-        QPalette pal = QApplication::palette();
+        QPalette pal = QGuiApplication::palette();
         setPaletteFromPageClientIfExists(pal);
         fgColor = pal.brush(QPalette::Disabled, QPalette::Text).color();
     }
@@ -724,7 +727,7 @@ bool RenderThemeQt::paintMediaVolumeSliderTrack(RenderObject *o, const PaintInfo
     int height = b.height();
 
     // Get the scale color from the page client
-    QPalette pal = QApplication::palette();
+    QPalette pal = QGuiApplication::palette();
     setPaletteFromPageClientIfExists(pal);
     const QColor highlightText = pal.brush(QPalette::Active, QPalette::HighlightedText).color();
     const QColor scaleColor(highlightText.red(), highlightText.green(), highlightText.blue(), mediaControlsBaselineOpacity() * 255);
@@ -839,7 +842,7 @@ void RenderThemeQt::adjustSliderThumbSize(RenderStyle* style) const
 
 double RenderThemeQt::caretBlinkInterval() const
 {
-    return QApplication::cursorFlashTime() / 1000.0 / 2.0;
+    return static_cast<QGuiApplication*>(qApp)->styleHints()->cursorFlashTime() / 1000.0 / 2.0;
 }
 
 String RenderThemeQt::fileListNameForWidth(const Vector<String>& filenames, const Font& font, int width)

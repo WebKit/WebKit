@@ -1,3 +1,24 @@
+2011-11-14  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Replace use of QApplication with QGuiApplication.
+
+        Reviewed by Tor Arne Vestbø.
+
+        Replace use of QApplication by QGuiApplication where applicable.
+
+        * platform/qt/RenderThemeQt.cpp:
+        (WebCore::RenderThemeQt::RenderThemeQt):
+        (WebCore::RenderThemeQt::platformActiveSelectionBackgroundColor):
+        (WebCore::RenderThemeQt::platformInactiveSelectionBackgroundColor):
+        (WebCore::RenderThemeQt::platformActiveSelectionForegroundColor):
+        (WebCore::RenderThemeQt::platformInactiveSelectionForegroundColor):
+        (WebCore::RenderThemeQt::platformFocusRingColor):
+        (WebCore::RenderThemeQt::systemColor):
+        (WebCore::RenderThemeQt::minimumMenuListSize):
+        (WebCore::RenderThemeQt::getMediaControlForegroundColor):
+        (WebCore::RenderThemeQt::paintMediaVolumeSliderTrack):
+        (WebCore::RenderThemeQt::caretBlinkInterval):
+
 2011-11-14  Jaehoon Jeong  <jh4u.jeong@samsung.com>
 
         [CMAKE] Add the UseV8.cmake to WebCore.

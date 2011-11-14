@@ -1,3 +1,12 @@
+2011-11-14  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Replace use of QApplication with QGuiApplication.
+
+        Reviewed by Tor Arne Vestbø.
+
+        * wtf/qt/compat/qguiapplication.h:
+        (QGuiApplication::styleHints): Introduce styleHints wrapper hack.
+
 2011-11-14  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix make distcheck build.
