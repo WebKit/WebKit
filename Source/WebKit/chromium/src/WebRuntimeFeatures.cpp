@@ -360,19 +360,19 @@ bool WebRuntimeFeatures::isFullScreenAPIEnabled()
 #endif
 }
 
-void WebRuntimeFeatures::enableMouseLockAPI(bool enable)
+void WebRuntimeFeatures::enablePointerLock(bool enable)
 {
 #if ENABLE(POINTER_LOCK)
-    RuntimeEnabledFeatures::setWebkitMouseLockAPIEnabled(enable);
+    RuntimeEnabledFeatures::setWebkitPointerLockEnabled(enable);
 #else
     UNUSED_PARAM(enable);
 #endif
 }
 
-bool WebRuntimeFeatures::isMouseLockAPIEnabled()
+bool WebRuntimeFeatures::isPointerLockEnabled()
 {
 #if ENABLE(POINTER_LOCK)
-    return RuntimeEnabledFeatures::webkitMouseLockAPIEnabled();
+    return RuntimeEnabledFeatures::webkitPointerLockEnabled();
 #else
     return false;
 #endif

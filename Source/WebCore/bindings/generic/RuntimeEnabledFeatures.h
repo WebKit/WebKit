@@ -81,9 +81,9 @@ public:
 #endif
 
 #if ENABLE(POINTER_LOCK)
-    static bool webkitMouseLockAPIEnabled() { return isMouseLockAPIEnabled; }
-    static void setWebkitMouseLockAPIEnabled(bool isEnabled) { isMouseLockAPIEnabled = isEnabled; }
-    static bool webkitPointerEnabled() { return isMouseLockAPIEnabled; }
+    static bool webkitPointerLockEnabled() { return isPointerLockEnabled; }
+    static void setWebkitPointerLockEnabled(bool isEnabled) { isPointerLockEnabled = isEnabled; }
+    static bool webkitPointerEnabled() { return isPointerLockEnabled; }
 #endif
 
 #if ENABLE(VIDEO)
@@ -235,7 +235,7 @@ private:
 #endif
 
 #if ENABLE(POINTER_LOCK)
-    static bool isMouseLockAPIEnabled;
+    static bool isPointerLockEnabled;
 #endif
 
 #if ENABLE(MEDIA_SOURCE)

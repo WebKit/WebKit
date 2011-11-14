@@ -165,7 +165,7 @@ bool RuntimeEnabledFeatures::isFullScreenAPIEnabled = true;
 #endif
 
 #if ENABLE(POINTER_LOCK)
-bool RuntimeEnabledFeatures::isMouseLockAPIEnabled = false;
+bool RuntimeEnabledFeatures::isPointerLockEnabled = false;
 #endif
 
 #if ENABLE(MEDIA_SOURCE)

@@ -109,8 +109,8 @@ public:
     WEBKIT_EXPORT static void enableFullScreenAPI(bool);
     WEBKIT_EXPORT static bool isFullScreenAPIEnabled();
 
-    WEBKIT_EXPORT static void enableMouseLockAPI(bool);
-    WEBKIT_EXPORT static bool isMouseLockAPIEnabled();
+    WEBKIT_EXPORT static void enablePointerLock(bool);
+    WEBKIT_EXPORT static bool isPointerLockEnabled();
 
     WEBKIT_EXPORT static void enableMediaSource(bool);
     WEBKIT_EXPORT static bool isMediaSourceEnabled();

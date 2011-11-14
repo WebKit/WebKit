@@ -199,7 +199,7 @@ Settings::Settings(Page* page)
     , m_fullScreenAPIEnabled(false)
 #endif
 #if ENABLE(POINTER_LOCK)
-    , m_mouseLockAPIEnabled(false)
+    , m_pointerLockEnabled(false)
 #endif
     , m_asynchronousSpellCheckingEnabled(false)
 #if USE(UNIFIED_TEXT_CHECKING)

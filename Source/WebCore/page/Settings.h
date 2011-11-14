@@ -383,8 +383,8 @@ namespace WebCore {
 #endif
 
 #if ENABLE(POINTER_LOCK)
-        void setMouseLockEnabled(bool flag) { m_mouseLockAPIEnabled = flag; }
-        bool mouseLockEnabled() const  { return m_mouseLockAPIEnabled; }
+        void setPointerLockEnabled(bool flag) { m_pointerLockEnabled = flag; }
+        bool PointerLockEnabled() const  { return m_pointerLockEnabled; }
 #endif
 
 #if USE(AVFOUNDATION)
@@ -594,7 +594,7 @@ namespace WebCore {
         bool m_fullScreenAPIEnabled : 1;
 #endif
 #if ENABLE(POINTER_LOCK)
-        bool m_mouseLockAPIEnabled : 1;
+        bool m_pointerLockEnabled : 1;
 #endif
         bool m_asynchronousSpellCheckingEnabled: 1;
         bool m_unifiedTextCheckerEnabled: 1;
