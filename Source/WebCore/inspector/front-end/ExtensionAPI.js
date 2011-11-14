@@ -274,20 +274,25 @@ Panels.prototype = {
 /**
  * @constructor
  */
-function PanelImpl(id)
+function ExtensionViewImpl(id)
 {
     this._id = id;
-    this.onShown = new EventSink("panel-shown-" + id);
-    this.onHidden = new EventSink("panel-hidden-" + id);
+
+    function dispatchShowEvent(message)
+    {
+        var frameIndex = message.arguments[0];
+        this._fire(window.top.frames[frameIndex]);
+    }
+    this.onShown = new EventSink("view-shown-" + id, dispatchShowEvent);
+    this.onHidden = new EventSink("view-hidden-" + id);
 }
 
 /**
  * @constructor
- * @extends {PanelImpl}
  */
 function PanelWithSidebarImpl(id)
 {
-    PanelImpl.call(this, id);
+    this._id = id;
 }
 
 PanelWithSidebarImpl.prototype = {
@@ -308,7 +313,7 @@ PanelWithSidebarImpl.prototype = {
     }
 }
 
-PanelWithSidebarImpl.prototype.__proto__ = PanelImpl.prototype;
+PanelWithSidebarImpl.prototype.__proto__ = ExtensionViewImpl.prototype;
 
 /**
  * @constructor
@@ -323,20 +328,23 @@ function ElementsPanel()
 
 /**
  * @constructor
- * @extends {Panel}
+ * @extends {ExtensionViewImpl}
  */
-function ExtensionPanel(id)
+function ExtensionPanelImpl(id)
 {
-    Panel.call(this, id);
+    ExtensionViewImpl.call(this, id);
     this.onSearch = new EventSink("panel-search-" + id);
 }
 
+ExtensionPanelImpl.prototype.__proto__ = ExtensionViewImpl.prototype;
+
 /**
  * @constructor
+ * @extends {ExtensionViewImpl}
  */
 function ExtensionSidebarPaneImpl(id)
 {
-    this._id = id;
+    ExtensionViewImpl.call(this, id);
     this.onUpdated = new EventSink("sidebar-updated-" + id);
 }
 
@@ -698,8 +706,8 @@ function defineDeprecatedProperty(object, className, oldName, newName)
 var AuditCategory = declareInterfaceClass(AuditCategoryImpl);
 var AuditResult = declareInterfaceClass(AuditResultImpl);
 var EventSink = declareInterfaceClass(EventSinkImpl);
+var ExtensionPanel = declareInterfaceClass(ExtensionPanelImpl);
 var ExtensionSidebarPane = declareInterfaceClass(ExtensionSidebarPaneImpl);
-var Panel = declareInterfaceClass(PanelImpl);
 var PanelWithSidebar = declareInterfaceClass(PanelWithSidebarImpl);
 var Request = declareInterfaceClass(RequestImpl);
 var Resource = declareInterfaceClass(ResourceImpl);

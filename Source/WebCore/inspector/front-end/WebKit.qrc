@@ -63,7 +63,6 @@
     <file>HeapSnapshotWorker.js</file>
     <file>HeapSnapshotWorkerDispatcher.js</file>
     <file>HelpScreen.js</file>
-    <file>IFrameView.js</file>
     <file>ImageView.js</file>
     <file>InjectedFakeWorker.js</file>
     <file>inspector.js</file>

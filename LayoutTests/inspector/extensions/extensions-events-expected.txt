@@ -11,12 +11,14 @@ RUNNING TEST: extension_testOnRequestFinished
 onRequestFinished fired
 RUNNING TEST: extension_testOnSelectionChanged
 onSelectionChanged fired
-RUNNING TEST: extension_testPanelShowHide
-Got onHidden event for panel elements
-Got onShown event for panel extension
-Got onHidden event for panel extension
-Got onShown event for panel elements
 RUNNING TEST: extension_testTimelineEvents
 Got Layout event from timeline
+RUNNING TEST: extension_testViewShowHide
+Got onHidden event for sidebar
+Got onShown event for panel
+Panel shown, location: .../extension-panel.html
+Got onHidden event for panel
+Got onShown event for sidebar
+Sidebar shown, location: .../extension-sidebar.html
 All tests done.
 

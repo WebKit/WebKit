@@ -6347,7 +6347,6 @@
             'inspector/front-end/HeapSnapshotWorker.js',
             'inspector/front-end/HeapSnapshotWorkerDispatcher.js',
             'inspector/front-end/HelpScreen.js',
-            'inspector/front-end/IFrameView.js',
             'inspector/front-end/ImageView.js',
             'inspector/front-end/InspectorFrontendHostStub.js',
             'inspector/front-end/InspectorView.js',

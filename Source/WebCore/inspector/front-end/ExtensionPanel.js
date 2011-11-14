@@ -30,21 +30,68 @@
 
 /**
  * @constructor
+ * @extends {WebInspector.View}
+ * @param {number} id
+ * @param {Element} parent
+ * @param {string} src
+ * @param {string} className
+ */
+
+WebInspector.ExtensionView = function(id, parent, src, className)
+{
+    WebInspector.View.call(this);
+    this.element.className = "fill";
+
+    this._id = id;
+    this._iframe = document.createElement("iframe");
+    this._iframe.addEventListener("load", this._onLoad.bind(this), false);
+    this._iframe.src = src;
+    this._iframe.className = className;
+
+    this.element.appendChild(this._iframe);
+    this.show(parent);
+}
+
+WebInspector.ExtensionView.prototype = {
+    wasShown: function()
+    {
+        if (typeof this._frameIndex === "number")
+            WebInspector.extensionServer.notifyViewShown(this._id, this._frameIndex);
+    },
+
+    willHide: function()
+    {
+        if (typeof this._frameIndex === "number")
+            WebInspector.extensionServer.notifyViewHidden(this._id);
+    },
+
+    _onLoad: function()
+    {
+        this._frameIndex = Array.prototype.indexOf.call(window.frames, this._iframe.contentWindow);
+        if (this.isShowing())
+            WebInspector.extensionServer.notifyViewShown(this._id, this._frameIndex);
+    }
+}
+
+WebInspector.ExtensionView.prototype.__proto__ = WebInspector.View.prototype;
+
+/**
+ * @constructor
  * @extends {WebInspector.Panel}
  * @param {string} id
  * @param {string} label
  * @param {string} iconURL
  */
-WebInspector.ExtensionPanel = function(id, label, iconURL)
+WebInspector.ExtensionPanel = function(id, label, pageURL, iconURL)
 {
     WebInspector.Panel.call(this, id);
     this.setHideOnDetach();
-
     this._toolbarItemLabel = label;
     if (iconURL) {
         this._addStyleRule(".toolbar-item." + id + " .toolbar-icon", "background-image: url(" + iconURL + ");");
         this._addStyleRule(".toolbar-small .toolbar-item." + id + " .toolbar-icon", "background-position-x: -32px;");
     }
+    new WebInspector.ExtensionView(id, this.element, pageURL, "extension panel");
 }
 
 WebInspector.ExtensionPanel.prototype = {
@@ -118,7 +165,7 @@ WebInspector.ExtensionSidebarPane.prototype = {
     setPage: function(url)
     {
         this.bodyElement.removeChildren();
-        WebInspector.extensionServer.createClientIframe(this.bodyElement, url);
+        var view = new WebInspector.ExtensionView(this._id, this.bodyElement, url, "extension");
         // TODO: Consider doing this upon load event.
         WebInspector.extensionServer.notifyExtensionSidebarUpdated(this._id);
     },

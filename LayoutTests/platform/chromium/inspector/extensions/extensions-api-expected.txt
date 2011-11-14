@@ -23,14 +23,6 @@ RUNNING TEST: extension_testAPI
     }
     panels : {
         elements : {
-            onShown : {
-                addListener : <function>
-                removeListener : <function>
-            }
-            onHidden : {
-                addListener : <function>
-                removeListener : <function>
-            }
             createSidebarPane : <function>
             onSelectionChanged : {
                 addListener : <function>

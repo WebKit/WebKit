@@ -81,14 +81,14 @@ WebInspector.ExtensionServer.prototype = {
         this._postNotification("panel-search-" + panelId, action, searchString);
     },
 
-    notifyPanelShown: function(panelId)
+    notifyViewShown: function(identifier, frameIndex)
     {
-        this._postNotification("panel-shown-" + panelId);
+        this._postNotification("view-shown-" + identifier, frameIndex);
     },
 
-    notifyPanelHidden: function(panelId)
+    notifyViewHidden: function(identifier)
     {
-        this._postNotification("panel-hidden-" + panelId);
+        this._postNotification("view-hidden-" + identifier);
     },
 
     _inspectedURLChanged: function(event)
@@ -196,12 +196,12 @@ WebInspector.ExtensionServer.prototype = {
         if (id in this._clientObjects || id in WebInspector.panels)
             return this._status.E_EXISTS(id);
 
-        var panel = new WebInspector.ExtensionPanel(id, message.title, this._expandResourcePath(port._extensionOrigin, message.icon));
+        var page = this._expandResourcePath(port._extensionOrigin, message.page);
+        var icon = this._expandResourcePath(port._extensionOrigin, message.icon)
+        var panel = new WebInspector.ExtensionPanel(id, message.title, page, icon);
         this._clientObjects[id] = panel;
         WebInspector.panels[id] = panel;
         WebInspector.addPanel(panel);
-
-        this.createClientIframe(panel.element, this._expandResourcePath(port._extensionOrigin, message.page), true);
         return this._status.OK();
     },
 
@@ -219,12 +219,6 @@ WebInspector.ExtensionServer.prototype = {
         panel.sidebarElement.appendChild(sidebar.element);
 
         return this._status.OK();
-    },
-
-    createClientIframe: function(parent, url, isPanel)
-    {
-        var iframeView = new WebInspector.IFrameView(url, "extension" + (isPanel ? " panel" : ""));
-        iframeView.show(parent);
     },
 
     _onSetSidebarHeight: function(message)

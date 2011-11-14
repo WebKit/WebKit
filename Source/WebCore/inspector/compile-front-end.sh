@@ -71,7 +71,7 @@ java -jar ~/closure/compiler.jar --summary_detail_level 3 --compilation_level SI
         --js Source/WebCore/inspector/front-end/Resource.js \
         --js Source/WebCore/inspector/front-end/NetworkManager.js \
         --js Source/WebCore/inspector/front-end/UISourceCode.js \
-    --module jsmodule_ui:36:jsmodule_common \
+    --module jsmodule_ui:35:jsmodule_common \
         --js Source/WebCore/inspector/front-end/AdvancedSearchController.js \
         --js Source/WebCore/inspector/front-end/Checkbox.js \
         --js Source/WebCore/inspector/front-end/Color.js \
@@ -82,7 +82,6 @@ java -jar ~/closure/compiler.jar --summary_detail_level 3 --compilation_level SI
         --js Source/WebCore/inspector/front-end/Drawer.js \
         --js Source/WebCore/inspector/front-end/EmptyView.js \
         --js Source/WebCore/inspector/front-end/HelpScreen.js \
-        --js Source/WebCore/inspector/front-end/IFrameView.js \
         --js Source/WebCore/inspector/front-end/InspectorView.js \
         --js Source/WebCore/inspector/front-end/KeyboardShortcut.js \
         --js Source/WebCore/inspector/front-end/Panel.js \

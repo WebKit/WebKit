@@ -63,26 +63,30 @@ function extension_testOnNavigated(nextTest)
     webInspector.inspectedWindow.eval("location.href = location.href + '?navigated'");
 }
 
-function extension_testPanelShowHide(nextTest)
+function extension_testViewShowHide(nextTest)
 {
     var listenersToCleanup = [];
-    function onPanelEvent(type, panelId)
+    var sidebar;
+
+    function onViewEvent(type, viewName, viewWindow)
     {
-        output("Got " + type + " event for panel " + panelId);
+        output("Got " + type + " event for " + viewName);
         if (type !== "onShown")
             return;
-        if (panelId === "extension") {
-            addListener(webInspector.panels.elements, "elements", "onShown");
+        if (viewName === "panel") {
+            output("Panel shown, location: " + trimURL(viewWindow.location.href));
+            addListener(sidebar, "sidebar", "onShown");
             extension_showPanel("elements");
-        } else if (panelId === "elements") {
+        } else if (viewName === "sidebar") {
+            output("Sidebar shown, location: " + trimURL(viewWindow.location.href));
             cleanupListeners();
             nextTest();
         }
     }
-    function addListener(panel, panelId, type)
+    function addListener(view, viewName, type)
     {
-        var listener = bind(onPanelEvent, null, type, panelId);
-        var event = panel[type];
+        var listener = bind(onViewEvent, null, type, viewName);
+        var event = view[type];
         listenersToCleanup.push({ event: event, listener: listener });
         event.addListener(listener);
     }
@@ -93,13 +97,20 @@ function extension_testPanelShowHide(nextTest)
     }
     function onPanelCreated(panel)
     {
-        addListener(panel, "extension", "onShown");
-        addListener(panel, "extension", "onHidden");
-        addListener(webInspector.panels.elements, "elements", "onHidden");
+        addListener(panel, "panel", "onShown");
+        addListener(panel, "panel", "onHidden");
+        addListener(sidebar, "sidebar", "onHidden");
+        sidebar.setPage(basePath + "extension-sidebar.html");
         extension_showPanel("extension");
     }
     extension_showPanel("elements");
-    webInspector.panels.create("Test Panel", "extension-panel.png", "extension-panel.html", onPanelCreated);
+    var basePath = location.pathname.replace(/\/[^/]*$/, "/");
+    function onSidebarCreated(sidebarPane)
+    {
+        sidebar = sidebarPane;
+        webInspector.panels.create("Test Panel", basePath + "extension-panel.png", basePath + "extension-panel.html", onPanelCreated);
+    }
+    webInspector.panels.elements.createSidebarPane("Test Sidebar", onSidebarCreated);
 }
 
 function extension_testTimelineEvents(nextTest)

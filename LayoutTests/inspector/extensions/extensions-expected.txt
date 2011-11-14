@@ -22,6 +22,14 @@ Extension panel size correct
 RUNNING TEST: extension_testSidebarPage
 Sidebar created
 {
+    onShown : {
+        addListener : <function>
+        removeListener : <function>
+    }
+    onHidden : {
+        addListener : <function>
+        removeListener : <function>
+    }
     onUpdated : {
         addListener : <function>
         removeListener : <function>
@@ -37,6 +45,14 @@ RUNNING TEST: extension_testSidebarWatchObject
 Watch sidebar created, callback arguments dump follows:
 {
     0 : {
+        onShown : {
+            addListener : <function>
+            removeListener : <function>
+        }
+        onHidden : {
+            addListener : <function>
+            removeListener : <function>
+        }
         onUpdated : {
             addListener : <function>
             removeListener : <function>

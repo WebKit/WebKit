@@ -1,3 +1,42 @@
+2011-11-14  Andrey Kosyakov  <caseq@chromium.org>
+
+        Web Inspector: expose iframe window to the onShown event handler of panels & sidebars
+        https://bugs.webkit.org/show_bug.cgi?id=72268
+
+        Reviewed by Pavel Feldman.
+
+        - replace IFrameView with ExtensionView;
+        - inherit both ExtensionPanel and ExtensionSidebarPane from ExtensionView in the API;
+        - move Panel.{onShow|onHide} to ExtensionView, effectively disabling show/hide notifications for non-extension panels and enabling it for sidebar panes;
+        - expose iframe's window object in the onShow event handler.
+
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/compile-front-end.sh:
+        * inspector/front-end/ExtensionAPI.js:
+        (injectedExtensionAPI.ExtensionViewImpl.dispatchShowEvent):
+        (injectedExtensionAPI):
+        (injectedExtensionAPI.PanelWithSidebarImpl):
+        (injectedExtensionAPI.ExtensionPanelImpl):
+        (injectedExtensionAPI.ExtensionSidebarPaneImpl):
+        * inspector/front-end/ExtensionPanel.js:
+        (WebInspector.ExtensionView):
+        (WebInspector.ExtensionView.prototype.wasShown):
+        (WebInspector.ExtensionView.prototype.willHide):
+        (WebInspector.ExtensionView.prototype._onLoad):
+        (WebInspector.ExtensionPanel):
+        (WebInspector.ExtensionSidebarPane.prototype.setPage):
+        * inspector/front-end/ExtensionServer.js:
+        (WebInspector.ExtensionServer.prototype.notifyViewShown):
+        (WebInspector.ExtensionServer.prototype.notifyViewHidden):
+        (WebInspector.ExtensionServer.prototype._onCreatePanel):
+        * inspector/front-end/IFrameView.js: Removed.
+        * inspector/front-end/Panel.js:
+        (WebInspector.Panel.prototype.wasShown):
+        (WebInspector.Panel.prototype.willHide):
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/inspector.html:
+
 2011-11-14  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: add 'Show function definition' context menu item for function values
