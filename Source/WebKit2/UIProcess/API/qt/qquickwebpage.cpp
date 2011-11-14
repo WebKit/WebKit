@@ -210,16 +210,25 @@ void QQuickWebPagePrivate::paintToCurrentGLContext()
     float opacity = computeEffectiveOpacity(q);
     QRectF clipRect = q->parentItem()->mapRectToScene(q->parentItem()->boundingRect());
 
+    if (!clipRect.isValid())
+        return;
+
+    // Make sure that no GL error code stays from previous QT operations.
+    glGetError();
+
     glEnable(GL_SCISSOR_TEST);
+    ASSERT(!glGetError());
     const int left = clipRect.left();
     const int width = clipRect.width();
     const int bottom = q->canvas()->height() - (clipRect.bottom() + 1);
     const int height = clipRect.height();
 
     glScissor(left, bottom, width, height);
+    ASSERT(!glGetError());
 
     pageProxy->renderToCurrentGLContext(transform, opacity);
     glDisable(GL_SCISSOR_TEST);
+    ASSERT(!glGetError());
 }
 
 void QQuickWebPagePrivate::_q_onAfterSceneRender()

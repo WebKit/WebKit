@@ -1,3 +1,17 @@
+2011-11-14  Viatcheslav Ostapenko  <ostapenko.viatcheslav@nokia.com>
+
+        Intermittent asserts in TextureMapperGL::bindSurface on MiniBrowser startup
+        https://bugs.webkit.org/show_bug.cgi?id=72299
+
+        Reviewed by Noam Rosenthal.
+
+        Added check that clipping rect is valid.
+        Clear GL error that might remain from QT GL operations.
+        Added GL error assert for scissor test operations.
+
+        * UIProcess/API/qt/qquickwebpage.cpp:
+        (QQuickWebPagePrivate::paintToCurrentGLContext):
+
 2011-11-14  Anders Carlsson  <andersca@apple.com>
 
         Only send progress notifications for the main frame
