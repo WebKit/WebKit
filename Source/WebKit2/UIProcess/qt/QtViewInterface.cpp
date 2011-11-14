@@ -42,10 +42,6 @@ QtViewInterface::QtViewInterface(QQuickWebView* viewportView, QQuickWebPage* pag
     Q_ASSERT(m_pageView);
 }
 
-void QtViewInterface::didFindZoomableArea(const QPoint&, const QRect&)
-{
-}
-
 QtSGUpdateQueue* QtViewInterface::sceneGraphUpdateQueue() const
 {
     return &m_pageView->d->sgUpdateQueue;

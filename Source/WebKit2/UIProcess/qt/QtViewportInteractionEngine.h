@@ -66,7 +66,9 @@ public:
 
     void reset();
     void setConstraints(const Constraints&);
+
     void setItemRectVisible(const QRectF&);
+    void animateItemRectVisible(const QRectF&);
 
     void pagePositionRequest(const QPoint& pos);
 
@@ -86,6 +88,8 @@ public:
     void pinchGestureStarted(const QPointF& pinchCenterInContentCoordinates);
     void pinchGestureRequestUpdate(const QPointF& pinchCenterInContentCoordinates, qreal totalScaleFactor);
     void pinchGestureEnded();
+
+    void zoomToAreaGestureEnded(const QPointF& touchPoint, const QRectF& endArea);
 
 Q_SIGNALS:
     void viewportUpdateRequested();

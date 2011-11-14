@@ -548,7 +548,9 @@ WKPageRef QtWebPageProxy::pageRef() const
 
 void QtWebPageProxy::didFindZoomableArea(const IntPoint& target, const IntRect& area)
 {
-    m_viewInterface->didFindZoomableArea(QPoint(target), QRect(area));
+    // FIXME: As the find method might not respond immediately during load etc,
+    // we should ignore all but the latest request.
+    m_interactionEngine->zoomToAreaGestureEnded(QPointF(target), QRectF(area));
 }
 
 void QtWebPageProxy::didReceiveMessageFromNavigatorQtObject(const String& message)

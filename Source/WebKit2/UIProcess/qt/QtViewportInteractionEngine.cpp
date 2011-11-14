@@ -143,6 +143,21 @@ void QtViewportInteractionEngine::setItemRectVisible(const QRectF& itemRect)
     m_content->setPos(- itemRect.topLeft() * itemScale);
 }
 
+void QtViewportInteractionEngine::animateItemRectVisible(const QRectF& itemRect)
+{
+    QRectF currentItemRectVisible = m_content->mapRectFromItem(m_viewport, m_viewport->boundingRect());
+    if (itemRect == currentItemRectVisible)
+        return;
+
+    m_scaleAnimation->setDuration(kScaleAnimationDurationMillis);
+    m_scaleAnimation->setEasingCurve(QEasingCurve::OutCubic);
+
+    m_scaleAnimation->setStartValue(currentItemRectVisible);
+    m_scaleAnimation->setEndValue(itemRect);
+
+    m_scaleAnimation->start();
+}
+
 void QtViewportInteractionEngine::scaleAnimationStateChanged(QAbstractAnimation::State newState, QAbstractAnimation::State /*oldState*/)
 {
     switch (newState) {
@@ -227,6 +242,42 @@ QRectF QtViewportInteractionEngine::computePosRangeForItemAtScale(qreal itemScal
     return QRectF(QPointF(0, 0), QSizeF(horizontalRange, verticalRange));
 }
 
+void QtViewportInteractionEngine::zoomToAreaGestureEnded(const QPointF& touchPoint, const QRectF& targetArea)
+{
+    if (!targetArea.isValid())
+        return;
+
+    if (scrollAnimationActive() || scaleAnimationActive())
+        return;
+
+    const int margin = 10; // We want at least a little bit or margin.
+    QRectF endArea = targetArea.adjusted(-margin, -margin, margin, margin);
+    endArea.setX(endArea.x() * m_constraints.devicePixelRatio);
+    endArea.setY(endArea.y() * m_constraints.devicePixelRatio);
+    endArea.setWidth(endArea.width() * m_constraints.devicePixelRatio);
+    endArea.setHeight(endArea.height() * m_constraints.devicePixelRatio);
+
+    const QRectF viewportRect = m_viewport->boundingRect();
+
+    qreal targetCSSScale = cssScaleFromItem(viewportRect.size().width() / endArea.size().width());
+    qreal endItemScale = itemScaleFromCSS(innerBoundedCSSScale(qMin(targetCSSScale, qreal(2.5))));
+
+    // We want to end up with the target area filling the whole width of the viewport (if possible),
+    // and centralized vertically where the user requested zoom. Thus our hotspot is the center of
+    // the targetArea x-wise and the requested zoom position, y-wise.
+    const QPointF hotspot = QPointF(endArea.center().x(), touchPoint.y() * m_constraints.devicePixelRatio);
+    const QPointF viewportHotspot = viewportRect.center();
+
+    QPointF endPosition = hotspot * endItemScale - viewportHotspot;
+
+    QRectF endPosRange = computePosRangeForItemAtScale(endItemScale);
+    endPosition = boundPosition(endPosRange.topLeft(), endPosition, endPosRange.bottomRight());
+
+    QRectF endVisibleContentRect(endPosition / endItemScale, viewportRect.size() / endItemScale);
+
+    animateItemRectVisible(endVisibleContentRect);
+}
+
 void QtViewportInteractionEngine::ensureContentWithinViewportBoundary()
 {
     if (scrollAnimationActive() || scaleAnimationActive())
@@ -248,20 +299,12 @@ void QtViewportInteractionEngine::ensureContentWithinViewportBoundary()
     QRectF endPosRange = computePosRangeForItemAtScale(endItemScale);
     endPosition = boundPosition(endPosRange.topLeft(), endPosition, endPosRange.bottomRight());
 
-    QRectF startVisibleContentRect = m_content->mapRectFromItem(m_viewport, viewportRect);
     QRectF endVisibleContentRect(endPosition / endItemScale, viewportRect.size() / endItemScale);
 
-    if (endVisibleContentRect == startVisibleContentRect)
-        return;
-
-    if (userHasScaledContent) {
-        m_scaleAnimation->setDuration(kScaleAnimationDurationMillis);
-        m_scaleAnimation->setEasingCurve(QEasingCurve::OutCubic);
-        m_scaleAnimation->setStartValue(startVisibleContentRect);
-        m_scaleAnimation->setEndValue(endVisibleContentRect);
-        m_scaleAnimation->start();
-    } else
+    if (!userHasScaledContent)
         setItemRectVisible(endVisibleContentRect);
+    else
+        animateItemRectVisible(endVisibleContentRect);
 }
 
 void QtViewportInteractionEngine::reset()

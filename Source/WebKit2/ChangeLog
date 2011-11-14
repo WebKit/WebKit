@@ -1,3 +1,20 @@
+2011-11-10  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        [Qt] the QQuickWebView should support double-tap to zoom
+        https://bugs.webkit.org/show_bug.cgi?id=72030
+
+        Reviewed by Andreas Kling.
+
+        * UIProcess/qt/QtViewInterface.cpp:
+        * UIProcess/qt/QtViewInterface.h:
+        * UIProcess/qt/QtViewportInteractionEngine.cpp:
+        (WebKit::QtViewportInteractionEngine::animateItemRectVisible):
+        (WebKit::QtViewportInteractionEngine::zoomToAreaGestureEnded):
+        (WebKit::QtViewportInteractionEngine::ensureContentWithinViewportBoundary):
+        * UIProcess/qt/QtViewportInteractionEngine.h:
+        * UIProcess/qt/QtWebPageProxy.cpp:
+        (QtWebPageProxy::didFindZoomableArea):
+
 2011-11-14  Zalan Bujtas  <zbujtas@gmail.com>
 
         Build breaks with --no-javascript-debugger --no-inspector
