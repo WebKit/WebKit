@@ -35,6 +35,7 @@ namespace WebCore {
 
 class SecurityOrigin;
 class ContentSecurityPolicy;
+class KURL;
 
 enum SandboxFlag {
     SandboxNone = 0,
@@ -55,6 +56,8 @@ public:
     SecurityOrigin* securityOrigin() const { return m_securityOrigin.get(); }
     SandboxFlags sandboxFlags() const { return m_sandboxFlags; }
     ContentSecurityPolicy* contentSecurityPolicy() { return m_contentSecurityPolicy.get(); }
+
+    bool isSecureTransitionTo(const KURL&) const;
 
     void enforceSandboxFlags(SandboxFlags mask) { m_sandboxFlags |= mask; }
     bool isSandboxed(SandboxFlags mask) const { return m_sandboxFlags & mask; }

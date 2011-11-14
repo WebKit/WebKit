@@ -121,8 +121,6 @@ public:
     // origins.
     bool canAccessSessionStorage() const { return !isUnique(); }
 
-    bool isSecureTransitionTo(const KURL&) const;
-
     // The local SecurityOrigin is the most privileged SecurityOrigin.
     // The local SecurityOrigin can script any document, navigate to local
     // resources, and can set arbitrary headers on XMLHttpRequests.

@@ -52,6 +52,16 @@ void SecurityContext::setContentSecurityPolicy(PassRefPtr<ContentSecurityPolicy>
     m_contentSecurityPolicy = contentSecurityPolicy;
 }
 
+bool SecurityContext::isSecureTransitionTo(const KURL& url) const
+{
+    // This origin represents a new window created by the application.
+    if (securityOrigin()->isEmpty())
+        return true;
+
+    RefPtr<SecurityOrigin> other = SecurityOrigin::create(url);
+    return securityOrigin()->canAccess(other.get());
+}
+
 SandboxFlags SecurityContext::parseSandboxPolicy(const String& policy)
 {
     // http://www.w3.org/TR/html5/the-iframe-element.html#attr-iframe-sandbox

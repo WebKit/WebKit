@@ -124,7 +124,7 @@ void DocumentWriter::begin(const KURL& urlReference, bool dispatch, Document* ow
 
     // FIXME: Do we need to consult the content security policy here about blocked plug-ins?
 
-    bool resetScripting = !(m_frame->loader()->stateMachine()->isDisplayingInitialEmptyDocument() && m_frame->document()->securityOrigin()->isSecureTransitionTo(url));
+    bool resetScripting = !(m_frame->loader()->stateMachine()->isDisplayingInitialEmptyDocument() && m_frame->document()->isSecureTransitionTo(url));
     m_frame->loader()->clear(resetScripting, resetScripting);
     clear();
     if (resetScripting)

@@ -1,3 +1,24 @@
+2011-11-13  Adam Barth  <abarth@webkit.org>
+
+        Move isSecureTransitionTo from SecurityOrigin to SecurityContext
+        https://bugs.webkit.org/show_bug.cgi?id=72241
+
+        Reviewed by Eric Seidel.
+
+        This patch is a step towards breaking the patch for
+        https://bugs.webkit.org/show_bug.cgi?id=71745 up into tiny,
+        digestible pieces.
+
+        * dom/SecurityContext.cpp:
+        (WebCore::SecurityContext::isSecureTransitionTo):
+        * dom/SecurityContext.h:
+        * loader/DocumentWriter.cpp:
+        (WebCore::DocumentWriter::begin):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::stopLoading):
+        * page/SecurityOrigin.cpp:
+        * page/SecurityOrigin.h:
+
 2011-11-13  Nat Duca  <nduca@chromium.org>
 
         [chromium] LayerRendererChromium::initialize should fail when GaphicsContext3D::makeCurrent fails

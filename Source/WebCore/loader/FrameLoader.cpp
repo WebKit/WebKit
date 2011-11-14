@@ -394,7 +394,7 @@ void FrameLoader::stopLoading(UnloadEventPolicy unloadEventPolicy)
         if (m_frame->document() && !m_frame->document()->inPageCache()) {
             // Don't remove event listeners from a transitional empty document (see bug 28716 for more information).
             bool keepEventListeners = m_stateMachine.isDisplayingInitialEmptyDocument() && m_provisionalDocumentLoader
-                && m_frame->document()->securityOrigin()->isSecureTransitionTo(m_provisionalDocumentLoader->url());
+                && m_frame->document()->isSecureTransitionTo(m_provisionalDocumentLoader->url());
 
             if (!keepEventListeners)
                 m_frame->document()->removeAllEventListeners();

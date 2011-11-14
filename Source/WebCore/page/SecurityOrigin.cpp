@@ -345,16 +345,6 @@ bool SecurityOrigin::isLocal() const
     return SchemeRegistry::shouldTreatURLSchemeAsLocal(m_protocol);
 }
 
-bool SecurityOrigin::isSecureTransitionTo(const KURL& url) const
-{
-    // This origin represents a new window created by the application.
-    if (isEmpty())
-        return true;
-
-    RefPtr<SecurityOrigin> other = SecurityOrigin::create(url);
-    return canAccess(other.get());
-}
-
 String SecurityOrigin::toString() const
 {
     if (isUnique())
