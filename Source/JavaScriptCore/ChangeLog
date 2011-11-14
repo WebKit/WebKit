@@ -1,3 +1,16 @@
+2011-11-14  Patrick Gansterer  <paroga@webkit.org>
+
+        [WIN] Remove dependency on pthread from FastMalloc
+        https://bugs.webkit.org/show_bug.cgi?id=72098
+
+        Reviewed by Adam Roben.
+
+        All pthread calls are already ported to native Windows calls.
+        Use the native version for all OS(WINDOWS) to remove the
+        runtime dependency on the pthread dll.
+
+        * wtf/FastMalloc.cpp:
+
 2011-11-14  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Replace use of QApplication with QGuiApplication.

@@ -79,11 +79,11 @@
 
 #include "Assertions.h"
 #include <limits>
-#if OS(WINDOWS) && PLATFORM(CHROMIUM) || OS(WINCE) && PLATFORM(WIN)
+#if OS(WINDOWS)
 #include <windows.h>
 #else
 #include <pthread.h>
-#endif // OS(WINDOWS) && PLATFORM(CHROMIUM) || OS(WINCE) && PLATFORM(WIN)
+#endif
 #include <wtf/StdLibExtras.h>
 #include <string.h>
 
@@ -109,7 +109,7 @@
 #ifndef NDEBUG
 namespace WTF {
 
-#if OS(WINDOWS) && PLATFORM(CHROMIUM) || OS(WINCE) && PLATFORM(WIN)
+#if OS(WINDOWS)
 
 // TLS_OUT_OF_INDEXES is not defined on WinCE.
 #ifndef TLS_OUT_OF_INDEXES
@@ -144,7 +144,7 @@ void fastMallocAllow()
     TlsSetValue(isForibiddenTlsIndex, kTlsAllowValue);
 }
 
-#else // !OS(WINDOWS) || !PLATFORM(CHROMIUM)
+#else // !OS(WINDOWS)
 
 static pthread_key_t isForbiddenKey;
 static pthread_once_t isForbiddenKeyOnce = PTHREAD_ONCE_INIT;
@@ -172,7 +172,7 @@ void fastMallocAllow()
     pthread_once(&isForbiddenKeyOnce, initializeIsForbiddenKey);
     pthread_setspecific(isForbiddenKey, 0);
 }
-#endif // OS(WINDOWS) && PLATFORM(CHROMIUM) || OS(WINCE) && PLATFORM(WIN)
+#endif // OS(WINDOWS)
 
 } // namespace WTF
 #endif // NDEBUG
