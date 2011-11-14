@@ -44,7 +44,10 @@ PeerConnectionHandlerInternal::PeerConnectionHandlerInternal(PeerConnectionHandl
 {
     ASSERT(m_client);
     m_webHandler = adoptPtr(WebKit::webKitPlatformSupport()->createPeerConnectionHandler(this));
-    m_webHandler->initialize(serverConfiguration, securityOrigin);
+    // FIXME: When there is some error reporting avaliable in the PeerConnection object report
+    // if we didn't get a WebPeerConnectionHandler instance.
+    if (m_webHandler)
+        m_webHandler->initialize(serverConfiguration, securityOrigin);
 }
 
 PeerConnectionHandlerInternal::~PeerConnectionHandlerInternal()
@@ -53,57 +56,68 @@ PeerConnectionHandlerInternal::~PeerConnectionHandlerInternal()
 
 void PeerConnectionHandlerInternal::produceInitialOffer(const MediaStreamDescriptorVector& pendingAddStreams)
 {
-    m_webHandler->produceInitialOffer(pendingAddStreams);
+    if (m_webHandler)
+        m_webHandler->produceInitialOffer(pendingAddStreams);
 }
 
 void PeerConnectionHandlerInternal::handleInitialOffer(const String& sdp)
 {
-    m_webHandler->handleInitialOffer(sdp);
+    if (m_webHandler)
+        m_webHandler->handleInitialOffer(sdp);
 }
 
 void PeerConnectionHandlerInternal::processSDP(const String& sdp)
 {
-    m_webHandler->processSDP(sdp);
+    if (m_webHandler)
+        m_webHandler->processSDP(sdp);
 }
 
 void PeerConnectionHandlerInternal::processPendingStreams(const MediaStreamDescriptorVector& pendingAddStreams, const MediaStreamDescriptorVector& pendingRemoveStreams)
 {
-    m_webHandler->processPendingStreams(pendingAddStreams, pendingRemoveStreams);
+    if (m_webHandler)
+        m_webHandler->processPendingStreams(pendingAddStreams, pendingRemoveStreams);
 }
 
 void PeerConnectionHandlerInternal::sendDataStreamMessage(const char* data, size_t length)
 {
-    m_webHandler->sendDataStreamMessage(data, length);
+    if (m_webHandler)
+        m_webHandler->sendDataStreamMessage(data, length);
 }
 
 void PeerConnectionHandlerInternal::stop()
 {
-    m_webHandler->stop();
+    if (m_webHandler)
+        m_webHandler->stop();
 }
 
 void PeerConnectionHandlerInternal::didCompleteICEProcessing()
 {
-    m_client->didCompleteICEProcessing();
+    if (m_webHandler)
+        m_client->didCompleteICEProcessing();
 }
 
 void PeerConnectionHandlerInternal::didGenerateSDP(const WebKit::WebString& sdp)
 {
-    m_client->didGenerateSDP(sdp);
+    if (m_webHandler)
+        m_client->didGenerateSDP(sdp);
 }
 
 void PeerConnectionHandlerInternal::didReceiveDataStreamMessage(const char* data, size_t length)
 {
-    m_client->didReceiveDataStreamMessage(data, length);
+    if (m_webHandler)
+        m_client->didReceiveDataStreamMessage(data, length);
 }
 
 void PeerConnectionHandlerInternal::didAddRemoteStream(const WebKit::WebMediaStreamDescriptor& webMediaStreamDescriptor)
 {
-    m_client->didAddRemoteStream(webMediaStreamDescriptor);
+    if (m_webHandler)
+        m_client->didAddRemoteStream(webMediaStreamDescriptor);
 }
 
 void PeerConnectionHandlerInternal::didRemoveRemoteStream(const WebKit::WebMediaStreamDescriptor& webMediaStreamDescriptor)
 {
-    m_client->didRemoveRemoteStream(webMediaStreamDescriptor);
+    if (m_webHandler)
+        m_client->didRemoveRemoteStream(webMediaStreamDescriptor);
 }
 
 } // namespace WebCore

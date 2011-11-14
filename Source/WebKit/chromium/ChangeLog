@@ -1,3 +1,28 @@
+2011-11-14  Tommy Widenflycht  <tommyw@google.com>
+
+        [chromium] MediaStream API: Allow for null WebPeerConnectionHandler
+        https://bugs.webkit.org/show_bug.cgi?id=72114
+
+        Fixing crash if WebKitPlatformSupport returns a null WebPeerConnectionHandler
+        to PeerConnectionHandlerInternal.
+
+        Reviewed by Adam Barth.
+
+        * bridge/PeerConnectionHandlerInternal.cpp:
+        (WebCore::PeerConnectionHandlerInternal::PeerConnectionHandlerInternal):
+        (WebCore::PeerConnectionHandlerInternal::produceInitialOffer):
+        (WebCore::PeerConnectionHandlerInternal::handleInitialOffer):
+        (WebCore::PeerConnectionHandlerInternal::processSDP):
+        (WebCore::PeerConnectionHandlerInternal::processPendingStreams):
+        (WebCore::PeerConnectionHandlerInternal::sendDataStreamMessage):
+        (WebCore::PeerConnectionHandlerInternal::stop):
+        (WebCore::PeerConnectionHandlerInternal::didCompleteICEProcessing):
+        (WebCore::PeerConnectionHandlerInternal::didGenerateSDP):
+        (WebCore::PeerConnectionHandlerInternal::didReceiveDataStreamMessage):
+        (WebCore::PeerConnectionHandlerInternal::didAddRemoteStream):
+        (WebCore::PeerConnectionHandlerInternal::didRemoveRemoteStream):
+        * public/WebKitPlatformSupport.h:
+
 2011-11-14  Jonathan Backer  <backer@chromium.org>
 
         [chromium] Plumb through partial swap

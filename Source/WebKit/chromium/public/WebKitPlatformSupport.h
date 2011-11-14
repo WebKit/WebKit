@@ -325,6 +325,7 @@ public:
 
     // WebRTC ----------------------------------------------------------
 
+    // May return null if WebRTC functionality is not avaliable or out of resources.
     virtual WebPeerConnectionHandler* createPeerConnectionHandler(WebPeerConnectionHandlerClient*) { return 0; }
 
 protected:
