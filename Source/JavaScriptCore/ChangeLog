@@ -1,3 +1,10 @@
+2011-11-14  Geoffrey Garen  <ggaren@apple.com>
+
+        32-bit build fix: Removed unused declaration.
+
+        * dfg/DFGJITCodeGenerator32_64.cpp:
+        (JSC::DFG::JITCodeGenerator::emitCall):
+
 2011-11-12  Geoffrey Garen  <ggaren@apple.com>
 
         Standardized the JS calling convention

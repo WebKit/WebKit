@@ -1269,7 +1269,6 @@ void JITCodeGenerator::nonSpeculativeNonPeepholeStrictEq(Node& node, bool invert
 void JITCodeGenerator::emitCall(Node& node)
 {
     P_DFGOperation_E slowCallFunction;
-    bool isCall;
 
     if (node.op == Call) {
         slowCallFunction = operationLinkCall;
