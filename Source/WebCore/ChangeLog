@@ -1,3 +1,18 @@
+2011-11-14  Adam Barth  <abarth@webkit.org>
+
+        SecurityOrigin inheritance should depend on document URL, not on "emptiness" of the SecurityOrigin
+        https://bugs.webkit.org/show_bug.cgi?id=72283
+
+        Reviewed by Sam Weinig.
+
+        This change aligns our implementation more closely with the spec.  I
+        don't think this change has an observable effects, but it moves us
+        closer to removing the concept of an empty security origin.
+
+        * dom/Document.cpp:
+        (WebCore::shouldInheritSecurityOriginFromOwner):
+        (WebCore::Document::initSecurityContext):
+
 2011-11-14  Erik Arvidsson  <arv@chromium.org>
 
         Remove getParameter from HTMLAnchorElement and Location

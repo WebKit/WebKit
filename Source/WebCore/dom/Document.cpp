@@ -286,6 +286,19 @@ static inline bool isValidNamePart(UChar32 c)
     return true;
 }
 
+static bool shouldInheritSecurityOriginFromOwner(const KURL& url)
+{
+    // http://www.whatwg.org/specs/web-apps/current-work/#origin-0
+    //
+    // If a Document has the address "about:blank"
+    //     The origin of the Document is the origin it was assigned when its browsing context was created.
+    //
+    // Note: We generalize this to all "about" URLs and invald URLs because we
+    // treat all of these URLs as about:blank.
+    //
+    return !url.isValid() || url.protocolIs("about");
+}
+
 static Widget* widgetForNode(Node* focusedNode)
 {
     if (!focusedNode)
@@ -4442,7 +4455,7 @@ void Document::initSecurityContext()
         }
     }
 
-    if (!securityOrigin()->isEmpty())
+    if (!shouldInheritSecurityOriginFromOwner(m_url))
         return;
 
     // If we do not obtain a meaningful origin from the URL, then we try to
