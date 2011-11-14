@@ -59,7 +59,6 @@
 #include "WebGLContextEvent.h"
 #include "WebGLDebugRendererInfo.h"
 #include "WebGLDebugShaders.h"
-#include "WebGLExperimentalCompressedTextures.h"
 #include "WebGLFramebuffer.h"
 #include "WebGLProgram.h"
 #include "WebGLRenderbuffer.h"
@@ -2126,11 +2125,6 @@ WebGLExtension* WebGLRenderingContext::getExtension(const String& name)
         }
         return m_oesVertexArrayObject.get();
     }
-    if (equalIgnoringCase(name, "WEBGL_EXPERIMENTAL_compressed_textures")) {
-        if (!m_webglExperimentalCompressedTextures)
-            m_webglExperimentalCompressedTextures = WebGLExperimentalCompressedTextures::create(this);
-        return m_webglExperimentalCompressedTextures.get();
-    }
     if (equalIgnoringCase(name, "WEBKIT_lose_context")) {
         if (!m_webkitLoseContext)
             m_webkitLoseContext = WebKitLoseContext::create(this);
@@ -2247,8 +2241,6 @@ WebGLGetInfo WebGLRenderingContext::getParameter(GC3Denum pname, ExceptionCode& 
     case GraphicsContext3D::COLOR_WRITEMASK:
         return getBooleanArrayParameter(pname);
     case GraphicsContext3D::COMPRESSED_TEXTURE_FORMATS:
-        if (m_webglExperimentalCompressedTextures)
-            return m_webglExperimentalCompressedTextures->getCompressedTextureFormats();
         // Defined as null in the spec
         return WebGLGetInfo();
     case GraphicsContext3D::CULL_FACE:
@@ -2579,8 +2571,6 @@ Vector<String> WebGLRenderingContext::getSupportedExtensions()
         result.append("OES_standard_derivatives");
     if (m_context->getExtensions()->supports("GL_OES_vertex_array_object"))
         result.append("OES_vertex_array_object");
-    if (WebGLExperimentalCompressedTextures::supported(this))
-        result.append("WEBGL_EXPERIMENTAL_compressed_textures");
     result.append("WEBKIT_lose_context");
 
     if (allowPrivilegedExtensions()) {

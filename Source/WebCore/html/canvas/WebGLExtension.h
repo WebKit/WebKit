@@ -40,7 +40,6 @@ public:
         OESVertexArrayObjectName,
         WebGLDebugRendererInfoName,
         WebGLDebugShadersName,
-        WebGLExperimentalCompressedTexturesName,
     };
 
     void ref() { m_context->ref(); }

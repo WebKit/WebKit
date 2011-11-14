@@ -1,3 +1,17 @@
+2011-11-14  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r100176.
+        http://trac.webkit.org/changeset/100176
+        https://bugs.webkit.org/show_bug.cgi?id=72309
+
+        it broke the Mac builds (missing symbols) in a non-obvious way
+        (Requested by jchaffraix on #webkit).
+
+        * public/WebGraphicsContext3D.h:
+        * src/GraphicsContext3DChromium.cpp:
+        * src/GraphicsContext3DPrivate.h:
+        * tests/MockWebGraphicsContext3D.h:
+
 2011-11-14  Adam Barth  <abarth@webkit.org>
 
         Remove the concept of an empty SecurityOrigin

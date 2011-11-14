@@ -4978,8 +4978,6 @@ webcore_sources += \
 	Source/WebCore/html/canvas/WebGLDebugRendererInfo.h \
 	Source/WebCore/html/canvas/WebGLDebugShaders.cpp \
 	Source/WebCore/html/canvas/WebGLDebugShaders.h \
-	Source/WebCore/html/canvas/WebGLExperimentalCompressedTextures.cpp \
-	Source/WebCore/html/canvas/WebGLExperimentalCompressedTextures.h \
 	Source/WebCore/html/canvas/WebGLFramebuffer.cpp \
 	Source/WebCore/html/canvas/WebGLFramebuffer.h \
 	Source/WebCore/html/canvas/WebGLGetInfo.cpp \

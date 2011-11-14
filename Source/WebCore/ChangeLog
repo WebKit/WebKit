@@ -1,3 +1,35 @@
+2011-11-14  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r100176.
+        http://trac.webkit.org/changeset/100176
+        https://bugs.webkit.org/show_bug.cgi?id=72309
+
+        it broke the Mac builds (missing symbols) in a non-obvious way
+        (Requested by jchaffraix on #webkit).
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * bindings/js/JSWebGLRenderingContextCustom.cpp:
+        (WebCore::toJS):
+        * bindings/v8/custom/V8WebGLRenderingContextCustom.cpp:
+        (WebCore::toV8Object):
+        * html/canvas/WebGLExperimentalCompressedTextures.cpp: Removed.
+        * html/canvas/WebGLExperimentalCompressedTextures.h: Removed.
+        * html/canvas/WebGLExperimentalCompressedTextures.idl: Removed.
+        * html/canvas/WebGLExtension.h:
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::getExtension):
+        (WebCore::WebGLRenderingContext::getParameter):
+        (WebCore::WebGLRenderingContext::getSupportedExtensions):
+        * html/canvas/WebGLRenderingContext.h:
+        * platform/graphics/Extensions3D.h:
+        * platform/graphics/GraphicsContext3D.h:
+        * platform/graphics/efl/GraphicsContext3DEfl.cpp:
+        * platform/graphics/opengl/GraphicsContext3DOpenGL.cpp:
+        * platform/graphics/qt/GraphicsContext3DQt.cpp:
+
 2011-11-14  Tony Chang  <tony@chromium.org>
 
         remove -wap-marquee css propery value
