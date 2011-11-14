@@ -1765,33 +1765,51 @@ EAPI Eina_Bool    ewk_view_setting_spatial_navigation_set(Evas_Object *o, Eina_B
 EAPI Eina_Bool    ewk_view_setting_local_storage_get(const Evas_Object *o);
 
 /**
- * Enables/disable the local storage feature of HTML5.
+ * Enables/disables the local storage feature of HTML5.
+ *
+ * Please notice that by default there is no storage path specified for the database.
+ * This means that the contents of @c window.localStorage will not be saved to disk and
+ * will be lost when the view is removed.
+ * To set the path where the storage database will be stored, use
+ * ewk_view_setting_local_storage_database_path_set.
  *
  * @param o view object to set if local storage is enabled
  * @param enable @c EINA_TRUE to enable the local storage feature,
  *        @c EINA_FALSE to disable
  *
  * @return @c EINA_TRUE on success or @c EINA_FALSE on failure
+ *
+ * @sa ewk_view_setting_local_storage_database_path_set
  */
 EAPI Eina_Bool    ewk_view_setting_local_storage_set(Evas_Object *o, Eina_Bool enable);
 
 /**
- * Gets the database path to the local storage feature of HTML5.
+ * Returns the path where the HTML5 local storage database is stored on disk.
+ *
+ * By default, there is no path set, which means changes to @c window.localStorage will not
+ * be saved to disk whatsoever.
  *
  * @param o view object to get the database path to the local storage feature
  *
- * @return @c eina_strinshare containing the database path to the local storage feature, or
+ * @return @c eina_stringshare containing the database path to the local storage feature, or
  *         @c 0 if it's not set
+ *
+ * @sa ewk_view_setting_local_storage_database_path_set
  */
 EAPI const char  *ewk_view_setting_local_storage_database_path_get(const Evas_Object *o);
 
 /**
- * Sets the database path to the local storage feature of HTML5.
+ * Sets the path where the HTML5 local storage database is stored on disk.
+ *
+ * By default, there is no path set, which means changes to @c window.localStorage will not
+ * be saved to disk whatsoever.
  *
  * @param o view object to set the database path to the local storage feature
  * @param path a new database path to the local storage feature
  *
  * @return @c EINA_TRUE on success or @c EINA_FALSE on failure
+ *
+ * @sa ewk_view_setting_local_storage_set
  */
 EAPI Eina_Bool    ewk_view_setting_local_storage_database_path_set(Evas_Object *o, const char *path);
 

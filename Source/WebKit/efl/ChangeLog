@@ -1,5 +1,18 @@
 2011-11-13  Raphael Kubo da Costa  <kubo@profusion.mobi>
 
+        [EFL] Improve the documentation of ewk_view_setting_local_storage_*.
+        https://bugs.webkit.org/show_bug.cgi?id=72135
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add some "see also" pointers, mention the default paths used for local
+        storage and document how things will not be persisted to disk if a
+        storage path is not set.
+
+        * ewk/ewk_view.h:
+
+2011-11-13  Raphael Kubo da Costa  <kubo@profusion.mobi>
+
         [EFL] Simplify eina_stringshare usage in ewk_settings.
         https://bugs.webkit.org/show_bug.cgi?id=72127
 
