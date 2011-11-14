@@ -661,3 +661,13 @@ bool WKPreferencesGetBackspaceKeyNavigationEnabled(WKPreferencesRef preferencesR
 {
     return toImpl(preferencesRef)->backspaceKeyNavigationEnabled();
 }
+
+void WKPreferencesSetCaretBrowsingEnabled(WKPreferencesRef preferencesRef, bool enabled)
+{
+    toImpl(preferencesRef)->setCaretBrowsingEnabled(enabled);
+}
+
+bool WKPreferencesGetCaretBrowsingEnabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->caretBrowsingEnabled();
+}
