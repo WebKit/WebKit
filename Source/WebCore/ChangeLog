@@ -1,3 +1,17 @@
+2011-11-14  Adam Barth  <abarth@webkit.org>
+
+        SecurityContext::isSecureTransitionTo should not refer to empty security origins
+        https://bugs.webkit.org/show_bug.cgi?id=72277
+
+        Reviewed by Eric Seidel.
+
+        Now that we're tracking the "failed to initialized SecurityOrigin"
+        state explicitly, we should use that to determine whether we can make a
+        secure transition.
+
+        * dom/SecurityContext.cpp:
+        (WebCore::SecurityContext::isSecureTransitionTo):
+
 2011-11-14  Vincent Scheib  <scheib@chromium.org>
 
         Mouse Lock: Renaming to 'Pointer Lock': ENABLE Flags

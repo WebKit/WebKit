@@ -56,8 +56,10 @@ void SecurityContext::setContentSecurityPolicy(PassRefPtr<ContentSecurityPolicy>
 
 bool SecurityContext::isSecureTransitionTo(const KURL& url) const
 {
-    // This origin represents a new window created by the application.
-    if (securityOrigin()->isEmpty())
+    // If we haven't initialized our security origin by now, this is probably
+    // a new window created via the API (i.e., that lacks an origin and lacks
+    // a place to inherit the origin from).
+    if (!haveInitializedSecurityOrigin())
         return true;
 
     RefPtr<SecurityOrigin> other = SecurityOrigin::create(url);
