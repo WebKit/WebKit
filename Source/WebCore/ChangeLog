@@ -1,3 +1,47 @@
+2011-11-14  Kentaro Hara  <haraken@chromium.org>
+
+        Remove all custom constructors of Events in V8
+        https://bugs.webkit.org/show_bug.cgi?id=72074
+
+        Reviewed by Adam Barth.
+
+        V8 has [ConstructorTemplate=Event] IDL, which generates
+        Event constructors. This patch removes all the custom constructors
+        in V8EventConstructors.cpp and generates them using
+        [ConstructorTemplate=Event] IDL.
+
+        Tests: fast/events/constructors/before-load-event-constructor.html
+               fast/events/constructors/close-event-constructor.html
+               fast/events/constructors/custom-event-constructor.html
+               fast/events/constructors/error-event-constructor.html
+               fast/events/constructors/event-constructors.html
+               fast/events/constructors/hash-change-event-constructor.html
+               fast/events/constructors/message-event-constructor.html
+               fast/events/constructors/overflow-event-constructor.html
+               fast/events/constructors/page-transition-event-constructor.html
+               fast/events/constructors/pop-state-event-constructor.html
+               fast/events/constructors/progress-event-constructor.html
+               fast/events/constructors/track-event-constructor.html
+               fast/events/constructors/webkit-animation-event-constructor.html
+               fast/events/constructors/webkit-transition-event-constructor.html
+
+        * Target.pri: Removed V8EventConstructors.cpp.
+        * WebCore.gypi: Ditto.
+        * bindings/v8/custom/V8EventConstructors.cpp: Removed.
+        * dom/BeforeLoadEvent.idl: Replaced [V8CustomConstructor] with [V8ConstructorTemplate=Event]. Added [InitializedByConstructor] IDL to attributes that can be initialized by the generated constructor.
+        * dom/CustomEvent.idl: Ditto.
+        * dom/ErrorEvent.idl: Ditto.
+        * dom/HashChangeEvent.idl: Ditto.
+        * dom/MessageEvent.idl: Ditto.
+        * dom/OverflowEvent.idl: Ditto.
+        * dom/PageTransitionEvent.idl: Ditto.
+        * dom/PopStateEvent.idl: Ditto.
+        * dom/ProgressEvent.idl: Ditto.
+        * dom/WebKitAnimationEvent.idl: Ditto.
+        * dom/WebKitTransitionEvent.idl: Ditto.
+        * html/track/TrackEvent.idl: Ditto.
+        * websockets/CloseEvent.idl: Ditto.
+
 2011-11-13  Patrick Gansterer  <paroga@webkit.org>
 
         [WX] Make FontPlatformData::m_size private

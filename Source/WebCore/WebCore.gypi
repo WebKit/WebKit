@@ -2182,7 +2182,6 @@
             'bindings/v8/custom/V8ElementCustom.cpp',
             'bindings/v8/custom/V8EntryCustom.cpp',
             'bindings/v8/custom/V8EntrySyncCustom.cpp',
-            'bindings/v8/custom/V8EventConstructors.cpp',
             'bindings/v8/custom/V8EventCustom.cpp',
             'bindings/v8/custom/V8FileReaderCustom.cpp',
             'bindings/v8/custom/V8Float32ArrayCustom.cpp',

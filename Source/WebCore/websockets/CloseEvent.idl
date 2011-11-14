@@ -32,11 +32,12 @@ module events {
 
     interface [
         NoStaticTables,
-        CustomConstructor
+        V8ConstructorTemplate=Event,
+        JSCustomConstructor
     ] CloseEvent : Event {
-        readonly attribute boolean wasClean;
-        readonly attribute unsigned short code;
-        readonly attribute [ConvertingNullStringTo=Undefined] DOMString reason;
+        readonly attribute [InitializedByConstructor] boolean wasClean;
+        readonly attribute [InitializedByConstructor] unsigned short code;
+        readonly attribute [InitializedByConstructor, ConvertingNullStringTo=Undefined] DOMString reason;
     };
 
 }

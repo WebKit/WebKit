@@ -26,15 +26,17 @@
 module events {
 
     interface [
-        CustomConstructor
+        V8ConstructorTemplate=Event,
+        JSCustomConstructor
     ] WebKitTransitionEvent : Event {
-    readonly attribute DOMString          propertyName;
-    readonly attribute double             elapsedTime;
-    void               initWebKitTransitionEvent(in [Optional=CallWithDefaultValue] DOMString typeArg,
-                                                 in [Optional=CallWithDefaultValue] boolean canBubbleArg,
-                                                 in [Optional=CallWithDefaultValue] boolean cancelableArg,
-                                                 in [Optional=CallWithDefaultValue] DOMString propertyNameArg,
-                                                 in [Optional=CallWithDefaultValue] double elapsedTimeArg);
+    readonly attribute [InitializedByConstructor] DOMString propertyName;
+    readonly attribute [InitializedByConstructor] double elapsedTime;
+
+    void initWebKitTransitionEvent(in [Optional=CallWithDefaultValue] DOMString typeArg,
+                                   in [Optional=CallWithDefaultValue] boolean canBubbleArg,
+                                   in [Optional=CallWithDefaultValue] boolean cancelableArg,
+                                   in [Optional=CallWithDefaultValue] DOMString propertyNameArg,
+                                   in [Optional=CallWithDefaultValue] double elapsedTimeArg);
 };
 
 }

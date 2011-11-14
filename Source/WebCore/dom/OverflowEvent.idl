@@ -26,15 +26,16 @@
 module events {
 
     interface [
-        CustomConstructor
+        V8ConstructorTemplate=Event,
+        JSCustomConstructor
     ] OverflowEvent : Event {
         const unsigned short HORIZONTAL = 0;
         const unsigned short VERTICAL   = 1;
         const unsigned short BOTH       = 2;
         
-        readonly attribute unsigned short orient;
-        readonly attribute boolean horizontalOverflow;
-        readonly attribute boolean verticalOverflow;        
+        readonly attribute [InitializedByConstructor] unsigned short orient;
+        readonly attribute [InitializedByConstructor] boolean horizontalOverflow;
+        readonly attribute [InitializedByConstructor] boolean verticalOverflow;
 
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
         void initOverflowEvent(in [Optional=CallWithDefaultValue] unsigned short orient,

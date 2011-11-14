@@ -32,11 +32,12 @@ module events {
 
     interface [
         NoStaticTables,
-        CustomConstructor
+        V8ConstructorTemplate=Event,
+        JSCustomConstructor
     ] ErrorEvent : Event {
-        readonly attribute DOMString message;
-        readonly attribute DOMString filename;
-        readonly attribute unsigned long lineno;
+        readonly attribute [InitializedByConstructor] DOMString message;
+        readonly attribute [InitializedByConstructor] DOMString filename;
+        readonly attribute [InitializedByConstructor] unsigned long lineno;
     };
 
 }

@@ -29,14 +29,15 @@ module events {
 
     interface [
         NoStaticTables,
-        CustomConstructor
+        V8ConstructorTemplate=Event,
+        JSCustomConstructor
     ] MessageEvent : Event {
-        readonly attribute DOMString origin;
-        readonly attribute DOMString lastEventId;
-        readonly attribute DOMWindow source;
+        readonly attribute [InitializedByConstructor] DOMString origin;
+        readonly attribute [InitializedByConstructor] DOMString lastEventId;
+        readonly attribute [InitializedByConstructor] DOMWindow source;
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
-        readonly attribute [CachedAttribute, CustomGetter] DOMObject data;
-        readonly attribute [CustomGetter] Array ports;
+        readonly attribute [InitializedByConstructor, CachedAttribute, CustomGetter] DOMObject data;
+        readonly attribute [InitializedByConstructor, CustomGetter] Array ports;
 
         [Custom] void initMessageEvent(in [Optional=CallWithDefaultValue] DOMString typeArg, 
                                        in [Optional=CallWithDefaultValue] boolean canBubbleArg, 

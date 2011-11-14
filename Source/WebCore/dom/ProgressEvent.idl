@@ -26,11 +26,12 @@
 module events {
 
     interface [
-        CustomConstructor
+        V8ConstructorTemplate=Event,
+        JSCustomConstructor
     ] ProgressEvent : Event {
-        readonly attribute boolean lengthComputable;
-        readonly attribute unsigned long long loaded;
-        readonly attribute unsigned long long total;
+        readonly attribute [InitializedByConstructor] boolean lengthComputable;
+        readonly attribute [InitializedByConstructor] unsigned long long loaded;
+        readonly attribute [InitializedByConstructor] unsigned long long total;
 
         void initProgressEvent(in [Optional=CallWithDefaultValue] DOMString typeArg,
                                in [Optional=CallWithDefaultValue] boolean canBubbleArg,
