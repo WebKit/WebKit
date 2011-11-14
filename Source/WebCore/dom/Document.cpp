@@ -4450,14 +4450,15 @@ void Document::initSecurityContext()
     if (!ownerFrame)
         ownerFrame = m_frame->loader()->opener();
 
-    if (ownerFrame) {
-        m_cookieURL = ownerFrame->document()->cookieURL();
-        // We alias the SecurityOrigins to match Firefox, see Bug 15313
-        // https://bugs.webkit.org/show_bug.cgi?id=15313
-        ScriptExecutionContext::setSecurityOrigin(ownerFrame->document()->securityOrigin());
-        // FIXME: Consider moving m_contentSecurityPolicy into SecurityOrigin.
-        ScriptExecutionContext::setContentSecurityPolicy(ownerFrame->document()->contentSecurityPolicy());
-    }
+    if (!ownerFrame)
+        return;
+
+    m_cookieURL = ownerFrame->document()->cookieURL();
+    // We alias the SecurityOrigins to match Firefox, see Bug 15313
+    // https://bugs.webkit.org/show_bug.cgi?id=15313
+    ScriptExecutionContext::setSecurityOrigin(ownerFrame->document()->securityOrigin());
+    // FIXME: Consider moving m_contentSecurityPolicy into SecurityOrigin.
+    ScriptExecutionContext::setContentSecurityPolicy(ownerFrame->document()->contentSecurityPolicy());
 }
 
 void Document::setSecurityOrigin(SecurityOrigin* securityOrigin)

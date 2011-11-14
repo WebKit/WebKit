@@ -1,5 +1,18 @@
 2011-11-13  Adam Barth  <abarth@webkit.org>
 
+        Document::initSecurityOrigin should return earlier more often
+        https://bugs.webkit.org/show_bug.cgi?id=72244
+
+        Reviewed by Eric Seidel.
+
+        This minor tweak was suggested by Darin to make the subsequent patches
+        easier to read.
+
+        * dom/Document.cpp:
+        (WebCore::Document::initSecurityContext):
+
+2011-11-13  Adam Barth  <abarth@webkit.org>
+
         SecurityPolicy should refer to isUnique rather than isEmpty
         https://bugs.webkit.org/show_bug.cgi?id=72242
 
