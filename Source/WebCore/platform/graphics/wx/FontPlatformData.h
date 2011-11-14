@@ -166,15 +166,14 @@ public:
     void cacheNSFont();
 #endif
 
-    float m_size;
-
 #ifndef NDEBUG
     String description() const;
 #endif
 
 private:
-    WTF::RefPtr<FontHolder> m_font;
     FontState m_fontState;
+    WTF::RefPtr<FontHolder> m_font;
+    float m_size;
 #if OS(DARWIN)
     NSFont* m_nsFont;
 #endif

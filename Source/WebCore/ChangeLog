@@ -1,3 +1,15 @@
+2011-11-13  Patrick Gansterer  <paroga@webkit.org>
+
+        [WX] Make FontPlatformData::m_size private
+        https://bugs.webkit.org/show_bug.cgi?id=72214
+
+        Reviewed by Andreas Kling.
+
+        Also change the order of member variables to match
+        the order in the constructor to fix many warnings.
+
+        * platform/graphics/wx/FontPlatformData.h:
+
 2011-11-13  Adam Barth  <abarth@webkit.org>
 
         Document::initSecurityOrigin should return earlier more often
