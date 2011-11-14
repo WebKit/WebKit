@@ -699,14 +699,6 @@ WebDOMTestObj WebDOMTestObj::objMethodWithArgs(int intArg, const WebDOMString& s
     return toWebKit(WTF::getPtr(impl()->objMethodWithArgs(intArg, strArg, toWebCore(objArg))));
 }
 
-WebDOMTestObj WebDOMTestObj::methodThatRequiresAllArgs(const WebDOMString& strArg, const WebDOMTestObj& objArg)
-{
-    if (!impl())
-        return WebDOMTestObj();
-
-    return toWebKit(WTF::getPtr(impl()->methodThatRequiresAllArgs(strArg, toWebCore(objArg))));
-}
-
 WebDOMTestObj WebDOMTestObj::methodThatRequiresAllArgsAndThrows(const WebDOMString& strArg, const WebDOMTestObj& objArg)
 {
     if (!impl())

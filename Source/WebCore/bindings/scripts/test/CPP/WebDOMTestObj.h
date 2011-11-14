@@ -151,7 +151,6 @@ public:
     int intMethodWithArgs(int intArg, const WebDOMString& strArg, const WebDOMTestObj& objArg);
     WebDOMTestObj objMethod();
     WebDOMTestObj objMethodWithArgs(int intArg, const WebDOMString& strArg, const WebDOMTestObj& objArg);
-    WebDOMTestObj methodThatRequiresAllArgs(const WebDOMString& strArg, const WebDOMTestObj& objArg);
     WebDOMTestObj methodThatRequiresAllArgsAndThrows(const WebDOMString& strArg, const WebDOMTestObj& objArg);
     void serializedValue(const WebDOMString& serializedArg);
     void idbKey(const WebDOMIDBKey& key);

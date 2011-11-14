@@ -1431,11 +1431,7 @@ sub GenerateArgumentsCountCheck
     my $argumentsCountCheckString = "";
     if ($numMandatoryParams >= 1) {
         $argumentsCountCheckString .= "    if (args.Length() < $numMandatoryParams)\n";
-        if ($function->signature->extendedAttributes->{"RequiresAllArguments"}) {
-            $argumentsCountCheckString .= "        return v8::Handle<v8::Value>();\n";
-        } else {
-            $argumentsCountCheckString .= "        return throwError(\"Not enough arguments\", V8Proxy::TypeError);\n";
-        }
+        $argumentsCountCheckString .= "        return throwError(\"Not enough arguments\", V8Proxy::TypeError);\n";
     }
     return $argumentsCountCheckString;
 }

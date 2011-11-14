@@ -574,12 +574,6 @@
     return kit(WTF::getPtr(IMPL->objMethodWithArgs(intArg, strArg, core(objArg))));
 }
 
-- (DOMTestObj *)methodThatRequiresAllArgs:(NSString *)strArg objArg:(DOMTestObj *)objArg
-{
-    WebCore::JSMainThreadNullState state;
-    return kit(WTF::getPtr(IMPL->methodThatRequiresAllArgs(strArg, core(objArg))));
-}
-
 - (DOMTestObj *)methodThatRequiresAllArgsAndThrows:(NSString *)strArg objArg:(DOMTestObj *)objArg
 {
     WebCore::JSMainThreadNullState state;

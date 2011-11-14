@@ -80,7 +80,6 @@ JSValue JSSVGLength::convertToSpecifiedUnits(ExecState* exec)
 
     SVGLength& podImp = impl()->propertyReference();
 
-    // Mimic the behaviour of RequiresAllArguments=Raise.
     if (exec->argumentCount() < 1)
         return throwError(exec, createSyntaxError(exec, "Not enough arguments"));
 

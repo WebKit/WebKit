@@ -38,8 +38,7 @@ module core {
             raises(DOMException);
         [Custom] void getData(in DOMString type)
             raises(DOMException);
-        // FIXME: RequiresAllArguments is probably bogus here.
-        [RequiresAllArguments] boolean setData(in DOMString type, in DOMString data);
+        boolean setData(in DOMString type, in DOMString data);
         [Custom] void setDragImage(in HTMLImageElement image, in long x, in long y)
             raises(DOMException);
 

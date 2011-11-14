@@ -247,7 +247,6 @@ static const HashTableValue JSTestObjPrototypeTableValues[] =
     { "intMethodWithArgs", DontDelete | Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionIntMethodWithArgs), (intptr_t)3 THUNK_GENERATOR(0) INTRINSIC(DFG::NoIntrinsic) },
     { "objMethod", DontDelete | Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionObjMethod), (intptr_t)0 THUNK_GENERATOR(0) INTRINSIC(DFG::NoIntrinsic) },
     { "objMethodWithArgs", DontDelete | Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionObjMethodWithArgs), (intptr_t)3 THUNK_GENERATOR(0) INTRINSIC(DFG::NoIntrinsic) },
-    { "methodThatRequiresAllArgs", DontDelete | Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionMethodThatRequiresAllArgs), (intptr_t)2 THUNK_GENERATOR(0) INTRINSIC(DFG::NoIntrinsic) },
     { "methodThatRequiresAllArgsAndThrows", DontDelete | Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionMethodThatRequiresAllArgsAndThrows), (intptr_t)2 THUNK_GENERATOR(0) INTRINSIC(DFG::NoIntrinsic) },
     { "serializedValue", DontDelete | Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionSerializedValue), (intptr_t)1 THUNK_GENERATOR(0) INTRINSIC(DFG::NoIntrinsic) },
     { "idbKey", DontDelete | Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionIdbKey), (intptr_t)1 THUNK_GENERATOR(0) INTRINSIC(DFG::NoIntrinsic) },
@@ -1146,27 +1145,6 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionObjMethodWithArgs(ExecSta
         return JSValue::encode(jsUndefined());
 
     JSC::JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(imp->objMethodWithArgs(intArg, strArg, objArg)));
-    return JSValue::encode(result);
-}
-
-EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodThatRequiresAllArgs(ExecState* exec)
-{
-    JSValue thisValue = exec->hostThisValue();
-    if (!thisValue.inherits(&JSTestObj::s_info))
-        return throwVMTypeError(exec);
-    JSTestObj* castedThis = static_cast<JSTestObj*>(asObject(thisValue));
-    ASSERT_GC_OBJECT_INHERITS(castedThis, &JSTestObj::s_info);
-    TestObj* imp = static_cast<TestObj*>(castedThis->impl());
-    if (exec->argumentCount() < 2)
-        return JSValue::encode(jsUndefined());
-    const String& strArg(ustringToString(MAYBE_MISSING_PARAMETER(exec, 0, MissingIsUndefined).isEmpty() ? UString() : MAYBE_MISSING_PARAMETER(exec, 0, MissingIsUndefined).toString(exec)));
-    if (exec->hadException())
-        return JSValue::encode(jsUndefined());
-    TestObj* objArg(toTestObj(MAYBE_MISSING_PARAMETER(exec, 1, MissingIsUndefined)));
-    if (exec->hadException())
-        return JSValue::encode(jsUndefined());
-
-    JSC::JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(imp->methodThatRequiresAllArgs(strArg, objArg)));
     return JSValue::encode(result);
 }
 

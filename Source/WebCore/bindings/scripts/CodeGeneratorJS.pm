@@ -2252,11 +2252,7 @@ sub GenerateArgumentsCountCheck
     if ($numMandatoryParams >= 1)
     {
         push(@$outputArray, "    if (exec->argumentCount() < $numMandatoryParams)\n");
-        if ($function->signature->extendedAttributes->{"RequiresAllArguments"}) {
-            push(@$outputArray, "        return JSValue::encode(jsUndefined());\n");
-        } else {
-            push(@$outputArray, "        return throwVMError(exec, createTypeError(exec, \"Not enough arguments\"));\n");
-        }
+        push(@$outputArray, "        return throwVMError(exec, createTypeError(exec, \"Not enough arguments\"));\n");
     }
 }
 

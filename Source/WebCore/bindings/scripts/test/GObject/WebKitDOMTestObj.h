@@ -116,18 +116,6 @@ WEBKIT_API WebKitDOMTestObj*
 webkit_dom_test_obj_obj_method_with_args(WebKitDOMTestObj* self, glong int_arg, const gchar* str_arg, WebKitDOMTestObj* obj_arg);
 
 /**
- * webkit_dom_test_obj_method_that_requires_all_args:
- * @self: A #WebKitDOMTestObj
- * @str_arg: A #gchar
- * @obj_arg: A #WebKitDOMTestObj
- *
- * Returns: (transfer none):
- *
-**/
-WEBKIT_API WebKitDOMTestObj*
-webkit_dom_test_obj_method_that_requires_all_args(WebKitDOMTestObj* self, const gchar* str_arg, WebKitDOMTestObj* obj_arg);
-
-/**
  * webkit_dom_test_obj_method_that_requires_all_args_and_throws:
  * @self: A #WebKitDOMTestObj
  * @str_arg: A #gchar

@@ -71,7 +71,6 @@ module test {
         TestObj objMethod();
         TestObj objMethodWithArgs(in long intArg, in DOMString strArg, in TestObj objArg);
 
-        [RequiresAllArguments] TestObj methodThatRequiresAllArgs(in DOMString strArg, in TestObj objArg);
         TestObj methodThatRequiresAllArgsAndThrows(in DOMString strArg, in TestObj objArg)
             raises(DOMException);
 

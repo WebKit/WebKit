@@ -30,8 +30,8 @@
 
     reset();
 
-    description("This test makes sure that we don't allow calling the window moving and resizing\
-    methods with less than 2 arguments and that we do allow calling them with more.");
+    description("This test makes sure that calling the window moving and resizing\
+    methods with less than 2 arguments treats the missing arguments as 0.");
 
     // resizeTo /////////////////////////
     debug('');
@@ -46,7 +46,7 @@
 
     debug("Testing - resizeTo with 1 argument");
     window.resizeTo(x);
-    shouldBe('window.outerWidth', 'resetWidth');
+    shouldBe('window.outerWidth', 'width');
     shouldBe('window.outerHeight', 'resetHeight');
     reset();
 
@@ -69,7 +69,7 @@
 
     debug("Testing - resizeBy with 1 argument");
     window.resizeBy(x);
-    shouldBe('window.outerWidth', 'resetWidth');
+    shouldBe('window.outerWidth', 'resetWidth + x');
     shouldBe('window.outerHeight', 'resetHeight');
     reset();
 
@@ -93,7 +93,7 @@
 
     debug("Testing - moveTo with 1 argument");
     window.moveTo(x);
-    shouldBe('window.screenX', 'resetX');
+    shouldBe('window.screenX', 'resetX + x');
     shouldBe('window.screenY', 'resetY');
     reset();
 
@@ -118,7 +118,7 @@
 
     debug("Testing - moveBy with 1 argument");
     window.moveBy(x);
-    shouldBe('window.screenX', 'resetX');
+    shouldBe('window.screenX', 'resetX + x');
     shouldBe('window.screenY', 'resetY');
     reset();
 

@@ -106,13 +106,13 @@ module window {
         readonly attribute long pageXOffset;
         readonly attribute long pageYOffset;
 
-        [RequiresAllArguments] void scrollBy(in long x, in long y);
-        [RequiresAllArguments] void scrollTo(in long x, in long y);
-        [RequiresAllArguments] void scroll(in long x, in long y);
-        [RequiresAllArguments] void moveBy(in float x, in float y); // FIXME: this should take longs not floats.
-        [RequiresAllArguments] void moveTo(in float x, in float y); // FIXME: this should take longs not floats.
-        [RequiresAllArguments] void resizeBy(in float x, in float y); // FIXME: this should take longs not floats.
-        [RequiresAllArguments] void resizeTo(in float width, in float height); // FIXME: this should take longs not floats.
+        void scrollBy(in [Optional=CallWithDefaultValue] long x, in [Optional=CallWithDefaultValue] long y);
+        void scrollTo(in [Optional=CallWithDefaultValue] long x, in [Optional=CallWithDefaultValue] long y);
+        void scroll(in [Optional=CallWithDefaultValue] long x, in [Optional=CallWithDefaultValue] long y);
+        void moveBy(in [Optional=CallWithDefaultValue] float x, in [Optional=CallWithDefaultValue] float y); // FIXME: this should take longs not floats.
+        void moveTo(in [Optional=CallWithDefaultValue] float x, in [Optional=CallWithDefaultValue] float y); // FIXME: this should take longs not floats.
+        void resizeBy(in [Optional=CallWithDefaultValue] float x, in [Optional=CallWithDefaultValue] float y); // FIXME: this should take longs not floats.
+        void resizeTo(in [Optional=CallWithDefaultValue] float width, in [Optional=CallWithDefaultValue] float height); // FIXME: this should take longs not floats.
 
         readonly attribute [DoNotCheckDomainSecurity] boolean closed;
 
