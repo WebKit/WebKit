@@ -878,7 +878,9 @@ void DOMWindow::postMessage(PassRefPtr<SerializedScriptValue> message, const Mes
     RefPtr<SecurityOrigin> target;
     if (targetOrigin != "*") {
         target = SecurityOrigin::createFromString(targetOrigin);
-        if (target->isEmpty()) {
+        // It doesn't make sense target a postMessage at a unique origin
+        // because there's no way to represent a unique origin in a string.
+        if (target->isUnique()) {
             ec = SYNTAX_ERR;
             return;
         }

@@ -134,13 +134,6 @@ public:
     // addition, the SandboxOrigin flag is inherited by iframes.
     bool isUnique() const { return m_isUnique; }
 
-    // The empty SecurityOrigin is a unique security orign (in the sense of
-    // isUnique above) that was created for a "blank" document, such about
-    // about:blank. Empty origins differ from unique origins in that they can
-    // sometimes be replaced by non-empty origins, for example when an
-    // about:blank iframe inherits its security origin from its parent frame.
-    bool isEmpty() const;
-
     // Marks a file:// origin as being in a domain defined by its path.
     void enforceFilePathSeparation();
 

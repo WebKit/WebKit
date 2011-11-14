@@ -1,5 +1,24 @@
 2011-11-14  Adam Barth  <abarth@webkit.org>
 
+        Remove the concept of an empty SecurityOrigin
+        https://bugs.webkit.org/show_bug.cgi?id=72287
+
+        Reviewed by Eric Seidel.
+
+        This concept is fragile and doesn't exist in the specs.  Previous
+        patches have removed most of the code relying upon this function.  This
+        patch removes a couple stragglers.
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::postMessage):
+            - This check should really be about unique origins because it
+              doesn't make sense to target postMessages at unique origins, as
+              explained in the comment.
+        * page/SecurityOrigin.cpp:
+        * page/SecurityOrigin.h:
+
+2011-11-14  Adam Barth  <abarth@webkit.org>
+
         SecurityContext::isSecureTransitionTo should not refer to empty security origins
         https://bugs.webkit.org/show_bug.cgi?id=72277
 

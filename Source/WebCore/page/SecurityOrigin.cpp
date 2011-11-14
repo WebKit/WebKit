@@ -134,12 +134,6 @@ SecurityOrigin::SecurityOrigin(const SecurityOrigin* other)
 {
 }
 
-bool SecurityOrigin::isEmpty() const
-{
-    ASSERT(!m_protocol.isEmpty() || m_isUnique);
-    return m_protocol.isEmpty();
-}
-
 PassRefPtr<SecurityOrigin> SecurityOrigin::create(const KURL& url, bool forceUnique)
 {
     if (!url.isValid())
