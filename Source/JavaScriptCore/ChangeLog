@@ -1,3 +1,16 @@
+2011-11-14  Michael Saboff  <msaboff@apple.com>
+
+        Towards 8 Bit Strings: Templatize YARR Parser
+        https://bugs.webkit.org/show_bug.cgi?id=72288
+
+        Changed Yarr::Parser to be a template based on character type.
+
+        Reviewed by Oliver Hunt.
+
+        * yarr/YarrParser.h:
+        (JSC::Yarr::Parser::Parser):
+        (JSC::Yarr::parse):
+
 2011-11-14  Geoffrey Garen  <ggaren@apple.com>
 
         32-bit build fix: Removed unused declaration.
