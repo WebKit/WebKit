@@ -61,11 +61,13 @@ PassRefPtr<SQLResultSet> SQLStatementSync::execute(DatabaseSync* db, ExceptionCo
     int result = statement.prepare();
     if (result != SQLResultOk) {
         ec = (result == SQLResultInterrupt ? SQLException::DATABASE_ERR : SQLException::SYNTAX_ERR);
+        db->setLastErrorMessage("could not prepare statement", result, database->lastErrorMsg());
         return 0;
     }
 
     if (statement.bindParameterCount() != m_arguments.size()) {
         ec = (db->isInterrupted()? SQLException::DATABASE_ERR : SQLException::SYNTAX_ERR);
+        db->setLastErrorMessage("number of '?'s in statement string does not match argument count");
         return 0;
     }
 
@@ -73,11 +75,13 @@ PassRefPtr<SQLResultSet> SQLStatementSync::execute(DatabaseSync* db, ExceptionCo
         result = statement.bindValue(i + 1, m_arguments[i]);
         if (result == SQLResultFull) {
             ec = SQLException::QUOTA_ERR;
+            db->setLastErrorMessage("there was not enough remaining storage space");
             return 0;
         }
 
         if (result != SQLResultOk) {
             ec = SQLException::DATABASE_ERR;
+            db->setLastErrorMessage("could not bind value", result, database->lastErrorMsg());
             return 0;
         }
     }
@@ -102,6 +106,7 @@ PassRefPtr<SQLResultSet> SQLStatementSync::execute(DatabaseSync* db, ExceptionCo
 
         if (result != SQLResultDone) {
             ec = SQLException::DATABASE_ERR;
+            db->setLastErrorMessage("could not iterate results", result, database->lastErrorMsg());
             return 0;
         }
     } else if (result == SQLResultDone) {
@@ -111,9 +116,11 @@ PassRefPtr<SQLResultSet> SQLStatementSync::execute(DatabaseSync* db, ExceptionCo
     } else if (result == SQLResultFull) {
         // Quota error, the delegate will be asked for more space and this statement might be re-run.
         ec = SQLException::QUOTA_ERR;
+        db->setLastErrorMessage("there was not enough remaining storage space");
         return 0;
     } else {
         ec = SQLException::DATABASE_ERR;
+        db->setLastErrorMessage("could not execute statement", result, database->lastErrorMsg());
         return 0;
     }
 

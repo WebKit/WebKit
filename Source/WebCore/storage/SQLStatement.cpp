@@ -78,7 +78,10 @@ bool SQLStatement::execute(Database* db)
 
     if (result != SQLResultOk) {
         LOG(StorageAPI, "Unable to verify correctness of statement %s - error %i (%s)", m_statement.ascii().data(), result, database->lastErrorMsg());
-        m_error = SQLError::create(result == SQLResultInterrupt ? SQLError::DATABASE_ERR : SQLError::SYNTAX_ERR, database->lastErrorMsg());
+        if (result == SQLResultInterrupt)
+            m_error = SQLError::create(SQLError::DATABASE_ERR, "could not prepare statement", result, "interrupted");
+        else
+            m_error = SQLError::create(SQLError::SYNTAX_ERR, "could not prepare statement", result, database->lastErrorMsg());
         return false;
     }
 
@@ -99,7 +102,7 @@ bool SQLStatement::execute(Database* db)
 
         if (result != SQLResultOk) {
             LOG(StorageAPI, "Failed to bind value index %i to statement for query '%s'", i + 1, m_statement.ascii().data());
-            m_error = SQLError::create(SQLError::DATABASE_ERR, database->lastErrorMsg());
+            m_error = SQLError::create(SQLError::DATABASE_ERR, "could not bind value", result, database->lastErrorMsg());
             return false;
         }
     }
@@ -123,7 +126,7 @@ bool SQLStatement::execute(Database* db)
         } while (result == SQLResultRow);
 
         if (result != SQLResultDone) {
-            m_error = SQLError::create(SQLError::DATABASE_ERR, database->lastErrorMsg());
+            m_error = SQLError::create(SQLError::DATABASE_ERR, "could not iterate results", result, database->lastErrorMsg());
             return false;
         }
     } else if (result == SQLResultDone) {
@@ -135,7 +138,7 @@ bool SQLStatement::execute(Database* db)
         setFailureDueToQuota();
         return false;
     } else {
-        m_error = SQLError::create(SQLError::DATABASE_ERR, database->lastErrorMsg());
+        m_error = SQLError::create(SQLError::DATABASE_ERR, "could not execute statement", result, database->lastErrorMsg());
         return false;
     }
 

@@ -95,7 +95,7 @@ protected:
 
     void closeDatabase();
 
-    virtual bool performOpenAndVerify(bool shouldSetVersionInNewDatabase, ExceptionCode& ec);
+    virtual bool performOpenAndVerify(bool shouldSetVersionInNewDatabase, ExceptionCode&, String& errorMessage);
 
     bool getVersionFromDatabase(String& version, bool shouldCacheVersion = true);
     bool setVersionInDatabase(const String& version, bool shouldCacheVersion = true);
@@ -104,6 +104,8 @@ protected:
     String getCachedVersion()const;
     void setCachedVersion(const String&);
     bool getActualVersionForTransaction(String& version);
+
+    void logErrorMessage(const String& message);
 
     static const char* databaseInfoTableName();
 

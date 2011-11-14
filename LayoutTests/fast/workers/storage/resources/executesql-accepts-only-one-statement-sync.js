@@ -1,11 +1,13 @@
 function executeStatement(tx, expectedToPass, statement)
 {
+    var message;
     try {
         tx.executeSql(statement);
-        postMessage(expectedToPass ? "PASS: " + statement : "FAIL: " + statement);
+        message = expectedToPass ? "PASS: " : "FAIL: ";
     } catch (err) {
-        postMessage(!expectedToPass ? "PASS: " + statement : "FAIL: " + statement);
+        message = !expectedToPass ? "PASS: " : "FAIL: ";
     }
+    postMessage(message + statement + ", " + db.lastErrorMessage);
 }
 
 var db = openDatabaseSync("ExecuteSQLAcceptsOnlyOneStatementTest", "1.0", "", 1);

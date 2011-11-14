@@ -265,8 +265,9 @@ void SQLTransaction::openTransactionAndPreflight()
     // Transaction Steps 1+2 - Open a transaction to the database, jumping to the error callback if that fails
     if (!m_sqliteTransaction->inProgress()) {
         ASSERT(!m_database->sqliteDatabase().transactionInProgress());
+        m_transactionError = SQLError::create(SQLError::DATABASE_ERR, "unable to begin transaction",
+                                              m_database->sqliteDatabase().lastError(), m_database->sqliteDatabase().lastErrorMsg());
         m_sqliteTransaction.clear();
-        m_transactionError = SQLError::create(SQLError::DATABASE_ERR, "unable to open a transaction to the database");
         handleTransactionError(false);
         return;
     }
@@ -276,10 +277,11 @@ void SQLTransaction::openTransactionAndPreflight()
     // the actual version. In single-process browsers, this is just a map lookup.
     String actualVersion;
     if (!m_database->getActualVersionForTransaction(actualVersion)) {
+        m_transactionError = SQLError::create(SQLError::DATABASE_ERR, "unable to read version",
+                                              m_database->sqliteDatabase().lastError(), m_database->sqliteDatabase().lastErrorMsg());
         m_database->disableAuthorizer();
         m_sqliteTransaction.clear();
         m_database->enableAuthorizer();
-        m_transactionError = SQLError::create(SQLError::DATABASE_ERR, "unable to read version");
         handleTransactionError(false);
         return;
     }
@@ -293,8 +295,7 @@ void SQLTransaction::openTransactionAndPreflight()
         m_database->enableAuthorizer();
         m_transactionError = m_wrapper->sqlError();
         if (!m_transactionError)
-            m_transactionError = SQLError::create(SQLError::UNKNOWN_ERR, "unknown error occured setting up transaction");
-
+            m_transactionError = SQLError::create(SQLError::UNKNOWN_ERR, "unknown error occured during transaction preflight");
         handleTransactionError(false);
         return;
     }
@@ -470,7 +471,7 @@ void SQLTransaction::postflightAndCommit()
     if (m_wrapper && !m_wrapper->performPostflight(this)) {
         m_transactionError = m_wrapper->sqlError();
         if (!m_transactionError)
-            m_transactionError = SQLError::create(SQLError::UNKNOWN_ERR, "unknown error occured setting up transaction");
+            m_transactionError = SQLError::create(SQLError::UNKNOWN_ERR, "unknown error occured during transaction postflight");
         handleTransactionError(false);
         return;
     }
@@ -487,7 +488,8 @@ void SQLTransaction::postflightAndCommit()
         if (m_wrapper)
             m_wrapper->handleCommitFailedAfterPostflight(this);
         m_successCallbackWrapper.clear();
-        m_transactionError = SQLError::create(SQLError::DATABASE_ERR, "failed to commit the transaction");
+        m_transactionError = SQLError::create(SQLError::DATABASE_ERR, "unable to commit transaction",
+                                              m_database->sqliteDatabase().lastError(), m_database->sqliteDatabase().lastErrorMsg());
         handleTransactionError(false);
         return;
     }

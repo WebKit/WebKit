@@ -37,6 +37,7 @@
 #include "Logging.h"
 #include "SQLiteStatement.h"
 #include "SQLiteTransaction.h"
+#include "ScriptCallStack.h"
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
 #include <wtf/HashMap.h>
@@ -51,6 +52,11 @@ namespace WebCore {
 
 static const char versionKey[] = "WebKitDatabaseVersionKey";
 static const char infoTableName[] = "__WebKitDatabaseInfoTable__";
+
+static String formatErrorMessage(const char* message, int sqliteErrorCode, const char* sqliteErrorMessage)
+{
+    return String::format("%s (%d %s)", message, sqliteErrorCode, sqliteErrorMessage);
+}
 
 static bool retrieveTextResultFromDatabase(SQLiteDatabase& db, const String& query, String& resultString)
 {
@@ -244,17 +250,19 @@ String AbstractDatabase::version() const
     return getCachedVersion();
 }
 
-bool AbstractDatabase::performOpenAndVerify(bool shouldSetVersionInNewDatabase, ExceptionCode& ec)
+bool AbstractDatabase::performOpenAndVerify(bool shouldSetVersionInNewDatabase, ExceptionCode& ec, String& errorMessage)
 {
+    ASSERT(errorMessage.isEmpty());
+
     const int maxSqliteBusyWaitTime = 30000;
 
     if (!m_sqliteDatabase.open(m_filename, true)) {
-        LOG_ERROR("Unable to open database at path %s", m_filename.ascii().data());
+        errorMessage = formatErrorMessage("unable to open database", m_sqliteDatabase.lastError(), m_sqliteDatabase.lastErrorMsg());
         ec = INVALID_STATE_ERR;
         return false;
     }
     if (!m_sqliteDatabase.turnOnIncrementalAutoVacuum())
-        LOG_ERROR("Unable to turn on incremental auto-vacuum for database %s", m_filename.ascii().data());
+        LOG_ERROR("Unable to turn on incremental auto-vacuum (%d %s)", m_sqliteDatabase.lastError(), m_sqliteDatabase.lastErrorMsg());
 
     m_sqliteDatabase.setBusyTimeout(maxSqliteBusyWaitTime);
 
@@ -290,7 +298,7 @@ bool AbstractDatabase::performOpenAndVerify(bool shouldSetVersionInNewDatabase, 
             SQLiteTransaction transaction(m_sqliteDatabase);
             transaction.begin();
             if (!transaction.inProgress()) {
-                LOG_ERROR("Unable to begin transaction while opening %s", databaseDebugName().ascii().data());
+                errorMessage = formatErrorMessage("unable to open database, failed to start transaction", m_sqliteDatabase.lastError(), m_sqliteDatabase.lastErrorMsg());
                 ec = INVALID_STATE_ERR;
                 m_sqliteDatabase.close();
                 return false;
@@ -301,14 +309,14 @@ bool AbstractDatabase::performOpenAndVerify(bool shouldSetVersionInNewDatabase, 
                 m_new = true;
 
                 if (!m_sqliteDatabase.executeCommand("CREATE TABLE " + tableName + " (key TEXT NOT NULL ON CONFLICT FAIL UNIQUE ON CONFLICT REPLACE,value TEXT NOT NULL ON CONFLICT FAIL);")) {
-                    LOG_ERROR("Unable to create table %s in database %s", infoTableName, databaseDebugName().ascii().data());
+                    errorMessage = formatErrorMessage("unable to open database, failed to create 'info' table", m_sqliteDatabase.lastError(), m_sqliteDatabase.lastErrorMsg());
                     ec = INVALID_STATE_ERR;
                     transaction.rollback();
                     m_sqliteDatabase.close();
                     return false;
                 }
             } else if (!getVersionFromDatabase(currentVersion, false)) {
-                LOG_ERROR("Failed to get current version from database %s", databaseDebugName().ascii().data());
+                errorMessage = formatErrorMessage("unable to open database, failed to read current version", m_sqliteDatabase.lastError(), m_sqliteDatabase.lastErrorMsg());
                 ec = INVALID_STATE_ERR;
                 transaction.rollback();
                 m_sqliteDatabase.close();
@@ -320,7 +328,7 @@ bool AbstractDatabase::performOpenAndVerify(bool shouldSetVersionInNewDatabase, 
             } else if (!m_new || shouldSetVersionInNewDatabase) {
                 LOG(StorageAPI, "Setting version %s in database %s that was just created", m_expectedVersion.ascii().data(), databaseDebugName().ascii().data());
                 if (!setVersionInDatabase(m_expectedVersion, false)) {
-                    LOG_ERROR("Failed to set version %s in database %s", m_expectedVersion.ascii().data(), databaseDebugName().ascii().data());
+                    errorMessage = formatErrorMessage("unable to open database, failed to write current version", m_sqliteDatabase.lastError(), m_sqliteDatabase.lastErrorMsg());
                     ec = INVALID_STATE_ERR;
                     transaction.rollback();
                     m_sqliteDatabase.close();
@@ -341,8 +349,7 @@ bool AbstractDatabase::performOpenAndVerify(bool shouldSetVersionInNewDatabase, 
     // If the expected version isn't the empty string, ensure that the current database version we have matches that version. Otherwise, set an exception.
     // If the expected version is the empty string, then we always return with whatever version of the database we have.
     if ((!m_new || shouldSetVersionInNewDatabase) && m_expectedVersion.length() && m_expectedVersion != currentVersion) {
-        LOG(StorageAPI, "page expects version %s from database %s, which actually has version name %s - openDatabase() call will fail", m_expectedVersion.ascii().data(),
-            databaseDebugName().ascii().data(), currentVersion.ascii().data());
+        errorMessage = "unable to open database, version mismatch, '" + m_expectedVersion + "' does not match the currentVersion of '" + currentVersion + "'";
         ec = INVALID_STATE_ERR;
         m_sqliteDatabase.close();
         return false;
@@ -524,8 +531,11 @@ void AbstractDatabase::incrementalVacuumIfNeeded()
 {
     int64_t freeSpaceSize = m_sqliteDatabase.freeSpaceSize();
     int64_t totalSize = m_sqliteDatabase.totalSize();
-    if (totalSize <= 10 * freeSpaceSize)
-        m_sqliteDatabase.runIncrementalVacuumCommand();
+    if (totalSize <= 10 * freeSpaceSize) {
+        int result = m_sqliteDatabase.runIncrementalVacuumCommand();
+        if (result != SQLResultOk)
+            logErrorMessage(formatErrorMessage("error vacuuming database", result, m_sqliteDatabase.lastErrorMsg()));
+    }
 }
 
 void AbstractDatabase::interrupt()
@@ -537,6 +547,11 @@ bool AbstractDatabase::isInterrupted()
 {
     MutexLocker locker(m_sqliteDatabase.databaseMutex());
     return m_sqliteDatabase.isInterrupted();
+}
+
+void AbstractDatabase::logErrorMessage(const String& message)
+{
+    m_scriptExecutionContext->addMessage(OtherMessageSource, LogMessageType, ErrorMessageLevel, message, 0, String(), 0);
 }
 
 } // namespace WebCore

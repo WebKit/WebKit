@@ -75,12 +75,17 @@ SQLTransactionSync::~SQLTransactionSync()
 PassRefPtr<SQLResultSet> SQLTransactionSync::executeSQL(const String& sqlStatement, const Vector<SQLValue>& arguments, ExceptionCode& ec)
 {
     ASSERT(m_database->scriptExecutionContext()->isContextThread());
+
+    m_database->setLastErrorMessage("");
+
     if (!m_database->opened()) {
+        m_database->setLastErrorMessage("cannot executeSQL because the database is not open");
         ec = SQLException::UNKNOWN_ERR;
         return 0;
     }
 
     if (m_hasVersionMismatch) {
+        m_database->setLastErrorMessage("cannot executeSQL because there is a version mismatch");
         ec = SQLException::VERSION_ERR;
         return 0;
     }
@@ -110,8 +115,10 @@ PassRefPtr<SQLResultSet> SQLTransactionSync::executeSQL(const String& sqlStateme
                 if (m_transactionClient->didExceedQuota(database())) {
                     ec = 0;
                     retryStatement = true;
-                } else
+                } else {
+                    m_database->setLastErrorMessage("there was not enough remaining storage space");
                     return 0;
+                }
             }
         }
     }
@@ -127,8 +134,10 @@ PassRefPtr<SQLResultSet> SQLTransactionSync::executeSQL(const String& sqlStateme
 ExceptionCode SQLTransactionSync::begin()
 {
     ASSERT(m_database->scriptExecutionContext()->isContextThread());
-    if (!m_database->opened())
+    if (!m_database->opened()) {
+        m_database->setLastErrorMessage("cannot begin transaction because the database is not open");
         return SQLException::UNKNOWN_ERR;
+    }
 
     ASSERT(!m_database->sqliteDatabase().transactionInProgress());
 
@@ -147,6 +156,8 @@ ExceptionCode SQLTransactionSync::begin()
     // Check if begin() succeeded.
     if (!m_sqliteTransaction->inProgress()) {
         ASSERT(!m_database->sqliteDatabase().transactionInProgress());
+        m_database->setLastErrorMessage("unable to begin transaction",
+                                        m_database->sqliteDatabase().lastError(), m_database->sqliteDatabase().lastErrorMsg());
         m_sqliteTransaction.clear();
         return SQLException::DATABASE_ERR;
     }
@@ -156,6 +167,8 @@ ExceptionCode SQLTransactionSync::begin()
     // the actual version. In single-process browsers, this is just a map lookup.
     String actualVersion;
     if (!m_database->getActualVersionForTransaction(actualVersion)) {
+        m_database->setLastErrorMessage("unable to read version",
+                                        m_database->sqliteDatabase().lastError(), m_database->sqliteDatabase().lastErrorMsg());
         rollback();
         return SQLException::DATABASE_ERR;
     }
@@ -168,6 +181,8 @@ ExceptionCode SQLTransactionSync::execute()
 {
     ASSERT(m_database->scriptExecutionContext()->isContextThread());
     if (!m_database->opened() || (m_callback && !m_callback->handleEvent(this))) {
+        if (m_database->lastErrorMessage().isEmpty())
+            m_database->setLastErrorMessage("failed to execute transaction callback");
         m_callback = 0;
         return SQLException::UNKNOWN_ERR;
     }
@@ -179,8 +194,10 @@ ExceptionCode SQLTransactionSync::execute()
 ExceptionCode SQLTransactionSync::commit()
 {
     ASSERT(m_database->scriptExecutionContext()->isContextThread());
-    if (!m_database->opened())
+    if (!m_database->opened()) {
+        m_database->setLastErrorMessage("unable to commit transaction because the database is not open.");
         return SQLException::UNKNOWN_ERR;
+    }
 
     ASSERT(m_sqliteTransaction);
 
@@ -189,8 +206,11 @@ ExceptionCode SQLTransactionSync::commit()
     m_database->enableAuthorizer();
 
     // If the commit failed, the transaction will still be marked as "in progress"
-    if (m_sqliteTransaction->inProgress())
+    if (m_sqliteTransaction->inProgress()) {
+        m_database->setLastErrorMessage("unable to commit transaction",
+                                        m_database->sqliteDatabase().lastError(), m_database->sqliteDatabase().lastErrorMsg());
         return SQLException::DATABASE_ERR;
+    }
 
     m_sqliteTransaction.clear();
 

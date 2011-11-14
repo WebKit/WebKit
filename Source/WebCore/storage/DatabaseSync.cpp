@@ -59,8 +59,9 @@ PassRefPtr<DatabaseSync> DatabaseSync::openDatabaseSync(ScriptExecutionContext* 
 
     RefPtr<DatabaseSync> database = adoptRef(new DatabaseSync(context, name, expectedVersion, displayName, estimatedSize));
 
-    if (!database->performOpenAndVerify(!creationCallback, ec)) {
-        LOG(StorageAPI, "Failed to open and verify version (expected %s) of database %s", expectedVersion.ascii().data(), database->databaseDebugName().ascii().data());
+    String errorMessage;
+    if (!database->performOpenAndVerify(!creationCallback, ec, errorMessage)) {
+        database->logErrorMessage(errorMessage);
         DatabaseTracker::tracker().removeOpenDatabase(database.get());
         return 0;
     }
@@ -96,39 +97,49 @@ void DatabaseSync::changeVersion(const String& oldVersion, const String& newVers
     ASSERT(m_scriptExecutionContext->isContextThread());
 
     if (sqliteDatabase().transactionInProgress()) {
+        setLastErrorMessage("unable to changeVersion from within a transaction");
         ec = SQLException::DATABASE_ERR;
         return;
     }
 
     RefPtr<SQLTransactionSync> transaction = SQLTransactionSync::create(this, changeVersionCallback, false);
-    if ((ec = transaction->begin()))
+    if ((ec = transaction->begin())) {
+        ASSERT(!lastErrorMessage().isEmpty());
         return;
+    }
 
     String actualVersion;
     if (!getVersionFromDatabase(actualVersion)) {
+        setLastErrorMessage("unable to read the current version", sqliteDatabase().lastError(), sqliteDatabase().lastErrorMsg());
         ec = SQLException::UNKNOWN_ERR;
         return;
     }
 
     if (actualVersion != oldVersion) {
+        setLastErrorMessage("current version of the database and `oldVersion` argument do not match");
         ec = SQLException::VERSION_ERR;
         return;
     }
 
-    if ((ec = transaction->execute()))
+    if ((ec = transaction->execute())) {
+        ASSERT(!lastErrorMessage().isEmpty());
         return;
+    }
 
     if (!setVersionInDatabase(newVersion)) {
+        setLastErrorMessage("unable to set the new version", sqliteDatabase().lastError(), sqliteDatabase().lastErrorMsg());
         ec = SQLException::UNKNOWN_ERR;
         return;
     }
 
     if ((ec = transaction->commit())) {
+        ASSERT(!lastErrorMessage().isEmpty());
         setCachedVersion(oldVersion);
         return;
     }
 
     setExpectedVersion(newVersion);
+    setLastErrorMessage("");
 }
 
 void DatabaseSync::transaction(PassRefPtr<SQLTransactionSyncCallback> callback, ExceptionCode& ec)
@@ -146,13 +157,18 @@ void DatabaseSync::runTransaction(PassRefPtr<SQLTransactionSyncCallback> callbac
     ASSERT(m_scriptExecutionContext->isContextThread());
 
     if (sqliteDatabase().transactionInProgress()) {
+        setLastErrorMessage("unable to start a transaction from within a transaction");
         ec = SQLException::DATABASE_ERR;
         return;
     }
 
     RefPtr<SQLTransactionSync> transaction = SQLTransactionSync::create(this, callback, readOnly);
-    if ((ec = transaction->begin()) || (ec = transaction->execute()) || (ec = transaction->commit()))
+    if ((ec = transaction->begin()) || (ec = transaction->execute()) || (ec = transaction->commit())) {
+        ASSERT(!lastErrorMessage().isEmpty());
         transaction->rollback();
+    }
+
+    setLastErrorMessage("");
 }
 
 void DatabaseSync::markAsDeletedAndClose()

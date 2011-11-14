@@ -47,16 +47,17 @@ bool ChangeVersionWrapper::performPreflight(SQLTransaction* transaction)
 {
     ASSERT(transaction && transaction->database());
 
-    String actualVersion;
+    Database* database = transaction->database();
 
-    if (!transaction->database()->getVersionFromDatabase(actualVersion)) {
-        LOG_ERROR("Unable to retrieve actual current version from database");
-        m_sqlError = SQLError::create(SQLError::UNKNOWN_ERR, "unable to verify current version of database");
+    String actualVersion;
+    if (!database->getVersionFromDatabase(actualVersion)) {
+        m_sqlError = SQLError::create(SQLError::UNKNOWN_ERR, "unable to read the current version",
+                                      database->sqliteDatabase().lastError(),
+                                      database->sqliteDatabase().lastErrorMsg());
         return false;
     }
 
     if (actualVersion != m_oldVersion) {
-        LOG_ERROR("Old version doesn't match actual version");
         m_sqlError = SQLError::create(SQLError::VERSION_ERR, "current version of the database and `oldVersion` argument do not match");
         return false;
     }
@@ -68,13 +69,16 @@ bool ChangeVersionWrapper::performPostflight(SQLTransaction* transaction)
 {
     ASSERT(transaction && transaction->database());
 
-    if (!transaction->database()->setVersionInDatabase(m_newVersion)) {
-        LOG_ERROR("Unable to set new version in database");
-        m_sqlError = SQLError::create(SQLError::UNKNOWN_ERR, "unable to set new version in database");
+    Database* database = transaction->database();
+
+    if (!database->setVersionInDatabase(m_newVersion)) {
+        m_sqlError = SQLError::create(SQLError::UNKNOWN_ERR, "unable to set new version in database",
+                                      database->sqliteDatabase().lastError(),
+                                      database->sqliteDatabase().lastErrorMsg());
         return false;
     }
 
-    transaction->database()->setExpectedVersion(m_newVersion);
+    database->setExpectedVersion(m_newVersion);
 
     return true;
 }

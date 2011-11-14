@@ -46,6 +46,8 @@ const int SQLResultSchema = SQLITE_SCHEMA;
 const int SQLResultFull = SQLITE_FULL;
 const int SQLResultInterrupt = SQLITE_INTERRUPT;
 
+static const char notOpenErrorMessage[] = "database is not open";
+
 SQLiteDatabase::SQLiteDatabase()
     : m_db(0)
     , m_pageSize(-1)
@@ -53,6 +55,8 @@ SQLiteDatabase::SQLiteDatabase()
     , m_sharable(false)
     , m_openingThread(0)
     , m_interrupted(false)
+    , m_openError(SQLITE_ERROR)
+    , m_openErrorMessage(notOpenErrorMessage)
 {
 }
 
@@ -65,15 +69,20 @@ bool SQLiteDatabase::open(const String& filename, bool forWebSQLDatabase)
 {
     close();
 
-    if (SQLiteFileSystem::openDatabase(filename, &m_db, forWebSQLDatabase) != SQLITE_OK) {
+    m_openError = SQLiteFileSystem::openDatabase(filename, &m_db, forWebSQLDatabase);
+    if (m_openError != SQLITE_OK) {
+        m_openErrorMessage = m_db ? sqlite3_errmsg(m_db) : "sqlite_open returned null";
         LOG_ERROR("SQLite database failed to load from %s\nCause - %s", filename.ascii().data(),
-            sqlite3_errmsg(m_db));
+            m_openErrorMessage.data());
         sqlite3_close(m_db);
         m_db = 0;
         return false;
     }
-    if (sqlite3_extended_result_codes(m_db, 1) != SQLITE_OK) {
-        LOG_ERROR("SQLite database error when enabling extended errors - %s", sqlite3_errmsg(m_db));
+
+    m_openError = sqlite3_extended_result_codes(m_db, 1);
+    if (m_openError != SQLITE_OK) {
+        m_openErrorMessage = sqlite3_errmsg(m_db);
+        LOG_ERROR("SQLite database error when enabling extended errors - %s", m_openErrorMessage.data());
         sqlite3_close(m_db);
         m_db = 0;
         return false;
@@ -81,6 +90,8 @@ bool SQLiteDatabase::open(const String& filename, bool forWebSQLDatabase)
 
     if (isOpen())
         m_openingThread = currentThread();
+    else
+        m_openErrorMessage = "sqlite_open returned null";
 
     if (!SQLiteStatement(*this, "PRAGMA temp_store = MEMORY;").executeCommand())
         LOG_ERROR("SQLite database could not set temp_store to memory");
@@ -102,6 +113,8 @@ void SQLiteDatabase::close()
     }
 
     m_openingThread = 0;
+    m_openError = SQLITE_ERROR;
+    m_openErrorMessage = notOpenErrorMessage;
 }
 
 void SQLiteDatabase::interrupt()
@@ -281,13 +294,14 @@ void SQLiteDatabase::clearAllTables()
     }
 }
 
-void SQLiteDatabase::runVacuumCommand()
+int SQLiteDatabase::runVacuumCommand()
 {
     if (!executeCommand("VACUUM;"))
         LOG(SQLDatabase, "Unable to vacuum database - %s", lastErrorMsg());
+    return lastError();
 }
 
-void SQLiteDatabase::runIncrementalVacuumCommand()
+int SQLiteDatabase::runIncrementalVacuumCommand()
 {
     MutexLocker locker(m_authorizerLock);
     enableAuthorizer(false);
@@ -296,6 +310,7 @@ void SQLiteDatabase::runIncrementalVacuumCommand()
         LOG(SQLDatabase, "Unable to run incremental vacuum - %s", lastErrorMsg());
 
     enableAuthorizer(true);
+    return lastError();
 }
 
 int64_t SQLiteDatabase::lastInsertRowID()
@@ -314,12 +329,12 @@ int SQLiteDatabase::lastChanges()
 
 int SQLiteDatabase::lastError()
 {
-    return m_db ? sqlite3_errcode(m_db) : SQLITE_ERROR;
+    return m_db ? sqlite3_errcode(m_db) : m_openError;
 }
 
 const char* SQLiteDatabase::lastErrorMsg()
 { 
-    return sqlite3_errmsg(m_db);
+    return m_db ? sqlite3_errmsg(m_db) : m_openErrorMessage.data();
 }
 
 #ifndef NDEBUG

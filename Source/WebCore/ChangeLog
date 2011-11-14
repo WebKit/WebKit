@@ -1,3 +1,78 @@
+2011-11-14  Michael Nordman  <michaeln@google.com>
+
+        Return more complete error and exception messages when a
+        WebSQLDatabase function fails. Produce console logging
+        for openDatabase() errors and vacuum errors. Add a lastErrorMessage
+        accessor to the DatabaseSync interface.
+        https://bugs.webkit.org/show_bug.cgi?id=71575
+
+        Reviewed by David Levin.
+
+        Yes, see LayoutTests/ChangeLog in this patch.
+
+        * platform/sql/SQLiteDatabase.cpp:
+        (WebCore::SQLiteDatabase::SQLiteDatabase):
+        (WebCore::SQLiteDatabase::open):
+        (WebCore::SQLiteDatabase::close):
+        (WebCore::SQLiteDatabase::lastError):
+        (WebCore::SQLiteDatabase::lastErrorMsg):
+        (WebCore::SQLiteDatabase:: runVacuumCommand):
+        (WebCore::SQLiteDatabase:: runIncrementalVacuumCommand):
+        Reflect errors in the open() method in lastError() and lastErrorMsg().
+        Return an error codes for runVacuumCommand() and runIncrementalVacuumCommand().
+
+        * platform/sql/SQLiteDatabase.h:
+        * storage/AbstractDatabase.cpp:
+        (WebCore::formatErrorMessage):
+        (WebCore::AbstractDatabase::performOpenAndVerify):
+        (WebCore::AbstractDatabase::logErrorMessage):
+        During openAndVerify, produce formatted error messages that include what was being done, the sqlite error code,
+        and the sqlite error message. Add a helper to log message to the console.
+
+        * storage/AbstractDatabase.h:
+        * storage/ChangeVersionWrapper.cpp:
+        (WebCore::ChangeVersionWrapper::performPreflight):
+        (WebCore::ChangeVersionWrapper::performPostflight):
+        * storage/Database.cpp:
+        (WebCore::Database::openDatabase):
+        (WebCore::Database::openAndVerifyVersion):
+        (WebCore::Database::performOpenAndVerify):
+        * storage/Database.h:
+        * storage/DatabaseSync.cpp:
+        (WebCore::DatabaseSync::openDatabaseSync):
+        (WebCore::DatabaseSync::changeVersion):
+        (WebCore::DatabaseSync::runTransaction):
+        * storage/DatabaseSync.h:
+        (WebCore::DatabaseSync::lastErrorMessage):
+        (WebCore::DatabaseSync::setLastErrorMessage):
+        * storage/DatabaseSync.idl:
+        Add a lastErrorMessage attribute so javascript callers can
+        retrieve more detailed information about what went wrong.
+
+        * storage/DatabaseTask.cpp:
+        (WebCore::Database::DatabaseOpenTask::DatabaseOpenTask):
+        (WebCore::Database::DatabaseOpenTask::doPerformTask):
+        * storage/DatabaseTask.h:
+        (WebCore::Database::DatabaseOpenTask::create):
+        Return an errorMessage in addition to the exception code.
+
+        * storage/SQLError.h:
+        (WebCore::SQLError::create):
+        Add helpers to produced formatted error messages.
+
+        * storage/SQLStatement.cpp:
+        (WebCore::SQLStatement::execute):
+        * storage/SQLStatementSync.cpp:
+        (WebCore::SQLStatementSync::execute):
+        * storage/SQLTransaction.cpp:
+        (WebCore::SQLTransaction::openTransactionAndPreflight):
+        (WebCore::SQLTransaction::postflightAndCommit):
+        * storage/SQLTransactionSync.cpp:
+        (WebCore::SQLTransactionSync::executeSQL):
+        (WebCore::SQLTransactionSync::begin):
+        (WebCore::SQLTransactionSync::execute):
+        (WebCore::SQLTransactionSync::commit):
+
 2011-11-14  Adam Barth  <abarth@webkit.org>
 
         SecurityOrigin inheritance should depend on document URL, not on "emptiness" of the SecurityOrigin
