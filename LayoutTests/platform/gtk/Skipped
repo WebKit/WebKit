@@ -402,6 +402,7 @@ accessibility/label-for-control-hittest.html
 accessibility/language-attribute.html
 accessibility/legend.html
 accessibility/lists.html
+accessibility/loading-iframe-updates-axtree.html
 accessibility/onclick-handlers.html
 accessibility/placeholder.html
 accessibility/plugin.html
@@ -1601,9 +1602,6 @@ fast/frames/flattening/iframe-flattening-fixed-width-and-height-no-scrolling.htm
 # https://bugs.webkit.org/show_bug.cgi?id=72131
 editing/pasteboard/copy-backslash-with-euc.html
 editing/pasteboard/paste-text-events.html
-
-# https://bugs.webkit.org/show_bug.cgi?id=72249
-accessibility/loading-iframe-updates-axtree.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=72248
 editing/spelling/spelling-unified-emulation.html
