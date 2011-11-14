@@ -180,7 +180,9 @@ LayerRendererChromium::LayerRendererChromium(CCLayerTreeHostImpl* owner,
 
 bool LayerRendererChromium::initialize()
 {
-    m_context->makeContextCurrent();
+    if (!m_context->makeContextCurrent())
+        return false;
+
     if (settings().acceleratePainting)
         m_capabilities.usingAcceleratedPainting = true;
 
@@ -264,7 +266,8 @@ void LayerRendererChromium::setVisible(bool visible)
 
 void LayerRendererChromium::releaseRenderSurfaceTextures()
 {
-    m_renderSurfaceTextureManager->evictAndDeleteAllTextures(m_renderSurfaceTextureAllocator.get());
+    if (m_renderSurfaceTextureManager)
+        m_renderSurfaceTextureManager->evictAndDeleteAllTextures(m_renderSurfaceTextureAllocator.get());
 }
 
 void LayerRendererChromium::viewportChanged()
@@ -629,8 +632,7 @@ void LayerRendererChromium::setScissorToRect(const IntRect& scissorRect)
 
 bool LayerRendererChromium::makeContextCurrent()
 {
-    m_context->makeContextCurrent();
-    return true;
+    return m_context->makeContextCurrent();
 }
 
 // Sets the coordinate range of content that ends being drawn onto the target render surface.

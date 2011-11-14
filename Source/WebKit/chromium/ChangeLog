@@ -1,3 +1,13 @@
+2011-11-13  Nat Duca  <nduca@chromium.org>
+
+        [chromium] LayerRendererChromium::initialize should fail when GaphicsContext3D::makeCurrent fails
+        https://bugs.webkit.org/show_bug.cgi?id=72102
+
+        Reviewed by James Robinson.
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::setIsAcceleratedCompositingActive):
+
 2011-11-13  Kent Tamura  <tkent@chromium.org>
 
         [Chromium] Remove WebFileChooserParams::acceptTypes

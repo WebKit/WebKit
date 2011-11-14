@@ -2692,6 +2692,8 @@ void WebViewImpl::setIsAcceleratedCompositingActive(bool active)
             if (m_pageOverlay)
                 m_pageOverlay->update();
         } else {
+            m_layerTreeHost.clear();
+            m_nonCompositedContentHost.clear();
             m_isAcceleratedCompositingActive = false;
             m_client->didDeactivateCompositor();
             m_compositorCreationFailed = true;

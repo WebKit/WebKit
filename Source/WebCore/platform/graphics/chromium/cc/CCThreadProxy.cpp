@@ -521,10 +521,10 @@ void CCThreadProxy::initializeLayerRendererOnImplThread(GraphicsContext3D* conte
         *capabilities = m_layerTreeHostImpl->layerRendererCapabilities();
         if (capabilities->usingSwapCompleteCallback)
             m_schedulerOnImplThread->setMaxFramesPending(2);
-    }
 
-    m_inputHandlerOnImplThread = CCInputHandler::create(m_layerTreeHostImpl.get());
-    *compositorIdentifier = m_inputHandlerOnImplThread->identifier();
+        m_inputHandlerOnImplThread = CCInputHandler::create(m_layerTreeHostImpl.get());
+        *compositorIdentifier = m_inputHandlerOnImplThread->identifier();
+    }
 
     completion->signal();
 }
