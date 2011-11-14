@@ -1,3 +1,31 @@
+2011-10-10  Robert Hogan  <robert@webkit.org>
+
+        CSS 2.1 failure: border-spacing-applies-to-015.htm
+        https://bugs.webkit.org/show_bug.cgi?id=69773
+
+        Reviewed by David Hyatt.
+
+        The CSS test suite expects UAs to allow multiple captions per table.
+        Replace m_caption with a Vector called m_captions.
+
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::RenderTable):
+        (WebCore::RenderTable::addChild):
+        (WebCore::RenderTable::removeChild):
+        (WebCore::RenderTable::adjustLogicalHeightForCaption):
+        (WebCore::RenderTable::layout):
+        (WebCore::RenderTable::addOverflowFromChildren):
+        (WebCore::RenderTable::paintObject):
+        (WebCore::RenderTable::subtractCaptionRect):
+        (WebCore::RenderTable::computePreferredLogicalWidths):
+        (WebCore::RenderTable::nextColElement):
+        (WebCore::RenderTable::colElement):
+        (WebCore::RenderTable::recalcCaption):
+        (WebCore::RenderTable::recalcSections):
+        (WebCore::RenderTable::overflowClipRect):
+        (WebCore::RenderTable::nodeAtPoint):
+        * rendering/RenderTable.h:
+
 2011-11-14  Gregg Tavares  <gman@google.com>
 
         Implement WEBGL_EXPERIMENTAL_compressed_textures WebGL extension

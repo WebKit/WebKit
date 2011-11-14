@@ -246,14 +246,13 @@ private:
     void subtractCaptionRect(LayoutRect&) const;
 
     void recalcCollapsedBorders();
-    void recalcCaption(RenderBlock*) const;
     void recalcSections() const;
-    void adjustLogicalHeightForCaption();
+    void adjustLogicalHeightForCaption(RenderBlock*);
 
     mutable Vector<LayoutUnit> m_columnPos;
     mutable Vector<ColumnStruct> m_columns;
 
-    mutable RenderBlock* m_caption;
+    mutable Vector<RenderBlock*> m_captions;
     mutable RenderTableSection* m_head;
     mutable RenderTableSection* m_foot;
     mutable RenderTableSection* m_firstBody;

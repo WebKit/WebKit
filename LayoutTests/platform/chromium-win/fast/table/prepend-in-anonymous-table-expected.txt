@@ -467,6 +467,8 @@ layer at (0,0) size 785x1529
       RenderBlock {DIV} at (0,1513) size 769x0
         RenderTable at (0,0) size 0x0
           RenderBlock {DIV} at (0,0) size 0x0
+          RenderBlock {DIV} at (0,0) size 0x0
       RenderBlock {DIV} at (0,1513) size 769x0
         RenderTable at (0,0) size 0x0
+          RenderBlock {DIV} at (0,0) size 0x0
           RenderBlock {DIV} at (0,0) size 0x0
