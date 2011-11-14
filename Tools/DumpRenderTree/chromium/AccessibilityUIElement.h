@@ -33,6 +33,7 @@
 
 #include "CppBoundClass.h"
 #include "WebAccessibilityObject.h"
+#include <vector>
 #include <wtf/Vector.h>
 
 class AccessibilityUIElement : public CppBoundClass {

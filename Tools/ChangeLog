@@ -1,3 +1,12 @@
+2011-11-14  Lei Zhang  <thestig@chromium.org>
+
+        Missing include in Tools/DumpRenderTree/chromium/AccessibilityUIElement.h:
+        https://bugs.webkit.org/show_bug.cgi?id=72088
+
+        Reviewed by Tony Chang.
+
+        * DumpRenderTree/chromium/AccessibilityUIElement.h:
+
 2011-11-14  Andrew Scherkus  <scherkus@chromium.org>
 
         [Chromium] Skip media layout tests on chromium-gpu-cg-mac-leopard platform
