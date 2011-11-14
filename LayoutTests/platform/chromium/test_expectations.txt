@@ -3882,3 +3882,6 @@ BUGMSTARZINGER : fast/js/mozilla/strict/15.4.5.1.html = TEXT
 BUG_SENORBLANCO MAC LINUX GPU : fast/canvas/canvas-transforms-fillRect-shadow.html = TEXT
 
 BUGWK72149 : media/track/tracklist-is-reachable.html = TEXT
+
+BUGV8_1821 WIN LINUX : http/tests/inspector-enabled/dedicated-workers-list.html = PASS CRASH
+BUGWK72133 SKIP MAC : http/tests/inspector-enabled/dedicated-workers-list.html = PASS CRASH TIMEOUT
