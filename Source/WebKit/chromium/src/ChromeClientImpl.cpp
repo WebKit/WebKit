@@ -672,15 +672,6 @@ void ChromeClientImpl::runOpenPanel(Frame* frame, PassRefPtr<FileChooser> fileCh
     params.directory = false;
 #endif
     params.acceptMIMETypes = fileChooser->settings().acceptMIMETypes;
-    // FIXME: Remove WebFileChooserParams::acceptTypes.
-    StringBuilder builder;
-    const Vector<String>& acceptTypeList = fileChooser->settings().acceptMIMETypes;
-    for (unsigned i = 0; i < acceptTypeList.size(); ++i) {
-        if (i > 0)
-            builder.append(',');
-        builder.append(acceptTypeList[i]);
-    }
-    params.acceptTypes = builder.toString();
     params.selectedFiles = fileChooser->settings().selectedFiles;
     if (params.selectedFiles.size() > 0)
         params.initialValue = params.selectedFiles[0];

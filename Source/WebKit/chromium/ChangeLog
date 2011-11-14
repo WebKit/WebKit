@@ -1,3 +1,14 @@
+2011-11-13  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium] Remove WebFileChooserParams::acceptTypes
+        https://bugs.webkit.org/show_bug.cgi?id=71998
+
+        Reviewed by Darin Fisher.
+
+        * public/WebFileChooserParams.h: Remove acceptTypes.
+        * src/ChromeClientImpl.cpp:
+        (WebKit::ChromeClientImpl::runOpenPanel): Remove acceptTypes generatio code.
+
 2011-11-11  Nico Weber  <thakis@chromium.org>
 
         [chromium] Remove 2 static initializers and 3 exit time destructors. Turn on -Wexit-time-destructors.

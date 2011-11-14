@@ -50,12 +50,6 @@ struct WebFileChooserParams {
     // |initialValue| is a filename which the dialog should select by default.
     // It can be an empty string.
     WebString initialValue;
-    // |acceptTypes| has a comma-separated MIME types such as "audio/*,text/plain".
-    // The dialog may restrict selectable files to the specified MIME types.
-    // This value comes from an 'accept' attribute value of an INPUT element, so it
-    // might be an incorrectly formatted string.
-    // DEPRECATED: Use acceptMIMETypes;
-    WebString acceptTypes;
     // This contains MIME type strings such as "audio/*" "text/plain".
     // The dialog may restrict selectable files to the specified MIME types.
     // This list comes from an 'accept' attribute value of an INPUT element, and
