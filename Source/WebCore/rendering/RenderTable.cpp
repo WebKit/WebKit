@@ -644,10 +644,17 @@ void RenderTable::splitColumn(unsigned position, int firstSpan)
     memmove(m_columns.data() + position + 1, m_columns.data() + position, (oldSize - position) * sizeof(ColumnStruct));
     m_columns[position + 1].span = oldSpan - firstSpan;
 
-    // change width of all rows.
+    // Propagate the change in our columns representation to the sections that don't need
+    // cell recalc. If they do, they will be synced up directly with m_columns later.
     for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
-        if (child->isTableSection())
-            toRenderTableSection(child)->splitColumn(position, firstSpan);
+        if (!child->isTableSection())
+            continue;
+
+        RenderTableSection* section = toRenderTableSection(child);
+        if (section->needsCellRecalc())
+            continue;
+
+        section->splitColumn(position, firstSpan);
     }
 
     m_columnPos.grow(numEffCols() + 1);
@@ -656,16 +663,22 @@ void RenderTable::splitColumn(unsigned position, int firstSpan)
 
 void RenderTable::appendColumn(int span)
 {
-    // easy case.
-    int pos = m_columns.size();
-    int newSize = pos + 1;
+    unsigned pos = m_columns.size();
+    unsigned newSize = pos + 1;
     m_columns.grow(newSize);
     m_columns[pos].span = span;
 
-    // change width of all rows.
+    // Propagate the change in our columns representation to the sections that don't need
+    // cell recalc. If they do, they will be synced up directly with m_columns later.
     for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
-        if (child->isTableSection())
-            toRenderTableSection(child)->appendColumn(pos);
+        if (!child->isTableSection())
+            continue;
+
+        RenderTableSection* section = toRenderTableSection(child);
+        if (section->needsCellRecalc())
+            continue;
+
+        section->appendColumn(pos);
     }
 
     m_columnPos.grow(numEffCols() + 1);
