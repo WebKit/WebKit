@@ -2288,29 +2288,51 @@ a.worker-item:hover {
 
 .soft-context-menu {
     position: absolute;
-    border: 1px solid rgb(180, 180, 180);
-    border-radius: 5px;
-    background-color: rgba(255, 255, 255, 0.95);
-    -webkit-box-shadow: rgba(0, 0, 0, 0.5) 0 3px 10px;
+    font-family: 'Lucida Grande', 'Helvetica', 'sans-serif';
+    border: 1px solid rgba(196, 196, 196, 0.9);
+    border-top: 1px solid rgba(196, 196, 196, 0.5);
+    border-bottom: 1px solid rgba(150, 150, 150, 0.9);
+    padding: 4px 0 4px 0;
+    border-radius: 4px;
+    background-color: white;
+    -webkit-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.25);
 }
 
 .soft-context-menu-item {
     width: 100%;
     line-height: 13px;
-    font-size: 13px;
-    padding: 4px 7px;
-    margin: 3px 0;
+    font-size: 14px;
+    border-top: 1px solid transparent;
+    border-bottom: 1px solid transparent;
+    padding: 1px 7px 3px 6px;
+    margin: 0 13px 0 0;
     white-space: nowrap;
 }
 
 .soft-context-menu-separator {
-    margin-top: 6px;
-    margin-bottom: 6px;
-    border-bottom: 1px solid rgb(180, 180, 180);
+    margin: 5px 1px 6px 1px;
+    border-bottom: 1px solid rgb(227, 227, 227);
 }
 
 .soft-context-menu-item-mouse-over {
+    border-top: 1px solid rgb(56, 121, 217);
+    border-bottom: 1px solid rgb(56, 121, 217);
     background-color: rgb(56, 121, 217);
+    color: white;
+}
+
+body.platform-mac .soft-context-menu-item-mouse-over {
+    border-top: 1px solid rgb(90, 131, 236);
+    border-bottom: 1px solid rgb(18, 88, 233);
+    background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(100, 140, 243)), to(rgb(36, 101, 243)));
+}
+
+.soft-context-menu-item-checkmark {
+    color: rgb(108, 108, 108);
+    pointer-events: none;
+}
+
+.soft-context-menu-item-mouse-over .soft-context-menu-item-checkmark {
     color: white;
 }
 

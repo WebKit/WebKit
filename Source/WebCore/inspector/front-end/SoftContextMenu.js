@@ -95,7 +95,7 @@ WebInspector.SoftContextMenu.prototype = {
 
         var checkMarkElement = document.createElement("span");
         checkMarkElement.textContent = "\u2713 "; // Checkmark Unicode symbol
-        checkMarkElement.style.pointerEvents = "none";
+        checkMarkElement.className = "soft-context-menu-item-checkmark";
         if (!item.checked)
             checkMarkElement.style.opacity = "0";
 

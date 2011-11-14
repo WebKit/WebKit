@@ -1,3 +1,24 @@
+2011-11-14  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Give HTML ContextMenu a more Native look
+        https://bugs.webkit.org/show_bug.cgi?id=72207
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/SoftContextMenu.js:
+        (.WebInspector.SoftContextMenu.prototype._createMenuItem):
+        Give the checkmark a class name so that it can be styled more
+        with CSS instead of with JavaScript.
+
+        * inspector/front-end/inspector.css:
+        (.soft-context-menu): tweak the border and shadow.
+        (.soft-context-menu-item): tweak the font size and positioning.
+        (.soft-context-menu-separator): tweak the whitespace.
+        (.soft-context-menu-item-mouse-over): solid blue for non-mac platforms.
+        (body.platform-mac .soft-context-menu-item-mouse-over): gradient for mac platforms.
+        (.soft-context-menu-item-checkmark): gray color normally.
+        (.soft-context-menu-item-mouse-over .soft-context-menu-item-checkmark): white on hover.
+
 2011-11-10  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: function remote objetct should provide access to function position in the script
