@@ -3889,3 +3889,5 @@ BUGWK72133 SKIP MAC : http/tests/inspector-enabled/dedicated-workers-list.html =
 BUGWK59552 MAC DEBUG : http/tests/security/cross-frame-access-custom.html = PASS CRASH
 
 BUGWK72271 MAC DEBUG : fast/loader/javascript-url-in-embed.html = PASS CRASH
+
+BUGWK72272 WIN : security/crypto-random-values-types.html = TEXT PASS
