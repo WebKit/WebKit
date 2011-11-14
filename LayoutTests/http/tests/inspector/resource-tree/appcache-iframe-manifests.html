@@ -27,7 +27,7 @@ function test()
         InspectorTest.navigateIFrame(frameId1, "resources/page-with-manifest.php?manifestId=2", step3);
     }
 
-    function step3(frameId)
+    function step3()
     {
         InspectorTest.waitForFrameManifestURLAndStatus(frameId1, "manifest.php?manifestId=2", applicationCache.IDLE, step4);
     }
@@ -60,41 +60,46 @@ function test()
 
     function step8()
     {
-        InspectorTest.dumpApplicationCache();
-        InspectorTest.dumpApplicationCacheStatusesRecords();
-        InspectorTest.removeIFrame(frameId3, step9);
+        InspectorTest.waitForFrameManifestURLAndStatus(frameId2, "manifest.php?manifestId=1", applicationCache.IDLE, step9);
     }
 
-    function step9(frameId)
+    function step9()
     {
-        InspectorTest.waitForFrameManifestURLAndStatus(frameId3, "", applicationCache.UNCACHED, step10);
+        InspectorTest.dumpApplicationCache();
+        InspectorTest.dumpApplicationCacheStatusesRecords();
+        InspectorTest.removeIFrame(frameId3, step10);
     }
 
     function step10()
     {
-        InspectorTest.dumpApplicationCache();
-        InspectorTest.dumpApplicationCacheStatusesRecords();
-        InspectorTest.removeIFrame(frameId2, step11);
+        InspectorTest.waitForFrameManifestURLAndStatus(frameId3, "", applicationCache.UNCACHED, step11);
     }
 
-    function step11(frameId)
+    function step11()
     {
-        InspectorTest.waitForFrameManifestURLAndStatus(frameId2, "", applicationCache.UNCACHED, step12);
+        InspectorTest.dumpApplicationCache();
+        InspectorTest.dumpApplicationCacheStatusesRecords();
+        InspectorTest.removeIFrame(frameId2, step12);
     }
 
     function step12()
     {
-        InspectorTest.dumpApplicationCache();
-        InspectorTest.dumpApplicationCacheStatusesRecords();
-        InspectorTest.removeIFrame(frameId1, step13);
+        InspectorTest.waitForFrameManifestURLAndStatus(frameId2, "", applicationCache.UNCACHED, step13);
     }
 
-    function step13(frameId)
+    function step13()
     {
-        InspectorTest.waitForFrameManifestURLAndStatus(frameId1, "", applicationCache.UNCACHED, step14);
+        InspectorTest.dumpApplicationCache();
+        InspectorTest.dumpApplicationCacheStatusesRecords();
+        InspectorTest.removeIFrame(frameId1, step14);
     }
 
     function step14()
+    {
+        InspectorTest.waitForFrameManifestURLAndStatus(frameId1, "", applicationCache.UNCACHED, step15);
+    }
+
+    function step15()
     {
         InspectorTest.dumpApplicationCache();
         InspectorTest.dumpApplicationCacheStatusesRecords();

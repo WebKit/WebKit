@@ -122,7 +122,7 @@ InspectorTest.dumpApplicationCacheModel = function()
     }
 
     function compareFunc(a, b) {
-        return InspectorTest.frameIdToString(frameId).localeCompare(InspectorTest.frameIdToString(frameId));
+        return InspectorTest.frameIdToString(a).localeCompare(InspectorTest.frameIdToString(b));
     }
     frameIds.sort(compareFunc);
 
@@ -198,7 +198,7 @@ InspectorTest.dumpApplicationCacheStatusesRecords = function()
     }
 
     function compareFunc(a, b) {
-        return InspectorTest.frameIdToString(frameId).localeCompare(InspectorTest.frameIdToString(frameId));
+        return InspectorTest.frameIdToString(a).localeCompare(InspectorTest.frameIdToString(b));
     }
     frameIds.sort(compareFunc);
 
