@@ -594,6 +594,21 @@ if (isWx()) {
 }
 
 if (isChromium()) {
+    # Currently chromium does not honour the features passed to build-webkit.
+    # Until this is solved, we issue a warning about that.
+    foreach (@features) {
+        if (${$_->{value}} ne $_->{default}) {
+            print "\n";
+            print "===========================================================\n";
+            print " Chromium does not honor the features passed to build-webkit.\n";
+            print " The preferred way is to set up your overrides in ~/.gyp/include.gypi.\n";
+            print " See https://trac.webkit.org/wiki/Chromium#Buildingwithfeaturedefines\n";
+            print " on how to do that.\n";
+            print "===========================================================\n";
+            last;
+        }
+    }
+
     @options = @ARGV;
     # Chromium doesn't build by project directories.
     @projects = ();
