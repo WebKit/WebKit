@@ -97,12 +97,10 @@ namespace JSC {
         UStringSourceProvider(const UString& source, const UString& url, const TextPosition& startPosition)
             : SourceProvider(url, startPosition)
             , m_source(source)
-            , m_data(m_source.characters16())
         {
         }
 
         UString m_source;
-        const UChar* m_data;
     };
     
 } // namespace JSC
