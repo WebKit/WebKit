@@ -1,5 +1,14 @@
 2011-11-14  Tony Gentilcore  <tonyg@chromium.org>
 
+        Unreviewed, rolling out r100116.
+        http://trac.webkit.org/changeset/100116
+
+        r100104 was rolled out, so no longer needed
+
+        * Scripts/run-bindings-tests:
+
+2011-11-14  Tony Gentilcore  <tonyg@chromium.org>
+
         Unreviewed, rolling out r100104.
         http://trac.webkit.org/changeset/100104
         https://bugs.webkit.org/show_bug.cgi?id=72247

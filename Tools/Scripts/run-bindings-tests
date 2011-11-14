@@ -108,7 +108,7 @@ def main(argv):
     """
     reset_results = "--reset-results" in argv
 
-    current_scm = scm.detection.detect_scm_system(os.curdir)
+    current_scm = scm.detect_scm_system(os.curdir)
     os.chdir(current_scm.checkout_root)
 
     all_tests_passed = True
