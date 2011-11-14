@@ -22,7 +22,6 @@
 
 #ifndef JSString_h
 #define JSString_h
-
 #include "CallFrame.h"
 #include "CommonIdentifiers.h"
 #include "Identifier.h"
@@ -85,6 +84,7 @@ namespace JSC {
                     expand();
                 m_jsString->m_fibers[m_index++].set(m_globalData, m_jsString, jsString);
                 m_jsString->m_length += jsString->m_length;
+                m_jsString->m_is8Bit = m_jsString->m_is8Bit && jsString->m_is8Bit;
             }
 
             JSString* release()
@@ -127,6 +127,7 @@ namespace JSC {
             ASSERT(!m_value.isNull());
             Base::finishCreation(globalData);
             m_length = length;
+            m_is8Bit = m_value.impl()->is8Bit();
         }
 
         void finishCreation(JSGlobalData& globalData, size_t length, size_t cost)
@@ -134,6 +135,7 @@ namespace JSC {
             ASSERT(!m_value.isNull());
             Base::finishCreation(globalData);
             m_length = length;
+            m_is8Bit = m_value.impl()->is8Bit();
             Heap::heap(this)->reportExtraMemoryCost(cost);
         }
 
@@ -141,6 +143,7 @@ namespace JSC {
         {
             Base::finishCreation(globalData);
             m_length = s1->length() + s2->length();
+            m_is8Bit = (s1->is8Bit() && s2->is8Bit());
             m_fibers[0].set(globalData, this, s1);
             m_fibers[1].set(globalData, this, s2);
         }
@@ -149,6 +152,7 @@ namespace JSC {
         {
             Base::finishCreation(globalData);
             m_length = s1->length() + s2->length() + s3->length();
+            m_is8Bit = (s1->is8Bit() && s2->is8Bit() &&  s3->is8Bit());
             m_fibers[0].set(globalData, this, s1);
             m_fibers[1].set(globalData, this, s2);
             m_fibers[2].set(globalData, this, s3);
@@ -244,6 +248,7 @@ namespace JSC {
         }
 
         void resolveRope(ExecState*) const;
+        void resolveRopeSlowCase(ExecState*, LChar*) const;
         void resolveRopeSlowCase(ExecState*, UChar*) const;
         void outOfMemory(ExecState*) const;
 
@@ -256,11 +261,13 @@ namespace JSC {
         static const unsigned s_maxInternalRopeLength = 3;
 
         // A string is represented either by a UString or a rope of fibers.
+        bool m_is8Bit : 1;
         unsigned m_length;
         mutable UString m_value;
         mutable FixedArray<WriteBarrier<JSString>, s_maxInternalRopeLength> m_fibers;
 
         bool isRope() const { return m_value.isNull(); }
+        bool is8Bit() const { return m_is8Bit; }
         UString& string() { ASSERT(!isRope()); return m_value; }
 
         friend JSValue jsString(ExecState*, JSString*, JSString*);
