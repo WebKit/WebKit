@@ -332,15 +332,22 @@ my @features = (
 # Update defaults from Qt's project file
 if (isQt()) {
     # Take a sneek peek at the arguments, since we will need the qmake binary early
-    # on to do profile parsing.
+    # on to do profile parsing. We also need to know if we're showing the help-text.
     foreach (@ARGV) {
         if (/^--qmake=(.*)/) {
             setQmakeBinaryPath($1);
+        } elsif (/^--help$/) {
+            $showHelp = 1;
         }
     }
-    my %qtDefaults = qtFeatureDefaults();
+
+    my %qtDefaults;
+    if ($showHelp) {
+        %qtDefaults = qtFeatureDefaults();
+    }
+
     foreach (@features) {
-        $_->{default} = $qtDefaults{$_->{define}} || 0;
+        $_->{default} = (%qtDefaults ? $qtDefaults{$_->{define}} : -1);
     }
 }
 
@@ -358,7 +365,7 @@ foreach (@ARGV) {
 
 # Initialize values from defaults
 foreach (@features) {
-    ${$_->{value}} = ($_->{default} && !$minimal) || 0;
+    ${$_->{value}} = ($minimal ? 0 : $_->{default});
 }
 
 $svgSupport = $svgSupport || $svgDOMObjCBindingsSupport || $svgFontsSupport;

@@ -1,3 +1,19 @@
+2011-11-14  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        [Qt] Add support for config tests for Qt 5
+
+        This allows us to build and run configure-tests at build
+        time to determine if a given platform feature is available.
+
+        Reviewed by Simon Hausmann.
+
+        * Scripts/build-webkit:
+        * Scripts/webkitdirs.pm:
+        (qtFeatureDefaults):
+        * qmake/configure.pro: Added.
+        * qmake/mkspecs/features/features.prf:
+        * qmake/sync.profile: Added.
+
 2011-11-11  Pierre Rossi  <pierre.rossi@gmail.com>
 
         [Qt] Remove the QStyle dependency in Qt's mobile theme

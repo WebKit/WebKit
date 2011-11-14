@@ -736,8 +736,6 @@ sub qtFeatureDefaults(;@)
     my @buildArgs = @_;
     my %qtFeatureDefaults;
 
-    push @buildArgs, "CONFIG+=compute_defaults";
-
     die "ERROR: qmake missing but required to build WebKit.\n" if not commandExists($qmakebin);
 
     my $qmakepath = File::Spec->catfile(sourceDir(), "Tools", "qmake");
@@ -747,12 +745,28 @@ sub qtFeatureDefaults(;@)
     } else {
         $qmakecommand = "QMAKEPATH=$qmakepath $qmakebin";
     }
-    my $dir = File::Spec->catfile($qmakepath, "mkspecs", "features", "features.prf");
-    my $defaults = `$qmakecommand @buildArgs $dir 2>&1`;
+
+    my $originalCwd = getcwd();
+
+    my $file;
+    if (!@buildArgs) {
+        # Do a quick check of the features without running the config tests
+        $file = File::Spec->catfile($qmakepath, "mkspecs", "features", "features.prf");
+        push @buildArgs, "CONFIG+=compute_defaults";
+    } else {
+        my $dir = File::Spec->catfile(productDir(), "Tools", "qmake");
+        File::Path::mkpath($dir);
+        chdir $dir or die "Failed to cd into " . $dir . "\n";
+        $file = File::Spec->catfile($qmakepath, "configure.pro");
+    }
+
+    my $defaults = `$qmakecommand @buildArgs $file 2>&1`;
 
     while ($defaults =~ m/(\S+?)=(\S+?)/gi) {
         $qtFeatureDefaults{$1}=$2;
     }
+
+    chdir $originalCwd;
 
     return %qtFeatureDefaults;
 }
