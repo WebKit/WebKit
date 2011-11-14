@@ -3716,22 +3716,6 @@ BUGCR29164 WIN LINUX : fast/frames/sandboxed-iframe-plugins.html = TEXT
 
 BUGWK69998 LINUX WIN : plugins/refcount-leaks.html = PASS TEXT
 BUGWK70001 LINUX WIN : fast/images/color-jpeg-with-color-profile.html = FAIL MISSING
-// Random crash of canvas tests.
-BUGWK70013 WIN GPU : canvas/philip/tests/2d.transformation.rotate.wrap.html = PASS CRASH
-BUGWK70013 WIN GPU : canvas/philip/tests/2d.transformation.setTransform.skewed.html = PASS CRASH
-BUGWK70013 WIN GPU : fast/canvas/arc360.html = PASS CRASH
-BUGWK70013 WIN GPU : fast/canvas/canvas-arc-360-winding.html = PASS CRASH
-BUGWK70013 WIN GPU : fast/canvas/canvas-arc-connecting-line.html = PASS CRASH
-BUGWK70013 WIN GPU : fast/canvas/canvas-drawImage-shadow.html = PASS CRASH
-BUGWK70013 WIN GPU : fast/canvas/canvas-fillPath-alpha-shadow.html = PASS CRASH
-BUGWK70013 WIN GPU : fast/canvas/canvas-fillPath-gradient-shadow.html = PASS CRASH
-BUGWK70013 WIN GPU : fast/canvas/canvas-fillPath-pattern-shadow.html = PASS CRASH
-BUGWK70013 WIN GPU : fast/canvas/canvas-fillPath-shadow.html = PASS CRASH
-BUGWK70013 WIN GPU : fast/canvas/canvas-largedraws.html = PASS CRASH
-BUGWK70013 WIN GPU : fast/canvas/canvas-lineWidth-intact-after-strokeRect.html = PASS CRASH
-BUGWK70013 WIN GPU : fast/canvas/canvas-strokePath-alpha-shadow.html = PASS CRASH
-BUGWK70013 WIN GPU : fast/canvas/canvas-strokePath-shadow.html = PASS CRASH
-BUGWK70013 WIN GPU : fast/canvas/canvas-transforms-fillRect-shadow.html = TEXT CRASH
 
 BUGV8_1768 : fast/js/delete-syntax.html = TEXT
 
@@ -3880,7 +3864,7 @@ BUGWK72264 MAC : inspector/debugger/script-formatter.html = TIMEOUT
 // Fixed ES5 bugs during the V8 roll, upstream in progress.
 BUGMSTARZINGER : fast/js/mozilla/strict/15.4.5.1.html = TEXT
 
-BUG_SENORBLANCO MAC LINUX GPU : fast/canvas/canvas-transforms-fillRect-shadow.html = TEXT
+BUG_SENORBLANCO GPU : fast/canvas/canvas-transforms-fillRect-shadow.html = TEXT
 
 BUGWK72149 : media/track/tracklist-is-reachable.html = TEXT
 BUGWK72269 : media/track/track-cues-cuechange.html = PASS TEXT
