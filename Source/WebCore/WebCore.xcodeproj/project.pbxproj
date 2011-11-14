@@ -4160,8 +4160,6 @@
 		B10B6981140C174000BC1C26 /* WebVTTTokenizer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B10B697E140C174000BC1C26 /* WebVTTTokenizer.cpp */; };
 		B10B6982140C174000BC1C26 /* WebVTTTokenizer.h in Headers */ = {isa = PBXBuildFile; fileRef = B10B697F140C174000BC1C26 /* WebVTTTokenizer.h */; };
 		B1827493134CA4C100B98C2D /* CallbackFunction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B1827492134CA4C100B98C2D /* CallbackFunction.cpp */; };
-		B1AD4E5C13A12A0B00846B27 /* TextTrackCueIndex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B1AD4E4B13A12A0B00846B27 /* TextTrackCueIndex.cpp */; };
-		B1AD4E5D13A12A0B00846B27 /* TextTrackCueIndex.h in Headers */ = {isa = PBXBuildFile; fileRef = B1AD4E4C13A12A0B00846B27 /* TextTrackCueIndex.h */; };
 		B1AD4E5E13A12A0B00846B27 /* LoadableTextTrack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B1AD4E4D13A12A0B00846B27 /* LoadableTextTrack.cpp */; };
 		B1AD4E5F13A12A0B00846B27 /* LoadableTextTrack.h in Headers */ = {isa = PBXBuildFile; fileRef = B1AD4E4E13A12A0B00846B27 /* LoadableTextTrack.h */; };
 		B1AD4E6613A12A0B00846B27 /* TextTrack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B1AD4E5513A12A0B00846B27 /* TextTrack.cpp */; };
@@ -11277,8 +11275,6 @@
 		B10B697E140C174000BC1C26 /* WebVTTTokenizer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebVTTTokenizer.cpp; sourceTree = "<group>"; };
 		B10B697F140C174000BC1C26 /* WebVTTTokenizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebVTTTokenizer.h; sourceTree = "<group>"; };
 		B1827492134CA4C100B98C2D /* CallbackFunction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CallbackFunction.cpp; sourceTree = "<group>"; };
-		B1AD4E4B13A12A0B00846B27 /* TextTrackCueIndex.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextTrackCueIndex.cpp; sourceTree = "<group>"; };
-		B1AD4E4C13A12A0B00846B27 /* TextTrackCueIndex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextTrackCueIndex.h; sourceTree = "<group>"; };
 		B1AD4E4D13A12A0B00846B27 /* LoadableTextTrack.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LoadableTextTrack.cpp; sourceTree = "<group>"; };
 		B1AD4E4E13A12A0B00846B27 /* LoadableTextTrack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoadableTextTrack.h; sourceTree = "<group>"; };
 		B1AD4E5513A12A0B00846B27 /* TextTrack.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextTrack.cpp; sourceTree = "<group>"; };
@@ -17391,8 +17387,6 @@
 				B1AD4E5713A12A0B00846B27 /* TextTrackCue.cpp */,
 				B1AD4E5813A12A0B00846B27 /* TextTrackCue.h */,
 				0707569D1422979800414161 /* TextTrackCue.idl */,
-				B1AD4E4B13A12A0B00846B27 /* TextTrackCueIndex.cpp */,
-				B1AD4E4C13A12A0B00846B27 /* TextTrackCueIndex.h */,
 				B1AD4E5913A12A0B00846B27 /* TextTrackCueList.cpp */,
 				B1AD4E5A13A12A0B00846B27 /* TextTrackCueList.h */,
 				0707569E1422979800414161 /* TextTrackCueList.idl */,
@@ -24427,7 +24421,6 @@
 				B2C3DA4B0D006C1D00EF6F26 /* TextStream.h in Headers */,
 				B1AD4E6713A12A0B00846B27 /* TextTrack.h in Headers */,
 				B1AD4E6913A12A0B00846B27 /* TextTrackCue.h in Headers */,
-				B1AD4E5D13A12A0B00846B27 /* TextTrackCueIndex.h in Headers */,
 				B1AD4E6B13A12A0B00846B27 /* TextTrackCueList.h in Headers */,
 				B1AD4E7413A12A4600846B27 /* TextTrackLoader.h in Headers */,
 				498770F11242C535002226BA /* Texture.h in Headers */,
@@ -27331,7 +27324,6 @@
 				B2C3DA4A0D006C1D00EF6F26 /* TextStream.cpp in Sources */,
 				B1AD4E6613A12A0B00846B27 /* TextTrack.cpp in Sources */,
 				B1AD4E6813A12A0B00846B27 /* TextTrackCue.cpp in Sources */,
-				B1AD4E5C13A12A0B00846B27 /* TextTrackCueIndex.cpp in Sources */,
 				B1AD4E6A13A12A0B00846B27 /* TextTrackCueList.cpp in Sources */,
 				B1AD4E7313A12A4600846B27 /* TextTrackLoader.cpp in Sources */,
 				498770F01242C535002226BA /* Texture.cpp in Sources */,

@@ -2055,12 +2055,10 @@ ENDIF ()
 
 IF (ENABLE_VIDEO_TRACK)
     LIST(APPEND WebCore_SOURCES
-        html/CueIndex.cpp
         html/HTMLTrackElement.cpp
         html/LoadableTextTrack.cpp
         html/TextTrack.cpp
         html/TextTrackCue.cpp
-        html/TextTrackCueIndex.cpp
         html/TextTrackCueList.cpp
         html/track/TextTrackList.cpp
         html/track/TrackBase.cpp

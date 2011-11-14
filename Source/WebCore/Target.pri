@@ -1869,7 +1869,6 @@ HEADERS += \
     html/TextDocument.h \
     html/TextTrack.h \
     html/TextTrackCue.h \
-    html/TextTrackCueIndex.h \
     html/TextTrackCueList.h \
     html/TimeRanges.h \
     html/ValidityState.h \

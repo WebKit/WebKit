@@ -5650,8 +5650,6 @@
             'html/TextTrack.h',
             'html/TextTrackCue.cpp',
             'html/TextTrackCue.h',
-            'html/TextTrackCueIndex.cpp',
-            'html/TextTrackCueIndex.h',
             'html/TextTrackCueList.cpp',
             'html/TextTrackCueList.h',
             'html/TimeInputType.cpp',

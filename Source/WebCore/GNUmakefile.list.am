@@ -1980,8 +1980,6 @@ webcore_sources += \
 	Source/WebCore/html/TextTrack.h \
 	Source/WebCore/html/TextTrackCue.cpp \
 	Source/WebCore/html/TextTrackCue.h \
-	Source/WebCore/html/TextTrackCueIndex.cpp \
-	Source/WebCore/html/TextTrackCueIndex.h \
 	Source/WebCore/html/TextTrackCueList.cpp \
 	Source/WebCore/html/TextTrackCueList.h \
 	Source/WebCore/html/TimeInputType.cpp \
