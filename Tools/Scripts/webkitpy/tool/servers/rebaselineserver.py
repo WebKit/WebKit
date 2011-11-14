@@ -164,8 +164,9 @@ def _move_test_baselines(test_file, extensions_to_move, source_platform, destina
 def get_test_baselines(test_file, test_config):
     # FIXME: This seems like a hack. This only seems used to access the Port.expected_baselines logic.
     class AllPlatformsPort(WebKitPort):
-        def __init__(self, host):
-            WebKitPort.__init__(self, host)
+        def __init__(self):
+            # FIXME: This should get the Host from the test_config to be mockable!
+            WebKitPort.__init__(self, Host(), filesystem=test_config.filesystem)
             self._platforms_by_directory = dict([(self._webkit_baseline_path(p), p) for p in test_config.platforms])
 
         def baseline_search_path(self):
@@ -176,11 +177,7 @@ def get_test_baselines(test_file, test_config):
 
     test_path = test_config.filesystem.join(test_config.layout_tests_directory, test_file)
 
-    # FIXME: This should get the Host from the test_config to be mockable!
-    host = Host()
-    host._initialize_scm()
-    host.filesystem = test_config.filesystem
-    all_platforms_port = AllPlatformsPort(host)
+    all_platforms_port = AllPlatformsPort()
 
     all_test_baselines = {}
     for baseline_extension in ('.txt', '.checksum', '.png'):

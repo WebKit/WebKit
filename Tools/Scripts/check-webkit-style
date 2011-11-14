@@ -48,7 +48,7 @@ import os
 import os.path
 import sys
 
-from webkitpy.common.checkout.scm.detection import detect_scm_system
+from webkitpy.common.checkout.scm import detect_scm_system
 import webkitpy.style.checker as checker
 from webkitpy.style.patchreader import PatchReader
 from webkitpy.style.checker import StyleProcessor

@@ -944,7 +944,6 @@ def main(args):
     logger.addHandler(log_handler)
 
     host = Host()
-    host._initialize_scm()
     target_port_obj = host.port_factory.get(None, target_options)
     host_port_obj = get_host_port_object(host.port_factory, options)
     if not host_port_obj or not target_port_obj:

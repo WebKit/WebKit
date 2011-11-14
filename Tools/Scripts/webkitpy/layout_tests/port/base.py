@@ -37,6 +37,7 @@ import difflib
 import errno
 import os
 
+from webkitpy.common.checkout.scm import detect_scm_system
 from webkitpy.common.memoized import memoized
 
 

@@ -27,56 +27,58 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from webkitpy.common.system.filesystem import FileSystem
-from webkitpy.common.system.executive import Executive
+import os
 
-from webkitpy.common.system.deprecated_logging import log
+from webkitpy.common.system.deprecated_logging import error, log
 
 from .svn import SVN
 from .git import Git
 
 
-class SCMDetector(object):
-    def __init__(self, filesystem, executive):
-        self._filesystem = filesystem
-        self._executive = executive
+def find_checkout_root():
+    """Returns the current checkout root (as determined by default_scm().
 
-    def default_scm(self, patch_directories=None):
-        """Return the default SCM object as determined by the CWD and running code.
+    Returns the absolute path to the top of the WebKit checkout, or None
+    if it cannot be determined.
 
-        Returns the default SCM object for the current working directory; if the
-        CWD is not in a checkout, then we attempt to figure out if the SCM module
-        itself is part of a checkout, and return that one. If neither is part of
-        a checkout, None is returned.
-
-        """
-        cwd = self._filesystem.getcwd()
-        scm_system = self.detect_scm_system(cwd, patch_directories)
-        if not scm_system:
-            script_directory = self._filesystem.dirname(self._filesystem.path_to_module(self.__module__))
-            scm_system = self.detect_scm_system(script_directory, patch_directories)
-            if scm_system:
-                log("The current directory (%s) is not a WebKit checkout, using %s" % (cwd, scm_system.checkout_root))
-            else:
-                raise Exception("FATAL: Failed to determine the SCM system for either %s or %s" % (cwd, script_directory))
-        return scm_system
-
-    def detect_scm_system(self, path, patch_directories=None):
-        absolute_path = self._filesystem.abspath(path)
-
-        if patch_directories == []:
-            patch_directories = None
-
-        if SVN.in_working_directory(absolute_path):
-            return SVN(cwd=absolute_path, patch_directories=patch_directories, filesystem=self._filesystem, executive=self._executive)
-
-        if Git.in_working_directory(absolute_path):
-            return Git(cwd=absolute_path, filesystem=self._filesystem, executive=self._executive)
-
-        return None
+    """
+    scm_system = default_scm()
+    if scm_system:
+        return scm_system.checkout_root
+    return None
 
 
-# FIXME: These free functions are all deprecated:
+def default_scm(patch_directories=None):
+    """Return the default SCM object as determined by the CWD and running code.
+
+    Returns the default SCM object for the current working directory; if the
+    CWD is not in a checkout, then we attempt to figure out if the SCM module
+    itself is part of a checkout, and return that one. If neither is part of
+    a checkout, None is returned.
+
+    """
+    cwd = os.getcwd()
+    scm_system = detect_scm_system(cwd, patch_directories)
+    if not scm_system:
+        script_directory = os.path.dirname(os.path.abspath(__file__))
+        scm_system = detect_scm_system(script_directory, patch_directories)
+        if scm_system:
+            log("The current directory (%s) is not a WebKit checkout, using %s" % (cwd, scm_system.checkout_root))
+        else:
+            error("FATAL: Failed to determine the SCM system for either %s or %s" % (cwd, script_directory))
+    return scm_system
+
 
 def detect_scm_system(path, patch_directories=None):
-    return SCMDetector(FileSystem(), Executive()).detect_scm_system(path, patch_directories)
+    absolute_path = os.path.abspath(path)
+
+    if patch_directories == []:
+        patch_directories = None
+
+    if SVN.in_working_directory(absolute_path):
+        return SVN(cwd=absolute_path, patch_directories=patch_directories)
+
+    if Git.in_working_directory(absolute_path):
+        return Git(cwd=absolute_path)
+
+    return None

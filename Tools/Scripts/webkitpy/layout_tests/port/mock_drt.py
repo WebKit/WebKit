@@ -279,5 +279,4 @@ class MockChromiumDRT(MockDRT):
 if __name__ == '__main__':
     # FIXME: Why is this using a real Host object instead of MockHost?
     host = Host()
-    host._initialize_scm()
     sys.exit(main(sys.argv[1:], host, sys.stdin, sys.stdout, sys.stderr))

@@ -30,6 +30,7 @@
 
 import codecs
 import fileinput
+import os.path
 import re
 import textwrap
 
@@ -39,7 +40,6 @@ class DEPS(object):
     _variable_regexp = r"\s+'%s':\s+'(?P<value>\d+)'"
 
     def __init__(self, path):
-        # FIXME: This should take a FileSystem object.
         self._path = path
 
     def read_variable(self, name):

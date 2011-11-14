@@ -430,7 +430,6 @@ def parse_args(args=None):
 def main():
     options, args = parse_args()
     host = Host()
-    host._initialize_scm()
     port = host.port_factory.get(options.platform, options)
     return run(port, options, args)
 

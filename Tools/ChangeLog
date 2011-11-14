@@ -1,3 +1,29 @@
+2011-11-14  Tony Gentilcore  <tonyg@chromium.org>
+
+        Unreviewed, rolling out r100104.
+        http://trac.webkit.org/changeset/100104
+        https://bugs.webkit.org/show_bug.cgi?id=72247
+
+        broke windows builds
+
+        * Scripts/check-webkit-style:
+        * Scripts/webkitpy/common/checkout/checkout_unittest.py:
+        * Scripts/webkitpy/common/checkout/deps.py:
+        * Scripts/webkitpy/common/checkout/scm/__init__.py:
+        * Scripts/webkitpy/common/checkout/scm/detection.py:
+        * Scripts/webkitpy/common/checkout/scm/git.py:
+        * Scripts/webkitpy/common/checkout/scm/scm_unittest.py:
+        * Scripts/webkitpy/common/checkout/scm/svn.py:
+        * Scripts/webkitpy/common/host.py:
+        * Scripts/webkitpy/common/host_mock.py:
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        * Scripts/webkitpy/layout_tests/controllers/manager_worker_broker.py:
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        * Scripts/webkitpy/layout_tests/port/mock_drt.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        * Scripts/webkitpy/to_be_moved/rebaseline_chromium_webkit_tests.py:
+        * Scripts/webkitpy/tool/servers/rebaselineserver.py:
+
 2011-11-14  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, build fix after r100104. run-binding-tests broke.

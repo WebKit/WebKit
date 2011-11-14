@@ -62,8 +62,8 @@ class Git(SCM, SVNRepository):
     # 1 or 128, mostly.
     ERROR_FILE_IS_MISSING = 128
 
-    def __init__(self, cwd, **kwargs):
-        SCM.__init__(self, cwd, **kwargs)
+    def __init__(self, cwd, executive=None):
+        SCM.__init__(self, cwd, executive)
         self._check_git_architecture()
 
     def _machine_is_64bit(self):

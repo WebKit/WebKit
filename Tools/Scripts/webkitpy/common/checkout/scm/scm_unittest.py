@@ -233,7 +233,6 @@ class SVNTestRepository:
         os.chdir(detect_scm_system(path).checkout_root)
 
 
-# FIXME: This should move to testing SCMDetector instead.
 class StandaloneFunctionsTest(unittest.TestCase):
     """This class tests any standalone/top-level functions in the package."""
     def setUp(self):
@@ -283,7 +282,6 @@ class StandaloneFunctionsTest(unittest.TestCase):
         os.path.abspath = lambda x: "/"
         self.assertRaises(SystemExit, default_scm)
         os.path.abspath = self.orig_abspath
-
 
 # For testing the SCM baseclass directly.
 class SCMClassTests(unittest.TestCase):
