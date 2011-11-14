@@ -3873,7 +3873,8 @@ BUGWK70395 MAC : fast/dom/rtl-scroll-to-leftmost-and-resize.html = IMAGE+TEXT
 
 BUGWK72189 WIN : accessibility/adjacent-continuations-cause-assertion-failure.html = TEXT
 
-BUGWK72204 : inspector/debugger/script-formatter.html = TEXT
+BUGWK72264 MAC : inspector/debugger/script-formatter.html = TIMEOUT
+BUGWK72264 MAC: http/tests/inspector/resource-tree/appcache-iframe-manifests.html = TIMEOUT
 
 // Fixed ES5 bugs during the V8 roll, upstream in progress.
 BUGMSTARZINGER : fast/js/mozilla/strict/15.4.5.1.html = TEXT
