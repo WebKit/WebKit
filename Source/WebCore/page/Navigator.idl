@@ -44,7 +44,7 @@ module window {
         readonly attribute [EnabledAtRuntime] Geolocation geolocation;
 #endif
 
-#if defined(ENABLE_MOUSE_LOCK_API) && ENABLE_MOUSE_LOCK_API
+#if defined(ENABLE_POINTER_LOCK) && ENABLE_POINTER_LOCK
         readonly attribute [EnabledAtRuntime] MouseLockable webkitPointer;
 #endif
 

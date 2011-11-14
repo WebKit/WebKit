@@ -171,7 +171,7 @@ Geolocation* Navigator::geolocation() const
     return m_geolocation.get();
 }
 
-#if ENABLE(MOUSE_LOCK_API)
+#if ENABLE(POINTER_LOCK)
 MouseLockable* Navigator::webkitPointer() const
 {
     if (!m_pointer)

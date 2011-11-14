@@ -425,7 +425,7 @@ void WebSettingsImpl::setFullScreenEnabled(bool enabled)
 
 void WebSettingsImpl::setMouseLockEnabled(bool enabled)
 {
-#if ENABLE(MOUSE_LOCK_API)
+#if ENABLE(POINTER_LOCK)
     m_settings->setMouseLockEnabled(enabled);
 #else
     UNUSED_PARAM(enabled);

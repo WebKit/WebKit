@@ -1,3 +1,12 @@
+2011-11-14  Vincent Scheib  <scheib@chromium.org>
+
+        Mouse Lock: Renaming to 'Pointer Lock': ENABLE Flags
+        https://bugs.webkit.org/show_bug.cgi?id=72286
+
+        Reviewed by Adam Barth.
+
+        * wtf/Platform.h:
+
 2011-11-14  Gavin Barraclough  <barraclough@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=72280

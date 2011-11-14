@@ -382,7 +382,7 @@ namespace WebCore {
         bool fullScreenEnabled() const  { return m_fullScreenAPIEnabled; }
 #endif
 
-#if ENABLE(MOUSE_LOCK_API)
+#if ENABLE(POINTER_LOCK)
         void setMouseLockEnabled(bool flag) { m_mouseLockAPIEnabled = flag; }
         bool mouseLockEnabled() const  { return m_mouseLockAPIEnabled; }
 #endif
@@ -593,7 +593,7 @@ namespace WebCore {
 #if ENABLE(FULLSCREEN_API)
         bool m_fullScreenAPIEnabled : 1;
 #endif
-#if ENABLE(MOUSE_LOCK_API)
+#if ENABLE(POINTER_LOCK)
         bool m_mouseLockAPIEnabled : 1;
 #endif
         bool m_asynchronousSpellCheckingEnabled: 1;

@@ -198,7 +198,7 @@ Settings::Settings(Page* page)
 #if ENABLE(FULLSCREEN_API)
     , m_fullScreenAPIEnabled(false)
 #endif
-#if ENABLE(MOUSE_LOCK_API)
+#if ENABLE(POINTER_LOCK)
     , m_mouseLockAPIEnabled(false)
 #endif
     , m_asynchronousSpellCheckingEnabled(false)

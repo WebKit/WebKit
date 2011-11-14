@@ -25,7 +25,7 @@
 module core {
 
     interface [
-        Conditional=MOUSE_LOCK_API,
+        Conditional=POINTER_LOCK,
         OmitConstructor
     ] MouseLockable {
         void webkitLock(in Element target, in [Callback, Optional] VoidCallback successCallback, in [Callback, Optional] VoidCallback failureCallback);

@@ -362,7 +362,7 @@ bool WebRuntimeFeatures::isFullScreenAPIEnabled()
 
 void WebRuntimeFeatures::enableMouseLockAPI(bool enable)
 {
-#if ENABLE(MOUSE_LOCK_API)
+#if ENABLE(POINTER_LOCK)
     RuntimeEnabledFeatures::setWebkitMouseLockAPIEnabled(enable);
 #else
     UNUSED_PARAM(enable);
@@ -371,7 +371,7 @@ void WebRuntimeFeatures::enableMouseLockAPI(bool enable)
 
 bool WebRuntimeFeatures::isMouseLockAPIEnabled()
 {
-#if ENABLE(MOUSE_LOCK_API)
+#if ENABLE(POINTER_LOCK)
     return RuntimeEnabledFeatures::webkitMouseLockAPIEnabled();
 #else
     return false;

@@ -80,7 +80,7 @@ public:
     static bool webkitCancelFullScreenEnabled() { return isFullScreenAPIEnabled; }
 #endif
 
-#if ENABLE(MOUSE_LOCK_API)
+#if ENABLE(POINTER_LOCK)
     static bool webkitMouseLockAPIEnabled() { return isMouseLockAPIEnabled; }
     static void setWebkitMouseLockAPIEnabled(bool isEnabled) { isMouseLockAPIEnabled = isEnabled; }
     static bool webkitPointerEnabled() { return isMouseLockAPIEnabled; }
@@ -234,7 +234,7 @@ private:
     static bool isFullScreenAPIEnabled;
 #endif
 
-#if ENABLE(MOUSE_LOCK_API)
+#if ENABLE(POINTER_LOCK)
     static bool isMouseLockAPIEnabled;
 #endif
 

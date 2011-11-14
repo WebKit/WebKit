@@ -59,7 +59,7 @@ public:
 
     Geolocation* geolocation() const;
 
-#if ENABLE(MOUSE_LOCK_API)
+#if ENABLE(POINTER_LOCK)
     MouseLockable* webkitPointer() const;
 #endif
 
@@ -80,7 +80,7 @@ private:
     mutable RefPtr<DOMPluginArray> m_plugins;
     mutable RefPtr<DOMMimeTypeArray> m_mimeTypes;
     mutable RefPtr<Geolocation> m_geolocation;
-#if ENABLE(MOUSE_LOCK_API)
+#if ENABLE(POINTER_LOCK)
     mutable RefPtr<MouseLockable> m_pointer;
 #endif
 };

@@ -25,7 +25,7 @@
 #ifndef MouseLockable_h
 #define MouseLockable_h
 
-#if ENABLE(MOUSE_LOCK_API)
+#if ENABLE(POINTER_LOCK)
 
 #include "VoidCallback.h"
 #include <wtf/PassRefPtr.h>
@@ -51,7 +51,7 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(MOUSE_LOCK_API)
+#endif // ENABLE(POINTER_LOCK)
 
 #endif // MouseLockable_h
 

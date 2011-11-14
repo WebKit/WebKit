@@ -25,7 +25,7 @@ module events {
         readonly attribute long             screenY;
         readonly attribute long             clientX;
         readonly attribute long             clientY;
-#if defined(ENABLE_MOUSE_LOCK_API) && ENABLE_MOUSE_LOCK_API
+#if defined(ENABLE_POINTER_LOCK) && ENABLE_POINTER_LOCK
         readonly attribute long             movementX;
         readonly attribute long             movementY;
 #endif

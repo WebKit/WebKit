@@ -39,7 +39,7 @@ namespace WebCore {
         const IntPoint& screenLocation() const { return m_screenLocation; }
         int clientX() const { return m_clientLocation.x(); }
         int clientY() const { return m_clientLocation.y(); }
-#if ENABLE(MOUSE_LOCK_API)
+#if ENABLE(POINTER_LOCK)
         int movementX() const { return m_movementDelta.x(); }
         int movementY() const { return m_movementDelta.y(); }
 #endif
@@ -76,7 +76,7 @@ namespace WebCore {
         // Expose these so MouseEvent::initMouseEvent can set them.
         IntPoint m_screenLocation;
         LayoutPoint m_clientLocation;
-#if ENABLE(MOUSE_LOCK_API)
+#if ENABLE(POINTER_LOCK)
         LayoutPoint m_movementDelta;
 #endif
 

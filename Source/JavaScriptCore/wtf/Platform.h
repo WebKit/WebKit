@@ -863,8 +863,8 @@
 #define ENABLE_FULLSCREEN_API 0
 #endif
 
-#if !defined(ENABLE_MOUSE_LOCK_API)
-#define ENABLE_MOUSE_LOCK_API 0
+#if !defined(ENABLE_POINTER_LOCK)
+#define ENABLE_POINTER_LOCK 0
 #endif
 
 #if !defined(WTF_USE_JSVALUE64) && !defined(WTF_USE_JSVALUE32_64)

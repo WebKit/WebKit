@@ -164,7 +164,7 @@ bool RuntimeEnabledFeatures::isQuotaEnabled = false;
 bool RuntimeEnabledFeatures::isFullScreenAPIEnabled = true;
 #endif
 
-#if ENABLE(MOUSE_LOCK_API)
+#if ENABLE(POINTER_LOCK)
 bool RuntimeEnabledFeatures::isMouseLockAPIEnabled = false;
 #endif
 

@@ -1,3 +1,17 @@
+2011-11-14  Vincent Scheib  <scheib@chromium.org>
+
+        Mouse Lock: Renaming to 'Pointer Lock': ENABLE Flags
+        https://bugs.webkit.org/show_bug.cgi?id=72286
+
+        Reviewed by Adam Barth.
+
+        * features.gypi:
+        * src/WebRuntimeFeatures.cpp:
+        (WebKit::WebRuntimeFeatures::enableMouseLockAPI):
+        (WebKit::WebRuntimeFeatures::isMouseLockAPIEnabled):
+        * src/WebSettingsImpl.cpp:
+        (WebKit::WebSettingsImpl::setMouseLockEnabled):
+
 2011-11-14  Gregg Tavares  <gman@google.com>
 
         Implement WEBGL_EXPERIMENTAL_compressed_textures WebGL extension

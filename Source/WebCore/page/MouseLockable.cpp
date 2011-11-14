@@ -25,7 +25,7 @@
 #include "config.h"
 #include "MouseLockable.h"
 
-#if ENABLE(MOUSE_LOCK_API)
+#if ENABLE(POINTER_LOCK)
 
 namespace WebCore {
 
@@ -55,4 +55,4 @@ bool MouseLockable::webkitIsLocked()
 
 }
 
-#endif // ENABLE(MOUSE_LOCK_API)
+#endif // ENABLE(POINTER_LOCK)
