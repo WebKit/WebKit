@@ -132,13 +132,10 @@ sub parseLeaksOutput(\@)
     #
     #   We treat every line except for  Process 00000: and Leak: as optional
 
-    # Newer versions of the leaks output have a header section at the top, with the first line describing the version of the output format.
-    # If we detect the new format is being used then we eat all of the header section so the output matches the format of older versions.
-    # FIXME: In the future we may wish to propagate this section through to our output.
-    if ($leaksOutput->[0] =~ /^leaks Report Version:/) {
-        while ($leaksOutput->[0] !~ /^Process /) {
-            shift @$leaksOutput;
-        }
+    # Skip header section until the first two "Process " lines.
+    # FIXME: In the future we may wish to propagate the header section through to our output.
+    until ($leaksOutput->[0] =~ /^Process /) {
+        shift @$leaksOutput;
     }
 
     my ($leakCount) = ($leaksOutput->[1] =~ /[[:blank:]]+([0-9]+)[[:blank:]]+leaks?/);

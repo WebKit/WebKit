@@ -1,3 +1,23 @@
+2011-11-14  David Kilzer  <ddkilzer@apple.com>
+
+        run-leaks does not work on Lion?
+        <http://webkit.org/b/71059>
+        <rdar://problem/10428527>
+
+        Reviewed by Adam Roben.
+
+        The output of leaks(1) changed again in Lion to move the
+        "leaks Report Version: 2.0" line from the first line of the
+        output to just above the "Process " lines that run-leaks is
+        interested in parsing.  This required using a more generic
+        algorithm to find the start of the "Process " lines.
+
+        * Scripts/run-leaks:
+        (parseLeaksOutput): Make the code to skip headers more generic.
+        * Scripts/webkitperl/run-leaks_unittest/run-leaks-report-v1.0.pl: Added.
+        * Scripts/webkitperl/run-leaks_unittest/run-leaks-report-v2.0-new.pl: Added.
+        * Scripts/webkitperl/run-leaks_unittest/run-leaks-report-v2.0-old.pl: Added.
+
 2011-11-14  Lei Zhang  <thestig@chromium.org>
 
         Missing include in Tools/DumpRenderTree/chromium/AccessibilityUIElement.h:
