@@ -110,8 +110,6 @@ Expected:
 |       "quux"
 resources/tests10.dat:
 15
-53
-54
 
 Test 15 of 54 in resources/tests10.dat failed. Input:
 <!DOCTYPE html><body><table><caption><svg><g>foo</g><g>bar</g>baz</table><p>quux
@@ -145,70 +143,6 @@ Expected:
 |           "baz"
 |     <p>
 |       "quux"
-
-Test 53 of 54 in resources/tests10.dat failed. Input:
-<math><annotation-xml><svg><foreignObject><div><math><mi></mi></math><span></span></div></foreignObject><path></path></svg></annotation-xml><mi>
-Got:
-| <html>
-|   <head>
-|   <body>
-|     <math math>
-|       <math annotation-xml>
-|         <svg svg>
-|           <svg foreignObject>
-|             <div>
-|               <math math>
-|                 <math mi>
-|               <span>
-|             <path>
-|       <math mi>
-Expected:
-| <html>
-|   <head>
-|   <body>
-|     <math math>
-|       <math annotation-xml>
-|         <svg svg>
-|           <svg foreignObject>
-|             <div>
-|               <math math>
-|                 <math mi>
-|               <span>
-|           <svg path>
-|       <math mi>
-
-Test 54 of 54 in resources/tests10.dat failed. Input:
-<math><annotation-xml><svg><foreignObject><math><mi><svg></svg></mi><mo></mo></math><span></span></foreignObject><path></path></svg></annotation-xml><mi>
-Got:
-| <html>
-|   <head>
-|   <body>
-|     <math math>
-|       <math annotation-xml>
-|         <svg svg>
-|           <svg foreignObject>
-|             <math math>
-|               <math mi>
-|                 <svg svg>
-|               <math mo>
-|             <span>
-|             <path>
-|       <math mi>
-Expected:
-| <html>
-|   <head>
-|   <body>
-|     <math math>
-|       <math annotation-xml>
-|         <svg svg>
-|           <svg foreignObject>
-|             <math math>
-|               <math mi>
-|                 <svg svg>
-|               <math mo>
-|             <span>
-|           <svg path>
-|       <math mi>
 resources/tests11.dat: PASS
 
 resources/tests12.dat: PASS

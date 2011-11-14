@@ -2313,6 +2313,9 @@ void HTMLTreeBuilder::processEndTag(AtomicHTMLToken& token)
         processEndTag(token);
         break;
     case InForeignContentMode:
+        if (m_tree.currentElement()->namespaceURI() == SVGNames::svgNamespaceURI)
+            adjustSVGTagNameCase(token);
+
         if (token.name() == SVGNames::scriptTag && m_tree.currentNode()->hasTagName(SVGNames::scriptTag)) {
             m_isPaused = true;
             m_scriptToProcess = m_tree.currentElement();
