@@ -31,7 +31,6 @@
 #include <QtCore/QObject>
 #include <QtCore/QScopedPointer>
 
-class QWebNavigationController;
 class QtWebPageProxy;
 
 QT_BEGIN_NAMESPACE
@@ -90,7 +89,6 @@ private:
     QQuickWebView* q_ptr;
     QScopedPointer<QtWebPageProxy> pageProxy;
 
-    QWebNavigationController* navigationController;
     bool useTraditionalDesktopBehaviour;
     QFileDialog* fileDialog;
     WKOpenPanelResultListenerRef openPanelResultListener;

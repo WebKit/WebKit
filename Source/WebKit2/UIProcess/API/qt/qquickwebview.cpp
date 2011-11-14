@@ -39,7 +39,6 @@
 
 QQuickWebViewPrivate::QQuickWebViewPrivate()
     : q_ptr(0)
-    , navigationController(0)
     , useTraditionalDesktopBehaviour(false)
 {
 }

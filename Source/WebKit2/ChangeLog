@@ -1,3 +1,16 @@
+2011-11-14  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        [Qt] Remove reference to QWebNavigationController
+        https://bugs.webkit.org/show_bug.cgi?id=72257
+
+        Reviewed by Simon Hausmann.
+
+        QWebNavigationController was removed in r99946, this is just a leftover.
+
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewPrivate::QQuickWebViewPrivate):
+        * UIProcess/API/qt/qquickwebview_p.h:
+
 2011-11-10  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         [Qt] the QQuickWebView should support double-tap to zoom
