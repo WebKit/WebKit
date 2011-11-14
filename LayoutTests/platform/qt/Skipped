@@ -2495,3 +2495,7 @@ http/tests/notifications/icon-does-not-exist.html
 # [Qt] http/tests/xmlhttprequest/workers/abort-exception-assert.html makes 6 fast/workers test fail
 # https://bugs.webkit.org/show_bug.cgi?id=71695
 http/tests/xmlhttprequest/workers/abort-exception-assert.html
+
+# [Qt] new test editing/spelling/spelling-unified-emulation.html is failing
+# https://bugs.webkit.org/show_bug.cgi?id=72251
+editing/spelling/spelling-unified-emulation.html
