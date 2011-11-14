@@ -14,7 +14,7 @@ WebView {
     }
 
     TestCase {
-        name: "TouchWebViewLoad"
+        name: "WebViewLoad"
 
         function test_loadZeroSizeView() {
             compare(spy.count, 0)

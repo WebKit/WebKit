@@ -1,3 +1,32 @@
+2011-11-14  Alexis Menard  <alexis.menard@openbossa.org>
+
+        [Qt][WK2] Cleanup QML tests.
+        https://bugs.webkit.org/show_bug.cgi?id=72259
+
+        Reviewed by Simon Hausmann.
+
+        Cleanup QML tests. This patch removes the duplicates after the merge of both views.
+        I also isolated the desktop specific bits into its own directory.
+
+        * UIProcess/API/qt/tests/qmltests/DesktopBehavior/tst_download.qml: Renamed from Source/WebKit2/UIProcess/API/qt/tests/qmltests/DesktopWebView/tst_download.qml.
+        * UIProcess/API/qt/tests/qmltests/DesktopBehavior/tst_linkHovered.qml: Renamed from Source/WebKit2/UIProcess/API/qt/tests/qmltests/DesktopWebView/tst_linkHovered.qml.
+        * UIProcess/API/qt/tests/qmltests/DesktopBehavior/tst_messaging.qml: Renamed from Source/WebKit2/UIProcess/API/qt/tests/qmltests/DesktopWebView/tst_messaging.qml.
+        * UIProcess/API/qt/tests/qmltests/DesktopBehavior/tst_navigationPolicyForUrl.qml: Renamed from Source/WebKit2/UIProcess/API/qt/tests/qmltests/DesktopWebView/tst_navigationPolicyForUrl.qml.
+        * UIProcess/API/qt/tests/qmltests/DesktopWebView/tst_loadProgressSignal.qml: Removed.
+        * UIProcess/API/qt/tests/qmltests/DesktopWebView/tst_loadZeroSizeView.qml: Removed.
+        * UIProcess/API/qt/tests/qmltests/DesktopWebView/tst_properties.qml: Removed.
+        * UIProcess/API/qt/tests/qmltests/TouchWebView/tst_load.qml: Removed.
+        * UIProcess/API/qt/tests/qmltests/TouchWebView/tst_loadFail.qml: Removed.
+        * UIProcess/API/qt/tests/qmltests/TouchWebView/tst_loadNegativeSizeView.qml: Removed.
+        * UIProcess/API/qt/tests/qmltests/TouchWebView/tst_loadProgress.qml: Removed.
+        * UIProcess/API/qt/tests/qmltests/WebView/tst_loadFail.qml: Renamed from Source/WebKit2/UIProcess/API/qt/tests/qmltests/DesktopWebView/tst_loadFail.qml.
+        * UIProcess/API/qt/tests/qmltests/WebView/tst_loadProgress.qml: Renamed from Source/WebKit2/UIProcess/API/qt/tests/qmltests/DesktopWebView/tst_loadProgress.qml.
+        * UIProcess/API/qt/tests/qmltests/WebView/tst_loadProgressSignal.qml: Renamed from Source/WebKit2/UIProcess/API/qt/tests/qmltests/TouchWebView/tst_loadProgressSignal.qml.
+        * UIProcess/API/qt/tests/qmltests/WebView/tst_loadZeroSizeView.qml: Renamed from Source/WebKit2/UIProcess/API/qt/tests/qmltests/TouchWebView/tst_loadZeroSizeView.qml.
+        * UIProcess/API/qt/tests/qmltests/WebView/tst_preferences.qml: Renamed from Source/WebKit2/UIProcess/API/qt/tests/qmltests/DesktopWebView/tst_preferences.qml.
+        * UIProcess/API/qt/tests/qmltests/WebView/tst_properties.qml: Renamed from Source/WebKit2/UIProcess/API/qt/tests/qmltests/TouchWebView/tst_properties.qml.
+        * UIProcess/API/qt/tests/qmltests/qmltests.pro:
+
 2011-11-14  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Add support for the caretBrowsingEnabled preference in WebKit2

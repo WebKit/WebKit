@@ -14,19 +14,14 @@ load(webkit2)
 DEFINES += QUICK_TEST_SOURCE_DIR=\"\\\"$$PWD\\\"\"
 
 OTHER_FILES += \
-    DesktopWebView/tst_properties.qml \
-    DesktopWebView/tst_navigationPolicyForUrl.qml \
-    DesktopWebView/tst_loadZeroSizeView.qml \
-    DesktopWebView/tst_loadProgress.qml \
-    DesktopWebView/tst_loadProgressSignal.qml \
-    DesktopWebView/tst_linkHovered.qml \
-    DesktopWebView/tst_messaging.qml \
-    DesktopWebView/tst_download.qml \
-    TouchWebView/tst_properties.qml \
-    TouchWebView/tst_load.qml \
-    TouchWebView/tst_loadZeroSizeView.qml \
-    TouchWebView/tst_loadNegativeSizeView.qml \
-    TouchWebView/tst_loadProgress.qml \
-    TouchWebView/tst_loadProgressSignal.qml
-
-
+    WebView/tst_properties.qml \
+    WebView/tst_loadZeroSizeView.qml \
+    WebView/tst_loadFail.qml \
+    WebView/tst_loadProgress.qml \
+    WebView/tst_loadProgressSignal.qml \
+    WebView/tst_loadZeroSizeView.qml \
+    WebView/tst_preferences.qml \
+    DesktopBehavior/tst_linkHovered.qml \
+    DesktopBehavior/tst_messaging.qml \
+    DesktopBehavior/tst_download.qml \
+    DesktopBehavior/tst_navigationPolicyForUrl.qml

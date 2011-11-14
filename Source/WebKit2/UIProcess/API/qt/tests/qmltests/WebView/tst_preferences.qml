@@ -1,9 +1,8 @@
 import QtQuick 2.0
 import QtTest 1.0
 import QtWebKit 3.0
-import QtWebKitTest 1.0
 
-DesktopWebView {
+WebView {
     id: webView
 
     preferences {
@@ -19,7 +18,7 @@ DesktopWebView {
     }
 
     TestCase {
-        name: "DesktopWebViewPreferences"
+        name: "WebViewPreferences"
 
         function init() {
             webView.preferences.javascriptEnabled = true

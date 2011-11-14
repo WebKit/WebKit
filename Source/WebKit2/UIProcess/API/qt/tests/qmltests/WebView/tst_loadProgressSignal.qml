@@ -1,9 +1,8 @@
 import QtQuick 2.0
 import QtTest 1.0
 import QtWebKit 3.0
-import QtWebKitTest 1.0
 
-DesktopWebView {
+WebView {
     id: webView
 
     SignalSpy {
@@ -19,7 +18,7 @@ DesktopWebView {
     }
 
     TestCase {
-        name: "DesktopWebViewLoadProgressSignal"
+        name: "WebViewLoadProgressSignal"
 
         function test_loadProgressSignal() {
             compare(spyProgress.count, 0)

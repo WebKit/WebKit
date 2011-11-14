@@ -4,8 +4,6 @@ import QtWebKit 3.0
 
 WebView {
     id: webView
-    height: 600
-    width: 400
 
     SignalSpy {
         id: spy
@@ -14,15 +12,15 @@ WebView {
     }
 
     TestCase {
-        name: "TouchWebViewLoad"
+        name: "WebViewLoadProgress"
 
-        function test_load() {
+        function test_loadProgress() {
             compare(spy.count, 0)
+            compare(webView.loadProgress, 0)
             webView.load(Qt.resolvedUrl("../common/test1.html"))
+            compare(webView.loadProgress, 0)
             spy.wait()
-            compare(webView.title, "Test page 1")
-            compare(webView.width, 400)
-            compare(webView.height, 600)
+            compare(webView.loadProgress, 100)
         }
     }
 }

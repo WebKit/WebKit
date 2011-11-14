@@ -4,8 +4,6 @@ import QtWebKit 3.0
 
 WebView {
     id: webView
-    height: -600
-    width: -400
 
     SignalSpy {
         id: spy
@@ -14,15 +12,21 @@ WebView {
     }
 
     TestCase {
-        name: "TouchWebViewLoad"
+        name: "WebViewProperties"
 
-        function test_loadNegativeSizeView() {
+        function test_title() {
             compare(spy.count, 0)
             webView.load(Qt.resolvedUrl("../common/test1.html"))
             spy.wait()
             compare(webView.title, "Test page 1")
-            compare(webView.width, -400)
-            compare(webView.height, -600)
+        }
+
+        function test_url() {
+            compare(spy.count, 1)
+            var testUrl = Qt.resolvedUrl("../common/test1.html")
+            webView.load(testUrl)
+            spy.wait()
+            compare(webView.url, testUrl)
         }
     }
 }
