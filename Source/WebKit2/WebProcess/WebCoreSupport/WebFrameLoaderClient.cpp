@@ -761,23 +761,28 @@ void WebFrameLoaderClient::didChangeEstimatedProgress()
 
 void WebFrameLoaderClient::postProgressStartedNotification()
 {
-    if (WebPage* webPage = m_frame->page())
-        webPage->send(Messages::WebPageProxy::DidStartProgress());
+    if (WebPage* webPage = m_frame->page()) {
+        if (m_frame->isMainFrame())
+            webPage->send(Messages::WebPageProxy::DidStartProgress());
+    }
 }
 
 void WebFrameLoaderClient::postProgressEstimateChangedNotification()
 {
     if (WebPage* webPage = m_frame->page()) {
-        double progress = webPage->corePage()->progress()->estimatedProgress();
-        webPage->send(Messages::WebPageProxy::DidChangeProgress(progress));
-
+        if (m_frame->isMainFrame()) {
+            double progress = webPage->corePage()->progress()->estimatedProgress();
+            webPage->send(Messages::WebPageProxy::DidChangeProgress(progress));
+        }
     }
 }
 
 void WebFrameLoaderClient::postProgressFinishedNotification()
 {
-    if (WebPage* webPage = m_frame->page())
-        webPage->send(Messages::WebPageProxy::DidFinishProgress());
+    if (WebPage* webPage = m_frame->page()) {
+        if (m_frame->isMainFrame())
+            webPage->send(Messages::WebPageProxy::DidFinishProgress());
+    }
 }
 
 void WebFrameLoaderClient::setMainFrameDocumentReady(bool)

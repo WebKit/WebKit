@@ -1,3 +1,17 @@
+2011-11-14  Anders Carlsson  <andersca@apple.com>
+
+        Only send progress notifications for the main frame
+        https://bugs.webkit.org/show_bug.cgi?id=72302
+
+        Reviewed by Sam Weinig.
+
+        Since it's impossible in the API to tell which frame the progress notifications are for, just send them to the main frame for now.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::postProgressStartedNotification):
+        (WebKit::WebFrameLoaderClient::postProgressEstimateChangedNotification):
+        (WebKit::WebFrameLoaderClient::postProgressFinishedNotification):
+
 2011-11-14  Alexis Menard  <alexis.menard@openbossa.org>
 
         [Qt][WK2] Cleanup QML tests.
