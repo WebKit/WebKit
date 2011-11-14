@@ -66,6 +66,9 @@ class MockHost(object):
 
         self._watch_list = MockWatchList()
 
+    def _initialize_scm(self, patch_directories=None):
+        pass
+
     def scm(self):
         return self._scm
 

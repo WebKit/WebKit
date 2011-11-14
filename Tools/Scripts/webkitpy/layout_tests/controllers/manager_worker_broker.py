@@ -255,6 +255,7 @@ if multiprocessing:
             # FIXME: This should get the Host from the owner of this object
             # so this function can be properly mocked!
             host = Host()
+            host._initialize_scm()
             port_obj = host.port_factory.get(self._platform_name, options)
 
             # The unix multiprocessing implementation clones the

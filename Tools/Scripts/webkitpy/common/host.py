@@ -29,7 +29,7 @@
 
 
 from webkitpy.common.checkout import Checkout
-from webkitpy.common.checkout.scm import default_scm
+from webkitpy.common.checkout.scm.detection import SCMDetector
 from webkitpy.common.memoized import memoized
 from webkitpy.common.net import bugzilla, buildbot, web
 from webkitpy.common.net.buildbot.chromiumbuildbot import ChromiumBuildBot
@@ -64,7 +64,8 @@ class Host(object):
         self.port_factory = PortFactory(self)
 
     def _initialize_scm(self, patch_directories=None):
-        self._scm = default_scm(patch_directories)
+        detector = SCMDetector(self.filesystem, self.executive)
+        self._scm = detector.default_scm(patch_directories)
         self._checkout = Checkout(self.scm())
 
     def scm(self):

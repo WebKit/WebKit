@@ -72,14 +72,14 @@ class SVN(SCM, SVNRepository):
 
     _svn_metadata_files = frozenset(['.svn', '_svn'])
 
-    def __init__(self, cwd, patch_directories, executive=None):
-        SCM.__init__(self, cwd, executive)
+    def __init__(self, cwd, patch_directories, **kwargs):
+        SCM.__init__(self, cwd, **kwargs)
         self._bogus_dir = None
         if patch_directories == []:
             # FIXME: ScriptError is for Executive, this should probably be a normal Exception.
             raise ScriptError(script_args=svn_info_args, message='Empty list of patch directories passed to SCM.__init__')
         elif patch_directories == None:
-            self._patch_directories = [ospath.relpath(cwd, self.checkout_root)]
+            self._patch_directories = [self._filesystem.relpath(cwd, self.checkout_root)]
         else:
             self._patch_directories = patch_directories
 
