@@ -324,7 +324,6 @@ table-cell
 table-caption
 -webkit-box
 -webkit-inline-box
--wap-marquee
 -webkit-flexbox
 -webkit-inline-flexbox
 //none
