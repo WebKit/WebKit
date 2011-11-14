@@ -1,3 +1,12 @@
+2011-11-14  Andrew Scherkus  <scherkus@chromium.org>
+
+        [Chromium] Skip media layout tests on chromium-gpu-cg-mac-leopard platform
+        https://bugs.webkit.org/show_bug.cgi?id=72147
+
+        Reviewed by Adam Barth.
+
+        * Scripts/webkitpy/layout_tests/port/chromium_gpu.py:
+
 2011-11-14  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] Move the QtWebKit module file to match the layout of Qt's mkspecs

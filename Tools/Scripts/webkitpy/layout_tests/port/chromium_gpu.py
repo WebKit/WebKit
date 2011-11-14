@@ -80,7 +80,8 @@ def _tests(port, paths):
     if not paths:
         paths = ['compositing', 'platform/chromium/compositing', 'animations/3d']
 
-        if not port.name().startswith('chromium-gpu-mac-leopard'):
+        if (port.name() != 'chromium-gpu-mac-leopard' and
+            port.name() != 'chromium-gpu-cg-mac-leopard'):
             # Only run tests requiring accelerated compositing on platforms that
             # support it.
             # FIXME: we should add the above paths here as well but let's test
