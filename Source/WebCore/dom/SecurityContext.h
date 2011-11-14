@@ -74,7 +74,11 @@ protected:
     void setSecurityOrigin(PassRefPtr<SecurityOrigin>);
     void setContentSecurityPolicy(PassRefPtr<ContentSecurityPolicy>);
 
+    void didFailToInitializeSecurityOrigin() { m_haveInitializedSecurityOrigin = false; }
+    bool haveInitializedSecurityOrigin() const { return m_haveInitializedSecurityOrigin; }
+
 private:
+    bool m_haveInitializedSecurityOrigin;
     SandboxFlags m_sandboxFlags;
     RefPtr<SecurityOrigin> m_securityOrigin;
     RefPtr<ContentSecurityPolicy> m_contentSecurityPolicy;

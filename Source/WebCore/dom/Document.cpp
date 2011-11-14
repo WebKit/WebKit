@@ -4392,8 +4392,10 @@ bool Document::useSecureKeyboardEntryWhenActive() const
 
 void Document::initSecurityContext()
 {
-    if (securityOrigin() && !securityOrigin()->isEmpty())
-        return; // m_securityOrigin has already been initialized.
+    if (haveInitializedSecurityOrigin()) {
+        ASSERT(securityOrigin());
+        return;
+    }
 
     if (!m_frame) {
         // No source for a security context.
@@ -4450,8 +4452,10 @@ void Document::initSecurityContext()
     if (!ownerFrame)
         ownerFrame = m_frame->loader()->opener();
 
-    if (!ownerFrame)
+    if (!ownerFrame) {
+        didFailToInitializeSecurityOrigin();
         return;
+    }
 
     m_cookieURL = ownerFrame->document()->cookieURL();
     // We alias the SecurityOrigins to match Firefox, see Bug 15313

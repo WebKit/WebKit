@@ -34,7 +34,8 @@
 namespace WebCore {
 
 SecurityContext::SecurityContext()
-    : m_sandboxFlags(SandboxNone)
+    : m_haveInitializedSecurityOrigin(false)
+    , m_sandboxFlags(SandboxNone)
 {
 }
 
@@ -45,6 +46,7 @@ SecurityContext::~SecurityContext()
 void SecurityContext::setSecurityOrigin(PassRefPtr<SecurityOrigin> securityOrigin)
 {
     m_securityOrigin = securityOrigin;
+    m_haveInitializedSecurityOrigin = true;
 }
 
 void SecurityContext::setContentSecurityPolicy(PassRefPtr<ContentSecurityPolicy> contentSecurityPolicy)

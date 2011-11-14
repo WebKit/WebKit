@@ -1,3 +1,27 @@
+2011-11-14  Adam Barth  <abarth@webkit.org>
+
+        SecurityContext should track whether the SecurityOrigin has been initialized
+        https://bugs.webkit.org/show_bug.cgi?id=72250
+
+        Reviewed by Eric Seidel.
+
+        This patch is another step towards https://bugs.webkit.org/show_bug.cgi?id=71745.
+
+        One of the things we use "empty" SecurityOrigins for is detecting
+        whether a Document's SecurityOrigin has been initialized.  In this
+        patch, we track that state directly on SecurityContext (which is a base
+        class of Document), moving us closer to removing the concept of an
+        empty SecurityOrigin.
+
+        * dom/Document.cpp:
+        (WebCore::Document::initSecurityContext):
+        * dom/SecurityContext.cpp:
+        (WebCore::SecurityContext::SecurityContext):
+        (WebCore::SecurityContext::setSecurityOrigin):
+        * dom/SecurityContext.h:
+        (WebCore::SecurityContext::didFailToInitializeSecurityOrigin):
+        (WebCore::SecurityContext::haveInitializedSecurityOrigin):
+
 2011-11-14  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix make distcheck build.
