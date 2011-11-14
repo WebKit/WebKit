@@ -1,3 +1,28 @@
+2011-11-14  Mark Rowe  <mrowe@apple.com>
+
+        <rdar://problem/10424154> testRegExp should not be installed as part of JavaScriptCore
+
+        testRegExp and testapi.js were being installed in the JavaScriptCore framework.
+        As test-only tools they shouldn't be installed there by default, only when
+        FORCE_TOOL_INSTALL is set to YES.
+
+        This patch incorprorates a few related changes:
+        1) Make the jsc and testRegExp targets be configured via .xcconfig files.
+        2) Sets up testRegExp so that SKIP_INSTALL is YES by default, and only NO when
+           FORCE_TOOL_INSTALL is YES.
+        3) Switches the testapi target to using a script build phase to install testapi.js
+           so that the installation will be skipped when SKIP_INSTALL is YES. I'm not sure
+           why this isn't the built-in behavior when a Copy Files build phase has "Copy only
+           when installing" checked, but it doesn't seem to be.
+        4) Other random cleanup such as removing a bogus group that refers to files that do
+           not exist, moving testRegExp.cpp in to the tests group, etc.
+
+        Reviewed by Geoff Garen.
+
+        * Configurations/JSC.xcconfig: Added.
+        * Configurations/TestRegExp.xcconfig: Added.
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
 2011-11-14  Michael Saboff  <msaboff@apple.com>
 
         Towards 8 bit strings - Add 8 bit paths to StringImpl methods
