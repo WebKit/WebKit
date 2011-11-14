@@ -3887,3 +3887,5 @@ BUGV8_1821 WIN LINUX : http/tests/inspector-enabled/dedicated-workers-list.html 
 BUGWK72133 SKIP MAC : http/tests/inspector-enabled/dedicated-workers-list.html = PASS CRASH TIMEOUT
 
 BUGWK59552 MAC DEBUG : http/tests/security/cross-frame-access-custom.html = PASS CRASH
+
+BUGWK72271 MAC DEBUG : fast/loader/javascript-url-in-embed.html = PASS CRASH
