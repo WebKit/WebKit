@@ -316,6 +316,7 @@ editing/pasteboard/drop-inputtext-acquires-style.html
 fast/css/user-drag-none.html
 svg/as-image/drag-svg-as-image.html
 fast/forms/range/slider-delete-while-dragging-thumb.html
+fast/forms/select-multiple-elements-with-mouse-drag-with-options-less-than-size.html
 
 # EventSender::dumpFilenameBeingDragged not implemented.
 # https://bugs.webkit.org/show_bug.cgi?id=61828
@@ -328,6 +329,7 @@ fast/events/drag-and-drop.html
 fast/events/drag-and-drop-dataTransfer-types-nocrash.html
 fast/events/drag-and-drop-fire-drag-dragover.html
 fast/events/drag-link.html
+fast/events/drag-text-with-clear.html
 fast/events/ondrop-text-html.html
 fast/events/dropzone-001.html
 fast/events/dropzone-002.html
@@ -2040,6 +2042,7 @@ svg/W3C-SVG-1.1/struct-frag-02-t.svg
 svg/W3C-SVG-1.1/struct-frag-03-t.svg
 svg/W3C-SVG-1.1/text-align-04-b.svg
 svg/zoom/page/zoom-mask-with-percentages.svg
+svg/zoom/page/zoom-img-preserveAspectRatio-support-1.html
 
 # [Qt] inspector/styles/styles-disable-then-enable.html make inspector/styles/styles-iframe.html fail in debug mode
 # https://bugs.webkit.org/show_bug.cgi?id=58313
@@ -2499,3 +2502,12 @@ http/tests/xmlhttprequest/workers/abort-exception-assert.html
 # [Qt] new test editing/spelling/spelling-unified-emulation.html is failing
 # https://bugs.webkit.org/show_bug.cgi?id=72251
 editing/spelling/spelling-unified-emulation.html
+
+# [Qt] new test http/tests/misc/xslt-bad-import.html is failing
+# https://bugs.webkit.org/show_bug.cgi?id=72252
+http/tests/misc/xslt-bad-import.html
+
+# [Qt] REGRESSION(100123): It made inspector tests crash
+# https://bugs.webkit.org/show_bug.cgi?id=72274
+inspector/timeline
+inspector/user-metrics.html
