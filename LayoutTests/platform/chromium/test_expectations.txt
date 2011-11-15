@@ -2174,7 +2174,8 @@ BUGCR52573 LINUX RELEASE : fast/js/array-every.html = PASS CRASH
 
 BUGWK44199 RELEASE SLOW : perf/array-nested-loop.html = PASS TEXT
 BUGWK44199 RELEASE SLOW : perf/class-list-remove.html = PASS TEXT
-BUGWK71652 RELEASE SLOW : perf/document-contains.html = PASS
+BUGWK71652 MAC LINUX RELEASE SLOW : perf/document-contains.html = PASS
+BUGWK72372 WIN RELEASE SLOW : perf/document-contains.html = PASS TEXT
 BUGWK67921 RELEASE SLOW : perf/show-hide-table-rows.html = PASS
 BUGWK44199 RELEASE : perf/clone-with-focus.html = PASS TEXT
 BUGWK44199 RELEASE : perf/typing-at-end-of-line.html = PASS TEXT
