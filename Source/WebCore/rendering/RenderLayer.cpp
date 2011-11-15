@@ -4180,11 +4180,11 @@ void RenderLayer::updateReflectionStyle()
     m_reflection->setStyle(newStyle.release());
 }
 
-void RenderLayer::updateContentsScale(float scale)
+void RenderLayer::pageScaleFactorChanged(float scale)
 {
 #if USE(ACCELERATED_COMPOSITING)
     if (m_backing)
-        m_backing->updateContentsScale(scale);
+        m_backing->pageScaleFactorChanged(scale);
 #endif
 }
 

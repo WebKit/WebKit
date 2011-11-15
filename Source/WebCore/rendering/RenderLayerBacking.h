@@ -136,7 +136,7 @@ public:
     // For informative purposes only.
     CompositingLayerType compositingLayerType() const;
     
-    void updateContentsScale(float);
+    void pageScaleFactorChanged(float);
 
     GraphicsLayer* layerForHorizontalScrollbar() const { return m_layerForHorizontalScrollbar.get(); }
     GraphicsLayer* layerForVerticalScrollbar() const { return m_layerForVerticalScrollbar.get(); }
