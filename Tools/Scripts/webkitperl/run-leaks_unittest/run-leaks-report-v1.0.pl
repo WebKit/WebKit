@@ -25,15 +25,12 @@
 # tests run-leaks using original leaks report version 1.0
 
 use strict;
-use diagnostics;
 use warnings;
 
-use File::Slurp qw(read_file);
-use File::Spec;
 use FindBin;
+use lib $FindBin::Bin;
+use RunLeaks;
 use Test::More;
-
-eval "package RunLeaks; sub {" . read_file(File::Spec->catfile($FindBin::Bin, "..", "..", "run-leaks")) . "}";
 
 my @input = split(/\n/, <<EOF);
 Process 1602: 86671 nodes malloced for 13261 KB
@@ -158,7 +155,7 @@ EOF
   },
 ];
 
-my $actualOutput = RunLeaks::parseLeaksOutput(\@input);
+my $actualOutput = RunLeaks::parseLeaksOutput(@input);
 
 plan(tests => 1);
 is_deeply($actualOutput, $expectedOutput, "leaks Report Version 1.0 - no call stack");

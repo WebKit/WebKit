@@ -1,3 +1,17 @@
+2011-11-15  David Kilzer  <ddkilzer@apple.com>
+
+        Don't use File::Slurp for run-leaks unit tests
+        <http://webkit.org/b/72356>
+
+        Reviewed by Daniel Bates.
+
+        * Scripts/webkitperl/run-leaks_unittest/RunLeaks.pm: Added.
+        * Scripts/webkitperl/run-leaks_unittest/run-leaks-report-v1.0.pl:
+        Extracted common package logic into RunLeaks.pm.  Fixed call to
+        RunLeaks::parseLeaksOutput().
+        * Scripts/webkitperl/run-leaks_unittest/run-leaks-report-v2.0-new.pl: Ditto.
+        * Scripts/webkitperl/run-leaks_unittest/run-leaks-report-v2.0-old.pl: Ditto.
+
 2011-11-15  Peter Kasting  <pkasting@google.com>
 
         Handle svn 1.7 when detecting whether a directory is in an svn checkout.

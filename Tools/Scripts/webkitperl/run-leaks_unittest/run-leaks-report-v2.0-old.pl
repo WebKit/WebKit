@@ -26,15 +26,12 @@
 # - The "old" 2.0 format has "leaks Report Version:  2.0" at the top of the report.
 
 use strict;
-use diagnostics;
 use warnings;
 
-use File::Slurp qw(read_file);
-use File::Spec;
 use FindBin;
+use lib $FindBin::Bin;
+use RunLeaks;
 use Test::More;
-
-eval "package RunLeaks; sub {" . read_file(File::Spec->catfile($FindBin::Bin, "..", "..", "run-leaks")) . "}";
 
 my @input = split(/\n/, <<EOF);
 leaks Report Version:  2.0
@@ -72,7 +69,7 @@ EOF
   },
 ];
 
-my $actualOutput = RunLeaks::parseLeaksOutput(\@input);
+my $actualOutput = RunLeaks::parseLeaksOutput(@input);
 
 plan(tests => 1);
 is_deeply($actualOutput, $expectedOutput, "leaks Report Version 2.0 (old)");
