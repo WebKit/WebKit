@@ -1,3 +1,29 @@
+2011-11-15  Anders Carlsson  <andersca@apple.com>
+
+        HostWindow screenToWindow/windowToScreen should be screenToRootView/rootViewToScreen
+        https://bugs.webkit.org/show_bug.cgi?id=72397
+
+        Reviewed by Dan Bernstein.
+
+        screenToWindow and windowToScreen already use root view coordinates everywhere, with the
+        exception of Mac WebKit1 which doesn't even implement the functions.
+
+        * accessibility/mac/WebAccessibilityObjectWrapper.mm:
+        (-[WebAccessibilityObjectWrapper position]):
+        * loader/EmptyClients.h:
+        * page/Chrome.cpp:
+        (WebCore::Chrome::screenToRootView):
+        (WebCore::Chrome::rootViewToScreen):
+        * page/Chrome.h:
+        * page/ChromeClient.h:
+        * platform/HostWindow.h:
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::contentsToScreen):
+        (WebCore::ScrollView::screenToContents):
+        * platform/chromium/PopupContainer.cpp:
+        (WebCore::PopupContainer::layoutAndCalculateWidgetRect):
+        (WebCore::PopupContainer::refresh):
+
 2011-11-15  Jeff Timanus  <twiz@chromium.org>
 
         Patch removing duplicated code in the setup of the DrawingBuffer used

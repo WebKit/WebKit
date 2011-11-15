@@ -562,13 +562,15 @@ void WebChromeClient::scroll(const IntSize&, const IntRect&, const IntRect&)
 {
 }
 
-IntPoint WebChromeClient::screenToWindow(const IntPoint& p) const
+IntPoint WebChromeClient::screenToRootView(const IntPoint& p) const
 {
+    // FIXME: Implement this.
     return p;
 }
 
-IntRect WebChromeClient::windowToScreen(const IntRect& r) const
+IntRect WebChromeClient::rootViewToScreen(const IntRect& r) const
 {
+    // FIXME: Implement this.
     return r;
 }
 

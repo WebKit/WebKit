@@ -123,8 +123,8 @@ public:
     virtual void scroll(
         const WebCore::IntSize& scrollDelta, const WebCore::IntRect& scrollRect,
         const WebCore::IntRect& clipRect);
-    virtual WebCore::IntPoint screenToWindow(const WebCore::IntPoint&) const;
-    virtual WebCore::IntRect windowToScreen(const WebCore::IntRect&) const;
+    virtual WebCore::IntPoint screenToRootView(const WebCore::IntPoint&) const;
+    virtual WebCore::IntRect rootViewToScreen(const WebCore::IntRect&) const;
     virtual PlatformPageClient platformPageClient() const { return 0; }
     virtual void scrollRectIntoView(const WebCore::IntRect&) const;
     virtual void scrollbarsModeDidChange() const;

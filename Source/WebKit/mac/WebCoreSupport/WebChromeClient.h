@@ -93,8 +93,8 @@ public:
     virtual void invalidateContentsForSlowScroll(const WebCore::IntRect&, bool) OVERRIDE;
     virtual void scroll(const WebCore::IntSize& scrollDelta, const WebCore::IntRect& rectToScroll, const WebCore::IntRect& clipRect) OVERRIDE;
 
-    virtual WebCore::IntPoint screenToWindow(const WebCore::IntPoint&) const OVERRIDE;
-    virtual WebCore::IntRect windowToScreen(const WebCore::IntRect&) const OVERRIDE;
+    virtual WebCore::IntPoint screenToRootView(const WebCore::IntPoint&) const OVERRIDE;
+    virtual WebCore::IntRect rootViewToScreen(const WebCore::IntRect&) const OVERRIDE;
     virtual PlatformPageClient platformPageClient() const OVERRIDE;
     virtual void contentsSizeChanged(WebCore::Frame*, const WebCore::IntSize&) const OVERRIDE;
     virtual void scrollRectIntoView(const WebCore::IntRect&) const OVERRIDE;

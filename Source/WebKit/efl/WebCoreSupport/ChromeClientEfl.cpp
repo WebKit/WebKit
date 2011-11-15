@@ -325,13 +325,13 @@ void ChromeClientEfl::contentsSizeChanged(Frame* frame, const IntSize& size) con
         ewk_view_contents_size_changed(m_view, size.width(), size.height());
 }
 
-IntRect ChromeClientEfl::windowToScreen(const IntRect& rect) const
+IntRect ChromeClientEfl::rootViewToScreen(const IntRect& rect) const
 {
     notImplemented();
     return rect;
 }
 
-IntPoint ChromeClientEfl::screenToWindow(const IntPoint& point) const
+IntPoint ChromeClientEfl::screenToRootView(const IntPoint& point) const
 {
     notImplemented();
     return point;

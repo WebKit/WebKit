@@ -250,13 +250,13 @@ void ChromeClientWinCE::scroll(const IntSize&, const IntRect& rectToScroll, cons
     invalidateContentsAndRootView(rectToScroll, false);
 }
 
-IntRect ChromeClientWinCE::windowToScreen(const IntRect& rect) const
+IntRect ChromeClientWinCE::rootViewToScreen(const IntRect& rect) const
 {
     notImplemented();
     return rect;
 }
 
-IntPoint ChromeClientWinCE::screenToWindow(const IntPoint& point) const
+IntPoint ChromeClientWinCE::screenToRootView(const IntPoint& point) const
 {
     notImplemented();
     return point;

@@ -363,13 +363,13 @@ void ChromeClientWx::invalidateContentsAndRootView(const IntRect& rect, bool imm
     }
 }
 
-IntRect ChromeClientWx::windowToScreen(const IntRect& rect) const
+IntRect ChromeClientWx::rootViewToScreen(const IntRect& rect) const
 {
     notImplemented();
     return rect;
 }
 
-IntPoint ChromeClientWx::screenToWindow(const IntPoint& point) const
+IntPoint ChromeClientWx::screenToRootView(const IntPoint& point) const
 {
     notImplemented();
     return point;

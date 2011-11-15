@@ -114,8 +114,8 @@ public:
     virtual void scroll(
         const WebCore::IntSize& scrollDelta, const WebCore::IntRect& rectToScroll,
         const WebCore::IntRect& clipRect);
-    virtual WebCore::IntPoint screenToWindow(const WebCore::IntPoint&) const;
-    virtual WebCore::IntRect windowToScreen(const WebCore::IntRect&) const;
+    virtual WebCore::IntPoint screenToRootView(const WebCore::IntPoint&) const;
+    virtual WebCore::IntRect rootViewToScreen(const WebCore::IntRect&) const;
     virtual PlatformPageClient platformPageClient() const { return 0; }
     virtual void contentsSizeChanged(WebCore::Frame*, const WebCore::IntSize&) const;
     virtual void layoutUpdated(WebCore::Frame*) const;

@@ -558,7 +558,7 @@ void ChromeClientImpl::scroll(
 #endif
 }
 
-IntPoint ChromeClientImpl::screenToWindow(const IntPoint& point) const
+IntPoint ChromeClientImpl::screenToRootView(const IntPoint& point) const
 {
     IntPoint windowPoint(point);
 
@@ -570,7 +570,7 @@ IntPoint ChromeClientImpl::screenToWindow(const IntPoint& point) const
     return windowPoint;
 }
 
-IntRect ChromeClientImpl::windowToScreen(const IntRect& rect) const
+IntRect ChromeClientImpl::rootViewToScreen(const IntRect& rect) const
 {
     IntRect screenRect(rect);
 

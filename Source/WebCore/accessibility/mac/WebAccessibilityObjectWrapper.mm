@@ -1413,10 +1413,10 @@ static NSMutableArray* convertToNSArray(const AccessibilityObject::Accessibility
         }
 
         if (scrollView)
-            rect = scrollView->contentsToWindow(rect);
+            rect = scrollView->contentsToRootView(rect);
         
         if (m_object->page())
-            point = m_object->page()->chrome()->windowToScreen(rect).location();
+            point = m_object->page()->chrome()->rootViewToScreen(rect).location();
         else
             point = rect.location();
     }

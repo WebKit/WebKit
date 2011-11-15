@@ -122,8 +122,8 @@ public:
     virtual void delegatedScrollRequested(const IntPoint& scrollPoint);
 #endif
 
-    virtual IntPoint screenToWindow(const IntPoint&) const;
-    virtual IntRect windowToScreen(const IntRect&) const;
+    virtual IntPoint screenToRootView(const IntPoint&) const;
+    virtual IntRect rootViewToScreen(const IntRect&) const;
     virtual PlatformPageClient platformPageClient() const;
     virtual void contentsSizeChanged(Frame*, const IntSize&) const;
 

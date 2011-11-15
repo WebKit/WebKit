@@ -56,8 +56,8 @@ public:
 #endif
 
     // Methods for doing coordinate conversions to and from screen coordinates.
-    virtual IntPoint screenToWindow(const IntPoint&) const = 0;
-    virtual IntRect windowToScreen(const IntRect&) const = 0;
+    virtual IntPoint screenToRootView(const IntPoint&) const = 0;
+    virtual IntRect rootViewToScreen(const IntRect&) const = 0;
 
     // Method for retrieving the native client of the page.
     virtual PlatformPageClient platformPageClient() const = 0;

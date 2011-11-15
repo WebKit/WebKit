@@ -76,8 +76,8 @@ namespace WebCore {
 #if USE(TILED_BACKING_STORE)
         virtual void delegatedScrollRequested(const IntPoint& scrollPoint);
 #endif
-        virtual IntPoint screenToWindow(const IntPoint&) const;
-        virtual IntRect windowToScreen(const IntRect&) const;
+        virtual IntPoint screenToRootView(const IntPoint&) const OVERRIDE;
+        virtual IntRect rootViewToScreen(const IntRect&) const OVERRIDE;
         virtual PlatformPageClient platformPageClient() const;
         virtual void scrollbarsModeDidChange() const;
         virtual void setCursor(const Cursor&);

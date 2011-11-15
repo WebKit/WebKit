@@ -142,7 +142,7 @@ IntRect PopupContainer::layoutAndCalculateWidgetRect(int targetControlHeight, co
         FloatRect screen = screenAvailableRect(m_frameView.get());
         // Use popupInitialCoordinate.x() + rightOffset because RTL position
         // needs to be considered.
-        widgetRect = chromeClient->windowToScreen(IntRect(popupInitialCoordinate.x() + rightOffset, popupInitialCoordinate.y(), targetSize.width(), targetSize.height()));
+        widgetRect = chromeClient->rootViewToScreen(IntRect(popupInitialCoordinate.x() + rightOffset, popupInitialCoordinate.y(), targetSize.width(), targetSize.height()));
 
         // If we have multiple screens and the browser rect is in one screen, we have
         // to clip the window width to the screen width.
@@ -150,7 +150,7 @@ IntRect PopupContainer::layoutAndCalculateWidgetRect(int targetControlHeight, co
         FloatRect windowRect = chromeClient->windowRect();
         if (windowRect.x() >= screen.x() && windowRect.maxX() <= screen.maxX() && (widgetRect.x() < screen.x() || widgetRect.maxX() > screen.maxX())) {
             // First, inverse the popup alignment if it does not fit the screen - this might fix things (or make them better).
-            IntRect inverseWidgetRect = chromeClient->windowToScreen(IntRect(popupInitialCoordinate.x() + (isRTL ? 0 : rtlOffset), popupInitialCoordinate.y(), targetSize.width(), targetSize.height()));
+            IntRect inverseWidgetRect = chromeClient->rootViewToScreen(IntRect(popupInitialCoordinate.x() + (isRTL ? 0 : rtlOffset), popupInitialCoordinate.y(), targetSize.width(), targetSize.height()));
             IntRect enclosingScreen = enclosingIntRect(screen);
             unsigned originalCutoff = max(enclosingScreen.x() - widgetRect.x(), 0) + max(widgetRect.maxX() - enclosingScreen.maxX(), 0);
             unsigned inverseCutoff = max(enclosingScreen.x() - inverseWidgetRect.x(), 0) + max(inverseWidgetRect.maxX() - enclosingScreen.maxX(), 0);
@@ -188,7 +188,7 @@ IntRect PopupContainer::layoutAndCalculateWidgetRect(int targetControlHeight, co
                 // Our height has changed, so recompute only Y axis of widgetRect.
                 // We don't have to recompute X axis, so we only replace Y axis
                 // in widgetRect.
-                IntRect frameInScreen = chromeClient->windowToScreen(frameRect());
+                IntRect frameInScreen = chromeClient->rootViewToScreen(frameRect());
                 widgetRect.setY(frameInScreen.y());
                 widgetRect.setHeight(frameInScreen.height());
                 // And move upwards if necessary.
@@ -417,7 +417,7 @@ void PopupContainer::refresh(const IntRect& targetControlRect)
     if (originalSize != widgetRect.size()) {
         ChromeClientChromium* chromeClient = chromeClientChromium();
         if (chromeClient) {
-            IntPoint widgetLocation = chromeClient->screenToWindow(widgetRect.location());
+            IntPoint widgetLocation = chromeClient->screenToRootView(widgetRect.location());
             widgetRect.setLocation(widgetLocation);
             setFrameRect(widgetRect);
         }

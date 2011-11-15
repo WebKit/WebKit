@@ -742,7 +742,7 @@ IntRect ScrollView::contentsToScreen(const IntRect& rect) const
         return platformContentsToScreen(rect);
     if (!hostWindow())
         return IntRect();
-    return hostWindow()->windowToScreen(contentsToWindow(rect));
+    return hostWindow()->rootViewToScreen(contentsToRootView(rect));
 }
 
 IntPoint ScrollView::screenToContents(const IntPoint& point) const
@@ -751,7 +751,7 @@ IntPoint ScrollView::screenToContents(const IntPoint& point) const
         return platformScreenToContents(point);
     if (!hostWindow())
         return IntPoint();
-    return windowToContents(hostWindow()->screenToWindow(point));
+    return rootViewToContents(hostWindow()->screenToRootView(point));
 }
 
 bool ScrollView::containsScrollbarsAvoidingResizer() const

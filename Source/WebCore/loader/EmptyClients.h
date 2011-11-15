@@ -168,8 +168,8 @@ public:
     virtual void scheduleAnimation() { }
 #endif
 
-    virtual IntPoint screenToWindow(const IntPoint& p) const { return p; }
-    virtual IntRect windowToScreen(const IntRect& r) const { return r; }
+    virtual IntPoint screenToRootView(const IntPoint& p) const OVERRIDE { return p; }
+    virtual IntRect rootViewToScreen(const IntRect& r) const OVERRIDE { return r; }
     virtual PlatformPageClient platformPageClient() const { return 0; }
     virtual void contentsSizeChanged(Frame*, const IntSize&) const { }
 

@@ -447,7 +447,7 @@ void ChromeClientQt::delegatedScrollRequested(const IntPoint& point)
 }
 #endif
 
-IntRect ChromeClientQt::windowToScreen(const IntRect& rect) const
+IntRect ChromeClientQt::rootViewToScreen(const IntRect& rect) const
 {
     QWebPageClient* pageClient = platformPageClient();
     if (!pageClient)
@@ -463,7 +463,7 @@ IntRect ChromeClientQt::windowToScreen(const IntRect& rect) const
     return screenRect;
 }
 
-IntPoint ChromeClientQt::screenToWindow(const IntPoint& point) const
+IntPoint ChromeClientQt::screenToRootView(const IntPoint& point) const
 {
     QWebPageClient* pageClient = platformPageClient();
     if (!pageClient)

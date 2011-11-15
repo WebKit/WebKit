@@ -381,13 +381,13 @@ void WebPopupMenuImpl::scroll(const IntSize& scrollDelta,
     }
 }
 
-IntPoint WebPopupMenuImpl::screenToWindow(const IntPoint& point) const
+IntPoint WebPopupMenuImpl::screenToRootView(const IntPoint& point) const
 {
     notImplemented();
     return IntPoint();
 }
 
-IntRect WebPopupMenuImpl::windowToScreen(const IntRect& rect) const
+IntRect WebPopupMenuImpl::rootViewToScreen(const IntRect& rect) const
 {
     notImplemented();
     return IntRect();

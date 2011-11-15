@@ -1,3 +1,15 @@
+2011-11-15  Anders Carlsson  <andersca@apple.com>
+
+        HostWindow screenToWindow/windowToScreen should be screenToRootView/rootViewToScreen
+        https://bugs.webkit.org/show_bug.cgi?id=72397
+
+        Reviewed by Dan Bernstein.
+
+        * WebCoreSupport/WebChromeClient.cpp:
+        (WebChromeClient::rootViewToScreen):
+        (WebChromeClient::screenToRootView):
+        * WebCoreSupport/WebChromeClient.h:
+
 2011-11-14  Anders Carlsson  <andersca@apple.com>
 
         HostWindow invalidation functions should use root view coordinates

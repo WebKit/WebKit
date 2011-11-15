@@ -115,8 +115,8 @@ private:
 #if USE(TILED_BACKING_STORE)
     virtual void delegatedScrollRequested(const WebCore::IntPoint& scrollOffset) OVERRIDE;
 #endif
-    virtual WebCore::IntPoint screenToWindow(const WebCore::IntPoint&) const OVERRIDE;
-    virtual WebCore::IntRect windowToScreen(const WebCore::IntRect&) const OVERRIDE;
+    virtual WebCore::IntPoint screenToRootView(const WebCore::IntPoint&) const OVERRIDE;
+    virtual WebCore::IntRect rootViewToScreen(const WebCore::IntRect&) const OVERRIDE;
     virtual PlatformPageClient platformPageClient() const OVERRIDE;
     virtual void contentsSizeChanged(WebCore::Frame*, const WebCore::IntSize&) const OVERRIDE;
     virtual void scrollRectIntoView(const WebCore::IntRect&) const OVERRIDE; // Currently only Mac has a non empty implementation.

@@ -98,14 +98,14 @@ void Chrome::delegatedScrollRequested(const IntPoint& scrollPoint)
 }
 #endif
 
-IntPoint Chrome::screenToWindow(const IntPoint& point) const
+IntPoint Chrome::screenToRootView(const IntPoint& point) const
 {
-    return m_client->screenToWindow(point);
+    return m_client->screenToRootView(point);
 }
 
-IntRect Chrome::windowToScreen(const IntRect& rect) const
+IntRect Chrome::rootViewToScreen(const IntRect& rect) const
 {
-    return m_client->windowToScreen(rect);
+    return m_client->rootViewToScreen(rect);
 }
 
 PlatformPageClient Chrome::platformPageClient() const
