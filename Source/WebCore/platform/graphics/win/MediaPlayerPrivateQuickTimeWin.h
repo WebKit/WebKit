@@ -69,6 +69,8 @@ private:
     virtual void paintContents(const GraphicsLayer*, GraphicsContext&, GraphicsLayerPaintingPhase, const IntRect& inClip);
     virtual void notifyAnimationStarted(const GraphicsLayer*, double time) { }
     virtual void notifySyncRequired(const GraphicsLayer*) { }
+    virtual float backingScaleFactor() const { return 1; }
+    virtual float pageScaleFactor() const { return 1; }
     virtual bool showDebugBorders() const { return false; }
     virtual bool showRepaintCounter() const { return false; }
 #endif 
