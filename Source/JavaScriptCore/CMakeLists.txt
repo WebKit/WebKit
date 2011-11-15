@@ -146,6 +146,7 @@ SET(JavaScriptCore_SOURCES
     runtime/JSArray.cpp
     runtime/JSByteArray.cpp
     runtime/JSCell.cpp
+    runtime/JSDateMath.cpp
     runtime/JSFunction.cpp
     runtime/JSBoundFunction.cpp
     runtime/JSGlobalData.cpp

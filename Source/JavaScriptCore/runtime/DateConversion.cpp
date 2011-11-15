@@ -44,10 +44,10 @@
 #include "DateConversion.h"
 
 #include "CallFrame.h"
+#include "JSDateMath.h"
 #include "JSObject.h"
 #include "ScopeChain.h"
 #include "UString.h"
-#include <wtf/DateMath.h>
 #include <wtf/StringExtras.h>
 #include <wtf/text/CString.h>
 

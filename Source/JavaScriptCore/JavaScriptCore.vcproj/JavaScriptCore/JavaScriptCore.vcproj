@@ -798,6 +798,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\runtime\JSDateMath.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\runtime\JSDateMath.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\runtime\JSFunction.cpp"
 				>
 			</File>

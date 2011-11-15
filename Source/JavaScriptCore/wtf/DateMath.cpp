@@ -75,13 +75,7 @@
 #include "Assertions.h"
 #include "ASCIICType.h"
 #include "CurrentTime.h"
-#if USE(JSC)
-#include "JSObject.h"
-#endif
 #include "MathExtras.h"
-#if USE(JSC)
-#include "ScopeChain.h"
-#endif
 #include "StdLibExtras.h"
 #include "StringExtras.h"
 
@@ -109,10 +103,6 @@ extern "C" struct tm * localtime(const time_t *timer);
 #include <sys/timeb.h>
 #endif
 
-#if USE(JSC)
-#include "CallFrame.h"
-#endif
-
 using namespace WTF;
 
 namespace WTF {
@@ -138,7 +128,7 @@ static const int firstDayOfMonth[2][12] = {
     {0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335}
 };
 
-static inline bool isLeapYear(int year)
+bool isLeapYear(int year)
 {
     if (year % 4 != 0)
         return false;
@@ -173,7 +163,7 @@ static inline double daysFrom1970ToYear(int year)
     return 365.0 * (year - 1970) + yearsToAddBy4Rule - yearsToExcludeBy100Rule + yearsToAddBy400Rule;
 }
 
-static inline double msToDays(double ms)
+double msToDays(double ms)
 {
     return floor(ms / msPerDay);
 }
@@ -210,24 +200,7 @@ static inline double msToMilliseconds(double ms)
     return result;
 }
 
-// 0: Sunday, 1: Monday, etc.
-static inline int msToWeekDay(double ms)
-{
-    int wd = (static_cast<int>(msToDays(ms)) + 4) % 7;
-    if (wd < 0)
-        wd += 7;
-    return wd;
-}
-
-static inline int msToSeconds(double ms)
-{
-    double result = fmod(floor(ms / msPerSecond), secondsPerMinute);
-    if (result < 0)
-        result += secondsPerMinute;
-    return static_cast<int>(result);
-}
-
-static inline int msToMinutes(double ms)
+int msToMinutes(double ms)
 {
     double result = fmod(floor(ms / msPerMinute), minutesPerHour);
     if (result < 0)
@@ -235,7 +208,7 @@ static inline int msToMinutes(double ms)
     return static_cast<int>(result);
 }
 
-static inline int msToHours(double ms)
+int msToHours(double ms)
 {
     double result = fmod(floor(ms/msPerHour), hoursPerDay);
     if (result < 0)
@@ -317,11 +290,6 @@ int dayInMonthFromDayInYear(int dayInYear, bool leapYear)
 static inline int monthToDayInYear(int month, bool isLeapYear)
 {
     return firstDayOfMonth[isLeapYear][month];
-}
-
-static inline double timeToMS(double hour, double min, double sec, double ms)
-{
-    return (((hour * minutesPerHour + min) * secondsPerMinute + sec) * msPerSecond + ms);
 }
 
 double dateToDaysFrom1970(int year, int month, int day)
@@ -724,7 +692,7 @@ double parseES5DateFromNullTerminatedCharacters(const char* dateString)
 }
 
 // Odd case where 'exec' is allowed to be 0, to accomodate a caller in WebCore.
-static double parseDateFromNullTerminatedCharacters(const char* dateString, bool& haveTZ, int& offset)
+double parseDateFromNullTerminatedCharacters(const char* dateString, bool& haveTZ, int& offset)
 {
     haveTZ = false;
     offset = 0;
@@ -1048,143 +1016,5 @@ String makeRFC2822DateString(unsigned dayOfWeek, unsigned day, unsigned month, u
 
     return stringBuilder.toString();
 }
+
 } // namespace WTF
-
-#if USE(JSC)
-namespace JSC {
-
-// Get the DST offset for the time passed in.
-//
-// NOTE: The implementation relies on the fact that no time zones have
-// more than one daylight savings offset change per month.
-// If this function is called with NaN it returns NaN.
-static double getDSTOffset(ExecState* exec, double ms, double utcOffset)
-{
-    DSTOffsetCache& cache = exec->globalData().dstOffsetCache;
-    double start = cache.start;
-    double end = cache.end;
-
-    if (start <= ms) {
-        // If the time fits in the cached interval, return the cached offset.
-        if (ms <= end) return cache.offset;
-
-        // Compute a possible new interval end.
-        double newEnd = end + cache.increment;
-
-        if (ms <= newEnd) {
-            double endOffset = calculateDSTOffset(newEnd, utcOffset);
-            if (cache.offset == endOffset) {
-                // If the offset at the end of the new interval still matches
-                // the offset in the cache, we grow the cached time interval
-                // and return the offset.
-                cache.end = newEnd;
-                cache.increment = msPerMonth;
-                return endOffset;
-            } else {
-                double offset = calculateDSTOffset(ms, utcOffset);
-                if (offset == endOffset) {
-                    // The offset at the given time is equal to the offset at the
-                    // new end of the interval, so that means that we've just skipped
-                    // the point in time where the DST offset change occurred. Updated
-                    // the interval to reflect this and reset the increment.
-                    cache.start = ms;
-                    cache.end = newEnd;
-                    cache.increment = msPerMonth;
-                } else {
-                    // The interval contains a DST offset change and the given time is
-                    // before it. Adjust the increment to avoid a linear search for
-                    // the offset change point and change the end of the interval.
-                    cache.increment /= 3;
-                    cache.end = ms;
-                }
-                // Update the offset in the cache and return it.
-                cache.offset = offset;
-                return offset;
-            }
-        }
-    }
-
-    // Compute the DST offset for the time and shrink the cache interval
-    // to only contain the time. This allows fast repeated DST offset
-    // computations for the same time.
-    double offset = calculateDSTOffset(ms, utcOffset);
-    cache.offset = offset;
-    cache.start = ms;
-    cache.end = ms;
-    cache.increment = msPerMonth;
-    return offset;
-}
-
-/*
- * Get the difference in milliseconds between this time zone and UTC (GMT)
- * NOT including DST.
- */
-double getUTCOffset(ExecState* exec)
-{
-    double utcOffset = exec->globalData().cachedUTCOffset;
-    if (!isnan(utcOffset))
-        return utcOffset;
-    exec->globalData().cachedUTCOffset = calculateUTCOffset();
-    return exec->globalData().cachedUTCOffset;
-}
-
-double gregorianDateTimeToMS(ExecState* exec, const GregorianDateTime& t, double milliSeconds, bool inputIsUTC)
-{
-    double day = dateToDaysFrom1970(t.year + 1900, t.month, t.monthDay);
-    double ms = timeToMS(t.hour, t.minute, t.second, milliSeconds);
-    double result = (day * WTF::msPerDay) + ms;
-
-    if (!inputIsUTC) { // convert to UTC
-        double utcOffset = getUTCOffset(exec);
-        result -= utcOffset;
-        result -= getDSTOffset(exec, result, utcOffset);
-    }
-
-    return result;
-}
-
-// input is UTC
-void msToGregorianDateTime(ExecState* exec, double ms, bool outputIsUTC, GregorianDateTime& tm)
-{
-    double dstOff = 0.0;
-    double utcOff = 0.0;
-    if (!outputIsUTC) {
-        utcOff = getUTCOffset(exec);
-        dstOff = getDSTOffset(exec, ms, utcOff);
-        ms += dstOff + utcOff;
-    }
-
-    const int year = msToYear(ms);
-    tm.second   =  msToSeconds(ms);
-    tm.minute   =  msToMinutes(ms);
-    tm.hour     =  msToHours(ms);
-    tm.weekDay  =  msToWeekDay(ms);
-    tm.yearDay  =  dayInYear(ms, year);
-    tm.monthDay =  dayInMonthFromDayInYear(tm.yearDay, isLeapYear(year));
-    tm.month    =  monthFromDayInYear(tm.yearDay, isLeapYear(year));
-    tm.year     =  year - 1900;
-    tm.isDST    =  dstOff != 0.0;
-    tm.utcOffset = static_cast<long>((dstOff + utcOff) / WTF::msPerSecond);
-    tm.timeZone = nullptr;
-}
-
-double parseDateFromNullTerminatedCharacters(ExecState* exec, const char* dateString)
-{
-    ASSERT(exec);
-    bool haveTZ;
-    int offset;
-    double ms = WTF::parseDateFromNullTerminatedCharacters(dateString, haveTZ, offset);
-    if (isnan(ms))
-        return std::numeric_limits<double>::quiet_NaN();
-
-    // fall back to local timezone
-    if (!haveTZ) {
-        double utcOffset = getUTCOffset(exec);
-        double dstOffset = getDSTOffset(exec, ms, utcOffset);
-        offset = static_cast<int>((utcOffset + dstOffset) / WTF::msPerMinute);
-    }
-    return ms - (offset * WTF::msPerMinute);
-}
-
-} // namespace JSC
-#endif // USE(JSC)

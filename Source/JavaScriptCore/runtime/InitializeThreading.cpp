@@ -33,11 +33,11 @@
 #include "Heap.h"
 #include "Heuristics.h"
 #include "Identifier.h"
+#include "JSDateMath.h"
 #include "JSGlobalObject.h"
 #include "UString.h"
 #include "WriteBarrier.h"
 #include "dtoa.h"
-#include <wtf/DateMath.h>
 #include <wtf/Threading.h>
 #include <wtf/dtoa/cached-powers.h>
 

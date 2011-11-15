@@ -27,6 +27,7 @@
 #include "DateConversion.h"
 #include "DateInstance.h"
 #include "Error.h"
+#include "JSDateMath.h"
 #include "JSGlobalObject.h"
 #include "JSString.h"
 #include "JSStringBuilder.h"
@@ -43,7 +44,6 @@
 #include <stdlib.h>
 #include <time.h>
 #include <wtf/Assertions.h>
-#include <wtf/DateMath.h>
 #include <wtf/MathExtras.h>
 #include <wtf/StringExtras.h>
 #include <wtf/UnusedParam.h>

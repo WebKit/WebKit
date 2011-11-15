@@ -1,3 +1,38 @@
+2011-11-14  Adam Barth  <abarth@webkit.org>
+
+        DateMath.cpp should not depend on JavaScriptCore
+        https://bugs.webkit.org/show_bug.cgi?id=71747
+
+        Reviewed by Darin Adler.
+
+        This patch moves the JSC-specific parts of DateMath into JSDateMath in
+        JavaScriptCore.  There shouldn't be any behavior change.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.gypi:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Target.pri:
+        * runtime/DateConstructor.cpp:
+        * runtime/DateConversion.cpp:
+        * runtime/DateInstance.cpp:
+        * runtime/DateInstanceCache.h:
+        * runtime/DatePrototype.cpp:
+        * runtime/InitializeThreading.cpp:
+        * runtime/JSDateMath.cpp: Copied from Source/JavaScriptCore/wtf/DateMath.cpp.
+        (JSC::timeToMS):
+        (JSC::msToSeconds):
+        * runtime/JSDateMath.h: Copied from Source/JavaScriptCore/wtf/DateMath.h.
+        * wtf/DateMath.cpp:
+        (WTF::isLeapYear):
+        (WTF::msToDays):
+        (WTF::msToMinutes):
+        (WTF::msToHours):
+        (WTF::parseDateFromNullTerminatedCharacters):
+        (WTF::makeRFC2822DateString):
+        * wtf/DateMath.h:
+
 2011-11-14  Michael Saboff  <msaboff@apple.com>
 
         Towards 8 bit strings - Add 8 bit handling to JSString Ropes
