@@ -9,7 +9,16 @@
 
             numberOfTrackTests = 2;
             
-            function trackLoaded(i)
+            function trackLoaded()
+            {
+                numberOfTracksLoaded++;
+                if (numberOfTracksLoaded == numberOfTrackTests) {
+                    for (var i = 0; i <= numberOfTrackTests; ++i)
+                        testTrack(i);
+                }
+            }
+
+            function testTrack(i)
             {
                 findMediaElement();
                 var expected = 
@@ -44,8 +53,8 @@
     <body>
     <p>Tests WebVTT settings.</p>
         <video>
-            <track src="captions-webvtt/tc013-settings.vtt" onload="trackLoaded(0)">
-            <track src="captions-webvtt/tc013-settings-bad-separation.vtt" onload="trackLoaded(1)">
+            <track src="captions-webvtt/tc013-settings.vtt" onload="trackLoaded()">
+            <track src="captions-webvtt/tc013-settings-bad-separation.vtt" onload="trackLoaded()">
         </video>
     </body>
 </html>
