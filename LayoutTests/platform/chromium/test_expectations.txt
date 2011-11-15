@@ -1459,13 +1459,15 @@ BUGCR23473 MAC : fast/repaint/transform-translate.html = IMAGE
 BUGWK39966 LINUX : fast/repaint/table-cell-collapsed-border.html = IMAGE
 
 // Thicker shadow than expected
-//BUGCR23471 LEOPARD : fast/text/stroking.html = IMAGE
+BUGCR23471 LEOPARD : fast/text/stroking.html = IMAGE
 
 // -----------------------------------------------------------------
 // END MAC PORT TESTS
 // -----------------------------------------------------------------
 
-// Rebaseline to take advantage of skia ColorFilter optimization
+// Rebaseline to take advantage of skia ColorFilter optimization.
+// Note that two of tests below are broken on Leopard for other reasons (search
+// elsewhere within this file) and thus should not be blindly rebaselined there.
 BUGCR104128 CPU : fast/box-shadow/box-shadow-radius.html = IMAGE
 BUGCR104128 CPU : fast/box-shadow/inset-box-shadow-radius.html = IMAGE
 BUGCR104128 CPU : fast/box-shadow/shadow-buffer-partial.html = IMAGE
@@ -1479,9 +1481,9 @@ BUGCR104128 CPU : fast/repaint/moving-shadow-on-container.html = IMAGE
 BUGCR104128 CPU : fast/repaint/text-shadow-horizontal.html = IMAGE
 BUGCR104128 CPU : fast/repaint/text-shadow.html = IMAGE
 BUGCR104128 CPU : fast/text/shadow-no-blur.html = IMAGE
-BUGCR104128 CPU : fast/text/shadow-translucent-fill.html = IMAGE
+BUGCR104128 WIN LINUX SNOWLEOPARD CPU : fast/text/shadow-translucent-fill.html = IMAGE
 BUGCR104128 CPU : fast/text/stroking-decorations.html = IMAGE
-BUGCR104128 CPU : fast/text/stroking.html = IMAGE
+BUGCR104128 WIN LINUX SNOWLEOPARD CPU : fast/text/stroking.html = IMAGE
 BUGCR104128 CPU : fast/writing-mode/english-lr-text.html = IMAGE
 BUGCR104128 CPU : svg/css/group-with-shadow.svg = IMAGE
 BUGCR104128 CPU : svg/css/shadow-with-large-radius.svg = IMAGE
@@ -3065,7 +3067,7 @@ BUGCR80301 LEOPARD : fast/canvas/canvas-largedraws.html = TIMEOUT
 BUGWK84665 : fast/dom/dataset-gc.html = TEXT
 
 BUGWK60115 LINUX WIN : fast/multicol/shadow-breaking.html = IMAGE
-//BUGWK60115 LEOPARD : fast/text/shadow-translucent-fill.html = IMAGE
+BUGWK60115 LEOPARD : fast/text/shadow-translucent-fill.html = IMAGE
 BUGWK60115 MAC CPU-CG : fast/transforms/shadows.html = PASS IMAGE
 BUGWK60115 WIN : svg/css/composite-shadow-text.svg = IMAGE
 BUGWK60115 WIN : svg/css/shadow-changes.svg = IMAGE
