@@ -27,7 +27,7 @@
 #include "config.h"
 #include "Int8Array.h"
 
-namespace WebCore {
+namespace WTF {
 
 PassRefPtr<Int8Array> Int8Array::create(unsigned length)
 {

@@ -344,6 +344,16 @@ sub IsScriptProfileType
     return 0;
 }
 
+sub IsTypedArrayType
+{
+    my $type = shift;
+    return 1 if (($type eq "ArrayBuffer") or ($type eq "ArrayBufferView"));
+    return 1 if (($type eq "Uint8Array") or ($type eq "Uint16Array") or ($type eq "Uint32Array"));
+    return 1 if (($type eq "Int8Array") or ($type eq "Int16Array") or ($type eq "Int32Array"));
+    return 1 if (($type eq "Float32Array") or ($type eq "Float64Array"));
+    return 0;
+}
+
 sub AddTypedefForScriptProfileType
 {
     my $type = shift;
@@ -357,7 +367,7 @@ sub AddClassForwardIfNeeded
     my $implClassName = shift;
 
     # SVGAnimatedLength/Number/etc. are typedefs to SVGAnimatedTemplate, so don't use class forwards for them!
-    unless ($codeGenerator->IsSVGAnimatedType($implClassName) or IsScriptProfileType($implClassName)) {
+    unless ($codeGenerator->IsSVGAnimatedType($implClassName) or IsScriptProfileType($implClassName) or IsTypedArrayType($implClassName)) {
         push(@headerContent, "class $implClassName;\n\n");
     # ScriptProfile and ScriptProfileNode are typedefs to JSC::Profile and JSC::ProfileNode.
     } elsif (IsScriptProfileType($implClassName)) {
@@ -2221,10 +2231,19 @@ sub GenerateImplementation
         push(@implContent, ";\n}\n");
     }
 
-    if ($parentClassName eq "JSArrayBufferView") {
+    if ($parentClassName eq "JSArrayBufferView" and IsTypedArrayType($implType)) {
         push(@implContent, <<END);
-    void ${implType}::neuterBinding(ScriptExecutionContext*) {
-    }
+}
+namespace WTF {
+void ${implType}::neuterBinding(WebCore::ScriptExecutionContext*) {
+}
+}
+namespace WebCore {
+END
+    } elsif ($parentClassName eq "JSArrayBufferView") {
+        push(@implContent, <<END);
+void ${implType}::neuterBinding(ScriptExecutionContext*) {
+}
 END
     }
 

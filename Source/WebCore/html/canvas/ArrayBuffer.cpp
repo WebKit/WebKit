@@ -30,7 +30,9 @@
 
 #include <wtf/RefPtr.h>
 
-namespace WebCore {
+using namespace WebCore;
+
+namespace WTF {
 
 static int clampValue(int x, int left, int right)
 {

@@ -26,7 +26,7 @@
 #include "config.h"
 #include "Int16Array.h"
 
-namespace WebCore {
+namespace WTF {
 
 PassRefPtr<Int16Array> Int16Array::create(unsigned length)
 {

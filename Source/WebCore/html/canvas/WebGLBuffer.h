@@ -29,11 +29,11 @@
 #include "ArrayBuffer.h"
 #include "WebGLObject.h"
 
+#include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
-class ArrayBufferView;
 
 class WebGLBuffer : public WebGLObject {
 public:

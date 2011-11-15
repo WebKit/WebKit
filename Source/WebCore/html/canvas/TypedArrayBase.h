@@ -30,26 +30,26 @@
 #include "ArrayBuffer.h"
 #include "ArrayBufferView.h"
 
-namespace WebCore {
+namespace WTF {
 
 template <typename T>
 class TypedArrayBase : public ArrayBufferView {
   public:
     T* data() const { return static_cast<T*>(baseAddress()); }
 
-    void set(TypedArrayBase<T>* array, unsigned offset, ExceptionCode& ec)
+    bool set(TypedArrayBase<T>* array, unsigned offset)
     {
-        setImpl(array, offset * sizeof(T), ec);
+        return setImpl(array, offset * sizeof(T));
     }
 
-    void setRange(const T* data, size_t dataLength, unsigned offset, ExceptionCode& ec)
+    bool setRange(const T* data, size_t dataLength, unsigned offset)
     {
-        setRangeImpl(reinterpret_cast<const char*>(data), dataLength * sizeof(T), offset * sizeof(T), ec);
+        return setRangeImpl(reinterpret_cast<const char*>(data), dataLength * sizeof(T), offset * sizeof(T));
     }
 
-    void zeroRange(unsigned offset, size_t length, ExceptionCode& ec)
+    bool zeroRange(unsigned offset, size_t length)
     {
-        zeroRangeImpl(offset * sizeof(T), length * sizeof(T), ec);
+        return zeroRangeImpl(offset * sizeof(T), length * sizeof(T));
     }
 
     // Overridden from ArrayBufferView. This must be public because of
@@ -112,20 +112,13 @@ protected:
         return create<Subclass>(buffer(), offset, length);
     }
 
-    virtual void neuter(ScriptExecutionContext* context)
-    {
-        ArrayBufferView::neuter(context);
-        m_length = 0;
-        neuterBinding(context);
-    }
-
-    virtual void neuterBinding(ScriptExecutionContext*) = 0;
-
     // We do not want to have to access this via a virtual function in subclasses,
     // which is why it is protected rather than private.
     unsigned m_length;
 };
 
-} // namespace WebCore
+} // namespace WTF
+
+using WTF::TypedArrayBase;
 
 #endif // TypedArrayBase_h

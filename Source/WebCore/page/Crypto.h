@@ -35,8 +35,6 @@
 
 namespace WebCore {
 
-class ArrayBufferView;
-
 typedef int ExceptionCode;
 
 class Crypto : public RefCounted<Crypto> {

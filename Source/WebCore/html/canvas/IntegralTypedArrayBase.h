@@ -34,7 +34,7 @@
 // Base class for all WebGL<T>Array types holding integral
 // (non-floating-point) values.
 
-namespace WebCore {
+namespace WTF {
 
 template <typename T>
 class IntegralTypedArrayBase : public TypedArrayBase<T> {
@@ -65,6 +65,8 @@ class IntegralTypedArrayBase : public TypedArrayBase<T> {
     }
 };
 
-} // namespace WebCore
+} // namespace WTF
+
+using WTF::IntegralTypedArrayBase;
 
 #endif // IntegralTypedArrayBase_h

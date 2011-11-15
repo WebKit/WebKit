@@ -27,7 +27,7 @@
 #include "config.h"
 #include "Uint32Array.h"
 
-namespace WebCore {
+namespace WTF {
 
 PassRefPtr<Uint32Array> Uint32Array::create(unsigned length)
 {

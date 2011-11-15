@@ -25,6 +25,7 @@
 #ifndef AsyncAudioDecoder_h
 #define AsyncAudioDecoder_h
 
+#include <wtf/Forward.h>
 #include <wtf/MessageQueue.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>
@@ -33,7 +34,6 @@
 
 namespace WebCore {
 
-class ArrayBuffer;
 class AudioBuffer;
 class AudioBufferCallback;
 

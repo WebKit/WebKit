@@ -1,3 +1,14 @@
+2011-11-14  Oliver Hunt  <oliver@apple.com>
+
+        Start migrating typed array impl types to WTF
+        https://bugs.webkit.org/show_bug.cgi?id=72336
+
+        Reviewed by Geoffrey Garen.
+
+        Add typed array impls to WTF forwarding header.
+
+        * wtf/Forward.h:
+
 2011-11-14  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Add --css-grid-layout to build-webkit and the build systems

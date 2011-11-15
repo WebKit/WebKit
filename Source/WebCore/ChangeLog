@@ -1,3 +1,150 @@
+2011-11-14  Oliver Hunt  <oliver@apple.com>
+
+        Start migrating typed array impl types to WTF
+        https://bugs.webkit.org/show_bug.cgi?id=72336
+
+        Reviewed by Geoffrey Garen.
+
+        Move typed arrays from WebCore namespace to WTF, and
+        start reducing dependencies on WebCore types.
+
+        * bindings/js/JSArrayBufferViewHelper.h:
+        (WebCore::setWebGLArrayHelper):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (IsTypedArrayType):
+        (AddClassForwardIfNeeded):
+        (GenerateImplementation):
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (IsTypedArrayType):
+        * bindings/scripts/test/CPP/WebDOMFloat64Array.cpp: Added.
+        (WebDOMFloat64Array::WebDOMFloat64Array):
+        (WebDOMFloat64Array::impl):
+        (toWebCore):
+        (toWebKit):
+        * bindings/scripts/test/CPP/WebDOMFloat64Array.h: Added.
+        (WebDOMFloat64Array::~WebDOMFloat64Array):
+        * bindings/scripts/test/GObject/WebKitDOMFloat64Array.cpp: Added.
+        (WebKit::kit):
+        (WebKit::core):
+        (webkit_dom_float64array_finalize):
+        (webkit_dom_float64array_set_property):
+        (webkit_dom_float64array_get_property):
+        (webkit_dom_float64array_constructed):
+        (webkit_dom_float64array_class_init):
+        (webkit_dom_float64array_init):
+        (WebKit::wrapFloat64Array):
+        * bindings/scripts/test/GObject/WebKitDOMFloat64Array.h: Added.
+        * bindings/scripts/test/GObject/WebKitDOMFloat64ArrayPrivate.h: Added.
+        * bindings/scripts/test/JS/JSFloat64Array.cpp: Added.
+        (WebCore::JSFloat64ArrayConstructor::JSFloat64ArrayConstructor):
+        (WebCore::JSFloat64ArrayConstructor::finishCreation):
+        (WebCore::JSFloat64ArrayConstructor::getOwnPropertySlot):
+        (WebCore::JSFloat64ArrayConstructor::getOwnPropertyDescriptor):
+        (WebCore::JSFloat64ArrayConstructor::getConstructData):
+        (WebCore::getJSFloat64ArrayPrototypeTable):
+        (WebCore::JSFloat64ArrayPrototype::self):
+        (WebCore::getJSFloat64ArrayTable):
+        (WebCore::JSFloat64Array::JSFloat64Array):
+        (WebCore::JSFloat64Array::finishCreation):
+        (WebCore::JSFloat64Array::createPrototype):
+        (WebCore::JSFloat64Array::getOwnPropertySlot):
+        (WebCore::JSFloat64Array::getOwnPropertyDescriptor):
+        (WebCore::JSFloat64Array::getOwnPropertySlotByIndex):
+        (WebCore::jsFloat64ArrayConstructor):
+        (WebCore::JSFloat64Array::put):
+        (WebCore::JSFloat64Array::putByIndex):
+        (WebCore::JSFloat64Array::getOwnPropertyNames):
+        (WebCore::JSFloat64Array::getConstructor):
+        (WebCore::JSFloat64Array::getByIndex):
+        (WebCore::toFloat64Array):
+        (WTF::Float64Array::neuterBinding):
+        * bindings/scripts/test/JS/JSFloat64Array.h: Added.
+        (WebCore::JSFloat64Array::create):
+        (WebCore::JSFloat64Array::createStructure):
+        (WebCore::JSFloat64Array::impl):
+        (WebCore::JSFloat64ArrayPrototype::create):
+        (WebCore::JSFloat64ArrayPrototype::createStructure):
+        (WebCore::JSFloat64ArrayPrototype::JSFloat64ArrayPrototype):
+        (WebCore::JSFloat64ArrayConstructor::create):
+        (WebCore::JSFloat64ArrayConstructor::createStructure):
+        * bindings/scripts/test/ObjC/DOMFloat64Array.h: Copied from Source/WebCore/html/canvas/Int16Array.cpp.
+        * bindings/scripts/test/ObjC/DOMFloat64Array.mm: Copied from Source/WebCore/html/canvas/Float32Array.cpp.
+        (core):
+        (kit):
+        * bindings/scripts/test/ObjC/DOMFloat64ArrayInternal.h: Copied from Source/WebCore/html/canvas/Int16Array.cpp.
+        * bindings/scripts/test/TestTypedArray.idl: Copied from Source/WebCore/html/canvas/Float64Array.cpp.
+        * bindings/scripts/test/V8/V8Float64Array.cpp: Added.
+        (WebCore::Float64ArrayInternal::V8_USE):
+        (WebCore::ConfigureV8Float64ArrayTemplate):
+        (WebCore::V8Float64Array::GetRawTemplate):
+        (WebCore::V8Float64Array::GetTemplate):
+        (WebCore::V8Float64Array::HasInstance):
+        (WebCore::V8Float64Array::wrapSlow):
+        (WTF::Float64Array::neuterBinding):
+        (WebCore::V8Float64Array::derefObject):
+        * bindings/scripts/test/V8/V8Float64Array.h: Added.
+        (WebCore::V8Float64Array::toNative):
+        (WebCore::V8Float64Array::existingWrapper):
+        (WebCore::V8Float64Array::wrap):
+        (WebCore::toV8):
+        * fileapi/FileReader.h:
+        * fileapi/FileReaderLoader.h:
+        * fileapi/FileReaderSync.h:
+        * fileapi/WebKitBlobBuilder.h:
+        * html/HTMLMediaElement.h:
+        * html/canvas/ArrayBuffer.cpp:
+        * html/canvas/ArrayBuffer.h:
+        * html/canvas/ArrayBufferView.cpp:
+        (WTF::ArrayBufferView::setImpl):
+        (WTF::ArrayBufferView::setRangeImpl):
+        (WTF::ArrayBufferView::zeroRangeImpl):
+        (WTF::ArrayBufferView::neuter):
+        * html/canvas/ArrayBufferView.h:
+        * html/canvas/Float32Array.cpp:
+        * html/canvas/Float32Array.h:
+        (WTF::Float32Array::set):
+        * html/canvas/Float64Array.cpp:
+        * html/canvas/Float64Array.h:
+        (WTF::Float64Array::set):
+        * html/canvas/Int16Array.cpp:
+        * html/canvas/Int16Array.h:
+        (WTF::Int16Array::set):
+        * html/canvas/Int32Array.cpp:
+        * html/canvas/Int32Array.h:
+        (WTF::Int32Array::set):
+        * html/canvas/Int8Array.cpp:
+        * html/canvas/Int8Array.h:
+        (WTF::Int8Array::set):
+        * html/canvas/IntegralTypedArrayBase.h:
+        * html/canvas/TypedArrayBase.h:
+        (WTF::TypedArrayBase::set):
+        (WTF::TypedArrayBase::setRange):
+        (WTF::TypedArrayBase::zeroRange):
+        * html/canvas/Uint16Array.cpp:
+        * html/canvas/Uint16Array.h:
+        (WTF::Uint16Array::set):
+        * html/canvas/Uint32Array.cpp:
+        * html/canvas/Uint32Array.h:
+        (WTF::Uint32Array::set):
+        * html/canvas/Uint8Array.cpp:
+        * html/canvas/Uint8Array.h:
+        (WTF::Uint8Array::set):
+        * html/canvas/WebGLBuffer.h:
+        * page/Crypto.h:
+        * webaudio/AsyncAudioDecoder.h:
+        * webaudio/AudioBuffer.cpp:
+        (WebCore::AudioBuffer::AudioBuffer):
+        (WebCore::AudioBuffer::zero):
+        * webaudio/AudioContext.h:
+        * webaudio/JavaScriptAudioNode.h:
+        * webaudio/RealtimeAnalyser.h:
+        * webaudio/RealtimeAnalyserNode.h:
+        * webaudio/WaveShaperNode.h:
+        * websockets/ThreadableWebSocketChannel.h:
+        * websockets/WebSocket.h:
+        * websockets/WebSocketChannel.h:
+        * xml/XMLHttpRequest.h:
+
 2011-11-14  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Add --css-grid-layout to build-webkit and the build systems

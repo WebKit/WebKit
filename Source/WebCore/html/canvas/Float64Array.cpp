@@ -27,7 +27,7 @@
 #include "config.h"
 #include "Float64Array.h"
 
-namespace WebCore {
+namespace WTF {
 
 PassRefPtr<Float64Array> Float64Array::create(unsigned length)
 {

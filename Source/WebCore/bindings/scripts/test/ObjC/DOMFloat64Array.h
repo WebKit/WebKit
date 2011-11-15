@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2009 Apple Inc. All rights reserved.
- * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,39 +24,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#include "Uint8Array.h"
+#import <WebCore/DOMArrayBufferView.h>
 
-namespace WTF {
+#if WEBKIT_VERSION_MAX_ALLOWED >= WEBKIT_VERSION_LATEST
 
-PassRefPtr<Uint8Array> Uint8Array::create(unsigned length)
-{
-    return TypedArrayBase<unsigned char>::create<Uint8Array>(length);
-}
+@interface DOMFloat64Array : DOMArrayBufferView
+@end
 
-PassRefPtr<Uint8Array> Uint8Array::create(unsigned char* array, unsigned length)
-{
-    return TypedArrayBase<unsigned char>::create<Uint8Array>(array, length);
-}
-
-PassRefPtr<Uint8Array> Uint8Array::create(PassRefPtr<ArrayBuffer> buffer, unsigned byteOffset, unsigned length)
-{
-    return TypedArrayBase<unsigned char>::create<Uint8Array>(buffer, byteOffset, length);
-}
-
-Uint8Array::Uint8Array(PassRefPtr<ArrayBuffer> buffer, unsigned byteOffset, unsigned length)
-    : IntegralTypedArrayBase<unsigned char>(buffer, byteOffset, length)
-{
-}
-
-PassRefPtr<Uint8Array> Uint8Array::subarray(int start) const
-{
-    return subarray(start, length());
-}
-
-PassRefPtr<Uint8Array> Uint8Array::subarray(int start, int end) const
-{
-    return subarrayImpl<Uint8Array>(start, end);
-}
-
-}
+#endif

@@ -34,9 +34,7 @@
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
-namespace WebCore {
-
-typedef int ExceptionCode;
+namespace WTF {
 
 class ArrayBufferView : public RefCounted<ArrayBufferView> {
   public:
@@ -72,11 +70,11 @@ class ArrayBufferView : public RefCounted<ArrayBufferView> {
   protected:
     ArrayBufferView(PassRefPtr<ArrayBuffer> buffer, unsigned byteOffset);
 
-    void setImpl(ArrayBufferView* array, unsigned byteOffset, ExceptionCode& ec);
+    bool setImpl(ArrayBufferView*, unsigned byteOffset);
 
-    void setRangeImpl(const char* data, size_t dataByteLength, unsigned byteOffset, ExceptionCode& ec);
+    bool setRangeImpl(const char* data, size_t dataByteLength, unsigned byteOffset);
 
-    void zeroRangeImpl(unsigned byteOffset, size_t rangeByteLength, ExceptionCode& ec);
+    bool zeroRangeImpl(unsigned byteOffset, size_t rangeByteLength);
 
     static void calculateOffsetAndLength(int start, int end, unsigned arraySize,
                                          unsigned* offset, unsigned* length);
@@ -120,7 +118,7 @@ class ArrayBufferView : public RefCounted<ArrayBufferView> {
         *numElements = std::min(remainingElements, *numElements);
     }
 
-    virtual void neuter(ScriptExecutionContext*);
+    virtual void neuter(WebCore::ScriptExecutionContext*);
 
     // This is the address of the ArrayBuffer's storage, plus the byte offset.
     void* m_baseAddress;
@@ -134,6 +132,8 @@ class ArrayBufferView : public RefCounted<ArrayBufferView> {
     ArrayBufferView* m_nextView;
 };
 
-} // namespace WebCore
+} // namespace WTF
+
+using WTF::ArrayBufferView;
 
 #endif // ArrayBufferView_h

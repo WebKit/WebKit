@@ -28,14 +28,18 @@
 
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
-
 namespace WebCore {
 
-class ArrayBuffer;
-class ArrayBufferView;
 class ScriptExecutionContext;
 
 typedef int ExceptionCode;
+
+}
+
+namespace WTF {
+
+class ArrayBuffer;
+class ArrayBufferView;
 
 class ArrayBufferContents {
     WTF_MAKE_NONCOPYABLE(ArrayBufferContents);
@@ -89,7 +93,7 @@ public:
     void addView(ArrayBufferView*);
     void removeView(ArrayBufferView*);
 
-    void transfer(ScriptExecutionContext*, ArrayBufferContents&, ExceptionCode&);
+    void transfer(WebCore::ScriptExecutionContext*, ArrayBufferContents&, WebCore::ExceptionCode&);
 
     ~ArrayBuffer() { }
 
@@ -102,6 +106,8 @@ private:
     ArrayBufferView* m_firstView;
 };
 
-} // namespace WebCore
+} // namespace WTF
+
+using WTF::ArrayBuffer;
 
 #endif // ArrayBuffer_h

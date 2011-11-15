@@ -46,7 +46,6 @@
 
 namespace WebCore {
 
-class ArrayBuffer;
 class Blob;
 class ThreadableWebSocketChannel;
 

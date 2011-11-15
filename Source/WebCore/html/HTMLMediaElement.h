@@ -59,7 +59,6 @@ class MediaError;
 class KURL;
 class TextTrackList;
 class TimeRanges;
-class Uint8Array;
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
 class Widget;
 #endif

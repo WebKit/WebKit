@@ -29,7 +29,7 @@
 
 #include "IntegralTypedArrayBase.h"
 
-namespace WebCore {
+namespace WTF {
 
 class ArrayBuffer;
 
@@ -40,14 +40,14 @@ public:
     static PassRefPtr<Uint32Array> create(PassRefPtr<ArrayBuffer> buffer, unsigned byteOffset, unsigned length);
 
     // Can’t use "using" here due to a bug in the RVCT compiler.
-    void set(TypedArrayBase<unsigned int>* array, unsigned offset, ExceptionCode& ec) { TypedArrayBase<unsigned int>::set(array, offset, ec); }
+    bool set(TypedArrayBase<unsigned int>* array, unsigned offset) { return TypedArrayBase<unsigned int>::set(array, offset); }
     void set(unsigned index, double value) { IntegralTypedArrayBase<unsigned int>::set(index, value); }
 
     PassRefPtr<Uint32Array> subarray(int start) const;
     PassRefPtr<Uint32Array> subarray(int start, int end) const;
 
 protected:
-    void neuterBinding(ScriptExecutionContext*);
+    void neuterBinding(WebCore::ScriptExecutionContext*);
 
 private:
     Uint32Array(PassRefPtr<ArrayBuffer> buffer,
@@ -60,6 +60,8 @@ private:
     virtual bool isUnsignedIntArray() const { return true; }
 };
 
-} // namespace WebCore
+} // namespace WTF
+
+using WTF::Uint32Array;
 
 #endif // Uint32Array_h

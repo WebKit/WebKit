@@ -27,7 +27,7 @@
 #include "config.h"
 #include "Float32Array.h"
 
-namespace WebCore {
+namespace WTF {
 
 PassRefPtr<Float32Array> Float32Array::create(unsigned length)
 {

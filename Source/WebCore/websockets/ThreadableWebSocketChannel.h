@@ -39,7 +39,6 @@
 
 namespace WebCore {
 
-class ArrayBuffer;
 class Blob;
 class KURL;
 class ScriptExecutionContext;
