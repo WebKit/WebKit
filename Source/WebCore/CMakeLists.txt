@@ -796,6 +796,7 @@ SET(WebCore_SOURCES
     html/IsIndexInputType.cpp
     html/LabelsNodeList.cpp
     html/LinkRelAttribute.cpp
+    html/MediaController.cpp
     html/MediaDocument.cpp
     html/MicroDataItemValue.cpp
     html/MonthInputType.cpp

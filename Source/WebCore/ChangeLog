@@ -1,3 +1,10 @@
+2011-11-15  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Unreviewed. Fix build breaks when EFL port is built.
+
+        * CMakeLists.txt:
+        * UseJSC.cmake:
+
 2011-11-15  Noel Gordon  <noel.gordon@gmail.com>
 
         Make ImageFrame member getAddr() public
