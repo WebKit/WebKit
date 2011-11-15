@@ -3268,12 +3268,9 @@ BUGCR85292 : platform/chromium/permissionclient/storage-permission.html = PASS T
 
 BUGCR85293 LINUX : svg/text/foreignObject-text-clipping-bug.xml = PASS IMAGE
 
-// CSS Regions support not yet enabled.
-BUGWK57312 SKIP : fast/regions = PASS
-BUGWK70733 SKIP : fast/regions/render-region-custom-style-mark.html = FAIL
-
-// CSS Exclusions support not yet enabled.
-BUGWK57311 SKIP : fast/exclusions = PASS
+// Need to evaluate and update regions and exclusions tests.
+BUGWK57312 : fast/regions = PASS FAIL MISSING
+BUGWK57311 : fast/exclusions = PASS FAIL MISSING
 
 // CSS Filters support not yet enabled
 BUGWK68469 SKIP : css3/filters = PASS
