@@ -1,3 +1,20 @@
+2011-11-15  Kent Tamura  <tkent@chromium.org>
+
+        [V8] Fix incorrect handling of JavaScript properties in DOMStringMap
+        https://bugs.webkit.org/show_bug.cgi?id=53578
+
+        Reviewed by Adam Barth.
+
+        Follows a JSC behavior change by r96893.
+
+        * bindings/v8/custom/V8DOMStringMapCustom.cpp:
+        (WebCore::V8DOMStringMap::namedPropertyGetter):
+        Propagate to the JavaScript object if the DOMStringMap object
+        doesn't have the requested item.
+        (WebCore::V8DOMStringMap::namedPropertyDeleter): ditto.
+        (WebCore::V8DOMStringMap::namedPropertySetter):
+        Try to set a property to only a DOMStringMap object.
+
 2011-11-14  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: Command line $x fails for 3 of 4 types of XPath query

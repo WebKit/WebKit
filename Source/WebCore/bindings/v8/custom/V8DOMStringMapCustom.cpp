@@ -49,7 +49,10 @@ v8::Handle<v8::Integer> V8DOMStringMap::namedPropertyQuery(v8::Local<v8::String>
 v8::Handle<v8::Value> V8DOMStringMap::namedPropertyGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     INC_STATS("DOM.DOMStringMap.NamedPropertyGetter");
-    return v8StringOrUndefined(V8DOMStringMap::toNative(info.Holder())->item(toWebCoreString(name)));
+    String value = V8DOMStringMap::toNative(info.Holder())->item(toWebCoreString(name));
+    if (value.isNull())
+        return notHandledByInterceptor();
+    return v8StringOrUndefined(value);
 }
 
 v8::Handle<v8::Array> V8DOMStringMap::namedPropertyEnumerator(const v8::AccessorInfo& info)
@@ -66,28 +69,14 @@ v8::Handle<v8::Array> V8DOMStringMap::namedPropertyEnumerator(const v8::Accessor
 v8::Handle<v8::Boolean> V8DOMStringMap::namedPropertyDeleter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     INC_STATS("DOM.DOMStringMap.NamedPropertyDeleter");
-
-    if (!info.Holder()->GetRealNamedPropertyInPrototypeChain(name).IsEmpty())
-        return v8::False();
-    if (info.Holder()->HasRealNamedCallbackProperty(name))
-        return v8::False();
-
     ExceptionCode ec = 0;
     V8DOMStringMap::toNative(info.Holder())->deleteItem(toWebCoreString(name), ec);
-    if (ec)
-        throwError(ec);
-    return v8::True();
+    return ec ? v8::False() : v8::True();
 }
 
 v8::Handle<v8::Value> V8DOMStringMap::namedPropertySetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     INC_STATS("DOM.DOMStringMap.NamedPropertySetter");
-
-    if (!info.Holder()->GetRealNamedPropertyInPrototypeChain(name).IsEmpty())
-        return value;
-    if (info.Holder()->HasRealNamedCallbackProperty(name))
-        return value;
-
     ExceptionCode ec = 0;
     V8DOMStringMap::toNative(info.Holder())->setItem(toWebCoreString(name), toWebCoreString(value), ec);
     if (ec)
