@@ -34,7 +34,15 @@ static void initShorthandMap(ShorthandMap& shorthandMap)
     #define SET_SHORTHAND_MAP_ENTRY(map, propID, array) \
         map.set(propID, CSSPropertyLonghand(array, WTF_ARRAY_LENGTH(array)))
 
-    // FIXME: The 'font' property has "shorthand nature" but is not parsed as a shorthand.
+    static const int fontProperties[] = {
+        CSSPropertyFontFamily,
+        CSSPropertyFontSize,
+        CSSPropertyFontStyle,
+        CSSPropertyFontVariant,
+        CSSPropertyFontWeight,
+        CSSPropertyLineHeight
+    };
+    SET_SHORTHAND_MAP_ENTRY(shorthandMap, CSSPropertyFont, fontProperties);
 
     // Do not change the order of the following four shorthands, and keep them together.
     static const int borderProperties[4][3] = {

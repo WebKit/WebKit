@@ -489,18 +489,6 @@ WebInspector.StylesSidebarPane.prototype = {
                 // property is overloaded, so don't add it to the rule's usedProperties.
                 if (!(name in usedProperties))
                     styleRule.usedProperties[name] = true;
-
-                if (name === "font") {
-                    // The font property is not reported as a shorthand. Report finding the individual
-                    // properties so they are visible in computed style.
-                    // FIXME: remove this when http://bugs.webkit.org/show_bug.cgi?id=15598 is fixed.
-                    styleRule.usedProperties["font-family"] = true;
-                    styleRule.usedProperties["font-size"] = true;
-                    styleRule.usedProperties["font-style"] = true;
-                    styleRule.usedProperties["font-variant"] = true;
-                    styleRule.usedProperties["font-weight"] = true;
-                    styleRule.usedProperties["line-height"] = true;
-                }
             }
 
             // Add all the properties found in this style to the used properties list.

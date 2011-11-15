@@ -34,6 +34,7 @@
 #include "ExceptionCode.h"
 #include "InspectorInstrumentation.h"
 #include "StyledElement.h"
+#include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>
 
 using namespace std;
@@ -193,6 +194,8 @@ String CSSMutableStyleDeclaration::getPropertyValue(int propertyID) const
                                         CSSPropertyBorderBottomStyle, CSSPropertyBorderLeftStyle };
             return get4Values(properties);
         }
+        case CSSPropertyFont:
+            return fontValue();
         case CSSPropertyMargin: {
             const int properties[4] = { CSSPropertyMarginTop, CSSPropertyMarginRight,
                                         CSSPropertyMarginBottom, CSSPropertyMarginLeft };
@@ -270,6 +273,62 @@ String CSSMutableStyleDeclaration::borderSpacingValue(const int properties[2]) c
     if (horizontalValueCSSText == verticalValueCSSText)
         return horizontalValueCSSText;
     return horizontalValueCSSText + ' ' + verticalValueCSSText;
+}
+
+bool CSSMutableStyleDeclaration::appendFontLonghandValueIfExplicit(int propertyId, StringBuilder& result) const
+{
+    const CSSProperty* property = findPropertyWithId(propertyId);
+    if (!property)
+        return false; // All longhands must have at least implicit values if "font" is specified.
+    if (property->isImplicit())
+        return true;
+
+    char prefix = '\0';
+    switch (propertyId) {
+    case CSSPropertyFontStyle:
+        break; // No prefix.
+    case CSSPropertyFontFamily:
+    case CSSPropertyFontVariant:
+    case CSSPropertyFontWeight:
+        prefix = ' ';
+        break;
+    case CSSPropertyLineHeight:
+        prefix = '/';
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+    }
+
+    if (prefix && !result.isEmpty())
+        result.append(prefix);
+    result.append(property->value()->cssText());
+
+    return true;
+}
+
+String CSSMutableStyleDeclaration::fontValue() const
+{
+    const CSSProperty* fontSizeProperty = findPropertyWithId(CSSPropertyFontSize);
+    if (!fontSizeProperty || fontSizeProperty->isImplicit())
+        return emptyString();
+
+    StringBuilder result;
+    bool success = true;
+    success &= appendFontLonghandValueIfExplicit(CSSPropertyFontStyle, result);
+    success &= appendFontLonghandValueIfExplicit(CSSPropertyFontVariant, result);
+    success &= appendFontLonghandValueIfExplicit(CSSPropertyFontWeight, result);
+    if (!result.isEmpty())
+        result.append(' ');
+    result.append(fontSizeProperty->value()->cssText());
+    success &= appendFontLonghandValueIfExplicit(CSSPropertyLineHeight, result);
+    success &= appendFontLonghandValueIfExplicit(CSSPropertyFontFamily, result);
+    if (!success) {
+        // An invalid "font" value has been built (should never happen, as at least implicit values
+        // for mandatory longhands are always found in the style), report empty value instead.
+        ASSERT_NOT_REACHED();
+        return emptyString();
+    }
+    return result.toString();
 }
 
 String CSSMutableStyleDeclaration::get4Values(const int* properties) const

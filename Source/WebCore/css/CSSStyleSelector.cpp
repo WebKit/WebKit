@@ -2385,11 +2385,16 @@ String CSSStyleSelector::pageName(int /* pageIndex */) const
     return "";
 }
 
-void CSSStyleSelector::applyPropertyToStyle(int id, CSSValue *value, RenderStyle* style)
+void CSSStyleSelector::applyPropertyToStyle(int id, CSSValue* value, RenderStyle* style)
 {
     initElement(0);
     initForStyleResolve(0, style);
     m_style = style;
+    applyPropertyToCurrentStyle(id, value);
+}
+
+void CSSStyleSelector::applyPropertyToCurrentStyle(int id, CSSValue* value)
+{
     if (value)
         applyProperty(id, value);
 }

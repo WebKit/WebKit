@@ -1,3 +1,39 @@
+2011-11-15  Alexander Pavlov  <apavlov@chromium.org>
+
+        font property does not show up as "shorthand" in inspector
+        https://bugs.webkit.org/show_bug.cgi?id=15598
+
+        Reviewed by Nikolas Zimmermann.
+
+        The "font" CSS property is turned into a real shorthand, as its longhands used to float around
+        in the resulting style declaration without any reference to their underlying "font" property.
+
+        Test: fast/css/font-shorthand.html
+
+        * css/CSSMutableStyleDeclaration.cpp:
+        (WebCore::CSSMutableStyleDeclaration::getPropertyValue): Extracted the "font" value building into fontValue().
+        (WebCore::CSSMutableStyleDeclaration::appendFontLonghandValueIfExplicit): Added
+        (WebCore::CSSMutableStyleDeclaration::fontValue): Build the "font" value from longhands.
+        * css/CSSMutableStyleDeclaration.h:
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::addProperty): Added optional "implicit" parameter.
+        (WebCore::CSSParser::parseFont): Build respective longhands instead of the shorthand "font" property.
+        * css/CSSParser.h: Added optional "implicit" parameter to addProperty().
+        * css/CSSPropertyLonghand.cpp:
+        (WebCore::initShorthandMap): Added "font" shorthand map entry.
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyPropertyToStyle): Separated the property application from the instance setup.
+        (WebCore::CSSStyleSelector::applyPropertyToCurrentStyle): Added.
+        * css/CSSStyleSelector.h: Made updateFont() public.
+        * css/FontValue.cpp:
+        (WebCore::FontValue::customCssText): Made use of StringBuilder.
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::setFont): Apply "font" longhands rather than the (non-existent) "font" property.
+        * inspector/front-end/StylesSidebarPane.js:
+        (WebInspector.StylesSidebarPane.prototype._markUsedProperties): Removed a workaround for "font" not being a shorthand.
+        * page/animation/AnimationBase.cpp:
+        (WebCore::addShorthandProperties): Removed a workaround for "font" not being a shorthand.
+
 2011-11-15  Pierre Rossi  <pierre.rossi@gmail.com>
 
         [Qt] Clean up the remaining duplicate code after the RenderThemeQt refactoring.

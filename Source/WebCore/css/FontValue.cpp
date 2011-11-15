@@ -23,6 +23,7 @@
 #include "CSSValueList.h"
 #include "CSSPrimitiveValue.h"
 #include "PlatformString.h"
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
@@ -30,38 +31,38 @@ String FontValue::customCssText() const
 {
     // font variant weight size / line-height family
 
-    String result("");
+    StringBuilder result;
 
     if (style)
-        result += style->cssText();
+        result.append(style->cssText());
     if (variant) {
         if (!result.isEmpty())
-            result += " ";
-        result += variant->cssText();
+            result.append(' ');
+        result.append(variant->cssText());
     }
     if (weight) {
         if (!result.isEmpty())
-            result += " ";
-        result += weight->cssText();
+            result.append(' ');
+        result.append(weight->cssText());
     }
     if (size) {
         if (!result.isEmpty())
-            result += " ";
-        result += size->cssText();
+            result.append(' ');
+        result.append(size->cssText());
     }
     if (lineHeight) {
         if (!size)
-            result += " ";
-        result += "/";
-        result += lineHeight->cssText();
+            result.append(' ');
+        result.append('/');
+        result.append(lineHeight->cssText());
     }
     if (family) {
         if (!result.isEmpty())
-            result += " ";
-        result += family->cssText();
+            result.append(' ');
+        result.append(family->cssText());
     }
 
-    return result;
+    return result.toString();
 }
 
 }

@@ -77,7 +77,7 @@ public:
 
     CSSPrimitiveValueCache* primitiveValueCache() const { return m_primitiveValueCache.get(); }
 
-    void addProperty(int propId, PassRefPtr<CSSValue>, bool important);
+    void addProperty(int propId, PassRefPtr<CSSValue>, bool important, bool implicit = false);
     void rollbackLastProperties(int num);
     bool hasProperties() const { return m_numParsedProperties > 0; }
 

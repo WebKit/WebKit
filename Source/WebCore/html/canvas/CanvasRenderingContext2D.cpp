@@ -1987,9 +1987,19 @@ void CanvasRenderingContext2D::setFont(const String& newFont)
         newStyle->setFontDescription(computedStyle->fontDescription());
     newStyle->font().update(newStyle->font().fontSelector());
 
-    // Now map the font property into the style.
+    // Now map the font property longhands into the style.
     CSSStyleSelector* styleSelector = canvas()->styleSelector();
-    styleSelector->applyPropertyToStyle(CSSPropertyFont, tempDecl->getPropertyCSSValue(CSSPropertyFont).get(), newStyle.get());
+    styleSelector->applyPropertyToStyle(CSSPropertyFontFamily, tempDecl->getPropertyCSSValue(CSSPropertyFontFamily).get(), newStyle.get());
+    styleSelector->applyPropertyToCurrentStyle(CSSPropertyFontStyle, tempDecl->getPropertyCSSValue(CSSPropertyFontStyle).get());
+    styleSelector->applyPropertyToCurrentStyle(CSSPropertyFontVariant, tempDecl->getPropertyCSSValue(CSSPropertyFontVariant).get());
+    styleSelector->applyPropertyToCurrentStyle(CSSPropertyFontWeight, tempDecl->getPropertyCSSValue(CSSPropertyFontWeight).get());
+
+    // As described in BUG66291, setting font-size on a font may entail a CSSPrimitiveValue::computeLengthDouble call,
+    // which assumes the fontMetrics are available for the affected font, otherwise a crash occurs (see http://trac.webkit.org/changeset/96122).
+    // The updateFont() call below updates the fontMetrics and ensures the proper setting of font-size.
+    styleSelector->updateFont();
+    styleSelector->applyPropertyToCurrentStyle(CSSPropertyFontSize, tempDecl->getPropertyCSSValue(CSSPropertyFontSize).get());
+    styleSelector->applyPropertyToCurrentStyle(CSSPropertyLineHeight, tempDecl->getPropertyCSSValue(CSSPropertyLineHeight).get());
 
     state().m_font = newStyle->font();
     state().m_font.update(styleSelector->fontSelector());

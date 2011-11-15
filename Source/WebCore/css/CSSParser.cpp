@@ -623,9 +623,9 @@ bool CSSParser::parseMediaQuery(MediaList* queries, const String& string)
     return ok;
 }
 
-void CSSParser::addProperty(int propId, PassRefPtr<CSSValue> value, bool important)
+void CSSParser::addProperty(int propId, PassRefPtr<CSSValue> value, bool important, bool implicit)
 {
-    OwnPtr<CSSProperty> prop(adoptPtr(new CSSProperty(propId, value, important, m_currentShorthand, m_implicitShorthand)));
+    OwnPtr<CSSProperty> prop(adoptPtr(new CSSProperty(propId, value, important, m_currentShorthand, m_implicitShorthand || implicit)));
     if (m_numParsedProperties >= m_maxParsedProperties) {
         if (m_numParsedProperties > (UINT_MAX / sizeof(CSSProperty*)) - 32)
             CRASH();  // Avoid inconsistencies with rollbackLastProperties.
@@ -3962,29 +3962,48 @@ bool CSSParser::parseWrapShape(bool important)
 bool CSSParser::parseFont(bool important)
 {
     bool valid = true;
+    bool styleImplicit = true;
+    bool variantImplicit = true;
+    bool weightImplicit = true;
+    bool lineHeightImplicit = true;
+    int valueOrdinal = 0;
+
     CSSParserValue *value = m_valueList->current();
     RefPtr<FontValue> font = FontValue::create();
-    // optional font-style, font-variant and font-weight
+    // Optional font-style, font-variant and font-weight.
     while (value) {
         int id = value->id;
         if (id) {
             if (id == CSSValueNormal) {
-                // do nothing, it's the inital value for all three
+                // It's the initial value for all three, so mark the corresponding longhand as explicit.
+                switch (valueOrdinal) {
+                case 0:
+                    styleImplicit = false;
+                    break;
+                case 1:
+                    variantImplicit = false;
+                    break;
+                case 2:
+                    weightImplicit = false;
+                    break;
+                }
             } else if (id == CSSValueItalic || id == CSSValueOblique) {
                 if (font->style)
                     return false;
                 font->style = primitiveValueCache()->createIdentifierValue(id);
+                styleImplicit = false;
             } else if (id == CSSValueSmallCaps) {
                 if (font->variant)
                     return false;
                 font->variant = primitiveValueCache()->createIdentifierValue(id);
+                variantImplicit = false;
             } else if (id >= CSSValueBold && id <= CSSValueLighter) {
                 if (font->weight)
                     return false;
                 font->weight = primitiveValueCache()->createIdentifierValue(id);
-            } else {
+                weightImplicit = false;
+            } else
                 valid = false;
-            }
         } else if (!font->weight && validUnit(value, FInteger | FNonNeg, true)) {
             int weight = static_cast<int>(value->fValue);
             int val = 0;
@@ -4007,9 +4026,10 @@ bool CSSParser::parseFont(bool important)
             else if (weight == 900)
                 val = CSSValue900;
 
-            if (val)
+            if (val) {
                 font->weight = primitiveValueCache()->createIdentifierValue(val);
-            else
+                weightImplicit = false;
+            } else
                 valid = false;
         } else {
             valid = false;
@@ -4017,11 +4037,12 @@ bool CSSParser::parseFont(bool important)
         if (!valid)
             break;
         value = m_valueList->next();
+        ++valueOrdinal;
     }
     if (!value)
         return false;
 
-    // set undefined values to default
+    // Set undefined values to default.
     if (!font->style)
         font->style = primitiveValueCache()->createIdentifierValue(CSSValueNormal);
     if (!font->variant)
@@ -4029,7 +4050,7 @@ bool CSSParser::parseFont(bool important)
     if (!font->weight)
         font->weight = primitiveValueCache()->createIdentifierValue(CSSValueNormal);
 
-    // now a font size _must_ come
+    // Now a font size _must_ come.
     // <absolute-size> | <relative-size> | <length> | <percentage> | inherit
     if (value->id >= CSSValueXxSmall && value->id <= CSSValueLarger)
         font->size = primitiveValueCache()->createIdentifierValue(value->id);
@@ -4040,15 +4061,17 @@ bool CSSParser::parseFont(bool important)
         return false;
 
     if (value->unit == CSSParserValue::Operator && value->iValue == '/') {
-        // line-height
+        // The line-height property.
         value = m_valueList->next();
         if (!value)
             return false;
         if (value->id == CSSValueNormal) {
-            // default value, nothing to do
-        } else if (validUnit(value, FNumber | FLength | FPercent | FNonNeg, m_strict))
+            // Default value, just mark the property as explicit.
+            lineHeightImplicit = false;
+        } else if (validUnit(value, FNumber | FLength | FPercent | FNonNeg, m_strict)) {
             font->lineHeight = createPrimitiveNumericValue(value);
-        else
+            lineHeightImplicit = false;
+        } else
             return false;
         value = m_valueList->next();
         if (!value)
@@ -4058,13 +4081,24 @@ bool CSSParser::parseFont(bool important)
     if (!font->lineHeight)
         font->lineHeight = primitiveValueCache()->createIdentifierValue(CSSValueNormal);
 
-    // font family must come now
+    // Font family must come now.
     font->family = parseFontFamily();
 
     if (m_valueList->current() || !font->family)
         return false;
 
-    addProperty(CSSPropertyFont, font.release(), important);
+    ShorthandScope scope(this, CSSPropertyFont);
+    addProperty(CSSPropertyFontFamily, font->family, important);
+    addProperty(CSSPropertyFontSize, font->size, important);
+    addProperty(CSSPropertyFontStyle, font->style, important, styleImplicit);
+    addProperty(CSSPropertyFontVariant, font->variant, important, variantImplicit);
+    addProperty(CSSPropertyFontWeight, font->weight, important, weightImplicit);
+    addProperty(CSSPropertyLineHeight, font->lineHeight, important, lineHeightImplicit);
+
+    // FIXME: http://www.w3.org/TR/2011/WD-css3-fonts-20110324/#font-prop requires that
+    // "font-stretch", "font-size-adjust", and "font-kerning" be reset to their initial values
+    // but we don't seem to support them at the moment. They should also be added here once implemented.
+
     return true;
 }
 

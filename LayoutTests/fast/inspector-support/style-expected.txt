@@ -1,4 +1,4 @@
-Note that background and font are both buggy right now!
+Note that background is buggy right now!
 Test
 background-image: initial (original property was background)
 background-repeat-x: initial (original property was background)
@@ -14,5 +14,10 @@ margin-right: 1em (original property was margin and property was implicitly set.
 margin-bottom: 1em (original property was margin and property was implicitly set.)
 margin-left: 1em (original property was margin and property was implicitly set.)
 color: white
-font: normal normal normal 24px/normal 'Lucida Grande'
+font-family: 'Lucida Grande' (original property was font)
+font-size: 24px (original property was font)
+font-style: normal (original property was font and property was implicitly set.)
+font-variant: normal (original property was font and property was implicitly set.)
+font-weight: normal (original property was font and property was implicitly set.)
+line-height: normal (original property was font and property was implicitly set.)
 

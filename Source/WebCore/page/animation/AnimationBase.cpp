@@ -898,6 +898,7 @@ static void addShorthandProperties()
     static const int animatableShorthandProperties[] = {
         CSSPropertyBackground,      // for background-color, background-position
         CSSPropertyBackgroundPosition,
+        CSSPropertyFont, // for font-size, font-weight
         CSSPropertyWebkitMask,      // for mask-position
         CSSPropertyWebkitMaskPosition,
         CSSPropertyBorderTop, CSSPropertyBorderRight, CSSPropertyBorderBottom, CSSPropertyBorderLeft,
@@ -921,15 +922,6 @@ static void addShorthandProperties()
         if (longhand.length() > 0)
             addPropertyWrapper(propertyID, new ShorthandPropertyWrapper(propertyID, longhand));
     }
-
-    // 'font' is not in the shorthand map.
-    static const int animatableFontProperties[] = {
-        CSSPropertyFontSize,
-        CSSPropertyFontWeight
-    };
-
-    CSSPropertyLonghand fontLonghand(animatableFontProperties, WTF_ARRAY_LENGTH(animatableFontProperties));
-    addPropertyWrapper(CSSPropertyFont, new ShorthandPropertyWrapper(CSSPropertyFont, fontLonghand));
 }
 
 static PropertyWrapperBase* wrapperForProperty(int propertyID)

@@ -164,6 +164,10 @@ public:
 
     void applyPropertyToStyle(int id, CSSValue*, RenderStyle*);
 
+    void applyPropertyToCurrentStyle(int id, CSSValue*);
+
+    void updateFont();
+
     static float getComputedSizeFromSpecifiedSize(Document*, float zoomFactor, bool isAbsoluteSize, float specifiedSize, ESmartMinimumForFontSize = UseSmartMinimumForFontFize);
 
 private:
@@ -287,7 +291,6 @@ public:
 private:
     static RenderStyle* s_styleNotYetAvailable;
 
-    void updateFont();
     void cacheBorderAndBackground();
 
     void mapFillAttachment(CSSPropertyID, FillLayer*, CSSValue*);
