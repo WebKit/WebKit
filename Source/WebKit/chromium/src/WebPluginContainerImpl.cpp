@@ -406,7 +406,7 @@ void WebPluginContainerImpl::loadFrameRequest(const WebURLRequest& request, cons
 
     FrameLoadRequest frameRequest(frame->document()->securityOrigin(), request.toResourceRequest(), target);
     UserGestureIndicator gestureIndicator(request.hasUserGesture() ? DefinitelyProcessingUserGesture : PossiblyProcessingUserGesture);
-    frame->loader()->loadFrameRequest(frameRequest, false, false, 0, 0, SendReferrer);
+    frame->loader()->loadFrameRequest(frameRequest, false, false, 0, 0, MaybeSendReferrer);
 }
 
 void WebPluginContainerImpl::zoomLevelChanged(double zoomLevel)

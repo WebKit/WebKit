@@ -1,3 +1,15 @@
+2011-11-15  Jochen Eisinger  <jochen@chromium.org>
+
+        Rename ReferrerPolicy to clarify its meaning
+        https://bugs.webkit.org/show_bug.cgi?id=72420
+
+        Reviewed by Nate Chapin.
+
+        * WebProcess/WebCoreSupport/WebContextMenuClient.cpp:
+        (WebKit::WebContextMenuClient::searchWithGoogle):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::linkClicked):
+
 2011-11-15  Sam Weinig  <sam@webkit.org>
 
         Fix windows build.

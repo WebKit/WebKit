@@ -513,7 +513,7 @@ void HTMLAnchorElement::handleClick(Event* event)
         frame->loader()->client()->startDownload(request, fastGetAttribute(downloadAttr));
     } else
 #endif
-        frame->loader()->urlSelected(kurl, target(), event, false, false, hasRel(RelationNoReferrer) ? NoReferrer : SendReferrer);
+        frame->loader()->urlSelected(kurl, target(), event, false, false, hasRel(RelationNoReferrer) ? NeverSendReferrer : MaybeSendReferrer);
 
     sendPings(kurl);
 }
@@ -577,7 +577,7 @@ void handleLinkClick(Event* event, Document* document, const String& url, const 
     Frame* frame = document->frame();
     if (!frame)
         return;
-    frame->loader()->urlSelected(document->completeURL(url), target, event, false, false, hideReferrer ? NoReferrer : SendReferrer);
+    frame->loader()->urlSelected(document->completeURL(url), target, event, false, false, hideReferrer ? NeverSendReferrer : MaybeSendReferrer);
 }
 
 #if ENABLE(MICRODATA)

@@ -87,9 +87,9 @@ namespace WebCore {
         UnloadEventPolicyUnloadAndPageHide
     };
 
-    enum ReferrerPolicy {
-        SendReferrer,
-        NoReferrer
+    enum ShouldSendReferrer {
+        MaybeSendReferrer,
+        NeverSendReferrer
     };
 
     // Passed to FrameLoader::urlSelected() and ScriptController::executeIfJavaScriptURL()

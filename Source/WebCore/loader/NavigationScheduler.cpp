@@ -197,7 +197,7 @@ public:
         if (!m_historySteps) {
             // Special case for go(0) from a frame -> reload only the frame
             // To follow Firefox and IE's behavior, history reload can only navigate the self frame.
-            frame->loader()->urlSelected(frame->document()->url(), "_self", 0, lockHistory(), lockBackForwardList(), SendReferrer);
+            frame->loader()->urlSelected(frame->document()->url(), "_self", 0, lockHistory(), lockBackForwardList(), MaybeSendReferrer);
             return;
         }
         // go(i!=0) from a frame navigates into the history of the frame only,
@@ -232,7 +232,7 @@ public:
             return;
         FrameLoadRequest frameRequest(requestingFrame->document()->securityOrigin());
         m_submission->populateFrameLoadRequest(frameRequest);
-        frame->loader()->loadFrameRequest(frameRequest, lockHistory(), lockBackForwardList(), m_submission->event(), m_submission->state(), SendReferrer);
+        frame->loader()->loadFrameRequest(frameRequest, lockHistory(), lockBackForwardList(), m_submission->event(), m_submission->state(), MaybeSendReferrer);
     }
     
     virtual void didStartTimer(Frame* frame, Timer<NavigationScheduler>* timer)
