@@ -1,0 +1,7 @@
+#submitted-on { position: relative; }
+#the-comment-list .author .akismet-user-comment-count { display: inline; }
+#dashboard_recent_comments .akismet-status { display: none; } /* never show the flagged by text on the dashboard */
+.akismet-status { float: right; }
+.akismet-status a { color: #AAA; font-style: italic; }
+span.comment-link a { text-decoration: underline; }
+span.comment-link:after { content: " " attr(title) " "; color: #aaa; text-decoration: none; }

@@ -1,5 +1,11 @@
 2011-11-14  Mark Rowe  <mrowe@apple.com>
 
+        Upgrade WordPress's Akismet plug-in to the latest version.
+
+        * blog/wp-content/plugins/akismet:
+
+2011-11-14  Mark Rowe  <mrowe@apple.com>
+
         Update one file that was missed.
 
         * blog/wp-settings.php:

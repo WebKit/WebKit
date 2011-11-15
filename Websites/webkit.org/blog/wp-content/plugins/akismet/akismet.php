@@ -1,20 +1,55 @@
 <?php
+/**
+ * @package Akismet
+ */
 /*
 Plugin Name: Akismet
 Plugin URI: http://akismet.com/
-Description: Akismet checks your comments against the Akismet web service to see if they look like spam or not. You need a <a href="http://wordpress.com/api-keys/">WordPress.com API key</a> to use it. You can review the spam it catches under "Comments." To show off your Akismet stats just put <code>&lt;?php akismet_counter(); ?&gt;</code> in your template. See also: <a href="http://wordpress.org/extend/plugins/stats/">WP Stats plugin</a>.
-Version: 2.2.6
-Author: Matt Mullenweg
-Author URI: http://ma.tt/
+Description: Used by millions, Akismet is quite possibly the best way in the world to <strong>protect your blog from comment and trackback spam</strong>. It keeps your site protected from spam even while you sleep. To get started: 1) Click the "Activate" link to the left of this description, 2) <a href="http://akismet.com/get/?return=true">Sign up for an Akismet API key</a>, and 3) Go to your <a href="plugins.php?page=akismet-key-config">Akismet configuration</a> page, and save your API key.
+Version: 2.5.3
+Author: Automattic
+Author URI: http://automattic.com/wordpress-plugins/
+License: GPLv2 or later
 */
 
-define('AKISMET_VERSION', '2.2.6');
+/*
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
 
-// If you hardcode a WP.com API key here, all key config screens will be hidden
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+*/
+
+define('AKISMET_VERSION', '2.5.3');
+define('AKISMET_PLUGIN_URL', plugin_dir_url( __FILE__ ));
+
+/** If you hardcode a WP.com API key here, all key config screens will be hidden */
 if ( defined('WPCOM_API_KEY') )
 	$wpcom_api_key = constant('WPCOM_API_KEY');
 else
 	$wpcom_api_key = '';
+
+// Make sure we don't expose any info if called directly
+if ( !function_exists( 'add_action' ) ) {
+	echo "Hi there!  I'm just a plugin, not much I can do when called directly.";
+	exit;
+}
+
+if ( isset($wp_db_version) && $wp_db_version <= 9872 )
+	include_once dirname( __FILE__ ) . '/legacy.php';
+
+include_once dirname( __FILE__ ) . '/widget.php';
+
+if ( is_admin() )
+	require_once dirname( __FILE__ ) . '/admin.php';
 
 function akismet_init() {
 	global $wpcom_api_key, $akismet_api_host, $akismet_api_port;
@@ -25,232 +60,8 @@ function akismet_init() {
 		$akismet_api_host = get_option('wordpress_api_key') . '.rest.akismet.com';
 
 	$akismet_api_port = 80;
-	add_action('admin_menu', 'akismet_config_page');
-	add_action('admin_menu', 'akismet_stats_page');
-	akismet_admin_warnings();
 }
 add_action('init', 'akismet_init');
-
-function akismet_admin_init() {
-	if ( function_exists( 'get_plugin_page_hook' ) )
-		$hook = get_plugin_page_hook( 'akismet-stats-display', 'index.php' );
-	else
-		$hook = 'dashboard_page_akismet-stats-display';
-	add_action('admin_head-'.$hook, 'akismet_stats_script');
-}
-add_action('admin_init', 'akismet_admin_init');
-
-if ( !function_exists('wp_nonce_field') ) {
-	function akismet_nonce_field($action = -1) { return; }
-	$akismet_nonce = -1;
-} else {
-	function akismet_nonce_field($action = -1) { return wp_nonce_field($action); }
-	$akismet_nonce = 'akismet-update-key';
-}
-
-if ( !function_exists('number_format_i18n') ) {
-	function number_format_i18n( $number, $decimals = null ) { return number_format( $number, $decimals ); }
-}
-
-function akismet_config_page() {
-	if ( function_exists('add_submenu_page') )
-		add_submenu_page('plugins.php', __('Akismet Configuration'), __('Akismet Configuration'), 'manage_options', 'akismet-key-config', 'akismet_conf');
-
-}
-
-function akismet_conf() {
-	global $akismet_nonce, $wpcom_api_key;
-
-	if ( isset($_POST['submit']) ) {
-		if ( function_exists('current_user_can') && !current_user_can('manage_options') )
-			die(__('Cheatin&#8217; uh?'));
-
-		check_admin_referer( $akismet_nonce );
-		$key = preg_replace( '/[^a-h0-9]/i', '', $_POST['key'] );
-
-		if ( empty($key) ) {
-			$key_status = 'empty';
-			$ms[] = 'new_key_empty';
-			delete_option('wordpress_api_key');
-		} else {
-			$key_status = akismet_verify_key( $key );
-		}
-
-		if ( $key_status == 'valid' ) {
-			update_option('wordpress_api_key', $key);
-			$ms[] = 'new_key_valid';
-		} else if ( $key_status == 'invalid' ) {
-			$ms[] = 'new_key_invalid';
-		} else if ( $key_status == 'failed' ) {
-			$ms[] = 'new_key_failed';
-		}
-
-		if ( isset( $_POST['akismet_discard_month'] ) )
-			update_option( 'akismet_discard_month', 'true' );
-		else
-			update_option( 'akismet_discard_month', 'false' );
-	} elseif ( isset($_POST['check']) ) {
-		akismet_get_server_connectivity(0);
-	}
-
-	if ( $key_status != 'valid' ) {
-		$key = get_option('wordpress_api_key');
-		if ( empty( $key ) ) {
-			if ( $key_status != 'failed' ) {
-				if ( akismet_verify_key( '1234567890ab' ) == 'failed' )
-					$ms[] = 'no_connection';
-				else
-					$ms[] = 'key_empty';
-			}
-			$key_status = 'empty';
-		} else {
-			$key_status = akismet_verify_key( $key );
-		}
-		if ( $key_status == 'valid' ) {
-			$ms[] = 'key_valid';
-		} else if ( $key_status == 'invalid' ) {
-			delete_option('wordpress_api_key');
-			$ms[] = 'key_empty';
-		} else if ( !empty($key) && $key_status == 'failed' ) {
-			$ms[] = 'key_failed';
-		}
-	}
-
-	$messages = array(
-		'new_key_empty' => array('color' => 'aa0', 'text' => __('Your key has been cleared.')),
-		'new_key_valid' => array('color' => '2d2', 'text' => __('Your key has been verified. Happy blogging!')),
-		'new_key_invalid' => array('color' => 'd22', 'text' => __('The key you entered is invalid. Please double-check it.')),
-		'new_key_failed' => array('color' => 'd22', 'text' => __('The key you entered could not be verified because a connection to akismet.com could not be established. Please check your server configuration.')),
-		'no_connection' => array('color' => 'd22', 'text' => __('There was a problem connecting to the Akismet server. Please check your server configuration.')),
-		'key_empty' => array('color' => 'aa0', 'text' => sprintf(__('Please enter an API key. (<a href="%s" style="color:#fff">Get your key.</a>)'), 'http://wordpress.com/profile/')),
-		'key_valid' => array('color' => '2d2', 'text' => __('This key is valid.')),
-		'key_failed' => array('color' => 'aa0', 'text' => __('The key below was previously validated but a connection to akismet.com can not be established at this time. Please check your server configuration.')));
-?>
-<?php if ( !empty($_POST['submit'] ) ) : ?>
-<div id="message" class="updated fade"><p><strong><?php _e('Options saved.') ?></strong></p></div>
-<?php endif; ?>
-<div class="wrap">
-<h2><?php _e('Akismet Configuration'); ?></h2>
-<div class="narrow">
-<form action="" method="post" id="akismet-conf" style="margin: auto; width: 400px; ">
-<?php if ( !$wpcom_api_key ) { ?>
-	<p><?php printf(__('For many people, <a href="%1$s">Akismet</a> will greatly reduce or even completely eliminate the comment and trackback spam you get on your site. If one does happen to get through, simply mark it as "spam" on the moderation screen and Akismet will learn from the mistakes. If you don\'t have a WordPress.com account yet, you can get one at <a href="%2$s">WordPress.com</a>.'), 'http://akismet.com/', 'http://wordpress.com/api-keys/'); ?></p>
-
-<?php akismet_nonce_field($akismet_nonce) ?>
-<h3><label for="key"><?php _e('WordPress.com API Key'); ?></label></h3>
-<?php foreach ( $ms as $m ) : ?>
-	<p style="padding: .5em; background-color: #<?php echo $messages[$m]['color']; ?>; color: #fff; font-weight: bold;"><?php echo $messages[$m]['text']; ?></p>
-<?php endforeach; ?>
-<p><input id="key" name="key" type="text" size="15" maxlength="12" value="<?php echo get_option('wordpress_api_key'); ?>" style="font-family: 'Courier New', Courier, mono; font-size: 1.5em;" /> (<?php _e('<a href="http://faq.wordpress.com/2005/10/19/api-key/">What is this?</a>'); ?>)</p>
-<?php if ( $invalid_key ) { ?>
-<h3><?php _e('Why might my key be invalid?'); ?></h3>
-<p><?php _e('This can mean one of two things, either you copied the key wrong or that the plugin is unable to reach the Akismet servers, which is most often caused by an issue with your web host around firewalls or similar.'); ?></p>
-<?php } ?>
-<?php } ?>
-<p><label><input name="akismet_discard_month" id="akismet_discard_month" value="true" type="checkbox" <?php if ( get_option('akismet_discard_month') == 'true' ) echo ' checked="checked" '; ?> /> <?php _e('Automatically discard spam comments on posts older than a month.'); ?></label></p>
-	<p class="submit"><input type="submit" name="submit" value="<?php _e('Update options &raquo;'); ?>" /></p>
-</form>
-
-<form action="" method="post" id="akismet-connectivity" style="margin: auto; width: 400px; ">
-
-<h3><?php _e('Server Connectivity'); ?></h3>
-<?php
-	$servers = akismet_get_server_connectivity();
-	$fail_count = count($servers) - count( array_filter($servers) );
-	if ( is_array($servers) && count($servers) > 0 ) {
-		// some connections work, some fail
-		if ( $fail_count > 0 && $fail_count < count($servers) ) { ?>
-			<p style="padding: .5em; background-color: #aa0; color: #fff; font-weight:bold;"><?php _e('Unable to reach some Akismet servers.'); ?></p>
-			<p><?php echo sprintf( __('A network problem or firewall is blocking some connections from your web server to Akismet.com.  Akismet is working but this may cause problems during times of network congestion.  Please contact your web host or firewall administrator and give them <a href="%s" target="_blank">this information about Akismet and firewalls</a>.'), 'http://blog.akismet.com/akismet-hosting-faq/'); ?></p>
-		<?php
-		// all connections fail
-		} elseif ( $fail_count > 0 ) { ?>
-			<p style="padding: .5em; background-color: #d22; color: #fff; font-weight:bold;"><?php _e('Unable to reach any Akismet servers.'); ?></p>
-			<p><?php echo sprintf( __('A network problem or firewall is blocking all connections from your web server to Akismet.com.  <strong>Akismet cannot work correctly until this is fixed.</strong>  Please contact your web host or firewall administrator and give them <a href="%s" target="_blank">this information about Akismet and firewalls</a>.'), 'http://blog.akismet.com/akismet-hosting-faq/'); ?></p>
-		<?php
-		// all connections work
-		} else { ?>
-			<p style="padding: .5em; background-color: #2d2; color: #fff; font-weight:bold;"><?php  _e('All Akismet servers are available.'); ?></p>
-			<p><?php _e('Akismet is working correctly.  All servers are accessible.'); ?></p>
-		<?php
-		}
-	} elseif ( !is_callable('fsockopen') ) {
-		?>
-			<p style="padding: .5em; background-color: #d22; color: #fff; font-weight:bold;"><?php _e('Network functions are disabled.'); ?></p>
-			<p><?php echo sprintf( __('Your web host or server administrator has disabled PHP\'s <code>fsockopen</code> function.  <strong>Akismet cannot work correctly until this is fixed.</strong>  Please contact your web host or firewall administrator and give them <a href="%s" target="_blank">this information about Akismet\'s system requirements</a>.'), 'http://blog.akismet.com/akismet-hosting-faq/'); ?></p>
-		<?php
-	} else {
-		?>
-			<p style="padding: .5em; background-color: #d22; color: #fff; font-weight:bold;"><?php _e('Unable to find Akismet servers.'); ?></p>
-			<p><?php echo sprintf( __('A DNS problem or firewall is preventing all access from your web server to Akismet.com.  <strong>Akismet cannot work correctly until this is fixed.</strong>  Please contact your web host or firewall administrator and give them <a href="%s" target="_blank">this information about Akismet and firewalls</a>.'), 'http://blog.akismet.com/akismet-hosting-faq/'); ?></p>
-		<?php
-	}
-	
-	if ( !empty($servers) ) {
-?>
-<table style="width: 100%;">
-<thead><th><?php _e('Akismet server'); ?></th><th><?php _e('Network Status'); ?></th></thead>
-<tbody>
-<?php
-		asort($servers);
-		foreach ( $servers as $ip => $status ) {
-			$color = ( $status ? '#2d2' : '#d22');
-	?>
-		<tr>
-		<td><?php echo htmlspecialchars($ip); ?></td>
-		<td style="padding: 0 .5em; font-weight:bold; color: #fff; background-color: <?php echo $color; ?>"><?php echo ($status ? __('No problems') : __('Obstructed') ); ?></td>
-		
-	<?php
-		}
-	}
-?>
-</tbody>
-</table>
-	<p><?php if ( get_option('akismet_connectivity_time') ) echo sprintf( __('Last checked %s ago.'), human_time_diff( get_option('akismet_connectivity_time') ) ); ?></p>
-	<p class="submit"><input type="submit" name="check" value="<?php _e('Check network status &raquo;'); ?>" /></p>
-</form>
-
-</div>
-</div>
-<?php
-}
-
-function akismet_stats_page() {
-	if ( function_exists('add_submenu_page') )
-		add_submenu_page('index.php', __('Akismet Stats'), __('Akismet Stats'), 'manage_options', 'akismet-stats-display', 'akismet_stats_display');
-
-}
-
-function akismet_stats_script() {
-	?>
-<script type="text/javascript">
-function resizeIframe() {
-    var height = document.documentElement.clientHeight;
-    height -= document.getElementById('akismet-stats-frame').offsetTop;
-    height += 100; // magic padding
-    
-    document.getElementById('akismet-stats-frame').style.height = height +"px";
-    
-};
-function resizeIframeInit() {
-	document.getElementById('akismet-stats-frame').onload = resizeIframe;
-	window.onresize = resizeIframe;
-}
-addLoadEvent(resizeIframeInit);
-</script><?php
-}
-
-
-function akismet_stats_display() {
-	global $akismet_api_host, $akismet_api_port, $wpcom_api_key;
-	$blog = urlencode( get_option('home') );
-	$url = "http://".akismet_get_key().".web.akismet.com/1.0/user-stats.php?blog={$blog}";
-	?>
-	<div class="wrap">
-	<iframe src="<?php echo $url; ?>" width="100%" height="100%" frameborder="0" id="akismet-stats-frame"></iframe>
-	</div>
-	<?php
-}
 
 function akismet_get_key() {
 	global $wpcom_api_key;
@@ -270,161 +81,271 @@ function akismet_verify_key( $key, $ip = null ) {
 	return $response[1];
 }
 
-// Check connectivity between the WordPress blog and Akismet's servers.
-// Returns an associative array of server IP addresses, where the key is the IP address, and value is true (available) or false (unable to connect).
-function akismet_check_server_connectivity() {
-	global $akismet_api_host, $akismet_api_port, $wpcom_api_key;
+// if we're in debug or test modes, use a reduced service level so as not to polute training or stats data
+function akismet_test_mode() {
+	if ( defined('AKISMET_TEST_MODE') && AKISMET_TEST_MODE )
+		return true;
+	return false;
+}
+
+// return a comma-separated list of role names for the given user
+function akismet_get_user_roles($user_id ) {
+	$roles = false;
 	
-	$test_host = 'rest.akismet.com';
+	if ( !class_exists('WP_User') )
+		return false;
 	
-	// Some web hosts may disable one or both functions
-	if ( !is_callable('fsockopen') || !is_callable('gethostbynamel') )
-		return array();
-	
-	$ips = gethostbynamel($test_host);
-	if ( !$ips || !is_array($ips) || !count($ips) )
-		return array();
-		
-	$servers = array();
-	foreach ( $ips as $ip ) {
-		$response = akismet_verify_key( akismet_get_key(), $ip );
-		// even if the key is invalid, at least we know we have connectivity
-		if ( $response == 'valid' || $response == 'invalid' )
-			$servers[$ip] = true;
-		else
-			$servers[$ip] = false;
+	if ( $user_id > 0 ) {
+		$comment_user = new WP_User($user_id);
+		if ( isset($comment_user->roles) )
+			$roles = join(',', $comment_user->roles);
 	}
 
-	return $servers;
-}
-
-// Check the server connectivity and store the results in an option.
-// Cached results will be used if not older than the specified timeout in seconds; use $cache_timeout = 0 to force an update.
-// Returns the same associative array as akismet_check_server_connectivity()
-function akismet_get_server_connectivity( $cache_timeout = 86400 ) {
-	$servers = get_option('akismet_available_servers');
-	if ( (time() - get_option('akismet_connectivity_time') < $cache_timeout) && $servers !== false )
-		return $servers;
-	
-	// There's a race condition here but the effect is harmless.
-	$servers = akismet_check_server_connectivity();
-	update_option('akismet_available_servers', $servers);
-	update_option('akismet_connectivity_time', time());
-	return $servers;
-}
-
-// Returns true if server connectivity was OK at the last check, false if there was a problem that needs to be fixed.
-function akismet_server_connectivity_ok() {
-	$servers = akismet_get_server_connectivity();
-	return !( empty($servers) || !count($servers) || count( array_filter($servers) ) < count($servers) );
-}
-
-function akismet_admin_warnings() {
-	global $wpcom_api_key;
-	if ( !get_option('wordpress_api_key') && !$wpcom_api_key && !isset($_POST['submit']) ) {
-		function akismet_warning() {
-			echo "
-			<div id='akismet-warning' class='updated fade'><p><strong>".__('Akismet is almost ready.')."</strong> ".sprintf(__('You must <a href="%1$s">enter your WordPress.com API key</a> for it to work.'), "plugins.php?page=akismet-key-config")."</p></div>
-			";
-		}
-		add_action('admin_notices', 'akismet_warning');
-		return;
-	} elseif ( get_option('akismet_connectivity_time') && empty($_POST) && is_admin() && !akismet_server_connectivity_ok() ) {
-		function akismet_warning() {
-			echo "
-			<div id='akismet-warning' class='updated fade'><p><strong>".__('Akismet has detected a problem.')."</strong> ".sprintf(__('A server or network problem is preventing Akismet from working correctly.  <a href="%1$s">Click here for more information</a> about how to fix the problem.'), "plugins.php?page=akismet-key-config")."</p></div>
-			";
-		}
-		add_action('admin_notices', 'akismet_warning');
-		return;
-	}
-}
-
-function akismet_get_host($host) {
-	// if all servers are accessible, just return the host name.
-	// if not, return an IP that was known to be accessible at the last check.
-	if ( akismet_server_connectivity_ok() ) {
-		return $host;
-	} else {
-		$ips = akismet_get_server_connectivity();
-		// a firewall may be blocking access to some Akismet IPs
-		if ( count($ips) > 0 && count(array_filter($ips)) < count($ips) ) {
-			// use DNS to get current IPs, but exclude any known to be unreachable
-			$dns = (array)gethostbynamel( rtrim($host, '.') . '.' );
-			$dns = array_filter($dns);
-			foreach ( $dns as $ip ) {
-				if ( array_key_exists( $ip, $ips ) && empty( $ips[$ip] ) )
-					unset($dns[$ip]);
-			}
-			// return a random IP from those available
-			if ( count($dns) )
-				return $dns[ array_rand($dns) ];
-			
+	if ( is_multisite() && is_super_admin( $user_id ) ) {
+		if ( empty( $roles ) ) {
+			$roles = 'super_admin';
+		} else {
+			$comment_user->roles[] = 'super_admin';
+			$roles = join( ',', $comment_user->roles );
 		}
 	}
-	// if all else fails try the host name
-	return $host;
+
+	return $roles;
 }
 
 // Returns array with headers in $response[0] and body in $response[1]
 function akismet_http_post($request, $host, $path, $port = 80, $ip=null) {
 	global $wp_version;
-	
-	$akismet_version = constant('AKISMET_VERSION');
 
-	$http_request  = "POST $path HTTP/1.0\r\n";
-	$http_request .= "Host: $host\r\n";
-	$http_request .= "Content-Type: application/x-www-form-urlencoded; charset=" . get_option('blog_charset') . "\r\n";
-	$http_request .= "Content-Length: " . strlen($request) . "\r\n";
-	$http_request .= "User-Agent: WordPress/$wp_version | Akismet/$akismet_version\r\n";
-	$http_request .= "\r\n";
-	$http_request .= $request;
-	
+	$akismet_ua = "WordPress/{$wp_version} | ";
+	$akismet_ua .= 'Akismet/' . constant( 'AKISMET_VERSION' );
+
+	$content_length = strlen( $request );
+
 	$http_host = $host;
-	// use a specific IP if provided - needed by akismet_check_server_connectivity()
-	if ( $ip && long2ip(ip2long($ip)) ) {
+	// use a specific IP if provided
+	// needed by akismet_check_server_connectivity()
+	if ( $ip && long2ip( ip2long( $ip ) ) ) {
 		$http_host = $ip;
 	} else {
-		$http_host = akismet_get_host($host);
+		$http_host = $host;
 	}
+	
+	// use the WP HTTP class if it is available
+	if ( function_exists( 'wp_remote_post' ) ) {
+		$http_args = array(
+			'body'			=> $request,
+			'headers'		=> array(
+				'Content-Type'	=> 'application/x-www-form-urlencoded; ' .
+									'charset=' . get_option( 'blog_charset' ),
+				'Host'			=> $host,
+				'User-Agent'	=> $akismet_ua
+			),
+			'httpversion'	=> '1.0',
+			'timeout'		=> 15
+		);
+		$akismet_url = "http://{$http_host}{$path}";
+		$response = wp_remote_post( $akismet_url, $http_args );
+		if ( is_wp_error( $response ) )
+			return '';
 
-	$response = '';
-	if( false != ( $fs = @fsockopen($http_host, $port, $errno, $errstr, 10) ) ) {
-		fwrite($fs, $http_request);
+		return array( $response['headers'], $response['body'] );
+	} else {
+		$http_request  = "POST $path HTTP/1.0\r\n";
+		$http_request .= "Host: $host\r\n";
+		$http_request .= 'Content-Type: application/x-www-form-urlencoded; charset=' . get_option('blog_charset') . "\r\n";
+		$http_request .= "Content-Length: {$content_length}\r\n";
+		$http_request .= "User-Agent: {$akismet_ua}\r\n";
+		$http_request .= "\r\n";
+		$http_request .= $request;
+		
+		$response = '';
+		if( false != ( $fs = @fsockopen( $http_host, $port, $errno, $errstr, 10 ) ) ) {
+			fwrite( $fs, $http_request );
 
-		while ( !feof($fs) )
-			$response .= fgets($fs, 1160); // One TCP-IP packet
-		fclose($fs);
-		$response = explode("\r\n\r\n", $response, 2);
+			while ( !feof( $fs ) )
+				$response .= fgets( $fs, 1160 ); // One TCP-IP packet
+			fclose( $fs );
+			$response = explode( "\r\n\r\n", $response, 2 );
+		}
+		return $response;
 	}
-	return $response;
 }
 
-function akismet_auto_check_comment( $comment ) {
-	global $akismet_api_host, $akismet_api_port;
+// filter handler used to return a spam result to pre_comment_approved
+function akismet_result_spam( $approved ) {
+	// bump the counter here instead of when the filter is added to reduce the possibility of overcounting
+	if ( $incr = apply_filters('akismet_spam_count_incr', 1) )
+		update_option( 'akismet_spam_count', get_option('akismet_spam_count') + $incr );
+	// this is a one-shot deal
+	remove_filter( 'pre_comment_approved', 'akismet_result_spam' );
+	return 'spam';
+}
 
-	$comment['user_ip']    = preg_replace( '/[^0-9., ]/', '', $_SERVER['REMOTE_ADDR'] );
+function akismet_result_hold( $approved ) {
+	// once only
+	remove_filter( 'pre_comment_approved', 'akismet_result_hold' );
+	return '0';
+}
+
+// how many approved comments does this author have?
+function akismet_get_user_comments_approved( $user_id, $comment_author_email, $comment_author, $comment_author_url ) {
+	global $wpdb;
+	
+	if ( !empty($user_id) )
+		return $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM $wpdb->comments WHERE user_id = %d AND comment_approved = 1", $user_id ) );
+		
+	if ( !empty($comment_author_email) )
+		return $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM $wpdb->comments WHERE comment_author_email = %s AND comment_author = %s AND comment_author_url = %s AND comment_approved = 1", $comment_author_email, $comment_author, $comment_author_url ) );
+		
+	return 0;
+}
+
+function akismet_microtime() {
+	$mtime = explode( ' ', microtime() );
+	return $mtime[1] + $mtime[0];
+}
+
+// log an event for a given comment, storing it in comment_meta
+function akismet_update_comment_history( $comment_id, $message, $event=null ) {
+	global $current_user;
+
+	// failsafe for old WP versions
+	if ( !function_exists('add_comment_meta') )
+		return false;
+	
+	$user = '';
+	if ( is_object($current_user) && isset($current_user->user_login) )
+		$user = $current_user->user_login;
+
+	$event = array(
+		'time' => akismet_microtime(),
+		'message' => $message,
+		'event' => $event,
+		'user' => $user,
+	);
+
+	// $unique = false so as to allow multiple values per comment
+	$r = add_comment_meta( $comment_id, 'akismet_history', $event, false );
+}
+
+// get the full comment history for a given comment, as an array in reverse chronological order
+function akismet_get_comment_history( $comment_id ) {
+	
+	// failsafe for old WP versions
+	if ( !function_exists('add_comment_meta') )
+		return false;
+
+	$history = get_comment_meta( $comment_id, 'akismet_history', false );
+	usort( $history, 'akismet_cmp_time' );
+	return $history;
+}
+
+function akismet_cmp_time( $a, $b ) {
+	return $a['time'] > $b['time'] ? -1 : 1;
+}
+
+// this fires on wp_insert_comment.  we can't update comment_meta when akismet_auto_check_comment() runs
+// because we don't know the comment ID at that point.
+function akismet_auto_check_update_meta( $id, $comment ) {
+	global $akismet_last_comment;
+
+	// failsafe for old WP versions
+	if ( !function_exists('add_comment_meta') )
+		return false;
+
+	// wp_insert_comment() might be called in other contexts, so make sure this is the same comment
+	// as was checked by akismet_auto_check_comment
+	if ( is_object($comment) && !empty($akismet_last_comment) && is_array($akismet_last_comment) ) {
+		if ( intval($akismet_last_comment['comment_post_ID']) == intval($comment->comment_post_ID)
+			&& $akismet_last_comment['comment_author'] == $comment->comment_author
+			&& $akismet_last_comment['comment_author_email'] == $comment->comment_author_email ) {
+				// normal result: true or false
+				if ( $akismet_last_comment['akismet_result'] == 'true' ) {
+					update_comment_meta( $comment->comment_ID, 'akismet_result', 'true' );
+					akismet_update_comment_history( $comment->comment_ID, __('Akismet caught this comment as spam'), 'check-spam' );
+					if ( $comment->comment_approved != 'spam' )
+						akismet_update_comment_history( $comment->comment_ID, sprintf( __('Comment status was changed to %s'), $comment->comment_approved), 'status-changed'.$comment->comment_approved );
+				} elseif ( $akismet_last_comment['akismet_result'] == 'false' ) {
+					update_comment_meta( $comment->comment_ID, 'akismet_result', 'false' );
+					akismet_update_comment_history( $comment->comment_ID, __('Akismet cleared this comment'), 'check-ham' );
+					if ( $comment->comment_approved == 'spam' ) {
+						if ( wp_blacklist_check($comment->comment_author, $comment->comment_author_email, $comment->comment_author_url, $comment->comment_content, $comment->comment_author_IP, $comment->comment_agent) )
+							akismet_update_comment_history( $comment->comment_ID, __('Comment was caught by wp_blacklist_check'), 'wp-blacklisted' );
+						else
+							akismet_update_comment_history( $comment->comment_ID, sprintf( __('Comment status was changed to %s'), $comment->comment_approved), 'status-changed-'.$comment->comment_approved );
+					}
+				// abnormal result: error
+				} else {
+					update_comment_meta( $comment->comment_ID, 'akismet_error', time() );
+					akismet_update_comment_history( $comment->comment_ID, sprintf( __('Akismet was unable to check this comment (response: %s), will automatically retry again later.'), $akismet_last_comment['akismet_result']), 'check-error' );
+				}
+				
+				// record the complete original data as submitted for checking
+				if ( isset($akismet_last_comment['comment_as_submitted']) )
+					update_comment_meta( $comment->comment_ID, 'akismet_as_submitted', $akismet_last_comment['comment_as_submitted'] );
+		}
+	}
+}
+
+add_action( 'wp_insert_comment', 'akismet_auto_check_update_meta', 10, 2 );
+
+
+function akismet_auto_check_comment( $commentdata ) {
+	global $akismet_api_host, $akismet_api_port, $akismet_last_comment;
+
+	$comment = $commentdata;
+	$comment['user_ip']    = $_SERVER['REMOTE_ADDR'];
 	$comment['user_agent'] = $_SERVER['HTTP_USER_AGENT'];
 	$comment['referrer']   = $_SERVER['HTTP_REFERER'];
 	$comment['blog']       = get_option('home');
 	$comment['blog_lang']  = get_locale();
 	$comment['blog_charset'] = get_option('blog_charset');
 	$comment['permalink']  = get_permalink($comment['comment_post_ID']);
+	
+	$comment['user_role'] = akismet_get_user_roles($comment['user_ID']);
 
-	$ignore = array( 'HTTP_COOKIE' );
+	$akismet_nonce_option = apply_filters( 'akismet_comment_nonce', get_option( 'akismet_comment_nonce' ) );
+	$comment['akismet_comment_nonce'] = 'inactive';
+	if ( $akismet_nonce_option == 'true' || $akismet_nonce_option == '' ) {
+		$comment['akismet_comment_nonce'] = 'failed';
+		if ( isset( $_POST['akismet_comment_nonce'] ) && wp_verify_nonce( $_POST['akismet_comment_nonce'], 'akismet_comment_nonce_' . $comment['comment_post_ID'] ) )
+			$comment['akismet_comment_nonce'] = 'passed';
 
-	foreach ( $_SERVER as $key => $value )
+		// comment reply in wp-admin
+		if ( isset( $_POST['_ajax_nonce-replyto-comment'] ) && check_ajax_referer( 'replyto-comment', '_ajax_nonce-replyto-comment' ) )
+			$comment['akismet_comment_nonce'] = 'passed';
+
+	}
+
+	if ( akismet_test_mode() )
+		$comment['is_test'] = 'true';
+		
+	foreach ($_POST as $key => $value ) {
+		if ( is_string($value) )
+			$comment["POST_{$key}"] = $value;
+	}
+
+	$ignore = array( 'HTTP_COOKIE', 'HTTP_COOKIE2', 'PHP_AUTH_PW' );
+
+	foreach ( $_SERVER as $key => $value ) {
 		if ( !in_array( $key, $ignore ) && is_string($value) )
 			$comment["$key"] = $value;
+		else
+			$comment["$key"] = '';
+	}
 
 	$query_string = '';
 	foreach ( $comment as $key => $data )
 		$query_string .= $key . '=' . urlencode( stripslashes($data) ) . '&';
+		
+	$commentdata['comment_as_submitted'] = $comment;
 
 	$response = akismet_http_post($query_string, $akismet_api_host, '/1.1/comment-check', $akismet_api_port);
+	$commentdata['akismet_result'] = $response[1];
 	if ( 'true' == $response[1] ) {
-		add_filter('pre_comment_approved', create_function('$a', 'return \'spam\';'));
-		update_option( 'akismet_spam_count', get_option('akismet_spam_count') + 1 );
+		// akismet_spam_count will be incremented later by akismet_result_spam()
+		add_filter('pre_comment_approved', 'akismet_result_spam');
 
 		do_action( 'akismet_spam_caught' );
 
@@ -432,677 +353,160 @@ function akismet_auto_check_comment( $comment ) {
 		$last_updated = strtotime( $post->post_modified_gmt );
 		$diff = time() - $last_updated;
 		$diff = $diff / 86400;
-
-		if ( $post->post_type == 'post' && $diff > 30 && get_option( 'akismet_discard_month' ) == 'true' )
-			die;
+		
+		if ( $post->post_type == 'post' && $diff > 30 && get_option( 'akismet_discard_month' ) == 'true' && empty($comment['user_ID']) ) {
+			// akismet_result_spam() won't be called so bump the counter here
+			if ( $incr = apply_filters('akismet_spam_count_incr', 1) )
+				update_option( 'akismet_spam_count', get_option('akismet_spam_count') + $incr );
+			wp_redirect( $_SERVER['HTTP_REFERER'] );
+			die();
+		}
 	}
-	akismet_delete_old();
-	return $comment;
+	
+	// if the response is neither true nor false, hold the comment for moderation and schedule a recheck
+	if ( 'true' != $response[1] && 'false' != $response[1] ) {
+		add_filter('pre_comment_approved', 'akismet_result_hold');
+		wp_schedule_single_event( time() + 1200, 'akismet_schedule_cron_recheck' );
+	}
+	
+	if ( function_exists('wp_next_scheduled') && function_exists('wp_schedule_event') ) {
+		// WP 2.1+: delete old comments daily
+		if ( !wp_next_scheduled('akismet_scheduled_delete') )
+			wp_schedule_event(time(), 'daily', 'akismet_scheduled_delete');
+	} elseif ( (mt_rand(1, 10) == 3) ) {
+		// WP 2.0: run this one time in ten
+		akismet_delete_old();
+	}
+	$akismet_last_comment = $commentdata;
+	return $commentdata;
 }
+
+add_action('preprocess_comment', 'akismet_auto_check_comment', 1);
 
 function akismet_delete_old() {
 	global $wpdb;
 	$now_gmt = current_time('mysql', 1);
-	$wpdb->query("DELETE FROM $wpdb->comments WHERE DATE_SUB('$now_gmt', INTERVAL 15 DAY) > comment_date_gmt AND comment_approved = 'spam'");
+	$comment_ids = $wpdb->get_col("SELECT comment_id FROM $wpdb->comments WHERE DATE_SUB('$now_gmt', INTERVAL 15 DAY) > comment_date_gmt AND comment_approved = 'spam'");
+	if ( empty( $comment_ids ) )
+		return;
+		
+	$comma_comment_ids = implode( ', ', array_map('intval', $comment_ids) );
+
+	do_action( 'delete_comment', $comment_ids );
+	$wpdb->query("DELETE FROM $wpdb->comments WHERE comment_id IN ( $comma_comment_ids )");
+	$wpdb->query("DELETE FROM $wpdb->commentmeta WHERE comment_id IN ( $comma_comment_ids )");
+	clean_comment_cache( $comment_ids );
 	$n = mt_rand(1, 5000);
-	if ( $n == 11 ) // lucky number
+	if ( apply_filters('akismet_optimize_table', ($n == 11)) ) // lucky number
 		$wpdb->query("OPTIMIZE TABLE $wpdb->comments");
+
 }
 
-function akismet_submit_nonspam_comment ( $comment_id ) {
-	global $wpdb, $akismet_api_host, $akismet_api_port, $current_user, $current_site;
-	$comment_id = (int) $comment_id;
-	
-	$comment = $wpdb->get_row("SELECT * FROM $wpdb->comments WHERE comment_ID = '$comment_id'");
-	if ( !$comment ) // it was deleted
-		return;
-	$comment->blog = get_option('home');
-	$comment->blog_lang = get_locale();
-	$comment->blog_charset = get_option('blog_charset');
-	$comment->permalink = get_permalink($comment->comment_post_ID);
-	if ( is_object($current_user) ) {
-	    $comment->reporter = $current_user->user_login;
-	}
-	if ( is_object($current_site) ) {
-		$comment->site_domain = $current_site->domain;
-	}
-	$query_string = '';
-	foreach ( $comment as $key => $data )
-		$query_string .= $key . '=' . urlencode( stripslashes($data) ) . '&';
+add_action('akismet_scheduled_delete', 'akismet_delete_old');
 
-	$response = akismet_http_post($query_string, $akismet_api_host, "/1.1/submit-ham", $akismet_api_port);
+function akismet_check_db_comment( $id, $recheck_reason = 'recheck_queue' ) {
+    global $wpdb, $akismet_api_host, $akismet_api_port;
+
+    $id = (int) $id;
+    $c = $wpdb->get_row( "SELECT * FROM $wpdb->comments WHERE comment_ID = '$id'", ARRAY_A );
+    if ( !$c )
+        return;
+
+    $c['user_ip']    = $c['comment_author_IP'];
+    $c['user_agent'] = $c['comment_agent'];
+    $c['referrer']   = '';
+    $c['blog']       = get_option('home');
+    $c['blog_lang']  = get_locale();
+    $c['blog_charset'] = get_option('blog_charset');
+    $c['permalink']  = get_permalink($c['comment_post_ID']);
+    $id = $c['comment_ID'];
+	if ( akismet_test_mode() )
+		$c['is_test'] = 'true';
+	$c['recheck_reason'] = $recheck_reason;
+
+    $query_string = '';
+    foreach ( $c as $key => $data )
+    $query_string .= $key . '=' . urlencode( stripslashes($data) ) . '&';
+
+    $response = akismet_http_post($query_string, $akismet_api_host, '/1.1/comment-check', $akismet_api_port);
+    return $response[1];
 }
 
-function akismet_submit_spam_comment ( $comment_id ) {
-	global $wpdb, $akismet_api_host, $akismet_api_port, $current_user, $current_site;
-	$comment_id = (int) $comment_id;
-
-	$comment = $wpdb->get_row("SELECT * FROM $wpdb->comments WHERE comment_ID = '$comment_id'");
-	if ( !$comment ) // it was deleted
-		return;
-	if ( 'spam' != $comment->comment_approved )
-		return;
-	$comment->blog = get_option('home');
-	$comment->blog_lang = get_locale();
-	$comment->blog_charset = get_option('blog_charset');
-	$comment->permalink = get_permalink($comment->comment_post_ID);
-	if ( is_object($current_user) ) {
-	    $comment->reporter = $current_user->user_login;
-	}
-	if ( is_object($current_site) ) {
-		$comment->site_domain = $current_site->domain;
-	}
-	$query_string = '';
-	foreach ( $comment as $key => $data )
-		$query_string .= $key . '=' . urlencode( stripslashes($data) ) . '&';
-
-	$response = akismet_http_post($query_string, $akismet_api_host, "/1.1/submit-spam", $akismet_api_port);
-}
-
-add_action('wp_set_comment_status', 'akismet_submit_spam_comment');
-add_action('edit_comment', 'akismet_submit_spam_comment');
-add_action('preprocess_comment', 'akismet_auto_check_comment', 1);
-
-function akismet_spamtoham( $comment ) { akismet_submit_nonspam_comment( $comment->comment_ID ); }
-add_filter( 'comment_spam_to_approved', 'akismet_spamtoham' );
-
-// Total spam in queue
-// get_option( 'akismet_spam_count' ) is the total caught ever
-function akismet_spam_count( $type = false ) {
+function akismet_cron_recheck() {
 	global $wpdb;
 
-	if ( !$type ) { // total
-		$count = wp_cache_get( 'akismet_spam_count', 'widget' );
-		if ( false === $count ) {
-			if ( function_exists('wp_count_comments') ) {
-				$count = wp_count_comments();
-				$count = $count->spam;
-			} else {
-				$count = (int) $wpdb->get_var("SELECT COUNT(comment_ID) FROM $wpdb->comments WHERE comment_approved = 'spam'");
+	delete_option('akismet_available_servers');
+
+	$comment_errors = $wpdb->get_col( "
+		SELECT comment_id
+		FROM {$wpdb->prefix}commentmeta
+		WHERE meta_key = 'akismet_error'
+		LIMIT 100
+	" );
+	
+	foreach ( (array) $comment_errors as $comment_id ) {
+		// if the comment no longer exists, remove the meta entry from the queue to avoid getting stuck
+		if ( !get_comment( $comment_id ) ) {
+			delete_comment_meta( $comment_id, 'akismet_error' );
+			continue;
+		}
+		
+		add_comment_meta( $comment_id, 'akismet_rechecking', true );
+		$status = akismet_check_db_comment( $comment_id, 'retry' );
+
+		$msg = '';
+		if ( $status == 'true' ) {
+			$msg = __( 'Akismet caught this comment as spam during an automatic retry.' );
+		} elseif ( $status == 'false' ) {
+			$msg = __( 'Akismet cleared this comment during an automatic retry.' );
+		}
+		
+		// If we got back a legit response then update the comment history
+		// other wise just bail now and try again later.  No point in
+		// re-trying all the comments once we hit one failure.
+		if ( !empty( $msg ) ) {
+			delete_comment_meta( $comment_id, 'akismet_error' );
+			akismet_update_comment_history( $comment_id, $msg, 'cron-retry' );
+			update_comment_meta( $comment_id, 'akismet_result', $status );
+			// make sure the comment status is still pending.  if it isn't, that means the user has already moved it elsewhere.
+			$comment = get_comment( $comment_id );
+			if ( $comment && 'unapproved' == wp_get_comment_status( $comment_id ) ) {
+				if ( $status == 'true' ) {
+					wp_spam_comment( $comment_id );
+				} elseif ( $status == 'false' ) {
+					// comment is good, but it's still in the pending queue.  depending on the moderation settings
+					// we may need to change it to approved.
+					if ( check_comment($comment->comment_author, $comment->comment_author_email, $comment->comment_author_url, $comment->comment_content, $comment->comment_author_IP, $comment->comment_agent, $comment->comment_type) )
+						wp_set_comment_status( $comment_id, 1 );
+				}
 			}
-			wp_cache_set( 'akismet_spam_count', $count, 'widget', 3600 );
+		} else {
+			delete_comment_meta( $comment_id, 'akismet_rechecking' );
+			wp_schedule_single_event( time() + 1200, 'akismet_schedule_cron_recheck' );
+			return;
 		}
-		return $count;
-	} elseif ( 'comments' == $type || 'comment' == $type ) { // comments
-		$type = '';
-	} else { // pingback, trackback, ...
-		$type  = $wpdb->escape( $type );
 	}
-
-	return (int) $wpdb->get_var("SELECT COUNT(comment_ID) FROM $wpdb->comments WHERE comment_approved = 'spam' AND comment_type='$type'");
-}
-
-function akismet_spam_comments( $type = false, $page = 1, $per_page = 50 ) {
-	global $wpdb;
-
-	$page = (int) $page;
-	if ( $page < 2 )
-		$page = 1;
-
-	$per_page = (int) $per_page;
-	if ( $per_page < 1 )
-		$per_page = 50;
-
-	$start = ( $page - 1 ) * $per_page;
-	$end = $start + $per_page;
-
-	if ( $type ) {
-		if ( 'comments' == $type || 'comment' == $type )
-			$type = '';
-		else
-			$type = $wpdb->escape( $type );
-		return $wpdb->get_results( "SELECT * FROM $wpdb->comments WHERE comment_approved = 'spam' AND comment_type='$type' ORDER BY comment_date DESC LIMIT $start, $end");
-	}
-
-	// All
-	return $wpdb->get_results( "SELECT * FROM $wpdb->comments WHERE comment_approved = 'spam' ORDER BY comment_date DESC LIMIT $start, $end");
-}
-
-// Totals for each comment type
-// returns array( type => count, ... )
-function akismet_spam_totals() {
-	global $wpdb;
-	$totals = $wpdb->get_results( "SELECT comment_type, COUNT(*) AS cc FROM $wpdb->comments WHERE comment_approved = 'spam' GROUP BY comment_type" );
-	$return = array();
-	foreach ( $totals as $total )
-		$return[$total->comment_type ? $total->comment_type : 'comment'] = $total->cc;
-	return $return;
-}
-
-function akismet_manage_page() {
-	global $wpdb, $submenu, $wp_db_version;
-
-	// WP 2.7 has its own spam management page
-	if ( 8645 <= $wp_db_version )
-		return;
-
-	$count = sprintf(__('Akismet Spam (%s)'), akismet_spam_count());
-	if ( isset( $submenu['edit-comments.php'] ) )
-		add_submenu_page('edit-comments.php', __('Akismet Spam'), $count, 'moderate_comments', 'akismet-admin', 'akismet_caught' );
-	elseif ( function_exists('add_management_page') )
-		add_management_page(__('Akismet Spam'), $count, 'moderate_comments', 'akismet-admin', 'akismet_caught');
-}
-
-function akismet_caught() {
-	global $wpdb, $comment, $akismet_caught, $akismet_nonce;
-
-	akismet_recheck_queue();
-	if (isset($_POST['submit']) && 'recover' == $_POST['action'] && ! empty($_POST['not_spam'])) {
-		check_admin_referer( $akismet_nonce );
-		if ( function_exists('current_user_can') && !current_user_can('moderate_comments') )
-			die(__('You do not have sufficient permission to moderate comments.'));
-
-		$i = 0;
-		foreach ($_POST['not_spam'] as $comment):
-			$comment = (int) $comment;
-			if ( function_exists('wp_set_comment_status') )
-				wp_set_comment_status($comment, 'approve');
-			else
-				$wpdb->query("UPDATE $wpdb->comments SET comment_approved = '1' WHERE comment_ID = '$comment'");
-			akismet_submit_nonspam_comment($comment);
-			++$i;
-		endforeach;
-		$to = add_query_arg( 'recovered', $i, $_SERVER['HTTP_REFERER'] );
-		wp_redirect( $to );
-		exit;
-	}
-	if ('delete' == $_POST['action']) {
-		check_admin_referer( $akismet_nonce );
-		if ( function_exists('current_user_can') && !current_user_can('moderate_comments') )
-			die(__('You do not have sufficient permission to moderate comments.'));
-
-		$delete_time = $wpdb->escape( $_POST['display_time'] );
-		$nuked = $wpdb->query( "DELETE FROM $wpdb->comments WHERE comment_approved = 'spam' AND '$delete_time' > comment_date_gmt" );
-		wp_cache_delete( 'akismet_spam_count', 'widget' );
-		$to = add_query_arg( 'deleted', 'all', $_SERVER['HTTP_REFERER'] );
-		wp_redirect( $to );
-		exit;
-	}
-
-if ( isset( $_GET['recovered'] ) ) {
-	$i = (int) $_GET['recovered'];
-	echo '<div class="updated"><p>' . sprintf(__('%1$s comments recovered.'), $i) . "</p></div>";
-}
-
-if (isset( $_GET['deleted'] ) )
-	echo '<div class="updated"><p>' . __('All spam deleted.') . '</p></div>';
-
-if ( isset( $GLOBALS['submenu']['edit-comments.php'] ) )
-	$link = 'edit-comments.php';
-else
-	$link = 'edit.php';
-?>
-<style type="text/css">
-.akismet-tabs {
-	list-style: none;
-	margin: 0;
-	padding: 0;
-	clear: both;
-	border-bottom: 1px solid #ccc;
-	height: 31px;
-	margin-bottom: 20px;
-	background: #ddd;
-	border-top: 1px solid #bdbdbd;
-}
-.akismet-tabs li {
-	float: left;
-	margin: 5px 0 0 20px;
-}
-.akismet-tabs a {
-	display: block;
-	padding: 4px .5em 3px;
-	border-bottom: none;
-	color: #036;
-}
-.akismet-tabs .active a {
-	background: #fff;
-	border: 1px solid #ccc;
-	border-bottom: none;
-	color: #000;
-	font-weight: bold;
-	padding-bottom: 4px;
-}
-#akismetsearch {
-	float: right;
-	margin-top: -.5em;
-}
-
-#akismetsearch p {
-	margin: 0;
-	padding: 0;
-}
-</style>
-<div class="wrap">
-<h2><?php _e('Caught Spam') ?></h2>
-<?php
-$count = get_option( 'akismet_spam_count' );
-if ( $count ) {
-?>
-<p><?php printf(__('Akismet has caught <strong>%1$s spam</strong> for you since you first installed it.'), number_format_i18n($count) ); ?></p>
-<?php
-}
-
-$spam_count = akismet_spam_count();
-
-if ( 0 == $spam_count ) {
-	echo '<p>'.__('You have no spam currently in the queue. Must be your lucky day. :)').'</p>';
-	echo '</div>';
-} else {
-	echo '<p>'.__('You can delete all of the spam from your database with a single click. This operation cannot be undone, so you may wish to check to ensure that no legitimate comments got through first. Spam is automatically deleted after 15 days, so don&#8217;t sweat it.').'</p>';
-?>
-<?php if ( !isset( $_POST['s'] ) ) { ?>
-<form method="post" action="<?php echo attribute_escape( add_query_arg( 'noheader', 'true' ) ); ?>">
-<?php akismet_nonce_field($akismet_nonce) ?>
-<input type="hidden" name="action" value="delete" />
-<?php printf(__('There are currently %1$s comments identified as spam.'), $spam_count); ?>&nbsp; &nbsp; <input type="submit" class="button delete" name="Submit" value="<?php _e('Delete all'); ?>" />
-<input type="hidden" name="display_time" value="<?php echo current_time('mysql', 1); ?>" />
-</form>
-<?php } ?>
-</div>
-<div class="wrap">
-<?php if ( isset( $_POST['s'] ) ) { ?>
-<h2><?php _e('Search'); ?></h2>
-<?php } else { ?>
-<?php echo '<p>'.__('These are the latest comments identified as spam by Akismet. If you see any mistakes, simply mark the comment as "not spam" and Akismet will learn from the submission. If you wish to recover a comment from spam, simply select the comment, and click Not Spam. After 15 days we clean out the junk for you.').'</p>'; ?>
-<?php } ?>
-<?php
-if ( isset( $_POST['s'] ) ) {
-	$s = $wpdb->escape($_POST['s']);
-	$comments = $wpdb->get_results("SELECT * FROM $wpdb->comments  WHERE
-		(comment_author LIKE '%$s%' OR
-		comment_author_email LIKE '%$s%' OR
-		comment_author_url LIKE ('%$s%') OR
-		comment_author_IP LIKE ('%$s%') OR
-		comment_content LIKE ('%$s%') ) AND
-		comment_approved = 'spam'
-		ORDER BY comment_date DESC");
-} else {
-	if ( isset( $_GET['apage'] ) )
-		$page = (int) $_GET['apage'];
-	else
-		$page = 1;
-
-	if ( $page < 2 )
-		$page = 1;
-
-	$current_type = false;
-	if ( isset( $_GET['ctype'] ) )
-		$current_type = preg_replace( '|[^a-z]|', '', $_GET['ctype'] );
-
-	$comments = akismet_spam_comments( $current_type, $page );
-	$total = akismet_spam_count( $current_type );
-	$totals = akismet_spam_totals();
-?>
-<ul class="akismet-tabs">
-<li <?php if ( !isset( $_GET['ctype'] ) ) echo ' class="active"'; ?>><a href="edit-comments.php?page=akismet-admin"><?php _e('All'); ?></a></li>
-<?php
-foreach ( $totals as $type => $type_count ) {
-	if ( 'comment' == $type ) {
-		$type = 'comments';
-		$show = __('Comments');
-	} else {
-		$show = ucwords( $type );
-	}
-	$type_count = number_format_i18n( $type_count );
-	$extra = $current_type === $type ? ' class="active"' : '';
-	echo "<li $extra><a href='edit-comments.php?page=akismet-admin&amp;ctype=$type'>$show ($type_count)</a></li>";
-}
-do_action( 'akismet_tabs' ); // so plugins can add more tabs easily
-?>
-</ul>
-<?php
-}
-
-if ($comments) {
-?>
-<form method="post" action="<?php echo attribute_escape("$link?page=akismet-admin"); ?>" id="akismetsearch">
-<p>  <input type="text" name="s" value="<?php if (isset($_POST['s'])) echo attribute_escape($_POST['s']); ?>" size="17" />
-  <input type="submit" class="button" name="submit" value="<?php echo attribute_escape(__('Search Spam &raquo;')) ?>"  />  </p>
-</form>
-<?php if ( $total > 50 ) {
-$total_pages = ceil( $total / 50 );
-$r = '';
-if ( 1 < $page ) {
-	$args['apage'] = ( 1 == $page - 1 ) ? '' : $page - 1;
-	$r .=  '<a class="prev" href="' . clean_url(add_query_arg( $args )) . '">'. __('&laquo; Previous Page') .'</a>' . "\n";
-}
-if ( ( $total_pages = ceil( $total / 50 ) ) > 1 ) {
-	for ( $page_num = 1; $page_num <= $total_pages; $page_num++ ) :
-		if ( $page == $page_num ) :
-			$r .=  "<strong>$page_num</strong>\n";
-		else :
-			$p = false;
-			if ( $page_num < 3 || ( $page_num >= $page - 3 && $page_num <= $page + 3 ) || $page_num > $total_pages - 3 ) :
-				$args['apage'] = ( 1 == $page_num ) ? '' : $page_num;
-				$r .= '<a class="page-numbers" href="' . clean_url(add_query_arg($args)) . '">' . ( $page_num ) . "</a>\n";
-				$in = true;
-			elseif ( $in == true ) :
-				$r .= "...\n";
-				$in = false;
-			endif;
-		endif;
-	endfor;
-}
-if ( ( $page ) * 50 < $total || -1 == $total ) {
-	$args['apage'] = $page + 1;
-	$r .=  '<a class="next" href="' . clean_url(add_query_arg($args)) . '">'. __('Next Page &raquo;') .'</a>' . "\n";
-}
-echo "<p>$r</p>";
-?>
-
-<?php } ?>
-<form style="clear: both;" method="post" action="<?php echo attribute_escape( add_query_arg( 'noheader', 'true' ) ); ?>">
-<?php akismet_nonce_field($akismet_nonce) ?>
-<input type="hidden" name="action" value="recover" />
-<ul id="spam-list" class="commentlist" style="list-style: none; margin: 0; padding: 0;">
-<?php
-$i = 0;
-foreach($comments as $comment) {
-	$i++;
-	$comment_date = mysql2date(get_option("date_format") . " @ " . get_option("time_format"), $comment->comment_date);
-	$post = get_post($comment->comment_post_ID);
-	$post_title = $post->post_title;
-	if ($i % 2) $class = 'class="alternate"';
-	else $class = '';
-	echo "\n\t<li id='comment-$comment->comment_ID' $class>";
-	?>
-
-<p><strong><?php comment_author() ?></strong> <?php if ($comment->comment_author_email) { ?>| <?php comment_author_email_link() ?> <?php } if ($comment->comment_author_url && 'http://' != $comment->comment_author_url) { ?> | <?php comment_author_url_link() ?> <?php } ?>| <?php _e('IP:') ?> <a href="http://ws.arin.net/cgi-bin/whois.pl?queryinput=<?php comment_author_IP() ?>"><?php comment_author_IP() ?></a></p>
-
-<?php comment_text() ?>
-
-<p><label for="spam-<?php echo $comment->comment_ID; ?>">
-<input type="checkbox" id="spam-<?php echo $comment->comment_ID; ?>" name="not_spam[]" value="<?php echo $comment->comment_ID; ?>" />
-<?php _e('Not Spam') ?></label> &#8212; <?php comment_date('M j, g:i A');  ?> &#8212; [
-<?php
-$post = get_post($comment->comment_post_ID);
-$post_title = wp_specialchars( $post->post_title, 'double' );
-$post_title = ('' == $post_title) ? "# $comment->comment_post_ID" : $post_title;
-?>
- <a href="<?php echo get_permalink($comment->comment_post_ID); ?>" title="<?php echo $post_title; ?>"><?php _e('View Post') ?></a> ] </p>
-
-
-<?php
-}
-?>
-</ul>
-<?php if ( $total > 50 ) {
-$total_pages = ceil( $total / 50 );
-$r = '';
-if ( 1 < $page ) {
-	$args['apage'] = ( 1 == $page - 1 ) ? '' : $page - 1;
-	$r .=  '<a class="prev" href="' . clean_url(add_query_arg( $args )) . '">'. __('&laquo; Previous Page') .'</a>' . "\n";
-}
-if ( ( $total_pages = ceil( $total / 50 ) ) > 1 ) {
-	for ( $page_num = 1; $page_num <= $total_pages; $page_num++ ) :
-		if ( $page == $page_num ) :
-			$r .=  "<strong>$page_num</strong>\n";
-		else :
-			$p = false;
-			if ( $page_num < 3 || ( $page_num >= $page - 3 && $page_num <= $page + 3 ) || $page_num > $total_pages - 3 ) :
-				$args['apage'] = ( 1 == $page_num ) ? '' : $page_num;
-				$r .= '<a class="page-numbers" href="' . clean_url(add_query_arg($args)) . '">' . ( $page_num ) . "</a>\n";
-				$in = true;
-			elseif ( $in == true ) :
-				$r .= "...\n";
-				$in = false;
-			endif;
-		endif;
-	endfor;
-}
-if ( ( $page ) * 50 < $total || -1 == $total ) {
-	$args['apage'] = $page + 1;
-	$r .=  '<a class="next" href="' . clean_url(add_query_arg($args)) . '">'. __('Next Page &raquo;') .'</a>' . "\n";
-}
-echo "<p>$r</p>";
-}
-?>
-<p class="submit">
-<input type="submit" name="submit" value="<?php echo attribute_escape(__('De-spam marked comments &raquo;')); ?>" />
-</p>
-<p><?php _e('Comments you de-spam will be submitted to Akismet as mistakes so it can learn and get better.'); ?></p>
-</form>
-<?php
-} else {
-?>
-<p><?php _e('No results found.'); ?></p>
-<?php } ?>
-
-<?php if ( !isset( $_POST['s'] ) ) { ?>
-<form method="post" action="<?php echo attribute_escape( add_query_arg( 'noheader', 'true' ) ); ?>">
-<?php akismet_nonce_field($akismet_nonce) ?>
-<p><input type="hidden" name="action" value="delete" />
-<?php printf(__('There are currently %1$s comments identified as spam.'), $spam_count); ?>&nbsp; &nbsp; <input type="submit" name="Submit" class="button" value="<?php echo attribute_escape(__('Delete all')); ?>" />
-<input type="hidden" name="display_time" value="<?php echo current_time('mysql', 1); ?>" /></p>
-</form>
-<?php } ?>
-</div>
-<?php
-	}
-}
-
-add_action('admin_menu', 'akismet_manage_page');
-
-// WP < 2.5
-function akismet_stats() {
-	if ( !function_exists('did_action') || did_action( 'rightnow_end' ) ) // We already displayed this info in the "Right Now" section
-		return;
-	if ( !$count = get_option('akismet_spam_count') )
-		return;
-	$path = plugin_basename(__FILE__);
-	echo '<h3>'.__('Spam').'</h3>';
-	global $submenu;
-	if ( isset( $submenu['edit-comments.php'] ) )
-		$link = 'edit-comments.php';
-	else
-		$link = 'edit.php';
-	echo '<p>'.sprintf(__('<a href="%1$s">Akismet</a> has protected your site from <a href="%2$s">%3$s spam comments</a>.'), 'http://akismet.com/', clean_url("$link?page=akismet-admin"), number_format_i18n($count) ).'</p>';
-}
-
-add_action('activity_box_end', 'akismet_stats');
-
-// WP 2.5+
-function akismet_rightnow() {
-	global $submenu, $wp_db_version;
-
-	if ( 8645 < $wp_db_version  ) // 2.7
-		$link = 'edit-comments.php?comment_status=spam';
-	elseif ( isset( $submenu['edit-comments.php'] ) )
-		$link = 'edit-comments.php?page=akismet-admin';
-	else
-		$link = 'edit.php?page=akismet-admin';
-
-	if ( $count = get_option('akismet_spam_count') ) {
-		$intro = sprintf( __ngettext(
-			'<a href="%1$s">Akismet</a> has protected your site from %2$s spam comment already,',
-			'<a href="%1$s">Akismet</a> has protected your site from %2$s spam comments already,',
-			$count
-		), 'http://akismet.com/', number_format_i18n( $count ) );
-	} else {
-		$intro = sprintf( __('<a href="%1$s">Akismet</a> blocks spam from getting to your blog,'), 'http://akismet.com/' );
-	}
-
-	if ( $queue_count = akismet_spam_count() ) {
-		$queue_text = sprintf( __ngettext(
-			'and there\'s <a href="%2$s">%1$s comment</a> in your spam queue right now.',
-			'and there are <a href="%2$s">%1$s comments</a> in your spam queue right now.',
-			$queue_count
-		), number_format_i18n( $queue_count ), clean_url($link) );
-	} else {
-		$queue_text = sprintf( __( "but there's nothing in your <a href='%1\$s'>spam queue</a> at the moment." ), clean_url($link) );
-	}
-
-	$text = sprintf( _c( '%1$s %2$s|akismet_rightnow' ), $intro, $queue_text );
-
-	echo "<p class='akismet-right-now'>$text</p>\n";
-}
 	
-add_action('rightnow_end', 'akismet_rightnow');
-
-// For WP <= 2.3.x
-if ( 'moderation.php' == $pagenow ) {
-	function akismet_recheck_button( $page ) {
-		global $submenu;
-		if ( isset( $submenu['edit-comments.php'] ) )
-			$link = 'edit-comments.php';
-		else
-			$link = 'edit.php';
-		$button = "<a href='$link?page=akismet-admin&amp;recheckqueue=true&amp;noheader=true' style='display: block; width: 100px; position: absolute; right: 7%; padding: 5px; font-size: 14px; text-decoration: underline; background: #fff; border: 1px solid #ccc;'>" . __('Recheck Queue for Spam') . "</a>";
-		$page = str_replace( '<div class="wrap">', '<div class="wrap">' . $button, $page );
-		return $page;
+	$remaining = $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM $wpdb->commentmeta WHERE meta_key = 'akismet_error'" ) );
+	if ( $remaining && !wp_next_scheduled('akismet_schedule_cron_recheck') ) {
+		wp_schedule_single_event( time() + 1200, 'akismet_schedule_cron_recheck' );
 	}
+}
+add_action( 'akismet_schedule_cron_recheck', 'akismet_cron_recheck' );
 
-	if ( $wpdb->get_var( "SELECT COUNT(*) FROM $wpdb->comments WHERE comment_approved = '0'" ) )
-		ob_start( 'akismet_recheck_button' );
+function akismet_add_comment_nonce( $post_id ) {
+	echo '<p style="display: none;">';
+	wp_nonce_field( 'akismet_comment_nonce_' . $post_id, 'akismet_comment_nonce', FALSE );
+	echo '</p>';
 }
 
-// For WP >= 2.5
-function akismet_check_for_spam_button($comment_status) {
-	if ( 'approved' == $comment_status )
-		return;
-	if ( function_exists('plugins_url') )
-		$link = 'admin.php?action=akismet_recheck_queue';
-	else
-		$link = 'edit-comments.php?page=akismet-admin&amp;recheckqueue=true&amp;noheader=true';
-	echo "</div><div class='alignleft'><a class='button-secondary checkforspam' href='$link'>" . __('Check for Spam') . "</a>";
+$akismet_comment_nonce_option = apply_filters( 'akismet_comment_nonce', get_option( 'akismet_comment_nonce' ) );
+
+if ( $akismet_comment_nonce_option == 'true' || $akismet_comment_nonce_option == '' )
+	add_action( 'comment_form', 'akismet_add_comment_nonce' );
+
+if ( '3.0.5' == $wp_version ) { 
+	remove_filter( 'comment_text', 'wp_kses_data' ); 
+	if ( is_admin() ) 
+		add_filter( 'comment_text', 'wp_kses_post' ); 
 }
-add_action('manage_comments_nav', 'akismet_check_for_spam_button');
-
-function akismet_recheck_queue() {
-	global $wpdb, $akismet_api_host, $akismet_api_port;
-
-	if ( ! ( isset( $_GET['recheckqueue'] ) || ( isset( $_REQUEST['action'] ) && 'akismet_recheck_queue' == $_REQUEST['action'] ) ) )
-		return;
-
-	$moderation = $wpdb->get_results( "SELECT * FROM $wpdb->comments WHERE comment_approved = '0'", ARRAY_A );
-	foreach ( (array) $moderation as $c ) {
-		$c['user_ip']    = $c['comment_author_IP'];
-		$c['user_agent'] = $c['comment_agent'];
-		$c['referrer']   = '';
-		$c['blog']       = get_option('home');
-		$c['blog_lang']  = get_locale();
-		$c['blog_charset'] = get_option('blog_charset');
-		$c['permalink']  = get_permalink($c['comment_post_ID']);
-		$id = (int) $c['comment_ID'];
-
-		$query_string = '';
-		foreach ( $c as $key => $data )
-		$query_string .= $key . '=' . urlencode( stripslashes($data) ) . '&';
-
-		$response = akismet_http_post($query_string, $akismet_api_host, '/1.1/comment-check', $akismet_api_port);
-		if ( 'true' == $response[1] ) {
-			$wpdb->query( "UPDATE $wpdb->comments SET comment_approved = 'spam' WHERE comment_ID = $id" );
-		}
-	}
-	wp_redirect( $_SERVER['HTTP_REFERER'] );
-	exit;
-}
-
-add_action('admin_action_akismet_recheck_queue', 'akismet_recheck_queue');
-
-function akismet_check_db_comment( $id ) {
-	global $wpdb, $akismet_api_host, $akismet_api_port;
-
-	$id = (int) $id;
-	$c = $wpdb->get_row( "SELECT * FROM $wpdb->comments WHERE comment_ID = '$id'", ARRAY_A );
-	if ( !$c )
-		return;
-
-	$c['user_ip']    = $c['comment_author_IP'];
-	$c['user_agent'] = $c['comment_agent'];
-	$c['referrer']   = '';
-	$c['blog']       = get_option('home');
-	$c['blog_lang']  = get_locale();
-	$c['blog_charset'] = get_option('blog_charset');
-	$c['permalink']  = get_permalink($c['comment_post_ID']);
-	$id = $c['comment_ID'];
-
-	$query_string = '';
-	foreach ( $c as $key => $data )
-	$query_string .= $key . '=' . urlencode( stripslashes($data) ) . '&';
-
-	$response = akismet_http_post($query_string, $akismet_api_host, '/1.1/comment-check', $akismet_api_port);
-	return $response[1];
-}
-
-// This option causes tons of FPs, was removed in 2.1
-function akismet_kill_proxy_check( $option ) { return 0; }
-add_filter('option_open_proxy_check', 'akismet_kill_proxy_check');
-
-// Widget stuff
-function widget_akismet_register() {
-	if ( function_exists('register_sidebar_widget') ) :
-	function widget_akismet($args) {
-		extract($args);
-		$options = get_option('widget_akismet');
-		$count = number_format_i18n(get_option('akismet_spam_count'));
-		?>
-			<?php echo $before_widget; ?>
-				<?php echo $before_title . $options['title'] . $after_title; ?>
-				<div id="akismetwrap"><div id="akismetstats"><a id="aka" href="http://akismet.com" title=""><?php printf( __( '%1$s %2$sspam comments%3$s %4$sblocked by%5$s<br />%6$sAkismet%7$s' ), '<div id="akismet1"><span id="akismetcount">' . $count . '</span>', '<span id="akismetsc">', '</span></div>', '<div id="akismet2"><span id="akismetbb">', '</span>', '<span id="akismeta">', '</span></div>' ); ?></a></div></div>
-			<?php echo $after_widget; ?>
-	<?php
-	}
-
-	function widget_akismet_style() {
-		?>
-<style type="text/css">
-#aka,#aka:link,#aka:hover,#aka:visited,#aka:active{color:#fff;text-decoration:none}
-#aka:hover{border:none;text-decoration:none}
-#aka:hover #akismet1{display:none}
-#aka:hover #akismet2,#akismet1{display:block}
-#akismet2{display:none;padding-top:2px}
-#akismeta{font-size:16px;font-weight:bold;line-height:18px;text-decoration:none}
-#akismetcount{display:block;font:15px Verdana,Arial,Sans-Serif;font-weight:bold;text-decoration:none}
-#akismetwrap #akismetstats{background:url(<?php echo get_option('siteurl'); ?>/wp-content/plugins/akismet/akismet.gif) no-repeat top left;border:none;color:#fff;font:11px 'Trebuchet MS','Myriad Pro',sans-serif;height:40px;line-height:100%;overflow:hidden;padding:8px 0 0;text-align:center;width:120px}
-</style>
-		<?php
-	}
-
-	function widget_akismet_control() {
-		$options = $newoptions = get_option('widget_akismet');
-		if ( $_POST["akismet-submit"] ) {
-			$newoptions['title'] = strip_tags(stripslashes($_POST["akismet-title"]));
-			if ( empty($newoptions['title']) ) $newoptions['title'] = 'Spam Blocked';
-		}
-		if ( $options != $newoptions ) {
-			$options = $newoptions;
-			update_option('widget_akismet', $options);
-		}
-		$title = htmlspecialchars($options['title'], ENT_QUOTES);
-	?>
-				<p><label for="akismet-title"><?php _e('Title:'); ?> <input style="width: 250px;" id="akismet-title" name="akismet-title" type="text" value="<?php echo $title; ?>" /></label></p>
-				<input type="hidden" id="akismet-submit" name="akismet-submit" value="1" />
-	<?php
-	}
-
-	register_sidebar_widget('Akismet', 'widget_akismet', null, 'akismet');
-	register_widget_control('Akismet', 'widget_akismet_control', null, 75, 'akismet');
-	if ( is_active_widget('widget_akismet') )
-		add_action('wp_head', 'widget_akismet_style');
-	endif;
-}
-
-add_action('init', 'widget_akismet_register');
-
-// Counter for non-widget users
-function akismet_counter() {
-?>
-<style type="text/css">
-#akismetwrap #aka,#aka:link,#aka:hover,#aka:visited,#aka:active{color:#fff;text-decoration:none}
-#aka:hover{border:none;text-decoration:none}
-#aka:hover #akismet1{display:none}
-#aka:hover #akismet2,#akismet1{display:block}
-#akismet2{display:none;padding-top:2px}
-#akismeta{font-size:16px;font-weight:bold;line-height:18px;text-decoration:none}
-#akismetcount{display:block;font:15px Verdana,Arial,Sans-Serif;font-weight:bold;text-decoration:none}
-#akismetwrap #akismetstats{background:url(<?php echo get_option('siteurl'); ?>/wp-content/plugins/akismet/akismet.gif) no-repeat top left;border:none;color:#fff;font:11px 'Trebuchet MS','Myriad Pro',sans-serif;height:40px;line-height:100%;overflow:hidden;padding:8px 0 0;text-align:center;width:120px}
-</style>
-<?php
-$count = number_format_i18n(get_option('akismet_spam_count'));
-?>
-<div id="akismetwrap"><div id="akismetstats"><a id="aka" href="http://akismet.com" title=""><div id="akismet1"><span id="akismetcount"><?php echo $count; ?></span> <span id="akismetsc"><?php _e('spam comments') ?></span></div> <div id="akismet2"><span id="akismetbb"><?php _e('blocked by') ?></span><br /><span id="akismeta">Akismet</span></div></a></div></div>
-<?php
-}
-
-?>
