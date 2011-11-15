@@ -5,7 +5,7 @@ var AnchorDialog = {
 		var action, elm, f = document.forms[0];
 
 		this.editor = ed;
-		elm = ed.dom.getParent(ed.selection.getNode(), 'A,IMG');
+		elm = ed.dom.getParent(ed.selection.getNode(), 'A');
 		v = ed.dom.getAttrib(elm, 'name');
 
 		if (v) {
@@ -17,18 +17,23 @@ var AnchorDialog = {
 	},
 
 	update : function() {
-		var ed = this.editor;
-		
+		var ed = this.editor, elm, name = document.forms[0].anchorName.value;
+
+		if (!name || !/^[a-z][a-z0-9\-\_:\.]*$/i.test(name)) {
+			tinyMCEPopup.alert('advanced_dlg.anchor_invalid');
+			return;
+		}
+
 		tinyMCEPopup.restoreSelection();
 
 		if (this.action != 'update')
 			ed.selection.collapse(1);
 
-		// Webkit acts weird if empty inline element is inserted so we need to use a image instead
-		if (tinymce.isWebKit)
-			ed.execCommand('mceInsertContent', 0, ed.dom.createHTML('img', {mce_name : 'a', name : document.forms[0].anchorName.value, 'class' : 'mceItemAnchor'}));
+		elm = ed.dom.getParent(ed.selection.getNode(), 'A');
+		if (elm)
+			elm.name = name;
 		else
-			ed.execCommand('mceInsertContent', 0, ed.dom.createHTML('a', {name : document.forms[0].anchorName.value, 'class' : 'mceItemAnchor'}, ''));
+			ed.execCommand('mceInsertContent', 0, ed.dom.createHTML('a', {name : name, 'class' : 'mceItemAnchor'}, ''));
 
 		tinyMCEPopup.close();
 	}

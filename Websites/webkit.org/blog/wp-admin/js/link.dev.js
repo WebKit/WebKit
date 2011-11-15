@@ -29,7 +29,7 @@ jQuery(document).ready( function($) {
 			return;
 		noSyncChecks = true;
 		var th = $(this), c = th.is(':checked'), id = th.val().toString();
-		$('#in-link-category-' + id + ', #in-popular-category-' + id).attr( 'checked', c );
+		$('#in-link-category-' + id + ', #in-popular-category-' + id).prop( 'checked', c );
 		noSyncChecks = false;
 	};
 
@@ -59,6 +59,7 @@ jQuery(document).ready( function($) {
 	$('#category-add-toggle').click( function() {
 		$(this).parents('div:first').toggleClass( 'wp-hidden-children' );
 		$('#category-tabs a[href="#categories-all"]').click();
+		$('#newcategory').focus();
 		return false;
 	} );
 

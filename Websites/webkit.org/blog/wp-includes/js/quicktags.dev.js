@@ -259,6 +259,7 @@ function edToolbar() {
 	}
 	document.write('<input type="button" id="ed_spell" class="ed_button" onclick="edSpell(edCanvas);" title="' + quicktagsL10n.dictionaryLookup + '" value="' + quicktagsL10n.lookup + '" />');
 	document.write('<input type="button" id="ed_close" class="ed_button" onclick="edCloseAllTags();" title="' + quicktagsL10n.closeAllOpenTags + '" value="' + quicktagsL10n.closeTags + '" />');
+	document.write('<input type="button" id="ed_fullscreen" class="ed_button" onclick="fullscreen.on();" title="' + quicktagsL10n.toggleFullscreen + '" value="' + quicktagsL10n.fullscreen + '" />');
 //	edShowLinks(); // disabled by default
 	document.write('</div>');
 }
@@ -333,7 +334,7 @@ function edInsertTag(myField, i) {
 
 function edInsertContent(myField, myValue) {
 	var sel, startPos, endPos, scrollTop;
-	
+
 	//IE support
 	if (document.selection) {
 		myField.focus();
@@ -360,18 +361,22 @@ function edInsertContent(myField, myValue) {
 }
 
 function edInsertLink(myField, i, defaultValue) {
-	if (!defaultValue) {
-		defaultValue = 'http://';
-	}
-	if (!edCheckOpenTags(i)) {
-		var URL = prompt(quicktagsL10n.enterURL, defaultValue);
-		if (URL) {
-			edButtons[i].tagStart = '<a href="' + URL + '">';
+	if ( 'object' == typeof(wpLink) ) {
+		wpLink.open();
+	} else {
+		if (!defaultValue) {
+			defaultValue = 'http://';
+		}
+		if (!edCheckOpenTags(i)) {
+			var URL = prompt(quicktagsL10n.enterURL, defaultValue);
+			if (URL) {
+				edButtons[i].tagStart = '<a href="' + URL + '">';
+				edInsertTag(myField, i);
+			}
+		}
+		else {
 			edInsertTag(myField, i);
 		}
-	}
-	else {
-		edInsertTag(myField, i);
 	}
 }
 

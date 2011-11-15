@@ -35,9 +35,13 @@ class WP_Styles extends WP_Dependencies {
 		if ( !parent::do_item($handle) )
 			return false;
 
-		$ver = $this->registered[$handle]->ver ? $this->registered[$handle]->ver : $this->default_version;
+		if ( null === $this->registered[$handle]->ver )
+			$ver = '';
+		else
+			$ver = $this->registered[$handle]->ver ? $this->registered[$handle]->ver : $this->default_version;
+
 		if ( isset($this->args[$handle]) )
-			$ver .= '&amp;' . $this->args[$handle];
+			$ver = $ver ? $ver . '&amp;' . $this->args[$handle] : $this->args[$handle];
 
 		if ( $this->do_concat ) {
 			if ( $this->in_default_dir($this->registered[$handle]->src) && !isset($this->registered[$handle]->extra['conditional']) && !isset($this->registered[$handle]->extra['alt']) ) {
@@ -64,10 +68,12 @@ class WP_Styles extends WP_Dependencies {
 
 		$tag .= apply_filters( 'style_loader_tag', "<link rel='$rel' id='$handle-css' $title href='$href' type='text/css' media='$media' />\n", $handle );
 		if ( 'rtl' === $this->text_direction && isset($this->registered[$handle]->extra['rtl']) && $this->registered[$handle]->extra['rtl'] ) {
-			if ( is_bool( $this->registered[$handle]->extra['rtl'] ) )
-				$rtl_href = str_replace( '.css', '-rtl.css', $this->_css_href( $this->registered[$handle]->src , $ver, "$handle-rtl" ));
-			else
+			if ( is_bool( $this->registered[$handle]->extra['rtl'] ) ) {
+				$suffix = isset( $this->registered[$handle]->extra['suffix'] ) ? $this->registered[$handle]->extra['suffix'] : '';
+				$rtl_href = str_replace( "{$suffix}.css", "-rtl{$suffix}.css", $this->_css_href( $this->registered[$handle]->src , $ver, "$handle-rtl" ));
+			} else {
 				$rtl_href = $this->_css_href( $this->registered[$handle]->extra['rtl'], $ver, "$handle-rtl" );
+			}
 
 			$tag .= apply_filters( 'style_loader_tag', "<link rel='$rel' id='$handle-rtl-css' $title href='$rtl_href' type='text/css' media='$media' />\n", $handle );
 		}
@@ -96,11 +102,12 @@ class WP_Styles extends WP_Dependencies {
 	}
 
 	function _css_href( $src, $ver, $handle ) {
-		if ( !preg_match('|^https?://|', $src) && ! ( $this->content_url && 0 === strpos($src, $this->content_url) ) ) {
+		if ( !is_bool($src) && !preg_match('|^https?://|', $src) && ! ( $this->content_url && 0 === strpos($src, $this->content_url) ) ) {
 			$src = $this->base_url . $src;
 		}
 
-		$src = add_query_arg('ver', $ver, $src);
+		if ( !empty($ver) )
+			$src = add_query_arg('ver', $ver, $src);
 		$src = apply_filters( 'style_loader_src', $src, $handle );
 		return esc_url( $src );
 	}

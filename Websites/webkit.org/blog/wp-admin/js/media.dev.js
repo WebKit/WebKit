@@ -31,11 +31,10 @@ var findPosts;
 				_ajax_nonce: $('#_ajax_nonce').val()
 			};
 
-			if ( $('#find-posts-pages:checked').val() ) {
-				post['pages'] = 1;
-			} else {
-				post['posts'] = 1;
-			}
+			var selectedItem;
+			$("input[@name='itemSelect[]']:checked").each(function() { selectedItem = $(this).val() });
+			post['post_type'] = selectedItem;
+
 			$.ajax({
 				type : 'POST',
 				url : ajaxurl,
@@ -78,6 +77,14 @@ var findPosts;
 			if ( '' == $('#find-posts-response').html() )
 				e.preventDefault();
 		});
+		$( '#find-posts .find-box-search :input' ).keypress( function( event ) {
+			if ( 13 == event.which ) {
+				findPosts.send();
+				return false;
+			}
+		} );
+		$( '#find-posts-search' ).click( findPosts.send );
+		$( '#find-posts-close' ).click( findPosts.close );
 		$('#doaction, #doaction2').click(function(e){
 			$('select[name^="action"]').each(function(){
 				if ( $(this).val() == 'attach' ) {

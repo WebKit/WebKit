@@ -19,12 +19,10 @@ $charset_collate = '';
 // Declare these as global in case schema.php is included from a function.
 global $wpdb, $wp_queries;
 
-if ( $wpdb->has_cap( 'collation' ) ) {
-	if ( ! empty($wpdb->charset) )
-		$charset_collate = "DEFAULT CHARACTER SET $wpdb->charset";
-	if ( ! empty($wpdb->collate) )
-		$charset_collate .= " COLLATE $wpdb->collate";
-}
+if ( ! empty($wpdb->charset) )
+	$charset_collate = "DEFAULT CHARACTER SET $wpdb->charset";
+if ( ! empty($wpdb->collate) )
+	$charset_collate .= " COLLATE $wpdb->collate";
 
 /** Create WordPress database tables SQL */
 $wp_queries = "CREATE TABLE $wpdb->terms (
@@ -54,6 +52,15 @@ CREATE TABLE $wpdb->term_relationships (
  PRIMARY KEY  (object_id,term_taxonomy_id),
  KEY term_taxonomy_id (term_taxonomy_id)
 ) $charset_collate;
+CREATE TABLE $wpdb->commentmeta (
+  meta_id bigint(20) unsigned NOT NULL auto_increment,
+  comment_id bigint(20) unsigned NOT NULL default '0',
+  meta_key varchar(255) default NULL,
+  meta_value longtext,
+  PRIMARY KEY  (meta_id),
+  KEY comment_id (comment_id),
+  KEY meta_key (meta_key)
+) $charset_collate;
 CREATE TABLE $wpdb->comments (
   comment_ID bigint(20) unsigned NOT NULL auto_increment,
   comment_post_ID bigint(20) unsigned NOT NULL default '0',
@@ -74,7 +81,8 @@ CREATE TABLE $wpdb->comments (
   KEY comment_approved (comment_approved),
   KEY comment_post_ID (comment_post_ID),
   KEY comment_approved_date_gmt (comment_approved,comment_date_gmt),
-  KEY comment_date_gmt (comment_date_gmt)
+  KEY comment_date_gmt (comment_date_gmt),
+  KEY comment_parent (comment_parent)
 ) $charset_collate;
 CREATE TABLE $wpdb->links (
   link_id bigint(20) unsigned NOT NULL auto_increment,
@@ -99,8 +107,8 @@ CREATE TABLE $wpdb->options (
   option_name varchar(64) NOT NULL default '',
   option_value longtext NOT NULL,
   autoload varchar(20) NOT NULL default 'yes',
-  PRIMARY KEY  (option_id,blog_id,option_name),
-  KEY option_name (option_name)
+  PRIMARY KEY  (option_id),
+  UNIQUE KEY option_name (option_name)
 ) $charset_collate;
 CREATE TABLE $wpdb->postmeta (
   meta_id bigint(20) unsigned NOT NULL auto_increment,
@@ -138,7 +146,8 @@ CREATE TABLE $wpdb->posts (
   PRIMARY KEY  (ID),
   KEY post_name (post_name),
   KEY type_status_date (post_type,post_status,post_date,ID),
-  KEY post_parent (post_parent)
+  KEY post_parent (post_parent),
+  KEY post_author (post_author)
 ) $charset_collate;
 CREATE TABLE $wpdb->users (
   ID bigint(20) unsigned NOT NULL auto_increment,
@@ -173,25 +182,24 @@ CREATE TABLE $wpdb->usermeta (
  * @uses $wp_db_version
  */
 function populate_options() {
-	global $wpdb, $wp_db_version;
+	global $wpdb, $wp_db_version, $current_site;
 
 	$guessurl = wp_guess_url();
 
 	do_action('populate_options');
 
 	if ( ini_get('safe_mode') ) {
-		// Safe mode screws up mkdir(), so we must use a flat structure.
+		// Safe mode can break mkdir() so use a flat structure by default.
 		$uploads_use_yearmonth_folders = 0;
-		$upload_path = WP_CONTENT_DIR;
 	} else {
 		$uploads_use_yearmonth_folders = 1;
-		$upload_path = WP_CONTENT_DIR . '/uploads';
 	}
 
 	$options = array(
 	'siteurl' => $guessurl,
-	'blogname' => __('My Blog'),
-	'blogdescription' => __('Just another WordPress weblog'),
+	'blogname' => __('My Site'),
+	/* translators: blog tagline */
+	'blogdescription' => __('Just another WordPress site'),
 	'users_can_register' => 0,
 	'admin_email' => 'you@example.com',
 	'start_of_week' => 1,
@@ -200,7 +208,6 @@ function populate_options() {
 	'require_name_email' => 1,
 	'comments_notify' => 1,
 	'posts_per_rss' => 10,
-	'rss_excerpt_length' => 50,
 	'rss_use_excerpt' => 0,
 	'mailserver_url' => 'mail.example.com',
 	'mailserver_login' => 'login@example.com',
@@ -210,7 +217,7 @@ function populate_options() {
 	'default_comment_status' => 'open',
 	'default_ping_status' => 'open',
 	'default_pingback_flag' => 1,
-	'default_post_edit_rows' => 10,
+	'default_post_edit_rows' => 20,
 	'posts_per_page' => 10,
 	/* translators: default date format, see http://php.net/date */
 	'date_format' => __('F j, Y'),
@@ -239,9 +246,8 @@ function populate_options() {
 	// 1.5
 	'default_email_category' => 1,
 	'recently_edited' => '',
-	'use_linksupdate' => 0,
-	'template' => 'default',
-	'stylesheet' => 'default',
+	'template' => WP_DEFAULT_THEME,
+	'stylesheet' => WP_DEFAULT_THEME,
 	'comment_whitelist' => 1,
 	'blacklist_keys' => '',
 	'comment_registration' => 0,
@@ -257,10 +263,7 @@ function populate_options() {
 
 	// 2.0.1
 	'uploads_use_yearmonth_folders' => $uploads_use_yearmonth_folders,
-	'upload_path' => $upload_path,
-
-	// 2.0.3
-	'secret' => wp_generate_password(64),
+	'upload_path' => '',
 
 	// 2.1
 	'blog_public' => '1',
@@ -293,9 +296,9 @@ function populate_options() {
 	'image_default_align' => '',
 	'close_comments_for_old_posts' => 0,
 	'close_comments_days_old' => 14,
-	'thread_comments' => 0,
+	'thread_comments' => 1,
 	'thread_comments_depth' => 5,
-	'page_comments' => 1,
+	'page_comments' => 0,
 	'comments_per_page' => 50,
 	'default_comments_page' => 'newest',
 	'comment_order' => 'asc',
@@ -305,8 +308,27 @@ function populate_options() {
 	'widget_rss' => array(),
 
 	// 2.8
-	'timezone_string' => ''
+	'timezone_string' => '',
+
+	// 2.9
+	'embed_autourls' => 1,
+	'embed_size_w' => '',
+	'embed_size_h' => 600,
+
+	// 3.0
+	'page_for_posts' => 0,
+	'page_on_front' => 0,
+
+	// 3.1
+	'default_post_format' => 0,
 	);
+
+	// 3.0 multisite
+	if ( is_multisite() ) {
+		/* translators: blog tagline */
+		$options[ 'blogdescription' ] = sprintf(__('Just another %s site'), $current_site->site_name );
+		$options[ 'permalink_structure' ] = '/%year%/%monthnum%/%day%/%postname%/';
+	}
 
 	// Set autoload to no for these options
 	$fat_options = array( 'moderation_keys', 'recently_edited', 'blacklist_keys' );
@@ -338,10 +360,12 @@ function populate_options() {
 	if ( !__get_option('home') ) update_option('home', $guessurl);
 
 	// Delete unused options
-	$unusedoptions = array ('blodotgsping_url', 'bodyterminator', 'emailtestonly', 'phoneemail_separator', 'smilies_directory', 'subjectprefix', 'use_bbcode', 'use_blodotgsping', 'use_phoneemail', 'use_quicktags', 'use_weblogsping', 'weblogs_cache_file', 'use_preview', 'use_htmltrans', 'smilies_directory', 'fileupload_allowedusers', 'use_phoneemail', 'default_post_status', 'default_post_category', 'archive_mode', 'time_difference', 'links_minadminlevel', 'links_use_adminlevels', 'links_rating_type', 'links_rating_char', 'links_rating_ignore_zero', 'links_rating_single_image', 'links_rating_image0', 'links_rating_image1', 'links_rating_image2', 'links_rating_image3', 'links_rating_image4', 'links_rating_image5', 'links_rating_image6', 'links_rating_image7', 'links_rating_image8', 'links_rating_image9', 'weblogs_cacheminutes', 'comment_allowed_tags', 'search_engine_friendly_urls', 'default_geourl_lat', 'default_geourl_lon', 'use_default_geourl', 'weblogs_xml_url', 'new_users_can_blog', '_wpnonce', '_wp_http_referer', 'Update', 'action', 'rich_editing', 'autosave_interval', 'deactivated_plugins', 'can_compress_scripts',
-		'page_uris', 'rewrite_rules', 'update_core', 'update_plugins', 'update_themes', 'doing_cron', 'random_seed');
-	foreach ($unusedoptions as $option)
+	$unusedoptions = array ('blodotgsping_url', 'bodyterminator', 'emailtestonly', 'phoneemail_separator', 'smilies_directory', 'subjectprefix', 'use_bbcode', 'use_blodotgsping', 'use_phoneemail', 'use_quicktags', 'use_weblogsping', 'weblogs_cache_file', 'use_preview', 'use_htmltrans', 'smilies_directory', 'fileupload_allowedusers', 'use_phoneemail', 'default_post_status', 'default_post_category', 'archive_mode', 'time_difference', 'links_minadminlevel', 'links_use_adminlevels', 'links_rating_type', 'links_rating_char', 'links_rating_ignore_zero', 'links_rating_single_image', 'links_rating_image0', 'links_rating_image1', 'links_rating_image2', 'links_rating_image3', 'links_rating_image4', 'links_rating_image5', 'links_rating_image6', 'links_rating_image7', 'links_rating_image8', 'links_rating_image9', 'weblogs_cacheminutes', 'comment_allowed_tags', 'search_engine_friendly_urls', 'default_geourl_lat', 'default_geourl_lon', 'use_default_geourl', 'weblogs_xml_url', 'new_users_can_blog', '_wpnonce', '_wp_http_referer', 'Update', 'action', 'rich_editing', 'autosave_interval', 'deactivated_plugins', 'can_compress_scripts', 'page_uris', 'update_core', 'update_plugins', 'update_themes', 'doing_cron', 'random_seed', 'rss_excerpt_length', 'secret', 'use_linksupdate', 'default_comment_status_page', 'wporg_popular_tags', 'what_to_show');
+	foreach ( $unusedoptions as $option )
 		delete_option($option);
+
+	// delete obsolete magpie stuff
+	$wpdb->query("DELETE FROM $wpdb->options WHERE option_name REGEXP '^rss_[0-9a-f]{32}(_ts)?$'");
 }
 
 /**
@@ -357,6 +381,7 @@ function populate_roles() {
 	populate_roles_260();
 	populate_roles_270();
 	populate_roles_280();
+	populate_roles_300();
 }
 
 /**
@@ -576,6 +601,183 @@ function populate_roles_280() {
 	if ( !empty( $role ) ) {
 		$role->add_cap( 'install_themes' );
 	}
+}
+
+/**
+ * Create and modify WordPress roles for WordPress 3.0.
+ *
+ * @since 3.0.0
+ */
+function populate_roles_300() {
+	$role =& get_role( 'administrator' );
+
+	if ( !empty( $role ) ) {
+		$role->add_cap( 'update_core' );
+		$role->add_cap( 'list_users' );
+		$role->add_cap( 'remove_users' );
+		$role->add_cap( 'add_users' );
+		$role->add_cap( 'promote_users' );
+		$role->add_cap( 'edit_theme_options' );
+		$role->add_cap( 'delete_themes' );
+		$role->add_cap( 'export' );
+	}
+}
+
+/**
+ * populate network settings
+ *
+ * @since 3.0.0
+ *
+ * @param int $network_id id of network to populate
+ * @return bool|WP_Error True on success, or WP_Error on warning (with the install otherwise successful,
+ * 	so the error code must be checked) or failure.
+ */
+function populate_network( $network_id = 1, $domain = '', $email = '', $site_name = '', $path = '/', $subdomain_install = false ) {
+	global $wpdb, $current_site, $wp_db_version, $wp_rewrite;
+
+	$errors = new WP_Error();
+	if ( '' == $domain )
+		$errors->add( 'empty_domain', __( 'You must provide a domain name.' ) );
+	if ( '' == $site_name )
+		$errors->add( 'empty_sitename', __( 'You must provide a name for your network of sites.' ) );
+
+	// check for network collision
+	if ( $network_id == $wpdb->get_var( $wpdb->prepare( "SELECT id FROM $wpdb->site WHERE id = %d", $network_id ) ) )
+		$errors->add( 'siteid_exists', __( 'The network already exists.' ) );
+
+	$site_user = get_user_by_email( $email );
+	if ( ! is_email( $email ) )
+		$errors->add( 'invalid_email', __( 'You must provide a valid e-mail address.' ) );
+
+	if ( $errors->get_error_code() )
+		return $errors;
+
+	// set up site tables
+	$template = get_option( 'template' );
+	$stylesheet = get_option( 'stylesheet' );
+	$allowed_themes = array( $stylesheet => true );
+	if ( $template != $stylesheet )
+		$allowed_themes[ $template ] = true;
+	if ( WP_DEFAULT_THEME != $stylesheet && WP_DEFAULT_THEME != $template )
+		$allowed_themes[ WP_DEFAULT_THEME ] = true;
+
+	if ( 1 == $network_id ) {
+		$wpdb->insert( $wpdb->site, array( 'domain' => $domain, 'path' => $path ) );
+		$network_id = $wpdb->insert_id;
+	} else {
+		$wpdb->insert( $wpdb->site, array( 'domain' => $domain, 'path' => $path, 'id' => $network_id ) );
+	}
+
+	if ( !is_multisite() ) {
+		$site_admins = array( $site_user->user_login );
+		$users = get_users( array( 'fields' => array( 'ID', 'user_login' ) ) );
+		if ( $users ) {
+			foreach ( $users as $user ) {
+				if ( is_super_admin( $user->ID ) && !in_array( $user->user_login, $site_admins ) )
+					$site_admins[] = $user->user_login;
+			}
+		}
+	} else {
+		$site_admins = get_site_option( 'site_admins' );
+	}
+
+	$welcome_email = __( 'Dear User,
+
+Your new SITE_NAME site has been successfully set up at:
+BLOG_URL
+
+You can log in to the administrator account with the following information:
+Username: USERNAME
+Password: PASSWORD
+Log in Here: BLOG_URLwp-login.php
+
+We hope you enjoy your new site.
+Thanks!
+
+--The Team @ SITE_NAME' );
+
+	$sitemeta = array(
+		'site_name' => $site_name,
+		'admin_email' => $site_user->user_email,
+		'admin_user_id' => $site_user->ID,
+		'registration' => 'none',
+		'upload_filetypes' => 'jpg jpeg png gif mp3 mov avi wmv midi mid pdf',
+		'blog_upload_space' => 10,
+		'fileupload_maxk' => 1500,
+		'site_admins' => $site_admins,
+		'allowedthemes' => $allowed_themes,
+		'illegal_names' => array( 'www', 'web', 'root', 'admin', 'main', 'invite', 'administrator', 'files' ),
+		'wpmu_upgrade_site' => $wp_db_version,
+		'welcome_email' => $welcome_email,
+		'first_post' => __( 'Welcome to <a href="SITE_URL">SITE_NAME</a>. This is your first post. Edit or delete it, then start blogging!' ),
+		// @todo - network admins should have a method of editing the network siteurl (used for cookie hash)
+		'siteurl' => get_option( 'siteurl' ) . '/',
+		'add_new_users' => '0',
+		'upload_space_check_disabled' => '0',
+		'subdomain_install' => intval( $subdomain_install ),
+		'global_terms_enabled' => global_terms_enabled() ? '1' : '0'
+	);
+	if ( ! $subdomain_install )
+		$sitemeta['illegal_names'][] = 'blog';
+
+	$insert = '';
+	foreach ( $sitemeta as $meta_key => $meta_value ) {
+		$meta_key = $wpdb->escape( $meta_key );
+		if ( is_array( $meta_value ) )
+			$meta_value = serialize( $meta_value );
+		$meta_value = $wpdb->escape( $meta_value );
+		if ( !empty( $insert ) )
+			$insert .= ', ';
+		$insert .= "( $network_id, '$meta_key', '$meta_value')";
+	}
+	$wpdb->query( "INSERT INTO $wpdb->sitemeta ( site_id, meta_key, meta_value ) VALUES " . $insert );
+
+	$current_site->domain = $domain;
+	$current_site->path = $path;
+	$current_site->site_name = ucfirst( $domain );
+
+	if ( !is_multisite() ) {
+		$wpdb->insert( $wpdb->blogs, array( 'site_id' => $network_id, 'domain' => $domain, 'path' => $path, 'registered' => current_time( 'mysql' ) ) );
+		$blog_id = $wpdb->insert_id;
+		update_user_meta( $site_user->ID, 'source_domain', $domain );
+		update_user_meta( $site_user->ID, 'primary_blog', $blog_id );
+		if ( !$upload_path = get_option( 'upload_path' ) ) {
+			$upload_path = substr( WP_CONTENT_DIR, strlen( ABSPATH ) ) . '/uploads';
+			update_option( 'upload_path', $upload_path );
+		}
+		update_option( 'fileupload_url', get_option( 'siteurl' ) . '/' . $upload_path );
+	}
+
+	if ( $subdomain_install )
+		update_option( 'permalink_structure', '/%year%/%monthnum%/%day%/%postname%/');
+	else
+		update_option( 'permalink_structure', '/blog/%year%/%monthnum%/%day%/%postname%/');
+
+	$wp_rewrite->flush_rules();
+
+	if ( $subdomain_install ) {
+		$vhost_ok = false;
+		$errstr = '';
+		$hostname = substr( md5( time() ), 0, 6 ) . '.' . $domain; // Very random hostname!
+		$page = wp_remote_get( 'http://' . $hostname, array( 'timeout' => 5, 'httpversion' => '1.1' ) );
+		if ( is_wp_error( $page ) )
+			$errstr = $page->get_error_message();
+		elseif ( 200 == wp_remote_retrieve_response_code( $page ) )
+				$vhost_ok = true;
+
+		if ( ! $vhost_ok ) {
+			$msg = '<p><strong>' . __( 'Warning! Wildcard DNS may not be configured correctly!' ) . '</strong></p>';
+			$msg .= '<p>' . sprintf( __( 'The installer attempted to contact a random hostname (<code>%1$s</code>) on your domain.' ), $hostname );
+			if ( ! empty ( $errstr ) )
+				$msg .= ' ' . sprintf( __( 'This resulted in an error message: %s' ), '<code>' . $errstr . '</code>' );
+			$msg .= '</p>';
+			$msg .= '<p>' . __( 'To use a subdomain configuration, you must have a wildcard entry in your DNS. This usually means adding a <code>*</code> hostname record pointing at your web server in your DNS configuration tool.' ) . '</p>';
+			$msg .= '<p>' . __( 'You can still use your site but any subdomain you create may not be accessible. If you know your DNS is correct, ignore this message.' ) . '</p>';
+			return new WP_Error( 'no_wildcard_dns', $msg );
+		}
+	}
+
+	return true;
 }
 
 ?>

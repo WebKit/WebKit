@@ -1,6 +1,6 @@
 <?php
 /**
- * User Profile Administration Panel.
+ * User Profile Administration Screen.
  *
  * @package WordPress
  * @subpackage Administration
@@ -9,11 +9,11 @@
 /**
  * This is a profile page.
  *
- * @since unknown
+ * @since 2.5.0
  * @var bool
  */
 define('IS_PROFILE_PAGE', true);
 
 /** Load User Editing Page */
-require_once('user-edit.php');
+require_once('./user-edit.php');
 ?>

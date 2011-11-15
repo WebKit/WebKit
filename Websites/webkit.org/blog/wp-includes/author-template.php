@@ -22,7 +22,11 @@
  */
 function get_the_author($deprecated = '') {
 	global $authordata;
-	return apply_filters('the_author', $authordata->display_name);
+
+	if ( !empty( $deprecated ) )
+		_deprecated_argument( __FUNCTION__, '2.1' );
+
+	return apply_filters('the_author', is_object($authordata) ? $authordata->display_name : null);
 }
 
 /**
@@ -41,10 +45,14 @@ function get_the_author($deprecated = '') {
  * @link http://codex.wordpress.org/Template_Tags/the_author
  *
  * @param string $deprecated Deprecated.
- * @param string $deprecated_echo Echo the string or return it.
+ * @param string $deprecated_echo Deprecated. Use get_the_author(). Echo the string or return it.
  * @return string The author's display name, from get_the_author().
  */
-function the_author($deprecated = '', $deprecated_echo = true) {
+function the_author( $deprecated = '', $deprecated_echo = true ) {
+	if ( !empty( $deprecated ) )
+		_deprecated_argument( __FUNCTION__, '2.1' );
+	if ( $deprecated_echo !== true )
+		_deprecated_argument( __FUNCTION__, '1.5', __('Use <code>get_the_author()</code> instead if you do not want the value echoed.') );
 	if ( $deprecated_echo )
 		echo get_the_author();
 	return get_the_author();
@@ -94,6 +102,8 @@ function get_the_author_meta($field = '', $user_id = false) {
 	else
 		$authordata = get_userdata( $user_id );
 
+	// Keys used as object vars cannot have dashes.
+	$field = str_replace('-', '', $field);
 	$field = strtolower($field);
 	$user_field = "user_$field";
 
@@ -104,7 +114,7 @@ function get_the_author_meta($field = '', $user_id = false) {
 	else
 		$value = isset($authordata->$field) ? $authordata->$field : '';
 
-	return apply_filters('get_the_author_' . $field, $value);
+	return apply_filters('get_the_author_' . $field, $value, $user_id);
 }
 
 /**
@@ -116,7 +126,24 @@ function get_the_author_meta($field = '', $user_id = false) {
  * @echo string The author's field from the current author's DB object.
  */
 function the_author_meta($field = '', $user_id = false) {
-	echo apply_filters('the_author_' . $field, get_the_author_meta($field, $user_id));
+	echo apply_filters('the_author_' . $field, get_the_author_meta($field, $user_id), $user_id);
+}
+
+/**
+ * Retrieve either author's link or author's name.
+ *
+ * If the author has a home page set, return an HTML link, otherwise just return the
+ * author's name.
+ *
+ * @uses get_the_author_meta()
+ * @uses get_the_author()
+ */
+function get_the_author_link() {
+	if ( get_the_author_meta('url') ) {
+		return '<a href="' . get_the_author_meta('url') . '" title="' . esc_attr( sprintf(__("Visit %s&#8217;s website"), get_the_author()) ) . '" rel="external">' . get_the_author() . '</a>';
+	} else {
+		return get_the_author();
+	}
 }
 
 /**
@@ -127,15 +154,10 @@ function the_author_meta($field = '', $user_id = false) {
  *
  * @link http://codex.wordpress.org/Template_Tags/the_author_link
  * @since 2.1
- * @uses get_the_author_meta()
- * @uses the_author()
+ * @uses get_the_author_link()
  */
 function the_author_link() {
-	if ( get_the_author_meta('url') ) {
-		echo '<a href="' . get_the_author_meta('url') . '" title="' . esc_attr( sprintf(__("Visit %s&#8217;s website"), get_the_author()) ) . '" rel="external">' . get_the_author() . '</a>';
-	} else {
-		the_author();
-	}
+	echo get_the_author_link();
 }
 
 /**
@@ -143,12 +165,12 @@ function the_author_link() {
  *
  * @since 1.5
  * @uses $post The current post in the Loop's DB object.
- * @uses get_usernumposts()
+ * @uses count_user_posts()
  * @return int The number of posts by the author.
  */
 function get_the_author_posts() {
 	global $post;
-	return get_usernumposts($post->post_author);
+	return count_user_posts($post->post_author);
 }
 
 /**
@@ -156,7 +178,7 @@ function get_the_author_posts() {
  *
  * @link http://codex.wordpress.org/Template_Tags/the_author_posts
  * @since 0.71
- * @uses get_the_author_posts() Echos returned value from function.
+ * @uses get_the_author_posts() Echoes returned value from function.
  */
 function the_author_posts() {
 	echo get_the_author_posts();
@@ -177,17 +199,23 @@ function the_author_posts() {
  * @param string $deprecated Deprecated.
  */
 function the_author_posts_link($deprecated = '') {
+	if ( !empty( $deprecated ) )
+		_deprecated_argument( __FUNCTION__, '2.1' );
+
 	global $authordata;
-	printf(
-		'<a href="%1$s" title="%2$s">%3$s</a>',
+	if ( !is_object( $authordata ) )
+		return false;
+	$link = sprintf(
+		'<a href="%1$s" title="%2$s" rel="author">%3$s</a>',
 		get_author_posts_url( $authordata->ID, $authordata->user_nicename ),
 		esc_attr( sprintf( __( 'Posts by %s' ), get_the_author() ) ),
 		get_the_author()
 	);
+	echo apply_filters( 'the_author_posts_link', $link );
 }
 
 /**
- * Retrieve the URL to the author page of the author of the current post.
+ * Retrieve the URL to the author page for the user with the ID provided.
  *
  * @since 2.1.0
  * @uses $wp_rewrite WP_Rewrite
@@ -199,7 +227,7 @@ function get_author_posts_url($author_id, $author_nicename = '') {
 	$link = $wp_rewrite->get_author_permastruct();
 
 	if ( empty($link) ) {
-		$file = get_option('home') . '/';
+		$file = home_url( '/' );
 		$link = $file . '?author=' . $auth_ID;
 	} else {
 		if ( '' == $author_nicename ) {
@@ -208,7 +236,7 @@ function get_author_posts_url($author_id, $author_nicename = '') {
 				$author_nicename = $user->user_nicename;
 		}
 		$link = str_replace('%author%', $author_nicename, $link);
-		$link = get_option('home') . trailingslashit($link);
+		$link = home_url( user_trailingslashit( $link ) );
 	}
 
 	$link = apply_filters('author_link', $link, $author_id, $author_nicename);
@@ -233,7 +261,7 @@ function get_author_posts_url($author_id, $author_nicename = '') {
  * echoing.</li>
  * <li>style (string) ('list'): Whether to display list of authors in list form
  * or as a string.</li>
- * <li>html (bool) (true): Whether to list the items in html for or plaintext.
+ * <li>html (bool) (true): Whether to list the items in html form or plaintext.
  * </li>
  * </ul>
  *
@@ -246,96 +274,128 @@ function wp_list_authors($args = '') {
 	global $wpdb;
 
 	$defaults = array(
+		'orderby' => 'name', 'order' => 'ASC', 'number' => '',
 		'optioncount' => false, 'exclude_admin' => true,
 		'show_fullname' => false, 'hide_empty' => true,
 		'feed' => '', 'feed_image' => '', 'feed_type' => '', 'echo' => true,
 		'style' => 'list', 'html' => true
 	);
 
-	$r = wp_parse_args( $args, $defaults );
-	extract($r, EXTR_SKIP);
+	$args = wp_parse_args( $args, $defaults );
+	extract( $args, EXTR_SKIP );
+
 	$return = '';
 
-	/** @todo Move select to get_authors(). */
-	$authors = $wpdb->get_results("SELECT ID, user_nicename from $wpdb->users " . ($exclude_admin ? "WHERE user_login <> 'admin' " : '') . "ORDER BY display_name");
+	$query_args = wp_array_slice_assoc( $args, array( 'orderby', 'order', 'number' ) );
+	$query_args['fields'] = 'ids';
+	$authors = get_users( $query_args );
 
 	$author_count = array();
-	foreach ((array) $wpdb->get_results("SELECT DISTINCT post_author, COUNT(ID) AS count FROM $wpdb->posts WHERE post_type = 'post' AND " . get_private_posts_cap_sql( 'post' ) . " GROUP BY post_author") as $row) {
+	foreach ( (array) $wpdb->get_results("SELECT DISTINCT post_author, COUNT(ID) AS count FROM $wpdb->posts WHERE post_type = 'post' AND " . get_private_posts_cap_sql( 'post' ) . " GROUP BY post_author") as $row )
 		$author_count[$row->post_author] = $row->count;
-	}
 
-	foreach ( (array) $authors as $author ) {
+	foreach ( $authors as $author_id ) {
+		$author = get_userdata( $author_id );
+
+		if ( $exclude_admin && 'admin' == $author->display_name )
+			continue;
+
+		$posts = isset( $author_count[$author->ID] ) ? $author_count[$author->ID] : 0;
+
+		if ( !$posts && $hide_empty )
+			continue;
 
 		$link = '';
 
-		$author = get_userdata( $author->ID );
-		$posts = (isset($author_count[$author->ID])) ? $author_count[$author->ID] : 0;
-		$name = $author->display_name;
-
-		if ( $show_fullname && ($author->first_name != '' && $author->last_name != '') )
+		if ( $show_fullname && $author->first_name && $author->last_name )
 			$name = "$author->first_name $author->last_name";
+		else
+			$name = $author->display_name;
 
-		if( !$html ) {
-			if ( $posts == 0 ) {
-				if ( ! $hide_empty )
-					$return .= $name . ', ';
-			} else
-				$return .= $name . ', ';
+		if ( !$html ) {
+			$return .= $name . ', ';
 
-			// No need to go further to process HTML.
-			continue;
+			continue; // No need to go further to process HTML.
 		}
 
-		if ( !($posts == 0 && $hide_empty) && 'list' == $style )
+		if ( 'list' == $style ) {
 			$return .= '<li>';
-		if ( $posts == 0 ) {
-			if ( ! $hide_empty )
-				$link = $name;
-		} else {
-			$link = '<a href="' . get_author_posts_url($author->ID, $author->user_nicename) . '" title="' . esc_attr( sprintf(__("Posts by %s"), $author->display_name) ) . '">' . $name . '</a>';
+		}
 
-			if ( (! empty($feed_image)) || (! empty($feed)) ) {
-				$link .= ' ';
-				if (empty($feed_image))
-					$link .= '(';
-				$link .= '<a href="' . get_author_feed_link($author->ID) . '"';
+		$link = '<a href="' . get_author_posts_url( $author->ID, $author->user_nicename ) . '" title="' . esc_attr( sprintf(__("Posts by %s"), $author->display_name) ) . '">' . $name . '</a>';
 
-				if ( !empty($feed) ) {
-					$title = ' title="' . esc_attr($feed) . '"';
-					$alt = ' alt="' . esc_attr($feed) . '"';
-					$name = $feed;
-					$link .= $title;
-				}
-
-				$link .= '>';
-
-				if ( !empty($feed_image) )
-					$link .= "<img src=\"" . esc_url($feed_image) . "\" style=\"border: none;\"$alt$title" . ' />';
-				else
-					$link .= $name;
-
-				$link .= '</a>';
-
-				if ( empty($feed_image) )
-					$link .= ')';
+		if ( !empty( $feed_image ) || !empty( $feed ) ) {
+			$link .= ' ';
+			if ( empty( $feed_image ) ) {
+				$link .= '(';
 			}
 
-			if ( $optioncount )
-				$link .= ' ('. $posts . ')';
+			$link .= '<a href="' . get_author_feed_link( $author->ID ) . '"';
 
+			$alt = $title = '';
+			if ( !empty( $feed ) ) {
+				$title = ' title="' . esc_attr( $feed ) . '"';
+				$alt = ' alt="' . esc_attr( $feed ) . '"';
+				$name = $feed;
+				$link .= $title;
+			}
+
+			$link .= '>';
+
+			if ( !empty( $feed_image ) )
+				$link .= '<img src="' . esc_url( $feed_image ) . '" style="border: none;"' . $alt . $title . ' />';
+			else
+				$link .= $name;
+
+			$link .= '</a>';
+
+			if ( empty( $feed_image ) )
+				$link .= ')';
 		}
 
-		if ( !($posts == 0 && $hide_empty) && 'list' == $style )
-			$return .= $link . '</li>';
-		else if ( ! $hide_empty )
-			$return .= $link . ', ';
+		if ( $optioncount )
+			$link .= ' ('. $posts . ')';
+
+		$return .= $link;
+		$return .= ( 'list' == $style ) ? '</li>' : ', ';
 	}
 
-	$return = trim($return, ', ');
+	$return = rtrim($return, ', ');
 
-	if ( ! $echo )
+	if ( !$echo )
 		return $return;
+
 	echo $return;
 }
+
+/**
+ * Does this site have more than one author
+ *
+ * Checks to see if more than one author has published posts.
+ *
+ * @since 3.2.0
+ * @return bool Whether or not we have more than one author
+ */
+function is_multi_author() {
+	global $wpdb;
+
+	if ( false === ( $is_multi_author = wp_cache_get('is_multi_author', 'posts') ) ) {
+		$rows = (array) $wpdb->get_col("SELECT DISTINCT post_author FROM $wpdb->posts WHERE post_type = 'post' AND post_status = 'publish' LIMIT 2");
+		$is_multi_author = 1 < count( $rows ) ? 1 : 0;
+		wp_cache_set('is_multi_author', $is_multi_author, 'posts');
+	}
+
+	return (bool) $is_multi_author;
+}
+
+/**
+ * Helper function to clear the cache for number of authors.
+ *
+ * @private
+ */
+function __clear_multi_author_cache() {
+	wp_cache_delete('is_multi_author', 'posts');
+}
+add_action('transition_post_status', '__clear_multi_author_cache');
 
 ?>

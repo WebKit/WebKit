@@ -130,66 +130,38 @@ function the_title_rss() {
 }
 
 /**
- * Display the post content for the feed.
- *
- * For encoding the html or the $encode_html parameter, there are three possible
- * values. '0' will make urls footnotes and use make_url_footnote(). '1' will
- * encode special characters and automatically display all of the content. The
- * value of '2' will strip all HTML tags from the content.
- *
- * Also note that you cannot set the amount of words and not set the html
- * encoding. If that is the case, then the html encoding will default to 2,
- * which will strip all HTML tags.
- *
- * To restrict the amount of words of the content, you can use the cut
- * parameter. If the content is less than the amount, then there won't be any
- * dots added to the end. If there is content left over, then dots will be added
- * and the rest of the content will be removed.
+ * Retrieve the post content for feeds.
  *
  * @package WordPress
  * @subpackage Feed
- * @since 0.71
- * @uses apply_filters() Calls 'the_content_rss' on the content before processing.
- * @see get_the_content() For the $more_link_text, $stripteaser, and $more_file
- *		parameters.
+ * @since 2.9.0
+ * @uses apply_filters() Calls 'the_content_feed' on the content before processing.
+ * @see get_the_content()
  *
- * @param string $more_link_text Optional. Text to display when more content is available but not displayed.
- * @param int|bool $stripteaser Optional. Default is 0.
- * @param string $more_file Optional.
- * @param int $cut Optional. Amount of words to keep for the content.
- * @param int $encode_html Optional. How to encode the content.
+ * @param string $feed_type The type of feed. rss2 | atom | rss | rdf
  */
-function the_content_rss($more_link_text='(more...)', $stripteaser=0, $more_file='', $cut = 0, $encode_html = 0) {
-	$content = get_the_content($more_link_text, $stripteaser, $more_file);
-	$content = apply_filters('the_content_rss', $content);
-	if ( $cut && !$encode_html )
-		$encode_html = 2;
-	if ( 1== $encode_html ) {
-		$content = esc_html($content);
-		$cut = 0;
-	} elseif ( 0 == $encode_html ) {
-		$content = make_url_footnote($content);
-	} elseif ( 2 == $encode_html ) {
-		$content = strip_tags($content);
-	}
-	if ( $cut ) {
-		$blah = explode(' ', $content);
-		if ( count($blah) > $cut ) {
-			$k = $cut;
-			$use_dotdotdot = 1;
-		} else {
-			$k = count($blah);
-			$use_dotdotdot = 0;
-		}
+function get_the_content_feed($feed_type = null) {
+	if ( !$feed_type )
+		$feed_type = get_default_feed();
 
-		/** @todo Check performance, might be faster to use array slice instead. */
-		for ( $i=0; $i<$k; $i++ )
-			$excerpt .= $blah[$i].' ';
-		$excerpt .= ($use_dotdotdot) ? '...' : '';
-		$content = $excerpt;
-	}
+	$content = apply_filters('the_content', get_the_content());
 	$content = str_replace(']]>', ']]&gt;', $content);
-	echo $content;
+	return apply_filters('the_content_feed', $content, $feed_type);
+}
+
+/**
+ * Display the post content for feeds.
+ *
+ * @package WordPress
+ * @subpackage Feed
+ * @since 2.9.0
+ * @uses apply_filters() Calls 'the_content_feed' on the content before processing.
+ * @see get_the_content()
+ *
+ * @param string $feed_type The type of feed. rss2 | atom | rss | rdf
+ */
+function the_content_feed($feed_type = null) {
+	echo get_the_content_feed($feed_type);
 }
 
 /**
@@ -214,7 +186,17 @@ function the_excerpt_rss() {
  * @uses apply_filters() Call 'the_permalink_rss' on the post permalink
  */
 function the_permalink_rss() {
-	echo apply_filters('the_permalink_rss', get_permalink());
+	echo esc_url( apply_filters('the_permalink_rss', get_permalink() ));
+}
+
+/**
+ * Outputs the link to the comments for the current post in an xml safe way
+ *
+ * @since 3.0.0
+ * @return none
+ */
+function comments_link_feed() {
+	echo esc_url( get_comments_link() );
 }
 
 /**
@@ -222,12 +204,12 @@ function the_permalink_rss() {
  *
  * @package WordPress
  * @subpackage Feed
- * @since unknown
+ * @since 2.5.0
  *
  * @param int|object $comment_id Optional comment object or id. Defaults to global comment object.
  */
 function comment_guid($comment_id = null) {
-	echo get_comment_guid($comment_id);
+	echo esc_url( get_comment_guid($comment_id) );
 }
 
 /**
@@ -235,7 +217,7 @@ function comment_guid($comment_id = null) {
  *
  * @package WordPress
  * @subpackage Feed
- * @since unknown
+ * @since 2.5.0
  *
  * @param int|object $comment_id Optional comment object or id. Defaults to global comment object.
  * @return bool|string false on failure or guid for comment on success.
@@ -311,10 +293,12 @@ function comment_text_rss() {
  * @since 2.1.0
  * @uses apply_filters()
  *
- * @param string $type Optional, default is 'rss'. Either 'rss', 'atom', or 'rdf'.
+ * @param string $type Optional, default is the type returned by get_default_feed().
  * @return string All of the post categories for displaying in the feed.
  */
-function get_the_category_rss($type = 'rss') {
+function get_the_category_rss($type = null) {
+	if ( empty($type) )
+		$type = get_default_feed();
 	$categories = get_the_category();
 	$tags = get_the_tags();
 	$the_list = '';
@@ -354,9 +338,9 @@ function get_the_category_rss($type = 'rss') {
  * @since 0.71
  * @see get_the_category_rss() For better explanation.
  *
- * @param string $type Optional, default is 'rss'. Either 'rss', 'atom', or 'rdf'.
+ * @param string $type Optional, default is the type returned by get_default_feed().
  */
-function the_category_rss($type = 'rss') {
+function the_category_rss($type = null) {
 	echo get_the_category_rss($type);
 }
 
@@ -501,7 +485,7 @@ function prep_atom_text_construct($data) {
  * @since 2.5
  */
 function self_link() {
-	$host = @parse_url(get_option('home'));
+	$host = @parse_url(home_url());
 	$host = $host['host'];
 	echo esc_url(
 		'http'
@@ -550,7 +534,8 @@ function fetch_feed($url) {
 	$feed->set_feed_url($url);
 	$feed->set_cache_class('WP_Feed_Cache');
 	$feed->set_file_class('WP_SimplePie_File');
-	$feed->set_cache_duration(apply_filters('wp_feed_cache_transient_lifetime', 43200));
+	$feed->set_cache_duration(apply_filters('wp_feed_cache_transient_lifetime', 43200, $url));
+	do_action_ref_array( 'wp_feed_options', array( &$feed, $url ) );
 	$feed->init();
 	$feed->handle_content_type();
 

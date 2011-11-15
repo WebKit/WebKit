@@ -1,24 +1,13 @@
 <?php
 
-function mce_put_file( $path, $content ) {
-	if ( function_exists('file_put_contents') )
-		return @file_put_contents( $path, $content );
-
-	$newfile = false;
-	$fp = @fopen( $path, 'wb' );
-	if ($fp) {
-		$newfile = fwrite( $fp, $content );
-		fclose($fp);
-	}
-	return $newfile;
-}
-
 // escape text only if it needs translating
 function mce_escape($text) {
 	global $language;
 
-	if ( 'en' == $language ) return $text;
-	else return esc_js($text);
+	if ( 'en' == $language )
+		return $text;
+	else
+		return esc_js($text);
 }
 
 $lang = 'tinyMCE.addI18n({' . $language . ':{
@@ -36,18 +25,63 @@ clipboard_msg:"' . mce_escape( __('Copy/Cut/Paste is not available in Mozilla an
 clipboard_no_support:"' . mce_escape( __('Currently not supported by your browser, use keyboard shortcuts instead.') ) . '",
 popup_blocked:"' . mce_escape( __('Sorry, but we have noticed that your popup-blocker has disabled a window that provides application functionality. You will need to disable popup blocking on this site in order to fully utilize this tool.') ) . '",
 invalid_data:"' . mce_escape( __('Error: Invalid values entered, these are marked in red.') ) . '",
+invalid_data_number:"' . mce_escape( __('{#field} must be a number') ) . '",
+invalid_data_min:"' . mce_escape( __('{#field} must be a number greater than {#min}') ) . '",
+invalid_data_size:"' . mce_escape( __('{#field} must be a number or percentage') ) . '",
 more_colors:"' . mce_escape( __('More colors') ) . '"
 },
+colors:{
+"000000":"' . mce_escape( __('Black') ) . '",
+"993300":"' . mce_escape( __('Burnt orange') ) . '",
+"333300":"' . mce_escape( __('Dark olive') ) . '",
+"003300":"' . mce_escape( __('Dark green') ) . '",
+"003366":"' . mce_escape( __('Dark azure') ) . '",
+"000080":"' . mce_escape( __('Navy Blue') ) . '",
+"333399":"' . mce_escape( __('Indigo') ) . '",
+"333333":"' . mce_escape( __('Very dark gray') ) . '",
+"800000":"' . mce_escape( __('Maroon') ) . '",
+"FF6600":"' . mce_escape( __('Orange') ) . '",
+"808000":"' . mce_escape( __('Olive') ) . '",
+"008000":"' . mce_escape( __('Green') ) . '",
+"008080":"' . mce_escape( __('Teal') ) . '",
+"0000FF":"' . mce_escape( __('Blue') ) . '",
+"666699":"' . mce_escape( __('Grayish blue') ) . '",
+"808080":"' . mce_escape( __('Gray') ) . '",
+"FF0000":"' . mce_escape( __('Red') ) . '",
+"FF9900":"' . mce_escape( __('Amber') ) . '",
+"99CC00":"' . mce_escape( __('Yellow green') ) . '",
+"339966":"' . mce_escape( __('Sea green') ) . '",
+"33CCCC":"' . mce_escape( __('Turquoise') ) . '",
+"3366FF":"' . mce_escape( __('Royal blue') ) . '",
+"800080":"' . mce_escape( __('Purple') ) . '",
+"999999":"' . mce_escape( __('Medium gray') ) . '",
+"FF00FF":"' . mce_escape( __('Magenta') ) . '",
+"FFCC00":"' . mce_escape( __('Gold') ) . '",
+"FFFF00":"' . mce_escape( __('Yellow') ) . '",
+"00FF00":"' . mce_escape( __('Lime') ) . '",
+"00FFFF":"' . mce_escape( __('Aqua') ) . '",
+"00CCFF":"' . mce_escape( __('Sky blue') ) . '",
+"993366":"' . mce_escape( __('Brown') ) . '",
+"C0C0C0":"' . mce_escape( __('Silver') ) . '",
+"FF99CC":"' . mce_escape( __('Pink') ) . '",
+"FFCC99":"' . mce_escape( __('Peach') ) . '",
+"FFFF99":"' . mce_escape( __('Light yellow') ) . '",
+"CCFFCC":"' . mce_escape( __('Pale green') ) . '",
+"CCFFFF":"' . mce_escape( __('Pale cyan') ) . '",
+"99CCFF":"' . mce_escape( __('Light sky blue') ) . '",
+"CC99FF":"' . mce_escape( __('Plum') ) . '",
+"FFFFFF":"' . mce_escape( __('White') ) . '"
+},
 contextmenu:{
-align:"' . mce_escape( __('Alignment') ) . '",
-left:"' . mce_escape( __('Left') ) . '",
-center:"' . mce_escape( __('Center') ) . '",
-right:"' . mce_escape( __('Right') ) . '",
-full:"' . mce_escape( __('Full') ) . '"
+align:"' . mce_escape( /* translators: alignment */ __('Alignment') ) . '",
+left:"' . mce_escape( /* translators: alignment */ __('Left') ) . '",
+center:"' . mce_escape( /* translators: alignment */ __('Center') ) . '",
+right:"' . mce_escape( /* translators: alignment */ __('Right') ) . '",
+full:"' . mce_escape( /* translators: alignment */ __('Full') ) . '"
 },
 insertdatetime:{
-date_fmt:"' . mce_escape( __('%Y-%m-%d') ) . '",
-time_fmt:"' . mce_escape( __('%H:%M:%S') ) . '",
+date_fmt:"' . mce_escape( /* translators: year, month, date */ __('%Y-%m-%d') ) . '",
+time_fmt:"' . mce_escape( /* translators: hours, minutes, seconds */ __('%H:%M:%S') ) . '",
 insertdate_desc:"' . mce_escape( __('Insert date') ) . '",
 inserttime_desc:"' . mce_escape( __('Insert time') ) . '",
 months_long:"' . mce_escape( __('January').','.__('February').','.__('March').','.__('April').','.__('May').','.__('June').','.__('July').','.__('August').','.__('September').','.__('October').','.__('November').','.__('December') ) . '",
@@ -113,7 +147,9 @@ desc:"' . mce_escape( __('Edit CSS Style') ) . '"
 paste:{
 paste_text_desc:"' . mce_escape( __('Paste as Plain Text') ) . '",
 paste_word_desc:"' . mce_escape( __('Paste from Word') ) . '",
-selectall_desc:"' . mce_escape( __('Select All') ) . '"
+selectall_desc:"' . mce_escape( __('Select All') ) . '",
+plaintext_mode_sticky:"' . mce_escape( __('Paste is now in plain text mode. Click again to toggle back to regular paste mode. After you paste something you will be returned to regular paste mode.') ) . '",
+plaintext_mode:"' . mce_escape( __('Paste is now in plain text mode. Click again to toggle back to regular paste mode.') ) . '"
 },
 paste_dlg:{
 text_title:"' . mce_escape( __('Use CTRL+V on your keyboard to paste the text into the window.') ) . '",
@@ -150,8 +186,6 @@ desc:"' . mce_escape( __('Toggle fullscreen mode') ) . ' (Alt+Shift+G)"
 },
 media:{
 desc:"' . mce_escape( __('Insert / edit embedded media') ) . '",
-delta_width:"' . /* translators: Extra width for the media popup in pixels */ mce_escape( _x('0', 'media popup width') ) . '",
-delta_height:"' . /* translators: Extra height for the media popup in pixels */ mce_escape( _x('0', 'media popup height') ) . '",
 edit:"' . mce_escape( __('Edit embedded media') ) . '"
 },
 fullpage:{
@@ -172,11 +206,31 @@ langs:"' . mce_escape( __('Languages') ) . '",
 wait:"' . mce_escape( __('Please wait...') ) . '",
 sug:"' . mce_escape( __('Suggestions') ) . '",
 no_sug:"' . mce_escape( __('No suggestions') ) . '",
-no_mpell:"' . mce_escape( __('No misspellings found.') ) . '"
+no_mpell:"' . mce_escape( __('No misspellings found.') ) . '",
+learn_word:"' . mce_escape( __('Learn word') ) . '" 
 },
 pagebreak:{
-desc:"' . mce_escape( __('Insert page break.') ) . '"
-}}});
+desc:"' . mce_escape( __('Insert Page Break') ) . '"
+},
+advlist:{
+types:"' . mce_escape( __('Types') ) . '",
+def:"' . mce_escape( __('Default') ) . '",
+lower_alpha:"' . mce_escape( __('Lower alpha') ) . '",
+lower_greek:"' . mce_escape( __('Lower greek') ) . '",
+lower_roman:"' . mce_escape( __('Lower roman') ) . '",
+upper_alpha:"' . mce_escape( __('Upper alpha') ) . '",
+upper_roman:"' . mce_escape( __('Upper roman') ) . '",
+circle:"' . mce_escape( __('Circle') ) . '",
+disc:"' . mce_escape( __('Disc') ) . '",
+square:"' . mce_escape( __('Square') ) . '"
+},
+aria:{
+rich_text_area:"' . mce_escape( __('Rich Text Area') ) . '"
+},
+wordcount:{
+words:"' . mce_escape( __('Words:') ) . ' "
+}
+}});
 
 tinyMCE.addI18n("' . $language . '.advanced",{
 style_select:"' . mce_escape( /* translators: TinyMCE font styles */ _x('Styles', 'TinyMCE font styles') ) . '",
@@ -202,10 +256,10 @@ bold_desc:"' . mce_escape( __('Bold') ) . ' (Ctrl / Alt+Shift + B)",
 italic_desc:"' . mce_escape( __('Italic') ) . ' (Ctrl / Alt+Shift + I)",
 underline_desc:"' . mce_escape( __('Underline') ) . '",
 striketrough_desc:"' . mce_escape( __('Strikethrough') ) . ' (Alt+Shift+D)",
-justifyleft_desc:"' . mce_escape( __('Align left') ) . ' (Alt+Shift+L)",
-justifycenter_desc:"' . mce_escape( __('Align center') ) . ' (Alt+Shift+C)",
-justifyright_desc:"' . mce_escape( __('Align right') ) . ' (Alt+Shift+R)",
-justifyfull_desc:"' . mce_escape( __('Align full') ) . ' (Alt+Shift+J)",
+justifyleft_desc:"' . mce_escape( __('Align Left') ) . ' (Alt+Shift+L)",
+justifycenter_desc:"' . mce_escape( __('Align Center') ) . ' (Alt+Shift+C)",
+justifyright_desc:"' . mce_escape( __('Align Right') ) . ' (Alt+Shift+R)",
+justifyfull_desc:"' . mce_escape( __('Align Full') ) . ' (Alt+Shift+J)",
 bullist_desc:"' . mce_escape( __('Unordered list') ) . ' (Alt+Shift+U)",
 numlist_desc:"' . mce_escape( __('Ordered list') ) . ' (Alt+Shift+O)",
 outdent_desc:"' . mce_escape( __('Outdent') ) . '",
@@ -213,12 +267,8 @@ indent_desc:"' . mce_escape( __('Indent') ) . '",
 undo_desc:"' . mce_escape( __('Undo') ) . ' (Ctrl+Z)",
 redo_desc:"' . mce_escape( __('Redo') ) . ' (Ctrl+Y)",
 link_desc:"' . mce_escape( __('Insert/edit link') ) . ' (Alt+Shift+A)",
-link_delta_width:"' . /* translators: Extra width for the link popup in pixels */ mce_escape( _x('0', 'link popup width') ) . '",
-link_delta_height:"' . /* translators: Extra height for the link popup in pixels */ mce_escape( _x('0', 'link popup height') ) . '",
 unlink_desc:"' . mce_escape( __('Unlink') ) . ' (Alt+Shift+S)",
 image_desc:"' . mce_escape( __('Insert/edit image') ) . ' (Alt+Shift+M)",
-image_delta_width:"' . /* translators: Extra width for the image popup in pixels */ mce_escape( _x('0', 'image popup width') ) . '",
-image_delta_height:"' . /* translators: Extra height for the image popup in pixels */ mce_escape( _x('0', 'image popup height') ) . '",
 cleanup_desc:"' . mce_escape( __('Cleanup messy code') ) . '",
 code_desc:"' . mce_escape( __('Edit HTML Source') ) . '",
 sub_desc:"' . mce_escape( __('Subscript') ) . '",
@@ -242,8 +292,10 @@ path:"' . mce_escape( __('Path') ) . '",
 newdocument:"' . mce_escape( __('Are you sure you want to clear all contents?') ) . '",
 toolbar_focus:"' . mce_escape( __('Jump to tool buttons - Alt+Q, Jump to editor - Alt-Z, Jump to element path - Alt-X') ) . '",
 more_colors:"' . mce_escape( __('More colors') ) . '",
-colorpicker_delta_width:"' . /* translators: Extra width for the colorpicker popup in pixels */ mce_escape( _x('0', 'colorpicker popup width') ) . '",
-colorpicker_delta_height:"' . /* translators: Extra height for the colorpicker popup in pixels */ mce_escape( _x('0', 'colorpicker popup height') ) . '"
+shortcuts_desc:"' . mce_escape( __('Accessibility Help') ) . '",
+help_shortcut:" ' . mce_escape( __('Press ALT F10 for toolbar. Press ALT 0 for help.') ) . '",
+rich_text_area:"' . mce_escape( __('Rich Text Area') ) . '",
+toolbar:"' . mce_escape( __('Toolbar') ) . '"
 });
 
 tinyMCE.addI18n("' . $language . '.advanced_dlg",{
@@ -268,7 +320,7 @@ colorpicker_palette_title:"' . mce_escape( __('Palette colors') ) . '",
 colorpicker_named_tab:"' . mce_escape( __('Named') ) . '",
 colorpicker_named_title:"' . mce_escape( __('Named colors') ) . '",
 colorpicker_color:"' . mce_escape( __('Color:') ) . '",
-colorpicker_name:"' . mce_escape( __('Name:') ) . '",
+colorpicker_name:"' . mce_escape( _x('Name:', 'html attribute') ) . '",
 charmap_title:"' . mce_escape( __('Select custom character') ) . '",
 image_title:"' . mce_escape( __('Insert/edit image') ) . '",
 image_src:"' . mce_escape( __('Image URL') ) . '",
@@ -295,7 +347,9 @@ link_target_blank:"' . mce_escape( __('Open link in a new window') ) . '",
 link_titlefield:"' . mce_escape( __('Title') ) . '",
 link_is_email:"' . mce_escape( __('The URL you entered seems to be an email address, do you want to add the required mailto: prefix?') ) . '",
 link_is_external:"' . mce_escape( __('The URL you entered seems to external link, do you want to add the required http:// prefix?') ) . '",
-link_list:"' . mce_escape( __('Link list') ) . '"
+link_list:"' . mce_escape( __('Link list') ) . '",
+accessibility_help:"' . mce_escape( __('Accessibility Help') ) . '",
+accessibility_usage_title:"' . mce_escape( __('General Usage') ) . '"
 });
 
 tinyMCE.addI18n("' . $language . '.media_dlg",{
@@ -309,7 +363,7 @@ preview:"' . mce_escape( __('Preview') ) . '",
 constrain_proportions:"' . mce_escape( __('Constrain proportions') ) . '",
 type:"' . mce_escape( __('Type') ) . '",
 id:"' . mce_escape( __('Id') ) . '",
-name:"' . mce_escape( __('Name') ) . '",
+name:"' . mce_escape( _x('Name', 'html attribute') ) . '",
 class_name:"' . mce_escape( __('Class') ) . '",
 vspace:"' . mce_escape( __('V-Space') ) . '",
 hspace:"' . mce_escape( __('H-Space') ) . '",
@@ -336,7 +390,7 @@ correction:"' . mce_escape( __('No correction') ) . '",
 enablejavascript:"' . mce_escape( __('Enable JavaScript') ) . '",
 starttime:"' . mce_escape( __('Start time') ) . '",
 endtime:"' . mce_escape( __('End time') ) . '",
-href:"' . mce_escape( __('Href') ) . '",
+href:"' . mce_escape( __('href') ) . '",
 qtsrcchokespeed:"' . mce_escape( __('Choke speed') ) . '",
 target:"' . mce_escape( __('Target') ) . '",
 volume:"' . mce_escape( __('Volume') ) . '",
@@ -399,12 +453,18 @@ flv_autostart:"' . mce_escape( __('Auto start') ) . '",
 flv_loop:"' . mce_escape( __('Loop') ) . '",
 flv_showscalemodes:"' . mce_escape( __('Show scale modes') ) . '",
 flv_smoothvideo:"' . mce_escape( __('Smooth video') ) . '",
-flv_jscallback:"' . mce_escape( __('JS Callback') ) . '"
+flv_jscallback:"' . mce_escape( __('JS Callback') ) . '",
+html5_video_options:"' . mce_escape( __('HTML5 Video Options') ) . '",
+altsource1:"' . mce_escape( __('Alternative source 1') ) . '",
+altsource2:"' . mce_escape( __('Alternative source 2') ) . '",
+preload:"' . mce_escape( __('Preload') ) . '",
+poster:"' . mce_escape( __('Poster') ) . '",
+source:"' . mce_escape( __('Source') ) . '"
 });
 
 tinyMCE.addI18n("' . $language . '.wordpress",{
 wp_adv_desc:"' . mce_escape( __('Show/Hide Kitchen Sink') )  . ' (Alt+Shift+Z)",
-wp_more_desc:"' . mce_escape( __('Insert More tag') ) . ' (Alt+Shift+T)",
+wp_more_desc:"' . mce_escape( __('Insert More Tag') ) . ' (Alt+Shift+T)",
 wp_page_desc:"' . mce_escape( __('Insert Page break') ) . ' (Alt+Shift+P)",
 wp_help_desc:"' . mce_escape( __('Help') ) . ' (Alt+Shift+H)",
 wp_more_alt:"' . mce_escape( __('More...') ) . '",
@@ -448,8 +508,8 @@ s100:"' . mce_escape( __('100%') ) . '",
 s110:"' . mce_escape( __('110%') ) . '",
 s120:"' . mce_escape( __('120%') ) . '",
 s130:"' . mce_escape( __('130%') ) . '",
-img_title:"' . mce_escape( __('Edit Image Title') ) . '",
-caption:"' . mce_escape( __('Edit Image Caption') ) . '",
-alt:"' . mce_escape( __('Edit Alternate Text') ) . '"
+img_title:"' . mce_escape( __('Title') ) . '",
+caption:"' . mce_escape( __('Caption') ) . '",
+alt:"' . mce_escape( __('Alternate Text') ) . '"
 });
 ';

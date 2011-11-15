@@ -3,10 +3,11 @@ jQuery(document).ready(function($) {
 
 	gallerySortableInit = function() {
 		gallerySortable = $('#media-items').sortable( {
-			items: '.media-item',
+			items: 'div.media-item',
 			placeholder: 'sorthelper',
 			axis: 'y',
 			distance: 2,
+			handle: 'div.filename',
 			stop: function(e, ui) {
 				// When an update has occurred, adjust the order for each item
 				var all = $('#media-items').sortable('toArray'), len = all.length;
@@ -109,18 +110,10 @@ wpgallery = {
 		return window.dialogArguments || opener || parent || top;
 	},
 
-	restoreSelection : function() {
-		var t = this;
-
-		if (tinymce.isIE)
-			t.editor.selection.moveToBookmark(t.editor.windowManager.bookmark);
-	},
-
 	setup : function() {
 		var t = this, a, ed = t.editor, g, columns, link, order, orderby;
 		if ( ! t.mcemode ) return;
 
-		t.restoreSelection();
 		t.el = ed.selection.getNode();
 
 		if ( t.el.nodeName != 'IMG' || ! ed.dom.hasClass(t.el, 'wpGallery') ) {

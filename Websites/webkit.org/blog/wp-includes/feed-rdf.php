@@ -23,9 +23,8 @@ echo '<?xml version="1.0" encoding="'.get_option('blog_charset').'"?'.'>'; ?>
 	<link><?php bloginfo_rss('url') ?></link>
 	<description><?php bloginfo_rss('description') ?></description>
 	<dc:date><?php echo mysql2date('Y-m-d\TH:i:s\Z', get_lastpostmodified('GMT'), false); ?></dc:date>
-	<?php the_generator( 'rdf' ); ?>
 	<sy:updatePeriod><?php echo apply_filters( 'rss_update_period', 'hourly' ); ?></sy:updatePeriod>
-	<sy:updateFrequency>1</sy:updateFrequency>
+	<sy:updateFrequency><?php echo apply_filters( 'rss_update_frequency', '1' ); ?></sy:updateFrequency>
 	<sy:updateBase>2000-01-01T12:00+00:00</sy:updateBase>
 	<?php do_action('rdf_header'); ?>
 	<items>
@@ -46,8 +45,8 @@ echo '<?xml version="1.0" encoding="'.get_option('blog_charset').'"?'.'>'; ?>
 <?php if (get_option('rss_use_excerpt')) : ?>
 	<description><?php the_excerpt_rss() ?></description>
 <?php else : ?>
-	<description><?php the_content_rss('', 0, '', get_option('rss_excerpt_length'), 2) ?></description>
-	<content:encoded><![CDATA[<?php the_content('', 0, '') ?>]]></content:encoded>
+	<description><?php the_excerpt_rss() ?></description>
+	<content:encoded><![CDATA[<?php the_content_feed('rdf') ?>]]></content:encoded>
 <?php endif; ?>
 	<?php do_action('rdf_item'); ?>
 </item>

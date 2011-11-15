@@ -1,32 +1,42 @@
 <?php
 /**
- * This holds the version number in a separate file so we can bump it without cluttering the SVN
- */
-
-/**
  * The WordPress version string
  *
  * @global string $wp_version
  */
-$wp_version = '2.8.5';
+$wp_version = '3.2.1';
 
 /**
  * Holds the WordPress DB revision, increments when changes are made to the WordPress DB schema.
  *
  * @global int $wp_db_version
  */
-$wp_db_version = 11548;
+$wp_db_version = 18226;
 
 /**
  * Holds the TinyMCE version
  *
  * @global string $tinymce_version
  */
-$tinymce_version = '3241-1141';
+$tinymce_version = '342-20110630';
 
 /**
  * Holds the cache manifest version
  *
  * @global string $manifest_version
  */
-$manifest_version = '20090616';
+$manifest_version = '20111113';
+
+/**
+ * Holds the required PHP version
+ *
+ * @global string $required_php_version
+ */
+$required_php_version = '5.2.4';
+
+/**
+ * Holds the required MySQL version
+ *
+ * @global string $required_mysql_version
+ */
+$required_mysql_version = '5.0';

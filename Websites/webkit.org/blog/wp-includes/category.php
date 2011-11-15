@@ -15,7 +15,7 @@
  */
 function get_all_category_ids() {
 	if ( ! $cat_ids = wp_cache_get( 'all_category_ids', 'category' ) ) {
-		$cat_ids = get_terms( 'category', 'fields=ids&get=all' );
+		$cat_ids = get_terms( 'category', array('fields' => 'ids', 'get' => 'all') );
 		wp_cache_add( 'all_category_ids', $cat_ids, 'category' );
 	}
 
@@ -37,12 +37,17 @@ function get_all_category_ids() {
  * @return array List of categories.
  */
 function &get_categories( $args = '' ) {
-	$defaults = array( 'type' => 'category' );
+	$defaults = array( 'taxonomy' => 'category' );
 	$args = wp_parse_args( $args, $defaults );
 
-	$taxonomy = apply_filters( 'get_categories_taxonomy', 'category', $args );
-	if ( 'link' == $args['type'] )
-		$taxonomy = 'link_category';
+	$taxonomy = apply_filters( 'get_categories_taxonomy', $args['taxonomy'], $args );
+
+	// Back compat
+	if ( isset($args['type']) && 'link' == $args['type'] ) {
+		_deprecated_argument( __FUNCTION__, '3.0', '' );
+		$taxonomy = $args['taxonomy'] = 'link_category';
+	}
+
 	$categories = (array) get_terms( $taxonomy, $args );
 
 	foreach ( array_keys( $categories ) as $k )
@@ -98,7 +103,7 @@ function &get_category( $category, $output = OBJECT, $filter = 'raw' ) {
  * @since 2.1.0
  *
  * @param string $category_path URL containing category slugs.
- * @param bool $full_match Optional. Whether should match full path or not.
+ * @param bool $full_match Optional. Whether full path should be matched.
  * @param string $output Optional. Constant OBJECT, ARRAY_A, or ARRAY_N
  * @return null|object|array Null on failure. Type is based on $output value.
  */
@@ -113,7 +118,7 @@ function get_category_by_path( $category_path, $full_match = true, $output = OBJ
 	foreach ( (array) $category_paths as $pathdir )
 		$full_path .= ( $pathdir != '' ? '/' : '' ) . sanitize_title( $pathdir );
 
-	$categories = get_terms( 'category', "get=all&slug=$leaf_path" );
+	$categories = get_terms( 'category', array('get' => 'all', 'slug' => $leaf_path) );
 
 	if ( empty( $categories ) )
 		return null;
@@ -178,11 +183,13 @@ function get_cat_ID( $cat_name='General' ) {
  * @since 1.0.0
  *
  * @param int $cat_id Category ID
- * @return string Category name
+ * @return string Category name, or an empty string if category doesn't exist.
  */
 function get_cat_name( $cat_id ) {
 	$cat_id = (int) $cat_id;
 	$category = &get_category( $cat_id );
+	if ( ! $category || is_wp_error( $category ) )
+		return '';
 	return $category->name;
 }
 
@@ -296,22 +303,6 @@ function &get_tag( $tag, $output = OBJECT, $filter = 'raw' ) {
 
 
 /* Cache */
-
-
-/**
- * Update the categories cache.
- *
- * This function does not appear to be used anymore or does not appear to be
- * needed. It might be a legacy function left over from when there was a need
- * for updating the category cache.
- *
- * @since 1.5.0
- *
- * @return bool Always return True
- */
-function update_category_cache() {
-	return true;
-}
 
 
 /**

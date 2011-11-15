@@ -39,8 +39,8 @@ class WP_Scripts extends WP_Dependencies {
 	 *
 	 * Prints the scripts passed to it or the print queue.  Also prints all necessary dependencies.
 	 *
-	 * @param mixed handles (optional) Scripts to be printed.  (void) prints queue, (string) prints that script, (array of strings) prints those scripts.
-	 * @param int group (optional) If scripts were queued in groups prints this group number.
+	 * @param mixed $handles (optional) Scripts to be printed.  (void) prints queue, (string) prints that script, (array of strings) prints those scripts.
+	 * @param int $group (optional) If scripts were queued in groups prints this group number.
 	 * @return array Scripts that have been printed
 	 */
 	function print_scripts( $handles = false, $group = false ) {
@@ -90,9 +90,13 @@ class WP_Scripts extends WP_Dependencies {
 		if ( false === $group && in_array($handle, $this->in_footer, true) )
 			$this->in_footer = array_diff( $this->in_footer, (array) $handle );
 
-		$ver = $this->registered[$handle]->ver ? $this->registered[$handle]->ver : $this->default_version;
+		if ( null === $this->registered[$handle]->ver )
+			$ver = '';
+		else
+			$ver = $this->registered[$handle]->ver ? $this->registered[$handle]->ver : $this->default_version;
+
 		if ( isset($this->args[$handle]) )
-			$ver .= '&amp;' . $this->args[$handle];
+			$ver = $ver ? $ver . '&amp;' . $this->args[$handle] : $this->args[$handle];
 
 		$src = $this->registered[$handle]->src;
 
@@ -114,7 +118,8 @@ class WP_Scripts extends WP_Dependencies {
 			$src = $this->base_url . $src;
 		}
 
-		$src = add_query_arg('ver', $ver, $src);
+		if ( !empty($ver) )
+			$src = add_query_arg('ver', $ver, $src);
 		$src = esc_url(apply_filters( 'script_loader_src', $src, $handle ));
 
 		if ( $this->do_concat )
@@ -130,9 +135,9 @@ class WP_Scripts extends WP_Dependencies {
 	 *
 	 * Localizes only if script has already been added
 	 *
-	 * @param string handle Script name
-	 * @param string object_name Name of JS object to hold l10n info
-	 * @param array l10n Array of JS var name => localized string
+	 * @param string $handle Script name
+	 * @param string $object_name Name of JS object to hold l10n info
+	 * @param array $l10n Array of JS var name => localized string
 	 * @return bool Successful localization
 	 */
 	function localize( $handle, $object_name, $l10n ) {
@@ -177,6 +182,9 @@ class WP_Scripts extends WP_Dependencies {
 	function in_default_dir($src) {
 		if ( ! $this->default_dirs )
 			return true;
+
+		if ( 0 === strpos( $src, '/wp-includes/js/l10n' ) )
+			return false;
 
 		foreach ( (array) $this->default_dirs as $test ) {
 			if ( 0 === strpos($src, $test) )

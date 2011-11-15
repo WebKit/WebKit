@@ -17,18 +17,31 @@ require( dirname(__FILE__) . '/wp-load.php' );
 
 nocache_headers();
 
-$comment_post_ID = (int) $_POST['comment_post_ID'];
+$comment_post_ID = isset($_POST['comment_post_ID']) ? (int) $_POST['comment_post_ID'] : 0;
 
-$status = $wpdb->get_row( $wpdb->prepare("SELECT post_status, comment_status FROM $wpdb->posts WHERE ID = %d", $comment_post_ID) );
+$post = get_post($comment_post_ID);
 
-if ( empty($status->comment_status) ) {
+if ( empty($post->comment_status) ) {
 	do_action('comment_id_not_found', $comment_post_ID);
 	exit;
-} elseif ( !comments_open($comment_post_ID) ) {
+}
+
+// get_post_status() will get the parent status for attachments.
+$status = get_post_status($post);
+
+$status_obj = get_post_status_object($status);
+
+if ( !comments_open($comment_post_ID) ) {
 	do_action('comment_closed', $comment_post_ID);
 	wp_die( __('Sorry, comments are closed for this item.') );
-} elseif ( in_array($status->post_status, array('draft', 'pending') ) ) {
+} elseif ( 'trash' == $status ) {
+	do_action('comment_on_trash', $comment_post_ID);
+	exit;
+} elseif ( !$status_obj->public && !$status_obj->private ) {
 	do_action('comment_on_draft', $comment_post_ID);
+	exit;
+} elseif ( post_password_required($comment_post_ID) ) {
+	do_action('comment_on_password_protected', $comment_post_ID);
 	exit;
 } else {
 	do_action('pre_comment_on_post', $comment_post_ID);
@@ -54,7 +67,7 @@ if ( $user->ID ) {
 		}
 	}
 } else {
-	if ( get_option('comment_registration') || 'private' == $status->post_status )
+	if ( get_option('comment_registration') || 'private' == $status )
 		wp_die( __('Sorry, you must be logged in to post a comment.') );
 }
 
@@ -88,5 +101,5 @@ $location = empty($_POST['redirect_to']) ? get_comment_link($comment_id) : $_POS
 $location = apply_filters('comment_post_redirect', $location, $comment);
 
 wp_redirect($location);
-
+exit;
 ?>

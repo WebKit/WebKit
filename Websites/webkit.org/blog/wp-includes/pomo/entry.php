@@ -2,12 +2,12 @@
 /**
  * Contains Translation_Entry class
  *
- * @version $Id: entry.php 115 2009-05-11 18:56:15Z nbachiyski $
+ * @version $Id: entry.php 406 2010-02-07 11:10:24Z nbachiyski $
  * @package pomo
  * @subpackage entry
  */
 
-
+if ( !class_exists( 'Translation_Entry' ) ):
 /**
  * Translation_Entry class encapsulates a translatable string
  */
@@ -46,7 +46,6 @@ class Translation_Entry {
 			return;
 		}
 		// get member variable values from args hash
-		$object_varnames = array_keys(get_object_vars($this));
 		foreach ($args as $varname => $value) {
 			$this->$varname = $value;
 		}
@@ -67,4 +66,4 @@ class Translation_Entry {
 		return is_null($this->context)? $this->singular : $this->context.chr(4).$this->singular;
 	}
 }
-?>
+endif;

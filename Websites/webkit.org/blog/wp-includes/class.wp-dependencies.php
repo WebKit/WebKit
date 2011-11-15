@@ -25,23 +25,16 @@ class WP_Dependencies {
 	var $groups = array();
 	var $group = 0;
 
-	function WP_Dependencies() {
-		$args = func_get_args();
-		call_user_func_array( array(&$this, '__construct'), $args );
-	}
-
-	function __construct() {}
-
 	/**
 	 * Do the dependencies
 	 *
 	 * Process the items passed to it or the queue.  Processes all dependencies.
 	 *
-	 * @param mixed handles (optional) items to be processed.  (void) processes queue, (string) process that item, (array of strings) process those items
+	 * @param mixed $handles (optional) items to be processed. (void) processes queue, (string) process that item, (array of strings) process those items
 	 * @return array Items that have been processed
 	 */
 	function do_items( $handles = false, $group = false ) {
-		// Print the queue if nothing is passed.  If a string is passed, print that script.  If an array is passed, print those scripts.
+		// Print the queue if nothing is passed. If a string is passed, print that script. If an array is passed, print those scripts.
 		$handles = false === $handles ? $this->queue : (array) $handles;
 		$this->all_deps( $handles );
 
@@ -72,9 +65,9 @@ class WP_Dependencies {
 	 *
 	 * Recursively builds array of items to process taking dependencies into account.  Does NOT catch infinite loops.
 	 *
-
-	 * @param mixed handles Accepts (string) dep name or (array of strings) dep names
-	 * @param bool recursion Used internally when function calls itself
+	 *
+	 * @param mixed $handles Accepts (string) dep name or (array of strings) dep names
+	 * @param bool $recursion Used internally when function calls itself
 	 */
 	function all_deps( $handles, $recursion = false, $group = false ) {
 		if ( !$handles = (array) $handles )
@@ -125,10 +118,10 @@ class WP_Dependencies {
 	 *
 	 * Adds the item only if no item of that name already exists
 	 *
-	 * @param string handle Script name
-	 * @param string src Script url
-	 * @param array deps (optional) Array of script names on which this script depends
-	 * @param string ver (optional) Script version (used for cache busting)
+	 * @param string $handle Script name
+	 * @param string $src Script url
+	 * @param array $deps (optional) Array of script names on which this script depends
+	 * @param string $ver (optional) Script version (used for cache busting)
 	 * @return array Hierarchical array of dependencies
 	 */
 	function add( $handle, $src, $deps = array(), $ver = false, $args = null ) {
@@ -143,9 +136,9 @@ class WP_Dependencies {
 	 *
 	 * Adds data only if script has already been added
 	 *
-	 * @param string handle Script name
-	 * @param string data_name Name of object in which to store extra data
-	 * @param array data Array of extra data
+	 * @param string $handle Script name
+	 * @param string $data_name Name of object in which to store extra data
+	 * @param array $data Array of extra data
 	 * @return bool success
 	 */
 	function add_data( $handle, $data_name, $data ) {
@@ -171,8 +164,14 @@ class WP_Dependencies {
 	}
 
 	function dequeue( $handles ) {
-		foreach ( (array) $handles as $handle )
-			unset( $this->queue[$handle] );
+		foreach ( (array) $handles as $handle ) {
+			$handle = explode('?', $handle);
+			$key = array_search($handle[0], $this->queue);
+			if ( false !== $key ) {
+				unset($this->queue[$key]);
+				unset($this->args[$handle[0]]);
+			}
+		}
 	}
 
 	function query( $handle, $list = 'registered' ) { // registered, queue, done, to_do
@@ -222,12 +221,10 @@ class _WP_Dependency {
 
 	var $extra = array();
 
-	function _WP_Dependency() {
+	function __construct() {
 		@list($this->handle, $this->src, $this->deps, $this->ver, $this->args) = func_get_args();
 		if ( !is_array($this->deps) )
 			$this->deps = array();
-		if ( !$this->ver )
-			$this->ver = false;
 	}
 
 	function add_data( $name, $data ) {

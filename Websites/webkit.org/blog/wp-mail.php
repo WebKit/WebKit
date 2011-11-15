@@ -10,8 +10,25 @@
 /** Make sure that the WordPress bootstrap has run before continuing. */
 require(dirname(__FILE__) . '/wp-load.php');
 
+if ( ! apply_filters( 'enable_post_by_email_configuration', true ) )
+	wp_die( __( 'This action has been disabled by the administrator.' ) );
+
+/** Allow a plugin to do a complete takeover of Post by Email **/
+do_action('wp-mail.php');
+
 /** Get the POP3 class with which to access the mailbox. */
 require_once( ABSPATH . WPINC . '/class-pop3.php' );
+
+/** Only check at this interval for new messages. */
+if ( !defined('WP_MAIL_INTERVAL') )
+	define('WP_MAIL_INTERVAL', 300); // 5 minutes
+
+$last_checked = get_transient('mailserver_last_checked');
+
+if ( $last_checked )
+	wp_die(__('Slow down cowboy, no need to check for new mails so often!'));
+
+set_transient('mailserver_last_checked', true, WP_MAIL_INTERVAL);
 
 $time_difference = get_option('gmt_offset') * 3600;
 
@@ -19,11 +36,17 @@ $phone_delim = '::';
 
 $pop3 = new POP3();
 
-if ( ! $pop3->connect(get_option('mailserver_url'), get_option('mailserver_port') ) ||
-	! $pop3->user(get_option('mailserver_login')) ||
-	( ! $count = $pop3->pass(get_option('mailserver_pass')) ) ) {
-		$pop3->quit();
-		wp_die( ( 0 === $count ) ? __('There doesn&#8217;t seem to be any new mail.') : esc_html($pop3->ERROR) );
+if ( !$pop3->connect( get_option('mailserver_url'), get_option('mailserver_port') ) || !$pop3->user( get_option('mailserver_login') ) )
+	wp_die( esc_html( $pop3->ERROR ) );
+
+$count = $pop3->pass( get_option('mailserver_pass') );
+
+if( false === $count )
+	wp_die( esc_html( $pop3->ERROR ) );
+
+if( 0 === $count ) {
+	$pop3->quit();
+	wp_die( __('There doesn&#8217;t seem to be any new mail.') );
 }
 
 for ( $i = 1; $i <= $count; $i++ ) {

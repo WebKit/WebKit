@@ -8,7 +8,7 @@
 /**
  * Schedules a hook to run only once.
  *
- * Schedules a hook which will be executed once by the Wordpress actions core at
+ * Schedules a hook which will be executed once by the WordPress actions core at
  * a time which you specify. The action will fire off when someone visits your
  * WordPress site, if the schedule time has passed.
  *
@@ -26,8 +26,16 @@ function wp_schedule_single_event( $timestamp, $hook, $args = array()) {
 		return;
 
 	$crons = _get_cron_array();
-	$key = md5(serialize($args));
-	$crons[$timestamp][$hook][$key] = array( 'schedule' => false, 'args' => $args );
+	$event = (object) array( 'hook' => $hook, 'timestamp' => $timestamp, 'schedule' => false, 'args' => $args );
+	$event = apply_filters('schedule_event', $event);
+
+	// A plugin disallowed this event
+	if ( ! $event )
+		return false;
+
+	$key = md5(serialize($event->args));
+
+	$crons[$event->timestamp][$event->hook][$key] = array( 'schedule' => $event->schedule, 'args' => $event->args );
 	uksort( $crons, "strnatcasecmp" );
 	_set_cron_array( $crons );
 }
@@ -42,6 +50,8 @@ function wp_schedule_single_event( $timestamp, $hook, $args = array()) {
  * Valid values for the recurrence are hourly, daily and twicedaily.  These can
  * be extended using the cron_schedules filter in wp_get_schedules().
  *
+ * Use wp_next_scheduled() to prevent duplicates
+ *
  * @since 2.1.0
  *
  * @param int $timestamp Timestamp for when to run the event.
@@ -53,10 +63,20 @@ function wp_schedule_single_event( $timestamp, $hook, $args = array()) {
 function wp_schedule_event( $timestamp, $recurrence, $hook, $args = array()) {
 	$crons = _get_cron_array();
 	$schedules = wp_get_schedules();
-	$key = md5(serialize($args));
+
 	if ( !isset( $schedules[$recurrence] ) )
 		return false;
-	$crons[$timestamp][$hook][$key] = array( 'schedule' => $recurrence, 'args' => $args, 'interval' => $schedules[$recurrence]['interval'] );
+
+	$event = (object) array( 'hook' => $hook, 'timestamp' => $timestamp, 'schedule' => $recurrence, 'args' => $args, 'interval' => $schedules[$recurrence]['interval'] );
+	$event = apply_filters('schedule_event', $event);
+
+	// A plugin disallowed this event
+	if ( ! $event )
+		return false;
+
+	$key = md5(serialize($event->args));
+
+	$crons[$event->timestamp][$event->hook][$key] = array( 'schedule' => $event->schedule, 'args' => $event->args, 'interval' => $event->interval );
 	uksort( $crons, "strnatcasecmp" );
 	_set_cron_array( $crons );
 }
@@ -90,10 +110,10 @@ function wp_reschedule_event( $timestamp, $recurrence, $hook, $args = array()) {
 
 	$now = time();
 
-    if ( $timestamp >= $now )
-        $timestamp = $now + $interval;
-    else
-        $timestamp = $now + ($interval - (($now - $timestamp) % $interval));
+	if ( $timestamp >= $now )
+		$timestamp = $now + $interval;
+	else
+		$timestamp = $now + ($interval - (($now - $timestamp) % $interval));
 
 	wp_schedule_event( $timestamp, $recurrence, $hook, $args );
 }
@@ -130,10 +150,15 @@ function wp_unschedule_event( $timestamp, $hook, $args = array() ) {
  * @since 2.1.0
  *
  * @param string $hook Action hook, the execution of which will be unscheduled.
- * @param mixed $args,... Optional. Event arguments.
+ * @param array $args Optional. Arguments that were to be pass to the hook's callback function.
  */
-function wp_clear_scheduled_hook( $hook ) {
-	$args = array_slice( func_get_args(), 1 );
+function wp_clear_scheduled_hook( $hook, $args = array() ) {
+	// Backward compatibility
+	// Previously this function took the arguments as discrete vars rather than an array like the rest of the API
+	if ( !is_array($args) ) {
+		_deprecated_argument( __FUNCTION__, '3.0', __('This argument has changed to an array to match the behavior of the other cron functions.') );
+		$args = array_slice( func_get_args(), 1 );
+	}
 
 	while ( $timestamp = wp_next_scheduled( $hook, $args ) )
 		wp_unschedule_event( $timestamp, $hook, $args );
@@ -176,14 +201,6 @@ function spawn_cron( $local_time = 0 ) {
 		return;
 
 	/*
-	 * do not even start the cron if local server timer has drifted
-	 * such as due to power failure, or misconfiguration
-	 */
-	$timer_accurate = check_server_timer( $local_time );
-	if ( !$timer_accurate )
-		return;
-
-	/*
 	* multiple processes on multiple web servers can run this code concurrently
 	* try to make this as atomic as possible by setting doing_cron switch
 	*/
@@ -219,7 +236,7 @@ function spawn_cron( $local_time = 0 ) {
 		while ( @ob_end_flush() );
 		flush();
 
-		@include_once(ABSPATH . 'wp-cron.php');
+		WP_DEBUG ? include_once( ABSPATH . 'wp-cron.php' ) : @include_once( ABSPATH . 'wp-cron.php' );
 		return;
 	}
 
@@ -388,10 +405,3 @@ function _upgrade_cron_array($cron) {
 	update_option( 'cron', $new_cron );
 	return $new_cron;
 }
-
-// stub for checking server timer accuracy, using outside standard time sources
-function check_server_timer( $local_time ) {
-	return true;
-}
-
-?>

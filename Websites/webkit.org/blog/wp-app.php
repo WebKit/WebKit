@@ -2,8 +2,6 @@
 /**
  * Atom Publishing Protocol support for WordPress
  *
- * @author Original by Elias Torres <http://torrez.us/archives/2006/08/31/491/>
- * @author Modified by Dougal Campbell <http://dougal.gunters.org/>
  * @version 1.0.5-dc
  */
 
@@ -17,14 +15,8 @@ define('APP_REQUEST', true);
 /** Set up WordPress environment */
 require_once('./wp-load.php');
 
-/** Post Template API */
-require_once(ABSPATH . WPINC . '/post-template.php');
-
 /** Atom Publishing Protocol Class */
 require_once(ABSPATH . WPINC . '/atomlib.php');
-
-/** Feed Handling API */
-require_once(ABSPATH . WPINC . '/feed.php');
 
 /** Admin Image API for metadata updating */
 require_once(ABSPATH . '/wp-admin/includes/image.php');
@@ -68,22 +60,6 @@ function log_app($label,$msg) {
 		fclose($fp);
 	}
 }
-
-if ( !function_exists('wp_set_current_user') ) :
-/**
- * @ignore
- */
-function wp_set_current_user($id, $name = '') {
-	global $current_user;
-
-	if ( isset($current_user) && ($id == $current_user->ID) )
-		return $current_user;
-
-	$current_user = new WP_User($id, $name);
-
-	return $current_user;
-}
-endif;
 
 /**
  * Filter to add more post statuses.
@@ -240,18 +216,15 @@ class AtomServer {
 	var $do_output = true;
 
 	/**
-	 * PHP4 constructor - Sets up object properties.
+	 * Constructor - Sets up object properties.
 	 *
 	 * @since 2.2.0
 	 * @return AtomServer
 	 */
-	function AtomServer() {
+	function __construct() {
 
-		$this->script_name = array_pop(explode('/',$_SERVER['SCRIPT_NAME']));
-		$this->app_base = get_bloginfo('url') . '/' . $this->script_name . '/';
-		if ( isset($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) == 'on' ) {
-			$this->app_base = preg_replace( '/^http:\/\//', 'https://', $this->app_base );
-		}
+		$this->script_name = array_pop( explode( '/', $_SERVER['SCRIPT_NAME'] ) );
+		$this->app_base = site_url( $this->script_name . '/' );
 
 		$this->selectors = array(
 			'@/service$@' =>
@@ -287,7 +260,7 @@ class AtomServer {
 	function handle_request() {
 		global $always_authenticate;
 
-		if( !empty( $_SERVER['ORIG_PATH_INFO'] ) )
+		if ( !empty( $_SERVER['ORIG_PATH_INFO'] ) )
 			$path = $_SERVER['ORIG_PATH_INFO'];
 		else
 			$path = $_SERVER['PATH_INFO'];
@@ -300,40 +273,38 @@ class AtomServer {
 		//$this->process_conditionals();
 
 		// exception case for HEAD (treat exactly as GET, but don't output)
-		if($method == 'HEAD') {
+		if ($method == 'HEAD') {
 			$this->do_output = false;
 			$method = 'GET';
 		}
 
 		// redirect to /service in case no path is found.
-		if(strlen($path) == 0 || $path == '/') {
+		if (strlen($path) == 0 || $path == '/')
 			$this->redirect($this->get_service_url());
-		}
 
 		// check to see if AtomPub is enabled
-		if( !get_option( 'enable_app' ) )
-			$this->forbidden( sprintf( __( 'AtomPub services are disabled on this blog.  An admin user can enable them at %s' ), admin_url('options-writing.php') ) );
+		if ( !get_option( 'enable_app' ) )
+			$this->forbidden( sprintf( __( 'AtomPub services are disabled on this site.  An admin user can enable them at %s' ), admin_url('options-writing.php') ) );
 
 		// dispatch
-		foreach($this->selectors as $regex => $funcs) {
-			if(preg_match($regex, $path, $matches)) {
-			if(isset($funcs[$method])) {
+		foreach ( $this->selectors as $regex => $funcs ) {
+			if ( preg_match($regex, $path, $matches) ) {
+				if ( isset($funcs[$method]) ) {
 
-				// authenticate regardless of the operation and set the current
-				// user. each handler will decide if auth is required or not.
-				if(!$this->authenticate()) {
-					if ($always_authenticate) {
-						$this->auth_required('Credentials required.');
+					// authenticate regardless of the operation and set the current
+					// user. each handler will decide if auth is required or not.
+					if ( !$this->authenticate() ) {
+						if ( $always_authenticate )
+							$this->auth_required('Credentials required.');
 					}
-				}
 
-				array_shift($matches);
-				call_user_func_array(array(&$this,$funcs[$method]), $matches);
-				exit();
-			} else {
-				// only allow what we have handlers for...
-				$this->not_allowed(array_keys($funcs));
-			}
+					array_shift($matches);
+					call_user_func_array(array(&$this,$funcs[$method]), $matches);
+					exit();
+				} else {
+					// only allow what we have handlers for...
+					$this->not_allowed(array_keys($funcs));
+				}
 			}
 		}
 
@@ -349,17 +320,18 @@ class AtomServer {
 	function get_service() {
 		log_app('function','get_service()');
 
-		if( !current_user_can( 'edit_posts' ) )
-			$this->auth_required( __( 'Sorry, you do not have the right to access this blog.' ) );
+		if ( !current_user_can( 'edit_posts' ) )
+			$this->auth_required( __( 'Sorry, you do not have the right to access this site.' ) );
 
 		$entries_url = esc_attr($this->get_entries_url());
 		$categories_url = esc_attr($this->get_categories_url());
 		$media_url = esc_attr($this->get_attachments_url());
+		$accepted_media_types = '';
 		foreach ($this->media_content_types as $med) {
 			$accepted_media_types = $accepted_media_types . "<accept>" . $med . "</accept>";
 		}
 		$atom_prefix="atom";
-		$atom_blogname=get_bloginfo('name');
+		$atom_blogname = get_bloginfo('name');
 		$service_doc = <<<EOD
 <service xmlns="$this->ATOMPUB_NS" xmlns:$atom_prefix="$this->ATOM_NS">
   <workspace>
@@ -389,16 +361,16 @@ EOD;
 	function get_categories_xml() {
 		log_app('function','get_categories_xml()');
 
-		if( !current_user_can( 'edit_posts' ) )
-			$this->auth_required( __( 'Sorry, you do not have the right to access this blog.' ) );
+		if ( !current_user_can( 'edit_posts' ) )
+			$this->auth_required( __( 'Sorry, you do not have the right to access this site.' ) );
 
-		$home = esc_attr(get_bloginfo_rss('home'));
+		$home = esc_attr(get_bloginfo_rss('url'));
 
 		$categories = "";
-		$cats = get_categories("hierarchical=0&hide_empty=0");
-		foreach ((array) $cats as $cat) {
+		$cats = get_categories(array('hierarchical' => 0, 'hide_empty' => 0));
+		foreach ( (array) $cats as $cat ) {
 			$categories .= "    <category term=\"" . esc_attr($cat->name) .  "\" />\n";
-}
+		}
 		$output = <<<EOD
 <app:categories xmlns:app="$this->ATOMPUB_NS"
 	xmlns="$this->ATOM_NS"
@@ -406,8 +378,8 @@ EOD;
 	$categories
 </app:categories>
 EOD;
-	$this->output($output, $this->CATEGORIES_CONTENT_TYPE);
-}
+		$this->output($output, $this->CATEGORIES_CONTENT_TYPE);
+	}
 
 	/**
 	 * Create new post.
@@ -415,39 +387,39 @@ EOD;
 	 * @since 2.2.0
 	 */
 	function create_post() {
-		global $blog_id, $user_ID;
+		global $user_ID;
 		$this->get_accepted_content_type($this->atom_content_types);
 
 		$parser = new AtomParser();
-		if(!$parser->parse()) {
+		if ( !$parser->parse() )
 			$this->client_error();
-		}
 
 		$entry = array_pop($parser->feed->entries);
 
 		log_app('Received entry:', print_r($entry,true));
 
 		$catnames = array();
-		foreach($entry->categories as $cat)
+		foreach ( $entry->categories as $cat ) {
 			array_push($catnames, $cat["term"]);
+		}
 
 		$wp_cats = get_categories(array('hide_empty' => false));
 
 		$post_category = array();
 
-		foreach($wp_cats as $cat) {
-			if(in_array($cat->name, $catnames))
+		foreach ( $wp_cats as $cat ) {
+			if ( in_array($cat->name, $catnames) )
 				array_push($post_category, $cat->term_id);
 		}
 
-		$publish = (isset($entry->draft) && trim($entry->draft) == 'yes') ? false : true;
+		$publish = ! ( isset( $entry->draft ) && 'yes' == trim( $entry->draft ) );
 
 		$cap = ($publish) ? 'publish_posts' : 'edit_posts';
 
-		if(!current_user_can($cap))
+		if ( !current_user_can($cap) )
 			$this->auth_required(__('Sorry, you do not have the right to edit/publish new posts.'));
 
-		$blog_ID = (int ) $blog_id;
+		$blog_ID = get_current_blog_id();
 		$post_status = ($publish) ? 'publish' : 'draft';
 		$post_author = (int) $user_ID;
 		$post_title = $entry->title[1];
@@ -469,7 +441,7 @@ EOD;
 		if ( is_wp_error( $postID ) )
 			$this->internal_error($postID->get_error_message());
 
-		if (!$postID)
+		if ( !$postID )
 			$this->internal_error(__('Sorry, your entry could not be posted. Something wrong happened.'));
 
 		// getting warning here about unable to set headers
@@ -496,7 +468,7 @@ EOD;
 	function get_post($postID) {
 		global $entry;
 
-		if( !current_user_can( 'edit_post', $postID ) )
+		if ( !current_user_can( 'edit_post', $postID ) )
 			$this->auth_required( __( 'Sorry, you do not have the right to access this post.' ) );
 
 		$this->set_current_entry($postID);
@@ -519,9 +491,8 @@ EOD;
 		$this->get_accepted_content_type($this->atom_content_types);
 
 		$parser = new AtomParser();
-		if(!$parser->parse()) {
+		if ( !$parser->parse() )
 			$this->bad_request();
-		}
 
 		$parsed = array_pop($parser->feed->entries);
 
@@ -531,10 +502,10 @@ EOD;
 		global $entry;
 		$this->set_current_entry($postID);
 
-		if(!current_user_can('edit_post', $entry['ID']))
+		if ( !current_user_can('edit_post', $entry['ID']) )
 			$this->auth_required(__('Sorry, you do not have the right to edit this post.'));
 
-		$publish = (isset($parsed->draft) && trim($parsed->draft) == 'yes') ? false : true;
+		$publish = ! ( isset($parsed->draft) && 'yes' == trim($parsed->draft) );
 		$post_status = ($publish) ? 'publish' : 'draft';
 
 		extract($entry);
@@ -554,9 +525,8 @@ EOD;
 
 		$result = wp_update_post($postdata);
 
-		if (!$result) {
+		if ( !$result )
 			$this->internal_error(__('For some strange yet very annoying reason, this post could not be edited.'));
-		}
 
 		do_action( 'atompub_put_post', $ID, $parsed );
 
@@ -577,16 +547,15 @@ EOD;
 		global $entry;
 		$this->set_current_entry($postID);
 
-		if(!current_user_can('edit_post', $postID)) {
+		if ( !current_user_can('edit_post', $postID) )
 			$this->auth_required(__('Sorry, you do not have the right to delete this post.'));
-		}
 
-		if ($entry['post_type'] == 'attachment') {
+		if ( $entry['post_type'] == 'attachment' ) {
 			$this->delete_attachment($postID);
 		} else {
 			$result = wp_delete_post($postID);
 
-			if (!$result) {
+			if ( !$result ) {
 				$this->internal_error(__('For some strange yet very annoying reason, this post could not be deleted.'));
 			}
 
@@ -604,10 +573,10 @@ EOD;
 	 * @param int $postID Optional. Post ID.
 	 */
 	function get_attachment($postID = null) {
-		if( !current_user_can( 'upload_files' ) )
+		if ( !current_user_can( 'upload_files' ) )
 			$this->auth_required( __( 'Sorry, you do not have permission to upload files.' ) );
 
-		if (!isset($postID)) {
+		if ( !isset($postID) ) {
 			$this->get_attachments();
 		} else {
 			$this->set_current_entry($postID);
@@ -626,25 +595,25 @@ EOD;
 
 		$type = $this->get_accepted_content_type();
 
-		if(!current_user_can('upload_files'))
+		if ( !current_user_can('upload_files') )
 			$this->auth_required(__('You do not have permission to upload files.'));
 
 		$fp = fopen("php://input", "rb");
 		$bits = null;
-		while(!feof($fp)) {
+		while ( !feof($fp) ) {
 			$bits .= fread($fp, 4096);
 		}
 		fclose($fp);
 
 		$slug = '';
 		if ( isset( $_SERVER['HTTP_SLUG'] ) )
-			$slug = sanitize_file_name( $_SERVER['HTTP_SLUG'] );
+			$slug = $_SERVER['HTTP_SLUG'];
 		elseif ( isset( $_SERVER['HTTP_TITLE'] ) )
-			$slug = sanitize_file_name( $_SERVER['HTTP_TITLE'] );
+			$slug = $_SERVER['HTTP_TITLE'];
 		elseif ( empty( $slug ) ) // just make a random name
 			$slug = substr( md5( uniqid( microtime() ) ), 0, 7);
 		$ext = preg_replace( '|.*/([a-z0-9]+)|', '$1', $_SERVER['CONTENT_TYPE'] );
-		$slug = "$slug.$ext";
+		$slug = sanitize_file_name( "$slug.$ext" );
 		$file = wp_upload_bits( $slug, NULL, $bits);
 
 		log_app('wp_upload_bits returns:',print_r($file,true));
@@ -689,7 +658,7 @@ EOD;
 		$this->get_accepted_content_type($this->atom_content_types);
 
 		$parser = new AtomParser();
-		if(!$parser->parse()) {
+		if (!$parser->parse()) {
 			$this->bad_request();
 		}
 
@@ -699,7 +668,7 @@ EOD;
 		global $entry;
 		$this->set_current_entry($postID);
 
-		if(!current_user_can('edit_post', $entry['ID']))
+		if ( !current_user_can('edit_post', $entry['ID']) )
 			$this->auth_required(__('Sorry, you do not have the right to edit this post.'));
 
 		extract($entry);
@@ -715,9 +684,8 @@ EOD;
 
 		$result = wp_update_post($postdata);
 
-		if (!$result) {
+		if ( !$result )
 			$this->internal_error(__('For some strange yet very annoying reason, this post could not be edited.'));
-		}
 
 		log_app('function',"put_attachment($postID)");
 		$this->ok();
@@ -737,15 +705,14 @@ EOD;
 		global $entry;
 		$this->set_current_entry($postID);
 
-		if(!current_user_can('edit_post', $postID)) {
+		if ( !current_user_can('edit_post', $postID) )
 			$this->auth_required(__('Sorry, you do not have the right to delete this post.'));
-		}
 
 		$location = get_post_meta($entry['ID'], '_wp_attached_file', true);
 		$filetype = wp_check_filetype($location);
 
-		if(!isset($location) || 'attachment' != $entry['post_type'] || empty($filetype['ext']))
-			$this->internal_error(__('Error ocurred while accessing post metadata for file location.'));
+		if ( !isset($location) || 'attachment' != $entry['post_type'] || empty($filetype['ext']) )
+			$this->internal_error(__('Error occurred while accessing post metadata for file location.'));
 
 		// delete file
 		@unlink($location);
@@ -753,9 +720,8 @@ EOD;
 		// delete attachment
 		$result = wp_delete_post($postID);
 
-		if (!$result) {
+		if ( !$result )
 			$this->internal_error(__('For some strange yet very annoying reason, this post could not be deleted.'));
-		}
 
 		log_app('function',"delete_attachment($postID). File '$location' deleted.");
 		$this->ok();
@@ -775,27 +741,26 @@ EOD;
 		$this->set_current_entry($postID);
 
 		// then whether user can edit the specific post
-		if(!current_user_can('edit_post', $postID)) {
+		if ( !current_user_can('edit_post', $postID) )
 			$this->auth_required(__('Sorry, you do not have the right to edit this post.'));
-		}
 
 		$location = get_post_meta($entry['ID'], '_wp_attached_file', true);
-		$location = get_option ('upload_path') . '/' . $location; 
+		$location = get_option ('upload_path') . '/' . $location;
 		$filetype = wp_check_filetype($location);
 
-		if(!isset($location) || 'attachment' != $entry['post_type'] || empty($filetype['ext']))
-			$this->internal_error(__('Error ocurred while accessing post metadata for file location.'));
+		if ( !isset($location) || 'attachment' != $entry['post_type'] || empty($filetype['ext']) )
+			$this->internal_error(__('Error occurred while accessing post metadata for file location.'));
 
 		status_header('200');
 		header('Content-Type: ' . $entry['post_mime_type']);
 		header('Connection: close');
 
-		if ($fp = fopen($location, "rb")) { 
-			status_header('200'); 
-			header('Content-Type: ' . $entry['post_mime_type']); 
+		if ( $fp = fopen($location, "rb") ) {
+			status_header('200');
+			header('Content-Type: ' . $entry['post_mime_type']);
 			header('Connection: close');
 
-			while(!feof($fp)) {
+			while ( !feof($fp) ) {
 				echo fread($fp, 4096);
 			}
 
@@ -818,7 +783,7 @@ EOD;
 	function put_file($postID) {
 
 		// first check if user can upload
-		if(!current_user_can('upload_files'))
+		if ( !current_user_can('upload_files') )
 			$this->auth_required(__('You do not have permission to upload files.'));
 
 		// check for not found
@@ -826,9 +791,8 @@ EOD;
 		$this->set_current_entry($postID);
 
 		// then whether user can edit the specific post
-		if(!current_user_can('edit_post', $postID)) {
+		if ( !current_user_can('edit_post', $postID) )
 			$this->auth_required(__('Sorry, you do not have the right to edit this post.'));
-		}
 
 		$upload_dir = wp_upload_dir( );
 		$location = get_post_meta($entry['ID'], '_wp_attached_file', true);
@@ -836,12 +800,12 @@ EOD;
 
 		$location = "{$upload_dir['basedir']}/{$location}";
 
-		if(!isset($location) || 'attachment' != $entry['post_type'] || empty($filetype['ext']))
-			$this->internal_error(__('Error ocurred while accessing post metadata for file location.'));
+		if (!isset($location) || 'attachment' != $entry['post_type'] || empty($filetype['ext']))
+			$this->internal_error(__('Error occurred while accessing post metadata for file location.'));
 
 		$fp = fopen("php://input", "rb");
 		$localfp = fopen($location, "w+");
-		while(!feof($fp)) {
+		while ( !feof($fp) ) {
 			fwrite($localfp,fread($fp, 4096));
 		}
 		fclose($fp);
@@ -858,9 +822,8 @@ EOD;
 		$post_data = compact('ID', 'post_date', 'post_date_gmt', 'post_modified', 'post_modified_gmt');
 		$result = wp_update_post($post_data);
 
-		if (!$result) {
+		if ( !$result )
 			$this->internal_error(__('Sorry, your entry could not be posted. Something wrong happened.'));
-		}
 
 		wp_update_attachment_metadata( $postID, wp_generate_attachment_metadata( $postID, $location ) );
 
@@ -877,15 +840,13 @@ EOD;
 	 * @return string
 	 */
 	function get_entries_url($page = null) {
-		if($GLOBALS['post_type'] == 'attachment') {
+		if ( isset($GLOBALS['post_type']) && ( $GLOBALS['post_type'] == 'attachment' ) )
 			$path = $this->MEDIA_PATH;
-		} else {
+		else
 			$path = $this->ENTRIES_PATH;
-		}
 		$url = $this->app_base . $path;
-		if(isset($page) && is_int($page)) {
+		if ( isset($page) && is_int($page) )
 			$url .= "/$page";
-		}
 		return $url;
 	}
 
@@ -905,10 +866,12 @@ EOD;
 	 *
 	 * @since 2.2.0
 	 *
-	 * @param mixed $deprecated Optional, not used.
+	 * @param mixed $deprecated Not used.
 	 * @return string
 	 */
 	function get_categories_url($deprecated = '') {
+		if ( !empty( $deprecated ) )
+			_deprecated_argument( __FUNCTION__, '2.5' );
 		return $this->app_base . $this->CATEGORIES_PATH;
 	}
 
@@ -931,7 +894,7 @@ EOD;
 	 */
 	function get_attachments_url($page = null) {
 		$url = $this->app_base . $this->MEDIA_PATH;
-		if(isset($page) && is_int($page)) {
+		if (isset($page) && is_int($page)) {
 			$url .= "/$page";
 		}
 		return $url;
@@ -968,7 +931,7 @@ EOD;
 	 * @return string
 	 */
 	function get_entry_url($postID = null) {
-		if(!isset($postID)) {
+		if (!isset($postID)) {
 			global $post;
 			$postID = (int) $post->ID;
 		}
@@ -999,7 +962,7 @@ EOD;
 	 * @return string
 	 */
 	function get_media_url($postID = null) {
-		if(!isset($postID)) {
+		if (!isset($postID)) {
 			global $post;
 			$postID = (int) $post->ID;
 		}
@@ -1032,14 +995,14 @@ EOD;
 		global $entry;
 		log_app('function',"set_current_entry($postID)");
 
-		if(!isset($postID)) {
+		if (!isset($postID)) {
 			// $this->bad_request();
 			$this->not_found();
 		}
 
 		$entry = wp_get_single_post($postID,ARRAY_A);
 
-		if(!isset($entry) || !isset($entry['ID']))
+		if (!isset($entry) || !isset($entry['ID']))
 			$this->not_found();
 
 		return;
@@ -1090,7 +1053,7 @@ EOD;
 
 		$this->ENTRY_PATH = $post_type;
 
-		if(!isset($page)) {
+		if (!isset($page)) {
 			$page = 1;
 		}
 		$page = (int) $page;
@@ -1113,22 +1076,22 @@ EOD;
 		$prev_page = ($page - 1) < 1 ? NULL : $page - 1;
 		$last_page = ((int)$last_page == 1 || (int)$last_page == 0) ? NULL : (int) $last_page;
 		$self_page = $page > 1 ? $page : NULL;
-?><feed xmlns="<?php echo $this->ATOM_NS ?>" xmlns:app="<?php echo $this->ATOMPUB_NS ?>" xml:lang="<?php echo get_option('rss_language'); ?>">
+?><feed xmlns="<?php echo $this->ATOM_NS ?>" xmlns:app="<?php echo $this->ATOMPUB_NS ?>" xml:lang="<?php echo get_option('rss_language'); ?>" <?php do_action('app_ns'); ?> >
 <id><?php $this->the_entries_url() ?></id>
 <updated><?php echo mysql2date('Y-m-d\TH:i:s\Z', get_lastpostmodified('GMT'), false); ?></updated>
 <title type="text"><?php bloginfo_rss('name') ?></title>
 <subtitle type="text"><?php bloginfo_rss("description") ?></subtitle>
 <link rel="first" type="<?php echo $this->ATOM_CONTENT_TYPE ?>" href="<?php $this->the_entries_url() ?>" />
-<?php if(isset($prev_page)): ?>
+<?php if (isset($prev_page)): ?>
 <link rel="previous" type="<?php echo $this->ATOM_CONTENT_TYPE ?>" href="<?php $this->the_entries_url($prev_page) ?>" />
 <?php endif; ?>
-<?php if(isset($next_page)): ?>
+<?php if (isset($next_page)): ?>
 <link rel="next" type="<?php echo $this->ATOM_CONTENT_TYPE ?>" href="<?php $this->the_entries_url($next_page) ?>" />
 <?php endif; ?>
 <link rel="last" type="<?php echo $this->ATOM_CONTENT_TYPE ?>" href="<?php $this->the_entries_url($last_page) ?>" />
 <link rel="self" type="<?php echo $this->ATOM_CONTENT_TYPE ?>" href="<?php $this->the_entries_url($self_page) ?>" />
 <rights type="text">Copyright <?php echo date('Y'); ?></rights>
-<?php the_generator( 'atom' ); ?>
+<?php do_action('app_head'); ?>
 <?php if ( have_posts() ) {
 			while ( have_posts() ) {
 				the_post();
@@ -1187,7 +1150,7 @@ EOD;
 	function echo_entry() { ?>
 <entry xmlns="<?php echo $this->ATOM_NS ?>"
        xmlns:app="<?php echo $this->ATOMPUB_NS ?>" xml:lang="<?php echo get_option('rss_language'); ?>">
-	<id><?php the_guid($GLOBALS['post']->ID); ?></id>
+	<id><?php the_guid( $GLOBALS['post']->ID ); ?></id>
 <?php list($content_type, $content) = prep_atom_text_construct(get_the_title()); ?>
 	<title type="<?php echo $content_type ?>"><?php echo $content ?></title>
 	<updated><?php echo get_post_modified_time('Y-m-d\TH:i:s\Z', true); ?></updated>
@@ -1202,9 +1165,9 @@ EOD;
 		<uri><?php the_author_meta('url') ?></uri>
 <?php } ?>
 	</author>
-<?php if($GLOBALS['post']->post_type == 'attachment') { ?>
+<?php if ($GLOBALS['post']->post_type == 'attachment') { ?>
 	<link rel="edit-media" href="<?php $this->the_media_url() ?>" />
-	<content type="<?php echo $GLOBALS['post']->post_mime_type ?>" src="<?php the_guid(); ?>"/>
+	<content type="<?php echo $GLOBALS['post']->post_mime_type ?>" src="<?php the_guid() ; ?>"/>
 <?php } else { ?>
 	<link href="<?php the_permalink_rss() ?>" />
 <?php if ( strlen( $GLOBALS['post']->post_content ) ) :
@@ -1216,6 +1179,7 @@ list($content_type, $content) = prep_atom_text_construct(get_the_content()); ?>
 	<?php the_category_rss( 'atom' ); ?>
 <?php list($content_type, $content) = prep_atom_text_construct(get_the_excerpt()); ?>
 	<summary type="<?php echo $content_type ?>"><?php echo $content ?></summary>
+	<?php do_action('app_entry'); ?>
 </entry>
 <?php }
 
@@ -1240,7 +1204,7 @@ list($content_type, $content) = prep_atom_text_construct(get_the_content()); ?>
 		log_app('Status','204: No Content');
 		header('Content-Type: text/plain');
 		status_header('204');
-		echo "Deleted.";
+		echo "Moved to Trash.";
 		exit;
 	}
 
@@ -1394,7 +1358,7 @@ EOD;
 				break;
 		}
 		header("Content-Type: $this->ATOM_CONTENT_TYPE");
-		if(isset($ctloc))
+		if (isset($ctloc))
 			header('Content-Location: ' . $ctloc);
 		header('Location: ' . $edit);
 		status_header('201');
@@ -1449,7 +1413,7 @@ EOD;
 			header('Content-Type: ' . $ctype);
 			header('Content-Disposition: attachment; filename=atom.xml');
 			header('Date: '. date('r'));
-			if($this->do_output)
+			if ($this->do_output)
 				echo $xml;
 			log_app('function', "output:\n$xml");
 			exit;
@@ -1488,7 +1452,7 @@ EOD;
 
 		// if using mod_rewrite/ENV hack
 		// http://www.besthostratings.com/articles/http-auth-php-cgi.html
-		if(isset($_SERVER['HTTP_AUTHORIZATION'])) {
+		if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
 			list($_SERVER['PHP_AUTH_USER'], $_SERVER['PHP_AUTH_PW']) =
 				explode(':', base64_decode(substr($_SERVER['HTTP_AUTHORIZATION'], 6)));
 		} else if (isset($_SERVER['REDIRECT_REMOTE_USER'])) {
@@ -1499,15 +1463,15 @@ EOD;
 		}
 
 		// If Basic Auth is working...
-		if(isset($_SERVER['PHP_AUTH_USER']) && isset($_SERVER['PHP_AUTH_PW'])) {
+		if (isset($_SERVER['PHP_AUTH_USER']) && isset($_SERVER['PHP_AUTH_PW'])) {
 			log_app("Basic Auth",$_SERVER['PHP_AUTH_USER']);
-		}
 
-		$user = wp_authenticate($_SERVER['PHP_AUTH_USER'], $_SERVER['PHP_AUTH_PW']);
-		if ( $user && !is_wp_error($user) ) {
-			wp_set_current_user($user->ID);
-			log_app("authenticate()", $user->user_login);
-			return true;
+			$user = wp_authenticate($_SERVER['PHP_AUTH_USER'], $_SERVER['PHP_AUTH_PW']);
+			if ( $user && !is_wp_error($user) ) {
+				wp_set_current_user($user->ID);
+				log_app("authenticate()", $user->user_login);
+				return true;
+			}
 		}
 
 		return false;
@@ -1523,11 +1487,11 @@ EOD;
 	 */
 	function get_accepted_content_type($types = null) {
 
-		if(!isset($types)) {
+		if (!isset($types)) {
 			$types = $this->media_content_types;
 		}
 
-		if(!isset($_SERVER['CONTENT_LENGTH']) || !isset($_SERVER['CONTENT_TYPE'])) {
+		if (!isset($_SERVER['CONTENT_LENGTH']) || !isset($_SERVER['CONTENT_TYPE'])) {
 			$this->length_required();
 		}
 
@@ -1538,8 +1502,8 @@ EOD;
 
 		foreach($types as $t) {
 			list($acceptedType,$acceptedSubtype) = explode('/',$t);
-			if($acceptedType == '*' || $acceptedType == $type) {
-				if($acceptedSubtype == '*' || $acceptedSubtype == $subtype)
+			if ($acceptedType == '*' || $acceptedType == $type) {
+				if ($acceptedSubtype == '*' || $acceptedSubtype == $subtype)
 					return $type . "/" . $subtype;
 			}
 		}
@@ -1554,8 +1518,8 @@ EOD;
 	 */
 	function process_conditionals() {
 
-		if(empty($this->params)) return;
-		if($_SERVER['REQUEST_METHOD'] == 'DELETE') return;
+		if (empty($this->params)) return;
+		if ($_SERVER['REQUEST_METHOD'] == 'DELETE') return;
 
 		switch($this->params[0]) {
 			case $this->ENTRY_PATH:
@@ -1606,11 +1570,11 @@ EOD;
 	function rfc3339_str2time($str) {
 
 		$match = false;
-		if(!preg_match("/(\d{4}-\d{2}-\d{2})T(\d{2}\:\d{2}\:\d{2})\.?\d{0,3}(Z|[+-]+\d{2}\:\d{2})/", $str, $match))
+		if (!preg_match("/(\d{4}-\d{2}-\d{2})T(\d{2}\:\d{2}\:\d{2})\.?\d{0,3}(Z|[+-]+\d{2}\:\d{2})/", $str, $match))
 			return false;
 
-		if($match[3] == 'Z')
-			$match[3] == '+0000';
+		if ($match[3] == 'Z')
+			$match[3] = '+0000';
 
 		return strtotime($match[1] . " " . $match[2] . " " . $match[3]);
 	}
@@ -1627,7 +1591,7 @@ EOD;
 
 		$pubtime = $this->rfc3339_str2time($published);
 
-		if(!$pubtime) {
+		if (!$pubtime) {
 			return array(current_time('mysql'),current_time('mysql',1));
 		} else {
 			return array(date("Y-m-d H:i:s", $pubtime), gmdate("Y-m-d H:i:s", $pubtime));

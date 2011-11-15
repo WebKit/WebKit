@@ -47,9 +47,9 @@ $comment->comment_author_email = esc_attr($comment->comment_author_email);
 <div id="misc-publishing-actions">
 
 <div class="misc-pub-section" id="comment-status-radio">
-<label class="approved"><input type="radio"<?php checked( $comment->comment_approved, '1' ); ?> name="comment_status" value="1" /><?php /* translators: comment type radio button */ echo _x('Approved', 'adjective') ?></label><br />
-<label class="waiting"><input type="radio"<?php checked( $comment->comment_approved, '0' ); ?> name="comment_status" value="0" /><?php /* translators: comment type radio button */ echo _x('Pending', 'adjective') ?></label><br />
-<label class="spam"><input type="radio"<?php checked( $comment->comment_approved, 'spam' ); ?> name="comment_status" value="spam" /><?php /* translators: comment type radio button */ echo _x('Spam', 'adjective'); ?></label>
+<label class="approved"><input type="radio"<?php checked( $comment->comment_approved, '1' ); ?> name="comment_status" value="1" /><?php /* translators: comment type radio button */ _ex('Approved', 'adjective') ?></label><br />
+<label class="waiting"><input type="radio"<?php checked( $comment->comment_approved, '0' ); ?> name="comment_status" value="0" /><?php /* translators: comment type radio button */ _ex('Pending', 'adjective') ?></label><br />
+<label class="spam"><input type="radio"<?php checked( $comment->comment_approved, 'spam' ); ?> name="comment_status" value="spam" /><?php /* translators: comment type radio button */ _ex('Spam', 'adjective'); ?></label>
 </div>
 
 <div class="misc-pub-section curtime misc-pub-section-last">
@@ -68,10 +68,10 @@ $date = date_i18n( $datef, strtotime( $comment->comment_date ) );
 
 <div id="major-publishing-actions">
 <div id="delete-action">
-<?php echo "<a class='submitdelete deletion' href='" . wp_nonce_url("comment.php?action=deletecomment&amp;c=$comment->comment_ID&amp;_wp_original_http_referer=" . urlencode(wp_get_referer()), 'delete-comment_' . $comment->comment_ID) . "' onclick=\"if ( confirm('" . esc_js(__("You are about to delete this comment. \n  'Cancel' to stop, 'OK' to delete.")) . "') ){return true;}return false;\">" . __('Delete') . "</a>\n"; ?>
+<?php echo "<a class='submitdelete deletion' href='" . wp_nonce_url("comment.php?action=" . ( !EMPTY_TRASH_DAYS ? 'deletecomment' : 'trashcomment' ) . "&amp;c=$comment->comment_ID&amp;_wp_original_http_referer=" . urlencode(wp_get_referer()), 'delete-comment_' . $comment->comment_ID) . "'>" . ( !EMPTY_TRASH_DAYS ? __('Delete Permanently') : __('Move to Trash') ) . "</a>\n"; ?>
 </div>
 <div id="publishing-action">
-<input type="submit" name="save" value="<?php esc_attr_e('Update Comment'); ?>" tabindex="4" class="button-primary" />
+<?php submit_button( __( 'Update Comment' ), 'primary', 'save', false, array( 'tabindex' => '4' ) ); ?>
 </div>
 <div class="clear"></div>
 </div>
@@ -120,12 +120,16 @@ $date = date_i18n( $datef, strtotime( $comment->comment_date ) );
 </div>
 
 <div id="postdiv" class="postarea">
-<?php the_editor($comment->comment_content, 'content', 'newcomment_author_url', false, 4); ?>
+<?php the_editor($comment->comment_content, 'content', 'newcomment_author_url', false, 4, false); ?>
 <?php wp_nonce_field( 'closedpostboxes', 'closedpostboxesnonce', false ); ?>
 </div>
 
-<?php do_meta_boxes('comment', 'normal', $comment); ?>
+<?php
+do_action('add_meta_boxes', 'comment', $comment);
+do_action('add_meta_boxes_comment', $comment);
 
+do_meta_boxes('comment', 'normal', $comment);
+?>
 <input type="hidden" name="c" value="<?php echo esc_attr($comment->comment_ID) ?>" />
 <input type="hidden" name="p" value="<?php echo esc_attr($comment->comment_post_ID) ?>" />
 <input name="referredby" type="hidden" id="referredby" value="<?php echo esc_url(stripslashes(wp_get_referer())); ?>" />

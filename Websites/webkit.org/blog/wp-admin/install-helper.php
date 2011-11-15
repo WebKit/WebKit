@@ -38,14 +38,6 @@
  * @subpackage Plugin
  */
 
-/**
- * @global bool $wp_only_load_config
- * @name $wp_only_load_config
- * @var bool
- * @since unknown
- */
-$wp_only_load_config = true;
-
 /** Load WordPress Bootstrap */
 require_once(dirname(dirname(__FILE__)).'/wp-load.php');
 
@@ -54,7 +46,7 @@ require_once(dirname(dirname(__FILE__)).'/wp-load.php');
  * @global bool|int $debug
  * @name $debug
  * @var bool|int
- * @since unknown
+ * @since 1.0.0
  */
 $debug = 0;
 
@@ -62,7 +54,7 @@ if ( ! function_exists('maybe_create_table') ) :
 /**
  * Create database table, if it doesn't already exist.
  *
- * @since unknown
+ * @since 1.0.0
  * @package WordPress
  * @subpackage Plugin
  * @uses $wpdb
@@ -94,7 +86,7 @@ if ( ! function_exists('maybe_add_column') ) :
 /**
  * Add column to database table, if column doesn't already exist in table.
  *
- * @since unknown
+ * @since 1.0.0
  * @package WordPress
  * @subpackage Plugin
  * @uses $wpdb
@@ -129,7 +121,7 @@ endif;
 /**
  * Drop column from database table, if it exists.
  *
- * @since unknown
+ * @since 1.0.0
  * @package WordPress
  * @subpackage Plugin
  * @uses $wpdb
@@ -173,7 +165,7 @@ function maybe_drop_column($table_name, $column_name, $drop_ddl) {
  *      Default
  *      Extra
  *
- * @since unknown
+ * @since 1.0.0
  * @package WordPress
  * @subpackage Plugin
  *

@@ -13,7 +13,7 @@
  */
 class WP_Filesystem_Base {
 	/**
-	 * Whether to display debug data for the connection or not.
+	 * Whether to display debug data for the connection.
 	 *
 	 * @since 2.5
 	 * @access public
@@ -21,7 +21,7 @@ class WP_Filesystem_Base {
 	 */
 	var $verbose = false;
 	/**
-	 * Cached list of local filepaths to maped remote filepaths.
+	 * Cached list of local filepaths to mapped remote filepaths.
 	 *
 	 * @since 2.7
 	 * @access private
@@ -82,7 +82,18 @@ class WP_Filesystem_Base {
 	 * @return string The location of the remote path.
 	 */
 	function wp_themes_dir() {
-		return $this->wp_content_dir() . '/themes';
+		return $this->wp_content_dir() . 'themes/';
+	}
+	/**
+	 * Returns the path on the remote filesystem of WP_LANG_DIR
+	 *
+	 * @since 3.2.0
+	 * @access public
+	 *
+	 * @return string The location of the remote path.
+	 */
+	function wp_lang_dir() {
+		return $this->find_folder(WP_LANG_DIR);
 	}
 
 	/**
@@ -137,11 +148,12 @@ class WP_Filesystem_Base {
 	function find_folder($folder) {
 
 		if ( strpos($this->method, 'ftp') !== false ) {
-			$constant_overrides = array( 'FTP_BASE' => ABSPATH, 'FTP_CONTENT_DIR' => WP_CONTENT_DIR, 'FTP_PLUGIN_DIR' => WP_PLUGIN_DIR );
+			$constant_overrides = array( 'FTP_BASE' => ABSPATH, 'FTP_CONTENT_DIR' => WP_CONTENT_DIR, 'FTP_PLUGIN_DIR' => WP_PLUGIN_DIR, 'FTP_LANG_DIR' => WP_LANG_DIR );
 			foreach ( $constant_overrides as $constant => $dir )
 				if ( defined($constant) && $folder === $dir )
 					return trailingslashit(constant($constant));
 		} elseif ( 'direct' == $this->method ) {
+			$folder = str_replace('\\', '/', $folder); //Windows path sanitiation
 			return trailingslashit($folder);
 		}
 
@@ -156,7 +168,7 @@ class WP_Filesystem_Base {
 			$this->cache[ $folder ] = $folder;
 			return $folder;
 		}
-		if( $return = $this->search_for_folder($folder) )
+		if ( $return = $this->search_for_folder($folder) )
 			$this->cache[ $folder ] = $return;
 		return $return;
 	}
@@ -203,14 +215,14 @@ class WP_Filesystem_Base {
 			}
 		}
 
-		//Only check this as a last resort, to prevent locating the incorrect install. All above proceeedures will fail quickly if this is the right branch to take.
+		//Only check this as a last resort, to prevent locating the incorrect install. All above procedures will fail quickly if this is the right branch to take.
 		if (isset( $files[ $last_path ] ) ) {
 			if ( $this->verbose )
 				printf( __('Found %s') . '<br/>',  $base . $last_path );
 			return trailingslashit($base . $last_path);
 		}
 		if ( $loop )
-			return false;//Prevent tihs function looping again.
+			return false; //Prevent this function from looping again.
 		//As an extra last resort, Change back to / if the folder wasnt found. This comes into effect when the CWD is /home/user/ but WP is at /var/www/.... mainly dedicated setups.
 		return $this->search_for_folder($folder, '/', true);
 
@@ -242,7 +254,7 @@ class WP_Filesystem_Base {
 			$info = 'd';
 		elseif (($perms & 0x2000) == 0x2000) // Character special
 			$info = 'c';
-		elseif (($perms & 0x1000) == 0x1000)// FIFO pipe
+		elseif (($perms & 0x1000) == 0x1000) // FIFO pipe
 			$info = 'p';
 		else // Unknown
 			$info = 'u';
@@ -288,8 +300,8 @@ class WP_Filesystem_Base {
 		$legal =  array('', 'w', 'r', 'x', '-');
 		$attarray = preg_split('//', $mode);
 
-		for($i=0; $i < count($attarray); $i++)
-		   if($key = array_search($attarray[$i], $legal))
+		for ($i=0; $i < count($attarray); $i++)
+		   if ($key = array_search($attarray[$i], $legal))
 			   $realmode .= $legal[$key];
 
 		$mode = str_pad($realmode, 9, '-');

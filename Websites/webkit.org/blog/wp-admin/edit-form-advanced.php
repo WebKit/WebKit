@@ -10,619 +10,270 @@
 if ( !defined('ABSPATH') )
 	die('-1');
 
+wp_enqueue_script('post');
+
+if ( post_type_supports($post_type, 'editor') || post_type_supports($post_type, 'thumbnail') ) {
+	add_thickbox();
+	wp_enqueue_script('media-upload');
+}
+
 /**
  * Post ID global
  * @name $post_ID
  * @var int
  */
 $post_ID = isset($post_ID) ? (int) $post_ID : 0;
-
+$temp_ID = isset($temp_ID) ? (int) $temp_ID : 0;
+$user_ID = isset($user_ID) ? (int) $user_ID : 0;
 $action = isset($action) ? $action : '';
-if ( isset($_GET['message']) )
-	$_GET['message'] = absint( $_GET['message'] );
-$messages[1] = sprintf(__('Post updated. <a href="%s">View post</a>'), get_permalink($post_ID));
-$messages[2] = __('Custom field updated.');
-$messages[3] = __('Custom field deleted.');
-$messages[4] = __('Post updated.');
-$messages[6] = sprintf(__('Post published. <a href="%s">View post</a>'), get_permalink($post_ID));
-$messages[7] = __('Post saved.');
-$messages[8] = sprintf(__('Post submitted. <a href="%s">Preview post</a>'), add_query_arg( 'preview', 'true', get_permalink($post_ID) ) );
 
-if ( isset($_GET['revision']) )
-	$messages[5] = sprintf( __('Post restored to revision from %s'), wp_post_revision_title( (int) $_GET['revision'], false ) );
+$messages = array();
+$messages['post'] = array(
+	 0 => '', // Unused. Messages start at index 1.
+	 1 => sprintf( __('Post updated. <a href="%s">View post</a>'), esc_url( get_permalink($post_ID) ) ),
+	 2 => __('Custom field updated.'),
+	 3 => __('Custom field deleted.'),
+	 4 => __('Post updated.'),
+	/* translators: %s: date and time of the revision */
+	 5 => isset($_GET['revision']) ? sprintf( __('Post restored to revision from %s'), wp_post_revision_title( (int) $_GET['revision'], false ) ) : false,
+	 6 => sprintf( __('Post published. <a href="%s">View post</a>'), esc_url( get_permalink($post_ID) ) ),
+	 7 => __('Post saved.'),
+	 8 => sprintf( __('Post submitted. <a target="_blank" href="%s">Preview post</a>'), esc_url( add_query_arg( 'preview', 'true', get_permalink($post_ID) ) ) ),
+	 9 => sprintf( __('Post scheduled for: <strong>%1$s</strong>. <a target="_blank" href="%2$s">Preview post</a>'),
+		// translators: Publish box date format, see http://php.net/date
+		date_i18n( __( 'M j, Y @ G:i' ), strtotime( $post->post_date ) ), esc_url( get_permalink($post_ID) ) ),
+	10 => sprintf( __('Post draft updated. <a target="_blank" href="%s">Preview post</a>'), esc_url( add_query_arg( 'preview', 'true', get_permalink($post_ID) ) ) ),
+);
+$messages['page'] = array(
+	 0 => '', // Unused. Messages start at index 1.
+	 1 => sprintf( __('Page updated. <a href="%s">View page</a>'), esc_url( get_permalink($post_ID) ) ),
+	 2 => __('Custom field updated.'),
+	 3 => __('Custom field deleted.'),
+	 4 => __('Page updated.'),
+	 5 => isset($_GET['revision']) ? sprintf( __('Page restored to revision from %s'), wp_post_revision_title( (int) $_GET['revision'], false ) ) : false,
+	 6 => sprintf( __('Page published. <a href="%s">View page</a>'), esc_url( get_permalink($post_ID) ) ),
+	 7 => __('Page saved.'),
+	 8 => sprintf( __('Page submitted. <a target="_blank" href="%s">Preview page</a>'), esc_url( add_query_arg( 'preview', 'true', get_permalink($post_ID) ) ) ),
+	 9 => sprintf( __('Page scheduled for: <strong>%1$s</strong>. <a target="_blank" href="%2$s">Preview page</a>'), date_i18n( __( 'M j, Y @ G:i' ), strtotime( $post->post_date ) ), esc_url( get_permalink($post_ID) ) ),
+	10 => sprintf( __('Page draft updated. <a target="_blank" href="%s">Preview page</a>'), esc_url( add_query_arg( 'preview', 'true', get_permalink($post_ID) ) ) ),
+);
+
+$messages = apply_filters( 'post_updated_messages', $messages );
+
+$message = false;
+if ( isset($_GET['message']) ) {
+	$_GET['message'] = absint( $_GET['message'] );
+	if ( isset($messages[$post_type][$_GET['message']]) )
+		$message = $messages[$post_type][$_GET['message']];
+	elseif ( !isset($messages[$post_type]) && isset($messages['post'][$_GET['message']]) )
+		$message = $messages['post'][$_GET['message']];
+}
 
 $notice = false;
-$notices[1] = __( 'There is an autosave of this post that is more recent than the version below.  <a href="%s">View the autosave</a>.' );
-
-if ( 0 == $post_ID ) {
-	$form_action = 'post';
-	$temp_ID = -1 * time(); // don't change this formula without looking at wp_write_post()
-	$form_extra = "<input type='hidden' id='post_ID' name='temp_ID' value='" . esc_attr($temp_ID) . "' />";
+$form_extra = '';
+if ( 'auto-draft' == $post->post_status ) {
+	if ( 'edit' == $action )
+		$post->post_title = '';
 	$autosave = false;
+	$form_extra .= "<input type='hidden' id='auto_draft' name='auto_draft' value='1' />";
 } else {
-	$form_action = 'editpost';
-	$form_extra = "<input type='hidden' id='post_ID' name='post_ID' value='" . esc_attr($post_ID) . "' />";
 	$autosave = wp_get_post_autosave( $post_ID );
-
-	// Detect if there exists an autosave newer than the post and if that autosave is different than the post
-	if ( $autosave && mysql2date( 'U', $autosave->post_modified_gmt, false ) > mysql2date( 'U', $post->post_modified_gmt, false ) ) {
-		foreach ( _wp_post_revision_fields() as $autosave_field => $_autosave_field ) {
-			if ( normalize_whitespace( $autosave->$autosave_field ) != normalize_whitespace( $post->$autosave_field ) ) {
-				$notice = sprintf( $notices[1], get_edit_post_link( $autosave->ID ) );
-				break;
-			}
-		}
-		unset($autosave_field, $_autosave_field);
-	}
 }
+
+$form_action = 'editpost';
+$nonce_action = 'update-' . $post_type . '_' . $post_ID;
+$form_extra .= "<input type='hidden' id='post_ID' name='post_ID' value='" . esc_attr($post_ID) . "' />";
+
+// Detect if there exists an autosave newer than the post and if that autosave is different than the post
+if ( $autosave && mysql2date( 'U', $autosave->post_modified_gmt, false ) > mysql2date( 'U', $post->post_modified_gmt, false ) ) {
+	foreach ( _wp_post_revision_fields() as $autosave_field => $_autosave_field ) {
+		if ( normalize_whitespace( $autosave->$autosave_field ) != normalize_whitespace( $post->$autosave_field ) ) {
+			$notice = sprintf( __( 'There is an autosave of this post that is more recent than the version below.  <a href="%s">View the autosave</a>' ), get_edit_post_link( $autosave->ID ) );
+			break;
+		}
+	}
+	unset($autosave_field, $_autosave_field);
+}
+
+$post_type_object = get_post_type_object($post_type);
 
 // All meta boxes should be defined and added before the first do_meta_boxes() call (or potentially during the do_meta_boxes action).
+require_once('./includes/meta-boxes.php');
 
-/**
- * Display post submit form fields.
- *
- * @since 2.7.0
- *
- * @param object $post
- */
-function post_submit_meta_box($post) {
-	global $action;
+add_meta_box('submitdiv', __('Publish'), 'post_submit_meta_box', $post_type, 'side', 'core');
 
-	$can_publish = current_user_can('publish_posts');
-?>
-<div class="submitbox" id="submitpost">
+if ( current_theme_supports( 'post-formats' ) && post_type_supports( $post_type, 'post-formats' ) )
+	add_meta_box( 'formatdiv', _x( 'Format', 'post format' ), 'post_format_meta_box', $post_type, 'side', 'core' );
 
-<div id="minor-publishing">
-
-<?php // Hidden submit button early on so that the browser chooses the right button when form is submitted with Return key ?>
-<div style="display:none;">
-<input type="submit" name="save" value="<?php esc_attr_e('Save'); ?>" />
-</div>
-
-<div id="minor-publishing-actions">
-<div id="save-action">
-<?php if ( 'publish' != $post->post_status && 'future' != $post->post_status && 'pending' != $post->post_status )  { ?>
-<input <?php if ( 'private' == $post->post_status ) { ?>style="display:none"<?php } ?> type="submit" name="save" id="save-post" value="<?php esc_attr_e('Save Draft'); ?>" tabindex="4" class="button button-highlighted" />
-<?php } elseif ( 'pending' == $post->post_status && $can_publish ) { ?>
-<input type="submit" name="save" id="save-post" value="<?php esc_attr_e('Save as Pending'); ?>" tabindex="4" class="button button-highlighted" />
-<?php } ?>
-</div>
-
-<div id="preview-action">
-<?php
-if ( 'publish' == $post->post_status ) {
-	$preview_link = esc_url(get_permalink($post->ID));
-	$preview_button = __('Preview Changes');
-} else {
-	$preview_link = esc_url(apply_filters('preview_post_link', add_query_arg('preview', 'true', get_permalink($post->ID))));
-	$preview_button = __('Preview');
-}
-?>
-<a class="preview button" href="<?php echo $preview_link; ?>" target="wp-preview" id="post-preview" tabindex="4"><?php echo $preview_button; ?></a>
-<input type="hidden" name="wp-preview" id="wp-preview" value="" />
-</div>
-
-<div class="clear"></div>
-</div><?php // /minor-publishing-actions ?>
-
-<div id="misc-publishing-actions">
-
-<div class="misc-pub-section<?php if ( !$can_publish ) { echo '  misc-pub-section-last'; } ?>"><label for="post_status"><?php _e('Status:') ?></label>
-<span id="post-status-display">
-<?php
-switch ( $post->post_status ) {
-	case 'private':
-		_e('Privately Published');
-		break;
-	case 'publish':
-		_e('Published');
-		break;
-	case 'future':
-		_e('Scheduled');
-		break;
-	case 'pending':
-		_e('Pending Review');
-		break;
-	case 'draft':
-		_e('Draft');
-		break;
-}
-?>
-</span>
-<?php if ( 'publish' == $post->post_status || 'private' == $post->post_status || $can_publish ) { ?>
-<a href="#post_status" <?php if ( 'private' == $post->post_status ) { ?>style="display:none;" <?php } ?>class="edit-post-status hide-if-no-js" tabindex='4'><?php _e('Edit') ?></a>
-
-<div id="post-status-select" class="hide-if-js">
-<input type="hidden" name="hidden_post_status" id="hidden_post_status" value="<?php echo esc_attr($post->post_status); ?>" />
-<select name='post_status' id='post_status' tabindex='4'>
-<?php if ( 'publish' == $post->post_status ) : ?>
-<option<?php selected( $post->post_status, 'publish' ); ?> value='publish'><?php _e('Published') ?></option>
-<?php elseif ( 'private' == $post->post_status ) : ?>
-<option<?php selected( $post->post_status, 'private' ); ?> value='publish'><?php _e('Privately Published') ?></option>
-<?php elseif ( 'future' == $post->post_status ) : ?>
-<option<?php selected( $post->post_status, 'future' ); ?> value='future'><?php _e('Scheduled') ?></option>
-<?php endif; ?>
-<option<?php selected( $post->post_status, 'pending' ); ?> value='pending'><?php _e('Pending Review') ?></option>
-<option<?php selected( $post->post_status, 'draft' ); ?> value='draft'><?php _e('Draft') ?></option>
-</select>
- <a href="#post_status" class="save-post-status hide-if-no-js button"><?php _e('OK'); ?></a>
- <a href="#post_status" class="cancel-post-status hide-if-no-js"><?php _e('Cancel'); ?></a>
-</div>
-
-<?php } ?>
-</div><?php // /misc-pub-section ?>
-
-<div class="misc-pub-section " id="visibility">
-<?php _e('Visibility:'); ?> <span id="post-visibility-display"><?php
-
-if ( 'private' == $post->post_status ) {
-	$post->post_password = '';
-	$visibility = 'private';
-	$visibility_trans = __('Private');
-} elseif ( !empty( $post->post_password ) ) {
-	$visibility = 'password';
-	$visibility_trans = __('Password protected');
-} elseif ( is_sticky( $post->ID ) ) {
-	$visibility = 'public';
-	$visibility_trans = __('Public, Sticky');
-} else {
-	$visibility = 'public';
-	$visibility_trans = __('Public');
-}
-
-?><?php echo esc_html( $visibility_trans ); ?></span> <?php if ( $can_publish ) { ?> <a href="#visibility" class="edit-visibility hide-if-no-js"><?php _e('Edit'); ?></a>
-
-<div id="post-visibility-select" class="hide-if-js">
-<input type="hidden" name="hidden_post_password" id="hidden-post-password" value="<?php echo esc_attr($post->post_password); ?>" />
-<input type="checkbox" style="display:none" name="hidden_post_sticky" id="hidden-post-sticky" value="sticky" <?php checked(is_sticky($post->ID)); ?> />
-<input type="hidden" name="hidden_post_visibility" id="hidden-post-visibility" value="<?php echo esc_attr( $visibility ); ?>" />
-
-
-<input type="radio" name="visibility" id="visibility-radio-public" value="public" <?php checked( $visibility, 'public' ); ?> /> <label for="visibility-radio-public" class="selectit"><?php _e('Public'); ?></label><br />
-<span id="sticky-span"><input id="sticky" name="sticky" type="checkbox" value="sticky" <?php checked(is_sticky($post->ID)); ?> tabindex="4" /> <label for="sticky" class="selectit"><?php _e('Stick this post to the front page') ?></label><br /></span>
-<input type="radio" name="visibility" id="visibility-radio-password" value="password" <?php checked( $visibility, 'password' ); ?> /> <label for="visibility-radio-password" class="selectit"><?php _e('Password protected'); ?></label><br />
-<span id="password-span"><label for="post_password"><?php _e('Password:'); ?></label> <input type="text" name="post_password" id="post_password" value="<?php echo esc_attr($post->post_password); ?>" /><br /></span>
-<input type="radio" name="visibility" id="visibility-radio-private" value="private" <?php checked( $visibility, 'private' ); ?> /> <label for="visibility-radio-private" class="selectit"><?php _e('Private'); ?></label><br />
-
-<p>
- <a href="#visibility" class="save-post-visibility hide-if-no-js button"><?php _e('OK'); ?></a>
- <a href="#visibility" class="cancel-post-visibility hide-if-no-js"><?php _e('Cancel'); ?></a>
-</p>
-</div>
-<?php } ?>
-
-</div><?php // /misc-pub-section ?>
-
-
-<?php
-// translators: Publish box date formt, see http://php.net/date
-$datef = __( 'M j, Y @ G:i' );
-if ( 0 != $post->ID ) {
-	if ( 'future' == $post->post_status ) { // scheduled for publishing at a future date
-		$stamp = __('Scheduled for: <b>%1$s</b>');
-	} else if ( 'publish' == $post->post_status || 'private' == $post->post_status ) { // already published
-		$stamp = __('Published on: <b>%1$s</b>');
-	} else if ( '0000-00-00 00:00:00' == $post->post_date_gmt ) { // draft, 1 or more saves, no date specified
-		$stamp = __('Publish <b>immediately</b>');
-	} else if ( time() < strtotime( $post->post_date_gmt . ' +0000' ) ) { // draft, 1 or more saves, future date specified
-		$stamp = __('Schedule for: <b>%1$s</b>');
-	} else { // draft, 1 or more saves, date specified
-		$stamp = __('Publish on: <b>%1$s</b>');
-	}
-	$date = date_i18n( $datef, strtotime( $post->post_date ) );
-} else { // draft (no saves, and thus no date specified)
-	$stamp = __('Publish <b>immediately</b>');
-	$date = date_i18n( $datef, strtotime( current_time('mysql') ) );
-}
-
-if ( $can_publish ) : // Contributors don't get to choose the date of publish ?>
-<div class="misc-pub-section curtime misc-pub-section-last">
-	<span id="timestamp">
-	<?php printf($stamp, $date); ?></span>
-	<a href="#edit_timestamp" class="edit-timestamp hide-if-no-js" tabindex='4'><?php _e('Edit') ?></a>
-	<div id="timestampdiv" class="hide-if-js"><?php touch_time(($action == 'edit'),1,4); ?></div>
-</div><?php // /misc-pub-section ?>
-<?php endif; ?>
-
-</div>
-<div class="clear"></div>
-</div>
-
-<div id="major-publishing-actions">
-<?php do_action('post_submitbox_start'); ?>
-<div id="delete-action">
-<?php
-if ( ( 'edit' == $action ) && current_user_can('delete_post', $post->ID) ) { ?>
-<a class="submitdelete deletion" href="<?php echo wp_nonce_url("post.php?action=delete&amp;post=$post->ID", 'delete-post_' . $post->ID); ?>" onclick="if ( confirm('<?php echo esc_js(sprintf( ('draft' == $post->post_status) ? __("You are about to delete this draft '%s'\n  'Cancel' to stop, 'OK' to delete.") : __("You are about to delete this post '%s'\n  'Cancel' to stop, 'OK' to delete."), $post->post_title )); ?>') ) {return true;}return false;"><?php _e('Delete'); ?></a>
-<?php } ?>
-</div>
-
-<div id="publishing-action">
-<?php
-if ( !in_array( $post->post_status, array('publish', 'future', 'private') ) || 0 == $post->ID ) {
-	if ( current_user_can('publish_posts') ) :
-		if ( !empty($post->post_date_gmt) && time() < strtotime( $post->post_date_gmt . ' +0000' ) ) : ?>
-		<input name="original_publish" type="hidden" id="original_publish" value="<?php esc_attr_e('Schedule') ?>" />
-		<input name="publish" type="submit" class="button-primary" id="publish" tabindex="5" accesskey="p" value="<?php esc_attr_e('Schedule') ?>" />
-<?php	else : ?>
-		<input name="original_publish" type="hidden" id="original_publish" value="<?php esc_attr_e('Publish') ?>" />
-		<input name="publish" type="submit" class="button-primary" id="publish" tabindex="5" accesskey="p" value="<?php esc_attr_e('Publish') ?>" />
-<?php	endif;
-	else : ?>
-		<input name="original_publish" type="hidden" id="original_publish" value="<?php esc_attr_e('Submit for Review') ?>" />
-		<input name="publish" type="submit" class="button-primary" id="publish" tabindex="5" accesskey="p" value="<?php esc_attr_e('Submit for Review') ?>" />
-<?php
-	endif;
-} else { ?>
-		<input name="original_publish" type="hidden" id="original_publish" value="<?php esc_attr_e('Update Post') ?>" />
-		<input name="save" type="submit" class="button-primary" id="publish" tabindex="5" accesskey="p" value="<?php esc_attr_e('Update Post') ?>" />
-<?php
-} ?>
-</div>
-<div class="clear"></div>
-</div>
-</div>
-
-<?php
-}
-add_meta_box('submitdiv', __('Publish'), 'post_submit_meta_box', 'post', 'side', 'core');
-
-/**
- * Display post tags form fields.
- *
- * @since 2.6.0
- *
- * @param object $post
- */
-function post_tags_meta_box($post, $box) {
-	$tax_name = esc_attr(substr($box['id'], 8));
+// all taxonomies
+foreach ( get_object_taxonomies($post_type) as $tax_name ) {
 	$taxonomy = get_taxonomy($tax_name);
-	$helps = isset($taxonomy->helps) ? esc_attr($taxonomy->helps) : __('Separate tags with commas.');
-?>
-<div class="tagsdiv" id="<?php echo $tax_name; ?>">
-	<div class="jaxtag">
-	<div class="nojs-tags hide-if-js">
-	<p><?php _e('Add or remove tags'); ?></p>
-	<textarea name="<?php echo "tax_input[$tax_name]"; ?>" class="the-tags" id="tax-input[<?php echo $tax_name; ?>]"><?php echo esc_attr(get_terms_to_edit( $post->ID, $tax_name )); ?></textarea></div>
+	if ( ! $taxonomy->show_ui )
+		continue;
 
-	<span class="ajaxtag hide-if-no-js">
-		<label class="screen-reader-text" for="new-tag-<?php echo $tax_name; ?>"><?php echo $box['title']; ?></label>
-		<input type="text" id="new-tag-<?php echo $tax_name; ?>" name="newtag[<?php echo $tax_name; ?>]" class="newtag form-input-tip" size="16" autocomplete="off" value="<?php esc_attr_e('Add new tag'); ?>" />
-		<input type="button" class="button tagadd" value="<?php esc_attr_e('Add'); ?>" tabindex="3" />
-	</span></div>
-	<p class="howto"><?php echo $helps; ?></p>
-	<div class="tagchecklist"></div>
-</div>
-<p class="tagcloud-link hide-if-no-js"><a href="#titlediv" class="tagcloud-link" id="link-<?php echo $tax_name; ?>"><?php printf( __('Choose from the most used tags in %s'), $box['title'] ); ?></a></p>
-<?php
+	$label = $taxonomy->labels->name;
+
+	if ( !is_taxonomy_hierarchical($tax_name) )
+		add_meta_box('tagsdiv-' . $tax_name, $label, 'post_tags_meta_box', $post_type, 'side', 'core', array( 'taxonomy' => $tax_name ));
+	else
+		add_meta_box($tax_name . 'div', $label, 'post_categories_meta_box', $post_type, 'side', 'core', array( 'taxonomy' => $tax_name ));
 }
 
-// all tag-style post taxonomies
-foreach ( get_object_taxonomies('post') as $tax_name ) {
-	if ( !is_taxonomy_hierarchical($tax_name) ) {
-		$taxonomy = get_taxonomy($tax_name);
-		$label = isset($taxonomy->label) ? esc_attr($taxonomy->label) : $tax_name;
+if ( post_type_supports($post_type, 'page-attributes') )
+	add_meta_box('pageparentdiv', 'page' == $post_type ? __('Page Attributes') : __('Attributes'), 'page_attributes_meta_box', $post_type, 'side', 'core');
 
-		add_meta_box('tagsdiv-' . $tax_name, $label, 'post_tags_meta_box', 'post', 'side', 'core');
-	}
-}
+if ( current_theme_supports( 'post-thumbnails', $post_type ) && post_type_supports( $post_type, 'thumbnail' )
+	&& ( ! is_multisite() || ( ( $mu_media_buttons = get_site_option( 'mu_media_buttons', array() ) ) && ! empty( $mu_media_buttons['image'] ) ) ) )
+		add_meta_box('postimagediv', __('Featured Image'), 'post_thumbnail_meta_box', $post_type, 'side', 'low');
 
-/**
- * Display post categories form fields.
- *
- * @since 2.6.0
- *
- * @param object $post
- */
-function post_categories_meta_box($post) {
-?>
-<ul id="category-tabs">
-	<li class="tabs"><a href="#categories-all" tabindex="3"><?php _e( 'All Categories' ); ?></a></li>
-	<li class="hide-if-no-js"><a href="#categories-pop" tabindex="3"><?php _e( 'Most Used' ); ?></a></li>
-</ul>
+if ( post_type_supports($post_type, 'excerpt') )
+	add_meta_box('postexcerpt', __('Excerpt'), 'post_excerpt_meta_box', $post_type, 'normal', 'core');
 
-<div id="categories-pop" class="tabs-panel" style="display: none;">
-	<ul id="categorychecklist-pop" class="categorychecklist form-no-clear" >
-<?php $popular_ids = wp_popular_terms_checklist('category'); ?>
-	</ul>
-</div>
+if ( post_type_supports($post_type, 'trackbacks') )
+	add_meta_box('trackbacksdiv', __('Send Trackbacks'), 'post_trackback_meta_box', $post_type, 'normal', 'core');
 
-<div id="categories-all" class="tabs-panel">
-	<ul id="categorychecklist" class="list:category categorychecklist form-no-clear">
-<?php wp_category_checklist($post->ID, false, false, $popular_ids) ?>
-	</ul>
-</div>
-
-<?php if ( current_user_can('manage_categories') ) : ?>
-<div id="category-adder" class="wp-hidden-children">
-	<h4><a id="category-add-toggle" href="#category-add" class="hide-if-no-js" tabindex="3"><?php _e( '+ Add New Category' ); ?></a></h4>
-	<p id="category-add" class="wp-hidden-child">
-	<label class="screen-reader-text" for="newcat"><?php _e( 'Add New Category' ); ?></label><input type="text" name="newcat" id="newcat" class="form-required form-input-tip" value="<?php esc_attr_e( 'New category name' ); ?>" tabindex="3" aria-required="true"/>
-	<label class="screen-reader-text" for="newcat_parent"><?php _e('Parent category'); ?>:</label><?php wp_dropdown_categories( array( 'hide_empty' => 0, 'name' => 'newcat_parent', 'orderby' => 'name', 'hierarchical' => 1, 'show_option_none' => __('Parent category'), 'tab_index' => 3 ) ); ?>
-	<input type="button" id="category-add-sumbit" class="add:categorychecklist:category-add button" value="<?php esc_attr_e( 'Add' ); ?>" tabindex="3" />
-<?php	wp_nonce_field( 'add-category', '_ajax_nonce', false ); ?>
-	<span id="category-ajax-response"></span></p>
-</div>
-<?php
-endif;
-
-}
-add_meta_box('categorydiv', __('Categories'), 'post_categories_meta_box', 'post', 'side', 'core');
-
-/**
- * Display post password form fields.
- *
- * @since 2.6.0
- *
- * @param object $post
- */
-function post_password_meta_box($post) {
-?>
-<p><label for="post_status_private" class="selectit"><input id="post_status_private" name="post_status" type="checkbox" value="private" <?php checked($post->post_status, 'private'); ?> tabindex="4" /> <?php _e('Keep this post private') ?></label></p>
-<h4><?php _e( 'Post Password' ); ?></h4>
-<p><label class="screen-reader-text" for="post_password"><?php _e('Password Protect This Post') ?></label><input name="post_password" type="text" size="25" id="post_password" value="<?php the_post_password(); ?>" /></p>
-<p><?php _e('Setting a password will require people who visit your blog to enter the above password to view this post and its comments.'); ?></p>
-<?php
-}
-// add_meta_box('passworddiv', __('Privacy Options'), 'post_password_meta_box', 'post', 'side', 'core');
-
-/**
- * Display post excerpt form fields.
- *
- * @since 2.6.0
- *
- * @param object $post
- */
-function post_excerpt_meta_box($post) {
-?>
-<label class="screen-reader-text" for="excerpt"><?php _e('Excerpt') ?></label><textarea rows="1" cols="40" name="excerpt" tabindex="6" id="excerpt"><?php echo $post->post_excerpt ?></textarea>
-<p><?php _e('Excerpts are optional hand-crafted summaries of your content that can be used in your theme. <a href="http://codex.wordpress.org/Excerpt" target="_blank">Learn more about manual excerpts.</a>'); ?></p>
-<?php
-}
-add_meta_box('postexcerpt', __('Excerpt'), 'post_excerpt_meta_box', 'post', 'normal', 'core');
-
-/**
- * Display trackback links form fields.
- *
- * @since 2.6.0
- *
- * @param object $post
- */
-function post_trackback_meta_box($post) {
-	$form_trackback = '<input type="text" name="trackback_url" id="trackback_url" class="code" tabindex="7" value="'. esc_attr( str_replace("\n", ' ', $post->to_ping) ) .'" />';
-	if ('' != $post->pinged) {
-		$pings = '<p>'. __('Already pinged:') . '</p><ul>';
-		$already_pinged = explode("\n", trim($post->pinged));
-		foreach ($already_pinged as $pinged_url) {
-			$pings .= "\n\t<li>" . esc_html($pinged_url) . "</li>";
-		}
-		$pings .= '</ul>';
-	}
-
-?>
-<p><label for="trackback_url"><?php _e('Send trackbacks to:'); ?></label> <?php echo $form_trackback; ?><br /> (<?php _e('Separate multiple URLs with spaces'); ?>)</p>
-<p><?php _e('Trackbacks are a way to notify legacy blog systems that you&#8217;ve linked to them. If you link other WordPress blogs they&#8217;ll be notified automatically using <a href="http://codex.wordpress.org/Introduction_to_Blogging#Managing_Comments" target="_blank">pingbacks</a>, no other action necessary.'); ?></p>
-<?php
-if ( ! empty($pings) )
-	echo $pings;
-}
-add_meta_box('trackbacksdiv', __('Send Trackbacks'), 'post_trackback_meta_box', 'post', 'normal', 'core');
-
-/**
- * Display custom fields for the post form fields.
- *
- * @since 2.6.0
- *
- * @param object $post
- */
-function post_custom_meta_box($post) {
-?>
-<div id="postcustomstuff">
-<div id="ajax-response"></div>
-<?php
-$metadata = has_meta($post->ID);
-list_meta($metadata);
-meta_form(); ?>
-</div>
-<p><?php _e('Custom fields can be used to add extra metadata to a post that you can <a href="http://codex.wordpress.org/Using_Custom_Fields" target="_blank">use in your theme</a>.'); ?></p>
-<?php
-}
-add_meta_box('postcustom', __('Custom Fields'), 'post_custom_meta_box', 'post', 'normal', 'core');
+if ( post_type_supports($post_type, 'custom-fields') )
+	add_meta_box('postcustom', __('Custom Fields'), 'post_custom_meta_box', $post_type, 'normal', 'core');
 
 do_action('dbx_post_advanced');
+if ( post_type_supports($post_type, 'comments') )
+	add_meta_box('commentstatusdiv', __('Discussion'), 'post_comment_status_meta_box', $post_type, 'normal', 'core');
 
-/**
- * Display comment status for post form fields.
- *
- * @since 2.6.0
- *
- * @param object $post
- */
-function post_comment_status_meta_box($post) {
-?>
-<input name="advanced_view" type="hidden" value="1" />
-<p class="meta-options">
-	<label for="comment_status" class="selectit"> <input name="comment_status" type="checkbox" id="comment_status" value="open" <?php checked($post->comment_status, 'open'); ?> /> <?php _e('Allow comments on this post') ?></label><br />
-	<label for="ping_status" class="selectit"><input name="ping_status" type="checkbox" id="ping_status" value="open" <?php checked($post->ping_status, 'open'); ?> /> <?php _e('Allow <a href="http://codex.wordpress.org/Introduction_to_Blogging#Managing_Comments" target="_blank">trackbacks and pingbacks</a> on this post') ?></label></p>
-<?php
+if ( ('publish' == $post->post_status || 'private' == $post->post_status) && post_type_supports($post_type, 'comments') )
+	add_meta_box('commentsdiv', __('Comments'), 'post_comment_meta_box', $post_type, 'normal', 'core');
+
+if ( !( 'pending' == $post->post_status && !current_user_can( $post_type_object->cap->publish_posts ) ) )
+	add_meta_box('slugdiv', __('Slug'), 'post_slug_meta_box', $post_type, 'normal', 'core');
+
+if ( post_type_supports($post_type, 'author') ) {
+	if ( is_super_admin() || current_user_can( $post_type_object->cap->edit_others_posts ) )
+		add_meta_box('authordiv', __('Author'), 'post_author_meta_box', $post_type, 'normal', 'core');
 }
-add_meta_box('commentstatusdiv', __('Discussion'), 'post_comment_status_meta_box', 'post', 'normal', 'core');
 
-/**
- * Display comments for post.
- *
- * @since 2.8.0
- *
- * @param object $post
- */
-function post_comment_meta_box($post) {
-	global $wpdb, $post_ID;
+if ( post_type_supports($post_type, 'revisions') && 0 < $post_ID && wp_get_post_revisions( $post_ID ) )
+	add_meta_box('revisionsdiv', __('Revisions'), 'post_revisions_meta_box', $post_type, 'normal', 'core');
 
-	$total = $wpdb->get_var($wpdb->prepare("SELECT count(1) FROM $wpdb->comments WHERE comment_post_ID = '%d' AND ( comment_approved = '0' OR comment_approved = '1')", $post_ID));
+do_action('add_meta_boxes', $post_type, $post);
+do_action('add_meta_boxes_' . $post_type, $post);
 
-	if ( 1 > $total ) {
-		echo '<p>' . __('No comments yet.') . '</p>';
-		return;
-	}
+do_action('do_meta_boxes', $post_type, 'normal', $post);
+do_action('do_meta_boxes', $post_type, 'advanced', $post);
+do_action('do_meta_boxes', $post_type, 'side', $post);
 
-	wp_nonce_field( 'get-comments', 'add_comment_nonce', false );
-?>
+add_screen_option('layout_columns', array('max' => 2) );
 
-<table class="widefat comments-box fixed" cellspacing="0" style="display:none;">
-<thead><tr>
-    <th scope="col" class="column-author"><?php _e('Author') ?></th>
-    <th scope="col" class="column-comment">
-<?php /* translators: field name in comment form */ echo _x('Comment', 'noun'); ?></th>
-</tr></thead>
-<tbody id="the-comment-list" class="list:comment"></tbody>
-</table>
-<p class="hide-if-no-js"><a href="#commentstatusdiv" id="show-comments" onclick="commentsBox.get(<?php echo $total; ?>);return false;"><?php _e('Show comments'); ?></a> <img class="waiting" style="display:none;" src="images/wpspin_light.gif" alt="" /></p>
-<?php
-	$hidden = get_hidden_meta_boxes('post');
-	if ( ! in_array('commentsdiv', $hidden) ) { ?>
-		<script type="text/javascript">jQuery(document).ready(function(){commentsBox.get(<?php echo $total; ?>, 10);});</script>
-<?php
-	}
+if ( 'post' == $post_type ) {
+	add_contextual_help($current_screen,
+	'<p>' . __('The title field and the big Post Editing Area are fixed in place, but you can reposition all the other boxes using drag and drop, and can minimize or expand them by clicking the title bar of each box. Use the Screen Options tab to unhide more boxes (Excerpt, Send Trackbacks, Custom Fields, Discussion, Slug, Author) or to choose a 1- or 2-column layout for this screen.') . '</p>' .
+	'<p>' . __('<strong>Title</strong> - Enter a title for your post. After you enter a title, you&#8217;ll see the permalink below, which you can edit.') . '</p>' .
+	'<p>' . __('<strong>Post editor</strong> - Enter the text for your post. There are two modes of editing: Visual and HTML. Choose the mode by clicking on the appropriate tab. Visual mode gives you a WYSIWYG editor. Click the last icon in the row to get a second row of controls. The HTML mode allows you to enter raw HTML along with your post text. You can insert media files by clicking the icons above the post editor and following the directions. You can go the distraction-free writing screen, new in 3.2, via the Fullscreen icon in Visual mode (second to last in the top row) or the Fullscreen button in HTML mode (last in the row). Once there, you can make buttons visible by hovering over the top area. Exit Fullscreen back to the regular post editor.') . '</p>' .
+	'<p>' . __('<strong>Publish</strong> - You can set the terms of publishing your post in the Publish box. For Status, Visibility, and Publish (immediately), click on the Edit link to reveal more options. Visibility includes options for password-protecting a post or making it stay at the top of your blog indefinitely (sticky). Publish (immediately) allows you to set a future or past date and time, so you can schedule a post to be published in the future or backdate a post.') . '</p>' .
+	( ( current_theme_supports( 'post-formats' ) && post_type_supports( 'post', 'post-formats' ) ) ? '<p>' . __( '<strong>Post Format</strong> - This designates how your theme will display a specific post. For example, you could have a <em>standard</em> blog post with a title and paragraphs, or a short <em>aside</em> that omits the title and contains a short text blurb. Please refer to the Codex for <a href="http://codex.wordpress.org/Post_Formats#Supported_Formats">descriptions of each post format</a>. Your theme could enable all or some of 10 possible formats.' ) . '</p>' : '' ) .
+	'<p>' . __('<strong>Featured Image</strong> - This allows you to associate an image with your post without inserting it. This is usually useful only if your theme makes use of the featured image as a post thumbnail on the home page, a custom header, etc.') . '</p>' .
+	'<p>' . __('<strong>Send Trackbacks</strong> - Trackbacks are a way to notify legacy blog systems that you&#8217;ve linked to them. Enter the URL(s) you want to send trackbacks. If you link to other WordPress sites they&#8217;ll be notified automatically using pingbacks, and this field is unnecessary.') . '</p>' .
+	'<p>' . __('<strong>Discussion</strong> - You can turn comments and pings on or off, and if there are comments on the post, you can see them here and moderate them.') . '</p>' .
+	'<p>' . sprintf(__('You can also create posts with the <a href="%s">Press This bookmarklet</a>.'), 'options-writing.php') . '</p>' .
+	'<p><strong>' . __('For more information:') . '</strong></p>' .
+	'<p>' . __('<a href="http://codex.wordpress.org/Posts_Add_New_Screen" target="_blank">Documentation on Writing and Editing Posts</a>') . '</p>' .
+	'<p>' . __('<a href="http://wordpress.org/support/" target="_blank">Support Forums</a>') . '</p>'
+	);
+} elseif ( 'page' == $post_type ) {
+	add_contextual_help($current_screen, '<p>' . __('Pages are similar to Posts in that they have a title, body text, and associated metadata, but they are different in that they are not part of the chronological blog stream, kind of like permanent posts. Pages are not categorized or tagged, but can have a hierarchy. You can nest Pages under other Pages by making one the &#8220;Parent&#8221; of the other, creating a group of Pages.') . '</p>' .
+	'<p>' . __('Creating a Page is very similar to creating a Post, and the screens can be customized in the same way using drag and drop, the Screen Options tab, and expanding/collapsing boxes as you choose. This screen also has the new in 3.2 distraction-free writing space, available in both the Visual and HTML modes via the Fullscreen buttons. The Page editor mostly works the same as the Post editor, but there are some Page-specific features in the Page Attributes box:') . '</p>' .
+	'<p>' . __('<strong>Parent</strong> - You can arrange your pages in hierarchies. For example, you could have an &#8220;About&#8221; page that has &#8220;Life Story&#8221; and &#8220;My Dog&#8221; pages under it. There are no limits to how many levels you can nest pages.') . '</p>' .
+	'<p>' . __('<strong>Template</strong> - Some themes have custom templates you can use for certain pages that might have additional features or custom layouts. If so, you&#8217;ll see them in this dropdown menu.') . '</p>' .
+	'<p>' . __('<strong>Order</strong> - Pages are usually ordered alphabetically, but you can choose your own order by entering a number (1 for first, etc.) in this field.') . '</p>' .
+	'<p><strong>' . __('For more information:') . '</strong></p>' .
+	'<p>' . __('<a href="http://codex.wordpress.org/Pages_Add_New_Screen" target="_blank">Documentation on Adding New Pages</a>') . '</p>' .
+	'<p>' . __('<a href="http://codex.wordpress.org/Pages_Screen#Editing_Individual_Pages" target="_blank">Documentation on Editing Pages</a>') . '</p>' .
+	'<p>' . __('<a href="http://wordpress.org/support/" target="_blank">Support Forums</a>') . '</p>'
+	);
 }
-if ( 'publish' == $post->post_status || 'private' == $post->post_status )
-	add_meta_box('commentsdiv', __('Comments'), 'post_comment_meta_box', 'post', 'normal', 'core');
 
-/**
- * Display post slug form fields.
- *
- * @since 2.6.0
- *
- * @param object $post
- */
-function post_slug_meta_box($post) {
+require_once('./admin-header.php');
 ?>
-<label class="screen-reader-text" for="post_name"><?php _e('Post Slug') ?></label><input name="post_name" type="text" size="13" id="post_name" value="<?php echo esc_attr( $post->post_name ); ?>" />
-<?php
-}
-if ( !( 'pending' == $post->post_status && !current_user_can( 'publish_posts' ) ) )
-	add_meta_box('slugdiv', __('Post Slug'), 'post_slug_meta_box', 'post', 'normal', 'core');
-
-$authors = get_editable_user_ids( $current_user->id ); // TODO: ROLE SYSTEM
-if ( $post->post_author && !in_array($post->post_author, $authors) )
-	$authors[] = $post->post_author;
-if ( $authors && count( $authors ) > 1 ) :
-/**
- * Display form field with list of authors.
- *
- * @since 2.6.0
- *
- * @param object $post
- */
-function post_author_meta_box($post) {
-	global $current_user, $user_ID;
-	$authors = get_editable_user_ids( $current_user->id ); // TODO: ROLE SYSTEM
-	if ( $post->post_author && !in_array($post->post_author, $authors) )
-		$authors[] = $post->post_author;
-?>
-<label class="screen-reader-text" for="post_author_override"><?php _e('Post Author'); ?></label><?php wp_dropdown_users( array('include' => $authors, 'name' => 'post_author_override', 'selected' => empty($post->ID) ? $user_ID : $post->post_author) ); ?>
-<?php
-}
-add_meta_box('authordiv', __('Post Author'), 'post_author_meta_box', 'post', 'normal', 'core');
-endif;
-
-if ( 0 < $post_ID && wp_get_post_revisions( $post_ID ) ) :
-/**
- * Display list of post revisions.
- *
- * @since 2.6.0
- *
- * @param object $post
- */
-function post_revisions_meta_box($post) {
-	wp_list_post_revisions();
-}
-add_meta_box('revisionsdiv', __('Post Revisions'), 'post_revisions_meta_box', 'post', 'normal', 'core');
-endif;
-
-do_action('do_meta_boxes', 'post', 'normal', $post);
-do_action('do_meta_boxes', 'post', 'advanced', $post);
-do_action('do_meta_boxes', 'post', 'side', $post);
-
-require_once('admin-header.php');
-
-?>
-
-<?php if ( (isset($mode) && 'bookmarklet' == $mode) || isset($_GET['popupurl']) ): ?>
-<input type="hidden" name="mode" value="bookmarklet" />
-<?php endif; ?>
 
 <div class="wrap">
 <?php screen_icon(); ?>
-<h2><?php echo esc_html( $title ); ?></h2>
+<h2><?php echo esc_html( $title ); ?><?php if ( isset( $post_new_file ) ) : ?> <a href="<?php echo esc_url( $post_new_file ) ?>" class="add-new-h2"><?php echo esc_html($post_type_object->labels->add_new); ?></a><?php endif; ?></h2>
 <?php if ( $notice ) : ?>
 <div id="notice" class="error"><p><?php echo $notice ?></p></div>
 <?php endif; ?>
-<?php if (isset($_GET['message'])) : ?>
-<div id="message" class="updated fade"><p><?php echo $messages[$_GET['message']]; ?></p></div>
+<?php if ( $message ) : ?>
+<div id="message" class="updated"><p><?php echo $message; ?></p></div>
 <?php endif; ?>
-<form name="post" action="post.php" method="post" id="post">
-<?php
-
-if ( 0 == $post_ID)
-	wp_nonce_field('add-post');
-else
-	wp_nonce_field('update-post_' .  $post_ID);
-
-?>
-
+<form name="post" action="post.php" method="post" id="post"<?php do_action('post_edit_form_tag'); ?>>
+<?php wp_nonce_field($nonce_action); ?>
 <input type="hidden" id="user-id" name="user_ID" value="<?php echo (int) $user_ID ?>" />
-<input type="hidden" id="hiddenaction" name="action" value="<?php echo esc_attr($form_action) ?>" />
-<input type="hidden" id="originalaction" name="originalaction" value="<?php echo esc_attr($form_action) ?>" />
+<input type="hidden" id="hiddenaction" name="action" value="<?php echo esc_attr( $form_action ) ?>" />
+<input type="hidden" id="originalaction" name="originalaction" value="<?php echo esc_attr( $form_action ) ?>" />
 <input type="hidden" id="post_author" name="post_author" value="<?php echo esc_attr( $post->post_author ); ?>" />
-<input type="hidden" id="post_type" name="post_type" value="<?php echo esc_attr($post->post_type) ?>" />
-<input type="hidden" id="original_post_status" name="original_post_status" value="<?php echo esc_attr($post->post_status) ?>" />
-<input name="referredby" type="hidden" id="referredby" value="<?php echo esc_url(stripslashes(wp_get_referer())); ?>" />
+<input type="hidden" id="post_type" name="post_type" value="<?php echo esc_attr( $post_type ) ?>" />
+<input type="hidden" id="original_post_status" name="original_post_status" value="<?php echo esc_attr( $post->post_status) ?>" />
+<input type="hidden" id="referredby" name="referredby" value="<?php echo esc_url(stripslashes(wp_get_referer())); ?>" />
 <?php
 if ( 'draft' != $post->post_status )
 	wp_original_referer_field(true, 'previous');
 
-echo $form_extra ?>
+echo $form_extra;
+
+wp_nonce_field( 'autosave', 'autosavenonce', false );
+wp_nonce_field( 'meta-box-order', 'meta-box-order-nonce', false );
+wp_nonce_field( 'closedpostboxes', 'closedpostboxesnonce', false );
+?>
 
 <div id="poststuff" class="metabox-holder<?php echo 2 == $screen_layout_columns ? ' has-right-sidebar' : ''; ?>">
 <div id="side-info-column" class="inner-sidebar">
 
-<?php do_action('submitpost_box'); ?>
-
-<?php $side_meta_boxes = do_meta_boxes('post', 'side', $post); ?>
+<?php
+('page' == $post_type) ? do_action('submitpage_box') : do_action('submitpost_box');
+$side_meta_boxes = do_meta_boxes($post_type, 'side', $post);
+?>
 </div>
 
 <div id="post-body">
 <div id="post-body-content">
+<?php if ( post_type_supports($post_type, 'title') ) { ?>
 <div id="titlediv">
 <div id="titlewrap">
-	<label class="screen-reader-text" for="title"><?php _e('Title') ?></label>
+	<label class="hide-if-no-js" style="visibility:hidden" id="title-prompt-text" for="title"><?php echo apply_filters( 'enter_title_here', __( 'Enter title here' ), $post ); ?></label>
 	<input type="text" name="post_title" size="30" tabindex="1" value="<?php echo esc_attr( htmlspecialchars( $post->post_title ) ); ?>" id="title" autocomplete="off" />
 </div>
 <div class="inside">
 <?php
-$sample_permalink_html = get_sample_permalink_html($post->ID);
-if ( !( 'pending' == $post->post_status && !current_user_can( 'publish_posts' ) ) ) { ?>
+$sample_permalink_html = $post_type_object->public ? get_sample_permalink_html($post->ID) : '';
+$shortlink = wp_get_shortlink($post->ID, 'post');
+if ( !empty($shortlink) )
+    $sample_permalink_html .= '<input id="shortlink" type="hidden" value="' . esc_attr($shortlink) . '" /><a href="#" class="button" onclick="prompt(&#39;URL:&#39;, jQuery(\'#shortlink\').val()); return false;">' . __('Get Shortlink') . '</a>';
+
+if ( $post_type_object->public && ! ( 'pending' == $post->post_status && !current_user_can( $post_type_object->cap->publish_posts ) ) ) { ?>
 	<div id="edit-slug-box">
-<?php
-	if ( ! empty($post->ID) && ! empty($sample_permalink_html) ) :
-		echo $sample_permalink_html;
-endif; ?>
+	<?php
+		if ( ! empty($post->ID) && ! empty($sample_permalink_html) && 'auto-draft' != $post->post_status )
+			echo $sample_permalink_html;
+	?>
 	</div>
 <?php
-} ?>
+}
+?>
 </div>
+<?php
+wp_nonce_field( 'samplepermalink', 'samplepermalinknonce', false );
+?>
 </div>
+<?php } ?>
 
+<?php if ( post_type_supports($post_type, 'editor') ) { ?>
 <div id="<?php echo user_can_richedit() ? 'postdivrich' : 'postdiv'; ?>" class="postarea">
 
 <?php the_editor($post->post_content); ?>
 
 <table id="post-status-info" cellspacing="0"><tbody><tr>
-	<td id="wp-word-count"></td>
+	<td id="wp-word-count"><?php printf( __( 'Word count: %s' ), '<span class="word-count">0</span>' ); ?></td>
 	<td class="autosave-info">
-	<span id="autosave">&nbsp;</span>
+	<span class="autosave-message">&nbsp;</span>
 <?php
-	if ( $post_ID ) {
+	if ( 'auto-draft' != $post->post_status ) {
 		echo '<span id="last-edit">';
 		if ( $last_id = get_post_meta($post_ID, '_edit_last', true) ) {
 			$last_user = get_userdata($last_id);
@@ -635,21 +286,16 @@ endif; ?>
 	</td>
 </tr></tbody></table>
 
-<?php
-wp_nonce_field( 'autosave', 'autosavenonce', false );
-wp_nonce_field( 'closedpostboxes', 'closedpostboxesnonce', false );
-wp_nonce_field( 'getpermalink', 'getpermalinknonce', false );
-wp_nonce_field( 'samplepermalink', 'samplepermalinknonce', false );
-wp_nonce_field( 'meta-box-order', 'meta-box-order-nonce', false ); ?>
 </div>
 
 <?php
+}
 
-do_meta_boxes('post', 'normal', $post);
+do_meta_boxes($post_type, 'normal', $post);
 
-do_action('edit_form_advanced');
+( 'page' == $post_type ) ? do_action('edit_page_form') : do_action('edit_form_advanced');
 
-do_meta_boxes('post', 'advanced', $post);
+do_meta_boxes($post_type, 'advanced', $post);
 
 do_action('dbx_post_sidebar'); ?>
 
