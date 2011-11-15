@@ -654,13 +654,7 @@ class Port(object):
         Returns:
            Operating-system's environment.
         """
-        env = os.environ.copy()
-        # FIXME: This is a hack.  Tests shouldn't be locale dependent.
-        # This works only in unix environments.
-        env['LANGUAGE'] = 'en'
-        env['LC_MESSAGES'] = 'en_US.utf8'
-        env['LANG'] = 'en_US.UTF-8'
-        return env
+        return os.environ.copy()
 
     def show_results_html_file(self, results_filename):
         """This routine should display the HTML file pointed at by

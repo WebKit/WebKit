@@ -1,3 +1,15 @@
+2011-11-14  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r100192.
+        http://trac.webkit.org/changeset/100192
+        https://bugs.webkit.org/show_bug.cgi?id=72328
+
+        Caused infinite tests to fail (Requested by abarth on
+        #webkit).
+
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        * Scripts/webkitpy/layout_tests/port/base_unittest.py:
+
 2011-11-14  Tony Chang  <tony@chromium.org>
 
         Remove the CSS3_FLEXBOX compile time flag and enable on all ports

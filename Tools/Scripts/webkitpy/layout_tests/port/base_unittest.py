@@ -194,13 +194,6 @@ class PortTest(unittest.TestCase):
         # This routine is a no-op. We just test it for coverage.
         port.setup_test_run()
 
-    def test_setup_environ_for_server(self):
-        port = self.make_port()
-        env = port.setup_environ_for_server()
-        self.assertEquals(env['LANGUAGE'], 'en')
-        self.assertEquals(env['LC_MESSAGES'], 'en_US.utf8')
-        self.assertEquals(env['LANG'], 'en_US.UTF-8')
-
     def test_test_dirs(self):
         filesystem = MockFileSystem({
             '/mock-checkout/LayoutTests/canvas/test': '',
