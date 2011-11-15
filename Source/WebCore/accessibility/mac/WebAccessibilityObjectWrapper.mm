@@ -1340,7 +1340,7 @@ static id textMarkerRangeFromVisiblePositions(AXObjectCache *cache, VisiblePosit
 
 - (id)remoteAccessibilityParentObject
 {
-    if (!m_object || !m_object->document())
+    if (!m_object || !m_object->document() || !m_object->document()->frame())
         return nil;
     
     return m_object->document()->frame()->loader()->client()->accessibilityRemoteObject();
