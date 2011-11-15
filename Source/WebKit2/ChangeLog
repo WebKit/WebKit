@@ -1,3 +1,50 @@
+2011-11-15  Sam Weinig  <sam@webkit.org>
+
+        Add WebKit2 API object to represent a connection
+        https://bugs.webkit.org/show_bug.cgi?id=72421
+
+        Reviewed by Anders Carlsson.
+
+        * GNUmakefile.am:
+        * Target.pri:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * win/WebKit2.vcproj:
+        Add new files.
+
+        * Shared/API/c/WKBase.h:
+        Add type.
+
+        * Shared/API/c/WKConnectionRef.cpp: Added.
+        (WKConnectionGetTypeID):
+        (WKConnectionSetConnectionClient):
+        (WKConnectionPostMessage):
+        * Shared/API/c/WKConnectionRef.h: Added.
+        Expose interface. Currently no support for synchronous messages.
+
+        * Shared/API/c/WKSharedAPICast.h:
+        Define relationship between WebConnection <-> WKConnectionRef.
+
+        * Shared/APIObject.h:
+        Add API type.
+
+        * Shared/WebConnection.cpp: Added.
+        (WebKit::WebConnection::~WebConnection):
+        (WebKit::WebConnection::initializeConnectionClient):
+        * Shared/WebConnection.h: Added.
+        (WebKit::WebConnection::type):
+        Sketch out the connection object. It is currently abstract
+        to allow different implementations for the UI and WebProcess sides
+        while retaining the same interface.
+
+        * Shared/WebConnectionClient.cpp: Added.
+        (WebKit::WebConnectionClient::didReceiveMessage):
+        (WebKit::WebConnectionClient::didClose):
+        * Shared/WebConnectionClient.h: Added.
+        Add simple client.
+
+        * UIProcess/API/C/WebKit2.h:
+        Add new file.
+
 2011-11-15  Chris Fleizach2  <cfleizach@apple.com>
 
         AX: WKAccessibilityWebObjectPage should not call super in accessibilityAttributeValue:

@@ -607,6 +607,22 @@
 				>
 			</File>
 			<File
+				RelativePath="..\Shared\WebConnection.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\Shared\WebConnection.h"
+				>
+			</File>
+			<File
+				RelativePath="..\Shared\WebConnectionClient.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\Shared\WebConnectionClient.h"
+				>
+			</File>
+			<File
 				RelativePath="..\Shared\WebContextMenuItem.cpp"
 				>
 			</File>
@@ -835,6 +851,14 @@
 				</File>
 				<File
 					RelativePath="..\Shared\API\c\WKCertificateInfo.h"
+					>
+				</File>
+				<File
+					RelativePath="..\Shared\API\c\WKConnectionRef.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\Shared\API\c\WKConnectionRef.h"
 					>
 				</File>
 				<File

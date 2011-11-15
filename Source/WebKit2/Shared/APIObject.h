@@ -39,6 +39,7 @@ public:
         TypeAuthenticationChallenge,
         TypeAuthenticationDecisionListener,
         TypeCertificateInfo,
+        TypeConnection,
         TypeContextMenuItem,
         TypeCredential,
         TypeData,

@@ -23,46 +23,35 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebKit2_h
-#define WebKit2_h
+#ifndef WKConnectionRef_h
+#define WKConnectionRef_h
 
 #include <WebKit2/WKBase.h>
-#include <WebKit2/WKType.h>
 
-#include <WebKit2/WKArray.h>
-#include <WebKit2/WKBackForwardList.h>
-#include <WebKit2/WKBackForwardListItem.h>
-#include <WebKit2/WKConnectionRef.h>
-#include <WebKit2/WKContext.h>
-#include <WebKit2/WKData.h>
-#include <WebKit2/WKDictionary.h>
-#include <WebKit2/WKError.h>
-#include <WebKit2/WKFormSubmissionListener.h>
-#include <WebKit2/WKFrame.h>
-#include <WebKit2/WKFramePolicyListener.h>
-#include <WebKit2/WKGeolocationManager.h>
-#include <WebKit2/WKGeolocationPermissionRequest.h>
-#include <WebKit2/WKGeolocationPosition.h>
-#include <WebKit2/WKGraphicsContext.h>
-#include <WebKit2/WKHitTestResult.h>
-#include <WebKit2/WKMutableArray.h>
-#include <WebKit2/WKMutableDictionary.h>
-#include <WebKit2/WKNavigationData.h>
-#include <WebKit2/WKNumber.h>
-#include <WebKit2/WKOpenPanelParameters.h>
-#include <WebKit2/WKOpenPanelResultListener.h>
-#include <WebKit2/WKPage.h>
-#include <WebKit2/WKPageGroup.h>
-#include <WebKit2/WKPreferences.h>
-#include <WebKit2/WKString.h>
-#include <WebKit2/WKURL.h>
-#include <WebKit2/WKURLRequest.h>
-#include <WebKit2/WKURLResponse.h>
-
-#if defined(__OBJC__) && __OBJC__
-#import <WebKit2/WKView.h>
-#elif !(defined(__APPLE__) && __APPLE__)
-#include <WebKit2/WKView.h>
+#ifdef __cplusplus
+extern "C" {
 #endif
 
-#endif /* WebKit2_h */
+typedef void (*WKConnectionDidReceiveMessageCallback)(WKConnectionRef connection, WKStringRef messageName, WKTypeRef messageBody, const void *clientInfo);
+typedef void (*WKConnectionDidCloseCallback)(WKConnectionRef connection, const void* clientInfo);
+
+struct WKConnectionClient {
+    int                                                                 version;
+    const void *                                                        clientInfo;
+    WKConnectionDidReceiveMessageCallback                               didReceiveMessage;
+    WKConnectionDidCloseCallback                                        didClose;
+};
+typedef struct WKConnectionClient WKConnectionClient;
+
+enum { WKConnectionClientCurrentVersion = 0 };
+
+WK_EXPORT WKTypeID WKConnectionGetTypeID();
+
+WK_EXPORT void WKConnectionSetConnectionClient(WKConnectionRef connection, const WKConnectionClient* client);
+WK_EXPORT void WKConnectionPostMessage(WKConnectionRef connection, WKStringRef messageName, WKTypeRef messageBody);
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif // WKConnectionRef_h

@@ -579,6 +579,12 @@
 		BC498619124D10E200D834E1 /* InjectedBundleHitTestResult.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC498617124D10E200D834E1 /* InjectedBundleHitTestResult.cpp */; };
 		BC49862F124D18C100D834E1 /* WKBundleHitTestResult.h in Headers */ = {isa = PBXBuildFile; fileRef = BC49862D124D18C100D834E1 /* WKBundleHitTestResult.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC498630124D18C100D834E1 /* WKBundleHitTestResult.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC49862E124D18C100D834E1 /* WKBundleHitTestResult.cpp */; };
+		BC4A628F147312BE006C681A /* WebConnection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC4A628B147312BE006C681A /* WebConnection.cpp */; };
+		BC4A6290147312BE006C681A /* WebConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = BC4A628C147312BE006C681A /* WebConnection.h */; };
+		BC4A6291147312BE006C681A /* WebConnectionClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC4A628D147312BE006C681A /* WebConnectionClient.cpp */; };
+		BC4A6292147312BE006C681A /* WebConnectionClient.h in Headers */ = {isa = PBXBuildFile; fileRef = BC4A628E147312BE006C681A /* WebConnectionClient.h */; };
+		BC4A6296147313A0006C681A /* WKConnectionRef.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC4A6294147313A0006C681A /* WKConnectionRef.cpp */; };
+		BC4A6297147313A0006C681A /* WKConnectionRef.h in Headers */ = {isa = PBXBuildFile; fileRef = BC4A6295147313A0006C681A /* WKConnectionRef.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC4BEEAB120A0A5F00FBA0C7 /* InjectedBundleNodeHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = BC4BEEA9120A0A5E00FBA0C7 /* InjectedBundleNodeHandle.h */; };
 		BC4BEEAC120A0A5F00FBA0C7 /* InjectedBundleNodeHandle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC4BEEAA120A0A5F00FBA0C7 /* InjectedBundleNodeHandle.cpp */; };
 		BC4BEFE1120A1A4C00FBA0C7 /* WKBundleNodeHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = BC4BEFDF120A1A4C00FBA0C7 /* WKBundleNodeHandle.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1552,6 +1558,12 @@
 		BC498617124D10E200D834E1 /* InjectedBundleHitTestResult.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedBundleHitTestResult.cpp; sourceTree = "<group>"; };
 		BC49862D124D18C100D834E1 /* WKBundleHitTestResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKBundleHitTestResult.h; sourceTree = "<group>"; };
 		BC49862E124D18C100D834E1 /* WKBundleHitTestResult.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKBundleHitTestResult.cpp; sourceTree = "<group>"; };
+		BC4A628B147312BE006C681A /* WebConnection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebConnection.cpp; sourceTree = "<group>"; };
+		BC4A628C147312BE006C681A /* WebConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebConnection.h; sourceTree = "<group>"; };
+		BC4A628D147312BE006C681A /* WebConnectionClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebConnectionClient.cpp; sourceTree = "<group>"; };
+		BC4A628E147312BE006C681A /* WebConnectionClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebConnectionClient.h; sourceTree = "<group>"; };
+		BC4A6294147313A0006C681A /* WKConnectionRef.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKConnectionRef.cpp; sourceTree = "<group>"; };
+		BC4A6295147313A0006C681A /* WKConnectionRef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKConnectionRef.h; sourceTree = "<group>"; };
 		BC4BEEA9120A0A5E00FBA0C7 /* InjectedBundleNodeHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectedBundleNodeHandle.h; sourceTree = "<group>"; };
 		BC4BEEAA120A0A5F00FBA0C7 /* InjectedBundleNodeHandle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedBundleNodeHandle.cpp; sourceTree = "<group>"; };
 		BC4BEFDF120A1A4C00FBA0C7 /* WKBundleNodeHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKBundleNodeHandle.h; sourceTree = "<group>"; };
@@ -2250,6 +2262,10 @@
 				518D2CAB12D5153B003BB93B /* WebBackForwardListItem.cpp */,
 				518D2CAC12D5153B003BB93B /* WebBackForwardListItem.h */,
 				BCF50726124329AA005955AE /* WebCertificateInfo.h */,
+				BC4A628B147312BE006C681A /* WebConnection.cpp */,
+				BC4A628C147312BE006C681A /* WebConnection.h */,
+				BC4A628D147312BE006C681A /* WebConnectionClient.cpp */,
+				BC4A628E147312BE006C681A /* WebConnectionClient.h */,
 				512935D51288D19400A4B695 /* WebContextMenuItem.cpp */,
 				512935D61288D19400A4B695 /* WebContextMenuItem.h */,
 				510FBB981288C95E00AFFDF4 /* WebContextMenuItemData.cpp */,
@@ -3288,6 +3304,8 @@
 				BCDDB316124EBD130048D13C /* WKBase.h */,
 				BC4075D9124FF0270068F20A /* WKCertificateInfo.cpp */,
 				BC4075DA124FF0270068F20A /* WKCertificateInfo.h */,
+				BC4A6294147313A0006C681A /* WKConnectionRef.cpp */,
+				BC4A6295147313A0006C681A /* WKConnectionRef.h */,
 				51A555F3128C6C47009ABCEC /* WKContextMenuItem.cpp */,
 				51A555F4128C6C47009ABCEC /* WKContextMenuItem.h */,
 				51A55600128C6D92009ABCEC /* WKContextMenuItemTypes.h */,
@@ -3941,6 +3959,9 @@
 				E1AEA22F14687BDB00804569 /* WKFullKeyboardAccessWatcher.h in Headers */,
 				1AAF263914687C39004A1E8A /* TiledCoreAnimationDrawingArea.h in Headers */,
 				1AF05D8714688348008B1E81 /* TiledCoreAnimationDrawingAreaProxy.h in Headers */,
+				BC4A6290147312BE006C681A /* WebConnection.h in Headers */,
+				BC4A6292147312BE006C681A /* WebConnectionClient.h in Headers */,
+				BC4A6297147313A0006C681A /* WKConnectionRef.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4638,6 +4659,9 @@
 				E1AEA23014687BDB00804569 /* WKFullKeyboardAccessWatcher.mm in Sources */,
 				1AAF263814687C39004A1E8A /* TiledCoreAnimationDrawingArea.mm in Sources */,
 				1AF05D8614688348008B1E81 /* TiledCoreAnimationDrawingAreaProxy.mm in Sources */,
+				BC4A628F147312BE006C681A /* WebConnection.cpp in Sources */,
+				BC4A6291147312BE006C681A /* WebConnectionClient.cpp in Sources */,
+				BC4A6296147313A0006C681A /* WKConnectionRef.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

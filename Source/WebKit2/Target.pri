@@ -119,6 +119,7 @@ HEADERS += \
     PluginProcess/WebProcessConnection.h \
     Shared/API/c/WKBase.h \
     Shared/API/c/WKCertificateInfo.h \
+    Shared/API/c/WKConnectionRef.h \
     Shared/API/c/WKContextMenuItem.h \
     Shared/API/c/WKContextMenuItemTypes.h \
     Shared/API/c/WKDictionary.h \
@@ -169,6 +170,8 @@ HEADERS += \
     Shared/WebCoreArgumentCoders.h \
     Shared/WebBackForwardListItem.h \
     Shared/WebCertificateInfo.h \
+    Shared/WebConnection.h \
+    Shared/WebConnectionClient.h \
     Shared/WebContextMenuItem.h \
     Shared/WebContextMenuItemData.h \
     Shared/WebError.h \
@@ -436,6 +439,7 @@ SOURCES += \
     PluginProcess/qt/PluginProcessQt.cpp \
     Shared/API/c/WKArray.cpp \
     Shared/API/c/WKCertificateInfo.cpp \
+    Shared/API/c/WKConnectionRef.cpp \
     Shared/API/c/WKContextMenuItem.cpp \
     Shared/API/c/WKDictionary.cpp \
     Shared/API/c/WKError.cpp \
@@ -481,6 +485,8 @@ SOURCES += \
     Shared/UpdateInfo.cpp \
     Shared/VisitedLinkTable.cpp \
     Shared/WebBackForwardListItem.cpp \
+    Shared/WebConnection.cpp \
+    Shared/WebConnectionClient.cpp \
     Shared/WebContextMenuItem.cpp \
     Shared/WebContextMenuItemData.cpp \
     Shared/WebCoreArgumentCoders.cpp \
