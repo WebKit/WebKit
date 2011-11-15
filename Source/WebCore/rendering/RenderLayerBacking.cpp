@@ -85,7 +85,7 @@ RenderLayerBacking::RenderLayerBacking(RenderLayer* layer)
     : m_owningLayer(layer)
     , m_artificiallyInflatedBounds(false)
 {
-    createGraphicsLayer();
+    createPrimaryGraphicsLayer();
 }
 
 RenderLayerBacking::~RenderLayerBacking()
@@ -94,29 +94,36 @@ RenderLayerBacking::~RenderLayerBacking()
     updateOverflowControlsLayers(false, false, false);
     updateForegroundLayer(false);
     updateMaskLayer(false);
-    destroyGraphicsLayer();
+    destroyGraphicsLayers();
 }
 
-void RenderLayerBacking::createGraphicsLayer()
+PassOwnPtr<GraphicsLayer> RenderLayerBacking::createGraphicsLayer(const String& name)
 {
-    m_graphicsLayer = GraphicsLayer::create(this);
-    
+    OwnPtr<GraphicsLayer> graphicsLayer = GraphicsLayer::create(this);
 #ifndef NDEBUG
-    m_graphicsLayer->setName(nameForLayer());
+    graphicsLayer->setName(name);
 #endif
+    return graphicsLayer.release();
+}
 
-#if USE(ACCELERATED_COMPOSITING)
+void RenderLayerBacking::createPrimaryGraphicsLayer()
+{
+    String layerName;
+#ifndef NDEBUG
+    layerName = nameForLayer();
+#endif
+    m_graphicsLayer = createGraphicsLayer(layerName);
+    
     ASSERT(renderer());
     ASSERT(renderer()->document());
     ASSERT(renderer()->document()->frame());
     m_graphicsLayer->setContentsScale(pageScaleFactor() * backingScaleFactor());
-#endif
 
     updateLayerOpacity(renderer()->style());
     updateLayerTransform(renderer()->style());
 }
 
-void RenderLayerBacking::destroyGraphicsLayer()
+void RenderLayerBacking::destroyGraphicsLayers()
 {
     if (m_graphicsLayer)
         m_graphicsLayer->removeFromParent();
@@ -543,10 +550,7 @@ bool RenderLayerBacking::updateClippingLayers(bool needsAncestorClip, bool needs
 
     if (needsAncestorClip) {
         if (!m_ancestorClippingLayer) {
-            m_ancestorClippingLayer = GraphicsLayer::create(this);
-#ifndef NDEBUG
-            m_ancestorClippingLayer->setName("Ancestor clipping Layer");
-#endif
+            m_ancestorClippingLayer = createGraphicsLayer("Ancestor clipping Layer");
             m_ancestorClippingLayer->setMasksToBounds(true);
             layersChanged = true;
         }
@@ -558,10 +562,7 @@ bool RenderLayerBacking::updateClippingLayers(bool needsAncestorClip, bool needs
     
     if (needsDescendantClip) {
         if (!m_clippingLayer) {
-            m_clippingLayer = GraphicsLayer::create(this);
-#ifndef NDEBUG
-            m_clippingLayer->setName("Child clipping Layer");
-#endif
+            m_clippingLayer = createGraphicsLayer("Child clipping Layer");
             m_clippingLayer->setMasksToBounds(true);
             layersChanged = true;
         }
@@ -606,10 +607,7 @@ bool RenderLayerBacking::updateOverflowControlsLayers(bool needsHorizontalScroll
     bool layersChanged = false;
     if (needsHorizontalScrollbarLayer) {
         if (!m_layerForHorizontalScrollbar) {
-            m_layerForHorizontalScrollbar = GraphicsLayer::create(this);
-#ifndef NDEBUG
-            m_layerForHorizontalScrollbar->setName("horizontal scrollbar");
-#endif
+            m_layerForHorizontalScrollbar = createGraphicsLayer("horizontal scrollbar");
             layersChanged = true;
         }
     } else if (m_layerForHorizontalScrollbar) {
@@ -619,10 +617,7 @@ bool RenderLayerBacking::updateOverflowControlsLayers(bool needsHorizontalScroll
 
     if (needsVerticalScrollbarLayer) {
         if (!m_layerForVerticalScrollbar) {
-            m_layerForVerticalScrollbar = GraphicsLayer::create(this);
-#ifndef NDEBUG
-            m_layerForVerticalScrollbar->setName("vertical scrollbar");
-#endif
+            m_layerForVerticalScrollbar = createGraphicsLayer("vertical scrollbar");
             layersChanged = true;
         }
     } else if (m_layerForVerticalScrollbar) {
@@ -632,10 +627,7 @@ bool RenderLayerBacking::updateOverflowControlsLayers(bool needsHorizontalScroll
 
     if (needsScrollCornerLayer) {
         if (!m_layerForScrollCorner) {
-            m_layerForScrollCorner = GraphicsLayer::create(this);
-#ifndef NDEBUG
-            m_layerForScrollCorner->setName("scroll corner");
-#endif
+            m_layerForScrollCorner = createGraphicsLayer("scroll corner");
             layersChanged = true;
         }
     } else if (m_layerForScrollCorner) {
@@ -651,10 +643,11 @@ bool RenderLayerBacking::updateForegroundLayer(bool needsForegroundLayer)
     bool layerChanged = false;
     if (needsForegroundLayer) {
         if (!m_foregroundLayer) {
-            m_foregroundLayer = GraphicsLayer::create(this);
+            String layerName;
 #ifndef NDEBUG
-            m_foregroundLayer->setName(nameForLayer() + " (foreground)");
+            layerName = nameForLayer() + " (foreground)";
 #endif
+            m_foregroundLayer = createGraphicsLayer(layerName);
             m_foregroundLayer->setDrawsContent(true);
             m_foregroundLayer->setPaintingPhase(GraphicsLayerPaintForeground);
             m_foregroundLayer->setContentsScale(pageScaleFactor() * backingScaleFactor());
@@ -677,10 +670,7 @@ bool RenderLayerBacking::updateMaskLayer(bool needsMaskLayer)
     bool layerChanged = false;
     if (needsMaskLayer) {
         if (!m_maskLayer) {
-            m_maskLayer = GraphicsLayer::create(this);
-#ifndef NDEBUG
-            m_maskLayer->setName("Mask");
-#endif
+            m_maskLayer = createGraphicsLayer("Mask");
             m_maskLayer->setDrawsContent(true);
             m_maskLayer->setPaintingPhase(GraphicsLayerPaintMask);
             m_maskLayer->setContentsScale(pageScaleFactor() * backingScaleFactor());
