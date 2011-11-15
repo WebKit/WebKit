@@ -684,6 +684,22 @@ private:
         return nodeIndex;
     }
     
+    bool structureChainIsStillValid(bool direct, Structure* previousStructure, StructureChain* chain)
+    {
+        if (direct)
+            return true;
+        
+        if (!previousStructure->storedPrototype().isNull() && previousStructure->storedPrototype().asCell()->structure() != chain->head()->get())
+            return false;
+        
+        for (WriteBarrier<Structure>* it = chain->head(); *it; ++it) {
+            if (!(*it)->storedPrototype().isNull() && (*it)->storedPrototype().asCell()->structure() != it[1].get())
+                return false;
+        }
+        
+        return true;
+    }
+    
     void buildOperandMapsIfNecessary();
     
     JSGlobalData* m_globalData;
@@ -1803,9 +1819,12 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                     Identifier identifier = m_codeBlock->identifier(identifierNumber);
                     size_t offset = newStructure->get(*m_globalData, identifier);
                     
-                    if (offset != notFound) {
+                    if (offset != notFound && structureChainIsStillValid(direct, previousStructure, structureChain)) {
                         addToGraph(CheckStructure, OpInfo(m_graph.addStructureSet(previousStructure)), base);
                         if (!direct) {
+                            if (!previousStructure->storedPrototype().isNull())
+                                addToGraph(CheckStructure, OpInfo(m_graph.addStructureSet(previousStructure->storedPrototype().asCell()->structure())), cellConstant(previousStructure->storedPrototype().asCell()));
+                            
                             for (WriteBarrier<Structure>* it = structureChain->head(); *it; ++it) {
                                 JSValue prototype = (*it)->storedPrototype();
                                 if (prototype.isNull())
