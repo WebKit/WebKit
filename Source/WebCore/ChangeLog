@@ -1,3 +1,13 @@
+2011-11-15  David Kilzer  <ddkilzer@apple.com>
+
+        Remove useless const modifier from KURL::init
+        <http://webkit.org/b/72387>
+
+        Reviewed by Darin Adler.
+
+        * platform/KURL.cpp:
+        (WebCore::KURL::init): Remove useless const.
+
 2011-11-14  Anders Carlsson  <andersca@apple.com>
 
         HostWindow invalidation functions should use root view coordinates

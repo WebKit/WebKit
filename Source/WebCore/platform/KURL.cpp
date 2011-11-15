@@ -486,7 +486,7 @@ void KURL::init(const KURL& base, const String& relative, const TextEncoding& en
                 parseBuffer.resize(bufferSize);
 
                 char* bufferPos = parseBuffer.data();
-                const char* bufferStart = bufferPos;
+                char* bufferStart = bufferPos;
 
                 // first copy everything before the path from the base
                 unsigned baseLength = base.m_string.length();
