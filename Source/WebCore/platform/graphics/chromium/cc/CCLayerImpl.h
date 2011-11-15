@@ -163,6 +163,9 @@ public:
     float scaleDelta() const { return m_scaleDelta; }
     void setScaleDelta(float);
 
+    const IntSize& sentScrollDelta() const { return m_sentScrollDelta; }
+    void setSentScrollDelta(const IntSize& sentScrollDelta) { m_sentScrollDelta = sentScrollDelta; }
+
     void scrollBy(const IntSize& scroll);
 
     bool scrollable() const { return m_scrollable; }
@@ -248,6 +251,7 @@ private:
     bool m_drawsContent;
 
     IntSize m_scrollDelta;
+    IntSize m_sentScrollDelta;
     IntSize m_maxScrollPosition;
     float m_scaleDelta;
 

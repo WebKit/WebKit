@@ -1,3 +1,25 @@
+2011-11-15  Alpha Lam  <hclam@chromium.org>
+
+        [chromium] scroll deltas are cleared during commit to the main thread
+        https://bugs.webkit.org/show_bug.cgi?id=71916
+
+        Reviewed by James Robinson.
+
+        Patch is covered by unit test.
+
+        Add a member m_sentScrollDelta to CCLayerImpl to keep track of the scroll delta being
+        sent to the main thread during commit. This gives a simpler approach to keep tracking of a
+        layer's scroll delta in impl thread.
+
+        * platform/graphics/chromium/LayerChromium.h:
+        (WebCore::LayerChromium::sentScrollDelta):
+        * platform/graphics/chromium/cc/CCLayerImpl.h:
+        (WebCore::CCLayerImpl::sentScrollDelta):
+        (WebCore::CCLayerImpl::setSentScrollDelta):
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.cpp:
+        (WebCore::CCLayerTreeHostImpl::processScrollDeltas):
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.h:
+
 2011-11-15  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] REGRESSION(100123): It made inspector tests crash

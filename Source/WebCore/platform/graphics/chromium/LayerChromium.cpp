@@ -301,6 +301,7 @@ void LayerChromium::pushPropertiesTo(CCLayerImpl* layer)
     layer->setSublayerTransform(m_sublayerTransform);
     layer->setTransform(m_transform);
     layer->setUpdateRect(m_updateRect);
+    layer->setSentScrollDelta(IntSize());
 
     if (maskLayer())
         maskLayer()->pushPropertiesTo(layer->maskLayer());

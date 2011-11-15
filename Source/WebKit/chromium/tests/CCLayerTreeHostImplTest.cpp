@@ -127,6 +127,7 @@ TEST_F(CCLayerTreeHostImplTest, scrollDeltaRepeatedScrolls)
     scrollInfo = m_hostImpl->processScrollDeltas();
     ASSERT_EQ(root->scrollPosition(), scrollPosition + scrollDelta);
     ASSERT_EQ(scrollInfo->scrolls.size(), 1u);
+    EXPECT_EQ(root->sentScrollDelta(), scrollDelta);
     expectContains(*scrollInfo.get(), root->id(), scrollDelta);
     expectClearedScrollDeltasRecursive(root.get());
 
