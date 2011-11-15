@@ -1,0 +1,106 @@
+(GraphicsLayer
+  (bounds 800.00 600.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 600.00)
+      (children 4
+        (GraphicsLayer
+          (position 8.00 13.00)
+          (bounds 100.00 100.00)
+          (drawsContent 1)
+          (children 2
+            (GraphicsLayer
+              (bounds 85.00 100.00)
+              (children 1
+                (GraphicsLayer
+                  (bounds 10.00 200.00)
+                )
+              )
+            )
+            (GraphicsLayer
+              (position 85.00 0.00)
+              (bounds 15.00 100.00)
+              (drawsContent 1)
+            )
+          )
+        )
+        (GraphicsLayer
+          (position 8.00 13.00)
+          (bounds 100.00 100.00)
+          (drawsContent 1)
+          (children 2
+            (GraphicsLayer
+              (bounds 100.00 85.00)
+              (children 1
+                (GraphicsLayer
+                  (bounds 200.00 10.00)
+                )
+              )
+            )
+            (GraphicsLayer
+              (position 0.00 85.00)
+              (bounds 100.00 15.00)
+              (drawsContent 1)
+            )
+          )
+        )
+        (GraphicsLayer
+          (position 8.00 13.00)
+          (bounds 100.00 100.00)
+          (drawsContent 1)
+          (children 4
+            (GraphicsLayer
+              (bounds 85.00 85.00)
+              (children 1
+                (GraphicsLayer
+                  (bounds 200.00 200.00)
+                )
+              )
+            )
+            (GraphicsLayer
+              (position 0.00 85.00)
+              (bounds 85.00 15.00)
+              (drawsContent 1)
+            )
+            (GraphicsLayer
+              (position 85.00 0.00)
+              (bounds 15.00 85.00)
+              (drawsContent 1)
+            )
+            (GraphicsLayer
+              (position 85.00 85.00)
+              (bounds 15.00 15.00)
+              (drawsContent 1)
+            )
+          )
+        )
+        (GraphicsLayer
+          (position 8.00 13.00)
+          (bounds 100.00 100.00)
+          (drawsContent 1)
+          (children 2
+            (GraphicsLayer
+              (bounds 100.00 100.00)
+              (children 1
+                (GraphicsLayer
+                  (bounds 10.00 10.00)
+                  (drawsContent 1)
+                  (children 1
+                    (GraphicsLayer
+                    )
+                  )
+                )
+              )
+            )
+            (GraphicsLayer
+              (position 85.00 85.00)
+              (bounds 15.00 15.00)
+              (drawsContent 1)
+            )
+          )
+        )
+      )
+    )
+  )
+)
+
