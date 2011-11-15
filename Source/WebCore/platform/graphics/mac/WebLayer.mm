@@ -36,6 +36,10 @@
 #import <QuartzCore/QuartzCore.h>
 #import <wtf/UnusedParam.h>
 
+@interface CALayer(WebCoreCALayerPrivate)
+- (void)reloadValueForKeyPath:(NSString *)keyPath;
+@end
+
 using namespace WebCore;
 
 @implementation WebLayer
@@ -146,10 +150,12 @@ void setLayerNeedsDisplayInRect(CALayer *layer, WebCore::PlatformCALayerClient* 
     }
 }
 
-// Disable default animations
 - (id<CAAction>)actionForKey:(NSString *)key
 {
-    UNUSED_PARAM(key);
+    // Fix for <rdar://problem/9015675>: Force the layer content to be updated when the tree is reparented.
+    if ([key isEqualToString:@"onOrderIn"])
+        [self reloadValueForKeyPath:@"contents"];
+
     return nil;
 }
 
