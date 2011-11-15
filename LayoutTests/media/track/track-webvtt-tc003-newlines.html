@@ -9,7 +9,16 @@
             
             numberOfTrackTests = 2;
 
-            function trackLoaded(i)
+            function trackLoaded()
+            {
+                numberOfTracksLoaded++;
+                if (numberOfTracksLoaded == numberOfTrackTests) {
+                    testTrack(0);
+                    testTrack(1);
+                }
+            }
+
+            function testTrack(i)
             {
                 findMediaElement();
                 var expected = 
@@ -44,8 +53,8 @@
     <body>
         <p>Tests that line terminators \r, \n, or \r\n are properly parsed, even when there is no newline at eof.</p>
         <video>
-            <track src="captions-webvtt/tc003-newlines.vtt" onload="trackLoaded(0)">
-            <track src="captions-webvtt/tc003-no-newline-at-eof.vtt" onload="trackLoaded(1)">
+            <track src="captions-webvtt/tc003-newlines.vtt" onload="trackLoaded()">
+            <track src="captions-webvtt/tc003-no-newline-at-eof.vtt" onload="trackLoaded()">
         </video>
     </body>
 </html>
