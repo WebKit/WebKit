@@ -1,3 +1,29 @@
+2011-11-15  Cary Clark  <caryclark@google.com>
+
+        [chromium-mac] Enable vertical text using Skia
+        https://bugs.webkit.org/show_bug.cgi?id=72137
+
+        Use Skia to draw vertical text. This is much
+        faster and has higher fidelity than the old method
+        of drawing text on a path.
+
+        The graphics context passed to Skia has been
+        rotated 90 degrees but the character advances
+        have not, so it is necessary to unrotate the canvas,
+        and re-rotate the positions.
+
+        This generates correct output (or, at least,
+        consistent with Chromium CG on Mac) for all vertical
+        text tests, one of which is mentioned below.
+        
+        Reviewed by Stephen White.
+
+        Test: fast/writing-mode/text-orientation-basic.html
+
+        * platform/graphics/skia/FontSkia.cpp:
+        (WebCore::setupPaint):
+        (WebCore::Font::drawGlyphs):
+
 2011-11-15  Philip Rogers  <pdr@google.com>
 
         Fix SVG hit testing when padding is present

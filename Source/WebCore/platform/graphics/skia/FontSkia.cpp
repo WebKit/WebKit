@@ -79,6 +79,7 @@ static void setupPaint(SkPaint* paint, const SimpleFontData* fontData, const Fon
     paint->setAntiAlias(shouldAntialias);
     paint->setEmbeddedBitmapText(false);
     paint->setTextSize(SkFloatToScalar(textSize));
+    paint->setVerticalText(platformData.orientation() == Vertical);
     SkTypeface* typeface = SkCreateTypefaceFromCTFont(platformData.ctFont());
     SkAutoUnref autoUnref(typeface);
     paint->setTypeface(typeface);
@@ -122,6 +123,8 @@ void Font::drawGlyphs(GraphicsContext* gc, const SimpleFontData* font,
     SkScalar x = SkFloatToScalar(point.x());
     SkScalar y = SkFloatToScalar(point.y());
 
+    if (font->platformData().orientation() == Vertical)
+        y += SkFloatToScalar(font->fontMetrics().floatAscent(IdeographicBaseline) - font->fontMetrics().floatAscent());
     // FIXME: text rendering speed:
     // Android has code in their WebCore fork to special case when the
     // GlyphBuffer has no advances other than the defaults. In that case the
@@ -129,24 +132,24 @@ void Font::drawGlyphs(GraphicsContext* gc, const SimpleFontData* font,
     // patches may be upstreamed to WebKit so we always use the slower path
     // here.
     const GlyphBufferAdvance* adv = glyphBuffer.advances(from);
-    SkAutoSTMalloc<32, SkPoint> storage(numGlyphs), storage2(numGlyphs), storage3(numGlyphs);
+    SkAutoSTMalloc<32, SkPoint> storage(numGlyphs);
     SkPoint* pos = storage.get();
-    SkPoint* vPosBegin = storage2.get();
-    SkPoint* vPosEnd = storage3.get();
 
-    bool isVertical = font->platformData().orientation() == Vertical;
     for (int i = 0; i < numGlyphs; i++) {
-        SkScalar myWidth = SkFloatToScalar(adv[i].width);
         pos[i].set(x, y);
-        if (isVertical) {
-            vPosBegin[i].set(x + myWidth, y);
-            vPosEnd[i].set(x + myWidth, y - myWidth);
-        }
-        x += myWidth;
+        x += SkFloatToScalar(adv[i].width);
         y += SkFloatToScalar(adv[i].height);
     }
 
     SkCanvas* canvas = gc->platformContext()->canvas();
+    if (font->platformData().orientation() == Vertical) {
+        canvas->save();
+        canvas->rotate(-90);
+        SkMatrix rotator;
+        rotator.reset();
+        rotator.setRotate(90);
+        rotator.mapPoints(pos, numGlyphs);
+    }
     TextDrawingModeFlags textMode = gc->platformContext()->getTextDrawingMode();
 
     // We draw text up to two times (once for fill, once for stroke).
@@ -158,16 +161,7 @@ void Font::drawGlyphs(GraphicsContext* gc, const SimpleFontData* font,
         paint.setTextEncoding(SkPaint::kGlyphID_TextEncoding);
         paint.setColor(gc->fillColor().rgb());
 
-        if (isVertical) {
-            SkPath path;
-            for (int i = 0; i < numGlyphs; ++i) {
-                path.reset();
-                path.moveTo(vPosBegin[i]);
-                path.lineTo(vPosEnd[i]);
-                canvas->drawTextOnPath(glyphs + i, sizeof(uint16_t), path, 0, paint);
-            }
-        } else
-            canvas->drawPosText(glyphs, numGlyphs * sizeof(uint16_t), pos, paint);
+        canvas->drawPosText(glyphs, numGlyphs * sizeof(uint16_t), pos, paint);
     }
 
     if ((textMode & TextModeStroke)
@@ -187,17 +181,10 @@ void Font::drawGlyphs(GraphicsContext* gc, const SimpleFontData* font,
             paint.setLooper(0);
         }
 
-        if (isVertical) {
-            SkPath path;
-            for (int i = 0; i < numGlyphs; ++i) {
-                path.reset();
-                path.moveTo(vPosBegin[i]);
-                path.lineTo(vPosEnd[i]);
-                canvas->drawTextOnPath(glyphs + i, sizeof(uint16_t), path, 0, paint);
-            }
-        } else
-            canvas->drawPosText(glyphs, numGlyphs * sizeof(uint16_t), pos, paint);
+        canvas->drawPosText(glyphs, numGlyphs * sizeof(uint16_t), pos, paint);
     }
+    if (font->platformData().orientation() == Vertical)
+        canvas->restore();
 }
 
 } // namespace WebCore

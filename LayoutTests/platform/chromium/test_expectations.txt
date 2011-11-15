@@ -3886,6 +3886,37 @@ BUGWK72133 SKIP MAC : http/tests/inspector-enabled/dedicated-workers-list.html =
 
 BUGWK59552 MAC DEBUG : http/tests/security/cross-frame-access-custom.html = PASS CRASH
 
+// use Skia to draw vertical text directly instead of text-on-path
+BUG_CARYCLARK MAC CPU : editing/selection/vertical-lr-ltr-extend-line-backward-br.html = IMAGE
+BUG_CARYCLARK MAC CPU : editing/selection/vertical-lr-ltr-extend-line-forward-br.html = IMAGE
+BUG_CARYCLARK MAC CPU : editing/selection/vertical-rl-ltr-extend-line-backward-br.html = IMAGE
+BUG_CARYCLARK MAC CPU : editing/selection/vertical-rl-ltr-extend-line-backward-p.html = IMAGE
+BUG_CARYCLARK MAC CPU : editing/selection/vertical-rl-ltr-extend-line-backward-wrap.html = IMAGE
+BUG_CARYCLARK MAC CPU : editing/selection/vertical-rl-ltr-extend-line-forward-br.html = IMAGE
+BUG_CARYCLARK MAC CPU : editing/selection/vertical-rl-ltr-extend-line-forward-p.html = IMAGE
+BUG_CARYCLARK MAC CPU : editing/selection/vertical-rl-ltr-extend-line-forward-wrap.html = IMAGE
+BUG_CARYCLARK MAC CPU : fast/dynamic/text-combine.html = IMAGE
+BUG_CARYCLARK MAC CPU : fast/repaint/japanese-rl-selection-clear.html = IMAGE
+BUG_CARYCLARK MAC CPU : fast/repaint/japanese-rl-selection-repaint-in-regions.html = IMAGE
+BUG_CARYCLARK MAC CPU : fast/repaint/japanese-rl-selection-repaint.html = IMAGE
+BUG_CARYCLARK MAC CPU : fast/repaint/repaint-across-writing-mode-boundary.html = IMAGE
+BUG_CARYCLARK SNOWLEOPARD LION CPU : fast/text/international/vertical-text-glyph-test.html = IMAGE
+BUG_CARYCLARK SNOWLEOPARD LION CPU : fast/text/justify-ideograph-vertical.html = IMAGE
+BUG_CARYCLARK MAC CPU : fast/writing-mode/Kusa-Makura-background-canvas.html = IMAGE
+BUG_CARYCLARK MAC CPU : fast/writing-mode/border-vertical-lr.html = IMAGE
+BUG_CARYCLARK MAC CPU : fast/writing-mode/broken-ideographic-font.html = IMAGE
+BUG_CARYCLARK MAC CPU : fast/writing-mode/fallback-orientation.html = IMAGE
+BUG_CARYCLARK MAC CPU : fast/writing-mode/japanese-lr-text.html = IMAGE
+BUG_CARYCLARK LION CPU : fast/writing-mode/japanese-rl-text-with-broken-font.html = IMAGE
+BUG_CARYCLARK SNOWLEOPARD CPU RELEASE : fast/writing-mode/japanese-rl-text-with-broken-font.html = IMAGE
+BUG_CARYCLARK MAC CPU : fast/writing-mode/japanese-rl-text.html = IMAGE
+BUG_CARYCLARK MAC CPU : fast/writing-mode/japanese-ruby-vertical-lr.html = IMAGE
+BUG_CARYCLARK MAC CPU : fast/writing-mode/japanese-ruby-vertical-rl.html = IMAGE
+BUG_CARYCLARK SNOWLEOPARD LION CPU : fast/writing-mode/text-orientation-basic.html = IMAGE
+BUG_CARYCLARK MAC CPU : fast/writing-mode/vertical-align-table-baseline.html = IMAGE
+BUG_CARYCLARK MAC CPU : fast/writing-mode/vertical-baseline-alignment.html = IMAGE
+BUG_CARYCLARK MAC CPU : fast/writing-mode/vertical-font-fallback.html = IMAGE
+
 BUGWK72271 MAC DEBUG : fast/loader/javascript-url-in-embed.html = PASS CRASH
 
 BUGWK72272 WIN : security/crypto-random-values-types.html = TEXT PASS
