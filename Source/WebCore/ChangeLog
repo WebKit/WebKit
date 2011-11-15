@@ -1,5 +1,13 @@
 2011-11-14  Oliver Hunt  <oliver@apple.com>
 
+        Fix V8 build again.
+
+        * bindings/scripts/CodeGeneratorV8.pm:
+        * bindings/scripts/test/V8/V8Float64Array.cpp:
+        (WTF::Float64Array::neuterBinding):
+
+2011-11-14  Oliver Hunt  <oliver@apple.com>
+
         Fix V8 build.
 
         * bindings/scripts/CodeGeneratorV8.pm:

@@ -109,7 +109,7 @@ v8::Handle<v8::Object> V8Float64Array::wrapSlow(Float64Array* impl)
     }
     namespace WTF {
     void Float64Array::neuterBinding(WebCore::ScriptExecutionContext*) {
-        v8::Handle<v8::Value> bound = toV8(this);
+        v8::Handle<v8::Value> bound = WebCore::toV8(this);
         v8::Handle<v8::Object> object(bound.As<v8::Object>());
         object->SetIndexedPropertiesToExternalArrayData(0, v8::kExternalByteArray, 0);
     }
