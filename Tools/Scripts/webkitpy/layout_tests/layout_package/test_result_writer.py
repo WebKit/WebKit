@@ -58,7 +58,9 @@ def write_test_result(port, test_name, driver_output,
             writer.write_image_files(driver_output.image, expected_driver_output.image)
         elif isinstance(failure, test_failures.FailureImageHashMismatch):
             writer.write_image_files(driver_output.image, expected_driver_output.image)
-            writer.write_image_diff_files(driver_output.image_diff)
+            # FIXME: Why is image_diff a bool on SL bot?  Maybe ImageDiff isn't found?
+            if driver_output.image_diff:
+                writer.write_image_diff_files(str(driver_output.image_diff))
         elif isinstance(failure, (test_failures.FailureAudioMismatch,
                                   test_failures.FailureMissingAudio)):
             writer.write_audio_files(driver_output.audio, expected_driver_output.audio)

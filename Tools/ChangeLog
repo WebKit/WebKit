@@ -1,5 +1,12 @@
 2011-11-15  Tony Chang  <tony@chromium.org>
 
+        Unreviewed, try to fix ref tests failures on SL Intel bot.
+        It looks like ImageDiff isn't returning an image diff.
+
+        * Scripts/webkitpy/layout_tests/layout_package/test_result_writer.py:
+
+2011-11-15  Tony Chang  <tony@chromium.org>
+
         Unreviewed fix of ref-tests on GTK+.
         If a driver is never started, _xvfb_process is never set.
 
