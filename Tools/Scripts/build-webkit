@@ -562,7 +562,7 @@ if (isGtk()) {
     @options = (@ARGV, @options);
 
     foreach (@features) {
-        push @options, "DEFINES+=$_->{define}=${$_->{value}}" if ${$_->{value}} != $_->{default};
+        push @options, "DEFINES+=$_->{define}=${$_->{value}}" if $_->{define} && ${$_->{value}} != $_->{default};
     }
 
     if ($minimal) {
