@@ -64,8 +64,8 @@ void JSString::resolveRope(ExecState* exec) const
 
     if (is8Bit()) {
         LChar* buffer;
-        if (PassRefPtr<StringImpl> newImpl = StringImpl::tryCreateUninitialized(m_length, buffer))
-            m_value = newImpl;
+        if (RefPtr<StringImpl> newImpl = StringImpl::tryCreateUninitialized(m_length, buffer))
+            m_value = newImpl.release();
         else {
             outOfMemory(exec);
             return;
@@ -73,7 +73,7 @@ void JSString::resolveRope(ExecState* exec) const
 
         for (size_t i = 0; i < s_maxInternalRopeLength && m_fibers[i]; ++i) {
             if (m_fibers[i]->isRope())
-                return resolveRopeSlowCase(exec, buffer);
+                return resolveRopeSlowCase8(buffer);
         }
 
         LChar* position = buffer;
@@ -91,8 +91,8 @@ void JSString::resolveRope(ExecState* exec) const
     }
 
     UChar* buffer;
-    if (PassRefPtr<StringImpl> newImpl = StringImpl::tryCreateUninitialized(m_length, buffer))
-        m_value = newImpl;
+    if (RefPtr<StringImpl> newImpl = StringImpl::tryCreateUninitialized(m_length, buffer))
+        m_value = newImpl.release();
     else {
         outOfMemory(exec);
         return;
@@ -100,7 +100,7 @@ void JSString::resolveRope(ExecState* exec) const
 
     for (size_t i = 0; i < s_maxInternalRopeLength && m_fibers[i]; ++i) {
         if (m_fibers[i]->isRope())
-            return resolveRopeSlowCase(exec, buffer);
+            return resolveRopeSlowCase(buffer);
     }
 
     UChar* position = buffer;
@@ -125,10 +125,8 @@ void JSString::resolveRope(ExecState* exec) const
 // Vector before performing any concatenation, but by working backwards we likely
 // only fill the queue with the number of substrings at any given level in a
 // rope-of-ropes.)    
-void JSString::resolveRopeSlowCase(ExecState* exec, LChar* buffer) const
+void JSString::resolveRopeSlowCase8(LChar* buffer) const
 {
-    UNUSED_PARAM(exec);
-
     LChar* position = buffer + m_length; // We will be working backwards over the rope.
     Vector<JSString*, 32> workQueue; // Putting strings into a Vector is only OK because there are no GC points in this method.
     
@@ -158,10 +156,8 @@ void JSString::resolveRopeSlowCase(ExecState* exec, LChar* buffer) const
     ASSERT(!isRope());
 }
 
-void JSString::resolveRopeSlowCase(ExecState* exec, UChar* buffer) const
+void JSString::resolveRopeSlowCase(UChar* buffer) const
 {
-    UNUSED_PARAM(exec);
-
     UChar* position = buffer + m_length; // We will be working backwards over the rope.
     Vector<JSString*, 32> workQueue; // These strings are kept alive by the parent rope, so using a Vector is OK.
 

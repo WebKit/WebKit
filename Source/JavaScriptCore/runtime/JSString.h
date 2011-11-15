@@ -248,8 +248,8 @@ namespace JSC {
         }
 
         void resolveRope(ExecState*) const;
-        void resolveRopeSlowCase(ExecState*, LChar*) const;
-        void resolveRopeSlowCase(ExecState*, UChar*) const;
+        void resolveRopeSlowCase8(LChar*) const;
+        void resolveRopeSlowCase(UChar*) const;
         void outOfMemory(ExecState*) const;
 
         static JSObject* toThisObject(JSCell*, ExecState*);

@@ -1,3 +1,15 @@
+2011-11-14  Michael Saboff  <msaboff@apple.com>
+
+        Further changes and cleanup to JSString.h and cpp.
+
+        Reviewed by Darin Adler.
+
+        * runtime/JSString.cpp:
+        (JSC::JSString::resolveRope): Change PassRefPtr to RefPtr.  Eliminated exec in slow case calls.
+        (JSC::JSString::resolveRopeSlowCase8): Darin and I agreed that this should have 8 in name.
+        (JSC::JSString::resolveRopeSlowCase): Removed exec parameter.
+        * runtime/JSString.h:
+
 2011-11-14  Adam Barth  <abarth@webkit.org>
 
         DateMath.cpp should not depend on JavaScriptCore
