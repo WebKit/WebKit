@@ -1,3 +1,17 @@
+2011-11-14  Raphael Kubo da Costa  <kubo@profusion.mobi>
+
+        build-webkit: Accept --cmakearg to pass additional arguments to CMake.
+        https://bugs.webkit.org/show_bug.cgi?id=72156
+
+        Reviewed by Daniel Bates.
+
+        Similar to --makearg and --qmakearg, --cmakearg lets one pass
+        additional arguments to CMake (eg. --cmakearg="-DFOO=bar").
+
+        * Scripts/build-webkit:
+        * Scripts/webkitdirs.pm:
+        (generateBuildSystemFromCMakeProject):
+
 2011-11-14  Ryosuke Niwa  <rniwa@webkit.org>
 
         Improve ChangeLogEntry's reviewer parsing algorithm part 2

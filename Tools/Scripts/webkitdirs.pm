@@ -1639,7 +1639,7 @@ sub buildAutotoolsProject($@)
 
 sub generateBuildSystemFromCMakeProject
 {
-    my ($port, $prefixPath, @cmakeArgs) = @_;
+    my ($port, $prefixPath, @cmakeArgs, $additionalCMakeArgs) = @_;
     my $config = configuration();
     my $buildPath = File::Spec->catdir(baseProductDir(), $config);
     File::Path::mkpath($buildPath) unless -d $buildPath;
@@ -1655,6 +1655,8 @@ sub generateBuildSystemFromCMakeProject
         push @args, "-DCMAKE_BUILD_TYPE=Debug";
     }
     push @args, @cmakeArgs if @cmakeArgs;
+    push @args, $additionalCMakeArgs if $additionalCMakeArgs;
+
     push @args, '"' . File::Spec->catdir(sourceDir(), "Source") . '"';
 
     # We call system("cmake @args") instead of system("cmake", @args) so that @args is
