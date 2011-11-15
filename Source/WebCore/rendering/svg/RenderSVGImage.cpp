@@ -43,6 +43,7 @@
 #include "SVGPreserveAspectRatio.h"
 #include "SVGRenderSupport.h"
 #include "SVGResources.h"
+#include "SVGResourcesCache.h"
 
 namespace WebCore {
 

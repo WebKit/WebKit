@@ -28,6 +28,7 @@
 #include "RenderSVGResourceContainer.h"
 #include "RenderSVGResourceSolidColor.h"
 #include "SVGResources.h"
+#include "SVGResourcesCache.h"
 #include "SVGURIReference.h"
 
 namespace WebCore {

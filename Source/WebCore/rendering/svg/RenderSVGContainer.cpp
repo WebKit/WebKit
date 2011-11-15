@@ -33,6 +33,7 @@
 #include "RenderView.h"
 #include "SVGRenderSupport.h"
 #include "SVGResources.h"
+#include "SVGResourcesCache.h"
 #include "SVGStyledElement.h"
 
 namespace WebCore {

@@ -39,6 +39,7 @@
 #include "RenderSVGRoot.h"
 #include "SVGLengthList.h"
 #include "SVGRenderSupport.h"
+#include "SVGResourcesCache.h"
 #include "SVGRootInlineBox.h"
 #include "SVGTextElement.h"
 #include "SVGTextLayoutAttributesBuilder.h"

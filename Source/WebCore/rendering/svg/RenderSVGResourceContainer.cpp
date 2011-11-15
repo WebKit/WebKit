@@ -23,6 +23,7 @@
 #include "RenderSVGResourceContainer.h"
 
 #include "RenderSVGShadowTreeRootContainer.h"
+#include "SVGResourcesCache.h"
 #include "SVGStyledTransformableElement.h"
 
 namespace WebCore {

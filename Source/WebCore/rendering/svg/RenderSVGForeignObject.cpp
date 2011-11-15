@@ -30,6 +30,7 @@
 #include "RenderView.h"
 #include "SVGForeignObjectElement.h"
 #include "SVGRenderSupport.h"
+#include "SVGResourcesCache.h"
 #include "SVGSVGElement.h"
 #include "TransformState.h"
 

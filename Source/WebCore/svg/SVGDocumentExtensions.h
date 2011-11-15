@@ -22,7 +22,6 @@
 #define SVGDocumentExtensions_h
 
 #if ENABLE(SVG)
-#include "SVGResourcesCache.h"
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
@@ -35,9 +34,10 @@ namespace WebCore {
 class Document;
 class RenderSVGResourceContainer;
 class SVGElement;
-class SVGStyledElement;
+class SVGResourcesCache;
 class SVGSMILElement;
 class SVGSVGElement;
+class SVGStyledElement;
 
 class SVGDocumentExtensions {
     WTF_MAKE_NONCOPYABLE(SVGDocumentExtensions); WTF_MAKE_FAST_ALLOCATED;

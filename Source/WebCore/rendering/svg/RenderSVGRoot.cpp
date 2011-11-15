@@ -40,6 +40,7 @@
 #include "SVGLength.h"
 #include "SVGRenderSupport.h"
 #include "SVGResources.h"
+#include "SVGResourcesCache.h"
 #include "SVGSVGElement.h"
 #include "SVGStyledElement.h"
 #include "SVGViewSpec.h"

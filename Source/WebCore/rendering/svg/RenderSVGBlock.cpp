@@ -26,6 +26,7 @@
 
 #include "RenderSVGResource.h"
 #include "SVGElement.h"
+#include "SVGResourcesCache.h"
 
 namespace WebCore {
 

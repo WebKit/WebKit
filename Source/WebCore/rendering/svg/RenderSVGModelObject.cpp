@@ -34,6 +34,7 @@
 #include "RenderSVGModelObject.h"
 
 #include "RenderSVGResource.h"
+#include "SVGResourcesCache.h"
 #include "SVGStyledElement.h"
 
 namespace WebCore {

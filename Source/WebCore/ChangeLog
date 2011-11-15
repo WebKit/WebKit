@@ -1,3 +1,31 @@
+2011-11-14  Daniel Bates  <dbates@rim.com>
+
+        Remove unnecessary #include SVGResourcesCache.h in SVGDocumentExtensions.h; use forward declaration
+        https://bugs.webkit.org/show_bug.cgi?id=72335
+
+        Reviewed by Eric Seidel.
+
+        It's sufficient to forward declare SVGResourcesCache in SVGDocumentExtensions.h and #include SVGResourcesCache.h
+        in SVGDocumentExtensions.cpp. This will reduce the number of files we need to re-compile after the file
+        SVGResourcesCache.h has been modified. Currently we #include SVGResourcesCache.h in SVGDocumentExtensions.h.
+
+        * rendering/svg/RenderSVGBlock.cpp: Include SVGResourcesCache.h.
+        * rendering/svg/RenderSVGContainer.cpp: Ditto.
+        * rendering/svg/RenderSVGForeignObject.cpp: Ditto.
+        * rendering/svg/RenderSVGImage.cpp: Ditto.
+        * rendering/svg/RenderSVGInline.cpp: Ditto.
+        * rendering/svg/RenderSVGModelObject.cpp: Ditto.
+        * rendering/svg/RenderSVGPath.cpp: Ditto.
+        * rendering/svg/RenderSVGResource.cpp: Ditto.
+        * rendering/svg/RenderSVGResourceClipper.cpp: Ditto.
+        * rendering/svg/RenderSVGResourceContainer.cpp: Ditto.
+        * rendering/svg/RenderSVGRoot.cpp: Ditto.
+        * rendering/svg/RenderSVGText.cpp: Ditto.
+        * rendering/svg/SVGInlineTextBox.cpp: Ditto.
+        * rendering/svg/SVGRenderSupport.cpp: Ditto.
+        * svg/SVGDocumentExtensions.cpp: Ditto.
+        * svg/SVGDocumentExtensions.h: Forward declare SVGResourcesCache.
+
 2011-11-14  Rafael Weinstein  <rafaelw@chromium.org>
 
         [MutationObservers] Add histogram collection for usage of DOM Mutation Events

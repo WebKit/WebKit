@@ -33,6 +33,7 @@
 #include "Page.h"
 #include "SMILTimeContainer.h"
 #include "SVGElement.h"
+#include "SVGResourcesCache.h"
 #include "SVGSMILElement.h"
 #include "SVGSVGElement.h"
 #include "ScriptableDocumentParser.h"

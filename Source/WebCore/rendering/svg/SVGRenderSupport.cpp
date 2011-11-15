@@ -39,6 +39,7 @@
 #include "RenderSVGResourceMasker.h"
 #include "RenderSVGRoot.h"
 #include "SVGResources.h"
+#include "SVGResourcesCache.h"
 #include "SVGStyledElement.h"
 #include "TransformState.h"
 #include <wtf/UnusedParam.h>
