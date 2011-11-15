@@ -1,3 +1,13 @@
+2011-11-15  Gavin Barraclough  <barraclough@apple.com>
+
+        Result of Error.prototype.toString not ES5 conformant
+        https://bugs.webkit.org/show_bug.cgi?id=70889
+
+        Reviewed by Oliver Hunt.
+
+        * runtime/ErrorPrototype.cpp:
+        (JSC::errorProtoFuncToString):
+
 2011-11-15  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Centralize hide_symbols and ensure all libs are built with symbol visibility & bsymbolic_functions

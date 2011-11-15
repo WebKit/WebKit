@@ -21,6 +21,7 @@
 #include "config.h"
 #include "ErrorPrototype.h"
 
+#include "Error.h"
 #include "JSFunction.h"
 #include "JSString.h"
 #include "JSStringBuilder.h"
@@ -74,27 +75,64 @@ bool ErrorPrototype::getOwnPropertyDescriptor(JSObject* object, ExecState* exec,
 
 // ------------------------------ Functions ---------------------------
 
+// ECMA-262 5.1, 15.11.4.4
 EncodedJSValue JSC_HOST_CALL errorProtoFuncToString(ExecState* exec)
 {
-    JSObject* thisObj = exec->hostThisValue().toThisObject(exec);
+    // 1. Let O be the this value.
+    JSValue thisValue = exec->hostThisValue();
 
+    // 2. If Type(O) is not Object, throw a TypeError exception.
+    if (!thisValue.isObject())
+        return throwVMTypeError(exec);
+    JSObject* thisObj = asObject(thisValue);
+
+    // Guard against recursion!
     StringRecursionChecker checker(exec, thisObj);
     if (JSValue earlyReturnValue = checker.earlyReturnValue())
         return JSValue::encode(earlyReturnValue);
 
+    // 3. Let name be the result of calling the [[Get]] internal method of O with argument "name".
     JSValue name = thisObj->get(exec, exec->propertyNames().name);
-    JSValue message = thisObj->get(exec, exec->propertyNames().message);
+    if (exec->hadException())
+        return JSValue::encode(jsUndefined());
 
-    // Mozilla-compatible format.
-
-    if (!name.isUndefined()) {
-        if (!message.isUndefined())
-            return JSValue::encode(jsMakeNontrivialString(exec, name.toString(exec), ": ", message.toString(exec)));
-        return JSValue::encode(jsNontrivialString(exec, name.toString(exec)));
+    // 4. If name is undefined, then let name be "Error"; else let name be ToString(name).
+    UString nameString;
+    if (name.isUndefined())
+        nameString = "Error";
+    else {
+        nameString = name.toString(exec);
+        if (exec->hadException())
+            return JSValue::encode(jsUndefined());
     }
-    if (!message.isUndefined())
-        return JSValue::encode(jsMakeNontrivialString(exec, "Error: ", message.toString(exec)));
-    return JSValue::encode(jsNontrivialString(exec, "Error"));
+
+    // 5. Let msg be the result of calling the [[Get]] internal method of O with argument "message".
+    JSValue message = thisObj->get(exec, exec->propertyNames().message);
+    if (exec->hadException())
+        return JSValue::encode(jsUndefined());
+
+    // (sic)
+    // 6. If msg is undefined, then let msg be the empty String; else let msg be ToString(msg).
+    // 7. If msg is undefined, then let msg be the empty String; else let msg be ToString(msg).
+    UString messageString;
+    if (message.isUndefined())
+        messageString = "";
+    else {
+        messageString = message.toString(exec);
+        if (exec->hadException())
+            return JSValue::encode(jsUndefined());
+    }
+
+    // 8. If name is the empty String, return msg.
+    if (!nameString.length())
+        return JSValue::encode(message.isString() ? message : jsString(exec, messageString));
+
+    // 9. If msg is the empty String, return name.
+    if (!messageString.length())
+        return JSValue::encode(name.isString() ? name : jsNontrivialString(exec, nameString));
+
+    // 10. Return the result of concatenating name, ":", a single space character, and msg.
+    return JSValue::encode(jsMakeNontrivialString(exec, nameString, ": ", messageString));
 }
 
 } // namespace JSC

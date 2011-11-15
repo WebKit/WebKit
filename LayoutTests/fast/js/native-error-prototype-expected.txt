@@ -1,10 +1,11 @@
-This is a test case for bug 55346.
+This is a test case for bug 55346 and bug 70889.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
 PASS ({}).toString.call(Error.prototype) is "[object Error]"
 PASS ({}).toString.call(RangeError.prototype) is "[object Error]"
+PASS err.toString() is "message"
 PASS successfullyParsed is true
 
 TEST COMPLETE
