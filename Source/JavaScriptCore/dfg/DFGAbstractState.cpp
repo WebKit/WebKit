@@ -168,7 +168,8 @@ bool AbstractState::execute(NodeIndex nodeIndex)
         return true;
         
     switch (node.op) {
-    case JSConstant: {
+    case JSConstant:
+    case WeakJSConstant: {
         JSValue value = m_graph.valueOfJSConstant(m_codeBlock, nodeIndex);
         if (value.isCell())
             m_haveStructures = true;
@@ -601,13 +602,6 @@ bool AbstractState::execute(NodeIndex nodeIndex)
         forNode(node.child1()).filter(PredictCell);
         break;
             
-    case CheckMethod:
-        // FIXME: We should be able to propagate the structure sets of constants (i.e. prototypes).
-        forNode(node.child1()).filter(m_graph.m_methodCheckData[node.methodCheckDataIndex()].structure);
-        forNode(nodeIndex).set(PredictFunction);
-        m_haveStructures = true;
-        break;
-        
     case CheckFunction:
         forNode(node.child1()).filter(PredictFunction);
         // FIXME: Should be able to propagate the fact that we know what the function is.

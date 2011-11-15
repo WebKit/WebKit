@@ -242,6 +242,10 @@ void Graph::dump(NodeIndex nodeIndex, CodeBlock* codeBlock)
         }
         hasPrinted = true;
     }
+    if (op == WeakJSConstant) {
+        printf("%s%p", hasPrinted ? ", " : "", node.weakConstant());
+        hasPrinted = true;
+    }
     if  (node.isBranch() || node.isJump()) {
         printf("%sT:#%u", hasPrinted ? ", " : "", node.takenBlockIndex());
         hasPrinted = true;
@@ -261,31 +265,6 @@ void Graph::dump(NodeIndex nodeIndex, CodeBlock* codeBlock)
             printf("  predicting %s", predictionToString(getGlobalVarPrediction(node.varNumber())));
         else if (node.hasHeapPrediction())
             printf("  predicting %s", predictionToString(node.getHeapPrediction()));
-        else if (node.hasMethodCheckData()) {
-            MethodCheckData& methodCheckData = m_methodCheckData[node.methodCheckDataIndex()];
-            JSCell* functionCell = getJSFunction(methodCheckData.function);
-            ExecutableBase* executable = 0;
-            CodeBlock* primaryForCall = 0;
-            CodeBlock* secondaryForCall = 0;
-            CodeBlock* primaryForConstruct = 0;
-            CodeBlock* secondaryForConstruct = 0;
-            if (functionCell) {
-                JSFunction* function = asFunction(functionCell);
-                executable = function->executable();
-                if (!executable->isHostFunction()) {
-                    FunctionExecutable* functionExecutable = static_cast<FunctionExecutable*>(executable);
-                    if (functionExecutable->isGeneratedForCall()) {
-                        primaryForCall = &functionExecutable->generatedBytecodeForCall();
-                        secondaryForCall = primaryForCall->alternative();
-                    }
-                    if (functionExecutable->isGeneratedForConstruct()) {
-                        primaryForConstruct = &functionExecutable->generatedBytecodeForConstruct();
-                        secondaryForConstruct = primaryForConstruct->alternative();
-                    }
-                }
-            }
-            printf("  predicting function %p(%p(%p(%p) %p(%p)))", methodCheckData.function, executable, primaryForCall, secondaryForCall, primaryForConstruct, secondaryForConstruct);
-        }
     }
     
     printf("\n");

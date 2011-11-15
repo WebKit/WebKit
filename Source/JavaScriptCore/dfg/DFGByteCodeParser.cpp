@@ -531,7 +531,11 @@ private:
     
     NodeIndex cellConstant(JSCell* cell)
     {
-        return getJSConstant(getCellConstantIndex(cell));
+        pair<HashMap<JSCell*, NodeIndex>::iterator, bool> iter = m_cellConstantNodes.add(cell, NoNode);
+        if (iter.second)
+            iter.first->second = addToGraph(WeakJSConstant, OpInfo(cell));
+        
+        return iter.first->second;
     }
     
     CodeOrigin currentCodeOrigin()
@@ -734,6 +738,7 @@ private:
     unsigned m_constantNaN;
     unsigned m_constant1;
     HashMap<JSCell*, unsigned> m_cellConstants;
+    HashMap<JSCell*, NodeIndex> m_cellConstantNodes;
 
     // A constant in the constant pool may be represented by more than one
     // node in the graph, depending on the context in which it is being used.
@@ -1255,6 +1260,7 @@ void ByteCodeParser::prepareToParseBlock()
 {
     for (unsigned i = 0; i < m_constants.size(); ++i)
         m_constants[i] = ConstantRecord();
+    m_cellConstantNodes.clear();
 }
 
 bool ByteCodeParser::parseBlock(unsigned limit)
@@ -1668,20 +1674,16 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                 // It's monomorphic as far as we can tell, since the method_check was linked
                 // but the slow path (i.e. the normal get_by_id) never fired.
 
-                pinCell(methodCall.cachedStructure.get());
-                pinCell(methodCall.cachedPrototypeStructure.get());
-                pinCell(methodCall.cachedFunction.get());
-                pinCell(methodCall.cachedPrototype.get());
-            
-                NodeIndex checkMethod = addToGraph(CheckMethod, OpInfo(identifier), OpInfo(m_graph.m_methodCheckData.size()), base);
-                set(getInstruction[1].u.operand, checkMethod);
+                pinCell(methodCall.cachedStructure.get()); // first check
+                pinCell(methodCall.cachedPrototype.get()); // second check
+                pinCell(methodCall.cachedPrototypeStructure.get()); // second check
+                pinCell(methodCall.cachedFunction.get()); // result
                 
-                MethodCheckData methodCheckData;
-                methodCheckData.structure = methodCall.cachedStructure.get();
-                methodCheckData.prototypeStructure = methodCall.cachedPrototypeStructure.get();
-                methodCheckData.function = methodCall.cachedFunction.get();
-                methodCheckData.prototype = methodCall.cachedPrototype.get();
-                m_graph.m_methodCheckData.append(methodCheckData);
+                addToGraph(CheckStructure, OpInfo(m_graph.addStructureSet(methodCall.cachedStructure.get())), base);
+                if (methodCall.cachedPrototype.get() != m_inlineStackTop->m_profiledBlock->globalObject()->methodCallDummy())
+                    addToGraph(CheckStructure, OpInfo(m_graph.addStructureSet(methodCall.cachedPrototypeStructure.get())), cellConstant(methodCall.cachedPrototype.get()));
+                
+                set(getInstruction[1].u.operand, cellConstant(methodCall.cachedFunction.get()));
             } else {
                 NodeIndex getMethod = addToGraph(GetMethod, OpInfo(identifier), OpInfo(prediction), base);
                 set(getInstruction[1].u.operand, getMethod);

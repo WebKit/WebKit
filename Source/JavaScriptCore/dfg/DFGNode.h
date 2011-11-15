@@ -157,8 +157,12 @@ static inline const char* arithNodeFlagsAsString(ArithNodeFlags flags)
 
 // This macro defines a set of information about all known node types, used to populate NodeId, NodeType below.
 #define FOR_EACH_DFG_OP(macro) \
-    /* Nodes for constants. */\
+    /* A constant in the CodeBlock's constant pool. */\
     macro(JSConstant, NodeResultJS) \
+    \
+    /* A constant not in the CodeBlock's constant pool. Uses get patched to jumps that exit the */\
+    /* code block. */\
+    macro(WeakJSConstant, NodeResultJS) \
     \
     /* Nodes for handling functions (both as call and as construct). */\
     macro(ConvertThis, NodeResultJS) \
@@ -230,7 +234,6 @@ static inline const char* arithNodeFlagsAsString(ArithNodeFlags flags)
     macro(GetStringLength, NodeResultInt32) \
     macro(GetByteArrayLength, NodeResultInt32) \
     macro(GetMethod, NodeResultJS | NodeMustGenerate) \
-    macro(CheckMethod, NodeResultJS | NodeMustGenerate) \
     macro(GetScopeChain, NodeResultJS) \
     macro(GetScopedVar, NodeResultJS | NodeMustGenerate) \
     macro(PutScopedVar, NodeMustGenerate | NodeClobbersWorld) \
@@ -397,9 +400,14 @@ struct Node {
         return op == JSConstant;
     }
     
+    bool isWeakConstant()
+    {
+        return op == WeakJSConstant;
+    }
+    
     bool hasConstant()
     {
-        return isConstant() || hasMethodCheckData();
+        return isConstant() || isWeakConstant();
     }
 
     unsigned constantNumber()
@@ -408,20 +416,26 @@ struct Node {
         return m_opInfo;
     }
     
-    // NOTE: this only works for JSConstant nodes.
-    JSValue valueOfJSConstantNode(CodeBlock* codeBlock)
+    JSCell* weakConstant()
     {
+        return bitwise_cast<JSCell*>(m_opInfo);
+    }
+    
+    JSValue valueOfJSConstant(CodeBlock* codeBlock)
+    {
+        if (op == WeakJSConstant)
+            return JSValue(weakConstant());
         return codeBlock->constantRegister(FirstConstantRegisterIndex + constantNumber()).get();
     }
 
     bool isInt32Constant(CodeBlock* codeBlock)
     {
-        return isConstant() && valueOfJSConstantNode(codeBlock).isInt32();
+        return isConstant() && valueOfJSConstant(codeBlock).isInt32();
     }
     
     bool isDoubleConstant(CodeBlock* codeBlock)
     {
-        bool result = isConstant() && valueOfJSConstantNode(codeBlock).isDouble();
+        bool result = isConstant() && valueOfJSConstant(codeBlock).isDouble();
         if (result)
             ASSERT(!isInt32Constant(codeBlock));
         return result;
@@ -429,14 +443,14 @@ struct Node {
     
     bool isNumberConstant(CodeBlock* codeBlock)
     {
-        bool result = isConstant() && valueOfJSConstantNode(codeBlock).isNumber();
+        bool result = isConstant() && valueOfJSConstant(codeBlock).isNumber();
         ASSERT(result == (isInt32Constant(codeBlock) || isDoubleConstant(codeBlock)));
         return result;
     }
     
     bool isBooleanConstant(CodeBlock* codeBlock)
     {
-        return isConstant() && valueOfJSConstantNode(codeBlock).isBoolean();
+        return isConstant() && valueOfJSConstant(codeBlock).isBoolean();
     }
     
     bool hasVariableAccessData()
@@ -477,7 +491,6 @@ struct Node {
         case PutById:
         case PutByIdDirect:
         case GetMethod:
-        case CheckMethod:
         case Resolve:
         case ResolveBase:
         case ResolveBaseStrictPut:
@@ -723,17 +736,6 @@ struct Node {
         return mergePrediction(m_opInfo2, prediction);
     }
     
-    bool hasMethodCheckData()
-    {
-        return op == CheckMethod;
-    }
-    
-    unsigned methodCheckDataIndex()
-    {
-        ASSERT(hasMethodCheckData());
-        return m_opInfo2;
-    }
-
     bool hasFunctionCheckData()
     {
         return op == CheckFunction;

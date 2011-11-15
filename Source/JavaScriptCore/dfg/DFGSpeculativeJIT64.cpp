@@ -2069,6 +2069,7 @@ void SpeculativeJIT::compile(Node& node)
 
     switch (op) {
     case JSConstant:
+    case WeakJSConstant:
         initConstantInfo(m_compileIndex);
         break;
 
@@ -3540,26 +3541,6 @@ void SpeculativeJIT::compile(Node& node)
         cachedGetMethod(baseGPR, resultGPR, scratchGPR, node.identifierNumber());
 
         jsValueResult(resultGPR, m_compileIndex, UseChildrenCalledExplicitly);
-        break;
-    }
-
-    case CheckMethod: {
-        MethodCheckData& methodCheckData = m_jit.graph().m_methodCheckData[node.methodCheckDataIndex()];
-        
-        SpeculateCellOperand base(this, node.child1());
-        GPRTemporary scratch(this); // this needs to be a separate register, unfortunately.
-        GPRReg baseGPR = base.gpr();
-        GPRReg scratchGPR = scratch.gpr();
-        
-        if (!m_state.forNode(node.child1()).m_structure.doesNotContainAnyOtherThan(methodCheckData.structure))
-            speculationCheck(JSValueRegs(), NoNode, m_jit.branchPtr(JITCompiler::NotEqual, JITCompiler::Address(baseGPR, JSCell::structureOffset()), JITCompiler::TrustedImmPtr(methodCheckData.structure)));
-        if (methodCheckData.prototype != m_jit.globalObjectFor(node.codeOrigin)->methodCallDummy()) {
-            m_jit.move(JITCompiler::TrustedImmPtr(methodCheckData.prototype->structureAddress()), scratchGPR);
-            speculationCheck(JSValueRegs(), NoNode, m_jit.branchPtr(JITCompiler::NotEqual, JITCompiler::Address(scratchGPR), JITCompiler::TrustedImmPtr(methodCheckData.prototypeStructure)));
-        }
-        
-        useChildren(node);
-        initConstantInfo(m_compileIndex);
         break;
     }
 

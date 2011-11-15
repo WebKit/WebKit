@@ -301,7 +301,8 @@ private:
         bool changed = false;
         
         switch (op) {
-        case JSConstant: {
+        case JSConstant:
+        case WeakJSConstant: {
             changed |= setPrediction(predictionFromValue(m_graph.valueOfJSConstant(m_codeBlock, m_compileIndex)));
             break;
         }
@@ -473,11 +474,6 @@ private:
             break;
         }
             
-        case CheckMethod: {
-            changed |= setPrediction(m_graph.getMethodCheckPrediction(node));
-            break;
-        }
-
         case Call:
         case Construct: {
             if (node.getHeapPrediction())
@@ -1041,47 +1037,6 @@ private:
         return NoNode;
     }
 
-    NodeIndex getMethodLoadElimination(const MethodCheckData& methodCheckData, unsigned identifierNumber, NodeIndex child1)
-    {
-        NodeIndex start = startIndexForChildren(child1);
-        for (NodeIndex index = m_compileIndex; index-- > start;) {
-            Node& node = m_graph[index];
-            switch (node.op) {
-            case CheckMethod:
-                if (node.child1() == child1
-                    && node.identifierNumber() == identifierNumber
-                    && m_graph.m_methodCheckData[node.methodCheckDataIndex()] == methodCheckData)
-                    return index;
-                break;
-                
-            case PutByOffset:
-                // If a put was optimized to by-offset then it's not changing the structure
-                break;
-                
-            case PutByVal:
-            case PutByValAlias:
-                if (byValHasIntBase(node)) {
-                    // If PutByVal speculates that it's accessing an array with an
-                    // integer index, then it's impossible for it to cause a structure
-                    // change.
-                    break;
-                }
-                return NoNode;
-                
-            case ArrayPush:
-            case ArrayPop:
-                // Pushing and popping cannot despecify a function.
-                break;
-                
-            default:
-                if (clobbersWorld(index))
-                    return NoNode;
-                break;
-            }
-        }
-        return NoNode;
-    }
-
     bool checkFunctionElimination(JSFunction* function, NodeIndex child1)
     {
         NodeIndex start = startIndexForChildren(child1);
@@ -1390,10 +1345,6 @@ private:
         case PutByVal:
             if (byValHasIntBase(node) && getByValLoadElimination(node.child1(), node.child2()) != NoNode)
                 node.op = PutByValAlias;
-            break;
-            
-        case CheckMethod:
-            setReplacement(getMethodLoadElimination(m_graph.m_methodCheckData[node.methodCheckDataIndex()], node.identifierNumber(), node.child1()));
             break;
             
         case CheckStructure:
