@@ -167,15 +167,17 @@ void RenderFlexibleBox::layoutBlock(bool relayoutChildren, int, BlockLayoutPass)
 
     IntSize previousSize = size();
 
-    // FIXME: In theory we should only have to call one of these.
-    // computeLogicalWidth for flex-flow:row and computeLogicalHeight for flex-flow:column.
+    setLogicalHeight(0);
+    // We need to call both of these because we grab both crossAxisExtent and mainAxisExtent in layoutInlineDirection.
     computeLogicalWidth();
     computeLogicalHeight();
 
     m_overflow.clear();
 
+    // FIXME: This is no longer named correctly. This should just be layoutFlexItems.
     layoutInlineDirection(relayoutChildren);
 
+    LayoutUnit oldClientAfterEdge = clientLogicalBottom();
     computeLogicalHeight();
 
     if (size() != previousSize)
@@ -183,6 +185,8 @@ void RenderFlexibleBox::layoutBlock(bool relayoutChildren, int, BlockLayoutPass)
 
     layoutPositionedObjects(relayoutChildren || isRoot());
 
+    // FIXME: css3/flexbox/repaint-rtl-column.html seems to repaint more overflow than it needs to.
+    computeOverflow(oldClientAfterEdge);
     statePusher.pop();
 
     updateLayerTransform();
@@ -646,8 +650,6 @@ void RenderFlexibleBox::layoutAndPlaceChildrenInlineDirection(FlexOrderIterator&
 
     LayoutUnit logicalTop = flowAwareBorderBefore() + flowAwarePaddingBefore();
     LayoutUnit totalMainExtent = mainAxisExtent();
-    if (crossAxisLength().isAuto())
-        setCrossAxisExtent(0);
     LayoutUnit maxAscent = 0, maxDescent = 0; // Used when flex-align: baseline.
     size_t i = 0;
     for (RenderBox* child = iterator.first(); child; child = iterator.next(), ++i) {
@@ -672,8 +674,8 @@ void RenderFlexibleBox::layoutAndPlaceChildrenInlineDirection(FlexOrderIterator&
         startEdge += flowAwareMarginStartForChild(child);
 
         LayoutUnit childMainExtent = mainAxisExtentForChild(child);
-        bool shouldFlipInlineDirection = isColumnFlow() ? true : isLeftToRightFlow();
-        LayoutUnit logicalLeft = shouldFlipInlineDirection ? startEdge : totalMainExtent - startEdge - childMainExtent;
+        bool shouldFlipMainAxis = !isColumnFlow() && !isLeftToRightFlow();
+        LayoutUnit logicalLeft = shouldFlipMainAxis ? totalMainExtent - startEdge - childMainExtent : startEdge;
 
         // FIXME: Supporting layout deltas.
         setFlowAwareLocationForChild(child, IntPoint(logicalLeft, logicalTop + flowAwareMarginBeforeForChild(child)));
