@@ -52,6 +52,7 @@ CCLayerImpl::CCLayerImpl(int id)
     , m_usesLayerClipping(false)
     , m_isNonCompositedContent(false)
     , m_drawsContent(false)
+    , m_scaleDelta(1)
     , m_targetRenderSurface(0)
     , m_drawDepth(0)
     , m_drawOpacity(0)
@@ -338,6 +339,15 @@ void CCLayerImpl::setPreserves3D(bool preserves3D)
     }
 }
 
+void CCLayerImpl::setZoomAnimatorTransform(const TransformationMatrix& zoomAnimatorTransform)
+{
+    if (m_zoomAnimatorTransform != zoomAnimatorTransform) {
+        m_zoomAnimatorTransform = zoomAnimatorTransform;
+        noteLayerPropertyChangedForSubtree();
+    }
+}
+
+
 void CCLayerImpl::setSublayerTransform(const TransformationMatrix& sublayerTransform)
 {
     if (m_sublayerTransform != sublayerTransform) {
@@ -391,6 +401,14 @@ void CCLayerImpl::setScrollDelta(const IntSize& scrollDelta)
 {
     if (m_scrollDelta != scrollDelta) {
         m_scrollDelta = scrollDelta;
+        noteLayerPropertyChangedForSubtree();
+    }
+}
+
+void CCLayerImpl::setScaleDelta(float scaleDelta)
+{
+    if (m_scaleDelta != scaleDelta) {
+        m_scaleDelta = scaleDelta;
         noteLayerPropertyChangedForSubtree();
     }
 }

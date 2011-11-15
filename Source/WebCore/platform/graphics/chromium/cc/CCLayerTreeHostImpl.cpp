@@ -232,9 +232,8 @@ void CCLayerTreeHostImpl::setScaleDelta(float delta)
 
     updateMaxScrollPosition();
 
-    TransformationMatrix deltaMatrix;
-    deltaMatrix.scale(m_scaleDelta);
-    m_layerRenderer->setPageMagnifyTransform(deltaMatrix);
+    if (m_scrollLayerImpl && m_scrollLayerImpl->scrollable())
+        m_scrollLayerImpl->setScaleDelta(m_scaleDelta);
 }
 
 void CCLayerTreeHostImpl::setPageScaleFactorLimits(float minPageScale, float maxPageScale)
@@ -268,7 +267,10 @@ void CCLayerTreeHostImpl::updateMaxScrollPosition()
 
 void CCLayerTreeHostImpl::setZoomAnimatorTransform(const TransformationMatrix& zoom)
 {
-    m_layerRenderer->setZoomAnimatorTransform(zoom);
+    if (!m_scrollLayerImpl)
+        return;
+
+    m_scrollLayerImpl->setZoomAnimatorTransform(zoom);
 }
 
 void CCLayerTreeHostImpl::scrollRootLayer(const IntSize& scrollDelta)

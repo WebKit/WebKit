@@ -2709,10 +2709,6 @@ BUGWK55968 WIN DEBUG GPU : compositing/webgl/webgl-nonpremultiplied-blend.html =
 
 BUGWK58587 : media/video-controls-rendering.html = IMAGE
 
-// Take new baselines from the bots when 68035 lands.
-//BUGWK69624 SLOW WIN GPU : platform/chromium/compositing/zoom-animator-scale-test2.html = IMAGE+TEXT
-//BUGWK70046 SLOW MAC : platform/chromium/compositing/zoom-animator-scale-test2.html = PASS MISSING
-
 BUGWK53868 : fast/notifications/notifications-document-close-crash.html = PASS TEXT
 
 BUGWK54051 MAC : plugins/invalidate_rect.html = TEXT
@@ -3816,7 +3812,6 @@ BUGENNE GPU : compositing/geometry/vertical-scroll-composited.html = FAIL
 BUGENNE GPU : compositing/overflow/fixed-position-ancestor-clip.html = FAIL
 BUGENNE GPU : compositing/scaling/tiled-layer-recursion.html = FAIL
 // Uncomment the above results for this when removing.
-BUGENNE GPU GPU-CG : platform/chromium/compositing/zoom-animator-scale-test2.html = FAIL TIMEOUT
 
 // This test sometimes exceeds 60-second time limit (for SLOW tests) on
 // win/linux debug. Since setting both SLOW and TIMEOUT is not allowed,

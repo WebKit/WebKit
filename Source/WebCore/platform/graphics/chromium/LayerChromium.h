@@ -122,6 +122,8 @@ public:
     void setSublayerTransform(const TransformationMatrix& transform) { m_sublayerTransform = transform; setNeedsCommit(); }
     const TransformationMatrix& sublayerTransform() const { return m_sublayerTransform; }
 
+    TransformationMatrix zoomAnimatorTransform() const { return TransformationMatrix(); }
+
     void setTransform(const TransformationMatrix& transform) { m_transform = transform; setNeedsCommit(); }
     const TransformationMatrix& transform() const { return m_transform; }
 
@@ -135,6 +137,8 @@ public:
     void setScrollable(bool scrollable) { m_scrollable = true;  setNeedsCommit(); }
 
     IntSize scrollDelta() const { return IntSize(); }
+
+    float scaleDelta() const { return 1; }
 
     bool doubleSided() const { return m_doubleSided; }
     void setDoubleSided(bool doubleSided) { m_doubleSided = doubleSided; setNeedsCommit(); }
