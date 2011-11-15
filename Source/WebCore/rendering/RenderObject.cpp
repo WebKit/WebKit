@@ -130,42 +130,46 @@ RenderObject* RenderObject::createObject(Node* node, RenderStyle* style)
         return new (arena) RenderRubyText(node);
 
     switch (style->display()) {
-        case NONE:
-            return 0;
-        case INLINE:
-            return new (arena) RenderInline(node);
-        case BLOCK:
-        case INLINE_BLOCK:
-        case RUN_IN:
-        case COMPACT:
-            // Only non-replaced block elements can become a region.
-            if (!style->regionThread().isEmpty() && doc->renderView())
-                return new (arena) RenderRegion(node, doc->renderView()->renderFlowThreadWithName(style->regionThread()));
-            return new (arena) RenderBlock(node);
-        case LIST_ITEM:
-            return new (arena) RenderListItem(node);
-        case TABLE:
-        case INLINE_TABLE:
-            return new (arena) RenderTable(node);
-        case TABLE_ROW_GROUP:
-        case TABLE_HEADER_GROUP:
-        case TABLE_FOOTER_GROUP:
-            return new (arena) RenderTableSection(node);
-        case TABLE_ROW:
-            return new (arena) RenderTableRow(node);
-        case TABLE_COLUMN_GROUP:
-        case TABLE_COLUMN:
-            return new (arena) RenderTableCol(node);
-        case TABLE_CELL:
-            return new (arena) RenderTableCell(node);
-        case TABLE_CAPTION:
-            return new (arena) RenderBlock(node);
-        case BOX:
-        case INLINE_BOX:
-            return new (arena) RenderDeprecatedFlexibleBox(node);
-        case FLEXBOX:
-        case INLINE_FLEXBOX:
-            return new (arena) RenderFlexibleBox(node);
+#if ENABLE(CSS_GRID_LAYOUT)
+    // For now, we don't show grid elements.
+    case GRID:
+#endif
+    case NONE:
+        return 0;
+    case INLINE:
+        return new (arena) RenderInline(node);
+    case BLOCK:
+    case INLINE_BLOCK:
+    case RUN_IN:
+    case COMPACT:
+        // Only non-replaced block elements can become a region.
+        if (!style->regionThread().isEmpty() && doc->renderView())
+            return new (arena) RenderRegion(node, doc->renderView()->renderFlowThreadWithName(style->regionThread()));
+        return new (arena) RenderBlock(node);
+    case LIST_ITEM:
+        return new (arena) RenderListItem(node);
+    case TABLE:
+    case INLINE_TABLE:
+        return new (arena) RenderTable(node);
+    case TABLE_ROW_GROUP:
+    case TABLE_HEADER_GROUP:
+    case TABLE_FOOTER_GROUP:
+        return new (arena) RenderTableSection(node);
+    case TABLE_ROW:
+        return new (arena) RenderTableRow(node);
+    case TABLE_COLUMN_GROUP:
+    case TABLE_COLUMN:
+        return new (arena) RenderTableCol(node);
+    case TABLE_CELL:
+        return new (arena) RenderTableCell(node);
+    case TABLE_CAPTION:
+        return new (arena) RenderBlock(node);
+    case BOX:
+    case INLINE_BOX:
+        return new (arena) RenderDeprecatedFlexibleBox(node);
+    case FLEXBOX:
+    case INLINE_FLEXBOX:
+        return new (arena) RenderFlexibleBox(node);
     }
 
     return 0;

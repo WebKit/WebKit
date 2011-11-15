@@ -990,6 +990,10 @@ bool CSSParser::parseValue(int propId, bool important)
         // -webkit-flexbox | -webkit-inline-flexbox
         if ((id >= CSSValueInline && id <= CSSValueWebkitInlineFlexbox) || id == CSSValueNone)
             validPrimitive = true;
+#if ENABLE(CSS_GRID_LAYOUT)
+        if (id == CSSValueWebkitGrid)
+            validPrimitive = true;
+#endif
         break;
 
     case CSSPropertyDirection:            // ltr | rtl | inherit

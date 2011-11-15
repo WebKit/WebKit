@@ -1066,6 +1066,11 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EDisplay e)
         case INLINE_FLEXBOX:
             m_value.ident = CSSValueWebkitInlineFlexbox;
             break;
+#if ENABLE(CSS_GRID_LAYOUT)
+        case GRID:
+            m_value.ident = CSSValueWebkitGrid;
+            break;
+#endif
         case NONE:
             m_value.ident = CSSValueNone;
             break;
@@ -1076,7 +1081,10 @@ template<> inline CSSPrimitiveValue::operator EDisplay() const
 {
     if (m_value.ident == CSSValueNone)
         return NONE;
-    return static_cast<EDisplay>(m_value.ident - CSSValueInline);
+
+    EDisplay display = static_cast<EDisplay>(m_value.ident - CSSValueInline);
+    ASSERT(display >= INLINE && display <= NONE);
+    return display;
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EEmptyCell e)

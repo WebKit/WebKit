@@ -1,0 +1,15 @@
+Test that setting and getting display: grid works as expected
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Test getting |display| set through CSS
+PASS getComputedStyle(gridElement, '').getPropertyValue('display') is '-webkit-grid'
+
+Test getting and setting display through JS
+PASS getComputedStyle(element, '').getPropertyValue('display') is 'block'
+PASS getComputedStyle(element, '').getPropertyValue('display') is '-webkit-grid'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

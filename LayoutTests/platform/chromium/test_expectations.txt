@@ -3270,6 +3270,9 @@ BUGCR85292 : platform/chromium/permissionclient/storage-permission.html = PASS T
 
 BUGCR85293 LINUX : svg/text/foreignObject-text-clipping-bug.xml = PASS IMAGE
 
+// CSS Grid Layout is not enabled yet.
+BUGWK60731 SKIP : fast/css-grid-layout = PASS
+
 // Need to evaluate and update regions and exclusions tests.
 BUGWK57312 : fast/regions = PASS FAIL MISSING
 BUGWK57311 : fast/exclusions = PASS FAIL MISSING
