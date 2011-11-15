@@ -1,5 +1,90 @@
 2011-11-15  Lucas Forschler  <lforschler@apple.com>
 
+    Merge 91137
+
+    2011-07-15  Simon Fraser  <simon.fraser@apple.com>
+
+            Have GraphicsLayer pull their contentsScale, rather than pushing it onto them
+            https://bugs.webkit.org/show_bug.cgi?id=64643
+
+            Reviewed by Darin Adler.
+
+            RenderLayerBacking would set the contentsScale on GraphicsLayers
+            on creation, and update it when the pageScaleFactor changed. However,
+            RenderLayerBacking doesn't really know what contentsScale is best
+            for a layer, so instead, have GraphicsLayers call back through the
+            GraphicsLayerClient to get the two relevant scale factors, and do
+            their own computation of contentsScale.
+
+            No testable behavior changes.
+
+            * page/Frame.cpp:
+            (WebCore::Frame::pageScaleFactorChanged): No need to pass the scale.
+
+            * platform/graphics/GraphicsLayer.cpp:
+            (WebCore::GraphicsLayer::notePageScaleFactorChangedIncludingDescendants):
+            Recurse through the GraphicsLayer tree, calling pageScaleFactorChanged() on 
+            each layer.
+
+            * platform/graphics/GraphicsLayer.h:
+            (WebCore::GraphicsLayer::pageScaleFactorChanged):
+            Remove contentsScale/setContentsScale
+
+            * platform/graphics/GraphicsLayerClient.h:
+            Add methods to fetch the backingScaleFactor() and pageScaleFactor().
+
+            * platform/graphics/ca/GraphicsLayerCA.cpp:
+            (WebCore::GraphicsLayerCA::GraphicsLayerCA): m_uncommittedChanges
+            defaults to ContentsScaleChanged so we update contentsScale on
+            the first flush.
+
+            (WebCore::GraphicsLayerCA::setContentsToBackgroundColor):
+            This was the wrong time to call updateContentsRect() and setupContentsLayer();
+            those should be done at commit time, so moved to updateLayerBackgroundColor().
+            (WebCore::GraphicsLayerCA::recursiveCommitChanges): Note whether we
+            have any changes, and call didCommitChangesForLayer() on the client.
+            (WebCore::GraphicsLayerCA::updateLayerBackgroundColor): Code moved to here.
+            (WebCore::clampedContentsScaleForScale): No longer has any hysteresis
+            on the scale, and now just clamps.
+            (WebCore::GraphicsLayerCA::updateContentsScale): Fetch the scales
+            from the client, and multiply them, then clamp.
+            (WebCore::GraphicsLayerCA::requiresTiledLayer): This now takes
+            contentsScale into account when deciding to use tiled layer,
+            so that zooming in will cause layers to start tiling.
+            (WebCore::GraphicsLayerCA::swapFromOrToTiledLayer): Don't call
+            setContentsScale(), but rather updateContentsScale().
+            (WebCore::GraphicsLayerCA::pageScaleFactorChanged): Set the bits
+            for properties that depend on the scale.
+            (WebCore::GraphicsLayerCA::noteChangesForScaleSensitiveProperties):
+            Note that contentsScale needs to be updated. At some point we might also
+            need to dirty other properties.
+            * platform/graphics/ca/GraphicsLayerCA.h: Moved the m_allowTiledLayer
+            bool for better packing. No need for a m_contentsScale member now.
+            * rendering/RenderLayer.cpp: Removed pageScaleFactorChanged().
+            * rendering/RenderLayer.h: Ditto.
+            * rendering/RenderLayerBacking.cpp:
+            (WebCore::RenderLayerBacking::createPrimaryGraphicsLayer): No need
+            to push the contents scale.
+            (WebCore::RenderLayerBacking::updateForegroundLayer): Ditto.
+            (WebCore::RenderLayerBacking::updateMaskLayer): Ditto.
+            (WebCore::RenderLayerBacking::pageScaleFactor): GraphicsLayerClient method.
+            (WebCore::RenderLayerBacking::backingScaleFactor): GraphicsLayerClient method.
+            (WebCore::RenderLayerBacking::didCommitChangesForLayer): Send through
+            to the compositor.
+            * rendering/RenderLayerBacking.h: GraphicsLayerClient methods.
+            * rendering/RenderLayerCompositor.cpp:
+            (WebCore::RenderLayerCompositor::didFlushChangesForLayer): We'll use
+            this later.
+            (WebCore::RenderLayerCompositor::backingScaleFactor): GraphicsLayerClient method.
+            (WebCore::RenderLayerCompositor::pageScaleFactor): Ditto.
+            (WebCore::RenderLayerCompositor::didCommitChangesForLayer): Ditto.
+            (WebCore::RenderLayerCompositor::ensureRootLayer): No need to push the contents scale.
+            (WebCore::RenderLayerCompositor::pageScaleFactorChanged): Just call notePageScaleFactorChangedIncludingDescendants()
+            on the root GraphicsLayer.
+            * rendering/RenderLayerCompositor.h: Added GraphicsLayerClient methods.
+
+2011-11-15  Lucas Forschler  <lforschler@apple.com>
+
     Merge 90954
 
     2011-07-13  Simon Fraser  <simon.fraser@apple.com>

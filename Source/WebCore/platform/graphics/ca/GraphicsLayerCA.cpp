@@ -249,9 +249,8 @@ GraphicsLayerCA::GraphicsLayerCA(GraphicsLayerClient* client)
     : GraphicsLayer(client)
     , m_contentsLayerPurpose(NoContentsLayer)
     , m_contentsLayerHasBackgroundColor(false)
-    , m_uncommittedChanges(NoChange)
-    , m_contentsScale(1)
     , m_allowTiledLayer(true)
+    , m_uncommittedChanges(ContentsScaleChanged)
 {
     m_layer = PlatformCALayer::create(PlatformCALayer::LayerTypeWebLayer, this);
 
@@ -670,8 +669,6 @@ void GraphicsLayerCA::setContentsToBackgroundColor(const Color& color)
 #ifndef NDEBUG
         m_contentsLayer->setName("Background Color Layer");
 #endif
-        updateContentsRect();
-        setupContentsLayer(m_contentsLayer.get());
     } else {
         m_contentsLayerPurpose = NoContentsLayer;
         m_contentsLayer = 0;
@@ -798,6 +795,8 @@ void GraphicsLayerCA::syncCompositingStateForThisLayerOnly()
 
 void GraphicsLayerCA::recursiveCommitChanges()
 {
+    bool hadChanges = m_uncommittedChanges;
+    
     commitLayerChangesBeforeSublayers();
 
     if (m_maskLayer)
@@ -817,6 +816,9 @@ void GraphicsLayerCA::recursiveCommitChanges()
         static_cast<GraphicsLayerCA*>(m_maskLayer)->commitLayerChangesAfterSublayers();
 
     commitLayerChangesAfterSublayers();
+
+    if (hadChanges && client())
+        client()->didCommitChangesForLayer(this);
 }
 
 void GraphicsLayerCA::commitLayerChangesBeforeSublayers()
@@ -1264,6 +1266,9 @@ void GraphicsLayerCA::updateLayerBackgroundColor()
 {
     if (!m_contentsLayer)
         return;
+
+    setupContentsLayer(m_contentsLayer.get());
+    updateContentsRect();
 
     if (m_backgroundColorSet)
         m_contentsLayer->setBackgroundColor(m_backgroundColor);
@@ -1955,31 +1960,13 @@ GraphicsLayerCA::LayerMap* GraphicsLayerCA::animatedLayerClones(AnimatedProperty
     return (property == AnimatedPropertyBackgroundColor) ? m_contentsLayerClones.get() : primaryLayerClones();
 }
 
-void GraphicsLayerCA::setContentsScale(float scale)
-{
-    float newScale = clampedContentsScaleForScale(scale);
-    if (newScale == m_contentsScale)
-        return;
-
-    m_contentsScale = newScale;
-    noteLayerPropertyChanged(ContentsScaleChanged);
-}
-
-float GraphicsLayerCA::clampedContentsScaleForScale(float scale) const
+static float clampedContentsScaleForScale(float scale)
 {
     // Define some limits as a sanity check for the incoming scale value
     // those too small to see.
     const float maxScale = 10.0f;
     const float minScale = 0.01f;
-    
-    // Avoid very slight scale changes that would be doing extra work for no benefit
-    const float maxAllowableDelta = 0.05f;
-
-    // Clamp
-    float result = max(minScale, min(scale, maxScale));
-
-    // If it hasn't changed much, don't do any work
-    return ((fabs(result - m_contentsScale) / m_contentsScale) < maxAllowableDelta) ? m_contentsScale : result;
+    return max(minScale, min(scale, maxScale));
 }
 
 void GraphicsLayerCA::updateContentsScale()
@@ -1988,7 +1975,12 @@ void GraphicsLayerCA::updateContentsScale()
     if (needTiledLayer != m_usingTiledLayer)
         swapFromOrToTiledLayer(needTiledLayer);
 
-    m_layer->setContentsScale(m_contentsScale);
+    float backingScaleFactor = m_client ? m_client->backingScaleFactor() : 1;
+    float pageScaleFactor = m_client ? m_client->pageScaleFactor() : 1;
+
+    float contentsScale = clampedContentsScaleForScale(pageScaleFactor * backingScaleFactor);
+    
+    m_layer->setContentsScale(contentsScale);
     if (drawsContent())
         m_layer->setNeedsDisplay();
 }
@@ -2041,8 +2033,10 @@ bool GraphicsLayerCA::requiresTiledLayer(const FloatSize& size) const
     if (!m_drawsContent || !m_allowTiledLayer)
         return false;
 
+    float contentsScale = m_client ? m_client->backingScaleFactor() * m_client->pageScaleFactor() : 1;
+
     // FIXME: catch zero-size height or width here (or earlier)?
-    return size.width() > cMaxPixelDimension || size.height() > cMaxPixelDimension;
+    return size.width() * contentsScale > cMaxPixelDimension || size.height() * contentsScale > cMaxPixelDimension;
 }
 
 void GraphicsLayerCA::swapFromOrToTiledLayer(bool useTiledLayer)
@@ -2051,8 +2045,6 @@ void GraphicsLayerCA::swapFromOrToTiledLayer(bool useTiledLayer)
     RefPtr<PlatformCALayer> oldLayer = m_layer;
     
     m_layer = PlatformCALayer::create(useTiledLayer ? PlatformCALayer::LayerTypeWebTiledLayer : PlatformCALayer::LayerTypeWebLayer, this);
-    m_layer->setContentsScale(m_contentsScale);
-
     m_usingTiledLayer = useTiledLayer;
     
     if (useTiledLayer) {
@@ -2085,7 +2077,7 @@ void GraphicsLayerCA::swapFromOrToTiledLayer(bool useTiledLayer)
     updateContentsOpaque();
     updateBackfaceVisibility();
     updateLayerBackgroundColor();
-    
+    updateContentsScale();
     updateOpacityOnLayer();
     
 #ifndef NDEBUG
@@ -2388,6 +2380,16 @@ void GraphicsLayerCA::updateOpacityOnLayer()
         
     }
 #endif
+}
+
+void GraphicsLayerCA::pageScaleFactorChanged()
+{
+    noteChangesForScaleSensitiveProperties();
+}
+
+void GraphicsLayerCA::noteChangesForScaleSensitiveProperties()
+{
+    noteLayerPropertyChanged(ContentsScaleChanged);
 }
 
 void GraphicsLayerCA::noteSublayersChanged()

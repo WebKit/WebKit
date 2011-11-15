@@ -1,3 +1,25 @@
+2011-11-15  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 91137
+
+    2011-07-15  Simon Fraser  <simon.fraser@apple.com>
+
+            Have GraphicsLayer pull their contentsScale, rather than pushing it onto them
+            https://bugs.webkit.org/show_bug.cgi?id=64643
+
+            Reviewed by Darin Adler.
+
+            Impement new GraphicsLayerClient methods related to contents scale,
+            and don't push the scale.
+
+            * WebProcess/WebPage/ca/LayerTreeHostCA.cpp:
+            (WebKit::LayerTreeHostCA::initialize):
+            (WebKit::LayerTreeHostCA::backingScaleFactor):
+            (WebKit::LayerTreeHostCA::pageScaleFactor):
+            (WebKit::LayerTreeHostCA::createPageOverlayLayer):
+            * WebProcess/WebPage/ca/LayerTreeHostCA.h:
+            (WebKit::LayerTreeHostCA::didCommitChangesForLayer):
+
 2011-10-27  Lucas Forschler  <lforschler@apple.com>
 
     Merge 98526

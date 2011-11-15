@@ -114,11 +114,6 @@ void RenderLayerBacking::createPrimaryGraphicsLayer()
 #endif
     m_graphicsLayer = createGraphicsLayer(layerName);
     
-    ASSERT(renderer());
-    ASSERT(renderer()->document());
-    ASSERT(renderer()->document()->frame());
-    m_graphicsLayer->setContentsScale(pageScaleFactor() * backingScaleFactor());
-
     updateLayerOpacity(renderer()->style());
     updateLayerTransform(renderer()->style());
 }
@@ -650,7 +645,6 @@ bool RenderLayerBacking::updateForegroundLayer(bool needsForegroundLayer)
             m_foregroundLayer = createGraphicsLayer(layerName);
             m_foregroundLayer->setDrawsContent(true);
             m_foregroundLayer->setPaintingPhase(GraphicsLayerPaintForeground);
-            m_foregroundLayer->setContentsScale(pageScaleFactor() * backingScaleFactor());
             layerChanged = true;
         }
     } else if (m_foregroundLayer) {
@@ -673,7 +667,6 @@ bool RenderLayerBacking::updateMaskLayer(bool needsMaskLayer)
             m_maskLayer = createGraphicsLayer("Mask");
             m_maskLayer->setDrawsContent(true);
             m_maskLayer->setPaintingPhase(GraphicsLayerPaintMask);
-            m_maskLayer->setContentsScale(pageScaleFactor() * backingScaleFactor());
             layerChanged = true;
         }
     } else if (m_maskLayer) {
@@ -1249,6 +1242,21 @@ void RenderLayerBacking::paintContents(const GraphicsLayer* graphicsLayer, Graph
     }
 }
 
+float RenderLayerBacking::pageScaleFactor() const
+{
+    return compositor()->pageScaleFactor();
+}
+
+float RenderLayerBacking::backingScaleFactor() const
+{
+    return compositor()->backingScaleFactor();
+}
+
+void RenderLayerBacking::didCommitChangesForLayer(const GraphicsLayer*) const
+{
+    compositor()->didFlushChangesForLayer(m_owningLayer);
+}
+
 bool RenderLayerBacking::showDebugBorders() const
 {
     return compositor() ? compositor()->compositorShowDebugBorders() : false;
@@ -1466,39 +1474,6 @@ CompositingLayerType RenderLayerBacking::compositingLayerType() const
         return m_graphicsLayer->usingTiledLayer() ? TiledCompositingLayer : NormalCompositingLayer;
     
     return ContainerCompositingLayer;
-}
-
-void RenderLayerBacking::pageScaleFactorChanged(float scale)
-{
-    float combinedScale = scale * backingScaleFactor();
-
-    if (m_graphicsLayer)
-        m_graphicsLayer->setContentsScale(combinedScale);
-
-    if (m_foregroundLayer)
-        m_foregroundLayer->setContentsScale(combinedScale);
-
-    if (m_maskLayer)
-        m_maskLayer->setContentsScale(combinedScale);
-}
-
-float RenderLayerBacking::pageScaleFactor() const
-{
-    Frame* frame = renderer()->document()->frame();
-    if (!frame)
-        return 1;
-    return frame->pageScaleFactor();
-}
-
-float RenderLayerBacking::backingScaleFactor() const
-{
-    Frame* frame = renderer()->document()->frame();
-    if (!frame)
-        return 1;
-    Page* page = frame->page();
-    if (!page)
-        return 1;
-    return page->chrome()->scaleFactor();
 }
 
 } // namespace WebCore

@@ -606,8 +606,6 @@ private:
     void setMustOverlapCompositedLayers(bool b) { m_mustOverlapCompositedLayers = b; }
 #endif
 
-    void pageScaleFactorChanged(float);
-
     friend class RenderLayerBacking;
     friend class RenderLayerCompositor;
     friend class RenderBoxModelObject;

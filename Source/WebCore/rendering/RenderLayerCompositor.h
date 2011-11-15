@@ -93,6 +93,9 @@ public:
     // flushPendingLayerChanges() flushes the entire GraphicsLayer tree, which can cross frame boundaries.
     // This call returns the rootmost compositor that is being flushed (including self).
     RenderLayerCompositor* enclosingCompositorFlushingLayers() const;
+
+    // Called when the GraphicsLayer for the given RenderLayer has flushed changes inside of flushPendingLayerChanges().
+    void didFlushChangesForLayer(RenderLayer*);
     
     // Rebuild the tree of compositing layers
     void updateCompositingLayers(CompositingUpdateType = CompositingUpdateAfterLayoutOrStyleChange, RenderLayer* updateRoot = 0);
@@ -189,7 +192,11 @@ public:
     bool compositorShowDebugBorders() const { return m_showDebugBorders; }
     bool compositorShowRepaintCounter() const { return m_showRepaintCounter; }
 
-    void pageScaleFactorChanged(float, RenderLayer* = 0);
+    virtual float backingScaleFactor() const;
+    virtual float pageScaleFactor() const;
+    virtual void didCommitChangesForLayer(const GraphicsLayer*) const;
+    
+    void pageScaleFactorChanged();
 
     GraphicsLayer* layerForHorizontalScrollbar() const { return m_layerForHorizontalScrollbar.get(); }
     GraphicsLayer* layerForVerticalScrollbar() const { return m_layerForVerticalScrollbar.get(); }

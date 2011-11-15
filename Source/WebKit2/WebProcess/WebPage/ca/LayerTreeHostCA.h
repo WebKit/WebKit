@@ -74,6 +74,9 @@ private:
     virtual void paintContents(const WebCore::GraphicsLayer*, WebCore::GraphicsContext&, WebCore::GraphicsLayerPaintingPhase, const WebCore::IntRect& clipRect);
     virtual bool showDebugBorders() const;
     virtual bool showRepaintCounter() const;
+    virtual float backingScaleFactor() const;
+    virtual float pageScaleFactor() const;
+    virtual void didCommitChangesForLayer(const WebCore::GraphicsLayer*) const { }
 
     // LayerTreeHostCA
     virtual void platformInitialize(LayerTreeContext&) = 0;

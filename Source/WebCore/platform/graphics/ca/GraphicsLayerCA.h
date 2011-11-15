@@ -56,9 +56,6 @@ public:
     virtual PlatformLayer* platformLayer() const;
     virtual PlatformCALayer* platformCALayer() const { return primaryLayer(); }
 
-    virtual float contentsScale() const { return m_contentsScale; }
-    virtual void setContentsScale(float);
-
     virtual bool setChildren(const Vector<GraphicsLayer*>&);
     virtual void addChild(GraphicsLayer*);
     virtual void addChildAtIndex(GraphicsLayer*, int index);
@@ -117,6 +114,8 @@ public:
     virtual void setDebugBorder(const Color&, float borderWidth);
 
     virtual void layerDidDisplay(PlatformLayer*);
+
+    virtual void pageScaleFactorChanged();
 
     void recursiveCommitChanges();
 
@@ -334,6 +333,7 @@ private:
     typedef unsigned LayerChangeFlags;
     void noteLayerPropertyChanged(LayerChangeFlags flags);
     void noteSublayersChanged();
+    void noteChangesForScaleSensitiveProperties();
 
     void repaintLayerDirtyRects();
 
@@ -356,6 +356,7 @@ private:
     
     ContentsLayerPurpose m_contentsLayerPurpose;
     bool m_contentsLayerHasBackgroundColor : 1;
+    bool m_allowTiledLayer : 1;
 
     RetainPtr<CGImageRef> m_uncorrectedContentsImage;
     RetainPtr<CGImageRef> m_pendingContentsImage;
@@ -399,13 +400,9 @@ private:
     AnimationsMap m_runningAnimations;
 
     Vector<FloatRect> m_dirtyRects;
+    FloatSize m_pixelAlignmentOffset;
     
     LayerChangeFlags m_uncommittedChanges;
-
-    float clampedContentsScaleForScale(float) const;
-    float m_contentsScale;
-    
-    bool m_allowTiledLayer;
 };
 
 } // namespace WebCore
