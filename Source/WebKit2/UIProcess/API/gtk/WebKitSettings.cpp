@@ -97,6 +97,7 @@ enum {
     PROP_DEFAULT_MONOSPACE_FONT_SIZE,
     PROP_MINIMUM_FONT_SIZE,
     PROP_DEFAULT_CHARSET,
+    PROP_ENABLE_CARET_BROWSING,
 };
 
 static void webKitSettingsSetProperty(GObject* object, guint propId, const GValue* value, GParamSpec* paramSpec)
@@ -172,6 +173,9 @@ static void webKitSettingsSetProperty(GObject* object, guint propId, const GValu
         break;
     case PROP_DEFAULT_CHARSET:
         webkit_settings_set_default_charset(settings, g_value_get_string(value));
+        break;
+    case PROP_ENABLE_CARET_BROWSING:
+        webkit_settings_set_enable_caret_browsing(settings, g_value_get_boolean(value));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propId, paramSpec);
@@ -252,6 +256,9 @@ static void webKitSettingsGetProperty(GObject* object, guint propId, GValue* val
         break;
     case PROP_DEFAULT_CHARSET:
         g_value_set_string(value, webkit_settings_get_default_charset(settings));
+        break;
+    case PROP_ENABLE_CARET_BROWSING:
+        g_value_set_boolean(value, webkit_settings_get_enable_caret_browsing(settings));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propId, paramSpec);
@@ -603,6 +610,18 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
                                                         "iso-8859-1",
                                                         readWriteConstructParamFlags));
 
+    /**
+     * WebKitSettings:enable-caret-browsing:
+     *
+     * Whether to enable accessibility enhanced keyboard navigation.
+     */
+    g_object_class_install_property(gObjectClass,
+                                    PROP_ENABLE_CARET_BROWSING,
+                                    g_param_spec_boolean("enable-caret-browsing",
+                                                         _("Enable Caret Browsing"),
+                                                         _("Whether to enable accessibility enhanced keyboard navigation"),
+                                                         FALSE,
+                                                         readWriteConstructParamFlags));
 
     g_type_class_add_private(klass, sizeof(WebKitSettingsPrivate));
 }
@@ -1510,4 +1529,39 @@ void webkit_settings_set_default_charset(WebKitSettings* settings, const gchar* 
     priv->defaultCharset = WebKit::toImpl(defaultCharsetRef.get())->string().utf8();
 
     g_object_notify(G_OBJECT(settings), "default-charset");
+}
+
+/**
+ * webkit_settings_get_enable_caret_browsing:
+ * @settings: a #WebKitSettings
+ *
+ * Get the #WebKitSettings:enable-caret-browsing property.
+ *
+ * Returns: %TRUE If caret browsing is enabled or %FALSE otherwise.
+ */
+gboolean webkit_settings_get_enable_caret_browsing(WebKitSettings* settings)
+{
+    g_return_val_if_fail(WEBKIT_IS_SETTINGS(settings), FALSE);
+
+    return WKPreferencesGetCaretBrowsingEnabled(settings->priv->preferences.get());
+}
+
+/**
+ * webkit_settings_set_enable_caret_browsing:
+ * @settings: a #WebKitSettings
+ * @enabled: Value to be set
+ *
+ * Set the #WebKitSettings:enable-caret-browsing property.
+ */
+void webkit_settings_set_enable_caret_browsing(WebKitSettings* settings, gboolean enabled)
+{
+    g_return_if_fail(WEBKIT_IS_SETTINGS(settings));
+
+    WebKitSettingsPrivate* priv = settings->priv;
+    bool currentValue = WKPreferencesGetCaretBrowsingEnabled(priv->preferences.get());
+    if (currentValue == enabled)
+        return;
+
+    WKPreferencesSetCaretBrowsingEnabled(priv->preferences.get(), enabled);
+    g_object_notify(G_OBJECT(settings), "enable-caret-browsing");
 }

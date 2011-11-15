@@ -203,6 +203,8 @@ webkit_settings_get_minimum_font_size
 webkit_settings_set_minimum_font_size
 webkit_settings_get_default_charset
 webkit_settings_set_default_charset
+webkit_settings_get_enable_caret_browsing
+webkit_settings_set_enable_caret_browsing
 
 <SUBSECTION Standard>
 WebKitSettingsClass
