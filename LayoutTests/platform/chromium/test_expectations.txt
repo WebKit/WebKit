@@ -3549,7 +3549,7 @@ BUGWK68436 SNOWLEOPARD CPU : svg/W3C-SVG-1.1/paths-data-12-t.svg = IMAGE+TEXT
 // Tests that are known to exhibit TEXT failures on Mac10.5 with Skia (CPU and/or GPU) graphics.
 BUGWK68437 LEOPARD CPU : canvas/philip/tests/2d.text.draw.fontface.notinpage.html = TEXT
 
-BUGWK68437 BUGWK54322 LEOPARD SNOWLEOPARD GPU GPU-CG CPU-CG : fast/canvas/set-colors.html = TEXT 
+BUGWK68437 BUGWK54322 LEOPARD SNOWLEOPARD GPU GPU-CG CPU-CG : fast/canvas/set-colors.html = TEXT
 // Failures introduced by USE_NEW_BUILDER in Skia.
 BUGCR33287 CPU : fast/canvas/set-colors.html = TEXT
 
