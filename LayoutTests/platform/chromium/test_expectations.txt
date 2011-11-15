@@ -3875,8 +3875,8 @@ BUGMSTARZINGER : fast/js/mozilla/strict/15.4.5.1.html = TEXT
 BUG_SENORBLANCO GPU : fast/canvas/canvas-transforms-fillRect-shadow.html = TEXT
 
 // Need to rebaseline on win and mac.
-BUG_TONY WIN MAC : css3/flexbox/repaint.html = PASS FAIL
-BUG_TONY WIN MAC : css3/flexbox/repaint-rtl-column.html = PASS FAIL
+BUG_TONY MAC : css3/flexbox/repaint.html = PASS FAIL
+BUG_TONY MAC : css3/flexbox/repaint-rtl-column.html = PASS FAIL
 
 BUGWK72149 : media/track/tracklist-is-reachable.html = TEXT
 
