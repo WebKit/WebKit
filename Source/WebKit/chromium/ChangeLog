@@ -1,3 +1,28 @@
+2011-11-14  Raymond Toy  <rtoy@google.com>
+
+        Add buffering to handle mismatch between hardware buffer size and webaudio render size
+        https://bugs.webkit.org/show_bug.cgi?id=71949
+
+        Reviewed by Kenneth Russell.
+
+        * src/AudioDestinationChromium.cpp:
+        (WebCore::AudioDestinationChromium::AudioDestinationChromium):
+        Create the FIFO for buffering.
+        (WebCore::AudioDestinationChromium::render):  Get rid of
+        m_renderCountPerCallback and let the FIFO consume function produce
+        the appropriate nubmer of calls to the webaudio producer.  Also
+        remove the rounding of the callback size so we use whatever the
+        hardware returns.  Removed maximumCallbackBufferSize and use
+        fifoSize to set the FIFO size.
+        (WebCore::AudioDestinationChromium::FIFO::FIFO):
+        (WebCore::AudioDestinationChromium::FIFO::consume):
+        (WebCore::AudioDestinationChromium::FIFO::findWrapLengths):
+        (WebCore::AudioDestinationChromium::FIFO::fillBuffer):
+        Implementation of new FIFO class.
+        * src/AudioDestinationChromium.h:
+        (WebCore::AudioDestinationChromium::FIFO::updateIndex):
+        Define new FIFO class.
+
 2011-11-14  Adrienne Walker  <enne@google.com>
 
         [chromium] Pipe compositor commit/swap up to WebWidgetClient
