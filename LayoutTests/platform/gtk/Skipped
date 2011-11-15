@@ -1606,14 +1606,6 @@ editing/pasteboard/paste-text-events.html
 # https://bugs.webkit.org/show_bug.cgi?id=72248
 editing/spelling/spelling-unified-emulation.html
 
-# REGRESSION (r100158-r100162): 5 fast tests failing on GTK Linux 64-bit Debug
-# https://bugs.webkit.org/show_bug.cgi?id=72297
-fast/js/global-constructors.html
-fast/dom/Window/window-property-descriptors.html
-fast/dom/Window/window-properties.html
-fast/dom/prototype-inheritance-2.html
-fast/dom/constructed-objects-prototypes.html
-
 # fast/dom/Window/window-postmessage-arrays.html fails on JSC platforms
 # https://bugs.webkit.org/show_bug.cgi?id=72363
 fast/dom/Window/window-postmessage-arrays.html
