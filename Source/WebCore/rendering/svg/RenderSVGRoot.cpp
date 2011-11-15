@@ -434,8 +434,7 @@ bool RenderSVGRoot::nodeAtPoint(const HitTestRequest& request, HitTestResult& re
     LayoutPoint pointInBorderBox = pointInParent - parentOriginToBorderBox();
 
     // Note: For now, we're ignoring hits to border and padding for <svg>
-    LayoutPoint pointInContentBox = pointInBorderBox - borderOriginToContentBox();
-    if (!contentBoxRect().contains(pointInContentBox))
+    if (!contentBoxRect().contains(pointInBorderBox))
         return false;
 
     LayoutPoint localPoint = localToParentTransform().inverse().mapPoint(pointInParent);

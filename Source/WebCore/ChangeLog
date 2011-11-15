@@ -1,3 +1,15 @@
+2011-11-15  Philip Rogers  <pdr@google.com>
+
+        Fix SVG hit testing when padding is present
+        https://bugs.webkit.org/show_bug.cgi?id=37325
+
+        Reviewed by Nikolas Zimmermann.
+
+        Test: svg/hittest/svg-padding.xhtml
+
+        * rendering/svg/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::nodeAtPoint):
+
 2011-11-15  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: move generic code from DevTools.js into the WebCore.
