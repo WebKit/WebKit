@@ -1,3 +1,16 @@
+2011-11-15  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: move generic code from DevTools.js into the WebCore.
+        https://bugs.webkit.org/show_bug.cgi?id=72377
+
+        This includes support for themed toolbar, remote debugging routines,
+        removes a couple of obsolete overrides from the DevTools.js
+
+        Reviewed by Yury Semikhatsky.
+
+        * src/js/DevTools.js:
+        (WebInspector.setInspectedTabId):
+
 2011-11-15  Alpha Lam  <hclam@chromium.org>
 
         [chromium] scroll deltas are cleared during commit to the main thread

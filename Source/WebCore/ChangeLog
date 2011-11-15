@@ -1,3 +1,24 @@
+2011-11-15  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: move generic code from DevTools.js into the WebCore.
+        https://bugs.webkit.org/show_bug.cgi?id=72377
+
+        This includes support for themed toolbar, remote debugging routines,
+        removes a couple of obsolete overrides from the DevTools.js
+
+        Reviewed by Yury Semikhatsky.
+
+        * English.lproj/localizedStrings.js:
+        * inspector/front-end/InspectorFrontendHostStub.js:
+        (.WebInspector.InspectorFrontendHostStub.prototype.inspectedURLChanged):
+        * inspector/front-end/ProfilesPanel.js:
+        * inspector/front-end/Resource.js:
+        * inspector/front-end/Settings.js:
+        * inspector/front-end/UIUtils.js:
+        (WebInspector.setToolbarColors):
+        (WebInspector.resetToolbarColors):
+        * inspector/front-end/inspector.js:
+
 2011-11-15  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Centralize hide_symbols and ensure all libs are built with symbol visibility & bsymbolic_functions

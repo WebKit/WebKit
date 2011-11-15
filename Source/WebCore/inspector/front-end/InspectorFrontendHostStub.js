@@ -110,6 +110,7 @@ WebInspector.InspectorFrontendHostStub.prototype = {
 
     inspectedURLChanged: function(url)
     {
+        document.title = WebInspector.UIString(Preferences.applicationTitle, url);
     },
 
     copyText: function()
