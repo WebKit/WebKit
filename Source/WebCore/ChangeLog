@@ -1,3 +1,25 @@
+2011-11-15  Vincent Scheib  <scheib@chromium.org>
+
+        Mouse Lock: Renaming to 'Pointer Lock': MouseLockable to PointerLock
+        https://bugs.webkit.org/show_bug.cgi?id=72315
+
+        Reviewed by Dimitri Glazkov.
+
+        * WebCore.gypi:
+        * page/Navigator.cpp:
+        (WebCore::Navigator::webkitPointer):
+        * page/Navigator.h:
+        * page/Navigator.idl:
+        * page/PointerLock.cpp: Renamed from Source/WebCore/page/MouseLockable.cpp.
+        (WebCore::PointerLock::PointerLock):
+        (WebCore::PointerLock::~PointerLock):
+        (WebCore::PointerLock::webkitLock):
+        (WebCore::PointerLock::webkitUnlock):
+        (WebCore::PointerLock::webkitIsLocked):
+        * page/PointerLock.h: Renamed from Source/WebCore/page/MouseLockable.h.
+        (WebCore::PointerLock::create):
+        * page/PointerLock.idl: Renamed from Source/WebCore/page/MouseLockable.idl.
+
 2011-10-28  Ojan Vafai  <ojan@chromium.org>
 
         Overflow and relayout are broken in the new flexboxes

@@ -33,7 +33,7 @@
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
 #include "Geolocation.h"
-#include "MouseLockable.h"
+#include "PointerLock.h"
 #include "KURL.h"
 #include "Language.h"
 #include "Page.h"
@@ -172,10 +172,10 @@ Geolocation* Navigator::geolocation() const
 }
 
 #if ENABLE(POINTER_LOCK)
-MouseLockable* Navigator::webkitPointer() const
+PointerLock* Navigator::webkitPointer() const
 {
     if (!m_pointer)
-        m_pointer = MouseLockable::create();
+        m_pointer = PointerLock::create();
     return m_pointer.get();
 }
 #endif

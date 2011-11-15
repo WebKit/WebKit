@@ -22,15 +22,37 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module core {
+#include "config.h"
+#include "PointerLock.h"
 
-    interface [
-        Conditional=POINTER_LOCK,
-        OmitConstructor
-    ] MouseLockable {
-        void webkitLock(in Element target, in [Callback, Optional] VoidCallback successCallback, in [Callback, Optional] VoidCallback failureCallback);
-        void webkitUnlock();
-        boolean webkitIsLocked();
-    };
+#if ENABLE(POINTER_LOCK)
+
+namespace WebCore {
+
+PointerLock::PointerLock()
+{
+}
+
+PointerLock::~PointerLock()
+{
+}
+
+void PointerLock::webkitLock(Element* target, PassRefPtr<VoidCallback> successCallback, PassRefPtr<VoidCallback> failureCallback)
+{
+    // FIXME: Implement
+}
+
+void PointerLock::webkitUnlock()
+{
+    // FIXME: Implement
+}
+
+bool PointerLock::webkitIsLocked()
+{
+    // FIXME: Implement
+    return false;
+}
 
 }
+
+#endif // ENABLE(POINTER_LOCK)

@@ -22,36 +22,15 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MouseLockable_h
-#define MouseLockable_h
+module core {
 
-#if ENABLE(POINTER_LOCK)
+    interface [
+        Conditional=POINTER_LOCK,
+        OmitConstructor
+    ] PointerLock {
+        void webkitLock(in Element target, in [Callback, Optional] VoidCallback successCallback, in [Callback, Optional] VoidCallback failureCallback);
+        void webkitUnlock();
+        boolean webkitIsLocked();
+    };
 
-#include "VoidCallback.h"
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
-
-namespace WebCore {
-
-class Element;
-
-class MouseLockable : public RefCounted<MouseLockable> {
-public:
-    static PassRefPtr<MouseLockable> create() { return adoptRef(new MouseLockable()); }
-
-    ~MouseLockable();
-
-    void webkitLock(Element* target, PassRefPtr<VoidCallback> successCallback, PassRefPtr<VoidCallback> failureCallback);
-    void webkitUnlock();
-    bool webkitIsLocked();
-
-private:
-    MouseLockable();
-};
-
-} // namespace WebCore
-
-#endif // ENABLE(POINTER_LOCK)
-
-#endif // MouseLockable_h
-
+}

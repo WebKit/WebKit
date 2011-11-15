@@ -32,7 +32,7 @@ class DOMMimeTypeArray;
 class DOMPluginArray;
 class Frame;
 class Geolocation;
-class MouseLockable;
+class PointerLock;
 class NavigatorUserMediaErrorCallback;
 class NavigatorUserMediaSuccessCallback;
 class PluginData;
@@ -60,7 +60,7 @@ public:
     Geolocation* geolocation() const;
 
 #if ENABLE(POINTER_LOCK)
-    MouseLockable* webkitPointer() const;
+    PointerLock* webkitPointer() const;
 #endif
 
     // Relinquishes the storage lock, if one exists.
@@ -81,7 +81,7 @@ private:
     mutable RefPtr<DOMMimeTypeArray> m_mimeTypes;
     mutable RefPtr<Geolocation> m_geolocation;
 #if ENABLE(POINTER_LOCK)
-    mutable RefPtr<MouseLockable> m_pointer;
+    mutable RefPtr<PointerLock> m_pointer;
 #endif
 };
 
