@@ -1,3 +1,25 @@
+2011-11-15  Yuqiang Xian  <yuqiang.xian@intel.com>
+
+        Remove DFGJITCompilerInlineMethods
+        https://bugs.webkit.org/show_bug.cgi?id=72366
+
+        Reviewed by Filip Pizlo.
+
+        Those methods are actually seldom used. Modify the few such places and
+        remove DFGJITCompilerInlineMethods stuffs totally.
+
+        * GNUmakefile.list.am:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * dfg/DFGJITCompiler.h:
+        (JSC::DFG::JITCompiler::addressOfDoubleConstant):
+        * dfg/DFGJITCompilerInlineMethods.h: Removed.
+        * dfg/DFGSpeculativeJIT.cpp:
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::silentFillFPR):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::fillJSValue):
+        (JSC::DFG::SpeculativeJIT::cachedGetMethod):
+
 2011-11-14  Filip Pizlo  <fpizlo@apple.com>
 
         DFG::SpeculativeJIT and DFG::JITCodeGenerator should be combined

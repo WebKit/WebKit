@@ -328,7 +328,6 @@
 		86704B8812DBA33700A9FE7B /* YarrParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 86704B8112DBA33700A9FE7B /* YarrParser.h */; settings = {ATTRIBUTES = (); }; };
 		86704B8912DBA33700A9FE7B /* YarrPattern.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 86704B8212DBA33700A9FE7B /* YarrPattern.cpp */; };
 		86704B8A12DBA33700A9FE7B /* YarrPattern.h in Headers */ = {isa = PBXBuildFile; fileRef = 86704B8312DBA33700A9FE7B /* YarrPattern.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		86880F1E14328BB900B08D42 /* DFGJITCompilerInlineMethods.h in Headers */ = {isa = PBXBuildFile; fileRef = 86880F1A14328BB900B08D42 /* DFGJITCompilerInlineMethods.h */; };
 		86880F1F14328BB900B08D42 /* DFGSpeculativeJIT32_64.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 86880F1B14328BB900B08D42 /* DFGSpeculativeJIT32_64.cpp */; };
 		86880F4D14353B2100B08D42 /* DFGSpeculativeJIT64.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 86880F4C14353B2100B08D42 /* DFGSpeculativeJIT64.cpp */; };
 		868BFA08117CEFD100B908B1 /* AtomicString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 868BFA00117CEFD100B908B1 /* AtomicString.cpp */; };
@@ -1108,7 +1107,6 @@
 		86704B8312DBA33700A9FE7B /* YarrPattern.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = YarrPattern.h; path = yarr/YarrPattern.h; sourceTree = "<group>"; };
 		867FC35F11B763950025105E /* JavaScriptCore.JSVALUE32_64only.exp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.exports; path = JavaScriptCore.JSVALUE32_64only.exp; sourceTree = "<group>"; };
 		867FC36111B763950025105E /* JavaScriptCore.JSVALUE64only.exp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.exports; path = JavaScriptCore.JSVALUE64only.exp; sourceTree = "<group>"; };
-		86880F1A14328BB900B08D42 /* DFGJITCompilerInlineMethods.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGJITCompilerInlineMethods.h; path = dfg/DFGJITCompilerInlineMethods.h; sourceTree = "<group>"; };
 		86880F1B14328BB900B08D42 /* DFGSpeculativeJIT32_64.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGSpeculativeJIT32_64.cpp; path = dfg/DFGSpeculativeJIT32_64.cpp; sourceTree = "<group>"; };
 		86880F4C14353B2100B08D42 /* DFGSpeculativeJIT64.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGSpeculativeJIT64.cpp; path = dfg/DFGSpeculativeJIT64.cpp; sourceTree = "<group>"; };
 		868BFA00117CEFD100B908B1 /* AtomicString.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AtomicString.cpp; path = text/AtomicString.cpp; sourceTree = "<group>"; };
@@ -2326,7 +2324,6 @@
 				0FD82EF31423073900179C94 /* DFGIntrinsic.h */,
 				86EC9DBB1328DF82002B2AD7 /* DFGJITCompiler.cpp */,
 				86EC9DBC1328DF82002B2AD7 /* DFGJITCompiler.h */,
-				86880F1A14328BB900B08D42 /* DFGJITCompilerInlineMethods.h */,
 				86ECA3E9132DEF1C002B2AD7 /* DFGNode.h */,
 				0F620171143FCD2F0068B77C /* DFGOperands.h */,
 				0FD82E52141DAEDE00179C94 /* DFGOSREntry.cpp */,
@@ -2904,7 +2901,6 @@
 				0F636DA0142D27D700B2E66A /* PackedIntVector.h in Headers */,
 				A7521E131429169A003C8D0C /* CardSet.h in Headers */,
 				0FD52AAE143035A00026DC9F /* UnionFind.h in Headers */,
-				86880F1E14328BB900B08D42 /* DFGJITCompilerInlineMethods.h in Headers */,
 				0FE228ED1436AB2700196C48 /* Heuristics.h in Headers */,
 				0FFF4BB4143955E900655BC0 /* DFGStructureSet.h in Headers */,
 				8604F505143CE1C200B295F5 /* JSGlobalThis.h in Headers */,

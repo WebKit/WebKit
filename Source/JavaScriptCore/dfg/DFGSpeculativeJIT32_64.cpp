@@ -30,7 +30,6 @@
 #if ENABLE(DFG_JIT)
 
 #include "JSByteArray.h"
-#include "DFGJITCompilerInlineMethods.h"
 
 namespace JSC { namespace DFG {
 
@@ -251,26 +250,20 @@ bool SpeculativeJIT::fillJSValue(NodeIndex nodeIndex, GPRReg& tagGPR, GPRReg& pa
     case DataFormatNone: {
 
         if (node.hasConstant()) {
-            if (isInt32Constant(nodeIndex)) {
-                tagGPR = allocate();
-                payloadGPR = allocate();
-                m_jit.emitLoad(nodeIndex, tagGPR, payloadGPR);
-                info.fillJSValue(tagGPR, payloadGPR, DataFormatJSInteger);
-            } else {
-                tagGPR = allocate();
-                payloadGPR = allocate();
-                m_jit.emitLoad(nodeIndex, tagGPR, payloadGPR);
-                info.fillJSValue(tagGPR, payloadGPR, DataFormatJS);
-            }
-
+            tagGPR = allocate();
+            payloadGPR = allocate();
+            m_jit.move(Imm32(valueOfJSConstant(nodeIndex).tag()), tagGPR);
+            m_jit.move(Imm32(valueOfJSConstant(nodeIndex).payload()), payloadGPR);
             m_gprs.retain(tagGPR, virtualRegister, SpillOrderConstant);
             m_gprs.retain(payloadGPR, virtualRegister, SpillOrderConstant);
+            info.fillJSValue(tagGPR, payloadGPR, isInt32Constant(nodeIndex) ? DataFormatJSInteger : DataFormatJS);
         } else {
             DataFormat spillFormat = info.spillFormat();
             ASSERT(spillFormat & DataFormatJS);
             tagGPR = allocate();
             payloadGPR = allocate();
-            m_jit.emitLoad(nodeIndex, tagGPR, payloadGPR);
+            m_jit.load32(JITCompiler::tagFor(virtualRegister), tagGPR);
+            m_jit.load32(JITCompiler::payloadFor(virtualRegister), payloadGPR);
             m_gprs.retain(tagGPR, virtualRegister, SpillOrderSpilled);
             m_gprs.retain(payloadGPR, virtualRegister, SpillOrderSpilled);
             info.fillJSValue(tagGPR, payloadGPR, spillFormat == DataFormatJSDouble ? DataFormatJS : spillFormat);
@@ -941,7 +934,6 @@ void SpeculativeJIT::cachedGetMethod(GPRReg basePayloadGPR, GPRReg resultTagGPR,
     JITCompiler::Call slowCall;
     JITCompiler::DataLabelPtr structToCompare, protoObj, protoStructToCompare, putFunction;
     
-    // m_jit.emitLoadPayload(baseIndex, scratchGPR);
     JITCompiler::Jump wrongStructure = m_jit.branchPtrWithPatch(JITCompiler::NotEqual, JITCompiler::Address(basePayloadGPR, JSCell::structureOffset()), structToCompare, JITCompiler::TrustedImmPtr(reinterpret_cast<void*>(-1)));
     protoObj = m_jit.moveWithPatch(JITCompiler::TrustedImmPtr(0), resultPayloadGPR);
     JITCompiler::Jump wrongProtoStructure = m_jit.branchPtrWithPatch(JITCompiler::NotEqual, JITCompiler::Address(resultPayloadGPR, JSCell::structureOffset()), protoStructToCompare, JITCompiler::TrustedImmPtr(reinterpret_cast<void*>(-1)));

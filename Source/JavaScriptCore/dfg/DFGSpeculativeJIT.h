@@ -499,8 +499,8 @@ private:
         ASSERT(info.fpr() == target);
 
         NodeIndex nodeIndex = info.nodeIndex();
-#if USE(JSVALUE64)
         Node& node = at(nodeIndex);
+#if USE(JSVALUE64)
         ASSERT(info.registerFormat() == DataFormatDouble);
 
         if (node.hasConstant()) {
@@ -522,7 +522,11 @@ private:
 #elif USE(JSVALUE32_64)
         UNUSED_PARAM(canTrample);
         ASSERT(info.registerFormat() == DataFormatDouble || info.registerFormat() == DataFormatJSDouble);
-        m_jit.emitLoadDouble(nodeIndex, target);
+        if (node.hasConstant()) {
+            ASSERT(isNumberConstant(nodeIndex));
+            m_jit.loadDouble(addressOfDoubleConstant(nodeIndex), target);
+        } else
+            m_jit.loadDouble(JITCompiler::addressFor(spillMe), target);
 #endif
     }
 

@@ -28,7 +28,6 @@
 
 #if ENABLE(DFG_JIT)
 
-#include "DFGJITCompilerInlineMethods.h"
 #include "JSByteArray.h"
 #include "LinkBuffer.h"
 

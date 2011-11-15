@@ -221,24 +221,6 @@ public:
         unsigned constantIndex = graph()[nodeIndex].constantNumber();
         return &(codeBlock()->constantRegister(FirstConstantRegisterIndex + constantIndex));
     }
-
-    void emitLoadTag(NodeIndex, GPRReg tag);
-    void emitLoadPayload(NodeIndex, GPRReg payload);
-
-    void emitLoad(const JSValue&, GPRReg tag, GPRReg payload);
-    void emitLoad(NodeIndex, GPRReg tag, GPRReg payload);
-    void emitLoad2(NodeIndex index1, GPRReg tag1, GPRReg payload1, NodeIndex index2, GPRReg tag2, GPRReg payload2);
-
-    void emitLoadDouble(NodeIndex, FPRReg value);
-    void emitLoadInt32ToDouble(NodeIndex, FPRReg value);
-
-    void emitStore(NodeIndex, GPRReg tag, GPRReg payload);
-    void emitStore(NodeIndex, const JSValue constant);
-    void emitStoreInt32(NodeIndex, GPRReg payload, bool indexIsInt32 = false);
-    void emitStoreInt32(NodeIndex, TrustedImm32 payload, bool indexIsInt32 = false);
-    void emitStoreCell(NodeIndex, GPRReg payload, bool indexIsCell = false);
-    void emitStoreBool(NodeIndex, GPRReg payload, bool indexIsBool = false);
-    void emitStoreDouble(NodeIndex, FPRReg value);
 #endif
 
     void addPropertyAccess(const PropertyAccessRecord& record)

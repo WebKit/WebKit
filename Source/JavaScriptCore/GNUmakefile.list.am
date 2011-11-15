@@ -132,7 +132,6 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/dfg/DFGIntrinsic.h \
 	Source/JavaScriptCore/dfg/DFGJITCompiler.cpp \
 	Source/JavaScriptCore/dfg/DFGJITCompiler.h \
-	Source/JavaScriptCore/dfg/DFGJITCompilerInlineMethods.h \
 	Source/JavaScriptCore/dfg/DFGNode.h \
 	Source/JavaScriptCore/dfg/DFGOperands.h \
 	Source/JavaScriptCore/dfg/DFGOperations.cpp \
