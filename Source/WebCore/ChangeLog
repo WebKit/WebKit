@@ -1,3 +1,21 @@
+2011-11-15  Noel Gordon  <noel.gordon@gmail.com>
+
+        Make ImageFrame member getAddr() public
+        https://bugs.webkit.org/show_bug.cgi?id=72321
+
+        Reviewed by Adam Barth.
+
+        Make ImageFrame member getAddr() public to allow ImageFrame users access to the
+        underlying frame pixels if needed. Image decoders, for example, could with care
+        use this service to write decoded pixels direct to the ImageFrame pixel buffer,
+        avoiding intermeadiate data copies from temporary decoded pixel row buffers and
+        the decoding performance loss that that entails.
+
+        No new tests, refactoring only.
+
+        * platform/image-decoders/ImageDecoder.h:
+        (WebCore::ImageFrame::getAddr):
+
 2011-11-14  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: [Crash] Crash when inspecting namespaced SVG styled via element names

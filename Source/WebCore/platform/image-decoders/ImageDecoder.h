@@ -137,6 +137,19 @@ namespace WebCore {
             setRGBA(getAddr(x, y), r, g, b, a);
         }
 
+        inline PixelData* getAddr(int x, int y)
+        {
+#if USE(SKIA)
+            return m_bitmap.bitmap().getAddr32(x, y);
+#elif PLATFORM(QT)
+            m_image = m_pixmap.toImage();
+            m_pixmap = QPixmap();
+            return reinterpret_cast_ptr<QRgb*>(m_image.scanLine(y)) + x;
+#else
+            return m_bytes + (y * width()) + x;
+#endif
+        }
+
 #if PLATFORM(QT)
         void setPixmap(const QPixmap& pixmap);
 #endif
@@ -150,19 +163,6 @@ namespace WebCore {
 
         int width() const;
         int height() const;
-
-        inline PixelData* getAddr(int x, int y)
-        {
-#if USE(SKIA)
-            return m_bitmap.bitmap().getAddr32(x, y);
-#elif PLATFORM(QT)
-            m_image = m_pixmap.toImage();
-            m_pixmap = QPixmap();
-            return reinterpret_cast_ptr<QRgb*>(m_image.scanLine(y)) + x;
-#else
-            return m_bytes + (y * width()) + x;
-#endif
-        }
 
         inline void setRGBA(PixelData* dest, unsigned r, unsigned g, unsigned b, unsigned a)
         {
