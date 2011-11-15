@@ -2511,6 +2511,7 @@ http/tests/misc/xslt-bad-import.html
 # https://bugs.webkit.org/show_bug.cgi?id=72363
 fast/dom/Window/window-postmessage-arrays.html
 
-# [Qt] http/tests/security/postMessage/invalid-origin-throws-exception.html fails after r100182
+# REGRESSION(r100182): It broke 2 http/tests/security tests
 # https://bugs.webkit.org/show_bug.cgi?id=72364
+http/tests/security/cross-frame-access-enumeration.html
 http/tests/security/postMessage/invalid-origin-throws-exception.html
