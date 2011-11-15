@@ -1,6 +1,4 @@
-Tests that TextTrack's cues are indexed and updated within 500ms during video playback. Test uses the enter and exits events on TextTrackCue.
-
-This test may fail occasionally since we cannot guarantee that cue events will fire within 250ms of their startTime or endTime.
+Tests that TextTrack's cues are indexed and updated in order during video playback. Test uses the enter and exits events on TextTrackCue.
 
 EVENT(canplaythrough)
 EXPECTED (testTrack.track.cues.length == '3') OK
@@ -9,38 +7,23 @@ RUN(video.play())
 EVENT(enter)
 This cue is the currently active cue:
 EXPECTED ([object TextTrackCue] == '[object TextTrackCue]') OK
-Start time:
-EXPECTED (video.currentTime >= '1') OK
-EXPECTED (video.currentTime < '1.5') OK
+EXPECTED (currentCue.id == '1') OK
 
 EVENT(exit)
-End time:
-EXPECTED (video.currentTime >= '2') OK
-EXPECTED (video.currentTime < '2.5') OK
 
 EVENT(enter)
 This cue is the currently active cue:
 EXPECTED ([object TextTrackCue] == '[object TextTrackCue]') OK
-Start time:
-EXPECTED (video.currentTime >= '2.5') OK
-EXPECTED (video.currentTime < '3') OK
+EXPECTED (currentCue.id == '2') OK
 
 EVENT(exit)
-End time:
-EXPECTED (video.currentTime >= '3.5') OK
-EXPECTED (video.currentTime < '4') OK
 
 EVENT(enter)
 This cue is the currently active cue:
 EXPECTED ([object TextTrackCue] == '[object TextTrackCue]') OK
-Start time:
-EXPECTED (video.currentTime >= '4') OK
-EXPECTED (video.currentTime < '4.5') OK
+EXPECTED (currentCue.id == '3') OK
 
 EVENT(exit)
-End time:
-EXPECTED (video.currentTime >= '5') OK
-EXPECTED (video.currentTime < '5.5') OK
 
 END OF TEST
 

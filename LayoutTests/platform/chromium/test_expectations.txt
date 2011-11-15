@@ -3879,7 +3879,6 @@ BUG_TONY WIN MAC : css3/flexbox/repaint.html = PASS FAIL
 BUG_TONY WIN MAC : css3/flexbox/repaint-rtl-column.html = PASS FAIL
 
 BUGWK72149 : media/track/tracklist-is-reachable.html = TEXT
-BUGWK72269 : media/track/track-cues-cuechange.html = PASS TEXT
 
 BUGV8_1821 WIN LINUX : http/tests/inspector-enabled/dedicated-workers-list.html = PASS CRASH
 BUGWK72133 SKIP MAC : http/tests/inspector-enabled/dedicated-workers-list.html = PASS CRASH TIMEOUT

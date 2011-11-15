@@ -7,20 +7,22 @@
         <script src=../video-test.js></script>
     </head>
     <body>
-        <p>Tests that TextTrack's cues are indexed and updated within 500ms during video playback. Test uses the cuechange event.</p>
-        <p>This test may fail occasionally since we cannot guarantee that cue events will fire within 250ms of their startTime or endTime.</p>
+        <p>Tests that TextTrack's cues are indexed and updated in order during video playback. Test uses the cuechange event.</p>
         <video controls>
             <track id="testTrack" src="captions-webvtt/cues-chrono-order.vtt" kind="captions">
         </video>
         <script>            
 
-        var timeInterval = 0.5;
         var cueChangeCount = 0;
+        var currentCue;
         var testTrack;
 
         function cueChangedFromTrackElement()
         {
             consoleWrite("EVENT(cuechange) from &lt;track&gt;");
+            
+            currentCueIndex = Math.floor(cueChangeCount/2);
+            currentCue = event.target.track.cues[currentCueIndex];
             checkCue();
 
             ++cueChangeCount;
@@ -31,25 +33,20 @@
         function cueChangedFromTextTrack()
         {
             consoleWrite("EVENT(cuechange) from TextTrack");
+            
+            currentCueIndex = Math.floor(cueChangeCount/2);
+            currentCue = event.target.cues[currentCueIndex];
             checkCue();
         }
         
         function checkCue()
         {
-            var cues = testTrack.track.cues;
-            
-            var currentCue = cues[Math.floor(cueChangeCount/2)];
-
             if (cueChangeCount % 2 == 0) {
+                consoleWrite("Cue entered");
                 testExpected(currentCue, testTrack.track.activeCues[0]);
-                consoleWrite("Start time:");
-                testExpected("video.currentTime", currentCue.startTime, '>=');
-                testExpected("video.currentTime", currentCue.startTime + timeInterval, '<');
-            } else {
-                consoleWrite("End time:");
-                testExpected("video.currentTime", currentCue.endTime, '>=');
-                testExpected("video.currentTime", currentCue.endTime + timeInterval, '<');
-            }
+                testExpected("currentCue.id", currentCueIndex + 1);
+            } else
+                consoleWrite("Cue exited");
             consoleWrite("");
         }
 

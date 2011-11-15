@@ -7,40 +7,31 @@
         <script src=../video-test.js></script>
     </head>
     <body>
-        <p>Tests that TextTrack's cues are indexed and updated within 500ms during video playback. Test uses the enter and exits events on TextTrackCue.</p>
-        <p>This test may fail occasionally since we cannot guarantee that cue events will fire within 250ms of their startTime or endTime.</p>
+        <p>Tests that TextTrack's cues are indexed and updated in order during video playback. Test uses the enter and exits events on TextTrackCue.</p>
         <video controls>
             <track id="testTrack" src="captions-webvtt/cues-chrono-order.vtt" kind="captions">
         </video>
         <script>            
-            
-        var timeInterval = 0.5
+
         var cueCount = 0;
+        var currentCue;
         var testTrack;
 
         function cueEntered()
         {
             consoleWrite("EVENT(enter)");
 
-            var currentCue = testTrack.track.cues[cueCount];
+            currentCue = event.target;
 
             consoleWrite("This cue is the currently active cue:");
             testExpected(currentCue, testTrack.track.activeCues[0]);
-            consoleWrite("Start time:");
-            testExpected("video.currentTime", currentCue.startTime, '>=');
-            testExpected("video.currentTime", currentCue.startTime + timeInterval, '<');
+            testExpected("currentCue.id", cueCount + 1);
             consoleWrite("");
         }
 
         function cueExited()
         {
             consoleWrite("EVENT(exit)");
-
-            var currentCue = testTrack.track.cues[cueCount];
-
-            consoleWrite("End time:");
-            testExpected("video.currentTime", currentCue.endTime, '>=');
-            testExpected("video.currentTime", currentCue.endTime + timeInterval, '<');
             consoleWrite("");
 
             ++cueCount;
