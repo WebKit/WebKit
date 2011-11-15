@@ -40,6 +40,8 @@ PASS DOMSettableTokenList.toString() is '[object DOMSettableTokenListConstructor
 PASS DOMStringList.toString() is '[object DOMStringListConstructor]'
 PASS DOMStringMap.toString() is '[object DOMStringMapConstructor]'
 PASS DOMTokenList.toString() is '[object DOMTokenListConstructor]'
+PASS DeviceMotionEvent.toString() is '[object DeviceMotionEventConstructor]'
+PASS DeviceOrientationEvent.toString() is '[object DeviceOrientationEventConstructor]'
 PASS Document.toString() is '[object DocumentConstructor]'
 PASS DocumentFragment.toString() is '[object DocumentFragmentConstructor]'
 PASS DocumentType.toString() is '[object DocumentTypeConstructor]'
