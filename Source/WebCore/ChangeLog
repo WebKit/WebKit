@@ -1,5 +1,27 @@
 2011-11-14  Adam Barth  <abarth@webkit.org>
 
+        Unique origins shouldn't remember their scheme, host, or port
+        https://bugs.webkit.org/show_bug.cgi?id=72308
+
+        Reviewed by Eric Seidel.
+
+        This patch contains the bulk (all?) of the behavior differences in this
+        patch series.  Unique origins shouldn't remember their schemes.  Doing
+        so causes some privileges (e.g., local access) to leak into unique
+        origins.
+
+        * page/SecurityOrigin.cpp:
+        (WebCore::SecurityOrigin::SecurityOrigin):
+            - Explicitly clear out the protocol, host, and port for unique
+              origins.  A future patch will refactor all this code to be more
+              elegant.
+        * platform/SchemeRegistry.cpp:
+        (WebCore::schemesWithUniqueOrigins):
+            - Merge "about" and "javascript" in with the general case now that
+              we don't have a separate notion of an empty origin.
+
+2011-11-14  Adam Barth  <abarth@webkit.org>
+
         Don't special-case "data" URLs in drag-and-drop logic
         https://bugs.webkit.org/show_bug.cgi?id=72322
 

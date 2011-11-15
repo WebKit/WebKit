@@ -56,7 +56,7 @@ window.onload = function()
     <!-- iframes where script execution is allowed, but origin is not shared -->
 
     <!-- plain, proper attribute value -->
-    <iframe sandbox="allow-scripts"
+    <iframe sandbox="allow-scripts allow-same-origin"
             name="f1"
             src="resources/sandboxed-iframe-attribute-parsing-allowed.html">
     </iframe>
@@ -66,7 +66,7 @@ window.onload = function()
 
 allow-scripts
 
-"
+allow-same-origin"
             name="f2"
             src="resources/sandboxed-iframe-attribute-parsing-allowed.html">
     </iframe>
@@ -103,7 +103,7 @@ allow-scripts
         
         'Kyssarna' ('The kisses'), Esaias Tegnér, 1782-1846
 
-    allow-scripts
+    allow-scripts allow-same-origin
     
         int main(void)
         {
@@ -114,44 +114,44 @@ allow-scripts
     </iframe>
 
     <!-- tab characters before and after attribute value -->
-    <iframe sandbox="		allow-scripts		"
+    <iframe sandbox="		allow-scripts		allow-same-origin"
             name="f4"
             src="resources/sandboxed-iframe-attribute-parsing-allowed.html">
     </iframe>
 
     <!-- mixed case -->
-    <iframe sandbox="AlLoW-sCrIpTs"
+    <iframe sandbox="AlLoW-sCrIpTs allow-same-origin"
             name="f5"
             src="resources/sandboxed-iframe-attribute-parsing-allowed.html">
     </iframe>
 
     <!-- iframes where script execution is disallowed -->
 
-    <iframe sandbox="allowscripts"
+    <iframe sandbox="allowscripts allow-same-origin"
             src="resources/sandboxed-iframe-attribute-parsing-disallowed.html">
     </iframe>
 
-    <iframe sandbox="allows-cripts"
+    <iframe sandbox="allows-cripts allow-same-origin"
             src="resources/sandboxed-iframe-attribute-parsing-disallowed.html">
     </iframe>
 
-    <iframe sandbox="-allow-scripts"
+    <iframe sandbox="-allow-scripts allow-same-origin"
             src="resources/sandboxed-iframe-attribute-parsing-disallowed.html">
     </iframe>
 
-    <iframe sandbox="allow_scripts"
+    <iframe sandbox="allow_scripts allow-same-origin"
             src="resources/sandboxed-iframe-attribute-parsing-disallowed.html">
     </iframe>
 
-    <iframe sandbox="allowScripts"
+    <iframe sandbox="allowScripts allow-same-origin"
             src="resources/sandboxed-iframe-attribute-parsing-disallowed.html">
     </iframe>
 
-    <iframe sandbox="aallow-scripts"
+    <iframe sandbox="aallow-scripts allow-same-origin"
             src="resources/sandboxed-iframe-attribute-parsing-disallowed.html">
     </iframe>
 
-    <iframe sandbox="allow-scriptss"
+    <iframe sandbox="allow-scriptss allow-same-origin"
             src="resources/sandboxed-iframe-attribute-parsing-disallowed.html">
     </iframe>
 

@@ -1,6 +1,59 @@
 <html>
 <head>
-<script src="../../js/resources/js-test-pre.js"></script>
+<script>
+// This code is inlined from js-test-pre.js because this document is displayed
+// in a sandboxed iframe and cannot load local resources.
+
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+
+function debug(msg)
+{
+    var span = document.createElement("span");
+    document.getElementById("console").appendChild(span);
+    span.innerHTML = msg + '<br />';
+}
+
+function escapeHTML(text)
+{
+    return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/\0/g, "\\0");
+}
+
+function testPassed(msg)
+{
+    debug('<span><span class="pass">PASS</span> ' + escapeHTML(msg) + '</span>');
+}
+
+function testFailed(msg)
+{
+    debug('<span><span class="fail">FAIL</span> ' + escapeHTML(msg) + '</span>');
+}
+
+function shouldThrow(_a, _e)
+{
+  var exception;
+  var _av;
+  try {
+     _av = eval(_a);
+  } catch (e) {
+     exception = e;
+  }
+
+  var _ev;
+  if (_e)
+      _ev =  eval(_e);
+
+  if (exception) {
+    if (typeof _e == "undefined" || exception == _ev)
+      testPassed(_a + " threw exception " + exception + ".");
+    else
+      testFailed(_a + " should throw " + (typeof _e == "undefined" ? "an exception" : _ev) + ". Threw exception " + exception + ".");
+  } else if (typeof _av == "undefined")
+    testFailed(_a + " should throw " + (typeof _e == "undefined" ? "an exception" : _ev) + ". Was undefined.");
+  else
+    testFailed(_a + " should throw " + (typeof _e == "undefined" ? "an exception" : _ev) + ". Was " + _av + ".");
+}
+</script>
 <script>
 
 window.onload = function() {
