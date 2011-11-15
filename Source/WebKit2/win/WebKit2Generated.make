@@ -18,6 +18,7 @@ all:
     xcopy /y /d "..\Shared\API\c\win\WKCertificateInfoWin.h" "%ConfigurationBuildDir%\include\WebKit2"
     xcopy /y /d "..\Shared\API\c\WKArray.h" "%ConfigurationBuildDir%\include\WebKit2"
     xcopy /y /d "..\Shared\API\c\WKBase.h" "%ConfigurationBuildDir%\include\WebKit2"
+    xcopy /y /d "..\Shared\API\c\WKConnectionRef.h" "%ConfigurationBuildDir%\include\WebKit2"
     xcopy /y /d "..\Shared\API\c\WKCertificateInfo.h" "%ConfigurationBuildDir%\include\WebKit2"
     xcopy /y /d "..\Shared\API\C\WKContextMenuItem.h" "%ConfigurationBuildDir%\include\WebKit2"
     xcopy /y /d "..\Shared\API\C\WKContextMenuItemTypes.h" "%ConfigurationBuildDir%\include\WebKit2"
