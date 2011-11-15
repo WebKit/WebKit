@@ -152,7 +152,7 @@ using namespace WebKit;
     if ([attribute isEqualToString:NSAccessibilityChildrenAttribute])
         return [self accessibilityChildren];
 
-    return [super accessibilityAttributeValue:attribute];
+    return nil;
 }
 
 - (BOOL)accessibilityShouldUseUniqueId

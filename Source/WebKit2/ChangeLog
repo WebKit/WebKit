@@ -1,3 +1,13 @@
+2011-11-15  Chris Fleizach2  <cfleizach@apple.com>
+
+        AX: WKAccessibilityWebObjectPage should not call super in accessibilityAttributeValue:
+        https://bugs.webkit.org/show_bug.cgi?id=72344
+
+        Reviewed by Beth Dakin.
+
+        * WebProcess/WebPage/mac/WKAccessibilityWebPageObject.mm:
+        (-[WKAccessibilityWebPageObject accessibilityAttributeValue:]):
+
 2011-11-15  Anders Carlsson  <andersca@apple.com>
 
         HostWindow screenToWindow/windowToScreen should be screenToRootView/rootViewToScreen
