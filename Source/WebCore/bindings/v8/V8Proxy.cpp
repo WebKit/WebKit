@@ -175,6 +175,14 @@ static void handleFatalErrorInV8()
     CRASH();
 }
 
+static v8::Local<v8::Value> handleMaxRecursionDepthExceeded()
+{
+    v8::Local<v8::String> code = v8::String::New("throw new RangeError('Maximum call stack size exceeded.')");
+    v8::Local<v8::Script> script = v8::Script::Compile(code);
+    script->Run();
+    return v8::Local<v8::Value>();
+}
+
 V8Proxy::V8Proxy(Frame* frame)
     : m_frame(frame)
     , m_windowShell(V8DOMWindowShell::create(frame))
@@ -384,20 +392,11 @@ v8::Local<v8::Value> V8Proxy::runScript(v8::Handle<v8::Script> script, bool isIn
         return notHandledByInterceptor();
 
     V8GCController::checkMemoryUsage();
-    // Compute the source string and prevent against infinite recursion.
-    if (m_recursion >= kMaxRecursionDepth) {
-        v8::Local<v8::String> code = v8ExternalString("throw RangeError('Recursion too deep')");
-        // FIXME: Ideally, we should be able to re-use the origin of the
-        // script passed to us as the argument instead of using an empty string
-        // and 0 baseLine.
-        script = compileScript(code, "", TextPosition::minimumPosition());
-    }
+    if (m_recursion >= kMaxRecursionDepth)
+        return handleMaxRecursionDepthExceeded();
 
     if (handleOutOfMemory())
         ASSERT(script.IsEmpty());
-
-    if (script.IsEmpty())
-        return notHandledByInterceptor();
 
     // Save the previous value of the inlineCode flag and update the flag for
     // the duration of the script invocation.
@@ -445,22 +444,14 @@ v8::Local<v8::Value> V8Proxy::callFunction(v8::Handle<v8::Function> function, v8
 {
     V8GCController::checkMemoryUsage();
 
+    if (m_recursion >= kMaxRecursionDepth)
+        return handleMaxRecursionDepthExceeded();
+
     // Keep Frame (and therefore ScriptController and V8Proxy) alive.
     RefPtr<Frame> protect(frame());
 
     v8::Local<v8::Value> result;
     {
-        if (m_recursion >= kMaxRecursionDepth) {
-            v8::Local<v8::String> code = v8::String::New("throw new RangeError('Maximum call stack size exceeded.')");
-            if (code.IsEmpty())
-                return result;
-            v8::Local<v8::Script> script = v8::Script::Compile(code);
-            if (script.IsEmpty())
-                return result;
-            script->Run();
-            return result;
-        }
-
         m_recursion++;
         result = V8Proxy::instrumentedCallFunction(m_frame->page(), function, receiver, argc, args);
         m_recursion--;
