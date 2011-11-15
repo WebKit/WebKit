@@ -319,12 +319,14 @@ EAPI Eina_Bool    ewk_frame_contents_alternate_set(Evas_Object *o, const char *c
 /**
  * Requests execution of the given script.
  *
+ * The returned string @b should be freed after use.
+ *
  * @param o frame object to execute script
  * @param script Java Script to execute
  *
- * @return @c EINA_TRUE if request was done, @c EINA_FALSE on errors
+ * @return newly allocated string for result or @c 0 if the result cannot be converted to string or failure
  */
-EAPI Eina_Bool    ewk_frame_script_execute(Evas_Object *o, const char *script);
+EAPI char        *ewk_frame_script_execute(Evas_Object *o, const char *script);
 
 /**
  * Queries if the frame is editable.
