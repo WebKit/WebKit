@@ -271,6 +271,8 @@ void MarkStackThreadSharedData::reset()
 #else
     ASSERT(m_opaqueRoots.isEmpty());
 #endif
+    
+    m_weakReferenceHarvesters.removeAll();
 }
 
 void MarkStack::reset()
@@ -449,8 +451,8 @@ void MarkStack::mergeOpaqueRoots()
 
 void SlotVisitor::harvestWeakReferences()
 {
-    while (m_shared.m_weakReferenceHarvesters.hasNext())
-        m_shared.m_weakReferenceHarvesters.removeNext()->visitWeakReferences(*this);
+    for (WeakReferenceHarvester* current = m_shared.m_weakReferenceHarvesters.head(); current; current = current->next())
+        current->visitWeakReferences(*this);
 }
 
 void SlotVisitor::finalizeUnconditionalFinalizers()

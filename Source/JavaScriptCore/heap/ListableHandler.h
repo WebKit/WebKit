@@ -42,6 +42,11 @@ protected:
     }
     
     virtual ~ListableHandler() { }
+    
+    T* next() const
+    {
+        return reinterpret_cast<T*>(m_nextAndFlag & ~1);
+    }
 
 private:
     // Allow these classes to use ListableHandler::List.
@@ -72,13 +77,24 @@ private:
             return !!m_first;
         }
         
+        T* head()
+        {
+            return m_first;
+        }
+        
         T* removeNext()
         {
             T* current = m_first;
-            T* next = reinterpret_cast<T*>(current->m_nextAndFlag & ~1);
+            T* next = current->next();
             current->m_nextAndFlag = 0;
             m_first = next;
             return current;
+        }
+        
+        void removeAll()
+        {
+            while (hasNext())
+                removeNext();
         }
         
     private:

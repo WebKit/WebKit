@@ -219,6 +219,8 @@ namespace JSC {
         void addOpaqueRoot(void*);
         bool containsOpaqueRoot(void*);
         int opaqueRootCount();
+        
+        bool isEmpty() { return m_stack.isEmpty(); }
 
         void reset();
 

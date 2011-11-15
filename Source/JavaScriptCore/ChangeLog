@@ -1,3 +1,23 @@
+2011-11-14  Filip Pizlo  <fpizlo@apple.com>
+
+        Weak reference harvesters should run to fixpoint
+        https://bugs.webkit.org/show_bug.cgi?id=72346
+
+        Reviewed by Oliver Hunt.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::markRoots):
+        * heap/ListableHandler.h:
+        (JSC::ListableHandler::next):
+        (JSC::ListableHandler::List::head):
+        (JSC::ListableHandler::List::removeNext):
+        (JSC::ListableHandler::List::removeAll):
+        * heap/MarkStack.cpp:
+        (JSC::MarkStackThreadSharedData::reset):
+        (JSC::SlotVisitor::harvestWeakReferences):
+        * heap/MarkStack.h:
+        (JSC::MarkStack::isEmpty):
+
 2011-11-14  Oliver Hunt  <oliver@apple.com>
 
         Start migrating typed array impl types to WTF

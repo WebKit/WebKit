@@ -684,10 +684,11 @@ void Heap::markRoots(bool fullGC)
     // opaque roots to determine reachability.
     {
         GCPHASE(VisitingWeakHandles);
-        int lastOpaqueRootCount;
-        do {
-            lastOpaqueRootCount = visitor.opaqueRootCount();
+        while (true) {
             m_handleHeap.visitWeakHandles(heapRootVisitor);
+            harvestWeakReferences();
+            if (visitor.isEmpty())
+                break;
             {
                 ParallelModeEnabler enabler(visitor);
                 visitor.donateAndDrain();
@@ -695,15 +696,9 @@ void Heap::markRoots(bool fullGC)
                 visitor.drainFromShared(SlotVisitor::MasterDrain);
 #endif
             }
-            // If the set of opaque roots has grown, more weak handles may have become reachable.
-        } while (lastOpaqueRootCount != visitor.opaqueRootCount());
+        }
     }
     GCCOUNTER(VisitedValueCount, visitor.visitCount());
-
-    {
-        GCPHASE(HarvestWeakReferences);
-        harvestWeakReferences();
-    }
 
     visitor.reset();
     m_sharedData.reset();
