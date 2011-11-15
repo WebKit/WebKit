@@ -64,6 +64,11 @@ DOMNodeMapping& getDOMNodeMap()
     return getDOMDataStore().domNodeMap();
 }
 
+DOMNodeMapping& getActiveDOMNodeMap()
+{
+    return getDOMDataStore().activeDomNodeMap();
+}
+
 DOMWrapperMap<void>& getDOMObjectMap()
 {
     return getDOMDataStore().domObjectMap();
@@ -94,6 +99,9 @@ void removeAllDOMObjects()
         // Remove all DOM nodes.
         DOMData::removeObjectsFromWrapperMap<Node>(&store, store.domNodeMap());
 
+        // Remove all active DOM nodes.
+        DOMData::removeObjectsFromWrapperMap<Node>(&store, store.activeDomNodeMap());
+
 #if ENABLE(SVG)
         // Remove all SVG element instances in the wrapper map.
         DOMData::removeObjectsFromWrapperMap<SVGElementInstance>(&store, store.domSvgElementInstanceMap());
@@ -116,6 +124,18 @@ void visitDOMNodes(DOMWrapperMap<Node>::Visitor* visitor)
         DOMDataStore* store = list[i];
 
         store->domNodeMap().visit(store, visitor);
+    }
+}
+
+void visitActiveDOMNodes(DOMWrapperMap<Node>::Visitor* visitor)
+{
+    v8::HandleScope scope;
+
+    DOMDataList& list = DOMDataStore::allStores();
+    for (size_t i = 0; i < list.size(); ++i) {
+        DOMDataStore* store = list[i];
+
+        store->activeDomNodeMap().visit(store, visitor);
     }
 }
 

@@ -1777,11 +1777,12 @@ END
     }
 
     my $DOMObject = "DOMObject";
-    # A DOMObject that is an ActiveDOMObject and also a DOMNode should be treated as an ActiveDOMObject.
-    if ($dataNode->extendedAttributes->{"ActiveDOMObject"}) {
-        $DOMObject = "ActiveDOMObject";
-    } elsif (IsNodeSubType($dataNode)) {
+    # A DOMObject that is an ActiveDOMObject and also a DOMNode should be treated as an DOMNode here.
+    # setJSWrapperForDOMNode() will look if node is active and choose correct map to add node to.
+    if (IsNodeSubType($dataNode)) {
         $DOMObject = "DOMNode";
+    } elsif ($dataNode->extendedAttributes->{"ActiveDOMObject"}) {
+        $DOMObject = "ActiveDOMObject";
     }
     push(@implContent, <<END);
 
@@ -3105,6 +3106,7 @@ sub GetDomMapFunction
     my $dataNode = shift;
     my $type = shift;
     return "getDOMSVGElementInstanceMap()" if $type eq "SVGElementInstance";
+    return "getActiveDOMNodeMap()" if (IsNodeSubType($dataNode) && $dataNode->extendedAttributes->{"ActiveDOMObject"});
     return "getDOMNodeMap()" if (IsNodeSubType($dataNode));
     return "getActiveDOMObjectMap()" if $dataNode->extendedAttributes->{"ActiveDOMObject"};
     return "getDOMObjectMap()";

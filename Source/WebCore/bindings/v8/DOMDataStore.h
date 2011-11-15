@@ -65,6 +65,7 @@ namespace WebCore {
     public:
         enum DOMWrapperMapType {
             DOMNodeMap,
+            ActiveDOMNodeMap,
             DOMObjectMap,
             ActiveDOMObjectMap,
 #if ENABLE(SVG)
@@ -81,6 +82,7 @@ namespace WebCore {
         void* getDOMWrapperMap(DOMWrapperMapType);
 
         DOMNodeMapping& domNodeMap() { return *m_domNodeMap; }
+        DOMNodeMapping& activeDomNodeMap() { return *m_activeDomNodeMap; }
         DOMWrapperMap<void>& domObjectMap() { return *m_domObjectMap; }
         DOMWrapperMap<void>& activeDomObjectMap() { return *m_activeDomObjectMap; }
 #if ENABLE(SVG)
@@ -89,15 +91,16 @@ namespace WebCore {
 
         // Need by V8GCController.
         static void weakActiveDOMObjectCallback(v8::Persistent<v8::Value> v8Object, void* domObject);
+        static void weakNodeCallback(v8::Persistent<v8::Value> v8Object, void* domObject);
 
     protected:
-        static void weakNodeCallback(v8::Persistent<v8::Value> v8Object, void* domObject);
         static void weakDOMObjectCallback(v8::Persistent<v8::Value> v8Object, void* domObject);
 #if ENABLE(SVG)
         static void weakSVGElementInstanceCallback(v8::Persistent<v8::Value> v8Object, void* domObject);
 #endif
         
         DOMNodeMapping* m_domNodeMap;
+        DOMNodeMapping* m_activeDomNodeMap;
         DOMWrapperMap<void>* m_domObjectMap;
         DOMWrapperMap<void>* m_activeDomObjectMap;
 #if ENABLE(SVG)

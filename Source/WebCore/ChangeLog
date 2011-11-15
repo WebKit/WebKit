@@ -1,3 +1,59 @@
+2011-11-15  Eugene Nalimov  <enal@google.com>
+
+        Event listener for active DOM object that is also DOM node can be garbage collected prematurely.
+        https://bugs.webkit.org/show_bug.cgi?id=70421 
+
+        Reviewed by Adam Barth.
+
+        Problem demonstrated itself when HTMLAudioElement was changed to become active DOM object.
+        Before that there were no DOM objects that simultaneously were nodes and active objects.
+        DOM object could be held in one of 3 maps -- node map, active objects map, and all other
+        objects map, and HTMLAudioElement should be in 2 maps simultaneously. When it was in the
+        active DOM objects map only, its event listener could be garbage collected, because special
+        code that groups listeners with wrappers could handle only wrappers for objects in the node
+        map. If we put HTMLAudioElement into nodes map, it would not be active DOM node, and can be
+        garbage collected prematurely itself (see https://bugs.webkit.org/show_bug.cgi?id=66878).
+        Fix is to introduce 4th map -- active nodes map, and change the code accordingly.
+
+        Test: media/audio-garbage-collect.html
+
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (GenerateNamedConstructorCallback):
+        (GetDomMapFunction):
+        * bindings/v8/DOMDataStore.cpp:
+        (WebCore::DOMDataStore::DOMDataStore):
+        (WebCore::DOMDataStore::getDOMWrapperMap):
+        (WebCore::DOMDataStore::weakNodeCallback):
+        * bindings/v8/DOMDataStore.h:
+        (WebCore::DOMDataStore::activeDomNodeMap):
+        * bindings/v8/ScopedDOMDataStore.cpp:
+        (WebCore::ScopedDOMDataStore::ScopedDOMDataStore):
+        (WebCore::ScopedDOMDataStore::~ScopedDOMDataStore):
+        * bindings/v8/StaticDOMDataStore.cpp:
+        (WebCore::StaticDOMDataStore::StaticDOMDataStore):
+        * bindings/v8/StaticDOMDataStore.h:
+        * bindings/v8/V8DOMMap.cpp:
+        (WebCore::getActiveDOMNodeMap):
+        (WebCore::removeAllDOMObjects):
+        (WebCore::visitActiveDOMNodes):
+        * bindings/v8/V8DOMMap.h:
+        * bindings/v8/V8DOMWrapper.cpp:
+        (WebCore::V8DOMWrapper::setJSWrapperForDOMNode):
+        (WebCore::V8DOMWrapper::getWrapperSlow):
+        * bindings/v8/V8GCController.cpp:
+        (WebCore::GCPrologueSpecialCase):
+        (WebCore::void):
+        (WebCore::Node):
+        (WebCore::GCPrologueVisitor::visitDOMWrapper):
+        (WebCore::V8GCController::gcPrologue):
+        (WebCore::GCEpilogueHelper::GCEpilogueSpecialCase):
+        (WebCore::GCEpilogueVisitor::visitDOMWrapper):
+        (WebCore::V8GCController::gcEpilogue):
+        * dom/Node.h:
+        (WebCore::Node::isActiveNode):
+        * html/HTMLAudioElement.h:
+        (WebCore::HTMLAudioElement::isActiveNode):
+
 2011-11-15  David Kilzer  <ddkilzer@apple.com>
 
         Remove useless const modifier from KURL::init

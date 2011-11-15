@@ -86,6 +86,7 @@ namespace WebCore {
 
 DOMDataStore::DOMDataStore()
     : m_domNodeMap(0)
+    , m_activeDomNodeMap(0)
     , m_domObjectMap(0)
     , m_activeDomObjectMap(0)
 #if ENABLE(SVG)
@@ -108,6 +109,8 @@ void* DOMDataStore::getDOMWrapperMap(DOMWrapperMapType type)
     switch (type) {
     case DOMNodeMap:
         return m_domNodeMap;
+    case ActiveDOMNodeMap:
+        return m_activeDomNodeMap;
     case DOMObjectMap:
         return m_domObjectMap;
     case ActiveDOMObjectMap:
@@ -149,7 +152,8 @@ void DOMDataStore::weakNodeCallback(v8::Persistent<v8::Value> value, void* domOb
     DOMDataList& list = DOMDataStore::allStores();
     for (size_t i = 0; i < list.size(); ++i) {
         DOMDataStore* store = list[i];
-        if (store->domNodeMap().removeIfPresent(node, v8Object)) {
+        DOMNodeMapping& nodeMap = node->isActiveNode() ? store->activeDomNodeMap() : store->domNodeMap();
+        if (nodeMap.removeIfPresent(node, v8Object)) {
             node->deref(); // Nobody overrides Node::deref so it's safe
             return; // There might be at most one wrapper for the node in world's maps
         }

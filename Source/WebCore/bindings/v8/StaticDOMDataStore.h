@@ -51,6 +51,7 @@ public:
 
 private:
     IntrusiveDOMWrapperMap m_staticDomNodeMap;
+    IntrusiveDOMWrapperMap m_staticActiveDomNodeMap;
     DOMWrapperMap<void> m_staticDomObjectMap;
     DOMWrapperMap<void> m_staticActiveDomObjectMap;
 #if ENABLE(SVG)

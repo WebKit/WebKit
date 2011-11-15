@@ -143,12 +143,10 @@ public:
 
 #endif // NDEBUG
 
-class GCPrologueVisitor : public DOMWrapperMap<void>::Visitor {
+class SpecialCasePrologueObjectHandler {
 public:
-    void visitDOMWrapper(DOMDataStore* store, void* object, v8::Persistent<v8::Object> wrapper)
+    static bool process(void* object, v8::Persistent<v8::Object> wrapper, WrapperTypeInfo* typeInfo)
     {
-        WrapperTypeInfo* typeInfo = V8DOMWrapper::domWrapperType(wrapper);  
-
         // Additional handling of message port ensuring that entangled ports also
         // have their wrappers entangled. This should ideally be handled when the
         // ports are actually entangled in MessagePort::entangle, but to avoid
@@ -161,7 +159,31 @@ public:
             MessagePort* port1 = static_cast<MessagePort*>(object);
             if (port1->isEntangled() || port1->hasPendingActivity())
                 wrapper.ClearWeak();
-        } else {
+            return true;
+        }
+        return false;
+    }
+};
+
+class SpecialCasePrologueNodeHandler {
+public:
+    static bool process(Node* object, v8::Persistent<v8::Object> wrapper, WrapperTypeInfo* typeInfo)
+    {
+        UNUSED_PARAM(object);
+        UNUSED_PARAM(wrapper);
+        UNUSED_PARAM(typeInfo);
+        return false;
+    }
+};
+
+template<typename T, typename S>
+class GCPrologueVisitor : public DOMWrapperMap<T>::Visitor {
+public:
+    void visitDOMWrapper(DOMDataStore* store, T* object, v8::Persistent<v8::Object> wrapper)
+    {
+        WrapperTypeInfo* typeInfo = V8DOMWrapper::domWrapperType(wrapper);  
+
+        if (!S::process(object, wrapper, typeInfo)) {
             ActiveDOMObject* activeDOMObject = typeInfo->toActiveDOMObject(wrapper);
             if (activeDOMObject && activeDOMObject->hasPendingActivity())
                 wrapper.ClearWeak();
@@ -373,12 +395,15 @@ void V8GCController::gcPrologue()
 
     // Run through all objects with possible pending activity making their
     // wrappers non weak if there is pending activity.
-    GCPrologueVisitor prologueVisitor;
-    visitActiveDOMObjects(&prologueVisitor);
+    GCPrologueVisitor<void, SpecialCasePrologueObjectHandler> prologueObjectVisitor;
+    visitActiveDOMObjects(&prologueObjectVisitor);
+    GCPrologueVisitor<Node, SpecialCasePrologueNodeHandler> prologueNodeVisitor;
+    visitActiveDOMNodes(&prologueNodeVisitor);
 
     // Create object groups.
     GrouperVisitor grouperVisitor;
     visitDOMNodes(&grouperVisitor);
+    visitActiveDOMNodes(&grouperVisitor);
     visitDOMObjects(&grouperVisitor);
     grouperVisitor.applyGrouping();
 
@@ -387,11 +412,10 @@ void V8GCController::gcPrologue()
     data->stringCache()->clearOnGC();
 }
 
-class GCEpilogueVisitor : public DOMWrapperMap<void>::Visitor {
+class SpecialCaseEpilogueObjectHandler {
 public:
-    void visitDOMWrapper(DOMDataStore* store, void* object, v8::Persistent<v8::Object> wrapper)
+    static bool process(void* object, v8::Persistent<v8::Object> wrapper, WrapperTypeInfo* typeInfo)
     {
-        WrapperTypeInfo* typeInfo = V8DOMWrapper::domWrapperType(wrapper);
         if (V8MessagePort::info.equals(typeInfo)) {
             MessagePort* port1 = static_cast<MessagePort*>(object);
             // We marked this port as reachable in GCPrologueVisitor.  Undo this now since the
@@ -399,7 +423,30 @@ public:
             // GCPrologueVisitor expects to see all handles marked as weak).
             if ((!wrapper.IsWeak() && !wrapper.IsNearDeath()) || port1->hasPendingActivity())
                 wrapper.MakeWeak(port1, &DOMDataStore::weakActiveDOMObjectCallback);
-        } else {
+            return true;
+        }
+        return false;
+    }
+};
+
+class SpecialCaseEpilogueNodeHandler {
+public:
+    static bool process(Node* object, v8::Persistent<v8::Object> wrapper, WrapperTypeInfo* typeInfo)
+    {
+        UNUSED_PARAM(object);
+        UNUSED_PARAM(wrapper);
+        UNUSED_PARAM(typeInfo);
+        return false;
+    }
+};
+
+template<typename T, typename S, v8::WeakReferenceCallback callback>
+class GCEpilogueVisitor : public DOMWrapperMap<T>::Visitor {
+public:
+    void visitDOMWrapper(DOMDataStore* store, T* object, v8::Persistent<v8::Object> wrapper)
+    {
+        WrapperTypeInfo* typeInfo = V8DOMWrapper::domWrapperType(wrapper);
+        if (!S::process(object, wrapper, typeInfo)) {
             ActiveDOMObject* activeDOMObject = typeInfo->toActiveDOMObject(wrapper);
             if (activeDOMObject && activeDOMObject->hasPendingActivity()) {
                 ASSERT(!wrapper.IsWeak());
@@ -408,7 +455,7 @@ public:
                 // may be a different pointer (in case ActiveDOMObject is not
                 // the main base class of the object's class) and pointer
                 // identity is required by DOM map functions.
-                wrapper.MakeWeak(object, &DOMDataStore::weakActiveDOMObjectCallback);
+                wrapper.MakeWeak(object, callback);
             }
         }
     }
@@ -444,8 +491,10 @@ void V8GCController::gcEpilogue()
 
     // Run through all objects with pending activity making their wrappers weak
     // again.
-    GCEpilogueVisitor epilogueVisitor;
-    visitActiveDOMObjects(&epilogueVisitor);
+    GCEpilogueVisitor<void, SpecialCaseEpilogueObjectHandler, &DOMDataStore::weakActiveDOMObjectCallback> epilogueObjectVisitor;
+    visitActiveDOMObjects(&epilogueObjectVisitor);
+    GCEpilogueVisitor<Node, SpecialCaseEpilogueNodeHandler, &DOMDataStore::weakNodeCallback> epilogueNodeVisitor;
+    visitActiveDOMNodes(&epilogueNodeVisitor);
 
     workingSetEstimateMB = getActualMemoryUsageInMB();
 

@@ -92,7 +92,10 @@ void V8DOMWrapper::setJSWrapperForActiveDOMObject(void* object, v8::Persistent<v
 void V8DOMWrapper::setJSWrapperForDOMNode(Node* node, v8::Persistent<v8::Object> wrapper)
 {
     ASSERT(V8DOMWrapper::maybeDOMWrapper(wrapper));
-    getDOMNodeMap().set(node, wrapper);
+    if (node->isActiveNode())
+        getActiveDOMNodeMap().set(node, wrapper);
+    else
+        getDOMNodeMap().set(node, wrapper);
 }
 
 v8::Local<v8::Function> V8DOMWrapper::getConstructor(WrapperTypeInfo* type, v8::Handle<v8::Value> objectPrototype)
@@ -295,7 +298,8 @@ v8::Handle<v8::Object> V8DOMWrapper::getWrapperSlow(Node* node)
             return v8::Handle<v8::Object>();
         return *wrapper;
     }
-    DOMNodeMapping& domNodeMap = context->world()->domDataStore()->domNodeMap();
+    DOMDataStore* store = context->world()->domDataStore();
+    DOMNodeMapping& domNodeMap = node->isActiveNode() ? store->activeDomNodeMap() : store->domNodeMap();
     return domNodeMap.get(node);
 }
 

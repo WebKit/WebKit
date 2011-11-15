@@ -42,6 +42,8 @@ public:
 
     virtual bool hasPendingActivity() const { return isPlaying() || HTMLMediaElement::hasPendingActivity(); }
 
+    virtual bool isActiveNode() const { return true; }
+
 private:
     HTMLAudioElement(const QualifiedName&, Document*);
 
