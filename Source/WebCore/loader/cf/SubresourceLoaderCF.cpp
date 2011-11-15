@@ -25,8 +25,6 @@
 #include "config.h"
 #include "SubresourceLoader.h"
 
-#include "SubresourceLoaderClient.h"
-
 namespace WebCore {
 
 #if HAVE(NETWORK_CFDATA_ARRAY_CALLBACK)
@@ -46,7 +44,7 @@ void SubresourceLoader::didReceiveDataArray(CFArrayRef dataArray)
             if (!m_client)
                 break;
             CFDataRef data = reinterpret_cast<CFDataRef>(CFArrayGetValueAtIndex(dataArray, i));
-            m_client->didReceiveData(this, reinterpret_cast<const char *>(CFDataGetBytePtr(data)), static_cast<int>(CFDataGetLength(data)));
+            didReceiveData(reinterpret_cast<const char *>(CFDataGetBytePtr(data)), static_cast<int>(CFDataGetLength(data)), -1, false);
         }
     }
 }

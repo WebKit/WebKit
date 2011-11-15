@@ -25894,10 +25894,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\loader\SubresourceLoaderClient.h"
-				>
-			</File>
-			<File
 				RelativePath="..\loader\SubstituteData.h"
 				>
 			</File>
@@ -26186,14 +26182,6 @@
 				</File>
 				<File
 					RelativePath="..\loader\cache\CachedResourceLoader.h"
-					>
-				</File>
-				<File
-					RelativePath="..\loader\cache\CachedResourceRequest.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\loader\cache\CachedResourceRequest.h"
 					>
 				</File>
 				<File

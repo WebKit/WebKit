@@ -31,7 +31,7 @@
 #include "config.h"
 #include "SubresourceLoader.h"
 
-#include "SubresourceLoaderClient.h"
+#include "CachedResource.h"
 #include <wtf/RefCountedLeakCounter.h>
 
 namespace WebCore {
@@ -43,9 +43,7 @@ void SubresourceLoader::didDownloadData(int length)
     RefPtr<SubresourceLoader> protect(this);
     
     ResourceLoader::didDownloadData(length);
-
-    if (m_client)
-        m_client->didDownloadData(this, length);
+    m_resource->didDownloadData(length);
 }
 
 }

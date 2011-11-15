@@ -908,7 +908,6 @@ SOURCES += \
     loader/cache/CachedImage.cpp \
     loader/cache/CachedRawResource.cpp \
     loader/cache/CachedResourceHandle.cpp \
-    loader/cache/CachedResourceRequest.cpp \
     loader/cache/CachedResource.cpp \
     loader/cache/CachedScript.cpp \
     loader/cache/CachedXSLStyleSheet.cpp \
@@ -1950,7 +1949,6 @@ HEADERS += \
     loader/cache/CachedResourceClientWalker.h \
     loader/cache/CachedResource.h \
     loader/cache/CachedResourceHandle.h \
-    loader/cache/CachedResourceRequest.h \
     loader/cache/CachedScript.h \
     loader/cache/CachedXSLStyleSheet.h \
     loader/cache/MemoryCache.h \

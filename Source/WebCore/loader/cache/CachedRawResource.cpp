@@ -29,8 +29,8 @@
 #include "CachedResourceClient.h"
 #include "CachedResourceClientWalker.h"
 #include "CachedResourceLoader.h"
-#include "CachedResourceRequest.h"
 #include "SharedBuffer.h"
+#include "SubresourceLoader.h"
 #include <wtf/PassRefPtr.h>
 
 namespace WebCore {
@@ -78,8 +78,8 @@ void CachedRawResource::didAddClient(CachedResourceClient* c)
 
 void CachedRawResource::allClientsRemoved()
 {
-    if (m_request)
-        m_request->cancel();
+    if (m_loader)
+        m_loader->cancel();
 }
 
 void CachedRawResource::willSendRequest(ResourceRequest& request, const ResourceResponse& response)
@@ -109,13 +109,13 @@ void CachedRawResource::didSendData(unsigned long long bytesSent, unsigned long 
 
 void CachedRawResource::setDefersLoading(bool defers)
 {
-    if (m_request)
-        m_request->setDefersLoading(defers);
+    if (m_loader)
+        m_loader->setDefersLoading(defers);
 }
 
 unsigned long CachedRawResource::identifier() const
 {
-    return m_request ? m_request->identifier() : 0;
+    return m_loader ? m_loader->identifier() : 0;
 }
 
 } // namespace WebCore

@@ -31,7 +31,6 @@
 #include "CachedFont.h"
 #include "CachedImage.h"
 #include "CachedRawResource.h"
-#include "CachedResourceRequest.h"
 #include "CachedScript.h"
 #include "CachedXSLStyleSheet.h"
 #include "Console.h"

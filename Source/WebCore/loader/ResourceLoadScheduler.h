@@ -37,6 +37,7 @@
 
 namespace WebCore {
 
+class CachedResource;
 class Frame;
 class KURL;
 class NetscapePlugInStreamLoader;
@@ -44,14 +45,13 @@ class NetscapePlugInStreamLoaderClient;
 class ResourceLoader;
 class ResourceRequest;
 class SubresourceLoader;
-class SubresourceLoaderClient;
 
 class ResourceLoadScheduler {
     WTF_MAKE_NONCOPYABLE(ResourceLoadScheduler);
 public:
     friend ResourceLoadScheduler* resourceLoadScheduler();
 
-    PassRefPtr<SubresourceLoader> scheduleSubresourceLoad(Frame*, SubresourceLoaderClient*, const ResourceRequest&, ResourceLoadPriority, const ResourceLoaderOptions&);
+    PassRefPtr<SubresourceLoader> scheduleSubresourceLoad(Frame*, CachedResource*, const ResourceRequest&, ResourceLoadPriority, const ResourceLoaderOptions&);
     PassRefPtr<NetscapePlugInStreamLoader> schedulePluginStreamLoad(Frame*, NetscapePlugInStreamLoaderClient*, const ResourceRequest&);
     void addMainResourceLoad(ResourceLoader*);
     void remove(ResourceLoader*);

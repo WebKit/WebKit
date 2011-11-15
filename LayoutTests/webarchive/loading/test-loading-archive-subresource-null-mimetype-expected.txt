@@ -10,6 +10,7 @@ file:///test.png - willSendRequest <NSURLRequest URL file:///test.png, main docu
 frame "<!--framePath //<!--frame0-->-->" - didFinishDocumentLoadForFrame
 resources/subresource-null-mimetype.webarchive - didFinishLoading
 file:///test.png - didReceiveResponse <NSURLResponse file:///Users/pecoraro/Desktop/test.png, http status code 0>
+file:///test.png - didFinishLoading
 frame "<!--framePath //<!--frame0-->-->" - didHandleOnloadEventsForFrame
 main frame - didHandleOnloadEventsForFrame
 frame "<!--framePath //<!--frame0-->-->" - didFinishLoadForFrame

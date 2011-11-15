@@ -1,3 +1,57 @@
+2011-11-15  Nate Chapin  <japhet@chromium.org>
+
+        CachedResourceRequest is now the only SubresourceLoaderClient
+        Merge CachedResourceRequest into SubresourceLoader and delete
+        the SubresourceLoaderClient interface. A few items were moved
+        to CachedResource instead of SubresourceLoader.
+        https://bugs.webkit.org/show_bug.cgi?id=71149
+
+        Reviewed by Adam Barth.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * loader/ResourceLoadScheduler.cpp:
+        * loader/ResourceLoadScheduler.h:
+        * loader/ResourceLoader.cpp:
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::SubresourceLoader):
+        (WebCore::SubresourceLoader::create):
+        (WebCore::SubresourceLoader::init): Do work that had previously been
+            done in SubresourceLoader::create() after the constructor.
+        (WebCore::SubresourceLoader::willSendRequest):
+        (WebCore::SubresourceLoader::didSendData):
+        (WebCore::SubresourceLoader::didReceiveResponse):
+        (WebCore::SubresourceLoader::didReceiveData):
+        (WebCore::SubresourceLoader::didReceiveCachedMetadata):
+        (WebCore::SubresourceLoader::didFinishLoading):
+        (WebCore::SubresourceLoader::didFail):
+        (WebCore::SubresourceLoader::willCancel):
+        (WebCore::SubresourceLoader::releaseResources): Do the cleanup work that was
+            duplicated throughout the various terminal CachedResourceRequest callbacks.
+        * loader/SubresourceLoader.h: Fix indentation style issues.
+        * loader/SubresourceLoaderClient.h: Removed.
+        * loader/cache/CachedImage.cpp:
+        * loader/cache/CachedRawResource.cpp:
+        * loader/cache/CachedResource.cpp:
+        (WebCore::cachedResourceTypeToTargetType):
+        (WebCore::CachedResource::load): Do the work that had been done in
+            CachedResourceRequest::load().
+        (WebCore::CachedResource::finish):
+        (WebCore::CachedResource::setResponse):
+        (WebCore::CachedResource::stopLoading):
+        * loader/cache/CachedResource.h:
+        (WebCore::CachedResource::canDelete):
+        * loader/cache/CachedResourceLoader.cpp:
+        * loader/cache/CachedResourceRequest.cpp: Removed.
+        * loader/cache/CachedResourceRequest.h: Removed.
+        * loader/cf/SubresourceLoaderCF.cpp:
+        * loader/chromium/CachedResourceRequestChromium.cpp: Removed.
+        * loader/chromium/SubresourceLoaderChromium.cpp:
+
 2011-11-15  Anders Carlsson  <andersca@apple.com>
 
         HostWindow screenToWindow/windowToScreen should be screenToRootView/rootViewToScreen

@@ -2165,8 +2165,6 @@ webcore_sources += \
 	Source/WebCore/loader/cache/CachedResourceHandle.h \
 	Source/WebCore/loader/cache/CachedResourceLoader.cpp \
 	Source/WebCore/loader/cache/CachedResourceLoader.h \
-	Source/WebCore/loader/cache/CachedResourceRequest.cpp \
-	Source/WebCore/loader/cache/CachedResourceRequest.h \
 	Source/WebCore/loader/cache/CachedScript.cpp \
 	Source/WebCore/loader/cache/CachedScript.h \
 	Source/WebCore/loader/cache/CachedStyleSheetClient.h \
@@ -2255,7 +2253,6 @@ webcore_sources += \
 	Source/WebCore/loader/SinkDocument.h \
 	Source/WebCore/loader/SubframeLoader.cpp \
 	Source/WebCore/loader/SubframeLoader.h \
-	Source/WebCore/loader/SubresourceLoaderClient.h \
 	Source/WebCore/loader/SubresourceLoader.cpp \
 	Source/WebCore/loader/SubresourceLoader.h \
 	Source/WebCore/loader/SubstituteData.h \

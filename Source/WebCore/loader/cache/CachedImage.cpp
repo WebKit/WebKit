@@ -29,7 +29,6 @@
 #include "CachedResourceClient.h"
 #include "CachedResourceClientWalker.h"
 #include "CachedResourceLoader.h"
-#include "CachedResourceRequest.h"
 #include "Frame.h"
 #include "FrameLoaderClient.h"
 #include "FrameLoaderTypes.h"
@@ -37,6 +36,7 @@
 #include "RenderObject.h"
 #include "Settings.h"
 #include "SharedBuffer.h"
+#include "SubresourceLoader.h"
 #include <wtf/CurrentTime.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
@@ -287,11 +287,10 @@ void CachedImage::notifyObservers(const IntRect* changeRect)
 
 void CachedImage::checkShouldPaintBrokenImage()
 {
-    Frame* frame = m_request ? m_request->cachedResourceLoader()->frame() : 0;
-    if (!frame)
+    if (!m_loader || m_loader->reachedTerminalState())
         return;
 
-    m_shouldPaintBrokenImage = frame->loader()->client()->shouldPaintBrokenImage(m_resourceRequest.url());
+    m_shouldPaintBrokenImage = m_loader->frameLoader()->client()->shouldPaintBrokenImage(m_resourceRequest.url());
 }
 
 void CachedImage::clear()
@@ -328,10 +327,9 @@ inline void CachedImage::createImage()
 
 size_t CachedImage::maximumDecodedImageSize()
 {
-    Frame* frame = m_request ? m_request->cachedResourceLoader()->frame() : 0;
-    if (!frame)
+    if (!m_loader || m_loader->reachedTerminalState())
         return 0;
-    Settings* settings = frame->settings();
+    Settings* settings = m_loader->frameLoader()->frame()->settings();
     return settings ? settings->maximumDecodedImageSize() : 0;
 }
 
