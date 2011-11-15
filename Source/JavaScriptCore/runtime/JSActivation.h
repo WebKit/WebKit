@@ -69,7 +69,7 @@ namespace JSC {
 
         static JSObject* toThisObject(JSCell*, ExecState*);
 
-        void copyRegisters(JSGlobalData&);
+        void tearOff(JSGlobalData&);
         
         static const ClassInfo s_info;
 
@@ -112,6 +112,23 @@ namespace JSC {
     {
         requiresDynamicChecks = m_requiresDynamicChecks;
         return false;
+    }
+
+    inline void JSActivation::tearOff(JSGlobalData& globalData)
+    {
+        ASSERT(!m_registerArray);
+
+        size_t numLocals = m_numCapturedVars + m_numParametersMinusThis;
+
+        if (!numLocals)
+            return;
+
+        int registerOffset = m_numParametersMinusThis + RegisterFile::CallFrameHeaderSize;
+        size_t registerArraySize = numLocals + RegisterFile::CallFrameHeaderSize;
+
+        OwnArrayPtr<WriteBarrier<Unknown> > registerArray = copyRegisterArray(globalData, m_registers - registerOffset, registerArraySize, m_numParametersMinusThis + 1);
+        WriteBarrier<Unknown>* registers = registerArray.get() + registerOffset;
+        setRegisters(registers, registerArray.release());
     }
 
 } // namespace JSC

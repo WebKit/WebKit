@@ -695,14 +695,12 @@ NEVER_INLINE bool Interpreter::unwindCallFrame(CallFrame*& callFrame, JSValue ex
 
         callFrame->setScopeChain(scopeChain);
         JSActivation* activation = asActivation(scopeChain->object.get());
-        activation->copyRegisters(*scopeChain->globalData);
-        if (JSValue arguments = callFrame->uncheckedR(unmodifiedArgumentsRegister(oldCodeBlock->argumentsRegister())).jsValue()) {
-            if (!oldCodeBlock->isStrictMode())
-                asArguments(arguments)->setActivation(callFrame->globalData(), activation);
-        }
+        activation->tearOff(*scopeChain->globalData);
+        if (JSValue arguments = callFrame->uncheckedR(unmodifiedArgumentsRegister(oldCodeBlock->argumentsRegister())).jsValue())
+            asArguments(arguments)->didTearOffActivation(callFrame->globalData(), activation);
     } else if (oldCodeBlock->usesArguments() && !oldCodeBlock->isStrictMode()) {
         if (JSValue arguments = callFrame->uncheckedR(unmodifiedArgumentsRegister(oldCodeBlock->argumentsRegister())).jsValue())
-            asArguments(arguments)->copyRegisters(callFrame->globalData());
+            asArguments(arguments)->tearOff(callFrame->globalData());
     }
 
     CallFrame* callerFrame = callFrame->callerFrame();
@@ -4453,15 +4451,13 @@ skip_id_custom_self:
         ASSERT(codeBlock->needsFullScopeChain());
         JSValue activationValue = callFrame->r(activation).jsValue();
         if (activationValue) {
-            asActivation(activationValue)->copyRegisters(*globalData);
+            asActivation(activationValue)->tearOff(*globalData);
 
-            if (JSValue argumentsValue = callFrame->r(unmodifiedArgumentsRegister(arguments)).jsValue()) {
-                if (!codeBlock->isStrictMode())
-                    asArguments(argumentsValue)->setActivation(*globalData, asActivation(activationValue));
-            }
+            if (JSValue argumentsValue = callFrame->r(unmodifiedArgumentsRegister(arguments)).jsValue())
+                asArguments(argumentsValue)->didTearOffActivation(*globalData, asActivation(activationValue));
         } else if (JSValue argumentsValue = callFrame->r(unmodifiedArgumentsRegister(arguments)).jsValue()) {
             if (!codeBlock->isStrictMode())
-                asArguments(argumentsValue)->copyRegisters(*globalData);
+                asArguments(argumentsValue)->tearOff(*globalData);
         }
 
         vPC += OPCODE_LENGTH(op_tear_off_activation);
@@ -4483,7 +4479,7 @@ skip_id_custom_self:
         ASSERT(!codeBlock->needsFullScopeChain() && codeBlock->ownerExecutable()->usesArguments());
 
         if (JSValue arguments = callFrame->r(unmodifiedArgumentsRegister(src1)).jsValue())
-            asArguments(arguments)->copyRegisters(*globalData);
+            asArguments(arguments)->tearOff(*globalData);
 
         vPC += OPCODE_LENGTH(op_tear_off_arguments);
         NEXT_INSTRUCTION();
@@ -5144,7 +5140,7 @@ JSValue Interpreter::retrieveArguments(CallFrame* callFrame, JSFunction* functio
         return arguments;
     }
 
-    return Arguments::createAndCopyRegisters(functionCallFrame->globalData(), functionCallFrame);
+    return Arguments::createAndTearOff(functionCallFrame->globalData(), functionCallFrame);
 }
 
 JSValue Interpreter::retrieveCaller(CallFrame* callFrame, JSFunction* function) const

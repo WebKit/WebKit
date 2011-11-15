@@ -70,10 +70,10 @@ namespace JSC {
             return arguments;
         }
         
-        static Arguments* createAndCopyRegisters(JSGlobalData& globalData, CallFrame* callFrame)
+        static Arguments* createAndTearOff(JSGlobalData& globalData, CallFrame* callFrame)
         {
             Arguments* arguments = new (allocateCell<Arguments>(globalData.heap)) Arguments(callFrame);
-            arguments->finishCreationAndCopyRegisters(callFrame);
+            arguments->finishCreationAndTearOff(callFrame);
             return arguments;
         }
         
@@ -111,11 +111,12 @@ namespace JSC {
         }
         
         void copyToRegisters(ExecState* exec, Register* buffer, uint32_t maxSize);
-        void copyRegisters(JSGlobalData&);
+        void tearOff(JSGlobalData&);
         bool isTornOff() const { return d->registerArray; }
-        void setActivation(JSGlobalData& globalData, JSActivation* activation)
+        void didTearOffActivation(JSGlobalData& globalData, JSActivation* activation)
         {
-            ASSERT(!d->registerArray);
+            if (isTornOff())
+                return;
             d->activation.set(globalData, this, activation);
             d->registers = &activation->registerAt(0);
         }
@@ -128,9 +129,9 @@ namespace JSC {
     protected:
         static const unsigned StructureFlags = OverridesGetOwnPropertySlot | OverridesVisitChildren | OverridesGetPropertyNames | JSObject::StructureFlags;
 
-        void finishCreationButDontCopyRegisters(CallFrame*);
+        void finishCreationButDontTearOff(CallFrame*);
         void finishCreation(CallFrame*);
-        void finishCreationAndCopyRegisters(CallFrame*);
+        void finishCreationAndTearOff(CallFrame*);
         void finishCreation(CallFrame*, NoParametersType);
 
     private:
@@ -190,7 +191,7 @@ namespace JSC {
     {
     }
     
-    inline void Arguments::finishCreationButDontCopyRegisters(CallFrame* callFrame)
+    inline void Arguments::finishCreationButDontTearOff(CallFrame* callFrame)
     {
         Base::finishCreation(callFrame->globalData());
         ASSERT(inherits(&s_info));
@@ -233,12 +234,12 @@ namespace JSC {
     inline void Arguments::finishCreation(CallFrame* callFrame)
     {
         ASSERT(!callFrame->isInlineCallFrame());
-        finishCreationButDontCopyRegisters(callFrame);
+        finishCreationButDontTearOff(callFrame);
         if (d->isStrictMode)
-            copyRegisters(callFrame->globalData());
+            tearOff(callFrame->globalData());
     }
 
-    inline void Arguments::finishCreationAndCopyRegisters(CallFrame* callFrame)
+    inline void Arguments::finishCreationAndTearOff(CallFrame* callFrame)
     {
         Base::finishCreation(callFrame->globalData());
         ASSERT(inherits(&s_info));
@@ -356,10 +357,10 @@ namespace JSC {
         d->overrodeCaller = false;
         d->isStrictMode = callFrame->codeBlock()->isStrictMode();
         if (d->isStrictMode)
-            copyRegisters(callFrame->globalData());
+            tearOff(callFrame->globalData());
     }
 
-    inline void Arguments::copyRegisters(JSGlobalData& globalData)
+    inline void Arguments::tearOff(JSGlobalData& globalData)
     {
         ASSERT(!isTornOff());
 
@@ -374,24 +375,6 @@ namespace JSC {
             registerArray[i].set(globalData, this, d->registers[i - registerOffset].get());
         d->registers = registerArray.get() + registerOffset;
         d->registerArray = registerArray.release();
-    }
-
-    // This JSActivation function is defined here so it can get at Arguments::setRegisters.
-    inline void JSActivation::copyRegisters(JSGlobalData& globalData)
-    {
-        ASSERT(!m_registerArray);
-
-        size_t numLocals = m_numCapturedVars + m_numParametersMinusThis;
-
-        if (!numLocals)
-            return;
-
-        int registerOffset = m_numParametersMinusThis + RegisterFile::CallFrameHeaderSize;
-        size_t registerArraySize = numLocals + RegisterFile::CallFrameHeaderSize;
-
-        OwnArrayPtr<WriteBarrier<Unknown> > registerArray = copyRegisterArray(globalData, m_registers - registerOffset, registerArraySize, m_numParametersMinusThis + 1);
-        WriteBarrier<Unknown>* registers = registerArray.get() + registerOffset;
-        setRegisters(registers, registerArray.release());
     }
 
 } // namespace JSC
