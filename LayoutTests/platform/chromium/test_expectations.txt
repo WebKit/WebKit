@@ -3870,5 +3870,6 @@ BUGWK72271 MAC DEBUG : fast/loader/javascript-url-in-embed.html = PASS CRASH
 BUGWK72272 WIN : security/crypto-random-values-types.html = TEXT PASS
 
 BUGWK72279 : media/track/track-webvtt-tc004-magic-header.html = TIMEOUT PASS
+BUGWK72369 : media/track/track-webvtt-tc003-newlines.html = TEXT PASS
 
 BUGWK59771 WIN : http/tests/inspector/resource-tree/resource-tree-frame-add.html = TIMEOUT PASS
