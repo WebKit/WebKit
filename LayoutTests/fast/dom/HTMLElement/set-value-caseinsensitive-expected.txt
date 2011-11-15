@@ -3,12 +3,6 @@ When contentEditable is set to a new value, the new value can be case-insensitiv
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-
-
-
-
-
-
 PASS document.getElementById("div1").getAttribute("contentEditable") is "true"
 PASS document.getElementById("div1").contentEditable is "true"
 PASS document.getElementById("div1").isContentEditable is true
@@ -30,11 +24,7 @@ PASS document.getElementById("p3").hasAttribute("contentEditable") is false
 PASS document.getElementById("p3").contentEditable is "inherit"
 PASS document.getElementById("p3").isContentEditable is true
 PASS window.getComputedStyle(p3, "").getPropertyValue("-webkit-user-modify") is "read-write-plaintext-only"
-
 PASS successfullyParsed is true
 
 TEST COMPLETE
-
-
-
 
