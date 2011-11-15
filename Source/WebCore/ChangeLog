@@ -1,3 +1,9 @@
+2011-11-14  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Fix the change log entry for r59190.
+
+        * ChangeLog-2010-05-24:
+
 2011-11-14  Dmitry Lomov  <dslomov@google.com>
         
         [V8][Chromium]Serialize dense arrays densly

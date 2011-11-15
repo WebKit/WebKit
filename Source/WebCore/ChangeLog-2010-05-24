@@ -8671,11 +8671,11 @@
 
 2010-05-11  Jer Noble  <jer.noble@apple.com>
 
-        Darin Adler.
-
         19 media tests are crashing on Windows Release
         https://bugs.webkit.org/show_bug.cgi?id=38950
         rdar://problem/7971658
+
+        Reviewed by Darin Adler.
 
         Link against JavaScriptCore.lib instead of WTF.lib, so the free and malloc used by 
         QTMovieWin is always the free and malloc in JavaScriptCore.dll.
