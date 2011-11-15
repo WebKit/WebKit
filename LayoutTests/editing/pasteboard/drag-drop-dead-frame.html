@@ -74,7 +74,6 @@ function dropIt2() {
 
 <p>Check you don't crash when your previous drag target frame is deleted &lt;rdar://problem/5049842&gt;</p>
 <div><span id="dragme">hello</span></div>
-<iframe id=targetframe src="resources/editable-iframe.html"></iframe>
-<script>runEditingTest();</script>
+<iframe id=targetframe src="resources/editable-iframe.html" onload="runEditingTest()"></iframe>
 </body>
 </html>
