@@ -39,11 +39,13 @@
 #include "Document.h"
 #include "Element.h"
 #include "HTMLHeadElement.h"
+#include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
 #include "InspectorCSSAgent.h"
 #include "InspectorPageAgent.h"
 #include "InspectorValues.h"
 #include "Node.h"
+#include "SVGNames.h"
 #include "StyleSheetList.h"
 #include "WebKitCSSKeyframesRule.h"
 
@@ -1102,7 +1104,12 @@ bool InspectorStyleSheet::inlineStyleSheetText(String* result) const
     if (!ownerNode || ownerNode->nodeType() != Node::ELEMENT_NODE)
         return false;
     Element* ownerElement = static_cast<Element*>(ownerNode);
-    if (ownerElement->tagName().lower() != "style")
+
+    if (!ownerElement->hasTagName(HTMLNames::styleTag)
+#if ENABLE(SVG)
+        && !ownerElement->hasTagName(SVGNames::styleTag)
+#endif
+    )
         return false;
     *result = ownerElement->innerText();
     return true;

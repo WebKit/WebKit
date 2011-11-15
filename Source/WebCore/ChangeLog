@@ -1,3 +1,15 @@
+2011-11-14  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: [Crash] Crash when inspecting namespaced SVG styled via element names
+        https://bugs.webkit.org/show_bug.cgi?id=72261
+
+        Reviewed by Pavel Feldman.
+
+        Test: inspector/styles/svg-style.xhtml
+
+        * inspector/InspectorStyleSheet.cpp:
+        (WebCore::InspectorStyleSheet::inlineStyleSheetText):
+
 2011-11-15  Kent Tamura  <tkent@chromium.org>
 
         [V8] Fix incorrect handling of JavaScript properties in DOMStringMap
