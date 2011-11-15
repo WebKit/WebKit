@@ -507,11 +507,11 @@ private:
         return getJSConstant(m_constantNaN);
     }
     
-    NodeIndex cellConstant(JSCell* cell)
+    unsigned getCellConstantIndex(JSCell* cell)
     {
         HashMap<JSCell*, unsigned>::iterator iter = m_cellConstants.find(cell);
         if (iter != m_cellConstants.end())
-            return getJSConstant(iter->second);
+            return iter->second;
         
         m_codeBlock->addConstant(cell);
         m_constants.append(ConstantRecord());
@@ -519,7 +519,19 @@ private:
         
         m_cellConstants.add(cell, m_codeBlock->numberOfConstantRegisters() - 1);
         
-        return getJSConstant(m_codeBlock->numberOfConstantRegisters() - 1);
+        return m_codeBlock->numberOfConstantRegisters() - 1;
+    }
+    
+    void pinCell(JSCell* cell)
+    {
+        if (!cell)
+            return;
+        getCellConstantIndex(cell);
+    }
+    
+    NodeIndex cellConstant(JSCell* cell)
+    {
+        return getJSConstant(getCellConstantIndex(cell));
     }
     
     CodeOrigin currentCodeOrigin()
@@ -921,8 +933,10 @@ void ByteCodeParser::handleCall(Interpreter* interpreter, Instruction* currentIn
         }
                 
         if (intrinsic != NoIntrinsic) {
-            if (!certainAboutExpectedFunction)
+            if (!certainAboutExpectedFunction) {
+                pinCell(expectedFunction);
                 addToGraph(CheckFunction, OpInfo(expectedFunction), callTarget);
+            }
             
             if (handleIntrinsic(usesResult, resultOperand, intrinsic, firstArg, lastArg, prediction)) {
                 if (!certainAboutExpectedFunction) {
@@ -989,8 +1003,10 @@ bool ByteCodeParser::handleInlining(bool usesResult, int callTarget, NodeIndex c
     // Now we know without a doubt that we are committed to inlining. So begin the process
     // by checking the callee (if necessary) and making sure that arguments and the callee
     // are flushed.
-    if (!certainAboutExpectedFunction)
+    if (!certainAboutExpectedFunction) {
+        pinCell(expectedFunction);
         addToGraph(CheckFunction, OpInfo(expectedFunction), callTargetNodeIndex);
+    }
     
     // FIXME: Don't flush constants!
     
@@ -1651,6 +1667,11 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             if (methodCall.seen && !!methodCall.cachedStructure && !stubInfo.seen) {
                 // It's monomorphic as far as we can tell, since the method_check was linked
                 // but the slow path (i.e. the normal get_by_id) never fired.
+
+                pinCell(methodCall.cachedStructure.get());
+                pinCell(methodCall.cachedPrototypeStructure.get());
+                pinCell(methodCall.cachedFunction.get());
+                pinCell(methodCall.cachedPrototype.get());
             
                 NodeIndex checkMethod = addToGraph(CheckMethod, OpInfo(identifier), OpInfo(m_graph.m_methodCheckData.size()), base);
                 set(getInstruction[1].u.operand, checkMethod);
@@ -1761,6 +1782,9 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                 if (prediction == PredictNone)
                     addToGraph(ForceOSRExit);
                 
+                for (unsigned i = 0; i < structureSet.size(); ++i)
+                    pinCell(structureSet[i]);
+                
                 addToGraph(CheckStructure, OpInfo(m_graph.addStructureSet(structureSet)), base);
                 set(currentInstruction[1].u.operand, addToGraph(GetByOffset, OpInfo(m_graph.m_storageAccessData.size()), OpInfo(prediction), addToGraph(GetPropertyStorage, base)));
                 
@@ -1794,6 +1818,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                     size_t offset = structure->get(*m_globalData, identifier);
                     
                     if (offset != notFound) {
+                        pinCell(structure);
                         addToGraph(CheckStructure, OpInfo(m_graph.addStructureSet(structure)), base);
                         addToGraph(PutByOffset, OpInfo(m_graph.m_storageAccessData.size()), base, addToGraph(GetPropertyStorage, base), value);
                         
@@ -1820,16 +1845,23 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                     size_t offset = newStructure->get(*m_globalData, identifier);
                     
                     if (offset != notFound && structureChainIsStillValid(direct, previousStructure, structureChain)) {
+                        pinCell(previousStructure);
+                        pinCell(newStructure);
                         addToGraph(CheckStructure, OpInfo(m_graph.addStructureSet(previousStructure)), base);
                         if (!direct) {
-                            if (!previousStructure->storedPrototype().isNull())
+                            if (!previousStructure->storedPrototype().isNull()) {
+                                pinCell(previousStructure->storedPrototype().asCell()->structure());
+                                pinCell(previousStructure->storedPrototype().asCell());
                                 addToGraph(CheckStructure, OpInfo(m_graph.addStructureSet(previousStructure->storedPrototype().asCell()->structure())), cellConstant(previousStructure->storedPrototype().asCell()));
+                            }
                             
                             for (WriteBarrier<Structure>* it = structureChain->head(); *it; ++it) {
                                 JSValue prototype = (*it)->storedPrototype();
                                 if (prototype.isNull())
                                     continue;
                                 ASSERT(prototype.isCell());
+                                pinCell(prototype.asCell());
+                                pinCell(prototype.asCell()->structure());
                                 addToGraph(CheckStructure, OpInfo(m_graph.addStructureSet(prototype.asCell()->structure())), cellConstant(prototype.asCell()));
                             }
                         }

@@ -1,5 +1,25 @@
 2011-11-14  Filip Pizlo  <fpizlo@apple.com>
 
+        DFG's inline references to objects should be tracked
+        https://bugs.webkit.org/show_bug.cgi?id=72313
+
+        Reviewed by Gavin Barraclough.
+        
+        Added a pinCell() method in the parser that currently creates a
+        dummy constant in CodeBlock. Added calls to pinCell() wherever the
+        DFG would inline a constant reference that the original code would
+        not have referred to.
+        
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::getCellConstantIndex):
+        (JSC::DFG::ByteCodeParser::pinCell):
+        (JSC::DFG::ByteCodeParser::cellConstant):
+        (JSC::DFG::ByteCodeParser::handleCall):
+        (JSC::DFG::ByteCodeParser::handleInlining):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+
+2011-11-14  Filip Pizlo  <fpizlo@apple.com>
+
         DFG put_by_id transition optimizations test the wrong structures
         https://bugs.webkit.org/show_bug.cgi?id=72324
 
