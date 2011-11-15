@@ -1,0 +1,13 @@
+CONSOLE MESSAGE: line 1: complete
+Tests $x for iterator and non-iterator types.
+
+$x('42')
+$x('name(/html)')
+$x('not(42)')
+$x('/html/body/p').length
+42
+"html"
+false
+1
+complete
+

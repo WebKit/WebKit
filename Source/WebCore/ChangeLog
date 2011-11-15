@@ -1,3 +1,15 @@
+2011-11-14  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: Command line $x fails for 3 of 4 types of XPath query
+        https://bugs.webkit.org/show_bug.cgi?id=72276
+
+        Reviewed by Timothy Hatcher.
+
+        Test: inspector/console/console-xpath.html
+
+        * inspector/InjectedScriptSource.js:
+        (.):
+
 2011-11-14  Ryosuke Niwa  <rniwa@webkit.org>
 
         Fix the change log entry for r59190.

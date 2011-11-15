@@ -1,0 +1,35 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/console-test.js"></script>
+<script>
+
+function test()
+{
+    InspectorTest.addConsoleSniffer(addMessageSniffer, true);
+
+    InspectorTest.evaluateInConsole("$x('42')"); // number
+    InspectorTest.evaluateInConsole("$x('name(/html)')"); // string
+    InspectorTest.evaluateInConsole("$x('not(42)')"); // boolean
+    InspectorTest.evaluateInConsole("$x('/html/body/p').length"); // node iterator
+    InspectorTest.evaluateInPage("console.log('complete')"); // node iterator
+
+    function addMessageSniffer(message)
+    {
+        if (message.toString().indexOf("complete") !== -1) {
+            InspectorTest.dumpConsoleMessages();
+            InspectorTest.completeTest();
+        }
+    }
+}
+
+</script>
+</head>
+
+<body onload="runTest()">
+<p>
+Tests $x for iterator and non-iterator types.
+</p>
+
+</body>
+</html>
