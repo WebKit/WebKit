@@ -1,3 +1,14 @@
+2011-11-14  Ian Vollick  <vollick@chromium.org>
+
+        Expose compositeAndReadback in WebLayerTreeView
+        https://bugs.webkit.org/show_bug.cgi?id=72188
+
+        Reviewed by Darin Fisher.
+
+        * public/WebLayerTreeView.h:
+        * src/WebLayerTreeView.cpp:
+        (WebKit::WebLayerTreeView::compositeAndReadback):
+
 2011-11-14  Raymond Toy  <rtoy@google.com>
 
         Add buffering to handle mismatch between hardware buffer size and webaudio render size

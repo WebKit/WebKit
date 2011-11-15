@@ -37,6 +37,7 @@ struct CCSettings;
 namespace WebKit {
 class WebLayer;
 class WebLayerTreeViewClient;
+struct WebRect;
 struct WebSize;
 
 class WebLayerTreeView {
@@ -80,6 +81,14 @@ public:
 
     WEBKIT_EXPORT void setViewportSize(const WebSize&);
     WEBKIT_EXPORT WebSize viewportSize() const;
+
+    // Composites and attempts to read back the result into the provided
+    // buffer. If it wasn't possible, e.g. due to context lost, will return
+    // false. Pixel format is 32bit (RGBA), and the provided buffer must be
+    // large enough contain viewportSize().width() * viewportSize().height()
+    // pixels. The WebLayerTreeView does not assume ownership of the buffer.
+    // The buffer is not modified if the false is returned.
+    WEBKIT_EXPORT bool compositeAndReadback(void *pixels, const WebRect&);
 
 #if WEBKIT_IMPLEMENTATION
     WebLayerTreeView(const WTF::PassRefPtr<WebCore::CCLayerTreeHost>&);
