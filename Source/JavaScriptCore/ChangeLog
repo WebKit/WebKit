@@ -1,3 +1,13 @@
+2011-11-14  Gavin Barraclough  <barraclough@apple.com>
+
+        Should sign the jsc binary
+        https://bugs.webkit.org/show_bug.cgi?id=72332
+
+        Reviewed by David Kilzer.
+
+        * Configurations/JSC.xcconfig:
+        * entitlements.plist: Added.
+
 2011-11-14  Filip Pizlo  <fpizlo@apple.com>
 
         DFG's inline references to objects should be tracked
