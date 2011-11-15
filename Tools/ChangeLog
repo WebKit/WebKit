@@ -1,3 +1,20 @@
+2011-11-14  Eric Seidel  <eric@webkit.org>
+
+        check-webkit-style broken by r99773: "Could not determine the port"
+        https://bugs.webkit.org/show_bug.cgi?id=72275
+
+        Reviewed by Adam Barth.
+
+        The TestExpectationsChecker was using a generic try/except block
+        which caught all exceptions, so we didn't notice that failing
+        to pass a Host to PortFactory was causing an exception in port instantiation.
+        I've factored out the "lookup the port" logic into a separate function
+        which I've now unittested.  This should fix the bug and prevent
+        others like it from occuring the the future.
+
+        * Scripts/webkitpy/style/checkers/test_expectations.py:
+        * Scripts/webkitpy/style/checkers/test_expectations_unittest.py:
+
 2011-11-14  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Add --css-grid-layout to build-webkit and the build systems

@@ -34,7 +34,7 @@ import re
 import sys
 
 from common import TabChecker
-from webkitpy.layout_tests.port.factory import PortFactory
+from webkitpy.common.host import Host
 from webkitpy.layout_tests.models import test_expectations
 
 
@@ -52,6 +52,21 @@ class TestExpectationsChecker(object):
 
     categories = set(['test/expectations'])
 
+    def _determine_port_from_exepectations_path(self, host, expectations_path):
+        try:
+            # I believe what this is trying to do is "when the port name is chromium,
+            # get the chromium-port for this platform".  Unclear why that's needed??
+            port_name = expectations_path.split(host.filesystem.sep)[-2]
+            if port_name == "chromium":
+                return host.port_factory.get(options=ChromiumOptions())
+            # Passing port_name=None to the factory would just return the current port, which isn't what we want, I don't think.
+            if not port_name:
+                return None
+            return host.port_factory.get(port_name)
+        except Exception, e:
+            _log.warn("Exception while getting port for path %s" % expectations_path)
+            return None
+
     def __init__(self, file_path, handle_style_error):
         self._file_path = file_path
         self._handle_style_error = handle_style_error
@@ -59,25 +74,20 @@ class TestExpectationsChecker(object):
         self._tab_checker = TabChecker(file_path, handle_style_error)
         self._output_regex = re.compile('Line:(?P<line>\d+)\s*(?P<message>.+)')
 
-        # FIXME: This should get the PortFactory from a Host object!
-        port_factory = PortFactory()
+        # FIXME: A host should be passed to the constructor instead!
+        host = Host()
+        host._initialize_scm()
 
         # Determining the port of this expectations.
-        try:
-            port_name = self._file_path.split(os.sep)[-2]
-            if port_name == "chromium":
-                self._port_obj = port_factory.get(options=ChromiumOptions())
-            else:
-                self._port_obj = port_factory.get(port_name)
-        except:
-            # Using 'test' port when we couldn't determine the port for this
-            # expectations.
+        self._port_obj = self._determine_port_from_exepectations_path(host, file_path)
+        # Using 'test' port when we couldn't determine the port for this
+        # expectations.
+        if not self._port_obj:
             _log.warn("Could not determine the port for %s. "
                       "Using 'test' port, but platform-specific expectations "
                       "will fail the check." % self._file_path)
-            self._port_obj = port_factory.get('test')
-        # Suppress error messages of test_expectations module since they will be
-        # reported later.
+            self._port_obj = host.port_factory.get('test')
+        # Suppress error messages of test_expectations module since they will be reported later.
         log = logging.getLogger("webkitpy.layout_tests.layout_package.test_expectations")
         log.setLevel(logging.CRITICAL)
 

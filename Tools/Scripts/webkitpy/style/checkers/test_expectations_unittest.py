@@ -32,7 +32,7 @@ import sys
 import unittest
 
 from test_expectations import TestExpectationsChecker
-from webkitpy.layout_tests import port
+from webkitpy.common.host_mock import MockHost
 
 
 class ErrorCollector(object):
@@ -63,8 +63,18 @@ class TestExpectationsTestCase(unittest.TestCase):
         self._error_collector = ErrorCollector()
         self._test_file = 'passes/text.html'
 
-    def process_expectations(self, expectations, overrides=None):
-        self._checker = TestExpectationsChecker()
+    def _expect_port_for_expectations_path(self, expected_port_or_port_class, expectations_path):
+        host = MockHost()
+        checker = TestExpectationsChecker(expectations_path, ErrorCollector())
+        port = checker._determine_port_from_exepectations_path(host, expectations_path)
+        if port:
+            self.assertEquals(port.__class__.__name__, expected_port_or_port_class)
+        else:
+            self.assertEquals(port, expected_port_or_port_class)
+
+    def test_determine_port_from_exepectations_path(self):
+        self._expect_port_for_expectations_path(None, "/")
+        self._expect_port_for_expectations_path("ChromiumMacPort", "/mock-checkout/LayoutTests/chromium-mac/test_expectations.txt")
 
     def assert_lines_lint(self, lines, expected):
         self._error_collector.reset_errors()
