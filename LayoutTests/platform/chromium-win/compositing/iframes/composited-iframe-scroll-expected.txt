@@ -1,0 +1,19 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x0
+  RenderBlock {HTML} at (0,0) size 800x0
+    RenderBody {BODY} at (0,0) size 800x0
+layer at (120,120) size 200x200
+  RenderBlock (positioned) {DIV} at (120,120) size 200x200 [bgcolor=#FF0000]
+layer at (0,100) size 240x245
+  RenderBlock (positioned) {DIV} at (0,100) size 240x245
+    RenderText {#text} at (0,0) size 0x0
+layer at (10,110) size 220x220
+  RenderPartObject {IFRAME} at (10,10) size 220x220
+    layer at (0,0) size 200x400
+      RenderView at (0,0) size 200x200
+    layer at (0,0) size 200x400
+      RenderBlock {HTML} at (0,0) size 200x400
+        RenderBody {BODY} at (0,0) size 200x400
+          RenderBlock {DIV} at (0,0) size 200x200 [bgcolor=#FF0000]
+          RenderBlock {DIV} at (0,200) size 200x200 [bgcolor=#008000]
