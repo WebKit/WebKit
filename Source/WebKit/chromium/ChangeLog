@@ -1,3 +1,12 @@
+2011-11-14  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        [chromium] Fix the build after moving some arrays to WTF
+        https://bugs.webkit.org/show_bug.cgi?id=72345
+
+        Reviewed by Dirk Pranke.
+
+        * public/WebArrayBufferView.h: s/WebCore/WTF/g.
+
 2011-11-14  Ian Vollick  <vollick@chromium.org>
 
         Expose compositeAndReadback in WebLayerTreeView

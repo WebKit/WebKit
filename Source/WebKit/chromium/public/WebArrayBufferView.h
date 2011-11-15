@@ -32,7 +32,7 @@
 #include "WebCommon.h"
 #include "WebPrivatePtr.h"
 
-namespace WebCore { class ArrayBufferView; }
+namespace WTF { class ArrayBufferView; }
 
 namespace WebKit {
 
@@ -51,13 +51,13 @@ public:
     WEBKIT_EXPORT void reset();
 
 #if WEBKIT_IMPLEMENTATION
-    WebArrayBufferView(const WTF::PassRefPtr<WebCore::ArrayBufferView>&);
-    WebArrayBufferView& operator=(const WTF::PassRefPtr<WebCore::ArrayBufferView>&);
-    operator WTF::PassRefPtr<WebCore::ArrayBufferView>() const;
+    WebArrayBufferView(const WTF::PassRefPtr<WTF::ArrayBufferView>&);
+    WebArrayBufferView& operator=(const WTF::PassRefPtr<WTF::ArrayBufferView>&);
+    operator WTF::PassRefPtr<WTF::ArrayBufferView>() const;
 #endif
 
 private:
-    WebPrivatePtr<WebCore::ArrayBufferView> m_private;
+    WebPrivatePtr<WTF::ArrayBufferView> m_private;
 };
 
 } // namespace WebKit
