@@ -460,13 +460,13 @@ IntRect WebChromeClient::windowResizerRect() const
     return IntRect();
 }
 
-void WebChromeClient::invalidateWindow(const IntRect& windowRect, bool immediate)
+void WebChromeClient::invalidateRootView(const IntRect& windowRect, bool immediate)
 {
     ASSERT(core(m_webView->topLevelFrame()));
     m_webView->repaint(windowRect, false /*contentChanged*/, immediate, false /*repaintContentOnly*/);
 }
 
-void WebChromeClient::invalidateContentsAndWindow(const IntRect& windowRect, bool immediate)
+void WebChromeClient::invalidateContentsAndRootView(const IntRect& windowRect, bool immediate)
 {
     ASSERT(core(m_webView->topLevelFrame()));
     m_webView->repaint(windowRect, true /*contentChanged*/, immediate /*immediate*/, false /*repaintContentOnly*/);

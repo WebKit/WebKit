@@ -348,12 +348,12 @@ void WebPopupMenuImpl::invalidateContents(const IntRect&, bool)
     notImplemented();
 }
 
-void WebPopupMenuImpl::invalidateWindow(const IntRect&, bool)
+void WebPopupMenuImpl::invalidateRootView(const IntRect&, bool)
 {
     notImplemented();
 }
 
-void WebPopupMenuImpl::invalidateContentsAndWindow(const IntRect& paintRect, bool /*immediate*/)
+void WebPopupMenuImpl::invalidateContentsAndRootView(const IntRect& paintRect, bool /*immediate*/)
 {
     if (paintRect.isEmpty())
         return;
@@ -363,7 +363,7 @@ void WebPopupMenuImpl::invalidateContentsAndWindow(const IntRect& paintRect, boo
 
 void WebPopupMenuImpl::invalidateContentsForSlowScroll(const IntRect& updateRect, bool immediate)
 {
-    invalidateContentsAndWindow(updateRect, immediate);
+    invalidateContentsAndRootView(updateRect, immediate);
 }
 
 void WebPopupMenuImpl::scheduleAnimation()

@@ -1,3 +1,38 @@
+2011-11-14  Anders Carlsson  <andersca@apple.com>
+
+        HostWindow invalidation functions should use root view coordinates
+        https://bugs.webkit.org/show_bug.cgi?id=72338
+
+        Reviewed by Dan Bernstein.
+
+        Rename invalidateWindow to invalidateRootView, and invalidateContentsAndWindow
+        to invalidateContentsAndRootView. Make sure that the rects passed to the renamed functions
+        are in root view coordinates by changing contentsToWindow calls to contentsToRootView.
+        
+        In practice this doesn't matter because for all platforms except Mac WebKit1, root view coordinates
+        and window coordinates are equivalent, and Mac WebKit1 doesn't use these invalidation functions.
+
+        * loader/EmptyClients.h:
+        * page/Chrome.cpp:
+        (WebCore::Chrome::invalidateRootView):
+        (WebCore::Chrome::invalidateContentsAndRootView):
+        * page/Chrome.h:
+        * page/ChromeClient.h:
+        * page/Frame.cpp:
+        (WebCore::Frame::tiledBackingStorePaintEnd):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::invalidateRect):
+        (WebCore::FrameView::scrollContentsFastPath):
+        * platform/HostWindow.h:
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::rectToCopyOnScroll):
+        (WebCore::ScrollView::scrollContents):
+        (WebCore::ScrollView::wheelEvent):
+        * platform/chromium/FramelessScrollView.cpp:
+        (WebCore::FramelessScrollView::invalidateRect):
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImageChromeClient::invalidateContentsAndRootView):
+
 2011-11-15  Philip Rogers  <pdr@google.com>
 
         Implement maxWidth for fillText and strokeText, fixing the canvas/philip/tests/2d.text.draw.fill.maxWidth.fontface.html test.

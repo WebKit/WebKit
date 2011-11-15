@@ -1,3 +1,16 @@
+2011-11-14  Anders Carlsson  <andersca@apple.com>
+
+        HostWindow invalidation functions should use root view coordinates
+        https://bugs.webkit.org/show_bug.cgi?id=72338
+
+        Reviewed by Dan Bernstein.
+
+        * WebCoreSupport/ChromeClientGtk.cpp:
+        (WebKit::ChromeClient::invalidateRootView):
+        (WebKit::ChromeClient::invalidateContentsAndRootView):
+        (WebKit::ChromeClient::invalidateContentsForSlowScroll):
+        * WebCoreSupport/ChromeClientGtk.h:
+
 2011-11-15  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Implement download support in WebKit2

@@ -66,7 +66,7 @@ ScrollableArea* FramelessScrollView::enclosingScrollableArea() const
 void FramelessScrollView::invalidateRect(const IntRect& rect)
 {
     if (HostWindow* h = hostWindow())
-        h->invalidateContentsAndWindow(rect, false /*immediate*/);
+        h->invalidateContentsAndRootView(rect, false /*immediate*/);
 }
 
 HostWindow* FramelessScrollView::hostWindow() const

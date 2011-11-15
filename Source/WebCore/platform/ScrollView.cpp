@@ -603,7 +603,7 @@ const int panIconSizeLength = 16;
 
 IntRect ScrollView::rectToCopyOnScroll() const
 {
-    IntRect scrollViewRect = convertToContainingWindow(IntRect(0, 0, visibleWidth(), visibleHeight()));
+    IntRect scrollViewRect = convertToRootView(IntRect(0, 0, visibleWidth(), visibleHeight()));
     if (hasOverlayScrollbars()) {
         int verticalScrollbarWidth = (verticalScrollbar() && !hasLayerForVerticalScrollbar()) ? verticalScrollbar()->width() : 0;
         int horizontalScrollbarHeight = (horizontalScrollbar() && !hasLayerForHorizontalScrollbar()) ? horizontalScrollbar()->height() : 0;
@@ -626,8 +626,8 @@ void ScrollView::scrollContents(const IntSize& scrollDelta)
     IntRect updateRect = clipRect;
     updateRect.intersect(scrollViewRect);
 
-    // Invalidate the window (not the backing store).
-    hostWindow()->invalidateWindow(updateRect, false /*immediate*/);
+    // Invalidate the root view (not the backing store).
+    hostWindow()->invalidateRootView(updateRect, false /*immediate*/);
 
     if (m_drawPanScrollIcon) {
         // FIXME: the pan icon is broken when accelerated compositing is on, since it will draw under the compositing layers.
@@ -636,7 +636,7 @@ void ScrollView::scrollContents(const IntSize& scrollDelta)
         IntPoint panIconDirtySquareLocation = IntPoint(m_panScrollIconPoint.x() - (panIconDirtySquareSizeLength / 2), m_panScrollIconPoint.y() - (panIconDirtySquareSizeLength / 2));
         IntRect panScrollIconDirtyRect = IntRect(panIconDirtySquareLocation, IntSize(panIconDirtySquareSizeLength, panIconDirtySquareSizeLength));
         panScrollIconDirtyRect.intersect(clipRect);
-        hostWindow()->invalidateContentsAndWindow(panScrollIconDirtyRect, false /*immediate*/);
+        hostWindow()->invalidateContentsAndRootView(panScrollIconDirtyRect, false /*immediate*/);
     }
 
     if (canBlitOnScroll()) { // The main frame can just blit the WebView window
@@ -662,15 +662,15 @@ void ScrollView::scrollContents(const IntSize& scrollDelta)
     }
 #endif
     if (!horizontalOverhangRect.isEmpty())
-        hostWindow()->invalidateContentsAndWindow(horizontalOverhangRect, false /*immediate*/);
+        hostWindow()->invalidateContentsAndRootView(horizontalOverhangRect, false /*immediate*/);
     if (!verticalOverhangRect.isEmpty())
-        hostWindow()->invalidateContentsAndWindow(verticalOverhangRect, false /*immediate*/);
+        hostWindow()->invalidateContentsAndRootView(verticalOverhangRect, false /*immediate*/);
 
     // This call will move children with native widgets (plugins) and invalidate them as well.
     frameRectsChanged();
 
     // Now blit the backingstore into the window which should be very fast.
-    hostWindow()->invalidateWindow(IntRect(), true);
+    hostWindow()->invalidateRootView(IntRect(), true);
 }
 
 bool ScrollView::scrollContentsFastPath(const IntSize& scrollDelta, const IntRect& rectToScroll, const IntRect& clipRect)
@@ -929,7 +929,7 @@ void ScrollView::repaintContentRectangle(const IntRect& rect, bool now)
     }
 
     if (hostWindow())
-        hostWindow()->invalidateContentsAndWindow(contentsToWindow(paintRect), now /*immediate*/);
+        hostWindow()->invalidateContentsAndRootView(contentsToWindow(paintRect), now /*immediate*/);
 }
 
 IntRect ScrollView::scrollCornerRect() const
@@ -1252,7 +1252,7 @@ void ScrollView::addPanScrollIcon(const IntPoint& iconPosition)
         return;
     m_drawPanScrollIcon = true;    
     m_panScrollIconPoint = IntPoint(iconPosition.x() - panIconSizeLength / 2 , iconPosition.y() - panIconSizeLength / 2) ;
-    hostWindow()->invalidateContentsAndWindow(IntRect(m_panScrollIconPoint, IntSize(panIconSizeLength, panIconSizeLength)), true /*immediate*/);
+    hostWindow()->invalidateContentsAndRootView(IntRect(m_panScrollIconPoint, IntSize(panIconSizeLength, panIconSizeLength)), true /*immediate*/);
 }
 
 void ScrollView::removePanScrollIcon()
@@ -1260,7 +1260,7 @@ void ScrollView::removePanScrollIcon()
     if (!hostWindow())
         return;
     m_drawPanScrollIcon = false; 
-    hostWindow()->invalidateContentsAndWindow(IntRect(m_panScrollIconPoint, IntSize(panIconSizeLength, panIconSizeLength)), true /*immediate*/);
+    hostWindow()->invalidateContentsAndRootView(IntRect(m_panScrollIconPoint, IntSize(panIconSizeLength, panIconSizeLength)), true /*immediate*/);
 }
 
 void ScrollView::setScrollOrigin(const IntPoint& origin, bool updatePositionAtAll, bool updatePositionSynchronously)

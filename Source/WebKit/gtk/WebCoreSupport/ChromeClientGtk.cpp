@@ -570,11 +570,11 @@ void ChromeClient::paint(WebCore::Timer<ChromeClient>*)
     m_repaintSoonSourceId = 0;
 }
 
-void ChromeClient::invalidateWindow(const IntRect&, bool immediate)
+void ChromeClient::invalidateRootView(const IntRect&, bool immediate)
 {
 }
 
-void ChromeClient::invalidateContentsAndWindow(const IntRect& updateRect, bool immediate)
+void ChromeClient::invalidateContentsAndRootView(const IntRect& updateRect, bool immediate)
 {
     if (updateRect.isEmpty())
         return;
@@ -584,7 +584,7 @@ void ChromeClient::invalidateContentsAndWindow(const IntRect& updateRect, bool i
 
 void ChromeClient::invalidateContentsForSlowScroll(const IntRect& updateRect, bool immediate)
 {
-    invalidateContentsAndWindow(updateRect, immediate);
+    invalidateContentsAndRootView(updateRect, immediate);
     m_adjustmentWatcher.updateAdjustmentsFromScrollbarsLater();
 }
 

@@ -102,8 +102,8 @@ namespace WebKit {
 #if ENABLE(REGISTER_PROTOCOL_HANDLER) 
         virtual void registerProtocolHandler(const WTF::String&, const WTF::String&, const WTF::String&, const WTF::String&); 
 #endif 
-        virtual void invalidateWindow(const IntRect&, bool);
-        virtual void invalidateContentsAndWindow(const IntRect&, bool);
+        virtual void invalidateRootView(const IntRect&, bool);
+        virtual void invalidateContentsAndRootView(const IntRect&, bool);
         virtual void invalidateContentsForSlowScroll(const IntRect&, bool);
         virtual void scroll(const IntSize& scrollDelta, const IntRect& rectToScroll, const IntRect& clipRect);
 

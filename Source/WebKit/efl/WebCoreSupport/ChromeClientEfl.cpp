@@ -485,12 +485,12 @@ void ChromeClientEfl::invalidateContents(const IntRect& updateRect, bool immedia
     notImplemented();
 }
 
-void ChromeClientEfl::invalidateWindow(const IntRect& updateRect, bool immediate)
+void ChromeClientEfl::invalidateRootView(const IntRect& updateRect, bool immediate)
 {
     notImplemented();
 }
 
-void ChromeClientEfl::invalidateContentsAndWindow(const IntRect& updateRect, bool immediate)
+void ChromeClientEfl::invalidateContentsAndRootView(const IntRect& updateRect, bool immediate)
 {
     if (updateRect.isEmpty())
         return;
@@ -506,7 +506,7 @@ void ChromeClientEfl::invalidateContentsAndWindow(const IntRect& updateRect, boo
 
 void ChromeClientEfl::invalidateContentsForSlowScroll(const IntRect& updateRect, bool immediate)
 {
-    invalidateContentsAndWindow(updateRect, immediate);
+    invalidateContentsAndRootView(updateRect, immediate);
 }
 
 void ChromeClientEfl::scroll(const IntSize& scrollDelta, const IntRect& rectToScroll, const IntRect& clipRect)

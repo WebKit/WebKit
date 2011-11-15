@@ -116,8 +116,8 @@ public:
 
     // WebCore::HostWindow methods:
     virtual void invalidateContents(const WebCore::IntRect&, bool);
-    virtual void invalidateWindow(const WebCore::IntRect&, bool);
-    virtual void invalidateContentsAndWindow(const WebCore::IntRect&, bool);
+    virtual void invalidateRootView(const WebCore::IntRect&, bool);
+    virtual void invalidateContentsAndRootView(const WebCore::IntRect&, bool);
     virtual void invalidateContentsForSlowScroll(const WebCore::IntRect&, bool);
     virtual void scheduleAnimation();
     virtual void scroll(

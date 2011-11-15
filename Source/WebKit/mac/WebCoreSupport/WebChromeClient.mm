@@ -541,7 +541,7 @@ IntRect WebChromeClient::windowResizerRect() const
     return enclosingIntRect([[m_webView window] _growBoxRect]);
 }
 
-void WebChromeClient::invalidateWindow(const IntRect&, bool immediate)
+void WebChromeClient::invalidateRootView(const IntRect&, bool immediate)
 {
     if (immediate) {
         [[m_webView window] displayIfNeeded];
@@ -549,13 +549,13 @@ void WebChromeClient::invalidateWindow(const IntRect&, bool immediate)
     }
 }
 
-void WebChromeClient::invalidateContentsAndWindow(const IntRect& rect, bool immediate)
+void WebChromeClient::invalidateContentsAndRootView(const IntRect& rect, bool immediate)
 {
 }
 
 void WebChromeClient::invalidateContentsForSlowScroll(const IntRect& rect, bool immediate)
 {
-    invalidateContentsAndWindow(rect, immediate);
+    invalidateContentsAndRootView(rect, immediate);
 }
 
 void WebChromeClient::scroll(const IntSize&, const IntRect&, const IntRect&)

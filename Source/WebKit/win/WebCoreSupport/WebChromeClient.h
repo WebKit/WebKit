@@ -94,8 +94,8 @@ public:
     virtual WebCore::KeyboardUIMode keyboardUIMode();
     virtual WebCore::IntRect windowResizerRect() const;
 
-    virtual void invalidateWindow(const WebCore::IntRect&, bool);
-    virtual void invalidateContentsAndWindow(const WebCore::IntRect&, bool);
+    virtual void invalidateRootView(const WebCore::IntRect&, bool);
+    virtual void invalidateContentsAndRootView(const WebCore::IntRect&, bool);
     virtual void invalidateContentsForSlowScroll(const WebCore::IntRect&, bool);
     virtual void scroll(const WebCore::IntSize& scrollDelta, const WebCore::IntRect& rectToScroll, const WebCore::IntRect& clipRect);
 

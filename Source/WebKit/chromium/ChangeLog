@@ -1,3 +1,21 @@
+2011-11-14  Anders Carlsson  <andersca@apple.com>
+
+        HostWindow invalidation functions should use root view coordinates
+        https://bugs.webkit.org/show_bug.cgi?id=72338
+
+        Reviewed by Dan Bernstein.
+
+        * src/ChromeClientImpl.cpp:
+        (WebKit::ChromeClientImpl::invalidateRootView):
+        (WebKit::ChromeClientImpl::invalidateContentsAndRootView):
+        (WebKit::ChromeClientImpl::invalidateContentsForSlowScroll):
+        * src/ChromeClientImpl.h:
+        * src/WebPopupMenuImpl.cpp:
+        (WebKit::WebPopupMenuImpl::invalidateRootView):
+        (WebKit::WebPopupMenuImpl::invalidateContentsAndRootView):
+        (WebKit::WebPopupMenuImpl::invalidateContentsForSlowScroll):
+        * src/WebPopupMenuImpl.h:
+
 2011-11-15  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: move generic code from DevTools.js into the WebCore.

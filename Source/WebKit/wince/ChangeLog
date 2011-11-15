@@ -1,3 +1,17 @@
+2011-11-14  Anders Carlsson  <andersca@apple.com>
+
+        HostWindow invalidation functions should use root view coordinates
+        https://bugs.webkit.org/show_bug.cgi?id=72338
+
+        Reviewed by Dan Bernstein.
+
+        * WebCoreSupport/ChromeClientWinCE.cpp:
+        (WebKit::ChromeClientWinCE::invalidateRootView):
+        (WebKit::ChromeClientWinCE::invalidateContentsAndRootView):
+        (WebKit::ChromeClientWinCE::invalidateContentsForSlowScroll):
+        (WebKit::ChromeClientWinCE::scroll):
+        * WebCoreSupport/ChromeClientWinCE.h:
+
 2011-11-04  Patrick Gansterer  <paroga@webkit.org>
 
         [WINCE] Use default LocalizationStrategy

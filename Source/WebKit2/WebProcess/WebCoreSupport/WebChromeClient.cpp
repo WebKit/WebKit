@@ -370,12 +370,12 @@ IntRect WebChromeClient::windowResizerRect() const
     return m_page->windowResizerRect();
 }
 
-void WebChromeClient::invalidateWindow(const IntRect&, bool)
+void WebChromeClient::invalidateRootView(const IntRect&, bool)
 {
     // Do nothing here, there's no concept of invalidating the window in the web process.
 }
 
-void WebChromeClient::invalidateContentsAndWindow(const IntRect& rect, bool)
+void WebChromeClient::invalidateContentsAndRootView(const IntRect& rect, bool)
 {
     if (Document* document = m_page->corePage()->mainFrame()->document()) {
         if (document->printing())

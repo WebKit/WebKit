@@ -1,3 +1,15 @@
+2011-11-14  Anders Carlsson  <andersca@apple.com>
+
+        HostWindow invalidation functions should use root view coordinates
+        https://bugs.webkit.org/show_bug.cgi?id=72338
+
+        Reviewed by Dan Bernstein.
+
+        * WebCoreSupport/WebChromeClient.cpp:
+        (WebChromeClient::invalidateRootView):
+        (WebChromeClient::invalidateContentsAndRootView):
+        * WebCoreSupport/WebChromeClient.h:
+
 2011-11-07  Adam Barth  <abarth@webkit.org>
 
         Move static "policy" state from SecurityOrigin.cpp to SecurityPolicy.cpp

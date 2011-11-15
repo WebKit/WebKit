@@ -108,8 +108,8 @@ private:
     virtual WebCore::IntRect windowResizerRect() const OVERRIDE;
     
     // HostWindow member function overrides.
-    virtual void invalidateWindow(const WebCore::IntRect&, bool) OVERRIDE;
-    virtual void invalidateContentsAndWindow(const WebCore::IntRect&, bool) OVERRIDE;
+    virtual void invalidateRootView(const WebCore::IntRect&, bool) OVERRIDE;
+    virtual void invalidateContentsAndRootView(const WebCore::IntRect&, bool) OVERRIDE;
     virtual void invalidateContentsForSlowScroll(const WebCore::IntRect&, bool) OVERRIDE;
     virtual void scroll(const WebCore::IntSize& scrollOffset, const WebCore::IntRect& scrollRect, const WebCore::IntRect& clipRect) OVERRIDE;
 #if USE(TILED_BACKING_STORE)

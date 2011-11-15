@@ -69,8 +69,8 @@ namespace WebCore {
 
         // HostWindow methods.
 
-        virtual void invalidateWindow(const IntRect&, bool);
-        virtual void invalidateContentsAndWindow(const IntRect&, bool);
+        virtual void invalidateRootView(const IntRect&, bool) OVERRIDE;
+        virtual void invalidateContentsAndRootView(const IntRect&, bool) OVERRIDE;
         virtual void invalidateContentsForSlowScroll(const IntRect&, bool);
         virtual void scroll(const IntSize&, const IntRect&, const IntRect&);
 #if USE(TILED_BACKING_STORE)

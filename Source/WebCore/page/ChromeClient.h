@@ -146,8 +146,8 @@ namespace WebCore {
         virtual IntRect windowResizerRect() const = 0;
 
         // Methods used by HostWindow.
-        virtual void invalidateWindow(const IntRect&, bool) = 0;
-        virtual void invalidateContentsAndWindow(const IntRect&, bool) = 0;
+        virtual void invalidateRootView(const IntRect&, bool) = 0;
+        virtual void invalidateContentsAndRootView(const IntRect&, bool) = 0;
         virtual void invalidateContentsForSlowScroll(const IntRect&, bool) = 0;
         virtual void scroll(const IntSize&, const IntRect&, const IntRect&) = 0;
 #if USE(TILED_BACKING_STORE)

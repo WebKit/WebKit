@@ -93,8 +93,8 @@ public:
     virtual WebCore::IntRect windowResizerRect() const;
 
     // Methods used by HostWindow.
-    virtual void invalidateWindow(const WebCore::IntRect&, bool);
-    virtual void invalidateContentsAndWindow(const WebCore::IntRect&, bool);
+    virtual void invalidateRootView(const WebCore::IntRect&, bool);
+    virtual void invalidateContentsAndRootView(const WebCore::IntRect&, bool);
     virtual void invalidateContentsForSlowScroll(const WebCore::IntRect&, bool);
     virtual void scroll(const WebCore::IntSize&, const WebCore::IntRect&, const WebCore::IntRect&);
     virtual WebCore::IntPoint screenToWindow(const WebCore::IntPoint&) const;

@@ -152,8 +152,8 @@ public:
     virtual void cancelGeolocationPermissionForFrame(Frame*, Geolocation*);
 
     virtual void invalidateContents(const IntRect&, bool);
-    virtual void invalidateWindow(const IntRect&, bool);
-    virtual void invalidateContentsAndWindow(const IntRect&, bool);
+    virtual void invalidateRootView(const IntRect&, bool);
+    virtual void invalidateContentsAndRootView(const IntRect&, bool);
     virtual void invalidateContentsForSlowScroll(const IntRect&, bool);
     virtual void scroll(const IntSize&, const IntRect&, const IntRect&);
     virtual void cancelGeolocationPermissionRequestForFrame(Frame*);

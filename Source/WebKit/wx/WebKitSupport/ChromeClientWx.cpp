@@ -340,7 +340,7 @@ IntRect ChromeClientWx::windowResizerRect() const
     return IntRect();
 }
 
-void ChromeClientWx::invalidateWindow(const IntRect& rect, bool immediate)
+void ChromeClientWx::invalidateRootView(const IntRect& rect, bool immediate)
 {
     if (immediate)
         m_webView->Update();
@@ -348,10 +348,10 @@ void ChromeClientWx::invalidateWindow(const IntRect& rect, bool immediate)
 
 void ChromeClientWx::invalidateContentsForSlowScroll(const IntRect& rect, bool immediate)
 {
-    invalidateContentsAndWindow(rect, immediate);
+    invalidateContentsAndRootView(rect, immediate);
 }
 
-void ChromeClientWx::invalidateContentsAndWindow(const IntRect& rect, bool immediate)
+void ChromeClientWx::invalidateContentsAndRootView(const IntRect& rect, bool immediate)
 {
     if (!m_webView)
         return;

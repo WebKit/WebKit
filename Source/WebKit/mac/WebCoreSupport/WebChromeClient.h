@@ -88,8 +88,8 @@ public:
 
     virtual WebCore::IntRect windowResizerRect() const OVERRIDE;
 
-    virtual void invalidateWindow(const WebCore::IntRect&, bool) OVERRIDE;
-    virtual void invalidateContentsAndWindow(const WebCore::IntRect&, bool) OVERRIDE;
+    virtual void invalidateRootView(const WebCore::IntRect&, bool) OVERRIDE;
+    virtual void invalidateContentsAndRootView(const WebCore::IntRect&, bool) OVERRIDE;
     virtual void invalidateContentsForSlowScroll(const WebCore::IntRect&, bool) OVERRIDE;
     virtual void scroll(const WebCore::IntSize& scrollDelta, const WebCore::IntRect& rectToScroll, const WebCore::IntRect& clipRect) OVERRIDE;
 

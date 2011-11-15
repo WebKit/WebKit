@@ -71,14 +71,14 @@ Chrome::~Chrome()
     m_client->chromeDestroyed();
 }
 
-void Chrome::invalidateWindow(const IntRect& updateRect, bool immediate)
+void Chrome::invalidateRootView(const IntRect& updateRect, bool immediate)
 {
-    m_client->invalidateWindow(updateRect, immediate);
+    m_client->invalidateRootView(updateRect, immediate);
 }
 
-void Chrome::invalidateContentsAndWindow(const IntRect& updateRect, bool immediate)
+void Chrome::invalidateContentsAndRootView(const IntRect& updateRect, bool immediate)
 {
-    m_client->invalidateContentsAndWindow(updateRect, immediate);
+    m_client->invalidateContentsAndRootView(updateRect, immediate);
 }
 
 void Chrome::invalidateContentsForSlowScroll(const IntRect& updateRect, bool immediate)

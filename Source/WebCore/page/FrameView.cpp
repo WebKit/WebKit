@@ -377,7 +377,7 @@ void FrameView::invalidateRect(const IntRect& rect)
 {
     if (!parent()) {
         if (hostWindow())
-            hostWindow()->invalidateContentsAndWindow(rect, false /*immediate*/);
+            hostWindow()->invalidateContentsAndRootView(rect, false /*immediate*/);
         return;
     }
 
@@ -1452,7 +1452,7 @@ bool FrameView::scrollContentsFastPath(const IntSize& scrollDelta, const IntRect
         if (renderBox->style()->position() != FixedPosition)
             continue;
         IntRect updateRect = renderBox->layer()->repaintRectIncludingDescendants();
-        updateRect = contentsToWindow(updateRect);
+        updateRect = contentsToRootView(updateRect);
         if (!isCompositedContentLayer && clipsRepaints())
             updateRect.intersect(rectToScroll);
         if (!updateRect.isEmpty()) {
@@ -1478,7 +1478,7 @@ bool FrameView::scrollContentsFastPath(const IntSize& scrollDelta, const IntRect
             updateRect.unite(scrolledRect);
 #if USE(ACCELERATED_COMPOSITING)
             if (isCompositedContentLayer) {
-                updateRect = windowToContents(updateRect);
+                updateRect = rootViewToContents(updateRect);
                 RenderView* root = rootRenderer(this);
                 ASSERT(root);
                 root->layer()->setBackingNeedsRepaintInRect(updateRect);
@@ -1487,7 +1487,7 @@ bool FrameView::scrollContentsFastPath(const IntSize& scrollDelta, const IntRect
 #endif
             if (clipsRepaints())
                 updateRect.intersect(rectToScroll);
-            hostWindow()->invalidateContentsAndWindow(updateRect, false);
+            hostWindow()->invalidateContentsAndRootView(updateRect, false);
         }
         return true;
     }

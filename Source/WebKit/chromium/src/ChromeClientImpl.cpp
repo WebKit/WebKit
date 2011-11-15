@@ -506,12 +506,12 @@ void ChromeClientImpl::registerProtocolHandler(const String& scheme, const Strin
 }
 #endif
 
-void ChromeClientImpl::invalidateWindow(const IntRect&, bool)
+void ChromeClientImpl::invalidateRootView(const IntRect&, bool)
 {
     notImplemented();
 }
 
-void ChromeClientImpl::invalidateContentsAndWindow(const IntRect& updateRect, bool /*immediate*/)
+void ChromeClientImpl::invalidateContentsAndRootView(const IntRect& updateRect, bool /*immediate*/)
 {
     if (updateRect.isEmpty())
         return;
@@ -529,7 +529,7 @@ void ChromeClientImpl::invalidateContentsAndWindow(const IntRect& updateRect, bo
 void ChromeClientImpl::invalidateContentsForSlowScroll(const IntRect& updateRect, bool immediate)
 {
     m_webView->hidePopups();
-    invalidateContentsAndWindow(updateRect, immediate);
+    invalidateContentsAndRootView(updateRect, immediate);
 }
 
 #if ENABLE(REQUEST_ANIMATION_FRAME)
