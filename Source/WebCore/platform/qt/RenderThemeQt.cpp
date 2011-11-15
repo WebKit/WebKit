@@ -332,10 +332,6 @@ void RenderThemeQt::adjustMenuListStyle(CSSStyleSelector*, RenderStyle* style, E
 
 void RenderThemeQt::adjustMenuListButtonStyle(CSSStyleSelector*, RenderStyle* style, Element*) const
 {
-    // WORKAROUND because html.css specifies -webkit-border-radius for <select> so we override it here
-    // see also http://bugs.webkit.org/show_bug.cgi?id=18399
-    style->resetBorderRadius();
-
     // Height is locked to auto.
     style->setHeight(Length(Auto));
 

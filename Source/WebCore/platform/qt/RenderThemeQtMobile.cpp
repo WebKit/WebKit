@@ -553,20 +553,9 @@ bool RenderThemeQtMobile::paintTextField(RenderObject* o, const PaintInfo& i, co
     return false;
 }
 
-void RenderThemeQtMobile::adjustMenuListStyle(CSSStyleSelector*, RenderStyle* style, Element*) const
+void RenderThemeQtMobile::adjustMenuListStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const
 {
-    style->resetBorder();
-
-    // Height is locked to auto.
-    style->setHeight(Length(Auto));
-
-    // White-space is locked to pre
-    style->setWhiteSpace(PRE);
-
-    computeSizeBasedOnStyle(style);
-
-    // Add in the padding that we'd like to use.
-    setPopupPadding(style);
+    RenderThemeQt::adjustMenuListStyle(selector, style, e);
     style->setPaddingLeft(Length(menuListPadding, Fixed));
 }
 

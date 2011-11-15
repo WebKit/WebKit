@@ -382,19 +382,6 @@ bool RenderThemeQStyle::paintButton(RenderObject* o, const PaintInfo& i, const I
     return false;
 }
 
-void RenderThemeQStyle::adjustTextFieldStyle(CSSStyleSelector*, RenderStyle* style, Element*) const
-{
-    // Resetting the style like this leads to differences like:
-    // - RenderTextControl {INPUT} at (2,2) size 168x25 [bgcolor=#FFFFFF] border: (2px inset #000000)]
-    // + RenderTextControl {INPUT} at (2,2) size 166x26
-    // in layout tests when a CSS style is applied that doesn't affect background color, border or
-    // padding. Just worth keeping in mind!
-    style->setBackgroundColor(Color::transparent);
-    style->resetBorder();
-    style->resetPadding();
-    computeSizeBasedOnStyle(style);
-}
-
 bool RenderThemeQStyle::paintTextField(RenderObject* o, const PaintInfo& i, const IntRect& r)
 {
     StylePainterQStyle p(this, i);
@@ -477,22 +464,13 @@ bool RenderThemeQStyle::paintMenuList(RenderObject* o, const PaintInfo& i, const
     return false;
 }
 
-void RenderThemeQStyle::adjustMenuListButtonStyle(CSSStyleSelector*, RenderStyle* style, Element*) const
+void RenderThemeQStyle::adjustMenuListButtonStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const
 {
     // WORKAROUND because html.css specifies -webkit-border-radius for <select> so we override it here
     // see also http://bugs.webkit.org/show_bug.cgi?id=18399
     style->resetBorderRadius();
 
-    // Height is locked to auto.
-    style->setHeight(Length(Auto));
-
-    // White-space is locked to pre
-    style->setWhiteSpace(PRE);
-
-    computeSizeBasedOnStyle(style);
-
-    // Add in the padding that we'd like to use.
-    setPopupPadding(style);
+    RenderThemeQt::adjustMenuListButtonStyle(selector, style, e);
 }
 
 bool RenderThemeQStyle::paintMenuListButton(RenderObject* o, const PaintInfo& i,
@@ -638,20 +616,6 @@ bool RenderThemeQStyle::paintSearchField(RenderObject* o, const PaintInfo& pi,
                                      const IntRect& r)
 {
     return paintTextField(o, pi, r);
-}
-
-void RenderThemeQStyle::adjustSearchFieldStyle(CSSStyleSelector* selector, RenderStyle* style,
-                                           Element* e) const
-{
-    // Resetting the style like this leads to differences like:
-    // - RenderTextControl {INPUT} at (2,2) size 168x25 [bgcolor=#FFFFFF] border: (2px inset #000000)]
-    // + RenderTextControl {INPUT} at (2,2) size 166x26
-    // in layout tests when a CSS style is applied that doesn't affect background color, border or
-    // padding. Just worth keeping in mind!
-    style->setBackgroundColor(Color::transparent);
-    style->resetBorder();
-    style->resetPadding();
-    computeSizeBasedOnStyle(style);
 }
 
 void RenderThemeQStyle::adjustSearchFieldDecorationStyle(CSSStyleSelector* selector, RenderStyle* style,

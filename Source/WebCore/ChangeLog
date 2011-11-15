@@ -1,3 +1,21 @@
+2011-11-15  Pierre Rossi  <pierre.rossi@gmail.com>
+
+        [Qt] Clean up the remaining duplicate code after the RenderThemeQt refactoring.
+        https://bugs.webkit.org/show_bug.cgi?id=72262
+
+        Reviewed by Antonio Gomes.
+
+        No new tests needed, this is purely cosmetic.
+
+        * platform/qt/RenderThemeQStyle.cpp:
+        (WebCore::RenderThemeQStyle::adjustMenuListButtonStyle):
+        * platform/qt/RenderThemeQStyle.h:
+        * platform/qt/RenderThemeQt.cpp:
+        (WebCore::RenderThemeQt::adjustMenuListButtonStyle): remove the call to resetBorderRadius()
+        since the mobile theme actually didn't do this.
+        * platform/qt/RenderThemeQtMobile.cpp:
+        (WebCore::RenderThemeQtMobile::adjustMenuListStyle):
+
 2011-11-15  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: move generic code from DevTools.js into the WebCore.
