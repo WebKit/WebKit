@@ -249,8 +249,7 @@ sub isGitBranchBuild()
 sub isSVNDirectory($)
 {
     my ($dir) = @_;
-
-    return -d File::Spec->catdir($dir, ".svn");
+    return system("cd $dir && svn info > " . File::Spec->devnull() . " 2>&1") == 0;
 }
 
 sub isSVN()
