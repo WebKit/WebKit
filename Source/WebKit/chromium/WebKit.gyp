@@ -192,6 +192,8 @@
                 'public/WebFontCache.h',
                 'public/WebFormControlElement.h',
                 'public/WebFormElement.h',
+                'public/WebGamepad.h',
+                'public/WebGamepads.h',
                 'public/WebGeolocationClient.h',
                 'public/WebGeolocationClientMock.h',
                 'public/WebGeolocationController.h',

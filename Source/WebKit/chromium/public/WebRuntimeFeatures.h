@@ -118,6 +118,9 @@ public:
     WEBKIT_EXPORT static void enableVideoTrack(bool);
     WEBKIT_EXPORT static bool isVideoTrackEnabled();
 
+    WEBKIT_EXPORT static void enableGamepad(bool);
+    WEBKIT_EXPORT static bool isGamepadEnabled();
+
 private:
     WebRuntimeFeatures();
 };

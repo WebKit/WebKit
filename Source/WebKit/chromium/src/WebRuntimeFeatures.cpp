@@ -414,4 +414,22 @@ bool WebRuntimeFeatures::isVideoTrackEnabled()
 #endif
 }
 
+void WebRuntimeFeatures::enableGamepad(bool enable)
+{
+#if ENABLE(GAMEPAD)
+    RuntimeEnabledFeatures::setGamepadsEnabled(enable);
+#else
+    UNUSED_PARAM(enable);
+#endif
+}
+
+bool WebRuntimeFeatures::isGamepadEnabled()
+{
+#if ENABLE(GAMEPAD)
+    return RuntimeEnabledFeatures::gamepadsEnabled();
+#else
+    return false;
+#endif
+}
+
 } // namespace WebKit

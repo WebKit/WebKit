@@ -35,6 +35,7 @@
 #include "WebAudioDevice.h"
 #include "WebCommon.h"
 #include "WebData.h"
+#include "WebGamepads.h"
 #include "WebLocalizedString.h"
 #include "WebSerializedScriptValue.h"
 #include "WebString.h"
@@ -106,6 +107,11 @@ public:
     virtual void dispatchStorageEvent(const WebString& key, const WebString& oldValue,
                                       const WebString& newValue, const WebString& origin,
                                       const WebURL& url, bool isLocalStorage) { }
+
+
+    // Gamepad -------------------------------------------------------------
+
+    virtual void sampleGamepads(WebGamepads& into) { into.length = 0; }
 
 
     // History -------------------------------------------------------------

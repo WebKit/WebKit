@@ -1,3 +1,30 @@
+2011-11-15  Scott Graham  <scottmg@chromium.org>
+
+        [Chromium] gamepad changes to the public interface of Chromium port
+        https://bugs.webkit.org/show_bug.cgi?id=71518
+
+        Reviewed by Darin Fisher.
+
+        Adds stubs for Chromium port, and defines shared memory structure to
+        be used between browser and WebKit.
+
+        Includes just the parts that touch the public interface so they can be
+        reviewed separately. See also:
+        https://bugs.webkit.org/show_bug.cgi?id=69451 and
+        http://codereview.chromium.org/8345027
+
+        * WebKit.gyp:
+        * public/WebGamepad.h: Added.
+        (WebKit::WebGamepad::WebGamepad):
+        * public/WebGamepads.h: Added.
+        (WebKit::WebGamepads::WebGamepads):
+        * public/WebKitPlatformSupport.h:
+        (WebKit::WebKitPlatformSupport::sampleGamepads):
+        * public/WebRuntimeFeatures.h:
+        * src/WebRuntimeFeatures.cpp:
+        (WebKit::WebRuntimeFeatures::enableGamepad):
+        (WebKit::WebRuntimeFeatures::isGamepadEnabled):
+
 2011-11-14  Anders Carlsson  <andersca@apple.com>
 
         HostWindow invalidation functions should use root view coordinates
