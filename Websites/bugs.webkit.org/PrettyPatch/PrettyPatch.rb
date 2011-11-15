@@ -272,6 +272,7 @@ h1 :hover {
 
 .overallComments textarea {
   height: 2em;
+  max-width: 100%;
 }
 
 .comment textarea, .overallComments textarea {
