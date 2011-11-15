@@ -1613,3 +1613,12 @@ fast/dom/Window/window-property-descriptors.html
 fast/dom/Window/window-properties.html
 fast/dom/prototype-inheritance-2.html
 fast/dom/constructed-objects-prototypes.html
+
+# fast/dom/Window/window-postmessage-arrays.html fails on JSC platforms
+# https://bugs.webkit.org/show_bug.cgi?id=72363
+fast/dom/Window/window-postmessage-arrays.html
+
+# REGRESSION(r100182): It broke 2 http/tests/security tests
+# https://bugs.webkit.org/show_bug.cgi?id=72364
+http/tests/security/cross-frame-access-enumeration.html
+http/tests/security/postMessage/invalid-origin-throws-exception.html
