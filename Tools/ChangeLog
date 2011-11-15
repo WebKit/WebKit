@@ -1,3 +1,10 @@
+2011-11-15  Tony Chang  <tony@chromium.org>
+
+        Unreviewed fix of ref-tests on GTK+.
+        If a driver is never started, _xvfb_process is never set.
+
+        * Scripts/webkitpy/layout_tests/port/gtk.py:
+
 2011-11-14  Tony Chang  <tony@chromium.org>
 
         [NRWT] Reftests should run even when pixel tests are disabled.

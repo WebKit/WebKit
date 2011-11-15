@@ -57,9 +57,10 @@ class GtkDriver(WebKitDriver):
 
     def stop(self):
         WebKitDriver.stop(self)
-        # FIXME: This should use Executive.kill_process
-        os.kill(self._xvfb_process.pid, signal.SIGTERM)
-        self._xvfb_process.wait()
+        if getattr(self, '_xvfb_process', None):
+            # FIXME: This should use Executive.kill_process
+            os.kill(self._xvfb_process.pid, signal.SIGTERM)
+            self._xvfb_process.wait()
 
 
 class GtkPort(WebKitPort):
