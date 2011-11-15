@@ -68,13 +68,10 @@ static URLSchemesMap& schemesWithUniqueOrigins()
 {
     DEFINE_STATIC_LOCAL(URLSchemesMap, schemesWithUniqueOrigins, ());
 
-    if (schemesWithUniqueOrigins.isEmpty()) {
-        schemesWithUniqueOrigins.add("about");
-        schemesWithUniqueOrigins.add("javascript");
-        // This is a willful violation of HTML5.
-        // See https://bugs.webkit.org/show_bug.cgi?id=11885
+    // This is a willful violation of HTML5.
+    // See https://bugs.webkit.org/show_bug.cgi?id=11885
+    if (schemesWithUniqueOrigins.isEmpty())
         schemesWithUniqueOrigins.add("data");
-    }
 
     return schemesWithUniqueOrigins;
 }

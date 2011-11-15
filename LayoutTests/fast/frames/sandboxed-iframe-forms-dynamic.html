@@ -30,9 +30,9 @@ function disallowedFormSubmitted()
 window.onload = function() {
     frameElements = document.getElementsByTagName("iframe");
 
-    frameElements[0].sandbox = "allow-scripts allow-same-origin";
-    frameElements[1].sandbox = "allow-scripts allow-forms allow-same-origin";
-    frameElements[2].sandbox = "allow-scripts allow-same-origin";
+    frameElements[0].sandbox = "allow-scripts";
+    frameElements[1].sandbox = "allow-scripts allow-forms";
+    frameElements[2].sandbox = "allow-scripts";
 
     frames[0].postMessage("go", "*");
     frames[1].postMessage("go", "*");
@@ -45,15 +45,15 @@ window.onload = function() {
 <body>
 
     <iframe style="width: 60px; height: 60px;"
-        sandbox="allow-scripts allow-forms allow-same-origin"
+        sandbox="allow-scripts allow-forms"
         src="resources/sandboxed-iframe-form-dynamic-allowed.html">
     </iframe>
     <iframe style="width: 60px; height: 60px;"
-        sandbox="allow-scripts allow-same-origin"
+        sandbox="allow-scripts"
         src="resources/sandboxed-iframe-form-dynamic-disallowed.html">
     </iframe>
     <iframe style="width: 60px; height: 60px;"
-        sandbox="allow-scripts allow-forms allow-same-origin"
+        sandbox="allow-scripts allow-forms"
         src="resources/sandboxed-iframe-form-dynamic-allowed.html">
     </iframe>
 

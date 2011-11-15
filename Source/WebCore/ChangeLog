@@ -1,3 +1,16 @@
+2011-11-15  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r100213.
+        http://trac.webkit.org/changeset/100213
+        https://bugs.webkit.org/show_bug.cgi?id=72371
+
+        "Breaks test_shell_tests" (Requested by tonyg-cr on #webkit).
+
+        * page/SecurityOrigin.cpp:
+        (WebCore::SecurityOrigin::SecurityOrigin):
+        * platform/SchemeRegistry.cpp:
+        (WebCore::schemesWithUniqueOrigins):
+
 2011-11-15  Alpha Lam  <hclam@chromium.org>
 
         [chromium] scroll deltas are cleared during commit to the main thread

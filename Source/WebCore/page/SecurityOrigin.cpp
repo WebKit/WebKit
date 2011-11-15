@@ -41,7 +41,6 @@
 
 namespace WebCore {
 
-const int InvalidPort = 0;
 const int MaxAllowedPort = 65535;
 
 static bool schemeRequiresAuthority(const String& scheme)
@@ -66,6 +65,10 @@ SecurityOrigin::SecurityOrigin(const KURL& url, bool forceUnique)
     , m_domainWasSetInDOM(false)
     , m_enforceFilePathSeparation(false)
 {
+    // These protocols do not create security origins; the owner frame provides the origin
+    if (m_protocol == "about" || m_protocol == "javascript")
+        m_protocol = "";
+
 #if ENABLE(BLOB) || ENABLE(FILE_SYSTEM)
     bool isBlobOrFileSystemProtocol = false;
 #if ENABLE(BLOB)
@@ -90,7 +93,6 @@ SecurityOrigin::SecurityOrigin(const KURL& url, bool forceUnique)
     // For edge case URLs that were probably misparsed, make sure that the origin is unique.
     if (schemeRequiresAuthority(m_protocol) && m_host.isEmpty())
         m_isUnique = true;
-
     if (m_protocol.isEmpty())
         m_isUnique = true;
 
@@ -114,14 +116,7 @@ SecurityOrigin::SecurityOrigin(const KURL& url, bool forceUnique)
     }
 
     if (isDefaultPortForProtocol(m_port, m_protocol))
-        m_port = InvalidPort;
-
-    // Don't leak details from URLs into unique origins.
-    if (m_isUnique) {
-        m_protocol = "";
-        m_host = "";
-        m_port = InvalidPort;
-    }
+        m_port = 0;
 }
 
 SecurityOrigin::SecurityOrigin(const SecurityOrigin* other)
