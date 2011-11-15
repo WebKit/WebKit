@@ -1097,7 +1097,7 @@ BUGWK70748 CPU : svg/clip-path/clip-path-transform-2.svg = IMAGE
 BUGWK70748 CPU : svg/clip-path/clip-path-use-as-child.svg = IMAGE
 BUGWK70748 CPU : svg/clip-path/clip-path-userSpaceOnUse.svg = IMAGE
 BUGWK70748 CPU : svg/clip-path/clip-path-with-text-clipped.svg = IMAGE
-BUGWK70748 CPU LEOPARD : svg/css/text-shadow-multiple.xhtml = IMAGE
+BUGWK70748 CPU : svg/css/text-shadow-multiple.xhtml = IMAGE
 BUGWK70748 CPU : svg/custom/resource-invalidate-on-target-update.svg = IMAGE
 BUGWK70748 CPU : svg/custom/use-on-clip-path-with-transformation.svg = IMAGE
 BUGWK70748 CPU LEOPARD : svg/W3C-I18N/tspan-dirLTR-ubOverride-in-rtl-context.svg = IMAGE
@@ -1459,11 +1459,35 @@ BUGCR23473 MAC : fast/repaint/transform-translate.html = IMAGE
 BUGWK39966 LINUX : fast/repaint/table-cell-collapsed-border.html = IMAGE
 
 // Thicker shadow than expected
-BUGCR23471 LEOPARD : fast/text/stroking.html = IMAGE
+//BUGCR23471 LEOPARD : fast/text/stroking.html = IMAGE
 
 // -----------------------------------------------------------------
 // END MAC PORT TESTS
 // -----------------------------------------------------------------
+
+// Rebaseline to take advantage of skia ColorFilter optimization
+BUGCR104128 CPU : fast/box-shadow/box-shadow-radius.html = IMAGE
+BUGCR104128 CPU : fast/box-shadow/inset-box-shadow-radius.html = IMAGE
+BUGCR104128 CPU : fast/box-shadow/shadow-buffer-partial.html = IMAGE
+BUGCR104128 CPU : fast/canvas/shadow-offset-4.html = IMAGE
+BUGCR104128 CPU : fast/canvas/shadow-offset-5.html = IMAGE
+BUGCR104128 CPU : fast/canvas/shadow-offset-6.html = IMAGE
+BUGCR104128 CPU : fast/canvas/shadow-offset-7.html = IMAGE
+BUGCR104128 CPU : fast/repaint/box-shadow-h.html = IMAGE
+BUGCR104128 CPU : fast/repaint/box-shadow-v.html = IMAGE
+BUGCR104128 CPU : fast/repaint/moving-shadow-on-container.html = IMAGE
+BUGCR104128 CPU : fast/repaint/text-shadow-horizontal.html = IMAGE
+BUGCR104128 CPU : fast/repaint/text-shadow.html = IMAGE
+BUGCR104128 CPU : fast/text/shadow-no-blur.html = IMAGE
+BUGCR104128 CPU : fast/text/shadow-translucent-fill.html = IMAGE
+BUGCR104128 CPU : fast/text/stroking-decorations.html = IMAGE
+BUGCR104128 CPU : fast/text/stroking.html = IMAGE
+BUGCR104128 CPU : fast/writing-mode/english-lr-text.html = IMAGE
+BUGCR104128 CPU : svg/css/group-with-shadow.svg = IMAGE
+BUGCR104128 CPU : svg/css/shadow-with-large-radius.svg = IMAGE
+BUGCR104128 CPU : svg/css/shadow-with-negative-offset.svg = IMAGE
+BUGCR104128 CPU : svg/css/stars-with-shadow.html = IMAGE
+BUGCR104128 CPU : transitions/svg-text-shadow-transition.html = IMAGE
 
 // Linux pixeltest failure: alpha=0.5 red (1,0,0) atop yellow (1,1,0) is
 // coming out with with a slightly-less-than-100% red channel. This test fails
@@ -2283,10 +2307,6 @@ BUGCR57056 LINUX : svg/custom/circular-marker-reference-4.svg = PASS FAIL
 BUGWK46689 : fast/dom/HTMLElement/class-list.html = PASS TEXT
 
 // To be rebaselined when the new gdi-aa-text code finalizes
-BUGCR98248 WIN : fast/text/stroking-decorations.html = IMAGE
-BUGCR98248 WIN : fast/text/stroking.html = IMAGE
-BUGCR98248 WIN : fast/writing-mode/english-lr-text.html = IMAGE
-BUGCR98248 WIN : svg/css/group-with-shadow.svg = IMAGE
 BUGCR98248 WIN : svg/css/text-gradient-shadow.svg = IMAGE
 
 // Flaky since r68438:r68445 or before that.
@@ -3022,7 +3042,7 @@ BUGDPRANKE DEBUG : fast/css-generated-content/table-row-group-to-inline.html = P
 
 BUGDPRANKE : http/tests/navigation/lockedhistory-iframe.html = PASS TIMEOUT TEXT
 BUGDPRANKE : fast/parser/iframe-sets-parent-to-javascript-url.html = PASS TEXT
-BUGDPRANKE : fast/repaint/moving-shadow-on-path.html = PASS TEXT
+BUGDPRANKE : fast/repaint/moving-shadow-on-path.html = PASS TEXT IMAGE
 
 BUGDPRANKE WIN DEBUG : http/tests/misc/empty-file-formdata.html = PASS TIMEOUT
 BUGDPRANKE WIN DEBUG : http/tests/xmlhttprequest/access-control-preflight-headers-async.html = PASS TIMEOUT
@@ -3046,10 +3066,8 @@ BUGCR80301 LEOPARD : fast/canvas/canvas-largedraws.html = TIMEOUT
 BUGWK84665 : fast/dom/dataset-gc.html = TEXT
 
 BUGWK60115 LINUX WIN : fast/multicol/shadow-breaking.html = IMAGE
-BUGWK60115 WIN : fast/text/shadow-translucent-fill.html = IMAGE
-BUGWK60115 LEOPARD : fast/text/shadow-translucent-fill.html = IMAGE
+//BUGWK60115 LEOPARD : fast/text/shadow-translucent-fill.html = IMAGE
 BUGWK60115 MAC CPU-CG : fast/transforms/shadows.html = PASS IMAGE
-BUGWK60115 WIN : transitions/svg-text-shadow-transition.html = IMAGE
 BUGWK60115 WIN : svg/css/composite-shadow-text.svg = IMAGE
 BUGWK60115 WIN : svg/css/shadow-changes.svg = IMAGE
 
@@ -3204,7 +3222,7 @@ BUGCR83426 MAC : svg/dynamic-updates/SVGFETurbulenceElement-svgdom-type-prop.htm
 BUGCR83426 MAC : svg/filters/feLighting-crash.svg = PASS IMAGE
 
 BUGCR83499 : fast/box-shadow/scaled-box-shadow.html = PASS IMAGE+TEXT IMAGE
-BUGCR83499 MAC : fast/box-shadow/box-shadow-transformed.html = PASS IMAGE+TEXT IMAGE
+BUGCR83499 : fast/box-shadow/box-shadow-transformed.html = PASS IMAGE+TEXT IMAGE
 
 BUGCR83504 SLOW WIN : fast/css/custom-font-xheight.html = PASS TEXT
 BUGCR83504 MAC : fast/css/custom-font-xheight.html = PASS TEXT
@@ -3302,8 +3320,8 @@ BUGWK56591 GPU GPU-CG : compositing/rtl/rtl-relative.html = TEXT
 BUGWK63033 : svg/custom/absolute-root-position-masking.xhtml = IMAGE
 BUGWK63036 MAC : svg/dom/SVGTransformList-basics.xhtml = IMAGE
 
-BUGCR86974 : svg/css/composite-shadow-example.html = PASS TEXT
-BUGCR86974 : svg/css/composite-shadow-with-opacity.html = PASS TEXT
+BUGCR86974 : svg/css/composite-shadow-example.html = PASS TEXT IMAGE
+BUGCR86974 : svg/css/composite-shadow-with-opacity.html = PASS TEXT IMAGE
 
 BUGCR89282 SNOWLEOPARD : fast/forms/range/input-appearance-range.html = IMAGE
 
