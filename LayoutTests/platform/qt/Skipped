@@ -155,9 +155,6 @@ svg/custom/manually-parsed-embedded-svg-disallowed-in-dashboard.html
 svg/custom/manually-parsed-svg-disallowed-in-dashboard.html
 svg/custom/svg-disallowed-in-dashboard-object.html
 
-# New flexbox is not yet enabled. http://webkit.org/b/62048
-css3/flexbox
-
 # CSS Regions support not yet enabled. http://webkit.org/b/57312
 fast/regions
 

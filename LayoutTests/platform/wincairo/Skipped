@@ -1901,9 +1901,6 @@ fast/dom/HTMLAnchorElement/anchor-download.html
 fast/dom/HTMLAnchorElement/anchor-nodownload-set.html
 fast/dom/HTMLAnchorElement/anchor-download-unset.html
 
-# New flexbox is not yet enabled. http://webkit.org/b/62048
-css3/flexbox
-
 # CSS Regions support not yet enabled. http://webkit.org/b/57312
 fast/regions
 

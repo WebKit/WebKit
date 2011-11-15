@@ -3268,9 +3268,6 @@ BUGCR85292 : platform/chromium/permissionclient/storage-permission.html = PASS T
 
 BUGCR85293 LINUX : svg/text/foreignObject-text-clipping-bug.xml = PASS IMAGE
 
-// New flexbox is not yet enabled.
-BUGWK62048 SKIP : css3/flexbox = PASS
-
 // CSS Regions support not yet enabled.
 BUGWK57312 SKIP : fast/regions = PASS
 BUGWK70733 SKIP : fast/regions/render-region-custom-style-mark.html = FAIL
@@ -3876,6 +3873,10 @@ BUGWK72264 MAC : inspector/debugger/script-formatter.html = TIMEOUT
 BUGMSTARZINGER : fast/js/mozilla/strict/15.4.5.1.html = TEXT
 
 BUG_SENORBLANCO GPU : fast/canvas/canvas-transforms-fillRect-shadow.html = TEXT
+
+// Need to rebaseline on win and mac.
+BUG_TONY WIN MAC : css3/flexbox/repaint.html = PASS FAIL
+BUG_TONY WIN MAC : css3/flexbox/repaint-rtl-column.html = PASS FAIL
 
 BUGWK72149 : media/track/tracklist-is-reachable.html = TEXT
 BUGWK72269 : media/track/track-cues-cuechange.html = PASS TEXT
