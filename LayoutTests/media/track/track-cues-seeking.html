@@ -9,12 +9,26 @@
     <body>
         <p>Tests TextTrack's activeCues are indexed and updated during video playback.</p>
         <video controls>
-            <track id="testTrack" src="captions-webvtt/cues-overlapping.vtt" kind="subtitles">
+            <track id="testTrack" src="captions-webvtt/cues-overlapping.vtt" kind="subtitles" onload="loaded()">
         </video>
         <script>            
             
         var seekedCount = 0;
         var testTrack;
+        
+        var trackLoaded = false;
+        var videoCanPlayThrough = false;
+
+        function attemptTests() 
+        {
+            if (!trackLoaded || !videoCanPlayThrough)
+                return;
+
+            testTrack = document.getElementById("testTrack");
+            testExpected("testTrack.track.cues.length", 3);
+            run("video.currentTime = 0.5");
+            consoleWrite("");
+        }
 
         function seeked()
         {
@@ -38,12 +52,16 @@
         waitForEvent('canplaythrough',
             function () 
             {
-                testTrack = document.getElementById("testTrack");
-                testExpected("testTrack.track.cues.length", 3);
-                run("video.currentTime = 0.5");
-                consoleWrite("");
+                videoCanPlayThrough = true;
+                attemptTests();
             }
         );
+        
+        function loaded()
+        {
+            trackLoaded = true;
+            attemptTests();
+        }
 
         findMediaElement();
         video.src = findMediaFile("video", "../content/test");
