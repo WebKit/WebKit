@@ -2074,7 +2074,7 @@ PassRefPtr<TextMetrics> CanvasRenderingContext2D::measureText(const String& text
     return metrics.release();
 }
 
-void CanvasRenderingContext2D::drawTextInternal(const String& text, float x, float y, bool fill, float /*maxWidth*/, bool /*useMaxWidth*/)
+void CanvasRenderingContext2D::drawTextInternal(const String& text, float x, float y, bool fill, float maxWidth, bool useMaxWidth)
 {
     GraphicsContext* c = drawingContext();
     if (!c)
@@ -2083,13 +2083,14 @@ void CanvasRenderingContext2D::drawTextInternal(const String& text, float x, flo
         return;
     if (!isfinite(x) | !isfinite(y))
         return;
+    if (useMaxWidth && !isfinite(maxWidth))
+        return;
 
     FontCachePurgePreventer fontCachePurgePreventer;
 
     const Font& font = accessFont();
     const FontMetrics& fontMetrics = font.fontMetrics();
 
-    // FIXME: Handle maxWidth.
     // FIXME: Need to turn off font smoothing.
 
     RenderStyle* computedStyle = canvas()->computedStyle();
@@ -2121,7 +2122,10 @@ void CanvasRenderingContext2D::drawTextInternal(const String& text, float x, flo
         break;
     }
 
-    float width = font.width(TextRun(text, false, 0, 0, TextRun::AllowTrailingExpansion, direction, override));
+    float fontWidth = font.width(TextRun(text, false, 0, 0, TextRun::AllowTrailingExpansion, direction, override));
+
+    useMaxWidth = (useMaxWidth && maxWidth < fontWidth);
+    float width = useMaxWidth ? maxWidth : fontWidth;
 
     TextAlign align = state().m_textAlign;
     if (align == StartTextAlign)
@@ -2168,9 +2172,16 @@ void CanvasRenderingContext2D::drawTextInternal(const String& text, float x, flo
         }
 
         maskImageContext->setTextDrawingMode(fill ? TextModeFill : TextModeStroke);
-        maskImageContext->translate(-maskRect.x(), -maskRect.y());
 
-        maskImageContext->drawBidiText(font, textRun, location);
+        if (useMaxWidth) {
+            maskImageContext->translate(location.x() - maskRect.x(), location.y() - maskRect.y());
+            // We draw when fontWidth is 0 so compositing operations (eg, a "copy" op) still work.
+            maskImageContext->scale(FloatSize((fontWidth > 0 ? (width / fontWidth) : 0), 1));
+            maskImageContext->drawBidiText(font, textRun, FloatPoint(0, 0));
+        } else {
+            maskImageContext->translate(-maskRect.x(), -maskRect.y());
+            maskImageContext->drawBidiText(font, textRun, location);
+        }
 
         GraphicsContextStateSaver stateSaver(*c);
         c->clipToImageBuffer(maskImage.get(), maskRect);
@@ -2188,7 +2199,15 @@ void CanvasRenderingContext2D::drawTextInternal(const String& text, float x, flo
     Font::setCodePath(Font::Complex);
 #endif
 
-    c->drawBidiText(font, textRun, location);
+    if (useMaxWidth) {
+        GraphicsContextStateSaver stateSaver(*c);
+        c->translate(location.x(), location.y());
+        // We draw when fontWidth is 0 so compositing operations (eg, a "copy" op) still work.
+        c->scale(FloatSize((fontWidth > 0 ? (width / fontWidth) : 0), 1));
+        c->drawBidiText(font, textRun, FloatPoint(0, 0));
+        stateSaver.restore();
+    } else
+        c->drawBidiText(font, textRun, location);
 
     if (fill)
         didDraw(textRect);

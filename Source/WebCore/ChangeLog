@@ -1,3 +1,18 @@
+2011-11-15  Philip Rogers  <pdr@google.com>
+
+        Implement maxWidth for fillText and strokeText, fixing the canvas/philip/tests/2d.text.draw.fill.maxWidth.fontface.html test.
+        https://bugs.webkit.org/show_bug.cgi?id=61528
+
+        Reviewed by Stephen White.
+
+        Tests: fast/canvas/2d.text.draw.fill.maxWidth.gradient.html
+               fast/canvas/2d.text.draw.fill.maxWidth.negative.html
+               fast/canvas/2d.text.draw.fill.maxWidth.veryLarge.html
+               fast/canvas/2d.text.draw.fill.maxWidth.verySmall.html
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::drawTextInternal):
+
 2011-11-15  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Implement download support in WebKit2
