@@ -10,26 +10,41 @@
     and does not block the document's 'load' event.</p>
 
     <script>
+        var events = [];
+
         if (window.layoutTestController) {
             layoutTestController.dumpAsText();
             layoutTestController.setWillSendRequestReturnsNull(true);
         } else
-            consoleWrite("This test can only be run in DumpRenderTree!<br><br>");
+            consoleWrite("<b><em>This test can only be run in DumpRenderTree!</em></b><br><br>");
 
-        function loaded() 
+        function finish() 
         {
+            consoleWrite("EVENT(loadstart)");
+            consoleWrite("EVENT(error)");
             testExpected("video.error", null, "!=");
             testExpected("video.error.code", MediaError.MEDIA_ERR_SRC_NOT_SUPPORTED);
             testExpected("video.networkState", HTMLMediaElement.NETWORK_NO_SOURCE);
             consoleWrite("");
             endTest();
         };
-        
-        window.onload = loaded;
+
+        function handleEvent(evt)
+        {
+            // Wait until all three events we listen for have been received before testing.
+            // Media events are dispatched asynchronously so we can't assume they will fire
+            // before window.onload.
+            if (events.indexOf(evt.type) == -1)
+                events.push(evt.type);
+            if (events.length == 3)
+                finish();
+        }
 
         findMediaElement();
-        waitForEvent("loadstart");
-        waitForEvent("error");
+
+        window.addEventListener('load', handleEvent);
+        video.addEventListener('loadstart', handleEvent);
+        video.addEventListener('error', handleEvent);
 
         testExpected("video.networkState", HTMLMediaElement.NETWORK_EMPTY);
         consoleWrite("");
