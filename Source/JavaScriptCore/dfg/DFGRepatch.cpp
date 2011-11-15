@@ -28,7 +28,7 @@
 
 #if ENABLE(DFG_JIT)
 
-#include "DFGJITCodeGenerator.h"
+#include "DFGSpeculativeJIT.h"
 #include "LinkBuffer.h"
 #include "Operations.h"
 #include "RepatchBuffer.h"
@@ -118,7 +118,7 @@ static void generateProtoChainAccessStub(ExecState* exec, StructureStubInfo& stu
     bool needToRestoreScratch = false;
     
     if (scratchGPR == InvalidGPRReg) {
-        scratchGPR = JITCodeGenerator::selectScratchGPR(baseGPR, resultGPR);
+        scratchGPR = SpeculativeJIT::selectScratchGPR(baseGPR, resultGPR);
         stubJit.push(scratchGPR);
         needToRestoreScratch = true;
     }
@@ -176,7 +176,7 @@ static bool tryCacheGetByID(ExecState* exec, JSValue baseValue, const Identifier
         MacroAssembler stubJit;
         
         if (scratchGPR == InvalidGPRReg) {
-            scratchGPR = JITCodeGenerator::selectScratchGPR(baseGPR, resultGPR);
+            scratchGPR = SpeculativeJIT::selectScratchGPR(baseGPR, resultGPR);
             stubJit.push(scratchGPR);
             needToRestoreScratch = true;
         }
@@ -541,7 +541,7 @@ static bool tryCachePutByID(ExecState* exec, JSValue baseValue, const Identifier
             MacroAssembler::JumpList failureCases;
             
             if (scratchGPR == InvalidGPRReg) {
-                scratchGPR = JITCodeGenerator::selectScratchGPR(baseGPR, valueGPR);
+                scratchGPR = SpeculativeJIT::selectScratchGPR(baseGPR, valueGPR);
                 stubJit.push(scratchGPR);
                 needToRestoreScratch = true;
             }
@@ -557,9 +557,9 @@ static bool tryCachePutByID(ExecState* exec, JSValue baseValue, const Identifier
 
 #if ENABLE(GGC) || ENABLE(WRITE_BARRIER_PROFILING)
             // Must always emit this write barrier as the structure transition itself requires it
-            GPRReg scratch2 = JITCodeGenerator::selectScratchGPR(baseGPR, valueGPR, scratchGPR);
+            GPRReg scratch2 = SpeculativeJIT::selectScratchGPR(baseGPR, valueGPR, scratchGPR);
             stubJit.push(scratch2);
-            JITCodeGenerator::writeBarrier(stubJit, baseGPR, scratchGPR, scratch2, WriteBarrierForPropertyAccess);
+            SpeculativeJIT::writeBarrier(stubJit, baseGPR, scratchGPR, scratch2, WriteBarrierForPropertyAccess);
             stubJit.pop(scratch2);
 #endif
 

@@ -130,10 +130,6 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/dfg/DFGGraph.cpp \
 	Source/JavaScriptCore/dfg/DFGGraph.h \
 	Source/JavaScriptCore/dfg/DFGIntrinsic.h \
-	Source/JavaScriptCore/dfg/DFGJITCodeGenerator32_64.cpp \
-	Source/JavaScriptCore/dfg/DFGJITCodeGenerator64.cpp \
-	Source/JavaScriptCore/dfg/DFGJITCodeGenerator.cpp \
-	Source/JavaScriptCore/dfg/DFGJITCodeGenerator.h \
 	Source/JavaScriptCore/dfg/DFGJITCompiler.cpp \
 	Source/JavaScriptCore/dfg/DFGJITCompiler.h \
 	Source/JavaScriptCore/dfg/DFGJITCompilerInlineMethods.h \

@@ -37,7 +37,7 @@ namespace JSC {
     class SourceCode;
     class VPtrHackExecutable;
     namespace DFG {
-    class JITCodeGenerator;
+    class SpeculativeJIT;
     class JITCompiler;
     }
 
@@ -47,7 +47,7 @@ namespace JSC {
 
     class JSFunction : public JSNonFinalObject {
         friend class JIT;
-        friend class DFG::JITCodeGenerator;
+        friend class DFG::SpeculativeJIT;
         friend class DFG::JITCompiler;
         friend class JSGlobalData;
 

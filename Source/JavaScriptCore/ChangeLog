@@ -1,5 +1,199 @@
 2011-11-14  Filip Pizlo  <fpizlo@apple.com>
 
+        DFG::SpeculativeJIT and DFG::JITCodeGenerator should be combined
+        https://bugs.webkit.org/show_bug.cgi?id=72348
+
+        Reviewed by Gavin Barraclough.
+        
+        Moved all of JITCodeGenerator into SpeculativeJIT.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Target.pri:
+        * dfg/DFGJITCodeGenerator.cpp: Removed.
+        * dfg/DFGJITCodeGenerator.h: Removed.
+        * dfg/DFGJITCodeGenerator32_64.cpp: Removed.
+        * dfg/DFGJITCodeGenerator64.cpp: Removed.
+        * dfg/DFGJITCompiler.cpp:
+        * dfg/DFGRepatch.cpp:
+        (JSC::DFG::generateProtoChainAccessStub):
+        (JSC::DFG::tryCacheGetByID):
+        (JSC::DFG::tryCachePutByID):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::clearGenerationInfo):
+        (JSC::DFG::SpeculativeJIT::fillStorage):
+        (JSC::DFG::SpeculativeJIT::useChildren):
+        (JSC::DFG::SpeculativeJIT::isStrictInt32):
+        (JSC::DFG::SpeculativeJIT::isKnownInteger):
+        (JSC::DFG::SpeculativeJIT::isKnownNumeric):
+        (JSC::DFG::SpeculativeJIT::isKnownCell):
+        (JSC::DFG::SpeculativeJIT::isKnownNotCell):
+        (JSC::DFG::SpeculativeJIT::isKnownNotInteger):
+        (JSC::DFG::SpeculativeJIT::isKnownNotNumber):
+        (JSC::DFG::SpeculativeJIT::isKnownBoolean):
+        (JSC::DFG::SpeculativeJIT::writeBarrier):
+        (JSC::DFG::SpeculativeJIT::markCellCard):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeCompare):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeStrictEq):
+        (JSC::DFG::dataFormatString):
+        (JSC::DFG::SpeculativeJIT::dump):
+        (JSC::DFG::SpeculativeJIT::checkConsistency):
+        (JSC::DFG::GPRTemporary::GPRTemporary):
+        (JSC::DFG::GPRTemporary::adopt):
+        (JSC::DFG::FPRTemporary::FPRTemporary):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::at):
+        (JSC::DFG::SpeculativeJIT::lock):
+        (JSC::DFG::SpeculativeJIT::unlock):
+        (JSC::DFG::SpeculativeJIT::canReuse):
+        (JSC::DFG::SpeculativeJIT::reuse):
+        (JSC::DFG::SpeculativeJIT::allocate):
+        (JSC::DFG::SpeculativeJIT::tryAllocate):
+        (JSC::DFG::SpeculativeJIT::fprAllocate):
+        (JSC::DFG::SpeculativeJIT::isFilled):
+        (JSC::DFG::SpeculativeJIT::isFilledDouble):
+        (JSC::DFG::SpeculativeJIT::use):
+        (JSC::DFG::SpeculativeJIT::selectScratchGPR):
+        (JSC::DFG::SpeculativeJIT::silentSpillGPR):
+        (JSC::DFG::SpeculativeJIT::silentSpillFPR):
+        (JSC::DFG::SpeculativeJIT::silentFillGPR):
+        (JSC::DFG::SpeculativeJIT::silentFillFPR):
+        (JSC::DFG::SpeculativeJIT::silentSpillAllRegisters):
+        (JSC::DFG::SpeculativeJIT::silentFillAllRegisters):
+        (JSC::DFG::SpeculativeJIT::boxDouble):
+        (JSC::DFG::SpeculativeJIT::unboxDouble):
+        (JSC::DFG::SpeculativeJIT::spill):
+        (JSC::DFG::SpeculativeJIT::isConstant):
+        (JSC::DFG::SpeculativeJIT::isJSConstant):
+        (JSC::DFG::SpeculativeJIT::isInt32Constant):
+        (JSC::DFG::SpeculativeJIT::isDoubleConstant):
+        (JSC::DFG::SpeculativeJIT::isNumberConstant):
+        (JSC::DFG::SpeculativeJIT::isBooleanConstant):
+        (JSC::DFG::SpeculativeJIT::isFunctionConstant):
+        (JSC::DFG::SpeculativeJIT::valueOfInt32Constant):
+        (JSC::DFG::SpeculativeJIT::valueOfNumberConstant):
+        (JSC::DFG::SpeculativeJIT::addressOfDoubleConstant):
+        (JSC::DFG::SpeculativeJIT::valueOfJSConstant):
+        (JSC::DFG::SpeculativeJIT::valueOfBooleanConstant):
+        (JSC::DFG::SpeculativeJIT::valueOfFunctionConstant):
+        (JSC::DFG::SpeculativeJIT::isNullConstant):
+        (JSC::DFG::SpeculativeJIT::identifier):
+        (JSC::DFG::SpeculativeJIT::flushRegisters):
+        (JSC::DFG::SpeculativeJIT::isFlushed):
+        (JSC::DFG::SpeculativeJIT::valueOfJSConstantAsImmPtr):
+        (JSC::DFG::SpeculativeJIT::bitOp):
+        (JSC::DFG::SpeculativeJIT::shiftOp):
+        (JSC::DFG::SpeculativeJIT::detectPeepHoleBranch):
+        (JSC::DFG::SpeculativeJIT::addressOfCallData):
+        (JSC::DFG::SpeculativeJIT::tagOfCallData):
+        (JSC::DFG::SpeculativeJIT::payloadOfCallData):
+        (JSC::DFG::SpeculativeJIT::integerResult):
+        (JSC::DFG::SpeculativeJIT::noResult):
+        (JSC::DFG::SpeculativeJIT::cellResult):
+        (JSC::DFG::SpeculativeJIT::booleanResult):
+        (JSC::DFG::SpeculativeJIT::jsValueResult):
+        (JSC::DFG::SpeculativeJIT::storageResult):
+        (JSC::DFG::SpeculativeJIT::doubleResult):
+        (JSC::DFG::SpeculativeJIT::initConstantInfo):
+        (JSC::DFG::SpeculativeJIT::resetCallArguments):
+        (JSC::DFG::SpeculativeJIT::addCallArgument):
+        (JSC::DFG::SpeculativeJIT::setupArguments):
+        (JSC::DFG::SpeculativeJIT::setupArgumentsExecState):
+        (JSC::DFG::SpeculativeJIT::setupArgumentsWithExecState):
+        (JSC::DFG::SpeculativeJIT::setupTwoStubArgs):
+        (JSC::DFG::SpeculativeJIT::setupStubArguments):
+        (JSC::DFG::SpeculativeJIT::callOperation):
+        (JSC::DFG::SpeculativeJIT::appendCallWithExceptionCheck):
+        (JSC::DFG::SpeculativeJIT::appendCallWithExceptionCheckSetResult):
+        (JSC::DFG::SpeculativeJIT::setupResults):
+        (JSC::DFG::SpeculativeJIT::appendCallSetResult):
+        (JSC::DFG::SpeculativeJIT::addBranch):
+        (JSC::DFG::SpeculativeJIT::linkBranches):
+        (JSC::DFG::SpeculativeJIT::block):
+        (JSC::DFG::SpeculativeJIT::checkConsistency):
+        (JSC::DFG::SpeculativeJIT::BranchRecord::BranchRecord):
+        (JSC::DFG::IntegerOperand::IntegerOperand):
+        (JSC::DFG::IntegerOperand::~IntegerOperand):
+        (JSC::DFG::IntegerOperand::index):
+        (JSC::DFG::IntegerOperand::format):
+        (JSC::DFG::IntegerOperand::gpr):
+        (JSC::DFG::IntegerOperand::use):
+        (JSC::DFG::DoubleOperand::DoubleOperand):
+        (JSC::DFG::DoubleOperand::~DoubleOperand):
+        (JSC::DFG::DoubleOperand::index):
+        (JSC::DFG::DoubleOperand::fpr):
+        (JSC::DFG::DoubleOperand::use):
+        (JSC::DFG::JSValueOperand::JSValueOperand):
+        (JSC::DFG::JSValueOperand::~JSValueOperand):
+        (JSC::DFG::JSValueOperand::index):
+        (JSC::DFG::JSValueOperand::gpr):
+        (JSC::DFG::JSValueOperand::jsValueRegs):
+        (JSC::DFG::JSValueOperand::isDouble):
+        (JSC::DFG::JSValueOperand::fill):
+        (JSC::DFG::JSValueOperand::tagGPR):
+        (JSC::DFG::JSValueOperand::payloadGPR):
+        (JSC::DFG::JSValueOperand::fpr):
+        (JSC::DFG::JSValueOperand::use):
+        (JSC::DFG::StorageOperand::StorageOperand):
+        (JSC::DFG::StorageOperand::~StorageOperand):
+        (JSC::DFG::StorageOperand::index):
+        (JSC::DFG::StorageOperand::gpr):
+        (JSC::DFG::StorageOperand::use):
+        (JSC::DFG::GPRTemporary::~GPRTemporary):
+        (JSC::DFG::GPRTemporary::gpr):
+        (JSC::DFG::FPRTemporary::~FPRTemporary):
+        (JSC::DFG::FPRTemporary::fpr):
+        (JSC::DFG::FPRTemporary::FPRTemporary):
+        (JSC::DFG::GPRResult::GPRResult):
+        (JSC::DFG::GPRResult2::GPRResult2):
+        (JSC::DFG::FPRResult::FPRResult):
+        (JSC::DFG::FPRResult::lockedResult):
+        (JSC::DFG::SpeculativeJIT::SpeculativeJIT):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::fillInteger):
+        (JSC::DFG::SpeculativeJIT::fillDouble):
+        (JSC::DFG::SpeculativeJIT::fillJSValue):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeValueToNumber):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeValueToInt32):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeUInt32ToNumber):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeKnownConstantArithOp):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeBasicArithOp):
+        (JSC::DFG::SpeculativeJIT::cachedGetById):
+        (JSC::DFG::SpeculativeJIT::cachedPutById):
+        (JSC::DFG::SpeculativeJIT::cachedGetMethod):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeNonPeepholeCompareNull):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativePeepholeBranchNull):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeCompareNull):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativePeepholeBranch):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeNonPeepholeCompare):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativePeepholeStrictEq):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeNonPeepholeStrictEq):
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::fillInteger):
+        (JSC::DFG::SpeculativeJIT::fillDouble):
+        (JSC::DFG::SpeculativeJIT::fillJSValue):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeValueToNumber):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeValueToInt32):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeUInt32ToNumber):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeKnownConstantArithOp):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeBasicArithOp):
+        (JSC::DFG::SpeculativeJIT::cachedGetById):
+        (JSC::DFG::SpeculativeJIT::cachedPutById):
+        (JSC::DFG::SpeculativeJIT::cachedGetMethod):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeNonPeepholeCompareNull):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativePeepholeBranchNull):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeCompareNull):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativePeepholeBranch):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeNonPeepholeCompare):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativePeepholeStrictEq):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeNonPeepholeStrictEq):
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        * runtime/JSFunction.h:
+
+2011-11-14  Filip Pizlo  <fpizlo@apple.com>
+
         Weak reference harvesters should run to fixpoint
         https://bugs.webkit.org/show_bug.cgi?id=72346
 

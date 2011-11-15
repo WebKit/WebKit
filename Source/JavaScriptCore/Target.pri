@@ -89,9 +89,6 @@ SOURCES += \
     dfg/DFGCorrectableJumpPoint.cpp \
     dfg/DFGDriver.cpp \
     dfg/DFGGraph.cpp \
-    dfg/DFGJITCodeGenerator.cpp \
-    dfg/DFGJITCodeGenerator32_64.cpp \
-    dfg/DFGJITCodeGenerator64.cpp \
     dfg/DFGJITCompiler.cpp \
     dfg/DFGOperations.cpp \
     dfg/DFGOSREntry.cpp \
