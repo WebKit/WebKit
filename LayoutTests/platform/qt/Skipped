@@ -2474,3 +2474,11 @@ fast/dom/Window/window-postmessage-arrays.html
 # https://bugs.webkit.org/show_bug.cgi?id=72364
 http/tests/security/cross-frame-access-enumeration.html
 http/tests/security/postMessage/invalid-origin-throws-exception.html
+
+# [Qt] editing/pasteboard/data-transfer-items-image-png.html is failing due to DataTransferItems for image/png not being implemented
+# https://bugs.webkit.org/show_bug.cgi?id=72430
+editing/pasteboard/data-transfer-items-image-png.html
+
+# [Qt] fast/forms/file/file-input-reset.html failing on Qt
+# https://bugs.webkit.org/show_bug.cgi?id=72429
+fast/forms/file/file-input-reset.html
