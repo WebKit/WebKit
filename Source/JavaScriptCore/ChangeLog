@@ -1,3 +1,12 @@
+2011-11-14  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Add --css-grid-layout to build-webkit and the build systems
+        https://bugs.webkit.org/show_bug.cgi?id=72320
+
+        Reviewed by Ojan Vafai.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2011-11-14  Geoffrey Garen  <ggaren@apple.com>
 
         A little bit of arguments / activation cleanup
