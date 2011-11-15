@@ -1,3 +1,15 @@
+2011-11-15  Jessie Berlin  <jberlin@apple.com>
+
+        NSURLRequest leak beneath ResourceRequest::setStorageSession seen on Leaks bot.
+        https://bugs.webkit.org/show_bug.cgi?id=72419
+
+        Reviewed by Adam Roben.
+
+        Adopt the copied NSURLRequest.
+
+        * platform/network/mac/ResourceRequestMac.mm:
+        (WebCore::ResourceRequest::setStorageSession):
+
 2011-11-15  John Bates  <jbates@google.com>
 
         Page/layer flashes after GPU-accelerated CSS transition
