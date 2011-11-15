@@ -1,0 +1,10 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x320
+  RenderBlock {HTML} at (0,0) size 800x320
+    RenderBody {BODY} at (8,8) size 784x304
+      RenderBlock (anonymous) at (0,0) size 784x154
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {DIV} at (0,154) size 150x150 [bgcolor=#99FF99]
+layer at (8,8) size 150x150
+  RenderEmbeddedObject {EMBED} at (0,0) size 150x150
