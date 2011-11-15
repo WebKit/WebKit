@@ -189,18 +189,19 @@ enum SerializationTag {
     FileTag = 'f', // file:RawFile -> File (ref)
     FileListTag = 'l', // length:uint32_t, files:RawFile[length] -> FileList (ref)
     ImageDataTag = '#', // width:uint32_t, height:uint32_t, pixelDataLength:uint32_t, data:byte[pixelDataLength] -> ImageData (ref)
-    ArrayTag = '[', // length:uint32_t -> pops the last array from the open stack;
-                    //                    fills it with the last length elements pushed on the deserialization stack
     ObjectTag = '{', // numProperties:uint32_t -> pops the last object from the open stack;
                      //                           fills it with the last numProperties name,value pairs pushed onto the deserialization stack
     SparseArrayTag = '@', // numProperties:uint32_t, length:uint32_t -> pops the last object from the open stack;
                           //                                            fills it with the last numProperties name,value pairs pushed onto the deserialization stack
+    DenseArrayTag = '$', // numProperties:uint32_t, length:uint32_t -> pops the last object from the open stack;
+                         //                                            fills it with the last length elements and numProperties name,value pairs pushed onto deserialization stack
     RegExpTag = 'R', // pattern:RawString, flags:uint32_t -> RegExp (ref)
     ArrayBufferTag = 'B', // byteLength:uint32_t, data:byte[byteLength] -> ArrayBuffer (ref)
     ArrayBufferViewTag = 'V', // subtag:byte, byteOffset:uint32_t, byteLength:uint32_t -> ArrayBufferView (ref). Consumes an ArrayBuffer from the top of the deserialization stack.
     ObjectReferenceTag = '^', // ref:uint32_t -> reference table[ref]
     GenerateFreshObjectTag = 'o', // -> empty object allocated an object ID and pushed onto the open stack (ref)
-    GenerateFreshArrayTag = 'a', // length:uint32_t -> empty array[length] allocated an object ID and pushed onto the open stack (ref)
+    GenerateFreshSparseArrayTag = 'a', // length:uint32_t -> empty array[length] allocated an object ID and pushed onto the open stack (ref)
+    GenerateFreshDenseArrayTag = 'A', // length:uint32_t -> empty array[length] allocated an object ID and pushed onto the open stack (ref)
     ReferenceCountTag = '?', // refTableSize:uint32_t -> If the reference table is not refTableSize big, fails.
     StringObjectTag = 's', //  string:RawString -> new String(string) (ref)
     NumberObjectTag = 'n', // value:double -> new Number(value) (ref)
@@ -437,12 +438,6 @@ public:
         doWriteUint32(index);
     }
 
-    void writeArray(uint32_t length)
-    {
-        append(ArrayTag);
-        doWriteUint32(length);
-    }
-
     void writeObjectReference(uint32_t reference)
     {
         append(ObjectReferenceTag);
@@ -458,6 +453,13 @@ public:
     void writeSparseArray(uint32_t numProperties, uint32_t length)
     {
         append(SparseArrayTag);
+        doWriteUint32(numProperties);
+        doWriteUint32(length);
+    }
+
+    void writeDenseArray(uint32_t numProperties, uint32_t length)
+    {
+        append(DenseArrayTag);
         doWriteUint32(numProperties);
         doWriteUint32(length);
     }
@@ -479,11 +481,18 @@ public:
         append(GenerateFreshObjectTag);
     }
 
-    void writeGenerateFreshArray(uint32_t length)
+    void writeGenerateFreshSparseArray(uint32_t length)
     {
-        append(GenerateFreshArrayTag);
+        append(GenerateFreshSparseArrayTag);
         doWriteUint32(length);
     }
+
+    void writeGenerateFreshDenseArray(uint32_t length)
+    {
+        append(GenerateFreshDenseArrayTag);
+        doWriteUint32(length);
+    }
+
 
 private:
     void doWriteArrayBuffer(const ArrayBuffer& arrayBuffer)
@@ -622,12 +631,6 @@ public:
         return handleError(JSFailure, state);
     }
 
-    StateBase* writeArray(uint32_t length, StateBase* state)
-    {
-        m_writer.writeArray(length);
-        return pop(state);
-    }
-
     StateBase* writeObject(uint32_t numProperties, StateBase* state)
     {
         m_writer.writeObject(numProperties);
@@ -639,6 +642,13 @@ public:
         m_writer.writeSparseArray(numProperties, length);
         return pop(state);
     }
+
+    StateBase* writeDenseArray(uint32_t numProperties, uint32_t length, StateBase* state)
+    {
+        m_writer.writeDenseArray(numProperties, length);
+        return pop(state);
+    }
+
 
 private:
     class StateBase {
@@ -700,34 +710,6 @@ private:
         }
     };
 
-#if 0
-    // Currently unused, see comment in newArrayState.
-    class ArrayState : public State<v8::Array> {
-    public:
-        ArrayState(v8::Handle<v8::Array> array, StateBase* next)
-            : State<v8::Array>(array, next)
-            , m_index(-1)
-        {
-        }
-
-        virtual StateBase* advance(Serializer& serializer)
-        {
-            ++m_index;
-            for (; m_index < composite()->Length(); ++m_index) {
-                v8::Handle<v8::Value> value = composite()->Get(m_index);
-                if (StateBase* newState = serializer.checkException(this))
-                    return newState;
-                if (StateBase* newState = serializer.doSerialize(value, this))
-                    return newState;
-            }
-            return serializer.writeArray(composite()->Length(), this);
-        }
-
-    private:
-        unsigned m_index;
-    };
-#endif
-
     class AbstractObjectState : public State<v8::Object> {
     public:
         AbstractObjectState(v8::Handle<v8::Object> object, StateBase* next)
@@ -739,16 +721,14 @@ private:
         {
         }
 
-        virtual StateBase* advance(Serializer& serializer)
+        virtual uint32_t execDepth() const { return m_isSerializingAccessor ? 1 : 0; }
+
+    protected:
+        virtual StateBase* objectDone(unsigned numProperties, Serializer&) = 0;
+
+        StateBase* serializeProperties(bool ignoreIndexed, Serializer& serializer) 
         {
             m_isSerializingAccessor = false;
-            if (!m_index) {
-                m_propertyNames = composite()->GetPropertyNames();
-                if (StateBase* newState = serializer.checkException(this))
-                    return newState;
-                if (m_propertyNames.IsEmpty())
-                    return serializer.reportFailure(this);
-            }
             while (m_index < m_propertyNames->Length()) {
                 bool isAccessor = false;
                 if (!m_nameDone) {
@@ -766,7 +746,7 @@ private:
                     isAccessor = hasStringProperty && composite()->HasRealNamedCallbackProperty(propertyName.As<v8::String>());
                     if (StateBase* newState = serializer.checkException(this))
                         return newState;
-                    if (hasStringProperty || hasIndexedProperty)
+                    if (hasStringProperty || (hasIndexedProperty && !ignoreIndexed))
                         m_propertyName = propertyName;
                     else {
                         ++m_index;
@@ -799,13 +779,9 @@ private:
             return objectDone(m_numSerializedProperties, serializer);
         }
 
-        virtual uint32_t execDepth() const { return m_isSerializingAccessor ? 1 : 0; }
-
-    protected:
-        virtual StateBase* objectDone(unsigned numProperties, Serializer&) = 0;
+        v8::Local<v8::Array> m_propertyNames;
 
     private:
-        v8::Local<v8::Array> m_propertyNames;
         v8::Local<v8::Value> m_propertyName;
         unsigned m_index;
         unsigned m_numSerializedProperties;
@@ -822,6 +798,18 @@ private:
         {
         }
 
+        virtual StateBase* advance(Serializer& serializer)
+        {
+            if (m_propertyNames.IsEmpty()) {
+                m_propertyNames = composite()->GetPropertyNames();
+                if (StateBase* newState = serializer.checkException(this))
+                    return newState;
+                if (m_propertyNames.IsEmpty())
+                    return serializer.reportFailure(this);
+            }
+            return serializeProperties(false, serializer);
+        }
+
     protected:
         virtual StateBase* objectDone(unsigned numProperties, Serializer& serializer)
         {
@@ -829,11 +817,51 @@ private:
         }
     };
 
+    class DenseArrayState : public AbstractObjectState {
+    public:
+        DenseArrayState(v8::Handle<v8::Array> array, v8::Handle<v8::Array> propertyNames, StateBase* next)
+            : AbstractObjectState(array, next)
+            , m_arrayIndex(0)
+            , m_arrayLength(array->Length())
+        {
+            m_propertyNames = v8::Local<v8::Array>::New(propertyNames);
+        }
+
+        virtual StateBase* advance(Serializer& serializer)
+        {
+            while (m_arrayIndex < m_arrayLength) {
+                v8::Handle<v8::Value> value = composite().As<v8::Array>()->Get(m_arrayIndex);
+                m_arrayIndex++;
+                if (StateBase* newState = serializer.checkException(this))
+                    return newState;
+                if (StateBase* newState = serializer.doSerialize(value, this))
+                    return newState;
+            }
+            return serializeProperties(true, serializer);
+        }
+
+    protected:
+        virtual StateBase* objectDone(unsigned numProperties, Serializer& serializer)
+        {
+            return serializer.writeDenseArray(numProperties, m_arrayLength, this);
+        }
+
+    private:
+        uint32_t m_arrayIndex;
+        uint32_t m_arrayLength;
+    };
+
     class SparseArrayState : public AbstractObjectState {
     public:
-        SparseArrayState(v8::Handle<v8::Array> array, StateBase* next)
+        SparseArrayState(v8::Handle<v8::Array> array, v8::Handle<v8::Array> propertyNames, StateBase* next)
             : AbstractObjectState(array, next)
         {
+            m_propertyNames = v8::Local<v8::Array>::New(propertyNames);
+        }
+
+        virtual StateBase* advance(Serializer& serializer) 
+        {
+            return serializeProperties(false, serializer);
         }
 
     protected:
@@ -994,17 +1022,36 @@ private:
         m_writer.writeArrayBuffer(*arrayBuffer);
     }
 
-    static StateBase* newArrayState(v8::Handle<v8::Array> array, StateBase* next)
+    static bool shouldSerializeDensely(uint32_t length, uint32_t propertyCount) 
     {
-        // FIXME: use plain Array state when we can quickly check that
-        // an array is not sparse and has only indexed properties.
-        return new SparseArrayState(array, next);
+        // Let K be the cost of serializing all property values that are there
+        // Cost of serializing sparsely: 5*propertyCount + K (5 bytes per uint32_t key)
+        // Cost of serializing densely: K + 1*(length - propertyCount) (1 byte for all properties that are not there)
+        // so densely is better than sparsly whenever 6*propertyCount > length
+        return 6 * propertyCount >= length;
     }
 
-    static StateBase* newObjectState(v8::Handle<v8::Object> object, StateBase* next)
+    StateBase* startArrayState(v8::Handle<v8::Array> array, StateBase* next)
     {
+        v8::Handle<v8::Array> propertyNames = array->GetPropertyNames();
+        if (StateBase* newState = checkException(next))
+            return newState;
+        uint32_t length = array->Length();
+
+        if (shouldSerializeDensely(length, propertyNames->Length())) {
+            m_writer.writeGenerateFreshDenseArray(length);
+            return push(new DenseArrayState(array, propertyNames, next));
+        }
+
+        m_writer.writeGenerateFreshSparseArray(length);
+        return push(new SparseArrayState(array, propertyNames, next));
+    }
+
+    StateBase* startObjectState(v8::Handle<v8::Object> object, StateBase* next)
+    {
+        m_writer.writeGenerateFreshObject();
         // FIXME: check not a wrapper
-        return new ObjectState(object, next);
+        return push(new ObjectState(object, next));
     }
 
     // Marks object as having been visited by the serializer and assigns it a unique object reference ID.
@@ -1082,8 +1129,7 @@ Serializer::StateBase* Serializer::doSerialize(v8::Handle<v8::Value> value, Stat
         else if (value->IsBooleanObject())
             writeBooleanObject(value);
         else if (value->IsArray()) {
-            m_writer.writeGenerateFreshArray(value.As<v8::Array>()->Length());
-            return push(newArrayState(value.As<v8::Array>(), next));
+            return startArrayState(value.As<v8::Array>(), next);
         } else if (V8File::HasInstance(value))
             writeFile(value);
         else if (V8Blob::HasInstance(value))
@@ -1099,8 +1145,7 @@ Serializer::StateBase* Serializer::doSerialize(v8::Handle<v8::Value> value, Stat
         else if (value->IsObject()) {
             if (isHostObject(jsObject) || jsObject->IsCallable() || value->IsNativeError())
                 return handleError(DataCloneError, next);
-            m_writer.writeGenerateFreshObject();
-            return push(newObjectState(jsObject, next));
+            return startObjectState(jsObject, next);
         } else
             return handleError(DataCloneError, next);
     }
@@ -1117,11 +1162,12 @@ public:
     virtual void pushObjectReference(const v8::Handle<v8::Value>&) = 0;
     virtual bool tryGetObjectFromObjectReference(uint32_t reference, v8::Handle<v8::Value>*) = 0;
     virtual bool tryGetTransferredMessagePort(uint32_t index, v8::Handle<v8::Value>*) = 0;
-    virtual bool newArray(uint32_t length) = 0;
+    virtual bool newSparseArray(uint32_t length) = 0;
+    virtual bool newDenseArray(uint32_t length) = 0;
     virtual bool newObject() = 0;
-    virtual bool completeArray(uint32_t length, v8::Handle<v8::Value>*) = 0;
     virtual bool completeObject(uint32_t numProperties, v8::Handle<v8::Value>*) = 0;
     virtual bool completeSparseArray(uint32_t numProperties, uint32_t length, v8::Handle<v8::Value>*) = 0;
+    virtual bool completeDenseArray(uint32_t numProperties, uint32_t length, v8::Handle<v8::Value>*) = 0;
 };
 
 // Reader is responsible for deserializing primitive types and
@@ -1234,14 +1280,6 @@ public:
             creator.pushObjectReference(*value);
             break;
 
-        case ArrayTag: {
-            uint32_t length;
-            if (!doReadUint32(&length))
-                return false;
-            if (!creator.completeArray(length, value))
-                return false;
-            break;
-        }
         case RegExpTag:
             if (!readRegExp(value))
                 return false;
@@ -1263,6 +1301,17 @@ public:
             if (!doReadUint32(&length))
                 return false;
             if (!creator.completeSparseArray(numProperties, length, value))
+                return false;
+            break;
+        }
+        case DenseArrayTag: {
+            uint32_t numProperties;
+            uint32_t length;
+            if (!doReadUint32(&numProperties))
+                return false;
+            if (!doReadUint32(&length))
+                return false;
+            if (!creator.completeDenseArray(numProperties, length, value))
                 return false;
             break;
         }
@@ -1289,13 +1338,23 @@ public:
                 return false;
             return true;
         }
-        case GenerateFreshArrayTag: {
+        case GenerateFreshSparseArrayTag: {
             if (m_version <= 0)
                 return false;
             uint32_t length;
             if (!doReadUint32(&length))
                 return false;
-            if (!creator.newArray(length))
+            if (!creator.newSparseArray(length))
+                return false;
+            return true;
+        }
+        case GenerateFreshDenseArrayTag: {
+            if (m_version <= 0)
+                return false;
+            uint32_t length;
+            if (!doReadUint32(&length))
+                return false;
+            if (!creator.newDenseArray(length))
                 return false;
             return true;
         }
@@ -1707,11 +1766,16 @@ public:
         return result;
     }
 
-    virtual bool newArray(uint32_t length)
+    virtual bool newSparseArray(uint32_t)
+    {
+        v8::Local<v8::Array> array = v8::Array::New(0);
+        openComposite(array);
+        return true;
+    }
+
+    virtual bool newDenseArray(uint32_t length)
     {
         v8::Local<v8::Array> array = v8::Array::New(length);
-        if (array.IsEmpty())
-            return false;
         openComposite(array);
         return true;
     }
@@ -1781,10 +1845,34 @@ public:
                 return false;
             array = composite.As<v8::Array>();
         } else
-            array = v8::Array::New(length);
+            array = v8::Array::New();
         if (array.IsEmpty())
             return false;
         return initializeObject(array, numProperties, value);
+    }
+
+    virtual bool completeDenseArray(uint32_t numProperties, uint32_t length, v8::Handle<v8::Value>* value)
+    {
+        v8::Local<v8::Array> array;
+        if (m_version > 0) {
+            v8::Local<v8::Value> composite;
+            if (!closeComposite(&composite))
+                return false;
+            array = composite.As<v8::Array>();
+        }
+        if (array.IsEmpty())
+            return false;
+        if (!initializeObject(array, numProperties, value))
+            return false;
+        if (length > stackDepth())
+            return false;
+        for (unsigned i = 0, stackPos = stackDepth() - length; i < length; i++, stackPos++) {
+            v8::Local<v8::Value> elem = element(stackPos);
+            if (!elem->IsUndefined())
+                array->Set(i, elem);
+        }
+        pop(length);
+        return true;
     }
 
     virtual void pushObjectReference(const v8::Handle<v8::Value>& object)

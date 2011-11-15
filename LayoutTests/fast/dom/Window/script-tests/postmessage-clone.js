@@ -97,7 +97,7 @@ tryPostMessage(thunk(
         'a[1] = b; ' +
         'return a;'
     ), false, "evalThunk", function(v) {
-        doPassFail(v.length === 3, "length correct"); // undefined
+        doPassFail(v.length === 3 || v.length === 2, "length correct"); // undefined
         doPassFail(v[0] === 0, "index 0 OK"); // mandatory
         doPassFail(v[1].x === 41, "accessor reached"); // mandatory
         doPassFail(v[2] === undefined, "index 2 undefined"); // undefined

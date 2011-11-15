@@ -1,3 +1,39 @@
+2011-11-14  Dmitry Lomov  <dslomov@google.com>
+        
+        [V8][Chromium]Serialize dense arrays densly
+        https://bugs.webkit.org/show_bug.cgi?id=72198
+        This patch ensures that:
+        - Dense arrays are serialized densly, and not as name-value pairs
+        - Sparse arrays are allocated as sparse on deserialization.
+        The criteria to choose whether to serialize densly or sparsely is the size
+        of a resulting serialized stream.
+
+        Reviewed by David Levin.
+
+        Test: fast/dom/Window/window-postmessage-arrays.html
+
+        * bindings/v8/SerializedScriptValue.cpp:
+        (WebCore::V8ObjectMap::Writer::writeDenseArray):
+        (WebCore::V8ObjectMap::Writer::writeGenerateFreshSparseArray):
+        (WebCore::V8ObjectMap::Writer::writeGenerateFreshDenseArray):
+        (WebCore::V8ObjectMap::Serializer::writeDenseArray):
+        (WebCore::V8ObjectMap::Serializer::AbstractObjectState::execDepth):
+        (WebCore::V8ObjectMap::Serializer::AbstractObjectState::serializeProperties):
+        (WebCore::V8ObjectMap::Serializer::ObjectState::advance):
+        (WebCore::V8ObjectMap::Serializer::DenseArrayState::DenseArrayState):
+        (WebCore::V8ObjectMap::Serializer::DenseArrayState::advance):
+        (WebCore::V8ObjectMap::Serializer::DenseArrayState::objectDone):
+        (WebCore::V8ObjectMap::Serializer::SparseArrayState::SparseArrayState):
+        (WebCore::V8ObjectMap::Serializer::SparseArrayState::advance):
+        (WebCore::V8ObjectMap::Serializer::serializeDensely):
+        (WebCore::V8ObjectMap::Serializer::startArrayState):
+        (WebCore::V8ObjectMap::Serializer::startObjectState):
+        (WebCore::V8ObjectMap::Serializer::doSerialize):
+        (WebCore::V8ObjectMap::Reader::read):
+        (WebCore::V8ObjectMap::Deserializer::newSparseArray):
+        (WebCore::V8ObjectMap::Deserializer::completeSparseArray):
+        (WebCore::V8ObjectMap::Deserializer::completeDenseArray):
+
 2011-11-14  Alexandre Elias  <aelias@google.com>
 
         [chromium] Fix scaleDelta zoom-out visibility rect bug
