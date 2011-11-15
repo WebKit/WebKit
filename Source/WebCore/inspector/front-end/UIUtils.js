@@ -595,6 +595,31 @@ WebInspector.setCurrentFocusElement = function(x)
         WebInspector._previousFocusElement.blur();
 }
 
+WebInspector.setToolbarColors = function(backgroundColor, color)
+{
+    if (!WebInspector._themeStyleElement) {
+        WebInspector._themeStyleElement = document.createElement("style");
+        document.head.appendChild(WebInspector._themeStyleElement);
+    }
+    WebInspector._themeStyleElement.textContent =
+        "#toolbar {\
+             background-image: none !important;\
+             background-color: " + backgroundColor + " !important;\
+         }\
+         \
+         .toolbar-label {\
+             color: " + color + " !important;\
+             text-shadow: none;\
+         }";
+}
+
+WebInspector.resetToolbarColors = function()
+{
+    if (WebInspector._themeStyleElement)
+        WebInspector._themeStyleElement.textContent = "";
+
+}
+
 ;(function() {
 
 function windowLoaded()
