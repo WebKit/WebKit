@@ -1,3 +1,14 @@
+2011-11-15  Andy Wingo  <wingo@igalia.com>
+
+        Extend sunspider driver to be able to run kraken
+        https://bugs.webkit.org/show_bug.cgi?id=71799
+
+        Reviewed by Filip Pizlo.
+
+        * resources/sunspider-standalone-driver.js: Try to load a -data
+        file.  If that succeeds, we have a kraken-like test, so we time
+        the test using `load'.  Otherwise fall back to using `run'.
+
 2011-08-11  Mark Rowe  <mrowe@apple.com>
 
         Fix sunspider-compare-results to default to the same suite version as the sunspider script.

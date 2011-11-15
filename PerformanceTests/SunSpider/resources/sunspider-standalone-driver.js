@@ -32,12 +32,28 @@ var times = [];
 times.length = tests.length;
 
 for (var j = 0; j < tests.length; j++) {
-    var testName = suitePath + "/" + tests[j] + ".js";
-    var startTime = new Date;
-    if (testName.indexOf('parse-only') >= 0)
+    var testBase = suitePath + "/" + tests[j];
+    var testName = testBase + ".js";
+    var testData = testBase + "-data.js";
+
+    if (testName.indexOf('parse-only') >= 0) {
         times[j] = checkSyntax(testName);
-    else
-        times[j] = run(testName);
+    } else {
+        // Tests may or may not have associated -data files whose loading
+        // should not be timed.
+        try {
+            load(testData);
+            // If a file does have test data, then we can't use the
+            // higher-precision `run' timer, because `run' uses a fresh
+            // global environment, so we fall back to `load'.
+            var startTime = new Date;
+            load(testName);
+            times[j] = new Date() - startTime;
+        } catch (e) {
+            // No test data, just use `run'.
+            times[j] = run(testName);
+        }
+    }
     gc();
 }
 
