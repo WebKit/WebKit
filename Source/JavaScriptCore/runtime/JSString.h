@@ -363,6 +363,21 @@ namespace JSC {
         return jsSubstring(globalData, s->value(exec), offset, length);
     }
 
+    inline JSString* jsSubstring8(JSGlobalData* globalData, const UString& s, unsigned offset, unsigned length)
+    {
+        ASSERT(offset <= static_cast<unsigned>(s.length()));
+        ASSERT(length <= static_cast<unsigned>(s.length()));
+        ASSERT(offset + length <= static_cast<unsigned>(s.length()));
+        if (!length)
+            return globalData->smallStrings.emptyString(globalData);
+        if (length == 1) {
+            UChar c = s[offset];
+            if (c <= maxSingleCharacterString)
+                return globalData->smallStrings.singleCharacterString(globalData, c);
+        }
+        return fixupVPtr(globalData, JSString::createHasOtherOwner(*globalData, StringImpl::create8(s.impl(), offset, length)));
+    }
+
     inline JSString* jsSubstring(JSGlobalData* globalData, const UString& s, unsigned offset, unsigned length)
     {
         ASSERT(offset <= static_cast<unsigned>(s.length()));
@@ -399,6 +414,7 @@ namespace JSC {
     inline JSString* jsEmptyString(ExecState* exec) { return jsEmptyString(&exec->globalData()); }
     inline JSString* jsString(ExecState* exec, const UString& s) { return jsString(&exec->globalData(), s); }
     inline JSString* jsSingleCharacterString(ExecState* exec, UChar c) { return jsSingleCharacterString(&exec->globalData(), c); }
+    inline JSString* jsSubstring8(ExecState* exec, const UString& s, unsigned offset, unsigned length) { return jsSubstring8(&exec->globalData(), s, offset, length); }
     inline JSString* jsSubstring(ExecState* exec, const UString& s, unsigned offset, unsigned length) { return jsSubstring(&exec->globalData(), s, offset, length); }
     inline JSString* jsNontrivialString(ExecState* exec, const UString& s) { return jsNontrivialString(&exec->globalData(), s); }
     inline JSString* jsNontrivialString(ExecState* exec, const char* s) { return jsNontrivialString(&exec->globalData(), s); }

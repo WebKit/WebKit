@@ -283,7 +283,27 @@ static ALWAYS_INLINE JSValue jsSpliceSubstrings(ExecState* exec, JSString* sourc
     if (!totalLength)
         return jsString(exec, "");
 
+    if (source.is8Bit()) {
+        LChar* buffer;
+        const LChar* sourceData = source.characters8();
+        RefPtr<StringImpl> impl = StringImpl::tryCreateUninitialized(totalLength, buffer);
+        if (!impl)
+            return throwOutOfMemoryError(exec);
+
+        int bufferPos = 0;
+        for (int i = 0; i < rangeCount; i++) {
+            if (int srcLen = substringRanges[i].length) {
+                StringImpl::copyChars(buffer + bufferPos, sourceData + substringRanges[i].position, srcLen);
+                bufferPos += srcLen;
+            }
+        }
+
+        return jsString(exec, impl.release());
+    }
+
     UChar* buffer;
+    const UChar* sourceData = source.characters16();
+
     RefPtr<StringImpl> impl = StringImpl::tryCreateUninitialized(totalLength, buffer);
     if (!impl)
         return throwOutOfMemoryError(exec);
@@ -291,7 +311,7 @@ static ALWAYS_INLINE JSValue jsSpliceSubstrings(ExecState* exec, JSString* sourc
     int bufferPos = 0;
     for (int i = 0; i < rangeCount; i++) {
         if (int srcLen = substringRanges[i].length) {
-            StringImpl::copyChars(buffer + bufferPos, source.characters() + substringRanges[i].position, srcLen);
+            StringImpl::copyChars(buffer + bufferPos, sourceData + substringRanges[i].position, srcLen);
             bufferPos += srcLen;
         }
     }
@@ -312,13 +332,45 @@ static ALWAYS_INLINE JSValue jsSpliceSubstringsWithSeparators(ExecState* exec, J
     }
 
     int totalLength = 0;
+    bool allSeperators8Bit = true;
     for (int i = 0; i < rangeCount; i++)
         totalLength += substringRanges[i].length;
-    for (int i = 0; i < separatorCount; i++)
+    for (int i = 0; i < separatorCount; i++) {
         totalLength += separators[i].length();
+        if (separators[i].length() && !separators[i].is8Bit())
+            allSeperators8Bit = false;
+    }
 
     if (!totalLength)
         return jsString(exec, "");
+
+    if (source.is8Bit() && allSeperators8Bit) {
+        LChar* buffer;
+        const LChar* sourceData = source.characters8();
+
+        RefPtr<StringImpl> impl = StringImpl::tryCreateUninitialized(totalLength, buffer);
+        if (!impl)
+            return throwOutOfMemoryError(exec);
+
+        int maxCount = max(rangeCount, separatorCount);
+        int bufferPos = 0;
+        for (int i = 0; i < maxCount; i++) {
+            if (i < rangeCount) {
+                if (int srcLen = substringRanges[i].length) {
+                    StringImpl::copyChars(buffer + bufferPos, sourceData + substringRanges[i].position, srcLen);
+                    bufferPos += srcLen;
+                }
+            }
+            if (i < separatorCount) {
+                if (int sepLen = separators[i].length()) {
+                    StringImpl::copyChars(buffer + bufferPos, separators[i].characters8(), sepLen);
+                    bufferPos += sepLen;
+                }
+            }
+        }        
+
+        return jsString(exec, impl.release());
+    }
 
     UChar* buffer;
     RefPtr<StringImpl> impl = StringImpl::tryCreateUninitialized(totalLength, buffer);
@@ -330,13 +382,13 @@ static ALWAYS_INLINE JSValue jsSpliceSubstringsWithSeparators(ExecState* exec, J
     for (int i = 0; i < maxCount; i++) {
         if (i < rangeCount) {
             if (int srcLen = substringRanges[i].length) {
-                StringImpl::copyChars(buffer + bufferPos, source.characters16() + substringRanges[i].position, srcLen);
+                StringImpl::copyChars(buffer + bufferPos, source.characters() + substringRanges[i].position, srcLen);
                 bufferPos += srcLen;
             }
         }
         if (i < separatorCount) {
             if (int sepLen = separators[i].length()) {
-                StringImpl::copyChars(buffer + bufferPos, separators[i].characters16(), sepLen);
+                StringImpl::copyChars(buffer + bufferPos, separators[i].characters(), sepLen);
                 bufferPos += sepLen;
             }
         }
@@ -423,48 +475,95 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncReplace(ExecState* exec)
             CachedCall cachedCall(exec, func, argCount);
             if (exec->hadException())
                 return JSValue::encode(jsNull());
-            while (true) {
-                int matchIndex;
-                int matchLen = 0;
-                int* ovector;
-                regExpConstructor->performMatch(*globalData, reg, source, startPosition, matchIndex, matchLen, &ovector);
-                if (matchIndex < 0)
-                    break;
-
-                sourceRanges.append(StringRange(lastIndex, matchIndex - lastIndex));
-
-                int completeMatchStart = ovector[0];
-                unsigned i = 0;
-                for (; i < reg->numSubpatterns() + 1; ++i) {
-                    int matchStart = ovector[i * 2];
-                    int matchLen = ovector[i * 2 + 1] - matchStart;
-
-                    if (matchStart < 0)
-                        cachedCall.setArgument(i, jsUndefined());
-                    else
-                        cachedCall.setArgument(i, jsSubstring(exec, source, matchStart, matchLen));
-                }
-
-                cachedCall.setArgument(i++, jsNumber(completeMatchStart));
-                cachedCall.setArgument(i++, sourceVal);
-
-                cachedCall.setThis(jsUndefined());
-                JSValue result = cachedCall.call();
-                if (LIKELY(result.isString()))
-                    replacements.append(asString(result)->value(exec));
-                else
-                    replacements.append(result.toString(cachedCall.newCallFrame(exec)));
-                if (exec->hadException())
-                    break;
-
-                lastIndex = matchIndex + matchLen;
-                startPosition = lastIndex;
-
-                // special case of empty match
-                if (!matchLen) {
-                    startPosition++;
-                    if (startPosition > sourceLen)
+            if (source.is8Bit()) {
+                while (true) {
+                    int matchIndex;
+                    int matchLen = 0;
+                    int* ovector;
+                    regExpConstructor->performMatch(*globalData, reg, source, startPosition, matchIndex, matchLen, &ovector);
+                    if (matchIndex < 0)
                         break;
+
+                    sourceRanges.append(StringRange(lastIndex, matchIndex - lastIndex));
+
+                    int completeMatchStart = ovector[0];
+                    unsigned i = 0;
+                    for (; i < reg->numSubpatterns() + 1; ++i) {
+                        int matchStart = ovector[i * 2];
+                        int matchLen = ovector[i * 2 + 1] - matchStart;
+
+                        if (matchStart < 0)
+                            cachedCall.setArgument(i, jsUndefined());
+                        else
+                            cachedCall.setArgument(i, jsSubstring8(globalData, source, matchStart, matchLen));
+                    }
+
+                    cachedCall.setArgument(i++, jsNumber(completeMatchStart));
+                    cachedCall.setArgument(i++, sourceVal);
+
+                    cachedCall.setThis(jsUndefined());
+                    JSValue result = cachedCall.call();
+                    if (LIKELY(result.isString()))
+                        replacements.append(asString(result)->value(exec));
+                    else
+                        replacements.append(result.toString(cachedCall.newCallFrame(exec)));
+                    if (exec->hadException())
+                        break;
+
+                    lastIndex = matchIndex + matchLen;
+                    startPosition = lastIndex;
+
+                    // special case of empty match
+                    if (!matchLen) {
+                        startPosition++;
+                        if (startPosition > sourceLen)
+                            break;
+                    }
+                }
+            } else {
+                while (true) {
+                    int matchIndex;
+                    int matchLen = 0;
+                    int* ovector;
+                    regExpConstructor->performMatch(*globalData, reg, source, startPosition, matchIndex, matchLen, &ovector);
+                    if (matchIndex < 0)
+                        break;
+
+                    sourceRanges.append(StringRange(lastIndex, matchIndex - lastIndex));
+
+                    int completeMatchStart = ovector[0];
+                    unsigned i = 0;
+                    for (; i < reg->numSubpatterns() + 1; ++i) {
+                        int matchStart = ovector[i * 2];
+                        int matchLen = ovector[i * 2 + 1] - matchStart;
+
+                        if (matchStart < 0)
+                            cachedCall.setArgument(i, jsUndefined());
+                        else
+                            cachedCall.setArgument(i, jsSubstring(globalData, source, matchStart, matchLen));
+                    }
+
+                    cachedCall.setArgument(i++, jsNumber(completeMatchStart));
+                    cachedCall.setArgument(i++, sourceVal);
+
+                    cachedCall.setThis(jsUndefined());
+                    JSValue result = cachedCall.call();
+                    if (LIKELY(result.isString()))
+                        replacements.append(asString(result)->value(exec));
+                    else
+                        replacements.append(result.toString(cachedCall.newCallFrame(exec)));
+                    if (exec->hadException())
+                        break;
+
+                    lastIndex = matchIndex + matchLen;
+                    startPosition = lastIndex;
+
+                    // special case of empty match
+                    if (!matchLen) {
+                        startPosition++;
+                        if (startPosition > sourceLen)
+                            break;
+                    }
                 }
             }
         } else {
@@ -615,8 +714,11 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncCharCodeAt(ExecState* exec)
     JSValue a0 = exec->argument(0);
     if (a0.isUInt32()) {
         uint32_t i = a0.asUInt32();
-        if (i < len)
-            return JSValue::encode(jsNumber(s.characters()[i]));
+        if (i < len) {
+            if (s.is8Bit())
+                return JSValue::encode(jsNumber(s.characters8()[i]));
+            return JSValue::encode(jsNumber(s.characters16()[i]));
+        }
         return JSValue::encode(jsNaN());
     }
     double dpos = a0.toInteger(exec);
