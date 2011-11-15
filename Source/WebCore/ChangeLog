@@ -1,3 +1,13 @@
+2011-11-15  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] REGRESSION(100123): It made inspector tests crash
+        https://bugs.webkit.org/show_bug.cgi?id=72274
+
+        Reviewed by Tor Arne Vestbø.
+
+        * platform/qt/RenderThemeQStyle.h: Remove uninitialized and duplicated
+        m_page member that should really come from RenderThemeQt.
+
 2011-11-15  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Unreviewed. Fix build breaks when EFL port is built.

@@ -108,8 +108,6 @@ private:
 
     QStyle* fallbackStyle() const;
 
-    Page* m_page;
-
 #ifdef Q_OS_MAC
     int m_buttonFontPixelSize;
 #endif
