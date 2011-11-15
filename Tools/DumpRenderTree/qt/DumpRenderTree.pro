@@ -53,6 +53,7 @@ wince*: {
     LIBS += $$WCECOMPAT/lib/wcecompat.lib
 }
 
+DEFINES -= USE_SYSTEM_MALLOC=0
 DEFINES += USE_SYSTEM_MALLOC=1
 
 RESOURCES = DumpRenderTree.qrc

@@ -1,5 +1,12 @@
 2011-11-15  Simon Hausmann  <simon.hausmann@nokia.com>
 
+        [Qt] Unreviewed prospective --minimal build fix.
+
+        * DumpRenderTree/qt/DumpRenderTree.pro: Avoid USE_SYSTEM_MALLOC=0
+        and USE_SYSTEM_MALLOC=1 appearing in DEFINES at the same time.
+
+2011-11-15  Simon Hausmann  <simon.hausmann@nokia.com>
+
         [Qt] Unreviewed --minimal build fix.
 
         * Scripts/build-webkit: Add to DEFINES+= from @options only if there is
