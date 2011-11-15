@@ -18,8 +18,6 @@ DESTDIR = $$WEBCORE_DESTDIR
 
 DEFINES += QT_MAKEDLL
 
-contains(QT_CONFIG, reduce_exports):CONFIG += hide_symbols
-
 haveQt(5) {
     # Add a QtScript dependency for the time being, in order to pull in the include
     # path for QtScript when it's built as a standalone module

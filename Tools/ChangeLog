@@ -1,5 +1,14 @@
 2011-11-15  Simon Hausmann  <simon.hausmann@nokia.com>
 
+        [Qt] Centralize hide_symbols and ensure all libs are built with symbol visibility & bsymbolic_functions
+
+        Reviewed by Tor Arne Vestbø.
+
+        * qmake/mkspecs/features/default_post.prf: Place the common hide_symbols and -Bsymbolic-functions
+        magic here where we handle all TEMPLATE = lib .pro files.
+
+2011-11-15  Simon Hausmann  <simon.hausmann@nokia.com>
+
         [Qt] Unreviewed prospective --minimal build fix.
 
         * DumpRenderTree/qt/DumpRenderTree.pro: Avoid USE_SYSTEM_MALLOC=0
