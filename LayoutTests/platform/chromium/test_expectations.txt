@@ -3838,12 +3838,14 @@ BUGWK71543 : media/media-element-play-after-eos.html = PASS TIMEOUT
 BUGWK71653 : platform/chromium-cg-mac/editing/input/ime-candidate-window-position.html = PASS TIMEOUT
 
 // Intermittent assertion failures on snowleopard bots.
-BUGWK59552 SNOWLEOPARD DEBUG : storage/domstorage/events/basic-body-attribute.html = PASS CRASH
 BUGWK59552 SNOWLEOPARD DEBUG : fast/dom/Element/id-in-frame.html = PASS CRASH
+BUGWK59552 SNOWLEOPARD DEBUG : fast/dom/image-object.html = PASS CRASH
 BUGWK59552 SNOWLEOPARD DEBUG : fast/frames/content-opacity-2.html = PASS CRASH
-BUGWK59552 SNOWLEOPARD DEBUG : fast/parser/close-while-stopping.html = PASS CRASH
 BUGWK59552 SNOWLEOPARD DEBUG : fast/frames/iframe-double-scale-contents.html = PASS CRASH
 BUGWK59552 SNOWLEOPARD DEBUG : fast/frames/set-parent-src-synchronously.html = PASS CRASH
+BUGWK59552 SNOWLEOPARD DEBUG : fast/parser/close-while-stopping.html = PASS CRASH
+BUGWK59552 SNOWLEOPARD DEBUG : http/tests/security/cross-frame-access-custom.html = PASS CRASH
+BUGWK59552 SNOWLEOPARD DEBUG : storage/domstorage/events/basic-body-attribute.html = PASS CRASH
 
 // Introduced due to BUGWK53512, fails under Skia right now
 BUGWK65939 : svg/custom/getBBox-path.svg = TEXT
@@ -3884,8 +3886,6 @@ BUGWK72149 : media/track/tracklist-is-reachable.html = TEXT
 
 BUGV8_1821 WIN LINUX : http/tests/inspector-enabled/dedicated-workers-list.html = PASS CRASH
 BUGWK72133 SKIP MAC : http/tests/inspector-enabled/dedicated-workers-list.html = PASS CRASH TIMEOUT
-
-BUGWK59552 MAC DEBUG : http/tests/security/cross-frame-access-custom.html = PASS CRASH
 
 // use Skia to draw vertical text directly instead of text-on-path
 BUG_CARYCLARK MAC CPU : editing/selection/vertical-lr-ltr-extend-line-backward-br.html = IMAGE
