@@ -1,3 +1,17 @@
+2011-11-14  Adam Barth  <abarth@webkit.org>
+
+        Don't special-case "data" URLs in drag-and-drop logic
+        https://bugs.webkit.org/show_bug.cgi?id=72322
+
+        Reviewed by Eric Seidel.
+
+        See the bug for more details.
+
+        Test: editing/pasteboard/drag-drop-to-data-url.html
+
+        * page/SecurityOrigin.cpp:
+        (WebCore::SecurityOrigin::canReceiveDragData):
+
 2011-11-14  Adrienne Walker  <enne@google.com>
 
         [chromium] Pipe compositor commit/swap up to WebWidgetClient
