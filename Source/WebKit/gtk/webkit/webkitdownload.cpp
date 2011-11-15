@@ -21,6 +21,7 @@
 #include "config.h"
 #include "webkitdownload.h"
 
+#include "ErrorsGtk.h"
 #include "GRefPtr.h"
 #include "Noncopyable.h"
 #include "NotImplemented.h"
@@ -435,6 +436,27 @@ WebKitDownload* webkit_download_new_with_handle(WebKitNetworkRequest* request, W
     return download;
 }
 
+static void webkitDownloadEmitError(WebKitDownload* download, const ResourceError& error)
+{
+    WebKitDownloadError errorCode;
+    switch (error.errorCode()) {
+    case DownloadErrorNetwork:
+        errorCode = WEBKIT_DOWNLOAD_ERROR_NETWORK;
+        break;
+    case DownloadErrorCancelledByUser:
+        errorCode = WEBKIT_DOWNLOAD_ERROR_CANCELLED_BY_USER;
+        break;
+    case DownloadErrorDestination:
+        errorCode = WEBKIT_DOWNLOAD_ERROR_DESTINATION;
+        break;
+    default:
+        g_assert_not_reached();
+    }
+
+    gboolean handled;
+    g_signal_emit_by_name(download, "error", 0, errorCode, error.localizedDescription().utf8().data(), &handled);
+}
+
 static gboolean webkit_download_open_stream_for_uri(WebKitDownload* download, const gchar* uri, gboolean append=FALSE)
 {
     g_return_val_if_fail(uri, FALSE);
@@ -451,8 +473,7 @@ static gboolean webkit_download_open_stream_for_uri(WebKitDownload* download, co
     g_object_unref(file);
 
     if (error) {
-        gboolean handled;
-        g_signal_emit_by_name(download, "error", 0, WEBKIT_DOWNLOAD_ERROR_DESTINATION, error->message, &handled);
+        webkitDownloadEmitError(download, downloadDestinationError(core(priv->networkResponse), error->message));
         g_error_free(error);
         return FALSE;
     }
@@ -530,9 +551,7 @@ void webkit_download_cancel(WebKitDownload* download)
         priv->resourceHandle->cancel();
 
     webkit_download_set_status(download, WEBKIT_DOWNLOAD_STATUS_CANCELLED);
-
-    gboolean handled;
-    g_signal_emit_by_name(download, "error", 0, WEBKIT_DOWNLOAD_ERROR_CANCELLED_BY_USER, _("User cancelled the download"), &handled);
+    webkitDownloadEmitError(download, downloadCancelledByUserError(core(priv->networkResponse)));
 }
 
 /**
@@ -696,8 +715,7 @@ void webkit_download_set_destination_uri(WebKitDownload* download, const gchar* 
         priv->destinationURI = g_strdup(destination_uri);
 
         if (error) {
-            gboolean handled;
-            g_signal_emit_by_name(download, "error", 0, WEBKIT_DOWNLOAD_ERROR_DESTINATION, error->message, &handled);
+            webkitDownloadEmitError(download, downloadDestinationError(core(priv->networkResponse), error->message));
             g_error_free(error);
             return;
         }
@@ -856,8 +874,7 @@ static void webkit_download_received_data(WebKitDownload* download, const gchar*
                               data, length, &bytes_written, NULL, &error);
 
     if (error) {
-        gboolean handled;
-        g_signal_emit_by_name(download, "error", 0, WEBKIT_DOWNLOAD_ERROR_DESTINATION, error->message, &handled);
+        webkitDownloadEmitError(download, downloadDestinationError(core(priv->networkResponse), error->message));
         g_error_free(error);
         return;
     }
@@ -912,9 +929,7 @@ static void webkit_download_error(WebKitDownload* download, const ResourceError&
 
     g_timer_stop(priv->timer);
     webkit_download_set_status(download, WEBKIT_DOWNLOAD_STATUS_ERROR);
-
-    gboolean handled;
-    g_signal_emit_by_name(download, "error", 0, WEBKIT_DOWNLOAD_ERROR_NETWORK, error.localizedDescription().utf8().data(), &handled);
+    webkitDownloadEmitError(download, downloadNetworkError(error));
 }
 
 DownloadClient::DownloadClient(WebKitDownload* download)

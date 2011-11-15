@@ -1,3 +1,21 @@
+2011-11-15  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Implement download support in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=72258
+
+        Reviewed by Martin Robinson.
+
+        Use errors from WebCore to emit the error signals.
+
+        * webkit/webkitdownload.cpp:
+        (webkitDownloadEmitError): Helper function that emits the error
+        signal for the given ResourceError.
+        (webkit_download_open_stream_for_uri): Use webkitDownloadEmitError().
+        (webkit_download_cancel): Ditto.
+        (webkit_download_set_destination_uri): Ditto.
+        (webkit_download_received_data): Ditto.
+        (webkit_download_error): Ditto.
+
 2011-11-14  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [GTK] Possible crash when destroying after called widgetSizeChanged.

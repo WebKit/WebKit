@@ -27,30 +27,130 @@
 #include "config.h"
 #include "Download.h"
 
+#include "DataReference.h"
+#include <WebCore/ErrorsGtk.h>
 #include <WebCore/NotImplemented.h>
+#include <gio/gio.h>
+#include <glib/gi18n-lib.h>
+#include <wtf/gobject/GOwnPtr.h>
+#include <wtf/gobject/GRefPtr.h>
+#include <wtf/text/CString.h>
 
 using namespace WebCore;
 
 namespace WebKit {
 
+class DownloadClient : public ResourceHandleClient {
+    WTF_MAKE_NONCOPYABLE(DownloadClient);
+public:
+    DownloadClient(Download* download)
+        : m_download(download)
+    {
+    }
+
+    void downloadFailed(const ResourceError& error)
+    {
+        m_download->didFail(error, CoreIPC::DataReference());
+    }
+
+    void didReceiveResponse(ResourceHandle*, const ResourceResponse& response)
+    {
+        String suggestedFilename = response.suggestedFilename();
+        if (suggestedFilename.isEmpty()) {
+            KURL url = response.url();
+            url.setQuery(String());
+            url.removeFragmentIdentifier();
+            suggestedFilename = decodeURLEscapeSequences(url.lastPathComponent());
+        }
+
+        bool overwrite;
+        String filename = m_download->decideDestinationWithSuggestedFilename(suggestedFilename.utf8().data(), overwrite);
+        if (filename.isEmpty()) {
+            downloadFailed(downloadDestinationError(response, _("Cannot determine destination filename")));
+            return;
+        }
+
+        GRefPtr<GFile> file(g_file_new_for_path(filename.utf8().data()));
+        GOwnPtr<GError> error;
+        m_outputStream = adoptGRef(g_file_replace(file.get(), 0, TRUE, G_FILE_CREATE_NONE, 0, &error.outPtr()));
+        if (!m_outputStream) {
+            downloadFailed(downloadDestinationError(response, error->message));
+            return;
+        }
+
+        m_response = adoptGRef(response.toSoupMessage());
+        m_download->didReceiveResponse(response);
+    }
+
+    void didReceiveData(ResourceHandle*, const char* data, int length, int /*encodedDataLength*/)
+    {
+        gsize bytesWritten;
+        GOwnPtr<GError> error;
+        g_output_stream_write_all(G_OUTPUT_STREAM(m_outputStream.get()), data, length, &bytesWritten, 0, &error.outPtr());
+        if (error) {
+            downloadFailed(downloadDestinationError(ResourceResponse(m_response.get()), error->message));
+            return;
+        }
+        m_download->didReceiveData(bytesWritten);
+    }
+
+    void didFinishLoading(ResourceHandle*, double)
+    {
+        m_outputStream = 0;
+        m_download->didFinish();
+    }
+
+    void didFail(ResourceHandle*, const ResourceError& error)
+    {
+        downloadFailed(downloadNetworkError(error));
+    }
+
+    void wasBlocked(ResourceHandle*)
+    {
+        notImplemented();
+    }
+
+    void cannotShowURL(ResourceHandle*)
+    {
+        notImplemented();
+    }
+
+    Download* m_download;
+    GRefPtr<GFileOutputStream> m_outputStream;
+    GRefPtr<SoupMessage> m_response;
+};
+
 void Download::start(WebPage* initiatingWebPage)
 {
-    notImplemented();
+    ASSERT(m_downloadClient);
+    ASSERT(m_resourceHandle);
+    m_downloadClient = adoptPtr(new DownloadClient(this));
+    m_resourceHandle = ResourceHandle::create(0, m_request, m_downloadClient.get(), false, false);
+    didStart();
 }
 
-void Download::startWithHandle(WebPage* initiatingPage, ResourceHandle*, const ResourceRequest& initialRequest, const ResourceResponse&)
+void Download::startWithHandle(WebPage* initiatingPage, ResourceHandle* resourceHandle, const ResourceRequest& initialRequest, const ResourceResponse&)
 {
-    notImplemented();
+    ASSERT(m_downloadClient);
+    ASSERT(m_resourceHandle);
+    m_downloadClient = adoptPtr(new DownloadClient(this));
+    resourceHandle->setClient(m_downloadClient.get());
+    m_resourceHandle = resourceHandle;
+    didStart();
 }
 
 void Download::cancel()
 {
-    notImplemented();
+    if (!m_resourceHandle)
+        return;
+    m_resourceHandle->cancel();
+    didCancel(CoreIPC::DataReference());
 }
 
 void Download::platformInvalidate()
 {
-    notImplemented();
+    m_downloadClient.release();
+    m_resourceHandle = 0;
 }
 
 void Download::didDecideDestination(const String& destination, bool allowOverwrite)

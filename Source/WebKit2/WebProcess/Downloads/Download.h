@@ -38,6 +38,11 @@ OBJC_CLASS NSURLDownload;
 OBJC_CLASS WKDownloadAsDelegate;
 #endif
 
+#if PLATFORM(GTK)
+#include <WebCore/ResourceHandle.h>
+#include <WebCore/ResourceHandleClient.h>
+#endif
+
 #if USE(CFNETWORK)
 #include <CFNetwork/CFURLDownloadPriv.h>
 #endif
@@ -136,6 +141,10 @@ private:
 #endif
 #if PLATFORM(QT)
     QtFileDownloader* m_qtDownloader;
+#endif
+#if PLATFORM(GTK)
+    OwnPtr<WebCore::ResourceHandleClient> m_downloadClient;
+    RefPtr<WebCore::ResourceHandle> m_resourceHandle;
 #endif
 };
 

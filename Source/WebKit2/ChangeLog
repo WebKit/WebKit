@@ -1,3 +1,25 @@
+2011-11-15  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Implement download support in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=72258
+
+        Reviewed by Martin Robinson.
+
+        * WebProcess/Downloads/Download.h:
+        * WebProcess/Downloads/soup/DownloadSoup.cpp:
+        (WebKit::DownloadClient::DownloadClient):
+        (WebKit::DownloadClient::downloadFailed):
+        (WebKit::DownloadClient::didReceiveResponse):
+        (WebKit::DownloadClient::didReceiveData):
+        (WebKit::DownloadClient::didFinishLoading):
+        (WebKit::DownloadClient::didFail):
+        (WebKit::DownloadClient::wasBlocked):
+        (WebKit::DownloadClient::cannotShowURL):
+        (WebKit::Download::start):
+        (WebKit::Download::startWithHandle):
+        (WebKit::Download::cancel):
+        (WebKit::Download::platformInvalidate):
+
 2011-11-15  Mario Sanchez Prada  <msanchez@igalia.com>
 
         [GTK][WEBKIT2] Add enable-caret-browsing property to WebKitSettings

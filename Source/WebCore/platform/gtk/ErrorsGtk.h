@@ -20,6 +20,8 @@
 #ifndef ErrorsGtk_h
 #define ErrorsGtk_h
 
+#include "PlatformString.h"
+
 namespace WebCore {
 
 class ResourceError;
@@ -29,6 +31,7 @@ class ResourceResponse;
 const char* const errorDomainNetwork = "WebKitNetworkError";
 const char* const errorDomainPolicy = "WebKitPolicyError";
 const char* const errorDomainPlugin = "WebKitPluginError";
+const char* const errorDomainDownload = "WebKitDownloadError";
 
 enum NetworkError {
     NetworkErrorFailed = 399,
@@ -56,6 +59,12 @@ enum PluginError {
     PluginErrorWillHandleLoad = 204
 };
 
+enum DownloadError {
+    DownloadErrorNetwork = 499,
+    DownloadErrorCancelledByUser = 400,
+    DownloadErrorDestination = 401
+};
+
 ResourceError cancelledError(const ResourceRequest&);
 ResourceError blockedError(const ResourceRequest&);
 ResourceError cannotShowURLError(const ResourceRequest&);
@@ -63,6 +72,9 @@ ResourceError interruptedForPolicyChangeError(const ResourceRequest&);
 ResourceError cannotShowMIMETypeError(const ResourceResponse&);
 ResourceError fileDoesNotExistError(const ResourceResponse&);
 ResourceError pluginWillHandleLoadError(const ResourceResponse&);
+ResourceError downloadNetworkError(const ResourceError&);
+ResourceError downloadCancelledByUserError(const ResourceResponse&);
+ResourceError downloadDestinationError(const ResourceResponse&, const String& errorMessage);
 
 }
 

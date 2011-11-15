@@ -69,4 +69,22 @@ ResourceError pluginWillHandleLoadError(const ResourceResponse& response)
                          response.url().string(), _("Plugin will handle load"));
 }
 
+ResourceError downloadNetworkError(const ResourceError& networkError)
+{
+    return ResourceError(errorDomainDownload, DownloadErrorNetwork,
+                         networkError.failingURL(), networkError.localizedDescription());
+}
+
+ResourceError downloadCancelledByUserError(const ResourceResponse& response)
+{
+    return ResourceError(errorDomainDownload, DownloadErrorCancelledByUser,
+                         response.url().string(), _("User cancelled the download"));
+}
+
+ResourceError downloadDestinationError(const ResourceResponse& response, const String& errorMessage)
+{
+    return ResourceError(errorDomainDownload, DownloadErrorDestination,
+                         response.url().string(), errorMessage);
+}
+
 } // namespace WebCore
