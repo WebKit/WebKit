@@ -44,7 +44,6 @@ WebInspector.MIMETypes = {
     "image/bmp":                   {2: true},
     "image/svg+xml":               {2: true},
     "image/vnd.microsoft.icon":    {2: true},
-    "image/webp":                  {2: true},
     "image/x-icon":                {2: true},
     "image/x-xbitmap":             {2: true},
     "font/ttf":                    {3: true},

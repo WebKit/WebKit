@@ -319,9 +319,6 @@ WebInspector.doLoadedDone = function()
     if (WebInspector.socket)
         document.body.addStyleClass("remote");
 
-    if (WebInspector.queryParamsObject.toolbarColor && WebInspector.queryParamsObject.textColor)
-        WebInspector.setToolbarColors(WebInspector.queryParamsObject.toolbarColor, WebInspector.queryParamsObject.textColor);
-
     WebInspector.shortcutsScreen = new WebInspector.ShortcutsScreen();
     this._registerShortcuts();
 

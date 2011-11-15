@@ -119,8 +119,6 @@ WebInspector.ProfilesPanel = function()
 
     this.enableToggleButton = new WebInspector.StatusBarButton("", "enable-toggle-status-bar-item");
     this.enableToggleButton.addEventListener("click", this._toggleProfiling.bind(this), false);
-    if (Preferences.profilerAlwaysEnabled)
-        this.enableToggleButton.element.addStyleClass("hidden");
 
     this.clearResultsButton = new WebInspector.StatusBarButton(WebInspector.UIString("Clear all profiles."), "clear-status-bar-item");
     this.clearResultsButton.addEventListener("click", this._clearProfiles.bind(this), false);

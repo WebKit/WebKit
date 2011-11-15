@@ -58,8 +58,7 @@ var Preferences = {
     showNetworkPanelInitiatorColumn: false,
     haveExtensions: false,
     sharedWorkersDebugNote: undefined,
-    localizeUI: true,
-    applicationTitle: "Web Inspector - %s"
+    localizeUI: true
 }
 
 /**
