@@ -1,3 +1,16 @@
+2011-11-14  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Improve ChangeLogEntry's reviewer parsing algorithm part 2
+        https://bugs.webkit.org/show_bug.cgi?id=72340
+
+        Reviewed by Eric Seidel.
+
+        This patch improves the recognition of NOBODY, wrestler names, and parenthesized clauses,
+        and prepares ChangeLogEntry to support edit-distance-based reviewer-name recognition.
+
+        * Scripts/webkitpy/common/checkout/changelog.py:
+        * Scripts/webkitpy/common/checkout/changelog_unittest.py:
+
 2011-11-14  Eric Seidel  <eric@webkit.org>
 
         check-webkit-style broken by r99773: "Could not determine the port"

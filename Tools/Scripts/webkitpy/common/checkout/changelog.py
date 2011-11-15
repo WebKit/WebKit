@@ -83,12 +83,27 @@ class ChangeLogEntry(object):
 
     reviewed_byless_regexp = r'^\s*((Review|Rubber(\s*|-)stamp)(s|ed)?|RS)(\s+|\s*=\s*)(?P<reviewer>([A-Z]\w+\s*)+)[\.,]?\s*$'
 
-    contributor_name_noise_regexp = re.compile(r"""
-    (\s+(landed|committed|)\s+by.+) # landed by, commented by, etc...
-    |\..+ # text afetr the first period (inclusive)
+    reviewer_name_noise_regexp = re.compile(r"""
+    (\s+((tweaked\s+)?and\s+)?(landed|committed|okayed)\s+by.+) # "landed by", "commented by", etc...
+    |(^(Reviewed\s+)?by\s+) # extra "Reviewed by" or "by"
+    |\.(?:(\s.+|$)) # text after the first period followed by a space
     |([(<]\s*[\w_\-\.]+@[\w_\-\.]+[>)]) # email addresses
-    |((?<=and)\s+([a-z\-]+\s+)+by) # phrases like "given a glance-over by" and "looked over by" (no capital letters)
+    |([(<](https?://?bugs.)webkit.org[^>)]+[>)]) # bug url
+    |("[^"]+") # wresler names like 'Sean/Shawn/Shaun' in 'Geoffrey "Sean/Shawn/Shaun" Garen'
+    |('[^']+') # wresler names like "The Belly" in "Sam 'The Belly' Weinig"
+    |((Mr|Ms|Dr|Mrs|Prof)\.(\s+|$))
     """, re.IGNORECASE | re.VERBOSE)
+
+    reviewer_name_casesensitive_noise_regexp = re.compile(r"""
+    ((\s+|^)(and\s+)?([a-z-]+\s+){5,}by\s+) # e.g. "and given a good once-over by"
+    |(\(\s*(?!(and|[A-Z])).+\)) # any parenthesis that doesn't start with "and" or a capital letter
+    |(with(\s+[a-z-]+)+) # phrases with "with no hesitation" in "Sam Weinig with no hesitation"
+    """, re.VERBOSE)
+
+    nobody_regexp = re.compile(r"""(\s+|^)nobody(
+    ((,|\s+-)?\s+(\w+\s+)+fix.*) # e.g. nobody, build fix...
+    |(\s*\([^)]+\).*) # NOBODY (..)...
+    |$)""", re.IGNORECASE | re.VERBOSE)
 
     # e.g. == Rolled over to ChangeLog-2011-02-16 ==
     rolled_over_regexp = r'^== Rolled over to ChangeLog-\d{4}-\d{2}-\d{2} ==$'
@@ -113,18 +128,23 @@ class ChangeLogEntry(object):
 
         reviewer_text = match.group("reviewer")
 
-        reviewer_text = ChangeLogEntry.contributor_name_noise_regexp.sub('', reviewer_text)
+        reviewer_text = ChangeLogEntry.nobody_regexp.sub('', reviewer_text)
+        reviewer_text = ChangeLogEntry.reviewer_name_noise_regexp.sub('', reviewer_text)
+        reviewer_text = ChangeLogEntry.reviewer_name_casesensitive_noise_regexp.sub('', reviewer_text)
+        reviewer_text = reviewer_text.replace('(', '').replace(')', '')
         reviewer_text = re.sub(r'\s\s+|[,.]\s*$', ' ', reviewer_text).strip()
+        if not len(reviewer_text):
+            return None, None
 
         # FIXME: Canonicalize reviewer names; e.g. Andy "First Time Reviewer" Estes
         # FIXME: Ignore NOBODY (\w+) and "a spell checker"
-        reviewer_list = re.split(r'\s*(?:(?:,(?:\s+and\s+|&)?)|(?:and\s+|&))\s*', reviewer_text)
+        reviewer_list = re.split(r'\s*(?:(?:,(?:\s+and\s+|&)?)|(?:and\s+|&)|(?:[/+]))\s*', reviewer_text)
 
         # Get rid of "reviewers" like "even though this is just a..." in "Reviewed by Sam Weinig, even though this is just a..."
-        reviewer_list = [reviewer for reviewer in reviewer_list if len(reviewer.split()) <= 5]
+        # and "who wrote the original code" in "Noam Rosenthal, who wrote the original code"
+        reviewer_list = [reviewer for reviewer in reviewer_list if not re.match('^who\s|^([a-z]+(\s+|\.|$)){6,}$', reviewer)]
 
         return reviewer_text, reviewer_list
-
 
     def _parse_entry(self):
         match = re.match(self.date_line_regexp, self._contents, re.MULTILINE)
