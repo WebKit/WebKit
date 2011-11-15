@@ -2516,7 +2516,6 @@ BUGWK50709 MAC : fast/css/font-weight-1.html = IMAGE+TEXT
 
 BUGCR65012 LINUX : fast/dom/HTMLHeadElement/head-check.html = PASS CRASH
 
-BUG_VITALYR : fast/images/gray-scale-jpeg-with-color-profile.html = MISSING
 BUG_VITALYR MAC : tables/mozilla/bugs/bug82946-2.html = IMAGE
 
 BUGWK70878 LINUX : http/tests/xmlhttprequest/xmlhttprequest-test-send-flag.html = PASS TIMEOUT
