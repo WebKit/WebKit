@@ -1,3 +1,25 @@
+2011-11-15  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 100022
+
+    2011-11-11  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=72167
+        REGRESSION: Scroll position not restored on back after scroll 
+        -and corresponding-
+        <rdar://problem/10410684>
+
+        Reviewed by Simon Fraser.
+
+        We can't just return early if we are not on an active page. 
+        notifyPositionChanged() is called when a page is going into the page cache (and 
+        therefore when not on an active page). We should not notify AppKit that the page 
+        has scrolled in that case, but we still need to call 
+        ScrollAnimator::notifyPositionChanged();. So this patch removes the early return, 
+        and replaces it with a conditional around the relevant code.
+        * platform/mac/ScrollAnimatorMac.mm:
+        (WebCore::ScrollAnimatorMac::notifyPositionChanged):
+
 2011-11-08  Lucas Forschler  <lforschler@apple.com>
 
     Merge 99508
