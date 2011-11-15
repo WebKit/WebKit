@@ -1,5 +1,12 @@
 2011-11-14  Oliver Hunt  <oliver@apple.com>
 
+        More V8 build fixes.
+
+        * bindings/v8/custom/V8ArrayBufferViewCustom.h:
+        (WebCore::setWebGLArrayHelper):
+
+2011-11-14  Oliver Hunt  <oliver@apple.com>
+
         Fix V8 build again.
 
         * bindings/scripts/CodeGeneratorV8.pm:
