@@ -340,8 +340,8 @@ inline JSValue Stringifier::toJSON(JSValue value, const PropertyNameForFunctionC
     if (callType == CallTypeNone)
         return value;
 
-    JSValue list[] = { propertyName.value(m_exec) };
-    ArgList args(list, WTF_ARRAY_LENGTH(list));
+    MarkedArgumentBuffer args;
+    args.append(propertyName.value(m_exec));
     return call(m_exec, object, callType, callData, value, args);
 }
 
@@ -354,8 +354,9 @@ Stringifier::StringifyResult Stringifier::appendStringifiedValue(UStringBuilder&
 
     // Call the replacer function.
     if (m_replacerCallType != CallTypeNone) {
-        JSValue list[] = { propertyName.value(m_exec), value };
-        ArgList args(list, WTF_ARRAY_LENGTH(list));
+        MarkedArgumentBuffer args;
+        args.append(propertyName.value(m_exec));
+        args.append(value);
         value = call(m_exec, m_replacer.get(), m_replacerCallType, m_replacerCallData, holder, args);
         if (m_exec->hadException())
             return StringifyFailed;
@@ -621,9 +622,10 @@ public:
 private:
     JSValue callReviver(JSObject* thisObj, JSValue property, JSValue unfiltered)
     {
-        JSValue args[] = { property, unfiltered };
-        ArgList argList(args, 2);
-        return call(m_exec, m_function.get(), m_callType, m_callData, thisObj, argList);
+        MarkedArgumentBuffer args;
+        args.append(property);
+        args.append(unfiltered);
+        return call(m_exec, m_function.get(), m_callType, m_callData, thisObj, args);
     }
 
     friend class Holder;

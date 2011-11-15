@@ -1,3 +1,19 @@
+2011-11-15  Geoffrey Garen  <ggaren@apple.com>
+
+        Use MarkedArgumentBuffer to avoid making assumptions about argument order
+        https://bugs.webkit.org/show_bug.cgi?id=72418
+
+        Reviewed by Sam Weinig.
+        
+        A step toward reversing the argument order.
+
+        * runtime/JSONObject.cpp:
+        (JSC::Stringifier::toJSON):
+        (JSC::Stringifier::appendStringifiedValue):
+        (JSC::Walker::callReviver): Don't assume that ArgList wants to point
+        at arguments in forward order. Instead, use MarkedArgumentBuffer, which
+        will make the decision for us.
+
 2011-11-15  Filip Pizlo  <fpizlo@apple.com>
 
         DFG should distinguish between constants in the constant pool and weak
