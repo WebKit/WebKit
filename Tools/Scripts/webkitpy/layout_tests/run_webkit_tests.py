@@ -274,6 +274,8 @@ def parse_args(args=None):
             dest="pixel_tests", help="Disable pixel-to-pixel PNG comparisons"),
         optparse.make_option("--no-sample-on-timeout", action="store_false",
             dest="sample_on_timeout", help="Don't run sample on timeout (Mac OS X only)"),
+        optparse.make_option("--no-ref-tests", action="store_true",
+            dest="no_ref_tests", help="Skip all ref tests"),
         optparse.make_option("--tolerance",
             help="Ignore image differences less than this percentage (some "
                 "ports may ignore this option)", type="float"),

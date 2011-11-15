@@ -225,8 +225,8 @@ class WebKitPort(Port):
         # to have multiple copies of webkit checked out and built.
         return self._build_path('layout-test-results')
 
-    def create_driver(self, worker_number):
-        return WebKitDriver(self, worker_number)
+    def _driver_class(self):
+        return WebKitDriver
 
     def _tests_for_other_platforms(self):
         # By default we will skip any directory under LayoutTests/platform
@@ -440,8 +440,8 @@ class WebKitPort(Port):
 class WebKitDriver(Driver):
     """WebKit implementation of the DumpRenderTree/WebKitTestRunner interface."""
 
-    def __init__(self, port, worker_number):
-        Driver.__init__(self, port, worker_number)
+    def __init__(self, port, worker_number, pixel_tests=False):
+        Driver.__init__(self, port, worker_number, pixel_tests)
         self._driver_tempdir = port._filesystem.mkdtemp(prefix='%s-' % self._port.driver_name())
         # WebKitTestRunner can report back subprocess crashes by printing
         # "#CRASHED - PROCESSNAME".  Since those can happen at any time
@@ -457,7 +457,6 @@ class WebKitDriver(Driver):
         self.err_seen_eof = False
         self._server_process = None
 
-
     # FIXME: This may be unsafe, as python does not guarentee any ordering of __del__ calls
     # I believe it's possible that self._port or self._port._filesystem may already be destroyed.
     def __del__(self):
@@ -466,7 +465,7 @@ class WebKitDriver(Driver):
     def cmd_line(self):
         cmd = self._command_wrapper(self._port.get_option('wrapper'))
         cmd.append(self._port._path_to_driver())
-        if self._port.get_option('pixel_tests'):
+        if self._pixel_tests:
             cmd.append('--pixel-tests')
         if self._port.get_option('gc_between_tests'):
             cmd.append('--gc-between-tests')
@@ -490,8 +489,10 @@ class WebKitDriver(Driver):
         self._crashed_subprocess_name = None
         self._server_process = server_process.ServerProcess(self._port, server_name, self.cmd_line(), environment)
 
-    def poll(self):
-        return self._server_process.poll()
+    def has_crashed(self):
+        if self._server_process is None:
+            return False
+        return self._server_process.poll() is not None
 
     def _check_for_driver_crash(self, error_line):
         if error_line == "#CRASHED\n":

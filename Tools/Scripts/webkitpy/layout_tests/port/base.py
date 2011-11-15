@@ -53,6 +53,7 @@ from webkitpy.common.system.executive import ScriptError
 from webkitpy.layout_tests import read_checksum_from_png
 from webkitpy.layout_tests.models.test_configuration import TestConfiguration
 from webkitpy.layout_tests.port import config as port_config
+from webkitpy.layout_tests.port import driver
 from webkitpy.layout_tests.port import http_lock
 from webkitpy.layout_tests.port import test_files
 from webkitpy.layout_tests.servers import apache_http_server
@@ -663,7 +664,7 @@ class Port(object):
 
     def create_driver(self, worker_number):
         """Return a newly created Driver subclass for starting/stopping the test driver."""
-        raise NotImplementedError('Port.create_driver')
+        return driver.DriverProxy(self, worker_number, self._driver_class(), pixel_tests=self.get_option('pixel_tests'))
 
     def start_helper(self):
         """If a port needs to reconfigure graphics settings or do other
@@ -957,3 +958,7 @@ class Port(object):
         """Generates a list of TestConfiguration instances, representing configurations
         for a platform across all OSes, architectures, build and graphics types."""
         raise NotImplementedError('Port._generate_test_configurations')
+
+    def _driver_class(self):
+        """Returns the port's driver implementation."""
+        raise NotImplementedError('Port._driver_class')

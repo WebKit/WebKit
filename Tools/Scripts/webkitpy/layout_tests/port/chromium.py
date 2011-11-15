@@ -252,9 +252,8 @@ class ChromiumPort(Port):
         if self._filesystem.exists(cachedir):
             self._filesystem.rmtree(cachedir)
 
-    def create_driver(self, worker_number):
-        """Starts a new Driver and returns a handle to it."""
-        return ChromiumDriver(self, worker_number)
+    def _driver_class(self):
+        return ChromiumDriver
 
     def start_helper(self):
         helper_path = self._path_to_helper()
@@ -400,16 +399,16 @@ class ChromiumPort(Port):
 
 # FIXME: This should inherit from WebKitDriver now that Chromium has a DumpRenderTree process like the rest of WebKit.
 class ChromiumDriver(Driver):
-    def __init__(self, port, worker_number):
-        Driver.__init__(self, port, worker_number)
+    def __init__(self, port, worker_number, pixel_tests=True):
+        Driver.__init__(self, port, worker_number, pixel_tests)
         self._proc = None
         self._image_path = None
-        if self._port.get_option('pixel_tests'):
+        if self._pixel_tests:
             self._image_path = self._port._filesystem.join(self._port.results_directory(), 'png_result%s.png' % self._worker_number)
 
     def _wrapper_options(self):
         cmd = []
-        if self._port.get_option('pixel_tests'):
+        if self._pixel_tests:
             # See note above in diff_image() for why we need _convert_path().
             cmd.append("--pixel-tests=" + self._port._convert_path(self._image_path))
         # FIXME: This is not None shouldn't be necessary, unless --js-flags="''" changes behavior somehow?
@@ -455,8 +454,10 @@ class ChromiumDriver(Driver):
         close_fds = sys.platform not in ('win32', 'cygwin')
         self._proc = subprocess.Popen(self.cmd_line(), stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, close_fds=close_fds)
 
-    def poll(self):
-        return self._proc.poll()
+    def has_crashed(self):
+        if self._proc is None:
+            return False
+        return self._proc.poll() is not None
 
     def _write_command_and_read_line(self, input=None):
         """Returns a tuple: (line, did_crash)"""
@@ -531,7 +532,7 @@ class ChromiumDriver(Driver):
 
         while not crash and line.rstrip() != "#EOF":
             # Make sure we haven't crashed.
-            if line == '' and self.poll() is not None:
+            if line == '' and self._proc.poll() is not None:
                 # This is hex code 0xc000001d, which is used for abrupt
                 # termination. This happens if we hit ctrl+c from the prompt
                 # and we happen to be waiting on DRT.

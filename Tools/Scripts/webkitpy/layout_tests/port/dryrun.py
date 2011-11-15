@@ -99,8 +99,8 @@ class DryRunPort(object):
     def stop_websocket_server(self):
         pass
 
-    def create_driver(self, worker_number):
-        return DryrunDriver(self, worker_number)
+    def driver_class(self):
+        return DryrunDriver
 
 
 class DryrunDriver(Driver):
@@ -108,9 +108,6 @@ class DryrunDriver(Driver):
 
     def cmd_line(self):
         return ['None']
-
-    def poll(self):
-        return None
 
     def run_test(self, driver_input):
         start_time = time.time()

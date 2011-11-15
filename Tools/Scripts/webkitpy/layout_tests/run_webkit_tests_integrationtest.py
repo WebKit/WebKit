@@ -152,12 +152,8 @@ def get_tests_run(extra_args=None, tests_included=False, flatten_batches=False,
 
     class RecordingTestDriver(TestDriver):
         def __init__(self, port, worker_number):
-            TestDriver.__init__(self, port, worker_number)
+            TestDriver.__init__(self, port, worker_number, pixel_tests=port.get_option('pixel_test'))
             self._current_test_batch = None
-
-        def poll(self):
-            # So that we don't create a new driver for every test
-            return None
 
         def stop(self):
             self._current_test_batch = None
@@ -680,8 +676,14 @@ class MainTest(unittest.TestCase):
         tests_run = get_tests_run(['passes/reftest.html'], tests_included=True, flatten_batches=True)
         self.assertEquals(['passes/reftest.html'], tests_run)
 
-    def test_reftest_skip_reftests_if_pixel_tests_are_disabled(self):
+    def test_reftest_run_reftests_if_pixel_tests_are_disabled(self):
         tests_run = get_tests_run(['--no-pixel-tests', 'passes/reftest.html'], tests_included=True, flatten_batches=True)
+        self.assertEquals(['passes/reftest.html'], tests_run)
+
+    def test_reftest_skip_reftests_if_no_ref_tests(self):
+        tests_run = get_tests_run(['--no-ref-tests', 'passes/reftest.html'], tests_included=True, flatten_batches=True)
+        self.assertEquals([], tests_run)
+        tests_run = get_tests_run(['--no-ref-tests', '--no-pixel-tests', 'passes/reftest.html'], tests_included=True, flatten_batches=True)
         self.assertEquals([], tests_run)
 
     def test_reftest_expected_html_should_be_ignored(self):

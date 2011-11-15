@@ -30,10 +30,11 @@ import shlex
 
 
 class DriverInput(object):
-    def __init__(self, test_name, timeout, image_hash):
+    def __init__(self, test_name, timeout, image_hash, is_reftest):
         self.test_name = test_name
         self.timeout = timeout  # in ms
         self.image_hash = image_hash
+        self.is_reftest = is_reftest
 
 
 class DriverOutput(object):
@@ -57,10 +58,10 @@ class DriverOutput(object):
         return bool(self.error)
 
 
-class Driver:
+class Driver(object):
     """Abstract interface for the DumpRenderTree interface."""
 
-    def __init__(self, port, worker_number):
+    def __init__(self, port, worker_number, pixel_tests):
         """Initialize a Driver to subsequently run tests.
 
         Typically this routine will spawn DumpRenderTree in a config
@@ -71,6 +72,7 @@ class Driver:
         """
         self._port = port
         self._worker_number = worker_number
+        self._pixel_tests = pixel_tests
 
     def run_test(self, driver_input):
         """Run a single test and return the results.
@@ -89,9 +91,42 @@ class Driver:
         # used by e.g. tools/valgrind/valgrind_tests.py.
         return shlex.split(wrapper_option) if wrapper_option else []
 
-    def poll(self):
-        """Returns None if the Driver is still running. Returns the returncode if it has exited."""
-        raise NotImplementedError('Driver.poll')
+    def has_crashed(self):
+        return False
 
     def stop(self):
         raise NotImplementedError('Driver.stop')
+
+    def cmd_line(self):
+        raise NotImplementedError('Driver.cmd_line')
+
+
+class DriverProxy(object):
+    """A wrapper for managing two Driver instances, one with pixel tests and
+    one without. This allows us to handle plain text tests and ref tests with a
+    single driver."""
+
+    def __init__(self, port, worker_number, driver_instance_constructor, pixel_tests):
+        self._driver = driver_instance_constructor(port, worker_number, pixel_tests)
+        if pixel_tests:
+            self._reftest_driver = self._driver
+        else:
+            self._reftest_driver = driver_instance_constructor(port, worker_number, pixel_tests=True)
+
+    def run_test(self, driver_input):
+        if driver_input.is_reftest:
+            return self._reftest_driver.run_test(driver_input)
+        return self._driver.run_test(driver_input)
+
+    def has_crashed(self):
+        return self._driver.has_crashed() or self._reftest_driver.has_crashed()
+
+    def stop(self):
+        self._driver.stop()
+        self._reftest_driver.stop()
+
+    def cmd_line(self):
+        cmd_line = self._driver.cmd_line()
+        if self._driver != self._reftest_driver:
+            cmd_line += ['; '] + self._reftest_driver.cmd_line()
+        return cmd_line

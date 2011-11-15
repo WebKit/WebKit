@@ -359,8 +359,8 @@ class TestPort(Port):
     def setup_test_run(self):
         pass
 
-    def create_driver(self, worker_number):
-        return TestDriver(self, worker_number)
+    def _driver_class(self):
+        return TestDriver
 
     def start_http_server(self):
         pass
@@ -487,9 +487,6 @@ class TestDriver(Driver):
 
     def cmd_line(self):
         return [self._port._path_to_driver()] + self._port.get_option('additional_drt_flag', [])
-
-    def poll(self):
-        return True
 
     def run_test(self, test_input):
         start_time = time.time()

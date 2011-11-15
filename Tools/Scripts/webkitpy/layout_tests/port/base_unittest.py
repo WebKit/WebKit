@@ -302,17 +302,17 @@ class VirtualTest(unittest.TestCase):
         self.assertVirtual(port._path_to_wdiff)
 
     def test_virtual_driver_methods(self):
-        driver = Driver(None, None)
+        driver = Driver(Port(MockHost()), None, pixel_tests=False)
         self.assertVirtual(driver.run_test, None)
-        self.assertVirtual(driver.poll)
         self.assertVirtual(driver.stop)
+        self.assertVirtual(driver.cmd_line)
 
 
 # FIXME: This should be moved to driver_unittest.py or just deleted.
 class DriverTest(unittest.TestCase):
 
     def _assert_wrapper(self, wrapper_string, expected_wrapper):
-        wrapper = Driver(None, None)._command_wrapper(wrapper_string)
+        wrapper = Driver(Port(MockHost()), None, pixel_tests=False)._command_wrapper(wrapper_string)
         self.assertEqual(wrapper, expected_wrapper)
 
     def test_command_wrapper(self):

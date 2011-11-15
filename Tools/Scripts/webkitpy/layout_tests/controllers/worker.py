@@ -243,7 +243,9 @@ class Worker(manager_worker_broker.AbstractWorker):
 
         Returns: a TestResult object.
         """
-        if not self._driver or self._driver.poll() is not None:
+        if self._driver and self._driver.has_crashed():
+            self.kill_driver()
+        if not self._driver:
             self._driver = self._port.create_driver(self._worker_number)
         return self.run_single_test(self._driver, test_input)
 

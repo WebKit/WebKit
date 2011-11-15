@@ -113,21 +113,17 @@ class SingleTestRunner:
         image_hash = None
         if self._should_fetch_expected_checksum():
             image_hash = self._port.expected_checksum(self._test_name)
-        return DriverInput(self._test_name, self._timeout, image_hash)
+        return DriverInput(self._test_name, self._timeout, image_hash, self._is_reftest)
 
     def run(self):
-        if self._options.new_baseline or self._options.reset_results:
-            if self._is_reftest:
-                # Returns a dummy TestResult. We don't have to rebase for reftests.
-                return TestResult(self._test_name)
-            else:
-                return self._run_rebaseline()
         if self._is_reftest:
-            if self._port.get_option('pixel_tests'):
-                return self._run_reftest()
-            result = TestResult(self._test_name)
-            result.type = test_expectations.SKIP
-            return result
+            if self._port.get_option('no_ref_tests') or self._options.new_baseline or self._options.reset_results:
+                result = TestResult(self._test_name)
+                result.type = test_expectations.SKIP
+                return result
+            return self._run_reftest()
+        if self._options.new_baseline or self._options.reset_results:
+            return self._run_rebaseline()
         return self._run_compare_test()
 
     def _run_compare_test(self):
@@ -290,7 +286,7 @@ class SingleTestRunner:
     def _run_reftest(self):
         driver_output1 = self._driver.run_test(self._driver_input())
         reference_test_name = self._port.relative_test_filename(self._reference_filename)
-        driver_output2 = self._driver.run_test(DriverInput(reference_test_name, self._timeout, driver_output1.image_hash))
+        driver_output2 = self._driver.run_test(DriverInput(reference_test_name, self._timeout, driver_output1.image_hash, self._is_reftest))
         test_result = self._compare_output_with_reference(driver_output1, driver_output2)
 
         test_result_writer.write_test_result(self._port, self._test_name, driver_output1, driver_output2, test_result.failures)
@@ -307,6 +303,8 @@ class SingleTestRunner:
         failures.extend(self._handle_error(driver_output2, reference_filename=self._reference_filename))
         if failures:
             return TestResult(self._test_name, failures, total_test_time, has_stderr)
+
+        assert(driver_output1.image_hash or driver_output2.image_hash)
 
         if self._is_mismatch_reftest:
             if driver_output1.image_hash == driver_output2.image_hash:

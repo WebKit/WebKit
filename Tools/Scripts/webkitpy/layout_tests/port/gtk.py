@@ -72,8 +72,8 @@ class GtkPort(WebKitPort):
     def _port_flag_for_scripts(self):
         return "--gtk"
 
-    def create_driver(self, worker_number):
-        return GtkDriver(self, worker_number)
+    def _driver_class(self):
+        return GtkDriver
 
     def setup_environ_for_server(self, server_name=None):
         environment = WebKitPort.setup_environ_for_server(self, server_name)
