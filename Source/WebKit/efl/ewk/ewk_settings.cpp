@@ -46,7 +46,7 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/StringConcatenate.h>
 
-static const char* _ewk_cache_directory_path = 0;
+static const char* s_offlineAppCachePath = 0;
 
 static const char* _ewk_icon_database_path = 0;
 #if ENABLE(SQL_DATABASE)
@@ -243,20 +243,15 @@ const char* ewk_settings_default_user_agent_get(void)
     return eina_stringshare_add(staticUa.utf8().data());
 }
 
-Eina_Bool ewk_settings_cache_directory_path_set(const char* path)
+void ewk_settings_application_cache_path_set(const char* path)
 {
-    if (!path)
-        return false;
-
     WebCore::cacheStorage().setCacheDirectory(WTF::String::fromUTF8(path));
-    eina_stringshare_replace(&_ewk_cache_directory_path, path);
-
-    return true;
+    eina_stringshare_replace(&s_offlineAppCachePath, path);
 }
 
-const char* ewk_settings_cache_directory_path_get()
+const char* ewk_settings_application_cache_path_get()
 {
-    return _ewk_cache_directory_path;
+    return s_offlineAppCachePath;
 }
 
 double ewk_settings_default_timer_interval_get(void)

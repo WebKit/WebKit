@@ -2087,14 +2087,14 @@ Eina_Bool ewk_view_setting_private_browsing_set(Evas_Object* ewkView, Eina_Bool 
     return true;
 }
 
-Eina_Bool ewk_view_setting_offline_app_cache_get(const Evas_Object* ewkView)
+Eina_Bool ewk_view_setting_application_cache_get(const Evas_Object* ewkView)
 {
     EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, false);
     EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, false);
     return priv->settings.offlineAppCache;
 }
 
-Eina_Bool ewk_view_setting_offline_app_cache_set(Evas_Object* ewkView, Eina_Bool enable)
+Eina_Bool ewk_view_setting_application_cache_set(Evas_Object* ewkView, Eina_Bool enable)
 {
     EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, false);
     EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, false);
@@ -2105,7 +2105,6 @@ Eina_Bool ewk_view_setting_offline_app_cache_set(Evas_Object* ewkView, Eina_Bool
     }
     return true;
 }
-
 
 Eina_Bool ewk_view_setting_caret_browsing_get(const Evas_Object* ewkView)
 {

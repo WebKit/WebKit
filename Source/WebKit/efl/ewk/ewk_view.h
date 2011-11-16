@@ -1555,25 +1555,39 @@ EAPI Eina_Bool    ewk_view_setting_private_browsing_get(const Evas_Object *o);
 EAPI Eina_Bool    ewk_view_setting_private_browsing_set(Evas_Object *o, Eina_Bool enable);
 
 /**
- * Queries if the cache for offline application is enabled.
+ * Returns whether HTML5 application cache support is enabled for this view.
  *
- * @param o view object to query if the cache for offline application is enabled
+ * The Offline Application Caching APIs are part of HTML5 and allow applications to store data locally that is accessed
+ * when the network cannot be reached.
  *
- * @return @c EINA_TRUE if the cache for offline application is enabled,
+ * Application cache support is enabled by default.
+ *
+ * @param o view object whose settings to query
+ *
+ * @return @c EINA_TRUE if the application cache is enabled,
  *         @c EINA_FALSE if not or on failure
+ *
+ * @sa ewk_settings_application_cache_path_set
  */
-EAPI Eina_Bool    ewk_view_setting_offline_app_cache_get(const Evas_Object *o);
+EAPI Eina_Bool    ewk_view_setting_application_cache_get(const Evas_Object *o);
 
 /**
- * Enables/disables the cache for offline application.
+ * Enables/disables the HTML5 application cache for this view.
  *
- * @param o view object to set if the cache for offline application
- * @param enable @c EINA_TRUE to enable the cache for offline application
+ * The Offline Application Caching APIs are part of HTML5 and allow applications to store data locally that is accessed
+ * when the network cannot be reached.
+ *
+ * Application cache support is enabled by default.
+ *
+ * @param o view object whose settings to change
+ * @param enable @c EINA_TRUE to enable the application cache,
  *        @c EINA_FALSE to disable
  *
  * @return @c EINA_TRUE on success or @c EINA_FALSE on failure
+ *
+ * @sa ewk_settings_application_cache_path_set
  */
-EAPI Eina_Bool    ewk_view_setting_offline_app_cache_set(Evas_Object *o, Eina_Bool enable);
+EAPI Eina_Bool    ewk_view_setting_application_cache_set(Evas_Object *o, Eina_Bool enable);
 
 /**
  * Queries if the caret browsing feature is enabled.

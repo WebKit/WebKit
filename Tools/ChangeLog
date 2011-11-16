@@ -1,3 +1,20 @@
+2011-11-16  Raphael Kubo da Costa  <kubo@profusion.mobi>
+
+        [EFL] Clean up the offline apps-related functions in ewk_settings.
+        https://bugs.webkit.org/show_bug.cgi?id=72132
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        `ewk_settings_cache' and `ewk_view_setting_cache' are too common
+        prefixes for code that is related only to the HTML5 app cache
+        features.
+
+        Use `ewk_settings_application_cache' and
+        `ewk_view_setting_application_cache' instead.
+
+        * DumpRenderTree/efl/DumpRenderTreeChrome.cpp:
+        (DumpRenderTreeChrome::resetDefaultsToConsistentValues):
+
 2011-11-15  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Centralize hide_symbols and ensure all libs are built with symbol visibility & bsymbolic_functions

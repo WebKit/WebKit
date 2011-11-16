@@ -157,7 +157,7 @@ void DumpRenderTreeChrome::resetDefaultsToConsistentValues()
     ewk_view_setting_private_browsing_set(mainView(), EINA_FALSE);
     ewk_view_setting_spatial_navigation_set(mainView(), EINA_FALSE);
     ewk_view_setting_enable_frame_flattening_set(mainView(), EINA_FALSE);
-    ewk_view_setting_offline_app_cache_set(mainView(), EINA_TRUE);
+    ewk_view_setting_application_cache_set(mainView(), EINA_TRUE);
     ewk_view_setting_enable_scripts_set(mainView(), EINA_TRUE);
     ewk_view_font_family_name_set(mainView(), EWK_FONT_FAMILY_STANDARD, "Times");
     ewk_view_font_family_name_set(mainView(), EWK_FONT_FAMILY_MONOSPACE, "Courier");

@@ -128,25 +128,32 @@ EAPI cairo_surface_t *ewk_settings_icon_database_icon_surface_get(const char *ur
 EAPI Evas_Object     *ewk_settings_icon_database_icon_object_add(const char *url, Evas *canvas);
 
 /**
- * Sets cache directory.
+ * Sets the path where the application cache will be stored.
+ *
+ * The Offline Application Caching APIs are part of HTML5 and allow applications to store data locally that is accessed
+ * when the network cannot be reached.
+ *
+ * By default, the path is @c ~/.webkit.
  *
  * @param path where to store cache, must be write-able.
  *
- * @return @c EINA_TRUE on success, @c EINA_FALSE if path is NULL or offline
- *         web application is not supported.
+ * @sa ewk_view_setting_application_cache_set
  */
-EAPI Eina_Bool        ewk_settings_cache_directory_path_set(const char *path);
+EAPI void             ewk_settings_application_cache_path_set(const char *path);
 
 /**
- * Return cache directory path.
+ * Returns the path where the HTML5 application cache is stored.
  *
- * This is guaranteed to be eina_stringshare, so whenever possible
- * save yourself some cpu cycles and use eina_stringshare_ref()
- * instead of eina_stringshare_add() or strdup().
+ * The Offline Application Caching APIs are part of HTML5 and allow applications to store data locally that is accessed
+ * when the network cannot be reached.
  *
- * @return cache directory path.
+ * By default, the path is @c ~/.webkit.
+ *
+ * @return eina_stringshare'd path value.
+ *
+ * @sa ewk_view_setting_application_cache_set
  */
-EAPI const char      *ewk_settings_cache_directory_path_get(void);
+EAPI const char      *ewk_settings_application_cache_path_get(void);
 
 /**
  * Gets status of the memory cache of WebCore.
