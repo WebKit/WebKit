@@ -1,3 +1,25 @@
+2011-11-15  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Add the needed plumbing to parse display: -webkit-inline-grid
+        https://bugs.webkit.org/show_bug.cgi?id=72438
+
+        Reviewed by Tony Chang.
+
+        Test: fast/css-grid-layout/display-grid-set-get.html
+
+        Added the needed constants and plugged everything together.
+        Again we treat display: -webkit-inline-grid like display: none
+        for the moment.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        * css/CSSValueKeywords.in:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::createObject):
+        * rendering/style/RenderStyleConstants.h:
+
 2011-11-15  W. James MacLean  <wjmaclean@chromium.org>
 
         [chromium] Move setVisibleRect() calls into calculateDrawTransformAndVisibility()

@@ -1070,6 +1070,9 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EDisplay e)
         case GRID:
             m_value.ident = CSSValueWebkitGrid;
             break;
+        case INLINE_GRID:
+            m_value.ident = CSSValueWebkitInlineGrid;
+            break;
 #endif
         case NONE:
             m_value.ident = CSSValueNone;

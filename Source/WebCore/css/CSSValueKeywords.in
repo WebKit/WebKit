@@ -328,6 +328,7 @@ table-caption
 -webkit-inline-flexbox
 #if defined(ENABLE_CSS_GRID_LAYOUT) && ENABLE_CSS_GRID_LAYOUT
 -webkit-grid
+-webkit-inline-grid
 #endif
 //none
 //

@@ -991,7 +991,7 @@ bool CSSParser::parseValue(int propId, bool important)
         if ((id >= CSSValueInline && id <= CSSValueWebkitInlineFlexbox) || id == CSSValueNone)
             validPrimitive = true;
 #if ENABLE(CSS_GRID_LAYOUT)
-        if (id == CSSValueWebkitGrid)
+        if (id == CSSValueWebkitGrid || id == CSSValueWebkitInlineGrid)
             validPrimitive = true;
 #endif
         break;

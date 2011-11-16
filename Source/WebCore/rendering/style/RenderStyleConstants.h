@@ -414,7 +414,7 @@ enum EDisplay {
     TABLE_CAPTION, BOX, INLINE_BOX, 
     FLEXBOX, INLINE_FLEXBOX,
 #if ENABLE(CSS_GRID_LAYOUT)
-    GRID,
+    GRID, INLINE_GRID,
 #endif
     NONE
 };

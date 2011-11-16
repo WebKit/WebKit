@@ -133,6 +133,7 @@ RenderObject* RenderObject::createObject(Node* node, RenderStyle* style)
 #if ENABLE(CSS_GRID_LAYOUT)
     // For now, we don't show grid elements.
     case GRID:
+    case INLINE_GRID:
 #endif
     case NONE:
         return 0;
