@@ -1,7 +1,7 @@
 <html>
 <head><title> wrappers.html </title>
 <style>
-    BODY { font: 11px 'Lucida Grande'; width: 90%; padding: 10px; }
+    BODY { font-family: 'Lucida Grande'; width: 90%; padding: 10px; }
     .box { border: 1px solid gray; background-color: #EEE; margin: 10px; }
 </style>
 <script>
@@ -33,7 +33,7 @@ function test() {
     check('document.styleSheets[0].cssRules', 'DOMCSSRuleList');
     check('document.styleSheets[0].cssRules[0]', 'DOMCSSStyleRule');
     check('document.styleSheets[0].cssRules[0].style', 'DOMCSSStyleDeclaration');
-    check('document.styleSheets[0].cssRules[0].style.getPropertyCSSValue("font")', 'DOMCSSValue');
+    check('document.styleSheets[0].cssRules[0].style.getPropertyCSSValue("font-family")', 'DOMCSSValueList');
     check('document.styleSheets[0].cssRules[0].style.getPropertyCSSValue("width")', 'DOMCSSPrimitiveValue');
     
 }
