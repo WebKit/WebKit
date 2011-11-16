@@ -2205,7 +2205,6 @@ void CanvasRenderingContext2D::drawTextInternal(const String& text, float x, flo
         // We draw when fontWidth is 0 so compositing operations (eg, a "copy" op) still work.
         c->scale(FloatSize((fontWidth > 0 ? (width / fontWidth) : 0), 1));
         c->drawBidiText(font, textRun, FloatPoint(0, 0));
-        stateSaver.restore();
     } else
         c->drawBidiText(font, textRun, location);
 
