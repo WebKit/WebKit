@@ -1,3 +1,18 @@
+2011-11-16  Per-Erik Brodin  <per-erik.brodin@ericsson.com>
+
+        [GTK] fast/events/event-creation.html fails creating MediaStreamEvent
+        https://bugs.webkit.org/show_bug.cgi?id=70720
+
+        Reviewed by Philippe Normand.
+
+        Added missing overriding of Event::interfaceName()
+
+        * mediastream/MediaStreamEvent.cpp:
+        (WebCore::MediaStreamEvent::stream): Changed return value to raw pointer.
+        (WebCore::MediaStreamEvent::interfaceName): Added back from r98044.
+        * mediastream/MediaStreamEvent.h:
+        * mediastream/MediaStreamEvent.idl: Changed module name to "events".
+
 2011-11-16  Mario Sanchez Prada  <msanchez@igalia.com>
 
         [GTK] Use GQuark's in the ATK wrapper to get and set arbitrary data

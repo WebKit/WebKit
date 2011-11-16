@@ -57,9 +57,14 @@ MediaStreamEvent::~MediaStreamEvent()
 {
 }
 
-PassRefPtr<MediaStream> MediaStreamEvent::stream() const
+MediaStream* MediaStreamEvent::stream() const
 {
-    return m_stream;
+    return m_stream.get();
+}
+
+const AtomicString& MediaStreamEvent::interfaceName() const
+{
+    return eventNames().interfaceForMediaStreamEvent;
 }
 
 } // namespace WebCore
