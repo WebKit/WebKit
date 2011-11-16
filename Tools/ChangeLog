@@ -5,6 +5,19 @@
 
         Reviewed by Adam Barth.
 
+        I will continue engaging hacks, until windows improves.
+
+        * Scripts/webkitpy/common/host.py:
+         - Host uses self.executive instead of self._executive like Port does.
+         - I wanted to test this, but it mutates global state -- thus impossible to unittest at this time.
+
+2011-11-16  Eric Seidel  <eric@webkit.org>
+
+        check-webkit-style broken by r99773: "Could not determine the port"
+        https://bugs.webkit.org/show_bug.cgi?id=72275
+
+        Reviewed by Adam Barth.
+
         Engage windows hacks harder.
 
         This is a speculative fix for ChromiumWin.  We're now

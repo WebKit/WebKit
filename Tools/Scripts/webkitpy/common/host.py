@@ -71,14 +71,13 @@ class Host(object):
     # FIXME: This is a horrible, horrible hack for ChromiumWin and should be removed.
     # Maybe this belongs in SVN in some more generic "find the svn binary" codepath?
     # Or possibly Executive should have a way to emulate shell path-lookups?
+    # FIXME: Unclear how to test this, since it currently mutates global state on SVN.
     def _engage_awesome_windows_hacks(self):
-        if sys.platform != "win32":
-            return
         try:
-            self._executive.run_command(['svn', 'help'])
+            self.executive.run_command(['svn', 'help'])
         except OSError, e:
             try:
-                self._executive.run_command(['svn.bat', 'help'])
+                self.executive.run_command(['svn.bat', 'help'])
                 # Chromium Win uses the depot_tools package, which contains a number
                 # of development tools, including Python and svn. Instead of using a
                 # real svn executable, depot_tools indirects via a batch file, called
@@ -96,7 +95,8 @@ class Host(object):
                 _log.debug('Failed to engage svn.bat Windows hack.')
 
     def _initialize_scm(self, patch_directories=None):
-        self._engage_awesome_windows_hacks()
+        if sys.platform == "win32":
+            self._engage_awesome_windows_hacks()
         self._scm = default_scm(patch_directories)
         self._checkout = Checkout(self.scm())
 
