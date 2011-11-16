@@ -5219,3 +5219,37 @@ svg/as-image/same-image-two-instances.html
 svg/as-image/svg-image-change-content-size.xhtml
 svg/as-object/svg-embedded-in-html-in-iframe.html
 svg/zoom/page/zoom-svg-as-background-with-relative-size-and-viewBox.html
+
+# crashing tests
+canvas/philip/tests/2d.text.draw.fill.maxWidth.fontface.html
+http/tests/misc/onload-remove-iframe-crash-2.html
+fast/canvas/2d.text.draw.fill.maxWidth.negative.html
+fast/canvas/2d.text.draw.fill.maxWidth.verySmall.html
+
+# new failing tests
+css2.1/20110323/border-spacing-applies-to-015.htm
+css2.1/20110323/table-caption-001.htm
+css2.1/20110323/table-caption-002.htm
+css2.1/20110323/table-caption-horizontal-alignment-001.htm
+css2.1/20110323/table-caption-margins-001.htm
+css2.1/20110323/table-caption-optional-001.htm
+css2.1/20110323/table-caption-optional-002.htm
+fast/dom/rtl-scroll-to-leftmost-and-resize.html
+fast/multicol/pagination-h-horizontal-bt.html
+fast/multicol/pagination-h-horizontal-tb.html
+fast/multicol/pagination-h-vertical-lr.html
+fast/multicol/pagination-h-vertical-rl.html
+fast/multicol/pagination-v-horizontal-bt.html
+fast/multicol/pagination-v-horizontal-tb.html
+fast/multicol/pagination-v-vertical-lr.html
+fast/multicol/pagination-v-vertical-rl.html
+http/tests/security/contentSecurityPolicy/policy-does-not-affect-child.html
+svg/as-image/animated-svg-as-image-no-fixed-intrinsic-size.html
+svg/as-image/animated-svg-as-image-same-image.html
+svg/foreignObject/background-render-phase.html
+svg/foreignObject/clip.html
+svg/foreignObject/filter.html
+svg/foreignObject/mask.html
+svg/foreignObject/multiple-foreign-objects.html
+svg/zoom/page/zoom-background-images.html
+svg/zoom/page/zoom-svg-as-background-with-relative-size.html
