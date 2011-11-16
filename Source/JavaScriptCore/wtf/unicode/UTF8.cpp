@@ -125,6 +125,48 @@ int decodeUTF8Sequence(const char* sequence)
 // for *legal* UTF-8 will be 4 or fewer bytes total.
 static const unsigned char firstByteMark[7] = { 0x00, 0x00, 0xC0, 0xE0, 0xF0, 0xF8, 0xFC };
 
+ConversionResult convertLatin1ToUTF8(
+                                     const LChar** sourceStart, const LChar* sourceEnd, 
+                                     char** targetStart, char* targetEnd)
+{
+    ConversionResult result = conversionOK;
+    const LChar* source = *sourceStart;
+    char* target = *targetStart;
+    while (source < sourceEnd) {
+        UChar32 ch;
+        unsigned short bytesToWrite = 0;
+        const UChar32 byteMask = 0xBF;
+        const UChar32 byteMark = 0x80; 
+        const LChar* oldSource = source; // In case we have to back up because of target overflow.
+        ch = static_cast<unsigned short>(*source++);
+
+        // Figure out how many bytes the result will require
+        if (ch < (UChar32)0x80)
+            bytesToWrite = 1;
+        else
+            bytesToWrite = 2;
+
+        target += bytesToWrite;
+        if (target > targetEnd) {
+            source = oldSource; // Back up source pointer!
+            target -= bytesToWrite;
+            result = targetExhausted;
+            break;
+        }
+        switch (bytesToWrite) { // note: everything falls through.
+        case 2:
+            *--target = (char)((ch | byteMark) & byteMask);
+            ch >>= 6;
+        case 1:
+            *--target =  (char)(ch | firstByteMark[bytesToWrite]);
+        }
+        target += bytesToWrite;
+    }
+    *sourceStart = source;
+    *targetStart = target;
+    return result;
+}
+
 ConversionResult convertUTF16ToUTF8(
     const UChar** sourceStart, const UChar* sourceEnd, 
     char** targetStart, char* targetEnd, bool strict)

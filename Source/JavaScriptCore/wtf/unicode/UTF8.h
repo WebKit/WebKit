@@ -66,6 +66,10 @@ namespace Unicode {
                     const char** sourceStart, const char* sourceEnd, 
                     UChar** targetStart, UChar* targetEnd, bool strict = true);
 
+    ConversionResult convertLatin1ToUTF8(
+                    const LChar** sourceStart, const LChar* sourceEnd, 
+                    char** targetStart, char* targetEnd);
+
     ConversionResult convertUTF16ToUTF8(
                     const UChar** sourceStart, const UChar* sourceEnd, 
                     char** targetStart, char* targetEnd, bool strict = true);

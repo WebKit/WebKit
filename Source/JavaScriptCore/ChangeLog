@@ -1,3 +1,34 @@
+2011-11-15  Michael Saboff  <msaboff@apple.com>
+
+        Towards 8 bit Strings - Update utf8() and ascii() methods for 8 bit strings
+        https://bugs.webkit.org/show_bug.cgi?id=72323
+
+        Added 8 bit optimized paths for String and UString ascii() and utf8() methods.
+
+        Added String::characters8(), characters16() and is8Bit() helper methods.
+
+        Added an new Unicode::convertLatin1ToUTF8() method that works on
+        LChar (8 bit) strings that is a stripped down version of convertUTF16ToUTF8().
+
+        Reviewed by Geoff Garen.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * runtime/UString.cpp:
+        (JSC::UString::utf8):
+        * wtf/text/WTFString.cpp:
+        (WTF::String::ascii):
+        (WTF::String::utf8):
+        * wtf/text/WTFString.h:
+        (WTF::String::characters8):
+        (WTF::String::characters16):
+        (WTF::String::is8Bit):
+        (WTF::LChar):
+        (WTF::UChar):
+        * wtf/unicode/UTF8.cpp:
+        (WTF::Unicode::convertLatin1ToUTF8):
+        * wtf/unicode/UTF8.h:
+        * wtf/unicode/Unicode.h:
+
 2011-11-15  Darin Adler  <darin@apple.com>
 
         REGRESSION (r98887): ParserArena and Keywords leaking

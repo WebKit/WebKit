@@ -641,7 +641,27 @@ CString String::ascii() const
     // preserved, characters outside of this range are converted to '?'.
 
     unsigned length = this->length();
-    const UChar* characters = this->characters();
+
+    if (!length) {
+        char* characterBuffer;
+        return CString::newUninitialized(length, characterBuffer);
+    }
+
+    if (this->is8Bit()) {
+        const LChar* characters = this->characters8();
+
+        char* characterBuffer;
+        CString result = CString::newUninitialized(length, characterBuffer);
+
+        for (unsigned i = 0; i < length; ++i) {
+            LChar ch = characters[i];
+            characterBuffer[i] = ch && (ch < 0x20 || ch > 0x7f) ? '?' : ch;
+        }
+
+        return result;        
+    }
+
+    const UChar* characters = this->characters16();
 
     char* characterBuffer;
     CString result = CString::newUninitialized(length, characterBuffer);
@@ -685,7 +705,9 @@ static inline void putUTF8Triple(char*& buffer, UChar ch)
 CString String::utf8(bool strict) const
 {
     unsigned length = this->length();
-    const UChar* characters = this->characters();
+
+    if (!length)
+        return CString("", 0);
 
     // Allocate a buffer big enough to hold all the characters
     // (an individual UTF-16 UChar can only expand to 3 UTF-8 bytes).
@@ -702,26 +724,36 @@ CString String::utf8(bool strict) const
     Vector<char, 1024> bufferVector(length * 3);
 
     char* buffer = bufferVector.data();
-    ConversionResult result = convertUTF16ToUTF8(&characters, characters + length, &buffer, buffer + bufferVector.size(), strict);
-    ASSERT(result != targetExhausted); // (length * 3) should be sufficient for any conversion
 
-    // Only produced from strict conversion.
-    if (result == sourceIllegal)
-        return CString();
+    if (is8Bit()) {
+        const LChar* characters = this->characters8();
 
-    // Check for an unconverted high surrogate.
-    if (result == sourceExhausted) {
-        if (strict)
+        ConversionResult result = convertLatin1ToUTF8(&characters, characters + length, &buffer, buffer + bufferVector.size());
+        ASSERT_UNUSED(result, result != targetExhausted); // (length * 3) should be sufficient for any conversion
+    } else {
+        const UChar* characters = this->characters16();
+
+        ConversionResult result = convertUTF16ToUTF8(&characters, characters + length, &buffer, buffer + bufferVector.size(), strict);
+        ASSERT(result != targetExhausted); // (length * 3) should be sufficient for any conversion
+
+        // Only produced from strict conversion.
+        if (result == sourceIllegal)
             return CString();
-        // This should be one unpaired high surrogate. Treat it the same
-        // was as an unpaired high surrogate would have been handled in
-        // the middle of a string with non-strict conversion - which is
-        // to say, simply encode it to UTF-8.
-        ASSERT((characters + 1) == (this->characters() + length));
-        ASSERT((*characters >= 0xD800) && (*characters <= 0xDBFF));
-        // There should be room left, since one UChar hasn't been converted.
-        ASSERT((buffer + 3) <= (buffer + bufferVector.size()));
-        putUTF8Triple(buffer, *characters);
+
+        // Check for an unconverted high surrogate.
+        if (result == sourceExhausted) {
+            if (strict)
+                return CString();
+            // This should be one unpaired high surrogate. Treat it the same
+            // was as an unpaired high surrogate would have been handled in
+            // the middle of a string with non-strict conversion - which is
+            // to say, simply encode it to UTF-8.
+            ASSERT((characters + 1) == (this->characters() + length));
+            ASSERT((*characters >= 0xD800) && (*characters <= 0xDBFF));
+            // There should be room left, since one UChar hasn't been converted.
+            ASSERT((buffer + 3) <= (buffer + bufferVector.size()));
+            putUTF8Triple(buffer, *characters);
+        }
     }
 
     return CString(bufferVector.data(), buffer - bufferVector.data());

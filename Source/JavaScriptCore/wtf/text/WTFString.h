@@ -140,6 +140,27 @@ public:
             return 0;
         return m_impl->characters();
     }
+    
+    const LChar* characters8() const
+    {
+        if (!m_impl)
+            return 0;
+        ASSERT(m_impl->is8Bit());
+        return m_impl->characters8();
+    }
+
+    const UChar* characters16() const
+    {
+        if (!m_impl)
+            return 0;
+        ASSERT(!m_impl->is8Bit());
+        return m_impl->characters16();
+    }
+
+    template <typename CharType>
+    inline const CharType* getCharacters() const;
+
+    bool is8Bit() const { return m_impl->is8Bit(); }
 
     WTF_EXPORT_PRIVATE CString ascii() const;
     WTF_EXPORT_PRIVATE CString latin1() const;
@@ -395,6 +416,21 @@ String::String(const Vector<UChar, inlineCapacity>& vector)
     : m_impl(vector.size() ? StringImpl::create(vector.data(), vector.size()) : 0)
 {
 }
+
+template<>
+inline const LChar* String::getCharacters<LChar>() const
+{
+    ASSERT(is8Bit());
+    return characters8();
+}
+
+template<>
+inline const UChar* String::getCharacters<UChar>() const
+{
+    ASSERT(!is8Bit());
+    return characters16();
+}
+
 
 #ifdef __OBJC__
 // This is for situations in WebKit where the long standing behavior has been

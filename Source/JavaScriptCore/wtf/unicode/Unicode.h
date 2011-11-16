@@ -25,6 +25,9 @@
 
 #include <wtf/Assertions.h>
 
+// Define platform neutral 8 bit character type (L is for Latin-1).
+typedef unsigned char LChar;
+
 #if USE(QT4_UNICODE)
 #include "qt4/UnicodeQt4.h"
 #elif USE(ICU_UNICODE)
@@ -38,8 +41,5 @@
 #endif
 
 COMPILE_ASSERT(sizeof(UChar) == 2, UCharIsTwoBytes);
-
-// Define platform neutral 8 bit character type (L is for Latin-1).
-typedef unsigned char LChar;
 
 #endif // WTF_UNICODE_H
