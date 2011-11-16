@@ -163,7 +163,7 @@ class WebKitPort(Port):
         if not actual_contents or not expected_contents:
             # FIXME: It's not clear what we should return in this case.
             # Maybe we should throw an exception?
-            return (None, 0)
+            return (True, 0)
 
         process = self._start_image_diff_process(expected_contents, actual_contents)
         return self._read_image_diff(process)

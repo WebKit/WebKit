@@ -1,3 +1,11 @@
+2011-11-15  Tony Chang  <tony@chromium.org>
+
+        Unreviewed, fix test-webkitpy tests.  Move the check for image results
+        earlier.
+
+        * Scripts/webkitpy/layout_tests/layout_package/test_result_writer.py:
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+
 2011-11-15  James Robinson  <jamesr@chromium.org>
 
         [chromium] Fix flag name in chromium DumpRenderTree for accelerated video trigger
