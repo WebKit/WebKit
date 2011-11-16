@@ -231,8 +231,6 @@ private:
     CCLayerSorter m_layerSorter;
 
     FloatQuad m_sharedGeometryQuad;
-
-    bool m_isViewportChanged;
 };
 
 // Setting DEBUG_GL_CALLS to 1 will call glGetError() after almost every GL

@@ -174,7 +174,6 @@ LayerRendererChromium::LayerRendererChromium(CCLayerTreeHostImpl* owner,
     , m_context(context)
     , m_defaultRenderSurface(0)
     , m_sharedGeometryQuad(FloatRect(-0.5f, -0.5f, 1.0f, 1.0f))
-    , m_isViewportChanged(false)
 {
 }
 
@@ -276,7 +275,8 @@ void LayerRendererChromium::releaseRenderSurfaceTextures()
 
 void LayerRendererChromium::viewportChanged()
 {
-    m_isViewportChanged = true;
+    if (m_context)
+        m_context->reshape(std::max(1, viewportWidth()), std::max(1, viewportHeight()));
 
     // Reset the current render surface to force an update of the viewport and
     // projection matrix next time useRenderSurface is called.
@@ -352,14 +352,6 @@ void LayerRendererChromium::drawLayersInternal()
         return;
 
     TRACE_EVENT("LayerRendererChromium::drawLayers", this, 0);
-    if (m_isViewportChanged) {
-        // Only reshape when we know we are going to draw. Otherwise, the reshape
-        // can leave the window at the wrong size if we never draw and the proper
-        // viewport size is never set.
-        m_isViewportChanged = false;
-        m_context->reshape(viewportWidth(), viewportHeight());
-    }
-
     CCLayerImpl* rootDrawLayer = rootLayer();
     makeContextCurrent();
 

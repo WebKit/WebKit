@@ -1,3 +1,18 @@
+2011-11-15  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r100340.
+        http://trac.webkit.org/changeset/100340
+        https://bugs.webkit.org/show_bug.cgi?id=72448
+
+        Caused assertion failure in Win dbg canary. (Requested by
+        pkasting on #webkit).
+
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::LayerRendererChromium):
+        (WebCore::LayerRendererChromium::viewportChanged):
+        (WebCore::LayerRendererChromium::drawLayersInternal):
+        * platform/graphics/chromium/LayerRendererChromium.h:
+
 2011-11-15  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Switch table indexing to unsigned

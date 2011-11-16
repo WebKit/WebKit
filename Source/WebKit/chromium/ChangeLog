@@ -1,3 +1,14 @@
+2011-11-15  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r100340.
+        http://trac.webkit.org/changeset/100340
+        https://bugs.webkit.org/show_bug.cgi?id=72448
+
+        Caused assertion failure in Win dbg canary. (Requested by
+        pkasting on #webkit).
+
+        * tests/CCLayerTreeHostImplTest.cpp:
+
 2011-11-15  Nat Duca  <nduca@chromium.org>
 
         [chromium] Fuse MainThread and CCThread
