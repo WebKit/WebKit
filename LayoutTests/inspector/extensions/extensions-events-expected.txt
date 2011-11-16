@@ -14,6 +14,8 @@ onSelectionChanged fired
 RUNNING TEST: extension_testTimelineEvents
 Got Layout event from timeline
 RUNNING TEST: extension_testViewShowHide
+Got onShown event for sidebar
+Sidebar shown, location: .../extension-sidebar.html
 Got onHidden event for sidebar
 Got onShown event for panel
 Panel shown, location: .../extension-panel.html

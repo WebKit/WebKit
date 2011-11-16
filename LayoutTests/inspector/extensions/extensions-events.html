@@ -67,6 +67,7 @@ function extension_testViewShowHide(nextTest)
 {
     var listenersToCleanup = [];
     var sidebar;
+    var beenToExtensionPanel = false;
 
     function onViewEvent(type, viewName, viewWindow)
     {
@@ -75,12 +76,16 @@ function extension_testViewShowHide(nextTest)
             return;
         if (viewName === "panel") {
             output("Panel shown, location: " + trimURL(viewWindow.location.href));
-            addListener(sidebar, "sidebar", "onShown");
             extension_showPanel("elements");
         } else if (viewName === "sidebar") {
             output("Sidebar shown, location: " + trimURL(viewWindow.location.href));
-            cleanupListeners();
-            nextTest();
+            if (!beenToExtensionPanel) {
+                extension_showPanel("extension");
+                beenToExtensionPanel = true;
+            } else {
+                cleanupListeners();
+                nextTest();
+            }
         }
     }
     function addListener(view, viewName, type)
@@ -100,8 +105,8 @@ function extension_testViewShowHide(nextTest)
         addListener(panel, "panel", "onShown");
         addListener(panel, "panel", "onHidden");
         addListener(sidebar, "sidebar", "onHidden");
+        addListener(sidebar, "sidebar", "onShown");
         sidebar.setPage(basePath + "extension-sidebar.html");
-        extension_showPanel("extension");
     }
     extension_showPanel("elements");
     var basePath = location.pathname.replace(/\/[^/]*$/, "/");
