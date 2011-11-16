@@ -72,18 +72,10 @@ namespace JSC {
         void finishCreation(JSGlobalData& globalData)
         {
             Base::finishCreation(globalData);
-            globalData.heap.addFinalizer(this, clearCode);
         }
 
     public:
         typedef JSCell Base;
-
-        static ExecutableBase* create(JSGlobalData& globalData, Structure* structure, int numParameters)
-        {
-            ExecutableBase* executable = new (allocateCell<ExecutableBase>(globalData.heap)) ExecutableBase(globalData, structure, numParameters);
-            executable->finishCreation(globalData);
-            return executable;
-        }
 
         bool isHostFunction() const
         {
@@ -94,8 +86,6 @@ namespace JSC {
         static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue proto) { return Structure::create(globalData, globalObject, proto, TypeInfo(CompoundType, StructureFlags), &s_info); }
         
         static const ClassInfo s_info;
-
-        virtual void clearCodeVirtual();
 
     protected:
         static const unsigned StructureFlags = 0;
@@ -182,9 +172,7 @@ namespace JSC {
         MacroAssemblerCodePtr m_jitCodeForCallWithArityCheck;
         MacroAssemblerCodePtr m_jitCodeForConstructWithArityCheck;
 #endif
-        
-    private:
-        static void clearCode(JSCell*);
+        void clearCode();
     };
 
     class NativeExecutable : public ExecutableBase {
@@ -203,6 +191,7 @@ namespace JSC {
                 executable = new (allocateCell<NativeExecutable>(globalData.heap)) NativeExecutable(globalData, function, constructor);
                 executable->finishCreation(globalData, JITCode::HostFunction(callThunk), JITCode::HostFunction(constructThunk), intrinsic);
             }
+            globalData.heap.addFinalizer(executable, &finalize);
             return executable;
         }
 #else
@@ -210,6 +199,7 @@ namespace JSC {
         {
             NativeExecutable* executable = new (allocateCell<NativeExecutable>(globalData.heap)) NativeExecutable(globalData, function, constructor);
             executable->finishCreation(globalData);
+            globalData.heap.addFinalizer(executable, &finalize);
             return executable;
         }
 #endif
@@ -243,6 +233,8 @@ namespace JSC {
 #if ENABLE(DFG_JIT)
         virtual DFG::Intrinsic intrinsic() const;
 #endif
+
+        static void finalize(JSCell*);
  
     private:
         NativeExecutable(JSGlobalData& globalData, NativeFunction function, NativeFunction constructor)
@@ -348,6 +340,7 @@ namespace JSC {
         {
             EvalExecutable* executable = new (allocateCell<EvalExecutable>(*exec->heap())) EvalExecutable(exec, source, isInStrictContext);
             executable->finishCreation(exec->globalData());
+            exec->globalData().heap.addFinalizer(executable, &finalize);
             return executable;
         }
 
@@ -365,7 +358,8 @@ namespace JSC {
         static const ClassInfo s_info;
 
     protected:
-        virtual void clearCodeVirtual();
+        void clearCode();
+        static void finalize(JSCell*);
 
     private:
         static const unsigned StructureFlags = OverridesVisitChildren | ScriptExecutable::StructureFlags;
@@ -386,6 +380,7 @@ namespace JSC {
         {
             ProgramExecutable* executable = new (allocateCell<ProgramExecutable>(*exec->heap())) ProgramExecutable(exec, source);
             executable->finishCreation(exec->globalData());
+            exec->globalData().heap.addFinalizer(executable, &finalize);
             return executable;
         }
 
@@ -430,7 +425,8 @@ namespace JSC {
         static const ClassInfo s_info;
         
     protected:
-        virtual void clearCodeVirtual();
+        void clearCode();
+        static void finalize(JSCell*);
 
     private:
         static const unsigned StructureFlags = OverridesVisitChildren | ScriptExecutable::StructureFlags;
@@ -452,6 +448,7 @@ namespace JSC {
         {
             FunctionExecutable* executable = new (allocateCell<FunctionExecutable>(*exec->heap())) FunctionExecutable(exec, name, source, forceUsesArguments, parameters, isInStrictContext);
             executable->finishCreation(exec->globalData(), name, firstLine, lastLine);
+            exec->globalData().heap.addFinalizer(executable, &finalize);
             return executable;
         }
 
@@ -459,6 +456,7 @@ namespace JSC {
         {
             FunctionExecutable* executable = new (allocateCell<FunctionExecutable>(globalData.heap)) FunctionExecutable(globalData, name, source, forceUsesArguments, parameters, isInStrictContext);
             executable->finishCreation(globalData, name, firstLine, lastLine);
+            globalData.heap.addFinalizer(executable, &finalize);
             return executable;
         }
 
@@ -613,7 +611,8 @@ namespace JSC {
         static const ClassInfo s_info;
         
     protected:
-        virtual void clearCodeVirtual();
+        void clearCode();
+        static void finalize(JSCell*);
 
         void finishCreation(JSGlobalData& globalData, const Identifier& name, int firstLine, int lastLine)
         {

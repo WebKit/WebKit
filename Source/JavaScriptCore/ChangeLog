@@ -1,3 +1,31 @@
+2011-11-16  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        De-virtualize ExecutableBase::clearCodeVirtual
+        https://bugs.webkit.org/show_bug.cgi?id=72337
+
+        Reviewed by Darin Adler.
+
+        Added static finalize functions to the subclasses of ExecutableBase that provide an implementation 
+        of clearCodeVirtual, changed all of the clearCodeVirtual methods to non-virtual clearCode method,
+        and had the finalize functions call the corresponding clearCode methods.
+
+        * runtime/Executable.cpp:
+        (JSC::ExecutableBase::clearCode):
+        (JSC::NativeExecutable::finalize):
+        (JSC::EvalExecutable::finalize):
+        (JSC::EvalExecutable::clearCode):
+        (JSC::ProgramExecutable::finalize):
+        (JSC::ProgramExecutable::clearCode):
+        (JSC::FunctionExecutable::discardCode):
+        (JSC::FunctionExecutable::finalize):
+        (JSC::FunctionExecutable::clearCode):
+        * runtime/Executable.h:
+        (JSC::ExecutableBase::finishCreation):
+        (JSC::NativeExecutable::create):
+        (JSC::EvalExecutable::create):
+        (JSC::ProgramExecutable::create):
+        (JSC::FunctionExecutable::create):
+
 2011-11-16  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         String new RegExp('\n').toString() returns is invalid RegularExpressionLiteral
