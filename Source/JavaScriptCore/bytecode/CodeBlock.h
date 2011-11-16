@@ -267,7 +267,14 @@ namespace JSC {
         CodeBlock* alternative() { return m_alternative.get(); }
         PassOwnPtr<CodeBlock> releaseAlternative() { return m_alternative.release(); }
         void setAlternative(PassOwnPtr<CodeBlock> alternative) { m_alternative = alternative; }
-
+        
+        CodeSpecializationKind specializationKind()
+        {
+            if (m_isConstructor)
+                return CodeForConstruct;
+            return CodeForCall;
+        }
+        
 #if ENABLE(JIT)
         CodeBlock* baselineVersion()
         {
@@ -984,8 +991,8 @@ namespace JSC {
         static ptrdiff_t offsetOfSpeculativeFailCounter() { return OBJECT_OFFSETOF(CodeBlock, m_speculativeFailCounter); }
         
         // The number of failures that triggers the use of the ratio.
-        unsigned largeFailCountThreshold() { return Heuristics::largeFailCountThresholdBase << alternative()->reoptimizationRetryCounter(); }
-        unsigned largeFailCountThresholdForLoop() { return Heuristics::largeFailCountThresholdBaseForLoop << alternative()->reoptimizationRetryCounter(); }
+        unsigned largeFailCountThreshold() { return Heuristics::largeFailCountThresholdBase << baselineVersion()->reoptimizationRetryCounter(); }
+        unsigned largeFailCountThresholdForLoop() { return Heuristics::largeFailCountThresholdBaseForLoop << baselineVersion()->reoptimizationRetryCounter(); }
         
         bool shouldReoptimizeNow()
         {

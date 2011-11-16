@@ -39,6 +39,10 @@ extern "C" {
 void compileOSRExit(ExecState* exec)
 {
     CodeBlock* codeBlock = exec->codeBlock();
+    
+    ASSERT(codeBlock);
+    ASSERT(codeBlock->getJITType() == JITCode::DFGJIT);
+    
     JSGlobalData* globalData = &exec->globalData();
     
     uint32_t exitIndex = globalData->osrExitIndex;

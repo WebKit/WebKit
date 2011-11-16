@@ -48,7 +48,12 @@ public:
     AssemblyHelpers(JSGlobalData* globalData, CodeBlock* codeBlock)
         : m_globalData(globalData)
         , m_codeBlock(codeBlock)
+        , m_baselineCodeBlock(codeBlock->baselineVersion())
     {
+        ASSERT(m_codeBlock);
+        ASSERT(m_baselineCodeBlock);
+        ASSERT(!m_baselineCodeBlock->alternative());
+        ASSERT(m_baselineCodeBlock->getJITType() == JITCode::BaselineJIT);
     }
     
     CodeBlock* codeBlock() { return m_codeBlock; }
@@ -299,8 +304,12 @@ public:
             ASSERT(executable->structure()->classInfo() == &FunctionExecutable::s_info);
             return static_cast<FunctionExecutable*>(executable)->baselineCodeBlockFor(codeOrigin.inlineCallFrame->isCall ? CodeForCall : CodeForConstruct);
         }
-        ASSERT(codeBlock()->alternative() == codeBlock()->baselineVersion());
-        return codeBlock()->alternative();
+        return baselineCodeBlock();
+    }
+    
+    CodeBlock* baselineCodeBlock()
+    {
+        return m_baselineCodeBlock;
     }
     
     Vector<BytecodeAndMachineOffset>& decodedCodeMapFor(CodeBlock*);
@@ -308,6 +317,7 @@ public:
 protected:
     JSGlobalData* m_globalData;
     CodeBlock* m_codeBlock;
+    CodeBlock* m_baselineCodeBlock;
 
     HashMap<CodeBlock*, Vector<BytecodeAndMachineOffset> > m_decodedCodeMaps;
 };

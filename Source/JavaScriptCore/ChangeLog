@@ -1,3 +1,40 @@
+2011-11-15  Filip Pizlo  <fpizlo@apple.com>
+
+        Crash in JSC::DFG::OSRExitCompiler::compileExit(JSC::DFG::OSRExit const&, JSC::DFG::SpeculationRecovery*)
+        https://bugs.webkit.org/show_bug.cgi?id=72292
+
+        Reviewed by Geoff Garen.
+        
+        We need to be careful about how we look for the baseline CodeBlock if we're lazy-compiling
+        an OSR exit after our CodeBlock has been jettisoned. In short, use CodeBlock::baselineVersion()
+        instead of CodeBlock::alternative().
+        
+        No performance effect.
+        
+        No tests because all of our heuristics work very hard to make sure that this never happens in
+        the first place. OSR exits are rare by design, and jettisoning of CodeBlocks (i.e. recompilation)
+        is even rarer. Furthermore, OSR exits after a CodeBlock has been jettisoned is rarer still
+        because the whole point of jettisoning is to bring the probability of future OSR exits to as
+        close to zero as possible. But even that isn't enough to trigger this bug; it requires the OSR
+        exit after a jettison to be the first of its kind; our whole design tries to ensure that
+        CodeBlocks tend to OSR exit at a handful (i.e. 1 in most cases) of points, and since jettisoning
+        is triggered by OSR, in most sane cases the OSR exits after jettison will not require lazy OSR
+        compilation. So this is a truly evil case, and any test for it would be quite fragile.
+
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::specializationKind):
+        (JSC::CodeBlock::largeFailCountThreshold):
+        (JSC::CodeBlock::largeFailCountThresholdForLoop):
+        * dfg/DFGAssemblyHelpers.h:
+        (JSC::DFG::AssemblyHelpers::AssemblyHelpers):
+        (JSC::DFG::AssemblyHelpers::baselineCodeBlockFor):
+        (JSC::DFG::AssemblyHelpers::baselineCodeBlock):
+        * dfg/DFGDriver.cpp:
+        (JSC::DFG::compile):
+        * dfg/DFGOSRExitCompiler.cpp:
+        * dfg/DFGOSRExitCompiler64.cpp:
+        (JSC::DFG::OSRExitCompiler::compileExit):
+
 2011-11-15  Geoffrey Garen  <ggaren@apple.com>
 
         Use MarkedArgumentBuffer to avoid making assumptions about argument order
