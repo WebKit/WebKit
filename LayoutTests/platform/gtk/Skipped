@@ -296,6 +296,7 @@ media/media-captions.html
 
 # DataTransferItems is not yet implemented.
 editing/pasteboard/data-transfer-items.html
+editing/pasteboard/data-transfer-items-image-png.html
 
 # Needs grammar checking.
 editing/spelling/markers.html
