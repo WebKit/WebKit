@@ -3909,7 +3909,7 @@ BUGWK59771 WIN : http/tests/inspector/resource-tree/resource-tree-frame-add.html
 
 BUGWK72376 WIN : fast/forms/file/input-file-label.html = TEXT PASS
 
-BUGWK72434 : inspector/styles/svg-style.xhtml = TEXT PASS
+BUGWK72434 : inspector/styles/svg-style.xhtml = PASS TEXT TIMEOUT
 
 BUGWK72485 DEBUG : animations/animation-direction-normal.html = TEXT PASS
 
