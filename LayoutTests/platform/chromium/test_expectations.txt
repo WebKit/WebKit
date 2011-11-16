@@ -299,16 +299,7 @@ BUGWK72402 WIN LINUX : platform/chromium/compositing/force-compositing-mode/reso
 BUGWK72402 WIN LINUX RELEASE : compositing/layer-creation/overflow-scroll-overlap.html = FAIL
 
 // mac failures
-BUGWK72402 MAC : animations/3d/matrix-transform-type-animation.html = FAIL
-BUGWK72402 MAC : animations/3d/replace-filling-transform.html = FAIL
-BUGWK72402 MAC : animations/3d/state-at-end-event-transform.html = FAIL
-BUGWK72402 MAC : compositing/geometry/empty-embed-rects.html = FAIL
-BUGWK72402 MAC : platform/chromium/compositing/child-layer-3d-sorting.html = FAIL
-BUGWK72402 MAC : platform/chromium/compositing/huge-layer-rotated.html = FAIL
-BUGWK72402 MAC : platform/chromium/compositing/layout-width-change.html = FAIL
-BUGWK72402 MAC : platform/chromium/compositing/plugins/webplugin-alpha.html = FAIL
-BUGWK72402 MAC : platform/chromium/compositing/plugins/webplugin-reflection.html = FAIL
-BUGWK72402 MAC : platform/chromium/compositing/tiny-layer-rotated.html = FAIL
+BUGWK72402 MAC : compositing/geometry/empty-embed-rects.html = TIMEOUT
 
 // We don't ship compositing on Leopard.
 WONTFIX SKIP LEOPARD : compositing = PASS TIMEOUT FAIL
