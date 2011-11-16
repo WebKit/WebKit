@@ -1,3 +1,13 @@
+2011-11-15  Adam Klein  <adamk@chromium.org>
+
+        [v8] Use throwError instead of compiling and running script in handleMaxRecursionDepthExceeded
+        https://bugs.webkit.org/show_bug.cgi?id=72432
+
+        Reviewed by Adam Barth.
+
+        * bindings/v8/V8Proxy.cpp:
+        (WebCore::handleMaxRecursionDepthExceeded):
+
 2011-11-15  Vincent Scheib  <scheib@chromium.org>
 
         Pointer Lock: Refactoring: PointerLock.idl: Dropping webkit prefix
