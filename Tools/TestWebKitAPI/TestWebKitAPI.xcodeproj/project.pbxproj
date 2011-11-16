@@ -122,7 +122,7 @@
 		BCB9F4FB112384C000A137E0 /* Copy Resources */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
-			dstPath = "";
+			dstPath = TestWebKitAPI.resources;
 			dstSubfolderSpec = 7;
 			files = (
 				33DC8912141955FE00747EF7 /* simple-iframe.html in Copy Resources */,

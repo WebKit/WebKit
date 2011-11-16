@@ -52,7 +52,7 @@ TEST(WebKit1, DOMRangeOfString)
     RetainPtr<DOMRangeOfStringFrameLoadDelegate> frameLoadDelegate(AdoptNS, [DOMRangeOfStringFrameLoadDelegate new]);
 
     webView.get().frameLoadDelegate = frameLoadDelegate.get();
-    [[webView.get() mainFrame] loadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"DOMRangeOfString" withExtension:@"html"]]];
+    [[webView.get() mainFrame] loadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"DOMRangeOfString" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];
 
     Util::run(&didFinishLoad);
 

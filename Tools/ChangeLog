@@ -1,3 +1,27 @@
+2011-11-15  Sam Weinig  <sam@webkit.org>
+
+        TestWebKitAPI should not put its resources in the root products directory
+        https://bugs.webkit.org/show_bug.cgi?id=72446
+
+        Reviewed by Anders Carlsson.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        Change the copy resources phase to place the resources in a TestWebKitAPI.resources
+        directory.
+
+        * TestWebKitAPI/Tests/WebKit2ObjC/WKBrowsingContextLoadDelegateTest.mm:
+        (TEST_F):
+        * TestWebKitAPI/Tests/mac/DOMRangeOfString.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/mac/DeviceScaleFactorOnBack.mm:
+        (TestWebKitAPI::DeviceScaleFactorOnBack::url):
+        * TestWebKitAPI/Tests/mac/DynamicDeviceScaleFactor.mm:
+        (TestWebKitAPI::DynamicDeviceScaleFactor::url):
+        * TestWebKitAPI/mac/PlatformUtilitiesMac.mm:
+        (TestWebKitAPI::Util::createURLForResource):
+        Update calls to retrieve files from the bundle to look in the newly
+        created subdirectory.
+
 2011-11-15  Tony Chang  <tony@chromium.org>
 
         Fix a webkitpy test caused by renaming the accelerate-video flag in r100355.

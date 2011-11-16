@@ -90,7 +90,7 @@ TEST_F(WKBrowsingContextLoadDelegateTest, SimpleLoad)
     view.browsingContextController.loadDelegate = loadDelegate;
 
     // Load the file.
-    NSURL *nsURL = [[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html"];
+    NSURL *nsURL = [[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
     [view.browsingContextController loadFileURL:nsURL restrictToFilesWithin:nil];
 
     // Wait for the load to finish.
