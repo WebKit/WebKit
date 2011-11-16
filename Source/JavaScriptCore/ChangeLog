@@ -1,5 +1,19 @@
 2011-11-15  Geoffrey Garen  <ggaren@apple.com>
 
+        Removed another use of ArgList that baked in the assumption that arguments
+        are forward in the regiter file.
+
+        Reviewed by Sam Weinig.
+
+        * dfg/DFGOperations.cpp:
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION): Use our new array creation API, instead of
+        working through ArgList.
+
+        * runtime/ArgList.h: Removed!
+
+2011-11-15  Geoffrey Garen  <ggaren@apple.com>
+
         Removed a use of ArgList that baked in the assumption that arguments
         are forward in the regiter file.
 

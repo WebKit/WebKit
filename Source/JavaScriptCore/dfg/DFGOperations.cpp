@@ -773,8 +773,7 @@ EncodedJSValue DFG_OPERATION operationStrCat(ExecState* exec, void* start, size_
 
 EncodedJSValue DFG_OPERATION operationNewArray(ExecState* exec, void* start, size_t size)
 {
-    ArgList argList(static_cast<Register*>(start), size);
-    return JSValue::encode(constructArray(exec, argList));
+    return JSValue::encode(constructArray(exec, static_cast<JSValue*>(start), size));
 }
 
 EncodedJSValue DFG_OPERATION operationNewArrayBuffer(ExecState* exec, size_t start, size_t size)
