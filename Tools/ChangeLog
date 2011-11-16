@@ -1,3 +1,13 @@
+2011-11-16  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        [Qt] Prospective fix for broken plugin tests
+
+        Don't hide symbols for the NPAPI test plugin
+
+        Rubber-stamped by Andreas Kling.
+
+        * DumpRenderTree/qt/TestNetscapePlugin/TestNetscapePlugin.pro:
+
 2011-11-16  Adam Roben  <aroben@apple.com>
 
         Move filenames/line numbers off to the right edge in Leaks Viewer
