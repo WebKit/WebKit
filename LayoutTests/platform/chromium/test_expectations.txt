@@ -504,6 +504,13 @@ WONTFIX WIN : css3/font-feature-settings-rendering.html = PASS FAIL
 // No webp encoding support on MAC CoreGraphics (CG)
 WONTFIX MAC CPU-CG : fast/canvas/canvas-toDataURL-webp.html = FAIL
 
+// These test the CoreAnimation plugin model which we never intend to support on
+// Windows and Linux.
+WONTFIX SKIP WIN LINUX : compositing/plugins/1x1-composited-plugin.html = IMAGE+TEXT
+WONTFIX SKIP WIN LINUX : compositing/plugins/composited-plugin.html = IMAGE+TEXT
+WONTFIX SKIP WIN LINUX : compositing/plugins/large-to-small-composited-plugin.html = TEXT
+WONTFIX SKIP WIN LINUX : compositing/plugins/small-to-large-composited-plugin.html = TEXT
+
 // -----------------------------------------------------------------
 // LIGHTTPD
 // -----------------------------------------------------------------
@@ -2688,9 +2695,9 @@ WONTFIX MAC CPU-CG : compositing/color-matching/pdf-image-match.html = IMAGE
 WONTFIX WIN LINUX : compositing/images/direct-pdf-image.html = IMAGE
 WONTFIX MAC CPU-CG : compositing/images/direct-pdf-image.html = IMAGE
 
-// Chromium does not support PDF or plugin content in layers right now.
-BUGWK47925 : compositing/plugins/composited-plugin.html = IMAGE+TEXT
-BUGWK47925 MAC CPU-CG : compositing/plugins/small-to-large-composited-plugin.html = TEXT
+// Chromium does not support the CoreAnimation plugin model right now.
+BUGWK47925 MAC : compositing/plugins/composited-plugin.html = IMAGE+TEXT
+BUGWK47925 MAC : compositing/plugins/small-to-large-composited-plugin.html = IMAGE+TEXT
 
 BUGWK47949 LINUX WIN : compositing/reflections/nested-reflection-anchor-point.html = IMAGE+TEXT
 BUGWK47949 MAC CPU-CG : compositing/reflections/nested-reflection-anchor-point.html = IMAGE
