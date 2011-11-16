@@ -32,6 +32,7 @@
 #include "ProcessModel.h"
 #include "VisitedLinkProvider.h"
 #include "WebContextInjectedBundleClient.h"
+#include "WebContextConnectionClient.h"
 #include "WebDownloadClient.h"
 #include "WebHistoryClient.h"
 #include "WebProcessProxy.h"
@@ -74,6 +75,7 @@ public:
     static const Vector<WebContext*>& allContexts();
 
     void initializeInjectedBundleClient(const WKContextInjectedBundleClient*);
+    void initializeConnectionClient(const WKContextConnectionClient*);
     void initializeHistoryClient(const WKContextHistoryClient*);
     void initializeDownloadClient(const WKContextDownloadClient*);
 
@@ -249,6 +251,8 @@ private:
     String m_injectedBundlePath;
     WebContextInjectedBundleClient m_injectedBundleClient;
 
+    WebContextConnectionClient m_connectionClient;
+    
     WebHistoryClient m_historyClient;
 
     PluginInfoStore m_pluginInfoStore;

@@ -1,3 +1,23 @@
+2011-11-15  Sam Weinig  <sam@webkit.org>
+
+        Add a connection client to the WKContext, to notify when new connections to the WebProcess are established
+        https://bugs.webkit.org/show_bug.cgi?id=72433
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextSetConnectionClient):
+        * UIProcess/API/C/WKContext.h:
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::initializeConnectionClient):
+        * UIProcess/WebContext.h:
+        Add connection client API.
+
+        * UIProcess/WebContextConnectionClient.cpp: Added.
+        (WebKit::WebContextConnectionClient::didCreateConnection):
+        * UIProcess/WebContextConnectionClient.h: Added.
+        Add basic implementation of the client. It is currently never triggered.
+
 2011-11-15  Jongseok Yang  <js45.yang@samsung.com>
 
         [SOUP][WK2] Add initial WebCookieManagerSoup.cpp for webkit2

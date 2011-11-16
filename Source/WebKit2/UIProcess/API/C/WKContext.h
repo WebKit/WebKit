@@ -105,6 +105,18 @@ typedef struct WKContextDownloadClient WKContextDownloadClient;
 
 enum { kWKContextDownloadClientCurrentVersion = 0 };
 
+// Connection Client
+typedef void (*WKContextDidCreateConnection)(WKContextRef context, WKConnectionRef connection, const void* clientInfo);
+
+struct WKContextConnectionClient {
+    int                                                                 version;
+    const void *                                                        clientInfo;
+    WKContextDidCreateConnection                                        didCreateConnection;
+};
+typedef struct WKContextConnectionClient WKContextConnectionClient;
+
+enum { kWKContextConnectionClientCurrentVersion = 0 };
+
 WK_EXPORT WKTypeID WKContextGetTypeID();
 
 WK_EXPORT WKContextRef WKContextCreate();
@@ -114,6 +126,7 @@ WK_EXPORT WKContextRef WKContextGetSharedProcessContext();
 WK_EXPORT void WKContextSetInjectedBundleClient(WKContextRef context, const WKContextInjectedBundleClient* client);
 WK_EXPORT void WKContextSetHistoryClient(WKContextRef context, const WKContextHistoryClient* client);
 WK_EXPORT void WKContextSetDownloadClient(WKContextRef context, const WKContextDownloadClient* client);
+WK_EXPORT void WKContextSetConnectionClient(WKContextRef context, const WKContextConnectionClient* client);
 
 WK_EXPORT WKDownloadRef WKContextDownloadURLRequest(WKContextRef context, const WKURLRequestRef request);
 

@@ -202,6 +202,11 @@ void WebContext::initializeInjectedBundleClient(const WKContextInjectedBundleCli
     m_injectedBundleClient.initialize(client);
 }
 
+void WebContext::initializeConnectionClient(const WKContextConnectionClient* client)
+{
+    m_connectionClient.initialize(client);
+}
+
 void WebContext::initializeHistoryClient(const WKContextHistoryClient* client)
 {
     m_historyClient.initialize(client);

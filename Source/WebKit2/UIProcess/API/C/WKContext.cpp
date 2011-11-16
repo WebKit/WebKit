@@ -86,6 +86,11 @@ void WKContextSetDownloadClient(WKContextRef contextRef, const WKContextDownload
     toImpl(contextRef)->initializeDownloadClient(wkClient);
 }
 
+void WKContextSetConnectionClient(WKContextRef contextRef, const WKContextConnectionClient* wkClient)
+{
+    toImpl(contextRef)->initializeConnectionClient(wkClient);
+}
+
 WKDownloadRef WKContextDownloadURLRequest(WKContextRef contextRef, const WKURLRequestRef requestRef)
 {
     return toAPI(toImpl(contextRef)->download(0, toImpl(requestRef)->resourceRequest()));
