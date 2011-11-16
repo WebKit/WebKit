@@ -1,3 +1,16 @@
+2011-11-16  Sergio Villar Senin  <svillar@igalia.com>
+
+        [Soup] Somet tests fail with FAIL Unexpected response data received: Wrong method: GET
+        https://bugs.webkit.org/show_bug.cgi?id=69219
+
+        Reviewed by Martin Robinson.
+
+        Do not stop appending data to the request body if any of the blob
+        items to upload is not accesible.
+
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::addEncodedBlobToSoupMessageBody):
+
 2011-11-16  Beth Dakin  <bdakin@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=72400

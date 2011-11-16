@@ -1533,10 +1533,8 @@ http/tests/multipart/load-last-non-html-frame.php
 # https://bugs.webkit.org/show_bug.cgi?id=69587
 editing/pasteboard/smart-paste-008.html
 
-# Some tests fail with  "FAIL Unexpected response data received: Wrong method: GET"
-# https://bugs.webkit.org/show_bug.cgi?id=69219
-http/tests/local/fileapi/send-sliced-dragged-file.html  
-http/tests/local/blob/send-hybrid-blob.html
+# Fails because it does not throw a couple of expected exceptions
+http/tests/local/fileapi/send-sliced-dragged-file.html
 
 # Microdata DOM API is not yet enabled.
 fast/dom/MicroData

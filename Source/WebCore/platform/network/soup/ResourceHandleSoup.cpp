@@ -542,37 +542,34 @@ static bool blobIsOutOfDate(const BlobDataItem& blobItem)
     return fileModificationTime != static_cast<time_t>(blobItem.expectedModificationTime);
 }
 
-static bool addEncodedBlobItemToSoupMessageBody(SoupMessage* message, const BlobDataItem& blobItem, unsigned long& totalBodySize)
+static void addEncodedBlobItemToSoupMessageBody(SoupMessage* message, const BlobDataItem& blobItem, unsigned long& totalBodySize)
 {
     if (blobItem.type == BlobDataItem::Data) {
         totalBodySize += blobItem.length;
         soup_message_body_append(message->request_body, SOUP_MEMORY_TEMPORARY,
                                  blobItem.data->data() + blobItem.offset, blobItem.length);
-        return true;
+        return;
     }
 
     ASSERT(blobItem.type == BlobDataItem::File);
     if (blobIsOutOfDate(blobItem))
-        return false;
+        return;
 
-    return addFileToSoupMessageBody(message,
-                                    blobItem.path,
-                                    blobItem.offset,
-                                    blobItem.length == BlobDataItem::toEndOfFile ? 0 : blobItem.length,
-                                    totalBodySize);
+    addFileToSoupMessageBody(message,
+                             blobItem.path,
+                             blobItem.offset,
+                             blobItem.length == BlobDataItem::toEndOfFile ? 0 : blobItem.length,
+                             totalBodySize);
 }
 
-static bool addEncodedBlobToSoupMessageBody(SoupMessage* message, const FormDataElement& element, unsigned long& totalBodySize)
+static void addEncodedBlobToSoupMessageBody(SoupMessage* message, const FormDataElement& element, unsigned long& totalBodySize)
 {
     RefPtr<BlobStorageData> blobData = static_cast<BlobRegistryImpl&>(blobRegistry()).getBlobDataFromURL(KURL(ParsedURLString, element.m_blobURL));
     if (!blobData)
-        return true;
+        return;
 
     for (size_t i = 0; i < blobData->items().size(); ++i)
-        if (!addEncodedBlobItemToSoupMessageBody(message, blobData->items()[i], totalBodySize))
-            return false;
-
-    return true;
+        addEncodedBlobItemToSoupMessageBody(message, blobData->items()[i], totalBodySize);
 }
 #endif // ENABLE(BLOB)
 
@@ -602,8 +599,7 @@ static bool addFormElementsToSoupMessage(SoupMessage* message, const char* conte
 
 #if ENABLE(BLOB)
         ASSERT(element.m_type == FormDataElement::encodedBlob);
-        if (!addEncodedBlobToSoupMessageBody(message, element, totalBodySize))
-            return false;
+        addEncodedBlobToSoupMessageBody(message, element, totalBodySize);
 #endif
     }
     return true;
