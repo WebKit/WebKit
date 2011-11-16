@@ -255,9 +255,9 @@ WONTFIX SKIP : fast/canvas/canvas-gradient-addStop-error.html = FAIL
 // this test will always fail.
 WONTFIX SKIP LINUX WIN : fast/events/option-tab.html = FAIL
 
-BUGWK72402 CPU CPU-CG WIN LINUX SNOWLEOPARD : compositing = PASS TIMEOUT FAIL
-BUGWK72402 CPU CPU-CG WIN LINUX SNOWLEOPARD : platform/chromium/compositing = PASS TIMEOUT FAIL
-BUGWK72402 CPU CPU-CG WIN LINUX SNOWLEOPARD : animations/3d = PASS TIMEOUT FAIL
+BUGWK72402 CPU CPU-CG WIN LINUX SNOWLEOPARD : compositing = TIMEOUT FAIL
+BUGWK72402 CPU CPU-CG WIN LINUX SNOWLEOPARD : platform/chromium/compositing = TIMEOUT FAIL
+BUGWK72402 CPU CPU-CG WIN LINUX SNOWLEOPARD : animations/3d = TIMEOUT FAIL
 
 // We don't ship compositing on Leopard.
 WONTFIX SKIP LEOPARD : compositing = PASS TIMEOUT FAIL
