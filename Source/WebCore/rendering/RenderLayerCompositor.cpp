@@ -1507,6 +1507,12 @@ void RenderLayerCompositor::didCommitChangesForLayer(const GraphicsLayer*) const
     // Nothing to do here yet.
 }
 
+bool RenderLayerCompositor::keepLayersPixelAligned() const
+{
+    // When scaling, attempt to align compositing layers to pixel boundaries.
+    return true;
+}
+
 static bool shouldCompositeOverflowControls(ScrollView* view)
 {
     if (view->platformWidget())
@@ -1590,7 +1596,7 @@ void RenderLayerCompositor::ensureRootPlatformLayer()
          return;
 
     if (!m_rootPlatformLayer) {
-        m_rootPlatformLayer = GraphicsLayer::create(0);
+        m_rootPlatformLayer = GraphicsLayer::create(this);
 #ifndef NDEBUG
         m_rootPlatformLayer->setName("content root");
 #endif
@@ -1607,7 +1613,7 @@ void RenderLayerCompositor::ensureRootPlatformLayer()
             ASSERT(!m_clipLayer);
 
             // Create a layer to host the clipping layer and the overflow controls layers.
-            m_overflowControlsHostLayer = GraphicsLayer::create(0);
+            m_overflowControlsHostLayer = GraphicsLayer::create(this);
 #ifndef NDEBUG
             m_overflowControlsHostLayer->setName("overflow controls host");
 #endif
