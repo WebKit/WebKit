@@ -203,7 +203,7 @@ WebDOMEvent WebDocument::createEvent(const WebString& eventType)
 {
     ExceptionCode ec = 0;
     WebDOMEvent event(unwrap<Document>()->createEvent(eventType, ec));
-    if (!ec)
+    if (ec)
         return WebDOMEvent();
     return event;
 }

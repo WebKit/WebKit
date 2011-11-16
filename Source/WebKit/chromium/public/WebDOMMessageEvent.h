@@ -45,7 +45,7 @@ class WebSerializedScriptValue;
 
 class WebDOMMessageEvent : public WebDOMEvent {
 public:
-    WEBKIT_EXPORT void initMessageEvent(const WebString& type, bool canBubble, bool cancelable, const WebSerializedScriptValue& messageData, const WebString& origin, const WebFrame& sourceFrame, const WebString& lastEventId);
+    WEBKIT_EXPORT void initMessageEvent(const WebString& type, bool canBubble, bool cancelable, const WebSerializedScriptValue& messageData, const WebString& origin, const WebFrame* sourceFrame, const WebString& lastEventId);
 };
 
 } // namespace WebKit

@@ -49,11 +49,13 @@ using namespace WebCore;
 
 namespace WebKit {
 
-void WebDOMMessageEvent::initMessageEvent(const WebString& type, bool canBubble, bool cancelable, const WebSerializedScriptValue& messageData, const WebString& origin, const WebFrame& sourceFrame, const WebString& lastEventId)
+void WebDOMMessageEvent::initMessageEvent(const WebString& type, bool canBubble, bool cancelable, const WebSerializedScriptValue& messageData, const WebString& origin, const WebFrame* sourceFrame, const WebString& lastEventId)
 {
     ASSERT(m_private);
     ASSERT(isMessageEvent());
-    DOMWindow* window = static_cast<const WebFrameImpl&>(sourceFrame).frame()->domWindow();
+    DOMWindow* window = 0;
+    if (sourceFrame)
+        window = static_cast<const WebFrameImpl*>(sourceFrame)->frame()->domWindow();
     OwnPtr<MessagePortArray> ports;
     unwrap<MessageEvent>()->initMessageEvent(type, canBubble, cancelable, messageData, origin, lastEventId, window, ports.release());
 }

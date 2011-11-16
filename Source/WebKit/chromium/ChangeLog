@@ -1,3 +1,24 @@
+2011-11-16  Dave Michael  <dmichael@chromium.org>
+
+        Fix up chromium API for creating events, initializing message events
+        https://bugs.webkit.org/show_bug.cgi?id=71478
+
+        - Fix a mistake when checking the exception code during event creation.
+        - Change WebFrame parameter to pointer so that NULL may be passed.
+
+        This is required for the following chromium CL: http://codereview.chromium.org/8437093/
+
+        Tested in Chromium by:
+         ui_test --gtest_filter=*PPAPITest.PostMessage*
+
+        Reviewed by Darin Fisher.
+
+        * public/WebDOMMessageEvent.h:
+        * src/WebDOMMessageEvent.cpp:
+        (WebKit::WebDOMMessageEvent::initMessageEvent):
+        * src/WebDocument.cpp:
+        (WebKit::WebDocument::createEvent):
+
 2011-11-16  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r100438.
