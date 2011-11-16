@@ -3494,6 +3494,7 @@ BUGWK66888 DEBUG : svg/animations/svginteger-animation-1.html = PASS TEXT
 BUGWK66900 LINUX SNOWLEOPARD DEBUG : fast/writing-mode/japanese-rl-text-with-broken-font.html = PASS IMAGE+TEXT
 
 BUGWK66908 WIN LINUX GPU DEBUG : canvas/philip/tests/2d.text.draw.fontface.notinpage.html = PASS TEXT
+BUGWK66908 LEOPARD GPU : canvas/philip/tests/2d.text.draw.fontface.notinpage.html = PASS TEXT
 BUGWK66908 : fast/css/font-face-woff.html = PASS IMAGE+TEXT
 BUGWK66908 : svg/custom/svg-fonts-fallback.xhtml = PASS IMAGE+TEXT IMAGE
 BUGWK66908 WIN SNOWLEOPARD : fast/css/font-face-multiple-faces.html = PASS IMAGE+TEXT
@@ -3819,7 +3820,7 @@ BUGENNE : compositing/geometry/fixed-position.html = FAIL
 BUGENNE : compositing/geometry/horizontal-scroll-composited.html = FAIL
 BUGENNE : compositing/geometry/vertical-scroll-composited.html = FAIL
 BUGENNE : compositing/overflow/fixed-position-ancestor-clip.html = FAIL
-BUGENNE : compositing/scaling/tiled-layer-recursion.html = FAIL CRASH
+BUG72182 : compositing/scaling/tiled-layer-recursion.html = FAIL CRASH
 
 // This test sometimes exceeds 60-second time limit (for SLOW tests) on
 // win/linux debug. Since setting both SLOW and TIMEOUT is not allowed,
