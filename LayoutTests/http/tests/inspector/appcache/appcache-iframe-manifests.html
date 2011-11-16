@@ -1,0 +1,107 @@
+<html>
+<head>
+<script src="../inspector-test.js"></script>
+<script src="appcache-test.js"></script>
+<script>
+function test()
+{
+    var frameId1;
+    var frameId2;
+    var frameId3;
+
+    WebInspector.showPanel("resources");
+    InspectorTest.dumpApplicationCache();
+    InspectorTest.createAndNavigateIFrame("resources/page-with-manifest.php?manifestId=1", step1);
+
+    function step1(frameId)
+    {
+        frameId1 = frameId;
+        InspectorTest.waitForFrameManifestURLAndStatus(frameId1, "manifest.php?manifestId=1", applicationCache.IDLE, step2);
+    }
+
+    function step2()
+    {
+        InspectorTest.dumpApplicationCache();
+        InspectorTest.navigateIFrame(frameId1, "resources/page-with-manifest.php?manifestId=2", step3);
+    }
+
+    function step3()
+    {
+        InspectorTest.waitForFrameManifestURLAndStatus(frameId1, "manifest.php?manifestId=2", applicationCache.IDLE, step4);
+    }
+
+    function step4()
+    {
+        InspectorTest.dumpApplicationCache();
+        InspectorTest.createAndNavigateIFrame("resources/page-with-manifest.php?manifestId=1", step5);
+    }
+
+    function step5(frameId)
+    {
+        frameId2 = frameId;
+        InspectorTest.waitForFrameManifestURLAndStatus(frameId2, "manifest.php?manifestId=1", applicationCache.IDLE, step6);
+    }
+
+    function step6()
+    {
+        InspectorTest.dumpApplicationCache();
+        InspectorTest.createAndNavigateIFrame("resources/page-with-manifest.php?manifestId=1", step7);
+    }
+
+    function step7(frameId)
+    {
+        frameId3 = frameId;
+        InspectorTest.waitForFrameManifestURLAndStatus(frameId3, "manifest.php?manifestId=1", applicationCache.IDLE, step8);
+    }
+
+    function step8()
+    {
+        InspectorTest.waitForFrameManifestURLAndStatus(frameId2, "manifest.php?manifestId=1", applicationCache.IDLE, step9);
+    }
+
+    function step9()
+    {
+        InspectorTest.dumpApplicationCache();
+        InspectorTest.removeIFrame(frameId3, step10);
+    }
+
+    function step10()
+    {
+        InspectorTest.waitForFrameManifestURLAndStatus(frameId3, "", applicationCache.UNCACHED, step11);
+    }
+
+    function step11()
+    {
+        InspectorTest.dumpApplicationCache();
+        InspectorTest.removeIFrame(frameId2, step12);
+    }
+
+    function step12()
+    {
+        InspectorTest.waitForFrameManifestURLAndStatus(frameId2, "", applicationCache.UNCACHED, step13);
+    }
+
+    function step13()
+    {
+        InspectorTest.dumpApplicationCache();
+        InspectorTest.removeIFrame(frameId1, step14);
+    }
+
+    function step14()
+    {
+        InspectorTest.waitForFrameManifestURLAndStatus(frameId1, "", applicationCache.UNCACHED, step15);
+    }
+
+    function step15()
+    {
+        InspectorTest.dumpApplicationCache();
+        InspectorTest.completeTest();
+    }
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that application cache model keeps track of manifest urls and statuses correctly.</p>
+<a href="https://bugs.webkit.org/show_bug.cgi?id=64581">Bug 64581</a>
+</body>
+</html>

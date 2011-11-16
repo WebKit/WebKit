@@ -1,3 +1,35 @@
+2011-11-16  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Application cache status should be updated after swapCache().
+        https://bugs.webkit.org/show_bug.cgi?id=72123
+
+        Reviewed by Pavel Feldman.
+
+        Application cache view resources and status are now updated after swapCache() call.
+        Refresh button removed from application cache view.
+        Application cache inspector tests are moved to their own folder.
+
+        Tests: http/tests/inspector/appcache/appcache-iframe-manifests.html
+               http/tests/inspector/appcache/appcache-manifest-with-non-existing-file.html
+               http/tests/inspector/appcache/appcache-swap.html
+
+        * inspector/front-end/ApplicationCacheItemsView.js:
+        (WebInspector.ApplicationCacheItemsView):
+        (WebInspector.ApplicationCacheItemsView.prototype.get statusBarItems):
+        (WebInspector.ApplicationCacheItemsView.prototype.wasShown):
+        (WebInspector.ApplicationCacheItemsView.prototype._maybeUpdate):
+        (WebInspector.ApplicationCacheItemsView.prototype._markDirty):
+        (WebInspector.ApplicationCacheItemsView.prototype.updateStatus):
+        (WebInspector.ApplicationCacheItemsView.prototype._updateCallback):
+        (WebInspector.ApplicationCacheItemsView.prototype._deleteCallback):
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        (WebCore::ApplicationCacheGroup::setNewestCache):
+        (WebCore::ApplicationCacheGroup::makeObsolete):
+        (WebCore::ApplicationCacheGroup::setUpdateStatus):
+        * loader/appcache/ApplicationCacheHost.cpp:
+        (WebCore::ApplicationCacheHost::notifyDOMApplicationCache):
+        (WebCore::ApplicationCacheHost::swapCache):
+
 2011-11-16  Eric Carlson  <eric.carlson@apple.com>
 
         addTrack() must throw an exception if 'kind' is unknown

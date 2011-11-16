@@ -1,0 +1,14 @@
+Tests that application cache model keeps track of manifest urls and statuses correctly when there is a non existing file listed in manifest.
+
+Bug 64581
+Dumping application cache tree:
+    (empty)
+Dumping application cache model:
+    (empty)
+
+Dumping application cache tree:
+    (empty)
+Dumping application cache model:
+    (empty)
+
+

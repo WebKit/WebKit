@@ -406,7 +406,6 @@ void ApplicationCacheGroup::setNewestCache(PassRefPtr<ApplicationCache> newestCa
 
     m_caches.add(m_newestCache.get());
     m_newestCache->setGroup(this);
-    InspectorInstrumentation::updateApplicationCacheStatus(m_frame);
 }
 
 void ApplicationCacheGroup::makeObsolete()
@@ -417,7 +416,6 @@ void ApplicationCacheGroup::makeObsolete()
     m_isObsolete = true;
     cacheStorage().cacheGroupMadeObsolete(this);
     ASSERT(!m_storageID);
-    InspectorInstrumentation::updateApplicationCacheStatus(m_frame);
 }
 
 void ApplicationCacheGroup::update(Frame* frame, ApplicationCacheUpdateOption updateOption)
@@ -1144,7 +1142,6 @@ void ApplicationCacheGroup::postListenerTask(ApplicationCacheHost::EventID event
 void ApplicationCacheGroup::setUpdateStatus(UpdateStatus status)
 {
     m_updateStatus = status;
-    InspectorInstrumentation::updateApplicationCacheStatus(m_frame);
 }
 
 void ApplicationCacheGroup::clearStorageID()

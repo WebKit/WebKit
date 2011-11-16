@@ -1,3 +1,13 @@
+2011-11-16  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Application cache status should be updated after swapCache().
+        https://bugs.webkit.org/show_bug.cgi?id=72123
+
+        Reviewed by Pavel Feldman.
+
+        * src/ApplicationCacheHost.cpp:
+        (WebCore::ApplicationCacheHost::swapCache):
+
 2011-11-16  Iain Merrick  <husky@google.com>
 
         [chromium] Pass screen refresh rate into compositor.

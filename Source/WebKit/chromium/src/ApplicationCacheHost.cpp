@@ -289,7 +289,10 @@ bool ApplicationCacheHost::update()
 
 bool ApplicationCacheHost::swapCache()
 {
-    return m_internal ? m_internal->m_outerHost->swapCache() : false;
+    bool success = m_internal ? m_internal->m_outerHost->swapCache() : false;
+    if (success)
+        InspectorInstrumentation::updateApplicationCacheStatus(m_documentLoader->frame());
+    return success;
 }
 
 bool ApplicationCacheHost::isApplicationCacheEnabled()

@@ -41,10 +41,6 @@ WebInspector.ApplicationCacheItemsView = function(model, frameId, status)
     this.deleteButton.visible = false;
     this.deleteButton.addEventListener("click", this._deleteButtonClicked, this);
 
-    // FIXME: Needs better tooltip. (Localized)
-    this.refreshButton = new WebInspector.StatusBarButton(WebInspector.UIString("Refresh"), "refresh-storage-status-bar-item");
-    this.refreshButton.addEventListener("click", this._refreshButtonClicked, this);
-
     if (Preferences.onlineDetectionEnabled) {
         this.connectivityIcon = document.createElement("img");
         this.connectivityIcon.className = "storage-application-cache-connectivity-icon";
@@ -69,12 +65,12 @@ WebInspector.ApplicationCacheItemsView = function(model, frameId, status)
     this._emptyView = new WebInspector.EmptyView(WebInspector.UIString("No Application Cache information available."));
     this._emptyView.show(this.element);
 
+    this._markDirty();
     this.updateStatus(status);
 
     // FIXME: Status bar items don't work well enough yet, so they are being hidden.
     // http://webkit.org/b/41637 Web Inspector: Give Semantics to "Refresh" and "Delete" Buttons in ApplicationCache DataGrid
     this.deleteButton.element.style.display = "none";
-    this.refreshButton.element.style.display = "none";
     if (Preferences.onlineDetectionEnabled) {
         this.connectivityIcon.style.display = "none";
         this.connectivityMessage.style.display = "none";
@@ -87,13 +83,13 @@ WebInspector.ApplicationCacheItemsView.prototype = {
     {
         if (Preferences.onlineDetectionEnabled) {
             return [
-                this.refreshButton.element, this.deleteButton.element,
+                this.deleteButton.element,
                 this.connectivityIcon, this.connectivityMessage, this.divider,
                 this.statusIcon, this.statusMessage
             ];
         } else {
             return [
-                this.refreshButton.element, this.deleteButton.element, this.divider,
+                this.deleteButton.element, this.divider,
                 this.statusIcon, this.statusMessage
             ];
         }
@@ -102,7 +98,7 @@ WebInspector.ApplicationCacheItemsView.prototype = {
     wasShown: function()
     {
         this.updateNetworkState(navigator.onLine);
-        this._update();
+        this._maybeUpdate();
     },
 
     willHide: function()
@@ -110,11 +106,28 @@ WebInspector.ApplicationCacheItemsView.prototype = {
         this.deleteButton.visible = false;
     },
 
+    _maybeUpdate: function()
+    {
+        if (!this.isShowing() || !this._viewDirty)
+            return;
+        
+        this._update();
+        this._viewDirty = false;
+    },
+
+    _markDirty: function()
+    {
+        this._viewDirty = true;
+    },
+
     /**
      * @param {number} status
      */
     updateStatus: function(status)
     {
+        var oldStatus = this._status;
+        this._status = status;
+        
         var statusInformation = {};
         // We should never have UNCACHED status, since we remove frames with UNCACHED application cache status from the tree. 
         statusInformation[applicationCache.UNCACHED]    = { src: "Images/errorRedDot.png", text: "UNCACHED" };
@@ -128,6 +141,10 @@ WebInspector.ApplicationCacheItemsView.prototype = {
 
         this.statusIcon.src = info.src;
         this.statusMessage.textContent = info.text;
+        
+        if (this.isShowing() && this._status === applicationCache.IDLE && (oldStatus === applicationCache.UPDATEREADY || !this._resources))
+            this._markDirty();
+        this._maybeUpdate();
     },
 
     /**
@@ -157,20 +174,25 @@ WebInspector.ApplicationCacheItemsView.prototype = {
     _updateCallback: function(applicationCache)
     {
         if (!applicationCache || !applicationCache.manifestURL) {
+            delete this._manifest;
+            delete this._creationTime;
+            delete this._updateTime;
+            delete this._size;
+            delete this._resources;
+            
             this._emptyView.show(this.element);
             this.deleteButton.visible = false;
             if (this._dataGrid)
                 this._dataGrid.element.addStyleClass("hidden");
             return;
         }
-
-        // FIXME: applicationCaches is just one cache.
         // FIXME: are these variables needed anywhere else?
         this._manifest = applicationCache.manifestURL;
         this._creationTime = applicationCache.creationTime;
         this._updateTime = applicationCache.updateTime;
         this._size = applicationCache.size;
         this._resources = applicationCache.resources;
+
         var lastPathComponent = applicationCache.lastPathComponent;
 
         if (!this._dataGrid)
@@ -264,12 +286,6 @@ WebInspector.ApplicationCacheItemsView.prototype = {
         // InspectorBackend.deleteCachedResource(...)
         // this._update();
     },
-
-    _refreshButtonClicked: function(event)
-    {
-        // FIXME: Is this a refresh button or a re-fetch manifest button?
-        // this._update();
-    }
 }
 
 WebInspector.ApplicationCacheItemsView.prototype.__proto__ = WebInspector.View.prototype;
