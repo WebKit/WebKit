@@ -58,7 +58,7 @@ void RenderTableCol::styleDidChange(StyleDifference diff, const RenderStyle* old
 
 void RenderTableCol::updateFromElement()
 {
-    int oldSpan = m_span;
+    unsigned oldSpan = m_span;
     Node* n = node();
     if (n && (n->hasTagName(colTag) || n->hasTagName(colgroupTag))) {
         HTMLTableColElement* tc = static_cast<HTMLTableColElement*>(n);

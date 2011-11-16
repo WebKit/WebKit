@@ -83,11 +83,11 @@ int FixedTableLayout::calcWidthArray(int)
 
     // iterate over all <col> elements
     RenderObject* child = m_table->firstChild();
-    int nEffCols = m_table->numEffCols();
+    unsigned nEffCols = m_table->numEffCols();
     m_width.resize(nEffCols);
     m_width.fill(Length(Auto));
 
-    int currentEffectiveColumn = 0;
+    unsigned currentEffectiveColumn = 0;
     Length grpWidth;
     while (child && child->isTableCol()) {
         RenderTableCol* col = toRenderTableCol(child);
@@ -101,9 +101,9 @@ int FixedTableLayout::calcWidthArray(int)
             if (w.isFixed() && w.value() > 0)
                 effWidth = w.value();
 
-            int span = col->span();
+            unsigned span = col->span();
             while (span) {
-                int spanInCurrentEffectiveColumn;
+                unsigned spanInCurrentEffectiveColumn;
                 if (currentEffectiveColumn >= nEffCols) {
                     m_table->appendColumn(span);
                     nEffCols++;
@@ -141,7 +141,7 @@ int FixedTableLayout::calcWidthArray(int)
     // Iterate over the first row in case some are unspecified.
     RenderTableSection* section = m_table->topNonEmptySection();
     if (section) {
-        int cCol = 0;
+        unsigned cCol = 0;
         RenderObject* firstRow = section->firstChild();
         child = firstRow->firstChild();
         while (child) {
@@ -151,13 +151,13 @@ int FixedTableLayout::calcWidthArray(int)
                     cell->computePreferredLogicalWidths();
 
                 Length w = cell->styleOrColLogicalWidth();
-                int span = cell->colSpan();
+                unsigned span = cell->colSpan();
                 int effWidth = 0;
                 if (w.isFixed() && w.isPositive())
                     effWidth = w.value();
                 
-                int usedSpan = 0;
-                int i = 0;
+                unsigned usedSpan = 0;
+                unsigned i = 0;
                 while (usedSpan < span && cCol + i < nEffCols) {
                     float eSpan = m_table->spanOfEffCol(cCol + i);
                     // Only set if no col element has already set it.
@@ -223,11 +223,11 @@ void FixedTableLayout::computePreferredLogicalWidths(LayoutUnit& minWidth, Layou
 void FixedTableLayout::layout()
 {
     int tableLogicalWidth = m_table->logicalWidth() - m_table->bordersPaddingAndSpacingInRowDirection();
-    int nEffCols = m_table->numEffCols();
+    unsigned nEffCols = m_table->numEffCols();
     Vector<int> calcWidth(nEffCols, 0);
 
-    int numAuto = 0;
-    int autoSpan = 0;
+    unsigned numAuto = 0;
+    unsigned autoSpan = 0;
     int totalFixedWidth = 0;
     int totalPercentWidth = 0;
     float totalPercent = 0;
@@ -236,7 +236,7 @@ void FixedTableLayout::layout()
     // Percentages are of the table's width, so for example
     // for a table width of 100px with columns (40px, 10%), the 10% compute
     // to 10px here, and will scale up to 20px in the final (80px, 20px).
-    for (int i = 0; i < nEffCols; i++) {
+    for (unsigned i = 0; i < nEffCols; i++) {
         if (m_width[i].isFixed()) {
             calcWidth[i] = m_width[i].value();
             totalFixedWidth += calcWidth[i];
@@ -259,7 +259,7 @@ void FixedTableLayout::layout()
             // Fixed widths only scale up
             if (totalFixedWidth && totalWidth < tableLogicalWidth) {
                 totalFixedWidth = 0;
-                for (int i = 0; i < nEffCols; i++) {
+                for (unsigned i = 0; i < nEffCols; i++) {
                     if (m_width[i].isFixed()) {
                         calcWidth[i] = calcWidth[i] * tableLogicalWidth / totalWidth;
                         totalFixedWidth += calcWidth[i];
@@ -268,7 +268,7 @@ void FixedTableLayout::layout()
             }
             if (totalPercent) {
                 totalPercentWidth = 0;
-                for (int i = 0; i < nEffCols; i++) {
+                for (unsigned i = 0; i < nEffCols; i++) {
                     if (m_width[i].isPercent()) {
                         calcWidth[i] = m_width[i].percent() * (tableLogicalWidth - totalFixedWidth) / totalPercent;
                         totalPercentWidth += calcWidth[i];
@@ -279,11 +279,12 @@ void FixedTableLayout::layout()
         }
     } else {
         // Divide the remaining width among the auto columns.
+        ASSERT(autoSpan >= numAuto);
         int remainingWidth = tableLogicalWidth - totalFixedWidth - totalPercentWidth - hspacing * (autoSpan - numAuto);
         int lastAuto = 0;
-        for (int i = 0; i < nEffCols; i++) {
+        for (unsigned i = 0; i < nEffCols; i++) {
             if (m_width[i].isAuto()) {
-                int span = m_table->spanOfEffCol(i);
+                unsigned span = m_table->spanOfEffCol(i);
                 int w = remainingWidth * span / autoSpan;
                 calcWidth[i] = w + hspacing * (span - 1);
                 remainingWidth -= w;
@@ -291,6 +292,7 @@ void FixedTableLayout::layout()
                     break;
                 lastAuto = i;
                 numAuto--;
+                ASSERT(autoSpan >= span);
                 autoSpan -= span;
             }
         }
@@ -314,7 +316,7 @@ void FixedTableLayout::layout()
     }
     
     int pos = 0;
-    for (int i = 0; i < nEffCols; i++) {
+    for (unsigned i = 0; i < nEffCols; i++) {
         m_table->columnPositions()[i] = pos;
         pos += calcWidth[i] + hspacing;
     }

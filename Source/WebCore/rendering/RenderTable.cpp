@@ -633,12 +633,12 @@ RenderTableSection* RenderTable::topNonEmptySection() const
     return section;
 }
 
-void RenderTable::splitColumn(unsigned position, int firstSpan)
+void RenderTable::splitColumn(unsigned position, unsigned firstSpan)
 {
     // we need to add a new columnStruct
     unsigned oldSize = m_columns.size();
     m_columns.grow(oldSize + 1);
-    int oldSpan = m_columns[position].span;
+    unsigned oldSpan = m_columns[position].span;
     ASSERT(oldSpan > firstSpan);
     m_columns[position].span = firstSpan;
     memmove(m_columns.data() + position + 1, m_columns.data() + position, (oldSize - position) * sizeof(ColumnStruct));
@@ -661,7 +661,7 @@ void RenderTable::splitColumn(unsigned position, int firstSpan)
     setNeedsLayoutAndPrefWidthsRecalc();
 }
 
-void RenderTable::appendColumn(int span)
+void RenderTable::appendColumn(unsigned span)
 {
     unsigned pos = m_columns.size();
     unsigned newSize = pos + 1;
@@ -704,12 +704,12 @@ RenderTableCol* RenderTable::nextColElement(RenderTableCol* current) const
     return 0;
 }
 
-RenderTableCol* RenderTable::colElement(int col, bool* startEdge, bool* endEdge) const
+RenderTableCol* RenderTable::colElement(unsigned col, bool* startEdge, bool* endEdge) const
 {
     if (!m_hasColElements)
         return 0;
     RenderObject* child = firstChild();
-    int cCol = 0;
+    unsigned cCol = 0;
 
     while (child) {
         if (child->isTableCol())
@@ -723,10 +723,11 @@ RenderTableCol* RenderTable::colElement(int col, bool* startEdge, bool* endEdge)
 
     RenderTableCol* colElem = toRenderTableCol(child);
     while (colElem) {
-        int span = colElem->span();
+        unsigned span = colElem->span();
         if (!colElem->firstChild()) {
-            int startCol = cCol;
-            int endCol = cCol + span - 1;
+            unsigned startCol = cCol;
+            ASSERT(span >= 1);
+            unsigned endCol = cCol + span - 1;
             cCol += span;
             if (cCol > col) {
                 if (startEdge)
@@ -792,11 +793,11 @@ void RenderTable::recalcSections() const
     }
 
     // repair column count (addChild can grow it too much, because it always adds elements to the last row of a section)
-    int maxCols = 0;
+    unsigned maxCols = 0;
     for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
         if (child->isTableSection()) {
             RenderTableSection* section = toRenderTableSection(child);
-            int sectionCols = section->numColumns();
+            unsigned sectionCols = section->numColumns();
             if (sectionCols > maxCols)
                 maxCols = sectionCols;
         }
@@ -1080,17 +1081,19 @@ RenderTableCell* RenderTable::cellAbove(const RenderTableCell* cell) const
     recalcSectionsIfNeeded();
 
     // Find the section and row to look in
-    int r = cell->row();
+    unsigned r = cell->row();
     RenderTableSection* section = 0;
-    int rAbove = 0;
+    unsigned rAbove = 0;
     if (r > 0) {
         // cell is not in the first row, so use the above row in its own section
         section = cell->section();
         rAbove = r - 1;
     } else {
         section = sectionAbove(cell->section(), SkipEmptySections);
-        if (section)
+        if (section) {
+            ASSERT(section->numRows());
             rAbove = section->numRows() - 1;
+        }
     }
 
     // Look up the cell in the section's grid, which requires effective col index

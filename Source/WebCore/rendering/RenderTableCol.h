@@ -41,8 +41,8 @@ public:
 
     virtual void computePreferredLogicalWidths();
 
-    int span() const { return m_span; }
-    void setSpan(int span) { m_span = span; }
+    unsigned span() const { return m_span; }
+    void setSpan(unsigned span) { m_span = span; }
 
 private:
     virtual RenderObjectChildList* virtualChildren() { return children(); }
@@ -64,7 +64,7 @@ private:
     RenderTable* table() const;
 
     RenderObjectChildList m_children;
-    int m_span;
+    unsigned m_span;
 };
 
 inline RenderTableCol* toRenderTableCol(RenderObject* object)

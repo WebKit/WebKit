@@ -1,3 +1,79 @@
+2011-11-15  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Switch table indexing to unsigned
+        https://bugs.webkit.org/show_bug.cgi?id=72083
+
+        Reviewed by Darin Adler.
+
+        No expected change in behavior.
+
+        All of the code is now using unsigned for indexing!
+
+        * rendering/FixedTableLayout.cpp:
+        (WebCore::FixedTableLayout::layout):
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::colElement):
+        (WebCore::RenderTable::cellAbove):
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::splitColumn):
+        Added some ASSERTs to make sure we don't underflow. Looking at how
+        the different variables are populated, they should not be reached.
+
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::colSpan):
+        (WebCore::RenderTableCell::rowSpan):
+        Those 2 functions promotes HTMLTableCellElement's int to unsigned
+        which should be fine as we make sure their are positive. Also HTML5
+        makes those 2 fields "unsigned long" which goes in the same direction.
+
+        * rendering/AutoTableLayout.cpp:
+        (WebCore::AutoTableLayout::layout):
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::nodeAtPoint):
+        Rewrote a couple of reverse iterating to be able to use unsigned
+        without overflowing.
+
+        * rendering/AutoTableLayout.cpp:
+        (WebCore::AutoTableLayout::recalcColumn):
+        (WebCore::AutoTableLayout::fullRecalc):
+        (WebCore::AutoTableLayout::calcEffectiveLogicalWidth):
+        (WebCore::AutoTableLayout::insertSpanCell):
+        * rendering/AutoTableLayout.h:
+        * rendering/FixedTableLayout.cpp:
+        (WebCore::FixedTableLayout::calcWidthArray):
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::splitColumn):
+        (WebCore::RenderTable::appendColumn):
+        (WebCore::RenderTable::recalcSections):
+        * rendering/RenderTable.h:
+        (WebCore::RenderTable::getColumnPos):
+        (WebCore::RenderTable::spanOfEffCol):
+        (WebCore::RenderTable::effColToCol):
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::styleOrColLogicalWidth):
+        (WebCore::CollapsedBorders::nextBorder):
+        * rendering/RenderTableCell.h:
+        * rendering/RenderTableCol.cpp:
+        (WebCore::RenderTableCol::updateFromElement):
+        * rendering/RenderTableCol.h:
+        (WebCore::RenderTableCol::span):
+        (WebCore::RenderTableCol::setSpan):
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::addCell):
+        (WebCore::RenderTableSection::setCellLogicalWidths):
+        (WebCore::RenderTableSection::layoutRows):
+        (WebCore::RenderTableSection::calcOuterBorderBefore):
+        (WebCore::RenderTableSection::calcOuterBorderAfter):
+        (WebCore::RenderTableSection::calcOuterBorderStart):
+        (WebCore::RenderTableSection::calcOuterBorderEnd):
+        (WebCore::RenderTableSection::paintObject):
+        (WebCore::RenderTableSection::appendColumn):
+        * rendering/RenderTableSection.h:
+        (WebCore::RenderTableSection::cellAt):
+        (WebCore::RenderTableSection::primaryCellAt):
+        (WebCore::RenderTableSection::getBaseline):
+        Mechanical change int -> unsigned.
+
 2011-11-15  Andy Estes  <aestes@apple.com>
 
         Consolidate the logic that creates run loop observers for flushing layer tree changes to CoreAnimation

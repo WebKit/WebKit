@@ -44,7 +44,7 @@ public:
     explicit RenderTable(Node*);
     virtual ~RenderTable();
 
-    LayoutUnit getColumnPos(int col) const { return m_columnPos[col]; }
+    LayoutUnit getColumnPos(unsigned col) const { return m_columnPos[col]; }
 
     int hBorderSpacing() const { return m_hSpacing; }
     int vBorderSpacing() const { return m_vSpacing; }
@@ -146,10 +146,10 @@ public:
     // This function returns 0 if the table has no non-empty sections.
     RenderTableSection* topNonEmptySection() const;
 
-    void splitColumn(unsigned position, int firstSpan);
-    void appendColumn(int span);
+    void splitColumn(unsigned position, unsigned firstSpan);
+    void appendColumn(unsigned span);
     unsigned numEffCols() const { return m_columns.size(); }
-    int spanOfEffCol(int effCol) const { return m_columns[effCol].span; }
+    unsigned spanOfEffCol(unsigned effCol) const { return m_columns[effCol].span; }
     
     unsigned colToEffCol(unsigned column) const
     {
@@ -160,10 +160,10 @@ public:
         return effColumn;
     }
     
-    int effColToCol(int effCol) const
+    unsigned effColToCol(unsigned effCol) const
     {
-        int c = 0;
-        for (int i = 0; i < effCol; i++)
+        unsigned c = 0;
+        for (unsigned i = 0; i < effCol; i++)
             c += m_columns[i].span;
         return c;
     }
@@ -174,7 +174,7 @@ public:
                (collapseBorders() ? 0 : (paddingStart() + paddingEnd() + (numEffCols() + 1) * hBorderSpacing()));
     }
 
-    RenderTableCol* colElement(int col, bool* startEdge = 0, bool* endEdge = 0) const;
+    RenderTableCol* colElement(unsigned col, bool* startEdge = 0, bool* endEdge = 0) const;
     RenderTableCol* nextColElement(RenderTableCol* current) const;
 
     bool needsSectionRecalc() const { return m_needsSectionRecalc; }

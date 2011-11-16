@@ -193,8 +193,8 @@ void RenderTableSection::addCell(RenderTableCell* cell, RenderTableRow* row)
     if (needsCellRecalc())
         return;
 
-    int rSpan = cell->rowSpan();
-    int cSpan = cell->colSpan();
+    unsigned rSpan = cell->rowSpan();
+    unsigned cSpan = cell->colSpan();
     Vector<RenderTable::ColumnStruct>& columns = table()->columns();
     unsigned nCols = columns.size();
     // addCell should be called only after m_cRow has been incremented.
@@ -241,16 +241,16 @@ void RenderTableSection::addCell(RenderTableCell* cell, RenderTableRow* row)
     // tell the cell where it is
     bool inColSpan = false;
     while (cSpan) {
-        int currentSpan;
+        unsigned currentSpan;
         if (m_cCol >= nCols) {
             table()->appendColumn(cSpan);
             currentSpan = cSpan;
         } else {
-            if (cSpan < (int)columns[m_cCol].span)
+            if (cSpan < columns[m_cCol].span)
                 table()->splitColumn(m_cCol, cSpan);
             currentSpan = columns[m_cCol].span;
         }
-        for (int r = 0; r < rSpan; r++) {
+        for (unsigned r = 0; r < rSpan; r++) {
             CellStruct& c = cellAt(insertionRow + r, m_cCol);
             ASSERT(cell);
             c.cells.append(cell);
@@ -283,7 +283,7 @@ void RenderTableSection::setCellLogicalWidths()
             if (!cell || current.inColSpan)
               continue;
             unsigned endCol = j;
-            int cspan = cell->colSpan();
+            unsigned cspan = cell->colSpan();
             while (cspan && endCol < cols) {
                 ASSERT(endCol < table()->columns().size());
                 cspan -= table()->columns()[endCol].span;
@@ -438,7 +438,7 @@ LayoutUnit RenderTableSection::layoutRows(LayoutUnit toAdd)
     ASSERT(!needsLayout());
 
     LayoutUnit rHeight;
-    int rindx;
+    unsigned rindx;
     unsigned totalRows = m_grid.size();
 
     // Set the width of our section now.  The rows will also be this width.
@@ -509,7 +509,7 @@ LayoutUnit RenderTableSection::layoutRows(LayoutUnit toAdd)
 
     LayoutUnit hspacing = table()->hBorderSpacing();
     LayoutUnit vspacing = table()->vBorderSpacing();
-    LayoutUnit nEffCols = table()->numEffCols();
+    unsigned nEffCols = table()->numEffCols();
 
     LayoutStateMaintainer statePusher(view(), this, LayoutSize(x(), y()), style()->isFlippedBlocksWritingMode());
 
@@ -522,7 +522,7 @@ LayoutUnit RenderTableSection::layoutRows(LayoutUnit toAdd)
             rowRenderer->updateLayerTransform();
         }
 
-        for (int c = 0; c < nEffCols; c++) {
+        for (unsigned c = 0; c < nEffCols; c++) {
             CellStruct& cs = cellAt(r, c);
             RenderTableCell* cell = cs.primaryCell();
 
@@ -679,7 +679,7 @@ LayoutUnit RenderTableSection::layoutRows(LayoutUnit toAdd)
 #endif
     // Now that our height has been determined, add in overflow from cells.
     for (unsigned r = 0; r < totalRows; r++) {
-        for (int c = 0; c < nEffCols; c++) {
+        for (unsigned c = 0; c < nEffCols; c++) {
             CellStruct& cs = cellAt(r, c);
             RenderTableCell* cell = cs.primaryCell();
             if (!cell || cs.inColSpan)
@@ -710,7 +710,7 @@ LayoutUnit RenderTableSection::layoutRows(LayoutUnit toAdd)
 
 LayoutUnit RenderTableSection::calcOuterBorderBefore() const
 {
-    int totalCols = table()->numEffCols();
+    unsigned totalCols = table()->numEffCols();
     if (!m_grid.size() || !totalCols)
         return 0;
 
@@ -729,7 +729,7 @@ LayoutUnit RenderTableSection::calcOuterBorderBefore() const
         borderWidth = rb.width();
 
     bool allHidden = true;
-    for (int c = 0; c < totalCols; c++) {
+    for (unsigned c = 0; c < totalCols; c++) {
         const CellStruct& current = cellAt(0, c);
         if (current.inColSpan || !current.hasCells())
             continue;
@@ -761,7 +761,7 @@ LayoutUnit RenderTableSection::calcOuterBorderBefore() const
 
 LayoutUnit RenderTableSection::calcOuterBorderAfter() const
 {
-    int totalCols = table()->numEffCols();
+    unsigned totalCols = table()->numEffCols();
     if (!m_grid.size() || !totalCols)
         return 0;
 
@@ -780,7 +780,7 @@ LayoutUnit RenderTableSection::calcOuterBorderAfter() const
         borderWidth = rb.width();
 
     bool allHidden = true;
-    for (int c = 0; c < totalCols; c++) {
+    for (unsigned c = 0; c < totalCols; c++) {
         const CellStruct& current = cellAt(m_grid.size() - 1, c);
         if (current.inColSpan || !current.hasCells())
             continue;
@@ -812,7 +812,7 @@ LayoutUnit RenderTableSection::calcOuterBorderAfter() const
 
 LayoutUnit RenderTableSection::calcOuterBorderStart() const
 {
-    int totalCols = table()->numEffCols();
+    unsigned totalCols = table()->numEffCols();
     if (!m_grid.size() || !totalCols)
         return 0;
 
@@ -856,7 +856,7 @@ LayoutUnit RenderTableSection::calcOuterBorderStart() const
 
 LayoutUnit RenderTableSection::calcOuterBorderEnd() const
 {
-    int totalCols = table()->numEffCols();
+    unsigned totalCols = table()->numEffCols();
     if (!m_grid.size() || !totalCols)
         return 0;
 
@@ -1106,9 +1106,7 @@ void RenderTableSection::paintObject(PaintInfo& paintInfo, const LayoutPoint& pa
             else
                 std::sort(cells.begin(), cells.end(), compareCellPositionsWithOverflowingCells);
 
-            int size = cells.size();
-            // Paint the cells.
-            for (int i = 0; i < size; ++i)
+            for (unsigned i = 0; i < cells.size(); ++i)
                 paintCell(cells[i], paintInfo, paintOffset);
         }
     }
@@ -1184,7 +1182,7 @@ unsigned RenderTableSection::numColumns() const
     return result + 1;
 }
 
-void RenderTableSection::appendColumn(int pos)
+void RenderTableSection::appendColumn(unsigned pos)
 {
     ASSERT(!m_needsCellRecalc);
 
@@ -1192,7 +1190,7 @@ void RenderTableSection::appendColumn(int pos)
         m_grid[row].row.resize(pos + 1);
 }
 
-void RenderTableSection::splitColumn(unsigned pos, int first)
+void RenderTableSection::splitColumn(unsigned pos, unsigned first)
 {
     ASSERT(!m_needsCellRecalc);
 
@@ -1205,7 +1203,8 @@ void RenderTableSection::splitColumn(unsigned pos, int first)
             r[pos + 1].cells.append(r[pos].cells);
             RenderTableCell* cell = r[pos].primaryCell();
             ASSERT(cell);
-            int colleft = cell->colSpan() - r[pos].inColSpan;
+            ASSERT(cell->colSpan() >= (r[pos].inColSpan ? 1 : 0));
+            unsigned colleft = cell->colSpan() - r[pos].inColSpan;
             if (first > colleft)
               r[pos + 1].inColSpan = 0;
             else
@@ -1279,7 +1278,8 @@ bool RenderTableSection::nodeAtPoint(const HitTestRequest& request, HitTestResul
     if (!current.hasCells())
         return false;
 
-    for (int i = current.cells.size() - 1; i >= 0; --i) {
+    for (unsigned i = current.cells.size() ; i; ) {
+        --i;
         RenderTableCell* cell = current.cells[i];
         LayoutPoint cellPoint = flipForWritingModeForChild(cell, adjustedLocation);
         if (static_cast<RenderObject*>(cell)->nodeAtPoint(request, result, pointInContainer, cellPoint, action)) {

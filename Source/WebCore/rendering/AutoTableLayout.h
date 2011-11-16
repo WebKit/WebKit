@@ -41,7 +41,7 @@ public:
 
 private:
     void fullRecalc();
-    void recalcColumn(int effCol);
+    void recalcColumn(unsigned effCol);
 
     int calcEffectiveLogicalWidth();
 

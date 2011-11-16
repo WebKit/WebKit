@@ -43,8 +43,8 @@ public:
     int cellIndex() const { return 0; }
     void setCellIndex(int) { }
 
-    int colSpan() const;
-    int rowSpan() const;
+    unsigned colSpan() const;
+    unsigned rowSpan() const;
 
     // Called from HTMLTableCellElement.
     void colSpanOrRowSpanChanged();

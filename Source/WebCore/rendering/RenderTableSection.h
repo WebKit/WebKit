@@ -90,16 +90,16 @@ public:
         Length logicalHeight;
     };
 
-    CellStruct& cellAt(int row,  int col) { return m_grid[row].row[col]; }
-    const CellStruct& cellAt(int row, int col) const { return m_grid[row].row[col]; }
-    RenderTableCell* primaryCellAt(int row, int col)
+    CellStruct& cellAt(unsigned row,  unsigned col) { return m_grid[row].row[col]; }
+    const CellStruct& cellAt(unsigned row, unsigned col) const { return m_grid[row].row[col]; }
+    RenderTableCell* primaryCellAt(unsigned row, unsigned col)
     {
         CellStruct& c = m_grid[row].row[col];
         return c.primaryCell();
     }
 
-    void appendColumn(int pos);
-    void splitColumn(unsigned pos, int first);
+    void appendColumn(unsigned pos);
+    void splitColumn(unsigned pos, unsigned first);
 
     LayoutUnit calcOuterBorderBefore() const;
     LayoutUnit calcOuterBorderAfter() const;
@@ -124,7 +124,7 @@ public:
     bool needsCellRecalc() const { return m_needsCellRecalc; }
     void setNeedsCellRecalc();
 
-    LayoutUnit getBaseline(int row) { return m_grid[row].baseline; }
+    LayoutUnit getBaseline(unsigned row) { return m_grid[row].baseline; }
 
     void rowLogicalHeightChanged(unsigned rowIndex);
 

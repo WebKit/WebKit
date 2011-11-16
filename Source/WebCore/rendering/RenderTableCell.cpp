@@ -62,7 +62,7 @@ void RenderTableCell::willBeDestroyed()
         recalcSection->setNeedsCellRecalc();
 }
 
-int RenderTableCell::colSpan() const
+unsigned RenderTableCell::colSpan() const
 {
     if (UNLIKELY(!m_hasAssociatedTableCellElement))
         return 1;
@@ -70,7 +70,7 @@ int RenderTableCell::colSpan() const
     return toHTMLTableCellElement(node())->colSpan();
 }
 
-int RenderTableCell::rowSpan() const
+unsigned RenderTableCell::rowSpan() const
 {
     if (UNLIKELY(!m_hasAssociatedTableCellElement))
         return 1;
@@ -96,10 +96,10 @@ Length RenderTableCell::styleOrColLogicalWidth() const
         return w;
 
     if (RenderTableCol* tableCol = table()->colElement(col())) {
-        int colSpanCount = colSpan();
+        unsigned colSpanCount = colSpan();
 
         Length colWidthSum = Length(0, Fixed);
-        for (int i = 1; i <= colSpanCount; i++) {
+        for (unsigned i = 1; i <= colSpanCount; i++) {
             Length colWidth = tableCol->style()->logicalWidth();
 
             // Percentage value should be returned only for colSpan == 1.
@@ -866,7 +866,7 @@ public:
 
     CollapsedBorder* nextBorder()
     {
-        for (int i = 0; i < m_count; i++) {
+        for (unsigned i = 0; i < m_count; i++) {
             if (m_borders[i].borderValue.exists() && m_borders[i].shouldPaint) {
                 m_borders[i].shouldPaint = false;
                 return &m_borders[i];
@@ -877,7 +877,7 @@ public:
     }
     
     CollapsedBorder m_borders[4];
-    int m_count;
+    unsigned m_count;
 };
 
 static void addBorderStyle(RenderTable::CollapsedBorderValues& borderValues,
