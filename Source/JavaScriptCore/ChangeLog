@@ -1,3 +1,30 @@
+2011-11-15  Geoffrey Garen  <ggaren@apple.com>
+
+        Removed a use of ArgList that baked in the assumption that arguments
+        are forward in the regiter file.
+
+        Reviewed by Sam Weinig.
+
+        * dfg/DFGOperations.cpp:
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION): Use new API.
+
+        * runtime/ArgList.cpp:
+        (JSC::ArgList::getSlice): No need to provide an arbitrary constructor --
+        getSlice can do the right thing by using its rights to private data.
+
+        * runtime/ArgList.h: Removed constructor that took a forward-contiguous
+        set of arguments.
+
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::finishCreation):
+        * runtime/JSArray.h:
+        (JSC::JSArray::create):
+        * runtime/JSGlobalObject.h:
+        (JSC::constructArray): Added explicit support for creating an array from
+        a pre-allocated set of values, so we could stop relying on the ArgList
+        API we want to remove.
+
 2011-11-15  Filip Pizlo  <fpizlo@apple.com>
 
         Crash in JSC::DFG::OSRExitCompiler::compileExit(JSC::DFG::OSRExit const&, JSC::DFG::SpeculationRecovery*)

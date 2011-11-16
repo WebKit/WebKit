@@ -33,10 +33,12 @@ namespace JSC {
 void ArgList::getSlice(int startIndex, ArgList& result) const
 {
     if (startIndex <= 0 || static_cast<unsigned>(startIndex) >= m_argCount) {
-        result = ArgList(m_args, 0);
+        result = ArgList();
         return;
     }
-    result = ArgList(m_args + startIndex, m_argCount - startIndex);
+
+    result.m_args = m_args + startIndex;
+    result.m_argCount =  m_argCount - startIndex;
 }
 
 void MarkedArgumentBuffer::markLists(HeapRootVisitor& heapRootVisitor, ListSet& markSet)

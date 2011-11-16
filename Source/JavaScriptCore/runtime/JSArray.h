@@ -66,6 +66,7 @@ namespace JSC {
         void finishCreation(JSGlobalData&);
         void finishCreation(JSGlobalData&, unsigned initialLength, ArrayCreationMode);
         void finishCreation(JSGlobalData&, const ArgList&);
+        void finishCreation(JSGlobalData&, const JSValue*, size_t length);
     
     public:
         typedef JSNonFinalObject Base;
@@ -91,6 +92,13 @@ namespace JSC {
         {
             JSArray* array = new (allocateCell<JSArray>(globalData.heap)) JSArray(globalData, structure);
             array->finishCreation(globalData, initialValues);
+            return array;
+        }
+
+        static JSArray* create(JSGlobalData& globalData, Structure* structure, const JSValue* values, size_t length)
+        {
+            JSArray* array = new (allocateCell<JSArray>(globalData.heap)) JSArray(globalData, structure);
+            array->finishCreation(globalData, values, length);
             return array;
         }
 

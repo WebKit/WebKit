@@ -191,12 +191,6 @@ namespace JSC {
         {
         }
         
-        ArgList(JSValue* args, unsigned argCount)
-            : m_args(args)
-            , m_argCount(argCount)
-        {
-        }
-        
         ArgList(Register* args, int argCount)
             : m_args(reinterpret_cast<JSValue*>(args))
             , m_argCount(argCount)
