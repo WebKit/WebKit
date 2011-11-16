@@ -27,6 +27,36 @@
 // import.
 
 var WebInspector = {
+    displayNameForURL: function(url) {
+        return url;
+    },
+
+    linkifyURLAsNode: function(url, linkText, classes, tooltipText) {
+        if (!linkText)
+            linkText = url;
+        classes = (classes ? classes + " " : "");
+
+        // FIXME: Create an <a> element here once we actually have somewhere useful to link to.
+        // <http://webkit.org/b/72509>
+        var a = document.createElement("span");
+        a.href = url;
+        a.className = classes;
+        if (typeof tooltipText === "undefined")
+            a.title = url;
+        else if (typeof tooltipText !== "string" || tooltipText.length)
+            a.title = tooltipText;
+        a.textContent = linkText;
+
+        return a;
+    },
+
+    linkifyResourceAsNode: function(url, preferredPanel, lineNumber, classes, tooltipText) {
+        var linkText = WebInspector.displayNameForURL(url);
+        if (lineNumber)
+            linkText += ":" + lineNumber;
+        return WebInspector.linkifyURLAsNode(url, linkText, classes, tooltipText);
+    },
+
     UIString: function(string) {
         return String.vsprintf(string, Array.prototype.slice.call(arguments, 1));
     },

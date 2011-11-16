@@ -1,5 +1,28 @@
 2011-11-16  Adam Roben  <aroben@apple.com>
 
+        Move filenames/line numbers off to the right edge in Leaks Viewer
+
+        Fixes <http://webkit.org/b/72510> Callstacks in Leaks Viewer are a little hard to read
+        because filenames/line numbers are right next to function names
+
+        Reviewed by Andreas Kling.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/LeaksViewer/LeaksParserImpl.js:
+        (LeaksParserImpl.prototype._createNode): Separate the filename and line number out from the
+        function name. Use the filename as the profile node's URL (we don't have enough info to
+        compute a real URL currently) and the line number as the profile node's line number so the
+        Inspector code will put them on the right side of the callstack graph.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/LeaksViewer/WebInspectorShims.js:
+        (WebInspector.displayNameForURL): Stubbed this out. For now we don't ever get any URLs
+        passed here, just filenames.
+
+        (WebInspector.linkifyURLAsNode):
+        (WebInspector.linkifyResourceAsNode):
+        Copied and slightly modified from inspector.js.
+
+2011-11-16  Adam Roben  <aroben@apple.com>
+
         Make Leaks Viewer load builds from the new Lion Leaks bot
 
         Fixes <http://webkit.org/b/72507> REGRESSION: Leaks Viewer no longer shows recent leaky builds

@@ -54,6 +54,18 @@ LeaksParserImpl.prototype = {
     },
 
     _createNode: function(functionName) {
+        var url;
+        var lineNumber;
+        var match = /(.*) (\S+):(\d+)$/.exec(functionName);
+        if (match) {
+            functionName = match[1];
+            // FIXME: It would be nice to be able to link straight to the right line in Trac, but to
+            // do that we'd have to have some way of translating from filenames to Trac URLs.
+            // <http://webkit.org/b/72509>
+            url = match[2];
+            lineNumber = match[3];
+        }
+
         return {
             functionName: functionName,
             selfTime: 0,
@@ -63,6 +75,8 @@ LeaksParserImpl.prototype = {
             children: [],
             childrenByName: {},
             callUID: functionName,
+            url: url,
+            lineNumber: lineNumber,
         };
     },
 
