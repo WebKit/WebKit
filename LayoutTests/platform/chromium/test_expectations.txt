@@ -2127,26 +2127,6 @@ BUGCR48452 LEOPARD : svg/custom/use-font-face-crash.svg = IMAGE+TEXT
 
 BUGCR48668 MAC : svg/W3C-SVG-1.1/struct-use-01-t.svg = FAIL
 
-// These ietestcenter tests still don't pass. Careful before removing these
-// that the baselines aren't incorrect
-// (like in: https://bugs.webkit.org/show_bug.cgi?id=42215)
-BUGCR48737 : ietestcenter/Javascript/15.2.3.3-4-178.html = TEXT
-BUGCR48737 : ietestcenter/Javascript/15.2.3.3-4-179.html = TEXT
-BUGCR48737 : ietestcenter/Javascript/15.2.3.3-4-180.html = TEXT
-BUGCR48737 : ietestcenter/Javascript/15.5.4.20-4-10.html = TEXT
-BUGCR48737 : ietestcenter/Javascript/15.5.4.20-4-18.html = TEXT
-BUGCR48737 : ietestcenter/Javascript/15.5.4.20-4-34.html = TEXT
-BUGCR48737 : ietestcenter/Javascript/15.10.6.html = TEXT
-BUGCR48737 : ietestcenter/Javascript/15.10.7.1-1.html = TEXT
-BUGCR48737 : ietestcenter/Javascript/15.10.7.2-1.html = TEXT
-BUGCR48737 : ietestcenter/Javascript/15.10.7.3-1.html = TEXT
-BUGCR48737 : ietestcenter/Javascript/15.10.7.4-1.html = TEXT
-BUGCR48737 : ietestcenter/Javascript/15.10.7.5-1.html = TEXT
-BUGCR48737 : ietestcenter/Javascript/15.2.3.3-4-212.html = TEXT
-BUGCR48737 : ietestcenter/Javascript/15.2.3.3-4-213.html = TEXT
-BUGCR48737 : ietestcenter/Javascript/15.2.3.3-4-214.html = TEXT
-BUGCR48737 : ietestcenter/Javascript/15.2.3.3-4-215.html = TEXT
-
 BUGCR49029 : fast/js/object-literal-syntax.html = TEXT
 
 BUGCR48859 WIN : fast/inline/continuation-outlines-with-layers-2.html = IMAGE+TEXT
@@ -2815,9 +2795,6 @@ BUGCR74766 WIN DEBUG : http/tests/security/javascriptURL/xss-ALLOWED-from-javasc
 BUGCR75561 LINUX WIN : fast/writing-mode/text-orientation-basic.html = IMAGE+TEXT
 BUGCR75561 LEOPARD : fast/writing-mode/text-orientation-basic.html = IMAGE IMAGE+TEXT
 
-// introduced by brarraclough in WK r80621
-BUGCR75562 : fast/js/array-proto-func-length-getter-except.html = TEXT
-
 BUGWK56060 LINUX : fast/images/favicon-as-image.html = IMAGE+TEXT
 
 BUGCR75632 LINUX : svg/W3C-SVG-1.1/text-text-03-b.svg = PASS CRASH
@@ -3056,9 +3033,6 @@ BUGDPRANKE : fast/dom/Document/document-reopen.html = PASS TEXT
 BUGDPRANKE : fast/parser/javascript-url-compat-mode.html = PASS TEXT
 
 BUGCR80301 LEOPARD : fast/canvas/canvas-largedraws.html = TIMEOUT
-
-// roll up from r84685:r84721??
-BUGWK84665 : fast/dom/dataset-gc.html = TEXT
 
 BUGWK60115 LINUX WIN : fast/multicol/shadow-breaking.html = IMAGE
 BUGWK60115 LEOPARD : fast/text/shadow-translucent-fill.html = IMAGE
@@ -3366,8 +3340,6 @@ BUGCR88911 LEOPARD : svg/W3C-SVG-1.1/struct-image-10-t.svg = IMAGE
 // V8 now follows spec on toisostring, test needs to be fixed.
 BUGCR88936 : fast/js/date-toisostring.html = TEXT
 
-BUGCR89242 : fast/js/eval-keyword-vs-function.html = TEXT
-
 BUGCR89331 WIN7 : plugins/mouse-click-plugin-clears-selection.html = PASS MISSING
 
 BUGWK70630 SNOWLEOPARD : fast/js/call-base-resolution.html = PASS TEXT CRASH
@@ -3633,8 +3605,6 @@ BUGWK68270 MAC DEBUG : fast/css/last-of-type-pseudo-class.html = IMAGE IMAGE+TEX
 BUGWK68270 MAC DEBUG : fast/css/only-child-pseudo-class.html = IMAGE IMAGE+TEXT TEXT
 BUGWK68270 MAC DEBUG : fast/css/only-of-type-pseudo-class.html = IMAGE IMAGE+TEXT TEXT
 
-BUGWK68445 : fast/js/string-split-conformance.html = FAIL
-
 // Tests that have become flaky (causing regressions, but only sometimes)
 BUG_EPOGER SNOWLEOPARD CPU-CG CPU DEBUG : fast/js/try-catch-crash.html = PASS TIMEOUT
 
@@ -3787,10 +3757,6 @@ BUGWK71004 : inspector/storage-panel-dom-storage.html = PASS TIMEOUT
 
 BUGWK71074 MAC : fast/table/border-collapsing/border-collapsing-head-foot.html = IMAGE+TEXT
 
-BUGWK71127 : fast/js/kde/RegExp.html = TEXT
-BUGWK71127 : fast/js/exception-sequencing-binops2.html = TEXT
-BUGWK71127 : fast/js/array-prototype-properties.html = TEXT
-
 BUGWK71181 : fast/forms/input-step-as-double.html = PASS TEXT
 BUGWK71209 LINUX MAC : compositing/visibility/visibility-image-layers.html = IMAGE
 
@@ -3856,7 +3822,6 @@ BUGRICOW : fast/js/array-functions-non-arrays.html = TEXT
 BUGRICOW : fast/js/eval-cross-window.html = TEXT
 BUGRICOW : fast/js/regexp-caching.html = TEXT
 BUGRICOW : fast/js/toString-overrides.html = TEXT
-BUGRICOW : fast/js/toString-recursion.html = TEXT
 BUGRICOW : http/tests/security/xss-eval.html = TEXT
 
 BUGWK72052 MAC DEBUG CPU-CG GPU-CG : fast/dom/javascript-url-exception-isolation.html = CRASH
