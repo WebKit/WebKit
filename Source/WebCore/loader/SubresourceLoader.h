@@ -68,6 +68,8 @@ private:
 #endif
     virtual void releaseResources();
 
+    void sendDataToResource(const char*, int);
+
     enum SubresourceLoaderState {
         Uninitialized,
         Initialized,

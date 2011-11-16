@@ -1,3 +1,21 @@
+2011-11-16  Nate Chapin  <japhet@chromium.org>
+
+        Fix incorrect multipart handling in r100311.
+        SubresourceLoader::didReceiveData() is getting called
+        twice, which has unintended side effects.
+        https://bugs.webkit.org/show_bug.cgi?id=72436
+
+        Reviewed by Adam Barth.
+
+        http/tests/multipart/invalid-image-data.html should stop
+        asserting after this.
+
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::didReceiveResponse):
+        (WebCore::SubresourceLoader::didReceiveData):
+        (WebCore::SubresourceLoader::sendDataToResource):
+        * loader/SubresourceLoader.h:
+
 2011-11-16  Justin Schuh  <jschuh@chromium.org>
 
         Clear SVG filter client when its node is detached

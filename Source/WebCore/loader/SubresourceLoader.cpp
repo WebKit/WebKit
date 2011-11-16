@@ -179,7 +179,7 @@ void SubresourceLoader::didReceiveResponse(const ResourceResponse& response)
         // Since a subresource loader does not load multipart sections progressively,
         // deliver the previously received data to the loader all at once now.
         // Then clear the data to make way for the next multipart section.
-        didReceiveData(buffer->data(), buffer->size(), -1, true);
+        sendDataToResource(buffer->data(), buffer->size());
         clearResourceData();
         
         // After the first multipart section is complete, signal to delegates that this load is "finished" 
@@ -204,6 +204,12 @@ void SubresourceLoader::didReceiveData(const char* data, int length, long long e
         return;
     }
 
+    if (!m_loadingMultipartContent)
+        sendDataToResource(data, length);
+}
+
+void SubresourceLoader::sendDataToResource(const char* data, int length)
+{
     // There are two cases where we might need to create our own SharedBuffer instead of copying the one in ResourceLoader.
     // (1) Multipart content: The loader delivers the data in a multipart section all at once, then sends eof.
     //     The resource data will change as the next part is loaded, so we need to make a copy.
