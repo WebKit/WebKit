@@ -54,6 +54,10 @@ namespace WTF {
     template<typename T> struct GenericHashTraits : GenericHashTraitsBase<IsInteger<T>::value, T> {
         typedef T TraitType;
         static T emptyValue() { return T(); }
+        typedef const T& PassType;
+        static const T& pass(const T& value) { return value; }
+        typedef const T& PeekType;
+        static const T& peek(const T& value) { return value; }
     };
 
     template<typename T> struct HashTraits : GenericHashTraits<T> { };

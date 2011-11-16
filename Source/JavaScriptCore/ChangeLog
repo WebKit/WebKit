@@ -1,5 +1,16 @@
 2011-11-16  Darin Adler  <darin@apple.com>
 
+        Add a "pass type" and "peek type" concept to HashTraits
+        https://bugs.webkit.org/show_bug.cgi?id=72473
+
+        Reviewed by Filip Pizlo.
+
+        * wtf/HashTraits.h: Added the pass type and peek type.
+        For OwnPtr, the pass type will be PassOwnPtr and the peek
+        type will be a raw pointer.
+
+2011-11-16  Darin Adler  <darin@apple.com>
+
         Fix some hash traits that don't derive from the base hash traits
         https://bugs.webkit.org/show_bug.cgi?id=72470
 
