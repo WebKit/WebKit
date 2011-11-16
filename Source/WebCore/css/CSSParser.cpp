@@ -7974,7 +7974,7 @@ String quoteCSSString(const String& string)
         }
     }
 
-    StringBuffer buffer(quotedStringSize);
+    StringBuffer<UChar> buffer(quotedStringSize);
     unsigned index = 0;
     buffer[index++] = '\'';
     afterEscape = false;

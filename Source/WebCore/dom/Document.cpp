@@ -1259,7 +1259,7 @@ static inline StringWithDirection canonicalizedTitle(Document* document, const S
     unsigned length = title.length();
     unsigned i;
 
-    StringBuffer buffer(length);
+    StringBuffer<UChar> buffer(length);
     unsigned builderIndex = 0;
 
     // Skip leading spaces and leading characters that would convert to spaces

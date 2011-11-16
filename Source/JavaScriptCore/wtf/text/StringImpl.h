@@ -139,12 +139,24 @@ private:
     }
 
     // Create a StringImpl adopting ownership of the provided buffer (BufferOwned)
-    StringImpl(const UChar* characters, unsigned length)
+    StringImpl(const LChar* characters, unsigned length)
         : m_refCount(s_refCountIncrement)
         , m_length(length)
-        , m_data16(characters)
+        , m_data8(characters)
         , m_buffer(0)
-        , m_hashAndFlags(BufferOwned)
+        , m_hashAndFlags(s_hashFlag8BitBuffer | BufferOwned)
+    {
+        ASSERT(m_data8);
+        ASSERT(m_length);
+    }
+
+    // Create a StringImpl adopting ownership of the provided buffer (BufferOwned)
+    StringImpl(const UChar* characters, unsigned length)
+    : m_refCount(s_refCountIncrement)
+    , m_length(length)
+    , m_data16(characters)
+    , m_buffer(0)
+    , m_hashAndFlags(BufferOwned)
     {
         ASSERT(m_data16);
         ASSERT(m_length);
@@ -262,13 +274,15 @@ public:
         }
         return empty();
     }
-    static PassRefPtr<StringImpl> adopt(StringBuffer&);
+
+    static PassRefPtr<StringImpl> adopt(StringBuffer<LChar>& buffer);
+    static PassRefPtr<StringImpl> adopt(StringBuffer<UChar>& buffer);
 
     unsigned length() const { return m_length; }
     bool is8Bit() const { return m_hashAndFlags & s_hashFlag8BitBuffer; }
 
     // FIXME: Remove all unnecessary usages of characters()
-    ALWAYS_INLINE const LChar* characters8() const { ASSERT(is8Bit()); ASSERT_NOT_REACHED(); return m_data8; }
+    ALWAYS_INLINE const LChar* characters8() const { ASSERT(is8Bit()); return m_data8; }
     ALWAYS_INLINE const UChar* characters16() const { ASSERT(!is8Bit()); return m_data16; }
     ALWAYS_INLINE const UChar* characters() const
     {
@@ -277,6 +291,9 @@ public:
 
         return getData16SlowCase();
     }
+
+    template <typename CharType>
+    ALWAYS_INLINE const CharType * getCharacters() const;
 
     size_t cost()
     {
@@ -456,8 +473,9 @@ public:
     PassRefPtr<StringImpl> simplifyWhiteSpace(IsWhiteSpaceFunctionPtr);
 
     PassRefPtr<StringImpl> removeCharacters(CharacterMatchFunctionPtr);
+    template <typename CharType>
+    ALWAYS_INLINE PassRefPtr<StringImpl> removeCharacters(const CharType* characters, CharacterMatchFunctionPtr);
 
-    // FIXME: Do we need char version, or is it okay to just pass in an ASCII char for 8-bit? Same for reverseFind, replace
     size_t find(UChar, unsigned index = 0);
     size_t find(CharacterMatchFunctionPtr, unsigned index = 0);
     size_t find(const LChar*, unsigned index = 0);
@@ -495,7 +513,7 @@ private:
     BufferOwnership bufferOwnership() const { return static_cast<BufferOwnership>(m_hashAndFlags & s_hashMaskBufferOwnership); }
     bool isStatic() const { return m_refCount & s_refCountFlagIsStaticString; }
     template <class UCharPredicate> PassRefPtr<StringImpl> stripMatchedCharacters(UCharPredicate);
-    template <class UCharPredicate> PassRefPtr<StringImpl> simplifyMatchedCharactersToSpace(UCharPredicate);
+    template <typename CharType, class UCharPredicate> PassRefPtr<StringImpl> simplifyMatchedCharactersToSpace(UCharPredicate);
     NEVER_INLINE const UChar* getData16SlowCase() const;
 
     // The bottom bit in the ref count indicates a static (immortal) string.
@@ -528,6 +546,12 @@ private:
     };
     mutable unsigned m_hashAndFlags;
 };
+
+template <>
+ALWAYS_INLINE const LChar* StringImpl::getCharacters<LChar>() const { return characters8(); }
+
+template <>
+ALWAYS_INLINE const UChar* StringImpl::getCharacters<UChar>() const { return characters16(); }
 
 bool equal(const StringImpl*, const StringImpl*);
 bool equal(const StringImpl*, const LChar*);

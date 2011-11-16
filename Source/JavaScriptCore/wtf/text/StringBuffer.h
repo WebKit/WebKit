@@ -35,15 +35,16 @@
 
 namespace WTF {
 
+template <typename CharType>
 class StringBuffer {
     WTF_MAKE_NONCOPYABLE(StringBuffer);
 public:
     explicit StringBuffer(unsigned length)
         : m_length(length)
     {
-        if (m_length > std::numeric_limits<unsigned>::max() / sizeof(UChar))
+        if (m_length > std::numeric_limits<unsigned>::max() / sizeof(CharType))
             CRASH();
-        m_data = static_cast<UChar*>(fastMalloc(m_length * sizeof(UChar)));
+        m_data = static_cast<CharType*>(fastMalloc(m_length * sizeof(CharType)));
     }
 
     ~StringBuffer()
@@ -68,15 +69,15 @@ public:
     }
 
     unsigned length() const { return m_length; }
-    UChar* characters() { return m_data; }
+    CharType* characters() { return m_data; }
 
     UChar& operator[](unsigned i) { ASSERT(i < m_length); return m_data[i]; }
 
-    UChar* release() { UChar* data = m_data; m_data = 0; return data; }
+    CharType* release() { CharType* data = m_data; m_data = 0; return data; }
 
 private:
     unsigned m_length;
-    UChar* m_data;
+    CharType* m_data;
 };
 
 } // namespace WTF

@@ -46,7 +46,7 @@ namespace WTF {
     class Int16Array;
     class Int32Array;
     class String;
-    class StringBuffer;
+    template <typename T> class StringBuffer;
     class StringBuilder;
     class StringImpl;
     class Uint8Array;

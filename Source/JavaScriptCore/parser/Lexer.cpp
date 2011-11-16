@@ -448,11 +448,9 @@ inline void assertCharIsIn8BitRange(LChar)
 template <typename T>
 inline void Lexer<T>::append8(const T* p, size_t length)
 {
-    // FIXME: Change three occurrances of m_buffer16 to m_buffer8 and
-    // UChar to LChar when 8 bit strings are turned on.
-    size_t currentSize = m_buffer16.size();
-    m_buffer16.grow(currentSize + length);
-    UChar* rawBuffer = m_buffer16.data() + currentSize;
+    size_t currentSize = m_buffer8.size();
+    m_buffer8.grow(currentSize + length);
+    LChar* rawBuffer = m_buffer8.data() + currentSize;
 
     for (size_t i = 0; i < length; i++) {
         T c = p[i];
@@ -563,10 +561,8 @@ template <bool shouldCreateIdentifier> ALWAYS_INLINE JSTokenType Lexer<UChar>::p
 
     bool isAll8Bit = false;
 
-#if 0 // FIXME: Remove this #if when 8 bit strings are turned on.
     if (!(orAllChars & ~0xff))
         isAll8Bit = true;
-#endif
 
     const Identifier* ident = 0;
     
@@ -671,8 +667,6 @@ template <bool shouldCreateIdentifier> JSTokenType Lexer<T>::parseIdentifierSlow
 template <typename T>
 template <bool shouldBuildStrings> ALWAYS_INLINE bool Lexer<T>::parseString(JSTokenData* tokenData, bool strictMode)
 {
-    // FIXME: Change record16 and m_buffer16 to record8 and m_buffer8 below when
-    // 8 bit strings are turned on.
     int startingOffset = currentOffset();
     int startingLineNumber = lineNumber();
     int stringQuoteCharacter = m_current;
@@ -691,7 +685,7 @@ template <bool shouldBuildStrings> ALWAYS_INLINE bool Lexer<T>::parseString(JSTo
             // Most common escape sequences first
             if (escape) {
                 if (shouldBuildStrings)
-                    record16(escape); // FIXME: Change to record8
+                    record8(escape);
                 shift();
             } else if (UNLIKELY(isLineTerminator(m_current)))
                 shiftLineTerminator();
@@ -701,14 +695,14 @@ template <bool shouldBuildStrings> ALWAYS_INLINE bool Lexer<T>::parseString(JSTo
                     int prev = m_current;
                     shift();
                     if (shouldBuildStrings)
-                        record16(convertHex(prev, m_current)); // FIXME: Change to record8
+                        record8(convertHex(prev, m_current));
                     shift();
                 } else if (shouldBuildStrings)
-                    record16('x'); // FIXME: Change to record8
+                    record8('x');
             } else {
                 setOffset(startingOffset);
                 setLineNumber(startingLineNumber);
-                m_buffer16.resize(0); // FIXME: Change to m_buffer8
+                m_buffer8.resize(0);
                 return parseStringSlowCase<shouldBuildStrings>(tokenData, strictMode);
             }
             stringStart = currentCharacter();
@@ -718,7 +712,7 @@ template <bool shouldBuildStrings> ALWAYS_INLINE bool Lexer<T>::parseString(JSTo
         if (UNLIKELY(((m_current > 0xff) || (m_current < 0xe)))) {
             setOffset(startingOffset);
             setLineNumber(startingLineNumber);
-            m_buffer16.resize(0); // FIXME: Change to m_buffer8
+            m_buffer8.resize(0);
             return parseStringSlowCase<shouldBuildStrings>(tokenData, strictMode);
         }
 
@@ -728,10 +722,8 @@ template <bool shouldBuildStrings> ALWAYS_INLINE bool Lexer<T>::parseString(JSTo
     if (currentCharacter() != stringStart && shouldBuildStrings)
         append8(stringStart, currentCharacter() - stringStart);
     if (shouldBuildStrings) {
-        // FIXME: Change to m_buffer8
-        tokenData->ident = makeIdentifier(m_buffer16.data(), m_buffer16.size());
-        // FIXME: Change to m_buffer8
-        m_buffer16.resize(0);
+        tokenData->ident = makeIdentifier(m_buffer8.data(), m_buffer8.size());
+        m_buffer8.resize(0);
     } else
         tokenData->ident = 0;
 

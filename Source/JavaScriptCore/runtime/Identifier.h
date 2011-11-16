@@ -89,7 +89,10 @@ namespace JSC {
 
     private:
         UString m_string;
-        
+
+        template <typename CharType>
+        ALWAYS_INLINE static uint32_t toUInt32FromCharacters(const CharType* characters, unsigned length, bool& ok);
+
         static bool equal(const Identifier& a, const Identifier& b) { return a.m_string.impl() == b.m_string.impl(); }
         static bool equal(const Identifier& a, const LChar* b) { return equal(a.m_string.impl(), b); }
 

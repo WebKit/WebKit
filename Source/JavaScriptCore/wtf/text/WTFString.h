@@ -118,7 +118,8 @@ public:
 
     void swap(String& o) { m_impl.swap(o.m_impl); }
 
-    static String adopt(StringBuffer& buffer) { return StringImpl::adopt(buffer); }
+    static String adopt(StringBuffer<LChar>& buffer) { return StringImpl::adopt(buffer); }
+    static String adopt(StringBuffer<UChar>& buffer) { return StringImpl::adopt(buffer); }
     template<size_t inlineCapacity>
     static String adopt(Vector<UChar, inlineCapacity>& vector) { return StringImpl::adopt(vector); }
 

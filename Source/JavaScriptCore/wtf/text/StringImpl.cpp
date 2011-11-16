@@ -171,12 +171,9 @@ PassRefPtr<StringImpl> StringImpl::create(const LChar* characters, unsigned leng
     if (!characters || !length)
         return empty();
 
-    UChar* data;
+    LChar* data;
     RefPtr<StringImpl> string = createUninitialized(length, data);
-    for (unsigned i = 0; i != length; ++i) {
-        unsigned char c = characters[i];
-        data[i] = c;
-    }
+    memcpy(data, characters, length * sizeof(LChar));
     return string.release();
 }
 
@@ -199,11 +196,20 @@ const UChar* StringImpl::getData16SlowCase() const
         // If this is a substring, return a pointer into the parent string.
         // TODO: Consider severing this string from the parent string
         unsigned offset = m_data8 - m_substringBuffer->characters8();
-        return m_substringBuffer->characters16() + offset;
+        return m_substringBuffer->characters() + offset;
     }
 
     unsigned len = length();
+    if (hasTerminatingNullCharacter())
+        len++;
+
     m_copyData16 = static_cast<UChar*>(fastMalloc(len * sizeof(UChar)));
+
+    if (hasTerminatingNullCharacter()) {
+        len--;
+        m_copyData16[len] = '\0';
+    }
+
     for (size_t i = 0; i < len; i++)
         m_copyData16[i] = m_data8[i];
 
@@ -528,24 +534,24 @@ PassRefPtr<StringImpl> StringImpl::stripWhiteSpace(IsWhiteSpaceFunctionPtr isWhi
     return stripMatchedCharacters(UCharPredicate(isWhiteSpace));
 }
 
-// FIXME: Add 8-bit path. Likely requires templatized StringBuffer class
-PassRefPtr<StringImpl> StringImpl::removeCharacters(CharacterMatchFunctionPtr findMatch)
+template <typename CharType>
+ALWAYS_INLINE PassRefPtr<StringImpl> StringImpl::removeCharacters(const CharType* characters, CharacterMatchFunctionPtr findMatch)
 {
-    const UChar* from = characters();
-    const UChar* fromend = from + m_length;
-
+    const CharType* from = characters;
+    const CharType* fromend = from + m_length;
+    
     // Assume the common case will not remove any characters
     while (from != fromend && !findMatch(*from))
         from++;
     if (from == fromend)
         return this;
-
-    StringBuffer data(m_length);
-    UChar* to = data.characters();
-    unsigned outc = from - characters16();
-
+    
+    StringBuffer<CharType> data(m_length);
+    CharType* to = data.characters();
+    unsigned outc = from - characters;
+    
     if (outc)
-        memcpy(to, characters16(), outc * sizeof(UChar));
+        memcpy(to, characters, outc * sizeof(CharType));
 
     while (true) {
         while (from != fromend && findMatch(*from))
@@ -561,18 +567,24 @@ PassRefPtr<StringImpl> StringImpl::removeCharacters(CharacterMatchFunctionPtr fi
     return adopt(data);
 }
 
-// FIXME: Add 8-bit path. Likely requires templatized StringBuffer class
-template <class UCharPredicate>
+PassRefPtr<StringImpl> StringImpl::removeCharacters(CharacterMatchFunctionPtr findMatch)
+{
+    if (is8Bit())
+        return removeCharacters(characters8(), findMatch);
+    return removeCharacters(characters16(), findMatch);
+}
+
+template <typename CharType, class UCharPredicate>
 inline PassRefPtr<StringImpl> StringImpl::simplifyMatchedCharactersToSpace(UCharPredicate predicate)
 {
-    StringBuffer data(m_length);
+    StringBuffer<CharType> data(m_length);
 
-    const UChar* from = characters16();
-    const UChar* fromend = from + m_length;
+    const CharType* from = getCharacters<CharType>();
+    const CharType* fromend = from + m_length;
     int outc = 0;
     bool changedToSpace = false;
     
-    UChar* to = data.characters();
+    CharType* to = data.characters();
     
     while (true) {
         while (from != fromend && predicate(*from)) {
@@ -601,12 +613,16 @@ inline PassRefPtr<StringImpl> StringImpl::simplifyMatchedCharactersToSpace(UChar
 
 PassRefPtr<StringImpl> StringImpl::simplifyWhiteSpace()
 {
-    return StringImpl::simplifyMatchedCharactersToSpace(SpaceOrNewlinePredicate());
+    if (is8Bit())
+        return StringImpl::simplifyMatchedCharactersToSpace<LChar>(SpaceOrNewlinePredicate());
+    return StringImpl::simplifyMatchedCharactersToSpace<UChar>(SpaceOrNewlinePredicate());
 }
 
 PassRefPtr<StringImpl> StringImpl::simplifyWhiteSpace(IsWhiteSpaceFunctionPtr isWhiteSpace)
 {
-    return StringImpl::simplifyMatchedCharactersToSpace(UCharPredicate(isWhiteSpace));
+    if (is8Bit())
+        return StringImpl::simplifyMatchedCharactersToSpace<LChar>(UCharPredicate(isWhiteSpace));
+    return StringImpl::simplifyMatchedCharactersToSpace<UChar>(UCharPredicate(isWhiteSpace));
 }
 
 int StringImpl::toIntStrict(bool* ok, int base)
@@ -1332,6 +1348,17 @@ bool equal(const StringImpl* a, const StringImpl* b)
     return StringHash::equal(a, b);
 }
 
+template <typename CharTypeL, typename CharTypeR>
+ALWAYS_INLINE static bool equal(const CharTypeL* a, const CharTypeR* b, unsigned length)
+{
+    for (unsigned i = 0; i != length; ++i) {
+        if (a[i] != b[i])
+            return false;
+    }
+    
+    return true;
+}
+
 bool equal(const StringImpl* a, const LChar* b, unsigned length)
 {
     if (!a)
@@ -1342,33 +1369,9 @@ bool equal(const StringImpl* a, const LChar* b, unsigned length)
     if (length != a->length())
         return false;
 
-    if (a->is8Bit()) {
-        const LChar* aChars = a->characters8();
-
-        for (unsigned i = 0; i != length; ++i) {
-            unsigned char bc = b[i];
-            unsigned char ac = aChars[i];
-            if (!bc)
-                return false;
-            if (ac != bc)
-                return false;
-        }
-
-        return true;
-    }
-
-    const UChar* aChars = a->characters16();
-
-    for (unsigned i = 0; i != length; ++i) {
-        UChar bc = b[i];
-        UChar ac = aChars[i];
-        if (!bc)
-            return false;
-        if (ac != bc)
-            return false;
-    }
-
-    return true;
+    if (a->is8Bit())
+        return equal(a->characters8(), b, length);
+    return equal(a->characters16(), b, length);
 }
 
 bool equal(const StringImpl* a, const LChar* b)
@@ -1541,11 +1544,18 @@ WTF::Unicode::Direction StringImpl::defaultWritingDirection(bool* hasStrongDirec
     return WTF::Unicode::LeftToRight;
 }
 
-PassRefPtr<StringImpl> StringImpl::adopt(StringBuffer& buffer)
+PassRefPtr<StringImpl> StringImpl::adopt(StringBuffer<LChar>& buffer)
 {
-    // FIXME: handle 8-bit StringBuffer when it exists.
+unsigned length = buffer.length();
+if (!length)
+    return empty();
+return adoptRef(new StringImpl(buffer.release(), length));
+}
+
+PassRefPtr<StringImpl> StringImpl::adopt(StringBuffer<UChar>& buffer)
+{
     unsigned length = buffer.length();
-    if (length == 0)
+    if (!length)
         return empty();
     return adoptRef(new StringImpl(buffer.release(), length));
 }
@@ -1570,7 +1580,7 @@ PassRefPtr<StringImpl> StringImpl::createWithTerminatingNullCharacter(const Stri
         data[length] = 0;
     }
     terminatedString->m_length--;
-    terminatedString->m_hashAndFlags = (string.m_hashAndFlags & ~s_flagMask) | s_hashFlagHasTerminatingNullCharacter;
+    terminatedString->m_hashAndFlags = (string.m_hashAndFlags & (~s_flagMask | s_hashFlag8BitBuffer)) | s_hashFlagHasTerminatingNullCharacter;
     return terminatedString.release();
 }
 

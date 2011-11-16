@@ -1,3 +1,41 @@
+2011-11-16  Michael Saboff  <msaboff@apple.com>
+
+        Enable 8 Bit Strings in JavaScriptCore
+        https://bugs.webkit.org/show_bug.cgi?id=71337
+
+        This patch turns on 8 bit strings in StringImpl and enables
+        their use in JavaScriptCore. Some of the changes are to
+        turn on code that had been staged (Lexer.cpp, Identifier.cpp,
+        SmallStrings.cpp and some of StringImpl.{h,cpp}).
+        Other changes are minor fixes to make 8 bit strings work
+        (UString.h, StringImpl::getData16SlowCase()).
+        Changed StringBuffer to be a templated class based on character
+        type.  This change riplled into WebCore code as well.
+
+        Reviewed by Geoffrey Garen.
+
+        No new tests - Changes in response to refactoring StringBuffer to
+        be a template on character type.
+
+        * css/CSSParser.cpp:
+        (WebCore::quoteCSSString):
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::formatNumber):
+        * dom/Document.cpp:
+        (WebCore::canonicalizedTitle):
+        * platform/Length.cpp:
+        (WebCore::newCoordsArray):
+        * platform/sql/SQLiteStatement.cpp:
+        (WebCore::SQLiteStatement::prepare):
+        * platform/text/TextCodecUTF16.cpp:
+        (WebCore::TextCodecUTF16::decode):
+        * platform/text/TextCodecUTF8.cpp:
+        (WebCore::TextCodecUTF8::decode):
+        * rendering/RenderText.cpp:
+        (WebCore::makeCapitalized):
+        * xml/XSLTProcessorLibxslt.cpp:
+        (WebCore::writeToStringBuilder):
+
 2011-11-16  Alexandre Elias  <aelias@google.com>
 
         [chromium] Improvements for page scale delta during commit

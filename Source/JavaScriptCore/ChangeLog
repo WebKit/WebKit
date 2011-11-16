@@ -1,3 +1,54 @@
+2011-11-16  Michael Saboff  <msaboff@apple.com>
+
+        Enable 8 Bit Strings in JavaScriptCore
+        https://bugs.webkit.org/show_bug.cgi?id=71337
+
+        This patch turns on 8 bit strings in StringImpl and enables
+        their use in JavaScriptCore. Some of the changes are to
+        turn on code that had been staged (Lexer.cpp, Identifier.cpp,
+        SmallStrings.cpp and some of StringImpl.{h,cpp}).
+        Other changes are minor fixes to make 8 bit strings work
+        (UString.h, StringImpl::getData16SlowCase()).
+        Changed StringBuffer to be a templated class based on character
+        type.  This change rippled into WebCore code as well.
+
+        Reviewed by Geoffrey Garen.
+
+        * JavaScriptCore.exp:
+        * parser/Lexer.cpp:
+        (JSC::::append8): Changed to use 8 bit buffers.
+        (JSC::::parseIdentifier): Changed to use 8 bit buffers.
+        (JSC::::parseString): Changed to use 8 bit buffers.
+        * runtime/Identifier.cpp:
+        (JSC::IdentifierCStringTranslator::translate): 8 bit version keeps data 8 bit
+        (JSC::Identifier::toUInt32FromCharacters): Templated helper.
+        (JSC::Identifier::toUInt32): Added 8 bit optimized path.
+        * runtime/SmallStrings.cpp:
+        (JSC::SmallStringsStorage::SmallStringsStorage): Changed to be 8 bit strings
+        * runtime/UString.h:
+        (JSC::UString::characters): Now calls StringImpl::characters()
+        * wtf/Forward.h:
+        * wtf/text/StringBuffer.h: Made StringBuffer a template base on character type.
+        (WTF::StringBuffer::StringBuffer):
+        (WTF::StringBuffer::characters):
+        (WTF::StringBuffer::release):
+        * wtf/text/StringImpl.cpp:
+        (WTF::StringImpl::create):
+        (WTF::StringImpl::getData16SlowCase): Fixed null terminated case.
+        (WTF::StringImpl::removeCharacters): Added 8 bit path.
+        (WTF::StringImpl::simplifyMatchedCharactersToSpace):
+        (WTF::StringImpl::simplifyWhiteSpace):
+        (WTF::equal): Removed bug from code copied from null terminated version.
+        (WTF::StringImpl::adopt): Added 8 bit path.
+        (WTF::StringImpl::createWithTerminatingNullCharacter): Fixed 8 bi flag propagation.
+        * wtf/text/StringImpl.h:
+        (WTF::StringImpl::StringImpl): Added new 8 bit constructor.
+        (WTF::StringImpl::characters8): Removed ASSERT_NOT_REACHED().
+        (WTF::getCharacters<LChar>): Added templated accessor for 8 bit strings.
+        (WTF::getCharacters<UChar>): Added templated accessor for 16 bit strings.
+        * wtf/text/WTFString.h:
+        (WTF::String::adopt): Changed to use StringBuffer template.
+
 2011-11-16  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         De-virtualize ExecutableBase::clearCodeVirtual
