@@ -3911,3 +3911,5 @@ BUGWK72376 WIN : fast/forms/file/input-file-label.html = TEXT PASS
 BUGWK72434 : inspector/styles/svg-style.xhtml = TEXT PASS
 
 BUGWK72447 : inspector/extensions/extensions-events.html = TEXT PASS
+
+BUGWK72485 DEBUG : animations/animation-direction-normal.html = TEXT PASS
