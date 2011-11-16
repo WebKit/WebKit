@@ -376,11 +376,11 @@ static JSValueRef stringAttributeValueCallback(JSContextRef context, JSObjectRef
 
 static JSValueRef uiElementAttributeValueCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    JSStringRef attribute = 0;
+    JSRetainPtr<JSStringRef> attribute;
     if (argumentCount == 1)
-        attribute = JSValueToStringCopy(context, arguments[0], exception);
+        attribute.adopt(JSValueToStringCopy(context, arguments[0], exception));
     
-    return AccessibilityUIElement::makeJSAccessibilityUIElement(context, toAXElement(thisObject)->uiElementAttributeValue(attribute));
+    return AccessibilityUIElement::makeJSAccessibilityUIElement(context, toAXElement(thisObject)->uiElementAttributeValue(attribute.get()));
 }
 
 static JSValueRef numberAttributeValueCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
