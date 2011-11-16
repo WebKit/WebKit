@@ -103,7 +103,7 @@ void StackBounds::initialize()
     stackSize = threadInfo.stksize;
     ASSERT(stackBase);
 
-    m_bound = stackBase;
+    m_bound = static_cast<char*>(stackBase) + 0x1000; // 4kb guard page
     m_origin = static_cast<char*>(stackBase) + stackSize;
 }
 

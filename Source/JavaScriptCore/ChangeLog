@@ -1,3 +1,13 @@
+2011-11-15  George Staikos  <staikos@webkit.org>
+
+        Remove the guard page from the addressable stack region on QNX.
+        https://bugs.webkit.org/show_bug.cgi?id=72455
+
+        Reviewed by Daniel Bates.
+
+        * wtf/StackBounds.cpp:
+        (WTF::StackBounds::initialize):
+
 2011-11-15  Michael Saboff  <msaboff@apple.com>
 
         Towards 8 bit Strings - Update utf8() and ascii() methods for 8 bit strings
