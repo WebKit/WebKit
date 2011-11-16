@@ -37,7 +37,11 @@
 #include "WebURL.h"
 #include "WebURLRequest.h"
 
+#include <WebCore/AXObjectCache.h>
+#include <WebCore/AccessibilityObject.h>
+#include <WebCore/Frame.h>
 #include <WebCore/KURL.h>
+#include <WebCore/Page.h>
 
 using namespace WebKit;
 
@@ -124,6 +128,46 @@ WKBundlePageGroupRef WKBundlePageGetPageGroup(WKBundlePageRef pageRef)
 WKBundleFrameRef WKBundlePageGetMainFrame(WKBundlePageRef pageRef)
 {
     return toAPI(toImpl(pageRef)->mainWebFrame());
+}
+
+void* WKAccessibilityRootObject(WKBundlePageRef pageRef)
+{
+    if (!pageRef)
+        return 0;
+    
+    WebCore::Page* page = toImpl(pageRef)->corePage();
+    if (!page)
+        return 0;
+    
+    WebCore::Frame* core = page->mainFrame();
+    if (!core || !core->document())
+        return 0;
+    
+    WebCore::AXObjectCache::enableAccessibility();
+
+    WebCore::AccessibilityObject* root = core->document()->axObjectCache()->rootObject();
+    if (!root)
+        return 0;
+    
+    return root->wrapper();
+}
+
+void* WKAccessibilityFocusedObject(WKBundlePageRef pageRef)
+{
+    if (!pageRef)
+        return 0;
+    
+    WebCore::Page* page = toImpl(pageRef)->corePage();
+    if (!page)
+        return 0;
+
+    WebCore::AXObjectCache::enableAccessibility();
+
+    WebCore::AccessibilityObject* focusedObject = WebCore::AXObjectCache::focusedUIElementForPage(page);
+    if (!focusedObject)
+        return 0;
+    
+    return focusedObject->wrapper();
 }
 
 void WKBundlePageStopLoading(WKBundlePageRef pageRef)

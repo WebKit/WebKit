@@ -495,7 +495,8 @@ static AccessibilitySearchKeyMap* createAccessibilitySearchKeyMap()
 
 static AccessibilitySearchKey accessibilitySearchKeyForString(const String& value)
 {
-    ASSERT(!value.isEmpty());
+    if (value.isEmpty())
+        return AnyTypeSearchKey;
     
     static const AccessibilitySearchKeyMap* searchKeyMap = createAccessibilitySearchKeyMap();
     

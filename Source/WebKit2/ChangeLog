@@ -1,3 +1,18 @@
+2011-11-16  Chris Fleizach  <cfleizach@apple.com>
+
+        WebKitTestRunner needs to support accessibility-related DRT APIs
+        https://bugs.webkit.org/show_bug.cgi?id=42131
+
+        Allow the injected bundle to retrieve the focused and root accessibility
+        objects.
+
+        Reviewed by Beth Dakin.
+
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (WKAccessibilityRootObject):
+        (WKAccessibilityFocusedObject):
+        * WebProcess/InjectedBundle/API/c/WKBundlePagePrivate.h:
+
 2011-11-16  Beth Dakin  <bdakin@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=72400

@@ -1,3 +1,18 @@
+2011-11-16  Chris Fleizach  <cfleizach@apple.com>
+
+        WebKitTestRunner needs to support accessibility-related DRT APIs
+        https://bugs.webkit.org/show_bug.cgi?id=42131
+
+        Minor changes needed to support AX testing in WKTestRunner.
+
+        Reviewed by Beth Dakin.
+
+        * WebCore.exp.in:
+             Expose focusedUIElementForPage so that the WK2 injected bundle can retrieve it.
+        * accessibility/mac/WebAccessibilityObjectWrapper.mm:
+        (accessibilitySearchKeyForString):
+            Remove an unncessary assert that was causing issues with the WK2 test run.
+
 2011-11-16  Sergio Villar Senin  <svillar@igalia.com>
 
         [Soup] Somet tests fail with FAIL Unexpected response data received: Wrong method: GET
