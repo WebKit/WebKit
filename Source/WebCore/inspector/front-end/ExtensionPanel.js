@@ -31,16 +31,14 @@
 /**
  * @constructor
  * @extends {WebInspector.View}
- * @param {number} id
+ * @param {string} id
  * @param {Element} parent
  * @param {string} src
  * @param {string} className
  */
-
 WebInspector.ExtensionView = function(id, parent, src, className)
 {
     WebInspector.View.call(this);
-    this.element.className = "fill";
 
     this._id = id;
     this._iframe = document.createElement("iframe");
@@ -74,6 +72,32 @@ WebInspector.ExtensionView.prototype = {
 }
 
 WebInspector.ExtensionView.prototype.__proto__ = WebInspector.View.prototype;
+
+/**
+ * @constructor
+ * @extends {WebInspector.View}
+ * @param {string} id
+ */
+WebInspector.ExtensionNotifierView = function(id)
+{
+    WebInspector.View.call(this);
+
+    this._id = id;
+}
+
+WebInspector.ExtensionNotifierView.prototype = {
+    wasShown: function()
+    {
+        WebInspector.extensionServer.notifyViewShown(this._id);
+    },
+
+    willHide: function()
+    {
+        WebInspector.extensionServer.notifyViewHidden(this._id);
+    }
+}
+
+WebInspector.ExtensionNotifierView.prototype.__proto__ = WebInspector.View.prototype;
 
 /**
  * @constructor
@@ -152,40 +176,98 @@ WebInspector.ExtensionSidebarPane = function(title, id)
 }
 
 WebInspector.ExtensionSidebarPane.prototype = {
-    setObject: function(object, title)
+    /**
+     * @param {Object} object
+     * @param {string} title
+     * @param {function(?string=)} callback
+     */
+    setObject: function(object, title, callback)
     {
-        this._setObject(WebInspector.RemoteObject.fromLocalObject(object), title);
+        this._createObjectPropertiesView();
+        this._setObject(WebInspector.RemoteObject.fromLocalObject(object), title, callback);
     },
 
-    setExpression: function(expression, title)
+    /**
+     * @param {string} expression
+     * @param {string} title
+     * @param {function(?string=)} callback
+     */
+    setExpression: function(expression, title, callback)
     {
-        RuntimeAgent.evaluate(expression, "extension-watch", true, undefined, undefined, undefined, this._onEvaluate.bind(this, title));
+        this._createObjectPropertiesView();
+        RuntimeAgent.evaluate(expression, "extension-watch", true, undefined, undefined, undefined, this._onEvaluate.bind(this, title, callback));
     },
 
+    /**
+     * @param {string} url
+     */
     setPage: function(url)
     {
-        this.bodyElement.removeChildren();
-        var view = new WebInspector.ExtensionView(this._id, this.bodyElement, url, "extension");
-        // TODO: Consider doing this upon load event.
-        WebInspector.extensionServer.notifyExtensionSidebarUpdated(this._id);
+        if (this._objectPropertiesView) {
+            this._objectPropertiesView.detach();
+            delete this._objectPropertiesView;
+        }
+        if (this._extensionView)
+            this._extensionView.detach(true);
+
+        this._extensionView = new WebInspector.ExtensionView(this._id, this.bodyElement, url, "extension");
     },
 
-    _onEvaluate: function(title, error, result, wasThrown)
+    /**
+     * @param {string} height
+     */
+    setHeight: function(height)
     {
-        if (!error)
-            this._setObject(WebInspector.RemoteObject.fromPayload(result), title);
+        this.bodyElement.style.height = height;
     },
 
-    _setObject: function(object, title)
+    /**
+     * @param {string} title
+     * @param {function(?string=)} callback
+     * @param {Protocol.Error} error
+     * @param {Object} result
+     * @param {boolean} wasThrown
+     */
+    _onEvaluate: function(title, callback, error, result, wasThrown)
     {
-        this.bodyElement.removeChildren();
+        if (error)
+            callback(error.toString());
+        else
+            this._setObject(WebInspector.RemoteObject.fromPayload(result), title, callback);
+    },
+
+    _createObjectPropertiesView: function()
+    {
+        if (this._objectPropertiesView)
+            return;
+        if (this._extensionView) {
+            this._extensionView.detach(true);
+            delete this._extensionView;
+        }
+        this._objectPropertiesView = new WebInspector.ExtensionNotifierView(this._id);
+        this._objectPropertiesView.show(this.bodyElement);
+    },
+
+    /**
+     * @param {Object} object
+     * @param {string} title
+     * @param {function(?string=)} callback
+     */
+    _setObject: function(object, title, callback)
+    {
+        // This may only happen if setPage() was called while we were evaluating the expression.
+        if (!this._objectPropertiesView) {
+            callback("operation cancelled");
+            return;
+        }
+        this._objectPropertiesView.element.removeChildren();
         var section = new WebInspector.ObjectPropertiesSection(object, title);
         if (!title)
             section.headerElement.addStyleClass("hidden");
         section.expanded = true;
         section.editable = false;
-        this.bodyElement.appendChild(section.element);
-        WebInspector.extensionServer.notifyExtensionSidebarUpdated(this._id);
+        this._objectPropertiesView.element.appendChild(section.element);
+        callback();
     }
 }
 

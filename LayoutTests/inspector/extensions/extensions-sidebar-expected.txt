@@ -1,0 +1,46 @@
+Tests sidebars in WebInspector extensions API
+
+Started extension.
+Running tests...
+RUNNING TEST: extension_testSidebarPageReplacedWithObject
+Got onShown(), frame defined
+Got onShown(), frame not defined
+RUNNING TEST: extension_testSidebarSetExpression
+Sidebar content: titlef0: "expression"f1: undefinedf2: nullf3: Objectf4: Array[0]f5: Array[3]f6: Objectf7: 42f8: Locationf9: HTMLCollection[2]f10: function () {}f11: "foo"__proto__: Object
+RUNNING TEST: extension_testSidebarSetObject
+Watch sidebar created, callback arguments dump follows:
+{
+    0 : {
+        onShown : {
+            addListener : <function>
+            removeListener : <function>
+        }
+        onHidden : {
+            addListener : <function>
+            removeListener : <function>
+        }
+        setHeight : <function>
+        setExpression : <function>
+        setObject : <function>
+        setPage : <function>
+    }
+}
+Sidebar content: f0: "object"f1: undefinedf2: nullf3: {}f4: []f5: [aa, bb, cc]f6: {f60:42, f61:foo, f62:[]}f7: 42
+RUNNING TEST: extension_testSidebarSetPage
+Sidebar created
+{
+    onShown : {
+        addListener : <function>
+        removeListener : <function>
+    }
+    onHidden : {
+        addListener : <function>
+        removeListener : <function>
+    }
+    setHeight : <function>
+    setExpression : <function>
+    setObject : <function>
+    setPage : <function>
+}
+All tests done.
+

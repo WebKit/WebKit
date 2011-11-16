@@ -167,7 +167,10 @@ WebInspector.View.prototype = {
             this._processWasShown();
     },
 
-    detach: function()
+    /**
+     * @param {boolean=} overrideHideOnDetach
+     */
+    detach: function(overrideHideOnDetach)
     {
         var parentElement = this.element.parentElement;
         if (!parentElement)
@@ -176,7 +179,7 @@ WebInspector.View.prototype = {
         if (this._parentIsShowing())
             this._processWillHide();
 
-        if (this._hideOnDetach) {
+        if (this._hideOnDetach && !overrideHideOnDetach) {
             this.element.removeStyleClass("visible");
             this._visible = false;
             if (this._parentIsShowing())

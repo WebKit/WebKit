@@ -1,0 +1,56 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/extensions-test.js"></script>
+<script type="text/javascript">
+
+function initialize_extensionsPanelTest()
+{
+    InspectorTest.panelCallback = function(width, height)
+    {
+        InspectorTest.checkPanelSize(width, height);
+        var callback = InspectorTest._pendingPanelSizeTestCallback;
+        if (callback) {
+            delete InspectorTest._pendingPanelSizeTestCallback;
+            callback();
+        }
+    }
+
+    InspectorTest.waitForPanel = function(callback)
+    {
+         InspectorTest._pendingPanelSizeTestCallback = callback;
+    }
+
+    InspectorTest.checkPanelSize = function(width, height)
+    {
+        var extensionPanel = WebInspector.inspectorView._panelOrder[WebInspector.inspectorView._panelOrder.length - 1];
+        var boundingRect = document.getElementById("main-panels").getBoundingClientRect();
+        InspectorTest.assertEquals(boundingRect.width, width, "panel width mismatch");
+        InspectorTest.assertEquals(boundingRect.height, height, "panel height mismatch");
+        InspectorTest.addResult("Extension panel size correct");
+    }
+}
+
+function extension_testCreatePanel(nextTest)
+{
+    var callbackCount = 0;
+
+    function onPanelCreated(panel)
+    {
+        output("Panel created");
+        dumpObject(panel);
+        // This will force extension iframe to be really loaded and will cause waitForPanel() callback below.
+        extension_showPanel("extension");
+    }
+    // The panel code is expected to report its size via InspectorTest.panelCallback()
+    evaluateOnFrontend("InspectorTest.waitForPanel(reply);", nextTest);
+    var basePath = location.pathname.replace(/\/[^/]*$/, "/");
+    webInspector.panels.create("Test Panel", basePath + "extension-panel.png", basePath + "extension-panel.html", onPanelCreated);
+}
+
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests WebInspector extension API</p>
+</body>
+</html>

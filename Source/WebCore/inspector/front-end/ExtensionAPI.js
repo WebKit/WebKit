@@ -345,7 +345,6 @@ ExtensionPanelImpl.prototype.__proto__ = ExtensionViewImpl.prototype;
 function ExtensionSidebarPaneImpl(id)
 {
     ExtensionViewImpl.call(this, id);
-    this.onUpdated = new EventSink("sidebar-updated-" + id);
 }
 
 ExtensionSidebarPaneImpl.prototype = {
@@ -354,14 +353,14 @@ ExtensionSidebarPaneImpl.prototype = {
         extensionServer.sendRequest({ command: "setSidebarHeight", id: this._id, height: height });
     },
 
-    setExpression: function(expression, rootTitle)
+    setExpression: function(expression, rootTitle, callback)
     {
-        extensionServer.sendRequest({ command: "setSidebarContent", id: this._id, expression: expression, rootTitle: rootTitle, evaluateOnPage: true });
+        extensionServer.sendRequest({ command: "setSidebarContent", id: this._id, expression: expression, rootTitle: rootTitle, evaluateOnPage: true }, callback);
     },
 
-    setObject: function(jsonObject, rootTitle)
+    setObject: function(jsonObject, rootTitle, callback)
     {
-        extensionServer.sendRequest({ command: "setSidebarContent", id: this._id, expression: jsonObject, rootTitle: rootTitle });
+        extensionServer.sendRequest({ command: "setSidebarContent", id: this._id, expression: jsonObject, rootTitle: rootTitle }, callback);
     },
 
     setPage: function(page)

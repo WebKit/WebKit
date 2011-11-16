@@ -1,0 +1,23 @@
+Tests WebInspector extension API
+
+Started extension.
+Running tests...
+RUNNING TEST: extension_testCreatePanel
+Panel created
+{
+    onShown : {
+        addListener : <function>
+        removeListener : <function>
+    }
+    onHidden : {
+        addListener : <function>
+        removeListener : <function>
+    }
+    onSearch : {
+        addListener : <function>
+        removeListener : <function>
+    }
+}
+Extension panel size correct
+All tests done.
+

@@ -103,11 +103,6 @@ WebInspector.ExtensionServer.prototype = {
         this._postNotification("reset");
     },
 
-    notifyExtensionSidebarUpdated: function(id)
-    {
-        this._postNotification("sidebar-updated-" + id);
-    },
-
     startAuditRun: function(category, auditRun)
     {
         this._clientObjects[auditRun.id] = auditRun;
@@ -226,18 +221,24 @@ WebInspector.ExtensionServer.prototype = {
         var sidebar = this._clientObjects[message.id];
         if (!sidebar)
             return this._status.E_NOTFOUND(message.id);
-        sidebar.bodyElement.firstChild.style.height = message.height;
+        sidebar.setHeight(message.height);
+        return this._status.OK();
     },
 
-    _onSetSidebarContent: function(message)
+    _onSetSidebarContent: function(message, port)
     {
         var sidebar = this._clientObjects[message.id];
         if (!sidebar)
             return this._status.E_NOTFOUND(message.id);
+        function callback(error)
+        {
+            var result = error ? this._status.E_FAILED(error) : this._status.OK();
+            this._dispatchCallback(message.requestId, port, result);
+        }
         if (message.evaluateOnPage)
-            sidebar.setExpression(message.expression, message.rootTitle);
+            sidebar.setExpression(message.expression, message.rootTitle, callback.bind(this));
         else
-            sidebar.setObject(message.expression, message.rootTitle);
+            sidebar.setObject(message.expression, message.rootTitle, callback.bind(this));
     },
 
     _onSetSidebarPage: function(message, port)
@@ -491,7 +492,8 @@ WebInspector.ExtensionServer.prototype = {
 
     _dispatchCallback: function(requestId, port, result)
     {
-        port.postMessage({ command: "callback", requestId: requestId, result: result });
+        if (requestId)
+            port.postMessage({ command: "callback", requestId: requestId, result: result });
     },
 
     initExtensions: function()
