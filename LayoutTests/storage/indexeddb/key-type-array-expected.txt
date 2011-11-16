@@ -256,11 +256,9 @@ Expecting exception from store.put('value', Array(1000));
 PASS Exception was thrown.
 PASS code is IDBDatabaseException.DATA_ERR
 
-PASS indexedDB.cmp(makeArrayOfDepth(5), 0) is 1
-PASS indexedDB.cmp(makeArrayOfDepth(50), 0) is 1
-PASS indexedDB.cmp(makeArrayOfDepth(500), 0) is 1
-PASS indexedDB.cmp(makeArrayOfDepth(5000), 0) is 1
-Expecting exception from indexedDB.cmp(makeArrayOfDepth(50000), 0)
+PASS indexedDB.cmp(makeArrayOfDepth(25), 0) is 1
+PASS indexedDB.cmp(makeArrayOfDepth(250), 0) is 1
+Expecting exception from indexedDB.cmp(makeArrayOfDepth(2500), 0)
 PASS Exception was thrown.
 PASS code is IDBDatabaseException.DATA_ERR
 

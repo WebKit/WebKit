@@ -38,7 +38,7 @@
 
 namespace WebCore {
 
-static const size_t maximumDepth = 20000;
+static const size_t maximumDepth = 2000;
 
 static PassRefPtr<IDBKey> createIDBKeyFromValue(v8::Handle<v8::Value> value, Vector<v8::Handle<v8::Array> >& stack)
 {

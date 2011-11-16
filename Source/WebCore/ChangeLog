@@ -1,3 +1,14 @@
+2011-11-16  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Reduce nested key depth threshold, re-enable flaky test
+        https://bugs.webkit.org/show_bug.cgi?id=72529
+
+        Reviewed by Adam Barth.
+
+        Drop maximum array key depth from 20k to 2k.
+
+        * bindings/v8/IDBBindingUtilities.cpp:
+
 2011-11-16  Nate Chapin  <japhet@chromium.org>
 
         Fix incorrect multipart handling in r100311.

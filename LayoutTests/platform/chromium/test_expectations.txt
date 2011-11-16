@@ -3832,8 +3832,6 @@ BUGWK65939 : svg/custom/getBBox-path.svg = TEXT
 BUGWK71830 : svg/zoom/page/zoom-svg-as-relative-image.html = IMAGE
 BUGWK71830 WIN MAC : svg/zoom/page/relative-sized-document-scrollbars.svg = IMAGE+TEXT
 
-BUG_OJAN : storage/indexeddb/key-type-array.html = TIMEOUT CRASH
-
 BUGWK72037 : storage/indexeddb/factory-deletedatabase-interactions.html = TEXT TIMEOUT PASS
 
 BUGRICOW : fast/js/array-functions-non-arrays.html = TEXT
