@@ -1,3 +1,11 @@
+2011-11-15  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Centralize hide_symbols and ensure all libs are built with symbol visibility & bsymbolic_functions
+
+        Reviewed by Tor Arne Vestbø.
+
+        * Target.pri: Eliminate duplicated symbol stuff that lives now in default_post.prf.
+
 2011-11-16  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Unreviewed, rolling out r100266.

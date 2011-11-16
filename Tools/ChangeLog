@@ -1,3 +1,14 @@
+2011-11-15  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Centralize hide_symbols and ensure all libs are built with symbol visibility & bsymbolic_functions
+
+        Reviewed by Tor Arne Vestbø.
+
+        * qmake/mkspecs/features/default_post.prf: Place the common hide_symbols and -Bsymbolic-functions
+        magic here where we handle all TEMPLATE = lib .pro files (except plugins).
+        * WebKitTestRunner/InjectedBundle/Target.pri: Mark the injected bundle as plugin, which also
+        removes the .so.0.0.0 and just produces .so.
+
 2011-11-16  Peter Beverloo  <peter@chromium.org>
 
         Explicitly include unistd.h in TestNetscapePlugIn

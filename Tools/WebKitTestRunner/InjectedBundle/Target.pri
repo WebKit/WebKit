@@ -47,7 +47,7 @@ QT += declarative widgets
 load(features)
 load(webcore)
 
-CONFIG += javascriptcore qtwebkit
+CONFIG += plugin javascriptcore qtwebkit
 
 INCLUDEPATH += \
     $$PWD/.. \
