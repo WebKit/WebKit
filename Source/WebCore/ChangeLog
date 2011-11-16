@@ -1,3 +1,13 @@
+2011-11-16  Robert Hogan  <robert@webkit.org>
+
+        Fix build on Windows and Mac after r100473
+
+        Unreviewed, fix build.
+
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * rendering/RenderingAllInOne.cpp:
+
 2011-11-16  Philip Rogers  <pdr@google.com>
 
         Remove extra GraphicsContextStateSaver restore() call.

@@ -92,6 +92,7 @@
 #include "RenderSlider.cpp"
 #include "RenderSummary.cpp"
 #include "RenderTable.cpp"
+#include "RenderTableCaption.cpp"
 #include "RenderTableCell.cpp"
 #include "RenderTableCol.cpp"
 #include "RenderTableRow.cpp"

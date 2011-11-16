@@ -3934,6 +3934,8 @@
 		A8DF4AE80980C42C0052981B /* RenderTableCol.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8DF4ADE0980C42C0052981B /* RenderTableCol.cpp */; };
 		A8DF4AE90980C42C0052981B /* RenderTableCell.h in Headers */ = {isa = PBXBuildFile; fileRef = A8DF4ADF0980C42C0052981B /* RenderTableCell.h */; };
 		A8DF4AEA0980C42C0052981B /* RenderTableCell.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8DF4AE00980C42C0052981B /* RenderTableCell.cpp */; };
+		A8DF4AE90980C42C0052981B /* RenderTableCaption.h in Headers */ = {isa = PBXBuildFile; fileRef = A8DF4ADF0980C42C0052981B /* RenderTableCaption.h */; };
+		A8DF4AEA0980C42C0052981B /* RenderTableCaption.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8DF4AE00980C42C0052981B /* RenderTableCaption.cpp */; };
 		A8DF4AEB0980C42C0052981B /* RenderTable.h in Headers */ = {isa = PBXBuildFile; fileRef = A8DF4AE10980C42C0052981B /* RenderTable.h */; };
 		A8DF4AEC0980C42C0052981B /* RenderTable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8DF4AE20980C42C0052981B /* RenderTable.cpp */; };
 		A8DF4AED0980C42C0052981B /* RenderTableSection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8DF4AE30980C42C0052981B /* RenderTableSection.cpp */; };
