@@ -27,6 +27,8 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import logging
+import sys
 
 from webkitpy.common.checkout import Checkout
 from webkitpy.common.checkout.scm import default_scm
@@ -36,6 +38,9 @@ from webkitpy.common.net.buildbot.chromiumbuildbot import ChromiumBuildBot
 from webkitpy.common.system import executive, filesystem, platforminfo, user, workspace
 from webkitpy.common.watchlist.watchlistloader import WatchListLoader
 from webkitpy.layout_tests.port.factory import PortFactory
+
+
+_log = logging.getLogger(__name__)
 
 
 class Host(object):
@@ -63,7 +68,35 @@ class Host(object):
         # FIXME: PortFactory doesn't belong on this Host object if Port is going to have a Host (circular dependency).
         self.port_factory = PortFactory(self)
 
+    # FIXME: This is a horrible, horrible hack for ChromiumWin and should be removed.
+    # Maybe this belongs in SVN in some more generic "find the svn binary" codepath?
+    # Or possibly Executive should have a way to emulate shell path-lookups?
+    def _engage_awesome_windows_hacks(self):
+        if sys.platform != "win32":
+            return
+        try:
+            self._executive.run_command(['svn', 'help'])
+        except OSError, e:
+            try:
+                self._executive.run_command(['svn.bat', 'help'])
+                # Chromium Win uses the depot_tools package, which contains a number
+                # of development tools, including Python and svn. Instead of using a
+                # real svn executable, depot_tools indirects via a batch file, called
+                # svn.bat. This batch file allows depot_tools to auto-update the real
+                # svn executable, which is contained in a subdirectory.
+                #
+                # That's all fine and good, except that subprocess.popen can detect
+                # the difference between a real svn executable and batch file when we
+                # don't provide use shell=True. Rather than use shell=True on Windows,
+                # We hack the svn.bat name into the SVN class.
+                _log.debug('Engaging svn.bat Windows hack.')
+                from webkitpy.common.checkout.scm.svn import SVN
+                SVN.executable_name = 'svn.bat'
+            except OSError, e:
+                _log.debug('Failed to engage svn.bat Windows hack.')
+
     def _initialize_scm(self, patch_directories=None):
+        self._engage_awesome_windows_hacks()
         self._scm = default_scm(patch_directories)
         self._checkout = Checkout(self.scm())
 
