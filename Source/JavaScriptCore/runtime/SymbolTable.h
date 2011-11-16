@@ -32,6 +32,7 @@
 #include "JSObject.h"
 #include "UString.h"
 #include <wtf/AlwaysInline.h>
+#include <wtf/HashTraits.h>
 
 namespace JSC {
 
@@ -112,9 +113,7 @@ namespace JSC {
         int m_bits;
     };
 
-    struct SymbolTableIndexHashTraits {
-        typedef SymbolTableEntry TraitType;
-        static SymbolTableEntry emptyValue() { return SymbolTableEntry(); }
+    struct SymbolTableIndexHashTraits : HashTraits<SymbolTableEntry> {
         static const bool emptyValueIsZero = true;
         static const bool needsDestruction = false;
     };

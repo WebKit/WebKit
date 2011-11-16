@@ -235,13 +235,9 @@ namespace JSC {
         static unsigned hash(StringImpl* key) { return key->existingHash(); }
     };
 
-    struct IdentifierMapIndexHashTraits {
-        typedef int TraitType;
-        typedef IdentifierMapIndexHashTraits StorageTraits;
+    struct IdentifierMapIndexHashTraits : HashTraits<int> {
         static int emptyValue() { return std::numeric_limits<int>::max(); }
         static const bool emptyValueIsZero = false;
-        static const bool needsDestruction = false;
-        static const bool needsRef = false;
     };
 
     typedef HashMap<RefPtr<StringImpl>, int, IdentifierRepHash, HashTraits<RefPtr<StringImpl> >, IdentifierMapIndexHashTraits> IdentifierMap;

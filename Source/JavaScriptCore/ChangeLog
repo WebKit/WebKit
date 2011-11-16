@@ -1,3 +1,22 @@
+2011-11-16  Darin Adler  <darin@apple.com>
+
+        Fix some hash traits that don't derive from the base hash traits
+        https://bugs.webkit.org/show_bug.cgi?id=72470
+
+        Reviewed by Filip Pizlo.
+
+        Hash traits structures need to derive from the base hash traits in
+        HashTraits.h, but some were not. This is needed for compatibility with
+        some additional traits we will be adding to make OwnPtr work with HashMap.
+
+        * runtime/Identifier.h: Make IdentifierMapIndexHashTraits derive from
+        HashTraits<int>. This enabled removal of all the members except for the
+        ones that control the empty value, because this is otherwise the same
+        as the standard int hash.
+
+        * runtime/SymbolTable.h: Changed SymbolTableIndexHashTraits to derive
+        from HashTraits<SymbolTableEntry> and removed redundant members.
+
 2011-11-15  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r100375 and r100385.
