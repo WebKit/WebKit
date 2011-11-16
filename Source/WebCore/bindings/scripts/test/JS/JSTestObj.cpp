@@ -1979,6 +1979,30 @@ JSValue jsTestObjCONST_JAVASCRIPT(ExecState* exec, JSValue, const Identifier&)
     return jsNumber(static_cast<int>(15));
 }
 
+static inline bool isObservable(JSTestObj* jsTestObj)
+{
+    if (jsTestObj->hasCustomProperties())
+        return true;
+    return false;
+}
+
+bool JSTestObjOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)
+{
+    JSTestObj* jsTestObj = static_cast<JSTestObj*>(handle.get().asCell());
+    if (!isObservable(jsTestObj))
+        return false;
+    UNUSED_PARAM(visitor);
+    return false;
+}
+
+void JSTestObjOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
+{
+    JSTestObj* jsTestObj = static_cast<JSTestObj*>(handle.get().asCell());
+    DOMWrapperWorld* world = static_cast<DOMWrapperWorld*>(context);
+    uncacheWrapper(world, jsTestObj->impl(), jsTestObj);
+    jsTestObj->clearImpl();
+}
+
 JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, TestObj* impl)
 {
     return wrap<JSTestObj>(exec, globalObject, impl);

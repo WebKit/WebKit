@@ -197,6 +197,30 @@ EncodedJSValue JSC_HOST_CALL jsTestMediaQueryListListenerPrototypeFunctionMethod
     return JSValue::encode(jsUndefined());
 }
 
+static inline bool isObservable(JSTestMediaQueryListListener* jsTestMediaQueryListListener)
+{
+    if (jsTestMediaQueryListListener->hasCustomProperties())
+        return true;
+    return false;
+}
+
+bool JSTestMediaQueryListListenerOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)
+{
+    JSTestMediaQueryListListener* jsTestMediaQueryListListener = static_cast<JSTestMediaQueryListListener*>(handle.get().asCell());
+    if (!isObservable(jsTestMediaQueryListListener))
+        return false;
+    UNUSED_PARAM(visitor);
+    return false;
+}
+
+void JSTestMediaQueryListListenerOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
+{
+    JSTestMediaQueryListListener* jsTestMediaQueryListListener = static_cast<JSTestMediaQueryListListener*>(handle.get().asCell());
+    DOMWrapperWorld* world = static_cast<DOMWrapperWorld*>(context);
+    uncacheWrapper(world, jsTestMediaQueryListListener->impl(), jsTestMediaQueryListListener);
+    jsTestMediaQueryListListener->clearImpl();
+}
+
 JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, TestMediaQueryListListener* impl)
 {
     return wrap<JSTestMediaQueryListListener>(exec, globalObject, impl);

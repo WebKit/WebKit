@@ -186,6 +186,7 @@ void JSTestNamedConstructorOwner::finalize(JSC::Handle<JSC::Unknown> handle, voi
     JSTestNamedConstructor* jsTestNamedConstructor = static_cast<JSTestNamedConstructor*>(handle.get().asCell());
     DOMWrapperWorld* world = static_cast<DOMWrapperWorld*>(context);
     uncacheWrapper(world, jsTestNamedConstructor->impl(), jsTestNamedConstructor);
+    jsTestNamedConstructor->clearImpl();
 }
 
 JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, TestNamedConstructor* impl)

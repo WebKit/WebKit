@@ -53,6 +53,7 @@ public:
 
     static JSC::JSValue getConstructor(JSC::ExecState*, JSC::JSGlobalObject*);
     TestSerializedScriptValueInterface* impl() const { return m_impl.get(); }
+    void clearImpl() { m_impl.clear(); }
 
 private:
     RefPtr<TestSerializedScriptValueInterface> m_impl;
@@ -61,6 +62,22 @@ protected:
     void finishCreation(JSC::JSGlobalData&);
     static const unsigned StructureFlags = JSC::OverridesGetOwnPropertySlot | Base::StructureFlags;
 };
+
+class JSTestSerializedScriptValueInterfaceOwner : public JSC::WeakHandleOwner {
+    virtual bool isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, JSC::SlotVisitor&);
+    virtual void finalize(JSC::Handle<JSC::Unknown>, void* context);
+};
+
+inline JSC::WeakHandleOwner* wrapperOwner(DOMWrapperWorld*, TestSerializedScriptValueInterface*)
+{
+    DEFINE_STATIC_LOCAL(JSTestSerializedScriptValueInterfaceOwner, jsTestSerializedScriptValueInterfaceOwner, ());
+    return &jsTestSerializedScriptValueInterfaceOwner;
+}
+
+inline void* wrapperContext(DOMWrapperWorld* world, TestSerializedScriptValueInterface*)
+{
+    return world;
+}
 
 JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, TestSerializedScriptValueInterface*);
 TestSerializedScriptValueInterface* toTestSerializedScriptValueInterface(JSC::JSValue);

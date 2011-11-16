@@ -178,6 +178,30 @@ JSValue JSTestSerializedScriptValueInterface::getConstructor(ExecState* exec, JS
     return getDOMConstructor<JSTestSerializedScriptValueInterfaceConstructor>(exec, static_cast<JSDOMGlobalObject*>(globalObject));
 }
 
+static inline bool isObservable(JSTestSerializedScriptValueInterface* jsTestSerializedScriptValueInterface)
+{
+    if (jsTestSerializedScriptValueInterface->hasCustomProperties())
+        return true;
+    return false;
+}
+
+bool JSTestSerializedScriptValueInterfaceOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)
+{
+    JSTestSerializedScriptValueInterface* jsTestSerializedScriptValueInterface = static_cast<JSTestSerializedScriptValueInterface*>(handle.get().asCell());
+    if (!isObservable(jsTestSerializedScriptValueInterface))
+        return false;
+    UNUSED_PARAM(visitor);
+    return false;
+}
+
+void JSTestSerializedScriptValueInterfaceOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
+{
+    JSTestSerializedScriptValueInterface* jsTestSerializedScriptValueInterface = static_cast<JSTestSerializedScriptValueInterface*>(handle.get().asCell());
+    DOMWrapperWorld* world = static_cast<DOMWrapperWorld*>(context);
+    uncacheWrapper(world, jsTestSerializedScriptValueInterface->impl(), jsTestSerializedScriptValueInterface);
+    jsTestSerializedScriptValueInterface->clearImpl();
+}
+
 JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, TestSerializedScriptValueInterface* impl)
 {
     return wrap<JSTestSerializedScriptValueInterface>(exec, globalObject, impl);

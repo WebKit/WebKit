@@ -51,6 +51,7 @@ public:
 
     static JSC::JSValue getConstructor(JSC::ExecState*, JSC::JSGlobalObject*);
     TestEventConstructor* impl() const { return m_impl.get(); }
+    void clearImpl() { m_impl.clear(); }
 
 private:
     RefPtr<TestEventConstructor> m_impl;
@@ -59,6 +60,22 @@ protected:
     void finishCreation(JSC::JSGlobalData&);
     static const unsigned StructureFlags = JSC::OverridesGetOwnPropertySlot | Base::StructureFlags;
 };
+
+class JSTestEventConstructorOwner : public JSC::WeakHandleOwner {
+    virtual bool isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, JSC::SlotVisitor&);
+    virtual void finalize(JSC::Handle<JSC::Unknown>, void* context);
+};
+
+inline JSC::WeakHandleOwner* wrapperOwner(DOMWrapperWorld*, TestEventConstructor*)
+{
+    DEFINE_STATIC_LOCAL(JSTestEventConstructorOwner, jsTestEventConstructorOwner, ());
+    return &jsTestEventConstructorOwner;
+}
+
+inline void* wrapperContext(DOMWrapperWorld* world, TestEventConstructor*)
+{
+    return world;
+}
 
 JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, TestEventConstructor*);
 TestEventConstructor* toTestEventConstructor(JSC::JSValue);

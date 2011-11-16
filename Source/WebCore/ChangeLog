@@ -1,3 +1,52 @@
+2011-11-15  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Rebaseline generated WebCore bindings
+
+        Unreviewed build fix
+
+        No new tests.
+
+        * bindings/scripts/test/JS/JSTestEventConstructor.cpp:
+        (WebCore::isObservable):
+        (WebCore::JSTestEventConstructorOwner::isReachableFromOpaqueRoots):
+        (WebCore::JSTestEventConstructorOwner::finalize):
+        * bindings/scripts/test/JS/JSTestEventConstructor.h:
+        (WebCore::JSTestEventConstructor::clearImpl):
+        (WebCore::wrapperOwner):
+        (WebCore::wrapperContext):
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        (WebCore::JSTestInterfaceOwner::finalize):
+        * bindings/scripts/test/JS/JSTestInterface.h:
+        (WebCore::JSTestInterface::clearImpl):
+        * bindings/scripts/test/JS/JSTestMediaQueryListListener.cpp:
+        (WebCore::isObservable):
+        (WebCore::JSTestMediaQueryListListenerOwner::isReachableFromOpaqueRoots):
+        (WebCore::JSTestMediaQueryListListenerOwner::finalize):
+        * bindings/scripts/test/JS/JSTestMediaQueryListListener.h:
+        (WebCore::JSTestMediaQueryListListener::clearImpl):
+        (WebCore::wrapperOwner):
+        (WebCore::wrapperContext):
+        * bindings/scripts/test/JS/JSTestNamedConstructor.cpp:
+        (WebCore::JSTestNamedConstructorOwner::finalize):
+        * bindings/scripts/test/JS/JSTestNamedConstructor.h:
+        (WebCore::JSTestNamedConstructor::clearImpl):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::isObservable):
+        (WebCore::JSTestObjOwner::isReachableFromOpaqueRoots):
+        (WebCore::JSTestObjOwner::finalize):
+        * bindings/scripts/test/JS/JSTestObj.h:
+        (WebCore::JSTestObj::clearImpl):
+        (WebCore::wrapperOwner):
+        (WebCore::wrapperContext):
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.cpp:
+        (WebCore::isObservable):
+        (WebCore::JSTestSerializedScriptValueInterfaceOwner::isReachableFromOpaqueRoots):
+        (WebCore::JSTestSerializedScriptValueInterfaceOwner::finalize):
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.h:
+        (WebCore::JSTestSerializedScriptValueInterface::clearImpl):
+        (WebCore::wrapperOwner):
+        (WebCore::wrapperContext):
+
 2011-11-15  Jeff Timanus  <twiz@chromium.org>
 
         Patch removing duplicated code in the setup of the DrawingBuffer used

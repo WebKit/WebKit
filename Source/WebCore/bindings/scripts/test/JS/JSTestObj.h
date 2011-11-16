@@ -64,6 +64,7 @@ public:
     JSC::JSValue customMethod(JSC::ExecState*);
     JSC::JSValue customMethodWithArgs(JSC::ExecState*);
     TestObj* impl() const { return m_impl.get(); }
+    void clearImpl() { m_impl.clear(); }
 
 private:
     RefPtr<TestObj> m_impl;
@@ -72,6 +73,22 @@ protected:
     void finishCreation(JSC::JSGlobalData&);
     static const unsigned StructureFlags = JSC::OverridesGetOwnPropertySlot | JSC::OverridesVisitChildren | Base::StructureFlags;
 };
+
+class JSTestObjOwner : public JSC::WeakHandleOwner {
+    virtual bool isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, JSC::SlotVisitor&);
+    virtual void finalize(JSC::Handle<JSC::Unknown>, void* context);
+};
+
+inline JSC::WeakHandleOwner* wrapperOwner(DOMWrapperWorld*, TestObj*)
+{
+    DEFINE_STATIC_LOCAL(JSTestObjOwner, jsTestObjOwner, ());
+    return &jsTestObjOwner;
+}
+
+inline void* wrapperContext(DOMWrapperWorld* world, TestObj*)
+{
+    return world;
+}
 
 JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, TestObj*);
 TestObj* toTestObj(JSC::JSValue);

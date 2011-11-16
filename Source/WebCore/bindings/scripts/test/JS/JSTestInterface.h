@@ -53,6 +53,7 @@ public:
 
     static JSC::JSValue getConstructor(JSC::ExecState*, JSC::JSGlobalObject*);
     TestInterface* impl() const { return m_impl.get(); }
+    void clearImpl() { m_impl.clear(); }
 
 private:
     RefPtr<TestInterface> m_impl;

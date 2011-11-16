@@ -51,6 +51,7 @@ public:
 
     static JSC::JSValue getConstructor(JSC::ExecState*, JSC::JSGlobalObject*);
     TestNamedConstructor* impl() const { return m_impl.get(); }
+    void clearImpl() { m_impl.clear(); }
 
 private:
     RefPtr<TestNamedConstructor> m_impl;

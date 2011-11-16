@@ -193,6 +193,30 @@ JSValue JSTestEventConstructor::getConstructor(ExecState* exec, JSGlobalObject* 
     return getDOMConstructor<JSTestEventConstructorConstructor>(exec, static_cast<JSDOMGlobalObject*>(globalObject));
 }
 
+static inline bool isObservable(JSTestEventConstructor* jsTestEventConstructor)
+{
+    if (jsTestEventConstructor->hasCustomProperties())
+        return true;
+    return false;
+}
+
+bool JSTestEventConstructorOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)
+{
+    JSTestEventConstructor* jsTestEventConstructor = static_cast<JSTestEventConstructor*>(handle.get().asCell());
+    if (!isObservable(jsTestEventConstructor))
+        return false;
+    UNUSED_PARAM(visitor);
+    return false;
+}
+
+void JSTestEventConstructorOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
+{
+    JSTestEventConstructor* jsTestEventConstructor = static_cast<JSTestEventConstructor*>(handle.get().asCell());
+    DOMWrapperWorld* world = static_cast<DOMWrapperWorld*>(context);
+    uncacheWrapper(world, jsTestEventConstructor->impl(), jsTestEventConstructor);
+    jsTestEventConstructor->clearImpl();
+}
+
 JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, TestEventConstructor* impl)
 {
     return wrap<JSTestEventConstructor>(exec, globalObject, impl);
