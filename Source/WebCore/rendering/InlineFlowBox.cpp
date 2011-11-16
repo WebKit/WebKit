@@ -1281,8 +1281,11 @@ void InlineFlowBox::paintMask(PaintInfo& paintInfo, const LayoutPoint& paintOffs
     paintFillLayers(paintInfo, Color(), renderer()->style()->maskLayers(), paintRect, compositeOp);
     
     bool hasBoxImage = maskBoxImage && maskBoxImage->canRender(renderer(), renderer()->style()->effectiveZoom());
-    if (!hasBoxImage || !maskBoxImage->isLoaded())
+    if (!hasBoxImage || !maskBoxImage->isLoaded()) {
+        if (pushTransparencyLayer)
+            paintInfo.context->endTransparencyLayer();
         return; // Don't paint anything while we wait for the image to load.
+    }
 
     // The simple case is where we are the only box for this object.  In those
     // cases only a single call to draw is required.

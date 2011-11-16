@@ -79,10 +79,6 @@ editing/input/emacs-ctrl-o.html
 # TESTS CRASHING
 ###############################################################################
 
-# [WK2] [GTK] fast/css/webkit-mask-crash-fieldset-legend.html asserts WebKitWebProcess
-# https://bugs.webkit.org/show_bug.cgi?id=69510
-fast/css/webkit-mask-crash-fieldset-legend.html
-
 # [WK2] [GTK] plugins/destroy-during-npp-new.html segfaults WebKitWebProcess
 # https://bugs.webkit.org/show_bug.cgi?id=69512
 plugins/destroy-during-npp-new.html

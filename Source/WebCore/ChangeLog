@@ -1,3 +1,18 @@
+2011-11-15  Sergio Villar Senin  <svillar@igalia.com>
+
+        [WK2] [GTK] fast/css/webkit-mask-crash-fieldset-legend.html asserts WebKitWebProcess
+        https://bugs.webkit.org/show_bug.cgi?id=69510
+
+        Reviewed by Simon Fraser.
+
+        End the current transparency layer before early returning from
+        paintMask() when there is a maskBoxImage which is still being
+        loaded. This will balance the previous call to
+        beginTransparencyLayer().
+
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::paintMask):
+
 2011-11-15  Darin Adler  <darin@apple.com>
 
         Incorrect type checks in RenderTheme media code
