@@ -48,45 +48,25 @@ var description, debug, successfullyParsed, errorMessage;
         span.innerHTML = msg + '<br />';
     };
 
-    function findPath() {
-        var scripts = document.getElementsByTagName("script");
-        var regExp = /^(.*resources\/)js-test-pre\.js/;
-        for (var i = scripts.length - 1; i >= 0; i--) {
-            var src = scripts[i].getAttribute("src");
-            var match;
-            regExp.lastIndex = 0;
-            if (src && (match = regExp.exec(src)))
-                return match[1];
-        }
-        return null;
-    }
+    var css =
+        ".pass {" +
+            "font-weight: bold;" +
+            "color: green;" +
+        "}" +
+        ".fail {" +
+            "font-weight: bold;" +
+            "color: red;" +
+        "}" +
+        "#console {" +
+            "white-space: pre-wrap;" +
+            "font-family: monospace;" +
+        "}";
 
-    // FIXME: No test should depend on this stylesheet.
-    function hasStyleSheet() {
-        var links = document.getElementsByTagName("link");
-        var regExp = /resources\/js-test-style.css/;
-        for (var i = 0; i < links.length; i++) {
-            var link = links[i];
-            if (link.rel.toLowerCase() === "stylesheet" && regExp.test(link.href))
-                return true;
-        }
-        return false;
-    }
-
-    function insertStyleSheet() {
-        if (hasStyleSheet())
-            return;
-
-        // FIXME: Once all tests have been updated to not depend on this link element
-        // we should remove this and replace with a simple style element instead.
-        var path = findPath();
-        if (!path == null)
-            return;
-
-        var link = document.createElement("link");
-        link.rel = "stylesheet";
-        link.href = path + "js-test-style.css";
-        document.documentElement.appendChild(link);
+    function insertStyleSheet()
+    {
+        var styleElement = document.createElement("style");
+        styleElement.textContent = css;
+        (document.head || document.documentElement).appendChild(styleElement);
     }
     
     insertStyleSheet();
@@ -397,10 +377,11 @@ function gc() {
 
 function isSuccessfullyParsed()
 {
+    // FIXME: Remove this and only report unexpected syntax errors.
     if (!errorMessage)
         successfullyParsed = true;
     shouldBeTrue("successfullyParsed");
-    debug('<br><span class="pass">TEST COMPLETE</span>');
+    debug('<br /><span class="pass">TEST COMPLETE</span>');
 }
 
 // It's possible for an async test to call finishJSTest() before js-test-post.js
@@ -410,11 +391,7 @@ function finishJSTest()
     wasFinishJSTestCalled = true;
     if (!window.wasPostTestScriptParsed)
         return;
-    if (!errorMessage)
-        successfullyParsed = true;
-    // FIXME: Remove this and only report unexpected syntax errors.
-    shouldBeTrue("successfullyParsed");
-    debug('<br /><span class="pass">TEST COMPLETE</span>');
+    isSuccessfullyParsed();
     if (window.jsTestIsAsync && window.layoutTestController)
         layoutTestController.notifyDone();
 }

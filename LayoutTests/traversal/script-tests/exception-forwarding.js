@@ -11,11 +11,6 @@ function test(node)
     }
 }
 
-// Move the stylesheet added by the test harness so it does not interfere.
-// FIXME: The testing harness should have a way to remove this link and restore it once done.
-var link = document.getElementsByTagName("link")[0];
-document.documentElement.appendChild(link);
-
 var i = document.createNodeIterator(document.documentElement, 0xFFFFFFFF, test, true);
 shouldThrow("i.nextNode()"); // 1
 shouldBe("i.nextNode()", "document.documentElement"); // 2
