@@ -65,7 +65,6 @@
             'tests/CCSchedulerStateMachineTest.cpp',
             'tests/CCSchedulerTestCommon.h',
             'tests/CCThreadTaskTest.cpp',
-            'tests/CCThreadTest.cpp',
             'tests/FrameTestHelpers.cpp',
             'tests/FrameTestHelpers.h',
             'tests/IDBBindingUtilitiesTest.cpp',

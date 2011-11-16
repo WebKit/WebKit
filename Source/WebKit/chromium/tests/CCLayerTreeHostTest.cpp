@@ -28,8 +28,7 @@
 
 #include "cc/CCLayerImpl.h"
 #include "cc/CCLayerTreeHostImpl.h"
-#include "cc/CCMainThreadTask.h"
-#include "cc/CCScopedMainThreadProxy.h"
+#include "cc/CCScopedThreadProxy.h"
 #include "cc/CCThreadTask.h"
 #include "GraphicsContext3DPrivate.h"
 #include <gtest/gtest.h>
@@ -236,12 +235,11 @@ protected:
         , m_timedOut(false)
     {
         m_webThread = adoptPtr(webKitPlatformSupport()->createThread("CCLayerTreeHostTest"));
+        ASSERT(CCProxy::mainThread());
+
         WebCompositor::setThread(m_webThread.get());
-#ifndef NDEBUG
-        CCProxy::setMainThread(currentThread());
-#endif
         ASSERT(CCProxy::isMainThread());
-        m_mainThreadProxy = CCScopedMainThreadProxy::create();
+        m_mainThreadProxy = CCScopedThreadProxy::create(CCProxy::mainThread());
     }
 
     void doBeginTest();
@@ -358,7 +356,7 @@ private:
 
     RefPtr<LayerChromium> m_rootLayer;
     OwnPtr<WebThread> m_webThread;
-    RefPtr<CCScopedMainThreadProxy> m_mainThreadProxy;
+    RefPtr<CCScopedThreadProxy> m_mainThreadProxy;
     TimeoutTask* m_timeoutTask;
 };
 
@@ -383,7 +381,7 @@ void CCLayerTreeHostTest::endTest()
 {
     // If we are called from the CCThread, re-call endTest on the main thread.
     if (!isMainThread())
-        m_mainThreadProxy->postTask(createMainThreadTask(this, &CCLayerTreeHostTest::endTest));
+        m_mainThreadProxy->postTask(createCCThreadTask(this, &CCLayerTreeHostTest::endTest));
     else {
         // For the case where we endTest during beginTest(), set a flag to indicate that
         // the test should end the second beginTest regains control.

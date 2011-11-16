@@ -55,8 +55,7 @@
 #include "WebGLLayerChromium.h"
 #include "cc/CCLayerImpl.h"
 #include "cc/CCLayerTreeHostCommon.h"
-#include "cc/CCMainThreadTask.h"
-#include "cc/CCThreadProxy.h"
+#include "cc/CCProxy.h"
 #if USE(SKIA)
 #include "Extensions3D.h"
 #include "GrContext.h"

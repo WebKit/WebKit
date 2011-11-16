@@ -22,64 +22,64 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CCScopedMainThreadProxy_h
-#define CCScopedMainThreadProxy_h
+#ifndef CCScopedThreadProxy_h
+#define CCScopedThreadProxy_h
 
-#include "cc/CCMainThreadTask.h"
 #include "cc/CCProxy.h"
+#include "cc/CCThreadTask.h"
 #include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebCore {
 
-// This class is a proxy used to post tasks to the main thread from any other thread. The proxy may be shut down at
-// any point from the main thread after which no more tasks posted to the proxy will run. In other words, all
+// This class is a proxy used to post tasks to an target thread from any other thread. The proxy may be shut down at
+// any point from the target thread after which no more tasks posted to the proxy will run. In other words, all
 // tasks posted via a proxy are scoped to the lifecycle of the proxy. Use this when posting tasks to an object that
 // might die with tasks in flight.
 //
-// The proxy must be created and shut down from the main thread, tasks may be posted from any thread.
+// The proxy must be created and shut down from the target thread, tasks may be posted from any thread.
 //
 // Implementation note: Unlike ScopedRunnableMethodFactory in Chromium, pending tasks are not cancelled by actually
 // destroying the proxy. Instead each pending task holds a reference to the proxy to avoid maintaining an explicit
 // list of outstanding tasks.
-class CCScopedMainThreadProxy : public ThreadSafeRefCounted<CCScopedMainThreadProxy> {
+class CCScopedThreadProxy : public ThreadSafeRefCounted<CCScopedThreadProxy> {
 public:
-    static PassRefPtr<CCScopedMainThreadProxy> create()
+    static PassRefPtr<CCScopedThreadProxy> create(CCThread* targetThread)
     {
-        ASSERT(CCProxy::isMainThread());
-        return adoptRef(new CCScopedMainThreadProxy);
+        ASSERT(currentThread() == targetThread->threadID());
+        return adoptRef(new CCScopedThreadProxy(targetThread));
     }
 
-    // Can be called from any thread. Posts a task to the main thread that runs unless
+    // Can be called from any thread. Posts a task to the target thread that runs unless
     // shutdown() is called before it runs.
-    void postTask(PassOwnPtr<CCMainThread::Task> task)
+    void postTask(PassOwnPtr<CCThread::Task> task)
     {
         ref();
-        CCMainThread::postTask(createMainThreadTask(this, &CCScopedMainThreadProxy::runTaskIfNotShutdown, task));
+        m_targetThread->postTask(createCCThreadTask(this, &CCScopedThreadProxy::runTaskIfNotShutdown, task));
     }
 
     void shutdown()
     {
-        ASSERT(CCProxy::isMainThread());
+        ASSERT(currentThread() == m_targetThread->threadID());
         ASSERT(!m_shutdown);
         m_shutdown = true;
     }
 
 private:
-    CCScopedMainThreadProxy()
-        : m_shutdown(false)
-    {
-    }
+    explicit CCScopedThreadProxy(CCThread* targetThread)
+        : m_targetThread(targetThread)
+        , m_shutdown(false) { }
 
-    void runTaskIfNotShutdown(PassOwnPtr<CCMainThread::Task> popTask)
+    void runTaskIfNotShutdown(PassOwnPtr<CCThread::Task> popTask)
     {
-        ASSERT(CCProxy::isMainThread());
-        OwnPtr<CCMainThread::Task> task = popTask;
+        ASSERT(currentThread() == m_targetThread->threadID());
+        OwnPtr<CCThread::Task> task = popTask;
         if (!m_shutdown)
             task->performTask();
         deref();
     }
 
-    bool m_shutdown; // Only accessed on the main thread
+    CCThread* m_targetThread;
+    bool m_shutdown; // Only accessed on the target thread
 };
 
 }

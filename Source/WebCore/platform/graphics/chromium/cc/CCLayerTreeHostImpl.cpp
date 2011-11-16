@@ -31,8 +31,6 @@
 #include "LayerRendererChromium.h"
 #include "TraceEvent.h"
 #include "cc/CCLayerTreeHost.h"
-#include "cc/CCMainThread.h"
-#include "cc/CCMainThreadTask.h"
 #include "cc/CCThreadTask.h"
 #include <wtf/CurrentTime.h>
 

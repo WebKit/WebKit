@@ -1,3 +1,25 @@
+2011-11-15  Nat Duca  <nduca@chromium.org>
+
+        [chromium] Fuse MainThread and CCThread
+        https://bugs.webkit.org/show_bug.cgi?id=72426
+
+        Reviewed by James Robinson.
+
+        * WebKit.gyp:
+        * WebKit.gypi:
+        * src/CCMainThreadImpl.cpp: Removed.
+        * src/CCThreadImpl.cpp:
+        (WebKit::CCThreadImpl::CCThreadImpl):
+        * src/WebCompositorImpl.cpp:
+        (WebKit::WebCompositor::setThread):
+        * src/WebKit.cpp:
+        (WebKit::initializeWithoutV8):
+        (WebKit::shutdown):
+        * tests/CCLayerTreeHostTest.cpp:
+        (WTF::CCLayerTreeHostTest::CCLayerTreeHostTest):
+        (WTF::CCLayerTreeHostTest::endTest):
+        * tests/CCThreadTest.cpp: Removed.
+
 2011-11-15  Jochen Eisinger  <jochen@chromium.org>
 
         Rename ReferrerPolicy to clarify its meaning

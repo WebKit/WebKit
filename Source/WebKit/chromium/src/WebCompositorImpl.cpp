@@ -50,7 +50,7 @@ namespace WebKit {
 void WebCompositor::setThread(WebThread* compositorThread)
 {
     ASSERT(compositorThread);
-    CCThreadProxy::setThread(CCThreadImpl::create(compositorThread).leakPtr());
+    CCThreadProxy::setImplThread(CCThreadImpl::create(compositorThread).leakPtr());
 }
 
 

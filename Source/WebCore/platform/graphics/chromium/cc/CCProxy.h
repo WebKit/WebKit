@@ -50,7 +50,13 @@ class TextureManager;
 class CCProxy {
     WTF_MAKE_NONCOPYABLE(CCProxy);
 public:
-    virtual ~CCProxy() { }
+    static void setMainThread(CCThread*);
+    static CCThread* mainThread();
+
+    static void setImplThread(CCThread*);
+    static CCThread* implThread();
+
+    virtual ~CCProxy();
 
     virtual bool compositeAndReadback(void *pixels, const IntRect&) = 0;
 
@@ -86,8 +92,6 @@ public:
 
 #ifndef NDEBUG
     static void setImplThread(bool);
-    static void setImplThread(WTF::ThreadIdentifier);
-    static void setMainThread(WTF::ThreadIdentifier);
 #endif
 
 protected:

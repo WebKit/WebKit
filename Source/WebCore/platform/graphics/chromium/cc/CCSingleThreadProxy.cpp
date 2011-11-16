@@ -30,7 +30,6 @@
 #include "LayerRendererChromium.h"
 #include "TraceEvent.h"
 #include "cc/CCLayerTreeHost.h"
-#include "cc/CCMainThreadTask.h"
 #include "cc/CCScrollController.h"
 #include "cc/CCTextureUpdater.h"
 #include <wtf/CurrentTime.h>

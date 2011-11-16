@@ -31,6 +31,8 @@
 #include "config.h"
 #include "WebKit.h"
 
+#include "CCThreadImpl.h"
+#include "cc/CCProxy.h"
 #include "Logging.h"
 #include "Page.h"
 #include "RuntimeEnabledFeatures.h"
@@ -97,12 +99,14 @@ void initializeWithoutV8(WebKitPlatformSupport* webKitPlatformSupport)
     // this, initializing this lazily probably doesn't buy us much.
     WebCore::UTF8Encoding();
 
- 
+    WebCore::CCProxy::setMainThread(CCThreadImpl::create(webKitPlatformSupport->currentThread()).leakPtr());
 }
 
 
 void shutdown()
 {
+    delete WebCore::CCProxy::mainThread();
+    WebCore::CCProxy::setMainThread(0);
     s_webKitPlatformSupport = 0;
 }
 

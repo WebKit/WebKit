@@ -103,6 +103,11 @@ ThreadIdentifier CCThreadImpl::threadID() const
 CCThreadImpl::CCThreadImpl(WebThread* thread)
     : m_thread(thread)
 {
+    if (thread == webKitPlatformSupport()->currentThread()) {
+        m_threadID = currentThread();
+        return;
+    }
+
     // Get the threadId for the newly-created thread by running a task
     // on that thread, blocking on the result.
     m_threadID = currentThread();

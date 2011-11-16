@@ -27,9 +27,9 @@
 
 #include "cc/CCCompletionEvent.h"
 #include "cc/CCLayerTreeHostImpl.h"
-#include "cc/CCMainThread.h"
 #include "cc/CCProxy.h"
 #include "cc/CCScheduler.h"
+#include "cc/CCThread.h"
 #include <wtf/OwnPtr.h>
 
 namespace WebCore {
@@ -37,14 +37,12 @@ namespace WebCore {
 class CCInputHandler;
 class CCLayerTreeHost;
 class CCScheduler;
-class CCScopedMainThreadProxy;
+class CCScopedThreadProxy;
 class CCTextureUpdater;
 class CCThread;
 
 class CCThreadProxy : public CCProxy, CCLayerTreeHostImplClient, CCSchedulerClient {
 public:
-    static void setThread(CCThread*);
-
     static PassOwnPtr<CCProxy> create(CCLayerTreeHost*);
 
     virtual ~CCThreadProxy();
@@ -80,20 +78,20 @@ public:
 private:
     explicit CCThreadProxy(CCLayerTreeHost*);
 
-    // Called on CCMainThread
+    // Called on main thread
     void beginFrameAndCommit(int sequenceNumber, double frameBeginTime, PassOwnPtr<CCScrollAndScaleSet>);
     void didCommitAndDrawFrame();
     void didCompleteSwapBuffers();
 
-    // Called on CCThread
+    // Called on impl thread
     struct ReadbackRequest {
         CCCompletionEvent completion;
         bool success;
         void* pixels;
         IntRect rect;
     };
-    PassOwnPtr<CCMainThread::Task> createBeginFrameAndCommitTaskOnImplThread();
-    void obtainBeginFrameAndCommitTaskFromCCThread(CCCompletionEvent*, CCMainThread::Task**);
+    PassOwnPtr<CCThread::Task> createBeginFrameAndCommitTaskOnImplThread();
+    void obtainBeginFrameAndCommitTaskFromCCThread(CCCompletionEvent*, CCThread::Task**);
     void beginFrameCompleteOnImplThread(CCCompletionEvent*);
     void requestReadbackOnImplThread(ReadbackRequest*);
     void finishAllRenderingOnImplThread(CCCompletionEvent*);
@@ -120,7 +118,7 @@ private:
 
     OwnPtr<CCScheduler> m_schedulerOnImplThread;
 
-    RefPtr<CCScopedMainThreadProxy> m_mainThreadProxy;
+    RefPtr<CCScopedThreadProxy> m_mainThreadProxy;
 
     // Set when the main thread is waiing on a readback.
     ReadbackRequest* m_readbackRequestOnImplThread;
@@ -134,8 +132,6 @@ private:
 
     // Set when the next draw should post didCommitAndDrawFrame to the main thread.
     bool m_nextFrameIsNewlyCommittedFrameOnImplThread;
-
-    static CCThread* s_ccThread;
 };
 
 }

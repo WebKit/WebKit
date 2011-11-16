@@ -1,3 +1,53 @@
+2011-11-15  Nat Duca  <nduca@chromium.org>
+
+        [chromium] Fuse MainThread and CCThread
+        https://bugs.webkit.org/show_bug.cgi?id=72426
+
+        Reviewed by James Robinson.
+
+        * WebCore.gypi:
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        * platform/graphics/chromium/cc/CCLayerTreeHost.cpp:
+        (WebCore::CCLayerTreeHost::CCLayerTreeHost):
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.cpp:
+        * platform/graphics/chromium/cc/CCMainThread.cpp: Removed.
+        * platform/graphics/chromium/cc/CCMainThread.h: Removed.
+        * platform/graphics/chromium/cc/CCMainThreadTask.h: Removed.
+        * platform/graphics/chromium/cc/CCProxy.cpp:
+        (WebCore::CCProxy::setMainThread):
+        (WebCore::CCProxy::mainThread):
+        (WebCore::CCProxy::setImplThread):
+        (WebCore::CCProxy::implThread):
+        (WebCore::CCProxy::isMainThread):
+        (WebCore::CCProxy::isImplThread):
+        (WebCore::CCProxy::~CCProxy):
+        * platform/graphics/chromium/cc/CCProxy.h:
+        * platform/graphics/chromium/cc/CCScopedThreadProxy.h: Renamed from Source/WebCore/platform/graphics/chromium/cc/CCScopedMainThreadProxy.h.
+        (WebCore::CCScopedThreadProxy::create):
+        (WebCore::CCScopedThreadProxy::postTask):
+        (WebCore::CCScopedThreadProxy::shutdown):
+        (WebCore::CCScopedThreadProxy::CCScopedThreadProxy):
+        (WebCore::CCScopedThreadProxy::runTaskIfNotShutdown):
+        * platform/graphics/chromium/cc/CCSingleThreadProxy.cpp:
+        * platform/graphics/chromium/cc/CCThreadProxy.cpp:
+        (WebCore::CCThreadProxy::CCThreadProxy):
+        (WebCore::CCThreadProxy::compositeAndReadback):
+        (WebCore::CCThreadProxy::finishAllRendering):
+        (WebCore::CCThreadProxy::initializeLayerRenderer):
+        (WebCore::CCThreadProxy::setNeedsAnimate):
+        (WebCore::CCThreadProxy::setNeedsCommit):
+        (WebCore::CCThreadProxy::onSwapBuffersCompleteOnImplThread):
+        (WebCore::CCThreadProxy::setNeedsRedraw):
+        (WebCore::CCThreadProxy::setVisible):
+        (WebCore::CCThreadProxy::start):
+        (WebCore::CCThreadProxy::stop):
+        (WebCore::CCThreadProxy::obtainBeginFrameAndCommitTaskFromCCThread):
+        (WebCore::CCThreadProxy::createBeginFrameAndCommitTaskOnImplThread):
+        (WebCore::CCThreadProxy::beginFrameAndCommit):
+        (WebCore::CCThreadProxy::scheduledActionDrawAndSwap):
+        (WebCore::CCThreadProxy::initializeImplOnImplThread):
+        * platform/graphics/chromium/cc/CCThreadProxy.h:
+
 2011-11-15  Vincent Scheib  <scheib@chromium.org>
 
         Pointer Lock: Refactor: MouseEvent.idl movementX/Y

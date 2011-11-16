@@ -351,7 +351,6 @@
                 'src/BlobRegistryProxy.h',
                 'src/BoundObject.cpp',
                 'src/BoundObject.h',
-                'src/CCMainThreadImpl.cpp',
                 'src/CCThreadImpl.cpp',
                 'src/CCThreadImpl.h',
                 'src/ChromeClientImpl.cpp',
@@ -698,7 +697,6 @@
                             ],
                             'sources!': [
                                 # We should not include files depending on webkit_support.
-                                'tests/CCThreadTest.cpp',
                                 # These tests depend on webkit_support and
                                 # functions defined only in !WEBKIT_IMPLEMENTATION.
                                 'tests/AssociatedURLLoaderTest.cpp',
