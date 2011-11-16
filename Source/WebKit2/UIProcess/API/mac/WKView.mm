@@ -2640,8 +2640,19 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
     InitWebCoreSystemInterface();
     RunLoop::initializeMainRunLoop();
 
+    // Legacy style scrollbars have design details that rely on tracking the mouse all the time.
+    NSTrackingAreaOptions options = NSTrackingMouseMoved | NSTrackingMouseEnteredAndExited | NSTrackingInVisibleRect;
+#if !defined(BUILDING_ON_SNOW_LEOPARD)
+    if (WKRecommendedScrollerStyle() == NSScrollerStyleLegacy)
+        options |= NSTrackingActiveAlways;
+    else
+        options |= NSTrackingActiveInKeyWindow;
+#else
+    options |= NSTrackingActiveInKeyWindow;
+#endif
+
     NSTrackingArea *trackingArea = [[NSTrackingArea alloc] initWithRect:frame
-                                                                options:(NSTrackingMouseMoved | NSTrackingMouseEnteredAndExited | NSTrackingActiveInKeyWindow | NSTrackingInVisibleRect)
+                                                                options:options
                                                                   owner:self
                                                                userInfo:nil];
     [self addTrackingArea:trackingArea];

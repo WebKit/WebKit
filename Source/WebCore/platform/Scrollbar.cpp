@@ -346,11 +346,6 @@ bool Scrollbar::mouseMoved(const PlatformMouseEvent& evt)
     if (m_pressedPart != NoPart)
         m_pressedPos = (orientation() == HorizontalScrollbar ? convertFromContainingWindow(evt.pos()).x() : convertFromContainingWindow(evt.pos()).y());
 
-    if (m_hoveredPart == NoPart) {
-        if (m_scrollableArea)
-            m_scrollableArea->scrollAnimator()->mouseEnteredScrollbar(this);
-    }
-
     ScrollbarPart part = theme()->hitTest(this, evt);
     if (part != m_hoveredPart) {
         if (m_pressedPart != NoPart) {
@@ -371,6 +366,12 @@ bool Scrollbar::mouseMoved(const PlatformMouseEvent& evt)
     } 
 
     return true;
+}
+
+void Scrollbar::mouseEntered()
+{
+    if (m_scrollableArea)
+        m_scrollableArea->scrollAnimator()->mouseEnteredScrollbar(this);
 }
 
 bool Scrollbar::mouseExited()
