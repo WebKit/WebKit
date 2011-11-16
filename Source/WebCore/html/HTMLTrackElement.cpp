@@ -95,7 +95,15 @@ void HTMLTrackElement::attributeChanged(Attribute* attr, bool preserveDecls)
     if (attrName == srcAttr) {
         if (!getAttribute(srcAttr).isEmpty() && mediaElement())
             scheduleLoad();
-    }
+
+    // 4.8.10.12.3 Sourcing out-of-band text tracks
+    // As the kind, label, and srclang attributes are set, changed, or removed, the text track must update accordingly...
+    } else if (attrName == kindAttr)
+        track()->setKind(attr->value());
+    else if (attrName == labelAttr)
+        track()->setLabel(attr->value());
+    else if (attrName == srclangAttr)
+        track()->setLanguage(attr->value());
 }
 
 KURL HTMLTrackElement::src() const
@@ -108,9 +116,9 @@ void HTMLTrackElement::setSrc(const String& url)
     setAttribute(srcAttr, url);
 }
 
-String HTMLTrackElement::kind() const
+String HTMLTrackElement::kind()
 {
-    return getAttribute(kindAttr);
+    return track()->kind();
 }
 
 void HTMLTrackElement::setKind(const String& kind)
@@ -153,8 +161,13 @@ LoadableTextTrack* HTMLTrackElement::ensureTrack()
     if (!RuntimeEnabledFeatures::webkitVideoTrackEnabled())
         return 0;
 
-    if (!m_track)
-        m_track = LoadableTextTrack::create(this, kind(), label(), srclang(), isDefault());
+    if (!m_track) {
+        // The kind attribute is an enumerated attribute, limited only to know values. It defaults to 'subtitles' if missing or invalid.
+        String kind = getAttribute(kindAttr);
+        if (!TextTrack::isValidKindKeyword(kind))
+            kind = TextTrack::subtitlesKeyword();
+        m_track = LoadableTextTrack::create(this, kind, label(), srclang(), isDefault());
+    }
     return m_track.get();
 }
 
@@ -203,12 +216,18 @@ void HTMLTrackElement::textTrackReadyStateChanged(TextTrack* track)
         return parent->textTrackReadyStateChanged(track);
 }
     
+void HTMLTrackElement::textTrackKindChanged(TextTrack* track)
+{
+    if (HTMLMediaElement* parent = mediaElement())
+        return parent->textTrackKindChanged(track);
+}
+
 void HTMLTrackElement::textTrackModeChanged(TextTrack* track)
 {
     if (HTMLMediaElement* parent = mediaElement())
         return parent->textTrackModeChanged(track);
 }
-    
+
 void HTMLTrackElement::textTrackAddCues(TextTrack* track, const TextTrackCueList* cues)
 {
     if (HTMLMediaElement* parent = mediaElement())

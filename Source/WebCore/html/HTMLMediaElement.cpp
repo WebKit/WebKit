@@ -931,6 +931,11 @@ void HTMLMediaElement::textTrackModeChanged(TextTrack*)
     // FIXME(62885): Implement.
 }
 
+void HTMLMediaElement::textTrackKindChanged(TextTrack*)
+{
+    // FIXME(62885): Implement.
+}
+
 void HTMLMediaElement::textTrackAddCues(TextTrack*, const TextTrackCueList* cues) 
 {
     for (size_t i = 0; i < cues->length(); ++i)
@@ -2069,23 +2074,38 @@ float HTMLMediaElement::percentLoaded() const
 }
 
 #if ENABLE(VIDEO_TRACK)
-PassRefPtr<TextTrack> HTMLMediaElement::addTrack(const String& kind, const String& label, const String& language)
+PassRefPtr<TextTrack> HTMLMediaElement::addTrack(const String& kind, const String& label, const String& language, ExceptionCode& ec)
 {
     if (!RuntimeEnabledFeatures::webkitVideoTrackEnabled())
         return 0;
 
-    // FIXME(71915): addTrack should throw a SyntaxError exception if 'kind' is an unknown value.
+    // 4.8.10.12.4 Text track API
+    // The addTextTrack(kind, label, language) method of media elements, when invoked, must run the following steps:
+    
+    // 1. If kind is not one of the following strings, then throw a SyntaxError exception and abort these steps
+    if (!TextTrack::isValidKindKeyword(kind)) {
+        ec = SYNTAX_ERR;
+        return 0;
+    }
+
+    // 2. If the label argument was omitted, let label be the empty string.
+    // 3. If the language argument was omitted, let language be the empty string.
+    // 4. Create a new TextTrack object.
     RefPtr<TextTrack> textTrack = TextTrack::create(ActiveDOMObject::scriptExecutionContext(), this, kind, label, language);
+
+    // 5. Create a new text track corresponding to the new object, and set its text track kind to kind, its text 
+    // track label to label, its text track language to language, its text track readiness state to the text track
+    // loaded state, its text track mode to the text track hidden mode, and its text track list of cues to an empty list.
+    
+    // 6. Add the new text track to the media element's list of text tracks.
     addTextTrack(textTrack);
+
     return textTrack.release();
 }
 
 void HTMLMediaElement::addTextTrack(PassRefPtr<TextTrack> track)
 {
-    if (!m_textTracks)
-        m_textTracks = TextTrackList::create(this, ActiveDOMObject::scriptExecutionContext());
-    m_textTracks->append(track);
-
+    textTracks()->append(track);
     configureTextTracks();
 }
 
@@ -2130,15 +2150,15 @@ void HTMLMediaElement::configureTextTracks()
     }
 }
 
-TextTrackList* HTMLMediaElement::textTracks() const 
+TextTrackList* HTMLMediaElement::textTracks() 
 {
     if (!RuntimeEnabledFeatures::webkitVideoTrackEnabled())
         return 0;
 
-    if (m_textTracks)
-        return m_textTracks.get();
+    if (!m_textTracks)
+        m_textTracks = TextTrackList::create(this, ActiveDOMObject::scriptExecutionContext());
 
-    return 0;
+    return m_textTracks.get();
 }
 
 void HTMLMediaElement::trackWasAdded(HTMLTrackElement* trackElement)

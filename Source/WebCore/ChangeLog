@@ -1,3 +1,52 @@
+2011-11-16  Eric Carlson  <eric.carlson@apple.com>
+
+        addTrack() must throw an exception if 'kind' is unknown
+        https://bugs.webkit.org/show_bug.cgi?id=71915
+
+        Reviewed by Philippe Normand.
+
+        Tests: media/track/track-addtrack-kind.html
+               media/track/track-kind.html
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::textTrackKindChanged): New. Will be implemented for 62885.
+        (WebCore::HTMLMediaElement::addTrack): Throw if  'kind' is not a known value.
+        (WebCore::HTMLMediaElement::addTextTrack): Call textTracks(), it will allocate the track
+            list object if necessary.
+        (WebCore::HTMLMediaElement::textTracks): Never return NULL, a TextTrackList with no tracks
+            is allowed.
+        * html/HTMLMediaElement.h:
+        (WebCore::HTMLMediaElement::addTrack): Add variants to deal with optional parameters plus
+            a mandatory ExceptionCode parameter.
+        * html/HTMLMediaElement.idl: addTrack can generate an exception.
+
+        * html/HTMLTrackElement.cpp:
+        (WebCore::HTMLTrackElement::attributeChanged): kind, label, and srclang attribute changes should
+            percolate down the the TextTrack.
+        (WebCore::HTMLTrackElement::kind): Return the TextTrack kind because it is not necessarily the
+            same as the attribute value.
+        (WebCore::HTMLTrackElement::ensureTrack): Only pass legal 'kind' keywords to create a TextTrack.
+        (WebCore::HTMLTrackElement::textTrackKindChanged): Notify parent element, if any.
+        * html/HTMLTrackElement.h:
+
+        * html/TextTrack.cpp:
+        (WebCore::TextTrack::subtitlesKeyword): New, return legal kind attribute value.
+        (WebCore::TextTrack::captionsKeyword): Ditto.
+        (WebCore::TextTrack::descriptionsKeyword): Ditto.
+        (WebCore::TextTrack::chaptersKeyword): Ditto.
+        (WebCore::TextTrack::metadataKeyword): Ditto.
+        (WebCore::TextTrack::TextTrack): Call setKind to make sure m_kind is always set to legal value.
+        (WebCore::TextTrack::isValidKindKeyword): New, validate 'kind' value.
+        (WebCore::TextTrack::setKind): Only allow legal values.
+        * html/TextTrack.h:
+        (WebCore::TextTrack::kind):
+        (WebCore::TextTrack::label):
+        (WebCore::TextTrack::setLabel):
+        (WebCore::TextTrack::language):
+        (WebCore::TextTrack::setLanguage):
+        (WebCore::TextTrack::readyState):
+        (WebCore::TextTrack::mode):
+
 2011-11-16  Andreas Kling  <kling@webkit.org>
 
         CSSValue: Clean up initial value construction.

@@ -40,16 +40,20 @@ public:
     static PassRefPtr<HTMLTrackElement> create(const QualifiedName&, Document*);
 
     KURL src() const;
-    String kind() const;
+    void setSrc(const String&);
+
+    String kind();
+    void setKind(const String&);
+
     String srclang() const;
+    void setSrclang(const String&);
+
     String label() const;
+    void setLabel(const String&);
 
     bool isDefault() const;
-    void setKind(const String&);
-    void setSrc(const String&);
-    void setSrclang(const String&);
-    void setLabel(const String&);
     void setIsDefault(bool);
+
     TextTrack* track();
     
     void scheduleLoad();
@@ -77,6 +81,7 @@ private:
     // TextTrackClient
     virtual void textTrackReadyStateChanged(TextTrack*);
     virtual void textTrackModeChanged(TextTrack*);
+    virtual void textTrackKindChanged(TextTrack*);
     virtual void textTrackAddCues(TextTrack*, const TextTrackCueList*);
     virtual void textTrackRemoveCues(TextTrack*, const TextTrackCueList*);
     virtual void textTrackAddCue(TextTrack*, PassRefPtr<TextTrackCue>);

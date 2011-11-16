@@ -1,0 +1,21 @@
+Tests that the addTrack() only accepts known 'kind' values.
+
+++ Test invalid 'kind'.
+EXPECTED (video.textTracks.length == '0') OK
+TEST(video.addTrack('kaptions')) THROWS(DOMException.SYNTAX_ERR) OK
+EXPECTED (video.textTracks.length == '0') OK
+
+++ Test all valid 'kind' keywords.
+RUN(video.addTrack('subtitles'))
+EXPECTED (video.textTracks.length == '1') OK
+RUN(video.addTrack('captions'))
+EXPECTED (video.textTracks.length == '2') OK
+RUN(video.addTrack('descriptions'))
+EXPECTED (video.textTracks.length == '3') OK
+RUN(video.addTrack('chapters'))
+EXPECTED (video.textTracks.length == '4') OK
+RUN(video.addTrack('metadata'))
+EXPECTED (video.textTracks.length == '5') OK
+
+END OF TEST
+

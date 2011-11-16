@@ -41,15 +41,45 @@
 
 namespace WebCore {
 
+const AtomicString& TextTrack::subtitlesKeyword()
+{
+    DEFINE_STATIC_LOCAL(const AtomicString, subtitles, ("subtitles"));
+    return subtitles;
+}
+
+const AtomicString& TextTrack::captionsKeyword()
+{
+    DEFINE_STATIC_LOCAL(const AtomicString, captions, ("captions"));
+    return captions;
+}
+
+const AtomicString& TextTrack::descriptionsKeyword()
+{
+    DEFINE_STATIC_LOCAL(const AtomicString, descriptions, ("descriptions"));
+    return descriptions;
+}
+
+const AtomicString& TextTrack::chaptersKeyword()
+{
+    DEFINE_STATIC_LOCAL(const AtomicString, chapters, ("chapters"));
+    return chapters;
+}
+
+const AtomicString& TextTrack::metadataKeyword()
+{
+    DEFINE_STATIC_LOCAL(const AtomicString, metadata, ("metadata"));
+    return metadata;
+}
+
 TextTrack::TextTrack(ScriptExecutionContext* context, TextTrackClient* client, const String& kind, const String& label, const String& language)
     : TrackBase(context, TrackBase::TextTrack)
-    , m_kind(kind)
     , m_label(label)
     , m_language(language)
     , m_readyState(TextTrack::NONE)
-    , m_mode(TextTrack::SHOWING)
+    , m_mode(TextTrack::HIDDEN)
     , m_client(client)
 {
+    setKind(kind);
 }
 
 TextTrack::~TextTrack()
@@ -59,24 +89,33 @@ TextTrack::~TextTrack()
     clearClient();
 }
 
-String TextTrack::kind() const
+bool TextTrack::isValidKindKeyword(const String& value)
 {
-    return m_kind;
+    if (equalIgnoringCase(value, subtitlesKeyword()))
+        return true;
+    if (equalIgnoringCase(value, captionsKeyword()))
+        return true;
+    if (equalIgnoringCase(value, descriptionsKeyword()))
+        return true;
+    if (equalIgnoringCase(value, chaptersKeyword()))
+        return true;
+    if (equalIgnoringCase(value, metadataKeyword()))
+        return true;
+
+    return false;
 }
 
-String TextTrack::label() const
+void TextTrack::setKind(const String& kind)
 {
-    return m_label;
-}
+    String oldKind = m_kind;
 
-String TextTrack::language() const
-{
-    return m_language;
-}
+    if (isValidKindKeyword(kind))
+        m_kind = kind;
+    else
+        m_kind = subtitlesKeyword();
 
-TextTrack::ReadyState TextTrack::readyState() const
-{
-    return m_readyState;
+    if (m_client && oldKind != m_kind)
+        m_client->textTrackKindChanged(this);
 }
 
 void TextTrack::setReadyState(ReadyState state)
@@ -84,11 +123,6 @@ void TextTrack::setReadyState(ReadyState state)
     m_readyState = state;
     if (m_client)
         m_client->textTrackReadyStateChanged(this);
-}
-
-TextTrack::Mode TextTrack::mode() const
-{
-    return m_mode;
 }
 
 void TextTrack::setMode(unsigned short mode, ExceptionCode& ec)

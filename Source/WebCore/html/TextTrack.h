@@ -28,6 +28,7 @@
 
 #if ENABLE(VIDEO_TRACK)
 
+#include "ExceptionCode.h"
 #include "TrackBase.h"
 #include <wtf/PassOwnPtr.h>
 #include <wtf/RefCounted.h>
@@ -39,12 +40,11 @@ class TextTrack;
 class TextTrackCue;
 class TextTrackCueList;
 
-typedef int ExceptionCode;
-
 class TextTrackClient {
 public:
     virtual ~TextTrackClient() { }
     virtual void textTrackReadyStateChanged(TextTrack*) = 0;
+    virtual void textTrackKindChanged(TextTrack*) = 0;
     virtual void textTrackModeChanged(TextTrack*) = 0;
     virtual void textTrackAddCues(TextTrack*, const TextTrackCueList*) = 0;
     virtual void textTrackRemoveCues(TextTrack*, const TextTrackCueList*) = 0;
@@ -60,15 +60,27 @@ public:
     }
     virtual ~TextTrack();
 
-    String kind() const;
-    String label() const;
-    String language() const;
+    String kind() const { return m_kind; }
+    void setKind(const String&);
+
+    static const AtomicString& subtitlesKeyword();
+    static const AtomicString& captionsKeyword();
+    static const AtomicString& descriptionsKeyword();
+    static const AtomicString& chaptersKeyword();
+    static const AtomicString& metadataKeyword();
+    static bool isValidKindKeyword(const String&);
+
+    String label() const { return m_label; }
+    void setLabel(const String& label) { m_label = label; }
+
+    String language() const { return m_language; }
+    void setLanguage(const String& language) { m_language = language; }
 
     enum ReadyState { NONE = 0, LOADING = 1, LOADED = 2, HTML_ERROR = 3 };
-    ReadyState readyState() const;
+    ReadyState readyState() const { return m_readyState; }
 
     enum Mode { DISABLED = 0, HIDDEN = 1, SHOWING = 2 };
-    Mode mode() const;
+    Mode mode() const { return m_mode; }
     void setMode(unsigned short, ExceptionCode&);
 
     TextTrackCueList* cues();

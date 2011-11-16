@@ -188,8 +188,11 @@ public:
     float percentLoaded() const;
 
 #if ENABLE(VIDEO_TRACK)
-    PassRefPtr<TextTrack> addTrack(const String& kind, const String& label = "", const String& language = "");
-    TextTrackList* textTracks() const;
+    PassRefPtr<TextTrack> addTrack(const String& kind, const String& label, const String& language, ExceptionCode&);
+    PassRefPtr<TextTrack> addTrack(const String& kind, const String& label, ExceptionCode& ec) { return addTrack(kind, label, emptyString(), ec); }
+    PassRefPtr<TextTrack> addTrack(const String& kind, ExceptionCode& ec) { return addTrack(kind, emptyString(), emptyString(), ec); }
+
+    TextTrackList* textTracks();
 
     void addTextTrack(PassRefPtr<TextTrack>);
 
@@ -198,6 +201,7 @@ public:
 
     // TextTrackClient
     virtual void textTrackReadyStateChanged(TextTrack*);
+    virtual void textTrackKindChanged(TextTrack*);
     virtual void textTrackModeChanged(TextTrack*);
     virtual void textTrackAddCues(TextTrack*, const TextTrackCueList*);
     virtual void textTrackRemoveCues(TextTrack*, const TextTrackCueList*);

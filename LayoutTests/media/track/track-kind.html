@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+    <head>
+
+        <script src=../media-file.js></script>
+        <script src=../video-test.js></script>
+        <script>
+
+            var trackElement;
+            function setKind(value)
+            {
+                consoleWrite("<b> set via DOM</b>");
+                run("trackElement.removeAttribute('kind')");
+                run("trackElement.kind = '" + value + "'");
+                testExpected("trackElement.getAttribute('kind')", value);
+                testExpected("trackElement.kind", value);
+                testExpected("trackElement.track.kind", value);
+                consoleWrite("<b> and via attribute</b>");
+                run("trackElement.removeAttribute('kind')");
+                run("trackElement.setAttribute('kind', '" + value + "')");
+                testExpected("trackElement.kind", value);
+                testExpected("trackElement.track.kind", value);
+                testExpected("trackElement.getAttribute('kind')", value);
+                consoleWrite("");
+
+            }
+
+            function start()
+            {
+                findMediaElement();
+                consoleWrite("");
+
+                trackElement = document.getElementById('track_1');
+
+                consoleWrite("<b>++ Test default attribute value</b>");
+                testExpected("trackElement.getAttribute('kind')", null);
+                testExpected("trackElement.kind", "subtitles");
+                testExpected("video.textTracks[0].kind", "subtitles");
+                consoleWrite("");
+
+                consoleWrite("<b>*** Set to bogus value, should return default</b>");
+                consoleWrite("<b> set via DOM</b>");
+                var value = "english-metadata"
+                run("trackElement.removeAttribute('kind')");
+                run("trackElement.kind = '" + value + "'");
+                testExpected("trackElement.getAttribute('kind')", value);
+                testExpected("trackElement.kind", "subtitles");
+                testExpected("trackElement.track.kind", "subtitles");
+                consoleWrite("<b> and via attribute</b>");
+                run("trackElement.removeAttribute('kind')");
+                run("trackElement.setAttribute('kind', '" + value + "')");
+                testExpected("trackElement.kind", "subtitles");
+                testExpected("trackElement.track.kind", "subtitles");
+                testExpected("trackElement.getAttribute('kind')", value);
+                consoleWrite("");
+
+                consoleWrite("<b>*** Set to known values</b>");
+                consoleWrite("<b>++ 'subtitles'</b>");
+                setKind("subtitles");
+
+                consoleWrite("<b>++ 'captions'</b>");
+                setKind("captions");
+
+                consoleWrite("<b>++ 'descriptions'</b>");
+                setKind("descriptions");
+
+                consoleWrite("<b>++ 'chapters'</b>");
+                setKind("chapters");
+
+                consoleWrite("<b>++ 'metadata'</b>");
+                setKind("metadata");
+
+                endTest();
+            }
+
+        </script>
+    </head>
+    <body onload="start()">
+        <p>Tests that the 'addtrack' event is fired when a TextTrack is created.</p>
+        <video>
+            <track id=track_1>
+        </video>
+    </body>
+</html>
