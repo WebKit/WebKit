@@ -1,3 +1,19 @@
+2011-11-16  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
+
+        [Qt] FrameLoaderClientQt::canShowMIMEType should always return true
+        https://bugs.webkit.org/show_bug.cgi?id=72169
+
+        Reviewed by Simon Hausmann.
+
+        Currently FrameLoaderClientQt::canShowMIMEType is called after
+        dispatchDecidePolicyForResponse. If decidePolicyForResponse returns
+        PolicyUse and canShowMIMEType returns false, then we have a bug.
+        Therefore, FrameLoaderClientQt::canShowMIMEType now will always
+        return true, following the implemenation of WebKit2.
+
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::canShowMIMEType):
+
 2011-11-15  Huang Dongsung  <luxtella@company100.net>
 
         [TexMap][Qt] Start PageClientQ[Graphics]Widget::syncTimer only when the syncTimer

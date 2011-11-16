@@ -650,25 +650,10 @@ bool FrameLoaderClientQt::canShowMIMETypeAsHTML(const String& MIMEType) const
     notImplemented();
     return false;
 }
-    
+
 bool FrameLoaderClientQt::canShowMIMEType(const String& MIMEType) const
 {
-    String type = MIMEType;
-    type.makeLower();
-    if (MIMETypeRegistry::isSupportedImageMIMEType(type))
-        return true;
-
-    if (MIMETypeRegistry::isSupportedNonImageMIMEType(type))
-        return true;
-
-    if (MIMETypeRegistry::isSupportedMediaMIMEType(type))
-        return true;
-
-    if (m_frame && m_frame->settings()  && m_frame->settings()->arePluginsEnabled()
-        && PluginDatabase::installedPlugins()->isMIMETypeRegistered(type))
-        return true;
-
-    return false;
+    return true;
 }
 
 bool FrameLoaderClientQt::representationExistsForURLScheme(const String&) const
