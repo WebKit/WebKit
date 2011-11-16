@@ -3912,6 +3912,7 @@ BUGWK72376 WIN : fast/forms/file/input-file-label.html = TEXT PASS
 BUGWK72434 : inspector/styles/svg-style.xhtml = PASS TEXT TIMEOUT
 
 BUGWK72485 DEBUG : animations/animation-direction-normal.html = TEXT PASS
+BUGWK72485 LEOPARD DEBUG CPU-CG GPU-CG : animations/play-state-paused.html = TEXT PASS
 
 BUGWK72487 MAC : compositing/layers-inside-overflow-scroll.html = IMAGE
 BUGWK72487 MAC : compositing/overflow/overflow-compositing-descendant.html = IMAGE
