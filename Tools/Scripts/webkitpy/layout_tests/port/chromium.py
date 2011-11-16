@@ -399,7 +399,7 @@ class ChromiumPort(Port):
 
 # FIXME: This should inherit from WebKitDriver now that Chromium has a DumpRenderTree process like the rest of WebKit.
 class ChromiumDriver(Driver):
-    def __init__(self, port, worker_number, pixel_tests=True):
+    def __init__(self, port, worker_number, pixel_tests):
         Driver.__init__(self, port, worker_number, pixel_tests)
         self._proc = None
         self._image_path = None

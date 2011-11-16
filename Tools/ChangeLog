@@ -1,3 +1,17 @@
+2011-11-16  Tony Chang  <tony@chromium.org>
+
+        [NRWT] refactor drivers to require pixel_tests param
+        https://bugs.webkit.org/show_bug.cgi?id=72517
+
+        Reviewed by Ojan Vafai.
+
+        No tests, just a refactoring.
+
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+        * Scripts/webkitpy/layout_tests/port/webkit_unittest.py:
+
 2011-11-16  Dirk Pranke  <dpranke@chromium.org>
 
         Run a dummy test in the gpu configurations if there's nothing to do.

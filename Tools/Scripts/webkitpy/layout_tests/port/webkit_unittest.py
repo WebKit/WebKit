@@ -255,7 +255,7 @@ class MockServerProcess(object):
 class WebKitDriverTest(unittest.TestCase):
     def test_read_block(self):
         port = TestWebKitPort()
-        driver = WebKitDriver(port, 0)
+        driver = WebKitDriver(port, 0, pixel_tests=False)
         driver._server_process = MockServerProcess([
             'ActualHash: foobar',
             'Content-Type: my_type',
@@ -269,7 +269,7 @@ class WebKitDriverTest(unittest.TestCase):
 
     def test_read_binary_block(self):
         port = TestWebKitPort()
-        driver = WebKitDriver(port, 0)
+        driver = WebKitDriver(port, 0, pixel_tests=True)
         driver._server_process = MockServerProcess([
             'ActualHash: actual',
             'ExpectedHash: expected',

@@ -440,7 +440,7 @@ class WebKitPort(Port):
 class WebKitDriver(Driver):
     """WebKit implementation of the DumpRenderTree/WebKitTestRunner interface."""
 
-    def __init__(self, port, worker_number, pixel_tests=False):
+    def __init__(self, port, worker_number, pixel_tests):
         Driver.__init__(self, port, worker_number, pixel_tests)
         self._driver_tempdir = port._filesystem.mkdtemp(prefix='%s-' % self._port.driver_name())
         # WebKitTestRunner can report back subprocess crashes by printing

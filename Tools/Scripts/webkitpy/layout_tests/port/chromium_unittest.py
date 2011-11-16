@@ -50,8 +50,7 @@ from webkitpy.layout_tests.port import port_testcase
 class ChromiumDriverTest(unittest.TestCase):
     def setUp(self):
         mock_port = Mock()
-        mock_port.get_option = lambda option_name: ''
-        self.driver = chromium.ChromiumDriver(mock_port, worker_number=0)
+        self.driver = chromium.ChromiumDriver(mock_port, worker_number=0, pixel_tests=True)
 
     def test_test_shell_command(self):
         expected_command = "test.html 2 checksum\n"
@@ -123,7 +122,7 @@ class ChromiumDriverTest(unittest.TestCase):
 
         class MockDriver(chromium.ChromiumDriver):
             def __init__(self):
-                chromium.ChromiumDriver.__init__(self, mock_port, worker_number=0)
+                chromium.ChromiumDriver.__init__(self, mock_port, worker_number=0, pixel_tests=False)
 
             def cmd_line(self):
                 return 'python'
