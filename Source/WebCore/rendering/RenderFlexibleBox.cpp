@@ -721,7 +721,7 @@ void RenderFlexibleBox::alignChildrenBlockDirection(FlexOrderIterator& iterator,
             Length height = isHorizontalFlow() ? child->style()->height() : child->style()->width();
             if (height.isAuto()) {
                 // FIXME: Clamp to max-height once it's spec'ed (should we align towards the start or center?).
-                LayoutUnit stretchedHeight = logicalHeightForChild(child) + RenderFlexibleBox::availableAlignmentSpaceForChild(child);
+                LayoutUnit stretchedHeight = crossAxisExtentForChild(child) + RenderFlexibleBox::availableAlignmentSpaceForChild(child);
                 if (isHorizontalFlow())
                     child->setHeight(stretchedHeight);
                 else

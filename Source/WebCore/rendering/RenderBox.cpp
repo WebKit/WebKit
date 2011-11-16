@@ -1801,6 +1801,9 @@ bool RenderBox::sizesToIntrinsicLogicalWidth(LogicalWidthType widthType) const
             return true;
     }
 
+    if (parent()->isFlexibleBox())
+        return true;
+
     // Flexible horizontal boxes lay out children at their intrinsic widths.  Also vertical boxes
     // that don't stretch their kids lay out their children at their intrinsic widths.
     // FIXME: Think about block-flow here.

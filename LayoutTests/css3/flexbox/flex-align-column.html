@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<style>
+body {
+    margin: 0;
+}
+.flexbox {
+    width: 600px;
+    height: 240px;
+    display: -webkit-flexbox;
+    background-color: #aaa;
+    position: relative;
+    -webkit-flex-flow: column;
+}
+.vertical {
+    -webkit-writing-mode: vertical-lr;
+}
+.flexbox :nth-child(1) {
+    background-color: blue;
+}
+.flexbox :nth-child(2) {
+    background-color: green;
+}
+.flexbox :nth-child(3) {
+    background-color: red;
+}
+.flexbox :nth-child(4) {
+    background-color: yellow;
+}
+.flexbox :nth-child(5) {
+    background-color: purple;
+}
+.flexbox :nth-child(6) {
+    background-color: orange;
+}
+.flexbox :nth-child(7) {
+    background-color: lime;
+}
+</style>
+<script>
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+</script>
+<script src="resources/flexbox.js"></script>
+<body onload="checkFlexBoxen()">
+
+<div class="flexbox">
+    <div data-offset-x=0 data-expected-width=600 data-expected-height=40 style="height: -webkit-flex(1);"></div>
+    <div data-offset-x=0 data-expected-width=600 data-expected-height=40 style="height: -webkit-flex(1); -webkit-flex-align: stretch; "></div>
+    <div data-offset-x=0 data-expected-width=20 data-expected-height=40 style="height: -webkit-flex(1); -webkit-flex-align: start; width: 20px;"></div>
+    <div data-offset-x=580 data-expected-width=20 data-expected-height=40 style="height: -webkit-flex(1); -webkit-flex-align: end; width: 20px;"></div>
+    <div data-offset-x=290 data-expected-width=20 data-expected-height=40 style="height: -webkit-flex(1); -webkit-flex-align: center; width: 20px;"></div>
+    <div data-offset-x=0 data-expected-width=20 data-expected-height=40 style="height: -webkit-flex(1); -webkit-flex-align: baseline; width: 20px;"></div>
+</div>
+
+<div class="flexbox vertical">
+    <div data-offset-y=0 data-expected-width=100 data-expected-height=240 style="width: -webkit-flex(1);"></div>
+    <div data-offset-y=0 data-expected-width=100 data-expected-height=240 style="width: -webkit-flex(1); -webkit-flex-align: stretch; "></div>
+    <div data-offset-y=0 data-expected-width=100 data-expected-height=20 style="width: -webkit-flex(1); -webkit-flex-align: start; height: 20px;"></div>
+    <div data-offset-y=220 data-expected-width=100 data-expected-height=20 style="width: -webkit-flex(1); -webkit-flex-align: end; height: 20px;"></div>
+    <div data-offset-y=110 data-expected-width=100 data-expected-height=20 style="width: -webkit-flex(1); -webkit-flex-align: center; height: 20px;"></div>
+    <div data-offset-y=0 data-expected-width=100 data-expected-height=20 style="width: -webkit-flex(1); -webkit-flex-align: baseline; height: 20px;"></div>
+</div>
+
+</body>
+</html>

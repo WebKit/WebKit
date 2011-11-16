@@ -1,3 +1,21 @@
+2011-10-28  Ojan Vafai  <ojan@chromium.org>
+
+        implement flex-align for flex-flow: column
+        https://bugs.webkit.org/show_bug.cgi?id=70754
+
+        Reviewed by David Hyatt.
+
+        Tests: css3/flexbox/flex-align-column.html
+               css3/flexbox/line-wrapping.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::sizesToIntrinsicLogicalWidth):
+        When flexitems are column, they should size to the intrinsic width unless flex-flow is stretch.
+
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::alignChildrenBlockDirection):
+        This was just using the wrong, non-flow-aware method.
+
 2011-11-15  Jochen Eisinger  <jochen@chromium.org>
 
         Rename ReferrerPolicy to clarify its meaning
@@ -137,6 +155,30 @@
         * page/PointerLock.h: Renamed from Source/WebCore/page/MouseLockable.h.
         (WebCore::PointerLock::create):
         * page/PointerLock.idl: Renamed from Source/WebCore/page/MouseLockable.idl.
+
+2011-10-28  Ojan Vafai  <ojan@chromium.org>
+
+        Overflow and relayout are broken in the new flexboxes
+        https://bugs.webkit.org/show_bug.cgi?id=71161
+
+        Reviewed by David Hyatt.
+
+        Tests: css3/flexbox/auto-height-dynamic.html
+               css3/flexbox/flex-item-child-overflow-expected.html
+               css3/flexbox/flex-item-child-overflow.html
+
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::layoutBlock):
+        -Always set the logical height to 0 to start with to ensure we don't
+        use the height from the previous layout when we are computing the
+        intrinsic size of the flexbox.
+        -Call computeOverflow after computeLogicalHeight so that flex-item's children's
+        overflow is properly rendered.
+
+        (WebCore::RenderFlexibleBox::layoutAndPlaceChildrenInlineDirection):
+        -Now that we setLogicalHeight in layoutBlock, we no longer need to do it here.
+        -Refactor flipping code. The behavior is the same, but the variable names are just
+        more correct.
 
 2011-10-28  Ojan Vafai  <ojan@chromium.org>
 
