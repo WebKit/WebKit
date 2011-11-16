@@ -1,3 +1,18 @@
+2011-11-16  Ryosuke Niwa  <rniwa@webkit.org>
+
+        contributors_by_fuzzy_match is super slow
+        https://bugs.webkit.org/show_bug.cgi?id=72540
+
+        Reviewed by Eric Seidel.
+
+        Make contributors_by_name do case insensitive search using a dictionary.
+
+        Also call contributors_by_name first in contributors_by_fuzzy_match now that it's fast
+        because that's the most common case.
+
+        * Scripts/webkitpy/common/config/committers.py:
+        * Scripts/webkitpy/common/config/committers_unittest.py:
+
 2011-11-16  David Levin  <levin@chromium.org>
 
         check-webkit-style should recognize functions even if they have OVERRIDE after them.

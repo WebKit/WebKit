@@ -462,6 +462,7 @@ class CommitterList(object):
         self._contributors = contributors + committers + reviewers
         self._committers = committers + reviewers
         self._reviewers = reviewers
+        self._contributors_by_name = {}
         self._accounts_by_email = {}
         self._accounts_by_login = {}
 
@@ -476,6 +477,14 @@ class CommitterList(object):
 
     def reviewers(self):
         return self._reviewers
+
+    def _name_to_contributor_map(self):
+        if not len(self._contributors_by_name):
+            for contributor in self._contributors:
+                assert(contributor.full_name)
+                assert(contributor.full_name.lower() not in self._contributors_by_name)  # We should never have duplicate names.
+                self._contributors_by_name[contributor.full_name.lower()] = contributor
+        return self._contributors_by_name
 
     def _email_to_account_map(self):
         if not len(self._accounts_by_email):
@@ -509,13 +518,6 @@ class CommitterList(object):
             return None
         return record
 
-    def contributor_by_name(self, name):
-        # This could be made into a hash lookup if callers need it to be fast.
-        for contributor in self.contributors():
-            if contributor.full_name and contributor.full_name == name:
-                return contributor
-        return None
-
     def committer_by_name(self, name):
         return self._committer_only(self.contributor_by_name(name))
 
@@ -540,7 +542,7 @@ class CommitterList(object):
         string = string.lower()
 
         # First path, optimitically match for fullname, email and irc_nicknames
-        account = self.account_by_email(string) or self.contributor_by_irc_nickname(string) or self.contributor_by_name(string)
+        account = self.contributor_by_name(string) or self.account_by_email(string) or self.contributor_by_irc_nickname(string)
         if account:
             return [account], 0
 
@@ -567,6 +569,9 @@ class CommitterList(object):
 
     def account_by_email(self, email):
         return self._email_to_account_map().get(email.lower())
+
+    def contributor_by_name(self, name):
+        return self._name_to_contributor_map().get(name.lower())
 
     def contributor_by_email(self, email):
         return self._contributor_only(self.account_by_email(email))
