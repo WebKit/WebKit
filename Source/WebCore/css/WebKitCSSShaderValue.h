@@ -32,19 +32,28 @@
 
 #if ENABLE(CSS_SHADERS)
 
+#include "CachedResourceHandle.h"
 #include "CSSPrimitiveValue.h"
 
 namespace WebCore {
 
+class CachedResourceLoader;
+class StyleCachedShader;
+class StyleShader;
+
 class WebKitCSSShaderValue : public CSSPrimitiveValue {
 public:
     static PassRefPtr<WebKitCSSShaderValue> create(const String& url) { return adoptRef(new WebKitCSSShaderValue(url)); }
+    ~WebKitCSSShaderValue();
 
+    StyleCachedShader* cachedShader(CachedResourceLoader*);
+    StyleShader* cachedOrPendingShader();
+    
 private:
-    WebKitCSSShaderValue(const String& url)
-        : CSSPrimitiveValue(WebKitCSSShaderClass, url, CSS_URI)
-    {
-    }
+    WebKitCSSShaderValue(const String& url);
+    
+    RefPtr<StyleShader> m_shader;
+    bool m_accessedShader;
 };
 
 } // namespace WebCore

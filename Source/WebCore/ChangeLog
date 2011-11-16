@@ -1,3 +1,69 @@
+2011-11-15  Alexandru Chiculita  <achicu@adobe.com>
+
+        [CSSShaders] Implement the style cached resources and computed style for the shader urls
+        https://bugs.webkit.org/show_bug.cgi?id=72378
+
+        Reviewed by Dean Jackson.
+
+        Test: css3/filters/custom-filter-property-computed-style.html
+
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::valueForFilter):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::CSSStyleSelector):
+        (WebCore::CSSStyleSelector::styleForKeyframe):
+        (WebCore::CSSStyleSelector::pseudoStyleForElement):
+        (WebCore::CSSStyleSelector::styleForPage):
+        (WebCore::CSSStyleSelector::applyMatchedDeclarations):
+        (WebCore::CSSStyleSelector::styleShader):
+        (WebCore::CSSStyleSelector::cachedOrPendingStyleShaderFromValue):
+        (WebCore::CSSStyleSelector::loadPendingShaders):
+        (WebCore::CSSStyleSelector::createCustomFilterOperation):
+        (WebCore::CSSStyleSelector::createFilterOperations):
+        * css/CSSStyleSelector.h:
+        * css/WebKitCSSShaderValue.cpp:
+        (WebCore::WebKitCSSShaderValue::WebKitCSSShaderValue):
+        (WebCore::WebKitCSSShaderValue::~WebKitCSSShaderValue):
+        (WebCore::WebKitCSSShaderValue::cachedShader):
+        (WebCore::WebKitCSSShaderValue::cachedOrPendingShader):
+        * css/WebKitCSSShaderValue.h:
+        * loader/cache/CachedResource.cpp:
+        (WebCore::defaultPriorityForResourceType):
+        * loader/cache/CachedResource.h:
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::createResource):
+        (WebCore::CachedResourceLoader::requestShader):
+        (WebCore::CachedResourceLoader::checkInsecureContent):
+        (WebCore::CachedResourceLoader::canRequest):
+        * loader/cache/CachedResourceLoader.h:
+        * loader/cache/CachedShader.cpp:
+        (WebCore::CachedShader::CachedShader):
+        (WebCore::CachedShader::~CachedShader):
+        * loader/cache/CachedShader.h:
+        * platform/graphics/filters/CustomFilterOperation.h:
+        * rendering/style/RenderStyle.h:
+        (WebCore::InheritedFlags::filter):
+        * rendering/style/StyleCachedShader.cpp:
+        (WebCore::StyleCachedShader::StyleCachedShader):
+        (WebCore::StyleCachedShader::cssValue):
+        * rendering/style/StyleCachedShader.h:
+        (WebCore::StyleCachedShader::create):
+        * rendering/style/StylePendingShader.h:
+        (WebCore::StylePendingShader::create):
+        (WebCore::StylePendingShader::cssValue):
+        (WebCore::StylePendingShader::cssShaderValue):
+        (WebCore::StylePendingShader::StylePendingShader):
+        * rendering/style/StyleShader.h:
+        (WebCore::StyleShader::~StyleShader):
+        (WebCore::StyleShader::isCachedShader):
+        (WebCore::StyleShader::isPendingShader):
+        (WebCore::StyleShader::StyleShader):
+
 2011-11-15  Sergio Villar Senin  <svillar@igalia.com>
 
         [WK2] [GTK] fast/css/webkit-mask-crash-fieldset-legend.html asserts WebKitWebProcess

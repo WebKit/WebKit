@@ -1366,6 +1366,12 @@
 		4FD8D0F3119C718B002FA825 /* ScriptGCEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 4FD8D0F1119C718B002FA825 /* ScriptGCEvent.h */; };
 		501BA9E21393CEA000F7ACEB /* CSSWrapShapes.h in Headers */ = {isa = PBXBuildFile; fileRef = 501BA9E11393CEA000F7ACEB /* CSSWrapShapes.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		501BAAA913950E2C00F7ACEB /* WindRule.h in Headers */ = {isa = PBXBuildFile; fileRef = 501BAAA813950E2C00F7ACEB /* WindRule.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		5038BC0714711CDB0095E0D1 /* WebKitCSSShaderValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5038BC0614711CDB0095E0D1 /* WebKitCSSShaderValue.cpp */; };
+		5038BC0B14711D340095E0D1 /* CustomFilterOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = 5038BC0914711D340095E0D1 /* CustomFilterOperation.h */; };
+		5038BE2F1472AD230095E0D1 /* StyleCachedShader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5038BE2D1472AD230095E0D1 /* StyleCachedShader.cpp */; };
+		5038BE301472AD230095E0D1 /* StyleCachedShader.h in Headers */ = {isa = PBXBuildFile; fileRef = 5038BE2E1472AD230095E0D1 /* StyleCachedShader.h */; };
+		5038BE401472AD980095E0D1 /* CachedShader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5038BE3E1472AD980095E0D1 /* CachedShader.cpp */; };
+		5038BE411472AD980095E0D1 /* CachedShader.h in Headers */ = {isa = PBXBuildFile; fileRef = 5038BE3F1472AD980095E0D1 /* CachedShader.h */; };
 		508CCA4F13CF106B003151F3 /* RenderFlowThread.h in Headers */ = {isa = PBXBuildFile; fileRef = 508CCA4D13CF106B003151F3 /* RenderFlowThread.h */; };
 		508CCA5013CF106B003151F3 /* RenderFlowThread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 508CCA4E13CF106B003151F3 /* RenderFlowThread.cpp */; };
 		50E566D6139E38C500214433 /* CSSWrapShapes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 501BAAB11395114B00F7ACEB /* CSSWrapShapes.cpp */; };
@@ -8556,6 +8562,12 @@
 		501BA9E11393CEA000F7ACEB /* CSSWrapShapes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSWrapShapes.h; sourceTree = "<group>"; };
 		501BAAA813950E2C00F7ACEB /* WindRule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WindRule.h; sourceTree = "<group>"; };
 		501BAAB11395114B00F7ACEB /* CSSWrapShapes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSWrapShapes.cpp; sourceTree = "<group>"; };
+		5038BC0614711CDB0095E0D1 /* WebKitCSSShaderValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebKitCSSShaderValue.cpp; sourceTree = "<group>"; };
+		5038BC0914711D340095E0D1 /* CustomFilterOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CustomFilterOperation.h; path = filters/CustomFilterOperation.h; sourceTree = "<group>"; };
+		5038BE2D1472AD230095E0D1 /* StyleCachedShader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = StyleCachedShader.cpp; path = style/StyleCachedShader.cpp; sourceTree = "<group>"; };
+		5038BE2E1472AD230095E0D1 /* StyleCachedShader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StyleCachedShader.h; path = style/StyleCachedShader.h; sourceTree = "<group>"; };
+		5038BE3E1472AD980095E0D1 /* CachedShader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CachedShader.cpp; sourceTree = "<group>"; };
+		5038BE3F1472AD980095E0D1 /* CachedShader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CachedShader.h; sourceTree = "<group>"; };
 		508CCA4D13CF106B003151F3 /* RenderFlowThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderFlowThread.h; sourceTree = "<group>"; };
 		508CCA4E13CF106B003151F3 /* RenderFlowThread.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderFlowThread.cpp; sourceTree = "<group>"; };
 		50B42157146976960087E604 /* WebKitCSSShaderValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKitCSSShaderValue.h; sourceTree = "<group>"; };
@@ -17589,6 +17601,7 @@
 		A75E8B7F0E1DE2B0007F2481 /* filters */ = {
 			isa = PBXGroup;
 			children = (
+				5038BC0914711D340095E0D1 /* CustomFilterOperation.h */,
 				19841BFA136836A1006EBBB9 /* arm */,
 				A1E1154313015C3D0054AC8C /* DistantLightSource.cpp */,
 				84730D5A1248F0B300D3A9C9 /* DistantLightSource.h */,
@@ -18487,6 +18500,8 @@
 		A8D2B2521287A56000AF4DDA /* cache */ = {
 			isa = PBXGroup;
 			children = (
+				5038BE3E1472AD980095E0D1 /* CachedShader.cpp */,
+				5038BE3F1472AD980095E0D1 /* CachedShader.h */,
 				BCB16C000979C3BD00467741 /* CachedCSSStyleSheet.cpp */,
 				BCB16C010979C3BD00467741 /* CachedCSSStyleSheet.h */,
 				BC64B4C90CB4295D005F2B62 /* CachedFont.cpp */,
@@ -19752,6 +19767,8 @@
 		BC8C8FAA0DDCD2F200B592F4 /* style */ = {
 			isa = PBXGroup;
 			children = (
+				5038BE2D1472AD230095E0D1 /* StyleCachedShader.cpp */,
+				5038BE2E1472AD230095E0D1 /* StyleCachedShader.h */,
 				BC5EB5E00E81BE8700B25965 /* BorderData.h */,
 				BC5EB5DA0E81B7EA00B25965 /* BorderValue.h */,
 				BC5EB5DE0E81B9AB00B25965 /* CollapsedBorderValue.h */,
@@ -20569,6 +20586,8 @@
 		F523D18402DE42E8018635CA /* css */ = {
 			isa = PBXGroup;
 			children = (
+				5038BC0614711CDB0095E0D1 /* WebKitCSSShaderValue.cpp */,
+				50B42157146976960087E604 /* WebKitCSSShaderValue.h */,
 				AD03AAF81468453900A39B5B /* CSSValue.cpp */,
 				CAE9F90D146441F000C245B0 /* CSSAspectRatioValue.cpp */,
 				CAE9F90E146441F000C245B0 /* CSSAspectRatioValue.h */,
@@ -24694,6 +24713,9 @@
 				CDF65CCA145B448800C4C7AA /* MediaControllerInterface.h in Headers */,
 				2917B5621473496C0052C9D0 /* LayerFlushScheduler.h in Headers */,
 				2917B5631473496C0052C9D0 /* LayerFlushSchedulerClient.h in Headers */,
+				5038BC0B14711D340095E0D1 /* CustomFilterOperation.h in Headers */,
+				5038BE301472AD230095E0D1 /* StyleCachedShader.h in Headers */,
+				5038BE411472AD980095E0D1 /* CachedShader.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -27564,6 +27586,9 @@
 				31313F651443B35F006E2A90 /* FilterEffectRenderer.cpp in Sources */,
 				2917B5611473496C0052C9D0 /* LayerFlushScheduler.cpp in Sources */,
 				2917B566147349950052C9D0 /* LayerFlushSchedulerMac.cpp in Sources */,
+				5038BC0714711CDB0095E0D1 /* WebKitCSSShaderValue.cpp in Sources */,
+				5038BE2F1472AD230095E0D1 /* StyleCachedShader.cpp in Sources */,
+				5038BE401472AD980095E0D1 /* CachedShader.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

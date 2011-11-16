@@ -856,6 +856,7 @@ public:
     ESpeak speak() { return static_cast<ESpeak>(rareInheritedData->speak); }
 
 #if ENABLE(CSS_FILTERS)
+    FilterOperations& filter() { return rareNonInheritedData.access()->m_filter.access()->m_operations; }
     const FilterOperations& filter() const { return rareNonInheritedData->m_filter->m_operations; }
     bool hasFilter() const { return !rareNonInheritedData->m_filter->m_operations.operations().isEmpty(); }
 #else

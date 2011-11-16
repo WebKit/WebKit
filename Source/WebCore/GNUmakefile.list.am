@@ -1121,6 +1121,7 @@ webcore_sources += \
 	Source/WebCore/css/WebKitCSSKeyframesRule.h \
 	Source/WebCore/css/WebKitCSSMatrix.cpp \
 	Source/WebCore/css/WebKitCSSMatrix.h \
+	Source/WebCore/css/WebKitCSSShaderValue.cpp \
 	Source/WebCore/css/WebKitCSSShaderValue.h \
 	Source/WebCore/css/WebKitCSSTransformValue.cpp \
 	Source/WebCore/css/WebKitCSSTransformValue.h \
@@ -2167,6 +2168,8 @@ webcore_sources += \
 	Source/WebCore/loader/cache/CachedResourceLoader.h \
 	Source/WebCore/loader/cache/CachedScript.cpp \
 	Source/WebCore/loader/cache/CachedScript.h \
+	Source/WebCore/loader/cache/CachedShader.cpp \
+	Source/WebCore/loader/cache/CachedShader.h \
 	Source/WebCore/loader/cache/CachedStyleSheetClient.h \
 	Source/WebCore/loader/cache/CachedTextTrack.cpp \
 	Source/WebCore/loader/cache/CachedTextTrack.h \
@@ -2530,6 +2533,7 @@ webcore_sources += \
 	Source/WebCore/platform/graphics/cairo/TransformationMatrixCairo.cpp \
 	Source/WebCore/platform/graphics/clutter/GraphicsLayerClutter.h \
 	Source/WebCore/platform/graphics/clutter/GraphicsLayerClutter.cpp \
+	Source/WebCore/platform/graphics/filters/CustomFilterOperation.h \
 	Source/WebCore/platform/graphics/filters/DistantLightSource.cpp \
 	Source/WebCore/platform/graphics/filters/DistantLightSource.h \
 	Source/WebCore/platform/graphics/filters/FEBlend.cpp \
@@ -3264,6 +3268,8 @@ webcore_sources += \
 	Source/WebCore/rendering/style/StyleBoxData.h \
 	Source/WebCore/rendering/style/StyleCachedImage.cpp \
 	Source/WebCore/rendering/style/StyleCachedImage.h \
+	Source/WebCore/rendering/style/StyleCachedShader.cpp \
+	Source/WebCore/rendering/style/StyleCachedShader.h \
 	Source/WebCore/rendering/style/StyleDashboardRegion.h \
 	Source/WebCore/rendering/style/StyleDeprecatedFlexibleBoxData.cpp \
 	Source/WebCore/rendering/style/StyleDeprecatedFlexibleBoxData.h \
@@ -3281,11 +3287,13 @@ webcore_sources += \
 	Source/WebCore/rendering/style/StyleMultiColData.cpp \
 	Source/WebCore/rendering/style/StyleMultiColData.h \
 	Source/WebCore/rendering/style/StylePendingImage.h \
+	Source/WebCore/rendering/style/StylePendingShader.h \
 	Source/WebCore/rendering/style/StyleRareInheritedData.cpp \
 	Source/WebCore/rendering/style/StyleRareInheritedData.h \
 	Source/WebCore/rendering/style/StyleRareNonInheritedData.cpp \
 	Source/WebCore/rendering/style/StyleRareNonInheritedData.h \
 	Source/WebCore/rendering/style/StyleReflection.h \
+	Source/WebCore/rendering/style/StyleShader.h \
 	Source/WebCore/rendering/style/StyleSurroundData.cpp \
 	Source/WebCore/rendering/style/StyleSurroundData.h \
 	Source/WebCore/rendering/style/StyleTransformData.cpp \

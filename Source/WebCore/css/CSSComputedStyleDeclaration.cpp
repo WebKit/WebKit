@@ -40,6 +40,9 @@
 #include "CSSSelector.h"
 #include "CSSTimingFunctionValue.h"
 #include "CSSValueList.h"
+#if ENABLE(CSS_SHADERS)
+#include "CustomFilterOperation.h"
+#endif
 #include "Document.h"
 #include "ExceptionCode.h"
 #include "FontFeatureSettings.h"
@@ -737,8 +740,18 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::valueForFilter(RenderStyle* st
         }
 #if ENABLE(CSS_SHADERS)
         case FilterOperation::CUSTOM: {
-            // FIXME: Implement custom shader function.
-            // https://bugs.webkit.org/show_bug.cgi?id=71396
+            CustomFilterOperation* customOperation = static_cast<CustomFilterOperation*>(filterOperation);
+            filterValue = WebKitCSSFilterValue::create(WebKitCSSFilterValue::CustomFilterOperation);
+            
+            RefPtr<CSSValueList> shadersList = CSSValueList::createSpaceSeparated();
+            if (customOperation->vertexShader())
+                shadersList->append(customOperation->vertexShader()->cssValue());
+            else
+                shadersList->append(primitiveValueCache->createIdentifierValue(CSSValueNone));
+            if (customOperation->fragmentShader())
+                shadersList->append(customOperation->fragmentShader()->cssValue());
+            filterValue->append(shadersList.release());
+            
             break;
         }
 #endif

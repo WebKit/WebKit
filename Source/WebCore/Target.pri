@@ -459,6 +459,7 @@ SOURCES += \
     css/WebKitCSSKeyframeRule.cpp \
     css/WebKitCSSKeyframesRule.cpp \
     css/WebKitCSSMatrix.cpp \
+    css/WebKitCSSShaderValue.cpp \
     css/WebKitCSSTransformValue.cpp \
     dom/ActiveDOMObject.cpp \
     dom/Attr.cpp \
@@ -910,6 +911,7 @@ SOURCES += \
     loader/cache/CachedResourceHandle.cpp \
     loader/cache/CachedResource.cpp \
     loader/cache/CachedScript.cpp \
+    loader/cache/CachedShader.cpp \
     loader/cache/CachedXSLStyleSheet.cpp \
     loader/CrossOriginAccessControl.cpp \
     loader/CrossOriginPreflightResultCache.cpp \
@@ -1250,6 +1252,7 @@ SOURCES += \
     rendering/style/StyleBackgroundData.cpp \
     rendering/style/StyleBoxData.cpp \
     rendering/style/StyleCachedImage.cpp \
+    rendering/style/StyleCachedShader.cpp \
     rendering/style/StyleDeprecatedFlexibleBoxData.cpp \
     rendering/style/StyleFilterData.cpp \
     rendering/style/StyleFlexibleBoxData.cpp \
@@ -1950,6 +1953,7 @@ HEADERS += \
     loader/cache/CachedResource.h \
     loader/cache/CachedResourceHandle.h \
     loader/cache/CachedScript.h \
+    loader/cache/CachedShader.h \
     loader/cache/CachedXSLStyleSheet.h \
     loader/cache/MemoryCache.h \
     loader/CrossOriginAccessControl.h \
@@ -2067,6 +2071,7 @@ HEADERS += \
     platform/mock/ScrollbarThemeMock.h \
     platform/graphics/BitmapImage.h \
     platform/graphics/Color.h \
+    platform/graphics/filters/CustomFilterOperation.h \
     platform/graphics/filters/FEBlend.h \
     platform/graphics/filters/FEColorMatrix.h \
     platform/graphics/filters/FEComponentTransfer.h \
@@ -2366,6 +2371,7 @@ HEADERS += \
     rendering/style/StyleBackgroundData.h \
     rendering/style/StyleBoxData.h \
     rendering/style/StyleCachedImage.h \
+    rendering/style/StyleCachedShader.h \
     rendering/style/StyleDeprecatedFlexibleBoxData.h \
     rendering/style/StyleFilterData.h \
     rendering/style/StyleFlexibleBoxData.h \
@@ -2373,9 +2379,11 @@ HEADERS += \
     rendering/style/StyleInheritedData.h \
     rendering/style/StyleMarqueeData.h \
     rendering/style/StyleMultiColData.h \
+    rendering/style/StylePendingShader.h \
     rendering/style/StyleRareInheritedData.h \
     rendering/style/StyleRareNonInheritedData.h \
     rendering/style/StyleReflection.h \
+    rendering/style/StyleShader.h \
     rendering/style/StyleSurroundData.h \
     rendering/style/StyleTransformData.h \
     rendering/style/StyleVisualData.h \

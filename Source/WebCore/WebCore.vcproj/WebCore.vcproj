@@ -26193,6 +26193,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\loader\cache\CachedShader.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\loader\cache\CachedShader.h"
+					>
+				</File>
+				<File
 					RelativePath="..\loader\cache\CachedStyleSheetClient.h"
 					>
 				</File>
@@ -29483,6 +29491,10 @@
 				<Filter
 					Name="filters"
 					>
+					<File
+						RelativePath="..\platform\graphics\filters\CustomFilterOperation.h"
+						>
+					</File>
 					<File
 						RelativePath="..\platform\graphics\filters\DistantLightSource.cpp"
 						>
@@ -32935,6 +32947,14 @@
 			</File>
 			<File
 				RelativePath="..\css\WebKitCSSFilterValue.h"
+				>
+			</File>
+			<File
+				RelativePath="..\css\WebKitCSSShaderValue.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\css\WebKitCSSShaderValue.h"
 				>
 			</File>
 			<File
@@ -40451,6 +40471,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\rendering\style\StyleCachedShader.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\rendering\style\StyleCachedShader.h"
+					>
+				</File>
+				<File
 					RelativePath="..\rendering\style\StyleDeprecatedFlexibleBoxData.cpp"
 					>
 					<FileConfiguration
@@ -40851,6 +40879,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\rendering\style\StylePendingShader.h"
+					>
+				</File>
+				<File
 					RelativePath="..\rendering\style\StyleRareInheritedData.cpp"
 					>
 					<FileConfiguration
@@ -40964,6 +40996,10 @@
 				</File>
 				<File
 					RelativePath="..\rendering\style\StyleReflection.h"
+					>
+				</File>
+				<File
+					RelativePath="..\rendering\style\StyleShader.h"
 					>
 				</File>
 				<File

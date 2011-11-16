@@ -53,6 +53,7 @@ class CSSStyleRule;
 class CSSStyleSheet;
 class CSSValue;
 class ContainerNode;
+class CustomFilterOperation;
 class Document;
 class Element;
 class Frame;
@@ -66,11 +67,14 @@ class RuleData;
 class RuleSet;
 class Settings;
 class StyleImage;
+class StyleShader;
 class StyleSheet;
 class StyleSheetList;
 class StyledElement;
 class WebKitCSSKeyframeRule;
 class WebKitCSSKeyframesRule;
+class WebKitCSSFilterValue;
+class WebKitCSSShaderValue;
 
 class MediaQueryResult {
     WTF_MAKE_NONCOPYABLE(MediaQueryResult); WTF_MAKE_FAST_ALLOCATED;
@@ -206,7 +210,13 @@ public:
 
 #if ENABLE(CSS_FILTERS)
     bool createFilterOperations(CSSValue* inValue, RenderStyle* inStyle, RenderStyle* rootStyle, FilterOperations& outOperations);
+#if ENABLE(CSS_SHADERS)
+    StyleShader* styleShader(CSSValue*);
+    StyleShader* cachedOrPendingStyleShaderFromValue(WebKitCSSShaderValue*);
+    PassRefPtr<CustomFilterOperation> createCustomFilterOperation(WebKitCSSFilterValue*);
+    void loadPendingShaders();
 #endif
+#endif // ENABLE(CSS_FILTERS)
 
     struct Features {
         Features();
@@ -389,6 +399,10 @@ private:
     bool m_applyPropertyToRegularStyle;
     bool m_applyPropertyToVisitedLinkStyle;
     const CSSStyleApplyProperty& m_applyProperty;
+    
+#if ENABLE(CSS_SHADERS)
+    bool m_hasPendingShaders;
+#endif
 
     friend class CSSStyleApplyProperty;
     friend bool operator==(const MatchedStyleDeclaration&, const MatchedStyleDeclaration&);

@@ -55,6 +55,10 @@
 #include "CachedTextTrack.h"
 #endif
 
+#if ENABLE(CSS_SHADERS)
+#include "CachedShader.h"
+#endif
+
 #define PRELOAD_DEBUG 0
 
 namespace WebCore {
@@ -87,6 +91,10 @@ static CachedResource* createResource(CachedResource::Type type, ResourceRequest
 #if ENABLE(VIDEO_TRACK)
     case CachedResource::TextTrackResource:
         return new CachedTextTrack(request);
+#endif
+#if ENABLE(CSS_SHADERS)
+    case CachedResource::ShaderResource:
+        return new CachedShader(request);
 #endif
     }
     ASSERT_NOT_REACHED();
@@ -167,6 +175,13 @@ CachedTextTrack* CachedResourceLoader::requestTextTrack(ResourceRequest& request
 }
 #endif
 
+#if ENABLE(CSS_SHADERS)
+CachedShader* CachedResourceLoader::requestShader(ResourceRequest& request)
+{
+    return static_cast<CachedShader*>(requestResource(CachedResource::ShaderResource, request, String(), defaultCachedResourceOptions()));
+}
+#endif
+
 CachedCSSStyleSheet* CachedResourceLoader::requestCSSStyleSheet(ResourceRequest& request, const String& charset, ResourceLoadPriority priority)
 {
     return static_cast<CachedCSSStyleSheet*>(requestResource(CachedResource::CSSStyleSheet, request, charset, defaultCachedResourceOptions(), priority));
@@ -241,6 +256,9 @@ bool CachedResourceLoader::checkInsecureContent(CachedResource::Type type, const
 #if ENABLE(VIDEO_TRACK)
     case CachedResource::TextTrackResource:
 #endif
+#if ENABLE(CSS_SHADERS)
+    case CachedResource::ShaderResource:
+#endif
     case CachedResource::ImageResource:
     case CachedResource::FontResource: {
         // These resources can corrupt only the frame's pixels.
@@ -289,6 +307,9 @@ bool CachedResourceLoader::canRequest(CachedResource::Type type, const KURL& url
 #if ENABLE(VIDEO_TRACK)
     case CachedResource::TextTrackResource:
 #endif
+#if ENABLE(CSS_SHADERS)
+    case CachedResource::ShaderResource:
+#endif
         // These types of resources can be loaded from any origin.
         // FIXME: Are we sure about CachedResource::FontResource?
         break;
@@ -318,6 +339,10 @@ bool CachedResourceLoader::canRequest(CachedResource::Type type, const KURL& url
             }
         }
         break;
+#if ENABLE(CSS_SHADERS)
+    case CachedResource::ShaderResource:
+        // Since shaders are referenced from CSS Styles use the same rules here.
+#endif
     case CachedResource::CSSStyleSheet:
         if (!m_document->contentSecurityPolicy()->allowStyleFromSource(url))
             return false;

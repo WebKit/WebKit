@@ -122,6 +122,14 @@
 #include "SVGNames.h"
 #endif
 
+#if ENABLE(CSS_SHADERS)
+#include "CustomFilterOperation.h"
+#include "StyleCachedShader.h"
+#include "StylePendingShader.h"
+#include "StyleShader.h"
+#include "WebKitCSSShaderValue.h"
+#endif
+
 using namespace std;
 
 namespace WebCore {
@@ -349,6 +357,9 @@ CSSStyleSelector::CSSStyleSelector(Document* document, StyleSheetList* styleShee
     , m_applyPropertyToRegularStyle(true)
     , m_applyPropertyToVisitedLinkStyle(false)
     , m_applyProperty(CSSStyleApplyProperty::sharedCSSStyleApplyProperty())
+#if ENABLE(CSS_SHADERS)
+    , m_hasPendingShaders(false)
+#endif
 {
     Element* root = document->documentElement();
 
@@ -1307,6 +1318,11 @@ PassRefPtr<RenderStyle> CSSStyleSelector::styleForKeyframe(const RenderStyle* el
 
     // Start loading images referenced by this style.
     loadPendingImages();
+    
+#if ENABLE(CSS_SHADERS)
+    // Start loading the shaders referenced by this style.
+    loadPendingShaders();
+#endif
 
     // Add all the animating properties to the keyframe.
     if (keyframeRule->style()) {
@@ -1416,6 +1432,11 @@ PassRefPtr<RenderStyle> CSSStyleSelector::pseudoStyleForElement(PseudoId pseudo,
     // Start loading images referenced by this style.
     loadPendingImages();
 
+#if ENABLE(CSS_SHADERS)
+    // Start loading the shaders referenced by this style.
+    loadPendingShaders();
+#endif
+
     // Now return the style.
     return m_style.release();
 }
@@ -1448,6 +1469,11 @@ PassRefPtr<RenderStyle> CSSStyleSelector::styleForPage(int pageIndex)
 
     // Start loading images referenced by this style.
     loadPendingImages();
+
+#if ENABLE(CSS_SHADERS)
+    // Start loading the shaders referenced by this style.
+    loadPendingShaders();
+#endif
 
     // Now return the style.
     return m_style.release();
@@ -2305,7 +2331,11 @@ void CSSStyleSelector::applyMatchedDeclarations(const MatchResult& matchResult)
     applyDeclarations<false>(true, matchResult.firstUARule, matchResult.lastUARule, applyInheritedOnly);
     
     loadPendingImages();
-        
+    
+#if ENABLE(CSS_SHADERS)
+    loadPendingShaders();
+#endif
+    
     ASSERT(!m_fontDirty);
     
     if (cachedStyle || !cacheHash)
@@ -5413,6 +5443,63 @@ static FilterOperation::OperationType filterOperationForType(WebKitCSSFilterValu
     return FilterOperation::NONE;
 }
 
+#if ENABLE(CSS_SHADERS)
+StyleShader* CSSStyleSelector::styleShader(CSSValue* value)
+{
+    if (value->isWebKitCSSShaderValue())
+        return cachedOrPendingStyleShaderFromValue(static_cast<WebKitCSSShaderValue*>(value));
+    return 0;
+}
+
+StyleShader* CSSStyleSelector::cachedOrPendingStyleShaderFromValue(WebKitCSSShaderValue* value)
+{
+    StyleShader* shader = value->cachedOrPendingShader();
+    if (shader && shader->isPendingShader())
+        m_hasPendingShaders = true;
+    return shader;
+}
+
+void CSSStyleSelector::loadPendingShaders()
+{
+    if (!m_style->hasFilter() || !m_hasPendingShaders)
+        return;
+
+    CachedResourceLoader* cachedResourceLoader = m_element->document()->cachedResourceLoader();
+
+    Vector<RefPtr<FilterOperation> >& filterOperations = m_style->filter().operations();
+    for (unsigned i = 0; i < filterOperations.size(); ++i) {
+        RefPtr<FilterOperation> filterOperation = filterOperations.at(i);
+        if (filterOperation->getOperationType() == FilterOperation::CUSTOM) {
+            CustomFilterOperation* customFilter = static_cast<CustomFilterOperation*>(filterOperation.get());
+            if (customFilter->vertexShader() && customFilter->vertexShader()->isPendingShader()) {
+                WebKitCSSShaderValue* shaderValue = static_cast<StylePendingShader*>(customFilter->vertexShader())->cssShaderValue();
+                customFilter->setVertexShader(shaderValue->cachedShader(cachedResourceLoader));
+            }
+            if (customFilter->fragmentShader() && customFilter->fragmentShader()->isPendingShader()) {
+                WebKitCSSShaderValue* shaderValue = static_cast<StylePendingShader*>(customFilter->fragmentShader())->cssShaderValue();
+                customFilter->setFragmentShader(shaderValue->cachedShader(cachedResourceLoader));
+            }
+        }
+    }
+    m_hasPendingShaders = false;
+}
+
+PassRefPtr<CustomFilterOperation> CSSStyleSelector::createCustomFilterOperation(WebKitCSSFilterValue* filterValue)
+{
+    ASSERT(filterValue->length());
+
+    CSSValue* shadersValue = filterValue->itemWithoutBoundsCheck(0);
+    ASSERT(shadersValue->isValueList());
+    CSSValueList* shadersList = static_cast<CSSValueList*>(shadersValue);
+
+    ASSERT(shadersList->length());
+    RefPtr<StyleShader> vertexShader = styleShader(shadersList->itemWithoutBoundsCheck(0));
+    RefPtr<StyleShader> fragmentShader = (shadersList->length() > 1) ? styleShader(shadersList->itemWithoutBoundsCheck(1)) : 0;
+    
+    return CustomFilterOperation::create(vertexShader, fragmentShader);
+}
+#endif
+
 bool CSSStyleSelector::createFilterOperations(CSSValue* inValue, RenderStyle* style, RenderStyle* rootStyle, FilterOperations& outOperations)
 {
     if (!inValue || !inValue->isValueList()) {
@@ -5432,8 +5519,9 @@ bool CSSStyleSelector::createFilterOperations(CSSValue* inValue, RenderStyle* st
 
 #if ENABLE(CSS_SHADERS)
         if (operationType == FilterOperation::CUSTOM) {
-            // FIXME: Implement the filter operation for the custom shader.
-            // https://bugs.webkit.org/show_bug.cgi?id=71446
+            RefPtr<CustomFilterOperation> operation = createCustomFilterOperation(filterValue);
+            if (operation)
+                operations.operations().append(operation);
             continue;
         }
 #endif
