@@ -55,7 +55,7 @@
 #include <signal.h>
 #endif
 
-#ifdef SOCK_SEQPACKET
+#if defined(SOCK_SEQPACKET) && !defined(Q_OS_MACX)
 #define SOCKET_TYPE SOCK_SEQPACKET
 #else
 #define SOCKET_TYPE SOCK_DGRAM
