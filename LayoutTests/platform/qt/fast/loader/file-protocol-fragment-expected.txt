@@ -4,4 +4,5 @@ resources/stylesheet.css#b - willSendRequest <NSURLRequest URL resources/stylesh
 resources/stylesheet.css#a - didReceiveResponse <NSURLResponse resources/stylesheet.css#a, http status code 0>
 resources/stylesheet.css#a - didFinishLoading
 resources/stylesheet.css#b - didReceiveResponse <NSURLResponse resources/stylesheet.css#b, http status code 0>
+resources/stylesheet.css#b - didFinishLoading
 This tests that file: URL are loaded separately even if they differ by the fragment only.
