@@ -58,7 +58,6 @@ public:
 
     bool isPrimitiveValue() const { return m_isPrimitive; }
     bool isValueList() const { return m_isList; }
-    bool isInheritedValue() const { return m_isInherited; }
 
     bool isBorderImageValue() const { return m_classType == BorderImageClass; }
     bool isBorderImageSliceValue() const { return m_classType == BorderImageSliceClass; }
@@ -69,6 +68,7 @@ public:
     bool isImageGeneratorValue() const { return m_classType == CanvasClass || m_classType == CrossfadeClass || m_classType == LinearGradientClass || m_classType == RadialGradientClass; }
     bool isImageValue() const { return m_classType == ImageClass || m_classType == CursorImageClass; }
     bool isImplicitInitialValue() const { return m_classType == InitialClass && m_isImplicit; }
+    bool isInheritedValue() const { return m_classType == InheritedClass; }
     bool isInitialValue() const { return m_classType == InitialClass; }
     bool isReflectValue() const { return m_classType == ReflectClass; }
     bool isShadowValue() const { return m_classType == ShadowClass; }
@@ -141,7 +141,6 @@ protected:
         , m_classType(classType)
         , m_isPrimitive(isPrimitiveType(classType))
         , m_isList(isListType(classType))
-        , m_isInherited(isInheritedType(classType))
     {
     }
 
@@ -168,11 +167,6 @@ private:
             || type == WebKitCSSTransformClass;
     }
 
-    static bool isInheritedType(ClassType type)
-    {
-        return type == InheritedClass;
-    }
-
     void destroy();
 
 protected:
@@ -191,7 +185,6 @@ private:
     unsigned m_classType : 5; // ClassType
     bool m_isPrimitive : 1;
     bool m_isList : 1;
-    bool m_isInherited : 1;
 };
 
 } // namespace WebCore

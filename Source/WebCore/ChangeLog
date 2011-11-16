@@ -1,3 +1,18 @@
+2011-11-16  Andreas Kling  <kling@webkit.org>
+
+        CSSValue: isInheritedValue() doesn't need a dedicated bit.
+        <http://webkit.org/b/72514>
+
+        Reviewed by Antti Koivisto.
+
+        Remove CSSValue::m_isInherited and have isInheritedValue() check the
+        class type instead. There's no compelling reason for CSSInheritedValue
+        to have a dedicated bit, since nobody subclasses it anyway.
+
+        * css/CSSValue.h:
+        (WebCore::CSSValue::isInheritedValue):
+        (WebCore::CSSValue::CSSValue):
+
 2011-11-16  Robert Hogan  <robert@webkit.org>
 
         Fix build on Windows and Mac after r100473
