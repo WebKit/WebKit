@@ -73,13 +73,15 @@ struct CCSettings {
             , compositeOffscreen(false)
             , enableCompositorThread(false)
             , showFPSCounter(false)
-            , showPlatformLayerTree(false) { }
+            , showPlatformLayerTree(false)
+            , refreshRate(0) { }
 
     bool acceleratePainting;
     bool compositeOffscreen;
     bool enableCompositorThread;
     bool showFPSCounter;
     bool showPlatformLayerTree;
+    double refreshRate;
 };
 
 // Provides information on an Impl's rendering capabilities back to the CCLayerTreeHost

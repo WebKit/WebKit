@@ -1,3 +1,19 @@
+2011-11-16  Iain Merrick  <husky@google.com>
+
+        [chromium] Pass screen refresh rate into compositor.
+        https://bugs.webkit.org/show_bug.cgi?id=71040
+
+        Reviewed by Tony Gentilcore.
+
+        * platform/PlatformScreen.h:
+        * platform/chromium/PlatformScreenChromium.cpp:
+        (WebCore::screenRefreshRate):
+        * platform/chromium/PlatformSupport.h:
+        * platform/graphics/chromium/cc/CCLayerTreeHost.h:
+        (WebCore::CCSettings::CCSettings):
+        * platform/graphics/chromium/cc/CCThreadProxy.cpp:
+        (WebCore::CCThreadProxy::initializeImplOnImplThread):
+
 2011-11-15  Andrey Kosyakov  <caseq@chromium.org>
 
         Web Inspector: [Extensions API] drop ExtensionSidebarPane.onUpdated, use callbacks instead

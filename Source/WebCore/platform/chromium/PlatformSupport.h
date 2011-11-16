@@ -234,6 +234,7 @@ public:
     static bool screenIsMonochrome(Widget*);
     static IntRect screenRect(Widget*);
     static IntRect screenAvailableRect(Widget*);
+    static double screenRefreshRate(Widget*);
 
     // SharedTimers -------------------------------------------------------
     static void setSharedTimerFiredFunction(void (*func)());

@@ -1,3 +1,17 @@
+2011-11-16  Iain Merrick  <husky@google.com>
+
+        [chromium] Pass screen refresh rate into compositor.
+        https://bugs.webkit.org/show_bug.cgi?id=71040
+
+        Reviewed by Tony Gentilcore.
+
+        * public/WebScreenInfo.h:
+        (WebKit::WebScreenInfo::WebScreenInfo):
+        * src/PlatformSupport.cpp:
+        (WebCore::PlatformSupport::screenRefreshRate):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::setIsAcceleratedCompositingActive):
+
 2011-11-15  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r100340.
