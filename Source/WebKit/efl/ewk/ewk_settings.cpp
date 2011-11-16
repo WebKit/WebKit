@@ -21,14 +21,17 @@
 #include "config.h"
 #include "ewk_settings.h"
 
+#include "CrossOriginPreflightResultCache.h"
 #include "DatabaseTracker.h"
 #include "EWebKit.h"
+#include "FontCache.h"
 #include "FrameView.h"
 #include "IconDatabase.h"
 #include "Image.h"
 #include "IntSize.h"
 #include "KURL.h"
 #include "MemoryCache.h"
+#include "PageCache.h"
 // FIXME: Why is there a directory in this include?
 #include "appcache/ApplicationCacheStorage.h"
 #include "ewk_private.h"
@@ -207,6 +210,29 @@ void ewk_settings_cache_capacity_set(unsigned capacity)
 {
     WebCore::MemoryCache* cache = WebCore::memoryCache();
     cache->setCapacities(0, capacity, capacity);
+}
+
+void ewk_settings_memory_cache_clear()
+{
+    // Turn the cache on and off. Disabling the object cache will remove all
+    // resources from the cache. They may still live on if they are referenced
+    // by some Web page though.
+    if (!WebCore::memoryCache()->disabled()) {
+        WebCore::memoryCache()->setDisabled(true);
+        WebCore::memoryCache()->setDisabled(false);
+    }
+
+    int pageCapacity = WebCore::pageCache()->capacity();
+    // Setting size to 0, makes all pages be released.
+    WebCore::pageCache()->setCapacity(0);
+    WebCore::pageCache()->releaseAutoreleasedPagesNow();
+    WebCore::pageCache()->setCapacity(pageCapacity);
+
+    // Invalidating the font cache and freeing all inactive font data.
+    WebCore::fontCache()->invalidate();
+
+    // Empty the Cross-Origin Preflight cache
+    WebCore::CrossOriginPreflightResultCache::shared().empty();
 }
 
 void ewk_settings_repaint_throttling_set(double deferredRepaintDelay, double initialDeferredRepaintDelayDuringLoading, double maxDeferredRepaintDelayDuringLoading, double deferredRepaintDelayIncrementDuringLoading)

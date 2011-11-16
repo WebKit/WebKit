@@ -186,6 +186,15 @@ EAPI void             ewk_settings_cache_enable_set(Eina_Bool set);
 EAPI void             ewk_settings_cache_capacity_set(unsigned capacity);
 
 /**
+ * Clears all memory caches.
+ *
+ * This function clears all memory caches, which include the object cache (for resources such as
+ * images, scripts and stylesheets), the page cache, the font cache and the Cross-Origin Preflight
+ * cache.
+ */
+EAPI void             ewk_settings_memory_cache_clear(void);
+
+/**
  * Sets values for repaint throttling.
  *
  * It allows to slow down page loading and
