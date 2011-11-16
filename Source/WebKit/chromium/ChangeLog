@@ -1,3 +1,25 @@
+2011-11-16  Alexandre Elias  <aelias@google.com>
+
+        [chromium] Improvements for page scale delta during commit
+        https://bugs.webkit.org/show_bug.cgi?id=72471
+
+        Reviewed by James Robinson.
+
+        Page scale now follows the same commit flow as scroll position:
+        the delta is folded into m_pageScale at BFAC time, and a "sent" value
+        is preserved for temporary use until the commit finishes.
+
+        I also merged setPageScaleFactor and setPageScaleFactorLimits into one
+        function on the impl side.  The reason is that setPageFactor must
+        be applied after the limits are updated, but on the other hand setting
+        the limits first may cause an unnecessary clamp of the scale delta.
+        Merging the methods avoids this bind.
+
+        No new tests. (planning to add later: https://bugs.webkit.org/show_bug.cgi?id=71529)
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::applyScrollAndScale):
+
 2011-11-16  Dave Michael  <dmichael@chromium.org>
 
         Fix up chromium API for creating events, initializing message events

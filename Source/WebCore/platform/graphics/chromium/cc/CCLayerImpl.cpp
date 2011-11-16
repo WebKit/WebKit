@@ -52,7 +52,7 @@ CCLayerImpl::CCLayerImpl(int id)
     , m_usesLayerClipping(false)
     , m_isNonCompositedContent(false)
     , m_drawsContent(false)
-    , m_scaleDelta(1)
+    , m_pageScaleDelta(1)
     , m_targetRenderSurface(0)
     , m_drawDepth(0)
     , m_drawOpacity(0)
@@ -405,10 +405,10 @@ void CCLayerImpl::setScrollDelta(const IntSize& scrollDelta)
     }
 }
 
-void CCLayerImpl::setScaleDelta(float scaleDelta)
+void CCLayerImpl::setPageScaleDelta(float pageScaleDelta)
 {
-    if (m_scaleDelta != scaleDelta) {
-        m_scaleDelta = scaleDelta;
+    if (m_pageScaleDelta != pageScaleDelta) {
+        m_pageScaleDelta = pageScaleDelta;
         noteLayerPropertyChangedForSubtree();
     }
 }

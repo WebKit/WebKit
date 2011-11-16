@@ -99,9 +99,8 @@ public:
     const IntSize& viewportSize() const { return m_viewportSize; }
     void setZoomAnimatorTransform(const TransformationMatrix&);
 
-    void setPageScale(float);
+    void setPageScaleFactorAndLimits(float pageScale, float minPageScale, float maxPageScale);
     float pageScale() const { return m_pageScale; }
-    void setPageScaleFactorLimits(float minPageScale, float maxPageScale);
 
     const CCSettings& settings() const { return m_settings; }
 
@@ -109,7 +108,6 @@ public:
     virtual void pinchGestureUpdate(float, const IntPoint&);
     virtual void pinchGestureEnd();
     PassOwnPtr<CCScrollAndScaleSet> processScrollDeltas();
-    void updateMaxScrollPosition();
 
 protected:
     CCLayerTreeHostImpl(const CCSettings&, CCLayerTreeHostImplClient*);
@@ -118,7 +116,10 @@ protected:
     int m_frameNumber;
 
 private:
-    void setScaleDelta(float);
+    void setPageScaleDelta(float);
+    void applyPageScaleDeltaToScrollLayer();
+    void adjustScrollsForPageScaleChange(float);
+    void updateMaxScrollPosition();
 
     OwnPtr<LayerRendererChromium> m_layerRenderer;
     RefPtr<CCLayerImpl> m_rootLayerImpl;
@@ -129,7 +130,8 @@ private:
     bool m_haveWheelEventHandlers;
 
     float m_pageScale;
-    float m_scaleDelta;
+    float m_pageScaleDelta;
+    float m_sentPageScaleDelta;
     float m_minPageScale, m_maxPageScale;
 
     bool m_pinchGestureActive;

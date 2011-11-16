@@ -1,3 +1,36 @@
+2011-11-16  Alexandre Elias  <aelias@google.com>
+
+        [chromium] Improvements for page scale delta during commit
+        https://bugs.webkit.org/show_bug.cgi?id=72471
+
+        Reviewed by James Robinson.
+
+        Page scale now follows the same commit flow as scroll position:
+        the delta is folded into m_pageScale at BFAC time, and a "sent" value
+        is preserved for temporary use until the commit finishes.
+
+        I also merged setPageScaleFactor and setPageScaleFactorLimits into one
+        function on the impl side.  The reason is that setPageFactor must
+        be applied after the limits are updated, but on the other hand setting
+        the limits first may cause an unnecessary clamp of the scale delta.
+        Merging the methods avoids this bind.
+
+        No new tests. (planning to add later: https://bugs.webkit.org/show_bug.cgi?id=71529)
+
+        * platform/graphics/chromium/cc/CCLayerTreeHost.cpp:
+        (WebCore::CCLayerTreeHost::finishCommitOnImplThread):
+        (WebCore::CCLayerTreeHost::applyScrollAndScale):
+        * platform/graphics/chromium/cc/CCLayerTreeHostCommon.h:
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.cpp:
+        (WebCore::CCLayerTreeHostImpl::CCLayerTreeHostImpl):
+        (WebCore::CCLayerTreeHostImpl::setPageScaleFactorAndLimits):
+        (WebCore::CCLayerTreeHostImpl::adjustScrollsForPageScaleChange):
+        (WebCore::CCLayerTreeHostImpl::setScaleDelta):
+        (WebCore::CCLayerTreeHostImpl::applyScaleDeltaToScrollLayer):
+        (WebCore::CCLayerTreeHostImpl::scrollRootLayer):
+        (WebCore::CCLayerTreeHostImpl::processScrollDeltas):
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.h:
+
 2011-11-16  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Reduce nested key depth threshold, re-enable flaky test

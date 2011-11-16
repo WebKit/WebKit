@@ -53,7 +53,7 @@ public:
 
 struct CCScrollAndScaleSet {
     Vector<CCLayerTreeHostCommon::ScrollUpdateInfo> scrolls;
-    float pageScale;
+    float pageScaleDelta;
 };
 
 template<typename LayerType>

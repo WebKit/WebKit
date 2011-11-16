@@ -131,8 +131,7 @@ void CCLayerTreeHost::finishCommitOnImplThread(CCLayerTreeHostImpl* hostImpl)
     hostImpl->setHaveWheelEventHandlers(m_haveWheelEventHandlers);
     hostImpl->setZoomAnimatorTransform(m_zoomAnimatorTransform);
     hostImpl->setViewport(viewportSize());
-    hostImpl->setPageScale(pageScale());
-    hostImpl->setPageScaleFactorLimits(m_minPageScale, m_maxPageScale);
+    hostImpl->setPageScaleFactorAndLimits(pageScale(), m_minPageScale, m_maxPageScale);
 
     // Synchronize trees, if one exists at all...
     if (rootLayer())
@@ -464,7 +463,7 @@ void CCLayerTreeHost::applyScrollAndScale(const CCScrollAndScaleSet& info)
 
     ASSERT(info.scrolls.size() == 1);
     IntSize scrollDelta = info.scrolls[0].scrollDelta;
-    m_client->applyScrollAndScale(scrollDelta, info.pageScale);
+    m_client->applyScrollAndScale(scrollDelta, info.pageScaleDelta);
 }
 
 void CCLayerTreeHost::startRateLimiter(GraphicsContext3D* context)

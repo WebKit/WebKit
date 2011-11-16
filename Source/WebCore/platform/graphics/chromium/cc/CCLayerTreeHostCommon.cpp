@@ -198,13 +198,13 @@ static void calculateDrawTransformsAndVisibilityInternal(LayerType* layer, Layer
     TransformationMatrix layerLocalTransform;
     // LT = Tr[origin] * M[zoomAnimator]
     layerLocalTransform.multiply(layer->zoomAnimatorTransform());
-    // LT = Tr[origin] * M[zoomAnimator] * S[scaleDelta]
-    layerLocalTransform.scale(layer->scaleDelta());
-    // LT = Tr[origin] * M[zoomAnimator] * S[scaleDelta] * Tr[origin2anchor]
+    // LT = Tr[origin] * M[zoomAnimator] * S[pageScaleDelta]
+    layerLocalTransform.scale(layer->pageScaleDelta());
+    // LT = Tr[origin] * M[zoomAnimator] * S[pageScaleDelta] * Tr[origin2anchor]
     layerLocalTransform.translate3d(position.x(), position.y(), layer->anchorPointZ());
-    // LT = Tr[origin] * M[zoomAnimator] * S[scaleDelta] * Tr[origin2anchor] * M[layer]
+    // LT = Tr[origin] * M[zoomAnimator] * S[pageScaleDelta] * Tr[origin2anchor] * M[layer]
     layerLocalTransform.multiply(layer->transform());
-    // LT = Tr[origin] * M[zoomAnimator] * S[scaleDelta] * Tr[origin2anchor] * M[layer] * Tr[anchor2center]
+    // LT = Tr[origin] * M[zoomAnimator] * S[pageScaleDelta] * Tr[origin2anchor] * M[layer] * Tr[anchor2center]
     layerLocalTransform.translate3d(centerOffsetX, centerOffsetY, -layer->anchorPointZ());
 
     TransformationMatrix combinedTransform = parentMatrix;

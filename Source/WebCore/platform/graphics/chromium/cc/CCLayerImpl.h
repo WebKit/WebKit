@@ -160,8 +160,8 @@ public:
     const IntSize& scrollDelta() const { return m_scrollDelta; }
     void setScrollDelta(const IntSize&);
 
-    float scaleDelta() const { return m_scaleDelta; }
-    void setScaleDelta(float);
+    float pageScaleDelta() const { return m_pageScaleDelta; }
+    void setPageScaleDelta(float);
 
     const IntSize& sentScrollDelta() const { return m_sentScrollDelta; }
     void setSentScrollDelta(const IntSize& sentScrollDelta) { m_sentScrollDelta = sentScrollDelta; }
@@ -253,7 +253,7 @@ private:
     IntSize m_scrollDelta;
     IntSize m_sentScrollDelta;
     IntSize m_maxScrollPosition;
-    float m_scaleDelta;
+    float m_pageScaleDelta;
 
     // Properties owned exclusively by this CCLayerImpl.
     // Debugging.

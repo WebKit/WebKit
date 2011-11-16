@@ -49,7 +49,8 @@ CCLayerTreeHostImpl::CCLayerTreeHostImpl(const CCSettings& settings, CCLayerTree
     , m_visible(true)
     , m_haveWheelEventHandlers(false)
     , m_pageScale(1)
-    , m_scaleDelta(1)
+    , m_pageScaleDelta(1)
+    , m_sentPageScaleDelta(1)
     , m_minPageScale(0)
     , m_maxPageScale(0)
     , m_pinchGestureActive(false)
@@ -194,27 +195,42 @@ void CCLayerTreeHostImpl::setViewport(const IntSize& viewportSize)
     m_layerRenderer->viewportChanged();
 }
 
-void CCLayerTreeHostImpl::setPageScale(float pageScale)
+void CCLayerTreeHostImpl::setPageScaleFactorAndLimits(float pageScale, float minPageScale, float maxPageScale)
 {
-    if (!pageScale || pageScale == m_pageScale)
+    if (!pageScale)
         return;
 
-    // Maintain constant the product of m_pageScale * m_scaleDelta.
-    float scaleChange = pageScale / m_pageScale;
-    float oldMagnifyScale = m_pageScale * m_scaleDelta;
-    m_pageScale = pageScale;
+    if (m_sentPageScaleDelta == 1 && pageScale == m_pageScale && minPageScale == m_minPageScale && maxPageScale == m_maxPageScale)
+        return;
 
-    setScaleDelta(oldMagnifyScale / pageScale);
+    m_minPageScale = minPageScale;
+    m_maxPageScale = maxPageScale;
+
+    float pageScaleChange = pageScale / m_pageScale;
+    m_pageScale = pageScale;
+    m_sentPageScaleDelta = 1;
+
+    // Clamp delta to limits and refresh display matrix.
+    setPageScaleDelta(m_pageScaleDelta);
+    applyPageScaleDeltaToScrollLayer();
+
+    adjustScrollsForPageScaleChange(pageScaleChange);
+}
+
+void CCLayerTreeHostImpl::adjustScrollsForPageScaleChange(float pageScaleChange)
+{
+    if (pageScaleChange == 1)
+        return;
 
     // We also need to convert impl-side scroll deltas to pageScale space.
-    if (m_scrollLayerImpl && m_scrollLayerImpl->scrollable()) {
+    if (m_scrollLayerImpl) {
         IntSize scrollDelta = m_scrollLayerImpl->scrollDelta();
-        scrollDelta.scale(scaleChange);
+        scrollDelta.scale(pageScaleChange);
         m_scrollLayerImpl->setScrollDelta(scrollDelta);
     }
 }
 
-void CCLayerTreeHostImpl::setScaleDelta(float delta)
+void CCLayerTreeHostImpl::setPageScaleDelta(float delta)
 {
     // Clamp to the current min/max limits.
     float finalMagnifyScale = m_pageScale * delta;
@@ -223,24 +239,19 @@ void CCLayerTreeHostImpl::setScaleDelta(float delta)
     else if (m_maxPageScale && finalMagnifyScale > m_maxPageScale)
         delta = m_maxPageScale / m_pageScale;
 
-    if (delta == m_scaleDelta)
+    if (delta == m_pageScaleDelta)
         return;
 
-    m_scaleDelta = delta;
+    m_pageScaleDelta = delta;
 
     updateMaxScrollPosition();
-
-    if (m_scrollLayerImpl && m_scrollLayerImpl->scrollable())
-        m_scrollLayerImpl->setScaleDelta(m_scaleDelta);
+    applyPageScaleDeltaToScrollLayer();
 }
 
-void CCLayerTreeHostImpl::setPageScaleFactorLimits(float minPageScale, float maxPageScale)
+void CCLayerTreeHostImpl::applyPageScaleDeltaToScrollLayer()
 {
-    m_minPageScale = minPageScale;
-    m_maxPageScale = maxPageScale;
-
-    // This will clamp m_scaleDelta and apply side effects if clamped.
-    setScaleDelta(m_scaleDelta);
+    if (m_scrollLayerImpl)
+        m_scrollLayerImpl->setPageScaleDelta(m_pageScaleDelta * m_sentPageScaleDelta);
 }
 
 void CCLayerTreeHostImpl::updateMaxScrollPosition()
@@ -249,7 +260,7 @@ void CCLayerTreeHostImpl::updateMaxScrollPosition()
         return;
 
     FloatSize viewBounds = m_viewportSize;
-    viewBounds.scale(1 / m_scaleDelta);
+    viewBounds.scale(1 / m_pageScaleDelta);
 
     // TODO(aelias): Hardcoding the first child here is weird. Think of
     // a cleaner way to get the contentBounds on the Impl side.
@@ -274,7 +285,7 @@ void CCLayerTreeHostImpl::setZoomAnimatorTransform(const TransformationMatrix& z
 void CCLayerTreeHostImpl::scrollRootLayer(const IntSize& scrollDelta)
 {
     TRACE_EVENT("CCLayerTreeHostImpl::scrollRootLayer", this, 0);
-    if (!m_scrollLayerImpl || !m_scrollLayerImpl->scrollable())
+    if (!m_scrollLayerImpl)
         return;
 
     m_scrollLayerImpl->scrollBy(scrollDelta);
@@ -304,9 +315,9 @@ void CCLayerTreeHostImpl::pinchGestureUpdate(float magnifyDelta,
 
     // Keep the center-of-pinch anchor specified by (x, y) in a stable
     // position over the course of the magnify.
-    FloatPoint prevScaleAnchor(anchor.x() / m_scaleDelta, anchor.y() / m_scaleDelta);
-    setScaleDelta(m_scaleDelta * magnifyDelta);
-    FloatPoint newScaleAnchor(anchor.x() / m_scaleDelta, anchor.y() / m_scaleDelta);
+    FloatPoint prevScaleAnchor(anchor.x() / m_pageScaleDelta, anchor.y() / m_pageScaleDelta);
+    setPageScaleDelta(m_pageScaleDelta * magnifyDelta);
+    FloatPoint newScaleAnchor(anchor.x() / m_pageScaleDelta, anchor.y() / m_pageScaleDelta);
 
     FloatSize move = prevScaleAnchor - newScaleAnchor;
 
@@ -325,14 +336,17 @@ void CCLayerTreeHostImpl::pinchGestureEnd()
 PassOwnPtr<CCScrollAndScaleSet> CCLayerTreeHostImpl::processScrollDeltas()
 {
     OwnPtr<CCScrollAndScaleSet> scrollInfo = adoptPtr(new CCScrollAndScaleSet());
-    bool didMove = m_scrollLayerImpl && (!m_scrollLayerImpl->scrollDelta().isZero() || m_scaleDelta != 1.0f);
+    bool didMove = m_scrollLayerImpl && (!m_scrollLayerImpl->scrollDelta().isZero() || m_pageScaleDelta != 1.0f);
     if (!didMove || m_pinchGestureActive) {
-        scrollInfo->pageScale = m_pageScale;
+        m_sentPageScaleDelta = scrollInfo->pageScaleDelta = 1;
         return scrollInfo.release();
     }
 
+    m_sentPageScaleDelta = scrollInfo->pageScaleDelta = m_pageScaleDelta;
+    m_pageScale = m_pageScale * m_sentPageScaleDelta;
+    setPageScaleDelta(1);
+
     // FIXME: track scrolls from layers other than the root
-    scrollInfo->pageScale = m_pageScale * m_scaleDelta;
     CCLayerTreeHostCommon::ScrollUpdateInfo scroll;
     scroll.layerId = m_scrollLayerImpl->id();
     scroll.scrollDelta = m_scrollLayerImpl->scrollDelta();
@@ -342,6 +356,8 @@ PassOwnPtr<CCScrollAndScaleSet> CCLayerTreeHostImpl::processScrollDeltas()
     m_scrollLayerImpl->setPosition(m_scrollLayerImpl->position() - m_scrollLayerImpl->scrollDelta());
     m_scrollLayerImpl->setSentScrollDelta(m_scrollLayerImpl->scrollDelta());
     m_scrollLayerImpl->setScrollDelta(IntSize());
+
+    adjustScrollsForPageScaleChange(m_sentPageScaleDelta);
 
     return scrollInfo.release();
 }

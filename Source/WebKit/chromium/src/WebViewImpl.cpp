@@ -2792,16 +2792,12 @@ void WebViewImpl::animateAndLayout(double frameBeginTime)
     layout();
 }
 
-void WebViewImpl::applyScrollAndScale(const IntSize& scrollDelta, float scaleFactor)
+void WebViewImpl::applyScrollAndScale(const IntSize& scrollDelta, float pageScaleDelta)
 {
     if (!mainFrameImpl() || !mainFrameImpl()->frameView())
         return;
 
-    float oldScale = pageScaleFactor();
-    if (!oldScale)
-        oldScale = 1;
-
-    if (!scaleFactor || oldScale == scaleFactor)
+    if (pageScaleDelta == 1)
         mainFrameImpl()->frameView()->scrollBy(scrollDelta);
     else {
         // The page scale changed, so apply a scale and scroll in a single
@@ -2811,10 +2807,9 @@ void WebViewImpl::applyScrollAndScale(const IntSize& scrollDelta, float scaleFac
         WebSize scrollOffset = mainFrame()->scrollOffset();
         scrollOffset.width += scrollDelta.width();
         scrollOffset.height += scrollDelta.height();
-        float scaleDelta = scaleFactor / oldScale;
-        WebPoint scaledScrollOffset(scrollOffset.width * scaleDelta,
-                                    scrollOffset.height * scaleDelta);
-        setPageScaleFactor(scaleFactor, scaledScrollOffset);
+        WebPoint scaledScrollOffset(scrollOffset.width * pageScaleDelta,
+                                    scrollOffset.height * pageScaleDelta);
+        setPageScaleFactor(pageScaleFactor() * pageScaleDelta, scaledScrollOffset);
     }
 }
 

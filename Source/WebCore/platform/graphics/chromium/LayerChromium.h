@@ -138,7 +138,7 @@ public:
 
     IntSize scrollDelta() const { return IntSize(); }
 
-    float scaleDelta() const { return 1; }
+    float pageScaleDelta() const { return 1; }
 
     bool doubleSided() const { return m_doubleSided; }
     void setDoubleSided(bool doubleSided) { m_doubleSided = doubleSided; setNeedsCommit(); }
