@@ -1,3 +1,15 @@
+2011-11-16  Justin Schuh  <jschuh@chromium.org>
+
+        Clear SVG filter client when its node is detached
+        https://bugs.webkit.org/show_bug.cgi?id=71741
+
+        Reviewed by Eric Seidel.
+
+        Test: svg/filters/reparent-animated-filter-target.html
+
+        * rendering/svg/SVGResourcesCache.cpp:
+        (WebCore::SVGResourcesCache::clientDestroyed):
+
 2011-11-16  John Bates  <jbates@google.com>
 
         Page/layer flashes after GPU-accelerated CSS transition
