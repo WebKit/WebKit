@@ -1,3 +1,24 @@
+2011-11-15  Vincent Scheib  <scheib@chromium.org>
+
+        Pointer Lock: Refactor: MouseEvent.idl movementX/Y
+        https://bugs.webkit.org/show_bug.cgi?id=72427
+
+        - [Conditional...] vs #if defined
+        - Runtime enabled
+        - .movementX/Y prefixed with 'webkit'
+
+        Reviewed by Adam Barth.
+
+        No new tests.
+
+        * bindings/generic/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::webkitMovementXEnabled):
+        (WebCore::RuntimeEnabledFeatures::webkitMovementYEnabled):
+        * dom/MouseEvent.idl:
+        * dom/MouseRelatedEvent.h:
+        (WebCore::MouseRelatedEvent::webkitMovementX):
+        (WebCore::MouseRelatedEvent::webkitMovementY):
+
 2011-10-28  Ojan Vafai  <ojan@chromium.org>
 
         implement flex-align for flex-flow: column

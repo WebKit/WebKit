@@ -25,10 +25,8 @@ module events {
         readonly attribute long             screenY;
         readonly attribute long             clientX;
         readonly attribute long             clientY;
-#if defined(ENABLE_POINTER_LOCK) && ENABLE_POINTER_LOCK
-        readonly attribute long             movementX;
-        readonly attribute long             movementY;
-#endif
+        readonly attribute [Conditional=POINTER_LOCK, EnabledAtRuntime] long webkitMovementX;
+        readonly attribute [Conditional=POINTER_LOCK, EnabledAtRuntime] long webkitMovementY;
         readonly attribute boolean          ctrlKey;
         readonly attribute boolean          shiftKey;
         readonly attribute boolean          altKey;
