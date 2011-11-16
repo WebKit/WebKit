@@ -1,3 +1,20 @@
+2011-11-16  Geoffrey Garen  <ggaren@apple.com>
+
+        Rolled back in r100375 and r100385 with 32-bit build fixed.
+
+        * dfg/DFGOperations.cpp:
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * runtime/ArgList.cpp:
+        (JSC::ArgList::getSlice):
+        * runtime/ArgList.h:
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::finishCreation):
+        * runtime/JSArray.h:
+        (JSC::JSArray::create):
+        * runtime/JSGlobalObject.h:
+        (JSC::constructArray):
+
 2011-11-16  Filip Pizlo  <fpizlo@apple.com>
 
         DFG global variable CSE mishandles the cross-global-object inlining corner case

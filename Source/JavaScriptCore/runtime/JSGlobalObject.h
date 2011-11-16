@@ -473,6 +473,11 @@ namespace JSC {
         return constructArray(exec, exec->lexicalGlobalObject(), values);
     }
 
+    inline JSArray* constructArray(ExecState* exec, const JSValue* values, size_t length)
+    {
+        return JSArray::create(exec->globalData(), exec->lexicalGlobalObject()->arrayStructure(), values, length);
+    }
+
     class DynamicGlobalObjectScope {
         WTF_MAKE_NONCOPYABLE(DynamicGlobalObjectScope);
     public:
