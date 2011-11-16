@@ -1,3 +1,13 @@
+2011-11-16  Balazs Kelemen  <kbalazs@webkit.org>
+
+        [WK2][X11] Don't leak the colormap we created for the plugin
+        https://bugs.webkit.org/show_bug.cgi?id=72144
+
+        Reviewed by Xan Lopez.
+
+        * WebProcess/Plugins/Netscape/x11/NetscapePluginX11.cpp:
+        (WebKit::NetscapePlugin::platformDestroy):
+
 2011-11-16  Viatcheslav Ostapenko  <ostapenko.viatcheslav@nokia.com>
 
         [Qt] [WK2] Crash in Connection::readyReadHandler() on socket error

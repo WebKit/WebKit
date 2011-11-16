@@ -193,10 +193,13 @@ bool NetscapePlugin::platformPostInitialize()
 
 void NetscapePlugin::platformDestroy()
 {
-    delete static_cast<NPSetWindowCallbackStruct*>(m_npWindow.ws_info);
+    NPSetWindowCallbackStruct* callbackStruct = static_cast<NPSetWindowCallbackStruct*>(m_npWindow.ws_info);
+    Display* hostDisplay = x11HostDisplay();
+    XFreeColormap(hostDisplay, callbackStruct->colormap);
+    delete callbackStruct;
 
     if (m_drawable) {
-        XFreePixmap(x11HostDisplay(), m_drawable);
+        XFreePixmap(hostDisplay, m_drawable);
         m_drawable = 0;
     }
 }
