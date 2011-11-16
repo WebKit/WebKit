@@ -50,15 +50,17 @@
 #include "Lookup.h"
 #include "Nodes.h"
 #include "ParserArena.h"
-#if ENABLE(REGEXP_TRACING)
-#include "RegExp.h"
-#endif
 #include "RegExpCache.h"
 #include "RegExpObject.h"
 #include "StrictEvalActivation.h"
 #include "StrongInlines.h"
 #include <wtf/Threading.h>
 #include <wtf/WTFThreadData.h>
+
+#if ENABLE(REGEXP_TRACING)
+#include "RegExp.h"
+#endif
+
 #if PLATFORM(MAC)
 #include <CoreFoundation/CoreFoundation.h>
 #endif
@@ -182,8 +184,8 @@ JSGlobalData::JSGlobalData(GlobalDataType globalDataType, ThreadStackType thread
 #if ENABLE(ASSEMBLER)
     , executableAllocator(*this)
 #endif
-    , parserArena(new ParserArena)
-    , keywords(new Keywords(this))
+    , parserArena(adoptPtr(new ParserArena))
+    , keywords(adoptPtr(new Keywords(this)))
     , interpreter(0)
     , heap(this, heapSize)
 #if ENABLE(DFG_JIT)

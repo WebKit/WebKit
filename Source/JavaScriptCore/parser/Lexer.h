@@ -47,15 +47,15 @@ public:
         return m_keywordTable.entry(m_globalData, ident);
     }
     
-private:
-    friend class JSGlobalData;
-    
-    Keywords(JSGlobalData*);
-    
     ~Keywords()
     {
         m_keywordTable.deleteTable();
     }
+    
+private:
+    friend class JSGlobalData;
+    
+    Keywords(JSGlobalData*);
     
     JSGlobalData* m_globalData;
     const HashTable m_keywordTable;

@@ -59,7 +59,7 @@ Parser<LexerType>::Parser(JSGlobalData* globalData, const SourceCode& source, Fu
     , m_sourceElements(0)
 {
     m_lexer = adoptPtr(new LexerType(globalData));
-    m_arena = m_globalData->parserArena;
+    m_arena = m_globalData->parserArena.get();
     m_lexer->setCode(source, m_arena);
 
     m_functionCache = source.provider()->cache();

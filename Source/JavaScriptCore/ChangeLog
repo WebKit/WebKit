@@ -1,3 +1,21 @@
+2011-11-15  Darin Adler  <darin@apple.com>
+
+        REGRESSION (r98887): ParserArena and Keywords leaking
+        https://bugs.webkit.org/show_bug.cgi?id=72428
+
+        Reviewed by Sam Weinig.
+
+        * parser/Lexer.h: Made Keywords destructor public since OwnPtr and PassOwnPtr
+        need to be able to destroy it.
+
+        * parser/Parser.cpp:
+        (JSC::Parser::Parser): Use get now that parserArena is an OwnPtr.
+
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::JSGlobalData): Use adoptPtr to initialize OwnPtr members.
+
+        * runtime/JSGlobalData.h: Make parserArena and keywords be OwnPtr.
+
 2011-11-15  Geoffrey Garen  <ggaren@apple.com>
 
         Removed another use of ArgList that baked in the assumption that arguments

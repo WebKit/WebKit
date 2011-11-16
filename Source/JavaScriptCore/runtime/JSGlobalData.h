@@ -219,8 +219,8 @@ namespace JSC {
                 : wtfThreadData().stack();
         }
 
-        ParserArena* parserArena;
-        Keywords* keywords;
+        OwnPtr<ParserArena> parserArena;
+        OwnPtr<Keywords> keywords;
         Interpreter* interpreter;
 #if ENABLE(JIT)
         OwnPtr<JITThunks> jitStubs;
