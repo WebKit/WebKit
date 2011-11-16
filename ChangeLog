@@ -1,3 +1,11 @@
+2011-11-16  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Fix path to module file in root project file
+
+        Reviewed by Simon Hausmann.
+
+        * WebKit.pro:
+
 2011-11-16  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Unreviewed, rolling out r100266.

@@ -39,7 +39,7 @@ SUBDIRS += Tools
 
 OTHER_FILES = \
     Tools/qmake/README \
-    Tools/qmake/qt_webkit.pri \
+    Tools/qmake/mkspecs/modules/qt_webkit.pri \
     Tools/qmake/mkspecs/features/*.prf \
     Tools/qmake/mkspecs/features/mac/*.prf \
     Tools/qmake/mkspecs/features/unix/*.prf \
