@@ -227,6 +227,9 @@ public:
     // again).
     virtual void setPageScaleFactorLimits(float minPageScale, float maxPageScale) = 0;
 
+    virtual float minimumPageScaleFactor() const = 0;
+    virtual float maximumPageScaleFactor() const = 0;
+
     // The ratio of the current device's screen DPI to the target device's screen DPI.
     virtual float deviceScaleFactor() const = 0;
 

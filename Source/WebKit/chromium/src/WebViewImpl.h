@@ -161,6 +161,9 @@ public:
     virtual void setPageScaleFactorPreservingScrollOffset(float);
     virtual void setPageScaleFactor(float scaleFactor, const WebPoint& origin);
     virtual void setPageScaleFactorLimits(float minPageScale, float maxPageScale);
+    virtual float minimumPageScaleFactor() const;
+    virtual float maximumPageScaleFactor() const;
+
     virtual float deviceScaleFactor() const;
     virtual void setDeviceScaleFactor(float);
     virtual bool isFixedLayoutModeEnabled() const;

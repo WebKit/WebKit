@@ -1,3 +1,24 @@
+2011-11-16  Alexandre Elias  <aelias@google.com>
+
+        [chromium] Add minimum/maximumPageScaleFactor API and clamp fixes
+        https://bugs.webkit.org/show_bug.cgi?id=72463
+
+        Reviewed by Darin Fisher.
+
+        We need a way to read back the computed min/max page scale factor in
+        order to support the software path, and for some application logic
+        such as zooming in/out when tapping form fields.
+
+        I also added a few clamp calls that are needed in some corner cases.
+
+        * public/WebView.h:
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::setPageScaleFactor):
+        (WebKit::WebViewImpl::setPageScaleFactorLimits):
+        (WebKit::WebViewImpl::minimumPageScaleFactor):
+        (WebKit::WebViewImpl::maximumPageScaleFactor):
+        * src/WebViewImpl.h:
+
 2011-11-16  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Application cache status should be updated after swapCache().

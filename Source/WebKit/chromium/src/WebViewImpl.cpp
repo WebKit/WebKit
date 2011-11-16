@@ -1903,7 +1903,8 @@ void WebViewImpl::setPageScaleFactor(float scaleFactor, const WebPoint& origin)
         scaleFactor = 1;
 
     scaleFactor = computePageScaleFactorWithinLimits(scaleFactor);
-    page()->setPageScaleFactor(scaleFactor, origin);
+    WebPoint clampedOrigin = clampOffsetAtScale(origin, scaleFactor);
+    page()->setPageScaleFactor(scaleFactor, clampedOrigin);
 }
 
 float WebViewImpl::deviceScaleFactor() const
@@ -1968,6 +1969,20 @@ void WebViewImpl::setPageScaleFactorLimits(float minPageScale, float maxPageScal
     if (m_layerTreeHost)
         m_layerTreeHost->setPageScaleFactorLimits(m_minimumPageScaleFactor, m_maximumPageScaleFactor);
 #endif
+
+    float clampedScale = computePageScaleFactorWithinLimits(pageScaleFactor());
+    if (clampedScale != pageScaleFactor())
+        setPageScaleFactorPreservingScrollOffset(clampedScale);
+}
+
+float WebViewImpl::minimumPageScaleFactor() const
+{
+    return m_minimumPageScaleFactor;
+}
+
+float WebViewImpl::maximumPageScaleFactor() const
+{
+    return m_maximumPageScaleFactor;
 }
 
 WebSize WebViewImpl::fixedLayoutSize() const
