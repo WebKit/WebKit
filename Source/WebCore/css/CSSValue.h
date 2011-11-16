@@ -58,7 +58,6 @@ public:
 
     bool isPrimitiveValue() const { return m_isPrimitive; }
     bool isValueList() const { return m_isList; }
-    bool isInitialValue() const { return m_isInitial; }
     bool isInheritedValue() const { return m_isInherited; }
 
     bool isBorderImageValue() const { return m_classType == BorderImageClass; }
@@ -69,7 +68,8 @@ public:
     bool isFontValue() const { return m_classType == FontClass; }
     bool isImageGeneratorValue() const { return m_classType == CanvasClass || m_classType == CrossfadeClass || m_classType == LinearGradientClass || m_classType == RadialGradientClass; }
     bool isImageValue() const { return m_classType == ImageClass || m_classType == CursorImageClass; }
-    bool isImplicitInitialValue() const { return m_classType == ImplicitInitialClass; }
+    bool isImplicitInitialValue() const { return m_classType == InitialClass && m_isImplicit; }
+    bool isInitialValue() const { return m_classType == InitialClass; }
     bool isReflectValue() const { return m_classType == ReflectClass; }
     bool isShadowValue() const { return m_classType == ShadowClass; }
     bool isTimingFunctionValue() const { return m_classType == CubicBezierTimingFunctionClass || m_classType == LinearTimingFunctionClass || m_classType == StepsTimingFunctionClass; }
@@ -108,7 +108,6 @@ protected:
         ImageClass,
         InheritedClass,
         InitialClass,
-        ImplicitInitialClass,
         PrimitiveClass,
         ReflectClass,
         ShadowClass,
@@ -138,10 +137,10 @@ protected:
         : m_primitiveUnitType(0)
         , m_hasCachedCSSText(false)
         , m_isQuirkValue(false)
+        , m_isImplicit(false)
         , m_classType(classType)
         , m_isPrimitive(isPrimitiveType(classType))
         , m_isList(isListType(classType))
-        , m_isInitial(isInitialType(classType))
         , m_isInherited(isInheritedType(classType))
     {
     }
@@ -174,25 +173,24 @@ private:
         return type == InheritedClass;
     }
 
-    static bool isInitialType(ClassType type)
-    {
-        return type == InitialClass || type == ImplicitInitialClass;
-    }
-
     void destroy();
 
 protected:
-    // These bits are only used by CSSPrimitiveValue but kept here
+    // The bits in this section are only used by specific subclasses but kept here
     // to maximize struct packing.
+
+    // CSSPrimitiveValue bits:
     unsigned m_primitiveUnitType : 7; // CSSPrimitiveValue::UnitTypes
     mutable bool m_hasCachedCSSText : 1;
     bool m_isQuirkValue : 1;
+
+    // CSSInitialValue bits:
+    bool m_isImplicit : 1;
 
 private:
     unsigned m_classType : 5; // ClassType
     bool m_isPrimitive : 1;
     bool m_isList : 1;
-    bool m_isInitial : 1;
     bool m_isInherited : 1;
 };
 

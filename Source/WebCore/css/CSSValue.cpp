@@ -120,7 +120,6 @@ String CSSValue::cssText() const
     case InheritedClass:
         return static_cast<const CSSInheritedValue*>(this)->customCssText();
     case InitialClass:
-    case ImplicitInitialClass:
         return static_cast<const CSSInitialValue*>(this)->customCssText();
     case PrimitiveClass:
         return static_cast<const CSSPrimitiveValue*>(this)->customCssText();
@@ -212,7 +211,6 @@ void CSSValue::destroy()
         delete static_cast<CSSInheritedValue*>(this);
         return;
     case InitialClass:
-    case ImplicitInitialClass:
         delete static_cast<CSSInitialValue*>(this);
         return;
     case PrimitiveClass:

@@ -1,3 +1,35 @@
+2011-11-16  Andreas Kling  <kling@webkit.org>
+
+        CSSValue: Clean up initial value construction.
+        <http://webkit.org/b/72502>
+
+        Reviewed by Antti Koivisto.
+
+        Instead of determining whether a given CSSInitialValue is 'implicit' or not by
+        querying the CSSValue::ClassType (InitialClass vs. ImplicitInitialClass),
+        add a protected CSSValue member and set it from the CSSInitialValue constructor.
+
+        Also get rid of the CSSValue::m_isInitial bit since we can now replace the
+        checks by classType() == InitialClass.
+
+        No new tests, this is a cleanup.
+
+        * css/CSSInitialValue.h:
+        (WebCore::CSSInitialValue::CSSInitialValue):
+
+            Poke 'implicit' constructor argument into CSSValue::m_isImplicit.
+
+        * css/CSSValue.cpp:
+        (WebCore::CSSValue::cssText):
+        (WebCore::CSSValue::destroy):
+
+            Remove ImplicitInitialClass cases.
+
+        * css/CSSValue.h:
+        (WebCore::CSSValue::isImplicitInitialValue):
+        (WebCore::CSSValue::isInitialValue):
+        (WebCore::CSSValue::CSSValue):
+
 2011-11-16  Antaryami Pandia  <antaryami.pandia@motorola.com>
 
         Remove unnecessary if check from RenderListBox::paintItemForeground.

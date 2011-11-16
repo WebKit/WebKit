@@ -43,8 +43,9 @@ public:
 
 private:
     CSSInitialValue(bool implicit)
-        : CSSValue(implicit ? ImplicitInitialClass : InitialClass)
+        : CSSValue(InitialClass)
     {
+        m_isImplicit = implicit;
     }
 
     static PassRefPtr<CSSInitialValue> create(bool implicit)
