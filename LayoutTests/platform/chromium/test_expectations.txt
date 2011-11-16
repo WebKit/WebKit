@@ -3937,4 +3937,6 @@ BUGWK72376 WIN : fast/forms/file/input-file-label.html = TEXT PASS
 
 BUGWK72434 : inspector/styles/svg-style.xhtml = TEXT PASS
 
-BUGWK72269 : media/track/track-cues-cuechange.html = PASS TEXT
+BUGWK72269 : media/track/track-cues-cuechange.html = TEXT PASS
+
+BUGWK72447 : inspector/extensions/extensions-events.html = TEXT PASS
