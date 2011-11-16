@@ -35,7 +35,7 @@ static const CFIndex CoreAnimationRunLoopOrder = 2000000;
 static const CFIndex LayerFlushRunLoopOrder = CoreAnimationRunLoopOrder - 1;
 
 LayerFlushScheduler::LayerFlushScheduler(LayerFlushSchedulerClient* client)
-    : m_suspendCount(0)
+    : m_isSuspended(false)
     , m_client(client)
 {
     ASSERT_ARG(client, client);
@@ -50,13 +50,13 @@ void LayerFlushScheduler::runLoopObserverCallback(CFRunLoopObserverRef, CFRunLoo
 {
     LayerFlushScheduler* layerFlushScheduler = static_cast<LayerFlushScheduler*>(context);
     ASSERT(layerFlushScheduler->m_runLoopObserver);
-    ASSERT(!layerFlushScheduler->m_suspendCount);
+    ASSERT(!layerFlushScheduler->m_isSuspended);
     layerFlushScheduler->m_client->flushLayers();
 }
 
 void LayerFlushScheduler::schedule()
 {
-    if (m_suspendCount)
+    if (m_isSuspended)
         return;
 
     CFRunLoopRef currentRunLoop = CFRunLoopGetCurrent();

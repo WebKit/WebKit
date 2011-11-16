@@ -1,3 +1,30 @@
+2011-11-16  Andy Estes  <aestes@apple.com>
+
+        Assertion failure in LayerFlushScheduler::resume() when running some layout tests in WebKitTestRunner
+        https://bugs.webkit.org/show_bug.cgi?id=72535
+
+        Reviewed by Anders Carlsson.
+
+        LayerFlushScheduler attempted to use a counter strategy for calls to
+        suspend() and resume(), which allowed us to assert that these calls
+        were balanced. Unfortunately it is hard to guarantee this in WebKit2,
+        where we sometimes try to call suspend() before we've entered
+        compositing mode (hence before we have a LayerTreeHost and a
+        LayerFlushScheduler). When we later call resume(), this call ends up
+        being unbalanced and asserts.
+
+        For now, remove the assertions and allow unbalanced calls to suspend()
+        and resume().
+
+        * platform/graphics/ca/LayerFlushScheduler.cpp:
+        (WebCore::LayerFlushScheduler::suspend):
+        (WebCore::LayerFlushScheduler::resume):
+        * platform/graphics/ca/LayerFlushScheduler.h:
+        * platform/graphics/ca/mac/LayerFlushSchedulerMac.cpp:
+        (WebCore::LayerFlushScheduler::LayerFlushScheduler):
+        (WebCore::LayerFlushScheduler::runLoopObserverCallback):
+        (WebCore::LayerFlushScheduler::schedule):
+
 2011-11-16  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r100473.

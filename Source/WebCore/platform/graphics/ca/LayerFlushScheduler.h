@@ -47,7 +47,7 @@ public:
     void resume();
 
 private:
-    unsigned int m_suspendCount;
+    bool m_isSuspended;
     LayerFlushSchedulerClient* m_client;
     
 #if PLATFORM(MAC)

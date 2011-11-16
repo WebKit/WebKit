@@ -33,19 +33,20 @@ namespace WebCore {
     
 void LayerFlushScheduler::suspend()
 {
-    if (!m_suspendCount)
-        invalidate();
+    if (m_isSuspended)
+        return;
     
-    ++m_suspendCount;
+    m_isSuspended = true;
+    invalidate();
 }
     
 void LayerFlushScheduler::resume()
 {
-    ASSERT(m_suspendCount);
-    --m_suspendCount;
+    if (!m_isSuspended)
+        return;
     
-    if (!m_suspendCount)
-        schedule();
+    m_isSuspended = false;
+    schedule();
 }
 
 } // namespace WebCore
