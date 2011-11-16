@@ -255,9 +255,60 @@ WONTFIX SKIP : fast/canvas/canvas-gradient-addStop-error.html = FAIL
 // this test will always fail.
 WONTFIX SKIP LINUX WIN : fast/events/option-tab.html = FAIL
 
-BUGWK72402 CPU CPU-CG WIN LINUX SNOWLEOPARD : compositing = TIMEOUT FAIL
-BUGWK72402 CPU CPU-CG WIN LINUX SNOWLEOPARD : platform/chromium/compositing = TIMEOUT FAIL
-BUGWK72402 CPU CPU-CG WIN LINUX SNOWLEOPARD : animations/3d = TIMEOUT FAIL
+// win+linux failures, probably aren't applicable to this config
+BUGWK72402 WIN LINUX : compositing/video-page-visibility.html = FAIL
+BUGWK72402 WIN LINUX : compositing/geometry/clipped-video-controller.html = FAIL
+BUGWK72402 WIN LINUX : compositing/geometry/video-fixed-scrolling.html = FAIL
+BUGWK72402 WIN LINUX : compositing/geometry/video-opacity-overlay.html = FAIL
+BUGWK72402 WIN LINUX : compositing/layer-creation/spanOverlapsCanvas.html = FAIL
+
+// win+linux failures, either real bugs or need rebaselines
+BUGWK72402 WIN LINUX : compositing/framesets/resources/composited-subframe.html = FAIL
+BUGWK72402 WIN LINUX : compositing/geometry/limit-layer-bounds-clipping-ancestor.html = FAIL
+BUGWK72402 WIN LINUX : compositing/geometry/limit-layer-bounds-fixed-positioned.html = FAIL
+BUGWK72402 WIN LINUX : compositing/geometry/limit-layer-bounds-overflow-root.html = FAIL
+BUGWK72402 WIN LINUX : compositing/geometry/limit-layer-bounds-positioned-transition.html = FAIL
+BUGWK72402 WIN LINUX : compositing/geometry/limit-layer-bounds-positioned.html = FAIL
+BUGWK72402 WIN LINUX : compositing/geometry/limit-layer-bounds-transformed-overflow.html = FAIL
+BUGWK72402 WIN LINUX : compositing/geometry/limit-layer-bounds-transformed.html = FAIL
+BUGWK72402 WIN LINUX : compositing/iframes/resources/composited-red.html = FAIL
+BUGWK72402 WIN LINUX : compositing/iframes/resources/composited-subframe.html = FAIL
+BUGWK72402 WIN LINUX : compositing/iframes/resources/enter-compositing-subframe.html = FAIL
+BUGWK72402 WIN LINUX : compositing/iframes/resources/fixed-position-subframe.html = FAIL
+BUGWK72402 WIN LINUX : compositing/iframes/resources/green-red-subframe.html = FAIL
+BUGWK72402 WIN LINUX : compositing/iframes/resources/has-composited-iframe-child.html = FAIL
+BUGWK72402 WIN LINUX : compositing/iframes/resources/intermediate-frame.html = FAIL
+BUGWK72402 WIN LINUX : compositing/iframes/resources/large-composited-subframe.html = FAIL
+BUGWK72402 WIN LINUX : compositing/iframes/resources/leave-compositing-subframe-click.html = FAIL
+BUGWK72402 WIN LINUX : compositing/iframes/resources/leave-compositing-subframe.html = FAIL
+BUGWK72402 WIN LINUX : compositing/iframes/resources/nested-subframe.html = FAIL
+BUGWK72402 WIN LINUX : compositing/iframes/resources/page-cache-helper.html = FAIL
+BUGWK72402 WIN LINUX : compositing/iframes/resources/page-cache-iframe.html = FAIL
+BUGWK72402 WIN LINUX : compositing/iframes/resources/red-green-subframe.html = FAIL
+BUGWK72402 WIN LINUX : compositing/iframes/resources/repaint-after-losing-scrollbars-iframe.html = FAIL
+BUGWK72402 WIN LINUX : compositing/iframes/resources/subframe.html = FAIL
+BUGWK72402 WIN LINUX : compositing/iframes/resources/subsubframe.html = FAIL
+BUGWK72402 WIN LINUX : compositing/layer-creation/scroll-partial-update.html = FAIL
+BUGWK72402 WIN LINUX : compositing/layers-inside-overflow-scroll.html = FAIL
+BUGWK72402 WIN LINUX : compositing/objects/resources/composited-subframe.html = FAIL
+BUGWK72402 WIN LINUX : compositing/overflow/overflow-compositing-descendant.html = FAIL
+BUGWK72402 WIN LINUX : compositing/overflow/scroll-ancestor-update.html = FAIL
+BUGWK72402 WIN LINUX : compositing/self-painting-layers.html = FAIL
+BUGWK72402 WIN LINUX : platform/chromium/compositing/force-compositing-mode/resources/subframe-big.html = FAIL
+BUGWK72402 WIN LINUX : platform/chromium/compositing/force-compositing-mode/resources/subframe-small.html = FAIL
+BUGWK72402 WIN LINUX RELEASE : compositing/layer-creation/overflow-scroll-overlap.html = FAIL
+
+// mac failures
+BUGWK72402 MAC : animations/3d/matrix-transform-type-animation.html = FAIL
+BUGWK72402 MAC : animations/3d/replace-filling-transform.html = FAIL
+BUGWK72402 MAC : animations/3d/state-at-end-event-transform.html = FAIL
+BUGWK72402 MAC : compositing/geometry/empty-embed-rects.html = FAIL
+BUGWK72402 MAC : platform/chromium/compositing/child-layer-3d-sorting.html = FAIL
+BUGWK72402 MAC : platform/chromium/compositing/huge-layer-rotated.html = FAIL
+BUGWK72402 MAC : platform/chromium/compositing/layout-width-change.html = FAIL
+BUGWK72402 MAC : platform/chromium/compositing/plugins/webplugin-alpha.html = FAIL
+BUGWK72402 MAC : platform/chromium/compositing/plugins/webplugin-reflection.html = FAIL
+BUGWK72402 MAC : platform/chromium/compositing/tiny-layer-rotated.html = FAIL
 
 // We don't ship compositing on Leopard.
 WONTFIX SKIP LEOPARD : compositing = PASS TIMEOUT FAIL
@@ -2665,8 +2716,6 @@ BUGCR71783 : scrollbars/custom-scrollbar-with-incomplete-style.html = IMAGE
 // Will need windows and linux baselines
 
 BUGWK47923 : compositing/geometry/limit-layer-bounds-opacity-transition.html = TIMEOUT
-
-BUGCR101112 WIN : compositing/geometry/object-clip-rects-assertion.html = PASS CRASH
 
 // Chromium does not support PDF content in <img> tags.
 WONTFIX WIN LINUX : compositing/color-matching/pdf-image-match.html = IMAGE+TEXT
