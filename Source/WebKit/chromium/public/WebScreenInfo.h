@@ -63,14 +63,10 @@ struct WebScreenInfo {
     //   some of the rectangle's coordinates may be negative values".
     WebRect availableRect;
 
-    // Measured in frames per second. 0 if the rate is unknown or not applicable.
-    double refreshRate;
-
     WebScreenInfo()
         : depth(0)
         , depthPerComponent(0)
-        , isMonochrome(false)
-        , refreshRate(0) { }
+        , isMonochrome(false) { }
 };
 
 } // namespace WebKit

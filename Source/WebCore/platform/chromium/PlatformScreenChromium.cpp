@@ -61,9 +61,4 @@ FloatRect screenAvailableRect(Widget* widget)
     return PlatformSupport::screenAvailableRect(widget);
 }
 
-double screenRefreshRate(Widget* widget)
-{
-    return PlatformSupport::screenRefreshRate(widget);
-}
-
 } // namespace WebCore
