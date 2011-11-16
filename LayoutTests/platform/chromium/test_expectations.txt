@@ -255,9 +255,9 @@ WONTFIX SKIP : fast/canvas/canvas-gradient-addStop-error.html = FAIL
 // this test will always fail.
 WONTFIX SKIP LINUX WIN : fast/events/option-tab.html = FAIL
 
-BUGWK72402 CPU CPU-CG : compositing = PASS TIMEOUT FAIL
-BUGWK72402 CPU CPU-CG : platform/chromium/compositing = PASS TIMEOUT FAIL
-BUGWK72402 CPU CPU-CG : animations/3d = PASS TIMEOUT FAIL
+BUGWK72402 CPU CPU-CG WIN LINUX SNOWLEOPARD : compositing = PASS TIMEOUT FAIL
+BUGWK72402 CPU CPU-CG WIN LINUX SNOWLEOPARD : platform/chromium/compositing = PASS TIMEOUT FAIL
+BUGWK72402 CPU CPU-CG WIN LINUX SNOWLEOPARD : animations/3d = PASS TIMEOUT FAIL
 
 // We don't ship compositing on Leopard.
 WONTFIX SKIP LEOPARD : compositing = PASS TIMEOUT FAIL
@@ -3491,7 +3491,7 @@ BUGWK66882 LINUX MAC : svg/W3C-SVG-1.1-SE/text-intro-09-b.svg = PASS IMAGE
 
 BUGWK66888 DEBUG : svg/animations/svginteger-animation-1.html = PASS TEXT
 
-BUGWK66900 LINUX SNOWLEOPARD DEBUG : fast/writing-mode/japanese-rl-text-with-broken-font.html = PASS IMAGE+TEXT
+BUGWK66900 LINUX DEBUG : fast/writing-mode/japanese-rl-text-with-broken-font.html = PASS IMAGE+TEXT
 
 BUGWK66908 WIN LINUX GPU DEBUG : canvas/philip/tests/2d.text.draw.fontface.notinpage.html = PASS TEXT
 BUGWK66908 LEOPARD GPU : canvas/philip/tests/2d.text.draw.fontface.notinpage.html = PASS TEXT
@@ -3820,7 +3820,7 @@ BUGENNE : compositing/geometry/fixed-position.html = FAIL
 BUGENNE : compositing/geometry/horizontal-scroll-composited.html = FAIL
 BUGENNE : compositing/geometry/vertical-scroll-composited.html = FAIL
 BUGENNE : compositing/overflow/fixed-position-ancestor-clip.html = FAIL
-BUG72182 : compositing/scaling/tiled-layer-recursion.html = FAIL CRASH
+BUGWK72182 : compositing/scaling/tiled-layer-recursion.html = FAIL CRASH
 
 // This test sometimes exceeds 60-second time limit (for SLOW tests) on
 // win/linux debug. Since setting both SLOW and TIMEOUT is not allowed,
