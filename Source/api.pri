@@ -35,6 +35,11 @@ win32*:!win32-msvc* {
     contains(DEFINES, ENABLE_WEBGL=1)|contains(CONFIG, texmap): LIBS += $$QMAKE_LIBS_OPENGL
 }
 
+CONFIG(release) {
+    contains(QT_CONFIG, reduce_exports):CONFIG += hide_symbols
+    unix:contains(QT_CONFIG, reduce_relocations):CONFIG += bsymbolic_functions
+}
+
 !static: DEFINES += QT_MAKEDLL
 
 SOURCES += \

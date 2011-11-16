@@ -20,6 +20,9 @@ DESTDIR = $$JAVASCRIPTCORE_DESTDIR
 QT += core
 QT -= gui
 
+contains(QT_CONFIG, reduce_exports):CONFIG += hide_symbols
+unix:contains(QT_CONFIG, reduce_relocations):CONFIG += bsymbolic_functions
+
 *-g++*:QMAKE_CXXFLAGS_RELEASE -= -O2
 *-g++*:QMAKE_CXXFLAGS_RELEASE += -O3
 
