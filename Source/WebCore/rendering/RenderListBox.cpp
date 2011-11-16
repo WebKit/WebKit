@@ -420,8 +420,7 @@ void RenderListBox::paintItemForeground(PaintInfo& paintInfo, const LayoutPoint&
     }
 
     // Draw the item text
-    if (itemStyle->visibility() != HIDDEN)
-        paintInfo.context->drawBidiText(itemFont, textRun, r.location());
+    paintInfo.context->drawBidiText(itemFont, textRun, r.location());
 }
 
 void RenderListBox::paintItemBackground(PaintInfo& paintInfo, const LayoutPoint& paintOffset, int listIndex)

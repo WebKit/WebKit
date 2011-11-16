@@ -1,3 +1,13 @@
+2011-11-16  Antaryami Pandia  <antaryami.pandia@motorola.com>
+
+        Remove unnecessary if check from RenderListBox::paintItemForeground.
+        https://bugs.webkit.org/show_bug.cgi?id=72488
+
+        Reviewed by Andreas Kling.
+
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::paintItemForeground):
+
 2011-11-15  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Centralize hide_symbols and ensure all libs are built with symbol visibility & bsymbolic_functions
