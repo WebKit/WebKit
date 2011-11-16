@@ -656,7 +656,8 @@ void Page::setDeviceScaleFactor(float scaleFactor)
     setNeedsRecalcStyleInAllFrames();
 
 #if USE(ACCELERATED_COMPOSITING)
-    m_mainFrame->deviceOrPageScaleFactorChanged();
+    if (mainFrame())
+        mainFrame()->deviceOrPageScaleFactorChanged();
 #endif
 
     for (Frame* frame = mainFrame(); frame; frame = frame->tree()->traverseNext())
