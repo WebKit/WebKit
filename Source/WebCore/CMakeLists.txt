@@ -1282,7 +1282,6 @@ SET(WebCore_SOURCES
     rendering/RenderSlider.cpp
     rendering/RenderSummary.cpp
     rendering/RenderTable.cpp
-    rendering/RenderTableCaption.cpp
     rendering/RenderTableCell.cpp
     rendering/RenderTableCol.cpp
     rendering/RenderTableRow.cpp

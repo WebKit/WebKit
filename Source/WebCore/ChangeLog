@@ -1,5 +1,29 @@
 2011-11-16  Sheriff Bot  <webkit.review.bot@gmail.com>
 
+        Unreviewed, rolling out r100473.
+        http://trac.webkit.org/changeset/100473
+        https://bugs.webkit.org/show_bug.cgi?id=72534
+
+        "Broke the Mac Build" (Requested by mwenge2 on #webkit).
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::addChildIgnoringAnonymousColumnBlocks):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::createObject):
+        (WebCore::RenderObject::addChild):
+        * rendering/RenderObject.h:
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::addChild):
+        * rendering/RenderTable.h:
+        * rendering/RenderTableCaption.cpp: Removed.
+        * rendering/RenderTableCaption.h: Removed.
+
+2011-11-16  Sheriff Bot  <webkit.review.bot@gmail.com>
+
         Unreviewed, rolling out r100479.
         http://trac.webkit.org/changeset/100479
         https://bugs.webkit.org/show_bug.cgi?id=72533

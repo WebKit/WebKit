@@ -36,7 +36,6 @@
 #include "HTMLNames.h"
 #include "LayoutRepainter.h"
 #include "RenderLayer.h"
-#include "RenderTableCaption.h"
 #include "RenderTableCell.h"
 #include "RenderTableCol.h"
 #include "RenderTableSection.h"
@@ -116,8 +115,8 @@ void RenderTable::addChild(RenderObject* child, RenderObject* beforeChild)
 
     bool wrapInAnonymousSection = !child->isPositioned();
 
-    if (child->isTableCaption()) {
-        m_captions.append(toRenderTableCaption(child));
+    if (child->isRenderBlock() && child->style()->display() == TABLE_CAPTION) {
+        m_captions.append(toRenderBlock(child));
         setNeedsSectionRecalc();
         wrapInAnonymousSection = false;
     } else if (child->isTableCol()) {
