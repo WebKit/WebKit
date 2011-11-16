@@ -53,12 +53,12 @@ static const char optionStartupDialog[] = "--testshell-startup-dialog";
 static const char optionCheckLayoutTestSystemDeps[] = "--check-layout-test-sys-deps";
 
 static const char optionHardwareAcceleratedGL[] = "--enable-hardware-gpu";
-static const char optionEnableAcceleratedCompositingForVideo[] = "--enable-compositing-for-video";
 static const char optionEnableThreadedCompositing[] = "--enable-threaded-compositing";
 static const char optionForceCompositingMode[] = "--force-compositing-mode";
 static const char optionEnableAccelerated2DCanvas[] = "--enable-accelerated-2d-canvas";
 static const char optionEnableLegacyAccelerated2DCanvas[] = "--enable-legacy-accelerated-2d-canvas";
 static const char optionEnableAcceleratedDrawing[] = "--enable-accelerated-drawing";
+static const char optionEnableAcceleratedCompositingForVideo[] = "--enable-accelerated-video";
 static const char optionEnableCompositeToTexture[] = "--enable-composite-to-texture";
 static const char optionUseGraphicsContext3DImplementation[] = "--use-graphics-context-3d-implementation=";
 
