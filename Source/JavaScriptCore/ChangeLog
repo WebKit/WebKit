@@ -1,3 +1,23 @@
+2011-11-15  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r100375 and r100385.
+        http://trac.webkit.org/changeset/100375
+        http://trac.webkit.org/changeset/100385
+        https://bugs.webkit.org/show_bug.cgi?id=72465
+
+        They broke 32 bit builds on Qt (Requested by ossy on #webkit).
+
+        * dfg/DFGOperations.cpp:
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * runtime/ArgList.cpp:
+        (JSC::ArgList::getSlice):
+        * runtime/ArgList.h:
+        (JSC::ArgList::ArgList):
+        * runtime/JSArray.cpp:
+        * runtime/JSArray.h:
+        * runtime/JSGlobalObject.h:
+
 2011-11-15  George Staikos  <staikos@webkit.org>
 
         Remove the guard page from the addressable stack region on QNX.

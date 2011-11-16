@@ -236,46 +236,6 @@ void JSArray::finishCreation(JSGlobalData& globalData, const ArgList& list)
     Heap::heap(this)->reportExtraMemoryCost(storageSize(initialStorage));
 }
 
-void JSArray::finishCreation(JSGlobalData& globalData, const JSValue* values, size_t length)
-{
-    Base::finishCreation(globalData);
-    ASSERT(inherits(&s_info));
-
-    unsigned initialCapacity = length;
-    unsigned initialStorage;
-    
-    // If the ArgList is empty, allocate space for 3 entries.  This value empirically
-    // works well for benchmarks.
-    if (!initialCapacity)
-        initialStorage = 3;
-    else
-        initialStorage = initialCapacity;
-    
-    m_storage = static_cast<ArrayStorage*>(fastMalloc(storageSize(initialStorage)));
-    m_storage->m_allocBase = m_storage;
-    m_indexBias = 0;
-    m_storage->m_length = initialCapacity;
-    m_vectorLength = initialStorage;
-    m_storage->m_numValuesInVector = initialCapacity;
-    m_storage->m_sparseValueMap = 0;
-    m_storage->subclassData = 0;
-    m_storage->reportedMapCapacity = 0;
-#if CHECK_ARRAY_CONSISTENCY
-    m_storage->m_inCompactInitialization = false;
-#endif
-
-    size_t i = 0;
-    WriteBarrier<Unknown>* vector = m_storage->m_vector;
-    for ( ; i != length; ++i)
-        vector[i].set(globalData, this, values[i]);
-    for (; i < initialStorage; i++)
-        vector[i].clear();
-
-    checkConsistency();
-
-    Heap::heap(this)->reportExtraMemoryCost(storageSize(initialStorage));
-}
-
 JSArray::~JSArray()
 {
     ASSERT(vptr() == JSGlobalData::jsArrayVPtr);
