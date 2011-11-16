@@ -116,7 +116,7 @@ public:
     virtual void layerDidDisplay(PlatformLayer*);
 
     virtual void setMaintainsPixelAlignment(bool);
-    virtual void pageScaleFactorChanged();
+    virtual void deviceOrPageScaleFactorChanged();
 
     void recursiveCommitChanges(float pageScaleFactor = 1, const FloatPoint& positionRelativeToBase = FloatPoint(), bool affectedByPageScale = false);
 

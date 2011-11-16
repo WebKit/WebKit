@@ -2394,7 +2394,7 @@ void GraphicsLayerCA::setMaintainsPixelAlignment(bool maintainsAlignment)
     noteChangesForScaleSensitiveProperties();
 }
 
-void GraphicsLayerCA::pageScaleFactorChanged()
+void GraphicsLayerCA::deviceOrPageScaleFactorChanged()
 {
     noteChangesForScaleSensitiveProperties();
 }
