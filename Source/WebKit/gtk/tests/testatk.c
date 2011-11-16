@@ -68,12 +68,25 @@ static const char* textForSelections = "<html><body><p>A paragraph with plain te
 
 static const char* textWithAttributes = "<html><head><style>.st1 {font-family: monospace; color:rgb(120,121,122);} .st2 {text-decoration:underline; background-color:rgb(80,81,82);}</style></head><body><p style=\"font-size:14; text-align:right;\">This is the <i>first</i><b> sentence of this text.</b></p><p class=\"st1\">This sentence should have an style applied <span class=\"st2\">and this part should have another one</span>.</p><p>x<sub>1</sub><sup>2</sup>=x<sub>2</sub><sup>3</sup></p><p style=\"text-align:center;\">This sentence is the <strike>last</strike> one.</p></body></html>";
 
-static void waitForAccessibleObjects()
+static AtkObject* getWebAreaObject(WebKitWebView* webView)
 {
     /* Manually spin the main context to make sure the accessible
        objects are properly created before continuing. */
     while (g_main_context_pending(0))
         g_main_context_iteration(0, TRUE);
+
+    AtkObject* rootObject = gtk_widget_get_accessible(GTK_WIDGET(webView));
+    if (!rootObject)
+        return NULL;
+
+    AtkObject* webAreaObject = atk_object_ref_accessible_child(rootObject, 0);
+    if (!webAreaObject)
+        return NULL;
+
+    /* We don't need the extra ref here. */
+    g_object_unref(webAreaObject);
+
+    return webAreaObject;
 }
 
 typedef gchar* (*AtkGetTextFunction) (AtkText*, gint, AtkTextBoundary, gint*, gint*);
@@ -239,10 +252,7 @@ static void testWebkitAtkCaretOffsets()
     gtk_widget_size_allocate(GTK_WIDGET(webView), &allocation);
     webkit_web_view_load_string(webView, textForCaretBrowsing, 0, 0, 0);
 
-    /* Wait for the accessible objects to be created. */
-    waitForAccessibleObjects();
-
-    AtkObject* object = gtk_widget_get_accessible(GTK_WIDGET(webView));
+    AtkObject* object = getWebAreaObject(webView);
     g_assert(object);
 
     AtkObject* header = atk_object_ref_accessible_child(object, 0);
@@ -342,16 +352,13 @@ static void testWebkitAtkCaretOffsetsAndExtranousWhiteSpaces()
     gtk_widget_size_allocate(GTK_WIDGET(webView), &allocation);
     webkit_web_view_load_string(webView, contentsWithExtraneousWhiteSpaces, 0, 0, 0);
 
-    /* Wait for the accessible objects to be created. */
-    waitForAccessibleObjects();
-
     /* Enable caret browsing. */
     WebKitWebSettings* settings = webkit_web_view_get_settings(webView);
     g_object_set(G_OBJECT(settings), "enable-caret-browsing", TRUE, NULL);
     webkit_web_view_set_settings(webView, settings);
 
     /* Get to the inner AtkText object. */
-    AtkObject* object = gtk_widget_get_accessible(GTK_WIDGET(webView));
+    AtkObject* object = getWebAreaObject(webView);
     g_assert(object);
     object = atk_object_ref_accessible_child(object, 0);
     g_assert(object);
@@ -389,10 +396,7 @@ static void testWebkitAtkComboBox()
     gtk_widget_size_allocate(GTK_WIDGET(webView), &allocation);
     webkit_web_view_load_string(webView, comboBoxSelector, 0, 0, 0);
 
-    /* Wait for the accessible objects to be created. */
-    waitForAccessibleObjects();
-
-    AtkObject* object = gtk_widget_get_accessible(GTK_WIDGET(webView));
+    AtkObject* object = getWebAreaObject(webView);
     g_assert(object);
 
     AtkObject* formObject = atk_object_ref_accessible_child(object, 0);
@@ -490,10 +494,7 @@ static void testWebkitAtkEmbeddedObjects()
     gtk_widget_size_allocate(GTK_WIDGET(webView), &allocation);
     webkit_web_view_load_string(webView, embeddedObjects, 0, 0, 0);
 
-    /* Wait for the accessible objects to be created. */
-    waitForAccessibleObjects();
-
-    AtkObject* object = gtk_widget_get_accessible(GTK_WIDGET(webView));
+    AtkObject* object = getWebAreaObject(webView);
     g_assert(object);
 
     AtkText* paragraph1 = ATK_TEXT(atk_object_ref_accessible_child(object, 0));
@@ -576,11 +577,8 @@ static void testWebkitAtkGetTextAtOffsetForms()
     gtk_widget_size_allocate(GTK_WIDGET(webView), &allocation);
     webkit_web_view_load_string(webView, contents, 0, 0, 0);
 
-    /* Wait for the accessible objects to be created. */
-    waitForAccessibleObjects();
-
     /* Get to the inner AtkText object. */
-    AtkObject* object = gtk_widget_get_accessible(GTK_WIDGET(webView));
+    AtkObject* object = getWebAreaObject(webView);
     g_assert(object);
     object = atk_object_ref_accessible_child(object, 0);
     g_assert(object);
@@ -601,11 +599,8 @@ static void testWebkitAtkGetTextAtOffset()
     gtk_widget_size_allocate(GTK_WIDGET(webView), &allocation);
     webkit_web_view_load_string(webView, contents, 0, 0, 0);
 
-    /* Wait for the accessible objects to be created. */
-    waitForAccessibleObjects();
-
     /* Get to the inner AtkText object. */
-    AtkObject* object = gtk_widget_get_accessible(GTK_WIDGET(webView));
+    AtkObject* object = getWebAreaObject(webView);
     g_assert(object);
     object = atk_object_ref_accessible_child(object, 0);
     g_assert(object);
@@ -626,11 +621,8 @@ static void testWebkitAtkGetTextAtOffsetNewlines()
     gtk_widget_size_allocate(GTK_WIDGET(webView), &allocation);
     webkit_web_view_load_string(webView, contentsWithNewlines, 0, 0, 0);
 
-    /* Wait for the accessible objects to be created. */
-    waitForAccessibleObjects();
-
     /* Get to the inner AtkText object. */
-    AtkObject* object = gtk_widget_get_accessible(GTK_WIDGET(webView));
+    AtkObject* object = getWebAreaObject(webView);
     g_assert(object);
     object = atk_object_ref_accessible_child(object, 0);
     g_assert(object);
@@ -651,11 +643,8 @@ static void testWebkitAtkGetTextAtOffsetTextarea()
     gtk_widget_size_allocate(GTK_WIDGET(webView), &allocation);
     webkit_web_view_load_string(webView, contentsInTextarea, 0, 0, 0);
 
-    /* Wait for the accessible objects to be created. */
-    waitForAccessibleObjects();
-
     /* Get to the inner AtkText object. */
-    AtkObject* object = gtk_widget_get_accessible(GTK_WIDGET(webView));
+    AtkObject* object = getWebAreaObject(webView);
     g_assert(object);
     object = atk_object_ref_accessible_child(object, 0);
     g_assert(object);
@@ -678,11 +667,8 @@ static void testWebkitAtkGetTextAtOffsetTextInput()
     gtk_widget_size_allocate(GTK_WIDGET(webView), &allocation);
     webkit_web_view_load_string(webView, contentsInTextInput, 0, 0, 0);
 
-    /* Wait for the accessible objects to be created. */
-    waitForAccessibleObjects();
-
     /* Get to the inner AtkText object. */
-    AtkObject* object = gtk_widget_get_accessible(GTK_WIDGET(webView));
+    AtkObject* object = getWebAreaObject(webView);
     g_assert(object);
     object = atk_object_ref_accessible_child(object, 0);
     g_assert(object);
@@ -705,11 +691,8 @@ static void testWebkitAtkGetTextAtOffsetWithSpecialCharacters()
     gtk_widget_size_allocate(GTK_WIDGET(webView), &allocation);
     webkit_web_view_load_string(webView, contentsWithSpecialChars, 0, 0, 0);
 
-    /* Wait for the accessible objects to be created. */
-    waitForAccessibleObjects();
-
     /* Get to the inner AtkText object. */
-    AtkObject* object = gtk_widget_get_accessible(GTK_WIDGET(webView));
+    AtkObject* object = getWebAreaObject(webView);
     g_assert(object);
     object = atk_object_ref_accessible_child(object, 0);
     g_assert(object);
@@ -739,11 +722,8 @@ static void testWebkitAtkGetTextInParagraphAndBodySimple()
     gtk_widget_size_allocate(GTK_WIDGET(webView), &allocation);
     webkit_web_view_load_string(webView, contentsInParagraphAndBodySimple, 0, 0, 0);
 
-    /* Wait for the accessible objects to be created. */
-    waitForAccessibleObjects();
-
     /* Get to the inner AtkText object. */
-    AtkObject* object = gtk_widget_get_accessible(GTK_WIDGET(webView));
+    AtkObject* object = getWebAreaObject(webView);
     g_assert(object);
     AtkObject* object1 = atk_object_ref_accessible_child(object, 0);
     g_assert(object1);
@@ -774,11 +754,8 @@ static void testWebkitAtkGetTextInParagraphAndBodyModerate()
     gtk_widget_size_allocate(GTK_WIDGET(webView), &allocation);
     webkit_web_view_load_string(webView, contentsInParagraphAndBodyModerate, 0, 0, 0);
 
-    /* Wait for the accessible objects to be created. */
-    waitForAccessibleObjects();
-
     /* Get to the inner AtkText object. */
-    AtkObject* object = gtk_widget_get_accessible(GTK_WIDGET(webView));
+    AtkObject* object = getWebAreaObject(webView);
     g_assert(object);
     AtkObject* object1 = atk_object_ref_accessible_child(object, 0);
     g_assert(object1);
@@ -809,10 +786,7 @@ static void testWebkitAtkGetTextInTable()
     gtk_widget_size_allocate(GTK_WIDGET(webView), &allocation);
     webkit_web_view_load_string(webView, contentsInTable, 0, 0, 0);
 
-    /* Wait for the accessible objects to be created. */
-    waitForAccessibleObjects();
-
-    AtkObject* object = gtk_widget_get_accessible(GTK_WIDGET(webView));
+    AtkObject* object = getWebAreaObject(webView);
     g_assert(object);
     object = atk_object_ref_accessible_child(object, 0);
     g_assert(object);
@@ -832,10 +806,7 @@ static void testWebkitAtkGetHeadersInTable()
     gtk_widget_size_allocate(GTK_WIDGET(webView), &allocation);
     webkit_web_view_load_string(webView, contentsInTableWithHeaders, 0, 0, 0);
 
-    /* Wait for the accessible objects to be created. */
-    waitForAccessibleObjects();
-
-    AtkObject* axWebView = gtk_widget_get_accessible(GTK_WIDGET(webView));
+    AtkObject* axWebView = getWebAreaObject(webView);
     g_assert(axWebView);
 
     /* Check table with both column and row headers. */
@@ -966,10 +937,7 @@ static void testWebkitAtkTextAttributes()
     gtk_widget_size_allocate(GTK_WIDGET(webView), &allocation);
     webkit_web_view_load_string(webView, textWithAttributes, 0, 0, 0);
 
-    /* Wait for the accessible objects to be created. */
-    waitForAccessibleObjects();
-
-    AtkObject* object = gtk_widget_get_accessible(GTK_WIDGET(webView));
+    AtkObject* object = getWebAreaObject(webView);
     g_assert(object);
 
     AtkObject* child = atk_object_ref_accessible_child(object, 0);
@@ -1076,10 +1044,7 @@ static void testWebkitAtkTextSelections()
     gtk_widget_size_allocate(GTK_WIDGET(webView), &allocation);
     webkit_web_view_load_string(webView, textForSelections, 0, 0, 0);
 
-    /* Wait for the accessible objects to be created. */
-    waitForAccessibleObjects();
-
-    AtkObject* object = gtk_widget_get_accessible(GTK_WIDGET(webView));
+    AtkObject* object = getWebAreaObject(webView);
     g_assert(object);
 
     AtkText* paragraph1 = ATK_TEXT(atk_object_ref_accessible_child(object, 0));
@@ -1233,10 +1198,7 @@ static void testWebkitAtkGetExtents()
     gtk_widget_size_allocate(GTK_WIDGET(webView), &allocation);
     webkit_web_view_load_string(webView, centeredContents, 0, 0, 0);
 
-    /* Wait for the accessible objects to be created. */
-    waitForAccessibleObjects();
-
-    AtkObject* object = gtk_widget_get_accessible(GTK_WIDGET(webView));
+    AtkObject* object = getWebAreaObject(webView);
     g_assert(object);
 
     AtkText* shortText1 = ATK_TEXT(atk_object_ref_accessible_child(object, 0));
@@ -1349,10 +1311,7 @@ static void testWebkitAtkLayoutAndDataTables()
     gtk_widget_size_allocate(GTK_WIDGET(webView), &allocation);
     webkit_web_view_load_string(webView, layoutAndDataTables, 0, 0, 0);
 
-    /* Wait for the accessible objects to be created. */
-    waitForAccessibleObjects();
-
-    AtkObject* object = gtk_widget_get_accessible(GTK_WIDGET(webView));
+    AtkObject* object = getWebAreaObject(webView);
     g_assert(object);
 
     /* Check the non-layout table (data table). */
@@ -1387,10 +1346,7 @@ static void testWebkitAtkLinksWithInlineImages()
     gtk_widget_size_allocate(GTK_WIDGET(webView), &allocation);
     webkit_web_view_load_string(webView, linksWithInlineImages, 0, 0, 0);
 
-    /* Wait for the accessible objects to be created. */
-    waitForAccessibleObjects();
-
-    AtkObject* object = gtk_widget_get_accessible(GTK_WIDGET(webView));
+    AtkObject* object = getWebAreaObject(webView);
     g_assert(object);
 
     /* First paragraph (link at the beginning). */
@@ -1439,10 +1395,7 @@ static void testWebkitAtkHypertextAndHyperlinks()
     gtk_widget_size_allocate(GTK_WIDGET(webView), &allocation);
     webkit_web_view_load_string(webView, hypertextAndHyperlinks, 0, 0, 0);
 
-    /* Wait for the accessible objects to be created. */
-    waitForAccessibleObjects();
-
-    AtkObject* object = gtk_widget_get_accessible(GTK_WIDGET(webView));
+    AtkObject* object = getWebAreaObject(webView);
     g_assert(object);
 
     AtkObject* paragraph1 = atk_object_ref_accessible_child(object, 0);
@@ -1534,10 +1487,7 @@ static void testWebkitAtkListsOfItems()
     gtk_widget_size_allocate(GTK_WIDGET(webView), &allocation);
     webkit_web_view_load_string(webView, listsOfItems, 0, 0, 0);
 
-    /* Wait for the accessible objects to be created. */
-    waitForAccessibleObjects();
-
-    AtkObject* object = gtk_widget_get_accessible(GTK_WIDGET(webView));
+    AtkObject* object = getWebAreaObject(webView);
     g_assert(object);
 
     /* Unordered list. */
@@ -1625,10 +1575,7 @@ static void testWebkitAtkTextChangedNotifications()
     gtk_widget_size_allocate(GTK_WIDGET(webView), &allocation);
     webkit_web_view_load_string(webView, formWithTextInputs, 0, 0, 0);
 
-    /* Wait for the accessible objects to be created. */
-    waitForAccessibleObjects();
-
-    AtkObject* object = gtk_widget_get_accessible(GTK_WIDGET(webView));
+    AtkObject* object = getWebAreaObject(webView);
     g_assert(object);
 
     AtkObject* form = atk_object_ref_accessible_child(object, 0);
@@ -1658,6 +1605,43 @@ static void testWebkitAtkTextChangedNotifications()
     g_object_unref(webView);
 }
 
+static void testWebkitAtkParentForRootObject()
+{
+    WebKitWebView* webView = WEBKIT_WEB_VIEW(webkit_web_view_new());
+    GtkAllocation allocation = { 0, 0, 800, 600 };
+    gtk_widget_size_allocate(GTK_WIDGET(webView), &allocation);
+    webkit_web_view_load_string(webView, contents, 0, 0, 0);
+
+    /* We need a parent for the webview to check top-down and
+       bottom-up navigation among them, so create a box for it. */
+#ifdef GTK_API_VERSION_2
+    GtkWidget* box = gtk_vbox_new(FALSE, 0);
+#else
+    GtkWidget* box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+#endif
+    g_object_ref_sink(box);
+    gtk_box_pack_start(GTK_BOX(box), GTK_WIDGET(webView), FALSE, FALSE, 0);
+
+    AtkObject* axBox = gtk_widget_get_accessible (box);
+    g_assert(ATK_IS_OBJECT(axBox));
+
+    g_assert_cmpint(atk_object_get_n_accessible_children(axBox), ==, 1);
+    AtkObject* axBoxChild = atk_object_ref_accessible_child(axBox, 0);
+    g_assert(axBoxChild);
+
+    AtkObject* axRoot = gtk_widget_get_accessible(GTK_WIDGET(webView));
+    g_assert(ATK_IS_OBJECT(axRoot));
+
+    /* The box's child should be the AtkObject for the WebView's root. */
+    g_assert(axBoxChild == axRoot);
+
+    /* Bottom-up navigation should match top-down one. */
+    g_assert(atk_object_get_parent(axBoxChild) == axBox);
+
+    g_object_unref(axBoxChild);
+    g_object_unref(box);
+}
+
 int main(int argc, char** argv)
 {
     gtk_test_init(&argc, &argv, 0);
@@ -1685,6 +1669,7 @@ int main(int argc, char** argv)
     g_test_add_func("/webkit/atk/linksWithInlineImages", testWebkitAtkLinksWithInlineImages);
     g_test_add_func("/webkit/atk/listsOfItems", testWebkitAtkListsOfItems);
     g_test_add_func("/webkit/atk/textChangedNotifications", testWebkitAtkTextChangedNotifications);
+    g_test_add_func("/webkit/atk/parentForRootObject", testWebkitAtkParentForRootObject);
     return g_test_run ();
 }
 

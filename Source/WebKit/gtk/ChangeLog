@@ -1,3 +1,45 @@
+2011-11-16  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        [GTK] Do not hide accessibility root object from AT's
+        https://bugs.webkit.org/show_bug.cgi?id=72390
+
+        Reviewed by Martin Robinson.
+
+        * tests/testatk.c:
+        (getWebAreaObject): New helper function, to bypass the new root
+        object in the accessibility hierarchy, since it's not usually
+        needed for the unit tests.
+        (testWebkitAtkCaretOffsets): Use getWebAreaObject().
+        (testWebkitAtkCaretOffsetsAndExtranousWhiteSpaces): Ditto.
+        (testWebkitAtkComboBox): Ditto.
+        (testWebkitAtkEmbeddedObjects): Ditto.
+        (testWebkitAtkGetTextAtOffsetForms): Ditto.
+        (testWebkitAtkGetTextAtOffset): Ditto.
+        (testWebkitAtkGetTextAtOffsetNewlines): Ditto.
+        (testWebkitAtkGetTextAtOffsetTextarea): Ditto.
+        (testWebkitAtkGetTextAtOffsetTextInput): Ditto.
+        (testWebkitAtkGetTextAtOffsetWithSpecialCharacters): Ditto.
+        (testWebkitAtkGetTextInParagraphAndBodySimple): Ditto.
+        (testWebkitAtkGetTextInParagraphAndBodyModerate): Ditto.
+        (testWebkitAtkGetTextInTable): Ditto.
+        (testWebkitAtkGetHeadersInTable): Ditto.
+        (testWebkitAtkTextAttributes): Ditto.
+        (testWebkitAtkTextSelections): Ditto.
+        (testWebkitAtkGetExtents): Ditto.
+        (testWebkitAtkLayoutAndDataTables): Ditto.
+        (testWebkitAtkLinksWithInlineImages): Ditto.
+        (testWebkitAtkHypertextAndHyperlinks): Ditto.
+        (testWebkitAtkListsOfItems): Ditto.
+        (testWebkitAtkTextChangedNotifications): Ditto.
+        (testWebkitAtkParentForRootObject): New test, to make sure that
+        both top-down and bottom-up navigation among GTK and WebKit worlds
+        matches accordingly.
+        (main): Added new test.
+
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_get_accessible): Remove the hack introduced
+        because of bug 51932, to bypass the root object here.
+
 2011-11-15  Anders Carlsson  <andersca@apple.com>
 
         HostWindow screenToWindow/windowToScreen should be screenToRootView/rootViewToScreen
