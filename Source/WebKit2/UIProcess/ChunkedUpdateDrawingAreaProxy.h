@@ -72,6 +72,7 @@ private:
     WebPageProxy* page() const;
 
     // DrawingAreaProxy
+    virtual void deviceScaleFactorDidChange() { }
     virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
     virtual bool paint(const WebCore::IntRect&, PlatformDrawingContext);
     virtual void sizeDidChange();

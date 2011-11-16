@@ -48,6 +48,7 @@ protected:
     // LayerTreeHost.
     virtual void invalidate();
     virtual void sizeDidChange(const WebCore::IntSize& newSize);
+    virtual void deviceScaleFactorDidChange();
     virtual void forceRepaint();
     virtual void setRootCompositingLayer(WebCore::GraphicsLayer*);
 

@@ -253,7 +253,8 @@ public:
         ViewWindowIsActive = 1 << 0,
         ViewIsFocused = 1 << 1,
         ViewIsVisible = 1 << 2,
-        ViewIsInWindow = 1 << 3
+        ViewIsInWindow = 1 << 3,
+        DeviceScaleFactor = 1 << 4,
     };
     typedef unsigned ViewStateFlags;
     void viewStateDidChange(ViewStateFlags flags);
@@ -360,6 +361,8 @@ public:
 
     void scalePage(double scale, const WebCore::IntPoint& origin);
     double pageScaleFactor() const { return m_pageScaleFactor; }
+
+    float deviceScaleFactor() const;
 
     void setUseFixedLayout(bool);
     void setFixedLayoutSize(const WebCore::IntSize&);

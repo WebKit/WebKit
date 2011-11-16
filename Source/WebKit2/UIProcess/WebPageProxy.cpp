@@ -649,6 +649,9 @@ void WebPageProxy::viewStateDidChange(ViewStateFlags flags)
         }
     }
 
+    if (flags & DeviceScaleFactor)
+        m_drawingArea->deviceScaleFactorDidChange();
+
     updateBackingStoreDiscardableState();
 }
 
@@ -1142,6 +1145,11 @@ void WebPageProxy::scalePage(double scale, const IntPoint& origin)
         return;
 
     process()->send(Messages::WebPage::ScalePage(scale, origin), m_pageID);
+}
+
+float WebPageProxy::deviceScaleFactor() const
+{
+    return m_pageClient->deviceScaleFactor();
 }
 
 void WebPageProxy::setUseFixedLayout(bool fixed)
