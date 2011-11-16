@@ -40,6 +40,25 @@
 BOOL applicationIsTerminating = NO;
 int pluginDatabaseClientCount = 0;
 
+#if USE(ACCELERATED_COMPOSITING)
+void LayerFlushController::scheduleLayerFlush()
+{
+    m_layerFlushScheduler.schedule();
+}
+
+void LayerFlushController::invalidateObserver()
+{
+    m_layerFlushScheduler.invalidate();
+}
+
+LayerFlushController::LayerFlushController(WebView* webView)
+    : m_webView(webView)
+    , m_layerFlushScheduler(this)
+{
+    ASSERT_ARG(webView, webView);
+}
+#endif
+
 @implementation WebViewPrivate
 
 + (void)initialize

@@ -48,12 +48,12 @@ PassRefPtr<LayerTreeHostCAMac> LayerTreeHostCAMac::create(WebPage* webPage)
 
 LayerTreeHostCAMac::LayerTreeHostCAMac(WebPage* webPage)
     : LayerTreeHostCA(webPage)
+    , m_layerFlushScheduler(this)
 {
 }
 
 LayerTreeHostCAMac::~LayerTreeHostCAMac()
 {
-    ASSERT(!m_flushPendingLayerChangesRunLoopObserver);
     ASSERT(!m_remoteLayerClient);
 }
 
@@ -69,50 +69,20 @@ void LayerTreeHostCAMac::platformInitialize(LayerTreeContext& layerTreeContext)
 
 void LayerTreeHostCAMac::scheduleLayerFlush()
 {
-    if (!m_layerFlushSchedulingEnabled)
-        return;
-
-    CFRunLoopRef currentRunLoop = CFRunLoopGetCurrent();
-    
-    // Make sure we wake up the loop or the observer could be delayed until some other source fires.
-    CFRunLoopWakeUp(currentRunLoop);
-
-    if (m_flushPendingLayerChangesRunLoopObserver)
-        return;
-
-    // Run before the Core Animation commit observer.
-    const CFIndex runLoopOrder = CoreAnimationRunLoopOrder - 1;
-    CFRunLoopObserverContext context = { 0, this, 0, 0, 0 };
-    m_flushPendingLayerChangesRunLoopObserver.adoptCF(CFRunLoopObserverCreate(0, kCFRunLoopBeforeWaiting | kCFRunLoopExit, true, runLoopOrder, flushPendingLayerChangesRunLoopObserverCallback, &context));
-
-    CFRunLoopAddObserver(currentRunLoop, m_flushPendingLayerChangesRunLoopObserver.get(), kCFRunLoopCommonModes);
+    m_layerFlushScheduler.schedule();
 }
 
 void LayerTreeHostCAMac::setLayerFlushSchedulingEnabled(bool layerFlushingEnabled)
 {
-    if (m_layerFlushSchedulingEnabled == layerFlushingEnabled)
-        return;
-
-    m_layerFlushSchedulingEnabled = layerFlushingEnabled;
-
-    if (m_layerFlushSchedulingEnabled) {
-        scheduleLayerFlush();
-        return;
-    }
-
-    if (!m_flushPendingLayerChangesRunLoopObserver)
-        return;
-
-    CFRunLoopObserverInvalidate(m_flushPendingLayerChangesRunLoopObserver.get());
-    m_flushPendingLayerChangesRunLoopObserver = nullptr;
+    if (layerFlushingEnabled)
+        m_layerFlushScheduler.resume();
+    else
+        m_layerFlushScheduler.suspend();
 }
 
 void LayerTreeHostCAMac::invalidate()
 {
-    if (m_flushPendingLayerChangesRunLoopObserver) {
-        CFRunLoopObserverInvalidate(m_flushPendingLayerChangesRunLoopObserver.get());
-        m_flushPendingLayerChangesRunLoopObserver = nullptr;
-    }
+    m_layerFlushScheduler.invalidate();
 
     WKCARemoteLayerClientInvalidate(m_remoteLayerClient.get());
     m_remoteLayerClient = nullptr;
@@ -148,24 +118,18 @@ void LayerTreeHostCAMac::resumeRendering()
     [[NSNotificationCenter defaultCenter] postNotificationName:@"NSCAViewRenderDidResumeNotification" object:nil userInfo:[NSDictionary dictionaryWithObject:root forKey:@"layer"]];
 }
 
-void LayerTreeHostCAMac::flushPendingLayerChangesRunLoopObserverCallback(CFRunLoopObserverRef, CFRunLoopActivity, void* context)
+void LayerTreeHostCAMac::flushLayers()
 {
-    LayerTreeHostCAMac* layerTreeHost = static_cast<LayerTreeHostCAMac*>(context);
-
-    ASSERT(layerTreeHost->m_layerFlushSchedulingEnabled);
-
     // This gets called outside of the normal event loop so wrap in an autorelease pool
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-    layerTreeHost->performScheduledLayerFlush();
+    performScheduledLayerFlush();
     [pool drain];
 }
 
 void LayerTreeHostCAMac::didPerformScheduledLayerFlush()
 {
     // We successfully flushed the pending layer changes, remove the run loop observer.
-    ASSERT(m_flushPendingLayerChangesRunLoopObserver);
-    CFRunLoopObserverInvalidate(m_flushPendingLayerChangesRunLoopObserver.get());
-    m_flushPendingLayerChangesRunLoopObserver = 0;
+    m_layerFlushScheduler.invalidate();
 
     LayerTreeHostCA::didPerformScheduledLayerFlush();
 }

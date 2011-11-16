@@ -1,3 +1,28 @@
+2011-11-15  Andy Estes  <aestes@apple.com>
+
+        Consolidate the logic that creates run loop observers for flushing layer tree changes to CoreAnimation
+        https://bugs.webkit.org/show_bug.cgi?id=72106
+
+        Reviewed by Anders Carlsson.
+
+        Remove code that schedules layer flushes and use LayerFlushScheduler instead.
+
+        * WebView/WebView.mm:
+        (-[WebView _close]): Invalidate the run loop observer and destroy the
+        LayerFlushController.
+        (LayerFlushController::flushLayers): Perform the work that
+        layerSyncRunLoopObserverCallBack used to do.
+        (-[WebView _scheduleCompositingLayerSync]): If layerFlushController has
+        yet to be created, create it, then schedule a layer flush.
+        * WebView/WebViewData.h:
+        (LayerFlushController::create): Create a LayerFlushController that
+        implements the LayerFlushSchedulerClient interface and contains a
+        LayerFlushScheduler with itself as the client.
+        * WebView/WebViewData.mm:
+        (LayerFlushController::scheduleLayerFlush):
+        (LayerFlushController::invalidateObserver):
+        (LayerFlushController::LayerFlushController):
+
 2011-11-15  Jochen Eisinger  <jochen@chromium.org>
 
         Rename ReferrerPolicy to clarify its meaning

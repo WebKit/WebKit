@@ -394,9 +394,6 @@ FindOptions coreOptions(WebFindOptions options)
 + (void)_preflightSpellChecker;
 - (BOOL)_continuousCheckingAllowed;
 - (NSResponder *)_responderForResponderOperations;
-#if USE(ACCELERATED_COMPOSITING)
-- (void)_clearLayerSyncLoopObserver;
-#endif
 #if ENABLE(GLIB_SUPPORT)
 - (void)_clearGlibLoopObserver;
 #endif
@@ -1096,7 +1093,10 @@ static bool fastDocumentTeardownEnabled()
     }
 
 #if USE(ACCELERATED_COMPOSITING)
-    [self _clearLayerSyncLoopObserver];
+    if (_private->layerFlushController) {
+        _private->layerFlushController->invalidateObserver();
+        _private->layerFlushController = nullptr;
+    }
 #endif
     
 #if ENABLE(GLIB_SUPPORT)
@@ -5859,18 +5859,6 @@ static inline uint64_t roundUpToPowerOf2(uint64_t num)
 #endif
 }
 
-#if USE(ACCELERATED_COMPOSITING)
-- (void)_clearLayerSyncLoopObserver
-{
-    if (!_private->layerSyncRunLoopObserver)
-        return;
-
-    CFRunLoopObserverInvalidate(_private->layerSyncRunLoopObserver);
-    CFRelease(_private->layerSyncRunLoopObserver);
-    _private->layerSyncRunLoopObserver = 0;
-}
-#endif
-
 #if ENABLE(GLIB_SUPPORT)
 - (void)_clearGlibLoopObserver
 {
@@ -6076,12 +6064,10 @@ static inline uint64_t roundUpToPowerOf2(uint64_t num)
        until the time is right (essentially when there are no more pending layouts).
     
 */
-
-static void layerSyncRunLoopObserverCallBack(CFRunLoopObserverRef, CFRunLoopActivity, void* info)
+void LayerFlushController::flushLayers()
 {
-    WebView *webView = reinterpret_cast<WebView*>(info);
-    NSWindow *window = [webView window];
-
+    NSWindow *window = [m_webView window];
+    
     // An NSWindow may not display in the next runloop cycle after dirtying due to delayed window display logic,
     // in which case this observer can fire first. So if the window is due for a display, don't commit
     // layer changes, otherwise they'll show on screen before the view drawing.
@@ -6096,8 +6082,8 @@ static void layerSyncRunLoopObserverCallBack(CFRunLoopObserverRef, CFRunLoopActi
     if (viewsNeedDisplay)
         return;
 
-    if ([webView _syncCompositingChanges]) {
-        [webView _clearLayerSyncLoopObserver];
+    if ([m_webView _syncCompositingChanges]) {
+        m_layerFlushScheduler.invalidate();
         // AppKit may have disabled screen updates, thinking an upcoming window flush will re-enable them.
         // In case setNeedsDisplayInRect() has prevented the window from needing to be flushed, re-enable screen
         // updates here.
@@ -6106,34 +6092,15 @@ static void layerSyncRunLoopObserverCallBack(CFRunLoopObserverRef, CFRunLoopActi
     } else {
         // Since the WebView does not need display, -viewWillDraw will not be called. Perform pending layout now,
         // so that the layers draw with up-to-date layout. 
-        [webView _viewWillDrawInternal];
+        [m_webView _viewWillDrawInternal];
     }
 }
 
 - (void)_scheduleCompositingLayerSync
 {
-    CFRunLoopRef currentRunLoop = CFRunLoopGetCurrent();
-
-    // Make sure we wake up the loop or the observer could be delayed until some other source fires.
-    CFRunLoopWakeUp(currentRunLoop);
-
-    if (_private->layerSyncRunLoopObserver)
-        return;
-
-    // Run after AppKit does its window update. If we do any painting, we'll commit
-    // layer changes from FrameView::paintContents(), otherwise we'll commit via
-    // _syncCompositingChanges when this observer fires.
-    // Also leave a slot for the requestAnimationFrameRunLoopObserver, if it's enabled
-    const CFIndex runLoopOrder = NSDisplayWindowRunLoopOrdering + 2;
-
-    // The WebView always outlives the observer, so no need to retain/release.
-    CFRunLoopObserverContext context = { 0, self, 0, 0, 0 };
-
-    _private->layerSyncRunLoopObserver = CFRunLoopObserverCreate(NULL,
-        kCFRunLoopBeforeWaiting | kCFRunLoopExit, true /* repeats */,
-        runLoopOrder, layerSyncRunLoopObserverCallBack, &context);
-
-    CFRunLoopAddObserver(currentRunLoop, _private->layerSyncRunLoopObserver, kCFRunLoopCommonModes);
+    if (!_private->layerFlushController)
+        _private->layerFlushController = LayerFlushController::create(self);
+    _private->layerFlushController->scheduleLayerFlush();
 }
 
 #endif

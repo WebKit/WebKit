@@ -1,3 +1,27 @@
+2011-11-15  Andy Estes  <aestes@apple.com>
+
+        Consolidate the logic that creates run loop observers for flushing layer tree changes to CoreAnimation
+        https://bugs.webkit.org/show_bug.cgi?id=72106
+
+        Reviewed by Anders Carlsson.
+
+        Remove code that schedules layer flushes and use LayerFlushScheduler instead.
+
+        * WebProcess/WebPage/ca/mac/LayerTreeHostCAMac.h: Replace
+        m_flushPendingLayerChangesRunLoopObserver with m_layerFlushScheduler
+        and implement the LayerFlushSchedulerClient interface.
+        * WebProcess/WebPage/ca/mac/LayerTreeHostCAMac.mm:
+        (WebKit::LayerTreeHostCAMac::LayerTreeHostCAMac): Instantiate
+        m_layerFlushScheduler with the LayerTreeHost as the client.
+        (WebKit::LayerTreeHostCAMac::~LayerTreeHostCAMac):
+        (WebKit::LayerTreeHostCAMac::scheduleLayerFlush): Call LayerFlushScheduler::schedule().
+        (WebKit::LayerTreeHostCAMac::setLayerFlushSchedulingEnabled): Call
+        LayerFlushScheduler::suspend() or LayerFlushScheduler::resume().
+        (WebKit::LayerTreeHostCAMac::invalidate): Call LayerFlushScheduler::invalidate().
+        (WebKit::LayerTreeHostCAMac::flushLayers): Do the work that
+        flushPendingLayerChangesRunLoopObserverCallback() used to do.
+        (WebKit::LayerTreeHostCAMac::didPerformScheduledLayerFlush): Call LayerFlushScheduler::invalidate().
+
 2011-11-15  Sam Weinig  <sam@webkit.org>
 
         Add a connection client to the WKContext, to notify when new connections to the WebProcess are established
