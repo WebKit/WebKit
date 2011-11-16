@@ -334,12 +334,10 @@ void CCLayerTreeHost::updateLayers(LayerChromium* rootLayer)
     paintLayerContents(m_updateList);
 }
 
-static void paintContentsIfDirty(LayerChromium* layer, const IntRect& visibleLayerRect)
+static void paintContentsIfDirty(LayerChromium* layer)
 {
-    if (layer->drawsContent()) {
-        layer->setVisibleLayerRect(visibleLayerRect);
+    if (layer->drawsContent())
         layer->paintContentsIfDirty();
-    }
 }
 
 void CCLayerTreeHost::paintMaskAndReplicaForRenderSurface(LayerChromium* renderSurfaceLayer)
@@ -350,20 +348,20 @@ void CCLayerTreeHost::paintMaskAndReplicaForRenderSurface(LayerChromium* renderS
 
     if (renderSurfaceLayer->maskLayer()) {
         renderSurfaceLayer->maskLayer()->setLayerTreeHost(this);
-        paintContentsIfDirty(renderSurfaceLayer->maskLayer(), IntRect(IntPoint(), renderSurfaceLayer->contentBounds()));
+        renderSurfaceLayer->maskLayer()->setVisibleLayerRect(IntRect(IntPoint(), renderSurfaceLayer->contentBounds()));
+        paintContentsIfDirty(renderSurfaceLayer->maskLayer());
     }
 
     LayerChromium* replicaLayer = renderSurfaceLayer->replicaLayer();
     if (replicaLayer) {
 
-        IntRect visibleLayerRect = CCLayerTreeHostCommon::calculateVisibleLayerRect<LayerChromium>(renderSurfaceLayer);
-
         replicaLayer->setLayerTreeHost(this);
-        paintContentsIfDirty(replicaLayer, visibleLayerRect);
+        paintContentsIfDirty(replicaLayer);
 
         if (replicaLayer->maskLayer()) {
             replicaLayer->maskLayer()->setLayerTreeHost(this);
-            paintContentsIfDirty(replicaLayer->maskLayer(), IntRect(IntPoint(), replicaLayer->maskLayer()->contentBounds()));
+            replicaLayer->maskLayer()->setVisibleLayerRect(IntRect(IntPoint(), replicaLayer->maskLayer()->contentBounds()));
+            paintContentsIfDirty(replicaLayer->maskLayer());
         }
     }
 }
@@ -400,10 +398,8 @@ void CCLayerTreeHost::paintLayerContents(const LayerList& renderSurfaceLayerList
 
             ASSERT(layer->opacity());
             ASSERT(!layer->bounds().isEmpty());
-            
-            IntRect visibleLayerRect = CCLayerTreeHostCommon::calculateVisibleLayerRect<LayerChromium>(layer);
-            
-            paintContentsIfDirty(layer, visibleLayerRect);
+
+            paintContentsIfDirty(layer);
         }
     }
 }

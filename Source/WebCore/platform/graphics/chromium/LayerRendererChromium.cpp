@@ -578,10 +578,7 @@ void LayerRendererChromium::drawLayer(CCLayerImpl* layer, CCRenderSurface* targe
         return;
     }
 
-    IntRect visibleLayerRect = CCLayerTreeHostCommon::calculateVisibleLayerRect<CCLayerImpl>(layer);
-    layer->setVisibleLayerRect(visibleLayerRect);
-
-    if (visibleLayerRect.isEmpty())
+    if (layer->visibleLayerRect().isEmpty())
         return;
 
     if (layer->usesLayerClipping())

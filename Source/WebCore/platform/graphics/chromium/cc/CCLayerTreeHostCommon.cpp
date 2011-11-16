@@ -437,14 +437,35 @@ static void calculateDrawTransformsAndVisibilityInternal(LayerType* layer, Layer
         sortLayers(&descendants.at(sortingStartIndex), descendants.end(), layerSorter);
 }
 
+// FIXME: Instead of using the following function to set visibility rects on a second
+// tree pass, revise calculateVisibleLayerRect() so that this can be done in a single
+// pass inside calculateDrawTransformsAndVisibilityInternal<>().
+template<typename LayerType, typename RenderSurfaceType>
+static void walkLayersAndCalculateVisibleLayerRects(const Vector<RefPtr<LayerType> >& renderSurfaceLayerList)
+{
+    for (int surfaceIndex = renderSurfaceLayerList.size() - 1; surfaceIndex >= 0 ; --surfaceIndex) {
+        LayerType* renderSurfaceLayer = renderSurfaceLayerList[surfaceIndex].get();
+        RenderSurfaceType* renderSurface = renderSurfaceLayer->renderSurface();
+
+        Vector<RefPtr<LayerType> >& layerList = renderSurface->layerList();
+        for (unsigned layerIndex = 0; layerIndex < layerList.size(); ++layerIndex) {
+            LayerType* layer = layerList[layerIndex].get();
+            IntRect visibleLayerRect = CCLayerTreeHostCommon::calculateVisibleLayerRect<LayerType>(layer);
+            layer->setVisibleLayerRect(visibleLayerRect);
+        }
+    }
+}
+
 void CCLayerTreeHostCommon::calculateDrawTransformsAndVisibility(LayerChromium* layer, LayerChromium* rootLayer, const TransformationMatrix& parentMatrix, const TransformationMatrix& fullHierarchyMatrix, Vector<RefPtr<LayerChromium> >& renderSurfaceLayerList, Vector<RefPtr<LayerChromium> >& layerList, int maxTextureSize)
 {
-    return WebCore::calculateDrawTransformsAndVisibilityInternal<LayerChromium, RenderSurfaceChromium, void*>(layer, rootLayer, parentMatrix, fullHierarchyMatrix, renderSurfaceLayerList, layerList, 0, maxTextureSize);
+    WebCore::calculateDrawTransformsAndVisibilityInternal<LayerChromium, RenderSurfaceChromium, void*>(layer, rootLayer, parentMatrix, fullHierarchyMatrix, renderSurfaceLayerList, layerList, 0, maxTextureSize);
+    walkLayersAndCalculateVisibleLayerRects<LayerChromium, RenderSurfaceChromium>(renderSurfaceLayerList);
 }
 
 void CCLayerTreeHostCommon::calculateDrawTransformsAndVisibility(CCLayerImpl* layer, CCLayerImpl* rootLayer, const TransformationMatrix& parentMatrix, const TransformationMatrix& fullHierarchyMatrix, Vector<RefPtr<CCLayerImpl> >& renderSurfaceLayerList, Vector<RefPtr<CCLayerImpl> >& layerList, CCLayerSorter* layerSorter, int maxTextureSize)
 {
-    return calculateDrawTransformsAndVisibilityInternal<CCLayerImpl, CCRenderSurface, CCLayerSorter>(layer, rootLayer, parentMatrix, fullHierarchyMatrix, renderSurfaceLayerList, layerList, layerSorter, maxTextureSize);
+    calculateDrawTransformsAndVisibilityInternal<CCLayerImpl, CCRenderSurface, CCLayerSorter>(layer, rootLayer, parentMatrix, fullHierarchyMatrix, renderSurfaceLayerList, layerList, layerSorter, maxTextureSize);
+    walkLayersAndCalculateVisibleLayerRects<CCLayerImpl, CCRenderSurface>(renderSurfaceLayerList);
 }
 
 } // namespace WebCore
