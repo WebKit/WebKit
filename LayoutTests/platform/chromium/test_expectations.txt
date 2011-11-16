@@ -2749,7 +2749,6 @@ BUGWK54322 SNOWLEOPARD : tables/mozilla/core/bloomberg.html = IMAGE
 BUGWK54322 SNOWLEOPARD : tables/mozilla/core/misc.html = IMAGE
 BUGWK54322 SNOWLEOPARD : tables/mozilla/core/row_span.html = IMAGE
 BUGWK54322 SNOWLEOPARD : tables/mozilla/other/cell_widths.html = IMAGE
-BUGWK54322 SNOWLEOPARD : transforms/no_transform_hit_testing.html = IMAGE
 BUGWK54322 SNOWLEOPARD : transforms/svg-vs-css.xhtml = IMAGE
 BUGWK54322 SNOWLEOPARD : transitions/move-after-transition.html = IMAGE
 BUGWK54322 SNOWLEOPARD : fast/dom/scroll-reveal-left-overflow.html = IMAGE
