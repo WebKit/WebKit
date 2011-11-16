@@ -1,3 +1,15 @@
+2011-11-16  Adam Roben  <aroben@apple.com>
+
+        Make Leaks Viewer load builds from the new Lion Leaks bot
+
+        Fixes <http://webkit.org/b/72507> REGRESSION: Leaks Viewer no longer shows recent leaky builds
+
+        Reviewed by Andreas Kling.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/LeaksViewer/LeaksViewer.js:
+        (LeaksViewer._displayURLPrompt): Use the Lion Leaks bot instead of the nonexistent
+        SnowLeopard one.
+
 2011-11-16  Raphael Kubo da Costa  <kubo@profusion.mobi>
 
         [EFL] Clean up the offline apps-related functions in ewk_settings.
