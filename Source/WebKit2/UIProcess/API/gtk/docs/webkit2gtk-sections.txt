@@ -55,6 +55,7 @@ webkit_web_view_load_uri
 webkit_web_view_load_html
 webkit_web_view_load_plain_text
 webkit_web_view_load_alternate_html
+webkit_web_view_load_request
 webkit_web_view_can_go_back
 webkit_web_view_go_back
 webkit_web_view_can_go_forward
@@ -218,6 +219,26 @@ WEBKIT_SETTINGS_GET_CLASS
 <SUBSECTION Private>
 WebKitSettingsPrivate
 webkit_settings_get_type
+</SECTION>
+
+<SECTION>
+<FILE>WebKitNetworkRequest</FILE>
+WebKitNetworkRequest
+webkit_network_request_new
+webkit_network_request_get_uri
+
+<SUBSECTION Standard>
+WebKitNetworkRequestClass
+WEBKIT_TYPE_NETWORK_REQUEST
+WEBKIT_NETWORK_REQUEST
+WEBKIT_IS_NETWORK_REQUEST
+WEBKIT_NETWORK_REQUEST_CLASS
+WEBKIT_IS_NETWORK_REQUEST_CLASS
+WEBKIT_NETWORK_REQUEST_GET_CLASS
+
+<SUBSECTION Private>
+WebKitNetworkRequestPrivate
+webkit_network_request_get_type
 </SECTION>
 
 <SECTION>

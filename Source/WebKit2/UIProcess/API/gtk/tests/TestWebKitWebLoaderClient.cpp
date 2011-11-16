@@ -84,6 +84,14 @@ static void testLoadAlternateContent(LoadTrackingTest* test, gconstpointer)
     assertNormalLoadHappenedAndClearEvents(test->m_loadEvents);
 }
 
+static void testLoadRequest(LoadTrackingTest* test, gconstpointer)
+{
+    GRefPtr<WebKitNetworkRequest> request(webkit_network_request_new(kServer->getURIForPath("/normal").data()));
+    test->loadRequest(request.get());
+    test->waitUntilLoadFinished();
+    assertNormalLoadHappenedAndClearEvents(test->m_loadEvents);
+}
+
 class LoadStopTrackingTest : public LoadTrackingTest {
 public:
     MAKE_GLIB_TEST_FIXTURE(LoadStopTrackingTest);
@@ -245,7 +253,8 @@ void beforeAll()
     LoadTrackingTest::add("WebKitWebLoaderClient", "loading-error", testLoadingError);
     LoadTrackingTest::add("WebKitWebView", "load-html", testLoadHtml);
     LoadTrackingTest::add("WebKitWebView", "load-plain-text", testLoadPlainText);
-    LoadTrackingTest::add("WebKitWebLoaderClient", "load-alternate-content", testLoadAlternateContent);
+    LoadTrackingTest::add("WebKitWebView", "load-alternate-content", testLoadAlternateContent);
+    LoadTrackingTest::add("WebKitWebView", "load-request", testLoadRequest);
     LoadStopTrackingTest::add("WebKitWebView", "stop-loading", testLoadCancelled);
     LoadTrackingTest::add("WebKitWebView", "title", testWebViewTitle);
     LoadTrackingTest::add("WebKitWebView", "progress", testLoadProgress);

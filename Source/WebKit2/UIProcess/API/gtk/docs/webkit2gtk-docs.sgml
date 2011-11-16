@@ -18,6 +18,7 @@
     <xi:include href="xml/WebKitBackForwardList.xml"/>
     <xi:include href="xml/WebKitBackForwardListItem.xml"/>
     <xi:include href="xml/WebKitSettings.xml"/>
+    <xi:include href="xml/WebKitNetworkRequest.xml"/>
     <xi:include href="xml/WebKitError.xml"/>
   </chapter>
 
