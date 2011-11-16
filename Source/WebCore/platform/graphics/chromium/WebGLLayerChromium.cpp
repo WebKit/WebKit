@@ -51,6 +51,7 @@ WebGLLayerChromium::WebGLLayerChromium(CCLayerDelegate* delegate)
     : CanvasLayerChromium(delegate)
     , m_textureChanged(true)
     , m_textureUpdated(false)
+    , m_drawingBuffer(0)
 {
 }
 
@@ -125,11 +126,16 @@ void WebGLLayerChromium::contentChanged()
 void WebGLLayerChromium::setDrawingBuffer(DrawingBuffer* drawingBuffer)
 {
     bool drawingBufferChanged = (m_drawingBuffer != drawingBuffer);
+
+    // The GraphicsContext3D used by the layer is the context associated with
+    // the drawing buffer. If the drawing buffer is changing, make sure
+    // to stop the rate limiter on the old context, not the new context from the
+    // new drawing buffer.
+    GraphicsContext3D* context3D = context();
+    if (layerTreeHost() && drawingBufferChanged && context3D)
+        layerTreeHost()->stopRateLimiter(context3D);
+
     m_drawingBuffer = drawingBuffer;
-
-    if (layerTreeHost() && drawingBufferChanged)
-        layerTreeHost()->stopRateLimiter(context());
-
     if (!m_drawingBuffer)
         return;
 

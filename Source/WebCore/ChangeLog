@@ -1,3 +1,13 @@
+2011-11-15  Jeff Timanus  <twiz@chromium.org>
+
+        [chromium] During tear down, prevent the WebGLLayerChromium instance from attempting to stop a timer for a NULL context.
+        https://bugs.webkit.org/show_bug.cgi?id=72423
+
+        Reviewed by Kenneth Russell.
+
+        * platform/graphics/chromium/WebGLLayerChromium.cpp:
+        (WebCore::WebGLLayerChromium::setDrawingBuffer):
+
 2011-11-15  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Rebaseline generated WebCore bindings
