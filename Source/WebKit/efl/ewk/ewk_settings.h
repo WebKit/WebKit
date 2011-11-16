@@ -47,12 +47,16 @@ EAPI uint64_t         ewk_settings_web_database_default_quota_get(void);
  * Sets the current path to the directory WebKit will write Web
  * Database databases.
  *
+ * By default, the value is @c ~/.webkit
+ *
  * @param path the new database directory path
  */
 EAPI void             ewk_settings_web_database_path_set(const char *path);
 
 /**
  * Returns directory path where web database is stored.
+ *
+ * By default, the value is @c ~/.webkit
  *
  * This is guaranteed to be eina_stringshare, so whenever possible
  * save yourself some cpu cycles and use eina_stringshare_ref()

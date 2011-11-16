@@ -21,10 +21,8 @@
 #include "config.h"
 #include "ewk_settings.h"
 
-#include "EWebKit.h"
-#if ENABLE(SQL_DATABASE)
 #include "DatabaseTracker.h"
-#endif
+#include "EWebKit.h"
 #include "FrameView.h"
 #include "IconDatabase.h"
 #include "Image.h"
@@ -49,10 +47,9 @@
 static const char* s_offlineAppCachePath = 0;
 
 static const char* _ewk_icon_database_path = 0;
-#if ENABLE(SQL_DATABASE)
-static const char* _ewk_default_web_database_path = 0;
-static uint64_t _ewk_default_web_database_quota = 1 * 1024 * 1024;
-#endif
+
+static const char* s_webDatabasePath = 0;
+static uint64_t s_webDatabaseQuota = 1 * 1024 * 1024; // 1MB.
 
 static WTF::String _ewk_settings_webkit_platform_get()
 {
@@ -80,28 +77,20 @@ static WTF::String _ewk_settings_webkit_os_version_get()
 
 uint64_t ewk_settings_web_database_default_quota_get()
 {
-#if ENABLE(SQL_DATABASE)
-    return _ewk_default_web_database_quota;
-#else
-    return 0;
-#endif
+    return s_webDatabaseQuota;
 }
 
 void ewk_settings_web_database_path_set(const char* path)
 {
 #if ENABLE(SQL_DATABASE)
     WebCore::DatabaseTracker::tracker().setDatabaseDirectoryPath(WTF::String::fromUTF8(path));
-    eina_stringshare_replace(&_ewk_default_web_database_path, path);
+    eina_stringshare_replace(&s_webDatabasePath, path);
 #endif
 }
 
 const char* ewk_settings_web_database_path_get(void)
 {
-#if ENABLE(SQL_DATABASE)
-    return _ewk_default_web_database_path;
-#else
-    return 0;
-#endif
+    return s_webDatabasePath;
 }
 
 Eina_Bool ewk_settings_icon_database_path_set(const char* directory)
