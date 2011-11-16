@@ -76,7 +76,9 @@ using namespace JSC::Bindings;
 
 class Global : public JSNonFinalObject {
 public:
-  virtual UString className() const { return "global"; }
+    typedef JSNonFinalObject Base;
+
+    static UString className(const JSObject*) { return "global"; }
 };
 
 static char code[] =
@@ -102,7 +104,7 @@ int main(int argc, char** argv)
         
         MyObject* myObject = new MyObject;
         
-        global->put(exec, Identifier("myInterface"), Instance::createRuntimeObject(Instance::QtLanguage, (void*)myObject));
+        global->methodTable()->put(global, exec, Identifier("myInterface"), Instance::createRuntimeObject(Instance::QtLanguage, (void*)myObject));
         
         
         if (code) {

@@ -11,17 +11,13 @@ win32-msvc*: CONFIG += exceptions_off stl_off
 isEmpty(OUTPUT_DIR): OUTPUT_DIR= ..
 include($$PWD/../WebKit.pri)
 
-unix:!mac:!symbian:CONFIG += link_pkgconfig
+unix:!mac:CONFIG += link_pkgconfig
 
 QMAKE_RPATHDIR += $$OUTPUT_DIR/lib
 
 OBJECTS_DIR_WTR = $$OBJECTS_DIR$${QMAKE_DIR_SEP}
 include($$PWD/JavaScriptCore.pri)
 prependJavaScriptCoreLib(.)
-
-symbian {
-    TARGET.CAPABILITY = ReadUserData WriteUserData NetworkServices
-}
 
 mac {
     LIBS_PRIVATE += -framework AppKit

@@ -29,7 +29,9 @@
 #include "Element.h"
 #include "StyleBase.h"
 #include <heap/Weak.h>
+#include <runtime/FunctionPrototype.h>
 #include <runtime/Lookup.h>
+#include <runtime/ObjectPrototype.h>
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 
@@ -42,10 +44,11 @@ namespace WebCore {
 
     // Base class for all constructor objects in the JSC bindings.
     class DOMConstructorObject : public JSDOMWrapper {
+        typedef JSDOMWrapper Base;
     public:
-        static JSC::Structure* createStructure(JSC::JSGlobalData& globalData, JSC::JSValue prototype)
+        static JSC::Structure* createStructure(JSC::JSGlobalData& globalData, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)
         {
-            return JSC::Structure::create(globalData, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
+            return JSC::Structure::create(globalData, globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), &s_info);
         }
 
     protected:
@@ -59,6 +62,7 @@ namespace WebCore {
     // Constructors using this base class depend on being in a Document and
     // can never be used from a WorkerContext.
     class DOMConstructorWithDocument : public DOMConstructorObject {
+        typedef DOMConstructorObject Base;
     public:
         Document* document() const
         {
@@ -69,6 +73,11 @@ namespace WebCore {
         DOMConstructorWithDocument(JSC::Structure* structure, JSDOMGlobalObject* globalObject)
             : DOMConstructorObject(structure, globalObject)
         {
+        }
+
+        void finishCreation(JSDOMGlobalObject* globalObject)
+        {
+            Base::finishCreation(globalObject->globalData());
             ASSERT(globalObject->scriptExecutionContext()->isDocument());
         }
     };
@@ -88,7 +97,7 @@ namespace WebCore {
     {
         if (JSC::Structure* structure = getCachedDOMStructure(globalObject, &WrapperClass::s_info))
             return structure;
-        return cacheDOMStructure(globalObject, WrapperClass::createStructure(exec->globalData(), WrapperClass::createPrototype(exec, globalObject)), &WrapperClass::s_info);
+        return cacheDOMStructure(globalObject, WrapperClass::createStructure(exec->globalData(), globalObject, WrapperClass::createPrototype(exec, globalObject)), &WrapperClass::s_info);
     }
 
     template<class WrapperClass> inline JSC::Structure* deprecatedGetDOMStructure(JSC::ExecState* exec)

@@ -145,7 +145,7 @@ bool runtimeObjectCustomPut(ExecState* exec, const Identifier& propertyName, JSV
         return 0;
     if (!scriptObject->hasProperty(exec, propertyName))
         return false;
-    scriptObject->put(exec, propertyName, value, slot);
+    scriptObject->methodTable()->put(scriptObject, exec, propertyName, value, slot);
     return true;
 }
 
@@ -177,7 +177,7 @@ CallType runtimeObjectGetCallData(JSHTMLElement* element, CallData& callData)
     if (JSObject* scriptObject = pluginScriptObjectFromPluginViewBase(element)) {
         CallData scriptObjectCallData;
         
-        if (scriptObject->getCallData(scriptObjectCallData) == CallTypeNone)
+        if (scriptObject->methodTable()->getCallData(scriptObject, scriptObjectCallData) == CallTypeNone)
             return CallTypeNone;
 
         callData.native.function = callPlugin;

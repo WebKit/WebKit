@@ -36,6 +36,7 @@ JSC::MacroAssemblerX86Common::SSE2CheckState JSC::MacroAssemblerX86Common::s_sse
 
 #include "CodeBlock.h"
 #include "CryptographicallyRandomNumber.h"
+#include "DFGNode.h" // for DFG_SUCCESS_STATS
 #include "Interpreter.h"
 #include "JITInlineMethods.h"
 #include "JITStubCall.h"
@@ -45,7 +46,6 @@ JSC::MacroAssemblerX86Common::SSE2CheckState JSC::MacroAssemblerX86Common::s_sse
 #include "RepatchBuffer.h"
 #include "ResultType.h"
 #include "SamplingTool.h"
-#include "dfg/DFGNode.h" // for DFG_SUCCESS_STATS
 
 using namespace std;
 
@@ -73,7 +73,7 @@ JIT::JIT(JSGlobalData* globalData, CodeBlock* codeBlock)
     : m_interpreter(globalData->interpreter)
     , m_globalData(globalData)
     , m_codeBlock(codeBlock)
-    , m_labels(codeBlock ? codeBlock->instructions().size() : 0)
+    , m_labels(codeBlock ? codeBlock->numberOfInstructions() : 0)
     , m_bytecodeOffset((unsigned)-1)
 #if USE(JSVALUE32_64)
     , m_jumpTargetIndex(0)
@@ -93,7 +93,33 @@ JIT::JIT(JSGlobalData* globalData, CodeBlock* codeBlock)
 {
 }
 
-#if USE(JSVALUE32_64)
+#if ENABLE(DFG_JIT)
+void JIT::emitOptimizationCheck(OptimizationCheckKind kind)
+{
+    if (!shouldEmitProfiling())
+        return;
+    
+    Jump skipOptimize = branchAdd32(Signed, TrustedImm32(kind == LoopOptimizationCheck ? Heuristics::executionCounterIncrementForLoop : Heuristics::executionCounterIncrementForReturn), AbsoluteAddress(m_codeBlock->addressOfExecuteCounter()));
+    JITStubCall stubCall(this, kind == LoopOptimizationCheck ? cti_optimize_from_loop : cti_optimize_from_ret);
+    if (kind == LoopOptimizationCheck)
+        stubCall.addArgument(Imm32(m_bytecodeOffset));
+    stubCall.call();
+    skipOptimize.link(this);
+}
+#endif
+
+#if CPU(X86)
+void JIT::emitTimeoutCheck()
+{
+    Jump skipTimeout = branchSub32(NonZero, TrustedImm32(1), AbsoluteAddress(&m_globalData->m_timeoutCount));
+    JITStubCall stubCall(this, cti_timeout_check);
+    stubCall.addArgument(regT1, regT0); // save last result registers.
+    stubCall.call(regT0);
+    store32(regT0, &m_globalData->m_timeoutCount);
+    stubCall.getArgument(0, regT1, regT0); // reload last result registers.
+    skipTimeout.link(this);
+}
+#elif USE(JSVALUE32_64)
 void JIT::emitTimeoutCheck()
 {
     Jump skipTimeout = branchSub32(NonZero, TrustedImm32(1), timeoutCheckRegister);
@@ -192,6 +218,10 @@ void JIT::privateCompileMainPass()
 
         m_labels[m_bytecodeOffset] = label();
 
+#if ENABLE(JIT_VERBOSE)
+        printf("Old JIT emitting code for bc#%u at offset 0x%lx.\n", m_bytecodeOffset, (long)debugOffset());
+#endif
+
         switch (m_interpreter->getOpcodeID(currentInstruction->u.opcode)) {
         DEFINE_BINARY_OP(op_del_by_val)
         DEFINE_BINARY_OP(op_in)
@@ -261,6 +291,7 @@ void JIT::privateCompileMainPass()
         DEFINE_OP(op_jtrue)
         DEFINE_OP(op_load_varargs)
         DEFINE_OP(op_loop)
+        DEFINE_OP(op_loop_hint)
         DEFINE_OP(op_loop_if_less)
         DEFINE_OP(op_loop_if_lesseq)
         DEFINE_OP(op_loop_if_greater)
@@ -356,7 +387,6 @@ void JIT::privateCompileMainPass()
 #endif
 }
 
-
 void JIT::privateCompileLinkPass()
 {
     unsigned jmpTableCount = m_jmpTable.size();
@@ -372,6 +402,16 @@ void JIT::privateCompileSlowCases()
     m_propertyAccessInstructionIndex = 0;
     m_globalResolveInfoIndex = 0;
     m_callLinkInfoIndex = 0;
+    
+#if !ASSERT_DISABLED && ENABLE(VALUE_PROFILER)
+    // Use this to assert that slow-path code associates new profiling sites with existing
+    // ValueProfiles rather than creating new ones. This ensures that for a given instruction
+    // (say, get_by_id) we get combined statistics for both the fast-path executions of that
+    // instructions and the slow-path executions. Furthermore, if the slow-path code created
+    // new ValueProfiles then the ValueProfiles would no longer be sorted by bytecode offset,
+    // which would break the invariant necessary to use CodeBlock::valueProfileForBytecodeOffset().
+    unsigned numberOfValueProfiles = m_codeBlock->numberOfValueProfiles();
+#endif
 
     for (Vector<SlowCaseEntry>::iterator iter = m_slowCases.begin(); iter != m_slowCases.end();) {
 #if USE(JSVALUE64)
@@ -383,6 +423,16 @@ void JIT::privateCompileSlowCases()
         unsigned firstTo = m_bytecodeOffset;
 #endif
         Instruction* currentInstruction = instructionsBegin + m_bytecodeOffset;
+        
+#if ENABLE(VALUE_PROFILER)
+        RareCaseProfile* rareCaseProfile = 0;
+        if (m_canBeOptimized)
+            rareCaseProfile = m_codeBlock->addRareCaseProfile(m_bytecodeOffset);
+#endif
+
+#if ENABLE(JIT_VERBOSE)
+        printf("Old JIT emitting slow code for bc#%u at offset 0x%lx.\n", m_bytecodeOffset, (long)debugOffset());
+#endif
 
         switch (m_interpreter->getOpcodeID(currentInstruction->u.opcode)) {
         DEFINE_SLOWCASE_OP(op_add)
@@ -455,12 +505,20 @@ void JIT::privateCompileSlowCases()
 
         ASSERT_WITH_MESSAGE(iter == m_slowCases.end() || firstTo != iter->to,"Not enough jumps linked in slow case codegen.");
         ASSERT_WITH_MESSAGE(firstTo == (iter - 1)->to, "Too many jumps linked in slow case codegen.");
+        
+#if ENABLE(VALUE_PROFILER)
+        if (m_canBeOptimized)
+            add32(Imm32(1), AbsoluteAddress(&rareCaseProfile->m_counter));
+#endif
 
         emitJumpSlowToHot(jump(), 0);
     }
 
     ASSERT(m_propertyAccessInstructionIndex == m_propertyAccessCompilationInfo.size());
     ASSERT(m_callLinkInfoIndex == m_callStructureStubCompilationInfo.size());
+#if ENABLE(VALUE_PROFILER)
+    ASSERT(numberOfValueProfiles == m_codeBlock->numberOfValueProfiles());
+#endif
 
 #ifndef NDEBUG
     // Reset this, in order to guard its use with ASSERTs.
@@ -470,6 +528,10 @@ void JIT::privateCompileSlowCases()
 
 JITCode JIT::privateCompile(CodePtr* functionEntryArityCheck)
 {
+#if ENABLE(VALUE_PROFILER)
+    m_canBeOptimized = m_codeBlock->canCompileWithDFG();
+#endif
+    
     // Just add a little bit of randomness to the codegen
     if (m_randomGenerator.getUint32() & 1)
         nop();
@@ -487,9 +549,33 @@ JITCode JIT::privateCompile(CodePtr* functionEntryArityCheck)
 
     Jump registerFileCheck;
     if (m_codeBlock->codeType() == FunctionCode) {
-#if DFG_SUCCESS_STATS
+#if ENABLE(DFG_JIT)
+#if DFG_ENABLE(SUCCESS_STATS)
         static SamplingCounter counter("orignalJIT");
         emitCount(counter);
+#endif
+#endif
+
+#if ENABLE(VALUE_PROFILER)
+        ASSERT(m_bytecodeOffset == (unsigned)-1);
+        if (shouldEmitProfiling()) {
+            for (int argumentRegister = -RegisterFile::CallFrameHeaderSize - m_codeBlock->m_numParameters; argumentRegister < -RegisterFile::CallFrameHeaderSize; ++argumentRegister) {
+                // If this is a constructor, then we want to put in a dummy profiling site (to
+                // keep things consistent) but we don't actually want to record the dummy value.
+                if (m_codeBlock->m_isConstructor
+                    && argumentRegister == -RegisterFile::CallFrameHeaderSize - m_codeBlock->m_numParameters)
+                    m_codeBlock->addValueProfile(-1);
+                else {
+#if USE(JSVALUE64)
+                    loadPtr(Address(callFrameRegister, argumentRegister * sizeof(Register)), regT0);
+#elif USE(JSVALUE32_64)
+                    load32(Address(callFrameRegister, argumentRegister * sizeof(Register) + OBJECT_OFFSETOF(JSValue, u.asBits.payload)), regT0);
+                    load32(Address(callFrameRegister, argumentRegister * sizeof(Register) + OBJECT_OFFSETOF(JSValue, u.asBits.tag)), regT1);
+#endif
+                    emitValueProfilingSite(FirstProfilingSite);
+                }
+            }
+        }
 #endif
 
         // In the case of a fast linked call, we do not set this up in the caller.
@@ -528,7 +614,7 @@ JITCode JIT::privateCompile(CodePtr* functionEntryArityCheck)
 
     ASSERT(m_jmpTable.isEmpty());
 
-    LinkBuffer patchBuffer(*m_globalData, this, m_globalData->executableAllocator);
+    LinkBuffer patchBuffer(*m_globalData, this);
 
     // Translate vPC offsets into addresses in JIT generated code, for switch tables.
     for (unsigned i = 0; i < m_switches.size(); ++i) {
@@ -581,6 +667,8 @@ JITCode JIT::privateCompile(CodePtr* functionEntryArityCheck)
     m_codeBlock->setNumberOfStructureStubInfos(m_propertyAccessCompilationInfo.size());
     for (unsigned i = 0; i < m_propertyAccessCompilationInfo.size(); ++i) {
         StructureStubInfo& info = m_codeBlock->structureStubInfo(i);
+        ASSERT(m_propertyAccessCompilationInfo[i].bytecodeIndex != std::numeric_limits<unsigned>::max());
+        info.bytecodeIndex = m_propertyAccessCompilationInfo[i].bytecodeIndex;
         info.callReturnLocation = patchBuffer.locationOf(m_propertyAccessCompilationInfo[i].callReturnLocation);
         info.hotPathBegin = patchBuffer.locationOf(m_propertyAccessCompilationInfo[i].hotPathBegin);
     }
@@ -588,6 +676,7 @@ JITCode JIT::privateCompile(CodePtr* functionEntryArityCheck)
     for (unsigned i = 0; i < m_codeBlock->numberOfCallLinkInfos(); ++i) {
         CallLinkInfo& info = m_codeBlock->callLinkInfo(i);
         info.isCall = m_callStructureStubCompilationInfo[i].isCall;
+        info.bytecodeIndex = m_callStructureStubCompilationInfo[i].bytecodeIndex;
         info.callReturnLocation = CodeLocationLabel(patchBuffer.locationOfNearCall(m_callStructureStubCompilationInfo[i].callReturnLocation));
         info.hotPathBegin = patchBuffer.locationOf(m_callStructureStubCompilationInfo[i].hotPathBegin);
         info.hotPathOther = patchBuffer.locationOfNearCall(m_callStructureStubCompilationInfo[i].hotPathOther);
@@ -596,14 +685,32 @@ JITCode JIT::privateCompile(CodePtr* functionEntryArityCheck)
     m_codeBlock->addMethodCallLinkInfos(methodCallCount);
     for (unsigned i = 0; i < methodCallCount; ++i) {
         MethodCallLinkInfo& info = m_codeBlock->methodCallLinkInfo(i);
+        info.bytecodeIndex = m_methodCallCompilationInfo[i].bytecodeIndex;
         info.cachedStructure.setLocation(patchBuffer.locationOf(m_methodCallCompilationInfo[i].structureToCompare));
         info.callReturnLocation = m_codeBlock->structureStubInfo(m_methodCallCompilationInfo[i].propertyAccessIndex).callReturnLocation;
     }
 
+#if ENABLE(DFG_JIT)
+    if (m_canBeOptimized) {
+        CompactJITCodeMap::Encoder jitCodeMapEncoder;
+        for (unsigned bytecodeOffset = 0; bytecodeOffset < m_labels.size(); ++bytecodeOffset) {
+            if (m_labels[bytecodeOffset].isSet())
+                jitCodeMapEncoder.append(bytecodeOffset, patchBuffer.offsetOf(m_labels[bytecodeOffset]));
+        }
+        m_codeBlock->setJITCodeMap(jitCodeMapEncoder.finish());
+    }
+#endif
+
     if (m_codeBlock->codeType() == FunctionCode && functionEntryArityCheck)
         *functionEntryArityCheck = patchBuffer.locationOf(arityCheck);
-
-    return JITCode(patchBuffer.finalizeCode(), JITCode::BaselineJIT);
+    
+    CodeRef result = patchBuffer.finalizeCode();
+    
+#if ENABLE(JIT_VERBOSE)
+    printf("JIT generated code for %p at [%p, %p).\n", m_codeBlock, result.executableMemory()->start(), result.executableMemory()->end());
+#endif
+    
+    return JITCode(result, JITCode::BaselineJIT);
 }
 
 void JIT::linkFor(JSFunction* callee, CodeBlock* callerCodeBlock, CodeBlock* calleeCodeBlock, JIT::CodePtr code, CallLinkInfo* callLinkInfo, int callerArgCount, JSGlobalData* globalData, CodeSpecializationKind kind)
@@ -615,7 +722,11 @@ void JIT::linkFor(JSFunction* callee, CodeBlock* callerCodeBlock, CodeBlock* cal
     if (!calleeCodeBlock || (callerArgCount == calleeCodeBlock->m_numParameters)) {
         ASSERT(!callLinkInfo->isLinked());
         callLinkInfo->callee.set(*globalData, callLinkInfo->hotPathBegin, callerCodeBlock->ownerExecutable(), callee);
+        callLinkInfo->lastSeenCallee.set(*globalData, callerCodeBlock->ownerExecutable(), callee);
         repatchBuffer.relink(callLinkInfo->hotPathOther, code);
+        
+        if (calleeCodeBlock)
+            calleeCodeBlock->linkIncomingCall(callLinkInfo);
     }
 
     // patch the call so we do not continue to try to link.

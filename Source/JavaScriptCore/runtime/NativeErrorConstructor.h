@@ -22,6 +22,7 @@
 #define NativeErrorConstructor_h
 
 #include "InternalFunction.h"
+#include "NativeErrorPrototype.h"
 
 namespace JSC {
 
@@ -33,26 +34,43 @@ namespace JSC {
     public:
         typedef InternalFunction Base;
 
-        static NativeErrorConstructor* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, Structure* prototypeStructure, const UString& nameAndMessage)
+        static NativeErrorConstructor* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, Structure* prototypeStructure, const UString& name)
         {
-            return new (allocateCell<NativeErrorConstructor>(*exec->heap())) NativeErrorConstructor(exec, globalObject, structure, prototypeStructure, nameAndMessage);
+            NativeErrorConstructor* constructor = new (allocateCell<NativeErrorConstructor>(*exec->heap())) NativeErrorConstructor(globalObject, structure);
+            constructor->finishCreation(exec, globalObject, prototypeStructure, name);
+            return constructor;
         }
         
         static const ClassInfo s_info;
 
-        static Structure* createStructure(JSGlobalData& globalData, JSValue prototype)
+        static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue prototype)
         {
-            return Structure::create(globalData, prototype, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
+            return Structure::create(globalData, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), &s_info);
         }
 
         Structure* errorStructure() { return m_errorStructure.get(); }
 
+    protected:
+        void finishCreation(ExecState* exec, JSGlobalObject* globalObject, Structure* prototypeStructure, const UString& name)
+        {
+            Base::finishCreation(exec->globalData(), Identifier(exec, name));
+            ASSERT(inherits(&s_info));
+
+            NativeErrorPrototype* prototype = NativeErrorPrototype::create(exec, globalObject, prototypeStructure, name, this);
+
+            putDirect(exec->globalData(), exec->propertyNames().length, jsNumber(1), DontDelete | ReadOnly | DontEnum); // ECMA 15.11.7.5
+            putDirect(exec->globalData(), exec->propertyNames().prototype, prototype, DontDelete | ReadOnly | DontEnum);
+            m_errorStructure.set(exec->globalData(), this, ErrorInstance::createStructure(exec->globalData(), globalObject, prototype));
+            ASSERT(m_errorStructure);
+            ASSERT(m_errorStructure->isObject());
+        }
+
     private:
-        NativeErrorConstructor(ExecState*, JSGlobalObject*, Structure*, Structure* prototypeStructure, const UString&);
+        NativeErrorConstructor(JSGlobalObject*, Structure*);
         static const unsigned StructureFlags = OverridesVisitChildren | InternalFunction::StructureFlags;
-        virtual ConstructType getConstructData(ConstructData&);
-        virtual CallType getCallData(CallData&);
-        virtual void visitChildren(SlotVisitor&);
+        static ConstructType getConstructData(JSCell*, ConstructData&);
+        static CallType getCallData(JSCell*, CallData&);
+        static void visitChildren(JSCell*, SlotVisitor&);
 
         WriteBarrier<Structure> m_errorStructure;
     };

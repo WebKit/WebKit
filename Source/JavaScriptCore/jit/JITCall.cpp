@@ -58,6 +58,7 @@ void JIT::compileOpCallInitializeCallFrame()
 void JIT::emit_op_call_put_result(Instruction* instruction)
 {
     int dst = instruction[1].u.operand;
+    emitValueProfilingSite(FirstProfilingSite);
     emitPutVirtualRegister(dst);
 }
 
@@ -74,7 +75,7 @@ void JIT::compileOpCallVarargs(Instruction* instruction)
 
     // Check for JSFunctions.
     emitJumpSlowCaseIfNotJSCell(regT0);
-    addSlowCase(branchPtr(NotEqual, Address(regT0), TrustedImmPtr(m_globalData->jsFunctionVPtr)));
+    addSlowCase(emitJumpIfNotType(regT0, regT3, JSFunctionType));
 
     // Speculatively roll the callframe, assuming argCount will match the arity.
     mul32(TrustedImm32(sizeof(Register)), regT2, regT2);
@@ -137,6 +138,7 @@ void JIT::compileOpCall(OpcodeID opcodeID, Instruction* instruction, unsigned ca
     m_callStructureStubCompilationInfo.append(StructureStubCompilationInfo());
     m_callStructureStubCompilationInfo[callLinkInfoIndex].hotPathBegin = addressOfLinkedFunctionCheck;
     m_callStructureStubCompilationInfo[callLinkInfoIndex].isCall = opcodeID != op_construct;
+    m_callStructureStubCompilationInfo[callLinkInfoIndex].bytecodeIndex = m_bytecodeOffset;
 
     // The following is the fast case, only used whan a callee can be linked.
 
@@ -170,7 +172,7 @@ void JIT::compileOpCallSlowCase(Instruction* instruction, Vector<SlowCaseEntry>:
 
     // Fast check for JS function.
     Jump callLinkFailNotObject = emitJumpIfNotJSCell(regT0);
-    Jump callLinkFailNotJSFunction = branchPtr(NotEqual, Address(regT0), TrustedImmPtr(m_globalData->jsFunctionVPtr));
+    Jump callLinkFailNotJSFunction = emitJumpIfNotType(regT0, regT3, JSFunctionType);
 
     // Speculatively roll the callframe, assuming argCount will match the arity.
     storePtr(callFrameRegister, Address(callFrameRegister, (RegisterFile::CallerFrame + registerOffset) * static_cast<int>(sizeof(Register))));
@@ -182,6 +184,13 @@ void JIT::compileOpCallSlowCase(Instruction* instruction, Vector<SlowCaseEntry>:
     // Done! - return back to the hot path.
     ASSERT(OPCODE_LENGTH(op_call) == OPCODE_LENGTH(op_call_eval));
     ASSERT(OPCODE_LENGTH(op_call) == OPCODE_LENGTH(op_construct));
+#if ENABLE(VALUE_PROFILER)
+    if (m_canBeOptimized) {
+        RareCaseProfile* rareCaseProfile = m_codeBlock->rareCaseProfile(m_codeBlock->numberOfRareCaseProfiles() - 1);
+        ASSERT((unsigned)rareCaseProfile->m_bytecodeOffset == m_bytecodeOffset);
+        add32(Imm32(1), AbsoluteAddress(&rareCaseProfile->m_counter));
+    }
+#endif
     emitJumpSlowToHot(jump(), OPCODE_LENGTH(op_call));
 
     // This handles host functions

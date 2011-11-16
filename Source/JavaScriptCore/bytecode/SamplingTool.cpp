@@ -83,6 +83,93 @@ void SamplingFlags::start() {}
 void SamplingFlags::stop() {}
 #endif
 
+#if ENABLE(SAMPLING_REGIONS)
+volatile uintptr_t SamplingRegion::s_currentOrReserved;
+Spectrum<const char*>* SamplingRegion::s_spectrum;
+unsigned long SamplingRegion::s_noneOfTheAbove;
+unsigned SamplingRegion::s_numberOfSamplesSinceDump;
+
+SamplingRegion::Locker::Locker()
+{
+    uintptr_t previous;
+    while (true) {
+        previous = s_currentOrReserved;
+        if (previous & 1) {
+#if OS(UNIX)
+            sched_yield();
+#endif
+            continue;
+        }
+        if (WTF::weakCompareAndSwap(&s_currentOrReserved, previous, previous | 1))
+            break;
+    }
+}
+
+SamplingRegion::Locker::~Locker()
+{
+    // We don't need the CAS, but we do it out of an
+    // abundance of caution (and because it gives us a memory fence, which is
+    // never bad).
+    uintptr_t previous;
+    do {
+        previous = s_currentOrReserved;
+    } while (!WTF::weakCompareAndSwap(&s_currentOrReserved, previous, previous & ~1));
+}
+
+void SamplingRegion::sample()
+{
+    // Make sure we lock s_current.
+    Locker locker;
+    
+    // Create a spectrum if we don't have one already.
+    if (!s_spectrum)
+        s_spectrum = new Spectrum<const char*>();
+    
+    ASSERT(s_currentOrReserved & 1);
+    
+    // Walk the region stack, and record each region we see.
+    SamplingRegion* region = bitwise_cast<SamplingRegion*>(s_currentOrReserved & ~1);
+    if (region) {
+        for (; region; region = region->m_previous)
+            s_spectrum->add(region->m_name);
+    } else
+        s_noneOfTheAbove++;
+    
+    if (s_numberOfSamplesSinceDump++ == SamplingThread::s_hertz) {
+        s_numberOfSamplesSinceDump = 0;
+        dumpInternal();
+    }
+}
+
+void SamplingRegion::dump()
+{
+    Locker locker;
+    
+    dumpInternal();
+}
+
+void SamplingRegion::dumpInternal()
+{
+    if (!s_spectrum) {
+        printf("\nSamplingRegion: was never sampled.\n\n");
+        return;
+    }
+    
+    Vector<Spectrum<const char*>::KeyAndCount> list = s_spectrum->buildList();
+    
+    unsigned long total = s_noneOfTheAbove;
+    for (unsigned i = list.size(); i--;)
+        total += list[i].count;
+    
+    printf("\nSamplingRegion: sample counts for regions: (%lu samples)\n", total);
+
+    for (unsigned i = list.size(); i--;)
+        printf("    %3.2lf%%  %s\n", (100.0 * list[i].count) / total, list[i].key);
+}
+#else // ENABLE(SAMPLING_REGIONS)
+void SamplingRegion::dump() { }
+#endif // ENABLE(SAMPLING_REGIONS)
+
 /*
   Start with flag 16 set.
   By doing this the monitoring of lower valued flags will be masked out
@@ -130,6 +217,9 @@ void* SamplingThread::threadStartFunc(void*)
 
 #if ENABLE(SAMPLING_FLAGS)
         SamplingFlags::sample();
+#endif
+#if ENABLE(SAMPLING_REGIONS)
+        SamplingRegion::sample();
 #endif
 #if ENABLE(OPCODE_SAMPLING)
         SamplingTool::sample();
@@ -386,22 +476,5 @@ void SamplingTool::dump(ExecState*)
 }
 
 #endif
-
-void AbstractSamplingCounter::dump()
-{
-#if ENABLE(SAMPLING_COUNTERS)
-    if (s_abstractSamplingCounterChain != &s_abstractSamplingCounterChainEnd) {
-        printf("\nSampling Counter Values:\n");
-        for (AbstractSamplingCounter* currCounter = s_abstractSamplingCounterChain; (currCounter != &s_abstractSamplingCounterChainEnd); currCounter = currCounter->m_next)
-            printf("\t%s\t: %lld\n", currCounter->m_name, currCounter->m_counter);
-        printf("\n\n");
-    }
-    s_completed = true;
-#endif
-}
-
-AbstractSamplingCounter AbstractSamplingCounter::s_abstractSamplingCounterChainEnd;
-AbstractSamplingCounter* AbstractSamplingCounter::s_abstractSamplingCounterChain = &s_abstractSamplingCounterChainEnd;
-bool AbstractSamplingCounter::s_completed = false;
 
 } // namespace JSC

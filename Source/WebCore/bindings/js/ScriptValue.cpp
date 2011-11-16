@@ -120,9 +120,9 @@ static PassRefPtr<InspectorValue> jsToInspectorValue(ScriptState* scriptState, J
     if (value.isNull() || value.isUndefined())
         return InspectorValue::null();
     if (value.isBoolean())
-        return InspectorBasicValue::create(value.getBoolean());
+        return InspectorBasicValue::create(value.asBoolean());
     if (value.isNumber())
-        return InspectorBasicValue::create(value.uncheckedGetNumber());
+        return InspectorBasicValue::create(value.asNumber());
     if (value.isString()) {
         UString s = value.getString(scriptState);
         return InspectorString::create(String(s.characters(), s.length()));
@@ -146,7 +146,7 @@ static PassRefPtr<InspectorValue> jsToInspectorValue(ScriptState* scriptState, J
         RefPtr<InspectorObject> inspectorObject = InspectorObject::create();
         JSObject* object = value.getObject();
         PropertyNameArray propertyNames(scriptState);
-        object->getOwnPropertyNames(scriptState, propertyNames);
+        object->methodTable()->getOwnPropertyNames(object, scriptState, propertyNames, ExcludeDontEnumProperties);
         for (size_t i = 0; i < propertyNames.size(); i++) {
             const Identifier& name =  propertyNames[i];
             JSValue propertyValue = object->get(scriptState, name);

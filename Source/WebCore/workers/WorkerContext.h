@@ -141,7 +141,7 @@ namespace WebCore {
 #if ENABLE(INSPECTOR)
         WorkerInspectorController* workerInspectorController() { return m_workerInspectorController.get(); }
 #endif
-        // These methods are used for GC marking. See JSWorkerContext::visitChildren(SlotVisitor&) in
+        // These methods are used for GC marking. See JSWorkerContext::visitChildrenVirtual(SlotVisitor&) in
         // JSWorkerContextCustom.cpp.
         WorkerNavigator* optionalNavigator() const { return m_navigator.get(); }
         WorkerLocation* optionalLocation() const { return m_location.get(); }

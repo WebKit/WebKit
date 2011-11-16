@@ -43,8 +43,15 @@ namespace JSC {
             , globalObject(*globalData, this, globalObject)
             , globalThis(*globalData, this, globalThis)
         {
-            ASSERT(globalData);
-            ASSERT(globalObject);
+        }
+
+        virtual ~ScopeChainNode();
+
+    protected:
+        void finishCreation(JSGlobalData* globalData, JSGlobalObject* globalObject)
+        {
+            Base::finishCreation(*globalData);
+            ASSERT_UNUSED(globalObject, globalObject);
         }
 
     public:
@@ -52,11 +59,15 @@ namespace JSC {
 
         static ScopeChainNode* create(ExecState* exec, ScopeChainNode* next, JSObject* object, JSGlobalData* globalData, JSGlobalObject* globalObject, JSObject* globalThis)
         {
-            return new (allocateCell<ScopeChainNode>(*exec->heap())) ScopeChainNode(next, object, globalData, globalObject, globalThis);
+            ScopeChainNode* node = new (allocateCell<ScopeChainNode>(*exec->heap())) ScopeChainNode(next, object, globalData, globalObject, globalThis);
+            node->finishCreation(globalData, globalObject);
+            return node;
         }
         static ScopeChainNode* create(ScopeChainNode* next, JSObject* object, JSGlobalData* globalData, JSGlobalObject* globalObject, JSObject* globalThis)
         {
-            return new (allocateCell<ScopeChainNode>(globalData->heap)) ScopeChainNode(next, object, globalData, globalObject, globalThis);
+            ScopeChainNode* node = new (allocateCell<ScopeChainNode>(globalData->heap)) ScopeChainNode(next, object, globalData, globalObject, globalThis);
+            node->finishCreation(globalData, globalObject);
+            return node;
         }
         
         JSGlobalData* globalData;
@@ -77,8 +88,8 @@ namespace JSC {
         void print();
 #endif
         
-        static Structure* createStructure(JSGlobalData& globalData, JSValue proto) { return Structure::create(globalData, proto, TypeInfo(CompoundType, StructureFlags), AnonymousSlotCount, &s_info); }
-        virtual void visitChildren(SlotVisitor&);
+        static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue proto) { return Structure::create(globalData, globalObject, proto, TypeInfo(CompoundType, StructureFlags), &s_info); }
+        static void visitChildren(JSCell*, SlotVisitor&);
         static JS_EXPORTDATA const ClassInfo s_info;
 
     private:

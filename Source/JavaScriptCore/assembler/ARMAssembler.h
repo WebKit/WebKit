@@ -161,7 +161,6 @@ namespace JSC {
             VMOV_ARM = 0x0e100a10,
             VCVT_F64_S32 = 0x0eb80bc0,
             VCVT_S32_F64 = 0x0ebd0b40,
-            VCVTR_S32_F64 = 0x0ebd0bc0,
             VMRS_APSR = 0x0ef1fa10,
 #if WTF_ARM_ARCH_AT_LEAST(5)
             CLZ = 0x016f0f10,
@@ -545,12 +544,6 @@ namespace JSC {
             emitDoublePrecisionInst(static_cast<ARMWord>(cc) | VCVT_S32_F64, (sd >> 1), 0, dm);
         }
 
-        void vcvtr_s32_f64_r(int sd, int dm, Condition cc = AL)
-        {
-            ASSERT(!(sd & 0x1)); // sd must be divisible by 2
-            emitDoublePrecisionInst(static_cast<ARMWord>(cc) | VCVTR_S32_F64, (sd >> 1), 0, dm);
-        }
-
         void vmrs_apsr(Condition cc = AL)
         {
             m_buffer.putInt(static_cast<ARMWord>(cc) | VMRS_APSR);
@@ -686,7 +679,7 @@ namespace JSC {
             return loadBranchTarget(ARMRegisters::pc, cc, useConstantPool);
         }
 
-        void* executableCopy(JSGlobalData&, ExecutablePool* allocator);
+        PassRefPtr<ExecutableMemoryHandle> executableCopy(JSGlobalData&);
 
 #ifndef NDEBUG
         unsigned debugOffset() { return m_buffer.debugOffset(); }
@@ -855,7 +848,7 @@ namespace JSC {
         // Memory load/store helpers
 
         void dataTransfer32(bool isLoad, RegisterID srcDst, RegisterID base, int32_t offset, bool bytes = false);
-        void baseIndexTransfer32(bool isLoad, RegisterID srcDst, RegisterID base, RegisterID index, int scale, int32_t offset);
+        void baseIndexTransfer32(bool isLoad, RegisterID srcDst, RegisterID base, RegisterID index, int scale, int32_t offset, bool bytes = false);
         void doubleTransfer(bool isLoad, FPRegisterID srcDst, RegisterID base, int32_t offset);
 
         // Constant pool hnadlers

@@ -38,6 +38,7 @@
 #include "V8IsolatedContext.h"
 #include "V8Proxy.h"
 #include "V8TestCallback.h"
+#include "V8any.h"
 #include "V8int.h"
 #include "V8log.h"
 #include <wtf/GetPtr.h>
@@ -566,6 +567,34 @@ static void conditionalAttr3AttrSetter(v8::Local<v8::String> name, v8::Local<v8:
 }
 
 #endif // ENABLE(Condition1) || ENABLE(Condition2)
+
+static v8::Handle<v8::Value> cachedAttribute1AttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+{
+    INC_STATS("DOM.TestObj.cachedAttribute1._get");
+    TestObj* imp = V8TestObj::toNative(info.Holder());
+    RefPtr<any> result = imp->cachedAttribute1();
+    v8::Handle<v8::Value> wrapper = result.get() ? getDOMObjectMap().get(result.get()) : v8::Handle<v8::Value>();
+    if (wrapper.IsEmpty()) {
+        wrapper = toV8(result.get());
+        if (!wrapper.IsEmpty())
+            V8DOMWrapper::setNamedHiddenReference(info.Holder(), "cachedAttribute1", wrapper);
+    }
+    return wrapper;
+}
+
+static v8::Handle<v8::Value> cachedAttribute2AttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+{
+    INC_STATS("DOM.TestObj.cachedAttribute2._get");
+    TestObj* imp = V8TestObj::toNative(info.Holder());
+    RefPtr<any> result = imp->cachedAttribute2();
+    v8::Handle<v8::Value> wrapper = result.get() ? getDOMObjectMap().get(result.get()) : v8::Handle<v8::Value>();
+    if (wrapper.IsEmpty()) {
+        wrapper = toV8(result.get());
+        if (!wrapper.IsEmpty())
+            V8DOMWrapper::setNamedHiddenReference(info.Holder(), "cachedAttribute2", wrapper);
+    }
+    return wrapper;
+}
 
 static v8::Handle<v8::Value> enabledAtRuntimeAttr1AttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
@@ -1221,6 +1250,22 @@ static const BatchedAttribute TestObjAttrs[] = {
     // Attribute 'conditionalAttr3' (Type: 'attribute' ExtAttr: 'Conditional')
     {"conditionalAttr3", TestObjInternal::conditionalAttr3AttrGetter, TestObjInternal::conditionalAttr3AttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
 #endif // ENABLE(Condition1) || ENABLE(Condition2)
+#if ENABLE(Condition1)
+    // Attribute 'conditionalAttr4' (Type: 'attribute' ExtAttr: 'Conditional')
+    {"conditionalAttr4", TestObjInternal::TestObjConstructorGetter, 0, &V8TestObjectA::info, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::ReadOnly), 0 /* on instance */},
+#endif // ENABLE(Condition1)
+#if ENABLE(Condition1) && ENABLE(Condition2)
+    // Attribute 'conditionalAttr5' (Type: 'attribute' ExtAttr: 'Conditional')
+    {"conditionalAttr5", TestObjInternal::TestObjConstructorGetter, 0, &V8TestObjectB::info, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::ReadOnly), 0 /* on instance */},
+#endif // ENABLE(Condition1) && ENABLE(Condition2)
+#if ENABLE(Condition1) || ENABLE(Condition2)
+    // Attribute 'conditionalAttr6' (Type: 'attribute' ExtAttr: 'Conditional')
+    {"conditionalAttr6", TestObjInternal::TestObjConstructorGetter, 0, &V8TestObjectC::info, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::ReadOnly), 0 /* on instance */},
+#endif // ENABLE(Condition1) || ENABLE(Condition2)
+    // Attribute 'cachedAttribute1' (Type: 'readonly attribute' ExtAttr: 'CachedAttribute')
+    {"cachedAttribute1", TestObjInternal::cachedAttribute1AttrGetter, 0, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    // Attribute 'cachedAttribute2' (Type: 'readonly attribute' ExtAttr: 'CachedAttribute')
+    {"cachedAttribute2", TestObjInternal::cachedAttribute2AttrGetter, 0, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'description' (Type: 'readonly attribute' ExtAttr: '')
     {"description", TestObjInternal::descriptionAttrGetter, 0, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'id' (Type: 'attribute' ExtAttr: '')

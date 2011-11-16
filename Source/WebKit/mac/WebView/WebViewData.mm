@@ -35,6 +35,7 @@
 #import <WebCore/HistoryItem.h>
 #import <objc/objc-auto.h>
 #import <runtime/InitializeThreading.h>
+#import <wtf/MainThread.h>
 #import <wtf/Threading.h>
 
 BOOL applicationIsTerminating = NO;

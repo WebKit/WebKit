@@ -121,7 +121,7 @@ static inline void updateGuidVersionMap(int guid, String newVersion)
     // FIXME: This is a quite-awkward restriction to have to program with.
 
     // Map null string to empty string (see comment above).
-    guidToVersionMap().set(guid, newVersion.isEmpty() ? String() : newVersion.threadsafeCopy());
+    guidToVersionMap().set(guid, newVersion.isEmpty() ? String() : newVersion.isolatedCopy());
 }
 
 typedef HashMap<int, HashSet<AbstractDatabase*>*> GuidDatabaseMap;
@@ -174,9 +174,9 @@ const String& AbstractDatabase::databaseInfoTableName()
 AbstractDatabase::AbstractDatabase(ScriptExecutionContext* context, const String& name, const String& expectedVersion,
                                    const String& displayName, unsigned long estimatedSize)
     : m_scriptExecutionContext(context)
-    , m_name(name.crossThreadString())
-    , m_expectedVersion(expectedVersion.crossThreadString())
-    , m_displayName(displayName.crossThreadString())
+    , m_name(name.isolatedCopy())
+    , m_expectedVersion(expectedVersion.isolatedCopy())
+    , m_displayName(displayName.isolatedCopy())
     , m_estimatedSize(estimatedSize)
     , m_guid(0)
     , m_opened(false)
@@ -236,7 +236,7 @@ void AbstractDatabase::closeDatabase()
 String AbstractDatabase::version() const
 {
     MutexLocker locker(guidMutex());
-    return guidToVersionMap().get(m_guid).threadsafeCopy();
+    return guidToVersionMap().get(m_guid).isolatedCopy();
 }
 
 static const int maxSqliteBusyWaitTime = 30000;
@@ -261,7 +261,7 @@ bool AbstractDatabase::performOpenAndVerify(bool shouldSetVersionInNewDatabase, 
         GuidVersionMap::iterator entry = guidToVersionMap().find(m_guid);
         if (entry != guidToVersionMap().end()) {
             // Map null string to empty string (see updateGuidVersionMap()).
-            currentVersion = entry->second.isNull() ? String("") : entry->second;
+            currentVersion = entry->second.isNull() ? String("") : entry->second.isolatedCopy();
             LOG(StorageAPI, "Current cached version for guid %i is %s", m_guid, currentVersion.ascii().data());
         } else {
             LOG(StorageAPI, "No cached version for guid %i", m_guid);
@@ -337,13 +337,13 @@ SecurityOrigin* AbstractDatabase::securityOrigin() const
 String AbstractDatabase::stringIdentifier() const
 {
     // Return a deep copy for ref counting thread safety
-    return m_name.threadsafeCopy();
+    return m_name.isolatedCopy();
 }
 
 String AbstractDatabase::displayName() const
 {
     // Return a deep copy for ref counting thread safety
-    return m_displayName.threadsafeCopy();
+    return m_displayName.isolatedCopy();
 }
 
 unsigned long AbstractDatabase::estimatedSize() const
@@ -354,7 +354,7 @@ unsigned long AbstractDatabase::estimatedSize() const
 String AbstractDatabase::fileName() const
 {
     // Return a deep copy for ref counting thread safety
-    return m_filename.threadsafeCopy();
+    return m_filename.isolatedCopy();
 }
 
 // static
@@ -370,7 +370,7 @@ bool AbstractDatabase::getVersionFromDatabase(String& version)
 
     m_databaseAuthorizer->disable();
 
-    bool result = retrieveTextResultFromDatabase(m_sqliteDatabase, getVersionQuery.threadsafeCopy(), version);
+    bool result = retrieveTextResultFromDatabase(m_sqliteDatabase, getVersionQuery.isolatedCopy(), version);
     if (!result)
         LOG_ERROR("Failed to retrieve version from database %s", databaseDebugName().ascii().data());
 
@@ -387,7 +387,7 @@ bool AbstractDatabase::setVersionInDatabase(const String& version)
 
     m_databaseAuthorizer->disable();
 
-    bool result = setTextValueInDatabase(m_sqliteDatabase, setVersionQuery.threadsafeCopy(), version);
+    bool result = setTextValueInDatabase(m_sqliteDatabase, setVersionQuery.isolatedCopy(), version);
     if (!result)
         LOG_ERROR("Failed to set version %s in database (%s)", version.ascii().data(), setVersionQuery.ascii().data());
 
@@ -408,7 +408,7 @@ bool AbstractDatabase::versionMatchesExpected() const
 
 void AbstractDatabase::setExpectedVersion(const String& version)
 {
-    m_expectedVersion = version.threadsafeCopy();
+    m_expectedVersion = version.isolatedCopy();
     // Update the in memory database version map.
     MutexLocker locker(guidMutex());
     updateGuidVersionMap(m_guid, version);

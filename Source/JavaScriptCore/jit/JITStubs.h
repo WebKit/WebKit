@@ -31,6 +31,7 @@
 #define JITStubs_h
 
 #include "CallData.h"
+#include "DFGIntrinsic.h"
 #include "MacroAssemblerCodeRef.h"
 #include "Register.h"
 #include "ThunkGenerators.h"
@@ -149,9 +150,6 @@ namespace JSC {
     struct JITStackFrame {
         JITStubArg reserved; // Unused
         JITStubArg args[6];
-#if USE(JSVALUE64)
-        void* padding; // Maintain 16-byte stack alignment.
-#endif
 
         ReturnAddressPtr thunkReturnAddress;
 
@@ -159,11 +157,15 @@ namespace JSC {
         void* preservedR4;
         void* preservedR5;
         void* preservedR6;
+        void* preservedR7;
+        void* preservedR8;
+        void* preservedR9;
+        void* preservedR10;
+        void* preservedR11;
 
         // These arguments passed in r1..r3 (r0 contained the entry code pointed, which is not preserved)
         RegisterFile* registerFile;
         CallFrame* callFrame;
-        void* unused1;
 
         // These arguments passed on the stack.
         Profiler** enabledProfilerReference;
@@ -294,19 +296,19 @@ namespace JSC {
         MacroAssemblerCodePtr ctiNativeConstruct() { return m_trampolineStructure.ctiNativeConstruct; }
         MacroAssemblerCodePtr ctiSoftModulo() { return m_trampolineStructure.ctiSoftModulo; }
 
-        MacroAssemblerCodePtr ctiStub(JSGlobalData* globalData, ThunkGenerator generator);
+        MacroAssemblerCodeRef ctiStub(JSGlobalData*, ThunkGenerator);
 
-        NativeExecutable* hostFunctionStub(JSGlobalData*, NativeFunction);
-        NativeExecutable* hostFunctionStub(JSGlobalData*, NativeFunction, ThunkGenerator);
+        NativeExecutable* hostFunctionStub(JSGlobalData*, NativeFunction, NativeFunction constructor);
+        NativeExecutable* hostFunctionStub(JSGlobalData*, NativeFunction, ThunkGenerator, DFG::Intrinsic);
 
         void clearHostFunctionStubs();
 
     private:
-        typedef HashMap<ThunkGenerator, MacroAssemblerCodePtr> CTIStubMap;
+        typedef HashMap<ThunkGenerator, MacroAssemblerCodeRef> CTIStubMap;
         CTIStubMap m_ctiStubMap;
         typedef HashMap<NativeFunction, Weak<NativeExecutable> > HostFunctionStubMap;
         OwnPtr<HostFunctionStubMap> m_hostFunctionStubMap;
-        RefPtr<ExecutablePool> m_executablePool;
+        RefPtr<ExecutableMemoryHandle> m_executableMemory;
 
         TrampolineStructure m_trampolineStructure;
     };
@@ -333,6 +335,7 @@ extern "C" {
     EncodedJSValue JIT_STUB cti_op_get_by_id_generic(STUB_ARGS_DECLARATION);
     EncodedJSValue JIT_STUB cti_op_get_by_id_getter_stub(STUB_ARGS_DECLARATION);
     EncodedJSValue JIT_STUB cti_op_get_by_id_method_check(STUB_ARGS_DECLARATION);
+    EncodedJSValue JIT_STUB cti_op_get_by_id_method_check_update(STUB_ARGS_DECLARATION);
     EncodedJSValue JIT_STUB cti_op_get_by_id_proto_fail(STUB_ARGS_DECLARATION);
     EncodedJSValue JIT_STUB cti_op_get_by_id_proto_list(STUB_ARGS_DECLARATION);
     EncodedJSValue JIT_STUB cti_op_get_by_id_proto_list_full(STUB_ARGS_DECLARATION);
@@ -423,6 +426,10 @@ extern "C" {
     void JIT_STUB cti_op_tear_off_activation(STUB_ARGS_DECLARATION);
     void JIT_STUB cti_op_tear_off_arguments(STUB_ARGS_DECLARATION);
     void JIT_STUB cti_op_throw_reference_error(STUB_ARGS_DECLARATION);
+#if ENABLE(DFG_JIT)
+    void JIT_STUB cti_optimize_from_loop(STUB_ARGS_DECLARATION);
+    void JIT_STUB cti_optimize_from_ret(STUB_ARGS_DECLARATION);
+#endif
     void* JIT_STUB cti_op_call_arityCheck(STUB_ARGS_DECLARATION);
     void* JIT_STUB cti_op_construct_arityCheck(STUB_ARGS_DECLARATION);
     void* JIT_STUB cti_op_call_jitCompile(STUB_ARGS_DECLARATION);

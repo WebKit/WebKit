@@ -26,11 +26,30 @@
 #include "config.h"
 #include "ConservativeRoots.h"
 
+#include "JSCell.h"
+#include "JSObject.h"
+#include "JettisonedCodeBlocks.h"
+#include "Structure.h"
+
 namespace JSC {
 
 inline bool isPointerAligned(void* p)
 {
     return !((intptr_t)(p) & (sizeof(char*) - 1));
+}
+
+ConservativeRoots::ConservativeRoots(const MarkedBlockSet* blocks)
+    : m_roots(m_inlineRoots)
+    , m_size(0)
+    , m_capacity(inlineCapacity)
+    , m_blocks(blocks)
+{
+}
+
+ConservativeRoots::~ConservativeRoots()
+{
+    if (m_roots != m_inlineRoots)
+        OSAllocator::decommitAndRelease(m_roots, m_capacity * sizeof(JSCell*));
 }
 
 void ConservativeRoots::grow()
@@ -44,8 +63,16 @@ void ConservativeRoots::grow()
     m_roots = newRoots;
 }
 
-inline void ConservativeRoots::add(void* p, TinyBloomFilter filter)
+class DummyMarkHook {
+public:
+    void mark(void*) { }
+};
+
+template<typename MarkHook>
+inline void ConservativeRoots::genericAddPointer(void* p, TinyBloomFilter filter, MarkHook& markHook)
 {
+    markHook.mark(p);
+    
     MarkedBlock* candidate = MarkedBlock::blockFor(p);
     if (filter.ruleOut(reinterpret_cast<Bits>(candidate))) {
         ASSERT(!candidate || !m_blocks->set().contains(candidate));
@@ -58,10 +85,7 @@ inline void ConservativeRoots::add(void* p, TinyBloomFilter filter)
     if (!m_blocks->set().contains(candidate))
         return;
 
-    // The conservative set inverts the typical meaning of mark bits: We only
-    // visit marked pointers, and our visit clears the mark bit. This efficiently
-    // sifts out pointers to dead objects and duplicate pointers.
-    if (!candidate->testAndClearMarked(p))
+    if (!candidate->isLiveCell(p))
         return;
 
     if (m_size == m_capacity)
@@ -70,7 +94,8 @@ inline void ConservativeRoots::add(void* p, TinyBloomFilter filter)
     m_roots[m_size++] = static_cast<JSCell*>(p);
 }
 
-void ConservativeRoots::add(void* begin, void* end)
+template<typename MarkHook>
+void ConservativeRoots::genericAddSpan(void* begin, void* end, MarkHook& markHook)
 {
     ASSERT(begin <= end);
     ASSERT((static_cast<char*>(end) - static_cast<char*>(begin)) < 0x1000000);
@@ -79,7 +104,18 @@ void ConservativeRoots::add(void* begin, void* end)
 
     TinyBloomFilter filter = m_blocks->filter(); // Make a local copy of filter to show the compiler it won't alias, and can be register-allocated.
     for (char** it = static_cast<char**>(begin); it != static_cast<char**>(end); ++it)
-        add(*it, filter);
+        genericAddPointer(*it, filter, markHook);
+}
+
+void ConservativeRoots::add(void* begin, void* end)
+{
+    DummyMarkHook dummyMarkHook;
+    genericAddSpan(begin, end, dummyMarkHook);
+}
+
+void ConservativeRoots::add(void* begin, void* end, JettisonedCodeBlocks& jettisonedCodeBlocks)
+{
+    genericAddSpan(begin, end, jettisonedCodeBlocks);
 }
 
 } // namespace JSC

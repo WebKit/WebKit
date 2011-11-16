@@ -30,71 +30,116 @@
 
 #include <dfg/DFGJITCompiler.h>
 
-namespace JSC { namespace DFG {
+namespace JSC {
+
+struct GlobalResolveInfo;
+
+namespace DFG {
 
 enum PutKind { Direct, NotDirect };
 
-typedef intptr_t RegisterSizedBoolean;
-
 extern "C" {
+
+#if CALLING_CONVENTION_IS_STDCALL
+#define DFG_OPERATION CDECL
+#else
+#define DFG_OPERATION
+#endif
 
 // These typedefs provide typechecking when generating calls out to helper routines;
 // this helps prevent calling a helper routine with the wrong arguments!
-typedef EncodedJSValue (*J_DFGOperation_EJJ)(ExecState*, EncodedJSValue, EncodedJSValue);
-typedef EncodedJSValue (*J_DFGOperation_EJ)(ExecState*, EncodedJSValue);
-typedef EncodedJSValue (*J_DFGOperation_EJP)(ExecState*, EncodedJSValue, void*);
-typedef EncodedJSValue (*J_DFGOperation_EJI)(ExecState*, EncodedJSValue, Identifier*);
-typedef EncodedJSValue (*J_DFGOperation_EP)(ExecState*, void*);
-typedef EncodedJSValue (*J_DFGOperation_EI)(ExecState*, Identifier*);
-typedef RegisterSizedBoolean (*Z_DFGOperation_EJ)(ExecState*, EncodedJSValue);
-typedef RegisterSizedBoolean (*Z_DFGOperation_EJJ)(ExecState*, EncodedJSValue, EncodedJSValue);
-typedef void (*V_DFGOperation_EJJJ)(ExecState*, EncodedJSValue, EncodedJSValue, EncodedJSValue);
-typedef void (*V_DFGOperation_EJJP)(ExecState*, EncodedJSValue, EncodedJSValue, void*);
-typedef void (*V_DFGOperation_EJJI)(ExecState*, EncodedJSValue, EncodedJSValue, Identifier*);
-typedef double (*D_DFGOperation_DD)(double, double);
-typedef void *(*P_DFGOperation_E)(ExecState*);
+/*
+    Key:
+    V: void
+    J: JSValue
+    P: pointer (void*)
+    C: JSCell*
+    A: JSArray*
+    S: size_t
+    Z: int32_t
+    D: double
+    I: Identifier*
+    G: GlobalResolveInfo*
+*/
+typedef int32_t DFG_OPERATION (*Z_DFGOperation_D)(double);
+typedef JSCell* DFG_OPERATION (*C_DFGOperation_E)(ExecState*);
+typedef JSCell* DFG_OPERATION (*C_DFGOperation_EC)(ExecState*, JSCell*);
+typedef JSCell* DFG_OPERATION (*C_DFGOperation_ECC)(ExecState*, JSCell*, JSCell*);
+typedef EncodedJSValue DFG_OPERATION (*J_DFGOperation_EA)(ExecState*, JSArray*);
+typedef EncodedJSValue DFG_OPERATION (*J_DFGOperation_EJA)(ExecState*, EncodedJSValue, JSArray*);
+typedef EncodedJSValue DFG_OPERATION (*J_DFGOperation_ECJ)(ExecState*, JSCell*, EncodedJSValue);
+typedef EncodedJSValue DFG_OPERATION (*J_DFGOperation_EJJ)(ExecState*, EncodedJSValue, EncodedJSValue);
+typedef EncodedJSValue DFG_OPERATION (*J_DFGOperation_EJ)(ExecState*, EncodedJSValue);
+typedef EncodedJSValue DFG_OPERATION (*J_DFGOperation_EJP)(ExecState*, EncodedJSValue, void*);
+typedef EncodedJSValue DFG_OPERATION (*J_DFGOperation_ECI)(ExecState*, JSCell*, Identifier*);
+typedef EncodedJSValue DFG_OPERATION (*J_DFGOperation_EP)(ExecState*, void*);
+typedef EncodedJSValue DFG_OPERATION (*J_DFGOperation_EPP)(ExecState*, void*, void*);
+typedef EncodedJSValue DFG_OPERATION (*J_DFGOperation_EGI)(ExecState*, GlobalResolveInfo*, Identifier*);
+typedef EncodedJSValue DFG_OPERATION (*J_DFGOperation_EPS)(ExecState*, void*, size_t);
+typedef EncodedJSValue DFG_OPERATION (*J_DFGOperation_ESS)(ExecState*, size_t, size_t);
+typedef EncodedJSValue DFG_OPERATION (*J_DFGOperation_EI)(ExecState*, Identifier*);
+typedef size_t DFG_OPERATION (*S_DFGOperation_EJ)(ExecState*, EncodedJSValue);
+typedef size_t DFG_OPERATION (*S_DFGOperation_EJJ)(ExecState*, EncodedJSValue, EncodedJSValue);
+typedef void DFG_OPERATION (*V_DFGOperation_EJJJ)(ExecState*, EncodedJSValue, EncodedJSValue, EncodedJSValue);
+typedef void DFG_OPERATION (*V_DFGOperation_ECJJ)(ExecState*, JSCell*, EncodedJSValue, EncodedJSValue);
+typedef void DFG_OPERATION (*V_DFGOperation_EJPP)(ExecState*, EncodedJSValue, EncodedJSValue, void*);
+typedef void DFG_OPERATION (*V_DFGOperation_EJCI)(ExecState*, EncodedJSValue, JSCell*, Identifier*);
+typedef void DFG_OPERATION (*V_DFGOperation_EPZJ)(ExecState*, void*, int32_t, EncodedJSValue);
+typedef void DFG_OPERATION (*V_DFGOperation_EAZJ)(ExecState*, JSArray*, int32_t, EncodedJSValue);
+typedef double DFG_OPERATION (*D_DFGOperation_DD)(double, double);
+typedef double DFG_OPERATION (*D_DFGOperation_EJ)(ExecState*, EncodedJSValue);
+typedef void* DFG_OPERATION (*P_DFGOperation_E)(ExecState*);
 
 // These routines are provide callbacks out to C++ implementations of operations too complex to JIT.
-EncodedJSValue operationConvertThis(ExecState*, EncodedJSValue encodedOp1);
-EncodedJSValue operationValueAdd(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2);
-EncodedJSValue operationArithAdd(EncodedJSValue encodedOp1, EncodedJSValue encodedOp2);
-EncodedJSValue operationArithSub(EncodedJSValue encodedOp1, EncodedJSValue encodedOp2);
-EncodedJSValue operationArithMul(EncodedJSValue encodedOp1, EncodedJSValue encodedOp2);
-EncodedJSValue operationArithDiv(EncodedJSValue encodedOp1, EncodedJSValue encodedOp2);
-EncodedJSValue operationArithMod(EncodedJSValue encodedOp1, EncodedJSValue encodedOp2);
-EncodedJSValue operationGetByVal(ExecState*, EncodedJSValue encodedBase, EncodedJSValue encodedProperty);
-EncodedJSValue operationGetById(ExecState*, EncodedJSValue encodedBase, Identifier*);
-EncodedJSValue operationGetByIdBuildList(ExecState*, EncodedJSValue encodedBase, Identifier*);
-EncodedJSValue operationGetByIdProtoBuildList(ExecState*, EncodedJSValue encodedBase, Identifier*);
-EncodedJSValue operationGetByIdOptimize(ExecState*, EncodedJSValue encodedBase, Identifier*);
-EncodedJSValue operationGetMethodOptimize(ExecState*, EncodedJSValue encodedBase, Identifier*);
-EncodedJSValue operationInstanceOf(ExecState*, EncodedJSValue value, EncodedJSValue base, EncodedJSValue prototype);
-EncodedJSValue operationResolve(ExecState*, Identifier*);
-EncodedJSValue operationResolveBase(ExecState*, Identifier*);
-EncodedJSValue operationResolveBaseStrictPut(ExecState*, Identifier*);
-void operationThrowHasInstanceError(ExecState*, EncodedJSValue base);
-void operationPutByValStrict(ExecState*, EncodedJSValue encodedBase, EncodedJSValue encodedProperty, EncodedJSValue encodedValue);
-void operationPutByValNonStrict(ExecState*, EncodedJSValue encodedBase, EncodedJSValue encodedProperty, EncodedJSValue encodedValue);
-void operationPutByValBeyondArrayBounds(ExecState*, JSArray*, int32_t index, EncodedJSValue encodedValue);
-void operationPutByIdStrict(ExecState*, EncodedJSValue encodedValue, EncodedJSValue encodedBase, Identifier*);
-void operationPutByIdNonStrict(ExecState*, EncodedJSValue encodedValue, EncodedJSValue encodedBase, Identifier*);
-void operationPutByIdDirectStrict(ExecState*, EncodedJSValue encodedValue, EncodedJSValue encodedBase, Identifier*);
-void operationPutByIdDirectNonStrict(ExecState*, EncodedJSValue encodedValue, EncodedJSValue encodedBase, Identifier*);
-void operationPutByIdStrictOptimize(ExecState*, EncodedJSValue encodedValue, EncodedJSValue encodedBase, Identifier*);
-void operationPutByIdNonStrictOptimize(ExecState*, EncodedJSValue encodedValue, EncodedJSValue encodedBase, Identifier*);
-void operationPutByIdDirectStrictOptimize(ExecState*, EncodedJSValue encodedValue, EncodedJSValue encodedBase, Identifier*);
-void operationPutByIdDirectNonStrictOptimize(ExecState*, EncodedJSValue encodedValue, EncodedJSValue encodedBase, Identifier*);
-RegisterSizedBoolean operationCompareLess(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2);
-RegisterSizedBoolean operationCompareLessEq(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2);
-RegisterSizedBoolean operationCompareGreater(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2);
-RegisterSizedBoolean operationCompareGreaterEq(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2);
-RegisterSizedBoolean operationCompareEq(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2);
-RegisterSizedBoolean operationCompareStrictEqCell(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2);
-RegisterSizedBoolean operationCompareStrictEq(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2);
-void* operationVirtualCall(ExecState*);
-void* operationLinkCall(ExecState*);
-void* operationVirtualConstruct(ExecState*);
-void* operationLinkConstruct(ExecState*);
+JSCell* DFG_OPERATION operationNewObject(ExecState*);
+JSCell* DFG_OPERATION operationCreateThis(ExecState*, JSCell* encodedOp1);
+JSCell* DFG_OPERATION operationCreateThisInlined(ExecState*, JSCell* encodedOp1, JSCell* constructor);
+EncodedJSValue DFG_OPERATION operationConvertThis(ExecState*, EncodedJSValue encodedOp1);
+EncodedJSValue DFG_OPERATION operationValueAdd(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2);
+EncodedJSValue DFG_OPERATION operationValueAddNotNumber(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2);
+EncodedJSValue DFG_OPERATION operationGetByVal(ExecState*, EncodedJSValue encodedBase, EncodedJSValue encodedProperty);
+EncodedJSValue DFG_OPERATION operationGetByValCell(ExecState*, JSCell*, EncodedJSValue encodedProperty);
+EncodedJSValue DFG_OPERATION operationGetById(ExecState*, JSCell*, Identifier*);
+EncodedJSValue DFG_OPERATION operationGetByIdBuildList(ExecState*, JSCell*, Identifier*);
+EncodedJSValue DFG_OPERATION operationGetByIdProtoBuildList(ExecState*, JSCell*, Identifier*);
+EncodedJSValue DFG_OPERATION operationGetByIdOptimize(ExecState*, JSCell*, Identifier*);
+EncodedJSValue DFG_OPERATION operationGetMethodOptimize(ExecState*, JSCell*, Identifier*);
+EncodedJSValue DFG_OPERATION operationResolve(ExecState*, Identifier*);
+EncodedJSValue DFG_OPERATION operationResolveBase(ExecState*, Identifier*);
+EncodedJSValue DFG_OPERATION operationResolveBaseStrictPut(ExecState*, Identifier*);
+EncodedJSValue DFG_OPERATION operationResolveGlobal(ExecState*, GlobalResolveInfo*, Identifier*);
+EncodedJSValue DFG_OPERATION operationToPrimitive(ExecState*, EncodedJSValue);
+EncodedJSValue DFG_OPERATION operationStrCat(ExecState*, void* start, size_t);
+EncodedJSValue DFG_OPERATION operationNewArray(ExecState*, void* start, size_t);
+EncodedJSValue DFG_OPERATION operationNewArrayBuffer(ExecState*, size_t, size_t);
+EncodedJSValue DFG_OPERATION operationNewRegexp(ExecState*, void*);
+void DFG_OPERATION operationPutByValStrict(ExecState*, EncodedJSValue encodedBase, EncodedJSValue encodedProperty, EncodedJSValue encodedValue);
+void DFG_OPERATION operationPutByValNonStrict(ExecState*, EncodedJSValue encodedBase, EncodedJSValue encodedProperty, EncodedJSValue encodedValue);
+void DFG_OPERATION operationPutByValCellStrict(ExecState*, JSCell*, EncodedJSValue encodedProperty, EncodedJSValue encodedValue);
+void DFG_OPERATION operationPutByValCellNonStrict(ExecState*, JSCell*, EncodedJSValue encodedProperty, EncodedJSValue encodedValue);
+void DFG_OPERATION operationPutByValBeyondArrayBounds(ExecState*, JSArray*, int32_t index, EncodedJSValue encodedValue);
+EncodedJSValue DFG_OPERATION operationArrayPush(ExecState*, EncodedJSValue encodedValue, JSArray*);
+EncodedJSValue DFG_OPERATION operationArrayPop(ExecState*, JSArray*);
+void DFG_OPERATION operationPutByIdStrict(ExecState*, EncodedJSValue encodedValue, JSCell* base, Identifier*);
+void DFG_OPERATION operationPutByIdNonStrict(ExecState*, EncodedJSValue encodedValue, JSCell* base, Identifier*);
+void DFG_OPERATION operationPutByIdDirectStrict(ExecState*, EncodedJSValue encodedValue, JSCell* base, Identifier*);
+void DFG_OPERATION operationPutByIdDirectNonStrict(ExecState*, EncodedJSValue encodedValue, JSCell* base, Identifier*);
+void DFG_OPERATION operationPutByIdStrictOptimize(ExecState*, EncodedJSValue encodedValue, JSCell* base, Identifier*);
+void DFG_OPERATION operationPutByIdNonStrictOptimize(ExecState*, EncodedJSValue encodedValue, JSCell* base, Identifier*);
+void DFG_OPERATION operationPutByIdDirectStrictOptimize(ExecState*, EncodedJSValue encodedValue, JSCell* base, Identifier*);
+void DFG_OPERATION operationPutByIdDirectNonStrictOptimize(ExecState*, EncodedJSValue encodedValue, JSCell* base, Identifier*);
+// These comparisons return a boolean within a size_t such that the value is zero extended to fill the register.
+size_t DFG_OPERATION operationCompareLess(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2);
+size_t DFG_OPERATION operationCompareLessEq(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2);
+size_t DFG_OPERATION operationCompareGreater(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2);
+size_t DFG_OPERATION operationCompareGreaterEq(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2);
+size_t DFG_OPERATION operationCompareEq(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2);
+size_t DFG_OPERATION operationCompareStrictEqCell(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2);
+size_t DFG_OPERATION operationCompareStrictEq(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2);
+void* DFG_OPERATION operationVirtualCall(ExecState*);
+void* DFG_OPERATION operationLinkCall(ExecState*);
+void* DFG_OPERATION operationVirtualConstruct(ExecState*);
+void* DFG_OPERATION operationLinkConstruct(ExecState*);
 
 // This method is used to lookup an exception hander, keyed by faultLocation, which is
 // the return location from one of the calls out to one of the helper operations above.
@@ -108,12 +153,17 @@ struct DFGHandler {
     ExecState* exec;
     void* handler;
 };
-DFGHandler lookupExceptionHandler(ExecState*, ReturnAddressPtr faultLocation);
+DFGHandler DFG_OPERATION lookupExceptionHandler(ExecState*, ReturnAddressPtr faultLocation);
 
 // These operations implement the implicitly called ToInt32, ToNumber, and ToBoolean conversions from ES5.
-double dfgConvertJSValueToNumber(ExecState*, EncodedJSValue);
-int32_t dfgConvertJSValueToInt32(ExecState*, EncodedJSValue);
-RegisterSizedBoolean dfgConvertJSValueToBoolean(ExecState*, EncodedJSValue);
+double DFG_OPERATION dfgConvertJSValueToNumber(ExecState*, EncodedJSValue);
+// This conversion returns an int32_t within a size_t such that the value is zero extended to fill the register.
+size_t DFG_OPERATION dfgConvertJSValueToInt32(ExecState*, EncodedJSValue);
+size_t DFG_OPERATION dfgConvertJSValueToBoolean(ExecState*, EncodedJSValue);
+
+#if DFG_ENABLE(VERBOSE_SPECULATION_FAILURE)
+void DFG_OPERATION debugOperationPrintSpeculationFailure(ExecState*, void*);
+#endif
 
 } // extern "C"
 } } // namespace JSC::DFG

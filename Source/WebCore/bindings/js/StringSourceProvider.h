@@ -44,7 +44,7 @@ namespace WebCore {
 
         virtual TextPosition1 startPosition() const { return m_startPosition; }
         JSC::UString getRange(int start, int end) const { return JSC::UString(m_source.characters() + start, end - start); }
-        const UChar* data() const { return m_source.characters(); }
+        const StringImpl* data() const { return m_source.impl(); }
         int length() const { return m_source.length(); }
         const String& source() const { return m_source; }
 

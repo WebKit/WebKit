@@ -40,6 +40,7 @@ namespace WTF {
     class Encoder;
     class String;
     class StringBuffer;
+    class StringBuilder;
     class StringImpl;
 }
 
@@ -59,6 +60,7 @@ using WTF::Encoder;
 using WTF::Decoder;
 using WTF::String;
 using WTF::StringBuffer;
+using WTF::StringBuilder;
 using WTF::StringImpl;
 
 #endif // WTF_Forward_h

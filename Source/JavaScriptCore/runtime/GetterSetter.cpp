@@ -28,23 +28,19 @@
 
 namespace JSC {
 
-const ClassInfo GetterSetter::s_info = { "GetterSetter", 0, 0, 0 };
+const ClassInfo GetterSetter::s_info = { "GetterSetter", 0, 0, 0, CREATE_METHOD_TABLE(GetterSetter) };
 
-void GetterSetter::visitChildren(SlotVisitor& visitor)
+void GetterSetter::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
-    ASSERT_GC_OBJECT_INHERITS(this, &s_info);
-    ASSERT(structure()->typeInfo().overridesVisitChildren());
-    JSCell::visitChildren(visitor);
+    GetterSetter* thisObject = static_cast<GetterSetter*>(cell);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
+    ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
+    JSCell::visitChildren(thisObject, visitor);
 
-    if (m_getter)
-        visitor.append(&m_getter);
-    if (m_setter)
-        visitor.append(&m_setter);
-}
-
-bool GetterSetter::isGetterSetter() const
-{
-    return true;
+    if (thisObject->m_getter)
+        visitor.append(&thisObject->m_getter);
+    if (thisObject->m_setter)
+        visitor.append(&thisObject->m_setter);
 }
 
 } // namespace JSC

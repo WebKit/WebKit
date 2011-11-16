@@ -42,7 +42,7 @@ namespace JSC {
 
 #if USE(JSVALUE64)
 
-void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executablePool, JSGlobalData* globalData, TrampolineStructure *trampolines)
+PassRefPtr<ExecutableMemoryHandle> JIT::privateCompileCTIMachineTrampolines(JSGlobalData* globalData, TrampolineStructure *trampolines)
 {
     // (2) The second function provides fast property access for string length
     Label stringLengthBegin = align();
@@ -140,6 +140,7 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
     move(TrustedImmPtr(&globalData->exceptionLocation), regT2);
     storePtr(regT1, regT2);
     poke(callFrameRegister, 1 + OBJECT_OFFSETOF(struct JITStackFrame, callFrame) / sizeof(void*));
+    storePtr(callFrameRegister, &m_globalData->topCallFrame);
     poke(TrustedImmPtr(FunctionPtr(ctiVMThrowTrampoline).value()));
     ret();
 
@@ -152,7 +153,7 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
     Call string_failureCases3Call = makeTailRecursiveCall(string_failureCases3);
 
     // All trampolines constructed! copy the code, link up calls, and set the pointers on the Machine object.
-    LinkBuffer patchBuffer(*m_globalData, this, m_globalData->executableAllocator);
+    LinkBuffer patchBuffer(*m_globalData, this);
 
     patchBuffer.link(string_failureCases1Call, FunctionPtr(cti_op_get_by_id_string_fail));
     patchBuffer.link(string_failureCases2Call, FunctionPtr(cti_op_get_by_id_string_fail));
@@ -163,7 +164,7 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
     patchBuffer.link(callCompileConstruct, FunctionPtr(cti_op_construct_jitCompile));
 
     CodeRef finalCode = patchBuffer.finalizeCode();
-    *executablePool = finalCode.m_executablePool;
+    RefPtr<ExecutableMemoryHandle> executableMemory = finalCode.executableMemory();
 
     trampolines->ctiVirtualCallLink = patchBuffer.trampolineAt(virtualCallLinkBegin);
     trampolines->ctiVirtualConstructLink = patchBuffer.trampolineAt(virtualConstructLinkBegin);
@@ -172,6 +173,8 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
     trampolines->ctiNativeCall = patchBuffer.trampolineAt(nativeCallThunk);
     trampolines->ctiNativeConstruct = patchBuffer.trampolineAt(nativeConstructThunk);
     trampolines->ctiStringLengthTrampoline = patchBuffer.trampolineAt(stringLengthBegin);
+    
+    return executableMemory.release();
 }
 
 JIT::Label JIT::privateCompileCTINativeCall(JSGlobalData* globalData, bool isConstruct)
@@ -280,6 +283,7 @@ JIT::Label JIT::privateCompileCTINativeCall(JSGlobalData* globalData, bool isCon
     storePtr(regT1, regT2);
     poke(callFrameRegister, OBJECT_OFFSETOF(struct JITStackFrame, callFrame) / sizeof(void*));
 
+    storePtr(callFrameRegister, &m_globalData->topCallFrame);
     // Set the return address.
     move(TrustedImmPtr(FunctionPtr(ctiVMThrowTrampoline).value()), regT1);
     restoreReturnAddressBeforeReturn(regT1);
@@ -289,9 +293,9 @@ JIT::Label JIT::privateCompileCTINativeCall(JSGlobalData* globalData, bool isCon
     return nativeCallThunk;
 }
 
-JIT::CodePtr JIT::privateCompileCTINativeCall(PassRefPtr<ExecutablePool>, JSGlobalData* globalData, NativeFunction)
+JIT::CodeRef JIT::privateCompileCTINativeCall(JSGlobalData* globalData, NativeFunction)
 {
-    return globalData->jitStubs->ctiNativeCall();
+    return CodeRef::createSelfManagedCodeRef(globalData->jitStubs->ctiNativeCall());
 }
 
 void JIT::emit_op_mov(Instruction* currentInstruction)
@@ -299,19 +303,26 @@ void JIT::emit_op_mov(Instruction* currentInstruction)
     int dst = currentInstruction[1].u.operand;
     int src = currentInstruction[2].u.operand;
 
-    if (m_codeBlock->isConstantRegisterIndex(src)) {
-        storePtr(ImmPtr(JSValue::encode(getConstantOperand(src))), Address(callFrameRegister, dst * sizeof(Register)));
-        if (dst == m_lastResultBytecodeRegister)
-            killLastResultRegister();
-    } else if ((src == m_lastResultBytecodeRegister) || (dst == m_lastResultBytecodeRegister)) {
-        // If either the src or dst is the cached register go though
-        // get/put registers to make sure we track this correctly.
+    if (canBeOptimized()) {
+        // Use simpler approach, since the DFG thinks that the last result register
+        // is always set to the destination on every operation.
         emitGetVirtualRegister(src, regT0);
         emitPutVirtualRegister(dst);
     } else {
-        // Perform the copy via regT1; do not disturb any mapping in regT0.
-        loadPtr(Address(callFrameRegister, src * sizeof(Register)), regT1);
-        storePtr(regT1, Address(callFrameRegister, dst * sizeof(Register)));
+        if (m_codeBlock->isConstantRegisterIndex(src)) {
+            storePtr(ImmPtr(JSValue::encode(getConstantOperand(src))), Address(callFrameRegister, dst * sizeof(Register)));
+            if (dst == m_lastResultBytecodeRegister)
+                killLastResultRegister();
+        } else if ((src == m_lastResultBytecodeRegister) || (dst == m_lastResultBytecodeRegister)) {
+            // If either the src or dst is the cached register go though
+            // get/put registers to make sure we track this correctly.
+            emitGetVirtualRegister(src, regT0);
+            emitPutVirtualRegister(dst);
+        } else {
+            // Perform the copy via regT1; do not disturb any mapping in regT0.
+            loadPtr(Address(callFrameRegister, src * sizeof(Register)), regT1);
+            storePtr(regT1, Address(callFrameRegister, dst * sizeof(Register)));
+        }
     }
 }
 
@@ -375,7 +386,7 @@ void JIT::emit_op_instanceof(Instruction* currentInstruction)
 
     // Check that prototype is an object
     loadPtr(Address(regT1, JSCell::structureOffset()), regT3);
-    addSlowCase(branch8(NotEqual, Address(regT3, Structure::typeInfoTypeOffset()), TrustedImm32(ObjectType)));
+    addSlowCase(emitJumpIfNotObject(regT3));
     
     // Fixme: this check is only needed because the JSC API allows HasInstance to be overridden; we should deprecate this.
     // Check that baseVal 'ImplementsDefaultHasInstance'.
@@ -450,6 +461,8 @@ void JIT::emit_op_tear_off_arguments(Instruction* currentInstruction)
 
 void JIT::emit_op_ret(Instruction* currentInstruction)
 {
+    emitOptimizationCheck(RetOptimizationCheck);
+    
     ASSERT(callFrameRegister != regT1);
     ASSERT(regT1 != returnValueRegister);
     ASSERT(returnValueRegister != callFrameRegister);
@@ -470,6 +483,8 @@ void JIT::emit_op_ret(Instruction* currentInstruction)
 
 void JIT::emit_op_ret_object_or_this(Instruction* currentInstruction)
 {
+    emitOptimizationCheck(RetOptimizationCheck);
+    
     ASSERT(callFrameRegister != regT1);
     ASSERT(regT1 != returnValueRegister);
     ASSERT(returnValueRegister != callFrameRegister);
@@ -478,7 +493,7 @@ void JIT::emit_op_ret_object_or_this(Instruction* currentInstruction)
     emitGetVirtualRegister(currentInstruction[1].u.operand, returnValueRegister);
     Jump notJSCell = emitJumpIfNotJSCell(returnValueRegister);
     loadPtr(Address(returnValueRegister, JSCell::structureOffset()), regT2);
-    Jump notObject = branch8(NotEqual, Address(regT2, Structure::typeInfoTypeOffset()), TrustedImm32(ObjectType));
+    Jump notObject = emitJumpIfNotObject(regT2);
 
     // Grab the return address.
     emitGetFromCallFrameHeaderPtr(RegisterFile::ReturnPC, regT1);
@@ -510,7 +525,7 @@ void JIT::emit_op_resolve(Instruction* currentInstruction)
 {
     JITStubCall stubCall(this, cti_op_resolve);
     stubCall.addArgument(TrustedImmPtr(&m_codeBlock->identifier(currentInstruction[2].u.operand)));
-    stubCall.call(currentInstruction[1].u.operand);
+    stubCall.callWithValueProfiling(currentInstruction[1].u.operand, FirstProfilingSite);
 }
 
 void JIT::emit_op_to_primitive(Instruction* currentInstruction)
@@ -541,7 +556,7 @@ void JIT::emit_op_resolve_base(Instruction* currentInstruction)
 {
     JITStubCall stubCall(this, currentInstruction[3].u.operand ? cti_op_resolve_base_strict_put : cti_op_resolve_base);
     stubCall.addArgument(TrustedImmPtr(&m_codeBlock->identifier(currentInstruction[2].u.operand)));
-    stubCall.call(currentInstruction[1].u.operand);
+    stubCall.callWithValueProfiling(currentInstruction[1].u.operand, FirstProfilingSite);
 }
 
 void JIT::emit_op_ensure_property_exists(Instruction* currentInstruction)
@@ -557,7 +572,7 @@ void JIT::emit_op_resolve_skip(Instruction* currentInstruction)
     JITStubCall stubCall(this, cti_op_resolve_skip);
     stubCall.addArgument(TrustedImmPtr(&m_codeBlock->identifier(currentInstruction[2].u.operand)));
     stubCall.addArgument(Imm32(currentInstruction[3].u.operand));
-    stubCall.call(currentInstruction[1].u.operand);
+    stubCall.callWithValueProfiling(currentInstruction[1].u.operand, FirstProfilingSite);
 }
 
 void JIT::emit_op_resolve_global(Instruction* currentInstruction, bool)
@@ -578,6 +593,7 @@ void JIT::emit_op_resolve_global(Instruction* currentInstruction, bool)
     loadPtr(Address(regT0, OBJECT_OFFSETOF(JSGlobalObject, m_propertyStorage)), regT0);
     load32(Address(regT2, OBJECT_OFFSETOF(GlobalResolveInfo, offset)), regT1);
     loadPtr(BaseIndex(regT0, regT1, ScalePtr), regT0);
+    emitValueProfilingSite(FirstProfilingSite);
     emitPutVirtualRegister(currentInstruction[1].u.operand);
 }
 
@@ -593,7 +609,7 @@ void JIT::emitSlow_op_resolve_global(Instruction* currentInstruction, Vector<Slo
     stubCall.addArgument(TrustedImmPtr(ident));
     stubCall.addArgument(Imm32(currentIndex));
     stubCall.addArgument(regT0);
-    stubCall.call(dst);
+    stubCall.callWithValueProfiling(dst, SubsequentProfilingSite);
 }
 
 void JIT::emit_op_not(Instruction* currentInstruction)
@@ -714,7 +730,7 @@ void JIT::emit_op_resolve_with_base(Instruction* currentInstruction)
     JITStubCall stubCall(this, cti_op_resolve_with_base);
     stubCall.addArgument(TrustedImmPtr(&m_codeBlock->identifier(currentInstruction[3].u.operand)));
     stubCall.addArgument(Imm32(currentInstruction[1].u.operand));
-    stubCall.call(currentInstruction[2].u.operand);
+    stubCall.callWithValueProfiling(currentInstruction[2].u.operand, FirstProfilingSite);
 }
 
 void JIT::emit_op_resolve_with_this(Instruction* currentInstruction)
@@ -722,7 +738,7 @@ void JIT::emit_op_resolve_with_this(Instruction* currentInstruction)
     JITStubCall stubCall(this, cti_op_resolve_with_this);
     stubCall.addArgument(TrustedImmPtr(&m_codeBlock->identifier(currentInstruction[3].u.operand)));
     stubCall.addArgument(Imm32(currentInstruction[1].u.operand));
-    stubCall.call(currentInstruction[2].u.operand);
+    stubCall.callWithValueProfiling(currentInstruction[2].u.operand, FirstProfilingSite);
 }
 
 void JIT::emit_op_jtrue(Instruction* currentInstruction)
@@ -795,7 +811,7 @@ void JIT::emit_op_get_pnames(Instruction* currentInstruction)
         isNotObject.append(emitJumpIfNotJSCell(regT0));
     if (base != m_codeBlock->thisRegister() || m_codeBlock->isStrictMode()) {
         loadPtr(Address(regT0, JSCell::structureOffset()), regT2);
-        isNotObject.append(branch8(NotEqual, Address(regT2, Structure::typeInfoTypeOffset()), TrustedImm32(ObjectType)));
+        isNotObject.append(emitJumpIfNotObject(regT2));
     }
 
     // We could inline the case where you have a valid cache, but
@@ -1161,7 +1177,7 @@ void JIT::emit_op_create_this(Instruction* currentInstruction)
     emitGetVirtualRegister(currentInstruction[2].u.operand, regT2);
     emitJumpSlowCaseIfNotJSCell(regT2, currentInstruction[2].u.operand);
     loadPtr(Address(regT2, JSCell::structureOffset()), regT1);
-    addSlowCase(branch8(NotEqual, Address(regT1, Structure::typeInfoTypeOffset()), TrustedImm32(ObjectType)));
+    addSlowCase(emitJumpIfNotObject(regT1));
     
     // now we know that the prototype is an object, but we don't know if it's got an
     // inheritor ID
@@ -1523,7 +1539,7 @@ void JIT::emitSlow_op_resolve_global_dynamic(Instruction* currentInstruction, Ve
     stubCall.addArgument(TrustedImmPtr(ident));
     stubCall.addArgument(Imm32(currentIndex));
     stubCall.addArgument(regT0);
-    stubCall.call(dst);
+    stubCall.callWithValueProfiling(dst, SubsequentProfilingSite); // The first profiling site is in emit_op_resolve_global
 }
 
 void JIT::emit_op_new_regexp(Instruction* currentInstruction)

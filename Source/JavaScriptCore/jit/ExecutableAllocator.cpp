@@ -27,45 +27,114 @@
 
 #include "ExecutableAllocator.h"
 
+#if ENABLE(EXECUTABLE_ALLOCATOR_DEMAND)
+#include <wtf/MetaAllocator.h>
+#include <wtf/PageReservation.h>
+#include <wtf/VMTags.h>
+#endif
+
 #if ENABLE(ASSEMBLER)
+
+using namespace WTF;
 
 namespace JSC {
 
 #if ENABLE(EXECUTABLE_ALLOCATOR_DEMAND)
 
-ExecutablePool::Allocation ExecutablePool::systemAlloc(size_t size)
+class DemandExecutableAllocator : public MetaAllocator {
+public:
+    DemandExecutableAllocator()
+        : MetaAllocator(32) // round up all allocations to 32 bytes
+    {
+        // Don't preallocate any memory here.
+    }
+    
+    virtual ~DemandExecutableAllocator()
+    {
+        for (unsigned i = 0; i < reservations.size(); ++i)
+            reservations.at(i).deallocate();
+    }
+
+protected:
+    virtual void* allocateNewSpace(size_t& numPages)
+    {
+        size_t newNumPages = (((numPages * pageSize() + JIT_ALLOCATOR_LARGE_ALLOC_SIZE - 1) / JIT_ALLOCATOR_LARGE_ALLOC_SIZE * JIT_ALLOCATOR_LARGE_ALLOC_SIZE) + pageSize() - 1) / pageSize();
+        
+        ASSERT(newNumPages >= numPages);
+        
+        numPages = newNumPages;
+        
+        PageReservation reservation = PageReservation::reserve(numPages * pageSize(), OSAllocator::JSJITCodePages, EXECUTABLE_POOL_WRITABLE, true);
+        if (!reservation)
+            CRASH();
+        
+        reservations.append(reservation);
+        
+        return reservation.base();
+    }
+    
+    virtual void notifyNeedPage(void* page)
+    {
+        OSAllocator::commit(page, pageSize(), EXECUTABLE_POOL_WRITABLE, true);
+    }
+    
+    virtual void notifyPageIsFree(void* page)
+    {
+        OSAllocator::decommit(page, pageSize());
+    }
+
+private:
+    Vector<PageReservation, 16> reservations;
+};
+
+static DemandExecutableAllocator* allocator;
+
+void ExecutableAllocator::initializeAllocator()
 {
-    PageAllocation allocation = PageAllocation::allocate(size, OSAllocator::JSJITCodePages, EXECUTABLE_POOL_WRITABLE, true);
-    if (!allocation)
-        CRASH();
-    return allocation;
+    ASSERT(!allocator);
+    allocator = new DemandExecutableAllocator();
 }
 
-void ExecutablePool::systemRelease(ExecutablePool::Allocation& allocation)
+ExecutableAllocator::ExecutableAllocator(JSGlobalData&)
 {
-    allocation.deallocate();
+    ASSERT(allocator);
 }
 
 bool ExecutableAllocator::isValid() const
 {
     return true;
 }
-    
+
 bool ExecutableAllocator::underMemoryPressure()
 {
     return false;
 }
-    
+
+PassRefPtr<ExecutableMemoryHandle> ExecutableAllocator::allocate(JSGlobalData&, size_t sizeInBytes)
+{
+    RefPtr<ExecutableMemoryHandle> result = allocator->allocate(sizeInBytes);
+    if (!result)
+        CRASH();
+    return result.release();
+}
+
 size_t ExecutableAllocator::committedByteCount()
 {
-    return 0;
-} 
+    return allocator->bytesCommitted();
+}
 
+#if ENABLE(META_ALLOCATOR_PROFILE)
+void ExecutableAllocator::dumpProfile()
+{
+    allocator->dumpProfile();
+}
 #endif
+
+#endif // ENABLE(EXECUTABLE_ALLOCATOR_DEMAND)
 
 #if ENABLE(ASSEMBLER_WX_EXCLUSIVE)
 
-#if OS(WINDOWS) || OS(SYMBIAN)
+#if OS(WINDOWS)
 #error "ASSEMBLER_WX_EXCLUSIVE not yet suported on this platform."
 #endif
 

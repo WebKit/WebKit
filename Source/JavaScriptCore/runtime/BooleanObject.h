@@ -28,20 +28,23 @@ namespace JSC {
     class BooleanObject : public JSWrapperObject {
     protected:
         BooleanObject(JSGlobalData&, Structure*);
+        void finishCreation(JSGlobalData&);
 
     public:
         typedef JSWrapperObject Base;
 
         static BooleanObject* create(JSGlobalData& globalData, Structure* structure)
         {
-            return new (allocateCell<BooleanObject>(globalData.heap)) BooleanObject(globalData, structure);
+            BooleanObject* boolean = new (allocateCell<BooleanObject>(globalData.heap)) BooleanObject(globalData, structure);
+            boolean->finishCreation(globalData);
+            return boolean;
         }
         
         static const ClassInfo s_info;
         
-        static Structure* createStructure(JSGlobalData& globalData, JSValue prototype)
+        static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue prototype)
         {
-            return Structure::create(globalData, prototype, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
+            return Structure::create(globalData, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), &s_info);
         }
     };
 

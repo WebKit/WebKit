@@ -7,11 +7,7 @@ TARGET = dummy
 
 QMAKE_EXTRA_TARGETS += generated_files
 
-CONFIG(standalone_package) {
-    isEmpty(JSC_GENERATED_SOURCES_DIR):JSC_GENERATED_SOURCES_DIR = $$PWD/generated
-} else {
-    isEmpty(JSC_GENERATED_SOURCES_DIR):JSC_GENERATED_SOURCES_DIR = generated
-}
+isEmpty(JSC_GENERATED_SOURCES_DIR):JSC_GENERATED_SOURCES_DIR = generated
 
 LUT_FILES += \
     runtime/ArrayConstructor.cpp \

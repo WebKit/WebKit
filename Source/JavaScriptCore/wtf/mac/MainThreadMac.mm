@@ -33,38 +33,53 @@
 #import <Foundation/NSThread.h>
 #import <stdio.h>
 #import <wtf/Assertions.h>
+#import <wtf/HashSet.h>
 #import <wtf/Threading.h>
+#import <wtf/ThreadSpecific.h>
 
-@interface WTFMainThreadCaller : NSObject {
+@interface JSWTFMainThreadCaller : NSObject {
 }
 - (void)call;
 @end
 
-@implementation WTFMainThreadCaller
+@implementation JSWTFMainThreadCaller
 
 - (void)call
 {
     WTF::dispatchFunctionsFromMainThread();
 }
 
-@end // implementation WTFMainThreadCaller
+@end // implementation JSWTFMainThreadCaller
 
 namespace WTF {
 
-static WTFMainThreadCaller* staticMainThreadCaller;
+static JSWTFMainThreadCaller* staticMainThreadCaller;
 static bool isTimerPosted; // This is only accessed on the 'main' thread.
 static bool mainThreadEstablishedAsPthreadMain;
 static pthread_t mainThreadPthread;
 static NSThread* mainThreadNSThread;
 
+#if ENABLE(PARALLEL_GC)
+static ThreadSpecific<bool>* isGCThread;
+
+static void initializeGCThreads()
+{
+    isGCThread = new ThreadSpecific<bool>();
+}
+#else
+static void initializeGCThreads() { }
+#endif
+
 void initializeMainThreadPlatform()
 {
     ASSERT(!staticMainThreadCaller);
-    staticMainThreadCaller = [[WTFMainThreadCaller alloc] init];
+    staticMainThreadCaller = [[JSWTFMainThreadCaller alloc] init];
 
     mainThreadEstablishedAsPthreadMain = false;
     mainThreadPthread = pthread_self();
     mainThreadNSThread = [[NSThread currentThread] retain];
+    
+    initializeGCThreads();
 }
 
 void initializeMainThreadToProcessMainThreadPlatform()
@@ -73,11 +88,13 @@ void initializeMainThreadToProcessMainThreadPlatform()
         NSLog(@"WebKit Threading Violation - initial use of WebKit from a secondary thread.");
 
     ASSERT(!staticMainThreadCaller);
-    staticMainThreadCaller = [[WTFMainThreadCaller alloc] init];
+    staticMainThreadCaller = [[JSWTFMainThreadCaller alloc] init];
 
     mainThreadEstablishedAsPthreadMain = true;
     mainThreadPthread = 0;
     mainThreadNSThread = nil;
+    
+    initializeGCThreads();
 }
 
 static void timerFired(CFRunLoopTimerRef timer, void*)
@@ -127,5 +144,32 @@ bool isMainThread()
     ASSERT(mainThreadPthread);
     return pthread_equal(pthread_self(), mainThreadPthread);
 }
+
+#if ENABLE(PARALLEL_GC)
+void registerGCThread()
+{
+    if (!isGCThread) {
+        // This happens if we're running in a process that doesn't care about
+        // MainThread.
+        return;
+    }
+
+    **isGCThread = true;
+}
+
+bool isMainThreadOrGCThread()
+{
+    if (isGCThread->isSet() && **isGCThread)
+        return true;
+    
+    return isMainThread();
+}
+#else
+// This is necessary because JavaScriptCore.exp doesn't support preprocessor macros.
+bool isMainThreadOrGCThread()
+{
+    return isMainThread();
+}
+#endif
 
 } // namespace WTF

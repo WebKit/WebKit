@@ -32,6 +32,7 @@
 #if ENABLE(DATABASE)
 
 #include <wtf/PassRefPtr.h>
+#include <wtf/RefCounted.h>
 #include "SQLValue.h"
 
 namespace WebCore {

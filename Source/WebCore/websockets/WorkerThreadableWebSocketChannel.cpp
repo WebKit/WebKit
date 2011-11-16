@@ -45,6 +45,7 @@
 #include "WorkerRunLoop.h"
 #include "WorkerThread.h"
 
+#include <wtf/MainThread.h>
 #include <wtf/PassRefPtr.h>
 
 namespace WebCore {

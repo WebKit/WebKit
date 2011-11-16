@@ -40,9 +40,9 @@ public:
         return adoptRef(new Geoposition(coordinates, timestamp));
     }
 
-    PassRefPtr<Geoposition> threadSafeCopy() const
+    PassRefPtr<Geoposition> isolatedCopy() const
     {
-        return Geoposition::create(m_coordinates->threadSafeCopy(), m_timestamp);
+        return Geoposition::create(m_coordinates->isolatedCopy(), m_timestamp);
     }
 
     DOMTimeStamp timestamp() const { return m_timestamp; }

@@ -69,22 +69,8 @@ class LinkBuffer {
 #endif
 
 public:
-    LinkBuffer(JSGlobalData& globalData, MacroAssembler* masm, PassRefPtr<ExecutablePool> executablePool)
-        : m_executablePool(executablePool)
-        , m_size(0)
-        , m_code(0)
-        , m_assembler(masm)
-        , m_globalData(&globalData)
-#ifndef NDEBUG
-        , m_completed(false)
-#endif
-    {
-        linkCode();
-    }
-
-    LinkBuffer(JSGlobalData& globalData, MacroAssembler* masm, ExecutableAllocator& allocator)
-        : m_executablePool(allocator.poolForSize(globalData, masm->m_assembler.codeSize()))
-        , m_size(0)
+    LinkBuffer(JSGlobalData& globalData, MacroAssembler* masm)
+        : m_size(0)
         , m_code(0)
         , m_assembler(masm)
         , m_globalData(&globalData)
@@ -149,6 +135,11 @@ public:
         return CodeLocationNearCall(MacroAssembler::getLinkerAddress(code(), applyOffset(call.m_label)));
     }
 
+    CodeLocationLabel locationOf(Jump jump)
+    {
+        return CodeLocationLabel(MacroAssembler::getLinkerAddress(code(), applyOffset(jump.m_label)));
+    }
+
     CodeLocationLabel locationOf(Label label)
     {
         return CodeLocationLabel(MacroAssembler::getLinkerAddress(code(), applyOffset(label.m_label)));
@@ -177,6 +168,11 @@ public:
         return MacroAssembler::getLinkerCallReturnOffset(call);
     }
 
+    uint32_t offsetOf(Label label)
+    {
+        return applyOffset(label.m_label).m_offset;
+    }
+
     // Upon completion of all patching either 'finalizeCode()' or 'finalizeCodeAddendum()' should be called
     // once to complete generation of the code.  'finalizeCode()' is suited to situations
     // where the executable pool must also be retained, the lighter-weight 'finalizeCodeAddendum()' is
@@ -185,14 +181,7 @@ public:
     {
         performFinalization();
 
-        return CodeRef(m_code, m_executablePool, m_size);
-    }
-
-    CodeLocationLabel finalizeCodeAddendum()
-    {
-        performFinalization();
-
-        return CodeLocationLabel(code());
+        return CodeRef(m_executableMemory);
     }
 
     CodePtr trampolineAt(Label label)
@@ -204,6 +193,11 @@ public:
     void* debugAddress()
     {
         return m_code;
+    }
+    
+    size_t debugSize()
+    {
+        return m_size;
     }
 #endif
 
@@ -227,14 +221,19 @@ private:
     {
         ASSERT(!m_code);
 #if !ENABLE(BRANCH_COMPACTION)
-        m_code = m_assembler->m_assembler.executableCopy(*m_globalData, m_executablePool.get());
+        m_executableMemory = m_assembler->m_assembler.executableCopy(*m_globalData);
+        if (!m_executableMemory)
+            return;
+        m_code = m_executableMemory->start();
         m_size = m_assembler->m_assembler.codeSize();
         ASSERT(m_code);
 #else
         size_t initialSize = m_assembler->m_assembler.codeSize();
-        m_code = (uint8_t*)m_executablePool->alloc(*m_globalData, initialSize);
-        if (!m_code)
+        m_executableMemory = m_globalData->executableAllocator.allocate(*m_globalData, initialSize);
+        if (!m_executableMemory)
             return;
+        m_code = (uint8_t*)m_executableMemory->start();
+        ASSERT(m_code);
         ExecutableAllocator::makeWritable(m_code, initialSize);
         uint8_t* inData = (uint8_t*)m_assembler->unlinkedCode();
         uint8_t* outData = reinterpret_cast<uint8_t*>(m_code);
@@ -292,7 +291,7 @@ private:
 
         jumpsToLink.clear();
         m_size = writePtr + initialSize - readPtr;
-        m_executablePool->tryShrink(m_code, initialSize, m_size);
+        m_executableMemory->shrink(m_size);
 
 #if DUMP_LINK_STATISTICS
         dumpLinkStatistics(m_code, initialSize, m_size);
@@ -361,7 +360,7 @@ private:
     }
 #endif
     
-    RefPtr<ExecutablePool> m_executablePool;
+    RefPtr<ExecutableMemoryHandle> m_executableMemory;
     size_t m_size;
     void* m_code;
     MacroAssembler* m_assembler;

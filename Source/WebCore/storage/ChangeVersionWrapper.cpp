@@ -37,8 +37,8 @@
 namespace WebCore {
 
 ChangeVersionWrapper::ChangeVersionWrapper(const String& oldVersion, const String& newVersion)
-    : m_oldVersion(oldVersion.crossThreadString())
-    , m_newVersion(newVersion.crossThreadString())
+    : m_oldVersion(oldVersion.isolatedCopy())
+    , m_newVersion(newVersion.isolatedCopy())
 {
 }
 

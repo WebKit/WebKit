@@ -28,6 +28,6 @@
 
 namespace JSC {
 
-const ClassInfo JSAPIValueWrapper::s_info = { "API Wrapper", 0, 0, 0 };
+const ClassInfo JSAPIValueWrapper::s_info = { "API Wrapper", 0, 0, 0, CREATE_METHOD_TABLE(JSAPIValueWrapper) };
 
 } // namespace JSC

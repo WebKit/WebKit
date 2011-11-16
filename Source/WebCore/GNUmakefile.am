@@ -751,6 +751,7 @@ EXTRA_DIST += \
 	$(shell ls $(srcdir)/Source/WebCore/dom/*.idl) \
 	$(shell ls $(srcdir)/Source/WebCore/fileapi/*.idl) \
 	$(shell ls $(srcdir)/Source/WebCore/html/canvas/*.idl) \
+	$(shell ls $(srcdir)/Source/WebCore/html/track/*.idl) \
 	$(shell ls $(srcdir)/Source/WebCore/html/*.idl) \
 	$(shell ls $(srcdir)/Source/WebCore/inspector/*.idl) \
 	$(shell ls $(srcdir)/Source/WebCore/loader/appcache/*.idl) \

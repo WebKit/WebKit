@@ -36,6 +36,7 @@
 #include "SerializedScriptValue.h"
 #include "ScriptState.h"
 #include <heap/Strong.h>
+#include <heap/StrongInlines.h>
 #include <runtime/JSValue.h>
 #include <wtf/PassRefPtr.h>
 

@@ -29,6 +29,7 @@
 
 #include "RegExpCache.h"
 #include "RegExpObject.h"
+#include "StrongInlines.h"
 
 namespace JSC {
 

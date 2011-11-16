@@ -43,11 +43,13 @@ public:
 
     using MacroAssemblerX86Common::add32;
     using MacroAssemblerX86Common::and32;
+    using MacroAssemblerX86Common::branchAdd32;
     using MacroAssemblerX86Common::or32;
     using MacroAssemblerX86Common::sub32;
     using MacroAssemblerX86Common::load32;
     using MacroAssemblerX86Common::store32;
     using MacroAssemblerX86Common::call;
+    using MacroAssemblerX86Common::jump;
     using MacroAssemblerX86Common::addDouble;
     using MacroAssemblerX86Common::loadDouble;
     using MacroAssemblerX86Common::convertInt32ToDouble;
@@ -76,7 +78,7 @@ public:
         sub32(imm, Address(scratchRegister));
     }
 
-    void load32(void* address, RegisterID dest)
+    void load32(const void* address, RegisterID dest)
     {
         if (dest == X86Registers::eax)
             m_assembler.movl_mEAX(address);
@@ -104,6 +106,14 @@ public:
         m_assembler.cvtsi2sd_rr(scratchRegister, dest);
     }
 
+    void absDouble(FPRegisterID src, FPRegisterID dst)
+    {
+        ASSERT(src != dst);
+        static const double negativeZeroConstant = -0.0;
+        loadDouble(&negativeZeroConstant, dst);
+        m_assembler.andnpd_rr(src, dst);
+    }
+
     void store32(TrustedImm32 imm, void* address)
     {
         move(TrustedImmPtr(address), scratchRegister);
@@ -116,6 +126,13 @@ public:
         Call result = Call(m_assembler.call(scratchRegister), Call::Linkable);
         ASSERT_UNUSED(label, differenceBetween(label, result) == REPTACH_OFFSET_CALL_R11);
         return result;
+    }
+
+    // Address is a memory location containing the address to jump to
+    void jump(AbsoluteAddress address)
+    {
+        move(TrustedImmPtr(address.m_ptr), scratchRegister);
+        jump(Address(scratchRegister));
     }
 
     Call tailRecursiveCall()
@@ -167,7 +184,12 @@ public:
         move(TrustedImmPtr(address.m_ptr), scratchRegister);
         addPtr(imm, Address(scratchRegister));
     }
-    
+
+    void add64(TrustedImm32 imm, AbsoluteAddress address)
+    {
+        addPtr(imm, address);
+    }
+
     void andPtr(RegisterID src, RegisterID dest)
     {
         m_assembler.andq_rr(src, dest);
@@ -297,6 +319,12 @@ public:
         storePtr(scratchRegister, address);
     }
 
+    void storePtr(TrustedImmPtr imm, BaseIndex address)
+    {
+        move(imm, scratchRegister);
+        m_assembler.movq_rm(scratchRegister, address.offset, address.base, address.index, address.scale);
+    }
+    
     DataLabel32 storePtrWithAddressOffsetPatch(RegisterID src, Address address)
     {
         m_assembler.movq_rm_disp32(src, address.offset, address.base);
@@ -321,6 +349,13 @@ public:
             m_assembler.cmpq_ir(right.m_value, left);
         m_assembler.setCC_r(x86Condition(cond), dest);
         m_assembler.movzbl_rr(dest, dest);
+    }
+    
+    Jump branchAdd32(ResultCondition cond, TrustedImm32 src, AbsoluteAddress dest)
+    {
+        move(TrustedImmPtr(dest.m_ptr), scratchRegister);
+        add32(src, Address(scratchRegister));
+        return Jump(m_assembler.jCC(x86Condition(cond)));
     }
 
     Jump branchPtr(RelationalCondition cond, RegisterID left, RegisterID right)
@@ -447,11 +482,11 @@ public:
         return MacroAssemblerX86Common::branchTest8(cond, BaseIndex(scratchRegister, address.base, TimesOne), mask);
     }
 
-    bool supportsFloatingPoint() const { return true; }
+    static bool supportsFloatingPoint() { return true; }
     // See comment on MacroAssemblerARMv7::supportsFloatingPointTruncate()
-    bool supportsFloatingPointTruncate() const { return true; }
-    bool supportsFloatingPointSqrt() const { return true; }
-    bool supportsDoubleBitops() const { return true; }
+    static bool supportsFloatingPointTruncate() { return true; }
+    static bool supportsFloatingPointSqrt() { return true; }
+    static bool supportsFloatingPointAbs() { return true; }
 
 private:
     friend class LinkBuffer;

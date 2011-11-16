@@ -53,11 +53,67 @@ namespace WTF {
             if (aLength != bLength)
                 return false;
 
+            if (a->is8Bit()) {
+                if (b->is8Bit()) {
+                    // Both a & b are 8 bit.
+                    const LChar* aChars = a->characters8();
+                    const LChar* bChars = b->characters8();
+
+                    unsigned i = 0;
+
+                    // FIXME: perhaps we should have a more abstract macro that indicates when
+                    // going 4 bytes at a time is unsafe
+#if (CPU(X86) || CPU(X86_64))
+                    const unsigned charsPerInt = sizeof(uint32_t) / sizeof(char);
+                    
+                    if (aLength > charsPerInt) {
+                        unsigned stopCount = aLength & ~(charsPerInt - 1);
+                        
+                        const uint32_t* aIntCharacters = reinterpret_cast<const uint32_t*>(aChars);
+                        const uint32_t* bIntCharacters = reinterpret_cast<const uint32_t*>(bChars);
+                        for (unsigned j = 0; i < stopCount; i += charsPerInt, ++j) {
+                            if (aIntCharacters[j] != bIntCharacters[j])
+                                return false;
+                        }
+                    }
+#endif
+                    for (; i < aLength; ++i) {
+                        if (aChars[i] != bChars[i])
+                            return false;
+                    }
+                    
+                    return true;
+                }
+
+                // We know that a is 8 bit & b is 16 bit.
+                const LChar* aChars = a->characters8();
+                const UChar* bChars = b->characters16();
+                for (unsigned i = 0; i != aLength; ++i) {
+                    if (*aChars++ != *bChars++)
+                        return false;
+                }
+
+                return true;
+            }
+
+            if (b->is8Bit()) {
+                // We know that a is 8 bit and b is 16 bit.
+                const UChar* aChars = a->characters16();
+                const LChar* bChars = b->characters8();
+                for (unsigned i = 0; i != aLength; ++i) {
+                    if (*aChars++ != *bChars++)
+                        return false;
+                }
+
+                return true;
+            }
+
+            // Both a & b are 16 bit.
             // FIXME: perhaps we should have a more abstract macro that indicates when
             // going 4 bytes at a time is unsafe
 #if CPU(ARM) || CPU(SH4) || CPU(MIPS) || CPU(SPARC)
-            const UChar* aChars = a->characters();
-            const UChar* bChars = b->characters();
+            const UChar* aChars = a->characters16();
+            const UChar* bChars = b->characters16();
             for (unsigned i = 0; i != aLength; ++i) {
                 if (*aChars++ != *bChars++)
                     return false;
@@ -65,8 +121,8 @@ namespace WTF {
             return true;
 #else
             /* Do it 4-bytes-at-a-time on architectures where it's safe */
-            const uint32_t* aChars = reinterpret_cast<const uint32_t*>(a->characters());
-            const uint32_t* bChars = reinterpret_cast<const uint32_t*>(b->characters());
+            const uint32_t* aChars = reinterpret_cast<const uint32_t*>(a->characters16());
+            const uint32_t* bChars = reinterpret_cast<const uint32_t*>(b->characters16());
 
             unsigned halfLength = aLength >> 1;
             for (unsigned i = 0; i != halfLength; ++i)
@@ -112,11 +168,16 @@ namespace WTF {
             return hash(str->characters(), str->length());
         }
 
-        static unsigned hash(const char* data, unsigned length)
+        static unsigned hash(const LChar* data, unsigned length)
         {
-            return StringHasher::computeHash<char, foldCase<char> >(data, length);
+            return StringHasher::computeHash<LChar, foldCase<LChar> >(data, length);
         }
 
+        static inline unsigned hash(const char* data, unsigned length)
+        {
+            return CaseFoldingHash::hash(reinterpret_cast<const LChar*>(data), length);
+        }
+        
         static bool equal(const StringImpl* a, const StringImpl* b)
         {
             if (a == b)
@@ -178,8 +239,6 @@ namespace WTF {
             return newHash;
         }
     };
-
-    template<> struct HashTraits<String> : SimpleClassHashTraits<String> { };
 
 }
 

@@ -24,6 +24,7 @@
 #define JSAPIValueWrapper_h
 
 #include "JSCell.h"
+#include "JSValue.h"
 #include "CallFrame.h"
 #include "Structure.h"
 
@@ -36,26 +37,32 @@ namespace JSC {
 
         JSValue value() const { return m_value.get(); }
 
-        virtual bool isAPIValueWrapper() const { return true; }
-
-        static Structure* createStructure(JSGlobalData& globalData, JSValue prototype)
+        static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue prototype)
         {
-            return Structure::create(globalData, prototype, TypeInfo(CompoundType, OverridesVisitChildren | OverridesGetPropertyNames), AnonymousSlotCount, &s_info);
+            return Structure::create(globalData, globalObject, prototype, TypeInfo(APIValueWrapperType, OverridesVisitChildren | OverridesGetPropertyNames), &s_info);
         }
         
-        static const ClassInfo s_info;
+        static JS_EXPORTDATA const ClassInfo s_info;
         
         static JSAPIValueWrapper* create(ExecState* exec, JSValue value) 
         {
-            return new (allocateCell<JSAPIValueWrapper>(*exec->heap())) JSAPIValueWrapper(exec, value);
+            JSAPIValueWrapper* wrapper = new (allocateCell<JSAPIValueWrapper>(*exec->heap())) JSAPIValueWrapper(exec);
+            wrapper->finishCreation(exec, value);
+            return wrapper;
+        }
+
+    protected:
+        void finishCreation(ExecState* exec, JSValue value)
+        {
+            Base::finishCreation(exec->globalData());
+            m_value.set(exec->globalData(), this, value);
+            ASSERT(!value.isCell());
         }
 
     private:
-        JSAPIValueWrapper(ExecState* exec, JSValue value)
+        JSAPIValueWrapper(ExecState* exec)
             : JSCell(exec->globalData(), exec->globalData().apiWrapperStructure.get())
         {
-            m_value.set(exec->globalData(), this, value);
-            ASSERT(!value.isCell());
         }
 
         WriteBarrier<Unknown> m_value;

@@ -49,7 +49,7 @@ PassRefPtr<SQLStatement> SQLStatement::create(Database* database, const String& 
 }
 
 SQLStatement::SQLStatement(Database* database, const String& statement, const Vector<SQLValue>& arguments, PassRefPtr<SQLStatementCallback> callback, PassRefPtr<SQLStatementErrorCallback> errorCallback, int permissions)
-    : m_statement(statement.crossThreadString())
+    : m_statement(statement.isolatedCopy())
     , m_arguments(arguments)
     , m_statementCallbackWrapper(callback, database->scriptExecutionContext())
     , m_statementErrorCallbackWrapper(errorCallback, database->scriptExecutionContext())

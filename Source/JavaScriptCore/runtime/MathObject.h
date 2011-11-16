@@ -21,32 +21,35 @@
 #ifndef MathObject_h
 #define MathObject_h
 
-#include "JSObjectWithGlobalObject.h"
+#include "JSObject.h"
 
 namespace JSC {
 
-    class MathObject : public JSObjectWithGlobalObject {
+    class MathObject : public JSNonFinalObject {
     private:
-        MathObject(ExecState*, JSGlobalObject*, Structure*);
+        MathObject(JSGlobalObject*, Structure*);
 
     public:
-        typedef JSObjectWithGlobalObject Base;
+        typedef JSNonFinalObject Base;
 
         static MathObject* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure)
         {
-            return new (allocateCell<MathObject>(*exec->heap())) MathObject(exec, globalObject, structure);
+            MathObject* object = new (allocateCell<MathObject>(*exec->heap())) MathObject(globalObject, structure);
+            object->finishCreation(exec, globalObject);
+            return object;
         }
-        virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
-        virtual bool getOwnPropertyDescriptor(ExecState*, const Identifier&, PropertyDescriptor&);
+        static bool getOwnPropertySlot(JSCell*, ExecState*, const Identifier&, PropertySlot&);
+        static bool getOwnPropertyDescriptor(JSObject*, ExecState*, const Identifier&, PropertyDescriptor&);
 
         static const ClassInfo s_info;
 
-        static Structure* createStructure(JSGlobalData& globalData, JSValue prototype)
+        static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue prototype)
         {
-            return Structure::create(globalData, prototype, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
+            return Structure::create(globalData, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), &s_info);
         }
 
     protected:
+        void finishCreation(ExecState*, JSGlobalObject*);
         static const unsigned StructureFlags = OverridesGetOwnPropertySlot | JSObject::StructureFlags;
     };
 

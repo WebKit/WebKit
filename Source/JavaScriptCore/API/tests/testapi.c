@@ -1366,7 +1366,7 @@ int main(int argc, char* argv[])
     function = JSObjectMakeFunction(context, foo, 1, argumentNames, functionBody, NULL, 1, &exception);
     ASSERT(function && !exception);
     JSValueRef arguments[] = { JSValueMakeNumber(context, 2) };
-    v = JSObjectCallAsFunction(context, function, NULL, 1, arguments, &exception);
+    JSObjectCallAsFunction(context, function, NULL, 1, arguments, &exception);
     JSStringRelease(foo);
     JSStringRelease(functionBody);
     
@@ -1493,7 +1493,7 @@ int main(int argc, char* argv[])
     // an assert inside putDirect or lead to a crash during GC. <https://bugs.webkit.org/show_bug.cgi?id=25785>
     nullDefinition = kJSClassDefinitionEmpty;
     nullClass = JSClassCreate(&nullDefinition);
-    myConstructor = JSObjectMakeConstructor(context, nullClass, 0);
+    JSObjectMakeConstructor(context, nullClass, 0);
     JSClassRelease(nullClass);
 
     char* scriptUTF8 = createStringWithContentsOfFile(scriptPath);

@@ -41,18 +41,19 @@ using namespace JSC;
 
 namespace WebCore {
 
-void JSMessagePort::visitChildren(SlotVisitor& visitor)
+void JSMessagePort::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
-    ASSERT_GC_OBJECT_INHERITS(this, &s_info);
+    JSMessagePort* thisObject = static_cast<JSMessagePort*>(cell);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
     COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
-    ASSERT(structure()->typeInfo().overridesVisitChildren());
-    Base::visitChildren(visitor);
+    ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
+    Base::visitChildren(thisObject, visitor);
 
     // If we have a locally entangled port, we can directly mark it as reachable. Ports that are remotely entangled are marked in-use by markActiveObjectsForContext().
-    if (MessagePort* port = m_impl->locallyEntangledPort())
+    if (MessagePort* port = thisObject->m_impl->locallyEntangledPort())
         visitor.addOpaqueRoot(port);
 
-    m_impl->visitJSEventListeners(visitor);
+    thisObject->m_impl->visitJSEventListeners(visitor);
 }
 
 JSC::JSValue JSMessagePort::postMessage(JSC::ExecState* exec)

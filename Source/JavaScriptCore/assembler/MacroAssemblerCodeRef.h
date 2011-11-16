@@ -52,6 +52,32 @@
 #define ASSERT_VALID_CODE_OFFSET(offset) // Anything goes!
 #endif
 
+#if CPU(X86) && OS(WIN)
+#define CALLING_CONVENTION_IS_STDCALL 1
+#ifndef CDECL
+#if COMPILER(MSVC)
+#define CDECL __cdecl
+#else
+#define CDECL __attribute__ ((__cdecl))
+#endif // COMPILER(MSVC)
+#endif // CDECL
+#else
+#define CALLING_CONVENTION_IS_STDCALL 0
+#endif
+
+#if CPU(X86)
+#define HAS_FASTCALL_CALLING_CONVENTION 1
+#ifndef FASTCALL
+#if COMPILER(MSVC)
+#define FASTCALL __fastcall
+#else
+#define FASTCALL  __attribute__ ((fastcall))
+#endif // COMPILER(MSVC)
+#endif // FASTCALL
+#else
+#define HAS_FASTCALL_CALLING_CONVENTION 0
+#endif // CPU(X86)
+
 namespace JSC {
 
 // FunctionPtr:
@@ -99,6 +125,82 @@ public:
     {
         ASSERT_VALID_CODE_POINTER(m_value);
     }
+
+#if CALLING_CONVENTION_IS_STDCALL
+
+    template<typename returnType>
+    FunctionPtr(returnType (CDECL *value)())
+        : m_value((void*)value)
+    {
+        ASSERT_VALID_CODE_POINTER(m_value);
+    }
+
+    template<typename returnType, typename argType1>
+    FunctionPtr(returnType (CDECL *value)(argType1))
+        : m_value((void*)value)
+    {
+        ASSERT_VALID_CODE_POINTER(m_value);
+    }
+
+    template<typename returnType, typename argType1, typename argType2>
+    FunctionPtr(returnType (CDECL *value)(argType1, argType2))
+        : m_value((void*)value)
+    {
+        ASSERT_VALID_CODE_POINTER(m_value);
+    }
+
+    template<typename returnType, typename argType1, typename argType2, typename argType3>
+    FunctionPtr(returnType (CDECL *value)(argType1, argType2, argType3))
+        : m_value((void*)value)
+    {
+        ASSERT_VALID_CODE_POINTER(m_value);
+    }
+
+    template<typename returnType, typename argType1, typename argType2, typename argType3, typename argType4>
+    FunctionPtr(returnType (CDECL *value)(argType1, argType2, argType3, argType4))
+        : m_value((void*)value)
+    {
+        ASSERT_VALID_CODE_POINTER(m_value);
+    }
+#endif
+
+#if HAS_FASTCALL_CALLING_CONVENTION
+
+    template<typename returnType>
+    FunctionPtr(returnType (FASTCALL *value)())
+        : m_value((void*)value)
+    {
+        ASSERT_VALID_CODE_POINTER(m_value);
+    }
+
+    template<typename returnType, typename argType1>
+    FunctionPtr(returnType (FASTCALL *value)(argType1))
+        : m_value((void*)value)
+    {
+        ASSERT_VALID_CODE_POINTER(m_value);
+    }
+
+    template<typename returnType, typename argType1, typename argType2>
+    FunctionPtr(returnType (FASTCALL *value)(argType1, argType2))
+        : m_value((void*)value)
+    {
+        ASSERT_VALID_CODE_POINTER(m_value);
+    }
+
+    template<typename returnType, typename argType1, typename argType2, typename argType3>
+    FunctionPtr(returnType (FASTCALL *value)(argType1, argType2, argType3))
+        : m_value((void*)value)
+    {
+        ASSERT_VALID_CODE_POINTER(m_value);
+    }
+
+    template<typename returnType, typename argType1, typename argType2, typename argType3, typename argType4>
+    FunctionPtr(returnType (FASTCALL *value)(argType1, argType2, argType3, argType4))
+        : m_value((void*)value)
+    {
+        ASSERT_VALID_CODE_POINTER(m_value);
+    }
+#endif
 
     template<typename FunctionType>
     explicit FunctionPtr(FunctionType* value)
@@ -199,22 +301,59 @@ private:
 // pointer to the code, and a ref pointer to the pool from within which it
 // was allocated.
 class MacroAssemblerCodeRef {
+private:
+    // This is private because it's dangerous enough that we want uses of it
+    // to be easy to find - hence the static create method below.
+    explicit MacroAssemblerCodeRef(MacroAssemblerCodePtr codePtr)
+        : m_codePtr(codePtr)
+    {
+        ASSERT(m_codePtr);
+    }
+
 public:
     MacroAssemblerCodeRef()
-        : m_size(0)
     {
     }
 
-    MacroAssemblerCodeRef(void* code, PassRefPtr<ExecutablePool> executablePool, size_t size)
-        : m_code(code)
-        , m_executablePool(executablePool)
-        , m_size(size)
+    MacroAssemblerCodeRef(PassRefPtr<ExecutableMemoryHandle> executableMemory)
+        : m_codePtr(executableMemory->start())
+        , m_executableMemory(executableMemory)
     {
+        ASSERT(m_executableMemory->isManaged());
+        ASSERT(m_executableMemory->start());
+        ASSERT(m_codePtr);
     }
+    
+    // Use this only when you know that the codePtr refers to code that is
+    // already being kept alive through some other means. Typically this means
+    // that codePtr is immortal.
+    static MacroAssemblerCodeRef createSelfManagedCodeRef(MacroAssemblerCodePtr codePtr)
+    {
+        return MacroAssemblerCodeRef(codePtr);
+    }
+    
+    ExecutableMemoryHandle* executableMemory() const
+    {
+        return m_executableMemory.get();
+    }
+    
+    MacroAssemblerCodePtr code() const
+    {
+        return m_codePtr;
+    }
+    
+    size_t size() const
+    {
+        if (!m_executableMemory)
+            return 0;
+        return m_executableMemory->sizeInBytes();
+    }
+    
+    bool operator!() const { return !m_codePtr; }
 
-    MacroAssemblerCodePtr m_code;
-    RefPtr<ExecutablePool> m_executablePool;
-    size_t m_size;
+private:
+    MacroAssemblerCodePtr m_codePtr;
+    RefPtr<ExecutableMemoryHandle> m_executableMemory;
 };
 
 } // namespace JSC

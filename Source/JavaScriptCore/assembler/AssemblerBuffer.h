@@ -28,6 +28,7 @@
 
 #if ENABLE(ASSEMBLER)
 
+#include "JSGlobalData.h"
 #include "stdint.h"
 #include <string.h>
 #include <jit/ExecutableAllocator.h>
@@ -128,24 +129,21 @@ namespace JSC {
             return AssemblerLabel(m_index);
         }
 
-        void* executableCopy(JSGlobalData& globalData, ExecutablePool* allocator)
+        PassRefPtr<ExecutableMemoryHandle> executableCopy(JSGlobalData& globalData)
         {
             if (!m_index)
                 return 0;
 
-            void* result = allocator->alloc(globalData, m_index);
+            RefPtr<ExecutableMemoryHandle> result = globalData.executableAllocator.allocate(globalData, m_index);
 
             if (!result)
                 return 0;
 
-            ExecutableAllocator::makeWritable(result, m_index);
+            ExecutableAllocator::makeWritable(result->start(), result->sizeInBytes());
 
-            return memcpy(result, m_buffer, m_index);
-        }
-
-        void rewindToLabel(AssemblerLabel label)
-        {
-            m_index = label.m_offset;
+            memcpy(result->start(), m_buffer, m_index);
+            
+            return result.release();
         }
 
 #ifndef NDEBUG

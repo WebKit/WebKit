@@ -44,6 +44,7 @@
 #include "npruntime_impl.h"
 #include "runtime_root.h"
 #include <debugger/Debugger.h>
+#include <heap/StrongInlines.h>
 #include <runtime/InitializeThreading.h>
 #include <runtime/JSLock.h>
 #include <wtf/Threading.h>
@@ -110,7 +111,7 @@ JSDOMWindowShell* ScriptController::createWindowShell(DOMWrapperWorld* world)
 {
     ASSERT(!m_windowShells.contains(world));
     Structure* structure = JSDOMWindowShell::createStructure(*world->globalData(), jsNull());
-    Strong<JSDOMWindowShell> windowShell(*world->globalData(), new JSDOMWindowShell(m_frame->domWindow(), structure, world));
+    Strong<JSDOMWindowShell> windowShell(*world->globalData(), JSDOMWindowShell::create(m_frame->domWindow(), structure, world));
     Strong<JSDOMWindowShell> windowShell2(windowShell);
     m_windowShells.add(world, windowShell);
     world->didCreateWindowShell(this);
@@ -140,8 +141,10 @@ ScriptValue ScriptController::evaluateInWorld(const ScriptSourceCode& sourceCode
 
     InspectorInstrumentationCookie cookie = InspectorInstrumentation::willEvaluateScript(m_frame, sourceURL, sourceCode.startLine());
 
+    JSValue evaluationException;
+
     exec->globalData().timeoutChecker.start();
-    Completion comp = JSMainThreadExecState::evaluate(exec, exec->dynamicGlobalObject()->globalScopeChain(), jsSourceCode, shell);
+    JSValue returnValue = JSMainThreadExecState::evaluate(exec, exec->dynamicGlobalObject()->globalScopeChain(), jsSourceCode, shell, &evaluationException);
     exec->globalData().timeoutChecker.stop();
 
     InspectorInstrumentation::didEvaluateScript(cookie);
@@ -150,16 +153,14 @@ ScriptValue ScriptController::evaluateInWorld(const ScriptSourceCode& sourceCode
     // so we start the keep alive timer here.
     m_frame->keepAlive();
 
-    if (comp.complType() == Normal || comp.complType() == ReturnValue) {
+    if (evaluationException) {
+        reportException(exec, evaluationException);
         m_sourceURL = savedSourceURL;
-        return ScriptValue(exec->globalData(), comp.value());
+        return ScriptValue();
     }
 
-    if (comp.complType() == Throw || comp.complType() == Interrupted)
-        reportException(exec, comp.value());
-
     m_sourceURL = savedSourceURL;
-    return ScriptValue();
+    return ScriptValue(exec->globalData(), returnValue);
 }
 
 ScriptValue ScriptController::evaluate(const ScriptSourceCode& sourceCode) 
@@ -241,7 +242,7 @@ int ScriptController::eventHandlerLineNumber() const
 
 void ScriptController::disableEval()
 {
-    windowShell(mainThreadNormalWorld())->window()->disableEval();
+    windowShell(mainThreadNormalWorld())->window()->setEvalEnabled(false);
 }
 
 bool ScriptController::processingUserGesture()

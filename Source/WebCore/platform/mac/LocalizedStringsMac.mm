@@ -27,6 +27,7 @@
 #import "LocalizedStrings.h"
 
 #import <wtf/Assertions.h>
+#import <wtf/MainThread.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/Threading.h>
 #import <wtf/text/WTFString.h>

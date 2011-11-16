@@ -41,14 +41,6 @@ extern "C" {
 }
 #endif
 
-#if PLATFORM(BREWMP)
-#include <AEEAppGen.h>
-#include <AEESource.h>
-#include <AEEStdLib.h>
-#include <wtf/brew/RefPtrBrew.h>
-#include <wtf/brew/ShellBrew.h>
-#endif
-
 namespace WTF {
 
 double randomNumber()
@@ -61,27 +53,8 @@ double randomNumber()
     // that might not be cryptographically secure. Ideally, most ports would
     // define USE(OS_RANDOMNESS).
 
-#if !ENABLE(WTF_MULTIPLE_THREADS)
-    static bool s_initialized = false;
-    if (!s_initialized) {
-        initializeRandomNumberGenerator();
-        s_initialized = true;
-    }
-#endif
-
 #if USE(MERSENNE_TWISTER_19937)
     return genrand_res53();
-#elif PLATFORM(BREWMP)
-    uint32_t bits;
-    // Is this a cryptographically strong source of random numbers? If so, we
-    // should move this into OSRandomSource.
-    // http://csrc.nist.gov/groups/STM/cmvp/documents/140-1/140sp/140sp851.pdf
-    // is slightly unclear on this point, although it seems to imply that it is
-    // secure.
-    RefPtr<ISource> randomSource = createRefPtrInstance<ISource>(AEECLSID_RANDOM);
-    ISOURCE_Read(randomSource.get(), reinterpret_cast<char*>(&bits), 4);
-
-    return static_cast<double>(bits) / (static_cast<double>(std::numeric_limits<uint32_t>::max()) + 1.0);
 #else
     uint32_t part1 = rand() & (RAND_MAX - 1);
     uint32_t part2 = rand() & (RAND_MAX - 1);

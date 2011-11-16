@@ -34,22 +34,22 @@ namespace JSC {
 
 class MacroAssemblerX86 : public MacroAssemblerX86Common {
 public:
-    MacroAssemblerX86()
-        : m_isSSE2Present(isSSE2Present())
-    {
-    }
-
     static const Scale ScalePtr = TimesFour;
 
     using MacroAssemblerX86Common::add32;
     using MacroAssemblerX86Common::and32;
+    using MacroAssemblerX86Common::branchAdd32;
+    using MacroAssemblerX86Common::branchSub32;
     using MacroAssemblerX86Common::sub32;
     using MacroAssemblerX86Common::or32;
     using MacroAssemblerX86Common::load32;
     using MacroAssemblerX86Common::store32;
     using MacroAssemblerX86Common::branch32;
     using MacroAssemblerX86Common::call;
+    using MacroAssemblerX86Common::jump;
+    using MacroAssemblerX86Common::addDouble;
     using MacroAssemblerX86Common::loadDouble;
+    using MacroAssemblerX86Common::storeDouble;
     using MacroAssemblerX86Common::convertInt32ToDouble;
 
     void add32(TrustedImm32 imm, RegisterID src, RegisterID dest)
@@ -62,11 +62,12 @@ public:
         m_assembler.addl_im(imm.m_value, address.m_ptr);
     }
     
-    void addWithCarry32(TrustedImm32 imm, AbsoluteAddress address)
+    void add64(TrustedImm32 imm, AbsoluteAddress address)
     {
-        m_assembler.adcl_im(imm.m_value, address.m_ptr);
+        m_assembler.addl_im(imm.m_value, address.m_ptr);
+        m_assembler.adcl_im(imm.m_value >> 31, reinterpret_cast<const char*>(address.m_ptr) + sizeof(int32_t));
     }
-    
+
     void and32(TrustedImm32 imm, AbsoluteAddress address)
     {
         m_assembler.andl_im(imm.m_value, address.m_ptr);
@@ -82,9 +83,14 @@ public:
         m_assembler.subl_im(imm.m_value, address.m_ptr);
     }
 
-    void load32(void* address, RegisterID dest)
+    void load32(const void* address, RegisterID dest)
     {
         m_assembler.movl_mr(address, dest);
+    }
+
+    void addDouble(AbsoluteAddress address, FPRegisterID dest)
+    {
+        m_assembler.addsd_mr(address.m_ptr, dest);
     }
 
     void loadDouble(const void* address, FPRegisterID dest)
@@ -93,9 +99,23 @@ public:
         m_assembler.movsd_mr(address, dest);
     }
 
+    void storeDouble(FPRegisterID src, const void* address)
+    {
+        ASSERT(isSSE2Present());
+        m_assembler.movsd_rm(src, address);
+    }
+
     void convertInt32ToDouble(AbsoluteAddress src, FPRegisterID dest)
     {
         m_assembler.cvtsi2sd_mr(src.m_ptr, dest);
+    }
+
+    void absDouble(FPRegisterID src, FPRegisterID dst)
+    {
+        ASSERT(src != dst);
+        static const double negativeZeroConstant = -0.0;
+        loadDouble(&negativeZeroConstant, dst);
+        m_assembler.andnpd_rr(src, dst);
     }
 
     void store32(TrustedImm32 imm, void* address)
@@ -106,6 +126,18 @@ public:
     void store32(RegisterID src, void* address)
     {
         m_assembler.movl_rm(src, address);
+    }
+
+    Jump branchAdd32(ResultCondition cond, TrustedImm32 imm, AbsoluteAddress dest)
+    {
+        m_assembler.addl_im(imm.m_value, dest.m_ptr);
+        return Jump(m_assembler.jCC(x86Condition(cond)));
+    }
+
+    Jump branchSub32(ResultCondition cond, TrustedImm32 imm, AbsoluteAddress dest)
+    {
+        m_assembler.subl_im(imm.m_value, dest.m_ptr);
+        return Jump(m_assembler.jCC(x86Condition(cond)));
     }
 
     Jump branch32(RelationalCondition cond, AbsoluteAddress left, RegisterID right)
@@ -123,6 +155,12 @@ public:
     Call call()
     {
         return Call(m_assembler.call(), Call::Linkable);
+    }
+
+    // Address is a memory location containing the address to jump to
+    void jump(AbsoluteAddress address)
+    {
+        m_assembler.jmp_m(address.m_ptr);
     }
 
     Call tailRecursiveCall()
@@ -162,15 +200,13 @@ public:
         return DataLabelPtr(this);
     }
 
-    bool supportsFloatingPoint() const { return m_isSSE2Present; }
+    static bool supportsFloatingPoint() { return isSSE2Present(); }
     // See comment on MacroAssemblerARMv7::supportsFloatingPointTruncate()
-    bool supportsFloatingPointTruncate() const { return m_isSSE2Present; }
-    bool supportsFloatingPointSqrt() const { return m_isSSE2Present; }
-    bool supportsDoubleBitops() const { return m_isSSE2Present; }
+    static bool supportsFloatingPointTruncate() { return isSSE2Present(); }
+    static bool supportsFloatingPointSqrt() { return isSSE2Present(); }
+    static bool supportsFloatingPointAbs() { return isSSE2Present(); }
 
 private:
-    const bool m_isSSE2Present;
-
     friend class LinkBuffer;
     friend class RepatchBuffer;
 

@@ -35,7 +35,7 @@ use File::Spec::Functions;
 
 my $srcRoot = realpath(File::Spec->catfile(dirname(abs_path($0)), "../.."));
 my $incFromRoot = abs_path($ARGV[0]);
-my @platformPrefixes = ("android", "brew", "cf", "chromium", "curl", "efl", "gtk", "haiku", "mac", "qt", "soup", "v8", "win", "wx");
+my @platformPrefixes = ("brew", "cf", "chromium", "curl", "efl", "gtk", "haiku", "mac", "qt", "soup", "v8", "win", "wx");
 my @frameworks = ( "JavaScriptCore", "WebCore", "WebKit2");
 my @skippedPrefixes;
 my @frameworkHeaders;

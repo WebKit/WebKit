@@ -27,17 +27,19 @@
 #define JSCallbackConstructor_h
 
 #include "JSObjectRef.h"
-#include <runtime/JSObjectWithGlobalObject.h>
+#include <runtime/JSObject.h>
 
 namespace JSC {
 
-class JSCallbackConstructor : public JSObjectWithGlobalObject {
+class JSCallbackConstructor : public JSNonFinalObject {
 public:
-    typedef JSObjectWithGlobalObject Base;
+    typedef JSNonFinalObject Base;
 
     static JSCallbackConstructor* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, JSClassRef classRef, JSObjectCallAsConstructorCallback callback) 
     {
-        return new (allocateCell<JSCallbackConstructor>(*exec->heap())) JSCallbackConstructor(globalObject, structure, classRef, callback);
+        JSCallbackConstructor* constructor = new (allocateCell<JSCallbackConstructor>(*exec->heap())) JSCallbackConstructor(globalObject, structure, classRef, callback);
+        constructor->finishCreation(globalObject, classRef);
+        return constructor;
     }
     
     virtual ~JSCallbackConstructor();
@@ -45,17 +47,18 @@ public:
     JSObjectCallAsConstructorCallback callback() const { return m_callback; }
     static const ClassInfo s_info;
 
-    static Structure* createStructure(JSGlobalData& globalData, JSValue proto) 
+    static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue proto) 
     {
-        return Structure::create(globalData, proto, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
+        return Structure::create(globalData, globalObject, proto, TypeInfo(ObjectType, StructureFlags), &s_info);
     }
 
 protected:
     JSCallbackConstructor(JSGlobalObject*, Structure*, JSClassRef, JSObjectCallAsConstructorCallback);
+    void finishCreation(JSGlobalObject*, JSClassRef);
     static const unsigned StructureFlags = ImplementsHasInstance | JSObject::StructureFlags;
 
 private:
-    virtual ConstructType getConstructData(ConstructData&);
+    static ConstructType getConstructData(JSCell*, ConstructData&);
 
     JSClassRef m_class;
     JSObjectCallAsConstructorCallback m_callback;

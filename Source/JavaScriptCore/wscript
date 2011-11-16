@@ -33,9 +33,8 @@ def build(bld):
 
     import Options
 
-    jscore_excludes = ['jsc.cpp', 'ProfilerServer.mm', 'ExecutableAllocatorPosix.cpp']
-    jscore_excludes.extend(get_excludes(jscore_dir, ['*Brew.cpp', '*CF.cpp', '*Symbian.cpp']))
-
+    jscore_excludes = ['jsc.cpp', 'ExecutableAllocatorPosix.cpp']
+    jscore_excludes.extend(get_excludes(jscore_dir, ['*CF.cpp', '*Symbian.cpp']))
     jscore_excludes.extend(get_excludes(jscore_dir, ['*None.cpp']))
 
     sources = []
@@ -55,7 +54,7 @@ def build(bld):
 
     # 1. A simple program
     jscore = bld.new_task_gen(
-        features = 'cxx cstaticlib',
+        features = 'cc cxx cstaticlib',
         includes = '. .. assembler DerivedSources ForwardingHeaders ' + ' '.join(includes),
         source = sources,
         target = 'jscore',

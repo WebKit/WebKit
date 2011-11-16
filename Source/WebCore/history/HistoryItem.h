@@ -31,6 +31,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
+#include <wtf/RefCounted.h>
 
 #if PLATFORM(MAC)
 #import <wtf/RetainPtr.h>

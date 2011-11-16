@@ -28,21 +28,26 @@ namespace WebCore {
 
     class JSOptionConstructor : public DOMConstructorWithDocument {
     public:
+        typedef DOMConstructorWithDocument Base;
+
         static JSOptionConstructor* create(JSC::ExecState* exec, JSC::Structure* structure, JSDOMGlobalObject* globalObject)
         {
-            return new (JSC::allocateCell<JSOptionConstructor>(*exec->heap())) JSOptionConstructor(exec, structure, globalObject);
+            JSOptionConstructor* constructor = new (JSC::allocateCell<JSOptionConstructor>(*exec->heap())) JSOptionConstructor(structure, globalObject);
+            constructor->finishCreation(exec, globalObject);
+            return constructor;
         }
 
-        static JSC::Structure* createStructure(JSC::JSGlobalData& globalData, JSC::JSValue prototype)
+        static JSC::Structure* createStructure(JSC::JSGlobalData& globalData, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)
         {
-            return JSC::Structure::create(globalData, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
+            return JSC::Structure::create(globalData, globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), &s_info);
         }
 
         static const JSC::ClassInfo s_info;
 
     private:
-        JSOptionConstructor(JSC::ExecState*, JSC::Structure*, JSDOMGlobalObject*);
-        virtual JSC::ConstructType getConstructData(JSC::ConstructData&);
+        JSOptionConstructor(JSC::Structure*, JSDOMGlobalObject*);
+        void finishCreation(JSC::ExecState*, JSDOMGlobalObject*);
+        static JSC::ConstructType getConstructData(JSC::JSCell*, JSC::ConstructData&);
     };
 
 } // namespace WebCore

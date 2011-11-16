@@ -23,6 +23,7 @@
 
 #include "KURLHash.h"
 #include <wtf/ListHashSet.h>
+#include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {

@@ -33,6 +33,7 @@
 namespace JSC {
 
 class JSCell;
+class JettisonedCodeBlocks;
 class Heap;
 
 class ConservativeRoots {
@@ -41,6 +42,7 @@ public:
     ~ConservativeRoots();
 
     void add(void* begin, void* end);
+    void add(void* begin, void* end, JettisonedCodeBlocks&);
     
     size_t size();
     JSCell** roots();
@@ -49,7 +51,12 @@ private:
     static const size_t inlineCapacity = 128;
     static const size_t nonInlineCapacity = 8192 / sizeof(JSCell*);
     
-    void add(void*, TinyBloomFilter);
+    template<typename MarkHook>
+    void genericAddPointer(void*, TinyBloomFilter, MarkHook&);
+
+    template<typename MarkHook>
+    void genericAddSpan(void*, void* end, MarkHook&);
+    
     void grow();
 
     JSCell** m_roots;
@@ -58,20 +65,6 @@ private:
     const MarkedBlockSet* m_blocks;
     JSCell* m_inlineRoots[inlineCapacity];
 };
-
-inline ConservativeRoots::ConservativeRoots(const MarkedBlockSet* blocks)
-    : m_roots(m_inlineRoots)
-    , m_size(0)
-    , m_capacity(inlineCapacity)
-    , m_blocks(blocks)
-{
-}
-
-inline ConservativeRoots::~ConservativeRoots()
-{
-    if (m_roots != m_inlineRoots)
-        OSAllocator::decommitAndRelease(m_roots, m_capacity * sizeof(JSCell*));
-}
 
 inline size_t ConservativeRoots::size()
 {

@@ -83,7 +83,12 @@ namespace WebCore {
     typedef Vector<FiringEventIterator, 1> FiringEventIteratorVector;
 
     typedef Vector<RegisteredEventListener, 1> EventListenerVector;
-    typedef HashMap<AtomicString, EventListenerVector*> EventListenerMap;
+
+    struct EventListenerMapHashTraits : HashTraits<WTF::AtomicString> {
+        static const int minimumTableSize = 32;
+    };
+
+    typedef HashMap<AtomicString, EventListenerVector*, AtomicStringHash, EventListenerMapHashTraits> EventListenerMap;
 
     struct EventTargetData {
         WTF_MAKE_NONCOPYABLE(EventTargetData); WTF_MAKE_FAST_ALLOCATED;

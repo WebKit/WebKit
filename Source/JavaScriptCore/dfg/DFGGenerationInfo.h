@@ -28,58 +28,10 @@
 
 #if ENABLE(DFG_JIT)
 
+#include "DataFormat.h"
 #include <dfg/DFGJITCompiler.h>
 
 namespace JSC { namespace DFG {
-
-// === DataFormat ===
-//
-// This enum tracks the current representation in which a value is being held.
-// Values may be unboxed primitives (int32, double, or cell), or boxed as a JSValue.
-// For boxed values, we may know the type of boxing that has taken place.
-// (May also need bool, array, object, string types!)
-enum DataFormat {
-    DataFormatNone = 0,
-    DataFormatInteger = 1,
-    DataFormatDouble = 2,
-    DataFormatCell = 3,
-    DataFormatJS = 8,
-    DataFormatJSInteger = DataFormatJS | DataFormatInteger,
-    DataFormatJSDouble = DataFormatJS | DataFormatDouble,
-    DataFormatJSCell = DataFormatJS | DataFormatCell,
-};
-
-inline bool needDataFormatConversion(DataFormat from, DataFormat to)
-{
-    ASSERT(from != DataFormatNone);
-    ASSERT(to != DataFormatNone);
-    switch (from) {
-    case DataFormatInteger:
-    case DataFormatDouble:
-        return to != from;
-    case DataFormatCell:
-    case DataFormatJS:
-    case DataFormatJSInteger:
-    case DataFormatJSDouble:
-    case DataFormatJSCell:
-        switch (to) {
-        case DataFormatInteger:
-        case DataFormatDouble:
-            return true;
-        case DataFormatCell:
-        case DataFormatJS:
-        case DataFormatJSInteger:
-        case DataFormatJSDouble:
-        case DataFormatJSCell:
-            return false;
-        default:
-            ASSERT_NOT_REACHED();
-        }
-    default:
-        ASSERT_NOT_REACHED();
-    }
-    return true;
-}
 
 // === GenerationInfo ===
 //
@@ -118,6 +70,7 @@ public:
         m_canFill = false;
         u.gpr = gpr;
     }
+#if USE(JSVALUE64)
     void initJSValue(NodeIndex nodeIndex, uint32_t useCount, GPRReg gpr, DataFormat format = DataFormatJS)
     {
         ASSERT(format & DataFormatJS);
@@ -129,6 +82,20 @@ public:
         m_canFill = false;
         u.gpr = gpr;
     }
+#elif USE(JSVALUE32_64)
+    void initJSValue(NodeIndex nodeIndex, uint32_t useCount, GPRReg tagGPR, GPRReg payloadGPR, DataFormat format = DataFormatJS)
+    {
+        ASSERT(format & DataFormatJS);
+
+        m_nodeIndex = nodeIndex;
+        m_useCount = useCount;
+        m_registerFormat = format;
+        m_spillFormat = DataFormatNone;
+        m_canFill = false;
+        u.v.tagGPR = tagGPR;
+        u.v.payloadGPR = payloadGPR;
+    }
+#endif
     void initCell(NodeIndex nodeIndex, uint32_t useCount, GPRReg gpr)
     {
         m_nodeIndex = nodeIndex;
@@ -138,14 +105,33 @@ public:
         m_canFill = false;
         u.gpr = gpr;
     }
+    void initBoolean(NodeIndex nodeIndex, uint32_t useCount, GPRReg gpr)
+    {
+        m_nodeIndex = nodeIndex;
+        m_useCount = useCount;
+        m_registerFormat = DataFormatBoolean;
+        m_spillFormat = DataFormatNone;
+        m_canFill = false;
+        u.gpr = gpr;
+    }
     void initDouble(NodeIndex nodeIndex, uint32_t useCount, FPRReg fpr)
     {
+        ASSERT(fpr != InvalidFPRReg);
         m_nodeIndex = nodeIndex;
         m_useCount = useCount;
         m_registerFormat = DataFormatDouble;
         m_spillFormat = DataFormatNone;
         m_canFill = false;
         u.fpr = fpr;
+    }
+    void initStorage(NodeIndex nodeIndex, uint32_t useCount, GPRReg gpr)
+    {
+        m_nodeIndex = nodeIndex;
+        m_useCount = useCount;
+        m_registerFormat = DataFormatStorage;
+        m_spillFormat = DataFormatNone;
+        m_canFill = false;
+        u.gpr = gpr;
     }
 
     // Get the index of the node that produced this value.
@@ -172,10 +158,50 @@ public:
     DataFormat registerFormat() { return m_registerFormat; }
     // Get the format of the value as it is spilled in the RegisterFile (or 'none').
     DataFormat spillFormat() { return m_spillFormat; }
+    
+    bool isJSFormat(DataFormat expectedFormat)
+    {
+        return JSC::isJSFormat(registerFormat(), expectedFormat) || JSC::isJSFormat(spillFormat(), expectedFormat);
+    }
+    
+    bool isJSInteger()
+    {
+        return isJSFormat(DataFormatJSInteger);
+    }
+    
+    bool isJSDouble()
+    {
+        return isJSFormat(DataFormatJSDouble);
+    }
+    
+    bool isJSCell()
+    {
+        return isJSFormat(DataFormatJSCell);
+    }
+    
+    bool isJSBoolean()
+    {
+        return isJSFormat(DataFormatJSBoolean);
+    }
+    
+    bool isUnknownJS()
+    {
+        return registerFormat() == DataFormatNone || registerFormat() == DataFormatJS
+            || spillFormat() == DataFormatNone || spillFormat() == DataFormatJS;
+    }
 
     // Get the machine resister currently holding the value.
+#if USE(JSVALUE64)
     GPRReg gpr() { ASSERT(m_registerFormat && m_registerFormat != DataFormatDouble); return u.gpr; }
     FPRReg fpr() { ASSERT(m_registerFormat == DataFormatDouble); return u.fpr; }
+    JSValueRegs jsValueRegs() { ASSERT(m_registerFormat & DataFormatJS); return JSValueRegs(u.gpr); }
+#elif USE(JSVALUE32_64)
+    GPRReg gpr() { ASSERT(!(m_registerFormat & DataFormatJS) && m_registerFormat != DataFormatDouble); return u.gpr; }
+    GPRReg tagGPR() { ASSERT(m_registerFormat & DataFormatJS); return u.v.tagGPR; }
+    GPRReg payloadGPR() { ASSERT(m_registerFormat & DataFormatJS); return u.v.payloadGPR; }
+    FPRReg fpr() { ASSERT(m_registerFormat == DataFormatDouble || m_registerFormat == DataFormatJSDouble); return u.fpr; }
+    JSValueRegs jsValueRegs() { ASSERT(m_registerFormat & DataFormatJS); return JSValueRegs(u.v.tagGPR, u.v.payloadGPR); }
+#endif
 
     // Check whether a value needs spilling in order to free up any associated machine registers.
     bool needsSpill()
@@ -195,9 +221,12 @@ public:
         ASSERT(m_spillFormat == DataFormatNone);
         // We should only be spilling values that are currently in machine registers.
         ASSERT(m_registerFormat != DataFormatNone);
-        // We only spill values that have been boxed as a JSValue; otherwise the GC
-        // would need a way to distinguish cell pointers from numeric primitives.
-        ASSERT(spillFormat & DataFormatJS);
+        // We only spill values that have been boxed as a JSValue because historically
+        // we assumed that the GC would want to be able to precisely identify heap
+        // pointers. This is not true anymore, but we still assume, in the fill code,
+        // that any spill slot for a JS value is boxed. For storage pointers, there is
+        // nothing we can do to box them, so we allow that to be an exception.
+        ASSERT((spillFormat & DataFormatJS) || spillFormat == DataFormatStorage || spillFormat == DataFormatInteger || spillFormat == DataFormatDouble);
 
         m_registerFormat = DataFormatNone;
         m_spillFormat = spillFormat;
@@ -221,36 +250,56 @@ public:
 
     // Record that this value is filled into machine registers,
     // tracking which registers, and what format the value has.
+#if USE(JSVALUE64)
     void fillJSValue(GPRReg gpr, DataFormat format = DataFormatJS)
     {
         ASSERT(format & DataFormatJS);
         m_registerFormat = format;
         u.gpr = gpr;
     }
+#elif USE(JSVALUE32_64)
+    void fillJSValue(GPRReg tagGPR, GPRReg payloadGPR, DataFormat format = DataFormatJS)
+    {
+        ASSERT(format & DataFormatJS);
+        m_registerFormat = format;
+        u.v.tagGPR = tagGPR; // FIXME: for JSValues with known type (boolean, integer, cell etc.) no tagGPR is needed?
+        u.v.payloadGPR = payloadGPR;
+    }
+    void fillCell(GPRReg gpr)
+    {
+        m_registerFormat = DataFormatCell;
+        u.gpr = gpr;
+    }
+#endif
     void fillInteger(GPRReg gpr)
     {
         m_registerFormat = DataFormatInteger;
         u.gpr = gpr;
     }
+    void fillBoolean(GPRReg gpr)
+    {
+        m_registerFormat = DataFormatBoolean;
+        u.gpr = gpr;
+    }
     void fillDouble(FPRReg fpr)
     {
+        ASSERT(fpr != InvalidFPRReg);
         m_registerFormat = DataFormatDouble;
         u.fpr = fpr;
     }
+    void fillStorage(GPRReg gpr)
+    {
+        m_registerFormat = DataFormatStorage;
+        u.gpr = gpr;
+    }
 
-#ifndef NDEBUG
     bool alive()
     {
         return m_useCount;
     }
-#endif
 
 private:
     // The index of the node whose result is stored in this virtual register.
-    // FIXME: Can we remove this? - this is currently only used when collecting
-    // snapshots of the RegisterBank for SpeculationCheck/EntryLocation. Could
-    // investigate storing NodeIndex as the name in RegsiterBank, instead of
-    // VirtualRegister.
     NodeIndex m_nodeIndex;
     uint32_t m_useCount;
     DataFormat m_registerFormat;
@@ -259,6 +308,12 @@ private:
     union {
         GPRReg gpr;
         FPRReg fpr;
+#if USE(JSVALUE32_64)
+        struct {
+            GPRReg tagGPR;
+            GPRReg payloadGPR;
+        } v;
+#endif
     } u;
 };
 

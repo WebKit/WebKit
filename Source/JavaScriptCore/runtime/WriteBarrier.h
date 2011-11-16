@@ -28,6 +28,7 @@
 
 #include "HandleTypes.h"
 #include "Heap.h"
+#include "SamplingCounter.h"
 #include "TypeTraits.h"
 
 namespace JSC {
@@ -120,6 +121,9 @@ public:
 
     void setWithoutWriteBarrier(T* value)
     {
+#if ENABLE(WRITE_BARRIER_PROFILING)
+        WriteBarrierCounters::usesWithoutBarrierFromCpp.count();
+#endif
         this->m_cell = reinterpret_cast<JSCell*>(value);
     }
 
@@ -217,14 +221,9 @@ template<typename T> inline void MarkStack::append(WriteBarrierBase<T>* slot)
     internalAppend(*slot->slot());
 }
 
-inline void MarkStack::appendValues(WriteBarrierBase<Unknown>* barriers, size_t count)
+ALWAYS_INLINE void MarkStack::appendValues(WriteBarrierBase<Unknown>* barriers, size_t count)
 {
-    JSValue* values = barriers->slot();
-#if ENABLE(GC_VALIDATION)
-    validateSet(values, count);
-#endif
-    if (count)
-        m_markSets.append(MarkSet(values, values + count));
+    append(barriers->slot(), count);
 }
 
 } // namespace JSC

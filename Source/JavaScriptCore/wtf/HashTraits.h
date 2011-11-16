@@ -28,6 +28,8 @@
 
 namespace WTF {
 
+    class String;
+
     using std::pair;
     using std::make_pair;
 
@@ -38,10 +40,11 @@ namespace WTF {
     template<typename T> struct GenericHashTraitsBase<false, T> {
         static const bool emptyValueIsZero = false;
         static const bool needsDestruction = true;
+        static const int minimumTableSize = 64;
     };
 
     // Default integer traits disallow both 0 and -1 as keys (max value instead of -1 for unsigned).
-    template<typename T> struct GenericHashTraitsBase<true, T> {
+    template<typename T> struct GenericHashTraitsBase<true, T> : GenericHashTraitsBase<false, T> {
         static const bool emptyValueIsZero = true;
         static const bool needsDestruction = false;
         static void constructDeletedValue(T& slot) { slot = static_cast<T>(-1); }
@@ -88,6 +91,7 @@ namespace WTF {
     };
 
     template<typename P> struct HashTraits<RefPtr<P> > : SimpleClassHashTraits<RefPtr<P> > { };
+    template<> struct HashTraits<String> : SimpleClassHashTraits<String> { };
 
     // special traits for pairs, helpful for their use in HashMap implementation
 
@@ -101,6 +105,8 @@ namespace WTF {
         static TraitType emptyValue() { return make_pair(FirstTraits::emptyValue(), SecondTraits::emptyValue()); }
 
         static const bool needsDestruction = FirstTraits::needsDestruction || SecondTraits::needsDestruction;
+
+        static const int minimumTableSize = FirstTraits::minimumTableSize;
 
         static void constructDeletedValue(TraitType& slot) { FirstTraits::constructDeletedValue(slot.first); }
         static bool isDeletedValue(const TraitType& value) { return FirstTraits::isDeletedValue(value.first); }

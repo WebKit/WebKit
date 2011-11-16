@@ -58,6 +58,7 @@ void JIT::compileOpCallInitializeCallFrame()
 void JIT::emit_op_call_put_result(Instruction* instruction)
 {
     int dst = instruction[1].u.operand;
+    emitValueProfilingSite(FirstProfilingSite);
     emitStore(dst, regT1, regT0);
 }
 
@@ -72,7 +73,7 @@ void JIT::compileOpCallVarargs(Instruction* instruction)
     addPtr(Imm32(registerOffset), regT2, regT3); // registerOffset
 
     emitJumpSlowCaseIfNotJSCell(callee, regT1);
-    addSlowCase(branchPtr(NotEqual, Address(regT0), TrustedImmPtr(m_globalData->jsFunctionVPtr)));
+    addSlowCase(emitJumpIfNotType(regT0, regT1, JSFunctionType));
 
     // Speculatively roll the callframe, assuming argCount will match the arity.
     mul32(TrustedImm32(sizeof(Register)), regT3, regT3);
@@ -93,7 +94,10 @@ void JIT::compileOpCallVarargsSlowCase(Instruction* instruction, Vector<SlowCase
     int callee = instruction[1].u.operand;
 
     linkSlowCaseIfNotJSCell(iter, callee);
+    Jump notCell = jump();
     linkSlowCase(iter);
+    move(TrustedImm32(JSValue::CellTag), regT1); // Need to restore cell tag in regT1 because it was clobbered.
+    notCell.link(this);
 
     JITStubCall stubCall(this, cti_op_call_NotJSFunction);
     stubCall.addArgument(regT1, regT0);
@@ -106,6 +110,8 @@ void JIT::compileOpCallVarargsSlowCase(Instruction* instruction, Vector<SlowCase
 
 void JIT::emit_op_ret(Instruction* currentInstruction)
 {
+    emitOptimizationCheck(RetOptimizationCheck);
+    
     unsigned dst = currentInstruction[1].u.operand;
 
     emitLoad(dst, regT1, regT0);
@@ -118,13 +124,15 @@ void JIT::emit_op_ret(Instruction* currentInstruction)
 
 void JIT::emit_op_ret_object_or_this(Instruction* currentInstruction)
 {
+    emitOptimizationCheck(RetOptimizationCheck);
+    
     unsigned result = currentInstruction[1].u.operand;
     unsigned thisReg = currentInstruction[2].u.operand;
 
     emitLoad(result, regT1, regT0);
     Jump notJSCell = branch32(NotEqual, regT1, TrustedImm32(JSValue::CellTag));
     loadPtr(Address(regT0, JSCell::structureOffset()), regT2);
-    Jump notObject = branch8(NotEqual, Address(regT2, Structure::typeInfoTypeOffset()), TrustedImm32(ObjectType));
+    Jump notObject = emitJumpIfNotObject(regT2);
 
     emitGetFromCallFrameHeaderPtr(RegisterFile::ReturnPC, regT2);
     emitGetFromCallFrameHeaderPtr(RegisterFile::CallerFrame, callFrameRegister);
@@ -215,6 +223,7 @@ void JIT::compileOpCall(OpcodeID opcodeID, Instruction* instruction, unsigned ca
     m_callStructureStubCompilationInfo.append(StructureStubCompilationInfo());
     m_callStructureStubCompilationInfo[callLinkInfoIndex].hotPathBegin = addressOfLinkedFunctionCheck;
     m_callStructureStubCompilationInfo[callLinkInfoIndex].isCall = opcodeID != op_construct;
+    m_callStructureStubCompilationInfo[callLinkInfoIndex].bytecodeIndex = m_bytecodeOffset;
 
     addSlowCase(branch32(NotEqual, regT1, TrustedImm32(JSValue::CellTag)));
 
@@ -252,7 +261,7 @@ void JIT::compileOpCallSlowCase(Instruction* instruction, Vector<SlowCaseEntry>:
 
     // Fast check for JS function.
     Jump callLinkFailNotObject = branch32(NotEqual, regT1, TrustedImm32(JSValue::CellTag));
-    Jump callLinkFailNotJSFunction = branchPtr(NotEqual, Address(regT0), TrustedImmPtr(m_globalData->jsFunctionVPtr));
+    Jump callLinkFailNotJSFunction = emitJumpIfNotType(regT0, regT1, JSFunctionType);
 
     // Speculatively roll the callframe, assuming argCount will match the arity.
     store32(TrustedImm32(JSValue::CellTag), tagFor(RegisterFile::CallerFrame + registerOffset, callFrameRegister));
@@ -268,8 +277,9 @@ void JIT::compileOpCallSlowCase(Instruction* instruction, Vector<SlowCaseEntry>:
     emitJumpSlowToHot(jump(), OPCODE_LENGTH(op_call));
 
     // This handles host functions
-    callLinkFailNotObject.link(this);
     callLinkFailNotJSFunction.link(this);
+    move(TrustedImm32(JSValue::CellTag), regT1); // Restore cell tag since it was clobbered.
+    callLinkFailNotObject.link(this);
 
     JITStubCall stubCall(this, opcodeID == op_construct ? cti_op_construct_NotJSConstruct : cti_op_call_NotJSFunction);
     stubCall.addArgument(callee);

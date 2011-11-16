@@ -32,7 +32,6 @@
 #include "JSCSSValue.h"
 #include "JSNode.h"
 #include "PlatformString.h"
-#include <runtime/StringObjectThatMasqueradesAsUndefined.h>
 #include <runtime/StringPrototype.h>
 #include <wtf/ASCIICType.h>
 #include <wtf/text/AtomicString.h>
@@ -44,13 +43,14 @@ using namespace WTF;
 
 namespace WebCore {
 
-void JSCSSStyleDeclaration::visitChildren(SlotVisitor& visitor)
+void JSCSSStyleDeclaration::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
-    ASSERT_GC_OBJECT_INHERITS(this, &s_info);
+    JSCSSStyleDeclaration* thisObject = static_cast<JSCSSStyleDeclaration*>(cell);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
     COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
-    ASSERT(structure()->typeInfo().overridesVisitChildren());
-    Base::visitChildren(visitor);
-    visitor.addOpaqueRoot(root(impl()));
+    ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
+    Base::visitChildren(thisObject, visitor);
+    visitor.addOpaqueRoot(root(thisObject->impl()));
 }
 
 // Check for a CSS prefix.
@@ -161,10 +161,6 @@ JSValue JSCSSStyleDeclaration::nameGetter(ExecState* exec, JSValue slotBase, con
 
     // If the property is a shorthand property (such as "padding"), 
     // it can only be accessed using getPropertyValue.
-
-    // Make the SVG 'filter' attribute undetectable, to avoid confusion with the IE 'filter' attribute.
-    if (propertyName == "filter")
-        return StringObjectThatMasqueradesAsUndefined::create(exec, stringToUString(thisObj->impl()->getPropertyValue(prop)));
 
     return jsString(exec, thisObj->impl()->getPropertyValue(prop));
 }

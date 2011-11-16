@@ -23,6 +23,7 @@
 #ifndef Error_h
 #define Error_h
 
+#include "InternalFunction.h"
 #include "JSObject.h"
 #include <stdint.h>
 
@@ -73,6 +74,59 @@ namespace JSC {
 
     JSValue createTypeErrorFunction(ExecState* exec, const UString& message);
     
+    class StrictModeTypeErrorFunction : public InternalFunction {
+    private:
+        StrictModeTypeErrorFunction(JSGlobalObject* globalObject, Structure* structure, const UString& message)
+            : InternalFunction(globalObject, structure)
+            , m_message(message)
+        {
+        }
+
+    public:
+        typedef InternalFunction Base;
+
+        static StrictModeTypeErrorFunction* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, const UString& message)
+        {
+            StrictModeTypeErrorFunction* function = new (allocateCell<StrictModeTypeErrorFunction>(*exec->heap())) StrictModeTypeErrorFunction(globalObject, structure, message);
+            function->finishCreation(exec->globalData(), exec->globalData().propertyNames->emptyIdentifier);
+            return function;
+        }
+    
+        static EncodedJSValue JSC_HOST_CALL constructThrowTypeError(ExecState* exec)
+        {
+            throwTypeError(exec, static_cast<StrictModeTypeErrorFunction*>(exec->callee())->m_message);
+            return JSValue::encode(jsNull());
+        }
+    
+        static ConstructType getConstructData(JSCell*, ConstructData& constructData)
+        {
+            constructData.native.function = constructThrowTypeError;
+            return ConstructTypeHost;
+        }
+    
+        static EncodedJSValue JSC_HOST_CALL callThrowTypeError(ExecState* exec)
+        {
+            throwTypeError(exec, static_cast<StrictModeTypeErrorFunction*>(exec->callee())->m_message);
+            return JSValue::encode(jsNull());
+        }
+
+        static CallType getCallData(JSCell*, CallData& callData)
+        {
+            callData.native.function = callThrowTypeError;
+            return CallTypeHost;
+        }
+
+        static const ClassInfo s_info;
+
+        static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue prototype) 
+        { 
+            return Structure::create(globalData, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), &s_info); 
+        }
+
+    private:
+        UString m_message;
+    };
+
 } // namespace JSC
 
 #endif // Error_h

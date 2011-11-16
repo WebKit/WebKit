@@ -37,62 +37,42 @@ namespace JSC {
 
     class JSGlobalObject;
     class Structure;
+    class PropertyDescriptor;
+    class PropertyNameArray;
 
-#if COMPILER(MSVC)
-    // If WTF_MAKE_NONCOPYABLE is applied to JSCell we end up with a bunch of
-    // undefined references to the JSCell copy constructor and assignment operator
-    // when linking JavaScriptCore.
-    class MSVCBugWorkaround {
-        WTF_MAKE_NONCOPYABLE(MSVCBugWorkaround);
-
-    protected:
-        MSVCBugWorkaround() { }
-        ~MSVCBugWorkaround() { }
+    enum EnumerationMode {
+        ExcludeDontEnumProperties,
+        IncludeDontEnumProperties
     };
 
-    class JSCell : MSVCBugWorkaround {
-#else
     class JSCell {
-        WTF_MAKE_NONCOPYABLE(JSCell);
-#endif
-
-        friend class ExecutableBase;
-        friend class GetterSetter;
-        friend class Heap;
-        friend class JSObject;
-        friend class JSPropertyNameIterator;
-        friend class JSString;
         friend class JSValue;
-        friend class JSAPIValueWrapper;
-        friend class JSGlobalData;
-        friend class NewSpace;
         friend class MarkedBlock;
-        friend class ScopeChainNode;
-        friend class Structure;
-        friend class StructureChain;
-        friend class RegExp;
 
+    public:
         enum CreatingEarlyCellTag { CreatingEarlyCell };
+        JSCell(CreatingEarlyCellTag);
+
+        enum VPtrStealingHackType { VPtrStealingHack };
+        explicit JSCell(VPtrStealingHackType) { }
+
+    public:
+        void* operator new(size_t, void* placementNewDestination) { return placementNewDestination; } // Used for initialization after GC allocation.
 
     protected:
-        enum VPtrStealingHackType { VPtrStealingHack };
-
-    private:
-        explicit JSCell(VPtrStealingHackType) { }
         JSCell(JSGlobalData&, Structure*);
-        JSCell(JSGlobalData&, Structure*, CreatingEarlyCellTag);
-        virtual ~JSCell();
+        virtual ~JSCell(); // Invoked by GC finalization.
 
     public:
         // Querying the type.
         bool isString() const;
         bool isObject() const;
-        virtual bool isGetterSetter() const;
+        bool isGetterSetter() const;
         bool inherits(const ClassInfo*) const;
-        virtual bool isAPIValueWrapper() const { return false; }
-        virtual bool isPropertyNameIterator() const { return false; }
+        bool isAPIValueWrapper() const;
 
         Structure* structure() const;
+        void setStructure(JSGlobalData&, Structure*);
         void clearStructure() { m_structure.clear(); }
 
         // Extracting the value.
@@ -101,37 +81,34 @@ namespace JSC {
         JSObject* getObject(); // NULL if not an object
         const JSObject* getObject() const; // NULL if not an object
         
-        virtual CallType getCallData(CallData&);
-        virtual ConstructType getConstructData(ConstructData&);
-
-        // Extracting integer values.
-        // FIXME: remove these methods, can check isNumberCell in JSValue && then call asNumberCell::*.
-        virtual bool getUInt32(uint32_t&) const;
+        static CallType getCallData(JSCell*, CallData&);
+        static ConstructType getConstructData(JSCell*, ConstructData&);
 
         // Basic conversions.
-        virtual JSValue toPrimitive(ExecState*, PreferredPrimitiveType) const;
-        virtual bool getPrimitiveNumber(ExecState*, double& number, JSValue&);
-        virtual bool toBoolean(ExecState*) const;
-        virtual double toNumber(ExecState*) const;
-        virtual UString toString(ExecState*) const;
-        virtual JSObject* toObject(ExecState*, JSGlobalObject*) const;
+        JSValue toPrimitive(ExecState*, PreferredPrimitiveType) const;
+        bool getPrimitiveNumber(ExecState*, double& number, JSValue&) const;
+        bool toBoolean(ExecState*) const;
+        double toNumber(ExecState*) const;
+        UString toString(ExecState*) const;
+        JSObject* toObject(ExecState*, JSGlobalObject*) const;
 
-        // Garbage collection.
-        void* operator new(size_t, void* placementNewDestination) { return placementNewDestination; }
-
-        virtual void visitChildren(SlotVisitor&);
+        static void visitChildren(JSCell*, SlotVisitor&);
 
         // Object operations, with the toObject operation included.
         const ClassInfo* classInfo() const;
-        virtual void put(ExecState*, const Identifier& propertyName, JSValue, PutPropertySlot&);
-        virtual void put(ExecState*, unsigned propertyName, JSValue);
-        virtual bool deleteProperty(ExecState*, const Identifier& propertyName);
-        virtual bool deleteProperty(ExecState*, unsigned propertyName);
+        const MethodTable* methodTable() const;
+        static void put(JSCell*, ExecState*, const Identifier& propertyName, JSValue, PutPropertySlot&);
+        static void putByIndex(JSCell*, ExecState*, unsigned propertyName, JSValue);
+        
+        static bool deleteProperty(JSCell*, ExecState*, const Identifier& propertyName);
+        static bool deletePropertyByIndex(JSCell*, ExecState*, unsigned propertyName);
 
-        virtual JSObject* toThisObject(ExecState*) const;
-        virtual JSValue getJSNumber();
-        void* vptr() { return *reinterpret_cast<void**>(this); }
-        void setVPtr(void* vptr) { *reinterpret_cast<void**>(this) = vptr; }
+        static JSObject* toThisObject(JSCell*, ExecState*);
+
+        void* vptr() const { ASSERT(!isZapped()); return *reinterpret_cast<void* const*>(this); }
+        void setVPtr(void* vptr) { *reinterpret_cast<void**>(this) = vptr; ASSERT(!isZapped()); }
+        void zap() { *reinterpret_cast<uintptr_t**>(this) = 0; }
+        bool isZapped() const { return !*reinterpret_cast<uintptr_t* const*>(this); }
 
         // FIXME: Rename getOwnPropertySlot to virtualGetOwnPropertySlot, and
         // fastGetOwnPropertySlot to getOwnPropertySlot. Callers should always
@@ -144,36 +121,66 @@ namespace JSC {
         {
             return OBJECT_OFFSETOF(JSCell, m_structure);
         }
+        
+        void* structureAddress()
+        {
+            return &m_structure;
+        }
 
 #if ENABLE(GC_VALIDATION)
         Structure* unvalidatedStructure() { return m_structure.unvalidatedGet(); }
 #endif
         
     protected:
-        static const unsigned AnonymousSlotCount = 0;
+
+        void finishCreation(JSGlobalData&);
+        void finishCreation(JSGlobalData&, Structure*, CreatingEarlyCellTag);
+
+        // Base implementation; for non-object classes implements getPropertySlot.
+        static bool getOwnPropertySlot(JSCell*, ExecState*, const Identifier& propertyName, PropertySlot&);
+        static bool getOwnPropertySlotByIndex(JSCell*, ExecState*, unsigned propertyName, PropertySlot&);
+
+        // Dummy implementations of override-able static functions for classes to put in their MethodTable
+        static NO_RETURN_DUE_TO_ASSERT void defineGetter(JSObject*, ExecState*, const Identifier&, JSObject*, unsigned);
+        static NO_RETURN_DUE_TO_ASSERT void defineSetter(JSObject*, ExecState*, const Identifier& propertyName, JSObject* setterFunction, unsigned attributes = 0);
+        static JSValue defaultValue(const JSObject*, ExecState*, PreferredPrimitiveType);
+        static NO_RETURN_DUE_TO_ASSERT void getOwnPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
+        static NO_RETURN_DUE_TO_ASSERT void getPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
+        static UString className(const JSObject*);
+        static bool hasInstance(JSObject*, ExecState*, JSValue, JSValue prototypeProperty);
+        static NO_RETURN_DUE_TO_ASSERT void putWithAttributes(JSObject*, ExecState*, const Identifier& propertyName, JSValue, unsigned attributes);
+        static bool defineOwnProperty(JSObject*, ExecState*, const Identifier& propertyName, PropertyDescriptor&, bool shouldThrow);
+        static bool getOwnPropertyDescriptor(JSObject*, ExecState*, const Identifier&, PropertyDescriptor&);
 
     private:
-        // Base implementation; for non-object classes implements getPropertySlot.
-        virtual bool getOwnPropertySlot(ExecState*, const Identifier& propertyName, PropertySlot&);
-        virtual bool getOwnPropertySlot(ExecState*, unsigned propertyName, PropertySlot&);
-        
-        // Note that the first two declarations of operator new have no corresponding implementation and 
-        // will cause link errors if you use them.
-        void* operator new(size_t, ExecState*);
-        void* operator new(size_t, JSGlobalData*);
-        
         WriteBarrier<Structure> m_structure;
     };
-
+    
     inline JSCell::JSCell(JSGlobalData& globalData, Structure* structure)
         : m_structure(globalData, this, structure)
     {
+    }
+
+    inline JSCell::JSCell(CreatingEarlyCellTag)
+    {
+    }
+
+    inline void JSCell::finishCreation(JSGlobalData& globalData)
+    {
+#if ENABLE(GC_VALIDATION)
+        ASSERT(globalData.isInitializingObject());
+        globalData.setInitializingObject(false);
+#else
+        UNUSED_PARAM(globalData);
+#endif
         ASSERT(m_structure);
     }
 
-    inline JSCell::JSCell(JSGlobalData& globalData, Structure* structure, CreatingEarlyCellTag)
+    inline void JSCell::finishCreation(JSGlobalData& globalData, Structure* structure, CreatingEarlyCellTag)
     {
 #if ENABLE(GC_VALIDATION)
+        ASSERT(globalData.isInitializingObject());
+        globalData.setInitializingObject(false);
         if (structure)
 #endif
             m_structure.setEarlyValue(globalData, this, structure);
@@ -183,9 +190,6 @@ namespace JSC {
 
     inline JSCell::~JSCell()
     {
-#if ENABLE(GC_VALIDATION)
-        m_structure.clear();
-#endif
     }
 
     inline Structure* JSCell::structure() const
@@ -193,9 +197,10 @@ namespace JSC {
         return m_structure.get();
     }
 
-    inline void JSCell::visitChildren(SlotVisitor& visitor)
+    inline void JSCell::visitChildren(JSCell* cell, SlotVisitor& visitor)
     {
-        visitor.append(&m_structure);
+        JSCell* thisObject = static_cast<JSCell*>(cell);
+        visitor.append(&thisObject->m_structure);
     }
 
     // --- JSValue inlines ----------------------------
@@ -238,20 +243,6 @@ namespace JSC {
     inline JSObject* JSValue::getObject() const
     {
         return isCell() ? asCell()->getObject() : 0;
-    }
-
-    inline CallType getCallData(JSValue value, CallData& callData)
-    {
-        CallType result = value.isCell() ? value.asCell()->getCallData(callData) : CallTypeNone;
-        ASSERT(result == CallTypeNone || value.isValidCallee());
-        return result;
-    }
-
-    inline ConstructType getConstructData(JSValue value, ConstructData& constructData)
-    {
-        ConstructType result = value.isCell() ? value.asCell()->getConstructData(constructData) : ConstructTypeNone;
-        ASSERT(result == ConstructTypeNone || value.isValidCallee());
-        return result;
     }
 
     ALWAYS_INLINE bool JSValue::getUInt32(uint32_t& v) const
@@ -304,17 +295,6 @@ namespace JSC {
         return true;
     }
 
-    inline bool JSValue::toBoolean(ExecState* exec) const
-    {
-        if (isInt32())
-            return asInt32() != 0;
-        if (isDouble())
-            return asDouble() > 0.0 || asDouble() < 0.0; // false for NaN
-        if (isCell())
-            return asCell()->toBoolean(exec);
-        return isTrue(); // false, null, and undefined all convert to false.
-    }
-
     ALWAYS_INLINE double JSValue::toNumber(ExecState* exec) const
     {
         if (isInt32())
@@ -322,15 +302,6 @@ namespace JSC {
         if (isDouble())
             return asDouble();
         return toNumberSlowCase(exec);
-    }
-
-    inline JSValue JSValue::getJSNumber()
-    {
-        if (isInt32() || isDouble())
-            return *this;
-        if (isCell())
-            return asCell()->getJSNumber();
-        return JSValue();
     }
 
     inline JSObject* JSValue::toObject(ExecState* exec) const
@@ -343,18 +314,23 @@ namespace JSC {
         return isCell() ? asCell()->toObject(exec, globalObject) : toObjectSlowCase(exec, globalObject);
     }
 
-    inline JSObject* JSValue::toThisObject(ExecState* exec) const
-    {
-        return isCell() ? asCell()->toThisObject(exec) : toThisObjectSlowCase(exec);
-    }
-
     template <typename T> void* allocateCell(Heap& heap)
     {
+#if ENABLE(GC_VALIDATION)
+        ASSERT(sizeof(T) == T::s_info.cellSize);
+        ASSERT(!heap.globalData()->isInitializingObject());
+        heap.globalData()->setInitializingObject(true);
+#endif
         JSCell* result = static_cast<JSCell*>(heap.allocate(sizeof(T)));
         result->clearStructure();
         return result;
     }
-        
+    
+    inline bool isZapped(const JSCell* cell)
+    {
+        return cell->isZapped();
+    }
+
 } // namespace JSC
 
 #endif // JSCell_h

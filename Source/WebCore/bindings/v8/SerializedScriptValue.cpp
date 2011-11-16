@@ -1208,7 +1208,7 @@ SerializedScriptValue* SerializedScriptValue::undefinedValue()
 PassRefPtr<SerializedScriptValue> SerializedScriptValue::release()
 {
     RefPtr<SerializedScriptValue> result = adoptRef(new SerializedScriptValue(m_data));
-    m_data = String().crossThreadString();
+    m_data = String();
     return result.release();
 }
 
@@ -1252,7 +1252,7 @@ SerializedScriptValue::SerializedScriptValue(v8::Handle<v8::Value> value, bool& 
 
 SerializedScriptValue::SerializedScriptValue(String wireData)
 {
-    m_data = wireData.crossThreadString();
+    m_data = wireData.isolatedCopy();
 }
 
 v8::Handle<v8::Value> SerializedScriptValue::deserialize()

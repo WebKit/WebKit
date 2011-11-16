@@ -40,7 +40,7 @@
 
 namespace JSC {
 
-void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executablePool, JSGlobalData* globalData, TrampolineStructure *trampolines)
+PassRefPtr<ExecutableMemoryHandle> JIT::privateCompileCTIMachineTrampolines(JSGlobalData* globalData, TrampolineStructure *trampolines)
 {
 #if ENABLE(JIT_USE_SOFT_MODULO)
     Label softModBegin = align();
@@ -152,7 +152,7 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
     Call string_failureCases3Call = makeTailRecursiveCall(string_failureCases3);
 
     // All trampolines constructed! copy the code, link up calls, and set the pointers on the Machine object.
-    LinkBuffer patchBuffer(*m_globalData, this, m_globalData->executableAllocator);
+    LinkBuffer patchBuffer(*m_globalData, this);
 
     patchBuffer.link(string_failureCases1Call, FunctionPtr(cti_op_get_by_id_string_fail));
     patchBuffer.link(string_failureCases2Call, FunctionPtr(cti_op_get_by_id_string_fail));
@@ -163,7 +163,7 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
     patchBuffer.link(callCompileCconstruct, FunctionPtr(cti_op_construct_jitCompile));
 
     CodeRef finalCode = patchBuffer.finalizeCode();
-    *executablePool = finalCode.m_executablePool;
+    RefPtr<ExecutableMemoryHandle> executableMemory = finalCode.executableMemory();
 
     trampolines->ctiVirtualCall = patchBuffer.trampolineAt(virtualCallBegin);
     trampolines->ctiVirtualConstruct = patchBuffer.trampolineAt(virtualConstructBegin);
@@ -175,6 +175,8 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
 #if ENABLE(JIT_USE_SOFT_MODULO)
     trampolines->ctiSoftModulo = patchBuffer.trampolineAt(softModBegin);
 #endif
+    
+    return executableMemory.release();
 }
 
 JIT::Label JIT::privateCompileCTINativeCall(JSGlobalData* globalData, bool isConstruct)
@@ -312,10 +314,9 @@ JIT::Label JIT::privateCompileCTINativeCall(JSGlobalData* globalData, bool isCon
     return nativeCallThunk;
 }
 
-JIT::CodePtr JIT::privateCompileCTINativeCall(PassRefPtr<ExecutablePool> executablePool, JSGlobalData* globalData, NativeFunction func)
+JIT::CodeRef JIT::privateCompileCTINativeCall(JSGlobalData* globalData, NativeFunction func)
 {
     Call nativeCall;
-    Label nativeCallThunk = align();
 
     emitPutImmediateToCallFrameHeader(0, RegisterFile::CodeBlock);
 
@@ -447,12 +448,10 @@ JIT::CodePtr JIT::privateCompileCTINativeCall(PassRefPtr<ExecutablePool> executa
     ret();
 
     // All trampolines constructed! copy the code, link up calls, and set the pointers on the Machine object.
-    LinkBuffer patchBuffer(*m_globalData, this, executablePool);
+    LinkBuffer patchBuffer(*m_globalData, this);
 
     patchBuffer.link(nativeCall, FunctionPtr(func));
-    patchBuffer.finalizeCode();
-
-    return patchBuffer.trampolineAt(nativeCallThunk);
+    return patchBuffer.finalizeCode();
 }
 
 void JIT::emit_op_mov(Instruction* currentInstruction)
@@ -529,7 +528,7 @@ void JIT::emit_op_instanceof(Instruction* currentInstruction)
     
     // Check that prototype is an object
     loadPtr(Address(regT1, JSCell::structureOffset()), regT3);
-    addSlowCase(branch8(NotEqual, Address(regT3, Structure::typeInfoTypeOffset()), TrustedImm32(ObjectType)));
+    addSlowCase(emitJumpIfNotObject(regT3));
 
     // Fixme: this check is only needed because the JSC API allows HasInstance to be overridden; we should deprecate this.
     // Check that baseVal 'ImplementsDefaultHasInstance'.
@@ -617,7 +616,7 @@ void JIT::emit_op_resolve(Instruction* currentInstruction)
 {
     JITStubCall stubCall(this, cti_op_resolve);
     stubCall.addArgument(TrustedImmPtr(&m_codeBlock->identifier(currentInstruction[2].u.operand)));
-    stubCall.call(currentInstruction[1].u.operand);
+    stubCall.callWithValueProfiling(currentInstruction[1].u.operand, FirstProfilingSite);
 }
 
 void JIT::emit_op_to_primitive(Instruction* currentInstruction)
@@ -659,7 +658,7 @@ void JIT::emit_op_resolve_base(Instruction* currentInstruction)
 {
     JITStubCall stubCall(this, currentInstruction[3].u.operand ? cti_op_resolve_base_strict_put : cti_op_resolve_base);
     stubCall.addArgument(TrustedImmPtr(&m_codeBlock->identifier(currentInstruction[2].u.operand)));
-    stubCall.call(currentInstruction[1].u.operand);
+    stubCall.callWithValueProfiling(currentInstruction[1].u.operand, FirstProfilingSite);
 }
 
 void JIT::emit_op_ensure_property_exists(Instruction* currentInstruction)
@@ -675,7 +674,7 @@ void JIT::emit_op_resolve_skip(Instruction* currentInstruction)
     JITStubCall stubCall(this, cti_op_resolve_skip);
     stubCall.addArgument(TrustedImmPtr(&m_codeBlock->identifier(currentInstruction[2].u.operand)));
     stubCall.addArgument(Imm32(currentInstruction[3].u.operand));
-    stubCall.call(currentInstruction[1].u.operand);
+    stubCall.callWithValueProfiling(currentInstruction[1].u.operand, FirstProfilingSite);
 }
 
 void JIT::emit_op_resolve_global(Instruction* currentInstruction, bool dynamic)
@@ -700,6 +699,7 @@ void JIT::emit_op_resolve_global(Instruction* currentInstruction, bool dynamic)
     load32(Address(regT3, OBJECT_OFFSETOF(GlobalResolveInfo, offset)), regT3);
     load32(BaseIndex(regT2, regT3, TimesEight, OBJECT_OFFSETOF(JSValue, u.asBits.payload)), regT0); // payload
     load32(BaseIndex(regT2, regT3, TimesEight, OBJECT_OFFSETOF(JSValue, u.asBits.tag)), regT1); // tag
+    emitValueProfilingSite(FirstProfilingSite);
     emitStore(dst, regT1, regT0);
     map(m_bytecodeOffset + (dynamic ? OPCODE_LENGTH(op_resolve_global_dynamic) : OPCODE_LENGTH(op_resolve_global)), dst, regT1, regT0);
 }
@@ -715,7 +715,7 @@ void JIT::emitSlow_op_resolve_global(Instruction* currentInstruction, Vector<Slo
     JITStubCall stubCall(this, cti_op_resolve_global);
     stubCall.addArgument(TrustedImmPtr(ident));
     stubCall.addArgument(Imm32(currentIndex));
-    stubCall.call(dst);
+    stubCall.callWithValueProfiling(dst, SubsequentProfilingSite);
 }
 
 void JIT::emit_op_not(Instruction* currentInstruction)
@@ -996,20 +996,24 @@ void JIT::compileOpStrictEq(Instruction* currentInstruction, CompileOpStrictEqTy
     unsigned src1 = currentInstruction[2].u.operand;
     unsigned src2 = currentInstruction[3].u.operand;
 
-    emitLoadTag(src1, regT0);
-    emitLoadTag(src2, regT1);
+    emitLoad2(src1, regT1, regT0, src2, regT3, regT2);
 
-    // Jump to a slow case if either operand is double, or if both operands are
-    // cells and/or Int32s.
-    move(regT0, regT2);
-    and32(regT1, regT2);
-    addSlowCase(branch32(Below, regT2, TrustedImm32(JSValue::LowestTag)));
-    addSlowCase(branch32(AboveOrEqual, regT2, TrustedImm32(JSValue::CellTag)));
+    // Bail if the tags differ, or are double.
+    addSlowCase(branch32(NotEqual, regT1, regT3));
+    addSlowCase(branch32(Below, regT1, TrustedImm32(JSValue::LowestTag)));
 
+    // Jump to a slow case if both are strings.
+    Jump notCell = branch32(NotEqual, regT1, TrustedImm32(JSValue::CellTag));
+    Jump firstNotString = branchPtr(NotEqual, Address(regT0), TrustedImmPtr(m_globalData->jsStringVPtr));
+    addSlowCase(branchPtr(Equal, Address(regT2), TrustedImmPtr(m_globalData->jsStringVPtr)));
+    notCell.link(this);
+    firstNotString.link(this);
+
+    // Simply compare the payloads.
     if (type == OpStrictEq)
-        compare32(Equal, regT0, regT1, regT0);
+        compare32(Equal, regT0, regT2, regT0);
     else
-        compare32(NotEqual, regT0, regT1, regT0);
+        compare32(NotEqual, regT0, regT2, regT0);
 
     emitStoreBool(dst, regT0);
 }
@@ -1025,6 +1029,7 @@ void JIT::emitSlow_op_stricteq(Instruction* currentInstruction, Vector<SlowCaseE
     unsigned src1 = currentInstruction[2].u.operand;
     unsigned src2 = currentInstruction[3].u.operand;
 
+    linkSlowCase(iter);
     linkSlowCase(iter);
     linkSlowCase(iter);
 
@@ -1045,6 +1050,7 @@ void JIT::emitSlow_op_nstricteq(Instruction* currentInstruction, Vector<SlowCase
     unsigned src1 = currentInstruction[2].u.operand;
     unsigned src2 = currentInstruction[3].u.operand;
 
+    linkSlowCase(iter);
     linkSlowCase(iter);
     linkSlowCase(iter);
 
@@ -1107,7 +1113,7 @@ void JIT::emit_op_resolve_with_base(Instruction* currentInstruction)
     JITStubCall stubCall(this, cti_op_resolve_with_base);
     stubCall.addArgument(TrustedImmPtr(&m_codeBlock->identifier(currentInstruction[3].u.operand)));
     stubCall.addArgument(Imm32(currentInstruction[1].u.operand));
-    stubCall.call(currentInstruction[2].u.operand);
+    stubCall.callWithValueProfiling(currentInstruction[2].u.operand, FirstProfilingSite);
 }
 
 void JIT::emit_op_resolve_with_this(Instruction* currentInstruction)
@@ -1115,7 +1121,7 @@ void JIT::emit_op_resolve_with_this(Instruction* currentInstruction)
     JITStubCall stubCall(this, cti_op_resolve_with_this);
     stubCall.addArgument(TrustedImmPtr(&m_codeBlock->identifier(currentInstruction[3].u.operand)));
     stubCall.addArgument(Imm32(currentInstruction[1].u.operand));
-    stubCall.call(currentInstruction[2].u.operand);
+    stubCall.callWithValueProfiling(currentInstruction[2].u.operand, FirstProfilingSite);
 }
 
 void JIT::emit_op_throw(Instruction* currentInstruction)
@@ -1147,7 +1153,7 @@ void JIT::emit_op_get_pnames(Instruction* currentInstruction)
         isNotObject.append(branch32(NotEqual, regT1, TrustedImm32(JSValue::CellTag)));
     if (base != m_codeBlock->thisRegister() || m_codeBlock->isStrictMode()) {
         loadPtr(Address(regT0, JSCell::structureOffset()), regT2);
-        isNotObject.append(branch8(NotEqual, Address(regT2, Structure::typeInfoTypeOffset()), TrustedImm32(ObjectType)));
+        isNotObject.append(emitJumpIfNotObject(regT2));
     }
 
     // We could inline the case where you have a valid cache, but
@@ -1442,7 +1448,7 @@ void JIT::emit_op_create_this(Instruction* currentInstruction)
     emitLoad(currentInstruction[2].u.operand, regT1, regT0);
     emitJumpSlowCaseIfNotJSCell(currentInstruction[2].u.operand, regT1);
     loadPtr(Address(regT0, JSCell::structureOffset()), regT1);
-    addSlowCase(branch8(NotEqual, Address(regT1, Structure::typeInfoTypeOffset()), TrustedImm32(ObjectType)));
+    addSlowCase(emitJumpIfNotObject(regT1));
     
     // now we know that the prototype is an object, but we don't know if it's got an
     // inheritor ID

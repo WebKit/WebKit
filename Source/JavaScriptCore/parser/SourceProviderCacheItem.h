@@ -23,7 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "JSParser.h"
+#ifndef SourceProviderCacheItem_h
+#define SourceProviderCacheItem_h
+
+#include "ParserTokens.h"
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
@@ -59,8 +62,12 @@ public:
     int closeBraceLine;
     int closeBracePos;
     bool usesEval;
+    bool strictMode;
+    bool needsFullActivation;
     Vector<RefPtr<StringImpl> > usedVariables;
     Vector<RefPtr<StringImpl> > writtenVariables;
 };
 
 }
+
+#endif // SourceProviderCacheItem_h

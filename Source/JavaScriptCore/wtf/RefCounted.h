@@ -23,7 +23,10 @@
 
 #include "Assertions.h"
 #include "FastAllocBase.h"
+#include "ThreadRestrictionVerifier.h"
 #include "Noncopyable.h"
+#include "OwnPtr.h"
+#include "UnusedParam.h"
 
 namespace WTF {
 
@@ -34,6 +37,9 @@ class RefCountedBase {
 public:
     void ref()
     {
+        // If this assert fires, it either indicates a thread safety issue or
+        // that the verification needs to change. See ThreadRestrictionVerifier for
+        // the different modes.
         ASSERT(!m_deletionHasBegun);
         ASSERT(!m_adoptionIsRequired);
         ++m_refCount;
@@ -48,6 +54,19 @@ public:
     int refCount() const
     {
         return m_refCount;
+    }
+
+    void setMutexForVerifier(Mutex&);
+
+#if HAVE(DISPATCH_H)
+    void setDispatchQueueForVerifier(dispatch_queue_t);
+#endif
+
+    // Turns off verification. Use of this method is discouraged (instead extend
+    // ThreadRestrictionVerifier to verify your case).
+    // FIXME: remove this method.
+    void deprecatedTurnOffVerifier()
+    {
     }
 
     void relaxAdoptionRequirement()
@@ -107,7 +126,6 @@ protected:
 #endif
 
 private:
-    template<typename T> friend class CrossThreadRefCounted;
 
 #ifndef NDEBUG
     friend void adopted(RefCountedBase*);
@@ -163,6 +181,12 @@ protected:
     {
     }
 };
+
+inline void RefCountedBase::setMutexForVerifier(Mutex&) { }
+
+#if HAVE(DISPATCH_H)
+inline void RefCountedBase::setDispatchQueueForVerifier(dispatch_queue_t) { }
+#endif // HAVE(DISPATCH_H)
 
 } // namespace WTF
 

@@ -32,6 +32,7 @@
 #define ScriptHeapSnapshot_h
 
 #include "PlatformString.h"
+#include <wtf/RefCounted.h>
 
 namespace v8 {
 class HeapSnapshot;

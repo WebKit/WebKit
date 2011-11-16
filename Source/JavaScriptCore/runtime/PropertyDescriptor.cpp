@@ -88,10 +88,17 @@ void PropertyDescriptor::setDescriptor(JSValue value, unsigned attributes)
 {
     ASSERT(value);
     m_attributes = attributes;
-    if (attributes & (Getter | Setter)) {
+    if (value.isGetterSetter()) {
         GetterSetter* accessor = asGetterSetter(value);
+
         m_getter = accessor->getter();
+        if (m_getter)
+            m_attributes |= Getter;
+
         m_setter = accessor->setter();
+        if (m_setter)
+            m_attributes |= Setter;
+
         ASSERT(m_getter || m_setter);
         m_seenAttributes = EnumerablePresent | ConfigurablePresent;
         m_attributes &= ~ReadOnly;

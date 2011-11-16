@@ -34,6 +34,7 @@
 #if ENABLE(INSPECTOR)
 
 #include <wtf/DecimalNumber.h>
+#include <wtf/dtoa.h>
 
 namespace WebCore {
 
@@ -619,7 +620,11 @@ void InspectorBasicValue::writeJSON(Vector<UChar>* output) const
         else
             output->append(falseString, 5);
     } else if (type() == TypeNumber) {
-        NumberToStringBuffer buffer;
+        NumberToUStringBuffer buffer;
+        if (!isfinite(m_doubleValue)) {
+            output->append(nullString, 4);
+            return;
+        }
         DecimalNumber decimal = m_doubleValue;
         unsigned length = 0;
         if (decimal.bufferLengthForStringDecimal() > WTF::NumberToStringBufferLength) {

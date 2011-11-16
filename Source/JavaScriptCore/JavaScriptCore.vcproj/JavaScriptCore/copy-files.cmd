@@ -38,6 +38,7 @@ mkdir "%PrivateHeadersDirectory%" 2>NUL
 for %%d in (
     assembler
     bytecode
+    dfg
     heap
     debugger
     interpreter
@@ -46,7 +47,9 @@ for %%d in (
     profiler
     runtime
     wtf
+    wtf\dtoa
     wtf\text
+    wtf\threads
     wtf\unicode
     wtf\unicode\icu
     yarr

@@ -29,34 +29,85 @@
 #ifndef ExceptionHelpers_h
 #define ExceptionHelpers_h
 
-#include "JSValue.h"
+#include "JSObject.h"
 
 namespace JSC {
 
-    class CodeBlock;
-    class ExecState;
-    class Identifier;
-    class JSGlobalData;
-    class JSGlobalObject;
-    class JSNotAnObjectErrorStub;
-    class JSObject;
-    class Node;
-    struct Instruction;
-    
-    JSObject* createInterruptedExecutionException(JSGlobalData*);
-    JSObject* createTerminatedExecutionException(JSGlobalData*);
-    JSObject* createStackOverflowError(ExecState*);
-    JSObject* createStackOverflowError(JSGlobalObject*);
-    JSObject* createOutOfMemoryError(JSGlobalObject*);
-    JSObject* createUndefinedVariableError(ExecState*, const Identifier&);
-    JSObject* createNotAnObjectError(ExecState*, JSValue);
-    JSObject* createInvalidParamError(ExecState*, const char* op, JSValue);
-    JSObject* createNotAConstructorError(ExecState*, JSValue);
-    JSObject* createNotAFunctionError(ExecState*, JSValue);
-    JSObject* createErrorForInvalidGlobalAssignment(ExecState*, const UString&);
+JSObject* createInterruptedExecutionException(JSGlobalData*);
+bool isInterruptedExecutionException(JSObject*);
+bool isInterruptedExecutionException(JSValue);
 
-    JSObject* throwOutOfMemoryError(ExecState*);
-    JSObject* throwStackOverflowError(ExecState*);
+JSObject* createTerminatedExecutionException(JSGlobalData*);
+bool isTerminatedExecutionException(JSObject*);
+bool isTerminatedExecutionException(JSValue);
+
+JSObject* createStackOverflowError(ExecState*);
+JSObject* createStackOverflowError(JSGlobalObject*);
+JSObject* createOutOfMemoryError(JSGlobalObject*);
+JSObject* createUndefinedVariableError(ExecState*, const Identifier&);
+JSObject* createNotAnObjectError(ExecState*, JSValue);
+JSObject* createInvalidParamError(ExecState*, const char* op, JSValue);
+JSObject* createNotAConstructorError(ExecState*, JSValue);
+JSObject* createNotAFunctionError(ExecState*, JSValue);
+JSObject* createErrorForInvalidGlobalAssignment(ExecState*, const UString&);
+
+JSObject* throwOutOfMemoryError(ExecState*);
+JSObject* throwStackOverflowError(ExecState*);
+
+
+class InterruptedExecutionError : public JSNonFinalObject {
+private:
+    InterruptedExecutionError(JSGlobalData& globalData)
+        : JSNonFinalObject(globalData, globalData.interruptedExecutionErrorStructure.get())
+    {
+    }
+
+    static JSValue defaultValue(const JSObject*, ExecState*, PreferredPrimitiveType);
+
+public:
+    typedef JSNonFinalObject Base;
+
+    static InterruptedExecutionError* create(JSGlobalData& globalData)
+    {
+        InterruptedExecutionError* error = new (allocateCell<InterruptedExecutionError>(globalData.heap)) InterruptedExecutionError(globalData);
+        error->finishCreation(globalData);
+        return error;
+    }
+
+    static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue prototype)
+    {
+        return Structure::create(globalData, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), &s_info);
+    }
+
+    static JS_EXPORTDATA const ClassInfo s_info;
+};
+
+class TerminatedExecutionError : public JSNonFinalObject {
+private:
+    TerminatedExecutionError(JSGlobalData& globalData)
+        : JSNonFinalObject(globalData, globalData.terminatedExecutionErrorStructure.get())
+    {
+    }
+
+    static JSValue defaultValue(const JSObject*, ExecState*, PreferredPrimitiveType);
+
+public:
+    typedef JSNonFinalObject Base;
+
+    static TerminatedExecutionError* create(JSGlobalData& globalData)
+    {
+        TerminatedExecutionError* error = new (allocateCell<TerminatedExecutionError>(globalData.heap)) TerminatedExecutionError(globalData);
+        error->finishCreation(globalData);
+        return error;
+    }
+
+    static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue prototype)
+    {
+        return Structure::create(globalData, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), &s_info);
+    }
+
+    static JS_EXPORTDATA const ClassInfo s_info;
+};
 
 } // namespace JSC
 

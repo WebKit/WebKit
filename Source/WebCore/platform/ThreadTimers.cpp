@@ -31,6 +31,7 @@
 #include "ThreadGlobalData.h"
 #include "Timer.h"
 #include <wtf/CurrentTime.h>
+#include <wtf/MainThread.h>
 
 namespace WebCore {
 

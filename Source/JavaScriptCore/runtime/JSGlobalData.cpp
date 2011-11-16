@@ -49,22 +49,17 @@
 #include "Lexer.h"
 #include "Lookup.h"
 #include "Nodes.h"
-#include "Parser.h"
-#include "RegExpCache.h"
-#include "RegExpObject.h"
-#include "StrictEvalActivation.h"
-#include <wtf/WTFThreadData.h>
+#include "ParserArena.h"
 #if ENABLE(REGEXP_TRACING)
 #include "RegExp.h"
 #endif
-
-
-#if ENABLE(JSC_MULTIPLE_THREADS)
+#include "RegExpCache.h"
+#include "RegExpObject.h"
+#include "StrictEvalActivation.h"
+#include "StrongInlines.h"
 #include <wtf/Threading.h>
-#endif
-
+#include <wtf/WTFThreadData.h>
 #if PLATFORM(MAC)
-#include "ProfilerServer.h"
 #include <CoreFoundation/CoreFoundation.h>
 #endif
 
@@ -162,6 +157,7 @@ void JSGlobalData::storeVPtrs()
 JSGlobalData::JSGlobalData(GlobalDataType globalDataType, ThreadStackType threadStackType, HeapSize heapSize)
     : globalDataType(globalDataType)
     , clientData(0)
+    , topCallFrame(CallFrame::noCaller())
     , arrayConstructorTable(fastNew<HashTable>(JSC::arrayConstructorTable))
     , arrayPrototypeTable(fastNew<HashTable>(JSC::arrayPrototypeTable))
     , booleanPrototypeTable(fastNew<HashTable>(JSC::booleanPrototypeTable))
@@ -185,12 +181,14 @@ JSGlobalData::JSGlobalData(GlobalDataType globalDataType, ThreadStackType thread
     , emptyList(new MarkedArgumentBuffer)
 #if ENABLE(ASSEMBLER)
     , executableAllocator(*this)
-    , regexAllocator(*this)
 #endif
-    , lexer(new Lexer(this))
-    , parser(new Parser)
+    , parserArena(new ParserArena)
+    , keywords(new Keywords(this))
     , interpreter(0)
     , heap(this, heapSize)
+#if ENABLE(DFG_JIT)
+    , sizeOfLastScratchBuffer(0)
+#endif
     , dynamicGlobalObject(0)
     , cachedUTCOffset(std::numeric_limits<double>::quiet_NaN())
     , maxReentryDepth(threadStackType == ThreadStackTypeSmall ? MaxSmallThreadReentryDepth : MaxLargeThreadReentryDepth)
@@ -201,6 +199,12 @@ JSGlobalData::JSGlobalData(GlobalDataType globalDataType, ThreadStackType thread
 #ifndef NDEBUG
     , exclusiveThread(0)
 #endif
+#if CPU(X86) && ENABLE(JIT)
+    , m_timeoutCount(512)
+#endif
+#if ENABLE(GC_VALIDATION)
+    , m_isInitializingObject(false)
+#endif
 {
     interpreter = new Interpreter;
     if (globalDataType == Default)
@@ -210,31 +214,28 @@ JSGlobalData::JSGlobalData(GlobalDataType globalDataType, ThreadStackType thread
     IdentifierTable* existingEntryIdentifierTable = wtfThreadData().setCurrentIdentifierTable(identifierTable);
     JSLock lock(SilenceAssertionsOnly);
     structureStructure.set(*this, Structure::createStructure(*this));
-    debuggerActivationStructure.set(*this, DebuggerActivation::createStructure(*this, jsNull()));
-    activationStructure.set(*this, JSActivation::createStructure(*this, jsNull()));
-    interruptedExecutionErrorStructure.set(*this, JSNonFinalObject::createStructure(*this, jsNull()));
-    terminatedExecutionErrorStructure.set(*this, JSNonFinalObject::createStructure(*this, jsNull()));
-    staticScopeStructure.set(*this, JSStaticScopeObject::createStructure(*this, jsNull()));
-    strictEvalActivationStructure.set(*this, StrictEvalActivation::createStructure(*this, jsNull()));
-    stringStructure.set(*this, JSString::createStructure(*this, jsNull()));
-    notAnObjectStructure.set(*this, JSNotAnObject::createStructure(*this, jsNull()));
-    propertyNameIteratorStructure.set(*this, JSPropertyNameIterator::createStructure(*this, jsNull()));
-    getterSetterStructure.set(*this, GetterSetter::createStructure(*this, jsNull()));
-    apiWrapperStructure.set(*this, JSAPIValueWrapper::createStructure(*this, jsNull()));
-    scopeChainNodeStructure.set(*this, ScopeChainNode::createStructure(*this, jsNull()));
-    executableStructure.set(*this, ExecutableBase::createStructure(*this, jsNull()));
-    nativeExecutableStructure.set(*this, NativeExecutable::createStructure(*this, jsNull()));
-    evalExecutableStructure.set(*this, EvalExecutable::createStructure(*this, jsNull()));
-    programExecutableStructure.set(*this, ProgramExecutable::createStructure(*this, jsNull()));
-    functionExecutableStructure.set(*this, FunctionExecutable::createStructure(*this, jsNull()));
-    regExpStructure.set(*this, RegExp::createStructure(*this, jsNull()));
-    structureChainStructure.set(*this, StructureChain::createStructure(*this, jsNull()));
+    debuggerActivationStructure.set(*this, DebuggerActivation::createStructure(*this, 0, jsNull()));
+    activationStructure.set(*this, JSActivation::createStructure(*this, 0, jsNull()));
+    interruptedExecutionErrorStructure.set(*this, InterruptedExecutionError::createStructure(*this, 0, jsNull()));
+    terminatedExecutionErrorStructure.set(*this, TerminatedExecutionError::createStructure(*this, 0, jsNull()));
+    staticScopeStructure.set(*this, JSStaticScopeObject::createStructure(*this, 0, jsNull()));
+    strictEvalActivationStructure.set(*this, StrictEvalActivation::createStructure(*this, 0, jsNull()));
+    stringStructure.set(*this, JSString::createStructure(*this, 0, jsNull()));
+    notAnObjectStructure.set(*this, JSNotAnObject::createStructure(*this, 0, jsNull()));
+    propertyNameIteratorStructure.set(*this, JSPropertyNameIterator::createStructure(*this, 0, jsNull()));
+    getterSetterStructure.set(*this, GetterSetter::createStructure(*this, 0, jsNull()));
+    apiWrapperStructure.set(*this, JSAPIValueWrapper::createStructure(*this, 0, jsNull()));
+    scopeChainNodeStructure.set(*this, ScopeChainNode::createStructure(*this, 0, jsNull()));
+    executableStructure.set(*this, ExecutableBase::createStructure(*this, 0, jsNull()));
+    nativeExecutableStructure.set(*this, NativeExecutable::createStructure(*this, 0, jsNull()));
+    evalExecutableStructure.set(*this, EvalExecutable::createStructure(*this, 0, jsNull()));
+    programExecutableStructure.set(*this, ProgramExecutable::createStructure(*this, 0, jsNull()));
+    functionExecutableStructure.set(*this, FunctionExecutable::createStructure(*this, 0, jsNull()));
+    regExpStructure.set(*this, RegExp::createStructure(*this, 0, jsNull()));
+    structureChainStructure.set(*this, StructureChain::createStructure(*this, 0, jsNull()));
 
     wtfThreadData().setCurrentIdentifierTable(existingEntryIdentifierTable);
 
-#if PLATFORM(MAC)
-    startProfilerServerIfNeeded();
-#endif
 #if ENABLE(JIT) && ENABLE(INTERPRETER)
 #if USE(CF)
     CFStringRef canUseJITKey = CFStringCreateWithCString(0 , "JavaScriptCoreUseJIT", kCFStringEncodingMacRoman);
@@ -337,9 +338,6 @@ JSGlobalData::~JSGlobalData()
     fastDelete(const_cast<HashTable*>(stringTable));
     fastDelete(const_cast<HashTable*>(stringConstructorTable));
 
-    delete parser;
-    delete lexer;
-
     deleteAllValues(opaqueJSClassData);
 
     delete emptyList;
@@ -352,6 +350,11 @@ JSGlobalData::~JSGlobalData()
     delete m_regExpCache;
 #if ENABLE(REGEXP_TRACING)
     delete m_rtTraceList;
+#endif
+
+#if ENABLE(DFG_JIT)
+    for (unsigned i = 0; i < scratchBuffers.size(); ++i)
+        fastFree(scratchBuffers[i]);
 #endif
 }
 
@@ -380,9 +383,7 @@ JSGlobalData& JSGlobalData::sharedInstance()
     JSGlobalData*& instance = sharedInstanceInternal();
     if (!instance) {
         instance = adoptRef(new JSGlobalData(APIShared, ThreadStackTypeSmall, SmallHeap)).leakRef();
-#if ENABLE(JSC_MULTIPLE_THREADS)
         instance->makeUsableFromMultipleThreads();
-#endif
     }
     return *instance;
 }
@@ -395,18 +396,18 @@ JSGlobalData*& JSGlobalData::sharedInstanceInternal()
 }
 
 #if ENABLE(JIT)
-NativeExecutable* JSGlobalData::getHostFunction(NativeFunction function)
+NativeExecutable* JSGlobalData::getHostFunction(NativeFunction function, NativeFunction constructor)
 {
-    return jitStubs->hostFunctionStub(this, function);
+    return jitStubs->hostFunctionStub(this, function, constructor);
 }
-NativeExecutable* JSGlobalData::getHostFunction(NativeFunction function, ThunkGenerator generator)
+NativeExecutable* JSGlobalData::getHostFunction(NativeFunction function, ThunkGenerator generator, DFG::Intrinsic intrinsic)
 {
-    return jitStubs->hostFunctionStub(this, function, generator);
+    return jitStubs->hostFunctionStub(this, function, generator, intrinsic);
 }
 #else
-NativeExecutable* JSGlobalData::getHostFunction(NativeFunction function)
+NativeExecutable* JSGlobalData::getHostFunction(NativeFunction function, NativeFunction constructor)
 {
-    return NativeExecutable::create(*this, function, callHostFunctionAsConstructor);
+    return NativeExecutable::create(*this, function, constructor);
 }
 #endif
 
@@ -436,6 +437,9 @@ void JSGlobalData::stopSampling()
 void JSGlobalData::dumpSampleData(ExecState* exec)
 {
     interpreter->dumpSampleData(exec);
+#if ENABLE(ASSEMBLER)
+    ExecutableAllocator::dumpProfile();
+#endif
 }
 
 void JSGlobalData::recompileAllJSFunctions()
@@ -444,7 +448,7 @@ void JSGlobalData::recompileAllJSFunctions()
     // up throwing away code that is live on the stack.
     ASSERT(!dynamicGlobalObject);
     
-    heap.forEachCell<Recompiler>();
+    heap.objectSpace().forEachCell<Recompiler>();
 }
 
 struct StackPreservingRecompiler : public MarkedBlock::VoidFunctor {
@@ -485,7 +489,7 @@ void JSGlobalData::releaseExecutableMemory()
                 recompiler.currentlyExecutingFunctions.add(static_cast<FunctionExecutable*>(executable));
                 
         }
-        heap.forEachCell<StackPreservingRecompiler>(recompiler);
+        heap.objectSpace().forEachCell<StackPreservingRecompiler>(recompiler);
     }
     m_regExpCache->invalidateCode();
     heap.collectAllGarbage();

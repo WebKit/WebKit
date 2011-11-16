@@ -42,7 +42,7 @@ static JSValue numberConstructorMinValue(ExecState*, JSValue, const Identifier&)
 
 namespace JSC {
 
-const ClassInfo NumberConstructor::s_info = { "Function", &InternalFunction::s_info, 0, ExecState::numberConstructorTable };
+const ClassInfo NumberConstructor::s_info = { "Function", &InternalFunction::s_info, 0, ExecState::numberConstructorTable, CREATE_METHOD_TABLE(NumberConstructor) };
 
 /* Source for NumberConstructor.lut.h
 @begin numberConstructorTable
@@ -54,9 +54,14 @@ const ClassInfo NumberConstructor::s_info = { "Function", &InternalFunction::s_i
 @end
 */
 
-NumberConstructor::NumberConstructor(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, NumberPrototype* numberPrototype)
-    : InternalFunction(&exec->globalData(), globalObject, structure, Identifier(exec, numberPrototype->s_info.className))
+NumberConstructor::NumberConstructor(JSGlobalObject* globalObject, Structure* structure)
+    : InternalFunction(globalObject, structure) 
 {
+}
+
+void NumberConstructor::finishCreation(ExecState* exec, NumberPrototype* numberPrototype)
+{
+    Base::finishCreation(exec->globalData(), Identifier(exec, numberPrototype->s_info.className));
     ASSERT(inherits(&s_info));
 
     // Number.Prototype
@@ -66,14 +71,14 @@ NumberConstructor::NumberConstructor(ExecState* exec, JSGlobalObject* globalObje
     putDirectWithoutTransition(exec->globalData(), exec->propertyNames().length, jsNumber(1), ReadOnly | DontEnum | DontDelete);
 }
 
-bool NumberConstructor::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
+bool NumberConstructor::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
-    return getStaticValueSlot<NumberConstructor, InternalFunction>(exec, ExecState::numberConstructorTable(exec), this, propertyName, slot);
+    return getStaticValueSlot<NumberConstructor, InternalFunction>(exec, ExecState::numberConstructorTable(exec), static_cast<NumberConstructor*>(cell), propertyName, slot);
 }
 
-bool NumberConstructor::getOwnPropertyDescriptor(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
+bool NumberConstructor::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
 {
-    return getStaticValueDescriptor<NumberConstructor, InternalFunction>(exec, ExecState::numberConstructorTable(exec), this, propertyName, descriptor);
+    return getStaticValueDescriptor<NumberConstructor, InternalFunction>(exec, ExecState::numberConstructorTable(exec), static_cast<NumberConstructor*>(object), propertyName, descriptor);
 }
 
 static JSValue numberConstructorNaNValue(ExecState*, JSValue, const Identifier&)
@@ -110,7 +115,7 @@ static EncodedJSValue JSC_HOST_CALL constructWithNumberConstructor(ExecState* ex
     return JSValue::encode(object);
 }
 
-ConstructType NumberConstructor::getConstructData(ConstructData& constructData)
+ConstructType NumberConstructor::getConstructData(JSCell*, ConstructData& constructData)
 {
     constructData.native.function = constructWithNumberConstructor;
     return ConstructTypeHost;
@@ -122,7 +127,7 @@ static EncodedJSValue JSC_HOST_CALL callNumberConstructor(ExecState* exec)
     return JSValue::encode(jsNumber(!exec->argumentCount() ? 0 : exec->argument(0).toNumber(exec)));
 }
 
-CallType NumberConstructor::getCallData(CallData& callData)
+CallType NumberConstructor::getCallData(JSCell*, CallData& callData)
 {
     callData.native.function = callNumberConstructor;
     return CallTypeHost;

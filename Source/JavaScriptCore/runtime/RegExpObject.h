@@ -21,23 +21,27 @@
 #ifndef RegExpObject_h
 #define RegExpObject_h
 
-#include "JSObjectWithGlobalObject.h"
+#include "JSObject.h"
 #include "RegExp.h"
 
 namespace JSC {
     
-    class RegExpObject : public JSObjectWithGlobalObject {
+    class RegExpObject : public JSNonFinalObject {
     public:
-        typedef JSObjectWithGlobalObject Base;
+        typedef JSNonFinalObject Base;
 
         static RegExpObject* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, RegExp* regExp)
         {
-            return new (allocateCell<RegExpObject>(*exec->heap())) RegExpObject(globalObject, structure, regExp);
+            RegExpObject* object = new (allocateCell<RegExpObject>(*exec->heap())) RegExpObject(globalObject, structure, regExp);
+            object->finishCreation(globalObject);
+            return object;
         }
         
         static RegExpObject* create(JSGlobalData& globalData, JSGlobalObject* globalObject, Structure* structure, RegExp* regExp)
         {
-            return new (allocateCell<RegExpObject>(globalData.heap)) RegExpObject(globalObject, structure, regExp);
+            RegExpObject* object = new (allocateCell<RegExpObject>(globalData.heap)) RegExpObject(globalObject, structure, regExp);
+            object->finishCreation(globalObject);
+            return object;
         }
 
         virtual ~RegExpObject();
@@ -61,24 +65,25 @@ namespace JSC {
         JSValue test(ExecState*);
         JSValue exec(ExecState*);
 
-        virtual bool getOwnPropertySlot(ExecState*, const Identifier& propertyName, PropertySlot&);
-        virtual bool getOwnPropertyDescriptor(ExecState*, const Identifier&, PropertyDescriptor&);
-        virtual void put(ExecState*, const Identifier& propertyName, JSValue, PutPropertySlot&);
+        static bool getOwnPropertySlot(JSCell*, ExecState*, const Identifier& propertyName, PropertySlot&);
+        static bool getOwnPropertyDescriptor(JSObject*, ExecState*, const Identifier&, PropertyDescriptor&);
+        static void put(JSCell*, ExecState*, const Identifier& propertyName, JSValue, PutPropertySlot&);
 
         static JS_EXPORTDATA const ClassInfo s_info;
 
-        static Structure* createStructure(JSGlobalData& globalData, JSValue prototype)
+        static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue prototype)
         {
-            return Structure::create(globalData, prototype, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
+            return Structure::create(globalData, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), &s_info);
         }
 
     protected:
         RegExpObject(JSGlobalObject*, Structure*, RegExp*);
-        static const unsigned StructureFlags = OverridesVisitChildren | OverridesGetOwnPropertySlot | JSObjectWithGlobalObject::StructureFlags;
+        void finishCreation(JSGlobalObject*);
+        static const unsigned StructureFlags = OverridesVisitChildren | OverridesGetOwnPropertySlot | Base::StructureFlags;
+
+        static void visitChildren(JSCell*, SlotVisitor&);
 
     private:
-        virtual void visitChildren(SlotVisitor&);
-
         bool match(ExecState*);
 
         struct RegExpObjectData {

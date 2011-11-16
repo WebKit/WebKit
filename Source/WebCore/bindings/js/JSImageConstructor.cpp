@@ -32,11 +32,16 @@ namespace WebCore {
 
 ASSERT_CLASS_FITS_IN_CELL(JSImageConstructor);
 
-const ClassInfo JSImageConstructor::s_info = { "ImageConstructor", &DOMConstructorWithDocument::s_info, 0, 0 };
+const ClassInfo JSImageConstructor::s_info = { "ImageConstructor", &DOMConstructorWithDocument::s_info, 0, 0, CREATE_METHOD_TABLE(JSImageConstructor) };
 
-JSImageConstructor::JSImageConstructor(ExecState* exec, Structure* structure, JSDOMGlobalObject* globalObject)
+JSImageConstructor::JSImageConstructor(Structure* structure, JSDOMGlobalObject* globalObject)
     : DOMConstructorWithDocument(structure, globalObject)
 {
+}
+
+void JSImageConstructor::finishCreation(ExecState* exec, JSDOMGlobalObject* globalObject)
+{
+    Base::finishCreation(globalObject);
     ASSERT(inherits(&s_info));
     putDirect(exec->globalData(), exec->propertyNames().prototype, JSHTMLImageElementPrototype::self(exec, globalObject), None);
 }
@@ -69,7 +74,7 @@ static EncodedJSValue JSC_HOST_CALL constructImage(ExecState* exec)
         HTMLImageElement::createForJSConstructor(document, optionalWidth, optionalHeight))));
 }
 
-ConstructType JSImageConstructor::getConstructData(ConstructData& constructData)
+ConstructType JSImageConstructor::getConstructData(JSCell*, ConstructData& constructData)
 {
     constructData.native.function = constructImage;
     return ConstructTypeHost;

@@ -32,7 +32,6 @@
 #include <runtime/InitializeThreading.h>
 #include <wtf/Threading.h>
 
-#include <QApplication>
 #include <QDebug>
 #include <QFile>
 #include <QLocalServer>

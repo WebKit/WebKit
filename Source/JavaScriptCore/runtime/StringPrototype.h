@@ -29,31 +29,33 @@ namespace JSC {
 
     class StringPrototype : public StringObject {
     private:
-        StringPrototype(ExecState*, JSGlobalObject*, Structure*);
+        StringPrototype(ExecState*, Structure*);
 
     public:
         typedef StringObject Base;
 
         static StringPrototype* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure)
         {
-            return new (allocateCell<StringPrototype>(*exec->heap())) StringPrototype(exec, globalObject, structure);
+            JSString* empty = jsEmptyString(exec);
+            StringPrototype* prototype = new (allocateCell<StringPrototype>(*exec->heap())) StringPrototype(exec, structure);
+            prototype->finishCreation(exec, globalObject, empty);
+            return prototype;
         }
 
-        virtual bool getOwnPropertySlot(ExecState*, const Identifier& propertyName, PropertySlot&);
-        virtual bool getOwnPropertyDescriptor(ExecState*, const Identifier&, PropertyDescriptor&);
+        static bool getOwnPropertySlot(JSCell*, ExecState*, const Identifier& propertyName, PropertySlot&);
+        static bool getOwnPropertyDescriptor(JSObject*, ExecState*, const Identifier&, PropertyDescriptor&);
 
-        static Structure* createStructure(JSGlobalData& globalData, JSValue prototype)
+        static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue prototype)
         {
-            return Structure::create(globalData, prototype, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
+            return Structure::create(globalData, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), &s_info);
         }
 
         static const ClassInfo s_info;
         
     protected:
+        void finishCreation(ExecState*, JSGlobalObject*, JSString*);
         static const unsigned StructureFlags = OverridesGetOwnPropertySlot | StringObject::StructureFlags;
 
-        COMPILE_ASSERT(!StringObject::AnonymousSlotCount, StringPrototype_stomps_on_your_anonymous_slot);
-        static const unsigned AnonymousSlotCount = 1;
     };
 
 } // namespace JSC

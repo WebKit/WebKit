@@ -171,6 +171,11 @@ public:
         m_assembler.orrs_r(dest, dest, m_assembler.getImm(imm.m_value, ARMRegisters::S0));
     }
 
+    void or32(RegisterID op1, RegisterID op2, RegisterID dest)
+    {
+        m_assembler.orrs_r(dest, op1, op2);
+    }
+
     void rshift32(RegisterID shift_amount, RegisterID dest)
     {
         ARMWord w = ARMAssembler::getOp2(0x1f);
@@ -251,6 +256,11 @@ public:
     void load8(ImplicitAddress address, RegisterID dest)
     {
         m_assembler.dataTransfer32(true, dest, address.base, address.offset, true);
+    }
+
+    void load8(BaseIndex address, RegisterID dest)
+    {
+        m_assembler.baseIndexTransfer32(true, dest, address.base, address.index, static_cast<int>(address.scale), address.offset, true);
     }
 
     void load32(ImplicitAddress address, RegisterID dest)
@@ -409,6 +419,13 @@ public:
         return branch32(cond, ARMRegisters::S1, right);
     }
 
+    Jump branch8(RelationalCondition cond, BaseIndex left, TrustedImm32 right)
+    {
+        ASSERT(!(right.m_value & 0xFFFFFF00));
+        load8(left, ARMRegisters::S1);
+        return branch32(cond, ARMRegisters::S1, right);
+    }
+
     Jump branch32(RelationalCondition cond, RegisterID left, RegisterID right, int useConstantPool = 0)
     {
         m_assembler.cmp_r(left, right);
@@ -458,23 +475,6 @@ public:
     {
         load32WithUnalignedHalfWords(left, ARMRegisters::S1);
         return branch32(cond, ARMRegisters::S1, right);
-    }
-
-    Jump branch16(RelationalCondition cond, BaseIndex left, RegisterID right)
-    {
-        UNUSED_PARAM(cond);
-        UNUSED_PARAM(left);
-        UNUSED_PARAM(right);
-        ASSERT_NOT_REACHED();
-        return jump();
-    }
-
-    Jump branch16(RelationalCondition cond, BaseIndex left, TrustedImm32 right)
-    {
-        load16(left, ARMRegisters::S0);
-        move(right, ARMRegisters::S1);
-        m_assembler.cmp_r(ARMRegisters::S0, ARMRegisters::S1);
-        return m_assembler.jmp(ARMCondition(cond));
     }
 
     Jump branchTest8(ResultCondition cond, Address address, TrustedImm32 mask = TrustedImm32(-1))
@@ -780,21 +780,21 @@ public:
     }
 
     // Floating point operators
-    bool supportsFloatingPoint() const
+    static bool supportsFloatingPoint()
     {
         return s_isVFPPresent;
     }
 
-    bool supportsFloatingPointTruncate() const
+    static bool supportsFloatingPointTruncate()
     {
-        return s_isVFPPresent;
+        return false;
     }
 
-    bool supportsFloatingPointSqrt() const
+    static bool supportsFloatingPointSqrt()
     {
         return s_isVFPPresent;
     }
-    bool supportsDoubleBitops() const { return false; }
+    static bool supportsFloatingPointAbs() { return false; }
 
     void loadDouble(ImplicitAddress address, FPRegisterID dest)
     {
@@ -862,7 +862,7 @@ public:
         m_assembler.vsqrt_f64_r(dest, src);
     }
     
-    void andnotDouble(FPRegisterID, FPRegisterID)
+    void absDouble(FPRegisterID, FPRegisterID)
     {
         ASSERT_NOT_REACHED();
     }
@@ -902,17 +902,13 @@ public:
     // Truncates 'src' to an integer, and places the resulting 'dest'.
     // If the result is not representable as a 32 bit value, branch.
     // May also branch for some values that are representable in 32 bits
-    // (specifically, in this case, INT_MIN and INT_MAX).
+    // (specifically, in this case, INT_MIN).
     Jump branchTruncateDoubleToInt32(FPRegisterID src, RegisterID dest)
     {
-        m_assembler.vcvtr_s32_f64_r(ARMRegisters::SD0 << 1, src);
-        // If VCVTR.S32.F64 can't fit the result into a 32-bit
-        // integer, it saturates at INT_MAX or INT_MIN. Testing this is
-        // probably quicker than testing FPSCR for exception.
-        m_assembler.vmov_arm_r(dest, ARMRegisters::SD0 << 1);
-        m_assembler.sub_r(ARMRegisters::S0, dest, ARMAssembler::getOp2(0x80000000));
-        m_assembler.cmn_r(ARMRegisters::S0, ARMAssembler::getOp2(1), ARMCondition(NotEqual));
-        return Jump(m_assembler.jmp(ARMCondition(Equal)));
+        UNUSED_PARAM(src);
+        UNUSED_PARAM(dest);
+        ASSERT_NOT_REACHED();
+        return jump();
     }
 
     // Convert 'src' to an integer, and places the resulting 'dest'.

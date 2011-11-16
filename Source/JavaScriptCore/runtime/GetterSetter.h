@@ -48,25 +48,25 @@ namespace JSC {
 
         static GetterSetter* create(ExecState* exec)
         {
-            return new (allocateCell<GetterSetter>(*exec->heap())) GetterSetter(exec);
+            GetterSetter* getterSetter = new (allocateCell<GetterSetter>(*exec->heap())) GetterSetter(exec);
+            getterSetter->finishCreation(exec->globalData());
+            return getterSetter;
         }
 
-        virtual void visitChildren(SlotVisitor&);
+        static void visitChildren(JSCell*, SlotVisitor&);
 
         JSObject* getter() const { return m_getter.get(); }
         void setGetter(JSGlobalData& globalData, JSObject* getter) { m_getter.set(globalData, this, getter); }
         JSObject* setter() const { return m_setter.get(); }
         void setSetter(JSGlobalData& globalData, JSObject* setter) { m_setter.set(globalData, this, setter); }
-        static Structure* createStructure(JSGlobalData& globalData, JSValue prototype)
+        static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue prototype)
         {
-            return Structure::create(globalData, prototype, TypeInfo(GetterSetterType, OverridesVisitChildren), AnonymousSlotCount, &s_info);
+            return Structure::create(globalData, globalObject, prototype, TypeInfo(GetterSetterType, OverridesVisitChildren), &s_info);
         }
         
         static const ClassInfo s_info;
 
     private:
-        virtual bool isGetterSetter() const;
-
         WriteBarrier<JSObject> m_getter;
         WriteBarrier<JSObject> m_setter;  
     };

@@ -83,7 +83,7 @@ namespace JSC {
 */
 
 template <int maxPoolSize, int barrierSize, int maxInstructionSize, class AssemblerType>
-class AssemblerBufferWithConstantPool: public AssemblerBuffer {
+class AssemblerBufferWithConstantPool : public AssemblerBuffer {
     typedef SegmentedVector<uint32_t, 512> LoadOffsets;
     using AssemblerBuffer::putIntegral;
     using AssemblerBuffer::putIntegralUnchecked;
@@ -195,10 +195,10 @@ public:
         putIntegralUnchecked(value.low);
     }
 
-    void* executableCopy(JSGlobalData& globalData, ExecutablePool* allocator)
+    PassRefPtr<ExecutableMemoryHandle> executableCopy(JSGlobalData& globalData)
     {
         flushConstantPool(false);
-        return AssemblerBuffer::executableCopy(globalData, allocator);
+        return AssemblerBuffer::executableCopy(globalData);
     }
 
     void putShortWithConstantInt(uint16_t insn, uint32_t constant, bool isReusable = false)

@@ -48,7 +48,7 @@ CrossThreadCopierBase<false, false, KURL>::Type CrossThreadCopierBase<false, fal
 
 CrossThreadCopierBase<false, false, String>::Type CrossThreadCopierBase<false, false, String>::copy(const String& str)
 {
-    return str.crossThreadString();
+    return str.isolatedCopy();
 }
 
 CrossThreadCopierBase<false, false, ResourceError>::Type CrossThreadCopierBase<false, false, ResourceError>::copy(const ResourceError& error)

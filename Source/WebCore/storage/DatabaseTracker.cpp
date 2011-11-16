@@ -92,17 +92,17 @@ void DatabaseTracker::setDatabaseDirectoryPath(const String& path)
 {
     MutexLocker lockDatabase(m_databaseGuard);
     ASSERT(!m_database.isOpen());
-    m_databaseDirectoryPath = path.threadsafeCopy();
+    m_databaseDirectoryPath = path.isolatedCopy();
 }
 
 String DatabaseTracker::databaseDirectoryPath() const
 {
-    return m_databaseDirectoryPath.threadsafeCopy();
+    return m_databaseDirectoryPath.isolatedCopy();
 }
 
 String DatabaseTracker::trackerDatabasePath() const
 {
-    return SQLiteFileSystem::appendDatabaseFileNameToPath(m_databaseDirectoryPath, "Databases.db");
+    return SQLiteFileSystem::appendDatabaseFileNameToPath(m_databaseDirectoryPath.isolatedCopy(), "Databases.db");
 }
 
 void DatabaseTracker::openTrackerDatabase(bool createIfDoesNotExist)
@@ -171,7 +171,7 @@ bool DatabaseTracker::canEstablishDatabase(ScriptExecutionContext* context, cons
         // Give the chrome client a chance to increase the quota.
         // Temporarily make the details of the proposed database available, so the client can get at them.
         // FIXME: We should really just pass the details into this call, rather than using m_proposedDatabases.
-        details = ProposedDatabase(origin->threadsafeCopy(), DatabaseDetails(name.threadsafeCopy(), displayName.threadsafeCopy(), estimatedSize, 0));
+        details = ProposedDatabase(origin->isolatedCopy(), DatabaseDetails(name.isolatedCopy(), displayName.isolatedCopy(), estimatedSize, 0));
         m_proposedDatabases.add(&details);
     }
     // Drop all locks before calling out; we don't know what they'll do.
@@ -267,7 +267,7 @@ void DatabaseTracker::interruptAllDatabasesForContext(const ScriptExecutionConte
 
 String DatabaseTracker::originPath(SecurityOrigin* origin) const
 {
-    return SQLiteFileSystem::appendDatabaseFileNameToPath(m_databaseDirectoryPath.threadsafeCopy(), origin->databaseIdentifier());
+    return SQLiteFileSystem::appendDatabaseFileNameToPath(m_databaseDirectoryPath.isolatedCopy(), origin->databaseIdentifier());
 }
 
 String DatabaseTracker::fullPathForDatabaseNoLock(SecurityOrigin* origin, const String& name, bool createIfNotExists)
@@ -328,7 +328,7 @@ String DatabaseTracker::fullPathForDatabase(SecurityOrigin* origin, const String
     MutexLocker lockDatabase(m_databaseGuard);
     Locker<OriginQuotaManager> quotaManagerLocker(originQuotaManager());
 
-    return fullPathForDatabaseNoLock(origin, name, createIfNotExists).threadsafeCopy();
+    return fullPathForDatabaseNoLock(origin, name, createIfNotExists).isolatedCopy();
 }
 
 void DatabaseTracker::populateOrigins()
@@ -353,7 +353,7 @@ void DatabaseTracker::populateOrigins()
     int result;
     while ((result = statement.step()) == SQLResultRow) {
         RefPtr<SecurityOrigin> origin = SecurityOrigin::createFromDatabaseIdentifier(statement.getColumnText(0));
-        m_quotaMap->set(origin.get()->threadsafeCopy(), statement.getColumnInt64(1));
+        m_quotaMap->set(origin.get()->isolatedCopy(), statement.getColumnInt64(1));
     }
 
     if (result != SQLResultDone)
@@ -403,7 +403,7 @@ bool DatabaseTracker::databaseNamesForOrigin(SecurityOrigin* origin, Vector<Stri
     }
 
     for (Vector<String>::iterator iter = temp.begin(); iter != temp.end(); ++iter)
-        resultVector.append(iter->threadsafeCopy());
+        resultVector.append(iter->isolatedCopy());
     return true;
 }
 
@@ -523,13 +523,13 @@ void DatabaseTracker::addOpenDatabase(AbstractDatabase* database)
         DatabaseNameMap* nameMap = m_openDatabaseMap->get(database->securityOrigin());
         if (!nameMap) {
             nameMap = new DatabaseNameMap;
-            m_openDatabaseMap->set(database->securityOrigin()->threadsafeCopy(), nameMap);
+            m_openDatabaseMap->set(database->securityOrigin()->isolatedCopy(), nameMap);
         }
 
         DatabaseSet* databaseSet = nameMap->get(name);
         if (!databaseSet) {
             databaseSet = new DatabaseSet;
-            nameMap->set(name.threadsafeCopy(), databaseSet);
+            nameMap->set(name.isolatedCopy(), databaseSet);
         }
 
         databaseSet->add(database);
@@ -695,7 +695,7 @@ void DatabaseTracker::setQuota(SecurityOrigin* origin, unsigned long long quota)
     }
 
     // FIXME: Is it really OK to update the quota in memory if we failed to update it on disk?
-    m_quotaMap->set(origin->threadsafeCopy(), quota);
+    m_quotaMap->set(origin->isolatedCopy(), quota);
 
     if (m_client)
         m_client->dispatchDidModifyOrigin(origin);
@@ -842,10 +842,10 @@ void DatabaseTracker::recordCreatingDatabase(SecurityOrigin *origin, const Strin
     NameCountMap* nameMap = m_beingCreated.get(origin);
     if (!nameMap) {
         nameMap = new NameCountMap();
-        m_beingCreated.set(origin->threadsafeCopy(), nameMap);
+        m_beingCreated.set(origin->isolatedCopy(), nameMap);
     }
     long count = nameMap->get(name);
-    nameMap->set(name.threadsafeCopy(), count + 1);
+    nameMap->set(name.isolatedCopy(), count + 1);
 }
 
 void DatabaseTracker::doneCreatingDatabase(SecurityOrigin *origin, const String& name)
@@ -887,10 +887,10 @@ void DatabaseTracker::recordDeletingDatabase(SecurityOrigin *origin, const Strin
     NameSet* nameSet = m_beingDeleted.get(origin);
     if (!nameSet) {
         nameSet = new NameSet();
-        m_beingDeleted.set(origin->threadsafeCopy(), nameSet);
+        m_beingDeleted.set(origin->isolatedCopy(), nameSet);
     }
     ASSERT(!nameSet->contains(name));
-    nameSet->add(name.threadsafeCopy());
+    nameSet->add(name.isolatedCopy());
 }
 
 void DatabaseTracker::doneDeletingDatabase(SecurityOrigin *origin, const String& name)
@@ -932,7 +932,7 @@ void DatabaseTracker::recordDeletingOrigin(SecurityOrigin *origin)
 {
     ASSERT(!m_databaseGuard.tryLock());
     ASSERT(!deletingOrigin(origin));
-    m_originsBeingDeleted.add(origin->threadsafeCopy());
+    m_originsBeingDeleted.add(origin->isolatedCopy());
 }
 
 void DatabaseTracker::doneDeletingOrigin(SecurityOrigin *origin)
@@ -1065,7 +1065,7 @@ void DatabaseTracker::scheduleNotifyDatabaseChanged(SecurityOrigin* origin, cons
 {
     MutexLocker locker(notificationMutex());
 
-    notificationQueue().append(pair<RefPtr<SecurityOrigin>, String>(origin->threadsafeCopy(), name.crossThreadString()));
+    notificationQueue().append(pair<RefPtr<SecurityOrigin>, String>(origin->isolatedCopy(), name.isolatedCopy()));
     scheduleForNotification();
 }
 

@@ -50,4 +50,74 @@ RegisterFile* CallFrame::registerFile()
 
 #endif
 
+#if ENABLE(DFG_JIT)
+bool CallFrame::isInlineCallFrameSlow()
+{
+    if (!callee())
+        return false;
+    JSCell* calleeAsFunctionCell = getJSFunction(callee());
+    if (!calleeAsFunctionCell)
+        return false;
+    JSFunction* calleeAsFunction = asFunction(calleeAsFunctionCell);
+    return calleeAsFunction->executable() != codeBlock()->ownerExecutable();
+}
+        
+CallFrame* CallFrame::trueCallerFrame()
+{
+    // this -> The callee; this is either an inlined callee in which case it already has
+    //    a pointer to the true caller. Otherwise it contains current PC in the machine
+    //    caller.
+    //
+    // machineCaller -> The caller according to the machine, which may be zero or
+    //    more frames above the true caller due to inlining.
+    //
+    // trueCaller -> The real caller.
+    
+    // Am I an inline call frame? If so, we're done.
+    if (isInlineCallFrame())
+        return callerFrame();
+    
+    // I am a machine call frame, so the question is: is my caller a machine call frame
+    // that has inlines or a machine call frame that doesn't?
+    CallFrame* machineCaller = callerFrame()->removeHostCallFrameFlag();
+    if (!machineCaller)
+        return 0;
+    ASSERT(!machineCaller->isInlineCallFrame());
+    if (!machineCaller->codeBlock())
+        return machineCaller;
+    if (!machineCaller->codeBlock()->hasCodeOrigins())
+        return machineCaller; // No inlining, so machineCaller == trueCaller
+    
+    // Figure out where the caller frame would have gone relative to the machine
+    // caller, and rematerialize it. Do so for the entire inline stack.
+    
+    CodeOrigin codeOrigin = machineCaller->codeBlock()->codeOriginForReturn(returnPC());
+    
+    for (InlineCallFrame* inlineCallFrame = codeOrigin.inlineCallFrame; inlineCallFrame;) {
+        InlineCallFrame* nextInlineCallFrame = inlineCallFrame->caller.inlineCallFrame;
+        
+        CallFrame* inlinedCaller = machineCaller + inlineCallFrame->stackOffset;
+        
+        JSFunction* calleeAsFunction = inlineCallFrame->callee.get();
+        
+        // Fill in the inlinedCaller
+        inlinedCaller->setCodeBlock(machineCaller->codeBlock());
+        
+        inlinedCaller->setScopeChain(calleeAsFunction->scope());
+        if (nextInlineCallFrame)
+            inlinedCaller->setCallerFrame(machineCaller + nextInlineCallFrame->stackOffset);
+        else
+            inlinedCaller->setCallerFrame(machineCaller);
+        
+        inlinedCaller->setInlineCallFrame(inlineCallFrame);
+        inlinedCaller->setArgumentCountIncludingThis(inlineCallFrame->arguments.size());
+        inlinedCaller->setCallee(calleeAsFunction);
+        
+        inlineCallFrame = nextInlineCallFrame;
+    }
+    
+    return machineCaller + codeOrigin.inlineCallFrame->stackOffset;
+}
+#endif
+
 }

@@ -31,15 +31,27 @@ namespace JSC {
     public:
         typedef InternalFunction Base;
 
-        static BooleanConstructor* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, BooleanPrototype* boolPrototype)
+        static BooleanConstructor* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, BooleanPrototype* booleanPrototype)
         {
-            return new (allocateCell<BooleanConstructor>(*exec->heap())) BooleanConstructor(exec, globalObject, structure, boolPrototype);
+            BooleanConstructor* constructor = new (allocateCell<BooleanConstructor>(*exec->heap())) BooleanConstructor(globalObject, structure);
+            constructor->finishCreation(exec, booleanPrototype);
+            return constructor;
         }
 
+        static const ClassInfo s_info;
+
+        static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue prototype) 
+        { 
+            return Structure::create(globalData, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), &s_info); 
+        }
+
+    protected:
+        void finishCreation(ExecState*, BooleanPrototype*);
+
     private:
-        BooleanConstructor(ExecState*, JSGlobalObject*, Structure*, BooleanPrototype*);
-        virtual ConstructType getConstructData(ConstructData&);
-        virtual CallType getCallData(CallData&);
+        BooleanConstructor(JSGlobalObject*, Structure*);
+        static ConstructType getConstructData(JSCell*, ConstructData&);
+        static CallType getCallData(JSCell*, CallData&);
     };
 
     JSObject* constructBooleanFromImmediateBoolean(ExecState*, JSGlobalObject*, JSValue);

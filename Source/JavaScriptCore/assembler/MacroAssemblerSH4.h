@@ -45,7 +45,7 @@ public:
     static const RegisterID linkRegister = SH4Registers::pr;
     static const RegisterID scratchReg3 = SH4Registers::r13;
 
-    static const int MaximumCompactPtrAlignedAddressOffset = 0x7FFFFFFF;
+    static const int MaximumCompactPtrAlignedAddressOffset = 60;
 
     enum RelationalCondition {
         Equal = SH4Assembler::EQ,
@@ -221,6 +221,18 @@ public:
         releaseScratch(scr);
     }
 
+    void or32(RegisterID op1, RegisterID op2, RegisterID dest)
+    {
+        if (op1 == op2)
+            move(op1, dest);
+        else if (op1 == dest)
+            or32(op2, dest);
+        else {
+            move(op2, dest);
+            or32(op1, dest);
+        }
+    }
+
     void rshift32(RegisterID shiftamount, RegisterID dest)
     {
         compare32(32, shiftamount, Equal);
@@ -234,6 +246,13 @@ public:
     {
         if (imm.m_value & 0x1f)
             rshift32(imm.m_value & 0x1f, dest);
+    }
+
+    void rshift32(RegisterID src, TrustedImm32 imm, RegisterID dest)
+    {
+        if (src != dest)
+            move(src, dest);
+        rshift32(imm, dest);
     }
 
     void sub32(RegisterID src, RegisterID dest)
@@ -502,6 +521,16 @@ public:
         load8(address.base, address.offset, dest);
     }
 
+    void load8(BaseIndex address, RegisterID dest)
+    {
+        RegisterID scr = claimScratch();
+        move(address.index, scr);
+        lshift32(TrustedImm32(address.scale), scr);
+        add32(address.base, scr);
+        load8(scr, address.offset, dest);
+        releaseScratch(scr);
+    }
+
     void load32(BaseIndex address, RegisterID dest)
     {
         RegisterID scr = claimScratch();
@@ -512,9 +541,9 @@ public:
         releaseScratch(scr);
     }
 
-    void load32(void* address, RegisterID dest)
+    void load32(const void* address, RegisterID dest)
     {
-        m_assembler.loadConstant(reinterpret_cast<uint32_t>(address), dest);
+        m_assembler.loadConstant(reinterpret_cast<uint32_t>(const_cast<void*>(address)), dest);
         m_assembler.movlMemReg(dest, dest);
     }
 
@@ -711,7 +740,7 @@ public:
         RegisterID scr1 = claimScratch();
         m_assembler.loadConstant((imm.m_value), scr);
         m_assembler.loadConstant(reinterpret_cast<uint32_t>(address), scr1);
-        m_assembler.movlMemReg(scr, scr1);
+        m_assembler.movlRegMem(scr, scr1);
         releaseScratch(scr);
         releaseScratch(scr1);
     }
@@ -720,7 +749,7 @@ public:
     {
         RegisterID scr = claimScratch();
         m_assembler.loadConstant(reinterpret_cast<uint32_t>(address), scr);
-        m_assembler.movlMemReg(src, scr);
+        m_assembler.movlRegMem(src, scr);
         releaseScratch(scr);
     }
 
@@ -735,17 +764,6 @@ public:
         return label;
     }
     
-    DataLabel32 load32WithAddressOffsetPatch(Address address, RegisterID dest)
-    {
-        RegisterID scr = claimScratch();
-        DataLabelCompact label(this);
-        m_assembler.loadConstantUnReusable(address.offset, scr);
-        m_assembler.addlRegReg(address.base, scr);
-        m_assembler.movlMemReg(scr, dest);
-        releaseScratch(scr);
-        return label;
-    }
-
     DataLabel32 store32WithAddressOffsetPatch(RegisterID src, Address address)
     {
         RegisterID scr = claimScratch();
@@ -757,12 +775,21 @@ public:
         return label;
     }
 
+    DataLabelCompact load32WithCompactAddressOffsetPatch(Address address, RegisterID dest)
+    {
+        DataLabelCompact dataLabel(this);
+        ASSERT(address.offset <= MaximumCompactPtrAlignedAddressOffset);
+        ASSERT(address.offset >= 0);
+        m_assembler.movlMemRegCompact(address.offset >> 2, address.base, dest);
+        return dataLabel;
+    }
+
      // Floating-point operations
 
-    bool supportsFloatingPoint() const { return true; }
-    bool supportsFloatingPointTruncate() const { return true; }
-    bool supportsFloatingPointSqrt() const { return true; }
-    bool supportsDoubleBitops() const { return false; }
+    static bool supportsFloatingPoint() { return true; }
+    static bool supportsFloatingPointTruncate() { return true; }
+    static bool supportsFloatingPointSqrt() { return true; }
+    static bool supportsFloatingPointAbs() { return false; }
 
     void loadDouble(ImplicitAddress address, FPRegisterID dest)
     {
@@ -1102,7 +1129,7 @@ public:
         m_assembler.dsqrt(dest);
     }
     
-    void andnotDouble(FPRegisterID, FPRegisterID)
+    void absDouble(FPRegisterID, FPRegisterID)
     {
         ASSERT_NOT_REACHED();
     }
@@ -1194,8 +1221,9 @@ public:
 
     DataLabelPtr moveWithPatch(TrustedImmPtr initialValue, RegisterID dest)
     {
+        m_assembler.ensureSpace(m_assembler.maxInstructionSize, sizeof(uint32_t));
         DataLabelPtr dataLabel(this);
-        m_assembler.loadConstantUnReusable(reinterpret_cast<uint32_t>(initialValue.m_value), dest, true);
+        m_assembler.loadConstantUnReusable(reinterpret_cast<uint32_t>(initialValue.m_value), dest);
         return dataLabel;
     }
 
@@ -1346,8 +1374,9 @@ public:
         return branchTrue();
     }
 
-    Jump branch16(RelationalCondition cond,  BaseIndex left, RegisterID right)
+    Jump branch8(RelationalCondition cond, BaseIndex left, TrustedImm32 right)
     {
+        ASSERT(!(right.m_value & 0xFFFFFF00));
         RegisterID scr = claimScratch();
 
         move(left.index, scr);
@@ -1356,25 +1385,8 @@ public:
         if (left.offset)
             add32(TrustedImm32(left.offset), scr);
         add32(left.base, scr);
-        load16(scr, scr);
-        extuw(scr, scr);
-        releaseScratch(scr);
-
-        return branch32(cond, scr, right);
-    }
-
-    Jump branch16(RelationalCondition cond, BaseIndex left, TrustedImm32 right)
-    {
-        RegisterID scr = claimScratch();
-
-        move(left.index, scr);
-        lshift32(TrustedImm32(left.scale), scr);
-
-        if (left.offset)
-            add32(TrustedImm32(left.offset), scr);
-        add32(left.base, scr);
-        load16(scr, scr);
-        extuw(scr, scr);
+        load8(scr, scr);
+        m_assembler.extub(scr, scr);
         RegisterID scr1 = claimScratch();
         m_assembler.loadConstant(right.m_value, scr1);
         releaseScratch(scr);

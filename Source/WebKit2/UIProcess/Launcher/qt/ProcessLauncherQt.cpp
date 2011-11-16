@@ -30,7 +30,7 @@
 #include "Connection.h"
 #include "RunLoop.h"
 #include "WebProcess.h"
-#include <QApplication>
+#include <QCoreApplication>
 #include <QDebug>
 #include <QFile>
 #include <QLocalServer>

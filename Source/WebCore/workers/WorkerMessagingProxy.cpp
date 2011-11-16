@@ -113,9 +113,9 @@ public:
 
 private:
     WorkerExceptionTask(const String& errorMessage, int lineNumber, const String& sourceURL, WorkerMessagingProxy* messagingProxy)
-        : m_errorMessage(errorMessage.crossThreadString())
+        : m_errorMessage(errorMessage.isolatedCopy())
         , m_lineNumber(lineNumber)
-        , m_sourceURL(sourceURL.crossThreadString())
+        , m_sourceURL(sourceURL.isolatedCopy())
         , m_messagingProxy(messagingProxy)
     {
     }

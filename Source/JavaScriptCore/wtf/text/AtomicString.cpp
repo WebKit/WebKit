@@ -85,24 +85,17 @@ static inline PassRefPtr<StringImpl> addToStringTable(const T& value)
 }
 
 struct CStringTranslator {
-    static unsigned hash(const char* c)
+    static unsigned hash(const LChar* c)
     {
         return StringHasher::computeHash(c);
     }
 
-    static bool equal(StringImpl* r, const char* s)
+    static inline bool equal(StringImpl* r, const LChar* s)
     {
-        int length = r->length();
-        const UChar* d = r->characters();
-        for (int i = 0; i != length; ++i) {
-            unsigned char c = s[i];
-            if (d[i] != c)
-                return false;
-        }
-        return !s[length];
+        return WTF::equal(r, s);
     }
 
-    static void translate(StringImpl*& location, const char* const& c, unsigned hash)
+    static void translate(StringImpl*& location, const LChar* const& c, unsigned hash)
     {
         location = StringImpl::create(c).leakRef();
         location->setHash(hash);
@@ -110,68 +103,20 @@ struct CStringTranslator {
     }
 };
 
-bool operator==(const AtomicString& a, const char* b)
-{ 
-    StringImpl* impl = a.impl();
-    if ((!impl || !impl->characters()) && !b)
-        return true;
-    if ((!impl || !impl->characters()) || !b)
-        return false;
-    return CStringTranslator::equal(impl, b); 
-}
-
-PassRefPtr<StringImpl> AtomicString::add(const char* c)
+PassRefPtr<StringImpl> AtomicString::add(const LChar* c)
 {
     if (!c)
         return 0;
     if (!*c)
         return StringImpl::empty();
 
-    return addToStringTable<const char*, CStringTranslator>(c);
+    return addToStringTable<const LChar*, CStringTranslator>(c);
 }
 
 struct UCharBuffer {
     const UChar* s;
     unsigned length;
 };
-
-static inline bool equal(StringImpl* string, const UChar* characters, unsigned length)
-{
-    if (string->length() != length)
-        return false;
-
-    // FIXME: perhaps we should have a more abstract macro that indicates when
-    // going 4 bytes at a time is unsafe
-#if CPU(ARM) || CPU(SH4) || CPU(MIPS) || CPU(SPARC)
-    const UChar* stringCharacters = string->characters();
-    for (unsigned i = 0; i != length; ++i) {
-        if (*stringCharacters++ != *characters++)
-            return false;
-    }
-    return true;
-#else
-    /* Do it 4-bytes-at-a-time on architectures where it's safe */
-
-    const uint32_t* stringCharacters = reinterpret_cast<const uint32_t*>(string->characters());
-    const uint32_t* bufferCharacters = reinterpret_cast<const uint32_t*>(characters);
-
-    unsigned halfLength = length >> 1;
-    for (unsigned i = 0; i != halfLength; ++i) {
-        if (*stringCharacters++ != *bufferCharacters++)
-            return false;
-    }
-
-    if (length & 1 &&  *reinterpret_cast<const uint16_t*>(stringCharacters) != *reinterpret_cast<const uint16_t*>(bufferCharacters))
-        return false;
-
-    return true;
-#endif
-}
-
-bool operator==(const AtomicString& string, const Vector<UChar>& vector)
-{
-    return string.impl() && equal(string.impl(), vector.data(), vector.size());
-}
 
 struct UCharBufferTranslator {
     static unsigned hash(const UCharBuffer& buf)

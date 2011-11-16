@@ -117,9 +117,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-#ifndef NDEBUG
-static WTF::RefCountedLeakCounter frameCounter("Frame");
-#endif
+DEFINE_DEBUG_ONLY_GLOBAL(WTF::RefCountedLeakCounter, frameCounter, ("Frame"));
 
 static inline Frame* parentFromOwnerElement(HTMLFrameOwnerElement* ownerElement)
 {

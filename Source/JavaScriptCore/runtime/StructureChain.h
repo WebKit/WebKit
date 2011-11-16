@@ -27,6 +27,7 @@
 #define StructureChain_h
 
 #include "JSCell.h"
+#include "JSObject.h"
 #include "Structure.h"
 
 #include <wtf/OwnArrayPtr.h>
@@ -44,16 +45,36 @@ namespace JSC {
     public:
         typedef JSCell Base;
 
-        static StructureChain* create(JSGlobalData& globalData, Structure* head) { return new (allocateCell<StructureChain>(globalData.heap)) StructureChain(globalData, globalData.structureChainStructure.get(), head); }
+        static StructureChain* create(JSGlobalData& globalData, Structure* head)
+        { 
+            StructureChain* chain = new (allocateCell<StructureChain>(globalData.heap)) StructureChain(globalData, globalData.structureChainStructure.get());
+            chain->finishCreation(globalData, head);
+            return chain;
+        }
         WriteBarrier<Structure>* head() { return m_vector.get(); }
-        void visitChildren(SlotVisitor&);
+        static void visitChildren(JSCell*, SlotVisitor&);
 
-        static Structure* createStructure(JSGlobalData& globalData, JSValue prototype) { return Structure::create(globalData, prototype, TypeInfo(CompoundType, OverridesVisitChildren), 0, &s_info); }
+        static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue prototype) { return Structure::create(globalData, globalObject, prototype, TypeInfo(CompoundType, OverridesVisitChildren), &s_info); }
         
         static ClassInfo s_info;
 
+    protected:
+        void finishCreation(JSGlobalData& globalData, Structure* head)
+        {
+            Base::finishCreation(globalData);
+            size_t size = 0;
+            for (Structure* current = head; current; current = current->storedPrototype().isNull() ? 0 : asObject(current->storedPrototype())->structure())
+                ++size;
+    
+            m_vector = adoptArrayPtr(new WriteBarrier<Structure>[size + 1]);
+
+            size_t i = 0;
+            for (Structure* current = head; current; current = current->storedPrototype().isNull() ? 0 : asObject(current->storedPrototype())->structure())
+                m_vector[i++].set(globalData, this, current);
+        }
+
     private:
-        StructureChain(JSGlobalData&, Structure*, Structure* head);
+        StructureChain(JSGlobalData&, Structure*);
         ~StructureChain();
         OwnArrayPtr<WriteBarrier<Structure> > m_vector;
     };

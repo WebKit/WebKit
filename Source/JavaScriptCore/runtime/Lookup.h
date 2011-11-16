@@ -22,9 +22,9 @@
 #define Lookup_h
 
 #include "CallFrame.h"
+#include "DFGIntrinsic.h"
 #include "Identifier.h"
 #include "JSGlobalObject.h"
-#include "JSObject.h"
 #include "PropertySlot.h"
 #include <stdio.h>
 #include <wtf/Assertions.h>
@@ -45,6 +45,9 @@ namespace JSC {
         intptr_t value2;
 #if ENABLE(JIT)
         ThunkGenerator generator;
+#if ENABLE(DFG_JIT)
+        DFG::Intrinsic intrinsic;
+#endif
 #endif
     };
 
@@ -59,6 +62,9 @@ namespace JSC {
         void initialize(StringImpl* key, unsigned char attributes, intptr_t v1, intptr_t v2
 #if ENABLE(JIT)
                         , ThunkGenerator generator = 0
+#if ENABLE(DFG_JIT)
+                        , DFG::Intrinsic intrinsic = DFG::NoIntrinsic
+#endif
 #endif
                         )
         {
@@ -68,6 +74,9 @@ namespace JSC {
             m_u.store.value2 = v2;
 #if ENABLE(JIT)
             m_u.function.generator = generator;
+#if ENABLE(DFG_JIT)
+            m_u.function.intrinsic = intrinsic;
+#endif
 #endif
             m_next = 0;
         }
@@ -79,6 +88,15 @@ namespace JSC {
 
 #if ENABLE(JIT)
         ThunkGenerator generator() const { ASSERT(m_attributes & Function); return m_u.function.generator; }
+        DFG::Intrinsic intrinsic() const
+        {
+            ASSERT(m_attributes & Function);
+#if ENABLE(DFG_JIT)
+            return m_u.function.intrinsic;
+#else
+            return DFG::NoIntrinsic;
+#endif
+        }
 #endif
         NativeFunction function() const { ASSERT(m_attributes & Function); return m_u.function.functionValue; }
         unsigned char functionLength() const { ASSERT(m_attributes & Function); return static_cast<unsigned char>(m_u.function.length); }
@@ -105,6 +123,9 @@ namespace JSC {
                 intptr_t length; // number of arguments for function
 #if ENABLE(JIT)
                 ThunkGenerator generator;
+#if ENABLE(DFG_JIT)
+                DFG::Intrinsic intrinsic;
+#endif
 #endif
             } function;
             struct {
@@ -155,6 +176,63 @@ namespace JSC {
             return entry(identifier);
         }
 
+        class ConstIterator {
+        public:
+            ConstIterator(const HashTable* table, int position)
+                : m_table(table)
+                , m_position(position)
+            {
+                skipInvalidKeys();
+            }
+
+            const HashEntry* operator->()
+            {
+                return &m_table->table[m_position];
+            }
+
+            const HashEntry* operator*()
+            {
+                return &m_table->table[m_position];
+            }
+
+            bool operator!=(const ConstIterator& other)
+            {
+                ASSERT(m_table == other.m_table);
+                return m_position != other.m_position;
+            }
+            
+            ConstIterator& operator++()
+            {
+                ASSERT(m_position < m_table->compactSize);
+                ++m_position;
+                skipInvalidKeys();
+                return *this;
+            }
+
+        private:
+            void skipInvalidKeys()
+            {
+                ASSERT(m_position <= m_table->compactSize);
+                while (m_position < m_table->compactSize && !m_table->table[m_position].key())
+                    ++m_position;
+                ASSERT(m_position <= m_table->compactSize);
+            }
+            
+            const HashTable* m_table;
+            int m_position;
+        };
+
+        ConstIterator begin(JSGlobalData& globalData) const
+        {
+            initializeIfNeeded(&globalData);
+            return ConstIterator(this, 0);
+        }
+        ConstIterator end(JSGlobalData& globalData) const
+        {
+            initializeIfNeeded(&globalData);
+            return ConstIterator(this, compactSize);
+        }
+
     private:
         ALWAYS_INLINE const HashEntry* entry(const Identifier& identifier) const
         {
@@ -178,7 +256,7 @@ namespace JSC {
         void createTable(JSGlobalData*) const;
     };
 
-    void setUpStaticFunctionSlot(ExecState*, const HashEntry*, JSObject* thisObject, const Identifier& propertyName, PropertySlot&);
+    bool setUpStaticFunctionSlot(ExecState*, const HashEntry*, JSObject* thisObject, const Identifier& propertyName, PropertySlot&);
 
     /**
      * This method does it all (looking in the hashtable, checking for function
@@ -192,13 +270,12 @@ namespace JSC {
         const HashEntry* entry = table->entry(exec, propertyName);
 
         if (!entry) // not found, forward to parent
-            return thisObj->ParentImp::getOwnPropertySlot(exec, propertyName, slot);
+            return ParentImp::getOwnPropertySlot(thisObj, exec, propertyName, slot);
 
         if (entry->attributes() & Function)
-            setUpStaticFunctionSlot(exec, entry, thisObj, propertyName, slot);
-        else
-            slot.setCacheableCustom(thisObj, entry->propertyGetter());
+            return setUpStaticFunctionSlot(exec, entry, thisObj, propertyName, slot);
 
+        slot.setCacheableCustom(thisObj, entry->propertyGetter());
         return true;
     }
 
@@ -208,14 +285,17 @@ namespace JSC {
         const HashEntry* entry = table->entry(exec, propertyName);
         
         if (!entry) // not found, forward to parent
-            return thisObj->ParentImp::getOwnPropertyDescriptor(exec, propertyName, descriptor);
+            return ParentImp::getOwnPropertyDescriptor(thisObj, exec, propertyName, descriptor);
  
         PropertySlot slot;
-        if (entry->attributes() & Function)
-            setUpStaticFunctionSlot(exec, entry, thisObj, propertyName, slot);
-        else
-            slot.setCustom(thisObj, entry->propertyGetter());
+        if (entry->attributes() & Function) {
+            bool present = setUpStaticFunctionSlot(exec, entry, thisObj, propertyName, slot);
+            if (present)
+                descriptor.setDescriptor(slot.getValue(exec, propertyName), entry->attributes());
+            return present;
+        }
 
+        slot.setCustom(thisObj, entry->propertyGetter());
         descriptor.setDescriptor(slot.getValue(exec, propertyName), entry->attributes());
         return true;
     }
@@ -228,15 +308,14 @@ namespace JSC {
     template <class ParentImp>
     inline bool getStaticFunctionSlot(ExecState* exec, const HashTable* table, JSObject* thisObj, const Identifier& propertyName, PropertySlot& slot)
     {
-        if (static_cast<ParentImp*>(thisObj)->ParentImp::getOwnPropertySlot(exec, propertyName, slot))
+        if (ParentImp::getOwnPropertySlot(thisObj, exec, propertyName, slot))
             return true;
 
         const HashEntry* entry = table->entry(exec, propertyName);
         if (!entry)
             return false;
 
-        setUpStaticFunctionSlot(exec, entry, thisObj, propertyName, slot);
-        return true;
+        return setUpStaticFunctionSlot(exec, entry, thisObj, propertyName, slot);
     }
     
     /**
@@ -247,7 +326,7 @@ namespace JSC {
     template <class ParentImp>
     inline bool getStaticFunctionDescriptor(ExecState* exec, const HashTable* table, JSObject* thisObj, const Identifier& propertyName, PropertyDescriptor& descriptor)
     {
-        if (static_cast<ParentImp*>(thisObj)->ParentImp::getOwnPropertyDescriptor(exec, propertyName, descriptor))
+        if (ParentImp::getOwnPropertyDescriptor(static_cast<ParentImp*>(thisObj), exec, propertyName, descriptor))
             return true;
         
         const HashEntry* entry = table->entry(exec, propertyName);
@@ -255,9 +334,10 @@ namespace JSC {
             return false;
         
         PropertySlot slot;
-        setUpStaticFunctionSlot(exec, entry, thisObj, propertyName, slot);
-        descriptor.setDescriptor(slot.getValue(exec, propertyName), entry->attributes());
-        return true;
+        bool present = setUpStaticFunctionSlot(exec, entry, thisObj, propertyName, slot);
+        if (present)
+            descriptor.setDescriptor(slot.getValue(exec, propertyName), entry->attributes());
+        return present;
     }
 
     /**
@@ -270,7 +350,7 @@ namespace JSC {
         const HashEntry* entry = table->entry(exec, propertyName);
 
         if (!entry) // not found, forward to parent
-            return thisObj->ParentImp::getOwnPropertySlot(exec, propertyName, slot);
+            return ParentImp::getOwnPropertySlot(thisObj, exec, propertyName, slot);
 
         ASSERT(!(entry->attributes() & Function));
 
@@ -288,7 +368,7 @@ namespace JSC {
         const HashEntry* entry = table->entry(exec, propertyName);
         
         if (!entry) // not found, forward to parent
-            return thisObj->ParentImp::getOwnPropertyDescriptor(exec, propertyName, descriptor);
+            return ParentImp::getOwnPropertyDescriptor(thisObj, exec, propertyName, descriptor);
         
         ASSERT(!(entry->attributes() & Function));
         PropertySlot slot;
@@ -310,12 +390,10 @@ namespace JSC {
         if (!entry)
             return false;
 
-        if (entry->attributes() & Function) { // function: put as override property
-            if (LIKELY(value.isCell()))
-                thisObj->putDirectFunction(exec->globalData(), propertyName, value.asCell());
-            else
-                thisObj->putDirect(exec->globalData(), propertyName, value);
-        } else if (!(entry->attributes() & ReadOnly))
+        // If this is a function put it as an override property.
+        if (entry->attributes() & Function)
+            thisObj->putDirect(exec->globalData(), propertyName, value);
+        else if (!(entry->attributes() & ReadOnly))
             entry->propertyPutter()(exec, thisObj, value);
 
         return true;
@@ -331,7 +409,7 @@ namespace JSC {
     inline void lookupPut(ExecState* exec, const Identifier& propertyName, JSValue value, const HashTable* table, ThisImp* thisObj, PutPropertySlot& slot)
     {
         if (!lookupPut<ThisImp>(exec, propertyName, value, table, thisObj))
-            thisObj->ParentImp::put(exec, propertyName, value, slot); // not found: forward to parent
+            ParentImp::put(thisObj, exec, propertyName, value, slot); // not found: forward to parent
     }
 
 } // namespace JSC

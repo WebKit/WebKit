@@ -117,23 +117,31 @@ struct JSCallbackObjectData : WeakHandleOwner {
 template <class Parent>
 class JSCallbackObject : public Parent {
 protected:
-    JSCallbackObject(ExecState*, JSGlobalObject*, Structure*, JSClassRef, void* data);
+    JSCallbackObject(ExecState*, Structure*, JSClassRef, void* data);
     JSCallbackObject(JSGlobalData&, JSClassRef, Structure*);
     // We'd like to use the placement version of operator new defined in JSCell, but 
     // we can't because Parent is a template argument, so we just duplicate the same 
     // functionality here.
     void* operator new(size_t, void* ptr) { return ptr; }
 
+    void finishCreation(ExecState*);
+    void finishCreation(JSGlobalData&);
+
 public:
     typedef Parent Base;
 
     static JSCallbackObject* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, JSClassRef classRef, void* data)
     {
-        return new (allocateCell<JSCallbackObject>(*exec->heap())) JSCallbackObject(exec, globalObject, structure, classRef, data);
+        ASSERT_UNUSED(globalObject, !structure->globalObject() || structure->globalObject() == globalObject);
+        JSCallbackObject* callbackObject = new (allocateCell<JSCallbackObject>(*exec->heap())) JSCallbackObject(exec, structure, classRef, data);
+        callbackObject->finishCreation(exec);
+        return callbackObject;
     }
     static JSCallbackObject* create(JSGlobalData& globalData, JSClassRef classRef, Structure* structure)
     {
-        return new (allocateCell<JSCallbackObject>(globalData.heap)) JSCallbackObject(globalData, classRef, structure);
+        JSCallbackObject* callbackObject = new (allocateCell<JSCallbackObject>(globalData.heap)) JSCallbackObject(globalData, classRef, structure);
+        callbackObject->finishCreation(globalData);
+        return callbackObject;
     }
 
     void setPrivate(void* data);
@@ -144,10 +152,7 @@ public:
     JSClassRef classRef() const { return m_callbackObjectData->jsClass; }
     bool inherits(JSClassRef) const;
 
-    static Structure* createStructure(JSGlobalData& globalData, JSValue proto) 
-    { 
-        return Structure::create(globalData, proto, TypeInfo(ObjectType, StructureFlags), Parent::AnonymousSlotCount, &s_info); 
-    }
+    static Structure* createStructure(JSGlobalData&, JSGlobalObject*, JSValue);
     
     JSValue getPrivateProperty(const Identifier& propertyName) const
     {
@@ -164,37 +169,37 @@ public:
         m_callbackObjectData->deletePrivateProperty(propertyName);
     }
 
+    using Parent::methodTable;
+
 protected:
     static const unsigned StructureFlags = ProhibitsPropertyCaching | OverridesGetOwnPropertySlot | ImplementsHasInstance | OverridesHasInstance | OverridesVisitChildren | OverridesGetPropertyNames | Parent::StructureFlags;
 
 private:
-    virtual UString className() const;
+    static UString className(const JSObject*);
 
-    virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
-    virtual bool getOwnPropertyDescriptor(ExecState*, const Identifier&, PropertyDescriptor&);
+    static bool getOwnPropertySlot(JSCell*, ExecState*, const Identifier&, PropertySlot&);
+    static bool getOwnPropertyDescriptor(JSObject*, ExecState*, const Identifier&, PropertyDescriptor&);
     
-    virtual void put(ExecState*, const Identifier&, JSValue, PutPropertySlot&);
+    static void put(JSCell*, ExecState*, const Identifier&, JSValue, PutPropertySlot&);
 
-    virtual bool deleteProperty(ExecState*, const Identifier&);
-    virtual bool deleteProperty(ExecState*, unsigned);
+    static bool deleteProperty(JSCell*, ExecState*, const Identifier&);
+    static bool deletePropertyByIndex(JSCell*, ExecState*, unsigned);
 
-    virtual bool hasInstance(ExecState* exec, JSValue value, JSValue proto);
+    static bool hasInstance(JSObject*, ExecState*, JSValue, JSValue proto);
 
-    virtual void getOwnPropertyNames(ExecState*, PropertyNameArray&, EnumerationMode mode = ExcludeDontEnumProperties);
+    static void getOwnPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
 
-    virtual double toNumber(ExecState*) const;
-    virtual UString toString(ExecState*) const;
+    static ConstructType getConstructData(JSCell*, ConstructData&);
+    static CallType getCallData(JSCell*, CallData&);
 
-    virtual ConstructType getConstructData(ConstructData&);
-    virtual CallType getCallData(CallData&);
-
-    virtual void visitChildren(SlotVisitor& visitor)
+    static void visitChildren(JSCell* cell, SlotVisitor& visitor)
     {
-        ASSERT_GC_OBJECT_INHERITS((static_cast<Parent*>(this)), &JSCallbackObject<Parent>::s_info);
+        JSCallbackObject* thisObject = static_cast<JSCallbackObject*>(cell);
+        ASSERT_GC_OBJECT_INHERITS((static_cast<Parent*>(thisObject)), &JSCallbackObject<Parent>::s_info);
         COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
-        ASSERT(Parent::structure()->typeInfo().overridesVisitChildren());
-        Parent::visitChildren(visitor);
-        m_callbackObjectData->visitChildren(visitor);
+        ASSERT(thisObject->Parent::structure()->typeInfo().overridesVisitChildren());
+        Parent::visitChildren(thisObject, visitor);
+        thisObject->m_callbackObjectData->visitChildren(visitor);
     }
 
     void init(ExecState*);

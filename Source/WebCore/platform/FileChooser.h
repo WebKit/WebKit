@@ -31,6 +31,7 @@
 #define FileChooser_h
 
 #include "PlatformString.h"
+#include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {

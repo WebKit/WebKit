@@ -58,6 +58,21 @@ private:
 };
 
 template<>
+class StringTypeAdapter<LChar> {
+public:
+    StringTypeAdapter<LChar>(LChar buffer)
+        : m_buffer(buffer)
+    {
+    }
+
+    unsigned length() { return 1; }
+    void writeTo(UChar* destination) { *destination = m_buffer; }
+
+private:
+    LChar m_buffer;
+};
+
+template<>
 class StringTypeAdapter<UChar> {
 public:
     StringTypeAdapter<UChar>(UChar buffer)
@@ -93,6 +108,28 @@ public:
 
 private:
     const char* m_buffer;
+    unsigned m_length;
+};
+
+template<>
+class StringTypeAdapter<LChar*> {
+public:
+    StringTypeAdapter<LChar*>(LChar* buffer)
+    : m_buffer(buffer)
+    , m_length(strlen(reinterpret_cast<char*>(buffer)))
+    {
+    }
+
+    unsigned length() { return m_length; }
+
+    void writeTo(UChar* destination)
+    {
+        for (unsigned i = 0; i < m_length; ++i)
+            destination[i] = m_buffer[i];
+    }
+
+private:
+    const LChar* m_buffer;
     unsigned m_length;
 };
 
@@ -149,6 +186,28 @@ private:
 };
 
 template<>
+class StringTypeAdapter<const LChar*> {
+public:
+    StringTypeAdapter<const LChar*>(const LChar* buffer)
+        : m_buffer(buffer)
+        , m_length(strlen(reinterpret_cast<const char*>(buffer)))
+    {
+    }
+    
+    unsigned length() { return m_length; }
+    
+    void writeTo(UChar* destination)
+    {
+        for (unsigned i = 0; i < m_length; ++i)
+            destination[i] = m_buffer[i];
+    }
+    
+private:
+    const LChar* m_buffer;
+    unsigned m_length;
+};
+
+template<>
 class StringTypeAdapter<Vector<char> > {
 public:
     StringTypeAdapter<Vector<char> >(const Vector<char>& buffer)
@@ -168,6 +227,26 @@ public:
 
 private:
     const Vector<char>& m_buffer;
+};
+
+template<>
+class StringTypeAdapter<Vector<LChar> > {
+public:
+    StringTypeAdapter<Vector<LChar> >(const Vector<LChar>& buffer)
+        : m_buffer(buffer)
+    {
+    }
+
+    size_t length() { return m_buffer.size(); }
+
+    void writeTo(UChar* destination)
+    {
+        for (size_t i = 0; i < m_buffer.size(); ++i)
+            destination[i] = m_buffer[i];
+    }
+
+private:
+    const Vector<LChar>& m_buffer;
 };
 
 template<>

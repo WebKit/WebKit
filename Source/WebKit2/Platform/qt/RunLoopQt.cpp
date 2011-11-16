@@ -29,7 +29,7 @@
 
 #include "WorkItem.h"
 
-#include <QApplication>
+#include <QCoreApplication>
 #include <QAbstractEventDispatcher>
 #include <QObject>
 #include <QMetaMethod>

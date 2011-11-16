@@ -30,6 +30,8 @@
 #ifndef MainThread_h
 #define MainThread_h
 
+#include "Platform.h"
+
 #include <stdint.h>
 
 namespace WTF {
@@ -47,6 +49,14 @@ void cancelCallOnMainThread(MainThreadFunction*, void* context);
 void setMainThreadCallbacksPaused(bool paused);
 
 bool isMainThread();
+#if ENABLE(PARALLEL_GC)
+void registerGCThread();
+bool isMainThreadOrGCThread();
+#elif PLATFORM(MAC)
+bool isMainThreadOrGCThread();
+#else
+inline bool isMainThreadOrGCThread() { return isMainThread(); }
+#endif
 
 // NOTE: these functions are internal to the callOnMainThread implementation.
 void initializeMainThreadPlatform();
@@ -68,4 +78,5 @@ using WTF::callOnMainThreadAndWait;
 using WTF::cancelCallOnMainThread;
 using WTF::setMainThreadCallbacksPaused;
 using WTF::isMainThread;
+using WTF::isMainThreadOrGCThread;
 #endif // MainThread_h

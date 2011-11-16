@@ -38,6 +38,7 @@ namespace WebCore {
         typedef JSDOMGlobalObject Base;
     protected:
         JSDOMWindowBase(JSC::JSGlobalData&, JSC::Structure*, PassRefPtr<DOMWindow>, JSDOMWindowShell*);
+        void finishCreation(JSC::JSGlobalData&, JSDOMWindowShell*);
 
     public:
         void updateDocument();
@@ -52,7 +53,7 @@ namespace WebCore {
 
         static JSC::Structure* createStructure(JSC::JSGlobalData& globalData, JSC::JSValue prototype)
         {
-            return JSC::Structure::create(globalData, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
+            return JSC::Structure::create(globalData, 0, prototype, JSC::TypeInfo(JSC::GlobalObjectType, StructureFlags), &s_info);
         }
 
         virtual JSC::ExecState* globalExec();
@@ -68,8 +69,7 @@ namespace WebCore {
         // Don't call this version of allowsAccessFrom -- it's a slightly incorrect implementation used only by WebScriptObject
         virtual bool allowsAccessFrom(const JSC::JSGlobalObject*) const;
         
-        virtual JSC::JSObject* toThisObject(JSC::ExecState*) const;
-        virtual JSC::JSValue toStrictThisObject(JSC::ExecState*) const;
+        static JSC::JSObject* toThisObject(JSC::JSCell*, JSC::ExecState*);
         JSDOMWindowShell* shell() const;
 
         static JSC::JSGlobalData* commonJSGlobalData();

@@ -890,7 +890,7 @@ JSValue convertQVariantToValue(ExecState* exec, PassRefPtr<RootObject> root, con
         QByteArray qtByteArray = variant.value<QByteArray>();
         WTF::RefPtr<WTF::ByteArray> wtfByteArray = WTF::ByteArray::create(qtByteArray.length());
         memcpy(wtfByteArray->data(), qtByteArray.constData(), qtByteArray.length());
-        return JSC::JSByteArray::create(exec, JSC::JSByteArray::createStructure(exec->globalData(), jsNull()), wtfByteArray.get());
+        return JSC::JSByteArray::create(exec, JSC::JSByteArray::createStructure(exec->globalData(), exec->lexicalGlobalObject(), jsNull()), wtfByteArray.get());
     }
 
     if (type == QMetaType::QObjectStar || type == QMetaType::QWidgetStar) {
@@ -935,7 +935,7 @@ JSValue convertQVariantToValue(ExecState* exec, PassRefPtr<RootObject> root, con
             JSValue val = convertQVariantToValue(exec, root.get(), i.value());
             if (val) {
                 PutPropertySlot slot;
-                ret->put(exec, Identifier(exec, reinterpret_cast_ptr<const UChar *>(s.constData()), s.length()), val, slot);
+                ret->methodTable()->put(ret, exec, Identifier(&exec->globalData(), reinterpret_cast_ptr<const UChar *>(s.constData()), s.length()), val, slot);
                 // ### error case?
             }
             ++i;
@@ -979,14 +979,19 @@ JSValue convertQVariantToValue(ExecState* exec, PassRefPtr<RootObject> root, con
 #define QW_D(Class) Class##Data* d = d_func()
 #define QW_DS(Class,Instance) Class##Data* d = Instance->d_func()
 
-const ClassInfo QtRuntimeMethod::s_info = { "QtRuntimeMethod", &InternalFunction::s_info, 0, 0 };
+const ClassInfo QtRuntimeMethod::s_info = { "QtRuntimeMethod", &InternalFunction::s_info, 0, 0, CREATE_METHOD_TABLE(QtRuntimeMethod) };
 
-QtRuntimeMethod::QtRuntimeMethod(QtRuntimeMethodData* dd, ExecState* exec, const Identifier& ident, PassRefPtr<QtInstance> inst)
-    : InternalFunction(&exec->globalData(), exec->lexicalGlobalObject(), deprecatedGetDOMStructure<QtRuntimeMethod>(exec), ident)
+QtRuntimeMethod::QtRuntimeMethod(QtRuntimeMethodData* dd, ExecState* exec, Structure* structure, const Identifier& identifier, PassRefPtr<QtInstance> instance)
+    : InternalFunction(exec->lexicalGlobalObject(), structure)
     , d_ptr(dd)
 {
+}
+
+void QtRuntimeMethod::finishCreation(ExecState* exec, const Identifier& identifier, PassRefPtr<QtInstance> instance)
+{
+    Base::finishCreation(exec->globalData(), identifier);
     QW_D(QtRuntimeMethod);
-    d->m_instance = inst;
+    d->m_instance = instance;
     d->m_finalizer.set(exec->globalData(), this, d);
 }
 
@@ -1395,19 +1400,27 @@ static int findSignalIndex(const QMetaObject* meta, int initialIndex, QByteArray
     return index;
 }
 
-QtRuntimeMetaMethod::QtRuntimeMetaMethod(ExecState* exec, const Identifier& ident, PassRefPtr<QtInstance> inst, int index, const QByteArray& signature, bool allowPrivate)
-    : QtRuntimeMethod (new QtRuntimeMetaMethodData(), exec, ident, inst)
+const ClassInfo QtRuntimeMetaMethod::s_info = { "QtRuntimeMethod", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(QtRuntimeMetaMethod) };
+
+QtRuntimeMetaMethod::QtRuntimeMetaMethod(ExecState* exec, Structure* structure, const Identifier& identifier)
+    : QtRuntimeMethod (new QtRuntimeMetaMethodData(), exec, structure, identifier)
 {
+}
+
+void QtRuntimeMetaMethod::finishCreation(ExecState* exec, const Identifier& identifier, PassRefPtr<QtInstance> instance, int index, const QByteArray& signature, bool allowPrivate)
+{
+    Base::finishCreation(exec, identifier, instance);
     QW_D(QtRuntimeMetaMethod);
     d->m_signature = signature;
     d->m_index = index;
     d->m_allowPrivate = allowPrivate;
 }
 
-void QtRuntimeMetaMethod::visitChildren(SlotVisitor& visitor)
+void QtRuntimeMetaMethod::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
-    QtRuntimeMethod::visitChildren(visitor);
-    QW_D(QtRuntimeMetaMethod);
+    QtRuntimeMetaMethod* thisObject = static_cast<QtRuntimeMetaMethod*>(cell);
+    QtRuntimeMethod::visitChildren(thisObject, visitor);
+    QtRuntimeMetaMethodData* d = thisObject->d_func();
     if (d->m_connect)
         visitor.append(&d->m_connect);
     if (d->m_disconnect)
@@ -1450,55 +1463,57 @@ EncodedJSValue QtRuntimeMetaMethod::call(ExecState* exec)
     return JSValue::encode(jsUndefined());
 }
 
-CallType QtRuntimeMetaMethod::getCallData(CallData& callData)
+CallType QtRuntimeMetaMethod::getCallData(JSCell*, CallData& callData)
 {
     callData.native.function = call;
     return CallTypeHost;
 }
 
-bool QtRuntimeMetaMethod::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
+bool QtRuntimeMetaMethod::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
+    QtRuntimeMetaMethod* thisObject = static_cast<QtRuntimeMetaMethod*>(cell);
     if (propertyName == "connect") {
-        slot.setCustom(this, connectGetter);
+        slot.setCustom(thisObject, thisObject->connectGetter);
         return true;
     } else if (propertyName == "disconnect") {
-        slot.setCustom(this, disconnectGetter);
+        slot.setCustom(thisObject, thisObject->disconnectGetter);
         return true;
     } else if (propertyName == exec->propertyNames().length) {
-        slot.setCustom(this, lengthGetter);
+        slot.setCustom(thisObject, thisObject->lengthGetter);
         return true;
     }
 
-    return QtRuntimeMethod::getOwnPropertySlot(exec, propertyName, slot);
+    return QtRuntimeMethod::getOwnPropertySlot(thisObject, exec, propertyName, slot);
 }
 
-bool QtRuntimeMetaMethod::getOwnPropertyDescriptor(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
+bool QtRuntimeMetaMethod::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
 {
+    QtRuntimeMetaMethod* thisObject = static_cast<QtRuntimeMetaMethod*>(object);
     if (propertyName == "connect") {
         PropertySlot slot;
-        slot.setCustom(this, connectGetter);
+        slot.setCustom(thisObject, connectGetter);
         descriptor.setDescriptor(slot.getValue(exec, propertyName), DontDelete | ReadOnly | DontEnum);
         return true;
     }
 
     if (propertyName == "disconnect") {
         PropertySlot slot;
-        slot.setCustom(this, disconnectGetter);
+        slot.setCustom(thisObject, disconnectGetter);
         descriptor.setDescriptor(slot.getValue(exec, propertyName), DontDelete | ReadOnly | DontEnum);
         return true;
     }
 
     if (propertyName == exec->propertyNames().length) {
         PropertySlot slot;
-        slot.setCustom(this, lengthGetter);
+        slot.setCustom(thisObject, lengthGetter);
         descriptor.setDescriptor(slot.getValue(exec, propertyName), DontDelete | ReadOnly | DontEnum);
         return true;
     }
 
-    return QtRuntimeMethod::getOwnPropertyDescriptor(exec, propertyName, descriptor);
+    return QtRuntimeMethod::getOwnPropertyDescriptor(thisObject, exec, propertyName, descriptor);
 }
 
-void QtRuntimeMetaMethod::getOwnPropertyNames(ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
+void QtRuntimeMetaMethod::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
     if (mode == IncludeDontEnumProperties) {
         propertyNames.add(Identifier(exec, "connect"));
@@ -1506,7 +1521,7 @@ void QtRuntimeMetaMethod::getOwnPropertyNames(ExecState* exec, PropertyNameArray
         propertyNames.add(exec->propertyNames().length);
     }
 
-    QtRuntimeMethod::getOwnPropertyNames(exec, propertyNames, mode);
+    QtRuntimeMethod::getOwnPropertyNames(object, exec, propertyNames, mode);
 }
 
 JSValue QtRuntimeMetaMethod::lengthGetter(ExecState*, JSValue, const Identifier&)
@@ -1539,9 +1554,16 @@ JSValue QtRuntimeMetaMethod::disconnectGetter(ExecState* exec, JSValue slotBase,
 
 QMultiMap<QObject*, QtConnectionObject*> QtRuntimeConnectionMethod::connections;
 
-QtRuntimeConnectionMethod::QtRuntimeConnectionMethod(ExecState* exec, const Identifier& ident, bool isConnect, PassRefPtr<QtInstance> inst, int index, const QByteArray& signature)
-    : QtRuntimeMethod (new QtRuntimeConnectionMethodData(), exec, ident, inst)
+const ClassInfo QtRuntimeConnectionMethod::s_info = { "QtRuntimeMethod", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(QtRuntimeConnectionMethod) };
+
+QtRuntimeConnectionMethod::QtRuntimeConnectionMethod(ExecState* exec, Structure* structure, const Identifier& identifier)
+    : QtRuntimeMethod (new QtRuntimeConnectionMethodData(), exec, structure, identifier)
 {
+}
+
+void QtRuntimeConnectionMethod::finishCreation(ExecState* exec, const Identifier& identifier, bool isConnect, PassRefPtr<QtInstance> instance, int index, const QByteArray& signature)
+{
+    Base::finishCreation(exec, identifier, instance);
     QW_D(QtRuntimeConnectionMethod);
 
     d->m_signature = signature;
@@ -1559,7 +1581,7 @@ EncodedJSValue QtRuntimeConnectionMethod::call(ExecState* exec)
 
     if (sender) {
 
-        JSObject* thisObject = exec->lexicalGlobalObject();
+        JSObject* thisObject = exec->lexicalGlobalObject()->methodTable()->toThisObject(exec->lexicalGlobalObject(), exec);
         JSObject* funcObject = 0;
 
         // QtScript checks signalness first, arguments second
@@ -1574,7 +1596,7 @@ EncodedJSValue QtRuntimeConnectionMethod::call(ExecState* exec)
             if (exec->argumentCount() == 1) {
                 funcObject = exec->argument(0).toObject(exec);
                 CallData callData;
-                if (funcObject->getCallData(callData) == CallTypeNone) {
+                if (funcObject->methodTable()->getCallData(funcObject, callData) == CallTypeNone) {
                     if (d->m_isConnect)
                         return throwVMError(exec, createTypeError(exec, "QtMetaMethod.connect: target is not a function"));
                     else
@@ -1587,7 +1609,7 @@ EncodedJSValue QtRuntimeConnectionMethod::call(ExecState* exec)
                     // Get the actual function to call
                     JSObject *asObj = exec->argument(1).toObject(exec);
                     CallData callData;
-                    if (asObj->getCallData(callData) != CallTypeNone) {
+                    if (asObj->methodTable()->getCallData(asObj, callData) != CallTypeNone) {
                         // Function version
                         funcObject = asObj;
                     } else {
@@ -1600,7 +1622,7 @@ EncodedJSValue QtRuntimeConnectionMethod::call(ExecState* exec)
                         JSValue val = thisObject->get(exec, funcIdent);
                         JSObject* asFuncObj = val.toObject(exec);
 
-                        if (asFuncObj->getCallData(callData) != CallTypeNone) {
+                        if (asFuncObj->methodTable()->getCallData(asFuncObj, callData) != CallTypeNone) {
                             funcObject = asFuncObj;
                         } else {
                             if (d->m_isConnect)
@@ -1679,40 +1701,42 @@ EncodedJSValue QtRuntimeConnectionMethod::call(ExecState* exec)
     return JSValue::encode(jsUndefined());
 }
 
-CallType QtRuntimeConnectionMethod::getCallData(CallData& callData)
+CallType QtRuntimeConnectionMethod::getCallData(JSCell*, CallData& callData)
 {
     callData.native.function = call;
     return CallTypeHost;
 }
 
-bool QtRuntimeConnectionMethod::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
+bool QtRuntimeConnectionMethod::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
+    QtRuntimeConnectionMethod* thisObject = static_cast<QtRuntimeConnectionMethod*>(cell);
     if (propertyName == exec->propertyNames().length) {
-        slot.setCustom(this, lengthGetter);
+        slot.setCustom(thisObject, thisObject->lengthGetter);
         return true;
     }
 
-    return QtRuntimeMethod::getOwnPropertySlot(exec, propertyName, slot);
+    return QtRuntimeMethod::getOwnPropertySlot(thisObject, exec, propertyName, slot);
 }
 
-bool QtRuntimeConnectionMethod::getOwnPropertyDescriptor(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
+bool QtRuntimeConnectionMethod::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
 {
+    QtRuntimeConnectionMethod* thisObject = static_cast<QtRuntimeConnectionMethod*>(object);
     if (propertyName == exec->propertyNames().length) {
         PropertySlot slot;
-        slot.setCustom(this, lengthGetter);
+        slot.setCustom(thisObject, lengthGetter);
         descriptor.setDescriptor(slot.getValue(exec, propertyName), DontDelete | ReadOnly | DontEnum);
         return true;
     }
 
-    return QtRuntimeMethod::getOwnPropertyDescriptor(exec, propertyName, descriptor);
+    return QtRuntimeMethod::getOwnPropertyDescriptor(thisObject, exec, propertyName, descriptor);
 }
 
-void QtRuntimeConnectionMethod::getOwnPropertyNames(ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
+void QtRuntimeConnectionMethod::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
     if (mode == IncludeDontEnumProperties)
         propertyNames.add(exec->propertyNames().length);
 
-    QtRuntimeMethod::getOwnPropertyNames(exec, propertyNames, mode);
+    QtRuntimeMethod::getOwnPropertyNames(object, exec, propertyNames, mode);
 }
 
 JSValue QtRuntimeConnectionMethod::lengthGetter(ExecState*, JSValue, const Identifier&)
@@ -1794,10 +1818,10 @@ int QtConnectionObject::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
 
 void QtConnectionObject::execute(void **argv)
 {
-    QObject* obj = m_instance->getObject();
-    if (obj) {
-        const QMetaObject* meta = obj->metaObject();
-        const QMetaMethod method = meta->method(m_signalIndex);
+    CallData callData;
+    JSObject* jsObject = toJS(object);
+    return jsObject->methodTable()->getCallData(jsObject, callData) == CallTypeJS;
+}
 
         QList<QByteArray> parameterTypes = method.parameterTypes();
 

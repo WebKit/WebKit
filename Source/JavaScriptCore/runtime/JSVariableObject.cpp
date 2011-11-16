@@ -29,33 +29,37 @@
 #include "config.h"
 #include "JSVariableObject.h"
 
+#include "JSActivation.h"
+#include "JSGlobalObject.h"
+#include "JSStaticScopeObject.h"
 #include "PropertyNameArray.h"
 #include "PropertyDescriptor.h"
 
 namespace JSC {
 
-bool JSVariableObject::deleteProperty(ExecState* exec, const Identifier& propertyName)
+JSVariableObject::~JSVariableObject()
 {
-    if (symbolTable().contains(propertyName.impl()))
-        return false;
-
-    return JSObject::deleteProperty(exec, propertyName);
 }
 
-void JSVariableObject::getOwnPropertyNames(ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
+bool JSVariableObject::deleteProperty(JSCell* cell, ExecState* exec, const Identifier& propertyName)
 {
-    SymbolTable::const_iterator end = symbolTable().end();
-    for (SymbolTable::const_iterator it = symbolTable().begin(); it != end; ++it) {
+    JSVariableObject* thisObject = static_cast<JSVariableObject*>(cell);
+    if (thisObject->symbolTable().contains(propertyName.impl()))
+        return false;
+
+    return JSObject::deleteProperty(thisObject, exec, propertyName);
+}
+
+void JSVariableObject::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
+{
+    JSVariableObject* thisObject = static_cast<JSVariableObject*>(object);
+    SymbolTable::const_iterator end = thisObject->symbolTable().end();
+    for (SymbolTable::const_iterator it = thisObject->symbolTable().begin(); it != end; ++it) {
         if (!(it->second.getAttributes() & DontEnum) || (mode == IncludeDontEnumProperties))
             propertyNames.add(Identifier(exec, it->first.get()));
     }
     
-    JSObject::getOwnPropertyNames(exec, propertyNames, mode);
-}
-
-bool JSVariableObject::isVariableObject() const
-{
-    return true;
+    JSObject::getOwnPropertyNames(thisObject, exec, propertyNames, mode);
 }
 
 bool JSVariableObject::symbolTableGet(const Identifier& propertyName, PropertyDescriptor& descriptor)
@@ -65,6 +69,28 @@ bool JSVariableObject::symbolTableGet(const Identifier& propertyName, PropertyDe
         descriptor.setDescriptor(registerAt(entry.getIndex()).get(), entry.getAttributes() | DontDelete);
         return true;
     }
+    return false;
+}
+
+void JSVariableObject::putWithAttributes(JSObject*, ExecState*, const Identifier&, JSValue, unsigned)
+{
+    ASSERT_NOT_REACHED();
+}
+
+bool JSVariableObject::isDynamicScope(bool& requiresDynamicChecks) const
+{
+    switch (structure()->typeInfo().type()) {
+    case GlobalObjectType:
+        return static_cast<const JSGlobalObject*>(this)->isDynamicScope(requiresDynamicChecks);
+    case ActivationObjectType:
+        return static_cast<const JSActivation*>(this)->isDynamicScope(requiresDynamicChecks);
+    case StaticScopeObjectType:
+        return static_cast<const JSStaticScopeObject*>(this)->isDynamicScope(requiresDynamicChecks);
+    default:
+        ASSERT_NOT_REACHED();
+        break;
+    }
+
     return false;
 }
 

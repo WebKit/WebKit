@@ -92,7 +92,8 @@ JSValue JSInjectedScriptHost::internalConstructorName(ExecState* exec)
     if (exec->argumentCount() < 1)
         return jsUndefined();
 
-    UString result = exec->argument(0).toThisObject(exec)->className();
+    JSObject* thisObject = exec->argument(0).toThisObject(exec);
+    UString result = thisObject->methodTable()->className(thisObject);
     return jsString(exec, result);
 }
 

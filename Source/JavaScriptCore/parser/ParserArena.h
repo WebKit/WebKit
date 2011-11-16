@@ -42,7 +42,10 @@ namespace JSC {
             clear();
         }
 
-        ALWAYS_INLINE const Identifier& makeIdentifier(JSGlobalData*, const UChar* characters, size_t length);
+        template <typename T>
+        ALWAYS_INLINE const Identifier& makeIdentifier(JSGlobalData*, const T* characters, size_t length);
+        ALWAYS_INLINE const Identifier& makeIdentifierLCharFromUChar(JSGlobalData*, const UChar* characters, size_t length);
+
         const Identifier& makeNumericIdentifier(JSGlobalData*, double number);
 
         bool isEmpty() const { return m_identifiers.isEmpty(); }
@@ -65,7 +68,8 @@ namespace JSC {
         FixedArray<Identifier*, MaximumCachableCharacter> m_recentIdentifiers;
     };
 
-    ALWAYS_INLINE const Identifier& IdentifierArena::makeIdentifier(JSGlobalData* globalData, const UChar* characters, size_t length)
+    template <typename T>
+    ALWAYS_INLINE const Identifier& IdentifierArena::makeIdentifier(JSGlobalData* globalData, const T* characters, size_t length)
     {
         if (characters[0] >= MaximumCachableCharacter) {
             m_identifiers.append(Identifier(globalData, characters, length));
@@ -86,6 +90,27 @@ namespace JSC {
         return m_identifiers.last();
     }
 
+    ALWAYS_INLINE const Identifier& IdentifierArena::makeIdentifierLCharFromUChar(JSGlobalData* globalData, const UChar* characters, size_t length)
+    {
+        if (characters[0] >= MaximumCachableCharacter) {
+            m_identifiers.append(Identifier::createLCharFromUChar(globalData, characters, length));
+            return m_identifiers.last();
+        }
+        if (length == 1) {
+            if (Identifier* ident = m_shortIdentifiers[characters[0]])
+                return *ident;
+            m_identifiers.append(Identifier(globalData, characters, length));
+            m_shortIdentifiers[characters[0]] = &m_identifiers.last();
+            return m_identifiers.last();
+        }
+        Identifier* ident = m_recentIdentifiers[characters[0]];
+        if (ident && Identifier::equal(ident->impl(), characters, length))
+            return *ident;
+        m_identifiers.append(Identifier::createLCharFromUChar(globalData, characters, length));
+        m_recentIdentifiers[characters[0]] = &m_identifiers.last();
+        return m_identifiers.last();
+    }
+    
     inline const Identifier& IdentifierArena::makeNumericIdentifier(JSGlobalData* globalData, double number)
     {
         m_identifiers.append(Identifier(globalData, UString::number(number)));
@@ -123,7 +148,7 @@ namespace JSC {
 
         void* allocateDeletable(size_t size)
         {
-            ParserArenaDeletable* deletable = static_cast<ParserArenaDeletable*>(fastMalloc(size));
+            ParserArenaDeletable* deletable = static_cast<ParserArenaDeletable*>(allocateFreeable(size));
             m_deletableObjects.append(deletable);
             return deletable;
         }

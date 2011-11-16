@@ -30,6 +30,7 @@
 #include "KURL.h"
 #include "Timer.h"
 #include <wtf/HashSet.h>
+#include <wtf/MainThread.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/StringHash.h>

@@ -37,6 +37,9 @@ namespace JSC {
 
 class LinkBuffer;
 class RepatchBuffer;
+namespace DFG {
+class CorrectableJumpPoint;
+}
 
 template <class AssemblerType>
 class AbstractMacroAssembler {
@@ -161,6 +164,19 @@ public:
             : m_value(value)
         {
         }
+        
+        // This is only here so that TrustedImmPtr(0) does not confuse the C++
+        // overload handling rules.
+        explicit TrustedImmPtr(int value)
+            : m_value(0)
+        {
+            ASSERT_UNUSED(value, !value);
+        }
+
+        explicit TrustedImmPtr(size_t value)
+            : m_value(reinterpret_cast<void*>(value))
+        {
+        }
 
         intptr_t asIntptr()
         {
@@ -244,6 +260,7 @@ public:
     class Label {
         template<class TemplateAssemblerType>
         friend class AbstractMacroAssembler;
+        friend class DFG::CorrectableJumpPoint;
         friend class Jump;
         friend class MacroAssemblerCodeRef;
         friend class LinkBuffer;
@@ -392,6 +409,7 @@ public:
         template<class TemplateAssemblerType>
         friend class AbstractMacroAssembler;
         friend class Call;
+        friend class DFG::CorrectableJumpPoint;
         friend class LinkBuffer;
     public:
         Jump()
@@ -512,10 +530,10 @@ public:
         return AssemblerType::getDifferenceBetweenLabels(from.m_label, to.m_label);
     }
 
-    // Temporary interface; likely to be removed, since may be hard to port to all architectures.
-#if CPU(X86) || CPU(X86_64)
-    void rewindToLabel(Label rewindTo) { m_assembler.rewindToLabel(rewindTo.m_label); }
-#endif
+    static ptrdiff_t differenceBetweenCodePtr(const MacroAssemblerCodePtr& a, const MacroAssemblerCodePtr& b)
+    {
+        return reinterpret_cast<ptrdiff_t>(b.executableAddress()) - reinterpret_cast<ptrdiff_t>(a.executableAddress());
+    }
 
     void beginUninterruptedSequence() { }
     void endUninterruptedSequence() { }

@@ -75,12 +75,12 @@
 #include <string.h>
 #include <wtf/AlwaysInline.h>
 #include <wtf/Assertions.h>
-#include <wtf/DecimalNumber.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/MathExtras.h>
 #include <wtf/Threading.h>
 #include <wtf/UnusedParam.h>
 #include <wtf/Vector.h>
+#include <wtf/dtoa/double-conversion.h>
 
 #if COMPILER(MSVC)
 #pragma warning(disable: 4244)
@@ -90,9 +90,7 @@
 
 namespace WTF {
 
-#if ENABLE(WTF_MULTIPLE_THREADS)
 Mutex* s_dtoaP5Mutex;
-#endif
 
 typedef union {
     double d;
@@ -435,9 +433,7 @@ static ALWAYS_INLINE void pow5mult(BigInt& b, int k)
     if (!(k >>= 2))
         return;
 
-#if ENABLE(WTF_MULTIPLE_THREADS)
     s_dtoaP5Mutex->lock();
-#endif
     P5Node* p5 = p5s;
 
     if (!p5) {
@@ -450,9 +446,7 @@ static ALWAYS_INLINE void pow5mult(BigInt& b, int k)
     }
 
     int p5sCountLocal = p5sCount;
-#if ENABLE(WTF_MULTIPLE_THREADS)
     s_dtoaP5Mutex->unlock();
-#endif
     int p5sUsed = 0;
 
     for (;;) {
@@ -463,9 +457,7 @@ static ALWAYS_INLINE void pow5mult(BigInt& b, int k)
             break;
 
         if (++p5sUsed == p5sCountLocal) {
-#if ENABLE(WTF_MULTIPLE_THREADS)
             s_dtoaP5Mutex->lock();
-#endif
             if (p5sUsed == p5sCount) {
                 ASSERT(!p5->next);
                 p5->next = new P5Node;
@@ -476,9 +468,7 @@ static ALWAYS_INLINE void pow5mult(BigInt& b, int k)
             }
 
             p5sCountLocal = p5sCount;
-#if ENABLE(WTF_MULTIPLE_THREADS)
             s_dtoaP5Mutex->unlock();
-#endif
         }
         p5 = p5->next;
     }
@@ -704,7 +694,7 @@ static ALWAYS_INLINE void d2b(BigInt& b, U* d, int* e, int* bits)
         *e = de - Bias - (P - 1) + k;
         *bits = P - k;
     } else {
-        *e = de - Bias - (P - 1) + 1 + k;
+        *e = 0 - Bias - (P - 1) + 1 + k;
         *bits = (32 * i) - hi0bits(x[i - 1]);
     }
 }
@@ -1802,33 +1792,13 @@ void dtoaRoundDP(DtoaBuffer result, double dd, int ndigits, bool& sign, int& exp
     dtoa<false, false, true, false>(result, dd, ndigits, sign, exponent, precision);
 }
 
-static ALWAYS_INLINE void copyAsciiToUTF16(UChar* next, const char* src, unsigned size)
-{
-    for (unsigned i = 0; i < size; ++i)
-        *next++ = *src++;
-}
 
-unsigned numberToString(double d, NumberToStringBuffer buffer)
+const char *numberToString(double d, NumberToStringBuffer buffer)
 {
-    // Handle NaN and Infinity.
-    if (!isfinite(d)) {
-        if (isnan(d)) {
-            copyAsciiToUTF16(buffer, "NaN", 3);
-            return 3;
-        }
-        if (d > 0) {
-            copyAsciiToUTF16(buffer, "Infinity", 8);
-            return 8;
-        }
-        copyAsciiToUTF16(buffer, "-Infinity", 9);
-        return 9;
-    }
-
-    // Convert to decimal with rounding.
-    DecimalNumber number(d);
-    return number.exponent() >= -6 && number.exponent() < 21
-        ? number.toStringDecimal(buffer, NumberToStringBufferLength)
-        : number.toStringExponential(buffer, NumberToStringBufferLength);
+    double_conversion::StringBuilder builder(buffer, NumberToStringBufferLength);
+    const double_conversion::DoubleToStringConverter& converter = double_conversion::DoubleToStringConverter::EcmaScriptConverter();
+    converter.ToShortest(d, &builder);
+    return builder.Finalize();
 }
 
 } // namespace WTF

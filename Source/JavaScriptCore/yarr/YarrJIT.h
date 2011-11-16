@@ -31,6 +31,7 @@
 #include "JSGlobalData.h"
 #include "MacroAssembler.h"
 #include "UString.h"
+#include "Yarr.h"
 #include "YarrPattern.h"
 
 #if CPU(X86) && !COMPILER(MSVC)
@@ -47,7 +48,8 @@ class ExecutablePool;
 namespace Yarr {
 
 class YarrCodeBlock {
-    typedef int (*YarrJITCode)(const UChar* input, unsigned start, unsigned length, int* output) YARR_CALL;
+    typedef int (*YarrJITCode8)(const LChar* input, unsigned start, unsigned length, int* output) YARR_CALL;
+    typedef int (*YarrJITCode16)(const UChar* input, unsigned start, unsigned length, int* output) YARR_CALL;
 
 public:
     YarrCodeBlock()
@@ -61,24 +63,35 @@ public:
 
     void setFallBack(bool fallback) { m_needFallBack = fallback; }
     bool isFallBack() { return m_needFallBack; }
-    void set(MacroAssembler::CodeRef ref) { m_ref = ref; }
+    bool has8BitCode() { return m_ref8.size(); }
+    bool has16BitCode() { return m_ref16.size(); }
+    void set8BitCode(MacroAssembler::CodeRef ref) { m_ref8 = ref; }
+    void set16BitCode(MacroAssembler::CodeRef ref) { m_ref16 = ref; }
+
+    int execute(const LChar* input, unsigned start, unsigned length, int* output)
+    {
+        ASSERT(has8BitCode());
+        return reinterpret_cast<YarrJITCode8>(m_ref8.code().executableAddress())(input, start, length, output);
+    }
 
     int execute(const UChar* input, unsigned start, unsigned length, int* output)
     {
-        return reinterpret_cast<YarrJITCode>(m_ref.m_code.executableAddress())(input, start, length, output);
+        ASSERT(has16BitCode());
+        return reinterpret_cast<YarrJITCode16>(m_ref16.code().executableAddress())(input, start, length, output);
     }
-
 #if ENABLE(REGEXP_TRACING)
-    void *getAddr() { return m_ref.m_code.executableAddress(); }
+    void *getAddr() { return m_ref.code().executableAddress(); }
 #endif
 
 private:
-    MacroAssembler::CodeRef m_ref;
+    MacroAssembler::CodeRef m_ref8;
+    MacroAssembler::CodeRef m_ref16;
     bool m_needFallBack;
 };
 
-void jitCompile(YarrPattern&, JSGlobalData*, YarrCodeBlock& jitObject);
+void jitCompile(YarrPattern&, YarrCharSize, JSGlobalData*, YarrCodeBlock& jitObject);
 int execute(YarrCodeBlock& jitObject, const UChar* input, unsigned start, unsigned length, int* output);
+int execute(YarrCodeBlock& jitObject, const LChar* input, unsigned start, unsigned length, int* output);
 
 } } // namespace JSC::Yarr
 

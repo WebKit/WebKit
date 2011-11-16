@@ -57,7 +57,7 @@ static EncodedJSValue JSC_HOST_CALL callNodeList(ExecState* exec)
     return JSValue::encode(toJS(exec, thisObj->globalObject(), thisObj->impl()->item(index)));
 }
 
-CallType JSNodeList::getCallData(CallData& callData)
+CallType JSNodeList::getCallData(JSCell*, CallData& callData)
 {
     callData.native.function = callNodeList;
     return CallTypeHost;

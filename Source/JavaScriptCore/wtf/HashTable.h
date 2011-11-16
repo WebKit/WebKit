@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2005, 2006, 2007, 2008, 2011 Apple Inc. All rights reserved.
  * Copyright (C) 2008 David Levin <levin@chromium.org>
  *
  * This library is free software; you can redistribute it and/or
@@ -22,11 +22,13 @@
 #ifndef WTF_HashTable_h
 #define WTF_HashTable_h
 
+#include "Alignment.h"
+#include "Assertions.h"
 #include "FastMalloc.h"
 #include "HashTraits.h"
+#include "StdLibExtras.h"
+#include "Threading.h"
 #include "ValueCheck.h"
-#include <wtf/Assertions.h>
-#include <wtf/Threading.h>
 
 namespace WTF {
 
@@ -377,14 +379,14 @@ namespace WTF {
 
         bool shouldExpand() const { return (m_keyCount + m_deletedCount) * m_maxLoad >= m_tableSize; }
         bool mustRehashInPlace() const { return m_keyCount * m_minLoad < m_tableSize * 2; }
-        bool shouldShrink() const { return m_keyCount * m_minLoad < m_tableSize && m_tableSize > m_minTableSize; }
+        bool shouldShrink() const { return m_keyCount * m_minLoad < m_tableSize && m_tableSize > KeyTraits::minimumTableSize; }
         void expand();
         void shrink() { rehash(m_tableSize / 2); }
 
         void rehash(int newTableSize);
         void reinsert(ValueType&);
 
-        static void initializeBucket(ValueType& bucket) { new (&bucket) ValueType(Traits::emptyValue()); }
+        static void initializeBucket(ValueType& bucket);
         static void deleteBucket(ValueType& bucket) { bucket.~ValueType(); Traits::constructDeletedValue(bucket); }
 
         FullLookupType makeLookupResult(ValueType* position, bool found, unsigned hash)
@@ -407,7 +409,6 @@ namespace WTF {
         static void invalidateIterators() { }
 #endif
 
-        static const int m_minTableSize = 64;
         static const int m_maxLoad = 2;
         static const int m_minLoad = 6;
 
@@ -438,7 +439,7 @@ namespace WTF {
     {
     }
 
-    static inline unsigned doubleHash(unsigned key)
+    inline unsigned doubleHash(unsigned key)
     {
         key = ~key + (key >> 23);
         key ^= (key << 12);
@@ -465,11 +466,10 @@ namespace WTF {
         if (!HashFunctions::safeToCompareToEmptyOrDeleted)
             return;
         ASSERT(!HashTranslator::equal(KeyTraits::emptyValue(), key));
-        ValueType deletedValue = Traits::emptyValue();
-        deletedValue.~ValueType();
+        AlignedBuffer<sizeof(ValueType), WTF_ALIGN_OF(ValueType)> deletedValueBuffer;
+        ValueType& deletedValue = *reinterpret_cast_ptr<ValueType*>(deletedValueBuffer.buffer);
         Traits::constructDeletedValue(deletedValue);
         ASSERT(!HashTranslator::equal(Extractor::extract(deletedValue), key));
-        new (&deletedValue) ValueType(Traits::emptyValue());
     }
 
 #endif
@@ -623,6 +623,31 @@ namespace WTF {
                 k = 1 | doubleHash(h);
             i = (i + k) & sizeMask;
         }
+    }
+
+    template<bool emptyValueIsZero> struct HashTableBucketInitializer;
+
+    template<> struct HashTableBucketInitializer<false> {
+        template<typename Traits, typename Value> static void initialize(Value& bucket)
+        {
+            new (&bucket) Value(Traits::emptyValue());
+        }
+    };
+
+    template<> struct HashTableBucketInitializer<true> {
+        template<typename Traits, typename Value> static void initialize(Value& bucket)
+        {
+            // This initializes the bucket without copying the empty value.
+            // That makes it possible to use this with types that don't support copying.
+            // The memset to 0 looks like a slow operation but is optimized by the compilers.
+            memset(&bucket, 0, sizeof(bucket));
+        }
+    };
+    
+    template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
+    inline void HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::initializeBucket(ValueType& bucket)
+    {
+        HashTableBucketInitializer<Traits::emptyValueIsZero>::template initialize<Traits>(bucket);
     }
 
     template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
@@ -901,7 +926,7 @@ namespace WTF {
     {
         int newSize;
         if (m_tableSize == 0)
-            newSize = m_minTableSize;
+            newSize = KeyTraits::minimumTableSize;
         else if (mustRehashInPlace())
             newSize = m_tableSize;
         else
@@ -1039,7 +1064,7 @@ namespace WTF {
 
         ASSERT(count == m_keyCount);
         ASSERT(deletedCount == m_deletedCount);
-        ASSERT(m_tableSize >= m_minTableSize);
+        ASSERT(m_tableSize >= KeyTraits::minimumTableSize);
         ASSERT(m_tableSizeMask);
         ASSERT(m_tableSize == m_tableSizeMask + 1);
     }

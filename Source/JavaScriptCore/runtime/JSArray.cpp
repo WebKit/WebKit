@@ -92,7 +92,7 @@ ASSERT_CLASS_FITS_IN_CELL(JSArray);
 // as long as it is 1/8 full. If more sparse than that, we use a map.
 static const unsigned minDensityMultiplier = 8;
 
-const ClassInfo JSArray::s_info = {"Array", &JSNonFinalObject::s_info, 0, 0};
+const ClassInfo JSArray::s_info = {"Array", &JSNonFinalObject::s_info, 0, 0, CREATE_METHOD_TABLE(JSArray)};
 
 // We keep track of the size of the last array after it was grown.  We use this
 // as a simple heuristic for as the value to grow the next array from size 0.
@@ -134,6 +134,11 @@ JSArray::JSArray(VPtrStealingHackType)
 JSArray::JSArray(JSGlobalData& globalData, Structure* structure)
     : JSNonFinalObject(globalData, structure)
 {
+}
+
+void JSArray::finishCreation(JSGlobalData& globalData)
+{
+    Base::finishCreation(globalData);
     ASSERT(inherits(&s_info));
 
     unsigned initialCapacity = 0;
@@ -148,9 +153,9 @@ JSArray::JSArray(JSGlobalData& globalData, Structure* structure)
     Heap::heap(this)->reportExtraMemoryCost(storageSize(0));
 }
 
-JSArray::JSArray(JSGlobalData& globalData, Structure* structure, unsigned initialLength, ArrayCreationMode creationMode)
-    : JSNonFinalObject(globalData, structure)
+void JSArray::finishCreation(JSGlobalData& globalData, unsigned initialLength, ArrayCreationMode creationMode)
 {
+    Base::finishCreation(globalData);
     ASSERT(inherits(&s_info));
 
     unsigned initialCapacity;
@@ -190,9 +195,9 @@ JSArray::JSArray(JSGlobalData& globalData, Structure* structure, unsigned initia
     Heap::heap(this)->reportExtraMemoryCost(storageSize(initialCapacity));
 }
 
-JSArray::JSArray(JSGlobalData& globalData, Structure* structure, const ArgList& list)
-    : JSNonFinalObject(globalData, structure)
+void JSArray::finishCreation(JSGlobalData& globalData, const ArgList& list)
 {
+    Base::finishCreation(globalData);
     ASSERT(inherits(&s_info));
 
     unsigned initialCapacity = list.size();
@@ -240,17 +245,18 @@ JSArray::~JSArray()
     fastFree(m_storage->m_allocBase);
 }
 
-bool JSArray::getOwnPropertySlot(ExecState* exec, unsigned i, PropertySlot& slot)
+bool JSArray::getOwnPropertySlotByIndex(JSCell* cell, ExecState* exec, unsigned i, PropertySlot& slot)
 {
-    ArrayStorage* storage = m_storage;
+    JSArray* thisObject = static_cast<JSArray*>(cell);
+    ArrayStorage* storage = thisObject->m_storage;
     
     if (i >= storage->m_length) {
         if (i > MAX_ARRAY_INDEX)
-            return getOwnPropertySlot(exec, Identifier::from(exec, i), slot);
+            return thisObject->methodTable()->getOwnPropertySlot(thisObject, exec, Identifier::from(exec, i), slot);
         return false;
     }
 
-    if (i < m_vectorLength) {
+    if (i < thisObject->m_vectorLength) {
         JSValue value = storage->m_vector[i].get();
         if (value) {
             slot.setValue(value);
@@ -266,39 +272,41 @@ bool JSArray::getOwnPropertySlot(ExecState* exec, unsigned i, PropertySlot& slot
         }
     }
 
-    return JSObject::getOwnPropertySlot(exec, Identifier::from(exec, i), slot);
+    return JSObject::getOwnPropertySlot(thisObject, exec, Identifier::from(exec, i), slot);
 }
 
-bool JSArray::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
+bool JSArray::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
+    JSArray* thisObject = static_cast<JSArray*>(cell);
     if (propertyName == exec->propertyNames().length) {
-        slot.setValue(jsNumber(length()));
+        slot.setValue(jsNumber(thisObject->length()));
         return true;
     }
 
     bool isArrayIndex;
     unsigned i = propertyName.toArrayIndex(isArrayIndex);
     if (isArrayIndex)
-        return JSArray::getOwnPropertySlot(exec, i, slot);
+        return JSArray::getOwnPropertySlotByIndex(thisObject, exec, i, slot);
 
-    return JSObject::getOwnPropertySlot(exec, propertyName, slot);
+    return JSObject::getOwnPropertySlot(thisObject, exec, propertyName, slot);
 }
 
-bool JSArray::getOwnPropertyDescriptor(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
+bool JSArray::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
 {
+    JSArray* thisObject = static_cast<JSArray*>(object);
     if (propertyName == exec->propertyNames().length) {
-        descriptor.setDescriptor(jsNumber(length()), DontDelete | DontEnum);
+        descriptor.setDescriptor(jsNumber(thisObject->length()), DontDelete | DontEnum);
         return true;
     }
 
-    ArrayStorage* storage = m_storage;
+    ArrayStorage* storage = thisObject->m_storage;
     
     bool isArrayIndex;
     unsigned i = propertyName.toArrayIndex(isArrayIndex);
     if (isArrayIndex) {
         if (i >= storage->m_length)
             return false;
-        if (i < m_vectorLength) {
+        if (i < thisObject->m_vectorLength) {
             WriteBarrier<Unknown>& value = storage->m_vector[i];
             if (value) {
                 descriptor.setDescriptor(value.get(), 0);
@@ -314,16 +322,17 @@ bool JSArray::getOwnPropertyDescriptor(ExecState* exec, const Identifier& proper
             }
         }
     }
-    return JSObject::getOwnPropertyDescriptor(exec, propertyName, descriptor);
+    return JSObject::getOwnPropertyDescriptor(thisObject, exec, propertyName, descriptor);
 }
 
 // ECMA 15.4.5.1
-void JSArray::put(ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
+void JSArray::put(JSCell* cell, ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
 {
+    JSArray* thisObject = static_cast<JSArray*>(cell);
     bool isArrayIndex;
     unsigned i = propertyName.toArrayIndex(isArrayIndex);
     if (isArrayIndex) {
-        put(exec, i, value);
+        putByIndex(thisObject, exec, i, value);
         return;
     }
 
@@ -333,18 +342,19 @@ void JSArray::put(ExecState* exec, const Identifier& propertyName, JSValue value
             throwError(exec, createRangeError(exec, "Invalid array length"));
             return;
         }
-        setLength(newLength);
+        thisObject->setLength(newLength);
         return;
     }
 
-    JSObject::put(exec, propertyName, value, slot);
+    JSObject::put(thisObject, exec, propertyName, value, slot);
 }
 
-void JSArray::put(ExecState* exec, unsigned i, JSValue value)
+void JSArray::putByIndex(JSCell* cell, ExecState* exec, unsigned i, JSValue value)
 {
-    checkConsistency();
+    JSArray* thisObject = static_cast<JSArray*>(cell);
+    thisObject->checkConsistency();
 
-    ArrayStorage* storage = m_storage;
+    ArrayStorage* storage = thisObject->m_storage;
 
     unsigned length = storage->m_length;
     if (i >= length && i <= MAX_ARRAY_INDEX) {
@@ -352,20 +362,20 @@ void JSArray::put(ExecState* exec, unsigned i, JSValue value)
         storage->m_length = length;
     }
 
-    if (i < m_vectorLength) {
+    if (i < thisObject->m_vectorLength) {
         WriteBarrier<Unknown>& valueSlot = storage->m_vector[i];
         if (valueSlot) {
-            valueSlot.set(exec->globalData(), this, value);
-            checkConsistency();
+            valueSlot.set(exec->globalData(), thisObject, value);
+            thisObject->checkConsistency();
             return;
         }
-        valueSlot.set(exec->globalData(), this, value);
+        valueSlot.set(exec->globalData(), thisObject, value);
         ++storage->m_numValuesInVector;
-        checkConsistency();
+        thisObject->checkConsistency();
         return;
     }
 
-    putSlowCase(exec, i, value);
+    thisObject->putSlowCase(exec, i, value);
 }
 
 NEVER_INLINE void JSArray::putSlowCase(ExecState* exec, unsigned i, JSValue value)
@@ -377,7 +387,7 @@ NEVER_INLINE void JSArray::putSlowCase(ExecState* exec, unsigned i, JSValue valu
     if (i >= MIN_SPARSE_ARRAY_INDEX) {
         if (i > MAX_ARRAY_INDEX) {
             PutPropertySlot slot;
-            put(exec, Identifier::from(exec, i), value, slot);
+            methodTable()->put(this, exec, Identifier::from(exec, i), value, slot);
             return;
         }
 
@@ -478,34 +488,36 @@ NEVER_INLINE void JSArray::putSlowCase(ExecState* exec, unsigned i, JSValue valu
     Heap::heap(this)->reportExtraMemoryCost(storageSize(newVectorLength) - storageSize(vectorLength));
 }
 
-bool JSArray::deleteProperty(ExecState* exec, const Identifier& propertyName)
+bool JSArray::deleteProperty(JSCell* cell, ExecState* exec, const Identifier& propertyName)
 {
+    JSArray* thisObject = static_cast<JSArray*>(cell);
     bool isArrayIndex;
     unsigned i = propertyName.toArrayIndex(isArrayIndex);
     if (isArrayIndex)
-        return deleteProperty(exec, i);
+        return thisObject->methodTable()->deletePropertyByIndex(thisObject, exec, i);
 
     if (propertyName == exec->propertyNames().length)
         return false;
 
-    return JSObject::deleteProperty(exec, propertyName);
+    return JSObject::deleteProperty(thisObject, exec, propertyName);
 }
 
-bool JSArray::deleteProperty(ExecState* exec, unsigned i)
+bool JSArray::deletePropertyByIndex(JSCell* cell, ExecState* exec, unsigned i)
 {
-    checkConsistency();
+    JSArray* thisObject = static_cast<JSArray*>(cell);
+    thisObject->checkConsistency();
 
-    ArrayStorage* storage = m_storage;
+    ArrayStorage* storage = thisObject->m_storage;
     
-    if (i < m_vectorLength) {
+    if (i < thisObject->m_vectorLength) {
         WriteBarrier<Unknown>& valueSlot = storage->m_vector[i];
         if (!valueSlot) {
-            checkConsistency();
+            thisObject->checkConsistency();
             return false;
         }
         valueSlot.clear();
         --storage->m_numValuesInVector;
-        checkConsistency();
+        thisObject->checkConsistency();
         return true;
     }
 
@@ -514,29 +526,30 @@ bool JSArray::deleteProperty(ExecState* exec, unsigned i)
             SparseArrayValueMap::iterator it = map->find(i);
             if (it != map->end()) {
                 map->remove(it);
-                checkConsistency();
+                thisObject->checkConsistency();
                 return true;
             }
         }
     }
 
-    checkConsistency();
+    thisObject->checkConsistency();
 
     if (i > MAX_ARRAY_INDEX)
-        return deleteProperty(exec, Identifier::from(exec, i));
+        return thisObject->methodTable()->deleteProperty(thisObject, exec, Identifier::from(exec, i));
 
     return false;
 }
 
-void JSArray::getOwnPropertyNames(ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
+void JSArray::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
+    JSArray* thisObject = static_cast<JSArray*>(object);
     // FIXME: Filling PropertyNameArray with an identifier for every integer
     // is incredibly inefficient for large arrays. We need a different approach,
     // which almost certainly means a different structure for PropertyNameArray.
 
-    ArrayStorage* storage = m_storage;
+    ArrayStorage* storage = thisObject->m_storage;
     
-    unsigned usedVectorLength = min(storage->m_length, m_vectorLength);
+    unsigned usedVectorLength = min(storage->m_length, thisObject->m_vectorLength);
     for (unsigned i = 0; i < usedVectorLength; ++i) {
         if (storage->m_vector[i])
             propertyNames.add(Identifier::from(exec, i));
@@ -551,7 +564,7 @@ void JSArray::getOwnPropertyNames(ExecState* exec, PropertyNameArray& propertyNa
     if (mode == IncludeDontEnumProperties)
         propertyNames.add(exec->propertyNames().length);
 
-    JSObject::getOwnPropertyNames(exec, propertyNames, mode);
+    JSObject::getOwnPropertyNames(thisObject, exec, propertyNames, mode);
 }
 
 ALWAYS_INLINE unsigned JSArray::getNewVectorLength(unsigned desiredLength)
@@ -740,7 +753,7 @@ void JSArray::push(ExecState* exec, JSValue value)
     ArrayStorage* storage = m_storage;
 
     if (UNLIKELY(storage->m_length == 0xFFFFFFFFu)) {
-        put(exec, storage->m_length, value);
+        methodTable()->putByIndex(this, exec, storage->m_length, value);
         throwError(exec, createRangeError(exec, "Invalid array length"));
         return;
     }
@@ -794,7 +807,7 @@ void JSArray::shiftCount(ExecState* exec, int count)
                 PropertySlot slot(this);
                 JSValue p = prototype();
                 if ((!p.isNull()) && (asObject(p)->getPropertySlot(exec, i, slot)))
-                    put(exec, i, slot.getValue(exec, i));
+                    methodTable()->putByIndex(this, exec, i, slot.getValue(exec, i));
             }
         }
 
@@ -843,7 +856,7 @@ void JSArray::unshiftCount(ExecState* exec, int count)
                 PropertySlot slot(this);
                 JSValue p = prototype();
                 if ((!p.isNull()) && (asObject(p)->getPropertySlot(exec, i, slot)))
-                    put(exec, i, slot.getValue(exec, i));
+                    methodTable()->putByIndex(this, exec, i, slot.getValue(exec, i));
             }
         }
     }
@@ -866,18 +879,31 @@ void JSArray::unshiftCount(ExecState* exec, int count)
         vector[i].clear();
 }
 
-void JSArray::visitChildren(SlotVisitor& visitor)
+void JSArray::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
-    ASSERT_GC_OBJECT_INHERITS(this, &s_info);
+    JSArray* thisObject = static_cast<JSArray*>(cell);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
     COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
-    ASSERT(structure()->typeInfo().overridesVisitChildren());
-    visitChildrenDirect(visitor);
+    ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
+
+    JSNonFinalObject::visitChildren(thisObject, visitor);
+    
+    ArrayStorage* storage = thisObject->m_storage;
+
+    unsigned usedVectorLength = std::min(storage->m_length, thisObject->m_vectorLength);
+    visitor.appendValues(storage->m_vector, usedVectorLength);
+
+    if (SparseArrayValueMap* map = storage->m_sparseValueMap) {
+        SparseArrayValueMap::iterator end = map->end();
+        for (SparseArrayValueMap::iterator it = map->begin(); it != end; ++it)
+            visitor.append(&it->second);
+    }
 }
 
 static int compareNumbersForQSort(const void* a, const void* b)
 {
-    double da = static_cast<const JSValue*>(a)->uncheckedGetNumber();
-    double db = static_cast<const JSValue*>(b)->uncheckedGetNumber();
+    double da = static_cast<const JSValue*>(a)->asNumber();
+    double db = static_cast<const JSValue*>(b)->asNumber();
     return (da > db) - (da < db);
 }
 
@@ -1011,7 +1037,6 @@ struct AVLTreeAbstractorForArrayCompare {
     JSValue m_compareFunction;
     CallType m_compareCallType;
     const CallData* m_compareCallData;
-    JSValue m_globalThisValue;
     OwnPtr<CachedCall> m_cachedCall;
 
     handle get_less(handle h) { return m_nodes[h].lt & 0x7FFFFFFF; }
@@ -1050,7 +1075,7 @@ struct AVLTreeAbstractorForArrayCompare {
 
         double compareResult;
         if (m_cachedCall) {
-            m_cachedCall->setThis(m_globalThisValue);
+            m_cachedCall->setThis(jsUndefined());
             m_cachedCall->setArgument(0, va);
             m_cachedCall->setArgument(1, vb);
             compareResult = m_cachedCall->call().toNumber(m_cachedCall->newCallFrame(m_exec));
@@ -1058,7 +1083,7 @@ struct AVLTreeAbstractorForArrayCompare {
             MarkedArgumentBuffer arguments;
             arguments.append(va);
             arguments.append(vb);
-            compareResult = call(m_exec, m_compareFunction, m_compareCallType, *m_compareCallData, m_globalThisValue, arguments).toNumber(m_exec);
+            compareResult = call(m_exec, m_compareFunction, m_compareCallType, *m_compareCallData, jsUndefined(), arguments).toNumber(m_exec);
         }
         return (compareResult < 0) ? -1 : 1; // Not passing equality through, because we need to store all values, even if equivalent.
     }
@@ -1094,7 +1119,6 @@ void JSArray::sort(ExecState* exec, JSValue compareFunction, CallType callType, 
     tree.abstractor().m_compareFunction = compareFunction;
     tree.abstractor().m_compareCallType = callType;
     tree.abstractor().m_compareCallData = &callData;
-    tree.abstractor().m_globalThisValue = exec->globalThisValue();
     tree.abstractor().m_nodes.grow(nodeCount);
 
     if (callType == CallTypeJS)

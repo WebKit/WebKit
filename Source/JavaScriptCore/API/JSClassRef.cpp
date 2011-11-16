@@ -243,7 +243,18 @@ JSObject* OpaqueJSClass::prototype(ExecState* exec)
      *       |        |          |
      *  DerivedClass  |  DerivedClassPrototype
      */
-    
+
+    if (convertToType) {
+        if (!prototypeClass)
+            prototypeClass = OpaqueJSClass::create(&kJSClassDefinitionEmpty).leakRef();
+        if (!prototypeClass->m_staticFunctions)
+            prototypeClass->m_staticFunctions = new OpaqueJSClassStaticFunctionsTable;
+        const Identifier& toString = exec->propertyNames().toString;
+        const Identifier& valueOf = exec->propertyNames().valueOf;
+        prototypeClass->m_staticFunctions->add(StringImpl::create(toString.characters(), toString.length()), new StaticFunctionEntry(&JSCallbackFunction::toStringCallback, 0));
+        prototypeClass->m_staticFunctions->add(StringImpl::create(valueOf.characters(), valueOf.length()), new StaticFunctionEntry(&JSCallbackFunction::valueOfCallback, 0));
+    }
+
     if (!prototypeClass)
         return 0;
 
@@ -251,7 +262,7 @@ JSObject* OpaqueJSClass::prototype(ExecState* exec)
 
     if (!jsClassData.cachedPrototype) {
         // Recursive, but should be good enough for our purposes
-        jsClassData.cachedPrototype.set(exec->globalData(), JSCallbackObject<JSObjectWithGlobalObject>::create(exec, exec->lexicalGlobalObject(), exec->lexicalGlobalObject()->callbackObjectStructure(), prototypeClass, &jsClassData), 0); // set jsClassData as the object's private data, so it can clear our reference on destruction
+        jsClassData.cachedPrototype.set(exec->globalData(), JSCallbackObject<JSNonFinalObject>::create(exec, exec->lexicalGlobalObject(), exec->lexicalGlobalObject()->callbackObjectStructure(), prototypeClass, &jsClassData), 0); // set jsClassData as the object's private data, so it can clear our reference on destruction
         if (parentClass) {
             if (JSObject* prototype = parentClass->prototype(exec))
                 jsClassData.cachedPrototype->setPrototype(exec->globalData(), prototype);

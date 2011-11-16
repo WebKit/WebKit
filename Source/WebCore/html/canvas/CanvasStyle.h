@@ -30,6 +30,7 @@
 #include "Color.h"
 #include "PlatformString.h"
 #include <wtf/Assertions.h>
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 

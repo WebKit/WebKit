@@ -157,6 +157,7 @@ namespace JSC {
         macro(op_loop_if_lesseq, 4) \
         macro(op_loop_if_greater, 4) \
         macro(op_loop_if_greatereq, 4) \
+        macro(op_loop_hint, 1) \
         macro(op_switch_imm, 4) \
         macro(op_switch_char, 4) \
         macro(op_switch_string, 4) \

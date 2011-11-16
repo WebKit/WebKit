@@ -23,6 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifndef SourceProviderCache_h
+#define SourceProviderCache_h
+
 #include <wtf/HashMap.h>
 #include <wtf/PassOwnPtr.h>
 
@@ -46,3 +49,5 @@ private:
 };
 
 }
+
+#endif // SourceProviderCache_h

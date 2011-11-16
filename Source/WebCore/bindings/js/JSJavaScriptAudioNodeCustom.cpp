@@ -34,13 +34,14 @@ using namespace JSC;
 
 namespace WebCore {
 
-void JSJavaScriptAudioNode::visitChildren(SlotVisitor& visitor)
+void JSJavaScriptAudioNode::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
-    ASSERT_GC_OBJECT_INHERITS(this, &s_info);
+    JSJavaScriptAudioNode* thisObject = static_cast<JSJavaScriptAudioNode*>(cell);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
     COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
-    ASSERT(structure()->typeInfo().overridesVisitChildren());
-    Base::visitChildren(visitor);
-    static_cast<JavaScriptAudioNode*>(impl())->visitJSEventListeners(visitor);
+    ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
+    Base::visitChildren(thisObject, visitor);
+    static_cast<JavaScriptAudioNode*>(thisObject->impl())->visitJSEventListeners(visitor);
 }
 
 } // namespace WebCore

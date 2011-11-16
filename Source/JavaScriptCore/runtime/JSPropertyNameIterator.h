@@ -48,17 +48,17 @@ namespace JSC {
         static JSPropertyNameIterator* create(ExecState*, JSObject*);
         static JSPropertyNameIterator* create(ExecState* exec, PropertyNameArrayData* propertyNameArrayData, size_t numCacheableSlot)
         {
-            return new (allocateCell<JSPropertyNameIterator>(*exec->heap())) JSPropertyNameIterator(exec, propertyNameArrayData, numCacheableSlot);
+            JSPropertyNameIterator* iterator = new (allocateCell<JSPropertyNameIterator>(*exec->heap())) JSPropertyNameIterator(exec, propertyNameArrayData, numCacheableSlot);
+            iterator->finishCreation(exec, propertyNameArrayData);
+            return iterator;
         }
         
-        static Structure* createStructure(JSGlobalData& globalData, JSValue prototype)
+        static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue prototype)
         {
-            return Structure::create(globalData, prototype, TypeInfo(CompoundType, OverridesVisitChildren), AnonymousSlotCount, &s_info);
+            return Structure::create(globalData, globalObject, prototype, TypeInfo(CompoundType, OverridesVisitChildren), &s_info);
         }
 
-        virtual bool isPropertyNameIterator() const { return true; }
-
-        virtual void visitChildren(SlotVisitor&);
+        static void visitChildren(JSCell*, SlotVisitor&);
 
         bool getOffset(size_t i, int& offset)
         {
@@ -83,6 +83,15 @@ namespace JSC {
         StructureChain* cachedPrototypeChain() { return m_cachedPrototypeChain.get(); }
         
         static const ClassInfo s_info;
+
+    protected:
+        void finishCreation(ExecState* exec, PropertyNameArrayData* propertyNameArrayData)
+        {
+            Base::finishCreation(exec->globalData());
+            PropertyNameArrayData::PropertyNameVector& propertyNameVector = propertyNameArrayData->propertyNameVector();
+            for (size_t i = 0; i < m_jsStringsSize; ++i)
+                m_jsStrings[i].set(exec->globalData(), this, jsOwnedString(exec, propertyNameVector[i].ustring()));
+        }
 
     private:
         JSPropertyNameIterator(ExecState*, PropertyNameArrayData* propertyNameArrayData, size_t numCacheableSlot);

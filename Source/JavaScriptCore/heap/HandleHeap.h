@@ -218,6 +218,8 @@ inline HandleHeap::Node::Node(HandleHeap* handleHeap)
     : m_handleHeap(handleHeap)
     , m_weakOwner(0)
     , m_weakOwnerContext(0)
+    , m_prev(0)
+    , m_next(0)
 {
 }
 
@@ -225,6 +227,8 @@ inline HandleHeap::Node::Node(WTF::SentinelTag)
     : m_handleHeap(0)
     , m_weakOwner(0)
     , m_weakOwnerContext(0)
+    , m_prev(0)
+    , m_next(0)
 {
 }
 

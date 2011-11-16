@@ -38,18 +38,9 @@
 #include <mach/vm_map.h>
 #endif
 
-#if OS(HAIKU)
-#include <OS.h>
-#endif
-
 #if OS(WINDOWS)
 #include <malloc.h>
 #include <windows.h>
-#endif
-
-#if OS(SYMBIAN)
-#include <e32hal.h>
-#include <e32std.h>
 #endif
 
 #if HAVE(ERRNO_H)

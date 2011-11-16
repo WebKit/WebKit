@@ -32,11 +32,12 @@
 #include "UserObjectImp.h"
 #include <JavaScriptCore/Completion.h>
 #include <JavaScriptCore/SourceCode.h>
+#include <JavaScriptCore/StrongInlines.h>
 
-JSGlueGlobalObject::JSGlueGlobalObject(JSGlobalData& globalData, Structure* structure, JSFlags flags)
+JSGlueGlobalObject::JSGlueGlobalObject(JSGlobalData& globalData, Structure* structure, Structure* userObjectStructure, JSFlags flags)
     : JSGlobalObject(globalData, structure)
     , m_flags(flags)
-    , m_userObjectStructure(globalData, UserObjectImp::createStructure(globalData, jsNull()))
+    , m_userObjectStructure(globalData, userObjectStructure)
 {
 }
 
@@ -67,12 +68,12 @@ JSGlobalObject* JSRun::GlobalObject() const
     return fGlobalObject.get();
 }
 
-Completion JSRun::Evaluate()
+JSValue JSRun::Evaluate(JSValue* expception)
 {
-    return JSC::evaluate(fGlobalObject->globalExec(), fGlobalObject->globalScopeChain(), makeSource(fSource));
+    return JSC::evaluate(fGlobalObject->globalExec(), fGlobalObject->globalScopeChain(), makeSource(fSource), JSValue(), expception);
 }
 
 bool JSRun::CheckSyntax()
 {
-    return JSC::checkSyntax(fGlobalObject->globalExec(), makeSource(fSource)).complType() != Throw;
+    return JSC::checkSyntax(fGlobalObject->globalExec(), makeSource(fSource));
 }

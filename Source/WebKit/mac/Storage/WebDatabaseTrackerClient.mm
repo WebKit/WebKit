@@ -57,7 +57,7 @@ class DidModifyOriginData {
 public:
     static void dispatchToMainThread(WebDatabaseTrackerClient* client, SecurityOrigin* origin)
     {
-        DidModifyOriginData* context = new DidModifyOriginData(client, origin->threadsafeCopy());
+        DidModifyOriginData* context = new DidModifyOriginData(client, origin->isolatedCopy());
         callOnMainThread(&DidModifyOriginData::dispatchDidModifyOriginOnMainThread, context);
     }
 

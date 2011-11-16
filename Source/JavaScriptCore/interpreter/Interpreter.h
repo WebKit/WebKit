@@ -62,6 +62,24 @@ namespace JSC {
         WillExecuteStatement
     };
 
+    class TopCallFrameSetter {
+    public:
+        TopCallFrameSetter(JSGlobalData& global, CallFrame* callFrame)
+            : globalData(global)
+            , oldCallFrame(global.topCallFrame) 
+        {
+            global.topCallFrame = callFrame;
+        }
+        
+        ~TopCallFrameSetter() 
+        {
+            globalData.topCallFrame = oldCallFrame;
+        }
+    private:
+        JSGlobalData& globalData;
+        CallFrame* oldCallFrame;
+    };
+
     enum { MaxLargeThreadReentryDepth = 256, MaxSmallThreadReentryDepth = 32 };
 
     class Interpreter {

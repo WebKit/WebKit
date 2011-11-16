@@ -40,33 +40,33 @@ public:
 
     static UserObjectImp* create(JSGlobalData& globalData, Structure* structure, JSUserObject* userObject)
     {
-        return new (allocateCell<UserObjectImp>(globalData.heap)) UserObjectImp(globalData, structure, userObject);
+        UserObjectImp* object = new (allocateCell<UserObjectImp>(globalData.heap)) UserObjectImp(globalData, structure, userObject);
+        object->finishCreation(globalData);
+        return object;
     }
     
     virtual ~UserObjectImp();
 
     static const ClassInfo s_info;
 
-    virtual CallType getCallData(CallData&);
+    static CallType getCallData(JSCell*, CallData&);
 
-    virtual void getOwnPropertyNames(ExecState*, PropertyNameArray&, EnumerationMode mode = ExcludeDontEnumProperties);
+    static void getOwnPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
 
     virtual JSValue callAsFunction(ExecState *exec);
-    virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
-    virtual void put(ExecState *exec, const Identifier &propertyName, JSValue value, PutPropertySlot&);
+    static bool getOwnPropertySlot(JSCell*, ExecState *, const Identifier&, PropertySlot&);
+    static void put(JSCell*, ExecState*, const Identifier& propertyName, JSValue, PutPropertySlot&);
 
     JSValue toPrimitive(ExecState*, PreferredPrimitiveType preferredType = NoPreference) const;
     virtual bool toBoolean(ExecState *exec) const;
-    virtual double toNumber(ExecState *exec) const;
-    virtual UString toString(ExecState *exec) const;
 
-    virtual void visitChildren(SlotVisitor&);
+    static void visitChildren(JSCell*, SlotVisitor&);
 
     JSUserObject *GetJSUserObject() const;
 
-    static Structure* createStructure(JSGlobalData& globalData, JSValue prototype)
+    static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue prototype)
     {
-        return Structure::create(globalData, prototype, TypeInfo(ObjectType, OverridesGetOwnPropertySlot | OverridesVisitChildren | OverridesGetPropertyNames), AnonymousSlotCount, &s_info);
+        return Structure::create(globalData, globalObject, prototype, TypeInfo(ObjectType, OverridesGetOwnPropertySlot | OverridesVisitChildren | OverridesGetPropertyNames), &s_info);
     }
 
 private:

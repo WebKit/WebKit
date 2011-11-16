@@ -39,14 +39,15 @@ using namespace JSC;
 
 namespace WebCore {
 
-void JSCanvasRenderingContext::visitChildren(SlotVisitor& visitor)
+void JSCanvasRenderingContext::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
-    ASSERT_GC_OBJECT_INHERITS(this, &s_info);
+    JSCanvasRenderingContext* thisObject = static_cast<JSCanvasRenderingContext*>(cell);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
     COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
-    ASSERT(structure()->typeInfo().overridesVisitChildren());
-    Base::visitChildren(visitor);
+    ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
+    Base::visitChildren(thisObject, visitor);
 
-    visitor.addOpaqueRoot(root(impl()->canvas()));
+    visitor.addOpaqueRoot(root(thisObject->impl()->canvas()));
 }
 
 JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, CanvasRenderingContext* object)

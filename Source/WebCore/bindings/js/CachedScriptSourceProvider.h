@@ -46,7 +46,7 @@ namespace WebCore {
         }
 
         JSC::UString getRange(int start, int end) const { return JSC::UString(m_cachedScript->script().characters() + start, end - start); }
-        const UChar* data() const { return m_cachedScript->script().characters(); }
+        const StringImpl* data() const { return m_cachedScript->script().impl(); }
         int length() const { return m_cachedScript->script().length(); }
         const String& source() const { return m_cachedScript->script(); }
 

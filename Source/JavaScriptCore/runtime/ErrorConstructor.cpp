@@ -29,9 +29,16 @@ namespace JSC {
 
 ASSERT_CLASS_FITS_IN_CELL(ErrorConstructor);
 
-ErrorConstructor::ErrorConstructor(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, ErrorPrototype* errorPrototype)
-    : InternalFunction(&exec->globalData(), globalObject, structure, Identifier(exec, errorPrototype->classInfo()->className))
+const ClassInfo ErrorConstructor::s_info = { "Function", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(ErrorConstructor) };
+
+ErrorConstructor::ErrorConstructor(JSGlobalObject* globalObject, Structure* structure)
+    : InternalFunction(globalObject, structure)
 {
+}
+
+void ErrorConstructor::finishCreation(ExecState* exec, ErrorPrototype* errorPrototype)
+{
+    Base::finishCreation(exec->globalData(), Identifier(exec, errorPrototype->classInfo()->className));
     // ECMA 15.11.3.1 Error.prototype
     putDirectWithoutTransition(exec->globalData(), exec->propertyNames().prototype, errorPrototype, DontEnum | DontDelete | ReadOnly);
     putDirectWithoutTransition(exec->globalData(), exec->propertyNames().length, jsNumber(1), DontDelete | ReadOnly | DontEnum);
@@ -46,7 +53,7 @@ static EncodedJSValue JSC_HOST_CALL constructWithErrorConstructor(ExecState* exe
     return JSValue::encode(ErrorInstance::create(exec, errorStructure, message));
 }
 
-ConstructType ErrorConstructor::getConstructData(ConstructData& constructData)
+ConstructType ErrorConstructor::getConstructData(JSCell*, ConstructData& constructData)
 {
     constructData.native.function = constructWithErrorConstructor;
     return ConstructTypeHost;
@@ -59,7 +66,7 @@ static EncodedJSValue JSC_HOST_CALL callErrorConstructor(ExecState* exec)
     return JSValue::encode(ErrorInstance::create(exec, errorStructure, message));
 }
 
-CallType ErrorConstructor::getCallData(CallData& callData)
+CallType ErrorConstructor::getCallData(JSCell*, CallData& callData)
 {
     callData.native.function = callErrorConstructor;
     return CallTypeHost;

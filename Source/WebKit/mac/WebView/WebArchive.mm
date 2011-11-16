@@ -38,6 +38,7 @@
 #import <WebCore/LegacyWebArchive.h>
 #import <WebCore/ThreadCheck.h>
 #import <WebCore/WebCoreObjCExtras.h>
+#import <wtf/MainThread.h>
 #import <wtf/Threading.h>
 
 using namespace WebCore;

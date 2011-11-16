@@ -149,11 +149,17 @@ inline float nextafterf(float x, float y) { return x > y ? x - FLT_EPSILON : x +
 inline double copysign(double x, double y) { return _copysign(x, y); }
 inline int isfinite(double x) { return _finite(x); }
 
-// MSVC's math.h does not currently supply log2.
+// MSVC's math.h does not currently supply log2 or log2f.
 inline double log2(double num)
 {
     // This constant is roughly M_LN2, which is not provided by default on Windows.
     return log(num) / 0.693147180559945309417232121458176568;
+}
+
+inline float log2f(float num)
+{
+    // This constant is roughly M_LN2, which is not provided by default on Windows.
+    return logf(num) / 0.693147180559945309417232121458176568f;
 }
 
 // Work around a bug in Win, where atan2(+-infinity, +-infinity) yields NaN instead of specific values.
@@ -254,7 +260,12 @@ inline int clampToInteger(unsigned x)
     return static_cast<int>(x);
 }
 
-#if !COMPILER(MSVC) && !(COMPILER(RVCT) && PLATFORM(BREWMP)) && !OS(SOLARIS) && !OS(SYMBIAN)
+inline bool isWithinIntRange(float x)
+{
+    return x > static_cast<float>(std::numeric_limits<int>::min()) && x < static_cast<float>(std::numeric_limits<int>::max());
+}
+
+#if !COMPILER(MSVC) && !COMPILER(RVCT) && !OS(SOLARIS)
 using std::isfinite;
 using std::isinf;
 using std::isnan;
@@ -280,6 +291,29 @@ inline void decomposeDouble(double number, bool& sign, int32_t& exponent, uint64
         exponent = mantissa ? -0x3fe : 0;
     else
         mantissa |= 0x10000000000000ull;
+}
+
+// Calculate d % 2^{64}.
+inline void doubleToInteger(double d, unsigned long long& value)
+{
+    if (isnan(d) || isinf(d))
+        value = 0;
+    else {
+        // -2^{64} < fmodValue < 2^{64}.
+        double fmodValue = fmod(trunc(d), std::numeric_limits<unsigned long long>::max() + 1.0);
+        if (fmodValue >= 0) {
+            // 0 <= fmodValue < 2^{64}.
+            // 0 <= value < 2^{64}. This cast causes no loss.
+            value = static_cast<unsigned long long>(fmodValue);
+        } else {
+            // -2^{64} < fmodValue < 0.
+            // 0 < fmodValueInUnsignedLongLong < 2^{64}. This cast causes no loss.
+            unsigned long long fmodValueInUnsignedLongLong = static_cast<unsigned long long>(-fmodValue);
+            // -1 < (std::numeric_limits<unsigned long long>::max() - fmodValueInUnsignedLongLong) < 2^{64} - 1.
+            // 0 < value < 2^{64}.
+            value = std::numeric_limits<unsigned long long>::max() - fmodValueInUnsignedLongLong + 1;
+        }
+    }
 }
 
 #endif // #ifndef WTF_MathExtras_h

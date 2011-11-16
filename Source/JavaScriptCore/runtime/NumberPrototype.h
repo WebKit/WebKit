@@ -31,24 +31,26 @@ namespace JSC {
 
         static NumberPrototype* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure)
         {
-            return new (allocateCell<NumberPrototype>(*exec->heap())) NumberPrototype(exec, globalObject, structure);
+            NumberPrototype* prototype = new (allocateCell<NumberPrototype>(*exec->heap())) NumberPrototype(exec, structure);
+            prototype->finishCreation(exec, globalObject);
+            return prototype;
         }
         
         static const ClassInfo s_info;
 
-        static Structure* createStructure(JSGlobalData& globalData, JSValue prototype)
+        static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue prototype)
         {
-            return Structure::create(globalData, prototype, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
+            return Structure::create(globalData, globalObject, prototype, TypeInfo(NumberObjectType, StructureFlags), &s_info);
         }
 
     protected:
+        void finishCreation(ExecState*, JSGlobalObject*);
         static const unsigned StructureFlags = OverridesGetOwnPropertySlot | NumberObject::StructureFlags;
-        static const unsigned AnonymousSlotCount = NumberObject::AnonymousSlotCount + 1;
 
     private:
-        NumberPrototype(ExecState*, JSGlobalObject*, Structure*);
-        virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
-        virtual bool getOwnPropertyDescriptor(ExecState*, const Identifier&, PropertyDescriptor&);
+        NumberPrototype(ExecState*, Structure*);
+        static bool getOwnPropertySlot(JSCell*, ExecState*, const Identifier&, PropertySlot&);
+        static bool getOwnPropertyDescriptor(JSObject*, ExecState*, const Identifier&, PropertyDescriptor&);
     };
 
 } // namespace JSC

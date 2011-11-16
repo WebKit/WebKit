@@ -34,6 +34,7 @@
 #include "MIMETypeRegistry.h"
 #include "SharedBuffer.h"
 #include <math.h>
+#include <wtf/MainThread.h>
 #include <wtf/StdLibExtras.h>
 
 #if USE(CG)

@@ -110,7 +110,7 @@ int RegularExpression::match(const String& str, int startFrom, int* matchLength)
     for (unsigned j = 0, i = 0; i < d->m_numSubpatterns + 1; j += 2, i++)
         offsetVector[j] = -1;
 
-    int result = JSC::Yarr::interpret(d->m_regExpByteCode.get(), str.characters(), startFrom, str.length(), offsetVector);
+    int result = JSC::Yarr::interpret(d->m_regExpByteCode.get(), JSC::UString(str.impl()), startFrom, str.length(), offsetVector);
     ASSERT(result >= -1);
 
     if (result < 0) {

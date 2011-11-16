@@ -36,6 +36,7 @@
 #include "OwnHandle.h"
 #include "PlatformString.h"
 #include <v8-debug.h>
+#inculde <wtf/RefCounted.h>
 
 namespace WebCore {
 

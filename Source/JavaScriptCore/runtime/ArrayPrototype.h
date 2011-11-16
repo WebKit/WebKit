@@ -35,21 +35,23 @@ namespace JSC {
 
         static ArrayPrototype* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure)
         {
-            return new (allocateCell<ArrayPrototype>(*exec->heap())) ArrayPrototype(globalObject, structure);
+            ArrayPrototype* prototype = new (allocateCell<ArrayPrototype>(*exec->heap())) ArrayPrototype(globalObject, structure);
+            prototype->finishCreation(globalObject);
+            return prototype;
         }
         
-        bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
-        virtual bool getOwnPropertyDescriptor(ExecState*, const Identifier&, PropertyDescriptor&);
+        static bool getOwnPropertySlot(JSCell*, ExecState*, const Identifier&, PropertySlot&);
+        static bool getOwnPropertyDescriptor(JSObject*, ExecState*, const Identifier&, PropertyDescriptor&);
 
         static const ClassInfo s_info;
 
-        static Structure* createStructure(JSGlobalData& globalData, JSValue prototype)
+        static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue prototype)
         {
-            return Structure::create(globalData, prototype, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
+            return Structure::create(globalData, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), &s_info);
         }
 
     protected:
-        static const unsigned AnonymousSlotCount = JSArray::AnonymousSlotCount + 1;
+        void finishCreation(JSGlobalObject*);
     };
 
 } // namespace JSC

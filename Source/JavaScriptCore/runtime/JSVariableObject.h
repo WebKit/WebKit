@@ -48,22 +48,23 @@ namespace JSC {
 
         SymbolTable& symbolTable() const { return *m_symbolTable; }
 
-        virtual void putWithAttributes(ExecState*, const Identifier&, JSValue, unsigned attributes) = 0;
+        virtual ~JSVariableObject();
 
-        virtual bool deleteProperty(ExecState*, const Identifier&);
-        virtual void getOwnPropertyNames(ExecState*, PropertyNameArray&, EnumerationMode mode = ExcludeDontEnumProperties);
+        static NO_RETURN_DUE_TO_ASSERT void putWithAttributes(JSObject*, ExecState*, const Identifier&, JSValue, unsigned attributes);
+
+        static bool deleteProperty(JSCell*, ExecState*, const Identifier&);
+        static void getOwnPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
         
-        virtual bool isVariableObject() const;
-        virtual bool isDynamicScope(bool& requiresDynamicChecks) const = 0;
+        bool isDynamicScope(bool& requiresDynamicChecks) const;
 
         WriteBarrier<Unknown>& registerAt(int index) const { return m_registers[index]; }
 
         WriteBarrier<Unknown>* const * addressOfRegisters() const { return &m_registers; }
         static size_t offsetOfRegisters() { return OBJECT_OFFSETOF(JSVariableObject, m_registers); }
 
-        static Structure* createStructure(JSGlobalData& globalData, JSValue prototype)
+        static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue prototype)
         {
-            return Structure::create(globalData, prototype, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
+            return Structure::create(globalData, globalObject, prototype, TypeInfo(VariableObjectType, StructureFlags), &s_info);
         }
         
     protected:
@@ -74,6 +75,11 @@ namespace JSC {
             , m_symbolTable(symbolTable)
             , m_registers(reinterpret_cast<WriteBarrier<Unknown>*>(registers))
         {
+        }
+
+        void finishCreation(JSGlobalData& globalData)
+        {
+            Base::finishCreation(globalData);
             ASSERT(m_symbolTable);
             COMPILE_ASSERT(sizeof(WriteBarrier<Unknown>) == sizeof(Register), Register_should_be_same_size_as_WriteBarrier);
         }

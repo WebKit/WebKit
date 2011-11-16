@@ -79,7 +79,7 @@ private:
         explicit SystemBasePath(const String& path) : m_value(path) { }
         operator String() const
         {
-            return m_value.threadsafeCopy();
+            return m_value.isolatedCopy();
         }
     private:
         String m_value;

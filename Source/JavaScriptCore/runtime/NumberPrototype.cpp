@@ -25,14 +25,20 @@
 #include "BigInteger.h"
 #include "Error.h"
 #include "JSFunction.h"
+#include "JSGlobalObject.h"
 #include "JSString.h"
 #include "Operations.h"
 #include "Uint16WithFraction.h"
 #include "dtoa.h"
 #include <wtf/Assertions.h>
-#include <wtf/DecimalNumber.h>
 #include <wtf/MathExtras.h>
 #include <wtf/Vector.h>
+#include <wtf/dtoa/double-conversion.h>
+
+using namespace WTF::double_conversion;
+
+// To avoid conflict with WTF::StringBuilder.
+typedef WTF::double_conversion::StringBuilder DoubleConversionStringBuilder;
 
 namespace JSC {
 
@@ -49,7 +55,7 @@ static EncodedJSValue JSC_HOST_CALL numberProtoFuncToPrecision(ExecState*);
 
 namespace JSC {
 
-const ClassInfo NumberPrototype::s_info = { "Number", &NumberObject::s_info, 0, ExecState::numberPrototypeTable };
+const ClassInfo NumberPrototype::s_info = { "Number", &NumberObject::s_info, 0, ExecState::numberPrototypeTable, CREATE_METHOD_TABLE(NumberPrototype) };
 
 /* Source for NumberPrototype.lut.h
 @begin numberPrototypeTable
@@ -64,34 +70,49 @@ const ClassInfo NumberPrototype::s_info = { "Number", &NumberObject::s_info, 0, 
 
 ASSERT_CLASS_FITS_IN_CELL(NumberPrototype);
 
-NumberPrototype::NumberPrototype(ExecState* exec, JSGlobalObject* globalObject, Structure* structure)
+NumberPrototype::NumberPrototype(ExecState* exec, Structure* structure)
     : NumberObject(exec->globalData(), structure)
 {
+}
+
+void NumberPrototype::finishCreation(ExecState* exec, JSGlobalObject*)
+{
+    Base::finishCreation(exec->globalData());
     setInternalValue(exec->globalData(), jsNumber(0));
 
     ASSERT(inherits(&s_info));
-    putAnonymousValue(globalObject->globalData(), 0, globalObject);
 }
 
-bool NumberPrototype::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot &slot)
+bool NumberPrototype::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot &slot)
 {
-    return getStaticFunctionSlot<NumberObject>(exec, ExecState::numberPrototypeTable(exec), this, propertyName, slot);
+    return getStaticFunctionSlot<NumberObject>(exec, ExecState::numberPrototypeTable(exec), static_cast<NumberPrototype*>(cell), propertyName, slot);
 }
 
-bool NumberPrototype::getOwnPropertyDescriptor(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
+bool NumberPrototype::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
 {
-    return getStaticFunctionDescriptor<NumberObject>(exec, ExecState::numberPrototypeTable(exec), this, propertyName, descriptor);
+    return getStaticFunctionDescriptor<NumberObject>(exec, ExecState::numberPrototypeTable(exec), static_cast<NumberPrototype*>(object), propertyName, descriptor);
 }
 
 // ------------------------------ Functions ---------------------------
 
-static ALWAYS_INLINE bool toThisNumber(JSValue thisValue, double &x)
+static ALWAYS_INLINE bool toThisNumber(JSValue thisValue, double& x)
 {
-    JSValue v = thisValue.getJSNumber();
-    if (UNLIKELY(!v))
-        return false;
-    x = v.uncheckedGetNumber();
-    return true;
+    if (thisValue.isInt32()) {
+        x = thisValue.asInt32();
+        return true;
+    }
+
+    if (thisValue.isDouble()) {
+        x = thisValue.asDouble();
+        return true;
+    }
+    
+    if (thisValue.isCell() && thisValue.asCell()->structure()->typeInfo().isNumberObject()) {
+        x = static_cast<const NumberObject*>(thisValue.asCell())->internalValue().asNumber();
+        return true;
+    }
+
+    return false;
 }
 
 static ALWAYS_INLINE bool getIntegerArgumentInRange(ExecState* exec, int low, int high, int& result, bool& isUndefined)
@@ -323,7 +344,6 @@ static char* toStringWithRadix(RadixBuffer& buffer, double number, unsigned radi
 // to argument-plus-one significant figures).
 EncodedJSValue JSC_HOST_CALL numberProtoFuncToExponential(ExecState* exec)
 {
-    // Get x (the double value of this, which should be a Number).
     double x;
     if (!toThisNumber(exec->hostThisValue(), x))
         return throwVMTypeError(exec);
@@ -339,12 +359,14 @@ EncodedJSValue JSC_HOST_CALL numberProtoFuncToExponential(ExecState* exec)
         return JSValue::encode(jsString(exec, UString::number(x)));
 
     // Round if the argument is not undefined, always format as exponential.
-    NumberToStringBuffer buffer;
-    unsigned length = isUndefined
-        ? DecimalNumber(x).toStringExponential(buffer, WTF::NumberToStringBufferLength)
-        : DecimalNumber(x, RoundingSignificantFigures, decimalPlacesInExponent + 1).toStringExponential(buffer, WTF::NumberToStringBufferLength);
-
-    return JSValue::encode(jsString(exec, UString(buffer, length)));
+    char buffer[WTF::NumberToStringBufferLength];
+    DoubleConversionStringBuilder builder(buffer, WTF::NumberToStringBufferLength);
+    const DoubleToStringConverter& converter = DoubleToStringConverter::EcmaScriptConverter();
+    builder.Reset();
+    isUndefined
+        ? converter.ToExponential(x, -1, &builder)
+        : converter.ToExponential(x, decimalPlacesInExponent, &builder);
+    return JSValue::encode(jsString(exec, UString(builder.Finalize())));
 }
 
 // toFixed converts a number to a string, always formatting as an a decimal fraction.
@@ -353,12 +375,9 @@ EncodedJSValue JSC_HOST_CALL numberProtoFuncToExponential(ExecState* exec)
 // method will instead fallback to calling ToString. 
 EncodedJSValue JSC_HOST_CALL numberProtoFuncToFixed(ExecState* exec)
 {
-    // Get x (the double value of this, which should be a Number).
-    JSValue thisValue = exec->hostThisValue();
-    JSValue v = thisValue.getJSNumber();
-    if (!v)
+    double x;
+    if (!toThisNumber(exec->hostThisValue(), x))
         return throwVMTypeError(exec);
-    double x = v.uncheckedGetNumber();
 
     // Get the argument. 
     int decimalPlaces;
@@ -376,10 +395,12 @@ EncodedJSValue JSC_HOST_CALL numberProtoFuncToFixed(ExecState* exec)
     // handled by numberToString.
     ASSERT(isfinite(x));
 
-    // Convert to decimal with rounding, and format as decimal.
-    NumberToStringBuffer buffer;
-    unsigned length = DecimalNumber(x, RoundingDecimalPlaces, decimalPlaces).toStringDecimal(buffer, WTF::NumberToStringBufferLength);
-    return JSValue::encode(jsString(exec, UString(buffer, length)));
+    char buffer[WTF::NumberToStringBufferLength];
+    DoubleConversionStringBuilder builder(buffer, WTF::NumberToStringBufferLength);
+    const DoubleToStringConverter& converter = DoubleToStringConverter::EcmaScriptConverter();
+    builder.Reset();
+    converter.ToFixed(x, decimalPlaces, &builder);
+    return JSValue::encode(jsString(exec, UString(builder.Finalize())));
 }
 
 // toPrecision converts a number to a string, takeing an argument specifying a
@@ -391,12 +412,9 @@ EncodedJSValue JSC_HOST_CALL numberProtoFuncToFixed(ExecState* exec)
 // with smaller values converted to exponential representation.
 EncodedJSValue JSC_HOST_CALL numberProtoFuncToPrecision(ExecState* exec)
 {
-    // Get x (the double value of this, which should be a Number).
-    JSValue thisValue = exec->hostThisValue();
-    JSValue v = thisValue.getJSNumber();
-    if (!v)
+    double x;
+    if (!toThisNumber(exec->hostThisValue(), x))
         return throwVMTypeError(exec);
-    double x = v.uncheckedGetNumber();
 
     // Get the argument. 
     int significantFigures;
@@ -412,24 +430,18 @@ EncodedJSValue JSC_HOST_CALL numberProtoFuncToPrecision(ExecState* exec)
     if (!isfinite(x))
         return JSValue::encode(jsString(exec, UString::number(x)));
 
-    // Convert to decimal with rounding.
-    DecimalNumber number(x, RoundingSignificantFigures, significantFigures);
-    // If number is in the range 1e-6 <= x < pow(10, significantFigures) then format
-    // as decimal. Otherwise, format the number as an exponential. Decimal format
-    // demands a minimum of (exponent + 1) digits to represent a number, for example
-    // 1234 (1.234e+3) requires 4 digits. (See ECMA-262 15.7.4.7.10.c)
-    NumberToStringBuffer buffer;
-    unsigned length = number.exponent() >= -6 && number.exponent() < significantFigures
-        ? number.toStringDecimal(buffer, WTF::NumberToStringBufferLength)
-        : number.toStringExponential(buffer, WTF::NumberToStringBufferLength);
-    return JSValue::encode(jsString(exec, UString(buffer, length)));
+    char buffer[WTF::NumberToStringBufferLength];
+    DoubleConversionStringBuilder builder(buffer, WTF::NumberToStringBufferLength);
+    const DoubleToStringConverter& converter = DoubleToStringConverter::EcmaScriptConverter();
+    builder.Reset();
+    converter.ToPrecision(x, significantFigures, &builder);
+    return JSValue::encode(jsString(exec, UString(builder.Finalize())));
 }
 
 EncodedJSValue JSC_HOST_CALL numberProtoFuncToString(ExecState* exec)
 {
-    JSValue thisValue = exec->hostThisValue();
-    JSValue v = thisValue.getJSNumber();
-    if (!v)
+    double x;
+    if (!toThisNumber(exec->hostThisValue(), x))
         return throwVMTypeError(exec);
 
     JSValue radixValue = exec->argument(0);
@@ -442,23 +454,20 @@ EncodedJSValue JSC_HOST_CALL numberProtoFuncToString(ExecState* exec)
         radix = static_cast<int>(radixValue.toInteger(exec)); // nan -> 0
 
     if (radix == 10)
-        return JSValue::encode(jsString(exec, v.toString(exec)));
+        return JSValue::encode(jsString(exec, jsNumber(x).toString(exec)));
 
     // Fast path for number to character conversion.
     if (radix == 36) {
-        if (v.isInt32()) {
-            int x = v.asInt32();
-            if (static_cast<unsigned>(x) < 36) { // Exclude negatives
-                JSGlobalData* globalData = &exec->globalData();
-                return JSValue::encode(globalData->smallStrings.singleCharacterString(globalData, radixDigits[x]));
-            }
+        unsigned c = static_cast<unsigned>(x);
+        if (c == x && c < 36) {
+            JSGlobalData* globalData = &exec->globalData();
+            return JSValue::encode(globalData->smallStrings.singleCharacterString(globalData, radixDigits[c]));
         }
     }
 
     if (radix < 2 || radix > 36)
         return throwVMError(exec, createRangeError(exec, "toString() radix argument must be between 2 and 36"));
 
-    double x = v.uncheckedGetNumber();
     if (!isfinite(x))
         return JSValue::encode(jsString(exec, UString::number(x)));
 
@@ -468,24 +477,19 @@ EncodedJSValue JSC_HOST_CALL numberProtoFuncToString(ExecState* exec)
 
 EncodedJSValue JSC_HOST_CALL numberProtoFuncToLocaleString(ExecState* exec)
 {
-    JSValue thisValue = exec->hostThisValue();
-    // FIXME: Not implemented yet.
-
-    JSValue v = thisValue.getJSNumber();
-    if (!v)
+    double x;
+    if (!toThisNumber(exec->hostThisValue(), x))
         return throwVMTypeError(exec);
 
-    return JSValue::encode(jsString(exec, v.toString(exec)));
+    return JSValue::encode(jsString(exec, jsNumber(x).toString(exec)));
 }
 
 EncodedJSValue JSC_HOST_CALL numberProtoFuncValueOf(ExecState* exec)
 {
-    JSValue thisValue = exec->hostThisValue();
-    JSValue v = thisValue.getJSNumber();
-    if (!v)
+    double x;
+    if (!toThisNumber(exec->hostThisValue(), x))
         return throwVMTypeError(exec);
-
-    return JSValue::encode(v);
+    return JSValue::encode(jsNumber(x));
 }
 
 } // namespace JSC

@@ -31,6 +31,7 @@
 #include "JSFunction.h"
 #include "JSLock.h"
 #include "JSString.h"
+#include "MainThread.h"
 #include "SamplingTool.h"
 #include <math.h>
 #include <stdio.h>
@@ -145,46 +146,68 @@ long StopWatch::getElapsedMS()
 
 class GlobalObject : public JSGlobalObject {
 private:
-    GlobalObject(JSGlobalData&, Structure*, const Vector<UString>& arguments);
+    GlobalObject(JSGlobalData&, Structure*);
 
 public:
     typedef JSGlobalObject Base;
 
     static GlobalObject* create(JSGlobalData& globalData, Structure* structure, const Vector<UString>& arguments)
     {
-        return new (allocateCell<GlobalObject>(globalData.heap)) GlobalObject(globalData, structure, arguments);
+        GlobalObject* object = new (allocateCell<GlobalObject>(globalData.heap)) GlobalObject(globalData, structure);
+        object->finishCreation(globalData, arguments);
+        return object;
     }
-    virtual UString className() const { return "global"; }
+
+    static const ClassInfo s_info;
+
+    static Structure* createStructure(JSGlobalData& globalData, JSValue prototype)
+    {
+        return Structure::create(globalData, 0, prototype, TypeInfo(GlobalObjectType, StructureFlags), &s_info);
+    }
+
+protected:
+    void finishCreation(JSGlobalData& globalData, const Vector<UString>& arguments)
+    {
+        Base::finishCreation(globalData);
+        
+        addFunction(globalData, "debug", functionDebug, 1);
+        addFunction(globalData, "print", functionPrint, 1);
+        addFunction(globalData, "quit", functionQuit, 0);
+        addFunction(globalData, "gc", functionGC, 0);
+#ifndef NDEBUG
+        addFunction(globalData, "releaseExecutableMemory", functionReleaseExecutableMemory, 0);
+#endif
+        addFunction(globalData, "version", functionVersion, 1);
+        addFunction(globalData, "run", functionRun, 1);
+        addFunction(globalData, "load", functionLoad, 1);
+        addFunction(globalData, "checkSyntax", functionCheckSyntax, 1);
+        addFunction(globalData, "readline", functionReadline, 0);
+        addFunction(globalData, "preciseTime", functionPreciseTime, 0);
+#if ENABLE(SAMPLING_FLAGS)
+        addFunction(globalData, "setSamplingFlags", functionSetSamplingFlags, 1);
+        addFunction(globalData, "clearSamplingFlags", functionClearSamplingFlags, 1);
+#endif
+
+        JSObject* array = constructEmptyArray(globalExec());
+        for (size_t i = 0; i < arguments.size(); ++i)
+            array->methodTable()->putByIndex(array, globalExec(), i, jsString(globalExec(), arguments[i]));
+        putDirect(globalData, Identifier(globalExec(), "arguments"), array);
+    }
+
+    void addFunction(JSGlobalData& globalData, const char* name, NativeFunction function, unsigned arguments)
+    {
+        Identifier identifier(globalExec(), name);
+        putDirect(globalData, identifier, JSFunction::create(globalExec(), this, arguments, identifier, function));
+    }
 };
 COMPILE_ASSERT(!IsInteger<GlobalObject>::value, WTF_IsInteger_GlobalObject_false);
 ASSERT_CLASS_FITS_IN_CELL(GlobalObject);
 
-GlobalObject::GlobalObject(JSGlobalData& globalData, Structure* structure, const Vector<UString>& arguments)
+const ClassInfo GlobalObject::s_info = { "global", &JSGlobalObject::s_info, 0, ExecState::globalObjectTable, CREATE_METHOD_TABLE(GlobalObject) };
+
+GlobalObject::GlobalObject(JSGlobalData& globalData, Structure* structure)
     : JSGlobalObject(globalData, structure)
 {
-    putDirectFunction(globalExec(), JSFunction::create(globalExec(), this, functionStructure(), 1, Identifier(globalExec(), "debug"), functionDebug));
-    putDirectFunction(globalExec(), JSFunction::create(globalExec(), this, functionStructure(), 1, Identifier(globalExec(), "print"), functionPrint));
-    putDirectFunction(globalExec(), JSFunction::create(globalExec(), this, functionStructure(), 0, Identifier(globalExec(), "quit"), functionQuit));
-    putDirectFunction(globalExec(), JSFunction::create(globalExec(), this, functionStructure(), 0, Identifier(globalExec(), "gc"), functionGC));
-#ifndef NDEBUG
-    putDirectFunction(globalExec(), JSFunction::create(globalExec(), this, functionStructure(), 0, Identifier(globalExec(), "releaseExecutableMemory"), functionReleaseExecutableMemory));
-#endif
-    putDirectFunction(globalExec(), JSFunction::create(globalExec(), this, functionStructure(), 1, Identifier(globalExec(), "version"), functionVersion));
-    putDirectFunction(globalExec(), JSFunction::create(globalExec(), this, functionStructure(), 1, Identifier(globalExec(), "run"), functionRun));
-    putDirectFunction(globalExec(), JSFunction::create(globalExec(), this, functionStructure(), 1, Identifier(globalExec(), "load"), functionLoad));
-    putDirectFunction(globalExec(), JSFunction::create(globalExec(), this, functionStructure(), 1, Identifier(globalExec(), "checkSyntax"), functionCheckSyntax));
-    putDirectFunction(globalExec(), JSFunction::create(globalExec(), this, functionStructure(), 0, Identifier(globalExec(), "readline"), functionReadline));
-    putDirectFunction(globalExec(), JSFunction::create(globalExec(), this, functionStructure(), 0, Identifier(globalExec(), "preciseTime"), functionPreciseTime));
-
-#if ENABLE(SAMPLING_FLAGS)
-    putDirectFunction(globalExec(), JSFunction::create(globalExec(), this, functionStructure(), 1, Identifier(globalExec(), "setSamplingFlags"), functionSetSamplingFlags));
-    putDirectFunction(globalExec(), JSFunction::create(globalExec(), this, functionStructure(), 1, Identifier(globalExec(), "clearSamplingFlags"), functionClearSamplingFlags));
-#endif
-
-    JSObject* array = constructEmptyArray(globalExec());
-    for (size_t i = 0; i < arguments.size(); ++i)
-        array->put(globalExec(), i, jsString(globalExec(), arguments[i]));
-    putDirect(globalExec()->globalData(), Identifier(globalExec(), "arguments"), array);
 }
 
 EncodedJSValue JSC_HOST_CALL functionPrint(ExecState* exec)
@@ -255,10 +278,12 @@ EncodedJSValue JSC_HOST_CALL functionLoad(ExecState* exec)
         return JSValue::encode(throwError(exec, createError(exec, "Could not open file.")));
 
     JSGlobalObject* globalObject = exec->lexicalGlobalObject();
-    Completion result = evaluate(globalObject->globalExec(), globalObject->globalScopeChain(), makeSource(script.data(), fileName));
-    if (result.complType() == Throw)
-        throwError(exec, result.value());
-    return JSValue::encode(result.value());
+    
+    JSValue evaluationException;
+    JSValue result = evaluate(globalObject->globalExec(), globalObject->globalScopeChain(), makeSource(script.data(), fileName), JSValue(), &evaluationException);
+    if (evaluationException)
+        throwError(exec, evaluationException);
+    return JSValue::encode(result);
 }
 
 EncodedJSValue JSC_HOST_CALL functionCheckSyntax(ExecState* exec)
@@ -272,11 +297,13 @@ EncodedJSValue JSC_HOST_CALL functionCheckSyntax(ExecState* exec)
 
     StopWatch stopWatch;
     stopWatch.start();
-    Completion result = checkSyntax(globalObject->globalExec(), makeSource(script.data(), fileName));
+
+    JSValue syntaxException;
+    bool validSyntax = checkSyntax(globalObject->globalExec(), makeSource(script.data(), fileName), &syntaxException);
     stopWatch.stop();
 
-    if (result.complType() == Throw)
-        throwError(exec, result.value());
+    if (!validSyntax)
+        throwError(exec, syntaxException);
     return JSValue::encode(jsNumber(stopWatch.getElapsedMS()));
 }
 
@@ -379,6 +406,9 @@ int main(int argc, char** argv)
 #endif
 
     // Initialize JSC before getting JSGlobalData.
+#if ENABLE(SAMPLING_REGIONS)
+    WTF::initializeMainThread();
+#endif
     JSC::initializeThreading();
 
     // We can't use destructors in the following code because it uses Windows
@@ -430,13 +460,14 @@ static bool runWithScripts(GlobalObject* globalObject, const Vector<Script>& scr
 
         globalData.startSampling();
 
-        Completion completion = evaluate(globalObject->globalExec(), globalObject->globalScopeChain(), makeSource(script, fileName));
-        success = success && completion.complType() != Throw;
+        JSValue evaluationException;
+        JSValue returnValue = evaluate(globalObject->globalExec(), globalObject->globalScopeChain(), makeSource(script, fileName), JSValue(), &evaluationException);
+        success = success && !evaluationException;
         if (dump) {
-            if (completion.complType() == Throw)
-                printf("Exception: %s\n", completion.value().toString(globalObject->globalExec()).utf8().data());
+            if (evaluationException)
+                printf("Exception: %s\n", evaluationException.toString(globalObject->globalExec()).utf8().data());
             else
-                printf("End: %s\n", completion.value().toString(globalObject->globalExec()).utf8().data());
+                printf("End: %s\n", returnValue.toString(globalObject->globalExec()).utf8().data());
         }
 
         globalData.stopSampling();
@@ -445,6 +476,9 @@ static bool runWithScripts(GlobalObject* globalObject, const Vector<Script>& scr
 
 #if ENABLE(SAMPLING_FLAGS)
     SamplingFlags::stop();
+#endif
+#if ENABLE(SAMPLING_REGIONS)
+    SamplingRegion::dump();
 #endif
     globalData.dumpSampleData(globalObject->globalExec());
 #if ENABLE(SAMPLING_COUNTERS)
@@ -467,7 +501,8 @@ static void runInteractive(GlobalObject* globalObject)
             break;
         if (line[0])
             add_history(line);
-        Completion completion = evaluate(globalObject->globalExec(), globalObject->globalScopeChain(), makeSource(line, interpreterName));
+        JSValue evaluationException;
+        JSValue returnValue = evaluate(globalObject->globalExec(), globalObject->globalScopeChain(), makeSource(line, interpreterName), JSValue(), &evaluationException);
         free(line);
 #else
         printf("%s", interactivePrompt);
@@ -482,12 +517,14 @@ static void runInteractive(GlobalObject* globalObject)
         if (line.isEmpty())
             break;
         line.append('\0');
-        Completion completion = evaluate(globalObject->globalExec(), globalObject->globalScopeChain(), makeSource(line.data(), interpreterName));
+
+        JSValue evaluationException;
+        JSValue returnValue = evaluate(globalObject->globalExec(), globalObject->globalScopeChain(), makeSource(line.data(), interpreterName), JSValue(), &evaluationException);
 #endif
-        if (completion.complType() == Throw)
-            printf("Exception: %s\n", completion.value().toString(globalObject->globalExec()).utf8().data());
+        if (evaluationException)
+            printf("Exception: %s\n", evaluationException.toString(globalObject->globalExec()).utf8().data());
         else
-            printf("%s\n", completion.value().toString(globalObject->globalExec()).utf8().data());
+            printf("%s\n", returnValue.toString(globalObject->globalExec()).utf8().data());
 
         globalObject->globalExec()->clearException();
     }

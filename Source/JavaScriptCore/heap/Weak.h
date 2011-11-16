@@ -47,7 +47,7 @@ public:
     }
 
     Weak(JSGlobalData& globalData, ExternalType value = ExternalType(), WeakHandleOwner* weakOwner = 0, void* context = 0)
-        : Handle<T>(globalData.allocateGlobalHandle())
+        : Handle<T>(globalData.heap.handleHeap()->allocate())
     {
         HandleHeap::heapFor(slot())->makeWeak(slot(), weakOwner, context);
         set(value);
@@ -106,7 +106,7 @@ public:
     void set(JSGlobalData& globalData, ExternalType value, WeakHandleOwner* weakOwner = 0, void* context = 0)
     {
         if (!slot()) {
-            setSlot(globalData.allocateGlobalHandle());
+            setSlot(globalData.heap.handleHeap()->allocate());
             HandleHeap::heapFor(slot())->makeWeak(slot(), weakOwner, context);
         }
         ASSERT(HandleHeap::heapFor(slot())->hasWeakOwner(slot(), weakOwner));
@@ -144,7 +144,6 @@ private:
     {
         ASSERT(slot());
         JSValue value = HandleTypes<T>::toJSValue(externalType);
-        ASSERT(!value || !value.isCell() || Heap::isMarked(value.asCell()));
         HandleHeap::heapFor(slot())->writeBarrier(slot(), value);
         *slot() = value;
     }

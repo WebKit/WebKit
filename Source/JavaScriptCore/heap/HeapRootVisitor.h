@@ -43,7 +43,7 @@ namespace JSC {
         void visit(JSValue*, size_t);
         void visit(JSString**);
         void visit(JSCell**);
-        
+
         SlotVisitor& visitor();
 
     private:

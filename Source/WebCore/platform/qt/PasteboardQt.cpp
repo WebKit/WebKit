@@ -34,7 +34,7 @@
 #include "Image.h"
 #include "RenderImage.h"
 #include "markup.h"
-#include <qapplication.h>
+#include <qguiapplication.h>
 #include <qclipboard.h>
 #include <qdebug.h>
 #include <qmimedata.h>
@@ -74,7 +74,7 @@ void Pasteboard::writeSelection(Range* selectedRange, bool canSmartCopyOrDelete,
 #endif
 
 #ifndef QT_NO_CLIPBOARD
-    QApplication::clipboard()->setMimeData(md, m_selectionMode ? QClipboard::Selection : QClipboard::Clipboard);
+    QGuiApplication::clipboard()->setMimeData(md, m_selectionMode ? QClipboard::Selection : QClipboard::Clipboard);
 #endif
     if (canSmartCopyOrDelete)
         md->setData(QLatin1String("application/vnd.qtwebkit.smartpaste"), QByteArray());
@@ -83,7 +83,7 @@ void Pasteboard::writeSelection(Range* selectedRange, bool canSmartCopyOrDelete,
 bool Pasteboard::canSmartReplace()
 {
 #ifndef QT_NO_CLIPBOARD
-    if (QApplication::clipboard()->mimeData()->hasFormat((QLatin1String("application/vnd.qtwebkit.smartpaste"))))
+    if (QGuiApplication::clipboard()->mimeData()->hasFormat((QLatin1String("application/vnd.qtwebkit.smartpaste"))))
         return true;
 #endif
     return false;
@@ -92,7 +92,7 @@ bool Pasteboard::canSmartReplace()
 String Pasteboard::plainText(Frame*)
 {
 #ifndef QT_NO_CLIPBOARD
-    return QApplication::clipboard()->text(m_selectionMode ? QClipboard::Selection : QClipboard::Clipboard);
+    return QGuiApplication::clipboard()->text(m_selectionMode ? QClipboard::Selection : QClipboard::Clipboard);
 #else
     return String();
 #endif
@@ -102,7 +102,7 @@ PassRefPtr<DocumentFragment> Pasteboard::documentFragment(Frame* frame, PassRefP
                                                           bool allowPlainText, bool& chosePlainText)
 {
 #ifndef QT_NO_CLIPBOARD
-    const QMimeData* mimeData = QApplication::clipboard()->mimeData(
+    const QMimeData* mimeData = QGuiApplication::clipboard()->mimeData(
             m_selectionMode ? QClipboard::Selection : QClipboard::Clipboard);
 
     chosePlainText = false;
@@ -133,7 +133,7 @@ void Pasteboard::writePlainText(const String& text)
     QString qtext = text;
     qtext.replace(QChar(0xa0), QLatin1Char(' '));
     md->setText(qtext);
-    QApplication::clipboard()->setMimeData(md, m_selectionMode ? QClipboard::Selection : QClipboard::Clipboard);
+    QGuiApplication::clipboard()->setMimeData(md, m_selectionMode ? QClipboard::Selection : QClipboard::Clipboard);
 #endif
 }
 
@@ -146,7 +146,7 @@ void Pasteboard::writeURL(const KURL& url, const String&, Frame*)
     QString urlString = url.string();
     md->setText(urlString);
     md->setUrls(QList<QUrl>() << url);
-    QApplication::clipboard()->setMimeData(md, m_selectionMode ? QClipboard::Selection : QClipboard::Clipboard);
+    QGuiApplication::clipboard()->setMimeData(md, m_selectionMode ? QClipboard::Selection : QClipboard::Clipboard);
 #endif
 }
 
@@ -165,7 +165,7 @@ void Pasteboard::writeImage(Node* node, const KURL&, const String&)
     QPixmap* pixmap = image->nativeImageForCurrentFrame();
     if (!pixmap)
         return;
-    QApplication::clipboard()->setPixmap(*pixmap, QClipboard::Clipboard);
+    QGuiApplication::clipboard()->setPixmap(*pixmap, QClipboard::Clipboard);
 #endif
 }
 

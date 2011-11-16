@@ -43,6 +43,7 @@ namespace StringWrapperCFAllocator {
         return info;
     }
 
+    NO_RETURN_DUE_TO_ASSERT
     static void release(const void*)
     {
         ASSERT_NOT_REACHED();
@@ -135,13 +136,13 @@ CFStringRef StringImpl::createCFString()
 {
     CFAllocatorRef allocator = (m_length && isMainThread()) ? StringWrapperCFAllocator::allocator() : 0;
     if (!allocator)
-        return CFStringCreateWithCharacters(0, reinterpret_cast<const UniChar*>(m_data), m_length);
+        return CFStringCreateWithCharacters(0, reinterpret_cast<const UniChar*>(characters()), m_length);
 
     // Put pointer to the StringImpl in a global so the allocator can store it with the CFString.
     ASSERT(!StringWrapperCFAllocator::currentString);
     StringWrapperCFAllocator::currentString = this;
 
-    CFStringRef string = CFStringCreateWithCharactersNoCopy(allocator, reinterpret_cast<const UniChar*>(m_data), m_length, kCFAllocatorNull);
+    CFStringRef string = CFStringCreateWithCharactersNoCopy(allocator, reinterpret_cast<const UniChar*>(characters()), m_length, kCFAllocatorNull);
 
     // The allocator cleared the global when it read it, but also clear it here just in case.
     ASSERT(!StringWrapperCFAllocator::currentString);

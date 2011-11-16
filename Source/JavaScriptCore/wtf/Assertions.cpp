@@ -41,7 +41,7 @@
 #include <CoreFoundation/CFString.h>
 #endif
 
-#if COMPILER(MSVC) && !OS(WINCE) && !PLATFORM(BREWMP)
+#if COMPILER(MSVC) && !OS(WINCE)
 #include <crtdbg.h>
 #endif
 
@@ -49,45 +49,13 @@
 #include <windows.h>
 #endif
 
-#if PLATFORM(BREWMP)
-#include <AEEdbg.h>
-#include <wtf/Vector.h>
-#endif
-
-#if PLATFORM(MAC)
+#if OS(DARWIN) || OS(LINUX)
 #include <cxxabi.h>
 #include <dlfcn.h>
 #include <execinfo.h>
 #endif
 
 extern "C" {
-
-#if PLATFORM(BREWMP)
-
-static void printLog(const Vector<char>& buffer)
-{
-    // Each call to DBGPRINTF generates at most 128 bytes of output on the Windows SDK.
-    // On Qualcomm chipset targets, DBGPRINTF() comes out the diag port (though this may change).
-    // The length of each output string is constrained even more than on the Windows SDK.
-#if COMPILER(MSVC)
-    const int printBufferSize = 128;
-#else
-    const int printBufferSize = 32;
-#endif
-
-    char printBuffer[printBufferSize + 1];
-    printBuffer[printBufferSize] = 0; // to guarantee null termination
-
-    const char* p = buffer.data();
-    const char* end = buffer.data() + buffer.size();
-    while (p < end) {
-        strncpy(printBuffer, p, printBufferSize);
-        dbg_Message(printBuffer, DBG_MSG_LEVEL_HIGH, __FILE__, __LINE__);
-        p += printBufferSize;
-    }
-}
-
-#endif
 
 WTF_ATTRIBUTE_PRINTF(1, 0)
 static void vprintf_stderr_common(const char* format, va_list args)
@@ -108,15 +76,6 @@ static void vprintf_stderr_common(const char* format, va_list args)
         CFRelease(str);
         CFRelease(cfFormat);
         return;
-    }
-#elif PLATFORM(BREWMP)
-    // When str is 0, the return value is the number of bytes needed
-    // to accept the result including null termination.
-    int size = vsnprintf(0, 0, format, args);
-    if (size > 0) {
-        Vector<char> buffer(size);
-        vsnprintf(buffer.data(), size, format, args);
-        printLog(buffer);
     }
 
 #elif HAVE(ISDEBUGGERPRESENT)
@@ -153,11 +112,7 @@ static void vprintf_stderr_common(const char* format, va_list args)
         } while (size > 1024);
     }
 #endif
-#if OS(SYMBIAN)
-    vfprintf(stdout, format, args);
-#else
     vfprintf(stderr, format, args);
-#endif
 }
 
 WTF_ATTRIBUTE_PRINTF(1, 2)
@@ -207,32 +162,58 @@ void WTFReportArgumentAssertionFailure(const char* file, int line, const char* f
     printCallSite(file, line, function);
 }
 
+void WTFGetBacktrace(void** stack, int* size)
+{
+#if OS(DARWIN) || OS(LINUX)
+    *size = backtrace(stack, *size);
+#elif OS(WINDOWS) && !OS(WINCE)
+    // The CaptureStackBackTrace function is available in XP, but it is not defined
+    // in the Windows Server 2003 R2 Platform SDK. So, we'll grab the function
+    // through GetProcAddress.
+    typedef WORD (NTAPI* RtlCaptureStackBackTraceFunc)(DWORD, DWORD, PVOID*, PDWORD);
+    HMODULE kernel32 = ::GetModuleHandleW(L"Kernel32.dll");
+    if (!kernel32) {
+        *size = 0;
+        return;
+    }
+    RtlCaptureStackBackTraceFunc captureStackBackTraceFunc = reinterpret_cast<RtlCaptureStackBackTraceFunc>(
+        ::GetProcAddress(kernel32, "RtlCaptureStackBackTrace"));
+    if (captureStackBackTraceFunc)
+        *size = captureStackBackTraceFunc(0, *size, stack, 0);
+    else
+        *size = 0;
+#else
+    *size = 0;
+#endif
+}
+
 void WTFReportBacktrace()
 {
-#if PLATFORM(MAC)
-    static const int maxFrames = 32;
-    void* samples[maxFrames];
-    int frames = backtrace(samples, maxFrames);
+    static const int framesToShow = 31;
+    static const int framesToSkip = 2;
+    void* samples[framesToShow + framesToSkip];
+    int frames = framesToShow + framesToSkip;
 
-    for (int i = 1; i < frames; ++i) {
-        void* pointer = samples[i];
+    WTFGetBacktrace(samples, &frames);
 
-        // Try to get a symbol name from the dynamic linker.
+    for (int i = framesToSkip; i < frames; ++i) {
+        const char* mangledName = 0;
+        char* cxaDemangled = 0;
+
+#if !PLATFORM(GTK) && !PLATFORM(QT) && (OS(DARWIN) || OS(LINUX))
         Dl_info info;
-        if (dladdr(pointer, &info) && info.dli_sname) {
-            const char* mangledName = info.dli_sname;
-
-            // Assume c++ & try to demangle the name.
-            char* demangledName = abi::__cxa_demangle(mangledName, 0, 0, 0);
-            if (demangledName) {
-                fprintf(stderr, "%-3d %s\n", i, demangledName);
-                free(demangledName);
-            } else
-                fprintf(stderr, "%-3d %s\n", i, mangledName);
-        } else
-            fprintf(stderr, "%-3d %p\n", i, pointer);
-    }
+        if (dladdr(samples[i], &info) && info.dli_sname)
+            mangledName = info.dli_sname;
+        if (mangledName)
+            cxaDemangled = abi::__cxa_demangle(mangledName, 0, 0, 0);
 #endif
+        const int frameNumber = i - framesToSkip + 1;
+        if (mangledName || cxaDemangled)
+            fprintf(stderr, "%-3d %p %s\n", frameNumber, samples[i], cxaDemangled ? cxaDemangled : mangledName);
+        else
+            fprintf(stderr, "%-3d %p\n", frameNumber, samples[i]);
+        free(cxaDemangled);
+    }
 }
 
 void WTFReportFatalError(const char* file, int line, const char* function, const char* format, ...)

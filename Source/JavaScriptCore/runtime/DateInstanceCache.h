@@ -27,6 +27,7 @@
 #define DateInstanceCache_h
 
 #include <wtf/DateMath.h>
+#include <wtf/FixedArray.h>
 #include <wtf/HashFunctions.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>

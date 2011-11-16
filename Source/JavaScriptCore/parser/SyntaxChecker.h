@@ -30,6 +30,7 @@
 #include <yarr/YarrSyntaxChecker.h>
 
 namespace JSC {
+    
 class SyntaxChecker {
 public:
     struct BinaryExprContext {
@@ -63,7 +64,7 @@ public:
         SyntaxChecker* m_context;
     };
     
-    SyntaxChecker(JSGlobalData* , Lexer*)
+    SyntaxChecker(JSGlobalData* , void*)
     {
     }
 
@@ -114,46 +115,46 @@ public:
     static const bool CreatesAST = false;
     static const bool NeedsFreeVariableInfo = false;
     static const bool CanUseFunctionCache = true;
-    static const unsigned DontBuildKeywords = Lexer::DontBuildKeywords;
-    static const unsigned DontBuildStrings = Lexer::DontBuildStrings;
+    static const unsigned DontBuildKeywords = LexexFlagsDontBuildKeywords;
+    static const unsigned DontBuildStrings = LexerFlagsDontBuildStrings;
 
     int createSourceElements() { return 1; }
-    ExpressionType makeFunctionCallNode(int, int, int, int, int) { return CallExpr; }
+    ExpressionType makeFunctionCallNode(int, int, int, int, int, int) { return CallExpr; }
     void appendToComma(ExpressionType& base, ExpressionType right) { base = right; }
-    ExpressionType createCommaExpr(ExpressionType, ExpressionType right) { return right; }
-    ExpressionType makeAssignNode(ExpressionType, Operator, ExpressionType, bool, bool, int, int, int) { return AssignmentExpr; }
-    ExpressionType makePrefixNode(ExpressionType, Operator, int, int, int) { return PreExpr; }
-    ExpressionType makePostfixNode(ExpressionType, Operator, int, int, int) { return PostExpr; }
-    ExpressionType makeTypeOfNode(ExpressionType) { return TypeofExpr; }
-    ExpressionType makeDeleteNode(ExpressionType, int, int, int) { return DeleteExpr; }
-    ExpressionType makeNegateNode(ExpressionType) { return UnaryExpr; }
-    ExpressionType makeBitwiseNotNode(ExpressionType) { return UnaryExpr; }
-    ExpressionType createLogicalNot(ExpressionType) { return UnaryExpr; }
-    ExpressionType createUnaryPlus(ExpressionType) { return UnaryExpr; }
-    ExpressionType createVoid(ExpressionType) { return UnaryExpr; }
-    ExpressionType thisExpr() { return ThisExpr; }
-    ExpressionType createResolve(const Identifier*, int) { return ResolveExpr; }
-    ExpressionType createObjectLiteral() { return ObjectLiteralExpr; }
+    ExpressionType createCommaExpr(int, ExpressionType, ExpressionType right) { return right; }
+    ExpressionType makeAssignNode(int, ExpressionType, Operator, ExpressionType, bool, bool, int, int, int) { return AssignmentExpr; }
+    ExpressionType makePrefixNode(int, ExpressionType, Operator, int, int, int) { return PreExpr; }
+    ExpressionType makePostfixNode(int, ExpressionType, Operator, int, int, int) { return PostExpr; }
+    ExpressionType makeTypeOfNode(int, ExpressionType) { return TypeofExpr; }
+    ExpressionType makeDeleteNode(int, ExpressionType, int, int, int) { return DeleteExpr; }
+    ExpressionType makeNegateNode(int, ExpressionType) { return UnaryExpr; }
+    ExpressionType makeBitwiseNotNode(int, ExpressionType) { return UnaryExpr; }
+    ExpressionType createLogicalNot(int, ExpressionType) { return UnaryExpr; }
+    ExpressionType createUnaryPlus(int, ExpressionType) { return UnaryExpr; }
+    ExpressionType createVoid(int, ExpressionType) { return UnaryExpr; }
+    ExpressionType thisExpr(int) { return ThisExpr; }
+    ExpressionType createResolve(int, const Identifier*, int) { return ResolveExpr; }
     ExpressionType createObjectLiteral(int) { return ObjectLiteralExpr; }
-    ExpressionType createArray(int) { return ArrayLiteralExpr; }
+    ExpressionType createObjectLiteral(int, int) { return ObjectLiteralExpr; }
     ExpressionType createArray(int, int) { return ArrayLiteralExpr; }
-    ExpressionType createNumberExpr(double) { return NumberExpr; }
-    ExpressionType createString(const Identifier*) { return StringExpr; }
-    ExpressionType createBoolean(bool) { return BoolExpr; }
-    ExpressionType createNull() { return NullExpr; }
-    ExpressionType createBracketAccess(ExpressionType, ExpressionType, bool, int, int, int) { return BracketExpr; }
-    ExpressionType createDotAccess(ExpressionType, const Identifier*, int, int, int) { return DotExpr; }
-    ExpressionType createRegExp(const Identifier& pattern, const Identifier&, int) { return Yarr::checkSyntax(pattern.ustring()) ? 0 : RegExpExpr; }
-    ExpressionType createNewExpr(ExpressionType, int, int, int, int) { return NewExpr; }
-    ExpressionType createNewExpr(ExpressionType, int, int) { return NewExpr; }
-    ExpressionType createConditionalExpr(ExpressionType, ExpressionType, ExpressionType) { return ConditionalExpr; }
-    ExpressionType createAssignResolve(const Identifier&, ExpressionType, bool, int, int, int) { return AssignmentExpr; }
-    ExpressionType createFunctionExpr(const Identifier*, int, int, int, int, int, int) { return FunctionExpr; }
-    int createFunctionBody(bool) { return 1; }
+    ExpressionType createArray(int, int, int) { return ArrayLiteralExpr; }
+    ExpressionType createNumberExpr(int, double) { return NumberExpr; }
+    ExpressionType createString(int, const Identifier*) { return StringExpr; }
+    ExpressionType createBoolean(int, bool) { return BoolExpr; }
+    ExpressionType createNull(int) { return NullExpr; }
+    ExpressionType createBracketAccess(int, ExpressionType, ExpressionType, bool, int, int, int) { return BracketExpr; }
+    ExpressionType createDotAccess(int, ExpressionType, const Identifier*, int, int, int) { return DotExpr; }
+    ExpressionType createRegExp(int, const Identifier& pattern, const Identifier&, int) { return Yarr::checkSyntax(pattern.ustring()) ? 0 : RegExpExpr; }
+    ExpressionType createNewExpr(int, ExpressionType, int, int, int, int) { return NewExpr; }
+    ExpressionType createNewExpr(int, ExpressionType, int, int) { return NewExpr; }
+    ExpressionType createConditionalExpr(int, ExpressionType, ExpressionType, ExpressionType) { return ConditionalExpr; }
+    ExpressionType createAssignResolve(int, const Identifier&, ExpressionType, bool, int, int, int) { return AssignmentExpr; }
+    ExpressionType createFunctionExpr(int, const Identifier*, int, int, int, int, int, int) { return FunctionExpr; }
+    int createFunctionBody(int, bool) { return 1; }
     int createArguments() { return 1; }
     int createArguments(int) { return 1; }
-    int createArgumentsList(int) { return 1; }
     int createArgumentsList(int, int) { return 1; }
+    int createArgumentsList(int, int, int) { return 1; }
     template <bool complete> Property createProperty(const Identifier* name, int, PropertyNode::Type type)
     {
         if (!complete)
@@ -165,10 +166,10 @@ public:
     {
         if (!complete)
             return Property(type);
-        return Property(&globalData->parser->arena().identifierArena().makeNumericIdentifier(globalData, name), type);
+        return Property(&globalData->parserArena->identifierArena().makeNumericIdentifier(globalData, name), type);
     }
-    int createPropertyList(Property) { return 1; }
-    int createPropertyList(Property, int) { return 1; }
+    int createPropertyList(int, Property) { return 1; }
+    int createPropertyList(int, Property, int) { return 1; }
     int createElementList(int, int) { return 1; }
     int createElementList(int, int, int) { return 1; }
     int createFormalParameterList(const Identifier&) { return 1; }
@@ -177,32 +178,32 @@ public:
     int createClauseList(int) { return 1; }
     int createClauseList(int, int) { return 1; }
     void setUsesArguments(int) { }
-    int createFuncDeclStatement(const Identifier*, int, int, int, int, int, int) { return 1; }
-    int createBlockStatement(int, int, int) { return 1; }
-    int createExprStatement(int, int, int) { return 1; }
-    int createIfStatement(int, int, int, int) { return 1; }
+    int createFuncDeclStatement(int, const Identifier*, int, int, int, int, int, int) { return 1; }
+    int createBlockStatement(int, int, int, int) { return 1; }
+    int createExprStatement(int, int, int, int) { return 1; }
     int createIfStatement(int, int, int, int, int) { return 1; }
-    int createForLoop(int, int, int, int, bool, int, int) { return 1; }
-    int createForInLoop(const Identifier*, int, int, int, int, int, int, int, int, int, int) { return 1; }
-    int createForInLoop(int, int, int, int, int, int, int, int) { return 1; }
-    int createEmptyStatement() { return 1; }
-    int createVarStatement(int, int, int) { return 1; }
-    int createReturnStatement(int, int, int, int, int) { return 1; }
-    int createBreakStatement(int, int, int, int) { return 1; }
-    int createBreakStatement(const Identifier*, int, int, int, int) { return 1; }
-    int createContinueStatement(int, int, int, int) { return 1; }
-    int createContinueStatement(const Identifier*, int, int, int, int) { return 1; }
-    int createTryStatement(int, const Identifier*, bool, int, int, int, int) { return 1; }
-    int createSwitchStatement(int, int, int, int, int, int) { return 1; }
-    int createWhileStatement(int, int, int, int) { return 1; }
-    int createWithStatement(int, int, int, int, int, int) { return 1; }
-    int createDoWhileStatement(int, int, int, int) { return 1; }
-    int createLabelStatement(const Identifier*, int, int, int) { return 1; }
-    int createThrowStatement(int, int, int, int, int) { return 1; }
-    int createDebugger(int, int) { return 1; }
-    int createConstStatement(int, int, int) { return 1; }
-    int appendConstDecl(int, const Identifier*, int) { return 1; }
-    template <bool strict> Property createGetterOrSetterProperty(PropertyNode::Type type, const Identifier* name, int, int, int, int, int, int)
+    int createIfStatement(int, int, int, int, int, int) { return 1; }
+    int createForLoop(int, int, int, int, int, bool, int, int) { return 1; }
+    int createForInLoop(int, const Identifier*, int, int, int, int, int, int, int, int, int, int) { return 1; }
+    int createForInLoop(int, int, int, int, int, int, int, int, int) { return 1; }
+    int createEmptyStatement(int) { return 1; }
+    int createVarStatement(int, int, int, int) { return 1; }
+    int createReturnStatement(int, int, int, int, int, int) { return 1; }
+    int createBreakStatement(int, int, int, int, int) { return 1; }
+    int createBreakStatement(int, const Identifier*, int, int, int, int) { return 1; }
+    int createContinueStatement(int, int, int, int, int) { return 1; }
+    int createContinueStatement(int, const Identifier*, int, int, int, int) { return 1; }
+    int createTryStatement(int, int, const Identifier*, bool, int, int, int, int) { return 1; }
+    int createSwitchStatement(int, int, int, int, int, int, int) { return 1; }
+    int createWhileStatement(int, int, int, int, int) { return 1; }
+    int createWithStatement(int, int, int, int, int, int, int) { return 1; }
+    int createDoWhileStatement(int, int, int, int, int) { return 1; }
+    int createLabelStatement(int, const Identifier*, int, int, int) { return 1; }
+    int createThrowStatement(int, int, int, int, int, int) { return 1; }
+    int createDebugger(int, int, int) { return 1; }
+    int createConstStatement(int, int, int, int) { return 1; }
+    int appendConstDecl(int, int, const Identifier*, int) { return 1; }
+    template <bool strict> Property createGetterOrSetterProperty(int, PropertyNode::Type type, const Identifier* name, int, int, int, int, int, int)
     {
         ASSERT(name);
         if (!strict)
@@ -212,7 +213,7 @@ public:
 
     void appendStatement(int, int) { }
     void addVar(const Identifier*, bool) { }
-    int combineCommaNodes(int, int) { return 1; }
+    int combineCommaNodes(int, int, int) { return 1; }
     int evalCount() const { return 0; }
     void appendBinaryExpressionInfo(int& operandStackDepth, int expr, int, int, int, bool)
     {
@@ -228,7 +229,7 @@ public:
     bool operatorStackHasHigherPrecedence(int&, int) { return true; }
     BinaryOperand getFromOperandStack(int) { return m_topBinaryExpr; }
     void shrinkOperandStackBy(int& operandStackDepth, int amount) { operandStackDepth -= amount; }
-    void appendBinaryOperation(int& operandStackDepth, int&, BinaryOperand, BinaryOperand) { operandStackDepth++; }
+    void appendBinaryOperation(int, int& operandStackDepth, int&, BinaryOperand, BinaryOperand) { operandStackDepth++; }
     void operatorStackAppend(int& operatorStackDepth, int, int) { operatorStackDepth++; }
     int popOperandStack(int&) { int res = m_topBinaryExpr; m_topBinaryExpr = 0; return res; }
     
@@ -238,7 +239,7 @@ public:
     void unaryTokenStackRemoveLast(int& stackDepth) { stackDepth = 0; }
     
     void assignmentStackAppend(int, int, int, int, int, Operator) { }
-    int createAssignment(int, int, int, int, int) { ASSERT_NOT_REACHED(); return 1; }
+    int createAssignment(int, int, int, int, int, int) { ASSERT_NOT_REACHED(); return 1; }
     const Identifier& getName(const Property& property) const { ASSERT(property.name); return *property.name; }
     PropertyNode::Type getType(const Property& property) const { return property.type; }
     bool isResolve(ExpressionType expr) const { return expr == ResolveExpr || expr == ResolveEvalExpr; }

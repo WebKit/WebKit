@@ -30,6 +30,7 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/Platform.h>
 #include <wtf/RefCounted.h>
+#include <wtf/StdLibExtras.h>
 
 namespace WTF {
     class ByteArray : public RefCountedBase {
@@ -70,6 +71,8 @@ namespace WTF {
 
         unsigned char* data() { return m_data; }
 
+        void clear() { memset(m_data, 0, m_size); }
+
         void deref()
         {
             if (derefBase()) {
@@ -81,6 +84,9 @@ namespace WTF {
         }
 
         static PassRefPtr<ByteArray> create(size_t size);
+
+        static size_t offsetOfSize() { return OBJECT_OFFSETOF(ByteArray, m_size); }
+        static size_t offsetOfData() { return OBJECT_OFFSETOF(ByteArray, m_data); }
 
     private:
         ByteArray(size_t size)

@@ -26,6 +26,7 @@
 #include "JSEventTarget.h"
 #include "JSMainThreadExecState.h"
 #include "WorkerContext.h"
+#include <runtime/ExceptionHelpers.h>
 #include <runtime/JSLock.h>
 #include <wtf/RefCountedLeakCounter.h>
 
@@ -100,7 +101,7 @@ void JSEventListener::handleEvent(ScriptExecutionContext* scriptExecutionContext
     CallType callType = getCallData(handleEventFunction, callData);
     if (callType == CallTypeNone) {
         handleEventFunction = JSValue();
-        callType = jsFunction->getCallData(callData);
+        callType = jsFunction->methodTable()->getCallData(jsFunction, callData);
     }
 
     if (callType != CallTypeNone) {
@@ -133,7 +134,7 @@ void JSEventListener::handleEvent(ScriptExecutionContext* scriptExecutionContext
 
 #if ENABLE(WORKERS)
         if (scriptExecutionContext->isWorkerContext()) {
-            bool terminatorCausedException = (exec->hadException() && exec->exception().isObject() && asObject(exec->exception())->exceptionType() == Terminated);
+            bool terminatorCausedException = (exec->hadException() && isTerminatedExecutionException(exec->exception()));
             if (terminatorCausedException || globalData.terminator.shouldTerminate())
                 static_cast<WorkerContext*>(scriptExecutionContext)->script()->forbidExecution();
         }
@@ -146,8 +147,7 @@ void JSEventListener::handleEvent(ScriptExecutionContext* scriptExecutionContext
             if (!retval.isUndefinedOrNull() && event->storesResultAsString())
                 event->storeResult(ustringToString(retval.toString(exec)));
             if (m_isAttribute) {
-                bool retvalbool;
-                if (retval.getBoolean(retvalbool) && !retvalbool)
+                if (retval.isFalse())
                     event->preventDefault();
             }
         }

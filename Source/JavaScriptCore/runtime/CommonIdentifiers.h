@@ -33,6 +33,7 @@
     macro(__lookupSetter__) \
     macro(apply) \
     macro(arguments) \
+    macro(bind) \
     macro(call) \
     macro(callee) \
     macro(caller) \
@@ -73,7 +74,8 @@
     macro(value) \
     macro(valueOf) \
     macro(writable) \
-    macro(displayName)
+    macro(displayName) \
+    macro(undefined)
 
 #define JSC_COMMON_IDENTIFIERS_EACH_KEYWORD(macro) \
     macro(null) \

@@ -28,6 +28,9 @@
 #ifndef WTF_Platform_h
 #define WTF_Platform_h
 
+/* Include compiler specific macros */
+#include "Compiler.h"
+
 /* ==== PLATFORM handles OS, operating environment, graphics API, and
    CPU. This macro will be phased out in favor of platform adaptation
    macros, policy decision macros, and top-level port definitions. ==== */
@@ -36,8 +39,6 @@
 
 /* ==== Platform adaptation macros: these describe properties of the target environment. ==== */
 
-/* COMPILER() - the compiler being used to build the project */
-#define COMPILER(WTF_FEATURE) (defined WTF_COMPILER_##WTF_FEATURE  && WTF_COMPILER_##WTF_FEATURE)
 /* CPU() - the target CPU architecture */
 #define CPU(WTF_FEATURE) (defined WTF_CPU_##WTF_FEATURE  && WTF_CPU_##WTF_FEATURE)
 /* HAVE() - specific system features (headers, functions or similar) that are present or not */
@@ -54,77 +55,6 @@
 /* ENABLE() - turn on a specific feature of WebKit */
 #define ENABLE(WTF_FEATURE) (defined ENABLE_##WTF_FEATURE  && ENABLE_##WTF_FEATURE)
 
-
-
-/* ==== COMPILER() - the compiler being used to build the project ==== */
-
-/* COMPILER(MSVC) Microsoft Visual C++ */
-/* COMPILER(MSVC7_OR_LOWER) Microsoft Visual C++ 2003 or lower*/
-/* COMPILER(MSVC9_OR_LOWER) Microsoft Visual C++ 2008 or lower*/
-#if defined(_MSC_VER)
-#define WTF_COMPILER_MSVC 1
-#if _MSC_VER < 1400
-#define WTF_COMPILER_MSVC7_OR_LOWER 1
-#elif _MSC_VER < 1600
-#define WTF_COMPILER_MSVC9_OR_LOWER 1
-#endif
-#endif
-
-/* COMPILER(RVCT)  - ARM RealView Compilation Tools */
-/* COMPILER(RVCT4_OR_GREATER) - ARM RealView Compilation Tools 4.0 or greater */
-#if defined(__CC_ARM) || defined(__ARMCC__)
-#define WTF_COMPILER_RVCT 1
-#define RVCT_VERSION_AT_LEAST(major, minor, patch, build) (__ARMCC_VERSION >= (major * 100000 + minor * 10000 + patch * 1000 + build))
-#else
-/* Define this for !RVCT compilers, just so we can write things like RVCT_VERSION_AT_LEAST(3, 0, 0, 0). */
-#define RVCT_VERSION_AT_LEAST(major, minor, patch, build) 0
-#endif
-
-/* COMPILER(GCCE) - GNU Compiler Collection for Embedded */
-#if defined(__GCCE__)
-#define WTF_COMPILER_GCCE 1
-#define GCCE_VERSION (__GCCE__ * 10000 + __GCCE_MINOR__ * 100 + __GCCE_PATCHLEVEL__)
-#define GCCE_VERSION_AT_LEAST(major, minor, patch) (GCCE_VERSION >= (major * 10000 + minor * 100 + patch))
-#endif
-
-/* COMPILER(GCC) - GNU Compiler Collection */
-/* --gnu option of the RVCT compiler also defines __GNUC__ */
-#if defined(__GNUC__) && !COMPILER(RVCT)
-#define WTF_COMPILER_GCC 1
-#define GCC_VERSION (__GNUC__ * 10000 + __GNUC_MINOR__ * 100 + __GNUC_PATCHLEVEL__)
-#define GCC_VERSION_AT_LEAST(major, minor, patch) (GCC_VERSION >= (major * 10000 + minor * 100 + patch))
-#else
-/* Define this for !GCC compilers, just so we can write things like GCC_VERSION_AT_LEAST(4, 1, 0). */
-#define GCC_VERSION_AT_LEAST(major, minor, patch) 0
-#endif
-
-/* COMPILER(MINGW) - MinGW GCC */
-/* COMPILER(MINGW64) - mingw-w64 GCC - only used as additional check to exclude mingw.org specific functions */
-#if defined(__MINGW32__)
-#define WTF_COMPILER_MINGW 1
-#include <_mingw.h> /* private MinGW header */
-    #if defined(__MINGW64_VERSION_MAJOR) /* best way to check for mingw-w64 vs mingw.org */
-        #define WTF_COMPILER_MINGW64 1
-    #endif /* __MINGW64_VERSION_MAJOR */
-#endif /* __MINGW32__ */
-
-/* COMPILER(WINSCW) - CodeWarrior for Symbian emulator */
-#if defined(__WINSCW__)
-#define WTF_COMPILER_WINSCW 1
-/* cross-compiling, it is not really windows */
-#undef WIN32
-#undef _WIN32
-#endif
-
-/* COMPILER(INTEL) - Intel C++ Compiler */
-#if defined(__INTEL_COMPILER)
-#define WTF_COMPILER_INTEL 1
-#endif
-
-/* COMPILER(SUNCC) */
-#if defined(__SUNPRO_CC) || defined(__SUNPRO_C)
-#define WTF_COMPILER_SUNCC 1
-#endif
 
 /* ==== CPU() - the target CPU architecture ==== */
 
@@ -392,11 +322,15 @@
 #define BUILDING_ON_LEOPARD 1
 #elif !defined(MAC_OS_X_VERSION_10_7) || MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_7
 #define BUILDING_ON_SNOW_LEOPARD 1
+#elif !defined(MAC_OS_X_VERSION_10_8) || MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_8
+#define BUILDING_ON_LION 1
 #endif
 #if !defined(MAC_OS_X_VERSION_10_6) || MAC_OS_X_VERSION_MIN_REQUIRED < MAC_OS_X_VERSION_10_6
 #define TARGETING_LEOPARD 1
 #elif !defined(MAC_OS_X_VERSION_10_7) || MAC_OS_X_VERSION_MIN_REQUIRED < MAC_OS_X_VERSION_10_7
 #define TARGETING_SNOW_LEOPARD 1
+#elif !defined(MAC_OS_X_VERSION_10_8) || MAC_OS_X_VERSION_MIN_REQUIRED < MAC_OS_X_VERSION_10_8
+#define TARGETING_LION 1
 #endif
 #include <TargetConditionals.h>
 
@@ -413,13 +347,8 @@
 #endif
 
 /* OS(FREEBSD) - FreeBSD */
-#if defined(__FreeBSD__) || defined(__DragonFly__)
+#if defined(__FreeBSD__) || defined(__DragonFly__) || defined(__FreeBSD_kernel__)
 #define WTF_OS_FREEBSD 1
-#endif
-
-/* OS(HAIKU) - Haiku */
-#ifdef __HAIKU__
-#define WTF_OS_HAIKU 1
 #endif
 
 /* OS(LINUX) - Linux */
@@ -457,23 +386,16 @@
 #define WTF_OS_WINDOWS 1
 #endif
 
-/* OS(SYMBIAN) - Symbian */
-#if defined (__SYMBIAN32__)
-#define WTF_OS_SYMBIAN 1
-#endif
-
 /* OS(UNIX) - Any Unix-like system */
 #if   OS(AIX)              \
     || OS(ANDROID)          \
     || OS(DARWIN)           \
     || OS(FREEBSD)          \
-    || OS(HAIKU)            \
     || OS(LINUX)            \
     || OS(NETBSD)           \
     || OS(OPENBSD)          \
     || OS(QNX)              \
     || OS(SOLARIS)          \
-    || OS(SYMBIAN)          \
     || defined(unix)        \
     || defined(__unix)      \
     || defined(__unix__)
@@ -487,7 +409,6 @@
 /* PLATFORM(QT) */
 /* PLATFORM(WX) */
 /* PLATFORM(GTK) */
-/* PLATFORM(HAIKU) */
 /* PLATFORM(MAC) */
 /* PLATFORM(WIN) */
 #if defined(BUILDING_CHROMIUM__)
@@ -498,17 +419,6 @@
 #define WTF_PLATFORM_WX 1
 #elif defined(BUILDING_GTK__)
 #define WTF_PLATFORM_GTK 1
-#elif defined(BUILDING_HAIKU__)
-#define WTF_PLATFORM_HAIKU 1
-#elif defined(BUILDING_BREWMP__)
-#define WTF_PLATFORM_BREWMP 1
-#if defined(AEE_SIMULATOR)
-#define WTF_PLATFORM_BREWMP_SIMULATOR 1
-#else
-#define WTF_PLATFORM_BREWMP_SIMULATOR 0
-#endif
-#undef WTF_OS_WINDOWS
-#undef WTF_PLATFORM_WIN
 #elif OS(DARWIN)
 #define WTF_PLATFORM_MAC 1
 #elif OS(WINDOWS)
@@ -560,10 +470,6 @@
 #endif
 #endif
 
-#if PLATFORM(BREWMP)
-#define WTF_USE_SKIA 1
-#endif
-
 #if PLATFORM(GTK)
 #define WTF_USE_CAIRO 1
 #endif
@@ -574,16 +480,8 @@
 #define WTF_USE_MERSENNE_TWISTER_19937 1
 #endif
 
-#if PLATFORM(QT) && OS(UNIX) && !OS(SYMBIAN) && !OS(DARWIN)
+#if PLATFORM(QT) && OS(UNIX) && !OS(DARWIN)
 #define WTF_USE_PTHREAD_BASED_QT 1
-#endif
-
-#if (PLATFORM(GTK) || PLATFORM(IOS) || PLATFORM(MAC) || PLATFORM(WIN) || (PLATFORM(QT) && (OS(DARWIN) || USE(PTHREAD_BASED_QT)) && !ENABLE(SINGLE_THREADED))) && !OS(QNX) && !defined(ENABLE_JSC_MULTIPLE_THREADS)
-#define ENABLE_JSC_MULTIPLE_THREADS 1
-#endif
-
-#if ENABLE(JSC_MULTIPLE_THREADS) || PLATFORM(CHROMIUM)
-#define ENABLE_WTF_MULTIPLE_THREADS 1
 #endif
 
 /* On Windows, use QueryPerformanceCounter by default */
@@ -609,8 +507,6 @@
 #endif
 #elif OS(WINCE)
 #define WTF_USE_WINCE_UNICODE 1
-#elif PLATFORM(BREWMP)
-#define WTF_USE_BREWMP_UNICODE 1
 #elif PLATFORM(GTK)
 /* The GTK+ Unicode backend is configurable */
 #else
@@ -650,10 +546,6 @@
 #define WTF_USE_WK_SCROLLBAR_PAINTER 1
 #endif
 
-#if PLATFORM(BREWMP)
-#define ENABLE_SINGLE_THREADED 1
-#endif
-
 #if PLATFORM(QT) && OS(DARWIN)
 #define WTF_USE_CF 1
 #endif
@@ -679,20 +571,6 @@
 #define WTF_USE_PTHREADS 1
 #define HAVE_PTHREAD_RWLOCK 1
 #define ENABLE_WEB_ARCHIVE 1
-#endif
-
-#if PLATFORM(ANDROID)
-#define WTF_USE_PTHREADS 1
-#define USE_SYSTEM_MALLOC 1
-#define ENABLE_JAVA_BRIDGE 1
-#define LOG_DISABLED 1
-/* Prevents Webkit from drawing the caret in textfields and textareas
-   This prevents unnecessary invals. */
-#define ENABLE_TEXT_CARET 1
-#define ENABLE_JAVASCRIPT_DEBUGGER 0
-#if !defined(ENABLE_JIT) && !ENABLE(ANDROID_JSC_JIT)
-#define ENABLE_JIT 0
-#endif
 #endif
 
 #if PLATFORM(WIN) && !OS(WINCE)
@@ -737,42 +615,31 @@
 #endif
 #endif
 
-#if PLATFORM(HAIKU)
-#define HAVE_POSIX_MEMALIGN 1
-#define WTF_USE_CURL 1
-#define WTF_USE_PTHREADS 1
-#define HAVE_PTHREAD_RWLOCK 1
-#define USE_SYSTEM_MALLOC 1
-#define ENABLE_NETSCAPE_PLUGIN_API 0
-#endif
-
-#if PLATFORM(BREWMP)
-#define USE_SYSTEM_MALLOC 1
-#endif
-
-#if PLATFORM(BREWMP_SIMULATOR)
-#define ENABLE_JIT 0
-#endif
-
 #if !defined(HAVE_ACCESSIBILITY)
 #if PLATFORM(IOS) || PLATFORM(MAC) || PLATFORM(WIN) || PLATFORM(GTK) || PLATFORM(CHROMIUM)
 #define HAVE_ACCESSIBILITY 1
 #endif
 #endif /* !defined(HAVE_ACCESSIBILITY) */
 
-#if OS(UNIX) && !OS(SYMBIAN)
+#if OS(UNIX)
 #define HAVE_SIGNAL_H 1
 #endif
 
+#if !defined(HAVE_VASPRINTF)
+#if !COMPILER(MSVC) && !COMPILER(RVCT) && !COMPILER(MINGW) && !(COMPILER(GCC) && OS(QNX))
+#define HAVE_VASPRINTF 1
+#endif
+#endif
+
 #if !defined(HAVE_STRNSTR)
-#if OS(DARWIN) || OS(FREEBSD)
+#if OS(DARWIN) || (OS(FREEBSD) && !defined(__GLIBC__))
 #define HAVE_STRNSTR 1
 #endif
 #endif
 
 #if !OS(WINDOWS) && !OS(SOLARIS) && !OS(QNX) \
-    && !OS(SYMBIAN) && !OS(HAIKU) && !OS(RVCT) \
-    && !OS(ANDROID) && !PLATFORM(BREWMP)
+    && !OS(RVCT) \
+    && !OS(ANDROID)
 #define HAVE_TM_GMTOFF 1
 #define HAVE_TM_ZONE 1
 #define HAVE_TIMEGM 1
@@ -819,23 +686,6 @@
 #endif
 #define HAVE_VIRTUALALLOC 1
 
-#elif OS(SYMBIAN)
-
-#define HAVE_ERRNO_H 1
-#define HAVE_MMAP 0
-#define HAVE_SBRK 1
-
-#define HAVE_SYS_TIME_H 1
-#define HAVE_STRINGS_H 1
-
-#if !COMPILER(RVCT)
-#define HAVE_SYS_PARAM_H 1
-#endif
-
-#elif PLATFORM(BREWMP)
-
-#define HAVE_ERRNO_H 1
-
 #elif OS(QNX)
 
 #define HAVE_ERRNO_H 1
@@ -844,12 +694,13 @@
 #define HAVE_STRINGS_H 1
 #define HAVE_SYS_PARAM_H 1
 #define HAVE_SYS_TIME_H 1
+#define WTF_USE_PTHREADS 1
 
 #elif OS(ANDROID)
 
 #define HAVE_ERRNO_H 1
 #define HAVE_LANGINFO_H 0
-#define HAVE_MMAP 1
+#define HAVE_NMAP 1
 #define HAVE_SBRK 1
 #define HAVE_STRINGS_H 1
 #define HAVE_SYS_PARAM_H 1
@@ -860,10 +711,6 @@
 /* FIXME: is this actually used or do other platforms generate their own config.h? */
 
 #define HAVE_ERRNO_H 1
-/* As long as Haiku doesn't have a complete support of locale this will be disabled. */
-#if !OS(HAIKU)
-#define HAVE_LANGINFO_H 1
-#endif
 #define HAVE_MMAP 1
 #define HAVE_SBRK 1
 #define HAVE_STRINGS_H 1
@@ -877,7 +724,7 @@
 #if PLATFORM(QT)
 /* We must not customize the global operator new and delete for the Qt port. */
 #define ENABLE_GLOBAL_FASTMALLOC_NEW 0
-#if !OS(UNIX) || OS(SYMBIAN)
+#if !OS(UNIX)
 #define USE_SYSTEM_MALLOC 1
 #endif
 #endif
@@ -959,12 +806,13 @@
 #define ENABLE_DEBUG_WITH_BREAKPOINT 0
 #define ENABLE_SAMPLING_COUNTERS 0
 #define ENABLE_SAMPLING_FLAGS 0
+#define ENABLE_SAMPLING_REGIONS 0
 #define ENABLE_OPCODE_SAMPLING 0
 #define ENABLE_CODEBLOCK_SAMPLING 0
 #if ENABLE(CODEBLOCK_SAMPLING) && !ENABLE(OPCODE_SAMPLING)
 #error "CODEBLOCK_SAMPLING requires OPCODE_SAMPLING"
 #endif
-#if ENABLE(OPCODE_SAMPLING) || ENABLE(SAMPLING_FLAGS)
+#if ENABLE(OPCODE_SAMPLING) || ENABLE(SAMPLING_FLAGS) || ENABLE(SAMPLING_REGIONS)
 #define ENABLE_SAMPLING_THREAD 1
 #endif
 
@@ -1018,8 +866,8 @@
 #define ENABLE_JIT 0
 #endif
 
-/* JIT is not implemented for 64 bit on MSVC */
-#if !defined(ENABLE_JIT) && COMPILER(MSVC) && CPU(X86_64)
+/* JIT is not implemented for Windows 64-bit */
+#if !defined(ENABLE_JIT) && OS(WINDOWS) && CPU(X86_64)
 #define ENABLE_JIT 0
 #endif
 
@@ -1032,9 +880,33 @@
 #define ENABLE_JIT 1
 #endif
 
-/* Currently only implemented for JSVALUE64, only tested on PLATFORM(MAC) */
-#if !defined(ENABLE_DFG_JIT) && ENABLE(JIT) && USE(JSVALUE64) && PLATFORM(MAC)
+/* Enable the DFG JIT on X86 and X86_64.  Only tested on Mac and GNU/Linux.  */
+#if !defined(ENABLE_DFG_JIT) && ENABLE(JIT) \
+    && (CPU(X86) || CPU(X86_64)) \
+    && (PLATFORM(MAC) || OS(LINUX))
 #define ENABLE_DFG_JIT 1
+#endif
+
+/* Profiling of types and values used by JIT code. DFG_JIT depends on it, but you
+   can enable it manually with DFG turned off if you want to use it as a standalone
+   profiler. In that case, you probably want to also enable VERBOSE_VALUE_PROFILE
+   below. */
+#if !defined(ENABLE_VALUE_PROFILER) && ENABLE(DFG_JIT)
+#define ENABLE_VALUE_PROFILER 1
+#endif
+
+#if !defined(ENABLE_VERBOSE_VALUE_PROFILE) && ENABLE(VALUE_PROFILER)
+#define ENABLE_VERBOSE_VALUE_PROFILE 0
+#endif
+
+#if !defined(ENABLE_SIMPLE_HEAP_PROFILING)
+#define ENABLE_SIMPLE_HEAP_PROFILING 0
+#endif
+
+/* Counts uses of write barriers using sampling counters. Be sure to also
+   set ENABLE_SAMPLING_COUNTERS to 1. */
+#if !defined(ENABLE_WRITE_BARRIER_PROFILING)
+#define ENABLE_WRITE_BARRIER_PROFILING 0
 #endif
 
 /* Ensure that either the JIT or the interpreter has been enabled. */
@@ -1105,13 +977,6 @@
 #endif
 #endif
 
-#if ENABLE(SINGLE_THREADED)
-#undef ENABLE_LAZY_BLOCK_FREEING
-#define ENABLE_LAZY_BLOCK_FREEING 0
-#else
-#define ENABLE_LAZY_BLOCK_FREEING 1
-#endif
-
 #ifndef ENABLE_LARGE_HEAP
 #if CPU(X86) || CPU(X86_64)
 #define ENABLE_LARGE_HEAP 1
@@ -1161,12 +1026,6 @@
 #define WTF_USE_PROTECTION_SPACE_AUTH_CALLBACK 1
 #endif
 
-#if COMPILER(GCC)
-#define WARN_UNUSED_RETURN __attribute__ ((warn_unused_result))
-#else
-#define WARN_UNUSED_RETURN
-#endif
-
 #if !ENABLE(NETSCAPE_PLUGIN_API) || (ENABLE(NETSCAPE_PLUGIN_API) && ((OS(UNIX) && (PLATFORM(QT) || PLATFORM(WX))) || PLATFORM(GTK)))
 #define ENABLE_PLUGIN_PACKAGE_SIMPLE_HASH 1
 #endif
@@ -1198,7 +1057,7 @@
 #define ENABLE_THREADING_OPENMP 1
 #endif
 
-#if !defined(ENABLE_PARALLEL_JOBS) && !ENABLE(SINGLE_THREADED) && (ENABLE(THREADING_GENERIC) || ENABLE(THREADING_LIBDISPATCH) || ENABLE(THREADING_OPENMP))
+#if !defined(ENABLE_PARALLEL_JOBS) && (ENABLE(THREADING_GENERIC) || ENABLE(THREADING_LIBDISPATCH) || ENABLE(THREADING_OPENMP))
 #define ENABLE_PARALLEL_JOBS 1
 #endif
 
@@ -1212,8 +1071,16 @@
    breakages one port at a time. */
 #define WTF_USE_EXPORT_MACROS 0
 
-#if (PLATFORM(QT) && !OS(SYMBIAN)) || PLATFORM(GTK) || PLATFORM(EFL)
+#if PLATFORM(QT) || PLATFORM(GTK) || PLATFORM(EFL)
 #define WTF_USE_UNIX_DOMAIN_SOCKETS 1
+#endif
+
+#if !defined(ENABLE_COMPARE_AND_SWAP) && COMPILER(GCC) && (CPU(X86) || CPU(X86_64))
+#define ENABLE_COMPARE_AND_SWAP 1
+#endif
+
+#if !defined(ENABLE_PARALLEL_GC) && PLATFORM(MAC) && ENABLE(COMPARE_AND_SWAP)
+#define ENABLE_PARALLEL_GC 1
 #endif
 
 #ifndef NDEBUG

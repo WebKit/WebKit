@@ -33,7 +33,7 @@ JSValue PropertySlot::functionGetter(ExecState* exec) const
         return exec->exception();
 
     CallData callData;
-    CallType callType = m_data.getterFunc->getCallData(callData);
+    CallType callType = m_data.getterFunc->methodTable()->getCallData(m_data.getterFunc, callData);
     
     // Only objects can have accessor properties.
     // If the base is WebCore's global object then we need to substitute the shell.

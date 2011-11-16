@@ -50,7 +50,7 @@ namespace JSC {
     class StructureChain;
 
 #if ENABLE(JIT)
-    typedef CodeLocationLabel PolymorphicAccessStructureListStubRoutineType;
+    typedef MacroAssemblerCodeRef PolymorphicAccessStructureListStubRoutineType;
 
     // Structure used by op_get_by_id_self_list and op_get_by_id_proto_list instruction to hold data off the main opcode stream.
     struct PolymorphicAccessStructureList {
@@ -58,6 +58,7 @@ namespace JSC {
     public:
         struct PolymorphicStubInfo {
             bool isChain;
+            bool isDirect;
             PolymorphicAccessStructureListStubRoutineType stubRoutine;
             WriteBarrier<Structure> base;
             union {
@@ -70,44 +71,47 @@ namespace JSC {
                 u.proto.clear();
             }
 
-            void set(JSGlobalData& globalData, JSCell* owner, PolymorphicAccessStructureListStubRoutineType _stubRoutine, Structure* _base)
+            void set(JSGlobalData& globalData, JSCell* owner, PolymorphicAccessStructureListStubRoutineType _stubRoutine, Structure* _base, bool isDirect)
             {
                 stubRoutine = _stubRoutine;
                 base.set(globalData, owner, _base);
                 u.proto.clear();
                 isChain = false;
+                this->isDirect = isDirect;
             }
             
-            void set(JSGlobalData& globalData, JSCell* owner, PolymorphicAccessStructureListStubRoutineType _stubRoutine, Structure* _base, Structure* _proto)
+            void set(JSGlobalData& globalData, JSCell* owner, PolymorphicAccessStructureListStubRoutineType _stubRoutine, Structure* _base, Structure* _proto, bool isDirect)
             {
                 stubRoutine = _stubRoutine;
                 base.set(globalData, owner, _base);
                 u.proto.set(globalData, owner, _proto);
                 isChain = false;
+                this->isDirect = isDirect;
             }
             
-            void set(JSGlobalData& globalData, JSCell* owner, PolymorphicAccessStructureListStubRoutineType _stubRoutine, Structure* _base, StructureChain* _chain)
+            void set(JSGlobalData& globalData, JSCell* owner, PolymorphicAccessStructureListStubRoutineType _stubRoutine, Structure* _base, StructureChain* _chain, bool isDirect)
             {
                 stubRoutine = _stubRoutine;
                 base.set(globalData, owner, _base);
                 u.chain.set(globalData, owner, _chain);
                 isChain = true;
+                this->isDirect = isDirect;
             }
         } list[POLYMORPHIC_LIST_CACHE_SIZE];
         
-        PolymorphicAccessStructureList(JSGlobalData& globalData, JSCell* owner, PolymorphicAccessStructureListStubRoutineType stubRoutine, Structure* firstBase)
+        PolymorphicAccessStructureList(JSGlobalData& globalData, JSCell* owner, PolymorphicAccessStructureListStubRoutineType stubRoutine, Structure* firstBase, bool isDirect)
         {
-            list[0].set(globalData, owner, stubRoutine, firstBase);
+            list[0].set(globalData, owner, stubRoutine, firstBase, isDirect);
         }
 
-        PolymorphicAccessStructureList(JSGlobalData& globalData, JSCell* owner, PolymorphicAccessStructureListStubRoutineType stubRoutine, Structure* firstBase, Structure* firstProto)
+        PolymorphicAccessStructureList(JSGlobalData& globalData, JSCell* owner, PolymorphicAccessStructureListStubRoutineType stubRoutine, Structure* firstBase, Structure* firstProto, bool isDirect)
         {
-            list[0].set(globalData, owner, stubRoutine, firstBase, firstProto);
+            list[0].set(globalData, owner, stubRoutine, firstBase, firstProto, isDirect);
         }
 
-        PolymorphicAccessStructureList(JSGlobalData& globalData, JSCell* owner, PolymorphicAccessStructureListStubRoutineType stubRoutine, Structure* firstBase, StructureChain* firstChain)
+        PolymorphicAccessStructureList(JSGlobalData& globalData, JSCell* owner, PolymorphicAccessStructureListStubRoutineType stubRoutine, Structure* firstBase, StructureChain* firstChain, bool isDirect)
         {
-            list[0].set(globalData, owner, stubRoutine, firstBase, firstChain);
+            list[0].set(globalData, owner, stubRoutine, firstBase, firstChain, isDirect);
         }
 
         void visitAggregate(SlotVisitor& visitor, int count)

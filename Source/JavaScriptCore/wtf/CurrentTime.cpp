@@ -60,8 +60,6 @@ extern "C" time_t mktime(struct tm *t);
 #include <glib.h>
 #elif PLATFORM(WX)
 #include <wx/datetime.h>
-#elif PLATFORM(BREWMP)
-#include <AEEStdLib.h>
 #elif PLATFORM(EFL)
 #include <Ecore.h>
 #else
@@ -274,20 +272,6 @@ double currentTime()
     return (double)now.GetTicks() + (double)(now.GetMillisecond() / 1000.0);
 }
 
-#elif PLATFORM(BREWMP)
-
-// GETUTCSECONDS returns the number of seconds since 1980/01/06 00:00:00 UTC,
-// and GETTIMEMS returns the number of milliseconds that have elapsed since the last
-// occurrence of 00:00:00 local time.
-// We can combine GETUTCSECONDS and GETTIMEMS to calculate the number of milliseconds
-// since 1970/01/01 00:00:00 UTC.
-double currentTime()
-{
-    // diffSeconds is the number of seconds from 1970/01/01 to 1980/01/06
-    const unsigned diffSeconds = 315964800;
-    return static_cast<double>(diffSeconds + GETUTCSECONDS() + ((GETTIMEMS() % 1000) / msPerSecond));
-}
-
 #elif PLATFORM(EFL)
 
 double currentTime()
@@ -324,6 +308,13 @@ double monotonicallyIncreasingTime()
 double monotonicallyIncreasingTime()
 {
     return ecore_time_get();
+}
+
+#elif PLATFORM(GTK)
+
+double monotonicallyIncreasingTime()
+{
+    return static_cast<double>(g_get_monotonic_time() / 1000000.0);
 }
 
 #else

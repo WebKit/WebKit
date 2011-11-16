@@ -26,6 +26,7 @@
 #include "ExecutableAllocator.h"
 #include "Structure.h"
 #include "RegExpKey.h"
+#include "yarr/Yarr.h"
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
 
@@ -66,14 +67,17 @@ namespace JSC {
         void printTraceData();
 #endif
 
-        static Structure* createStructure(JSGlobalData& globalData, JSValue prototype)
+        static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue prototype)
         {
-            return Structure::create(globalData, prototype, TypeInfo(LeafType, 0), 0, &s_info);
+            return Structure::create(globalData, globalObject, prototype, TypeInfo(LeafType, 0), &s_info);
         }
         
         static JS_EXPORTDATA const ClassInfo s_info;
 
         RegExpKey key() { return RegExpKey(m_flags, m_patternString); }
+
+    protected:
+        void finishCreation(JSGlobalData&);
 
     private:
         friend class RegExpCache;
@@ -88,13 +92,8 @@ namespace JSC {
             NotCompiled
         } m_state;
 
-        void compile(JSGlobalData*);
-        void compileIfNecessary(JSGlobalData& globalData)
-        {
-            if (m_representation)
-                return;
-            compile(&globalData);
-        }
+        void compile(JSGlobalData*, Yarr::YarrCharSize);
+        void compileIfNecessary(JSGlobalData&, Yarr::YarrCharSize);
 
 #if ENABLE(YARR_JIT_DEBUG)
         void matchCompareWithInterpreter(const UString&, int startOffset, int* offsetVector, int jitResult);

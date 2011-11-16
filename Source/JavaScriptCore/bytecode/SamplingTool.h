@@ -32,8 +32,11 @@
 #include "Strong.h"
 #include "Nodes.h"
 #include "Opcode.h"
+#include "SamplingCounter.h"
 #include <wtf/Assertions.h>
+#include <wtf/Atomics.h>
 #include <wtf/HashMap.h>
+#include <wtf/MainThread.h>
 #include <wtf/Threading.h>
 
 namespace JSC {
@@ -91,6 +94,89 @@ namespace JSC {
         static uint64_t s_flagCounts[33];
 #endif
     };
+
+#if ENABLE(SAMPLING_REGIONS)
+    class SamplingRegion {
+    public:
+        // Create a scoped sampling region using a C string constant name that describes
+        // what you are doing. This must be a string constant that persists for the
+        // lifetime of the process and is immutable.
+        SamplingRegion(const char* name)
+        {
+            if (!isMainThread()) {
+                m_name = 0;
+                return;
+            }
+            
+            m_name = name;
+            exchangeCurrent(this, &m_previous);
+            ASSERT(!m_previous || m_previous > this);
+        }
+        
+        ~SamplingRegion()
+        {
+            if (!m_name)
+                return;
+            
+            ASSERT(bitwise_cast<SamplingRegion*>(s_currentOrReserved & ~1) == this);
+            exchangeCurrent(m_previous);
+        }
+        
+        static void sample();
+        
+        static void dump();
+        
+    private:
+        const char* m_name;
+        SamplingRegion* m_previous;
+
+        static void exchangeCurrent(SamplingRegion* current, SamplingRegion** previousPtr = 0)
+        {
+            uintptr_t previous;
+            while (true) {
+                previous = s_currentOrReserved;
+                
+                // If it's reserved (i.e. sampling thread is reading it), loop around.
+                if (previous & 1) {
+#if OS(UNIX)
+                    sched_yield();
+#endif
+                    continue;
+                }
+                
+                // If we're going to CAS, then make sure previous is set.
+                if (previousPtr)
+                    *previousPtr = bitwise_cast<SamplingRegion*>(previous);
+                
+                if (WTF::weakCompareAndSwap(&s_currentOrReserved, previous, bitwise_cast<uintptr_t>(current)))
+                    break;
+            }
+        }
+        
+        static void dumpInternal();
+
+        class Locker {
+        public:
+            Locker();
+            ~Locker();
+        };
+
+        static volatile uintptr_t s_currentOrReserved;
+        
+        // rely on identity hashing of string constants
+        static Spectrum<const char*>* s_spectrum;
+        
+        static unsigned long s_noneOfTheAbove;
+        
+        static unsigned s_numberOfSamplesSinceDump;
+    };
+#else // ENABLE(SAMPLING_REGIONS)
+    class SamplingRegion {
+    public:
+        SamplingRegion(const char*) { }
+        void dump();
+    };
+#endif // ENABLE(SAMPLING_REGIONS)
 
     class CodeBlock;
     class ExecState;
@@ -278,143 +364,6 @@ namespace JSC {
         OwnPtr<ScriptSampleRecordMap> m_scopeSampleMap;
 #endif
     };
-
-    // AbstractSamplingCounter:
-    //
-    // Implements a named set of counters, printed on exit if ENABLE(SAMPLING_COUNTERS).
-    // See subclasses below, SamplingCounter, GlobalSamplingCounter and DeletableSamplingCounter.
-    class AbstractSamplingCounter {
-        friend class DeletableSamplingCounter;
-    public:
-        void count(uint32_t count = 1)
-        {
-            m_counter += count;
-        }
-
-        static void dump();
-
-        int64_t* addressOfCounter() { return &m_counter; }
-
-    protected:
-        // Effectively the contructor, however called lazily in the case of GlobalSamplingCounter.
-        void init(const char* name)
-        {
-            m_counter = 0;
-            m_name = name;
-
-            // Set m_next to point to the head of the chain, and inform whatever is
-            // currently at the head that this node will now hold the pointer to it.
-            m_next = s_abstractSamplingCounterChain;
-            s_abstractSamplingCounterChain->m_referer = &m_next;
-            // Add this node to the head of the list.
-            s_abstractSamplingCounterChain = this;
-            m_referer = &s_abstractSamplingCounterChain;
-        }
-
-        int64_t m_counter;
-        const char* m_name;
-        AbstractSamplingCounter* m_next;
-        // This is a pointer to the pointer to this node in the chain; used to
-        // allow fast linked list deletion.
-        AbstractSamplingCounter** m_referer;
-        // Null object used to detect end of static chain.
-        static AbstractSamplingCounter s_abstractSamplingCounterChainEnd;
-        static AbstractSamplingCounter* s_abstractSamplingCounterChain;
-        static bool s_completed;
-    };
-
-#if ENABLE(SAMPLING_COUNTERS)
-    // SamplingCounter:
-    //
-    // This class is suitable and (hopefully!) convenient for cases where a counter is
-    // required within the scope of a single function.  It can be instantiated as a
-    // static variable since it contains a constructor but not a destructor (static
-    // variables in WebKit cannot have destructors).
-    //
-    // For example:
-    //
-    // void someFunction()
-    // {
-    //     static SamplingCounter countMe("This is my counter.  There are many like it, but this one is mine.");
-    //     countMe.count();
-    //     // ...
-    // }
-    //
-    class SamplingCounter : public AbstractSamplingCounter {
-    public:
-        SamplingCounter(const char* name) { init(name); }
-    };
-
-    // GlobalSamplingCounter:
-    //
-    // This class is suitable for use where a counter is to be declared globally,
-    // since it contains neither a constructor nor destructor.  Instead, ensure
-    // that 'name()' is called to provide the counter with a name (and also to
-    // allow it to be printed out on exit).
-    //
-    // GlobalSamplingCounter globalCounter;
-    //
-    // void firstFunction()
-    // {
-    //     // Put this within a function that is definitely called!
-    //     // (Or alternatively alongside all calls to 'count()').
-    //     globalCounter.name("I Name You Destroyer.");
-    //     globalCounter.count();
-    //     // ...
-    // }
-    //
-    // void secondFunction()
-    // {
-    //     globalCounter.count();
-    //     // ...
-    // }
-    //
-    class GlobalSamplingCounter : public AbstractSamplingCounter {
-    public:
-        void name(const char* name)
-        {
-            // Global objects should be mapped in zero filled memory, so this should
-            // be a safe (albeit not necessarily threadsafe) check for 'first call'.
-            if (!m_next)
-                init(name);
-        }
-    };
-
-    // DeletableSamplingCounter:
-    //
-    // The above classes (SamplingCounter, GlobalSamplingCounter), are intended for
-    // use within a global or static scope, and as such cannot have a destructor.
-    // This means there is no convenient way for them to remove themselves from the
-    // static list of counters, and should an instance of either class be freed
-    // before 'dump()' has walked over the list it will potentially walk over an
-    // invalid pointer.
-    //
-    // This class is intended for use where the counter may possibly be deleted before
-    // the program exits.  Should this occur, the counter will print it's value to
-    // stderr, and remove itself from the static list.  Example:
-    //
-    // DeletableSamplingCounter* counter = new DeletableSamplingCounter("The Counter With No Name");
-    // counter->count();
-    // delete counter;
-    //
-    class DeletableSamplingCounter : public AbstractSamplingCounter {
-    public:
-        DeletableSamplingCounter(const char* name) { init(name); }
-
-        ~DeletableSamplingCounter()
-        {
-            if (!s_completed)
-                fprintf(stderr, "DeletableSamplingCounter \"%s\" deleted early (with count %lld)\n", m_name, m_counter);
-            // Our m_referer pointer should know where the pointer to this node is,
-            // and m_next should know that this node is the previous node in the list.
-            ASSERT(*m_referer == this);
-            ASSERT(m_next->m_referer == &m_next);
-            // Remove this node from the list, and inform m_next that we have done so.
-            m_next->m_referer = m_referer;
-            *m_referer = m_next;
-        }
-    };
-#endif
 
 } // namespace JSC
 

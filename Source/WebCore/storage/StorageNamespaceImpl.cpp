@@ -33,6 +33,7 @@
 #include "StorageMap.h"
 #include "StorageSyncManager.h"
 #include "StorageTracker.h"
+#include <wtf/MainThread.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/StringHash.h>
 
@@ -66,7 +67,7 @@ PassRefPtr<StorageNamespace> StorageNamespaceImpl::sessionStorageNamespace(unsig
 
 StorageNamespaceImpl::StorageNamespaceImpl(StorageType storageType, const String& path, unsigned quota)
     : m_storageType(storageType)
-    , m_path(path.crossThreadString())
+    , m_path(path.isolatedCopy())
     , m_syncManager(0)
     , m_quota(quota)
     , m_isShutdown(false)

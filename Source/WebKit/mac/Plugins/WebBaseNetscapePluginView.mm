@@ -226,64 +226,64 @@ String WebHaltablePlugin::pluginName() const
 // Methods that subclasses must override
 - (void)setAttributeKeys:(NSArray *)keys andValues:(NSArray *)values
 {
-    ASSERT_NOT_REACHED();
+    // This needs to be overridden by subclasses.
 }
 
 - (void)handleMouseMoved:(NSEvent *)event
 {
-    ASSERT_NOT_REACHED();
+    // This needs to be overriden by subclasses.
 }
 
 - (void)handleMouseEntered:(NSEvent *)event
 {
-    ASSERT_NOT_REACHED();
+    // This needs to be overridden by subclasses.
 }
 
 - (void)handleMouseExited:(NSEvent *)event
 {
-    ASSERT_NOT_REACHED();
+    // This needs to be overridden by subclasses.
 }
 
 - (void)focusChanged
 {
-    ASSERT_NOT_REACHED();
+    // This needs to be overridden by subclasses.
 }
 
 - (void)windowFocusChanged:(BOOL)hasFocus
 {
-    ASSERT_NOT_REACHED();
+    // This needs to be overridden by subclasses.
 }
 
 - (BOOL)createPlugin
 {
-    ASSERT_NOT_REACHED();
+    // This needs to be overridden by subclasses.
     return NO;
 }
 
 - (void)loadStream
 {
-    ASSERT_NOT_REACHED();
+    // This needs to be overridden by subclasses.
 }
 
 - (BOOL)shouldStop
 {
-    ASSERT_NOT_REACHED();
+    // This needs to be overridden by subclasses.
     return YES;
 }
 
 - (void)destroyPlugin
 {
-    ASSERT_NOT_REACHED();
+    // This needs to be overridden by subclasses.
 }
 
 - (void)updateAndSetWindow
 {
-    ASSERT_NOT_REACHED();
+    // This needs to be overridden by subclasses.
 }
 
 - (void)sendModifierEventWithKeyCode:(int)keyCode character:(char)character
 {
-    ASSERT_NOT_REACHED();
+    // This needs to be overridden by subclasses.
 }
 
 - (void)privateBrowsingModeDidChange
@@ -985,7 +985,7 @@ String WebHaltablePlugin::pluginName() const
 
 - (CALayer *)pluginLayer
 {
-    ASSERT_NOT_REACHED();
+    // This needs to be overridden by subclasses.
     return nil;
 }
 

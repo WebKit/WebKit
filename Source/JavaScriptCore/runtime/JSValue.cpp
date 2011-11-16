@@ -119,16 +119,25 @@ JSObject* JSValue::synthesizePrototype(ExecState* exec) const
 #ifndef NDEBUG
 char* JSValue::description()
 {
-    static const size_t size = 32;
+    static const size_t size = 64;
     static char description[size];
 
     if (!*this)
         snprintf(description, size, "<JSValue()>");
     else if (isInt32())
         snprintf(description, size, "Int32: %d", asInt32());
-    else if (isDouble())
-        snprintf(description, size, "Double: %lf", asDouble());
-    else if (isCell())
+    else if (isDouble()) {
+#if USE(JSVALUE64)
+        snprintf(description, size, "Double: %lf, %lx", asDouble(), reinterpretDoubleToIntptr(asDouble()));
+#else
+        union {
+            double asDouble;
+            uint32_t asTwoInt32s[2];
+        } u;
+        u.asDouble = asDouble();
+        snprintf(description, size, "Double: %lf, %08x:%08x", asDouble(), u.asTwoInt32s[1], u.asTwoInt32s[0]);
+#endif
+    } else if (isCell())
         snprintf(description, size, "Cell: %p", asCell());
     else if (isTrue())
         snprintf(description, size, "True");
@@ -192,7 +201,31 @@ int32_t toInt32(double number)
 
 bool JSValue::isValidCallee()
 {
-    return asObject(asObject(asCell())->getAnonymousValue(0))->isGlobalObject();
+    return asObject(asCell())->globalObject();
+}
+
+JSString* JSValue::toPrimitiveString(ExecState* exec) const
+{
+    if (isString())
+        return static_cast<JSString*>(asCell());
+    if (isInt32())
+        return jsString(&exec->globalData(), exec->globalData().numericStrings.add(asInt32()));
+    if (isDouble())
+        return jsString(&exec->globalData(), exec->globalData().numericStrings.add(asDouble()));
+    if (isTrue())
+        return jsNontrivialString(exec, exec->propertyNames().trueKeyword.ustring());
+    if (isFalse())
+        return jsNontrivialString(exec, exec->propertyNames().falseKeyword.ustring());
+    if (isNull())
+        return jsNontrivialString(exec, exec->propertyNames().nullKeyword.ustring());
+    if (isUndefined())
+        return jsNontrivialString(exec, exec->propertyNames().undefined.ustring());
+
+    ASSERT(isCell());
+    JSValue v = asCell()->toPrimitive(exec, NoPreference);
+    if (v.isString())
+        return static_cast<JSString*>(v.asCell());
+    return jsString(&exec->globalData(), v.toString(exec));
 }
 
 } // namespace JSC

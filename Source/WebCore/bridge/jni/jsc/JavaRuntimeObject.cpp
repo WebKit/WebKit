@@ -33,13 +33,16 @@
 namespace JSC {
 namespace Bindings {
 
-const ClassInfo JavaRuntimeObject::s_info = { "JavaRuntimeObject", &RuntimeObject::s_info, 0, 0 };
+const ClassInfo JavaRuntimeObject::s_info = { "JavaRuntimeObject", &RuntimeObject::s_info, 0, 0, CREATE_METHOD_TABLE(JavaRuntimeObject) };
 
-JavaRuntimeObject::JavaRuntimeObject(ExecState* exec, JSGlobalObject* globalObject, PassRefPtr<JavaInstance> instance)
-    // FIXME: deprecatedGetDOMStructure uses the prototype off of the wrong global object
-    // We need to pass in the right global object for "i".
-    : RuntimeObject(exec, globalObject, WebCore::deprecatedGetDOMStructure<JavaRuntimeObject>(exec), instance)
+JavaRuntimeObject::JavaRuntimeObject(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, PassRefPtr<JavaInstance> instance)
+    : RuntimeObject(exec, globalObject, structure, instance)
 {
+}
+
+void JavaRuntimeObject::finishCreation(JSGlobalObject* globalObject)
+{
+    Base::finishCreation(globalObject);
     ASSERT(inherits(&s_info));
 }
 

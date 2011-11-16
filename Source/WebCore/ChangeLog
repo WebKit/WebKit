@@ -1,3 +1,8 @@
+2011-11-15  Oliver Hunt  <oliver@apple.com>
+
+        Merged JavaScriptCore up to r99898, and took all
+        changes to WebCore required by those changes.
+
 2011-10-31  Lucas Forschler  <lforschler@apple.com>
 
     Merge 98936

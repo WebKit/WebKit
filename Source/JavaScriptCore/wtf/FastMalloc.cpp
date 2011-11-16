@@ -79,14 +79,13 @@
 
 #include "Assertions.h"
 #include <limits>
-#if ENABLE(WTF_MULTIPLE_THREADS)
-#if OS(WINDOWS) && PLATFORM(CHROMIUM)
+#if OS(WINDOWS) && PLATFORM(CHROMIUM) || OS(WINCE) && PLATFORM(WIN)
 #include <windows.h>
 #else
 #include <pthread.h>
-#endif // OS(WINDOWS)
-#endif
+#endif // OS(WINDOWS) && PLATFORM(CHROMIUM) || OS(WINCE) && PLATFORM(WIN)
 #include <wtf/StdLibExtras.h>
+#include <string.h>
 
 #ifndef NO_TCMALLOC_SAMPLES
 #ifdef WTF_CHANGES
@@ -106,8 +105,12 @@
 #ifndef NDEBUG
 namespace WTF {
 
-#if ENABLE(WTF_MULTIPLE_THREADS)
-#if OS(WINDOWS) && PLATFORM(CHROMIUM)
+#if OS(WINDOWS) && PLATFORM(CHROMIUM) || OS(WINCE) && PLATFORM(WIN)
+
+// TLS_OUT_OF_INDEXES is not defined on WinCE.
+#ifndef TLS_OUT_OF_INDEXES
+#define TLS_OUT_OF_INDEXES 0xffffffff
+#endif
 
 static DWORD isForibiddenTlsIndex = TLS_OUT_OF_INDEXES;
 static const LPVOID kTlsAllowValue = reinterpret_cast<LPVOID>(0); // Must be zero.
@@ -165,30 +168,10 @@ void fastMallocAllow()
     pthread_once(&isForbiddenKeyOnce, initializeIsForbiddenKey);
     pthread_setspecific(isForbiddenKey, 0);
 }
-#endif // OS(WINDOWS) && PLATFORM(CHROMIUM)
-#else
-
-static bool staticIsForbidden;
-static bool isForbidden()
-{
-    return staticIsForbidden;
-}
-
-void fastMallocForbid()
-{
-    staticIsForbidden = true;
-}
-
-void fastMallocAllow()
-{
-    staticIsForbidden = false;
-}
-#endif // ENABLE(WTF_MULTIPLE_THREADS)
+#endif // OS(WINDOWS) && PLATFORM(CHROMIUM) || OS(WINCE) && PLATFORM(WIN)
 
 } // namespace WTF
 #endif // NDEBUG
-
-#include <string.h>
 
 namespace WTF {
 
@@ -199,7 +182,8 @@ void fastMallocMatchFailed(void*);
 #else
 COMPILE_ASSERT(((sizeof(ValidationHeader) % sizeof(AllocAlignmentInteger)) == 0), ValidationHeader_must_produce_correct_alignment);
 #endif
-void fastMallocMatchFailed(void*)
+
+NO_RETURN_DUE_TO_CRASH void fastMallocMatchFailed(void*)
 {
     CRASH();
 }
@@ -234,10 +218,6 @@ TryMallocReturnValue tryFastZeroedMalloc(size_t n)
 } // namespace WTF
 
 #if FORCE_SYSTEM_MALLOC
-
-#if PLATFORM(BREWMP)
-#include "brew/SystemMallocBrew.h"
-#endif
 
 #if OS(DARWIN)
 #include <malloc/malloc.h>
@@ -284,15 +264,8 @@ void* fastMalloc(size_t n)
     void* result = malloc(n);
 #endif
 
-    if (!result) {
-#if PLATFORM(BREWMP)
-        // The behavior of malloc(0) is implementation defined.
-        // To make sure that fastMalloc never returns 0, retry with fastMalloc(1).
-        if (!n)
-            return fastMalloc(1);
-#endif
+    if (!result)
         CRASH();
-    }
 
     return result;
 }
@@ -331,15 +304,8 @@ void* fastCalloc(size_t n_elements, size_t element_size)
     void* result = calloc(n_elements, element_size);
 #endif
 
-    if (!result) {
-#if PLATFORM(BREWMP)
-        // If either n_elements or element_size is 0, the behavior of calloc is implementation defined.
-        // To make sure that fastCalloc never returns 0, retry with fastCalloc(1, 1).
-        if (!n_elements || !element_size)
-            return fastCalloc(1, 1);
-#endif
+    if (!result)
         CRASH();
-    }
 
     return result;
 }
@@ -418,8 +384,7 @@ size_t fastMallocSize(const void* p)
     return Internal::fastMallocValidationHeader(const_cast<void*>(p))->m_size;
 #elif OS(DARWIN)
     return malloc_size(p);
-#elif OS(WINDOWS) && !PLATFORM(BREWMP)
-    // Brew MP uses its own memory allocator, so _msize does not work on the Brew MP simulator.
+#elif OS(WINDOWS)
     return _msize(const_cast<void*>(p));
 #else
     return 1;

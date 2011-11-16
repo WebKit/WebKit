@@ -30,10 +30,48 @@
 #if ENABLE(PARALLEL_JOBS) && ENABLE(THREADING_GENERIC)
 
 #include "ParallelJobs.h"
+#include "UnusedParam.h"
+
+#if OS(DARWIN) || OS(OPENBSD) || OS(NETBSD)
+#include <sys/sysctl.h>
+#include <sys/types.h>
+#elif OS(LINUX) || OS(AIX) || OS(SOLARIS)
+#include <unistd.h>
+#elif OS(WINDOWS)
+#include <Windows.h>
+#endif
 
 namespace WTF {
 
 Vector< RefPtr<ParallelEnvironment::ThreadPrivate> >* ParallelEnvironment::s_threadPool = 0;
+
+int ParallelEnvironment::s_maxNumberOfParallelThreads = -1;
+
+void ParallelEnvironment::determineMaxNumberOfParallelThreads()
+{
+    const int defaultIfUnavailable = 2;
+#if OS(DARWIN) || OS(OPENBSD) || OS(NETBSD)
+    unsigned result;
+    size_t length = sizeof(result);
+    int name[] = {
+        CTL_HW,
+        HW_NCPU
+    };
+    int sysctlResult = sysctl(name, sizeof(name) / sizeof(int), &result, &length, 0, 0);
+    s_maxNumberOfParallelThreads = sysctlResult < 0 ? defaultIfUnavailable : result;
+#elif OS(LINUX) || OS(AIX) || OS(SOLARIS)
+    long sysconfResult = sysconf(_SC_NPROCESSORS_ONLN);
+    s_maxNumberOfParallelThreads = sysconfResult < 0 ? defaultIfUnavailable : static_cast<int>(sysconfResult);
+#elif OS(WINDOWS)
+    UNUSED_PARAM(defaultIfUnavailable);
+
+    SYSTEM_INFO sysInfo;
+    GetSystemInfo(&sysInfo);
+    s_maxNumberOfParallelThreads = sysInfo.dwNumberOfProcessors;
+#else
+    s_maxNumberOfParallelThreads = defaultIfUnavailable;
+#endif
+}
 
 bool ParallelEnvironment::ThreadPrivate::tryLockFor(ParallelEnvironment* parent)
 {

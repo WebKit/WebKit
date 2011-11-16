@@ -48,35 +48,35 @@ namespace JSC {
 
         static JSActivation* create(JSGlobalData& globalData, CallFrame* callFrame, FunctionExecutable* funcExec)
         {
-            return new (allocateCell<JSActivation>(globalData.heap)) JSActivation(callFrame, funcExec);
+            JSActivation* activation = new (allocateCell<JSActivation>(globalData.heap)) JSActivation(callFrame, funcExec);
+            activation->finishCreation(callFrame);
+            return activation;
         }
 
         virtual ~JSActivation();
 
-        virtual void visitChildren(SlotVisitor&);
+        static void visitChildren(JSCell*, SlotVisitor&);
 
         virtual bool isDynamicScope(bool& requiresDynamicChecks) const;
 
-        virtual bool isActivationObject() const { return true; }
+        static bool getOwnPropertySlot(JSCell*, ExecState*, const Identifier&, PropertySlot&);
+        static void getOwnPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
 
-        virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
-        virtual void getOwnPropertyNames(ExecState*, PropertyNameArray&, EnumerationMode);
+        static void put(JSCell*, ExecState*, const Identifier&, JSValue, PutPropertySlot&);
 
-        virtual void put(ExecState*, const Identifier&, JSValue, PutPropertySlot&);
+        static void putWithAttributes(JSObject*, ExecState*, const Identifier&, JSValue, unsigned attributes);
+        static bool deleteProperty(JSCell*, ExecState*, const Identifier& propertyName);
 
-        virtual void putWithAttributes(ExecState*, const Identifier&, JSValue, unsigned attributes);
-        virtual bool deleteProperty(ExecState*, const Identifier& propertyName);
-
-        virtual JSObject* toThisObject(ExecState*) const;
-        virtual JSValue toStrictThisObject(ExecState*) const;
+        static JSObject* toThisObject(JSCell*, ExecState*);
 
         void copyRegisters(JSGlobalData&);
         
         static const ClassInfo s_info;
 
-        static Structure* createStructure(JSGlobalData& globalData, JSValue proto) { return Structure::create(globalData, proto, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info); }
+        static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue proto) { return Structure::create(globalData, globalObject, proto, TypeInfo(ActivationObjectType, StructureFlags), &s_info); }
 
     protected:
+        void finishCreation(CallFrame*);
         static const unsigned StructureFlags = IsEnvironmentRecord | OverridesGetOwnPropertySlot | OverridesVisitChildren | OverridesGetPropertyNames | JSVariableObject::StructureFlags;
 
     private:
@@ -106,6 +106,12 @@ namespace JSC {
     ALWAYS_INLINE JSActivation* Register::activation() const
     {
         return asActivation(jsValue());
+    }
+
+    inline bool JSActivation::isDynamicScope(bool& requiresDynamicChecks) const
+    {
+        requiresDynamicChecks = m_requiresDynamicChecks;
+        return false;
     }
 
 } // namespace JSC

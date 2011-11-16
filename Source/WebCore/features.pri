@@ -28,8 +28,19 @@ CONFIG(QTDIR_build) {
     }
 }
 
-contains(DEFINES, ENABLE_SINGLE_THREADED=1) {
-    DEFINES+=ENABLE_DATABASE=0 ENABLE_DOM_STORAGE=0 ENABLE_ICONDATABASE=0 ENABLE_WORKERS=0 ENABLE_SHARED_WORKERS=0
+contains(CONFIG, use_system_icu) {
+    DEFINES += WTF_USE_ICU_UNICODE=1
+    DEFINES -= WTF_USE_QT4_UNICODE
+    LIBS += -licuuc -licui18n
+} else {
+    DEFINES += WTF_USE_QT4_UNICODE=1
+    DEFINES -= WTF_USE_ICU_UNICODE
+}
+
+isEmpty(HAVE_QRAWFONT) {
+    # We have to disable SVG Fonts, which rely on the fast path.
+    DEFINES -= ENABLE_SVG_FONTS=1
+    DEFINES += ENABLE_SVG_FONTS=0
 }
 
 # turn off SQLITE support if we do not have sqlite3 available

@@ -36,6 +36,7 @@
 #import <WebKit/WebPluginPackage.h>
 #import <runtime/InitializeThreading.h>
 #import <wtf/Assertions.h>
+#import <wtf/MainThread.h>
 #import <wtf/Threading.h>
 #import <wtf/Vector.h>
 #import <wtf/text/CString.h>

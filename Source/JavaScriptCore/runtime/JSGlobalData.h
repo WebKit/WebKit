@@ -30,9 +30,10 @@
 #define JSGlobalData_h
 
 #include "CachedTranscendentalFunction.h"
-#include "Heap.h"
+#include "DFGIntrinsic.h"
 #include "DateInstanceCache.h"
 #include "ExecutableAllocator.h"
+#include "Heap.h"
 #include "Strong.h"
 #include "JITStubs.h"
 #include "JSValue.h"
@@ -63,9 +64,9 @@ namespace JSC {
     class Interpreter;
     class JSGlobalObject;
     class JSObject;
-    class Lexer;
+    class Keywords;
     class NativeExecutable;
-    class Parser;
+    class ParserArena;
     class RegExpCache;
     class Stringifier;
     class Structure;
@@ -128,13 +129,11 @@ namespace JSC {
         static PassRefPtr<JSGlobalData> createContextGroup(ThreadStackType, HeapSize = SmallHeap);
         ~JSGlobalData();
 
-#if ENABLE(JSC_MULTIPLE_THREADS)
-        // Will start tracking threads that use the heap, which is resource-heavy.
         void makeUsableFromMultipleThreads() { heap.machineThreads().makeUsableFromMultipleThreads(); }
-#endif
 
         GlobalDataType globalDataType;
         ClientData* clientData;
+        CallFrame* topCallFrame;
 
         const HashTable* arrayConstructorTable;
         const HashTable* arrayPrototypeTable;
@@ -189,10 +188,20 @@ namespace JSC {
         SmallStrings smallStrings;
         NumericStrings numericStrings;
         DateInstanceCache dateInstanceCache;
-        
+        Vector<CodeBlock*> codeBlocksBeingCompiled;
+        void startedCompiling(CodeBlock* codeBlock)
+        {
+            codeBlocksBeingCompiled.append(codeBlock);
+        }
+
+        void finishedCompiling(CodeBlock* codeBlock)
+        {
+            ASSERT_UNUSED(codeBlock, codeBlock == codeBlocksBeingCompiled.last());
+            codeBlocksBeingCompiled.removeLast();
+        }
+
 #if ENABLE(ASSEMBLER)
         ExecutableAllocator executableAllocator;
-        ExecutableAllocator regexAllocator;
 #endif
 
 #if !ENABLE(JIT)
@@ -210,18 +219,18 @@ namespace JSC {
                 : wtfThreadData().stack();
         }
 
-        Lexer* lexer;
-        Parser* parser;
+        ParserArena* parserArena;
+        Keywords* keywords;
         Interpreter* interpreter;
 #if ENABLE(JIT)
         OwnPtr<JITThunks> jitStubs;
-        MacroAssemblerCodePtr getCTIStub(ThunkGenerator generator)
+        MacroAssemblerCodeRef getCTIStub(ThunkGenerator generator)
         {
             return jitStubs->ctiStub(this, generator);
         }
-        NativeExecutable* getHostFunction(NativeFunction, ThunkGenerator);
+        NativeExecutable* getHostFunction(NativeFunction, ThunkGenerator, DFG::Intrinsic);
 #endif
-        NativeExecutable* getHostFunction(NativeFunction);
+        NativeExecutable* getHostFunction(NativeFunction, NativeFunction constructor);
 
         TimeoutChecker timeoutChecker;
         Terminator terminator;
@@ -231,6 +240,30 @@ namespace JSC {
 #if ENABLE(JIT)
         ReturnAddressPtr exceptionLocation;
         JSValue hostCallReturnValue;
+#if ENABLE(DFG_JIT)
+        uint32_t osrExitIndex;
+        void* osrExitJumpDestination;
+        Vector<void*> scratchBuffers;
+        size_t sizeOfLastScratchBuffer;
+        
+        void* scratchBufferForSize(size_t size)
+        {
+            if (!size)
+                return 0;
+            
+            if (size > sizeOfLastScratchBuffer) {
+                // Protect against a N^2 memory usage pathology by ensuring
+                // that at worst, we get a geometric series, meaning that the
+                // total memory usage is somewhere around
+                // max(scratch buffer size) * 4.
+                sizeOfLastScratchBuffer = size * 2;
+                
+                scratchBuffers.append(fastMalloc(sizeOfLastScratchBuffer));
+            }
+            
+            return scratchBuffers.last();
+        }
+#endif
 #endif
 
         HashMap<OpaqueJSClass*, OpaqueJSClassContextData*> opaqueJSClassData;
@@ -272,12 +305,19 @@ namespace JSC {
         void addRegExpToTrace(PassRefPtr<RegExp> regExp);
 #endif
         void dumpRegExpTrace();
-        HandleSlot allocateGlobalHandle() { return heap.allocateGlobalHandle(); }
-        HandleSlot allocateLocalHandle() { return heap.allocateLocalHandle(); }
         void clearBuiltinStructures();
 
         bool isCollectorBusy() { return heap.isBusy(); }
         void releaseExecutableMemory();
+
+#if ENABLE(GC_VALIDATION)
+        bool isInitializingObject() const; 
+        void setInitializingObject(bool);
+#endif
+
+#if CPU(X86) && ENABLE(JIT)
+        unsigned m_timeoutCount;
+#endif
 
     private:
         JSGlobalData(GlobalDataType, ThreadStackType, HeapSize);
@@ -287,12 +327,22 @@ namespace JSC {
         bool m_canUseJIT;
 #endif
         StackBounds m_stack;
+#if ENABLE(GC_VALIDATION)
+        bool m_isInitializingObject;
+#endif
     };
 
-    inline HandleSlot allocateGlobalHandle(JSGlobalData& globalData)
+#if ENABLE(GC_VALIDATION)
+    inline bool JSGlobalData::isInitializingObject() const
     {
-        return globalData.allocateGlobalHandle();
+        return m_isInitializingObject;
     }
+
+    inline void JSGlobalData::setInitializingObject(bool initializingObject)
+    {
+        m_isInitializingObject = initializingObject;
+    }
+#endif
 
 } // namespace JSC
 

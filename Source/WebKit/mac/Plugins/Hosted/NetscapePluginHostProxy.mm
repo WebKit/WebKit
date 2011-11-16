@@ -567,7 +567,7 @@ kern_return_t WKPCEvaluate(mach_port_t clientPort, uint32_t pluginID, uint32_t r
 
     PluginDestroyDeferrer deferrer(instanceProxy);
     
-    String script = String::fromUTF8WithLatin1Fallback(scriptData, scriptLength);
+    String script = scriptLength ? String::fromUTF8WithLatin1Fallback(scriptData, scriptLength) : emptyString();
     
     data_t resultData = 0;
     mach_msg_type_number_t resultLength = 0;

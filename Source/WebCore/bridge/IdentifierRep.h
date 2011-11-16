@@ -59,11 +59,7 @@ private:
         m_value.m_string = fastStrDup(name);
     }
     
-    ~IdentifierRep()
-    {
-        // IdentifierReps should never be deleted.
-        ASSERT_NOT_REACHED();
-    }
+    ~IdentifierRep(); // Not implemented
     
     union {
         const char* m_string;

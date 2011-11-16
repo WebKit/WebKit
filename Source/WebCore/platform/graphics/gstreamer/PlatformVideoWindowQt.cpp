@@ -23,7 +23,7 @@
 #include "HTMLVideoElement.h"
 #include "PlatformVideoWindowPrivate.h"
 
-#include <QApplication>
+#include <QGuiApplication>
 #include <QDesktopWidget>
 #include <QKeyEvent>
 #include <QPalette>

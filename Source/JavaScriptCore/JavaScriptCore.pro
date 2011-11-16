@@ -15,18 +15,8 @@ QT -= gui
 CONFIG += depend_includepath
 
 contains(QT_CONFIG, embedded):CONFIG += embedded
-
-# WebCore adds these config only when in a standalone build.
-# qbase.pri takes care of that when in a QTDIR_build
-# Here we add the config for both cases since we don't include qbase.pri
 contains(QT_CONFIG, reduce_exports):CONFIG += hide_symbols
 unix:contains(QT_CONFIG, reduce_relocations):CONFIG += bsymbolic_functions
-
-CONFIG(QTDIR_build) {
-    # Remove the following 2 lines if you want debug information in JavaScriptCore
-    CONFIG -= separate_debug_info
-    CONFIG += no_debug_info
-}
 
 *-g++*:QMAKE_CXXFLAGS_RELEASE -= -O2
 *-g++*:QMAKE_CXXFLAGS_RELEASE += -O3
@@ -66,29 +56,44 @@ SOURCES += \
     bytecode/CodeBlock.cpp \
     bytecode/JumpTable.cpp \
     bytecode/Opcode.cpp \
+    bytecode/PredictedType.cpp \
     bytecode/SamplingTool.cpp \
     bytecode/StructureStubInfo.cpp \
+    bytecode/ValueProfile.cpp \
     bytecompiler/BytecodeGenerator.cpp \
     bytecompiler/NodesCodegen.cpp \
+    heap/AllocationSpace.cpp \
     heap/ConservativeRoots.cpp \
     heap/HandleHeap.cpp \
     heap/HandleStack.cpp \
     heap/Heap.cpp \
+    heap/JettisonedCodeBlocks.cpp \
     heap/MachineStackMarker.cpp \
     heap/MarkStack.cpp \
     heap/MarkedBlock.cpp \
-    heap/NewSpace.cpp \
-    heap/OldSpace.cpp \
+    heap/MarkedSpace.cpp \
+    heap/VTableSpectrum.cpp \
+    heap/WriteBarrierSupport.cpp \
     debugger/DebuggerActivation.cpp \
     debugger/DebuggerCallFrame.cpp \
     debugger/Debugger.cpp \
+    dfg/DFGAbstractState.cpp \
     dfg/DFGByteCodeParser.cpp \
+    dfg/DFGCapabilities.cpp \
+    dfg/DFGDriver.cpp \
     dfg/DFGGraph.cpp \
     dfg/DFGJITCodeGenerator.cpp \
+    dfg/DFGJITCodeGenerator32_64.cpp \
+    dfg/DFGJITCodeGenerator64.cpp \
     dfg/DFGJITCompiler.cpp \
-    dfg/DFGNonSpeculativeJIT.cpp \
+    dfg/DFGJITCompiler32_64.cpp \
     dfg/DFGOperations.cpp \
+    dfg/DFGOSREntry.cpp \
+    dfg/DFGPropagator.cpp \
+    dfg/DFGRepatch.cpp \
     dfg/DFGSpeculativeJIT.cpp \
+    dfg/DFGSpeculativeJIT32_64.cpp \
+    dfg/DFGSpeculativeJIT64.cpp \
     interpreter/CallFrame.cpp \
     interpreter/Interpreter.cpp \
     interpreter/RegisterFile.cpp \
@@ -105,7 +110,6 @@ SOURCES += \
     jit/JITPropertyAccess32_64.cpp \
     jit/JITStubs.cpp \
     jit/ThunkGenerators.cpp \
-    parser/JSParser.cpp \
     parser/Lexer.cpp \
     parser/Nodes.cpp \
     parser/ParserArena.cpp \
@@ -140,6 +144,7 @@ SOURCES += \
     runtime/FunctionPrototype.cpp \
     runtime/GCActivityCallback.cpp \
     runtime/GetterSetter.cpp \
+    runtime/Heuristics.cpp \
     runtime/Identifier.cpp \
     runtime/InitializeThreading.cpp \
     runtime/InternalFunction.cpp \
@@ -149,13 +154,14 @@ SOURCES += \
     runtime/JSByteArray.cpp \
     runtime/JSCell.cpp \
     runtime/JSFunction.cpp \
+    runtime/JSBoundFunction.cpp \
     runtime/JSGlobalData.cpp \
     runtime/JSGlobalObject.cpp \
     runtime/JSGlobalObjectFunctions.cpp \
+    runtime/JSGlobalThis.cpp \
     runtime/JSLock.cpp \
     runtime/JSNotAnObject.cpp \
     runtime/JSObject.cpp \
-    runtime/JSObjectWithGlobalObject.cpp \
     runtime/JSONObject.cpp \
     runtime/JSPropertyNameIterator.cpp \
     runtime/JSStaticScopeObject.cpp \
@@ -182,7 +188,7 @@ SOURCES += \
     runtime/RegExpObject.cpp \
     runtime/RegExpPrototype.cpp \
     runtime/RegExpCache.cpp \
-    runtime/RopeImpl.cpp \
+    runtime/SamplingCounter.cpp \
     runtime/ScopeChain.cpp \
     runtime/SmallStrings.cpp \
     runtime/StrictEvalActivation.cpp \
@@ -202,16 +208,6 @@ SOURCES += \
 }
 
 # Generated files, simply list them for JavaScriptCore
-
-symbian: {
-    symbian-abld|symbian-sbsv2 {
-        MMP_RULES += ALWAYS_BUILD_AS_ARM
-    }  else {
-        QMAKE_CFLAGS -= --thumb
-        QMAKE_CXXFLAGS -= --thumb
-    }
-    QMAKE_CXXFLAGS.ARMCC += -OTime -O3
-}
 
 lessThan(QT_GCC_MAJOR_VERSION, 5) {
     # GCC 4.5 and before

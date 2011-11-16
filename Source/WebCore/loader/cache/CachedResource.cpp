@@ -70,9 +70,7 @@ static ResourceLoadPriority defaultPriorityForResourceType(CachedResource::Type 
     return ResourceLoadPriorityLow;
 }
 
-#ifndef NDEBUG
-static RefCountedLeakCounter cachedResourceLeakCounter("CachedResource");
-#endif
+DEFINE_DEBUG_ONLY_GLOBAL(RefCountedLeakCounter, cachedResourceLeakCounter, ("CachedResource"));
 
 CachedResource::CachedResource(const String& url, Type type)
     : m_url(url)

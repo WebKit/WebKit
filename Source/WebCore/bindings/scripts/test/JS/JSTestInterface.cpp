@@ -93,9 +93,9 @@ bool JSTestInterfaceConstructor::getOwnPropertySlot(ExecState* exec, const Ident
     return getStaticValueSlot<JSTestInterfaceConstructor, DOMObject>(exec, &JSTestInterfaceConstructorTable, this, propertyName, slot);
 }
 
-bool JSTestInterfaceConstructor::getOwnPropertyDescriptor(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
+bool JSTestInterfaceConstructor::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
 {
-    return getStaticValueDescriptor<JSTestInterfaceConstructor, DOMObject>(exec, &JSTestInterfaceConstructorTable, this, propertyName, descriptor);
+    return getStaticValueDescriptor<JSTestInterfaceConstructor, JSDOMWrapper>(exec, &JSTestInterfaceConstructorTable, static_cast<JSTestInterfaceConstructor*>(object), propertyName, descriptor);
 }
 
 EncodedJSValue JSC_HOST_CALL JSTestInterfaceConstructor::constructJSTestInterface(ExecState* exec)
@@ -152,9 +152,11 @@ bool JSTestInterface::getOwnPropertySlot(ExecState* exec, const Identifier& prop
     return getStaticValueSlot<JSTestInterface, Base>(exec, &JSTestInterfaceTable, this, propertyName, slot);
 }
 
-bool JSTestInterface::getOwnPropertyDescriptor(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
+bool JSTestInterface::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
 {
-    return getStaticValueDescriptor<JSTestInterface, Base>(exec, &JSTestInterfaceTable, this, propertyName, descriptor);
+    JSTestInterface* thisObject = static_cast<JSTestInterface*>(object);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
+    return getStaticValueDescriptor<JSTestInterface, Base>(exec, &JSTestInterfaceTable, thisObject, propertyName, descriptor);
 }
 
 JSValue jsTestInterfaceConstructor(ExecState* exec, JSValue slotBase, const Identifier&)

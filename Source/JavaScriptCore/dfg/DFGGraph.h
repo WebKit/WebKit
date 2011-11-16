@@ -28,8 +28,12 @@
 
 #if ENABLE(DFG_JIT)
 
-#include <RegisterFile.h>
-#include <dfg/DFGNode.h>
+#include "CodeBlock.h"
+#include "DFGBasicBlock.h"
+#include "DFGNode.h"
+#include "PredictionTracker.h"
+#include "RegisterFile.h"
+#include <wtf/BitVector.h>
 #include <wtf/HashMap.h>
 #include <wtf/Vector.h>
 #include <wtf/StdLibExtras.h>
@@ -41,56 +45,49 @@ class ExecState;
 
 namespace DFG {
 
-// helper function to distinguish vars & temporaries from arguments.
-inline bool operandIsArgument(int operand) { return operand < 0; }
-
-struct PredictionSlot {
-public:
-    PredictionSlot()
-        : m_value(PredictNone)
+struct MethodCheckData {
+    // It is safe to refer to these directly because they are shadowed by
+    // the old JIT's CodeBlock's MethodCallLinkInfo.
+    Structure* structure;
+    Structure* prototypeStructure;
+    JSObject* function;
+    JSObject* prototype;
+    
+    bool operator==(const MethodCheckData& other) const
     {
+        if (structure != other.structure)
+            return false;
+        if (prototypeStructure != other.prototypeStructure)
+            return false;
+        if (function != other.function)
+            return false;
+        if (prototype != other.prototype)
+            return false;
+        return true;
     }
-    PredictedType m_value;
+    
+    bool operator!=(const MethodCheckData& other) const
+    {
+        return !(*this == other);
+    }
 };
 
-typedef uint32_t BlockIndex;
-
-// For every local variable we track any existing get or set of the value.
-// We track the get so that these may be shared, and we track the set to
-// retrieve the current value, and to reference the final definition.
-struct VariableRecord {
-    VariableRecord()
-        : value(NoNode)
-    {
-    }
-
-    NodeIndex value;
+struct StorageAccessData {
+    size_t offset;
+    unsigned identifierNumber;
+    
+    // NOTE: the offset and identifierNumber do not by themselves
+    // uniquely identify a property. The identifierNumber and a
+    // Structure* do. If those two match, then the offset should
+    // be the same, as well. For any Node that has a StorageAccessData,
+    // it is possible to retrieve the Structure* by looking at the
+    // first child. It should be a CheckStructure, which has the
+    // Structure*.
 };
 
-typedef Vector <BlockIndex, 2> PredecessorList;
-
-struct BasicBlock {
-    BasicBlock(unsigned bytecodeBegin, NodeIndex begin, unsigned numArguments, unsigned numLocals)
-        : bytecodeBegin(bytecodeBegin)
-        , begin(begin)
-        , end(NoNode)
-        , m_arguments(numArguments)
-        , m_locals(numLocals)
-    {
-    }
-
-    static inline BlockIndex getBytecodeBegin(OwnPtr<BasicBlock>* block)
-    {
-        return (*block)->bytecodeBegin;
-    }
-
-    unsigned bytecodeBegin;
-    NodeIndex begin;
-    NodeIndex end;
-
-    PredecessorList m_predecessors;
-    Vector <VariableRecord, 8> m_arguments;
-    Vector <VariableRecord, 16> m_locals;
+struct ResolveGlobalData {
+    unsigned identifierNumber;
+    unsigned resolveInfoIndex;
 };
 
 // 
@@ -101,12 +98,6 @@ struct BasicBlock {
 // Nodes that are 'dead' remain in the vector with refCount 0.
 class Graph : public Vector<Node, 64> {
 public:
-    Graph(unsigned numArguments, unsigned numVariables)
-        : m_argumentPredictions(numArguments)
-        , m_variablePredictions(numVariables)
-    {
-    }
-
     // Mark a node as being referenced.
     void ref(NodeIndex nodeIndex)
     {
@@ -120,117 +111,194 @@ public:
     // CodeBlock is optional, but may allow additional information to be dumped (e.g. Identifier names).
     void dump(CodeBlock* = 0);
     void dump(NodeIndex, CodeBlock* = 0);
+
+    // Dump the code origin of the given node as a diff from the code origin of the
+    // preceding node.
+    void dumpCodeOrigin(NodeIndex);
 #endif
 
-    BlockIndex blockIndexForBytecodeOffset(unsigned bytecodeBegin)
-    {
-        OwnPtr<BasicBlock>* begin = m_blocks.begin();
-        OwnPtr<BasicBlock>* block = binarySearch<OwnPtr<BasicBlock>, unsigned, BasicBlock::getBytecodeBegin>(begin, m_blocks.size(), bytecodeBegin);
-        ASSERT(block >= m_blocks.begin() && block < m_blocks.end());
-        return static_cast<BlockIndex>(block - begin);
-    }
+    BlockIndex blockIndexForBytecodeOffset(Vector<BlockIndex>& blocks, unsigned bytecodeBegin);
 
-    BasicBlock& blockForBytecodeOffset(unsigned bytecodeBegin)
+    bool predictGlobalVar(unsigned varNumber, PredictedType prediction)
     {
-        return *m_blocks[blockIndexForBytecodeOffset(bytecodeBegin)];
-    }
-
-    void predict(int operand, PredictedType prediction)
-    {
-        if (operandIsArgument(operand)) {
-            unsigned argument = operand + m_argumentPredictions.size() + RegisterFile::CallFrameHeaderSize;
-            m_argumentPredictions[argument].m_value |= prediction;
-        } else if ((unsigned)operand < m_variablePredictions.size())
-            m_variablePredictions[operand].m_value |= prediction;
-    }
-    
-    void predictGlobalVar(unsigned varNumber, PredictedType prediction)
-    {
-        HashMap<unsigned, PredictionSlot>::iterator iter = m_globalVarPredictions.find(varNumber + 1);
-        if (iter == m_globalVarPredictions.end()) {
-            PredictionSlot predictionSlot;
-            predictionSlot.m_value |= prediction;
-            m_globalVarPredictions.add(varNumber + 1, predictionSlot);
-        } else
-            iter->second.m_value |= prediction;
-    }
-    
-    void predict(Node& node, PredictedType prediction)
-    {
-        switch (node.op) {
-        case GetLocal:
-            predict(node.local(), prediction);
-            break;
-        case GetGlobalVar:
-            predictGlobalVar(node.varNumber(), prediction);
-            break;
-        default:
-            break;
-        }
-    }
-
-    PredictedType getPrediction(int operand)
-    {
-        if (operandIsArgument(operand)) {
-            unsigned argument = operand + m_argumentPredictions.size() + RegisterFile::CallFrameHeaderSize;
-            return m_argumentPredictions[argument].m_value;
-        }
-        if ((unsigned)operand < m_variablePredictions.size())
-            return m_variablePredictions[operand].m_value;
-        return PredictNone;
+        return m_predictions.predictGlobalVar(varNumber, prediction);
     }
     
     PredictedType getGlobalVarPrediction(unsigned varNumber)
     {
-        HashMap<unsigned, PredictionSlot>::iterator iter = m_globalVarPredictions.find(varNumber + 1);
-        if (iter == m_globalVarPredictions.end())
-            return PredictNone;
-        return iter->second.m_value;
+        return m_predictions.getGlobalVarPrediction(varNumber);
     }
     
-    PredictedType getPrediction(Node& node)
+    PredictedType getMethodCheckPrediction(Node& node)
     {
-        Node* nodePtr = &node;
-        
-        if (nodePtr->op == ValueToNumber)
-            nodePtr = &(*this)[nodePtr->child1()];
-
-        if (nodePtr->op == ValueToInt32)
-            nodePtr = &(*this)[nodePtr->child1()];
-        
-        switch (nodePtr->op) {
-        case GetLocal:
-            return getPrediction(nodePtr->local());
-        case GetGlobalVar:
-            return getGlobalVarPrediction(nodePtr->varNumber());
-        case GetById:
-        case GetMethod:
-        case GetByVal:
-        case Call:
-        case Construct:
-            return nodePtr->getPrediction();
-        default:
-            return PredictNone;
-        }
+        return predictionFromCell(m_methodCheckData[node.methodCheckDataIndex()].function);
+    }
+    
+    PredictedType getJSConstantPrediction(Node& node, CodeBlock* codeBlock)
+    {
+        return predictionFromValue(node.valueOfJSConstantNode(codeBlock));
+    }
+    
+    // Helper methods to check nodes for constants.
+    bool isConstant(NodeIndex nodeIndex)
+    {
+        return at(nodeIndex).hasConstant();
+    }
+    bool isJSConstant(NodeIndex nodeIndex)
+    {
+        return at(nodeIndex).hasConstant();
+    }
+    bool isInt32Constant(CodeBlock* codeBlock, NodeIndex nodeIndex)
+    {
+        return at(nodeIndex).isInt32Constant(codeBlock);
+    }
+    bool isDoubleConstant(CodeBlock* codeBlock, NodeIndex nodeIndex)
+    {
+        return at(nodeIndex).isDoubleConstant(codeBlock);
+    }
+    bool isNumberConstant(CodeBlock* codeBlock, NodeIndex nodeIndex)
+    {
+        return at(nodeIndex).isNumberConstant(codeBlock);
+    }
+    bool isBooleanConstant(CodeBlock* codeBlock, NodeIndex nodeIndex)
+    {
+        return at(nodeIndex).isBooleanConstant(codeBlock);
+    }
+    bool isFunctionConstant(CodeBlock* codeBlock, NodeIndex nodeIndex)
+    {
+        if (!isJSConstant(nodeIndex))
+            return false;
+        if (!getJSFunction(valueOfJSConstant(codeBlock, nodeIndex)))
+            return false;
+        return true;
+    }
+    // Helper methods get constant values from nodes.
+    JSValue valueOfJSConstant(CodeBlock* codeBlock, NodeIndex nodeIndex)
+    {
+        if (at(nodeIndex).hasMethodCheckData())
+            return JSValue(m_methodCheckData[at(nodeIndex).methodCheckDataIndex()].function);
+        return valueOfJSConstantNode(codeBlock, nodeIndex);
+    }
+    int32_t valueOfInt32Constant(CodeBlock* codeBlock, NodeIndex nodeIndex)
+    {
+        return valueOfJSConstantNode(codeBlock, nodeIndex).asInt32();
+    }
+    double valueOfNumberConstant(CodeBlock* codeBlock, NodeIndex nodeIndex)
+    {
+        return valueOfJSConstantNode(codeBlock, nodeIndex).asNumber();
+    }
+    bool valueOfBooleanConstant(CodeBlock* codeBlock, NodeIndex nodeIndex)
+    {
+        return valueOfJSConstantNode(codeBlock, nodeIndex).asBoolean();
+    }
+    JSFunction* valueOfFunctionConstant(CodeBlock* codeBlock, NodeIndex nodeIndex)
+    {
+        JSCell* function = getJSFunction(valueOfJSConstant(codeBlock, nodeIndex));
+        ASSERT(function);
+        return asFunction(function);
     }
 
 #ifndef NDEBUG
     static const char *opName(NodeType);
+    
+    // This is O(n), and should only be used for verbose dumps.
+    const char* nameOfVariableAccessData(VariableAccessData*);
 #endif
 
-    void predictArgumentTypes(ExecState*);
+    void predictArgumentTypes(CodeBlock*);
+    
+    StructureSet* addStructureSet(const StructureSet& structureSet)
+    {
+        ASSERT(structureSet.size());
+        m_structureSet.append(structureSet);
+        return &m_structureSet.last();
+    }
+    
+    StructureTransitionData* addStructureTransitionData(const StructureTransitionData& structureTransitionData)
+    {
+        m_structureTransitionData.append(structureTransitionData);
+        return &m_structureTransitionData.last();
+    }
+    
+    ValueProfile* valueProfileFor(NodeIndex nodeIndex, CodeBlock* profiledBlock)
+    {
+        if (nodeIndex == NoNode)
+            return 0;
+        
+        Node& node = at(nodeIndex);
+        
+        switch (node.op) {
+        case GetLocal: {
+            if (!operandIsArgument(node.local()))
+                return 0;
+            int argument = node.local() + m_arguments.size() + RegisterFile::CallFrameHeaderSize;
+            if (node.variableAccessData() != at(m_arguments[argument]).variableAccessData())
+                return 0;
+            return profiledBlock->valueProfileForArgument(argument);
+        }
+        
+        // Nodes derives from calls need special handling because the value profile is
+        // associated with the op_call_put_result instruction.
+        case Call:
+        case Construct:
+        case ArrayPop:
+        case ArrayPush: {
+            ASSERT(OPCODE_LENGTH(op_call) == OPCODE_LENGTH(op_construct));
+            return profiledBlock->valueProfileForBytecodeOffset(node.codeOrigin.bytecodeIndex + OPCODE_LENGTH(op_call));
+        }
+
+        default:
+            if (node.hasHeapPrediction())
+                return profiledBlock->valueProfileForBytecodeOffset(node.codeOrigin.bytecodeIndex);
+            return 0;
+        }
+    }
 
     Vector< OwnPtr<BasicBlock> , 8> m_blocks;
     Vector<NodeIndex, 16> m_varArgChildren;
+    Vector<MethodCheckData> m_methodCheckData;
+    Vector<StorageAccessData> m_storageAccessData;
+    Vector<ResolveGlobalData> m_resolveGlobalData;
+    Vector<NodeIndex, 8> m_arguments;
+    SegmentedVector<VariableAccessData, 16> m_variableAccessData;
+    SegmentedVector<StructureSet, 16> m_structureSet;
+    SegmentedVector<StructureTransitionData, 8> m_structureTransitionData;
+    BitVector m_preservedVars;
+    unsigned m_localVars;
+    unsigned m_parameterSlots;
 private:
+    
+    JSValue valueOfJSConstantNode(CodeBlock* codeBlock, NodeIndex nodeIndex)
+    {
+        return codeBlock->constantRegister(FirstConstantRegisterIndex + at(nodeIndex).constantNumber()).get();
+    }
 
     // When a node's refCount goes from 0 to 1, it must (logically) recursively ref all of its children, and vice versa.
     void refChildren(NodeIndex);
 
-    Vector<PredictionSlot, 16> m_argumentPredictions;
-    Vector<PredictionSlot, 16> m_variablePredictions;
-    HashMap<unsigned, PredictionSlot> m_globalVarPredictions;
+    PredictionTracker m_predictions;
 };
+
+class GetBytecodeBeginForBlock {
+public:
+    GetBytecodeBeginForBlock(Graph& graph)
+        : m_graph(graph)
+    {
+    }
+    
+    unsigned operator()(BlockIndex* blockIndex) const
+    {
+        return m_graph.m_blocks[*blockIndex]->bytecodeBegin;
+    }
+
+private:
+    Graph& m_graph;
+};
+
+inline BlockIndex Graph::blockIndexForBytecodeOffset(Vector<BlockIndex>& linkingTargets, unsigned bytecodeBegin)
+{
+    return *WTF::binarySearchWithFunctor<BlockIndex, unsigned>(linkingTargets.begin(), linkingTargets.size(), bytecodeBegin, WTF::KeyMustBePresentInArray, GetBytecodeBeginForBlock(*this));
+}
 
 } } // namespace JSC::DFG
 

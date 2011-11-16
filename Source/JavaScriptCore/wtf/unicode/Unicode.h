@@ -33,12 +33,13 @@
 #include <wtf/unicode/glib/UnicodeGLib.h>
 #elif USE(WINCE_UNICODE)
 #include <wtf/unicode/wince/UnicodeWinCE.h>
-#elif USE(BREWMP_UNICODE)
-#include <wtf/unicode/brew/UnicodeBrew.h>
 #else
 #error "Unknown Unicode implementation"
 #endif
 
 COMPILE_ASSERT(sizeof(UChar) == 2, UCharIsTwoBytes);
+
+// Define platform neutral 8 bit character type (L is for Latin-1).
+typedef unsigned char LChar;
 
 #endif // WTF_UNICODE_H

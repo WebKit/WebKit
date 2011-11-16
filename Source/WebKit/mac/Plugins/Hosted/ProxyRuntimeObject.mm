@@ -26,7 +26,6 @@
 #if USE(PLUGIN_HOST_PROCESS)
 
 #include "runtime/ObjectPrototype.h"
-#include <WebCore/JSDOMBinding.h>
 #include "ProxyInstance.h"
 #include "ProxyRuntimeObject.h"
 
@@ -35,13 +34,16 @@ using namespace JSC;
 namespace WebKit {
 
 
-const ClassInfo ProxyRuntimeObject::s_info = { "ProxyRuntimeObject", &RuntimeObject::s_info, 0, 0 };
+const ClassInfo ProxyRuntimeObject::s_info = { "ProxyRuntimeObject", &RuntimeObject::s_info, 0, 0, CREATE_METHOD_TABLE(ProxyRuntimeObject) };
 
-ProxyRuntimeObject::ProxyRuntimeObject(ExecState* exec, JSGlobalObject* globalObject, PassRefPtr<ProxyInstance> instance)
-    // FIXME: deprecatedGetDOMStructure uses the prototype off of the wrong global object
-    // exec-globalData() is also likely wrong.
-    : RuntimeObject(exec, globalObject, WebCore::deprecatedGetDOMStructure<ProxyRuntimeObject>(exec), instance)
+ProxyRuntimeObject::ProxyRuntimeObject(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, PassRefPtr<ProxyInstance> instance)
+    : RuntimeObject(exec, globalObject, structure, instance)
 {
+}
+
+void ProxyRuntimeObject::finishCreation(JSGlobalObject* globalObject)
+{
+    Base::finishCreation(globalObject);
     ASSERT(inherits(&s_info));
 }
 

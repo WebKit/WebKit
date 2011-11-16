@@ -37,8 +37,6 @@ namespace WTF {
 
 using namespace Unicode;
 
-static const unsigned minLengthToShare = 20;
-
 COMPILE_ASSERT(sizeof(StringImpl) == 2 * sizeof(int) + 3 * sizeof(void*), StringImpl_should_stay_small);
 
 StringImpl::~StringImpl()
@@ -55,20 +53,43 @@ StringImpl::~StringImpl()
 #endif
 
     BufferOwnership ownership = bufferOwnership();
-    if (ownership != BufferInternal) {
-        if (ownership == BufferOwned) {
-            ASSERT(!m_sharedBuffer);
-            ASSERT(m_data);
-            fastFree(const_cast<UChar*>(m_data));
-        } else if (ownership == BufferSubstring) {
-            ASSERT(m_substringBuffer);
-            m_substringBuffer->deref();
-        } else {
-            ASSERT(ownership == BufferShared);
-            ASSERT(m_sharedBuffer);
-            m_sharedBuffer->deref();
-        }
+
+    if (has16BitShadow()) {
+        ASSERT(m_copyData16);
+        fastFree(m_copyData16);
     }
+
+    if (ownership == BufferInternal)
+        return;
+    if (ownership == BufferOwned) {
+        // We use m_data8, but since it is a union with m_data16 this works either way.
+        ASSERT(m_data8);
+        fastFree(const_cast<LChar*>(m_data8));
+        return;
+    }
+
+    ASSERT(ownership == BufferSubstring);
+    ASSERT(m_substringBuffer);
+    m_substringBuffer->deref();
+}
+
+PassRefPtr<StringImpl> StringImpl::createUninitialized(unsigned length, LChar*& data)
+{
+    if (!length) {
+        data = 0;
+        return empty();
+    }
+
+    // Allocate a single buffer large enough to contain the StringImpl
+    // struct as well as the data which it contains. This removes one
+    // heap allocation from this call.
+    if (length > ((std::numeric_limits<unsigned>::max() - sizeof(StringImpl)) / sizeof(LChar)))
+        CRASH();
+    size_t size = sizeof(StringImpl) + length * sizeof(LChar);
+    StringImpl* string = static_cast<StringImpl*>(fastMalloc(size));
+
+    data = reinterpret_cast<LChar*>(string + 1);
+    return adoptRef(new (string) StringImpl(length, Force8BitConstructor));
 }
 
 PassRefPtr<StringImpl> StringImpl::createUninitialized(unsigned length, UChar*& data)
@@ -90,6 +111,50 @@ PassRefPtr<StringImpl> StringImpl::createUninitialized(unsigned length, UChar*& 
     return adoptRef(new (string) StringImpl(length));
 }
 
+PassRefPtr<StringImpl> StringImpl::reallocate(PassRefPtr<StringImpl> originalString, unsigned length, LChar*& data)
+{
+    ASSERT(originalString->is8Bit());
+    ASSERT(originalString->hasOneRef());
+    ASSERT(originalString->bufferOwnership() == BufferInternal);
+
+    if (!length) {
+        data = 0;
+        return empty();
+    }
+
+    // Same as createUninitialized() except here we use fastRealloc.
+    if (length > ((std::numeric_limits<unsigned>::max() - sizeof(StringImpl)) / sizeof(LChar)))
+        CRASH();
+    size_t size = sizeof(StringImpl) + length * sizeof(LChar);
+    originalString->~StringImpl();
+    StringImpl* string = static_cast<StringImpl*>(fastRealloc(originalString.leakRef(), size));
+
+    data = reinterpret_cast<LChar*>(string + 1);
+    return adoptRef(new (string) StringImpl(length, Force8BitConstructor));
+}
+
+PassRefPtr<StringImpl> StringImpl::reallocate(PassRefPtr<StringImpl> originalString, unsigned length, UChar*& data)
+{
+    ASSERT(!originalString->is8Bit());
+    ASSERT(originalString->hasOneRef());
+    ASSERT(originalString->bufferOwnership() == BufferInternal);
+
+    if (!length) {
+        data = 0;
+        return empty();
+    }
+
+    // Same as createUninitialized() except here we use fastRealloc.
+    if (length > ((std::numeric_limits<unsigned>::max() - sizeof(StringImpl)) / sizeof(UChar)))
+        CRASH();
+    size_t size = sizeof(StringImpl) + length * sizeof(UChar);
+    originalString->~StringImpl();
+    StringImpl* string = static_cast<StringImpl*>(fastRealloc(originalString.leakRef(), size));
+
+    data = reinterpret_cast<UChar*>(string + 1);
+    return adoptRef(new (string) StringImpl(length));
+}
+
 PassRefPtr<StringImpl> StringImpl::create(const UChar* characters, unsigned length)
 {
     if (!characters || !length)
@@ -101,7 +166,7 @@ PassRefPtr<StringImpl> StringImpl::create(const UChar* characters, unsigned leng
     return string.release();
 }
 
-PassRefPtr<StringImpl> StringImpl::create(const char* characters, unsigned length)
+PassRefPtr<StringImpl> StringImpl::create(const LChar* characters, unsigned length)
 {
     if (!characters || !length)
         return empty();
@@ -115,45 +180,36 @@ PassRefPtr<StringImpl> StringImpl::create(const char* characters, unsigned lengt
     return string.release();
 }
 
-PassRefPtr<StringImpl> StringImpl::create(const char* string)
+PassRefPtr<StringImpl> StringImpl::create(const LChar* string)
 {
     if (!string)
         return empty();
-    size_t length = strlen(string);
+    size_t length = strlen(reinterpret_cast<const char*>(string));
     if (length > numeric_limits<unsigned>::max())
         CRASH();
     return create(string, length);
 }
 
-PassRefPtr<StringImpl> StringImpl::create(const UChar* characters, unsigned length, PassRefPtr<SharedUChar> sharedBuffer)
+const UChar* StringImpl::getData16SlowCase() const
 {
-    ASSERT(characters);
-    ASSERT(minLengthToShare && length >= minLengthToShare);
-    return adoptRef(new StringImpl(characters, length, sharedBuffer));
-}
+    if (has16BitShadow())
+        return m_copyData16;
 
-SharedUChar* StringImpl::sharedBuffer()
-{
-    if (m_length < minLengthToShare)
-        return 0;
-    // All static strings are smaller that the minimim length to share.
-    ASSERT(!isStatic());
-
-    BufferOwnership ownership = bufferOwnership();
-
-    if (ownership == BufferInternal)
-        return 0;
-    if (ownership == BufferSubstring)
-        return m_substringBuffer->sharedBuffer();
-    if (ownership == BufferOwned) {
-        ASSERT(!m_sharedBuffer);
-        m_sharedBuffer = SharedUChar::create(new SharableUChar(m_data)).leakRef();
-        m_refCountAndFlags = (m_refCountAndFlags & ~s_refCountMaskBufferOwnership) | BufferShared;
+    if (bufferOwnership() == BufferSubstring) {
+        // If this is a substring, return a pointer into the parent string.
+        // TODO: Consider severing this string from the parent string
+        unsigned offset = m_data8 - m_substringBuffer->characters8();
+        return m_substringBuffer->characters16() + offset;
     }
 
-    ASSERT(bufferOwnership() == BufferShared);
-    ASSERT(m_sharedBuffer);
-    return m_sharedBuffer;
+    unsigned len = length();
+    m_copyData16 = static_cast<UChar*>(fastMalloc(len * sizeof(UChar)));
+    for (size_t i = 0; i < len; i++)
+        m_copyData16[i] = m_data8[i];
+
+    m_hashAndFlags |= s_hashFlagHas16BitShadow;
+
+    return m_copyData16;
 }
 
 bool StringImpl::containsOnlyWhitespace()
@@ -161,9 +217,21 @@ bool StringImpl::containsOnlyWhitespace()
     // FIXME: The definition of whitespace here includes a number of characters
     // that are not whitespace from the point of view of RenderText; I wonder if
     // that's a problem in practice.
-    for (unsigned i = 0; i < m_length; i++)
-        if (!isASCIISpace(m_data[i]))
+    if (is8Bit()) {
+        for (unsigned i = 0; i < m_length; i++) {
+            UChar c = m_data8[i];
+            if (!isASCIISpace(c))
+                return false;
+        }
+
+        return true;
+    }
+
+    for (unsigned i = 0; i < m_length; i++) {
+        UChar c = m_data16[i];
+        if (!isASCIISpace(c))
             return false;
+    }
     return true;
 }
 
@@ -177,15 +245,20 @@ PassRefPtr<StringImpl> StringImpl::substring(unsigned start, unsigned length)
             return this;
         length = maxLength;
     }
-    return create(m_data + start, length);
+    if (is8Bit())
+        return create(m_data8 + start, length);
+
+    return create(m_data16 + start, length);
 }
 
 UChar32 StringImpl::characterStartingAt(unsigned i)
 {
-    if (U16_IS_SINGLE(m_data[i]))
-        return m_data[i];
-    if (i + 1 < m_length && U16_IS_LEAD(m_data[i]) && U16_IS_TRAIL(m_data[i + 1]))
-        return U16_GET_SUPPLEMENTARY(m_data[i], m_data[i + 1]);
+    if (is8Bit())
+        return m_data8[i];
+    if (U16_IS_SINGLE(m_data16[i]))
+        return m_data16[i];
+    if (i + 1 < m_length && U16_IS_LEAD(m_data16[i]) && U16_IS_TRAIL(m_data16[i + 1]))
+        return U16_GET_SUPPLEMENTARY(m_data16[i], m_data16[i + 1]);
     return 0;
 }
 
@@ -195,15 +268,46 @@ PassRefPtr<StringImpl> StringImpl::lower()
     // no-op code path up through the first 'return' statement.
     
     // First scan the string for uppercase and non-ASCII characters:
-    UChar ored = 0;
     bool noUpper = true;
-    const UChar *end = m_data + m_length;
-    for (const UChar* chp = m_data; chp != end; chp++) {
+    UChar ored = 0;
+    if (is8Bit()) {
+        const LChar* end = m_data8 + m_length;
+        for (const LChar* chp = m_data8; chp != end; chp++) {
+            if (UNLIKELY(isASCIIUpper(*chp)))
+                noUpper = false;
+            ored |= *chp;
+        }
+        // Nothing to do if the string is all ASCII with no uppercase.
+        if (noUpper && !(ored & ~0x7F))
+            return this;
+
+        if (m_length > static_cast<unsigned>(numeric_limits<int32_t>::max()))
+            CRASH();
+        int32_t length = m_length;
+
+        LChar* data8;
+        RefPtr<StringImpl> newImpl = createUninitialized(length, data8);
+
+        if (!(ored & ~0x7F)) {
+            for (int32_t i = 0; i < length; i++)
+                data8[i] = toASCIILower(m_data8[i]);
+
+            return newImpl.release();
+        }
+
+        // Do a slower implementation for cases that include non-ASCII Latin-1 characters.
+        for (int32_t i = 0; i < length; i++)
+            data8[i] = static_cast<LChar>(Unicode::toLower(m_data8[i]));
+
+        return newImpl.release();
+    }
+
+    const UChar *end = m_data16 + m_length;
+    for (const UChar* chp = m_data16; chp != end; chp++) {
         if (UNLIKELY(isASCIIUpper(*chp)))
             noUpper = false;
         ored |= *chp;
     }
-    
     // Nothing to do if the string is all ASCII with no uppercase.
     if (noUpper && !(ored & ~0x7F))
         return this;
@@ -212,28 +316,31 @@ PassRefPtr<StringImpl> StringImpl::lower()
         CRASH();
     int32_t length = m_length;
 
-    UChar* data;
-    RefPtr<StringImpl> newImpl = createUninitialized(m_length, data);
-
     if (!(ored & ~0x7F)) {
-        // Do a faster loop for the case where all the characters are ASCII.
-        for (int i = 0; i < length; i++) {
-            UChar c = m_data[i];
-            data[i] = toASCIILower(c);
+        UChar* data16;
+        RefPtr<StringImpl> newImpl = createUninitialized(m_length, data16);
+        
+        for (int32_t i = 0; i < length; i++) {
+            UChar c = m_data16[i];
+            data16[i] = toASCIILower(c);
         }
-        return newImpl;
+        return newImpl.release();
     }
     
     // Do a slower implementation for cases that include non-ASCII characters.
+    UChar* data16;
+    RefPtr<StringImpl> newImpl = createUninitialized(m_length, data16);
+
     bool error;
-    int32_t realLength = Unicode::toLower(data, length, m_data, m_length, &error);
+    int32_t realLength = Unicode::toLower(data16, length, m_data16, m_length, &error);
     if (!error && realLength == length)
-        return newImpl;
-    newImpl = createUninitialized(realLength, data);
-    Unicode::toLower(data, realLength, m_data, m_length, &error);
+        return newImpl.release();
+
+    newImpl = createUninitialized(realLength, data16);
+    Unicode::toLower(data16, realLength, m_data16, m_length, &error);
     if (error)
         return this;
-    return newImpl;
+    return newImpl.release();
 }
 
 PassRefPtr<StringImpl> StringImpl::upper()
@@ -241,30 +348,53 @@ PassRefPtr<StringImpl> StringImpl::upper()
     // This function could be optimized for no-op cases the way lower() is,
     // but in empirical testing, few actual calls to upper() are no-ops, so
     // it wouldn't be worth the extra time for pre-scanning.
-    UChar* data;
-    RefPtr<StringImpl> newImpl = createUninitialized(m_length, data);
 
     if (m_length > static_cast<unsigned>(numeric_limits<int32_t>::max()))
         CRASH();
     int32_t length = m_length;
 
+    if (is8Bit()) {
+        LChar* data8;
+        RefPtr<StringImpl> newImpl = createUninitialized(m_length, data8);
+        
+        // Do a faster loop for the case where all the characters are ASCII.
+        char ored = 0;
+        for (int i = 0; i < length; i++) {
+            char c = m_data8[i];
+            ored |= c;
+            data8[i] = toASCIIUpper(c);
+        }
+        if (!(ored & ~0x7F))
+            return newImpl.release();
+
+        // Do a slower implementation for cases that include non-ASCII Latin-1 characters.
+        for (int32_t i = 0; i < length; i++)
+            data8[i] = static_cast<LChar>(Unicode::toUpper(m_data8[i]));
+
+        return newImpl.release();
+    }
+
+    UChar* data16;
+    RefPtr<StringImpl> newImpl = createUninitialized(m_length, data16);
+    
     // Do a faster loop for the case where all the characters are ASCII.
     UChar ored = 0;
     for (int i = 0; i < length; i++) {
-        UChar c = m_data[i];
+        UChar c = m_data16[i];
         ored |= c;
-        data[i] = toASCIIUpper(c);
+        data16[i] = toASCIIUpper(c);
     }
     if (!(ored & ~0x7F))
         return newImpl.release();
 
     // Do a slower implementation for cases that include non-ASCII characters.
     bool error;
-    int32_t realLength = Unicode::toUpper(data, length, m_data, m_length, &error);
+    newImpl = createUninitialized(m_length, data16);
+    int32_t realLength = Unicode::toUpper(data16, length, m_data16, m_length, &error);
     if (!error && realLength == length)
         return newImpl;
-    newImpl = createUninitialized(realLength, data);
-    Unicode::toUpper(data, realLength, m_data, m_length, &error);
+    newImpl = createUninitialized(realLength, data16);
+    Unicode::toUpper(data16, realLength, m_data16, m_length, &error);
     if (error)
         return this;
     return newImpl.release();
@@ -275,28 +405,54 @@ PassRefPtr<StringImpl> StringImpl::secure(UChar character, LastCharacterBehavior
     if (!m_length)
         return this;
 
+    if (!(character & ~0x7F)) {
+        LChar* data;
+        RefPtr<StringImpl> newImpl = createUninitialized(m_length, data);
+        for (unsigned i = 0; i < m_length; ++i)
+            data[i] = character;
+        return newImpl.release();
+    }
     UChar* data;
     RefPtr<StringImpl> newImpl = createUninitialized(m_length, data);
     unsigned lastCharacterIndex = m_length - 1;
     for (unsigned i = 0; i < lastCharacterIndex; ++i)
         data[i] = character;
-    data[lastCharacterIndex] = (behavior == ObscureLastCharacter) ? character : m_data[lastCharacterIndex];
+    data[lastCharacterIndex] = (behavior == ObscureLastCharacter) ? character : (is8Bit() ? m_data8[lastCharacterIndex] : m_data16[lastCharacterIndex]);
     return newImpl.release();
 }
 
 PassRefPtr<StringImpl> StringImpl::foldCase()
 {
-    UChar* data;
-    RefPtr<StringImpl> newImpl = createUninitialized(m_length, data);
-
     if (m_length > static_cast<unsigned>(numeric_limits<int32_t>::max()))
         CRASH();
     int32_t length = m_length;
 
+    if (is8Bit()) {
+        // Do a faster loop for the case where all the characters are ASCII.
+        LChar* data;
+        RefPtr <StringImpl>newImpl = createUninitialized(m_length, data);
+        LChar ored = 0;
+
+        for (int32_t i = 0; i < length; i++) {
+            LChar c = m_data8[i];
+            data[i] = toASCIILower(c);
+            ored |= c;
+        }
+
+        if (!(ored & ~0x7F))
+            return newImpl.release();
+
+        // Do a slower implementation for cases that include non-ASCII Latin-1 characters.
+        for (int32_t i = 0; i < length; i++)
+            data[i] = static_cast<LChar>(Unicode::toLower(m_data8[i]));
+    }
+
     // Do a faster loop for the case where all the characters are ASCII.
+    UChar* data;
+    RefPtr<StringImpl> newImpl = createUninitialized(m_length, data);
     UChar ored = 0;
     for (int32_t i = 0; i < length; i++) {
-        UChar c = m_data[i];
+        UChar c = m_data16[i];
         ored |= c;
         data[i] = toASCIILower(c);
     }
@@ -305,11 +461,11 @@ PassRefPtr<StringImpl> StringImpl::foldCase()
 
     // Do a slower implementation for cases that include non-ASCII characters.
     bool error;
-    int32_t realLength = Unicode::foldCase(data, length, m_data, m_length, &error);
+    int32_t realLength = Unicode::foldCase(data, length, m_data16, m_length, &error);
     if (!error && realLength == length)
         return newImpl.release();
     newImpl = createUninitialized(realLength, data);
-    Unicode::foldCase(data, realLength, m_data, m_length, &error);
+    Unicode::foldCase(data, realLength, m_data16, m_length, &error);
     if (error)
         return this;
     return newImpl.release();
@@ -325,7 +481,7 @@ inline PassRefPtr<StringImpl> StringImpl::stripMatchedCharacters(UCharPredicate 
     unsigned end = m_length - 1;
     
     // skip white space from start
-    while (start <= end && predicate(m_data[start]))
+    while (start <= end && predicate(is8Bit() ? m_data8[start] : m_data16[start]))
         start++;
     
     // only white space
@@ -333,12 +489,14 @@ inline PassRefPtr<StringImpl> StringImpl::stripMatchedCharacters(UCharPredicate 
         return empty();
 
     // skip white space from end
-    while (end && predicate(m_data[end]))
+    while (end && predicate(is8Bit() ? m_data8[end] : m_data16[end]))
         end--;
 
     if (!start && end == m_length - 1)
         return this;
-    return create(m_data + start, end + 1 - start);
+    if (is8Bit())
+        return create(m_data8 + start, end + 1 - start);
+    return create(m_data16 + start, end + 1 - start);
 }
 
 class UCharPredicate {
@@ -372,9 +530,10 @@ PassRefPtr<StringImpl> StringImpl::stripWhiteSpace(IsWhiteSpaceFunctionPtr isWhi
     return stripMatchedCharacters(UCharPredicate(isWhiteSpace));
 }
 
+// FIXME: Add 8-bit path. Likely requires templatized StringBuffer class
 PassRefPtr<StringImpl> StringImpl::removeCharacters(CharacterMatchFunctionPtr findMatch)
 {
-    const UChar* from = m_data;
+    const UChar* from = characters();
     const UChar* fromend = from + m_length;
 
     // Assume the common case will not remove any characters
@@ -385,10 +544,10 @@ PassRefPtr<StringImpl> StringImpl::removeCharacters(CharacterMatchFunctionPtr fi
 
     StringBuffer data(m_length);
     UChar* to = data.characters();
-    unsigned outc = from - m_data;
+    unsigned outc = from - characters16();
 
     if (outc)
-        memcpy(to, m_data, outc * sizeof(UChar));
+        memcpy(to, characters16(), outc * sizeof(UChar));
 
     while (true) {
         while (from != fromend && findMatch(*from))
@@ -404,12 +563,13 @@ PassRefPtr<StringImpl> StringImpl::removeCharacters(CharacterMatchFunctionPtr fi
     return adopt(data);
 }
 
+// FIXME: Add 8-bit path. Likely requires templatized StringBuffer class
 template <class UCharPredicate>
 inline PassRefPtr<StringImpl> StringImpl::simplifyMatchedCharactersToSpace(UCharPredicate predicate)
 {
     StringBuffer data(m_length);
 
-    const UChar* from = m_data;
+    const UChar* from = characters16();
     const UChar* fromend = from + m_length;
     int outc = 0;
     bool changedToSpace = false;
@@ -453,65 +613,67 @@ PassRefPtr<StringImpl> StringImpl::simplifyWhiteSpace(IsWhiteSpaceFunctionPtr is
 
 int StringImpl::toIntStrict(bool* ok, int base)
 {
-    return charactersToIntStrict(m_data, m_length, ok, base);
+    return charactersToIntStrict(characters16(), m_length, ok, base);
 }
 
 unsigned StringImpl::toUIntStrict(bool* ok, int base)
 {
-    return charactersToUIntStrict(m_data, m_length, ok, base);
+    return charactersToUIntStrict(characters16(), m_length, ok, base);
 }
 
 int64_t StringImpl::toInt64Strict(bool* ok, int base)
 {
-    return charactersToInt64Strict(m_data, m_length, ok, base);
+    return charactersToInt64Strict(characters16(), m_length, ok, base);
+
 }
 
 uint64_t StringImpl::toUInt64Strict(bool* ok, int base)
 {
-    return charactersToUInt64Strict(m_data, m_length, ok, base);
+    return charactersToUInt64Strict(characters16(), m_length, ok, base);
 }
 
 intptr_t StringImpl::toIntPtrStrict(bool* ok, int base)
 {
-    return charactersToIntPtrStrict(m_data, m_length, ok, base);
+    return charactersToIntPtrStrict(characters16(), m_length, ok, base);
 }
 
 int StringImpl::toInt(bool* ok)
 {
-    return charactersToInt(m_data, m_length, ok);
+    return charactersToInt(characters16(), m_length, ok);
 }
 
 unsigned StringImpl::toUInt(bool* ok)
 {
-    return charactersToUInt(m_data, m_length, ok);
+    return charactersToUInt(characters16(), m_length, ok);
 }
 
 int64_t StringImpl::toInt64(bool* ok)
 {
-    return charactersToInt64(m_data, m_length, ok);
+    return charactersToInt64(characters16(), m_length, ok);
 }
 
 uint64_t StringImpl::toUInt64(bool* ok)
 {
-    return charactersToUInt64(m_data, m_length, ok);
+    return charactersToUInt64(characters16(), m_length, ok);
 }
 
 intptr_t StringImpl::toIntPtr(bool* ok)
 {
-    return charactersToIntPtr(m_data, m_length, ok);
+    return charactersToIntPtr(characters16(), m_length, ok);
+
 }
 
 double StringImpl::toDouble(bool* ok, bool* didReadNumber)
 {
-    return charactersToDouble(m_data, m_length, ok, didReadNumber);
+    return charactersToDouble(characters16(), m_length, ok, didReadNumber);
 }
 
 float StringImpl::toFloat(bool* ok, bool* didReadNumber)
 {
-    return charactersToFloat(m_data, m_length, ok, didReadNumber);
+    return charactersToFloat(characters16(), m_length, ok, didReadNumber);
 }
 
-static bool equal(const UChar* a, const char* b, int length)
+static bool equal(const UChar* a, const LChar* b, int length)
 {
     ASSERT(length >= 0);
     while (length--) {
@@ -522,7 +684,7 @@ static bool equal(const UChar* a, const char* b, int length)
     return true;
 }
 
-bool equalIgnoringCase(const UChar* a, const char* b, unsigned length)
+bool equalIgnoringCase(const UChar* a, const LChar* b, unsigned length)
 {
     while (length--) {
         unsigned char bc = *b++;
@@ -563,20 +725,20 @@ int codePointCompare(const StringImpl* s1, const StringImpl* s2)
 
 size_t StringImpl::find(UChar c, unsigned start)
 {
-    return WTF::find(m_data, m_length, c, start);
+    return WTF::find(characters16(), m_length, c, start);
 }
 
 size_t StringImpl::find(CharacterMatchFunctionPtr matchFunction, unsigned start)
 {
-    return WTF::find(m_data, m_length, matchFunction, start);
+    return WTF::find(characters16(), m_length, matchFunction, start);
 }
 
-size_t StringImpl::find(const char* matchString, unsigned index)
+size_t StringImpl::find(const LChar* matchString, unsigned index)
 {
     // Check for null or empty string to match against
     if (!matchString)
         return notFound;
-    size_t matchStringLength = strlen(matchString);
+    size_t matchStringLength = strlen(reinterpret_cast<const char*>(matchString));
     if (matchStringLength > numeric_limits<unsigned>::max())
         CRASH();
     unsigned matchLength = matchStringLength;
@@ -585,7 +747,7 @@ size_t StringImpl::find(const char* matchString, unsigned index)
 
     // Optimization 1: fast case for strings of length 1.
     if (matchLength == 1)
-        return WTF::find(characters(), length(), *(const unsigned char*)matchString, index);
+        return WTF::find(characters16(), length(), *matchString, index);
 
     // Check index & matchLength are in range.
     if (index > length())
@@ -597,7 +759,6 @@ size_t StringImpl::find(const char* matchString, unsigned index)
     unsigned delta = searchLength - matchLength;
 
     const UChar* searchCharacters = characters() + index;
-    const unsigned char* matchCharacters = (const unsigned char*)matchString;
 
     // Optimization 2: keep a running hash of the strings,
     // only call memcmp if the hashes match.
@@ -605,7 +766,7 @@ size_t StringImpl::find(const char* matchString, unsigned index)
     unsigned matchHash = 0;
     for (unsigned i = 0; i < matchLength; ++i) {
         searchHash += searchCharacters[i];
-        matchHash += matchCharacters[i];
+        matchHash += matchString[i];
     }
 
     unsigned i = 0;
@@ -620,12 +781,12 @@ size_t StringImpl::find(const char* matchString, unsigned index)
     return index + i;
 }
 
-size_t StringImpl::findIgnoringCase(const char* matchString, unsigned index)
+size_t StringImpl::findIgnoringCase(const LChar* matchString, unsigned index)
 {
     // Check for null or empty string to match against
     if (!matchString)
         return notFound;
-    size_t matchStringLength = strlen(matchString);
+    size_t matchStringLength = strlen(reinterpret_cast<const char*>(matchString));
     if (matchStringLength > numeric_limits<unsigned>::max())
         CRASH();
     unsigned matchLength = matchStringLength;
@@ -664,7 +825,7 @@ size_t StringImpl::find(StringImpl* matchString, unsigned index)
 
     // Optimization 1: fast case for strings of length 1.
     if (matchLength == 1)
-        return WTF::find(characters(), length(), matchString->characters()[0], index);
+        return WTF::find(characters16(), length(), matchString->characters16()[0], index);
 
     // Check index & matchLength are in range.
     if (index > length())
@@ -732,7 +893,7 @@ size_t StringImpl::findIgnoringCase(StringImpl* matchString, unsigned index)
 
 size_t StringImpl::reverseFind(UChar c, unsigned index)
 {
-    return WTF::reverseFind(m_data, m_length, c, index);
+    return WTF::reverseFind(characters16(), m_length, c, index);
 }
 
 size_t StringImpl::reverseFind(StringImpl* matchString, unsigned index)
@@ -746,7 +907,7 @@ size_t StringImpl::reverseFind(StringImpl* matchString, unsigned index)
 
     // Optimization 1: fast case for strings of length 1.
     if (matchLength == 1)
-        return WTF::reverseFind(characters(), length(), matchString->characters()[0], index);
+        return WTF::reverseFind(characters16(), length(), matchString->characters()[0], index);
 
     // Check index & matchLength are in range.
     if (matchLength > length())
@@ -819,17 +980,55 @@ PassRefPtr<StringImpl> StringImpl::replace(UChar oldC, UChar newC)
     if (oldC == newC)
         return this;
     unsigned i;
-    for (i = 0; i != m_length; ++i)
-        if (m_data[i] == oldC)
+    for (i = 0; i != m_length; ++i) {
+        UChar c = is8Bit() ? m_data8[i] : m_data16[i];
+        if (c == oldC)
             break;
+    }
     if (i == m_length)
         return this;
+
+    if (is8Bit()) {
+        if (oldC > 0xff)
+            // Looking for a 16 bit char in an 8 bit string, we're done.
+            return this;
+
+        if (newC <= 0xff) {
+            LChar* data;
+            LChar oldChar = static_cast<LChar>(oldC);
+            LChar newChar = static_cast<LChar>(newC);
+
+            RefPtr<StringImpl> newImpl = createUninitialized(m_length, data);
+
+            for (i = 0; i != m_length; ++i) {
+                char ch = m_data8[i];
+                if (ch == oldChar)
+                    ch = newChar;
+                data[i] = ch;
+            }
+            return newImpl.release();
+        }
+
+        // There is the possibility we need to up convert from 8 to 16 bit,
+        // create a 16 bit string for the result.
+        UChar* data;
+        RefPtr<StringImpl> newImpl = createUninitialized(m_length, data);
+
+        for (i = 0; i != m_length; ++i) {
+            UChar ch = m_data8[i];
+            if (ch == oldC)
+                ch = newC;
+            data[i] = ch;
+        }
+
+        return newImpl.release();
+    }
 
     UChar* data;
     RefPtr<StringImpl> newImpl = createUninitialized(m_length, data);
 
     for (i = 0; i != m_length; ++i) {
-        UChar ch = m_data[i];
+        UChar ch = m_data16[i];
         if (ch == oldC)
             ch = newC;
         data[i] = ch;
@@ -844,18 +1043,43 @@ PassRefPtr<StringImpl> StringImpl::replace(unsigned position, unsigned lengthToR
     unsigned lengthToInsert = str ? str->length() : 0;
     if (!lengthToReplace && !lengthToInsert)
         return this;
-    UChar* data;
 
     if ((length() - lengthToReplace) >= (numeric_limits<unsigned>::max() - lengthToInsert))
         CRASH();
 
+    if (is8Bit() && (!str || str->is8Bit())) {
+        LChar* data;
+        RefPtr<StringImpl> newImpl =
+        createUninitialized(length() - lengthToReplace + lengthToInsert, data);
+        memcpy(data, m_data8, position * sizeof(LChar));
+        if (str)
+            memcpy(data + position, str->m_data8, lengthToInsert * sizeof(LChar));
+        memcpy(data + position + lengthToInsert, m_data8 + position + lengthToReplace,
+               (length() - position - lengthToReplace) * sizeof(LChar));
+        return newImpl.release();
+    }
+    UChar* data;
     RefPtr<StringImpl> newImpl =
         createUninitialized(length() - lengthToReplace + lengthToInsert, data);
-    memcpy(data, characters(), position * sizeof(UChar));
-    if (str)
-        memcpy(data + position, str->characters(), lengthToInsert * sizeof(UChar));
-    memcpy(data + position + lengthToInsert, characters() + position + lengthToReplace,
-        (length() - position - lengthToReplace) * sizeof(UChar));
+    if (is8Bit())
+        for (unsigned i = 0; i < position; i++)
+            data[i] = m_data8[i];
+    else
+        memcpy(data, m_data16, position * sizeof(UChar));
+    if (str) {
+        if (str->is8Bit())
+            for (unsigned i = 0; i < lengthToInsert; i++)
+                data[i + position] = str->m_data8[i];
+        else
+            memcpy(data + position, str->m_data16, lengthToInsert * sizeof(UChar));
+    }
+    if (is8Bit()) {
+        for (unsigned i = 0; i < length() - position - lengthToReplace; i++)
+            data[i + position + lengthToInsert] = m_data8[i + position + lengthToReplace];
+    } else {
+        memcpy(data + position + lengthToInsert, characters() + position + lengthToReplace,
+            (length() - position - lengthToReplace) * sizeof(UChar));
+    }
     return newImpl.release();
 }
 
@@ -868,13 +1092,13 @@ PassRefPtr<StringImpl> StringImpl::replace(UChar pattern, StringImpl* replacemen
     size_t srcSegmentStart = 0;
     unsigned matchCount = 0;
     
-    // Count the matches
+    // Count the matches.
     while ((srcSegmentStart = find(pattern, srcSegmentStart)) != notFound) {
         ++matchCount;
         ++srcSegmentStart;
     }
     
-    // If we have 0 matches, we don't have to do any more work
+    // If we have 0 matches then we don't have to do any more work.
     if (!matchCount)
         return this;
     
@@ -888,26 +1112,76 @@ PassRefPtr<StringImpl> StringImpl::replace(UChar pattern, StringImpl* replacemen
 
     newSize += replaceSize;
 
-    UChar* data;
-    RefPtr<StringImpl> newImpl = createUninitialized(newSize, data);
-
-    // Construct the new data
+    // Construct the new data.
     size_t srcSegmentEnd;
     unsigned srcSegmentLength;
     srcSegmentStart = 0;
     unsigned dstOffset = 0;
+    bool srcIs8Bit = is8Bit();
+    bool replacementIs8Bit = replacement->is8Bit();
     
+    // There are 4 cases:
+    // 1. This and replacement are both 8 bit.
+    // 2. This and replacement are both 16 bit.
+    // 3. This is 8 bit and replacement is 16 bit.
+    // 4. This is 16 bit and replacement is 8 bit.
+    if (srcIs8Bit && replacementIs8Bit) {
+        // Case 1
+        LChar* data;
+        RefPtr<StringImpl> newImpl = createUninitialized(newSize, data);
+
+        while ((srcSegmentEnd = find(pattern, srcSegmentStart)) != notFound) {
+            srcSegmentLength = srcSegmentEnd - srcSegmentStart;
+            memcpy(data + dstOffset, m_data8 + srcSegmentStart, srcSegmentLength * sizeof(LChar));
+            dstOffset += srcSegmentLength;
+            memcpy(data + dstOffset, replacement->m_data8, repStrLength * sizeof(LChar));
+            dstOffset += repStrLength;
+            srcSegmentStart = srcSegmentEnd + 1;
+        }
+
+        srcSegmentLength = m_length - srcSegmentStart;
+        memcpy(data + dstOffset, m_data8 + srcSegmentStart, srcSegmentLength * sizeof(LChar));
+
+        ASSERT(dstOffset + srcSegmentLength == newImpl->length());
+
+        return newImpl.release();
+    }
+
+    UChar* data;
+    RefPtr<StringImpl> newImpl = createUninitialized(newSize, data);
+
     while ((srcSegmentEnd = find(pattern, srcSegmentStart)) != notFound) {
         srcSegmentLength = srcSegmentEnd - srcSegmentStart;
-        memcpy(data + dstOffset, m_data + srcSegmentStart, srcSegmentLength * sizeof(UChar));
+        if (srcIs8Bit) {
+            // Case 3.
+            for (unsigned i = 0; i < srcSegmentLength; i++)
+                data[i + dstOffset] = m_data8[i + srcSegmentStart];
+        } else {
+            // Cases 2 & 4.
+            memcpy(data + dstOffset, m_data16 + srcSegmentStart, srcSegmentLength * sizeof(UChar));
+        }
         dstOffset += srcSegmentLength;
-        memcpy(data + dstOffset, replacement->m_data, repStrLength * sizeof(UChar));
+        if (replacementIs8Bit) {
+            // Case 4.
+            for (unsigned i = 0; i < repStrLength; i++)
+                data[i + dstOffset] = replacement->m_data8[i];
+        } else {
+            // Cases 2 & 3.
+            memcpy(data + dstOffset, replacement->m_data16, repStrLength * sizeof(UChar));
+        }
         dstOffset += repStrLength;
         srcSegmentStart = srcSegmentEnd + 1;
     }
 
     srcSegmentLength = m_length - srcSegmentStart;
-    memcpy(data + dstOffset, m_data + srcSegmentStart, srcSegmentLength * sizeof(UChar));
+    if (srcIs8Bit) {
+        // Case 3.
+        for (unsigned i = 0; i < srcSegmentLength; i++)
+            data[i + dstOffset] = m_data8[i + srcSegmentStart];
+    } else {
+        // Cases 2 & 4.
+        memcpy(data + dstOffset, m_data16 + srcSegmentStart, srcSegmentLength * sizeof(UChar));
+    }
 
     ASSERT(dstOffset + srcSegmentLength == newImpl->length());
 
@@ -927,7 +1201,7 @@ PassRefPtr<StringImpl> StringImpl::replace(StringImpl* pattern, StringImpl* repl
     size_t srcSegmentStart = 0;
     unsigned matchCount = 0;
     
-    // Count the matches
+    // Count the matches.
     while ((srcSegmentStart = find(pattern, srcSegmentStart)) != notFound) {
         ++matchCount;
         srcSegmentStart += patternLength;
@@ -946,26 +1220,75 @@ PassRefPtr<StringImpl> StringImpl::replace(StringImpl* pattern, StringImpl* repl
 
     newSize += matchCount * repStrLength;
 
-    UChar* data;
-    RefPtr<StringImpl> newImpl = createUninitialized(newSize, data);
     
     // Construct the new data
     size_t srcSegmentEnd;
     unsigned srcSegmentLength;
     srcSegmentStart = 0;
     unsigned dstOffset = 0;
+    bool srcIs8Bit = is8Bit();
+    bool replacementIs8Bit = replacement->is8Bit();
     
+    // There are 4 cases:
+    // 1. This and replacement are both 8 bit.
+    // 2. This and replacement are both 16 bit.
+    // 3. This is 8 bit and replacement is 16 bit.
+    // 4. This is 16 bit and replacement is 8 bit.
+    if (srcIs8Bit && replacementIs8Bit) {
+        // Case 1
+        LChar* data;
+        RefPtr<StringImpl> newImpl = createUninitialized(newSize, data);
+        while ((srcSegmentEnd = find(pattern, srcSegmentStart)) != notFound) {
+            srcSegmentLength = srcSegmentEnd - srcSegmentStart;
+            memcpy(data + dstOffset, m_data8 + srcSegmentStart, srcSegmentLength * sizeof(LChar));
+            dstOffset += srcSegmentLength;
+            memcpy(data + dstOffset, replacement->m_data8, repStrLength * sizeof(LChar));
+            dstOffset += repStrLength;
+            srcSegmentStart = srcSegmentEnd + patternLength;
+        }
+
+        srcSegmentLength = m_length - srcSegmentStart;
+        memcpy(data + dstOffset, m_data8 + srcSegmentStart, srcSegmentLength * sizeof(LChar));
+
+        ASSERT(dstOffset + srcSegmentLength == newImpl->length());
+
+        return newImpl.release();
+    }
+
+    UChar* data;
+    RefPtr<StringImpl> newImpl = createUninitialized(newSize, data);
     while ((srcSegmentEnd = find(pattern, srcSegmentStart)) != notFound) {
         srcSegmentLength = srcSegmentEnd - srcSegmentStart;
-        memcpy(data + dstOffset, m_data + srcSegmentStart, srcSegmentLength * sizeof(UChar));
+        if (srcIs8Bit) {
+            // Case 3.
+            for (unsigned i = 0; i < srcSegmentLength; i++)
+                data[i + dstOffset] = m_data8[i + srcSegmentStart];
+        } else {
+            // Case 2 & 4.
+            memcpy(data + dstOffset, m_data16 + srcSegmentStart, srcSegmentLength * sizeof(UChar));
+        }
         dstOffset += srcSegmentLength;
-        memcpy(data + dstOffset, replacement->m_data, repStrLength * sizeof(UChar));
+        if (replacementIs8Bit) {
+            // Cases 2 & 3.
+            for (unsigned i = 0; i < repStrLength; i++)
+                data[i + dstOffset] = replacement->m_data8[i];
+        } else {
+            // Case 4
+            memcpy(data + dstOffset, replacement->m_data16, repStrLength * sizeof(UChar));
+        }
         dstOffset += repStrLength;
         srcSegmentStart = srcSegmentEnd + patternLength;
     }
 
     srcSegmentLength = m_length - srcSegmentStart;
-    memcpy(data + dstOffset, m_data + srcSegmentStart, srcSegmentLength * sizeof(UChar));
+    if (srcIs8Bit) {
+        // Case 3.
+        for (unsigned i = 0; i < srcSegmentLength; i++)
+            data[i + dstOffset] = m_data8[i + srcSegmentStart];
+    } else {
+        // Cases 2 & 4.
+        memcpy(data + dstOffset, m_data16 + srcSegmentStart, srcSegmentLength * sizeof(UChar));
+    }
 
     ASSERT(dstOffset + srcSegmentLength == newImpl->length());
 
@@ -977,7 +1300,46 @@ bool equal(const StringImpl* a, const StringImpl* b)
     return StringHash::equal(a, b);
 }
 
-bool equal(const StringImpl* a, const char* b)
+bool equal(const StringImpl* a, const LChar* b, unsigned length)
+{
+    if (!a)
+        return !b;
+    if (!b)
+        return !a;
+
+    if (length != a->length())
+        return false;
+
+    if (a->is8Bit()) {
+        const LChar* aChars = a->characters8();
+
+        for (unsigned i = 0; i != length; ++i) {
+            unsigned char bc = b[i];
+            unsigned char ac = aChars[i];
+            if (!bc)
+                return false;
+            if (ac != bc)
+                return false;
+        }
+
+        return true;
+    }
+
+    const UChar* aChars = a->characters16();
+
+    for (unsigned i = 0; i != length; ++i) {
+        UChar bc = b[i];
+        UChar ac = aChars[i];
+        if (!bc)
+            return false;
+        if (ac != bc)
+            return false;
+    }
+
+    return true;
+}
+
+bool equal(const StringImpl* a, const LChar* b)
 {
     if (!a)
         return !b;
@@ -985,16 +1347,75 @@ bool equal(const StringImpl* a, const char* b)
         return !a;
 
     unsigned length = a->length();
-    const UChar* as = a->characters();
+
+    if (a->is8Bit()) {
+        const LChar* aPtr = a->characters8();
+        for (unsigned i = 0; i != length; ++i) {
+            unsigned char bc = b[i];
+            unsigned char ac = aPtr[i];
+            if (!bc)
+                return false;
+            if (ac != bc)
+                return false;
+        }
+
+        return !b[length];
+    }
+
+    const UChar* aPtr = a->characters16();
     for (unsigned i = 0; i != length; ++i) {
         unsigned char bc = b[i];
         if (!bc)
             return false;
-        if (as[i] != bc)
+        if (aPtr[i] != bc)
             return false;
     }
 
     return !b[length];
+}
+
+bool equal(const StringImpl* a, const UChar* b, unsigned length)
+{
+    if (!a)
+        return !b;
+    if (!b)
+        return false;
+
+    if (a->length() != length)
+        return false;
+    // FIXME: perhaps we should have a more abstract macro that indicates when
+    // going 4 bytes at a time is unsafe
+#if CPU(ARM) || CPU(SH4) || CPU(MIPS) || CPU(SPARC)
+    const UChar* as = a->characters();
+    for (unsigned i = 0; i != length; ++i)
+        if (as[i] != b[i])
+            return false;
+    return true;
+#else
+    if (a->is8Bit()) {
+        const LChar* as = a->characters8();
+        for (unsigned i = 0; i != length; ++i)
+            if (as[i] != b[i])
+                return false;
+        return true;
+    }
+
+    // Do comparison 4-bytes-at-a-time on architectures where it's safe.
+
+    const uint32_t* aCharacters = reinterpret_cast<const uint32_t*>(a->characters16());
+    const uint32_t* bCharacters = reinterpret_cast<const uint32_t*>(b);
+
+    unsigned halfLength = length >> 1;
+    for (unsigned i = 0; i != halfLength; ++i) {
+        if (*aCharacters++ != *bCharacters++)
+            return false;
+    }
+
+    if (length & 1 &&  *reinterpret_cast<const uint16_t*>(aCharacters) != *reinterpret_cast<const uint16_t*>(bCharacters))
+        return false;
+
+    return true;
+#endif
 }
 
 bool equalIgnoringCase(StringImpl* a, StringImpl* b)
@@ -1002,7 +1423,7 @@ bool equalIgnoringCase(StringImpl* a, StringImpl* b)
     return CaseFoldingHash::equal(a, b);
 }
 
-bool equalIgnoringCase(StringImpl* a, const char* b)
+bool equalIgnoringCase(StringImpl* a, const LChar* b)
 {
     if (!a)
         return !b;
@@ -1010,13 +1431,34 @@ bool equalIgnoringCase(StringImpl* a, const char* b)
         return !a;
 
     unsigned length = a->length();
-    const UChar* as = a->characters();
 
     // Do a faster loop for the case where all the characters are ASCII.
     UChar ored = 0;
     bool equal = true;
+    if (a->is8Bit()) {
+        const LChar* as = a->characters8();
+        for (unsigned i = 0; i != length; ++i) {
+            LChar bc = b[i];
+            if (!bc)
+                return false;
+            UChar ac = as[i];
+            ored |= ac;
+            equal = equal && (toASCIILower(ac) == toASCIILower(bc));
+        }
+        
+        // Do a slower implementation for cases that include non-ASCII characters.
+        if (ored & ~0x7F) {
+            equal = true;
+            for (unsigned i = 0; i != length; ++i)
+                equal = equal && (foldCase(as[i]) == foldCase(b[i]));
+        }
+        
+        return equal && !b[length];        
+    }
+
+    const UChar* as = a->characters16();
     for (unsigned i = 0; i != length; ++i) {
-        char bc = b[i];
+        LChar bc = b[i];
         if (!bc)
             return false;
         UChar ac = as[i];
@@ -1028,8 +1470,7 @@ bool equalIgnoringCase(StringImpl* a, const char* b)
     if (ored & ~0x7F) {
         equal = true;
         for (unsigned i = 0; i != length; ++i) {
-            unsigned char bc = b[i];
-            equal = equal && (foldCase(as[i]) == foldCase(bc));
+            equal = equal && (foldCase(as[i]) == foldCase(b[i]));
         }
     }
 
@@ -1051,7 +1492,7 @@ bool equalIgnoringNullity(StringImpl* a, StringImpl* b)
 WTF::Unicode::Direction StringImpl::defaultWritingDirection(bool* hasStrongDirectionality)
 {
     for (unsigned i = 0; i < m_length; ++i) {
-        WTF::Unicode::Direction charDirection = WTF::Unicode::direction(m_data[i]);
+        WTF::Unicode::Direction charDirection = WTF::Unicode::direction(is8Bit() ? m_data8[i] : m_data16[i]);
         if (charDirection == WTF::Unicode::LeftToRight) {
             if (hasStrongDirectionality)
                 *hasStrongDirectionality = true;
@@ -1068,22 +1509,9 @@ WTF::Unicode::Direction StringImpl::defaultWritingDirection(bool* hasStrongDirec
     return WTF::Unicode::LeftToRight;
 }
 
-// This is a hot function because it's used when parsing HTML.
-PassRefPtr<StringImpl> StringImpl::createStrippingNullCharactersSlowCase(const UChar* characters, unsigned length)
-{
-    StringBuffer strippedCopy(length);
-    unsigned strippedLength = 0;
-    for (unsigned i = 0; i < length; i++) {
-        if (int c = characters[i])
-            strippedCopy[strippedLength++] = c;
-    }
-    ASSERT(strippedLength < length);  // Only take the slow case when stripping.
-    strippedCopy.shrink(strippedLength);
-    return adopt(strippedCopy);
-}
-
 PassRefPtr<StringImpl> StringImpl::adopt(StringBuffer& buffer)
 {
+    // FIXME: handle 8-bit StringBuffer when it exists.
     unsigned length = buffer.length();
     if (length == 0)
         return empty();
@@ -1094,31 +1522,24 @@ PassRefPtr<StringImpl> StringImpl::createWithTerminatingNullCharacter(const Stri
 {
     // Use createUninitialized instead of 'new StringImpl' so that the string and its buffer
     // get allocated in a single memory block.
-    UChar* data;
     unsigned length = string.m_length;
     if (length >= numeric_limits<unsigned>::max())
         CRASH();
-    RefPtr<StringImpl> terminatedString = createUninitialized(length + 1, data);
-    memcpy(data, string.m_data, length * sizeof(UChar));
-    data[length] = 0;
+    RefPtr<StringImpl> terminatedString;
+    if (string.is8Bit()) {
+        LChar* data;
+        terminatedString = createUninitialized(length + 1, data);
+        memcpy(data, string.m_data8, length * sizeof(LChar));
+        data[length] = 0;
+    } else {
+        UChar* data;
+        terminatedString = createUninitialized(length + 1, data);
+        memcpy(data, string.m_data16, length * sizeof(UChar));
+        data[length] = 0;
+    }
     terminatedString->m_length--;
-    terminatedString->m_hash = string.m_hash;
-    terminatedString->m_refCountAndFlags |= s_refCountFlagHasTerminatingNullCharacter;
+    terminatedString->m_hashAndFlags = (string.m_hashAndFlags & ~s_flagMask) | s_hashFlagHasTerminatingNullCharacter;
     return terminatedString.release();
-}
-
-PassRefPtr<StringImpl> StringImpl::threadsafeCopy() const
-{
-    return create(m_data, m_length);
-}
-
-PassRefPtr<StringImpl> StringImpl::crossThreadString()
-{
-    if (SharedUChar* sharedBuffer = this->sharedBuffer())
-        return adoptRef(new StringImpl(m_data, m_length, sharedBuffer->crossThreadCopy()));
-
-    // If no shared buffer is available, create a copy.
-    return threadsafeCopy();
 }
 
 } // namespace WTF

@@ -41,55 +41,55 @@
 
 namespace JSC {
 
-class InterruptedExecutionError : public JSNonFinalObject {
-private:
-    InterruptedExecutionError(JSGlobalData& globalData)
-        : JSNonFinalObject(globalData, globalData.interruptedExecutionErrorStructure.get())
-    {
-    }
+const ClassInfo InterruptedExecutionError::s_info = { "InterruptedExecutionError", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(InterruptedExecutionError) };
 
-public:
-    typedef JSNonFinalObject Base;
-
-    static InterruptedExecutionError* create(JSGlobalData& globalData)
-    {
-        return new (allocateCell<InterruptedExecutionError>(globalData.heap)) InterruptedExecutionError(globalData);
-    }
-
-    virtual ComplType exceptionType() const { return Interrupted; }
-
-    virtual UString toString(ExecState*) const { return "JavaScript execution exceeded timeout."; }
-};
+JSValue InterruptedExecutionError::defaultValue(const JSObject*, ExecState* exec, PreferredPrimitiveType hint)
+{
+    if (hint == PreferString)
+        return jsNontrivialString(exec, "JavaScript execution exceeded timeout.");
+    return JSValue(std::numeric_limits<double>::quiet_NaN());
+}
 
 JSObject* createInterruptedExecutionException(JSGlobalData* globalData)
 {
     return InterruptedExecutionError::create(*globalData);
 }
 
-class TerminatedExecutionError : public JSNonFinalObject {
-private:
-    TerminatedExecutionError(JSGlobalData& globalData)
-        : JSNonFinalObject(globalData, globalData.terminatedExecutionErrorStructure.get())
-    {
-    }
+bool isInterruptedExecutionException(JSObject* object)
+{
+    return object->inherits(&InterruptedExecutionError::s_info);
+}
 
-public:
-    typedef JSNonFinalObject Base;
+bool isInterruptedExecutionException(JSValue value)
+{
+    return value.inherits(&InterruptedExecutionError::s_info);
+}
 
-    static TerminatedExecutionError* create(JSGlobalData& globalData)
-    {
-        return new (allocateCell<TerminatedExecutionError>(globalData.heap)) TerminatedExecutionError(globalData);
-    }
 
-    virtual ComplType exceptionType() const { return Terminated; }
+const ClassInfo TerminatedExecutionError::s_info = { "TerminatedExecutionError", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(TerminatedExecutionError) };
 
-    virtual UString toString(ExecState*) const { return "JavaScript execution terminated."; }
-};
+JSValue TerminatedExecutionError::defaultValue(const JSObject*, ExecState* exec, PreferredPrimitiveType hint)
+{
+    if (hint == PreferString)
+        return jsNontrivialString(exec, "JavaScript execution terminated.");
+    return JSValue(std::numeric_limits<double>::quiet_NaN());
+}
 
 JSObject* createTerminatedExecutionException(JSGlobalData* globalData)
 {
     return TerminatedExecutionError::create(*globalData);
 }
+
+bool isTerminatedExecutionException(JSObject* object)
+{
+    return object->inherits(&TerminatedExecutionError::s_info);
+}
+
+bool isTerminatedExecutionException(JSValue value)
+{
+    return value.inherits(&TerminatedExecutionError::s_info);
+}
+
 
 JSObject* createStackOverflowError(ExecState* exec)
 {

@@ -2161,6 +2161,7 @@ webcore_sources += \
 	Source/WebCore/page/DragClient.h \
 	Source/WebCore/page/DragController.cpp \
 	Source/WebCore/page/DragController.h \
+	Source/WebCore/page/DragSession.h \
 	Source/WebCore/page/DragState.h \
 	Source/WebCore/page/EditorClient.h \
 	Source/WebCore/page/EventHandler.cpp \
@@ -2558,6 +2559,7 @@ webcore_sources += \
 	Source/WebCore/platform/network/ProxyServer.h \
 	Source/WebCore/platform/network/NetworkStateNotifier.cpp \
 	Source/WebCore/platform/network/NetworkStateNotifier.h \
+	Source/WebCore/platform/network/ProtectionSpaceHash.h \
 	Source/WebCore/platform/network/ProtectionSpace.cpp \
 	Source/WebCore/platform/network/ProtectionSpace.h \
 	Source/WebCore/platform/network/ResourceErrorBase.cpp \

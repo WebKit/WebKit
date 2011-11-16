@@ -78,8 +78,8 @@ private:
 
 WorkerThreadStartupData::WorkerThreadStartupData(const KURL& scriptURL, const String& userAgent, const String& sourceCode)
     : m_scriptURL(scriptURL.copy())
-    , m_userAgent(userAgent.crossThreadString())
-    , m_sourceCode(sourceCode.crossThreadString())
+    , m_userAgent(userAgent.isolatedCopy())
+    , m_sourceCode(sourceCode.isolatedCopy())
 {
 }
 

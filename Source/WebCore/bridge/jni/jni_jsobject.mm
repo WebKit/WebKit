@@ -306,8 +306,6 @@ jobject JavaJSObject::call(jstring methodName, jobjectArray args) const
 jobject JavaJSObject::eval(jstring script) const
 {
     LOG(LiveConnect, "JavaJSObject::eval script = %s", JavaString(script).utf8());
-    
-    JSValue result;
 
     JSLock lock(SilenceAssertionsOnly);
     
@@ -316,18 +314,10 @@ jobject JavaJSObject::eval(jstring script) const
         return 0;
 
     rootObject->globalObject()->globalData().timeoutChecker.start();
-    Completion completion = JSC::evaluate(rootObject->globalObject()->globalExec(), rootObject->globalObject()->globalScopeChain(), makeSource(JavaString(script).impl()), JSC::JSValue());
+    JSValue result = JSC::evaluate(rootObject->globalObject()->globalExec(), rootObject->globalObject()->globalScopeChain(), makeSource(JavaString(script).impl()));
     rootObject->globalObject()->globalData().timeoutChecker.stop();
-    ComplType type = completion.complType();
-    
-    if (type == Normal) {
-        result = completion.value();
-        if (!result)
-            result = jsUndefined();
-    } else
-        result = jsUndefined();
-    
-    return convertValueToJObject (result);
+
+    return convertValueToJObject(result);
 }
 
 jobject JavaJSObject::getMember(jstring memberName) const
@@ -358,7 +348,7 @@ void JavaJSObject::setMember(jstring memberName, jobject value) const
 
     JSLock lock(SilenceAssertionsOnly);
     PutPropertySlot slot;
-    _imp->put(exec, Identifier(exec, JavaString(memberName).impl()), convertJObjectToValue(exec, value), slot);
+    _imp->methodTable()->put(_imp, exec, Identifier(exec, JavaString(memberName).impl()), convertJObjectToValue(exec, value), slot);
 }
 
 
@@ -372,7 +362,7 @@ void JavaJSObject::removeMember(jstring memberName) const
 
     ExecState* exec = rootObject->globalObject()->globalExec();
     JSLock lock(SilenceAssertionsOnly);
-    _imp->deleteProperty(exec, Identifier(exec, JavaString(memberName).impl()));
+    _imp->methodTable()->deleteProperty(_imp, exec, Identifier(exec, JavaString(memberName).impl()));
 }
 
 
@@ -403,7 +393,7 @@ void JavaJSObject::setSlot(jint index, jobject value) const
 
     ExecState* exec = rootObject->globalObject()->globalExec();
     JSLock lock(SilenceAssertionsOnly);
-    _imp->put(exec, (unsigned)index, convertJObjectToValue(exec, value));
+    _imp->methodTable()->putByIndex(_imp, exec, (unsigned)index, convertJObjectToValue(exec, value));
 }
 
 

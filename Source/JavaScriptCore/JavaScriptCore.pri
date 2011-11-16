@@ -1,7 +1,5 @@
 # JavaScriptCore - Qt4 build info
 
-include(../common.pri)
-
 VPATH += $$PWD
 
 # Use a config-specific target to prevent parallel builds file clashes on Mac
@@ -12,11 +10,7 @@ else: JAVASCRIPTCORE_TARGET = jscore
 CONFIG(debug, debug|release) : JAVASCRIPTCORE_DESTDIR = debug
 else: JAVASCRIPTCORE_DESTDIR = release
 
-CONFIG(standalone_package) {
-    isEmpty(JSC_GENERATED_SOURCES_DIR):JSC_GENERATED_SOURCES_DIR = $$PWD/generated
-} else {
-    isEmpty(JSC_GENERATED_SOURCES_DIR):JSC_GENERATED_SOURCES_DIR = $$OUTPUT_DIR/JavaScriptCore/generated
-}
+isEmpty(JSC_GENERATED_SOURCES_DIR):JSC_GENERATED_SOURCES_DIR = $$OUTPUT_DIR/JavaScriptCore/generated
 
 JAVASCRIPTCORE_INCLUDEPATH = \
     $$PWD \
@@ -35,22 +29,19 @@ JAVASCRIPTCORE_INCLUDEPATH = \
     $$PWD/runtime \
     $$PWD/wtf \
     $$PWD/wtf/gobject \
-    $$PWD/wtf/symbian \
+    $$PWD/wtf/qt \
     $$PWD/wtf/unicode \
     $$PWD/yarr \
     $$PWD/API \
     $$PWD/ForwardingHeaders \
     $$JSC_GENERATED_SOURCES_DIR
 
-symbian {
-    PREPEND_INCLUDEPATH = $$JAVASCRIPTCORE_INCLUDEPATH $$PREPEND_INCLUDEPATH
-} else {
-    INCLUDEPATH = $$JAVASCRIPTCORE_INCLUDEPATH $$INCLUDEPATH
-}
+INCLUDEPATH = $$JAVASCRIPTCORE_INCLUDEPATH $$INCLUDEPATH
 
-symbian {
-    LIBS += -lhal
-    INCLUDEPATH *= $$MW_LAYER_SYSTEMINCLUDE
+win32-g++* {
+    LIBS += -lpthreadGC2
+} else:win32-msvc* {
+    LIBS += -lpthreadVC2
 }
 
 win32-*: DEFINES += _HAS_TR1=0
@@ -80,12 +71,6 @@ defineTest(prependJavaScriptCoreLib) {
         LIBS = -l$$JAVASCRIPTCORE_TARGET $$LIBS
         LIBS = -L$$pathToJavaScriptCoreOutput $$LIBS
         POST_TARGETDEPS += $${pathToJavaScriptCoreOutput}$${QMAKE_DIR_SEP}$${JAVASCRIPTCORE_TARGET}.lib
-    } else:symbian {
-        LIBS = -l$${JAVASCRIPTCORE_TARGET}.lib $$LIBS
-        # The default symbian build system does not use library paths at all. However when building with
-        # qmake's symbian makespec that uses Makefiles
-        QMAKE_LIBDIR += $$pathToJavaScriptCoreOutput
-        POST_TARGETDEPS += $${pathToJavaScriptCoreOutput}$${QMAKE_DIR_SEP}$${JAVASCRIPTCORE_TARGET}.lib
     } else {
         # Make sure jscore will be early in the list of libraries to workaround a bug in MinGW
         # that can't resolve symbols from QtCore if libjscore comes after.
@@ -99,7 +84,7 @@ defineTest(prependJavaScriptCoreLib) {
     }
 
     # The following line is to prevent qmake from adding jscore to libQtWebKit's prl dependencies.
-    # The compromise we have to accept by disabling explicitlib is to drop support to link QtWebKit and QtScript
+    # The compromise we have to accept by disabling explicitlib is to drop support to link QtWebKit
     # statically in applications (which isn't used often because, among other things, of licensing obstacles).
     CONFIG -= explicitlib
     CONFIG -= staticlib

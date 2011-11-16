@@ -48,7 +48,7 @@
 #include "markup.h"
 #include <wtf/text/StringHash.h>
 
-#include <QApplication>
+#include <QGuiApplication>
 #include <QClipboard>
 #include <QList>
 #include <QMimeData>
@@ -96,7 +96,7 @@ ClipboardQt::ClipboardQt(ClipboardAccessPolicy policy, ClipboardType clipboardTy
 #ifndef QT_NO_CLIPBOARD
     if (policy != ClipboardWritable) {
         Q_ASSERT(isForCopyAndPaste());
-        m_readableData = QApplication::clipboard()->mimeData();
+        m_readableData = QGuiApplication::clipboard()->mimeData();
     }
 #endif
 }
@@ -125,7 +125,7 @@ void ClipboardQt::clearData(const String& type)
     }
 #ifndef QT_NO_CLIPBOARD
     if (isForCopyAndPaste())
-        QApplication::clipboard()->setMimeData(m_writableData);
+        QGuiApplication::clipboard()->setMimeData(m_writableData);
 #endif
 }
 
@@ -136,7 +136,7 @@ void ClipboardQt::clearAllData()
 
 #ifndef QT_NO_CLIPBOARD
     if (isForCopyAndPaste())
-        QApplication::clipboard()->setMimeData(0);
+        QGuiApplication::clipboard()->setMimeData(0);
     else
 #endif
         delete m_writableData;
@@ -187,7 +187,7 @@ bool ClipboardQt::setData(const String& type, const String& data)
 
 #ifndef QT_NO_CLIPBOARD
     if (isForCopyAndPaste())
-        QApplication::clipboard()->setMimeData(m_writableData);
+        QGuiApplication::clipboard()->setMimeData(m_writableData);
 #endif
     return true;
 }
@@ -305,7 +305,7 @@ void ClipboardQt::declareAndWriteDragImage(Element* element, const KURL& url, co
     m_writableData->setHtml(createMarkup(element, IncludeNode, 0, AbsoluteURLs));
 #ifndef QT_NO_CLIPBOARD
     if (isForCopyAndPaste())
-        QApplication::clipboard()->setMimeData(m_writableData);
+        QGuiApplication::clipboard()->setMimeData(m_writableData);
 #endif
 }
 
@@ -321,7 +321,7 @@ void ClipboardQt::writeURL(const KURL& url, const String& title, Frame* frame)
     m_writableData->setText(title);
 #ifndef QT_NO_CLIPBOARD
     if (isForCopyAndPaste())
-        QApplication::clipboard()->setMimeData(m_writableData);
+        QGuiApplication::clipboard()->setMimeData(m_writableData);
 #endif
 }
 
@@ -338,7 +338,7 @@ void ClipboardQt::writeRange(Range* range, Frame* frame)
     m_writableData->setHtml(createMarkup(range, 0, AnnotateForInterchange, false, AbsoluteURLs));
 #ifndef QT_NO_CLIPBOARD
     if (isForCopyAndPaste())
-        QApplication::clipboard()->setMimeData(m_writableData);
+        QGuiApplication::clipboard()->setMimeData(m_writableData);
 #endif
 }
 
@@ -351,7 +351,7 @@ void ClipboardQt::writePlainText(const String& str)
     m_writableData->setText(text);
 #ifndef QT_NO_CLIPBOARD
     if (isForCopyAndPaste())
-        QApplication::clipboard()->setMimeData(m_writableData);
+        QGuiApplication::clipboard()->setMimeData(m_writableData);
 #endif
 }
 

@@ -25,14 +25,14 @@
 
 namespace JSC {
 
-EncodedJSValue StringRecursionChecker::throwStackOverflowError()
+JSValue StringRecursionChecker::throwStackOverflowError()
 {
-    return throwVMError(m_exec, createStackOverflowError(m_exec));
+    return throwError(m_exec, createStackOverflowError(m_exec));
 }
 
-EncodedJSValue StringRecursionChecker::emptyString()
+JSValue StringRecursionChecker::emptyString()
 {
-    return JSValue::encode(jsEmptyString(m_exec));
+    return jsEmptyString(m_exec);
 }
 
 }

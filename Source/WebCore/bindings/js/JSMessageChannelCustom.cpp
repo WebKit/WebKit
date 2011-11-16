@@ -32,18 +32,19 @@
 using namespace JSC;
 
 namespace WebCore {
-    
-void JSMessageChannel::visitChildren(SlotVisitor& visitor)
-{
-    ASSERT_GC_OBJECT_INHERITS(this, &s_info);
-    COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
-    ASSERT(structure()->typeInfo().overridesVisitChildren());
-    Base::visitChildren(visitor);
 
-    if (MessagePort* port = m_impl->port1())
+void JSMessageChannel::visitChildren(JSCell* cell, SlotVisitor& visitor)
+{
+    JSMessageChannel* thisObject = static_cast<JSMessageChannel*>(cell);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
+    COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
+    ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
+    Base::visitChildren(thisObject, visitor);
+
+    if (MessagePort* port = thisObject->m_impl->port1())
         visitor.addOpaqueRoot(port);
 
-    if (MessagePort* port = m_impl->port2())
+    if (MessagePort* port = thisObject->m_impl->port2())
         visitor.addOpaqueRoot(port);
 }
 

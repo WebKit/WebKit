@@ -65,6 +65,8 @@ class StructureTransitionTable {
 
         static const bool needsDestruction = FirstTraits::needsDestruction || SecondTraits::needsDestruction;
 
+        static const int minimumTableSize = FirstTraits::minimumTableSize;
+
         static void constructDeletedValue(TraitType& slot) { FirstTraits::constructDeletedValue(slot.first); }
         static bool isDeletedValue(const TraitType& value) { return FirstTraits::isDeletedValue(value.first); }
     };
@@ -93,14 +95,18 @@ public:
 
     ~StructureTransitionTable()
     {
-        if (!isUsingSingleSlot())
+        if (!isUsingSingleSlot()) {
             delete map();
-        else
-            clearSingleTransition();
+            return;
+        }
+
+        HandleSlot slot = this->slot();
+        if (!slot)
+            return;
+        HandleHeap::heapFor(slot)->deallocate(slot);
     }
 
     inline void add(JSGlobalData&, Structure*);
-    inline void remove(Structure*);
     inline bool contains(StringImpl* rep, unsigned attributes) const;
     inline Structure* get(StringImpl* rep, unsigned attributes) const;
 
@@ -145,19 +151,12 @@ private:
         return 0;
     }
     
-    void clearSingleTransition()
-    {
-        ASSERT(isUsingSingleSlot());
-        if (HandleSlot slot = this->slot())
-            HandleHeap::heapFor(slot)->deallocate(slot);
-    }
-    
     void setSingleTransition(JSGlobalData& globalData, Structure* structure)
     {
         ASSERT(isUsingSingleSlot());
         HandleSlot slot = this->slot();
         if (!slot) {
-            slot = globalData.allocateGlobalHandle();
+            slot = globalData.heap.handleHeap()->allocate();
             HandleHeap::heapFor(slot)->makeWeak(slot, 0, 0);
             m_data = reinterpret_cast<intptr_t>(slot) | UsingSingleSlotFlag;
         }

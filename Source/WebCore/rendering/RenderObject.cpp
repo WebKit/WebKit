@@ -168,9 +168,7 @@ RenderObject* RenderObject::createObject(Node* node, RenderStyle* style)
     return 0;
 }
 
-#ifndef NDEBUG 
-static WTF::RefCountedLeakCounter renderObjectCounter("RenderObject");
-#endif
+DEFINE_DEBUG_ONLY_GLOBAL(WTF::RefCountedLeakCounter, renderObjectCounter, ("RenderObject"));
 
 RenderObject::RenderObject(Node* node)
     : CachedResourceClient()

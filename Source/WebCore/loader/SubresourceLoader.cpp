@@ -37,12 +37,11 @@
 #include "SecurityOrigin.h"
 #include "SubresourceLoaderClient.h"
 #include <wtf/RefCountedLeakCounter.h>
+#include <wtf/StdLibExtras.h>
 
 namespace WebCore {
 
-#ifndef NDEBUG    
-static WTF::RefCountedLeakCounter subresourceLoaderCounter("SubresourceLoader");
-#endif
+DEFINE_DEBUG_ONLY_GLOBAL(WTF::RefCountedLeakCounter, subresourceLoaderCounter, ("SubresourceLoader"));
 
 SubresourceLoader::SubresourceLoader(Frame* frame, SubresourceLoaderClient* client, bool sendResourceLoadCallbacks, bool shouldContentSniff)
     : ResourceLoader(frame, sendResourceLoadCallbacks, shouldContentSniff)

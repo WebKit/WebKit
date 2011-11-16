@@ -288,27 +288,28 @@ void ARMAssembler::dataTransfer32(bool isLoad, RegisterID srcDst, RegisterID bas
     }
 }
 
-void ARMAssembler::baseIndexTransfer32(bool isLoad, RegisterID srcDst, RegisterID base, RegisterID index, int scale, int32_t offset)
+void ARMAssembler::baseIndexTransfer32(bool isLoad, RegisterID srcDst, RegisterID base, RegisterID index, int scale, int32_t offset, bool bytes)
 {
     ARMWord op2;
+    ARMWord transferFlag = bytes ? DT_BYTE : 0;
 
     ASSERT(scale >= 0 && scale <= 3);
     op2 = lsl(index, scale);
 
     if (offset >= 0 && offset <= 0xfff) {
         add_r(ARMRegisters::S0, base, op2);
-        dtr_u(isLoad, srcDst, ARMRegisters::S0, offset);
+        dtr_u(isLoad, srcDst, ARMRegisters::S0, offset | transferFlag);
         return;
     }
     if (offset <= 0 && offset >= -0xfff) {
         add_r(ARMRegisters::S0, base, op2);
-        dtr_d(isLoad, srcDst, ARMRegisters::S0, -offset);
+        dtr_d(isLoad, srcDst, ARMRegisters::S0, (-offset & 0xfff) | transferFlag);
         return;
     }
 
     ldr_un_imm(ARMRegisters::S0, offset);
     add_r(ARMRegisters::S0, ARMRegisters::S0, op2);
-    dtr_ur(isLoad, srcDst, base, ARMRegisters::S0);
+    dtr_ur(isLoad, srcDst, base, ARMRegisters::S0 | transferFlag);
 }
 
 void ARMAssembler::doubleTransfer(bool isLoad, FPRegisterID srcDst, RegisterID base, int32_t offset)
@@ -343,14 +344,15 @@ void ARMAssembler::doubleTransfer(bool isLoad, FPRegisterID srcDst, RegisterID b
     fdtr_u(isLoad, srcDst, ARMRegisters::S0, 0);
 }
 
-void* ARMAssembler::executableCopy(JSGlobalData& globalData, ExecutablePool* allocator)
+PassRefPtr<ExecutableMemoryHandle> ARMAssembler::executableCopy(JSGlobalData& globalData)
 {
     // 64-bit alignment is required for next constant pool and JIT code as well
     m_buffer.flushWithoutBarrier(true);
     if (!m_buffer.isAligned(8))
         bkpt(0);
 
-    char* data = reinterpret_cast<char*>(m_buffer.executableCopy(globalData, allocator));
+    RefPtr<ExecutableMemoryHandle> result = m_buffer.executableCopy(globalData);
+    char* data = reinterpret_cast<char*>(result->start());
 
     for (Jumps::Iterator iter = m_jumps.begin(); iter != m_jumps.end(); ++iter) {
         // The last bit is set if the constant must be placed on constant pool.
@@ -370,7 +372,7 @@ void* ARMAssembler::executableCopy(JSGlobalData& globalData, ExecutablePool* all
         }
     }
 
-    return data;
+    return result;
 }
 
 } // namespace JSC

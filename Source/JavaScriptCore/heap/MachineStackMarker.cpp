@@ -47,16 +47,10 @@
 #include <windows.h>
 #include <malloc.h>
 
-#elif OS(HAIKU)
-
-#include <OS.h>
-
 #elif OS(UNIX)
 
 #include <stdlib.h>
-#if !OS(HAIKU)
 #include <sys/mman.h>
-#endif
 #include <unistd.h>
 
 #if OS(SOLARIS)
@@ -78,9 +72,6 @@
 
 #if USE(PTHREADS) && !OS(WINDOWS) && !OS(DARWIN)
 #include <signal.h>
-#ifndef SA_RESTART
-#error MachineThreads requires SA_RESTART
-#endif
 #endif
 
 #endif
@@ -101,8 +92,6 @@ UNUSED_PARAM(end);
 #endif
 }
 
-#if ENABLE(JSC_MULTIPLE_THREADS)
-
 #if OS(DARWIN)
 typedef mach_port_t PlatformThread;
 #elif OS(WINDOWS)
@@ -122,12 +111,12 @@ static void pthreadSignalHandlerSuspendResume(int signo)
 
 class MachineThreads::Thread {
 public:
-    Thread(pthread_t pthread, const PlatformThread& platThread, void* base) 
-        : posixThread(pthread)
-        , platformThread(platThread)
+    Thread(const PlatformThread& platThread, void* base)
+        : platformThread(platThread)
         , stackBase(base)
     {
-#if USE(PTHREADS) && !OS(WINDOWS) && !OS(DARWIN)
+#if USE(PTHREADS) && !OS(WINDOWS) && !OS(DARWIN) && defined(SA_RESTART)
+        // if we have SA_RESTART, enable SIGUSR2 debugging mechanism
         struct sigaction action;
         action.sa_handler = pthreadSignalHandlerSuspendResume;
         sigemptyset(&action.sa_mask);
@@ -142,25 +131,19 @@ public:
     }
 
     Thread* next;
-    pthread_t posixThread;
     PlatformThread platformThread;
     void* stackBase;
 };
 
-#endif
-
 MachineThreads::MachineThreads(Heap* heap)
     : m_heap(heap)
-#if ENABLE(JSC_MULTIPLE_THREADS)
     , m_registeredThreads(0)
     , m_threadSpecific(0)
-#endif
 {
 }
 
 MachineThreads::~MachineThreads()
 {
-#if ENABLE(JSC_MULTIPLE_THREADS)
     if (m_threadSpecific) {
         int error = pthread_key_delete(m_threadSpecific);
         ASSERT_UNUSED(error, !error);
@@ -172,19 +155,27 @@ MachineThreads::~MachineThreads()
         delete t;
         t = next;
     }
-#endif
 }
-
-#if ENABLE(JSC_MULTIPLE_THREADS)
 
 static inline PlatformThread getCurrentPlatformThread()
 {
 #if OS(DARWIN)
     return pthread_mach_thread_np(pthread_self());
 #elif OS(WINDOWS)
-    return pthread_getw32threadhandle_np(pthread_self());
+    return GetCurrentThread();
 #elif USE(PTHREADS)
     return pthread_self();
+#endif
+}
+
+static inline bool equalThread(const PlatformThread& first, const PlatformThread& second)
+{
+#if OS(DARWIN) || OS(WINDOWS)
+    return first == second;
+#elif USE(PTHREADS)
+    return !!pthread_equal(first, second);
+#else
+#error Need a way to compare threads on this platform
 #endif
 }
 
@@ -206,7 +197,7 @@ void MachineThreads::addCurrentThread()
         return;
 
     pthread_setspecific(m_threadSpecific, this);
-    Thread* thread = new Thread(pthread_self(), getCurrentPlatformThread(), m_heap->globalData()->stack().origin());
+    Thread* thread = new Thread(getCurrentPlatformThread(), m_heap->globalData()->stack().origin());
 
     MutexLocker lock(m_registeredThreadsMutex);
 
@@ -222,11 +213,11 @@ void MachineThreads::removeThread(void* p)
 
 void MachineThreads::removeCurrentThread()
 {
-    pthread_t currentPosixThread = pthread_self();
+    PlatformThread currentPlatformThread = getCurrentPlatformThread();
 
     MutexLocker lock(m_registeredThreadsMutex);
 
-    if (pthread_equal(currentPosixThread, m_registeredThreads->posixThread)) {
+    if (equalThread(currentPlatformThread, m_registeredThreads->platformThread)) {
         Thread* t = m_registeredThreads;
         m_registeredThreads = m_registeredThreads->next;
         delete t;
@@ -234,7 +225,7 @@ void MachineThreads::removeCurrentThread()
         Thread* last = m_registeredThreads;
         Thread* t;
         for (t = m_registeredThreads->next; t; t = t->next) {
-            if (pthread_equal(t->posixThread, currentPosixThread)) {
+            if (equalThread(t->platformThread, currentPlatformThread)) {
                 last->next = t->next;
                 break;
             }
@@ -244,8 +235,6 @@ void MachineThreads::removeCurrentThread()
         delete t;
     }
 }
-
-#endif
 
 #if COMPILER(GCC)
 #define REGISTER_BUFFER_ALIGNMENT __attribute__ ((aligned (sizeof(void*))))
@@ -276,8 +265,6 @@ void MachineThreads::gatherFromCurrentThread(ConservativeRoots& conservativeRoot
     swapIfBackwards(stackBegin, stackEnd);
     conservativeRoots.add(stackBegin, stackEnd);
 }
-
-#if ENABLE(JSC_MULTIPLE_THREADS)
 
 static inline void suspendThread(const PlatformThread& platformThread)
 {
@@ -325,6 +312,8 @@ typedef arm_thread_state_t PlatformThreadRegisters;
 
 #elif OS(WINDOWS)
 typedef CONTEXT PlatformThreadRegisters;
+#elif OS(QNX)
+typedef struct _debug_thread_info PlatformThreadRegisters;
 #elif USE(PTHREADS)
 typedef pthread_attr_t PlatformThreadRegisters;
 #else
@@ -364,9 +353,19 @@ static size_t getPlatformThreadRegisters(const PlatformThread& platformThread, P
 // end OS(DARWIN)
 
 #elif OS(WINDOWS)
-    regs.ContextFlags = CONTEXT_INTEGER | CONTEXT_CONTROL | CONTEXT_SEGMENTS;
+    regs.ContextFlags = CONTEXT_INTEGER | CONTEXT_CONTROL;
     GetThreadContext(platformThread, &regs);
     return sizeof(CONTEXT);
+#elif OS(QNX)
+    memset(&regs, 0, sizeof(regs));
+    regs.tid = pthread_self();
+    int fd = open("/proc/self", O_RDONLY);
+    if (fd == -1) {
+        LOG_ERROR("Unable to open /proc/self (errno: %d)", errno);
+        CRASH();
+    }
+    devctl(fd, DCMD_PROC_TIDSTATUS, &regs, sizeof(regs), 0);
+    close(fd);
 #elif USE(PTHREADS)
     pthread_attr_init(&regs);
 #if HAVE(PTHREAD_NP_H) || OS(NETBSD)
@@ -415,10 +414,23 @@ static inline void* otherThreadStackPointer(const PlatformThreadRegisters& regs)
 #endif // __DARWIN_UNIX03
 
 // end OS(DARWIN)
-#elif CPU(X86) && OS(WINDOWS)
+#elif OS(WINDOWS)
+
+#if CPU(ARM)
+    return reinterpret_cast<void*>((uintptr_t) regs.Sp);
+#elif CPU(MIPS)
+    return reinterpret_cast<void*>((uintptr_t) regs.IntSp);
+#elif CPU(X86)
     return reinterpret_cast<void*>((uintptr_t) regs.Esp);
-#elif CPU(X86_64) && OS(WINDOWS)
+#elif CPU(X86_64)
     return reinterpret_cast<void*>((uintptr_t) regs.Rsp);
+#else
+#error Unknown Architecture
+#endif
+
+#elif OS(QNX)
+    return reinterpret_cast<void*>((uintptr_t) regs.sp);
+
 #elif USE(PTHREADS)
     void* stackBase = 0;
     size_t stackSize = 0;
@@ -433,7 +445,7 @@ static inline void* otherThreadStackPointer(const PlatformThreadRegisters& regs)
 
 static void freePlatformThreadRegisters(PlatformThreadRegisters& regs)
 {
-#if USE(PTHREADS) && !OS(WINDOWS) && !OS(DARWIN)
+#if USE(PTHREADS) && !OS(WINDOWS) && !OS(DARWIN) && !OS(QNX)
     pthread_attr_destroy(&regs);
 #else
     UNUSED_PARAM(regs);
@@ -459,15 +471,12 @@ void MachineThreads::gatherFromOtherThread(ConservativeRoots& conservativeRoots,
     freePlatformThreadRegisters(regs);
 }
 
-#endif
-
 void MachineThreads::gatherConservativeRoots(ConservativeRoots& conservativeRoots, void* stackCurrent)
 {
     gatherFromCurrentThread(conservativeRoots, stackCurrent);
 
-#if ENABLE(JSC_MULTIPLE_THREADS)
-
     if (m_threadSpecific) {
+        PlatformThread currentPlatformThread = getCurrentPlatformThread();
 
         MutexLocker lock(m_registeredThreadsMutex);
 
@@ -480,14 +489,13 @@ void MachineThreads::gatherConservativeRoots(ConservativeRoots& conservativeRoot
         // It is safe to access the registeredThreads list, because we earlier asserted that locks are being held,
         // and since this is a shared heap, they are real locks.
         for (Thread* thread = m_registeredThreads; thread; thread = thread->next) {
-            if (!pthread_equal(thread->posixThread, pthread_self()))
+            if (!equalThread(thread->platformThread, currentPlatformThread))
                 gatherFromOtherThread(conservativeRoots, thread);
         }
 #ifndef NDEBUG
         fastMallocAllow();
 #endif
     }
-#endif
 }
 
 } // namespace JSC

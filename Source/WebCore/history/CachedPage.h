@@ -27,6 +27,7 @@
 #define CachedPage_h
 
 #include "CachedFrame.h"
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
     

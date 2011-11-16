@@ -39,7 +39,9 @@ public:
     }
 
     void append(const UChar*, unsigned);
-    void append(const char*, unsigned);
+    void append(const LChar*, unsigned);
+
+    ALWAYS_INLINE void append(const char* characters, unsigned length) { append(reinterpret_cast<const LChar*>(characters), length); }
 
     void append(const String& string)
     {
@@ -108,10 +110,17 @@ public:
     UChar operator[](unsigned i) const
     {
         ASSERT(i < m_length);
+        return characters()[i];
+    }
+
+    const UChar* characters() const
+    {
+        if (!m_length)
+            return 0;
         if (!m_string.isNull())
-            return m_string[i];
+            return m_string.characters();
         ASSERT(m_buffer);
-        return m_buffer->characters()[i];
+        return m_buffer->characters();
     }
 
     void clear()
@@ -123,6 +132,7 @@ public:
 
 private:
     void allocateBuffer(const UChar* currentCharacters, unsigned requiredLength);
+    void reallocateBuffer(unsigned requiredLength);
     UChar* appendUninitialized(unsigned length);
     void reifyString();
 

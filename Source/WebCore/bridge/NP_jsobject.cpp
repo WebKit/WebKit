@@ -241,7 +241,7 @@ bool _NPN_Invoke(NPP npp, NPObject* o, NPIdentifier methodName, const NPVariant*
         getListFromVariantArgs(exec, args, argCount, rootObject, argList);
         RefPtr<JSGlobalData> globalData(&exec->globalData());
         globalData->timeoutChecker.start();
-        JSValue resultV = JSC::call(exec, function, callType, callData, obj->imp->toThisObject(exec), argList);
+        JSValue resultV = JSC::call(exec, function, callType, callData, obj->imp->methodTable()->toThisObject(obj->imp, exec), argList);
         globalData->timeoutChecker.stop();
 
         // Convert and return the result of the function call.
@@ -274,20 +274,12 @@ bool _NPN_Evaluate(NPP instance, NPObject* o, NPString* s, NPVariant* variant)
         JSLock lock(SilenceAssertionsOnly);
         String scriptString = convertNPStringToUTF16(s);
         RefPtr<JSGlobalData> globalData(&exec->globalData());
-        globalData->timeoutChecker.start();
-        Completion completion = JSC::evaluate(rootObject->globalObject()->globalExec(), rootObject->globalObject()->globalScopeChain(), makeSource(scriptString), JSC::JSValue());
-        globalData->timeoutChecker.stop();
-        ComplType type = completion.complType();
         
-        JSValue result;
-        if (type == Normal) {
-            result = completion.value();
-            if (!result)
-                result = jsUndefined();
-        } else
-            result = jsUndefined();
+        globalData->timeoutChecker.start();
+        JSValue returnValue = JSC::evaluate(rootObject->globalObject()->globalExec(), rootObject->globalObject()->globalScopeChain(), makeSource(scriptString), JSC::JSValue());
+        globalData->timeoutChecker.stop();
 
-        convertValueToNPVariant(exec, result, variant);
+        convertValueToNPVariant(exec, returnValue, variant);
         exec->clearException();
         return true;
     }
@@ -345,9 +337,9 @@ bool _NPN_SetProperty(NPP, NPObject* o, NPIdentifier propertyName, const NPVaria
 
         if (i->isString()) {
             PutPropertySlot slot;
-            obj->imp->put(exec, identifierFromNPIdentifier(exec, i->string()), convertNPVariantToValue(exec, variant, rootObject), slot);
+            obj->imp->methodTable()->put(obj->imp, exec, identifierFromNPIdentifier(exec, i->string()), convertNPVariantToValue(exec, variant, rootObject), slot);
         } else
-            obj->imp->put(exec, i->number(), convertNPVariantToValue(exec, variant, rootObject));
+            obj->imp->methodTable()->putByIndex(obj->imp, exec, i->number(), convertNPVariantToValue(exec, variant, rootObject));
         exec->clearException();
         return true;
     }
@@ -383,9 +375,9 @@ bool _NPN_RemoveProperty(NPP, NPObject* o, NPIdentifier propertyName)
 
         JSLock lock(SilenceAssertionsOnly);
         if (i->isString())
-            obj->imp->deleteProperty(exec, identifierFromNPIdentifier(exec, i->string()));
+            obj->imp->methodTable()->deleteProperty(obj->imp, exec, identifierFromNPIdentifier(exec, i->string()));
         else
-            obj->imp->deleteProperty(exec, i->number());
+            obj->imp->methodTable()->deletePropertyByIndex(obj->imp, exec, i->number());
 
         exec->clearException();
         return true;
@@ -468,7 +460,7 @@ bool _NPN_Enumerate(NPP, NPObject* o, NPIdentifier** identifier, uint32_t* count
         JSLock lock(SilenceAssertionsOnly);
         PropertyNameArray propertyNames(exec);
 
-        obj->imp->getPropertyNames(exec, propertyNames);
+        obj->imp->methodTable()->getPropertyNames(obj->imp, exec, propertyNames, ExcludeDontEnumProperties);
         unsigned size = static_cast<unsigned>(propertyNames.size());
         // FIXME: This should really call NPN_MemAlloc but that's in WebKit
         NPIdentifier* identifiers = static_cast<NPIdentifier*>(malloc(sizeof(NPIdentifier) * size));

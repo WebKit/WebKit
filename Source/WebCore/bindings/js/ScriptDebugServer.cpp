@@ -222,7 +222,7 @@ void ScriptDebugServer::dispatchDidParseSource(const ListenerSet& listeners, Sou
 {
     String sourceID = ustringToString(JSC::UString::number(sourceProvider->asID()));
     String url = ustringToString(sourceProvider->url());
-    String data = ustringToString(JSC::UString(sourceProvider->data(), sourceProvider->length()));
+    String data = ustringToString(JSC::UString(const_cast<StringImpl*>(sourceProvider->data())));
     int lineOffset = sourceProvider->startPosition().m_line.convertAsZeroBasedInt();
     int columnOffset = sourceProvider->startPosition().m_column.convertAsZeroBasedInt();
 
@@ -251,7 +251,7 @@ void ScriptDebugServer::dispatchDidParseSource(const ListenerSet& listeners, Sou
 void ScriptDebugServer::dispatchFailedToParseSource(const ListenerSet& listeners, SourceProvider* sourceProvider, int errorLine, const String& errorMessage)
 {
     String url = ustringToString(sourceProvider->url());
-    String data = ustringToString(JSC::UString(sourceProvider->data(), sourceProvider->length()));
+    String data = ustringToString(JSC::UString(const_cast<StringImpl*>(sourceProvider->data())));
     int firstLine = sourceProvider->startPosition().m_line.oneBasedInt();
 
     Vector<ScriptDebugListener*> copy;

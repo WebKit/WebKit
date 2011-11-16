@@ -27,29 +27,35 @@
 #define RUNTIME_ARRAY_H_
 
 #include "BridgeJSC.h"
+#include "JSDOMBinding.h"
 #include <runtime/ArrayPrototype.h>
 
 namespace JSC {
     
 class RuntimeArray : public JSArray {
 public:
+    typedef JSArray Base;
+
     static RuntimeArray* create(ExecState* exec, Bindings::Array* array)
     {
-        return new (allocateCell<RuntimeArray>(*exec->heap())) RuntimeArray(exec, array);
+        Structure* domStructure = WebCore::deprecatedGetDOMStructure<RuntimeArray>(exec);
+        RuntimeArray* runtimeArray = new (allocateCell<RuntimeArray>(*exec->heap())) RuntimeArray(exec, domStructure);
+        runtimeArray->finishCreation(exec->globalData(), array);
+        return runtimeArray;
     }
 
     typedef Bindings::Array BindingsArray;
     virtual ~RuntimeArray();
 
-    virtual void getOwnPropertyNames(ExecState*, PropertyNameArray&, EnumerationMode mode = ExcludeDontEnumProperties);
-    virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
-    virtual bool getOwnPropertySlot(ExecState*, unsigned, PropertySlot&);
-    virtual bool getOwnPropertyDescriptor(ExecState*, const Identifier&, PropertyDescriptor&);
-    virtual void put(ExecState*, const Identifier& propertyName, JSValue, PutPropertySlot&);
-    virtual void put(ExecState*, unsigned propertyName, JSValue);
+    static void getOwnPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
+    static bool getOwnPropertySlot(JSCell*, ExecState*, const Identifier&, PropertySlot&);
+    static bool getOwnPropertySlotByIndex(JSCell*, ExecState*, unsigned, PropertySlot&);
+    static bool getOwnPropertyDescriptor(JSObject*, ExecState*, const Identifier&, PropertyDescriptor&);
+    static void put(JSCell*, ExecState*, const Identifier& propertyName, JSValue, PutPropertySlot&);
+    static void putByIndex(JSCell*, ExecState*, unsigned propertyName, JSValue);
     
-    virtual bool deleteProperty(ExecState* exec, const Identifier &propertyName);
-    virtual bool deleteProperty(ExecState* exec, unsigned propertyName);
+    static bool deleteProperty(JSCell*, ExecState*, const Identifier &propertyName);
+    static bool deletePropertyByIndex(JSCell*, ExecState*, unsigned propertyName);
     
     unsigned getLength() const { return getConcreteArray()->getLength(); }
     
@@ -62,16 +68,18 @@ public:
         return globalObject->arrayPrototype();
     }
 
-    static Structure* createStructure(JSGlobalData& globalData, JSValue prototype)
+    static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue prototype)
     {
-        return Structure::create(globalData, prototype, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
+        return Structure::create(globalData, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), &s_info);
     }
 
 protected:
+    void finishCreation(JSGlobalData&, Bindings::Array*);
+
     static const unsigned StructureFlags = OverridesGetOwnPropertySlot | OverridesGetPropertyNames | JSArray::StructureFlags;
 
 private:
-    RuntimeArray(ExecState*, Bindings::Array*);
+    RuntimeArray(ExecState*, Structure*);
     static JSValue lengthGetter(ExecState*, JSValue, const Identifier&);
     static JSValue indexGetter(ExecState*, JSValue, unsigned);
 };

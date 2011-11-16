@@ -22,6 +22,7 @@
 #define TreeShared_h
 
 #include <wtf/Assertions.h>
+#include <wtf/MainThread.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Threading.h>
 
@@ -100,7 +101,7 @@ public:
 
     T* parent() const
     {
-        ASSERT(isMainThread());
+        ASSERT(isMainThreadOrGCThread());
         return m_parent;
     }
 

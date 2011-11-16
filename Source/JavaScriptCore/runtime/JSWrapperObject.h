@@ -35,18 +35,20 @@ namespace JSC {
         JSValue internalValue() const;
         void setInternalValue(JSGlobalData&, JSValue);
 
-        static Structure* createStructure(JSGlobalData& globalData, JSValue prototype) 
+        static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue prototype) 
         { 
-            return Structure::create(globalData, prototype, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
+            return Structure::create(globalData, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), &s_info);
         }
 
     protected:
         explicit JSWrapperObject(JSGlobalData&, Structure*);
         static const unsigned StructureFlags = OverridesVisitChildren | JSNonFinalObject::StructureFlags;
 
-    private:
-        virtual void visitChildren(SlotVisitor&);
+        static void visitChildren(JSCell*, SlotVisitor&);
+
+        virtual ~JSWrapperObject();
         
+    private:
         WriteBarrier<Unknown> m_internalValue;
     };
 

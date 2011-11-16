@@ -32,6 +32,7 @@
 #include <JavaScriptCore/Strong.h>
 #include "JSBase.h"
 #include "JSUtils.h"
+#include "UserObjectImp.h"
 
 class JSGlueGlobalObject : public JSGlobalObject {
     public:
@@ -39,14 +40,17 @@ class JSGlueGlobalObject : public JSGlobalObject {
 
         static JSGlueGlobalObject* create(JSGlobalData& globalData, Structure* structure, JSFlags flags = kJSFlagNone)
         {
-            return new (allocateCell<JSGlueGlobalObject>(globalData.heap)) JSGlueGlobalObject(globalData, structure, flags);
+            Structure* userObjectStructure = UserObjectImp::createStructure(globalData, 0, jsNull());
+            JSGlueGlobalObject* object = new (allocateCell<JSGlueGlobalObject>(globalData.heap)) JSGlueGlobalObject(globalData, structure, userObjectStructure, flags);
+            object->finishCreation(globalData);
+            return object;
         }
 
         JSFlags Flags() const { return m_flags; }
         Structure* userObjectStructure() const { return m_userObjectStructure.get(); }
 
     private:
-        JSGlueGlobalObject(JSGlobalData&, Structure*, JSFlags = kJSFlagNone);
+        JSGlueGlobalObject(JSGlobalData&, Structure*, Structure*, JSFlags = kJSFlagNone);
         
         JSFlags m_flags;
         Strong<Structure> m_userObjectStructure;
@@ -59,7 +63,7 @@ class JSRun : public JSBase {
 
         UString GetSource() const;
         JSGlobalObject* GlobalObject() const;
-        Completion Evaluate();
+        JSValue Evaluate(JSValue* exception);
         bool CheckSyntax();
         JSFlags Flags() const;
     private:

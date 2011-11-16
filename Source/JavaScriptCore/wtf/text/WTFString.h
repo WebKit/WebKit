@@ -46,18 +46,6 @@ QT_END_NAMESPACE
 class wxString;
 #endif
 
-#if PLATFORM(HAIKU)
-class BString;
-#endif
-
-#if PLATFORM(BREWMP)
-// AECHAR is defined in AEEStdDef.h, but don't include it here to avoid conflicts.
-#ifndef _AECHAR_DEFINED
-typedef uint16             AECHAR;
-#define _AECHAR_DEFINED
-#endif
-#endif
-
 namespace WTF {
 
 class CString;
@@ -101,9 +89,11 @@ public:
     WTF_EXPORT_PRIVATE String(const UChar*);
 
     // Construct a string with latin1 data.
+    WTF_EXPORT_PRIVATE String(const LChar* characters, unsigned length);
     WTF_EXPORT_PRIVATE String(const char* characters, unsigned length);
 
     // Construct a string with latin1 data, from a null-terminated source.
+    WTF_EXPORT_PRIVATE String(const LChar* characters);
     WTF_EXPORT_PRIVATE String(const char* characters);
 
     // Construct a string referencing an existing StringImpl.
@@ -167,7 +157,7 @@ public:
         { return m_impl ? m_impl->find(str.impl(), start) : notFound; }
     size_t find(CharacterMatchFunctionPtr matchFunction, unsigned start = 0) const
         { return m_impl ? m_impl->find(matchFunction, start) : notFound; }
-    size_t find(const char* str, unsigned start = 0) const
+    size_t find(const LChar* str, unsigned start = 0) const
         { return m_impl ? m_impl->find(str, start) : notFound; }
 
     // Find the last instance of a single character or string.
@@ -177,7 +167,7 @@ public:
         { return m_impl ? m_impl->reverseFind(str.impl(), start) : notFound; }
 
     // Case insensitive string matching.
-    WTF_EXPORT_PRIVATE size_t findIgnoringCase(const char* str, unsigned start = 0) const
+    WTF_EXPORT_PRIVATE size_t findIgnoringCase(const LChar* str, unsigned start = 0) const
         { return m_impl ? m_impl->findIgnoringCase(str, start) : notFound; }
     WTF_EXPORT_PRIVATE size_t findIgnoringCase(const String& str, unsigned start = 0) const
         { return m_impl ? m_impl->findIgnoringCase(str.impl(), start) : notFound; }
@@ -185,7 +175,7 @@ public:
         { return m_impl ? m_impl->reverseFindIgnoringCase(str.impl(), start) : notFound; }
 
     // Wrappers for find & reverseFind adding dynamic sensitivity check.
-    size_t find(const char* str, unsigned start, bool caseSensitive) const
+    size_t find(const LChar* str, unsigned start, bool caseSensitive) const
         { return caseSensitive ? find(str, start) : findIgnoringCase(str, start); }
     size_t find(const String& str, unsigned start, bool caseSensitive) const
         { return caseSensitive ? find(str, start) : findIgnoringCase(str, start); }
@@ -197,7 +187,7 @@ public:
     WTF_EXPORT_PRIVATE UChar32 characterStartingAt(unsigned) const; // Ditto.
     
     bool contains(UChar c) const { return find(c) != notFound; }
-    bool contains(const char* str, bool caseSensitive = true) const { return find(str, 0, caseSensitive) != notFound; }
+    bool contains(const LChar* str, bool caseSensitive = true) const { return find(str, 0, caseSensitive) != notFound; }
     bool contains(const String& str, bool caseSensitive = true) const { return find(str, 0, caseSensitive) != notFound; }
 
     bool startsWith(const String& s, bool caseSensitive = true) const
@@ -206,7 +196,8 @@ public:
         { return m_impl ? m_impl->endsWith(s.impl(), caseSensitive) : s.isEmpty(); }
 
     WTF_EXPORT_PRIVATE void append(const String&);
-    WTF_EXPORT_PRIVATE void append(char);
+    WTF_EXPORT_PRIVATE void append(LChar);
+    inline WTF_EXPORT_PRIVATE void append(char c) { append(static_cast<LChar>(c)); };
     WTF_EXPORT_PRIVATE void append(UChar);
     WTF_EXPORT_PRIVATE void append(const UChar*, unsigned length);
     WTF_EXPORT_PRIVATE void insert(const String&, unsigned pos);
@@ -276,13 +267,7 @@ public:
 
     bool percentage(int& percentage) const;
 
-    // Returns a StringImpl suitable for use on another thread.
-    WTF_EXPORT_PRIVATE String crossThreadString() const;
-    // Makes a deep copy. Helpful only if you need to use a String on another thread
-    // (use crossThreadString if the method call doesn't need to be threadsafe).
-    // Since the underlying StringImpl objects are immutable, there's no other reason
-    // to ever prefer copy() over plain old assignment.
-    WTF_EXPORT_PRIVATE String threadsafeCopy() const;
+    WTF_EXPORT_PRIVATE String isolatedCopy() const;
 
     // Prevent Strings from being implicitly convertable to bool as it will be ambiguous on any platform that
     // allows implicit conversion to another pointer type (e.g., Mac allows implicit conversion to NSString*).
@@ -315,22 +300,16 @@ public:
     WTF_EXPORT_PRIVATE operator wxString() const;
 #endif
 
-#if PLATFORM(HAIKU)
-    String(const BString&);
-    operator BString() const;
-#endif
-
-#if PLATFORM(BREWMP)
-    String(const AECHAR*);
-#endif
-
     // String::fromUTF8 will return a null string if
     // the input data contains invalid UTF-8 sequences.
-    WTF_EXPORT_PRIVATE static String fromUTF8(const char*, size_t);
-    WTF_EXPORT_PRIVATE static String fromUTF8(const char*);
+    WTF_EXPORT_PRIVATE static String fromUTF8(const LChar*, size_t);
+    WTF_EXPORT_PRIVATE static String fromUTF8(const LChar*);
+    inline WTF_EXPORT_PRIVATE static String fromUTF8(const char* s, size_t length) { return fromUTF8(reinterpret_cast<const LChar*>(s), length); };
+    inline WTF_EXPORT_PRIVATE static String fromUTF8(const char* s) { return fromUTF8(reinterpret_cast<const LChar*>(s)); };
 
     // Tries to convert the passed in string to UTF-8, but will fall back to Latin-1 if the string is not valid UTF-8.
-    WTF_EXPORT_PRIVATE static String fromUTF8WithLatin1Fallback(const char*, size_t);
+    WTF_EXPORT_PRIVATE static String fromUTF8WithLatin1Fallback(const LChar*, size_t);
+    inline WTF_EXPORT_PRIVATE static String fromUTF8WithLatin1Fallback(const char* s, size_t length) { return fromUTF8WithLatin1Fallback(reinterpret_cast<const LChar*>(s), length); };
     
     // Determines the writing direction using the Unicode Bidi Algorithm rules P2 and P3.
     WTF::Unicode::Direction defaultWritingDirection(bool* hasStrongDirectionality = 0) const
@@ -344,6 +323,7 @@ public:
 
     bool containsOnlyASCII() const { return charactersAreAllASCII(characters(), length()); }
     bool containsOnlyLatin1() const { return charactersAreAllLatin1(characters(), length()); }
+    bool containsOnlyWhitespace() const { return !m_impl || m_impl->containsOnlyWhitespace(); }
 
     // Hash table deleted values, which are only constructed and never copied or destroyed.
     String(WTF::HashTableDeletedValueType) : m_impl(WTF::HashTableDeletedValue) { }
@@ -365,16 +345,22 @@ QDataStream& operator>>(QDataStream& stream, String& str);
 inline String& operator+=(String& a, const String& b) { a.append(b); return a; }
 
 inline bool operator==(const String& a, const String& b) { return equal(a.impl(), b.impl()); }
-inline bool operator==(const String& a, const char* b) { return equal(a.impl(), b); }
-inline bool operator==(const char* a, const String& b) { return equal(a, b.impl()); }
+inline bool operator==(const String& a, const LChar* b) { return equal(a.impl(), b); }
+inline bool operator==(const String& a, const char* b) { return equal(a.impl(), reinterpret_cast<const LChar*>(b)); }
+inline bool operator==(const LChar* a, const String& b) { return equal(a, b.impl()); }
+inline bool operator==(const char* a, const String& b) { return equal(reinterpret_cast<const LChar*>(a), b.impl()); }
 
 inline bool operator!=(const String& a, const String& b) { return !equal(a.impl(), b.impl()); }
-inline bool operator!=(const String& a, const char* b) { return !equal(a.impl(), b); }
-inline bool operator!=(const char* a, const String& b) { return !equal(a, b.impl()); }
+inline bool operator!=(const String& a, const LChar* b) { return !equal(a.impl(), b); }
+inline bool operator!=(const String& a, const char* b) { return !equal(a.impl(), reinterpret_cast<const LChar*>(b)); }
+inline bool operator!=(const LChar* a, const String& b) { return !equal(a, b.impl()); }
+inline bool operator!=(const char* a, const String& b) { return !equal(reinterpret_cast<const LChar*>(a), b.impl()); }
 
 inline bool equalIgnoringCase(const String& a, const String& b) { return equalIgnoringCase(a.impl(), b.impl()); }
-inline bool equalIgnoringCase(const String& a, const char* b) { return equalIgnoringCase(a.impl(), b); }
-inline bool equalIgnoringCase(const char* a, const String& b) { return equalIgnoringCase(a, b.impl()); }
+inline bool equalIgnoringCase(const String& a, const LChar* b) { return equalIgnoringCase(a.impl(), b); }
+inline bool equalIgnoringCase(const String& a, const char* b) { return equalIgnoringCase(a.impl(), reinterpret_cast<const LChar*>(b)); }
+inline bool equalIgnoringCase(const LChar* a, const String& b) { return equalIgnoringCase(a, b.impl()); }
+inline bool equalIgnoringCase(const char* a, const String& b) { return equalIgnoringCase(reinterpret_cast<const LChar*>(a), b.impl()); }
 
 inline bool equalPossiblyIgnoringCase(const String& a, const String& b, bool ignoreCase) 
 {

@@ -46,19 +46,16 @@ inline void* ParserArena::freeablePool()
 
 inline void ParserArena::deallocateObjects()
 {
+    size_t size = m_deletableObjects.size();
+    for (size_t i = 0; i < size; ++i)
+        m_deletableObjects[i]->~ParserArenaDeletable();
+
     if (m_freeablePoolEnd)
         fastFree(freeablePool());
 
-    size_t size = m_freeablePools.size();
+    size = m_freeablePools.size();
     for (size_t i = 0; i < size; ++i)
         fastFree(m_freeablePools[i]);
-
-    size = m_deletableObjects.size();
-    for (size_t i = 0; i < size; ++i) {
-        ParserArenaDeletable* object = m_deletableObjects[i];
-        object->~ParserArenaDeletable();
-        fastFree(object);
-    }
 }
 
 ParserArena::~ParserArena()

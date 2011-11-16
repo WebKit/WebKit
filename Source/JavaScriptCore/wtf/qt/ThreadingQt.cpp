@@ -29,8 +29,6 @@
 #include "config.h"
 #include "Threading.h"
 
-#if !ENABLE(SINGLE_THREADED)
-
 #include "DateMath.h"
 #include "dtoa.h"
 #include "CurrentTime.h"
@@ -151,11 +149,8 @@ void initializeThreading()
         threadMapMutex();
         initializeRandomNumberGenerator();
         wtfThreadData();
-#if ENABLE(WTF_MULTIPLE_THREADS)
         s_dtoaP5Mutex = new Mutex;
         initializeDates();
-#endif
-
     }
 }
 
@@ -296,5 +291,3 @@ void ThreadCondition::broadcast()
 } // namespace WebCore
 
 #include "ThreadingQt.moc"
-
-#endif

@@ -26,6 +26,7 @@
 #ifndef JavaRuntimeObject_h
 #define JavaRuntimeObject_h
 
+#include "JSDOMBinding.h"
 #include "runtime_object.h"
 
 namespace JSC {
@@ -35,9 +36,16 @@ class JavaInstance;
 
 class JavaRuntimeObject : public RuntimeObject {
 public:
-    static JavaRuntimeObject* create(ExecState* exec, JSGlobalObject* globalObject, PassRefPtr<JavaInstance> javaInst)
+    typedef RuntimeObject Base;
+
+    static JavaRuntimeObject* create(ExecState* exec, JSGlobalObject* globalObject, PassRefPtr<JavaInstance> javaInstance)
     {
-        return new (allocateCell<JavaRuntimeObject>(*exec->heap())) JavaRuntimeObject(exec, globalObject, javaInst);
+        // FIXME: deprecatedGetDOMStructure uses the prototype off of the wrong global object
+        // We need to pass in the right global object for "i".
+        Structure* domStructure = WebCore::deprecatedGetDOMStructure<JavaRuntimeObject>(exec);
+        JavaRuntimeObject* object = new (allocateCell<JavaRuntimeObject>(*exec->heap())) JavaRuntimeObject(exec, globalObject, domStructure, javaInstance);
+        object->finishCreation(globalObject);
+        return object;
     }
 
     virtual ~JavaRuntimeObject();
@@ -46,13 +54,14 @@ public:
 
     static const ClassInfo s_info;
 
-    static Structure* createStructure(JSGlobalData& globalData, JSValue prototype)
+    static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue prototype)
     {
-        return Structure::create(globalData, prototype, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
+        return Structure::create(globalData, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), &s_info);
     }
 
 private:
-    JavaRuntimeObject(ExecState*, JSGlobalObject*, PassRefPtr<JavaInstance>);
+    JavaRuntimeObject(ExecState*, JSGlobalObject*, Structure*, PassRefPtr<JavaInstance>);
+    void finishCreation(JSGlobalObject*);
 };
 
 }

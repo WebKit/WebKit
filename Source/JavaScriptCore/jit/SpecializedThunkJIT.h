@@ -37,10 +37,9 @@ namespace JSC {
     class SpecializedThunkJIT : public JSInterfaceJIT {
     public:
         static const int ThisArgument = -1;
-        SpecializedThunkJIT(int expectedArgCount, JSGlobalData* globalData, ExecutablePool* pool)
+        SpecializedThunkJIT(int expectedArgCount, JSGlobalData* globalData)
             : m_expectedArgCount(expectedArgCount)
             , m_globalData(globalData)
-            , m_pool(pool)
         {
             // Check that we have the expected number of arguments
             m_failures.append(branch32(NotEqual, Address(callFrameRegister, RegisterFile::ArgumentCount * (int)sizeof(Register)), TrustedImm32(expectedArgCount + 1)));
@@ -62,7 +61,6 @@ namespace JSC {
         {
             loadCellArgument(argument, dst);
             m_failures.append(branchPtr(NotEqual, Address(dst, 0), TrustedImmPtr(m_globalData->jsStringVPtr)));
-            m_failures.append(branchTest32(NonZero, Address(dst, OBJECT_OFFSETOF(JSString, m_fiberCount))));
         }
         
         void loadInt32Argument(int argument, RegisterID dst, Jump& failTarget)
@@ -95,11 +93,22 @@ namespace JSC {
         {
 #if USE(JSVALUE64)
             moveDoubleToPtr(src, regT0);
+            Jump zero = branchTestPtr(Zero, regT0);
             subPtr(tagTypeNumberRegister, regT0);
+            Jump done = jump();
+            zero.link(this);
+            move(tagTypeNumberRegister, regT0);
+            done.link(this);
 #else
             storeDouble(src, Address(stackPointerRegister, -(int)sizeof(double)));
             loadPtr(Address(stackPointerRegister, OBJECT_OFFSETOF(JSValue, u.asBits.tag) - sizeof(double)), regT1);
             loadPtr(Address(stackPointerRegister, OBJECT_OFFSETOF(JSValue, u.asBits.payload) - sizeof(double)), regT0);
+            Jump lowNonZero = branchTestPtr(NonZero, regT1);
+            Jump highNonZero = branchTestPtr(NonZero, regT0);
+            move(TrustedImm32(0), regT0);
+            move(TrustedImm32(Int32Tag), regT1);
+            lowNonZero.link(this);
+            highNonZero.link(this);
 #endif
             loadPtr(payloadFor(RegisterFile::CallerFrame, callFrameRegister), callFrameRegister);
             ret();
@@ -123,13 +132,13 @@ namespace JSC {
             ret();
         }
         
-        MacroAssemblerCodePtr finalize(JSGlobalData& globalData, MacroAssemblerCodePtr fallback)
+        MacroAssemblerCodeRef finalize(JSGlobalData& globalData, MacroAssemblerCodePtr fallback)
         {
-            LinkBuffer patchBuffer(globalData, this, m_pool.get());
+            LinkBuffer patchBuffer(globalData, this);
             patchBuffer.link(m_failures, CodeLocationLabel(fallback));
             for (unsigned i = 0; i < m_calls.size(); i++)
                 patchBuffer.link(m_calls[i].first, m_calls[i].second);
-            return patchBuffer.finalizeCode().m_code;
+            return patchBuffer.finalizeCode();
         }
 
         // Assumes that the target function uses fpRegister0 as the first argument
@@ -163,7 +172,6 @@ namespace JSC {
         
         int m_expectedArgCount;
         JSGlobalData* m_globalData;
-        RefPtr<ExecutablePool> m_pool;
         MacroAssembler::JumpList m_failures;
         Vector<std::pair<Call, FunctionPtr> > m_calls;
     };

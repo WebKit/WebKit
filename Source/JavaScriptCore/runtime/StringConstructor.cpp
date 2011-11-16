@@ -37,7 +37,7 @@ static EncodedJSValue JSC_HOST_CALL stringFromCharCode(ExecState*);
 
 namespace JSC {
 
-const ClassInfo StringConstructor::s_info = { "Function", &InternalFunction::s_info, 0, ExecState::stringConstructorTable };
+const ClassInfo StringConstructor::s_info = { "Function", &InternalFunction::s_info, 0, ExecState::stringConstructorTable, CREATE_METHOD_TABLE(StringConstructor) };
 
 /* Source for StringConstructor.lut.h
 @begin stringConstructorTable
@@ -47,21 +47,26 @@ const ClassInfo StringConstructor::s_info = { "Function", &InternalFunction::s_i
 
 ASSERT_CLASS_FITS_IN_CELL(StringConstructor);
 
-StringConstructor::StringConstructor(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, StringPrototype* stringPrototype)
-    : InternalFunction(&exec->globalData(), globalObject, structure, Identifier(exec, stringPrototype->classInfo()->className))
+StringConstructor::StringConstructor(JSGlobalObject* globalObject, Structure* structure)
+    : InternalFunction(globalObject, structure)
 {
+}
+
+void StringConstructor::finishCreation(ExecState* exec, StringPrototype* stringPrototype)
+{
+    Base::finishCreation(exec->globalData(), Identifier(exec, stringPrototype->classInfo()->className));
     putDirectWithoutTransition(exec->globalData(), exec->propertyNames().prototype, stringPrototype, ReadOnly | DontEnum | DontDelete);
     putDirectWithoutTransition(exec->globalData(), exec->propertyNames().length, jsNumber(1), ReadOnly | DontEnum | DontDelete);
 }
 
-bool StringConstructor::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot &slot)
+bool StringConstructor::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot &slot)
 {
-    return getStaticFunctionSlot<InternalFunction>(exec, ExecState::stringConstructorTable(exec), this, propertyName, slot);
+    return getStaticFunctionSlot<InternalFunction>(exec, ExecState::stringConstructorTable(exec), static_cast<StringConstructor*>(cell), propertyName, slot);
 }
 
-bool StringConstructor::getOwnPropertyDescriptor(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
+bool StringConstructor::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
 {
-    return getStaticFunctionDescriptor<InternalFunction>(exec, ExecState::stringConstructorTable(exec), this, propertyName, descriptor);
+    return getStaticFunctionDescriptor<InternalFunction>(exec, ExecState::stringConstructorTable(exec), static_cast<StringConstructor*>(object), propertyName, descriptor);
 }
 
 // ------------------------------ Functions --------------------------------
@@ -88,10 +93,14 @@ static EncodedJSValue JSC_HOST_CALL constructWithStringConstructor(ExecState* ex
     JSGlobalObject* globalObject = asInternalFunction(exec->callee())->globalObject();
     if (!exec->argumentCount())
         return JSValue::encode(StringObject::create(exec, globalObject->stringObjectStructure()));
-    return JSValue::encode(StringObject::create(exec, globalObject->stringObjectStructure(), exec->argument(0).toString(exec)));
+    
+    JSString* string = exec->argument(0).isString()
+        ? asString(exec->argument(0))
+        : jsString(exec, exec->argument(0).toString(exec));
+    return JSValue::encode(StringObject::create(exec, globalObject->stringObjectStructure(), string));
 }
 
-ConstructType StringConstructor::getConstructData(ConstructData& constructData)
+ConstructType StringConstructor::getConstructData(JSCell*, ConstructData& constructData)
 {
     constructData.native.function = constructWithStringConstructor;
     return ConstructTypeHost;
@@ -104,7 +113,7 @@ static EncodedJSValue JSC_HOST_CALL callStringConstructor(ExecState* exec)
     return JSValue::encode(jsString(exec, exec->argument(0).toString(exec)));
 }
 
-CallType StringConstructor::getCallData(CallData& callData)
+CallType StringConstructor::getCallData(JSCell*, CallData& callData)
 {
     callData.native.function = callStringConstructor;
     return CallTypeHost;

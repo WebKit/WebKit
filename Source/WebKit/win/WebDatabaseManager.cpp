@@ -334,7 +334,7 @@ class DidModifyOriginData {
 public:
     static void dispatchToMainThread(WebDatabaseManager* databaseManager, SecurityOrigin* origin)
     {
-        DidModifyOriginData* context = new DidModifyOriginData(databaseManager, origin->threadsafeCopy());
+        DidModifyOriginData* context = new DidModifyOriginData(databaseManager, origin->isolatedCopy());
         callOnMainThread(&DidModifyOriginData::dispatchDidModifyOriginOnMainThread, context);
     }
 

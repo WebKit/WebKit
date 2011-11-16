@@ -24,6 +24,7 @@
 #define TextResourceDecoder_h
 
 #include "TextEncoding.h"
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 

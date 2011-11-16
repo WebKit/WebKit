@@ -1,3 +1,10 @@
+2011-11-15  Oliver Hunt  <oliver@apple.com>
+
+        Merged JavaScriptCore r92804-r99898.
+
+        Disabled thread verification on RefPtr, so as to minimise
+        changes needed by WebCore.
+
 2011-10-26  Lucas Forschler  <lforschler@apple.com>
 
     Merge fix for 10351765.

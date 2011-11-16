@@ -47,9 +47,11 @@ namespace JSC {
     EncodedJSValue JSC_HOST_CALL globalFuncEncodeURIComponent(ExecState*);
     EncodedJSValue JSC_HOST_CALL globalFuncEscape(ExecState*);
     EncodedJSValue JSC_HOST_CALL globalFuncUnescape(ExecState*);
+    EncodedJSValue JSC_HOST_CALL globalFuncThrowTypeError(ExecState*);
 
     static const double mantissaOverflowLowerBound = 9007199254740992.0;
-    double parseIntOverflow(const char*, int length, int radix);
+    double parseIntOverflow(const LChar*, int length, int radix);
+    ALWAYS_INLINE double parseIntOverflow(const char* s, int length, int radix) { return parseIntOverflow(reinterpret_cast<const LChar*>(s), length, radix); }
     double parseIntOverflow(const UChar*, int length, int radix);
     bool isStrWhiteSpace(UChar);
     double jsToNumber(const UString& s);

@@ -39,7 +39,6 @@
 #include <wtf/Assertions.h>
 
 #if PLATFORM(QT)
-#include <QApplication>
 #include <QSocketNotifier>
 #elif PLATFORM(GTK)
 #include <glib.h>

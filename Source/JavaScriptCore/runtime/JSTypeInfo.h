@@ -34,7 +34,7 @@
 
 namespace JSC {
 
-    static const unsigned MasqueradesAsUndefined = 1; // WebCore uses MasqueradesAsUndefined to make document.all and style.filter undetectable.
+    static const unsigned MasqueradesAsUndefined = 1; // WebCore uses MasqueradesAsUndefined to make document.all undetectable.
     static const unsigned ImplementsHasInstance = 1 << 1;
     static const unsigned OverridesHasInstance = 1 << 2;
     static const unsigned ImplementsDefaultHasInstance = 1 << 3;
@@ -42,8 +42,7 @@ namespace JSC {
     static const unsigned OverridesGetOwnPropertySlot = 1 << 5;
     static const unsigned OverridesVisitChildren = 1 << 6;
     static const unsigned OverridesGetPropertyNames = 1 << 7;
-    static const unsigned IsJSFinalObject = 1 << 8;
-    static const unsigned ProhibitsPropertyCaching = 1 << 9;
+    static const unsigned ProhibitsPropertyCaching = 1 << 8;
 
     class TypeInfo {
     public:
@@ -55,23 +54,27 @@ namespace JSC {
             ASSERT(flags <= 0x3ff);
             ASSERT(type <= 0xff);
             ASSERT(type >= CompoundType || !(flags & OverridesVisitChildren));
+            // No object that doesn't ImplementsHasInstance should override it!
+            ASSERT((m_flags & (ImplementsHasInstance | OverridesHasInstance)) != OverridesHasInstance);
             // ImplementsDefaultHasInstance means (ImplementsHasInstance & !OverridesHasInstance)
             if ((m_flags & (ImplementsHasInstance | OverridesHasInstance)) == ImplementsHasInstance)
                 m_flags |= ImplementsDefaultHasInstance;
         }
 
-        JSType type() const { return (JSType)m_type; }
+        JSType type() const { return static_cast<JSType>(m_type); }
+        bool isObject() const { return type() >= ObjectType; }
+        bool isFinalObject() const { return type() == FinalObjectType; }
+        bool isNumberObject() const { return type() == NumberObjectType; }
 
-        bool masqueradesAsUndefined() const { return m_flags & MasqueradesAsUndefined; }
-        bool implementsHasInstance() const { return m_flags & ImplementsHasInstance; }
-        bool isEnvironmentRecord() const { return m_flags & IsEnvironmentRecord; }
-        bool overridesHasInstance() const { return m_flags & OverridesHasInstance; }
-        bool overridesGetOwnPropertySlot() const { return m_flags & OverridesGetOwnPropertySlot; }
-        bool overridesVisitChildren() const { return m_flags & OverridesVisitChildren; }
-        bool overridesGetPropertyNames() const { return m_flags & OverridesGetPropertyNames; }
-        unsigned isFinal() const { return m_flags2 & (IsJSFinalObject >> 8); }
-        unsigned prohibitsPropertyCaching() const { return m_flags2 & (ProhibitsPropertyCaching >> 8); }
-        unsigned flags() const { return m_flags; }
+        bool masqueradesAsUndefined() const { return isSetOnFlags1(MasqueradesAsUndefined); }
+        bool implementsHasInstance() const { return isSetOnFlags1(ImplementsHasInstance); }
+        bool isEnvironmentRecord() const { return isSetOnFlags1(IsEnvironmentRecord); }
+        bool overridesHasInstance() const { return isSetOnFlags1(OverridesHasInstance); }
+        bool implementsDefaultHasInstance() const { return isSetOnFlags1(ImplementsDefaultHasInstance); }
+        bool overridesGetOwnPropertySlot() const { return isSetOnFlags1(OverridesGetOwnPropertySlot); }
+        bool overridesVisitChildren() const { return isSetOnFlags1(OverridesVisitChildren); }
+        bool overridesGetPropertyNames() const { return isSetOnFlags1(OverridesGetPropertyNames); }
+        bool prohibitsPropertyCaching() const { return isSetOnFlags2(ProhibitsPropertyCaching); }
 
         static ptrdiff_t flagsOffset()
         {
@@ -84,6 +87,9 @@ namespace JSC {
         }
 
     private:
+        bool isSetOnFlags1(unsigned flag) const { ASSERT(flag <= (1 << 7)); return m_flags & flag; }
+        bool isSetOnFlags2(unsigned flag) const { ASSERT(flag >= (1 << 8)); return m_flags2 & (flag >> 8); }
+
         unsigned char m_type;
         unsigned char m_flags;
         unsigned char m_flags2;

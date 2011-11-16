@@ -69,7 +69,6 @@ public:
     using MacroAssemblerBase::pop;
     using MacroAssemblerBase::jump;
     using MacroAssemblerBase::branch32;
-    using MacroAssemblerBase::branch16;
 #if CPU(X86_64)
     using MacroAssemblerBase::branchPtr;
     using MacroAssemblerBase::branchTestPtr;
@@ -130,11 +129,6 @@ public:
         return branch32(commute(cond), right, left);
     }
 
-    void branch16(RelationalCondition cond, BaseIndex left, RegisterID right, Label target)
-    {
-        branch16(cond, left, right).linkTo(target, this);
-    }
-    
     void branchTestPtr(ResultCondition cond, RegisterID reg, Label target)
     {
         branchTestPtr(cond, reg).linkTo(target, this);
@@ -199,6 +193,11 @@ public:
         add32(imm, src, dest);
     }
 
+    void addPtr(TrustedImm32 imm, AbsoluteAddress address)
+    {
+        add32(imm, address);
+    }
+    
     void andPtr(RegisterID src, RegisterID dest)
     {
         and32(src, dest);
@@ -212,6 +211,11 @@ public:
     void orPtr(RegisterID src, RegisterID dest)
     {
         or32(src, dest);
+    }
+
+    void orPtr(RegisterID op1, RegisterID op2, RegisterID dest)
+    {
+        or32(op1, op2, dest);
     }
 
     void orPtr(TrustedImmPtr imm, RegisterID dest)
@@ -260,7 +264,7 @@ public:
         load32(address, dest);
     }
 
-    void loadPtr(void* address, RegisterID dest)
+    void loadPtr(const void* address, RegisterID dest)
     {
         load32(address, dest);
     }
@@ -381,11 +385,26 @@ public:
     {
         return MacroAssemblerBase::branchTest8(cond, Address(address.base, address.offset), mask);
     }
-#endif
+#endif // !CPU(X86_64)
 
 };
 
 } // namespace JSC
+
+#else // ENABLE(ASSEMBLER)
+
+// If there is no assembler for this platform, at least allow code to make references to
+// some of the things it would otherwise define, albeit without giving that code any way
+// of doing anything useful.
+class MacroAssembler {
+private:
+    MacroAssembler() { }
+    
+public:
+    
+    enum RegisterID { NoRegister };
+    enum FPRegisterID { NoFPRegister };
+};
 
 #endif // ENABLE(ASSEMBLER)
 

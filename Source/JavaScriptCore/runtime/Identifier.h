@@ -24,6 +24,7 @@
 #include "JSGlobalData.h"
 #include "ThreadSpecific.h"
 #include "UString.h"
+#include <wtf/WTFThreadData.h>
 #include <wtf/text/CString.h>
 
 namespace JSC {
@@ -36,11 +37,11 @@ namespace JSC {
         Identifier() { }
 
         Identifier(ExecState* exec, const char* s) : m_string(add(exec, s)) { } // Only to be used with string literals.
-        Identifier(ExecState* exec, const UChar* s, int length) : m_string(add(exec, s, length)) { }
         Identifier(ExecState* exec, StringImpl* rep) : m_string(add(exec, rep)) { } 
         Identifier(ExecState* exec, const UString& s) : m_string(add(exec, s.impl())) { }
 
         Identifier(JSGlobalData* globalData, const char* s) : m_string(add(globalData, s)) { } // Only to be used with string literals.
+        Identifier(JSGlobalData* globalData, const LChar* s, int length) : m_string(add(globalData, s, length)) { }
         Identifier(JSGlobalData* globalData, const UChar* s, int length) : m_string(add(globalData, s, length)) { }
         Identifier(JSGlobalData* globalData, StringImpl* rep) : m_string(add(globalData, rep)) { } 
         Identifier(JSGlobalData* globalData, const UString& s) : m_string(add(globalData, s.impl())) { }
@@ -52,7 +53,9 @@ namespace JSC {
         int length() const { return m_string.length(); }
         
         CString ascii() const { return m_string.ascii(); }
-        
+
+        static Identifier createLCharFromUChar(JSGlobalData* globalData, const UChar* s, int length) { return Identifier(globalData, add8(globalData, s, length)); }
+
         static Identifier from(ExecState* exec, unsigned y);
         static Identifier from(ExecState* exec, int y);
         static Identifier from(ExecState* exec, double y);
@@ -70,10 +73,14 @@ namespace JSC {
         friend bool operator==(const Identifier&, const Identifier&);
         friend bool operator!=(const Identifier&, const Identifier&);
 
+        friend bool operator==(const Identifier&, const LChar*);
         friend bool operator==(const Identifier&, const char*);
+        friend bool operator!=(const Identifier&, const LChar*);
         friend bool operator!=(const Identifier&, const char*);
     
-        static bool equal(const StringImpl*, const char*);
+        static bool equal(const StringImpl*, const LChar*);
+        static inline bool equal(const StringImpl*a, const char*b) { return Identifier::equal(a, reinterpret_cast<const LChar*>(b)); };
+        static bool equal(const StringImpl*, const LChar*, unsigned length);
         static bool equal(const StringImpl*, const UChar*, unsigned length);
         static bool equal(const StringImpl* a, const StringImpl* b) { return ::equal(a, b); }
 
@@ -84,10 +91,11 @@ namespace JSC {
         UString m_string;
         
         static bool equal(const Identifier& a, const Identifier& b) { return a.m_string.impl() == b.m_string.impl(); }
-        static bool equal(const Identifier& a, const char* b) { return equal(a.m_string.impl(), b); }
+        static bool equal(const Identifier& a, const LChar* b) { return equal(a.m_string.impl(), b); }
 
-        static PassRefPtr<StringImpl> add(ExecState*, const UChar*, int length);
-        static PassRefPtr<StringImpl> add(JSGlobalData*, const UChar*, int length);
+        template <typename T> static PassRefPtr<StringImpl> add(JSGlobalData*, const T*, int length);
+        static PassRefPtr<StringImpl> add8(JSGlobalData*, const UChar*, int length);
+        template <typename T> ALWAYS_INLINE static bool canUseSingleCharacterString(T);
 
         static PassRefPtr<StringImpl> add(ExecState* exec, StringImpl* r)
         {
@@ -114,7 +122,66 @@ namespace JSC {
         static void checkCurrentIdentifierTable(ExecState*);
         static void checkCurrentIdentifierTable(JSGlobalData*);
     };
+
+    template <> ALWAYS_INLINE bool Identifier::canUseSingleCharacterString(LChar)
+    {
+        ASSERT(maxSingleCharacterString == 0xff);
+        return true;
+    }
+
+    template <> ALWAYS_INLINE bool Identifier::canUseSingleCharacterString(UChar c)
+    {
+        return (c <= maxSingleCharacterString);
+    }
+
+    template <typename T>
+    struct CharBuffer {
+        const T* s;
+        unsigned int length;
+    };
     
+    template <typename T>
+    struct IdentifierCharBufferTranslator {
+        static unsigned hash(const CharBuffer<T>& buf)
+        {
+            return StringHasher::computeHash<T>(buf.s, buf.length);
+        }
+        
+        static bool equal(StringImpl* str, const CharBuffer<T>& buf)
+        {
+            return Identifier::equal(str, buf.s, buf.length);
+        }
+
+        static void translate(StringImpl*& location, const CharBuffer<T>& buf, unsigned hash)
+        {
+            T* d;
+            StringImpl* r = StringImpl::createUninitialized(buf.length, d).leakRef();
+            for (unsigned i = 0; i != buf.length; i++)
+                d[i] = buf.s[i];
+            r->setHash(hash);
+            location = r; 
+        }
+    };
+
+    template <typename T>
+    PassRefPtr<StringImpl> Identifier::add(JSGlobalData* globalData, const T* s, int length)
+    {
+        if (length == 1) {
+            T c = s[0];
+            if (canUseSingleCharacterString(c))
+                return add(globalData, globalData->smallStrings.singleCharacterStringRep(c));
+        }
+        
+        if (!length)
+            return StringImpl::empty();
+        CharBuffer<T> buf = {s, length}; 
+        pair<HashSet<StringImpl*>::iterator, bool> addResult = globalData->identifierTable->add<CharBuffer<T>, IdentifierCharBufferTranslator<T> >(buf);
+        
+        // If the string is newly-translated, then we need to adopt it.
+        // The boolean in the pair tells us if that is so.
+        return addResult.second ? adoptRef(*addResult.first) : *addResult.first;
+    }
+
     inline bool operator==(const Identifier& a, const Identifier& b)
     {
         return Identifier::equal(a, b);
@@ -125,25 +192,39 @@ namespace JSC {
         return !Identifier::equal(a, b);
     }
 
-    inline bool operator==(const Identifier& a, const char* b)
+    inline bool operator==(const Identifier& a, const LChar* b)
     {
         return Identifier::equal(a, b);
     }
 
-    inline bool operator!=(const Identifier& a, const char* b)
+    inline bool operator==(const Identifier& a, const char* b)
+    {
+        return Identifier::equal(a, reinterpret_cast<const LChar*>(b));
+    }
+    
+    inline bool operator!=(const Identifier& a, const LChar* b)
     {
         return !Identifier::equal(a, b);
     }
 
+    inline bool operator!=(const Identifier& a, const char* b)
+    {
+        return !Identifier::equal(a, reinterpret_cast<const LChar*>(b));
+    }
+    
+    inline bool Identifier::equal(const StringImpl* r, const LChar* s)
+    {
+        return WTF::equal(r, s);
+    }
+
+    inline bool Identifier::equal(const StringImpl* r, const LChar* s, unsigned length)
+    {
+        return WTF::equal(r, s, length);
+    }
+
     inline bool Identifier::equal(const StringImpl* r, const UChar* s, unsigned length)
     {
-        if (r->length() != length)
-            return false;
-        const UChar* d = r->characters();
-        for (unsigned i = 0; i != length; ++i)
-            if (d[i] != s[i])
-                return false;
-        return true;
+        return WTF::equal(r, s, length);
     }
     
     IdentifierTable* createIdentifierTable();
@@ -153,6 +234,25 @@ namespace JSC {
         static unsigned hash(const RefPtr<StringImpl>& key) { return key->existingHash(); }
         static unsigned hash(StringImpl* key) { return key->existingHash(); }
     };
+
+    struct IdentifierMapIndexHashTraits {
+        typedef int TraitType;
+        typedef IdentifierMapIndexHashTraits StorageTraits;
+        static int emptyValue() { return std::numeric_limits<int>::max(); }
+        static const bool emptyValueIsZero = false;
+        static const bool needsDestruction = false;
+        static const bool needsRef = false;
+    };
+
+    typedef HashMap<RefPtr<StringImpl>, int, IdentifierRepHash, HashTraits<RefPtr<StringImpl> >, IdentifierMapIndexHashTraits> IdentifierMap;
+
+    template<typename U, typename V>
+    std::pair<HashSet<StringImpl*>::iterator, bool> IdentifierTable::add(U value)
+    {
+        std::pair<HashSet<StringImpl*>::iterator, bool> result = m_table.add<U, V>(value);
+        (*result.first)->setIsIdentifier(true);
+        return result;
+    }
 
 } // namespace JSC
 

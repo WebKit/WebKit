@@ -34,18 +34,24 @@ void InternalFunction::vtableAnchor() {}
 
 ASSERT_CLASS_FITS_IN_CELL(InternalFunction);
 
-const ClassInfo InternalFunction::s_info = { "Function", &JSObjectWithGlobalObject::s_info, 0, 0 };
+const ClassInfo InternalFunction::s_info = { "Function", &JSNonFinalObject::s_info, 0, 0, CREATE_METHOD_TABLE(InternalFunction) };
 
 InternalFunction::InternalFunction(VPtrStealingHackType)
-    : JSObjectWithGlobalObject(VPtrStealingHack)
+    : JSNonFinalObject(VPtrStealingHack)
 {
 }
 
-InternalFunction::InternalFunction(JSGlobalData* globalData, JSGlobalObject* globalObject, Structure* structure, const Identifier& name)
-    : JSObjectWithGlobalObject(globalObject, structure)
+InternalFunction::InternalFunction(JSGlobalObject* globalObject, Structure* structure)
+    : JSNonFinalObject(globalObject->globalData(), structure)
 {
+}
+
+void InternalFunction::finishCreation(JSGlobalData& globalData, const Identifier& name)
+{
+    Base::finishCreation(globalData);
     ASSERT(inherits(&s_info));
-    putDirect(*globalData, globalData->propertyNames->name, jsString(globalData, name.isNull() ? "" : name.ustring()), DontDelete | ReadOnly | DontEnum);
+    ASSERT(methodTable()->getCallData != InternalFunction::s_info.methodTable.getCallData);
+    putDirect(globalData, globalData.propertyNames->name, jsString(&globalData, name.isNull() ? "" : name.ustring()), DontDelete | ReadOnly | DontEnum);
 }
 
 const UString& InternalFunction::name(ExecState* exec)
@@ -61,6 +67,12 @@ const UString InternalFunction::displayName(ExecState* exec)
         return asString(displayName)->tryGetValue();
     
     return UString();
+}
+
+CallType InternalFunction::getCallData(JSCell*, CallData&)
+{
+    ASSERT_NOT_REACHED();
+    return CallTypeNone;
 }
 
 const UString InternalFunction::calculatedDisplayName(ExecState* exec)

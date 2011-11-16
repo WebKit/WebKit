@@ -101,7 +101,7 @@ bool ScriptGlobalObject::get(ScriptState* scriptState, const char* name, ScriptO
 bool ScriptGlobalObject::remove(ScriptState* scriptState, const char* name)
 {
     JSLock lock(SilenceAssertionsOnly);
-    scriptState->lexicalGlobalObject()->deleteProperty(scriptState, Identifier(scriptState, name));
+    scriptState->lexicalGlobalObject()->methodTable()->deleteProperty(scriptState->lexicalGlobalObject(), scriptState, Identifier(scriptState, name));
     return handleException(scriptState);
 }
 

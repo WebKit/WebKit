@@ -734,6 +734,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\runtime\Heuristics.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\runtime\Heuristics.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\runtime\Identifier.cpp"
 				>
 			</File>
@@ -798,6 +806,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\runtime\JSBoundFunction.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\runtime\JSBoundFunction.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\runtime\JSGlobalData.cpp"
 				>
 			</File>
@@ -822,6 +838,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\runtime\JSGlobalThis.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\runtime\JSGlobalThis.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\runtime\JSLock.cpp"
 				>
 			</File>
@@ -843,14 +867,6 @@
 			</File>
 			<File
 				RelativePath="..\..\runtime\JSObject.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\runtime\JSObjectWithGlobalObject.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\runtime\JSObjectWithGlobalObject.h"
 				>
 			</File>
 			<File
@@ -1094,14 +1110,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\runtime\RopeImpl.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\runtime\RopeImpl.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\runtime\ScopeChain.cpp"
 				>
 			</File>
@@ -1113,6 +1121,14 @@
 				RelativePath="..\..\runtime\ScopeChainMark.h"
 				>
 			</File>
+                        <File
+                                RelativePath="..\..\runtime\SamplingCounter.cpp"
+                                >
+                        </File>
+                        <File
+                                RelativePath="..\..\runtime\SamplingCounter.h"
+                                >
+                        </File>
 			<File
 				RelativePath="..\..\runtime\SmallStrings.cpp"
 				>
@@ -1143,10 +1159,6 @@
 			</File>
 			<File
 				RelativePath="..\..\runtime\StringObject.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\runtime\StringObjectThatMasqueradesAsUndefined.h"
 				>
 			</File>
 			<File
@@ -1434,6 +1446,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\bytecode\CodeOrigin.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\bytecode\EvalCodeCache.h"
 				>
 			</File>
@@ -1458,6 +1474,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\bytecode\PredictedType.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\bytecode\PredictedType.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\bytecode\SamplingTool.cpp"
 				>
 			</File>
@@ -1471,6 +1495,14 @@
 			</File>
 			<File
 				RelativePath="..\..\bytecode\StructureStubInfo.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\bytecode\ValueProfile.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\bytecode\ValueProfile.h"
 				>
 			</File>
 		</Filter>
@@ -1542,6 +1574,22 @@
 				>
 			</File>
 		</Filter>
+                <Filter
+                        Name="dfg"
+                        >
+                        <File
+                                RelativePath="..\..\dfg\DFGDriver.h"
+                                >
+                        </File>
+                        <File
+                                RelativePath="..\..\dfg\DFGIntrinsic.h"
+                                >
+                        </File>
+                        <File
+                                RelativePath="..\..\dfg\DFGOSREntry.h"
+                                >
+                        </File>
+                </Filter>
 		<Filter
 			Name="yarr"
 			>
@@ -1750,14 +1798,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\parser\JSParser.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\parser\JSParser.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\parser\Lexer.cpp"
 				>
 			</File>
@@ -1866,6 +1906,14 @@
 			Name="heap"
 			>
                             <File
+                                    RelativePath="..\..\heap\AllocationSpace.cpp"
+                                    >
+                            </File>
+                            <File
+                                    RelativePath="..\..\heap\AllocationSpace.h"
+                                    >
+                            </File>
+                            <File
                                     RelativePath="..\..\heap\ConservativeRoots.cpp"
                                     >
                             </File>
@@ -1890,19 +1938,11 @@
                                     >
                             </File>
                             <File
-                                    RelativePath="..\..\heap\NewSpace.cpp"
+                                    RelativePath="..\..\heap\MarkedSpace.cpp"
                                     >
                             </File>
                             <File
-                                    RelativePath="..\..\heap\NewSpace.h"
-                                    >
-                            </File>
-                            <File
-                                    RelativePath="..\..\heap\OldSpace.cpp"
-                                    >
-                            </File>
-                            <File
-                                    RelativePath="..\..\heap\OldSpace.h"
+                                    RelativePath="..\..\heap\MarkedSpace.h"
                                     >
                             </File>
                             <File
@@ -1930,6 +1970,10 @@
                                     >
                             </File>
                             <File
+                                    RelativePath="..\..\heap\StrongInlines.h"
+                                    >
+                            </File>
+                            <File
                                     RelativePath="..\..\heap\Handle.h"
                                     >
                             </File>
@@ -1950,6 +1994,14 @@
                                     >
                             </File>
                             <File
+                                    RelativePath="..\..\heap\JettisonedCodeBlocks.cpp"
+                                    >
+                            </File>
+                            <File
+                                    RelativePath="..\..\heap\JettisonedCodeBlocks.h"
+                                    >
+                            </File>
+                            <File
                                     RelativePath="..\..\heap\Local.h"
                                     >
                             </File>
@@ -1958,9 +2010,25 @@
                                     >
                             </File>
                             <File
+                                    RelativePath="..\..\heap\VTableSpectrum.h"
+                                    >
+                            </File>
+                            <File
+                                    RelativePath="..\..\heap\VTableSpectrum.cpp"
+                                    >
+                            </File>
+                            <File
                                     RelativePath="..\..\heap\Weak.h"
                                     >
                             </File>
+			    <File
+				    RelativePath="..\..\heap\WriteBarrierSupport.cpp"
+				    >
+			    </File>
+			    <File
+				    RelativePath="..\..\heap\WriteBarrierSupport.h"
+				    >
+			    </File>
 		</Filter>
 		<File
 			RelativePath="..\..\config.h"

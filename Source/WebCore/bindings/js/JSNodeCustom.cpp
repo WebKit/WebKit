@@ -192,14 +192,15 @@ ScopeChainNode* JSNode::pushEventHandlerScope(ExecState*, ScopeChainNode* node) 
     return node;
 }
 
-void JSNode::visitChildren(SlotVisitor& visitor)
+void JSNode::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
-    ASSERT_GC_OBJECT_INHERITS(this, &s_info);
+    JSNode* thisObject = static_cast<JSNode*>(cell);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
     COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
-    ASSERT(structure()->typeInfo().overridesVisitChildren());
-    Base::visitChildren(visitor);
+    ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
+    Base::visitChildren(thisObject, visitor);
 
-    Node* node = m_impl.get();
+    Node* node = thisObject->m_impl.get();
     node->visitJSEventListeners(visitor);
 
     visitor.addOpaqueRoot(root(node));

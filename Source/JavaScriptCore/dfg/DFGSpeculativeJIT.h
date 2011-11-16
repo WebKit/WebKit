@@ -28,70 +28,93 @@
 
 #if ENABLE(DFG_JIT)
 
-#include <dfg/DFGJITCodeGenerator.h>
+#include "DFGAbstractState.h"
+#include "DFGJITCodeGenerator.h"
+#include "DFGOSRExit.h"
+#include "ValueRecovery.h"
 
 namespace JSC { namespace DFG {
 
 class SpeculativeJIT;
 
-// This enum describes the types of additional recovery that
-// may need be performed should a speculation check fail.
-enum SpeculationRecoveryType {
-    SpeculativeAdd
+enum ValueSourceKind {
+    SourceNotSet,
+    ValueInRegisterFile,
+    Int32InRegisterFile,
+    CellInRegisterFile,
+    BooleanInRegisterFile,
+    HaveNode
 };
 
-// === SpeculationRecovery ===
-//
-// This class provides additional information that may be associated with a
-// speculation check - for example 
-class SpeculationRecovery {
+class ValueSource {
 public:
-    SpeculationRecovery(SpeculationRecoveryType type, GPRReg dest, GPRReg src)
-        : m_type(type)
-        , m_dest(dest)
-        , m_src(src)
+    ValueSource()
+        : m_nodeIndex(nodeIndexFromKind(SourceNotSet))
     {
     }
-
-    SpeculationRecoveryType type() { return m_type; }
-    GPRReg dest() { return m_dest; }
-    GPRReg src() { return m_src; }
-
+    
+    explicit ValueSource(ValueSourceKind valueSourceKind)
+        : m_nodeIndex(nodeIndexFromKind(valueSourceKind))
+    {
+        ASSERT(kind() != SourceNotSet);
+        ASSERT(kind() != HaveNode);
+    }
+    
+    explicit ValueSource(NodeIndex nodeIndex)
+        : m_nodeIndex(nodeIndex)
+    {
+        ASSERT(kind() == HaveNode);
+    }
+    
+    static ValueSource forPrediction(PredictedType prediction)
+    {
+        if (isInt32Prediction(prediction))
+            return ValueSource(Int32InRegisterFile);
+        if (isArrayPrediction(prediction) || isByteArrayPrediction(prediction))
+            return ValueSource(CellInRegisterFile);
+        if (isBooleanPrediction(prediction))
+            return ValueSource(BooleanInRegisterFile);
+        return ValueSource(ValueInRegisterFile);
+    }
+    
+    bool isSet() const
+    {
+        return kindFromNodeIndex(m_nodeIndex) != SourceNotSet;
+    }
+    
+    ValueSourceKind kind() const
+    {
+        return kindFromNodeIndex(m_nodeIndex);
+    }
+    
+    NodeIndex nodeIndex() const
+    {
+        ASSERT(kind() == HaveNode);
+        return m_nodeIndex;
+    }
+    
+#ifndef NDEBUG
+    void dump(FILE* out) const;
+#endif
+    
 private:
-    // Indicates the type of additional recovery to be performed.
-    SpeculationRecoveryType m_type;
-    // different recovery types may required different additional information here.
-    GPRReg m_dest;
-    GPRReg m_src;
-};
-
-// === SpeculationCheck ===
-//
-// This structure records a bail-out from the speculative path,
-// which will need to be linked in to the non-speculative one.
-struct SpeculationCheck {
-    SpeculationCheck(MacroAssembler::Jump, SpeculativeJIT*, unsigned recoveryIndex = 0);
-
-    // The location of the jump out from the speculative path, 
-    // and the node we were generating code for.
-    MacroAssembler::Jump m_check;
+    static NodeIndex nodeIndexFromKind(ValueSourceKind kind)
+    {
+        ASSERT(kind >= SourceNotSet && kind < HaveNode);
+        return NoNode - kind;
+    }
+    
+    static ValueSourceKind kindFromNodeIndex(NodeIndex nodeIndex)
+    {
+        unsigned kind = static_cast<unsigned>(NoNode - nodeIndex);
+        if (kind >= static_cast<unsigned>(HaveNode))
+            return HaveNode;
+        return static_cast<ValueSourceKind>(kind);
+    }
+    
     NodeIndex m_nodeIndex;
-    // Used to record any additional recovery to be performed; this
-    // value is an index into the SpeculativeJIT's m_speculationRecoveryList
-    // array, offset by 1. (m_recoveryIndex == 0) means no recovery.
-    unsigned m_recoveryIndex;
-
-    struct RegisterInfo {
-        NodeIndex nodeIndex;
-        DataFormat format;
-        bool isSpilled;
-    };
-    RegisterInfo m_gprInfo[GPRInfo::numberOfRegisters];
-    RegisterInfo m_fprInfo[FPRInfo::numberOfRegisters];
 };
-typedef SegmentedVector<SpeculationCheck, 16> SpeculationCheckVector;
-
-
+    
 // === SpeculativeJIT ===
 //
 // The SpeculativeJIT is used to generate a fast, but potentially
@@ -103,28 +126,12 @@ typedef SegmentedVector<SpeculationCheck, 16> SpeculationCheckVector;
 // to propagate type information (including information that has
 // only speculatively been asserted) through the dataflow.
 class SpeculativeJIT : public JITCodeGenerator {
-    friend struct SpeculationCheck;
+    friend struct OSRExit;
 public:
-    SpeculativeJIT(JITCompiler& jit)
-        : JITCodeGenerator(jit, true)
-        , m_compileOkay(true)
-    {
-    }
+    SpeculativeJIT(JITCompiler&);
 
     bool compile();
-
-    // Retrieve the list of bail-outs from the speculative path,
-    // and additional recovery information.
-    SpeculationCheckVector& speculationChecks()
-    {
-        return m_speculationChecks;
-    }
-    SpeculationRecovery* speculationRecovery(size_t index)
-    {
-        // SpeculationCheck::m_recoveryIndex is offset by 1,
-        // 0 means no recovery.
-        return index ? &m_speculationRecoveryList[index - 1] : 0;
-    }
+    void linkOSREntries(LinkBuffer&);
 
     // Called by the speculative operand types, below, to fill operand to
     // machine registers, implicitly generating speculation checks as needed.
@@ -132,17 +139,20 @@ public:
     GPRReg fillSpeculateIntStrict(NodeIndex);
     FPRReg fillSpeculateDouble(NodeIndex);
     GPRReg fillSpeculateCell(NodeIndex);
+    GPRReg fillSpeculateBoolean(NodeIndex);
 
 private:
+    friend class JITCodeGenerator;
+    
     void compile(Node&);
+    void compileMovHint(Node&);
     void compile(BasicBlock&);
 
     void checkArgumentTypes();
-    void initializeVariableTypes();
 
     bool isInteger(NodeIndex nodeIndex)
     {
-        Node& node = m_jit.graph()[nodeIndex];
+        Node& node = at(nodeIndex);
         if (node.hasInt32Result())
             return true;
 
@@ -152,84 +162,145 @@ private:
         VirtualRegister virtualRegister = node.virtualRegister();
         GenerationInfo& info = m_generationInfo[virtualRegister];
         
-        return (info.registerFormat() | DataFormatJS) == DataFormatJSInteger
-            || (info.spillFormat() | DataFormatJS) == DataFormatJSInteger;
+        return info.isJSInteger();
     }
     
-    bool shouldSpeculateInteger(NodeIndex nodeIndex)
-    {
-        if (isInteger(nodeIndex))
-            return true;
-        
-        if (isInt32Prediction(m_jit.graph().getPrediction(m_jit.graph()[nodeIndex])))
-            return true;
-        
-        return false;
-    }
-
-    bool shouldSpeculateDouble(NodeIndex nodeIndex)
-    {
-        Node& node = m_jit.graph()[nodeIndex];
-        VirtualRegister virtualRegister = node.virtualRegister();
-        GenerationInfo& info = m_generationInfo[virtualRegister];
-
-        if ((info.registerFormat() | DataFormatJS) == DataFormatJSDouble
-            || (info.spillFormat() | DataFormatJS) == DataFormatJSDouble)
-            return true;
-        
-        if (isDoublePrediction(m_jit.graph().getPrediction(node)))
-            return true;
-        
-        return false;
-    }
-    
-    bool shouldSpeculateInteger(NodeIndex op1, NodeIndex op2)
-    {
-        return !(shouldSpeculateDouble(op1) || shouldSpeculateDouble(op2)) && (shouldSpeculateInteger(op1) || shouldSpeculateInteger(op2));
-    }
-
-    bool compare(Node&, MacroAssembler::RelationalCondition, MacroAssembler::DoubleCondition, Z_DFGOperation_EJJ);
+    bool compare(Node&, MacroAssembler::RelationalCondition, MacroAssembler::DoubleCondition, S_DFGOperation_EJJ);
+    bool compilePeepHoleBranch(Node&, MacroAssembler::RelationalCondition, MacroAssembler::DoubleCondition, S_DFGOperation_EJJ);
     void compilePeepHoleIntegerBranch(Node&, NodeIndex branchNodeIndex, JITCompiler::RelationalCondition);
-    void compilePeepHoleDoubleBranch(Node&, NodeIndex branchNodeIndex, JITCompiler::DoubleCondition, Z_DFGOperation_EJJ);
+    void compilePeepHoleDoubleBranch(Node&, NodeIndex branchNodeIndex, JITCompiler::DoubleCondition);
+    void compilePeepHoleObjectEquality(Node&, NodeIndex branchNodeIndex, void* vptr, PredictionChecker);
+    void compileObjectEquality(Node&, void* vptr, PredictionChecker);
+    void compileValueAdd(Node&);
+    void compileObjectOrOtherLogicalNot(NodeIndex value, void* vptr, bool needSpeculationCheck);
+    void compileLogicalNot(Node&);
+    void emitObjectOrOtherBranch(NodeIndex value, BlockIndex taken, BlockIndex notTaken, void *vptr, bool needSpeculationCheck);
+    void emitBranch(Node&);
     
+    void compileGetCharCodeAt(Node&);
+    void compileGetByValOnString(Node&);
+    void compileValueToInt32(Node&);
+    void compileGetByValOnByteArray(Node&);
+    void compilePutByValForByteArray(GPRReg base, GPRReg property, Node&);
+    
+    // It is acceptable to have structure be equal to scratch, so long as you're fine
+    // with the structure GPR being clobbered.
+    template<typename T>
+    void emitAllocateJSFinalObject(T structure, GPRReg resultGPR, GPRReg scratchGPR, MacroAssembler::JumpList& slowPath)
+    {
+        MarkedSpace::SizeClass* sizeClass = &m_jit.globalData()->heap.sizeClassForObject(sizeof(JSFinalObject));
+        
+        m_jit.loadPtr(&sizeClass->firstFreeCell, resultGPR);
+        slowPath.append(m_jit.branchTestPtr(MacroAssembler::Zero, resultGPR));
+        
+        // The object is half-allocated: we have what we know is a fresh object, but
+        // it's still on the GC's free list.
+        
+        // Ditch the structure by placing it into the structure slot, so that we can reuse
+        // scratchGPR.
+        m_jit.storePtr(structure, MacroAssembler::Address(resultGPR, JSObject::structureOffset()));
+        
+        // Now that we have scratchGPR back, remove the object from the free list
+        m_jit.loadPtr(MacroAssembler::Address(resultGPR), scratchGPR);
+        m_jit.storePtr(scratchGPR, &sizeClass->firstFreeCell);
+        
+        // Initialize the object's vtable
+        m_jit.storePtr(MacroAssembler::TrustedImmPtr(m_jit.globalData()->jsFinalObjectVPtr), MacroAssembler::Address(resultGPR));
+        
+        // Initialize the object's inheritorID.
+        m_jit.storePtr(MacroAssembler::TrustedImmPtr(0), MacroAssembler::Address(resultGPR, JSObject::offsetOfInheritorID()));
+        
+        // Initialize the object's property storage pointer.
+        m_jit.addPtr(MacroAssembler::TrustedImm32(sizeof(JSObject)), resultGPR, scratchGPR);
+        m_jit.storePtr(scratchGPR, MacroAssembler::Address(resultGPR, JSFinalObject::offsetOfPropertyStorage()));
+    }
+
+#if USE(JSVALUE64) 
     JITCompiler::Jump convertToDouble(GPRReg value, FPRReg result, GPRReg tmp);
+#elif USE(JSVALUE32_64)
+    JITCompiler::Jump convertToDouble(JSValueOperand&, FPRReg result);
+#endif
 
     // Add a speculation check without additional recovery.
-    void speculationCheck(MacroAssembler::Jump jumpToFail)
+    void speculationCheck(JSValueSource jsValueSource, NodeIndex nodeIndex, MacroAssembler::Jump jumpToFail)
     {
         if (!m_compileOkay)
             return;
-        m_speculationChecks.append(SpeculationCheck(jumpToFail, this));
+        m_jit.codeBlock()->appendOSRExit(OSRExit(jsValueSource, m_jit.valueProfileFor(nodeIndex), jumpToFail, this));
     }
     // Add a speculation check with additional recovery.
-    void speculationCheck(MacroAssembler::Jump jumpToFail, const SpeculationRecovery& recovery)
+    void speculationCheck(JSValueSource jsValueSource, NodeIndex nodeIndex, MacroAssembler::Jump jumpToFail, const SpeculationRecovery& recovery)
     {
         if (!m_compileOkay)
             return;
-        m_speculationRecoveryList.append(recovery);
-        m_speculationChecks.append(SpeculationCheck(jumpToFail, this, m_speculationRecoveryList.size()));
+        m_jit.codeBlock()->appendSpeculationRecovery(recovery);
+        m_jit.codeBlock()->appendOSRExit(OSRExit(jsValueSource, m_jit.valueProfileFor(nodeIndex), jumpToFail, this, m_jit.codeBlock()->numberOfSpeculationRecoveries()));
     }
 
     // Called when we statically determine that a speculation will fail.
-    void terminateSpeculativeExecution()
+    void terminateSpeculativeExecution(JSValueRegs jsValueRegs, NodeIndex nodeIndex)
     {
+#if DFG_ENABLE(DEBUG_VERBOSE)
+        fprintf(stderr, "SpeculativeJIT was terminated.\n");
+#endif
+        if (!m_compileOkay)
+            return;
+        speculationCheck(jsValueRegs, nodeIndex, m_jit.jump());
         m_compileOkay = false;
     }
 
     template<bool strict>
     GPRReg fillSpeculateIntInternal(NodeIndex, DataFormat& returnFormat);
-
+    
     // It is possible, during speculative generation, to reach a situation in which we
     // can statically determine a speculation will fail (for example, when two nodes
     // will make conflicting speculations about the same operand). In such cases this
     // flag is cleared, indicating no further code generation should take place.
     bool m_compileOkay;
-    // This vector tracks bail-outs from the speculative path to the non-speculative one.
-    SpeculationCheckVector m_speculationChecks;
-    // Some bail-outs need to record additional information recording specific recovery
-    // to be performed (for example, on detected overflow from an add, we may need to
-    // reverse the addition if an operand is being overwritten).
-    Vector<SpeculationRecovery, 16> m_speculationRecoveryList;
+    
+    // Tracking for which nodes are currently holding the values of arguments and bytecode
+    // operand-indexed variables.
+    
+    ValueSource valueSourceForOperand(int operand)
+    {
+        return valueSourceReferenceForOperand(operand);
+    }
+    
+    void setNodeIndexForOperand(NodeIndex nodeIndex, int operand)
+    {
+        valueSourceReferenceForOperand(operand) = ValueSource(nodeIndex);
+    }
+    
+    // Call this with care, since it both returns a reference into an array
+    // and potentially resizes the array. So it would not be right to call this
+    // twice and then perform operands on both references, since the one from
+    // the first call may no longer be valid.
+    ValueSource& valueSourceReferenceForOperand(int operand)
+    {
+        if (operandIsArgument(operand)) {
+            int argument = operand + m_arguments.size() + RegisterFile::CallFrameHeaderSize;
+            return m_arguments[argument];
+        }
+        
+        if ((unsigned)operand >= m_variables.size())
+            m_variables.resize(operand + 1);
+        
+        return m_variables[operand];
+    }
+    
+    Vector<ValueSource, 0> m_arguments;
+    Vector<ValueSource, 0> m_variables;
+    int m_lastSetOperand;
+    CodeOrigin m_codeOriginForOSR;
+    
+    AbstractState m_state;
+    
+    ValueRecovery computeValueRecoveryFor(const ValueSource&);
+
+    ValueRecovery computeValueRecoveryFor(int operand)
+    {
+        return computeValueRecoveryFor(valueSourceForOperand(operand));
+    }
 };
 
 
@@ -408,37 +479,56 @@ private:
     GPRReg m_gprOrInvalid;
 };
 
-
-// === SpeculationCheckIndexIterator ===
-//
-// This class is used by the non-speculative JIT to check which
-// nodes require entry points from the speculative path.
-class SpeculationCheckIndexIterator {
+class SpeculateBooleanOperand {
 public:
-    SpeculationCheckIndexIterator(SpeculationCheckVector& speculationChecks)
-        : m_speculationChecks(speculationChecks)
-        , m_iter(m_speculationChecks.begin())
-        , m_end(m_speculationChecks.end())
+    explicit SpeculateBooleanOperand(SpeculativeJIT* jit, NodeIndex index)
+        : m_jit(jit)
+        , m_index(index)
+        , m_gprOrInvalid(InvalidGPRReg)
     {
+        ASSERT(m_jit);
+        if (jit->isFilled(index))
+            gpr();
     }
-
-    bool hasCheckAtIndex(NodeIndex nodeIndex)
+    
+    ~SpeculateBooleanOperand()
     {
-        while (m_iter != m_end) {
-            NodeIndex current = m_iter->m_nodeIndex;
-            if (current >= nodeIndex)
-                return current == nodeIndex;
-            ++m_iter;
-        }
-        return false;
+        ASSERT(m_gprOrInvalid != InvalidGPRReg);
+        m_jit->unlock(m_gprOrInvalid);
+    }
+    
+    NodeIndex index() const
+    {
+        return m_index;
+    }
+    
+    GPRReg gpr()
+    {
+        if (m_gprOrInvalid == InvalidGPRReg)
+            m_gprOrInvalid = m_jit->fillSpeculateBoolean(index());
+        return m_gprOrInvalid;
+    }
+    
+    void use()
+    {
+        m_jit->use(m_index);
     }
 
 private:
-    SpeculationCheckVector& m_speculationChecks;
-    SpeculationCheckVector::Iterator m_iter;
-    SpeculationCheckVector::Iterator m_end;
+    SpeculativeJIT* m_jit;
+    NodeIndex m_index;
+    GPRReg m_gprOrInvalid;
 };
 
+inline SpeculativeJIT::SpeculativeJIT(JITCompiler& jit)
+    : JITCodeGenerator(jit)
+    , m_compileOkay(true)
+    , m_arguments(jit.codeBlock()->m_numParameters)
+    , m_variables(jit.graph().m_localVars)
+    , m_lastSetOperand(std::numeric_limits<int>::max())
+    , m_state(m_jit.codeBlock(), m_jit.graph())
+{
+}
 
 } } // namespace JSC::DFG
 

@@ -26,7 +26,9 @@
 #ifndef JSNPObject_h
 #define JSNPObject_h
 
-#include <JavaScriptCore/JSObjectWithGlobalObject.h>
+#include <JavaScriptCore/JSGlobalObject.h>
+#include <JavaScriptCore/JSObject.h>
+#include <JavaScriptCore/ObjectPrototype.h>
 
 typedef void* NPIdentifier;
 struct NPObject;
@@ -37,9 +39,18 @@ class NPRuntimeObjectMap;
     
 // JSNPObject is a JSObject that wraps an NPObject.
 
-class JSNPObject : public JSC::JSObjectWithGlobalObject {
+class JSNPObject : public JSC::JSNonFinalObject {
 public:
-    static JSNPObject* create(JSC::JSGlobalObject*, NPRuntimeObjectMap*, NPObject*);
+    typedef JSC::JSNonFinalObject Base;
+
+    static JSNPObject* create(JSC::JSGlobalObject* globalObject, NPRuntimeObjectMap* objectMap, NPObject* npObject)
+    {
+        JSC::Structure* structure = createStructure(globalObject->globalData(), globalObject, globalObject->objectPrototype());
+        JSNPObject* object = new (JSC::allocateCell<JSNPObject>(globalObject->globalData().heap)) JSNPObject(globalObject, structure, objectMap, npObject);
+        object->finishCreation(globalObject);
+        return object;
+    }
+
     ~JSNPObject();
 
     void invalidate();
@@ -55,24 +66,32 @@ public:
 
     NPObject* npObject() const { return m_npObject; }
 
+protected:
+    void finishCreation(JSC::JSGlobalObject*);
+
 private:
-    JSNPObject(JSC::JSGlobalObject*, NPRuntimeObjectMap*, NPObject*, JSC::Structure*);
+    JSNPObject(JSC::JSGlobalObject*, JSC::Structure*, NPRuntimeObjectMap*, NPObject*);
 
     static const unsigned StructureFlags = JSC::OverridesGetOwnPropertySlot | JSC::OverridesGetPropertyNames | JSObject::StructureFlags;
     
-    static JSC::Structure* createStructure(JSC::JSGlobalData& globalData, JSC::JSValue prototype)
+    static JSC::Structure* createStructure(JSC::JSGlobalData& globalData, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)
     {
-        return JSC::Structure::create(globalData, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
+        return JSC::Structure::create(globalData, globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), &s_info);
     }
 
-    virtual JSC::CallType getCallData(JSC::CallData&);
-    virtual JSC::ConstructType getConstructData(JSC::ConstructData&);
+    static JSC::CallType getCallData(JSC::JSCell*, JSC::CallData&);
+    static JSC::ConstructType getConstructData(JSC::JSCell*, JSC::ConstructData&);
 
-    virtual bool getOwnPropertySlot(JSC::ExecState*, const JSC::Identifier& propertyName, JSC::PropertySlot&);
-    virtual bool getOwnPropertyDescriptor(JSC::ExecState*, const JSC::Identifier& propertyName, JSC::PropertyDescriptor&);
-    virtual void put(JSC::ExecState*, const JSC::Identifier& propertyName, JSC::JSValue, JSC::PutPropertySlot&);
+    static bool getOwnPropertySlot(JSC::JSCell*, JSC::ExecState*, const JSC::Identifier& propertyName, JSC::PropertySlot&);
+    static bool getOwnPropertyDescriptor(JSC::JSObject*, JSC::ExecState*, const JSC::Identifier& propertyName, JSC::PropertyDescriptor&);
+    static void put(JSC::JSCell*, JSC::ExecState*, const JSC::Identifier& propertyName, JSC::JSValue, JSC::PutPropertySlot&);
 
-    virtual void getOwnPropertyNames(JSC::ExecState*, JSC::PropertyNameArray&, JSC::EnumerationMode mode = JSC::ExcludeDontEnumProperties);
+    static bool deleteProperty(JSC::JSCell*, JSC::ExecState*, const JSC::Identifier& propertyName);
+    static bool deletePropertyByIndex(JSC::JSCell*, JSC::ExecState*, unsigned propertyName);
+
+    bool deleteProperty(JSC::ExecState*, NPIdentifier propertyName);
+
+    static void getOwnPropertyNames(JSC::JSObject*, JSC::ExecState*, JSC::PropertyNameArray&, JSC::EnumerationMode);
 
     static JSC::JSValue propertyGetter(JSC::ExecState*, JSC::JSValue, const JSC::Identifier&);
     static JSC::JSValue methodGetter(JSC::ExecState*, JSC::JSValue, const JSC::Identifier&);

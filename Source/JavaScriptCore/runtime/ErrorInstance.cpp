@@ -23,34 +23,12 @@
 
 namespace JSC {
 
-const ClassInfo ErrorInstance::s_info = { "Error", &JSNonFinalObject::s_info, 0, 0 };
+const ClassInfo ErrorInstance::s_info = { "Error", &JSNonFinalObject::s_info, 0, 0, CREATE_METHOD_TABLE(ErrorInstance) };
 
 ErrorInstance::ErrorInstance(JSGlobalData& globalData, Structure* structure)
     : JSNonFinalObject(globalData, structure)
     , m_appendSourceToMessage(false)
 {
-    ASSERT(inherits(&s_info));
-    putDirect(globalData, globalData.propertyNames->message, jsString(&globalData, ""), DontEnum);
-}
-
-ErrorInstance::ErrorInstance(JSGlobalData& globalData, Structure* structure, const UString& message)
-    : JSNonFinalObject(globalData, structure)
-    , m_appendSourceToMessage(false)
-{
-    ASSERT(inherits(&s_info));
-    putDirect(globalData, globalData.propertyNames->message, jsString(&globalData, message), DontEnum);
-}
-
-ErrorInstance* ErrorInstance::create(JSGlobalData& globalData, Structure* structure, const UString& message)
-{
-    return new (allocateCell<ErrorInstance>(globalData.heap)) ErrorInstance(globalData, structure, message);
-}
-
-ErrorInstance* ErrorInstance::create(ExecState* exec, Structure* structure, JSValue message)
-{
-    if (message.isUndefined())
-        return new (allocateCell<ErrorInstance>(*exec->heap())) ErrorInstance(exec->globalData(), structure);
-    return new (allocateCell<ErrorInstance>(*exec->heap())) ErrorInstance(exec->globalData(), structure, message.toString(exec));
 }
 
 } // namespace JSC

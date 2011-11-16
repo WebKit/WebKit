@@ -153,10 +153,8 @@ public:
 private:
     WebPage* m_page;
 };
-    
-#ifndef NDEBUG
-static WTF::RefCountedLeakCounter webPageCounter("WebPage");
-#endif
+
+DEFINE_DEBUG_ONLY_GLOBAL(WTF::RefCountedLeakCounter, webPageCounter, ("WebPage"));
 
 PassRefPtr<WebPage> WebPage::create(uint64_t pageID, const WebPageCreationParameters& parameters)
 {

@@ -197,6 +197,7 @@ protected:
         throwError(m_exec, createInterruptedExecutionException(&m_exec->globalData()));
     }
 
+    NO_RETURN_DUE_TO_ASSERT
     void fail()
     {
         ASSERT_NOT_REACHED();
@@ -332,11 +333,11 @@ private:
     {
         PropertySlot slot(array);
         if (isJSArray(&m_exec->globalData(), array)) {
-            if (array->JSArray::getOwnPropertySlot(m_exec, propertyName, slot)) {
+            if (JSArray::getOwnPropertySlotByIndex(array, m_exec, propertyName, slot)) {
                 hasIndex = true;
                 return slot.getValue(m_exec, propertyName);
             }
-        } else if (array->getOwnPropertySlot(m_exec, propertyName, slot)) {
+        } else if (array->methodTable()->getOwnPropertySlotByIndex(array, m_exec, propertyName, slot)) {
             hasIndex = true;
             return slot.getValue(m_exec, propertyName);
         }
@@ -347,7 +348,7 @@ private:
     JSValue getProperty(JSObject* object, const Identifier& propertyName)
     {
         PropertySlot slot(object);
-        if (object->getOwnPropertySlot(m_exec, propertyName, slot))
+        if (object->methodTable()->getOwnPropertySlot(object, m_exec, propertyName, slot))
             return slot.getValue(m_exec, propertyName);
         return JSValue();
     }
@@ -405,7 +406,7 @@ private:
 
         if (value.isNumber()) {
             write(DoubleTag);
-            write(value.uncheckedGetNumber());
+            write(value.asNumber());
             return true;
         }
 
@@ -687,7 +688,7 @@ SerializationReturnCode CloneSerializer::serialize(JSValue in)
                 inputObjectStack.append(inObject);
                 indexStack.append(0);
                 propertyStack.append(PropertyNameArray(m_exec));
-                inObject->getOwnPropertyNames(m_exec, propertyStack.last());
+                inObject->methodTable()->getOwnPropertyNames(inObject, m_exec, propertyStack.last(), ExcludeDontEnumProperties);
                 // fallthrough
             }
             objectStartVisitMember:
@@ -1030,7 +1031,7 @@ private:
         if (array->canSetIndex(index))
             array->setIndex(m_exec->globalData(), index, value);
         else
-            array->put(m_exec, index, value);
+            array->methodTable()->putByIndex(array, m_exec, index, value);
     }
 
     void putProperty(JSObject* object, const Identifier& property, JSValue value)

@@ -26,14 +26,15 @@
 #include "InlineBox.h"
 #include "RenderArena.h"
 #include <wtf/RefCountedLeakCounter.h>
+#include <wtf/StdLibExtras.h>
 
 using namespace WTF;
 
 namespace WebCore {
 
-#ifndef NDEBUG
-static RefCountedLeakCounter bidiRunCounter("BidiRun");
+DEFINE_DEBUG_ONLY_GLOBAL(RefCountedLeakCounter, bidiRunCounter, ("BidiRun"));
 
+#ifndef NDEBUG
 static bool inBidiRunDestroy;
 #endif
 

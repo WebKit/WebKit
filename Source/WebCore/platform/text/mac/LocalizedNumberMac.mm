@@ -33,6 +33,7 @@
 
 #include <limits>
 #import <Foundation/NSNumberFormatter.h>
+#include <wtf/MainThread.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/text/CString.h>
 

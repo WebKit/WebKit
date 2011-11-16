@@ -49,7 +49,7 @@ PassRefPtr<StorageSyncManager> StorageSyncManager::create(const String& path)
 
 StorageSyncManager::StorageSyncManager(const String& path)
     : m_thread(LocalStorageThread::create())
-    , m_path(path.crossThreadString())
+    , m_path(path.isolatedCopy())
 {
     ASSERT(isMainThread());
     ASSERT(!m_path.isEmpty());

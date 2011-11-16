@@ -48,7 +48,7 @@
     ],
   },
   'conditions': [
-    ['os_posix == 1 and OS != "mac" and gcc_version==46', {
+    ['os_posix == 1 and OS != "mac" and OS != "android" and gcc_version==46', {
       'target_defaults': {
         # Disable warnings about c++0x compatibility, as some names (such as nullptr) conflict
         # with upcoming c++0x types.
@@ -125,18 +125,14 @@
         # ... Then include what we want.
         ['include', '../wtf/'],
         # FIXME: This is clearly not sustainable. 
-        ['exclude', '../wtf/android'], 
-        ['exclude', '../wtf/brew'], 
         ['exclude', '../wtf/efl'], 
         ['exclude', '../wtf/gobject'], 
         ['exclude', '../wtf/gtk'], 
-        ['exclude', '../wtf/haiku'], 
         ['exclude', '../wtf/mac'], 
         ['exclude', '../wtf/qt'], 
         ['exclude', '../wtf/url'], 
         ['exclude', '../wtf/wince'], 
         ['exclude', '../wtf/wx'], 
-        ['exclude', '../wtf/unicode/brew'], 
         ['exclude', '../wtf/unicode/wince'], 
         ['exclude', '../wtf/unicode/glib'], 
         ['exclude', '../wtf/unicode/qt4'], 

@@ -26,7 +26,8 @@
 #ifndef WTF_StdLibExtras_h
 #define WTF_StdLibExtras_h
 
-#include <wtf/Assertions.h>
+#include "CheckedArithmetic.h"
+#include "Assertions.h"
 
 // Use these to declare and define a static local variable (static T;) so that
 //  it is leaked so that its destructors are not called at exit. Using this
@@ -41,6 +42,25 @@
     static type& name = *new type arguments
 #endif
 #endif
+
+// Use this macro to declare and define a debug-only global variable that may have a
+// non-trivial constructor and destructor. When building with clang, this will suppress
+// warnings about global constructors and exit-time destructors.
+#ifndef NDEBUG
+#if COMPILER(CLANG)
+#define DEFINE_DEBUG_ONLY_GLOBAL(type, name, arguments) \
+    _Pragma("clang diagnostic push") \
+    _Pragma("clang diagnostic ignored \"-Wglobal-constructors\"") \
+    _Pragma("clang diagnostic ignored \"-Wexit-time-destructors\"") \
+    static type name arguments; \
+    _Pragma("clang diagnostic pop")
+#else
+#define DEFINE_DEBUG_ONLY_GLOBAL(type, name, arguments) \
+    static type name arguments;
+#endif // COMPILER(CLANG)
+#else
+#define DEFINE_DEBUG_ONLY_GLOBAL(type, name, arguments)
+#endif // NDEBUG
 
 // OBJECT_OFFSETOF: Like the C++ offsetof macro, but you can use it with classes.
 // The magic number 0x4000 is insignificant. We use it to avoid using NULL, since
@@ -102,6 +122,13 @@ inline TO bitwise_cast(FROM from)
     return u.to;
 }
 
+template<typename To, typename From>
+inline To safeCast(From value)
+{
+    ASSERT(isInBounds<To>(value));
+    return static_cast<To>(value);
+}
+
 // Returns a count of the number of bits set in 'bits'.
 inline size_t bitCount(unsigned bits)
 {
@@ -123,19 +150,23 @@ template<size_t divisor> inline size_t roundUpToMultipleOf(size_t x)
     return (x + remainderMask) & ~remainderMask;
 }
 
+enum BinarySearchMode {
+    KeyMustBePresentInArray,
+    KeyMustNotBePresentInArray
+};
+
 // Binary search algorithm, calls extractKey on pre-sorted elements in array,
 // compares result with key (KeyTypes should be comparable with '--', '<', '>').
-// Optimized for cases where the array contains the key, checked by assertions.
-template<typename ArrayType, typename KeyType, KeyType(*extractKey)(ArrayType*)>
-inline ArrayType* binarySearch(ArrayType* array, size_t size, KeyType key)
+template<typename ArrayElementType, typename KeyType, KeyType(*extractKey)(ArrayElementType*)>
+inline ArrayElementType* binarySearch(ArrayElementType* array, size_t size, KeyType key, BinarySearchMode mode = KeyMustBePresentInArray)
 {
-    // The array must contain at least one element (pre-condition, array does conatin key).
-    // If the array only contains one element, no need to do the comparison.
+    // The array must contain at least one element (pre-condition, array does contain key).
+    // If the array contains only one element, no need to do the comparison.
     while (size > 1) {
         // Pick an element to check, half way through the array, and read the value.
         int pos = (size - 1) >> 1;
         KeyType val = extractKey(&array[pos]);
-        
+
         // If the key matches, success!
         if (val == key)
             return &array[pos];
@@ -149,19 +180,103 @@ inline ArrayType* binarySearch(ArrayType* array, size_t size, KeyType key)
             array += (pos + 1);
         }
 
+        // In case of BinarySearchMode = KeyMustBePresentInArray 'size' should never reach zero.
+        if (mode == KeyMustBePresentInArray)
+            ASSERT(size);
+    }
+
+    // In case of BinarySearchMode = KeyMustBePresentInArray if we reach this point
+    // we've chopped down to one element, no need to check it matches
+    if (mode == KeyMustBePresentInArray) {
+        ASSERT(size == 1);
+        ASSERT(key == extractKey(&array[0]));
+    }
+
+    return &array[0];
+}
+
+// Modified binary search algorithm that uses a functor. Note that this is strictly
+// more powerful than the above, but results in somewhat less template specialization.
+// Hence, depending on inlining heuristics, it might be slower.
+template<typename ArrayElementType, typename KeyType, typename ExtractKey>
+inline ArrayElementType* binarySearchWithFunctor(ArrayElementType* array, size_t size, KeyType key, BinarySearchMode mode = KeyMustBePresentInArray, const ExtractKey& extractKey = ExtractKey())
+{
+    // The array must contain at least one element (pre-condition, array does contain key).
+    // If the array contains only one element, no need to do the comparison.
+    while (size > 1) {
+        // Pick an element to check, half way through the array, and read the value.
+        int pos = (size - 1) >> 1;
+        KeyType val = extractKey(&array[pos]);
+
+        // If the key matches, success!
+        if (val == key)
+            return &array[pos];
+        // The item we are looking for is smaller than the item being check; reduce the value of 'size',
+        // chopping off the right hand half of the array.
+        else if (key < val)
+            size = pos;
+        // Discard all values in the left hand half of the array, up to and including the item at pos.
+        else {
+            size -= (pos + 1);
+            array += (pos + 1);
+        }
+
+        // In case of BinarySearchMode = KeyMustBePresentInArray 'size' should never reach zero.
+        if (mode == KeyMustBePresentInArray)
+            ASSERT(size);
+    }
+
+    // In case of BinarySearchMode = KeyMustBePresentInArray if we reach this point
+    // we've chopped down to one element, no need to check it matches
+    if (mode == KeyMustBePresentInArray) {
+        ASSERT(size == 1);
+        ASSERT(key == extractKey(&array[0]));
+    }
+
+    return &array[0];
+}
+
+// Modified binarySearch() algorithm designed for array-like classes that support
+// operator[] but not operator+=. One example of a class that qualifies is
+// SegmentedVector.
+template<typename ArrayElementType, typename KeyType, KeyType(*extractKey)(ArrayElementType*), typename ArrayType>
+inline ArrayElementType* genericBinarySearch(ArrayType& array, size_t size, KeyType key)
+{
+    // The array must contain at least one element (pre-condition, array does conatin key).
+    // If the array only contains one element, no need to do the comparison.
+    size_t offset = 0;
+    while (size > 1) {
+        // Pick an element to check, half way through the array, and read the value.
+        int pos = (size - 1) >> 1;
+        KeyType val = extractKey(&array[offset + pos]);
+        
+        // If the key matches, success!
+        if (val == key)
+            return &array[offset + pos];
+        // The item we are looking for is smaller than the item being check; reduce the value of 'size',
+        // chopping off the right hand half of the array.
+        if (key < val)
+            size = pos;
+        // Discard all values in the left hand half of the array, up to and including the item at pos.
+        else {
+            size -= (pos + 1);
+            offset += (pos + 1);
+        }
+
         // 'size' should never reach zero.
         ASSERT(size);
     }
     
     // If we reach this point we've chopped down to one element, no need to check it matches
     ASSERT(size == 1);
-    ASSERT(key == extractKey(&array[0]));
-    return &array[0];
+    ASSERT(key == extractKey(&array[offset]));
+    return &array[offset];
 }
 
 } // namespace WTF
 
 using WTF::binarySearch;
 using WTF::bitwise_cast;
+using WTF::safeCast;
 
 #endif // WTF_StdLibExtras_h

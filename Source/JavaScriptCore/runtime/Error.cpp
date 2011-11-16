@@ -26,6 +26,7 @@
 
 #include "ConstructData.h"
 #include "ErrorConstructor.h"
+#include "FunctionPrototype.h"
 #include "JSFunction.h"
 #include "JSGlobalObject.h"
 #include "JSObject.h"
@@ -165,55 +166,14 @@ JSObject* throwSyntaxError(ExecState* exec)
     return throwError(exec, createSyntaxError(exec, "Syntax error"));
 }
 
-class StrictModeTypeErrorFunction : public InternalFunction {
-private:
-    StrictModeTypeErrorFunction(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, const UString& message)
-        : InternalFunction(&exec->globalData(), globalObject, structure, exec->globalData().propertyNames->emptyIdentifier)
-        , m_message(message)
-    {
-    }
-
-public:
-    typedef InternalFunction Base;
-
-    static StrictModeTypeErrorFunction* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, const UString& message)
-    {
-        return new (allocateCell<StrictModeTypeErrorFunction>(*exec->heap())) StrictModeTypeErrorFunction(exec, globalObject, structure, message);
-    }
-    
-    static EncodedJSValue JSC_HOST_CALL constructThrowTypeError(ExecState* exec)
-    {
-        throwTypeError(exec, static_cast<StrictModeTypeErrorFunction*>(exec->callee())->m_message);
-        return JSValue::encode(jsNull());
-    }
-    
-    ConstructType getConstructData(ConstructData& constructData)
-    {
-        constructData.native.function = constructThrowTypeError;
-        return ConstructTypeHost;
-    }
-    
-    static EncodedJSValue JSC_HOST_CALL callThrowTypeError(ExecState* exec)
-    {
-        throwTypeError(exec, static_cast<StrictModeTypeErrorFunction*>(exec->callee())->m_message);
-        return JSValue::encode(jsNull());
-    }
-
-    CallType getCallData(CallData& callData)
-    {
-        callData.native.function = callThrowTypeError;
-        return CallTypeHost;
-    }
-
-private:
-    UString m_message;
-};
-
 ASSERT_CLASS_FITS_IN_CELL(StrictModeTypeErrorFunction);
+
+const ClassInfo StrictModeTypeErrorFunction::s_info = { "Function", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(StrictModeTypeErrorFunction) };
 
 JSValue createTypeErrorFunction(ExecState* exec, const UString& message)
 {
-    return StrictModeTypeErrorFunction::create(exec, exec->lexicalGlobalObject(), exec->lexicalGlobalObject()->internalFunctionStructure(), message);
+    JSGlobalObject* globalObject = exec->lexicalGlobalObject();
+    return StrictModeTypeErrorFunction::create(exec, globalObject, globalObject->strictModeTypeErrorFunctionStructure(), message);
 }
 
 } // namespace JSC

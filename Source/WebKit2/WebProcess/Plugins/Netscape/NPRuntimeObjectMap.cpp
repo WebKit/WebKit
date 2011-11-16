@@ -31,10 +31,12 @@
 #include "NPRuntimeUtilities.h"
 #include "PluginView.h"
 #include "WebProcess.h"
+#include <JavaScriptCore/Completion.h>
 #include <JavaScriptCore/Error.h>
 #include <JavaScriptCore/JSLock.h>
 #include <JavaScriptCore/SourceCode.h>
 #include <JavaScriptCore/Strong.h>
+#include <JavaScriptCore/StrongInlines.h>
 #include <WebCore/Frame.h>
 #include <WebCore/NotImplemented.h>
 
@@ -188,21 +190,9 @@ bool NPRuntimeObjectMap::evaluate(NPObject* npObject, const String&scriptString,
     JSValue thisValue = getOrCreateJSObject(globalObject.get(), npObject);
 
     globalObject->globalData().timeoutChecker.start();
-    Completion completion = JSC::evaluate(exec, globalObject->globalScopeChain(), makeSource(UString(scriptString.impl())), thisValue);
+    JSValue resultValue = JSC::evaluate(exec, globalObject->globalScopeChain(), makeSource(UString(scriptString.impl())), thisValue);
     globalObject->globalData().timeoutChecker.stop();
 
-    ComplType completionType = completion.complType();
-
-    JSValue resultValue;
-    if (completionType == Normal) {
-        resultValue = completion.value();
-        if (!resultValue)
-            resultValue = jsUndefined();
-    } else
-        resultValue = jsUndefined();
-
-    exec->clearException();
-    
     convertJSValueToNPVariant(exec, resultValue, *result);
     return true;
 }

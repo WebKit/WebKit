@@ -36,6 +36,8 @@ namespace JSC {
 
     ALWAYS_INLINE JSValue jsString(ExecState* exec, JSString* s1, JSString* s2)
     {
+        JSGlobalData& globalData = exec->globalData();
+
         unsigned length1 = s1->length();
         if (!length1)
             return s2;
@@ -45,194 +47,76 @@ namespace JSC {
         if ((length1 + length2) < length1)
             return throwOutOfMemoryError(exec);
 
-        unsigned fiberCount = s1->fiberCount() + s2->fiberCount();
-        JSGlobalData* globalData = &exec->globalData();
-
-        if (fiberCount <= JSString::s_maxInternalRopeLength)
-            return JSString::create(*globalData, fiberCount, s1, s2);
-
-        JSString::RopeBuilder ropeBuilder(fiberCount);
-        if (UNLIKELY(ropeBuilder.isOutOfMemory()))
-            return throwOutOfMemoryError(exec);
-        ropeBuilder.append(s1);
-        ropeBuilder.append(s2);
-        return JSString::create(*globalData, ropeBuilder.release());
-    }
-
-    ALWAYS_INLINE JSValue jsString(ExecState* exec, const UString& u1, JSString* s2)
-    {
-        unsigned length1 = u1.length();
-        if (!length1)
-            return s2;
-        unsigned length2 = s2->length();
-        if (!length2)
-            return jsString(exec, u1);
-        if ((length1 + length2) < length1)
-            return throwOutOfMemoryError(exec);
-
-        unsigned fiberCount = 1 + s2->fiberCount();
-        JSGlobalData* globalData = &exec->globalData();
-
-        if (fiberCount <= JSString::s_maxInternalRopeLength)
-            return JSString::create(*globalData, fiberCount, u1, s2);
-
-        JSString::RopeBuilder ropeBuilder(fiberCount);
-        if (UNLIKELY(ropeBuilder.isOutOfMemory()))
-            return throwOutOfMemoryError(exec);
-        ropeBuilder.append(u1);
-        ropeBuilder.append(s2);
-        return JSString::create(*globalData, ropeBuilder.release());
-    }
-
-    ALWAYS_INLINE JSValue jsString(ExecState* exec, JSString* s1, const UString& u2)
-    {
-        unsigned length1 = s1->length();
-        if (!length1)
-            return jsString(exec, u2);
-        unsigned length2 = u2.length();
-        if (!length2)
-            return s1;
-        if ((length1 + length2) < length1)
-            return throwOutOfMemoryError(exec);
-
-        unsigned fiberCount = s1->fiberCount() + 1;
-        JSGlobalData* globalData = &exec->globalData();
-
-        if (fiberCount <= JSString::s_maxInternalRopeLength)
-            return JSString::create(*globalData, fiberCount, s1, u2);
-
-        JSString::RopeBuilder ropeBuilder(fiberCount);
-        if (UNLIKELY(ropeBuilder.isOutOfMemory()))
-            return throwOutOfMemoryError(exec);
-        ropeBuilder.append(s1);
-        ropeBuilder.append(u2);
-        return JSString::create(*globalData, ropeBuilder.release());
-    }
-
-    ALWAYS_INLINE JSValue jsString(ExecState* exec, const UString& u1, const UString& u2)
-    {
-        unsigned length1 = u1.length();
-        if (!length1)
-            return jsString(exec, u2);
-        unsigned length2 = u2.length();
-        if (!length2)
-            return jsString(exec, u1);
-        if ((length1 + length2) < length1)
-            return throwOutOfMemoryError(exec);
-
-        JSGlobalData* globalData = &exec->globalData();
-        return JSString::create(*globalData, u1, u2);
+        return fixupVPtr(&globalData, JSString::create(globalData, s1, s2));
     }
 
     ALWAYS_INLINE JSValue jsString(ExecState* exec, const UString& u1, const UString& u2, const UString& u3)
     {
+        JSGlobalData* globalData = &exec->globalData();
+
         unsigned length1 = u1.length();
         unsigned length2 = u2.length();
         unsigned length3 = u3.length();
         if (!length1)
-            return jsString(exec, u2, u3);
+            return jsString(exec, jsString(globalData, u2), jsString(globalData, u3));
         if (!length2)
-            return jsString(exec, u1, u3);
+            return jsString(exec, jsString(globalData, u1), jsString(globalData, u3));
         if (!length3)
-            return jsString(exec, u1, u2);
+            return jsString(exec, jsString(globalData, u1), jsString(globalData, u2));
 
         if ((length1 + length2) < length1)
             return throwOutOfMemoryError(exec);
         if ((length1 + length2 + length3) < length3)
             return throwOutOfMemoryError(exec);
 
-        JSGlobalData* globalData = &exec->globalData();
-        return JSString::create(*globalData, u1, u2, u3);
+        return fixupVPtr(globalData, JSString::create(exec->globalData(), jsString(globalData, u1), jsString(globalData, u2), jsString(globalData, u3)));
     }
 
     ALWAYS_INLINE JSValue jsString(ExecState* exec, Register* strings, unsigned count)
     {
-        ASSERT(count >= 3);
-
-        unsigned fiberCount = 0;
-        for (unsigned i = 0; i < count; ++i) {
-            JSValue v = strings[i].jsValue();
-            if (LIKELY(v.isString()))
-                fiberCount += asString(v)->fiberCount();
-            else
-                ++fiberCount;
-        }
-
         JSGlobalData* globalData = &exec->globalData();
-        if (fiberCount == 3)
-            return JSString::create(exec, strings[0].jsValue(), strings[1].jsValue(), strings[2].jsValue());
+        JSString::RopeBuilder ropeBuilder(*globalData);
 
-        JSString::RopeBuilder ropeBuilder(fiberCount);
-        if (UNLIKELY(ropeBuilder.isOutOfMemory()))
-            return throwOutOfMemoryError(exec);
-
-        unsigned length = 0;
-        bool overflow = false;
+        unsigned oldLength = 0;
 
         for (unsigned i = 0; i < count; ++i) {
             JSValue v = strings[i].jsValue();
-            if (LIKELY(v.isString()))
+            if (v.isString())
                 ropeBuilder.append(asString(v));
             else
-                ropeBuilder.append(v.toString(exec));
+                ropeBuilder.append(jsString(globalData, v.toString(exec)));
 
-            unsigned newLength = ropeBuilder.length();
-            if (newLength < length)
-                overflow = true;
-            length = newLength;
+            if (ropeBuilder.length() < oldLength) // True for overflow
+                return throwOutOfMemoryError(exec);
         }
 
-        if (overflow)
-            return throwOutOfMemoryError(exec);
-
-        return JSString::create(*globalData, ropeBuilder.release());
+        return ropeBuilder.release();
     }
 
-    ALWAYS_INLINE JSValue jsString(ExecState* exec, JSValue thisValue)
+    ALWAYS_INLINE JSValue jsStringFromArguments(ExecState* exec, JSValue thisValue)
     {
-        unsigned fiberCount = 0;
-        if (LIKELY(thisValue.isString()))
-            fiberCount += asString(thisValue)->fiberCount();
-        else
-            ++fiberCount;
-        for (unsigned i = 0; i < exec->argumentCount(); ++i) {
-            JSValue v = exec->argument(i);
-            if (LIKELY(v.isString()))
-                fiberCount += asString(v)->fiberCount();
-            else
-                ++fiberCount;
-        }
+        JSGlobalData* globalData = &exec->globalData();
+        JSString::RopeBuilder ropeBuilder(*globalData);
 
-        JSString::RopeBuilder ropeBuilder(fiberCount);
-        if (UNLIKELY(ropeBuilder.isOutOfMemory()))
-            return throwOutOfMemoryError(exec);
-
-        if (LIKELY(thisValue.isString()))
+        if (thisValue.isString())
             ropeBuilder.append(asString(thisValue));
         else
-            ropeBuilder.append(thisValue.toString(exec));
+            ropeBuilder.append(jsString(globalData, thisValue.toString(exec)));
 
-        unsigned length = 0;
-        bool overflow = false;
+        unsigned oldLength = 0;
 
         for (unsigned i = 0; i < exec->argumentCount(); ++i) {
             JSValue v = exec->argument(i);
-            if (LIKELY(v.isString()))
+            if (v.isString())
                 ropeBuilder.append(asString(v));
             else
-                ropeBuilder.append(v.toString(exec));
+                ropeBuilder.append(jsString(globalData, v.toString(exec)));
 
-            unsigned newLength = ropeBuilder.length();
-            if (newLength < length)
-                overflow = true;
-            length = newLength;
+            if (ropeBuilder.length() < oldLength) // True for overflow
+                return throwOutOfMemoryError(exec);
         }
 
-        if (overflow)
-            return throwOutOfMemoryError(exec);
-
-        JSGlobalData* globalData = &exec->globalData();
-        return JSString::create(*globalData, ropeBuilder.release());
+        return ropeBuilder.release();
     }
 
     // ECMA 11.9.3
@@ -248,7 +132,7 @@ namespace JSC {
     {
         do {
             if (v1.isNumber() && v2.isNumber())
-                return v1.uncheckedGetNumber() == v2.uncheckedGetNumber();
+                return v1.asNumber() == v2.asNumber();
 
             bool s1 = v1.isString();
             bool s2 = v2.isString();
@@ -299,10 +183,10 @@ namespace JSC {
 
             if (v1.isBoolean()) {
                 if (v2.isNumber())
-                    return static_cast<double>(v1.getBoolean()) == v2.uncheckedGetNumber();
+                    return static_cast<double>(v1.asBoolean()) == v2.asNumber();
             } else if (v2.isBoolean()) {
                 if (v1.isNumber())
-                    return v1.uncheckedGetNumber() == static_cast<double>(v2.getBoolean());
+                    return v1.asNumber() == static_cast<double>(v2.asBoolean());
             }
 
             return v1 == v2;
@@ -326,7 +210,7 @@ namespace JSC {
             return v1 == v2;
 
         if (v1.isNumber() && v2.isNumber())
-            return v1.uncheckedGetNumber() == v2.uncheckedGetNumber();
+            return v1.asNumber() == v2.asNumber();
 
         if (!v1.isCell() || !v2.isCell())
             return v1 == v2;
@@ -343,15 +227,15 @@ namespace JSC {
         if (v1.isInt32() && v2.isInt32())
             return v1.asInt32() < v2.asInt32();
 
-        double n1;
-        double n2;
-        if (v1.getNumber(n1) && v2.getNumber(n2))
-            return n1 < n2;
+        if (v1.isNumber() && v2.isNumber())
+            return v1.asNumber() < v2.asNumber();
 
         JSGlobalData* globalData = &callFrame->globalData();
         if (isJSString(globalData, v1) && isJSString(globalData, v2))
             return asString(v1)->value(callFrame) < asString(v2)->value(callFrame);
 
+        double n1;
+        double n2;
         JSValue p1;
         JSValue p2;
         bool wasNotString1;
@@ -378,15 +262,15 @@ namespace JSC {
         if (v1.isInt32() && v2.isInt32())
             return v1.asInt32() <= v2.asInt32();
 
-        double n1;
-        double n2;
-        if (v1.getNumber(n1) && v2.getNumber(n2))
-            return n1 <= n2;
+        if (v1.isNumber() && v2.isNumber())
+            return v1.asNumber() <= v2.asNumber();
 
         JSGlobalData* globalData = &callFrame->globalData();
         if (isJSString(globalData, v1) && isJSString(globalData, v2))
             return !(asString(v2)->value(callFrame) < asString(v1)->value(callFrame));
 
+        double n1;
+        double n2;
         JSValue p1;
         JSValue p2;
         bool wasNotString1;
@@ -415,9 +299,8 @@ namespace JSC {
 
     ALWAYS_INLINE JSValue jsAdd(CallFrame* callFrame, JSValue v1, JSValue v2)
     {
-        double left = 0.0, right;
-        if (v1.getNumber(left) && v2.getNumber(right))
-            return jsNumber(left + right);
+        if (v1.isNumber() && v2.isNumber())
+            return jsNumber(v1.asNumber() + v2.asNumber());
         
         if (v1.isString()) {
             return v2.isString()

@@ -41,13 +41,18 @@ using namespace JSC;
 
 namespace WebCore {
 
-const ClassInfo JSDOMWindowBase::s_info = { "Window", &JSDOMGlobalObject::s_info, 0, 0 };
+const ClassInfo JSDOMWindowBase::s_info = { "Window", &JSDOMGlobalObject::s_info, 0, 0, CREATE_METHOD_TABLE(JSDOMWindowBase) };
 
 JSDOMWindowBase::JSDOMWindowBase(JSGlobalData& globalData, Structure* structure, PassRefPtr<DOMWindow> window, JSDOMWindowShell* shell)
-    : JSDOMGlobalObject(globalData, structure, shell->world(), shell)
+    : JSDOMGlobalObject(globalData, structure, shell->world())
     , m_impl(window)
     , m_shell(shell)
 {
+}
+
+void JSDOMWindowBase::finishCreation(JSGlobalData& globalData, JSDOMWindowShell* shell)
+{
+    Base::finishCreation(globalData, shell);
     ASSERT(inherits(&s_info));
 
     GlobalPropertyInfo staticGlobals[] = {
@@ -151,14 +156,9 @@ void JSDOMWindowBase::willRemoveFromWindowShell()
     setCurrentEvent(0);
 }
 
-JSObject* JSDOMWindowBase::toThisObject(ExecState*) const
+JSObject* JSDOMWindowBase::toThisObject(JSCell* cell, ExecState*)
 {
-    return shell();
-}
-
-JSValue JSDOMWindowBase::toStrictThisObject(ExecState*) const
-{
-    return shell();
+    return static_cast<JSDOMWindowBase*>(cell)->shell();
 }
 
 JSDOMWindowShell* JSDOMWindowBase::shell() const

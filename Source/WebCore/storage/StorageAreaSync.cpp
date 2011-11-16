@@ -56,7 +56,7 @@ inline StorageAreaSync::StorageAreaSync(PassRefPtr<StorageSyncManager> storageSy
     , m_finalSyncScheduled(false)
     , m_storageArea(storageArea)
     , m_syncManager(storageSyncManager)
-    , m_databaseIdentifier(databaseIdentifier.crossThreadString())
+    , m_databaseIdentifier(databaseIdentifier.isolatedCopy())
     , m_clearItemsWhileSyncing(false)
     , m_syncScheduled(false)
     , m_syncInProgress(false)
@@ -188,7 +188,7 @@ void StorageAreaSync::syncTimerFired(Timer<StorageAreaSync>*)
                 partialSync = true;
                 break;
             }
-            m_itemsPendingSync.set(changed_it->first.crossThreadString(), changed_it->second.crossThreadString());
+            m_itemsPendingSync.set(changed_it->first.isolatedCopy(), changed_it->second.isolatedCopy());
         }
 
         if (partialSync) {

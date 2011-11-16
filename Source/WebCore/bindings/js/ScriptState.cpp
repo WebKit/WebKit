@@ -38,6 +38,7 @@
 #include "Page.h"
 #include "WorkerContext.h"
 #include "WorkerScriptController.h"
+#include <heap/StrongInlines.h>
 #include <interpreter/CallFrame.h>
 #include <runtime/JSGlobalObject.h>
 

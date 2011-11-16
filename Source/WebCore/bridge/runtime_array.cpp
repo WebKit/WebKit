@@ -35,13 +35,16 @@ using namespace WebCore;
 
 namespace JSC {
 
-const ClassInfo RuntimeArray::s_info = { "RuntimeArray", &JSArray::s_info, 0, 0 };
+const ClassInfo RuntimeArray::s_info = { "RuntimeArray", &JSArray::s_info, 0, 0, CREATE_METHOD_TABLE(RuntimeArray) };
 
-RuntimeArray::RuntimeArray(ExecState* exec, Bindings::Array* array)
-    // FIXME: deprecatedGetDOMStructure uses the prototype off of the wrong global object
-    // We need to pass in the right global object for "array".
-    : JSArray(exec->globalData(), deprecatedGetDOMStructure<RuntimeArray>(exec))
+RuntimeArray::RuntimeArray(ExecState* exec, Structure* structure)
+    : JSArray(exec->globalData(), structure)
 {
+}
+
+void RuntimeArray::finishCreation(JSGlobalData& globalData, Bindings::Array* array)
+{
+    Base::finishCreation(globalData);
     ASSERT(inherits(&s_info));
     setSubclassData(array);
 }
@@ -63,42 +66,45 @@ JSValue RuntimeArray::indexGetter(ExecState* exec, JSValue slotBase, unsigned in
     return thisObj->getConcreteArray()->valueAt(exec, index);
 }
 
-void RuntimeArray::getOwnPropertyNames(ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
+void RuntimeArray::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
-    unsigned length = getLength();
+    RuntimeArray* thisObject = static_cast<RuntimeArray*>(object);
+    unsigned length = thisObject->getLength();
     for (unsigned i = 0; i < length; ++i)
         propertyNames.add(Identifier::from(exec, i));
 
     if (mode == IncludeDontEnumProperties)
         propertyNames.add(exec->propertyNames().length);
 
-    JSObject::getOwnPropertyNames(exec, propertyNames, mode);
+    JSObject::getOwnPropertyNames(thisObject, exec, propertyNames, mode);
 }
 
-bool RuntimeArray::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
+bool RuntimeArray::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
+    RuntimeArray* thisObject = static_cast<RuntimeArray*>(cell);
     if (propertyName == exec->propertyNames().length) {
-        slot.setCacheableCustom(this, lengthGetter);
+        slot.setCacheableCustom(thisObject, thisObject->lengthGetter);
         return true;
     }
     
     bool ok;
     unsigned index = propertyName.toArrayIndex(ok);
     if (ok) {
-        if (index < getLength()) {
-            slot.setCustomIndex(this, index, indexGetter);
+        if (index < thisObject->getLength()) {
+            slot.setCustomIndex(thisObject, index, thisObject->indexGetter);
             return true;
         }
     }
     
-    return JSObject::getOwnPropertySlot(exec, propertyName, slot);
+    return JSObject::getOwnPropertySlot(thisObject, exec, propertyName, slot);
 }
 
-bool RuntimeArray::getOwnPropertyDescriptor(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
+bool RuntimeArray::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
 {
+    RuntimeArray* thisObject = static_cast<RuntimeArray*>(object);
     if (propertyName == exec->propertyNames().length) {
         PropertySlot slot;
-        slot.setCustom(this, lengthGetter);
+        slot.setCustom(thisObject, lengthGetter);
         descriptor.setDescriptor(slot.getValue(exec, propertyName), ReadOnly | DontDelete | DontEnum);
         return true;
     }
@@ -106,29 +112,31 @@ bool RuntimeArray::getOwnPropertyDescriptor(ExecState* exec, const Identifier& p
     bool ok;
     unsigned index = propertyName.toArrayIndex(ok);
     if (ok) {
-        if (index < getLength()) {
+        if (index < thisObject->getLength()) {
             PropertySlot slot;
-            slot.setCustomIndex(this, index, indexGetter);
+            slot.setCustomIndex(thisObject, index, indexGetter);
             descriptor.setDescriptor(slot.getValue(exec, propertyName), DontDelete | DontEnum);
             return true;
         }
     }
     
-    return JSObject::getOwnPropertyDescriptor(exec, propertyName, descriptor);
+    return JSObject::getOwnPropertyDescriptor(thisObject, exec, propertyName, descriptor);
 }
 
-bool RuntimeArray::getOwnPropertySlot(ExecState *exec, unsigned index, PropertySlot& slot)
+bool RuntimeArray::getOwnPropertySlotByIndex(JSCell* cell, ExecState *exec, unsigned index, PropertySlot& slot)
 {
-    if (index < getLength()) {
-        slot.setCustomIndex(this, index, indexGetter);
+    RuntimeArray* thisObject = static_cast<RuntimeArray*>(cell);
+    if (index < thisObject->getLength()) {
+        slot.setCustomIndex(thisObject, index, thisObject->indexGetter);
         return true;
     }
     
-    return JSObject::getOwnPropertySlot(exec, index, slot);
+    return JSObject::getOwnPropertySlotByIndex(thisObject, exec, index, slot);
 }
 
-void RuntimeArray::put(ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
+void RuntimeArray::put(JSCell* cell, ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
 {
+    RuntimeArray* thisObject = static_cast<RuntimeArray*>(cell);
     if (propertyName == exec->propertyNames().length) {
         throwError(exec, createRangeError(exec, "Range error"));
         return;
@@ -137,29 +145,30 @@ void RuntimeArray::put(ExecState* exec, const Identifier& propertyName, JSValue 
     bool ok;
     unsigned index = propertyName.toArrayIndex(ok);
     if (ok) {
-        getConcreteArray()->setValueAt(exec, index, value);
+        thisObject->getConcreteArray()->setValueAt(exec, index, value);
         return;
     }
     
-    JSObject::put(exec, propertyName, value, slot);
+    JSObject::put(thisObject, exec, propertyName, value, slot);
 }
 
-void RuntimeArray::put(ExecState* exec, unsigned index, JSValue value)
+void RuntimeArray::putByIndex(JSCell* cell, ExecState* exec, unsigned index, JSValue value)
 {
-    if (index >= getLength()) {
+    RuntimeArray* thisObject = static_cast<RuntimeArray*>(cell);
+    if (index >= thisObject->getLength()) {
         throwError(exec, createRangeError(exec, "Range error"));
         return;
     }
     
-    getConcreteArray()->setValueAt(exec, index, value);
+    thisObject->getConcreteArray()->setValueAt(exec, index, value);
 }
 
-bool RuntimeArray::deleteProperty(ExecState*, const Identifier&)
+bool RuntimeArray::deleteProperty(JSCell*, ExecState*, const Identifier&)
 {
     return false;
 }
 
-bool RuntimeArray::deleteProperty(ExecState*, unsigned)
+bool RuntimeArray::deletePropertyByIndex(JSCell*, ExecState*, unsigned)
 {
     return false;
 }

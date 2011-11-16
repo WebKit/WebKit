@@ -50,10 +50,10 @@ NEVER_INLINE JSValue jsAddSlowCase(CallFrame* callFrame, JSValue v1, JSValue v2)
     if (p1.isString()) {
         return p2.isString()
             ? jsString(callFrame, asString(p1), asString(p2))
-            : jsString(callFrame, asString(p1), p2.toString(callFrame));
+            : jsString(callFrame, asString(p1), jsString(callFrame, p2.toString(callFrame)));
     }
     if (p2.isString())
-        return jsString(callFrame, p1.toString(callFrame), asString(p2));
+        return jsString(callFrame, jsString(callFrame, p1.toString(callFrame)), asString(p2));
 
     return jsNumber(p1.toNumber(callFrame) + p2.toNumber(callFrame));
 }
@@ -74,7 +74,8 @@ JSValue jsTypeStringForValue(CallFrame* callFrame, JSValue v)
         if (asObject(v)->structure()->typeInfo().masqueradesAsUndefined())
             return jsNontrivialString(callFrame, "undefined");
         CallData callData;
-        if (asObject(v)->getCallData(callData) != CallTypeNone)
+        JSObject* object = asObject(v);
+        if (object->methodTable()->getCallData(object, callData) != CallTypeNone)
             return jsNontrivialString(callFrame, "function");
     }
     return jsNontrivialString(callFrame, "object");
@@ -88,11 +89,12 @@ bool jsIsObjectType(JSValue v)
     JSType type = v.asCell()->structure()->typeInfo().type();
     if (type == NumberType || type == StringType)
         return false;
-    if (type == ObjectType) {
+    if (type >= ObjectType) {
         if (asObject(v)->structure()->typeInfo().masqueradesAsUndefined())
             return false;
         CallData callData;
-        if (asObject(v)->getCallData(callData) != CallTypeNone)
+        JSObject* object = asObject(v);
+        if (object->methodTable()->getCallData(object, callData) != CallTypeNone)
             return false;
     }
     return true;
@@ -102,7 +104,8 @@ bool jsIsFunctionType(JSValue v)
 {
     if (v.isObject()) {
         CallData callData;
-        if (asObject(v)->getCallData(callData) != CallTypeNone)
+        JSObject* object = asObject(v);
+        if (object->methodTable()->getCallData(object, callData) != CallTypeNone)
             return true;
     }
     return false;

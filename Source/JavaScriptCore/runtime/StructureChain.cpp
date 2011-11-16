@@ -32,34 +32,25 @@
 
 namespace JSC {
     
-ClassInfo StructureChain::s_info = { "StructureChain", 0, 0, 0 };
+ClassInfo StructureChain::s_info = { "StructureChain", 0, 0, 0, CREATE_METHOD_TABLE(StructureChain) };
 
-StructureChain::StructureChain(JSGlobalData& globalData, Structure* structure, Structure* head)
+StructureChain::StructureChain(JSGlobalData& globalData, Structure* structure)
     : JSCell(globalData, structure)
 {
-    size_t size = 0;
-    for (Structure* current = head; current; current = current->storedPrototype().isNull() ? 0 : asObject(current->storedPrototype())->structure())
-        ++size;
-    
-    m_vector = adoptArrayPtr(new WriteBarrier<Structure>[size + 1]);
-
-    size_t i = 0;
-    for (Structure* current = head; current; current = current->storedPrototype().isNull() ? 0 : asObject(current->storedPrototype())->structure())
-        m_vector[i++].set(globalData, this, current);
-    m_vector[i].clear();
 }
 
 StructureChain::~StructureChain()
 {
 }
 
-void StructureChain::visitChildren(SlotVisitor& visitor)
+void StructureChain::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
-    ASSERT_GC_OBJECT_INHERITS(this, &s_info);
-    ASSERT(structure()->typeInfo().overridesVisitChildren());
+    StructureChain* thisObject = static_cast<StructureChain*>(cell);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
+    ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
     size_t i = 0;
-    while (m_vector[i])
-        visitor.append(&m_vector[i++]);
+    while (thisObject->m_vector[i])
+        visitor.append(&thisObject->m_vector[i++]);
 }
 
 } // namespace JSC

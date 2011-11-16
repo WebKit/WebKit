@@ -27,6 +27,7 @@
 #define JSMainThreadExecState_h
 
 #include "JSDOMBinding.h"
+#include <runtime/Completion.h>
 #ifndef NDEBUG
 #include <wtf/MainThread.h>
 #endif
@@ -51,10 +52,10 @@ public:
         return JSC::call(exec, functionObject, callType, callData, thisValue, args);
     };
 
-    static JSC::Completion evaluate(JSC::ExecState* exec, JSC::ScopeChainNode* chain, const JSC::SourceCode& source, JSC::JSValue thisValue)
+    static JSC::JSValue evaluate(JSC::ExecState* exec, JSC::ScopeChainNode* chain, const JSC::SourceCode& source, JSC::JSValue thisValue, JSC::JSValue* exception)
     {
         JSMainThreadExecState currentState(exec);
-        return JSC::evaluate(exec, chain, source, thisValue);
+        return JSC::evaluate(exec, chain, source, thisValue, exception);
     };
 
 protected:

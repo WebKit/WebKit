@@ -50,14 +50,18 @@ namespace WebCore {
 
 ScriptObject InjectedScriptManager::createInjectedScript(const String& source, ScriptState* scriptState, long id)
 {
-    SourceCode sourceCode = makeSource(stringToUString(source));
     JSLock lock(SilenceAssertionsOnly);
+
+    SourceCode sourceCode = makeSource(stringToUString(source));
     JSDOMGlobalObject* globalObject = static_cast<JSDOMGlobalObject*>(scriptState->lexicalGlobalObject());
     JSValue globalThisValue = scriptState->globalThisValue();
-    Completion comp = JSMainThreadExecState::evaluate(scriptState, globalObject->globalScopeChain(), sourceCode, globalThisValue);
-    if (comp.complType() != JSC::Normal && comp.complType() != JSC::ReturnValue)
+
+    JSValue evaluationException;
+    JSValue evaluationReturnValue = JSMainThreadExecState::evaluate(scriptState, globalObject->globalScopeChain(), sourceCode, globalThisValue, &evaluationException);
+    if (evaluationException)
         return ScriptObject();
-    JSValue functionValue = comp.value();
+
+    JSValue functionValue = evaluationReturnValue;
     CallData callData;
     CallType callType = getCallData(functionValue, callData);
     if (callType == CallTypeNone)

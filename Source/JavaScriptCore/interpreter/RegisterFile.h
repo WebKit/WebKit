@@ -38,6 +38,7 @@
 namespace JSC {
 
     class ConservativeRoots;
+    class JettisonedCodeBlocks;
 
     class RegisterFile {
         WTF_MAKE_NONCOPYABLE(RegisterFile);
@@ -64,6 +65,7 @@ namespace JSC {
         ~RegisterFile();
         
         void gatherConservativeRoots(ConservativeRoots&);
+        void gatherConservativeRoots(ConservativeRoots&, JettisonedCodeBlocks&);
 
         Register* begin() const { return static_cast<Register*>(m_reservation.base()); }
         Register* end() const { return m_end; }

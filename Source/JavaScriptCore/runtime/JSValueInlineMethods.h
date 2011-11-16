@@ -54,47 +54,15 @@ namespace JSC {
         return asInt32();
     }
 
-    inline double JSValue::uncheckedGetNumber() const
+    inline double JSValue::asNumber() const
     {
         ASSERT(isNumber());
         return isInt32() ? asInt32() : asDouble();
     }
 
-    ALWAYS_INLINE JSValue JSValue::toJSNumber(ExecState* exec) const
-    {
-        return isNumber() ? asValue() : jsNumber(this->toNumber(exec));
-    }
-
     inline JSValue jsNaN()
     {
         return JSValue(std::numeric_limits<double>::quiet_NaN());
-    }
-
-    inline bool JSValue::getNumber(double& result) const
-    {
-        if (isInt32()) {
-            result = asInt32();
-            return true;
-        }
-        if (isDouble()) {
-            result = asDouble();
-            return true;
-        }
-        return false;
-    }
-
-    inline bool JSValue::getBoolean(bool& v) const
-    {
-        if (isTrue()) {
-            v = true;
-            return true;
-        }
-        if (isFalse()) {
-            v = false;
-            return true;
-        }
-        
-        return false;
     }
 
     inline JSValue::JSValue(char i)
@@ -255,6 +223,11 @@ namespace JSC {
         return u.asInt64 != other.u.asInt64;
     }
 
+    inline bool JSValue::isEmpty() const
+    {
+        return tag() == EmptyValueTag;
+    }
+
     inline bool JSValue::isUndefined() const
     {
         return tag() == UndefinedTag;
@@ -344,7 +317,7 @@ namespace JSC {
         return isTrue() || isFalse();
     }
 
-    inline bool JSValue::getBoolean() const
+    inline bool JSValue::asBoolean() const
     {
         ASSERT(isBoolean());
         return payload();
@@ -400,14 +373,19 @@ namespace JSC {
         return u.ptr != other.u.ptr;
     }
 
+    inline bool JSValue::isEmpty() const
+    {
+        return u.asInt64 == ValueEmpty;
+    }
+
     inline bool JSValue::isUndefined() const
     {
-        return asValue() == jsUndefined();
+        return asValue() == JSValue(JSUndefined);
     }
 
     inline bool JSValue::isNull() const
     {
-        return asValue() == jsNull();
+        return asValue() == JSValue(JSNull);
     }
 
     inline bool JSValue::isTrue() const
@@ -420,10 +398,10 @@ namespace JSC {
         return asValue() == JSValue(JSFalse);
     }
 
-    inline bool JSValue::getBoolean() const
+    inline bool JSValue::asBoolean() const
     {
-        ASSERT(asValue() == jsBoolean(true) || asValue() == jsBoolean(false));
-        return asValue() == jsBoolean(true);
+        ASSERT(isBoolean());
+        return asValue() == JSValue(JSTrue);
     }
 
     inline int32_t JSValue::asInt32() const

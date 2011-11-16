@@ -29,34 +29,44 @@
 #include "config.h"
 #include "InitializeThreading.h"
 
+#include "ExecutableAllocator.h"
 #include "Heap.h"
-#include "dtoa.h"
+#include "Heuristics.h"
 #include "Identifier.h"
 #include "JSGlobalObject.h"
 #include "UString.h"
+#include "WriteBarrier.h"
+#include "dtoa.h"
 #include <wtf/DateMath.h>
 #include <wtf/Threading.h>
+#include <wtf/dtoa/cached-powers.h>
 
 using namespace WTF;
 
 namespace JSC {
 
-#if OS(DARWIN) && ENABLE(JSC_MULTIPLE_THREADS)
+#if OS(DARWIN)
 static pthread_once_t initializeThreadingKeyOnce = PTHREAD_ONCE_INIT;
 #endif
 
 static void initializeThreadingOnce()
 {
+    WTF::double_conversion::initialize();
     WTF::initializeThreading();
-    JSGlobalData::storeVPtrs();
-#if ENABLE(JSC_MULTIPLE_THREADS)
-    RegisterFile::initializeThreading();
+    Heuristics::initializeHeuristics();
+#if ENABLE(WRITE_BARRIER_PROFILING)
+    WriteBarrierCounters::initialize();
 #endif
+    JSGlobalData::storeVPtrs();
+#if ENABLE(JIT) && ENABLE(ASSEMBLER)
+    ExecutableAllocator::initializeAllocator();
+#endif
+    RegisterFile::initializeThreading();
 }
 
 void initializeThreading()
 {
-#if OS(DARWIN) && ENABLE(JSC_MULTIPLE_THREADS)
+#if OS(DARWIN)
     pthread_once(&initializeThreadingKeyOnce, initializeThreadingOnce);
 #else
     static bool initializedThreading = false;

@@ -38,18 +38,6 @@ typedef struct HPEN__* HPEN;
 typedef struct HRGN__* HRGN;
 #endif
 
-#if PLATFORM(BREWMP)
-// Forward delcarations at this point avoid the need to include BREW includes
-// in WTF headers.
-typedef struct _ISocket ISocket;
-typedef struct _IFileMgr IFileMgr;
-typedef struct _IFile IFile;
-typedef struct IBitmap IBitmap;
-typedef struct ISSL ISSL;
-typedef struct IMemGroup IMemGroup;
-typedef struct IMemSpace IMemSpace;
-#endif
-
 #if PLATFORM(EFL)
 typedef struct _Ecore_Evas Ecore_Evas;
 typedef struct _Ecore_Pipe Ecore_Pipe;
@@ -73,16 +61,6 @@ namespace WTF {
     void deleteOwnedPtr(HPALETTE);
     void deleteOwnedPtr(HPEN);
     void deleteOwnedPtr(HRGN);
-#endif
-
-#if PLATFORM(BREWMP)
-    void deleteOwnedPtr(IFileMgr*);
-    void deleteOwnedPtr(IFile*);
-    void deleteOwnedPtr(IBitmap*);
-    void deleteOwnedPtr(ISSL*);
-    void deleteOwnedPtr(ISocket*);
-    void deleteOwnedPtr(IMemGroup*);
-    void deleteOwnedPtr(IMemSpace*);
 #endif
 
 #if PLATFORM(EFL)

@@ -133,7 +133,7 @@ bool IconDatabase::open(const String& directory, const String& filename)
         return false;
     }
 
-    m_databaseDirectory = directory.crossThreadString();
+    m_databaseDirectory = directory.isolatedCopy();
 
     // Formulate the full path for the database file
     m_completeDatabasePath = pathByAppendingComponent(m_databaseDirectory, filename);
@@ -232,7 +232,7 @@ Image* IconDatabase::synchronousIconForPageURL(const String& pageURLOriginal, co
     
     PageURLRecord* pageRecord = m_pageURLToRecordMap.get(pageURLOriginal);
     if (!pageRecord) {
-        pageURLCopy = pageURLOriginal.crossThreadString();
+        pageURLCopy = pageURLOriginal.isolatedCopy();
         pageRecord = getOrCreatePageURLRecord(pageURLCopy);
     }
     
@@ -268,7 +268,7 @@ Image* IconDatabase::synchronousIconForPageURL(const String& pageURLOriginal, co
     // mark it to be read by the background thread
     if (iconRecord->imageDataStatus() == ImageDataStatusUnknown) {
         if (pageURLCopy.isNull())
-            pageURLCopy = pageURLOriginal.crossThreadString();
+            pageURLCopy = pageURLOriginal.isolatedCopy();
     
         MutexLocker locker(m_pendingReadingLock);
         m_pageURLsInterestedInIcons.add(pageURLCopy);
@@ -317,7 +317,7 @@ String IconDatabase::synchronousIconURLForPageURL(const String& pageURLOriginal)
     
     PageURLRecord* pageRecord = m_pageURLToRecordMap.get(pageURLOriginal);
     if (!pageRecord)
-        pageRecord = getOrCreatePageURLRecord(pageURLOriginal.crossThreadString());
+        pageRecord = getOrCreatePageURLRecord(pageURLOriginal.isolatedCopy());
     
     // If pageRecord is NULL, one of two things is true -
     // 1 - The initial url import is incomplete and this pageURL has already been marked to be notified once it is complete if an iconURL exists
@@ -326,7 +326,7 @@ String IconDatabase::synchronousIconURLForPageURL(const String& pageURLOriginal)
         return String();
     
     // Possible the pageRecord is around because it's a retained pageURL with no iconURL, so we have to check
-    return pageRecord->iconRecord() ? pageRecord->iconRecord()->iconURL().threadsafeCopy() : String();
+    return pageRecord->iconRecord() ? pageRecord->iconRecord()->iconURL().isolatedCopy() : String();
 }
 
 #ifdef CAN_THEME_URL_ICON
@@ -410,7 +410,7 @@ void IconDatabase::retainIconForPageURL(const String& pageURLOriginal)
     String pageURL;
     
     if (!record) {
-        pageURL = pageURLOriginal.crossThreadString();
+        pageURL = pageURLOriginal.isolatedCopy();
 
         record = new PageURLRecord(pageURL);
         m_pageURLToRecordMap.set(pageURL, record);
@@ -418,7 +418,7 @@ void IconDatabase::retainIconForPageURL(const String& pageURLOriginal)
     
     if (!record->retain()) {
         if (pageURL.isNull())
-            pageURL = pageURLOriginal.crossThreadString();
+            pageURL = pageURLOriginal.isolatedCopy();
 
         // This page just had its retain count bumped from 0 to 1 - Record that fact
         m_retainedPageURLs.add(pageURL);
@@ -493,7 +493,7 @@ void IconDatabase::releaseIconForPageURL(const String& pageURLOriginal)
     // Mark stuff for deletion from the database only if we're not in private browsing
     if (!m_privateBrowsingEnabled) {
         MutexLocker locker(m_pendingSyncLock);
-        m_pageURLsPendingSync.set(pageURLOriginal.crossThreadString(), pageRecord->snapshot(true));
+        m_pageURLsPendingSync.set(pageURLOriginal.isolatedCopy(), pageRecord->snapshot(true));
     
         // If this page is the last page to refer to a particular IconRecord, that IconRecord needs to
         // be marked for deletion
@@ -517,7 +517,9 @@ void IconDatabase::setIconDataForIconURL(PassRefPtr<SharedBuffer> dataOriginal, 
         return;
     
     RefPtr<SharedBuffer> data = dataOriginal ? dataOriginal->copy() : PassRefPtr<SharedBuffer>(0);
-    String iconURL = iconURLOriginal.crossThreadString();
+    if (data)
+        data->setMutexForVerifier(m_urlAndIconLock);
+    String iconURL = iconURLOriginal.isolatedCopy();
     
     Vector<String> pageURLs;
     {
@@ -594,8 +596,8 @@ void IconDatabase::setIconURLForPageURL(const String& iconURLOriginal, const Str
         if (pageRecord && pageRecord->iconRecord() && pageRecord->iconRecord()->iconURL() == iconURLOriginal)
             return;
             
-        pageURL = pageURLOriginal.crossThreadString();
-        iconURL = iconURLOriginal.crossThreadString();
+        pageURL = pageURLOriginal.isolatedCopy();
+        iconURL = iconURLOriginal.isolatedCopy();
 
         if (!pageRecord) {
             pageRecord = new PageURLRecord(pageURL);
@@ -859,13 +861,13 @@ bool IconDatabase::isOpen() const
 String IconDatabase::databasePath() const
 {
     MutexLocker locker(m_syncLock);
-    return m_completeDatabasePath.threadsafeCopy();
+    return m_completeDatabasePath.isolatedCopy();
 }
 
 String IconDatabase::defaultDatabaseFilename()
 {
     DEFINE_STATIC_LOCAL(String, defaultDatabaseFilename, ("WebpageIcons.db"));
-    return defaultDatabaseFilename.threadsafeCopy();
+    return defaultDatabaseFilename.isolatedCopy();
 }
 
 // Unlike getOrCreatePageURLRecord(), getOrCreateIconRecord() does not mark the icon as "interested in import"
@@ -2135,7 +2137,7 @@ class ImportedIconURLForPageURLWorkItem : public ClientWorkItem {
 public:
     ImportedIconURLForPageURLWorkItem(IconDatabaseClient* client, const String& pageURL)
         : ClientWorkItem(client)
-        , m_pageURL(new String(pageURL.threadsafeCopy()))
+        , m_pageURL(new String(pageURL.isolatedCopy()))
     { }
     
     virtual ~ImportedIconURLForPageURLWorkItem()
@@ -2158,7 +2160,7 @@ class ImportedIconDataForPageURLWorkItem : public ClientWorkItem {
 public:
     ImportedIconDataForPageURLWorkItem(IconDatabaseClient* client, const String& pageURL)
         : ClientWorkItem(client)
-        , m_pageURL(new String(pageURL.threadsafeCopy()))
+        , m_pageURL(new String(pageURL.isolatedCopy()))
     { }
     
     virtual ~ImportedIconDataForPageURLWorkItem()

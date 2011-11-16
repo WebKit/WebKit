@@ -134,6 +134,11 @@ module test {
         attribute [Conditional=Condition1|Condition2] long conditionalAttr3;
 
 #if defined(TESTING_V8) || defined(TESTING_JS)
+        readonly attribute [CachedAttribute] any cachedAttribute1;
+        readonly attribute [CachedAttribute] any cachedAttribute2;
+#endif
+
+#if defined(TESTING_V8) || defined(TESTING_JS)
         // Overloads
         void    overloadedMethod(in TestObj objArg, in DOMString strArg);
         void    overloadedMethod(in TestObj objArg, in [Optional] long intArg);

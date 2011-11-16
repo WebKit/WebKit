@@ -47,25 +47,25 @@ static NPIdentifier npIdentifierFromIdentifier(const Identifier& identifier)
     return static_cast<NPIdentifier>(IdentifierRep::get(identifier.ustring().utf8().data()));
 }
 
-const ClassInfo JSNPObject::s_info = { "NPObject", &JSObjectWithGlobalObject::s_info, 0, 0 };
+const ClassInfo JSNPObject::s_info = { "NPObject", &JSNonFinalObject::s_info, 0, 0, CREATE_METHOD_TABLE(JSNPObject) };
 
-JSNPObject::JSNPObject(JSGlobalObject* globalObject, NPRuntimeObjectMap* objectMap, NPObject* npObject, Structure* structure)
-    : JSObjectWithGlobalObject(globalObject, structure)
+JSNPObject::JSNPObject(JSGlobalObject* globalObject, Structure* structure, NPRuntimeObjectMap* objectMap, NPObject* npObject)
+    : JSNonFinalObject(globalObject->globalData(), structure)
     , m_objectMap(objectMap)
     , m_npObject(npObject)
 {
+    ASSERT(globalObject == structure->globalObject());
+}
+
+void JSNPObject::finishCreation(JSGlobalObject* globalObject)
+{
+    Base::finishCreation(globalObject->globalData());
     ASSERT(inherits(&s_info));
 
     // We should never have an NPJSObject inside a JSNPObject.
     ASSERT(!NPJSObject::isNPJSObject(m_npObject));
 
     retainNPObject(m_npObject);
-}
-
-JSNPObject* JSNPObject::create(JSC::JSGlobalObject* globalObject, NPRuntimeObjectMap* objectMap, NPObject* npObject)
-{
-    Structure* structure = createStructure(globalObject->globalData(), globalObject->objectPrototype());
-    return new (JSC::allocateCell<JSNPObject>(globalObject->globalData().heap)) JSNPObject(globalObject, objectMap, npObject, structure);
 }
 
 JSNPObject::~JSNPObject()
@@ -216,10 +216,11 @@ static EncodedJSValue JSC_HOST_CALL callNPJSObject(ExecState* exec)
     return JSValue::encode(static_cast<JSNPObject*>(object)->callObject(exec));
 }
 
-JSC::CallType JSNPObject::getCallData(JSC::CallData& callData)
+JSC::CallType JSNPObject::getCallData(JSC::JSCell* cell, JSC::CallData& callData)
 {
-    ASSERT_GC_OBJECT_INHERITS(this, &s_info);
-    if (!m_npObject || !m_npObject->_class->invokeDefault)
+    JSNPObject* thisObject = static_cast<JSNPObject*>(cell);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
+    if (!thisObject->m_npObject || !thisObject->m_npObject->_class->invokeDefault)
         return CallTypeNone;
 
     callData.native.function = callNPJSObject;
@@ -234,20 +235,22 @@ static EncodedJSValue JSC_HOST_CALL constructWithConstructor(ExecState* exec)
     return JSValue::encode(static_cast<JSNPObject*>(constructor)->callConstructor(exec));
 }
 
-ConstructType JSNPObject::getConstructData(ConstructData& constructData)
+ConstructType JSNPObject::getConstructData(JSCell* cell, ConstructData& constructData)
 {
-    ASSERT_GC_OBJECT_INHERITS(this, &s_info);
-    if (!m_npObject || !m_npObject->_class->construct)
+    JSNPObject* thisObject = static_cast<JSNPObject*>(cell);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
+    if (!thisObject->m_npObject || !thisObject->m_npObject->_class->construct)
         return ConstructTypeNone;
 
     constructData.native.function = constructWithConstructor;
     return ConstructTypeHost;
 }
 
-bool JSNPObject::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
+bool JSNPObject::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
-    ASSERT_GC_OBJECT_INHERITS(this, &s_info);
-    if (!m_npObject) {
+    JSNPObject* thisObject = static_cast<JSNPObject*>(cell);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
+    if (!thisObject->m_npObject) {
         throwInvalidAccessError(exec);
         return false;
     }
@@ -255,24 +258,25 @@ bool JSNPObject::getOwnPropertySlot(ExecState* exec, const Identifier& propertyN
     NPIdentifier npIdentifier = npIdentifierFromIdentifier(propertyName);
 
     // First, check if the NPObject has a property with this name.
-    if (m_npObject->_class->hasProperty && m_npObject->_class->hasProperty(m_npObject, npIdentifier)) {
-        slot.setCustom(this, propertyGetter);
+    if (thisObject->m_npObject->_class->hasProperty && thisObject->m_npObject->_class->hasProperty(thisObject->m_npObject, npIdentifier)) {
+        slot.setCustom(thisObject, thisObject->propertyGetter);
         return true;
     }
 
     // Second, check if the NPObject has a method with this name.
-    if (m_npObject->_class->hasMethod && m_npObject->_class->hasMethod(m_npObject, npIdentifier)) {
-        slot.setCustom(this, methodGetter);
+    if (thisObject->m_npObject->_class->hasMethod && thisObject->m_npObject->_class->hasMethod(thisObject->m_npObject, npIdentifier)) {
+        slot.setCustom(thisObject, thisObject->methodGetter);
         return true;
     }
     
     return false;
 }
 
-bool JSNPObject::getOwnPropertyDescriptor(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
+bool JSNPObject::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
 {
-    ASSERT_GC_OBJECT_INHERITS(this, &s_info);
-    if (!m_npObject) {
+    JSNPObject* thisObject = static_cast<JSNPObject*>(object);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
+    if (!thisObject->m_npObject) {
         throwInvalidAccessError(exec);
         return false;
     }
@@ -280,17 +284,17 @@ bool JSNPObject::getOwnPropertyDescriptor(ExecState* exec, const Identifier& pro
     NPIdentifier npIdentifier = npIdentifierFromIdentifier(propertyName);
 
     // First, check if the NPObject has a property with this name.
-    if (m_npObject->_class->hasProperty && m_npObject->_class->hasProperty(m_npObject, npIdentifier)) {
+    if (thisObject->m_npObject->_class->hasProperty && thisObject->m_npObject->_class->hasProperty(thisObject->m_npObject, npIdentifier)) {
         PropertySlot slot;
-        slot.setCustom(this, propertyGetter);
+        slot.setCustom(thisObject, propertyGetter);
         descriptor.setDescriptor(slot.getValue(exec, propertyName), DontDelete);
         return true;
     }
 
     // Second, check if the NPObject has a method with this name.
-    if (m_npObject->_class->hasMethod && m_npObject->_class->hasMethod(m_npObject, npIdentifier)) {
+    if (thisObject->m_npObject->_class->hasMethod && thisObject->m_npObject->_class->hasMethod(thisObject->m_npObject, npIdentifier)) {
         PropertySlot slot;
-        slot.setCustom(this, methodGetter);
+        slot.setCustom(thisObject, methodGetter);
         descriptor.setDescriptor(slot.getValue(exec, propertyName), DontDelete | ReadOnly);
         return true;
     }
@@ -298,35 +302,36 @@ bool JSNPObject::getOwnPropertyDescriptor(ExecState* exec, const Identifier& pro
     return false;
 }
 
-void JSNPObject::put(ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot&)
+void JSNPObject::put(JSCell* cell, ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot&)
 {
-    ASSERT_GC_OBJECT_INHERITS(this, &s_info);
-    if (!m_npObject) {
+    JSNPObject* thisObject = static_cast<JSNPObject*>(cell);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
+    if (!thisObject->m_npObject) {
         throwInvalidAccessError(exec);
         return;
     }
 
     NPIdentifier npIdentifier = npIdentifierFromIdentifier(propertyName);
     
-    if (!m_npObject->_class->hasProperty || !m_npObject->_class->hasProperty(m_npObject, npIdentifier)) {
+    if (!thisObject->m_npObject->_class->hasProperty || !thisObject->m_npObject->_class->hasProperty(thisObject->m_npObject, npIdentifier)) {
         // FIXME: Should we throw an exception here?
         return;
     }
 
-    if (!m_npObject->_class->setProperty)
+    if (!thisObject->m_npObject->_class->setProperty)
         return;
 
     NPVariant variant;
-    m_objectMap->convertJSValueToNPVariant(exec, value, variant);
+    thisObject->m_objectMap->convertJSValueToNPVariant(exec, value, variant);
 
     // Calling NPClass::setProperty will call into plug-in code, and there's no telling what the plug-in can do.
     // (including destroying the plug-in). Because of this, we make sure to keep the plug-in alive until 
     // the call has finished.
-    NPRuntimeObjectMap::PluginProtector protector(m_objectMap);
+    NPRuntimeObjectMap::PluginProtector protector(thisObject->m_objectMap);
 
     {
         JSLock::DropAllLocks dropAllLocks(SilenceAssertionsOnly);
-        m_npObject->_class->setProperty(m_npObject, npIdentifier, &variant);
+        thisObject->m_npObject->_class->setProperty(thisObject->m_npObject, npIdentifier, &variant);
 
         NPRuntimeObjectMap::moveGlobalExceptionToExecState(exec);
 
@@ -336,15 +341,57 @@ void JSNPObject::put(ExecState* exec, const Identifier& propertyName, JSValue va
     releaseNPVariantValue(&variant);
 }
 
-void JSNPObject::getOwnPropertyNames(ExecState* exec, PropertyNameArray& propertyNameArray, EnumerationMode mode)
+bool JSNPObject::deleteProperty(JSCell* cell, ExecState* exec, const Identifier& propertyName)
+{
+    return static_cast<JSNPObject*>(cell)->deleteProperty(exec, npIdentifierFromIdentifier(propertyName));
+}
+
+bool JSNPObject::deletePropertyByIndex(JSCell* cell, ExecState* exec, unsigned propertyName)
+{
+    return static_cast<JSNPObject*>(cell)->deleteProperty(exec, static_cast<NPIdentifier>(IdentifierRep::get(propertyName)));
+}
+
+bool JSNPObject::deleteProperty(ExecState* exec, NPIdentifier propertyName)
 {
     ASSERT_GC_OBJECT_INHERITS(this, &s_info);
     if (!m_npObject) {
         throwInvalidAccessError(exec);
+        return false;
+    }
+
+    if (!m_npObject->_class->removeProperty) {
+        // FIXME: Should we throw an exception here?
+        return false;
+    }
+
+    // Calling NPClass::setProperty will call into plug-in code, and there's no telling what the plug-in can do.
+    // (including destroying the plug-in). Because of this, we make sure to keep the plug-in alive until 
+    // the call has finished.
+    NPRuntimeObjectMap::PluginProtector protector(m_objectMap);
+
+    {
+        JSLock::DropAllLocks dropAllLocks(SilenceAssertionsOnly);
+
+        // FIXME: Should we throw an exception if removeProperty returns false?
+        if (!m_npObject->_class->removeProperty(m_npObject, propertyName))
+            return false;
+
+        NPRuntimeObjectMap::moveGlobalExceptionToExecState(exec);
+    }
+
+    return true;
+}
+
+void JSNPObject::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNameArray, EnumerationMode mode)
+{
+    JSNPObject* thisObject = static_cast<JSNPObject*>(object);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
+    if (!thisObject->m_npObject) {
+        throwInvalidAccessError(exec);
         return;
     }
 
-    if (!NP_CLASS_STRUCT_VERSION_HAS_ENUM(m_npObject->_class) || !m_npObject->_class->enumerate)
+    if (!NP_CLASS_STRUCT_VERSION_HAS_ENUM(thisObject->m_npObject->_class) || !thisObject->m_npObject->_class->enumerate)
         return;
 
     NPIdentifier* identifiers = 0;
@@ -353,13 +400,13 @@ void JSNPObject::getOwnPropertyNames(ExecState* exec, PropertyNameArray& propert
     // Calling NPClass::enumerate will call into plug-in code, and there's no telling what the plug-in can do.
     // (including destroying the plug-in). Because of this, we make sure to keep the plug-in alive until 
     // the call has finished.
-    NPRuntimeObjectMap::PluginProtector protector(m_objectMap);
+    NPRuntimeObjectMap::PluginProtector protector(thisObject->m_objectMap);
     
     {
         JSLock::DropAllLocks dropAllLocks(SilenceAssertionsOnly);
 
         // FIXME: Should we throw an exception if enumerate returns false?
-        if (!m_npObject->_class->enumerate(m_npObject, &identifiers, &identifierCount))
+        if (!thisObject->m_npObject->_class->enumerate(thisObject->m_npObject, &identifiers, &identifierCount))
             return;
 
         NPRuntimeObjectMap::moveGlobalExceptionToExecState(exec);

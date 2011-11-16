@@ -29,7 +29,6 @@
 
 #include "APICast.h"
 #include "APIShims.h"
-#include "Completion.h"
 #include "OpaqueJSString.h"
 #include "SourceCode.h"
 #include <interpreter/CallFrame.h>
@@ -52,17 +51,19 @@ JSValueRef JSEvaluateScript(JSContextRef ctx, JSStringRef script, JSObjectRef th
     // evaluate sets "this" to the global object if it is NULL
     JSGlobalObject* globalObject = exec->dynamicGlobalObject();
     SourceCode source = makeSource(script->ustring(), sourceURL->ustring(), startingLineNumber);
-    Completion completion = evaluate(globalObject->globalExec(), globalObject->globalScopeChain(), source, jsThisObject);
 
-    if (completion.complType() == Throw) {
+    JSValue evaluationException;
+    JSValue returnValue = evaluate(globalObject->globalExec(), globalObject->globalScopeChain(), source, jsThisObject, &evaluationException);
+
+    if (evaluationException) {
         if (exception)
-            *exception = toRef(exec, completion.value());
+            *exception = toRef(exec, evaluationException);
         return 0;
     }
 
-    if (completion.value())
-        return toRef(exec, completion.value());
-    
+    if (returnValue)
+        return toRef(exec, returnValue);
+
     // happens, for example, when the only statement is an empty (';') statement
     return toRef(exec, jsUndefined());
 }
@@ -73,13 +74,16 @@ bool JSCheckScriptSyntax(JSContextRef ctx, JSStringRef script, JSStringRef sourc
     APIEntryShim entryShim(exec);
 
     SourceCode source = makeSource(script->ustring(), sourceURL->ustring(), startingLineNumber);
-    Completion completion = checkSyntax(exec->dynamicGlobalObject()->globalExec(), source);
-    if (completion.complType() == Throw) {
+    
+    JSValue syntaxException;
+    bool isValidSyntax = checkSyntax(exec->dynamicGlobalObject()->globalExec(), source, &syntaxException);
+
+    if (!isValidSyntax) {
         if (exception)
-            *exception = toRef(exec, completion.value());
+            *exception = toRef(exec, syntaxException);
         return false;
     }
-    
+
     return true;
 }
 

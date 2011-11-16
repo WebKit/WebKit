@@ -325,28 +325,19 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
     ExecState* exec = [self _rootObject]->globalObject()->globalExec();
     ASSERT(!exec->hadException());
 
-    JSValue result;
     JSLock lock(SilenceAssertionsOnly);
     
     [self _rootObject]->globalObject()->globalData().timeoutChecker.start();
-    Completion completion = JSMainThreadExecState::evaluate([self _rootObject]->globalObject()->globalExec(), [self _rootObject]->globalObject()->globalScopeChain(), makeSource(String(script)), JSC::JSValue());
+    JSValue returnValue = JSMainThreadExecState::evaluate(exec, [self _rootObject]->globalObject()->globalScopeChain(), makeSource(String(script)), JSC::JSValue(), 0);
     [self _rootObject]->globalObject()->globalData().timeoutChecker.stop();
-    ComplType type = completion.complType();
-    
-    if (type == Normal) {
-        result = completion.value();
-        if (!result)
-            result = jsUndefined();
-    } else
-        result = jsUndefined();
-    
+
     if (exec->hadException()) {
         addExceptionToConsole(exec);
-        result = jsUndefined();
+        returnValue = jsUndefined();
         exec->clearException();
     }
-    
-    id resultObj = [WebScriptObject _convertValueToObjcValue:result originRootObject:[self _originRootObject] rootObject:[self _rootObject]];
+
+    id resultObj = [WebScriptObject _convertValueToObjcValue:returnValue originRootObject:[self _originRootObject] rootObject:[self _rootObject]];
     
     _didExecute(self);
     
@@ -364,7 +355,7 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
     JSLock lock(SilenceAssertionsOnly);
 
     PutPropertySlot slot;
-    [self _imp]->put(exec, Identifier(exec, stringToUString(String(key))), convertObjcValueToValue(exec, &value, ObjcObjectType, [self _rootObject]), slot);
+    [self _imp]->methodTable()->put([self _imp], exec, Identifier(exec, stringToUString(String(key))), convertObjcValueToValue(exec, &value, ObjcObjectType, [self _rootObject]), slot);
 
     if (exec->hadException()) {
         addExceptionToConsole(exec);
@@ -418,7 +409,7 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
     ASSERT(!exec->hadException());
 
     JSLock lock(SilenceAssertionsOnly);
-    [self _imp]->deleteProperty(exec, Identifier(exec, stringToUString(String(key))));
+    [self _imp]->methodTable()->deleteProperty([self _imp], exec, Identifier(exec, stringToUString(String(key))));
 
     if (exec->hadException()) {
         addExceptionToConsole(exec);
@@ -501,7 +492,7 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
     ASSERT(!exec->hadException());
 
     JSLock lock(SilenceAssertionsOnly);
-    [self _imp]->put(exec, index, convertObjcValueToValue(exec, &value, ObjcObjectType, [self _rootObject]));
+    [self _imp]->methodTable()->putByIndex([self _imp], exec, index, convertObjcValueToValue(exec, &value, ObjcObjectType, [self _rootObject]));
 
     if (exec->hadException()) {
         addExceptionToConsole(exec);
@@ -556,10 +547,10 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
     }
 
     if (value.isNumber())
-        return [NSNumber numberWithDouble:value.uncheckedGetNumber()];
+        return [NSNumber numberWithDouble:value.asNumber()];
 
     if (value.isBoolean())
-        return [NSNumber numberWithBool:value.getBoolean()];
+        return [NSNumber numberWithBool:value.asBoolean()];
 
     if (value.isUndefined())
         return [WebUndefined undefined];
@@ -601,6 +592,11 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
     return [self webScriptValueAtIndex:index];
 }
 
+@end
+
+
+@interface WebUndefined (Overrides)
+- (void)dealloc NO_RETURN_DUE_TO_ASSERT;
 @end
 
 @implementation WebUndefined
@@ -660,7 +656,7 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
 
 - (void)dealloc
 {
-    ASSERT(false);
+    ASSERT_NOT_REACHED();
     return;
     [super dealloc]; // make -Wdealloc-check happy
 }

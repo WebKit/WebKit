@@ -32,19 +32,8 @@
 #include <wtf/Noncopyable.h>
 #include <wtf/StackBounds.h>
 #include <wtf/text/StringHash.h>
-
-// This was ENABLE(WORKERS) in WebCore, but this is not defined when compiling JSC.
-// However this check was not correct anyway, re this comment:
-//    // FIXME: Workers are not necessarily the only feature that make per-thread global data necessary.
-//    // We need to check for e.g. database objects manipulating strings on secondary threads.
-// Always enabling this is safe, and should be a better option until we can come up
-// with a better define.
-#define WTFTHREADDATA_MULTITHREADED 1
-
-#if WTFTHREADDATA_MULTITHREADED
 #include <wtf/ThreadSpecific.h>
 #include <wtf/Threading.h>
-#endif
 
 #if USE(JSC)
 // FIXME: This is a temporary layering violation while we move more string code to WTF.
@@ -131,18 +120,13 @@ private:
     StackBounds m_stackBounds;
 #endif
 
-#if WTFTHREADDATA_MULTITHREADED
     static JS_EXPORTDATA ThreadSpecific<WTFThreadData>* staticData;
-#else
-    static JS_EXPORTDATA WTFThreadData* staticData;
-#endif
     friend WTFThreadData& wtfThreadData();
     friend class AtomicStringTable;
 };
 
 inline WTFThreadData& wtfThreadData()
 {
-#if WTFTHREADDATA_MULTITHREADED
     // WRT WebCore:
     //    WTFThreadData is used on main thread before it could possibly be used
     //    on secondary ones, so there is no need for synchronization here.
@@ -152,14 +136,6 @@ inline WTFThreadData& wtfThreadData()
     if (!WTFThreadData::staticData)
         WTFThreadData::staticData = new ThreadSpecific<WTFThreadData>;
     return **WTFThreadData::staticData;
-#else
-    if (!WTFThreadData::staticData) {
-        WTFThreadData::staticData = static_cast<WTFThreadData*>(fastMalloc(sizeof(WTFThreadData)));
-        // WTFThreadData constructor indirectly uses staticData, so we need to set up the memory before invoking it.
-        new (WTFThreadData::staticData) WTFThreadData;
-    }
-    return *WTFThreadData::staticData;
-#endif
 }
 
 } // namespace WTF

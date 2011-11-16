@@ -28,6 +28,7 @@
 #include <stdint.h>
 #include <wtf/AlwaysInline.h>
 #include <wtf/Assertions.h>
+#include <wtf/HashMap.h>
 #include <wtf/HashTraits.h>
 #include <wtf/MathExtras.h>
 #include <wtf/StdLibExtras.h>
@@ -44,9 +45,20 @@ namespace JSC {
     class PropertySlot;
     class PutPropertySlot;
     class UString;
+#if ENABLE(DFG_JIT)
+    namespace DFG {
+        class AssemblyHelpers;
+        class JITCompiler;
+        class JITCodeGenerator;
+        class JSValueSource;
+        class OSRExitCompiler;
+        class SpeculativeJIT;
+    }
+#endif
 
     struct ClassInfo;
     struct Instruction;
+    struct MethodTable;
 
     template <class T> class WriteBarrierBase;
 
@@ -98,6 +110,14 @@ namespace JSC {
         friend class JITStubCall;
         friend class JSInterfaceJIT;
         friend class SpecializedThunkJIT;
+#if ENABLE(DFG_JIT)
+        friend class DFG::AssemblyHelpers;
+        friend class DFG::JITCompiler;
+        friend class DFG::JITCodeGenerator;
+        friend class DFG::JSValueSource;
+        friend class DFG::OSRExitCompiler;
+        friend class DFG::SpeculativeJIT;
+#endif
 
     public:
         static EncodedJSValue encode(JSValue);
@@ -144,8 +164,11 @@ namespace JSC {
         int32_t asInt32() const;
         uint32_t asUInt32() const;
         double asDouble() const;
+        bool asBoolean() const;
+        double asNumber() const;
 
         // Querying the type.
+        bool isEmpty() const;
         bool isUndefined() const;
         bool isNull() const;
         bool isUndefinedOrNull() const;
@@ -158,10 +181,6 @@ namespace JSC {
         bool inherits(const ClassInfo*) const;
         
         // Extracting the value.
-        bool getBoolean(bool&) const;
-        bool getBoolean() const; // false if not a boolean
-        bool getNumber(double&) const;
-        double uncheckedGetNumber() const;
         bool getString(ExecState* exec, UString&) const;
         UString getString(ExecState* exec) const; // null string if not a string
         JSObject* getObject() const; // 0 if not an object
@@ -178,9 +197,8 @@ namespace JSC {
         // toNumber conversion is expected to be side effect free if an exception has
         // been set in the ExecState already.
         double toNumber(ExecState*) const;
-        JSValue toJSNumber(ExecState*) const; // Fast path for when you expect that the value is an immediate number.
         UString toString(ExecState*) const;
-        UString toPrimitiveString(ExecState*) const;
+        JSString* toPrimitiveString(ExecState*) const;
         JSObject* toObject(ExecState*) const;
         JSObject* toObject(ExecState*, JSGlobalObject*) const;
 
@@ -204,9 +222,6 @@ namespace JSC {
         void put(ExecState*, unsigned propertyName, JSValue);
 
         JSObject* toThisObject(ExecState*) const;
-        JSValue toStrictThisObject(ExecState*) const;
-        UString toThisString(ExecState*) const;
-        JSString* toThisJSString(ExecState*) const;
 
         static bool equal(ExecState* exec, JSValue v1, JSValue v2);
         static bool equalSlowCase(ExecState* exec, JSValue v1, JSValue v2);
@@ -214,8 +229,6 @@ namespace JSC {
         static bool strictEqual(ExecState* exec, JSValue v1, JSValue v2);
         static bool strictEqualSlowCase(ExecState* exec, JSValue v1, JSValue v2);
         static bool strictEqualSlowCaseInline(ExecState* exec, JSValue v1, JSValue v2);
-
-        JSValue getJSNumber(); // JSValue() if this is not a JSNumber or number object
 
         bool isCell() const;
         JSCell* asCell() const;
@@ -374,6 +387,8 @@ namespace JSC {
     };
 #endif
 
+    typedef HashMap<EncodedJSValue, unsigned, EncodedJSValueHash, EncodedJSValueHashTraits> JSValueMap;
+
     // Stand-alone helper functions.
     inline JSValue jsNull()
     {
@@ -392,11 +407,13 @@ namespace JSC {
 
     ALWAYS_INLINE JSValue jsDoubleNumber(double d)
     {
+        ASSERT(JSValue(JSValue::EncodeAsDouble, d).isNumber());
         return JSValue(JSValue::EncodeAsDouble, d);
     }
 
     ALWAYS_INLINE JSValue jsNumber(double d)
     {
+        ASSERT(JSValue(d).isNumber());
         return JSValue(d);
     }
 
@@ -455,8 +472,6 @@ namespace JSC {
 
     inline bool operator!=(const JSValue a, const JSCell* b) { return a != JSValue(b); }
     inline bool operator!=(const JSCell* a, const JSValue b) { return JSValue(a) != b; }
-
-    bool isZombie(const JSCell*);
 
 } // namespace JSC
 

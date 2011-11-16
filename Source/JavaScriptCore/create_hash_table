@@ -179,7 +179,6 @@ sub calcCompactHashSize()
 
 # Paul Hsieh's SuperFastHash
 # http://www.azillionmonkeys.com/qed/hash.html
-# Ported from UString..
 sub hashValue($) {
   my @chars = split(/ */, $_[0]);
 
@@ -207,7 +206,7 @@ sub hashValue($) {
   }
 
   # Handle end case
-  if ($rem !=0) {
+  if ($rem != 0) {
     $hash += ord($chars[$s]);
     $hash ^= (leftShift($hash, 11)% $EXP2_32);
     $hash += $hash >> 17;
@@ -221,11 +220,15 @@ sub hashValue($) {
   $hash += ($hash >> 15);
   $hash = $hash% $EXP2_32;
   $hash ^= (leftShift($hash, 10)% $EXP2_32);
-  
-  # this avoids ever returning a hash code of 0, since that is used to
-  # signal "hash not computed yet", using a value that is likely to be
-  # effectively the same as 0 when the low bits are masked
-  $hash = 0x80000000  if ($hash == 0);
+
+  # Save 8 bits for StringImpl to use as flags.
+  $hash &= 0xffffff;
+
+  # This avoids ever returning a hash code of 0, since that is used to
+  # signal "hash not computed yet". Setting the high bit maintains
+  # reasonable fidelity to a hash code of 0 because it is likely to yield
+  # exactly 0 when hash lookup masks out the high bits.
+  $hash = (0x80000000 >> 8) if ($hash == 0);
 
   return $hash;
 }
@@ -252,6 +255,11 @@ sub output() {
     print "#else\n";
     print "#define THUNK_GENERATOR(generator)\n";
     print "#endif\n";
+    print "#if ENABLE(DFG_JIT)\n";
+    print "#define INTRINSIC(intrinsic) , intrinsic\n";
+    print "#else\n";
+    print "#define INTRINSIC(intrinsic)\n";
+    print "#endif\n";
     print "\nstatic const struct HashTableValue ${nameEntries}\[$count\] = {\n";
     my $i = 0;
     foreach my $key (@keys) {
@@ -272,24 +280,35 @@ sub output() {
             $secondValue = "0";
         }
         my $thunkGenerator = "0";
+        my $intrinsic = "DFG::NoIntrinsic";
         if ($key eq "charCodeAt") {
             $thunkGenerator = "charCodeAtThunkGenerator";
+            $intrinsic = "DFG::CharCodeAtIntrinsic";
         }
         if ($key eq "charAt") {
             $thunkGenerator = "charAtThunkGenerator";
+            $intrinsic = "DFG::CharAtIntrinsic";
         }
         if ($key eq "fromCharCode") {
             $thunkGenerator = "fromCharCodeThunkGenerator";
         }
         if ($name eq "mathTable") {
+            if ($key eq "min") {
+                $intrinsic = "DFG::MinIntrinsic";
+            }
+            if ($key eq "max") {
+                $intrinsic = "DFG::MaxIntrinsic";
+            }
             if ($key eq "sqrt") {
                 $thunkGenerator = "sqrtThunkGenerator";
+                $intrinsic = "DFG::SqrtIntrinsic";
             }
             if ($key eq "pow") {
                 $thunkGenerator = "powThunkGenerator";
             }
             if ($key eq "abs") {
                 $thunkGenerator = "absThunkGenerator";
+                $intrinsic = "DFG::AbsIntrinsic";
             }
             if ($key eq "floor") {
                 $thunkGenerator = "floorThunkGenerator";
@@ -307,10 +326,18 @@ sub output() {
                 $thunkGenerator = "logThunkGenerator";
             }
         }
-        print "   { \"$key\", $attrs[$i], (intptr_t)" . $castStr . "($firstValue), (intptr_t)$secondValue THUNK_GENERATOR($thunkGenerator) },\n";
+        if ($name eq "arrayPrototypeTable") {
+            if ($key eq "push") {
+                $intrinsic = "DFG::ArrayPushIntrinsic";
+            }
+            if ($key eq "pop") {
+                $intrinsic = "DFG::ArrayPopIntrinsic";
+            }
+        }
+        print "   { \"$key\", $attrs[$i], (intptr_t)" . $castStr . "($firstValue), (intptr_t)$secondValue THUNK_GENERATOR($thunkGenerator) INTRINSIC($intrinsic) },\n";
         $i++;
     }
-    print "   { 0, 0, 0, 0 THUNK_GENERATOR(0) }\n";
+    print "   { 0, 0, 0, 0 THUNK_GENERATOR(0) INTRINSIC(DFG::NoIntrinsic) }\n";
     print "};\n\n";
     print "#undef THUNK_GENERATOR\n";
     print "extern JSC_CONST_HASHTABLE HashTable $name =\n";

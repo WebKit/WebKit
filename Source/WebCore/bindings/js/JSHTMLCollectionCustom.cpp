@@ -96,7 +96,7 @@ static EncodedJSValue JSC_HOST_CALL callHTMLCollection(ExecState* exec)
     return JSValue::encode(jsUndefined());
 }
 
-CallType JSHTMLCollection::getCallData(CallData& callData)
+CallType JSHTMLCollection::getCallData(JSCell*, CallData& callData)
 {
     callData.native.function = callHTMLCollection;
     return CallTypeHost;

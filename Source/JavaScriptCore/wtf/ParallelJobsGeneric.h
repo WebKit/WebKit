@@ -35,27 +35,30 @@
 
 namespace WTF {
 
-static const unsigned int maxParallelThreads = 2;
-
 class ParallelEnvironment {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     typedef void (*ThreadFunction)(void*);
 
-    ParallelEnvironment(ThreadFunction threadFunction, size_t sizeOfParameter, unsigned int requestedJobNumber) :
+    ParallelEnvironment(ThreadFunction threadFunction, size_t sizeOfParameter, int requestedJobNumber) :
         m_threadFunction(threadFunction),
         m_sizeOfParameter(sizeOfParameter)
     {
-        if (!requestedJobNumber || requestedJobNumber > maxParallelThreads)
-            requestedJobNumber = maxParallelThreads;
+        ASSERT_ARG(requestedJobNumber, requestedJobNumber >= 1);
+
+        if (s_maxNumberOfParallelThreads == -1)
+            determineMaxNumberOfParallelThreads();
+
+        if (!requestedJobNumber || requestedJobNumber > s_maxNumberOfParallelThreads)
+            requestedJobNumber = static_cast<unsigned>(s_maxNumberOfParallelThreads);
 
         if (!s_threadPool)
             s_threadPool = new Vector< RefPtr<ThreadPrivate> >();
 
         // The main thread should be also a worker.
-        unsigned int maxNewThreads = requestedJobNumber - 1;
+        int maxNumberOfNewThreads = requestedJobNumber - 1;
 
-        for (unsigned int i = 0; i < maxParallelThreads && m_threads.size() < maxNewThreads; ++i) {
+        for (int i = 0; i < s_maxNumberOfParallelThreads && m_threads.size() < maxNumberOfNewThreads; ++i) {
             if (s_threadPool->size() < i + 1)
                 s_threadPool->append(ThreadPrivate::create());
 
@@ -122,12 +125,15 @@ public:
     };
 
 private:
+    static void determineMaxNumberOfParallelThreads();
+
     ThreadFunction m_threadFunction;
     size_t m_sizeOfParameter;
     int m_numberOfJobs;
 
     Vector< RefPtr<ThreadPrivate> > m_threads;
     static Vector< RefPtr<ThreadPrivate> >* s_threadPool;
+    static int s_maxNumberOfParallelThreads;
 };
 
 } // namespace WTF

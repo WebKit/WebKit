@@ -49,7 +49,7 @@ static EncodedJSValue JSC_HOST_CALL regExpProtoFuncToString(ExecState*);
 
 namespace JSC {
 
-const ClassInfo RegExpPrototype::s_info = { "RegExp", &RegExpObject::s_info, 0, ExecState::regExpPrototypeTable };
+const ClassInfo RegExpPrototype::s_info = { "RegExp", &RegExpObject::s_info, 0, ExecState::regExpPrototypeTable, CREATE_METHOD_TABLE(RegExpPrototype) };
 
 /* Source for RegExpPrototype.lut.h
 @begin regExpPrototypeTable
@@ -62,19 +62,19 @@ const ClassInfo RegExpPrototype::s_info = { "RegExp", &RegExpObject::s_info, 0, 
 
 ASSERT_CLASS_FITS_IN_CELL(RegExpPrototype);
 
-RegExpPrototype::RegExpPrototype(ExecState*, JSGlobalObject* globalObject, Structure* structure, RegExp* regExp)
+RegExpPrototype::RegExpPrototype(JSGlobalObject* globalObject, Structure* structure, RegExp* regExp)
     : RegExpObject(globalObject, structure, regExp)
 {
 }
 
-bool RegExpPrototype::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot &slot)
+bool RegExpPrototype::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot &slot)
 {
-    return getStaticFunctionSlot<RegExpObject>(exec, ExecState::regExpPrototypeTable(exec), this, propertyName, slot);
+    return getStaticFunctionSlot<RegExpObject>(exec, ExecState::regExpPrototypeTable(exec), static_cast<RegExpPrototype*>(cell), propertyName, slot);
 }
 
-bool RegExpPrototype::getOwnPropertyDescriptor(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
+bool RegExpPrototype::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
 {
-    return getStaticFunctionDescriptor<RegExpObject>(exec, ExecState::regExpPrototypeTable(exec), this, propertyName, descriptor);
+    return getStaticFunctionDescriptor<RegExpObject>(exec, ExecState::regExpPrototypeTable(exec), static_cast<RegExpPrototype*>(object), propertyName, descriptor);
 }
 
 // ------------------------------ Functions ---------------------------
@@ -142,8 +142,8 @@ EncodedJSValue JSC_HOST_CALL regExpProtoFuncToString(ExecState* exec)
     RegExpObject* thisObject = asRegExpObject(thisValue);
 
     StringRecursionChecker checker(exec, thisObject);
-    if (EncodedJSValue earlyReturnValue = checker.earlyReturnValue())
-        return earlyReturnValue;
+    if (JSValue earlyReturnValue = checker.earlyReturnValue())
+        return JSValue::encode(earlyReturnValue);
 
     char postfix[5] = { '/', 0, 0, 0, 0 };
     int index = 1;

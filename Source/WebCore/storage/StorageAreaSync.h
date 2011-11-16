@@ -31,6 +31,7 @@
 #include "SQLiteDatabase.h"
 #include "Timer.h"
 #include <wtf/HashMap.h>
+#include <wtf/RefCounted.h>
 #include <wtf/text/StringHash.h>
 
 namespace WebCore {

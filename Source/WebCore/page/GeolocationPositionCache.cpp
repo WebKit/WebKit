@@ -208,7 +208,7 @@ void GeolocationPositionCache::writeToDatabaseImpl()
     {
         MutexLocker lock(m_cachedPositionMutex);
         if (m_cachedPosition)
-            cachedPosition = m_cachedPosition->threadSafeCopy();
+            cachedPosition = m_cachedPosition->isolatedCopy();
     }
 
     SQLiteTransaction transaction(database);

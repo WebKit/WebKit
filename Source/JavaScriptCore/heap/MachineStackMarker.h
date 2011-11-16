@@ -22,12 +22,9 @@
 #ifndef MachineThreads_h
 #define MachineThreads_h
 
+#include <pthread.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/ThreadingPrimitives.h>
-
-#if ENABLE(JSC_MULTIPLE_THREADS)
-#include <pthread.h>
-#endif
 
 namespace JSC {
 
@@ -42,30 +39,23 @@ namespace JSC {
 
         void gatherConservativeRoots(ConservativeRoots&, void* stackCurrent);
 
-#if ENABLE(JSC_MULTIPLE_THREADS)
         void makeUsableFromMultipleThreads();
         void addCurrentThread(); // Only needs to be called by clients that can use the same heap from multiple threads.
-#endif
 
     private:
         void gatherFromCurrentThread(ConservativeRoots&, void* stackCurrent);
 
-#if ENABLE(JSC_MULTIPLE_THREADS)
         class Thread;
 
         static void removeThread(void*);
         void removeCurrentThread();
 
         void gatherFromOtherThread(ConservativeRoots&, Thread*);
-#endif
 
         Heap* m_heap;
-
-#if ENABLE(JSC_MULTIPLE_THREADS)
         Mutex m_registeredThreadsMutex;
         Thread* m_registeredThreads;
         pthread_key_t m_threadSpecific;
-#endif
     };
 
 } // namespace JSC

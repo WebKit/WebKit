@@ -492,10 +492,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\wtf\text\StringImplBase.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\wtf\text\StringOperators.h"
 				>
 			</File>
@@ -509,6 +505,102 @@
 			</File>
 			<File
 				RelativePath="..\..\wtf\text\WTFString.h"
+				>
+			</File>
+		</Filter>
+        <Filter
+            Name="dtoa"
+            >
+            <File
+                RelativePath="..\..\wtf\dtoa\bignum-dtoa.cc"
+                >
+            </File>
+            <File
+                RelativePath="..\..\wtf\dtoa\bignum-dtoa.h"
+                >
+            </File>
+            <File
+                RelativePath="..\..\wtf\dtoa\bignum.cc"
+                >
+            </File>
+            <File
+                RelativePath="..\..\wtf\dtoa\bignum.h"
+                >
+            </File>
+            <File
+                RelativePath="..\..\wtf\dtoa\cached-powers.cc"
+                >
+            </File>
+            <File
+                RelativePath="..\..\wtf\dtoa\cached-powers.h"
+                >
+            </File>
+            <File
+                RelativePath="..\..\wtf\dtoa\diy-fp.cc"
+                >
+            </File>
+            <File
+                RelativePath="..\..\wtf\dtoa\diy-fp.h"
+                >
+            </File>
+            <File
+                RelativePath="..\..\wtf\dtoa\double-conversion.cc"
+                >
+            </File>
+            <File
+                RelativePath="..\..\wtf\dtoa\double-conversion.h"
+                >
+            </File>
+            <File
+                RelativePath="..\..\wtf\dtoa\double.h"
+                >
+            </File>
+            <File
+                RelativePath="..\..\wtf\dtoa\fast-dtoa.cc"
+                >
+            </File>
+            <File
+                RelativePath="..\..\wtf\dtoa\fast-dtoa.h"
+                >
+            </File>
+            <File
+                RelativePath="..\..\wtf\dtoa\fixed-dtoa.cc"
+                >
+            </File>
+            <File
+                RelativePath="..\..\wtf\dtoa\fixed-dtoa.h"
+                >
+            </File>
+            <File
+                RelativePath="..\..\wtf\dtoa\strtod.cc"
+                >
+            </File>
+            <File
+                RelativePath="..\..\wtf\dtoa\strtod.h"
+                >
+            </File>
+            <File
+                RelativePath="..\..\wtf\dtoa\utils.h"
+                >
+            </File>
+        </Filter>
+		<Filter
+			Name="threads"
+			>
+    		<Filter
+    			Name="win"
+    			>
+    			<File
+    				RelativePath="..\..\wtf\threads\win\BinarySemaphoreWin.cpp"
+    				>
+    			</File>
+    		</Filter>
+			<File
+				RelativePath="..\..\wtf\threads\BinarySemaphore.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\wtf\threads\BinarySemaphore.h"
 				>
 			</File>
 		</Filter>
@@ -541,6 +633,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\wtf\BitVector.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\wtf\BitVector.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\wtf\Bitmap.h"
 			>
 		</File>
@@ -550,6 +650,10 @@
 		</File>
 		<File
 			RelativePath="..\..\wtf\BloomFilter.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\wtf\BoundsCheckedPointer.h"
 			>
 		</File>
 		<File
@@ -565,11 +669,15 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\wtf\Complex.h"
+			RelativePath="..\..\wtf\CheckedArithmetic.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\wtf\CrossThreadRefCounted.h"
+			RelativePath="..\..\wtf\Compiler.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\wtf\Complex.h"
 			>
 		</File>
 		<File
@@ -753,6 +861,18 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\wtf\MetaAllocator.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\wtf\MetaAllocator.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\wtf\MetaAllocatorHandle.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\wtf\MD5.cpp"
 			>
 		</File>
@@ -810,6 +930,10 @@
 		</File>
 		<File
 			RelativePath="..\..\wtf\OwnPtrCommon.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\wtf\PackedIntVector.h"
 			>
 		</File>
 		<File
@@ -890,6 +1014,10 @@
 		</File>
 		<File
 			RelativePath="..\..\wtf\RandomNumberSeed.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\wtf\RedBlackTree.h"
 			>
 		</File>
 		<File
@@ -994,10 +1122,6 @@
 		</File>
 		<File
 			RelativePath="..\..\wtf\Threading.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\wtf\ThreadingNone.cpp"
 			>
 		</File>
 		<File

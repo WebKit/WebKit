@@ -6,6 +6,7 @@ SET(JavaScriptCore_INCLUDE_DIRECTORIES
     "${JAVASCRIPTCORE_DIR}/assembler"
     "${JAVASCRIPTCORE_DIR}/bytecode"
     "${JAVASCRIPTCORE_DIR}/bytecompiler"
+    "${JAVASCRIPTCORE_DIR}/dfg"
     "${JAVASCRIPTCORE_DIR}/heap"
     "${JAVASCRIPTCORE_DIR}/debugger"
     "${JAVASCRIPTCORE_DIR}/interpreter"
@@ -36,26 +37,29 @@ SET(JavaScriptCore_SOURCES
     bytecode/CodeBlock.cpp
     bytecode/JumpTable.cpp
     bytecode/Opcode.cpp
+    bytecode/PredictedType.cpp
     bytecode/SamplingTool.cpp
     bytecode/StructureStubInfo.cpp
+    bytecode/ValueProfile.cpp
 
     bytecompiler/BytecodeGenerator.cpp
     bytecompiler/NodesCodegen.cpp
 
+    heap/AllocationSpace.cpp
     heap/Heap.cpp
     heap/HandleHeap.cpp
     heap/HandleStack.cpp
+    heap/JettisonedCodeBlocks.cpp
     heap/MachineStackMarker.cpp
     heap/MarkedBlock.cpp
-    heap/NewSpace.cpp
-    heap/OldSpace.cpp
+    heap/MarkedSpace.cpp
     heap/ConservativeRoots.cpp
     heap/MarkStack.cpp
 
     debugger/Debugger.cpp
     debugger/DebuggerActivation.cpp
     debugger/DebuggerCallFrame.cpp
-
+    
     interpreter/CallFrame.cpp
     interpreter/Interpreter.cpp
     interpreter/RegisterFile.cpp
@@ -73,7 +77,6 @@ SET(JavaScriptCore_SOURCES
     jit/JITStubs.cpp
     jit/ThunkGenerators.cpp
 
-    parser/JSParser.cpp
     parser/Lexer.cpp
     parser/Nodes.cpp
     parser/Parser.cpp
@@ -110,6 +113,7 @@ SET(JavaScriptCore_SOURCES
     runtime/FunctionPrototype.cpp
     runtime/GCActivityCallback.cpp
     runtime/GetterSetter.cpp
+    runtime/Heuristics.cpp
     runtime/Identifier.cpp
     runtime/InitializeThreading.cpp
     runtime/InternalFunction.cpp
@@ -119,13 +123,14 @@ SET(JavaScriptCore_SOURCES
     runtime/JSByteArray.cpp
     runtime/JSCell.cpp
     runtime/JSFunction.cpp
+    runtime/JSBoundFunction.cpp
     runtime/JSGlobalData.cpp
     runtime/JSGlobalObject.cpp
     runtime/JSGlobalObjectFunctions.cpp
+    runtime/JSGlobalThis.cpp
     runtime/JSLock.cpp
     runtime/JSNotAnObject.cpp
     runtime/JSObject.cpp
-    runtime/JSObjectWithGlobalObject.cpp
     runtime/JSONObject.cpp
     runtime/JSPropertyNameIterator.cpp
     runtime/JSStaticScopeObject.cpp
@@ -152,7 +157,6 @@ SET(JavaScriptCore_SOURCES
     runtime/RegExpConstructor.cpp
     runtime/RegExpObject.cpp
     runtime/RegExpPrototype.cpp
-    runtime/RopeImpl.cpp
     runtime/ScopeChain.cpp
     runtime/SmallStrings.cpp
     runtime/StrictEvalActivation.cpp

@@ -211,8 +211,8 @@ private:
 
         // parseEscape() should never call these delegate methods when
         // invoked with inCharacterClass set.
-        void assertionWordBoundary(bool) { ASSERT_NOT_REACHED(); }
-        void atomBackReference(unsigned) { ASSERT_NOT_REACHED(); }
+        NO_RETURN_DUE_TO_ASSERT void assertionWordBoundary(bool) { ASSERT_NOT_REACHED(); }
+        NO_RETURN_DUE_TO_ASSERT void atomBackReference(unsigned) { ASSERT_NOT_REACHED(); }
 
     private:
         Delegate& m_delegate;
@@ -231,7 +231,7 @@ private:
         : m_delegate(delegate)
         , m_backReferenceLimit(backReferenceLimit)
         , m_err(NoError)
-        , m_data(pattern.characters())
+        , m_data(pattern.characters16())
         , m_size(pattern.length())
         , m_index(0)
         , m_parenthesesNestingDepth(0)

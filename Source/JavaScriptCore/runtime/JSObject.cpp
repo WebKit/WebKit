@@ -29,13 +29,14 @@
 #include "GetterSetter.h"
 #include "JSFunction.h"
 #include "JSGlobalObject.h"
+#include "JSGlobalThis.h"
+#include "Lookup.h"
 #include "NativeErrorConstructor.h"
+#include "Nodes.h"
 #include "ObjectPrototype.h"
+#include "Operations.h"
 #include "PropertyDescriptor.h"
 #include "PropertyNameArray.h"
-#include "Lookup.h"
-#include "Nodes.h"
-#include "Operations.h"
 #include <math.h>
 #include <wtf/Assertions.h>
 
@@ -47,7 +48,9 @@ ASSERT_CLASS_FITS_IN_CELL(JSFinalObject);
 
 const char* StrictModeReadonlyPropertyWriteError = "Attempted to assign to readonly property.";
 
-const ClassInfo JSObject::s_info = { "Object", 0, 0, 0 };
+const ClassInfo JSObject::s_info = { "Object", 0, 0, 0, CREATE_METHOD_TABLE(JSObject) };
+
+const ClassInfo JSFinalObject::s_info = { "Object", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(JSFinalObject) };
 
 static inline void getClassPropertyNames(ExecState* exec, const ClassInfo* classInfo, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
@@ -68,31 +71,48 @@ static inline void getClassPropertyNames(ExecState* exec, const ClassInfo* class
     }
 }
 
-void JSObject::visitChildren(SlotVisitor& visitor)
+void JSObject::finalize(JSCell* cell)
 {
-    ASSERT_GC_OBJECT_INHERITS(this, &s_info);
+    delete [] static_cast<JSObject*>(cell)->m_propertyStorage.get();
+}
+
+void JSObject::vtableAnchor()
+{
+}
+
+void JSObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
+{
+    JSObject* thisObject = static_cast<JSObject*>(cell);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
 #ifndef NDEBUG
     bool wasCheckingForDefaultMarkViolation = visitor.m_isCheckingForDefaultMarkViolation;
     visitor.m_isCheckingForDefaultMarkViolation = false;
 #endif
 
-    visitChildrenDirect(visitor);
+    JSCell::visitChildren(thisObject, visitor);
+
+    PropertyStorage storage = thisObject->propertyStorage();
+    size_t storageSize = thisObject->structure()->propertyStorageSize();
+    visitor.appendValues(storage, storageSize);
+    if (thisObject->m_inheritorID)
+        visitor.append(&thisObject->m_inheritorID);
 
 #ifndef NDEBUG
     visitor.m_isCheckingForDefaultMarkViolation = wasCheckingForDefaultMarkViolation;
 #endif
 }
 
-UString JSObject::className() const
+UString JSObject::className(const JSObject* object)
 {
-    const ClassInfo* info = classInfo();
+    const ClassInfo* info = object->classInfo();
     ASSERT(info);
     return info->className;
 }
 
-bool JSObject::getOwnPropertySlot(ExecState* exec, unsigned propertyName, PropertySlot& slot)
+bool JSObject::getOwnPropertySlotByIndex(JSCell* cell, ExecState* exec, unsigned propertyName, PropertySlot& slot)
 {
-    return getOwnPropertySlot(exec, Identifier::from(exec, propertyName), slot);
+    JSObject* thisObject = static_cast<JSObject*>(cell);
+    return thisObject->methodTable()->getOwnPropertySlot(thisObject, exec, Identifier::from(exec, propertyName), slot);
 }
 
 static void throwSetterError(ExecState* exec)
@@ -101,33 +121,35 @@ static void throwSetterError(ExecState* exec)
 }
 
 // ECMA 8.6.2.2
-void JSObject::put(ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
+void JSObject::put(JSCell* cell, ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
 {
+    JSObject* thisObject = static_cast<JSObject*>(cell);
     ASSERT(value);
-    ASSERT(!Heap::heap(value) || Heap::heap(value) == Heap::heap(this));
+    ASSERT(!Heap::heap(value) || Heap::heap(value) == Heap::heap(thisObject));
+    JSGlobalData& globalData = exec->globalData();
 
     if (propertyName == exec->propertyNames().underscoreProto) {
         // Setting __proto__ to a non-object, non-null value is silently ignored to match Mozilla.
         if (!value.isObject() && !value.isNull())
             return;
 
-        if (!isExtensible()) {
+        if (!thisObject->isExtensible()) {
             if (slot.isStrictMode())
                 throwTypeError(exec, StrictModeReadonlyPropertyWriteError);
             return;
         }
             
-        if (!setPrototypeWithCycleCheck(exec->globalData(), value))
+        if (!thisObject->setPrototypeWithCycleCheck(globalData, value))
             throwError(exec, createError(exec, "cyclic __proto__ value"));
         return;
     }
 
     // Check if there are any setters or getters in the prototype chain
     JSValue prototype;
-    for (JSObject* obj = this; !obj->structure()->hasGetterSetterProperties(); obj = asObject(prototype)) {
+    for (JSObject* obj = thisObject; !obj->structure()->hasGetterSetterProperties(); obj = asObject(prototype)) {
         prototype = obj->prototype();
         if (prototype.isNull()) {
-            if (!putDirectInternal(exec->globalData(), propertyName, value, 0, true, slot) && slot.isStrictMode())
+            if (!thisObject->putDirectInternal(globalData, propertyName, value, 0, true, slot, getJSFunction(value)) && slot.isStrictMode())
                 throwTypeError(exec, StrictModeReadonlyPropertyWriteError);
             return;
         }
@@ -135,14 +157,14 @@ void JSObject::put(ExecState* exec, const Identifier& propertyName, JSValue valu
     
     unsigned attributes;
     JSCell* specificValue;
-    if ((m_structure->get(exec->globalData(), propertyName, attributes, specificValue) != WTF::notFound) && attributes & ReadOnly) {
+    if ((thisObject->structure()->get(globalData, propertyName, attributes, specificValue) != WTF::notFound) && attributes & ReadOnly) {
         if (slot.isStrictMode())
             throwError(exec, createTypeError(exec, StrictModeReadonlyPropertyWriteError));
         return;
     }
 
-    for (JSObject* obj = this; ; obj = asObject(prototype)) {
-        if (JSValue gs = obj->getDirect(exec->globalData(), propertyName)) {
+    for (JSObject* obj = thisObject; ; obj = asObject(prototype)) {
+        if (JSValue gs = obj->getDirect(globalData, propertyName)) {
             if (gs.isGetterSetter()) {
                 JSObject* setterFunc = asGetterSetter(gs)->setter();        
                 if (!setterFunc) {
@@ -151,12 +173,12 @@ void JSObject::put(ExecState* exec, const Identifier& propertyName, JSValue valu
                 }
                 
                 CallData callData;
-                CallType callType = setterFunc->getCallData(callData);
+                CallType callType = setterFunc->methodTable()->getCallData(setterFunc, callData);
                 MarkedArgumentBuffer args;
                 args.append(value);
 
                 // If this is WebCore's global object then we need to substitute the shell.
-                call(exec, setterFunc, callType, callData, this->toThisObject(exec), args);
+                call(exec, setterFunc, callType, callData, thisObject->methodTable()->toThisObject(thisObject, exec), args);
                 return;
             }
 
@@ -169,46 +191,29 @@ void JSObject::put(ExecState* exec, const Identifier& propertyName, JSValue valu
         if (prototype.isNull())
             break;
     }
-
-    if (!putDirectInternal(exec->globalData(), propertyName, value, 0, true, slot) && slot.isStrictMode())
+    
+    if (!thisObject->putDirectInternal(globalData, propertyName, value, 0, true, slot, getJSFunction(value)) && slot.isStrictMode())
         throwTypeError(exec, StrictModeReadonlyPropertyWriteError);
     return;
 }
 
-void JSObject::put(ExecState* exec, unsigned propertyName, JSValue value)
+void JSObject::putByIndex(JSCell* cell, ExecState* exec, unsigned propertyName, JSValue value)
 {
     PutPropertySlot slot;
-    put(exec, Identifier::from(exec, propertyName), value, slot);
+    JSObject* thisObject = static_cast<JSObject*>(cell);
+    thisObject->methodTable()->put(thisObject, exec, Identifier::from(exec, propertyName), value, slot);
 }
 
-void JSObject::putWithAttributes(JSGlobalData* globalData, const Identifier& propertyName, JSValue value, unsigned attributes, bool checkReadOnly, PutPropertySlot& slot)
+void JSObject::putWithAttributes(JSObject* object, ExecState* exec, const Identifier& propertyName, JSValue value, unsigned attributes)
 {
-    putDirectInternal(*globalData, propertyName, value, attributes, checkReadOnly, slot);
+    PutPropertySlot slot;
+    object->putDirectInternal(exec->globalData(), propertyName, value, attributes, true, slot, getJSFunction(value));
 }
 
 void JSObject::putWithAttributes(JSGlobalData* globalData, const Identifier& propertyName, JSValue value, unsigned attributes)
 {
-    putDirectInternal(*globalData, propertyName, value, attributes);
-}
-
-void JSObject::putWithAttributes(JSGlobalData* globalData, unsigned propertyName, JSValue value, unsigned attributes)
-{
-    putWithAttributes(globalData, Identifier::from(globalData, propertyName), value, attributes);
-}
-
-void JSObject::putWithAttributes(ExecState* exec, const Identifier& propertyName, JSValue value, unsigned attributes, bool checkReadOnly, PutPropertySlot& slot)
-{
-    putDirectInternal(exec->globalData(), propertyName, value, attributes, checkReadOnly, slot);
-}
-
-void JSObject::putWithAttributes(ExecState* exec, const Identifier& propertyName, JSValue value, unsigned attributes)
-{
-    putDirectInternal(exec->globalData(), propertyName, value, attributes);
-}
-
-void JSObject::putWithAttributes(ExecState* exec, unsigned propertyName, JSValue value, unsigned attributes)
-{
-    putWithAttributes(exec, Identifier::from(exec, propertyName), value, attributes);
+    PutPropertySlot slot;
+    putDirectInternal(*globalData, propertyName, value, attributes, true, slot, getJSFunction(value));
 }
 
 bool JSObject::hasProperty(ExecState* exec, const Identifier& propertyName) const
@@ -224,19 +229,24 @@ bool JSObject::hasProperty(ExecState* exec, unsigned propertyName) const
 }
 
 // ECMA 8.6.2.5
-bool JSObject::deleteProperty(ExecState* exec, const Identifier& propertyName)
+bool JSObject::deleteProperty(JSCell* cell, ExecState* exec, const Identifier& propertyName)
 {
+    JSObject* thisObject = static_cast<JSObject*>(cell);
+
+    if (!thisObject->staticFunctionsReified())
+        thisObject->reifyStaticFunctionsForDelete(exec);
+
     unsigned attributes;
     JSCell* specificValue;
-    if (m_structure->get(exec->globalData(), propertyName, attributes, specificValue) != WTF::notFound) {
+    if (thisObject->structure()->get(exec->globalData(), propertyName, attributes, specificValue) != WTF::notFound) {
         if ((attributes & DontDelete))
             return false;
-        removeDirect(exec->globalData(), propertyName);
+        thisObject->removeDirect(exec->globalData(), propertyName);
         return true;
     }
 
     // Look in the static hashtable of properties
-    const HashEntry* entry = findPropertyHashEntry(exec, propertyName);
+    const HashEntry* entry = thisObject->findPropertyHashEntry(exec, propertyName);
     if (entry && entry->attributes() & DontDelete)
         return false; // this builtin property can't be deleted
 
@@ -247,12 +257,13 @@ bool JSObject::deleteProperty(ExecState* exec, const Identifier& propertyName)
 bool JSObject::hasOwnProperty(ExecState* exec, const Identifier& propertyName) const
 {
     PropertySlot slot;
-    return const_cast<JSObject*>(this)->getOwnPropertySlot(exec, propertyName, slot);
+    return const_cast<JSObject*>(this)->methodTable()->getOwnPropertySlot(const_cast<JSObject*>(this), exec, propertyName, slot);
 }
 
-bool JSObject::deleteProperty(ExecState* exec, unsigned propertyName)
+bool JSObject::deletePropertyByIndex(JSCell* cell, ExecState* exec, unsigned propertyName)
 {
-    return deleteProperty(exec, Identifier::from(exec, propertyName));
+    JSObject* thisObject = static_cast<JSObject*>(cell);
+    return thisObject->methodTable()->deleteProperty(thisObject, exec, Identifier::from(exec, propertyName));
 }
 
 static ALWAYS_INLINE JSValue callDefaultValueFunction(ExecState* exec, const JSObject* object, const Identifier& propertyName)
@@ -277,29 +288,29 @@ static ALWAYS_INLINE JSValue callDefaultValueFunction(ExecState* exec, const JSO
     return result;
 }
 
-bool JSObject::getPrimitiveNumber(ExecState* exec, double& number, JSValue& result)
+bool JSObject::getPrimitiveNumber(ExecState* exec, double& number, JSValue& result) const
 {
-    result = defaultValue(exec, PreferNumber);
+    result = methodTable()->defaultValue(this, exec, PreferNumber);
     number = result.toNumber(exec);
     return !result.isString();
 }
 
 // ECMA 8.6.2.6
-JSValue JSObject::defaultValue(ExecState* exec, PreferredPrimitiveType hint) const
+JSValue JSObject::defaultValue(const JSObject* object, ExecState* exec, PreferredPrimitiveType hint)
 {
     // Must call toString first for Date objects.
-    if ((hint == PreferString) || (hint != PreferNumber && prototype() == exec->lexicalGlobalObject()->datePrototype())) {
-        JSValue value = callDefaultValueFunction(exec, this, exec->propertyNames().toString);
+    if ((hint == PreferString) || (hint != PreferNumber && object->prototype() == exec->lexicalGlobalObject()->datePrototype())) {
+        JSValue value = callDefaultValueFunction(exec, object, exec->propertyNames().toString);
         if (value)
             return value;
-        value = callDefaultValueFunction(exec, this, exec->propertyNames().valueOf);
+        value = callDefaultValueFunction(exec, object, exec->propertyNames().valueOf);
         if (value)
             return value;
     } else {
-        JSValue value = callDefaultValueFunction(exec, this, exec->propertyNames().valueOf);
+        JSValue value = callDefaultValueFunction(exec, object, exec->propertyNames().valueOf);
         if (value)
             return value;
-        value = callDefaultValueFunction(exec, this, exec->propertyNames().toString);
+        value = callDefaultValueFunction(exec, object, exec->propertyNames().toString);
         if (value)
             return value;
     }
@@ -320,11 +331,16 @@ const HashEntry* JSObject::findPropertyHashEntry(ExecState* exec, const Identifi
     return 0;
 }
 
-void JSObject::defineGetter(ExecState* exec, const Identifier& propertyName, JSObject* getterFunction, unsigned attributes)
+void JSObject::defineGetter(JSObject* thisObject, ExecState* exec, const Identifier& propertyName, JSObject* getterFunction, unsigned attributes)
 {
-    JSValue object = getDirect(exec->globalData(), propertyName);
+    if (propertyName == exec->propertyNames().underscoreProto) {
+        // Defining a getter for __proto__ is silently ignored.
+        return;
+    }
+
+    JSValue object = thisObject->getDirect(exec->globalData(), propertyName);
     if (object && object.isGetterSetter()) {
-        ASSERT(m_structure->hasGetterSetterProperties());
+        ASSERT(thisObject->structure()->hasGetterSetterProperties());
         asGetterSetter(object)->setGetter(exec->globalData(), getterFunction);
         return;
     }
@@ -332,84 +348,97 @@ void JSObject::defineGetter(ExecState* exec, const Identifier& propertyName, JSO
     JSGlobalData& globalData = exec->globalData();
     PutPropertySlot slot;
     GetterSetter* getterSetter = GetterSetter::create(exec);
-    putDirectInternal(globalData, propertyName, getterSetter, attributes | Getter, true, slot);
+    thisObject->putDirectInternal(globalData, propertyName, getterSetter, attributes | Getter, true, slot, 0);
 
     // putDirect will change our Structure if we add a new property. For
     // getters and setters, though, we also need to change our Structure
     // if we override an existing non-getter or non-setter.
     if (slot.type() != PutPropertySlot::NewProperty) {
-        if (!m_structure->isDictionary())
-            setStructure(exec->globalData(), Structure::getterSetterTransition(globalData, m_structure.get()));
+        if (!thisObject->structure()->isDictionary())
+            thisObject->setStructure(exec->globalData(), Structure::getterSetterTransition(globalData, thisObject->structure()));
     }
 
-    m_structure->setHasGetterSetterProperties(true);
+    thisObject->structure()->setHasGetterSetterProperties(true);
     getterSetter->setGetter(globalData, getterFunction);
 }
 
-void JSObject::defineSetter(ExecState* exec, const Identifier& propertyName, JSObject* setterFunction, unsigned attributes)
+void JSObject::initializeGetterSetterProperty(ExecState* exec, const Identifier& propertyName, GetterSetter* getterSetter, unsigned attributes)
 {
-    JSValue object = getDirect(exec->globalData(), propertyName);
+    // Set an inital property on an object; the property must not already exist & the attribute flags must be set correctly.
+    ASSERT(structure()->get(exec->globalData(), propertyName) == WTF::notFound);
+    ASSERT(static_cast<bool>(getterSetter->getter()) == static_cast<bool>(attributes & Getter));
+    ASSERT(static_cast<bool>(getterSetter->setter()) == static_cast<bool>(attributes & Setter));
+
+    JSGlobalData& globalData = exec->globalData();
+    PutPropertySlot slot;
+    putDirectInternal(globalData, propertyName, getterSetter, attributes | Getter, true, slot, 0);
+
+    // putDirect will change our Structure if we add a new property. For
+    // getters and setters, though, we also need to change our Structure
+    // if we override an existing non-getter or non-setter.
+    if (slot.type() != PutPropertySlot::NewProperty) {
+        if (!structure()->isDictionary())
+            setStructure(exec->globalData(), Structure::getterSetterTransition(globalData, structure()));
+    }
+
+    structure()->setHasGetterSetterProperties(true);
+}
+
+void JSObject::defineSetter(JSObject* thisObject, ExecState* exec, const Identifier& propertyName, JSObject* setterFunction, unsigned attributes)
+{
+    if (propertyName == exec->propertyNames().underscoreProto) {
+        // Defining a setter for __proto__ is silently ignored.
+        return;
+    }
+
+    JSValue object = thisObject->getDirect(exec->globalData(), propertyName);
     if (object && object.isGetterSetter()) {
-        ASSERT(m_structure->hasGetterSetterProperties());
+        ASSERT(thisObject->structure()->hasGetterSetterProperties());
         asGetterSetter(object)->setSetter(exec->globalData(), setterFunction);
         return;
     }
 
     PutPropertySlot slot;
     GetterSetter* getterSetter = GetterSetter::create(exec);
-    putDirectInternal(exec->globalData(), propertyName, getterSetter, attributes | Setter, true, slot);
+    thisObject->putDirectInternal(exec->globalData(), propertyName, getterSetter, attributes | Setter, true, slot, 0);
 
     // putDirect will change our Structure if we add a new property. For
     // getters and setters, though, we also need to change our Structure
     // if we override an existing non-getter or non-setter.
     if (slot.type() != PutPropertySlot::NewProperty) {
-        if (!m_structure->isDictionary())
-            setStructure(exec->globalData(), Structure::getterSetterTransition(exec->globalData(), m_structure.get()));
+        if (!thisObject->structure()->isDictionary())
+            thisObject->setStructure(exec->globalData(), Structure::getterSetterTransition(exec->globalData(), thisObject->structure()));
     }
 
-    m_structure->setHasGetterSetterProperties(true);
+    thisObject->structure()->setHasGetterSetterProperties(true);
     getterSetter->setSetter(exec->globalData(), setterFunction);
 }
 
 JSValue JSObject::lookupGetter(ExecState* exec, const Identifier& propertyName)
 {
-    JSObject* object = this;
-    while (true) {
-        if (JSValue value = object->getDirect(exec->globalData(), propertyName)) {
-            if (!value.isGetterSetter())
-                return jsUndefined();
-            JSObject* functionObject = asGetterSetter(value)->getter();
-            if (!functionObject)
-                return jsUndefined();
-            return functionObject;
-        }
+    PropertyDescriptor descriptor;
+    if (!getPropertyDescriptor(exec, propertyName, descriptor))
+        return jsUndefined();
 
-        if (!object->prototype() || !object->prototype().isObject())
-            return jsUndefined();
-        object = asObject(object->prototype());
-    }
+    if (!descriptor.getterPresent())
+        return jsUndefined();
+
+    return descriptor.getter();
 }
 
 JSValue JSObject::lookupSetter(ExecState* exec, const Identifier& propertyName)
 {
-    JSObject* object = this;
-    while (true) {
-        if (JSValue value = object->getDirect(exec->globalData(), propertyName)) {
-            if (!value.isGetterSetter())
-                return jsUndefined();
-            JSObject* functionObject = asGetterSetter(value)->setter();
-            if (!functionObject)
-                return jsUndefined();
-            return functionObject;
-        }
+    PropertyDescriptor descriptor;
+    if (!getPropertyDescriptor(exec, propertyName, descriptor))
+        return jsUndefined();
 
-        if (!object->prototype() || !object->prototype().isObject())
-            return jsUndefined();
-        object = asObject(object->prototype());
-    }
+    if (!descriptor.setterPresent())
+        return jsUndefined();
+    
+    return descriptor.setter();
 }
 
-bool JSObject::hasInstance(ExecState* exec, JSValue value, JSValue proto)
+bool JSObject::hasInstance(JSObject*, ExecState* exec, JSValue value, JSValue proto)
 {
     if (!value.isObject())
         return false;
@@ -430,7 +459,7 @@ bool JSObject::hasInstance(ExecState* exec, JSValue value, JSValue proto)
 bool JSObject::propertyIsEnumerable(ExecState* exec, const Identifier& propertyName) const
 {
     PropertyDescriptor descriptor;
-    if (!const_cast<JSObject*>(this)->getOwnPropertyDescriptor(exec, propertyName, descriptor))
+    if (!const_cast<JSObject*>(this)->methodTable()->getOwnPropertyDescriptor(const_cast<JSObject*>(this), exec, propertyName, descriptor))
         return false;
     return descriptor.enumerable();
 }
@@ -438,7 +467,7 @@ bool JSObject::propertyIsEnumerable(ExecState* exec, const Identifier& propertyN
 bool JSObject::getPropertySpecificValue(ExecState* exec, const Identifier& propertyName, JSCell*& specificValue) const
 {
     unsigned attributes;
-    if (m_structure->get(exec->globalData(), propertyName, attributes, specificValue) != WTF::notFound)
+    if (structure()->get(exec->globalData(), propertyName, attributes, specificValue) != WTF::notFound)
         return true;
 
     // This could be a function within the static table? - should probably
@@ -448,20 +477,20 @@ bool JSObject::getPropertySpecificValue(ExecState* exec, const Identifier& prope
     return false;
 }
 
-void JSObject::getPropertyNames(ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
+void JSObject::getPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
-    getOwnPropertyNames(exec, propertyNames, mode);
+    object->methodTable()->getOwnPropertyNames(object, exec, propertyNames, mode);
 
-    if (prototype().isNull())
+    if (object->prototype().isNull())
         return;
 
-    JSObject* prototype = asObject(this->prototype());
+    JSObject* prototype = asObject(object->prototype());
     while(1) {
         if (prototype->structure()->typeInfo().overridesGetPropertyNames()) {
-            prototype->getPropertyNames(exec, propertyNames, mode);
+            prototype->methodTable()->getPropertyNames(prototype, exec, propertyNames, mode);
             break;
         }
-        prototype->getOwnPropertyNames(exec, propertyNames, mode);
+        prototype->methodTable()->getOwnPropertyNames(prototype, exec, propertyNames, mode);
         JSValue nextProto = prototype->prototype();
         if (nextProto.isNull())
             break;
@@ -469,10 +498,11 @@ void JSObject::getPropertyNames(ExecState* exec, PropertyNameArray& propertyName
     }
 }
 
-void JSObject::getOwnPropertyNames(ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
+void JSObject::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
-    m_structure->getPropertyNames(exec->globalData(), propertyNames, mode);
-    getClassPropertyNames(exec, classInfo(), propertyNames, mode);
+    object->structure()->getPropertyNamesFromStructure(exec->globalData(), propertyNames, mode);
+    if (!object->staticFunctionsReified())
+        getClassPropertyNames(exec, object->classInfo(), propertyNames, mode);
 }
 
 bool JSObject::toBoolean(ExecState*) const
@@ -496,23 +526,15 @@ UString JSObject::toString(ExecState* exec) const
     return primitive.toString(exec);
 }
 
-JSObject* JSObject::toObject(ExecState*, JSGlobalObject*) const
+JSObject* JSObject::toThisObject(JSCell* cell, ExecState*)
 {
-    return const_cast<JSObject*>(this);
-}
-
-JSObject* JSObject::toThisObject(ExecState*) const
-{
-    return const_cast<JSObject*>(this);
-}
-
-JSValue JSObject::toStrictThisObject(ExecState*) const
-{
-    return const_cast<JSObject*>(this);
+    return static_cast<JSObject*>(cell);
 }
 
 JSObject* JSObject::unwrappedObject()
 {
+    if (isGlobalThis())
+        return static_cast<JSGlobalThis*>(this)->unwrappedObject();
     return this;
 }
 
@@ -521,7 +543,7 @@ void JSObject::seal(JSGlobalData& globalData)
     if (isSealed(globalData))
         return;
     preventExtensions(globalData);
-    setStructure(globalData, Structure::sealTransition(globalData, m_structure.get()));
+    setStructure(globalData, Structure::sealTransition(globalData, structure()));
 }
 
 void JSObject::freeze(JSGlobalData& globalData)
@@ -529,51 +551,62 @@ void JSObject::freeze(JSGlobalData& globalData)
     if (isFrozen(globalData))
         return;
     preventExtensions(globalData);
-    setStructure(globalData, Structure::freezeTransition(globalData, m_structure.get()));
+    setStructure(globalData, Structure::freezeTransition(globalData, structure()));
 }
 
 void JSObject::preventExtensions(JSGlobalData& globalData)
 {
     if (isExtensible())
-        setStructure(globalData, Structure::preventExtensionsTransition(globalData, m_structure.get()));
+        setStructure(globalData, Structure::preventExtensionsTransition(globalData, structure()));
+}
+
+// This presently will flatten to an uncachable dictionary; this is suitable
+// for use in delete, we may want to do something different elsewhere.
+void JSObject::reifyStaticFunctionsForDelete(ExecState* exec)
+{
+    ASSERT(!staticFunctionsReified());
+    JSGlobalData& globalData = exec->globalData();
+
+    // If this object's ClassInfo has no static properties, then nothing to reify!
+    // We can safely set the flag to avoid the expensive check again in the future.
+    if (!classInfo()->hasStaticProperties()) {
+        structure()->setStaticFunctionsReified();
+        return;
+    }
+
+    if (!structure()->isUncacheableDictionary())
+        setStructure(globalData, Structure::toUncacheableDictionaryTransition(globalData, structure()));
+
+    for (const ClassInfo* info = classInfo(); info; info = info->parentClass) {
+        const HashTable* hashTable = info->propHashTable(globalObject()->globalExec());
+        if (!hashTable)
+            continue;
+        PropertySlot slot;
+        for (HashTable::ConstIterator iter = hashTable->begin(globalData); iter != hashTable->end(globalData); ++iter) {
+            if (iter->attributes() & Function)
+                setUpStaticFunctionSlot(globalObject()->globalExec(), *iter, this, Identifier(&globalData, iter->key()), slot);
+        }
+    }
+
+    structure()->setStaticFunctionsReified();
 }
 
 void JSObject::removeDirect(JSGlobalData& globalData, const Identifier& propertyName)
 {
-    if (m_structure->get(globalData, propertyName) == WTF::notFound)
+    if (structure()->get(globalData, propertyName) == WTF::notFound)
         return;
 
     size_t offset;
-    if (m_structure->isUncacheableDictionary()) {
-        offset = m_structure->removePropertyWithoutTransition(globalData, propertyName);
+    if (structure()->isUncacheableDictionary()) {
+        offset = structure()->removePropertyWithoutTransition(globalData, propertyName);
         if (offset != WTF::notFound)
             putUndefinedAtDirectOffset(offset);
         return;
     }
 
-    setStructure(globalData, Structure::removePropertyTransition(globalData, m_structure.get(), propertyName, offset));
+    setStructure(globalData, Structure::removePropertyTransition(globalData, structure(), propertyName, offset));
     if (offset != WTF::notFound)
         putUndefinedAtDirectOffset(offset);
-}
-
-void JSObject::putDirectFunction(ExecState* exec, InternalFunction* function, unsigned attr)
-{
-    putDirectFunction(exec->globalData(), Identifier(exec, function->name(exec)), function, attr);
-}
-
-void JSObject::putDirectFunction(ExecState* exec, JSFunction* function, unsigned attr)
-{
-    putDirectFunction(exec->globalData(), Identifier(exec, function->name(exec)), function, attr);
-}
-
-void JSObject::putDirectFunctionWithoutTransition(ExecState* exec, InternalFunction* function, unsigned attr)
-{
-    putDirectFunctionWithoutTransition(exec->globalData(), Identifier(exec, function->name(exec)), function, attr);
-}
-
-void JSObject::putDirectFunctionWithoutTransition(ExecState* exec, JSFunction* function, unsigned attr)
-{
-    putDirectFunctionWithoutTransition(exec->globalData(), Identifier(exec, function->name(exec)), function, attr);
 }
 
 NEVER_INLINE void JSObject::fillGetterPropertySlot(PropertySlot& slot, WriteBarrierBase<Unknown>* location)
@@ -589,39 +622,42 @@ NEVER_INLINE void JSObject::fillGetterPropertySlot(PropertySlot& slot, WriteBarr
 
 Structure* JSObject::createInheritorID(JSGlobalData& globalData)
 {
-    m_inheritorID.set(globalData, this, createEmptyObjectStructure(globalData, this));
+    m_inheritorID.set(globalData, this, createEmptyObjectStructure(globalData, structure()->globalObject(), this));
     ASSERT(m_inheritorID->isEmpty());
     return m_inheritorID.get();
 }
 
-void JSObject::allocatePropertyStorage(size_t oldSize, size_t newSize)
+void JSObject::allocatePropertyStorage(JSGlobalData& globalData, size_t oldSize, size_t newSize)
 {
     ASSERT(newSize > oldSize);
 
-    // It's important that this function not rely on m_structure, since
+    // It's important that this function not rely on structure(), since
     // we might be in the middle of a transition.
-    bool wasInline = (oldSize < JSObject::baseExternalStorageCapacity);
+    PropertyStorage newPropertyStorage = 0;
+    newPropertyStorage = new WriteBarrierBase<Unknown>[newSize];
 
-    PropertyStorage oldPropertyStorage = m_propertyStorage;
-    PropertyStorage newPropertyStorage = new WriteBarrierBase<Unknown>[newSize];
+    PropertyStorage oldPropertyStorage = m_propertyStorage.get();
+    ASSERT(newPropertyStorage);
 
     for (unsigned i = 0; i < oldSize; ++i)
        newPropertyStorage[i] = oldPropertyStorage[i];
 
-    if (!wasInline)
+    if (isUsingInlineStorage())
+        Heap::heap(this)->addFinalizer(this, &finalize);
+    else
         delete [] oldPropertyStorage;
 
-    m_propertyStorage = newPropertyStorage;
+    m_propertyStorage.set(globalData, this, newPropertyStorage);
 }
 
-bool JSObject::getOwnPropertyDescriptor(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
+bool JSObject::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
 {
     unsigned attributes = 0;
     JSCell* cell = 0;
-    size_t offset = m_structure->get(exec->globalData(), propertyName, attributes, cell);
+    size_t offset = object->structure()->get(exec->globalData(), propertyName, attributes, cell);
     if (offset == WTF::notFound)
         return false;
-    descriptor.setDescriptor(getDirectOffset(offset), attributes);
+    descriptor.setDescriptor(object->getDirectOffset(offset), attributes);
     return true;
 }
 
@@ -629,7 +665,7 @@ bool JSObject::getPropertyDescriptor(ExecState* exec, const Identifier& property
 {
     JSObject* object = this;
     while (true) {
-        if (object->getOwnPropertyDescriptor(exec, propertyName, descriptor))
+        if (object->methodTable()->getOwnPropertyDescriptor(object, exec, propertyName, descriptor))
             return true;
         JSValue prototype = object->prototype();
         if (!prototype.isObject())
@@ -651,7 +687,7 @@ static bool putDescriptor(ExecState* exec, JSObject* target, const Identifier& p
                 attributes |= Setter;
                 accessor->setSetter(exec->globalData(), asObject(oldDescriptor.setter()));
             }
-            target->putWithAttributes(exec, propertyName, accessor, attributes);
+            target->methodTable()->putWithAttributes(target, exec, propertyName, accessor, attributes);
             return true;
         }
         JSValue newValue = jsUndefined();
@@ -659,33 +695,33 @@ static bool putDescriptor(ExecState* exec, JSObject* target, const Identifier& p
             newValue = descriptor.value();
         else if (oldDescriptor.value())
             newValue = oldDescriptor.value();
-        target->putWithAttributes(exec, propertyName, newValue, attributes & ~(Getter | Setter));
+        target->methodTable()->putWithAttributes(target, exec, propertyName, newValue, attributes & ~(Getter | Setter));
         return true;
     }
     attributes &= ~ReadOnly;
     if (descriptor.getter() && descriptor.getter().isObject())
-        target->defineGetter(exec, propertyName, asObject(descriptor.getter()), attributes);
+        target->methodTable()->defineGetter(target, exec, propertyName, asObject(descriptor.getter()), attributes);
     if (exec->hadException())
         return false;
     if (descriptor.setter() && descriptor.setter().isObject())
-        target->defineSetter(exec, propertyName, asObject(descriptor.setter()), attributes);
+        target->methodTable()->defineSetter(target, exec, propertyName, asObject(descriptor.setter()), attributes);
     return !exec->hadException();
 }
 
-bool JSObject::defineOwnProperty(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor, bool throwException)
+bool JSObject::defineOwnProperty(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor, bool throwException)
 {
     // If we have a new property we can just put it on normally
     PropertyDescriptor current;
-    if (!getOwnPropertyDescriptor(exec, propertyName, current)) {
+    if (!object->methodTable()->getOwnPropertyDescriptor(object, exec, propertyName, current)) {
         // unless extensions are prevented!
-        if (!isExtensible()) {
+        if (!object->isExtensible()) {
             if (throwException)
                 throwError(exec, createTypeError(exec, "Attempting to define property on object that is not extensible."));
             return false;
         }
         PropertyDescriptor oldDescriptor;
         oldDescriptor.setValue(jsUndefined());
-        return putDescriptor(exec, this, propertyName, descriptor, descriptor.attributes(), oldDescriptor);
+        return putDescriptor(exec, object, propertyName, descriptor, descriptor.attributes(), oldDescriptor);
     }
 
     if (descriptor.isEmpty())
@@ -711,8 +747,8 @@ bool JSObject::defineOwnProperty(ExecState* exec, const Identifier& propertyName
     // A generic descriptor is simply changing the attributes of an existing property
     if (descriptor.isGenericDescriptor()) {
         if (!current.attributesEqual(descriptor)) {
-            deleteProperty(exec, propertyName);
-            putDescriptor(exec, this, propertyName, descriptor, current.attributesWithOverride(descriptor), current);
+            object->methodTable()->deleteProperty(object, exec, propertyName);
+            putDescriptor(exec, object, propertyName, descriptor, current.attributesWithOverride(descriptor), current);
         }
         return true;
     }
@@ -724,8 +760,8 @@ bool JSObject::defineOwnProperty(ExecState* exec, const Identifier& propertyName
                 throwError(exec, createTypeError(exec, "Attempting to change access mechanism for an unconfigurable property."));
             return false;
         }
-        deleteProperty(exec, propertyName);
-        return putDescriptor(exec, this, propertyName, descriptor, current.attributesWithOverride(descriptor), current);
+        object->methodTable()->deleteProperty(object, exec, propertyName);
+        return putDescriptor(exec, object, propertyName, descriptor, current.attributesWithOverride(descriptor), current);
     }
 
     // Changing the value and attributes of an existing property
@@ -747,13 +783,13 @@ bool JSObject::defineOwnProperty(ExecState* exec, const Identifier& propertyName
             if (!descriptor.value())
                 return true;
             PutPropertySlot slot;
-            put(exec, propertyName, descriptor.value(), slot);
+            object->methodTable()->put(object, exec, propertyName, descriptor.value(), slot);
             if (exec->hadException())
                 return false;
             return true;
         }
-        deleteProperty(exec, propertyName);
-        return putDescriptor(exec, this, propertyName, descriptor, current.attributesWithOverride(descriptor), current);
+        object->methodTable()->deleteProperty(object, exec, propertyName);
+        return putDescriptor(exec, object, propertyName, descriptor, current.attributesWithOverride(descriptor), current);
     }
 
     // Changing the accessor functions of an existing accessor property
@@ -770,7 +806,7 @@ bool JSObject::defineOwnProperty(ExecState* exec, const Identifier& propertyName
             return false;
         }
     }
-    JSValue accessor = getDirect(exec->globalData(), propertyName);
+    JSValue accessor = object->getDirect(exec->globalData(), propertyName);
     if (!accessor)
         return false;
     GetterSetter* getterSetter = asGetterSetter(accessor);
@@ -781,13 +817,13 @@ bool JSObject::defineOwnProperty(ExecState* exec, const Identifier& propertyName
             getterSetter->setGetter(exec->globalData(), asObject(descriptor.getter()));
         return true;
     }
-    deleteProperty(exec, propertyName);
+    object->methodTable()->deleteProperty(object, exec, propertyName);
     unsigned attrs = current.attributesWithOverride(descriptor);
     if (descriptor.setter())
         attrs |= Setter;
     if (descriptor.getter())
         attrs |= Getter;
-    putDirect(exec->globalData(), propertyName, getterSetter, attrs);
+    object->putDirect(exec->globalData(), propertyName, getterSetter, attrs);
     return true;
 }
 

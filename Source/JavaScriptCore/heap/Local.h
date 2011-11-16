@@ -57,13 +57,13 @@ private:
 };
 
 template <typename T> inline Local<T>::Local(JSGlobalData& globalData, ExternalType value)
-    : Handle<T>(globalData.allocateLocalHandle())
+    : Handle<T>(globalData.heap.handleStack()->push())
 {
     set(value);
 }
 
 template <typename T> inline Local<T>::Local(JSGlobalData& globalData, Handle<T> other)
-    : Handle<T>(globalData.allocateLocalHandle())
+    : Handle<T>(globalData.heap.handleStack()->push())
 {
     set(other.get());
 }
@@ -94,7 +94,6 @@ template <typename T> inline Local<T>& Local<T>::operator=(Handle<T> other)
 template <typename T> inline void Local<T>::set(ExternalType externalType)
 {
     ASSERT(slot());
-    ASSERT(!HandleTypes<T>::toJSValue(externalType) || !HandleTypes<T>::toJSValue(externalType).isCell() || Heap::isMarked(HandleTypes<T>::toJSValue(externalType).asCell()));
     *slot() = externalType;
 }
 

@@ -30,7 +30,6 @@
 #include <wtf/Assertions.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/HashSet.h>
-#include <wtf/WTFThreadData.h>
 #include <wtf/text/StringHash.h>
 
 using WTF::ThreadSpecific;
@@ -43,16 +42,10 @@ IdentifierTable::~IdentifierTable()
     for (HashSet<StringImpl*>::iterator iter = m_table.begin(); iter != end; ++iter)
         (*iter)->setIsIdentifier(false);
 }
+
 std::pair<HashSet<StringImpl*>::iterator, bool> IdentifierTable::add(StringImpl* value)
 {
     std::pair<HashSet<StringImpl*>::iterator, bool> result = m_table.add(value);
-    (*result.first)->setIsIdentifier(true);
-    return result;
-}
-template<typename U, typename V>
-std::pair<HashSet<StringImpl*>::iterator, bool> IdentifierTable::add(U value)
-{
-    std::pair<HashSet<StringImpl*>::iterator, bool> result = m_table.add<U, V>(value);
     (*result.first)->setIsIdentifier(true);
     return result;
 }
@@ -67,36 +60,51 @@ void deleteIdentifierTable(IdentifierTable* table)
     delete table;
 }
 
-bool Identifier::equal(const StringImpl* r, const char* s)
-{
-    int length = r->length();
-    const UChar* d = r->characters();
-    for (int i = 0; i != length; ++i)
-        if (d[i] != (unsigned char)s[i])
-            return false;
-    return s[length] == 0;
-}
-
 struct IdentifierCStringTranslator {
-    static unsigned hash(const char* c)
+    static unsigned hash(const LChar* c)
     {
-        return StringHasher::computeHash<char>(c);
+        return StringHasher::computeHash<LChar>(c);
     }
 
-    static bool equal(StringImpl* r, const char* s)
+    static bool equal(StringImpl* r, const LChar* s)
     {
         return Identifier::equal(r, s);
     }
 
-    static void translate(StringImpl*& location, const char* c, unsigned hash)
+    static void translate(StringImpl*& location, const LChar* c, unsigned hash)
     {
-        size_t length = strlen(c);
+        size_t length = strlen(reinterpret_cast<const char*>(c));
         UChar* d;
         StringImpl* r = StringImpl::createUninitialized(length, d).leakRef();
         for (size_t i = 0; i != length; i++)
-            d[i] = static_cast<unsigned char>(c[i]); // use unsigned char to zero-extend instead of sign-extend
+            d[i] = c[i];
         r->setHash(hash);
         location = r;
+    }
+};
+
+struct IdentifierLCharFromUCharTranslator {
+    static unsigned hash(const CharBuffer<UChar>& buf)
+    {
+        return StringHasher::computeHash<UChar>(buf.s, buf.length);
+    }
+    
+    static bool equal(StringImpl* str, const CharBuffer<UChar>& buf)
+    {
+        return Identifier::equal(str, buf.s, buf.length);
+    }
+    
+    static void translate(StringImpl*& location, const CharBuffer<UChar>& buf, unsigned hash)
+    {
+        LChar* d;
+        StringImpl* r = StringImpl::createUninitialized(buf.length, d).leakRef();
+        for (unsigned i = 0; i != buf.length; i++) {
+            UChar c = buf.s[i];
+            ASSERT(c <= 0xff);
+            d[i] = c;
+        }
+        r->setHash(hash);
+        location = r; 
     }
 };
 
@@ -107,7 +115,7 @@ PassRefPtr<StringImpl> Identifier::add(JSGlobalData* globalData, const char* c)
     if (!c[0])
         return StringImpl::empty();
     if (!c[1])
-        return add(globalData, globalData->smallStrings.singleCharacterStringRep(static_cast<unsigned char>(c[0])));
+        return add(globalData, globalData->smallStrings.singleCharacterStringRep(c[0]));
 
     IdentifierTable& identifierTable = *globalData->identifierTable;
     LiteralIdentifierTable& literalIdentifierTable = identifierTable.literalTable();
@@ -116,7 +124,7 @@ PassRefPtr<StringImpl> Identifier::add(JSGlobalData* globalData, const char* c)
     if (iter != literalIdentifierTable.end())
         return iter->second;
 
-    pair<HashSet<StringImpl*>::iterator, bool> addResult = identifierTable.add<const char*, IdentifierCStringTranslator>(c);
+    pair<HashSet<StringImpl*>::iterator, bool> addResult = identifierTable.add<const LChar*, IdentifierCStringTranslator>(reinterpret_cast<const LChar*>(c));
 
     // If the string is newly-translated, then we need to adopt it.
     // The boolean in the pair tells us if that is so.
@@ -132,43 +140,36 @@ PassRefPtr<StringImpl> Identifier::add(ExecState* exec, const char* c)
     return add(&exec->globalData(), c);
 }
 
-struct UCharBuffer {
-    const UChar* s;
-    unsigned int length;
-};
-
-struct IdentifierUCharBufferTranslator {
-    static unsigned hash(const UCharBuffer& buf)
-    {
-        return StringHasher::computeHash<UChar>(buf.s, buf.length);
+PassRefPtr<StringImpl> Identifier::add8(JSGlobalData* globalData, const UChar* s, int length)
+{
+    if (length == 1) {
+        UChar c = s[0];
+        ASSERT(c <= 0xff);
+        if (canUseSingleCharacterString(c))
+            return add(globalData, globalData->smallStrings.singleCharacterStringRep(c));
     }
-
-    static bool equal(StringImpl* str, const UCharBuffer& buf)
-    {
-        return Identifier::equal(str, buf.s, buf.length);
-    }
-
-    static void translate(StringImpl*& location, const UCharBuffer& buf, unsigned hash)
-    {
-        UChar* d;
-        StringImpl* r = StringImpl::createUninitialized(buf.length, d).leakRef();
-        for (unsigned i = 0; i != buf.length; i++)
-            d[i] = buf.s[i];
-        r->setHash(hash);
-        location = r; 
-    }
-};
+    
+    if (!length)
+        return StringImpl::empty();
+    CharBuffer<UChar> buf = {s, length}; 
+    pair<HashSet<StringImpl*>::iterator, bool> addResult = globalData->identifierTable->add<CharBuffer<UChar>, IdentifierLCharFromUCharTranslator >(buf);
+    
+    // If the string is newly-translated, then we need to adopt it.
+    // The boolean in the pair tells us if that is so.
+    return addResult.second ? adoptRef(*addResult.first) : *addResult.first;
+}
 
 uint32_t Identifier::toUInt32(const UString& string, bool& ok)
 {
     ok = false;
 
     unsigned length = string.length();
-    const UChar* characters = string.characters();
 
     // An empty string is not a number.
     if (!length)
         return 0;
+
+    const UChar* characters = string.characters16();
 
     // Get the first character, turning it into a digit.
     uint32_t value = characters[0] - '0';
@@ -202,28 +203,6 @@ uint32_t Identifier::toUInt32(const UString& string, bool& ok)
     return value;
 }
 
-PassRefPtr<StringImpl> Identifier::add(JSGlobalData* globalData, const UChar* s, int length)
-{
-    if (length == 1) {
-        UChar c = s[0];
-        if (c <= maxSingleCharacterString)
-            return add(globalData, globalData->smallStrings.singleCharacterStringRep(c));
-    }
-    if (!length)
-        return StringImpl::empty();
-    UCharBuffer buf = {s, length}; 
-    pair<HashSet<StringImpl*>::iterator, bool> addResult = globalData->identifierTable->add<UCharBuffer, IdentifierUCharBufferTranslator>(buf);
-
-    // If the string is newly-translated, then we need to adopt it.
-    // The boolean in the pair tells us if that is so.
-    return addResult.second ? adoptRef(*addResult.first) : *addResult.first;
-}
-
-PassRefPtr<StringImpl> Identifier::add(ExecState* exec, const UChar* s, int length)
-{
-    return add(&exec->globalData(), s, length);
-}
-
 PassRefPtr<StringImpl> Identifier::addSlowCase(JSGlobalData* globalData, StringImpl* r)
 {
     ASSERT(!r->isIdentifier());
@@ -232,7 +211,7 @@ PassRefPtr<StringImpl> Identifier::addSlowCase(JSGlobalData* globalData, StringI
     ASSERT(r->length());
 
     if (r->length() == 1) {
-        UChar c = r->characters()[0];
+        UChar c = (*r)[0];
         if (c <= maxSingleCharacterString)
             r = globalData->smallStrings.singleCharacterStringRep(c);
             if (r->isIdentifier())
@@ -295,8 +274,8 @@ void Identifier::checkCurrentIdentifierTable(ExecState* exec)
 
 // These only exists so that our exports are the same for debug and release builds.
 // This would be an ASSERT_NOT_REACHED(), but we're in NDEBUG only code here!
-void Identifier::checkCurrentIdentifierTable(JSGlobalData*) { CRASH(); }
-void Identifier::checkCurrentIdentifierTable(ExecState*) { CRASH(); }
+NO_RETURN_DUE_TO_CRASH void Identifier::checkCurrentIdentifierTable(JSGlobalData*) { CRASH(); }
+NO_RETURN_DUE_TO_CRASH void Identifier::checkCurrentIdentifierTable(ExecState*) { CRASH(); }
 
 #endif
 

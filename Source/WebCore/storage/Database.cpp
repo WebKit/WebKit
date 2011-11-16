@@ -128,7 +128,7 @@ Database::Database(ScriptExecutionContext* context, const String& name, const St
     , m_isTransactionQueueEnabled(true)
     , m_deleted(false)
 {
-    m_databaseThreadSecurityOrigin = m_contextThreadSecurityOrigin->threadsafeCopy();
+    m_databaseThreadSecurityOrigin = m_contextThreadSecurityOrigin->isolatedCopy();
 
     ScriptController::initializeThreading();
     ASSERT(m_scriptExecutionContext->databaseThread());
@@ -392,7 +392,7 @@ SQLTransactionCoordinator* Database::transactionCoordinator() const
 
 Vector<String> Database::tableNames()
 {
-    // FIXME: Not using threadsafeCopy on these strings looks ok since threads take strict turns
+    // FIXME: Not using isolatedCopy on these strings looks ok since threads take strict turns
     // in dealing with them. However, if the code changes, this may not be true anymore.
     Vector<String> result;
     DatabaseTaskSynchronizer synchronizer;
