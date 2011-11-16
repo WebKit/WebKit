@@ -11,6 +11,13 @@
 
 2011-11-16  Dirk Pranke  <dpranke@chromium.org>
 
+        Revert r100509; change was committed twice (first time as r100491).
+        Unreviewed, build fix.
+
+        * Scripts/webkitpy/layout_tests/port/chromium_gpu.py:
+
+2011-11-16  Dirk Pranke  <dpranke@chromium.org>
+
         Run a dummy test in the gpu configurations if there's nothing to do.
         https://bugs.webkit.org/show_bug.cgi?id=72498
 
