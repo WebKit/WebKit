@@ -146,6 +146,13 @@ class ChangeLogEntry(object):
 
         return reviewer_text, reviewer_list
 
+    def _fuzz_match_reviewers(self, reviewers_text_list):
+        if not reviewers_text_list:
+            return []
+        list_of_reviewers = [self._committer_list.contributors_by_fuzzy_match(reviewer)[0] for reviewer in reviewers_text_list]
+        # Flatten lists and get rid of any reviewers with more than one candidate.
+        return [reviewers[0] for reviewers in list_of_reviewers if len(reviewers) == 1]
+
     def _parse_entry(self):
         match = re.match(self.date_line_regexp, self._contents, re.MULTILINE)
         if not match:
@@ -155,8 +162,8 @@ class ChangeLogEntry(object):
         self._author_name = match.group("name") if match else None
         self._author_email = match.group("email") if match else None
 
-        self._reviewer_text, self._reviewer_list = ChangeLogEntry._parse_reviewer_text(self._contents)
-        self._reviewer = self._committer_list.committer_by_name(self._reviewer_list[0]) if self._reviewer_list else None
+        self._reviewer_text, self._reviewers_text_list = ChangeLogEntry._parse_reviewer_text(self._contents)
+        self._reviewers = self._fuzz_match_reviewers(self._reviewers_text_list)
         self._author = self._committer_list.contributor_by_email(self._author_email) or self._committer_list.contributor_by_name(self._author_name)
 
         self._touched_files = re.findall(self.touched_files_regexp, self._contents, re.MULTILINE)
@@ -175,8 +182,20 @@ class ChangeLogEntry(object):
     def reviewer_text(self):
         return self._reviewer_text
 
+    # Might be None, might also not be a Reviewer!
     def reviewer(self):
-        return self._reviewer  # Might be None, might also not be a Reviewer!
+        return self._reviewers[0] if len(self._reviewers) > 0 else None
+
+    def reviewers(self):
+        return self._reviewers
+
+    def has_valid_reviewer(self):
+        if self._reviewers_text_list:
+            for reviewer in self._reviewers_text_list:
+                reviewer = self._committer_list.committer_by_name(reviewer)
+                if reviewer:
+                    return True
+        return bool(re.search("unreviewed", self._contents, re.IGNORECASE))
 
     def contents(self):
         return self._contents

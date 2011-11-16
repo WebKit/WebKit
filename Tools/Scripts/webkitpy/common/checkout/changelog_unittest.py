@@ -377,40 +377,15 @@ class ChangeLogTest(unittest.TestCase):
         reviewer_text, reviewer_list = ChangeLogEntry._parse_reviewer_text('Reviewed by Sam Weinig with no hesitation')
         self.assertEquals(reviewer_list, ['Sam Weinig'])
 
-        # For now, we let unofficial reviewers recognized as reviewers
-        reviewer_text, reviewer_list = ChangeLogEntry._parse_reviewer_text('Reviewed by Sam Weinig, Anders Carlsson, and (unofficially) Adam Barth.')
-        self.assertEquals(reviewer_list, ['Sam Weinig', 'Anders Carlsson', 'Adam Barth'])
-
-        # It's okay to have 'build fix' and 'others', etc... as a reviewer in the following cases because fuzzy-match would reject it
-        reviewer_text, reviewer_list = ChangeLogEntry._parse_reviewer_text('Reviewed by Dimitri Glazkov, build fix')
-        self.assertEquals(reviewer_list, ['Dimitri Glazkov', 'build fix'])
-
-        reviewer_text, reviewer_list = ChangeLogEntry._parse_reviewer_text('Reviewed by BUILD FIX')
-        self.assertEquals(reviewer_list, ['BUILD FIX'])
-
-        reviewer_text, reviewer_list = ChangeLogEntry._parse_reviewer_text('Reviewed by Mac build fix')
-        self.assertEquals(reviewer_list, ['Mac build fix'])
-
-        reviewer_text, reviewer_list = ChangeLogEntry._parse_reviewer_text('Reviewed by Darin Adler, Dan Bernstein, Adele Peterson, and others.')
-        self.assertEquals(reviewer_text, 'Darin Adler, Dan Bernstein, Adele Peterson, and others')
-        self.assertEquals(reviewer_list, ['Darin Adler', 'Dan Bernstein', 'Adele Peterson', 'others'])
-
-        reviewer_text, reviewer_list = ChangeLogEntry._parse_reviewer_text('Reviewed by George Staikos (and others)')
-        self.assertEquals(reviewer_list, ['George Staikos', 'others'])
-
         reviewer_text, reviewer_list = ChangeLogEntry._parse_reviewer_text('Reviewed by Oliver Hunt, okayed by Darin Adler.')
         self.assertEquals(reviewer_list, ['Oliver Hunt'])
 
-        reviewer_text, reviewer_list = ChangeLogEntry._parse_reviewer_text('Reviewed by Mark Rowe, but Dan Bernstein also reviewed and asked thoughtful questions.')
-        self.assertEquals(reviewer_list, ['Mark Rowe', 'but Dan Bernstein also reviewed', 'asked thoughtful questions'])
-
-        # It's okay to have " in" and "by ", etc... in the following cases because we're going to fuzzy-match them later
-        reviewer_text, reviewer_list = ChangeLogEntry._parse_reviewer_text('Reviewed by Darin Adler in <https://bugs.webkit.org/show_bug.cgi?id=47736>.')
-        self.assertEquals(reviewer_text, 'Darin Adler in')
-        reviewer_text, reviewer_list = ChangeLogEntry._parse_reviewer_text('Reviewed by Adam Barth.:w')
-        self.assertEquals(reviewer_text, 'Adam Barth.:w')
         reviewer_text, reviewer_list = ChangeLogEntry._parse_reviewer_text('Reviewed by Darin Adler).')
-        self.assertEquals(reviewer_text, 'Darin Adler')
+        self.assertEquals(reviewer_list, ['Darin Adler'])
+
+        # For now, we let unofficial reviewers recognized as reviewers
+        reviewer_text, reviewer_list = ChangeLogEntry._parse_reviewer_text('Reviewed by Sam Weinig, Anders Carlsson, and (unofficially) Adam Barth.')
+        self.assertEquals(reviewer_list, ['Sam Weinig', 'Anders Carlsson', 'Adam Barth'])
 
         reviewer_text, reviewer_list = ChangeLogEntry._parse_reviewer_text('Reviewed by NOBODY.')
         self.assertEquals(reviewer_text, None)
@@ -432,6 +407,48 @@ class ChangeLogTest(unittest.TestCase):
 
         reviewer_text, reviewer_list = ChangeLogEntry._parse_reviewer_text('Reviewed by nobody (trivial follow up fix), Joseph Pecoraro LGTM-ed.')
         self.assertEquals(reviewer_text, None)
+
+    def _entry_with_reviewer(self, reviewer_line):
+        return ChangeLogEntry('''2009-08-19  Eric Seidel  <eric@webkit.org>
+
+            REVIEW_LINE
+
+            * Scripts/bugzilla-tool:
+'''.replace("REVIEW_LINE", reviewer_line))
+
+    def _contributors(self, names):
+        return [CommitterList().contributor_by_name(name) for name in names]
+
+    def _assert_fuzzy_reviewer_match(self, reviewer_text, expected_text_list, expected_contributors):
+        unused, reviewer_text_list = ChangeLogEntry._parse_reviewer_text(reviewer_text)
+        self.assertEquals(reviewer_text_list, expected_text_list)
+        self.assertEquals(self._entry_with_reviewer(reviewer_text).reviewers(), self._contributors(expected_contributors))
+
+    def test_fuzzy_reviewer_match(self):
+        self._assert_fuzzy_reviewer_match('Reviewed by Dimitri Glazkov, build fix', ['Dimitri Glazkov', 'build fix'], ['Dimitri Glazkov'])
+        self._assert_fuzzy_reviewer_match('Reviewed by BUILD FIX', ['BUILD FIX'], [])
+        self._assert_fuzzy_reviewer_match('Reviewed by Mac build fix', ['Mac build fix'], [])
+        self._assert_fuzzy_reviewer_match('Reviewed by Darin Adler, Dan Bernstein, Adele Peterson, and others.',
+            ['Darin Adler', 'Dan Bernstein', 'Adele Peterson', 'others'], ['Darin Adler', 'Dan Bernstein', 'Adele Peterson'])
+        self._assert_fuzzy_reviewer_match('Reviewed by George Staikos (and others)', ['George Staikos', 'others'], ['George Staikos'])
+        self._assert_fuzzy_reviewer_match('Reviewed by Mark Rowe, but Dan Bernstein also reviewed and asked thoughtful questions.',
+            ['Mark Rowe', 'but Dan Bernstein also reviewed', 'asked thoughtful questions'], ['Mark Rowe'])
+        self._assert_fuzzy_reviewer_match('Reviewed by Darin Adler in <https://bugs.webkit.org/show_bug.cgi?id=47736>.', ['Darin Adler in'], ['Darin Adler'])
+        self._assert_fuzzy_reviewer_match('Reviewed by Adam Barth.:w', ['Adam Barth.:w'], ['Adam Barth'])
+
+    def _assert_has_valid_reviewer(self, reviewer_line, expected):
+        self.assertEqual(self._entry_with_reviewer(reviewer_line).has_valid_reviewer(), expected)
+
+    def test_has_valid_reviewer(self):
+        self._assert_has_valid_reviewer("Reviewed by Eric Seidel.", True)
+        self._assert_has_valid_reviewer("Reviewed by Eric Seidel", True)  # Not picky about the '.'
+        self._assert_has_valid_reviewer("Reviewed by Eric.", False)
+        self._assert_has_valid_reviewer("Reviewed by Eric C Seidel.", False)
+        self._assert_has_valid_reviewer("Rubber-stamped by Eric.", False)
+        self._assert_has_valid_reviewer("Rubber-stamped by Eric Seidel.", True)
+        self._assert_has_valid_reviewer("Rubber stamped by Eric.", False)
+        self._assert_has_valid_reviewer("Rubber stamped by Eric Seidel.", True)
+        self._assert_has_valid_reviewer("Unreviewed build fix.", True)
 
     def test_latest_entry_parse(self):
         changelog_contents = u"%s\n%s" % (self._example_entry, self._example_changelog)

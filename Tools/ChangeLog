@@ -1,3 +1,30 @@
+2011-11-14  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Implement edit-distance based reviewer recognition algorithm
+        https://bugs.webkit.org/show_bug.cgi?id=72351
+
+        Reviewed by Eric Seidel.
+
+        Implement an algorithm to recognize reviewer's name based on its edit distance (or more precisely
+        its Levenshtein distance) to each reviewer's full name, first, last and middle names, and IRC nicknames.
+        Furthermore, we cap the maximum edit distance at len(name) - 1 to avoid matching a bogus string like
+        "build fix" to a reviewer's name (e.g. with with edit distance 9).
+
+        This algorithm is implemented in CommitterList.contributors_by_fuzzy_match. The function to compute
+        the edit distance is implemented in edit_distance.py.
+
+        Also moved _has_valid_reviewer from ValidateReviewer to ChangeLogEntry because we can no longer rely
+        on the presence of ChangeLogEntry.reviewer() to verify that reviewer string is nicely formatted.
+
+        * Scripts/webkitpy/common/checkout/changelog.py:
+        * Scripts/webkitpy/common/checkout/changelog_unittest.py:
+        * Scripts/webkitpy/common/config/committers.py:
+        * Scripts/webkitpy/common/config/committers_unittest.py:
+        * Scripts/webkitpy/common/editdistance.py: Added.
+        * Scripts/webkitpy/common/editdistance_unittest.py: Added.
+        * Scripts/webkitpy/tool/steps/validatereviewer.py:
+        * Scripts/webkitpy/tool/steps/validatereviewer_unittest.py: Removed.
+
 2011-11-15  Tony Chang  <tony@chromium.org>
 
         Skip a failing webkitpy test on cygwin.

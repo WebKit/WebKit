@@ -1,9 +1,9 @@
-# Copyright (C) 2010 Google Inc. All rights reserved.
-# 
+# Copyright (c) 2010 Google Inc. All rights reserved.
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
 # met:
-# 
+#
 #     * Redistributions of source code must retain the above copyright
 # notice, this list of conditions and the following disclaimer.
 #     * Redistributions in binary form must reproduce the above
@@ -13,7 +13,7 @@
 #     * Neither the name of Google Inc. nor the names of its
 # contributors may be used to endorse or promote products derived from
 # this software without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
 # "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
 # LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -26,33 +26,18 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import os
-import re
+import unittest
 
-from webkitpy.common.checkout.changelog import ChangeLog
-from webkitpy.tool.steps.abstractstep import AbstractStep
-from webkitpy.tool.steps.options import Options
-from webkitpy.common.system.deprecated_logging import error, log
+from webkitpy.common.editdistance import edit_distance
 
 
-# FIXME: Some of this logic should probably be unified with CommitterValidator?
-class ValidateReviewer(AbstractStep):
-    @classmethod
-    def options(cls):
-        return AbstractStep.options() + [
-            Options.non_interactive,
-        ]
-
-    def run(self, state):
-        # FIXME: For now we disable this check when a user is driving the script
-        # this check is too draconian (and too poorly tested) to foist upon users.
-        if not self._options.non_interactive:
-            return
-        for changelog_path in self.cached_lookup(state, "changelogs"):
-            changelog_entry = ChangeLog(changelog_path).latest_entry()
-            if changelog_entry.has_valid_reviewer():
-                continue
-            reviewer_text = changelog_entry.reviewer_text()
-            if reviewer_text:
-                log("%s found in %s does not appear to be a valid reviewer according to committers.py." % (reviewer_text, changelog_path))
-            error('%s neither lists a valid reviewer nor contains the string "Unreviewed" or "Rubber stamp" (case insensitive).' % changelog_path)
+class EditDistanceTest(unittest.TestCase):
+    def test_edit_distance(self):
+        self.assertEqual(edit_distance('', 'aa'), 2)
+        self.assertEqual(edit_distance('aa', ''), 2)
+        self.assertEqual(edit_distance('a', 'ab'), 1)
+        self.assertEqual(edit_distance('ab', 'a'), 1)
+        self.assertEqual(edit_distance('ab', 'aa'), 1)
+        self.assertEqual(edit_distance('aa', 'ab'), 1)
+        self.assertEqual(edit_distance('abd', 'abcdef'), 3)
+        self.assertEqual(edit_distance('abcdef', 'abd'), 3)

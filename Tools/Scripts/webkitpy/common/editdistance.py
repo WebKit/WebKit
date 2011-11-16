@@ -1,9 +1,9 @@
-# Copyright (C) 2010 Google Inc. All rights reserved.
-# 
+# Copyright (c) 2011 Google Inc. All rights reserved.
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
 # met:
-# 
+#
 #     * Redistributions of source code must retain the above copyright
 # notice, this list of conditions and the following disclaimer.
 #     * Redistributions in binary form must reproduce the above
@@ -13,7 +13,7 @@
 #     * Neither the name of Google Inc. nor the names of its
 # contributors may be used to endorse or promote products derived from
 # this software without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
 # "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
 # LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -26,33 +26,22 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import os
-import re
-
-from webkitpy.common.checkout.changelog import ChangeLog
-from webkitpy.tool.steps.abstractstep import AbstractStep
-from webkitpy.tool.steps.options import Options
-from webkitpy.common.system.deprecated_logging import error, log
+from array import array
 
 
-# FIXME: Some of this logic should probably be unified with CommitterValidator?
-class ValidateReviewer(AbstractStep):
-    @classmethod
-    def options(cls):
-        return AbstractStep.options() + [
-            Options.non_interactive,
-        ]
+def edit_distance(str1, str2):
+    unsignedShort = 'h'
+    distances = [array(unsignedShort, (0,) * (len(str2) + 1)) for i in range(0, len(str1) + 1)]
+    # distances[0][0] = 0 since distance between str1[:0] and str2[:0] is 0
+    for i in range(1, len(str1) + 1):
+        distances[i][0] = i  # Distance between str1[:i] and str2[:0] is i
 
-    def run(self, state):
-        # FIXME: For now we disable this check when a user is driving the script
-        # this check is too draconian (and too poorly tested) to foist upon users.
-        if not self._options.non_interactive:
-            return
-        for changelog_path in self.cached_lookup(state, "changelogs"):
-            changelog_entry = ChangeLog(changelog_path).latest_entry()
-            if changelog_entry.has_valid_reviewer():
-                continue
-            reviewer_text = changelog_entry.reviewer_text()
-            if reviewer_text:
-                log("%s found in %s does not appear to be a valid reviewer according to committers.py." % (reviewer_text, changelog_path))
-            error('%s neither lists a valid reviewer nor contains the string "Unreviewed" or "Rubber stamp" (case insensitive).' % changelog_path)
+    for j in range(1, len(str2) + 1):
+        distances[0][j] = j  # Distance between str1[:0] and str2[:j] is j
+
+    for i in range(0, len(str1)):
+        for j in range(0, len(str2)):
+            diff = 0 if str1[i] == str2[j] else 1
+            # Deletion, Insertion, Identical / Replacement
+            distances[i + 1][j + 1] = min(distances[i + 1][j] + 1, distances[i][j + 1] + 1, distances[i][j] + diff)
+    return distances[len(str1)][len(str2)]

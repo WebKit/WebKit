@@ -29,6 +29,7 @@
 #
 # WebKit's Python module for committer and reviewer validation.
 
+from webkitpy.common.editdistance import edit_distance
 
 class Account(object):
     def __init__(self, name, email_or_emails, irc_nickname_or_nicknames=None):
@@ -449,7 +450,6 @@ reviewers_list = [
     Reviewer("Zoltan Herczeg", ["zherczeg@webkit.org", "zherczeg@inf.u-szeged.hu"], "zherczeg"),
 ]
 
-
 class CommitterList(object):
 
     # Committers and reviewers are passed in to allow easy testing
@@ -521,12 +521,46 @@ class CommitterList(object):
 
     def contributor_by_irc_nickname(self, irc_nickname):
         for contributor in self.contributors():
+            # FIXME: This should do case-insensitive comparison or assert that all IRC nicknames are in lowercase
             if contributor.irc_nicknames and irc_nickname in contributor.irc_nicknames:
                 return contributor
         return None
 
     def contributors_by_search_string(self, string):
         return filter(lambda contributor: contributor.contains_string(string), self.contributors())
+
+    def _tokenize_contributor_name(self, contributor):
+        full_name_in_lowercase = contributor.full_name.lower()
+        tokens = [full_name_in_lowercase] + full_name_in_lowercase.split()
+        if contributor.irc_nicknames:
+            return tokens + [nickname.lower() for nickname in contributor.irc_nicknames if len(nickname) > 5]
+        return tokens
+
+    def contributors_by_fuzzy_match(self, string):
+        string = string.lower()
+
+        # First path, optimitically match for fullname, email and irc_nicknames
+        account = self.account_by_email(string) or self.contributor_by_irc_nickname(string) or self.contributor_by_name(string)
+        if account:
+            return [account], 0
+
+        # Second path, much slower search using edit-distance
+        contributorWithMinDistance = []
+        minDistance = len(string) / 2 - 1
+        for contributor in self.contributors():
+            tokens = self._tokenize_contributor_name(contributor)
+            editdistances = [edit_distance(token, string) for token in tokens if abs(len(token) - len(string)) <= minDistance]
+            if not editdistances:
+                continue
+            distance = min(editdistances)
+            if distance == minDistance:
+                contributorWithMinDistance.append(contributor)
+            elif distance < minDistance:
+                contributorWithMinDistance = [contributor]
+                minDistance = distance
+        if not len(contributorWithMinDistance):
+            return [], len(string)
+        return contributorWithMinDistance, minDistance
 
     def account_by_login(self, login):
         return self._login_to_account_map().get(login.lower())
