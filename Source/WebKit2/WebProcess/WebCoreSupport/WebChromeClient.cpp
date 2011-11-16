@@ -115,9 +115,9 @@ FloatRect WebChromeClient::pageRect()
     return FloatRect(FloatPoint(), m_page->size());
 }
 
-float WebChromeClient::scaleFactor()
+float WebChromeClient::deviceScaleFactor()
 {
-    return m_page->userSpaceScaleFactor();
+    return m_page->deviceScaleFactor();
 }
 
 void WebChromeClient::focus()

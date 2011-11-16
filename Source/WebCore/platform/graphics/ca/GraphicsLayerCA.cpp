@@ -1983,7 +1983,7 @@ void GraphicsLayerCA::updateContentsScale(float pageScaleFactor, const FloatPoin
     if (needTiledLayer != m_usingTiledLayer)
         swapFromOrToTiledLayer(needTiledLayer, pageScaleFactor, positionRelativeToBase);
 
-    float contentsScale = clampedContentsScaleForScale(pageScaleFactor * backingScaleFactor());
+    float contentsScale = clampedContentsScaleForScale(pageScaleFactor * deviceScaleFactor());
     
     m_layer->setContentsScale(contentsScale);
     if (drawsContent())
@@ -2038,7 +2038,7 @@ bool GraphicsLayerCA::requiresTiledLayer(float pageScaleFactor, const FloatSize&
     if (!m_drawsContent || !m_allowTiledLayer)
         return false;
 
-    float contentsScale = pageScaleFactor * backingScaleFactor();
+    float contentsScale = pageScaleFactor * deviceScaleFactor();
 
     // FIXME: catch zero-size height or width here (or earlier)?
     return size.width() * contentsScale > cMaxPixelDimension || size.height() * contentsScale > cMaxPixelDimension;

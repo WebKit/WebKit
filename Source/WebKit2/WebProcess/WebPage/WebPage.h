@@ -233,8 +233,8 @@ public:
     void setPageZoomFactor(double);
     void setPageAndTextZoomFactors(double pageZoomFactor, double textZoomFactor);
 
-    void scaleWebView(double scale, const WebCore::IntPoint& origin);
-    double viewScaleFactor() const;
+    void scalePage(double scale, const WebCore::IntPoint& origin);
+    double pageScaleFactor() const;
 
     void setUseFixedLayout(bool);
     void setFixedLayoutSize(const WebCore::IntSize&);
@@ -399,7 +399,7 @@ public:
 
     void runModal();
 
-    float userSpaceScaleFactor() const { return m_userSpaceScaleFactor; }
+    float deviceScaleFactor() const { return m_deviceScaleFactor; }
 
     void setMemoryCacheMessagesEnabled(bool);
 
@@ -654,7 +654,7 @@ private:
     bool m_canRunModal;
     bool m_isRunningModal;
 
-    float m_userSpaceScaleFactor;
+    float m_deviceScaleFactor;
 
     bool m_cachedMainFrameIsPinnedToLeftSide;
     bool m_cachedMainFrameIsPinnedToRightSide;

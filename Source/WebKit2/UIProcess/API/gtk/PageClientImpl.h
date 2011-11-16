@@ -86,7 +86,7 @@ private:
     virtual void setFindIndicator(PassRefPtr<FindIndicator>, bool fadeOut);
     virtual void didChangeScrollbarsForMainFrame() const;
     virtual void flashBackingStoreUpdates(const Vector<WebCore::IntRect>& updateRects);
-    virtual float userSpaceScaleFactor() const { return 1; }
+    virtual float deviceScaleFactor() const { return 1; }
     virtual void getEditorCommandsForKeyEvent(const NativeWebKeyboardEvent&, Vector<WTF::String>&);
     virtual void findStringInCustomRepresentation(const String&, FindOptions, unsigned);
     virtual void countStringMatchesInCustomRepresentation(const String&, FindOptions, unsigned);

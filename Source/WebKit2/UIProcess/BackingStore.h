@@ -60,11 +60,11 @@ class BackingStore {
     WTF_MAKE_NONCOPYABLE(BackingStore);
 
 public:
-    static PassOwnPtr<BackingStore> create(const WebCore::IntSize&, float scaleFactor, WebPageProxy*);
+    static PassOwnPtr<BackingStore> create(const WebCore::IntSize&, float deviceScaleFactor, WebPageProxy*);
     ~BackingStore();
 
     const WebCore::IntSize& size() const { return m_size; }
-    float scaleFactor() const { return m_scaleFactor; }
+    float deviceScaleFactor() const { return m_deviceScaleFactor; }
 
 #if PLATFORM(MAC)
     typedef CGContextRef PlatformGraphicsContext;
@@ -80,13 +80,13 @@ public:
     void incorporateUpdate(const UpdateInfo&);
 
 private:
-    BackingStore(const WebCore::IntSize&, float scaleFactor, WebPageProxy*);
+    BackingStore(const WebCore::IntSize&, float deviceScaleFactor, WebPageProxy*);
 
     void incorporateUpdate(ShareableBitmap*, const UpdateInfo&);
     void scroll(const WebCore::IntRect& scrollRect, const WebCore::IntSize& scrollOffset);
 
     WebCore::IntSize m_size;
-    float m_scaleFactor;
+    float m_deviceScaleFactor;
     WebPageProxy* m_webPageProxy;
 
 #if PLATFORM(MAC)

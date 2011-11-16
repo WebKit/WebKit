@@ -65,7 +65,7 @@ public:
     virtual void didCommitChangesForLayer(const GraphicsLayer*) const { }
 
     // Multiplier for backing store size, related to high DPI.
-    virtual float backingScaleFactor() const { return 1; }
+    virtual float deviceScaleFactor() const { return 1; }
     // Page scale factor.
     virtual float pageScaleFactor() const { return 1; }
 

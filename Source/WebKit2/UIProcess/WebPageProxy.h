@@ -358,8 +358,8 @@ public:
     void setPageZoomFactor(double);
     void setPageAndTextZoomFactors(double pageZoomFactor, double textZoomFactor);
 
-    void scaleWebView(double scale, const WebCore::IntPoint& origin);
-    double viewScaleFactor() const { return m_viewScaleFactor; }
+    void scalePage(double scale, const WebCore::IntPoint& origin);
+    double pageScaleFactor() const { return m_pageScaleFactor; }
 
     void setUseFixedLayout(bool);
     void setFixedLayoutSize(const WebCore::IntSize&);
@@ -382,7 +382,7 @@ public:
     void makeFirstResponder();
 #endif
 
-    void viewScaleFactorDidChange(double);
+    void pageScaleFactorDidChange(double);
 
     void setMemoryCacheClientCallsEnabled(bool);
 
@@ -826,7 +826,7 @@ private:
 
     double m_textZoomFactor;
     double m_pageZoomFactor;
-    double m_viewScaleFactor;
+    double m_pageScaleFactor;
 
     bool m_drawsBackground;
     bool m_drawsTransparentBackground;

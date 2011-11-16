@@ -92,7 +92,7 @@ namespace WebCore {
 
         FloatRect pageRect() const;
         
-        float scaleFactor();
+        float deviceScaleFactor();
 
         void focus() const;
         void unfocus() const;

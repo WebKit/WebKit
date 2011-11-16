@@ -217,7 +217,7 @@ namespace WebCore {
         void lifeSupportTimerFired(Timer<Frame>*);
 
 #if USE(ACCELERATED_COMPOSITING)
-        void pageScaleFactorChanged(float);
+        void deviceOrPageScaleFactorChanged();
 #endif
 
         HashSet<FrameDestructionObserver*> m_destructionObservers;
