@@ -1,0 +1,11 @@
+This tests that function inlining in the DFG JIT doesn't get confused by different global objects.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS foo(3) is 324
+PASS successfullyParsed is true
+
+TEST COMPLETE
+PASS done() called with 5770500
+

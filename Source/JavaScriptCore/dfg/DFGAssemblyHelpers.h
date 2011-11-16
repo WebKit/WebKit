@@ -284,10 +284,7 @@ public:
 
     JSGlobalObject* globalObjectFor(CodeOrigin codeOrigin)
     {
-        if (!codeOrigin.inlineCallFrame)
-            return codeBlock()->globalObject();
-        // FIXME: if we ever inline based on executable not function, this code will need to change.
-        return codeOrigin.inlineCallFrame->callee->scope()->globalObject.get();
+        return codeBlock()->globalObjectFor(codeOrigin);
     }
     
     bool strictModeFor(CodeOrigin codeOrigin)

@@ -821,6 +821,14 @@ namespace JSC {
         }
 
         JSGlobalObject* globalObject() { return m_globalObject.get(); }
+        
+        JSGlobalObject* globalObjectFor(CodeOrigin codeOrigin)
+        {
+            if (!codeOrigin.inlineCallFrame)
+                return globalObject();
+            // FIXME: if we ever inline based on executable not function, this code will need to change.
+            return codeOrigin.inlineCallFrame->callee->scope()->globalObject.get();
+        }
 
         // Jump Tables
 

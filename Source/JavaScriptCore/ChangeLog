@@ -1,3 +1,22 @@
+2011-11-16  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG global variable CSE mishandles the cross-global-object inlining corner case
+        https://bugs.webkit.org/show_bug.cgi?id=72542
+
+        Reviewed by Geoff Garen.
+        
+        Moved code to get the global object for a code origin into CodeBlock, so it is
+        more broadly accessible. Fixed CSE to compare both the variable number, and the
+        global object, before deciding to perform elimination.
+
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::globalObjectFor):
+        * dfg/DFGAssemblyHelpers.h:
+        (JSC::DFG::AssemblyHelpers::globalObjectFor):
+        * dfg/DFGPropagator.cpp:
+        (JSC::DFG::Propagator::globalVarLoadElimination):
+        (JSC::DFG::Propagator::performNodeCSE):
+
 2011-11-16  Michael Saboff  <msaboff@apple.com>
 
         Enable 8 Bit Strings in JavaScriptCore

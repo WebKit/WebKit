@@ -981,18 +981,18 @@ private:
         return NoNode;
     }
     
-    NodeIndex globalVarLoadElimination(unsigned varNumber)
+    NodeIndex globalVarLoadElimination(unsigned varNumber, JSGlobalObject* globalObject)
     {
         NodeIndex start = startIndexForChildren();
         for (NodeIndex index = m_compileIndex; index-- > start;) {
             Node& node = m_graph[index];
             switch (node.op) {
             case GetGlobalVar:
-                if (node.varNumber() == varNumber)
+                if (node.varNumber() == varNumber && m_codeBlock->globalObjectFor(node.codeOrigin) == globalObject)
                     return index;
                 break;
             case PutGlobalVar:
-                if (node.varNumber() == varNumber)
+                if (node.varNumber() == varNumber && m_codeBlock->globalObjectFor(node.codeOrigin) == globalObject)
                     return node.child1();
                 break;
             default:
@@ -1334,7 +1334,7 @@ private:
         // Finally handle heap accesses. These are not quite pure, but we can still
         // optimize them provided that some subtle conditions are met.
         case GetGlobalVar:
-            setReplacement(globalVarLoadElimination(node.varNumber()));
+            setReplacement(globalVarLoadElimination(node.varNumber(), m_codeBlock->globalObjectFor(node.codeOrigin)));
             break;
             
         case GetByVal:
