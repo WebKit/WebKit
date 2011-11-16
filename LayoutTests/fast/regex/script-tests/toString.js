@@ -10,6 +10,13 @@ function testForwardSlash(pattern, _string)
     return re1.test(string) && re2.test(string);
 }
 
+function testLineTerminator(pattern)
+{
+    re1 = new RegExp(pattern);
+
+    return /\n|\r|\u2028|\u2029/.test(re1.toString());
+}
+
 shouldBe("RegExp('/').source", '"\\\\/"');
 shouldBe("RegExp('').source", '""');
 shouldBe("RegExp.prototype.source", '""');
@@ -35,3 +42,14 @@ shouldBeTrue('testForwardSlash("x\\/x/x", "x\\/x\\/x");');
 shouldBeTrue('testForwardSlash("x/x\\/x", "x\\/x\\/x");');
 shouldBeTrue('testForwardSlash("x\\/x\\/x", "x\\/x\\/x");');
 
+shouldBeFalse('testLineTerminator("\\n");');
+shouldBeFalse('testLineTerminator("\\\\n");');
+shouldBeFalse('testLineTerminator("\\r");');
+shouldBeFalse('testLineTerminator("\\\\r");');
+shouldBeFalse('testLineTerminator("\\u2028");');
+shouldBeFalse('testLineTerminator("\\\\u2028");');
+shouldBeFalse('testLineTerminator("\\u2029");');
+shouldBeFalse('testLineTerminator("\\\\u2029");');
+
+shouldBe("RegExp('[/]').source", "'[/]'");
+shouldBe("RegExp('\\\\[/]').source", "'\\\\[\\\\/]'");

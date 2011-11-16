@@ -1,3 +1,13 @@
+2011-11-16  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        String new RegExp('\n').toString() returns is invalid RegularExpressionLiteral
+        https://bugs.webkit.org/show_bug.cgi?id=71572
+
+        Reviewed by Gavin Barraclough and Darin Adler.
+
+        * runtime/RegExpObject.cpp:
+        (JSC::regExpObjectSource):
+
 2011-11-16  Darin Adler  <darin@apple.com>
 
         Specialize HashTraits for OwnPtr to use PassOwnPtr and raw pointer
