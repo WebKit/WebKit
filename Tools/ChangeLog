@@ -1,5 +1,18 @@
 2011-11-16  Peter Beverloo  <peter@chromium.org>
 
+        Explicitly include unistd.h in TestNetscapePlugIn
+        https://bugs.webkit.org/show_bug.cgi?id=72385
+
+        This is needed for the sleep() call in the indicateTestFailure method,
+        which seems to be implicitly available for other platforms. This is not
+        the case on Android.
+
+        Reviewed by Steve Block.
+
+        * DumpRenderTree/TestNetscapePlugIn/PluginTest.cpp:
+
+2011-11-16  Peter Beverloo  <peter@chromium.org>
+
         [Chromium] Update the Android NDK version being pulled in by update-webkit-chromium
         https://bugs.webkit.org/show_bug.cgi?id=72384
 

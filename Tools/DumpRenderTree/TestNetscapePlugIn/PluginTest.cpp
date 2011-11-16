@@ -29,6 +29,10 @@
 #include <assert.h>
 #include <string.h>
 
+#if defined(ANDROID)
+#include <unistd.h>
+#endif
+
 using namespace std;
 extern NPNetscapeFuncs *browser;
 
