@@ -186,8 +186,8 @@ def get_tests_run(extra_args=None, tests_included=False, flatten_batches=False,
 class MainTest(unittest.TestCase):
     def test_accelerated_compositing(self):
         # This just tests that we recognize the command line args
-        self.assertTrue(passing_run(['--accelerated-compositing']))
-        self.assertTrue(passing_run(['--no-accelerated-compositing']))
+        self.assertTrue(passing_run(['--accelerated-video']))
+        self.assertTrue(passing_run(['--no-accelerated-video']))
 
     def test_accelerated_2d_canvas(self):
         # This just tests that we recognize the command line args
