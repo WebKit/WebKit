@@ -263,40 +263,15 @@ BUGWK72402 WIN LINUX : compositing/geometry/video-opacity-overlay.html = FAIL
 BUGWK72402 WIN LINUX : compositing/layer-creation/spanOverlapsCanvas.html = FAIL
 
 // win+linux failures, either real bugs or need rebaselines
-BUGWK72402 WIN LINUX : compositing/framesets/resources/composited-subframe.html = FAIL
-BUGWK72402 WIN LINUX : compositing/geometry/limit-layer-bounds-clipping-ancestor.html = FAIL
-BUGWK72402 WIN LINUX : compositing/geometry/limit-layer-bounds-fixed-positioned.html = FAIL
-BUGWK72402 WIN LINUX : compositing/geometry/limit-layer-bounds-overflow-root.html = FAIL
-BUGWK72402 WIN LINUX : compositing/geometry/limit-layer-bounds-positioned-transition.html = FAIL
-BUGWK72402 WIN LINUX : compositing/geometry/limit-layer-bounds-positioned.html = FAIL
-BUGWK72402 WIN LINUX : compositing/geometry/limit-layer-bounds-transformed-overflow.html = FAIL
-BUGWK72402 WIN LINUX : compositing/geometry/limit-layer-bounds-transformed.html = FAIL
-BUGWK72402 WIN LINUX : compositing/iframes/resources/composited-red.html = FAIL
-BUGWK72402 WIN LINUX : compositing/iframes/resources/composited-subframe.html = FAIL
-BUGWK72402 WIN LINUX : compositing/iframes/resources/enter-compositing-subframe.html = FAIL
-BUGWK72402 WIN LINUX : compositing/iframes/resources/fixed-position-subframe.html = FAIL
-BUGWK72402 WIN LINUX : compositing/iframes/resources/green-red-subframe.html = FAIL
-BUGWK72402 WIN LINUX : compositing/iframes/resources/has-composited-iframe-child.html = FAIL
-BUGWK72402 WIN LINUX : compositing/iframes/resources/intermediate-frame.html = FAIL
-BUGWK72402 WIN LINUX : compositing/iframes/resources/large-composited-subframe.html = FAIL
-BUGWK72402 WIN LINUX : compositing/iframes/resources/leave-compositing-subframe-click.html = FAIL
-BUGWK72402 WIN LINUX : compositing/iframes/resources/leave-compositing-subframe.html = FAIL
-BUGWK72402 WIN LINUX : compositing/iframes/resources/nested-subframe.html = FAIL
-BUGWK72402 WIN LINUX : compositing/iframes/resources/page-cache-helper.html = FAIL
-BUGWK72402 WIN LINUX : compositing/iframes/resources/page-cache-iframe.html = FAIL
-BUGWK72402 WIN LINUX : compositing/iframes/resources/red-green-subframe.html = FAIL
-BUGWK72402 WIN LINUX : compositing/iframes/resources/repaint-after-losing-scrollbars-iframe.html = FAIL
-BUGWK72402 WIN LINUX : compositing/iframes/resources/subframe.html = FAIL
-BUGWK72402 WIN LINUX : compositing/iframes/resources/subsubframe.html = FAIL
-BUGWK72402 WIN LINUX : compositing/layer-creation/scroll-partial-update.html = FAIL
-BUGWK72402 WIN LINUX : compositing/layers-inside-overflow-scroll.html = FAIL
-BUGWK72402 WIN LINUX : compositing/objects/resources/composited-subframe.html = FAIL
-BUGWK72402 WIN LINUX : compositing/overflow/overflow-compositing-descendant.html = FAIL
-BUGWK72402 WIN LINUX : compositing/overflow/scroll-ancestor-update.html = FAIL
-BUGWK72402 WIN LINUX : compositing/self-painting-layers.html = FAIL
-BUGWK72402 WIN LINUX : platform/chromium/compositing/force-compositing-mode/resources/subframe-big.html = FAIL
-BUGWK72402 WIN LINUX : platform/chromium/compositing/force-compositing-mode/resources/subframe-small.html = FAIL
-BUGWK72402 WIN LINUX RELEASE : compositing/layer-creation/overflow-scroll-overlap.html = FAIL
+BUGWK72402 WIN LINUX : compositing/geometry/limit-layer-bounds-clipping-ancestor.html = TEXT
+BUGWK72402 WIN LINUX : compositing/geometry/limit-layer-bounds-fixed-positioned.html = TEXT
+BUGWK72402 WIN LINUX : compositing/geometry/limit-layer-bounds-overflow-root.html = TEXT
+BUGWK72402 WIN LINUX : compositing/geometry/limit-layer-bounds-positioned-transition.html = TEXT
+BUGWK72402 WIN LINUX : compositing/geometry/limit-layer-bounds-positioned.html = TEXT
+BUGWK72402 WIN LINUX : compositing/geometry/limit-layer-bounds-transformed-overflow.html = TEXT
+BUGWK72402 WIN LINUX : compositing/geometry/limit-layer-bounds-transformed.html = TEXT
+BUGWK72402 WIN LINUX : compositing/layer-creation/scroll-partial-update.html = TEXT
+BUGWK72402 WIN LINUX : compositing/layer-creation/overflow-scroll-overlap.html = TEXT
 
 // mac failures
 BUGWK72402 MAC : compositing/geometry/empty-embed-rects.html = TIMEOUT
@@ -2737,8 +2712,6 @@ BUGNONE SLOW WIN DEBUG GPU : fast/canvas/canvas-getImageData.html = PASS
 
 // Accelerated 2d for mac isn't supported yet, so SKIP this test for now.
 BUGCR74979 SKIP MAC GPU GPU-CG : media/video-canvas-alpha.html = IMAGE
-
-BUGWK67116 DEBUG : compositing/layer-creation/overflow-scroll-overlap.html = PASS TEXT
 
 BUGWK67760 GPU : media/media-document-audio-repaint.html = IMAGE PASS
 
