@@ -1,3 +1,25 @@
+2011-11-16  John Bates  <jbates@google.com>
+
+        Page/layer flashes after GPU-accelerated CSS transition
+        https://bugs.webkit.org/show_bug.cgi?id=72343
+
+        LayerRendererChromium was resizing the window to 1x1 at initialization.
+        In some cases, there is no drawLayers before switching back to
+        software rendering. This left the window resized to 1x1 and the
+        following software paints would therefore not be visible. This change
+        moves the reshape call into drawLayers so that it will only be called
+        if rendering will occur.
+
+        Reviewed by James Robinson.
+
+        New test: CCLayerTreeHostImplTest.reshapeNotCalledUntilDraw.
+
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::viewportChanged):
+        (WebCore::LayerRendererChromium::doViewportChanged):
+        (WebCore::LayerRendererChromium::drawLayersInternal):
+        * platform/graphics/chromium/LayerRendererChromium.h:
+
 2011-11-16  Alexandre Elias  <aelias@google.com>
 
         [chromium] Add null pointer check in setDeviceScaleFactor

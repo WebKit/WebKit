@@ -292,5 +292,50 @@ TEST_F(CCLayerTreeHostImplTest, blendingOffWhenDrawingOpaqueLayers)
     EXPECT_TRUE(layer2->drawn());
 }
 
+class ReshapeTrackerContext: public MockWebGraphicsContext3D {
+public:
+    ReshapeTrackerContext() : m_reshapeCalled(false) { }
+
+    virtual bool initialize(Attributes, WebView*, bool renderDirectlyToWebView) { return true; }
+
+    virtual void reshape(int width, int height)
+    {
+        m_reshapeCalled = true;
+    }
+
+    bool reshapeCalled() const { return m_reshapeCalled; }
+
+private:
+    bool m_reshapeCalled;
+};
+
+class FakeDrawableCCLayerImpl: public CCLayerImpl {
+public:
+    FakeDrawableCCLayerImpl() : CCLayerImpl(0) { }
+    virtual void draw(LayerRendererChromium* renderer) { }
+};
+
+// Only reshape when we know we are going to draw. Otherwise, the reshape
+// can leave the window at the wrong size if we never draw and the proper
+// viewport size is never set.
+TEST_F(CCLayerTreeHostImplTest, reshapeNotCalledUntilDraw)
+{
+    GraphicsContext3D::Attributes attrs;
+    ReshapeTrackerContext* reshapeTracker = new ReshapeTrackerContext();
+    RefPtr<GraphicsContext3D> context = GraphicsContext3DPrivate::createGraphicsContextFromWebContext(adoptPtr(reshapeTracker), attrs, 0, GraphicsContext3D::RenderDirectlyToHostWindow, GraphicsContext3DPrivate::ForUseOnThisThread);
+    m_hostImpl->initializeLayerRenderer(context);
+    m_hostImpl->setViewport(IntSize(10, 10));
+
+    RefPtr<CCLayerImpl> root = adoptRef(new FakeDrawableCCLayerImpl());
+    root->setAnchorPoint(FloatPoint(0, 0));
+    root->setBounds(IntSize(10, 10));
+    root->setDrawsContent(true);
+    m_hostImpl->setRootLayer(root);
+    EXPECT_FALSE(reshapeTracker->reshapeCalled());
+
+    m_hostImpl->drawLayers();
+    EXPECT_TRUE(reshapeTracker->reshapeCalled());
+}
+
 
 } // namespace
