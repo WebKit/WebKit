@@ -125,10 +125,6 @@ enum ParameterMissingPolicy {
     inline bool setInlineCachedWrapper(DOMWrapperWorld*, void*, JSDOMWrapper*) { return false; }
     inline bool clearInlineCachedWrapper(DOMWrapperWorld*, void*, JSDOMWrapper*) { return false; }
 
-    // Overload these functions to provide a custom WeakHandleOwner.
-    inline JSC::WeakHandleOwner* wrapperOwner(DOMWrapperWorld* world, void*) { return world->defaultWrapperOwner(); }
-    inline void* wrapperContext(DOMWrapperWorld*, void* domObject) { return domObject; }
-
     template <typename DOMClass> inline JSDOMWrapper* getCachedWrapper(DOMWrapperWorld* world, DOMClass* domObject)
     {
         if (JSDOMWrapper* wrapper = getInlineCachedWrapper(world, domObject))

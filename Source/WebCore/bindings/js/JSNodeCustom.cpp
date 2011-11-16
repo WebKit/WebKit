@@ -141,6 +141,7 @@ void JSNodeOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
     JSNode* jsNode = static_cast<JSNode*>(handle.get().asCell());
     DOMWrapperWorld* world = static_cast<DOMWrapperWorld*>(context);
     uncacheWrapper(world, jsNode->impl(), jsNode);
+    jsNode->clearImpl();
 }
 
 JSValue JSNode::insertBefore(ExecState* exec)
