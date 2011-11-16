@@ -1,3 +1,22 @@
+2011-11-15  Jongseok Yang  <js45.yang@samsung.com>
+
+        [SOUP][WK2] Add initial WebCookieManagerSoup.cpp for webkit2
+        https://bugs.webkit.org/show_bug.cgi?id=72235
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Add WebCookieManagerSoup.cpp and implement functions for the cookie accept policy.
+        It's required when using the soup network backend.
+        Remove WebCookieManagerEfl.cpp and WebCookieManagerGtk.cpp because GTK port and
+        EFL port use soup network backend without a network backend of their own.
+
+        * GNUmakefile.am:
+        * WebProcess/Cookies/efl/WebCookieManagerEfl.cpp: Removed.
+        * WebProcess/Cookies/gtk/WebCookieManagerGtk.cpp: Removed.
+        * WebProcess/Cookies/soup/WebCookieManagerSoup.cpp: Added.
+        (WebKit::WebCookieManager::platformSetHTTPCookieAcceptPolicy):
+        (WebKit::WebCookieManager::platformGetHTTPCookieAcceptPolicy):
+
 2011-11-15  Jochen Eisinger  <jochen@chromium.org>
 
         Rename ReferrerPolicy to clarify its meaning

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011 Samsung Electronics.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,17 +26,55 @@
 #include "config.h"
 #include "WebCookieManager.h"
 
+#include <WebCore/CookieJarSoup.h>
+#include <libsoup/soup.h>
+
+using namespace WebCore;
+
 namespace WebKit {
 
-void WebCookieManager::platformSetHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicy)
+void WebCookieManager::platformSetHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicy policy)
 {
-    // FIXME: Not implemented.
+    SoupCookieJar* cookieJar = WebCore::defaultCookieJar();
+    SoupCookieJarAcceptPolicy soupPolicy;
+
+    soupPolicy = SOUP_COOKIE_JAR_ACCEPT_ALWAYS;
+    switch (policy) {
+    case HTTPCookieAcceptPolicyAlways:
+        soupPolicy = SOUP_COOKIE_JAR_ACCEPT_ALWAYS;
+        break;
+    case HTTPCookieAcceptPolicyNever:
+        soupPolicy = SOUP_COOKIE_JAR_ACCEPT_NEVER;
+        break;
+    case HTTPCookieAcceptPolicyOnlyFromMainDocumentDomain:
+        soupPolicy = SOUP_COOKIE_JAR_ACCEPT_NO_THIRD_PARTY;
+        break;
+    }
+    soup_cookie_jar_set_accept_policy(cookieJar, soupPolicy);
 }
 
 HTTPCookieAcceptPolicy WebCookieManager::platformGetHTTPCookieAcceptPolicy()
 {
-    // FIXME: Not implemented.
-    return HTTPCookieAcceptPolicyAlways;
+    SoupCookieJar* cookieJar = WebCore::defaultCookieJar();
+    SoupCookieJarAcceptPolicy soupPolicy;
+
+    HTTPCookieAcceptPolicy policy;
+
+    soupPolicy = soup_cookie_jar_get_accept_policy(cookieJar);
+    switch (soupPolicy) {
+    case SOUP_COOKIE_JAR_ACCEPT_ALWAYS:
+        policy = HTTPCookieAcceptPolicyAlways;
+        break;
+    case SOUP_COOKIE_JAR_ACCEPT_NEVER:
+        policy = HTTPCookieAcceptPolicyNever;
+        break;
+    case SOUP_COOKIE_JAR_ACCEPT_NO_THIRD_PARTY:
+        policy = HTTPCookieAcceptPolicyOnlyFromMainDocumentDomain;
+        break;
+    default:
+        policy = HTTPCookieAcceptPolicyAlways;
+    }
+    return policy;
 }
 
 } // namespace WebKit
