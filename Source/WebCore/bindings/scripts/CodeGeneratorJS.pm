@@ -924,10 +924,10 @@ sub GenerateHeader
     }
 
     if (!$hasParent) {
-        push(@headerContent, "    $implType* impl() const { return m_impl.get(); }\n");
-        push(@headerContent, "    void clearImpl() { m_impl.clear(); }\n\n");
+        push(@headerContent, "    $implType* impl() const { return m_impl; }\n");
+        push(@headerContent, "    void releaseImpl() { m_impl->deref(); m_impl = 0; }\n\n");
         push(@headerContent, "private:\n");
-        push(@headerContent, "    RefPtr<$implType> m_impl;\n");
+        push(@headerContent, "    $implType* m_impl;\n");
     } elsif ($dataNode->extendedAttributes->{"GenerateNativeConverter"}) {
         push(@headerContent, "    $implClassName* impl() const\n");
         push(@headerContent, "    {\n");
@@ -1545,7 +1545,7 @@ sub GenerateImplementation
             push(@implContent, "    : $parentClassName(structure, globalObject, impl)\n");
         } else {
             push(@implContent, "    : $parentClassName(structure, globalObject)\n");
-            push(@implContent, "    , m_impl(impl)\n");
+            push(@implContent, "    , m_impl(impl.leakRef())\n");
         }
         push(@implContent, "{\n");
         push(@implContent, "}\n\n");
@@ -2213,7 +2213,7 @@ sub GenerateImplementation
         push(@implContent, "    JS${implClassName}* js${implClassName} = static_cast<JS${implClassName}*>(handle.get().asCell());\n");
         push(@implContent, "    DOMWrapperWorld* world = static_cast<DOMWrapperWorld*>(context);\n");
         push(@implContent, "    uncacheWrapper(world, js${implClassName}->impl(), js${implClassName});\n");
-        push(@implContent, "    js${implClassName}->clearImpl();\n");
+        push(@implContent, "    js${implClassName}->releaseImpl();\n");
         push(@implContent, "}\n\n");
     }
 

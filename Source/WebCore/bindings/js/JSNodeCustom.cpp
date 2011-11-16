@@ -141,7 +141,7 @@ void JSNodeOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
     JSNode* jsNode = static_cast<JSNode*>(handle.get().asCell());
     DOMWrapperWorld* world = static_cast<DOMWrapperWorld*>(context);
     uncacheWrapper(world, jsNode->impl(), jsNode);
-    jsNode->clearImpl();
+    jsNode->releaseImpl();
 }
 
 JSValue JSNode::insertBefore(ExecState* exec)
@@ -201,7 +201,7 @@ void JSNode::visitChildren(JSCell* cell, SlotVisitor& visitor)
     ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
     Base::visitChildren(thisObject, visitor);
 
-    Node* node = thisObject->m_impl.get();
+    Node* node = thisObject->impl();
     node->visitJSEventListeners(visitor);
 
     visitor.addOpaqueRoot(root(node));

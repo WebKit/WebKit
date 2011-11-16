@@ -1,3 +1,33 @@
+2011-11-16  Sam Weinig  <sam@webkit.org>
+
+        JS wrappers of DOM objects should have no-op constructors
+        https://bugs.webkit.org/show_bug.cgi?id=72556
+
+        Reviewed by Geoffrey Garen.
+
+        Stop using a RefPtr to hold DOM objects contained by JavaScript
+        wrappers and instead use a raw pointer. We were already releasing
+        the underlying object before the destructor ran (via the finalizer)
+        so the default behavior of destroying the RefPtr is always unnecessary
+        busy work. 
+
+        * bindings/js/JSCSSValueCustom.cpp:
+        (WebCore::JSCSSValueOwner::finalize):
+        * bindings/js/JSNodeCustom.cpp:
+        (WebCore::JSNodeOwner::finalize):
+        (WebCore::JSNode::visitChildren):
+        Call releaseImpl() instead of clearImpl().
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHeader):
+        Stop storing m_impl in a RefPtr and instead use a raw pointer. Switch
+        clearImpl() to releaseImpl(), which explicitly derefs the pointer and
+        clear it.
+
+        (GenerateImplementation):
+        Use leakPtr() to explicitly adopt the PassRefPtr into the raw pointer.
+        Change default finalize to call releaseImpl() instead of clearImpl().
+
 2011-11-16  Michael Saboff  <msaboff@apple.com>
 
         Enable 8 Bit Strings in JavaScriptCore
