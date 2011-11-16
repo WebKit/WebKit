@@ -1,3 +1,14 @@
+2011-11-16  Tony Chang  <tony@chromium.org>
+
+        [NRWT] speculative fix for multiple subprocess test on cygwin
+        https://bugs.webkit.org/show_bug.cgi?id=72518
+
+        Reviewed by Adam Barth.
+
+        * Scripts/webkitpy/layout_tests/port/chromium.py: cygwin probably
+            tries to emulate posix fd behavior.
+        * Scripts/webkitpy/layout_tests/port/chromium_unittest.py:
+
 2011-11-16  Dirk Pranke  <dpranke@chromium.org>
 
         Run a dummy test in the gpu configurations if there's nothing to do.

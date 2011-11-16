@@ -451,7 +451,7 @@ class ChromiumDriver(Driver):
         assert not self._proc
         # FIXME: This should use ServerProcess like WebKitDriver does.
         # FIXME: We should be reading stderr and stdout separately like how WebKitDriver does.
-        close_fds = sys.platform not in ('win32', 'cygwin')
+        close_fds = sys.platform != 'win32'
         self._proc = subprocess.Popen(self.cmd_line(), stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, close_fds=close_fds)
 
     def has_crashed(self):
