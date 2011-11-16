@@ -192,6 +192,7 @@ void InjectedBundle::beginTesting()
     m_gcController = GCController::create();
     m_eventSendingController = EventSendingController::create();
     m_textInputController = TextInputController::create();
+    m_accessibilityController = AccessibilityController::create();
 
     WKBundleSetShouldTrackVisitedLinks(m_bundle, false);
     WKBundleRemoveAllVisitedLinks(m_bundle);

@@ -62,6 +62,10 @@ Programs_WebKitTestRunner_LDFLAGS = \
 noinst_LTLIBRARIES += Libraries/libTestRunnerInjectedBundle.la
 
 webkittestrunner_built_sources += \
+	DerivedSources/InjectedBundle/JSAccessibilityController.cpp \
+	DerivedSources/InjectedBundle/JSAccessibilityTextMarker.cpp \
+	DerivedSources/InjectedBundle/JSAccessibilityTextMarkerRange.cpp \
+	DerivedSources/InjectedBundle/JSAccessibilityUIElement.cpp \
 	DerivedSources/InjectedBundle/JSEventSendingController.cpp \
 	DerivedSources/InjectedBundle/JSGCController.cpp \
 	DerivedSources/InjectedBundle/JSLayoutTestController.cpp \
@@ -70,6 +74,14 @@ nodist_Libraries_libTestRunnerInjectedBundle_la_SOURCES = $(webkittestrunner_bui
 BUILT_SOURCES += $(webkittestrunner_built_sources)
 
 Libraries_libTestRunnerInjectedBundle_la_SOURCES = \
+	Tools/WebKitTestRunner/InjectedBundle/AccessibilityController.cpp \
+	Tools/WebKitTestRunner/InjectedBundle/AccessibilityController.h \
+	Tools/WebKitTestRunner/InjectedBundle/AccessibilityTextMarker.cpp \
+	Tools/WebKitTestRunner/InjectedBundle/AccessibilityTextMarker.h \
+	Tools/WebKitTestRunner/InjectedBundle/AccessibilityTextMarkerRange.cpp \
+	Tools/WebKitTestRunner/InjectedBundle/AccessibilityTextMarkerRange.h \
+	Tools/WebKitTestRunner/InjectedBundle/AccessibilityUIElement.cpp \
+	Tools/WebKitTestRunner/InjectedBundle/AccessibilityUIElement.h \
 	Tools/WebKitTestRunner/InjectedBundle/ActivateFonts.h \
 	Tools/WebKitTestRunner/InjectedBundle/Bindings/JSWrappable.h \
 	Tools/WebKitTestRunner/InjectedBundle/Bindings/JSWrapper.cpp \

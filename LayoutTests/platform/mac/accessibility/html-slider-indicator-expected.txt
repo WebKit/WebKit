@@ -1,5 +1,3 @@
-ALERT: Successfully received AXValueChanged
-ALERT: Successfully received AXValueChanged
 
 This tests that a basic range returns all the correct information for the mac platform.
 
@@ -19,4 +17,6 @@ PASS range.isEqual(hitTestRange) is true
 PASS successfullyParsed is true
 
 TEST COMPLETE
+Successfully received AXValueChanged
+Successfully received AXValueChanged
 

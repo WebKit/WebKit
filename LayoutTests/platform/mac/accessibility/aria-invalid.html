@@ -13,6 +13,7 @@
 
 <p id="description"></p>
 <div id="console"></div>
+<div id="notifications"></div>
 
 <script>
 
@@ -21,7 +22,7 @@
     var notificationElement = 0;
     function notificationCallback(notification) {
         if (notification == "AXInvalidStatusChanged") {
-            alert("Notification received successfully.");
+            document.getElementById("notifications").innerHTML += "Notification received successfully.";
             notificationElement.removeNotificationListener();
             window.layoutTestController.notifyDone();
         }

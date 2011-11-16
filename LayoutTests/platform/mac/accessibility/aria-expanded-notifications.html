@@ -19,6 +19,7 @@
 
 <p id="description"></p>
 <div id="console"></div>
+<div id="notifications"></div>
 
 <script>
 
@@ -30,17 +31,8 @@
     // The order of notifications should be Row Count, Row Collapsed, Row Count, Row Expanded
     function notifyCallback(notification) {  
         notifyName = notification;
-        if (notifyCount == 0) {
-            shouldBe("notifyName", "'AXRowCountChanged'");
-        } 
-        else if (notifyCount == 1) {
-            shouldBe("notifyName", "'AXRowCollapsed'");
-        }
-        else if (notifyCount == 2) {
-            shouldBe("notifyName", "'AXRowCountChanged'");
-        }
-        else if (notifyCount == 3) {
-            shouldBe("notifyName", "'AXRowExpanded'");
+        document.getElementById("notifications").innerHTML += "Notification: " + notifyName + "<br>";
+        if (notifyCount == 3) {
             axTree.removeNotificationListener();
             window.layoutTestController.notifyDone();
         }

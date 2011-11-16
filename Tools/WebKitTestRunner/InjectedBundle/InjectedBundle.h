@@ -26,6 +26,7 @@
 #ifndef InjectedBundle_h
 #define InjectedBundle_h
 
+#include "AccessibilityController.h"
 #include "EventSendingController.h"
 #include "GCController.h"
 #include "LayoutTestController.h"
@@ -56,6 +57,7 @@ public:
     GCController* gcController() { return m_gcController.get(); }
     EventSendingController* eventSendingController() { return m_eventSendingController.get(); }
     TextInputController* textInputController() { return m_textInputController.get(); }
+    AccessibilityController* accessibilityController() { return m_accessibilityController.get(); }
 
     InjectedBundlePage* page() const;
     size_t pageCount() const { return m_pages.size(); }
@@ -105,6 +107,7 @@ private:
     WKBundlePageGroupRef m_pageGroup;
     Vector<OwnPtr<InjectedBundlePage> > m_pages;
 
+    RefPtr<AccessibilityController> m_accessibilityController;
     RefPtr<LayoutTestController> m_layoutTestController;
     RefPtr<GCController> m_gcController;
     RefPtr<EventSendingController> m_eventSendingController;

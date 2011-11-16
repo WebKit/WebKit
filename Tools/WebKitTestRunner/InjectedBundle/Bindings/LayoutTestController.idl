@@ -131,6 +131,8 @@ module WTR {
         void setBackingScaleFactor(in double backingScaleFactor, in object callback);
 
         void setWindowIsKey(in boolean isKey);
+        
+        readonly attribute DOMString platformName;
     };
 
 }

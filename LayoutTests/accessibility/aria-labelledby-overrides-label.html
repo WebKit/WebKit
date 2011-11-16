@@ -25,7 +25,7 @@
           shouldBe("text.description", "'AXDescription: Shut down computer after 10 minutes'");
 
           // There should be no title UI element.
-          shouldBe("text.titleUIElement().isValid", "false");
+          shouldBe("text.titleUIElement() != null && text.titleUIElement().isValid", "false");
           
           // The label element is in a group, in a group, in the web area.
           var labelElement = accessibilityController.rootElement.childAtIndex(0).childAtIndex(0).childAtIndex(0).childAtIndex(0);

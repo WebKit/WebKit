@@ -32,8 +32,7 @@
             body.focus();
             var group = accessibilityController.focusedElement.childAtIndex(1);
             var group2 = accessibilityController.focusedElement.childAtIndex(3);
-
-            if (group.titleUIElement().allAttributes() != "" && group2.titleUIElement().allAttributes() == "")
+            if (group.titleUIElement().allAttributes() != "" && (group2.titleUIElement() == null || group2.titleUIElement().allAttributes() == "")) 
                 result.innerText += "Pass";
             else
                 result.innerText += "Fail";

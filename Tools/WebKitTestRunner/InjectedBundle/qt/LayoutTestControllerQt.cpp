@@ -89,6 +89,12 @@ JSRetainPtr<JSStringRef> LayoutTestController::pathToLocalResource(JSStringRef u
     return JSStringCreateWithCharacters(reinterpret_cast<const JSChar*>(path.constData()), path.length());
 }
 
+JSRetainPtr<JSStringRef> LayoutTestController::platformName()
+{
+    JSRetainPtr<JSStringRef> platformName(Adopt, JSStringCreateWithUTF8CString("qt"));
+    return platformName;
+}
+
 } // namespace WTR
 
 #include "LayoutTestControllerQt.moc"

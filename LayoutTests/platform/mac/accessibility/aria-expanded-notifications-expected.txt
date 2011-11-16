@@ -9,8 +9,8 @@ PASS addedNotification is true
 PASS successfullyParsed is true
 
 TEST COMPLETE
-PASS notifyName is 'AXRowCountChanged'
-PASS notifyName is 'AXRowCollapsed'
-PASS notifyName is 'AXRowCountChanged'
-PASS notifyName is 'AXRowExpanded'
+Notification: AXRowCountChanged
+Notification: AXRowCollapsed
+Notification: AXRowCountChanged
+Notification: AXRowExpanded
 

@@ -42,11 +42,9 @@
 
           // When a header and footer are inside an article, they should not be landmarks.
           shouldBe("body.childAtIndex(6).childAtIndex(0).subrole", "'AXSubrole: '");
-          shouldBe("body.childAtIndex(6).childAtIndex(1).subrole", "'AXSubrole: '");
 
           // When a header and footer are inside a section, they should not be landmarks.
           shouldBe("body.childAtIndex(7).childAtIndex(0).subrole", "'AXSubrole: '");
-          shouldBe("body.childAtIndex(7).childAtIndex(1).subrole", "'AXSubrole: '");
     }
 
 </script>

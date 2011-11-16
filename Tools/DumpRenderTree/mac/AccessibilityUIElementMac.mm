@@ -1117,6 +1117,22 @@ AccessibilityUIElement AccessibilityUIElement::cellForColumnAndRow(unsigned col,
     return 0;
 }
 
+AccessibilityUIElement AccessibilityUIElement::horizontalScrollbar() const
+{
+    BEGIN_AX_OBJC_EXCEPTIONS
+    return AccessibilityUIElement([m_element accessibilityAttributeValue:NSAccessibilityHorizontalScrollBarAttribute]);
+    END_AX_OBJC_EXCEPTIONS    
+    
+    return 0;
+}
+
+AccessibilityUIElement AccessibilityUIElement::verticalScrollbar() const
+{
+    BEGIN_AX_OBJC_EXCEPTIONS
+    return AccessibilityUIElement([m_element accessibilityAttributeValue:NSAccessibilityVerticalScrollBarAttribute]);
+    END_AX_OBJC_EXCEPTIONS        
+}
+
 JSStringRef AccessibilityUIElement::selectedTextRange()
 {
     NSRange range = NSMakeRange(NSNotFound, 0);

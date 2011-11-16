@@ -20,9 +20,7 @@ PASS body.childAtIndex(3).subrole is 'AXSubrole: AXDocumentArticle'
 PASS body.childAtIndex(4).subrole is 'AXSubrole: AXLandmarkNavigation'
 PASS body.childAtIndex(5).subrole is 'AXSubrole: AXLandmarkComplementary'
 PASS body.childAtIndex(6).childAtIndex(0).subrole is 'AXSubrole: '
-PASS body.childAtIndex(6).childAtIndex(1).subrole is 'AXSubrole: '
 PASS body.childAtIndex(7).childAtIndex(0).subrole is 'AXSubrole: '
-PASS body.childAtIndex(7).childAtIndex(1).subrole is 'AXSubrole: '
 PASS successfullyParsed is true
 
 TEST COMPLETE

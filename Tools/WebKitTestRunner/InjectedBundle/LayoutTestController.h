@@ -190,6 +190,8 @@ public:
     void callFocusWebViewCallback();
     void callSetBackingScaleFactorCallback();
 
+    JSRetainPtr<JSStringRef> platformName();
+    
 private:
     static const double waitToDumpWatchdogTimerInterval;
 

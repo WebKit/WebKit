@@ -11,6 +11,7 @@ content inside
 
 <p id="description"></p>
 <div id="console"></div>
+<div id="notifications"></div>
 
 <script>
 
@@ -19,12 +20,12 @@ content inside
     var axTextbox = 0;
     function notificationCallback(notification) {
         if (notification == "AXValueChanged") {
-           alert("Successfully received " + notification);
+           document.getElementById("notifications").innerHTML += "Successfully received " + notification + "<br>";
            axTextbox.removeNotificationListener();
            window.layoutTestController.notifyDone();
         }
         else if (notification == "AXSelectedTextChanged") {
-           alert("Successfully received " + notification);
+           document.getElementById("notifications").innerHTML += "Successfully received " + notification + "<br>";
         }
     }
 

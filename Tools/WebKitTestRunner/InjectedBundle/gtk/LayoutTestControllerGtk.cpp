@@ -65,4 +65,10 @@ JSRetainPtr<JSStringRef> LayoutTestController::pathToLocalResource(JSStringRef u
     return url;
 }
 
+JSRetainPtr<JSStringRef> LayoutTestController::platformName()
+{
+    JSRetainPtr<JSStringRef> platformName(Adopt, JSStringCreateWithUTF8CString("gtk"));
+    return platformName;
+}
+
 } // namespace WTR

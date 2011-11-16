@@ -303,15 +303,9 @@ editing/selection/click-in-margins-inside-editable-div.html
 editing/selection/click-in-padding-with-multiple-line-boxes.html
 editing/selection/shift-click.html
 
-# Implement accesitility support to WebKit2
-platform/gtk/accessibility/aria-roles-unignored.html
-platform/gtk/accessibility/aria-slider-required-attributes.html
-platform/gtk/accessibility/aria-table-hierarchy.html
-platform/gtk/accessibility/caret-browsing-text-focus.html
-platform/gtk/accessibility/input-slider.html
-platform/gtk/accessibility/list-items-always-exposed.html
-platform/gtk/accessibility/object-with-title.html
-platform/gtk/accessibility/table-hierarchy.html
+# Implement accessibility support for WebKit2
+accessibility
+platform/gtk/accessibility
 
 # Implement textInputController.firstRectForCharacterRange interface
 fast/forms/cursor-at-editable-content-boundary.html

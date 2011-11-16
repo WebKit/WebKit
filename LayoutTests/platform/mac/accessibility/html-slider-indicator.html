@@ -8,6 +8,7 @@
 
 <p id="description"></p>
 <div id="console"></div>
+<div id="notifications"></div>
 
 <script>
 
@@ -17,7 +18,7 @@
     var valueChangeCount = 0;
     function notificationCallback(notification) {
         if (notification == "AXValueChanged") {
-           alert("Successfully received " + notification);
+           document.getElementById("notifications").innerHTML += "Successfully received " + notification + "<br>";
            valueChangeCount++;
         }
 

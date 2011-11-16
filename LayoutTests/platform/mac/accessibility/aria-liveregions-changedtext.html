@@ -11,6 +11,7 @@
 
 <p id="description"></p>
 <div id="console"></div>
+<div id="notifications"></div>
 
 <script>
 
@@ -19,7 +20,7 @@
     var liveRegionText = 0;
     function ariaCallbackText(notification) {
         if (notification == "AXLiveRegionChanged") {
-           alert("Successfully received " + notification);
+           document.getElementById("notifications").innerHTML += "Successfully received " + notification;
            liveRegionText.removeNotificationListener();
            window.layoutTestController.notifyDone();
         }

@@ -199,6 +199,10 @@ public:
     // Table-specific
     AccessibilityUIElement cellForColumnAndRow(unsigned column, unsigned row);
 
+    // Scrollarea-specific
+    AccessibilityUIElement horizontalScrollbar() const;
+    AccessibilityUIElement verticalScrollbar() const;
+
     // Text markers.
     AccessibilityTextMarkerRange textMarkerRangeForElement(AccessibilityUIElement*);    
     AccessibilityTextMarkerRange textMarkerRangeForMarkers(AccessibilityTextMarker* startMarker, AccessibilityTextMarker* endMarker);

@@ -60,5 +60,11 @@ JSRetainPtr<JSStringRef> LayoutTestController::pathToLocalResource(JSStringRef u
 {
     return JSStringRetain(url); // Do nothing on mac.
 }
+    
+JSRetainPtr<JSStringRef> LayoutTestController::platformName()
+{
+    JSRetainPtr<JSStringRef> platformName(Adopt, JSStringCreateWithUTF8CString("mac"));
+    return platformName;
+}
 
 } // namespace WTR

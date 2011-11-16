@@ -23,6 +23,17 @@
 /* Begin PBXBuildFile section */
 		0F5169CB1445222D00E0A9D7 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0F5169CA1445222D00E0A9D7 /* WebKit.framework */; };
 		0F5169CC1445222D00E0A9D7 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0F5169CA1445222D00E0A9D7 /* WebKit.framework */; };
+		29210EAE144CACB700835BB5 /* AccessibilityUIElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 29210EA9144CACB200835BB5 /* AccessibilityUIElement.cpp */; };
+		29210EB0144CACBD00835BB5 /* AccessibilityController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 29210EA2144CAAA500835BB5 /* AccessibilityController.cpp */; };
+		29210EB4144CACD500835BB5 /* AccessibilityTextMarker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 29210EB1144CACD400835BB5 /* AccessibilityTextMarker.cpp */; };
+		29210EB5144CACD500835BB5 /* AccessibilityTextMarkerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 29210EB3144CACD400835BB5 /* AccessibilityTextMarkerMac.mm */; };
+		29210EDA144CC3EA00835BB5 /* AccessibilityUIElementMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 29210EAB144CACB200835BB5 /* AccessibilityUIElementMac.mm */; };
+		29210EDB144CD47900835BB5 /* JSAccessibilityController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 583913D014335E95008307E5 /* JSAccessibilityController.cpp */; };
+		29210EE1144CDB2600835BB5 /* JSAccessibilityUIElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 29210EDB146727E711835BB5 /* JSAccessibilityUIElement.cpp */; };
+		29A8FCCB145EF02E009045A6 /* JSAccessibilityTextMarker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 29210EE1144CDE6789815EE5 /* JSAccessibilityTextMarker.cpp */; };
+		29A8FCDD145F0337009045A6 /* JSAccessibilityTextMarkerRange.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 29A8FCE1345E7021006AA5A6 /* JSAccessibilityTextMarkerRange.cpp */; };
+		29A8FCE2145F037B009045A6 /* AccessibilityTextMarkerRange.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 29A8FCE1145F037B009045A6 /* AccessibilityTextMarkerRange.cpp */; };
+		29A8FCE5145F0464009045A6 /* AccessibilityTextMarkerRangeMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 29A8FCE4145F0464009045A6 /* AccessibilityTextMarkerRangeMac.mm */; };
 		5322FB4313FDA0CD0041ABCC /* CyclicRedundancyCheck.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5322FB4113FDA0CD0041ABCC /* CyclicRedundancyCheck.cpp */; };
 		5322FB4613FDA0EA0041ABCC /* PixelDumpSupport.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5322FB4413FDA0EA0041ABCC /* PixelDumpSupport.cpp */; };
 		5641E2D014335E95008307E5 /* JSTextInputController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5641E2CE14335E95008307E5 /* JSTextInputController.cpp */; };
@@ -85,6 +96,27 @@
 
 /* Begin PBXFileReference section */
 		0F5169CA1445222D00E0A9D7 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = WebKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		29210EA2144CAAA500835BB5 /* AccessibilityController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AccessibilityController.cpp; sourceTree = "<group>"; };
+		29210EA3144CAAA500835BB5 /* AccessibilityController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilityController.h; sourceTree = "<group>"; };
+		29210EA8144CAB8800835BB5 /* AccessibilityController.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AccessibilityController.idl; sourceTree = "<group>"; };
+		29210EA9144CACB200835BB5 /* AccessibilityUIElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AccessibilityUIElement.cpp; sourceTree = "<group>"; };
+		29210EAA144CACB200835BB5 /* AccessibilityUIElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilityUIElement.h; sourceTree = "<group>"; };
+		29210EAB144CACB200835BB5 /* AccessibilityUIElementMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AccessibilityUIElementMac.mm; path = mac/AccessibilityUIElementMac.mm; sourceTree = "<group>"; };
+		29210EB1144CACD400835BB5 /* AccessibilityTextMarker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AccessibilityTextMarker.cpp; sourceTree = "<group>"; };
+		29210EB2144CACD400835BB5 /* AccessibilityTextMarker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilityTextMarker.h; sourceTree = "<group>"; };
+		29210EB3144CACD400835BB5 /* AccessibilityTextMarkerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AccessibilityTextMarkerMac.mm; path = mac/AccessibilityTextMarkerMac.mm; sourceTree = "<group>"; };
+		29210EDB146727E711835BB5 /* JSAccessibilityUIElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JSAccessibilityUIElement.cpp; path = DerivedSources/WebKitTestRunner/JSAccessibilityUIElement.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
+		29210EDB146727E811835BB5 /* JSAccessibilityUIElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSAccessibilityUIElement.h; path = DerivedSources/WebKitTestRunner/JSAccessibilityUIElement.h; sourceTree = BUILT_PRODUCTS_DIR; };
+		29210EDC144CD56E00835BB5 /* AccessibilityUIElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AccessibilityUIElement.idl; sourceTree = "<group>"; };
+		29210EE1144CDE6789815EE5 /* JSAccessibilityTextMarker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JSAccessibilityTextMarker.cpp; path = DerivedSources/WebKitTestRunner/JSAccessibilityTextMarker.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
+		29210EE1145CDE6789815EE5 /* JSAccessibilityTextMarker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSAccessibilityTextMarker.h; path = DerivedSources/WebKitTestRunner/JSAccessibilityTextMarker.h; sourceTree = BUILT_PRODUCTS_DIR; };
+		29A8FCC5145B93C6009045A6 /* AccessibilityTextMarker.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AccessibilityTextMarker.idl; sourceTree = "<group>"; };
+		29A8FCD2145EF8F2009045A6 /* AccessibilityTextMarkerRange.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = AccessibilityTextMarkerRange.idl; sourceTree = "<group>"; };
+		29A8FCDF145F0358009045A6 /* AccessibilityTextMarkerRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilityTextMarkerRange.h; sourceTree = "<group>"; };
+		29A8FCE1145F037B009045A6 /* AccessibilityTextMarkerRange.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AccessibilityTextMarkerRange.cpp; sourceTree = "<group>"; };
+		29A8FCE1345E7021006AA5A6 /* JSAccessibilityTextMarkerRange.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JSAccessibilityTextMarkerRange.cpp; path = DerivedSources/WebKitTestRunner/JSAccessibilityTextMarkerRange.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
+		29A8FCE1345E7021006AA5A7 /* JSAccessibilityTextMarkerRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSAccessibilityTextMarkerRange.h; path = DerivedSources/WebKitTestRunner/JSAccessibilityTextMarkerRange.h; sourceTree = BUILT_PRODUCTS_DIR; };
+		29A8FCE4145F0464009045A6 /* AccessibilityTextMarkerRangeMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AccessibilityTextMarkerRangeMac.mm; path = mac/AccessibilityTextMarkerRangeMac.mm; sourceTree = "<group>"; };
 		378D442213346D00006A777B /* config.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = "<group>"; };
 		41230E16138C78BF00BCCFCA /* libWebCoreTestSupport.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libWebCoreTestSupport.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		4181731B138AD39D0057AAA4 /* WebCoreTestSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebCoreTestSupport.h; path = WebCoreTestSupport/WebCoreTestSupport.h; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -99,6 +131,8 @@
 		5664A49914326384008881BE /* TextInputController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextInputController.h; sourceTree = "<group>"; };
 		5670B8261386FC13002EB355 /* EventSenderProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventSenderProxy.h; sourceTree = "<group>"; };
 		5670B8271386FCA5002EB355 /* EventSenderProxy.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = EventSenderProxy.mm; sourceTree = "<group>"; };
+		583913D014335E95008307E5 /* JSAccessibilityController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JSAccessibilityController.cpp; path = DerivedSources/WebKitTestRunner/JSAccessibilityController.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
+		583913D114335E95008307E5 /* JSAccessibilityController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSAccessibilityController.h; path = DerivedSources/WebKitTestRunner/JSAccessibilityController.h; sourceTree = BUILT_PRODUCTS_DIR; };
 		6510A77711EC643800410867 /* AHEM____.TTF */ = {isa = PBXFileReference; lastKnownFileType = file; name = "AHEM____.TTF"; path = "fonts/AHEM____.TTF"; sourceTree = "<group>"; };
 		6510A77911EC643800410867 /* WebKitWeightWatcher100.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = WebKitWeightWatcher100.ttf; path = fonts/WebKitWeightWatcher100.ttf; sourceTree = "<group>"; };
 		6510A77A11EC643800410867 /* WebKitWeightWatcher200.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = WebKitWeightWatcher200.ttf; path = fonts/WebKitWeightWatcher200.ttf; sourceTree = "<group>"; };
@@ -245,6 +279,24 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		29A8FCE0145F035D009045A6 /* Accessibility */ = {
+			isa = PBXGroup;
+			children = (
+				29210EA2144CAAA500835BB5 /* AccessibilityController.cpp */,
+				29210EA3144CAAA500835BB5 /* AccessibilityController.h */,
+				29210EA9144CACB200835BB5 /* AccessibilityUIElement.cpp */,
+				29210EAA144CACB200835BB5 /* AccessibilityUIElement.h */,
+				29210EAB144CACB200835BB5 /* AccessibilityUIElementMac.mm */,
+				29210EB1144CACD400835BB5 /* AccessibilityTextMarker.cpp */,
+				29210EB2144CACD400835BB5 /* AccessibilityTextMarker.h */,
+				29210EB3144CACD400835BB5 /* AccessibilityTextMarkerMac.mm */,
+				29A8FCE1145F037B009045A6 /* AccessibilityTextMarkerRange.cpp */,
+				29A8FCDF145F0358009045A6 /* AccessibilityTextMarkerRange.h */,
+				29A8FCE4145F0464009045A6 /* AccessibilityTextMarkerRangeMac.mm */,
+			);
+			name = Accessibility;
+			sourceTree = "<group>";
+		};
 		65EB859E11EC67CC0034D300 /* mac */ = {
 			isa = PBXGroup;
 			children = (
@@ -257,6 +309,7 @@
 		BC14E4E0120E02F900826C0C /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				29A8FCE0145F035D009045A6 /* Accessibility */,
 				BC8FD8C9120E527F00F3E71A /* EventSendingController.cpp */,
 				BC8FD8C8120E527F00F3E71A /* EventSendingController.h */,
 				BC14E4D9120E02D000826C0C /* GCController.cpp */,
@@ -342,6 +395,10 @@
 				BC952C0E11F3B97B003398B4 /* JSWrappable.h */,
 				BC952C0C11F3B965003398B4 /* JSWrapper.cpp */,
 				BC952C0B11F3B965003398B4 /* JSWrapper.h */,
+				29210EA8144CAB8800835BB5 /* AccessibilityController.idl */,
+				29A8FCC5145B93C6009045A6 /* AccessibilityTextMarker.idl */,
+				29A8FCD2145EF8F2009045A6 /* AccessibilityTextMarkerRange.idl */,
+				29210EDC144CD56E00835BB5 /* AccessibilityUIElement.idl */,
 				BC8FD8CB120E52B000F3E71A /* EventSendingController.idl */,
 				BC14E4E1120E032000826C0C /* GCController.idl */,
 				BC952ED211F3C29F003398B4 /* LayoutTestController.idl */,
@@ -353,6 +410,14 @@
 		BC952D3A11F3BF1F003398B4 /* Derived Sources */ = {
 			isa = PBXGroup;
 			children = (
+				583913D014335E95008307E5 /* JSAccessibilityController.cpp */,
+				583913D114335E95008307E5 /* JSAccessibilityController.h */,
+				29210EE1144CDE6789815EE5 /* JSAccessibilityTextMarker.cpp */,
+				29210EE1145CDE6789815EE5 /* JSAccessibilityTextMarker.h */,
+				29A8FCE1345E7021006AA5A6 /* JSAccessibilityTextMarkerRange.cpp */,
+				29A8FCE1345E7021006AA5A7 /* JSAccessibilityTextMarkerRange.h */,
+				29210EDB146727E711835BB5 /* JSAccessibilityUIElement.cpp */,
+				29210EDB146727E811835BB5 /* JSAccessibilityUIElement.h */,
 				BC8FD8D0120E545B00F3E71A /* JSEventSendingController.cpp */,
 				BC8FD8D1120E545B00F3E71A /* JSEventSendingController.h */,
 				BC14E4E8120E03D800826C0C /* JSGCController.cpp */,
@@ -512,6 +577,17 @@
 				C0CE720B1247C93300BC0EC4 /* LayoutTestControllerMac.mm in Sources */,
 				5664A49A14326384008881BE /* TextInputController.cpp in Sources */,
 				5641E2D014335E95008307E5 /* JSTextInputController.cpp in Sources */,
+				29210EAE144CACB700835BB5 /* AccessibilityUIElement.cpp in Sources */,
+				29210EB0144CACBD00835BB5 /* AccessibilityController.cpp in Sources */,
+				29210EB4144CACD500835BB5 /* AccessibilityTextMarker.cpp in Sources */,
+				29210EB5144CACD500835BB5 /* AccessibilityTextMarkerMac.mm in Sources */,
+				29210EDA144CC3EA00835BB5 /* AccessibilityUIElementMac.mm in Sources */,
+				29210EDB144CD47900835BB5 /* JSAccessibilityController.cpp in Sources */,
+				29210EE1144CDB2600835BB5 /* JSAccessibilityUIElement.cpp in Sources */,
+				29A8FCCB145EF02E009045A6 /* JSAccessibilityTextMarker.cpp in Sources */,
+				29A8FCDD145F0337009045A6 /* JSAccessibilityTextMarkerRange.cpp in Sources */,
+				29A8FCE2145F037B009045A6 /* AccessibilityTextMarkerRange.cpp in Sources */,
+				29A8FCE5145F0464009045A6 /* AccessibilityTextMarkerRangeMac.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

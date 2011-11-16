@@ -64,4 +64,10 @@ JSRetainPtr<JSStringRef> LayoutTestController::pathToLocalResource(JSStringRef u
     return JSStringRetain(url); // TODO.
 }
 
+JSRetainPtr<JSStringRef> LayoutTestController::platformName()
+{
+    JSRetainPtr<JSStringRef> platformName(Adopt, JSStringCreateWithUTF8CString("win"));
+    return platformName;
+}
+
 } // namespace WTR

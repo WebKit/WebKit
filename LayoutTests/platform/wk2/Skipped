@@ -38,12 +38,12 @@
 ########################################
 ### START OF (1) Classified failures with bug reports
 
-# WebKit2 needs to support accessibility
-# <https://bugs.webkit.org/show_bug.cgi?id=42130>
-# WebKitTestRunner needs to support accessibility-related DRT APIs
-# <https://bugs.webkit.org/show_bug.cgi?id=42131>
-accessibility
-platform/mac/accessibility
+# AX tests that require hit testing do not work in WK2.
+# <https://bugs.webkit.org/show_bug.cgi?id=71298>
+accessibility/loading-iframe-updates-axtree.html
+platform/mac/accessibility/html-slider-indicator.html
+platform/mac/accessibility/listbox-hit-test.html
+platform/mac/accessibility/iframe-with-title-correct-hierarchy.html
 
 # Some compositing tests flakey
 # <https://bugs.webkit.org/show_bug.cgi?id=48354>

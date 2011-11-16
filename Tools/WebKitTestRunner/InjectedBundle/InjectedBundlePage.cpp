@@ -655,6 +655,8 @@ void InjectedBundlePage::didClearWindowForFrame(WKBundleFrameRef frame, WKBundle
     InjectedBundle::shared().gcController()->makeWindowObject(context, window, &exception);
     InjectedBundle::shared().eventSendingController()->makeWindowObject(context, window, &exception);
     InjectedBundle::shared().textInputController()->makeWindowObject(context, window, &exception);
+    InjectedBundle::shared().accessibilityController()->makeWindowObject(context, window, &exception);
+
 #if PLATFORM(QT)
     DumpRenderTreeSupportQt::injectInternalsObject(context);
 #else

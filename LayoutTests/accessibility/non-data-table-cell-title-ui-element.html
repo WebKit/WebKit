@@ -32,7 +32,9 @@
             // get the <th>skip</th> element
             var group = accessibilityController.focusedElement.childAtIndex(5);
             var titleUI = group.titleUIElement();
-            var allAttributes = titleUI.allAttributes();
+            var allAttributes = "";
+            if (titleUI)
+                allAttributes = titleUI.allAttributes();
 
             // verify it has no title ui element           
             if (!allAttributes) {

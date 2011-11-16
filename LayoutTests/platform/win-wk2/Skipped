@@ -26,10 +26,9 @@
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 
-# WebKit2 needs to support accessibility
-# <https://bugs.webkit.org/show_bug.cgi?id=42130>
-# WebKitTestRunner needs to support accessibility-related DRT APIs
-# <https://bugs.webkit.org/show_bug.cgi?id=42131>
+# Windows does not support WebKit2 accessibility.
+# <https://bugs.webkit.org/show_bug.cgi?id=71296>
+accessibility
 platform/win/accessibility
 
 # WebKitTestRunner needs an implementation of layoutTestController.dumpIconChanges
