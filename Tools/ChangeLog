@@ -1,5 +1,26 @@
 2011-11-16  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
+        [Qt] Fix use of config.tests
+
+        We were checking @buildArgs to determine if the optional argument was
+        passed or not, but this is not the right way to do that in Perl. The
+        right way is to not use a prototype for the function, and to pass
+        the list as a reference (to avoid list expansion). That way we can
+        check the number of arguments, and choose the right code path based
+        on that.
+
+        We were also missing a default-value of 0 for any feature that's not
+        set in features.prf.
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * Scripts/build-webkit:
+        * Scripts/webkitdirs.pm:
+        (qtFeatureDefaults):
+        (buildQMakeProject):
+
+2011-11-16  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
         [Qt] Prospective fix for broken plugin tests
 
         Don't hide symbols for the NPAPI test plugin

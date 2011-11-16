@@ -348,7 +348,7 @@ if (isQt()) {
     }
 
     foreach (@features) {
-        $_->{default} = (%qtDefaults ? $qtDefaults{$_->{define}} : -1);
+        $_->{default} = (%qtDefaults ? $qtDefaults{$_->{define}} || 0 : -1);
     }
 }
 
