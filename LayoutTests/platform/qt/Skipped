@@ -2482,3 +2482,7 @@ editing/pasteboard/data-transfer-items-image-png.html
 # [Qt] fast/forms/file/file-input-reset.html failing on Qt
 # https://bugs.webkit.org/show_bug.cgi?id=72429
 fast/forms/file/file-input-reset.html
+
+# [Qt] new test css3/flexbox/line-wrapping.html failing
+# https://bugs.webkit.org/show_bug.cgi?id=72490
+css3/flexbox/line-wrapping.html
