@@ -1359,7 +1359,6 @@ BUGCR23473 MAC : fast/repaint/4774354.html = IMAGE
 BUGCR23473 MAC : fast/repaint/4776765.html = IMAGE
 BUGCR23473 MAC : fast/repaint/background-generated.html = IMAGE
 BUGCR23473 MAC : fast/repaint/backgroundSizeRepaint.html = IMAGE
-BUGCR23473 MAC : fast/repaint/block-selection-gap-in-composited-layer.html = IMAGE
 BUGCR23473 MAC : fast/repaint/block-selection-gap-in-table-cell.html = IMAGE
 BUGCR23473 MAC : fast/repaint/body-background-image.html = IMAGE
 BUGCR23473 MAC : fast/repaint/border-fit-lines.html = IMAGE
@@ -2740,9 +2739,6 @@ BUGWK54322 SNOWLEOPARD : fast/canvas/arc360.html = IMAGE
 BUGWK54322 SNOWLEOPARD : fast/css/transform-default-parameter.html = IMAGE
 BUGWK54322 SNOWLEOPARD : fast/dom/blur-contenteditable.html = IMAGE
 BUGWK54322 SNOWLEOPARD : fast/images/favicon-as-image.html = IMAGE+TEXT
-BUGWK54322 SNOWLEOPARD : fast/media/mq-transform-02.html = IMAGE+TEXT
-BUGWK54322 SNOWLEOPARD : fast/media/mq-transform-03.html = IMAGE+TEXT
-BUGWK54322 SNOWLEOPARD : fast/replaced/width100percent-textarea.html = IMAGE
 BUGWK54322 SNOWLEOPARD : fast/text/international/pop-up-button-text-alignment-and-direction.html = IMAGE
 BUGWK54322 SNOWLEOPARD : fast/text/international/text-combine-image-test.html = IMAGE
 BUGWK54322 SNOWLEOPARD : fonts/monospace.html = IMAGE
@@ -3878,7 +3874,7 @@ BUG_SENORBLANCO GPU : fast/canvas/canvas-transforms-fillRect-shadow.html = TEXT
 
 // Will need baselines updated to take compositing into account when that is enabled by default.
 // See bug for details
-BUGWK72402 : fast/media/mq-transform-03.html = PASS FAIL
+BUGWK72402 WIN LINUX : fast/media/mq-transform-03.html = PASS FAIL
 BUGWK72402 : transitions/default-timing-function.html = PASS FAIL
 BUGWK72402 : animations/missing-values-first-keyframe.html = PASS FAIL
 BUGWK72402 : fast/repaint/block-selection-gap-in-composited-layer.html = PASS FAIL
