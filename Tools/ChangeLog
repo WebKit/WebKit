@@ -1,3 +1,9 @@
+2011-11-15  Tony Chang  <tony@chromium.org>
+
+        Skip a failing webkitpy test on cygwin.
+
+        * Scripts/webkitpy/layout_tests/port/chromium_unittest.py:
+
 2011-11-15  Sam Weinig  <sam@webkit.org>
 
         TestWebKitAPI should not put its resources in the root products directory
