@@ -1,3 +1,16 @@
+2011-11-15  Jeff Timanus  <twiz@chromium.org>
+
+        Patch removing duplicated code in the setup of the DrawingBuffer used
+        to host the back-buffer for WebGL contents.
+        https://bugs.webkit.org/show_bug.cgi?id=72327
+
+        Reviewed by Kenneth Russell.
+
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::copyTexImage2D):
+        (WebCore::WebGLRenderingContext::copyTexSubImage2D):
+        (WebCore::WebGLRenderingContext::readPixels):
+
 2011-11-15  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         JS DOM wrappers depend on destructor to deref impl RefPtrs

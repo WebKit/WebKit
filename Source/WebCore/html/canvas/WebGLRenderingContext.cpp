@@ -82,6 +82,29 @@ const double secondsBetweenRestoreAttempts = 1.0;
 
 namespace {
 
+    class ScopedDrawingBufferBinder {
+    public:
+        ScopedDrawingBufferBinder(DrawingBuffer* drawingBuffer, WebGLFramebuffer* framebufferBinding)
+            : m_drawingBuffer(drawingBuffer)
+            , m_framebufferBinding(framebufferBinding)
+        {
+            // Commit DrawingBuffer if needed (e.g., for multisampling)
+            if (!m_framebufferBinding && m_drawingBuffer)
+                m_drawingBuffer->commit();
+        }
+
+        ~ScopedDrawingBufferBinder()
+        {
+            // Restore DrawingBuffer if needed
+            if (!m_framebufferBinding && m_drawingBuffer)
+                m_drawingBuffer->bind();
+        }
+
+    private:
+        DrawingBuffer* m_drawingBuffer;
+        WebGLFramebuffer* m_framebufferBinding;
+    };
+
     Platform3DObject objectOrZero(WebGLObject* object)
     {
         return object ? object->object() : 0;
@@ -1164,20 +1187,10 @@ void WebGLRenderingContext::copyTexImage2D(GC3Denum target, GC3Dint level, GC3De
     }
     clearIfComposited();
     if (isResourceSafe()) {
-        // Commit DrawingBuffer if needed (e.g., for multisampling)
-        if (!m_framebufferBinding && m_drawingBuffer)
-            m_drawingBuffer->commit();
-
+        ScopedDrawingBufferBinder binder(m_drawingBuffer.get(), m_framebufferBinding.get());
         m_context->copyTexImage2D(target, level, internalformat, x, y, width, height, border);
-
-        // Restore DrawingBuffer if needed
-        if (!m_framebufferBinding && m_drawingBuffer)
-            m_drawingBuffer->bind();
     } else {
-        // Commit DrawingBuffer if needed (e.g., for multisampling)
-        if (!m_framebufferBinding && m_drawingBuffer)
-            m_drawingBuffer->commit();
-
+        ScopedDrawingBufferBinder binder(m_drawingBuffer.get(), m_framebufferBinding.get());
         GC3Dint clippedX, clippedY;
         GC3Dsizei clippedWidth, clippedHeight;
         if (clip2D(x, y, width, height, getBoundFramebufferWidth(), getBoundFramebufferHeight(), &clippedX, &clippedY, &clippedWidth, &clippedHeight)) {
@@ -1189,10 +1202,6 @@ void WebGLRenderingContext::copyTexImage2D(GC3Denum target, GC3Dint level, GC3De
             }
         } else
             m_context->copyTexImage2D(target, level, internalformat, x, y, width, height, border);
-
-        // Restore DrawingBuffer if needed
-        if (!m_framebufferBinding && m_drawingBuffer)
-            m_drawingBuffer->bind();
     }
     // FIXME: if the framebuffer is not complete, none of the below should be executed.
     tex->setLevelInfo(target, level, internalformat, width, height, GraphicsContext3D::UNSIGNED_BYTE);
@@ -1223,17 +1232,10 @@ void WebGLRenderingContext::copyTexSubImage2D(GC3Denum target, GC3Dint level, GC
         return;
     }
     clearIfComposited();
-    if (isResourceSafe())
-        // Commit DrawingBuffer if needed (e.g., for multisampling)
-        if (!m_framebufferBinding && m_drawingBuffer)
-            m_drawingBuffer->commit();
-
+    if (isResourceSafe()) {
+        ScopedDrawingBufferBinder binder(m_drawingBuffer.get(), m_framebufferBinding.get());
         m_context->copyTexSubImage2D(target, level, xoffset, yoffset, x, y, width, height);
-
-        // Restore DrawingBuffer if needed
-        if (!m_framebufferBinding && m_drawingBuffer)
-            m_drawingBuffer->bind();
-    else {
+    } else {
         GC3Dint clippedX, clippedY;
         GC3Dsizei clippedWidth, clippedHeight;
         if (clip2D(x, y, width, height, getBoundFramebufferWidth(), getBoundFramebufferHeight(), &clippedX, &clippedY, &clippedWidth, &clippedHeight)) {
@@ -1256,27 +1258,13 @@ void WebGLRenderingContext::copyTexSubImage2D(GC3Denum target, GC3Dint level, GC
             }
             m_context->texSubImage2D(target, level, xoffset, yoffset, width, height, format, type, zero.get());
             if (clippedWidth > 0 && clippedHeight > 0) {
-                // Commit DrawingBuffer if needed (e.g., for multisampling)
-                if (!m_framebufferBinding && m_drawingBuffer)
-                    m_drawingBuffer->commit();
-
+                ScopedDrawingBufferBinder binder(m_drawingBuffer.get(), m_framebufferBinding.get());
                 m_context->copyTexSubImage2D(target, level, xoffset + clippedX - x, yoffset + clippedY - y,
                                              clippedX, clippedY, clippedWidth, clippedHeight);
-
-               // Restore DrawingBuffer if needed
-               if (!m_framebufferBinding && m_drawingBuffer)
-                  m_drawingBuffer->bind();
             }
         } else {
-            // Commit DrawingBuffer if needed (e.g., for multisampling)
-            if (!m_framebufferBinding && m_drawingBuffer)
-                m_drawingBuffer->commit();
-
+            ScopedDrawingBufferBinder binder(m_drawingBuffer.get(), m_framebufferBinding.get());
             m_context->copyTexSubImage2D(target, level, xoffset, yoffset, x, y, width, height);
-
-            // Restore DrawingBuffer if needed
-            if (!m_framebufferBinding && m_drawingBuffer)
-                m_drawingBuffer->bind();
         }
     }
     cleanupAfterGraphicsCall(false);
@@ -3041,15 +3029,10 @@ void WebGLRenderingContext::readPixels(GC3Dint x, GC3Dint y, GC3Dsizei width, GC
     clearIfComposited();
     void* data = pixels->baseAddress();
 
-    // Commit DrawingBuffer if needed (e.g., for multisampling)
-    if (!m_framebufferBinding && m_drawingBuffer)
-        m_drawingBuffer->commit();
-
-    m_context->readPixels(x, y, width, height, format, type, data);
-
-    // Restore DrawingBuffer if needed
-    if (!m_framebufferBinding && m_drawingBuffer)
-        m_drawingBuffer->bind();
+    {
+        ScopedDrawingBufferBinder binder(m_drawingBuffer.get(), m_framebufferBinding.get());
+        m_context->readPixels(x, y, width, height, format, type, data);
+    }
 
 #if OS(DARWIN)
     // FIXME: remove this section when GL driver bug on Mac is fixed, i.e.,
