@@ -27,16 +27,26 @@
 #include "config.h"
 
 #if USE(ACCELERATED_COMPOSITING)
-#if USE(SKIA)
 
-#include "FrameBufferSkPictureCanvasLayerTextureUpdater.h"
+#include "LayerTextureUpdaterCanvas.h"
 
+#include "Extensions3D.h"
+#include "GraphicsContext.h"
 #include "LayerPainterChromium.h"
+#include "ManagedTexture.h"
+#include "PlatformColor.h"
+#include "TraceEvent.h"
+
+#if USE(SKIA)
+#include "GrContext.h"
+#include "PlatformContextSkia.h"
 #include "SkCanvas.h"
 #include "SkGpuDevice.h"
+#endif // USE(SKIA)
 
 namespace WebCore {
 
+#if USE(SKIA)
 namespace {
 
 class FrameBuffer {
@@ -94,48 +104,94 @@ SkCanvas* FrameBuffer::initialize(GraphicsContext3D* context, TextureAllocator* 
 }
 
 } // namespace
+#endif // USE(SKIA)
 
-FrameBufferSkPictureCanvasLayerTextureUpdater::Texture::Texture(FrameBufferSkPictureCanvasLayerTextureUpdater* textureUpdater, PassOwnPtr<ManagedTexture> texture)
-    : LayerTextureUpdater::Texture(texture)
-    , m_textureUpdater(textureUpdater)
+LayerTextureUpdaterCanvas::LayerTextureUpdaterCanvas(PassOwnPtr<LayerPainterChromium> painter)
+    : m_painter(painter)
 {
 }
 
-FrameBufferSkPictureCanvasLayerTextureUpdater::Texture::~Texture()
+void LayerTextureUpdaterCanvas::paintContents(GraphicsContext& context, const IntRect& contentRect)
+{
+    context.translate(-contentRect.x(), -contentRect.y());
+    {
+        TRACE_EVENT("LayerTextureUpdaterCanvas::paint", this, 0);
+        m_painter->paint(context, contentRect);
+    }
+    m_contentRect = contentRect;
+}
+
+PassRefPtr<LayerTextureUpdaterBitmap> LayerTextureUpdaterBitmap::create(PassOwnPtr<LayerPainterChromium> painter, bool useMapTexSubImage)
+{
+    return adoptRef(new LayerTextureUpdaterBitmap(painter, useMapTexSubImage));
+}
+
+LayerTextureUpdaterBitmap::LayerTextureUpdaterBitmap(PassOwnPtr<LayerPainterChromium> painter, bool useMapTexSubImage)
+    : LayerTextureUpdaterCanvas(painter)
+    , m_texSubImage(useMapTexSubImage)
 {
 }
 
-void FrameBufferSkPictureCanvasLayerTextureUpdater::Texture::updateRect(GraphicsContext3D* context, TextureAllocator* allocator, const IntRect& sourceRect, const IntRect& destRect)
+LayerTextureUpdater::SampledTexelFormat LayerTextureUpdaterBitmap::sampledTexelFormat(GC3Denum textureFormat)
 {
-    textureUpdater()->updateTextureRect(context, allocator, texture(), sourceRect, destRect);
+    // The component order may be bgra if we uploaded bgra pixels to rgba textures.
+    return PlatformColor::sameComponentOrder(textureFormat) ?
+            LayerTextureUpdater::SampledTexelFormatRGBA : LayerTextureUpdater::SampledTexelFormatBGRA;
 }
 
-PassRefPtr<FrameBufferSkPictureCanvasLayerTextureUpdater> FrameBufferSkPictureCanvasLayerTextureUpdater::create(PassOwnPtr<LayerPainterChromium> painter)
+void LayerTextureUpdaterBitmap::prepareToUpdate(const IntRect& contentRect, const IntSize& tileSize, int borderTexels)
 {
-    return adoptRef(new FrameBufferSkPictureCanvasLayerTextureUpdater(painter));
+    m_texSubImage.setSubImageSize(tileSize);
+
+    m_canvas.resize(contentRect.size());
+    // Assumption: if a tiler is using border texels, then it is because the
+    // layer is likely to be filtered or transformed. Because of it might be
+    // transformed, draw the text in grayscale instead of subpixel antialiasing.
+    PlatformCanvas::Painter::TextOption textOption =
+        borderTexels ? PlatformCanvas::Painter::GrayscaleText : PlatformCanvas::Painter::SubpixelText;
+    PlatformCanvas::Painter canvasPainter(&m_canvas, textOption);
+    paintContents(*canvasPainter.context(), contentRect);
 }
 
-FrameBufferSkPictureCanvasLayerTextureUpdater::FrameBufferSkPictureCanvasLayerTextureUpdater(PassOwnPtr<LayerPainterChromium> painter)
-    : SkPictureCanvasLayerTextureUpdater(painter)
+void LayerTextureUpdaterBitmap::updateTextureRect(GraphicsContext3D* context, TextureAllocator* allocator, ManagedTexture* texture, const IntRect& sourceRect, const IntRect& destRect)
+{
+    PlatformCanvas::AutoLocker locker(&m_canvas);
+
+    texture->bindTexture(context, allocator);
+    m_texSubImage.upload(locker.pixels(), contentRect(), sourceRect, destRect, texture->format(), context);
+}
+
+#if USE(SKIA)
+PassRefPtr<LayerTextureUpdaterSkPicture> LayerTextureUpdaterSkPicture::create(PassOwnPtr<LayerPainterChromium> painter)
+{
+    return adoptRef(new LayerTextureUpdaterSkPicture(painter));
+}
+
+LayerTextureUpdaterSkPicture::LayerTextureUpdaterSkPicture(PassOwnPtr<LayerPainterChromium> painter)
+    : LayerTextureUpdaterCanvas(painter)
 {
 }
 
-FrameBufferSkPictureCanvasLayerTextureUpdater::~FrameBufferSkPictureCanvasLayerTextureUpdater()
+LayerTextureUpdaterSkPicture::~LayerTextureUpdaterSkPicture()
 {
 }
 
-PassRefPtr<LayerTextureUpdater::Texture> FrameBufferSkPictureCanvasLayerTextureUpdater::createTexture(TextureManager* manager)
-{
-    return adoptRef(new Texture(this, ManagedTexture::create(manager)));
-}
-
-LayerTextureUpdater::SampledTexelFormat FrameBufferSkPictureCanvasLayerTextureUpdater::sampledTexelFormat(GC3Denum textureFormat)
+LayerTextureUpdater::SampledTexelFormat LayerTextureUpdaterSkPicture::sampledTexelFormat(GC3Denum textureFormat)
 {
     // Here we directly render to the texture, so the component order is always correct.
     return LayerTextureUpdater::SampledTexelFormatRGBA;
 }
 
-void FrameBufferSkPictureCanvasLayerTextureUpdater::updateTextureRect(GraphicsContext3D* context, TextureAllocator* allocator, ManagedTexture* texture, const IntRect& sourceRect, const IntRect& destRect)
+void LayerTextureUpdaterSkPicture::prepareToUpdate(const IntRect& contentRect, const IntSize& tileSize, int borderTexels)
+{
+    SkCanvas* canvas = m_picture.beginRecording(contentRect.width(), contentRect.height());
+    PlatformContextSkia platformContext(canvas);
+    GraphicsContext graphicsContext(&platformContext);
+    paintContents(graphicsContext, contentRect);
+    m_picture.endRecording();
+}
+
+void LayerTextureUpdaterSkPicture::updateTextureRect(GraphicsContext3D* context, TextureAllocator* allocator, ManagedTexture* texture, const IntRect& sourceRect, const IntRect& destRect)
 {
     // Make sure SKIA uses the correct GL context.
     context->makeContextCurrent();
@@ -151,12 +207,12 @@ void FrameBufferSkPictureCanvasLayerTextureUpdater::updateTextureRect(GraphicsCo
     // Note that destRect is defined relative to sourceRect.
     canvas->translate(contentRect().x() - sourceRect.x() + destRect.x(),
                       contentRect().y() - sourceRect.y() + destRect.y());
-    drawPicture(canvas);
+    canvas->drawPicture(m_picture);
 
     // Flush SKIA context so that all the rendered stuff appears on the texture.
     context->grContext()->flush();
 }
+#endif // USE(SKIA)
 
 } // namespace WebCore
-#endif // USE(SKIA)
 #endif // USE(ACCELERATED_COMPOSITING)

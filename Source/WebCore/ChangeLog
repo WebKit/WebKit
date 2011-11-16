@@ -1,3 +1,56 @@
+2011-11-15  James Robinson  <jamesr@chromium.org>
+
+        Rollout http://trac.webkit.org/changeset/99813, caused some crashes in
+        TiledLayerChromium::updateCompositorResources()
+
+        * WebCore.gypi:
+        * platform/graphics/chromium/BitmapCanvasLayerTextureUpdater.cpp: Removed.
+        * platform/graphics/chromium/BitmapCanvasLayerTextureUpdater.h: Removed.
+        * platform/graphics/chromium/CanvasLayerTextureUpdater.cpp: Removed.
+        * platform/graphics/chromium/CanvasLayerTextureUpdater.h: Removed.
+        * platform/graphics/chromium/ContentLayerChromium.cpp:
+        (WebCore::ContentLayerChromium::createTextureUpdater):
+        * platform/graphics/chromium/FrameBufferSkPictureCanvasLayerTextureUpdater.h: Removed.
+        * platform/graphics/chromium/ImageLayerChromium.cpp:
+        (WebCore::ImageLayerTextureUpdater::prepareToUpdate):
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        * platform/graphics/chromium/LayerTextureUpdater.h:
+        * platform/graphics/chromium/LayerTextureUpdaterCanvas.cpp: Renamed from Source/WebCore/platform/graphics/chromium/FrameBufferSkPictureCanvasLayerTextureUpdater.cpp.
+        (WebCore::FrameBuffer::FrameBuffer::FrameBuffer):
+        (WebCore::FrameBuffer::FrameBuffer::~FrameBuffer):
+        (WebCore::FrameBuffer::FrameBuffer::initialize):
+        (WebCore::LayerTextureUpdaterCanvas::LayerTextureUpdaterCanvas):
+        (WebCore::LayerTextureUpdaterCanvas::paintContents):
+        (WebCore::LayerTextureUpdaterBitmap::create):
+        (WebCore::LayerTextureUpdaterBitmap::LayerTextureUpdaterBitmap):
+        (WebCore::LayerTextureUpdaterBitmap::sampledTexelFormat):
+        (WebCore::LayerTextureUpdaterBitmap::prepareToUpdate):
+        (WebCore::LayerTextureUpdaterBitmap::updateTextureRect):
+        (WebCore::LayerTextureUpdaterSkPicture::create):
+        (WebCore::LayerTextureUpdaterSkPicture::LayerTextureUpdaterSkPicture):
+        (WebCore::LayerTextureUpdaterSkPicture::~LayerTextureUpdaterSkPicture):
+        (WebCore::LayerTextureUpdaterSkPicture::sampledTexelFormat):
+        (WebCore::LayerTextureUpdaterSkPicture::prepareToUpdate):
+        (WebCore::LayerTextureUpdaterSkPicture::updateTextureRect):
+        * platform/graphics/chromium/LayerTextureUpdaterCanvas.h: Added.
+        (WebCore::LayerTextureUpdaterCanvas::contentRect):
+        (WebCore::LayerTextureUpdaterBitmap::orientation):
+        (WebCore::LayerTextureUpdaterSkPicture::orientation):
+        * platform/graphics/chromium/SkPictureCanvasLayerTextureUpdater.cpp: Removed.
+        * platform/graphics/chromium/SkPictureCanvasLayerTextureUpdater.h: Removed.
+        * platform/graphics/chromium/TiledLayerChromium.cpp:
+        (WebCore::UpdatableTile::UpdatableTile):
+        (WebCore::UpdatableTile::texture):
+        (WebCore::TiledLayerChromium::updateCompositorResources):
+        (WebCore::TiledLayerChromium::pushPropertiesTo):
+        (WebCore::TiledLayerChromium::createTile):
+        (WebCore::TiledLayerChromium::protectTileTextures):
+        (WebCore::TiledLayerChromium::prepareToUpdate):
+        * platform/graphics/chromium/cc/CCTextureUpdater.cpp:
+        (WebCore::CCTextureUpdater::append):
+        (WebCore::CCTextureUpdater::update):
+        * platform/graphics/chromium/cc/CCTextureUpdater.h:
+
 2011-11-15  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Add the needed plumbing to parse display: -webkit-inline-grid

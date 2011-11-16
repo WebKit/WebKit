@@ -29,7 +29,6 @@
 
 #if USE(ACCELERATED_COMPOSITING)
 
-#include "ManagedTexture.h"
 #include "GraphicsTypes3D.h"
 #include <wtf/RefCounted.h>
 
@@ -38,26 +37,11 @@ namespace WebCore {
 class GraphicsContext3D;
 class IntRect;
 class IntSize;
+class ManagedTexture;
 class TextureAllocator;
-class TextureManager;
 
 class LayerTextureUpdater : public RefCounted<LayerTextureUpdater> {
 public:
-    // Allows texture uploaders to store per-tile resources.
-    class Texture : public RefCounted<Texture> {
-    public:
-        virtual ~Texture() { }
-
-        ManagedTexture* texture() { return m_texture.get(); }
-        virtual void prepareRect(const IntRect& /* sourceRect */) { }
-        virtual void updateRect(GraphicsContext3D*, TextureAllocator*, const IntRect& sourceRect, const IntRect& destRect) = 0;
-    protected:
-        explicit Texture(PassOwnPtr<ManagedTexture> texture) : m_texture(texture) { }
-
-    private:
-        OwnPtr<ManagedTexture> m_texture;
-    };
-
     virtual ~LayerTextureUpdater() { }
 
     enum Orientation {
@@ -70,7 +54,6 @@ public:
         SampledTexelFormatBGRA,
         SampledTexelFormatInvalid,
     };
-    virtual PassRefPtr<Texture> createTexture(TextureManager*) = 0;
     // Returns the orientation of the texture uploaded by this interface.
     virtual Orientation orientation() = 0;
     // Returns the format of the texel uploaded by this interface.
@@ -78,7 +61,8 @@ public:
     // This format specifies the component order in the sampled texel.
     // If the format is TexelFormatBGRA, vec4.x is blue and vec4.z is red.
     virtual SampledTexelFormat sampledTexelFormat(GC3Denum textureFormat) = 0;
-    virtual void prepareToUpdate(const IntRect& /* contentRect */, const IntSize& /* tileSize */, int /* borderTexels */) { }
+    virtual void prepareToUpdate(const IntRect& contentRect, const IntSize& tileSize, int borderTexels) = 0;
+    virtual void updateTextureRect(GraphicsContext3D*, TextureAllocator*, ManagedTexture*, const IntRect& sourceRect, const IntRect& destRect) = 0;
 };
 
 } // namespace WebCore
