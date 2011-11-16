@@ -1,3 +1,15 @@
+2011-11-16  Antaryami Pandia  <antaryami.pandia@motorola.com>
+
+        [Gtk] display:none has no effect on <option> element.
+        https://bugs.webkit.org/show_bug.cgi?id=72370
+
+        Reviewed by Martin Robinson.
+
+        * platform/gtk/GtkPopupMenu.cpp:
+        (WebCore::GtkPopupMenu::appendItem):
+        * platform/gtk/PopupMenuGtk.cpp:
+        (WebCore::PopupMenuGtk::createGtkActionForMenuItem):
+
 2011-11-16  Dan Winship  <danw@gnome.org>
 
         [GTK] Fix platformDefersLoading to handle non-http requests, and

@@ -58,6 +58,7 @@ GtkAction* PopupMenuGtk::createGtkActionForMenuItem(int itemIndex)
     g_object_set_data(G_OBJECT(action), "popup-menu-action-index", GINT_TO_POINTER(itemIndex));
     g_signal_connect(action, "activate", G_CALLBACK(menuItemActivated), this);
     // FIXME: Apply the PopupMenuStyle from client()->itemStyle(i)
+    gtk_action_set_visible(action, !client()->itemStyle(itemIndex).isDisplayNone());
     gtk_action_set_sensitive(action, client()->itemIsEnabled(itemIndex));
 
     return action;
