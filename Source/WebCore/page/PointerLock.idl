@@ -28,9 +28,9 @@ module core {
         Conditional=POINTER_LOCK,
         OmitConstructor
     ] PointerLock {
-        void webkitLock(in Element target, in [Callback, Optional] VoidCallback successCallback, in [Callback, Optional] VoidCallback failureCallback);
-        void webkitUnlock();
-        boolean webkitIsLocked();
+        void lock(in Element target, in [Callback, Optional] VoidCallback successCallback, in [Callback, Optional] VoidCallback failureCallback);
+        void unlock();
+        boolean isLocked();
     };
 
 }

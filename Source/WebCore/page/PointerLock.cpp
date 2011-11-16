@@ -37,17 +37,17 @@ PointerLock::~PointerLock()
 {
 }
 
-void PointerLock::webkitLock(Element* target, PassRefPtr<VoidCallback> successCallback, PassRefPtr<VoidCallback> failureCallback)
+void PointerLock::lock(Element* target, PassRefPtr<VoidCallback> successCallback, PassRefPtr<VoidCallback> failureCallback)
 {
     // FIXME: Implement
 }
 
-void PointerLock::webkitUnlock()
+void PointerLock::unlock()
 {
     // FIXME: Implement
 }
 
-bool PointerLock::webkitIsLocked()
+bool PointerLock::isLocked()
 {
     // FIXME: Implement
     return false;

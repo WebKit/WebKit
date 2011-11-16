@@ -41,9 +41,9 @@ public:
 
     ~PointerLock();
 
-    void webkitLock(Element* target, PassRefPtr<VoidCallback> successCallback, PassRefPtr<VoidCallback> failureCallback);
-    void webkitUnlock();
-    bool webkitIsLocked();
+    void lock(Element* target, PassRefPtr<VoidCallback> successCallback, PassRefPtr<VoidCallback> failureCallback);
+    void unlock();
+    bool isLocked();
 
 private:
     PointerLock();
