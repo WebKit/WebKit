@@ -33,6 +33,7 @@
 namespace WebCore {
 
 class RenderTableCol;
+class RenderTableCaption;
 class RenderTableCell;
 class RenderTableSection;
 class TableLayout;
@@ -252,7 +253,7 @@ private:
     mutable Vector<LayoutUnit> m_columnPos;
     mutable Vector<ColumnStruct> m_columns;
 
-    mutable Vector<RenderBlock*> m_captions;
+    mutable Vector<RenderTableCaption*> m_captions;
     mutable RenderTableSection* m_head;
     mutable RenderTableSection* m_foot;
     mutable RenderTableSection* m_firstBody;
