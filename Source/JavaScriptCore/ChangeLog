@@ -1,4 +1,16 @@
-2011-11-15  Simon Hausmann  <simon.hausmann@nokia.com>
+2011-11-16  Darin Adler  <darin@apple.com>
+
+        Specialize HashTraits for OwnPtr to use PassOwnPtr and raw pointer
+        https://bugs.webkit.org/show_bug.cgi?id=72475
+
+        Reviewed by Adam Roben.
+
+        * wtf/HashTraits.h: Specialize HashTraits for OwnPtr.
+        Do overloads so we can pass a nullptr and also be sure to get the
+        raw pointer type from the OwnPtr template so we handle both forms
+        of OwnPtr: OwnPtr<T> and OwnPtr<T*>.
+
+2011-11-16  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Centralize hide_symbols and ensure all libs are built with symbol visibility & bsymbolic_functions
 
