@@ -2732,6 +2732,7 @@ BUGWK54322 SNOWLEOPARD : fast/canvas/arc360.html = IMAGE
 BUGWK54322 SNOWLEOPARD : fast/css/transform-default-parameter.html = IMAGE
 BUGWK54322 SNOWLEOPARD : fast/dom/blur-contenteditable.html = IMAGE
 BUGWK54322 SNOWLEOPARD : fast/images/favicon-as-image.html = IMAGE+TEXT
+BUGWK54322 SNOWLEOPARD : fast/replaced/width100percent-textarea.html = IMAGE
 BUGWK54322 SNOWLEOPARD : fast/text/international/pop-up-button-text-alignment-and-direction.html = IMAGE
 BUGWK54322 SNOWLEOPARD : fast/text/international/text-combine-image-test.html = IMAGE
 BUGWK54322 SNOWLEOPARD : fonts/monospace.html = IMAGE
