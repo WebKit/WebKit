@@ -194,6 +194,7 @@ namespace WebCore {
         GRefPtr<SoupRequest> m_soupRequest;
         GRefPtr<GInputStream> m_inputStream;
         GRefPtr<GCancellable> m_cancellable;
+        GRefPtr<GAsyncResult> m_deferredResult;
         char* m_buffer;
         unsigned long m_bodySize;
         unsigned long m_bodyDataSent;

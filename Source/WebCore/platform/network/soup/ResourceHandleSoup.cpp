@@ -502,9 +502,6 @@ static void sendRequestCallback(GObject* source, GAsyncResult* res, gpointer dat
         }
     }
 
-    if (d->m_defersLoading)
-         soup_session_pause_message(handle->defaultSession(), d->m_soupMessage.get());
-
     g_input_stream_read_async(d->m_inputStream.get(), d->m_buffer, READ_BUFFER_SIZE,
                               G_PRIORITY_DEFAULT, d->m_cancellable.get(), readCallback, handle.get());
 }
@@ -678,7 +675,7 @@ static bool startHTTPRequest(ResourceHandle* handle)
     if (!soup_message_headers_get_one(soupMessage->request_headers, "Accept"))
         soup_message_headers_append(soupMessage->request_headers, "Accept", "*/*");
 
-    // Send the request only if it's not been explicitely deferred.
+    // Send the request only if it's not been explicitly deferred.
     if (!d->m_defersLoading) {
         d->m_cancellable = adoptGRef(g_cancellable_new());
         soup_request_send_async(d->m_soupRequest.get(), d->m_cancellable.get(), sendRequestCallback, handle);
@@ -738,34 +735,33 @@ void ResourceHandle::cancel()
         g_cancellable_cancel(d->m_cancellable.get());
 }
 
+static bool hasBeenSent(ResourceHandle* handle)
+{
+    ResourceHandleInternal* d = handle->getInternal();
+
+    return d->m_cancellable;
+}
+
 void ResourceHandle::platformSetDefersLoading(bool defersLoading)
 {
-    // Initial implementation of this method was required for bug #44157.
-
     if (d->m_cancelled)
         return;
 
-    if (!defersLoading && !d->m_cancellable && d->m_soupRequest.get()) {
+    // We only need to take action here to UN-defer loading.
+    if (defersLoading)
+        return;
+
+    if (!hasBeenSent(this)) {
+        ASSERT(d->m_soupRequest);
         d->m_cancellable = adoptGRef(g_cancellable_new());
         soup_request_send_async(d->m_soupRequest.get(), d->m_cancellable.get(), sendRequestCallback, this);
         return;
     }
 
-    // Only supported for http(s) transfers. Something similar would
-    // probably be needed for data transfers done with GIO.
-    if (!d->m_soupMessage)
-        return;
-
-    // Do not pause or unpause operations that are completed or have not reached
-    // sendRequestCallback yet. If m_defersLoading is true at that point, we'll pause.
-    SoupMessage* soupMessage = d->m_soupMessage.get();
-    if (d->m_finished || !d->m_inputStream)
-        return;
-
-    if (defersLoading)
-        soup_session_pause_message(defaultSession(), soupMessage);
-    else
-        soup_session_unpause_message(defaultSession(), soupMessage);
+    if (d->m_deferredResult) {
+        GRefPtr<GAsyncResult> asyncResult = adoptGRef(d->m_deferredResult.leakRef());
+        readCallback(G_OBJECT(d->m_inputStream.get()), asyncResult.get(), this);
+    }
 }
 
 bool ResourceHandle::loadsBlocked()
@@ -820,6 +816,11 @@ static void readCallback(GObject* source, GAsyncResult* asyncResult, gpointer da
 
     if (d->m_cancelled || !client) {
         cleanupSoupRequestOperation(handle.get());
+        return;
+    }
+
+    if (d->m_defersLoading) {
+        d->m_deferredResult = asyncResult;
         return;
     }
 
@@ -878,8 +879,11 @@ static bool startNonHTTPRequest(ResourceHandle* handle, KURL url)
     // balanced by a deref() in cleanupSoupRequestOperation, which should always run
     handle->ref();
 
-    d->m_cancellable = adoptGRef(g_cancellable_new());
-    soup_request_send_async(d->m_soupRequest.get(), d->m_cancellable.get(), sendRequestCallback, handle);
+    // Send the request only if it's not been explicitly deferred.
+    if (!d->m_defersLoading) {
+        d->m_cancellable = adoptGRef(g_cancellable_new());
+        soup_request_send_async(d->m_soupRequest.get(), d->m_cancellable.get(), sendRequestCallback, handle);
+    }
 
     return true;
 }

@@ -1,3 +1,23 @@
+2011-11-16  Dan Winship  <danw@gnome.org>
+
+        [GTK] Fix platformDefersLoading to handle non-http requests, and
+        to not use broken-ish libsoup APIs.
+        https://bugs.webkit.org/show_bug.cgi?id=72227
+
+        Reviewed by Martin Robinson.
+
+        * platform/network/ResourceHandleInternal.h:
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::sendRequestCallback):
+        (WebCore::startHTTPRequest):
+        (WebCore::hasBeenSent):
+        (WebCore::ResourceHandle::platformSetDefersLoading):
+        (WebCore::readCallback): rather than deferring by using
+        soup_session_pause_message(), let the read complete, but just don't
+        process the result until we're no longer deferred.
+        (WebCore::startNonHTTPRequest): Don't start the request if
+        it's deferred.
+
 2011-11-16  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Application cache status should be updated after swapCache().
