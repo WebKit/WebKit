@@ -53,17 +53,9 @@ AccessibilityMediaControl::AccessibilityMediaControl(RenderObject* renderer)
 
 PassRefPtr<AccessibilityObject> AccessibilityMediaControl::create(RenderObject* renderer)
 {
-    ASSERT(renderer->node() && renderer->node()->isMediaControlElement());
+    ASSERT(renderer->node());
 
-    Node* node = renderer->node();
-    MediaControlElementType controlType;
-
-    if (node->hasTagName(inputTag))
-        controlType = static_cast<MediaControlInputElement*>(node)->displayType();
-    else
-        controlType = static_cast<MediaControlElement*>(node)->displayType();
-
-    switch (controlType) {
+    switch (mediaControlElementType(renderer->node())) {
     case MediaSlider:
         return AccessibilityMediaTimeline::create(renderer);
 
@@ -84,12 +76,7 @@ MediaControlElementType AccessibilityMediaControl::controlType() const
     if (!renderer() || !renderer()->node())
         return MediaTimelineContainer; // Timeline container is not accessible.
 
-    Node* node = renderer()->node();
-
-    if (node->hasTagName(inputTag))
-        return static_cast<MediaControlInputElement*>(node)->displayType();
-
-    return static_cast<MediaControlElement*>(node)->displayType();
+    return mediaControlElementType(renderer()->node());
 }
 
 String AccessibilityMediaControl::controlTypeName() const
@@ -264,9 +251,11 @@ PassRefPtr<AccessibilityObject> AccessibilityMediaTimeline::create(RenderObject*
 
 String AccessibilityMediaTimeline::valueDescription() const
 {
-    ASSERT(m_renderer->node()->hasTagName(inputTag));
+    Node* node = m_renderer->node();
+    if (!node->hasTagName(inputTag))
+        return String();
 
-    float time = static_cast<HTMLInputElement*>(m_renderer->node())->value().toFloat();
+    float time = static_cast<HTMLInputElement*>(node)->value().toFloat();
     return localizedMediaTimeDescription(time);
 }
 

@@ -54,6 +54,12 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
+// FIXME: These constants may need to be tweaked to better match the seeking in the QuickTime plug-in.
+static const float cSkipRepeatDelay = 0.1f;
+static const float cSkipTime = 0.2f;
+static const float cScanRepeatDelay = 1.5f;
+static const float cScanMaximumRate = 8;
+
 HTMLMediaElement* toParentMediaElement(Node* node)
 {
     Node* mediaNode = node ? node->shadowAncestorNode() : 0;
@@ -63,11 +69,14 @@ HTMLMediaElement* toParentMediaElement(Node* node)
     return static_cast<HTMLMediaElement*>(mediaNode);
 }
 
-// FIXME: These constants may need to be tweaked to better match the seeking in the QuickTime plug-in.
-static const float cSkipRepeatDelay = 0.1f;
-static const float cSkipTime = 0.2f;
-static const float cScanRepeatDelay = 1.5f;
-static const float cScanMaximumRate = 8;
+MediaControlElementType mediaControlElementType(Node* node)
+{
+    ASSERT(node->isMediaControlElement());
+    HTMLElement* element = toHTMLElement(node);
+    if (element->hasTagName(inputTag))
+        return static_cast<MediaControlInputElement*>(element)->displayType();
+    return static_cast<MediaControlElement*>(element)->displayType();
+}
 
 // ----------------------------
 
