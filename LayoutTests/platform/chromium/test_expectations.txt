@@ -38,7 +38,6 @@ BUGCR24182 SLOW LINUX WIN LEOPARD DEBUG : jquery/traversing.html = PASS
 BUGCR24182 SLOW SNOWLEOPARD DEBUG : fast/frames/sandboxed-iframe-navigation-parent.html = PASS
 BUGCR24182 SLOW SNOWLEOPARD DEBUG : fast/js/repeat-cached-vm-reentry.html = PASS
 BUGCR24182 SLOW SNOWLEOPARD DEBUG : fast/dom/Window/window-postmessage-clone-deep-array.html = PASS
-BUGCR24182 SLOW DEBUG : fast/frames/sandboxed-iframe-navigation-targetlink.html = PASS
 BUGCR24182 SLOW SNOWLEOPARD DEBUG : fast/frames/calculate-percentage.html = PASS
 // See BUGCR104797
 //BUGCR24182 SLOW DEBUG SNOWLEOPARD : svg/hixie/perf/007.xml = PASS
@@ -3697,6 +3696,7 @@ BUGCR99899 MAC : fast/frames/sandboxed-iframe-plugins.html = CRASH TEXT PASS
 BUGCR99899 MAC : storage/domstorage/events/case-sensitive.html = CRASH PASS
 // New failures from WebKit r51577
 BUGCR29164 WIN LINUX : fast/frames/sandboxed-iframe-plugins.html = TEXT
+BUGWK72530 SLOW DEBUG : fast/frames/sandboxed-iframe-navigation-targetlink.html = CRASH PASS
 
 BUGWK69998 LINUX WIN : plugins/refcount-leaks.html = PASS TEXT
 BUGWK70001 LINUX WIN : fast/images/color-jpeg-with-color-profile.html = FAIL MISSING
