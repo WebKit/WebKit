@@ -2732,7 +2732,7 @@ BUGWK58587 : media/video-controls-rendering.html = IMAGE
 
 BUGWK53868 : fast/notifications/notifications-document-close-crash.html = PASS TEXT
 
-BUGWK54051 MAC : plugins/invalidate_rect.html = TEXT
+BUGWK54051 MAC : compositing/plugins/invalidate_rect.html = TEXT
 BUGWK54051 MAC : plugins/windowless_plugin_paint_test.html = TIMEOUT
 
 // Snow Leopard-only failures (generally just need updated pixel results)
@@ -3877,6 +3877,16 @@ BUGWK72264 MAC : inspector/debugger/script-formatter.html = TIMEOUT
 BUGMSTARZINGER : fast/js/mozilla/strict/15.4.5.1.html = TEXT
 
 BUG_SENORBLANCO GPU : fast/canvas/canvas-transforms-fillRect-shadow.html = TEXT
+
+// Will need baselines updated to take compositing into account when that is enabled by default.
+// See bug for details
+BUGWK72402 : fast/media/mq-transform-03.html = PASS FAIL
+BUGWK72402 : transitions/default-timing-function.html = PASS FAIL
+BUGWK72402 : animations/missing-values-first-keyframe.html = PASS FAIL
+BUGWK72402 : fast/repaint/block-selection-gap-in-composited-layer.html = PASS FAIL
+BUGWK72402 : fast/media/mq-transform-02.html = PASS FAIL
+BUGWK72402 : animations/opacity-transform-animation.html = PASS FAIL
+BUGWK72402 : animations/missing-values-last-keyframe.html = PASS FAIL
 
 // Need to rebaseline on win and mac.
 BUG_TONY MAC : css3/flexbox/repaint.html = PASS FAIL

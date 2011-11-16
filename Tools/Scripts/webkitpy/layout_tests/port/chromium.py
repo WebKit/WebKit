@@ -425,10 +425,10 @@ class ChromiumDriver(Driver):
             'gp_fault_error_box': '--gp-fault-error-box',
             'stress_opt': '--stress-opt',
             'stress_deopt': '--stress-deopt',
-            'accelerated_compositing': '--enable-accelerated-compositing',
             'threaded_compositing': '--enable-threaded-compositing',
             'accelerated_2d_canvas': '--enable-accelerated-2d-canvas',
             'accelerated_drawing': '--enable-accelerated-drawing',
+            'accelerated_video': '--enable-accelerated-video',
             'enable_hardware_gpu': '--enable-hardware-gpu',
         }
         for nrwt_option, drt_option in option_mappings.items():

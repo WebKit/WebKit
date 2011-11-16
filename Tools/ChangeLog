@@ -1,3 +1,35 @@
+2011-11-15  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Merge chromium-gpu layout test configurations into non-gpu versions
+        https://bugs.webkit.org/show_bug.cgi?id=72402
+
+        Reviewed by Dirk Pranke.
+
+        Allows the compositing layout tests to run in the normal layout test run. This sets the default compositing
+        triggers in DumpRenderTree to more closely match what we use in Chromium. There are two exceptions, canvas 2d
+        and video (media) are still controlled by an explicit trigger so that they are true when platform=chromium-gpu
+        and false otherwise, so that we can run the same set of tests in both configurations. This isn't necessary for
+        the normal compositing triggers since we currently run the compositing tests in only one configuration - with
+        compositing enabled.
+
+        Since the compositing tests are currently marked WONTFIX SKIP on non-GPU platforms in test_expectations.txt this
+        patch should not impact any tests.
+
+        * DumpRenderTree/chromium/DumpRenderTree.cpp:
+        (main):
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::TestShell):
+        (TestShell::resetWebSettings):
+        * DumpRenderTree/chromium/TestShell.h:
+        (TestShell::setAcceleratedCompositingForVideoEnabled):
+        * DumpRenderTree/chromium/WebPreferences.cpp:
+        (WebPreferences::reset):
+        (WebPreferences::applyTo):
+        * DumpRenderTree/chromium/WebPreferences.h:
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_gpu.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_gpu_unittest.py:
+
 2011-11-15  Tony Chang  <tony@chromium.org>
 
         Unreviewed, try to fix ref tests failures on SL Intel bot.

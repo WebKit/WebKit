@@ -103,7 +103,7 @@ TestShell::TestShell(bool testShellMode)
     , m_testShellMode(testShellMode)
     , m_devTools(0)
     , m_allowExternalPages(false)
-    , m_acceleratedCompositingEnabled(false)
+    , m_acceleratedCompositingForVideoEnabled(false)
     , m_threadedCompositingEnabled(false)
     , m_compositeToTexture(false)
     , m_forceCompositingMode(false)
@@ -196,7 +196,8 @@ void TestShell::closeDevTools()
 void TestShell::resetWebSettings(WebView& webView)
 {
     m_prefs.reset();
-    m_prefs.acceleratedCompositingEnabled = m_acceleratedCompositingEnabled;
+    m_prefs.acceleratedCompositingEnabled = true;
+    m_prefs.acceleratedCompositingForVideoEnabled = m_acceleratedCompositingForVideoEnabled;
     m_prefs.threadedCompositingEnabled = m_threadedCompositingEnabled;
     m_prefs.compositeToTexture = m_compositeToTexture;
     m_prefs.forceCompositingMode = m_forceCompositingMode;

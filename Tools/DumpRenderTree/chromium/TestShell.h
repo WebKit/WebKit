@@ -128,7 +128,7 @@ public:
     bool allowExternalPages() const { return m_allowExternalPages; }
     void setAllowExternalPages(bool allowExternalPages) { m_allowExternalPages = allowExternalPages; }
 
-    void setAcceleratedCompositingEnabled(bool enabled) { m_acceleratedCompositingEnabled = enabled; }
+    void setAcceleratedCompositingForVideoEnabled(bool enabled) { m_acceleratedCompositingForVideoEnabled = enabled; }
     void setThreadedCompositingEnabled(bool enabled) { m_threadedCompositingEnabled = enabled; }
     void setCompositeToTexture(bool enabled) { m_compositeToTexture = enabled; }
     void setForceCompositingMode(bool enabled) { m_forceCompositingMode = enabled; }
@@ -215,7 +215,7 @@ private:
     TestParams m_params;
     int m_timeout; // timeout value in millisecond
     bool m_allowExternalPages;
-    bool m_acceleratedCompositingEnabled;
+    bool m_acceleratedCompositingForVideoEnabled;
     bool m_threadedCompositingEnabled;
     bool m_compositeToTexture;
     bool m_forceCompositingMode;

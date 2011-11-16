@@ -63,10 +63,10 @@ def get(host, platform=None, port_name='chromium-gpu', **kwargs):
 
 def _set_gpu_options(port, graphics_type='gpu'):
     port._graphics_type = graphics_type
-    if port.get_option('accelerated_compositing') is None:
-        port._options.accelerated_compositing = True
     if port.get_option('accelerated_2d_canvas') is None:
         port._options.accelerated_2d_canvas = True
+    if port.get_option('accelerated_video') is None:
+        port._options.accelerated_video = True
     if port.get_option('experimental_fully_parallel') is None:
         port._options.experimental_fully_parallel = True
 
@@ -78,8 +78,7 @@ def _set_gpu_options(port, graphics_type='gpu'):
 
 def _tests(port, paths):
     if not paths:
-        paths = ['compositing', 'platform/chromium/compositing', 'animations/3d']
-
+        paths = []
         if (port.name() != 'chromium-gpu-mac-leopard' and
             port.name() != 'chromium-gpu-cg-mac-leopard'):
             # Only run tests requiring accelerated compositing on platforms that
@@ -92,9 +91,7 @@ def _tests(port, paths):
             # Canvas is not yet accelerated on the Mac, so there's no point
             # in running the tests there.
             paths += ['fast/canvas', 'canvas/philip']
-        # invalidate_rect.html tests a bug in the compositor.
-        # See https://bugs.webkit.org/show_bug.cgi?id=53117
-        paths += ['plugins/invalidate_rect.html']
+
     return set([port.relative_test_filename(f) for f in test_files.find(port, paths)])
 
 

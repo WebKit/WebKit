@@ -107,6 +107,7 @@ void WebPreferences::reset()
 
     tabsToLinks = false;
     hyperlinkAuditingEnabled = false;
+    acceleratedCompositingForVideoEnabled = false;
     acceleratedCompositingEnabled = false;
     threadedCompositingEnabled = false;
     compositeToTexture = false;
@@ -211,6 +212,7 @@ void WebPreferences::applyTo(WebView* webView)
     webView->setTabsToLinks(tabsToLinks);
     settings->setCaretBrowsingEnabled(caretBrowsingEnabled);
     settings->setAcceleratedCompositingEnabled(acceleratedCompositingEnabled);
+    settings->setAcceleratedCompositingForVideoEnabled(acceleratedCompositingForVideoEnabled);
     settings->setUseThreadedCompositor(threadedCompositingEnabled);
     settings->setCompositeToTextureEnabled(compositeToTexture);
     settings->setForceCompositingMode(forceCompositingMode);

@@ -56,16 +56,16 @@ class ChromiumGpuTest(unittest.TestCase):
         host.filesystem = FileSystem()  # FIXME: This test should not use a real filesystem!
 
         # test that we got the right port
-        mock_options = MockOptions(accelerated_compositing=None,
-                                            accelerated_2d_canvas=None,
-                                            builder_name='foo',
-                                            child_processes=None)
+        mock_options = MockOptions(accelerated_2d_canvas=None,
+                                   accelerated_video=None,
+                                   builder_name='foo',
+                                   child_processes=None)
         if input_name and platform:
             port = chromium_gpu.get(host, platform=platform, port_name=input_name, options=mock_options)
         else:
             port = chromium_gpu.get(host, port_name=port_name, options=mock_options)
-        self.assertTrue(port._options.accelerated_compositing)
         self.assertTrue(port._options.accelerated_2d_canvas)
+        self.assertTrue(port._options.accelerated_video)
         self.assertTrue(port._options.experimental_fully_parallel)
         self.assertEqual(port._options.builder_name, 'foo - GPU')
 
@@ -86,10 +86,6 @@ class ChromiumGpuTest(unittest.TestCase):
 
         # Note that this is using a real filesystem.
         files = port.tests(None)
-
-        path = 'compositing/checkerboard.html'
-        self.assertTrue(port._filesystem.exists(port.abspath_for_test(path)))
-        self.assertTrue(path in files)
 
         path = 'fast/html/keygen.html'
         self.assertTrue(port._filesystem.exists(port.abspath_for_test(path)))

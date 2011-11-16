@@ -100,6 +100,7 @@ struct WebPreferences {
     bool tabsToLinks;
     bool hyperlinkAuditingEnabled;
     bool caretBrowsingEnabled;
+    bool acceleratedCompositingForVideoEnabled;
     bool acceleratedCompositingEnabled;
     bool threadedCompositingEnabled;
     bool compositeToTexture;
