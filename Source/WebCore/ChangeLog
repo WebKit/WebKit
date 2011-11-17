@@ -1,3 +1,38 @@
+2011-11-17  Shawn Singh  <shawnsingh@chromium.org>
+
+        [chromium] Fix minor style nit in CCLayerImpl
+        https://bugs.webkit.org/show_bug.cgi?id=71070
+
+        Reviewed by James Robinson.
+
+        Fixes if-statements on several settors to follow WebKit
+        conventions. Existing CCLayerImplTest unit tests already cover
+        this change.
+
+        * platform/graphics/chromium/cc/CCLayerImpl.cpp:
+        (WebCore::CCLayerImpl::setBounds):
+        (WebCore::CCLayerImpl::setMaskLayer):
+        (WebCore::CCLayerImpl::setReplicaLayer):
+        (WebCore::CCLayerImpl::setDrawsContent):
+        (WebCore::CCLayerImpl::setAnchorPoint):
+        (WebCore::CCLayerImpl::setAnchorPointZ):
+        (WebCore::CCLayerImpl::setBackgroundColor):
+        (WebCore::CCLayerImpl::setMasksToBounds):
+        (WebCore::CCLayerImpl::setOpaque):
+        (WebCore::CCLayerImpl::setOpacity):
+        (WebCore::CCLayerImpl::setPosition):
+        (WebCore::CCLayerImpl::setPreserves3D):
+        (WebCore::CCLayerImpl::setZoomAnimatorTransform):
+        (WebCore::CCLayerImpl::setSublayerTransform):
+        (WebCore::CCLayerImpl::setTransform):
+        (WebCore::CCLayerImpl::setDebugBorderColor):
+        (WebCore::CCLayerImpl::setDebugBorderWidth):
+        (WebCore::CCLayerImpl::setContentBounds):
+        (WebCore::CCLayerImpl::setScrollPosition):
+        (WebCore::CCLayerImpl::setScrollDelta):
+        (WebCore::CCLayerImpl::setScaleDelta):
+        (WebCore::CCLayerImpl::setDoubleSided):
+
 2011-11-17  Michael Saboff  <msaboff@apple.com>
 
         Leaks seen in MemoryPressureHandlerMac.mm on Leaks bot

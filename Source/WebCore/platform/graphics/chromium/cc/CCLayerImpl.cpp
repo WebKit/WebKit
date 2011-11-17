@@ -252,184 +252,206 @@ void CCLayerImpl::resetPropertyChangedFlagForSubtree()
 
 void CCLayerImpl::setBounds(const IntSize& bounds)
 {
-    if (m_bounds != bounds) {
-        m_bounds = bounds;
+    if (m_bounds == bounds)
+        return;
 
-        if (masksToBounds())
-            noteLayerPropertyChangedForSubtree();
-        else
-            m_layerPropertyChanged = true;
-    }
+    m_bounds = bounds;
+
+    if (masksToBounds())
+        noteLayerPropertyChangedForSubtree();
+    else
+        m_layerPropertyChanged = true;
 }
 
 void CCLayerImpl::setMaskLayer(PassRefPtr<CCLayerImpl> maskLayer)
 {
-    if (m_maskLayer != maskLayer) {
-        m_maskLayer = maskLayer;
-        noteLayerPropertyChangedForSubtree();
-    }
+    if (m_maskLayer == maskLayer)
+        return;
+
+    m_maskLayer = maskLayer;
+    noteLayerPropertyChangedForSubtree();
 }
 
 void CCLayerImpl::setReplicaLayer(PassRefPtr<CCLayerImpl> replicaLayer)
 {
-    if (m_replicaLayer != replicaLayer) {
-        m_replicaLayer = replicaLayer;
-        noteLayerPropertyChangedForSubtree();
-    }
+    if (m_replicaLayer == replicaLayer)
+        return;
+
+    m_replicaLayer = replicaLayer;
+    noteLayerPropertyChangedForSubtree();
 }
 
 void CCLayerImpl::setDrawsContent(bool drawsContent)
 {
-    if (m_drawsContent != drawsContent) {
-        m_drawsContent = drawsContent;
-        m_layerPropertyChanged = true;
-    }
+    if (m_drawsContent == drawsContent)
+        return;
+
+    m_drawsContent = drawsContent;
+    m_layerPropertyChanged = true;
 }
 
 void CCLayerImpl::setAnchorPoint(const FloatPoint& anchorPoint)
 {
-    if (m_anchorPoint != anchorPoint) {
-        m_anchorPoint = anchorPoint;
-        noteLayerPropertyChangedForSubtree();
-    }
+    if (m_anchorPoint == anchorPoint)
+        return;
+
+    m_anchorPoint = anchorPoint;
+    noteLayerPropertyChangedForSubtree();
 }
 
 void CCLayerImpl::setAnchorPointZ(float anchorPointZ)
 {
-    if (m_anchorPointZ != anchorPointZ) {
-        m_anchorPointZ = anchorPointZ;
-        noteLayerPropertyChangedForSubtree();
-    }
+    if (m_anchorPointZ == anchorPointZ)
+        return;
+
+    m_anchorPointZ = anchorPointZ;
+    noteLayerPropertyChangedForSubtree();
 }
 
 void CCLayerImpl::setBackgroundColor(const Color& backgroundColor)
 {
-    if (m_backgroundColor != backgroundColor) {
-        m_backgroundColor = backgroundColor;
-        m_layerPropertyChanged = true;
-    }
+    if (m_backgroundColor == backgroundColor)
+        return;
+
+    m_backgroundColor = backgroundColor;
+    m_layerPropertyChanged = true;
 }
 
 void CCLayerImpl::setMasksToBounds(bool masksToBounds)
 {
-    if (m_masksToBounds != masksToBounds) {
-        m_masksToBounds = masksToBounds;
-        noteLayerPropertyChangedForSubtree();
-    }
+    if (m_masksToBounds == masksToBounds)
+        return;
+
+    m_masksToBounds = masksToBounds;
+    noteLayerPropertyChangedForSubtree();
 }
 
 void CCLayerImpl::setOpaque(bool opaque)
 {
-    if (m_opaque != opaque) {
-        m_opaque = opaque;
-        noteLayerPropertyChangedForSubtree();
-    }
+    if (m_opaque == opaque)
+        return;
+
+    m_opaque = opaque;
+    noteLayerPropertyChangedForSubtree();
 }
 
 void CCLayerImpl::setOpacity(float opacity)
 {
-    if (m_opacity != opacity) {
-        m_opacity = opacity;
-        noteLayerPropertyChangedForSubtree();
-    }
+    if (m_opacity == opacity)
+        return;
+
+    m_opacity = opacity;
+    noteLayerPropertyChangedForSubtree();
 }
 
 void CCLayerImpl::setPosition(const FloatPoint& position)
 {
-    if (m_position != position) {
-        m_position = position;
-        noteLayerPropertyChangedForSubtree();
-    }
+    if (m_position == position)
+        return;
+
+    m_position = position;
+    noteLayerPropertyChangedForSubtree();
 }
 
 void CCLayerImpl::setPreserves3D(bool preserves3D)
 {
-    if (m_preserves3D != preserves3D) {
-        m_preserves3D = preserves3D;
-        noteLayerPropertyChangedForSubtree();
-    }
+    if (m_preserves3D == preserves3D)
+        return;
+
+    m_preserves3D = preserves3D;
+    noteLayerPropertyChangedForSubtree();
 }
 
 void CCLayerImpl::setZoomAnimatorTransform(const TransformationMatrix& zoomAnimatorTransform)
 {
-    if (m_zoomAnimatorTransform != zoomAnimatorTransform) {
-        m_zoomAnimatorTransform = zoomAnimatorTransform;
-        noteLayerPropertyChangedForSubtree();
-    }
+    if (m_zoomAnimatorTransform == zoomAnimatorTransform)
+        return;
+
+    m_zoomAnimatorTransform = zoomAnimatorTransform;
+    noteLayerPropertyChangedForSubtree();
 }
 
 
 void CCLayerImpl::setSublayerTransform(const TransformationMatrix& sublayerTransform)
 {
-    if (m_sublayerTransform != sublayerTransform) {
-        m_sublayerTransform = sublayerTransform;
-        // sublayer transform does not affect the current layer; it affects only its children.
-        noteLayerPropertyChangedForDescendants();
-    }
+    if (m_sublayerTransform == sublayerTransform)
+        return;
+
+    m_sublayerTransform = sublayerTransform;
+    // sublayer transform does not affect the current layer; it affects only its children.
+    noteLayerPropertyChangedForDescendants();
 }
 
 void CCLayerImpl::setTransform(const TransformationMatrix& transform)
 {
-    if (m_transform != transform) {
-        m_transform = transform;
-        noteLayerPropertyChangedForSubtree();
-    }
+    if (m_transform == transform)
+        return;
+
+    m_transform = transform;
+    noteLayerPropertyChangedForSubtree();
 }
 
 void CCLayerImpl::setDebugBorderColor(Color debugBorderColor)
 {
-    if (m_debugBorderColor != debugBorderColor) {
-        m_debugBorderColor = debugBorderColor;
-        m_layerPropertyChanged = true;
-    }
+    if (m_debugBorderColor == debugBorderColor)
+        return;
+
+    m_debugBorderColor = debugBorderColor;
+    m_layerPropertyChanged = true;
 }
 
 void CCLayerImpl::setDebugBorderWidth(float debugBorderWidth)
 {
-    if (m_debugBorderWidth != debugBorderWidth) {
-        m_debugBorderWidth = debugBorderWidth;
-        m_layerPropertyChanged = true;
-    }
+    if (m_debugBorderWidth == debugBorderWidth)
+        return;
+
+    m_debugBorderWidth = debugBorderWidth;
+    m_layerPropertyChanged = true;
 }
 
 void CCLayerImpl::setContentBounds(const IntSize& contentBounds)
 {
-    if (m_contentBounds != contentBounds) {
-        m_contentBounds = contentBounds;
-        m_layerPropertyChanged = true;
-    }
+    if (m_contentBounds == contentBounds)
+        return;
+
+    m_contentBounds = contentBounds;
+    m_layerPropertyChanged = true;
 }
 
 void CCLayerImpl::setScrollPosition(const IntPoint& scrollPosition)
 {
-    if (m_scrollPosition != scrollPosition) {
-        m_scrollPosition = scrollPosition;
-        noteLayerPropertyChangedForSubtree();
-    }
+    if (m_scrollPosition == scrollPosition)
+        return;
+
+    m_scrollPosition = scrollPosition;
+    noteLayerPropertyChangedForSubtree();
 }
 
 void CCLayerImpl::setScrollDelta(const IntSize& scrollDelta)
 {
-    if (m_scrollDelta != scrollDelta) {
-        m_scrollDelta = scrollDelta;
-        noteLayerPropertyChangedForSubtree();
-    }
+    if (m_scrollDelta == scrollDelta)
+        return;
+
+    m_scrollDelta = scrollDelta;
+    noteLayerPropertyChangedForSubtree();
 }
 
 void CCLayerImpl::setPageScaleDelta(float pageScaleDelta)
 {
-    if (m_pageScaleDelta != pageScaleDelta) {
-        m_pageScaleDelta = pageScaleDelta;
-        noteLayerPropertyChangedForSubtree();
-    }
+    if (m_pageScaleDelta == pageScaleDelta)
+        return;
+
+    m_pageScaleDelta = pageScaleDelta;
+    noteLayerPropertyChangedForSubtree();
 }
 
 void CCLayerImpl::setDoubleSided(bool doubleSided)
 {
-    if (m_doubleSided != doubleSided) {
-        m_doubleSided = doubleSided;
-        noteLayerPropertyChangedForSubtree();
-    }
+    if (m_doubleSided == doubleSided)
+        return;
+
+    m_doubleSided = doubleSided;
+    noteLayerPropertyChangedForSubtree();
 }
 
 }
