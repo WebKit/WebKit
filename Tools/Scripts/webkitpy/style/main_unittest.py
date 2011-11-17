@@ -20,93 +20,59 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-"""Unit tests for main.py."""
-
-import os
 import unittest
 
 from main import change_directory
+from webkitpy.common.system.filesystem_mock import MockFileSystem
 from webkitpy.common.system.logtesting import LogTesting
 
 
 class ChangeDirectoryTest(unittest.TestCase):
-
-    """Tests change_directory()."""
-
     _original_directory = "/original"
     _checkout_root = "/WebKit"
 
-    class _MockOs(object):
-
-        """A mock os module for unit testing."""
-
-        def __init__(self, test_case):
-            self._test_case = test_case
-            self._current_directory = \
-                ChangeDirectoryTest._original_directory
-
-        def chdir(self, current_directory):
-            self._current_directory = current_directory
-
-        def assertCurrentDirectory(self, expected_directory):
-            self._test_case.assertEquals(expected_directory,
-                                         self._current_directory)
-
     def setUp(self):
         self._log = LogTesting.setUp(self)
-        self._mock_os = self._MockOs(self)
+        self.filesystem = MockFileSystem(dirs=[self._original_directory, self._checkout_root], cwd=self._original_directory)
 
     def tearDown(self):
         self._log.tearDown()
 
-    # This method is a convenient wrapper for change_working_directory() that
-    # passes the mock_os for this unit testing class.
     def _change_directory(self, paths, checkout_root):
-        return change_directory(paths=paths,
-                                checkout_root=checkout_root,
-                                mock_os=self._mock_os)
+        return change_directory(self.filesystem, paths=paths, checkout_root=checkout_root)
 
     def _assert_result(self, actual_return_value, expected_return_value,
                        expected_log_messages, expected_current_directory):
         self.assertEquals(actual_return_value, expected_return_value)
         self._log.assertMessages(expected_log_messages)
-        self._mock_os.assertCurrentDirectory(expected_current_directory)
+        self.assertEquals(self.filesystem.getcwd(), expected_current_directory)
 
     def test_checkout_root_none_paths_none(self):
-        self.assertRaises(Exception, self._change_directory,
-                          checkout_root=None, paths=None)
+        self.assertRaises(Exception, self._change_directory, checkout_root=None, paths=None)
         self._log.assertMessages([])
-        self._mock_os.assertCurrentDirectory(self._original_directory)
+        self.assertEquals(self.filesystem.getcwd(), self._original_directory)
 
     def test_checkout_root_none(self):
-        paths = self._change_directory(checkout_root=None,
-                                       paths=["path1"])
+        paths = self._change_directory(checkout_root=None, paths=["path1"])
         log_messages = [
 """WARNING: WebKit checkout root not found:
   Path-dependent style checks may not work correctly.
   See the help documentation for more info.
 """]
-        self._assert_result(paths, ["path1"], log_messages,
-                            self._original_directory)
+        self._assert_result(paths, ["path1"], log_messages, self._original_directory)
 
     def test_paths_none(self):
-        paths = self._change_directory(checkout_root=self._checkout_root,
-                                       paths=None)
+        paths = self._change_directory(checkout_root=self._checkout_root, paths=None)
         self._assert_result(paths, None, [], self._checkout_root)
 
     def test_paths_convertible(self):
-        paths=["/WebKit/foo1.txt",
-               "/WebKit/foo2.txt"]
-        paths = self._change_directory(checkout_root=self._checkout_root,
-                                       paths=paths)
-        self._assert_result(paths, ["foo1.txt", "foo2.txt"], [],
-                            self._checkout_root)
+        paths = ["/WebKit/foo1.txt", "/WebKit/foo2.txt"]
+        paths = self._change_directory(checkout_root=self._checkout_root, paths=paths)
+        self._assert_result(paths, ["foo1.txt", "foo2.txt"], [], self._checkout_root)
 
     def test_with_scm_paths_unconvertible(self):
-        paths=["/WebKit/foo1.txt",
-               "/outside/foo2.txt"]
-        paths = self._change_directory(checkout_root=self._checkout_root,
-                                       paths=paths)
+        paths = ["/WebKit/foo1.txt", "/outside/foo2.txt"]
+        paths = self._change_directory(checkout_root=self._checkout_root, paths=paths)
         log_messages = [
 """WARNING: Path-dependent style checks may not work correctly:
 
@@ -120,5 +86,4 @@ class ChangeDirectoryTest(unittest.TestCase):
   See the help documentation for more info.
 
 """]
-        self._assert_result(paths, paths, log_messages,
-                            self._original_directory)
+        self._assert_result(paths, paths, log_messages, self._original_directory)

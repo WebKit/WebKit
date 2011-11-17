@@ -1,3 +1,14 @@
+2011-11-17  Eric Seidel  <eric@webkit.org>
+
+        Move check-webkit-style change_directory code to more modern mocks
+        https://bugs.webkit.org/show_bug.cgi?id=72664
+
+        Reviewed by Adam Barth.
+
+        * Scripts/check-webkit-style:
+        * Scripts/webkitpy/style/main.py:
+        * Scripts/webkitpy/style/main_unittest.py:
+
 2011-11-17  Zan Dobersek  <zandobersek@gmail.com>
 
         [GTK] enable ref tests

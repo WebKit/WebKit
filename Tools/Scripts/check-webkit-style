@@ -35,12 +35,12 @@ The goal of this script is to identify places in the code that *may*
 be in non-compliance with WebKit style.  It does not attempt to fix
 up these problems -- the point is to educate.  It does also not
 attempt to find all problems, or to ensure that everything it does
-find is legitimately a problem.
+find is legitimately a problem."""
 
-"""
+import sys
 
 from webkitpy.style.main import CheckWebKitStyle
 
 
 if __name__ == "__main__":
-    CheckWebKitStyle().main()
+    sys.exit(CheckWebKitStyle().main())

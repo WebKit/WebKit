@@ -22,22 +22,20 @@
 
 import codecs
 import logging
-import os
-import os.path
 import sys
 
-from webkitpy.common.system.ospath import relpath as _relpath
 from webkitpy.common.checkout.scm.detection import detect_scm_system
 import webkitpy.style.checker as checker
 from webkitpy.style.patchreader import PatchReader
 from webkitpy.style.checker import StyleProcessor
 from webkitpy.style.filereader import TextFileReader
+from webkitpy.common.system.filesystem import FileSystem
 
 
 _log = logging.getLogger(__name__)
 
 
-def change_directory(checkout_root, paths, mock_os=None):
+def change_directory(filesystem, checkout_root, paths):
     """Change the working directory to the WebKit checkout root, if possible.
 
     If every path in the paths parameter is below the checkout root (or if
@@ -64,11 +62,8 @@ def change_directory(checkout_root, paths, mock_os=None):
              or all changes under the checkout root should be checked.
       checkout_root: The path to the root of the WebKit checkout, or None or
                      the empty string if no checkout could be detected.
-      mock_os: A replacement module for unit testing.  Defaults to os.
 
     """
-    os_module = os if mock_os is None else mock_os
-
     if paths is not None:
         paths = list(paths)
 
@@ -104,7 +99,7 @@ def change_directory(checkout_root, paths, mock_os=None):
         # the checkout root.
         rel_paths = []
         for path in paths:
-            rel_path = _relpath(path, checkout_root)
+            rel_path = filesystem.relpath(path, checkout_root)
             if rel_path is None:
                 # Then the path is not below the checkout root.  Since all
                 # paths should be interpreted relative to the same root,
@@ -132,7 +127,7 @@ def change_directory(checkout_root, paths, mock_os=None):
         paths = rel_paths
 
     _log.debug("Changing to checkout root: " + checkout_root)
-    os_module.chdir(checkout_root)
+    filesystem.chdir(checkout_root)
 
     return paths
 
@@ -140,6 +135,9 @@ def change_directory(checkout_root, paths, mock_os=None):
 class CheckWebKitStyle(object):
     # FIXME: This function is huge and needs to be split up.
     def main(self):
+        # FIXME: We should get our FileSystem from a Host object.
+        filesystem = FileSystem()
+
         # Change stderr to write with replacement characters so we don't die
         # if we try to print something containing non-ASCII characters.
         stderr = codecs.StreamReaderWriter(sys.stderr,
@@ -169,7 +167,7 @@ class CheckWebKitStyle(object):
         parser = checker.check_webkit_style_parser()
         (paths, options) = parser.parse(args)
 
-        cwd = os.path.abspath(os.curdir)
+        cwd = filesystem.abspath(filesystem.getcwd())
         scm = detect_scm_system(cwd)
 
         if scm is None:
@@ -177,7 +175,7 @@ class CheckWebKitStyle(object):
                 _log.error("WebKit checkout not found: You must run this script "
                            "from within a WebKit checkout if you are not passing "
                            "specific paths to check.")
-                sys.exit(1)
+                return 1
 
             checkout_root = None
             _log.debug("WebKit checkout not found for current directory.")
@@ -187,10 +185,9 @@ class CheckWebKitStyle(object):
 
         configuration = checker.check_webkit_style_configuration(options)
 
-        paths = change_directory(checkout_root=checkout_root, paths=paths)
+        paths = change_directory(filesystem, checkout_root=checkout_root, paths=paths)
 
         style_processor = StyleProcessor(configuration)
-
         file_reader = TextFileReader(style_processor)
 
         if paths and not options.diff_files:
@@ -205,7 +202,6 @@ class CheckWebKitStyle(object):
         file_count = file_reader.file_count
         delete_only_file_count = file_reader.delete_only_file_count
 
-        _log.info("Total errors found: %d in %d files"
-                  % (error_count, file_count))
+        _log.info("Total errors found: %d in %d files" % (error_count, file_count))
         # We fail when style errors are found or there are no checked files.
-        sys.exit(error_count > 0 or (file_count == 0 and delete_only_file_count == 0))
+        return error_count > 0 or (file_count == 0 and delete_only_file_count == 0)
