@@ -1067,6 +1067,7 @@ SET(WebCore_SOURCES
 
     platform/graphics/BitmapImage.cpp
     platform/graphics/Color.cpp
+    platform/graphics/CrossfadeGeneratedImage.cpp
     platform/graphics/FloatPoint.cpp
     platform/graphics/FloatPoint3D.cpp
     platform/graphics/FloatQuad.cpp
@@ -1080,7 +1081,7 @@ SET(WebCore_SOURCES
     platform/graphics/FontFamily.cpp
     platform/graphics/FontFastPath.cpp
     platform/graphics/FontFeatureSettings.cpp
-    platform/graphics/GeneratedImage.cpp
+    platform/graphics/GeneratorGeneratedImage.cpp
     platform/graphics/GlyphPageTreeNode.cpp
     platform/graphics/Gradient.cpp
     platform/graphics/GraphicsContext.cpp

@@ -126,6 +126,8 @@ namespace WebCore {
 
         friend class GraphicsContext;
         friend class GeneratedImage;
+        friend class CrossfadeGeneratedImage;
+        friend class GeneratorGeneratedImage;
 
     private:
         ImageBufferData m_data;

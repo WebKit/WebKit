@@ -1,3 +1,101 @@
+2011-11-16  Tim Horton  <timothy_horton@apple.com>
+
+        Implement CSS3 Images cross-fade() image function
+        https://bugs.webkit.org/show_bug.cgi?id=52162
+        <rdar://problem/10209254>
+
+        Reviewed by Simon Fraser.
+
+        Render -webkit-cross-fade. Only cross-fades entirely composed of images will render for now,
+        cross-fades involving generated images are not yet implemented.
+
+        Reorganize GeneratedImage to be the base class for GeneratorGeneratedImage and CrossfadeGeneratedImage.
+
+        Add a pending state to CSSImageGeneratorValue, which is used to enable the pending-images loading
+        mechanism for -webkit-cross-fade's sub-images. Rework the logic in CSSStyleSelector to support pending
+        generated images.
+        
+        Support parsing fractional values for the cross-fade amount (for example, 0.5 = 50%). Clamp cross-fade
+        amount to 0-1 range.
+
+        Tests: css3/images/cross-fade-invalidation.html
+               css3/images/cross-fade-simple.html
+               css3/images/cross-fade-sizing.html
+               css3/images/cross-fade-tiled.html
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSCanvasValue.h:
+        (WebCore::CSSCanvasValue::isPending):
+        (WebCore::CSSCanvasValue::loadSubimages):
+        * css/CSSCrossfadeValue.cpp:
+        (WebCore::CSSCrossfadeValue::isPending):
+        (WebCore::CSSCrossfadeValue::loadSubimages):
+        (WebCore::subimageIsPending):
+        (WebCore::loadSubimage):
+        (WebCore::cachedImageForCSSValue):
+        (WebCore::CSSCrossfadeValue::image):
+        (WebCore::CSSCrossfadeValue::crossfadeChanged):
+        * css/CSSCrossfadeValue.h:
+        (WebCore::CSSCrossfadeValue::create):
+        (WebCore::CSSCrossfadeValue::~CSSCrossfadeValue):
+        (WebCore::CSSCrossfadeValue::fixedSize):
+        (WebCore::CSSCrossfadeValue::CSSCrossfadeValue):
+        (WebCore::CSSCrossfadeValue::CrossfadeObserverProxy::CrossfadeObserverProxy):
+        * css/CSSGradientValue.cpp:
+        (WebCore::CSSGradientValue::image):
+        * css/CSSGradientValue.h:
+        (WebCore::CSSGradientValue::isPending):
+        (WebCore::CSSGradientValue::loadSubimages):
+        * css/CSSImageGeneratorValue.cpp:
+        (WebCore::CSSImageGeneratorValue::generatedOrPendingImage):
+        (WebCore::CSSImageGeneratorValue::generatedImage):
+        (WebCore::CSSImageGeneratorValue::isPending):
+        (WebCore::CSSImageGeneratorValue::loadSubimages):
+        * css/CSSImageGeneratorValue.h:
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseCrossfade):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::styleImage):
+        (WebCore::CSSStyleSelector::generatedOrPendingFromValue):
+        (WebCore::CSSStyleSelector::loadPendingImage):
+        (WebCore::CSSStyleSelector::loadPendingImages):
+        * css/CSSStyleSelector.h:
+        * platform/graphics/BitmapImage.h:
+        * platform/graphics/CrossfadeGeneratedImage.cpp: Added.
+        (WebCore::CrossfadeGeneratedImage::CrossfadeGeneratedImage):
+        (WebCore::CrossfadeGeneratedImage::~CrossfadeGeneratedImage):
+        (WebCore::CrossfadeGeneratedImage::drawCrossfade):
+        (WebCore::CrossfadeGeneratedImage::draw):
+        (WebCore::CrossfadeGeneratedImage::drawPattern):
+        (WebCore::CrossfadeGeneratedImage::imageChanged):
+        * platform/graphics/CrossfadeGeneratedImage.h: Added.
+        (WebCore::CrossfadeGeneratedImage::create):
+        (WebCore::CrossfadeSubimageObserverProxy::CrossfadeSubimageObserverProxy):
+        (WebCore::CrossfadeSubimageObserverProxy::setReady):
+        * platform/graphics/GeneratedImage.h:
+        (WebCore::GeneratedImage::GeneratedImage):
+        * platform/graphics/GeneratorGeneratedImage.cpp: Renamed from Source/WebCore/platform/graphics/GeneratedImage.cpp.
+        (WebCore::GeneratorGeneratedImage::draw):
+        (WebCore::GeneratorGeneratedImage::drawPattern):
+        (WebCore::GeneratedImage::computeIntrinsicDimensions):
+        * platform/graphics/GeneratorGeneratedImage.h: Copied from Source/WebCore/platform/graphics/GeneratedImage.h.
+        (WebCore::GeneratorGeneratedImage::create):
+        (WebCore::GeneratorGeneratedImage::~GeneratorGeneratedImage):
+        (WebCore::GeneratorGeneratedImage::GeneratorGeneratedImage):
+        * platform/graphics/Image.h:
+        * platform/graphics/ImageBuffer.h:
+        * rendering/style/StylePendingImage.h:
+        (WebCore::StylePendingImage::create):
+        (WebCore::StylePendingImage::data):
+        (WebCore::StylePendingImage::cssImageValue):
+        (WebCore::StylePendingImage::cssImageGeneratorValue):
+        (WebCore::StylePendingImage::StylePendingImage):
+
+
 2011-11-16  Dan Bernstein  <mitz@apple.com>
 
         WebCore part of <rdar://problem/10262242> Add API for paginated display

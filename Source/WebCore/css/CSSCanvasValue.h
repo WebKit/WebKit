@@ -44,6 +44,9 @@ public:
     bool isFixedSize() const { return true; }
     IntSize fixedSize(const RenderObject*);
 
+    bool isPending() const { return false; }
+    void loadSubimages(CachedResourceLoader*) { }
+
     void setName(const String& name) { m_name = name; }
 
 private:

@@ -69,6 +69,9 @@ public:
     bool isFixedSize() const { return false; }
     IntSize fixedSize(const RenderObject*) const { return IntSize(); }
 
+    bool isPending() const { return false; }
+    void loadSubimages(CachedResourceLoader*) { }
+
 protected:
     CSSGradientValue(ClassType classType, CSSGradientRepeat repeat, bool deprecatedType = false)
         : CSSImageGeneratorValue(classType)

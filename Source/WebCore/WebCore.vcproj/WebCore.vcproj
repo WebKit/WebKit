@@ -27249,6 +27249,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\platform\graphics\CrossfadeGeneratedImage.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\platform\graphics\CrossfadeGeneratedImage.h"
+					>
+				</File>
+				<File
 					RelativePath="..\platform\graphics\ColorPath.h"
 					>
 				</File>
@@ -27381,7 +27389,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\platform\graphics\GeneratedImage.cpp"
+					RelativePath="..\platform\graphics\GeneratorGeneratedImage.cpp"
 					>
 				</File>
 				<File

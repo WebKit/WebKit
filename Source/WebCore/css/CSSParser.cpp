@@ -6313,12 +6313,20 @@ bool CSSParser::parseCrossfade(CSSParserValueList* valueList, RefPtr<CSSValue>& 
         return false;
     a = args->next();
 
-    // The third argument is the crossfade value. It is a percentage.
-    if (!a || a->unit != CSSPrimitiveValue::CSS_PERCENTAGE)
+    // The third argument is the crossfade value. It is a percentage or a fractional number.
+    RefPtr<CSSPrimitiveValue> percentage;
+    if (!a)
+        return false;
+    
+    if (a->unit == CSSPrimitiveValue::CSS_PERCENTAGE)
+        percentage = primitiveValueCache()->createValue(clampTo<double>(a->fValue / 100, 0, 1), CSSPrimitiveValue::CSS_NUMBER);
+    else if (a->unit == CSSPrimitiveValue::CSS_NUMBER)
+        percentage = primitiveValueCache()->createValue(clampTo<double>(a->fValue, 0, 1), CSSPrimitiveValue::CSS_NUMBER);
+    else
         return false;
 
-    result = CSSCrossfadeValue::create(static_cast<CSSImageValue*>(fromImageValue.get()), static_cast<CSSImageValue*>(toImageValue.get()));
-    result->setPercentage(createPrimitiveNumericValue(a));
+    result = CSSCrossfadeValue::create(fromImageValue, toImageValue);
+    result->setPercentage(percentage);
 
     crossfade = result;
 

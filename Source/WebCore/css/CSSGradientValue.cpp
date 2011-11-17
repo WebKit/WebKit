@@ -26,9 +26,9 @@
 #include "config.h"
 #include "CSSGradientValue.h"
 
-#include "CSSValueKeywords.h"
 #include "CSSStyleSelector.h"
-#include "GeneratedImage.h"
+#include "CSSValueKeywords.h"
+#include "GeneratorGeneratedImage.h"
 #include "Gradient.h"
 #include "Image.h"
 #include "IntSize.h"
@@ -67,7 +67,7 @@ PassRefPtr<Image> CSSGradientValue::image(RenderObject* renderer, const IntSize&
         gradient = static_cast<CSSRadialGradientValue*>(this)->createGradient(renderer, size);
     }
 
-    RefPtr<Image> newImage = GeneratedImage::create(gradient, size);
+    RefPtr<Image> newImage = GeneratorGeneratedImage::create(gradient, size);
     if (cacheable)
         putImage(size, newImage);
 

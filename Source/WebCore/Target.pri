@@ -1035,6 +1035,7 @@ SOURCES += \
     platform/graphics/FontFeatureSettings.cpp \
     platform/graphics/BitmapImage.cpp \
     platform/graphics/Color.cpp \
+    platform/graphics/CrossfadeGeneratedImage.cpp \
     platform/graphics/FloatPoint3D.cpp \
     platform/graphics/FloatPoint.cpp \
     platform/graphics/FloatQuad.cpp \
@@ -1043,7 +1044,7 @@ SOURCES += \
     platform/graphics/FontData.cpp \
     platform/graphics/Font.cpp \
     platform/graphics/FontCache.cpp \
-    platform/graphics/GeneratedImage.cpp \
+    platform/graphics/GeneratorGeneratedImage.cpp \
     platform/graphics/Gradient.cpp \
     platform/graphics/GraphicsContext.cpp \
     platform/graphics/GraphicsLayer.cpp \
@@ -2071,6 +2072,7 @@ HEADERS += \
     platform/mock/ScrollbarThemeMock.h \
     platform/graphics/BitmapImage.h \
     platform/graphics/Color.h \
+    platform/graphics/CrossfadeGeneratedImage.h \
     platform/graphics/filters/CustomFilterOperation.h \
     platform/graphics/filters/FEBlend.h \
     platform/graphics/filters/FEColorMatrix.h \
@@ -2109,6 +2111,7 @@ HEADERS += \
     platform/graphics/FontFeatureSettings.h \
     platform/graphics/FontMetrics.h \
     platform/graphics/Font.h \
+    platform/graphics/GeneratorGeneratedImage.h \
     platform/graphics/GeneratedImage.h \
     platform/graphics/GlyphPageTreeNode.h \
     platform/graphics/Gradient.h \

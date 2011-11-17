@@ -4279,7 +4279,7 @@ StyleImage* CSSStyleSelector::styleImage(CSSPropertyID property, CSSValue* value
         return cachedOrPendingFromValue(property, static_cast<CSSImageValue*>(value));
 
     if (value->isImageGeneratorValue())
-        return static_cast<CSSImageGeneratorValue*>(value)->generatedImage();
+        return generatedOrPendingFromValue(property, static_cast<CSSImageGeneratorValue*>(value));
 
     return 0;
 }
@@ -4287,6 +4287,14 @@ StyleImage* CSSStyleSelector::styleImage(CSSPropertyID property, CSSValue* value
 StyleImage* CSSStyleSelector::cachedOrPendingFromValue(CSSPropertyID property, CSSImageValue* value)
 {
     StyleImage* image = value->cachedOrPendingImage();
+    if (image && image->isPendingImage())
+        m_pendingImageProperties.add(property);
+    return image;
+}
+
+StyleImage* CSSStyleSelector::generatedOrPendingFromValue(CSSPropertyID property, CSSImageGeneratorValue* value)
+{
+    StyleImage* image = value->generatedOrPendingImage();
     if (image && image->isPendingImage())
         m_pendingImageProperties.add(property);
     return image;
@@ -5667,6 +5675,24 @@ bool CSSStyleSelector::createFilterOperations(CSSValue* inValue, RenderStyle* st
 
 #endif
 
+StyleImage* CSSStyleSelector::loadPendingImage(StylePendingImage* pendingImage)
+{
+    CachedResourceLoader* cachedResourceLoader = m_element->document()->cachedResourceLoader();
+
+    if (pendingImage->cssImageValue()) {
+        CSSImageValue* imageValue = pendingImage->cssImageValue();
+        return imageValue->cachedImage(cachedResourceLoader);
+    }
+
+    if (pendingImage->cssImageGeneratorValue()) {
+        CSSImageGeneratorValue* imageGeneratorValue = pendingImage->cssImageGeneratorValue();
+        imageGeneratorValue->loadSubimages(cachedResourceLoader);
+        return imageGeneratorValue->generatedImage();
+    }
+
+    return 0;
+}
+
 void CSSStyleSelector::loadPendingImages()
 {
     if (m_pendingImageProperties.isEmpty())
@@ -5676,14 +5702,12 @@ void CSSStyleSelector::loadPendingImages()
     for (HashSet<int>::const_iterator it = m_pendingImageProperties.begin(); it != end; ++it) {
         CSSPropertyID currentProperty = static_cast<CSSPropertyID>(*it);
 
-        CachedResourceLoader* cachedResourceLoader = m_element->document()->cachedResourceLoader();
-
         switch (currentProperty) {
             case CSSPropertyBackgroundImage: {
                 for (FillLayer* backgroundLayer = m_style->accessBackgroundLayers(); backgroundLayer; backgroundLayer = backgroundLayer->next()) {
                     if (backgroundLayer->image() && backgroundLayer->image()->isPendingImage()) {
-                        CSSImageValue* imageValue = static_cast<StylePendingImage*>(backgroundLayer->image())->cssImageValue();
-                        backgroundLayer->setImage(imageValue->cachedImage(cachedResourceLoader));
+                        StyleImage* loadedImage = loadPendingImage(static_cast<StylePendingImage*>(backgroundLayer->image()));
+                        backgroundLayer->setImage(loadedImage);
                     }
                 }
                 break;
@@ -5692,11 +5716,11 @@ void CSSStyleSelector::loadPendingImages()
             case CSSPropertyContent: {
                 for (ContentData* contentData = const_cast<ContentData*>(m_style->contentData()); contentData; contentData = contentData->next()) {
                     if (contentData->isImage()) {
-                        const StyleImage* image = static_cast<ImageContentData*>(contentData)->image();
+                        StyleImage* image = static_cast<ImageContentData*>(contentData)->image();
                         if (image->isPendingImage()) {
-                            CSSImageValue* imageValue = static_cast<const StylePendingImage*>(image)->cssImageValue();
-                            if (StyleCachedImage* cachedImage = imageValue->cachedImage(cachedResourceLoader))
-                                static_cast<ImageContentData*>(contentData)->setImage(cachedImage);
+                            StyleImage* loadedImage = loadPendingImage(static_cast<StylePendingImage*>(image));
+                            if (loadedImage)
+                                static_cast<ImageContentData*>(contentData)->setImage(loadedImage);
                         }
                     }
                 }
@@ -5709,8 +5733,8 @@ void CSSStyleSelector::loadPendingImages()
                         CursorData& currentCursor = cursorList->at(i);
                         if (StyleImage* image = currentCursor.image()) {
                             if (image->isPendingImage()) {
-                                CSSImageValue* imageValue = static_cast<StylePendingImage*>(image)->cssImageValue();
-                                currentCursor.setImage(imageValue->cachedImage(cachedResourceLoader));
+                                StyleImage* loadedImage = loadPendingImage(static_cast<StylePendingImage*>(image));
+                                currentCursor.setImage(loadedImage);
                             }
                         }
                     }
@@ -5720,16 +5744,16 @@ void CSSStyleSelector::loadPendingImages()
 
             case CSSPropertyListStyleImage: {
                 if (m_style->listStyleImage() && m_style->listStyleImage()->isPendingImage()) {
-                    CSSImageValue* imageValue = static_cast<StylePendingImage*>(m_style->listStyleImage())->cssImageValue();
-                    m_style->setListStyleImage(imageValue->cachedImage(cachedResourceLoader));
+                    StyleImage* loadedImage = loadPendingImage(static_cast<StylePendingImage*>(m_style->listStyleImage()));
+                    m_style->setListStyleImage(loadedImage);
                 }
                 break;
             }
 
             case CSSPropertyBorderImageSource: {
                 if (m_style->borderImageSource() && m_style->borderImageSource()->isPendingImage()) {
-                    CSSImageValue* imageValue = static_cast<StylePendingImage*>(m_style->borderImageSource())->cssImageValue();
-                    m_style->setBorderImageSource(imageValue->cachedImage(cachedResourceLoader));
+                    StyleImage* loadedImage = loadPendingImage(static_cast<StylePendingImage*>(m_style->borderImageSource()));
+                    m_style->setBorderImageSource(loadedImage);
                 }
                 break;
             }
@@ -5738,8 +5762,8 @@ void CSSStyleSelector::loadPendingImages()
                 if (StyleReflection* reflection = m_style->boxReflect()) {
                     const NinePieceImage& maskImage = reflection->mask();
                     if (maskImage.image() && maskImage.image()->isPendingImage()) {
-                        CSSImageValue* imageValue = static_cast<StylePendingImage*>(maskImage.image())->cssImageValue();
-                        reflection->setMask(NinePieceImage(imageValue->cachedImage(cachedResourceLoader), maskImage.imageSlices(), maskImage.fill(), maskImage.borderSlices(), maskImage.outset(), maskImage.horizontalRule(), maskImage.verticalRule()));
+                        StyleImage* loadedImage = loadPendingImage(static_cast<StylePendingImage*>(maskImage.image()));
+                        reflection->setMask(NinePieceImage(loadedImage, maskImage.imageSlices(), maskImage.fill(), maskImage.borderSlices(), maskImage.outset(), maskImage.horizontalRule(), maskImage.verticalRule()));
                     }
                 }
                 break;
@@ -5747,8 +5771,8 @@ void CSSStyleSelector::loadPendingImages()
 
             case CSSPropertyWebkitMaskBoxImageSource: {
                 if (m_style->maskBoxImageSource() && m_style->maskBoxImageSource()->isPendingImage()) {
-                    CSSImageValue* imageValue = static_cast<StylePendingImage*>(m_style->maskBoxImageSource())->cssImageValue();
-                    m_style->setMaskBoxImageSource(imageValue->cachedImage(cachedResourceLoader));
+                    StyleImage* loadedImage = loadPendingImage(static_cast<StylePendingImage*>(m_style->maskBoxImageSource()));
+                    m_style->setMaskBoxImageSource(loadedImage);
                 }
                 break;
             }
@@ -5756,8 +5780,8 @@ void CSSStyleSelector::loadPendingImages()
             case CSSPropertyWebkitMaskImage: {
                 for (FillLayer* maskLayer = m_style->accessMaskLayers(); maskLayer; maskLayer = maskLayer->next()) {
                     if (maskLayer->image() && maskLayer->image()->isPendingImage()) {
-                        CSSImageValue* imageValue = static_cast<StylePendingImage*>(maskLayer->image())->cssImageValue();
-                        maskLayer->setImage(imageValue->cachedImage(cachedResourceLoader));
+                        StyleImage* loadedImage = loadPendingImage(static_cast<StylePendingImage*>(maskLayer->image()));
+                        maskLayer->setImage(loadedImage);
                     }
                 }
                 break;

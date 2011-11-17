@@ -2507,6 +2507,8 @@ webcore_sources += \
 	Source/WebCore/platform/graphics/BitmapImage.h \
 	Source/WebCore/platform/graphics/Color.cpp \
 	Source/WebCore/platform/graphics/Color.h \
+	Source/WebCore/platform/graphics/CrossfadeGeneratedImage.cpp \
+	Source/WebCore/platform/graphics/CrossfadeGeneratedImage.h \
 	Source/WebCore/platform/graphics/ColorSpace.h \
 	Source/WebCore/platform/graphics/DashArray.h \
 	Source/WebCore/platform/graphics/Extensions3D.h \
@@ -2625,7 +2627,8 @@ webcore_sources += \
 	Source/WebCore/platform/graphics/FontSmoothingMode.h \
 	Source/WebCore/platform/graphics/FontTraitsMask.h \
 	Source/WebCore/platform/graphics/FontWidthVariant.h \
-	Source/WebCore/platform/graphics/GeneratedImage.cpp \
+	Source/WebCore/platform/graphics/GeneratorGeneratedImage.cpp \
+	Source/WebCore/platform/graphics/GeneratorGeneratedImage.h \
 	Source/WebCore/platform/graphics/GeneratedImage.h \
 	Source/WebCore/platform/graphics/Generator.h \
 	Source/WebCore/platform/graphics/Glyph.h \

@@ -44,6 +44,7 @@ class CSSPrimitiveValue;
 class CSSProperty;
 class CSSFontFace;
 class CSSFontFaceRule;
+class CSSImageGeneratorValue;
 class CSSImageValue;
 class CSSRegionStyleRule;
 class CSSRuleList;
@@ -67,6 +68,7 @@ class RuleData;
 class RuleSet;
 class Settings;
 class StyleImage;
+class StylePendingImage;
 class StyleShader;
 class StyleSheet;
 class StyleSheetList;
@@ -294,6 +296,7 @@ public:
 
     StyleImage* styleImage(CSSPropertyID, CSSValue*);
     StyleImage* cachedOrPendingFromValue(CSSPropertyID, CSSImageValue*);
+    StyleImage* generatedOrPendingFromValue(CSSPropertyID, CSSImageGeneratorValue*);
 
     bool applyPropertyToRegularStyle() const { return m_applyPropertyToRegularStyle; }
     bool applyPropertyToVisitedLinkStyle() const { return m_applyPropertyToVisitedLinkStyle; }
@@ -340,6 +343,7 @@ private:
     void applySVGProperty(int id, CSSValue*);
 #endif
 
+    StyleImage* loadPendingImage(StylePendingImage*);
     void loadPendingImages();
 
     struct MatchedStyleDeclaration {
