@@ -1,5 +1,16 @@
 2011-11-17  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
+        [Qt] Remove forwarding header for WebKit2 C API
+
+        The Qt port of WebKit does not provide a C-API for the View classes.
+
+        Reviewed by Simon Hausmann.
+
+        * UIProcess/API/C/WebKit2.h:
+        * UIProcess/API/qt/WKView.h: Removed.
+
+2011-11-17  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
         [Qt] Resolve import and web-process paths automatically for QML tests
 
         Reviewed by Kenneth Rohde Christiansen.
