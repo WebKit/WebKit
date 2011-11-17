@@ -6713,14 +6713,14 @@ bool CSSParser::isValidFilterArgument(CSSParserValue* argument, WebKitCSSFilterV
     // Check parameter values.
     if (filterType == WebKitCSSFilterValue::GrayscaleFilterOperation
         || filterType == WebKitCSSFilterValue::SepiaFilterOperation
-        || filterType == WebKitCSSFilterValue::SaturateFilterOperation
         || filterType == WebKitCSSFilterValue::InvertFilterOperation
         || filterType == WebKitCSSFilterValue::OpacityFilterOperation) {
         // Arguments must be within [0,1].
         double amount = argument->fValue;
         if (amount < 0 || amount > 1)
             return false;
-    } else if (filterType == WebKitCSSFilterValue::GammaFilterOperation
+    } else if (filterType == WebKitCSSFilterValue::SaturateFilterOperation
+               || filterType == WebKitCSSFilterValue::GammaFilterOperation
                || filterType == WebKitCSSFilterValue::BlurFilterOperation) {
         // Arguments must be positive
         double amount = argument->fValue;

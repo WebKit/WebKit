@@ -94,11 +94,6 @@ PASS cssRule.type is 1
 PASS declaration.length is 0
 PASS declaration.getPropertyValue('-webkit-filter') is null
 
-Parameter out of bounds : saturate(1.5)
-PASS cssRule.type is 1
-PASS declaration.length is 0
-PASS declaration.getPropertyValue('-webkit-filter') is null
-
 Bare number : hue-rotate(10)
 PASS cssRule.type is 1
 PASS declaration.length is 0

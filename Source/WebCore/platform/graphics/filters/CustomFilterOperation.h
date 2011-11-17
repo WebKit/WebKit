@@ -39,7 +39,7 @@ namespace WebCore {
 
 // CSS Shaders
 
-class CustomFilterOperation: public FilterOperation {
+class CustomFilterOperation : public FilterOperation {
 public:
     static PassRefPtr<CustomFilterOperation> create(PassRefPtr<StyleShader> vertexShader, PassRefPtr<StyleShader> fragmentShader)
     {

@@ -2694,10 +2694,12 @@ void RenderLayer::paintLayer(RenderLayer* rootLayer, GraphicsContext* p,
 #if ENABLE(CSS_FILTERS)
     if (!p->paintingDisabled() && hasFilter() && !size().isZero() && !(paintFlags & PaintLayerPaintingFilter)) {
         // Update the filter's image if necessary.
+        // The filter is always built at this point.
         updateFilterBackingStore();
+        m_filter->prepare();
         
         // Paint into the context that represents the SourceGraphic of the filter.
-        GraphicsContext* sourceGraphicsContext = m_filter->sourceImage()->context();
+        GraphicsContext* sourceGraphicsContext = m_filter->inputContext();
 
         FloatRect paintRect = FloatRect(FloatPoint(), size());
         sourceGraphicsContext->clearRect(paintRect);
@@ -2705,17 +2707,14 @@ void RenderLayer::paintLayer(RenderLayer* rootLayer, GraphicsContext* p,
         // Now do the regular paint into the SourceGraphic.
         paintLayer(this, sourceGraphicsContext, paintDirtyRect, paintBehavior, paintingRoot, region, overlapTestRequests, paintFlags | PaintLayerPaintingFilter);
             
-        // Invalidate the filter so that it executes again.
-        m_filter->sourceGraphic()->clearResult();
-        m_filter->effect()->clearResult();
-        m_filter->effect()->apply();
+        m_filter->apply();
         
         LayoutPoint layerOrigin;
         convertToLayerCoords(rootLayer, layerOrigin);
         LayoutRect filterBounds = LayoutRect(layerOrigin.x(), layerOrigin.y(), size().width(), size().height());
         
         // Get the filtered output and draw it in place.
-        p->drawImageBuffer(m_filter->effect()->asImageBuffer(), renderer()->style()->colorSpace(), filterBounds, CompositeSourceOver);
+        p->drawImageBuffer(m_filter->output(), renderer()->style()->colorSpace(), filterBounds, CompositeSourceOver);
         return;
     }
 #endif
@@ -4387,31 +4386,7 @@ void RenderLayer::updateOrRemoveFilterEffect()
         if (!m_filter)
             m_filter = FilterEffectRenderer::create();
 
-        // For the moment we only support a single hue-rotate() filter.
-        // See https://bugs.webkit.org/show_bug.cgi?id=68474 and
-        // https://bugs.webkit.org/show_bug.cgi?id=68475
-
-        RefPtr<FilterEffect> effect;
-        FilterOperations filterOperations = renderer()->style()->filter();
-        if (filterOperations.size() == 1) {
-            const FilterOperation* operation = filterOperations.at(0);
-            if (operation->getOperationType() == FilterOperation::HUE_ROTATE) {
-                const BasicColorMatrixFilterOperation* colorMatrixOperation = static_cast<const BasicColorMatrixFilterOperation*>(operation);
-                Vector<float> inputParameters;
-                inputParameters.append(narrowPrecisionToFloat(colorMatrixOperation->amount()));
-                effect = FEColorMatrix::create(m_filter.get(), FECOLORMATRIX_TYPE_HUEROTATE, inputParameters);
-            }
-        }
-
-        // If we didn't make a real filter, create a null-op (FEMerge with one input).
-        if (!effect)
-            effect = FEMerge::create(m_filter.get());
-
-        RefPtr<SourceGraphic> sourceGraphic = SourceGraphic::create(m_filter.get());
-        m_filter->setSourceGraphic(sourceGraphic);
-
-        effect->inputEffects().append(sourceGraphic);
-        m_filter->setEffect(effect);
+        m_filter->build(renderer()->style()->filter(), toRenderBox(renderer())->borderBoxRect());
     } else {
         m_filter = 0;
     }
@@ -4423,10 +4398,8 @@ void RenderLayer::updateFilterBackingStore()
     if (!layoutSize.isZero()) {
         FloatRect size = FloatRect(0, 0, layoutSize.width(), layoutSize.height());
         FloatRect currentSourceSize = m_filter->sourceImageRect();
-        if (size != currentSourceSize) {
+        if (size != currentSourceSize)
             m_filter->setSourceImageRect(size);
-            m_filter->setSourceImage(ImageBuffer::create(layoutSize));
-        }
     }
 }
 

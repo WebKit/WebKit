@@ -40,7 +40,6 @@ testInvalidFilterRule("Too many parameters", "saturate(0.5 0.5)");
 testInvalidFilterRule("Too many parameters and commas", "saturate(0.5, 0.5)");
 testInvalidFilterRule("Trailing comma", "saturate(0.5,)");
 testInvalidFilterRule("Negative parameter", "saturate(-0.5)");
-testInvalidFilterRule("Parameter out of bounds", "saturate(1.5)");
 
 testInvalidFilterRule("Bare number", "hue-rotate(10)");
 testInvalidFilterRule("Length", "hue-rotate(10px)");

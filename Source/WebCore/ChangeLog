@@ -1,3 +1,66 @@
+2011-11-16  Dean Jackson  <dino@apple.com>
+
+        Implement filter function shorthands
+        https://bugs.webkit.org/show_bug.cgi?id=68475
+
+        Reviewed by Simon Fraser.
+
+        Implement the shorthand functions for filter effects.
+        This includes grayscale, sepia, invert, hue-rotate, saturate,
+        opacity, gamma, drop-shadow and blur. At the moment sharpen
+        and url are not supported.
+
+        CSSParser needed to be updated because it was mistakenly
+        clamping saturation values to [0,1]. Any positive number
+        is allowed so you can produce super-saturated images.
+
+        The biggest change was the API to FilterEffectRenderer. It now
+        builds a list of effects and applies the filter itself.
+
+        Note that the drop-shadow and blur operations don't yet
+        provide accurate results because they produce an output image
+        that is larger than the input. See
+        https://bugs.webkit.org/show_bug.cgi?id=71929
+        https://bugs.webkit.org/show_bug.cgi?id=71930
+
+        While I was there, I fixed a small style issue in
+        CustomFilterOperation.
+
+        Tests: css3/filters/effect-blur.html
+               css3/filters/effect-combined.html
+               css3/filters/effect-drop-shadow.html
+               css3/filters/effect-gamma.html
+               css3/filters/effect-grayscale.html
+               css3/filters/effect-hue-rotate.html
+               css3/filters/effect-invert.html
+               css3/filters/effect-opacity.html
+               css3/filters/effect-saturate.html
+               css3/filters/effect-sepia.html
+
+        * WebCore.xcodeproj/project.pbxproj: Add StyleShader.h to
+        the project (missing from earlier commit).
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::isValidFilterArgument): Don't clamp
+        saturate to [0,1]
+        * platform/graphics/filters/CustomFilterOperation.h:
+        * rendering/FilterEffectRenderer.cpp:
+        (WebCore::endMatrixRow):
+        (WebCore::lastMatrixRow):
+        (WebCore::FilterEffectRenderer::FilterEffectRenderer):
+        (WebCore::FilterEffectRenderer::inputContext):
+        (WebCore::FilterEffectRenderer::build):
+        (WebCore::FilterEffectRenderer::prepare):
+        (WebCore::FilterEffectRenderer::apply):
+        * rendering/FilterEffectRenderer.h:
+        (WebCore::FilterEffectRenderer::setSourceImageRect):
+        (WebCore::FilterEffectRenderer::output):
+        (WebCore::FilterEffectRenderer::setMaxEffectRects):
+        (WebCore::FilterEffectRenderer::lastEffect):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paintLayer):
+        (WebCore::RenderLayer::updateOrRemoveFilterEffect):
+        (WebCore::RenderLayer::updateFilterBackingStore):
+
 2011-11-16  Kentaro Hara  <haraken@chromium.org>
 
         Remove all custom constructors of Events from JSC

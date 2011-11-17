@@ -30,7 +30,11 @@
 
 #include "Filter.h"
 #include "FilterEffect.h"
+#include "FilterOperations.h"
 #include "FloatRect.h"
+#include "GraphicsContext.h"
+#include "ImageBuffer.h"
+#include "SVGFilterBuilder.h"
 #include "SourceGraphic.h"
 
 #include <wtf/PassRefPtr.h>
@@ -38,6 +42,8 @@
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
+
+typedef Vector<RefPtr<FilterEffect> > FilterEffectList;
 
 class FilterEffectRenderer : public Filter {
 public:
@@ -49,31 +55,50 @@ public:
     virtual void setSourceImageRect(const FloatRect& sourceImageRect)
     { 
         m_sourceDrawingRegion = sourceImageRect;
-        if (m_effect)
-            effect()->setMaxEffectRect(sourceImageRect);
+        setMaxEffectRects(sourceImageRect);
         setFilterRegion(sourceImageRect);
+        m_sourceGraphicBuffer = ImageBuffer::create(IntSize(sourceImageRect.width(), sourceImageRect.height()));
+        m_graphicsBufferAttached = false;
     }
     virtual FloatRect sourceImageRect() const { return m_sourceDrawingRegion; }
 
     virtual void setFilterRegion(const FloatRect& filterRegion) { m_filterRegion = filterRegion; }
     virtual FloatRect filterRegion() const { return m_filterRegion; }
 
-    virtual void setEffect(PassRefPtr<FilterEffect> effect) { m_effect = effect; }
-    virtual RefPtr<FilterEffect> effect() const { return m_effect; }
+    GraphicsContext* inputContext();
+    ImageBuffer* output() const { return lastEffect()->asImageBuffer(); }
 
-    virtual void setSourceGraphic(PassRefPtr<SourceGraphic> sourceGraphic) { m_sourceGraphic = sourceGraphic; }
-    virtual RefPtr<SourceGraphic> sourceGraphic() const { return m_sourceGraphic; }
+    void build(const FilterOperations&, const LayoutRect&);
+    void prepare();
+    void apply();
     
 private:
+
+    void setMaxEffectRects(const FloatRect& effectRect)
+    {
+        for (size_t i = 0; i < m_effects.size(); ++i) {
+            RefPtr<FilterEffect> effect = m_effects.at(i);
+            effect->setMaxEffectRect(effectRect);
+        }
+    }
+    PassRefPtr<FilterEffect> lastEffect() const
+    {
+        if (m_effects.size() > 0)
+            return m_effects.last();
+        return 0;
+    }
+
     FilterEffectRenderer();
     virtual ~FilterEffectRenderer();
-
+    
     FloatRect m_sourceDrawingRegion;
     FloatRect m_filterRegion;
     
-    RefPtr<FilterEffect> m_effect;
+    FilterEffectList m_effects;
     RefPtr<SourceGraphic> m_sourceGraphic;
-    GraphicsContext* m_savedContext;
+    OwnPtr<ImageBuffer> m_sourceGraphicBuffer;
+    
+    bool m_graphicsBufferAttached;
 };
 
 } // namespace WebCore

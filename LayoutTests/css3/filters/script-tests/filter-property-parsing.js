@@ -136,6 +136,11 @@ testFilterRule("Float value converts to integer",
                ["WebKitCSSFilterValue.CSS_FILTER_SATURATE"],
                ["saturate(1)"]);
 
+testFilterRule("Input value > 1",
+               "saturate(5.5)", 1, "saturate(5.5)",
+               ["WebKitCSSFilterValue.CSS_FILTER_SATURATE"],
+               ["saturate(5.5)"]);
+
 testFilterRule("Zero value",
                "saturate(0)", 1, "saturate(0)",
                ["WebKitCSSFilterValue.CSS_FILTER_SATURATE"],
