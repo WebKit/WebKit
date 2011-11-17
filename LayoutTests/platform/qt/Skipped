@@ -2533,3 +2533,10 @@ http/tests/misc/onload-remove-iframe-crash-2.html
 # [Qt] inspector/elements/elements-panel-selection-on-refresh.html crashing
 # https://bugs.webkit.org/show_bug.cgi?id=72504
 inspector/elements/elements-panel-selection-on-refresh.html
+
+# [Qt] [Qt] REGRESSION(r100510): Enable 8 Bit Strings in JavaScriptCore
+# https://bugs.webkit.org/show_bug.cgi?id=72602
+editing/selection/find-yensign-and-backslash-with-japanese-fonts.html
+editing/selection/find-yensign-and-backslash.html
+fast/text/find-kana.html
+fast/text/find-spaces.html
