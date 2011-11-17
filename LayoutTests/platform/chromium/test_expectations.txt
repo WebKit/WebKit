@@ -257,16 +257,16 @@ WONTFIX SKIP : fast/canvas/canvas-gradient-addStop-error.html = FAIL
 // this test will always fail.
 WONTFIX SKIP LINUX WIN : fast/events/option-tab.html = FAIL
 
-// text failures on every platform. appears to be a real issue
-BUGWK72402 : compositing/geometry/limit-layer-bounds-clipping-ancestor.html = TEXT
-BUGWK72402 : compositing/geometry/limit-layer-bounds-fixed-positioned.html = TEXT
-BUGWK72402 : compositing/geometry/limit-layer-bounds-overflow-root.html = TEXT
-BUGWK72402 : compositing/geometry/limit-layer-bounds-positioned-transition.html = TEXT
-BUGWK72402 : compositing/geometry/limit-layer-bounds-positioned.html = TEXT
-BUGWK72402 : compositing/geometry/limit-layer-bounds-transformed-overflow.html = TEXT
-BUGWK72402 : compositing/geometry/limit-layer-bounds-transformed.html = TEXT
-BUGWK72402 : compositing/layer-creation/scroll-partial-update.html = TEXT
-BUGWK72402 : compositing/layer-creation/overflow-scroll-overlap.html = TEXT
+// Compositor layer trees on mac different from other platforms, but it's not clear why
+BUGWK72402 MAC : compositing/geometry/limit-layer-bounds-clipping-ancestor.html = TEXT
+BUGWK72402 MAC : compositing/geometry/limit-layer-bounds-fixed-positioned.html = TEXT
+BUGWK72402 MAC : compositing/geometry/limit-layer-bounds-overflow-root.html = TEXT
+BUGWK72402 MAC : compositing/geometry/limit-layer-bounds-positioned-transition.html = TEXT
+BUGWK72402 MAC : compositing/geometry/limit-layer-bounds-positioned.html = TEXT
+BUGWK72402 MAC : compositing/geometry/limit-layer-bounds-transformed-overflow.html = TEXT
+BUGWK72402 MAC : compositing/geometry/limit-layer-bounds-transformed.html = TEXT
+BUGWK72402 MAC : compositing/layer-creation/scroll-partial-update.html = TEXT
+BUGWK72402 MAC : compositing/layer-creation/overflow-scroll-overlap.html = TEXT
 
 // mac failures
 BUGWK72402 MAC : compositing/geometry/empty-embed-rects.html = TIMEOUT
@@ -3840,10 +3840,7 @@ BUGMSTARZINGER : fast/js/mozilla/strict/15.4.5.1.html = TEXT
 
 BUG_SENORBLANCO GPU : fast/canvas/canvas-transforms-fillRect-shadow.html = TEXT
 
-// Will need baselines updated to take compositing into account when that is enabled by default.
-// See bug for details
-BUGWK72402 : fast/repaint/block-selection-gap-in-composited-layer.html = PASS FAIL
-BUGWK72402 : transitions/default-timing-function.html = PASS FAIL
+BUGWK66953 : transitions/default-timing-function.html = PASS FAIL
 
 // Need to rebaseline on win and mac.
 BUG_TONY MAC : css3/flexbox/repaint.html = PASS FAIL
