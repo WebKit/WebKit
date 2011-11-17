@@ -87,9 +87,9 @@ class LeakDetector(object):
     def _leaks_args(self, pid):
         leaks_args = []
         for callstack in self._callstacks_to_exclude_from_leaks():
-            leaks_args += ['--exclude-callstack="%s"' % callstack]  # Callstacks can have spaces in them, so we quote the arg to prevent confusing perl's optparse.
+            leaks_args += ['--exclude-callstack=%s' % callstack]
         for excluded_type in self._types_to_exlude_from_leaks():
-            leaks_args += ['--exclude-type="%s"' % excluded_type]
+            leaks_args += ['--exclude-type=%s' % excluded_type]
         leaks_args.append(pid)
         return leaks_args
 

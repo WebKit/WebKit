@@ -1,3 +1,20 @@
+2011-11-17  Adam Roben  <aroben@apple.com>
+
+        Remove extra quoting of call stacks and types passed to run-leaks by NRWT
+
+        Fixes <http://webkit.org/b/72623> REGRESSION (NRWT): run-webkit-tests --leaks reports leaks
+        that are supposed to be ignored
+
+        Reviewed by Adam Barth.
+
+        * Scripts/webkitpy/layout_tests/port/leakdetector.py:
+        (LeakDetector._leaks_args): Removed extra quoting of call stacks and types. Quoting is only
+        required when passing arguments via the shell (which we aren't doing here). It is not
+        required by Perl's option-parsing code (as the comment I removed mistakenly claimed).
+
+        * Scripts/webkitpy/layout_tests/port/leakdetector_unittest.py:
+        (LeakDetectorTest.test_leaks_args): Updated expectations.
+
 2011-11-17  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, run-bindings-tests fix after r91028.
