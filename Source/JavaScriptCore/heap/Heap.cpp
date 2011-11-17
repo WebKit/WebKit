@@ -486,16 +486,16 @@ bool Heap::unprotect(JSValue k)
     return m_protectedValues.remove(k.asCell());
 }
 
+void Heap::jettisonDFGCodeBlock(PassOwnPtr<CodeBlock> codeBlock)
+{
+    m_dfgCodeBlocks.jettison(codeBlock);
+}
+
 void Heap::markProtectedObjects(HeapRootVisitor& heapRootVisitor)
 {
     ProtectCountSet::iterator end = m_protectedValues.end();
     for (ProtectCountSet::iterator it = m_protectedValues.begin(); it != end; ++it)
         heapRootVisitor.visit(&it->first);
-}
-
-void Heap::addJettisonedCodeBlock(PassOwnPtr<CodeBlock> codeBlock)
-{
-    m_jettisonedCodeBlocks.addCodeBlock(codeBlock);
 }
 
 void Heap::pushTempSortVector(Vector<ValueStringPair>* tempVector)
@@ -579,12 +579,11 @@ void Heap::markRoots(bool fullGC)
     }
 
     ConservativeRoots registerFileRoots(&m_objectSpace.blocks());
-    m_jettisonedCodeBlocks.clearMarks();
+    m_dfgCodeBlocks.clearMarks();
     {
         GCPHASE(GatherRegisterFileRoots);
-        registerFile().gatherConservativeRoots(registerFileRoots, m_jettisonedCodeBlocks);
+        registerFile().gatherConservativeRoots(registerFileRoots, m_dfgCodeBlocks);
     }
-    m_jettisonedCodeBlocks.deleteUnmarkedCodeBlocks();
 #if ENABLE(GGC)
     MarkedBlock::DirtyCellVector dirtyCells;
     if (!fullGC) {
@@ -668,7 +667,7 @@ void Heap::markRoots(bool fullGC)
     
         {
             GCPHASE(TraceCodeBlocks);
-            m_jettisonedCodeBlocks.traceCodeBlocks(visitor);
+            m_dfgCodeBlocks.traceMarkedCodeBlocks(visitor);
             visitor.donateAndDrain();
         }
     
@@ -804,6 +803,11 @@ void Heap::collect(SweepToggle sweepToggle)
     {
         GCPHASE(ResetAllocator);
         resetAllocator();
+    }
+    
+    {
+        GCPHASE(DeleteCodeBlocks);
+        m_dfgCodeBlocks.deleteUnmarkedJettisonedCodeBlocks();
     }
 
     if (sweepToggle == DoSweep) {

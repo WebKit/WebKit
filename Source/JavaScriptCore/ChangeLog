@@ -1,3 +1,75 @@
+2011-11-15  Filip Pizlo  <fpizlo@apple.com>
+
+        Code block jettisoning should be part of the GC's transitive closure
+        https://bugs.webkit.org/show_bug.cgi?id=72467
+
+        Reviewed by Geoff Garen.
+        
+        Replaced JettisonedCodeBlocks with DFGCodeBlocks. The latter knows about all
+        DFG code blocks (i.e. those that may be jettisoned, and may have inlined weak
+        references) and helps track what state each of those code blocks is in during
+        GC. The state consists of two flags; mayBeExecuting, which tells if the code block
+        is live from call frames; and isJettisoned, which tells if the code block is
+        not owned by any executable and thus should be deleted as soon as it is not
+        mayBeExecuting.
+        
+        - Not executing, Not jettisoned: The code block may or may not be reachable from
+          any executables, but it is owned by an executable, and hence should be
+          kept alive if its executable is live and if all of its weak references are
+          live. Otherwise it should be deleted during the current GC cycle, and its
+          outgoing references should not be scanned.
+          
+        - Not executing but jettisoned: The code block should be deleted as soon as
+          possible and none of its outgoing references should be scanned.
+          
+        - Executing but not jettisoned: The code block should be kept alive during this
+          GC cycle, and all of its outgoing references (including the weak ones)
+          should be scanned and marked strongly. The mayBeExecuting bit will be cleared at
+          the end of the GC cycle.
+          
+        - Executing and jettisoned: The code block should be kept alive during this
+          GC cycle, and all of its outgoing references (including the weak ones)
+          should be scanned and marked strongly. However, on the next GC cycle, it
+          will have its mayBeExecuting bit cleared and hence it will become a candidate
+          for immediate deletion provided it is not executing again.
+
+        This is performance-neutral.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Target.pri:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::~CodeBlock):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::setJITCode):
+        (JSC::CodeBlock::DFGData::DFGData):
+        (JSC::DFGCodeBlocks::mark):
+        * heap/ConservativeRoots.cpp:
+        (JSC::ConservativeRoots::add):
+        * heap/ConservativeRoots.h:
+        * heap/DFGCodeBlocks.cpp: Added.
+        (JSC::DFGCodeBlocks::DFGCodeBlocks):
+        (JSC::DFGCodeBlocks::~DFGCodeBlocks):
+        (JSC::DFGCodeBlocks::jettison):
+        (JSC::DFGCodeBlocks::clearMarks):
+        (JSC::DFGCodeBlocks::deleteUnmarkedJettisonedCodeBlocks):
+        (JSC::DFGCodeBlocks::traceMarkedCodeBlocks):
+        * heap/DFGCodeBlocks.h: Added.
+        * heap/Heap.cpp:
+        (JSC::Heap::jettisonDFGCodeBlock):
+        (JSC::Heap::markRoots):
+        (JSC::Heap::collect):
+        * heap/Heap.h:
+        * heap/JettisonedCodeBlocks.cpp: Removed.
+        * heap/JettisonedCodeBlocks.h: Removed.
+        * interpreter/RegisterFile.cpp:
+        (JSC::RegisterFile::gatherConservativeRoots):
+        * interpreter/RegisterFile.h:
+        * runtime/Executable.cpp:
+        (JSC::jettisonCodeBlock):
+
 2011-11-16  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, build fix for 32-bit.

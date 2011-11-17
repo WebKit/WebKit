@@ -23,9 +23,9 @@
 #define Heap_h
 
 #include "AllocationSpace.h"
+#include "DFGCodeBlocks.h"
 #include "HandleHeap.h"
 #include "HandleStack.h"
-#include "JettisonedCodeBlocks.h"
 #include "MarkedBlock.h"
 #include "MarkedBlockSet.h"
 #include "MarkedSpace.h"
@@ -37,6 +37,7 @@
 
 namespace JSC {
 
+    class CodeBlock;
     class GCActivityCallback;
     class GlobalCodeBlock;
     class Heap;
@@ -103,7 +104,7 @@ namespace JSC {
         void protect(JSValue);
         bool unprotect(JSValue); // True when the protect count drops to 0.
         
-        void addJettisonedCodeBlock(PassOwnPtr<CodeBlock>);
+        void jettisonDFGCodeBlock(PassOwnPtr<CodeBlock>);
 
         size_t size();
         size_t capacity();
@@ -131,6 +132,7 @@ namespace JSC {
         friend class MarkedBlock;
         friend class AllocationSpace;
         friend class SlotVisitor;
+        friend class CodeBlock;
 
         static const size_t minExtraCost = 256;
         static const size_t maxExtraCost = 1024 * 1024;
@@ -204,7 +206,7 @@ namespace JSC {
 
         HandleHeap m_handleHeap;
         HandleStack m_handleStack;
-        JettisonedCodeBlocks m_jettisonedCodeBlocks;
+        DFGCodeBlocks m_dfgCodeBlocks;
         FinalizerOwner m_finalizerOwner;
         
         bool m_isSafeToCollect;

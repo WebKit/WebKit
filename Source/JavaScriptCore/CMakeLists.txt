@@ -67,10 +67,10 @@ SET(JavaScriptCore_SOURCES
     dfg/DFGThunks.cpp
 
     heap/AllocationSpace.cpp
+    heap/DFGCodeBlocks.cpp
     heap/Heap.cpp
     heap/HandleHeap.cpp
     heap/HandleStack.cpp
-    heap/JettisonedCodeBlocks.cpp
     heap/MachineStackMarker.cpp
     heap/MarkedBlock.cpp
     heap/MarkedSpace.cpp

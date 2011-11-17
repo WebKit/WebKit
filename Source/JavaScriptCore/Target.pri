@@ -66,10 +66,10 @@ SOURCES += \
     bytecompiler/NodesCodegen.cpp \
     heap/AllocationSpace.cpp \
     heap/ConservativeRoots.cpp \
+    heap/DFGCodeBlocks.cpp \
     heap/HandleHeap.cpp \
     heap/HandleStack.cpp \
     heap/Heap.cpp \
-    heap/JettisonedCodeBlocks.cpp \
     heap/MachineStackMarker.cpp \
     heap/MarkStack.cpp \
     heap/MarkedBlock.cpp \

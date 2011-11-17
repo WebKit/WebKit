@@ -2002,11 +2002,11 @@
                                     >
                             </File>
                             <File
-                                    RelativePath="..\..\heap\JettisonedCodeBlocks.cpp"
+                                    RelativePath="..\..\heap\DFGCodeBlocks.cpp"
                                     >
                             </File>
                             <File
-                                    RelativePath="..\..\heap\JettisonedCodeBlocks.h"
+                                    RelativePath="..\..\heap\DFGCodeBlocks.h"
                                     >
                             </File>
                             <File

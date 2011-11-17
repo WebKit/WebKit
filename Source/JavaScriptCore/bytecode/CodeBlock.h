@@ -32,6 +32,7 @@
 
 #include "CodeOrigin.h"
 #include "CompactJITCodeMap.h"
+#include "DFGCodeBlocks.h"
 #include "DFGOSREntry.h"
 #include "DFGOSRExit.h"
 #include "EvalCodeCache.h"
@@ -71,6 +72,7 @@ namespace JSC {
     };
 
     class ExecState;
+    class DFGCodeBlocks;
 
     enum CodeType { GlobalCode, EvalCode, FunctionCode };
 
@@ -523,6 +525,12 @@ namespace JSC {
         {
             m_jitCode = code;
             m_jitCodeWithArityCheck = codeWithArityCheck;
+#if ENABLE(DFG_JIT)
+            if (m_jitCode.jitType() == JITCode::DFGJIT) {
+                createDFGDataIfNecessary();
+                m_globalData->heap.m_dfgCodeBlocks.m_set.add(this);
+            }
+#endif
         }
         JITCode& getJITCode() { return m_jitCode; }
         MacroAssemblerCodePtr getJITCodeWithArityCheck() { return m_jitCodeWithArityCheck; }
@@ -1080,6 +1088,8 @@ namespace JSC {
         virtual void finalizeUnconditionally();
         
     private:
+        friend class DFGCodeBlocks;
+        
 #if !defined(NDEBUG) || ENABLE(OPCODE_SAMPLING)
         void dump(ExecState*, const Vector<Instruction>::const_iterator& begin, Vector<Instruction>::const_iterator&) const;
 
@@ -1154,11 +1164,19 @@ namespace JSC {
         };
         
         struct DFGData {
+            DFGData()
+                : mayBeExecuting(false)
+                , isJettisoned(false)
+            {
+            }
+            
             Vector<DFG::OSREntryData> osrEntry;
             SegmentedVector<DFG::OSRExit, 8> osrExit;
             Vector<DFG::SpeculationRecovery> speculationRecovery;
             Vector<WeakReferenceTransition> transitions;
             Vector<WriteBarrier<JSCell> > weakReferences;
+            bool mayBeExecuting;
+            bool isJettisoned;
         };
         
         OwnPtr<DFGData> m_dfgData;
@@ -1378,6 +1396,26 @@ namespace JSC {
         if (LIKELY(!codeBlock() || codeBlock()->getJITType() != JITCode::DFGJIT))
             return false;
         return isInlineCallFrameSlow();
+    }
+#endif
+
+#if ENABLE(DFG_JIT)
+    inline void DFGCodeBlocks::mark(void* candidateCodeBlock)
+    {
+        // We have to check for 0 and -1 because those are used by the HashMap as markers.
+        uintptr_t value = reinterpret_cast<uintptr_t>(candidateCodeBlock);
+        
+        // This checks for both of those nasty cases in one go.
+        // 0 + 1 = 1
+        // -1 + 1 = 0
+        if (value + 1 <= 1)
+            return;
+        
+        HashSet<CodeBlock*>::iterator iter = m_set.find(static_cast<CodeBlock*>(candidateCodeBlock));
+        if (iter == m_set.end())
+            return;
+        
+        (*iter)->m_dfgData->mayBeExecuting = true;
     }
 #endif
     

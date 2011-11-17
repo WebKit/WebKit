@@ -1496,6 +1496,12 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, CodeType codeType, JSGlo
 
 CodeBlock::~CodeBlock()
 {
+#if ENABLE(DFG_JIT)
+    // Remove myself from the set of DFG code blocks. Note that I may not be in this set
+    // (because I'm not a DFG code block), in which case this is a no-op anyway.
+    m_globalData->heap.m_dfgCodeBlocks.m_set.remove(this);
+#endif
+    
 #if ENABLE(VERBOSE_VALUE_PROFILE)
     dumpValueProfiles();
 #endif
