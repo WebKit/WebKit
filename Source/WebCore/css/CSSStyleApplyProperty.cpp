@@ -25,6 +25,7 @@
 #include "config.h"
 #include "CSSStyleApplyProperty.h"
 
+#include "CSSAspectRatioValue.h"
 #include "CSSCursorImageValue.h"
 #include "CSSFlexValue.h"
 #include "CSSPrimitiveValueMappings.h"
@@ -831,6 +832,41 @@ public:
     static PropertyHandler createHandler() { return PropertyHandler(&applyInheritValue, &applyInitialValue, &applyValue); }
 };
 
+class ApplyPropertyAspectRatio {
+public:
+    static void applyInheritValue(CSSStyleSelector* selector)
+    {
+        if (!selector->parentStyle()->hasAspectRatio())
+            return;
+        selector->style()->setAspectRatioDenominator(selector->parentStyle()->aspectRatioDenominator());
+        selector->style()->setAspectRatioNumerator(selector->parentStyle()->aspectRatioNumerator());
+    }
+
+    static void applyInitialValue(CSSStyleSelector* selector)
+    {
+        selector->style()->setHasAspectRatio(RenderStyle::initialHasAspectRatio());
+        selector->style()->setAspectRatioDenominator(RenderStyle::initialAspectRatioDenominator());
+        selector->style()->setAspectRatioNumerator(RenderStyle::initialAspectRatioNumerator());
+    }
+
+    static void applyValue(CSSStyleSelector* selector, CSSValue* value)
+    {
+        if (!value->isAspectRatioValue()) {
+            selector->style()->setHasAspectRatio(false);
+            return;
+        }
+        CSSAspectRatioValue* aspectRatioValue = static_cast<CSSAspectRatioValue*>(value);
+        selector->style()->setHasAspectRatio(true);
+        selector->style()->setAspectRatioDenominator(aspectRatioValue->denominatorValue());
+        selector->style()->setAspectRatioNumerator(aspectRatioValue->numeratorValue());
+    }
+
+    static PropertyHandler createHandler()
+    {
+        return PropertyHandler(&applyInheritValue, &applyInitialValue, &applyValue);
+    }
+};
+
 const CSSStyleApplyProperty& CSSStyleApplyProperty::sharedCSSStyleApplyProperty()
 {
     DEFINE_STATIC_LOCAL(CSSStyleApplyProperty, cssStyleApplyPropertyInstance, ());
@@ -841,6 +877,8 @@ CSSStyleApplyProperty::CSSStyleApplyProperty()
 {
     for (int i = 0; i < numCSSProperties; ++i)
         m_propertyMap[i] = PropertyHandler();
+
+    setPropertyHandler(CSSPropertyWebkitAspectRatio, ApplyPropertyAspectRatio::createHandler());
 
     setPropertyHandler(CSSPropertyColor, ApplyPropertyColor<InheritFromParent, &RenderStyle::color, &RenderStyle::setColor, &RenderStyle::setVisitedLinkColor, &RenderStyle::invalidColor, RenderStyle::initialColor>::createHandler());
     setPropertyHandler(CSSPropertyDirection, ApplyPropertyDirection<&RenderStyle::direction, &RenderStyle::setDirection, RenderStyle::initialDirection>::createHandler());

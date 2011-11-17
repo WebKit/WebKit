@@ -701,6 +701,11 @@ public:
     ColorSpace colorSpace() const { return static_cast<ColorSpace>(rareInheritedData->colorSpace); }
     float opacity() const { return rareNonInheritedData->opacity; }
     ControlPart appearance() const { return static_cast<ControlPart>(rareNonInheritedData->m_appearance); }
+    // aspect ratio convenience method
+    bool hasAspectRatio() const { return rareNonInheritedData->m_hasAspectRatio; }
+    float aspectRatio() const { return aspectRatioNumerator() / aspectRatioDenominator(); }
+    float aspectRatioDenominator() const { return rareNonInheritedData->m_aspectRatioDenominator; }
+    float aspectRatioNumerator() const { return rareNonInheritedData->m_aspectRatioNumerator; }
     EBoxAlignment boxAlign() const { return static_cast<EBoxAlignment>(rareNonInheritedData->m_deprecatedFlexibleBox->align); }
     EBoxDirection boxDirection() const { return static_cast<EBoxDirection>(inherited_flags._box_direction); }
     float boxFlex() { return rareNonInheritedData->m_deprecatedFlexibleBox->flex; }
@@ -1054,6 +1059,9 @@ public:
     void setEmptyCells(EEmptyCell v) { inherited_flags._empty_cells = v; }
     void setCaptionSide(ECaptionSide v) { inherited_flags._caption_side = v; }
 
+    void setHasAspectRatio(bool b) { SET_VAR(rareNonInheritedData, m_hasAspectRatio, b); }
+    void setAspectRatioDenominator(float v) { SET_VAR(rareNonInheritedData, m_aspectRatioDenominator, v); }
+    void setAspectRatioNumerator(float v) { SET_VAR(rareNonInheritedData, m_aspectRatioNumerator, v); }
     void setCounterIncrement(short v) { SET_VAR(rareNonInheritedData, m_counterIncrement, v) }
     void setCounterReset(short v) { SET_VAR(rareNonInheritedData, m_counterReset, v) }
 
@@ -1463,6 +1471,9 @@ public:
     static EBorderFit initialBorderFit() { return BorderFitBorder; }
     static EResize initialResize() { return RESIZE_NONE; }
     static ControlPart initialAppearance() { return NoControlPart; }
+    static bool initialHasAspectRatio() { return false; }
+    static float initialAspectRatioDenominator() { return 1; }
+    static float initialAspectRatioNumerator() { return 1; }
     static Order initialRTLOrdering() { return LogicalOrder; }
     static float initialTextStrokeWidth() { return 0; }
     static unsigned short initialColumnCount() { return 1; }

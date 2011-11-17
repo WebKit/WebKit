@@ -35,6 +35,8 @@ namespace WebCore {
 
 StyleRareNonInheritedData::StyleRareNonInheritedData()
     : opacity(RenderStyle::initialOpacity())
+    , m_aspectRatioDenominator(RenderStyle::initialAspectRatioDenominator())
+    , m_aspectRatioNumerator(RenderStyle::initialAspectRatioNumerator())
     , m_counterIncrement(0)
     , m_counterReset(0)
     , m_perspective(RenderStyle::initialPerspective())
@@ -66,6 +68,7 @@ StyleRareNonInheritedData::StyleRareNonInheritedData()
     , m_textCombine(RenderStyle::initialTextCombine())
     , m_wrapFlow(RenderStyle::initialWrapFlow())
     , m_wrapThrough(RenderStyle::initialWrapThrough())
+    , m_hasAspectRatio(false)
 #if USE(ACCELERATED_COMPOSITING)
     , m_runningAcceleratedAnimation(false)
 #endif
@@ -76,6 +79,8 @@ StyleRareNonInheritedData::StyleRareNonInheritedData()
 StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonInheritedData& o)
     : RefCounted<StyleRareNonInheritedData>()
     , opacity(o.opacity)
+    , m_aspectRatioDenominator(o.m_aspectRatioDenominator)
+    , m_aspectRatioNumerator(o.m_aspectRatioNumerator)
     , m_counterIncrement(o.m_counterIncrement)
     , m_counterReset(o.m_counterReset)
     , m_perspective(o.m_perspective)
@@ -127,6 +132,7 @@ StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonInherited
     , m_textCombine(o.m_textCombine)
     , m_wrapFlow(o.m_wrapFlow)
     , m_wrapThrough(o.m_wrapThrough)
+    , m_hasAspectRatio(o.m_hasAspectRatio)
 #if USE(ACCELERATED_COMPOSITING)
     , m_runningAcceleratedAnimation(o.m_runningAcceleratedAnimation)
 #endif
@@ -162,8 +168,11 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
         && m_appearance == o.m_appearance
         && m_borderFit == o.m_borderFit
         && m_textCombine == o.m_textCombine
+        && m_aspectRatioDenominator == o.m_aspectRatioDenominator
+        && m_aspectRatioNumerator == o.m_aspectRatioNumerator
         && m_counterIncrement == o.m_counterIncrement
         && m_counterReset == o.m_counterReset
+        && m_hasAspectRatio == o.m_hasAspectRatio
 #if USE(ACCELERATED_COMPOSITING)
         && !m_runningAcceleratedAnimation && !o.m_runningAcceleratedAnimation
 #endif

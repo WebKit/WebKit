@@ -29,9 +29,10 @@
 #include "CSSStyleSelector.h"
 
 #include "Attribute.h"
+#include "CachedImage.h"
 #include "ContentData.h"
+#include "Counter.h"
 #include "CounterContent.h"
-#include "CursorList.h"
 #include "CSSBorderImageValue.h"
 #include "CSSCursorImageValue.h"
 #include "CSSFontFaceRule.h"
@@ -53,8 +54,7 @@
 #include "CSSStyleSheet.h"
 #include "CSSTimingFunctionValue.h"
 #include "CSSValueList.h"
-#include "CachedImage.h"
-#include "Counter.h"
+#include "CursorList.h"
 #if ENABLE(CSS_FILTERS)
 #include "FilterOperation.h"
 #endif
@@ -3822,7 +3822,6 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSSPropertyTextUnderlineMode:
     case CSSPropertyTextUnderlineStyle:
     case CSSPropertyTextUnderlineWidth:
-    case CSSPropertyWebkitAspectRatio:
     case CSSPropertyWebkitFontSizeDelta:
     case CSSPropertyWebkitTextDecorationsInEffect:
     case CSSPropertyWebkitTextStroke:
@@ -3925,6 +3924,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSSPropertyBackgroundOrigin:
     case CSSPropertyWebkitBackgroundOrigin:
     case CSSPropertyBackgroundImage:
+    case CSSPropertyWebkitAspectRatio:
     case CSSPropertyBackgroundSize:
     case CSSPropertyWebkitBackgroundSize:
     case CSSPropertyWebkitMaskAttachment:

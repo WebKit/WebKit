@@ -1876,6 +1876,10 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             return getTimingFunctionValue(style->animations());
         case CSSPropertyWebkitAppearance:
             return primitiveValueCache->createValue(style->appearance());
+        case CSSPropertyWebkitAspectRatio:
+            if (!style->hasAspectRatio())
+                return primitiveValueCache->createIdentifierValue(CSSValueNone);
+            return primitiveValueCache->createValue(style->aspectRatio(), CSSPrimitiveValue::CSS_NUMBER);
         case CSSPropertyWebkitBackfaceVisibility:
             return primitiveValueCache->createIdentifierValue((style->backfaceVisibility() == BackfaceVisibilityHidden) ? CSSValueHidden : CSSValueVisible);
         case CSSPropertyWebkitBorderImage:
@@ -2070,7 +2074,6 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             break;
 
         /* Unimplemented CSS 3 properties (including CSS3 shorthand properties) */
-        case CSSPropertyWebkitAspectRatio:
         case CSSPropertyWebkitTextEmphasis:
         case CSSPropertyTextLineThrough:
         case CSSPropertyTextLineThroughColor:

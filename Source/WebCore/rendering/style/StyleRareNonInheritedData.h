@@ -89,6 +89,9 @@ public:
 
     float opacity; // Whether or not we're transparent.
 
+    float m_aspectRatioDenominator;
+    float m_aspectRatioNumerator;
+
     short m_counterIncrement;
     short m_counterReset;
 
@@ -161,6 +164,7 @@ public:
     unsigned m_wrapFlow: 3; // WrapFlow
     unsigned m_wrapThrough: 1; // WrapThrough
 
+    bool m_hasAspectRatio : 1; // Whether or not an aspect ratio has been specified.
 #if USE(ACCELERATED_COMPOSITING)
     bool m_runningAcceleratedAnimation : 1;
 #endif

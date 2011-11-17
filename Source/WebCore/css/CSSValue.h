@@ -59,6 +59,7 @@ public:
     bool isPrimitiveValue() const { return m_isPrimitive; }
     bool isValueList() const { return m_isList; }
 
+    bool isAspectRatioValue() const { return m_classType == AspectRatioClass; }
     bool isBorderImageValue() const { return m_classType == BorderImageClass; }
     bool isBorderImageSliceValue() const { return m_classType == BorderImageSliceClass; }
     bool isCursorImageValue() const { return m_classType == CursorImageClass; }
