@@ -86,24 +86,24 @@ void FilterEffectRenderer::build(const FilterOperations& operations, const Layou
         case FilterOperation::GRAYSCALE: {
             BasicColorMatrixFilterOperation* colorMatrixOperation = static_cast<BasicColorMatrixFilterOperation*>(filterOperation);
             Vector<float> inputParameters;
-            float oneMinusAmount = clampTo(1 - narrowPrecisionToFloat(colorMatrixOperation->amount()), 0.0, 1.0);
+            double oneMinusAmount = clampTo(1 - colorMatrixOperation->amount(), 0.0, 1.0);
 
             // See https://dvcs.w3.org/hg/FXTF/raw-file/tip/filters/index.html#grayscaleEquivalent
             // for information on parameters.
 
-            inputParameters.append(0.2126 + 0.7874 * oneMinusAmount);
-            inputParameters.append(0.7152 - 0.7152 * oneMinusAmount);
-            inputParameters.append(0.0722 - 0.0722 * oneMinusAmount);
+            inputParameters.append(narrowPrecisionToFloat(0.2126 + 0.7874 * oneMinusAmount));
+            inputParameters.append(narrowPrecisionToFloat(0.7152 - 0.7152 * oneMinusAmount));
+            inputParameters.append(narrowPrecisionToFloat(0.0722 - 0.0722 * oneMinusAmount));
             endMatrixRow(inputParameters);
 
-            inputParameters.append(0.2126 - 0.2126 * oneMinusAmount);
-            inputParameters.append(0.7152 + 0.2848 * oneMinusAmount);
-            inputParameters.append(0.0722 - 0.0722 * oneMinusAmount);
+            inputParameters.append(narrowPrecisionToFloat(0.2126 - 0.2126 * oneMinusAmount));
+            inputParameters.append(narrowPrecisionToFloat(0.7152 + 0.2848 * oneMinusAmount));
+            inputParameters.append(narrowPrecisionToFloat(0.0722 - 0.0722 * oneMinusAmount));
             endMatrixRow(inputParameters);
 
-            inputParameters.append(0.2126 - 0.2126 * oneMinusAmount);
-            inputParameters.append(0.7152 - 0.7152 * oneMinusAmount);
-            inputParameters.append(0.0722 + 0.9278 * oneMinusAmount);
+            inputParameters.append(narrowPrecisionToFloat(0.2126 - 0.2126 * oneMinusAmount));
+            inputParameters.append(narrowPrecisionToFloat(0.7152 - 0.7152 * oneMinusAmount));
+            inputParameters.append(narrowPrecisionToFloat(0.0722 + 0.9278 * oneMinusAmount));
             endMatrixRow(inputParameters);
 
             lastMatrixRow(inputParameters);
@@ -114,24 +114,24 @@ void FilterEffectRenderer::build(const FilterOperations& operations, const Layou
         case FilterOperation::SEPIA: {
             BasicColorMatrixFilterOperation* colorMatrixOperation = static_cast<BasicColorMatrixFilterOperation*>(filterOperation);
             Vector<float> inputParameters;
-            float oneMinusAmount = clampTo(1 - narrowPrecisionToFloat(colorMatrixOperation->amount()), 0.0, 1.0);
+            double oneMinusAmount = clampTo(1 - colorMatrixOperation->amount(), 0.0, 1.0);
 
             // See https://dvcs.w3.org/hg/FXTF/raw-file/tip/filters/index.html#sepiaEquivalent
             // for information on parameters.
 
-            inputParameters.append(0.393 + 0.607 * oneMinusAmount);
-            inputParameters.append(0.769 - 0.769 * oneMinusAmount);
-            inputParameters.append(0.189 - 0.189 * oneMinusAmount);
+            inputParameters.append(narrowPrecisionToFloat(0.393 + 0.607 * oneMinusAmount));
+            inputParameters.append(narrowPrecisionToFloat(0.769 - 0.769 * oneMinusAmount));
+            inputParameters.append(narrowPrecisionToFloat(0.189 - 0.189 * oneMinusAmount));
             endMatrixRow(inputParameters);
 
-            inputParameters.append(0.349 - 0.349 * oneMinusAmount);
-            inputParameters.append(0.686 + 0.314 * oneMinusAmount);
-            inputParameters.append(0.168 - 0.168 * oneMinusAmount);
+            inputParameters.append(narrowPrecisionToFloat(0.349 - 0.349 * oneMinusAmount));
+            inputParameters.append(narrowPrecisionToFloat(0.686 + 0.314 * oneMinusAmount));
+            inputParameters.append(narrowPrecisionToFloat(0.168 - 0.168 * oneMinusAmount));
             endMatrixRow(inputParameters);
 
-            inputParameters.append(0.272 - 0.272 * oneMinusAmount);
-            inputParameters.append(0.534 - 0.534 * oneMinusAmount);
-            inputParameters.append(0.131 + 0.869 * oneMinusAmount);
+            inputParameters.append(narrowPrecisionToFloat(0.272 - 0.272 * oneMinusAmount));
+            inputParameters.append(narrowPrecisionToFloat(0.534 - 0.534 * oneMinusAmount));
+            inputParameters.append(narrowPrecisionToFloat(0.131 + 0.869 * oneMinusAmount));
             endMatrixRow(inputParameters);
 
             lastMatrixRow(inputParameters);
@@ -159,7 +159,7 @@ void FilterEffectRenderer::build(const FilterOperations& operations, const Layou
             transferFunction.type = FECOMPONENTTRANSFER_TYPE_TABLE;
             Vector<float> transferParameters;
             transferParameters.append(narrowPrecisionToFloat(componentTransferOperation->amount()));
-            transferParameters.append(1.0 - narrowPrecisionToFloat(componentTransferOperation->amount()));
+            transferParameters.append(narrowPrecisionToFloat(1 - componentTransferOperation->amount()));
             transferFunction.tableValues = transferParameters;
 
             ComponentTransferFunction nullFunction;

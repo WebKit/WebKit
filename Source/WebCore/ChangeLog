@@ -1,3 +1,12 @@
+2011-11-17  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Not reviewed. Fix 32bit builds.
+
+        * platform/ClockGeneric.cpp:
+        (ClockGeneric::now): Use narrowPrecisionToFloat.
+        * rendering/FilterEffectRenderer.cpp:
+        (WebCore::FilterEffectRenderer::build): Use it correctly.
+
 2011-11-17  Dominic Mazzoni  <dmazzoni@google.com>
 
         Accessibility: Chromium requires an AX notification when an iframe loads.

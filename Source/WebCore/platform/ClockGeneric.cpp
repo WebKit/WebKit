@@ -81,6 +81,6 @@ void ClockGeneric::stop()
 
 float ClockGeneric::now() const
 {
-    return WTF::currentTime();
+    return narrowPrecisionToFloat(WTF::currentTime());
 }
 
