@@ -1,3 +1,15 @@
+2011-11-17  Patrick Gansterer  <paroga@webkit.org>
+
+        [CMake] Make CODE_GENERATOR_PREPROCESSOR more useable
+        https://bugs.webkit.org/show_bug.cgi?id=72516
+
+        Reviewed by Brent Fulgham.
+
+        On windows some code generators fail, if the path to the preprocessor contains spaces.
+        Use only the executable name to avoid this issue for now.
+
+        * Source/cmake/OptionsCommon.cmake:
+
 2011-11-17  Jochen Eisinger  <jochen@chromium.org>
 
         [chromium] add gyp-mac-tool to .gitignore
