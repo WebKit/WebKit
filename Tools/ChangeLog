@@ -1,5 +1,17 @@
 2011-11-16  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Add a list of contribution areas
+        https://bugs.webkit.org/show_bug.cgi?id=72566
+
+        Reviewed by Eric Seidel.
+
+        Added ContributionAreas class.
+
+        * Scripts/webkitpy/common/config/contributionareas.py: Added.
+        * Scripts/webkitpy/common/config/contributionareas_unittest.py: Added.
+
+2011-11-16  Ryosuke Niwa  <rniwa@webkit.org>
+
         Refactor ChangeLogTest.test_parse_reviewer_text
         https://bugs.webkit.org/show_bug.cgi?id=72572
 
