@@ -2500,8 +2500,3 @@ editing/selection/find-yensign-and-backslash-with-japanese-fonts.html
 editing/selection/find-yensign-and-backslash.html
 fast/text/find-kana.html
 fast/text/find-spaces.html
-
-# REGRESSION(r100535)
-# Implement CSS3 Images cross-fade() image function
-# https://bugs.webkit.org/show_bug.cgi?id=52162
-fast/css/getComputedStyle/computed-style-cross-fade.html
