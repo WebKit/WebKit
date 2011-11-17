@@ -1,3 +1,13 @@
+2011-11-17  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK] Disable ref tests
+        https://bugs.webkit.org/show_bug.cgi?id=72599
+
+        Reviewed by Xan Lopez.
+
+        * Scripts/webkitpy/layout_tests/port/gtk.py: Enforce disabled ref
+        tests to avoid massive flakiness.
+
 2011-11-17  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] Move WebKit2 C++ APIs to private API and build QML extension plugin on top of that

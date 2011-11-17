@@ -68,6 +68,11 @@ class GtkPort(WebKitPort):
 
     def __init__(self, host, **kwargs):
         WebKitPort.__init__(self, host, **kwargs)
+
+        # FIXME: Disable ref tests for now, they make the buildbots very flaky :(
+        # https://bugs.webkit.org/show_bug.cgi?id=72601
+        self.set_option_default("no_ref_tests", True)
+
         self._version = self.port_name
 
     def _port_flag_for_scripts(self):
