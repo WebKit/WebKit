@@ -1,3 +1,46 @@
+2011-11-16  Daniel Sievers  <sievers@chromium.org>
+
+        [Chromium] Avoid color mask operations for root layers
+        https://bugs.webkit.org/show_bug.cgi?id=72452
+
+        Instead of relying on the combination of clearing the surface and initializing
+        the alpha channel to 1.0 followed by disabling alpha in the color mask when
+        rendering the root layer tiles, add shaders to support writing out opaque layers
+        (alpha channel values written as 1.0).
+
+        Reviewed by James Robinson.
+
+        No functional change made that requires new tests.
+
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::drawLayersInternal):
+        (WebCore::LayerRendererChromium::initializeSharedObjects):
+        (WebCore::LayerRendererChromium::tilerProgramOpaque):
+        (WebCore::LayerRendererChromium::tilerProgramOpaqueAA):
+        (WebCore::LayerRendererChromium::tilerProgramSwizzleOpaque):
+        (WebCore::LayerRendererChromium::tilerProgramSwizzleOpaqueAA):
+        (WebCore::LayerRendererChromium::cleanupSharedObjects):
+        * platform/graphics/chromium/LayerRendererChromium.h:
+        * platform/graphics/chromium/ShaderChromium.cpp:
+        (WebCore::FragmentTexOpaqueBinding::FragmentTexOpaqueBinding):
+        (WebCore::FragmentTexOpaqueBinding::init):
+        (WebCore::FragmentShaderRGBATexOpaque::getShaderString):
+        (WebCore::FragmentShaderRGBATexSwizzleOpaque::getShaderString):
+        (WebCore::FragmentTexClampOpaqueAABinding::FragmentTexClampOpaqueAABinding):
+        (WebCore::FragmentTexClampOpaqueAABinding::init):
+        (WebCore::FragmentShaderRGBATexClampOpaqueAA::getShaderString):
+        (WebCore::FragmentShaderRGBATexClampSwizzleOpaqueAA::getShaderString):
+        * platform/graphics/chromium/ShaderChromium.h:
+        (WebCore::FragmentTexOpaqueBinding::alphaLocation):
+        (WebCore::FragmentTexOpaqueBinding::samplerLocation):
+        (WebCore::FragmentTexClampOpaqueAABinding::alphaLocation):
+        (WebCore::FragmentTexClampOpaqueAABinding::samplerLocation):
+        (WebCore::FragmentTexClampOpaqueAABinding::fragmentTexTransformLocation):
+        (WebCore::FragmentTexClampOpaqueAABinding::edgeLocation):
+        * platform/graphics/chromium/cc/CCTiledLayerImpl.cpp:
+        (WebCore::CCTiledLayerImpl::draw):
+        * platform/graphics/chromium/cc/CCTiledLayerImpl.h:
+
 2011-11-16  Tim Horton  <timothy_horton@apple.com>
 
         Implement CSS3 Images cross-fade() image function

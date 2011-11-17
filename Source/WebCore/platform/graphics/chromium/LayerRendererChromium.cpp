@@ -664,6 +664,7 @@ bool LayerRendererChromium::initializeSharedObjects()
     m_sharedGeometry = adoptPtr(new GeometryBinding(m_context.get()));
     m_renderSurfaceProgram = adoptPtr(new CCRenderSurface::Program(m_context.get()));
     m_tilerProgram = adoptPtr(new CCTiledLayerImpl::Program(m_context.get()));
+    m_tilerProgramOpaque = adoptPtr(new CCTiledLayerImpl::ProgramOpaque(m_context.get()));
 
     GLC(m_context.get(), m_context->flush());
 
@@ -748,6 +749,16 @@ const CCTiledLayerImpl::Program* LayerRendererChromium::tilerProgram()
     return m_tilerProgram.get();
 }
 
+const CCTiledLayerImpl::ProgramOpaque* LayerRendererChromium::tilerProgramOpaque()
+{
+    ASSERT(m_tilerProgramOpaque);
+    if (!m_tilerProgramOpaque->initialized()) {
+        TRACE_EVENT("LayerRendererChromium::tilerProgramOpaque::initialize", this, 0);
+        m_tilerProgramOpaque->initialize(m_context.get());
+    }
+    return m_tilerProgramOpaque.get();
+}
+
 const CCTiledLayerImpl::ProgramAA* LayerRendererChromium::tilerProgramAA()
 {
     if (!m_tilerProgramAA)
@@ -768,6 +779,17 @@ const CCTiledLayerImpl::ProgramSwizzle* LayerRendererChromium::tilerProgramSwizz
         m_tilerProgramSwizzle->initialize(m_context.get());
     }
     return m_tilerProgramSwizzle.get();
+}
+
+const CCTiledLayerImpl::ProgramSwizzleOpaque* LayerRendererChromium::tilerProgramSwizzleOpaque()
+{
+    if (!m_tilerProgramSwizzleOpaque)
+        m_tilerProgramSwizzleOpaque = adoptPtr(new CCTiledLayerImpl::ProgramSwizzleOpaque(m_context.get()));
+    if (!m_tilerProgramSwizzleOpaque->initialized()) {
+        TRACE_EVENT("LayerRendererChromium::tilerProgramSwizzleOpaque::initialize", this, 0);
+        m_tilerProgramSwizzleOpaque->initialize(m_context.get());
+    }
+    return m_tilerProgramSwizzleOpaque.get();
 }
 
 const CCTiledLayerImpl::ProgramSwizzleAA* LayerRendererChromium::tilerProgramSwizzleAA()
@@ -849,10 +871,14 @@ void LayerRendererChromium::cleanupSharedObjects()
         m_headsUpDisplayProgram->cleanup(m_context.get());
     if (m_tilerProgram)
         m_tilerProgram->cleanup(m_context.get());
+    if (m_tilerProgramOpaque)
+        m_tilerProgramOpaque->cleanup(m_context.get());
     if (m_tilerProgramAA)
         m_tilerProgramAA->cleanup(m_context.get());
     if (m_tilerProgramSwizzle)
         m_tilerProgramSwizzle->cleanup(m_context.get());
+    if (m_tilerProgramSwizzleOpaque)
+        m_tilerProgramSwizzleOpaque->cleanup(m_context.get());
     if (m_tilerProgramSwizzleAA)
         m_tilerProgramSwizzleAA->cleanup(m_context.get());
     if (m_canvasLayerProgram)
@@ -877,8 +903,10 @@ void LayerRendererChromium::cleanupSharedObjects()
     m_borderProgram.clear();
     m_headsUpDisplayProgram.clear();
     m_tilerProgram.clear();
+    m_tilerProgramOpaque.clear();
     m_tilerProgramAA.clear();
     m_tilerProgramSwizzle.clear();
+    m_tilerProgramSwizzleOpaque.clear();
     m_tilerProgramSwizzleAA.clear();
     m_canvasLayerProgram.clear();
     m_pluginLayerProgram.clear();

@@ -139,10 +139,8 @@ void CCTiledLayerImpl::draw(LayerRendererChromium* layerRenderer)
     }
 
     GraphicsContext3D* context = layerRenderer->context();
-    if (isNonCompositedContent()) {
-        context->colorMask(true, true, true, false);
+    if (isNonCompositedContent())
         GLC(context, context->disable(GraphicsContext3D::BLEND));
-    }
 
     switch (m_sampledTexelFormat) {
     case LayerTextureUpdater::SampledTexelFormatRGBA:
@@ -150,8 +148,13 @@ void CCTiledLayerImpl::draw(LayerRendererChromium* layerRenderer)
             const ProgramAA* program = layerRenderer->tilerProgramAA();
             drawTiles(layerRenderer, layerRect, layerTransform, deviceMatrix, deviceRect, layerQuad, drawOpacity(), program, program->fragmentShader().fragmentTexTransformLocation(), program->fragmentShader().edgeLocation());
         } else {
-            const Program* program = layerRenderer->tilerProgram();
-            drawTiles(layerRenderer, layerRect, layerTransform, deviceMatrix, deviceRect, layerQuad, drawOpacity(), program, -1, -1);
+            if (isNonCompositedContent()) {
+                const ProgramOpaque* program = layerRenderer->tilerProgramOpaque();
+                drawTiles(layerRenderer, layerRect, layerTransform, deviceMatrix, deviceRect, layerQuad, drawOpacity(), program, -1, -1);
+            } else {
+                const Program* program = layerRenderer->tilerProgram();
+                drawTiles(layerRenderer, layerRect, layerTransform, deviceMatrix, deviceRect, layerQuad, drawOpacity(), program, -1, -1);
+            }
         }
         break;
     case LayerTextureUpdater::SampledTexelFormatBGRA:
@@ -159,18 +162,21 @@ void CCTiledLayerImpl::draw(LayerRendererChromium* layerRenderer)
             const ProgramSwizzleAA* program = layerRenderer->tilerProgramSwizzleAA();
             drawTiles(layerRenderer, layerRect, layerTransform, deviceMatrix, deviceRect, layerQuad, drawOpacity(), program, program->fragmentShader().fragmentTexTransformLocation(), program->fragmentShader().edgeLocation());
         } else {
-            const ProgramSwizzle* program = layerRenderer->tilerProgramSwizzle();
-            drawTiles(layerRenderer, layerRect, layerTransform, deviceMatrix, deviceRect, layerQuad, drawOpacity(), program, -1, -1);
+            if (isNonCompositedContent()) {
+                const ProgramSwizzleOpaque* program = layerRenderer->tilerProgramSwizzleOpaque();
+                drawTiles(layerRenderer, layerRect, layerTransform, deviceMatrix, deviceRect, layerQuad, drawOpacity(), program, -1, -1);
+            } else {
+                const ProgramSwizzle* program = layerRenderer->tilerProgramSwizzle();
+                drawTiles(layerRenderer, layerRect, layerTransform, deviceMatrix, deviceRect, layerQuad, drawOpacity(), program, -1, -1);
+            }
         }
         break;
     default:
         ASSERT_NOT_REACHED();
     }
 
-    if (isNonCompositedContent()) {
-        context->colorMask(true, true, true, true);
+    if (isNonCompositedContent())
         GLC(context, context->enable(GraphicsContext3D::BLEND));
-    }
 }
 
 void CCTiledLayerImpl::setTilingData(const CCLayerTilingData& tiler)

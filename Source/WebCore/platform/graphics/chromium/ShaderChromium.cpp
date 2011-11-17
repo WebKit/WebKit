@@ -269,6 +269,18 @@ void FragmentTexAlphaBinding::init(GraphicsContext3D* context, unsigned program)
     ASSERT(m_samplerLocation != -1 && m_alphaLocation != -1);
 }
 
+FragmentTexOpaqueBinding::FragmentTexOpaqueBinding()
+    : m_samplerLocation(-1)
+{
+}
+
+void FragmentTexOpaqueBinding::init(GraphicsContext3D* context, unsigned program)
+{
+    m_samplerLocation = context->getUniformLocation(program, "s_texture");
+
+    ASSERT(m_samplerLocation != -1);
+}
+
 String FragmentShaderRGBATexFlipAlpha::getShaderString() const
 {
     return SHADER(
@@ -299,6 +311,20 @@ String FragmentShaderRGBATexAlpha::getShaderString() const
     );
 }
 
+String FragmentShaderRGBATexOpaque::getShaderString() const
+{
+    return SHADER(
+        precision mediump float;
+        varying vec2 v_texCoord;
+        uniform sampler2D s_texture;
+        void main()
+        {
+            vec4 texColor = texture2D(s_texture, v_texCoord);
+            gl_FragColor = vec4(texColor.rgb, 1.0);
+        }
+    );
+}
+
 String FragmentShaderRGBATexSwizzleAlpha::getShaderString() const
 {
     return SHADER(
@@ -310,6 +336,20 @@ String FragmentShaderRGBATexSwizzleAlpha::getShaderString() const
         {
             vec4 texColor = texture2D(s_texture, v_texCoord);
             gl_FragColor = vec4(texColor.z, texColor.y, texColor.x, texColor.w) * alpha;
+        }
+    );
+}
+
+String FragmentShaderRGBATexSwizzleOpaque::getShaderString() const
+{
+    return SHADER(
+        precision mediump float;
+        varying vec2 v_texCoord;
+        uniform sampler2D s_texture;
+        void main()
+        {
+            vec4 texColor = texture2D(s_texture, v_texCoord);
+            gl_FragColor = vec4(texColor.z, texColor.y, texColor.x, 1.0);
         }
     );
 }

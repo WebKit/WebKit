@@ -120,8 +120,10 @@ public:
     const CCRenderSurface::MaskProgram* renderSurfaceMaskProgram();
     const CCRenderSurface::MaskProgramAA* renderSurfaceMaskProgramAA();
     const CCTiledLayerImpl::Program* tilerProgram();
+    const CCTiledLayerImpl::ProgramOpaque* tilerProgramOpaque();
     const CCTiledLayerImpl::ProgramAA* tilerProgramAA();
     const CCTiledLayerImpl::ProgramSwizzle* tilerProgramSwizzle();
+    const CCTiledLayerImpl::ProgramSwizzleOpaque* tilerProgramSwizzleOpaque();
     const CCTiledLayerImpl::ProgramSwizzleAA* tilerProgramSwizzleAA();
     const CCCanvasLayerImpl::Program* canvasLayerProgram();
     const CCPluginLayerImpl::Program* pluginLayerProgram();
@@ -205,7 +207,9 @@ private:
     OwnPtr<LayerChromium::BorderProgram> m_borderProgram;
     OwnPtr<CCHeadsUpDisplay::Program> m_headsUpDisplayProgram;
     OwnPtr<CCTiledLayerImpl::Program> m_tilerProgram;
+    OwnPtr<CCTiledLayerImpl::ProgramOpaque> m_tilerProgramOpaque;
     OwnPtr<CCTiledLayerImpl::ProgramSwizzle> m_tilerProgramSwizzle;
+    OwnPtr<CCTiledLayerImpl::ProgramSwizzleOpaque> m_tilerProgramSwizzleOpaque;
     OwnPtr<CCTiledLayerImpl::ProgramAA> m_tilerProgramAA;
     OwnPtr<CCTiledLayerImpl::ProgramSwizzleAA> m_tilerProgramSwizzleAA;
     OwnPtr<CCCanvasLayerImpl::Program> m_canvasLayerProgram;
