@@ -1599,3 +1599,7 @@ editing/spelling/spelling-unified-emulation.html
 # fast/dom/Window/window-postmessage-arrays.html fails on JSC platforms
 # https://bugs.webkit.org/show_bug.cgi?id=72363
 fast/dom/Window/window-postmessage-arrays.html
+
+# fast/forms/checkbox-appearance-change-by-checked.html is failing after enabling reftests
+# https://bugs.webkit.org/show_bug.cgi?id=72569
+fast/forms/checkbox-appearance-change-by-checked.html

@@ -484,4 +484,6 @@ fast/text/international/locale-sensitive-fonts.html
 # https://bugs.webkit.org/show_bug.cgi?id=72435
 fast/dom/Window/window-postmessage-arrays.html
 
-
+# [Mac] fast/forms/file/file-input-reset.html failing after enabling reftests
+# https://bugs.webkit.org/show_bug.cgi?id=72571
+fast/forms/file/file-input-reset.html
