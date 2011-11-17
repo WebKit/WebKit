@@ -40,6 +40,8 @@ WebInspector.DebuggerModel = function()
      */
     this._scripts = {};
 
+    this._capabilitiesObject = {};
+
     InspectorBackend.registerDebuggerDispatcher(new WebInspector.DebuggerDispatcher(this));
 }
 
@@ -85,12 +87,30 @@ WebInspector.DebuggerModel.BreakReason = {
 WebInspector.DebuggerModel.prototype = {
     enableDebugger: function()
     {
+        /**
+         * @param {Protocol.Error} error
+         * @param {Array.<string>} capabilities
+         */
+        function callback(error, capabilities)
+        {
+            for (var i = 0; i < capabilities.length; ++i)
+                this._capabilitiesObject[capabilities[i]] = true;
+        }
+        DebuggerAgent.getCapabilities(callback.bind(this));
         DebuggerAgent.enable();
     },
 
     disableDebugger: function()
     {
         DebuggerAgent.disable();
+    },
+
+    /**
+     * @return {boolean}
+     */
+    canSetScriptSource: function()
+    {
+        return !!this._capabilitiesObject[DebuggerAgent.capabilitySetScriptSource];
     },
 
     _debuggerWasEnabled: function()

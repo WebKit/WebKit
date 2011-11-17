@@ -1,3 +1,16 @@
+2011-11-15  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: introduce Debugger domain capabilities concept.
+        https://bugs.webkit.org/show_bug.cgi?id=72393
+
+        Many of the Preferences that we have in Settings.js and override in DevTools.js
+        are really not preferences, but capabilities. Protocol clients should have a way
+        of figuring out whether some capability is present before using it.
+
+        Reviewed by Yury Semikhatsky.
+
+        * src/js/DevTools.js:
+
 2011-11-11  Adrienne Walker  <enne@google.com>
 
         [chromium] Expose mock scrollbars to window.internals

@@ -1,3 +1,33 @@
+2011-11-15  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: introduce Debugger domain capabilities concept.
+        https://bugs.webkit.org/show_bug.cgi?id=72393
+
+        Many of the Preferences that we have in Settings.js and override in DevTools.js
+        are really not preferences, but capabilities. Protocol clients should have a way
+        of figuring out whether some capability is present before using it.
+
+        Reviewed by Yury Semikhatsky.
+
+        * bindings/js/ScriptDebugServer.cpp:
+        (WebCore::ScriptDebugServer::canSetScriptSource):
+        * bindings/js/ScriptDebugServer.h:
+        * bindings/v8/ScriptDebugServer.cpp:
+        (WebCore::ScriptDebugServer::canSetScriptSource):
+        * bindings/v8/ScriptDebugServer.h:
+        * inspector/CodeGeneratorInspector.py:
+        * inspector/Inspector.json:
+        * inspector/InspectorDebuggerAgent.cpp:
+        (WebCore::InspectorDebuggerAgent::getCapabilities):
+        * inspector/InspectorDebuggerAgent.h:
+        * inspector/front-end/DebuggerModel.js:
+        (WebInspector.DebuggerModel):
+        (WebInspector.DebuggerModel.prototype.enableDebugger):
+        (WebInspector.DebuggerModel.prototype.canSetScriptSource):
+        * inspector/front-end/DebuggerPresentationModel.js:
+        (WebInspector.DebuggerPresentationModel.prototype.canEditScriptSource):
+        * inspector/front-end/Settings.js:
+
 2011-11-17  Mihnea Ovidenie  <mihnea@adobe.com>
 
         CSS exclusions: parse the wrap-flow and wrap-through properties
