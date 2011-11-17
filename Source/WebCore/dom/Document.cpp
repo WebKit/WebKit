@@ -2252,13 +2252,27 @@ void Document::implicitClose()
     }
 
 #if PLATFORM(MAC) || PLATFORM(CHROMIUM)
-    if (f && renderObject && this == topDocument() && AXObjectCache::accessibilityEnabled()) {
+    if (f && renderObject && AXObjectCache::accessibilityEnabled()) {
         // The AX cache may have been cleared at this point, but we need to make sure it contains an
         // AX object to send the notification to. getOrCreate will make sure that an valid AX object
         // exists in the cache (we ignore the return value because we don't need it here). This is 
         // only safe to call when a layout is not in progress, so it can not be used in postNotification.    
         axObjectCache()->getOrCreate(renderObject);
-        axObjectCache()->postNotification(renderObject, AXObjectCache::AXLoadComplete, true);
+        if (this == topDocument())
+            axObjectCache()->postNotification(renderObject, AXObjectCache::AXLoadComplete, true);
+        else {
+            // AXLoadComplete can only be posted on the top document, so if it's a document
+            // in an iframe that just finished loading, post a notification on the iframe
+            // element instead.
+            ScrollView* scrollView = frame()->view();
+            if (scrollView && scrollView->isFrameView()) {
+                HTMLFrameOwnerElement* owner = static_cast<FrameView*>(scrollView)->frame()->ownerElement();
+                if (owner && owner->renderer()) {
+                    AccessibilityObject* axIFrame = axObjectCache()->getOrCreate(owner->renderer());
+                    axObjectCache()->postNotification(axIFrame, axIFrame->document(), AXObjectCache::AXLayoutComplete, true);
+                }
+            }
+        }
     }
 #endif
 

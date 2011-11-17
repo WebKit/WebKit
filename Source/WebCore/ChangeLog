@@ -1,3 +1,19 @@
+2011-11-17  Dominic Mazzoni  <dmazzoni@google.com>
+
+        Accessibility: Chromium requires an AX notification when an iframe loads.
+        https://bugs.webkit.org/show_bug.cgi?id=72239
+
+        When a document finishes loading, we were sending an AXLoadComplete if it
+        was the top document. Now, if it's a document in an iframe, send an
+        AXLayoutComplete on the iframe.
+
+        Reviewed by Chris Fleizach.
+
+        Test: accessibility/loading-iframe-sends-notification.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::implicitClose):
+
 2011-11-16  Mark Rowe  <mrowe@apple.com>
 
         <http://webkit.org/b/72574> Remove unnecessary use of CarbonCore APIs from Audio code
