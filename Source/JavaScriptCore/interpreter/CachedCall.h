@@ -35,13 +35,13 @@ namespace JSC {
     class CachedCall {
         WTF_MAKE_NONCOPYABLE(CachedCall); WTF_MAKE_FAST_ALLOCATED;
     public:
-        CachedCall(CallFrame* callFrame, JSFunction* function, int argCount)
+        CachedCall(CallFrame* callFrame, JSFunction* function, int argumentCount)
             : m_valid(false)
             , m_interpreter(callFrame->interpreter())
             , m_globalObjectScope(callFrame->globalData(), function->scope()->globalObject.get())
         {
             ASSERT(!function->isHostFunction());
-            m_closure = m_interpreter->prepareForRepeatCall(function->jsExecutable(), callFrame, function, argCount, function->scope());
+            m_closure = m_interpreter->prepareForRepeatCall(function->jsExecutable(), callFrame, function, argumentCount + 1, function->scope());
             m_valid = !callFrame->hadException();
         }
         
@@ -50,8 +50,8 @@ namespace JSC {
             ASSERT(m_valid);
             return m_interpreter->execute(m_closure);
         }
-        void setThis(JSValue v) { m_closure.setArgument(0, v); }
-        void setArgument(int n, JSValue v) { m_closure.setArgument(n + 1, v); }
+        void setThis(JSValue v) { m_closure.setThis(v); }
+        void setArgument(int n, JSValue v) { m_closure.setArgument(n, v); }
 
         CallFrame* newCallFrame(ExecState* exec)
         {

@@ -141,7 +141,7 @@ namespace JSC {
     private:
         enum ExecutionFlag { Normal, InitializeAndReturn };
 
-        CallFrameClosure prepareForRepeatCall(FunctionExecutable*, CallFrame*, JSFunction*, int argCount, ScopeChainNode*);
+        CallFrameClosure prepareForRepeatCall(FunctionExecutable*, CallFrame*, JSFunction*, int argumentCountIncludingThis, ScopeChainNode*);
         void endRepeatCall(CallFrameClosure&);
         JSValue execute(CallFrameClosure&);
 

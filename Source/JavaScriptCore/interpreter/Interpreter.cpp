@@ -1217,7 +1217,7 @@ JSObject* Interpreter::executeConstruct(CallFrame* callFrame, JSObject* construc
     return checkedReturn(asObject(result));
 }
 
-CallFrameClosure Interpreter::prepareForRepeatCall(FunctionExecutable* FunctionExecutable, CallFrame* callFrame, JSFunction* function, int argCount, ScopeChainNode* scopeChain)
+CallFrameClosure Interpreter::prepareForRepeatCall(FunctionExecutable* FunctionExecutable, CallFrame* callFrame, JSFunction* function, int argumentCountIncludingThis, ScopeChainNode* scopeChain)
 {
     ASSERT(!scopeChain->globalData->exception);
     
@@ -1229,9 +1229,7 @@ CallFrameClosure Interpreter::prepareForRepeatCall(FunctionExecutable* FunctionE
     }
     
     Register* oldEnd = m_registerFile.end();
-    int argc = 1 + argCount; // implicit "this" parameter
-    
-    if (!m_registerFile.grow(oldEnd + argc)) {
+    if (!m_registerFile.grow(oldEnd + argumentCountIncludingThis)) {
         throwStackOverflowError(callFrame);
         return CallFrameClosure();
     }
@@ -1239,7 +1237,7 @@ CallFrameClosure Interpreter::prepareForRepeatCall(FunctionExecutable* FunctionE
     CallFrame* newCallFrame = CallFrame::create(oldEnd);
     // We initialise |this| unnecessarily here for the sake of code clarity
     size_t dst = 0;
-    for (int i = 0; i < argc; ++i)
+    for (int i = 0; i < argumentCountIncludingThis; ++i)
         newCallFrame->uncheckedR(dst++) = jsUndefined();
     
     JSObject* error = FunctionExecutable->compileForCall(callFrame, scopeChain);
@@ -1250,15 +1248,15 @@ CallFrameClosure Interpreter::prepareForRepeatCall(FunctionExecutable* FunctionE
     }
     CodeBlock* codeBlock = &FunctionExecutable->generatedBytecodeForCall();
 
-    newCallFrame = slideRegisterWindowForCall(codeBlock, &m_registerFile, newCallFrame, argc + RegisterFile::CallFrameHeaderSize, argc);
+    newCallFrame = slideRegisterWindowForCall(codeBlock, &m_registerFile, newCallFrame, argumentCountIncludingThis + RegisterFile::CallFrameHeaderSize, argumentCountIncludingThis);
     if (UNLIKELY(!newCallFrame)) {
         throwStackOverflowError(callFrame);
         m_registerFile.shrink(oldEnd);
         return CallFrameClosure();
     }
-    newCallFrame->init(codeBlock, 0, scopeChain, callFrame->addHostCallFrameFlag(), argc, function);  
+    newCallFrame->init(codeBlock, 0, scopeChain, callFrame->addHostCallFrameFlag(), argumentCountIncludingThis, function);  
     scopeChain->globalData->topCallFrame = newCallFrame;
-    CallFrameClosure result = { callFrame, newCallFrame, function, FunctionExecutable, scopeChain->globalData, oldEnd, scopeChain, codeBlock->m_numParameters, argc };
+    CallFrameClosure result = { callFrame, newCallFrame, function, FunctionExecutable, scopeChain->globalData, oldEnd, scopeChain, codeBlock->m_numParameters, argumentCountIncludingThis };
     return result;
 }
 

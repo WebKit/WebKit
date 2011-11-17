@@ -36,23 +36,30 @@ struct CallFrameClosure {
     JSGlobalData* globalData;
     Register* oldEnd;
     ScopeChainNode* scopeChain;
-    int expectedParams;
-    int providedParams;
+    int parameterCountIncludingThis;
+    int argumentCountIncludingThis;
     
-    void setArgument(int arg, JSValue value)
+    void setThis(JSValue value)
     {
-        if (arg < expectedParams)
-            newCallFrame[arg - RegisterFile::CallFrameHeaderSize - expectedParams] = value;
+        newCallFrame[-RegisterFile::CallFrameHeaderSize - parameterCountIncludingThis] = value;
+        if (argumentCountIncludingThis > parameterCountIncludingThis)
+            newCallFrame[-RegisterFile::CallFrameHeaderSize - parameterCountIncludingThis - argumentCountIncludingThis] = value;
+    }
 
-        if (providedParams > expectedParams)
-            newCallFrame[arg - RegisterFile::CallFrameHeaderSize - expectedParams - providedParams] = value;
+    void setArgument(int argument, JSValue value)
+    {
+        if (argument + 1 < parameterCountIncludingThis)
+            newCallFrame[argument + 1 - RegisterFile::CallFrameHeaderSize - parameterCountIncludingThis] = value;
+
+        if (argumentCountIncludingThis > parameterCountIncludingThis)
+            newCallFrame[argument + 1 - RegisterFile::CallFrameHeaderSize - parameterCountIncludingThis - argumentCountIncludingThis] = value;
     }
 
     void resetCallFrame()
     {
         newCallFrame->setScopeChain(scopeChain);
-        for (int i = providedParams; i < expectedParams; ++i)
-            newCallFrame[i - RegisterFile::CallFrameHeaderSize - expectedParams] = jsUndefined();
+        for (int i = argumentCountIncludingThis; i < parameterCountIncludingThis; ++i)
+            newCallFrame[i - RegisterFile::CallFrameHeaderSize - parameterCountIncludingThis] = jsUndefined();
     }
 };
 

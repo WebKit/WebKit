@@ -1,3 +1,32 @@
+2011-11-16  Geoffrey Garen  <ggaren@apple.com>
+
+        Some CachedCall cleanup, in preparation for reversing argument order.
+
+        Reviewed by Gavin Barraclough.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::stronglyVisitWeakReferences): A build fix for the interpreter,
+        so I can test it.
+
+        * interpreter/CachedCall.h:
+        (JSC::CachedCall::CachedCall): Renamed argCount to argumentCount because
+        we are not that desperate for character saving.
+
+        (JSC::CachedCall::setThis):
+        (JSC::CachedCall::setArgument): Adopted new 0-based argument indexing for
+        CallFrameClosure.
+
+        * interpreter/CallFrameClosure.h:
+        (JSC::CallFrameClosure::setThis):
+        (JSC::CallFrameClosure::setArgument):
+        (JSC::CallFrameClosure::resetCallFrame): Provide 0-based argument indexing,
+        with an explicit setter for 'this', since that's how most clients think.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::prepareForRepeatCall):
+        * interpreter/Interpreter.h: Change argCount to argumentCountIncludingThis,
+        for clarity.
+
 2011-11-16  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         De-virtualize ScriptExecutable::unlinkCalls
