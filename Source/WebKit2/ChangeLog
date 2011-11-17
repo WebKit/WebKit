@@ -1,3 +1,30 @@
+2011-11-17  Nayan Kumar K  <nayankk@motorola.com>
+
+        [WebKit2][gtk] Add few more properties to WebKitSettings
+        https://bugs.webkit.org/show_bug.cgi?id=72468
+
+        Reviewed by Martin Robinson.
+
+        Add 'enable-private-browsing', 'enable-developer-extras, 'enable-resizable-text-areas'
+        and 'enable-tabs-to-links' properties to WebKitSettings.
+
+        * UIProcess/API/gtk/WebKitSettings.cpp:
+        (webKitSettingsSetProperty): Add new set functions.
+        (webKitSettingsGetProperty): Add new get functions.
+        (webkit_settings_class_init): Add new properties.
+        (webkit_settings_get_enable_private_browsing): Get 'enable-private-browsing' property.
+        (webkit_settings_set_enable_private_browsing): Set 'enable-private-browsing' property.
+        (webkit_settings_get_enable_developer_extras): Get 'enable-developer-extras' property.
+        (webkit_settings_set_enable_developer_extras): Set 'enable-developer-extras' property.
+        (webkit_settings_get_enable_resizable_text_areas): Get 'enable-resizable-text-areas' property.
+        (webkit_settings_set_enable_resizable_text_areas): Set 'enable-resizable-text-areas' property.
+        (webkit_settings_get_enable_tabs_to_links): Get 'enable-tabs-to-links' property.
+        (webkit_settings_set_enable_tabs_to_links): Set 'enable-tabs-to-links' property.
+        * UIProcess/API/gtk/WebKitSettings.h: New public APIs added.
+        * UIProcess/API/gtk/docs/webkit2gtk-sections.txt: New APIs added.
+        * UIProcess/API/gtk/tests/TestWebKitSettings.cpp:
+        (testWebKitSettings): Add new tests.
+
 2011-11-17  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix WebKit2 GTK+ build after r100569.

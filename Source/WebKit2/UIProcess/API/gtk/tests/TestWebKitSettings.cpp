@@ -157,6 +157,22 @@ static void testWebKitSettings(Test*, gconstpointer)
     webkit_settings_set_default_charset(settings, "utf8");
     g_assert_cmpstr(webkit_settings_get_default_charset(settings), ==, "utf8");
 
+    g_assert(!webkit_settings_get_enable_private_browsing(settings));
+    webkit_settings_set_enable_private_browsing(settings, TRUE);
+    g_assert(webkit_settings_get_enable_private_browsing(settings));
+
+    g_assert(!webkit_settings_get_enable_developer_extras(settings));
+    webkit_settings_set_enable_developer_extras(settings, TRUE);
+    g_assert(webkit_settings_get_enable_developer_extras(settings));
+
+    g_assert(webkit_settings_get_enable_resizable_text_areas(settings));
+    webkit_settings_set_enable_resizable_text_areas(settings, FALSE);
+    g_assert(!webkit_settings_get_enable_resizable_text_areas(settings));
+
+    g_assert(!webkit_settings_get_enable_tabs_to_links(settings));
+    webkit_settings_set_enable_tabs_to_links(settings, TRUE);
+    g_assert(webkit_settings_get_enable_tabs_to_links(settings));
+
     // Caret browsing is disabled by default.
     g_assert(!webkit_settings_get_enable_caret_browsing(settings));
     webkit_settings_set_enable_caret_browsing(settings, TRUE);

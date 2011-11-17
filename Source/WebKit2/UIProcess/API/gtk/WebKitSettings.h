@@ -238,6 +238,34 @@ webkit_settings_set_default_charset                            (WebKitSettings* 
                                                                 const gchar* default_charset);
 
 WEBKIT_API gboolean
+webkit_settings_get_enable_private_browsing                    (WebKitSettings* settings);
+
+WEBKIT_API void
+webkit_settings_set_enable_private_browsing                    (WebKitSettings* settings,
+                                                                gboolean        enabled);
+
+WEBKIT_API gboolean
+webkit_settings_get_enable_developer_extras                    (WebKitSettings* settings);
+
+WEBKIT_API void
+webkit_settings_set_enable_developer_extras                    (WebKitSettings* settings,
+                                                                gboolean        enabled);
+
+WEBKIT_API gboolean
+webkit_settings_get_enable_resizable_text_areas                (WebKitSettings* settings);
+
+WEBKIT_API void
+webkit_settings_set_enable_resizable_text_areas                (WebKitSettings* settings,
+                                                                gboolean        enabled);
+
+WEBKIT_API gboolean
+webkit_settings_get_enable_tabs_to_links                       (WebKitSettings* settings);                              
+
+WEBKIT_API void
+webkit_settings_set_enable_tabs_to_links                       (WebKitSettings* settings,
+                                                                gboolean        enabled);
+
+WEBKIT_API gboolean
 webkit_settings_get_enable_caret_browsing                      (WebKitSettings* settings);
 
 WEBKIT_API void

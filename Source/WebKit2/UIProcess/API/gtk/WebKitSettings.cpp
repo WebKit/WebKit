@@ -97,6 +97,10 @@ enum {
     PROP_DEFAULT_MONOSPACE_FONT_SIZE,
     PROP_MINIMUM_FONT_SIZE,
     PROP_DEFAULT_CHARSET,
+    PROP_ENABLE_PRIVATE_BROWSING,
+    PROP_ENABLE_DEVELOPER_EXTRAS,
+    PROP_ENABLE_RESIZABLE_TEXT_AREAS,
+    PROP_ENABLE_TABS_TO_LINKS,
     PROP_ENABLE_CARET_BROWSING,
 };
 
@@ -173,6 +177,18 @@ static void webKitSettingsSetProperty(GObject* object, guint propId, const GValu
         break;
     case PROP_DEFAULT_CHARSET:
         webkit_settings_set_default_charset(settings, g_value_get_string(value));
+        break;
+    case PROP_ENABLE_PRIVATE_BROWSING:
+        webkit_settings_set_enable_private_browsing(settings, g_value_get_boolean(value));
+        break;
+    case PROP_ENABLE_DEVELOPER_EXTRAS:
+        webkit_settings_set_enable_developer_extras(settings, g_value_get_boolean(value));
+        break;
+    case PROP_ENABLE_RESIZABLE_TEXT_AREAS:
+        webkit_settings_set_enable_resizable_text_areas(settings, g_value_get_boolean(value));
+        break;
+    case PROP_ENABLE_TABS_TO_LINKS:
+        webkit_settings_set_enable_tabs_to_links(settings, g_value_get_boolean(value));
         break;
     case PROP_ENABLE_CARET_BROWSING:
         webkit_settings_set_enable_caret_browsing(settings, g_value_get_boolean(value));
@@ -256,6 +272,18 @@ static void webKitSettingsGetProperty(GObject* object, guint propId, GValue* val
         break;
     case PROP_DEFAULT_CHARSET:
         g_value_set_string(value, webkit_settings_get_default_charset(settings));
+        break;
+    case PROP_ENABLE_PRIVATE_BROWSING:
+        g_value_set_boolean(value, webkit_settings_get_enable_private_browsing(settings));
+        break;
+    case PROP_ENABLE_DEVELOPER_EXTRAS:
+        g_value_set_boolean(value, webkit_settings_get_enable_developer_extras(settings));
+        break;
+    case PROP_ENABLE_RESIZABLE_TEXT_AREAS:
+        g_value_set_boolean(value, webkit_settings_get_enable_resizable_text_areas(settings));
+        break;
+    case PROP_ENABLE_TABS_TO_LINKS:
+        g_value_set_boolean(value, webkit_settings_get_enable_tabs_to_links(settings));
         break;
     case PROP_ENABLE_CARET_BROWSING:
         g_value_set_boolean(value, webkit_settings_get_enable_caret_browsing(settings));
@@ -609,6 +637,62 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
                                                         _("The default text charset used when interpreting content with unspecified charset."),
                                                         "iso-8859-1",
                                                         readWriteConstructParamFlags));
+
+    /**
+     * WebKitSettings:enable-private-browsing:
+     *
+     * Determines whether or not private browsing is enabled. Private browsing
+     * will disable history, cache and form auto-fill for any pages visited.
+     */
+    g_object_class_install_property(gObjectClass,
+                                    PROP_ENABLE_PRIVATE_BROWSING,
+                                    g_param_spec_boolean("enable-private-browsing",
+                                                         _("Enable private browsing"),
+                                                         _("Whether to enable private browsing"),
+                                                         FALSE,
+                                                         readWriteConstructParamFlags));
+
+    /**
+     * WebKitSettings:enable-developer-extras:
+     *
+     * Determines whether or not developer tools, such as the Web Inspector, are enabled.
+     */
+    g_object_class_install_property(gObjectClass,
+                                    PROP_ENABLE_DEVELOPER_EXTRAS,
+                                    g_param_spec_boolean("enable-developer-extras",
+                                                         _("Enable developer extras"),
+                                                         _("Whether to enable developer extras"),
+                                                         FALSE,
+                                                         readWriteConstructParamFlags));
+
+    /**
+     * WebKitSettings:enable-resizable-text-areas:
+     *
+     * Determines whether or not text areas can be resized.
+     */
+    g_object_class_install_property(gObjectClass,
+                                    PROP_ENABLE_RESIZABLE_TEXT_AREAS,
+                                    g_param_spec_boolean("enable-resizable-text-areas",
+                                                         _("Enable resizable text areas"),
+                                                         _("Whether to enable resizable text areas"),
+                                                         TRUE,
+                                                         readWriteConstructParamFlags));
+
+    /**
+     * WebKitSettings:enable-tabs-to-links:
+     *
+     * Determines whether the tab key cycles through the elements on the page. 
+     * When this setting is enabled, users will be able to focus the next element 
+     * in the page by pressing the tab key. If the selected element is editable,
+     * then pressing tab key will insert the tab character.
+     */
+    g_object_class_install_property(gObjectClass,
+                                    PROP_ENABLE_TABS_TO_LINKS,
+                                    g_param_spec_boolean("enable-tabs-to-links",
+                                                         _("Enable tabs to links"),
+                                                         _("Whether to enable tabs to links"),
+                                                         FALSE,
+                                                         readWriteConstructParamFlags));
 
     /**
      * WebKitSettings:enable-caret-browsing:
@@ -1529,6 +1613,146 @@ void webkit_settings_set_default_charset(WebKitSettings* settings, const gchar* 
     priv->defaultCharset = WebKit::toImpl(defaultCharsetRef.get())->string().utf8();
 
     g_object_notify(G_OBJECT(settings), "default-charset");
+}
+
+/**
+ * webkit_settings_get_enable_private_browsing:
+ * @settings: a #WebKitSettings
+ *
+ * Get the #WebKitSettings:enable-private-browsing property.
+ *
+ * Returns: %TRUE If private browsing is enabled or %FALSE otherwise.
+ */
+gboolean webkit_settings_get_enable_private_browsing(WebKitSettings* settings)
+{
+    g_return_val_if_fail(WEBKIT_IS_SETTINGS(settings), FALSE);
+
+    return WKPreferencesGetPrivateBrowsingEnabled(settings->priv->preferences.get());
+}
+
+/**
+ * webkit_settings_set_private_caret_browsing:
+ * @settings: a #WebKitSettings
+ * @enabled: Value to be set
+ *
+ * Set the #WebKitSettings:enable-private-browsing property.
+ */
+void webkit_settings_set_enable_private_browsing(WebKitSettings* settings, gboolean enabled)
+{
+    g_return_if_fail(WEBKIT_IS_SETTINGS(settings));
+
+    WebKitSettingsPrivate* priv = settings->priv;
+    bool currentValue = WKPreferencesGetPrivateBrowsingEnabled(priv->preferences.get());
+    if (currentValue == enabled)
+        return;
+
+    WKPreferencesSetPrivateBrowsingEnabled(priv->preferences.get(), enabled);
+    g_object_notify(G_OBJECT(settings), "enable-private-browsing");
+}
+
+/**
+ * webkit_settings_get_enable_developer_extras:
+ * @settings: a #WebKitSettings
+ *
+ * Get the #WebKitSettings:enable-developer-extras property.
+ *
+ * Returns: %TRUE If developer extras is enabled or %FALSE otherwise.
+ */
+gboolean webkit_settings_get_enable_developer_extras(WebKitSettings* settings)
+{
+    g_return_val_if_fail(WEBKIT_IS_SETTINGS(settings), FALSE);
+
+    return WKPreferencesGetDeveloperExtrasEnabled(settings->priv->preferences.get());
+}
+
+/**
+ * webkit_settings_set_enable_developer_extras:
+ * @settings: a #WebKitSettings
+ * @enabled: Value to be set
+ *
+ * Set the #WebKitSettings:enable-developer-extras property.
+ */
+void webkit_settings_set_enable_developer_extras(WebKitSettings* settings, gboolean enabled)
+{
+    g_return_if_fail(WEBKIT_IS_SETTINGS(settings));
+
+    WebKitSettingsPrivate* priv = settings->priv;
+    bool currentValue = WKPreferencesGetDeveloperExtrasEnabled(priv->preferences.get());
+    if (currentValue == enabled)
+        return;
+
+    WKPreferencesSetDeveloperExtrasEnabled(priv->preferences.get(), enabled);
+    g_object_notify(G_OBJECT(settings), "enable-developer-extras");
+}
+
+/**
+ * webkit_settings_get_enable_resizable_text_areas:
+ * @settings: a #WebKitSettings
+ *
+ * Get the #WebKitSettings:enable-resizable-text-areas property.
+ *
+ * Returns: %TRUE If text areas can be resized or %FALSE otherwise.
+ */
+gboolean webkit_settings_get_enable_resizable_text_areas(WebKitSettings* settings)
+{
+    g_return_val_if_fail(WEBKIT_IS_SETTINGS(settings), FALSE);
+
+    return WKPreferencesGetTextAreasAreResizable(settings->priv->preferences.get());
+}
+
+/**
+ * webkit_settings_set_enable_resizable_text_areas:
+ * @settings: a #WebKitSettings
+ * @enabled: Value to be set
+ *
+ * Set the #WebKitSettings:enable-resizable-text-areas property.
+ */
+void webkit_settings_set_enable_resizable_text_areas(WebKitSettings* settings, gboolean enabled)
+{
+    g_return_if_fail(WEBKIT_IS_SETTINGS(settings));
+
+    WebKitSettingsPrivate* priv = settings->priv;
+    bool currentValue = WKPreferencesGetTextAreasAreResizable(priv->preferences.get());
+    if (currentValue == enabled)
+        return;
+
+    WKPreferencesSetTextAreasAreResizable(priv->preferences.get(), enabled);
+    g_object_notify(G_OBJECT(settings), "enable-resizable-text-areas");
+}
+
+/**
+ * webkit_settings_get_enable_tabs_to_links:
+ * @settings: a #WebKitSettings
+ *
+ * Get the #WebKitSettings:enable-tabs-to-links property.
+ *
+ * Returns: %TRUE If tabs to link is enabled or %FALSE otherwise.
+ */
+gboolean webkit_settings_get_enable_tabs_to_links(WebKitSettings* settings)
+{
+    g_return_val_if_fail(WEBKIT_IS_SETTINGS(settings), FALSE);
+
+    return WKPreferencesGetTabsToLinks(settings->priv->preferences.get());
+}
+
+/**
+ * webkit_settings_set_enable_tabs_to_links:
+ * @settings: a #WebKitSettings
+ * @enabled: Value to be set
+ *
+ * Set the #WebKitSettings:enable-tabs-to-links property.
+ */
+void webkit_settings_set_enable_tabs_to_links(WebKitSettings* settings, gboolean enabled)
+{
+    g_return_if_fail(WEBKIT_IS_SETTINGS(settings));
+
+    WebKitSettingsPrivate* priv = settings->priv;
+    bool currentValue = WKPreferencesGetTabsToLinks(priv->preferences.get());
+    if (currentValue == enabled)
+        return;
+
+    WKPreferencesSetTabsToLinks(priv->preferences.get(), enabled);
+    g_object_notify(G_OBJECT(settings), "enable-tabs-to-links");
 }
 
 /**
