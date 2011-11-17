@@ -3905,3 +3905,13 @@ BUGWK66953 MAC DEBUG : animations/play-state.html = TEXT PASS
 BUGWK66953 DEBUG : animations/play-state-paused.html = TEXT PASS
 BUGWK66953 DEBUG : animations/play-state-suspend.html = TEXT PASS
 BUGWK66953 DEBUG : animations/suspend-resume-animation.html = TEXT PASS
+
+BUGWK72487 SNOWLEOPARD CPU : compositing/layer-creation/spanOverlapsCanvas.html = TEXT
+BUGWK72487 SNOWLEOPARD : compositing/layers-inside-overflow-scroll.html = IMAGE
+BUGWK72487 SNOWLEOPARD : compositing/self-painting-layers.html = IMAGE
+BUGWK72487 SNOWLEOPARD : compositing/video-page-visibility.html = IMAGE
+BUGWK72487 SNOWLEOPARD : compositing/geometry/video-opacity-overlay.html = IMAGE
+BUGWK72487 SNOWLEOPARD : compositing/geometry/video-fixed-scrolling.html = IMAGE
+BUGWK72487 SNOWLEOPARD : compositing/geometry/clipped-video-controller.html = IMAGE
+BUGWK72487 SNOWLEOPARD : compositing/overflow/scroll-ancestor-update.html = IMAGE
+BUGWK72487 SNOWLEOPARD : compositing/overflow/overflow-compositing-descendant.html = IMAGE
