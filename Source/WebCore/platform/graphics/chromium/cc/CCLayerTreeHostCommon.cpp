@@ -109,6 +109,7 @@ template<typename LayerType, typename RenderSurfaceType, typename LayerSorter>
 static void calculateDrawTransformsAndVisibilityInternal(LayerType* layer, LayerType* rootLayer, const TransformationMatrix& parentMatrix, const TransformationMatrix& fullHierarchyMatrix, Vector<RefPtr<LayerType> >& renderSurfaceLayerList, Vector<RefPtr<LayerType> >& layerList, LayerSorter* layerSorter, int maxTextureSize)
 {
     typedef Vector<RefPtr<LayerType> > LayerList;
+
     // This function computes the new matrix transformations recursively for this
     // layer and all its descendants. It also computes the appropriate render surfaces.
     // Some important points to remember:
@@ -187,6 +188,15 @@ static void calculateDrawTransformsAndVisibilityInternal(LayerType* layer, Layer
     //        S is the scale adjustment (to scale up to the layer size)
     //
 
+    float drawOpacity = layer->opacity();
+    if (layer->parent() && layer->parent()->preserves3D())
+        drawOpacity *= layer->parent()->drawOpacity();
+    // The opacity of a layer always applies to its children (either implicitly
+    // via a render surface or explicitly if the parent preserves 3D), so the
+    // entire subtree can be skipped if this layer is fully transparent.
+    if (!drawOpacity)
+        return;
+
     IntSize bounds = layer->bounds();
     FloatPoint anchorPoint = layer->anchorPoint();
     FloatPoint position = layer->position() - layer->scrollDelta();
@@ -238,7 +248,9 @@ static void calculateDrawTransformsAndVisibilityInternal(LayerType* layer, Layer
     if (useSurfaceForMasking || useSurfaceForReflection || useSurfaceForFlatDescendants || ((useSurfaceForClipping || useSurfaceForOpacity) && layer->descendantDrawsContent())) {
         if (!layer->renderSurface())
             layer->createRenderSurface();
+
         RenderSurfaceType* renderSurface = layer->renderSurface();
+        renderSurface->clearLayerList();
 
         // The origin of the new surface is the upper left corner of the layer.
         TransformationMatrix drawTransform;
@@ -247,10 +259,6 @@ static void calculateDrawTransformsAndVisibilityInternal(LayerType* layer, Layer
 
         transformedLayerRect = IntRect(0, 0, bounds.width(), bounds.height());
 
-        // Layer's opacity will be applied when drawing the render surface.
-        float drawOpacity = layer->opacity();
-        if (layer->parent() && layer->parent()->preserves3D())
-            drawOpacity *= layer->parent()->drawOpacity();
         renderSurface->setDrawOpacity(drawOpacity);
         layer->setDrawOpacity(1);
 
@@ -266,8 +274,6 @@ static void calculateDrawTransformsAndVisibilityInternal(LayerType* layer, Layer
         // surface and is therefore expressed in the parent's coordinate system.
         renderSurface->setClipRect(layer->parent() ? layer->parent()->clipRect() : layer->clipRect());
 
-        renderSurface->clearLayerList();
-
         if (layer->maskLayer()) {
             renderSurface->setMaskLayer(layer->maskLayer());
             layer->maskLayer()->setTargetRenderSurface(renderSurface);
@@ -282,12 +288,9 @@ static void calculateDrawTransformsAndVisibilityInternal(LayerType* layer, Layer
         layer->setDrawTransform(combinedTransform);
         transformedLayerRect = enclosingIntRect(layer->drawTransform().mapRect(layerRect));
 
-        layer->setDrawOpacity(layer->opacity());
+        layer->setDrawOpacity(drawOpacity);
 
         if (layer->parent()) {
-            if (layer->parent()->preserves3D())
-               layer->setDrawOpacity(layer->drawOpacity() * layer->parent()->drawOpacity());
-
             // Layers inherit the clip rect from their parent.
             layer->setClipRect(layer->parent()->clipRect());
             if (layer->parent()->usesLayerClipping())
@@ -374,6 +377,22 @@ static void calculateDrawTransformsAndVisibilityInternal(LayerType* layer, Layer
             layer->setDrawableContentRect(drawableContentRect);
         }
     }
+
+    if (layer->renderSurface() && !layer->renderSurface()->layerList().size()) {
+        // If a render surface has no layer list, then it and none of its
+        // children needed to get drawn. Therefore, it should be the last layer
+        // in the render surface list and we can trivially remove it.
+        if (layer != rootLayer) {
+            ASSERT(renderSurfaceLayerList.last() == layer);
+            renderSurfaceLayerList.removeLast();
+            layer->clearRenderSurface();
+        }
+        return;
+    }
+
+    // If neither this layer nor any of its children were added, early out.
+    if (sortingStartIndex == descendants.size())
+        return;
 
     if (layer->masksToBounds() || useSurfaceForMasking) {
         IntRect drawableContentRect = layer->drawableContentRect();

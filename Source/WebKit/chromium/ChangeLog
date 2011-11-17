@@ -1,3 +1,15 @@
+2011-11-17  Adrienne Walker  <enne@google.com>
+
+        [chromium] Implicitly skip render surfaces that won't be drawn
+        https://bugs.webkit.org/show_bug.cgi?id=71038
+
+        Update a test that depends on a layer not getting removed.
+
+        Reviewed by James Robinson.
+
+        * tests/CCLayerTreeHostCommonTest.cpp:
+        (WebCore::TEST):
+
 2011-11-17  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Remove onlineDetectionEnabled from Preferences

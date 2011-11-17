@@ -371,14 +371,8 @@ void CCLayerTreeHost::paintLayerContents(const LayerList& renderSurfaceLayerList
         LayerChromium* renderSurfaceLayer = renderSurfaceLayerList[surfaceIndex].get();
         RenderSurfaceChromium* renderSurface = renderSurfaceLayer->renderSurface();
         ASSERT(renderSurface);
-
-        // Render surfaces whose drawable area has zero width or height
-        // will have no layers associated with them and should be skipped.
-        if (!renderSurface->layerList().size())
-            continue;
-
-        if (!renderSurface->drawOpacity())
-            continue;
+        ASSERT(renderSurface->layerList().size());
+        ASSERT(renderSurface->drawOpacity());
 
         renderSurfaceLayer->setLayerTreeHost(this);
         paintMaskAndReplicaForRenderSurface(renderSurfaceLayer);
@@ -409,9 +403,8 @@ void CCLayerTreeHost::updateCompositorResources(GraphicsContext3D* context, CCTe
         LayerChromium* renderSurfaceLayer = m_updateList[surfaceIndex].get();
         RenderSurfaceChromium* renderSurface = renderSurfaceLayer->renderSurface();
         ASSERT(renderSurface);
-
-        if (!renderSurface->layerList().size() || !renderSurface->drawOpacity())
-            continue;
+        ASSERT(renderSurface->layerList().size());
+        ASSERT(renderSurface->drawOpacity());
 
         if (renderSurfaceLayer->maskLayer())
             updateCompositorResources(renderSurfaceLayer->maskLayer(), context, updater);
