@@ -150,6 +150,7 @@ WebPageProxy::WebPageProxy(PageClient* pageClient, PassRefPtr<WebProcessProxy> p
     , m_isInWindow(m_pageClient->isViewInWindow())
     , m_isVisible(m_pageClient->isViewVisible())
     , m_backForwardList(WebBackForwardList::create(this))
+    , m_loadStateAtProcessExit(WebFrameProxy::LoadStateFinished)
     , m_textZoomFactor(1)
     , m_pageZoomFactor(1)
     , m_pageScaleFactor(1)
@@ -3076,6 +3077,11 @@ void WebPageProxy::processDidCrash()
     ASSERT(m_pageClient);
 
     m_isValid = false;
+
+    if (m_mainFrame) {
+        m_urlAtProcessExit = m_mainFrame->url();
+        m_loadStateAtProcessExit = m_mainFrame->loadState();
+    }
 
     m_mainFrame = nullptr;
     m_drawingArea = nullptr;

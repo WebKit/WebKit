@@ -95,7 +95,7 @@ public:
     virtual bool runJavaScriptConfirm(const QString&);
     virtual QString runJavaScriptPrompt(const QString&, const QString& defaultValue, bool& ok);
 
-    virtual void processDidCrash();
+    virtual void processDidCrash(const QUrl&);
     virtual void didRelaunchProcess();
 
     virtual QJSEngine* engine();

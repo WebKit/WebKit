@@ -214,14 +214,15 @@ QString QtViewInterface::runJavaScriptPrompt(const QString& message, const QStri
     return m_viewportView->d_func()->runJavaScriptPrompt(message, defaultValue, ok);
 }
 
-void QtViewInterface::processDidCrash()
+void QtViewInterface::processDidCrash(const QUrl& url)
 {
-    // FIXME
+    qWarning("WARNING: The web process experienced a crash on '%s'.", qPrintable(url.toString(QUrl::RemoveUserInfo)));
+
 }
 
 void QtViewInterface::didRelaunchProcess()
 {
-    // FIXME
+    qWarning("WARNING: The web process has been successfully restarted.");
 }
 
 QJSEngine* QtViewInterface::engine()

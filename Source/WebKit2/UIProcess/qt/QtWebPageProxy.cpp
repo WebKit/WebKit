@@ -669,7 +669,9 @@ void QtWebPageProxy::processDidCrash()
     m_panGestureRecognizer.reset();
     m_pinchGestureRecognizer.reset();
     m_tapGestureRecognizer.reset();
-    m_viewInterface->processDidCrash();
+
+    WebCore::KURL url(WebCore::ParsedURLString, m_webPageProxy->urlAtProcessExit());
+    m_viewInterface->processDidCrash(QUrl(url));
 }
 
 QWebPreferences* QtWebPageProxy::preferences() const

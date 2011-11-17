@@ -512,7 +512,10 @@ public:
     WebPageGroup* pageGroup() const { return m_pageGroup.get(); }
 
     bool isValid();
-    
+
+    const String& urlAtProcessExit() const { return m_urlAtProcessExit; }
+    WebFrameProxy::LoadState loadStateAtProcessExit() const { return m_loadStateAtProcessExit; }
+
     WebCore::DragSession dragSession() const { return m_currentDragSession; }
     void resetDragOperation() { m_currentDragSession = WebCore::DragSession(); }
 
@@ -875,6 +878,9 @@ private:
     bool m_maintainsInactiveSelection;
 
     String m_toolTip;
+
+    String m_urlAtProcessExit;
+    WebFrameProxy::LoadState m_loadStateAtProcessExit;
 
     EditorState m_editorState;
 
