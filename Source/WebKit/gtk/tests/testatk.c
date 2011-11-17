@@ -1625,7 +1625,6 @@ static void testWebkitAtkParentForRootObject()
     AtkObject* axBox = gtk_widget_get_accessible (box);
     g_assert(ATK_IS_OBJECT(axBox));
 
-    g_assert_cmpint(atk_object_get_n_accessible_children(axBox), ==, 1);
     AtkObject* axBoxChild = atk_object_ref_accessible_child(axBox, 0);
     g_assert(axBoxChild);
 

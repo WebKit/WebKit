@@ -1,3 +1,21 @@
+2011-11-17  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        [GTK] ATK API tests failing because of patch for bug 72390
+        https://bugs.webkit.org/show_bug.cgi?id=72592
+
+        Reviewed by Philippe Normand.
+
+        * tests/testatk.c:
+        (testWebkitAtkParentForRootObject): Remove the offending line in
+        the unit test, which is not actually required to test the new
+        functionality and causes problems in some scenarios, due to the
+        lazy creation mechanism of AtkObjects.
+
+        * tests/testatkroles.c:
+        (finish_loading): Reflect that the document frame object is no
+        longer the root accessibility object (a scroll pane from now on),
+        but the only child of that one. Thus, skip that root object.
+
 2011-11-16  Mario Sanchez Prada  <msanchez@igalia.com>
 
         [GTK] Do not hide accessibility root object from AT's

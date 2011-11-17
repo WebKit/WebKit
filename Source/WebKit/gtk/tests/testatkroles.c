@@ -59,9 +59,18 @@ static gboolean finish_loading(AtkRolesFixture* fixture)
     if (g_main_loop_is_running(fixture->loop))
         g_main_loop_quit(fixture->loop);
 
-    fixture->documentFrame = gtk_widget_get_accessible(fixture->webView);
+    // With the change to support WK2 accessibility, the root object
+    // has changed and it's no longer the document frame, but a scroll
+    // pane containing the document frame as its only child. See the
+    // bug 72390 for more details on this change.
+    // https://bugs.webkit.org/show_bug.cgi?id=72390
+    AtkObject* rootObject = gtk_widget_get_accessible(fixture->webView);
+    fixture->documentFrame = atk_object_ref_accessible_child(rootObject, 0);
     g_assert(fixture->documentFrame);
 
+    // Remove the reference added by ref_accessible_child() and
+    // return, since we don't need to keep that extra ref at all.
+    g_object_unref(fixture->documentFrame);
     return FALSE;
 }
 
