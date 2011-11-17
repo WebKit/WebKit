@@ -97,8 +97,8 @@ def _tests(port, paths):
             # tests on the bots. If paths is empty, test_files.find()
             # finds *everything*. However, we have to return something,
             # or NRWT thinks there's something wrong. So, we return a single
-            # dummy test. See https://bugs.webkit.org/show_bug.cgi?id=72498.
-            paths = ['fast/html/article-element.html']
+            # short directory. See https://bugs.webkit.org/show_bug.cgi?id=72498.
+            paths = ['fast/html']
 
     return set([port.relative_test_filename(f) for f in test_files.find(port, paths)])
 

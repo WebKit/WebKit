@@ -1,3 +1,12 @@
+2011-11-17  Dirk Pranke  <dpranke@chromium.org>
+
+        Chromium Mac 10.5 CG dbg bots are failing to run webkit_gpu_tests
+        https://bugs.webkit.org/show_bug.cgi?id=72615
+
+        Reviewed by James Robinson.
+
+        * Scripts/webkitpy/layout_tests/port/chromium_gpu.py:
+
 2011-11-17  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Layer violation: qt_runtime.cpp accesses QWebElement and QTDRTNode
