@@ -1,3 +1,13 @@
+2011-11-17  Kelly Norton  <knorton@google.com>
+
+       Several void functions in FrameView and RenderObject actually return values.
+       https://bugs.webkit.org/show_bug.cgi?id=72640
+
+        Reviewed by Adam Barth.
+
+        * ../../Source/WebCore/page/FrameView.cpp:
+        * ../../Source/WebCore/rendering/RenderObject.cpp:
+
 2011-11-17  Patrick Gansterer  <paroga@webkit.org>
 
         [CMake] Make CODE_GENERATOR_PREPROCESSOR more useable

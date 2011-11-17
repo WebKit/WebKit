@@ -1289,8 +1289,10 @@ void RenderObject::repaintUsingContainer(RenderBoxModelObject* repaintContainer,
         return;
     }
 
-    if (repaintContainer->isRenderFlowThread())
-        return toRenderFlowThread(repaintContainer)->repaintRectangleInRegions(r, immediate);
+    if (repaintContainer->isRenderFlowThread()) {
+        toRenderFlowThread(repaintContainer)->repaintRectangleInRegions(r, immediate);
+        return;
+    }
 
 #if USE(ACCELERATED_COMPOSITING)
     RenderView* v = view();

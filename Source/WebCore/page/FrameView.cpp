@@ -1807,8 +1807,10 @@ void FrameView::visibleContentsResized()
 void FrameView::beginDeferredRepaints()
 {
     Page* page = m_frame->page();
-    if (page->mainFrame() != m_frame)
-        return page->mainFrame()->view()->beginDeferredRepaints();
+    if (page->mainFrame() != m_frame) {
+        page->mainFrame()->view()->beginDeferredRepaints();
+        return;
+    }
 
     m_deferringRepaints++;
 }
@@ -1817,8 +1819,10 @@ void FrameView::beginDeferredRepaints()
 void FrameView::endDeferredRepaints()
 {
     Page* page = m_frame->page();
-    if (page->mainFrame() != m_frame)
-        return page->mainFrame()->view()->endDeferredRepaints();
+    if (page->mainFrame() != m_frame) {
+        page->mainFrame()->view()->endDeferredRepaints();
+        return;
+    }
 
     ASSERT(m_deferringRepaints > 0);
 
@@ -2385,7 +2389,7 @@ void FrameView::didStartRubberBand(const IntSize& initialOverhang) const
     Page* page = m_frame->page();
     if (!page)
         return;
-    return page->chrome()->client()->didCompleteRubberBandForFrame(m_frame.get(), initialOverhang);
+    page->chrome()->client()->didCompleteRubberBandForFrame(m_frame.get(), initialOverhang);
 }
 
 void FrameView::didCompleteRubberBand(const IntSize& initialOverhang) const
@@ -2393,7 +2397,7 @@ void FrameView::didCompleteRubberBand(const IntSize& initialOverhang) const
     Page* page = m_frame->page();
     if (!page)
         return;
-    return page->chrome()->client()->didCompleteRubberBandForFrame(m_frame.get(), initialOverhang);
+    page->chrome()->client()->didCompleteRubberBandForFrame(m_frame.get(), initialOverhang);
 }
 
 void FrameView::didStartAnimatedScroll() const
@@ -2401,7 +2405,7 @@ void FrameView::didStartAnimatedScroll() const
     Page* page = m_frame->page();
     if (!page)
         return;
-    return page->chrome()->client()->didStartAnimatedScroll();
+    page->chrome()->client()->didStartAnimatedScroll();
 }
 
 void FrameView::didCompleteAnimatedScroll() const
@@ -2409,7 +2413,7 @@ void FrameView::didCompleteAnimatedScroll() const
     Page* page = m_frame->page();
     if (!page)
         return;
-    return page->chrome()->client()->didCompleteAnimatedScroll();
+    page->chrome()->client()->didCompleteAnimatedScroll();
 }
 
 void FrameView::setVisibleScrollerThumbRect(const IntRect& scrollerThumb)
@@ -2419,7 +2423,7 @@ void FrameView::setVisibleScrollerThumbRect(const IntRect& scrollerThumb)
         return;
     if (page->mainFrame() != m_frame)
         return;
-    return page->chrome()->client()->notifyScrollerThumbIsVisibleInRect(scrollerThumb);
+    page->chrome()->client()->notifyScrollerThumbIsVisibleInRect(scrollerThumb);
 }
 
 bool FrameView::isOnActivePage() const
@@ -2823,7 +2827,7 @@ void FrameView::paintOverhangAreas(GraphicsContext* context, const IntRect& hori
             return;
     }
 
-    return ScrollView::paintOverhangAreas(context, horizontalOverhangArea, verticalOverhangArea, dirtyRect);
+    ScrollView::paintOverhangAreas(context, horizontalOverhangArea, verticalOverhangArea, dirtyRect);
 }
 
 void FrameView::updateLayoutAndStyleIfNeededRecursive()
