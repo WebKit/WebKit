@@ -3923,3 +3923,5 @@ BUGWK72598 : css3/images/cross-fade-invalidation.html = IMAGE
 BUGWK72598 : css3/images/cross-fade-simple.html = IMAGE
 BUGWK72598 : css3/images/cross-fade-sizing.html = IMAGE
 BUGWK72598 : css3/images/cross-fade-blending.html = IMAGE
+
+BUGWK72622 WIN DEBUG : http/tests/inspector/resource-tree/resource-tree-no-xhrs.html = MISSING PASS TEXT
