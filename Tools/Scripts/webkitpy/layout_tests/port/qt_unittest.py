@@ -82,3 +82,8 @@ class QtPortTest(port_testcase.PortTestCase):
         port._executive = MockExecutive(should_log=True)
         expected_stderr = "MOCK run_command: ['Tools/Scripts/run-launcher', '--release', '--qt', 'file://test.html'], cwd=/mock-checkout\n"
         OutputCapture().assert_outputs(self, port.show_results_html_file, ["test.html"], expected_stderr=expected_stderr)
+
+    def test_setup_environ_for_server(self):
+        port = self.make_port()
+        env = port.setup_environ_for_server(port.driver_name())
+        self.assertEquals(env['QTWEBKIT_PLUGIN_PATH'], 'MOCK output of child process/lib/plugins')

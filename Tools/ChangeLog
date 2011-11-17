@@ -1,3 +1,25 @@
+2011-11-17  Eric Seidel  <eric@webkit.org>
+
+        new-run-webkit-tests is locale dependent
+        https://bugs.webkit.org/show_bug.cgi?id=68691
+
+        Reviewed by Adam Barth.
+
+        Make NRWT use a clean environment, just like ORWT did.
+
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_win.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_win_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/efl.py:
+        * Scripts/webkitpy/layout_tests/port/google_chrome_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/mac.py:
+        * Scripts/webkitpy/layout_tests/port/qt.py:
+        * Scripts/webkitpy/layout_tests/port/qt_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+        * Scripts/webkitpy/layout_tests/port/win.py:
+
 2011-11-17  Dirk Pranke  <dpranke@chromium.org>
 
         Chromium Mac 10.5 CG dbg bots are failing to run webkit_gpu_tests

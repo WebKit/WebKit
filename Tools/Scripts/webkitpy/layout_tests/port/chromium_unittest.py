@@ -50,7 +50,7 @@ from webkitpy.layout_tests.port.driver import DriverInput
 
 class ChromiumDriverTest(unittest.TestCase):
     def setUp(self):
-        mock_port = Mock()
+        mock_port = Mock()  # FIXME: This should use a tighter mock.
         self.driver = chromium.ChromiumDriver(mock_port, worker_number=0, pixel_tests=True)
 
     def test_test_shell_command(self):
@@ -71,7 +71,7 @@ class ChromiumDriverTest(unittest.TestCase):
         self.assertEqual(did_crash, expected_crash)
 
     def test_write_command_and_read_line(self):
-        self.driver._proc = Mock()
+        self.driver._proc = Mock()  # FIXME: This should use a tighter mock.
         # Set up to read 3 lines before we get an IOError
         self.driver._proc.stdout = StringIO.StringIO("first\nsecond\nthird\n")
 
@@ -105,7 +105,7 @@ class ChromiumDriverTest(unittest.TestCase):
     def test_stop(self):
         self.pid = None
         self.wait_called = False
-        self.driver._proc = Mock()
+        self.driver._proc = Mock()  # FIXME: This should use a tighter mock.
         self.driver._proc.pid = 1
         self.driver._proc.stdin = StringIO.StringIO()
         self.driver._proc.stdout = StringIO.StringIO()
@@ -219,7 +219,8 @@ class ChromiumPortTest(port_testcase.PortTestCase):
         pass
 
     class TestMacPort(chromium_mac.ChromiumMacPort):
-        def __init__(self, options):
+        def __init__(self, options=None):
+            options = options or MockOptions()
             chromium_mac.ChromiumMacPort.__init__(self, MockHost(), options=options)
 
         def default_configuration(self):
@@ -227,7 +228,8 @@ class ChromiumPortTest(port_testcase.PortTestCase):
             return 'default'
 
     class TestLinuxPort(chromium_linux.ChromiumLinuxPort):
-        def __init__(self, options):
+        def __init__(self, options=None):
+            options = options or MockOptions()
             chromium_linux.ChromiumLinuxPort.__init__(self, MockHost(), options=options)
 
         def default_configuration(self):
@@ -235,7 +237,8 @@ class ChromiumPortTest(port_testcase.PortTestCase):
             return 'default'
 
     class TestWinPort(chromium_win.ChromiumWinPort):
-        def __init__(self, options):
+        def __init__(self, options=None):
+            options = options or MockOptions()
             chromium_win.ChromiumWinPort.__init__(self, MockHost(), options=options)
 
         def default_configuration(self):
@@ -243,14 +246,10 @@ class ChromiumPortTest(port_testcase.PortTestCase):
             return 'default'
 
     def test_path_to_image_diff(self):
-        mock_options = MockOptions()
-        port = ChromiumPortTest.TestLinuxPort(options=mock_options)
         # FIXME: These don't need to use endswith now that the port uses a MockFileSystem.
-        self.assertTrue(port._path_to_image_diff().endswith('/out/default/ImageDiff'))
-        port = ChromiumPortTest.TestMacPort(options=mock_options)
-        self.assertTrue(port._path_to_image_diff().endswith('/xcodebuild/default/ImageDiff'))
-        port = ChromiumPortTest.TestWinPort(options=mock_options)
-        self.assertTrue(port._path_to_image_diff().endswith('/default/ImageDiff.exe'))
+        self.assertTrue(ChromiumPortTest.TestLinuxPort()._path_to_image_diff().endswith('/out/default/ImageDiff'))
+        self.assertTrue(ChromiumPortTest.TestMacPort()._path_to_image_diff().endswith('/xcodebuild/default/ImageDiff'))
+        self.assertTrue(ChromiumPortTest.TestWinPort()._path_to_image_diff().endswith('/default/ImageDiff.exe'))
 
     def test_skipped_layout_tests(self):
         mock_options = MockOptions()
@@ -284,9 +283,7 @@ LINUX WIN : fast/js/very-good.js = TIMEOUT PASS"""
             def _path_to_image_diff(self):
                 return "/path/to/image_diff"
 
-        mock_options = MockOptions()
-        port = ChromiumPortTest.TestLinuxPort(mock_options)
-
+        port = ChromiumPortTest.TestLinuxPort()
         mock_image_diff = "MOCK Image Diff"
 
         def mock_run_command(args):
@@ -333,8 +330,7 @@ LINUX WIN : fast/js/very-good.js = TIMEOUT PASS"""
 
 class ChromiumPortLoggingTest(logtesting.LoggingTestCase):
     def test_check_sys_deps(self):
-        mock_options = MockOptions()
-        port = ChromiumPortTest.TestLinuxPort(options=mock_options)
+        port = ChromiumPortTest.TestLinuxPort()
 
         # Success
         port._executive = MockExecutive2(exit_code=0)
@@ -349,6 +345,7 @@ class ChromiumPortLoggingTest(logtesting.LoggingTestCase):
             'ERROR: To override, invoke with --nocheck-sys-deps\n',
             'ERROR: \n',
             'ERROR: testing output failure\n'])
+
 
 if __name__ == '__main__':
     unittest.main()
