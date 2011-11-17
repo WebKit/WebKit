@@ -2197,7 +2197,8 @@ BUGWK72372 WIN RELEASE SLOW : perf/document-contains.html = PASS TEXT
 BUGWK67921 RELEASE SLOW : perf/show-hide-table-rows.html = PASS
 BUGWK44199 RELEASE : perf/clone-with-focus.html = PASS TEXT
 BUGWK44199 RELEASE : perf/typing-at-end-of-line.html = PASS TEXT
-BUGWK44199 BUGWK63057 RELEASE SLOW : perf/array-binary-search.html = PASS TEXT
+BUGWK44199 BUGWK63057 RELEASE SLOW : perf/array-binary-search.html = MISSING PASS TEXT
+BUGWK44199 BUGWK63057 DEBUG : perf/array-binary-search.html = MISSING PASS TEXT
 
 // Failing after http://trac.webkit.org/changeset/65665/
 BUGWK44278 : svg/transforms/text-with-mask-with-svg-transform.svg = IMAGE+TEXT IMAGE
