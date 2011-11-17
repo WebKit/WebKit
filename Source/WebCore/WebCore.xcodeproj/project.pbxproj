@@ -5297,8 +5297,6 @@
 		BCE1C4400D9830F4003B02F2 /* JSLocationCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCE1C43F0D9830F4003B02F2 /* JSLocationCustom.cpp */; };
 		BCE3BEC20D222B1D007E06E4 /* TagNodeList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCE3BEC00D222B1D007E06E4 /* TagNodeList.cpp */; };
 		BCE3BEC30D222B1D007E06E4 /* TagNodeList.h in Headers */ = {isa = PBXBuildFile; fileRef = BCE3BEC10D222B1D007E06E4 /* TagNodeList.h */; };
-		BCE43897140B0051005E437E /* EventConstructors.h in Headers */ = {isa = PBXBuildFile; fileRef = BCE43896140B0051005E437E /* EventConstructors.h */; };
-		BCE4389A140B0073005E437E /* JSEventConstructors.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCE43899140B0073005E437E /* JSEventConstructors.cpp */; };
 		BCE4389C140B1BA8005E437E /* JSDictionary.h in Headers */ = {isa = PBXBuildFile; fileRef = BCE4389B140B1BA7005E437E /* JSDictionary.h */; };
 		BCE438A2140C0DC0005E437E /* JSDictionary.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCE438A1140C0DBF005E437E /* JSDictionary.cpp */; };
 		BCE4413312F748E2009B84B8 /* RenderCombineText.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCE4413112F748E2009B84B8 /* RenderCombineText.cpp */; };
@@ -12606,8 +12604,6 @@
 		BCE1C43F0D9830F4003B02F2 /* JSLocationCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSLocationCustom.cpp; sourceTree = "<group>"; };
 		BCE3BEC00D222B1D007E06E4 /* TagNodeList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TagNodeList.cpp; sourceTree = "<group>"; };
 		BCE3BEC10D222B1D007E06E4 /* TagNodeList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TagNodeList.h; sourceTree = "<group>"; };
-		BCE43896140B0051005E437E /* EventConstructors.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EventConstructors.h; path = generic/EventConstructors.h; sourceTree = "<group>"; };
-		BCE43899140B0073005E437E /* JSEventConstructors.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSEventConstructors.cpp; sourceTree = "<group>"; };
 		BCE4389B140B1BA7005E437E /* JSDictionary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDictionary.h; sourceTree = "<group>"; };
 		BCE438A1140C0DBF005E437E /* JSDictionary.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDictionary.cpp; sourceTree = "<group>"; };
 		BCE4413112F748E2009B84B8 /* RenderCombineText.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderCombineText.cpp; sourceTree = "<group>"; };
@@ -19461,7 +19457,6 @@
 				A622A8F5122C44A600A785B3 /* BindingSecurity.h */,
 				A622A8F6122C44A600A785B3 /* BindingSecurityBase.cpp */,
 				A622A8F7122C44A600A785B3 /* BindingSecurityBase.h */,
-				BCE43896140B0051005E437E /* EventConstructors.h */,
 				A622A8F9122C44A600A785B3 /* GenericBinding.h */,
 			);
 			name = generic;
@@ -19530,7 +19525,6 @@
 				65E0E9431133C89F00B4CB10 /* JSDOMWrapper.h */,
 				F3D461461161D53200CA0D09 /* JSErrorHandler.cpp */,
 				F3D461471161D53200CA0D09 /* JSErrorHandler.h */,
-				BCE43899140B0073005E437E /* JSEventConstructors.cpp */,
 				BC60901E0E91B8EC000C68B5 /* JSEventTarget.cpp */,
 				BC60901D0E91B8EC000C68B5 /* JSEventTarget.h */,
 				3314ACE910892086000F0E56 /* JSExceptionBase.cpp */,
@@ -24661,7 +24655,6 @@
 				DF9AFD7213FC31D80015FEB7 /* MediaPlayerPrivateAVFoundationObjC.h in Headers */,
 				93500F3213FDE3BE0099EC24 /* NSScrollerImpDetails.h in Headers */,
 				D0A3A7311405A39800FB8ED3 /* ResourceLoaderOptions.h in Headers */,
-				BCE43897140B0051005E437E /* EventConstructors.h in Headers */,
 				BCE4389C140B1BA8005E437E /* JSDictionary.h in Headers */,
 				E45322AC140CE267005A0F92 /* SelectorQuery.h in Headers */,
 				B10B6980140C174000BC1C26 /* WebVTTToken.h in Headers */,
@@ -27530,7 +27523,6 @@
 				4998AED413FC417F0090B1AA /* JSRequestAnimationFrameCallbackCustom.cpp in Sources */,
 				1A1414B513A0F0500019996C /* WebKitFontFamilyNames.cpp in Sources */,
 				DF9AFD7313FC31D80015FEB7 /* MediaPlayerPrivateAVFoundationObjC.mm in Sources */,
-				BCE4389A140B0073005E437E /* JSEventConstructors.cpp in Sources */,
 				BCE438A2140C0DC0005E437E /* JSDictionary.cpp in Sources */,
 				E45322AB140CE267005A0F92 /* SelectorQuery.cpp in Sources */,
 				B10B6981140C174000BC1C26 /* WebVTTTokenizer.cpp in Sources */,

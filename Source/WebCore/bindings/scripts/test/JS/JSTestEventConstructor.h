@@ -29,6 +29,8 @@
 
 namespace WebCore {
 
+class JSDictionary;
+
 class JSTestEventConstructor : public JSDOMWrapper {
 public:
     typedef JSDOMWrapper Base;
@@ -129,6 +131,8 @@ protected:
     static JSC::EncodedJSValue JSC_HOST_CALL constructJSTestEventConstructor(JSC::ExecState*);
     static JSC::ConstructType getConstructData(JSC::JSCell*, JSC::ConstructData&);
 };
+
+bool fillTestEventConstructorInit(TestEventConstructorInit&, JSDictionary&);
 
 // Attributes
 

@@ -733,6 +733,7 @@ sub GenerateHeader
     }
 
     AddClassForwardIfNeeded("JSDOMWindowShell") if $interfaceName eq "DOMWindow";
+    AddClassForwardIfNeeded("JSDictionary") if IsConstructorTemplate($dataNode, "Event");
 
     # Class declaration
     push(@headerContent, "class $className : public $parentClassName {\n");
@@ -1084,7 +1085,7 @@ sub GenerateHeader
 
     if ($dataNode->extendedAttributes->{"JSCustomConstructor"} || $dataNode->extendedAttributes->{"CustomConstructor"} || !$dataNode->extendedAttributes->{"OmitConstructor"}) {
         $headerIncludes{"JSDOMBinding.h"} = 1;
-        GenerateConstructorDeclaration(\@headerContent, $className, $dataNode);
+        GenerateConstructorDeclaration(\@headerContent, $className, $dataNode, $interfaceName);
     }
 
     if ($numFunctions > 0) {
@@ -3208,9 +3209,9 @@ sub GenerateConstructorDeclaration
     my $outputArray = shift;
     my $className = shift;
     my $dataNode = shift;
+    my $interfaceName = shift;
 
     my $constructorClassName = "${className}Constructor";
-    my $canConstruct = $dataNode->extendedAttributes->{"Constructor"} || $dataNode->extendedAttributes->{"JSCustomConstructor"} || $dataNode->extendedAttributes->{"CustomConstructor"};
     my $callWith = $dataNode->extendedAttributes->{"CallWith"};
 
     push(@$outputArray, "class ${constructorClassName} : public DOMConstructorObject {\n");
@@ -3239,11 +3240,15 @@ sub GenerateConstructorDeclaration
     push(@$outputArray, "protected:\n");
     push(@$outputArray, "    static const unsigned StructureFlags = JSC::OverridesGetOwnPropertySlot | JSC::ImplementsHasInstance | DOMConstructorObject::StructureFlags;\n");
 
-    if ($canConstruct) {
+    if (IsConstructable($dataNode)) {
         push(@$outputArray, "    static JSC::EncodedJSValue JSC_HOST_CALL construct${className}(JSC::ExecState*);\n");
         push(@$outputArray, "    static JSC::ConstructType getConstructData(JSC::JSCell*, JSC::ConstructData&);\n");
     }
     push(@$outputArray, "};\n\n");
+
+    if (IsConstructorTemplate($dataNode, "Event")) {
+        push(@$outputArray, "bool fill${interfaceName}Init(${interfaceName}Init&, JSDictionary&);\n\n");
+    }
 }
 
 sub GenerateConstructorDefinition
@@ -3288,8 +3293,72 @@ sub GenerateConstructorDefinition
     push(@$outputArray, "    return getStaticValueDescriptor<${constructorClassName}, JSDOMWrapper>(exec, &${constructorClassName}Table, static_cast<${constructorClassName}*>(object), propertyName, descriptor);\n");
     push(@$outputArray, "}\n\n");
 
-    if ($dataNode->extendedAttributes->{"Constructor"} || $dataNode->extendedAttributes->{"JSCustomConstructor"} || $dataNode->extendedAttributes->{"CustomConstructor"}) {
-        if (!($dataNode->extendedAttributes->{"JSCustomConstructor"} || $dataNode->extendedAttributes->{"CustomConstructor"})) {
+    if (IsConstructable($dataNode)) {
+        if (IsConstructorTemplate($dataNode, "Event")) {
+            $implIncludes{"JSDictionary.h"} = 1;
+            $implIncludes{"<runtime/Error.h>"} = 1;
+
+            push(@$outputArray, <<END);
+EncodedJSValue JSC_HOST_CALL ${constructorClassName}::construct${className}(ExecState* exec)
+{
+    ${constructorClassName}* jsConstructor = static_cast<${constructorClassName}*>(exec->callee());
+
+    ScriptExecutionContext* executionContext = jsConstructor->scriptExecutionContext();
+    if (!executionContext)
+        return throwVMError(exec, createReferenceError(exec, "Constructor associated execution context is unavailable"));
+
+    AtomicString eventType = ustringToAtomicString(exec->argument(0).toString(exec));
+    if (exec->hadException())
+        return JSValue::encode(jsUndefined());
+
+    ${interfaceName}Init eventInit;
+
+    JSValue initializerValue = exec->argument(1);
+    if (!initializerValue.isUndefinedOrNull()) {
+        // Given the above test, this will always yield an object.
+        JSObject* initializerObject = initializerValue.toObject(exec);
+
+        // Create the dictionary wrapper from the initializer object.
+        JSDictionary dictionary(exec, initializerObject);
+
+        // Attempt to fill in the EventInit.
+        if (!fill${interfaceName}Init(eventInit, dictionary))
+            return JSValue::encode(jsUndefined());
+    }
+
+    RefPtr<${interfaceName}> event = ${interfaceName}::create(eventType, eventInit);
+    return JSValue::encode(toJS(exec, jsConstructor->globalObject(), event.get()));
+}
+
+bool fill${interfaceName}Init(${interfaceName}Init& eventInit, JSDictionary& dictionary)
+{
+END
+
+            foreach my $interfaceBase (@{$dataNode->parents}) {
+                push(@implContent, <<END);
+    if (!fill${interfaceBase}Init(eventInit, dictionary))
+        return false;
+
+END
+            }
+
+            for (my $index = 0; $index < @{$dataNode->attributes}; $index++) {
+                my $attribute = @{$dataNode->attributes}[$index];
+                if ($attribute->signature->extendedAttributes->{"InitializedByConstructor"}) {
+                    my $attributeName = $attribute->signature->name;
+                    push(@implContent, <<END);
+    if (!dictionary.tryGetProperty("${attributeName}", eventInit.${attributeName}))
+        return false;
+END
+                }
+            }
+
+            push(@$outputArray, <<END);
+    return true;
+}
+
+END
+        } elsif (!($dataNode->extendedAttributes->{"JSCustomConstructor"} || $dataNode->extendedAttributes->{"CustomConstructor"})) {
             push(@$outputArray, "EncodedJSValue JSC_HOST_CALL ${constructorClassName}::construct${className}(ExecState* exec)\n");
             push(@$outputArray, "{\n");
 
@@ -3349,6 +3418,21 @@ sub GenerateConstructorDefinition
         push(@$outputArray, "    return ConstructTypeHost;\n");
         push(@$outputArray, "}\n\n");
     }
+}
+
+sub IsConstructable
+{
+    my $dataNode = shift;
+
+    return $dataNode->extendedAttributes->{"CustomConstructor"} || $dataNode->extendedAttributes->{"JSCustomConstructor"} || $dataNode->extendedAttributes->{"Constructor"} || $dataNode->extendedAttributes->{"JSConstructorTemplate"} || $dataNode->extendedAttributes->{"ConstructorTemplate"};
+}
+
+sub IsConstructorTemplate
+{
+    my $dataNode = shift;
+    my $template = shift;
+
+    return ($dataNode->extendedAttributes->{"JSConstructorTemplate"} && $dataNode->extendedAttributes->{"JSConstructorTemplate"} eq $template) || ($dataNode->extendedAttributes->{"ConstructorTemplate"} && $dataNode->extendedAttributes->{"ConstructorTemplate"} eq $template);
 }
 
 1;

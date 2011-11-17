@@ -72,7 +72,6 @@
 #include "JSDocumentCustom.cpp"
 #include "JSElementCustom.cpp"
 #include "JSErrorHandler.cpp"
-#include "JSEventConstructors.cpp"
 #include "JSEventCustom.cpp"
 #include "JSEventListener.cpp"
 #include "JSEventTarget.cpp"

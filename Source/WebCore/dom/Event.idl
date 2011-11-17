@@ -23,8 +23,7 @@ module events {
     // Introduced in DOM Level 2:
     interface [
         CustomToJS,
-        V8ConstructorTemplate=Event,
-        JSCustomConstructor,
+        ConstructorTemplate=Event,
         NoStaticTables,
         Polymorphic
     ] Event {

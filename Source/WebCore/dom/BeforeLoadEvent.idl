@@ -27,8 +27,7 @@
 module events {
 
     interface [
-        V8ConstructorTemplate=Event,
-        JSCustomConstructor
+        ConstructorTemplate=Event
     ] BeforeLoadEvent : Event {
         readonly attribute [InitializedByConstructor] DOMString url;
     };

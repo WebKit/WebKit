@@ -29,8 +29,7 @@ module events {
 
     interface [
         NoStaticTables,
-        V8ConstructorTemplate=Event,
-        JSCustomConstructor
+        ConstructorTemplate=Event
     ] MessageEvent : Event {
         readonly attribute [InitializedByConstructor] DOMString origin;
         readonly attribute [InitializedByConstructor] DOMString lastEventId;

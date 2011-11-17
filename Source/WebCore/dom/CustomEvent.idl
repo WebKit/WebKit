@@ -28,8 +28,7 @@ module events {
 #if !defined(LANGUAGE_CPP) || !LANGUAGE_CPP
     // Introduced in DOM Level 3:
     interface [
-        V8ConstructorTemplate=Event,
-        JSCustomConstructor
+        ConstructorTemplate=Event
     ] CustomEvent : Event {
         readonly attribute [InitializedByConstructor] DOMObject detail;
 

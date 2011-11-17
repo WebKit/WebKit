@@ -26,8 +26,7 @@
 module events {
 
     interface [
-        V8ConstructorTemplate=Event,
-        JSCustomConstructor
+        ConstructorTemplate=Event
     ] WebKitAnimationEvent : Event {
         readonly attribute [InitializedByConstructor] DOMString animationName;
         readonly attribute [InitializedByConstructor] double elapsedTime;

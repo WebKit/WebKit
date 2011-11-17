@@ -21,8 +21,10 @@
 #include "config.h"
 #include "JSTestEventConstructor.h"
 
+#include "JSDictionary.h"
 #include "KURL.h"
 #include "TestEventConstructor.h"
+#include <runtime/Error.h>
 #include <runtime/JSString.h>
 #include <wtf/GetPtr.h>
 
@@ -95,6 +97,42 @@ bool JSTestEventConstructorConstructor::getOwnPropertySlot(JSCell* cell, ExecSta
 bool JSTestEventConstructorConstructor::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
 {
     return getStaticValueDescriptor<JSTestEventConstructorConstructor, JSDOMWrapper>(exec, &JSTestEventConstructorConstructorTable, static_cast<JSTestEventConstructorConstructor*>(object), propertyName, descriptor);
+}
+
+EncodedJSValue JSC_HOST_CALL JSTestEventConstructorConstructor::constructJSTestEventConstructor(ExecState* exec)
+{
+    JSTestEventConstructorConstructor* jsConstructor = static_cast<JSTestEventConstructorConstructor*>(exec->callee());
+
+    ScriptExecutionContext* executionContext = jsConstructor->scriptExecutionContext();
+    if (!executionContext)
+        return throwVMError(exec, createReferenceError(exec, "Constructor associated execution context is unavailable"));
+
+    AtomicString eventType = ustringToAtomicString(exec->argument(0).toString(exec));
+    if (exec->hadException())
+        return JSValue::encode(jsUndefined());
+
+    TestEventConstructorInit eventInit;
+
+    JSValue initializerValue = exec->argument(1);
+    if (!initializerValue.isUndefinedOrNull()) {
+        // Given the above test, this will always yield an object.
+        JSObject* initializerObject = initializerValue.toObject(exec);
+
+        // Create the dictionary wrapper from the initializer object.
+        JSDictionary dictionary(exec, initializerObject);
+
+        // Attempt to fill in the EventInit.
+        if (!fillTestEventConstructorInit(eventInit, dictionary))
+            return JSValue::encode(jsUndefined());
+    }
+
+    RefPtr<TestEventConstructor> event = TestEventConstructor::create(eventType, eventInit);
+    return JSValue::encode(toJS(exec, jsConstructor->globalObject(), event.get()));
+}
+
+bool fillTestEventConstructorInit(TestEventConstructorInit& eventInit, JSDictionary& dictionary)
+{
+    return true;
 }
 
 ConstructType JSTestEventConstructorConstructor::getConstructData(JSCell*, ConstructData& constructData)

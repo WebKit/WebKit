@@ -28,8 +28,7 @@ module html {
     interface [
         Conditional=VIDEO_TRACK,
         EnabledAtRuntime=webkitVideoTrack,
-        V8ConstructorTemplate=Event,
-        JSCustomConstructor
+        ConstructorTemplate=Event
     ] TrackEvent : Event {
         readonly attribute [InitializedByConstructor, CustomGetter] object track;
     };

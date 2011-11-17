@@ -21,8 +21,7 @@ module events {
 
     // Introduced in http://www.whatwg.org/specs/web-apps/current-work/multipage/history.html#event-hashchange
     interface [
-        V8ConstructorTemplate=Event,
-        JSCustomConstructor
+        ConstructorTemplate=Event
     ] HashChangeEvent : Event {
         void initHashChangeEvent(in [Optional=CallWithDefaultValue] DOMString type, 
                                  in [Optional=CallWithDefaultValue] boolean canBubble, 

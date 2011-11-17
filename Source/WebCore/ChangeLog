@@ -1,3 +1,73 @@
+2011-11-16  Kentaro Hara  <haraken@chromium.org>
+
+        Remove all custom constructors of Events from JSC
+        https://bugs.webkit.org/show_bug.cgi?id=72577
+
+        Reviewed by Adam Barth.
+
+        - Makes CodeGeneratorJS.pm generate Event constructors
+        if [ConstructorTemplate=Event] IDL is specified.
+        - Removes EventConstructors.h and JSEventConstructors.cpp.
+        - Replaces all JSC custom constructors of Events
+        with the generated code by [ConstructorTemplate=Event] IDL.
+
+        Tests: fast/events/constructors/before-load-event-constructor.html
+               fast/events/constructors/close-event-constructor.html
+               fast/events/constructors/custom-event-constructor.html
+               fast/events/constructors/error-event-constructor.html
+               fast/events/constructors/event-constructors.html
+               fast/events/constructors/hash-change-event-constructor.html
+               fast/events/constructors/message-event-constructor.html
+               fast/events/constructors/overflow-event-constructor.html
+               fast/events/constructors/page-transition-event-constructor.html
+               fast/events/constructors/pop-state-event-constructor.html
+               fast/events/constructors/progress-event-constructor.html
+               fast/events/constructors/track-event-constructor.html
+               fast/events/constructors/webkit-animation-event-constructor.html
+               fast/events/constructors/webkit-transition-event-constructor.html
+
+        * bindings/generic/EventConstructors.h: Removed. This is what we wanted to do in this patch.
+        * bindings/js/JSEventConstructors.cpp: Ditto.
+        * GNUmakefile.list.am: Removed EventConstructors.h and JSEventConstructors.cpp.
+        * Target.pri: Ditto.
+        * UseJSC.cmake: Ditto.
+        * WebCore.gypi: Ditto.
+        * WebCore.vcproj/WebCore.vcproj: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * bindings/js/JSBindingsAllInOne.cpp: Ditto.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHeader): Added JSDictionary.h.
+        (GenerateConstructorDeclaration): Added a header for fillXXXXEventInit(...).
+        (GenerateConstructorDefinition): Generates an Event constructor. The generated code is the same as the code that had been written in JSEventConstructors.cpp.
+        (IsConstructable): Judges if a given interface is constructable.
+        (IsConstructorTemplate): Judges if a given interface has a given template, e.g. judges if an interface has [ConstructorTemplate=Event].
+
+        * bindings/scripts/test/TestEventConstructor.idl: Changed 'CustomConstructor=Event' to 'ConstructorTemplate=Event'. We should have changed this in r100108.
+        * bindings/scripts/test/JS/JSTestEventConstructor.cpp: Updated a run-bindings-tests result.
+        (WebCore::JSTestEventConstructorConstructor::constructJSTestEventConstructor):
+        (WebCore::fillTestEventConstructorInit):
+        * bindings/scripts/test/JS/JSTestEventConstructor.h: Ditto.
+        * bindings/scripts/test/V8/V8TestEventConstructor.cpp: Ditto.
+        (WebCore::V8TestEventConstructor::constructorCallback):
+        (WebCore::fillTestEventConstructorInit):
+        * bindings/scripts/test/V8/V8TestEventConstructor.h: Ditto.
+
+        * dom/BeforeLoadEvent.idl: In essence, replaced [JSCustomConstructor] IDL with [JSConstructorTemplate=Event] IDL.
+        * dom/CustomEvent.idl: Ditto.
+        * dom/ErrorEvent.idl: Ditto.
+        * dom/Event.idl: Ditto.
+        * dom/HashChangeEvent.idl: Ditto.
+        * dom/MessageEvent.idl: Ditto.
+        * dom/OverflowEvent.idl: Ditto.
+        * dom/PageTransitionEvent.idl: Ditto.
+        * dom/PopStateEvent.idl: Ditto.
+        * dom/ProgressEvent.idl: Ditto.
+        * dom/WebKitAnimationEvent.idl: Ditto.
+        * dom/WebKitTransitionEvent.idl: Ditto.
+        * html/track/TrackEvent.idl: Ditto.
+        * websockets/CloseEvent.idl: Ditto.
+
 2011-11-16  Dean Jackson  <dino@apple.com>
 
         Build fix for Apple WebKit due to r100560.
