@@ -65,7 +65,6 @@ public:
     virtual void setViewNeedsDisplay(const QRect&);
 
     virtual QSize drawingAreaSize();
-    virtual void contentSizeChanged(const QSize&);
     virtual void scrollPositionRequested(const QPoint& pos);
 
     virtual bool isActive();
@@ -73,6 +72,9 @@ public:
     virtual bool isVisible();
 
     virtual void startDrag(Qt::DropActions supportedDropActions, const QImage& dragImage, QMimeData*, QPoint* clientPosition, QPoint* globalPosition, Qt::DropAction*);
+
+    virtual void didFinishFirstNonEmptyLayout();
+    virtual void didChangeContentsSize(const QSize&);
     virtual void didChangeViewportProperties(const WebCore::ViewportArguments&);
 
     virtual void didChangeUrl(const QUrl&);

@@ -330,10 +330,9 @@ void QtViewportInteractionEngine::reset()
     properties.setScrollMetric(QScrollerProperties::OvershootScrollDistanceFactor, 0.33);
 
     scroller()->setScrollerProperties(properties);
-    setConstraints(Constraints());
 }
 
-void QtViewportInteractionEngine::setConstraints(const Constraints& constraints)
+void QtViewportInteractionEngine::applyConstraints(const Constraints& constraints)
 {
     if (m_constraints == constraints)
         return;

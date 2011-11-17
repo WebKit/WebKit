@@ -57,9 +57,19 @@ QSize QtViewInterface::drawingAreaSize()
     return QSize(m_pageView->width(), m_pageView->height());
 }
 
-void QtViewInterface::contentSizeChanged(const QSize& newSize)
+void QtViewInterface::didFinishFirstNonEmptyLayout()
 {
-    m_viewportView->d_func()->contentSizeChanged(newSize);
+    m_viewportView->d_func()->didFinishFirstNonEmptyLayout();
+}
+
+void QtViewInterface::didChangeContentsSize(const QSize& newSize)
+{
+    m_viewportView->d_func()->didChangeContentsSize(newSize);
+}
+
+void QtViewInterface::didChangeViewportProperties(const WebCore::ViewportArguments& args)
+{
+    m_viewportView->d_func()->didChangeViewportProperties(args);
 }
 
 void QtViewInterface::scrollPositionRequested(const QPoint& pos)
@@ -95,12 +105,6 @@ void QtViewInterface::startDrag(Qt::DropActions supportedDropActions, const QIma
     *dropAction = drag->exec(supportedDropActions);
     *globalPosition = QCursor::pos();
     *clientPosition = window->mapFromGlobal(*globalPosition);
-}
-
-
-void QtViewInterface::didChangeViewportProperties(const WebCore::ViewportArguments& args)
-{
-    m_viewportView->d_func()->didChangeViewportProperties(args);
 }
 
 void QtViewInterface::didChangeUrl(const QUrl& url)

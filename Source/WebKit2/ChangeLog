@@ -1,3 +1,43 @@
+2011-11-17  Zalan Bujtas  <zbujtas@gmail.com>
+
+        [Qt][WK2] Do not apply new viewport properties until after the first visually non-empty layout.
+        https://bugs.webkit.org/show_bug.cgi?id=72508
+
+        Delay applying viewport properties on the viewport item until after the first visually non-empty
+        layout finished. It enables the viewport to be intact until the new page is ready to be rendered.
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewPrivate::QQuickWebViewPrivate):
+        (QQuickWebViewPrivate::loadDidCommit):
+        (QQuickWebViewPrivate::didFinishFirstNonEmptyLayout):
+        (QQuickWebViewPrivate::didChangeContentsSize):
+        (QQuickWebViewPrivate::didChangeViewportProperties):
+        (QQuickWebViewPrivate::updateViewportSize):
+        (QQuickWebViewPrivate::computeViewportConstraints):
+        * UIProcess/API/qt/qquickwebview_p.h:
+        (PostTransitionState::isTransitioningToNewPage):
+        * UIProcess/qt/ClientImpl.cpp:
+        (qt_wk_didFirstVisuallyNonEmptyLayoutForFrame):
+        (setupPageLoaderClient):
+        * UIProcess/qt/QtViewInterface.cpp:
+        (WebKit::QtViewInterface::didFinishFirstNonEmptyLayout):
+        (WebKit::QtViewInterface::didChangeContentsSize):
+        (WebKit::QtViewInterface::didChangeViewportProperties):
+        (WebKit::QtViewInterface::startDrag):
+        * UIProcess/qt/QtViewInterface.h:
+        * UIProcess/qt/QtViewportInteractionEngine.cpp:
+        (WebKit::QtViewportInteractionEngine::reset):
+        (WebKit::QtViewportInteractionEngine::applyConstraints):
+        * UIProcess/qt/QtViewportInteractionEngine.h:
+        * UIProcess/qt/QtWebPageProxy.cpp:
+        (QtWebPageProxy::didFinishFirstNonEmptyLayout):
+        (QtWebPageProxy::didChangeContentsSize):
+        (QtWebPageProxy::didChangeViewportProperties):
+        (QtWebPageProxy::startDrag):
+        * UIProcess/qt/QtWebPageProxy.h:
+
 2011-11-17  Eunmi Lee  <eunmi15.lee@samsung.com>
 
         Reviewed by Martin Robinson.

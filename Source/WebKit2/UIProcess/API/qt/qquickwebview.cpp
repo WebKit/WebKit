@@ -39,6 +39,8 @@
 
 QQuickWebViewPrivate::QQuickWebViewPrivate()
     : q_ptr(0)
+    , postTransitionState(adoptPtr(new PostTransitionState(this)))
+    , transitioningToNewPage(false)
     , useTraditionalDesktopBehaviour(false)
 {
 }
@@ -103,17 +105,44 @@ void QQuickWebViewPrivate::initializeTouch(QQuickWebView* viewport)
 
 void QQuickWebViewPrivate::loadDidCommit()
 {
-    if (!useTraditionalDesktopBehaviour)
-        interactionEngine->reset();
+    transitioningToNewPage = true;
 }
 
-void QQuickWebViewPrivate::contentSizeChanged(const QSize& newSize)
+void QQuickWebViewPrivate::didFinishFirstNonEmptyLayout()
+{
+    transitioningToNewPage = false;
+
+    if (useTraditionalDesktopBehaviour)
+        return;
+
+    postTransitionState->apply();
+}
+
+void QQuickWebViewPrivate::didChangeContentsSize(const QSize& newSize)
 {
     if (useTraditionalDesktopBehaviour)
         return;
 
+    if (isTransitioningToNewPage()) {
+        postTransitionState->contentsSize = newSize;
+        return;
+    }
+
     pageView->setWidth(newSize.width());
     pageView->setHeight(newSize.height());
+}
+
+void QQuickWebViewPrivate::didChangeViewportProperties(const WebCore::ViewportArguments& args)
+{
+    if (useTraditionalDesktopBehaviour)
+        return;
+
+    viewportArguments = args;
+
+    if (isTransitioningToNewPage())
+        return;
+
+    interactionEngine->applyConstraints(computeViewportConstraints());
 }
 
 void QQuickWebViewPrivate::scrollPositionRequested(const QPoint& pos)
@@ -142,7 +171,6 @@ void QQuickWebViewPrivate::_q_onVisibleChanged()
     wkPage->viewStateDidChange(WebPageProxy::ViewIsVisible);
 }
 
-
 void QQuickWebViewPrivate::updateViewportSize()
 {
     Q_Q(QQuickWebView);
@@ -155,17 +183,18 @@ void QQuickWebViewPrivate::updateViewportSize()
     // Let the WebProcess know about the new viewport size, so that
     // it can resize the content accordingly.
     wkPage->setViewportSize(viewportSize);
-    updateViewportConstraints();
+
+    interactionEngine->applyConstraints(computeViewportConstraints());
     _q_viewportUpdated();
 }
 
-void QQuickWebViewPrivate::updateViewportConstraints()
+QtViewportInteractionEngine::Constraints QQuickWebViewPrivate::computeViewportConstraints()
 {
     Q_Q(QQuickWebView);
+
     QSize availableSize = q->boundingRect().size().toSize();
 
-    if (availableSize.isEmpty())
-        return;
+    Q_ASSERT(!availableSize.isEmpty());
 
     WebPageProxy* wkPage = toImpl(pageProxy->pageRef());
     WebPreferences* wkPrefs = wkPage->pageGroup()->preferences();
@@ -182,26 +211,15 @@ void QQuickWebViewPrivate::updateViewportConstraints()
     WebCore::restrictScaleFactorToInitialScaleIfNotUserScalable(attr);
 
     QtViewportInteractionEngine::Constraints newConstraints;
+
     newConstraints.initialScale = attr.initialScale;
     newConstraints.minimumScale = attr.minimumScale;
     newConstraints.maximumScale = attr.maximumScale;
     newConstraints.devicePixelRatio = attr.devicePixelRatio;
     newConstraints.isUserScalable = !!attr.userScalable;
-    interactionEngine->setConstraints(newConstraints);
 
-    // Overwrite minimum scale value with fit-to-view value, unless the the content author
-    // explicitly says no. NB: We can only do this when we know we have a valid size, ie.
-    // after initial layout has completed.
+    return newConstraints;
 }
-
-void QQuickWebViewPrivate::didChangeViewportProperties(const WebCore::ViewportArguments& args)
-{
-    if (useTraditionalDesktopBehaviour)
-        return;
-    viewportArguments = args;
-    updateViewportConstraints();
-}
-
 
 void QQuickWebViewPrivate::runJavaScriptAlert(const QString& alertText)
 {

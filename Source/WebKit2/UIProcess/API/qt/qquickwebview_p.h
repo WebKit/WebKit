@@ -30,6 +30,7 @@
 
 #include <QtCore/QObject>
 #include <QtCore/QScopedPointer>
+#include <wtf/OwnPtr.h>
 
 class QtWebPageProxy;
 
@@ -51,10 +52,14 @@ public:
     void disableMouseEvents();
 
     void loadDidCommit();
-    void contentSizeChanged(const QSize& newSize);
+
+    void didFinishFirstNonEmptyLayout();
+    void didChangeContentsSize(const QSize& newSize);
+    void didChangeViewportProperties(const WebCore::ViewportArguments& args);
+
     void scrollPositionRequested(const QPoint& pos);
     void updateViewportSize();
-    void updateViewportConstraints();
+    QtViewportInteractionEngine::Constraints computeViewportConstraints();
 
     static QQuickWebViewPrivate* get(QQuickWebView* view)
     {
@@ -74,20 +79,50 @@ public:
     void runJavaScriptAlert(const QString&);
     bool runJavaScriptConfirm(const QString&);
     QString runJavaScriptPrompt(const QString&, const QString& defaultValue, bool& ok);
-    void didChangeViewportProperties(const WebCore::ViewportArguments& args);
 
 public slots:
     void setUseTraditionalDesktopBehaviour(bool enable);
 
 private:
+
+    // This class is responsible for collecting and applying all properties
+    // on the viewport item, when transitioning from page A to page B is finished.
+    // See more at https://trac.webkit.org/wiki/QtWebKitLayoutInteraction
+    class PostTransitionState {
+    public:
+        PostTransitionState(QQuickWebViewPrivate* parent)
+            : p(parent)
+        { }
+
+        void apply()
+        {
+            p->interactionEngine->reset();
+            p->interactionEngine->applyConstraints(p->computeViewportConstraints());
+
+            if (contentsSize.isValid()) {
+                p->pageView->setWidth(contentsSize.width());
+                p->pageView->setHeight(contentsSize.height());
+            }
+
+            contentsSize = QSize();
+        }
+
+        QQuickWebViewPrivate* p;
+        QSize contentsSize;
+    };
+
+    bool isTransitioningToNewPage() const { return transitioningToNewPage; }
+
     QScopedPointer<QQuickWebPage> pageView;
     QScopedPointer<WebKit::QtViewInterface> viewInterface;
     QScopedPointer<QtViewportInteractionEngine> interactionEngine;
 
-    WebCore::ViewportArguments viewportArguments;
-
     QQuickWebView* q_ptr;
     QScopedPointer<QtWebPageProxy> pageProxy;
+
+    WebCore::ViewportArguments viewportArguments;
+    OwnPtr<PostTransitionState> postTransitionState;
+    bool transitioningToNewPage;
 
     bool useTraditionalDesktopBehaviour;
     QFileDialog* fileDialog;

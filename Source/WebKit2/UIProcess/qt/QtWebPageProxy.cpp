@@ -446,9 +446,19 @@ void QtWebPageProxy::pageDidRequestScroll(const IntPoint& pos)
     m_viewInterface->scrollPositionRequested(pos);
 }
 
+void QtWebPageProxy::didFinishFirstNonEmptyLayout()
+{
+    m_viewInterface->didFinishFirstNonEmptyLayout();
+}
+
 void QtWebPageProxy::didChangeContentsSize(const IntSize& newSize)
 {
-    m_viewInterface->contentSizeChanged(QSize(newSize));
+    m_viewInterface->didChangeContentsSize(QSize(newSize));
+}
+
+void QtWebPageProxy::didChangeViewportProperties(const WebCore::ViewportArguments& args)
+{
+    m_viewInterface->didChangeViewportProperties(args);
 }
 
 void QtWebPageProxy::toolTipChanged(const String&, const String& newTooltip)
@@ -790,11 +800,6 @@ void QtWebPageProxy::startDrag(const WebCore::DragData& dragData, PassRefPtr<Sha
                                &clientPosition, &globalPosition, &actualDropAction);
 
     m_webPageProxy->dragEnded(clientPosition, globalPosition, dropActionToDragOperation(actualDropAction));
-}
-
-void QtWebPageProxy::didChangeViewportProperties(const WebCore::ViewportArguments& args)
-{
-    m_viewInterface->didChangeViewportProperties(args);
 }
 
 void QtWebPageProxy::handleDownloadRequest(DownloadProxy* download)

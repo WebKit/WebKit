@@ -65,7 +65,7 @@ public:
     bool event(QEvent*);
 
     void reset();
-    void setConstraints(const Constraints&);
+    void applyConstraints(const Constraints&);
 
     void setItemRectVisible(const QRectF&);
     void animateItemRectVisible(const QRectF&);

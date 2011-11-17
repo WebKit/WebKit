@@ -151,6 +151,14 @@ static void qt_wk_didFinishProgress(WKPageRef page, const void* clientInfo)
     toQtWebPageProxy(clientInfo)->didChangeLoadProgress(100);
 }
 
+static void qt_wk_didFirstVisuallyNonEmptyLayoutForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void *clientInfo)
+{
+    if (!WKFrameIsMainFrame(frame))
+        return;
+
+    toQtWebPageProxy(clientInfo)->didFinishFirstNonEmptyLayout();
+}
+
 static void qt_wk_runJavaScriptAlert(WKPageRef page, WKStringRef alertText, WKFrameRef frame, const void* clientInfo)
 {
     QString qAlertText = WKStringCopyQString(alertText);
@@ -316,6 +324,7 @@ void setupPageLoaderClient(QtWebPageProxy* qtWebPageProxy, WebPageProxy* webPage
     loadClient.didStartProgress = qt_wk_didStartProgress;
     loadClient.didChangeProgress = qt_wk_didChangeProgress;
     loadClient.didFinishProgress = qt_wk_didFinishProgress;
+    loadClient.didFirstVisuallyNonEmptyLayoutForFrame = qt_wk_didFirstVisuallyNonEmptyLayoutForFrame;
     WKPageSetPageLoaderClient(qtWebPageProxy->pageRef(), &loadClient);
 }
 
