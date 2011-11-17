@@ -3789,10 +3789,6 @@ BUGWK71451 SLOW : fast/frames/sandboxed-iframe-navigation-windowopen.html = PASS
 BUGWK71451 LINUX : http/tests/security/contentSecurityPolicy/policy-does-not-affect-child.html = TEXT PASS
 BUGWK71451 LINUX : http/tests/security/contentSecurityPolicy/object-src-none-allowed.html = TEXT PASS
 
-BUGENNE : compositing/geometry/fixed-position.html = FAIL
-BUGENNE : compositing/geometry/horizontal-scroll-composited.html = FAIL
-BUGENNE : compositing/geometry/vertical-scroll-composited.html = FAIL
-BUGENNE : compositing/overflow/fixed-position-ancestor-clip.html = FAIL
 BUGWK72182 : compositing/scaling/tiled-layer-recursion.html = FAIL CRASH
 
 // This test sometimes exceeds 60-second time limit (for SLOW tests) on
