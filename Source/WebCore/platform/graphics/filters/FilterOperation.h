@@ -29,7 +29,6 @@
 #if ENABLE(CSS_FILTERS)
 
 #include "Length.h"
-#include "ShadowData.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/RefCounted.h>
@@ -270,12 +269,15 @@ private:
 
 class DropShadowFilterOperation : public FilterOperation {
 public:
-    static PassRefPtr<DropShadowFilterOperation> create(PassOwnPtr<ShadowData> shadow, OperationType type)
+    static PassRefPtr<DropShadowFilterOperation> create(int x, int y, int stdDeviation, Color color, OperationType type)
     {
-        return adoptRef(new DropShadowFilterOperation(shadow, type));
+        return adoptRef(new DropShadowFilterOperation(x, y, stdDeviation, color, type));
     }
 
-    const ShadowData* shadow() const { return m_shadow.get(); }
+    int x() const { return m_x; }
+    int y() const { return m_y; }
+    int stdDeviation() const { return m_stdDeviation; }
+    Color color() const { return m_color; }
 
 private:
 
@@ -284,16 +286,22 @@ private:
         if (!isSameType(o))
             return false;
         const DropShadowFilterOperation* other = static_cast<const DropShadowFilterOperation*>(&o);
-        return *m_shadow == *(other->m_shadow);
+        return m_x == other->m_x && m_y == other->m_y && m_stdDeviation == other->m_stdDeviation && m_color == other->m_color;
     }
 
-    DropShadowFilterOperation(PassOwnPtr<ShadowData> shadow, OperationType type)
+    DropShadowFilterOperation(int x, int y, int stdDeviation, Color color, OperationType type)
         : FilterOperation(type)
-        , m_shadow(shadow)
+        , m_x(x)
+        , m_y(y)
+        , m_stdDeviation(stdDeviation)
+        , m_color(color)
     {
     }
 
-    OwnPtr<ShadowData> m_shadow;
+    int m_x;
+    int m_y;
+    int m_stdDeviation;
+    Color m_color;
 };
 
 } // namespace WebCore

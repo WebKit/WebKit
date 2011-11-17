@@ -5657,9 +5657,8 @@ bool CSSStyleSelector::createFilterOperations(CSSValue* inValue, RenderStyle* st
             Color color;
             if (item->color)
                 color = getColorFromPrimitiveValue(item->color.get());
-            OwnPtr<ShadowData> shadowData = adoptPtr(new ShadowData(x, y, blur, 0, Normal, false, color.isValid() ? color : Color::transparent));
             
-            operations.operations().append(DropShadowFilterOperation::create(shadowData.release(), operationType));
+            operations.operations().append(DropShadowFilterOperation::create(x, y, blur, color.isValid() ? color : Color::transparent, operationType));
             break;
         }
         case WebKitCSSFilterValue::UnknownFilterOperation:

@@ -1,3 +1,26 @@
+2011-11-16  Dean Jackson  <dino@apple.com>
+
+        DropShadowFilterOperation violates platform isolation
+        https://bugs.webkit.org/show_bug.cgi?id=72544
+
+        Reviewed by Simon Fraser.
+
+        Move ShadowData properties into the DropShadowFilterOperation
+        to avoid depending on something outside platform.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::valueForFilter):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::createFilterOperations):
+        * platform/graphics/filters/FilterOperation.h:
+        (WebCore::DropShadowFilterOperation::create):
+        (WebCore::DropShadowFilterOperation::x):
+        (WebCore::DropShadowFilterOperation::y):
+        (WebCore::DropShadowFilterOperation::stdDeviation):
+        (WebCore::DropShadowFilterOperation::color):
+        (WebCore::DropShadowFilterOperation::operator==):
+        (WebCore::DropShadowFilterOperation::DropShadowFilterOperation):
+
 2011-11-16  Adam Bergkvist  <adam.bergkvist@ericsson.com>
 
         Use a simple page client for user consent in getUserMedia()
