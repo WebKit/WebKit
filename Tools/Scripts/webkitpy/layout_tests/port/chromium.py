@@ -594,7 +594,7 @@ class ChromiumDriver(Driver):
         # FIXME: We really should properly handle the stderr output separately.
         if crash:
             error = error + str(text)
-            crashed_process_name = self.driver_name()
+            crashed_process_name = self._port.driver_name()
 
         return DriverOutput(text, output_image, actual_checksum, audio=audio_bytes,
             crash=crash, crashed_process_name=crashed_process_name, test_time=run_time, timeout=timeout, error=error)

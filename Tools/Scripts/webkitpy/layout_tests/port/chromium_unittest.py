@@ -45,6 +45,7 @@ import chromium_win
 
 from webkitpy.layout_tests.models.test_configuration import TestConfiguration
 from webkitpy.layout_tests.port import port_testcase
+from webkitpy.layout_tests.port.driver import DriverInput
 
 
 class ChromiumDriverTest(unittest.TestCase):
@@ -88,6 +89,18 @@ class ChromiumDriverTest(unittest.TestCase):
             raise IOError
         self.driver._proc.stdout.readline = mock_readline
         self._assert_write_command_and_read_line(expected_crash=True)
+
+    def test_crashed_process_name(self):
+        self.driver._proc = Mock()
+
+        # Simulate a crash by having stdout close unexpectedly.
+        def mock_readline():
+            raise IOError
+        self.driver._proc.stdout.readline = mock_readline
+
+        self.driver._port.test_to_uri = lambda test: 'mocktesturi'
+        driver_output = self.driver.run_test(DriverInput(test_name='some/test.html', timeout=1, image_hash=None, is_reftest=False))
+        self.assertEqual(self.driver._port.driver_name(), driver_output.crashed_process_name)
 
     def test_stop(self):
         self.pid = None

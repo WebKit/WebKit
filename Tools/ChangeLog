@@ -1,5 +1,21 @@
 2011-11-17  Adam Roben  <aroben@apple.com>
 
+        Fix a crash-inducing typo I introduced in r100648
+
+        Fixes <http://webkit.org/b/72642> REGRESSION (r100648): NRWT crashes on Chromium when
+        handling a crashing test
+
+        Reviewed by Adam Barth.
+
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        (ChromiumDriver.run_test): Get the driver name from the port.
+
+        * Scripts/webkitpy/layout_tests/port/chromium_unittest.py:
+        (ChromiumDriverTest.test_crashed_process_name): Simulate a crash and check that we got the
+        right crashed process name.
+
+2011-11-17  Adam Roben  <aroben@apple.com>
+
         Fix NRWT's parsing of the number of excluded leaks
 
         Fixes <http://webkit.org/b/72635> NRWT crashes when parsing leaks files from which certain
