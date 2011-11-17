@@ -1,3 +1,14 @@
+2011-11-17  Alexis Menard  <alexis.menard@openbossa.org>
+
+        [Qt] The experimental plugin doesn't work after being renamed.
+
+        Reviewed by Tor Arne Vestbø.
+
+        It was renamed from private to experimental but the qmldir file
+        was forgotten.
+
+        * declarative/experimental/qmldir:
+
 2011-11-17  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Layer violation: WebCore::dnsPrefetch uses QWebSettings::globalSettings()
