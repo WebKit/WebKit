@@ -1,5 +1,15 @@
 2011-11-16  Dean Jackson  <dino@apple.com>
 
+        Build fix for Apple WebKit due to r100560.
+        When I removed the violating header file it lost the
+        reference to Color.
+
+        No review.
+
+        * platform/graphics/filters/FilterOperation.h:
+
+2011-11-16  Dean Jackson  <dino@apple.com>
+
         DropShadowFilterOperation violates platform isolation
         https://bugs.webkit.org/show_bug.cgi?id=72544
 

@@ -28,6 +28,7 @@
 
 #if ENABLE(CSS_FILTERS)
 
+#include "Color.h"
 #include "Length.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
