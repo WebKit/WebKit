@@ -39,7 +39,7 @@ class Event;
 class Node;
 class ScriptExecutionContext;
 
-class WorkerEventQueue : public RefCounted<WorkerEventQueue>, public EventQueue {
+class WorkerEventQueue : public EventQueue {
 public:
 
     static PassOwnPtr<WorkerEventQueue> create(ScriptExecutionContext*);

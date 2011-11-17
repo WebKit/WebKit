@@ -115,6 +115,7 @@ WorkerContext::WorkerContext(const KURL& url, const String& userAgent, WorkerThr
     , m_workerInspectorController(adoptPtr(new WorkerInspectorController(this)))
 #endif
     , m_closing(false)
+    , m_eventQueue(WorkerEventQueue::create(this))
 {
     setSecurityOrigin(SecurityOrigin::create(url));
     

@@ -1,3 +1,19 @@
+2011-11-16  David Grogan  <dgrogan@chromium.org>
+
+        instantiate WorkerEventQueue in WorkerContext
+        https://bugs.webkit.org/show_bug.cgi?id=72528
+
+        Reviewed by David Levin.
+
+        No new tests - nothing uses it yet.
+
+        * workers/WorkerContext.cpp:
+        (WebCore::WorkerContext::WorkerContext):
+        Instantiate WorkerEventQueue in InitializerList
+
+        * workers/WorkerEventQueue.h:
+        Don't inherit from RefCounted, WorkerContext has an OwnPtr to it
+
 2011-11-16  Kentaro Hara  <haraken@chromium.org>
 
         Unreviewed. Rebaselined run-bindings-tests results.
