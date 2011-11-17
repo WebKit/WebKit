@@ -150,7 +150,7 @@ my @features = (
       define => "ENABLE_ANIMATION_API", default => 0, value => \$animationAPISupport },
 
     { option => "blob", desc => "Toggle Blob support",
-      define => "ENABLE_BLOB", default => (isAppleMacWebKit() || isGtk()), value => \$blobSupport },
+      define => "ENABLE_BLOB", default => (isAppleMacWebKit() || isGtk() || isChromium()), value => \$blobSupport },
 
     { option => "channel-messaging", desc => "Toggle MessageChannel and MessagePort support",
       define => "ENABLE_CHANNEL_MESSAGING", default => 1, value => \$channelMessagingSupport },
