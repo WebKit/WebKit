@@ -712,18 +712,27 @@ IntRect ScrollView::contentsToRootView(const IntRect& contentsRect) const
 
 IntPoint ScrollView::windowToContents(const IntPoint& windowPoint) const
 {
+    if (delegatesScrolling())
+        return convertFromContainingWindow(windowPoint);
+
     IntPoint viewPoint = convertFromContainingWindow(windowPoint);
     return viewPoint + scrollOffset();
 }
 
 IntPoint ScrollView::contentsToWindow(const IntPoint& contentsPoint) const
 {
+    if (delegatesScrolling())
+        return convertToContainingWindow(contentsPoint);
+
     IntPoint viewPoint = contentsPoint - scrollOffset();
     return convertToContainingWindow(viewPoint);  
 }
 
 IntRect ScrollView::windowToContents(const IntRect& windowRect) const
 {
+    if (delegatesScrolling())
+        return convertFromContainingWindow(windowRect);
+
     IntRect viewRect = convertFromContainingWindow(windowRect);
     viewRect.move(scrollOffset());
     return viewRect;
@@ -731,6 +740,9 @@ IntRect ScrollView::windowToContents(const IntRect& windowRect) const
 
 IntRect ScrollView::contentsToWindow(const IntRect& contentsRect) const
 {
+    if (delegatesScrolling())
+        return convertToContainingWindow(contentsRect);
+
     IntRect viewRect = contentsRect;
     viewRect.move(-scrollOffset());
     return convertToContainingWindow(viewRect);
