@@ -25,7 +25,6 @@
 #include <QSet>
 #include <QString>
 #include <QTime>
-#include "qwebsettings.h"
 
 namespace WebCore {
 

@@ -1,5 +1,20 @@
 2011-11-17  Simon Hausmann  <simon.hausmann@nokia.com>
 
+        [Qt] Layer violation: WebCore::dnsPrefetch uses QWebSettings::globalSettings()
+        https://bugs.webkit.org/show_bug.cgi?id=72596
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        We don't need to use QWebSettings here, because we now propagate the DNS prefetch
+        setting to WebCore::Settings and the rest of WebCore checks the setting before calling
+        WebCore::prefetchDNS.
+
+        * platform/network/qt/DnsPrefetchHelper.cpp:
+        (WebCore::prefetchDNS): Removed the use of QWebSettings.
+        * platform/network/qt/DnsPrefetchHelper.h: Remove offending qwebsettings.h inclusion.
+
+2011-11-17  Simon Hausmann  <simon.hausmann@nokia.com>
+
         [Qt] Layer violation: Image::loadPlatformResource uses QWebSettings::webGraphic
         https://bugs.webkit.org/show_bug.cgi?id=72594
 

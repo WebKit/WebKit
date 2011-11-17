@@ -141,6 +141,10 @@ void QWebSettingsPrivate::apply()
                                       global->attributes.value(QWebSettings::AutoLoadImages));
         settings->setLoadsImagesAutomatically(value);
 
+        value = attributes.value(QWebSettings::DnsPrefetchEnabled,
+                                 global->attributes.value(QWebSettings::DnsPrefetchEnabled));
+        settings->setDNSPrefetchingEnabled(value);
+
         value = attributes.value(QWebSettings::JavascriptEnabled,
                                       global->attributes.value(QWebSettings::JavascriptEnabled));
         settings->setScriptEnabled(value);
