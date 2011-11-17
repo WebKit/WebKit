@@ -1,3 +1,58 @@
+2011-11-16  Adam Bergkvist  <adam.bergkvist@ericsson.com>
+
+        Use a simple page client for user consent in getUserMedia()
+        https://bugs.webkit.org/show_bug.cgi?id=70897
+
+        Reviewed by Adam Barth.
+
+        This is one in a series of patches that update the MediaStream feature
+        to use WebCore platform interfaces.
+
+        Covered by existing tests.
+
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * mediastream/MediaStreamClient.h: Removed.
+        * mediastream/MediaStreamController.cpp: Removed.
+        * mediastream/MediaStreamController.h: Removed.
+        * mediastream/MediaStreamFrameController.cpp: Removed.
+        * mediastream/MediaStreamFrameController.h: Removed.
+        * mediastream/UserMediaClient.h: Added.
+        (WebCore::UserMediaClient::~UserMediaClient):
+        * mediastream/UserMediaRequest.cpp: Added.
+        (WebCore::UserMediaRequest::create):
+        (WebCore::UserMediaRequest::UserMediaRequest):
+        (WebCore::UserMediaRequest::~UserMediaRequest):
+        (WebCore::UserMediaRequest::start):
+        (WebCore::UserMediaRequest::mediaStreamSourcesQueryCompleted):
+        (WebCore::UserMediaRequest::succeed):
+        (WebCore::UserMediaRequest::fail):
+        (WebCore::UserMediaRequest::contextDestroyed):
+        (WebCore::UserMediaRequest::parseOptions):
+        * mediastream/UserMediaRequest.h: Added.
+        (WebCore::UserMediaRequest::audio):
+        (WebCore::UserMediaRequest::video):
+        (WebCore::UserMediaRequest::cameraPreferenceUser):
+        (WebCore::UserMediaRequest::cameraPreferenceEnvironment):
+        (WebCore::UserMediaRequest::successCallback):
+        (WebCore::UserMediaRequest::errorCallback):
+        * page/CallbackTask.h: Removed.
+        * page/Frame.cpp:
+        (WebCore::Frame::Frame):
+        (WebCore::Frame::~Frame):
+        (WebCore::Frame::pageDestroyed):
+        (WebCore::Frame::transferChildFrameToNewDocument):
+        * page/Frame.h:
+        * page/Navigator.cpp:
+        (WebCore::Navigator::webkitGetUserMedia):
+        * page/NavigatorUserMediaErrorCallback.h:
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+        (WebCore::Page::~Page):
+        (WebCore::Page::PageClients::PageClients):
+        * page/Page.h:
+        (WebCore::Page::userMediaClient):
+
 2011-11-16  David Grogan  <dgrogan@chromium.org>
 
         instantiate WorkerEventQueue in WorkerContext

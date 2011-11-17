@@ -65,7 +65,6 @@ namespace WebCore {
     class Document;
     class FrameView;
     class HTMLTableCellElement;
-    class MediaStreamFrameController;
     class RegularExpression;
     class RenderPart;
     class TiledBackingStore;
@@ -201,10 +200,6 @@ namespace WebCore {
         NSImage* imageFromRect(NSRect) const;
 #endif
 
-#if ENABLE(MEDIA_STREAM)
-        MediaStreamFrameController* mediaStreamFrameController() const { return m_mediaStreamFrameController.get(); }
-#endif
-        
         // Should only be called on the main frame of a page.
         void notifyChromeClientWheelEventHandlerCountChanged() const;
 
@@ -266,9 +261,6 @@ namespace WebCore {
         OwnPtr<TiledBackingStore> m_tiledBackingStore;
 #endif
 
-#if ENABLE(MEDIA_STREAM)
-        OwnPtr<MediaStreamFrameController> m_mediaStreamFrameController;
-#endif
     };
 
     inline void Frame::init()

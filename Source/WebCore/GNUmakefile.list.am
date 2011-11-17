@@ -2280,13 +2280,8 @@ webcore_sources += \
 	Source/WebCore/mediastream/LocalMediaStream.h \
 	Source/WebCore/mediastream/MediaStream.cpp \
 	Source/WebCore/mediastream/MediaStream.h \
-	Source/WebCore/mediastream/MediaStreamClient.h \
-	Source/WebCore/mediastream/MediaStreamController.cpp \
-	Source/WebCore/mediastream/MediaStreamController.h \
 	Source/WebCore/mediastream/MediaStreamEvent.cpp \
 	Source/WebCore/mediastream/MediaStreamEvent.h \
-	Source/WebCore/mediastream/MediaStreamFrameController.cpp \
-	Source/WebCore/mediastream/MediaStreamFrameController.h \
 	Source/WebCore/mediastream/MediaStreamList.cpp \
 	Source/WebCore/mediastream/MediaStreamList.h \
 	Source/WebCore/mediastream/MediaStreamRegistry.cpp \
@@ -2298,6 +2293,9 @@ webcore_sources += \
 	Source/WebCore/mediastream/PeerConnection.cpp \
 	Source/WebCore/mediastream/PeerConnection.h \
 	Source/WebCore/mediastream/SignalingCallback.h \
+	Source/WebCore/mediastream/UserMediaClient.h \
+	Source/WebCore/mediastream/UserMediaRequest.cpp \
+	Source/WebCore/mediastream/UserMediaRequest.h \
 	Source/WebCore/notifications/NotificationCenter.cpp \
 	Source/WebCore/notifications/NotificationCenter.h \
 	Source/WebCore/notifications/NotificationContents.h \
@@ -2318,7 +2316,6 @@ webcore_sources += \
 	Source/WebCore/page/AdjustViewSizeOrNot.h \
 	Source/WebCore/page/BarInfo.cpp \
 	Source/WebCore/page/BarInfo.h \
-	Source/WebCore/page/CallbackTask.h \
 	Source/WebCore/page/Chrome.cpp \
 	Source/WebCore/page/Chrome.h \
 	Source/WebCore/page/ChromeClient.h \

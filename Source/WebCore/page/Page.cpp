@@ -81,8 +81,7 @@
 #endif
 
 #if ENABLE(MEDIA_STREAM)
-#include "MediaStreamClient.h"
-#include "MediaStreamController.h"
+#include "UserMediaClient.h"
 #endif
 
 namespace WebCore {
@@ -138,11 +137,11 @@ Page::Page(PageClients& pageClients)
     , m_deviceMotionController(RuntimeEnabledFeatures::deviceMotionEnabled() ? adoptPtr(new DeviceMotionController(pageClients.deviceMotionClient)) : nullptr)
     , m_deviceOrientationController(RuntimeEnabledFeatures::deviceOrientationEnabled() ? adoptPtr(new DeviceOrientationController(this, pageClients.deviceOrientationClient)) : nullptr)
 #endif
-#if ENABLE(MEDIA_STREAM)
-    , m_mediaStreamController(RuntimeEnabledFeatures::mediaStreamEnabled() ? adoptPtr(new MediaStreamController(pageClients.mediaStreamClient)) : PassOwnPtr<MediaStreamController>())
-#endif
 #if ENABLE(INPUT_SPEECH)
     , m_speechInputClient(pageClients.speechInputClient)
+#endif
+#if ENABLE(MEDIA_STREAM)
+    , m_userMediaClient(pageClients.userMediaClient)
 #endif
     , m_settings(adoptPtr(new Settings(this)))
     , m_progress(adoptPtr(new ProgressTracker))
@@ -209,6 +208,11 @@ Page::~Page()
     InspectorInstrumentation::inspectedPageDestroyed(this);
 #if ENABLE(INSPECTOR)
     m_inspectorController->inspectedPageDestroyed();
+#endif
+
+#if ENABLE(MEDIA_STREAM)
+    if (m_userMediaClient)
+        m_userMediaClient->pageDestroyed();
 #endif
 
     backForward()->close();
@@ -1059,7 +1063,7 @@ Page::PageClients::PageClients()
     , deviceMotionClient(0)
     , deviceOrientationClient(0)
     , speechInputClient(0)
-    , mediaStreamClient(0)
+    , userMediaClient(0)
 {
 }
 

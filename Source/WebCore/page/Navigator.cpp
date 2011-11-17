@@ -46,9 +46,9 @@
 #include <wtf/StdLibExtras.h>
 
 #if ENABLE(MEDIA_STREAM)
-#include "MediaStreamFrameController.h"
 #include "NavigatorUserMediaErrorCallback.h"
 #include "NavigatorUserMediaSuccessCallback.h"
+#include "UserMediaRequest.h"
 #endif
 
 namespace WebCore {
@@ -284,8 +284,23 @@ void Navigator::registerProtocolHandler(const String& scheme, const String& url,
 #if ENABLE(MEDIA_STREAM)
 void Navigator::webkitGetUserMedia(const String& options, PassRefPtr<NavigatorUserMediaSuccessCallback> successCallback, PassRefPtr<NavigatorUserMediaErrorCallback> errorCallback, ExceptionCode& ec)
 {
-    if (m_frame && m_frame->mediaStreamFrameController())
-        m_frame->mediaStreamFrameController()->generateStream(options, successCallback, errorCallback, ec);
+    if (!successCallback)
+        return;
+
+    if (!m_frame)
+        return;
+
+    Page* page = m_frame->page();
+    if (!page)
+        return;
+
+    RefPtr<UserMediaRequest> request = UserMediaRequest::create(m_frame->document(), page->userMediaClient(), options, successCallback, errorCallback);
+    if (!request) {
+        ec = NOT_SUPPORTED_ERR;
+        return;
+    }
+
+    request->start();
 }
 #endif
 
