@@ -24,12 +24,9 @@
 
 from __future__ import with_statement
 
-import codecs
-import os
-import shutil
-import tempfile
 import unittest
 
+from webkitpy.common.system.filesystem import FileSystem
 from webkitpy.common.system.logtesting import LoggingTestCase
 from webkitpy.style.checker import ProcessorBase
 from webkitpy.style.filereader import TextFileReader
@@ -58,24 +55,21 @@ class TextFileReaderTest(LoggingTestCase):
 
     def setUp(self):
         LoggingTestCase.setUp(self)
-        processor = TextFileReaderTest.MockProcessor()
-
-        temp_dir = tempfile.mkdtemp()
-
-        self._file_reader = TextFileReader(processor)
-        self._processor = processor
-        self._temp_dir = temp_dir
+        # FIXME: This should be a MockFileSystem once TextFileReader is moved entirely on top of FileSystem.
+        self.filesystem = FileSystem()
+        self._temp_dir = str(self.filesystem.mkdtemp())
+        self._processor = TextFileReaderTest.MockProcessor()
+        self._file_reader = TextFileReader(self.filesystem, self._processor)
 
     def tearDown(self):
         LoggingTestCase.tearDown(self)
-        shutil.rmtree(self._temp_dir)
+        self.filesystem.rmtree(self._temp_dir)
 
-    def _create_file(self, rel_path, text, encoding="utf-8"):
+    def _create_file(self, rel_path, text):
         """Create a file with given text and return the path to the file."""
-        # FIXME: There are better/more secure APIs for creatin tmp file paths.
-        file_path = os.path.join(self._temp_dir, rel_path)
-        with codecs.open(file_path, "w", encoding) as file:
-            file.write(text)
+        # FIXME: There are better/more secure APIs for creating tmp file paths.
+        file_path = self.filesystem.join(self._temp_dir, rel_path)
+        self.filesystem.write_text_file(file_path, text)
         return file_path
 
     def _passed_to_processor(self):
@@ -98,8 +92,8 @@ class TextFileReaderTest(LoggingTestCase):
         self.assertLog(["ERROR: File does not exist: 'does_not_exist.txt'\n"])
 
     def test_process_file__is_dir(self):
-        temp_dir = os.path.join(self._temp_dir, 'test_dir')
-        os.mkdir(temp_dir)
+        temp_dir = self.filesystem.join(self._temp_dir, 'test_dir')
+        self.filesystem.maybe_make_directory(temp_dir)
 
         self._file_reader.process_file(temp_dir)
 
@@ -113,8 +107,7 @@ class TextFileReaderTest(LoggingTestCase):
         # remain.
         message = log_messages.pop()
 
-        self.assertTrue(message.startswith('WARNING: Could not read file. '
-                                           "Skipping: '%s'\n  " % temp_dir))
+        self.assertTrue(message.startswith("WARNING: Could not read file. Skipping: '%s'\n  " % temp_dir))
 
         self._assert_file_reader([], 1)
 
@@ -147,12 +140,12 @@ class TextFileReaderTest(LoggingTestCase):
 
     def test_process_paths(self):
         # We test a list of paths that contains both a file and a directory.
-        dir = os.path.join(self._temp_dir, 'foo_dir')
-        os.mkdir(dir)
+        dir = self.filesystem.join(self._temp_dir, 'foo_dir')
+        self.filesystem.maybe_make_directory(dir)
 
         file_path1 = self._create_file('file1.txt', 'foo')
 
-        rel_path = os.path.join('foo_dir', 'file2.txt')
+        rel_path = self.filesystem.join('foo_dir', 'file2.txt')
         file_path2 = self._create_file(rel_path, 'bar')
 
         self._file_reader.process_paths([dir, file_path1])

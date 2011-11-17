@@ -1,5 +1,20 @@
 2011-11-17  Eric Seidel  <eric@webkit.org>
 
+        Teach TextFileReader about FileSystem
+        https://bugs.webkit.org/show_bug.cgi?id=72673
+
+        Reviewed by Adam Barth.
+
+        Unfortunately TextFileReader doesn't use FileSystem
+        everywhere yet, so we can't move the unittests to
+        using MockFileSystem, but we're close.
+
+        * Scripts/webkitpy/style/filereader.py:
+        * Scripts/webkitpy/style/filereader_unittest.py:
+        * Scripts/webkitpy/style/main.py:
+
+2011-11-17  Eric Seidel  <eric@webkit.org>
+
         Give check-webkit-style a Host
         https://bugs.webkit.org/show_bug.cgi?id=72670
 

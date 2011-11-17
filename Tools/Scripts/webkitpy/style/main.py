@@ -192,7 +192,7 @@ class CheckWebKitStyle(object):
         paths = change_directory(host.filesystem, checkout_root=checkout_root, paths=paths)
 
         style_processor = StyleProcessor(configuration)
-        file_reader = TextFileReader(style_processor)
+        file_reader = TextFileReader(host.filesystem, style_processor)
 
         if paths and not options.diff_files:
             file_reader.process_paths(paths)

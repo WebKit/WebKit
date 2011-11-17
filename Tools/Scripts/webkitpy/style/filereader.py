@@ -54,13 +54,15 @@ class TextFileReader(object):
 
     """
 
-    def __init__(self, processor):
+    def __init__(self, filesystem, processor):
         """Create an instance.
 
         Arguments:
           processor: A ProcessorBase instance.
 
         """
+        # FIXME: Although TextFileReader requires a FileSystem it circumvents it in two places!
+        self.filesystem = filesystem
         self._processor = processor
         self.file_count = 0
         self.delete_only_file_count = 0
@@ -83,6 +85,7 @@ class TextFileReader(object):
             # (codecs does not support it anyway), so the resulting
             # lines contain trailing "\r" characters if we are reading
             # a file with CRLF endings.
+            # FIXME: This should use self.filesystem
             file = codecs.open(file_path, 'r', 'utf8', 'replace')
 
         try:
@@ -108,9 +111,9 @@ class TextFileReader(object):
         """
         self.file_count += 1
 
-        if not os.path.exists(file_path) and file_path != "-":
+        if not self.filesystem.exists(file_path) and file_path != "-":
             _log.error("File does not exist: '%s'" % file_path)
-            sys.exit(1)
+            sys.exit(1)  # FIXME: This should throw or return instead of exiting directly.
 
         if not self._processor.should_process(file_path):
             _log.debug("Skipping file: '%s'" % file_path)
@@ -120,34 +123,23 @@ class TextFileReader(object):
         try:
             lines = self._read_lines(file_path)
         except IOError, err:
-            message = ("Could not read file. Skipping: '%s'\n  %s"
-                       % (file_path, err))
+            message = ("Could not read file. Skipping: '%s'\n  %s" % (file_path, err))
             _log.warn(message)
             return
 
         self._processor.process(lines, file_path, **kwargs)
 
     def _process_directory(self, directory):
-        """Process all files in the given directory, recursively.
-
-        Args:
-          directory: A directory path.
-
-        """
+        """Process all files in the given directory, recursively."""
+        # FIXME: We should consider moving to self.filesystem.files_under() (or adding walk() to FileSystem)
         for dir_path, dir_names, file_names in os.walk(directory):
             for file_name in file_names:
-                file_path = os.path.join(dir_path, file_name)
+                file_path = self.filesystem.join(dir_path, file_name)
                 self.process_file(file_path)
 
     def process_paths(self, paths):
-        """Process the given file and directory paths.
-
-        Args:
-          paths: A list of file and directory paths.
-
-        """
         for path in paths:
-            if os.path.isdir(path):
+            if self.filesystem.isdir(path):
                 self._process_directory(directory=path)
             else:
                 self.process_file(path)
