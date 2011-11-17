@@ -165,7 +165,8 @@ public:
     bool isSameSchemeHostPort(const SecurityOrigin*) const;
 
 private:
-    explicit SecurityOrigin(const KURL&, bool forceUnique);
+    SecurityOrigin();
+    explicit SecurityOrigin(const KURL&);
     explicit SecurityOrigin(const SecurityOrigin*);
 
     // FIXME: Rename this function to something more semantic.
@@ -182,7 +183,7 @@ private:
     bool m_domainWasSetInDOM;
     bool m_canLoadLocalResources;
     bool m_enforceFilePathSeparation;
-    bool m_needsStorageIdentifierQuirkForFiles;
+    bool m_needsDatabaseIdentifierQuirkForFiles;
 };
 
 } // namespace WebCore

@@ -1,3 +1,30 @@
+2011-11-17  Adam Barth  <abarth@webkit.org>
+
+        Refactor SecurityOrigin::create to be easier to understand
+        https://bugs.webkit.org/show_bug.cgi?id=72342
+
+        Reviewed by Eric Seidel.
+
+        Over time, the SecurityOrigin constructor has grown a bit out of
+        control.  This patch attempts to separate the different concerns into
+        free functions.  The general approach is to put more logic in the
+        "create" function and introduce a simple constructor for unique
+        origins.
+
+        This patch shouldn't change any behavior.
+
+        * page/SecurityOrigin.cpp:
+        (WebCore::schemeRequiresAuthority):
+        (WebCore::shouldUseInnerURL):
+        (WebCore::extractInnerURL):
+        (WebCore::isDirectory):
+        (WebCore::shouldTreatAsUniqueOrigin):
+        (WebCore::SecurityOrigin::SecurityOrigin):
+        (WebCore::SecurityOrigin::create):
+        (WebCore::SecurityOrigin::createUnique):
+        (WebCore::SecurityOrigin::databaseIdentifier):
+        * page/SecurityOrigin.h:
+
 2011-11-17  Shawn Singh  <shawnsingh@chromium.org>
 
         [chromium] Fix minor style nit in CCLayerImpl
