@@ -4,6 +4,8 @@ import QtWebKit 3.0
 
 WebView {
     id: webView
+    width: 400
+    height: 300
 
     preferences {
         javascriptEnabled: true

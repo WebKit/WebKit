@@ -17,7 +17,6 @@ DEFINES += IMPORT_DIR=\"\\\"$${ROOT_BUILD_DIR}$${QMAKE_DIR_SEP}imports\\\"\"
 
 OTHER_FILES += \
     WebView/tst_properties.qml \
-    WebView/tst_loadZeroSizeView.qml \
     WebView/tst_loadFail.qml \
     WebView/tst_loadProgress.qml \
     WebView/tst_loadProgressSignal.qml \
