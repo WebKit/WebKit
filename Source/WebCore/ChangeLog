@@ -1,3 +1,10 @@
+2011-11-17  Pavel Feldman  <pfeldman@google.com>
+
+        Not reviewed: fix IE user agents strings in the inspector.
+
+        * inspector/front-end/SettingsScreen.js:
+        (WebInspector.SettingsScreen.prototype._createUserAgentSelectRowElement.get const):
+
 2011-11-16  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Make use-fixed-layout work reliable
