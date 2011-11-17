@@ -260,7 +260,6 @@ http/tests/security/drag-over-remote-content-iframe.html
 http/tests/local/drag-over-remote-content.html
 http/tests/local/fileapi
 http/tests/security/drag-drop-same-unique-origin.html
-http/tests/misc/drag-not-loaded-image.html
 
 # [Qt] DumpRenderTree needs a beginDragWithFiles implementation
 # https://bugs.webkit.org/show_bug.cgi?id=50902
@@ -336,9 +335,6 @@ fast/events/dropzone-002.html
 fast/events/dropzone-003.html
 fast/events/dropzone-004.html
 
-# caused by: http://trac.webkit.org/changeset/52192
-http/tests/misc/drag-over-iframe-invalid-source-crash.html
-
 # Missing eventSender.beginDragWithFiles()
 fast/dom/Window/window-postmessage-clone-frames.html
 
@@ -360,10 +356,6 @@ http/tests/security/clipboard/clipboard-file-access.html
 
 # no expected results
 http/tests/misc/favicon-as-image.html
-
-# https://bugs.webkit.org/show_bug.cgi?id=34004
-# [Qt] http/tests/misc/slow-loading-mask.html timed out.
-http/tests/misc/slow-loading-mask.html
 
 # No authentication challenge handling
 http/tests/loading/basic-credentials-sent-automatically.html
@@ -407,7 +399,6 @@ http/tests/xmlhttprequest/workers/shared-worker-methods.html
 # Caused by the way Qt caches network connections using user@hostname as the key
 # See https://bugs.webkit.org/show_bug.cgi?id=37084 and http://bugreports.qt.nokia.com/browse/QTBUG-9619
 # Fixed in Qt 4.8
-http/tests/xmlhttprequest/re-login-async.html
 http/tests/xmlhttprequest/re-login.html
 
 # Still fail with Qt 4.7.1
@@ -517,9 +508,6 @@ fast/frames/sandboxed-iframe-plugins.html
 fast/frames/sandboxed-iframe-scripting.html
 fast/frames/sandboxed-iframe-storage.html
 http/tests/cookies/simple-cookies-max-age.html
-http/tests/cookies/simple-cookies-expired.html
-http/tests/xmlhttprequest/workers/close.html
-http/tests/xmlhttprequest/workers/shared-worker-close.html
 
 transitions/change-values-during-transition.html
 
@@ -538,7 +526,6 @@ inspector/timeline/timeline-paint.html
 inspector/styles/styles-add-blank-property.html
 
 # [Qt] New fails caused by change(s) between r79317-r79320.
-http/tests/inspector/change-iframe-src.html
 inspector/debugger/open-close-open.html
 
 # [Qt] fast/frames/flattening/frameset-flattening-subframesets.html fails intermittently on Qt bot
@@ -740,11 +727,6 @@ fast/ruby/rubyDOM-remove-text2.html
 # [Qt] http/tests/misc/favicon-loads-with-icon-loading-override.html fails
 # https://bugs.webkit.org/show_bug.cgi?id=58396
 http/tests/misc/favicon-loads-with-icon-loading-override.html
-
-# Missing layoutTestController.setAlwaysAcceptCookies - implemented for Qt version >= 4.8
-http/tests/security/cookies/third-party-cookie-blocking-main-frame.html
-http/tests/security/cookies/third-party-cookie-blocking-user-action.html
-http/tests/security/cookies/third-party-cookie-blocking.html
 
 # ============================================================================= #
 # Failing SVG tests
@@ -1683,10 +1665,6 @@ svg/text/lengthAdjust-text-metrics.html
 # Support for third-party cookie blocking
 # https://bugs.webkit.org/show_bug.cgi?id=45455
 # See also http://bugreports.qt.nokia.com/browse/QTBUG-13601
-http/tests/cookies/third-party-cookie-relaxing.html
-http/tests/xmlhttprequest/cross-origin-cookie-storage.html
-http/tests/xmlhttprequest/access-control-basic-allow-preflight-cache-timeout.html
-http/tests/plugins/third-party-cookie-accept-policy.html
 platform/qt/http/tests/cookies/strict-third-party-cookie-blocking.html
 
 # ============================================================================= #
@@ -1708,9 +1686,7 @@ printing/single-line-must-not-be-split-into-two-pages.html
 # Web Timing related bugs
 # https://bugs.webkit.org/show_bug.cgi?id=51245
 fast/dom/webtiming.html
-http/tests/misc/webtiming-ssl.php
 http/tests/misc/webtiming-origins.html
-http/tests/misc/webtiming-slow-load.php
 
 # Advanced credential handling
 http/tests/security/401-logout/401-logout.php
@@ -1865,7 +1841,6 @@ http/tests/xmlviewer/dumpAsText/xul.xml
 # [Qt] Two http auth tests fail with Qt 4.7.2
 # https://bugs.webkit.org/show_bug.cgi?id=55767
 http/tests/appcache/auth.html
-http/tests/xmlhttprequest/basic-auth.html
 
 # LayoutTestController::clearApplicationCacheForOrigin is not implemented
 http/tests/appcache/origin-delete.html
@@ -1886,7 +1861,6 @@ http/tests/inspector/network/network-size-chunked.html
 http/tests/inspector/network/network-size-sync.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=64097
-http/tests/inspector/network/network-disable-cache-memory.html
 http/tests/inspector/network/network-disable-cache-xhrs.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=65911
@@ -2104,10 +2078,6 @@ fast/events/page-visibility-iframe-move-test.html
 fast/events/page-visibility-iframe-propagation-test.html
 fast/events/page-visibility-transition-test.html
 
-# Fails with Qt 4.7.3.
-http/tests/inspector/network/download.html
-http/tests/inspector/network/x-frame-options-deny.html
-
 # [Qt]fast/events/remove-target-in-mouseup* tests fail
 # https://bugs.webkit.org/show_bug.cgi?id=60833
 fast/events/remove-target-in-mouseup-deep.html
@@ -2267,10 +2237,6 @@ svg/W3C-SVG-1.1-SE/styling-pres-02-f.svg
 # https://bugs.webkit.org/show_bug.cgi?id=65257
 svg/custom/zero-path-square-cap-rendering2.svg
 
-# [Qt]Web Inspector: http/tests/inspector/network/network-sidebar-width.html fails
-# https://bugs.webkit.org/show_bug.cgi?id=65526
-http/tests/inspector/network/network-sidebar-width.html
-
 # [Qt]REGRESSION(r92254): It made 2 tests timeout
 # https://bugs.webkit.org/show_bug.cgi?id=65609
 fast/frames/lots-of-objects.html
@@ -2414,12 +2380,6 @@ fast/text/line-initial-and-final-swashes.html
 # [Qt] Assertion fail in CSSPrimitiveValue ctor
 # https://bugs.webkit.org/show_bug.cgi?id=69933
 fast/borders/inline-mask-overlay-image-outset-vertical-rl.html
-
-# Web Inspector: REGRESSION(r97267): It made 3 tests fail on the Qt bot
-# https://bugs.webkit.org/show_bug.cgi?id=70005
-http/tests/inspector/resource-tree/resource-tree-document-url.html
-http/tests/inspector/resource-tree/resource-tree-frame-navigate.html
-http/tests/inspector/resource-tree/resource-tree-non-unique-url.html
 
 # [Qt] Assertion fail in CSSPrimitiveValue ctor
 # https://bugs.webkit.org/show_bug.cgi?id=69933
