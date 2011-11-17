@@ -1,3 +1,39 @@
+2011-11-17  Adam Roben  <aroben@apple.com>
+
+        Make NRWT find crash logs for the crashed process, which may not necessarily be the driver process
+
+        Fixes <http://webkit.org/b/72526> REGRESSION (NRWT): WebKitTestRunner crash log gets saved
+        when web process crashes, but WebProcess crash log should get saved instead
+
+        Reviewed by Eric Seidel.
+
+        * Scripts/webkitpy/layout_tests/controllers/test_result_writer.py:
+        (write_test_result): Simplified a little to share more code between the case where we
+        crashed when running the test and where we crashed when checking the expected rendering for
+        a reftest. Changed to pass the crashed process name down to write_crash_report.
+        (TestResultWriter.write_crash_report): Added crashed_process_name parameter, which we pass
+        along to CrashLogs.find_newest_log rather than always using the driver name.
+
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        (ChromiumDriver.run_test): Pass the driver name as the name of the crashed process if we
+        crashed.
+
+        * Scripts/webkitpy/layout_tests/port/test.py:
+        (TestInstance.__init__): Initialize new web_process_crash attribute.
+        (unit_test_list): Added new web-process-crash-with-stderr test, which is used by the new
+        test this patch adds.
+        (TestDriver.run_test): Pass a crashed process name to DriverOutput based on whether the test
+        specifies that the driver crashed or the web process crashed.
+
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+        (MainTest.test_web_process_crash_log): Added. Similar to test_crash_log, but uses a test for
+        which we pretend the web process crashed rather than the driver process.
+
+        (MainTest.test_run_singly_actually_runs_tests):
+        (MainTest.test_unexpected_failures):
+        (EndToEndTest.test_end_to_end):
+        Updated magic numbers to account for new unexpected failing test added to unit_test_list.
+
 2011-11-17  Tony Chang  <tony@chromium.org>
 
         [chromium] stop spamming features warning on every build

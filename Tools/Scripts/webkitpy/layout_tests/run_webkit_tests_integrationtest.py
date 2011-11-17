@@ -376,7 +376,7 @@ class MainTest(unittest.TestCase):
 
     def test_run_singly_actually_runs_tests(self):
         res, _, _, _ = logging_run(['--run-singly', 'failures/unexpected'])
-        self.assertEquals(res, 6)
+        self.assertEquals(res, 7)
 
     def test_single_file(self):
         # FIXME: We should consider replacing more of the get_tests_run()-style tests
@@ -426,7 +426,7 @@ class MainTest(unittest.TestCase):
 
         # Update this magic number if you add an unexpected test to webkitpy.layout_tests.port.test
         # FIXME: It's nice to have a routine in port/test.py that returns this number.
-        unexpected_tests_count = 6
+        unexpected_tests_count = 7
 
         self.assertEqual(res, unexpected_tests_count)
         self.assertFalse(out.empty())
@@ -505,6 +505,22 @@ class MainTest(unittest.TestCase):
         if sys.platform != "darwin":
             expected_crash_log = "mock-std-error-output"
         self.assertEquals(fs.read_text_file('/tmp/layout-test-results/failures/unexpected/crash-with-stderr-crash-log.txt'), expected_crash_log)
+
+    def test_web_process_crash_log(self):
+        mock_crash_report = 'mock-crash-report'
+        fs = unit_test_filesystem()
+        fs.write_text_file('/Users/mock/Library/Logs/DiagnosticReports/WebProcess_2011-06-13-150719_quadzen.crash', mock_crash_report)
+        res, buildbot_output, regular_output, user = logging_run([
+                'failures/unexpected/web-process-crash-with-stderr.html',
+            ],
+            tests_included=True,
+            record_results=True,
+            filesystem=fs)
+        expected_crash_log = mock_crash_report
+        # Currently CrashLog uploading only works on Darwin.
+        if sys.platform != "darwin":
+            expected_crash_log = "mock-std-error-output"
+        self.assertEquals(fs.read_text_file('/tmp/layout-test-results/failures/unexpected/web-process-crash-with-stderr-crash-log.txt'), expected_crash_log)
 
     def test_exit_after_n_failures_upload(self):
         fs = unit_test_filesystem()
@@ -741,8 +757,8 @@ class EndToEndTest(unittest.TestCase):
         fs = unit_test_filesystem()
         res, out, err, user = logging_run(record_results=True, tests_included=True, filesystem=fs)
 
-        # Six tests should fail, so the return code should be 6.
-        self.assertEquals(res, 6)
+        # Seven tests should fail, so the return code should be 7.
+        self.assertEquals(res, 7)
         results = self.parse_full_results(fs.files['/tmp/layout-test-results/full_results.json'])
 
         # Check to ensure we're passing back image diff %age correctly.

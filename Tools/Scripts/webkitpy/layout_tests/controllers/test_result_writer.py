@@ -63,10 +63,8 @@ def write_test_result(port, test_name, driver_output,
                                   test_failures.FailureMissingAudio)):
             writer.write_audio_files(driver_output.audio, expected_driver_output.audio)
         elif isinstance(failure, test_failures.FailureCrash):
-            if failure.is_reftest:
-                writer.write_crash_report(expected_driver_output.error)
-            else:
-                writer.write_crash_report(driver_output.error)
+            crashed_driver_output = expected_driver_output if failure.is_reftest else driver_output
+            writer.write_crash_report(crashed_driver_output.crashed_process_name, crashed_driver_output.error)
         elif isinstance(failure, test_failures.FailureReftestMismatch):
             writer.write_image_files(driver_output.image, expected_driver_output.image)
             # FIXME: This work should be done earlier in the pipeline (e.g., when we compare images for non-ref tests).
@@ -156,13 +154,13 @@ class TestResultWriter(object):
         fs.maybe_make_directory(fs.dirname(filename))
         fs.write_binary_file(filename, error)
 
-    def write_crash_report(self, error):
+    def write_crash_report(self, crashed_process_name, error):
         fs = self._port._filesystem
         filename = self.output_filename(self.FILENAME_SUFFIX_CRASH_LOG + ".txt")
         fs.maybe_make_directory(fs.dirname(filename))
         # FIXME: We shouldn't be grabbing private members of port.
         crash_logs = CrashLogs(fs)
-        log = crash_logs.find_newest_log(self._port.driver_name())
+        log = crash_logs.find_newest_log(crashed_process_name)
         # CrashLogs doesn't support every platform, so we fall back to
         # including the stderr output, which is admittedly somewhat redundant.
         fs.write_text_file(filename, log if log else error)

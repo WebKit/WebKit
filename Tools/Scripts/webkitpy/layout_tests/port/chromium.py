@@ -588,14 +588,16 @@ class ChromiumDriver(Driver):
                 text = None
 
         error = ''.join(error)
+        crashed_process_name = None
         # Currently the stacktrace is in the text output, not error, so append the two together so
         # that we can see stack in the output. See http://webkit.org/b/66806
         # FIXME: We really should properly handle the stderr output separately.
         if crash:
             error = error + str(text)
+            crashed_process_name = self.driver_name()
 
         return DriverOutput(text, output_image, actual_checksum, audio=audio_bytes,
-            crash=crash, test_time=run_time, timeout=timeout, error=error)
+            crash=crash, crashed_process_name=crashed_process_name, test_time=run_time, timeout=timeout, error=error)
 
     def stop(self):
         if not self._proc:

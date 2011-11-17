@@ -46,6 +46,7 @@ class TestInstance(object):
         self.name = name
         self.base = name[(name.rfind("/") + 1):name.rfind(".html")]
         self.crash = False
+        self.web_process_crash = False
         self.exception = False
         self.hang = False
         self.keyboard = False
@@ -149,6 +150,8 @@ layer at (0,0) size 800x34
 """, expected_text=None)
     tests.add('failures/unexpected/crash.html', crash=True)
     tests.add('failures/unexpected/crash-with-stderr.html', crash=True,
+              error="mock-std-error-output")
+    tests.add('failures/unexpected/web-process-crash-with-stderr.html', web_process_crash=True,
               error="mock-std-error-output")
     tests.add('failures/unexpected/text-image-checksum.html',
               actual_text='text-image-checksum_fail-txt',
@@ -502,8 +505,14 @@ class TestDriver(Driver):
         audio = None
         if test.actual_audio:
             audio = base64.b64decode(test.actual_audio)
+        crashed_process_name = None
+        if test.crash:
+            crashed_process_name = self._port.driver_name()
+        elif test.web_process_crash:
+            crashed_process_name = 'WebProcess'
         return DriverOutput(test.actual_text, test.actual_image,
-            test.actual_checksum, audio, crash=test.crash,
+            test.actual_checksum, audio, crash=test.crash or test.web_process_crash,
+            crashed_process_name=crashed_process_name,
             test_time=time.time() - start_time, timeout=test.timeout, error=test.error)
 
     def stop(self):
