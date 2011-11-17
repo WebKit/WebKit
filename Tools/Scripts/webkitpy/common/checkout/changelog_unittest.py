@@ -251,162 +251,76 @@ class ChangeLogTest(unittest.TestCase):
         self.assertEquals(parsed_entries[7].reviewer_text(), None)
         self.assertEquals(parsed_entries[8].reviewer_text(), 'Darin Adler')
 
+    def _assert_parse_reviewer_text_and_list(self, text, expected_reviewer_text, expected_reviewer_text_list=None):
+        reviewer_text, reviewer_text_list = ChangeLogEntry._parse_reviewer_text(text)
+        self.assertEquals(reviewer_text, expected_reviewer_text)
+        if expected_reviewer_text_list:
+            self.assertEquals(reviewer_text_list, expected_reviewer_text_list)
+        else:
+            self.assertEquals(reviewer_text_list, [expected_reviewer_text])
+
+    def _assert_parse_reviewer_text_list(self, text, expected_reviewer_text_list):
+        reviewer_text, reviewer_text_list = ChangeLogEntry._parse_reviewer_text(text)
+        self.assertEquals(reviewer_text_list, expected_reviewer_text_list)
+
     def test_parse_reviewer_text(self):
-        reviewer_text, reviewer_list = ChangeLogEntry._parse_reviewer_text('  reviewed  by Ryosuke Niwa,   Oliver Hunt, and  Dimitri Glazkov')
-        self.assertEquals(reviewer_text, 'Ryosuke Niwa, Oliver Hunt, and Dimitri Glazkov')
-        self.assertEquals(reviewer_list, ['Ryosuke Niwa', 'Oliver Hunt', 'Dimitri Glazkov'])
+        self._assert_parse_reviewer_text_and_list('  reviewed  by Ryosuke Niwa,   Oliver Hunt, and  Dimitri Glazkov',
+            'Ryosuke Niwa, Oliver Hunt, and Dimitri Glazkov', ['Ryosuke Niwa', 'Oliver Hunt', 'Dimitri Glazkov'])
+        self._assert_parse_reviewer_text_and_list('Reviewed by Brady Eidson and David Levin, landed by Brady Eidson',
+            'Brady Eidson and David Levin', ['Brady Eidson', 'David Levin'])
 
-        reviewer_text, reviewer_list = ChangeLogEntry._parse_reviewer_text('Reviewed by Brady Eidson and David Levin, landed by Brady Eidson')
-        self.assertEquals(reviewer_text, 'Brady Eidson and David Levin')
-        self.assertEquals(reviewer_list, ['Brady Eidson', 'David Levin'])
+        self._assert_parse_reviewer_text_and_list('Reviewed by Simon Fraser. Committed by Beth Dakin.', 'Simon Fraser')
+        self._assert_parse_reviewer_text_and_list('Reviewed by Geoff Garen. V8 fixes courtesy of Dmitry Titov.', 'Geoff Garen')
+        self._assert_parse_reviewer_text_and_list('Reviewed by Adam Roben&Dirk Schulze', 'Adam Roben&Dirk Schulze', ['Adam Roben', 'Dirk Schulze'])
+        self._assert_parse_reviewer_text_and_list('Rubber stamps by Darin Adler & Sam Weinig.', 'Darin Adler & Sam Weinig', ['Darin Adler', 'Sam Weinig'])
 
-        reviewer_text, reviewer_list = ChangeLogEntry._parse_reviewer_text('Reviewed by Simon Fraser. Committed by Beth Dakin.')
-        self.assertEquals(reviewer_text, 'Simon Fraser')
-        self.assertEquals(reviewer_list, ['Simon Fraser'])
+        self._assert_parse_reviewer_text_and_list('Reviewed by adam,andy and andy adam, andy smith',
+            'adam,andy and andy adam, andy smith', ['adam', 'andy', 'andy adam', 'andy smith'])
 
-        reviewer_text, reviewer_list = ChangeLogEntry._parse_reviewer_text('Reviewed by Geoff Garen. V8 fixes courtesy of Dmitry Titov.')
-        self.assertEquals(reviewer_text, 'Geoff Garen')
-        self.assertEquals(reviewer_list, ['Geoff Garen'])
+        self._assert_parse_reviewer_text_and_list('rubber stamped by Oliver Hunt (oliver@apple.com) and Darin Adler (darin@apple.com)',
+            'Oliver Hunt and Darin Adler', ['Oliver Hunt', 'Darin Adler'])
 
-        reviewer_text, reviewer_list = ChangeLogEntry._parse_reviewer_text('Reviewed by Adam Roben&Dirk Schulze')
-        self.assertEquals(reviewer_text, 'Adam Roben&Dirk Schulze')
-        self.assertEquals(reviewer_list, ['Adam Roben', 'Dirk Schulze'])
+        self._assert_parse_reviewer_text_and_list('rubber  Stamped by David Hyatt  <hyatt@apple.com>', 'David Hyatt')
+        self._assert_parse_reviewer_text_and_list('Rubber-stamped by Antti Koivisto.', 'Antti Koivisto')
+        self._assert_parse_reviewer_text_and_list('Rubberstamped by Dan Bernstein.', 'Dan Bernstein')
+        self._assert_parse_reviewer_text_and_list('Reviews by Ryosuke Niwa', 'Ryosuke Niwa')
+        self._assert_parse_reviewer_text_and_list('Reviews Ryosuke Niwa', 'Ryosuke Niwa')
+        self._assert_parse_reviewer_text_and_list('Rubberstamp Ryosuke Niwa', 'Ryosuke Niwa')
+        self._assert_parse_reviewer_text_and_list('Typed and reviewed by Alexey Proskuryakov.', 'Alexey Proskuryakov')
+        self._assert_parse_reviewer_text_and_list('Reviewed and landed by Brady Eidson', 'Brady Eidson')
+        self._assert_parse_reviewer_text_and_list('Reviewed by rniwa@webkit.org.', 'rniwa@webkit.org')
+        self._assert_parse_reviewer_text_and_list('Reviewed by Dirk Schulze / Darin Adler.', 'Dirk Schulze / Darin Adler', ['Dirk Schulze', 'Darin Adler'])
+        self._assert_parse_reviewer_text_and_list('Reviewed by Sam Weinig + Oliver Hunt.', 'Sam Weinig + Oliver Hunt', ['Sam Weinig', 'Oliver Hunt'])
 
-        reviewer_text, reviewer_list = ChangeLogEntry._parse_reviewer_text('Reviewed by adam,andy and andy adam, andy smith')
-        self.assertEquals(reviewer_text, 'adam,andy and andy adam, andy smith')
-        self.assertEquals(reviewer_list, ['adam', 'andy', 'andy adam', 'andy smith'])
-
-        reviewer_text, reviewer_list = ChangeLogEntry._parse_reviewer_text('rubber stamped by Oliver Hunt (oliver@apple.com) and Darin Adler (darin@apple.com)')
-        self.assertEquals(reviewer_text, 'Oliver Hunt and Darin Adler')
-        self.assertEquals(reviewer_list, ['Oliver Hunt', 'Darin Adler'])
-
-        reviewer_text, reviewer_list = ChangeLogEntry._parse_reviewer_text('rubber  Stamped by David Hyatt  <hyatt@apple.com>')
-        self.assertEquals(reviewer_text, 'David Hyatt')
-        self.assertEquals(reviewer_list, ['David Hyatt'])
-
-        reviewer_text, reviewer_list = ChangeLogEntry._parse_reviewer_text('Rubber-stamped by Antti Koivisto.')
-        self.assertEquals(reviewer_text, 'Antti Koivisto')
-        self.assertEquals(reviewer_list, ['Antti Koivisto'])
-
-        reviewer_text, reviewer_list = ChangeLogEntry._parse_reviewer_text('Rubberstamped by Dan Bernstein.')
-        self.assertEquals(reviewer_text, 'Dan Bernstein')
-        self.assertEquals(reviewer_list, ['Dan Bernstein'])
-
-        reviewer_text, reviewer_list = ChangeLogEntry._parse_reviewer_text('Rubber stamps by Darin Adler & Sam Weinig.')
-        self.assertEquals(reviewer_text, 'Darin Adler & Sam Weinig')
-        self.assertEquals(reviewer_list, ['Darin Adler', 'Sam Weinig'])
-
-        reviewer_text, reviewer_list = ChangeLogEntry._parse_reviewer_text('Reviews by Ryosuke Niwa')
-        self.assertEquals(reviewer_text, 'Ryosuke Niwa')
-        self.assertEquals(reviewer_list, ['Ryosuke Niwa'])
-
-        reviewer_text, reviewer_list = ChangeLogEntry._parse_reviewer_text('Reviews Ryosuke Niwa')
-        self.assertEquals(reviewer_text, 'Ryosuke Niwa')
-        self.assertEquals(reviewer_list, ['Ryosuke Niwa'])
-
-        reviewer_text, reviewer_list = ChangeLogEntry._parse_reviewer_text('Rubberstamp Ryosuke Niwa')
-        self.assertEquals(reviewer_text, 'Ryosuke Niwa')
-        self.assertEquals(reviewer_list, ['Ryosuke Niwa'])
-
-        reviewer_text, reviewer_list = ChangeLogEntry._parse_reviewer_text('Typed and reviewed by Alexey Proskuryakov.')
-        self.assertEquals(reviewer_text, 'Alexey Proskuryakov')
-        self.assertEquals(reviewer_list, ['Alexey Proskuryakov'])
-
-        reviewer_text, reviewer_list = ChangeLogEntry._parse_reviewer_text('Reviewed by Sam Weinig, and given a good once-over by Jeff Miller.')
-        self.assertEquals(reviewer_list, ['Sam Weinig', 'Jeff Miller'])
-
-        reviewer_text, reviewer_list = ChangeLogEntry._parse_reviewer_text('Reviewed and landed by Brady Eidson')
-        self.assertEquals(reviewer_text, 'Brady Eidson')
-        self.assertEquals(reviewer_list, ['Brady Eidson'])
-
-        reviewer_text, reviewer_list = ChangeLogEntry._parse_reviewer_text(' Reviewed by Sam Weinig, even though this is just a...')
-        self.assertEquals(reviewer_list, ['Sam Weinig'])
-
-        reviewer_text, reviewer_list = ChangeLogEntry._parse_reviewer_text('Reviewed by rniwa@webkit.org.')
-        self.assertEquals(reviewer_text, 'rniwa@webkit.org')
-        self.assertEquals(reviewer_list, ['rniwa@webkit.org'])
-
-        reviewer_text, reviewer_list = ChangeLogEntry._parse_reviewer_text('Reviewed by Dirk Schulze / Darin Adler.')
-        self.assertEquals(reviewer_text, 'Dirk Schulze / Darin Adler')
-        self.assertEquals(reviewer_list, ['Dirk Schulze', 'Darin Adler'])
-
-        reviewer_text, reviewer_list = ChangeLogEntry._parse_reviewer_text('Reviewed by Sam Weinig + Oliver Hunt.')
-        self.assertEquals(reviewer_text, 'Sam Weinig + Oliver Hunt')
-        self.assertEquals(reviewer_list, ['Sam Weinig', 'Oliver Hunt'])
-
-        reviewer_text, reviewer_list = ChangeLogEntry._parse_reviewer_text('Reviewed by Sam Weinig + Oliver Hunt.')
-        self.assertEquals(reviewer_text, 'Sam Weinig + Oliver Hunt')
-        self.assertEquals(reviewer_list, ['Sam Weinig', 'Oliver Hunt'])
-
-        reviewer_text, reviewer_list = ChangeLogEntry._parse_reviewer_text('Rubber stamped by by Gustavo Noronha Silva')
-        self.assertEquals(reviewer_text, 'Gustavo Noronha Silva')
-
-        reviewer_text, reviewer_list = ChangeLogEntry._parse_reviewer_text('Rubberstamped by Noam Rosenthal, who wrote the original code.')
-        self.assertEquals(reviewer_list, ['Noam Rosenthal'])
-
-        reviewer_text, reviewer_list = ChangeLogEntry._parse_reviewer_text('Reviewed by Dan Bernstein (relanding of r47157)')
-        self.assertEquals(reviewer_list, ['Dan Bernstein'])
-
-        reviewer_text, reviewer_list = ChangeLogEntry._parse_reviewer_text('Reviewed by Geoffrey "Sean/Shawn/Shaun" Garen')
-        self.assertEquals(reviewer_list, ['Geoffrey Garen'])
-
-        reviewer_text, reviewer_list = ChangeLogEntry._parse_reviewer_text('Reviewed by Dave "Messy" Hyatt.')
-        self.assertEquals(reviewer_list, ['Dave Hyatt'])
-
-        reviewer_text, reviewer_list = ChangeLogEntry._parse_reviewer_text('Reviewed by Sam \'The Belly\' Weinig')
-        self.assertEquals(reviewer_list, ['Sam Weinig'])
-
-        reviewer_text, reviewer_list = ChangeLogEntry._parse_reviewer_text('Rubber-stamped by David "I\'d prefer not" Hyatt.')
-        self.assertEquals(reviewer_list, ['David Hyatt'])
-
-        reviewer_text, reviewer_list = ChangeLogEntry._parse_reviewer_text('Reviewed by Mr. Geoffrey Garen.')
-        self.assertEquals(reviewer_list, ['Geoffrey Garen'])
-
-        reviewer_text, reviewer_list = ChangeLogEntry._parse_reviewer_text('Reviewed by Darin (ages ago)')
-        self.assertEquals(reviewer_list, ['Darin'])
-
-        reviewer_text, reviewer_list = ChangeLogEntry._parse_reviewer_text('Reviewed by Sam Weinig (except for a few comment and header tweaks).')
-        self.assertEquals(reviewer_list, ['Sam Weinig'])
-
-        reviewer_text, reviewer_list = ChangeLogEntry._parse_reviewer_text('Reviewed by Sam Weinig (all but the FormDataListItem rename)')
-        self.assertEquals(reviewer_list, ['Sam Weinig'])
-
-        reviewer_text, reviewer_list = ChangeLogEntry._parse_reviewer_text('Reviewed by Darin Adler, tweaked and landed by Beth.')
-        self.assertEquals(reviewer_list, ['Darin Adler'])
-
-        reviewer_text, reviewer_list = ChangeLogEntry._parse_reviewer_text('Reviewed by Sam Weinig with no hesitation')
-        self.assertEquals(reviewer_list, ['Sam Weinig'])
-
-        reviewer_text, reviewer_list = ChangeLogEntry._parse_reviewer_text('Reviewed by Oliver Hunt, okayed by Darin Adler.')
-        self.assertEquals(reviewer_list, ['Oliver Hunt'])
-
-        reviewer_text, reviewer_list = ChangeLogEntry._parse_reviewer_text('Reviewed by Darin Adler).')
-        self.assertEquals(reviewer_list, ['Darin Adler'])
+        self._assert_parse_reviewer_text_list('Reviewed by Sam Weinig, and given a good once-over by Jeff Miller.', ['Sam Weinig', 'Jeff Miller'])
+        self._assert_parse_reviewer_text_list(' Reviewed by Sam Weinig, even though this is just a...', ['Sam Weinig'])
+        self._assert_parse_reviewer_text_list('Rubber stamped by by Gustavo Noronha Silva', ['Gustavo Noronha Silva'])
+        self._assert_parse_reviewer_text_list('Rubberstamped by Noam Rosenthal, who wrote the original code.', ['Noam Rosenthal'])
+        self._assert_parse_reviewer_text_list('Reviewed by Dan Bernstein (relanding of r47157)', ['Dan Bernstein'])
+        self._assert_parse_reviewer_text_list('Reviewed by Geoffrey "Sean/Shawn/Shaun" Garen', ['Geoffrey Garen'])
+        self._assert_parse_reviewer_text_list('Reviewed by Dave "Messy" Hyatt.', ['Dave Hyatt'])
+        self._assert_parse_reviewer_text_list('Reviewed by Sam \'The Belly\' Weinig', ['Sam Weinig'])
+        self._assert_parse_reviewer_text_list('Rubber-stamped by David "I\'d prefer not" Hyatt.', ['David Hyatt'])
+        self._assert_parse_reviewer_text_list('Reviewed by Mr. Geoffrey Garen.', ['Geoffrey Garen'])
+        self._assert_parse_reviewer_text_list('Reviewed by Darin (ages ago)', ['Darin'])
+        self._assert_parse_reviewer_text_list('Reviewed by Sam Weinig (except for a few comment and header tweaks).', ['Sam Weinig'])
+        self._assert_parse_reviewer_text_list('Reviewed by Sam Weinig (all but the FormDataListItem rename)', ['Sam Weinig'])
+        self._assert_parse_reviewer_text_list('Reviewed by Darin Adler, tweaked and landed by Beth.', ['Darin Adler'])
+        self._assert_parse_reviewer_text_list('Reviewed by Sam Weinig with no hesitation', ['Sam Weinig'])
+        self._assert_parse_reviewer_text_list('Reviewed by Oliver Hunt, okayed by Darin Adler.', ['Oliver Hunt'])
+        self._assert_parse_reviewer_text_list('Reviewed by Darin Adler).', ['Darin Adler'])
 
         # For now, we let unofficial reviewers recognized as reviewers
-        reviewer_text, reviewer_list = ChangeLogEntry._parse_reviewer_text('Reviewed by Sam Weinig, Anders Carlsson, and (unofficially) Adam Barth.')
-        self.assertEquals(reviewer_list, ['Sam Weinig', 'Anders Carlsson', 'Adam Barth'])
+        self._assert_parse_reviewer_text_list('Reviewed by Sam Weinig, Anders Carlsson, and (unofficially) Adam Barth.',
+            ['Sam Weinig', 'Anders Carlsson', 'Adam Barth'])
 
-        reviewer_text, reviewer_list = ChangeLogEntry._parse_reviewer_text('Reviewed by NOBODY.')
-        self.assertEquals(reviewer_text, None)
-
-        reviewer_text, reviewer_list = ChangeLogEntry._parse_reviewer_text('Reviewed by NOBODY - Build Fix.')
-        self.assertEquals(reviewer_text, None)
-
-        reviewer_text, reviewer_list = ChangeLogEntry._parse_reviewer_text('Reviewed by NOBODY, layout tests fix.')
-        self.assertEquals(reviewer_text, None)
-
-        reviewer_text, reviewer_list = ChangeLogEntry._parse_reviewer_text('Reviewed by NOBODY (Qt build fix pt 2).')
-        self.assertEquals(reviewer_text, None)
-
-        reviewer_text, reviewer_list = ChangeLogEntry._parse_reviewer_text('Reviewed by NOBODY(rollout)')
-        self.assertEquals(reviewer_text, None)
-
-        reviewer_text, reviewer_list = ChangeLogEntry._parse_reviewer_text('Reviewed by NOBODY (Build fix, forgot to svn add this file)')
-        self.assertEquals(reviewer_text, None)
-
-        reviewer_text, reviewer_list = ChangeLogEntry._parse_reviewer_text('Reviewed by nobody (trivial follow up fix), Joseph Pecoraro LGTM-ed.')
-        self.assertEquals(reviewer_text, None)
+        self._assert_parse_reviewer_text_list('Reviewed by NOBODY.', None)
+        self._assert_parse_reviewer_text_list('Reviewed by NOBODY - Build Fix.', None)
+        self._assert_parse_reviewer_text_list('Reviewed by NOBODY, layout tests fix.', None)
+        self._assert_parse_reviewer_text_list('Reviewed by NOBODY (Qt build fix pt 2).', None)
+        self._assert_parse_reviewer_text_list('Reviewed by NOBODY(rollout)', None)
+        self._assert_parse_reviewer_text_list('Reviewed by NOBODY (Build fix, forgot to svn add this file)', None)
+        self._assert_parse_reviewer_text_list('Reviewed by nobody (trivial follow up fix), Joseph Pecoraro LGTM-ed.', None)
 
     def _entry_with_reviewer(self, reviewer_line):
         return ChangeLogEntry('''2009-08-19  Eric Seidel  <eric@webkit.org>
