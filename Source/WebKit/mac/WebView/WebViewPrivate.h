@@ -559,7 +559,7 @@ Could be worth adding to the API.
 - (BOOL)_useFixedLayout;
 - (NSSize)_fixedLayoutSize;
 
-- (void)_setOverrideBackingScaleFactor:(CGFloat)overrideScaleFactor;
+- (void)_setCustomBackingScaleFactor:(CGFloat)overrideScaleFactor;
 
 // Deprecated. Use the methods in pending public above instead.
 - (WebNSUInteger)markAllMatchesForText:(NSString *)string caseSensitive:(BOOL)caseFlag highlight:(BOOL)highlight limit:(WebNSUInteger)limit;

@@ -111,7 +111,7 @@ struct WKViewInterpretKeyEventsParameters {
 };
 
 @interface WKView (FileInternal)
-- (float)_deviceScaleFactor;
+- (float)_intrinsicDeviceScaleFactor;
 @end
 
 @interface WKViewData : NSObject {
@@ -1789,7 +1789,7 @@ static NSString * const windowDidChangeResolutionNotification = @"NSWindowDidCha
 #endif
     }
 
-    _data->_page->setDeviceScaleFactor([self _deviceScaleFactor]);
+_data->_page->setIntrinsicDeviceScaleFactor([self _intrinsicDeviceScaleFactor]);
 }
 
 - (void)_windowDidBecomeKey:(NSNotification *)notification
@@ -1837,7 +1837,7 @@ static NSString * const windowDidChangeResolutionNotification = @"NSWindowDidCha
 
 - (void)_windowDidChangeResolution:(NSNotification *)notification
 {
-    _data->_page->setDeviceScaleFactor([self _deviceScaleFactor]);
+ _data->_page->setIntrinsicDeviceScaleFactor([self _intrinsicDeviceScaleFactor]);
 }
 
 static void drawPageBackground(CGContextRef context, WebPageProxy* page, const IntRect& rect)
@@ -2572,7 +2572,7 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
 
 @implementation WKView (FileInternal)
 
-- (float)_deviceScaleFactor
+- (float)_intrinsicDeviceScaleFactor
 {
     NSWindow *window = [self window];
 #if !defined(BUILDING_ON_SNOW_LEOPARD)
