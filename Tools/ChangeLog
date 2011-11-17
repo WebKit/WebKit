@@ -1,3 +1,14 @@
+2011-11-16  Mark Rowe  <mrowe@apple.com>
+
+        Fix the build.
+
+        The C++ standard library interferes with Objective-C exceptions when built with -fno-exceptions.
+        Apply the workaround that we use in other projects to WebKitTestRunner.
+
+        * WebKitTestRunner/Configurations/Base.xcconfig: Use the prefix header for all targets.
+        * WebKitTestRunner/Configurations/WebKitTestRunner.xcconfig: Ditto.
+        * WebKitTestRunner/WebKitTestRunnerPrefix.h: Work around the C++ standard library obnoxiousness.
+
 2011-11-16  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         [Qt] Fix build after WTR AX support

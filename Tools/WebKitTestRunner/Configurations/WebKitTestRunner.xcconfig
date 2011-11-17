@@ -23,7 +23,6 @@
 
 PRODUCT_NAME = WebKitTestRunner
 GCC_ENABLE_OBJC_EXCEPTIONS = YES
-GCC_PREFIX_HEADER = WebKitTestRunnerPrefix.h
 
 INSTALL_PATH = $(SYSTEM_LIBRARY_DIR)/Frameworks/WebKit.framework/Versions/A/Resources;
 SKIP_INSTALL = NO;
