@@ -254,7 +254,6 @@ public:
         ViewIsFocused = 1 << 1,
         ViewIsVisible = 1 << 2,
         ViewIsInWindow = 1 << 3,
-        DeviceScaleFactor = 1 << 4,
     };
     typedef unsigned ViewStateFlags;
     void viewStateDidChange(ViewStateFlags flags);
@@ -362,7 +361,8 @@ public:
     void scalePage(double scale, const WebCore::IntPoint& origin);
     double pageScaleFactor() const { return m_pageScaleFactor; }
 
-    float deviceScaleFactor() const;
+    void setDeviceScaleFactor(float);
+    float deviceScaleFactor() const { return m_deviceScaleFactor; }
 
     void setUseFixedLayout(bool);
     void setFixedLayoutSize(const WebCore::IntSize&);
@@ -830,6 +830,7 @@ private:
     double m_textZoomFactor;
     double m_pageZoomFactor;
     double m_pageScaleFactor;
+    float m_deviceScaleFactor;
 
     bool m_drawsBackground;
     bool m_drawsTransparentBackground;
