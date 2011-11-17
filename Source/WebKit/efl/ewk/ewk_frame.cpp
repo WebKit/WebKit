@@ -71,7 +71,7 @@ struct Ewk_Frame_Smart_Data {
     const char* title;
     const char* uri;
     const char* name;
-    Eina_Bool editable : 1;
+    bool editable : 1;
 };
 
 struct Eina_Iterator_Ewk_Frame {

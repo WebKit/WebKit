@@ -151,8 +151,8 @@ struct _Ewk_View_Private_Data {
     } scrolls;
     unsigned int imh; /**< input method hints */
     struct {
-        Eina_Bool viewCleared : 1;
-        Eina_Bool needTouchEvents : 1;
+        bool viewCleared : 1;
+        bool needTouchEvents : 1;
     } flags;
     struct {
         const char* userAgent;
@@ -171,23 +171,23 @@ struct _Ewk_View_Private_Data {
         const char* fontFantasy;
         const char* fontSerif;
         const char* fontSansSerif;
-        Eina_Bool autoLoadImages : 1;
-        Eina_Bool autoShrinkImages : 1;
-        Eina_Bool enableAutoResizeWindow : 1;
-        Eina_Bool enableDeveloperExtras : 1;
-        Eina_Bool enableScripts : 1;
-        Eina_Bool enablePlugins : 1;
-        Eina_Bool enableFrameFlattening : 1;
-        Eina_Bool encodingDetector : 1;
-        Eina_Bool scriptsCanOpenWindows : 1;
-        Eina_Bool scriptsCanCloseWindows : 1;
-        Eina_Bool resizableTextareas : 1;
-        Eina_Bool privateBrowsing : 1;
-        Eina_Bool caretBrowsing : 1;
-        Eina_Bool spatialNavigation : 1;
-        Eina_Bool localStorage : 1;
-        Eina_Bool offlineAppCache : 1;
-        Eina_Bool pageCache : 1;
+        bool autoLoadImages : 1;
+        bool autoShrinkImages : 1;
+        bool enableAutoResizeWindow : 1;
+        bool enableDeveloperExtras : 1;
+        bool enableScripts : 1;
+        bool enablePlugins : 1;
+        bool enableFrameFlattening : 1;
+        bool encodingDetector : 1;
+        bool scriptsCanOpenWindows : 1;
+        bool scriptsCanCloseWindows : 1;
+        bool resizableTextareas : 1;
+        bool privateBrowsing : 1;
+        bool caretBrowsing : 1;
+        bool spatialNavigation : 1;
+        bool localStorage : 1;
+        bool offlineAppCache : 1;
+        bool pageCache : 1;
         struct {
             float minScale;
             float maxScale;

@@ -44,7 +44,7 @@ struct _Ewk_Tiled_Backing_Store_Item {
     struct {
         Evas_Coord x, y, width, height;
     } geometry;
-    Eina_Bool smooth_scale;
+    bool smooth_scale;
 };
 
 struct _Ewk_Tiled_Backing_Store_Pre_Render_Request {
@@ -64,7 +64,7 @@ struct _Ewk_Tiled_Backing_Store_Data {
         struct {
             Evas_Coord width, height;
             float zoom;
-            Eina_Bool zoomWeakSmoothScale : 1;
+            bool zoomWeakSmoothScale : 1;
         } tile;
         struct {
             struct {
@@ -88,8 +88,8 @@ struct _Ewk_Tiled_Backing_Store_Data {
         void* data;
         Eina_Inlist* preRenderRequests;
         Ecore_Idler* idler;
-        Eina_Bool disabled;
-        Eina_Bool suspend : 1;
+        bool disabled;
+        bool suspend : 1;
     } render;
     struct {
         void* (*preCallback)(void* data, Evas_Object* ewkBackingStore);
@@ -98,11 +98,11 @@ struct _Ewk_Tiled_Backing_Store_Data {
         void* postData;
     } process;
     struct {
-        Eina_Bool any : 1;
-        Eina_Bool position : 1;
-        Eina_Bool size : 1;
-        Eina_Bool model : 1;
-        Eina_Bool offset : 1;
+        bool any : 1;
+        bool position : 1;
+        bool size : 1;
+        bool model : 1;
+        bool offset : 1;
     } changed;
 #ifdef DEBUG_MEM_LEAKS
     Ecore_Event_Handler* sig_usr;

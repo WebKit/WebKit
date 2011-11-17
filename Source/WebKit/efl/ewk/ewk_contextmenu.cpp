@@ -56,8 +56,8 @@ struct _Ewk_Context_Menu_Item {
     const char* title; /**< contains the title of the item */
     Ewk_Context_Menu* submenu; /**< contains the pointer to the submenu of the item */
 
-    Eina_Bool checked : 1;
-    Eina_Bool enabled : 1;
+    bool checked : 1;
+    bool enabled : 1;
 };
 
 void ewk_context_menu_ref(Ewk_Context_Menu* menu)
