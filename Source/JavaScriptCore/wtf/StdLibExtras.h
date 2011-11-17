@@ -47,7 +47,7 @@
 // non-trivial constructor and destructor. When building with clang, this will suppress
 // warnings about global constructors and exit-time destructors.
 #ifndef NDEBUG
-#if COMPILER(CLANG)
+#if 0 && COMPILER(CLANG)
 #define DEFINE_DEBUG_ONLY_GLOBAL(type, name, arguments) \
     _Pragma("clang diagnostic push") \
     _Pragma("clang diagnostic ignored \"-Wglobal-constructors\"") \
