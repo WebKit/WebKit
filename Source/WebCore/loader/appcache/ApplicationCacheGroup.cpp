@@ -682,12 +682,6 @@ void ApplicationCacheGroup::didReceiveManifestResponse(const ResourceResponse& r
         return;
     }
 
-    if (!equalIgnoringCase(response.mimeType(), "text/cache-manifest")) {
-        m_frame->domWindow()->console()->addMessage(OtherMessageSource, LogMessageType, ErrorMessageLevel, "Application Cache manifest had an incorrect MIME type: " + response.mimeType() + ".", 0, String());
-        cacheUpdateFailed();
-        return;
-    }
-
     m_manifestResource = ApplicationCacheResource::create(m_manifestHandle->firstRequest().url(), response, ApplicationCacheResource::Manifest);
 }
 

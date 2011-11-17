@@ -94,6 +94,9 @@ BUGWK63933 : fast/canvas/canvas-webkitLineDash-invalid.html = FAIL
 // Microdata DOM API is not yet enabled.
 BUGWK68610 SKIP : fast/dom/MicroData = PASS
 
+// Unskip after changes on both sides have landed and rolled together.
+BUGCR103939 SKIP : http/tests/appcache/wrong-content-type.html = TEXT
+
 // -----------------------------------------------------------------
 // WONTFIX TESTS
 // -----------------------------------------------------------------

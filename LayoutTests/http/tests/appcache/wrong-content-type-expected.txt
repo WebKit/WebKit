@@ -1,5 +1,4 @@
-CONSOLE MESSAGE: line 0: Application Cache manifest had an incorrect MIME type: text/plain.
-Test that a manifest served with a wrong content-type isn't treated as such.
+Test that a manifest served with an arbitrary content-type is OK.
 
 Should say SUCCESS:
 

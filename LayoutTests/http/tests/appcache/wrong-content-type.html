@@ -1,6 +1,6 @@
 <html manifest="resources/wrong-content-type.manifest">
 <body>
-<p>Test that a manifest served with a wrong content-type isn't treated as such.</p>
+<p>Test that a manifest served with an arbitrary content-type is OK.</p>
 <p>Should say SUCCESS:</p>
 <div id=result></div>
 <script>
@@ -14,15 +14,16 @@ function log(message)
     document.getElementById("result").innerHTML += message + "<br>";
 }
 
-function cacheCallback()
+function errorEventListener()
 {
-    log("FAIL: An event was dispatched on window.applicationCache, even though it was not associated wuth any cache yet.");
+    log("FAILURE: An error event was dispatched on window.applicationCache.");
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
 }
 
-function test()
+function verifyStatus()
 {
-    // Wait for cache update to finish.
-    if (window.applicationCache.status != window.applicationCache.UNCACHED)
+    if (window.applicationCache.status != window.applicationCache.IDLE)
         log("FAILURE: Unexpected cache status: " + window.applicationCache.status);
     else
         log("SUCCESS");
@@ -31,9 +32,9 @@ function test()
         layoutTestController.notifyDone();
 }
 
-applicationCache.addEventListener('cached', function() { log("cached"); cacheCallback() }, false);
-applicationCache.addEventListener('noupdate', function() { log("noupdate"); cacheCallback() }, false);
-applicationCache.addEventListener('error', test, false);
+applicationCache.addEventListener('cached', verifyStatus, false);
+applicationCache.addEventListener('noupdate', verifyStatus, false);
+applicationCache.addEventListener('error', errorEventListener, false);
 
 </script>
 </body>
