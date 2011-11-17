@@ -64,13 +64,15 @@ public:
         }
 
         bool overwrite;
-        String filename = m_download->decideDestinationWithSuggestedFilename(suggestedFilename.utf8().data(), overwrite);
-        if (filename.isEmpty()) {
-            downloadFailed(downloadDestinationError(response, _("Cannot determine destination filename")));
+        String destinationURI = m_download->decideDestinationWithSuggestedFilename(suggestedFilename.utf8().data(), overwrite);
+        if (destinationURI.isEmpty()) {
+            GOwnPtr<char> errorMessage(g_strdup_printf(_("Cannot determine destination URI for download with suggested filename %s"),
+                                                       suggestedFilename.utf8().data()));
+            downloadFailed(downloadDestinationError(response, errorMessage.get());
             return;
         }
 
-        GRefPtr<GFile> file(g_file_new_for_path(filename.utf8().data()));
+        GRefPtr<GFile> file = adoptGRef(g_file_new_for_uri(destinationURI.utf8().data()));
         GOwnPtr<GError> error;
         m_outputStream = adoptGRef(g_file_replace(file.get(), 0, TRUE, G_FILE_CREATE_NONE, 0, &error.outPtr()));
         if (!m_outputStream) {
