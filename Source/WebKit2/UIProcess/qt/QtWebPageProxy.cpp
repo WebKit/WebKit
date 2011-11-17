@@ -607,14 +607,6 @@ void QtWebPageProxy::didChangeLoadProgress(int newLoadProgress)
     m_viewInterface->didChangeLoadProgress(newLoadProgress);
 }
 
-void QtWebPageProxy::paint(QPainter* painter, const QRect& area)
-{
-    if (m_webPageProxy->isValid())
-        paintContent(painter, area);
-    else
-        painter->fillRect(area, Qt::white);
-}
-
 bool QtWebPageProxy::canGoBack() const
 {
     return m_webPageProxy->canGoBack();
@@ -819,13 +811,6 @@ void QtWebPageProxy::didReceiveDownloadResponse(QWebDownloadItem* download)
 {
     // Now that our downloadItem has everything we need we can emit downloadRequested.
     m_viewInterface->downloadRequested(download);
-}
-
-void QtWebPageProxy::paintContent(QPainter* painter, const QRect& area)
-{
-    // FIXME: Do something with the unpainted region?
-    WebCore::Region unpaintedRegion;
-    static_cast<DrawingAreaProxyImpl*>(m_webPageProxy->drawingArea())->paint(painter, area, unpaintedRegion);
 }
 
 PassOwnPtr<DrawingAreaProxy> QtWebPageProxy::createDrawingAreaProxy()

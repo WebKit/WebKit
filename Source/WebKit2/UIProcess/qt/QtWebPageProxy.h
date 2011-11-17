@@ -147,8 +147,6 @@ public:
     void didChangeLoadProgress(int);
     int loadProgress() const { return m_loadProgress; }
 
-    void paint(QPainter*, const QRect&);
-
     bool canGoBack() const;
     void goBack();
     bool canGoForward() const;
@@ -211,7 +209,6 @@ public:
     Q_SIGNAL void receivedMessageFromNavigatorQtObject(const QVariantMap&);
 
 protected:
-    virtual void paintContent(QPainter* painter, const QRect& area);
     RefPtr<WebKit::WebPageProxy> m_webPageProxy;
     WebKit::QtViewInterface* const m_viewInterface;
     QtViewportInteractionEngine* m_interactionEngine;
