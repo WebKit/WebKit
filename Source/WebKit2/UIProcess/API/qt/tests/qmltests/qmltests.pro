@@ -13,6 +13,7 @@ load(webkit2)
 
 # QML files tested are the ones in WebKit source repository.
 DEFINES += QUICK_TEST_SOURCE_DIR=\"\\\"$$PWD\\\"\"
+DEFINES += IMPORT_DIR=\"\\\"$${ROOT_BUILD_DIR}$${QMAKE_DIR_SEP}imports\\\"\"
 
 OTHER_FILES += \
     WebView/tst_properties.qml \

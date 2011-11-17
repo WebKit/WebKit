@@ -1,5 +1,15 @@
 2011-11-17  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
+        [Qt] Resolve import and web-process paths automatically for QML tests
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * UIProcess/API/qt/tests/qmltests/qmltests.pro:
+        * UIProcess/API/qt/tests/qmltests/tst_qmltests.cpp:
+        (main):
+
+2011-11-17  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
         [Qt] Move WebKit2 C++ APIs to private API and build QML extension plugin on top of that
 
         A new extension object has been added to QQuickWebView (the same approach should be used

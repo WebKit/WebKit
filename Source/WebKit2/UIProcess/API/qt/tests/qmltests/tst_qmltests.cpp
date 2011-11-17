@@ -23,6 +23,7 @@
 #include "qquickwebpage_p.h"
 #include "qquickwebview_p.h"
 
+#include <QVarLengthArray>
 #include <QtQuickTest/quicktest.h>
 #include <QtWidgets/QApplication>
 
@@ -37,7 +38,19 @@ public:
 
 int main(int argc, char** argv)
 {
+    QVarLengthArray<char*, 8> arguments;
+    for (int i = 0; i < argc; ++i)
+        arguments.append(argv[i]);
+
+    arguments.append(const_cast<char*>("-import"));
+    arguments.append(const_cast<char*>(IMPORT_DIR));
+
+    argc = arguments.count();
+    argv = arguments.data();
+
     suppressDebugOutput();
+    addQtWebProcessToPath();
+
     // Instantiate QApplication to prevent quick_test_main to instantiate a QGuiApplication.
     // This can be removed as soon as we do not use QtWidgets any more.
     QApplication app(argc, argv);
