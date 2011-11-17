@@ -271,6 +271,16 @@ bool RenderObject::isHTMLMarquee() const
     return node() && node()->renderer() == this && node()->hasTagName(marqueeTag);
 }
 
+static bool isBeforeAfterContentGeneratedByAncestor(RenderObject* renderer, RenderObject* beforeAfterContent)
+{
+    while (renderer) {
+        if (renderer->generatingNode() == beforeAfterContent->generatingNode())
+            return true;
+        renderer = renderer->parent();
+    }
+    return false;
+}
+
 void RenderObject::addChild(RenderObject* newChild, RenderObject* beforeChild)
 {
     RenderObjectChildList* children = virtualChildren();
@@ -281,9 +291,9 @@ void RenderObject::addChild(RenderObject* newChild, RenderObject* beforeChild)
     RenderObject* beforeContent = 0;
     bool beforeChildHasBeforeAndAfterContent = false;
     if (beforeChild && (beforeChild->isTable() || beforeChild->isTableSection() || beforeChild->isTableRow() || beforeChild->isTableCell())) {
-        beforeContent = beforeChild->findBeforeContentRenderer();
-        RenderObject* afterContent = beforeChild->findAfterContentRenderer();
-        if (beforeContent && afterContent) {
+        beforeContent = beforeChild->beforePseudoElementRenderer();
+        RenderObject* afterContent = beforeChild->afterPseudoElementRenderer();
+        if (beforeContent && afterContent && isBeforeAfterContentGeneratedByAncestor(this, beforeContent)) {
             beforeChildHasBeforeAndAfterContent = true;
             beforeContent->destroy();
         }

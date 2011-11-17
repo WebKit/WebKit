@@ -1,3 +1,36 @@
+2011-11-17  Ken Buchanan  <kenrb@chromium.org>
+
+        Crash from nested tables with generated content
+        https://bugs.webkit.org/show_bug.cgi?id=68811
+
+        Reviewed by David Hyatt.
+
+        When adding a child to a table that has generated content, this change
+        ensures that we leave alone any generated content renderers that belong
+        to descendants in the tree. They don't need to be touched, and doing so
+        can create confusion about who the content belongs to.
+
+        This patch also simplifies some existing code for finding pseudoelement
+        renderers. 
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::addChildIgnoringAnonymousColumnBlocks):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::addChild):
+        (WebCore::RenderObject::isBeforeAfterContentGeneratedByAncestor): Added
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::findAfterContentRenderer): Deleted
+        (WebCore::RenderObject::findBeforeContentRenderer): Deleted
+        * rendering/RenderObjectChildList.cpp:
+        (WebCore::RenderObjectChildList::beforePseudoElementRenderer):
+        (WebCore::RenderObjectChildList::afterPseudoElementRenderer):
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::addChild):
+        * rendering/RenderTableRow.cpp:
+        (WebCore::RenderTableRow::addChild):
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::addChild):
+
 2011-11-17  Patrick Gansterer  <paroga@webkit.org>
 
         Unreviewed WinCE build fix for r94119.

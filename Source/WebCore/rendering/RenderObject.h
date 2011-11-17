@@ -356,18 +356,6 @@ public:
     static inline bool isAfterContent(const RenderObject* obj) { return obj && obj->isAfterContent(); }
     static inline bool isBeforeOrAfterContent(const RenderObject* obj) { return obj && obj->isBeforeOrAfterContent(); }
 
-    inline RenderObject* findBeforeContentRenderer() const
-    {
-        RenderObject* renderer = beforePseudoElementRenderer();
-        return isBeforeContent(renderer) ? renderer : 0;
-    }
-
-    inline RenderObject* findAfterContentRenderer() const
-    {
-        RenderObject* renderer = afterPseudoElementRenderer();
-        return isAfterContent(renderer) ? renderer : 0;
-    }
-
     inline RenderObject* anonymousContainer(RenderObject* child)
     {
          RenderObject* container = child;

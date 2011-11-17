@@ -86,7 +86,7 @@ void RenderTableRow::addChild(RenderObject* child, RenderObject* beforeChild)
 {
     // Make sure we don't append things after :after-generated content if we have it.
     if (!beforeChild)
-        beforeChild = findAfterContentRenderer();
+        beforeChild = afterPseudoElementRenderer();
 
     if (!child->isTableCell()) {
         RenderObject* last = beforeChild;

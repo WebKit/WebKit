@@ -674,7 +674,7 @@ void RenderBlock::addChildIgnoringAnonymousColumnBlocks(RenderObject* newChild, 
 {
     // Make sure we don't append things after :after-generated content if we have it.
     if (!beforeChild)
-        beforeChild = findAfterContentRenderer();
+        beforeChild = afterPseudoElementRenderer();
 
     // If the requested beforeChild is not one of our children, then this is because
     // there is an anonymous container within this object that contains the beforeChild.
