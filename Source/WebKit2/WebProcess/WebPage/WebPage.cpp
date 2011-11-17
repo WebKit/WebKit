@@ -172,6 +172,7 @@ PassRefPtr<WebPage> WebPage::create(uint64_t pageID, const WebPageCreationParame
 
 WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     : m_viewSize(parameters.viewSize)
+    , m_useFixedLayout(false)
     , m_drawsBackground(true)
     , m_drawsTransparentBackground(false)
     , m_isInRedo(false)
@@ -708,18 +709,18 @@ void WebPage::setResizesToContentsUsingLayoutSize(const IntSize& targetLayoutSiz
 {
     FrameView* view = m_page->mainFrame()->view();
 
+    m_useFixedLayout = !targetLayoutSize.isEmpty();
+
+    // Set view attributes based on whether fixed layout is used.
+    view->setDelegatesScrolling(m_useFixedLayout);
+    view->setUseFixedLayout(m_useFixedLayout);
+    view->setPaintsEntireContents(m_useFixedLayout);
+
     if (view->fixedLayoutSize() == targetLayoutSize)
         return;
 
-    bool fixedLayout = !targetLayoutSize.isEmpty();
-
-    if (fixedLayout)
-        view->setFixedLayoutSize(targetLayoutSize);
-
-    // Set view attributes based on whether fixed layout is used.
-    view->setDelegatesScrolling(fixedLayout);
-    view->setUseFixedLayout(fixedLayout);
-    view->setPaintsEntireContents(fixedLayout);
+    // Always reset even when empty.
+    view->setFixedLayoutSize(targetLayoutSize);
 
     // Schedule a layout to use the new target size.
     if (!view->layoutPending()) {
@@ -893,6 +894,8 @@ float WebPage::deviceScaleFactor() const
 
 void WebPage::setUseFixedLayout(bool fixed)
 {
+    m_useFixedLayout = fixed;
+
     Frame* frame = m_mainFrame->coreFrame();
     if (!frame)
         return;

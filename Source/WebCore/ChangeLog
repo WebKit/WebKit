@@ -1,3 +1,16 @@
+2011-11-16  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Make use-fixed-layout work reliable
+        https://bugs.webkit.org/show_bug.cgi?id=72511
+
+        Reviewed by Simon Hausmann.
+
+        Always send a viewport update per page load as we depend on that,
+        to reset all viewport handling before doing layout.
+
+        * page/Page.cpp:
+        (WebCore::Page::updateViewportArguments):
+
 2011-11-16  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: inspector follows javascript: hrefs as relative

@@ -263,6 +263,7 @@ public:
     double pageScaleFactor() const;
 
     void setUseFixedLayout(bool);
+    bool useFixedLayout() const { return m_useFixedLayout; }
     void setFixedLayoutSize(const WebCore::IntSize&);
 
     void setPaginationMode(uint32_t /* WebCore::Page::Pagination::Mode */);
@@ -609,6 +610,7 @@ private:
 
     WebCore::IntSize m_viewSize;
     OwnPtr<DrawingArea> m_drawingArea;
+    bool m_useFixedLayout;
 
     bool m_drawsBackground;
     bool m_drawsTransparentBackground;

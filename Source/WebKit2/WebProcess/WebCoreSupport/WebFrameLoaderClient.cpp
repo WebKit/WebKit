@@ -1139,35 +1139,16 @@ void WebFrameLoaderClient::transitionToCommittedFromCachedFrame(CachedFrame*)
 void WebFrameLoaderClient::transitionToCommittedForNewPage()
 {
     WebPage* webPage = m_frame->page();
+
     Color backgroundColor = webPage->drawsTransparentBackground() ? Color::transparent : Color::white;
+    bool shouldUseFixedLayout = webPage->mainWebFrame() == m_frame && webPage->useFixedLayout();
 
-    bool isMainFrame = webPage->mainWebFrame() == m_frame;
-
-#if USE(TILED_BACKING_STORE)
-    IntSize currentVisibleContentSize;
-    IntSize fixedLayoutSize;
-
-    if (FrameView* view = m_frame->coreFrame()->view()) {
-        currentVisibleContentSize = view->visibleContentRect().size();
-        fixedLayoutSize = view->fixedLayoutSize();
-    }
-
-    m_frame->coreFrame()->createView(webPage->size(), backgroundColor, false, fixedLayoutSize, !fixedLayoutSize.isEmpty());
-
-    if (isMainFrame && !fixedLayoutSize.isEmpty()) {
-        m_frame->coreFrame()->view()->setDelegatesScrolling(true);
-        m_frame->coreFrame()->view()->setPaintsEntireContents(true);
-        // The HistoryController will update the scroll position later if needed.
-        m_frame->coreFrame()->view()->setFixedVisibleContentRect(IntRect(IntPoint::zero(), currentVisibleContentSize));
-    }
-
-#else
+#if !USE(TILED_BACKING_STORE)
     const ResourceResponse& response = m_frame->coreFrame()->loader()->documentLoader()->response();
     m_frameHasCustomRepresentation = isMainFrame && WebProcess::shared().shouldUseCustomRepresentationForResponse(response);
-
-    m_frame->coreFrame()->createView(webPage->size(), backgroundColor, false, IntSize(), false);
 #endif
 
+    m_frame->coreFrame()->createView(webPage->size(), backgroundColor, /* transparent */ false, IntSize(), shouldUseFixedLayout);
     m_frame->coreFrame()->view()->setTransparent(!webPage->drawsBackground());
 }
 

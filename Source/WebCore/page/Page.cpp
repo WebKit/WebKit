@@ -404,7 +404,7 @@ void Page::setNeedsRecalcStyleInAllFrames()
 
 void Page::updateViewportArguments()
 {
-    if (!mainFrame() || !mainFrame()->document() || mainFrame()->document()->viewportArguments() == m_viewportArguments)
+    if (!mainFrame() || !mainFrame()->document())
         return;
 
     m_viewportArguments = mainFrame()->document()->viewportArguments();

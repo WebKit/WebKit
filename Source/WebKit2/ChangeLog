@@ -1,3 +1,29 @@
+2011-11-16  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Make use-fixed-layout work reliable
+        https://bugs.webkit.org/show_bug.cgi?id=72511
+
+        Reviewed by Simon Hausmann.
+
+        The code handling use-fixed-layout wasn't 100% reliable. The code
+        was changed to make sure the value is always correct.
+
+        It also doesn't set the value by looking at the previous FrameView,
+        as that wouldn't work in cases, such as when the web process has
+        crashed.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::transitionToCommittedForNewPage):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+        (WebKit::WebPage::setResizesToContentsUsingLayoutSize):
+        (WebKit::WebPage::setUseFixedLayout):
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::useFixedLayout):
+
+            Store the state as m_useFixedLayout so that it can be used
+            from the WebFrameLoaderClient.
+
 2011-11-17  Zalan Bujtas  <zbujtas@gmail.com>
 
         [Qt][WK2] Do not apply new viewport properties until after the first visually non-empty layout.
