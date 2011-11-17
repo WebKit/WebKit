@@ -239,7 +239,7 @@
                       "slavenames": ["google-linux-2"]
                     },
                     {
-                      "name": "Chromium Linux Release (Flexbox)", "type": "NewBuildAndTest", "builddir": "chromium-linux-flexbox",
+                      "name": "Chromium Linux Release (Grid Layout)", "type": "NewBuildAndTest", "builddir": "chromium-linux-flexbox",
                       "platform": "chromium-linux", "configuration": "release", "architectures": ["i386"],
                       "slavenames": ["google-linux-flexbox"]
                     },
@@ -271,7 +271,7 @@
                                        "Qt Windows 32-bit Release", "Qt Windows 32-bit Debug", "Qt SnowLeopard Release",
                                        "Qt Linux MIPS Release", "Qt Linux SH4 Release",
                                        "Chromium Win Release", "Chromium Win Release (Tests)", "Chromium Mac Release", "Chromium Mac Release (Tests)",
-                                       "Chromium Linux Release", "Chromium Linux Release (Tests)", "Chromium Linux Release (Flexbox)",
+                                       "Chromium Linux Release", "Chromium Linux Release (Tests)", "Chromium Linux Release (Grid Layout)",
                                        "Chromium Android Release", "WinCairo Release", "WinCE Release (Build)", "EFL Linux Release (Build)"]
                     },
                     { "type": "PlatformSpecificScheduler", "platform": "mac-snowleopard", "branch": "trunk", "treeStableTimer": 45.0, 
