@@ -1,0 +1,43 @@
+<!--
+Test for https://bugs.webkit.org/show_bug.cgi?id=68777
+When we change opacity for parent DIV, this should change also opacity for absolute child, which is
+on its own layer. Before fixing this worked only second time, when parent DIV already has its own
+layer.
+-->
+<html>
+    <head>
+        <style>
+        #parentDiv {
+            background: #0f0;
+            width: 100px;
+            height: 100px;
+        }
+        #childDiv {
+            position: absolute;
+            background: #00f;
+            top: 0px;
+            left: 80px;
+            width: 200px;
+            height: 50px;
+    }
+  </style>
+        <script type="text/javascript">
+            function test() {
+                if (window.layoutTestController) {
+                    layoutTestController.display();
+                    setTimeout(function() {
+                        document.getElementById("parentDiv").style.opacity = 0.5;
+                        layoutTestController.notifyDone();
+                    }, 0);
+                    layoutTestController.waitUntilDone();
+                }
+            }
+        </script>
+    </head>
+    <body onload="test()">
+        <div id="parentDiv">
+            <div id="childDiv"/>
+        </div>
+    </body>
+</html>
+
