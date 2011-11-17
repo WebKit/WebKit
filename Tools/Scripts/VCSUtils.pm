@@ -422,19 +422,6 @@ sub possiblyColored($$)
     }
 }
 
-sub adjustPathForRecentRenamings($)
-{
-    my ($fullPath) = @_;
-
-    if ($fullPath =~ m|^WebCore/|
-        || $fullPath =~ m|^JavaScriptCore/|
-        || $fullPath =~ m|^WebKit/|
-        || $fullPath =~ m|^WebKit2/|) {
-        return "Source/$fullPath";
-    }
-    return $fullPath;
-}
-
 sub canonicalizePath($)
 {
     my ($file) = @_;
@@ -624,7 +611,7 @@ sub parseGitDiffHeader($$)
         # The first and second paths can differ in the case of copies
         # and renames.  We use the second file path because it is the
         # destination path.
-        $indexPath = adjustPathForRecentRenamings($4);
+        $indexPath = $4;
         # Use $POSTMATCH to preserve the end-of-line character.
         $_ = "Index: $indexPath$POSTMATCH"; # Convert to SVN format.
     } else {
@@ -740,7 +727,7 @@ sub parseSvnDiffHeader($$)
 
     my $indexPath;
     if (/$svnDiffStartRegEx/) {
-        $indexPath = adjustPathForRecentRenamings($1);
+        $indexPath = $1;
     } else {
         die("First line of SVN diff does not begin with \"Index \": \"$_\"");
     }
