@@ -173,41 +173,30 @@ public:
     class CharAccess {
     public:
         CharAccess(const UString& s)
-            : m_buffer(0)
         {
             if (s.is8Bit()) {
-#if USE(JSC)
                 m_charSize = Char8;
-                unsigned length = s.length();
-                m_ptr.ptr8 = m_buffer = static_cast<char *>(fastMalloc(length));
-                memcpy(m_buffer, s.latin1().data(), length);
-#else
-                ASSERT_NOT_REACHED();
-#endif
+                m_ptr.ptr8 = s.characters8();
             } else {
                 m_charSize = Char16;
-                m_ptr.ptr16 = s.characters();
+                m_ptr.ptr16 = s.characters16();
             }
         }
 
-        CharAccess(const char* ptr)
+        CharAccess(const LChar* ptr)
             : m_charSize(Char8)
-            , m_buffer(0)
         {
             m_ptr.ptr8 = ptr;
         }
 
         CharAccess(const UChar* ptr)
             : m_charSize(Char16)
-            , m_buffer(0)
         {
             m_ptr.ptr16 = ptr;
         }
 
         ~CharAccess()
         {
-            if (m_charSize == Char8)
-                fastFree(m_buffer);
         }
 
         inline UChar operator[](unsigned index)
@@ -219,11 +208,10 @@ public:
 
     private:
         union {
-            const char* ptr8;
+            const LChar* ptr8;
             const UChar* ptr16;
         } m_ptr;
         YarrCharSize m_charSize;
-        char* m_buffer;
     };
 
     class InputStream {

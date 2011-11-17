@@ -1,3 +1,17 @@
+2011-11-16  Michael Saboff  <msaboff@apple.com>
+
+        LayoutTests for Debug Builds Crashes in JavaScriptCore/yarr/YarrInterpreter.cpp(185)
+        https://bugs.webkit.org/show_bug.cgi?id=72561
+
+        Removed #if USE(JSC) and therefore the ASSERT_NOT_REACHED().
+        Simplified the code in the process.
+
+        Reviewed by James Robinson.
+
+        * yarr/YarrInterpreter.cpp:
+        (JSC::Yarr::Interpreter::CharAccess::CharAccess):
+        (JSC::Yarr::Interpreter::CharAccess::~CharAccess):
+
 2011-11-16  Geoffrey Garen  <ggaren@apple.com>
 
         Interpreter build fixes.
