@@ -1,3 +1,18 @@
+2011-11-17  Sergio Villar Senin  <svillar@igalia.com>
+
+        [GTK] plugins/get-url-notify-with-url-that-fails-to-load.html on bots after r100466
+        https://bugs.webkit.org/show_bug.cgi?id=72613
+
+        Reviewed by Martin Robinson.
+
+        Do not assume that a SoupRequest always exists, it is not
+        generated for example when the provided URL is
+        invalid. ResourceHandle::platformSetDefersLoading was crashing
+        because of that.
+
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::ResourceHandle::platformSetDefersLoading):
+
 2011-11-17  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Remove onlineDetectionEnabled from Preferences

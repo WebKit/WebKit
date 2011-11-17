@@ -74,6 +74,7 @@ editing/deleting/delete-by-word-001.html
 editing/undo/undo-deleteWord.html
 editing/pasteboard/emacs-ctrl-a-k-y.html
 editing/input/emacs-ctrl-o.html
+plugins/get-url-notify-with-url-that-fails-to-load.html
 
 ###############################################################################
 # TESTS CRASHING

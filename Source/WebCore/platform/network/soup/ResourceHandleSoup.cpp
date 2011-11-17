@@ -747,8 +747,11 @@ void ResourceHandle::platformSetDefersLoading(bool defersLoading)
     if (defersLoading)
         return;
 
-    if (!hasBeenSent(this)) {
-        ASSERT(d->m_soupRequest);
+    // We need to check for d->m_soupRequest because the request may
+    // have raised a failure (for example invalid URLs). We cannot
+    // simply check for d->m_scheduledFailure because it's cleared as
+    // soon as the failure event is fired.
+    if (!hasBeenSent(this) && d->m_soupRequest) {
         d->m_cancellable = adoptGRef(g_cancellable_new());
         soup_request_send_async(d->m_soupRequest.get(), d->m_cancellable.get(), sendRequestCallback, this);
         return;
