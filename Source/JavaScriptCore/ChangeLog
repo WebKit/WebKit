@@ -1,3 +1,10 @@
+2011-11-16  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, build fix for 32-bit.
+
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
 2011-11-16  Geoffrey Garen  <ggaren@apple.com>
 
         Some CachedCall cleanup, in preparation for reversing argument order.
