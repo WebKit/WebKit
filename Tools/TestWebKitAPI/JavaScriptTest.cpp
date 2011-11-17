@@ -28,17 +28,18 @@
 #include "PlatformUtilities.h"
 #include "Test.h"
 #include <JavaScriptCore/JavaScriptCore.h>
+#include <JavaScriptCore/JSRetainPtr.h>
 #include <WebKit2/WKRetainPtr.h>
 #include <WebKit2/WKSerializedScriptValue.h>
+#include <wtf/OwnArrayPtr.h>
 
 namespace TestWebKitAPI {
 
 struct JavaScriptCallbackContext {
-    JavaScriptCallbackContext(const char* expectedString) : didFinish(false), expectedString(expectedString), didMatchExpectedString(false) { }
+    JavaScriptCallbackContext() : didFinish(false) { }
 
     bool didFinish;
-    const char* expectedString;
-    bool didMatchExpectedString;
+    JSRetainPtr<JSStringRef> actualString;
 };
 
 static void javaScriptCallback(WKSerializedScriptValueRef resultSerializedScriptValue, WKErrorRef error, void* ctx)
@@ -53,24 +54,30 @@ static void javaScriptCallback(WKSerializedScriptValueRef resultSerializedScript
     JSValueRef scriptValue = WKSerializedScriptValueDeserialize(resultSerializedScriptValue, scriptContext, 0);
     ASSERT_NOT_NULL(scriptValue);
 
-    JSStringRef scriptString = JSValueToStringCopy(scriptContext, scriptValue, 0);
-    ASSERT_NOT_NULL(scriptString);
+    context->actualString.adopt(JSValueToStringCopy(scriptContext, scriptValue, 0));
+    ASSERT_NOT_NULL(context->actualString.get());
 
     context->didFinish = true;
-    context->didMatchExpectedString = JSStringIsEqualToUTF8CString(scriptString, context->expectedString);
 
-    JSStringRelease(scriptString);
     JSGlobalContextRelease(scriptContext);
 
     EXPECT_NULL(error);
 }
 
-bool runJSTest(WKPageRef page, const char* script, const char* expectedResult)
+::testing::AssertionResult runJSTest(const char*, const char*, const char*, WKPageRef page, const char* script, const char* expectedResult)
 {
-    JavaScriptCallbackContext context(expectedResult);
+    JavaScriptCallbackContext context;
     WKPageRunJavaScriptInMainFrame(page, Util::toWK(script).get(), &context, javaScriptCallback);
     Util::run(&context.didFinish);
-    return context.didMatchExpectedString;
+
+    if (JSStringIsEqualToUTF8CString(context.actualString.get(), expectedResult))
+        return ::testing::AssertionSuccess();
+
+    size_t bufferSize = JSStringGetMaximumUTF8CStringSize(context.actualString.get());
+    OwnArrayPtr<char> buffer = adoptArrayPtr(new char[bufferSize]);
+    JSStringGetUTF8CString(context.actualString.get(), buffer.get(), bufferSize);
+
+    return ::testing::AssertionFailure() << script << " should be " << expectedResult << " but is " << buffer.get();
 }
 
 } // namespace TestWebKitAPI

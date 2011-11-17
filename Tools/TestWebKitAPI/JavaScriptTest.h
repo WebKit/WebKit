@@ -23,10 +23,16 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <gtest/gtest.h>
+
 namespace TestWebKitAPI {
 
-// Executes |script| in the page and waits until it has run. Returns true if the script's output
-// matches |expectedResult|, false otherwise. Asserts if an error occurs.
-bool runJSTest(WKPageRef, const char* script, const char* expectedResult);
+// These macros execute |script| in the page and wait until it has run, then compare its return
+// value to the expected result.
+#define EXPECT_JS_EQ(page, script, result) EXPECT_PRED_FORMAT3(runJSTest, page, script, result)
+#define EXPECT_JS_FALSE(page, script) EXPECT_JS_EQ(page, script, "false")
+#define EXPECT_JS_TRUE(page, script) EXPECT_JS_EQ(page, script, "true")
+
+::testing::AssertionResult runJSTest(const char* pageExpr, const char* scriptExpr, const char* expectedResultExpr, WKPageRef, const char* script, const char* expectedResult);
 
 } // namespace TestWebKitAPI

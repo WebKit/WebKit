@@ -68,13 +68,13 @@ TEST(WebKit2, SpacebarScrolling)
     WKPageLoadURL(webView.page(), url.get());
     Util::run(&didFinishLoad);
 
-    EXPECT_TRUE(runJSTest(webView.page(), "isDocumentScrolled()", "false"));
-    EXPECT_TRUE(runJSTest(webView.page(), "textFieldContainsSpace()", "false"));
+    EXPECT_JS_FALSE(webView.page(), "isDocumentScrolled()");
+    EXPECT_JS_FALSE(webView.page(), "textFieldContainsSpace()");
 
     webView.simulateSpacebarKeyPress();
 
-    EXPECT_TRUE(runJSTest(webView.page(), "isDocumentScrolled()", "false"));
-    EXPECT_TRUE(runJSTest(webView.page(), "textFieldContainsSpace()", "true"));
+    EXPECT_JS_FALSE(webView.page(), "isDocumentScrolled()");
+    EXPECT_JS_TRUE(webView.page(), "textFieldContainsSpace()");
 
     // On Mac, a key down event represents both a raw key down and a key press. On Windows, a key
     // down event only represents a raw key down. We expect the key press to be handled (because it
@@ -85,13 +85,13 @@ TEST(WebKit2, SpacebarScrolling)
     EXPECT_TRUE(didNotHandleKeyDownEvent);
 #endif
 
-    EXPECT_TRUE(runJSTest(webView.page(), "blurTextField()", "undefined"));
+    EXPECT_JS_EQ(webView.page(), "blurTextField()", "undefined");
 
     didNotHandleKeyDownEvent = false;
     webView.simulateSpacebarKeyPress();
 
-    EXPECT_TRUE(runJSTest(webView.page(), "isDocumentScrolled()", "true"));
-    EXPECT_TRUE(runJSTest(webView.page(), "textFieldContainsSpace()", "true"));
+    EXPECT_JS_TRUE(webView.page(), "isDocumentScrolled()");
+    EXPECT_JS_TRUE(webView.page(), "textFieldContainsSpace()");
 
 #if PLATFORM(MAC)
     EXPECT_FALSE(didNotHandleKeyDownEvent);
