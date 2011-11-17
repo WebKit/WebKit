@@ -1,3 +1,10 @@
+2011-11-17  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Unreviewed build fix.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::transitionToCommittedForNewPage):
+
 2011-11-16  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Make use-fixed-layout work reliable

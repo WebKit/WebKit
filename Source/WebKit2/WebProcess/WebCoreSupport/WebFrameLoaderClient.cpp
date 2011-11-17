@@ -1141,7 +1141,8 @@ void WebFrameLoaderClient::transitionToCommittedForNewPage()
     WebPage* webPage = m_frame->page();
 
     Color backgroundColor = webPage->drawsTransparentBackground() ? Color::transparent : Color::white;
-    bool shouldUseFixedLayout = webPage->mainWebFrame() == m_frame && webPage->useFixedLayout();
+    bool isMainFrame = webPage->mainWebFrame() == m_frame;
+    bool shouldUseFixedLayout = isMainFrame && webPage->useFixedLayout();
 
 #if !USE(TILED_BACKING_STORE)
     const ResourceResponse& response = m_frame->coreFrame()->loader()->documentLoader()->response();
