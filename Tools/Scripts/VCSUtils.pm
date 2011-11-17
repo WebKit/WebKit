@@ -348,7 +348,7 @@ sub determineVCSRoot()
         # Some users have a workflow where svn-create-patch, svn-apply and
         # svn-unapply are used outside of multiple svn working directores,
         # so warn the user and assume Subversion is being used in this case.
-        warn "Unable to determine VCS root; assuming Subversion";
+        warn "Unable to determine VCS root for '" . Cwd::getcwd() . "'; assuming Subversion";
         $isSVN = 1;
     }
 

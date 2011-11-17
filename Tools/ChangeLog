@@ -1,3 +1,38 @@
+2011-11-16  Eric Seidel  <eric@webkit.org>
+
+        Add SCMDetector object to make scm detection mockable
+        https://bugs.webkit.org/show_bug.cgi?id=72247
+
+        Reviewed by Adam Barth.
+
+        I think SCM detection may eventually be rolled into Checkout,
+        but this patch at least makes it possible to mock code-paths
+        which rely on scm detection.
+        In the process of replacing callers of these free-functions
+        I found that one of the functions was no longer used,
+        and that one of the callers could instead just use the SCM
+        object it already had access to through port.host.scm().
+        I also discovered that I was not calling Host._initialize_scm()
+        and thus host.scm() was always returning None!
+
+        * Scripts/check-webkit-style:
+        * Scripts/webkitpy/common/checkout/checkout_unittest.py:
+        * Scripts/webkitpy/common/checkout/deps.py:
+        * Scripts/webkitpy/common/checkout/scm/__init__.py:
+        * Scripts/webkitpy/common/checkout/scm/detection.py:
+        * Scripts/webkitpy/common/checkout/scm/git.py:
+        * Scripts/webkitpy/common/checkout/scm/scm_unittest.py:
+        * Scripts/webkitpy/common/checkout/scm/svn.py:
+        * Scripts/webkitpy/common/host.py:
+        * Scripts/webkitpy/common/host_mock.py:
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        * Scripts/webkitpy/layout_tests/controllers/manager_worker_broker.py:
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        * Scripts/webkitpy/layout_tests/port/mock_drt.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        * Scripts/webkitpy/to_be_moved/rebaseline_chromium_webkit_tests.py:
+        * Scripts/webkitpy/tool/servers/rebaselineserver.py:
+
 2011-11-16  Mark Rowe  <mrowe@apple.com>
 
         Fix the build.
