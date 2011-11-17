@@ -1,3 +1,14 @@
+2011-11-17  Alexis Menard  <alexis.menard@openbossa.org>
+
+        [Qt][WK2] Don't export the private QQuickView.
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        We don't need to export that class anymore as the experimental QML plugin
+        does not expose this object anymore.
+
+        * UIProcess/API/qt/qquickwebview_p_p.h:
+
 2011-11-17  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         [Qt] Expose setUseTraditionalDesktopBehaviour() in QML experimental API

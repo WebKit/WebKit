@@ -38,7 +38,7 @@ QT_BEGIN_NAMESPACE
 class QFileDialog;
 QT_END_NAMESPACE
 
-class QWEBKIT_EXPORT QQuickWebViewPrivate : public WebKit::QtPolicyInterface {
+class QQuickWebViewPrivate : public WebKit::QtPolicyInterface {
 
     Q_DECLARE_PUBLIC(QQuickWebView)
 public:
