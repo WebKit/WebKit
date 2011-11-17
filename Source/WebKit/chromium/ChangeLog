@@ -1,3 +1,13 @@
+2011-11-17  Peter Kasting  <pkasting@google.com>
+
+        Unreviewed, rolling out r100572.
+        https://bugs.webkit.org/show_bug.cgi?id=72393
+        https://bugs.webkit.org/show_bug.cgi?id=72651
+
+        May have caused seg faults on Chromium Linux dbg bot.
+
+        * src/js/DevTools.js:
+
 2011-11-17  Adrienne Walker  <enne@google.com>
 
         [chromium] Implicitly skip render surfaces that won't be drawn

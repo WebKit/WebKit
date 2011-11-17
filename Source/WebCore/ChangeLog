@@ -1,3 +1,28 @@
+2011-11-17  Peter Kasting  <pkasting@google.com>
+
+        Unreviewed, rolling out r100572.
+        https://bugs.webkit.org/show_bug.cgi?id=72393
+        https://bugs.webkit.org/show_bug.cgi?id=72651
+
+        May have caused seg faults on Chromium Linux dbg bot.
+
+        * bindings/js/ScriptDebugServer.cpp:
+        * bindings/js/ScriptDebugServer.h:
+        * bindings/v8/ScriptDebugServer.cpp:
+        (WebCore::ScriptDebugServer::stepOutOfFunction):
+        * bindings/v8/ScriptDebugServer.h:
+        * inspector/CodeGeneratorInspector.py:
+        * inspector/Inspector.json:
+        * inspector/InspectorDebuggerAgent.cpp:
+        * inspector/InspectorDebuggerAgent.h:
+        * inspector/front-end/DebuggerModel.js:
+        (WebInspector.DebuggerModel):
+        (WebInspector.DebuggerModel.prototype.enableDebugger):
+        (WebInspector.DebuggerModel.prototype.disableDebugger):
+        * inspector/front-end/DebuggerPresentationModel.js:
+        (WebInspector.DebuggerPresentationModel.prototype.canEditScriptSource):
+        * inspector/front-end/Settings.js:
+
 2011-11-17  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r100652.

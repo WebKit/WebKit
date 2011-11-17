@@ -100,12 +100,6 @@ bool InspectorDebuggerAgent::enabled()
     return m_inspectorState->getBoolean(DebuggerAgentState::debuggerEnabled);
 }
 
-void InspectorDebuggerAgent::getCapabilities(ErrorString*, RefPtr<InspectorArray>* capabilities)
-{
-    if (scriptDebugServer().canSetScriptSource())
-        (*capabilities)->pushString(InspectorFrontend::Debugger::capabilitySetScriptSource);
-}
-
 void InspectorDebuggerAgent::enable(ErrorString*)
 {
     if (enabled())

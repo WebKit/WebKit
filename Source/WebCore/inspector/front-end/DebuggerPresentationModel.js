@@ -246,7 +246,7 @@ WebInspector.DebuggerPresentationModel.prototype = {
      */
     canEditScriptSource: function(uiSourceCode)
     {
-        if (!WebInspector.debuggerModel.canSetScriptSource() || this._formatSource)
+        if (!Preferences.canEditScriptSource || this._formatSource)
             return false;
         var rawSourceCode = uiSourceCode.rawSourceCode;
         var script = this._scriptForRawSourceCode(rawSourceCode);

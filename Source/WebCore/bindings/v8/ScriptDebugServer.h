@@ -41,7 +41,6 @@
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/PassOwnPtr.h>
-#include <wtf/Vector.h>
 #include <wtf/text/StringHash.h>
 
 namespace WebCore {
@@ -75,7 +74,6 @@ public:
     void stepOverStatement();
     void stepOutOfFunction();
 
-    bool canSetScriptSource();
     bool setScriptSource(const String& sourceID, const String& newContent, bool preview, String* error, ScriptValue* newCallFrames, ScriptObject* result);
 
     void recompileAllJSFunctionsSoon() { }
