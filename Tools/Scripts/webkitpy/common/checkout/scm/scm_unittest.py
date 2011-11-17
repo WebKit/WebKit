@@ -281,7 +281,7 @@ class StandaloneFunctionsTest(unittest.TestCase):
 
         # Mock out abspath() to test being not in a checkout at all.
         os.path.abspath = lambda x: "/"
-        self.assertRaises(SystemExit, default_scm)
+        self.assertRaises(Exception, default_scm)
         os.path.abspath = self.orig_abspath
 
 

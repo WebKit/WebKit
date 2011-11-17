@@ -1,5 +1,19 @@
 2011-11-17  Eric Seidel  <eric@webkit.org>
 
+        Give check-webkit-style a Host
+        https://bugs.webkit.org/show_bug.cgi?id=72670
+
+        Reviewed by Adam Barth.
+
+        * Scripts/webkitpy/common/checkout/scm/detection.py:
+        * Scripts/webkitpy/common/checkout/scm/scm_unittest.py:
+         - We don't run these unittests, but this one was looking for the wrong exception.
+        * Scripts/webkitpy/style/main.py:
+        * Scripts/webkitpy/to_be_moved/rebaseline_chromium_webkit_tests.py:
+         - This was create a new scm object even though it already had one?
+
+2011-11-17  Eric Seidel  <eric@webkit.org>
+
         Move check-webkit-style change_directory code to more modern mocks
         https://bugs.webkit.org/show_bug.cgi?id=72664
 

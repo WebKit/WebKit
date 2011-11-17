@@ -29,7 +29,7 @@ import webkitpy.style.checker as checker
 from webkitpy.style.patchreader import PatchReader
 from webkitpy.style.checker import StyleProcessor
 from webkitpy.style.filereader import TextFileReader
-from webkitpy.common.system.filesystem import FileSystem
+from webkitpy.common.host import Host
 
 
 _log = logging.getLogger(__name__)
@@ -133,11 +133,7 @@ def change_directory(filesystem, checkout_root, paths):
 
 
 class CheckWebKitStyle(object):
-    # FIXME: This function is huge and needs to be split up.
-    def main(self):
-        # FIXME: We should get our FileSystem from a Host object.
-        filesystem = FileSystem()
-
+    def _engage_awesome_stderr_hacks(self):
         # Change stderr to write with replacement characters so we don't die
         # if we try to print something containing non-ASCII characters.
         stderr = codecs.StreamReaderWriter(sys.stderr,
@@ -154,8 +150,18 @@ class CheckWebKitStyle(object):
         #        accept a stream parameter where necessary, and not calling
         #        sys.stderr explicitly anywhere.
         sys.stderr = stderr
+        return stderr
 
+    def main(self):
         args = sys.argv[1:]
+
+        host = Host()
+        # FIXME: Intentionally not calling host._initialize_scm() for now.
+        # _initialize_scm() would throw an exception if it failed to find the checkout_root.
+        # check-webkit-style seems designed to be run from outside a webkit checkout.
+        # Unclear if that's still a needed feature.
+
+        stderr = self._engage_awesome_stderr_hacks()
 
         # Checking for the verbose flag before calling check_webkit_style_parser()
         # lets us enable verbose logging earlier.
@@ -167,9 +173,7 @@ class CheckWebKitStyle(object):
         parser = checker.check_webkit_style_parser()
         (paths, options) = parser.parse(args)
 
-        cwd = filesystem.abspath(filesystem.getcwd())
-        scm = detect_scm_system(cwd)
-
+        scm = detect_scm_system(host.filesystem.getcwd())
         if scm is None:
             if not paths:
                 _log.error("WebKit checkout not found: You must run this script "
@@ -185,7 +189,7 @@ class CheckWebKitStyle(object):
 
         configuration = checker.check_webkit_style_configuration(options)
 
-        paths = change_directory(filesystem, checkout_root=checkout_root, paths=paths)
+        paths = change_directory(host.filesystem, checkout_root=checkout_root, paths=paths)
 
         style_processor = StyleProcessor(configuration)
         file_reader = TextFileReader(style_processor)

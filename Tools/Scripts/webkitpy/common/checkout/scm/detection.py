@@ -48,7 +48,6 @@ class SCMDetector(object):
         CWD is not in a checkout, then we attempt to figure out if the SCM module
         itself is part of a checkout, and return that one. If neither is part of
         a checkout, None is returned.
-
         """
         cwd = self._filesystem.getcwd()
         scm_system = self.detect_scm_system(cwd, patch_directories)

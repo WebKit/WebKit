@@ -951,15 +951,14 @@ def main(args):
         return 1
 
     url_fetcher = urlfetcher.UrlFetcher(host_port_obj._filesystem)
-    scm_obj = scm.default_scm()
 
     # We use the default zip factory method.
     zip_factory = None
 
     # FIXME: SCM module doesn't handle paths that aren't relative to the checkout_root consistently.
-    host_port_obj._filesystem.chdir(scm_obj.checkout_root)
+    host_port_obj._filesystem.chdir(host.scm().checkout_root)
 
-    ret_code = real_main(options, target_options, host_port_obj, target_port_obj, url_fetcher, zip_factory, scm_obj)
+    ret_code = real_main(options, target_options, host_port_obj, target_port_obj, url_fetcher, zip_factory, host.scm())
     if not ret_code and log_handler.num_failures:
         ret_code = 1
     print ''
@@ -970,8 +969,7 @@ def main(args):
     return ret_code
 
 
-def real_main(options, target_options, host_port_obj, target_port_obj, url_fetcher,
-              zip_factory, scm_obj):
+def real_main(options, target_options, host_port_obj, target_port_obj, url_fetcher, zip_factory, scm_obj):
     """Main function to produce new baselines. The Rebaseliner object uses two
     different Port objects - one to represent the machine the object is running
     on, and one to represent the port whose expectations are being updated.
