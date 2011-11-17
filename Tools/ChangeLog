@@ -1,5 +1,19 @@
 2011-11-17  Adam Barth  <abarth@webkit.org>
 
+        Move test_result_writer out of layout_package
+        https://bugs.webkit.org/show_bug.cgi?id=72586
+
+        Rubber-stamped by Eric Seidel.
+
+        This is part of a series of patches to remove layout_package.
+
+        * Scripts/webkitpy/layout_tests/controllers/single_test_runner.py:
+        * Scripts/webkitpy/layout_tests/controllers/test_result_writer.py: Copied from Tools/Scripts/webkitpy/layout_tests/layout_package/test_result_writer.py.
+        * Scripts/webkitpy/layout_tests/layout_package/test_result_writer.py: Removed.
+        * Scripts/webkitpy/tool/commands/rebaseline.py:
+
+2011-11-17  Adam Barth  <abarth@webkit.org>
+
         svn-apply shouldn't magically move files into Source anymore
         https://bugs.webkit.org/show_bug.cgi?id=72579
 

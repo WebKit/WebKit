@@ -31,7 +31,7 @@ import logging
 import re
 import time
 
-from webkitpy.layout_tests.layout_package import test_result_writer
+from webkitpy.layout_tests.controllers import test_result_writer
 from webkitpy.layout_tests.port.driver import DriverInput, DriverOutput
 from webkitpy.layout_tests.models import test_expectations
 from webkitpy.layout_tests.models import test_failures
