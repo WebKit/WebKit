@@ -27,6 +27,8 @@ function test()
 
     const dataURL = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEIAAABCAgMAAACeOuh7AAAABGdBTUEAAK/INwWK6QAAAAlQTFRF////AAAA////fu+PTwAAAAF0Uk5TAEDm2GYAAACHSURBVDjLxdLbDYAgDAVQGELn0R3oEHYf2KGdUqtE46OFRCP3oyTng1xCnWsaD5JRRtCkQ2YmkBkHRXqWJBn0j0TICbrsWVoWhRShCdcGyZCtHxMaUnVPRZ9KSbmBJdsX2vJVnwqRD0Rb4rpzgIbE/AI5NTnWAMvy5l0dXrfuLh5OCe5BmmYGXhTUxlQ5xJ8AAAAASUVORK5CYII=";
     completeURL("https://example.com/foo", dataURL);
+    completeURL("http://example.com/foo", "javascript:alert('foo');");
+    InspectorTest.addResult(WebInspector.resourceURLForRelatedNode(null, " javascript:alert('foo'); "));
 
     function dumpHref(dumpLinkClass)
     {
@@ -81,7 +83,7 @@ function test()
 </head>
 <body onload="runAfterIframeIsLoaded()">
 <p>
-Tests that URLs are linked to and completed correctly. Bugs <a href="http://bugs.webkit.org/show_bug.cgi?id=51663">51663</a>, <a href="http://bugs.webkit.org/show_bug.cgi?id=53171">53171</a>, <a href="http://bugs.webkit.org/show_bug.cgi?id=62643">62643</a>
+Tests that URLs are linked to and completed correctly. Bugs <a href="http://bugs.webkit.org/show_bug.cgi?id=51663">51663</a>, <a href="http://bugs.webkit.org/show_bug.cgi?id=53171">53171</a>, <a href="http://bugs.webkit.org/show_bug.cgi?id=62643">62643</a>, <a href="http://bugs.webkit.org/show_bug.cgi?id=72373">72373</a>
 </p>
 <div id="local"></div>
 <iframe src="resources/styles-url-linkify-iframe.html"></iframe>

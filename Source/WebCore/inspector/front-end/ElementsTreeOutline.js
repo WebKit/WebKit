@@ -1467,7 +1467,11 @@ WebInspector.ElementsTreeElement.prototype = {
         if (linkify && (name === "src" || name === "href")) {
             var rewrittenHref = WebInspector.resourceURLForRelatedNode(node, value);
             value = value.replace(/([\/;:\)\]\}])/g, "$1\u200B");
-            attrSpanElement.appendChild(linkify(rewrittenHref, value, "webkit-html-attribute-value", node.nodeName().toLowerCase() === "a"));
+            if (rewrittenHref === null) {
+                var attrValueElement = attrSpanElement.createChild("span", "webkit-html-attribute-value");
+                attrValueElement.textContent = value;
+            } else
+                attrSpanElement.appendChild(linkify(rewrittenHref, value, "webkit-html-attribute-value", node.nodeName().toLowerCase() === "a"));
         } else {
             value = value.replace(/([\/;:\)\]\}])/g, "$1\u200B");
             var attrValueElement = attrSpanElement.createChild("span", "webkit-html-attribute-value");

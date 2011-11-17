@@ -1,3 +1,17 @@
+2011-11-16  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: inspector follows javascript: hrefs as relative
+        https://bugs.webkit.org/show_bug.cgi?id=72373
+
+        javascript: hrefs should never be linkified for security.
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/front-end/ElementsTreeOutline.js:
+        (WebInspector.ElementsTreeElement.prototype._buildAttributeDOM):
+        * inspector/front-end/ResourceUtils.js:
+        (WebInspector.completeURL):
+
 2011-11-17  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Not reviewed. Fix 32bit builds.

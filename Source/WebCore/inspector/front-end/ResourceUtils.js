@@ -220,10 +220,16 @@ WebInspector.linkifyResourceAsNode = function(url, lineNumber, classes, tooltipT
     return anchor;
 }
 
+/**
+ * @return {?string} null if the specified resource MUST NOT have a URL (e.g. "javascript:...")
+ */
 WebInspector.resourceURLForRelatedNode = function(node, url)
 {
     if (!url || url.indexOf("://") > 0)
         return url;
+
+    if (url.trim().indexOf("javascript:") === 0)
+        return null; // Do not provide a resource URL for security.
 
     for (var frameOwnerCandidate = node; frameOwnerCandidate; frameOwnerCandidate = frameOwnerCandidate.parentNode) {
         if (frameOwnerCandidate.documentURL) {
@@ -280,7 +286,12 @@ WebInspector.completeURL = function(baseURL, href)
     if (href) {
         // Return absolute URLs as-is.
         var parsedHref = href.asParsedURL();
-        if ((parsedHref && parsedHref.scheme) || href.indexOf("data:") === 0)
+        if (parsedHref && parsedHref.scheme)
+            return href;
+
+        // Return special URLs as-is.
+        var trimmedHref = href.trim();
+        if (trimmedHref.indexOf("data:") === 0 || trimmedHref.indexOf("javascript:") === 0)
             return href;
     }
 
