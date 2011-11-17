@@ -23,33 +23,21 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <gtest/gtest.h>
-#include <wtf/Platform.h>
+#include "JavaScriptTest.h"
 
-#if PLATFORM(MAC)
-#ifdef __OBJC__
-@class WKView;
-@class WebView;
-#else
-class WKView;
-class WebView;
-#endif
-#endif
+#include <WebKit/WebView.h>
 
 namespace TestWebKitAPI {
 
-// These macros execute |script| in the page and wait until it has run, then compare its return
-// value to the expected result.
-#define EXPECT_JS_EQ(page, script, result) EXPECT_PRED_FORMAT3(runJSTest, page, script, result)
-#define EXPECT_JS_FALSE(page, script) EXPECT_JS_EQ(page, script, "false")
-#define EXPECT_JS_TRUE(page, script) EXPECT_JS_EQ(page, script, "true")
+::testing::AssertionResult runJSTest(const char*, const char*, const char*, WebView *webView, const char* script, const char* expectedResult)
+{
+    NSString *actualResult = [webView stringByEvaluatingJavaScriptFromString:[NSString stringWithUTF8String:script]];
+    return compareJSResult(script, [actualResult UTF8String], expectedResult);
+}
 
-::testing::AssertionResult runJSTest(const char* pageExpr, const char* scriptExpr, const char* expectedResultExpr, WKPageRef, const char* script, const char* expectedResult);
-::testing::AssertionResult compareJSResult(const char* script, const char* actualResult, const char* expectedResult);
-
-#if PLATFORM(MAC)
-::testing::AssertionResult runJSTest(const char* webViewExpr, const char* scriptExpr, const char* expectedResultExpr, WebView *, const char* script, const char* expectedResult);
-::testing::AssertionResult runJSTest(const char* viewExpr, const char* scriptExpr, const char* expectedResultExpr, WKView *, const char* script, const char* expectedResult);
-#endif
+::testing::AssertionResult runJSTest(const char* viewExpr, const char* scriptExpr, const char* expectedResultExpr, WKView *view, const char* script, const char* expectedResult)
+{
+    return runJSTest(viewExpr, scriptExpr, expectedResultExpr, [view pageRef], script, expectedResult);
+}
 
 } // namespace TestWebKitAPI

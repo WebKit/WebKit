@@ -23,33 +23,33 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <gtest/gtest.h>
-#include <wtf/Platform.h>
+#import "SyntheticBackingScaleFactorWindow.h"
 
-#if PLATFORM(MAC)
-#ifdef __OBJC__
-@class WKView;
-@class WebView;
-#else
-class WKView;
-class WebView;
-#endif
-#endif
+@implementation SyntheticBackingScaleFactorWindow
 
-namespace TestWebKitAPI {
+- (id)initWithContentRect:(NSRect)contentRect styleMask:(NSUInteger)windowStyle backing:(NSBackingStoreType)bufferingType defer:(BOOL)deferCreation
+{
+    self = [super initWithContentRect:contentRect styleMask:windowStyle backing:bufferingType defer:deferCreation];
+    if (!self)
+        return nil;
 
-// These macros execute |script| in the page and wait until it has run, then compare its return
-// value to the expected result.
-#define EXPECT_JS_EQ(page, script, result) EXPECT_PRED_FORMAT3(runJSTest, page, script, result)
-#define EXPECT_JS_FALSE(page, script) EXPECT_JS_EQ(page, script, "false")
-#define EXPECT_JS_TRUE(page, script) EXPECT_JS_EQ(page, script, "true")
+    _backingScaleFactor = 1;
+    return self;
+}
 
-::testing::AssertionResult runJSTest(const char* pageExpr, const char* scriptExpr, const char* expectedResultExpr, WKPageRef, const char* script, const char* expectedResult);
-::testing::AssertionResult compareJSResult(const char* script, const char* actualResult, const char* expectedResult);
+- (void)setBackingScaleFactor:(CGFloat)scaleFactor
+{
+    _backingScaleFactor = scaleFactor;
+}
 
-#if PLATFORM(MAC)
-::testing::AssertionResult runJSTest(const char* webViewExpr, const char* scriptExpr, const char* expectedResultExpr, WebView *, const char* script, const char* expectedResult);
-::testing::AssertionResult runJSTest(const char* viewExpr, const char* scriptExpr, const char* expectedResultExpr, WKView *, const char* script, const char* expectedResult);
-#endif
+- (CGFloat)backingScaleFactor
+{
+    return _backingScaleFactor;
+}
 
-} // namespace TestWebKitAPI
+- (CGFloat)userSpaceScaleFactor
+{
+    return _backingScaleFactor;
+}
+
+@end
