@@ -41,7 +41,6 @@ var Preferences = {
     showColorNicknames: true,
     debuggerAlwaysEnabled: false,
     profilerAlwaysEnabled: false,
-    onlineDetectionEnabled: true,
     nativeInstrumentationEnabled: false,
     useDataURLForResourceImageIcons: true,
     showTimingTab: false,

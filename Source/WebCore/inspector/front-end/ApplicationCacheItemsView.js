@@ -41,14 +41,12 @@ WebInspector.ApplicationCacheItemsView = function(model, frameId, status)
     this.deleteButton.visible = false;
     this.deleteButton.addEventListener("click", this._deleteButtonClicked, this);
 
-    if (Preferences.onlineDetectionEnabled) {
-        this.connectivityIcon = document.createElement("img");
-        this.connectivityIcon.className = "storage-application-cache-connectivity-icon";
-        this.connectivityIcon.src = "";
-        this.connectivityMessage = document.createElement("span");
-        this.connectivityMessage.className = "storage-application-cache-connectivity";
-        this.connectivityMessage.textContent = "";
-    }
+    this.connectivityIcon = document.createElement("img");
+    this.connectivityIcon.className = "storage-application-cache-connectivity-icon";
+    this.connectivityIcon.src = "";
+    this.connectivityMessage = document.createElement("span");
+    this.connectivityMessage.className = "storage-application-cache-connectivity";
+    this.connectivityMessage.textContent = "";
 
     this.divider = document.createElement("span");
     this.divider.className = "status-bar-item status-bar-divider";
@@ -70,29 +68,21 @@ WebInspector.ApplicationCacheItemsView = function(model, frameId, status)
 
     // FIXME: Status bar items don't work well enough yet, so they are being hidden.
     // http://webkit.org/b/41637 Web Inspector: Give Semantics to "Refresh" and "Delete" Buttons in ApplicationCache DataGrid
+    // http://webkit.org/b/72618 Web Inspector: ApplicationCache view should show navigator.onLine indicator.
     this.deleteButton.element.style.display = "none";
-    if (Preferences.onlineDetectionEnabled) {
-        this.connectivityIcon.style.display = "none";
-        this.connectivityMessage.style.display = "none";
-    }
+    this.connectivityIcon.style.display = "none";
+    this.connectivityMessage.style.display = "none";
     this.divider.style.display = "none";
 }
 
 WebInspector.ApplicationCacheItemsView.prototype = {
     get statusBarItems()
     {
-        if (Preferences.onlineDetectionEnabled) {
-            return [
-                this.deleteButton.element,
-                this.connectivityIcon, this.connectivityMessage, this.divider,
-                this.statusIcon, this.statusMessage
-            ];
-        } else {
-            return [
-                this.deleteButton.element, this.divider,
-                this.statusIcon, this.statusMessage
-            ];
-        }
+        return [
+            this.deleteButton.element,
+            this.connectivityIcon, this.connectivityMessage, this.divider,
+            this.statusIcon, this.statusMessage
+        ];
     },
 
     wasShown: function()
@@ -152,14 +142,12 @@ WebInspector.ApplicationCacheItemsView.prototype = {
      */
     updateNetworkState: function(isNowOnline)
     {
-        if (Preferences.onlineDetectionEnabled) {
-            if (isNowOnline) {
-                this.connectivityIcon.src = "Images/successGreenDot.png";
-                this.connectivityMessage.textContent = WebInspector.UIString("Online");
-            } else {
-                this.connectivityIcon.src = "Images/errorRedDot.png";
-                this.connectivityMessage.textContent = WebInspector.UIString("Offline");
-            }
+        if (isNowOnline) {
+            this.connectivityIcon.src = "Images/successGreenDot.png";
+            this.connectivityMessage.textContent = WebInspector.UIString("Online");
+        } else {
+            this.connectivityIcon.src = "Images/errorRedDot.png";
+            this.connectivityMessage.textContent = WebInspector.UIString("Offline");
         }
     },
 

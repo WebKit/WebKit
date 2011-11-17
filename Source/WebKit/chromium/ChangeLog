@@ -1,3 +1,12 @@
+2011-11-17  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Remove onlineDetectionEnabled from Preferences
+        https://bugs.webkit.org/show_bug.cgi?id=72617
+
+        Reviewed by Pavel Feldman.
+
+        * src/js/DevTools.js:
+
 2011-11-17  Kenichi Ishibashi  <bashi@chromium.org>
 
         [chromium] don't call fontconfig twice in complex text path
