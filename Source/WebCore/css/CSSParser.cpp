@@ -987,7 +987,7 @@ bool CSSParser::parseValue(int propId, bool important)
         // inline | block | list-item | run-in | inline-block | table |
         // inline-table | table-row-group | table-header-group | table-footer-group | table-row |
         // table-column-group | table-column | table-cell | table-caption | -webkit-box | -webkit-inline-box | none | inherit
-        // -webkit-flexbox | -webkit-inline-flexbox
+        // -webkit-flexbox | -webkit-inline-flexbox | -webkit-grid | -webkit-inline-grid
         if ((id >= CSSValueInline && id <= CSSValueWebkitInlineFlexbox) || id == CSSValueNone)
             validPrimitive = true;
 #if ENABLE(CSS_GRID_LAYOUT)

@@ -1,3 +1,14 @@
+2011-11-16  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Update supported display list after -webkit-grid and -webkit-inline-grid addition
+        https://bugs.webkit.org/show_bug.cgi?id=72559
+
+        Reviewed by Tony Chang.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue): Added the 2 new supported
+        values (forgotten in the previous change).
+
 2011-11-11  Adrienne Walker  <enne@google.com>
 
         [chromium] Expose mock scrollbars to window.internals
