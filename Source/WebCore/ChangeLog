@@ -1,3 +1,20 @@
+2011-11-17  Michael Saboff  <msaboff@apple.com>
+
+        Leaks seen in MemoryPressureHandlerMac.mm on Leaks bot
+        https://bugs.webkit.org/show_bug.cgi?id=72416
+
+        Added code to release _cache_event_source and _timer_event_source
+        after they are canceled.  Also added defensive code to
+        clean up the _timer_event_source in uninstall().
+
+        Reviewed by Geoffrey Garen.
+
+        No new tests, fixing leaks caught by leaks bot.
+
+        * platform/mac/MemoryPressureHandlerMac.mm:
+        (WebCore::MemoryPressureHandler::uninstall):
+        (WebCore::MemoryPressureHandler::holdOff):
+
 2011-11-17  Ken Buchanan <kenrb@chromium.org>
 
         Crash from positioned generated content under run-in
