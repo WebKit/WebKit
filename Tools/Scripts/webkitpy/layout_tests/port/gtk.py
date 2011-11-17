@@ -45,7 +45,12 @@ _log = logging.getLogger(__name__)
 
 class GtkDriver(WebKitDriver):
     def _start(self):
-        display_id = self._worker_number + 1
+        # Use even displays for pixel tests and odd ones otherwise. When pixel tests are disabled,
+        # DriverProxy creates two drivers, one for normal and the other for ref tests. Both have
+        # the same worker number, so this prevents them from using the same Xvfb instance.
+        display_id = self._worker_number * 2 + 1
+        if self._pixel_tests:
+            display_id += 1
         run_xvfb = ["Xvfb", ":%d" % (display_id), "-screen",  "0", "800x600x24", "-nolisten", "tcp"]
         with open(os.devnull, 'w') as devnull:
             self._xvfb_process = subprocess.Popen(run_xvfb, stderr=devnull)
@@ -61,6 +66,7 @@ class GtkDriver(WebKitDriver):
             # FIXME: This should use Executive.kill_process
             os.kill(self._xvfb_process.pid, signal.SIGTERM)
             self._xvfb_process.wait()
+            self._xvfb_process = None
 
 
 class GtkPort(WebKitPort):
@@ -68,11 +74,6 @@ class GtkPort(WebKitPort):
 
     def __init__(self, host, **kwargs):
         WebKitPort.__init__(self, host, **kwargs)
-
-        # FIXME: Disable ref tests for now, they make the buildbots very flaky :(
-        # https://bugs.webkit.org/show_bug.cgi?id=72601
-        self.set_option_default("no_ref_tests", True)
-
         self._version = self.port_name
 
     def _port_flag_for_scripts(self):

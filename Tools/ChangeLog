@@ -1,3 +1,17 @@
+2011-11-17  Zan Dobersek  <zandobersek@gmail.com>
+
+        [GTK] enable ref tests
+        https://bugs.webkit.org/show_bug.cgi?id=72601
+
+        Re-enable ref tests. Run the driver under evenly numbered display if performing
+        pixel tests or under oddly numbered display otherwise. This prevents the ref tests
+        being run in an already used Xvfb instance if pixel tests are disabled.
+
+        Reviewed by Tony Chang.
+
+        * Scripts/webkitpy/layout_tests/port/gtk.py: Also set Xvfb variable to None
+        after the process is killed
+
 2011-11-17  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         Make check-webkit-style accept xxx_p.h as a primary header for xxx.cpp for Qt's sake
