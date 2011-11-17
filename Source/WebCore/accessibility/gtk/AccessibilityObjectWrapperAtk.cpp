@@ -295,6 +295,12 @@ static AtkObject* atkParentOfRootObject(AtkObject* object)
 
 static AtkObject* webkit_accessible_get_parent(AtkObject* object)
 {
+    // Check first if the parent has been already set.
+    AtkObject* accessibleParent = ATK_OBJECT_CLASS(webkit_accessible_parent_class)->get_parent(object);
+    if (accessibleParent)
+        return accessibleParent;
+
+    // Parent not set yet, so try to find it in the hierarchy.
     AccessibilityObject* coreObject = core(object);
     if (!coreObject)
         return 0;

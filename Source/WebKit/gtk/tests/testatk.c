@@ -1641,6 +1641,44 @@ static void testWebkitAtkParentForRootObject()
     g_object_unref(box);
 }
 
+static void testWebkitAtkSetParentForObject()
+{
+    WebKitWebView* webView = WEBKIT_WEB_VIEW(webkit_web_view_new());
+    GtkAllocation allocation = { 0, 0, 800, 600 };
+    gtk_widget_size_allocate(GTK_WIDGET(webView), &allocation);
+    webkit_web_view_load_string(webView, contents, 0, 0, 0);
+
+    /* Put the webview in a window to check the normal behaviour keeps
+       working as expected when the webview is inside a container. */
+    GtkWidget* window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    g_object_ref_sink(window);
+    gtk_container_add(GTK_CONTAINER(window), webView);
+
+    AtkObject* axRoot = gtk_widget_get_accessible(GTK_WIDGET(webView));
+    g_assert(ATK_IS_OBJECT(axRoot));
+
+    AtkObject* axWindow = gtk_widget_get_accessible(window);
+    g_assert(ATK_IS_OBJECT(axWindow));
+
+    /* The parent of the root object is the window's a11y object. */
+    g_assert(atk_object_get_parent(axRoot) == axWindow);
+
+    /* We now need to use something as a an alternative parent for
+       the a11y object associated with the root of the DOM tree. */
+    GtkWidget* button = gtk_button_new();
+    g_object_ref_sink(button);
+
+    AtkObject* axButton = gtk_widget_get_accessible (button);
+    g_assert(ATK_IS_OBJECT(axButton));
+
+    /* Manually set the button's a11y object as the parent and check. */
+    atk_object_set_parent(axRoot, axButton);
+    g_assert(atk_object_get_parent(axRoot) == axButton);
+
+    g_object_unref(button);
+    g_object_unref(window);
+}
+
 int main(int argc, char** argv)
 {
     gtk_test_init(&argc, &argv, 0);
@@ -1669,6 +1707,7 @@ int main(int argc, char** argv)
     g_test_add_func("/webkit/atk/listsOfItems", testWebkitAtkListsOfItems);
     g_test_add_func("/webkit/atk/textChangedNotifications", testWebkitAtkTextChangedNotifications);
     g_test_add_func("/webkit/atk/parentForRootObject", testWebkitAtkParentForRootObject);
+    g_test_add_func("/webkit/atk/setParentForObject", testWebkitAtkSetParentForObject);
     return g_test_run ();
 }
 

@@ -1,5 +1,18 @@
 2011-11-17  Mario Sanchez Prada  <msanchez@igalia.com>
 
+        [GTK] Consider parent AtkObject in webkit_accessible_get_parent(), if already set
+        https://bugs.webkit.org/show_bug.cgi?id=72525
+
+        Reviewed by Xan Lopez.
+
+        * tests/testatk.c:
+        (testWebkitAtkSetParentForObject): New unit test to check that
+        calls to atk_object_get_parent() over a WebKitGTK's accessibility
+        wrapper object returns its parent AtkObject if previously set.
+        (main): Added new test.
+
+2011-11-17  Mario Sanchez Prada  <msanchez@igalia.com>
+
         [GTK] ATK API tests failing because of patch for bug 72390
         https://bugs.webkit.org/show_bug.cgi?id=72592
 
