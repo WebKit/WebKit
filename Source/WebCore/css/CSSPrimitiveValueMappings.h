@@ -3452,6 +3452,80 @@ template<> inline CSSPrimitiveValue::operator ColumnAxis() const
     }
 }
 
+template<> inline CSSPrimitiveValue::CSSPrimitiveValue(WrapFlow wrapFlow)
+: CSSValue(PrimitiveClass)
+{
+    m_primitiveUnitType = CSS_IDENT;
+    switch (wrapFlow) {
+    case WrapFlowAuto:
+        m_value.ident = CSSValueAuto;
+        break;
+    case WrapFlowBoth:
+        m_value.ident = CSSValueBoth;
+        break;
+    case WrapFlowLeft:
+        m_value.ident = CSSValueLeft;
+        break;
+    case WrapFlowRight:
+        m_value.ident = CSSValueRight;
+        break;
+    case WrapFlowMaximum:
+        m_value.ident = CSSValueMaximum;
+        break;
+    case WrapFlowClear:
+        m_value.ident = CSSValueClear;
+        break;
+    }
+}
+
+template<> inline CSSPrimitiveValue::operator WrapFlow() const
+{
+    switch (m_value.ident) {
+    case CSSValueAuto:
+        return WrapFlowAuto;
+    case CSSValueBoth:
+        return WrapFlowBoth;
+    case CSSValueLeft:
+        return WrapFlowLeft;
+    case CSSValueRight:
+        return WrapFlowRight;
+    case CSSValueMaximum:
+        return WrapFlowMaximum;
+    case CSSValueClear:
+        return WrapFlowClear;
+    default:
+        ASSERT_NOT_REACHED();
+        return WrapFlowAuto;
+    }
+}
+
+template<> inline CSSPrimitiveValue::CSSPrimitiveValue(WrapThrough wrapThrough)
+: CSSValue(PrimitiveClass)
+{
+    m_primitiveUnitType = CSS_IDENT;
+    switch (wrapThrough) {
+    case WrapThroughWrap:
+        m_value.ident = CSSValueWrap;
+        break;
+    case WrapThroughNone:
+        m_value.ident = CSSValueNone;
+        break;
+    }
+}
+
+template<> inline CSSPrimitiveValue::operator WrapThrough() const
+{
+    switch (m_value.ident) {
+    case CSSValueWrap:
+        return WrapThroughWrap;
+    case CSSValueNone:
+        return WrapThroughNone;
+    default:
+        ASSERT_NOT_REACHED();
+        return WrapThroughWrap;
+    }
+}
+
 #if ENABLE(SVG)
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EColorInterpolation e)

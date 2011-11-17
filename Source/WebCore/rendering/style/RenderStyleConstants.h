@@ -460,6 +460,10 @@ enum ColumnAxis { HorizontalColumnAxis, VerticalColumnAxis, AutoColumnAxis };
 
 enum LineGridSnap { LineGridSnapNone, LineGridSnapBaseline, LineGridSnapBounds };
 
+enum WrapFlow { WrapFlowAuto, WrapFlowBoth, WrapFlowLeft, WrapFlowRight, WrapFlowMaximum, WrapFlowClear };
+
+enum WrapThrough { WrapThroughWrap, WrapThroughNone };
+
 } // namespace WebCore
 
 #endif // RenderStyleConstants_h

@@ -2200,6 +2200,16 @@ bool CSSParser::parseValue(int propId, bool important)
             return parseWrapShape(important);
         break;
 
+    case CSSPropertyWebkitWrapFlow:
+        if (id == CSSValueAuto || id == CSSValueBoth || id == CSSValueLeft || id == CSSValueRight || id == CSSValueMaximum || id == CSSValueClear)
+            validPrimitive = true;
+        break;
+
+    case CSSPropertyWebkitWrapThrough:
+        if (id == CSSValueWrap || id == CSSValueNone)
+            validPrimitive = true;
+        break;
+
 #if ENABLE(SVG)
     default:
         return parseSVGValue(propId, important);

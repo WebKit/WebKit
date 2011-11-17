@@ -1,0 +1,25 @@
+Test parsing of the CSS wrap-flow property.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS test("-webkit-wrap-flow: auto") is "auto"
+PASS test("-webkit-wrap-flow: both") is "both"
+PASS test("-webkit-wrap-flow: left") is "left"
+PASS test("-webkit-wrap-flow: right") is "right"
+PASS test("-webkit-wrap-flow: maximum") is "maximum"
+PASS test("-webkit-wrap-flow: clear") is "clear"
+PASS test("-webkit-wrap-flow: ;") is ""
+PASS test("-webkit-wrap-flow: 5") is ""
+PASS test("-webkit-wrap-flow: -1.2") is ""
+PASS test("-webkit-wrap-flow: 'string'") is ""
+PASS testComputedStyle("auto") is "auto"
+PASS testComputedStyle("5") is "auto"
+PASS testComputedStyle("'string'") is "auto"
+PASS testNotInherited("auto", "left") is "left"
+PASS testNotInherited("right", "auto") is "auto"
+PASS testNotInherited("both", "clear") is "clear"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

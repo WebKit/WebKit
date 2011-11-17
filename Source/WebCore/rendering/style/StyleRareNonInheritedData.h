@@ -156,6 +156,9 @@ public:
     unsigned m_borderFit : 1; // EBorderFit
     unsigned m_textCombine : 1; // CSS3 text-combine properties
 
+    unsigned m_wrapFlow: 3; // WrapFlow
+    unsigned m_wrapThrough: 1; // WrapThrough
+
 #if USE(ACCELERATED_COMPOSITING)
     bool m_runningAcceleratedAnimation : 1;
 #endif

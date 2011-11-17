@@ -385,6 +385,10 @@ StyleDifference RenderStyle::diff(const RenderStyle* other, unsigned& changedCon
         if (rareNonInheritedData->m_regionOverflow != other->rareNonInheritedData->m_regionOverflow)
             return StyleDifferenceLayout;
 
+        if (rareNonInheritedData->m_wrapFlow != other->rareNonInheritedData->m_wrapFlow
+            || rareNonInheritedData->m_wrapThrough != other->rareNonInheritedData->m_wrapThrough)
+            return StyleDifferenceLayout;
+
         if (rareNonInheritedData->m_deprecatedFlexibleBox.get() != other->rareNonInheritedData->m_deprecatedFlexibleBox.get()
             && *rareNonInheritedData->m_deprecatedFlexibleBox.get() != *other->rareNonInheritedData->m_deprecatedFlexibleBox.get())
             return StyleDifferenceLayout;

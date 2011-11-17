@@ -284,7 +284,9 @@ static const int computedProperties[] = {
     CSSPropertyWebkitRegionOverflow,
     CSSPropertyWebkitRegionBreakAfter,
     CSSPropertyWebkitRegionBreakBefore,
-    CSSPropertyWebkitRegionBreakInside
+    CSSPropertyWebkitRegionBreakInside,
+    CSSPropertyWebkitWrapFlow,
+    CSSPropertyWebkitWrapThrough
 #if ENABLE(SVG)
     ,
     CSSPropertyClipPath,
@@ -2153,6 +2155,10 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
 
             return primitiveValueCache->createValue(style->wrapShape());
 
+        case CSSPropertyWebkitWrapFlow:
+            return primitiveValueCache->createValue(style->wrapFlow());
+        case CSSPropertyWebkitWrapThrough:
+            return primitiveValueCache->createValue(style->wrapThrough());
 #if ENABLE(SVG)
         case CSSPropertyClipPath:
         case CSSPropertyClipRule:

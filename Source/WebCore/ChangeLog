@@ -1,3 +1,42 @@
+2011-11-17  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        CSS exclusions: parse the wrap-flow and wrap-through properties
+        https://bugs.webkit.org/show_bug.cgi?id=71904
+
+        Reviewed by Dean Jackson.
+
+        Tests: fast/exclusions/wrap-flow-parsing.html
+               fast/exclusions/wrap-through-parsing.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::operator WrapFlow):
+        (WebCore::CSSPrimitiveValue::operator WrapThrough):
+        * css/CSSProperty.cpp:
+        (WebCore::CSSProperty::isInheritedProperty):
+        * css/CSSPropertyNames.in:
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        * css/CSSValueKeywords.in:
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::diff):
+        * rendering/style/RenderStyle.h:
+        (WebCore::InheritedFlags::wrapFlow):
+        (WebCore::InheritedFlags::wrapThrough):
+        (WebCore::InheritedFlags::setWrapFlow):
+        (WebCore::InheritedFlags::setWrapThrough):
+        (WebCore::InheritedFlags::initialWrapFlow):
+        (WebCore::InheritedFlags::initialWrapThrough):
+        * rendering/style/RenderStyleConstants.h:
+        * rendering/style/StyleRareNonInheritedData.cpp:
+        (WebCore::StyleRareNonInheritedData::StyleRareNonInheritedData):
+        (WebCore::StyleRareNonInheritedData::operator==):
+        * rendering/style/StyleRareNonInheritedData.h:
+
 2011-11-16  Dean Jackson  <dino@apple.com>
 
         Implement filter function shorthands

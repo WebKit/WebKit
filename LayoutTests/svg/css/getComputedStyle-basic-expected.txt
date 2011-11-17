@@ -420,6 +420,10 @@ rect: style.getPropertyValue(-webkit-region-break-before) : auto
 rect: style.getPropertyCSSValue(-webkit-region-break-before) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-region-break-inside) : auto
 rect: style.getPropertyCSSValue(-webkit-region-break-inside) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(-webkit-wrap-flow) : auto
+rect: style.getPropertyCSSValue(-webkit-wrap-flow) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(-webkit-wrap-through) : wrap
+rect: style.getPropertyCSSValue(-webkit-wrap-through) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(clip-path) : none
 rect: style.getPropertyCSSValue(clip-path) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(clip-rule) : nonzero
@@ -916,6 +920,10 @@ g: style.getPropertyValue(-webkit-region-break-before) : auto
 g: style.getPropertyCSSValue(-webkit-region-break-before) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-region-break-inside) : auto
 g: style.getPropertyCSSValue(-webkit-region-break-inside) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(-webkit-wrap-flow) : auto
+g: style.getPropertyCSSValue(-webkit-wrap-flow) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(-webkit-wrap-through) : wrap
+g: style.getPropertyCSSValue(-webkit-wrap-through) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(clip-path) : none
 g: style.getPropertyCSSValue(clip-path) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(clip-rule) : nonzero

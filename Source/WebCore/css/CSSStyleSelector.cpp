@@ -3871,6 +3871,14 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
 
         return;
 
+    case CSSPropertyWebkitWrapFlow:
+        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(wrapFlow, WrapFlow);
+        return;
+
+    case CSSPropertyWebkitWrapThrough:
+        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(wrapThrough, WrapThrough);
+        return;
+
     // CSS Fonts Module Level 3
     case CSSPropertyWebkitFontFeatureSettings: {
         if (primitiveValue && primitiveValue->getIdent() == CSSValueNormal) {

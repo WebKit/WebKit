@@ -856,6 +856,18 @@ evenodd
 // auto
 break
 
+// -webkit-wrap-flow
+// auto
+// both
+// left
+// right
+maximum
+// clear
+
+// -webkit-wrap-through
+wrap
+// none
+
 #if defined(ENABLE_CSS_FILTERS) && ENABLE_CSS_FILTERS
 // -webkit-filter
 #if defined(ENABLE_CSS_SHADERS) && ENABLE_CSS_SHADERS
