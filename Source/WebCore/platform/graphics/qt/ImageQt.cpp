@@ -42,38 +42,59 @@
 #include "StillImageQt.h"
 #include "qwebsettings.h"
 
-#include <QPixmap>
-#include <QPainter>
+#include <QApplication>
+#include <QDebug>
 #include <QImage>
 #include <QImageReader>
+#include <QPainter>
+#include <QPixmap>
+#include <QStyle>
 #include <QTransform>
 
-#include <QDebug>
-
 #include <math.h>
+
+typedef QHash<QByteArray, QPixmap> WebGraphicHash;
+Q_GLOBAL_STATIC(WebGraphicHash, _graphics)
+
+static void earlyClearGraphics()
+{
+    _graphics()->clear();
+}
+
+static WebGraphicHash* graphics()
+{
+    WebGraphicHash* hash = _graphics();
+
+    if (hash->isEmpty()) {
+
+        // prevent ~QPixmap running after ~QApplication (leaks native pixmaps)
+        qAddPostRoutine(earlyClearGraphics);
+
+        // QWebSettings::MissingImageGraphic
+        hash->insert("missingImage", QPixmap(QLatin1String(":webkit/resources/missingImage.png")));
+        // QWebSettings::MissingPluginGraphic
+        hash->insert("nullPlugin", QPixmap(QLatin1String(":webkit/resources/nullPlugin.png")));
+        // QWebSettings::DefaultFrameIconGraphic
+        hash->insert("urlIcon", QPixmap(QLatin1String(":webkit/resources/urlIcon.png")));
+        // QWebSettings::TextAreaSizeGripCornerGraphic
+        hash->insert("textAreaResizeCorner", QPixmap(QLatin1String(":webkit/resources/textAreaResizeCorner.png")));
+        // QWebSettings::DeleteButtonGraphic
+        hash->insert("deleteButton", QPixmap(QLatin1String(":webkit/resources/deleteButton.png")));
+        // QWebSettings::InputSpeechButtonGraphic
+        hash->insert("inputSpeech", QPixmap(QLatin1String(":webkit/resources/inputSpeech.png")));
+        // QWebSettings::SearchCancelButtonGraphic
+        hash->insert("searchCancelButton", QApplication::style()->standardPixmap(QStyle::SP_DialogCloseButton));
+        // QWebSettings::SearchCancelButtonPressedGraphic
+        hash->insert("searchCancelButtonPressed", QApplication::style()->standardPixmap(QStyle::SP_DialogCloseButton));
+    }
+
+    return hash;
+}
 
 // This function loads resources into WebKit
 static QPixmap loadResourcePixmap(const char *name)
 {
-    QPixmap pixmap;
-    if (qstrcmp(name, "missingImage") == 0)
-        pixmap = QWebSettings::webGraphic(QWebSettings::MissingImageGraphic);
-    else if (qstrcmp(name, "nullPlugin") == 0)
-        pixmap = QWebSettings::webGraphic(QWebSettings::MissingPluginGraphic);
-    else if (qstrcmp(name, "urlIcon") == 0)
-        pixmap = QWebSettings::webGraphic(QWebSettings::DefaultFrameIconGraphic);
-    else if (qstrcmp(name, "textAreaResizeCorner") == 0)
-        pixmap = QWebSettings::webGraphic(QWebSettings::TextAreaSizeGripCornerGraphic);
-    else if (qstrcmp(name, "deleteButton") == 0)
-        pixmap = QWebSettings::webGraphic(QWebSettings::DeleteButtonGraphic);
-    else if (!qstrcmp(name, "inputSpeech"))
-        pixmap = QWebSettings::webGraphic(QWebSettings::InputSpeechButtonGraphic);
-    else if (!qstrcmp(name, "searchCancelButton"))
-        pixmap = QWebSettings::webGraphic(QWebSettings::SearchCancelButtonGraphic);
-    else if (!qstrcmp(name, "searchCancelButtonPressed"))
-        pixmap = QWebSettings::webGraphic(QWebSettings::SearchCancelButtonPressedGraphic);
-
-    return pixmap;
+    return graphics()->value(name);
 }
 
 namespace WebCore {
@@ -99,6 +120,15 @@ bool FrameData::clear(bool clearMetadata)
 PassRefPtr<Image> Image::loadPlatformResource(const char* name)
 {
     return StillImage::create(loadResourcePixmap(name));
+}
+
+void Image::setPlatformResource(const char* name, const QPixmap& pixmap)
+{
+    WebGraphicHash* h = graphics();
+    if (pixmap.isNull())
+        h->remove(name);
+    else
+        h->insert(name, pixmap);
 }
 
 void Image::drawPattern(GraphicsContext* ctxt, const FloatRect& tileRect, const AffineTransform& patternTransform,

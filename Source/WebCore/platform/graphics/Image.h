@@ -160,6 +160,10 @@ public:
     static PassRefPtr<Image> loadPlatformThemeIcon(const char* name, int size);
 #endif
 
+#if PLATFORM(QT)
+    static void setPlatformResource(const char* name, const QPixmap&);
+#endif
+
     virtual void drawPattern(GraphicsContext*, const FloatRect& srcRect, const AffineTransform& patternTransform,
                              const FloatPoint& phase, ColorSpace styleColorSpace, CompositeOperator, const FloatRect& destRect);
 

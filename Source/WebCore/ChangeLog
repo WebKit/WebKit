@@ -1,3 +1,19 @@
+2011-11-17  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Layer violation: Image::loadPlatformResource uses QWebSettings::webGraphic
+        https://bugs.webkit.org/show_bug.cgi?id=72594
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Move the cache for the resource pixmaps into ImageQt.cpp.
+
+        * platform/graphics/Image.h: Add Qt specific setter for resource pixmaps.
+        * platform/graphics/qt/ImageQt.cpp: Moved resource pixmap hash from qwebsettings.
+        (earlyClearGraphics):
+        (graphics):
+        (loadResourcePixmap):
+        (WebCore::Image::setPlatformResource):
+
 2011-11-17  Zeno Albisser  <zeno@webkit.org>
 
         [Qt][WK2] Touch/Mouse events are delivered with wrong coordinates.

@@ -1,3 +1,19 @@
+2011-11-17  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Layer violation: Image::loadPlatformResource uses QWebSettings::webGraphic
+        https://bugs.webkit.org/show_bug.cgi?id=72594
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Move resource pixmap cache into ImageQt.cpp.
+
+        * Api/qwebsettings.cpp:
+        (resourceNameForWebGraphic): Helper function to translate between public API enums and
+        resource names.
+        (QWebSettings::setWebGraphic): Call the new ImageQt::setPlatformResource setter.
+        (QWebSettings::webGraphic): Call Image::loadPlatformResource to read from the cache
+        in WebCore.
+
 2011-11-17  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] Move WebKit2 C++ APIs to private API and build QML extension plugin on top of that
