@@ -146,7 +146,9 @@ public:
     QQuickWebViewExperimental(QQuickWebView* webView);
     virtual ~QQuickWebViewExperimental();
 
+public Q_SLOTS:
     void setUseTraditionalDesktopBehaviour(bool enable);
+
 private:
     QQuickWebView* q_ptr;
     QQuickWebViewPrivate* d_ptr;
