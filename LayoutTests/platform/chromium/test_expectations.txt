@@ -3907,11 +3907,6 @@ BUGWK72376 WIN : fast/forms/file/input-file-label.html = TEXT PASS
 
 BUGWK72434 : inspector/styles/svg-style.xhtml = PASS TEXT TIMEOUT
 
-BUGWK72487 MAC : compositing/layers-inside-overflow-scroll.html = IMAGE
-BUGWK72487 MAC : compositing/overflow/overflow-compositing-descendant.html = IMAGE
-BUGWK72487 MAC : compositing/overflow/scroll-ancestor-update.html = IMAGE
-BUGWK72487 MAC : compositing/self-painting-layers.html = IMAGE
-
 // Animations tests use an inherently-flaky timer-based design.
 BUGWK66953 : animations/animation-direction-normal.html = TEXT PASS
 BUGWK66953 MAC DEBUG : animations/change-keyframes.html = TEXT PASS
