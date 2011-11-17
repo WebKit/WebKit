@@ -1,3 +1,11 @@
+2011-11-16  Geoffrey Garen  <ggaren@apple.com>
+
+        Interpreter build fixes.
+
+        * bytecode/CodeBlock.h:
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::privateExecute):
+
 2011-11-16  Patrick Gansterer  <paroga@webkit.org>
 
         Unreviewed. Build fix for !ENABLE(JIT) after r100363.

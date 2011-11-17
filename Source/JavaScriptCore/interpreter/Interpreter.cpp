@@ -1784,8 +1784,7 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
         int dst = vPC[1].u.operand;
         int firstArg = vPC[2].u.operand;
         int argCount = vPC[3].u.operand;
-        ArgList args(callFrame->registers() + firstArg, argCount);
-        callFrame->uncheckedR(dst) = JSValue(constructArray(callFrame, args));
+        callFrame->uncheckedR(dst) = JSValue(constructArray(callFrame, reinterpret_cast<JSValue*>(&callFrame->registers()[firstArg]), argCount));
 
         vPC += OPCODE_LENGTH(op_new_array);
         NEXT_INSTRUCTION();
@@ -1800,8 +1799,7 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
         int dst = vPC[1].u.operand;
         int firstArg = vPC[2].u.operand;
         int argCount = vPC[3].u.operand;
-        ArgList args(codeBlock->constantBuffer(firstArg), argCount);
-        callFrame->uncheckedR(dst) = JSValue(constructArray(callFrame, args));
+        callFrame->uncheckedR(dst) = JSValue(constructArray(callFrame, codeBlock->constantBuffer(firstArg), argCount));
         
         vPC += OPCODE_LENGTH(op_new_array);
         NEXT_INSTRUCTION();
