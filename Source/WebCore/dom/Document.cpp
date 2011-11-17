@@ -2403,12 +2403,16 @@ void Document::updateBaseURL()
     // DOM 3 Core: When the Document supports the feature "HTML" [DOM Level 2 HTML], the base URI is computed using
     // first the value of the href attribute of the HTML BASE element if any, and the value of the documentURI attribute
     // from the Document interface otherwise.
-    if (m_baseElementURL.isEmpty()) {
+    if (!m_baseElementURL.isEmpty())
+        m_baseURL = m_baseElementURL;
+    else if (!m_baseURLOverride.isEmpty())
+        m_baseURL = m_baseURLOverride;
+    else {
         // The documentURI attribute is an arbitrary string. DOM 3 Core does not specify how it should be resolved,
         // so we use a null base URL.
         m_baseURL = KURL(KURL(), documentURI());
-    } else
-        m_baseURL = m_baseElementURL;
+    }
+
     if (!m_baseURL.isValid())
         m_baseURL = KURL();
 
@@ -2416,6 +2420,12 @@ void Document::updateBaseURL()
         m_elemSheet->setFinalURL(m_baseURL);
     if (m_mappedElementSheet)
         m_mappedElementSheet->setFinalURL(m_baseURL);
+}
+
+void Document::setBaseURLOverride(const KURL& url)
+{
+    m_baseURLOverride = url;
+    updateBaseURL();
 }
 
 void Document::processBaseElement()

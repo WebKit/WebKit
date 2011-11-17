@@ -563,7 +563,7 @@ void FrameLoader::clear(bool clearWindowProperties, bool clearScriptObjects, boo
 void FrameLoader::receivedFirstData()
 {
     KURL workingURL = activeDocumentLoader()->documentURL();
-#if ENABLE(WEB_ARCHIVE) || ENABLE(MHTML)
+#if ENABLE(WEB_ARCHIVE)
     // FIXME: The document loader, not the frame loader, should be in charge of loading web archives.
     // Once this is done, we can just make DocumentLoader::documentURL() return the right URL
     // based on whether it has a non-null archive or not.
@@ -576,7 +576,15 @@ void FrameLoader::receivedFirstData()
 
     dispatchDidCommitLoad();
     dispatchDidClearWindowObjectsInAllWorlds();
-    
+
+#if ENABLE(MHTML)
+    if (m_archive) {
+        // The origin is the MHTML file, we need to set the base URL to the document encoded in the MHTML so
+        // relative URLs are resolved properly.
+        m_frame->document()->setBaseURLOverride(m_archive->mainResource()->url());
+    }
+#endif
+
     if (m_documentLoader) {
         StringWithDirection ptitle = m_documentLoader->title();
         // If we have a title let the WebView know about it.

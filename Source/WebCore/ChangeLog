@@ -1,3 +1,15 @@
+2011-11-16  Jay Civelli  <jcivelli@chromium.org>
+
+        Make sure MHTML documents use the domain of the MHTML file.
+        https://bugs.webkit.org/show_bug.cgi?id=72445
+
+        Reviewed by Adam Barth.
+
+        * dom/Document.h:
+        (WebCore::Document::setBaseURL):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::receivedFirstData):
+
 2011-11-16  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Update supported display list after -webkit-grid and -webkit-inline-grid addition
