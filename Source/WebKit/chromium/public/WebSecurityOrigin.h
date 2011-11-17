@@ -69,7 +69,10 @@ public:
     WEBKIT_EXPORT WebString host() const;
     WEBKIT_EXPORT unsigned short port() const;
 
-    // The empty WebSecurityOrigin is the least privileged WebSecurityOrigin.
+    // A unique WebSecurityOrigin is the least privileged WebSecurityOrigin.
+    bool isUnique() const { return isEmpty(); }
+
+    // FIXME: Remove this function once there are no more callers.
     WEBKIT_EXPORT bool isEmpty() const;
 
     // Returns true if this WebSecurityOrigin can script objects in the given

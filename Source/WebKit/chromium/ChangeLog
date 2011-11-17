@@ -1,3 +1,16 @@
+2011-11-17  Adam Barth  <abarth@webkit.org>
+
+        [Chromium] Introduce WebSecurityOrigin::isUnique in preparation for removing WebSecurityOrigin::isEmpty
+        https://bugs.webkit.org/show_bug.cgi?id=72580
+
+        Reviewed by Darin Fisher.
+
+        We've removed the concept of empty security origins from WebKit because
+        it doesn't exist in the specs.  Now it's time to remove it from the API.
+
+        * public/WebSecurityOrigin.h:
+        (WebKit::WebSecurityOrigin::isUnique):
+
 2011-11-15  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: introduce Debugger domain capabilities concept.
