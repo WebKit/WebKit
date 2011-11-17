@@ -49686,6 +49686,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\workers\WorkerEventQueue.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\workers\WorkerEventQueue.h"
+				>
+			</File>
+			<File
 				RelativePath="..\workers\WorkerLoaderProxy.h"
 				>
 			</File>

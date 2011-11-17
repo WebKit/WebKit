@@ -1,3 +1,13 @@
+2011-11-17  Ben Murdoch  <benm@google.com>
+
+        Unreviewed build fix.
+
+        Fix the Windows builds by adding WorkerEventQueue.cpp|h to the
+        vcproj. Build break was introduced in
+        https://bugs.webkit.org/show_bug.cgi?id=72528
+
+        * WebCore.vcproj/WebCore.vcproj: Add missing files.
+
 2011-11-17  Mihnea Ovidenie  <mihnea@adobe.com>
 
         CSS Exclusions: parse the wrap-margin and wrap-padding properties
