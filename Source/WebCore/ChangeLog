@@ -1,3 +1,18 @@
+2011-11-17  Ken Buchanan <kenrb@chromium.org>
+
+        Crash from positioned generated content under run-in
+        https://bugs.webkit.org/show_bug.cgi?id=70456
+
+        Reviewed by David Hyatt.
+
+        Modified handling of run-in children to clear generated children
+        before removing the parent from the render tree. This caused problems
+        with absolute positioned children being not properly removed from the
+        positioned object list of the RenderView.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::handleRunInChild):
+
 2011-11-17  Peter Kasting  <pkasting@google.com>
 
         Unreviewed, rolling out r100572.
