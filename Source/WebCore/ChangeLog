@@ -1,3 +1,22 @@
+2011-11-17  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        CSS table with 100% width can overflow their containing block
+        https://bugs.webkit.org/show_bug.cgi?id=72180
+
+        Reviewed by David Hyatt.
+
+        Tests: fast/table/table-in-table-percent-width-collapsing-border-quirks-mode.html
+               fast/table/table-in-table-percent-width-collapsing-border.html
+               fast/table/table-in-table-percent-width-quirks-mode.html
+               fast/table/table-in-table-percent-width.html
+
+        After r97555, we would include the borders in a CSS table's logical width even if the 'width'
+        property was a percent. This does not match what Firefox and IE are doing. Thus don't apply
+        this behavior to percent 'width'.
+
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::computeLogicalWidth):
+
 2011-11-17  Adrienne Walker  <enne@google.com>
 
         [chromium] Implicitly skip render surfaces that won't be drawn

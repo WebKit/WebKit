@@ -229,7 +229,7 @@ void RenderTable::computeLogicalWidth()
         // Percent or fixed table
         // HTML tables size as though CSS width includes border/padding, CSS tables do not.
         LayoutUnit borders = 0;
-        if (!node() || !node()->hasTagName(tableTag)) {
+        if (logicalWidthType != Percent && (!node() || !node()->hasTagName(tableTag))) {
             bool collapsing = collapseBorders();
             LayoutUnit borderAndPaddingBefore = borderBefore() + (collapsing ? 0 : paddingBefore());
             LayoutUnit borderAndPaddingAfter = borderAfter() + (collapsing ? 0 : paddingAfter());
