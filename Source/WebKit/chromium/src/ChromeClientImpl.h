@@ -65,6 +65,7 @@ public:
     virtual void setWindowRect(const WebCore::FloatRect&);
     virtual WebCore::FloatRect windowRect();
     virtual WebCore::FloatRect pageRect();
+    virtual float deviceScaleFactor();
     virtual void focus();
     virtual void unfocus();
     virtual bool canTakeFocus(WebCore::FocusDirection);

@@ -299,6 +299,7 @@ QWebPagePrivate::QWebPagePrivate(QWebPage *qq)
     , selectTrailingWhitespaceEnabled(false)
     , linkPolicy(QWebPage::DontDelegateLinks)
     , viewportSize(QSize(0, 0))
+    , pixelRatio(1)
 #ifndef QT_NO_CONTEXTMENU
     , currentContextMenu(0)
 #endif
@@ -2541,7 +2542,7 @@ QWebPage::ViewportAttributes QWebPage::viewportAttributesForSize(const QSize& av
     result.m_devicePixelRatio = conf.devicePixelRatio;
     result.m_isUserScalable = static_cast<bool>(conf.userScalable);
 
-    d->page->setDeviceScaleFactor(conf.devicePixelRatio);
+    d->pixelRatio = conf.devicePixelRatio;
 
     return result;
 }

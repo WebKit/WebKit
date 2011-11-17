@@ -3445,23 +3445,9 @@ static NSString * const windowDidChangeResolutionNotification = @"NSWindowDidCha
         [self close];
 }
 
-- (float)_deviceScaleFactor 
-{
-    NSWindow *window = [self window];
-#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
-    if (window)
-        return [window backingScaleFactor];
-    return [[NSScreen mainScreen] backingScaleFactor];
-#else
-    if (window)
-        return [window userSpaceScaleFactor];
-    return [[NSScreen mainScreen] userSpaceScaleFactor];
-#endif
-}
-
 - (void)_windowDidChangeResolution:(NSNotification *)notification 
 {
-    _private->page->setDeviceScaleFactor([self _deviceScaleFactor]); 
+    _private->page->mainFrame()->deviceScaleFactorChanged(); 
 }
 
 - (void)setPreferences:(WebPreferences *)prefs

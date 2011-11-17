@@ -166,9 +166,7 @@ namespace WebCore {
         // FIXME: These functions should move to Page.
         void scalePage(float scale, const IntPoint& origin);
         float pageScaleFactor() const { return m_pageScaleFactor; }
-#if USE(ACCELERATED_COMPOSITING)
-        void deviceOrPageScaleFactorChanged();
-#endif
+        void deviceScaleFactorChanged();
 
 #if ENABLE(ORIENTATION_EVENTS)
         // Orientation is the interface orientation in degrees. Some examples are:
@@ -219,6 +217,10 @@ namespace WebCore {
 
         void injectUserScriptsForWorld(DOMWrapperWorld*, const UserScriptVector&, UserScriptInjectionTime);
         void lifeSupportTimerFired(Timer<Frame>*);
+
+#if USE(ACCELERATED_COMPOSITING)
+        void deviceOrPageScaleFactorChanged();
+#endif
 
         HashSet<FrameDestructionObserver*> m_destructionObservers;
 

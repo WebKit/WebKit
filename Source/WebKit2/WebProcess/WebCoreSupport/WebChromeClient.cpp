@@ -115,6 +115,11 @@ FloatRect WebChromeClient::pageRect()
     return FloatRect(FloatPoint(), m_page->size());
 }
 
+float WebChromeClient::deviceScaleFactor()
+{
+    return m_page->deviceScaleFactor();
+}
+
 void WebChromeClient::focus()
 {
     m_page->send(Messages::WebPageProxy::SetFocus(true));

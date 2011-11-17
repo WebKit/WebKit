@@ -1,244 +1,37 @@
-2011-08-17  Adam Roben  <aroben@apple.com>
+2011-11-15  Lucas Forschler  <lforschler@apple.com>
 
-        Make WebCore keep track of the current device scale factor
+    Merge 93040
 
-        Fixes <http://webkit.org/b/66413> WebCore requires every WebKit port to keep track of the
-        device scale factor
+    2011-08-10  Adam Roben  <aroben@apple.com>
 
-        Reviewed by Darin Adler.
+            Clear up scale factor terminology
 
-        * WebKitSupport/ChromeClientWx.cpp:
-        * WebKitSupport/ChromeClientWx.h:
-        Removed deviceScaleFactor.
+            WebKit by and large deals with two scale factors: one intrinsic to the device on which the
+            software is running, and one that is per-Page and can be controlled via API calls. This
+            patch names the former "deviceScaleFactor" and the latter "pageScaleFactor", and makes the
+            code use those names. It should introduce no behavior changes.
 
-2011-08-15  Dmitry Titov  <dimich@chromium.org>
+            Fixes <http://webkit.org/b/55787> WebKit uses multiple conflicting names to refer to the
+            device scale factor
 
-        FrameLoaderClient::transferLoadingResourceFromPage does not have enough parameters
-        https://bugs.webkit.org/show_bug.cgi?id=66165
+            Reviewed by Simon Fraser.
 
-        Reviewed by Darin Fisher.
+            * WebKitSupport/ChromeClientWx.cpp:
+            * WebKitSupport/ChromeClientWx.h:
 
-        * WebKitSupport/FrameLoaderClientWx.cpp:
-        (WebCore::FrameLoaderClientWx::transferLoadingResourceFromPage):
-        * WebKitSupport/FrameLoaderClientWx.h:
+2011-08-11  Lucas Forschler  <lforschler@apple.com>
 
-2011-08-10  Adam Roben  <aroben@apple.com>
+    Merged 91097
 
-        Clear up scale factor terminology
+    2011-07-15  Dan Bernstein  <mitz@apple.com>
 
-        WebKit by and large deals with two scale factors: one intrinsic to the device on which the
-        software is running, and one that is per-Page and can be controlled via API calls. This
-        patch names the former "deviceScaleFactor" and the latter "pageScaleFactor", and makes the
-        code use those names. It should introduce no behavior changes.
+            REGRESSION: Mouse cursor doesn’t hide when full screen video HUD hides
+            https://bugs.webkit.org/show_bug.cgi?id=64615
 
-        Fixes <http://webkit.org/b/55787> WebKit uses multiple conflicting names to refer to the
-        device scale factor
+            Reviewed by Anders Carlsson.
 
-        Reviewed by Simon Fraser.
-
-        * WebKitSupport/ChromeClientWx.cpp:
-        * WebKitSupport/ChromeClientWx.h:
-
-2011-08-05  Anders Carlsson  <andersca@apple.com>
-
-        Remove PluginHalter
-        https://bugs.webkit.org/show_bug.cgi?id=65729
-
-        Reviewed by Darin Adler.
-
-        Don't include PluginHalterClient.h, it's been removed.
-
-        * WebView.cpp:
-
-2011-08-03  Pavel Feldman  <pfeldman@chromium.org>
-
-        Web Inspector: remove Node parameter from the InspectorClient::highlight
-        https://bugs.webkit.org/show_bug.cgi?id=65549
-
-        Reviewed by Yury Semikhatsky.
-
-        * WebKitSupport/InspectorClientWx.cpp:
-        (WebCore::InspectorClientWx::highlight):
-        * WebKitSupport/InspectorClientWx.h:
-
-2011-07-30  Patrick Gansterer  <paroga@webkit.org>
-
-        Remove inclusion of MainThread.h from Threading.h
-        https://bugs.webkit.org/show_bug.cgi?id=65081
-
-        Reviewed by Darin Adler.
-
-        Add missing include statements for MainThread.
-
-        * WebView.cpp:
-
-2011-07-26  Sadrul Habib Chowdhury  <sadrul@chromium.org>
-
-        Add support for download='filename' attribute in anchors.
-        https://bugs.webkit.org/show_bug.cgi?id=64580
-
-        Reviewed by Adam Barth.
-
-        * WebKitSupport/FrameLoaderClientWx.cpp:
-        (WebCore::FrameLoaderClientWx::startDownload):
-        * WebKitSupport/FrameLoaderClientWx.h:
-
-2011-07-15  Dan Bernstein  <mitz@apple.com>
-
-        REGRESSION: Mouse cursor doesn’t hide when full screen video HUD hides
-        https://bugs.webkit.org/show_bug.cgi?id=64615
-
-        Reviewed by Anders Carlsson.
-
-        * WebKitSupport/ChromeClientWx.h:
-        (WebCore::ChromeClientWx::setCursorHiddenUntilMouseMoves): Added this stub.
-
-2011-07-12  Joseph Pecoraro  <joepeck@webkit.org>
-
-        ApplicationCache update should not immediately fail when reaching per-origin quota
-        https://bugs.webkit.org/show_bug.cgi?id=64177
-
-        Reviewed by Alexey Proskuryakov.
-
-        * WebKitSupport/ChromeClientWx.cpp:
-        (WebCore::ChromeClientWx::reachedApplicationCacheOriginQuota):
-        * WebKitSupport/ChromeClientWx.h:
-
-2011-07-09  Robin Dunn  <robin@alldunn.com>
-
-        Reviewed by Kevin Ollivier.
-
-        [wx] In load events, specify the wxWebFrame that sent them.
-        
-        https://bugs.webkit.org/show_bug.cgi?id=64233
-
-        * WebBrowserShell.cpp:
-        (wxWebBrowserShell::OnLoadEvent):
-        * WebFrame.cpp:
-        (wxWebFrame::GetName):
-        * WebFrame.h:
-        * WebKitSupport/FrameLoaderClientWx.cpp:
-        (WebCore::FrameLoaderClientWx::dispatchDidHandleOnloadEvents):
-        (WebCore::FrameLoaderClientWx::dispatchDidStartProvisionalLoad):
-        (WebCore::FrameLoaderClientWx::dispatchDidReceiveTitle):
-        (WebCore::FrameLoaderClientWx::dispatchDidCommitLoad):
-        (WebCore::FrameLoaderClientWx::dispatchDidFinishDocumentLoad):
-        (WebCore::FrameLoaderClientWx::postProgressFinishedNotification):
-        (WebCore::FrameLoaderClientWx::dispatchDidFailLoading):
-        (WebCore::FrameLoaderClientWx::dispatchDecidePolicyForNewWindowAction):
-        (WebCore::FrameLoaderClientWx::dispatchDecidePolicyForNavigationAction):
-        * WebView.h:
-        * bindings/python/webview.i:
-
-2011-07-09  Robin Dunn  <robin@alldunn.com>
-
-        Reviewed by Kevin Ollivier.
-
-        Make sure wxPrintData grabs the default print settings to calculate page width, 
-        and readjusts settings after the print dialog is displayed.
-        
-        https://bugs.webkit.org/show_bug.cgi?id=64232
-
-        * WebFrame.cpp:
-        (wxWebFramePrintout::InitializeWithPageSize):
-        (wxWebFramePrintout::OnBeginPrinting):
-        (wxWebFrame::Print):
-
-2011-07-06  Kevin Ollivier  <kevino@theolliviers.com>
-
-        [wx] Unreviewed build fix. Don't expose the kit function to the swig wrappers.
-
-        * WebFrame.h:
-
-2011-06-20  Robin Dunn  <robin@alldunn.com>
-
-        Reviewed by Kevin Ollivier.
-
-        Make showing the dialog optional, and add handling for Javascript print() calls.
-        
-        https://bugs.webkit.org/show_bug.cgi?id=63008
-
-        * WebFrame.cpp:
-        (kit):
-        (wxWebFrame::Print):
-        * WebFrame.h:
-        * WebKitSupport/ChromeClientWx.cpp:
-        (WebCore::ChromeClientWx::print):
-        * WebKitSupport/FrameLoaderClientWx.h:
-        (WebCore::FrameLoaderClientWx::webFrame):
-        (WebCore::FrameLoaderClientWx::webView):
-        * WebView.cpp:
-        (wxWebViewPrintFrameEvent::wxWebViewPrintFrameEvent):
-        * WebView.h:
-        * bindings/python/webview.i:
-
-2011-06-20  Kevin Ollivier  <kevino@theolliviers.com>
-
-        [wx] Unreviewed build fix after method rename.
-
-        * WebKitSupport/ChromeClientWx.cpp:
-        (WebCore::ChromeClientWx::loadIconForFiles):
-
-2011-06-18  Dimitri Glazkov  <dglazkov@chromium.org>
-
-        Reviewed by Darin Adler.
-
-        Separate concerns of loading file icons and choosing files.
-        https://bugs.webkit.org/show_bug.cgi?id=62931
-
-        * WebKitSupport/ChromeClientWx.cpp:
-        (WebCore::ChromeClientWx::chooseIconForFiles): Renamed.
-        * WebKitSupport/ChromeClientWx.h:
-
-2011-06-18  Holger Hans Peter Freyther  <holger@moiji-mobile.com>
-
-        Reviewed by Brent Fulgham.
-
-        [misc] JSC/wtf/text/*.h should not be included via #include ""
-        https://bugs.webkit.org/show_bug.cgi?id=60836
-
-        Adam Barth pointed out that one should not include files from
-        JavaScriptCore/wtf/text using #include "File.h". This change
-        is addressing it.
-
-        * WebEdit.cpp: Include file via <wtf/text/File.h>.
-
-2011-06-12  Adam Barth  <abarth@webkit.org>
-
-        Reviewed by Alexey Proskuryakov.
-
-        Rename FrameLoaderClient::interruptForPolicyChangeError to use the past tense
-        https://bugs.webkit.org/show_bug.cgi?id=62516
-
-        * WebKitSupport/FrameLoaderClientWx.cpp:
-        (WebCore::FrameLoaderClientWx::interruptedForPolicyChangeError):
-        * WebKitSupport/FrameLoaderClientWx.h:
-
-2011-05-31  Robin Dunn  <robin@alldunn.com>
-
-        Reviewed by Kevin Ollivier.
-
-        [wx] Implement printing support for wxWidgets 2.9.x and above.
-        
-        https://bugs.webkit.org/show_bug.cgi?id=61796
-
-        * WebBrowserShell.cpp:
-        (wxWebBrowserShell::wxWebBrowserShell):
-        (wxWebBrowserShell::OnPrint):
-        * WebBrowserShell.h:
-        * WebFrame.cpp:
-        (wxWebFramePrintout::wxWebFramePrintout):
-        (wxWebFramePrintout::GetPageCount):
-        (wxWebFramePrintout::SetFirstPage):
-        (wxWebFramePrintout::SetLastPage):
-        (wxWebFramePrintout::InitializeWithPageSize):
-        (wxWebFramePrintout::OnBeginPrinting):
-        (wxWebFramePrintout::GetPageInfo):
-        (wxWebFramePrintout::HasPage):
-        (wxWebFramePrintout::OnPrintPage):
-        (wxWebFramePrintout::OnEndPrinting):
-        (wxWebFrame::Print):
-        * WebFrame.h:
+            * WebKitSupport/ChromeClientWx.h:
+            (WebCore::ChromeClientWx::setCursorHiddenUntilMouseMoves): Added this stub.
 
 2011-05-13  Jon Lee  <jonlee@apple.com>
 

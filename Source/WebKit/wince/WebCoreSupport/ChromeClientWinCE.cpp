@@ -69,6 +69,11 @@ FloatRect ChromeClientWinCE::pageRect()
     return windowRect();
 }
 
+float ChromeClientWinCE::deviceScaleFactor()
+{
+    return 1.0;
+}
+
 void ChromeClientWinCE::focus()
 {
     notImplemented();

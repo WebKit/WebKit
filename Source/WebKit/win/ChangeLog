@@ -1,137 +1,72 @@
-2011-08-17  Adam Roben  <aroben@apple.com>
+2011-11-15  Lucas Forschler  <lforschler@apple.com>
 
-        Make WebCore keep track of the current device scale factor
+    Merge 93040
 
-        Fixes <http://webkit.org/b/66413> WebCore requires every WebKit port to keep track of the
-        device scale factor
+    2011-08-10  Adam Roben  <aroben@apple.com>
 
-        Reviewed by Darin Adler.
+            Clear up scale factor terminology
 
-        * WebCoreSupport/WebChromeClient.cpp:
-        * WebCoreSupport/WebChromeClient.h:
-        Removed deviceScaleFactor.
+            WebKit by and large deals with two scale factors: one intrinsic to the device on which the
+            software is running, and one that is per-Page and can be controlled via API calls. This
+            patch names the former "deviceScaleFactor" and the latter "pageScaleFactor", and makes the
+            code use those names. It should introduce no behavior changes.
 
-2011-08-15  Dmitry Titov  <dimich@chromium.org>
+            Fixes <http://webkit.org/b/55787> WebKit uses multiple conflicting names to refer to the
+            device scale factor
 
-        FrameLoaderClient::transferLoadingResourceFromPage does not have enough parameters
-        https://bugs.webkit.org/show_bug.cgi?id=66165
+            Reviewed by Simon Fraser.
 
-        Reviewed by Darin Fisher.
+            * WebCoreSupport/WebChromeClient.cpp:
+            * WebCoreSupport/WebChromeClient.h:
 
-        * WebCoreSupport/WebFrameLoaderClient.cpp:
-        (WebFrameLoaderClient::transferLoadingResourceFromPage):
-        * WebCoreSupport/WebFrameLoaderClient.h:
+2011-11-15  Lucas Forschler  <lforschler@apple.com>
 
-2011-08-15  Adam Roben  <aroben@apple.com>
+    Merge 91161
 
-        Touch a file to trigger a Windows build
+    2011-07-16  Simon Fraser  <simon.fraser@apple.com>
 
-        I'm trying to ferret out some issues with our Debug builder.
+            Add code to attempt to align compositing layers to pixel boundaries when page scale changes
+            https://bugs.webkit.org/show_bug.cgi?id=64658
 
-        * WebView.cpp: Sorted #includes.
+            Reviewed by Dan Bernstein.
 
-2011-08-10  Adam Roben  <aroben@apple.com>
+            Removed implementations of backingScaleFactor() and pageScaleFactor() now
+            that GraphicsLayerClient has default implementations.
 
-        Clear up scale factor terminology
+            * WebView.h:
 
-        WebKit by and large deals with two scale factors: one intrinsic to the device on which the
-        software is running, and one that is per-Page and can be controlled via API calls. This
-        patch names the former "deviceScaleFactor" and the latter "pageScaleFactor", and makes the
-        code use those names. It should introduce no behavior changes.
+2011-11-15  Lucas Forschler  <lforschler@apple.com>
 
-        Fixes <http://webkit.org/b/55787> WebKit uses multiple conflicting names to refer to the
-        device scale factor
+    Merge 91145
 
-        Reviewed by Simon Fraser.
+    2011-07-15  Simon Fraser  <simon.fraser@apple.com>
 
-        * WebCoreSupport/WebChromeClient.cpp:
-        * WebCoreSupport/WebChromeClient.h:
+            Fix Windows build.
 
-2011-08-13  Dan Bernstein  <mitz@apple.com>
+            * WebView.h:
+            (WebView::backingScaleFactor):
+            (WebView::pageScaleFactor):
 
-        Changed the value of WebKitShowsToolTipOverTruncatedTextPreferenceKey to match the naming everywhere else.
+2011-08-11  Lucas Forschler  <lforschler@apple.com>
 
-        Reviewed by Joseph Pecoraro.
+    Merged 91097
 
-        * WebPreferenceKeysPrivate.h:
+    2011-07-15  Dan Bernstein  <mitz@apple.com>
 
-2011-08-13  Dan Bernstein  <mitz@apple.com>
+            REGRESSION: Mouse cursor doesn’t hide when full screen video HUD hides
+            https://bugs.webkit.org/show_bug.cgi?id=64615
 
-        Build fix.
+            Reviewed by Anders Carlsson.
 
-        * WebView.cpp:
-        (WebView::notifyPreferencesChanged):
+            * WebCoreSupport/WebChromeClient.cpp:
+            (WebChromeClient::setCursorHiddenUntilMouseMoves): Added this stub.
+            * WebCoreSupport/WebChromeClient.h:
 
-2011-08-12  Dan Bernstein  <mitz@apple.com>
+2011-08-05  Lucas Forschler  <lforschler@apple.com>
 
-        Add an option to automatically show tooltips (with the full text) over truncated text
-        https://bugs.webkit.org/show_bug.cgi?id=66178
+    Merged 92414.
 
-        Reviewed by Simon Fraser.
-
-        * Interfaces/IWebPreferencesPrivate.idl: Added accessors.
-        * WebPreferenceKeysPrivate.h: Defined a preference key.
-        * WebPreferences.cpp:
-        (WebPreferences::initializeDefaultSettings): Added a default value of
-        false for the ShowsToolTipOverTruncatedText preference.
-        (WebPreferences::showsToolTipOverTruncatedText): Added this getter.
-        (WebPreferences::setShowsToolTipOverTruncatedText): Added this setter.
-        * WebPreferences.h:
-        * WebView.cpp:
-        (WebView::notifyPreferencesChanged): Added call to Settings::setShowsToolTipOverTruncatedText().
-
-2011-08-05  Brent Fulgham  <bfulgham@webkit.org>
-
-        WebView::performLayeredWindowUpdate() crashes with
-        NULL pointer when using layered window updates.
-        https://bugs.webkit.org/show_bug.cgi?id=60618
-
-        Reviewed by Adam Roben.
-
-        During resize operations, the backing store will be destroyed if
-        the window's size (either height or width) is set to zero. The
-        bug was identified when a user first resized a WebView to zero
-        dimensions, then attempted to perform a MoveWindow. The paint
-        message triggered by the MoveWindow attempted to use the layered
-        window update logic, which encountered the nulled backing store.
-
-        * WebView.cpp:
-        (WebView::performLayeredWindowUpdate): Add an early
-         return when there is no backing store to blend with.
-
-2011-08-05  Anders Carlsson  <andersca@apple.com>
-
-        Remove PluginHalter
-        https://bugs.webkit.org/show_bug.cgi?id=65729
-
-        Reviewed by Darin Adler.
-
-        Remove plug-in halter and associated classes.
-
-        * Interfaces/IWebPluginHalterDelegate.idl: Removed.
-        * Interfaces/IWebPreferencesPrivate.idl:
-        * Interfaces/IWebViewPrivate.idl:
-        * Interfaces/WebKit.idl:
-        * WebCoreSupport/WebPluginHalterClient.cpp: Removed.
-        * WebCoreSupport/WebPluginHalterClient.h: Removed.
-        * WebKit.vcproj/Interfaces.vcproj:
-        * WebKit.vcproj/WebKit.vcproj:
-        * WebPreferenceKeysPrivate.h:
-        * WebPreferences.cpp:
-        (WebPreferences::initializeDefaultSettings):
-        * WebPreferences.h:
-        * WebView.cpp:
-        (WebView::close):
-        (WebView::initWithFrame):
-        (WebView::notifyPreferencesChanged):
-        (WebView::unused1):
-        (WebView::unused2):
-        (WebView::unused3):
-        (WebView::unused4):
-        (WebView::unused5):
-        * WebView.h:
-
-2011-08-04  Jeff Miller  <jeffm@apple.com>
+    2011-08-04  Jeff Miller  <jeffm@apple.com>
 
         Add support for setting and getting whether AVFoundation is enabled to IWebPreferences
         https://bugs.webkit.org/show_bug.cgi?id=65718
@@ -151,468 +86,11 @@
         * WebView.cpp:
         (WebView::notifyPreferencesChanged): Keep settings for AVFoundation being enabled in sync.
 
-2011-08-03  Kent Tamura  <tkent@chromium.org>
+2011-06-07  Lucas Forschler  <lforschler@apple.com>
 
-        [Windows] Fix build without ENABLE_VIDEO.
+    Merged 88260.
 
-        * WebView.cpp:
-        (WebView::enterFullscreenForNode):
-
-2011-08-03  Kent Tamura  <tkent@chromium.org>
-
-        Fix incorrect checks for HTMLMediaElement
-        https://bugs.webkit.org/show_bug.cgi?id=65590
-
-        Reviewed by Dimitri Glazkov.
-
-        <video> and <audio> can be an HTMLElement instance instead of
-        HTMLMediaElement if MediaPlayer::isAvailable() returns false or
-        the media feature is disabled at runtime.
-
-        * WebView.cpp:
-        (WebView::enterFullscreenForNode):
-
-2011-08-03  Joseph Pecoraro  <joepeck@webkit.org>
-
-        Web Inspector: Remove InspectorFrontendHost load/saveSessionSetting
-        https://bugs.webkit.org/show_bug.cgi?id=65582
-
-        Reviewed by Pavel Feldman.
-
-        * WebCoreSupport/WebInspectorClient.cpp:
-        * WebCoreSupport/WebInspectorClient.h:
-
-2011-08-03  Adam Roben  <aroben@apple.com>
-
-        Windows nightly build fix after r91777
-
-        * Interfaces/IWebPreferences.idl: Moved [set]PictographFontFamily to the end of the
-        interface to maintain binary compatibility with Safari 5.1.
-
-2011-08-03  Pavel Feldman  <pfeldman@google.com>
-
-        Web Inspector: [Timeline] Hover on paint events and see rect outline around that area.
-        https://bugs.webkit.org/show_bug.cgi?id=65510
-
-        Reviewed by Yury Semikhatsky.
-
-        * WebNodeHighlight.cpp:
-        (WebNodeHighlight::update):
-
-2011-08-03  Pavel Feldman  <pfeldman@chromium.org>
-
-        Web Inspector: remove Node parameter from the InspectorClient::highlight
-        https://bugs.webkit.org/show_bug.cgi?id=65549
-
-        Reviewed by Yury Semikhatsky.
-
-        * WebCoreSupport/WebInspectorClient.cpp:
-        (WebInspectorClient::highlight):
-        * WebCoreSupport/WebInspectorClient.h:
-
-2011-07-31  Daniel Bates  <dbates@webkit.org>
-
-        Attempt to fix the WinCairo Debug build after r92059 (https://bugs.webkit.org/show_bug.cgi?id=65419).
-
-        * WebKit.vcproj/WebKit_Cairo.def: Export some symbols.
-        * WebKit.vcproj/WebKit_Cairo_debug.def: Ditto.
-
-2011-07-30  Patrick Gansterer  <paroga@webkit.org>
-
-        Remove inclusion of MainThread.h from Threading.h
-        https://bugs.webkit.org/show_bug.cgi?id=65081
-
-        Reviewed by Darin Adler.
-
-        Add missing include statements for MainThread.
-
-        * WebKitClassFactory.cpp:
-        * WebView.cpp:
-
-2011-07-26  Sadrul Habib Chowdhury  <sadrul@chromium.org>
-
-        Add support for download='filename' attribute in anchors.
-        https://bugs.webkit.org/show_bug.cgi?id=64580
-
-        Reviewed by Adam Barth.
-
-        * WebFrame.cpp:
-        (WebFrame::startDownload):
-        * WebFrame.h:
-
-2011-07-26  Dan Bernstein  <mitz@apple.com>
-
-        <rdar://problem/9842889> Add a generic pictograph font family
-        https://bugs.webkit.org/show_bug.cgi?id=65197
-
-        Reviewed by Anders Carlsson.
-
-        * Interfaces/IWebPreferences.idl: Added pictographFontFamily() and
-        setPictographFontFamily().
-        * WebPreferenceKeysPrivate.h: Added WebKitPictographFontPreferenceKey.
-        * WebPreferences.cpp:
-        (WebPreferences::initializeDefaultSettings): Initialize the pictograph font
-        preference to "Times New Roman".
-        (WebPreferences::pictographFontFamily): Added this getter.
-        (WebPreferences::setPictographFontFamily): Added this setter.
-        * WebPreferences.h:
-        * WebView.cpp:
-        (WebView::notifyPreferencesChanged): Pass the preference value through to
-        WebCore.
-
-2011-07-18  Dean Jackson  <dino@apple.com>
-
-        https://bugs.webkit.org/show_bug.cgi?id=64742
-        Expose WebPreferences for media playback requiring user gestures and inline playback
-
-        Reviewed by Simon Fraser.
-
-        Two new WebPreferences: MediaPlaybackRequiresUserGesture and
-        MediaPlaybackAllowsInline.
-
-        * Interfaces/IWebPreferencesPrivate.idl:
-        * WebPreferenceKeysPrivate.h:
-        * WebPreferences.cpp:
-        (WebPreferences::initializeDefaultSettings):
-        (WebPreferences::setMediaPlaybackRequiresUserGesture):
-        (WebPreferences::mediaPlaybackRequiresUserGesture):
-        (WebPreferences::setMediaPlaybackAllowsInline):
-        (WebPreferences::mediaPlaybackAllowsInline):
-        * WebPreferences.h:
-        * WebView.cpp:
-        (WebView::notifyPreferencesChanged):
-
-2011-07-16  Simon Fraser  <simon.fraser@apple.com>
-
-        Add code to attempt to align compositing layers to pixel boundaries when page scale changes
-        https://bugs.webkit.org/show_bug.cgi?id=64658
-
-        Reviewed by Dan Bernstein.
-
-        Removed implementations of backingScaleFactor() and pageScaleFactor() now
-        that GraphicsLayerClient has default implementations.
-
-        * WebView.h:
-
-2011-07-15  Simon Fraser  <simon.fraser@apple.com>
-
-        Fix Windows build.
-        
-        * WebView.h:
-        (WebView::backingScaleFactor):
-        (WebView::pageScaleFactor):
-
-2011-07-15  Dan Bernstein  <mitz@apple.com>
-
-        REGRESSION: Mouse cursor doesn’t hide when full screen video HUD hides
-        https://bugs.webkit.org/show_bug.cgi?id=64615
-
-        Reviewed by Anders Carlsson.
-
-        * WebCoreSupport/WebChromeClient.cpp:
-        (WebChromeClient::setCursorHiddenUntilMouseMoves): Added this stub.
-        * WebCoreSupport/WebChromeClient.h:
-
-2011-07-12  Joseph Pecoraro  <joepeck@webkit.org>
-
-        ApplicationCache update should not immediately fail when reaching per-origin quota
-        https://bugs.webkit.org/show_bug.cgi?id=64177
-
-        Reviewed by Alexey Proskuryakov.
-
-        * WebCoreSupport/WebChromeClient.cpp:
-        (WebChromeClient::reachedApplicationCacheOriginQuota):
-        * WebCoreSupport/WebChromeClient.h:
-
-2011-07-11  Hironori Bono  <hbono@chromium.org>
-
-        Reviewed by Adam Roben.
-
-        Implement layoutTestController.setTextDirection for WebKit2 and Windows.
-        https://bugs.webkit.org/show_bug.cgi?id=61931
-
-        This change implements layoutTextController.setTextDirection for WebKit2
-        and Windows so we can run a layout test added by r87770 on them. Each
-        implementation adds a wrapper function for Editor::setBaseWritingDirection()
-        so LayoutTestController can call it.
-
-        * Interfaces/IWebFramePrivate.idl: Added setTextDirection to allow
-        LayoutTestController to change the text direction.
-        * WebFrame.cpp: ditto.
-        (WebFrame::setTextDirection):
-        * WebFrame.h: ditto.
-
-2011-07-08  Chang Shu  <cshu@webkit.org>
-
-        Update calling sites after function renamed.
-        https://bugs.webkit.org/show_bug.cgi?id=59114
-
-        Reviewed by Alexey Proskuryakov.
-
-        * WebKitGraphics.cpp:
-        (WebDrawText):
-
-2011-06-30  Anders Carlsson  <andersca@apple.com>
-
-        Reviewed by Dan Bernstein.
-
-        More ScrollableArea scaffolding
-        https://bugs.webkit.org/show_bug.cgi?id=63678
-
-        * WebScrollBar.h:
-        (WebScrollBar::enclosingScrollableArea):
-        Always return 0, WebScrollbar has no concept of an enclosing scrollable area.
-
-2011-06-28  Ilya Sherman  <isherman@chromium.org>
-
-        Reviewed by Adam Barth.
-
-        form.autocomplete="off" does not work
-        https://bugs.webkit.org/show_bug.cgi?id=35823
-
-        * WebFrame.cpp:
-        (WebFrame::elementDoesAutoComplete): Updated callsite.
-
-2011-06-27  Brent Fulgham  <bfulgham@webkit.org>
-
-        Reviewed by Adam Roben.
-
-        Avoid attempt to create a zero-size DIB.
-        https://bugs.webkit.org/show_bug.cgi?id=63484.
-
-        * WebNodeHighlight.cpp:
-        (WebNodeHighlight::update): Check for zero-height (or zero-width)
-        region for DIB, and exit early if attempting to create a zero-size
-        DIB/BITMAP.
-
-2011-06-24  Dan Bernstein  <mitz@apple.com>
-
-        Reviewed by Anders Carlsson.
-
-        Add an option to enable legacy rounding hacks
-        https://bugs.webkit.org/show_bug.cgi?id=63363
-
-        * WebKitGraphics.cpp:
-        (CenterTruncateStringToWidth): Enabled rounding hacks in the string truncator.
-        (RightTruncateStringToWidth): Ditto.
-
-2011-06-24  Yuta Kitamura  <yutak@chromium.org>
-
-        Reviewed by Adam Barth.
-
-        WebSocket: Add run-time flag for new HyBi protocol
-        https://bugs.webkit.org/show_bug.cgi?id=60348
-
-        Make a new flag (Setting::m_useHixie76WebSocketProtocol)
-        switchable from WebView and WebPreferences.
-
-        * Interfaces/IWebPreferencesPrivate.idl:
-        * WebPreferenceKeysPrivate.h:
-        * WebPreferences.cpp:
-        (WebPreferences::initializeDefaultSettings):
-        (WebPreferences::setHixie76WebSocketProtocolEnabled):
-        (WebPreferences::hixie76WebSocketProtocolEnabled):
-        * WebPreferences.h:
-        * WebView.cpp:
-        (WebView::notifyPreferencesChanged):
-
-2011-06-22  Dominic Cooney  <dominicc@chromium.org>
-
-        Reviewed by Mark Rowe.
-
-        Add window.internals to WebKit2's WebKitTestRunner.
-        https://bugs.webkit.org/show_bug.cgi?id=61073
-
-        * WebKit.vcproj/WebKit.sln: InjectedBundle depends on WebCoreTestSupport
-
-2011-06-20  Dimitri Glazkov  <dglazkov@chromium.org>
-
-        Reviewed by Kent Tamura.
-
-        FileChooser should be only created when we need to choose files.
-        https://bugs.webkit.org/show_bug.cgi?id=63039
-
-        * WebCoreSupport/WebChromeClient.cpp:
-        (WebChromeClient::runOpenPanel): Changed to use settings.
-
-2011-06-21  Sheriff Bot  <webkit.review.bot@gmail.com>
-
-        Unreviewed, rolling out r89354.
-        http://trac.webkit.org/changeset/89354
-        https://bugs.webkit.org/show_bug.cgi?id=63099
-
-        Broke tests on Mac (Requested by rniwa on #webkit).
-
-        * WebCoreSupport/WebInspectorClient.cpp:
-        (WebInspectorClient::WebInspectorClient):
-        (WebInspectorClient::openInspectorFrontend):
-        (WebInspectorFrontendClient::destroyInspectorView):
-        * WebCoreSupport/WebInspectorClient.h:
-        * WebInspector.cpp:
-        (WebInspector::createInstance):
-        (WebInspector::WebInspector):
-        (WebInspector::webViewClosed):
-        (WebInspector::showConsole):
-        (WebInspector::isDebuggingJavaScript):
-        (WebInspector::toggleDebuggingJavaScript):
-        (WebInspector::isProfilingJavaScript):
-        (WebInspector::toggleProfilingJavaScript):
-        (WebInspector::isJavaScriptProfilingEnabled):
-        (WebInspector::setJavaScriptProfilingEnabled):
-        (WebInspector::isTimelineProfilingEnabled):
-        (WebInspector::setTimelineProfilingEnabled):
-        * WebInspector.h:
-        * WebView.cpp:
-        (WebView::WebView):
-        (WebView::close):
-        (WebView::initWithFrame):
-        (WebView::inspector):
-        * WebView.h:
-
-2011-06-20  Pavel Feldman  <pfeldman@chromium.org>
-
-        Reviewed by Yury Semikhatsky.
-
-        Web Inspector: introduce InspectorFrontendAPI for actions initiated from the application menu.
-        https://bugs.webkit.org/show_bug.cgi?id=62985
-
-        Both: inspector protocol and WebCore/InspectorController have a number of unnecessary
-        methods for plumbing the menu action handlers through the WebKit and WebCore.
-        I intend to remove this menu support from the protocol and WebCore/InspectorController API.
-        I am starting with exposing the new front-end API in the WebCore and using it in the WebKit/mac port.
-        WebKit/win and WebKit2 to follow.
-
-        * WebInspector.cpp:
-        (WebInspector::createInstance):
-        (WebInspector::WebInspector):
-        (WebInspector::webViewClosed):
-        (WebInspector::showConsole):
-        (WebInspector::isDebuggingJavaScript):
-        (WebInspector::toggleDebuggingJavaScript):
-        (WebInspector::isProfilingJavaScript):
-        (WebInspector::toggleProfilingJavaScript):
-        (WebInspector::isJavaScriptProfilingEnabled):
-        (WebInspector::setJavaScriptProfilingEnabled):
-        (WebInspector::isTimelineProfilingEnabled):
-        (WebInspector::setTimelineProfilingEnabled):
-        * WebInspector.h:
-        * WebView.cpp:
-        (WebView::WebView):
-        (WebView::close):
-        (WebView::initWithFrame):
-        (WebView::inspector):
-        * WebView.h:
-
-2011-06-18  Dimitri Glazkov  <dglazkov@chromium.org>
-
-        Reviewed by Darin Adler.
-
-        Separate concerns of loading file icons and choosing files.
-        https://bugs.webkit.org/show_bug.cgi?id=62931
-
-        * WebCoreSupport/WebChromeClient.cpp:
-        (WebChromeClient::loadIconForFiles): Renamed.
-        * WebCoreSupport/WebChromeClient.h:
-
-2011-06-16  Sheriff Bot  <webkit.review.bot@gmail.com>
-
-        Unreviewed, rolling out r89026.
-        http://trac.webkit.org/changeset/89026
-        https://bugs.webkit.org/show_bug.cgi?id=62804
-
-        These patches were likely correct.  I'll investigate the
-        browser_test failures. (Requested by abarth on #webkit).
-
-        * FullscreenVideoController.cpp:
-        (FullscreenVideoController::play):
-        (FullscreenVideoController::pause):
-
-2011-06-16  Vitaly Repeshko  <vitalyr@chromium.org>
-
-        Unreviewed.
-
-        Revert Adam's user gesture patch series r89002, r89005, r89007, r89018
-        https://bugs.webkit.org/show_bug.cgi?id=62796
-
-        The patches broke chromium browser tests.
-
-        * FullscreenVideoController.cpp:
-        (FullscreenVideoController::play):
-        (FullscreenVideoController::pause):
-
-2011-06-16  Adam Barth  <abarth@webkit.org>
-
-        Reviewed by Eric Seidel.
-
-        Remove HTMLVideoElement::processingUserGesture
-        https://bugs.webkit.org/show_bug.cgi?id=62784
-
-        * FullscreenVideoController.cpp:
-        (FullscreenVideoController::play):
-        (FullscreenVideoController::pause):
-
-2011-06-13  Kentaro Hara  <haraken@google.com>
-
-        Reviewed by Alexey Proskuryakov.
-
-        Add resizePageRectsKeepingRatio(), which expands/shrinks a page, keeping the ratio of the original page
-        https://bugs.webkit.org/show_bug.cgi?id=61256
-
-        In order to prevent rounding error caused by expanding/shrinking a page
-        using different calculation here and there, I added a common calculation
-        method, resizePageRectsKeepingRatio(), which expands/shrinks a page,
-        keeping the ratio of width and height of the original page.
-        WebFrame::setInPrintingMode() uses resizePageRectsKeepingRatio() to
-        expand/shrink a page.
-
-        Test: printing/page-count-with-one-word.html
-
-        * WebFrame.cpp:
-        (WebFrame::setPrinting):
-        (WebFrame::setInPrintingMode):
-        * WebFrame.h:
-
-2011-06-12  MORITA Hajime  <morrita@google.com>
-
-        Unreviewed, rolling out r88625.
-        http://trac.webkit.org/changeset/88625
-        https://bugs.webkit.org/show_bug.cgi?id=61073
-
-        Breaks SL Webkit2 Tests
-
-        * WebKit.vcproj/WebKit.sln:
-
-2011-06-12  Adam Barth  <abarth@webkit.org>
-
-        Reviewed by Alexey Proskuryakov.
-
-        Rename FrameLoaderClient::interruptForPolicyChangeError to use the past tense
-        https://bugs.webkit.org/show_bug.cgi?id=62516
-
-        * WebFrame.cpp:
-        (WebFrame::interruptedForPolicyChangeError):
-        * WebFrame.h:
-
-2011-06-12  Dominic Cooney  <dominicc@chromium.org>
-
-        Reviewed by Hajime Morita.
-
-        Add window.internals to WebKit2's WebKitTestRunner.
-        https://bugs.webkit.org/show_bug.cgi?id=61073
-
-        * WebKit.vcproj/WebKit.sln: InjectedBundle depends on WebCoreTestSupport
-
-2011-06-12  Adam Barth  <abarth@webkit.org>
-
-        Reviewed by Alexey Proskuryakov.
-
-        Remove trival "forward-to-client" member functions from FrameLoader
-        https://bugs.webkit.org/show_bug.cgi?id=62510
-
-        * WebCoreSupport/WebFrameNetworkingContext.cpp:
-        (WebFrameNetworkingContext::blockedError):
-
-2011-06-06  Michael Saboff  <msaboff@apple.com>
+    2011-06-06  Michael Saboff  <msaboff@apple.com>
 
         Reviewed by Geoffrey Garen.
 
@@ -634,80 +112,6 @@
         (RightTruncateStringToWidth):
         Wrapped code accessing fallback fonts with local
         FontCachePurgePreventer in these methods.
-
-2011-06-04  Dominic Cooney  <dominicc@chromium.org>
-
-        Reviewed by Dimitri Glazkov.
-
-        Add WebCoreTestSupport project containing window.internals.
-        https://bugs.webkit.org/show_bug.cgi?id=61076
-
-        * WebKit.vcproj/WebKit.sln:
-
-2011-05-18  Anthony Johnson <anthony.johnson@flexsim.com>
-
-        Reviewed by Brent Fulgham.
-
-        Implement the ability to add C++ event listeners to html dom
-        elements and dom window. 
-        https://bugs.webkit.org/show_bug.cgi?id=60269
-
-        * DOMCoreClasses.cpp: Add new DOMWindow class and implementations.
-        (DOMNode::QueryInterface): Report that the DOMNode implements
-         the IDomEventTarget interface.
-        (DOMNode::addEventListener): Add implementation of a COM-based
-         event listener.
-        (DOMNode::removeEventListener):
-        (DOMNode::dispatchEvent): 
-        (DOMDocument::createInstance):
-        (DOMWindow::QueryInterface): New implementation.
-        (DOMWindow::document): New implementation.
-        (DOMWindow::getComputedStyle): Stub.
-        (DOMWindow::getMatchedCSSRules): Stub.
-        (DOMWindow::devicePixelRatio): Stub.
-        (DOMWindow::addEventListener): New implementation.
-        (DOMWindow::removeEventListener): New implementation.
-        (DOMWindow::dispatchEvent): New implementation.
-        (DOMWindow::DOMWindow): New implementation.
-        (DOMWindow::~DOMWindow): New implementation.
-        (DOMWindow::createInstance): New implementation.
-        * DOMCoreClasses.h: Add new DOMWindow class and declarations.
-        (DOMWindow::AddRef): New declaration.
-        (DOMWindow::Release): New declaration.
-        (DOMWindow::throwException): New declaration.
-        (DOMWindow::callWebScriptMethod): New declaration.
-        (DOMWindow::evaluateWebScript): New declaration.
-        (DOMWindow::removeWebScriptKey): New declaration.
-        (DOMWindow::stringRepresentation): New declaration.
-        (DOMWindow::webScriptValueAtIndex): New declaration.
-        (DOMWindow::setWebScriptValueAtIndex): New declaration.
-        (DOMWindow::setException): New declaration.
-        (DOMWindow::window): New declaration.
-        * DOMEventsClasses.cpp: Add new WebEventListener and implementation.
-        (DOMEventListener::handleEvent): New implementation.
-        (WebEventListener::WebEventListener): New implementation.
-        (WebEventListener::~WebEventListener): New implementation.
-        (WebEventListener::operator==): New implementation.
-        (WebEventListener::handleEvent): New implementation.
-        (WebEventListener::create): New implementation.
-        * DOMEventsClasses.h: Add new WebEventListener class declaration.
-        * Interfaces/IWebFrame.idl: Add new DOMWindow accessor to the
-         main Web Frame interface.
-        * WebFrame.cpp: Add implementation of new DOMWindow creation method.
-        (WebFrame::DOMWindow):
-        * WebFrame.h: Add DOMWindow declaration.
-
-2011-05-20  Simon Fraser  <simon.fraser@apple.com>
-
-        Reviewed by Sam Weinig.
-
-        numberOfActiveAnimations() can include animations from documents in the page cache
-        https://bugs.webkit.org/show_bug.cgi?id=53641
-
-        Pass the Frame's document as the one to count animations on.
-
-        * WebFrame.cpp:
-        (WebFrame::numberOfActiveAnimations):
 
 2011-05-20  Jer Noble  <jer.noble@apple.com>
 

@@ -394,7 +394,7 @@ void DrawingAreaImpl::sendDidUpdateBackingStoreState()
 
     if (m_isPaintingSuspended || (m_layerTreeHost && !m_layerTreeHost->participatesInDisplay())) {
         updateInfo.viewSize = m_webPage->size();
-        updateInfo.deviceScaleFactor = m_webPage->corePage()->deviceScaleFactor();
+        updateInfo.deviceScaleFactor = m_webPage->deviceScaleFactor();
 
         if (m_layerTreeHost) {
             layerTreeContext = m_layerTreeHost->layerTreeContext();
@@ -506,7 +506,7 @@ void DrawingAreaImpl::exitAcceleratedCompositingMode()
     UpdateInfo updateInfo;
     if (m_isPaintingSuspended) {
         updateInfo.viewSize = m_webPage->size();
-        updateInfo.deviceScaleFactor = m_webPage->corePage()->deviceScaleFactor();
+        updateInfo.deviceScaleFactor = m_webPage->deviceScaleFactor();
     } else
         display(updateInfo);
 
@@ -671,7 +671,7 @@ void DrawingAreaImpl::display(UpdateInfo& updateInfo)
         return;
 
     updateInfo.viewSize = m_webPage->size();
-    updateInfo.deviceScaleFactor = m_webPage->corePage()->deviceScaleFactor();
+    updateInfo.deviceScaleFactor = m_webPage->deviceScaleFactor();
 
     if (m_layerTreeHost)
         m_layerTreeHost->display(updateInfo);
@@ -680,7 +680,7 @@ void DrawingAreaImpl::display(UpdateInfo& updateInfo)
         ASSERT(m_webPage->bounds().contains(bounds));
 
     IntSize bitmapSize = bounds.size();
-    bitmapSize.scale(m_webPage->corePage()->deviceScaleFactor());
+    bitmapSize.scale(m_webPage->deviceScaleFactor());
     RefPtr<ShareableBitmap> bitmap = ShareableBitmap::createShareable(bitmapSize, ShareableBitmap::SupportsAlpha);
     if (!bitmap)
         return;
@@ -705,7 +705,7 @@ void DrawingAreaImpl::display(UpdateInfo& updateInfo)
         OwnPtr<GraphicsContext> graphicsContext = createGraphicsContext(bitmap.get());
         
         updateInfo.updateRectBounds = bounds;
-    graphicsContext->scale(FloatSize(m_webPage->corePage()->deviceScaleFactor(), m_webPage->corePage()->deviceScaleFactor()));
+    graphicsContext->scale(FloatSize(m_webPage->deviceScaleFactor(), m_webPage->deviceScaleFactor()));
 
         graphicsContext->translate(-bounds.x(), -bounds.y());
 

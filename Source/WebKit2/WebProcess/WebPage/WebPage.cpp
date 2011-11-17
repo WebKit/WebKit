@@ -189,6 +189,7 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     , m_canRunBeforeUnloadConfirmPanel(parameters.canRunBeforeUnloadConfirmPanel)
     , m_canRunModal(parameters.canRunModal)
     , m_isRunningModal(false)
+    , m_deviceScaleFactor(parameters.deviceScaleFactor)
     , m_cachedMainFrameIsPinnedToLeftSide(false)
     , m_cachedMainFrameIsPinnedToRightSide(false)
     , m_isShowingContextMenu(false)
@@ -785,7 +786,11 @@ double WebPage::pageScaleFactor() const
 
 void WebPage::setDeviceScaleFactor(float scaleFactor)
 {
-    m_page->setDeviceScaleFactor(scaleFactor);
+    if (m_deviceScaleFactor == scaleFactor)
+        return;
+
+    m_deviceScaleFactor = scaleFactor;
+    m_page->mainFrame()->deviceScaleFactorChanged();
 }
 
 void WebPage::setUseFixedLayout(bool fixed)
