@@ -997,21 +997,21 @@ namespace JSC {
         
         static ptrdiff_t offsetOfSpeculativeSuccessCounter() { return OBJECT_OFFSETOF(CodeBlock, m_speculativeSuccessCounter); }
         static ptrdiff_t offsetOfSpeculativeFailCounter() { return OBJECT_OFFSETOF(CodeBlock, m_speculativeFailCounter); }
-        
+#if ENABLE(JIT)
         // The number of failures that triggers the use of the ratio.
         unsigned largeFailCountThreshold() { return Heuristics::largeFailCountThresholdBase << baselineVersion()->reoptimizationRetryCounter(); }
         unsigned largeFailCountThresholdForLoop() { return Heuristics::largeFailCountThresholdBaseForLoop << baselineVersion()->reoptimizationRetryCounter(); }
-        
+
         bool shouldReoptimizeNow()
         {
             return Heuristics::desiredSpeculativeSuccessFailRatio * speculativeFailCounter() >= speculativeSuccessCounter() && speculativeFailCounter() >= largeFailCountThreshold();
         }
-        
+
         bool shouldReoptimizeFromLoopNow()
         {
             return Heuristics::desiredSpeculativeSuccessFailRatio * speculativeFailCounter() >= speculativeSuccessCounter() && speculativeFailCounter() >= largeFailCountThresholdForLoop();
         }
-        
+#endif
 #if ENABLE(VALUE_PROFILER)
         bool shouldOptimizeNow();
 #else

@@ -1,3 +1,9 @@
+2011-11-16  Patrick Gansterer  <paroga@webkit.org>
+
+        Unreviewed. Build fix for !ENABLE(JIT) after r100363.
+
+        * bytecode/CodeBlock.h:
+
 2011-11-16  Geoffrey Garen  <ggaren@apple.com>
 
         Rolled back in r100375 and r100385 with 32-bit build fixed.
