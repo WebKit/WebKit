@@ -864,6 +864,13 @@ resume:
     return node.release();
 }
 
+void HistoryItem::markForFullStyleRecalc()
+{
+    // Children are guaranteed not to have CachedPages.
+    if (m_cachedPage)
+        m_cachedPage->markForFullStyleRecalc();
+}
+
 #ifndef NDEBUG
 
 int HistoryItem::showTree() const
