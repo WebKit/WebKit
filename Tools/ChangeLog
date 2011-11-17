@@ -1,3 +1,18 @@
+2011-11-17  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        Make check-webkit-style accept xxx_p.h as a primary header for xxx.cpp for Qt's sake
+        https://bugs.webkit.org/show_bug.cgi?id=72620
+
+        Reviewed by David Levin.
+
+        Qt's convention of keeping private (but exposed) API suffixed by "_p.h" but not
+        adding the suffix the cpp file. One example of false positive
+        https://bugs.webkit.org/show_bug.cgi?id=72319#c12.
+
+        * Scripts/webkitpy/style/checkers/cpp.py: accept headers ending with _p as primary if its
+        basename contains the cpp's basename.
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+
 2011-11-17  Eric Seidel  <eric@webkit.org>
 
         Move check-webkit-style's guts into webkitpy/style/main.py

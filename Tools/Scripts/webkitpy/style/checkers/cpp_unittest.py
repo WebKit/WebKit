@@ -2706,6 +2706,11 @@ class OrderOfIncludesTest(CppStyleTestBase):
                          classify_include('foo.cpp',
                                           'moc_foo.cpp',
                                           False, include_state))
+        # Qt private APIs use _p.h suffix.
+        self.assertEqual(cpp_style._PRIMARY_HEADER,
+                         classify_include('foo.cpp',
+                                          'foo_p.h',
+                                          False, include_state))
         # Tricky example where both includes might be classified as primary.
         self.assert_language_rules_check('ScrollbarThemeWince.cpp',
                                          '#include "config.h"\n'
