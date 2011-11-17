@@ -1131,6 +1131,8 @@ AccessibilityUIElement AccessibilityUIElement::verticalScrollbar() const
     BEGIN_AX_OBJC_EXCEPTIONS
     return AccessibilityUIElement([m_element accessibilityAttributeValue:NSAccessibilityVerticalScrollBarAttribute]);
     END_AX_OBJC_EXCEPTIONS        
+
+    return 0;
 }
 
 JSStringRef AccessibilityUIElement::selectedTextRange()
