@@ -1,3 +1,21 @@
+2011-11-17  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: cleanup style and naming and code in accessibility search mechanism
+        https://bugs.webkit.org/show_bug.cgi?id=72570
+
+        Reviewed by Beth Dakin.
+
+        Cleanup the naming and code style within the element searching mechanism.
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::isAccessibilityObjectSearchMatch):
+        (WebCore::AccessibilityObject::isAccessibilityTextSearchMatch):
+        (WebCore::AccessibilityObject::firstAccessibleObjectFromNode):
+        (WebCore::AccessibilityObject::findMatchingObjects):
+        * accessibility/AccessibilityObject.h:
+        * accessibility/mac/WebAccessibilityObjectWrapper.mm:
+        (-[WebAccessibilityObjectWrapper accessibilityAttributeValue:forParameter:]):
+
 2011-11-17  Julien Chaffraix  <jchaffraix@webkit.org>
 
         CSS table with 100% width can overflow their containing block

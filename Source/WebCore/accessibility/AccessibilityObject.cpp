@@ -89,20 +89,20 @@ void AccessibilityObject::detach()
 #endif    
 }
 
-bool AccessibilityObject::isAccessibilityObjectSearchMatch(AccessibilityObject* axObject, AccessibilitySearchPredicate* axSearchPredicate)
+bool AccessibilityObject::isAccessibilityObjectSearchMatch(AccessibilityObject* axObject, AccessibilitySearchCriteria* criteria)
 {
-    if (!axObject || !axSearchPredicate)
+    if (!axObject || !criteria)
         return false;
     
-    switch (axSearchPredicate->axSearchKey) {
+    switch (criteria->searchKey) {
     // The AnyTypeSearchKey matches any non-null AccessibilityObject.
     case AnyTypeSearchKey:
         return true;
         
     case BlockquoteSameLevelSearchKey:
-        return axSearchPredicate->axStartObject
+        return criteria->startObject
             && axObject->isBlockquote()
-            && axObject->blockquoteLevel() == axSearchPredicate->axStartObject->blockquoteLevel();
+            && axObject->blockquoteLevel() == criteria->startObject->blockquoteLevel();
         
     case BlockquoteSearchKey:
         return axObject->isBlockquote();
@@ -120,16 +120,16 @@ bool AccessibilityObject::isAccessibilityObjectSearchMatch(AccessibilityObject* 
         return axObject->isControl();
         
     case DifferentTypeSearchKey:
-        return axSearchPredicate->axStartObject
-            && axObject->roleValue() != axSearchPredicate->axStartObject->roleValue();
+        return criteria->startObject
+            && axObject->roleValue() != criteria->startObject->roleValue();
         
     case FontChangeSearchKey:
-        return axSearchPredicate->axStartObject
-            && !axObject->hasSameFont(axSearchPredicate->axStartObject->renderer());
+        return criteria->startObject
+            && !axObject->hasSameFont(criteria->startObject->renderer());
         
     case FontColorChangeSearchKey:
-        return axSearchPredicate->axStartObject
-            && !axObject->hasSameFontColor(axSearchPredicate->axStartObject->renderer());
+        return criteria->startObject
+            && !axObject->hasSameFontColor(criteria->startObject->renderer());
         
     // FIXME: Handle this search key.
     case FrameSearchKey:
@@ -157,9 +157,9 @@ bool AccessibilityObject::isAccessibilityObjectSearchMatch(AccessibilityObject* 
         return axObject->headingLevel() == 6;
         
     case HeadingSameLevelSearchKey:
-        return axSearchPredicate->axStartObject
+        return criteria->startObject
             && axObject->isHeading()
-            && axObject->headingLevel() == axSearchPredicate->axStartObject->headingLevel();
+            && axObject->headingLevel() == criteria->startObject->headingLevel();
         
     case HeadingSearchKey:
         return axObject->isHeading();
@@ -189,20 +189,20 @@ bool AccessibilityObject::isAccessibilityObjectSearchMatch(AccessibilityObject* 
         return axObject->isRadioGroup();
         
     case SameTypeSearchKey:
-        return axSearchPredicate->axStartObject
-            && axObject->roleValue() == axSearchPredicate->axStartObject->roleValue();
+        return criteria->startObject
+            && axObject->roleValue() == criteria->startObject->roleValue();
         
     case StaticTextSearchKey:
         return axObject->hasStaticText();
         
     case StyleChangeSearchKey:
-        return axSearchPredicate->axStartObject
-            && !axObject->hasSameStyle(axSearchPredicate->axStartObject->renderer());
+        return criteria->startObject
+            && !axObject->hasSameStyle(criteria->startObject->renderer());
         
     case TableSameLevelSearchKey:
-        return axSearchPredicate->axStartObject
+        return criteria->startObject
             && axObject->isAccessibilityTable()
-            && axObject->tableLevel() == axSearchPredicate->axStartObject->tableLevel();
+            && axObject->tableLevel() == criteria->startObject->tableLevel();
         
     case TableSearchKey:
         return axObject->isAccessibilityTable();
@@ -224,12 +224,12 @@ bool AccessibilityObject::isAccessibilityObjectSearchMatch(AccessibilityObject* 
     }
 }
 
-bool AccessibilityObject::isAccessibilityTextSearchMatch(AccessibilityObject* axObject, AccessibilitySearchPredicate* axSearchPredicate)
+bool AccessibilityObject::isAccessibilityTextSearchMatch(AccessibilityObject* axObject, AccessibilitySearchCriteria* criteria)
 {
-    if (!axObject || !axSearchPredicate)
+    if (!axObject || !criteria)
         return false;
     
-    return axObject->accessibilityObjectContainsText(axSearchPredicate->searchText);
+    return axObject->accessibilityObjectContainsText(criteria->searchText);
 }
 
 bool AccessibilityObject::accessibilityObjectContainsText(String* text) const
@@ -246,7 +246,6 @@ bool AccessibilityObject::isBlockquote() const
 {
     return node() && node()->hasTagName(blockquoteTag);
 }
-
 
 bool AccessibilityObject::isARIATextControl() const
 {
@@ -330,8 +329,6 @@ AccessibilityObject* AccessibilityObject::parentObjectUnignored() const
 
 AccessibilityObject* AccessibilityObject::firstAccessibleObjectFromNode(const Node* node)
 {
-    ASSERT(AXObjectCache::accessibilityEnabled());
-
     if (!node)
         return 0;
 
@@ -357,37 +354,42 @@ AccessibilityObject* AccessibilityObject::firstAccessibleObjectFromNode(const No
     return accessibleObject;
 }
 
-void AccessibilityObject::accessibleObjectsWithAccessibilitySearchPredicate(AccessibilitySearchPredicate* axSearchPredicate, AccessibilityChildrenVector& axResults)
+void AccessibilityObject::findMatchingObjects(AccessibilitySearchCriteria* criteria, AccessibilityChildrenVector& results)
 {
-    ASSERT(AXObjectCache::accessibilityEnabled());
+    ASSERT(criteria);
     
-    if (!axSearchPredicate)
+    if (!criteria)
         return;
     
-    AccessibilityChildrenVector axChildren;
-    if (axSearchPredicate->axContainerObject)
-        axChildren.append(axSearchPredicate->axContainerObject);
+    AccessibilityObject* startObject = criteria->startObject;
+    AccessibilityChildrenVector searchStack;
+    searchStack.append(this);
     
-    bool isSearchDirectionNext = (axSearchPredicate->axSearchDirection == SearchDirectionNext);
-    bool didFindAXStartObject = (!axSearchPredicate->axStartObject);
+    bool isForward = criteria->searchDirection == SearchDirectionNext;
+    bool didFindStartObject = !criteria->startObject;
     
     // FIXME: Iterate the AccessibilityObject cache creating and adding objects if nessesary.
-    while (!axChildren.isEmpty() && axResults.size() < axSearchPredicate->resultsLimit) {
-        AccessibilityObject* axChild = axChildren.last().get();
-        axChildren.removeLast();
+    while (!searchStack.isEmpty()) {
+        AccessibilityObject* searchObject = searchStack.last().get();
+        searchStack.removeLast();
         
-        if (didFindAXStartObject) {
-            if (isAccessibilityObjectSearchMatch(axChild, axSearchPredicate)
-                && isAccessibilityTextSearchMatch(axChild, axSearchPredicate))
-                axResults.append(axChild);
-        } else if (axChild == axSearchPredicate->axStartObject)
-            didFindAXStartObject = true;
+        if (didFindStartObject) {
+            if (isAccessibilityObjectSearchMatch(searchObject, criteria) && isAccessibilityTextSearchMatch(searchObject, criteria)) {
+                results.append(searchObject);
+             
+                // Enough results were found to stop searching.
+                if (results.size() >= criteria->resultsLimit)
+                    break;
+            }
+        } else if (searchObject == startObject)
+            didFindStartObject = true;
         
-        AccessibilityChildrenVector axGrandchildren = axChild->children();
-        unsigned axGrandchildrenSize = axChild->children().size();
-        for (unsigned i = (isSearchDirectionNext) ? axGrandchildrenSize : 0; (isSearchDirectionNext) ? i > 0 : i < axGrandchildrenSize; (isSearchDirectionNext) ? i-- : i++)
+        AccessibilityChildrenVector searchChildren = searchObject->children();
+        size_t childrenSize = searchChildren.size();
+        for (size_t i = isForward ? childrenSize : 0; isForward ? i > 0 : i < childrenSize; isForward ? i-- : i++) {
             // FIXME: Handle attachments.
-            axChildren.append(axGrandchildren.at((isSearchDirectionNext) ? i - 1 : i).get());
+            searchStack.append(searchChildren.at(isForward ? i - 1 : i).get());
+        }
     }
 }
 

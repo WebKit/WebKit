@@ -273,11 +273,10 @@ enum AccessibilitySearchKey {
     VisitedLinkSearchKey
 };
 
-struct AccessibilitySearchPredicate {
-    AccessibilityObject* axContainerObject;
-    AccessibilityObject* axStartObject;
-    AccessibilitySearchDirection axSearchDirection;
-    AccessibilitySearchKey axSearchKey;
+struct AccessibilitySearchCriteria {
+    AccessibilityObject* startObject;
+    AccessibilitySearchDirection searchDirection;
+    AccessibilitySearchKey searchKey;
     String* searchText;
     unsigned resultsLimit;
 };
@@ -319,9 +318,6 @@ class AccessibilityObject : public RefCounted<AccessibilityObject> {
 protected:
     AccessibilityObject();
     
-    // Should only be called by accessibleObjectsWithAccessibilitySearchPredicate for AccessibilityObject searching.
-    static bool isAccessibilityObjectSearchMatch(AccessibilityObject*, AccessibilitySearchPredicate*);
-    static bool isAccessibilityTextSearchMatch(AccessibilityObject*, AccessibilitySearchPredicate*);
 public:
     virtual ~AccessibilityObject();
     virtual void detach();
@@ -483,7 +479,7 @@ public:
     virtual AccessibilityObject* parentObjectUnignored() const;
     virtual AccessibilityObject* parentObjectIfExists() const { return 0; }
     static AccessibilityObject* firstAccessibleObjectFromNode(const Node*);
-    static void accessibleObjectsWithAccessibilitySearchPredicate(AccessibilitySearchPredicate*, AccessibilityChildrenVector&);
+    void findMatchingObjects(AccessibilitySearchCriteria*, AccessibilityChildrenVector&);
 
     virtual AccessibilityObject* observableObject() const { return 0; }
     virtual void linkedUIElements(AccessibilityChildrenVector&) const { }
@@ -689,7 +685,9 @@ protected:
     AccessibilityRole m_role;
     
     virtual bool isDetached() const { return true; }
-    
+    static bool isAccessibilityObjectSearchMatch(AccessibilityObject*, AccessibilitySearchCriteria*);
+    static bool isAccessibilityTextSearchMatch(AccessibilityObject*, AccessibilitySearchCriteria*);
+
 #if PLATFORM(GTK)
     bool allowsTextRanges() const;
     unsigned getLengthForTextRange() const;

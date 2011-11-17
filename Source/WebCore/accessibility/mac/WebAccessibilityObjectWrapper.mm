@@ -2802,17 +2802,17 @@ static RenderObject* rendererForView(NSView* view)
     
     // dispatch
     if ([attribute isEqualToString:NSAccessibilityUIElementsForSearchPredicateParameterizedAttribute]) {
-        AccessibilityObject* axStartObject = 0;
+        AccessibilityObject* startObject = 0;
         if ([[dictionary objectForKey:@"AXStartElement"] isKindOfClass:[WebAccessibilityObjectWrapper self]])
-            axStartObject = [(WebAccessibilityObjectWrapper*)[dictionary objectForKey:@"AXStartElement"] accessibilityObject];
+            startObject = [(WebAccessibilityObjectWrapper*)[dictionary objectForKey:@"AXStartElement"] accessibilityObject];
         
-        AccessibilitySearchDirection axSearchDirection = SearchDirectionNext;
+        AccessibilitySearchDirection searchDirection = SearchDirectionNext;
         if ([[dictionary objectForKey:@"AXDirection"] isKindOfClass:[NSString self]])
-            axSearchDirection = ([(NSString*)[dictionary objectForKey:@"AXDirection"] isEqualToString:@"AXDirectionNext"]) ? SearchDirectionNext : SearchDirectionPrevious;
+            searchDirection = ([(NSString*)[dictionary objectForKey:@"AXDirection"] isEqualToString:@"AXDirectionNext"]) ? SearchDirectionNext : SearchDirectionPrevious;
         
-        AccessibilitySearchKey axSearchKey = AnyTypeSearchKey;
+        AccessibilitySearchKey searchKey = AnyTypeSearchKey;
         if ([[dictionary objectForKey:@"AXSearchKey"] isKindOfClass:[NSString self]])
-            axSearchKey = accessibilitySearchKeyForString((CFStringRef)[dictionary objectForKey:@"AXSearchKey"]);
+            searchKey = accessibilitySearchKeyForString((CFStringRef)[dictionary objectForKey:@"AXSearchKey"]);
         
         String searchText;
         if ([[dictionary objectForKey:@"AXSearchText"] isKindOfClass:[NSString self]])
@@ -2822,11 +2822,12 @@ static RenderObject* rendererForView(NSView* view)
         if ([[dictionary objectForKey:@"AXResultsLimit"] isKindOfClass:[NSNumber self]])
             resultsLimit = [(NSNumber*)[dictionary objectForKey:@"AXResultsLimit"] unsignedIntValue];
         
-        AccessibilitySearchPredicate axSearchPredicate = {m_object, axStartObject, axSearchDirection, axSearchKey, &searchText, resultsLimit};
-        AccessibilityObject::AccessibilityChildrenVector axResults;
-        AccessibilityObject::accessibleObjectsWithAccessibilitySearchPredicate(&axSearchPredicate, axResults);
+        AccessibilitySearchCriteria criteria = {startObject, searchDirection, searchKey, &searchText, resultsLimit};
+
+        AccessibilityObject::AccessibilityChildrenVector results;
+        m_object->findMatchingObjects(&criteria, results);
         
-        return convertToNSArray(axResults);
+        return convertToNSArray(results);
     }
 
     if ([attribute isEqualToString:@"AXUIElementForTextMarker"]) {
