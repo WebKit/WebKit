@@ -1,3 +1,14 @@
+2011-11-16  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        [Qt] Fix build after WTR AX support
+        https://bugs.webkit.org/show_bug.cgi?id=72560
+
+        Reviewed by Geoffrey Garen.
+
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (WKAccessibilityRootObject):
+        (WKAccessibilityFocusedObject):
+
 2011-11-11  Adrienne Walker  <enne@google.com>
 
         [chromium] Expose mock scrollbars to window.internals

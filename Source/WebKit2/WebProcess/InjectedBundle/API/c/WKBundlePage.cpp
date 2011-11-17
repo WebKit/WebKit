@@ -132,6 +132,7 @@ WKBundleFrameRef WKBundlePageGetMainFrame(WKBundlePageRef pageRef)
 
 void* WKAccessibilityRootObject(WKBundlePageRef pageRef)
 {
+#if HAVE(ACCESSIBILITY)
     if (!pageRef)
         return 0;
     
@@ -150,10 +151,14 @@ void* WKAccessibilityRootObject(WKBundlePageRef pageRef)
         return 0;
     
     return root->wrapper();
+#else
+    return 0;
+#endif
 }
 
 void* WKAccessibilityFocusedObject(WKBundlePageRef pageRef)
 {
+#if HAVE(ACCESSIBILITY)
     if (!pageRef)
         return 0;
     
@@ -168,6 +173,9 @@ void* WKAccessibilityFocusedObject(WKBundlePageRef pageRef)
         return 0;
     
     return focusedObject->wrapper();
+#else
+    return 0;
+#endif
 }
 
 void WKBundlePageStopLoading(WKBundlePageRef pageRef)

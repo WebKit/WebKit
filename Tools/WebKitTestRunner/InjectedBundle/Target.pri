@@ -10,6 +10,10 @@ TARGET = WTRInjectedBundle
 mac:debug_and_release:TARGET = $$qtLibraryTarget($$TARGET)
 
 SOURCES += \
+    AccessibilityController.cpp \
+    AccessibilityTextMarker.cpp \
+    AccessibilityTextMarkerRange.cpp \
+    AccessibilityUIElement.cpp \
     InjectedBundle.cpp \
     InjectedBundle.h \
     InjectedBundleMain.cpp \
@@ -32,6 +36,10 @@ SOURCES += \
 include(DerivedSources.pri)
 
 HEADERS += \
+    AccessibilityController.h \
+    AccessibilityTextMarker.h \
+    AccessibilityTextMarkerRange.h \
+    AccessibilityUIElement.h \
     ActivateFonts.h \
     EventSendingController.h \
     GCController.h \

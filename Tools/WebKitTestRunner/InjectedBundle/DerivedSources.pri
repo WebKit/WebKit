@@ -14,6 +14,10 @@ equals(sanitizedFile, $$toSanitizedPath($$_PRO_FILE_)):TEMPLATE = derived
 load(features)
 
 IDL_BINDINGS += \
+    Bindings/AccessibilityController.idl \
+    Bindings/AccessibilityTextMarker.idl \
+    Bindings/AccessibilityTextMarkerRange.idl \
+    Bindings/AccessibilityUIElement.idl \
     Bindings/EventSendingController.idl \
     Bindings/GCController.idl \
     Bindings/LayoutTestController.idl \
