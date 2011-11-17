@@ -632,6 +632,8 @@ bool CSSProperty::isInheritedProperty(unsigned propertyID)
     case CSSPropertyWebkitFlowFrom:
     case CSSPropertyWebkitRegionOverflow:
     case CSSPropertyWebkitWrapShape:
+    case CSSPropertyWebkitWrapMargin:
+    case CSSPropertyWebkitWrapPadding:
     case CSSPropertyWebkitRegionBreakAfter:
     case CSSPropertyWebkitRegionBreakBefore:
     case CSSPropertyWebkitRegionBreakInside:

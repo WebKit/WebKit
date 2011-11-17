@@ -1,3 +1,39 @@
+2011-11-17  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        CSS Exclusions: parse the wrap-margin and wrap-padding properties
+        https://bugs.webkit.org/show_bug.cgi?id=71900
+
+        Reviewed by Dean Jackson.
+
+        Tests: fast/exclusions/wrap-margin-parsing.html
+               fast/exclusions/wrap-padding-parsing.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/CSSParser.cpp:
+        (WebCore::isSimpleLengthPropertyID):
+        (WebCore::CSSParser::parseValue):
+        * css/CSSProperty.cpp:
+        (WebCore::CSSProperty::isInheritedProperty):
+        * css/CSSPropertyNames.in:
+        * css/CSSStyleApplyProperty.cpp:
+        (WebCore::CSSStyleApplyProperty::CSSStyleApplyProperty):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::diff):
+        * rendering/style/RenderStyle.h:
+        (WebCore::InheritedFlags::wrapPadding):
+        (WebCore::InheritedFlags::setWrapPadding):
+        (WebCore::InheritedFlags::initialWrapPadding):
+        (WebCore::InheritedFlags::wrapMargin):
+        (WebCore::InheritedFlags::setWrapMargin):
+        (WebCore::InheritedFlags::initialWrapMargin):
+        * rendering/style/StyleRareNonInheritedData.cpp:
+        (WebCore::StyleRareNonInheritedData::StyleRareNonInheritedData):
+        (WebCore::StyleRareNonInheritedData::operator==):
+        * rendering/style/StyleRareNonInheritedData.h:
+
 2011-11-17  Kenichi Ishibashi  <bashi@chromium.org>
 
         [chromium] don't call fontconfig twice in complex text path

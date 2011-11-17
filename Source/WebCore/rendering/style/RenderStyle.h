@@ -1286,6 +1286,14 @@ public:
     CSSWrapShape* wrapShape() const { return rareNonInheritedData->m_wrapShape.get(); }
     static CSSWrapShape* initialWrapShape() { return 0; }
 
+    Length wrapPadding() const { return rareNonInheritedData->m_wrapPadding; }
+    void setWrapPadding(Length wrapPadding) { SET_VAR(rareNonInheritedData, m_wrapPadding, wrapPadding); }
+    static Length initialWrapPadding() { return Length(0, Fixed); }
+
+    Length wrapMargin() const { return rareNonInheritedData->m_wrapMargin; }
+    void setWrapMargin(Length wrapMargin) { SET_VAR(rareNonInheritedData, m_wrapMargin, wrapMargin); }
+    static Length initialWrapMargin() { return Length(0, Fixed); }
+
     bool hasContent() const { return contentData(); }
     const ContentData* contentData() const { return rareNonInheritedData->m_content.get(); }
     bool contentDataEquivalent(const RenderStyle* otherStyle) const { return const_cast<RenderStyle*>(this)->rareNonInheritedData->contentDataEquivalent(*const_cast<RenderStyle*>(otherStyle)->rareNonInheritedData); }

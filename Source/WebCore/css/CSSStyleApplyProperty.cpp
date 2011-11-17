@@ -1047,6 +1047,9 @@ CSSStyleApplyProperty::CSSStyleApplyProperty()
     setPropertyHandler(CSSPropertyWebkitTextEmphasisPosition, ApplyPropertyDefault<TextEmphasisPosition, &RenderStyle::textEmphasisPosition, TextEmphasisPosition, &RenderStyle::setTextEmphasisPosition, TextEmphasisPosition, &RenderStyle::initialTextEmphasisPosition>::createHandler());
     setPropertyHandler(CSSPropertyWebkitTextEmphasisStyle, ApplyPropertyTextEmphasisStyle::createHandler());
 
+    setPropertyHandler(CSSPropertyWebkitWrapMargin, ApplyPropertyLength<&RenderStyle::wrapMargin, &RenderStyle::setWrapMargin, &RenderStyle::initialWrapMargin>::createHandler());
+    setPropertyHandler(CSSPropertyWebkitWrapPadding, ApplyPropertyLength<&RenderStyle::wrapPadding, &RenderStyle::setWrapPadding, &RenderStyle::initialWrapPadding>::createHandler());
+
     setPropertyHandler(CSSPropertyZIndex, ApplyPropertyAuto<int, &RenderStyle::zIndex, &RenderStyle::setZIndex, &RenderStyle::hasAutoZIndex, &RenderStyle::setHasAutoZIndex>::createHandler());
 }
 

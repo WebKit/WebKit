@@ -4055,6 +4055,8 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSSPropertyWebkitTextCombine:
     case CSSPropertyWebkitTextEmphasisPosition:
     case CSSPropertyWebkitTextEmphasisStyle:
+    case CSSPropertyWebkitWrapMargin:
+    case CSSPropertyWebkitWrapPadding:
     case CSSPropertyZIndex:
         ASSERT_NOT_REACHED();
         return;

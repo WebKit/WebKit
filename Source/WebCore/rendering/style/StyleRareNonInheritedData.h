@@ -127,6 +127,8 @@ public:
     LengthSize m_pageSize;
 
     RefPtr<CSSWrapShape> m_wrapShape;
+    Length m_wrapMargin;
+    Length m_wrapPadding;
     
     Color m_visitedLinkBackgroundColor;
     Color m_visitedLinkOutlineColor;

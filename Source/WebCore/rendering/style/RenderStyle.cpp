@@ -386,7 +386,9 @@ StyleDifference RenderStyle::diff(const RenderStyle* other, unsigned& changedCon
             return StyleDifferenceLayout;
 
         if (rareNonInheritedData->m_wrapFlow != other->rareNonInheritedData->m_wrapFlow
-            || rareNonInheritedData->m_wrapThrough != other->rareNonInheritedData->m_wrapThrough)
+            || rareNonInheritedData->m_wrapThrough != other->rareNonInheritedData->m_wrapThrough
+            || rareNonInheritedData->m_wrapMargin != other->rareNonInheritedData->m_wrapMargin
+            || rareNonInheritedData->m_wrapPadding != other->rareNonInheritedData->m_wrapPadding)
             return StyleDifferenceLayout;
 
         if (rareNonInheritedData->m_deprecatedFlexibleBox.get() != other->rareNonInheritedData->m_deprecatedFlexibleBox.get()

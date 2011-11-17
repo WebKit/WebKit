@@ -422,6 +422,10 @@ rect: style.getPropertyValue(-webkit-region-break-inside) : auto
 rect: style.getPropertyCSSValue(-webkit-region-break-inside) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-wrap-flow) : auto
 rect: style.getPropertyCSSValue(-webkit-wrap-flow) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(-webkit-wrap-margin) : 0px
+rect: style.getPropertyCSSValue(-webkit-wrap-margin) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(-webkit-wrap-padding) : 0px
+rect: style.getPropertyCSSValue(-webkit-wrap-padding) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-wrap-through) : wrap
 rect: style.getPropertyCSSValue(-webkit-wrap-through) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(clip-path) : none
@@ -922,6 +926,10 @@ g: style.getPropertyValue(-webkit-region-break-inside) : auto
 g: style.getPropertyCSSValue(-webkit-region-break-inside) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-wrap-flow) : auto
 g: style.getPropertyCSSValue(-webkit-wrap-flow) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(-webkit-wrap-margin) : 0px
+g: style.getPropertyCSSValue(-webkit-wrap-margin) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(-webkit-wrap-padding) : 0px
+g: style.getPropertyCSSValue(-webkit-wrap-padding) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-wrap-through) : wrap
 g: style.getPropertyCSSValue(-webkit-wrap-through) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(clip-path) : none

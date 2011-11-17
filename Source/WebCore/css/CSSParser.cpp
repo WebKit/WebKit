@@ -384,6 +384,8 @@ static inline bool isSimpleLengthPropertyID(int propertyId, bool& acceptsNegativ
     case CSSPropertyWebkitPaddingBefore:
     case CSSPropertyWebkitPaddingEnd:
     case CSSPropertyWebkitPaddingStart:
+    case CSSPropertyWebkitWrapMargin:
+    case CSSPropertyWebkitWrapPadding:
         acceptsNegativeNumbers = false;
         return true;
     case CSSPropertyBottom:
@@ -2199,7 +2201,6 @@ bool CSSParser::parseValue(int propId, bool important)
         else if (value->unit == CSSParserValue::Function)
             return parseWrapShape(important);
         break;
-
     case CSSPropertyWebkitWrapFlow:
         if (id == CSSValueAuto || id == CSSValueBoth || id == CSSValueLeft || id == CSSValueRight || id == CSSValueMaximum || id == CSSValueClear)
             validPrimitive = true;
@@ -2209,7 +2210,10 @@ bool CSSParser::parseValue(int propId, bool important)
         if (id == CSSValueWrap || id == CSSValueNone)
             validPrimitive = true;
         break;
-
+    case CSSPropertyWebkitWrapMargin:
+    case CSSPropertyWebkitWrapPadding:
+        validPrimitive = (!id && validUnit(value, FLength | FNonNeg, m_strict));
+        break;
 #if ENABLE(SVG)
     default:
         return parseSVGValue(propId, important);

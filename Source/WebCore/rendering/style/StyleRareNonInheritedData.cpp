@@ -44,6 +44,8 @@ StyleRareNonInheritedData::StyleRareNonInheritedData()
     , m_mask(FillLayer(MaskFillLayer))
     , m_pageSize()
     , m_wrapShape(RenderStyle::initialWrapShape())
+    , m_wrapMargin(RenderStyle::initialWrapMargin())
+    , m_wrapPadding(RenderStyle::initialWrapPadding())
     , m_visitedLinkBackgroundColor(RenderStyle::initialBackgroundColor())
     , m_flowThread(RenderStyle::initialFlowThread())
     , m_regionThread(RenderStyle::initialRegionThread())
@@ -98,6 +100,8 @@ StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonInherited
     , m_maskBoxImage(o.m_maskBoxImage)
     , m_pageSize(o.m_pageSize)
     , m_wrapShape(o.m_wrapShape)
+    , m_wrapMargin(o.m_wrapMargin)
+    , m_wrapPadding(o.m_wrapPadding)
     , m_visitedLinkBackgroundColor(o.m_visitedLinkBackgroundColor)
     , m_visitedLinkOutlineColor(o.m_visitedLinkBackgroundColor)
     , m_visitedLinkBorderLeftColor(o.m_visitedLinkBorderLeftColor)
@@ -182,6 +186,8 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
         && (m_wrapShape == o.m_wrapShape)
         && (m_wrapFlow == o.m_wrapFlow)
         && (m_wrapThrough == o.m_wrapThrough)
+        && (m_wrapMargin == o.m_wrapMargin)
+        && (m_wrapPadding == o.m_wrapPadding)
         && m_visitedLinkBackgroundColor == o.m_visitedLinkBackgroundColor
         && m_visitedLinkOutlineColor == o.m_visitedLinkOutlineColor
         && m_visitedLinkBorderLeftColor == o.m_visitedLinkBorderLeftColor

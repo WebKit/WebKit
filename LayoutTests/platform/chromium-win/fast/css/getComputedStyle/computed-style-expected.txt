@@ -212,6 +212,8 @@ zoom: 1;
 -webkit-region-break-before: auto;
 -webkit-region-break-inside: auto;
 -webkit-wrap-flow: auto;
+-webkit-wrap-margin: 0px;
+-webkit-wrap-padding: 0px;
 -webkit-wrap-through: wrap;
 clip-path: none;
 clip-rule: nonzero;

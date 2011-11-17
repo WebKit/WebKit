@@ -286,6 +286,8 @@ static const int computedProperties[] = {
     CSSPropertyWebkitRegionBreakBefore,
     CSSPropertyWebkitRegionBreakInside,
     CSSPropertyWebkitWrapFlow,
+    CSSPropertyWebkitWrapMargin,
+    CSSPropertyWebkitWrapPadding,
     CSSPropertyWebkitWrapThrough
 #if ENABLE(SVG)
     ,
@@ -2036,6 +2038,10 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             return primitiveValueCache->createValue(style->regionThread(), CSSPrimitiveValue::CSS_STRING);
         case CSSPropertyWebkitRegionOverflow:
             return primitiveValueCache->createValue(style->regionOverflow());
+        case CSSPropertyWebkitWrapMargin:
+            return primitiveValueCache->createValue(style->wrapMargin());
+        case CSSPropertyWebkitWrapPadding:
+            return primitiveValueCache->createValue(style->wrapPadding());
 #if ENABLE(CSS_FILTERS)
         case CSSPropertyWebkitFilter:
             return valueForFilter(style.get());
