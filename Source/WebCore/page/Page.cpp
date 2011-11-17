@@ -152,6 +152,7 @@ Page::Page(PageClients& pageClients)
     , m_cookieEnabled(true)
     , m_areMemoryCacheClientCallsEnabled(true)
     , m_mediaVolume(1)
+    , m_deviceScaleFactor(1)
     , m_javaScriptURLsAreAllowed(true)
     , m_didLoadUserStyleSheet(false)
     , m_userStyleSheetModificationTime(0)
@@ -592,6 +593,19 @@ void Page::setMediaVolume(float volume)
     for (Frame* frame = mainFrame(); frame; frame = frame->tree()->traverseNext()) {
         frame->document()->mediaVolumeDidChange();
     }
+}
+
+void Page::setDeviceScaleFactor(float scaleFactor)
+{
+    if (m_deviceScaleFactor == scaleFactor)
+        return;
+
+    m_deviceScaleFactor = scaleFactor;
+    setNeedsRecalcStyleInAllFrames();
+
+#if USE(ACCELERATED_COMPOSITING)
+    m_mainFrame->deviceOrPageScaleFactorChanged();
+#endif
 }
 
 void Page::didMoveOnscreen()

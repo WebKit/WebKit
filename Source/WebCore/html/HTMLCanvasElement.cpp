@@ -79,7 +79,7 @@ HTMLCanvasElement::HTMLCanvasElement(const QualifiedName& tagName, Document* doc
     , m_size(DefaultWidth, DefaultHeight)
     , m_rendererIsCanvas(false)
     , m_ignoreReset(false)
-    , m_deviceScaleFactor(document->frame() ? document->frame()->page()->chrome()->deviceScaleFactor() : 1)
+    , m_deviceScaleFactor(document->frame() ? document->frame()->page()->deviceScaleFactor() : 1)
     , m_originClean(true)
     , m_hasCreatedImageBuffer(false)
 {

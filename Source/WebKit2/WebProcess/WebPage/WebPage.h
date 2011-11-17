@@ -400,7 +400,6 @@ public:
     void runModal();
 
     void setDeviceScaleFactor(float);
-    float deviceScaleFactor() const { return m_deviceScaleFactor; }
 
     void setMemoryCacheMessagesEnabled(bool);
 
@@ -654,8 +653,6 @@ private:
 
     bool m_canRunModal;
     bool m_isRunningModal;
-
-    float m_deviceScaleFactor;
 
     bool m_cachedMainFrameIsPinnedToLeftSide;
     bool m_cachedMainFrameIsPinnedToRightSide;
