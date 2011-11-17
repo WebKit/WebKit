@@ -53,7 +53,7 @@ namespace JSC {
             return activation;
         }
 
-        virtual ~JSActivation();
+        static void finalize(JSCell*);
 
         static void visitChildren(JSCell*, SlotVisitor&);
 

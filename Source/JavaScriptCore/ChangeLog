@@ -1,3 +1,15 @@
+2011-11-17  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Add finalizer to JSActivation
+        https://bugs.webkit.org/show_bug.cgi?id=72575
+
+        Reviewed by Geoffrey Garen.
+
+        * runtime/JSActivation.cpp:
+        (JSC::JSActivation::finishCreation): Attach finalize function to objects during creation.
+        (JSC::JSActivation::finalize):
+        * runtime/JSActivation.h: Replaced virtual destructor with static finalize function.
+
 2011-11-15  Filip Pizlo  <fpizlo@apple.com>
 
         Code block jettisoning should be part of the GC's transitive closure

@@ -56,11 +56,12 @@ void JSActivation::finishCreation(CallFrame* callFrame)
     // We have to manually ref and deref the symbol table as JSVariableObject
     // doesn't know about SharedSymbolTable
     static_cast<SharedSymbolTable*>(m_symbolTable)->ref();
+    callFrame->globalData().heap.addFinalizer(this, &finalize);
 }
 
-JSActivation::~JSActivation()
+void JSActivation::finalize(JSCell* cell)
 {
-    static_cast<SharedSymbolTable*>(m_symbolTable)->deref();
+    static_cast<SharedSymbolTable*>(jsCast<JSActivation*>(cell)->m_symbolTable)->deref();
 }
 
 void JSActivation::visitChildren(JSCell* cell, SlotVisitor& visitor)
