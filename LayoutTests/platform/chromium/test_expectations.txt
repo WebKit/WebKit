@@ -3808,6 +3808,7 @@ BUGWK71653 : platform/chromium-cg-mac/editing/input/ime-candidate-window-positio
 BUGWK59552 SNOWLEOPARD DEBUG : fast/dom/Element/id-in-frame.html = PASS CRASH
 BUGWK59552 SNOWLEOPARD DEBUG : fast/dom/image-object.html = PASS CRASH
 BUGWK59552 SNOWLEOPARD DEBUG : fast/frames/content-opacity-2.html = PASS CRASH
+BUGWK59552 SNOWLEOPARD DEBUG : fast/frames/frame-unload-crash.html = PASS CRASH
 BUGWK59552 SNOWLEOPARD DEBUG : fast/frames/iframe-double-scale-contents.html = PASS CRASH
 BUGWK59552 SNOWLEOPARD DEBUG : fast/frames/set-parent-src-synchronously.html = PASS CRASH
 BUGWK59552 SNOWLEOPARD DEBUG : fast/loader/opaque-base-url.html = PASS CRASH
