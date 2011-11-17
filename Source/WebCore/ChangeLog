@@ -1,5 +1,16 @@
 2011-11-17  Mark Rowe  <mrowe@apple.com>
 
+        <http://webkit.org/b/72646> Disable deprecation warnings around code where we cannot easily
+        switch away from the deprecated APIs.
+
+        Reviewed by Dan Bernstein.
+
+        * platform/mac/WebCoreNSStringExtras.mm:
+        * platform/network/cf/SocketStreamHandleCFNet.cpp:
+        (WebCore::SocketStreamHandle::reportErrorToClient):
+
+2011-11-17  Mark Rowe  <mrowe@apple.com>
+
         <http://webkit.org/b/72637> Stop performing runtime version checks on OS versions where the check can never possibly fail.
 
         Reviewed by Simon Fraser.

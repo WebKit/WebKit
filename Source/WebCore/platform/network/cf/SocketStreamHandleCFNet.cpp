@@ -542,11 +542,16 @@ void SocketStreamHandle::reportErrorToClient(CFErrorRef error)
     String description;
 
 #if PLATFORM(MAC)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+
     if (CFEqual(CFErrorGetDomain(error), kCFErrorDomainOSStatus)) {
         const char* descriptionOSStatus = GetMacOSStatusCommentString(static_cast<OSStatus>(errorCode));
         if (descriptionOSStatus && descriptionOSStatus[0] != '\0')
             description = "OSStatus Error " + String::number(errorCode) + ": " + descriptionOSStatus;
     }
+
+#pragma GCC diagnostic pop
 #endif
 
     if (description.isNull()) {

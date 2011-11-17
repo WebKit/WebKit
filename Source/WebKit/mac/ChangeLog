@@ -1,3 +1,14 @@
+2011-11-17  Mark Rowe  <mrowe@apple.com>
+
+        <http://webkit.org/b/72646> Disable deprecation warnings around code where we cannot easily
+        switch away from the deprecated APIs.
+
+        Reviewed by Dan Bernstein.
+
+        * Plugins/WebBasePluginPackage.mm:
+        * Plugins/WebNetscapePluginPackage.mm:
+        (-[WebNetscapePluginPackage _tryLoad]):
+
 2011-11-16  Dan Bernstein  <mitz@apple.com>
 
         WebKit/mac part of <rdar://problem/10262242> Add API for paginated display

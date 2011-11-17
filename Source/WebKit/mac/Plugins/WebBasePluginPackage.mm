@@ -93,6 +93,9 @@ using namespace WebCore;
     return WebCFAutorelease(WKCopyCFLocalizationPreferredName(NULL));
 }
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+// FIXME: Rewrite this in terms of -[NSURL URLByResolvingBookmarkData:…].
 static NSString *pathByResolvingSymlinksAndAliases(NSString *thePath)
 {
     NSString *newPath = [thePath stringByResolvingSymlinksInPath];
@@ -118,6 +121,7 @@ static NSString *pathByResolvingSymlinksAndAliases(NSString *thePath)
 
     return newPath;
 }
+#pragma GCC diagnostic pop
 
 - (id)initWithPath:(NSString *)pluginPath
 {
