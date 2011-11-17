@@ -3535,6 +3535,11 @@ BUGWK68436 SNOWLEOPARD CPU DEBUG : fast/repaint/background-clip-text.html = TIME
 BUGWK68436 SNOWLEOPARD CPU : fast/repaint/text-emphasis-h.html = TIMEOUT IMAGE
 BUGWK68436 SNOWLEOPARD CPU : svg/W3C-SVG-1.1/paths-data-12-t.svg = IMAGE+TEXT
 
+// New test that needs rebaselining for chromium ports
+BUGWK70471 : fast/borders/border-mixed-alpha.html = IMAGE
+// WK70471 introduces slight changes in seams for this test
+BUGWK70471 : fast/borders/mixed-border-styles.html = IMAGE
+
 // Tests that are known to exhibit TEXT failures on Mac10.5 with Skia (CPU and/or GPU) graphics.
 BUGWK68437 LEOPARD CPU : canvas/philip/tests/2d.text.draw.fontface.notinpage.html = TEXT
 

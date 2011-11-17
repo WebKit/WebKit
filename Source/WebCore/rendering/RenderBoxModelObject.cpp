@@ -1424,6 +1424,21 @@ static inline bool colorsMatchAtCorner(BoxSide side, BoxSide adjacentSide, const
     return !borderStyleHasUnmatchedColorsAtCorner(edges[side].style, side, adjacentSide);
 }
 
+
+static inline bool colorNeedsAntiAliasAtCorner(BoxSide side, BoxSide adjacentSide, const BorderEdge edges[])
+{
+    if (!edges[side].color.hasAlpha())
+        return false;
+
+    if (edges[side].shouldRender() != edges[adjacentSide].shouldRender())
+        return false;
+
+    if (!edgesShareColor(edges[side], edges[adjacentSide]))
+        return true;
+
+    return borderStyleHasUnmatchedColorsAtCorner(edges[side].style, side, adjacentSide);
+}
+
 // This assumes that we draw in order: top, bottom, left, right.
 static inline bool willBeOverdrawn(BoxSide side, BoxSide adjacentSide, const BorderEdge edges[])
 {
@@ -1506,11 +1521,16 @@ void RenderBoxModelObject::paintOneBorderSide(GraphicsContext* graphicsContext, 
         drawBoxSideFromPath(graphicsContext, outerBorder.rect(), *path, edges, edgeToRender.width, thickness, side, style,
             colorToPaint, edgeToRender.style, bleedAvoidance, includeLogicalLeftEdge, includeLogicalRightEdge);
     } else {
-        bool shouldClip = styleRequiresClipPolygon(edgeToRender.style) && (mitreAdjacentSide1 || mitreAdjacentSide2);
+        bool clipForStyle = styleRequiresClipPolygon(edgeToRender.style) && (mitreAdjacentSide1 || mitreAdjacentSide2);
+        bool clipAdjacentSide1 = colorNeedsAntiAliasAtCorner(side, adjacentSide1, edges) && mitreAdjacentSide1;
+        bool clipAdjacentSide2 = colorNeedsAntiAliasAtCorner(side, adjacentSide2, edges) && mitreAdjacentSide2;
+        bool shouldClip = clipForStyle || clipAdjacentSide1 || clipAdjacentSide2;
         
         GraphicsContextStateSaver clipStateSaver(*graphicsContext, shouldClip);
         if (shouldClip) {
-            clipBorderSidePolygon(graphicsContext, outerBorder, innerBorder, side, !mitreAdjacentSide1, !mitreAdjacentSide2);
+            bool aliasAdjacentSide1 = clipAdjacentSide1 || (clipForStyle && mitreAdjacentSide1);
+            bool aliasAdjacentSide2 = clipAdjacentSide2 || (clipForStyle && mitreAdjacentSide2);
+            clipBorderSidePolygon(graphicsContext, outerBorder, innerBorder, side, !aliasAdjacentSide1, !aliasAdjacentSide2);
             // Since we clipped, no need to draw with a mitre.
             mitreAdjacentSide1 = false;
             mitreAdjacentSide2 = false;

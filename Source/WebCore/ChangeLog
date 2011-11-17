@@ -1,3 +1,19 @@
+2011-11-16  Ben Wells  <benwells@chromium.org>
+
+        Seaming on border corners with mixed colour alpha borders
+        https://bugs.webkit.org/show_bug.cgi?id=70471
+
+        Reviewed by Simon Fraser.
+
+        Seaming is fixed by antialiasing mitred corners for edges that have alpha and are joining
+        a side that is of a different color.
+
+        Test: fast/borders/border-mixed-alpha.html
+
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::colorNeedsAntiAliasAtCorner):
+        (WebCore::RenderBoxModelObject::paintOneBorderSide):
+
 2011-11-16  Sam Weinig  <sam@webkit.org>
 
         JS wrappers of DOM objects should have no-op constructors
