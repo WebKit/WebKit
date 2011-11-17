@@ -71,13 +71,14 @@ const AtomicString& TextTrack::metadataKeyword()
     return metadata;
 }
 
-TextTrack::TextTrack(ScriptExecutionContext* context, TextTrackClient* client, const String& kind, const String& label, const String& language)
+TextTrack::TextTrack(ScriptExecutionContext* context, TextTrackClient* client, const String& kind, const String& label, const String& language, TextTrackType type)
     : TrackBase(context, TrackBase::TextTrack)
     , m_label(label)
     , m_language(language)
     , m_readyState(TextTrack::NONE)
     , m_mode(TextTrack::HIDDEN)
     , m_client(client)
+    , m_trackType(type)
 {
     setKind(kind);
 }

@@ -57,6 +57,8 @@ public:
     void scheduleLoad(const KURL&);
 
     virtual void clearClient();
+    
+    size_t trackElementIndex();
 
 private:
     // TextTrackLoaderClient

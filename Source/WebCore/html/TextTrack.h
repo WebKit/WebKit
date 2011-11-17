@@ -56,7 +56,7 @@ class TextTrack : public TrackBase {
 public:
     static PassRefPtr<TextTrack> create(ScriptExecutionContext* context, TextTrackClient* client, const String& kind, const String& label, const String& language)
     {
-        return adoptRef(new TextTrack(context, client, kind, label, language));
+        return adoptRef(new TextTrack(context, client, kind, label, language, AddTrack));
     }
     virtual ~TextTrack();
 
@@ -101,8 +101,11 @@ public:
     virtual void fireCueChangeEvent();
     DEFINE_ATTRIBUTE_EVENT_LISTENER(cuechange);
 
+    enum TextTrackType { TrackElement, AddTrack, InBand };
+    TextTrackType trackType() const { return m_trackType; }
+
 protected:
-    TextTrack(ScriptExecutionContext*, TextTrackClient*, const String& kind, const String& label, const String& language);
+    TextTrack(ScriptExecutionContext*, TextTrackClient*, const String& kind, const String& label, const String& language, TextTrackType);
 
     void setReadyState(ReadyState);
 
@@ -115,6 +118,7 @@ private:
     TextTrack::ReadyState m_readyState;
     TextTrack::Mode m_mode;
     TextTrackClient* m_client;
+    TextTrackType m_trackType;
 };
 
 } // namespace WebCore

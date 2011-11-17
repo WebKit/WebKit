@@ -38,7 +38,7 @@
 namespace WebCore {
 
 LoadableTextTrack::LoadableTextTrack(HTMLTrackElement* track, const String& kind, const String& label, const String& language, bool isDefault)
-    : TextTrack(track->document(), track, kind, label, language)
+    : TextTrack(track->document(), track, kind, label, language, TrackElement)
     , m_trackElement(track)
     , m_loadTimer(this, &LoadableTextTrack::loadTimerFired)
     , m_isDefault(isDefault)
@@ -118,6 +118,24 @@ void LoadableTextTrack::fireCueChangeEvent()
     TextTrack::fireCueChangeEvent();
     ExceptionCode ec = 0;
     m_trackElement->dispatchEvent(Event::create(eventNames().cuechangeEvent, false, false), ec);
+}
+
+size_t LoadableTextTrack::trackElementIndex()
+{
+    ASSERT(m_trackElement);
+    ASSERT(m_trackElement->parentNode());
+
+    size_t index = 0;
+    for (Node* node = m_trackElement->parentNode()->firstChild(); node; node = node->nextSibling()) {
+        if (!node->hasTagName(trackTag))
+            continue;
+        if (node == m_trackElement)
+            return index;
+        ++index;
+    }
+    ASSERT_NOT_REACHED();
+
+    return 0;
 }
 
 } // namespace WebCore
