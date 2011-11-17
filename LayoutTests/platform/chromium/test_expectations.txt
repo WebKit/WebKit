@@ -254,12 +254,16 @@ WONTFIX SKIP : fast/canvas/canvas-gradient-addStop-error.html = FAIL
 // this test will always fail.
 WONTFIX SKIP LINUX WIN : fast/events/option-tab.html = FAIL
 
-// probably aren't applicable to this config
-BUGWK72402 : compositing/video-page-visibility.html = FAIL
-BUGWK72402 : compositing/geometry/clipped-video-controller.html = FAIL
-BUGWK72402 : compositing/geometry/video-fixed-scrolling.html = FAIL
-BUGWK72402 : compositing/geometry/video-opacity-overlay.html = FAIL
-BUGWK72402 : compositing/layer-creation/spanOverlapsCanvas.html = FAIL
+// Will need rebaselines for new compositing triggers
+BUGJAMESR : compositing/video-page-visibility.html = FAIL
+BUGJAMESR : compositing/geometry/clipped-video-controller.html = FAIL
+BUGJAMESR : compositing/geometry/video-fixed-scrolling.html = FAIL
+BUGJAMESR : compositing/geometry/video-opacity-overlay.html = FAIL
+BUGJAMESR : compositing/layer-creation/spanOverlapsCanvas.html = FAIL
+BUGJAMESR : compositing/layers-inside-overflow-scroll.html = FAIL
+BUGJAMESR : compositing/overflow/overflow-compositing-descendant.html = FAIL
+BUGJAMESR : compositing/overflow/scroll-ancestor-update.html = FAIL
+BUGJAMESR : compositing/self-painting-layers.html = FAIL
 
 // text failures on every platform. appears to be a real issue
 BUGWK72402 : compositing/geometry/limit-layer-bounds-clipping-ancestor.html = TEXT

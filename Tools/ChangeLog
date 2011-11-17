@@ -1,3 +1,13 @@
+2011-11-16  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Enable video and canvas 2d compositing triggers by default for layout tests in the compositing directory
+        https://bugs.webkit.org/show_bug.cgi?id=72562
+
+        Reviewed by Dirk Pranke.
+
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::runFileTest):
+
 2011-11-16  Tony Chang  <tony@chromium.org>
 
         [NRWT] speculative fix for multiple subprocess test on cygwin

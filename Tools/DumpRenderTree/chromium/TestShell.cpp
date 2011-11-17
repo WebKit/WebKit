@@ -218,6 +218,12 @@ void TestShell::runFileTest(const TestParams& params)
         || testUrl.find("loading\\") != string::npos)
         m_layoutTestController->setShouldDumpFrameLoadCallbacks(true);
 
+    if (testUrl.find("compositing/") != string::npos || testUrl.find("compositing\\") != string::npos) {
+        m_prefs.acceleratedCompositingForVideoEnabled = true;
+        m_prefs.accelerated2dCanvasEnabled = true;
+        m_prefs.applyTo(m_webView);
+    }
+
     if (testUrl.find("/dumpAsText/") != string::npos
         || testUrl.find("\\dumpAsText\\") != string::npos) {
         m_layoutTestController->setShouldDumpAsText(true);
