@@ -1,3 +1,13 @@
+2011-11-17  Nayan Kumar K  <nayankk@motorola.com>
+
+        [WebKit2][gtk] Fix assert while running TestWebKitSettings
+        https://bugs.webkit.org/show_bug.cgi?id=72469
+
+        Reviewed by Martin Robinson.
+
+        * UIProcess/API/gtk/tests/TestWebKitSettings.cpp:
+        (testWebKitSettings): Correct the test.
+
 2011-11-16  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Use a URI instead of local path to create download destination in WebKit2

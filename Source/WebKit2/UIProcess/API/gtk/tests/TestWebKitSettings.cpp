@@ -147,8 +147,8 @@ static void testWebKitSettings(Test*, gconstpointer)
     webkit_settings_set_default_monospace_font_size(settings, 12);
     g_assert_cmpuint(webkit_settings_get_default_monospace_font_size(settings), ==, 12);
 
-    // Default minimum font size is 5.
-    g_assert_cmpuint(webkit_settings_get_minimum_font_size(settings), ==, 5);
+    // Default minimum font size is 0.
+    g_assert_cmpuint(webkit_settings_get_minimum_font_size(settings), ==, 0);
     webkit_settings_set_minimum_font_size(settings, 7);
     g_assert_cmpuint(webkit_settings_get_minimum_font_size(settings), ==, 7);
 
