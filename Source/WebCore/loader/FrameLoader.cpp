@@ -647,7 +647,7 @@ void FrameLoader::didBeginDocument(bool dispatch)
             m_frame->document()->contentSecurityPolicy()->didReceiveHeader(contentSecurityPolicy, ContentSecurityPolicy::EnforcePolicy);
 
         String reportOnlyContentSecurityPolicy = m_documentLoader->response().httpHeaderField("X-WebKit-CSP-Report-Only");
-        if (!contentSecurityPolicy.isEmpty())
+        if (!reportOnlyContentSecurityPolicy.isEmpty())
             m_frame->document()->contentSecurityPolicy()->didReceiveHeader(reportOnlyContentSecurityPolicy, ContentSecurityPolicy::ReportOnly);
     }
 

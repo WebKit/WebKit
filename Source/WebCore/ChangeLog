@@ -1,3 +1,17 @@
+2011-11-17  Adam Barth  <abarth@webkit.org>
+
+        CSP report-only mode doesn't work from an HTTP header
+        https://bugs.webkit.org/show_bug.cgi?id=71958
+
+        Reviewed by Eric Seidel.
+
+        "It's tested or it's broken." -- Adam Leventhal
+
+        Test: http/tests/security/contentSecurityPolicy/report-only-from-header.php
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::didBeginDocument):
+
 2011-11-15  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: introduce Debugger domain capabilities concept.
