@@ -1,3 +1,16 @@
+2011-11-09  Robert Hogan  <robert@webkit.org>
+
+        CSS 2.1 failure: outline-color-* tests fail
+        https://bugs.webkit.org/show_bug.cgi?id=71931
+
+        Reviewed by Julien Chaffraix.
+
+        WebKit wasn't displaying the top block in these tests because it did not paint the outline
+        of divs with zero size.
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::paintOutline): paint the outline even when the block has zero size
+
 2011-11-17  Sergio Villar Senin  <svillar@igalia.com>
 
         [GTK] plugins/get-url-notify-with-url-that-fails-to-load.html on bots after r100466
