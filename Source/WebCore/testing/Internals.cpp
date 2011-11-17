@@ -371,6 +371,16 @@ void Internals::setZoomParameters(Document* document, float scale, float x, floa
 #endif
 }
 
+void Internals::setMockScrollbarsEnabled(Document* document, bool enabled, ExceptionCode& ec)
+{
+    if (!document || !document->settings()) {
+        ec = INVALID_ACCESS_ERR;
+        return;
+    }
+
+    document->settings()->setMockScrollbarsEnabled(enabled);
+}
+
 void Internals::setPasswordEchoEnabled(Document* document, bool enabled, ExceptionCode& ec)
 {
     if (!document || !document->settings()) {

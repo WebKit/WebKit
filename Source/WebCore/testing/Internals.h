@@ -85,6 +85,8 @@ public:
     float getPageScaleFactor(Document*,  ExceptionCode&);
     void setZoomParameters(Document*, float scale, float x, float y, ExceptionCode&);
 
+    void setMockScrollbarsEnabled(Document*, bool enabled, ExceptionCode&);
+
     void setPasswordEchoEnabled(Document*, bool enabled, ExceptionCode&);
     void setPasswordEchoDurationInSeconds(Document*, double durationInSeconds, ExceptionCode&);
 

@@ -229,6 +229,7 @@ void WebPreferences::applyTo(WebView* webView)
     settings->setEditableLinkBehaviorNeverLive();
     settings->setEnableScrollAnimator(false);
     settings->setFontRenderingModeNormal();
+    settings->setMockScrollbarsEnabled(false);
     settings->setTextDirectionSubmenuInclusionBehaviorNeverIncluded();
     settings->setUsesEncodingDetector(false);
     settings->setImagesEnabled(true);

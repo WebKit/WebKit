@@ -319,6 +319,11 @@ void WebSettingsImpl::setForceCompositingMode(bool enabled)
     m_settings->setForceCompositingMode(enabled);
 }
 
+void WebSettingsImpl::setMockScrollbarsEnabled(bool enabled)
+{
+    m_settings->setMockScrollbarsEnabled(enabled);
+}
+
 void WebSettingsImpl::setCompositeToTextureEnabled(bool enabled)
 {
     m_compositeToTextureEnabled = enabled;

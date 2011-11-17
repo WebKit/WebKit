@@ -1,3 +1,12 @@
+2011-11-11  Adrienne Walker  <enne@google.com>
+
+        [chromium] Expose mock scrollbars to window.internals
+        https://bugs.webkit.org/show_bug.cgi?id=72195
+
+        Reviewed by James Robinson.
+
+        * Source/autotools/symbols.filter:
+
 2011-11-15  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Centralize hide_symbols and ensure all libs are built with symbol visibility & bsymbolic_functions
