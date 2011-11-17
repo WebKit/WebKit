@@ -204,7 +204,7 @@ namespace JSC {
         }
 #endif
 
-        ~NativeExecutable();
+        virtual ~NativeExecutable();
 
         NativeFunction function() { return m_function; }
         NativeFunction constructor() { return m_constructor; }
@@ -279,7 +279,7 @@ namespace JSC {
         bool needsActivation() const { return m_hasCapturedVariables || m_features & (EvalFeature | WithFeature | CatchFeature); }
         bool isStrictMode() const { return m_features & StrictModeFeature; }
 
-        virtual void unlinkCalls() = 0;
+        void unlinkCalls();
         
         static const ClassInfo s_info;
 
@@ -312,7 +312,7 @@ namespace JSC {
     public:
         typedef ScriptExecutable Base;
 
-        ~EvalExecutable();
+        virtual ~EvalExecutable();
 
         JSObject* compile(ExecState* exec, ScopeChainNode* scopeChainNode)
         {
@@ -352,10 +352,12 @@ namespace JSC {
 #endif
         static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue proto)
         {
-            return Structure::create(globalData, globalObject, proto, TypeInfo(CompoundType, StructureFlags), &s_info);
+            return Structure::create(globalData, globalObject, proto, TypeInfo(EvalExecutableType, StructureFlags), &s_info);
         }
         
         static const ClassInfo s_info;
+
+        void unlinkCalls();
 
     protected:
         void clearCode();
@@ -367,7 +369,6 @@ namespace JSC {
 
         JSObject* compileInternal(ExecState*, ScopeChainNode*, JITCode::JITType);
         static void visitChildren(JSCell*, SlotVisitor&);
-        void unlinkCalls();
 
         OwnPtr<EvalCodeBlock> m_evalCodeBlock;
     };
@@ -384,7 +385,7 @@ namespace JSC {
             return executable;
         }
 
-        ~ProgramExecutable();
+        virtual ~ProgramExecutable();
 
         JSObject* compile(ExecState* exec, ScopeChainNode* scopeChainNode)
         {
@@ -419,11 +420,13 @@ namespace JSC {
         
         static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue proto)
         {
-            return Structure::create(globalData, globalObject, proto, TypeInfo(CompoundType, StructureFlags), &s_info);
+            return Structure::create(globalData, globalObject, proto, TypeInfo(ProgramExecutableType, StructureFlags), &s_info);
         }
         
         static const ClassInfo s_info;
         
+        void unlinkCalls();
+
     protected:
         void clearCode();
         static void finalize(JSCell*);
@@ -434,7 +437,6 @@ namespace JSC {
 
         JSObject* compileInternal(ExecState*, ScopeChainNode*, JITCode::JITType);
         static void visitChildren(JSCell*, SlotVisitor&);
-        void unlinkCalls();
 
         OwnPtr<ProgramCodeBlock> m_programCodeBlock;
     };
@@ -459,6 +461,8 @@ namespace JSC {
             globalData.heap.addFinalizer(executable, &finalize);
             return executable;
         }
+
+        virtual ~FunctionExecutable();
 
         JSFunction* make(ExecState* exec, ScopeChainNode* scopeChain)
         {
@@ -605,11 +609,13 @@ namespace JSC {
         static FunctionExecutable* fromGlobalCode(const Identifier&, ExecState*, Debugger*, const SourceCode&, JSObject** exception);
         static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue proto)
         {
-            return Structure::create(globalData, globalObject, proto, TypeInfo(CompoundType, StructureFlags), &s_info);
+            return Structure::create(globalData, globalObject, proto, TypeInfo(FunctionExecutableType, StructureFlags), &s_info);
         }
         
         static const ClassInfo s_info;
         
+        void unlinkCalls();
+
     protected:
         void clearCode();
         static void finalize(JSCell*);
@@ -640,7 +646,6 @@ namespace JSC {
         static const unsigned StructureFlags = OverridesVisitChildren | ScriptExecutable::StructureFlags;
         unsigned m_numCapturedVariables : 31;
         bool m_forceUsesArguments : 1;
-        void unlinkCalls();
 
         RefPtr<FunctionParameters> m_parameters;
         OwnPtr<FunctionCodeBlock> m_codeBlockForCall;
@@ -680,6 +685,20 @@ namespace JSC {
         if (!function || !function->isHostFunction())
             return false;
         return function->nativeFunction() == nativeFunction;
+    }
+
+    inline void ScriptExecutable::unlinkCalls()
+    {
+        switch (structure()->typeInfo().type()) {
+        case EvalExecutableType:
+            return jsCast<EvalExecutable*>(this)->unlinkCalls();
+        case ProgramExecutableType:
+            return jsCast<ProgramExecutable*>(this)->unlinkCalls();
+        case FunctionExecutableType:
+            return jsCast<FunctionExecutable*>(this)->unlinkCalls();
+        default:
+            ASSERT_NOT_REACHED();
+        }
     }
 
 }

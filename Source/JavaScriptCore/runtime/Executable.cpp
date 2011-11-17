@@ -135,6 +135,10 @@ FunctionExecutable::FunctionExecutable(ExecState* exec, const Identifier& name, 
 {
 }
 
+FunctionExecutable::~FunctionExecutable()
+{
+}
+
 JSObject* EvalExecutable::compileOptimized(ExecState* exec, ScopeChainNode* scopeChainNode)
 {
     ASSERT(exec->globalData().dynamicGlobalObject);
