@@ -50,11 +50,11 @@ public:
     }
 
     static JSC::JSValue getConstructor(JSC::ExecState*, JSC::JSGlobalObject*);
-    TestMediaQueryListListener* impl() const { return m_impl.get(); }
-    void clearImpl() { m_impl.clear(); }
+    TestMediaQueryListListener* impl() const { return m_impl; }
+    void releaseImpl() { m_impl->deref(); m_impl = 0; }
 
 private:
-    RefPtr<TestMediaQueryListListener> m_impl;
+    TestMediaQueryListListener* m_impl;
 protected:
     JSTestMediaQueryListListener(JSC::Structure*, JSDOMGlobalObject*, PassRefPtr<TestMediaQueryListListener>);
     void finishCreation(JSC::JSGlobalData&);

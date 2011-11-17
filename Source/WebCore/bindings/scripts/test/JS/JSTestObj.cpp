@@ -313,7 +313,7 @@ const ClassInfo JSTestObj::s_info = { "TestObj", &JSDOMWrapper::s_info, &JSTestO
 
 JSTestObj::JSTestObj(Structure* structure, JSDOMGlobalObject* globalObject, PassRefPtr<TestObj> impl)
     : JSDOMWrapper(structure, globalObject)
-    , m_impl(impl)
+    , m_impl(impl.leakRef())
 {
 }
 
@@ -2000,7 +2000,7 @@ void JSTestObjOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
     JSTestObj* jsTestObj = static_cast<JSTestObj*>(handle.get().asCell());
     DOMWrapperWorld* world = static_cast<DOMWrapperWorld*>(context);
     uncacheWrapper(world, jsTestObj->impl(), jsTestObj);
-    jsTestObj->clearImpl();
+    jsTestObj->releaseImpl();
 }
 
 JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, TestObj* impl)

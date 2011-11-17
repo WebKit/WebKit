@@ -140,7 +140,7 @@ const ClassInfo JSTestMediaQueryListListener::s_info = { "TestMediaQueryListList
 
 JSTestMediaQueryListListener::JSTestMediaQueryListListener(Structure* structure, JSDOMGlobalObject* globalObject, PassRefPtr<TestMediaQueryListListener> impl)
     : JSDOMWrapper(structure, globalObject)
-    , m_impl(impl)
+    , m_impl(impl.leakRef())
 {
 }
 
@@ -218,7 +218,7 @@ void JSTestMediaQueryListListenerOwner::finalize(JSC::Handle<JSC::Unknown> handl
     JSTestMediaQueryListListener* jsTestMediaQueryListListener = static_cast<JSTestMediaQueryListListener*>(handle.get().asCell());
     DOMWrapperWorld* world = static_cast<DOMWrapperWorld*>(context);
     uncacheWrapper(world, jsTestMediaQueryListListener->impl(), jsTestMediaQueryListListener);
-    jsTestMediaQueryListListener->clearImpl();
+    jsTestMediaQueryListListener->releaseImpl();
 }
 
 JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, TestMediaQueryListListener* impl)

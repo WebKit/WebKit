@@ -52,11 +52,11 @@ public:
     }
 
     static JSC::JSValue getConstructor(JSC::ExecState*, JSC::JSGlobalObject*);
-    TestSerializedScriptValueInterface* impl() const { return m_impl.get(); }
-    void clearImpl() { m_impl.clear(); }
+    TestSerializedScriptValueInterface* impl() const { return m_impl; }
+    void releaseImpl() { m_impl->deref(); m_impl = 0; }
 
 private:
-    RefPtr<TestSerializedScriptValueInterface> m_impl;
+    TestSerializedScriptValueInterface* m_impl;
 protected:
     JSTestSerializedScriptValueInterface(JSC::Structure*, JSDOMGlobalObject*, PassRefPtr<TestSerializedScriptValueInterface>);
     void finishCreation(JSC::JSGlobalData&);

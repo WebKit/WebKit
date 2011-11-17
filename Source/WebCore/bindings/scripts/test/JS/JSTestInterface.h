@@ -52,11 +52,11 @@ public:
     }
 
     static JSC::JSValue getConstructor(JSC::ExecState*, JSC::JSGlobalObject*);
-    TestInterface* impl() const { return m_impl.get(); }
-    void clearImpl() { m_impl.clear(); }
+    TestInterface* impl() const { return m_impl; }
+    void releaseImpl() { m_impl->deref(); m_impl = 0; }
 
 private:
-    RefPtr<TestInterface> m_impl;
+    TestInterface* m_impl;
 protected:
     JSTestInterface(JSC::Structure*, JSDOMGlobalObject*, PassRefPtr<TestInterface>);
     void finishCreation(JSC::JSGlobalData&);

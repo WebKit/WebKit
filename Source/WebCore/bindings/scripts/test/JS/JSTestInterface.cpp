@@ -158,7 +158,7 @@ const ClassInfo JSTestInterface::s_info = { "TestInterface", &JSDOMWrapper::s_in
 
 JSTestInterface::JSTestInterface(Structure* structure, JSDOMGlobalObject* globalObject, PassRefPtr<TestInterface> impl)
     : JSDOMWrapper(structure, globalObject)
-    , m_impl(impl)
+    , m_impl(impl.leakRef())
 {
 }
 
@@ -221,7 +221,7 @@ void JSTestInterfaceOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* cont
     JSTestInterface* jsTestInterface = static_cast<JSTestInterface*>(handle.get().asCell());
     DOMWrapperWorld* world = static_cast<DOMWrapperWorld*>(context);
     uncacheWrapper(world, jsTestInterface->impl(), jsTestInterface);
-    jsTestInterface->clearImpl();
+    jsTestInterface->releaseImpl();
 }
 
 JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, TestInterface* impl)

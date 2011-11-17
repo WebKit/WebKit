@@ -63,11 +63,11 @@ public:
     // Custom functions
     JSC::JSValue customMethod(JSC::ExecState*);
     JSC::JSValue customMethodWithArgs(JSC::ExecState*);
-    TestObj* impl() const { return m_impl.get(); }
-    void clearImpl() { m_impl.clear(); }
+    TestObj* impl() const { return m_impl; }
+    void releaseImpl() { m_impl->deref(); m_impl = 0; }
 
 private:
-    RefPtr<TestObj> m_impl;
+    TestObj* m_impl;
 protected:
     JSTestObj(JSC::Structure*, JSDOMGlobalObject*, PassRefPtr<TestObj>);
     void finishCreation(JSC::JSGlobalData&);

@@ -123,7 +123,7 @@ const ClassInfo JSTestNamedConstructor::s_info = { "TestNamedConstructor", &JSDO
 
 JSTestNamedConstructor::JSTestNamedConstructor(Structure* structure, JSDOMGlobalObject* globalObject, PassRefPtr<TestNamedConstructor> impl)
     : JSDOMWrapper(structure, globalObject)
-    , m_impl(impl)
+    , m_impl(impl.leakRef())
 {
 }
 
@@ -186,7 +186,7 @@ void JSTestNamedConstructorOwner::finalize(JSC::Handle<JSC::Unknown> handle, voi
     JSTestNamedConstructor* jsTestNamedConstructor = static_cast<JSTestNamedConstructor*>(handle.get().asCell());
     DOMWrapperWorld* world = static_cast<DOMWrapperWorld*>(context);
     uncacheWrapper(world, jsTestNamedConstructor->impl(), jsTestNamedConstructor);
-    jsTestNamedConstructor->clearImpl();
+    jsTestNamedConstructor->releaseImpl();
 }
 
 JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, TestNamedConstructor* impl)

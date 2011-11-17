@@ -50,11 +50,11 @@ public:
     }
 
     static JSC::JSValue getConstructor(JSC::ExecState*, JSC::JSGlobalObject*);
-    TestNamedConstructor* impl() const { return m_impl.get(); }
-    void clearImpl() { m_impl.clear(); }
+    TestNamedConstructor* impl() const { return m_impl; }
+    void releaseImpl() { m_impl->deref(); m_impl = 0; }
 
 private:
-    RefPtr<TestNamedConstructor> m_impl;
+    TestNamedConstructor* m_impl;
 protected:
     JSTestNamedConstructor(JSC::Structure*, JSDOMGlobalObject*, PassRefPtr<TestNamedConstructor>);
     void finishCreation(JSC::JSGlobalData&);
