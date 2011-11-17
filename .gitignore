@@ -81,6 +81,7 @@ Source/WebKit/chromium/xcodebuild/
 # Ignore files that Chromium port generates
 /Makefile.chromium
 /out
+/gyp-mac-tool
 
 # Ignore compiled java tests:
 LayoutTests/java/*.class
