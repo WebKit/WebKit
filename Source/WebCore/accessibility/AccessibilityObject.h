@@ -487,7 +487,7 @@ public:
     virtual bool exposesTitleUIElement() const { return true; }
     virtual AccessibilityObject* correspondingLabelForControlElement() const { return 0; }
     virtual AccessibilityObject* correspondingControlForLabelElement() const { return 0; }
-    virtual AccessibilityObject* scrollBar(AccessibilityOrientation) const { return 0; }
+    virtual AccessibilityObject* scrollBar(AccessibilityOrientation) { return 0; }
     
     virtual AccessibilityRole ariaRoleAttribute() const { return UnknownRole; }
     virtual bool isPresentationalChildOfAriaRole() const { return false; }

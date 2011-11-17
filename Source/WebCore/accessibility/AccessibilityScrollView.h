@@ -50,8 +50,9 @@ private:
     virtual bool isAttachment() const;
     virtual Widget* widgetForAttachmentView() const;
     
-    virtual AccessibilityObject* scrollBar(AccessibilityOrientation) const;
+    virtual AccessibilityObject* scrollBar(AccessibilityOrientation);
     virtual void addChildren();
+    virtual void clearChildren();
     virtual AccessibilityObject* accessibilityHitTest(const LayoutPoint&) const;
     virtual void updateChildrenIfNecessary();
     virtual void setNeedsToUpdateChildren() { m_childrenDirty = true; }

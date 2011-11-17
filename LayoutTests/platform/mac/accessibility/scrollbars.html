@@ -1,0 +1,45 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../../../fast/js/resources/js-test-style.css">
+<script>
+var successfullyParsed = false;
+</script>
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body id="body" tabindex="0">
+
+<p id="description"></p>
+<div id="console"></div>
+
+<div role="textbox" id="iframeGroup"></div>
+
+<script>
+
+    description("This tests that a scroll area will return scroll bars when asked.");
+
+   if (window.accessibilityController) {
+        document.getElementById("body").focus();
+        var body = accessibilityController.focusedElement;
+    }
+
+    // Cause the web page to gain scrollbars.
+    for (var k = 0; k < 100; k++) {
+       document.getElementById("body").innerHTML += "<br><br><br>";
+    }
+
+     if (window.accessibilityController) {
+          document.getElementById("body").focus();
+          var body = accessibilityController.focusedElement;
+
+          var scrollArea = body.parentElement();
+          shouldBe("scrollArea.role", "'AXRole: AXScrollArea'");
+          shouldBe("scrollArea.verticalScrollbar.role", "'AXRole: AXScrollBar'");
+    }
+
+    successfullyParsed = true;
+</script>
+
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

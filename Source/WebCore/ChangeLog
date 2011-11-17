@@ -1,3 +1,23 @@
+2011-11-17  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: The scrollArea is not correctly returning the scrollbars
+        https://bugs.webkit.org/show_bug.cgi?id=70247
+
+        Reviewed by Beth Dakin.
+
+        A few bugs that were preventing this from working.
+           1) In accessibilityAttributeValue: when an element did not have a renderer() we were returning earlier than we should have
+           2) We were not updating and clearing the scrollbars correctly when children were cleared or when asked for.
+
+        Test: platform/mac/accessibility/scrollbars.html
+
+        * accessibility/AccessibilityScrollView.cpp:
+        (WebCore::AccessibilityScrollView::scrollBar):
+        (WebCore::AccessibilityScrollView::clearChildren):
+        * accessibility/AccessibilityScrollView.h:
+        * accessibility/mac/WebAccessibilityObjectWrapper.mm:
+        (-[WebAccessibilityObjectWrapper accessibilityAttributeValue:]):
+
 2011-11-14  Adam Barth  <abarth@webkit.org>
 
         Unique origins shouldn't remember their scheme, host, or port

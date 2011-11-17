@@ -48,8 +48,10 @@ PassRefPtr<AccessibilityScrollView> AccessibilityScrollView::create(ScrollView* 
     return adoptRef(new AccessibilityScrollView(view));
 }
     
-AccessibilityObject* AccessibilityScrollView::scrollBar(AccessibilityOrientation orientation) const
+AccessibilityObject* AccessibilityScrollView::scrollBar(AccessibilityOrientation orientation)
 {
+    updateScrollbars();
+    
     switch (orientation) {
     case AccessibilityOrientationVertical:
         return m_verticalScrollbar ? m_verticalScrollbar.get() : 0;
@@ -121,6 +123,13 @@ AccessibilityScrollbar* AccessibilityScrollView::addChildScrollbar(Scrollbar* sc
     return scrollBarObject;
 }
         
+void AccessibilityScrollView::clearChildren()
+{
+    AccessibilityObject::clearChildren();
+    m_verticalScrollbar = 0;
+    m_horizontalScrollbar = 0;
+}
+    
 void AccessibilityScrollView::addChildren()
 {
     ASSERT(!m_haveChildren);

@@ -2218,30 +2218,17 @@ static NSString* roleValueToNSString(AccessibilityRole value)
     if ([attributeName isEqualToString: @"AXSelectedTextMarkerRange"])
         return [self textMarkerRangeForSelection];
     
-    if (m_object->isAccessibilityRenderObject()) {
-        RenderObject* renderer = static_cast<AccessibilityRenderObject*>(m_object)->renderer();
-        if (!renderer)
-            return nil;
-        
+    if (m_object->renderer()) {
         if ([attributeName isEqualToString: @"AXStartTextMarker"])
-            return [self textMarkerForVisiblePosition:startOfDocument(renderer->document())];
+            return [self textMarkerForVisiblePosition:startOfDocument(m_object->renderer()->document())];
         if ([attributeName isEqualToString: @"AXEndTextMarker"])
-            return [self textMarkerForVisiblePosition:endOfDocument(renderer->document())];
-
-        if ([attributeName isEqualToString:NSAccessibilityBlockQuoteLevelAttribute])
-            return [NSNumber numberWithInt:m_object->blockquoteLevel()];
-        if ([attributeName isEqualToString:@"AXTableLevel"])
-            return [NSNumber numberWithInt:m_object->tableLevel()];
-    } else {
-        AccessibilityObject* parent = m_object->parentObjectUnignored();
-        if (!parent)
-            return [NSNumber numberWithInt:0];
-        
-        if ([attributeName isEqualToString:NSAccessibilityBlockQuoteLevelAttribute])
-            return [parent->wrapper() accessibilityAttributeValue:NSAccessibilityBlockQuoteLevelAttribute];
-        if ([attributeName isEqualToString:@"AXTableLevel"])
-            return [parent->wrapper() accessibilityAttributeValue:@"AXTableLevel"];
+            return [self textMarkerForVisiblePosition:endOfDocument(m_object->renderer()->document())];
     }
+    
+    if ([attributeName isEqualToString:NSAccessibilityBlockQuoteLevelAttribute])
+        return [NSNumber numberWithInt:m_object->blockquoteLevel()];
+    if ([attributeName isEqualToString:@"AXTableLevel"])
+        return [NSNumber numberWithInt:m_object->tableLevel()];
     
     if ([attributeName isEqualToString: NSAccessibilityLinkedUIElementsAttribute]) {
         AccessibilityObject::AccessibilityChildrenVector linkedUIElements;
