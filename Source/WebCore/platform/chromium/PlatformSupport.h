@@ -152,7 +152,12 @@ public:
     static bool loadFont(NSFont* srcFont, CGFontRef*, uint32_t* fontID);
 #elif OS(UNIX)
     static void getRenderStyleForStrike(const char* family, int sizeAndStyle, FontRenderStyle* result);
-    static String getFontFamilyForCharacters(const UChar*, size_t numCharacters, const char* preferredLocale);
+    struct FontFamily {
+        String name;
+        bool isBold;
+        bool isItalic;
+    };
+    static void getFontFamilyForCharacters(const UChar*, size_t numCharacters, const char* preferredLocale, FontFamily*);
 #endif
 
     // Forms --------------------------------------------------------------

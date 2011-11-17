@@ -118,7 +118,8 @@ public:
 
     FontOrientation orientation() const { return m_orientation; }
     void setOrientation(FontOrientation orientation) { m_orientation = orientation; }
-    
+    void setFakeBold(bool fakeBold) { m_fakeBold = fakeBold; }
+    void setFakeItalic(bool fakeItalic) { m_fakeItalic = fakeItalic; }
     bool operator==(const FontPlatformData&) const;
     FontPlatformData& operator=(const FontPlatformData&);
     bool isHashTableDeletedValue() const { return m_typeface == hashTableDeletedFontValue(); }

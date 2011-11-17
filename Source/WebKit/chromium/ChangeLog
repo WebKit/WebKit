@@ -1,3 +1,21 @@
+2011-11-17  Kenichi Ishibashi  <bashi@chromium.org>
+
+        [chromium] don't call fontconfig twice in complex text path
+        https://bugs.webkit.org/show_bug.cgi?id=38701
+
+        Reviewed by Tony Chang.
+
+        Add new API for getFamilyForChars() so that keeping correct font mapping of the given characters.
+
+        * public/linux/WebFontFamily.h: Added.
+        * public/linux/WebFontInfo.h: Add a new API.
+        * public/linux/WebSandboxSupport.h:
+        (WebKit::WebSandboxSupport::getFontFamilyForCharacters): Ditto.
+        * src/PlatformSupport.cpp:
+        (WebCore::PlatformSupport::getFontFamilyForCharacters): Ditto.
+        * src/linux/WebFontInfo.cpp:
+        (WebKit::WebFontInfo::familyForChars): Modified to get weight and italic properties of the font. Old API uses new API internally.
+
 2011-11-17  Adam Barth  <abarth@webkit.org>
 
         [Chromium] Introduce WebSecurityOrigin::isUnique in preparation for removing WebSecurityOrigin::isEmpty

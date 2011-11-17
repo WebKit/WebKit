@@ -59,12 +59,40 @@ const SimpleFontData* FontCache::getFontDataForCharacters(const Font& font,
                                                           int length)
 {
     icu::Locale locale = icu::Locale::getDefault();
-    String family = PlatformSupport::getFontFamilyForCharacters(characters, length, locale.getLanguage());
-    if (family.isEmpty())
+    PlatformSupport::FontFamily family;
+    PlatformSupport::getFontFamilyForCharacters(characters, length, locale.getLanguage(), &family);
+    if (family.name.isEmpty())
         return 0;
 
-    AtomicString atomicFamily(family);
+    AtomicString atomicFamily(family.name);
+    // FIXME: Remove this #if after API transition complete.
+#if 0
+    // Changes weight and/or italic of given FontDescription depends on
+    // the result of fontconfig so that keeping the correct font mapping
+    // of the given characters. See http://crbug.com/32109 for details.
+    bool shouldSetFakeBold = false;
+    bool shouldSetFakeItalic = false;
+    FontDescription description(font.fontDescription());
+    if (family.isBold && description.weight() < FontWeightBold)
+        description.setWeight(FontWeightBold);
+    if (!family.isBold && description.weight() >= FontWeightBold) {
+        shouldSetFakeBold = true;
+        description.setWeight(FontWeightNormal);
+    }
+    if (family.isItalic && description.italic() == FontItalicOff)
+        description.setItalic(FontItalicOn);
+    if (!family.isItalic && description.italic() == FontItalicOn) {
+        shouldSetFakeItalic = true;
+        description.setItalic(FontItalicOff);
+    }
+
+    FontPlatformData platformData = FontPlatformData(*getCachedFontPlatformData(description, atomicFamily, DoNotRetain));
+    platformData.setFakeBold(shouldSetFakeBold);
+    platformData.setFakeItalic(shouldSetFakeItalic);
+    return getCachedFontData(&platformData, DoNotRetain);
+#else
     return getCachedFontData(getCachedFontPlatformData(font.fontDescription(), atomicFamily, DoNotRetain), DoNotRetain);
+#endif
 }
 
 SimpleFontData* FontCache::getSimilarFontPlatformData(const Font& font)

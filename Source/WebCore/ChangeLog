@@ -1,3 +1,21 @@
+2011-11-17  Kenichi Ishibashi  <bashi@chromium.org>
+
+        [chromium] don't call fontconfig twice in complex text path
+        https://bugs.webkit.org/show_bug.cgi?id=38701
+
+        Adds a new API for getting font family. For now, FontCacheLinux calls the new API, but don't use additional properties for compatibility. The old API will be removed when Chromium is ready to use new API.
+
+        Reviewed by Tony Chang.
+
+        No new tests. No behavior changes for now.
+
+        * platform/chromium/PlatformSupport.h: Added FontFamily struct and changed the declaration of getFontFamilyForCharacters().
+        * platform/graphics/chromium/FontCacheLinux.cpp:
+        (WebCore::FontCache::getFontDataForCharacters): Uses new PlatformSupport::getFontFamilyForCharacters().
+        * platform/graphics/chromium/FontPlatformDataLinux.h:
+        (WebCore::FontPlatformData::setFakeBold): Added.
+        (WebCore::FontPlatformData::setFakeItalic): Added.
+
 2011-11-17  Mario Sanchez Prada  <msanchez@igalia.com>
 
         [GTK] Consider parent AtkObject in webkit_accessible_get_parent(), if already set

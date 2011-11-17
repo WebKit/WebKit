@@ -31,6 +31,7 @@
 #include "config.h"
 #include "WebFontInfo.h"
 
+#include "WebFontFamily.h"
 #include "WebFontRenderStyle.h"
 
 #include <fontconfig/fontconfig.h>
@@ -39,7 +40,15 @@
 
 namespace WebKit {
 
+// FIXME: Depreciated API. Remove later.
 WebCString WebFontInfo::familyForChars(const WebUChar* characters, size_t numCharacters, const char* preferredLocale)
+{
+    WebFontFamily family;
+    familyForChars(characters, numCharacters, preferredLocale, &family);
+    return family.name;
+}
+
+void WebFontInfo::familyForChars(const WebUChar* characters, size_t numCharacters, const char* preferredLocale, WebFontFamily* family)
 {
     FcCharSet* cset = FcCharSetCreate();
     for (size_t i = 0; i < numCharacters; ++i) {
@@ -78,9 +87,12 @@ WebCString WebFontInfo::familyForChars(const WebUChar* characters, size_t numCha
     FcPatternDestroy(pattern);
     FcCharSetDestroy(cset);
 
-    if (!fontSet)
-        return WebCString();
-
+    if (!fontSet) {
+        family->name = WebCString();
+        family->isBold = false;
+        family->isItalic = false;
+        return;
+    }
     // Older versions of fontconfig have a bug where they cannot select
     // only scalable fonts so we have to manually filter the results.
     for (int i = 0; i < fontSet->nfont; ++i) {
@@ -99,18 +111,26 @@ WebCString WebFontInfo::familyForChars(const WebUChar* characters, size_t numCha
         if (access(reinterpret_cast<char*>(cFilename), R_OK))
             continue;
 
-        FcChar8* family;
-        WebCString result;
-        if (FcPatternGetString(current, FC_FAMILY, 0, &family) == FcResultMatch) {
-            const char* charFamily = reinterpret_cast<char*>(family);
-            result = WebCString(charFamily, strlen(charFamily));
+        FcChar8* familyName;
+        if (FcPatternGetString(current, FC_FAMILY, 0, &familyName) == FcResultMatch) {
+            const char* charFamily = reinterpret_cast<char*>(familyName);
+            family->name = WebCString(charFamily, strlen(charFamily));
         }
+        int weight;
+        if (FcPatternGetInteger(current, FC_WEIGHT, 0, &weight) == FcResultMatch)
+            family->isBold = weight >= FC_WEIGHT_BOLD;
+        else
+            family->isBold = false;
+        int slant;
+        if (FcPatternGetInteger(current, FC_SLANT, 0, &slant) == FcResultMatch)
+            family->isItalic = slant != FC_SLANT_ROMAN;
+        else
+            family->isItalic = false;
         FcFontSetDestroy(fontSet);
-        return result;
+        return;
     }
 
     FcFontSetDestroy(fontSet);
-    return WebCString();
 }
 
 void WebFontInfo::renderStyleForStrike(const char* family, int sizeAndStyle, WebFontRenderStyle* out)
