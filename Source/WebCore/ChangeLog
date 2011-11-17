@@ -1,3 +1,13 @@
+2011-11-17  Patrick Gansterer  <paroga@webkit.org>
+
+        Unreviewed WinCE build fix for r94119.
+
+        MSVC throws multiply defined symbols linker error when using local class in inline function.
+
+        * bindings/js/JSDictionary.h:
+        (WebCore::JSDictionary::IdentitySetter::identitySetter):
+        (WebCore::JSDictionary::tryGetProperty):
+
 2011-11-17  Eric Carlson  <eric.carlson@apple.com>
 
         TextTrackList not sorted correctly

@@ -54,6 +54,14 @@ public:
     bool tryGetProperty(const char* propertyName, T* context, void (*setter)(T* context, const Result&));
 
 private:
+    template <typename Result>
+    struct IdentitySetter {
+        static void identitySetter(Result* context, const Result& result)
+        {
+            *context = result;
+        }
+    };
+
     enum GetPropertyResult {
         ExceptionThrown,
         NoPropertyFound,
@@ -110,14 +118,7 @@ bool JSDictionary::tryGetProperty(const char* propertyName, T* context, void (*s
 template <typename Result>
 bool JSDictionary::tryGetProperty(const char* propertyName, Result& finalResult)
 {
-    struct IdentitySetter {
-        static void identitySetter(Result* context, const Result& result)
-        {
-            *context = result;
-        }
-    };
-
-    return tryGetProperty(propertyName, &finalResult, IdentitySetter::identitySetter);
+    return tryGetProperty(propertyName, &finalResult, IdentitySetter<Result>::identitySetter);
 }
 
 } // namespace WebCore
