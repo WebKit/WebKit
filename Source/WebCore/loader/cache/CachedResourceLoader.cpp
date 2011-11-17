@@ -653,6 +653,8 @@ void CachedResourceLoader::removeCachedResource(CachedResource* resource) const
 void CachedResourceLoader::loadDone()
 {
     m_loadFinishing = false;
+
+    RefPtr<Document> protect(m_document);
     if (frame())
         frame()->loader()->loadDone();
     performPostLoadActions();
