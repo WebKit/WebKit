@@ -28,6 +28,8 @@
 
 #include "TestController.h"
 
+#include <stdio.h>
+
 #include <QApplication>
 #include <QObject>
 #include <QTimer>
