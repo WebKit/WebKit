@@ -1327,6 +1327,12 @@ static AtkObject* webkit_web_view_get_accessible(GtkWidget* widget)
     if (!axRoot || !ATK_IS_OBJECT(axRoot))
         return 0;
 
+    // Ensure the parent is set to make top-down and bottom-up navigation work.
+    GtkWidget* parentWidget = gtk_widget_get_parent(widget);
+    AtkObject* axParent = parentWidget ? gtk_widget_get_accessible(parentWidget) : 0;
+    if (axParent)
+        atk_object_set_parent(axRoot, axParent);
+
     return axRoot;
 }
 

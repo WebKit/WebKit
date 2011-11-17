@@ -1,5 +1,17 @@
 2011-11-17  Mario Sanchez Prada  <msanchez@igalia.com>
 
+        [Gtk] Ensure the parent for the webView's a11y object is set.
+
+        This should fix some accessibility related GTK API tests.
+
+        Rubber-stamped by Philippe Normand.
+
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_get_accessible): Always set the parent to make
+        navigation across GTK and WebKit worlds work properly.
+
+2011-11-17  Mario Sanchez Prada  <msanchez@igalia.com>
+
         [GTK] Consider parent AtkObject in webkit_accessible_get_parent(), if already set
         https://bugs.webkit.org/show_bug.cgi?id=72525
 
