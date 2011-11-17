@@ -34,6 +34,16 @@ G_BEGIN_DECLS
 #define WEBKIT_IS_DOWNLOAD_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass),  WEBKIT_TYPE_DOWNLOAD))
 #define WEBKIT_DOWNLOAD_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj),  WEBKIT_TYPE_DOWNLOAD, WebKitDownloadClass))
 
+/**
+ * WebKitDownloadStatus:
+ * @WEBKIT_DOWNLOAD_STATUS_ERROR: The download failed because of an error other than user cancellation.
+ * @WEBKIT_DOWNLOAD_STATUS_CREATED: The download has not started yet.
+ * @WEBKIT_DOWNLOAD_STATUS_STARTED: The download has started, but has not completed yet.
+ * @WEBKIT_DOWNLOAD_STATUS_CANCELLED: The user canceled the download.
+ * @WEBKIT_DOWNLOAD_STATUS_FINISHED: The download completed successfully.
+ *
+ * Enum values used to denote the various states of a download.
+ **/
 typedef enum {
     WEBKIT_DOWNLOAD_STATUS_ERROR = -1,
     WEBKIT_DOWNLOAD_STATUS_CREATED = 0,
@@ -42,6 +52,14 @@ typedef enum {
     WEBKIT_DOWNLOAD_STATUS_FINISHED
 } WebKitDownloadStatus;
 
+/**
+ * WebKitDownloadError:
+ * @WEBKIT_DOWNLOAD_ERROR_CANCELLED_BY_USER: The download failed due to user cancellation.
+ * @WEBKIT_DOWNLOAD_ERROR_DESTINATION: The download failed due to disk write failure.
+ * @WEBKIT_DOWNLOAD_ERROR_NETWORK: The download failed due to a network error.
+ *
+ * Enum values used to denote the various download errors.
+ **/
 typedef enum {
     WEBKIT_DOWNLOAD_ERROR_CANCELLED_BY_USER,
     WEBKIT_DOWNLOAD_ERROR_DESTINATION,

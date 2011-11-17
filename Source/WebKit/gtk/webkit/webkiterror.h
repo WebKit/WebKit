@@ -30,6 +30,18 @@ G_BEGIN_DECLS
 #define WEBKIT_POLICY_ERROR         webkit_policy_error_quark  ()
 #define WEBKIT_PLUGIN_ERROR         webkit_plugin_error_quark  ()
 
+/* The enum values are synchronized with Mac's WebKit error values. */
+
+/**
+ * WebKitNetworkError:
+ * @WEBKIT_NETWORK_ERROR_FAILED: Generic load failure
+ * @WEBKIT_NETWORK_ERROR_TRANSPORT: Load failure due to transport error
+ * @WEBKIT_NETWORK_ERROR_UNKNOWN_PROTOCOL: Load failure due to unknown protocol
+ * @WEBKIT_NETWORK_ERROR_CANCELLED: Load failure due to cancellation
+ * @WEBKIT_NETWORK_ERROR_FILE_DOES_NOT_EXIST: Load failure due to missing file
+ *
+ * Enum values used to denote the various network errors.
+ **/
 typedef enum {
     WEBKIT_NETWORK_ERROR_FAILED                                 = 399,
     WEBKIT_NETWORK_ERROR_TRANSPORT                              = 300,
@@ -38,7 +50,16 @@ typedef enum {
     WEBKIT_NETWORK_ERROR_FILE_DOES_NOT_EXIST                    = 303,
 } WebKitNetworkError;
 
-/* Sync'd with Mac's WebKit Errors */
+/**
+ * WebKitPolicyError:
+ * @WEBKIT_POLICY_ERROR_FAILED: Generic load failure due to policy error
+ * @WEBKIT_POLICY_ERROR_CANNOT_SHOW_MIME_TYPE: Load failure due to unsupported mime type
+ * @WEBKIT_POLICY_ERROR_CANNOT_SHOW_URL: Load failure due to URI that can not be shown
+ * @WEBKIT_POLICY_ERROR_FRAME_LOAD_INTERRUPTED_BY_POLICY_CHANGE: Load failure due to frame load interruption by policy change
+ * @WEBKIT_POLICY_ERROR_CANNOT_USE_RESTRICTED_PORT: Load failure due to port restriction
+ *
+ * Enum values used to denote the various policy errors.
+ **/
 typedef enum {
     WEBKIT_POLICY_ERROR_FAILED                                  = 199,
     WEBKIT_POLICY_ERROR_CANNOT_SHOW_MIME_TYPE                   = 100,
@@ -47,6 +68,17 @@ typedef enum {
     WEBKIT_POLICY_ERROR_CANNOT_USE_RESTRICTED_PORT              = 103,
 } WebKitPolicyError;
 
+/**
+ * WebKitPluginError:
+ * @WEBKIT_PLUGIN_ERROR_FAILED: Generic plugin load failure
+ * @WEBKIT_PLUGIN_ERROR_CANNOT_FIND_PLUGIN: Load failure due to missing plugin
+ * @WEBKIT_PLUGIN_ERROR_CANNOT_LOAD_PLUGIN: Load failure due to inability to load plugin
+ * @WEBKIT_PLUGIN_ERROR_JAVA_UNAVAILABLE: Load failue due to missing Java support that is required to load plugin
+ * @WEBKIT_PLUGIN_ERROR_CONNECTION_CANCELLED: Load failure due to connection cancellation
+ * @WEBKIT_PLUGIN_ERROR_WILL_HANDLE_LOAD: Load failure since plugin handles the load
+ *
+ * Enum values used to denote the various plugin errors.
+ **/
 typedef enum {
     WEBKIT_PLUGIN_ERROR_FAILED                                  = 299,
     WEBKIT_PLUGIN_ERROR_CANNOT_FIND_PLUGIN                      = 200,

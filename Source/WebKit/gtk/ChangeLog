@@ -1,3 +1,14 @@
+2011-11-17  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Remove the last remaining WebKit1 gtkdoc warnings
+        https://bugs.webkit.org/show_bug.cgi?id=72627
+
+        Reviewed by Philippe Normand.
+
+        * webkit/webkitdownload.h: Add missing enum documentation.
+        * webkit/webkiterror.h: Ditto.
+        * webkit/webkitwebview.h: Ditto.
+
 2011-11-17  Mario Sanchez Prada  <msanchez@igalia.com>
 
         [Gtk] Ensure the parent for the webView's a11y object is set.

@@ -44,12 +44,31 @@ G_BEGIN_DECLS
 
 typedef struct _WebKitWebViewPrivate WebKitWebViewPrivate;
 
+/**
+ * WebKitNavigationResponse:
+ * @WEBKIT_NAVIGATION_RESPONSE_ACCEPT: Instruct WebKit to allow the navigation.
+ * @WEBKIT_NAVIGATION_RESPONSE_IGNORE: Instruct WebKit to ignore the navigation.
+ * @WEBKIT_NAVIGATION_RESPONSE_DOWNLOAD: Instruct WebKit to start a download of the destination instead.
+ *
+ * Enum values used to denote the various responses to a navigation policy decision.
+ **/
 typedef enum {
     WEBKIT_NAVIGATION_RESPONSE_ACCEPT,
     WEBKIT_NAVIGATION_RESPONSE_IGNORE,
     WEBKIT_NAVIGATION_RESPONSE_DOWNLOAD
 } WebKitNavigationResponse;
 
+/**
+ * WebKitWebViewTargetInfo:
+ * @WEBKIT_WEB_VIEW_TARGET_INFO_HTML: Rich markup data
+ * @WEBKIT_WEB_VIEW_TARGET_INFO_TEXT: Text data
+ * @WEBKIT_WEB_VIEW_TARGET_INFO_IMAGE: Image data
+ * @WEBKIT_WEB_VIEW_TARGET_INFO_URI_LIST: URI list data
+ * @WEBKIT_WEB_VIEW_TARGET_INFO_NETSCAPE_URL: A single URL in the Netscape protocol
+ *
+ * Enum values used to denote the info value of various selection types. These can be used
+ * to interpret the data WebKitGTK+ publishes via GtkClipboard and drag-and-drop.
+ **/
 typedef enum
 {
     WEBKIT_WEB_VIEW_TARGET_INFO_HTML,
@@ -59,6 +78,17 @@ typedef enum
     WEBKIT_WEB_VIEW_TARGET_INFO_NETSCAPE_URL
 } WebKitWebViewTargetInfo;
 
+/**
+ * WebKitWebViewViewMode:
+ * @WEBKIT_WEB_VIEW_VIEW_MODE_WINDOWED: Windowed view mode
+ * @WEBKIT_WEB_VIEW_VIEW_MODE_FLOATING: Floating view mode
+ * @WEBKIT_WEB_VIEW_VIEW_MODE_FULLSCREEN: Fullscreen view mode
+ * @WEBKIT_WEB_VIEW_VIEW_MODE_MAXIMIZED: Maximized view mode
+ * @WEBKIT_WEB_VIEW_VIEW_MODE_MINIMIZED: Minimized view mode
+ *
+ * Enum values used to denote the various types of view modes. See the
+ * #WebKitWebView:view-mode property.
+ **/
 typedef enum
 {
     WEBKIT_WEB_VIEW_VIEW_MODE_WINDOWED,
