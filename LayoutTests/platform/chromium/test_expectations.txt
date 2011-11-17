@@ -3915,3 +3915,9 @@ BUGWK72487 SNOWLEOPARD : compositing/geometry/video-fixed-scrolling.html = IMAGE
 BUGWK72487 SNOWLEOPARD : compositing/geometry/clipped-video-controller.html = IMAGE
 BUGWK72487 SNOWLEOPARD : compositing/overflow/scroll-ancestor-update.html = IMAGE
 BUGWK72487 SNOWLEOPARD : compositing/overflow/overflow-compositing-descendant.html = IMAGE
+
+BUGWK72598 : css3/images/cross-fade-tiled.html = IMAGE
+BUGWK72598 : css3/images/cross-fade-invalidation.html = IMAGE
+BUGWK72598 : css3/images/cross-fade-simple.html = IMAGE
+BUGWK72598 : css3/images/cross-fade-sizing.html = IMAGE
+BUGWK72598 : css3/images/cross-fade-blending.html = IMAGE
