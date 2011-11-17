@@ -27,8 +27,8 @@
 #include "config.h"
 
 #include "PlatformWebView.h"
-#include "qquickwebview.h"
-#include "qquickwebpage.h"
+#include "qquickwebpage_p.h"
+#include "qquickwebview_p.h"
 
 #include <QApplication>
 #include <QDeclarativeProperty>

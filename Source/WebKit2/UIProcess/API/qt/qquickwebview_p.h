@@ -21,112 +21,138 @@
 #ifndef qquickwebview_p_h
 #define qquickwebview_p_h
 
-#include "QtPolicyInterface.h"
-#include "QtViewInterface.h"
-#include "QtViewportInteractionEngine.h"
-#include "QtWebPageProxy.h"
+#include "qwebkitglobal.h"
+#include <QtDeclarative/qquickitem.h>
 
-#include "qquickwebview.h"
+class QQuickWebPage;
+class QQuickWebViewPrivate;
+class QQuickWebViewExperimental;
+class QWebDownloadItem;
+class QWebPreferences;
 
-#include <QtCore/QObject>
-#include <QtCore/QScopedPointer>
-#include <wtf/OwnPtr.h>
+namespace WebKit {
+class QtViewInterface;
+}
 
-class QtWebPageProxy;
+namespace WTR {
+class PlatformWebView;
+}
+
+typedef const struct OpaqueWKContext* WKContextRef;
+typedef const struct OpaqueWKPageGroup* WKPageGroupRef;
+typedef const struct OpaqueWKPage* WKPageRef;
 
 QT_BEGIN_NAMESPACE
-class QFileDialog;
+class QPainter;
+class QUrl;
 QT_END_NAMESPACE
 
-class QWEBKIT_EXPORT QQuickWebViewPrivate : public QObject, public WebKit::QtPolicyInterface {
+class QWEBKIT_EXPORT QQuickWebView : public QQuickItem {
     Q_OBJECT
-    Q_DECLARE_PUBLIC(QQuickWebView)
+    Q_PROPERTY(QString title READ title NOTIFY titleChanged)
+    Q_PROPERTY(QUrl url READ url NOTIFY urlChanged)
+    Q_PROPERTY(int loadProgress READ loadProgress NOTIFY loadProgressChanged)
+    Q_PROPERTY(bool canGoBack READ canGoBack NOTIFY navigationStateChanged FINAL)
+    Q_PROPERTY(bool canGoForward READ canGoForward NOTIFY navigationStateChanged FINAL)
+    Q_PROPERTY(bool canStop READ canStop NOTIFY navigationStateChanged FINAL)
+    Q_PROPERTY(bool canReload READ canReload NOTIFY navigationStateChanged FINAL)
+    Q_PROPERTY(QWebPreferences* preferences READ preferences CONSTANT FINAL)
+    Q_PROPERTY(QQuickWebPage* page READ page CONSTANT FINAL)
+    Q_ENUMS(NavigationPolicy)
+    Q_ENUMS(ErrorType)
 public:
-    QQuickWebViewPrivate();
-    virtual ~QQuickWebViewPrivate() { }
-    void setPageProxy(QtWebPageProxy*);
-    void initialize(QQuickWebView* viewport, WKContextRef contextRef = 0, WKPageGroupRef pageGroupRef = 0);
-    void initializeTouch(QQuickWebView* viewport);
-    void initializeDesktop(QQuickWebView* viewport);
-    void enableMouseEvents();
-    void disableMouseEvents();
-
-    void loadDidCommit();
-
-    void didFinishFirstNonEmptyLayout();
-    void didChangeContentsSize(const QSize& newSize);
-    void didChangeViewportProperties(const WebCore::ViewportArguments& args);
-
-    void scrollPositionRequested(const QPoint& pos);
-    void updateViewportSize();
-    QtViewportInteractionEngine::Constraints computeViewportConstraints();
-
-    static QQuickWebViewPrivate* get(QQuickWebView* view)
-    {
-        return view->d_ptr.data();
-    }
-
-    void _q_viewportUpdated();
-    void _q_viewportTrajectoryVectorChanged(const QPointF&);
-    void _q_onOpenPanelFilesSelected();
-    void _q_onOpenPanelFinished(int result);
-    void _q_onVisibleChanged();
-
-    // QtPolicyInterface.
-    virtual QtPolicyInterface::PolicyAction navigationPolicyForURL(const QUrl&, Qt::MouseButton, Qt::KeyboardModifiers);
-
-    void chooseFiles(WKOpenPanelResultListenerRef, const QStringList& selectedFileNames, WebKit::QtViewInterface::FileChooserType);
-    void runJavaScriptAlert(const QString&);
-    bool runJavaScriptConfirm(const QString&);
-    QString runJavaScriptPrompt(const QString&, const QString& defaultValue, bool& ok);
-
-public slots:
-    void setUseTraditionalDesktopBehaviour(bool enable);
-
-private:
-
-    // This class is responsible for collecting and applying all properties
-    // on the viewport item, when transitioning from page A to page B is finished.
-    // See more at https://trac.webkit.org/wiki/QtWebKitLayoutInteraction
-    class PostTransitionState {
-    public:
-        PostTransitionState(QQuickWebViewPrivate* parent)
-            : p(parent)
-        { }
-
-        void apply()
-        {
-            p->interactionEngine->reset();
-            p->interactionEngine->applyConstraints(p->computeViewportConstraints());
-
-            if (contentsSize.isValid()) {
-                p->pageView->setWidth(contentsSize.width());
-                p->pageView->setHeight(contentsSize.height());
-            }
-
-            contentsSize = QSize();
-        }
-
-        QQuickWebViewPrivate* p;
-        QSize contentsSize;
+    enum NavigationPolicy {
+        UsePolicy,
+        DownloadPolicy,
+        IgnorePolicy
     };
 
-    bool isTransitioningToNewPage() const { return transitioningToNewPage; }
+    enum ErrorType {
+        EngineError,
+        NetworkError,
+        HttpError,
+        DownloadError
+    };
+    QQuickWebView(QQuickItem* parent = 0);
+    virtual ~QQuickWebView();
 
-    QScopedPointer<QQuickWebPage> pageView;
-    QScopedPointer<WebKit::QtViewInterface> viewInterface;
-    QScopedPointer<QtViewportInteractionEngine> interactionEngine;
+    QUrl url() const;
+    QString title() const;
+    int loadProgress() const;
 
-    QQuickWebView* q_ptr;
-    QScopedPointer<QtWebPageProxy> pageProxy;
+    bool canGoBack() const;
+    bool canGoForward() const;
+    bool canStop() const;
+    bool canReload() const;
 
-    WebCore::ViewportArguments viewportArguments;
-    OwnPtr<PostTransitionState> postTransitionState;
-    bool transitioningToNewPage;
+    QWebPreferences* preferences() const;
+    QQuickWebPage* page();
 
-    bool useTraditionalDesktopBehaviour;
-    QFileDialog* fileDialog;
-    WKOpenPanelResultListenerRef openPanelResultListener;
+    QQuickWebViewExperimental* experimental() const;
+
+public Q_SLOTS:
+    void load(const QUrl&);
+    void postMessage(const QString&);
+
+    void goBack();
+    void goForward();
+    void stop();
+    void reload();
+
+Q_SIGNALS:
+    void titleChanged(const QString& title);
+    void statusBarMessageChanged(const QString& message);
+    void loadStarted();
+    void loadSucceeded();
+    void loadFailed(QQuickWebView::ErrorType errorType, int errorCode, const QUrl& url);
+    void loadProgressChanged(int progress);
+    void urlChanged(const QUrl& url);
+    void messageReceived(const QVariantMap& message);
+    void downloadRequested(QWebDownloadItem* downloadItem);
+    void linkHovered(const QUrl& url, const QString& title);
+    void viewModeChanged();
+    void navigationStateChanged();
+
+protected:
+    virtual void geometryChanged(const QRectF&, const QRectF&);
+    virtual void touchEvent(QTouchEvent* event);
+
+private:
+    Q_DECLARE_PRIVATE(QQuickWebView)
+
+    QQuickWebView(WKContextRef, WKPageGroupRef, QQuickItem* parent = 0);
+    WKPageRef pageRef() const;
+
+    Q_PRIVATE_SLOT(d_func(), void _q_viewportUpdated());
+    Q_PRIVATE_SLOT(d_func(), void _q_viewportTrajectoryVectorChanged(const QPointF&));
+    Q_PRIVATE_SLOT(d_func(), void _q_onOpenPanelFilesSelected());
+    Q_PRIVATE_SLOT(d_func(), void _q_onOpenPanelFinished(int result));
+    Q_PRIVATE_SLOT(d_func(), void _q_onVisibleChanged());
+    // Hides QObject::d_ptr allowing us to use the convenience macros.
+    QScopedPointer<QQuickWebViewPrivate> d_ptr;
+    QQuickWebViewExperimental* m_experimental;
+
+    friend class QtWebPageProxy;
+    friend class WebKit::QtViewInterface;
+    friend class WTR::PlatformWebView;
+    friend class QQuickWebViewExperimental;
 };
 
-#endif /* qquickwebview_p_h */
+QML_DECLARE_TYPE(QQuickWebView)
+
+class QWEBKIT_EXPORT QQuickWebViewExperimental : public QObject {
+    Q_OBJECT
+public:
+    QQuickWebViewExperimental(QQuickWebView* webView);
+    virtual ~QQuickWebViewExperimental();
+
+    void setUseTraditionalDesktopBehaviour(bool enable);
+private:
+    QQuickWebView* q_ptr;
+    QQuickWebViewPrivate* d_ptr;
+
+    Q_DECLARE_PRIVATE(QQuickWebView)
+    Q_DECLARE_PUBLIC(QQuickWebView)
+};
+
+#endif // qquickwebview_p_h

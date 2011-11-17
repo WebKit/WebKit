@@ -29,7 +29,7 @@
 #include "BrowserWindow.h"
 
 #include "config.h"
-#include "qquickwebpage.h"
+#include "qquickwebpage_p.h"
 #include "qquickwebview_p.h"
 #include "utils.h"
 
@@ -53,7 +53,7 @@ BrowserWindow::BrowserWindow(WindowOptions* options)
     setSource(QUrl("qrc:/qml/BrowserWindow.qml"));
     connect(rootObject(), SIGNAL(pageTitleChanged(QString)), this, SLOT(setWindowTitle(QString)));
     if (!options->useTouchWebView())
-        QQuickWebViewPrivate::get(rootObject()->property("webview").value<QQuickWebView*>())->setUseTraditionalDesktopBehaviour(true);
+        webView()->experimental()->setUseTraditionalDesktopBehaviour(true);
     if (options->startMaximized())
         setWindowState(Qt::WindowMaximized);
     else
@@ -61,7 +61,7 @@ BrowserWindow::BrowserWindow(WindowOptions* options)
     show();
 }
 
-QObject* BrowserWindow::webView() const
+QQuickWebView* BrowserWindow::webView() const
 {
     return rootObject()->property("webview").value<QQuickWebView*>();
 }

@@ -21,7 +21,7 @@
 #ifndef QtWebError_h
 #define QtWebError_h
 
-#include "qwebdownloaditem.h"
+#include "qwebdownloaditem_p.h"
 #include "qwebkitglobal.h"
 #include <QtNetwork/QNetworkReply>
 #include <WKError.h>

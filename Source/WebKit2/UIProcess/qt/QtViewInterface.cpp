@@ -22,10 +22,10 @@
 #include "QtViewInterface.h"
 
 #include "QtWebError.h"
-#include "qquickwebpage.h"
 #include "qquickwebpage_p.h"
-#include "qquickwebview.h"
+#include "qquickwebpage_p_p.h"
 #include "qquickwebview_p.h"
+#include "qquickwebview_p_p.h"
 
 #include <QtDeclarative/QDeclarativeEngine>
 #include <QtDeclarative/QQuickView>

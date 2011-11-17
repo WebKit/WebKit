@@ -1,5 +1,6 @@
 include(../tests.pri)
 
+CONFIG += qtwebkit-private
 CONFIG += warn_on testcase
 
 QT -= testlib

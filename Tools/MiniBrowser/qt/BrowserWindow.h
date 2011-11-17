@@ -33,6 +33,8 @@
 #include <QStringList>
 #include <QtDeclarative/QQuickView>
 
+class QQuickWebView;
+
 class BrowserWindow : public QQuickView {
     Q_OBJECT
 
@@ -40,7 +42,7 @@ public:
     BrowserWindow(WindowOptions* = 0);
     ~BrowserWindow();
     void load(const QString& url);
-    QObject* webView() const;
+    QQuickWebView* webView() const;
 
 public slots:
     BrowserWindow* newWindow(const QString& url = "about:blank");

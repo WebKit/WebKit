@@ -19,12 +19,12 @@
  */
 
 #include "config.h"
-#include "qquickwebpage.h"
+#include "qquickwebpage_p.h"
 
 #include "QtWebPageProxy.h"
 #include "TransformationMatrix.h"
-#include "qquickwebpage_p.h"
-#include "qquickwebview.h"
+#include "qquickwebpage_p_p.h"
+#include "qquickwebview_p.h"
 #include <QtCore/QUrl>
 #include <QtDeclarative/QQuickCanvas>
 #include <QtDeclarative/QSGEngine>
@@ -243,4 +243,4 @@ void QQuickWebPagePrivate::_q_onSceneGraphInitialized()
     QObject::connect(engine, SIGNAL(afterRendering()), q, SLOT(_q_onAfterSceneRender()), Qt::DirectConnection);
 }
 
-#include "moc_qquickwebpage.cpp"
+#include "moc_qquickwebpage_p.cpp"

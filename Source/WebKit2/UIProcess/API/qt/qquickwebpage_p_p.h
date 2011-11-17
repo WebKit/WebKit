@@ -18,21 +18,38 @@
  *
  */
 
-#ifndef qquickwebviewprivateextension_p_h
-#define qquickwebviewprivateextension_p_h
+#ifndef qquickwebpage_p_p_h
+#define qquickwebpage_p_p_h
 
-#include "qwebkitglobal.h"
+#include "QtSGUpdateQueue.h"
+#include "QtViewInterface.h"
+#include "QtWebPageProxy.h"
+#include "qquickwebpage_p.h"
 
-#include <QObject>
+QT_BEGIN_NAMESPACE
+class QRectF;
+class QSGNode;
+class QString;
+QT_END_NAMESPACE
 
-class QQuickWebViewPrivate;
+class QQuickWebPage;
 
-class QWEBKIT_EXPORT QQuickWebViewPrivateExtension : public QObject {
-    Q_OBJECT
-    Q_PROPERTY(QQuickWebViewPrivate* privateObject READ viewPrivate CONSTANT FINAL)
+class QQuickWebPagePrivate {
 public:
-    QQuickWebViewPrivateExtension(QObject *parent = 0);
-    QQuickWebViewPrivate* viewPrivate();
+    QQuickWebPagePrivate(QQuickWebPage* view);
+
+    void setPageProxy(QtWebPageProxy*);
+
+    void initializeSceneGraphConnections();
+
+    void _q_onAfterSceneRender();
+    void _q_onSceneGraphInitialized();
+    void paintToCurrentGLContext();
+
+    QQuickWebPage* const q;
+    QtWebPageProxy* pageProxy;
+    WebKit::QtSGUpdateQueue sgUpdateQueue;
+    bool paintingIsInitialized;
 };
 
-#endif // qquickwebviewprivateextension_p_h
+#endif // qquickwebpage_p_p_h

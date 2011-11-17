@@ -17,26 +17,32 @@
     Boston, MA 02110-1301, USA.
 */
 
-#include "config.h"
-
-#include "qquickwebpage.h"
-#include "qquickwebview.h"
+#include "qquickwebpage_p.h"
 #include "qquickwebview_p.h"
-#include "qquickwebviewprivateextension_p.h"
 
 #include <QtDeclarative/qdeclarative.h>
 #include <QtDeclarative/qdeclarativeextensionplugin.h>
 
 QT_BEGIN_NAMESPACE
 
-class WebKitQmlPluginPrivate : public QDeclarativeExtensionPlugin {
+class QQuickWebViewExperimentalExtension : public QObject {
+    Q_OBJECT
+    Q_PROPERTY(QQuickWebViewExperimental* experimental READ experimental CONSTANT FINAL)
+public:
+    QQuickWebViewExperimentalExtension(QObject *parent = 0) : QObject(parent) { }
+    QQuickWebViewExperimental* experimental() { return static_cast<QQuickWebView*>(parent())->experimental(); }
+};
+
+class WebKitQmlExperimentalExtensionPlugin: public QDeclarativeExtensionPlugin {
     Q_OBJECT
 public:
     virtual void registerTypes(const char* uri)
     {
-        Q_ASSERT(QLatin1String(uri) == QLatin1String("QtWebKit.private"));
-        qmlRegisterExtendedType<QQuickWebView, QQuickWebViewPrivateExtension>(uri, 3, 0, "WebView");
-        qmlRegisterUncreatableType<QQuickWebViewPrivate>(uri, 3, 0, "WebViewPrivate", QObject::tr("Cannot create separate instance of WebViewPrivate"));
+        Q_ASSERT(QLatin1String(uri) == QLatin1String("QtWebKit.experimental"));
+
+        qmlRegisterExtendedType<QQuickWebView, QQuickWebViewExperimentalExtension>(uri, 3, 0, "WebView");
+        qmlRegisterUncreatableType<QQuickWebViewExperimental>(uri, 3, 0, "QQuickWebViewExperimental",
+            QObject::tr("Cannot create separate instance of QQuickWebViewExperimental"));
     }
 };
 
@@ -44,4 +50,4 @@ QT_END_NAMESPACE
 
 #include "plugin.moc"
 
-Q_EXPORT_PLUGIN2(qmlwebkitpluginprivate, QT_PREPEND_NAMESPACE(WebKitQmlPluginPrivate));
+Q_EXPORT_PLUGIN2(qmlwebkitpluginexperimental, QT_PREPEND_NAMESPACE(WebKitQmlExperimentalExtensionPlugin));

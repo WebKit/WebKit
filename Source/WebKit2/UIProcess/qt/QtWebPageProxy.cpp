@@ -22,10 +22,10 @@
 #include "QtWebPageProxy.h"
 
 #include "QtWebError.h"
-#include "qwebdownloaditem.h"
 #include "qwebdownloaditem_p.h"
-#include "qwebpreferences.h"
+#include "qwebdownloaditem_p_p.h"
 #include "qwebpreferences_p.h"
+#include "qwebpreferences_p_p.h"
 
 #include "ClientImpl.h"
 #include "DownloadProxy.h"

@@ -37,7 +37,6 @@ DEPENDPATH += $$OUT_PWD
 
 INCLUDEPATH += \
     $${ROOT_WEBKIT_DIR}/Source \
-    $${ROOT_BUILD_DIR}/include/QtWebKit \
     $$buildDirForSource(Source/include) \
     $${QT.script.includes}
 

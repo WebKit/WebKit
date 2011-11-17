@@ -27,8 +27,8 @@
 #include "WKStringQt.h"
 #include "WKURLQt.h"
 #include "WebContext.h"
-#include "qwebdownloaditem.h"
 #include "qwebdownloaditem_p.h"
+#include "qwebdownloaditem_p_p.h"
 
 namespace WebKit {
 

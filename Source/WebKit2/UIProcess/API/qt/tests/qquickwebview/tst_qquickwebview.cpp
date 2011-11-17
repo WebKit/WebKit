@@ -22,8 +22,8 @@
 
 #include <QScopedPointer>
 #include <QtTest/QtTest>
-#include <qquickwebpage.h>
-#include <qquickwebview.h>
+#include <qquickwebpage_p.h>
+#include <qquickwebview_p.h>
 
 class tst_QQuickWebView : public QObject {
     Q_OBJECT

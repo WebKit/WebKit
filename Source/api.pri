@@ -161,14 +161,11 @@ contains(CONFIG, texmap) {
 
 # ------------- Install rules -------------
 
-modulefile.files = $${ROOT_WEBKIT_DIR}/Tools/qmake/mkspecs/modules/qt_webkit.pri
+modulefile.files = $$QT.webkit.modulefile
 mkspecs = $$[QMAKE_MKSPECS]
 mkspecs = $$split(mkspecs, :)
 modulefile.path = $$last(mkspecs)/modules
 INSTALLS += modulefile
-
-include($$first(modulefile.files))
-VERSION = $${QT.webkit.VERSION}
 
 # Syncqt has already run at this point, so we can use headers.pri
 # as a basis for our install-rules

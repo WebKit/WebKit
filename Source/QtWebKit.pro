@@ -17,12 +17,9 @@ SUBDIRS += api
 
 include(WebKit/qt/docs/docs.pri)
 
-SUBDIRS += WebKit/qt/declarative
-haveQt(5) {
-    !no_webkit2 {
-        SUBDIRS += WebKit/qt/declarative/private
-    }
-}
+declarative.file = WebKit/qt/declarative/declarative.pro
+declarative.makefile = Makefile.declarative
+SUBDIRS += declarative
 
 tests.file = tests.pri
 SUBDIRS += tests

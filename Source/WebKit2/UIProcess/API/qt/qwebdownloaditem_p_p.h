@@ -17,30 +17,37 @@
     Boston, MA 02110-1301, USA.
 */
 
-#include "config.h"
-#include "../util.h"
 
-#include "qquickwebpage_p.h"
-#include "qquickwebview_p.h"
+#ifndef qwebdownloaditem_p_p_h
+#define qwebdownloaditem_p_p_h
 
-#include <QtQuickTest/quicktest.h>
-#include <QtWidgets/QApplication>
+#include "qwebdownloaditem_p.h"
+#include <QUrl>
 
-class DesktopWebView : public QQuickWebView {
+namespace WebKit {
+class DownloadProxy;
+}
+
+class QWebDownloadItemPrivate : public QObject {
+    Q_OBJECT
 public:
-    DesktopWebView(QQuickItem* parent = 0)
-        : QQuickWebView(parent)
-    {
-        experimental()->setUseTraditionalDesktopBehaviour(true);
-    }
+    QWebDownloadItemPrivate(QWebDownloadItem*);
+
+    void didReceiveResponse(QWebDownloadItem* download) { emit receivedResponse(download); }
+
+    QWebDownloadItem* q;
+
+    WebKit::DownloadProxy* downloadProxy;
+
+    QUrl sourceUrl;
+    QString suggestedFilename;
+    QString destinationPath;
+    QString mimeType;
+    quint64 expectedContentLength;
+    quint64 totalBytesReceived;
+
+Q_SIGNALS:
+    void receivedResponse(QWebDownloadItem*);
 };
 
-int main(int argc, char** argv)
-{
-    suppressDebugOutput();
-    // Instantiate QApplication to prevent quick_test_main to instantiate a QGuiApplication.
-    // This can be removed as soon as we do not use QtWidgets any more.
-    QApplication app(argc, argv);
-    qmlRegisterType<DesktopWebView>("QtWebKitTest", 1, 0, "DesktopWebView");
-    return quick_test_main(argc, argv, "qmltests", 0, QUICK_TEST_SOURCE_DIR);
-}
+#endif // qwebdownloaditem_p_p_h

@@ -18,7 +18,7 @@
 */
 
 #include "config.h"
-#include "qwebpreferences.h"
+#include "qwebpreferences_p.h"
 
 #include "QtWebPageProxy.h"
 #include "WKPageGroup.h"
@@ -26,7 +26,7 @@
 #include "WKPreferencesPrivate.h"
 #include "WKRetainPtr.h"
 #include "WKStringQt.h"
-#include "qwebpreferences_p.h"
+#include "qwebpreferences_p_p.h"
 
 QWebPreferences* QWebPreferencesPrivate::createPreferences(QtWebPageProxy* qtWebPageProxy)
 {

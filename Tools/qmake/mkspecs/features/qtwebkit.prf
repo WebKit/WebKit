@@ -24,5 +24,6 @@ config_step {
     }
 
     DEPENDPATH += $$ROOT_WEBKIT_DIR/Source/WebKit/qt/Api
+    INCLUDEPATH += $${ROOT_BUILD_DIR}/include/QtWebKit
 }
 

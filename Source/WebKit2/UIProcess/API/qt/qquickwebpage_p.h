@@ -21,35 +21,57 @@
 #ifndef qquickwebpage_p_h
 #define qquickwebpage_p_h
 
-#include "QtSGUpdateQueue.h"
-#include "QtViewInterface.h"
-#include "QtWebPageProxy.h"
-#include "qquickwebpage.h"
+#include "qwebkitglobal.h"
 
-QT_BEGIN_NAMESPACE
-class QRectF;
-class QSGNode;
-class QString;
-QT_END_NAMESPACE
+#include <QtCore/QSharedPointer>
+#include <QtDeclarative/QQuickItem>
 
-class QQuickWebPage;
+class QQuickWebView;
+class QQuickWebPagePrivate;
+class QWebPreferences;
 
-class QQuickWebPagePrivate {
+namespace WebKit {
+class QtViewInterface;
+}
+
+class QWEBKIT_EXPORT QQuickWebPage : public QQuickItem {
+    Q_OBJECT
 public:
-    QQuickWebPagePrivate(QQuickWebPage* view);
+    QQuickWebPage(QQuickItem* parent = 0);
+    virtual ~QQuickWebPage();
 
-    void setPageProxy(QtWebPageProxy*);
+protected:
+    virtual void keyPressEvent(QKeyEvent*);
+    virtual void keyReleaseEvent(QKeyEvent*);
+    virtual void inputMethodEvent(QInputMethodEvent*);
+    virtual void focusInEvent(QFocusEvent*);
+    virtual void focusOutEvent(QFocusEvent*);
+    virtual void mousePressEvent(QMouseEvent*);
+    virtual void mouseMoveEvent(QMouseEvent*);
+    virtual void mouseReleaseEvent(QMouseEvent *);
+    virtual void mouseDoubleClickEvent(QMouseEvent*);
+    virtual void wheelEvent(QWheelEvent*);
+    virtual void hoverEnterEvent(QHoverEvent*);
+    virtual void hoverMoveEvent(QHoverEvent*);
+    virtual void hoverLeaveEvent(QHoverEvent*);
+    virtual void dragMoveEvent(QDragMoveEvent*);
+    virtual void dragEnterEvent(QDragEnterEvent*);
+    virtual void dragLeaveEvent(QDragLeaveEvent*);
+    virtual void dropEvent(QDropEvent*);
+    virtual void touchEvent(QTouchEvent*);
+    virtual bool event(QEvent*);
+    virtual void geometryChanged(const QRectF&, const QRectF&);
+    virtual void itemChange(ItemChange, const ItemChangeData&);
 
-    void initializeSceneGraphConnections();
+private:
+    Q_PRIVATE_SLOT(d, void _q_onAfterSceneRender());
+    Q_PRIVATE_SLOT(d, void _q_onSceneGraphInitialized());
 
-    void _q_onAfterSceneRender();
-    void _q_onSceneGraphInitialized();
-    void paintToCurrentGLContext();
-
-    QQuickWebPage* const q;
-    QtWebPageProxy* pageProxy;
-    WebKit::QtSGUpdateQueue sgUpdateQueue;
-    bool paintingIsInitialized;
+    QQuickWebPagePrivate* d;
+    friend class QQuickWebViewPrivate;
+    friend class WebKit::QtViewInterface;
 };
 
-#endif /* qquickwebpage_p_h */
+QML_DECLARE_TYPE(QQuickWebPage)
+
+#endif // qquickwebpage_p_h

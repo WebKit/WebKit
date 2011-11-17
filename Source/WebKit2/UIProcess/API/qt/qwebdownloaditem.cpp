@@ -19,10 +19,10 @@
  */
 
 #include "config.h"
-#include "qwebdownloaditem.h"
+#include "qwebdownloaditem_p.h"
 
 #include "DownloadProxy.h"
-#include "qwebdownloaditem_p.h"
+#include "qwebdownloaditem_p_p.h"
 
 QWebDownloadItemPrivate::QWebDownloadItemPrivate(QWebDownloadItem* qq)
     : q(qq)

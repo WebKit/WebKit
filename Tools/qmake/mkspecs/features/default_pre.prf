@@ -101,5 +101,9 @@ haveQt(5): {
     }
 }
 
+QT.webkit.modulefile = $${ROOT_WEBKIT_DIR}/Tools/qmake/mkspecs/modules/qt_webkit.pri
+include($$QT.webkit.modulefile)
+VERSION = $${QT.webkit.VERSION}
+
 # Set some defaults for specific platforms
 CONFIG += include_webinspector

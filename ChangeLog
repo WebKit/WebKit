@@ -1,3 +1,18 @@
+2011-11-17  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        [Qt] Move WebKit2 C++ APIs to private API and build QML extension plugin on top of that
+
+        A new extension object has been added to QQuickWebView (the same approach should be used
+        for other API classes that need experimental APIs). The QML extension mechanism is then
+        built on top of the experimental object.
+
+        https://bugs.webkit.org/show_bug.cgi?id=72522
+
+        Reviewed by Simon Hausmann.
+
+        * Source/QtWebKit.pro:
+        * Source/api.pri:
+
 2011-11-11  Adrienne Walker  <enne@google.com>
 
         [chromium] Expose mock scrollbars to window.internals

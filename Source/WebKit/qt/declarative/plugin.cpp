@@ -23,10 +23,10 @@
 #include <QtDeclarative/qdeclarativeextensionplugin.h>
 
 #if defined(HAVE_WEBKIT2)
-#include "qquickwebpage.h"
-#include "qquickwebview.h"
-#include "qwebdownloaditem.h"
-#include "qwebpreferences.h"
+#include "qquickwebpage_p.h"
+#include "qquickwebview_p.h"
+#include "qwebdownloaditem_p.h"
+#include "qwebpreferences_p.h"
 
 #include <QtNetwork/qnetworkreply.h>
 #endif

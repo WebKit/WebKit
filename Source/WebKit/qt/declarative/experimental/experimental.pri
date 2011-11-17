@@ -1,13 +1,13 @@
 # -------------------------------------------------------------------
-# Project file for the QtWebKit QML private plugin
+# Project file for the Qt Quick (QML) experimental API plugin
 #
 # See 'Tools/qmake/README' for an overview of the build system
 # -------------------------------------------------------------------
 
 TEMPLATE = lib
-TARGET  = qmlwebkitprivateplugin
+TARGET  = qmlwebkitexperimentalplugin
 
-TARGET.module_name = QtWebKit/private
+TARGET.module_name = QtWebKit/experimental
 
 CONFIG += qt plugin
 
@@ -27,10 +27,7 @@ contains(QT_CONFIG, reduce_exports):CONFIG += hide_symbols
 
 wince*:LIBS += $$QMAKE_LIBS_GUI
 
-load(javascriptcore)
-load(webcore)
-load(webkit2)
-CONFIG += qtwebkit
+CONFIG += qtwebkit qtwebkit-private
 
 QT += declarative widgets network
 
@@ -51,4 +48,5 @@ qmldir.files += $$PWD/qmldir
 qmldir.path +=  $$[QT_INSTALL_IMPORTS]/$${TARGET.module_name}
 
 INSTALLS += target qmldir
+
 

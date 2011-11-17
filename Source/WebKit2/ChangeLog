@@ -1,3 +1,48 @@
+2011-11-17  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        [Qt] Move WebKit2 C++ APIs to private API and build QML extension plugin on top of that
+
+        A new extension object has been added to QQuickWebView (the same approach should be used
+        for other API classes that need experimental APIs). The QML extension mechanism is then
+        built on top of the experimental object.
+
+        https://bugs.webkit.org/show_bug.cgi?id=72522
+
+        Reviewed by Simon Hausmann.
+
+        * Target.pri:
+        * UIProcess/API/qt/qquickwebpage.cpp:
+        * UIProcess/API/qt/qquickwebpage.h: Removed.
+        * UIProcess/API/qt/qquickwebpage_p.h:
+        * UIProcess/API/qt/qquickwebpage_p_p.h: Renamed from Source/WebKit2/UIProcess/API/qt/qquickwebviewprivateextension_p.h.
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewExperimental::QQuickWebViewExperimental):
+        (QQuickWebViewExperimental::~QQuickWebViewExperimental):
+        (QQuickWebViewExperimental::setUseTraditionalDesktopBehaviour):
+        (QQuickWebView::QQuickWebView):
+        (QQuickWebView::experimental):
+        * UIProcess/API/qt/qquickwebview.h: Removed.
+        * UIProcess/API/qt/qquickwebview_p.h:
+        * UIProcess/API/qt/qquickwebview_p_p.h: Copied from Source/WebKit2/UIProcess/API/qt/qquickwebview_p.h.
+        * UIProcess/API/qt/qquickwebviewprivateextension.cpp: Removed.
+        * UIProcess/API/qt/qwebdownloaditem.cpp:
+        * UIProcess/API/qt/qwebdownloaditem.h: Removed.
+        * UIProcess/API/qt/qwebdownloaditem_p.h:
+        * UIProcess/API/qt/qwebdownloaditem_p_p.h: Copied from Source/WebKit2/UIProcess/API/qt/qwebdownloaditem_p.h.
+        (QWebDownloadItemPrivate::didReceiveResponse):
+        * UIProcess/API/qt/qwebpreferences.cpp:
+        * UIProcess/API/qt/qwebpreferences.h: Removed.
+        * UIProcess/API/qt/qwebpreferences_p.h:
+        * UIProcess/API/qt/tests/qmltests/qmltests.pro:
+        * UIProcess/API/qt/tests/qmltests/tst_qmltests.cpp:
+        (DesktopWebView::DesktopWebView):
+        * UIProcess/API/qt/tests/qquickwebview/qquickwebview.pro:
+        * UIProcess/API/qt/tests/qquickwebview/tst_qquickwebview.cpp:
+        * UIProcess/qt/QtDownloadManager.cpp:
+        * UIProcess/qt/QtViewInterface.cpp:
+        * UIProcess/qt/QtWebError.h:
+        * UIProcess/qt/QtWebPageProxy.cpp:
+
 2011-11-17  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Unreviewed build fix.

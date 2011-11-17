@@ -19,7 +19,7 @@
  */
 
 #include "config.h"
-#include "qquickwebview.h"
+#include "qquickwebview_p.h"
 
 #include "QtViewInterface.h"
 #include "QtWebPageProxy.h"
@@ -27,9 +27,9 @@
 #include "WebPageGroup.h"
 #include "WebPreferences.h"
 
-#include "qquickwebpage_p.h"
-#include "qquickwebview_p.h"
-#include "qwebpreferences_p.h"
+#include "qquickwebpage_p_p.h"
+#include "qquickwebview_p_p.h"
+#include "qwebpreferences_p_p.h"
 
 #include <QtDeclarative/QQuickCanvas>
 #include <QtWidgets/QFileDialog>
@@ -373,9 +373,27 @@ void QQuickWebViewPrivate::setPageProxy(QtWebPageProxy* pageProxy)
     QObject::connect(pageProxy, SIGNAL(receivedMessageFromNavigatorQtObject(QVariantMap)), q, SIGNAL(messageReceived(QVariantMap)));
 }
 
+QQuickWebViewExperimental::QQuickWebViewExperimental(QQuickWebView *webView)
+    : QObject(webView)
+    , q_ptr(webView)
+    , d_ptr(webView->d_ptr.data())
+{
+}
+
+QQuickWebViewExperimental::~QQuickWebViewExperimental()
+{
+}
+
+void QQuickWebViewExperimental::setUseTraditionalDesktopBehaviour(bool enable)
+{
+    Q_D(QQuickWebView);
+    d->setUseTraditionalDesktopBehaviour(enable);
+}
+
 QQuickWebView::QQuickWebView(QQuickItem* parent)
     : QQuickItem(parent)
     , d_ptr(new QQuickWebViewPrivate)
+    , m_experimental(new QQuickWebViewExperimental(this))
 {
     Q_D(QQuickWebView);
     d->initialize(this);
@@ -385,6 +403,7 @@ QQuickWebView::QQuickWebView(QQuickItem* parent)
 QQuickWebView::QQuickWebView(WKContextRef contextRef, WKPageGroupRef pageGroupRef, QQuickItem* parent)
     : QQuickItem(parent)
     , d_ptr(new QQuickWebViewPrivate)
+    , m_experimental(new QQuickWebViewExperimental(this))
 {
     Q_D(QQuickWebView);
     d->initialize(this, contextRef, pageGroupRef);
@@ -486,6 +505,11 @@ QWebPreferences* QQuickWebView::preferences() const
     return d->pageProxy->preferences();
 }
 
+QQuickWebViewExperimental* QQuickWebView::experimental() const
+{
+    return m_experimental;
+}
+
 void QQuickWebView::geometryChanged(const QRectF& newGeometry, const QRectF& oldGeometry)
 {
     Q_D(QQuickWebView);
@@ -511,5 +535,4 @@ WKPageRef QQuickWebView::pageRef() const
     return d->pageProxy->pageRef();
 }
 
-#include "moc_qquickwebview.cpp"
 #include "moc_qquickwebview_p.cpp"

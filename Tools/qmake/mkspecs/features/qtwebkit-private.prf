@@ -1,0 +1,12 @@
+# -------------------------------------------------------------------
+# This file is used by tools that rely on private APIs of
+# the QtWebKit library
+#
+# FIXME: Can we use the same way as client applications would use?
+#
+# See 'Tools/qmake/README' for an overview of the build system
+# -------------------------------------------------------------------
+
+config_step {
+    INCLUDEPATH += $${ROOT_BUILD_DIR}/include/$${QT.webkit.name}/$${QT.webkit.VERSION}/$${QT.webkit.name}/private
+}

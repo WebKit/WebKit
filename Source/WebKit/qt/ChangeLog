@@ -1,3 +1,24 @@
+2011-11-17  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        [Qt] Move WebKit2 C++ APIs to private API and build QML extension plugin on top of that
+
+        A new extension object has been added to QQuickWebView (the same approach should be used
+        for other API classes that need experimental APIs). The QML extension mechanism is then
+        built on top of the experimental object.
+
+        https://bugs.webkit.org/show_bug.cgi?id=72522
+
+        Reviewed by Simon Hausmann.
+
+        * declarative/declarative.pro:
+        * declarative/experimental/experimental.pri: Renamed from Source/WebKit/qt/declarative/private/private.pro.
+        * declarative/experimental/plugin.cpp: Renamed from Source/WebKit/qt/declarative/private/plugin.cpp.
+        (QQuickWebViewExperimentalExtension::QQuickWebViewExperimentalExtension):
+        (QQuickWebViewExperimentalExtension::experimental):
+        * declarative/experimental/qmldir: Renamed from Source/WebKit/qt/declarative/private/qmldir.
+        * declarative/plugin.cpp:
+        * declarative/public.pri: Copied from Source/WebKit/qt/declarative/declarative.pro.
+
 2011-11-16  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r100448.
