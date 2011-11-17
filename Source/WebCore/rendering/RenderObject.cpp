@@ -1149,6 +1149,9 @@ void RenderObject::paintOutline(GraphicsContext* graphicsContext, const LayoutRe
     LayoutRect inner = paintRect;
     inner.inflate(offset);
 
+    if (inner.isEmpty())
+        return;
+
     LayoutRect outer = inner;
     outer.inflate(outlineWidth);
 
