@@ -236,39 +236,39 @@ template<> struct ArgumentCoder<WebCore::TransformationMatrix> {
     static bool decode(ArgumentDecoder*, WebCore::TransformationMatrix&);
 };
 
-template<> struct ArgumentCoder<WebCore::MatrixTransformOperation> {
-    static void encode(ArgumentEncoder*, const WebCore::MatrixTransformOperation&);
-    static bool decode(ArgumentDecoder*, WebCore::MatrixTransformOperation&);
+template<> struct ArgumentCoder<RefPtr<WebCore::MatrixTransformOperation> > {
+    static void encode(ArgumentEncoder*, const WebCore::MatrixTransformOperation*);
+    static bool decode(ArgumentDecoder*, RefPtr<WebCore::MatrixTransformOperation>&);
 };
 
-template<> struct ArgumentCoder<WebCore::Matrix3DTransformOperation> {
-    static void encode(ArgumentEncoder*, const WebCore::Matrix3DTransformOperation&);
-    static bool decode(ArgumentDecoder*, WebCore::Matrix3DTransformOperation&);
+template<> struct ArgumentCoder<RefPtr<WebCore::Matrix3DTransformOperation> > {
+    static void encode(ArgumentEncoder*, const WebCore::Matrix3DTransformOperation*);
+    static bool decode(ArgumentDecoder*, RefPtr<WebCore::Matrix3DTransformOperation>&);
 };
 
-template<> struct ArgumentCoder<WebCore::PerspectiveTransformOperation> {
-    static void encode(ArgumentEncoder*, const WebCore::PerspectiveTransformOperation&);
-    static bool decode(ArgumentDecoder*, WebCore::PerspectiveTransformOperation&);
+template<> struct ArgumentCoder<RefPtr<WebCore::PerspectiveTransformOperation> > {
+    static void encode(ArgumentEncoder*, const WebCore::PerspectiveTransformOperation*);
+    static bool decode(ArgumentDecoder*, RefPtr<WebCore::PerspectiveTransformOperation>&);
 };
 
-template<> struct ArgumentCoder<WebCore::RotateTransformOperation> {
-    static void encode(ArgumentEncoder*, const WebCore::RotateTransformOperation&);
-    static bool decode(ArgumentDecoder*, WebCore::RotateTransformOperation&);
+template<> struct ArgumentCoder<RefPtr<WebCore::RotateTransformOperation> > {
+    static void encode(ArgumentEncoder*, const WebCore::RotateTransformOperation*);
+    static bool decode(ArgumentDecoder*, RefPtr<WebCore::RotateTransformOperation>&);
 };
 
-template<> struct ArgumentCoder<WebCore::ScaleTransformOperation> {
-    static void encode(ArgumentEncoder*, const WebCore::ScaleTransformOperation&);
-    static bool decode(ArgumentDecoder*, WebCore::ScaleTransformOperation&);
+template<> struct ArgumentCoder<RefPtr<WebCore::ScaleTransformOperation> > {
+    static void encode(ArgumentEncoder*, const WebCore::ScaleTransformOperation*);
+    static bool decode(ArgumentDecoder*, RefPtr<WebCore::ScaleTransformOperation>&);
 };
 
-template<> struct ArgumentCoder<WebCore::SkewTransformOperation> {
-    static void encode(ArgumentEncoder*, const WebCore::SkewTransformOperation&);
-    static bool decode(ArgumentDecoder*, WebCore::SkewTransformOperation&);
+template<> struct ArgumentCoder<RefPtr<WebCore::SkewTransformOperation> > {
+    static void encode(ArgumentEncoder*, const WebCore::SkewTransformOperation*);
+    static bool decode(ArgumentDecoder*, RefPtr<WebCore::SkewTransformOperation>&);
 };
 
-template<> struct ArgumentCoder<WebCore::TranslateTransformOperation> {
-    static void encode(ArgumentEncoder*, const WebCore::TranslateTransformOperation&);
-    static bool decode(ArgumentDecoder*, WebCore::TranslateTransformOperation&);
+template<> struct ArgumentCoder<RefPtr<WebCore::TranslateTransformOperation> > {
+    static void encode(ArgumentEncoder*, const WebCore::TranslateTransformOperation*);
+    static bool decode(ArgumentDecoder*, RefPtr<WebCore::TranslateTransformOperation>&);
 };
 
 template<> struct ArgumentCoder<RefPtr<WebCore::TimingFunction> > {

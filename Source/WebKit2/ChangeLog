@@ -1,3 +1,23 @@
+2011-11-17  Igor Oliveira  <igor.oliveira@openbossa.org>
+
+        [WK2] Fix TransformOperation serialization
+        https://bugs.webkit.org/show_bug.cgi?id=72625
+
+        SimpleArgumentCoder can encode and decode just POD types. And according the 
+        ISO/IEC 14882, POD types does not have virtual methods, however TransformOperation
+        has pure virtual methods.
+
+        This patch fixes TransformOperation subclass serialization.
+
+        Reviewed by Noam Rosenthal.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (CoreIPC::::encode):
+        (CoreIPC::::decode):
+        (CoreIPC::encodeOperation):
+        (CoreIPC::decodeOperation):
+        * Shared/WebCoreArgumentCoders.h:
+
 2011-11-17  Mark Rowe  <mrowe@apple.com>
 
         <http://webkit.org/b/72646> Disable deprecation warnings around code where we cannot easily
