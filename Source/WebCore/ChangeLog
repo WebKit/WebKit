@@ -1,3 +1,12 @@
+2011-11-17  Mark Rowe  <mrowe@apple.com>
+
+        <http://webkit.org/b/72637> Stop performing runtime version checks on OS versions where the check can never possibly fail.
+
+        Reviewed by Simon Fraser.
+
+        * platform/graphics/cg/ImageBufferDataCG.cpp:
+        (WebCore::haveVImageRoundingErrorFix): When not targeting Snow Leopard we always have the fix.
+
 2011-11-17  Chris Fleizach  <cfleizach@apple.com>
 
         AX: The scrollArea is not correctly returning the scrollbars
