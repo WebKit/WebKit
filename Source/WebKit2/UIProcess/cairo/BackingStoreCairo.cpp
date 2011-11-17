@@ -32,7 +32,6 @@
 #include "WebPageProxy.h"
 #include <WebCore/GraphicsContext.h>
 #include <cairo/cairo.h>
-#include <gtk/gtk.h>
 
 using namespace WebCore;
 

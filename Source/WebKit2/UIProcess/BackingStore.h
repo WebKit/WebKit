@@ -41,7 +41,7 @@
 #include <QtGui/QPixmap>
 #endif
 
-#if PLATFORM(GTK)
+#if USE(CAIRO)
 #include <RefPtrCairo.h>
 #include <WebCore/WidgetBackingStore.h>
 #endif
@@ -72,7 +72,7 @@ public:
     typedef HDC PlatformGraphicsContext;
 #elif PLATFORM(QT)
     typedef QPainter* PlatformGraphicsContext;
-#elif PLATFORM(GTK)
+#elif USE(CAIRO)
     typedef cairo_t* PlatformGraphicsContext;
 #endif
 
@@ -98,7 +98,7 @@ private:
     OwnPtr<HBITMAP> m_bitmap;
 #elif PLATFORM(QT)
     QPixmap m_pixmap;
-#elif PLATFORM(GTK)
+#elif USE(CAIRO)
     OwnPtr<WebCore::WidgetBackingStore> m_backingStore;
 #endif
 };

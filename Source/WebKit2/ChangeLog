@@ -1,3 +1,21 @@
+2011-11-17  Eunmi Lee  <eunmi15.lee@samsung.com>
+
+        Reviewed by Martin Robinson.
+
+        [WK2] Move gtk/BackingStoreGtk.cpp to cairo/BackingStoreCairo.cpp to share with EFL port.
+        https://bugs.webkit.org/show_bug.cgi?id=62444
+
+        Rename gtk/BackingStoreGtk.cpp to cairo/BackingStoreCairo.cpp to share with EFL port.
+        The gtk/BackingStoreGtk.cpp only has cairo dependency, so it can be shared with other port
+        that uses cairo.
+
+        * GNUmakefile.am:
+        * UIProcess/BackingStore.h:
+        * UIProcess/cairo/BackingStoreCairo.cpp: Renamed from Source/WebKit2/UIProcess/gtk/BackingStoreGtk.cpp.
+        (WebKit::BackingStore::paint):
+        (WebKit::BackingStore::incorporateUpdate):
+        (WebKit::BackingStore::scroll):
+
 2011-11-17  Nayan Kumar K  <nayankk@motorola.com>
 
         [WebKit2][gtk] Add few more properties to WebKitSettings
