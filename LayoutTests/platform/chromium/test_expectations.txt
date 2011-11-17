@@ -2688,8 +2688,10 @@ WONTFIX WIN LINUX : compositing/images/direct-pdf-image.html = IMAGE
 WONTFIX MAC CPU-CG : compositing/images/direct-pdf-image.html = IMAGE
 
 // Chromium does not support the CoreAnimation plugin model right now.
-BUGWK47925 MAC : compositing/plugins/composited-plugin.html = IMAGE+TEXT
-BUGWK47925 MAC : compositing/plugins/small-to-large-composited-plugin.html = IMAGE+TEXT
+BUGWK47925 SNOWLEOPARD CPU : compositing/plugins/composited-plugin.html = TEXT
+BUGWK47925 SNOWLEOPARD CPU-CG : compositing/plugins/composited-plugin.html = IMAGE+TEXT
+BUGWK47925 LEOPARD : compositing/plugins/composited-plugin.html = IMAGE+TEXT
+BUGWK47925 MAC : compositing/plugins/small-to-large-composited-plugin.html = TEXT
 
 BUGWK47949 LINUX WIN : compositing/reflections/nested-reflection-anchor-point.html = IMAGE+TEXT
 BUGWK47949 MAC CPU-CG : compositing/reflections/nested-reflection-anchor-point.html = IMAGE
