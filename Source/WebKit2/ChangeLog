@@ -1,3 +1,58 @@
+2011-11-16  Dan Bernstein  <mitz@apple.com>
+
+        WebKit2 part of <rdar://problem/10262242> Add API for paginated display
+        https://bugs.webkit.org/show_bug.cgi?id=72537
+
+        Reviewed by Anders Carlsson.
+
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode): Encode the pagination mode and gap between pages.
+        (WebKit::WebPageCreationParameters::decode): Decode the pagination mode and gap between pages.
+        * Shared/WebPageCreationParameters.h: Added paginationMode and gapBetweenPages members.
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPaginationMode): Added this API wrapper.
+        (WKPageGetPaginationMode): Ditto.
+        (WKPageSetGapBetweenPages): Ditto.
+        (WKPageGetGapBetweenPages): Ditto.
+        (WKPageGetPageCount): Ditto.
+        * UIProcess/API/C/WKPagePrivate.h: Added an enum and a definition of WKPaginationMode and
+        accessors.
+        * UIProcess/API/mac/WKBrowsingContextController.mm:
+        (-[WKBrowsingContextController setPaginationMode:]): Added this API wrapper.
+        (-[WKBrowsingContextController paginationMode]): Ditto.
+        (-[WKBrowsingContextController setGapBetweenPages:]): Ditto.
+        (-[WKBrowsingContextController gapBetweenPages]): Ditto.
+        (-[WKBrowsingContextController pageCount]): Ditto.
+        * UIProcess/API/mac/WKBrowsingContextControllerPrivate.h: Added. Includes an enum and a definition
+        of WKBrowsingContextPaginationMode and property declarations.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy): Added intialization of m_paginationMode, m_gapBetweenPages,
+        and m_pageCount.
+        (WebKit::WebPageProxy::setPaginationMode): Added this accessor, which caches the value and sends
+        a message to the WebPage.
+        (WebKit::WebPageProxy::setGapBetweenPages): Ditto.
+        (WebKit::WebPageProxy::creationParameters): Set the pagination mode and gap between pages in the
+        creation parameters.
+        (WebKit::WebPageProxy::didChangePageCount): Added. Updates the cached page count.
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::paginationMode): Added this getter that returns a cached value.
+        (WebKit::WebPageProxy::gapBetweenPages): Ditto.
+        (WebKit::WebPageProxy::pageCount): Ditto.
+        * UIProcess/WebPageProxy.messages.in: Added DidChangedPageCount, sent when the page count changes
+        after layout.
+        * WebKit2.xcodeproj/project.pbxproj: Added WKBrowsingContextControllerPrivate.h.
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp: 
+        (WebKit::WebFrameLoaderClient::dispatchDidLayout): Added a call to WebPage::mainFrameDidLayout(),
+        allowing the page to respond to changes in the column count.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage): Added initializer for m_cachedPageCount.
+        (WebKit::WebPage::setPaginationMode): Added.
+        (WebKit::WebPage::setGapBetweenPages): Added.
+        (WebKit::WebPage::mainFrameDidLayout): Added. Sends a DidChangePageCount message to the UI process
+        if the page count has changed.
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in: Added SetPaginationMode and SetGapBetweenPages messages.
+
 2011-11-16  Chris Fleizach  <cfleizach@apple.com>
 
         WebKitTestRunner needs to support accessibility-related DRT APIs

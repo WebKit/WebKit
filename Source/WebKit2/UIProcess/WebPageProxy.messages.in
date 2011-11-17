@@ -63,6 +63,7 @@ messages -> WebPageProxy {
     NotifyScrollerThumbIsVisibleInRect(WebCore::IntRect scrollerThumb)
     DidChangeScrollbarsForMainFrame(bool hasHorizontalScrollbar, bool hasVerticalScrollbar)
     DidChangeScrollOffsetPinningForMainFrame(bool hasHorizontalScrollbar, bool hasVerticalScrollbar)
+    DidChangePageCount(unsigned pageCount);
     DidFailToInitializePlugin(WTF::String mimeType)
     NumWheelEventHandlersChanged(unsigned count)
 

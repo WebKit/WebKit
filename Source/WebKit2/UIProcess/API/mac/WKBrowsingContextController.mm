@@ -25,11 +25,12 @@
 
 #import "config.h"
 #import "WKBrowsingContextController.h"
+#import "WKBrowsingContextControllerPrivate.h"
 #import "WKBrowsingContextControllerInternal.h"
 
 #import "WKErrorCF.h"
 #import "WKFrame.h"
-#import "WKPage.h"
+#import "WKPagePrivate.h"
 #import "WKRetainPtr.h"
 #import "WKStringCF.h"
 #import "WKURLCF.h"
@@ -196,6 +197,59 @@ static inline NSURL *autoreleased(WKURLRef url)
 
 @end
 
+@implementation WKBrowsingContextController (Private)
+
+- (void)setPaginationMode:(WKBrowsingContextPaginationMode)paginationMode
+{
+    WKPaginationMode mode;
+    switch (paginationMode) {
+    case WKPaginationModeUnpaginated:
+        mode = kWKPaginationModeUnpaginated;
+        break;
+    case WKPaginationModeHorizontal:
+        mode = kWKPaginationModeHorizontal;
+        break;
+    case WKPaginationModeVertical:
+        mode = kWKPaginationModeVertical;
+        break;
+    default:
+        return;
+    }
+
+    WKPageSetPaginationMode(self.pageRef, mode);
+}
+
+- (WKBrowsingContextPaginationMode)paginationMode
+{
+    switch (WKPageGetPaginationMode(self.pageRef)) {
+    case kWKPaginationModeUnpaginated:
+        return WKPaginationModeUnpaginated;
+    case kWKPaginationModeHorizontal:
+        return WKPaginationModeHorizontal;
+    case kWKPaginationModeVertical:
+        return WKPaginationModeVertical;
+    }
+
+    ASSERT_NOT_REACHED();
+    return WKPaginationModeUnpaginated;
+}
+
+- (void)setGapBetweenPages:(CGFloat)gapBetweenPages
+{
+    WKPageSetGapBetweenPages(self.pageRef, gapBetweenPages);
+}
+
+- (CGFloat)gapBetweenPages
+{
+    return WKPageGetGapBetweenPages(self.pageRef);
+}
+
+- (NSUInteger)pageCount
+{
+    return WKPageGetPageCount(self.pageRef);
+}
+
+@end
 
 @implementation WKBrowsingContextController (Internal)
 

@@ -98,6 +98,12 @@ enum {
 };
 typedef NSUInteger WebFindOptions;
 
+typedef enum {
+    WebPaginationModeUnpaginated,
+    WebPaginationModeHorizontal,
+    WebPaginationModeVertical,
+} WebPaginationMode;
+
 @interface WebController : NSTreeController {
     IBOutlet WebView *webView;
 }
@@ -554,6 +560,12 @@ Could be worth adding to the API.
 
 - (BOOL)_useFixedLayout;
 - (NSSize)_fixedLayoutSize;
+
+- (void)_setPaginationMode:(WebPaginationMode)paginationMode;
+- (WebPaginationMode)_paginationMode;
+- (void)_setGapBetweenPages:(CGFloat)pageGap;
+- (CGFloat)_gapBetweenPages;
+- (NSUInteger)_pageCount;
 
 - (void)_setCustomBackingScaleFactor:(CGFloat)overrideScaleFactor;
 - (CGFloat)_backingScaleFactor;

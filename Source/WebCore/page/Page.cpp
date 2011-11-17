@@ -59,6 +59,7 @@
 #include "PluginViewBase.h"
 #include "ProgressTracker.h"
 #include "RenderTheme.h"
+#include "RenderView.h"
 #include "RenderWidget.h"
 #include "RuntimeEnabledFeatures.h"
 #include "SchemeRegistry.h"
@@ -675,6 +676,21 @@ void Page::setPagination(const Pagination& pagination)
 
     setNeedsRecalcStyleInAllFrames();
     backForward()->markPagesForFullStyleRecalc();
+}
+
+unsigned Page::pageCount() const
+{
+    if (m_pagination.mode == Pagination::Unpaginated)
+        return 0;
+
+    FrameView* frameView = mainFrame()->view();
+    if (!frameView->didFirstLayout())
+        return 0;
+
+    mainFrame()->view()->forceLayout();
+
+    RenderView* contentRenderer = mainFrame()->contentRenderer();
+    return contentRenderer->columnCount(contentRenderer->columnInfo());
 }
 
 void Page::didMoveOnscreen()

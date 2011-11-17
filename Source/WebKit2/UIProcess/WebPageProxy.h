@@ -56,6 +56,7 @@
 #include <WebCore/DragActions.h>
 #include <WebCore/DragSession.h>
 #include <WebCore/HitTestResult.h>
+#include <WebCore/Page.h>
 #include <WebCore/PlatformScreen.h>
 #include <WebCore/ScrollTypes.h>
 #include <WebCore/TextChecking.h>
@@ -412,6 +413,12 @@ public:
     bool isPinnedToLeftSide() const { return m_mainFrameIsPinnedToLeftSide; }
     bool isPinnedToRightSide() const { return m_mainFrameIsPinnedToRightSide; }
 
+    void setPaginationMode(WebCore::Page::Pagination::Mode);
+    WebCore::Page::Pagination::Mode paginationMode() const { return m_paginationMode; }
+    void setGapBetweenPages(double);
+    double gapBetweenPages() const { return m_gapBetweenPages; }
+    unsigned pageCount() const { return m_pageCount; }
+
 #if PLATFORM(MAC)
     // Called by the web process through a message.
     void registerWebProcessAccessibilityToken(const CoreIPC::DataReference&);
@@ -662,6 +669,7 @@ private:
     void notifyScrollerThumbIsVisibleInRect(const WebCore::IntRect&);
     void didChangeScrollbarsForMainFrame(bool hasHorizontalScrollbar, bool hasVerticalScrollbar);
     void didChangeScrollOffsetPinningForMainFrame(bool pinnedToLeftSide, bool pinnedToRightSide);
+    void didChangePageCount(unsigned);
     void didFailToInitializePlugin(const String& mimeType);
     void numWheelEventHandlersChanged(unsigned count) { m_wheelEventHandlerCount = count; }
 
@@ -884,6 +892,9 @@ private:
     bool m_useFixedLayout;
     WebCore::IntSize m_fixedLayoutSize;
 
+    WebCore::Page::Pagination::Mode m_paginationMode;
+    double m_gapBetweenPages;
+
     // If the process backing the web page is alive and kicking.
     bool m_isValid;
 
@@ -937,6 +948,8 @@ private:
 
     bool m_mainFrameIsPinnedToLeftSide;
     bool m_mainFrameIsPinnedToRightSide;
+
+    unsigned m_pageCount;
 
     WebCore::IntRect m_visibleScrollerThumbRect;
 

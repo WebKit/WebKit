@@ -563,9 +563,11 @@ void WebFrameLoaderClient::dispatchDidLayout()
     // NOTE: Unlike the other layout notifications, this does not notify the
     // the UIProcess for every call.
 
-    // FIXME: Remove at the soonest possible time.
-    if (m_frame == m_frame->page()->mainWebFrame())
+    if (m_frame == m_frame->page()->mainWebFrame()) {
+        // FIXME: Remove at the soonest possible time.
         webPage->send(Messages::WebPageProxy::SetRenderTreeSize(webPage->renderTreeSize()));
+        webPage->mainFrameDidLayout();
+    }
 }
 
 Frame* WebFrameLoaderClient::dispatchCreatePage(const NavigationAction& navigationAction)

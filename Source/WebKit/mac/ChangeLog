@@ -1,3 +1,18 @@
+2011-11-16  Dan Bernstein  <mitz@apple.com>
+
+        WebKit/mac part of <rdar://problem/10262242> Add API for paginated display
+        https://bugs.webkit.org/show_bug.cgi?id=72537
+
+        Reviewed by Anders Carlsson.
+
+        * WebView/WebView.mm:
+        (-[WebView _setPaginationMode:]): Added this accessor.
+        (-[WebView _paginationMode]): Ditto.
+        (-[WebView _setGapBetweenPages:]): Ditto.
+        (-[WebView _gapBetweenPages]): Ditto.
+        (-[WebView _pageCount]): Ditto.
+        * WebView/WebViewPrivate.h: Defined WebPaginationMode enum and values.
+
 2011-11-15  Andy Estes  <aestes@apple.com>
 
         Consolidate the logic that creates run loop observers for flushing layer tree changes to CoreAnimation

@@ -1,3 +1,15 @@
+2011-11-16  Dan Bernstein  <mitz@apple.com>
+
+        WebCore part of <rdar://problem/10262242> Add API for paginated display
+        https://bugs.webkit.org/show_bug.cgi?id=72537
+
+        Reviewed by Anders Carlsson.
+
+        * WebCore.exp.in: Exported Page::pageCount().
+        * page/Page.cpp:
+        (WebCore::Page::pageCount): Added this getter.
+        * page/Page.h:
+
 2011-11-16  Shawn Singh  <shawnsingh@chromium.org>
 
         [chromium] Track property changes for render surfaces.

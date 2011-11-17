@@ -52,6 +52,20 @@ WK_EXPORT WKPageDebugPaintFlags WKPageGetDebugPaintFlags(void);
 
 WK_EXPORT WKStringRef WKPageCopyStandardUserAgentWithApplicationName(WKStringRef);
 
+enum {
+    kWKPaginationModeUnpaginated,
+    kWKPaginationModeHorizontal,
+    kWKPaginationModeVertical,
+};
+typedef uint32_t WKPaginationMode;
+
+WK_EXPORT void WKPageSetPaginationMode(WKPageRef page, WKPaginationMode paginationMode);
+WK_EXPORT WKPaginationMode WKPageGetPaginationMode(WKPageRef page);
+WK_EXPORT void WKPageSetGapBetweenPages(WKPageRef page, double gap);
+WK_EXPORT double WKPageGetGapBetweenPages(WKPageRef page);
+
+WK_EXPORT unsigned WKPageGetPageCount(WKPageRef page);
+
 struct WKPrintInfo {
     float pageSetupScaleFactor;
     float availablePaperWidth;

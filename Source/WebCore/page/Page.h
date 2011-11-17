@@ -267,6 +267,8 @@ namespace WebCore {
         const Pagination& pagination() const { return m_pagination; }
         void setPagination(const Pagination&);
 
+        unsigned pageCount() const;
+
         // Notifications when the Page starts and stops being presented via a native window.
         void didMoveOnscreen();
         void willMoveOffscreen();

@@ -121,6 +121,9 @@ messages -> WebPage {
     SetUseFixedLayout(bool fixed)
     SetFixedLayoutSize(WebCore::IntSize size)
 
+    SetPaginationMode(uint32_t mode);
+    SetGapBetweenPages(double gap);
+
     # Find.
     FindString(WTF::String string, uint32_t findOptions, unsigned maxMatchCount)
     HideFindUI()

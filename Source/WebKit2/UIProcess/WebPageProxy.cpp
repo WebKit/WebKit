@@ -159,6 +159,8 @@ WebPageProxy::WebPageProxy(PageClient* pageClient, PassRefPtr<WebProcessProxy> p
     , m_drawsTransparentBackground(false)
     , m_areMemoryCacheClientCallsEnabled(true)
     , m_useFixedLayout(false)
+    , m_paginationMode(Page::Pagination::Unpaginated)
+    , m_gapBetweenPages(0)
     , m_isValid(true)
     , m_isClosed(false)
     , m_isInPrintingMode(false)
@@ -187,6 +189,7 @@ WebPageProxy::WebPageProxy(PageClient* pageClient, PassRefPtr<WebProcessProxy> p
     , m_mainFrameHasVerticalScrollbar(false)
     , m_mainFrameIsPinnedToLeftSide(false)
     , m_mainFrameIsPinnedToRightSide(false)
+    , m_pageCount(0)
     , m_renderTreeSize(0)
     , m_shouldSendEventsSynchronously(false)
 {
@@ -1276,6 +1279,30 @@ void WebPageProxy::setFixedLayoutSize(const IntSize& size)
 
     m_fixedLayoutSize = size;
     process()->send(Messages::WebPage::SetFixedLayoutSize(size), m_pageID);
+}
+
+void WebPageProxy::setPaginationMode(WebCore::Page::Pagination::Mode mode)
+{
+    if (mode == m_paginationMode)
+        return;
+
+    m_paginationMode = mode;
+
+    if (!isValid())
+        return;
+    process()->send(Messages::WebPage::SetPaginationMode(mode), m_pageID);
+}
+
+void WebPageProxy::setGapBetweenPages(double gap)
+{
+    if (gap == m_gapBetweenPages)
+        return;
+
+    m_gapBetweenPages = gap;
+
+    if (!isValid())
+        return;
+    process()->send(Messages::WebPage::SetGapBetweenPages(gap), m_pageID);
 }
 
 void WebPageProxy::pageScaleFactorDidChange(double scaleFactor)
@@ -3155,6 +3182,8 @@ WebPageCreationParameters WebPageProxy::creationParameters() const
     parameters.areMemoryCacheClientCallsEnabled = m_areMemoryCacheClientCallsEnabled;
     parameters.useFixedLayout = m_useFixedLayout;
     parameters.fixedLayoutSize = m_fixedLayoutSize;
+    parameters.paginationMode = m_paginationMode;
+    parameters.gapBetweenPages = m_gapBetweenPages;
     parameters.userAgent = userAgent();
     parameters.sessionState = SessionState(m_backForwardList->entries(), m_backForwardList->currentIndex());
     parameters.highestUsedBackForwardItemID = WebBackForwardListItem::highedUsedItemID();
@@ -3277,6 +3306,11 @@ void WebPageProxy::didChangeScrollOffsetPinningForMainFrame(bool pinnedToLeftSid
 {
     m_mainFrameIsPinnedToLeftSide = pinnedToLeftSide;
     m_mainFrameIsPinnedToRightSide = pinnedToRightSide;
+}
+
+void WebPageProxy::didChangePageCount(unsigned pageCount)
+{
+    m_pageCount = pageCount;
 }
 
 void WebPageProxy::didFailToInitializePlugin(const String& mimeType)

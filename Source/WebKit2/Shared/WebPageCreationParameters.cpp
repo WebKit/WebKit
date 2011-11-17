@@ -1,5 +1,5 @@
 /*
- * Copyright (C)  2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -46,6 +46,8 @@ void WebPageCreationParameters::encode(CoreIPC::ArgumentEncoder* encoder) const
     encoder->encode(areMemoryCacheClientCallsEnabled);
     encoder->encode(useFixedLayout);
     encoder->encode(fixedLayoutSize);
+    encoder->encodeEnum(paginationMode);
+    encoder->encode(gapBetweenPages);
     encoder->encode(userAgent);
     encoder->encode(sessionState);
     encoder->encode(highestUsedBackForwardItemID);
@@ -89,6 +91,10 @@ bool WebPageCreationParameters::decode(CoreIPC::ArgumentDecoder* decoder, WebPag
     if (!decoder->decode(parameters.useFixedLayout))
         return false;
     if (!decoder->decode(parameters.fixedLayoutSize))
+        return false;
+    if (!decoder->decodeEnum(parameters.paginationMode))
+        return false;
+    if (!decoder->decode(parameters.gapBetweenPages))
         return false;
     if (!decoder->decode(parameters.userAgent))
         return false;

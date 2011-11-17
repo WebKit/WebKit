@@ -63,6 +63,9 @@ struct WebPageCreationParameters {
     bool useFixedLayout;
     WebCore::IntSize fixedLayoutSize;
 
+    WebCore::Page::Pagination::Mode paginationMode;
+    double gapBetweenPages;
+
     String userAgent;
 
     SessionState sessionState;

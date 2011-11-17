@@ -193,6 +193,7 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     , m_isRunningModal(false)
     , m_cachedMainFrameIsPinnedToLeftSide(false)
     , m_cachedMainFrameIsPinnedToRightSide(false)
+    , m_cachedPageCount(0)
     , m_isShowingContextMenu(false)
 #if PLATFORM(WIN)
     , m_gestureReachedScrollingLimit(false)
@@ -239,6 +240,9 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
 
     setDrawsBackground(parameters.drawsBackground);
     setDrawsTransparentBackground(parameters.drawsTransparentBackground);
+
+    setPaginationMode(parameters.paginationMode);
+    setGapBetweenPages(parameters.gapBetweenPages);
 
     setMemoryCacheMessagesEnabled(parameters.areMemoryCacheClientCallsEnabled);
 
@@ -914,6 +918,20 @@ void WebPage::setFixedLayoutSize(const IntSize& size)
 
     view->setFixedLayoutSize(size);
     view->forceLayout();
+}
+
+void WebPage::setPaginationMode(uint32_t mode)
+{
+    Page::Pagination pagination = m_page->pagination();
+    pagination.mode = static_cast<Page::Pagination::Mode>(mode);
+    m_page->setPagination(pagination);
+}
+
+void WebPage::setGapBetweenPages(double gap)
+{
+    Page::Pagination pagination = m_page->pagination();
+    pagination.gap = gap;
+    m_page->setPagination(pagination);
 }
 
 void WebPage::installPageOverlay(PassRefPtr<PageOverlay> pageOverlay)
@@ -2165,6 +2183,15 @@ void WebPage::didChangeScrollOffsetForMainFrame()
         
         m_cachedMainFrameIsPinnedToLeftSide = isPinnedToLeftSide;
         m_cachedMainFrameIsPinnedToRightSide = isPinnedToRightSide;
+    }
+}
+
+void WebPage::mainFrameDidLayout()
+{
+    unsigned pageCount = m_page->pageCount();
+    if (pageCount != m_cachedPageCount) {
+        send(Messages::WebPageProxy::DidChangePageCount(pageCount));
+        m_cachedPageCount = pageCount;
     }
 }
 

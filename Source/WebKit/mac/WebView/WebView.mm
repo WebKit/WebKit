@@ -2717,6 +2717,78 @@ static PassOwnPtr<Vector<String> > toStringVector(NSArray* patterns)
     return view->fixedLayoutSize();
 }
 
+- (void)_setPaginationMode:(WebPaginationMode)paginationMode
+{
+    Page* page = core(self);
+    if (!page)
+        return;
+
+    Page::Pagination pagination = page->pagination();
+    switch (paginationMode) {
+    case WebPaginationModeUnpaginated:
+        pagination.mode = Page::Pagination::Unpaginated;
+        break;
+    case WebPaginationModeHorizontal:
+        pagination.mode = Page::Pagination::HorizontallyPaginated;
+        break;
+    case WebPaginationModeVertical:
+        pagination.mode = Page::Pagination::VerticallyPaginated;
+        break;
+    default:
+        return;
+    }
+
+    page->setPagination(pagination);
+}
+
+- (WebPaginationMode)_paginationMode
+{
+    Page* page = core(self);
+    if (!page)
+        return WebPaginationModeUnpaginated;
+
+    switch (page->pagination().mode) {
+    case Page::Pagination::Unpaginated:
+        return WebPaginationModeUnpaginated;
+    case Page::Pagination::HorizontallyPaginated:
+        return WebPaginationModeHorizontal;
+    case Page::Pagination::VerticallyPaginated:
+        return WebPaginationModeVertical;
+    }
+
+    ASSERT_NOT_REACHED();
+    return WebPaginationModeUnpaginated;
+}
+
+- (void)_setGapBetweenPages:(CGFloat)pageGap
+{
+    Page* page = core(self);
+    if (!page)
+        return;
+
+    Page::Pagination pagination = page->pagination();
+    pagination.gap = pageGap;
+    page->setPagination(pagination);
+}
+
+- (CGFloat)_gapBetweenPages
+{
+    Page* page = core(self);
+    if (!page)
+        return 0;
+
+    return page->pagination().gap;
+}
+
+- (NSUInteger)_pageCount
+{
+    Page* page = core(self);
+    if (!page)
+        return 0;
+
+    return page->pageCount();
+}
+
 - (CGFloat)_backingScaleFactor
 {
     return [self _deviceScaleFactor];

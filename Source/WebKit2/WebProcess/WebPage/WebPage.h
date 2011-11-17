@@ -265,6 +265,9 @@ public:
     void setUseFixedLayout(bool);
     void setFixedLayoutSize(const WebCore::IntSize&);
 
+    void setPaginationMode(uint32_t /* WebCore::Page::Pagination::Mode */);
+    void setGapBetweenPages(double);
+
     bool drawsBackground() const { return m_drawsBackground; }
     bool drawsTransparentBackground() const { return m_drawsTransparentBackground; }
 
@@ -421,6 +424,8 @@ public:
     bool mainFrameHasCustomRepresentation() const;
 
     void didChangeScrollOffsetForMainFrame();
+
+    void mainFrameDidLayout();
 
     bool canRunBeforeUnloadConfirmPanel() const { return m_canRunBeforeUnloadConfirmPanel; }
     void setCanRunBeforeUnloadConfirmPanel(bool canRunBeforeUnloadConfirmPanel) { m_canRunBeforeUnloadConfirmPanel = canRunBeforeUnloadConfirmPanel; }
@@ -695,6 +700,8 @@ private:
 
     bool m_cachedMainFrameIsPinnedToLeftSide;
     bool m_cachedMainFrameIsPinnedToRightSide;
+
+    unsigned m_cachedPageCount;
 
     bool m_isShowingContextMenu;
 
