@@ -1038,7 +1038,7 @@ private:
         Node& node = at(nodeIndex);
         m_generationInfo[node.virtualRegister()].initConstant(nodeIndex, node.refCount());
     }
-
+    
     // These methods used to sort arguments into the correct registers.
     // On X86 we use cdecl calling conventions, which pass all arguments on the
     // stack. On other architectures we may need to sort values into the
@@ -1987,7 +1987,7 @@ private:
         speculationCheck(jsValueRegs, nodeIndex, m_jit.jump());
         m_compileOkay = false;
     }
-
+    
     template<bool strict>
     GPRReg fillSpeculateIntInternal(NodeIndex, DataFormat& returnFormat);
     

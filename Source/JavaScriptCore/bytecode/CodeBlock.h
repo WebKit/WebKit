@@ -292,6 +292,10 @@ namespace JSC {
         bool canProduceCopyWithBytecode() { return hasInstructions(); }
 
         void visitAggregate(SlotVisitor&);
+        
+        // Call this if you are not jettisoning a code block, and thus
+        // have no evidence to suggest that it will never be called into again.
+        void stronglyVisitWeakReferences(SlotVisitor&);
 
         static void dumpStatistics();
 
@@ -450,6 +454,33 @@ namespace JSC {
         DFG::SpeculationRecovery& speculationRecovery(unsigned index)
         {
             return m_dfgData->speculationRecovery[index];
+        }
+        
+        void appendWeakReference(JSCell* target)
+        {
+            createDFGDataIfNecessary();
+            m_dfgData->weakReferences.append(WriteBarrier<JSCell>(*globalData(), ownerExecutable(), target));
+        }
+        
+        void shrinkWeakReferencesToFit()
+        {
+            if (!m_dfgData)
+                return;
+            m_dfgData->weakReferences.shrinkToFit();
+        }
+        
+        void appendWeakReferenceTransition(JSCell* codeOrigin, JSCell* from, JSCell* to)
+        {
+            createDFGDataIfNecessary();
+            m_dfgData->transitions.append(
+                WeakReferenceTransition(*globalData(), ownerExecutable(), codeOrigin, from, to));
+        }
+        
+        void shrinkWeakReferenceTransitionsToFit()
+        {
+            if (!m_dfgData)
+                return;
+            m_dfgData->transitions.shrinkToFit();
         }
 #endif
 
@@ -1106,10 +1137,28 @@ namespace JSC {
 #if ENABLE(DFG_JIT)
         OwnPtr<CompactJITCodeMap> m_jitCodeMap;
         
+        struct WeakReferenceTransition {
+            WeakReferenceTransition() { }
+            
+            WeakReferenceTransition(JSGlobalData& globalData, JSCell* owner, JSCell* codeOrigin, JSCell* from, JSCell* to)
+                : m_from(globalData, owner, from)
+                , m_to(globalData, owner, to)
+            {
+                if (!!codeOrigin)
+                    m_codeOrigin.set(globalData, owner, codeOrigin);
+            }
+
+            WriteBarrier<JSCell> m_codeOrigin;
+            WriteBarrier<JSCell> m_from;
+            WriteBarrier<JSCell> m_to;
+        };
+        
         struct DFGData {
-            Vector<DFG::OSREntryData, 4> osrEntry;
-            SegmentedVector<DFG::OSRExit, 16> osrExit;
-            Vector<DFG::SpeculationRecovery, 4> speculationRecovery;
+            Vector<DFG::OSREntryData> osrEntry;
+            SegmentedVector<DFG::OSRExit, 8> osrExit;
+            Vector<DFG::SpeculationRecovery> speculationRecovery;
+            Vector<WeakReferenceTransition> transitions;
+            Vector<WriteBarrier<JSCell> > weakReferences;
         };
         
         OwnPtr<DFGData> m_dfgData;

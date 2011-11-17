@@ -1654,6 +1654,24 @@ void CodeBlock::visitAggregate(SlotVisitor& visitor)
     if (hasInstructions() && m_shouldDiscardBytecode)
         visitor.addUnconditionalFinalizer(this);
 #endif
+    
+    stronglyVisitWeakReferences(visitor);
+}
+
+void CodeBlock::stronglyVisitWeakReferences(SlotVisitor& visitor)
+{
+    if (!m_dfgData)
+        return;
+    
+    for (unsigned i = 0; i < m_dfgData->transitions.size(); ++i) {
+        if (!!m_dfgData->transitions[i].m_codeOrigin)
+            visitor.append(&m_dfgData->transitions[i].m_codeOrigin); // Almost certainly not necessary, since the code origin should also be a weak reference. Better to be safe, though.
+        visitor.append(&m_dfgData->transitions[i].m_from);
+        visitor.append(&m_dfgData->transitions[i].m_to);
+    }
+    
+    for (unsigned i = 0; i < m_dfgData->weakReferences.size(); ++i)
+        visitor.append(&m_dfgData->weakReferences[i]);
 }
 
 HandlerInfo* CodeBlock::handlerForBytecodeOffset(unsigned bytecodeOffset)

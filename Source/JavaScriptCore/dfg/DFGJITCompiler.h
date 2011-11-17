@@ -238,6 +238,24 @@ public:
         m_jsCalls.append(JSCallRecord(fastCall, slowCall, targetToCheck, callType, codeOrigin));
     }
     
+    void addWeakReference(JSCell* target)
+    {
+        m_codeBlock->appendWeakReference(target);
+    }
+    
+    void addWeakReferenceTransition(JSCell* codeOrigin, JSCell* from, JSCell* to)
+    {
+        m_codeBlock->appendWeakReferenceTransition(codeOrigin, from, to);
+    }
+    
+    template<typename T>
+    Jump branchWeakPtr(RelationalCondition cond, T left, JSCell* weakPtr)
+    {
+        Jump result = branchPtr(cond, left, TrustedImmPtr(weakPtr));
+        addWeakReference(weakPtr);
+        return result;
+    }
+    
     void noticeOSREntry(BasicBlock& basicBlock, JITCompiler::Label blockHead, LinkBuffer& linkBuffer)
     {
 #if DFG_ENABLE(OSR_ENTRY)
@@ -321,7 +339,7 @@ private:
         CallLinkInfo::CallType m_callType;
         CodeOrigin m_codeOrigin;
     };
-
+    
     Vector<PropertyAccessRecord, 4> m_propertyAccesses;
     Vector<MethodGetRecord, 4> m_methodGets;
     Vector<JSCallRecord, 4> m_jsCalls;

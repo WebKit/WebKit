@@ -204,6 +204,9 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
         linkBuffer.link(exit.m_check.lateJump(), target);
         exit.m_check.correctLateJump(linkBuffer);
     }
+    
+    codeBlock()->shrinkWeakReferencesToFit();
+    codeBlock()->shrinkWeakReferenceTransitionsToFit();
 }
 
 void JITCompiler::compile(JITCode& entry)

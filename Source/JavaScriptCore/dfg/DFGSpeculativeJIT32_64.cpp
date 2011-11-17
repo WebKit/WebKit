@@ -2058,7 +2058,11 @@ void SpeculativeJIT::compile(Node& node)
 
     switch (op) {
     case JSConstant:
+        initConstantInfo(m_compileIndex);
+        break;
+
     case WeakJSConstant:
+        m_jit.addWeakReference(node.weakConstant());
         initConstantInfo(m_compileIndex);
         break;
 
@@ -3501,7 +3505,7 @@ void SpeculativeJIT::compile(Node& node)
 
     case CheckFunction: {
         SpeculateCellOperand function(this, node.child1());
-        speculationCheck(JSValueRegs(), NoNode, m_jit.branchPtr(JITCompiler::NotEqual, function.gpr(), JITCompiler::TrustedImmPtr(node.function())));
+        speculationCheck(JSValueRegs(), NoNode, m_jit.branchWeakPtr(JITCompiler::NotEqual, function.gpr(), JITCompiler::TrustedImmPtr(node.function())));
         noResult(m_compileIndex);
         break;
     }
@@ -3517,7 +3521,7 @@ void SpeculativeJIT::compile(Node& node)
         ASSERT(node.structureSet().size());
         
         if (node.structureSet().size() == 1)
-            speculationCheck(JSValueRegs(), NoNode, m_jit.branchPtr(JITCompiler::NotEqual, JITCompiler::Address(base.gpr(), JSCell::structureOffset()), JITCompiler::TrustedImmPtr(node.structureSet()[0])));
+            speculationCheck(JSValueRegs(), NoNode, m_jit.branchWeakPtr(JITCompiler::NotEqual, JITCompiler::Address(base.gpr(), JSCell::structureOffset()), JITCompiler::TrustedImmPtr(node.structureSet()[0])));
         else {
             GPRTemporary structure(this);
             
@@ -3526,9 +3530,9 @@ void SpeculativeJIT::compile(Node& node)
             JITCompiler::JumpList done;
             
             for (size_t i = 0; i < node.structureSet().size() - 1; ++i)
-                done.append(m_jit.branchPtr(JITCompiler::Equal, structure.gpr(), JITCompiler::TrustedImmPtr(node.structureSet()[i])));
+                done.append(m_jit.branchWeakPtr(JITCompiler::Equal, structure.gpr(), JITCompiler::TrustedImmPtr(node.structureSet()[i])));
             
-            speculationCheck(JSValueRegs(), NoNode, m_jit.branchPtr(JITCompiler::NotEqual, structure.gpr(), JITCompiler::TrustedImmPtr(node.structureSet().last())));
+            speculationCheck(JSValueRegs(), NoNode, m_jit.branchWeakPtr(JITCompiler::NotEqual, structure.gpr(), JITCompiler::TrustedImmPtr(node.structureSet().last())));
             
             done.link(&m_jit);
         }
@@ -3540,6 +3544,11 @@ void SpeculativeJIT::compile(Node& node)
     case PutStructure: {
         SpeculateCellOperand base(this, node.child1());
         GPRReg baseGPR = base.gpr();
+        
+        m_jit.addWeakReferenceTransition(
+            node.codeOrigin.codeOriginOwner(),
+            node.structureTransitionData().previousStructure,
+            node.structureTransitionData().newStructure);
         
 #if ENABLE(GGC) || ENABLE(WRITE_BARRIER_PROFILING)
         // Must always emit this write barrier as the structure transition itself requires it
