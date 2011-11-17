@@ -96,7 +96,7 @@ class LeakDetector(object):
     def _parse_leaks_output(self, leaks_output):
         _, count, bytes = re.search(r'Process (?P<pid>\d+): (?P<count>\d+) leaks? for (?P<bytes>\d+) total', leaks_output).groups()
         excluded_match = re.search(r'(?P<excluded>\d+) leaks? excluded', leaks_output)
-        excluded = excluded_match.group(0) if excluded_match else 0
+        excluded = excluded_match.group('excluded') if excluded_match else 0
         return int(count), int(excluded), int(bytes)
 
     def leaks_files_in_directory(self, directory):

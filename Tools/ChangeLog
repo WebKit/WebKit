@@ -1,5 +1,24 @@
 2011-11-17  Adam Roben  <aroben@apple.com>
 
+        Fix NRWT's parsing of the number of excluded leaks
+
+        Fixes <http://webkit.org/b/72635> NRWT crashes when parsing leaks files from which certain
+        leaks were excluded
+
+        Reviewed by Adam Barth.
+
+        * Scripts/webkitpy/layout_tests/port/leakdetector.py:
+        (LeakDetector._parse_leaks_output): Extract just the number of excluded leaks from the
+        regular expression match, not the entire matched string.
+
+        * Scripts/webkitpy/layout_tests/port/leakdetector_unittest.py:
+        (LeakDetectorTest): Added some example output that shows how things look when leaks are
+        excluded.
+        (LeakDetectorTest.test_parse_leaks_output): Test that we parse the number of exclusions
+        correctly.
+
+2011-11-17  Adam Roben  <aroben@apple.com>
+
         Make NRWT find crash logs for the crashed process, which may not necessarily be the driver process
 
         Fixes <http://webkit.org/b/72526> REGRESSION (NRWT): WebKitTestRunner crash log gets saved
