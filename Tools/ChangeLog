@@ -1,5 +1,11 @@
 2011-11-17  Adam Barth  <abarth@webkit.org>
 
+        Unreviewed. Fix style nits in printing.py.
+
+        * Scripts/webkitpy/layout_tests/views/printing.py:
+
+2011-11-17  Adam Barth  <abarth@webkit.org>
+
         Minor style nits in run_webkit_tests.py
         https://bugs.webkit.org/show_bug.cgi?id=72583
 
