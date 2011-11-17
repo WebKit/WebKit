@@ -75,10 +75,10 @@ public:
     void setOriginTransform(const TransformationMatrix& originTransform) { m_originTransform = originTransform; }
     const TransformationMatrix& originTransform() const { return m_originTransform; }
 
-    void setClipRect(const IntRect& clipRect) { m_clipRect = clipRect; }
+    void setClipRect(const IntRect&);
     const IntRect& clipRect() const { return m_clipRect; }
 
-    void setContentRect(const IntRect& contentRect) { m_contentRect = contentRect; }
+    void setContentRect(const IntRect&);
     const IntRect& contentRect() const { return m_contentRect; }
 
     void setSkipsDraw(bool skipsDraw) { m_skipsDraw = skipsDraw; }
@@ -97,6 +97,10 @@ public:
     ManagedTexture* contentsTexture() const { return m_contentsTexture.get(); }
 
     int owningLayerId() const;
+
+    void resetPropertyChangedFlag() { m_surfacePropertyChanged = false; }
+    bool surfacePropertyChanged() const;
+
 private:
     void drawLayer(LayerRendererChromium*, CCLayerImpl*, const TransformationMatrix&);
     template <class T>
@@ -107,6 +111,7 @@ private:
 
     IntRect m_contentRect;
     bool m_skipsDraw;
+    bool m_surfacePropertyChanged;
 
     OwnPtr<ManagedTexture> m_contentsTexture;
     float m_drawOpacity;

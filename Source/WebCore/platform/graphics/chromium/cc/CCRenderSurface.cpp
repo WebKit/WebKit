@@ -43,6 +43,7 @@ CCRenderSurface::CCRenderSurface(CCLayerImpl* owningLayer)
     : m_owningLayer(owningLayer)
     , m_maskLayer(0)
     , m_skipsDraw(false)
+    , m_surfacePropertyChanged(false)
     , m_drawOpacity(1)
 {
 }
@@ -233,6 +234,38 @@ void CCRenderSurface::dumpSurface(TextStream& ts, int indent) const
 int CCRenderSurface::owningLayerId() const
 {
     return m_owningLayer ? m_owningLayer->id() : 0;
+}
+
+void CCRenderSurface::setClipRect(const IntRect& clipRect)
+{
+    if (m_clipRect == clipRect)
+        return;
+
+    m_surfacePropertyChanged = true;
+    m_clipRect = clipRect;
+}
+
+void CCRenderSurface::setContentRect(const IntRect& contentRect)
+{
+    if (m_contentRect == contentRect)
+        return;
+
+    m_surfacePropertyChanged = true;
+    m_contentRect = contentRect;
+}
+
+bool CCRenderSurface::surfacePropertyChanged() const
+{
+    // Surface property changes are tracked as follows:
+    //
+    // - m_surfacePropertyChanged is flagged when the clipRect or contentRect change. As
+    //   of now, these are the only two properties that can be affected by descendant layers.
+    //
+    // - all other property changes come from the owning layer (or some ancestor layer
+    //   that propagates its change to the owning layer).
+    //
+    ASSERT(m_owningLayer);
+    return m_surfacePropertyChanged || m_owningLayer->layerPropertyChanged();
 }
 
 }

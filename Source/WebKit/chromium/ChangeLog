@@ -1,3 +1,16 @@
+2011-11-16  Shawn Singh  <shawnsingh@chromium.org>
+
+        [chromium] Track property changes for render surfaces.
+        https://bugs.webkit.org/show_bug.cgi?id=72521
+
+        Reviewed by James Robinson.
+
+        * WebKit.gypi:
+        * tests/CCLayerImplTest.cpp:
+        (WebCore::TEST):
+        * tests/CCRenderSurfaceTest.cpp: Added.
+        (WebCore::TEST):
+
 2011-11-16  Alexandre Elias  <aelias@google.com>
 
         [chromium] Improvements for page scale delta during commit

@@ -343,6 +343,9 @@ void LayerRendererChromium::drawLayersOntoRenderSurfaces(CCLayerImpl* rootDrawLa
                 drawLayer(layerList[layerIndex].get(), renderSurface);
         }
     }
+
+    // The next frame should start by assuming nothing has changed, and changes are noted as they occur.
+    rootDrawLayer->resetPropertyChangedFlagForSubtree();
 }
 
 

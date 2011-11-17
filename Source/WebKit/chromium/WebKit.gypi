@@ -61,6 +61,7 @@
             'tests/CCLayerTreeHostCommonTest.cpp',
             'tests/CCLayerTreeHostImplTest.cpp',
             'tests/CCLayerTreeHostTest.cpp',
+            'tests/CCRenderSurfaceTest.cpp',
             'tests/CCSchedulerTest.cpp',
             'tests/CCSchedulerStateMachineTest.cpp',
             'tests/CCSchedulerTestCommon.h',

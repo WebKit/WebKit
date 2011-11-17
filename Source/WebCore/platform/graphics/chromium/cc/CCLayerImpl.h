@@ -192,7 +192,7 @@ public:
     String layerTreeAsText() const;
 
     bool layerPropertyChanged() const { return m_layerPropertyChanged; }
-    void resetLayerPropertyChanged() { m_layerPropertyChanged = false; }
+    void resetPropertyChangedFlagForSubtree(); // also resets property change for existing render surfaces.
 
 protected:
     explicit CCLayerImpl(int);

@@ -1,3 +1,25 @@
+2011-11-16  Shawn Singh  <shawnsingh@chromium.org>
+
+        [chromium] Track property changes for render surfaces.
+        https://bugs.webkit.org/show_bug.cgi?id=72521
+
+        Reviewed by James Robinson.
+
+        Created CCRenderSurfaceTest for testing.
+
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::drawLayersOntoRenderSurfaces):
+        * platform/graphics/chromium/cc/CCLayerImpl.cpp:
+        (WebCore::CCLayerImpl::resetPropertyChangedFlagForSubtree):
+        * platform/graphics/chromium/cc/CCLayerImpl.h:
+        * platform/graphics/chromium/cc/CCRenderSurface.cpp:
+        (WebCore::CCRenderSurface::CCRenderSurface):
+        (WebCore::CCRenderSurface::setClipRect):
+        (WebCore::CCRenderSurface::setContentRect):
+        (WebCore::CCRenderSurface::surfacePropertyChanged):
+        * platform/graphics/chromium/cc/CCRenderSurface.h:
+        (WebCore::CCRenderSurface::resetPropertyChangedFlag):
+
 2011-11-16  Ben Wells  <benwells@chromium.org>
 
         Seaming on border corners with mixed colour alpha borders

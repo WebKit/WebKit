@@ -239,6 +239,17 @@ void CCLayerImpl::noteLayerPropertyChangedForDescendants()
         m_children[i]->noteLayerPropertyChangedForSubtree();
 }
 
+void CCLayerImpl::resetPropertyChangedFlagForSubtree()
+{
+    m_layerPropertyChanged = false;
+
+    if (m_renderSurface)
+        m_renderSurface->resetPropertyChangedFlag();
+
+    for (size_t i = 0; i < m_children.size(); ++i)
+        m_children[i]->resetPropertyChangedFlagForSubtree();
+}
+
 void CCLayerImpl::setBounds(const IntSize& bounds)
 {
     if (m_bounds != bounds) {
