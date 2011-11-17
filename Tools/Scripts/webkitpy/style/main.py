@@ -20,11 +20,18 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import codecs
 import logging
 import os
+import os.path
 import sys
 
 from webkitpy.common.system.ospath import relpath as _relpath
+from webkitpy.common.checkout.scm.detection import detect_scm_system
+import webkitpy.style.checker as checker
+from webkitpy.style.patchreader import PatchReader
+from webkitpy.style.checker import StyleProcessor
+from webkitpy.style.filereader import TextFileReader
 
 
 _log = logging.getLogger(__name__)
@@ -128,3 +135,77 @@ def change_directory(checkout_root, paths, mock_os=None):
     os_module.chdir(checkout_root)
 
     return paths
+
+
+class CheckWebKitStyle(object):
+    # FIXME: This function is huge and needs to be split up.
+    def main(self):
+        # Change stderr to write with replacement characters so we don't die
+        # if we try to print something containing non-ASCII characters.
+        stderr = codecs.StreamReaderWriter(sys.stderr,
+                                           codecs.getreader('utf8'),
+                                           codecs.getwriter('utf8'),
+                                           'replace')
+        # Setting an "encoding" attribute on the stream is necessary to
+        # prevent the logging module from raising an error.  See
+        # the checker.configure_logging() function for more information.
+        stderr.encoding = "UTF-8"
+
+        # FIXME: Change webkitpy.style so that we do not need to overwrite
+        #        the global sys.stderr.  This involves updating the code to
+        #        accept a stream parameter where necessary, and not calling
+        #        sys.stderr explicitly anywhere.
+        sys.stderr = stderr
+
+        args = sys.argv[1:]
+
+        # Checking for the verbose flag before calling check_webkit_style_parser()
+        # lets us enable verbose logging earlier.
+        is_verbose = "-v" in args or "--verbose" in args
+
+        checker.configure_logging(stream=stderr, is_verbose=is_verbose)
+        _log.debug("Verbose logging enabled.")
+
+        parser = checker.check_webkit_style_parser()
+        (paths, options) = parser.parse(args)
+
+        cwd = os.path.abspath(os.curdir)
+        scm = detect_scm_system(cwd)
+
+        if scm is None:
+            if not paths:
+                _log.error("WebKit checkout not found: You must run this script "
+                           "from within a WebKit checkout if you are not passing "
+                           "specific paths to check.")
+                sys.exit(1)
+
+            checkout_root = None
+            _log.debug("WebKit checkout not found for current directory.")
+        else:
+            checkout_root = scm.checkout_root
+            _log.debug("WebKit checkout found with root: %s" % checkout_root)
+
+        configuration = checker.check_webkit_style_configuration(options)
+
+        paths = change_directory(checkout_root=checkout_root, paths=paths)
+
+        style_processor = StyleProcessor(configuration)
+
+        file_reader = TextFileReader(style_processor)
+
+        if paths and not options.diff_files:
+            file_reader.process_paths(paths)
+        else:
+            changed_files = paths if options.diff_files else None
+            patch = scm.create_patch(options.git_commit, changed_files=changed_files)
+            patch_checker = PatchReader(file_reader)
+            patch_checker.check(patch)
+
+        error_count = style_processor.error_count
+        file_count = file_reader.file_count
+        delete_only_file_count = file_reader.delete_only_file_count
+
+        _log.info("Total errors found: %d in %d files"
+                  % (error_count, file_count))
+        # We fail when style errors are found or there are no checked files.
+        sys.exit(error_count > 0 or (file_count == 0 and delete_only_file_count == 0))
