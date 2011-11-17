@@ -1,0 +1,10 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x345
+  RenderBlock {HTML} at (0,0) size 800x345
+    RenderBody {BODY} at (8,16) size 784x321
+      RenderBlock {P} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 386x21
+          text run at (0,0) width 386: "Test passes if the two boxes below are the same color."
+      RenderBlock {DIV} at (100,121) size 0x0
+      RenderBlock {DIV} at (50,221) size 100x100 [bgcolor=#999999]
