@@ -1,5 +1,17 @@
 2011-11-17  Adam Barth  <abarth@webkit.org>
 
+        Minor style nits in run_webkit_tests.py
+        https://bugs.webkit.org/show_bug.cgi?id=72583
+
+        Reviewed by Eric Seidel.
+
+        This patch just fixes some minor style issues as I work my way back
+        into this code.
+
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+
+2011-11-17  Adam Barth  <abarth@webkit.org>
+
         Move test_result_writer out of layout_package
         https://bugs.webkit.org/show_bug.cgi?id=72586
 

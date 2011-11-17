@@ -29,8 +29,6 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-"""Run layout tests."""
-
 import errno
 import logging
 import optparse
@@ -39,9 +37,6 @@ import signal
 import sys
 
 from webkitpy.common.host import Host
-
-from webkitpy import layout_tests
-
 from webkitpy.layout_tests.controllers.manager import Manager, WorkerException
 from webkitpy.layout_tests.views import printing
 
@@ -49,29 +44,13 @@ from webkitpy.layout_tests.views import printing
 _log = logging.getLogger(__name__)
 
 
-def run(port, options, args, regular_output=sys.stderr,
-        buildbot_output=sys.stdout):
-    """Run the tests.
-
-    Args:
-      port: Port object for port-specific behavior
-      options: a dictionary of command line options
-      args: a list of sub directories or files to test
-      regular_output: a stream-like object that we can send logging/debug
-          output to
-      buildbot_output: a stream-like object that we can write all output that
-          is intended to be parsed by the buildbot to
-    Returns:
-      the number of unexpected results that occurred, or -1 if there is an
-          error.
-
-    """
+def run(port, options, args, regular_output=sys.stderr, buildbot_output=sys.stdout):
     warnings = _set_up_derived_options(port, options)
 
-    printer = printing.Printer(port, options, regular_output, buildbot_output,
-                               configure_logging=True)
-    for w in warnings:
-        _log.warning(w)
+    printer = printing.Printer(port, options, regular_output, buildbot_output, configure_logging=True)
+
+    for warning in warnings:
+        _log.warning(warning)
 
     if options.help_printing:
         printer.help_printing()
@@ -80,7 +59,7 @@ def run(port, options, args, regular_output=sys.stderr,
 
     # We wrap any parts of the run that are slow or likely to raise exceptions
     # in a try/finally to ensure that we clean up the logging configuration.
-    num_unexpected_results = -1
+    unexpected_result_count = -1
     try:
         manager = Manager(port, options, printer)
         manager.print_config()
@@ -106,14 +85,13 @@ def run(port, options, args, regular_output=sys.stderr,
 
         result_summary = manager.set_up_run()
         if result_summary:
-            num_unexpected_results = manager.run(result_summary)
+            unexpected_result_count = manager.run(result_summary)
             manager.clean_up_run()
-            _log.debug("Testing completed, Exit status: %d" %
-                       num_unexpected_results)
+            _log.debug("Testing completed, Exit status: %d" % unexpected_result_count)
     finally:
         printer.cleanup()
 
-    return num_unexpected_results
+    return unexpected_result_count
 
 
 def _set_up_derived_options(port, options):
