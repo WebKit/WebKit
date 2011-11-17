@@ -68,7 +68,7 @@ public:
         if (destinationURI.isEmpty()) {
             GOwnPtr<char> errorMessage(g_strdup_printf(_("Cannot determine destination URI for download with suggested filename %s"),
                                                        suggestedFilename.utf8().data()));
-            downloadFailed(downloadDestinationError(response, errorMessage.get());
+            downloadFailed(downloadDestinationError(response, errorMessage.get()));
             return;
         }
 

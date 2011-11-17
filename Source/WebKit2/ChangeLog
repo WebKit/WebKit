@@ -1,3 +1,10 @@
+2011-11-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix WebKit2 GTK+ build after r100569.
+
+        * WebProcess/Downloads/soup/DownloadSoup.cpp:
+        (WebKit::DownloadClient::didReceiveResponse):
+
 2011-11-17  Nayan Kumar K  <nayankk@motorola.com>
 
         [WebKit2][gtk] Fix assert while running TestWebKitSettings
