@@ -113,6 +113,10 @@ class MacPort(ApplePort):
         return self._version == "snowleopard"
 
     # Belongs on a Platform object.
+    def is_lion(self):
+        return self._version == "lion"
+
+    # Belongs on a Platform object.
     def is_crash_reporter(self, process_name):
         return re.search(r'ReportCrash', process_name)
 

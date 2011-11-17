@@ -1279,6 +1279,14 @@ sub countAndPrintLeaks($$$)
         );
     }
 
+    if (isLion()) {
+        push @callStacksToExclude, (
+            "FigByteFlumeCustomURLCreateWithURL", # <rdar://problem/10461926> leak in CoreMedia
+            "PDFPage\\(PDFPageInternal\\) pageLayoutIfAvail", # <rdar://problem/10462055> leak in PDFKit
+            "_NSCopyStyleRefForFocusRingStyleClip", # <rdar://problem/10462031> leak in AppKit
+        );
+    }
+
     my $leaksTool = sourceDir() . "/Tools/Scripts/run-leaks";
     my $excludeString = "--exclude-callstack '" . (join "' --exclude-callstack '", @callStacksToExclude) . "'";
     $excludeString .= " --exclude-type '" . (join "' --exclude-type '", @typesToExclude) . "'" if @typesToExclude;

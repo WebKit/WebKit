@@ -76,6 +76,12 @@ class LeakDetector(object):
                 "glrCompExecuteKernel",  # <rdar://problem/7815391> leak in graphics driver while using OpenGL
                 "NSNumberFormatter getObjectValue:forString:errorDescription:",  # <rdar://problem/7149350> Leak in NSNumberFormatter
             ]
+        elif self._port.is_lion():
+            callstacks += [
+                "FigByteFlumeCustomURLCreateWithURL", # <rdar://problem/10461926> leak in CoreMedia
+                "PDFPage\(PDFPageInternal\) pageLayoutIfAvail", # <rdar://problem/10462055> leak in PDFKit
+                "_NSCopyStyleRefForFocusRingStyleClip", # <rdar://problem/10462031> leak in AppKit
+            ]
         return callstacks
 
     def _leaks_args(self, pid):

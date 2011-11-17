@@ -1,3 +1,25 @@
+2011-11-17  Adam Roben  <aroben@apple.com>
+
+        Ignore some leaks in frameworks we link against on Lion
+
+        Fixes <http://webkit.org/b/72609> Lion Leaks bot complains about a bunch of leaks that
+        aren't WebKit's fault
+
+        Reviewed by Antti Koivisto.
+
+        * Scripts/old-run-webkit-tests:
+        (countAndPrintLeaks):
+        * Scripts/webkitpy/layout_tests/port/leakdetector.py:
+        (LeakDetector._callstacks_to_exclude_from_leaks):
+        Added some call stacks to exclude on Lion that represent leaks in lower-level frameworks.
+
+        * Scripts/webkitpy/layout_tests/port/mac.py:
+        (MacPort.is_lion): Added.
+
+        * Scripts/webkitpy/layout_tests/port/mac_unittest.py:
+        (MacPortTest.test_is_version_methods): Added tests for the is_leopard/is_snowleopard/is_lion
+        methods.
+
 2011-11-17  Philippe Normand  <pnormand@igalia.com>
 
         [GTK] Disable ref tests

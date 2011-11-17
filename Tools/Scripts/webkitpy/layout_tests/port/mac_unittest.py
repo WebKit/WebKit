@@ -113,6 +113,22 @@ java/
 
         self.assertRaises(AssertionError, self.assert_name, None, '10.3.1', 'should-raise-assertion-so-this-value-does-not-matter')
 
+    def test_is_version_methods(self):
+        leopard_port = self.make_port(port_name='mac-leopard', os_version_string='10.5.3')
+        self.assertTrue(leopard_port.is_leopard())
+        self.assertFalse(leopard_port.is_snowleopard())
+        self.assertFalse(leopard_port.is_lion())
+
+        snowleopard_port = self.make_port(port_name='mac-snowleopard', os_version_string='10.6.3')
+        self.assertFalse(snowleopard_port.is_leopard())
+        self.assertTrue(snowleopard_port.is_snowleopard())
+        self.assertFalse(snowleopard_port.is_lion())
+
+        lion_port = self.make_port(port_name='mac-lion', os_version_string='10.7.2')
+        self.assertFalse(lion_port.is_leopard())
+        self.assertFalse(lion_port.is_snowleopard())
+        self.assertTrue(lion_port.is_lion())
+
     def test_setup_environ_for_server(self):
         port = MacPort(MockHost(), options=MockOptions(leaks=True, guard_malloc=True))
         env = port.setup_environ_for_server(port.driver_name())
