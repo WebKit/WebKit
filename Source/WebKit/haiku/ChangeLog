@@ -1,38 +1,109 @@
-2011-11-15  Lucas Forschler  <lforschler@apple.com>
+2011-08-17  Adam Roben  <aroben@apple.com>
 
-    Merge 93040
+        Make WebCore keep track of the current device scale factor
 
-    2011-08-10  Adam Roben  <aroben@apple.com>
+        Fixes <http://webkit.org/b/66413> WebCore requires every WebKit port to keep track of the
+        device scale factor
 
-            Clear up scale factor terminology
+        Reviewed by Darin Adler.
 
-            WebKit by and large deals with two scale factors: one intrinsic to the device on which the
-            software is running, and one that is per-Page and can be controlled via API calls. This
-            patch names the former "deviceScaleFactor" and the latter "pageScaleFactor", and makes the
-            code use those names. It should introduce no behavior changes.
+        * WebCoreSupport/ChromeClientHaiku.cpp:
+        * WebCoreSupport/ChromeClientHaiku.h:
+        Removed deviceScaleFactor.
 
-            Fixes <http://webkit.org/b/55787> WebKit uses multiple conflicting names to refer to the
-            device scale factor
+2011-08-15  Dmitry Titov  <dimich@chromium.org>
 
-            Reviewed by Simon Fraser.
+        FrameLoaderClient::transferLoadingResourceFromPage does not have enough parameters
+        https://bugs.webkit.org/show_bug.cgi?id=66165
 
-            * WebCoreSupport/ChromeClientHaiku.cpp:
-            * WebCoreSupport/ChromeClientHaiku.h:
+        Reviewed by Darin Fisher.
 
-2011-08-11  Lucas Forschler  <lforschler@apple.com>
+        * WebCoreSupport/FrameLoaderClientHaiku.cpp:
+        (WebCore::FrameLoaderClientHaiku::transferLoadingResourceFromPage):
+        * WebCoreSupport/FrameLoaderClientHaiku.h:
 
-    Merged 91097
+2011-08-10  Adam Roben  <aroben@apple.com>
 
-    2011-07-15  Dan Bernstein  <mitz@apple.com>
+        Clear up scale factor terminology
 
-            REGRESSION: Mouse cursor doesn’t hide when full screen video HUD hides
-            https://bugs.webkit.org/show_bug.cgi?id=64615
+        WebKit by and large deals with two scale factors: one intrinsic to the device on which the
+        software is running, and one that is per-Page and can be controlled via API calls. This
+        patch names the former "deviceScaleFactor" and the latter "pageScaleFactor", and makes the
+        code use those names. It should introduce no behavior changes.
 
-            Reviewed by Anders Carlsson.
+        Fixes <http://webkit.org/b/55787> WebKit uses multiple conflicting names to refer to the
+        device scale factor
 
-            * WebCoreSupport/ChromeClientHaiku.cpp:
-            (WebCore::ChromeClientHaiku::setCursorHiddenUntilMouseMoves): Added this stub.
-            * WebCoreSupport/ChromeClientHaiku.h:
+        Reviewed by Simon Fraser.
+
+        * WebCoreSupport/ChromeClientHaiku.cpp:
+        * WebCoreSupport/ChromeClientHaiku.h:
+
+2011-08-03  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: remove Node parameter from the InspectorClient::highlight
+        https://bugs.webkit.org/show_bug.cgi?id=65549
+
+        Reviewed by Yury Semikhatsky.
+
+        * WebCoreSupport/InspectorClientHaiku.cpp:
+        (WebCore::InspectorClientHaiku::highlight):
+        * WebCoreSupport/InspectorClientHaiku.h:
+
+2011-07-26  Sadrul Habib Chowdhury  <sadrul@chromium.org>
+
+        Add support for download='filename' attribute in anchors.
+        https://bugs.webkit.org/show_bug.cgi?id=64580
+
+        Reviewed by Adam Barth.
+
+        * WebCoreSupport/FrameLoaderClientHaiku.cpp:
+        (WebCore::FrameLoaderClientHaiku::startDownload):
+        * WebCoreSupport/FrameLoaderClientHaiku.h:
+
+2011-07-15  Dan Bernstein  <mitz@apple.com>
+
+        REGRESSION: Mouse cursor doesn’t hide when full screen video HUD hides
+        https://bugs.webkit.org/show_bug.cgi?id=64615
+
+        Reviewed by Anders Carlsson.
+
+        * WebCoreSupport/ChromeClientHaiku.cpp:
+        (WebCore::ChromeClientHaiku::setCursorHiddenUntilMouseMoves): Added this stub.
+        * WebCoreSupport/ChromeClientHaiku.h:
+
+2011-07-12  Joseph Pecoraro  <joepeck@webkit.org>
+
+        ApplicationCache update should not immediately fail when reaching per-origin quota
+        https://bugs.webkit.org/show_bug.cgi?id=64177
+
+        Reviewed by Alexey Proskuryakov.
+
+        * WebCoreSupport/ChromeClientHaiku.cpp:
+        (WebCore::ChromeClientWx::reachedApplicationCacheOriginQuota):
+        * WebCoreSupport/ChromeClientHaiku.h:
+
+2011-06-18  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Separate concerns of loading file icons and choosing files.
+        https://bugs.webkit.org/show_bug.cgi?id=62931
+
+        * WebCoreSupport/ChromeClientHaiku.cpp:
+        (WebCore::ChromeClientHaiku::loadIconForFiles): Renamed.
+        * WebCoreSupport/ChromeClientHaiku.h:
+
+2011-06-12  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Rename FrameLoaderClient::interruptForPolicyChangeError to use the past tense
+        https://bugs.webkit.org/show_bug.cgi?id=62516
+
+        * WebCoreSupport/FrameLoaderClientHaiku.cpp:
+        (WebCore::FrameLoaderClientHaiku::interruptedForPolicyChangeError):
+        * WebCoreSupport/FrameLoaderClientHaiku.h:
 
 2011-05-13  Jon Lee  <jonlee@apple.com>
 

@@ -45,8 +45,6 @@ public:
 
     virtual FloatRect pageRect();
 
-    virtual float deviceScaleFactor();
-
     virtual void focus();
     virtual void unfocus();
 

@@ -1488,7 +1488,7 @@ float RenderLayerCompositor::deviceScaleFactor() const
     Page* page = frame->page();
     if (!page)
         return 1;
-    return page->chrome()->deviceScaleFactor();
+    return page->deviceScaleFactor();
 }
 
 float RenderLayerCompositor::pageScaleFactor() const
