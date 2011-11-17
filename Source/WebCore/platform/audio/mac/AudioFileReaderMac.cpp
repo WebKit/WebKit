@@ -36,7 +36,7 @@
 #include "AudioFileReader.h"
 #include "FloatConversion.h"
 #include <CoreFoundation/CoreFoundation.h>
-#include <CoreServices/CoreServices.h>
+#include <wtf/RetainPtr.h>
 
 namespace WebCore {
 
@@ -64,19 +64,12 @@ AudioFileReader::AudioFileReader(const char* filePath)
     , m_audioFileID(0)
     , m_extAudioFileRef(0)
 {
-    FSRef fsref;
-    OSStatus result = FSPathMakeRef((UInt8*)filePath, &fsref, 0);
-    if (result != noErr)
+    RetainPtr<CFStringRef> filePathString(AdoptCF, CFStringCreateWithCString(kCFAllocatorDefault, filePath, kCFStringEncodingUTF8));
+    RetainPtr<CFURLRef> url(AdoptCF, CFURLCreateWithFileSystemPath(kCFAllocatorDefault, filePathString.get(), kCFURLPOSIXPathStyle, false));
+    if (!url)
         return;
 
-    CFURLRef urlRef = CFURLCreateFromFSRef(0, &fsref);
-    if (!urlRef)
-        return;
-
-    ExtAudioFileOpenURL(urlRef, &m_extAudioFileRef);
-
-    if (urlRef)
-        CFRelease(urlRef);
+    ExtAudioFileOpenURL(url.get(), &m_extAudioFileRef);
 }
 
 AudioFileReader::AudioFileReader(const void* data, size_t dataSize)

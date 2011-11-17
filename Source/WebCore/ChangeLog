@@ -1,3 +1,17 @@
+2011-11-16  Mark Rowe  <mrowe@apple.com>
+
+        <http://webkit.org/b/72574> Remove unnecessary use of CarbonCore APIs from Audio code
+
+        Reviewed by Andy Estes.
+
+        * platform/audio/mac/AudioDestinationMac.cpp:
+        (WebCore::AudioDestinationMac::AudioDestinationMac): Switch from using the Carbon Component Manager
+        to using AudioUnit's own component interface.
+        (WebCore::AudioDestinationMac::~AudioDestinationMac): Ditto.
+        * platform/audio/mac/AudioFileReaderMac.cpp:
+        (WebCore::AudioFileReader::AudioFileReader): Remove an unncessary trip through the Carbon File Manager
+        when converting a char* path to a CFURLRef representing the same.
+
 2011-11-17  Adam Barth  <abarth@webkit.org>
 
         CSP report-only mode doesn't work from an HTTP header

@@ -76,19 +76,19 @@ AudioDestinationMac::AudioDestinationMac(AudioSourceProvider& provider, float sa
     , m_isPlaying(false)
 {
     // Open and initialize DefaultOutputUnit
-    Component comp;
-    ComponentDescription desc;
+    AudioComponent comp;
+    AudioComponentDescription desc;
 
     desc.componentType = kAudioUnitType_Output;
     desc.componentSubType = kAudioUnitSubType_DefaultOutput;
     desc.componentManufacturer = kAudioUnitManufacturer_Apple;
     desc.componentFlags = 0;
     desc.componentFlagsMask = 0;
-    comp = FindNextComponent(0, &desc);
+    comp = AudioComponentFindNext(0, &desc);
 
     ASSERT(comp);
 
-    OSStatus result = OpenAComponent(comp, &m_outputUnit);
+    OSStatus result = AudioComponentInstanceNew(comp, &m_outputUnit);
     ASSERT(!result);
 
     result = AudioUnitInitialize(m_outputUnit);
@@ -100,7 +100,7 @@ AudioDestinationMac::AudioDestinationMac(AudioSourceProvider& provider, float sa
 AudioDestinationMac::~AudioDestinationMac()
 {
     if (m_outputUnit)
-        CloseComponent(m_outputUnit);
+        AudioComponentInstanceDispose(m_outputUnit);
 }
 
 void AudioDestinationMac::configure()
