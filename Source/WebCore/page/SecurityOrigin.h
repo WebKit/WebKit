@@ -182,6 +182,7 @@ private:
     bool m_domainWasSetInDOM;
     bool m_canLoadLocalResources;
     bool m_enforceFilePathSeparation;
+    bool m_needsStorageIdentifierQuirkForFiles;
 };
 
 } // namespace WebCore

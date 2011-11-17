@@ -41,6 +41,7 @@
 
 namespace WebCore {
 
+const int InvalidPort = 0;
 const int MaxAllowedPort = 65535;
 
 static bool schemeRequiresAuthority(const String& scheme)
@@ -64,11 +65,8 @@ SecurityOrigin::SecurityOrigin(const KURL& url, bool forceUnique)
     , m_universalAccess(false)
     , m_domainWasSetInDOM(false)
     , m_enforceFilePathSeparation(false)
+    , m_needsStorageIdentifierQuirkForFiles(false)
 {
-    // These protocols do not create security origins; the owner frame provides the origin
-    if (m_protocol == "about" || m_protocol == "javascript")
-        m_protocol = "";
-
 #if ENABLE(BLOB) || ENABLE(FILE_SYSTEM)
     bool isBlobOrFileSystemProtocol = false;
 #if ENABLE(BLOB)
@@ -93,6 +91,7 @@ SecurityOrigin::SecurityOrigin(const KURL& url, bool forceUnique)
     // For edge case URLs that were probably misparsed, make sure that the origin is unique.
     if (schemeRequiresAuthority(m_protocol) && m_host.isEmpty())
         m_isUnique = true;
+
     if (m_protocol.isEmpty())
         m_isUnique = true;
 
@@ -116,7 +115,17 @@ SecurityOrigin::SecurityOrigin(const KURL& url, bool forceUnique)
     }
 
     if (isDefaultPortForProtocol(m_port, m_protocol))
-        m_port = 0;
+        m_port = InvalidPort;
+
+    if (m_protocol == "file")
+        m_needsStorageIdentifierQuirkForFiles = true;
+
+    // Don't leak details from URLs into unique origins.
+    if (m_isUnique) {
+        m_protocol = "";
+        m_host = "";
+        m_port = InvalidPort;
+    }
 }
 
 SecurityOrigin::SecurityOrigin(const SecurityOrigin* other)
@@ -131,6 +140,7 @@ SecurityOrigin::SecurityOrigin(const SecurityOrigin* other)
     , m_domainWasSetInDOM(other->m_domainWasSetInDOM)
     , m_canLoadLocalResources(other->m_canLoadLocalResources)
     , m_enforceFilePathSeparation(other->m_enforceFilePathSeparation)
+    , m_needsStorageIdentifierQuirkForFiles(other->m_needsStorageIdentifierQuirkForFiles)
 {
 }
 
@@ -409,6 +419,14 @@ PassRefPtr<SecurityOrigin> SecurityOrigin::create(const String& protocol, const 
 
 String SecurityOrigin::databaseIdentifier() const 
 {
+    // Historically, we've used the following (somewhat non-sensical) string
+    // for the databaseIdentifier of local files. We used to compute this
+    // string because of a bug in how we handled the scheme for file URLs.
+    // Now that we've fixed that bug, we still need to produce this string
+    // to avoid breaking existing persistent state.
+    if (m_needsStorageIdentifierQuirkForFiles)
+        return "file__0";
+
     String separatorString(&SeparatorCharacter, 1);
 
     if (m_encodedHost.isEmpty())
