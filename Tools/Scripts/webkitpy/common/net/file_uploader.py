@@ -36,10 +36,12 @@ import urllib2
 
 from webkitpy.common.net.networktransaction import NetworkTransaction
 
+
 def get_mime_type(filename):
     return mimetypes.guess_type(filename)[0] or 'application/octet-stream'
 
 
+# FIXME: Rather than taking tuples, this function should take more structured data.
 def _encode_multipart_form_data(fields, files):
     """Encode form fields for multipart/form-data.
 
@@ -81,25 +83,30 @@ def _encode_multipart_form_data(fields, files):
     return content_type, body
 
 
-class TestResultsUploader:
-    def __init__(self, host):
-        self._host = host
+class FileUploader(object):
+    def __init__(self, url):
+        self._url = url
 
     def _upload_files(self, attrs, file_objs):
-        url = "http://%s/testfile/upload" % self._host
+        # FIXME: We should use the same variable names for the formal and actual parameters.
         content_type, data = _encode_multipart_form_data(attrs, file_objs)
-        headers = {"Content-Type": content_type}
-        request = urllib2.Request(url, data, headers)
+        headers = {
+            "Content-Type": content_type,
+        }
+        # FIXME: We should talk to the network via a Host object.
+        request = urllib2.Request(self._url, data, headers)
         urllib2.urlopen(request)
 
     def upload(self, params, files, timeout_seconds):
         file_objs = []
         for filename, path in files:
+            # FIXME: We should talk to the filesytem via a Host object.
             with codecs.open(path, "rb") as file:
                 file_objs.append(('file', filename, file.read()))
 
         orig_timeout = socket.getdefaulttimeout()
         try:
+            # FIXME: We shouldn't mutate global static state.
             socket.setdefaulttimeout(timeout_seconds)
             NetworkTransaction(timeout_seconds=timeout_seconds).run(
                 lambda: self._upload_files(params, file_objs))

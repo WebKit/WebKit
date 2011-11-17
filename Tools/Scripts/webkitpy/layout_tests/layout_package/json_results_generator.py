@@ -34,7 +34,7 @@ import time
 import urllib2
 import xml.dom.minidom
 
-from webkitpy.layout_tests.layout_package import test_results_uploader
+from webkitpy.common.net.file_uploader import FileUploader
 
 try:
     import json
@@ -317,8 +317,8 @@ class JSONResultsGeneratorBase(object):
         files = [(file, self._fs.join(self._results_directory, file))
             for file in json_files]
 
-        uploader = test_results_uploader.TestResultsUploader(
-            self._test_results_server)
+        url = "http://%s/testfile/upload" % self._test_results_server
+        uploader = FileUploader(url)
         try:
             # Set uploading timeout in case appengine server is having problem.
             # 120 seconds are more than enough to upload test results.
@@ -418,6 +418,7 @@ class JSONResultsGeneratorBase(object):
              urllib2.quote(self._test_type)))
 
         try:
+            # FIXME: We should talk to the network via a Host object.
             results_file = urllib2.urlopen(results_file_url)
             info = results_file.info()
             old_results = results_file.read()

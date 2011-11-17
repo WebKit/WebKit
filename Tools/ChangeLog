@@ -1,5 +1,22 @@
 2011-11-17  Adam Barth  <abarth@webkit.org>
 
+        Move test_results_uploader.py out of layout_package
+        https://bugs.webkit.org/show_bug.cgi?id=72590
+
+        Reviewed by Eric Seidel.
+
+        Most of the lines of code in this file are wrong, but I've restrained
+        myself and only changed a few of them to generalized this class to the
+        common package.
+
+        This is part of a series of patches to remove layout_package.
+
+        * Scripts/webkitpy/common/net/file_uploader.py: Copied from Tools/Scripts/webkitpy/layout_tests/layout_package/test_results_uploader.py.
+        * Scripts/webkitpy/layout_tests/layout_package/json_results_generator.py:
+        * Scripts/webkitpy/layout_tests/layout_package/test_results_uploader.py: Removed.
+
+2011-11-17  Adam Barth  <abarth@webkit.org>
+
         Unreviewed. Fix style nits in printing.py.
 
         * Scripts/webkitpy/layout_tests/views/printing.py:
