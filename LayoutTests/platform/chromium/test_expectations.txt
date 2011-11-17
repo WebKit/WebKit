@@ -1520,9 +1520,6 @@ BUGCR24191 LINUX : fast/css/hsla-color.html = FAIL
 BUGCR5737 LINUX : fast/forms/001.html = FAIL
 BUGCR5737 LINUX : fast/forms/input-first-letter.html = FAIL
 
-// New test. We should fix it, but it doesn't need to block the current release
-BUGCR10418 WIN DEBUG : animations/change-keyframes-name.html = PASS FAIL
-
 // We could fix this test for us and upstream it if the test shell user agent
 // would let us differentiate test_shell and WebKit DumpTreeNode.
 BUGCR7482 MAC : http/tests/misc/timer-vs-loading.html = PASS TIMEOUT TEXT
@@ -2290,9 +2287,6 @@ BUGWEBGL SLOW WIN DEBUG GPU : fast/canvas/webgl/index-validation-with-resized-bu
 BUGCR60651 WIN : fast/canvas/webgl/gl-object-get-calls.html = PASS TIMEOUT TEXT
 BUGCR60651 : fast/canvas/webgl/uniform-location.html = TIMEOUT TEXT
 
-BUG_AUTO DEBUG : animations/suspend-resume-animation.html = PASS TEXT
-BUG_AUTO WIN DEBUG : animations/multiple-keyframes.html = PASS TEXT
-
 // Seems to have been crashing intermittently for as long as we have test history.
 BUGCR62741 WIN LINUX SNOWLEOPARD DEBUG : svg/clip-path/clip-path-text-and-stroke.svg = PASS CRASH
 BUGWK68270 LEOPARD CPU DEBUG : svg/clip-path/clip-path-text-and-stroke.svg = IMAGE
@@ -2441,9 +2435,12 @@ WONTFIX SKIP WIN : platform/win/plugins/draws-gradient.html = IMAGE+TEXT CRASH
 WONTFIX SKIP WIN : platform/win/plugins/get-value-netscape-window.html = TEXT CRASH
 
 // Added in WK r71424
-BUGCR62138 : animations/stop-animation-on-suspend.html = PASS CRASH TEXT
+BUGCR62138 MAC DEBUG : animations/stop-animation-on-suspend.html = CRASH TEXT PASS
+BUGCR62138 MAC RELEASE : animations/stop-animation-on-suspend.html = TEXT PASS
+BUGCR62138 LINUX WIN : animations/stop-animation-on-suspend.html = TEXT PASS
 
-BUGCR61739 DEBUG : animations/suspend-resume-animation-events.html = PASS CRASH TEXT
+BUGCR61739 DEBUG : animations/suspend-resume-animation-events.html = CRASH TEXT PASS
+BUGCR61739 WIN RELEASE : animations/suspend-resume-animation-events.html = TEXT PASS
 
 // New tests added with http://trac.webkit.org/changeset/72472 and further.
 // See https://bugs.webkit.org/show_bug.cgi?id=51982 for more info.
@@ -2773,7 +2770,6 @@ BUGWK54322 SNOWLEOPARD : transitions/transition-end-event-rendering.html = PASS 
 
 // Flaky
 BUGCR73080 LINUX DEBUG : fast/forms/form-attribute-elements-order.html = PASS TIMEOUT
-BUGCR73091 : animations/play-state-suspend.html = PASS TEXT
 BUGCR73092 WIN : fast/dom/gc-11.html = PASS TEXT
 BUGCR73094 LINUX DEBUG : http/tests/websocket/tests/hixie76/send-after-close-on-unload.html = PASS TIMEOUT
 BUGCR73094 LINUX DEBUG : http/tests/websocket/tests/hybi/send-after-close-on-unload.html = PASS TIMEOUT
@@ -2834,7 +2830,6 @@ BUGCR76578 LINUX DEBUG : svg/filters/big-sized-filter.svg = PASS TIMEOUT
 BUGCR76552 DEBUG : fast/dom/HTMLScriptElement/dont-load-unknown-type.html = PASS TEXT
 
 // Flaky
-BUGCR76609 DEBUG : animations/play-state.html = PASS TEXT
 BUGCR76610 MAC WIN DEBUG : canvas/philip/tests/2d.text.draw.align.center.html = PASS TEXT
 BUGCR76716 LINUX WIN DEBUG : fast/css/first-child-pseudo-class.html = PASS TEXT
 BUGCR76979 WIN RELEASE : inspector/console/console-dirxml.html = PASS TEXT
@@ -2978,9 +2973,6 @@ BUGCR79259 : fast/js/array-proto-func-property-getter-except.html = PASS TEXT
 // Flaky, perhaps Skia related.
 BUGCR79851 LINUX : fast/table/frame-and-rules.html = PASS TEXT
 
-// Flaky, possibly timing related.
-BUGCR79853 : animations/combo-transform-translate+scale.html = PASS TEXT
-
 // Flaky on debug
 BUGCR79855 LINUX WIN DEBUG : fast/css/only-child-pseudo-class.html = PASS TEXT
 
@@ -3015,7 +3007,6 @@ BUGWK60131 SLOW : fast/css/visited-link-hang.html = PASS
 
 // webkit roll : 84350:84431
 BUGDPRANKE LINUX MAC : transitions/interrupt-zero-duration.html = PASS TEXT
-BUGDPRANKE LINUX WIN : animations/change-one-anim.html = PASS TEXT
 
 // pulled in from downstream during webkit roll 84350:84431
 BUGCASEQ LINUX WIN : fast/forms/input-text-drag-down.html = IMAGE+TEXT
@@ -3042,7 +3033,6 @@ BUGDPRANKE LINUX WIN DEBUG : fast/css/only-of-type-pseudo-class.html = PASS TEXT
 BUGWK59063 : fast/images/animated-gif-restored-from-bfcache.html = TEXT
 
 // more failures for triaging, fails on deps bots at least?
-BUGDPRANKE DEBUG : animations/keyframes-out-of-order.html = PASS TEXT
 BUGDPRANKE : http/tests/navigation/redirect-on-back-updates-history-item.html = PASS TIMEOUT
 BUGWK60125 : fast/files/create-blob-url-crash.html = PASS CRASH
 
@@ -3250,7 +3240,7 @@ BUGABARTH LINUX : svg/text/scaling-font-with-geometric-precision.html = PASS IMA
 
 BUGCR84157 WIN GPU : fast/canvas/canvas-currentColor.html = TEXT
 
-BUGWK62255 : animations/animation-iteration-event-destroy-renderer.html = PASS TIMEOUT
+BUGWK62255 LEOPARD DEBUG : animations/animation-iteration-event-destroy-renderer.html = PASS TIMEOUT
 
 BUGCR85292 : platform/chromium/permissionclient/storage-permission.html = PASS TEXT
 
@@ -3375,7 +3365,7 @@ BUGCR89673 : fast/js/object-prototype-properties.html = TEXT
 // The test is flaky, due to the WebSocket issue.
 BUGWK64788 : http/tests/websocket/tests/hybi/reserved-opcodes.html = PASS TIMEOUT
 
-BUGWK70888 LEOPARD DEBUG : animations/dynamic-stylesheet-loading.html = PASS TEXT
+BUGWK70888 MAC DEBUG : animations/dynamic-stylesheet-loading.html = PASS TEXT
 BUGWK70887 DEBUG : jquery/css.html = PASS TIMEOUT
 
 BUGWK64940 WIN DEBUG : svg/W3C-SVG-1.1/animate-elem-78-t.svg = PASS CRASH
@@ -3489,8 +3479,6 @@ BUGWK66908 : fast/css/font-face-woff.html = PASS IMAGE+TEXT
 BUGWK66908 : svg/custom/svg-fonts-fallback.xhtml = PASS IMAGE+TEXT IMAGE
 BUGWK66908 WIN SNOWLEOPARD : fast/css/font-face-multiple-faces.html = PASS IMAGE+TEXT
 BUGWK66908 DEBUG : svg/custom/svg-fonts-segmented.xhtml = PASS IMAGE+TEXT
-
-BUGWK66953 SNOWLEOPARD DEBUG : animations/negative-delay.html = PASS TEXT
 
 BUGWK66974 DEBUG : fast/events/keydown-1.html = PASS TIMEOUT
 
@@ -3756,7 +3744,6 @@ BUGWK72039 LINUX MAC DEBUG : http/tests/multipart/policy-ignore-crash.php = MISS
 
 BUGWK70971 MAC : storage/domstorage/events/basic-setattribute.html = PASS CRASH
 
-BUGWK70988 SNOWLEOPARD : animations/change-one-anim.html = PASS TEXT
 BUGWK70988 SNOWLEOPARD : fast/forms/submit-to-blank-multiple-times.html = PASS TEXT
 BUGWK70988 SNOWLEOPARD : fast/overflow/003.xml = PASS TEXT
 BUGWK70988 SNOWLEOPARD : fast/preloader/noscript.html = PASS TEXT
@@ -3779,7 +3766,6 @@ BUGWK71209 LINUX MAC : compositing/visibility/visibility-image-layers.html = IMA
 
 BUGWK71211 GPU LINUX DEBUG : fast/canvas/shadow-offset-3.html = PASS CRASH
 BUGWK71214 LEOPARD CPU-CG : css2.1/20110323/block-non-replaced-width-008.htm = FAIL
-BUGWK71215 SNOWLEOPARD DEBUG : animations/change-keyframes.html = TEXT
 
 BUGWK71673 MAC : svg/zoom/page/zoom-img-preserveAspectRatio-support-1.html = TEXT IMAGE IMAGE+TEXT
 BUGWK71673 WIN LINUX : svg/zoom/page/zoom-img-preserveAspectRatio-support-1.html = PASS IMAGE IMAGE+TEXT
@@ -3855,11 +3841,8 @@ BUG_SENORBLANCO GPU : fast/canvas/canvas-transforms-fillRect-shadow.html = TEXT
 
 // Will need baselines updated to take compositing into account when that is enabled by default.
 // See bug for details
-BUGWK72402 : transitions/default-timing-function.html = PASS FAIL
-BUGWK72402 : animations/missing-values-first-keyframe.html = PASS FAIL
 BUGWK72402 : fast/repaint/block-selection-gap-in-composited-layer.html = PASS FAIL
-BUGWK72402 : animations/opacity-transform-animation.html = PASS FAIL
-BUGWK72402 : animations/missing-values-last-keyframe.html = PASS FAIL
+BUGWK72402 : transitions/default-timing-function.html = PASS FAIL
 
 // Need to rebaseline on win and mac.
 BUG_TONY MAC : css3/flexbox/repaint.html = PASS FAIL
@@ -3912,10 +3895,18 @@ BUGWK72376 WIN : fast/forms/file/input-file-label.html = TEXT PASS
 
 BUGWK72434 : inspector/styles/svg-style.xhtml = PASS TEXT TIMEOUT
 
-BUGWK72485 DEBUG : animations/animation-direction-normal.html = TEXT PASS
-BUGWK72485 LEOPARD DEBUG CPU-CG GPU-CG : animations/play-state-paused.html = TEXT PASS
-
 BUGWK72487 MAC : compositing/layers-inside-overflow-scroll.html = IMAGE
 BUGWK72487 MAC : compositing/overflow/overflow-compositing-descendant.html = IMAGE
 BUGWK72487 MAC : compositing/overflow/scroll-ancestor-update.html = IMAGE
 BUGWK72487 MAC : compositing/self-painting-layers.html = IMAGE
+
+// Animations tests use an inherently-flaky timer-based design.
+BUGWK66953 : animations/animation-direction-normal.html = TEXT PASS
+BUGWK66953 MAC DEBUG : animations/change-keyframes.html = TEXT PASS
+BUGWK66953 WIN MAC DEBUG : animations/change-one-anim.html = TEXT PASS
+BUGWK66953 WIN MAC DEBUG : animations/combo-transform-translate+scale.html = TEXT PASS
+BUGWK66953 LEOPARD DEBUG : animations/negative-delay.html = TEXT PASS
+BUGWK66953 MAC DEBUG : animations/play-state.html = TEXT PASS
+BUGWK66953 DEBUG : animations/play-state-paused.html = TEXT PASS
+BUGWK66953 DEBUG : animations/play-state-suspend.html = TEXT PASS
+BUGWK66953 DEBUG : animations/suspend-resume-animation.html = TEXT PASS
