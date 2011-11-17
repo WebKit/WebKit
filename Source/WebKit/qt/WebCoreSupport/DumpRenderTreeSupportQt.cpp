@@ -57,6 +57,7 @@
 #include "HistoryItem.h"
 #include "HTMLInputElement.h"
 #include "InspectorController.h"
+#include "JSNode.h"
 #include "NodeList.h"
 #include "NotificationPresenterClientQt.h"
 #include "Page.h"
@@ -83,6 +84,7 @@
 #include "WorkerThread.h"
 #include <wtf/CurrentTime.h>
 
+#include "qt_runtime.h"
 #include "qwebelement.h"
 #include "qwebframe.h"
 #include "qwebframe_p.h"
@@ -149,6 +151,37 @@ QDRTNode& QDRTNode::operator=(const QDRTNode& other)
     return *this;
 }
 
+QDRTNode QtDRTNodeRuntime::create(WebCore::Node* node)
+{
+    return QDRTNode(node);
+}
+
+WebCore::Node* QtDRTNodeRuntime::get(const QDRTNode& node)
+{
+    return node.m_node;
+}
+
+static QVariant convertJSValueToNodeVariant(JSC::JSObject* object, int *distance, HashSet<JSC::JSObject*>*)
+{
+    if (!object || !object->inherits(&JSNode::s_info))
+        return QVariant();
+    return QVariant::fromValue<QDRTNode>(QtDRTNodeRuntime::create((static_cast<JSNode*>(object))->impl()));
+}
+
+static JSC::JSValue convertNodeVariantToJSValue(JSC::ExecState* exec, WebCore::JSDOMGlobalObject* globalObject, const QVariant& variant)
+{
+    return toJS(exec, globalObject, QtDRTNodeRuntime::get(variant.value<QDRTNode>()));
+}
+
+void QtDRTNodeRuntime::initialize()
+{
+    static bool initialized = false;
+    if (initialized)
+        return;
+    initialized = true;
+    int id = qRegisterMetaType<QDRTNode>();
+    JSC::Bindings::registerCustomType(id, convertJSValueToNodeVariant, convertNodeVariantToJSValue);
+}
 
 DumpRenderTreeSupportQt::DumpRenderTreeSupportQt()
 {
@@ -156,6 +189,11 @@ DumpRenderTreeSupportQt::DumpRenderTreeSupportQt()
 
 DumpRenderTreeSupportQt::~DumpRenderTreeSupportQt()
 {
+}
+
+void DumpRenderTreeSupportQt::initialize()
+{
+    QtDRTNodeRuntime::initialize();
 }
 
 void DumpRenderTreeSupportQt::overwritePluginDirectories()

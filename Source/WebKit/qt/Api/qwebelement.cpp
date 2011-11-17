@@ -20,6 +20,7 @@
 #include "config.h"
 #include "qwebelement.h"
 
+#include "qwebelement_p.h"
 #include "CSSComputedStyleDeclaration.h"
 #include "CSSMutableStyleDeclaration.h"
 #include "CSSParser.h"
@@ -53,6 +54,7 @@
 #include "qwebframe_p.h"
 #if USE(JSC)
 #include "runtime_root.h"
+#include <JSDocument.h>
 #endif
 #include <wtf/Vector.h>
 #include <wtf/text/CString.h>
@@ -2086,3 +2088,49 @@ QList<QWebElement> QWebElementCollection::toList() const
     Returns true if the element pointed to by this iterator is greater than or equal to the
     element pointed to by the \a other iterator.
 */
+
+QWebElement QtWebElementRuntime::create(Element* element)
+{
+    return QWebElement(element);
+}
+
+Element* QtWebElementRuntime::get(const QWebElement& element)
+{
+    return element.m_element;
+}
+
+static QVariant convertJSValueToWebElementVariant(JSC::JSObject* object, int *distance, HashSet<JSC::JSObject*>* visitedObjects)
+{
+    Element* element = 0;
+    QVariant ret;
+    if (object && object->inherits(&JSElement::s_info)) {
+        element =(static_cast<JSElement*>(object))->impl();
+        *distance = 0;
+        // Allow other objects to reach this one. This won't cause our algorithm to
+        // loop since when we find an Element we do not recurse.
+        visitedObjects->remove(object);
+    } else if (object && object->inherits(&JSDocument::s_info)) {
+        // To support LayoutTestControllerQt::nodesFromRect(), used in DRT, we do an implicit
+        // conversion from 'document' to the QWebElement representing the 'document.documentElement'.
+        // We can't simply use a QVariantMap in nodesFromRect() because it currently times out
+        // when serializing DOMMimeType and DOMPlugin, even if we limit the recursion.
+        element =(static_cast<JSDocument*>(object))->impl()->documentElement();
+    }
+
+    return QVariant::fromValue<QWebElement>(QtWebElementRuntime::create(element));
+}
+
+static JSC::JSValue convertWebElementVariantToJSValue(JSC::ExecState* exec, WebCore::JSDOMGlobalObject* globalObject, const QVariant& variant)
+{
+    return WebCore::toJS(exec, globalObject, QtWebElementRuntime::get(variant.value<QWebElement>()));
+}
+
+void QtWebElementRuntime::initialize()
+{
+    static bool initialized = false;
+    if (initialized)
+        return;
+    initialized = true;
+    int id = qRegisterMetaType<QWebElement>();
+    JSC::Bindings::registerCustomType(id, convertJSValueToWebElementVariant, convertWebElementVariantToJSValue);
+}

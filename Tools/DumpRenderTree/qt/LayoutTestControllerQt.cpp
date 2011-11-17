@@ -42,7 +42,6 @@ LayoutTestController::LayoutTestController(WebCore::DumpRenderTree* drt)
     : QObject()
     , m_drt(drt)
 {
-    qRegisterMetaType<QWebElement>("QWebElement");
     reset();
     DumpRenderTreeSupportQt::dumpNotification(true);
 }

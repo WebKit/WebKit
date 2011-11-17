@@ -1,3 +1,34 @@
+2011-11-17  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Layer violation: qt_runtime.cpp accesses QWebElement and QTDRTNode
+        https://bugs.webkit.org/show_bug.cgi?id=72595
+
+        Reviewed by Noam Rosenthal.
+
+        Move QWebElement and QtDRTNode JS bindings from WebCore to WebKit/qt.
+
+        * Api/qwebelement.cpp: Add QWebElement to JSValue and JSValue to QWebElement
+        conversion through intermediate QVariant.
+        (QtWebElementRuntime::create):
+        (QtWebElementRuntime::get):
+        (convertJSValueToWebElementVariant):
+        (convertWebElementVariantToJSValue):
+        (QtWebElementRuntime::initialize): Register conversion functions for QWebElement.
+        * Api/qwebelement.h:
+        * Api/qwebelement_p.h: Added.
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::QWebPagePrivate): Initialize QWebElement conversion functions for
+        the JS runtime.
+        * WebCoreSupport/DumpRenderTreeSupportQt.cpp: Add QtDRTNode to JSValue and JSValue to
+        QtDRTNode conversion through intermediate QVariant.
+        (QtDRTNodeRuntime::create):
+        (QtDRTNodeRuntime::get):
+        (convertJSValueToNodeVariant):
+        (convertNodeVariantToJSValue):
+        (QtDRTNodeRuntime::initialize):
+        (DumpRenderTreeSupportQt::initialize): Register conversion functions for QtDRTNode.
+        * WebCoreSupport/DumpRenderTreeSupportQt.h:
+
 2011-11-17  Alexis Menard  <alexis.menard@openbossa.org>
 
         [Qt] The experimental plugin doesn't work after being renamed.

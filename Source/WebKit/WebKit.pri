@@ -27,6 +27,7 @@ HEADERS += \
     $$PWD/qt/Api/qwebdatabase.h \
     $$PWD/qt/Api/qwebsecurityorigin.h \
     $$PWD/qt/Api/qwebelement.h \
+    $$PWD/qt/Api/qwebelement_p.h \
     $$PWD/qt/Api/qwebpluginfactory.h \
     $$PWD/qt/Api/qwebhistory.h \
     $$PWD/qt/Api/qwebinspector.h \

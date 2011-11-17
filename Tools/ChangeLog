@@ -1,3 +1,18 @@
+2011-11-17  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Layer violation: qt_runtime.cpp accesses QWebElement and QTDRTNode
+        https://bugs.webkit.org/show_bug.cgi?id=72595
+
+        Reviewed by Noam Rosenthal.
+
+        * DumpRenderTree/qt/DumpRenderTreeQt.cpp:
+        (WebCore::DumpRenderTree::DumpRenderTree): Use new initialize() function to
+        ensure the registration of the DRTNode JS bindings.
+        * DumpRenderTree/qt/LayoutTestControllerQt.cpp:
+        (LayoutTestController::LayoutTestController): Remove unnecessary explicit qt meta type
+        registration of QWebElement (now done implicitly through QWebPage ->
+        QtWebElementRunTime::initialize code path)
+
 2011-11-17  Adam Roben  <aroben@apple.com>
 
         Fix a crash-inducing typo I introduced in r100648

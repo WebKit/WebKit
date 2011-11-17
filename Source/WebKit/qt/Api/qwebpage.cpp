@@ -22,6 +22,7 @@
 #include "config.h"
 #include "qwebpage.h"
 
+#include "qwebelement_p.h"
 #include "qwebview.h"
 #include "qwebframe.h"
 #include "qwebpage_p.h"
@@ -323,6 +324,7 @@ QWebPagePrivate::QWebPagePrivate(QWebPage *qq)
     WebCore::SecurityPolicy::setLocalLoadPolicy(WebCore::SecurityPolicy::AllowLocalLoadsForLocalAndSubstituteData);
 
     PlatformStrategiesQt::initialize();
+    QtWebElementRuntime::initialize();
 
 #if USE(QTKIT)
     InitWebCoreSystemInterface();

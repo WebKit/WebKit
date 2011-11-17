@@ -398,6 +398,8 @@ DumpRenderTree::DumpRenderTree()
     if (viewMode == "graphics")
         setGraphicsBased(true);
 
+    DumpRenderTreeSupportQt::initialize();
+
     // Set running in DRT mode for qwebpage to create testable objects.
     DumpRenderTreeSupportQt::setDumpRenderTreeModeEnabled(true);
     DumpRenderTreeSupportQt::overwritePluginDirectories();

@@ -1,3 +1,23 @@
+2011-11-17  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Layer violation: qt_runtime.cpp accesses QWebElement and QTDRTNode
+        https://bugs.webkit.org/show_bug.cgi?id=72595
+
+        Reviewed by Noam Rosenthal.
+
+        Removed QWebElement and QtDRTNode usage that reached from WebCore into
+        WebKit/qt and replaced it with the ability to register custom JSValue
+        conversion functions. The old code has been moved to WebKit/qt.
+
+        * bridge/qt/qt_instance.cpp:
+        (JSC::Bindings::QtInstance::QtInstance): Remove unnecessary meta type registration
+        (now done in QtWebElementRuntime::initialize in WebKit/qt).
+        * bridge/qt/qt_runtime.cpp:
+        (JSC::Bindings::registerCustomType):
+        (JSC::Bindings::convertValueToQVariant):
+        (JSC::Bindings::convertQVariantToValue):
+        * bridge/qt/qt_runtime.h:
+
 2011-11-17  Fady Samuel  <fsamuel@chromium.org>
 
         Pass Aspect Ratio to RenderStyle

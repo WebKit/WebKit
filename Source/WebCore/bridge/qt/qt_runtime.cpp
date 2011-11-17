@@ -25,7 +25,6 @@
 #include "DateInstance.h"
 #include "DateMath.h"
 #include "DatePrototype.h"
-#include "DumpRenderTreeSupportQt.h"
 #include "FunctionPrototype.h"
 #include "Interpreter.h"
 #include "JSArray.h"
@@ -52,7 +51,6 @@
 #include "qt_instance.h"
 #include "qt_pixmapruntime.h"
 #include "qvarlengtharray.h"
-#include "qwebelement.h"
 #include <limits.h>
 #include <runtime/Error.h>
 #include <runtime_array.h>
@@ -121,36 +119,21 @@ QDebug operator<<(QDebug dbg, const JSRealType &c)
 }
 #endif
 
-// this is here as a proxy, so we'd have a class to friend in QWebElement,
-// as getting/setting a WebCore in QWebElement is private
-class QtWebElementRuntime {
-public:
-    static QWebElement create(Element* element)
-    {
-        return QWebElement(element);
-    }
-
-    static Element* get(const QWebElement& element)
-    {
-        return element.m_element;
-    }
+struct RuntimeConversion {
+    ConvertToJSValueFunction toJSValueFunc;
+    ConvertToVariantFunction toVariantFunc;
 };
 
-// this is here as a proxy, so we'd have a class to friend in QDRTNode,
-// as getting/setting a WebCore in QDRTNode is private.
-// We only need to pass WebCore Nodes for layout tests.
-class QtDRTNodeRuntime {
-public:
-    static QDRTNode create(Node* node)
-    {
-        return QDRTNode(node);
-    }
+typedef QHash<int, RuntimeConversion> RuntimeConversionTable;
+Q_GLOBAL_STATIC(RuntimeConversionTable, customRuntimeConversions)
 
-    static Node* get(const QDRTNode& node)
-    {
-        return node.m_node;
-    }
-};
+void registerCustomType(int qtMetaTypeId, ConvertToVariantFunction toVariantFunc, ConvertToJSValueFunction toJSValueFunc)
+{
+    RuntimeConversion conversion;
+    conversion.toJSValueFunc = toJSValueFunc;
+    conversion.toVariantFunc = toVariantFunc;
+    customRuntimeConversions()->insert(qtMetaTypeId, conversion);
+}
 
 static JSRealType valueRealType(ExecState* exec, JSValue val)
 {
@@ -777,26 +760,10 @@ QVariant convertValueToQVariant(ExecState* exec, JSValue value, QMetaType::Type 
                 break;
             } else if (QtPixmapInstance::canHandle(static_cast<QMetaType::Type>(hint))) {
                 ret = QtPixmapInstance::variantFromObject(object, static_cast<QMetaType::Type>(hint));
-            } else if (hint == (QMetaType::Type) qMetaTypeId<QWebElement>()) {
-                if (object && object->inherits(&JSElement::s_info)) {
-                    ret = QVariant::fromValue<QWebElement>(QtWebElementRuntime::create((static_cast<JSElement*>(object))->impl()));
-                    dist = 0;
-                    // Allow other objects to reach this one. This won't cause our algorithm to
-                    // loop since when we find an Element we do not recurse.
-                    visitedObjects->remove(object);
+            } else if (customRuntimeConversions()->contains(hint)) {
+                ret = customRuntimeConversions()->value(hint).toVariantFunc(object, &dist, visitedObjects);
+                if (dist == 0)
                     break;
-                }
-                if (object && object->inherits(&JSDocument::s_info)) {
-                    // To support LayoutTestControllerQt::nodesFromRect(), used in DRT, we do an implicit
-                    // conversion from 'document' to the QWebElement representing the 'document.documentElement'.
-                    // We can't simply use a QVariantMap in nodesFromRect() because it currently times out
-                    // when serializing DOMMimeType and DOMPlugin, even if we limit the recursion.
-                    ret = QVariant::fromValue<QWebElement>(QtWebElementRuntime::create((static_cast<JSDocument*>(object))->impl()->documentElement()));
-                } else
-                    ret = QVariant::fromValue<QWebElement>(QWebElement());
-            } else if (hint == (QMetaType::Type) qMetaTypeId<QDRTNode>()) {
-                if (object && object->inherits(&JSNode::s_info))
-                    ret = QVariant::fromValue<QDRTNode>(QtDRTNodeRuntime::create((static_cast<JSNode*>(object))->impl()));
             } else if (hint == (QMetaType::Type) qMetaTypeId<QVariant>()) {
                 if (value.isUndefinedOrNull()) {
                     if (distance)
@@ -928,26 +895,14 @@ JSValue convertQVariantToValue(ExecState* exec, PassRefPtr<RootObject> root, con
     if (QtPixmapInstance::canHandle(static_cast<QMetaType::Type>(variant.type())))
         return QtPixmapInstance::createPixmapRuntimeObject(exec, root, variant);
 
-    if (type == qMetaTypeId<QWebElement>()) {
+    if (customRuntimeConversions()->contains(type)) {
         if (!root->globalObject()->inherits(&JSDOMWindow::s_info))
             return jsUndefined();
 
         Document* document = (static_cast<JSDOMWindow*>(root->globalObject()))->impl()->document();
         if (!document)
             return jsUndefined();
-
-        return toJS(exec, toJSDOMGlobalObject(document, exec), QtWebElementRuntime::get(variant.value<QWebElement>()));
-    }
-
-    if (type == qMetaTypeId<QDRTNode>()) {
-        if (!root->globalObject()->inherits(&JSDOMWindow::s_info))
-            return jsUndefined();
-
-        Document* document = (static_cast<JSDOMWindow*>(root->globalObject()))->impl()->document();
-        if (!document)
-            return jsUndefined();
-
-        return toJS(exec, toJSDOMGlobalObject(document, exec), QtDRTNodeRuntime::get(variant.value<QDRTNode>()));
+        return customRuntimeConversions()->value(type).toJSValueFunc(exec, toJSDOMGlobalObject(document, exec), variant);
     }
 
     if (type == QMetaType::QVariantMap) {

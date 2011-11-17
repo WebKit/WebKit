@@ -33,6 +33,10 @@
 #include <qmetaobject.h>
 #include <qvariant.h>
 
+namespace WebCore {
+class JSDOMGlobalObject;
+}
+
 namespace JSC {
 namespace Bindings {
 
@@ -261,6 +265,12 @@ private:
     JSObjectRef m_receiver;
     JSObjectRef m_receiverFunction;
 };
+
+
+typedef QVariant (*ConvertToVariantFunction)(JSObject* object, int *distance, HashSet<JSObject*>* visitedObjects);
+typedef JSValue (*ConvertToJSValueFunction)(ExecState* exec, WebCore::JSDOMGlobalObject* globalObject, const QVariant& variant);
+
+void registerCustomType(int qtMetaTypeId, ConvertToVariantFunction, ConvertToJSValueFunction);
 
 QVariant convertValueToQVariant(ExecState* exec, JSValue value, QMetaType::Type hint, int *distance);
 JSValue convertQVariantToValue(ExecState* exec, PassRefPtr<RootObject> root, const QVariant& variant);
