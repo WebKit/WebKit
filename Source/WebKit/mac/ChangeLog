@@ -1,3 +1,18 @@
+2011-11-18  Anton D'Auria  <adauria@apple.com>
+
+        bool WebChromeClient::shouldInterruptJavaScript casts pointer to bool and always returns true
+        https://bugs.webkit.org/show_bug.cgi?id=72568
+
+        Reviewed by David Kilzer.
+
+        WebChromeClient::shouldInterruptJavaScript called CallUIDelegate, which used an id
+        as the return value, which was then cast to a bool and always returned true. This
+        patch uses CallUIDelegateReturningBoolean instead of CallUIDelegate, with the default
+        return value of NO.
+
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::shouldInterruptJavaScript):
+
 2011-11-16  Dan Bernstein  <mitz@apple.com>
 
         WebKit/mac part of <rdar://problem/10262242> Add API for paginated display

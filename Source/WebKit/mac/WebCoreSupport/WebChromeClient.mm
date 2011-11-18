@@ -524,7 +524,7 @@ bool WebChromeClient::runJavaScriptPrompt(Frame* frame, const String& prompt, co
 
 bool WebChromeClient::shouldInterruptJavaScript()
 {
-    return CallUIDelegate(m_webView, @selector(webViewShouldInterruptJavaScript:));
+    return CallUIDelegateReturningBoolean(NO, m_webView, @selector(webViewShouldInterruptJavaScript:));
 }
 
 void WebChromeClient::setStatusbarText(const String& status)
