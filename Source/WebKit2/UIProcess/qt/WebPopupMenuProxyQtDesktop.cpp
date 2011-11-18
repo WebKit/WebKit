@@ -27,51 +27,63 @@
 #include "WebPopupMenuProxyQtDesktop.h"
 
 #include "PlatformPopupMenuData.h"
-#include "WebPopupItem.h"
+#include <QAbstractItemView>
+#include <QCoreApplication>
 #include <QtDeclarative/QQuickCanvas>
 #include <QtDeclarative/QQuickItem>
+#include <QMouseEvent>
 #include <QStandardItemModel>
+#include "WebPopupItem.h"
 
 using namespace WebCore;
 
 namespace WebKit {
 
 WebPopupMenuProxyQtDesktop::WebPopupMenuProxyQtDesktop(WebPopupMenuProxy::Client* client, QQuickItem* webViewItem)
-    : QObject()
-    , WebPopupMenuProxy(client)
-    , m_comboBox(new QtWebComboBox)
+    : WebPopupMenuProxy(client)
     , m_webViewItem(webViewItem)
     , m_selectedIndex(-1)
 {
-    QtWebComboBox* comboBox = m_comboBox.data();
+    window()->winId(); // Ensure that the combobox has a window
+    Q_ASSERT(window()->windowHandle());
+    window()->windowHandle()->setTransientParent(m_webViewItem->canvas());
 
-    comboBox->window()->winId(); // Ensure that the combobox has a window
-    Q_ASSERT(comboBox->window()->windowHandle());
-    comboBox->window()->windowHandle()->setTransientParent(m_webViewItem->canvas());
-
-    connect(comboBox, SIGNAL(activated(int)), SLOT(setSelectedIndex(int)));
-    connect(comboBox, SIGNAL(didHide()), SLOT(onPopupMenuHidden()), Qt::QueuedConnection);
+    connect(this, SIGNAL(activated(int)), SLOT(setSelectedIndex(int)));
+    // Install an event filter on the view inside the combo box popup to make sure we know
+    // when the popup got closed. E.g. QComboBox::hidePopup() won't be called when the popup
+    // is closed by a mouse wheel event outside its window.
+    view()->installEventFilter(this);
 }
 
 WebPopupMenuProxyQtDesktop::~WebPopupMenuProxyQtDesktop()
 {
-    delete m_comboBox.data();
 }
 
 void WebPopupMenuProxyQtDesktop::showPopupMenu(const IntRect& rect, WebCore::TextDirection, double, const Vector<WebPopupItem>& items, const PlatformPopupMenuData&, int32_t selectedIndex)
 {
-    QtWebComboBox* comboBox = m_comboBox.data();
     m_selectedIndex = selectedIndex;
     populate(items);
-    comboBox->setCurrentIndex(selectedIndex);
-    comboBox->setGeometry(m_webViewItem->mapRectToScene(QRect(rect)).toRect());
-    comboBox->showPopupAtCursorPosition();
+    setCurrentIndex(selectedIndex);
+    setGeometry(m_webViewItem->mapRectToScene(QRect(rect)).toRect());
+
+    QMouseEvent event(QEvent::MouseButtonPress, QCursor::pos(), Qt::LeftButton,
+                      Qt::LeftButton, Qt::NoModifier);
+    QCoreApplication::sendEvent(this, &event);
 }
 
 void WebPopupMenuProxyQtDesktop::hidePopupMenu()
 {
-    if (m_comboBox)
-        m_comboBox.data()->hidePopup();
+    hidePopup();
+}
+
+bool WebPopupMenuProxyQtDesktop::eventFilter(QObject *watched, QEvent *event)
+{
+    Q_ASSERT(watched == view());
+    if (event->type() == QEvent::Hide) {
+        if (m_client)
+            m_client->valueChangedForPopupMenu(this, m_selectedIndex);
+    }
+    return false;
 }
 
 void WebPopupMenuProxyQtDesktop::setSelectedIndex(int index)
@@ -79,29 +91,20 @@ void WebPopupMenuProxyQtDesktop::setSelectedIndex(int index)
     m_selectedIndex = index;
 }
 
-void WebPopupMenuProxyQtDesktop::onPopupMenuHidden()
-{
-    if (m_client)
-        m_client->valueChangedForPopupMenu(this, m_selectedIndex);
-}
-
 void WebPopupMenuProxyQtDesktop::populate(const Vector<WebPopupItem>& items)
 {
-    QtWebComboBox* comboBox = m_comboBox.data();
-    Q_ASSERT(comboBox);
+    clear();
 
-    comboBox->clear();
-
-    QStandardItemModel* model = qobject_cast<QStandardItemModel*>(comboBox->model());
+    QStandardItemModel* model = qobject_cast<QStandardItemModel*>(this->model());
     Q_ASSERT(model);
 
     for (size_t i = 0; i < items.size(); ++i) {
         const WebPopupItem& item = items.at(i);
         if (item.m_type == WebPopupItem::Separator) {
-            comboBox->insertSeparator(i);
+            insertSeparator(i);
             continue;
         }
-        comboBox->insertItem(i, item.m_text);
+        insertItem(i, item.m_text);
         model->item(i)->setToolTip(item.m_toolTip);
         model->item(i)->setEnabled(item.m_isEnabled);
     }
