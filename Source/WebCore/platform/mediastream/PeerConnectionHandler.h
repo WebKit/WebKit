@@ -43,6 +43,10 @@ namespace WebCore {
 class PeerConnectionHandlerClient;
 class SecurityOrigin;
 
+#if PLATFORM(CHROMIUM)
+class PeerConnectionHandlerInternal;
+#endif
+
 class PeerConnectionHandler {
     WTF_MAKE_NONCOPYABLE(PeerConnectionHandler);
     WTF_MAKE_FAST_ALLOCATED;
@@ -61,7 +65,11 @@ public:
 private:
     PeerConnectionHandler(PeerConnectionHandlerClient*, const String& serverConfiguration, PassRefPtr<SecurityOrigin>);
 
+#if PLATFORM(CHROMIUM)
+    OwnPtr<PeerConnectionHandlerInternal> m_private;
+#elif USE(GSTREAMER)
     PeerConnectionHandlerClient* m_client;
+#endif
 };
 
 } // namespace WebCore

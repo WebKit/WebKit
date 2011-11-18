@@ -1,3 +1,19 @@
+2011-11-18  Tommy Widenflycht  <tommyw@google.com>
+
+        MediaStream API: Merging the PeerConnectionHandler.h files
+        https://bugs.webkit.org/show_bug.cgi?id=72611
+
+        Reviewed by Adam Barth.
+
+        No actual code changes.
+
+        * GNUmakefile.am:
+        * GNUmakefile.list.am:
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.gypi:
+        * platform/mediastream/PeerConnectionHandler.h: Renamed from Source/WebCore/platform/mediastream/chromium/PeerConnectionHandler.h.
+        * platform/mediastream/gstreamer/PeerConnectionHandler.h: Removed.
+
 2011-11-17  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Layer violation: ThirdPartyCookiesQt.cpp uses QWebSettings in two places

@@ -108,7 +108,6 @@
       '../platform/image-encoders/skia',
       '../platform/leveldb',
       '../platform/mediastream',
-      '../platform/mediastream/chromium',
       '../platform/mock',
       '../platform/network',
       '../platform/network/chromium',
