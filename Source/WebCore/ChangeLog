@@ -1,3 +1,27 @@
+2011-11-18  Adam Barth  <abarth@webkit.org>
+
+        Move some mediastream related files into the mediastream directory
+        https://bugs.webkit.org/show_bug.cgi?id=72695
+
+        Reviewed by Eric Seidel.
+
+        Just moving the files to the proper directory.
+
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * mediastream/NavigatorUserMediaError.h: Renamed from Source/WebCore/page/NavigatorUserMediaError.h.
+        (WebCore::NavigatorUserMediaError::create):
+        (WebCore::NavigatorUserMediaError::~NavigatorUserMediaError):
+        (WebCore::NavigatorUserMediaError::code):
+        (WebCore::NavigatorUserMediaError::NavigatorUserMediaError):
+        * mediastream/NavigatorUserMediaError.idl: Renamed from Source/WebCore/page/NavigatorUserMediaError.idl.
+        * mediastream/NavigatorUserMediaErrorCallback.h: Renamed from Source/WebCore/page/NavigatorUserMediaErrorCallback.h.
+        (WebCore::NavigatorUserMediaErrorCallback::~NavigatorUserMediaErrorCallback):
+        * mediastream/NavigatorUserMediaErrorCallback.idl: Renamed from Source/WebCore/page/NavigatorUserMediaErrorCallback.idl.
+        * mediastream/NavigatorUserMediaSuccessCallback.h: Renamed from Source/WebCore/page/NavigatorUserMediaSuccessCallback.h.
+        (WebCore::NavigatorUserMediaSuccessCallback::~NavigatorUserMediaSuccessCallback):
+        * mediastream/NavigatorUserMediaSuccessCallback.idl: Renamed from Source/WebCore/page/NavigatorUserMediaSuccessCallback.idl.
+
 2011-11-18  Andrey Kosyakov  <caseq@chromium.org>
 
         Web Inspector: [Extensions API] Provide a way for extension to create a status bar icon

@@ -2288,6 +2288,9 @@ webcore_sources += \
 	Source/WebCore/mediastream/MediaStreamTrack.h \
 	Source/WebCore/mediastream/MediaStreamTrackList.cpp \
 	Source/WebCore/mediastream/MediaStreamTrackList.h \
+	Source/WebCore/mediastream/NavigatorUserMediaError.h \
+	Source/WebCore/mediastream/NavigatorUserMediaErrorCallback.h \
+	Source/WebCore/mediastream/NavigatorUserMediaSuccessCallback.h \
 	Source/WebCore/mediastream/PeerConnection.cpp \
 	Source/WebCore/mediastream/PeerConnection.h \
 	Source/WebCore/mediastream/SignalingCallback.h \
@@ -2381,9 +2384,6 @@ webcore_sources += \
 	Source/WebCore/page/Navigator.h \
 	Source/WebCore/page/NavigatorBase.cpp \
 	Source/WebCore/page/NavigatorBase.h \
-	Source/WebCore/page/NavigatorUserMediaError.h \
-	Source/WebCore/page/NavigatorUserMediaErrorCallback.h \
-	Source/WebCore/page/NavigatorUserMediaSuccessCallback.h \
 	Source/WebCore/page/OriginAccessEntry.cpp \
 	Source/WebCore/page/OriginAccessEntry.h \
 	Source/WebCore/page/Page.cpp \
