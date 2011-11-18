@@ -20,6 +20,17 @@
 
 2011-11-17  Peter Kasting  <pkasting@google.com>
 
+        Unreviewed, rolling out r100584.
+        http://trac.webkit.org/changeset/100584
+        https://bugs.webkit.org/show_bug.cgi?id=72239
+
+        See if this change caused Linux dbg crashes.
+
+        * dom/Document.cpp:
+        (WebCore::Document::implicitClose):
+
+2011-11-17  Peter Kasting  <pkasting@google.com>
+
         Unreviewed, rolling out r100676.
         http://trac.webkit.org/changeset/100676
         https://bugs.webkit.org/show_bug.cgi?id=72393
