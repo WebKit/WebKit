@@ -56,7 +56,7 @@ protected:
     void imageChanged(CachedImage*, const IntRect* = 0);
 
 private:
-    void drawCrossfade(GraphicsContext*);
+    void drawCrossfade(GraphicsContext*, const FloatRect& srcRect);
 
     // These are owned by the CSSCrossfadeValue that owns us.
     CachedImage* m_fromImage;

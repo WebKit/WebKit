@@ -57,7 +57,7 @@ CrossfadeGeneratedImage::~CrossfadeGeneratedImage()
     m_toImage->removeClient(m_crossfadeSubimageObserver.get());
 }
 
-void CrossfadeGeneratedImage::drawCrossfade(GraphicsContext* context)
+void CrossfadeGeneratedImage::drawCrossfade(GraphicsContext* context, const FloatRect& srcRect)
 {
     float inversePercentage = 1 - m_percentage;
 
@@ -74,12 +74,14 @@ void CrossfadeGeneratedImage::drawCrossfade(GraphicsContext* context)
 
     context->clip(IntRect(IntPoint(), m_crossfadeSize));
     context->beginTransparencyLayer(1);
-
+    
     // Draw the image we're fading away from.
     context->save();
     if (m_crossfadeSize != fromImageSize)
         context->scale(FloatSize(static_cast<float>(m_crossfadeSize.width()) / fromImageSize.width(),
                                  static_cast<float>(m_crossfadeSize.height()) / fromImageSize.height()));
+    context->translate(-srcRect.x() * fromImageSize.width() / static_cast<float>(m_crossfadeSize.width()),
+                       -srcRect.y() * fromImageSize.height() / static_cast<float>(m_crossfadeSize.height()));
     context->setAlpha(inversePercentage);
     context->drawImage(fromImage, ColorSpaceDeviceRGB, IntPoint());
     context->restore();
@@ -89,6 +91,8 @@ void CrossfadeGeneratedImage::drawCrossfade(GraphicsContext* context)
     if (m_crossfadeSize != toImageSize)
         context->scale(FloatSize(static_cast<float>(m_crossfadeSize.width()) / toImageSize.width(),
                                  static_cast<float>(m_crossfadeSize.height()) / toImageSize.height()));
+    context->translate(-srcRect.x() * toImageSize.width() / static_cast<float>(m_crossfadeSize.width()),
+                       -srcRect.y() * toImageSize.height() / static_cast<float>(m_crossfadeSize.height()));
     context->setAlpha(m_percentage);
     context->drawImage(toImage, ColorSpaceDeviceRGB, IntPoint(), CompositePlusLighter);
     context->restore();
@@ -99,13 +103,12 @@ void CrossfadeGeneratedImage::drawCrossfade(GraphicsContext* context)
 void CrossfadeGeneratedImage::draw(GraphicsContext* context, const FloatRect& dstRect, const FloatRect& srcRect, ColorSpace, CompositeOperator compositeOp)
 {
     UNUSED_PARAM(compositeOp);
-    UNUSED_PARAM(srcRect);
 
     GraphicsContextStateSaver stateSaver(*context);
     context->clip(dstRect);
     context->translate(dstRect.x(), dstRect.y());
-
-    drawCrossfade(context);
+    
+    drawCrossfade(context, srcRect);
 }
 
 void CrossfadeGeneratedImage::drawPattern(GraphicsContext* context, const FloatRect& srcRect, const AffineTransform& patternTransform, const FloatPoint& phase, ColorSpace styleColorSpace, CompositeOperator compositeOp, const FloatRect& destRect)
@@ -116,7 +119,7 @@ void CrossfadeGeneratedImage::drawPattern(GraphicsContext* context, const FloatR
 
     // Fill with the cross-faded image.
     GraphicsContext* graphicsContext = imageBuffer->context();
-    drawCrossfade(graphicsContext);
+    drawCrossfade(graphicsContext, FloatRect(FloatPoint(), m_crossfadeSize));
 
     // Tile the image buffer into the context.
     imageBuffer->drawPattern(context, srcRect, patternTransform, phase, styleColorSpace, compositeOp, destRect);

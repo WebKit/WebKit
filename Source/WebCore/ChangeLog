@@ -1,3 +1,21 @@
+2011-11-18  Tim Horton  <timothy_horton@apple.com>
+
+        -webkit-cross-fade rendered incorrectly in overflow divs
+        https://bugs.webkit.org/show_bug.cgi?id=72693
+        <rdar://problem/10468564>
+
+        Reviewed by Simon Fraser.
+
+        Respect the desired source rectangle when rendering the cross-fade.
+
+        Test: css3/images/cross-fade-overflow-position.html
+
+        * platform/graphics/CrossfadeGeneratedImage.cpp:
+        (WebCore::CrossfadeGeneratedImage::drawCrossfade):
+        (WebCore::CrossfadeGeneratedImage::draw):
+        (WebCore::CrossfadeGeneratedImage::drawPattern):
+        * platform/graphics/CrossfadeGeneratedImage.h:
+
 2011-11-18  Raphael Kubo da Costa  <kubo@profusion.mobi>
 
         Unreviewed build fix; r100686 broke the EFL build when Geolocation

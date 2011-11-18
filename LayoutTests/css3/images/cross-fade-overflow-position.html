@@ -1,0 +1,29 @@
+<html>
+<head>
+    <style>
+    #image {
+        background-image: -webkit-cross-fade(url(resources/half-circles.svg), url(resources/green-100.png), 50%);
+        width: 100px; height: 100px;
+        background-repeat: no-repeat;
+    }
+
+    #container {
+        overflow: hidden;
+        height: 50px;
+    }
+    </style>
+    <script>
+    function load()
+    {
+        var container = document.getElementById("container");
+        container.scrollTop = container.scrollHeight;
+    }
+    </script>
+</head>
+<body onload="load()">
+    <div id="container">
+        <!-- The crossfade should appear as the *bottom* half of a green circle, with a paler green background -->
+        <div id="image"></div>
+    </div>
+</body>
+</html>
