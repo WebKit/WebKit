@@ -545,4 +545,27 @@ FloatRect ComplexTextController::selectionRect(const FloatPoint& point, int heig
     return FloatRect(point.x() + toX, point.y(), fromX - toX, height);
 }
 
+void ComplexTextController::glyphsForRange(int from, int to, int& fromGlyph, int& glyphLength)
+{
+    // Character offsets within the current run. THESE MAY NOT BE IN RANGE and may
+    // be negative, etc. The code below handles this.
+    int fromChar = from - m_item.item.pos;
+    int toChar = to - m_item.item.pos;
+
+    // See if there are any characters in the current run.
+    if (!numCodePoints() || fromChar >= static_cast<int>(numCodePoints()) || toChar <= 0) {
+        fromGlyph = -1;
+        glyphLength = 0;
+        return;
+    }
+
+    // Compute the starting glyph within this span. |from| and |to| are
+    // global offsets that may intersect arbitrarily with our local run.
+    fromGlyph = m_item.log_clusters[fromChar < 0 ? 0 : fromChar];
+    if (toChar >= static_cast<int>(numCodePoints()))
+        glyphLength = length() - fromGlyph;
+    else
+        glyphLength = m_item.log_clusters[toChar] - fromGlyph;
+}
+
 } // namespace WebCore

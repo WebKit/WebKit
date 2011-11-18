@@ -1,3 +1,21 @@
+2011-11-17  Robin Cao  <robin.cao@torchmobile.com.cn>
+
+        [chromium] Font::drawComplexText can not draw a segment of text run
+        https://bugs.webkit.org/show_bug.cgi?id=72095
+
+        Reviewed by Adam Barth.
+
+        drawComplexText() should respect the 'from' and 'to' arguments.
+        Drawing the whole text run may result in text overlapping.
+
+        Test: platform/chromium-linux/fast/text/international/draw-complex-text-from-to.html
+
+        * platform/graphics/chromium/ComplexTextControllerLinux.cpp:
+        (WebCore::ComplexTextController::glyphsForRange):
+        * platform/graphics/chromium/ComplexTextControllerLinux.h:
+        * platform/graphics/chromium/FontLinux.cpp:
+        (WebCore::Font::drawComplexText):
+
 2011-11-17  Adam Barth  <abarth@webkit.org>
 
         Unique SecurityOrigins shouldn't remember their old schemes and hosts

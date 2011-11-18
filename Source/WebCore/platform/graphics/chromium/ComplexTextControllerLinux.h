@@ -93,6 +93,9 @@ public:
     bool rtl() const { return m_run.rtl(); }
     const uint16_t* glyphs() const { return m_glyphs16; }
 
+    // Return the start index and length of glyphs for the range [from, to) in the current script run.
+    void glyphsForRange(int from, int to, int& fromGlyph, int& glyphLength);
+
     // Return the length of the array returned by |glyphs|
     const unsigned length() const { return m_item.num_glyphs; }
 

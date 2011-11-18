@@ -1,0 +1,3 @@
+The text and ellipsis should not overlap.
+
+هذا هو الاختبار

@@ -201,16 +201,22 @@ void Font::drawComplexText(GraphicsContext* gc, const TextRun& run,
         controller.setupForRTL();
 
     while (controller.nextScriptRun()) {
+        // Check if there is any glyph found in the current script run.
+        int fromGlyph, glyphLength;
+        controller.glyphsForRange(from, to, fromGlyph, glyphLength);
+        if (fromGlyph < 0 || glyphLength <= 0)
+            continue;
+
         if (fill) {
             controller.fontPlatformDataForScriptRun()->setupPaint(&fillPaint);
             adjustTextRenderMode(&fillPaint, gc->platformContext());
-            canvas->drawPosText(controller.glyphs(), controller.length() << 1, controller.positions(), fillPaint);
+            canvas->drawPosText(controller.glyphs() + fromGlyph, glyphLength << 1, controller.positions() + fromGlyph, fillPaint);
         }
 
         if (stroke) {
             controller.fontPlatformDataForScriptRun()->setupPaint(&strokePaint);
             adjustTextRenderMode(&strokePaint, gc->platformContext());
-            canvas->drawPosText(controller.glyphs(), controller.length() << 1, controller.positions(), strokePaint);
+            canvas->drawPosText(controller.glyphs() + fromGlyph, glyphLength << 1, controller.positions() + fromGlyph, strokePaint);
         }
     }
 }
