@@ -342,7 +342,7 @@ WebInspector.ElementsPanel.prototype = {
         if (++this._currentSearchResultIndex >= this._searchResults.length)
             this._currentSearchResultIndex = 0;
             
-        this._highlightCurrentSearchResult(true);
+        this._highlightCurrentSearchResult();
     },
 
     jumpToPreviousSearchResult: function()
@@ -354,7 +354,7 @@ WebInspector.ElementsPanel.prototype = {
         if (--this._currentSearchResultIndex < 0)
             this._currentSearchResultIndex = (this._searchResults.length - 1);
 
-        this._highlightCurrentSearchResult(false);
+        this._highlightCurrentSearchResult();
     },
 
     _highlightCurrentSearchResult: function()

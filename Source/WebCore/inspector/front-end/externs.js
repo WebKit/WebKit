@@ -174,3 +174,10 @@ function ExtensionReloadOptions() {
  * @type {WebInspector.HandlerRegistry}
  */
 WebInspector.openAnchorLocationRegistry = null;
+
+/**
+ * @param {WebInspector.Panel} panel
+ */
+WebInspector.showPanelForAnchorNavigation = function(panel)
+{
+}

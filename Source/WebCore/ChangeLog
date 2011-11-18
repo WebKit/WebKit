@@ -1,3 +1,14 @@
+2011-11-18  Pavel Feldman  <pfeldman@google.com>
+
+        Not reviewed: restore front-end compilability via updating externs and JS generator.
+
+        * inspector/front-end/ElementsPanel.js:
+        (WebInspector.ElementsPanel.prototype.jumpToNextSearchResult):
+        (WebInspector.ElementsPanel.prototype.jumpToPreviousSearchResult):
+        * inspector/front-end/externs.js:
+        (WebInspector.showPanelForAnchorNavigation):
+        * inspector/generate-protocol-externs:
+
 2011-11-17  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: dispatch messages from the front-end to the backend asynchronously.

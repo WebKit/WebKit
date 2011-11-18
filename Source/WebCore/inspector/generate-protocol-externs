@@ -69,6 +69,8 @@ def full_qualified_type_id(domain_name, type_id):
        return "%s.%s" % (domain_name, type_id)
     return type_id
     
+def dash_to_camelcase(word):
+    return "".join(x.capitalize() or "-" for x in word.split("-"))
 
 def param_type(domain_name, param):
     if "type" in param:
@@ -158,6 +160,10 @@ for domain in json_api:
                         output_file.write(" * @param {%s} %s\n" % (param_type(domain_name, param), param["name"]))
                 output_file.write(" */\n")
             output_file.write("%sAgent.Dispatcher.prototype.%s = function(%s) {};\n" % (domain_name, event["name"], ", ".join(params)));
+    if "capabilities" in domain:
+        for capability in domain["capabilities"]:
+            output_file.write("/** @type {string} */\n")
+            output_file.write("%sAgent.capability%s;\n" % (domain_name, dash_to_camelcase(capability["name"])));
     output_file.write("/**\n * @param {%sAgent.Dispatcher} dispatcher\n */\n" % domain_name)
     output_file.write("InspectorBackend.register%sDispatcher = function(dispatcher) {}\n" % domain_name);
 output_file.close()
