@@ -1,5 +1,25 @@
 2011-11-17  Eric Seidel  <eric@webkit.org>
 
+        Remove more direct uses of os.path
+        https://bugs.webkit.org/show_bug.cgi?id=72677
+
+        Reviewed by Adam Barth.
+
+        Remove more uses of os.path, including refactoring
+        CommitterValidator to use a Host object instead of
+        manual hacks to emulate what SCM and FileSystem provide.
+
+        * Scripts/webkitpy/common/checkout/changelog.py:
+        * Scripts/webkitpy/common/config/committervalidator.py:
+        * Scripts/webkitpy/common/config/committervalidator_unittest.py:
+        * Scripts/webkitpy/common/system/filesystem_mock.py:
+         - Turns out none of our unittests actually looked at this path.
+           now I've made it be a valid path.
+        * Scripts/webkitpy/tool/bot/feeders.py:
+        * Scripts/webkitpy/tool/commands/queues.py:
+
+2011-11-17  Eric Seidel  <eric@webkit.org>
+
         Teach TextFileReader about FileSystem
         https://bugs.webkit.org/show_bug.cgi?id=72673
 

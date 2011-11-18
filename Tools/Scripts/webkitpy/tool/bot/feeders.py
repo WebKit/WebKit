@@ -44,7 +44,7 @@ class CommitQueueFeeder(AbstractFeeder):
 
     def __init__(self, tool):
         AbstractFeeder.__init__(self, tool)
-        self.committer_validator = CommitterValidator(self._tool.bugs)
+        self.committer_validator = CommitterValidator(self._tool)
 
     def _update_work_items(self, item_ids):
         # FIXME: This is the last use of update_work_items, the commit-queue

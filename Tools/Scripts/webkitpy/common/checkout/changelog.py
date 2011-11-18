@@ -30,7 +30,6 @@
 
 import codecs
 import fileinput # inplace file editing for set_reviewer_in_changelog
-import os.path
 import re
 import textwrap
 

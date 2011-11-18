@@ -28,30 +28,18 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import os
-
-from webkitpy.common.system.ospath import relpath
 from webkitpy.common.config import committers, urls
 
 
 class CommitterValidator(object):
-
-    def __init__(self, bugzilla):
-        self._bugzilla = bugzilla
-
-    def _checkout_root(self):
-        # FIXME: This is a hack, we would have this from scm.checkout_root
-        # if we had any way to get to an scm object here.
-        components = __file__.split(os.sep)
-        tools_index = components.index("Tools")
-        return os.sep.join(components[:tools_index])
+    def __init__(self, host):
+        self.host = host
 
     def _committers_py_path(self):
         # extension can sometimes be .pyc, we always want .py
-        (path, extension) = os.path.splitext(committers.__file__)
-        # FIXME: When we're allowed to use python 2.6 we can use the real
-        # os.path.relpath
-        path = relpath(path, self._checkout_root())
+        committers_path = self.host.filesystem.path_to_module(committers.__name__)
+        (path, extension) = self.host.filesystem.splitext(committers_path)
+        path = self.host.filesystem.relpath(path, self.host.scm().checkout_root)
         return ".".join([path, "py"])
 
     def _flag_permission_rejection_message(self, setter_email, flag_name):
@@ -72,21 +60,16 @@ class CommitterValidator(object):
 
     def _validate_setter_email(self, patch, result_key, rejection_function):
         committer = getattr(patch, result_key)()
-        # If the flag is set, and we don't recognize the setter, reject the
-        # flag!
+        # If the flag is set, and we don't recognize the setter, reject the flag!
         setter_email = patch._attachment_dictionary.get("%s_email" % result_key)
         if setter_email and not committer:
-            rejection_function(patch.id(),
-                self._flag_permission_rejection_message(setter_email,
-                                                        result_key))
+            rejection_function(patch.id(), self._flag_permission_rejection_message(setter_email, result_key))
             return False
         return True
 
     def _reject_patch_if_flags_are_invalid(self, patch):
-        return (self._validate_setter_email(
-                patch, "reviewer", self.reject_patch_from_review_queue)
-            and self._validate_setter_email(
-                patch, "committer", self.reject_patch_from_commit_queue))
+        return (self._validate_setter_email(patch, "reviewer", self.reject_patch_from_review_queue)
+            and self._validate_setter_email(patch, "committer", self.reject_patch_from_commit_queue))
 
     def patches_after_rejecting_invalid_commiters_and_reviewers(self, patches):
         return [patch for patch in patches if self._reject_patch_if_flags_are_invalid(patch)]
@@ -95,7 +78,7 @@ class CommitterValidator(object):
                                        attachment_id,
                                        additional_comment_text=None):
         comment_text = "Rejecting attachment %s from commit-queue." % attachment_id
-        self._bugzilla.set_flag_on_attachment(attachment_id,
+        self.host.bugs.set_flag_on_attachment(attachment_id,
                                               "commit-queue",
                                               "-",
                                               comment_text,
@@ -105,7 +88,7 @@ class CommitterValidator(object):
                                        attachment_id,
                                        additional_comment_text=None):
         comment_text = "Rejecting attachment %s from review queue." % attachment_id
-        self._bugzilla.set_flag_on_attachment(attachment_id,
+        self.host.bugs.set_flag_on_attachment(attachment_id,
                                               'review',
                                               '-',
                                               comment_text,

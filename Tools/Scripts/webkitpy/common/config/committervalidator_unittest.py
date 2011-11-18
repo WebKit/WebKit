@@ -28,12 +28,13 @@
 
 import unittest
 
+from webkitpy.common.host_mock import MockHost
 from .committervalidator import CommitterValidator
 
 
 class CommitterValidatorTest(unittest.TestCase):
     def test_flag_permission_rejection_message(self):
-        validator = CommitterValidator(bugzilla=None)
+        validator = CommitterValidator(MockHost())
         self.assertEqual(validator._committers_py_path(), "Tools/Scripts/webkitpy/common/config/committers.py")
         expected_messsage = """foo@foo.com does not have review permissions according to http://trac.webkit.org/browser/trunk/Tools/Scripts/webkitpy/common/config/committers.py.
 

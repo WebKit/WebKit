@@ -267,7 +267,7 @@ class CommitQueue(AbstractPatchQueue, StepSequenceErrorHandler, CommitQueueTaskD
 
     def begin_work_queue(self):
         AbstractPatchQueue.begin_work_queue(self)
-        self.committer_validator = CommitterValidator(self._tool.bugs)
+        self.committer_validator = CommitterValidator(self._tool)
         self._expected_failures = ExpectedFailures()
         self._layout_test_results_reader = LayoutTestResultsReader(self._tool, self._log_directory())
 
@@ -288,7 +288,7 @@ class CommitQueue(AbstractPatchQueue, StepSequenceErrorHandler, CommitQueueTaskD
                 return True
             self._did_retry(patch)
         except ScriptError, e:
-            validator = CommitterValidator(self._tool.bugs)
+            validator = CommitterValidator(self._tool)
             validator.reject_patch_from_commit_queue(patch.id(), self._error_message_for_bug(task, patch, e))
             results_archive = task.results_archive_from_patch_test_run(patch)
             if results_archive:
