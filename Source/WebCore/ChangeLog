@@ -1,3 +1,23 @@
+2011-11-17  Adam Barth  <abarth@webkit.org>
+
+        Remove cargo-cult copy/pasting of ScriptExecutionContext namespace
+        https://bugs.webkit.org/show_bug.cgi?id=72676
+
+        Reviewed by Eric Seidel.
+
+        It looks like this cargo-cult started with initDNSPrefetch being hacked
+        into setSecurityOrigin.  I've removed this hack along with the
+        copy/paste code.
+
+        * dom/DOMImplementation.cpp:
+        * dom/Document.cpp:
+        (WebCore::Document::setIsViewSource):
+        (WebCore::Document::open):
+        (WebCore::Document::initSecurityContext):
+        (WebCore::Document::setSecurityOrigin):
+        * dom/Document.h:
+        * xml/XSLTProcessor.cpp:
+
 2011-11-17  Peter Kasting  <pkasting@google.com>
 
         Unreviewed, rolling out r100676.

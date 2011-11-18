@@ -35,6 +35,7 @@
 #include "HTMLBodyElement.h"
 #include "HTMLDocument.h"
 #include "Page.h"
+#include "SecurityOrigin.h"
 #include "Text.h"
 #include "TextResourceDecoder.h"
 #include "markup.h"

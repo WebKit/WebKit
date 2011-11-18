@@ -46,6 +46,7 @@
 #include "PluginData.h"
 #include "PluginDocument.h"
 #include "RegularExpression.h"
+#include "SecurityOrigin.h"
 #include "Settings.h"
 #include "TextDocument.h"
 #include "ThreadGlobalData.h"

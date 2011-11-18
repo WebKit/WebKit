@@ -1762,7 +1762,7 @@ void Document::setIsViewSource(bool isViewSource)
     if (!m_isViewSource)
         return;
 
-    ScriptExecutionContext::setSecurityOrigin(SecurityOrigin::create(url(), true));
+    setSecurityOrigin(SecurityOrigin::create(url(), true));
 }
 
 void Document::createStyleSelector()
@@ -2007,7 +2007,7 @@ void Document::open(Document* ownerDocument)
     if (ownerDocument) {
         setURL(ownerDocument->url());
         m_cookieURL = ownerDocument->cookieURL();
-        ScriptExecutionContext::setSecurityOrigin(ownerDocument->securityOrigin());
+        setSecurityOrigin(ownerDocument->securityOrigin());
     }
 
     if (m_frame) {
@@ -4458,17 +4458,17 @@ void Document::initSecurityContext()
         // No source for a security context.
         // This can occur via document.implementation.createDocument().
         m_cookieURL = KURL(ParsedURLString, "");
-        ScriptExecutionContext::setSecurityOrigin(SecurityOrigin::createUnique());
-        ScriptExecutionContext::setContentSecurityPolicy(ContentSecurityPolicy::create(this));
+        setSecurityOrigin(SecurityOrigin::createUnique());
+        setContentSecurityPolicy(ContentSecurityPolicy::create(this));
         return;
     }
 
     // In the common case, create the security context from the currently
     // loading URL with a fresh content security policy.
     m_cookieURL = m_url;
-    ScriptExecutionContext::enforceSandboxFlags(m_frame->loader()->effectiveSandboxFlags());
-    ScriptExecutionContext::setSecurityOrigin(SecurityOrigin::create(m_url, isSandboxed(SandboxOrigin)));
-    ScriptExecutionContext::setContentSecurityPolicy(ContentSecurityPolicy::create(this));
+    enforceSandboxFlags(m_frame->loader()->effectiveSandboxFlags());
+    setSecurityOrigin(SecurityOrigin::create(m_url, isSandboxed(SandboxOrigin)));
+    setContentSecurityPolicy(ContentSecurityPolicy::create(this));
 
     if (SecurityPolicy::allowSubstituteDataAccessToLocal()) {
         // If this document was loaded with substituteData, then the document can
@@ -4517,17 +4517,13 @@ void Document::initSecurityContext()
     m_cookieURL = ownerFrame->document()->cookieURL();
     // We alias the SecurityOrigins to match Firefox, see Bug 15313
     // https://bugs.webkit.org/show_bug.cgi?id=15313
-    ScriptExecutionContext::setSecurityOrigin(ownerFrame->document()->securityOrigin());
-    // FIXME: Consider moving m_contentSecurityPolicy into SecurityOrigin.
-    ScriptExecutionContext::setContentSecurityPolicy(ownerFrame->document()->contentSecurityPolicy());
+    setSecurityOrigin(ownerFrame->document()->securityOrigin());
+    setContentSecurityPolicy(ownerFrame->document()->contentSecurityPolicy());
 }
 
-void Document::setSecurityOrigin(SecurityOrigin* securityOrigin)
+void Document::setSecurityOrigin(PassRefPtr<SecurityOrigin> origin)
 {
-    ScriptExecutionContext::setSecurityOrigin(securityOrigin);
-    // FIXME: Find a better place to enable DNS prefetch, which is a loader concept,
-    // not applicable to arbitrary documents.
-    initDNSPrefetch();
+    SecurityContext::setSecurityOrigin(origin);
 }
 
 #if ENABLE(SQL_DATABASE)
