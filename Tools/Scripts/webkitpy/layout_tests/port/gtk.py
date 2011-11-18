@@ -87,7 +87,7 @@ class GtkPort(WebKitPort):
         environment['GTK_MODULES'] = 'gail'
         environment['LIBOVERLAY_SCROLLBAR'] = '0'
         environment['TEST_RUNNER_INJECTED_BUNDLE_FILENAME'] = self._build_path('Libraries', 'libTestRunnerInjectedBundle.la')
-        environment['TEST_RUNNER_TEST_PLUGIN_PATH'] = self._build_path('Libraries', 'TestNetscapePlugin')
+        environment['TEST_RUNNER_TEST_PLUGIN_PATH'] = self._build_path('TestNetscapePlugin', '.libs')
         environment['WEBKIT_INSPECTOR_PATH'] = self._build_path('Programs', 'resources', 'inspector')
         return environment
 

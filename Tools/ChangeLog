@@ -1,3 +1,15 @@
+2011-11-18  Sergio Villar Senin  <svillar@igalia.com>
+
+        [GTK][WK2] Invalid TestNetscapePlugin path when using new-run-webkit-tests
+        https://bugs.webkit.org/show_bug.cgi?id=72707
+
+        Reviewed by Philippe Normand.
+
+        Make new-run-webkit-tests use the right path to locate the test
+        plugin used by WebKitTestRunner.
+
+        * Scripts/webkitpy/layout_tests/port/gtk.py:
+
 2011-11-18  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] WTR and InjectedBundle should not link statically against JSC/WTF
