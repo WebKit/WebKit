@@ -50,7 +50,7 @@ public:
         , m_printLoadedUrls(false)
         , m_useTouchWebView(false)
         , m_startMaximized(false)
-        , m_windowSize(QSize(800, 600))
+        , m_windowSize(QSize(980, 735))
     {
     }
 

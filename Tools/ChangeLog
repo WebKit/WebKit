@@ -1,3 +1,15 @@
+2011-11-18  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        [Qt] Change default size of the MiniBrowser
+
+        Reviewed by Simon Hausmann.
+
+        As we lay out desktop pages using the width of 980, change our default
+        size to 980x735 so that we are not scaling down by default.
+
+        * MiniBrowser/qt/MiniBrowserApplication.h:
+        (WindowOptions::WindowOptions):
+
 2011-11-17  Raphael Kubo da Costa  <kubo@profusion.mobi>
 
         [EFL] Clean up the use of DATA_DIR in the buildsystem
