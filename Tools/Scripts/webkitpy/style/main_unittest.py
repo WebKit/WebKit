@@ -47,20 +47,6 @@ class ChangeDirectoryTest(unittest.TestCase):
         self._log.assertMessages(expected_log_messages)
         self.assertEquals(self.filesystem.getcwd(), expected_current_directory)
 
-    def test_checkout_root_none_paths_none(self):
-        self.assertRaises(Exception, self._change_directory, checkout_root=None, paths=None)
-        self._log.assertMessages([])
-        self.assertEquals(self.filesystem.getcwd(), self._original_directory)
-
-    def test_checkout_root_none(self):
-        paths = self._change_directory(checkout_root=None, paths=["path1"])
-        log_messages = [
-"""WARNING: WebKit checkout root not found:
-  Path-dependent style checks may not work correctly.
-  See the help documentation for more info.
-"""]
-        self._assert_result(paths, ["path1"], log_messages, self._original_directory)
-
     def test_paths_none(self):
         paths = self._change_directory(checkout_root=self._checkout_root, paths=None)
         self._assert_result(paths, None, [], self._checkout_root)

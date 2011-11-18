@@ -1,5 +1,18 @@
 2011-11-17  Eric Seidel  <eric@webkit.org>
 
+        Remove support for running check-webkit-style w/o a webkit checkout
+        https://bugs.webkit.org/show_bug.cgi?id=72678
+
+        Reviewed by Adam Barth.
+
+        After talking to Dave Levin we've decided to remove this
+        code.  I know of no users of check-webkit-style w/o a webkit checkout
+        and this needlessly adds complexity.
+
+        * Scripts/webkitpy/style/main.py:
+
+2011-11-17  Eric Seidel  <eric@webkit.org>
+
         Remove more direct uses of os.path
         https://bugs.webkit.org/show_bug.cgi?id=72677
 

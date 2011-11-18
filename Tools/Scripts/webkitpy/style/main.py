@@ -24,7 +24,6 @@ import codecs
 import logging
 import sys
 
-from webkitpy.common.checkout.scm.detection import detect_scm_system
 import webkitpy.style.checker as checker
 from webkitpy.style.patchreader import PatchReader
 from webkitpy.style.checker import StyleProcessor
@@ -46,53 +45,22 @@ def change_directory(filesystem, checkout_root, paths):
     checkout root, and for path-specific style checks to work as expected.
     Path-specific checks include whether files should be skipped, whether
     custom style rules should apply to certain files, etc.
-        If the checkout root is None or the empty string, this method returns
-    the paths parameter unchanged.
 
     Returns:
       paths: A copy of the paths parameter -- possibly converted, as follows.
              If this method changed the current working directory to the
              checkout root, then the list is the paths parameter converted to
-             normalized paths relative to the checkout root.  Otherwise, the
-             paths are not converted.
+             normalized paths relative to the checkout root.
 
     Args:
       paths: A list of paths to the files that should be checked for style.
              This argument can be None or the empty list if a git commit
              or all changes under the checkout root should be checked.
-      checkout_root: The path to the root of the WebKit checkout, or None or
-                     the empty string if no checkout could be detected.
+      checkout_root: The path to the root of the WebKit checkout.
 
     """
     if paths is not None:
         paths = list(paths)
-
-    if not checkout_root:
-        if not paths:
-            raise Exception("The paths parameter must be non-empty if "
-                            "there is no checkout root.")
-
-        # FIXME: Consider trying to detect the checkout root for each file
-        #        being checked rather than only trying to detect the checkout
-        #        root for the current working directory.  This would allow
-        #        files to be checked correctly even if the script is being
-        #        run from outside any WebKit checkout.
-        #
-        #        Moreover, try to find the "source root" for each file
-        #        using path-based heuristics rather than using only the
-        #        presence of a WebKit checkout.  For example, we could
-        #        examine parent directories until a directory is found
-        #        containing JavaScriptCore, WebCore, WebKit, Websites,
-        #        and Tools.
-        #             Then log an INFO message saying that a source root not
-        #        in a WebKit checkout was found.  This will allow us to check
-        #        the style of non-scm copies of the source tree (e.g.
-        #        nightlies).
-        _log.warn("WebKit checkout root not found:\n"
-                  "  Path-dependent style checks may not work correctly.\n"
-                  "  See the help documentation for more info.")
-
-        return paths
 
     if paths:
         # Then try converting all of the paths to paths relative to
@@ -156,10 +124,7 @@ class CheckWebKitStyle(object):
         args = sys.argv[1:]
 
         host = Host()
-        # FIXME: Intentionally not calling host._initialize_scm() for now.
-        # _initialize_scm() would throw an exception if it failed to find the checkout_root.
-        # check-webkit-style seems designed to be run from outside a webkit checkout.
-        # Unclear if that's still a needed feature.
+        host._initialize_scm()
 
         stderr = self._engage_awesome_stderr_hacks()
 
@@ -173,23 +138,9 @@ class CheckWebKitStyle(object):
         parser = checker.check_webkit_style_parser()
         (paths, options) = parser.parse(args)
 
-        scm = detect_scm_system(host.filesystem.getcwd())
-        if scm is None:
-            if not paths:
-                _log.error("WebKit checkout not found: You must run this script "
-                           "from within a WebKit checkout if you are not passing "
-                           "specific paths to check.")
-                return 1
-
-            checkout_root = None
-            _log.debug("WebKit checkout not found for current directory.")
-        else:
-            checkout_root = scm.checkout_root
-            _log.debug("WebKit checkout found with root: %s" % checkout_root)
-
         configuration = checker.check_webkit_style_configuration(options)
 
-        paths = change_directory(host.filesystem, checkout_root=checkout_root, paths=paths)
+        paths = change_directory(host.filesystem, checkout_root=host.scm().checkout_root, paths=paths)
 
         style_processor = StyleProcessor(configuration)
         file_reader = TextFileReader(host.filesystem, style_processor)
@@ -198,7 +149,7 @@ class CheckWebKitStyle(object):
             file_reader.process_paths(paths)
         else:
             changed_files = paths if options.diff_files else None
-            patch = scm.create_patch(options.git_commit, changed_files=changed_files)
+            patch = host.scm().create_patch(options.git_commit, changed_files=changed_files)
             patch_checker = PatchReader(file_reader)
             patch_checker.check(patch)
 
