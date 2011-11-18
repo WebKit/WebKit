@@ -46,6 +46,7 @@ private slots:
     void reload();
     void stop();
     void loadProgress();
+    void scrollRequest();
 
     void show();
 
@@ -236,6 +237,18 @@ void tst_QQuickWebView::show()
     m_window->show();
     QTest::qWait(200);
     m_window->hide();
+}
+
+void tst_QQuickWebView::scrollRequest()
+{
+    webView()->setSize(QSizeF(300, 400));
+
+    webView()->load(QUrl::fromLocalFile(QLatin1String(TESTS_SOURCE_DIR "/html/scroll.html")));
+    QVERIFY(waitForSignal(webView(), SIGNAL(loadSucceeded())));
+
+    // COMPARE with the position requested in the html
+    int y = -50 * webView()->page()->scale();
+    QVERIFY(webView()->page()->pos().y() == y);
 }
 
 QTWEBKIT_API_TEST_MAIN(tst_QQuickWebView)

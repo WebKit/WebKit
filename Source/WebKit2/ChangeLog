@@ -1,3 +1,15 @@
+2011-11-18  Dinu Jacob  <dinu.jacob@nokia.com>
+
+        [Qt][Wk2] Add an API test for scroll request from javascript
+        https://bugs.webkit.org/show_bug.cgi?id=72407
+
+        New API test added for QQuickWebView for javascript scroll request 
+        Reviewed by Simon Hausmann.
+
+        * UIProcess/API/qt/tests/html/scroll.html: Added.
+        * UIProcess/API/qt/tests/qquickwebview/tst_qquickwebview.cpp:
+        (tst_QQuickWebView::scrollRequest):
+
 2011-11-18 No'am Rosenthal  <noam.rosenthal@nokia.com>
 
         WebKit2: Enable serializing of data types needed for cross-process accelerated compositing
