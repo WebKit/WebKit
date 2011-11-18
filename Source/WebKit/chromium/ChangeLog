@@ -1,3 +1,17 @@
+2011-11-17  Alexandre Elias  <aelias@google.com>
+
+        [chromium] Don't clamp minimumPageScaleFactor when doc width is zero
+        https://bugs.webkit.org/show_bug.cgi?id=72679
+
+        Reviewed by James Robinson.
+
+        For a brief period during initialization, the document width can be
+        zero.  In that situation, don't try to limit minimumPageScaleFactor
+        to the document size.
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::setPageScaleFactorLimits):
+
 2011-11-06  Nat Duca  <nduca@chromium.org>
 
         [chromium] Fix handling of setNeedsCommit and setNeedsAnimate in threaded mode

@@ -1959,10 +1959,12 @@ void WebViewImpl::setPageScaleFactorLimits(float minPageScale, float maxPageScal
     m_minimumPageScaleFactor = min(max(minPageScale, minPageScaleFactor), maxPageScaleFactor) * deviceScaleFactor();
     m_maximumPageScaleFactor = max(min(maxPageScale, maxPageScaleFactor), minPageScaleFactor) * deviceScaleFactor();
 
-    // Limit page scaling down to the document width.
-    int viewWidth = m_size.width;
-    int unscaledContentWidth = mainFrame()->contentsSize().width / pageScaleFactor();
-    m_minimumPageScaleFactor = max(m_minimumPageScaleFactor,  static_cast<float>(viewWidth) / unscaledContentWidth);
+    if (m_size.width && mainFrame() && mainFrame()->contentsSize().width) {
+        // Limit page scaling down to the document width.
+        int viewWidth = m_size.width;
+        int unscaledContentWidth = mainFrame()->contentsSize().width / pageScaleFactor();
+        m_minimumPageScaleFactor = max(m_minimumPageScaleFactor, static_cast<float>(viewWidth) / unscaledContentWidth);
+    }
     ASSERT(minPageScale <= maxPageScale);
 #if USE(ACCELERATED_COMPOSITING)
     if (m_layerTreeHost)
