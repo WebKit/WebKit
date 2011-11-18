@@ -45,6 +45,10 @@
 #include "ThemeTypes.h"
 #include "UnicodeBidi.h"
 
+#if ENABLE(CSS_SHADERS)
+#include "CustomFilterOperation.h"
+#endif
+
 #include <wtf/MathExtras.h>
 
 namespace WebCore {
@@ -3128,6 +3132,45 @@ template<> inline CSSPrimitiveValue::operator ESpeak() const
         return SpeakNormal;
     }
 }
+
+#if ENABLE(CSS_SHADERS)
+template<> inline CSSPrimitiveValue::CSSPrimitiveValue(CustomFilterOperation::MeshBoxType meshBoxType)
+    : CSSValue(PrimitiveClass)
+{
+    m_primitiveUnitType = CSS_IDENT;
+    switch (meshBoxType) {
+    case CustomFilterOperation::FILTER_BOX:
+        m_value.ident = CSSValueFilterBox;
+        break;
+    case CustomFilterOperation::BORDER_BOX:
+        m_value.ident = CSSValueBorderBox;
+        break;
+    case CustomFilterOperation::PADDING_BOX:
+        m_value.ident = CSSValuePaddingBox;
+        break;
+    case CustomFilterOperation::CONTENT_BOX:
+        m_value.ident = CSSValueContentBox;
+        break;
+    }
+}
+
+template<> inline CSSPrimitiveValue::operator CustomFilterOperation::MeshBoxType() const
+{
+    switch (m_value.ident) {
+    case CSSValueFilterBox:
+        return CustomFilterOperation::FILTER_BOX;
+    case CSSValueBorderBox:
+        return CustomFilterOperation::BORDER_BOX;
+    case CSSValuePaddingBox:
+        return CustomFilterOperation::PADDING_BOX;
+    case CSSValueContentBox:
+        return CustomFilterOperation::CONTENT_BOX;
+    default:
+        ASSERT_NOT_REACHED();
+        return CustomFilterOperation::FILTER_BOX;
+    }
+}
+#endif // ENABLE(CSS_SHADERS)
 
 #if ENABLE(SVG)
 

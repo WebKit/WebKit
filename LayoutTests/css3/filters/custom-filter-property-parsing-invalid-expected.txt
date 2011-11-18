@@ -39,12 +39,57 @@ PASS cssRule.type is 1
 PASS declaration.length is 0
 PASS declaration.getPropertyValue('-webkit-filter') is null
 
-To many mesh sizes : custom(none, 10 20 30)
+Too many mesh sizes : custom(none, 10 20 30)
 PASS cssRule.type is 1
 PASS declaration.length is 0
 PASS declaration.getPropertyValue('-webkit-filter') is null
 
-Wrong mesh type : custom(url(shader), detach)
+Wrong mesh-box type - 'padding' : custom(url(shader), padding)
+PASS cssRule.type is 1
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('-webkit-filter') is null
+
+Wrong mesh-box type - 'none' : custom(url(shader), none)
+PASS cssRule.type is 1
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('-webkit-filter') is null
+
+More mesh-box types : custom(url(shader), padding-box filter-box)
+PASS cssRule.type is 1
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('-webkit-filter') is null
+
+Wrong order for mesh-detached and mesh-box type : custom(url(shader), detached padding-box)
+PASS cssRule.type is 1
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('-webkit-filter') is null
+
+Wrong order for mesh size and mesh-box type : custom(url(shader), padding-box 10)
+PASS cssRule.type is 1
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('-webkit-filter') is null
+
+Too many mesh sizes with mesh-box type : custom(url(shader), 20 30 40 padding-box)
+PASS cssRule.type is 1
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('-webkit-filter') is null
+
+Invalid comma between mesh-sizes : custom(url(shader), 20, 40 padding-box)
+PASS cssRule.type is 1
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('-webkit-filter') is null
+
+Invalid comma before mesh type : custom(url(shader), 20, padding-box)
+PASS cssRule.type is 1
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('-webkit-filter') is null
+
+No mesh parameter : custom(url(shader), )
+PASS cssRule.type is 1
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('-webkit-filter') is null
+
+Wrong mesh type - correct identifier is 'detached' : custom(url(shader), detach)
 PASS cssRule.type is 1
 PASS declaration.length is 0
 PASS declaration.getPropertyValue('-webkit-filter') is null
@@ -54,7 +99,7 @@ PASS cssRule.type is 1
 PASS declaration.length is 0
 PASS declaration.getPropertyValue('-webkit-filter') is null
 
-To many parameter values : custom(url(shader), p1 1 2 3 4 5)
+Too many parameter values : custom(url(shader), p1 1 2 3 4 5)
 PASS cssRule.type is 1
 PASS declaration.length is 0
 PASS declaration.getPropertyValue('-webkit-filter') is null

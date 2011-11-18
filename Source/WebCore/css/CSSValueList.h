@@ -90,6 +90,7 @@ public:
     CSSValueListIterator(CSSValue* value) : m_inspector(value), m_position(0) { }
     bool hasMore() const { return m_position < m_inspector.length(); }
     CSSValue* value() const { return m_inspector.item(m_position); }
+    bool isPrimitiveValue() const { return value()->isPrimitiveValue(); }
     void advance() { m_position++; ASSERT(m_position <= m_inspector.length());}
     size_t index() const { return m_position; }
 private:

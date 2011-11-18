@@ -41,9 +41,22 @@ namespace WebCore {
 
 class CustomFilterOperation : public FilterOperation {
 public:
-    static PassRefPtr<CustomFilterOperation> create(PassRefPtr<StyleShader> vertexShader, PassRefPtr<StyleShader> fragmentShader)
+    enum MeshBoxType {
+        FILTER_BOX,
+        BORDER_BOX,
+        PADDING_BOX,
+        CONTENT_BOX
+    };
+    
+    enum MeshType {
+        ATTACHED,
+        DETACHED
+    };
+    
+    static PassRefPtr<CustomFilterOperation> create(PassRefPtr<StyleShader> vertexShader, PassRefPtr<StyleShader> fragmentShader,
+                                                    unsigned meshRows, unsigned meshColumns, MeshBoxType meshBoxType, MeshType meshType)
     {
-        return adoptRef(new CustomFilterOperation(vertexShader, fragmentShader));
+        return adoptRef(new CustomFilterOperation(vertexShader, fragmentShader, meshRows, meshColumns, meshBoxType, meshType));
     }
     
     void setVertexShader(PassRefPtr<StyleShader> shader) { m_vertexShader = shader; }
@@ -51,6 +64,12 @@ public:
     
     void setFragmentShader(PassRefPtr<StyleShader> shader) { m_fragmentShader = shader; }
     StyleShader* fragmentShader() const { return m_fragmentShader.get(); }
+    
+    unsigned meshRows() const { return m_meshRows; }
+    unsigned meshColumns() const { return m_meshColumns; }
+    
+    MeshBoxType meshBoxType() const { return m_meshBoxType; }
+    MeshType meshType() const { return m_meshType; }
     
 private:
     virtual bool operator==(const FilterOperation& o) const
@@ -60,18 +79,32 @@ private:
 
         const CustomFilterOperation* other = static_cast<const CustomFilterOperation*>(&o);
         return m_vertexShader.get() == other->m_vertexShader.get()
-            && m_fragmentShader.get() == other->m_fragmentShader.get();
+               && m_fragmentShader.get() == other->m_fragmentShader.get()
+               && m_meshRows == other->m_meshRows
+               && m_meshColumns == other->m_meshColumns
+               && m_meshBoxType == other->m_meshBoxType
+               && m_meshType == other->m_meshType;
     }
     
-    CustomFilterOperation(PassRefPtr<StyleShader> vertexShader, PassRefPtr<StyleShader> fragmentShader)
+    CustomFilterOperation(PassRefPtr<StyleShader> vertexShader, PassRefPtr<StyleShader> fragmentShader,
+                          unsigned meshRows, unsigned meshColumns, MeshBoxType meshBoxType, MeshType meshType)
         : FilterOperation(CUSTOM)
         , m_vertexShader(vertexShader)
         , m_fragmentShader(fragmentShader)
+        , m_meshRows(meshRows)
+        , m_meshColumns(meshColumns)
+        , m_meshBoxType(meshBoxType)
+        , m_meshType(meshType)
     {
     }
 
     RefPtr<StyleShader> m_vertexShader;
     RefPtr<StyleShader> m_fragmentShader;
+    
+    unsigned m_meshRows;
+    unsigned m_meshColumns;
+    MeshBoxType m_meshBoxType;
+    MeshType m_meshType;
 };
 
 } // namespace WebCore

@@ -1,3 +1,29 @@
+2011-11-18  Alexandru Chiculita  <achicu@adobe.com>
+
+        [CSSShaders] Implement the computed style for mesh parameters of the custom() filter
+        https://bugs.webkit.org/show_bug.cgi?id=72478
+
+        Reviewed by Dean Jackson.
+
+        Added parsing and computed style for the mesh rows, columns, mesh box type 
+        (filter-box, border-box, content-box and padding-box) and the detached mode.
+        
+        Also fixed a case where "custom(none, 10, 10 filter-box)" was incorrectly
+        treated as "custom(none, 10)".
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::valueForFilter):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseCustomFilter): Fixed a case where invalid syntax was parsed as correct syntax.
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::operator CustomFilterOperation::MeshBoxType):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::createCustomFilterOperation):
+        * css/CSSValueList.h:
+        (WebCore::CSSValueListIterator::isPrimitiveValue):
+        * platform/graphics/filters/CustomFilterOperation.h:
+
 2011-11-18  Adam Barth  <abarth@webkit.org>
 
         Remove unneeded include (and ifdef) from V8DOMWindowCustom.cpp

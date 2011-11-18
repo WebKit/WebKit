@@ -5514,7 +5514,58 @@ PassRefPtr<CustomFilterOperation> CSSStyleSelector::createCustomFilterOperation(
     RefPtr<StyleShader> vertexShader = styleShader(shadersList->itemWithoutBoundsCheck(0));
     RefPtr<StyleShader> fragmentShader = (shadersList->length() > 1) ? styleShader(shadersList->itemWithoutBoundsCheck(1)) : 0;
     
-    return CustomFilterOperation::create(vertexShader, fragmentShader);
+    unsigned meshRows = 0;
+    unsigned meshColumns = 0;
+    CustomFilterOperation::MeshBoxType meshBoxType = CustomFilterOperation::FILTER_BOX;
+    CustomFilterOperation::MeshType meshType = CustomFilterOperation::ATTACHED;
+    
+    if (filterValue->length() > 1) {
+        CSSValueListIterator iterator(filterValue->itemWithoutBoundsCheck(1));
+        
+        // The second value might be the mesh box or the list of parameters:
+        // If it starts with a number or any of the mesh-box identifiers it is 
+        // the mesh-box list, if not it means it is the parameters list.
+
+        if (iterator.hasMore() && iterator.isPrimitiveValue()) {
+            CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(iterator.value());
+            if (primitiveValue->primitiveType() == CSSPrimitiveValue::CSS_NUMBER) {
+                // If only one integer value is specified, it will set both
+                // the rows and the columns.
+                meshRows = meshColumns = primitiveValue->getIntValue();
+                iterator.advance();
+                
+                // Try to match another number for the columns.
+                if (iterator.hasMore() && iterator.isPrimitiveValue()) {
+                    CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(iterator.value());
+                    if (primitiveValue->primitiveType() == CSSPrimitiveValue::CSS_NUMBER) {
+                        meshColumns = primitiveValue->getIntValue();
+                        iterator.advance();
+                    }
+                }
+            }
+        }
+        
+        if (iterator.hasMore() && iterator.isPrimitiveValue()) {
+            CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(iterator.value());
+            if (primitiveValue->getIdent() == CSSValueBorderBox
+                || primitiveValue->getIdent() == CSSValuePaddingBox
+                || primitiveValue->getIdent() == CSSValueContentBox
+                || primitiveValue->getIdent() == CSSValueFilterBox) {
+                meshBoxType = *primitiveValue;
+                iterator.advance();
+            }
+        }
+        
+        if (iterator.hasMore() && iterator.isPrimitiveValue()) {
+            CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(iterator.value());
+            if (primitiveValue->getIdent() == CSSValueDetached) {
+                meshType = CustomFilterOperation::DETACHED;
+                iterator.advance();
+            }
+        }
+    }
+    
+    return CustomFilterOperation::create(vertexShader, fragmentShader, meshRows, meshColumns, meshBoxType, meshType);
 }
 #endif
 

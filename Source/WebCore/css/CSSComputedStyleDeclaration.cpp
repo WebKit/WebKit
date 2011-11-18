@@ -748,6 +748,8 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::valueForFilter(RenderStyle* st
             CustomFilterOperation* customOperation = static_cast<CustomFilterOperation*>(filterOperation);
             filterValue = WebKitCSSFilterValue::create(WebKitCSSFilterValue::CustomFilterOperation);
             
+            // The output should be verbose, even if the values are the default ones.
+            
             RefPtr<CSSValueList> shadersList = CSSValueList::createSpaceSeparated();
             if (customOperation->vertexShader())
                 shadersList->append(customOperation->vertexShader()->cssValue());
@@ -755,7 +757,21 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::valueForFilter(RenderStyle* st
                 shadersList->append(primitiveValueCache->createIdentifierValue(CSSValueNone));
             if (customOperation->fragmentShader())
                 shadersList->append(customOperation->fragmentShader()->cssValue());
+            else
+                shadersList->append(primitiveValueCache->createIdentifierValue(CSSValueNone));
             filterValue->append(shadersList.release());
+            
+            RefPtr<CSSValueList> meshParameters = CSSValueList::createSpaceSeparated();
+            meshParameters->append(primitiveValueCache->createValue(customOperation->meshRows(), CSSPrimitiveValue::CSS_NUMBER));
+            meshParameters->append(primitiveValueCache->createValue(customOperation->meshColumns(), CSSPrimitiveValue::CSS_NUMBER));
+            meshParameters->append(primitiveValueCache->createValue(customOperation->meshBoxType()));
+            
+            // FIXME: The specification doesn't have any "attached" identifier. Should we add one?
+            // https://bugs.webkit.org/show_bug.cgi?id=72700
+            if (customOperation->meshType() == CustomFilterOperation::DETACHED)
+                meshParameters->append(primitiveValueCache->createIdentifierValue(CSSValueDetached));
+            
+            filterValue->append(meshParameters.release());
             
             break;
         }
