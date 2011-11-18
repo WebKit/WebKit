@@ -1,3 +1,15 @@
+2011-11-06  Nat Duca  <nduca@chromium.org>
+
+        [chromium] Fix handling of setNeedsCommit and setNeedsAnimate in threaded mode
+        https://bugs.webkit.org/show_bug.cgi?id=71638
+
+        Reviewed by James Robinson.
+
+        * platform/graphics/chromium/cc/CCThreadProxy.cpp:
+        (WebCore::CCThreadProxy::CCThreadProxy):
+        (WebCore::CCThreadProxy::setNeedsAnimate):
+        (WebCore::CCThreadProxy::beginFrameAndCommit):
+
 2011-11-17  Adam Barth  <abarth@webkit.org>
 
         Remove bogus ASSERT.

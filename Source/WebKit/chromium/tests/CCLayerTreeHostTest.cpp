@@ -59,6 +59,7 @@ public:
     virtual void commitCompleteOnCCThread(CCLayerTreeHostImpl*) { }
     virtual void drawLayersOnCCThread(CCLayerTreeHostImpl*) { }
     virtual void applyScrollAndScale(const IntSize&, float) { }
+    virtual void animateAndLayout(double frameBeginTime) { }
 };
 
 // Adapts CCLayerTreeHostImpl for test. Runs real code, then invokes test hooks.
@@ -151,6 +152,7 @@ public:
 
     virtual void animateAndLayout(double frameBeginTime)
     {
+        m_testHooks->animateAndLayout(frameBeginTime);
     }
 
     virtual void applyScrollAndScale(const IntSize& scrollDelta, float scale)
@@ -203,6 +205,11 @@ public:
 
     void endTest();
 
+    void postSetNeedsAnimateToMainThread()
+    {
+        callOnMainThread(CCLayerTreeHostTest::dispatchSetNeedsAnimate, this);
+    }
+
     void postSetNeedsCommitToMainThread()
     {
         callOnMainThread(CCLayerTreeHostTest::dispatchSetNeedsCommit, this);
@@ -212,6 +219,12 @@ public:
     {
         callOnMainThread(CCLayerTreeHostTest::dispatchSetNeedsRedraw, this);
     }
+
+    void postSetNeedsAnimateAndCommitToMainThread()
+    {
+        callOnMainThread(CCLayerTreeHostTest::dispatchSetNeedsAnimateAndCommit, this);
+    }
+
 
     void postSetVisibleToMainThread(bool visible)
     {
@@ -261,6 +274,26 @@ protected:
         CCLayerTreeHostTest* test = static_cast<CCLayerTreeHostTest*>(self);
         ASSERT_TRUE(test);
         test->m_layerTreeHost.clear();
+    }
+
+    static void dispatchSetNeedsAnimate(void* self)
+    {
+      ASSERT(isMainThread());
+      CCLayerTreeHostTest* test = static_cast<CCLayerTreeHostTest*>(self);
+      ASSERT(test);
+      if (test->m_layerTreeHost)
+          test->m_layerTreeHost->setNeedsAnimate();
+    }
+
+    static void dispatchSetNeedsAnimateAndCommit(void* self)
+    {
+      ASSERT(isMainThread());
+      CCLayerTreeHostTest* test = static_cast<CCLayerTreeHostTest*>(self);
+      ASSERT(test);
+      if (test->m_layerTreeHost) {
+          test->m_layerTreeHost->setNeedsAnimate();
+          test->m_layerTreeHost->setNeedsCommit();
+      }
     }
 
     static void dispatchSetNeedsCommit(void* self)
@@ -639,6 +672,46 @@ private:
 };
 
 TEST_F(CCLayerTreeHostTestSetNeedsRedraw, runMultiThread)
+{
+    runTestThreaded();
+}
+
+// Trigger a frame with setNeedsCommit. Then, inside the resulting animate
+// callback, requet another frame using setNeedsAnimate. End the test when
+// animate gets called yet-again, indicating that the proxy is correctly
+// handling the case where setNeedsAnimate() is called inside the begin frame
+// flow.
+class CCLayerTreeHostTestSetNeedsAnimateInsideAnimationCallback : public CCLayerTreeHostTestThreadOnly {
+public:
+    CCLayerTreeHostTestSetNeedsAnimateInsideAnimationCallback()
+        : m_numAnimates(0)
+    {
+    }
+
+    virtual void beginTest()
+    {
+        postSetNeedsAnimateToMainThread();
+    }
+
+    virtual void animateAndLayout(double)
+    {
+        if (!m_numAnimates) {
+            m_layerTreeHost->setNeedsAnimate();
+            m_numAnimates++;
+            return;
+        }
+        endTest();
+    }
+
+    virtual void afterTest()
+    {
+    }
+
+private:
+    int m_numAnimates;
+};
+
+TEST_F(CCLayerTreeHostTestSetNeedsAnimateInsideAnimationCallback, runMultiThread)
 {
     runTestThreaded();
 }

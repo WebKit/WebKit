@@ -97,12 +97,11 @@ private:
     void finishAllRenderingOnImplThread(CCCompletionEvent*);
     void initializeImplOnImplThread(CCCompletionEvent*);
     void initializeLayerRendererOnImplThread(GraphicsContext3D*, CCCompletionEvent*, bool* initializeSucceeded, LayerRendererCapabilities*, int* compositorIdentifier);
-    void setNeedsAnimateOnImplThread();
     void setVisibleOnImplThread(CCCompletionEvent*, bool visible);
     void layerTreeHostClosedOnImplThread(CCCompletionEvent*);
 
     // Accessed on main thread only.
-    bool m_animationRequested;
+    bool m_animateRequested;
     bool m_commitRequested;
     CCLayerTreeHost* m_layerTreeHost;
     int m_compositorIdentifier;
