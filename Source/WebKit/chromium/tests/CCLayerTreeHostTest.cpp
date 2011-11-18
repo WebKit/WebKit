@@ -26,9 +26,11 @@
 
 #include "cc/CCLayerTreeHost.h"
 
+#include "ContentLayerChromium.h"
 #include "cc/CCLayerImpl.h"
 #include "cc/CCLayerTreeHostImpl.h"
 #include "cc/CCScopedThreadProxy.h"
+#include "cc/CCTextureUpdater.h"
 #include "cc/CCThreadTask.h"
 #include "GraphicsContext3DPrivate.h"
 #include <gtest/gtest.h>
@@ -226,6 +228,8 @@ public:
     {
         m_timeoutTask = 0;
     }
+
+    CCLayerTreeHost* layerTreeHost() { return m_layerTreeHost.get(); }
 
 
 protected:
@@ -822,6 +826,105 @@ private:
 };
 
 TEST_F(CCLayerTreeHostTestSetVisible, runMultiThread)
+{
+    runTest(true);
+}
+
+class TestOpacityChangeLayerDelegate : public CCLayerDelegate {
+public:
+    TestOpacityChangeLayerDelegate(CCLayerTreeHostTest* test)
+        : m_test(test)
+    {
+    }
+
+    virtual void paintContents(GraphicsContext&, const IntRect&)
+    {
+        // Set layer opacity to 0.
+        m_test->layerTreeHost()->rootLayer()->setOpacity(0);
+    }
+
+    virtual bool drawsContent() const { return true; }
+    virtual bool preserves3D() { return false; }
+    virtual void notifySyncRequired() { }
+
+private:
+    CCLayerTreeHostTest* m_test;
+};
+
+class ContentLayerChromiumWithUpdateTracking : public ContentLayerChromium {
+public:
+    static PassRefPtr<ContentLayerChromiumWithUpdateTracking> create(CCLayerDelegate *delegate) { return adoptRef(new ContentLayerChromiumWithUpdateTracking(delegate)); }
+
+    int paintContentsCount() { return m_paintContentsCount; }
+    void resetPaintContentsCount() { m_paintContentsCount = 0; }
+
+    int updateCount() { return m_updateCount; }
+    void resetUpdateCount() { m_updateCount = 0; }
+
+    virtual void paintContentsIfDirty()
+    {
+        ContentLayerChromium::paintContentsIfDirty();
+        m_paintContentsCount++;
+    }
+
+    virtual void updateCompositorResources(GraphicsContext3D* context, CCTextureUpdater& updater)
+    {
+        ContentLayerChromium::updateCompositorResources(context, updater);
+        m_updateCount++;
+    }
+
+private:
+    explicit ContentLayerChromiumWithUpdateTracking(CCLayerDelegate *delegate)
+        : ContentLayerChromium(delegate)
+        , m_paintContentsCount(0)
+        , m_updateCount(0)
+    {
+        setBounds(IntSize(10, 10));
+    }
+
+    int m_paintContentsCount;
+    int m_updateCount;
+};
+
+// Layer opacity change during paint should not prevent compositor resources from being updated during commit.
+class CCLayerTreeHostTestOpacityChange : public CCLayerTreeHostTest {
+public:
+    CCLayerTreeHostTestOpacityChange()
+        : m_testOpacityChangeDelegate(this)
+        , m_updateCheckLayer(ContentLayerChromiumWithUpdateTracking::create(&m_testOpacityChangeDelegate))
+    {
+    }
+
+    virtual void beginTest()
+    {
+        m_layerTreeHost->setRootLayer(m_updateCheckLayer);
+        m_layerTreeHost->setViewport(IntSize(10, 10));
+
+        postSetNeedsCommitToMainThread();
+    }
+
+    virtual void commitCompleteOnCCThread(CCLayerTreeHostImpl*)
+    {
+        endTest();
+    }
+
+    virtual void afterTest()
+    {
+        // paintContentsIfDirty() should have been called once.
+        EXPECT_EQ(1, m_updateCheckLayer->paintContentsCount());
+
+        // updateCompositorResources() should have been called the same
+        // amout of times as paintContentsIfDirty().
+        EXPECT_EQ(m_updateCheckLayer->paintContentsCount(),
+                  m_updateCheckLayer->updateCount());
+    }
+
+private:
+    TestOpacityChangeLayerDelegate m_testOpacityChangeDelegate;
+    RefPtr<ContentLayerChromiumWithUpdateTracking> m_updateCheckLayer;
+};
+
+TEST_F(CCLayerTreeHostTestOpacityChange, runMultiThread)
 {
     runTest(true);
 }

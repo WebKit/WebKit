@@ -193,7 +193,6 @@ private:
     void paintMaskAndReplicaForRenderSurface(LayerChromium*);
 
     void updateLayers(LayerChromium*);
-    void updateCompositorResources(LayerChromium*, GraphicsContext3D*, CCTextureUpdater&);
     void clearPendingUpdate();
 
     int m_compositorIdentifier;

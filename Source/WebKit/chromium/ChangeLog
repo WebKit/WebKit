@@ -1,3 +1,35 @@
+2011-11-17  David Reveman  <reveman@chromium.org>
+
+        [Chromium] Calls to paintContentsIfDirty() and updateCompositorResources() should be balanced.
+        https://bugs.webkit.org/show_bug.cgi?id=72630
+
+        Reviewed by James Robinson.
+
+        Add test that check if calls to paintContentsIfDirty() and
+        updateCompositorResources() are balanced when layer opacity
+        changes during paintContent().
+
+        * tests/CCLayerTreeHostTest.cpp:
+        (WTF::CCLayerTreeHostTest::layerTreeHost):
+        (WTF::TestOpacityChangeLayerDelegate::TestOpacityChangeLayerDelegate):
+        (WTF::TestOpacityChangeLayerDelegate::paintContents):
+        (WTF::TestOpacityChangeLayerDelegate::drawsContent):
+        (WTF::TestOpacityChangeLayerDelegate::preserves3D):
+        (WTF::TestOpacityChangeLayerDelegate::notifySyncRequired):
+        (WTF::ContentLayerChromiumWithUpdateTracking::create):
+        (WTF::ContentLayerChromiumWithUpdateTracking::paintContentsCount):
+        (WTF::ContentLayerChromiumWithUpdateTracking::resetPaintContentsCount):
+        (WTF::ContentLayerChromiumWithUpdateTracking::updateCount):
+        (WTF::ContentLayerChromiumWithUpdateTracking::resetUpdateCount):
+        (WTF::ContentLayerChromiumWithUpdateTracking::paintContentsIfDirty):
+        (WTF::ContentLayerChromiumWithUpdateTracking::updateCompositorResources):
+        (WTF::ContentLayerChromiumWithUpdateTracking::ContentLayerChromiumWithUpdateTracking):
+        (WTF::CCLayerTreeHostTestOpacityChange::CCLayerTreeHostTestOpacityChange):
+        (WTF::CCLayerTreeHostTestOpacityChange::beginTest):
+        (WTF::CCLayerTreeHostTestOpacityChange::commitCompleteOnCCThread):
+        (WTF::CCLayerTreeHostTestOpacityChange::afterTest):
+        (WTF::TEST_F):
+
 2011-11-17  Peter Kasting  <pkasting@google.com>
 
         Unreviewed, rolling out r100676.

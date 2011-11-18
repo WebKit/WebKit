@@ -94,20 +94,18 @@ void ContentLayerChromium::cleanupResources()
 
 void ContentLayerChromium::paintContentsIfDirty()
 {
-    ASSERT(drawsContent());
-
     updateTileSizeAndTilingOption();
 
-    const IntRect& layerRect = visibleLayerRect();
-    if (layerRect.isEmpty())
-        return;
+    IntRect layerRect;
+
+    // Always call prepareToUpdate() but with an empty layer rectangle when
+    // layer doesn't draw contents.
+    if (drawsContent())
+        layerRect = visibleLayerRect();
 
     IntRect dirty = enclosingIntRect(m_dirtyRect);
     dirty.intersect(IntRect(IntPoint(), contentBounds()));
     invalidateRect(dirty);
-
-    if (!drawsContent())
-        return;
 
     prepareToUpdate(layerRect);
     resetNeedsDisplay();

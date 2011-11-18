@@ -79,7 +79,7 @@ void VideoLayerChromium::cleanupResources()
 
 void VideoLayerChromium::updateCompositorResources(GraphicsContext3D* context, CCTextureUpdater& updater)
 {
-    if (!m_delegate || !m_provider)
+    if (!m_delegate || !m_provider || !drawsContent())
         return;
 
     if (m_dirtyRect.isEmpty() && texturesValid()) {
@@ -92,8 +92,6 @@ void VideoLayerChromium::updateCompositorResources(GraphicsContext3D* context, C
         }
         return;
     }
-
-    ASSERT(drawsContent());
 
     m_planes = 0;
     m_skipsDraw = false;

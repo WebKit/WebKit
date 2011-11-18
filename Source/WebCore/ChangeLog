@@ -1,3 +1,28 @@
+2011-11-17  David Reveman  <reveman@chromium.org>
+
+        [Chromium] Calls to paintContentsIfDirty() and updateCompositorResources() should be balanced.
+        https://bugs.webkit.org/show_bug.cgi?id=72630
+
+        Reviewed by James Robinson.
+
+        Layer property changes during paintContent() can leave the layer
+        in an invalid state as paintContentsIfDirty() has been called
+        without a matching updateCompositorResources() call. Removing
+        conditionals around these calls ensure they are balanced.
+
+        This patch is tested by the following unit test:
+        - CCLayerTreeHostTestOpacityChange.runMultiThread
+
+        * platform/graphics/chromium/ContentLayerChromium.cpp:
+        (WebCore::ContentLayerChromium::paintContentsIfDirty):
+        * platform/graphics/chromium/VideoLayerChromium.cpp:
+        (WebCore::VideoLayerChromium::updateCompositorResources):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.cpp:
+        (WebCore::CCLayerTreeHost::paintMaskAndReplicaForRenderSurface):
+        (WebCore::CCLayerTreeHost::paintLayerContents):
+        (WebCore::CCLayerTreeHost::updateCompositorResources):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.h:
+
 2011-11-17  Adam Barth  <abarth@webkit.org>
 
         Remove cargo-cult copy/pasting of ScriptExecutionContext namespace

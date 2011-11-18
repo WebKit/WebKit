@@ -333,12 +333,6 @@ void CCLayerTreeHost::updateLayers(LayerChromium* rootLayer)
     paintLayerContents(m_updateList);
 }
 
-static void paintContentsIfDirty(LayerChromium* layer)
-{
-    if (layer->drawsContent())
-        layer->paintContentsIfDirty();
-}
-
 void CCLayerTreeHost::paintMaskAndReplicaForRenderSurface(LayerChromium* renderSurfaceLayer)
 {
     // Note: Masks and replicas only exist for layers that own render surfaces. If we reach this point
@@ -348,19 +342,19 @@ void CCLayerTreeHost::paintMaskAndReplicaForRenderSurface(LayerChromium* renderS
     if (renderSurfaceLayer->maskLayer()) {
         renderSurfaceLayer->maskLayer()->setLayerTreeHost(this);
         renderSurfaceLayer->maskLayer()->setVisibleLayerRect(IntRect(IntPoint(), renderSurfaceLayer->contentBounds()));
-        paintContentsIfDirty(renderSurfaceLayer->maskLayer());
+        renderSurfaceLayer->maskLayer()->paintContentsIfDirty();
     }
 
     LayerChromium* replicaLayer = renderSurfaceLayer->replicaLayer();
     if (replicaLayer) {
 
         replicaLayer->setLayerTreeHost(this);
-        paintContentsIfDirty(replicaLayer);
+        replicaLayer->paintContentsIfDirty();
 
         if (replicaLayer->maskLayer()) {
             replicaLayer->maskLayer()->setLayerTreeHost(this);
             replicaLayer->maskLayer()->setVisibleLayerRect(IntRect(IntPoint(), replicaLayer->maskLayer()->contentBounds()));
-            paintContentsIfDirty(replicaLayer->maskLayer());
+            replicaLayer->maskLayer()->paintContentsIfDirty();
         }
     }
 }
@@ -392,7 +386,7 @@ void CCLayerTreeHost::paintLayerContents(const LayerList& renderSurfaceLayerList
             ASSERT(layer->opacity());
             ASSERT(!layer->bounds().isEmpty());
 
-            paintContentsIfDirty(layer);
+            layer->paintContentsIfDirty();
         }
     }
 }
@@ -407,13 +401,13 @@ void CCLayerTreeHost::updateCompositorResources(GraphicsContext3D* context, CCTe
         ASSERT(renderSurface->drawOpacity());
 
         if (renderSurfaceLayer->maskLayer())
-            updateCompositorResources(renderSurfaceLayer->maskLayer(), context, updater);
+            renderSurfaceLayer->maskLayer()->updateCompositorResources(context, updater);
 
         if (renderSurfaceLayer->replicaLayer()) {
-            updateCompositorResources(renderSurfaceLayer->replicaLayer(), context, updater);
+            renderSurfaceLayer->replicaLayer()->updateCompositorResources(context, updater);
             
             if (renderSurfaceLayer->replicaLayer()->maskLayer())
-                updateCompositorResources(renderSurfaceLayer->replicaLayer()->maskLayer(), context, updater);
+                renderSurfaceLayer->replicaLayer()->maskLayer()->updateCompositorResources(context, updater);
         }
         
         const LayerList& layerList = renderSurface->layerList();
@@ -423,19 +417,9 @@ void CCLayerTreeHost::updateCompositorResources(GraphicsContext3D* context, CCTe
             if (layer->renderSurface() && layer->renderSurface() != renderSurface)
                 continue;
 
-            updateCompositorResources(layer, context, updater);
+            layer->updateCompositorResources(context, updater);
         }
     }
-}
-
-void CCLayerTreeHost::updateCompositorResources(LayerChromium* layer, GraphicsContext3D* context, CCTextureUpdater& updater)
-{
-    // For normal layers, these conditions should have already been checked while creating the render surface layer lists.
-    // For masks and replicas however, we may still need to check them here.
-    if (layer->bounds().isEmpty() || !layer->opacity() || !layer->drawsContent())
-        return;
-
-    layer->updateCompositorResources(context, updater);
 }
 
 void CCLayerTreeHost::clearPendingUpdate()
