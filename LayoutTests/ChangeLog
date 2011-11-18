@@ -1,3 +1,17 @@
+2011-11-16  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG global variable CSE mishandles the cross-global-object inlining corner case
+        https://bugs.webkit.org/show_bug.cgi?id=72542
+
+        Reviewed by Geoff Garen.
+
+        * fast/js/cross-global-object-inline-global-var-expected.txt: Added.
+        * fast/js/cross-global-object-inline-global-var.html: Added.
+        * fast/js/script-tests/cross-global-object-inline-global-var.js: Added.
+        (foo):
+        (done):
+        (doit):
+
 2011-11-10  Filip Pizlo  <fpizlo@apple.com>
 
         DFG byte array support sometimes clamps values incorrectly
