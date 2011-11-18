@@ -1,3 +1,16 @@
+2011-11-18  Igor Oliveira  <igor.oliveira@openbossa.org>
+
+        [TextureMapper] computePerspectiveTransformIfNeeded is called twice in TextureMapperNode::syncCompositingState
+        https://bugs.webkit.org/show_bug.cgi?id=72727
+
+        TextureMapperNode::computeAllTransforms already has a call to TextureMapperNode::computePerspectiveTransformIfNeeded,
+        so it does not need to be called again after TextureMapperNode::computeAllTransforms.
+
+        Reviewed by Noam Rosenthal.
+
+        * platform/graphics/texmap/TextureMapperNode.cpp:
+        (WebCore::TextureMapperNode::syncCompositingState):
+
 2011-11-18  Mihnea Ovidenie  <mihnea@adobe.com>
 
         Fix compilation warning in ComplexTextControllerCoreText.mm

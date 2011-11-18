@@ -1005,7 +1005,6 @@ void TextureMapperNode::syncCompositingState(GraphicsLayerTextureMapper* graphic
     syncAnimations(graphicsLayer);
 
     computeAllTransforms();
-    computePerspectiveTransformIfNeeded();
     computeTiles();
     computeOverlapsIfNeeded();
 
