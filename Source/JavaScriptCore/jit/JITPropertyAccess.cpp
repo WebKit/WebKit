@@ -521,12 +521,17 @@ void JIT::privateCompilePutByIdTransition(StructureStubInfo* stubInfo, Structure
     // Check eax is an object of the right Structure.
     failureCases.append(emitJumpIfNotJSCell(regT0));
     failureCases.append(branchPtr(NotEqual, Address(regT0, JSCell::structureOffset()), TrustedImmPtr(oldStructure)));
+    
     testPrototype(oldStructure->storedPrototype(), failureCases);
+    
+    ASSERT(oldStructure->storedPrototype().isNull() || oldStructure->storedPrototype().asCell()->structure() == chain->head()->get());
 
     // ecx = baseObject->m_structure
     if (!direct) {
-        for (WriteBarrier<Structure>* it = chain->head(); *it; ++it)
+        for (WriteBarrier<Structure>* it = chain->head(); *it; ++it) {
+            ASSERT((*it)->storedPrototype().isNull() || (*it)->storedPrototype().asCell()->structure() == it[1].get());
             testPrototype((*it)->storedPrototype(), failureCases);
+        }
     }
 
     Call callTarget;

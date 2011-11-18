@@ -1,5 +1,22 @@
 2011-11-18  Oliver Hunt  <oliver@apple.com>
 
+        Merge r100219
+
+        2011-11-14  Filip Pizlo  <fpizlo@apple.com>
+
+                DFG put_by_id transition optimizations test the wrong structures
+                https://bugs.webkit.org/show_bug.cgi?id=72324
+
+                Reviewed by Gavin Barraclough.
+
+                * dfg/DFGByteCodeParser.cpp:
+                (JSC::DFG::ByteCodeParser::structureChainIsStillValid):
+                (JSC::DFG::ByteCodeParser::parseBlock):
+                * jit/JITPropertyAccess.cpp:
+                (JSC::JIT::privateCompilePutByIdTransition):
+
+2011-11-18  Oliver Hunt  <oliver@apple.com>
+
         Merge r100197
 
         2011-11-14  Mark Rowe  <mrowe@apple.com>
