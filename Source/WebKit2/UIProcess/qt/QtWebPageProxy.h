@@ -49,6 +49,7 @@ QT_END_NAMESPACE
 class QtWebError;
 class QWebPreferences;
 class QWKHistory;
+class QQuickWebPage;
 
 using namespace WebKit;
 
@@ -73,7 +74,7 @@ public:
         WebActionCount
     };
 
-    QtWebPageProxy(WebKit::QtViewInterface*, WebKit::QtViewportInteractionEngine* = 0, WebKit::QtPolicyInterface* = 0, WKContextRef = 0, WKPageGroupRef = 0);
+    QtWebPageProxy(QQuickWebPage*, WebKit::QtViewInterface*, WebKit::QtViewportInteractionEngine* = 0, WebKit::QtPolicyInterface* = 0, WKContextRef = 0, WKPageGroupRef = 0);
     ~QtWebPageProxy();
 
     virtual PassOwnPtr<DrawingAreaProxy> createDrawingAreaProxy();
@@ -192,6 +193,7 @@ public:
 
     QWKHistory* history() const;
     QtViewInterface* viewInterface() const { return m_viewInterface; }
+    QQuickWebPage* qmlWebPage() const { return m_qmlWebPage; }
 
     void handleDownloadRequest(DownloadProxy*);
     void init();
@@ -209,6 +211,7 @@ public:
     Q_SIGNAL void receivedMessageFromNavigatorQtObject(const QVariantMap&);
 
 protected:
+    QQuickWebPage* m_qmlWebPage;
     RefPtr<WebKit::WebPageProxy> m_webPageProxy;
     WebKit::QtViewInterface* const m_viewInterface;
     QtViewportInteractionEngine* m_interactionEngine;

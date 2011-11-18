@@ -48,6 +48,11 @@ namespace WebCore {
 class GraphicsContext;
 }
 
+#if PLATFORM(QT)
+class QQuickWebPage;
+typedef QQuickWebPage PlatformWebView;
+#endif
+
 namespace WebKit {
 
 class ShareableBitmap;
@@ -59,9 +64,6 @@ typedef WKView PlatformWebView;
 #elif PLATFORM(WIN)
 class WebView;
 typedef WebView PlatformWebView;
-#elif PLATFORM(QT)
-class QtViewInterface;
-typedef QtViewInterface PlatformWebView;
 #endif
 
 class TiledDrawingAreaProxy : public DrawingAreaProxy {

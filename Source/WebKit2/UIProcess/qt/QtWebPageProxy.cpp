@@ -21,6 +21,7 @@
 #include "config.h"
 #include "QtWebPageProxy.h"
 
+#include "qquickwebpage_p.h"
 #include "QtWebError.h"
 #include "qwebdownloaditem_p.h"
 #include "qwebdownloaditem_p_p.h"
@@ -128,8 +129,9 @@ WebCore::DragOperation dropActionToDragOperation(Qt::DropActions actions)
     return (DragOperation)result;
 }
 
-QtWebPageProxy::QtWebPageProxy(QtViewInterface* viewInterface, QtViewportInteractionEngine* viewportInteractionEngine, QtPolicyInterface* policyInterface, WKContextRef contextRef, WKPageGroupRef pageGroupRef)
-    : m_viewInterface(viewInterface)
+QtWebPageProxy::QtWebPageProxy(QQuickWebPage* qmlWebPage, QtViewInterface* viewInterface, QtViewportInteractionEngine* viewportInteractionEngine, QtPolicyInterface* policyInterface, WKContextRef contextRef, WKPageGroupRef pageGroupRef)
+    : m_qmlWebPage(qmlWebPage)
+    , m_viewInterface(viewInterface)
     , m_interactionEngine(viewportInteractionEngine)
     , m_panGestureRecognizer(viewportInteractionEngine)
     , m_pinchGestureRecognizer(viewportInteractionEngine)
@@ -390,9 +392,9 @@ void QtWebPageProxy::setCursorHiddenUntilMouseMoves(bool hiddenUntilMouseMoves)
     notImplemented();
 }
 
-void QtWebPageProxy::setViewNeedsDisplay(const WebCore::IntRect& rect)
+void QtWebPageProxy::setViewNeedsDisplay(const WebCore::IntRect&)
 {
-    m_viewInterface->setViewNeedsDisplay(QRect(rect));
+    m_qmlWebPage->update();
 }
 
 void QtWebPageProxy::displayView()
@@ -407,7 +409,7 @@ void QtWebPageProxy::scrollView(const WebCore::IntRect& scrollRect, const WebCor
 
 WebCore::IntSize QtWebPageProxy::viewSize()
 {
-    return WebCore::IntSize(m_viewInterface->drawingAreaSize());
+    return WebCore::IntSize(m_qmlWebPage->width(), m_qmlWebPage->height());
 }
 
 bool QtWebPageProxy::isViewWindowActive()
@@ -417,12 +419,12 @@ bool QtWebPageProxy::isViewWindowActive()
 
 bool QtWebPageProxy::isViewFocused()
 {
-    return m_viewInterface->hasFocus();
+    return m_qmlWebPage->hasFocus();
 }
 
 bool QtWebPageProxy::isViewVisible()
 {
-    return m_viewInterface->isVisible();
+    return m_viewInterface->isVisible() && m_qmlWebPage->isVisible();
 }
 
 bool QtWebPageProxy::isViewInWindow()
@@ -660,7 +662,7 @@ void QtWebPageProxy::didRelaunchProcess()
 {
     updateNavigationState();
     m_viewInterface->didRelaunchProcess();
-    setDrawingAreaSize(m_viewInterface->drawingAreaSize());
+    setDrawingAreaSize(viewSize());
 }
 
 void QtWebPageProxy::processDidCrash()

@@ -1,3 +1,33 @@
+2011-11-18  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Removal of QtViewInterface part 1
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Replace functions of QtViewInterface that forward to QQuickWebPage with direct
+        usage of QQuickWebPage. Also removed some dead code.
+
+        * UIProcess/API/qt/qquickwebpage.cpp:
+        (QQuickWebPage::sceneGraphUpdateQueue):
+        * UIProcess/API/qt/qquickwebpage_p.h:
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewPrivate::initialize):
+        * UIProcess/TiledDrawingAreaProxy.h:
+        * UIProcess/qt/QtViewInterface.cpp:
+        (WebKit::QtViewInterface::QtViewInterface):
+        (WebKit::QtViewInterface::isVisible):
+        * UIProcess/qt/QtViewInterface.h:
+        * UIProcess/qt/QtWebPageProxy.cpp:
+        (QtWebPageProxy::QtWebPageProxy):
+        (QtWebPageProxy::setViewNeedsDisplay):
+        (QtWebPageProxy::viewSize):
+        (QtWebPageProxy::isViewFocused):
+        (QtWebPageProxy::isViewVisible):
+        (QtWebPageProxy::didRelaunchProcess):
+        * UIProcess/qt/QtWebPageProxy.h:
+        (QtWebPageProxy::qmlWebPage):
+        * UIProcess/qt/TiledDrawingAreaProxyQt.cpp:
+
 2011-11-17  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Layer violation: ThirdPartyCookiesQt.cpp uses QWebSettings in two places

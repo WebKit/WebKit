@@ -46,6 +46,11 @@ QQuickWebPage::~QQuickWebPage()
     delete d;
 }
 
+QtSGUpdateQueue *QQuickWebPage::sceneGraphUpdateQueue() const
+{
+    return &d->sgUpdateQueue;
+}
+
 void QQuickWebPage::keyPressEvent(QKeyEvent* event)
 {
     this->event(event);

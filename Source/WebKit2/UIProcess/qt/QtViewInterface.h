@@ -58,17 +58,11 @@ public:
         MultipleFilesSelection
     };
 
-    QtViewInterface(QQuickWebView* viewportView, QQuickWebPage* pageView);
+    QtViewInterface(QQuickWebView* viewportView);
 
-    QtSGUpdateQueue* sceneGraphUpdateQueue() const;
-
-    virtual void setViewNeedsDisplay(const QRect&);
-
-    virtual QSize drawingAreaSize();
     virtual void scrollPositionRequested(const QPoint& pos);
 
     virtual bool isActive();
-    virtual bool hasFocus();
     virtual bool isVisible();
 
     virtual void startDrag(Qt::DropActions supportedDropActions, const QImage& dragImage, QMimeData*, QPoint* clientPosition, QPoint* globalPosition, Qt::DropAction*);
@@ -98,8 +92,6 @@ public:
     virtual void processDidCrash(const QUrl&);
     virtual void didRelaunchProcess();
 
-    virtual QJSEngine* engine();
-
     virtual void chooseFiles(WKOpenPanelResultListenerRef, const QStringList& selectedFileNames, FileChooserType);
 
     virtual void didMouseMoveOverElement(const QUrl&, const QString&);
@@ -108,7 +100,6 @@ public:
 
 private:
     QQuickWebView* const m_viewportView;
-    QQuickWebPage* const m_pageView;
 
     QSharedPointer<QMenu> activeMenu;
     QUrl lastHoveredURL;

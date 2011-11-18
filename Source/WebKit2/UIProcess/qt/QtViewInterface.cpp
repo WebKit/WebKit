@@ -34,27 +34,10 @@
 
 namespace WebKit {
 
-QtViewInterface::QtViewInterface(QQuickWebView* viewportView, QQuickWebPage* pageView)
+QtViewInterface::QtViewInterface(QQuickWebView* viewportView)
     : m_viewportView(viewportView)
-    , m_pageView(pageView)
 {
     Q_ASSERT(m_viewportView);
-    Q_ASSERT(m_pageView);
-}
-
-QtSGUpdateQueue* QtViewInterface::sceneGraphUpdateQueue() const
-{
-    return &m_pageView->d->sgUpdateQueue;
-}
-
-void QtViewInterface::setViewNeedsDisplay(const QRect&)
-{
-    m_pageView->update();
-}
-
-QSize QtViewInterface::drawingAreaSize()
-{
-    return QSize(m_pageView->width(), m_pageView->height());
 }
 
 void QtViewInterface::didFinishFirstNonEmptyLayout()
@@ -83,14 +66,9 @@ bool QtViewInterface::isActive()
     return true;
 }
 
-bool QtViewInterface::hasFocus()
-{
-    return m_pageView->hasFocus();
-}
-
 bool QtViewInterface::isVisible()
 {
-    return m_viewportView->isVisible() && m_pageView->isVisible();
+    return m_viewportView->isVisible();
 }
 
 void QtViewInterface::startDrag(Qt::DropActions supportedDropActions, const QImage& dragImage, QMimeData* data, QPoint* clientPosition, QPoint* globalPosition, Qt::DropAction* dropAction)
@@ -224,15 +202,6 @@ void QtViewInterface::didRelaunchProcess()
 {
     qWarning("WARNING: The web process has been successfully restarted.");
 }
-
-QJSEngine* QtViewInterface::engine()
-{
-    QQuickView* view = qobject_cast<QQuickView*>(m_pageView->canvas());
-    if (view)
-        return view->engine();
-    return 0;
-}
-
 
 void QtViewInterface::downloadRequested(QWebDownloadItem* downloadItem)
 {

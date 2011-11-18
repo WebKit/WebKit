@@ -32,6 +32,7 @@ class QWebPreferences;
 
 namespace WebKit {
 class QtViewInterface;
+class QtSGUpdateQueue;
 }
 
 class QWEBKIT_EXPORT QQuickWebPage : public QQuickItem {
@@ -39,6 +40,9 @@ class QWEBKIT_EXPORT QQuickWebPage : public QQuickItem {
 public:
     QQuickWebPage(QQuickItem* parent = 0);
     virtual ~QQuickWebPage();
+
+    // Internal. To be removed soon.
+    WebKit::QtSGUpdateQueue* sceneGraphUpdateQueue() const;
 
 protected:
     virtual void keyPressEvent(QKeyEvent*);
