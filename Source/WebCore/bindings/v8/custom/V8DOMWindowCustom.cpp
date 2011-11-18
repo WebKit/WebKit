@@ -61,9 +61,6 @@
 #include "V8Node.h"
 #include "V8Proxy.h"
 #include "V8Utilities.h"
-#if ENABLE(WEB_SOCKETS)
-#include "WebSocket.h"
-#endif
 #include "WindowFeatures.h"
 
 namespace WebCore {
