@@ -108,6 +108,9 @@ qwk_1.0 {
         *QQuickWebViewPrivateExtension;
         non-virtual?thunk?to?QQuickWebViewPrivateExtension*;
         QQuickWebViewPrivateExtension::*;
+        *QQuickWebViewExperimental;
+        non-virtual?thunk?to?QQuickWebViewExperimental*;
+        QQuickWebViewExperimental::*;
 
         # WebKit 2 C API mangled in C++
         WKStringCopyQString*;

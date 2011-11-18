@@ -1,5 +1,12 @@
 2011-11-18  Simon Hausmann  <simon.hausmann@nokia.com>
 
+        [Qt] Unreviewed build fix: Export QQuickWebViewExperimental private API
+        that was added since I made the export patch.
+
+        * Source/qtwebkit-export.map:
+
+2011-11-18  Simon Hausmann  <simon.hausmann@nokia.com>
+
         [Qt] WTR and InjectedBundle should not link statically against JSC/WTF
         https://bugs.webkit.org/show_bug.cgi?id=72697
 
