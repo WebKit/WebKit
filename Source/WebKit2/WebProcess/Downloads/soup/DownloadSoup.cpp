@@ -153,12 +153,17 @@ void Download::cancel()
         return;
     m_resourceHandle->cancel();
     didCancel(CoreIPC::DataReference());
+    m_resourceHandle = 0;
 }
 
 void Download::platformInvalidate()
 {
+    if (m_resourceHandle) {
+        m_resourceHandle->setClient(0);
+        m_resourceHandle->cancel();
+        m_resourceHandle = 0;
+    }
     m_downloadClient.release();
-    m_resourceHandle = 0;
 }
 
 void Download::didDecideDestination(const String& destination, bool allowOverwrite)
@@ -168,7 +173,7 @@ void Download::didDecideDestination(const String& destination, bool allowOverwri
 
 void Download::platformDidFinish()
 {
-    notImplemented();
+    m_resourceHandle = 0;
 }
 
 void Download::receivedCredential(const AuthenticationChallenge& authenticationChallenge, const Credential& credential)

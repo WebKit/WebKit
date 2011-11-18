@@ -1,5 +1,22 @@
 2011-11-18  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Cancel current download operation before download object is deleted
+        https://bugs.webkit.org/show_bug.cgi?id=72721
+
+        Reviewed by Martin Robinson.
+
+        It fixes a crash in the web process when a download finishes early
+        due to a failure.
+
+        * WebProcess/Downloads/soup/DownloadSoup.cpp:
+        (WebKit::Download::cancel): Delete current ResourceHandle.
+        (WebKit::Download::platformInvalidate): If there's a
+        ResourceHandle active, cancel the download operation and delete
+        the handle.
+        (WebKit::Download::platformDidFinish): Delete current ResourceHandle.
+
+2011-11-18  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Downloads not started by WebView only fail for transport errors
         https://bugs.webkit.org/show_bug.cgi?id=72718
 
