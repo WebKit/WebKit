@@ -28,9 +28,10 @@ DESTDIR = $${ROOT_BUILD_DIR}/bin
 QT = core gui widgets network declarative testlib
 
 load(features)
+load(javascriptcore)
 load(webkit2)
 
-CONFIG += javascriptcore qtwebkit
+CONFIG += qtwebkit
 
 !embedded: PKGCONFIG += fontconfig
 

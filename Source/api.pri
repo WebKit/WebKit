@@ -218,3 +218,5 @@ plugin_backend_xlib {
     CONFIG *= link_pkgconfig
     PKGCONFIG += x11
 }
+
+linux-g++*: QMAKE_LFLAGS += -Wl,--version-script=$$PWD/qtwebkit-export.map

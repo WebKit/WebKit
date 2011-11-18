@@ -53,9 +53,10 @@ DESTDIR = $${ROOT_BUILD_DIR}/lib
 QT += declarative widgets
 
 load(features)
+load(javascriptcore)
 load(webcore)
 
-CONFIG += plugin javascriptcore qtwebkit
+CONFIG += plugin qtwebkit
 
 INCLUDEPATH += \
     $$PWD/.. \

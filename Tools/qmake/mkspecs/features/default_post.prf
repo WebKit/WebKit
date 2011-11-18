@@ -131,7 +131,7 @@ contains(TEMPLATE, lib) {
     win32-msvc*|win32-icc: INCLUDEPATH += $$ROOT_WEBKIT_DIR/Source/JavaScriptCore/os-win32
 
     !plugin {
-        contains(QT_CONFIG, reduce_exports):CONFIG += hide_symbols
+        !linux-g++*:contains(QT_CONFIG, reduce_exports):CONFIG += hide_symbols
         unix:contains(QT_CONFIG, reduce_relocations):CONFIG += bsymbolic_functions
     }
 }

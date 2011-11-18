@@ -1,0 +1,118 @@
+qwk_1.0 {
+    global:
+    WK*;
+    JSValueToObject;
+    JSObjectGetProperty;
+    JSValueIsObjectOfClass;
+    JSObjectSetProperty;
+    JSValueMakeString;
+    JSValueIsObject;
+    JSStringCreateWithUTF8CString;
+    JSValueToNumber;
+    JSStringRelease;
+    JSValueToStringCopy;
+    JSStringRetain;
+    JSClassRetain;
+    JSObjectGetPrivate;
+    JSObjectMake;
+    JSValueMakeBoolean;
+    JSClassCreate;
+    JSValueMakeNull;
+    JSValueToBoolean;
+    JSValueMakeNumber;
+    JSObjectCallAsFunction;
+    JSValueMakeUndefined;
+    JSClassRelease;
+    JSStringIsEqualToUTF8CString;
+    JSStringGetUTF8CString;
+    JSContextGetGlobalObject;
+    kJSClassDefinitionEmpty;
+    JSValueIsNumber;
+    JSObjectGetPropertyAtIndex;
+    JSValueIsString;
+    JSStringGetLength;
+    JSStringGetCharactersPtr;
+    JSStringCreateWithCharacters;
+    JSValueUnprotect;
+    JSValueProtect;
+    JSEvaluateScript;
+    _WKContextSetAdditionalPluginsDirectory;
+    WTFReportBacktrace;
+    extern "C++" {
+        # WebKit 1 API
+        *QGraphicsWebView;
+        non-virtual?thunk?to?QGraphicsWebView*;
+        QGraphicsWebView::*;
+        *QWebDatabase;
+        non-virtual?thunk?to?QWebDatabase*;
+        QWebDatabase::*;
+        *QWebElement;
+        non-virtual?thunk?to?QWebElement*;
+        QWebElement::*;
+        *QWebElementCollection;
+        non-virtual?thunk?to?QWebElementCollection*;
+        QWebElementCollection::*;
+        *QWebHitTestResult;
+        non-virtual?thunk?to?QWebHitTestResult*;
+        QWebHitTestResult::*;
+        *QWebFrame;
+        non-virtual?thunk?to?QWebFrame*;
+        QWebFrame::*;
+        *QWebPage;
+        non-virtual?thunk?to?QWebPage*;
+        QWebPage::*;
+        *QWebView;
+        non-virtual?thunk?to?QWebView*;
+        QWebView::*;
+        *QWebSettings;
+        non-virtual?thunk?to?QWebSettings*;
+        QWebSettings::*;
+        *QWebInspector;
+        non-virtual?thunk?to?QWebInspector*;
+        QWebInspector::*;
+        *DumpRenderTreeSupportQt;
+        non-virtual?thunk?to?DumpRenderTreeSupportQt*;
+        DumpRenderTreeSupportQt::*;
+        *QWebPluginFactory;
+        non-virtual?thunk?to?QWebPluginFactory*;
+        QWebPluginFactory::*;
+        *QWebHistory;
+        non-virtual?thunk?to?QWebHistory*;
+        QWebHistory::*;
+        *QWebHistoryItem;
+        non-virtual?thunk?to?QWebHistoryItem*;
+        QWebHistoryItem::*;
+        *QWebSecurityOrigin;
+        non-virtual?thunk?to?QWebSecurityOrigin*;
+        QWebSecurityOrigin::*;
+        *QWebHistoryInterface;
+        non-virtual?thunk?to?QWebHistoryInterface*;
+        QWebHistoryInterface::*;
+        qWebKit*Version*;
+        "operator<<(QDataStream&, QWebHistory const&)";
+        "operator>>(QDataStream&, QWebHistory&)";
+
+        # WebKit 2 Helpers
+        WebKit::WebProcessMainQt*;
+        WTF::fastMalloc*;
+        WTF::fastFree*;
+        WTF::fastZeroedMalloc*;
+
+        # WebKit 2 API
+        *QQuickWebView;
+        non-virtual?thunk?to?QQuickWebView*;
+        QQuickWebView::*;
+        *QQuickWebViewPrivate;
+        non-virtual?thunk?to?QQuickWebViewPrivate*;
+        QQuickWebViewPrivate::*;
+        *QQuickWebViewPrivateExtension;
+        non-virtual?thunk?to?QQuickWebViewPrivateExtension*;
+        QQuickWebViewPrivateExtension::*;
+
+        # WebKit 2 C API mangled in C++
+        WKStringCopyQString*;
+        WKStringCreateWithQString*;
+        WKImageCreateQImage*;
+    };
+    local: *;
+};

@@ -1,3 +1,16 @@
+2011-11-18  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] WTR and InjectedBundle should not link statically against JSC/WTF
+        https://bugs.webkit.org/show_bug.cgi?id=72697
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * Tools.pro: Make WTR linux only for the moment.
+        * WebKitTestRunner/InjectedBundle/Target.pri: Remove static jsc/wtf linkage.
+        * WebKitTestRunner/Target.pri: Ditto.
+        * qmake/mkspecs/features/default_post.prf: Don't build the main webkit sources
+        with ELF visibility on Linux. Instead we're temporarily using an LD version script.
+
 2011-11-18  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         [Qt] Change default size of the MiniBrowser
