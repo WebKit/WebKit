@@ -3798,6 +3798,7 @@ BUGWK59552 SNOWLEOPARD DEBUG : fast/dom/null-document-location-put-crash.html = 
 BUGWK59552 SNOWLEOPARD DEBUG : fast/frames/content-opacity-2.html = PASS CRASH
 BUGWK59552 SNOWLEOPARD DEBUG : fast/frames/frame-unload-crash.html = PASS CRASH
 BUGWK59552 SNOWLEOPARD DEBUG : fast/frames/iframe-double-scale-contents.html = PASS CRASH
+BUGWK59552 SNOWLEOPARD DEBUG : fast/frames/sandboxed-iframe-parsing-space-characters.html = PASS CRASH
 BUGWK59552 SNOWLEOPARD DEBUG : fast/frames/set-parent-src-synchronously.html = PASS CRASH
 BUGWK59552 SNOWLEOPARD DEBUG : fast/loader/opaque-base-url.html = PASS CRASH
 BUGWK59552 SNOWLEOPARD DEBUG : fast/parser/close-while-stopping.html = PASS CRASH
