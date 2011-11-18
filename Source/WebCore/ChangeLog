@@ -1,3 +1,31 @@
+2011-11-17  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: dispatch messages from the front-end to the backend asynchronously.
+        https://bugs.webkit.org/show_bug.cgi?id=72621
+
+        We should align the way we dispatch messages from the front-end to backend across the environments:
+          - WebKit has it synchronoulsly
+          - Chromium has it asynchronously
+          - Remote debugging has it asynchronously
+        Making it asynchronous made a number of flaky Qt tests pass.
+
+        Tests uncovered console agent problem that was also fixed.
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/InspectorConsoleAgent.cpp:
+        (WebCore::InspectorConsoleAgent::clearFrontend):
+        * inspector/InspectorFrontendClient.h:
+        * inspector/InspectorFrontendClientLocal.cpp:
+        (WebCore::InspectorBackendDispatchTask::InspectorBackendDispatchTask):
+        (WebCore::InspectorBackendDispatchTask::dispatch):
+        (WebCore::InspectorBackendDispatchTask::reset):
+        (WebCore::InspectorBackendDispatchTask::onTimer):
+        (WebCore::InspectorFrontendClientLocal::InspectorFrontendClientLocal):
+        (WebCore::InspectorFrontendClientLocal::windowObjectCleared):
+        (WebCore::InspectorFrontendClientLocal::sendMessageToBackend):
+        * inspector/InspectorFrontendClientLocal.h:
+
 2011-11-18  Iain Merrick  <husky@google.com>
 
         [chromium] Pass screen refresh rate into compositor.

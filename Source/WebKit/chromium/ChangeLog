@@ -1,3 +1,14 @@
+2011-11-17  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: dispatch messages from the front-end to the backend asynchronously.
+        https://bugs.webkit.org/show_bug.cgi?id=72621
+
+        Reviewed by Yury Semikhatsky.
+
+        * src/InspectorFrontendClientImpl.cpp:
+        (WebKit::InspectorFrontendClientImpl::performDisconnectFromBackend):
+        * src/InspectorFrontendClientImpl.h:
+
 2011-11-18  Iain Merrick  <husky@google.com>
 
         [chromium] Pass screen refresh rate into compositor.

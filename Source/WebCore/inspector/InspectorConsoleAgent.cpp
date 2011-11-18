@@ -135,6 +135,7 @@ void InspectorConsoleAgent::setFrontend(InspectorFrontend* frontend)
 void InspectorConsoleAgent::clearFrontend()
 {
     m_frontend = 0;
+    m_inspectorState->setBoolean(ConsoleAgentState::consoleMessagesEnabled, false);
 }
 
 void InspectorConsoleAgent::addMessageToConsole(MessageSource source, MessageType type, MessageLevel level, const String& message, PassRefPtr<ScriptArguments> arguments, PassRefPtr<ScriptCallStack> callStack)

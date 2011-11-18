@@ -39,6 +39,7 @@
 namespace WebCore {
 
 class InspectorController;
+class InspectorBackendDispatchTask;
 class InspectorFrontendHost;
 class Page;
 
@@ -88,6 +89,7 @@ private:
     // TODO(yurys): this ref shouldn't be needed.
     RefPtr<InspectorFrontendHost> m_frontendHost;
     OwnPtr<InspectorFrontendClientLocal::Settings> m_settings;
+    OwnPtr<InspectorBackendDispatchTask> m_dispatchTask;
 };
 
 } // namespace WebCore

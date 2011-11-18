@@ -27,11 +27,19 @@ function test()
 
     function step3()
     {
-        function format(record) {
+        function format(record)
+        {
             if (record.type === WebInspector.TimelineAgent.RecordType.EvaluateScript)
                 InspectorTest.printTimelineRecordProperties(record);
-            else if (record.type === WebInspector.TimelineAgent.RecordType.ParseHTML)
+            else if (record.type === WebInspector.TimelineAgent.RecordType.ParseHTML) {
+                var children = [];
+                for (var i = 0; i < record.children.length; ++i) {
+                    if (record.children[i].type !== WebInspector.TimelineAgent.RecordType.RecalculateStyles)
+                        children.push(record.children[i]);
+                }
+                record.children = children;
                 InspectorTest.dumpTimelineRecord(record);
+            }
         }
         InspectorTest.printTimelineRecords(null, format);
         InspectorTest.completeTest();
