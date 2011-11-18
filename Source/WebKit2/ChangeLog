@@ -1,3 +1,17 @@
+2011-11-17  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Layer violation: ThirdPartyCookiesQt.cpp uses QWebSettings in two places
+        https://bugs.webkit.org/show_bug.cgi?id=72597
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Stub implementation of new NetworkingContext::thirdPartyCookiePolicyPermission
+        API.
+
+        * WebProcess/WebCoreSupport/qt/WebFrameNetworkingContext.cpp:
+        (WebCore::WebFrameNetworkingContext::thirdPartyCookiePolicyPermission):
+        * WebProcess/WebCoreSupport/qt/WebFrameNetworkingContext.h:
+
 2011-11-17  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] The process freezes when you right click on windowless Flash

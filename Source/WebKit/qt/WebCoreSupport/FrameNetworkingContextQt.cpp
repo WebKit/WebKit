@@ -22,9 +22,10 @@
 #include "FrameNetworkingContextQt.h"
 
 #include "qwebframe.h"
+#include "qwebframe_p.h"
 #include "qwebpage.h"
 #include <QNetworkAccessManager>
-#include <QObject>
+#include <QNetworkCookieJar>
 
 namespace WebCore {
 
@@ -54,6 +55,24 @@ QNetworkAccessManager* FrameNetworkingContextQt::networkAccessManager() const
 bool FrameNetworkingContextQt::mimeSniffingEnabled() const
 {
     return m_mimeSniffingEnabled;
+}
+
+bool FrameNetworkingContextQt::thirdPartyCookiePolicyPermission(const QUrl& url) const
+{
+    switch (QWebSettings::globalSettings()->thirdPartyCookiePolicy()) {
+    case QWebSettings::AlwaysAllowThirdPartyCookies:
+        return true;
+    case QWebSettings::AlwaysBlockThirdPartyCookies:
+        return false;
+    case QWebSettings::AllowThirdPartyWithExistingCookies: {
+        QList<QNetworkCookie> cookies = networkAccessManager()->cookieJar()->cookiesForUrl(url);
+        return !cookies.isEmpty();
+    }
+    default:
+        break;
+    }
+
+    return false;
 }
 
 }

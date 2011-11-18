@@ -395,11 +395,7 @@ QNetworkReplyHandler::QNetworkReplyHandler(ResourceHandle* handle, LoadType load
     else
         m_method = QNetworkAccessManager::CustomOperation;
 
-    QObject* originatingObject = 0;
-    if (m_resourceHandle->getInternal()->m_context)
-        originatingObject = m_resourceHandle->getInternal()->m_context->originatingObject();
-
-    m_request = r.toNetworkRequest(originatingObject);
+    m_request = r.toNetworkRequest(m_resourceHandle->getInternal()->m_context.get());
 
     m_queue.push(&QNetworkReplyHandler::start);
 }
@@ -555,11 +551,7 @@ void QNetworkReplyHandler::redirect(ResourceResponse& response, const QUrl& redi
     if (wasAborted()) // Network error cancelled the request.
         return;
 
-    QObject* originatingObject = 0;
-    if (m_resourceHandle->getInternal()->m_context)
-        originatingObject = m_resourceHandle->getInternal()->m_context->originatingObject();
-
-    m_request = newRequest.toNetworkRequest(originatingObject);
+    m_request = newRequest.toNetworkRequest(m_resourceHandle->getInternal()->m_context.get());
 }
 
 void QNetworkReplyHandler::forwardData()

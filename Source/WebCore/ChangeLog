@@ -1,3 +1,37 @@
+2011-11-17  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Layer violation: ThirdPartyCookiesQt.cpp uses QWebSettings in two places
+        https://bugs.webkit.org/show_bug.cgi?id=72597
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Moved code that queries the third party cookie policy from QWebSettings
+        out of WebCore. Instead NetworkingContext has now the interface that allows
+        delegating the functionality into WebKit/qt.
+
+        In order to do that we need to pass the NetworkingContext around, which is used to
+        retrieve the cookie jar and the originating frame object pointer.
+
+        * platform/network/NetworkingContext.h: Add interface.
+        * platform/network/qt/QNetworkReplyHandler.cpp:
+        (WebCore::QNetworkReplyHandler::QNetworkReplyHandler): Pass NetworkingContext to ResourceRequest::toNetworkRequest.
+        (WebCore::QNetworkReplyHandler::redirect): Ditto.
+        * platform/network/qt/ResourceRequest.h: Replaced originatingObject parameter with NetworkingContext, which can
+        also provide the same plus more (cookie jar, policy callback).
+        * platform/network/qt/ResourceRequestQt.cpp:
+        (WebCore::ResourceRequest::toNetworkRequest): Ditto.
+        * platform/qt/CookieJarQt.cpp: Simplify to use NetworkingContext to get cookie jar and
+        call new thirdPartyCookiePolicyPermits API that takes the context as parameter.
+        (WebCore::networkingContext):
+        (WebCore::setCookies):
+        (WebCore::cookies):
+        (WebCore::cookieRequestHeaderFieldValue):
+        (WebCore::cookiesEnabled):
+        * platform/qt/ThirdPartyCookiesQt.cpp: Replace up-casting to QWebFrame and use of QWebSettings
+        with useage of NetworkingContext.
+        (WebCore::thirdPartyCookiePolicyPermits):
+        * platform/qt/ThirdPartyCookiesQt.h:
+
 2011-11-17  Kenichi Ishibashi  <bashi@chromium.org>
 
         crash: WebCore::FontPlatformData::roundsGlyphAdvances on Lion

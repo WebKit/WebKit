@@ -23,9 +23,7 @@
 #include "Cookie.h"
 #include "CookieJar.h"
 #include "Document.h"
-#include "qwebframe.h"
-#include "qwebpage.h"
-#include "qwebsettings.h"
+#include "NetworkingContext.h"
 
 #include <QList>
 #include <QNetworkAccessManager>
@@ -34,18 +32,6 @@
 namespace WebCore {
 
 #if QT_VERSION >= QT_VERSION_CHECK(4, 8, 0)
-static QNetworkCookieJar* cookieJar(QObject* originatingFrame)
-{
-    if (!originatingFrame)
-        return 0;
-    QWebFrame* frame = qobject_cast<QWebFrame*>(originatingFrame);
-    if (!frame)
-        return 0;
-    QNetworkAccessManager* manager = frame->page()->networkAccessManager();
-    QNetworkCookieJar* jar = manager->cookieJar();
-    return jar;
-}
-
 inline void removeTopLevelDomain(QString* domain, const QString& topLevelDomain)
 {
     domain->remove(domain->length() - topLevelDomain.length(), topLevelDomain.length());
@@ -73,39 +59,20 @@ static bool urlsShareSameDomain(const QUrl& url, const QUrl& firstPartyUrl)
 }
 #endif
 
-bool thirdPartyCookiePolicyPermits(QNetworkCookieJar* jar, const QUrl& url, const QUrl& firstPartyUrl)
+bool thirdPartyCookiePolicyPermits(NetworkingContext* context, const QUrl& url, const QUrl& firstPartyUrl)
 {
 #if QT_VERSION >= QT_VERSION_CHECK(4, 8, 0)
+    QNetworkCookieJar* jar = context->networkAccessManager()->cookieJar();
+    if (!jar)
+        return true;
+
     if (firstPartyUrl.isEmpty())
         return true;
 
     if (urlsShareSameDomain(url, firstPartyUrl))
         return true;
 
-    switch (QWebSettings::globalSettings()->thirdPartyCookiePolicy()) {
-    case QWebSettings::AlwaysAllowThirdPartyCookies:
-        return true;
-    case QWebSettings::AlwaysBlockThirdPartyCookies:
-        return false;
-    case QWebSettings::AllowThirdPartyWithExistingCookies: {
-        QList<QNetworkCookie> cookies = jar->cookiesForUrl(url);
-        return !cookies.isEmpty();
-    }
-    default:
-        return false;
-    }
-#else
-    return true;
-#endif
-}
-
-bool thirdPartyCookiePolicyPermitsForFrame(QObject* originatingFrame, const QUrl& url, const QUrl& firstPartyUrl)
-{
-#if QT_VERSION >= QT_VERSION_CHECK(4, 8, 0)
-    QNetworkCookieJar* jar = cookieJar(originatingFrame);
-    if (!jar)
-        return true;
-    return thirdPartyCookiePolicyPermits(jar, url, firstPartyUrl);
+    return context->thirdPartyCookiePolicyPermission(url);
 #else
     return true;
 #endif

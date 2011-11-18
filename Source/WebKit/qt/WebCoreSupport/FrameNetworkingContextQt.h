@@ -34,6 +34,7 @@ private:
     virtual QObject* originatingObject() const;
     virtual QNetworkAccessManager* networkAccessManager() const;
     virtual bool mimeSniffingEnabled() const;
+    virtual bool thirdPartyCookiePolicyPermission(const QUrl&) const;
 
     QObject* m_originatingObject;
     QNetworkAccessManager* m_networkAccessManager;

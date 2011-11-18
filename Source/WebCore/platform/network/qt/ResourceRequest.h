@@ -31,10 +31,10 @@
 
 QT_BEGIN_NAMESPACE
 class QNetworkRequest;
-class QObject;
 QT_END_NAMESPACE
 
 namespace WebCore {
+class NetworkingContext;
 
     class ResourceRequest : public ResourceRequestBase {
     public:
@@ -59,7 +59,7 @@ namespace WebCore {
         {
         }
 
-        QNetworkRequest toNetworkRequest(QObject* originatingObject = 0) const;
+        QNetworkRequest toNetworkRequest(NetworkingContext* = 0) const;
 
     private:
         friend class ResourceRequestBase;

@@ -53,4 +53,10 @@ bool WebFrameNetworkingContext::mimeSniffingEnabled() const
     return m_mimeSniffingEnabled;
 }
 
+bool WebFrameNetworkingContext::thirdPartyCookiePolicyPermission(const QUrl &) const
+{
+    // ### TODO. Used QWebSettings in WK1.
+    return true;
+}
+
 }

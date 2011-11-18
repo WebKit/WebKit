@@ -21,13 +21,12 @@
 #define ThirdPartyCookiesQt_h
 
 class QNetworkCookieJar;
-class QObject;
 class QUrl;
 
 namespace WebCore {
+class NetworkingContext;
 
-bool thirdPartyCookiePolicyPermits(QNetworkCookieJar* , const QUrl&, const QUrl& firstPartyUrl);
-bool thirdPartyCookiePolicyPermitsForFrame(QObject* originatingFrame, const QUrl&, const QUrl& firstPartyUrl);
+bool thirdPartyCookiePolicyPermits(NetworkingContext*, const QUrl&, const QUrl& firstPartyUrl);
 
 }
 

@@ -1,5 +1,30 @@
 2011-11-17  Simon Hausmann  <simon.hausmann@nokia.com>
 
+        [Qt] Layer violation: ThirdPartyCookiesQt.cpp uses QWebSettings in two places
+        https://bugs.webkit.org/show_bug.cgi?id=72597
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Implemented NetworkingContext::thirdPartyCookiePolicyPermission, which queries
+        the global QWebSettings.
+
+        * WebCoreSupport/DumpRenderTreeSupportQt.cpp:
+        (DumpRenderTreeSupportQt::thirdPartyCookiePolicyAllows): Adapt to the
+        changed thirdPartyCookiePolicyPermits WebCore API that operates on a networking context.
+        * WebCoreSupport/DumpRenderTreeSupportQt.h:
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::dispatchDecidePolicyForNewWindowAction): Pass networking
+        context to ResourceRequest::toNetworkRequest.
+        (WebCore::FrameLoaderClientQt::dispatchDecidePolicyForNavigationAction): Ditto.
+        (WebCore::FrameLoaderClientQt::startDownload): Ditto.
+        * WebCoreSupport/FrameNetworkingContextQt.cpp:
+        (WebCore::FrameNetworkingContextQt::thirdPartyCookiePolicyPermission): Implement.
+        * WebCoreSupport/FrameNetworkingContextQt.h:
+        * tests/qwebpage/tst_qwebpage.cpp:
+        (tst_QWebPage::thirdPartyCookiePolicy): Adapt to QtDRTSupport API change.
+
+2011-11-17  Simon Hausmann  <simon.hausmann@nokia.com>
+
         [Qt] Layer violation: qt_runtime.cpp accesses QWebElement and QTDRTNode
         https://bugs.webkit.org/show_bug.cgi?id=72595
 

@@ -1242,7 +1242,7 @@ void FrameLoaderClientQt::dispatchDecidePolicyForResponse(FramePolicyFunction fu
 void FrameLoaderClientQt::dispatchDecidePolicyForNewWindowAction(FramePolicyFunction function, const WebCore::NavigationAction& action, const WebCore::ResourceRequest& request, PassRefPtr<WebCore::FormState>, const WTF::String&)
 {
     Q_ASSERT(m_webFrame);
-    QNetworkRequest r(request.toNetworkRequest(m_webFrame));
+    QNetworkRequest r(request.toNetworkRequest(m_frame->loader()->networkingContext()));
     QWebPage* page = m_webFrame->page();
 
     if (!page->d->acceptNavigationRequest(0, r, QWebPage::NavigationType(action.type()))) {
@@ -1263,7 +1263,7 @@ void FrameLoaderClientQt::dispatchDecidePolicyForNewWindowAction(FramePolicyFunc
 void FrameLoaderClientQt::dispatchDecidePolicyForNavigationAction(FramePolicyFunction function, const WebCore::NavigationAction& action, const WebCore::ResourceRequest& request, PassRefPtr<WebCore::FormState>)
 {
     Q_ASSERT(m_webFrame);
-    QNetworkRequest r(request.toNetworkRequest(m_webFrame));
+    QNetworkRequest r(request.toNetworkRequest(m_frame->loader()->networkingContext()));
     QWebPage*page = m_webFrame->page();
     PolicyAction result;
 
@@ -1318,7 +1318,7 @@ void FrameLoaderClientQt::startDownload(const WebCore::ResourceRequest& request,
     if (!m_webFrame)
         return;
 
-    emit m_webFrame->page()->downloadRequested(request.toNetworkRequest(m_webFrame));
+    emit m_webFrame->page()->downloadRequested(request.toNetworkRequest(m_frame->loader()->networkingContext()));
 }
 
 PassRefPtr<Frame> FrameLoaderClientQt::createFrame(const KURL& url, const String& name, HTMLFrameOwnerElement* ownerElement,

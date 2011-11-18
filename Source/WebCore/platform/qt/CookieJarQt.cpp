@@ -38,9 +38,6 @@
 #include "NetworkingContext.h"
 #include "PlatformString.h"
 #include "ThirdPartyCookiesQt.h"
-#include "qwebframe.h"
-#include "qwebpage.h"
-#include "qwebsettings.h"
 #include <QDateTime>
 #include <QNetworkAccessManager>
 #include <QNetworkCookie>
@@ -51,7 +48,7 @@ namespace WebCore {
 
 static SharedCookieJarQt* s_sharedCookieJarQt = 0;
 
-static QNetworkCookieJar *cookieJar(const Document *document)
+static NetworkingContext* networkingContext(const Document* document)
 {
     if (!document)
         return 0;
@@ -61,20 +58,21 @@ static QNetworkCookieJar *cookieJar(const Document *document)
     FrameLoader* loader = frame->loader();
     if (!loader)
         return 0;
-    QNetworkAccessManager* manager = loader->networkingContext()->networkAccessManager();
-    QNetworkCookieJar* jar = manager->cookieJar();
-    return jar;
+    return loader->networkingContext();
 }
 
 void setCookies(Document* document, const KURL& url, const String& value)
 {
-    QNetworkCookieJar* jar = cookieJar(document);
+    NetworkingContext* context = networkingContext(document);
+    if (!context)
+        return;
+    QNetworkCookieJar* jar = context->networkAccessManager()->cookieJar();
     if (!jar)
         return;
 
     QUrl urlForCookies(url);
     QUrl firstPartyUrl(document->firstPartyForCookies());
-    if (!thirdPartyCookiePolicyPermits(jar, urlForCookies, firstPartyUrl))
+    if (!thirdPartyCookiePolicyPermits(context, urlForCookies, firstPartyUrl))
         return;
 
     QList<QNetworkCookie> cookies = QNetworkCookie::parseCookies(QString(value).toLatin1());
@@ -91,13 +89,14 @@ void setCookies(Document* document, const KURL& url, const String& value)
 
 String cookies(const Document* document, const KURL& url)
 {
-    QNetworkCookieJar* jar = cookieJar(document);
-    if (!jar)
+    NetworkingContext* context = networkingContext(document);
+    if (!context)
         return String();
+    QNetworkCookieJar* jar = context->networkAccessManager()->cookieJar();
 
     QUrl urlForCookies(url);
     QUrl firstPartyUrl(document->firstPartyForCookies());
-    if (!thirdPartyCookiePolicyPermits(jar, urlForCookies, firstPartyUrl))
+    if (!thirdPartyCookiePolicyPermits(context, urlForCookies, firstPartyUrl))
         return String();
 
     QList<QNetworkCookie> cookies = jar->cookiesForUrl(urlForCookies);
@@ -116,9 +115,10 @@ String cookies(const Document* document, const KURL& url)
 
 String cookieRequestHeaderFieldValue(const Document* document, const KURL &url)
 {
-    QNetworkCookieJar* jar = cookieJar(document);
-    if (!jar)
+    NetworkingContext* context = networkingContext(document);
+    if (!context)
         return String();
+    QNetworkCookieJar* jar = context->networkAccessManager()->cookieJar();
 
     QList<QNetworkCookie> cookies = jar->cookiesForUrl(QUrl(url));
     if (cookies.isEmpty())
@@ -133,8 +133,10 @@ String cookieRequestHeaderFieldValue(const Document* document, const KURL &url)
 
 bool cookiesEnabled(const Document* document)
 {
-    QNetworkCookieJar* jar = cookieJar(document);
-    return jar;
+    NetworkingContext* context = networkingContext(document);
+    if (!context)
+        return false;
+    return context->networkAccessManager()->cookieJar();
 }
 
 bool getRawCookies(const Document*, const KURL&, Vector<Cookie>& rawCookies)

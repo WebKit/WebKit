@@ -18,6 +18,7 @@
 */
 
 #include "config.h"
+#include "NetworkingContext.h"
 #include "ResourceRequest.h"
 #include "ThirdPartyCookiesQt.h"
 
@@ -39,11 +40,11 @@ unsigned initializeMaximumHTTPConnectionCountPerHost()
     return 6 * (1 + 3 + 2);
 }
 
-QNetworkRequest ResourceRequest::toNetworkRequest(QObject* originatingFrame) const
+QNetworkRequest ResourceRequest::toNetworkRequest(NetworkingContext *context) const
 {
     QNetworkRequest request;
     request.setUrl(url());
-    request.setOriginatingObject(originatingFrame);
+    request.setOriginatingObject(context ? context->originatingObject() : 0);
 
     const HTTPHeaderMap &headers = httpHeaderFields();
     for (HTTPHeaderMap::const_iterator it = headers.begin(), end = headers.end();
@@ -79,7 +80,7 @@ QNetworkRequest ResourceRequest::toNetworkRequest(QObject* originatingFrame) con
         break;
     }
 
-    if (!allowCookies() || !thirdPartyCookiePolicyPermitsForFrame(originatingFrame, url(), firstPartyForCookies())) {
+    if (!allowCookies() || !thirdPartyCookiePolicyPermits(context, url(), firstPartyForCookies())) {
         request.setAttribute(QNetworkRequest::CookieSaveControlAttribute, QNetworkRequest::Manual);
         request.setAttribute(QNetworkRequest::CookieLoadControlAttribute, QNetworkRequest::Manual);
     }

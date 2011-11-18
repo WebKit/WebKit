@@ -233,7 +233,7 @@ public:
     static void goBack(QWebPage*);
 
 #if QT_VERSION >= QT_VERSION_CHECK(4, 8, 0)
-    static bool thirdPartyCookiePolicyAllows(QNetworkCookieJar*, const QUrl&, const QUrl& firstPartyUrl);
+    static bool thirdPartyCookiePolicyAllows(QWebPage*, const QUrl&, const QUrl& firstPartyUrl);
 #endif
 };
 

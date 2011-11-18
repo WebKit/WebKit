@@ -1119,9 +1119,10 @@ void DumpRenderTreeSupportQt::setMinimumTimerInterval(QWebPage* page, double int
 }
 
 #if QT_VERSION >= QT_VERSION_CHECK(4, 8, 0)
-bool DumpRenderTreeSupportQt::thirdPartyCookiePolicyAllows(QNetworkCookieJar* jar, const QUrl& url, const QUrl& firstPartyUrl)
+bool DumpRenderTreeSupportQt::thirdPartyCookiePolicyAllows(QWebPage *page, const QUrl& url, const QUrl& firstPartyUrl)
 {
-    return thirdPartyCookiePolicyPermits(jar, url, firstPartyUrl);
+    Page* corePage = QWebPagePrivate::core(page);
+    return thirdPartyCookiePolicyPermits(corePage->mainFrame()->loader()->networkingContext(), url, firstPartyUrl);
 }
 #endif
 

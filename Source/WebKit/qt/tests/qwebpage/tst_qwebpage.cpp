@@ -3023,35 +3023,35 @@ void tst_QWebPage::thirdPartyCookiePolicy()
     QVERIFY(m_page->networkAccessManager()->cookieJar());
 
     // These are all first-party cookies, so should pass.
-    QVERIFY(DumpRenderTreeSupportQt::thirdPartyCookiePolicyAllows(m_page->networkAccessManager()->cookieJar(),
+    QVERIFY(DumpRenderTreeSupportQt::thirdPartyCookiePolicyAllows(m_page,
             QUrl("http://www.example.com"), QUrl("http://example.com")));
-    QVERIFY(DumpRenderTreeSupportQt::thirdPartyCookiePolicyAllows(m_page->networkAccessManager()->cookieJar(),
+    QVERIFY(DumpRenderTreeSupportQt::thirdPartyCookiePolicyAllows(m_page,
             QUrl("http://www.example.com"), QUrl("http://doc.example.com")));
-    QVERIFY(DumpRenderTreeSupportQt::thirdPartyCookiePolicyAllows(m_page->networkAccessManager()->cookieJar(),
+    QVERIFY(DumpRenderTreeSupportQt::thirdPartyCookiePolicyAllows(m_page,
             QUrl("http://aaa.www.example.com"), QUrl("http://doc.example.com")));
-    QVERIFY(DumpRenderTreeSupportQt::thirdPartyCookiePolicyAllows(m_page->networkAccessManager()->cookieJar(),
+    QVERIFY(DumpRenderTreeSupportQt::thirdPartyCookiePolicyAllows(m_page,
             QUrl("http://example.com"), QUrl("http://www.example.com")));
-    QVERIFY(DumpRenderTreeSupportQt::thirdPartyCookiePolicyAllows(m_page->networkAccessManager()->cookieJar(),
+    QVERIFY(DumpRenderTreeSupportQt::thirdPartyCookiePolicyAllows(m_page,
             QUrl("http://www.example.co.uk"), QUrl("http://example.co.uk")));
-    QVERIFY(DumpRenderTreeSupportQt::thirdPartyCookiePolicyAllows(m_page->networkAccessManager()->cookieJar(),
+    QVERIFY(DumpRenderTreeSupportQt::thirdPartyCookiePolicyAllows(m_page,
             QUrl("http://www.example.co.uk"), QUrl("http://doc.example.co.uk")));
-    QVERIFY(DumpRenderTreeSupportQt::thirdPartyCookiePolicyAllows(m_page->networkAccessManager()->cookieJar(),
+    QVERIFY(DumpRenderTreeSupportQt::thirdPartyCookiePolicyAllows(m_page,
             QUrl("http://aaa.www.example.co.uk"), QUrl("http://doc.example.co.uk")));
-    QVERIFY(DumpRenderTreeSupportQt::thirdPartyCookiePolicyAllows(m_page->networkAccessManager()->cookieJar(),
+    QVERIFY(DumpRenderTreeSupportQt::thirdPartyCookiePolicyAllows(m_page,
             QUrl("http://example.co.uk"), QUrl("http://www.example.co.uk")));
 
     // These are all third-party cookies, so should fail.
-    QVERIFY(!DumpRenderTreeSupportQt::thirdPartyCookiePolicyAllows(m_page->networkAccessManager()->cookieJar(),
+    QVERIFY(!DumpRenderTreeSupportQt::thirdPartyCookiePolicyAllows(m_page,
             QUrl("http://www.example.com"), QUrl("http://slashdot.org")));
-    QVERIFY(!DumpRenderTreeSupportQt::thirdPartyCookiePolicyAllows(m_page->networkAccessManager()->cookieJar(),
+    QVERIFY(!DumpRenderTreeSupportQt::thirdPartyCookiePolicyAllows(m_page,
             QUrl("http://example.com"), QUrl("http://anotherexample.com")));
-    QVERIFY(!DumpRenderTreeSupportQt::thirdPartyCookiePolicyAllows(m_page->networkAccessManager()->cookieJar(),
+    QVERIFY(!DumpRenderTreeSupportQt::thirdPartyCookiePolicyAllows(m_page,
             QUrl("http://anotherexample.com"), QUrl("http://example.com")));
-    QVERIFY(!DumpRenderTreeSupportQt::thirdPartyCookiePolicyAllows(m_page->networkAccessManager()->cookieJar(),
+    QVERIFY(!DumpRenderTreeSupportQt::thirdPartyCookiePolicyAllows(m_page,
             QUrl("http://www.example.co.uk"), QUrl("http://slashdot.co.uk")));
-    QVERIFY(!DumpRenderTreeSupportQt::thirdPartyCookiePolicyAllows(m_page->networkAccessManager()->cookieJar(),
+    QVERIFY(!DumpRenderTreeSupportQt::thirdPartyCookiePolicyAllows(m_page,
             QUrl("http://example.co.uk"), QUrl("http://anotherexample.co.uk")));
-    QVERIFY(!DumpRenderTreeSupportQt::thirdPartyCookiePolicyAllows(m_page->networkAccessManager()->cookieJar(),
+    QVERIFY(!DumpRenderTreeSupportQt::thirdPartyCookiePolicyAllows(m_page,
             QUrl("http://anotherexample.co.uk"), QUrl("http://example.co.uk")));
 }
 #endif

@@ -30,6 +30,7 @@
 QT_BEGIN_NAMESPACE
 class QObject;
 class QNetworkAccessManager;
+class QUrl;
 QT_END_NAMESPACE
 #endif
 
@@ -55,6 +56,7 @@ public:
     virtual QObject* originatingObject() const = 0;
     virtual QNetworkAccessManager* networkAccessManager() const = 0;
     virtual bool mimeSniffingEnabled() const = 0;
+    virtual bool thirdPartyCookiePolicyPermission(const QUrl&) const = 0;
 #endif
 
 #if PLATFORM(WIN)
