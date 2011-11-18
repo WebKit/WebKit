@@ -430,7 +430,7 @@ void CCThreadProxy::scheduledActionUpdateMoreResources()
 {
     TRACE_EVENT("CCThreadProxy::scheduledActionUpdateMoreResources", this, 0);
     ASSERT(m_currentTextureUpdaterOnImplThread);
-    static const int UpdatesPerFrame = 16;
+    static const int UpdatesPerFrame = 99999;
     m_currentTextureUpdaterOnImplThread->update(m_layerTreeHostImpl->context(), UpdatesPerFrame);
 }
 
