@@ -363,6 +363,7 @@ protected:
     virtual void runTest(bool threaded)
     {
         m_settings.enableCompositorThread = threaded;
+        m_settings.refreshRate = 100.0;
         webkit_support::PostDelayedTask(CCLayerTreeHostTest::onBeginTest, static_cast<void*>(this), 0);
         m_timeoutTask = new TimeoutTask(this);
         webkit_support::PostDelayedTask(m_timeoutTask, 5000); // webkit_support takes ownership of the task

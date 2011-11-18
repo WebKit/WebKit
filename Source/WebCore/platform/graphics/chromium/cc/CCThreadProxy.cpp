@@ -515,7 +515,8 @@ void CCThreadProxy::initializeImplOnImplThread(CCCompletionEvent* completion)
     TRACE_EVENT("CCThreadProxy::initializeImplOnImplThread", this, 0);
     ASSERT(isImplThread());
     m_layerTreeHostImpl = m_layerTreeHost->createLayerTreeHostImpl(this);
-    const double displayRefreshIntervalMs = 1000.0 / 60.0;
+    ASSERT(m_layerTreeHostImpl->settings().refreshRate > 0);
+    const double displayRefreshIntervalMs = 1000.0 / m_layerTreeHostImpl->settings().refreshRate;
     OwnPtr<CCFrameRateController> frameRateController = adoptPtr(new CCFrameRateController(CCDelayBasedTimeSource::create(displayRefreshIntervalMs, CCProxy::implThread())));
     m_schedulerOnImplThread = CCScheduler::create(this, frameRateController.release());
     m_schedulerOnImplThread->setVisible(m_layerTreeHostImpl->visible());

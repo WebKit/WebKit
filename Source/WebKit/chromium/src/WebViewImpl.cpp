@@ -86,6 +86,7 @@
 #include "PlatformContextSkia.h"
 #include "PlatformKeyboardEvent.h"
 #include "PlatformMouseEvent.h"
+#include "PlatformScreen.h"
 #include "PlatformThemeChromiumLinux.h"
 #include "PlatformWheelEvent.h"
 #include "PopupContainer.h"
@@ -2745,12 +2746,18 @@ void WebViewImpl::setIsAcceleratedCompositingActive(bool active)
     } else {
         TRACE_EVENT("WebViewImpl::setIsAcceleratedCompositingActive(true)", this, 0);
 
+        static const double defaultRefreshRate = 60.0;
+
         WebCore::CCSettings ccSettings;
         ccSettings.acceleratePainting = page()->settings()->acceleratedDrawingEnabled();
         ccSettings.compositeOffscreen = settings()->compositeToTextureEnabled();
         ccSettings.enableCompositorThread = settings()->useThreadedCompositor();
         ccSettings.showFPSCounter = settings()->showFPSCounter();
         ccSettings.showPlatformLayerTree = settings()->showPlatformLayerTree();
+        ccSettings.refreshRate = screenRefreshRate(page()->mainFrame()->view());
+        ASSERT(ccSettings.refreshRate >= 0);
+        if (!ccSettings.refreshRate)
+            ccSettings.refreshRate = defaultRefreshRate;
 
         m_nonCompositedContentHost = NonCompositedContentHost::create(WebViewImplContentPainter::create(this));
         m_layerTreeHost = CCLayerTreeHost::create(this, ccSettings);

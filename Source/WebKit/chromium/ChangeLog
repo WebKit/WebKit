@@ -1,3 +1,19 @@
+2011-11-18  Iain Merrick  <husky@google.com>
+
+        [chromium] Pass screen refresh rate into compositor.
+        https://bugs.webkit.org/show_bug.cgi?id=71040
+
+        Reviewed by Tony Gentilcore.
+
+        * public/WebScreenInfo.h:
+        (WebKit::WebScreenInfo::WebScreenInfo):
+        * src/PlatformSupport.cpp:
+        (WebCore::PlatformSupport::screenRefreshRate):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::setIsAcceleratedCompositingActive):
+        * tests/CCLayerTreeHostTest.cpp:
+        (WTF::CCLayerTreeHostTest::runTest):
+
 2011-11-17  Vincent Scheib  <scheib@chromium.org>
 
         Pointer Lock: Page Settings unecessary
