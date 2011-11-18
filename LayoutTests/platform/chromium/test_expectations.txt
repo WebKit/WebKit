@@ -3942,3 +3942,6 @@ BUGWK72651 LINUX DEBUG : inspector/styles/styles-url-linkify.html = CRASH PASS
 
 BUGWK72728 LEOPARD CPU-CG : canvas/philip/tests/2d.imageData.put.unchanged.html = TEXT
 BUGWK72728 LEOPARD CPU-CG : fast/canvas/canvas-alphaImageData-behavior.html = TEXT
+
+// Needs rebaseline after r100786
+BUGADAMK : css3/images/cross-fade-overflow-position.html = IMAGE
