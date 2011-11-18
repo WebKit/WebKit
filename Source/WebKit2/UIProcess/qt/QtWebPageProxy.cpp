@@ -270,7 +270,8 @@ bool QtWebPageProxy::handleWheelEvent(QWheelEvent* ev)
 {
     m_webPageProxy->handleWheelEvent(NativeWebWheelEvent(ev));
     // FIXME: Handle whether the page used the wheel event or not.
-    m_interactionEngine->wheelEvent(ev);
+    if (m_interactionEngine)
+        m_interactionEngine->wheelEvent(ev);
     return ev->isAccepted();
 }
 
@@ -633,6 +634,9 @@ WKPageRef QtWebPageProxy::pageRef() const
 
 void QtWebPageProxy::didFindZoomableArea(const IntPoint& target, const IntRect& area)
 {
+    if (!m_interactionEngine)
+        return;
+
     // FIXME: As the find method might not respond immediately during load etc,
     // we should ignore all but the latest request.
     m_interactionEngine->zoomToAreaGestureEnded(QPointF(target), QRectF(area));

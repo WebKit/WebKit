@@ -1,3 +1,16 @@
+2011-11-18  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        [Qt] Guard for the viewportInteractionEngine as it doesn't always exist.
+
+        Reviewed by Antonio Gomes.
+
+        The engine is non-existent when the view is configured to use desktop
+        behavior.
+
+        * UIProcess/qt/QtWebPageProxy.cpp:
+        (QtWebPageProxy::handleWheelEvent):
+        (QtWebPageProxy::didFindZoomableArea):
+
 2011-11-18  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Send DidCreateDestination to DownloadProxy when destination has been created
