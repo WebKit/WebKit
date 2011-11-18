@@ -40,6 +40,12 @@ QtTapGestureRecognizer::QtTapGestureRecognizer(QtViewportInteractionEngine* inte
     reset();
 }
 
+void QtTapGestureRecognizer::setViewportInteractionEngine(QtViewportInteractionEngine* engine)
+{
+    QtGestureRecognizer::setViewportInteractionEngine(engine);
+    reset();
+}
+
 bool QtTapGestureRecognizer::recognize(const QTouchEvent* event, qint64 eventTimestampMillis)
 {
     if (event->touchPoints().size() != 1) {

@@ -50,6 +50,7 @@ namespace WebKit {
 class QtTapGestureRecognizer : public QObject, private QtGestureRecognizer {
 public:
     QtTapGestureRecognizer(QtViewportInteractionEngine*, QtWebPageProxy*);
+    void setViewportInteractionEngine(QtViewportInteractionEngine*);
     bool recognize(const QTouchEvent*, qint64 eventTimestampMillis);
     void reset();
 

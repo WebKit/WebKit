@@ -779,6 +779,14 @@ void QtWebPageProxy::setNavigatorQtObjectEnabled(bool enabled)
     m_context->postMessageToInjectedBundle(messageName, body.get());
 }
 
+void QtWebPageProxy::setViewportInteractionEngine(QtViewportInteractionEngine* engine)
+{
+    m_interactionEngine = engine;
+    m_panGestureRecognizer.setViewportInteractionEngine(engine);
+    m_pinchGestureRecognizer.setViewportInteractionEngine(engine);
+    m_tapGestureRecognizer.setViewportInteractionEngine(engine);
+}
+
 void QtWebPageProxy::postMessageToNavigatorQtObject(const QString& message)
 {
     static String messageName("MessageToNavigatorQtObject");
