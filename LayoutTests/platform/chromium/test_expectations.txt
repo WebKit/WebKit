@@ -3240,7 +3240,6 @@ BUGWK60731 SKIP : fast/css-grid-layout = PASS
 
 // Need to evaluate and update regions and exclusions tests.
 BUGWK57312 : fast/regions = PASS FAIL MISSING
-BUGWK57311 : fast/exclusions = PASS FAIL MISSING
 
 // CSS Filters support not yet enabled
 BUGWK68469 SKIP : css3/filters = PASS
