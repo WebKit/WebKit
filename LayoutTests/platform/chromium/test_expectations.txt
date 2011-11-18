@@ -634,7 +634,6 @@ BUGWK60107 SLOW LINUX WIN DEBUG : inspector/console/console-tests.html = PASS
 BUGWK60107 SLOW LINUX WIN DEBUG : inspector/console/console-clear.html = PASS
 
 BUGWK60109 WIN : inspector/elements/edit-dom-actions.html = PASS TEXT TIMEOUT
-BUGWK60109 SLOW LINUX DEBUG : inspector/elements/edit-dom-actions.html = PASS
 
 // -----------------------------------------------------------------
 // Editing tests
@@ -3919,7 +3918,8 @@ BUGWK72631 WIN DEBUG : fast/filesystem/file-writer-abort-depth.html = CRASH PASS
 
 BUGWK72651 LINUX DEBUG : http/tests/inspector/styles/styles-redirected-css.html = CRASH PASS
 BUGWK72651 LINUX DEBUG : inspector/elements/dom-agent-query-selector.html = CRASH PASS
-BUGWK72651 LINUX DEBUG : inspector/elements/edit-dom-actions.html = CRASH PASS
+// SLOW on next line is from bug WK60109.
+BUGWK72651 SLOW LINUX DEBUG : inspector/elements/edit-dom-actions.html = CRASH PASS
 BUGWK72651 LINUX DEBUG : inspector/elements/modify-chardata.html = CRASH PASS
 BUGWK72651 LINUX DEBUG : inspector/styles/media-queries.html = CRASH PASS
 BUGWK72651 LINUX DEBUG : inspector/styles/metrics-box-sizing.html = CRASH PASS
