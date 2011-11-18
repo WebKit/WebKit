@@ -1,0 +1,21 @@
+Test that pending transactions are not aborted during recursive JS calls until all JS (in all frames) is finished.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS 'webkitIndexedDB' in window is true
+PASS webkitIndexedDB == null is false
+webkitIndexedDB.open('transaction-abort-with-js-recursion-cross-frame')
+db = event.target.result
+db.setVersion('new version')
+pendingTransaction = db.transaction(['objectStore'], webkitIDBTransaction.READ_WRITE)
+Start re-entrant JS
+transaction = db.transaction(['objectStore'], webkitIDBTransaction.READ_WRITE)
+End re-entrant JS
+store = pendingTransaction.objectStore('objectStore')
+PASS store !== undefined is true
+Pending transaction aborted
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -175,6 +175,11 @@ static void handleFatalErrorInV8()
     CRASH();
 }
 
+static int recursionLevel()
+{
+    return V8BindingPerIsolateData::current()->recursionLevel();
+}
+
 static v8::Local<v8::Value> handleMaxRecursionDepthExceeded()
 {
     throwError("Maximum call stack size exceeded.", V8Proxy::RangeError);
@@ -185,7 +190,6 @@ V8Proxy::V8Proxy(Frame* frame)
     : m_frame(frame)
     , m_windowShell(V8DOMWindowShell::create(frame))
     , m_inlineCode(false)
-    , m_recursion(0)
 {
 }
 
@@ -390,7 +394,7 @@ v8::Local<v8::Value> V8Proxy::runScript(v8::Handle<v8::Script> script, bool isIn
         return notHandledByInterceptor();
 
     V8GCController::checkMemoryUsage();
-    if (m_recursion >= kMaxRecursionDepth)
+    if (recursionLevel() >= kMaxRecursionDepth)
         return handleMaxRecursionDepthExceeded();
 
     if (handleOutOfMemory())
@@ -409,12 +413,10 @@ v8::Local<v8::Value> V8Proxy::runScript(v8::Handle<v8::Script> script, bool isIn
     v8::TryCatch tryCatch;
     tryCatch.SetVerbose(true);
     {
-        m_recursion++;
+        V8RecursionScope recursionScope;
         result = script->Run();
-        m_recursion--;
     }
 
-    // Release the storage mutex if applicable.
     didLeaveScriptContext();
 
     if (handleOutOfMemory())
@@ -442,7 +444,7 @@ v8::Local<v8::Value> V8Proxy::callFunction(v8::Handle<v8::Function> function, v8
 {
     V8GCController::checkMemoryUsage();
 
-    if (m_recursion >= kMaxRecursionDepth)
+    if (recursionLevel() >= kMaxRecursionDepth)
         return handleMaxRecursionDepthExceeded();
 
     // Keep Frame (and therefore ScriptController and V8Proxy) alive.
@@ -450,12 +452,10 @@ v8::Local<v8::Value> V8Proxy::callFunction(v8::Handle<v8::Function> function, v8
 
     v8::Local<v8::Value> result;
     {
-        m_recursion++;
+        V8RecursionScope recursionScope;
         result = V8Proxy::instrumentedCallFunction(m_frame->page(), function, receiver, argc, args);
-        m_recursion--;
     }
 
-    // Release the storage mutex if applicable.
     didLeaveScriptContext();
 
     if (v8::V8::IsDead())
@@ -576,7 +576,7 @@ V8Proxy* V8Proxy::retrieve(ScriptExecutionContext* context)
 
 void V8Proxy::didLeaveScriptContext()
 {
-    if (m_recursion)
+    if (recursionLevel())
         return;
 
 #if ENABLE(INDEXED_DATABASE)

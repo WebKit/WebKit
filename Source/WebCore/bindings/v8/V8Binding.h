@@ -38,6 +38,7 @@
 #include "V8DOMWrapper.h"
 #include "V8GCController.h"
 #include "V8HiddenPropertyName.h"
+#include <wtf/Noncopyable.h>
 #include <wtf/text/AtomicString.h>
 
 #include <v8.h>
@@ -143,6 +144,10 @@ namespace WebCore {
         // DOMDataStore is owned outside V8BindingPerIsolateData.
         void setDOMDataStore(DOMDataStore* store) { m_domDataStore = store; }
 
+        int recursionLevel() const { return m_recursionLevel; }
+        void incrementRecursionLevel() { ++m_recursionLevel; }
+        void decrementRecursionLevel() { --m_recursionLevel; }
+
 #ifndef NDEBUG
         GlobalHandleMap& globalHandleMap() { return m_globalHandleMap; }
 #endif
@@ -166,9 +171,18 @@ namespace WebCore {
         bool m_constructorMode;
         friend class ConstructorMode;
 
+        int m_recursionLevel;
+
 #ifndef NDEBUG
         GlobalHandleMap m_globalHandleMap;
 #endif
+    };
+
+    class V8RecursionScope {
+        WTF_MAKE_NONCOPYABLE(V8RecursionScope);
+    public:
+        V8RecursionScope() { V8BindingPerIsolateData::current()->incrementRecursionLevel(); }
+        ~V8RecursionScope() { V8BindingPerIsolateData::current()->decrementRecursionLevel(); }
     };
 
     class ConstructorMode {

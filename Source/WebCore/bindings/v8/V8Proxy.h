@@ -271,7 +271,7 @@ namespace WebCore {
         static void reportUnsafeAccessTo(Frame* target);
 
     private:
-        void didLeaveScriptContext();
+        static void didLeaveScriptContext();
 
         void resetIsolatedWorlds();
 
@@ -302,11 +302,6 @@ namespace WebCore {
         // True for <a href="javascript:foo()"> and false for <script>foo()</script>.
         // Only valid during execution.
         bool m_inlineCode;
-
-        // Track the recursion depth to be able to avoid too deep recursion. The V8
-        // engine allows much more recursion than KJS does so we need to guard against
-        // excessive recursion in the binding layer.
-        int m_recursion;
 
         // All of the extensions registered with the context.
         static V8Extensions m_extensions;

@@ -1,3 +1,38 @@
+2011-11-17  Adam Klein  <adamk@chromium.org>
+
+        Move JS recursion counter from V8Proxy to V8BindingPerIsolateData
+        https://bugs.webkit.org/show_bug.cgi?id=72645
+
+        Reviewed by Adam Barth.
+
+        With the JS recursion level stored as a member of V8Proxy, it's tied
+        to a frame. But this is incorrect, as there's no reason that a JS call
+        stack need be restricted to a single frame (see my new test case for
+        an example of code going across frames).
+
+        In order to get the correct accounting of JS recursion level, per-Isolate
+        is the right granularity (per dslomov), which is what this patch accomplishes.
+
+        Test: storage/indexeddb/transaction-abort-with-js-recursion-cross-frame.html
+
+        * bindings/v8/V8Binding.cpp:
+        (WebCore::V8BindingPerIsolateData::V8BindingPerIsolateData):
+        * bindings/v8/V8Binding.h:
+        (WebCore::V8BindingPerIsolateData::recursionLevel):
+        (WebCore::V8BindingPerIsolateData::incrementRecursionLevel):
+        (WebCore::V8BindingPerIsolateData::decrementRecursionLevel):
+        (WebCore::V8RecursionScope::V8RecursionScope):
+        (WebCore::V8RecursionScope::~V8RecursionScope):
+        * bindings/v8/V8Proxy.cpp:
+        (WebCore::incrementRecursionLevel):
+        (WebCore::decrementRecursionLevel):
+        (WebCore::recursionLevel):
+        (WebCore::V8Proxy::V8Proxy):
+        (WebCore::V8Proxy::runScript):
+        (WebCore::V8Proxy::callFunction):
+        (WebCore::V8Proxy::didLeaveScriptContext):
+        * bindings/v8/V8Proxy.h:
+
 2011-11-17  Robin Cao  <robin.cao@torchmobile.com.cn>
 
         [chromium] Font::drawComplexText can not draw a segment of text run
