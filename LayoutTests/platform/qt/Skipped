@@ -1602,8 +1602,11 @@ printing/media-queries-print.html
 # failing websocket tests
 # ============================================================================= #
 
-# Skipped until new WebSocket protocol is implemented. http://webkit.org/b/50099
-http/tests/websocket/tests/hybi/
+# SocketStreamHandleQt seems to have some bug in platformClose() behavior.
+http/tests/websocket/tests/hybi/close-before-open.html
+http/tests/websocket/tests/hybi/close-code-and-reason.html
+http/tests/websocket/tests/hybi/close.html
+http/tests/websocket/tests/hybi/workers/close.html
 
 # ============================================================================= #
 # new tests without expected results

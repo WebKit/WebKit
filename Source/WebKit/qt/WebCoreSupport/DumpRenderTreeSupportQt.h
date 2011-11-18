@@ -235,6 +235,9 @@ public:
 #if QT_VERSION >= QT_VERSION_CHECK(4, 8, 0)
     static bool thirdPartyCookiePolicyAllows(QWebPage*, const QUrl&, const QUrl& firstPartyUrl);
 #endif
+
+    static bool defaultHixie76WebSocketProtocolEnabled();
+    static void setHixie76WebSocketProtocolEnabled(QWebPage*, bool);
 };
 
 #endif

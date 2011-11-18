@@ -1,3 +1,16 @@
+2011-11-18  Yuta Kitamura  <yutak@chromium.org>
+
+        [Qt] Enable WebSocket hybi tests
+        https://bugs.webkit.org/show_bug.cgi?id=72687
+
+        Reviewed by Simon Hausmann.
+
+        * WebCoreSupport/DumpRenderTreeSupportQt.cpp:
+        (DumpRenderTreeSupportQt::defaultHixie76WebSocketProtocolEnabled):
+        (DumpRenderTreeSupportQt::setHixie76WebSocketProtocolEnabled):
+        Call WebCore::Settings::setUseHixie76WebSocketProtocol() to switch WebSocket protocols.
+        * WebCoreSupport/DumpRenderTreeSupportQt.h:
+
 2011-11-17  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Layer violation: ThirdPartyCookiesQt.cpp uses QWebSettings in two places

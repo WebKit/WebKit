@@ -1238,6 +1238,22 @@ void DumpRenderTreeSupportQt::resetInternalsObject(QWebFrame* frame)
 #endif
 }
 
+bool DumpRenderTreeSupportQt::defaultHixie76WebSocketProtocolEnabled()
+{
+    return true;
+}
+
+void DumpRenderTreeSupportQt::setHixie76WebSocketProtocolEnabled(QWebPage* page, bool enabled)
+{
+#if ENABLE(WEB_SOCKETS)
+    if (Page* corePage = QWebPagePrivate::core(page))
+        corePage->settings()->setUseHixie76WebSocketProtocol(enabled);
+#else
+    UNUSED_PARAM(page);
+    UNUSED_PARAM(enabled);
+#endif
+}
+
 // Provide a backward compatibility with previously exported private symbols as of QtWebKit 4.6 release
 
 void QWEBKIT_EXPORT qt_resumeActiveDOMObjects(QWebFrame* frame)
