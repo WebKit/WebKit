@@ -3689,8 +3689,6 @@ BUGWK72530 SLOW DEBUG : fast/frames/sandboxed-iframe-navigation-targetlink.html 
 BUGWK69998 LINUX WIN : plugins/refcount-leaks.html = PASS TEXT
 BUGWK70001 LINUX WIN : fast/images/color-jpeg-with-color-profile.html = FAIL MISSING
 
-BUGV8_1768 : fast/js/delete-syntax.html = TEXT
-
 // V8 handles stack overflow exceptions differently than JSC
 BUGWK70210 : fast/js/stack-overflow-arrity-catch.html = TEXT
 
