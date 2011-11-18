@@ -21,6 +21,7 @@
 #include <glib.h>
 #include <glib/gstdio.h>
 #include <gtk/gtk.h>
+#include <locale.h>
 #include <unistd.h>
 #include <webkit/webkit.h>
 
@@ -1612,22 +1613,26 @@ static void testWebkitAtkParentForRootObject()
     gtk_widget_size_allocate(GTK_WIDGET(webView), &allocation);
     webkit_web_view_load_string(webView, contents, 0, 0, 0);
 
-    /* We need a parent container widget for the webview so use
-       another (dummy) webView as that container. */
-    GtkWidget* parentContainer = webkit_web_view_new();
+    /* We need a parent container widget for the webview. */
+    GtkWidget* parentContainer = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     g_object_ref_sink(parentContainer);
     gtk_container_add(GTK_CONTAINER(parentContainer), GTK_WIDGET(webView));
 
-    AtkObject* axParent = gtk_widget_get_accessible (parentContainer);
+    AtkObject* axParent = gtk_widget_get_accessible(parentContainer);
     g_assert(ATK_IS_OBJECT(axParent));
 
     AtkObject* axRoot = gtk_widget_get_accessible(GTK_WIDGET(webView));
     g_assert(ATK_IS_OBJECT(axRoot));
 
-    /* Check that the parent for the webView's accessibility object is
-       the the accessibility object for the webview's parent widget. */
-    g_assert(atk_object_get_parent(axRoot) == axParent);
+    /* The child for the parent container's accessibility object
+       should be the accessibility object for the WebView's root. */
+    AtkObject* axParentChild = atk_object_ref_accessible_child(axParent, 0);
+    g_assert(axParentChild == axRoot);
 
+    /* Bottom-up navigation should match top-down one. */
+    g_assert(atk_object_get_parent(axParentChild) == axParent);
+
+    g_object_unref(axParentChild);
     g_object_unref(parentContainer);
 }
 
@@ -1638,11 +1643,9 @@ static void testWebkitAtkSetParentForObject()
     gtk_widget_size_allocate(GTK_WIDGET(webView), &allocation);
     webkit_web_view_load_string(webView, contents, 0, 0, 0);
 
-    /* Put the webview in a parent container widget check the normal
-       behaviour keeps working as expected when the webview is inside
-       a container. We use a dummy webView for that in order not to
-       need any ATK implementation other than WebKit's one. */
-    GtkWidget* parentContainer = webkit_web_view_new();
+    /* Put the webview in a parent container widget to check that the
+       normal behaviour keeps working as expected by default. */
+    GtkWidget* parentContainer = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     g_object_ref_sink(parentContainer);
     gtk_container_add(GTK_CONTAINER(parentContainer), GTK_WIDGET(webView));
 
@@ -1655,15 +1658,16 @@ static void testWebkitAtkSetParentForObject()
     /* The parent of the root object is the parent container's a11y object. */
     g_assert(atk_object_get_parent(axRoot) == axParent);
 
-    /* We now need to use another AtkObject as a an alternative parent
-       for the a11y object associated with the root of the DOM tree. */
-    GtkWidget* alternativeParent = webkit_web_view_new();
+    /* We now need to use something as a an alternative parent for
+       the a11y object associated with the root of the DOM tree. */
+    GtkWidget* alternativeParent = gtk_button_new();
     g_object_ref_sink(alternativeParent);
 
-    AtkObject* axAlternativeParent = gtk_widget_get_accessible (alternativeParent);
+    AtkObject* axAlternativeParent = gtk_widget_get_accessible(alternativeParent);
     g_assert(ATK_IS_OBJECT(axAlternativeParent));
 
-    /* Manually set the button's a11y object as the parent and check. */
+    /* Manually set the alternative parent's accessibility object as
+       the parent for the WebKit accessibility root object and check. */
     atk_object_set_parent(axRoot, axAlternativeParent);
     g_assert(atk_object_get_parent(axRoot) == axAlternativeParent);
 
@@ -1671,9 +1675,30 @@ static void testWebkitAtkSetParentForObject()
     g_object_unref(parentContainer);
 }
 
+/* FIXME: Please remove this function and replace its usage by
+   gtk_test_init() when upgrading to GTK 3.2 or greater. */
+static void initializeTestingFramework(int argc, char** argv)
+{
+    /* Ensure GAIL is the only module loaded. */
+    g_setenv("GTK_MODULES", "gail", TRUE);
+
+    /* Following lines were taken from gtk_test_init(). */
+    g_test_init(&argc, &argv, 0);
+    gtk_disable_setlocale();
+    setlocale(LC_ALL, "C");
+    gdk_disable_multidevice();
+    gtk_init(&argc, &argv);
+}
+
 int main(int argc, char** argv)
 {
-    gtk_test_init(&argc, &argv, 0);
+  /* We can't just call to gtk_test_init() in this case because its
+     implementation makes sure that no GTK+ module will be loaded, and
+     we will need to load GAIL for tests that need to use AtkObjects
+     from non-WebKit GtkWidgets (e.g parentForRootObject). However, it
+     shouldn't be needed to do this in the future, as GAIL won't longer
+     be a separate module (but part of GTK+) since GTK+ 3.2 on. */
+    initializeTestingFramework(argc, argv);
 
     g_test_bug_base("https://bugs.webkit.org/");
     g_test_add_func("/webkit/atk/caretOffsets", testWebkitAtkCaretOffsets);

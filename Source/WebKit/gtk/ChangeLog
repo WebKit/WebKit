@@ -1,3 +1,23 @@
+2011-11-18  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        [GTK] Accessibility API tests not loading Gtk's accessibility implementation
+        https://bugs.webkit.org/show_bug.cgi?id=72732
+
+        Reviewed by Philippe Normand.
+
+        Ensure that the GAIL module is being loaded by avoiding using
+        gtk_test_init() directly, but a modified version of it.
+
+        * tests/testatk.c:
+        (testWebkitAtkParentForRootObject): Use a normal GtkWidget (a
+        GtkWindow) as the parent container for the webView, instead of
+        using a dummy webView for that, which was hackish.
+        (testWebkitAtkSetParentForObject): Use normal GtkWidgets instead
+        of dummy webViews (a GtkWindow and a GtkButton).
+        (initializeTestingFramework): New function, identical to
+        gtk_test_init(), but loading GAIL as the only GTK module.
+        (main): Use initializeTestingFramework().
+
 2011-11-18  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Downloads not started by WebView only fail for transport errors
