@@ -1,3 +1,17 @@
+2011-11-17  Raphael Kubo da Costa  <kubo@profusion.mobi>
+
+        [EFL] Clean up the use of DATA_DIR in the buildsystem
+        https://bugs.webkit.org/show_bug.cgi?id=72681
+
+        Reviewed by Daniel Bates.
+
+        Add the -DDATA_DIR definition here instead of defining it globally in
+        OptionsEfl.cmake, as WebCore is the only place which needs it.
+
+        No new tests, this is a buildsystem change.
+
+        * PlatformEfl.cmake:
+
 2011-11-17  Adam Klein  <adamk@chromium.org>
 
         Move JS recursion counter from V8Proxy to V8BindingPerIsolateData

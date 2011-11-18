@@ -1,3 +1,15 @@
+2011-11-17  Raphael Kubo da Costa  <kubo@profusion.mobi>
+
+        [EFL] Clean up the use of DATA_DIR in the buildsystem
+        https://bugs.webkit.org/show_bug.cgi?id=72681
+
+        Reviewed by Daniel Bates.
+
+        * Source/cmake/OptionsEfl.cmake: Rename DATA_DIR to DATA_INSTALL_DIR
+        and add it to the cache; add a variable with the path of the generated
+        theme and remove the -DDATA_DIR definition, it was moved to
+        PlatformEFL.cmake in WebCore.
+
 2011-11-17  Patrick Gansterer  <paroga@webkit.org>
 
         [CMake] Add ENABLE_CLIENT_BASED_GEOLOCATION to cmakeconfig.h

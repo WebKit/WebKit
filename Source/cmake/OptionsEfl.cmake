@@ -54,8 +54,8 @@ SET(JavaScriptCore_LIBRARY_NAME javascriptcore_efl)
 SET(WebCore_LIBRARY_NAME webcore_efl)
 SET(WebKit_LIBRARY_NAME ewebkit)
 
-SET(DATA_DIR ${CMAKE_INSTALL_PREFIX}/share/${WebKit_LIBRARY_NAME}-${PROJECT_VERSION_MAJOR})
-ADD_DEFINITIONS(-DDATA_DIR="${DATA_DIR}")
+SET(DATA_INSTALL_DIR "share/${WebKit_LIBRARY_NAME}-${PROJECT_VERSION_MAJOR}" CACHE PATH "Installation path for theme data")
+SET(THEME_BINARY_DIR ${CMAKE_BINARY_DIR}/WebKit/efl/DefaultTheme)
 
 SET(VERSION_SCRIPT "-Wl,--version-script,${CMAKE_MODULE_PATH}/eflsymbols.filter")
 

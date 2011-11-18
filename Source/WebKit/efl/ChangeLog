@@ -1,3 +1,15 @@
+2011-11-17  Raphael Kubo da Costa  <kubo@profusion.mobi>
+
+        [EFL] Clean up the use of DATA_DIR in the buildsystem
+        https://bugs.webkit.org/show_bug.cgi?id=72681
+
+        Reviewed by Daniel Bates.
+
+        Instead of messing with BUILD_DATA_DIR and PARENT_SCOPE, just use
+        THEME_BINARY_DIR as defined in OptionsEfl.cmake.
+
+        * CMakeListsEfl.txt:
+
 2011-11-16  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         [EFL] Use standard booleand data type in struct.
