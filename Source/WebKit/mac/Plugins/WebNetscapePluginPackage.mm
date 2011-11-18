@@ -122,9 +122,6 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
     CFBundleCloseBundleResourceMap(cfBundle.get(), resRef);
 }
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-
 - (NSString *)stringForStringListID:(SInt16)stringListID andIndex:(SInt16)index
 {
     // Get resource, and dereference the handle.
@@ -204,8 +201,6 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
     
     return YES;
 }
-
-#pragma GCC diagnostic pop
 
 - (BOOL)_initWithPath:(NSString *)pluginPath
 {
@@ -429,16 +424,13 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
         isCFM = YES;
     }
 #endif /* SUPPORT_CFM */
-
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+    
     // Plugins (at least QT) require that you call UseResFile on the resource file before loading it.
     resourceRef = [self openResourceFile];
     if (resourceRef != -1) {
         UseResFile(resourceRef);
     }
-#pragma GCC diagnostic pop
-
+    
     // swap function tables
 #ifdef SUPPORT_CFM
     if (isCFM) {

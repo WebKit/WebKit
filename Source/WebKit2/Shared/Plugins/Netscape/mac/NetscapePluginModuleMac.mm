@@ -216,9 +216,6 @@ static bool getPluginInfoFromPropertyLists(CFBundleRef bundle, PluginModuleInfo&
     return true;    
 }
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-
 class ResourceMap {
 public:
     explicit ResourceMap(CFBundleRef bundle)
@@ -286,8 +283,6 @@ static bool getStringListResource(ResID resourceID, Vector<String>& stringList) 
 
     return true;
 }
-
-#pragma GCC diagnostic pop
 
 static const ResID PluginNameOrDescriptionStringNumber = 126;
 static const ResID MIMEDescriptionStringNumber = 127;

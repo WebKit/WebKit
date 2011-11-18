@@ -68,9 +68,6 @@ NSString *filenameByFixingIllegalCharacters(NSString *string)
     return filename;
 }
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-
 CFStringEncoding stringEncodingForResource(Handle resource)
 {
     short resRef = HomeResFile(resource);
@@ -113,4 +110,3 @@ CFStringEncoding stringEncodingForResource(Handle resource)
     return encoding;
 }
 
-#pragma GCC diagnostic pop
