@@ -3924,3 +3924,22 @@ BUGWK72598 : css3/images/cross-fade-blending.html = IMAGE
 BUGWK72622 WIN DEBUG : http/tests/inspector/resource-tree/resource-tree-no-xhrs.html = MISSING PASS TEXT
 
 BUGWK72631 WIN DEBUG : fast/filesystem/file-writer-abort-depth.html = CRASH PASS
+
+BUGWK72651 LINUX DEBUG : inspector/elements/dom-agent-query-selector.html = CRASH PASS
+BUGWK72651 LINUX DEBUG : inspector/elements/edit-dom-actions.html = CRASH PASS
+BUGWK72651 LINUX DEBUG : inspector/elements/modify-chardata.html = CRASH PASS
+BUGWK72651 LINUX DEBUG : inspector/styles/media-queries.html = CRASH PASS
+BUGWK72651 LINUX DEBUG : inspector/styles/metrics-box-sizing.html = CRASH PASS
+BUGWK72651 LINUX DEBUG : inspector/styles/styles-add-blank-property.html = CRASH PASS
+BUGWK72651 LINUX DEBUG : inspector/styles/styles-add-invalid-property.html = CRASH PASS
+BUGWK72651 LINUX DEBUG : inspector/styles/styles-add-new-rule.html = CRASH PASS
+BUGWK72651 LINUX DEBUG : inspector/styles/styles-change-node-while-editing.html = CRASH PASS
+BUGWK72651 LINUX DEBUG : inspector/styles/styles-commit-editing.html = CRASH PASS
+BUGWK72651 LINUX DEBUG : inspector/styles/styles-computed-trace.html = CRASH PASS
+BUGWK72651 LINUX DEBUG : inspector/styles/styles-disable-inherited.html = CRASH PASS
+BUGWK72651 LINUX DEBUG : inspector/styles/styles-disable-then-delete.html = CRASH PASS
+BUGWK72651 LINUX DEBUG : inspector/styles/styles-iframe.html = CRASH PASS
+BUGWK72651 LINUX DEBUG : inspector/styles/styles-new-API.html = CRASH PASS
+BUGWK72651 LINUX DEBUG : inspector/styles/styles-redirected-css.html = CRASH PASS
+BUGWK72651 LINUX DEBUG : inspector/styles/styles-update-from-js.html = CRASH PASS
+BUGWK72651 LINUX DEBUG : inspector/styles/styles-url-linkify.html = CRASH PASS
