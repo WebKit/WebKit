@@ -156,7 +156,7 @@ namespace JSC {
 
 #if ENABLE(DFG_JIT)
         // Intrinsics are only for calls, currently.
-        virtual DFG::Intrinsic intrinsic() const;
+        DFG::Intrinsic intrinsic() const;
         
         DFG::Intrinsic intrinsicFor(CodeSpecializationKind kind) const
         {
@@ -213,6 +213,10 @@ namespace JSC {
         
         static const ClassInfo s_info;
 
+#if ENABLE(DFG_JIT)
+        DFG::Intrinsic intrinsic() const;
+#endif
+
     protected:
 #if ENABLE(JIT)
         void finishCreation(JSGlobalData& globalData, JITCode callThunk, JITCode constructThunk, DFG::Intrinsic intrinsic)
@@ -230,10 +234,6 @@ namespace JSC {
         }
 #endif
         
-#if ENABLE(DFG_JIT)
-        virtual DFG::Intrinsic intrinsic() const;
-#endif
-
         static void finalize(JSCell*);
  
     private:

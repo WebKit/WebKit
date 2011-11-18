@@ -1,3 +1,17 @@
+2011-11-18  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        De-virtualize ExecutableBase::intrinsic
+        https://bugs.webkit.org/show_bug.cgi?id=72548
+
+        Reviewed by Oliver Hunt.
+
+        * runtime/Executable.cpp:
+        (JSC::ExecutableBase::intrinsic): Dynamic cast to NativeExecutable. If successful, call intrinsic, otherwise return default value. 
+        * runtime/Executable.h:
+        * runtime/JSCell.h:
+        (JSC::jsDynamicCast): Add jsDynamicCast that duplicates the functionality of dynamic_cast in C++ but uses ClassInfo
+        rather than requiring C++ RTTI.
+
 2011-11-18  Patrick Gansterer  <paroga@webkit.org>
 
         [CMake] Remove duplicate dtoa files from CMakeLists.txt

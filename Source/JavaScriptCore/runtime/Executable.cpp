@@ -53,6 +53,8 @@ inline void ExecutableBase::clearCode()
 #if ENABLE(DFG_JIT)
 DFG::Intrinsic ExecutableBase::intrinsic() const
 {
+    if (const NativeExecutable* nativeExecutable = jsDynamicCast<const NativeExecutable*>(this))
+        return nativeExecutable->intrinsic();
     return DFG::NoIntrinsic;
 }
 #endif

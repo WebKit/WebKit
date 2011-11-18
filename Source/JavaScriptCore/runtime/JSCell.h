@@ -337,6 +337,12 @@ namespace JSC {
         return static_cast<To>(from);
     }
 
+    template<typename To, typename From>
+    inline To jsDynamicCast(From* from)
+    {
+        return from->inherits(&WTF::RemovePointer<To>::Type::s_info) ? static_cast<To>(from) : 0;
+    }
+
 } // namespace JSC
 
 #endif // JSCell_h
