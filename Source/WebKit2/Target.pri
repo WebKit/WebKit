@@ -318,6 +318,7 @@ HEADERS += \
     UIProcess/qt/QtPinchGestureRecognizer.h \
     UIProcess/qt/QtTapGestureRecognizer.h \
     UIProcess/qt/QtWebError.h \
+    UIProcess/qt/QtDialogRunner.h \
     UIProcess/qt/QtDownloadManager.h \
     UIProcess/qt/QtWebPageProxy.h \
     UIProcess/qt/qwkhistory.h \
@@ -622,6 +623,7 @@ SOURCES += \
     UIProcess/qt/QtPinchGestureRecognizer.cpp \
     UIProcess/qt/QtTapGestureRecognizer.cpp \
     UIProcess/qt/QtWebError.cpp \
+    UIProcess/qt/QtDialogRunner.cpp \
     UIProcess/qt/QtDownloadManager.cpp \
     UIProcess/qt/QtWebPageProxy.cpp \
     UIProcess/qt/qwkhistory.cpp \

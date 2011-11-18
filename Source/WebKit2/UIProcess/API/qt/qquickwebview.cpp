@@ -21,6 +21,7 @@
 #include "config.h"
 #include "qquickwebview_p.h"
 
+#include "QtDialogRunner.h"
 #include "QtWebPageProxy.h"
 #include "UtilsQt.h"
 #include "WebPageGroup.h"
@@ -33,11 +34,13 @@
 #include <QtDeclarative/QQuickCanvas>
 #include <QtWidgets/QFileDialog>
 #include <QtWidgets/QInputDialog>
-#include <QtWidgets/QMessageBox>
 #include <WKOpenPanelResultListener.h>
 
 QQuickWebViewPrivate::QQuickWebViewPrivate()
     : q_ptr(0)
+    , alertDialog(0)
+    , confirmDialog(0)
+    , promptDialog(0)
     , postTransitionState(adoptPtr(new PostTransitionState(this)))
     , transitioningToNewPage(false)
     , useTraditionalDesktopBehaviour(false)
@@ -221,45 +224,56 @@ QtViewportInteractionEngine::Constraints QQuickWebViewPrivate::computeViewportCo
 
 void QQuickWebViewPrivate::runJavaScriptAlert(const QString& alertText)
 {
-#ifndef QT_NO_MESSAGEBOX
+    if (!alertDialog)
+        return;
+
     Q_Q(QQuickWebView);
-    const QString title = QObject::tr("JavaScript Alert - %1").arg(q->url().host());
+    QtDialogRunner dialogRunner;
+    if (!dialogRunner.initForAlert(alertDialog, q, alertText))
+        return;
+
     disableMouseEvents();
-    QMessageBox::information(0, title, escapeHtml(alertText), QMessageBox::Ok);
+    dialogRunner.exec();
     enableMouseEvents();
-#else
-    Q_UNUSED(alertText);
-#endif
 }
 
 bool QQuickWebViewPrivate::runJavaScriptConfirm(const QString& message)
 {
-    bool result = true;
-#ifndef QT_NO_MESSAGEBOX
+    if (!confirmDialog)
+        return true;
+
     Q_Q(QQuickWebView);
-    const QString title = QObject::tr("JavaScript Confirm - %1").arg(q->url().host());
+    QtDialogRunner dialogRunner;
+    if (!dialogRunner.initForConfirm(confirmDialog, q, message))
+        return true;
+
     disableMouseEvents();
-    result = QMessageBox::Yes == QMessageBox::information(0, title, escapeHtml(message), QMessageBox::Yes, QMessageBox::No);
+    dialogRunner.exec();
     enableMouseEvents();
-#else
-    Q_UNUSED(message);
-#endif
-    return result;
+
+    return dialogRunner.wasAccepted();
 }
 
 QString QQuickWebViewPrivate::runJavaScriptPrompt(const QString& message, const QString& defaultValue, bool& ok)
 {
-#ifndef QT_NO_INPUTDIALOG
+    if (!promptDialog) {
+        ok = true;
+        return defaultValue;
+    }
+
     Q_Q(QQuickWebView);
-    const QString title = QObject::tr("JavaScript Prompt - %1").arg(q->url().host());
+    QtDialogRunner dialogRunner;
+    if (!dialogRunner.initForPrompt(promptDialog, q, message, defaultValue)) {
+        ok = true;
+        return defaultValue;
+    }
+
     disableMouseEvents();
-    QString result = QInputDialog::getText(0, title, escapeHtml(message), QLineEdit::Normal, defaultValue, &ok);
+    dialogRunner.exec();
     enableMouseEvents();
-    return result;
-#else
-    Q_UNUSED(message);
-    return defaultValue;
-#endif
+
+    ok = dialogRunner.wasAccepted();
+    return dialogRunner.result();
 }
 
 void QQuickWebViewPrivate::chooseFiles(WKOpenPanelResultListenerRef listenerRef, const QStringList& selectedFileNames, QtWebPageProxy::FileChooserType type)
@@ -386,6 +400,51 @@ void QQuickWebViewExperimental::setUseTraditionalDesktopBehaviour(bool enable)
 {
     Q_D(QQuickWebView);
     d->setUseTraditionalDesktopBehaviour(enable);
+}
+
+QDeclarativeComponent* QQuickWebViewExperimental::alertDialog() const
+{
+    Q_D(const QQuickWebView);
+    return d->alertDialog;
+}
+
+void QQuickWebViewExperimental::setAlertDialog(QDeclarativeComponent* alertDialog)
+{
+    Q_D(QQuickWebView);
+    if (d->alertDialog == alertDialog)
+        return;
+    d->alertDialog = alertDialog;
+    emit alertDialogChanged();
+}
+
+QDeclarativeComponent* QQuickWebViewExperimental::confirmDialog() const
+{
+    Q_D(const QQuickWebView);
+    return d->confirmDialog;
+}
+
+void QQuickWebViewExperimental::setConfirmDialog(QDeclarativeComponent* confirmDialog)
+{
+    Q_D(QQuickWebView);
+    if (d->confirmDialog == confirmDialog)
+        return;
+    d->confirmDialog = confirmDialog;
+    emit confirmDialogChanged();
+}
+
+QDeclarativeComponent* QQuickWebViewExperimental::promptDialog() const
+{
+    Q_D(const QQuickWebView);
+    return d->promptDialog;
+}
+
+void QQuickWebViewExperimental::setPromptDialog(QDeclarativeComponent* promptDialog)
+{
+    Q_D(QQuickWebView);
+    if (d->promptDialog == promptDialog)
+        return;
+    d->promptDialog = promptDialog;
+    emit promptDialogChanged();
 }
 
 QQuickWebView::QQuickWebView(QQuickItem* parent)

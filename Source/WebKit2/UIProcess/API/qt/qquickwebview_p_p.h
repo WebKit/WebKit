@@ -35,12 +35,15 @@
 class QtWebPageProxy;
 
 QT_BEGIN_NAMESPACE
+class QDeclarativeComponent;
 class QFileDialog;
 QT_END_NAMESPACE
 
 class QQuickWebViewPrivate : public WebKit::QtPolicyInterface {
 
     Q_DECLARE_PUBLIC(QQuickWebView)
+    friend class QQuickWebViewExperimental;
+
 public:
     QQuickWebViewPrivate();
     virtual ~QQuickWebViewPrivate() { }
@@ -111,6 +114,10 @@ private:
 
     QQuickWebView* q_ptr;
     QScopedPointer<QtWebPageProxy> pageProxy;
+
+    QDeclarativeComponent* alertDialog;
+    QDeclarativeComponent* confirmDialog;
+    QDeclarativeComponent* promptDialog;
 
     WebCore::ViewportArguments viewportArguments;
     OwnPtr<PostTransitionState> postTransitionState;

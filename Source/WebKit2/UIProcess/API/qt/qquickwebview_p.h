@@ -24,6 +24,7 @@
 #include "qwebkitglobal.h"
 #include <QtDeclarative/qquickitem.h>
 
+class QDeclarativeComponent;
 class QQuickWebPage;
 class QQuickWebViewPrivate;
 class QQuickWebViewExperimental;
@@ -137,12 +138,28 @@ QML_DECLARE_TYPE(QQuickWebView)
 
 class QWEBKIT_EXPORT QQuickWebViewExperimental : public QObject {
     Q_OBJECT
+    Q_PROPERTY(QDeclarativeComponent* alertDialog READ alertDialog WRITE setAlertDialog NOTIFY alertDialogChanged)
+    Q_PROPERTY(QDeclarativeComponent* confirmDialog READ confirmDialog WRITE setConfirmDialog NOTIFY confirmDialogChanged)
+    Q_PROPERTY(QDeclarativeComponent* promptDialog READ promptDialog WRITE setPromptDialog NOTIFY promptDialogChanged)
+
 public:
     QQuickWebViewExperimental(QQuickWebView* webView);
     virtual ~QQuickWebViewExperimental();
 
+    QDeclarativeComponent* alertDialog() const;
+    void setAlertDialog(QDeclarativeComponent*);
+    QDeclarativeComponent* confirmDialog() const;
+    void setConfirmDialog(QDeclarativeComponent*);
+    QDeclarativeComponent* promptDialog() const;
+    void setPromptDialog(QDeclarativeComponent*);
+
 public Q_SLOTS:
     void setUseTraditionalDesktopBehaviour(bool enable);
+
+Q_SIGNALS:
+    void alertDialogChanged();
+    void confirmDialogChanged();
+    void promptDialogChanged();
 
 private:
     QQuickWebView* q_ptr;

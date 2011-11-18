@@ -16,6 +16,7 @@ DEFINES += QUICK_TEST_SOURCE_DIR=\"\\\"$$PWD\\\"\"
 DEFINES += IMPORT_DIR=\"\\\"$${ROOT_BUILD_DIR}$${QMAKE_DIR_SEP}imports\\\"\"
 
 OTHER_FILES += \
+    WebView/tst_javaScriptDialogs.qml \
     WebView/tst_properties.qml \
     WebView/tst_loadFail.qml \
     WebView/tst_loadProgress.qml \

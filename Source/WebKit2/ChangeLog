@@ -1,3 +1,58 @@
+2011-11-17  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        [Qt] Support customizing JS alert/confirm/prompt dialogs using QML
+        https://bugs.webkit.org/show_bug.cgi?id=72319
+
+        Reviewed by Simon Hausmann.
+
+        Adds alertDialog, confirmDialog and promptDialog properties to QQuickWebView's
+        privateObject. These are QML components that are created by the webview when the
+        corresponding function is called in JS.
+
+        The dialogs are created in a context that contains a model object, similar to
+        ListView delegates. The "message" and "defaultValue" parameters are available
+        in the model object, as well as slots expected to be called by the dialog.
+
+        This commit removes the old code for supporting QWidget builtin dialogs. The code
+        wasn't working properly (closing any dialog was closing the app after QWindow
+        refactoring in Qt5).
+
+        * Target.pri:
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewPrivate::runJavaScriptAlert):
+        (QQuickWebViewPrivate::runJavaScriptConfirm):
+        (QQuickWebViewPrivate::runJavaScriptPrompt):
+        (QQuickWebViewExperimental::alertDialog):
+        (QQuickWebViewExperimental::setAlertDialog):
+        (QQuickWebViewExperimental::confirmDialog):
+        (QQuickWebViewExperimental::setConfirmDialog):
+        (QQuickWebViewExperimental::promptDialog):
+        (QQuickWebViewExperimental::setPromptDialog):
+        * UIProcess/API/qt/qquickwebview_p.h:
+        * UIProcess/API/qt/qquickwebview_p_p.h:
+        * UIProcess/API/qt/tests/qmltests/WebView/tst_javaScriptDialogs.qml: Added.
+        * UIProcess/API/qt/tests/qmltests/common/alert.html: Added.
+        * UIProcess/API/qt/tests/qmltests/common/confirm.html: Added.
+        * UIProcess/API/qt/tests/qmltests/common/prompt.html: Added.
+        * UIProcess/API/qt/tests/qmltests/qmltests.pro:
+        * UIProcess/qt/QtDialogRunner.cpp: Added.
+        (QtDialogRunner::QtDialogRunner):
+        (QtDialogRunner::~QtDialogRunner):
+        (DialogContextObject::DialogContextObject):
+        (DialogContextObject::message):
+        (DialogContextObject::defaultValue):
+        (DialogContextObject::dismiss):
+        (DialogContextObject::accept):
+        (DialogContextObject::reject):
+        (QtDialogRunner::initForAlert):
+        (QtDialogRunner::initForConfirm):
+        (QtDialogRunner::initForPrompt):
+        (QtDialogRunner::createDialog):
+        * UIProcess/qt/QtDialogRunner.h: Added.
+        (QtDialogRunner::wasAccepted):
+        (QtDialogRunner::result):
+        (QtDialogRunner::onAccepted):
+
 2011-11-18  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         [Qt] Support wheel event together with resizesToContents
