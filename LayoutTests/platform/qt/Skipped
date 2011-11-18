@@ -2493,3 +2493,7 @@ http/tests/misc/onload-remove-iframe-crash-2.html
 # [Qt] inspector/elements/elements-panel-selection-on-refresh.html crashing
 # https://bugs.webkit.org/show_bug.cgi?id=72504
 inspector/elements/elements-panel-selection-on-refresh.html
+
+# [Qt] fast/canvas/canvas-lineWidth.html timeouts intermittently on 64 bit
+# https://bugs.webkit.org/show_bug.cgi?id=72694
+fast/canvas/canvas-lineWidth.html
