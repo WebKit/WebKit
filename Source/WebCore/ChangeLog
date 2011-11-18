@@ -1,3 +1,16 @@
+2011-11-17  Vincent Scheib  <scheib@chromium.org>
+
+        Pointer Lock: Page Settings unecessary
+        https://bugs.webkit.org/show_bug.cgi?id=72662
+
+        Reviewed by Darin Fisher.
+
+        No new tests.
+
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+        * page/Settings.h:
+
 2011-11-17  James Robinson  <jamesr@chromium.org>
 
         [chromium] Disable incremental uploading in threaded compositing path

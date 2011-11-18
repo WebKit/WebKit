@@ -119,7 +119,6 @@ public:
     virtual void setValidationMessageTimerMagnification(int);
     virtual void setMinimumTimerInterval(double);
     virtual void setFullScreenEnabled(bool);
-    virtual void setPointerLockEnabled(bool);
     virtual void setAllowDisplayOfInsecureContent(bool);
     virtual void setAllowRunningOfInsecureContent(bool);
     virtual void setShouldPrintBackgrounds(bool);

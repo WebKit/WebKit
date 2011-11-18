@@ -1,3 +1,14 @@
+2011-11-17  Vincent Scheib  <scheib@chromium.org>
+
+        Pointer Lock: Page Settings unecessary
+        https://bugs.webkit.org/show_bug.cgi?id=72662
+
+        Reviewed by Darin Fisher.
+
+        * public/WebSettings.h:
+        * src/WebSettingsImpl.cpp:
+        * src/WebSettingsImpl.h:
+
 2011-11-17  Alexandre Elias  <aelias@google.com>
 
         [chromium] Don't clamp minimumPageScaleFactor when doc width is zero

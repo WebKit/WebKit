@@ -382,11 +382,6 @@ namespace WebCore {
         bool fullScreenEnabled() const  { return m_fullScreenAPIEnabled; }
 #endif
 
-#if ENABLE(POINTER_LOCK)
-        void setPointerLockEnabled(bool flag) { m_pointerLockEnabled = flag; }
-        bool PointerLockEnabled() const  { return m_pointerLockEnabled; }
-#endif
-
 #if USE(AVFOUNDATION)
         static void setAVFoundationEnabled(bool flag) { gAVFoundationEnabled = flag; }
         static bool isAVFoundationEnabled() { return gAVFoundationEnabled; }
@@ -592,9 +587,6 @@ namespace WebCore {
         bool m_dnsPrefetchingEnabled : 1;
 #if ENABLE(FULLSCREEN_API)
         bool m_fullScreenAPIEnabled : 1;
-#endif
-#if ENABLE(POINTER_LOCK)
-        bool m_pointerLockEnabled : 1;
 #endif
         bool m_asynchronousSpellCheckingEnabled: 1;
         bool m_unifiedTextCheckerEnabled: 1;

@@ -198,9 +198,6 @@ Settings::Settings(Page* page)
 #if ENABLE(FULLSCREEN_API)
     , m_fullScreenAPIEnabled(false)
 #endif
-#if ENABLE(POINTER_LOCK)
-    , m_pointerLockEnabled(false)
-#endif
     , m_asynchronousSpellCheckingEnabled(false)
 #if USE(UNIFIED_TEXT_CHECKING)
     , m_unifiedTextCheckerEnabled(true)

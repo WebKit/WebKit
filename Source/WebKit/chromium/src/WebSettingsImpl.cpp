@@ -428,15 +428,6 @@ void WebSettingsImpl::setFullScreenEnabled(bool enabled)
 #endif
 }
 
-void WebSettingsImpl::setPointerLockEnabled(bool enabled)
-{
-#if ENABLE(POINTER_LOCK)
-    m_settings->setPointerLockEnabled(enabled);
-#else
-    UNUSED_PARAM(enabled);
-#endif
-}
-
 void WebSettingsImpl::setAllowDisplayOfInsecureContent(bool enabled)
 {
     m_settings->setAllowDisplayOfInsecureContent(enabled);
