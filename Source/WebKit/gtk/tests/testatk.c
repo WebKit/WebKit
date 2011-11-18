@@ -1612,33 +1612,23 @@ static void testWebkitAtkParentForRootObject()
     gtk_widget_size_allocate(GTK_WIDGET(webView), &allocation);
     webkit_web_view_load_string(webView, contents, 0, 0, 0);
 
-    /* We need a parent for the webview to check top-down and
-       bottom-up navigation among them, so create a box for it. */
-#ifdef GTK_API_VERSION_2
-    GtkWidget* box = gtk_vbox_new(FALSE, 0);
-#else
-    GtkWidget* box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
-#endif
-    g_object_ref_sink(box);
-    gtk_box_pack_start(GTK_BOX(box), GTK_WIDGET(webView), FALSE, FALSE, 0);
+    /* We need a parent container widget for the webview so use
+       another (dummy) webView as that container. */
+    GtkWidget* parentContainer = webkit_web_view_new();
+    g_object_ref_sink(parentContainer);
+    gtk_container_add(GTK_CONTAINER(parentContainer), GTK_WIDGET(webView));
 
-    AtkObject* axBox = gtk_widget_get_accessible (box);
-    g_assert(ATK_IS_OBJECT(axBox));
-
-    AtkObject* axBoxChild = atk_object_ref_accessible_child(axBox, 0);
-    g_assert(axBoxChild);
+    AtkObject* axParent = gtk_widget_get_accessible (parentContainer);
+    g_assert(ATK_IS_OBJECT(axParent));
 
     AtkObject* axRoot = gtk_widget_get_accessible(GTK_WIDGET(webView));
     g_assert(ATK_IS_OBJECT(axRoot));
 
-    /* The box's child should be the AtkObject for the WebView's root. */
-    g_assert(axBoxChild == axRoot);
+    /* Check that the parent for the webView's accessibility object is
+       the the accessibility object for the webview's parent widget. */
+    g_assert(atk_object_get_parent(axRoot) == axParent);
 
-    /* Bottom-up navigation should match top-down one. */
-    g_assert(atk_object_get_parent(axBoxChild) == axBox);
-
-    g_object_unref(axBoxChild);
-    g_object_unref(box);
+    g_object_unref(parentContainer);
 }
 
 static void testWebkitAtkSetParentForObject()
@@ -1648,35 +1638,37 @@ static void testWebkitAtkSetParentForObject()
     gtk_widget_size_allocate(GTK_WIDGET(webView), &allocation);
     webkit_web_view_load_string(webView, contents, 0, 0, 0);
 
-    /* Put the webview in a window to check the normal behaviour keeps
-       working as expected when the webview is inside a container. */
-    GtkWidget* window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-    g_object_ref_sink(window);
-    gtk_container_add(GTK_CONTAINER(window), webView);
+    /* Put the webview in a parent container widget check the normal
+       behaviour keeps working as expected when the webview is inside
+       a container. We use a dummy webView for that in order not to
+       need any ATK implementation other than WebKit's one. */
+    GtkWidget* parentContainer = webkit_web_view_new();
+    g_object_ref_sink(parentContainer);
+    gtk_container_add(GTK_CONTAINER(parentContainer), GTK_WIDGET(webView));
 
     AtkObject* axRoot = gtk_widget_get_accessible(GTK_WIDGET(webView));
     g_assert(ATK_IS_OBJECT(axRoot));
 
-    AtkObject* axWindow = gtk_widget_get_accessible(window);
-    g_assert(ATK_IS_OBJECT(axWindow));
+    AtkObject* axParent = gtk_widget_get_accessible(parentContainer);
+    g_assert(ATK_IS_OBJECT(axParent));
 
-    /* The parent of the root object is the window's a11y object. */
-    g_assert(atk_object_get_parent(axRoot) == axWindow);
+    /* The parent of the root object is the parent container's a11y object. */
+    g_assert(atk_object_get_parent(axRoot) == axParent);
 
-    /* We now need to use something as a an alternative parent for
-       the a11y object associated with the root of the DOM tree. */
-    GtkWidget* button = gtk_button_new();
-    g_object_ref_sink(button);
+    /* We now need to use another AtkObject as a an alternative parent
+       for the a11y object associated with the root of the DOM tree. */
+    GtkWidget* alternativeParent = webkit_web_view_new();
+    g_object_ref_sink(alternativeParent);
 
-    AtkObject* axButton = gtk_widget_get_accessible (button);
-    g_assert(ATK_IS_OBJECT(axButton));
+    AtkObject* axAlternativeParent = gtk_widget_get_accessible (alternativeParent);
+    g_assert(ATK_IS_OBJECT(axAlternativeParent));
 
     /* Manually set the button's a11y object as the parent and check. */
-    atk_object_set_parent(axRoot, axButton);
-    g_assert(atk_object_get_parent(axRoot) == axButton);
+    atk_object_set_parent(axRoot, axAlternativeParent);
+    g_assert(atk_object_get_parent(axRoot) == axAlternativeParent);
 
-    g_object_unref(button);
-    g_object_unref(window);
+    g_object_unref(alternativeParent);
+    g_object_unref(parentContainer);
 }
 
 int main(int argc, char** argv)

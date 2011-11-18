@@ -1,3 +1,18 @@
+2011-11-18  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        [GTK] Accessibility API tests failing because of using non-WebKit GtkWidgets
+        https://bugs.webkit.org/show_bug.cgi?id=72708
+
+        Reviewed by Xan Lopez.
+
+        Do not use non-WebKit GtkWidget's in unit tests, to avoid problems
+        when GTK's accessibility implementation is not being loaded.
+
+        * tests/testatk.c:
+        (testWebkitAtkParentForRootObject): Use a dummy WebKitWebView
+        widget as the parent container needed for this unit test.
+        (testWebkitAtkSetParentForObject): Ditto.
+
 2011-11-17  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Remove the last remaining WebKit1 gtkdoc warnings
