@@ -364,9 +364,9 @@ PassRefPtr<StringImpl> StringImpl::upper()
         RefPtr<StringImpl> newImpl = createUninitialized(m_length, data8);
         
         // Do a faster loop for the case where all the characters are ASCII.
-        char ored = 0;
+        LChar ored = 0;
         for (int i = 0; i < length; i++) {
-            char c = m_data8[i];
+            LChar c = m_data8[i];
             ored |= c;
             data8[i] = toASCIIUpper(c);
         }
@@ -449,6 +449,8 @@ PassRefPtr<StringImpl> StringImpl::foldCase()
         // Do a slower implementation for cases that include non-ASCII Latin-1 characters.
         for (int32_t i = 0; i < length; i++)
             data[i] = static_cast<LChar>(Unicode::toLower(m_data8[i]));
+
+        return newImpl.release();
     }
 
     // Do a faster loop for the case where all the characters are ASCII.
@@ -713,7 +715,7 @@ static bool equal(const UChar* a, const LChar* b, int length)
 {
     ASSERT(length >= 0);
     while (length--) {
-        unsigned char bc = *b++;
+        LChar bc = *b++;
         if (*a++ != bc)
             return false;
     }
@@ -723,7 +725,7 @@ static bool equal(const UChar* a, const LChar* b, int length)
 bool equalIgnoringCase(const UChar* a, const LChar* b, unsigned length)
 {
     while (length--) {
-        unsigned char bc = *b++;
+        LChar bc = *b++;
         if (foldCase(*a++) != foldCase(bc))
             return false;
     }
@@ -1049,7 +1051,7 @@ PassRefPtr<StringImpl> StringImpl::replace(UChar oldC, UChar newC)
             RefPtr<StringImpl> newImpl = createUninitialized(m_length, data);
 
             for (i = 0; i != m_length; ++i) {
-                char ch = m_data8[i];
+                LChar ch = m_data8[i];
                 if (ch == oldChar)
                     ch = newChar;
                 data[i] = ch;
@@ -1386,8 +1388,8 @@ bool equal(const StringImpl* a, const LChar* b)
     if (a->is8Bit()) {
         const LChar* aPtr = a->characters8();
         for (unsigned i = 0; i != length; ++i) {
-            unsigned char bc = b[i];
-            unsigned char ac = aPtr[i];
+            LChar bc = b[i];
+            LChar ac = aPtr[i];
             if (!bc)
                 return false;
             if (ac != bc)
@@ -1399,7 +1401,7 @@ bool equal(const StringImpl* a, const LChar* b)
 
     const UChar* aPtr = a->characters16();
     for (unsigned i = 0; i != length; ++i) {
-        unsigned char bc = b[i];
+        LChar bc = b[i];
         if (!bc)
             return false;
         if (aPtr[i] != bc)

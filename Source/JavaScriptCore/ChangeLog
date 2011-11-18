@@ -1,3 +1,26 @@
+2011-11-17  Michael Saboff  <msaboff@apple.com>
+
+        [Qt] REGRESSION(r100510): Enable 8 Bit Strings in JavaScriptCore
+        https://bugs.webkit.org/show_bug.cgi?id=72602
+
+        Fixed StringImpl::foldCase by adding return in the case we need to handle
+        folding of 8 bit strings with Latin-1 characters.
+
+        Fixed case where StringImpl::replace was using a char temp instead of an
+        LChar temp.
+
+        Because of the second change, I changed other uses of char or
+        unsigned char to LChar.
+
+        Reviewed by Zoltan Herczeg.
+
+        * wtf/text/StringImpl.cpp:
+        (WTF::StringImpl::upper):
+        (WTF::StringImpl::foldCase):
+        (WTF::equal):
+        (WTF::equalIgnoringCase):
+        (WTF::StringImpl::replace):
+
 2011-11-17  Patrick Gansterer  <paroga@webkit.org>
 
         [CMake] Move FAST_MALLOC specific lines from Platform*.cmake to CMakeLists.txt
