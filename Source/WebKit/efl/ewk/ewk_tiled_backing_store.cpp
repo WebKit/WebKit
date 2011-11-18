@@ -619,7 +619,7 @@ static inline void _ewk_tiled_backing_store_model_matrix_create(Ewk_Tiled_Backin
         ewk_tile_matrix_free(priv->model.matrix);
     }
 
-    priv->model.matrix = ewk_tile_matrix_new(tileUnusedCache, priv->model.current.columns, priv->model.current.rows, priv->colorSpace, _ewk_tiled_backing_store_render, priv);
+    priv->model.matrix = ewk_tile_matrix_new(tileUnusedCache, priv->model.current.columns, priv->model.current.rows, priv->view.tile.zoom, priv->colorSpace, _ewk_tiled_backing_store_render, priv);
 }
 
 static void _ewk_tiled_backing_store_smart_member_del(Evas_Object* ewkBackingStore, Evas_Object* member)
@@ -1298,6 +1298,9 @@ static void _ewk_tiled_backing_store_smart_calculate(Evas_Object* ewkBackingStor
 
     ewk_tile_matrix_freeze(priv->model.matrix);
 
+    if (priv->changed.model && !priv->changed.size)
+        ewk_tile_matrix_invalidate(priv->model.matrix);
+
     if (!priv->render.suspend && priv->changed.model) {
         unsigned long columns, rows;
 
@@ -1477,6 +1480,7 @@ static Eina_Bool _ewk_tiled_backing_store_zoom_set_internal(Ewk_Tiled_Backing_St
     priv->view.offset.zoomCenter.x = currentX;
     priv->view.offset.zoomCenter.y = currentY;
 
+    ewk_tile_matrix_zoom_level_set(priv->model.matrix, *zoom);
 
     if (!priv->view.width || !priv->view.height) {
         priv->view.offset.base.x = 0;

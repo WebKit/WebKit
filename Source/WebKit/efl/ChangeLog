@@ -1,3 +1,28 @@
+2011-11-17  KwangHyuk Kim  <hyuki.kim@samsung.com>
+
+        [EFL] Add matrix list to reuse tile matrix for each different zoom level.
+        https://bugs.webkit.org/show_bug.cgi?id=68595
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add matrix list to keep each tile matrix corresponding to each different zoom level when zoom level is changed.
+        Then backing store can reuse tile matrix by getting it from this matrix list.
+
+        * ewk/ewk_tiled_backing_store.cpp:
+        (_ewk_tiled_backing_store_model_matrix_create):
+        (_ewk_tiled_backing_store_smart_calculate):
+        (_ewk_tiled_backing_store_zoom_set_internal):
+        * ewk/ewk_tiled_matrix.cpp:
+        (ewk_tile_matrix_entry_get):
+        (_ewk_tile_matrix_cell_free):
+        (_ewk_tile_matrix_tile_free):
+        (ewk_tile_matrix_new):
+        (ewk_tile_matrix_zoom_level_set):
+        (ewk_tile_matrix_invalidate):
+        (ewk_tile_matrix_free):
+        (ewk_tile_matrix_tile_new):
+        * ewk/ewk_tiled_matrix.h:
+
 2011-11-17  Raphael Kubo da Costa  <kubo@profusion.mobi>
 
         [EFL] Clean up the use of DATA_DIR in the buildsystem

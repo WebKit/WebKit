@@ -26,10 +26,12 @@
 #include <Evas.h>
 
 /* matrix of tiles */
-Ewk_Tile_Matrix* ewk_tile_matrix_new(Ewk_Tile_Unused_Cache* tuc, unsigned long cols, unsigned long rows, Evas_Colorspace cspace, void (* render_cb)(void* data, Ewk_Tile* t, const Eina_Rectangle* update), const void* render_data);
+Ewk_Tile_Matrix* ewk_tile_matrix_new(Ewk_Tile_Unused_Cache* tileUnusedCache, unsigned long columns, unsigned long rows, float zoomLevel, Evas_Colorspace colorSpace, void (*render_callback)(void* data, Ewk_Tile* tile, const Eina_Rectangle* update), const void* renderData);
 void ewk_tile_matrix_free(Ewk_Tile_Matrix* tm);
 
 void ewk_tile_matrix_resize(Ewk_Tile_Matrix* tm, unsigned long cols, unsigned long rows);
+void ewk_tile_matrix_zoom_level_set(Ewk_Tile_Matrix* tileMatrix, float zoom);
+void ewk_tile_matrix_invalidate(Ewk_Tile_Matrix* tileMatrix);
 
 Ewk_Tile_Unused_Cache* ewk_tile_matrix_unused_cache_get(const Ewk_Tile_Matrix* tm);
 
