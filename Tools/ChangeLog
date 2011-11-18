@@ -1,3 +1,16 @@
+2011-11-17  Raphael Kubo da Costa  <kubo@profusion.mobi>
+
+        [EFL] Move platform includes last in DRT's include directories.
+        https://bugs.webkit.org/show_bug.cgi?id=72684
+
+        Reviewed by Daniel Bates.
+
+        This is the first step in fixing the build when a platform include (in
+        this case, Valgrind 3.7.0 ships its config.h) and the wrong config.h
+        is included instead of WebKit's.
+
+        * DumpRenderTree/efl/CMakeLists.txt:
+
 2011-11-17  Ryosuke Niwa  <rniwa@webkit.org>
 
         fuzzy_match doesn't recognize "Dan B" or "hyatt"
