@@ -1,3 +1,28 @@
+2011-11-18  Simon Fraser  <simon.fraser@apple.com>
+
+        Appearance of compound transform animations under apps linked on SnowLeopard is incorrect
+        https://bugs.webkit.org/show_bug.cgi?id=72641
+        and
+        <rdar://problem/10314267>
+
+        Reviewed by Dean Jackson.
+
+        GraphicsLayerCA contains a "linked on or after" check to account for a bug in
+        Core Animation on SnowLeopard and earlier, which is that CA would apply the list
+        of animations in reverse order.
+        
+        Our previous fix was incorrect, because it only adjusted the 'additive' property
+        of the animation list based on ordering, rather than flipping the entire list.
+        This change reverses the list of animations before giving them to CA, which fixes
+        the bug.
+                
+        Test: animations/additive-transform-animations.html
+
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::appendToUncommittedAnimations):
+        (WebCore::GraphicsLayerCA::createTransformAnimationsFromKeyframes):
+        * platform/graphics/ca/GraphicsLayerCA.h:
+
 2011-11-18  Tim Horton  <timothy_horton@apple.com>
 
         -webkit-cross-fade rendered incorrectly in overflow divs

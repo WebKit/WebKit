@@ -1697,6 +1697,29 @@ bool GraphicsLayerCA::createAnimationFromKeyframes(const KeyframeValueList& valu
     return true;
 }
 
+bool GraphicsLayerCA::appendToUncommittedAnimations(const KeyframeValueList& valueList, const TransformOperationList& functionList, const Animation* animation, const String& animationName, const IntSize& boxSize, int animationIndex, double timeOffset, bool isMatrixAnimation)
+{
+    TransformOperation::OperationType transformOp = isMatrixAnimation ? TransformOperation::MATRIX_3D : functionList[animationIndex];
+    bool additive = animationIndex > 0;
+    bool isKeyframe = valueList.size() > 2;
+
+    RefPtr<PlatformCAAnimation> caAnimation;
+    bool validMatrices = true;
+    if (isKeyframe) {
+        caAnimation = createKeyframeAnimation(animation, valueList.property(), additive);
+        validMatrices = setTransformAnimationKeyframes(valueList, animation, caAnimation.get(), animationIndex, transformOp, isMatrixAnimation, boxSize);
+    } else {
+        caAnimation = createBasicAnimation(animation, valueList.property(), additive);
+        validMatrices = setTransformAnimationEndpoints(valueList, animation, caAnimation.get(), animationIndex, transformOp, isMatrixAnimation, boxSize);
+    }
+    
+    if (!validMatrices)
+        return false;
+
+    m_uncomittedAnimations.append(LayerPropertyAnimation(caAnimation, animationName, valueList.property(), animationIndex, timeOffset));
+    return true;
+}
+
 bool GraphicsLayerCA::createTransformAnimationsFromKeyframes(const KeyframeValueList& valueList, const Animation* animation, const String& animationName, double timeOffset, const IntSize& boxSize)
 {
     ASSERT(valueList.property() == AnimatedPropertyWebkitTransform);
@@ -1717,41 +1740,33 @@ bool GraphicsLayerCA::createTransformAnimationsFromKeyframes(const KeyframeValue
     // Also, we can't do component animation unless we have valueFunction, so we need to do matrix animation
     // if that's not true as well.
     bool isMatrixAnimation = !listsMatch || !PlatformCAAnimation::supportsValueFunction();
-    
-    size_t numAnimations = isMatrixAnimation ? 1 : functionList.size();
-    bool isKeyframe = valueList.size() > 2;
-    
-    // Iterate through the transform functions, sending an animation for each one.
-    for (size_t animationIndex = 0; animationIndex < numAnimations; ++animationIndex) {
-        TransformOperation::OperationType transformOp = isMatrixAnimation ? TransformOperation::MATRIX_3D : functionList[animationIndex];
-        RefPtr<PlatformCAAnimation> caAnimation;
+    int numAnimations = isMatrixAnimation ? 1 : functionList.size();
 
-        bool additive;
-#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD) && !PLATFORM(WIN)
-        // Old versions of Core Animation apply animations in reverse order (<rdar://problem/7095638>) so we need the last one we add (per property)
+    bool reverseAnimationList = true;
+#if !defined(BUILDING_ON_SNOW_LEOPARD) && !PLATFORM(WIN)
+        // Old versions of Core Animation apply animations in reverse order (<rdar://problem/7095638>) so we need to flip the list.
         // to be non-additive. For binary compatibility, the current version of Core Animation preserves this behavior for applications linked
         // on or before Snow Leopard.
         // FIXME: This fix has not been added to QuartzCore on Windows yet (<rdar://problem/9112233>) so we expect the
         // reversed animation behavior
         static bool executableWasLinkedOnOrBeforeSnowLeopard = wkExecutableWasLinkedOnOrBeforeSnowLeopard();
         if (!executableWasLinkedOnOrBeforeSnowLeopard)
-            additive = animationIndex > 0;
-        else
+            reverseAnimationList = false;
 #endif
-            additive = animationIndex < (numAnimations - 1);
-
-        if (isKeyframe) {
-            caAnimation = createKeyframeAnimation(animation, valueList.property(), additive);
-            validMatrices = setTransformAnimationKeyframes(valueList, animation, caAnimation.get(), animationIndex, transformOp, isMatrixAnimation, boxSize);
-        } else {
-            caAnimation = createBasicAnimation(animation, valueList.property(), additive);
-            validMatrices = setTransformAnimationEndpoints(valueList, animation, caAnimation.get(), animationIndex, transformOp, isMatrixAnimation, boxSize);
+    if (reverseAnimationList) {
+        for (int animationIndex = numAnimations - 1; animationIndex >= 0; --animationIndex) {
+            if (!appendToUncommittedAnimations(valueList, functionList, animation, animationName, boxSize, animationIndex, timeOffset, isMatrixAnimation)) {
+                validMatrices = false;
+                break;
+            }
         }
-        
-        if (!validMatrices)
-            break;
-    
-        m_uncomittedAnimations.append(LayerPropertyAnimation(caAnimation, animationName, valueList.property(), animationIndex, timeOffset));
+    } else {
+        for (int animationIndex = 0; animationIndex < numAnimations; ++animationIndex) {
+            if (!appendToUncommittedAnimations(valueList, functionList, animation, animationName, boxSize, animationIndex, timeOffset, isMatrixAnimation)) {
+                validMatrices = false;
+                break;
+            }
+        }
     }
 
     return validMatrices;

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <style type="text/css">
+    .box {
+      height: 100px;
+      width: 100px;
+      background-color: blue;
+    }
+    
+    #box {
+      -webkit-animation: anim 2s linear both;
+    }
+    
+    @-webkit-keyframes anim {
+        from { -webkit-transform: rotate(0deg) translate(-100px, 0); }
+        to   { -webkit-transform: rotate(180deg) translate(300px, 0); }
+    }
+
+    #result {
+      opacity: 0; /* hide in pixel result */
+    }
+  </style>
+  <script src="resources/animation-test-helpers.js" type="text/javascript"></script>
+  <script type="text/javascript">
+    const expectedValues = [
+      // [time, element-id, property, expected-value, tolerance]
+      ["anim",  1, "box",  "webkitTransform", [0, 1, -1, 0, 0, 100], 0.002],
+    ];
+    
+    const doPixelTest = true;
+    const disablePauseAnimationAPI = false;
+    runAnimationTest(expectedValues, null, null, disablePauseAnimationAPI, doPixelTest);
+  </script>
+</head>
+<body>
+
+<div class="box" id="box"></div>
+<div id="result"></div>
+
+</body>
+</html>
