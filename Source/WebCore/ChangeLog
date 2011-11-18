@@ -1,3 +1,17 @@
+2011-11-18  Beth Dakin  <bdakin@apple.com>
+
+        <rdar://problem/10466170> Regression: Scroll bars disappear and don't come back
+
+        Reviewed by Sam Weinig.
+
+        Fixing a merge issue. On TOT we use #if USE(SCROLLBAR_PAINTER), but on the branch 
+        it is still #if USE(WK_SCROLLBAR_PAINTER). Also, on the branch, all of the 
+        m_scrollbarPainterController functions go through WebKitSystemInterface instead of 
+        using forward declaration. We should consider merging those changes, but in the 
+        meantime, for this to work, we have to go back to the branch-style.
+        * platform/mac/ScrollAnimatorMac.mm:
+        (WebCore::ScrollAnimatorMac::notityPositionChanged):
+
 2011-11-14 Lucas Forschler  <lforschler@apple.com>
 
     Merge 100022
