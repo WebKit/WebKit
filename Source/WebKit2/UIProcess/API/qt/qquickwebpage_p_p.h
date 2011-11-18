@@ -22,7 +22,6 @@
 #define qquickwebpage_p_p_h
 
 #include "QtSGUpdateQueue.h"
-#include "QtViewInterface.h"
 #include "QtWebPageProxy.h"
 #include "qquickwebpage_p.h"
 

@@ -1,3 +1,51 @@
+2011-11-18  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Removal of QtViewInterface part 3
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Move the remaining forwarded calls from ClientImpl that went through
+        ViewInterface and then PageProxy or WebView to go straight to
+        QtWebPageProxy. QtViewInterface is empty now and therefore removed.
+
+        * Target.pri:
+        * UIProcess/API/qt/qquickwebpage_p.h:
+        * UIProcess/API/qt/qquickwebpage_p_p.h:
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewPrivate::initialize):
+        (QQuickWebViewPrivate::chooseFiles):
+        * UIProcess/API/qt/qquickwebview_p.h:
+        * UIProcess/API/qt/qquickwebview_p_p.h:
+        * UIProcess/qt/ClientImpl.cpp:
+        (qt_wk_runJavaScriptAlert):
+        (qt_wk_runJavaScriptConfirm):
+        (qt_wk_runJavaScriptPrompt):
+        (qt_wk_setStatusText):
+        (qt_wk_runOpenPanel):
+        (qt_wk_mouseDidMoveOverElement):
+        (setupPageUiClient):
+        * UIProcess/qt/QtViewInterface.cpp: Removed.
+        * UIProcess/qt/QtViewInterface.h: Removed.
+        * UIProcess/qt/QtWebPageProxy.cpp:
+        (QtWebPageProxy::QtWebPageProxy):
+        (QtWebPageProxy::didChangeStatusText):
+        (QtWebPageProxy::didMouseMoveOverElement):
+        (QtWebPageProxy::showContextMenu):
+        (QtWebPageProxy::hideContextMenu):
+        (QtWebPageProxy::runJavaScriptAlert):
+        (QtWebPageProxy::runJavaScriptConfirm):
+        (QtWebPageProxy::runJavaScriptPrompt):
+        (QtWebPageProxy::chooseFiles):
+        (QtWebPageProxy::createContextMenuProxy):
+        (QtWebPageProxy::didChangeLoadProgress):
+        * UIProcess/qt/QtWebPageProxy.h:
+        (QtWebPageProxy::contextMenuItemSelected):
+        * UIProcess/qt/WebContextMenuProxyQt.cpp:
+        (WebKit::WebContextMenuProxyQt::WebContextMenuProxyQt):
+        (WebKit::WebContextMenuProxyQt::create):
+        (WebKit::WebContextMenuProxyQt::hideContextMenu):
+        * UIProcess/qt/WebContextMenuProxyQt.h:
+
 2011-11-18  Zalan Bujtas  <zbujtas@gmail.com>
 
         [Qt][WK2] UI process segfaults, when visiblity properties are set while the WebProcess is dead.

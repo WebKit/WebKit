@@ -31,7 +31,6 @@ class QQuickWebPagePrivate;
 class QWebPreferences;
 
 namespace WebKit {
-class QtViewInterface;
 class QtSGUpdateQueue;
 }
 class QtWebPageProxy;
@@ -74,7 +73,6 @@ private:
 
     QQuickWebPagePrivate* d;
     friend class QQuickWebViewPrivate;
-    friend class WebKit::QtViewInterface;
     friend class QtWebPageProxy;
 };
 

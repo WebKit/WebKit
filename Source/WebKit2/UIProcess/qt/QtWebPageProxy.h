@@ -29,7 +29,6 @@
 #include "QtPinchGestureRecognizer.h"
 #include "QtPolicyInterface.h"
 #include "QtTapGestureRecognizer.h"
-#include "QtViewInterface.h"
 #include "ShareableBitmap.h"
 #include "ViewportArguments.h"
 #include "WebContext.h"
@@ -75,7 +74,12 @@ public:
         WebActionCount
     };
 
-    QtWebPageProxy(QQuickWebPage*, QQuickWebView*, WebKit::QtViewInterface*, WebKit::QtViewportInteractionEngine* = 0, WebKit::QtPolicyInterface* = 0, WKContextRef = 0, WKPageGroupRef = 0);
+    enum FileChooserType {
+        SingleFileSelection,
+        MultipleFilesSelection
+    };
+
+    QtWebPageProxy(QQuickWebPage*, QQuickWebView*, WebKit::QtViewportInteractionEngine* = 0, WebKit::QtPolicyInterface* = 0, WKContextRef = 0, WKPageGroupRef = 0);
     ~QtWebPageProxy();
 
     virtual PassOwnPtr<DrawingAreaProxy> createDrawingAreaProxy();
@@ -193,14 +197,30 @@ public:
     void renderToCurrentGLContext(const WebCore::TransformationMatrix&, float);
 
     QWKHistory* history() const;
-    QtViewInterface* viewInterface() const { return m_viewInterface; }
-    QQuickWebPage* qmlWebPage() const { return m_qmlWebPage; }
+
+    void contextMenuItemSelected(const WebContextMenuItemData& data)
+    {
+        m_webPageProxy->contextMenuItemSelected(data);
+    }
 
     void handleDownloadRequest(DownloadProxy*);
     void init();
 
     void handleSingleTapEvent(const QTouchEvent::TouchPoint&);
     void handleDoubleTapEvent(const QTouchEvent::TouchPoint&);
+
+    void didChangeStatusText(const QString&);
+
+    void showContextMenu(QSharedPointer<QMenu>);
+    void hideContextMenu();
+
+    void runJavaScriptAlert(const QString&);
+    bool runJavaScriptConfirm(const QString&);
+    QString runJavaScriptPrompt(const QString&, const QString& defaultValue, bool& ok);
+
+    void chooseFiles(WKOpenPanelResultListenerRef, const QStringList& selectedFileNames, FileChooserType);
+
+    void didMouseMoveOverElement(const QUrl&, const QString&);
 
 public Q_SLOTS:
     void navigationStateChanged();
@@ -215,7 +235,6 @@ protected:
     QQuickWebPage* m_qmlWebPage;
     QQuickWebView* m_qmlWebView;
     RefPtr<WebKit::WebPageProxy> m_webPageProxy;
-    WebKit::QtViewInterface* const m_viewInterface;
     QtViewportInteractionEngine* m_interactionEngine;
     QtPanGestureRecognizer m_panGestureRecognizer;
     QtPinchGestureRecognizer m_pinchGestureRecognizer;
@@ -263,6 +282,10 @@ private:
     bool m_navigatorQtObjectEnabled;
     QPoint m_tripleClick;
     QBasicTimer m_tripleClickTimer;
+
+    QSharedPointer<QMenu> activeMenu;
+    QUrl lastHoveredURL;
+    QString lastHoveredTitle;
 };
 
 #endif /* QtWebPageProxy_h */

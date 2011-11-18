@@ -45,7 +45,6 @@
 #include "NativeWebWheelEvent.h"
 #include "NotImplemented.h"
 #include "QtPolicyInterface.h"
-#include "QtViewInterface.h"
 #include "QtViewportInteractionEngine.h"
 #include "QtWebUndoCommand.h"
 #include "WebBackForwardList.h"
@@ -134,10 +133,9 @@ WebCore::DragOperation dropActionToDragOperation(Qt::DropActions actions)
     return (DragOperation)result;
 }
 
-QtWebPageProxy::QtWebPageProxy(QQuickWebPage* qmlWebPage, QQuickWebView* qmlWebView, QtViewInterface* viewInterface, QtViewportInteractionEngine* viewportInteractionEngine, QtPolicyInterface* policyInterface, WKContextRef contextRef, WKPageGroupRef pageGroupRef)
+QtWebPageProxy::QtWebPageProxy(QQuickWebPage* qmlWebPage, QQuickWebView* qmlWebView, QtViewportInteractionEngine* viewportInteractionEngine, QtPolicyInterface* policyInterface, WKContextRef contextRef, WKPageGroupRef pageGroupRef)
     : m_qmlWebPage(qmlWebPage)
     , m_qmlWebView(qmlWebView)
-    , m_viewInterface(viewInterface)
     , m_interactionEngine(viewportInteractionEngine)
     , m_panGestureRecognizer(viewportInteractionEngine)
     , m_pinchGestureRecognizer(viewportInteractionEngine)
@@ -355,6 +353,72 @@ void QtWebPageProxy::handleDoubleTapEvent(const QTouchEvent::TouchPoint& point)
     m_webPageProxy->findZoomableAreaForPoint(point.pos().toPoint());
 }
 
+void QtWebPageProxy::didChangeStatusText(const QString& newMessage)
+{
+    emit m_qmlWebView->statusBarMessageChanged(newMessage);
+}
+
+void QtWebPageProxy::didMouseMoveOverElement(const QUrl& linkURL, const QString& linkTitle)
+{
+    if (linkURL == lastHoveredURL && linkTitle == lastHoveredTitle)
+        return;
+    lastHoveredURL = linkURL;
+    lastHoveredTitle = linkTitle;
+    emit m_qmlWebView->linkHovered(lastHoveredURL, lastHoveredTitle);
+}
+
+void QtWebPageProxy::showContextMenu(QSharedPointer<QMenu> menu)
+{
+    // Remove the active menu in case this function is called twice.
+    if (activeMenu)
+        activeMenu->hide();
+
+    if (menu->isEmpty())
+        return;
+
+    QWindow* window = m_qmlWebView->canvas();
+    if (!window)
+        return;
+
+    activeMenu = menu;
+
+    activeMenu->window()->winId(); // Ensure that the menu has a window
+    Q_ASSERT(activeMenu->window()->windowHandle());
+    activeMenu->window()->windowHandle()->setTransientParent(window);
+
+    QPoint menuPositionInScene = m_qmlWebView->mapToScene(menu->pos()).toPoint();
+    menu->exec(window->mapToGlobal(menuPositionInScene));
+    // The last function to get out of exec() clear the local copy.
+    if (activeMenu == menu)
+        activeMenu.clear();
+}
+
+void QtWebPageProxy::hideContextMenu()
+{
+    if (activeMenu)
+        activeMenu->hide();
+}
+
+void QtWebPageProxy::runJavaScriptAlert(const QString& alertText)
+{
+    m_qmlWebView->d_func()->runJavaScriptAlert(alertText);
+}
+
+bool QtWebPageProxy::runJavaScriptConfirm(const QString& message)
+{
+    return m_qmlWebView->d_func()->runJavaScriptConfirm(message);
+}
+
+QString QtWebPageProxy::runJavaScriptPrompt(const QString& message, const QString& defaultValue, bool& ok)
+{
+    return m_qmlWebView->d_func()->runJavaScriptPrompt(message, defaultValue, ok);
+}
+
+void QtWebPageProxy::chooseFiles(WKOpenPanelResultListenerRef listenerRef, const QStringList& selectedFileNames, FileChooserType type)
+{
+    m_qmlWebView->d_func()->chooseFiles(listenerRef, selectedFileNames, type);
+}
+
 void QtWebPageProxy::timerEvent(QTimerEvent* ev)
 {
     int timerId = ev->timerId();
@@ -541,7 +605,7 @@ PassRefPtr<WebPopupMenuProxy> QtWebPageProxy::createPopupMenuProxy(WebPageProxy*
 
 PassRefPtr<WebContextMenuProxy> QtWebPageProxy::createContextMenuProxy(WebPageProxy*)
 {
-    return WebContextMenuProxyQt::create(m_webPageProxy.get(), m_viewInterface);
+    return WebContextMenuProxyQt::create(this);
 }
 
 void QtWebPageProxy::setFindIndicator(PassRefPtr<FindIndicator>, bool fadeOut, bool animate)
@@ -611,10 +675,10 @@ void QtWebPageProxy::loadDidFail(const QtWebError& error)
     emit m_qmlWebView->loadFailed(static_cast<QQuickWebView::ErrorType>(error.type()), error.errorCode(), error.url());
 }
 
-void QtWebPageProxy::didChangeLoadProgress(int newLoadProgress)
+void QtWebPageProxy::didChangeLoadProgress(int percentageLoaded)
 {
-    m_loadProgress = newLoadProgress;
-    m_viewInterface->didChangeLoadProgress(newLoadProgress);
+    m_loadProgress = percentageLoaded;
+    emit m_qmlWebView->loadProgressChanged(percentageLoaded);
 }
 
 bool QtWebPageProxy::canGoBack() const

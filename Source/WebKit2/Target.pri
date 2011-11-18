@@ -324,7 +324,6 @@ HEADERS += \
     UIProcess/qt/qwkhistory_p.h \
     UIProcess/qt/QtSGUpdateQueue.h \
     UIProcess/qt/QtSGTileNode.h \
-    UIProcess/qt/QtViewInterface.h \
     UIProcess/qt/QtViewportInteractionEngine.h \
     UIProcess/qt/QtWebUndoCommand.h \
     UIProcess/qt/WebContextMenuProxyQt.h \
@@ -618,7 +617,6 @@ SOURCES += \
     UIProcess/WebUIClient.cpp \
     UIProcess/qt/ClientImpl.cpp \
     UIProcess/qt/LayerTreeHostProxyQt.cpp \
-    UIProcess/qt/QtViewInterface.cpp \
     UIProcess/qt/QtGestureRecognizer.cpp \
     UIProcess/qt/QtPanGestureRecognizer.cpp \
     UIProcess/qt/QtPinchGestureRecognizer.cpp \

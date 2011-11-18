@@ -39,15 +39,14 @@ Q_DECLARE_METATYPE(WebKit::WebContextMenuItemData);
 
 namespace WebKit {
 
-WebContextMenuProxyQt::WebContextMenuProxyQt(WebPageProxy* pageProxy, QtViewInterface* viewInterface)
+WebContextMenuProxyQt::WebContextMenuProxyQt(QtWebPageProxy* pageProxy)
     : m_webPageProxy(pageProxy)
-    , m_viewInterface(viewInterface)
 {
 }
 
-PassRefPtr<WebContextMenuProxyQt> WebContextMenuProxyQt::create(WebPageProxy* pageProxy, QtViewInterface* viewInterface)
+PassRefPtr<WebContextMenuProxyQt> WebContextMenuProxyQt::create(QtWebPageProxy *pageProxy)
 {
-    return adoptRef(new WebContextMenuProxyQt(pageProxy, viewInterface));
+    return adoptRef(new WebContextMenuProxyQt(pageProxy));
 }
 
 void WebContextMenuProxyQt::actionTriggered(bool)
@@ -74,7 +73,7 @@ void WebContextMenuProxyQt::showContextMenu(const IntPoint& position, const Vect
 
 void WebContextMenuProxyQt::hideContextMenu()
 {
-    m_viewInterface->hideContextMenu();
+    m_webPageProxy->hideContextMenu();
 }
 
 PassOwnPtr<QMenu> WebContextMenuProxyQt::createContextMenu(const Vector<WebContextMenuItemData>& items) const

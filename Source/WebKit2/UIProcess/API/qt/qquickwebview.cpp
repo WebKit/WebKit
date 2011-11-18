@@ -21,7 +21,6 @@
 #include "config.h"
 #include "qquickwebview_p.h"
 
-#include "QtViewInterface.h"
 #include "QtWebPageProxy.h"
 #include "UtilsQt.h"
 #include "WebPageGroup.h"
@@ -70,10 +69,9 @@ void QQuickWebViewPrivate::initialize(QQuickWebView* viewport, WKContextRef cont
 
     QObject::connect(viewport, SIGNAL(visibleChanged()), viewport, SLOT(_q_onVisibleChanged()));
     pageView.reset(new QQuickWebPage(viewport));
-    viewInterface.reset(new WebKit::QtViewInterface(viewport));
 
     QQuickWebPagePrivate* const pageViewPrivate = pageView.data()->d;
-    setPageProxy(new QtWebPageProxy(pageView.data(), q_ptr, viewInterface.data(), 0, this, contextRef, pageGroupRef));
+    setPageProxy(new QtWebPageProxy(pageView.data(), q_ptr, 0, this, contextRef, pageGroupRef));
     pageViewPrivate->setPageProxy(pageProxy.data());
 
     QWebPreferencesPrivate::get(pageProxy->preferences())->setAttribute(QWebPreferencesPrivate::AcceleratedCompositingEnabled, true);
@@ -264,7 +262,7 @@ QString QQuickWebViewPrivate::runJavaScriptPrompt(const QString& message, const 
 #endif
 }
 
-void QQuickWebViewPrivate::chooseFiles(WKOpenPanelResultListenerRef listenerRef, const QStringList& selectedFileNames, QtViewInterface::FileChooserType type)
+void QQuickWebViewPrivate::chooseFiles(WKOpenPanelResultListenerRef listenerRef, const QStringList& selectedFileNames, QtWebPageProxy::FileChooserType type)
 {
 #ifndef QT_NO_FILEDIALOG
     Q_Q(QQuickWebView);

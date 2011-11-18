@@ -22,7 +22,6 @@
 #define qquickwebview_p_p_h
 
 #include "QtPolicyInterface.h"
-#include "QtViewInterface.h"
 #include "QtViewportInteractionEngine.h"
 #include "QtWebPageProxy.h"
 
@@ -71,7 +70,7 @@ public:
     // QtPolicyInterface.
     virtual QtPolicyInterface::PolicyAction navigationPolicyForURL(const QUrl&, Qt::MouseButton, Qt::KeyboardModifiers);
 
-    void chooseFiles(WKOpenPanelResultListenerRef, const QStringList& selectedFileNames, WebKit::QtViewInterface::FileChooserType);
+    void chooseFiles(WKOpenPanelResultListenerRef, const QStringList& selectedFileNames, QtWebPageProxy::FileChooserType);
     void runJavaScriptAlert(const QString&);
     bool runJavaScriptConfirm(const QString&);
     QString runJavaScriptPrompt(const QString&, const QString& defaultValue, bool& ok);
@@ -108,7 +107,6 @@ private:
     bool isTransitioningToNewPage() const { return transitioningToNewPage; }
 
     QScopedPointer<QQuickWebPage> pageView;
-    QScopedPointer<WebKit::QtViewInterface> viewInterface;
     QScopedPointer<QtViewportInteractionEngine> interactionEngine;
 
     QQuickWebView* q_ptr;

@@ -26,7 +26,6 @@
 #include "WKStringQt.h"
 #include "WKURLQt.h"
 #include <QtPolicyInterface.h>
-#include <QtViewInterface.h>
 #include <QtWebPageProxy.h>
 #include <WKArray.h>
 #include <WKFrame.h>
@@ -46,12 +45,6 @@ static QtWebPageProxy* toQtWebPageProxy(const void* clientInfo)
     if (clientInfo)
         return reinterpret_cast<QtWebPageProxy*>(const_cast<void*>(clientInfo));
     return 0;
-}
-
-static inline QtViewInterface* toQtViewInterface(const void* clientInfo)
-{
-    ASSERT(clientInfo);
-    return reinterpret_cast<QtViewInterface*>(const_cast<void*>(clientInfo));
 }
 
 static inline QtPolicyInterface* toQtPolicyInterface(const void* clientInfo)
@@ -162,13 +155,13 @@ static void qt_wk_didFirstVisuallyNonEmptyLayoutForFrame(WKPageRef page, WKFrame
 static void qt_wk_runJavaScriptAlert(WKPageRef page, WKStringRef alertText, WKFrameRef frame, const void* clientInfo)
 {
     QString qAlertText = WKStringCopyQString(alertText);
-    toQtViewInterface(clientInfo)->runJavaScriptAlert(qAlertText);
+    toQtWebPageProxy(clientInfo)->runJavaScriptAlert(qAlertText);
 }
 
 static bool qt_wk_runJavaScriptConfirm(WKPageRef, WKStringRef message, WKFrameRef, const void* clientInfo)
 {
     QString qMessage = WKStringCopyQString(message);
-    return toQtViewInterface(clientInfo)->runJavaScriptConfirm(qMessage);
+    return toQtWebPageProxy(clientInfo)->runJavaScriptConfirm(qMessage);
 }
 
 static inline WKStringRef createNullWKString()
@@ -182,7 +175,7 @@ static WKStringRef qt_wk_runJavaScriptPrompt(WKPageRef, WKStringRef message, WKS
     QString qMessage = WKStringCopyQString(message);
     QString qDefaultValue = WKStringCopyQString(defaultValue);
     bool ok = false;
-    QString result = toQtViewInterface(clientInfo)->runJavaScriptPrompt(qMessage, qDefaultValue, ok);
+    QString result = toQtWebPageProxy(clientInfo)->runJavaScriptPrompt(qMessage, qDefaultValue, ok);
     if (!ok)
         return createNullWKString();
     return WKStringCreateWithQString(result);
@@ -191,7 +184,7 @@ static WKStringRef qt_wk_runJavaScriptPrompt(WKPageRef, WKStringRef message, WKS
 static void qt_wk_setStatusText(WKPageRef, WKStringRef text, const void *clientInfo)
 {
     QString qText = WKStringCopyQString(text);
-    toQtViewInterface(clientInfo)->didChangeStatusText(qText);
+    toQtWebPageProxy(clientInfo)->didChangeStatusText(qText);
 }
 
 static void qt_wk_runOpenPanel(WKPageRef, WKFrameRef, WKOpenPanelParametersRef parameters, WKOpenPanelResultListenerRef listener, const void* clientInfo)
@@ -203,15 +196,15 @@ static void qt_wk_runOpenPanel(WKPageRef, WKFrameRef, WKOpenPanelParametersRef p
         for (unsigned i = 0; wkSelectedFileNames.size(); ++i)
             selectedFileNames += wkSelectedFileNames.at(i);
 
-    QtViewInterface::FileChooserType allowMultipleFiles = WKOpenPanelParametersGetAllowsMultipleFiles(parameters) ? QtViewInterface::MultipleFilesSelection : QtViewInterface::SingleFileSelection;
-    toQtViewInterface(clientInfo)->chooseFiles(listener, selectedFileNames, allowMultipleFiles);
+    QtWebPageProxy::FileChooserType allowMultipleFiles = WKOpenPanelParametersGetAllowsMultipleFiles(parameters) ? QtWebPageProxy::MultipleFilesSelection : QtWebPageProxy::SingleFileSelection;
+    toQtWebPageProxy(clientInfo)->chooseFiles(listener, selectedFileNames, allowMultipleFiles);
 }
 
 static void qt_wk_mouseDidMoveOverElement(WKPageRef page, WKHitTestResultRef hitTestResult, WKEventModifiers modifiers, WKTypeRef userData, const void* clientInfo)
 {
     const QUrl absoluteLinkUrl = WKURLCopyQUrl(WKHitTestResultCopyAbsoluteLinkURL(hitTestResult));
     const QString linkTitle = WKStringCopyQString(WKHitTestResultCopyLinkTitle(hitTestResult));
-    toQtViewInterface(clientInfo)->didMouseMoveOverElement(absoluteLinkUrl, linkTitle);
+    toQtWebPageProxy(clientInfo)->didMouseMoveOverElement(absoluteLinkUrl, linkTitle);
 }
 
 static Qt::MouseButton toQtMouseButton(WKEventMouseButton button)
@@ -333,7 +326,7 @@ void setupPageUiClient(QtWebPageProxy* qtWebPageProxy, WebPageProxy* webPageProx
     WKPageUIClient uiClient;
     memset(&uiClient, 0, sizeof(WKPageUIClient));
     uiClient.version = kWKPageUIClientCurrentVersion;
-    uiClient.clientInfo = qtWebPageProxy->viewInterface();
+    uiClient.clientInfo = qtWebPageProxy;
     uiClient.runJavaScriptAlert = qt_wk_runJavaScriptAlert;
     uiClient.runJavaScriptConfirm = qt_wk_runJavaScriptConfirm;
     uiClient.runJavaScriptPrompt = qt_wk_runJavaScriptPrompt;

@@ -30,10 +30,6 @@ class QQuickWebViewExperimental;
 class QWebDownloadItem;
 class QWebPreferences;
 
-namespace WebKit {
-class QtViewInterface;
-}
-
 namespace WTR {
 class PlatformWebView;
 }
@@ -133,7 +129,6 @@ private:
     QQuickWebViewExperimental* m_experimental;
 
     friend class QtWebPageProxy;
-    friend class WebKit::QtViewInterface;
     friend class WTR::PlatformWebView;
     friend class QQuickWebViewExperimental;
 };
