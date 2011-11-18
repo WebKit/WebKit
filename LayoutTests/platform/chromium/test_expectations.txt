@@ -1144,10 +1144,6 @@ BUGCR10315 WIN : fast/encoding/invalid-UTF-8.html = IMAGE+TEXT
 // recorded will not be called.
 BUGCR24209 : fast/js/pic/cached-prototype-setter.html = FAIL
 
-// We have the wrong shadow for "This".
-// It appears we're not obeying the "transparent" fill color.
-BUGCR10317 LINUX : fast/css/shadow-multiple.html = FAIL
-
 // We're much closer now. To fully pass this we need encoders for jpg
 // and gif, which is a low priority.
 BUGCR10318 : fast/canvas/toDataURL-supportedTypes.html = FAIL
@@ -1340,7 +1336,6 @@ BUGCR23488 LEOPARD RELEASE : fast/backgrounds/size/backgroundSize15.html = IMAGE
 BUGCR23488 SLOW LEOPARD DEBUG : fast/backgrounds/size/backgroundSize15.html = IMAGE
 BUGCR23488 LEOPARD : fast/block/float/float-avoidance.html = IMAGE
 BUGCR23488 MAC : fast/canvas/canvas-incremental-repaint-2.html = IMAGE
-BUGCR23488 LEOPARD : fast/css/shadow-multiple.html = IMAGE
 BUGCR23488 LEOPARD : fast/frames/content-opacity-1.html = IMAGE
 BUGCR23488 LEOPARD : fast/frames/content-opacity-2.html = IMAGE
 BUGCR23488 MAC : fast/layers/add-layer-with-nested-stacking.html = IMAGE
@@ -1764,12 +1759,12 @@ BUGCR28005 LINUX WIN : fast/css/color-correction-on-backgrounds.html = IMAGE+TEX
 BUGCR28005 LINUX WIN : fast/css/color-correction-on-text.html = IMAGE+TEXT
 BUGCR28005 LINUX WIN : fast/css/color-correction.html = IMAGE+TEXT
 BUGCR28005 LINUX WIN : fast/css/color-correction-on-box-shadow.html = IMAGE+TEXT
+BUGCR28005 MAC CPU : fast/css/color-correction-on-box-shadow.html = IMAGE
 BUGCR28005 LINUX WIN : fast/css/color-correction-on-text-shadow.html = IMAGE+TEXT
+BUGCR28005 MAC CPU : fast/css/color-correction-on-text-shadow.html = IMAGE
 BUGCR28005 LINUX WIN : fast/css/color-correction-on-background-image.html = FAIL
 BUGCR28005 LINUX WIN : fast/css/color-correction-untagged-images.html = IMAGE+TEXT
 
-// May also be related to r50760, but not as confident.
-BUGCR27551 WIN : fast/css/shadow-multiple.html = IMAGE
 
 // WebKit merge 50756:50820, possibly due to WebKit r50808/r50786 and Chromium r31715
 BUGCR27553 WIN : fast/text/atsui-partial-selection.html = IMAGE
@@ -2737,7 +2732,7 @@ BUGWK54322 SNOWLEOPARD : fast/replaced/width100percent-textarea.html = IMAGE
 BUGWK54322 SNOWLEOPARD : fast/text/international/pop-up-button-text-alignment-and-direction.html = IMAGE
 BUGWK54322 SNOWLEOPARD : fast/text/international/text-combine-image-test.html = IMAGE
 BUGWK54322 SNOWLEOPARD : fonts/monospace.html = IMAGE
-BUGWK54322 SNOWLEOPARD DEBUG SLOW : http/tests/misc/acid3.html = IMAGE+TEXT // See "SVG tests" section too
+BUGWK54322 SNOWLEOPARD DEBUG SLOW REBASELINE : http/tests/misc/acid3.html = IMAGE
 BUGWK54322 SNOWLEOPARD : svg/custom/animate-path-discrete.svg = IMAGE
 BUGWK54322 SNOWLEOPARD : svg/W3C-SVG-1.1/coords-viewattr-01-b.svg = IMAGE+TEXT
 BUGWK54322 SNOWLEOPARD : svg/zoom/text/zoom-coords-viewattr-01-b.svg = IMAGE+TEXT
@@ -3041,7 +3036,6 @@ BUGDPRANKE : fast/parser/javascript-url-compat-mode.html = PASS TEXT
 
 BUGCR80301 LEOPARD : fast/canvas/canvas-largedraws.html = TIMEOUT
 
-BUGWK60115 LINUX WIN : fast/multicol/shadow-breaking.html = IMAGE
 BUGWK60115 LEOPARD : fast/text/shadow-translucent-fill.html = IMAGE
 BUGWK60115 MAC CPU-CG : fast/transforms/shadows.html = PASS IMAGE
 BUGWK60115 WIN : svg/css/composite-shadow-text.svg = IMAGE
@@ -3091,7 +3085,6 @@ BUGDPRANKE DEBUG : http/tests/misc/window-dot-stop.html = PASS TEXT
 // flakiness on the deps bots (noted r~83476)
 BUGWK60105 LINUX WIN DEBUG : fast/css/empty-pseudo-class.html = PASS TEXT
 
-BUGWK59782 LINUX WIN : fast/box-shadow/single-pixel-shadow.html = IMAGE
 
 // New test added in r85303.
 BUG_HCLAM : compositing/masks/layer-mask-placement.html = IMAGE
@@ -3397,7 +3390,6 @@ BUGWK67915 LINUX WIN : fast/borders/borderRadiusDashed06.html = IMAGE
 // Introduced in r92298, which might cause another test crashing.
 BUGZMO SKIP : fast/loader/reload-zero-byte-plugin.html = FAIL
 
-BUGWK65666 LINUX WIN : fast/box-shadow/box-shadow-clipped-slices.html = IMAGE
 
 // These tests were disabled and re-enabled in r92545 and r92550.
 // Unfortunately they are failing for us.
