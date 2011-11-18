@@ -3914,6 +3914,7 @@ BUGWK72598 : css3/images/cross-fade-blending.html = IMAGE
 
 BUGWK72622 WIN DEBUG : http/tests/inspector/resource-tree/resource-tree-no-xhrs.html = MISSING PASS TEXT
 
+BUGWK72631 LINUX : fast/filesystem/file-writer-abort.html = CRASH PASS
 BUGWK72631 WIN DEBUG : fast/filesystem/file-writer-abort-depth.html = CRASH PASS
 
 BUGWK72651 LINUX DEBUG : http/tests/inspector/styles/styles-redirected-css.html = CRASH PASS
