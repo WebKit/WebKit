@@ -597,9 +597,6 @@ void ScrollAnimatorChromiumMac::immediateScrollToPoint(const FloatPoint& newPosi
 {
     FloatPoint adjustedPosition = adjustScrollPositionIfNecessary(newPosition);
  
-    if (adjustedPosition.x() == m_currentPosX && adjustedPosition.y() == m_currentPosY)
-        return;
-    
     m_currentPosX = adjustedPosition.x();
     m_currentPosY = adjustedPosition.y();
     notifyPositionChanged();

@@ -1,3 +1,21 @@
+2011-11-18  Xiaomei Ji  <xji@chromium.org>
+
+        REGRESSION: rtl horizontal scrollbar / resize bug - Body shifts on resize when scrolled all the way to the left
+        https://bugs.webkit.org/show_bug.cgi?id=70395
+
+        Reviewed by Tony Chang.
+
+        This patch fixes the problem in Mac and Chromium Mac.
+   
+        The existing test fast/dom/rtl-scroll-to-leftmost-and-resize.html seems does not really work in Mac DRT
+        (the browswer window is not resized). It works in Chromium-Mac. And Chromium-Mac's code
+        is forked from Mac.
+
+        * platform/chromium/ScrollAnimatorChromiumMac.mm:
+        (WebCore::ScrollAnimatorChromiumMac::immediateScrollToPoint):
+        * platform/mac/ScrollAnimatorMac.mm:
+        (WebCore::ScrollAnimatorMac::immediateScrollToPoint):
+
 2011-11-18  Martin Robinson  <mrobinson@igalia.com>
 
         REGRESSION (r99924): broke 2 pasteboard tests on GTK
