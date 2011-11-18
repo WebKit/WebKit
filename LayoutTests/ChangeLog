@@ -1,3 +1,19 @@
+2011-11-10  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG byte array support sometimes clamps values incorrectly
+        https://bugs.webkit.org/show_bug.cgi?id=71975
+
+        Reviewed by Oliver Hunt.
+        
+        Added a test for byte arrays, and fixed a small bug in dfg-min-max.js.
+
+        * fast/js/dfg-byte-array-put-expected.txt: Added.
+        * fast/js/dfg-byte-array-put.html: Added.
+        * fast/js/script-tests/dfg-byte-array-put.js: Added.
+        (doPut):
+        (doGet):
+        * fast/js/script-tests/dfg-min-max.js:
+
 2011-10-21  Lucas Forschler  <lforschler@apple.com>
 
     Merge 98060
