@@ -80,6 +80,7 @@ class LeakDetector(object):
             callstacks += [
                 "FigByteFlumeCustomURLCreateWithURL", # <rdar://problem/10461926> leak in CoreMedia
                 "PDFPage\(PDFPageInternal\) pageLayoutIfAvail", # <rdar://problem/10462055> leak in PDFKit
+                "SecTransformExecute", # <rdar://problem/10470667> leak in Security.framework
                 "_NSCopyStyleRefForFocusRingStyleClip", # <rdar://problem/10462031> leak in AppKit
             ]
         return callstacks
