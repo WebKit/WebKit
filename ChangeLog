@@ -1,5 +1,12 @@
 2011-11-18  Simon Hausmann  <simon.hausmann@nokia.com>
 
+        [Qt] Unreviewed build fix: Export QQuickWebPage/Preferences private API
+        needed for the qml plugin.
+
+        * Source/qtwebkit-export.map:
+
+2011-11-18  Simon Hausmann  <simon.hausmann@nokia.com>
+
         [Qt] Unreviewed build fix: Export QQuickWebViewExperimental private API
         that was added since I made the export patch.
 

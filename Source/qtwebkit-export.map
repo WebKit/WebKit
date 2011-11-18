@@ -111,6 +111,15 @@ qwk_1.0 {
         *QQuickWebViewExperimental;
         non-virtual?thunk?to?QQuickWebViewExperimental*;
         QQuickWebViewExperimental::*;
+        *QWebPreferences;
+        non-virtual?thunk?to?QWebPreferences*;
+        QWebPreferences::*;
+        *QWebDownloadItem;
+        non-virtual?thunk?to?QWebDownloadItem*;
+        QWebDownloadItem::*;
+        *QQuickWebPage;
+        non-virtual?thunk?to?QQuickWebPage*;
+        QQuickWebPage::*;
 
         # WebKit 2 C API mangled in C++
         WKStringCopyQString*;
