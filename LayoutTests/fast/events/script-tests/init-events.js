@@ -130,17 +130,6 @@ shouldBe("testInitEvent('Mutation', '\"a\", false, false, null, \"b\", \"c\", \"
 shouldBe("testInitEvent('Mutation', '\"a\", false, false, null, \"b\", \"c\", null, 1001').attrName", "'null'");
 shouldBe("testInitEvent('Mutation', '\"a\", false, false, null, \"b\", \"c\", \"d\", 1001').attrChange", "1001");
 
-shouldBe("testInitEvent('Progress', '\"a\", false, false, false, 1001, 1002').type", "'a'");
-shouldBe("testInitEvent('Progress', 'null, false, false, false, 1001, 1002').type", "'null'");
-shouldBe("testInitEvent('Progress', '\"a\", false, false, false, 1001, 1002').bubbles", "false");
-shouldBe("testInitEvent('Progress', '\"a\", true, false, false, 1001, 1002').bubbles", "true");
-shouldBe("testInitEvent('Progress', '\"a\", false, false, false, 1001, 1002').cancelable", "false");
-shouldBe("testInitEvent('Progress', '\"a\", false, true, false, 1001, 1002').cancelable", "true");
-shouldBe("testInitEvent('Progress', '\"a\", false, false, false, 1001, 1002').lengthComputable", "false");
-shouldBe("testInitEvent('Progress', '\"a\", false, false, true, 1001, 1002').lengthComputable", "true");
-shouldBe("testInitEvent('Progress', '\"a\", false, false, false, 1001, 1002').loaded", "1001");
-shouldBe("testInitEvent('Progress', '\"a\", false, false, false, 1001, 1002').total", "1002");
-
 shouldBe("testInitEvent('Storage', '\"a\", false, false, \"b\", \"c\", \"d\", \"e\"').type", "'a'");
 shouldBe("testInitEvent('Storage', 'null, false, false, \"b\", \"c\", \"d\", \"e\"').type", "'null'");
 shouldBe("testInitEvent('Storage', '\"a\", false, false, \"b\", \"c\", \"d\", \"e\"').bubbles", "false");

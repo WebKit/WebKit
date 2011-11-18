@@ -60,19 +60,6 @@ ProgressEvent::ProgressEvent(const AtomicString& type, bool lengthComputable, un
 {
 }
     
-void ProgressEvent::initProgressEvent(const AtomicString& typeArg, bool canBubbleArg, bool cancelableArg,
-    bool lengthComputableArg, unsigned long long loadedArg, unsigned long long totalArg)
-{    
-    if (dispatched())
-        return;
-
-    initEvent(typeArg, canBubbleArg, cancelableArg);
-
-    m_lengthComputable = lengthComputableArg;
-    m_loaded = loadedArg;
-    m_total = totalArg;
-}
-
 const AtomicString& ProgressEvent::interfaceName() const
 {
     return eventNames().interfaceForProgressEvent;

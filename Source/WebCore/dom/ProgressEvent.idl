@@ -31,13 +31,6 @@ module events {
         readonly attribute [InitializedByConstructor] boolean lengthComputable;
         readonly attribute [InitializedByConstructor] unsigned long long loaded;
         readonly attribute [InitializedByConstructor] unsigned long long total;
-
-        void initProgressEvent(in [Optional=CallWithDefaultValue] DOMString typeArg,
-                               in [Optional=CallWithDefaultValue] boolean canBubbleArg,
-                               in [Optional=CallWithDefaultValue] boolean cancelableArg,
-                               in [Optional=CallWithDefaultValue] boolean lengthComputableArg, 
-                               in [Optional=CallWithDefaultValue] unsigned long long loadedArg, 
-                               in [Optional=CallWithDefaultValue] unsigned long long totalArg);
     };
 
 }

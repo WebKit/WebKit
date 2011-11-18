@@ -52,9 +52,6 @@ eventPhase : '2'
 initEvent : 'function initEvent() {
     [native code]
 }'
-initProgressEvent : 'function initProgressEvent() {
-    [native code]
-}'
 lengthComputable : 'false'
 loaded : '0'
 position : '0'

@@ -301,11 +301,6 @@ shouldBe("nonNumericPolicy('document.createNodeIterator(document, x, null, false
 
 shouldBe("nonNumericPolicy('document.getElementsByTagName(\"div\").item(x)')", "'any type allowed'");
 
-// ProgressEvent
-
-shouldBe("nonNumericPolicy('document.createEvent(\"ProgressEvent\").initProgressEvent(\"a\", false, false, false, x, 0)')", "'any type allowed'");
-shouldBe("nonNumericPolicy('document.createEvent(\"ProgressEvent\").initProgressEvent(\"a\", false, false, false, 0, x)')", "'any type allowed'");
-
 // Range
 
 shouldBe("nonNumericPolicy('document.createRange().setStart(document, x)')", "'any type allowed'");

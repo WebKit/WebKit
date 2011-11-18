@@ -1,3 +1,19 @@
+2011-11-17  Kaustubh Atrawalkar  <kaustubh@motorola.com>
+
+        Remove initProgressEvent method
+        https://bugs.webkit.org/show_bug.cgi?id=71340
+
+        Reviewed by Adam Barth.
+
+        This method has been removed from the spec draft.
+        http://www.w3.org/TR/progress-events/#interface-progressevent
+
+        No new tests. Removed method.
+
+        * dom/ProgressEvent.cpp:
+        * dom/ProgressEvent.h:
+        * dom/ProgressEvent.idl:
+
 2011-11-17  Eunmi Lee  <eunmi15.lee@samsung.com>
 
         [EFL] Move keyIdentifierForEvasKeyName() and windowsKeyCodeForEvasKeyName() to the

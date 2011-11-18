@@ -53,9 +53,6 @@ public:
         return adoptRef(new ProgressEvent(type, initializer));
     }
 
-    void initProgressEvent(const AtomicString& typeArg, bool canBubbleArg, bool cancelableArg,
-        bool lengthComputableArg, unsigned long long loadedArg, unsigned long long totalArg);
-
     bool lengthComputable() const { return m_lengthComputable; }
     unsigned long long loaded() const { return m_loaded; }
     unsigned long long total() const { return m_total; }

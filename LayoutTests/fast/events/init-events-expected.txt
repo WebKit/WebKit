@@ -116,16 +116,6 @@ PASS testInitEvent('Mutation', '"a", false, false, null, "b", null, "d", 1001').
 PASS testInitEvent('Mutation', '"a", false, false, null, "b", "c", "d", 1001').attrName is 'd'
 PASS testInitEvent('Mutation', '"a", false, false, null, "b", "c", null, 1001').attrName is 'null'
 PASS testInitEvent('Mutation', '"a", false, false, null, "b", "c", "d", 1001').attrChange is 1001
-PASS testInitEvent('Progress', '"a", false, false, false, 1001, 1002').type is 'a'
-PASS testInitEvent('Progress', 'null, false, false, false, 1001, 1002').type is 'null'
-PASS testInitEvent('Progress', '"a", false, false, false, 1001, 1002').bubbles is false
-PASS testInitEvent('Progress', '"a", true, false, false, 1001, 1002').bubbles is true
-PASS testInitEvent('Progress', '"a", false, false, false, 1001, 1002').cancelable is false
-PASS testInitEvent('Progress', '"a", false, true, false, 1001, 1002').cancelable is true
-PASS testInitEvent('Progress', '"a", false, false, false, 1001, 1002').lengthComputable is false
-PASS testInitEvent('Progress', '"a", false, false, true, 1001, 1002').lengthComputable is true
-PASS testInitEvent('Progress', '"a", false, false, false, 1001, 1002').loaded is 1001
-PASS testInitEvent('Progress', '"a", false, false, false, 1001, 1002').total is 1002
 PASS testInitEvent('Storage', '"a", false, false, "b", "c", "d", "e"').type is 'a'
 PASS testInitEvent('Storage', 'null, false, false, "b", "c", "d", "e"').type is 'null'
 PASS testInitEvent('Storage', '"a", false, false, "b", "c", "d", "e"').bubbles is false
