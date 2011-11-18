@@ -27,6 +27,7 @@
 #include <QScrollEvent>
 #include <QScrollPrepareEvent>
 #include <QScrollerProperties>
+#include <QWheelEvent>
 #include <QtDeclarative/qquickitem.h>
 
 namespace WebKit {
@@ -213,6 +214,35 @@ static inline QPointF boundPosition(const QPointF minPosition, const QPointF& po
 {
     return QPointF(qBound(minPosition.x(), position.x(), maxPosition.x()),
                    qBound(minPosition.y(), position.y(), maxPosition.y()));
+}
+
+void QtViewportInteractionEngine::wheelEvent(QWheelEvent* ev)
+{
+    if (scrollAnimationActive() || scaleAnimationActive() || pinchGestureActive())
+        return; // Ignore.
+
+    int delta = ev->delta();
+    QPointF newPos = -m_content->pos();
+
+    // A delta that is not mod 120 indicates a device that is sending
+    // fine-resolution scroll events, so use the delta as number of wheel ticks
+    // and number of pixels to scroll. See also webkit.org/b/29601
+    bool fullTick = !(delta % 120);
+
+    static const int cDefaultQtScrollStep = 20;
+    static const int wheelScrollLines = 3;
+    int scrollLines = (fullTick) ? wheelScrollLines * cDefaultQtScrollStep : 1;
+
+    delta = (fullTick) ? delta / 120.0f : delta;
+    delta *= scrollLines;
+
+    if (ev->orientation() == Qt::Horizontal)
+        newPos.rx() += delta;
+    else
+        newPos.ry() += delta;
+
+    QRectF endPosRange = computePosRangeForItemAtScale(m_content->scale());
+    m_content->setPos(-boundPosition(endPosRange.topLeft(), newPos, endPosRange.bottomRight()));
 }
 
 void QtViewportInteractionEngine::pagePositionRequest(const QPoint& pagePosition)

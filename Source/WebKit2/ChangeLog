@@ -1,3 +1,16 @@
+2011-11-18  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        [Qt] Support wheel event together with resizesToContents
+
+        Reviewed by Simon Hausmann.
+
+        * UIProcess/API/qt/qquickwebpage.cpp:
+        * UIProcess/qt/QtViewportInteractionEngine.cpp:
+        (WebKit::QtViewportInteractionEngine::wheelEvent):
+        * UIProcess/qt/QtViewportInteractionEngine.h:
+        * UIProcess/qt/QtWebPageProxy.cpp:
+        (QtWebPageProxy::handleWheelEvent):
+
 2011-11-18  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt][WK2] Layer violation: WebPopupMenuProxyQtDesktop.cpp uses files from WebKit/qt

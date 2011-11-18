@@ -33,6 +33,7 @@
 QT_BEGIN_NAMESPACE
 class QPointF;
 class QQuickItem;
+class QWheelEvent;
 QT_END_NAMESPACE
 
 namespace WebKit {
@@ -70,6 +71,7 @@ public:
     void setItemRectVisible(const QRectF&);
     void animateItemRectVisible(const QRectF&);
 
+    void wheelEvent(QWheelEvent*);
     void pagePositionRequest(const QPoint& pos);
 
     bool scrollAnimationActive() const;

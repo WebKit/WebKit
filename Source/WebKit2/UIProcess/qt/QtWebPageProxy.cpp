@@ -269,6 +269,8 @@ bool QtWebPageProxy::handleMouseDoubleClickEvent(QMouseEvent* ev)
 bool QtWebPageProxy::handleWheelEvent(QWheelEvent* ev)
 {
     m_webPageProxy->handleWheelEvent(NativeWebWheelEvent(ev));
+    // FIXME: Handle whether the page used the wheel event or not.
+    m_interactionEngine->wheelEvent(ev);
     return ev->isAccepted();
 }
 
