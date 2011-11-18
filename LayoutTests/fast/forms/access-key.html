@@ -25,6 +25,8 @@ function test()
         pressKey("a");
         pressKey("b");
         pressKey("c");
+        pressKey("d");
+        pressKey("e");
     }
 }
 </script>
@@ -49,6 +51,8 @@ function test()
     <area accesskey="c" shape="rect" coords="6,0,10,10" alt="" href="#" onfocus="log('c area 2 focussed')" onclick="log('c area 2 clicked')">
 </map>
 <img usemap="#mymap" alt="pic" src="#" height="10" width="10">
+<select accesskey="d" onfocus="log('d select focussed')" onclick="log('d select clicked')"></select>
+<textarea accesskey="e" onfocus="log('e textarea focussed')" onclick="log('e textarea clicked')"></textarea>
 </p>
 <hr>
 <ol id="console"></ol>

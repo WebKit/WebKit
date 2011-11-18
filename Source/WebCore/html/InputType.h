@@ -184,7 +184,7 @@ public:
     virtual bool isKeyboardFocusable() const;
     virtual bool shouldUseInputMethod() const;
     virtual void handleBlurEvent();
-    virtual void accessKeyAction(bool sendToAnyElement);
+    virtual void accessKeyAction(bool sendMouseEvents);
     virtual bool canBeSuccessfulSubmitButton();
 
 

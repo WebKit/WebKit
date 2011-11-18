@@ -74,7 +74,7 @@ public:
 
     void click();
 
-    virtual void accessKeyAction(bool sendToAnyElement);
+    virtual void accessKeyAction(bool sendMouseEvents);
 
     bool ieForbidsInsertHTML() const;
 

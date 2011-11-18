@@ -53,7 +53,7 @@ private:
     virtual bool isActivatedSubmit() const;
     virtual void setActivatedSubmit(bool flag);
 
-    virtual void accessKeyAction(bool sendToAnyElement);
+    virtual void accessKeyAction(bool sendMouseEvents);
     virtual bool isURLAttribute(Attribute*) const;
 
     virtual bool canStartSelection() const { return false; }

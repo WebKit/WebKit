@@ -347,10 +347,10 @@ void HTMLSelectElement::optionElementChildrenChanged()
         renderer()->document()->axObjectCache()->childrenChanged(renderer());
 }
 
-void HTMLSelectElement::accessKeyAction(bool sendToAnyElement)
+void HTMLSelectElement::accessKeyAction(bool sendMouseEvents)
 {
     focus();
-    dispatchSimulatedClick(0, sendToAnyElement);
+    dispatchSimulatedClick(0, sendMouseEvents);
 }
 
 void HTMLSelectElement::setMultiple(bool multiple)

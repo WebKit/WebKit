@@ -85,13 +85,13 @@ bool BaseCheckableInputType::canSetStringValue() const
 }
 
 // FIXME: Could share this with BaseButtonInputType and RangeInputType if we had a common base class.
-void BaseCheckableInputType::accessKeyAction(bool sendToAnyElement)
+void BaseCheckableInputType::accessKeyAction(bool sendMouseEvents)
 {
-    InputType::accessKeyAction(sendToAnyElement);
+    InputType::accessKeyAction(sendMouseEvents);
 
-    // Send mouse button events if the caller specified sendToAnyElement.
+    // Send mouse button events if the caller specified sendMouseEvents.
     // FIXME: The comment above is no good. It says what we do, but not why.
-    element()->dispatchSimulatedClick(0, sendToAnyElement);
+    element()->dispatchSimulatedClick(0, sendMouseEvents);
 }
 
 String BaseCheckableInputType::fallbackValue() const

@@ -1,3 +1,61 @@
+2011-11-18  Vineet Chaudhary  <vineet.chaudhary@motorola.com>
+
+        Access key should work on all elements.
+        https://bugs.webkit.org/show_bug.cgi?id=71854
+
+        Reviewed by Ryosuke Niwa.
+
+        All HTML elements can have the accesskey content attribute set.
+        Specification http://dev.w3.org/html5/spec/Overview.html#the-accesskey-attribute
+        Adding "accessKey" attribute to HTMLElement.idl file as [Reflect].
+
+        Test: fast/forms/access-key-for-all-elements.html
+
+        * bindings/objc/PublicDOMInterfaces.h: Moved properties form subclass to base class.
+        * html/BaseButtonInputType.cpp: 
+        (WebCore::BaseButtonInputType::accessKeyAction): Renamed variable sendToAnyElement to sendMouseEvents.
+        * html/BaseButtonInputType.h: Ditto
+        * html/BaseCheckableInputType.cpp:
+        (WebCore::BaseCheckableInputType::accessKeyAction): Ditto
+        * html/BaseCheckableInputType.h: Ditto
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::accessKeyAction): Ditto
+        * html/HTMLAnchorElement.h: Ditto
+        * html/HTMLAnchorElement.idl: Removed redundant IDL attribute entries.
+        * html/HTMLAreaElement.idl: Removed redundant IDL attribute entries.
+        * html/HTMLButtonElement.cpp:
+        (WebCore::HTMLButtonElement::accessKeyAction): Renamed variable sendToAnyElement to sendMouseEvents.
+        * html/HTMLButtonElement.h: Ditto
+        * html/HTMLButtonElement.idl: Removed redundant IDL attribute entries.
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::accessKeyAction): Renamed variable sendToAnyElement to sendMouseEvents.
+        If the element does not have a defined activation behavior, fire a click event at the element.
+        * html/HTMLElement.h: Ditto
+        * html/HTMLElement.idl: Added accessKey IDL attribute.
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::accessKeyAction): Renamed variable sendToAnyElement to sendMouseEvents.
+        * html/HTMLInputElement.h: Ditto
+        * html/HTMLInputElement.idl: Removed redundant IDL attribute entries.
+        * html/HTMLLabelElement.cpp:
+        (WebCore::HTMLLabelElement::accessKeyAction): Renamed variable sendToAnyElement to sendMouseEvents.
+        * html/HTMLLabelElement.h: Ditto
+        * html/HTMLLabelElement.idl: Removed redundant IDL attribute entries.
+        * html/HTMLLegendElement.cpp:
+        (WebCore::HTMLLegendElement::accessKeyAction): Renamed variable sendToAnyElement to sendMouseEvents.
+        * html/HTMLLegendElement.h: Ditto
+        * html/HTMLLegendElement.idl: Removed redundant IDL attribute entries.
+        * html/HTMLOptGroupElement.h: Renamed variable sendToAnyElement to sendMouseEvents.
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::accessKeyAction): Ditto
+        * html/HTMLSelectElement.h: Ditto
+        * html/HTMLTextAreaElement.h: Ditto
+        * html/HTMLTextAreaElement.idl: Removed redundant IDL attribute entries.
+        * html/HiddenInputType.h: Renamed variable sendToAnyElement to sendMouseEvents.
+        * html/InputType.h: Ditto
+        * html/RangeInputType.cpp:
+        (WebCore::RangeInputType::accessKeyAction): Ditto
+        * html/RangeInputType.h: Ditto
+
 2011-11-18  Simon Fraser  <simon.fraser@apple.com>
 
         Appearance of compound transform animations under apps linked on SnowLeopard is incorrect

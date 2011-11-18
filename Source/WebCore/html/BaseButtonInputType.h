@@ -46,7 +46,7 @@ private:
     virtual void handleKeypressEvent(KeyboardEvent*);
     virtual void handleKeyupEvent(KeyboardEvent*);
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*) const;
-    virtual void accessKeyAction(bool sendToAnyElement);
+    virtual void accessKeyAction(bool sendMouseEvents);
     virtual bool storesValueSeparateFromAttribute();
     virtual void setValue(const String&, bool, bool);
 };

@@ -25,7 +25,6 @@ module html {
         attribute [ConvertNullToNullString] DOMString defaultValue;
         readonly attribute HTMLFormElement form;
         readonly attribute ValidityState validity;
-        attribute [Reflect] DOMString accessKey;
         attribute long cols;
         attribute [Reflect] boolean disabled;
         attribute [Reflect] boolean autofocus;

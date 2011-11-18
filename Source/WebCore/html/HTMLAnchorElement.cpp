@@ -230,10 +230,10 @@ void HTMLAnchorElement::parseMappedAttribute(Attribute* attr)
         HTMLElement::parseMappedAttribute(attr);
 }
 
-void HTMLAnchorElement::accessKeyAction(bool sendToAnyElement)
+void HTMLAnchorElement::accessKeyAction(bool sendMouseEvents)
 {
-    // send the mouse button events if the caller specified sendToAnyElement
-    dispatchSimulatedClick(0, sendToAnyElement);
+    // send the mouse button events if the caller specified sendMouseEvents
+    dispatchSimulatedClick(0, sendMouseEvents);
 }
 
 bool HTMLAnchorElement::isURLAttribute(Attribute *attr) const

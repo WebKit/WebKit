@@ -40,7 +40,7 @@ private:
 
     virtual bool isFocusable() const;
 
-    virtual void accessKeyAction(bool sendToAnyElement);
+    virtual void accessKeyAction(bool sendMouseEvents);
 
     // Overridden to update the hover/active state of the corresponding control.
     virtual void setActive(bool = true, bool pause = false);

@@ -22,7 +22,6 @@ module html {
 
     interface HTMLLegendElement : HTMLElement {
         readonly attribute HTMLFormElement form;
-        attribute [Reflect] DOMString accessKey;
         attribute [Reflect] DOMString align;
     };
 

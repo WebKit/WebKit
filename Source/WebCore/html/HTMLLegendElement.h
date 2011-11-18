@@ -40,7 +40,7 @@ private:
 
     virtual bool supportsFocus() const;
     virtual const AtomicString& formControlType() const;
-    virtual void accessKeyAction(bool sendToAnyElement);
+    virtual void accessKeyAction(bool sendMouseEvents);
     virtual void focus(bool restorePreviousSelection = true);
 };
 

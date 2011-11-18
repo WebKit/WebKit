@@ -47,7 +47,7 @@ private:
     virtual bool appendFormData(FormDataList&, bool) const;
     virtual void handleKeypressEvent(KeyboardEvent*);
     virtual bool canSetStringValue() const;
-    virtual void accessKeyAction(bool sendToAnyElement);
+    virtual void accessKeyAction(bool sendMouseEvents);
     virtual String fallbackValue() const OVERRIDE;
     virtual bool storesValueSeparateFromAttribute();
     virtual void setValue(const String&, bool, bool);

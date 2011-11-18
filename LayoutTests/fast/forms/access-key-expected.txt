@@ -5,7 +5,7 @@ If this test passes you should see 1 - 9 and a, b and c clicked or focussed.
      
 
 
-   
+     
 1 button focussed
 1 button clicked
 2 input type button focussed
@@ -23,3 +23,6 @@ If this test passes you should see 1 - 9 and a, b and c clicked or focussed.
 a input type associated to label closed before input focussed
 b area 1 clicked
 c area 2 clicked
+d select focussed
+d select clicked
+e textarea focussed

@@ -104,7 +104,7 @@ private:
     virtual bool isKeyboardFocusable(KeyboardEvent*) const;
     virtual void defaultEventHandler(Event*);
     virtual void setActive(bool active = true, bool pause = false);
-    virtual void accessKeyAction(bool fullAction);
+    virtual void accessKeyAction(bool sendMouseEvents);
     virtual bool isURLAttribute(Attribute*) const;
     virtual bool canStartSelection() const;
     virtual String target() const;

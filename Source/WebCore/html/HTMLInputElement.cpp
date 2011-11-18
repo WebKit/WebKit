@@ -699,9 +699,9 @@ bool HTMLInputElement::canHaveSelection() const
     return isTextField();
 }
 
-void HTMLInputElement::accessKeyAction(bool sendToAnyElement)
+void HTMLInputElement::accessKeyAction(bool sendMouseEvents)
 {
-    m_inputType->accessKeyAction(sendToAnyElement);
+    m_inputType->accessKeyAction(sendMouseEvents);
 }
 
 bool HTMLInputElement::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const

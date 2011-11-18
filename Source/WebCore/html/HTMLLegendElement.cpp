@@ -87,10 +87,10 @@ void HTMLLegendElement::focus(bool)
         control->focus(false);
 }
 
-void HTMLLegendElement::accessKeyAction(bool sendToAnyElement)
+void HTMLLegendElement::accessKeyAction(bool sendMouseEvents)
 {
     if (HTMLFormControlElement* control = associatedControl())
-        control->accessKeyAction(sendToAnyElement);
+        control->accessKeyAction(sendMouseEvents);
 }
     
 } // namespace

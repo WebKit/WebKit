@@ -74,7 +74,7 @@ public:
 
     const Vector<HTMLElement*>& listItems() const;
 
-    virtual void accessKeyAction(bool sendToAnyElement);
+    virtual void accessKeyAction(bool sendMouseEvents);
     void accessKeySetSelectedIndex(int);
 
     void setMultiple(bool);

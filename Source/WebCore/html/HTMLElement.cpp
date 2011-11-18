@@ -774,17 +774,9 @@ void HTMLElement::click()
     dispatchSimulatedClick(0, false, false);
 }
 
-// accessKeyAction is used by the accessibility support code
-// to send events to elements that our JavaScript caller does
-// does not.  The elements JS is interested in have subclasses
-// that override this method to direct the click appropriately.
-// Here in the base class, then, we only send the click if
-// the caller wants it to go to any HTMLElement, and we say
-// to send the mouse events in addition to the click.
-void HTMLElement::accessKeyAction(bool sendToAnyElement)
+void HTMLElement::accessKeyAction(bool sendMouseEvents)
 {
-    if (sendToAnyElement)
-        dispatchSimulatedClick(0, true);
+    dispatchSimulatedClick(0, sendMouseEvents);
 }
 
 String HTMLElement::title() const

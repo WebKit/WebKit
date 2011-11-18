@@ -101,7 +101,7 @@ private:
     virtual bool isKeyboardFocusable(KeyboardEvent*) const;
     virtual void updateFocusAppearance(bool restorePreviousSelection);
 
-    virtual void accessKeyAction(bool sendToAnyElement);
+    virtual void accessKeyAction(bool sendMouseEvents);
 
     virtual bool shouldUseInputMethod();
 

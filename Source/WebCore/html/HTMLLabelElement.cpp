@@ -146,12 +146,12 @@ void HTMLLabelElement::focus(bool)
         element->focus();
 }
 
-void HTMLLabelElement::accessKeyAction(bool sendToAnyElement)
+void HTMLLabelElement::accessKeyAction(bool sendMouseEvents)
 {
     if (HTMLElement* element = control())
-        element->accessKeyAction(sendToAnyElement);
+        element->accessKeyAction(sendMouseEvents);
     else
-        HTMLElement::accessKeyAction(sendToAnyElement);
+        HTMLElement::accessKeyAction(sendMouseEvents);
 }
 
 void HTMLLabelElement::parseMappedAttribute(Attribute* attribute)

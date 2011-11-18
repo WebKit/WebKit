@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description('This test checks to see if accesskey attributes works on all elements.');
+
+function pressKey(key)
+{
+    if (/\bMac OS X\b/.test(navigator.userAgent))
+        modifiers = ["ctrlKey", "altKey"];
+    else
+        modifiers = ["altKey"];
+    eventSender.keyDown(key, modifiers);
+}
+
+var tagNames = ["a","abbr","acronym","address","applet","area","article","aside","audio","b","base","basefont","bdo","bgsound","big","blockquote",
+    "body","br","canvas","caption","center","cite","code","col","colgroup","command","datalist","dd","del","details","dfn","dir","div","dl","dt",
+    "em","embed","fieldset","figcaption","figure","font","footer","form","frame","frameset","h1","h2","h3","h4","h5","h6","head","header","hgroup","hr","html",
+    "i","iframe","img","ins","kbd","keygen","label","layer","li","link","listing","map","mark","marquee","menu","meta","meter","nav",
+    "nobr","noembed","noframes","nolayer","noscript","object","ol","output","p","param","plaintext","pre","progress","q","rp","rt","ruby","s",
+    "samp","script","section","small","source","span","strike","strong","style","sub","summary","sup","table","tbody","td","tfoot","th","thead",
+    "title","tr","track","tt","u","ul","var","video","wbr","xmp"];
+
+for (var i = 0 ; i < tagNames.length; i++) {
+    var testElement = document.createElement(tagNames[i]);
+    document.body.appendChild(testElement);
+    var clicked = false;
+    testElement.onclick = function () { clicked = true; }
+    var focused = false;
+    testElement.onfocus = function () { focused = true; }
+    debug('Check for ' + testElement.tagName + ' tag');    
+    shouldBeDefined('testElement.accessKey');
+    shouldBeTrue("testElement.accessKey ='k'; testElement.accessKey == 'k'");
+    shouldBe("pressKey(testElement.accessKey);[clicked, focused]", "[true, false]");
+    debug('');
+}
+</script>
+<script src="../js/resources/js-test-post.js"></script>
+<div id="console"></div>
+</body>
+</html>
