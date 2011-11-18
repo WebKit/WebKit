@@ -42,6 +42,7 @@ namespace WebCore {
     class IntPoint;
     class IntRect;
     class IntSize;
+    class KeyframeValueList;
     class ProtectionSpace;
     class ResourceError;
     class ResourceRequest;
@@ -273,6 +274,7 @@ template<> struct ArgumentCoder<RefPtr<WebCore::TranslateTransformOperation> > {
 
 template<> struct ArgumentCoder<RefPtr<WebCore::TimingFunction> > {
     static void encode(ArgumentEncoder*, const RefPtr<WebCore::TimingFunction>&);
+    static void encode(ArgumentEncoder*, const WebCore::TimingFunction*);
     static bool decode(ArgumentDecoder*, RefPtr<WebCore::TimingFunction>&);
 };
 
@@ -289,6 +291,13 @@ template<> struct ArgumentCoder<WebCore::TransformOperations> {
 template<> struct ArgumentCoder<WebCore::Animation> {
     static void encode(ArgumentEncoder*, const WebCore::Animation&);
     static bool decode(ArgumentDecoder*, WebCore::Animation&);
+};
+#endif
+
+#if USE(ACCELERATED_COMPOSITING)
+template<> struct ArgumentCoder<WebCore::KeyframeValueList> {
+    static void encode(ArgumentEncoder*, const WebCore::KeyframeValueList& keyframes);
+    static bool decode(ArgumentDecoder*, WebCore::KeyframeValueList& keyframes);
 };
 #endif
 

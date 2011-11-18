@@ -35,6 +35,7 @@
 #include <WebCore/Editor.h>
 #include <WebCore/FileChooser.h>
 #include <WebCore/GraphicsContext.h>
+#include <WebCore/GraphicsLayer.h>
 #include <WebCore/Image.h>
 #include <WebCore/PluginData.h>
 #include <WebCore/ProtectionSpace.h>
@@ -823,15 +824,22 @@ bool ArgumentCoder<RefPtr<TranslateTransformOperation> >::decode(ArgumentDecoder
 
 void ArgumentCoder<RefPtr<TimingFunction> >::encode(ArgumentEncoder* encoder, const RefPtr<TimingFunction>& function)
 {
-    // We don't want to encode null-references.
-    ASSERT(function);
+    encode(encoder, function.get());
+}
+
+void ArgumentCoder<RefPtr<TimingFunction> >::encode(ArgumentEncoder* encoder, const WebCore::TimingFunction* function)
+{
+    if (!function) {
+        encoder->encodeInt32(WebCore::TimingFunction::LinearFunction);
+        return;
+    }
 
     encoder->encodeEnum(function->type());
     switch (function->type()) {
     case TimingFunction::LinearFunction:
         break;
     case TimingFunction::CubicBezierFunction: {
-        CubicBezierTimingFunction* cubicFunction = static_cast<CubicBezierTimingFunction*>(function.get());
+        const WebCore::CubicBezierTimingFunction* cubicFunction = static_cast<const WebCore::CubicBezierTimingFunction*>(function);
         encoder->encodeDouble(cubicFunction->x1());
         encoder->encodeDouble(cubicFunction->y1());
         encoder->encodeDouble(cubicFunction->x2());
@@ -839,7 +847,7 @@ void ArgumentCoder<RefPtr<TimingFunction> >::encode(ArgumentEncoder* encoder, co
         break;
     }
     case TimingFunction::StepsFunction: {
-        StepsTimingFunction* stepsFunction = static_cast<StepsTimingFunction*>(function.get());
+        const WebCore::StepsTimingFunction* stepsFunction = static_cast<const WebCore::StepsTimingFunction*>(function);
         encoder->encodeInt32(stepsFunction->numberOfSteps());
         encoder->encodeBool(stepsFunction->stepAtStart());
         break;
@@ -1146,6 +1154,78 @@ bool ArgumentCoder<Animation>::decode(ArgumentDecoder* decoder, Animation& anima
 
     return true;
 }
+
+#if USE(ACCELERATED_COMPOSITING)
+
+void ArgumentCoder<KeyframeValueList>::encode(ArgumentEncoder* encoder, const WebCore::KeyframeValueList& keyframes)
+{
+    encoder->encodeUInt32(keyframes.size());
+    encoder->encodeInt32(keyframes.property());
+    for (size_t i = 0; i < keyframes.size(); ++i) {
+        const WebCore::AnimationValue* value = keyframes.at(i);
+        encoder->encodeFloat(value->keyTime());
+        ArgumentCoder<RefPtr<WebCore::TimingFunction> >::encode(encoder, value->timingFunction());
+        switch (keyframes.property()) {
+        case WebCore::AnimatedPropertyOpacity: {
+            const WebCore::FloatAnimationValue* floatValue = static_cast<const WebCore::FloatAnimationValue*>(value);
+            encoder->encodeFloat(floatValue->value());
+            break;
+        }
+        case WebCore::AnimatedPropertyWebkitTransform: {
+            const WebCore::TransformAnimationValue* transformValue = static_cast<const WebCore::TransformAnimationValue*>(value);
+            ArgumentCoder<WebCore::TransformOperations>::encode(encoder, *transformValue->value());
+            break;
+        }
+        default:
+            break;
+        }
+    }
+}
+
+bool ArgumentCoder<KeyframeValueList>::decode(ArgumentDecoder* decoder, WebCore::KeyframeValueList& keyframes)
+{
+    uint32_t size;
+    int32_t property;
+    if (!decoder->decodeUInt32(size))
+        return false;
+    if (!decoder->decodeInt32(property))
+        return false;
+
+    keyframes = WebCore::KeyframeValueList(WebCore::AnimatedPropertyID(property));
+
+    for (size_t i = 0; i < size; ++i) {
+        float keyTime;
+        RefPtr<WebCore::TimingFunction> timingFunction;
+        if (!decoder->decodeFloat(keyTime))
+            return false;
+        if (!ArgumentCoder<RefPtr<WebCore::TimingFunction> >::decode(decoder, timingFunction))
+            return false;
+
+        switch (property) {
+        case WebCore::AnimatedPropertyOpacity: {
+            float value;
+            if (!decoder->decodeFloat(value))
+                return false;
+            keyframes.insert(new WebCore::FloatAnimationValue(keyTime, value, timingFunction));
+            break;
+        }
+        case WebCore::AnimatedPropertyWebkitTransform: {
+            WebCore::TransformOperations value;
+            if (!ArgumentCoder<WebCore::TransformOperations>::decode(decoder, value))
+                return false;
+            keyframes.insert(new WebCore::TransformAnimationValue(keyTime, &value, timingFunction));
+            break;
+        }
+        default:
+            break;
+        }
+    }
+
+    return true;
+}
+
+#endif
+
 #endif
 
 } // namespace CoreIPC
