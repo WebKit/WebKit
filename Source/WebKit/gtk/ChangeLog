@@ -1,3 +1,13 @@
+2011-11-18  Martin Robinson  <mrobinson@igalia.com>
+
+        REGRESSION (r99924): broke 2 pasteboard tests on GTK
+        https://bugs.webkit.org/show_bug.cgi?id=72131
+
+        Reviewed by Tony Chang.
+
+        * WebCoreSupport/EditorClientGtk.cpp:
+        (WebKit::setSelectionPrimaryClipboardIfNeeded): Use the new clearAll method.
+
 2011-11-18  Mario Sanchez Prada  <msanchez@igalia.com>
 
         [GTK] Accessibility API tests not loading Gtk's accessibility implementation

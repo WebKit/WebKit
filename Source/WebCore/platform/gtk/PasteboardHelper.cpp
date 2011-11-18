@@ -283,7 +283,7 @@ static void clearClipboardContentsCallback(GtkClipboard* clipboard, gpointer dat
 
     // Only clear the DataObject for this clipboard if we are not currently setting it.
     if (dataObject != settingClipboardDataObject)
-        dataObject->clear();
+        dataObject->clearAll();
 
     if (!data)
         return;

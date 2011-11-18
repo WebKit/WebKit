@@ -291,7 +291,7 @@ static void setSelectionPrimaryClipboardIfNeeded(WebKitWebView* webView)
     if (!targetFrame->selection()->isRange())
         return;
 
-    dataObject->clear();
+    dataObject->clearAll();
     dataObject->setRange(targetFrame->selection()->toNormalizedRange());
 
     viewSettingClipboard = webView;

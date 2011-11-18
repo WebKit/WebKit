@@ -116,9 +116,10 @@ void ClipboardGtk::clearData(const String& typeString)
     case ClipboardDataTypeText:
         m_dataObject->clearText();
         break;
+    case ClipboardDataTypeImage:
+        m_dataObject->clearImage();
     case ClipboardDataTypeUnknown:
-    default:
-        m_dataObject->clear();
+        m_dataObject->clearAll();
     }
 
     if (m_clipboard)
@@ -131,7 +132,11 @@ void ClipboardGtk::clearAllData()
     if (policy() != ClipboardWritable)
         return;
 
-    m_dataObject->clear();
+    // We do not clear filenames. According to the spec: "The clearData() method
+    // does not affect whether any files were included in the drag, so the types
+    // attribute's list might still not be empty after calling clearData() (it would 
+    // still contain the "Files" string if any files were included in the drag)."
+    m_dataObject->clearAllExceptFilenames();
 
     if (m_clipboard)
         PasteboardHelper::defaultPasteboardHelper()->writeClipboardContents(m_clipboard);

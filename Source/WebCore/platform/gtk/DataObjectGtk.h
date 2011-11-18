@@ -59,7 +59,9 @@ public:
     void setMarkup(const String&);
     void setURIList(const String&);
     String urlLabel() const;
-    void clear();
+
+    void clearAllExceptFilenames();
+    void clearAll();
     void clearText();
     void clearMarkup();
 

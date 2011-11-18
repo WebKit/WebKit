@@ -1589,11 +1589,6 @@ http/tests/security/mixedContent/redirect-https-to-http-script-in-iframe.html
 fast/frames/flattening/iframe-flattening-nested.html
 fast/frames/flattening/iframe-flattening-fixed-width-and-height-no-scrolling.html
 
-# REGRESSION (r99924): broke 2 pasteboard tests on GTK
-# https://bugs.webkit.org/show_bug.cgi?id=72131
-editing/pasteboard/copy-backslash-with-euc.html
-editing/pasteboard/paste-text-events.html
-
 # https://bugs.webkit.org/show_bug.cgi?id=72248
 editing/spelling/spelling-unified-emulation.html
 

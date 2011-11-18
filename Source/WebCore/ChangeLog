@@ -1,3 +1,25 @@
+2011-11-18  Martin Robinson  <mrobinson@igalia.com>
+
+        REGRESSION (r99924): broke 2 pasteboard tests on GTK
+        https://bugs.webkit.org/show_bug.cgi?id=72131
+
+        Reviewed by Tony Chang.
+
+        * platform/gtk/ClipboardGtk.cpp:
+        (WebCore::ClipboardGtk::clearData): Call clearAll now.
+        (WebCore::ClipboardGtk::clearAllData): Call clearAllExceptFilenames now.
+        * platform/gtk/DataObjectGtk.cpp:
+        (WebCore::DataObjectGtk::clearAllExceptFilenames): Renamed from clear.
+        (WebCore::DataObjectGtk::clearAll): Added this method which also clear filenames.
+        * platform/gtk/DataObjectGtk.h:
+        * platform/gtk/PasteboardGtk.cpp: Call clear before setting new clipboard data.
+        (WebCore::Pasteboard::writeSelection): Ditto.
+        (WebCore::Pasteboard::writePlainText): Ditto.
+        (WebCore::Pasteboard::writeURL): Ditto.
+        (WebCore::Pasteboard::writeImage): Ditto.
+        * platform/gtk/PasteboardHelper.cpp:
+        (WebCore::clearClipboardContentsCallback): Use the clearAll method now.
+
 2011-11-18  Vineet Chaudhary  <vineet.chaudhary@motorola.com>
 
         Access key should work on all elements.
