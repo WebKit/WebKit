@@ -1,3 +1,14 @@
+2011-11-17  Peter Kasting  <pkasting@google.com>
+
+        Unreviewed, rolling out r100698.
+        http://trac.webkit.org/changeset/100698
+        https://bugs.webkit.org/show_bug.cgi?id=72239
+
+        This change wasn't the problem either.
+
+        * dom/Document.cpp:
+        (WebCore::Document::implicitClose):
+
 2011-11-17  David Reveman  <reveman@chromium.org>
 
         [Chromium] Calls to paintContentsIfDirty() and updateCompositorResources() should be balanced.
@@ -23,6 +34,17 @@
         (WebCore::CCLayerTreeHost::updateCompositorResources):
         * platform/graphics/chromium/cc/CCLayerTreeHost.h:
 
+2011-11-17  Peter Kasting  <pkasting@google.com>
+
+        Unreviewed, rolling out r100584.
+        http://trac.webkit.org/changeset/100584
+        https://bugs.webkit.org/show_bug.cgi?id=72239
+
+        See if this change caused Linux dbg crashes.
+
+        * dom/Document.cpp:
+        (WebCore::Document::implicitClose):
+
 2011-11-17  Adam Barth  <abarth@webkit.org>
 
         Remove cargo-cult copy/pasting of ScriptExecutionContext namespace
@@ -42,17 +64,6 @@
         (WebCore::Document::setSecurityOrigin):
         * dom/Document.h:
         * xml/XSLTProcessor.cpp:
-
-2011-11-17  Peter Kasting  <pkasting@google.com>
-
-        Unreviewed, rolling out r100584.
-        http://trac.webkit.org/changeset/100584
-        https://bugs.webkit.org/show_bug.cgi?id=72239
-
-        See if this change caused Linux dbg crashes.
-
-        * dom/Document.cpp:
-        (WebCore::Document::implicitClose):
 
 2011-11-17  Peter Kasting  <pkasting@google.com>
 
