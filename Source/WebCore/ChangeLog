@@ -1,3 +1,22 @@
+2011-11-17  Kenichi Ishibashi  <bashi@chromium.org>
+
+        crash: WebCore::FontPlatformData::roundsGlyphAdvances on Lion
+        https://bugs.webkit.org/show_bug.cgi?id=71997
+
+        Reviewed by Dan Bernstein.
+
+        The cause is a null dereference of a fontData that is stored in
+        ComplexTextRun. The fontData is initialized by using the
+        fontCache, but it could be null when the font is in fallback
+        list. The reason a font from the fallback list might not be in the
+        font Cache is that it may be a web font. Before looking up the
+        fontCache, try to see whether the font is in the fallback list.
+
+        No new tests. We don't have webfonts that can produce the problem.
+
+        * platform/graphics/mac/ComplexTextControllerCoreText.mm:
+        (WebCore::ComplexTextController::collectComplexTextRunsForCharactersCoreText): See fallback list first, then lookup cache.
+
 2011-11-17  Kaustubh Atrawalkar  <kaustubh@motorola.com>
 
         Remove initProgressEvent method

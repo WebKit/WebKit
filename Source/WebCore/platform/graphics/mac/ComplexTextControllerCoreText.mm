@@ -186,12 +186,12 @@ void ComplexTextController::collectComplexTextRunsForCharactersCoreText(const UC
 
     bool isSystemFallback = false;
 
+    UChar32 baseCharacter;
     RetainPtr<CFDictionaryRef> stringAttributes;
     if (fontData == systemFallbackFontData()) {
         // FIXME: This code path does not support small caps.
         isSystemFallback = true;
 
-        UChar32 baseCharacter;
         U16_GET(cp, 0, 0, length, baseCharacter);
         fontData = m_font.fontDataAt(0)->fontDataForCharacter(baseCharacter);
 
@@ -250,15 +250,29 @@ void ComplexTextController::collectComplexTextRunsForCharactersCoreText(const UC
             CTFontRef runFont = static_cast<CTFontRef>(CFDictionaryGetValue(runAttributes, kCTFontAttributeName));
             ASSERT(CFGetTypeID(runFont) == CTFontGetTypeID());
             if (!CFEqual(runFont, fontData->platformData().ctFont())) {
-                // Rather than using runFont as an NSFont and wrapping it in a FontPlatformData, go through
-                // the font cache and ultimately through NSFontManager in order to get an NSFont with the right
-                // NSFontRenderingMode.
-                RetainPtr<CFStringRef> fontName(AdoptCF, CTFontCopyPostScriptName(runFont));
-                if (CFEqual(fontName.get(), CFSTR("LastResort"))) {
-                    m_complexTextRuns.append(ComplexTextRun::create(m_font.primaryFont(), cp, stringLocation + runRange.location, runRange.length, m_run.ltr()));
-                    continue;
+                // Begin trying to see if runFont matches any of the fonts in the fallback list.
+                RetainPtr<CGFontRef> runCGFont(AdoptCF, CTFontCopyGraphicsFont(runFont, 0));
+                unsigned i = 0;
+                for (const FontData* candidateFontData = m_font.fontDataAt(i); candidateFontData; candidateFontData = m_font.fontDataAt(++i)) {
+                    runFontData = candidateFontData->fontDataForCharacter(baseCharacter);
+                    RetainPtr<CGFontRef> cgFont(AdoptCF, CTFontCopyGraphicsFont(runFontData->platformData().ctFont(), 0));
+                    if (CFEqual(cgFont.get(), runCGFont.get()))
+                        break;
+                    runFontData = 0;
                 }
-                runFontData = fontCache()->getCachedFontData(m_font.fontDescription(), fontName.get(), false, FontCache::DoNotRetain);
+                // If there is no matching font, look up by name in the font cache.
+                if (!runFontData) {
+                    // Rather than using runFont as an NSFont and wrapping it in a FontPlatformData, go through
+                    // the font cache and ultimately through NSFontManager in order to get an NSFont with the right
+                    // NSFontRenderingMode.
+                    RetainPtr<CFStringRef> fontName(AdoptCF, CTFontCopyPostScriptName(runFont));
+                    if (CFEqual(fontName.get(), CFSTR("LastResort"))) {
+                        m_complexTextRuns.append(ComplexTextRun::create(m_font.primaryFont(), cp, stringLocation + runRange.location, runRange.length, m_run.ltr()));
+                        continue;
+                    }
+                    runFontData = fontCache()->getCachedFontData(m_font.fontDescription(), fontName.get(), false, FontCache::DoNotRetain);
+                }
+                ASSERT(runFontData);
                 if (m_fallbackFonts && runFontData != m_font.primaryFont())
                     m_fallbackFonts->add(runFontData);
             }
