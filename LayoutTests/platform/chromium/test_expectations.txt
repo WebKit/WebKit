@@ -3219,8 +3219,6 @@ BUGCR84095 VISTA : svg/custom/use-detach.svg = PASS TIMEOUT
 // Flaky for a long time with no obvious cause.
 BUGADAMK VISTA : http/tests/history/redirect-301.html = PASS TIMEOUT
 
-BUGWK61625 LEOPARD : fast/events/dropzone-002.html = TEXT
-
 // Weird failures only on debug bots after r87526.
 BUGADAMK DEBUG : svg/custom/object-sizing-explicit-height.xhtml = PASS IMAGE+TEXT
 BUGADAMK DEBUG : svg/custom/object-sizing-explicit-width.xhtml = PASS IMAGE+TEXT
