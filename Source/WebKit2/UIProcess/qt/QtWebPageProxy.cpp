@@ -750,6 +750,7 @@ void QtWebPageProxy::setDrawingAreaSize(const QSize& size)
 {
     if (!m_webPageProxy->drawingArea())
         return;
+
     m_webPageProxy->drawingArea()->setSize(IntSize(size), IntSize());
 }
 
@@ -903,6 +904,9 @@ void QtWebPageProxy::doneWithTouchEvent(const NativeWebTouchEvent& event, bool w
 
 void QtWebPageProxy::setVisibleContentRectAndScale(const QRectF& visibleContentRect, float scale)
 {
+    if (!m_webPageProxy->drawingArea())
+        return;
+
     QRect alignedVisibleContentRect = visibleContentRect.toAlignedRect();
     m_webPageProxy->drawingArea()->setVisibleContentsRectAndScale(alignedVisibleContentRect, scale);
 
@@ -912,6 +916,9 @@ void QtWebPageProxy::setVisibleContentRectAndScale(const QRectF& visibleContentR
 
 void QtWebPageProxy::setVisibleContentRectTrajectoryVector(const QPointF& trajectoryVector)
 {
+    if (!m_webPageProxy->drawingArea())
+        return;
+
     m_webPageProxy->drawingArea()->setVisibleContentRectTrajectoryVector(trajectoryVector);
 }
 

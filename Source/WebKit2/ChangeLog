@@ -1,3 +1,18 @@
+2011-11-18  Zalan Bujtas  <zbujtas@gmail.com>
+
+        [Qt][WK2] UI process segfaults, when visiblity properties are set while the WebProcess is dead.
+        https://bugs.webkit.org/show_bug.cgi?id=72699
+
+        The drawing area may be null, if the web process has crashed, but not yet recovered.
+        Always null check against drawing area.
+
+        Reviewed by Simon Hausmann.
+
+        * UIProcess/qt/QtWebPageProxy.cpp:
+        (QtWebPageProxy::setDrawingAreaSize):
+        (QtWebPageProxy::setVisibleContentRectAndScale):
+        (QtWebPageProxy::setVisibleContentRectTrajectoryVector):
+
 2011-11-18  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Removal of QtViewInterface part 1
