@@ -27,6 +27,7 @@
 #include "QtWebPageProxy.h"
 
 #include "qquickwebview_p.h"
+#include "qquickwebpage_p.h"
 
 #include <QtCore/QObject>
 #include <QtCore/QScopedPointer>

@@ -21,6 +21,10 @@
 #include "config.h"
 #include "QtWebPageProxy.h"
 
+#include <qdeclarativeengine.h>
+#include <qquickcanvas.h>
+#include "qquickwebview_p.h"
+#include "qquickwebview_p_p.h"
 #include "qquickwebpage_p.h"
 #include "QtWebError.h"
 #include "qwebdownloaditem_p.h"
@@ -52,6 +56,7 @@
 #include "WebPopupMenuProxyQt.h"
 #include "WKStringQt.h"
 #include "WKURLQt.h"
+#include <QDrag>
 #include <QGuiApplication>
 #include <QGraphicsSceneMouseEvent>
 #include <QJSEngine>
@@ -129,8 +134,9 @@ WebCore::DragOperation dropActionToDragOperation(Qt::DropActions actions)
     return (DragOperation)result;
 }
 
-QtWebPageProxy::QtWebPageProxy(QQuickWebPage* qmlWebPage, QtViewInterface* viewInterface, QtViewportInteractionEngine* viewportInteractionEngine, QtPolicyInterface* policyInterface, WKContextRef contextRef, WKPageGroupRef pageGroupRef)
+QtWebPageProxy::QtWebPageProxy(QQuickWebPage* qmlWebPage, QQuickWebView* qmlWebView, QtViewInterface* viewInterface, QtViewportInteractionEngine* viewportInteractionEngine, QtPolicyInterface* policyInterface, WKContextRef contextRef, WKPageGroupRef pageGroupRef)
     : m_qmlWebPage(qmlWebPage)
+    , m_qmlWebView(qmlWebView)
     , m_viewInterface(viewInterface)
     , m_interactionEngine(viewportInteractionEngine)
     , m_panGestureRecognizer(viewportInteractionEngine)
@@ -384,7 +390,8 @@ bool QtWebPageProxy::handleFocusOutEvent(QFocusEvent*)
 
 void QtWebPageProxy::setCursor(const WebCore::Cursor& cursor)
 {
-    m_viewInterface->didChangeCursor(*cursor.platformCursor());
+    // FIXME: This is a temporary fix until we get cursor support in QML items.
+    QGuiApplication::setOverrideCursor(*cursor.platformCursor());
 }
 
 void QtWebPageProxy::setCursorHiddenUntilMouseMoves(bool hiddenUntilMouseMoves)
@@ -414,7 +421,8 @@ WebCore::IntSize QtWebPageProxy::viewSize()
 
 bool QtWebPageProxy::isViewWindowActive()
 {
-    return m_viewInterface->isActive();
+    // FIXME: The scene graph does not have the concept of being active or not when this was written.
+    return true;
 }
 
 bool QtWebPageProxy::isViewFocused()
@@ -424,7 +432,7 @@ bool QtWebPageProxy::isViewFocused()
 
 bool QtWebPageProxy::isViewVisible()
 {
-    return m_viewInterface->isVisible() && m_qmlWebPage->isVisible();
+    return m_qmlWebView->isVisible() && m_qmlWebPage->isVisible();
 }
 
 bool QtWebPageProxy::isViewInWindow()
@@ -445,27 +453,27 @@ void QtWebPageProxy::exitAcceleratedCompositingMode()
 
 void QtWebPageProxy::pageDidRequestScroll(const IntPoint& pos)
 {
-    m_viewInterface->scrollPositionRequested(pos);
+    m_qmlWebView->d_func()->scrollPositionRequested(pos);
 }
 
 void QtWebPageProxy::didFinishFirstNonEmptyLayout()
 {
-    m_viewInterface->didFinishFirstNonEmptyLayout();
+    m_qmlWebView->d_func()->didFinishFirstNonEmptyLayout();
 }
 
 void QtWebPageProxy::didChangeContentsSize(const IntSize& newSize)
 {
-    m_viewInterface->didChangeContentsSize(QSize(newSize));
+    m_qmlWebView->d_func()->didChangeContentsSize(newSize);
 }
 
 void QtWebPageProxy::didChangeViewportProperties(const WebCore::ViewportArguments& args)
 {
-    m_viewInterface->didChangeViewportProperties(args);
+    m_qmlWebView->d_func()->didChangeViewportProperties(args);
 }
 
 void QtWebPageProxy::toolTipChanged(const String&, const String& newTooltip)
 {
-    m_viewInterface->didChangeToolTip(QString(newTooltip));
+    // There is not yet any UI defined for the tooltips for mobile so we ignore the change.
 }
 
 void QtWebPageProxy::registerEditCommand(PassRefPtr<WebEditCommandProxy> command, WebPageProxy::UndoOrRedo undoOrRedo)
@@ -575,32 +583,32 @@ void QtWebPageProxy::didReceiveMessageFromNavigatorQtObject(const String& messag
 
 void QtWebPageProxy::didChangeUrl(const QUrl& url)
 {
-    m_viewInterface->didChangeUrl(url);
+    emit m_qmlWebView->urlChanged(url);
 }
 
 void QtWebPageProxy::didChangeTitle(const QString& newTitle)
 {
-    m_viewInterface->didChangeTitle(newTitle);
+    emit m_qmlWebView->titleChanged(newTitle);
 }
 
 void QtWebPageProxy::loadDidBegin()
 {
-    m_viewInterface->loadDidBegin();
+    emit m_qmlWebView->loadStarted();
 }
 
 void QtWebPageProxy::loadDidCommit()
 {
-    m_viewInterface->loadDidCommit();
+    m_qmlWebView->d_func()->loadDidCommit();
 }
 
 void QtWebPageProxy::loadDidSucceed()
 {
-    m_viewInterface->loadDidSucceed();
+    emit m_qmlWebView->loadSucceeded();
 }
 
 void QtWebPageProxy::loadDidFail(const QtWebError& error)
 {
-    m_viewInterface->loadDidFail(error);
+    emit m_qmlWebView->loadFailed(static_cast<QQuickWebView::ErrorType>(error.type()), error.errorCode(), error.url());
 }
 
 void QtWebPageProxy::didChangeLoadProgress(int newLoadProgress)
@@ -661,7 +669,7 @@ void QtWebPageProxy::navigationStateChanged()
 void QtWebPageProxy::didRelaunchProcess()
 {
     updateNavigationState();
-    m_viewInterface->didRelaunchProcess();
+    qWarning("WARNING: The web process has been successfully restarted.");
     setDrawingAreaSize(viewSize());
 }
 
@@ -673,7 +681,7 @@ void QtWebPageProxy::processDidCrash()
     m_tapGestureRecognizer.reset();
 
     WebCore::KURL url(WebCore::ParsedURLString, m_webPageProxy->urlAtProcessExit());
-    m_viewInterface->processDidCrash(QUrl(url));
+    qWarning("WARNING: The web process experienced a crash on '%s'.", qPrintable(QUrl(url).toString(QUrl::RemoveUserInfo)));
 }
 
 QWebPreferences* QtWebPageProxy::preferences() const
@@ -790,10 +798,16 @@ void QtWebPageProxy::startDrag(const WebCore::DragData& dragData, PassRefPtr<Sha
 
     QPoint clientPosition;
     QPoint globalPosition;
-    Qt::DropAction actualDropAction;
+    Qt::DropAction actualDropAction = Qt::IgnoreAction;
 
-    m_viewInterface->startDrag(supportedDropActions, dragQImage, mimeData,
-                               &clientPosition, &globalPosition, &actualDropAction);
+    if (QWindow* window = m_qmlWebView->canvas()) {
+        QDrag* drag = new QDrag(window);
+        drag->setPixmap(QPixmap::fromImage(dragQImage));
+        drag->setMimeData(mimeData);
+        actualDropAction = drag->exec(supportedDropActions);
+        globalPosition = QCursor::pos();
+        clientPosition = window->mapFromGlobal(globalPosition);
+    }
 
     m_webPageProxy->dragEnded(clientPosition, globalPosition, dropActionToDragOperation(actualDropAction));
 }
@@ -811,10 +825,14 @@ void QtWebPageProxy::handleDownloadRequest(DownloadProxy* download)
     s_downloadManager->addDownload(download, downloadItem);
 }
 
-void QtWebPageProxy::didReceiveDownloadResponse(QWebDownloadItem* download)
+void QtWebPageProxy::didReceiveDownloadResponse(QWebDownloadItem* downloadItem)
 {
     // Now that our downloadItem has everything we need we can emit downloadRequested.
-    m_viewInterface->downloadRequested(download);
+    if (!downloadItem)
+        return;
+
+    QDeclarativeEngine::setObjectOwnership(downloadItem, QDeclarativeEngine::JavaScriptOwnership);
+    emit m_qmlWebView->downloadRequested(downloadItem);
 }
 
 PassOwnPtr<DrawingAreaProxy> QtWebPageProxy::createDrawingAreaProxy()

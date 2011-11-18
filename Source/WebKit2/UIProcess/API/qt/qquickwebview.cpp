@@ -73,7 +73,7 @@ void QQuickWebViewPrivate::initialize(QQuickWebView* viewport, WKContextRef cont
     viewInterface.reset(new WebKit::QtViewInterface(viewport));
 
     QQuickWebPagePrivate* const pageViewPrivate = pageView.data()->d;
-    setPageProxy(new QtWebPageProxy(pageView.data(), viewInterface.data(), 0, this, contextRef, pageGroupRef));
+    setPageProxy(new QtWebPageProxy(pageView.data(), q_ptr, viewInterface.data(), 0, this, contextRef, pageGroupRef));
     pageViewPrivate->setPageProxy(pageProxy.data());
 
     QWebPreferencesPrivate::get(pageProxy->preferences())->setAttribute(QWebPreferencesPrivate::AcceleratedCompositingEnabled, true);

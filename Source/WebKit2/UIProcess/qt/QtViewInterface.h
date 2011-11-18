@@ -60,26 +60,7 @@ public:
 
     QtViewInterface(QQuickWebView* viewportView);
 
-    virtual void scrollPositionRequested(const QPoint& pos);
-
-    virtual bool isActive();
-    virtual bool isVisible();
-
-    virtual void startDrag(Qt::DropActions supportedDropActions, const QImage& dragImage, QMimeData*, QPoint* clientPosition, QPoint* globalPosition, Qt::DropAction*);
-
-    virtual void didFinishFirstNonEmptyLayout();
-    virtual void didChangeContentsSize(const QSize&);
-    virtual void didChangeViewportProperties(const WebCore::ViewportArguments&);
-
-    virtual void didChangeUrl(const QUrl&);
-    virtual void didChangeTitle(const QString&);
-    virtual void didChangeToolTip(const QString&);
     virtual void didChangeStatusText(const QString&);
-    virtual void didChangeCursor(const QCursor&);
-    virtual void loadDidBegin();
-    virtual void loadDidCommit();
-    virtual void loadDidSucceed();
-    virtual void loadDidFail(const QtWebError&);
     virtual void didChangeLoadProgress(int);
 
     virtual void showContextMenu(QSharedPointer<QMenu>);
@@ -89,14 +70,9 @@ public:
     virtual bool runJavaScriptConfirm(const QString&);
     virtual QString runJavaScriptPrompt(const QString&, const QString& defaultValue, bool& ok);
 
-    virtual void processDidCrash(const QUrl&);
-    virtual void didRelaunchProcess();
-
     virtual void chooseFiles(WKOpenPanelResultListenerRef, const QStringList& selectedFileNames, FileChooserType);
 
     virtual void didMouseMoveOverElement(const QUrl&, const QString&);
-
-    virtual void downloadRequested(QWebDownloadItem*);
 
 private:
     QQuickWebView* const m_viewportView;

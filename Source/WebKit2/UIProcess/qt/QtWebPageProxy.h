@@ -50,6 +50,7 @@ class QtWebError;
 class QWebPreferences;
 class QWKHistory;
 class QQuickWebPage;
+class QQuickWebView;
 
 using namespace WebKit;
 
@@ -74,7 +75,7 @@ public:
         WebActionCount
     };
 
-    QtWebPageProxy(QQuickWebPage*, WebKit::QtViewInterface*, WebKit::QtViewportInteractionEngine* = 0, WebKit::QtPolicyInterface* = 0, WKContextRef = 0, WKPageGroupRef = 0);
+    QtWebPageProxy(QQuickWebPage*, QQuickWebView*, WebKit::QtViewInterface*, WebKit::QtViewportInteractionEngine* = 0, WebKit::QtPolicyInterface* = 0, WKContextRef = 0, WKPageGroupRef = 0);
     ~QtWebPageProxy();
 
     virtual PassOwnPtr<DrawingAreaProxy> createDrawingAreaProxy();
@@ -203,7 +204,7 @@ public:
 
 public Q_SLOTS:
     void navigationStateChanged();
-    void didReceiveDownloadResponse(QWebDownloadItem*);
+    void didReceiveDownloadResponse(QWebDownloadItem* downloadItem);
 
 public:
     Q_SIGNAL void zoomableAreaFound(const QRect&);
@@ -212,6 +213,7 @@ public:
 
 protected:
     QQuickWebPage* m_qmlWebPage;
+    QQuickWebView* m_qmlWebView;
     RefPtr<WebKit::WebPageProxy> m_webPageProxy;
     WebKit::QtViewInterface* const m_viewInterface;
     QtViewportInteractionEngine* m_interactionEngine;

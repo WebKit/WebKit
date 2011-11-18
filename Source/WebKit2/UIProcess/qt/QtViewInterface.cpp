@@ -40,95 +40,9 @@ QtViewInterface::QtViewInterface(QQuickWebView* viewportView)
     Q_ASSERT(m_viewportView);
 }
 
-void QtViewInterface::didFinishFirstNonEmptyLayout()
-{
-    m_viewportView->d_func()->didFinishFirstNonEmptyLayout();
-}
-
-void QtViewInterface::didChangeContentsSize(const QSize& newSize)
-{
-    m_viewportView->d_func()->didChangeContentsSize(newSize);
-}
-
-void QtViewInterface::didChangeViewportProperties(const WebCore::ViewportArguments& args)
-{
-    m_viewportView->d_func()->didChangeViewportProperties(args);
-}
-
-void QtViewInterface::scrollPositionRequested(const QPoint& pos)
-{
-    m_viewportView->d_func()->scrollPositionRequested(pos);
-}
-
-bool QtViewInterface::isActive()
-{
-    // FIXME: The scene graph does not have the concept of being active or not when this was written.
-    return true;
-}
-
-bool QtViewInterface::isVisible()
-{
-    return m_viewportView->isVisible();
-}
-
-void QtViewInterface::startDrag(Qt::DropActions supportedDropActions, const QImage& dragImage, QMimeData* data, QPoint* clientPosition, QPoint* globalPosition, Qt::DropAction* dropAction)
-{
-    QWindow* window = m_viewportView->canvas();
-    if (!window)
-        return;
-
-    QDrag* drag = new QDrag(window);
-    drag->setPixmap(QPixmap::fromImage(dragImage));
-    drag->setMimeData(data);
-    *dropAction = drag->exec(supportedDropActions);
-    *globalPosition = QCursor::pos();
-    *clientPosition = window->mapFromGlobal(*globalPosition);
-}
-
-void QtViewInterface::didChangeUrl(const QUrl& url)
-{
-    emit m_viewportView->urlChanged(url);
-}
-
-void QtViewInterface::didChangeTitle(const QString& newTitle)
-{
-    emit m_viewportView->titleChanged(newTitle);
-}
-
-void QtViewInterface::didChangeToolTip(const QString&)
-{
-    // There is not yet any UI defined for the tooltips for mobile so we ignore the change.
-}
-
 void QtViewInterface::didChangeStatusText(const QString& newMessage)
 {
     emit m_viewportView->statusBarMessageChanged(newMessage);
-}
-
-void QtViewInterface::didChangeCursor(const QCursor& newCursor)
-{
-    // FIXME: This is a temporary fix until we get cursor support in QML items.
-    QGuiApplication::setOverrideCursor(newCursor);
-}
-
-void QtViewInterface::loadDidBegin()
-{
-    emit m_viewportView->loadStarted();
-}
-
-void QtViewInterface::loadDidCommit()
-{
-    m_viewportView->d_func()->loadDidCommit();
-}
-
-void QtViewInterface::loadDidSucceed()
-{
-    emit m_viewportView->loadSucceeded();
-}
-
-void QtViewInterface::loadDidFail(const QtWebError& error)
-{
-    emit m_viewportView->loadFailed(static_cast<QQuickWebView::ErrorType>(error.type()), error.errorCode(), error.url());
 }
 
 void QtViewInterface::didChangeLoadProgress(int percentageLoaded)
@@ -190,26 +104,6 @@ bool QtViewInterface::runJavaScriptConfirm(const QString& message)
 QString QtViewInterface::runJavaScriptPrompt(const QString& message, const QString& defaultValue, bool& ok)
 {
     return m_viewportView->d_func()->runJavaScriptPrompt(message, defaultValue, ok);
-}
-
-void QtViewInterface::processDidCrash(const QUrl& url)
-{
-    qWarning("WARNING: The web process experienced a crash on '%s'.", qPrintable(url.toString(QUrl::RemoveUserInfo)));
-
-}
-
-void QtViewInterface::didRelaunchProcess()
-{
-    qWarning("WARNING: The web process has been successfully restarted.");
-}
-
-void QtViewInterface::downloadRequested(QWebDownloadItem* downloadItem)
-{
-    if (!downloadItem)
-        return;
-
-    QDeclarativeEngine::setObjectOwnership(downloadItem, QDeclarativeEngine::JavaScriptOwnership);
-    emit m_viewportView->downloadRequested(downloadItem);
 }
 
 void QtViewInterface::chooseFiles(WKOpenPanelResultListenerRef listenerRef, const QStringList& selectedFileNames, QtViewInterface::FileChooserType type)

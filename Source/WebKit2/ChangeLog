@@ -4,6 +4,43 @@
 
         Reviewed by Kenneth Rohde Christiansen.
 
+        Move all functions that forwarded from QtWebPageProxy to QtViewInterface and then
+        to QQuickWebView straight into QtWebPageProxy.
+
+        * UIProcess/API/qt/qquickwebpage_p.h:
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewPrivate::initialize):
+        * UIProcess/API/qt/qquickwebview_p_p.h:
+        * UIProcess/qt/QtViewInterface.cpp:
+        * UIProcess/qt/QtViewInterface.h:
+        * UIProcess/qt/QtWebPageProxy.cpp:
+        (QtWebPageProxy::QtWebPageProxy):
+        (QtWebPageProxy::setCursor):
+        (QtWebPageProxy::isViewWindowActive):
+        (QtWebPageProxy::isViewVisible):
+        (QtWebPageProxy::pageDidRequestScroll):
+        (QtWebPageProxy::didFinishFirstNonEmptyLayout):
+        (QtWebPageProxy::didChangeContentsSize):
+        (QtWebPageProxy::didChangeViewportProperties):
+        (QtWebPageProxy::toolTipChanged):
+        (QtWebPageProxy::didChangeUrl):
+        (QtWebPageProxy::didChangeTitle):
+        (QtWebPageProxy::loadDidBegin):
+        (QtWebPageProxy::loadDidCommit):
+        (QtWebPageProxy::loadDidSucceed):
+        (QtWebPageProxy::loadDidFail):
+        (QtWebPageProxy::didRelaunchProcess):
+        (QtWebPageProxy::processDidCrash):
+        (QtWebPageProxy::startDrag):
+        (QtWebPageProxy::didReceiveDownloadResponse):
+        * UIProcess/qt/QtWebPageProxy.h:
+
+2011-11-18  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Removal of QtViewInterface part 1
+
+        Reviewed by Kenneth Rohde Christiansen.
+
         Replace functions of QtViewInterface that forward to QQuickWebPage with direct
         usage of QQuickWebPage. Also removed some dead code.
 
