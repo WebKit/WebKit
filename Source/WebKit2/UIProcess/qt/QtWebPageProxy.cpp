@@ -146,7 +146,6 @@ QtWebPageProxy::QtWebPageProxy(QQuickWebPage* qmlWebPage, QQuickWebView* qmlWebV
     , m_loadProgress(0)
     , m_navigatorQtObjectEnabled(false)
 {
-    ASSERT(viewInterface);
     m_webPageProxy = m_context->createWebPage(this, toImpl(pageGroupRef));
     m_history = QWKHistoryPrivate::createHistory(this, m_webPageProxy->backForwardList());
     if (!contextRef)

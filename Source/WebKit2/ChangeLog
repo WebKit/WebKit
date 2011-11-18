@@ -1,5 +1,13 @@
 2011-11-18  Simon Hausmann  <simon.hausmann@nokia.com>
 
+        [Qt] Unreviewed debug build fix
+
+        * UIProcess/qt/QtWebPageProxy.cpp:
+        (QtWebPageProxy::QtWebPageProxy): Don't assert on a non-existant
+        variable.
+
+2011-11-18  Simon Hausmann  <simon.hausmann@nokia.com>
+
         [Qt] Removal of QtViewInterface part 3
 
         Reviewed by Kenneth Rohde Christiansen.
