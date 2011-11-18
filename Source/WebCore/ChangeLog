@@ -1,3 +1,10 @@
+2011-11-17  Adam Barth  <abarth@webkit.org>
+
+        Remove bogus ASSERT.
+
+        * page/SecurityOrigin.cpp:
+        (WebCore::SecurityOrigin::SecurityOrigin):
+
 2011-11-17  Peter Kasting  <pkasting@google.com>
 
         Unreviewed, rolling out r100698.

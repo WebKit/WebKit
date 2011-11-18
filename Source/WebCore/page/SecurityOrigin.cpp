@@ -137,8 +137,6 @@ SecurityOrigin::SecurityOrigin(const KURL& url)
     , m_enforceFilePathSeparation(false)
     , m_needsDatabaseIdentifierQuirkForFiles(false)
 {
-    ASSERT(url.isValid());
-
     // document.domain starts as m_host, but can be set by the DOM.
     m_domain = m_host;
 
