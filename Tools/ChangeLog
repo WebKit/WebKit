@@ -1,3 +1,18 @@
+2011-11-17  Ryosuke Niwa  <rniwa@webkit.org>
+
+        fuzzy_match doesn't recognize "Dan B" or "hyatt"
+        https://bugs.webkit.org/show_bug.cgi?id=72636
+
+        Reviewed by Eric Seidel.
+
+        Make contributors_by_fuzz_match search string in shorthand names of contributors such as "Ryosuke N"
+        and user names of email addreses such as rniwa in rniwa@webkit.org.
+
+        Also import legacy contributor names and mispell lists from Eric's script on the bug 26533 as a test.
+
+        * Scripts/webkitpy/common/config/committers.py:
+        * Scripts/webkitpy/common/config/committers_unittest.py:
+
 2011-11-17  Eric Seidel  <eric@webkit.org>
 
         Remove support for running check-webkit-style w/o a webkit checkout

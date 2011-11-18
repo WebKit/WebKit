@@ -531,6 +531,24 @@ class CommitterList(object):
     def contributors_by_search_string(self, string):
         return filter(lambda contributor: contributor.contains_string(string), self.contributors())
 
+    def contributors_by_email_username(self, string):
+        string = string + '@'
+        result = []
+        for contributor in self.contributors():
+            for email in contributor.emails:
+                if email.startswith(string):
+                    result.append(contributor)
+                    break
+        return result
+
+    def _contributor_name_shorthands(self, contributor):
+        if ' ' not in contributor.full_name:
+            return []
+        split_fullname = contributor.full_name.split()
+        first_name = split_fullname[0]
+        last_name = split_fullname[-1]
+        return first_name, last_name, first_name + last_name[0], first_name + ' ' + last_name[0]
+
     def _tokenize_contributor_name(self, contributor):
         full_name_in_lowercase = contributor.full_name.lower()
         tokens = [full_name_in_lowercase] + full_name_in_lowercase.split()
@@ -539,14 +557,25 @@ class CommitterList(object):
         return tokens
 
     def contributors_by_fuzzy_match(self, string):
-        string = string.lower()
+        string_in_lowercase = string.lower()
 
-        # First path, optimitically match for fullname, email and irc_nicknames
-        account = self.contributor_by_name(string) or self.account_by_email(string) or self.contributor_by_irc_nickname(string)
+        # 1. Exact match for fullname, email and irc_nicknames
+        account = self.contributor_by_name(string_in_lowercase) or self.account_by_email(string_in_lowercase) or self.contributor_by_irc_nickname(string_in_lowercase)
         if account:
             return [account], 0
 
-        # Second path, much slower search using edit-distance
+        # 2. Exact match for email username (before @)
+        accounts = self.contributors_by_email_username(string_in_lowercase)
+        if accounts and len(accounts) == 1:
+            return accounts, 0
+
+        # 3. Exact match for first name, last name, and first name + initial combinations such as "Dan B" and "Tim H"
+        accounts = [contributor for contributor in self.contributors() if string in self._contributor_name_shorthands(contributor)]
+        if accounts and len(accounts) == 1:
+            return accounts, 0
+
+        # 4. Finally, fuzzy-match using edit-distance
+        string = string_in_lowercase
         contributorWithMinDistance = []
         minDistance = len(string) / 2 - 1
         for contributor in self.contributors():
