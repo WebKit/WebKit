@@ -1,3 +1,29 @@
+2011-11-17  Adam Barth  <abarth@webkit.org>
+
+        Unique SecurityOrigins shouldn't remember their old schemes and hosts
+        https://bugs.webkit.org/show_bug.cgi?id=71745
+
+        Reviewed by Darin Adler.
+
+        This is the final step in this series of patches.
+
+        This patch removes the forceUnique flag from SecurityOrigin::create.
+        Now, we create unique origins without passing in the document's URL,
+        preventing information from the document's URL from leaking into the
+        unique origin.
+
+        * WebCore.exp.in:
+        * dom/Document.cpp:
+        (WebCore::Document::setIsViewSource):
+        (WebCore::Document::initSecurityContext):
+        * loader/cache/MemoryCache.cpp:
+        (WebCore::MemoryCache::getOriginsWithCache):
+            - Update this callsite to use createFromString, which does exactly
+              what this code is doing manually.
+        * page/SecurityOrigin.cpp:
+        (WebCore::SecurityOrigin::create):
+        * page/SecurityOrigin.h:
+
 2011-11-17  Vincent Scheib  <scheib@chromium.org>
 
         Pointer Lock: Page Settings unecessary

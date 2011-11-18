@@ -39,7 +39,7 @@ class KURL;
 
 class SecurityOrigin : public ThreadSafeRefCounted<SecurityOrigin> {
 public:
-    static PassRefPtr<SecurityOrigin> create(const KURL&, bool forceUnique = false);
+    static PassRefPtr<SecurityOrigin> create(const KURL&);
     static PassRefPtr<SecurityOrigin> createUnique();
 
     static PassRefPtr<SecurityOrigin> createFromDatabaseIdentifier(const String&);

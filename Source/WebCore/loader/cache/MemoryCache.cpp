@@ -537,7 +537,7 @@ void MemoryCache::getOriginsWithCache(SecurityOriginSet& origins)
 {
     CachedResourceMap::iterator e = m_resources.end();
     for (CachedResourceMap::iterator it = m_resources.begin(); it != e; ++it)
-        origins.add(SecurityOrigin::create(KURL(KURL(), it->second->url())));
+        origins.add(SecurityOrigin::createFromString(it->second->url()));
 }
 
 void MemoryCache::removeFromLiveDecodedResourcesList(CachedResource* resource)

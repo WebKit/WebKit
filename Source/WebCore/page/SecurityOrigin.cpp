@@ -180,9 +180,9 @@ SecurityOrigin::SecurityOrigin(const SecurityOrigin* other)
 {
 }
 
-PassRefPtr<SecurityOrigin> SecurityOrigin::create(const KURL& url, bool forceUnique)
+PassRefPtr<SecurityOrigin> SecurityOrigin::create(const KURL& url)
 {
-    if (forceUnique || shouldTreatAsUniqueOrigin(url)) {
+    if (shouldTreatAsUniqueOrigin(url)) {
         RefPtr<SecurityOrigin> origin = adoptRef(new SecurityOrigin());
 
         if (url.protocolIs("file")) {

@@ -1762,7 +1762,7 @@ void Document::setIsViewSource(bool isViewSource)
     if (!m_isViewSource)
         return;
 
-    setSecurityOrigin(SecurityOrigin::create(url(), true));
+    setSecurityOrigin(SecurityOrigin::createUnique());
 }
 
 void Document::createStyleSelector()
@@ -4467,7 +4467,7 @@ void Document::initSecurityContext()
     // loading URL with a fresh content security policy.
     m_cookieURL = m_url;
     enforceSandboxFlags(m_frame->loader()->effectiveSandboxFlags());
-    setSecurityOrigin(SecurityOrigin::create(m_url, isSandboxed(SandboxOrigin)));
+    setSecurityOrigin(isSandboxed(SandboxOrigin) ? SecurityOrigin::createUnique() : SecurityOrigin::create(m_url));
     setContentSecurityPolicy(ContentSecurityPolicy::create(this));
 
     if (SecurityPolicy::allowSubstituteDataAccessToLocal()) {
