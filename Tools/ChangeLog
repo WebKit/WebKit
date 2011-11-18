@@ -1,5 +1,15 @@
 2011-11-18  Adam Roben  <aroben@apple.com>
 
+        Ignore an ANGLE leak that is not WebKit's fault
+
+        * Scripts/old-run-webkit-tests:
+        (countAndPrintLeaks):
+        * Scripts/webkitpy/layout_tests/port/leakdetector.py:
+        (LeakDetector._callstacks_to_exclude_from_leaks):
+        Added ScanFromString to the call stacks to exclude on all OS versions.
+
+2011-11-18  Adam Roben  <aroben@apple.com>
+
         Ignore another Lion-specific leak that is not WebKit's fault
 
         * Scripts/old-run-webkit-tests:

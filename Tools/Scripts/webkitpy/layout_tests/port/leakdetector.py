@@ -55,6 +55,7 @@ class LeakDetector(object):
     def _callstacks_to_exclude_from_leaks(self):
         callstacks = [
             "Flash_EnforceLocalSecurity",  # leaks in Flash plug-in code, rdar://problem/4449747
+            "ScanFromString", # <http://code.google.com/p/angleproject/issues/detail?id=249> leak in ANGLE
         ]
         if self._port.is_leopard():
             callstacks += [

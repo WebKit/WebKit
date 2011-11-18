@@ -1251,7 +1251,8 @@ sub countAndPrintLeaks($$$)
     );
 
     my @callStacksToExclude = (
-        "Flash_EnforceLocalSecurity" # leaks in Flash plug-in code, rdar://problem/4449747
+        "Flash_EnforceLocalSecurity", # leaks in Flash plug-in code, rdar://problem/4449747
+        "ScanFromString", # <http://code.google.com/p/angleproject/issues/detail?id=249> leak in ANGLE
     );
 
     if (isLeopard()) {
