@@ -52,7 +52,7 @@
 #include "WebContextMenuProxyQt.h"
 #include "WebEditCommandProxy.h"
 #include "WebEventFactoryQt.h"
-#include "WebPopupMenuProxyQt.h"
+#include "WebPopupMenuProxyQtDesktop.h"
 #include "WKStringQt.h"
 #include "WKURLQt.h"
 #include <QDrag>
@@ -599,7 +599,7 @@ void QtWebPageProxy::doneWithKeyEvent(const NativeWebKeyboardEvent&, bool)
 
 PassRefPtr<WebPopupMenuProxy> QtWebPageProxy::createPopupMenuProxy(WebPageProxy*)
 {
-    return WebPopupMenuProxyQt::create();
+    return WebPopupMenuProxyQtDesktop::create(m_webPageProxy.get(), m_qmlWebView);
 }
 
 PassRefPtr<WebContextMenuProxy> QtWebPageProxy::createContextMenuProxy(WebPageProxy*)

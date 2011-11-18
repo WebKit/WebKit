@@ -1,5 +1,15 @@
 2011-11-18  Simon Hausmann  <simon.hausmann@nokia.com>
 
+        [Qt][WK2] Fix popups for select elements.
+
+        Reviewed by Tor Arne Vestbø.
+
+        * UIProcess/qt/QtWebPageProxy.cpp:
+        (QtWebPageProxy::createPopupMenuProxy): Fall back to the "desktop" implementation
+        for the moment. Better than nothing :)
+
+2011-11-18  Simon Hausmann  <simon.hausmann@nokia.com>
+
         [Qt] Unreviewed debug build fix
 
         * UIProcess/qt/QtWebPageProxy.cpp:
