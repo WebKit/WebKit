@@ -1,5 +1,17 @@
 2011-11-18  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Send DidCreateDestination to DownloadProxy when destination has been created
+        https://bugs.webkit.org/show_bug.cgi?id=72724
+
+        Reviewed by Martin Robinson.
+
+        * WebProcess/Downloads/soup/DownloadSoup.cpp:
+        (WebKit::DownloadClient::didReceiveResponse): Call
+        didCreateDestination() when destination URI has been successfully
+        created.
+
+2011-11-18  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Cancel current download operation before download object is deleted
         https://bugs.webkit.org/show_bug.cgi?id=72721
 

@@ -88,6 +88,8 @@ public:
             downloadFailed(downloadDestinationError(response, error->message));
             return;
         }
+
+        m_download->didCreateDestination(destinationURI);
     }
 
     void didReceiveData(ResourceHandle*, const char* data, int length, int /*encodedDataLength*/)
