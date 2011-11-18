@@ -3022,7 +3022,7 @@ BUGDPRANKE DEBUG : fast/css-generated-content/table-row-group-to-inline.html = P
 
 BUGDPRANKE : http/tests/navigation/lockedhistory-iframe.html = PASS TIMEOUT TEXT
 BUGDPRANKE : fast/parser/iframe-sets-parent-to-javascript-url.html = PASS TEXT
-BUGDPRANKE : fast/repaint/moving-shadow-on-path.html = PASS TEXT IMAGE
+BUGDPRANKE : fast/repaint/moving-shadow-on-path.html = PASS TEXT
 
 BUGDPRANKE WIN DEBUG : http/tests/misc/empty-file-formdata.html = PASS TIMEOUT
 BUGDPRANKE WIN DEBUG : http/tests/xmlhttprequest/access-control-preflight-headers-async.html = PASS TIMEOUT
@@ -3925,6 +3925,7 @@ BUGWK72622 WIN DEBUG : http/tests/inspector/resource-tree/resource-tree-no-xhrs.
 
 BUGWK72631 WIN DEBUG : fast/filesystem/file-writer-abort-depth.html = CRASH PASS
 
+BUGWK72651 LINUX DEBUG : http/tests/inspector/styles/styles-redirected-css.html = CRASH PASS
 BUGWK72651 LINUX DEBUG : inspector/elements/dom-agent-query-selector.html = CRASH PASS
 BUGWK72651 LINUX DEBUG : inspector/elements/edit-dom-actions.html = CRASH PASS
 BUGWK72651 LINUX DEBUG : inspector/elements/modify-chardata.html = CRASH PASS
@@ -3940,6 +3941,5 @@ BUGWK72651 LINUX DEBUG : inspector/styles/styles-disable-inherited.html = CRASH 
 BUGWK72651 LINUX DEBUG : inspector/styles/styles-disable-then-delete.html = CRASH PASS
 BUGWK72651 LINUX DEBUG : inspector/styles/styles-iframe.html = CRASH PASS
 BUGWK72651 LINUX DEBUG : inspector/styles/styles-new-API.html = CRASH PASS
-BUGWK72651 LINUX DEBUG : inspector/styles/styles-redirected-css.html = CRASH PASS
 BUGWK72651 LINUX DEBUG : inspector/styles/styles-update-from-js.html = CRASH PASS
 BUGWK72651 LINUX DEBUG : inspector/styles/styles-url-linkify.html = CRASH PASS
