@@ -45,6 +45,8 @@ IF (${RET} EQUAL -1)
     MESSAGE(FATAL_ERROR "Please choose which WebKit port to build (one of ${ALL_PORTS})")
 ENDIF ()
 
+STRING(TOLOWER ${PORT} WEBKIT_PORT_DIR)
+
 # -----------------------------------------------------------------------------
 # Find common packages (used by all ports)
 # -----------------------------------------------------------------------------
