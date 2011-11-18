@@ -1,11 +1,3 @@
-IF (ENABLE_FAST_MALLOC)
-  LIST(APPEND WTF_SOURCES
-    TCSystemAlloc.cpp
-  )
-ELSE ()
-  ADD_DEFINITIONS(-DUSE_SYSTEM_MALLOC=1)
-ENDIF()
-
 LIST(APPEND WTF_SOURCES
     efl/MainThreadEfl.cpp
     efl/OwnPtrEfl.cpp

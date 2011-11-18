@@ -1,3 +1,17 @@
+2011-11-17  Patrick Gansterer  <paroga@webkit.org>
+
+        [CMake] Move FAST_MALLOC specific lines from Platform*.cmake to CMakeLists.txt
+        https://bugs.webkit.org/show_bug.cgi?id=72644
+
+        Reviewed by Brent Fulgham.
+
+        All ports need to do the same determination about fast malloc. Move the CMake code from
+        platform specific files into the generic one, so that additional ports can reuse it.
+
+        * wtf/CMakeLists.txt:
+        * wtf/PlatformEfl.cmake:
+        * wtf/PlatformWinCE.cmake:
+
 2011-11-17  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Add finalizer to JSActivation

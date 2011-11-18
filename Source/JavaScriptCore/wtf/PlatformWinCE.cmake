@@ -8,7 +8,6 @@ LIST(APPEND WTF_HEADERS
 LIST(APPEND WTF_SOURCES
     NullPtr.cpp
     OSAllocatorWin.cpp
-    TCSystemAlloc.cpp
     ThreadingWin.cpp
     ThreadSpecificWin.cpp
 
