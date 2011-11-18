@@ -55,6 +55,15 @@ public:
 
     void didReceiveResponse(ResourceHandle*, const ResourceResponse& response)
     {
+        m_response = adoptGRef(response.toSoupMessage());
+        m_download->didReceiveResponse(response);
+
+        if (response.httpStatusCode() >= 400) {
+            downloadFailed(downloadNetworkError(ResourceError(errorDomainDownload, response.httpStatusCode(),
+                                                              response.url().string(), response.httpStatusText())));
+            return;
+        }
+
         String suggestedFilename = response.suggestedFilename();
         if (suggestedFilename.isEmpty()) {
             KURL url = response.url();
@@ -79,9 +88,6 @@ public:
             downloadFailed(downloadDestinationError(response, error->message));
             return;
         }
-
-        m_response = adoptGRef(response.toSoupMessage());
-        m_download->didReceiveResponse(response);
     }
 
     void didReceiveData(ResourceHandle*, const char* data, int length, int /*encodedDataLength*/)

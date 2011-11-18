@@ -248,6 +248,67 @@ test_webkit_download_data(void)
     g_object_unref(webView);
 }
 
+static void notifyDownloadStatusCallback(GObject *object, GParamSpec *pspec, gpointer data)
+{
+    WebKitDownload *download = WEBKIT_DOWNLOAD(object);
+    WebKitNetworkResponse *response = webkit_download_get_network_response(download);
+    SoupMessage *message = webkit_network_response_get_message(response);
+
+    switch (webkit_download_get_status(download)) {
+    case WEBKIT_DOWNLOAD_STATUS_ERROR:
+        g_assert_cmpint(message->status_code, ==, 404);
+        g_main_loop_quit(loop);
+        break;
+    case WEBKIT_DOWNLOAD_STATUS_FINISHED:
+    case WEBKIT_DOWNLOAD_STATUS_CANCELLED:
+        g_assert_not_reached();
+        break;
+    default:
+        break;
+    }
+}
+
+static void serverCallback(SoupServer *server, SoupMessage *message, const char *path, GHashTable *query, SoupClientContext *context, gpointer userData)
+{
+    if (message->method != SOUP_METHOD_GET) {
+        soup_message_set_status(message, SOUP_STATUS_NOT_IMPLEMENTED);
+        return;
+    }
+
+    soup_message_set_status(message, SOUP_STATUS_NOT_FOUND);
+    soup_message_body_complete(message->response_body);
+}
+
+static void test_webkit_download_not_found(void)
+{
+    SoupServer *server = soup_server_new(SOUP_SERVER_PORT, 0, NULL);
+    soup_server_run_async(server);
+    soup_server_add_handler(server, NULL, serverCallback, NULL, NULL);
+    SoupURI *baseURI = soup_uri_new("http://127.0.0.1/");
+    soup_uri_set_port(baseURI, soup_server_get_port(server));
+
+    SoupURI *uri = soup_uri_new_with_base(baseURI, "/foo");
+    char *uriString = soup_uri_to_string(uri, FALSE);
+    soup_uri_free(uri);
+
+    loop = g_main_loop_new(NULL, TRUE);
+    WebKitNetworkRequest *request = webkit_network_request_new(uriString);
+    g_free (uriString);
+    WebKitDownload *download = webkit_download_new(request);
+    g_object_unref(request);
+
+    webkit_download_set_destination_uri(download, "file:///tmp/foo");
+    g_signal_connect(download, "notify::status", G_CALLBACK(notifyDownloadStatusCallback), NULL);
+
+    webkit_download_start(download);
+    g_main_loop_run(loop);
+
+    g_object_unref(download);
+    g_main_loop_unref(loop);
+    soup_uri_free(baseURI);
+    g_object_unref(server);
+}
+
 int main(int argc, char** argv)
 {
     gtk_test_init(&argc, &argv, NULL);
@@ -257,6 +318,7 @@ int main(int argc, char** argv)
     g_test_add_func("/webkit/download/synch", test_webkit_download_synch);
     g_test_add_func("/webkit/download/asynch", test_webkit_download_asynch);
     g_test_add_func("/webkit/download/data", test_webkit_download_data);
+    g_test_add_func("/webkit/download/not-found", test_webkit_download_not_found);
     return g_test_run ();
 }
 

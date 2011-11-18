@@ -940,6 +940,10 @@ DownloadClient::DownloadClient(WebKitDownload* download)
 void DownloadClient::didReceiveResponse(ResourceHandle*, const ResourceResponse& response)
 {
     webkit_download_set_response(m_download, response);
+    if (response.httpStatusCode() >= 400) {
+        webkit_download_error(m_download, ResourceError(errorDomainDownload, response.httpStatusCode(),
+                                                        response.url().string(), response.httpStatusText()));
+    }
 }
 
 void DownloadClient::didReceiveData(ResourceHandle*, const char* data, int length, int encodedDataLength)

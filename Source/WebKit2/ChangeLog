@@ -1,3 +1,15 @@
+2011-11-18  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Downloads not started by WebView only fail for transport errors
+        https://bugs.webkit.org/show_bug.cgi?id=72718
+
+        Reviewed by Martin Robinson.
+
+        * WebProcess/Downloads/soup/DownloadSoup.cpp:
+        (WebKit::DownloadClient::didReceiveResponse): Check if the http
+        status of the response is an error code and finish the download
+        with an error in such case.
+
 2011-11-17  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         [Qt] Support customizing JS alert/confirm/prompt dialogs using QML

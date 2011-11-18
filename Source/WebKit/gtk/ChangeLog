@@ -1,3 +1,22 @@
+2011-11-18  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Downloads not started by WebView only fail for transport errors
+        https://bugs.webkit.org/show_bug.cgi?id=72718
+
+        Reviewed by Martin Robinson.
+
+        Abort the download with an error if the response contains an
+        error code. It adds a new test case to the download unit tests.
+
+        * tests/testdownload.c:
+        (notifyDownloadStatusCallback):
+        (serverCallback):
+        (test_webkit_download_not_found):
+        (main):
+        * webkit/webkitdownload.cpp:
+        (DownloadClient::didReceiveResponse): Check whether http status of
+        the response is an error code and emit error signal in such case.
+
 2011-11-18  Mario Sanchez Prada  <msanchez@igalia.com>
 
         [GTK] Accessibility API tests failing because of using non-WebKit GtkWidgets
