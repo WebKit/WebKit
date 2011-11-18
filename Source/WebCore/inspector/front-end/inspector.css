@@ -496,6 +496,11 @@ button.status-bar-item:disabled {
     background-position: 0 0 !important;
 }
 
+button.status-bar-item.extension {
+    background-image: none;
+    background-color: auto;
+}
+
 select.status-bar-item {
     min-width: 48px;
     border-width: 0 17px 0 2px;

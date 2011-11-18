@@ -336,6 +336,23 @@ function ExtensionPanelImpl(id)
     this.onSearch = new EventSink("panel-search-" + id);
 }
 
+ExtensionPanelImpl.prototype = {
+    createStatusBarButton: function(iconPath, tooltipText, disabled)
+    {
+        var id = "button-" + extensionServer.nextObjectId();
+        var request = {
+            command: "createStatusBarButton",
+            panel: this._id,
+            id: id,
+            icon: iconPath,
+            tooltip: tooltipText,
+            disabled: !!disabled
+        };
+        extensionServer.sendRequest(request);
+        return new Button(id);
+    }
+};
+
 ExtensionPanelImpl.prototype.__proto__ = ExtensionViewImpl.prototype;
 
 /**
@@ -368,6 +385,29 @@ ExtensionSidebarPaneImpl.prototype = {
         extensionServer.sendRequest({ command: "setSidebarPage", id: this._id, page: page });
     }
 }
+
+/**
+ * @constructor
+ */
+function ButtonImpl(id)
+{
+    this._id = id;
+    this.onClicked = new EventSink("button-clicked-" + id);
+}
+
+ButtonImpl.prototype = {
+    update: function(iconPath, tooltipText, disabled)
+    {
+        var request = {
+            command: "updateButton",
+            id: this._id,
+            icon: iconPath,
+            tooltip: tooltipText,
+            disabled: !!disabled
+        };
+        extensionServer.sendRequest(request);
+    }
+};
 
 /**
  * @constructor
@@ -704,6 +744,7 @@ function defineDeprecatedProperty(object, className, oldName, newName)
 
 var AuditCategory = declareInterfaceClass(AuditCategoryImpl);
 var AuditResult = declareInterfaceClass(AuditResultImpl);
+var Button = declareInterfaceClass(ButtonImpl);
 var EventSink = declareInterfaceClass(EventSinkImpl);
 var ExtensionPanel = declareInterfaceClass(ExtensionPanelImpl);
 var ExtensionSidebarPane = declareInterfaceClass(ExtensionSidebarPaneImpl);

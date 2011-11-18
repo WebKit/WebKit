@@ -111,6 +111,8 @@ WebInspector.ExtensionPanel = function(id, label, pageURL, iconURL)
     WebInspector.Panel.call(this, id);
     this.setHideOnDetach();
     this._toolbarItemLabel = label;
+    this._statusBarItems = [];
+
     if (iconURL) {
         this._addStyleRule(".toolbar-item." + id + " .toolbar-icon", "background-image: url(" + iconURL + ");");
         this._addStyleRule(".toolbar-small .toolbar-item." + id + " .toolbar-icon", "background-position-x: -32px;");
@@ -127,6 +129,19 @@ WebInspector.ExtensionPanel.prototype = {
     get defaultFocusedElement()
     {
         return this.sidebarTreeElement || this.element;
+    },
+
+    get statusBarItems()
+    {
+        return this._statusBarItems;
+    },
+
+    /**
+     * @param {Element} element
+     */
+    addStatusBarItem: function(element)
+    {
+        this._statusBarItems.push(element);
     },
 
     searchCanceled: function(startingNewSearch)
@@ -162,6 +177,44 @@ WebInspector.ExtensionPanel.prototype = {
 }
 
 WebInspector.ExtensionPanel.prototype.__proto__ = WebInspector.Panel.prototype;
+
+/**
+ * @constructor
+ * @param {string} id
+ * @param {string} iconURL
+ * @param {string=} tooltip
+ * @param {boolean=} disabled
+ */
+WebInspector.ExtensionButton = function(id, iconURL, tooltip, disabled)
+{
+    this._id = id;
+    this.element = document.createElement("button");
+    this.element.className = "status-bar-item extension";
+    this.element.addEventListener("click", this._onClicked.bind(this), false);
+    this.update(iconURL, tooltip, disabled);
+}
+
+WebInspector.ExtensionButton.prototype = {
+    /**
+     * @param {string} iconURL
+     * @param {string=} tooltip
+     * @param {boolean=} disabled
+     */
+    update: function(iconURL, tooltip, disabled)
+    {
+        if (typeof iconURL === "string")
+            this.element.style.backgroundImage = "url(" + iconURL + ")";
+        if (typeof tooltip === "string")
+            this.element.title = tooltip;
+        if (typeof disabled === "boolean")
+            this.element.disabled = disabled;
+    },
+
+    _onClicked: function()
+    {
+        WebInspector.extensionServer.notifyButtonClicked(this._id);
+    }
+}
 
 /**
  * @constructor

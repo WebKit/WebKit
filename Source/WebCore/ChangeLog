@@ -1,3 +1,30 @@
+2011-11-18  Andrey Kosyakov  <caseq@chromium.org>
+
+        Web Inspector: [Extensions API] Provide a way for extension to create a status bar icon
+        https://bugs.webkit.org/show_bug.cgi?id=45955
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/ExtensionAPI.js:
+        (injectedExtensionAPI.ExtensionPanelImpl.prototype.createStatusBarButton):
+        (injectedExtensionAPI):
+        (injectedExtensionAPI.ButtonImpl.prototype.update):
+        * inspector/front-end/ExtensionPanel.js:
+        (WebInspector.ExtensionPanel):
+        (WebInspector.ExtensionPanel.prototype.get statusBarItems):
+        (WebInspector.ExtensionPanel.prototype.addStatusBarItem):
+        (WebInspector.ExtensionButton):
+        (WebInspector.ExtensionButton.prototype.update):
+        (WebInspector.ExtensionButton.prototype._onClicked):
+        * inspector/front-end/ExtensionServer.js:
+        (WebInspector.ExtensionServer):
+        (WebInspector.ExtensionServer.prototype.notifyButtonClicked):
+        (WebInspector.ExtensionServer.prototype._onCreateStatusBarButton):
+        (WebInspector.ExtensionServer.prototype._onUpdateButton):
+        (WebInspector.ExtensionServer.prototype._onCreateSidebarPane):
+        * inspector/front-end/inspector.css:
+        (button.status-bar-item.extension):
+
 2011-11-18  Tommy Widenflycht  <tommyw@google.com>
 
         MediaStream API: Merging the PeerConnectionHandler.h files

@@ -50,6 +50,7 @@ WebInspector.ExtensionServer = function()
     this._registerHandler("addRequestHeaders", this._onAddRequestHeaders.bind(this));
     this._registerHandler("createPanel", this._onCreatePanel.bind(this));
     this._registerHandler("createSidebarPane", this._onCreateSidebarPane.bind(this));
+    this._registerHandler("createStatusBarButton", this._onCreateStatusBarButton.bind(this));
     this._registerHandler("evaluateOnInspectedPage", this._onEvaluateOnInspectedPage.bind(this));
     this._registerHandler("getHAR", this._onGetHAR.bind(this));
     this._registerHandler("getConsoleMessages", this._onGetConsoleMessages.bind(this));
@@ -66,6 +67,7 @@ WebInspector.ExtensionServer = function()
     this._registerHandler("stopAuditCategoryRun", this._onStopAuditCategoryRun.bind(this));
     this._registerHandler("subscribe", this._onSubscribe.bind(this));
     this._registerHandler("unsubscribe", this._onUnsubscribe.bind(this));
+    this._registerHandler("updateButton", this._onUpdateButton.bind(this));
 
     window.addEventListener("message", this._onWindowMessage.bind(this), false);
 }
@@ -89,6 +91,11 @@ WebInspector.ExtensionServer.prototype = {
     notifyViewHidden: function(identifier)
     {
         this._postNotification("view-hidden-" + identifier);
+    },
+
+    notifyButtonClicked: function(identifier)
+    {
+        this._postNotification("button-clicked-" + identifier);
     },
 
     _inspectedURLChanged: function(event)
@@ -200,7 +207,27 @@ WebInspector.ExtensionServer.prototype = {
         return this._status.OK();
     },
 
-    _onCreateSidebarPane: function(message, constructor)
+    _onCreateStatusBarButton: function(message, port)
+    {
+        var panel = this._clientObjects[message.panel];
+        if (!panel || !(panel instanceof WebInspector.ExtensionPanel))
+            return this._status.E_NOTFOUND(message.panel);
+        var button = new WebInspector.ExtensionButton(message.id, this._expandResourcePath(port._extensionOrigin, message.icon), message.tooltip, message.disabled);
+        this._clientObjects[message.id] = button;
+        panel.addStatusBarItem(button.element);
+        return this._status.OK();
+    },
+
+    _onUpdateButton: function(message, port)
+    {
+        var button = this._clientObjects[message.id];
+        if (!button || !(button instanceof WebInspector.ExtensionButton))
+            return this._status.E_NOTFOUND(message.id);
+        button.update(this._expandResourcePath(port._extensionOrigin, message.icon), message.tooltip, message.disabled);
+        return this._status.OK();
+    },
+
+    _onCreateSidebarPane: function(message)
     {
         var panel = WebInspector.panels[message.panel];
         if (!panel)
