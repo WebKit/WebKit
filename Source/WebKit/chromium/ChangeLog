@@ -1,5 +1,15 @@
 2011-11-17  Peter Kasting  <pkasting@google.com>
 
+        Unreviewed, rolling out r100676.
+        http://trac.webkit.org/changeset/100676
+        https://bugs.webkit.org/show_bug.cgi?id=72393
+
+        Looks like r100572 was not the source of the crashes.
+
+        * src/js/DevTools.js:
+
+2011-11-17  Peter Kasting  <pkasting@google.com>
+
         Unreviewed, rolling out r100572.
         https://bugs.webkit.org/show_bug.cgi?id=72393
         https://bugs.webkit.org/show_bug.cgi?id=72651

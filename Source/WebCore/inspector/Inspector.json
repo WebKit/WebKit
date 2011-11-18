@@ -1741,6 +1741,9 @@
     {
         "domain": "Debugger",
         "description": "Debugger domain exposes JavaScript debugging capabilities. It allows setting and removing breakpoints, stepping through execution, exploring stack traces, etc.",
+        "capabilities": [
+            { "name": "set-script-source", "description": "Allows setting script source live" }
+        ],
         "types": [
             {
                 "id": "BreakpointId",
@@ -1791,8 +1794,16 @@
         ],
         "commands": [
             {
+                "name": "getCapabilities",
+                "returns": [
+                    { "name": "capabilities", "type": "array", "items": { "type": "string"}, "description": "List of the debugger domain capabilities" }
+                ],
+                "description": "Returns the list of the debugger capabilities.",
+                "hidden": true
+            },
+            {
                 "name": "enable",
-                "description": "Enables debugger for given page."
+                "description": "Enables debugger for the given page. Clients should not assume that the debugging has been enabled until the result for this command is received."
             },
             {
                 "name": "disable",
@@ -1890,6 +1901,7 @@
                     { "name": "callFrames", "type": "array", "optional": true, "items": { "$ref": "CallFrame"}, "description": "New stack trace in case editing has happened while VM was stopped." },
                     { "name": "result", "type": "object", "optional": true, "description": "VM-specific description of the changes applied.", "hidden": true }
                 ],
+                "capability": "set-script-source",
                 "description": "Edits JavaScript source live."
             },
             {

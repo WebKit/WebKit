@@ -64,6 +64,7 @@ public:
 
     virtual ~InspectorDebuggerAgent();
 
+    void getCapabilities(ErrorString*, RefPtr<InspectorArray>*);
     void enable(ErrorString*);
     void disable(ErrorString*);
     bool enabled();

@@ -40,7 +40,6 @@
     Preferences.detailedHeapProfiles = true;
     Preferences.debuggerAlwaysEnabled = true;
     Preferences.profilerAlwaysEnabled = true;
-    Preferences.canEditScriptSource = true;
     Preferences.nativeInstrumentationEnabled = true;
     Preferences.fileSystemEnabled = false;
     Preferences.showTimingTab = true;

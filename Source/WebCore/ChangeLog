@@ -1,3 +1,32 @@
+2011-11-17  Peter Kasting  <pkasting@google.com>
+
+        Unreviewed, rolling out r100676.
+        http://trac.webkit.org/changeset/100676
+        https://bugs.webkit.org/show_bug.cgi?id=72393
+
+        Looks like r100572 was not the source of the crashes.
+
+        * bindings/js/ScriptDebugServer.cpp:
+        (WebCore::ScriptDebugServer::canSetScriptSource):
+        * bindings/js/ScriptDebugServer.h:
+        * bindings/v8/ScriptDebugServer.cpp:
+        (WebCore::ScriptDebugServer::stepOutOfFunction):
+        (WebCore::ScriptDebugServer::canSetScriptSource):
+        * bindings/v8/ScriptDebugServer.h:
+        * inspector/CodeGeneratorInspector.py:
+        * inspector/Inspector.json:
+        * inspector/InspectorDebuggerAgent.cpp:
+        (WebCore::InspectorDebuggerAgent::getCapabilities):
+        * inspector/InspectorDebuggerAgent.h:
+        * inspector/front-end/DebuggerModel.js:
+        (WebInspector.DebuggerModel):
+        (WebInspector.DebuggerModel.prototype.enableDebugger):
+        (WebInspector.DebuggerModel.prototype.disableDebugger):
+        (WebInspector.DebuggerModel.prototype.canSetScriptSource):
+        * inspector/front-end/DebuggerPresentationModel.js:
+        (WebInspector.DebuggerPresentationModel.prototype.canEditScriptSource):
+        * inspector/front-end/Settings.js:
+
 2011-11-17  Konstantin Scheglov  <scheglov@google.com>
 
         Absolute child is not repainted when parent opacity changes

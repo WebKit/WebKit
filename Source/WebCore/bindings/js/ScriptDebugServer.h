@@ -42,6 +42,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/RefPtr.h>
+#include <wtf/Vector.h>
 #include <wtf/text/TextPosition.h>
 
 namespace JSC {
@@ -80,6 +81,7 @@ public:
     void stepOverStatement();
     void stepOutOfFunction();
 
+    bool canSetScriptSource();
     bool setScriptSource(const String& sourceID, const String& newContent, bool preview, String* error, ScriptValue* newCallFrames, ScriptObject* result);
 
     void recompileAllJSFunctionsSoon();
