@@ -87,6 +87,10 @@ public:
         // NPN_GetValue even when it is a lie.
         RequiresGTKToolKit,
 
+        // Some version 10 releases of Flash run under nspluginwrapper will completely
+        // freeze when sending right click events to them in windowed mode.
+        IgnoreRightClickInWindowlessMode,
+
         // Windows specific quirks:
 #elif PLUGIN_ARCHITECTURE(WIN)
         // Whether NPN_UserAgent should always return a Mozilla user agent.

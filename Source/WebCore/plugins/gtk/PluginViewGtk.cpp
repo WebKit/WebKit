@@ -409,6 +409,9 @@ void PluginView::handleMouseEvent(MouseEvent* event)
     if (!m_isStarted || m_status != PluginStatusLoadedSuccessfully)
         return;
 
+    if (event->button() == RightButton && m_plugin->quirks().contains(PluginQuirkIgnoreRightClickInWindowlessMode))
+        return;
+
     if (event->type() == eventNames().mousedownEvent) {
         if (Page* page = m_parentFrame->page())
             page->focusController()->setActive(true);

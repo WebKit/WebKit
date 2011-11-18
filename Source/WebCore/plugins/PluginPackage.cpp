@@ -207,11 +207,11 @@ void PluginPackage::determineQuirks(const String& mimeType)
 #if PLATFORM(QT)
         // Flash will crash on repeated calls to SetWindow in windowed mode
         m_quirks.add(PluginQuirkDontCallSetWindowMoreThanOnce);
+#endif
 
 #if CPU(X86_64)
         // 64-bit Flash freezes if right-click is sent in windowless mode
         m_quirks.add(PluginQuirkIgnoreRightClickInWindowlessMode);
-#endif
 #endif
 
         m_quirks.add(PluginQuirkRequiresDefaultScreenDepth);

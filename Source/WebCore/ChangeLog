@@ -1,3 +1,21 @@
+2011-11-17  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] The process freezes when you right click on windowless Flash
+        https://bugs.webkit.org/show_bug.cgi?id=69123
+
+        Reviewed by Xan Lopez.
+
+        No new tests. I tried to create a layout test that exercised this
+        issue, but it appears that EventSender clicks do not trigger
+        it. This is covered by the manual tests containing Flash.
+
+        * plugins/PluginPackage.cpp:
+        (WebCore::PluginPackage::determineQuirks): Always activate the
+        windowless Flash quirk if on x86_64 and X11.
+        * plugins/gtk/PluginViewGtk.cpp:
+        (WebCore::PluginView::handleMouseEvent): Avoid sending right-click
+        events if we have the quirk.
+
 2011-11-17  Peter Rybin  <peter.rybin@gmail.com>
 
         Web Inspector: clear fixme in generator script

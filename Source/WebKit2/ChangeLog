@@ -1,3 +1,23 @@
+2011-11-17  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] The process freezes when you right click on windowless Flash
+        https://bugs.webkit.org/show_bug.cgi?id=69123
+
+        Reviewed by Xan Lopez.
+
+        Add a new plugin quirk for dealing with right-clicking on
+        windowless Flash on x86_64 machines. This already exists for
+        WebKit1.
+
+        * Shared/Plugins/Netscape/x11/NetscapePluginModuleX11.cpp:
+        (WebKit::NetscapePluginModule::determineQuirks): If the plugin is
+        Flash and we are on x86_64, then disable sending right-clicking
+        events while in windowless mode.
+        * Shared/Plugins/PluginQuirks.h: Add the new quirk.
+        * WebProcess/Plugins/Netscape/x11/NetscapePluginX11.cpp:
+        (WebKit::NetscapePlugin::platformHandleMouseEvent): If the quirk
+        is active  don't send right click events.
+
 2011-11-17  Igor Oliveira  <igor.oliveira@openbossa.org>
 
         [WK2] Fix TransformOperation serialization
