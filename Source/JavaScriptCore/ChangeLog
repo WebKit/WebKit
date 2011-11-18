@@ -1,3 +1,15 @@
+2011-11-18  Filip Pizlo  <fpizlo@apple.com>
+
+        Crash in JSC::DFG::OSRExitCompiler::compileExit(JSC::DFG::OSRExit const&, JSC::DFG::SpeculationRecovery*)
+        https://bugs.webkit.org/show_bug.cgi?id=72292
+
+        Reviewed by Darin Adler.
+        
+        Fix this for 32_64.
+
+        * dfg/DFGOSRExitCompiler32_64.cpp:
+        (JSC::DFG::OSRExitCompiler::compileExit):
+
 2011-11-18  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         De-virtualize ExecutableBase::intrinsic
