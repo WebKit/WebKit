@@ -67,4 +67,6 @@ BUGWK71777 : fast/lists/inlineBoxWrapperNullCheck.html = PASS TEXT
 
 BUGWK71655 : fast/frames/flattening/frameset-flattening-simple.html = PASS TEXT
 
+BUGWK72698 : media/audio-garbage-collect.html = PASS TEXT
+
 // End of Flaky tests
