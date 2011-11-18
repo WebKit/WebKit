@@ -37,6 +37,16 @@ try:
 except ImportError:
     import simplejson as json
 
+
+DOMAIN_DEFINE_NAME_MAP = {
+    "Database": "ENABLE_SQL_DATABASE",
+    "Debugger": "ENABLE_JAVASCRIPT_DEBUGGER",
+    "DOMDebugger": "ENABLE_JAVASCRIPT_DEBUGGER",
+    "Profiler": "ENABLE_JAVASCRIPT_DEBUGGER",
+    "Worker": "ENABLE_WORKERS",
+}
+
+
 cmdline_parser = optparse.OptionParser()
 cmdline_parser.add_option("--defines")
 cmdline_parser.add_option("--output_h_dir")
@@ -91,6 +101,27 @@ def parse_defines(str):
 defines_map = parse_defines(arg_options.defines)
 
 
+class Capitalizer:
+    @staticmethod
+    def upper_camel_case_to_lower(str):
+        pos = 0
+        while pos < len(str) and str[pos].isupper():
+            pos += 1
+        if pos == 0:
+            return str
+        if pos == 1:
+            return str[0].lower() + str[1:]
+        if pos < len(str):
+            pos -= 1
+        possible_abbreviation = str[0:pos]
+        if possible_abbreviation not in Capitalizer.ABBREVIATION:
+            raise Exception("Unknown abbreviation %s" % possible_abbreviation)
+        str = possible_abbreviation.lower() + str[pos:]
+        return str
+
+    ABBREVIATION = frozenset(["XHR", "DOM", "CSS"])
+
+
 class DomainNameFixes:
     @classmethod
     def get_fixed_data(cls, domain_name):
@@ -99,10 +130,7 @@ class DomainNameFixes:
         else:
             agent_name_res = "Inspector%sAgent" % domain_name
 
-        if domain_name in cls.agent_field_name_map:
-            field_name_res = cls.agent_field_name_map[domain_name]
-        else:
-            field_name_res = domain_name.lower() + "Agent"
+        field_name_res = Capitalizer.upper_camel_case_to_lower(domain_name) + "Agent"
 
         class Res(object):
             agent_type_name = agent_name_res
@@ -112,11 +140,11 @@ class DomainNameFixes:
 
             @staticmethod
             def is_disabled(defines):
-                if not domain_name in cls.domain_define_name_map:
+                if not domain_name in DOMAIN_DEFINE_NAME_MAP:
                     # Has not corresponding preprocessor symbol.
                     return False
 
-                define_name = cls.domain_define_name_map[domain_name]
+                define_name = DOMAIN_DEFINE_NAME_MAP[domain_name]
 
                 if not define_name in defines:
                     # Disabled when not mentioned
@@ -130,31 +158,6 @@ class DomainNameFixes:
     skip_js_bind_domains = set(["Runtime", "CSS", "DOMDebugger"])
     hidden_domains = set(["Inspector"])
     agent_type_map = {"Network": "InspectorResourceAgent"}
-
-    # TODO: get rid of this, generate names instead.
-    agent_field_name_map = {
-        "Page": "pageAgent",
-        "Runtime": "runtimeAgent",
-        "Console": "consoleAgent",
-        "Network":  "resourceAgent",
-        "Database":  "databaseAgent",
-        "DOMStorage":  "domStorageAgent",
-        "ApplicationCache":  "applicationCacheAgent",
-        "DOM":  "domAgent",
-        "CSS":  "cssAgent",
-        "Debugger": "debuggerAgent",
-        "DOMDebugger": "domDebuggerAgent",
-        "Profiler": "profilerAgent",
-        "Worker": "workerAgent",
-    }
-
-    domain_define_name_map = {
-        "Database": "ENABLE_SQL_DATABASE",
-        "Debugger": "ENABLE_JAVASCRIPT_DEBUGGER",
-        "DOMDebugger": "ENABLE_JAVASCRIPT_DEBUGGER",
-        "Profiler": "ENABLE_JAVASCRIPT_DEBUGGER",
-        "Worker": "ENABLE_WORKERS",
-    }
 
 
 class CParamType(object):
@@ -447,11 +450,11 @@ ${frontendDomainMethodDeclarations}        void setInspectorFrontendChannel(Insp
 $methodOutCode
     ErrorString error;
 $methodInCode
-if (!protocolErrors->length())
-    $agentField->$methodName(&error$agentCallParams);
+    if (!protocolErrors->length())
+        $agentField->$methodName(&error$agentCallParams);
 
     RefPtr<InspectorObject> result = InspectorObject::create();
-${responseCook}sendResponse(callId, result, String::format("Some arguments of method '%s' can't be processed", "$domainName.$methodName"), protocolErrors, error);
+${responseCook}    sendResponse(callId, result, String::format("Some arguments of method '%s' can't be processed", "$domainName.$methodName"), protocolErrors, error);
 }
 """)
 
@@ -464,7 +467,7 @@ $code    if (m_inspectorFrontendChannel)
 }
 """)
 
-    frontend_h = string.Template("""// Copyright (c) 2010 The Chromium Authors. All rights reserved.
+    frontend_h = string.Template("""// Copyright (c) 2011 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 #ifndef InspectorFrontend_h
@@ -495,7 +498,7 @@ ${fieldDeclarations}};
 #endif // !defined(InspectorFrontend_h)
 """)
 
-    backend_h = string.Template("""// Copyright (c) 2010 The Chromium Authors. All rights reserved.
+    backend_h = string.Template("""// Copyright (c) 2011 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 #ifndef InspectorBackendDispatcher_h
@@ -567,7 +570,7 @@ $fieldDeclarations
 
 """)
 
-    backend_cpp = string.Template("""// Copyright (c) 2010 The Chromium Authors. All rights reserved.
+    backend_cpp = string.Template("""// Copyright (c) 2011 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -898,7 +901,7 @@ bool InspectorBackendDispatcher::getCommandName(const String& message, String* r
 #endif // ENABLE(INSPECTOR)
 """)
 
-    frontend_cpp = string.Template("""// Copyright (c) 2010 The Chromium Authors. All rights reserved.
+    frontend_cpp = string.Template("""// Copyright (c) 2011 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -930,7 +933,7 @@ $methods
 #endif // ENABLE(INSPECTOR)
 """)
 
-    backend_js = string.Template("""// Copyright (c) 2010 The Chromium Authors. All rights reserved.
+    backend_js = string.Template("""// Copyright (c) 2011 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -1319,7 +1322,7 @@ class Generator:
     def process_command(json_command, domain_name, agent_field_name):
         json_command_name = json_command["name"]
         Generator.method_name_enum_list.append("        k%s_%sCmd," % (domain_name, json_command["name"]))
-        Generator.method_handler_list.append("        &InspectorBackendDispatcher::%s_%s," % (domain_name, json_command_name))
+        Generator.method_handler_list.append("            &InspectorBackendDispatcher::%s_%s," % (domain_name, json_command_name))
         Generator.backend_method_declaration_list.append("    void %s_%s(long callId, InspectorObject* requestMessageObject);" % (domain_name, json_command_name))
 
         method_in_code = ""

@@ -1,3 +1,14 @@
+2011-11-17  Peter Rybin  <peter.rybin@gmail.com>
+
+        Web Inspector: clear fixme in generator script
+        https://bugs.webkit.org/show_bug.cgi?id=71372
+
+        Remove unnecessary field name map and update license year number.
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/CodeGeneratorInspector.py:
+
 2011-11-17  Raphael Kubo da Costa  <kubo@profusion.mobi>
 
         [EFL] Clean up the use of DATA_DIR in the buildsystem
