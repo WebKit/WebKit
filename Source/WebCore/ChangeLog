@@ -1,3 +1,15 @@
+2011-11-18  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        Fix compilation warning in ComplexTextControllerCoreText.mm
+        https://bugs.webkit.org/show_bug.cgi?id=72702
+
+        Reviewed by Andreas Kling.
+
+        No functionality changed, so no new tests.
+
+        * platform/graphics/mac/ComplexTextControllerCoreText.mm:
+        (WebCore::ComplexTextController::collectComplexTextRunsForCharactersCoreText):
+
 2011-11-18  Pavel Feldman  <pfeldman@google.com>
 
         Not reviewed: restore front-end compilability via updating externs and JS generator.

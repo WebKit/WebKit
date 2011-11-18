@@ -186,7 +186,7 @@ void ComplexTextController::collectComplexTextRunsForCharactersCoreText(const UC
 
     bool isSystemFallback = false;
 
-    UChar32 baseCharacter;
+    UChar32 baseCharacter = 0;
     RetainPtr<CFDictionaryRef> stringAttributes;
     if (fontData == systemFallbackFontData()) {
         // FIXME: This code path does not support small caps.
