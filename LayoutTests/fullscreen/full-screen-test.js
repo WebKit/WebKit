@@ -13,8 +13,14 @@ function runWithKeyDown(fn)
 {
     // FIXME: WKTR does not yet support the keyDown() message.  Do a mouseDown here
     // instead until keyDown support is added.
-	var eventName = !window.layoutTestController || eventSender.keyDown ? 'keypress' : 'mousedown'
-    document.addEventListener(eventName, function() { fn(); }, false);
+    var eventName = !window.layoutTestController || eventSender.keyDown ? 'keypress' : 'mousedown'
+
+    function thunk() {
+        document.removeEventListener(eventName, thunk, false);
+        fn();
+    }
+    document.addEventListener(eventName, thunk, false);
+
     if (window.layoutTestController) {
         if (eventSender.keyDown)
             eventSender.keyDown(" ", []);

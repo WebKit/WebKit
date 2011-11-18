@@ -39,6 +39,8 @@
 #include "WebTextInputType.h"
 #include "WebTextDirection.h"
 
+#define WEBKIT_HAS_NEW_FULLSCREEN_API 1
+
 namespace WebKit {
 
 class WebInputEvent;
@@ -67,19 +69,27 @@ public:
     // willStartLiveResize.
     virtual void willEndLiveResize() { }
 
+    // Called to notify the WebWidget of entering/exiting fullscreen mode. The
+    // resize method may be called between will{Enter,Exit}FullScreen and
+    // did{Enter,Exit}FullScreen.
+    virtual void willEnterFullScreen() { }
+    virtual void didEnterFullScreen() { }
+    virtual void willExitFullScreen() { }
+    virtual void didExitFullScreen() { }
+
     // Called to update imperative animation state. This should be called before
     // paint, although the client can rate-limit these calls. When
     // frameBeginTime is 0.0, the WebWidget will determine the frame begin time
     // itself.
     virtual void animate(double frameBeginTime) { }
 
-    // Called to layout the WebWidget.  This MUST be called before Paint,
+    // Called to layout the WebWidget. This MUST be called before Paint,
     // and it may result in calls to WebWidgetClient::didInvalidateRect.
     virtual void layout() { }
 
     // Called to paint the rectangular region within the WebWidget
     // onto the specified canvas at (viewPort.x,viewPort.y). You MUST call
-    // Layout before calling this method.  It is okay to call paint
+    // Layout before calling this method. It is okay to call paint
     // multiple times once layout has been called, assuming no other
     // changes are made to the WebWidget (e.g., once events are
     // processed, it should be assumed that another call to layout is
@@ -87,8 +97,8 @@ public:
     virtual void paint(WebCanvas*, const WebRect& viewPort) { }
 
     // In non-threaded compositing mode, triggers compositing of the current
-    // layers onto the screen. You MUST call Layout before calling this method, for the same
-    // reasons described in the paint method above
+    // layers onto the screen. You MUST call Layout before calling this method,
+    // for the same reasons described in the paint method above
     //
     // In threaded compositing mode, indicates that the widget should update
     // itself, for example due to window damage. The redraw will begin
@@ -101,7 +111,7 @@ public:
     // on receiving this message
     virtual void themeChanged() { }
 
-    // Called to inform the WebWidget of an input event.  Returns true if
+    // Called to inform the WebWidget of an input event. Returns true if
     // the event has been processed, false otherwise.
     virtual bool handleInputEvent(const WebInputEvent&) { return false; }
 

@@ -14,6 +14,15 @@ body {
     if ("webkitRequestFullScreen" in Element.prototype) {
         if (window.layoutTestController) 
             layoutTestController.waitUntilDone();
+
+        var callback;
+        var fullscreenChanged = function(event)
+        {
+            if (callback)
+                callback(event)
+        };
+        document.addEventListener('webkitfullscreenchange', fullscreenChanged);
+
         document.body.offsetTop;
         var span = document.getElementById('c2');
         var div = span.parentNode;
@@ -21,13 +30,15 @@ body {
         var spanEnteredFullScreen = function(event) {
             setTimeout(function () {
                 span.appendChild(document.createElement('div'));
+                callback = function() {
+                    if (window.layoutTestController)
+                        layoutTestController.notifyDone();
+                }
                 document.webkitCancelFullScreen();
-                if (window.layoutTestController)
-                    layoutTestController.notifyDone();
             }, 0);
         };
 
-        document.addEventListener('webkitfullscreenchange', spanEnteredFullScreen);
+        callback = spanEnteredFullScreen;
 
         document.addEventListener('keydown', function () {
             span.webkitRequestFullScreen();

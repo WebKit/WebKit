@@ -786,6 +786,17 @@ void WebViewHost::runModal()
     webkit_support::MessageLoopSetNestableTasksAllowed(oldState);
 }
 
+bool WebViewHost::enterFullScreen()
+{
+    postDelayedTask(new HostMethodTask(this, &WebViewHost::enterFullScreenNow), 0);
+    return true;
+}
+
+void WebViewHost::exitFullScreen()
+{
+    postDelayedTask(new HostMethodTask(this, &WebViewHost::exitFullScreenNow), 0);
+}
+
 // WebFrameClient ------------------------------------------------------------
 
 WebPlugin* WebViewHost::createPlugin(WebFrame* frame, const WebPluginParams& params)
@@ -1511,6 +1522,18 @@ void WebViewHost::setPageTitle(const WebString&)
 void WebViewHost::setAddressBarURL(const WebURL&)
 {
     // Nothing to do in layout test.
+}
+
+void WebViewHost::enterFullScreenNow()
+{
+    webView()->willEnterFullScreen();
+    webView()->didEnterFullScreen();
+}
+
+void WebViewHost::exitFullScreenNow()
+{
+    webView()->willExitFullScreen();
+    webView()->didExitFullScreen();
 }
 
 // Painting functions ---------------------------------------------------------

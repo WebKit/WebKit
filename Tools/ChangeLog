@@ -1,3 +1,21 @@
+2011-10-27  Darin Fisher  <darin@chromium.org>
+
+        [chromium] Improve fullscreen API
+        https://bugs.webkit.org/show_bug.cgi?id=70477
+
+        Reviewed by Adam Barth.
+
+        Implement enter/exitFullScreen.  The implementation is asynchronous,
+        via postDelayedTask, to simulate how the browser actually behaves.
+
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::enterFullScreen):
+        (WebViewHost::exitFullScreen):
+        (WebViewHost::setAddressBarURL):
+        (WebViewHost::enterFullScreenNow):
+        (WebViewHost::exitFullScreenNow):
+        * DumpRenderTree/chromium/WebViewHost.h:
+
 2011-11-18  Adam Roben  <aroben@apple.com>
 
         Ignore an ANGLE leak that is not WebKit's fault

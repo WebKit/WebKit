@@ -1064,6 +1064,63 @@ void WebViewImpl::willEndLiveResize()
         pluginContainer->willEndLiveResize();
 }
 
+void WebViewImpl::willEnterFullScreen()
+{
+#if ENABLE(FULLSCREEN_API)
+    if (!m_provisionalFullScreenElement)
+        return;
+
+    // Ensure that this element's document is still attached.
+    Document* doc = m_provisionalFullScreenElement->document();
+    if (doc->frame()) {
+        doc->webkitWillEnterFullScreenForElement(m_provisionalFullScreenElement.get());
+        m_fullScreenFrame = doc->frame();
+    }
+    m_provisionalFullScreenElement.clear();
+#endif
+}
+
+void WebViewImpl::didEnterFullScreen()
+{
+#if ENABLE(FULLSCREEN_API)
+    if (!m_fullScreenFrame)
+        return;
+
+    if (Document* doc = m_fullScreenFrame->document()) {
+        if (doc->webkitIsFullScreen())
+            doc->webkitDidEnterFullScreenForElement(0);
+    }
+#endif
+}
+
+void WebViewImpl::willExitFullScreen()
+{
+#if ENABLE(FULLSCREEN_API)
+    if (!m_fullScreenFrame)
+        return;
+
+    if (Document* doc = m_fullScreenFrame->document()) {
+        if (doc->webkitIsFullScreen())
+            doc->webkitWillExitFullScreenForElement(0);
+    }
+#endif
+}
+
+void WebViewImpl::didExitFullScreen()
+{
+#if ENABLE(FULLSCREEN_API)
+    if (!m_fullScreenFrame)
+        return;
+
+    if (Document* doc = m_fullScreenFrame->document()) {
+        if (doc->webkitIsFullScreen())
+            doc->webkitDidExitFullScreenForElement(0);
+    }
+
+    m_fullScreenFrame.clear();
+#endif
+}
+
 void WebViewImpl::animate(double frameBeginTime)
 {
 #if ENABLE(REQUEST_ANIMATION_FRAME)
@@ -1204,6 +1261,33 @@ void WebViewImpl::loseCompositorContext(int numTimes)
     if (m_layerTreeHost)
         m_layerTreeHost->loseCompositorContext(numTimes);
 #endif
+}
+
+void WebViewImpl::enterFullScreenForElement(WebCore::Element* element)
+{
+    // We are already transitioning to fullscreen for a different element.
+    if (m_provisionalFullScreenElement) {
+        m_provisionalFullScreenElement = element;
+        return;
+    }
+
+    // We are already in fullscreen mode.
+    if (m_fullScreenFrame) {
+        m_provisionalFullScreenElement = element;
+        willEnterFullScreen();
+        didEnterFullScreen();
+        return;
+    }
+
+    // We need to transition to fullscreen mode.
+    if (m_client && m_client->enterFullScreen())
+        m_provisionalFullScreenElement = element;
+}
+
+void WebViewImpl::exitFullScreenForElement(WebCore::Element* element)
+{
+    if (m_client)
+        m_client->exitFullScreen();
 }
 
 const WebInputEvent* WebViewImpl::m_currentInputEvent = 0;
@@ -2927,17 +3011,5 @@ void WebViewImpl::resetGestureRecognizer()
     m_gestureRecognizer->reset();
 }
 #endif
-
-void WebViewImpl::exitFullscreen()
-{
-#if ENABLE(FULLSCREEN_API)
-    Document* document = page()->mainFrame()->document();
-    Element* fullscreenElement = document->webkitCurrentFullScreenElement();
-    if (!fullscreenElement)
-        return;
-    document->webkitWillExitFullScreenForElement(fullscreenElement);
-    document->webkitDidExitFullScreenForElement(fullscreenElement);
-#endif
-}
 
 } // namespace WebKit

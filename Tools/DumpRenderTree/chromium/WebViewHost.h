@@ -163,6 +163,8 @@ class WebViewHost : public WebKit::WebSpellCheckClient, public WebKit::WebViewCl
     virtual void closeWidgetSoon();
     virtual void show(WebKit::WebNavigationPolicy);
     virtual void runModal();
+    virtual bool enterFullScreen();
+    virtual void exitFullScreen();
     virtual WebKit::WebRect windowRect();
     virtual void setWindowRect(const WebKit::WebRect&);
     virtual WebKit::WebRect rootWindowRect();
@@ -254,6 +256,9 @@ private:
     // Called when the URL of the page changes.
     // Should be used to update the text of the URL bar.
     void setAddressBarURL(const WebKit::WebURL&);
+
+    void enterFullScreenNow();
+    void exitFullScreenNow();
 
     // In the Mac code, this is called to trigger the end of a test after the
     // page has finished loading. From here, we can generate the dump for the

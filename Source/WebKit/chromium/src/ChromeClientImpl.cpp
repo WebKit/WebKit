@@ -882,48 +882,35 @@ ChromeClient::CompositingTriggerFlags ChromeClientImpl::allowedCompositingTrigge
 }
 #endif
 
-bool ChromeClientImpl::supportsFullscreenForNode(const WebCore::Node* node)
+bool ChromeClientImpl::supportsFullscreenForNode(const Node* node)
 {
-    if (m_webView->client() && node->hasTagName(WebCore::HTMLNames::videoTag))
-        return m_webView->client()->supportsFullscreen();
     return false;
 }
 
-void ChromeClientImpl::enterFullscreenForNode(WebCore::Node* node)
+void ChromeClientImpl::enterFullscreenForNode(Node* node)
 {
-    if (m_webView->client())
-        m_webView->client()->enterFullscreenForNode(WebNode(node));
+    ASSERT_NOT_REACHED();
 }
 
-void ChromeClientImpl::exitFullscreenForNode(WebCore::Node* node)
+void ChromeClientImpl::exitFullscreenForNode(Node* node)
 {
-    if (m_webView->client())
-        m_webView->client()->exitFullscreenForNode(WebNode(node));
+    ASSERT_NOT_REACHED();
 }
 
 #if ENABLE(FULLSCREEN_API)
-bool ChromeClientImpl::supportsFullScreenForElement(const WebCore::Element* element, bool withKeyboard)
+bool ChromeClientImpl::supportsFullScreenForElement(const Element* element, bool withKeyboard)
 {
-    return m_webView->page()->settings()->fullScreenEnabled();
+    return true;
 }
 
-void ChromeClientImpl::enterFullScreenForElement(WebCore::Element* element)
+void ChromeClientImpl::enterFullScreenForElement(Element* element)
 {
-    // FIXME: Make this code support asynchronous embedder implementations of
-    // enterFullscreenForElement() by restructuring this code to wait for an
-    // ACK.
-    // FIXME: We may need to call these someplace else when window resizes.
-    element->document()->webkitWillEnterFullScreenForElement(element);
-    m_webView->client()->enterFullscreen();
-    element->document()->webkitDidEnterFullScreenForElement(element);
+    m_webView->enterFullScreenForElement(element);
 }
 
-void ChromeClientImpl::exitFullScreenForElement(WebCore::Element* element)
+void ChromeClientImpl::exitFullScreenForElement(Element* element)
 {
-    // FIXME: We may need to call these someplace else when window resizes.
-    element->document()->webkitWillExitFullScreenForElement(element);
-    m_webView->client()->exitFullscreen();
-    element->document()->webkitDidExitFullScreenForElement(element);
+    m_webView->exitFullScreenForElement(element);
 }
 
 void ChromeClientImpl::fullScreenRendererChanged(RenderBox*)

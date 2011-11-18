@@ -410,10 +410,6 @@ public:
                                     bool isInitialState) { }
 
 
-    // Fullscreen -----------------------------------------------------------
-
-    virtual void exitFullscreen() = 0;
-
     // Testing functionality for LayoutTestController -----------------------
 
     // Simulates a compositor lost context.

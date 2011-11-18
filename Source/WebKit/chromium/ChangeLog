@@ -1,3 +1,49 @@
+2011-10-24  Darin Fisher  <darin@chromium.org>
+
+        [chromium] Improve fullscreen API
+        https://bugs.webkit.org/show_bug.cgi?id=70477
+
+        Reviewed by Adam Barth.
+
+        Move fullscreen entry points from WebView to WebWidget since they are
+        just about widget geometry.
+
+        Delay webkitfullscreenchange event until we know that we have entered
+        fullscreen mode.  This is accomplished by expanding the WebKit APIs to
+        differentiate will{Enter,Exit} from did{Enter,Exit} state changes.
+
+        WebViewImpl is forced to keep a reference to the requested fullscreen
+        element while we are requesting to enter fullscreen mode.  Once in
+        fullscreen mode, we switch to keeping only a reference to the Frame
+        containing the fullscreen element, which we drop upon exiting
+        fullscreen mode.
+
+        * public/WebView.h:
+        * public/WebViewClient.h:
+        * public/WebWidget.h:
+        (WebKit::WebWidget::willEnterFullScreen):
+        (WebKit::WebWidget::didEnterFullScreen):
+        (WebKit::WebWidget::willExitFullScreen):
+        (WebKit::WebWidget::didExitFullScreen):
+        * public/WebWidgetClient.h:
+        (WebKit::WebWidgetClient::enterFullScreen):
+        (WebKit::WebWidgetClient::exitFullScreen):
+        * src/ChromeClientImpl.cpp:
+        (WebKit::ChromeClientImpl::supportsFullscreenForNode):
+        (WebKit::ChromeClientImpl::enterFullscreenForNode):
+        (WebKit::ChromeClientImpl::exitFullscreenForNode):
+        (WebKit::ChromeClientImpl::supportsFullScreenForElement):
+        (WebKit::ChromeClientImpl::enterFullScreenForElement):
+        (WebKit::ChromeClientImpl::exitFullScreenForElement):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::willEnterFullScreen):
+        (WebKit::WebViewImpl::didEnterFullScreen):
+        (WebKit::WebViewImpl::willExitFullScreen):
+        (WebKit::WebViewImpl::didExitFullScreen):
+        (WebKit::WebViewImpl::enterFullScreenForElement):
+        (WebKit::WebViewImpl::exitFullScreenForElement):
+        * src/WebViewImpl.h:
+
 2011-11-17  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: dispatch messages from the front-end to the backend asynchronously.

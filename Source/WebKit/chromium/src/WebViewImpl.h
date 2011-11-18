@@ -102,6 +102,10 @@ public:
     virtual void willStartLiveResize();
     virtual void resize(const WebSize&);
     virtual void willEndLiveResize();
+    virtual void willEnterFullScreen();
+    virtual void didEnterFullScreen();
+    virtual void willExitFullScreen();
+    virtual void didExitFullScreen();
     virtual void animate(double frameBeginTime);
     virtual void layout();
     virtual void paint(WebCanvas*, const WebRect&);
@@ -221,7 +225,6 @@ public:
                                     unsigned inactiveBackgroundColor,
                                     unsigned inactiveForegroundColor);
     virtual void performCustomContextMenuAction(unsigned action);
-    virtual void exitFullscreen();
 
     // CCLayerTreeHostClient
     virtual void animateAndLayout(double frameBeginTime);
@@ -421,6 +424,9 @@ public:
 
     void loseCompositorContext(int numTimes);
 
+    void enterFullScreenForElement(WebCore::Element*);
+    void exitFullScreenForElement(WebCore::Element*);
+
 private:
     float computePageScaleFactorWithinLimits(float scale);
     WebPoint clampOffsetAtScale(const WebPoint& offset, float scale);
@@ -586,6 +592,12 @@ private:
 
     // If set, the (plugin) node which has mouse capture.
     RefPtr<WebCore::Node> m_mouseCaptureNode;
+
+    // If set, the WebView is transitioning to fullscreen for this element.
+    RefPtr<WebCore::Element> m_provisionalFullScreenElement;
+
+    // If set, the WebView is in fullscreen mode for an element in this frame.
+    RefPtr<WebCore::Frame> m_fullScreenFrame;
 
 #if USE(ACCELERATED_COMPOSITING)
     WebCore::IntRect m_rootLayerScrollDamage;
