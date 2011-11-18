@@ -28,7 +28,9 @@
 
 namespace WebCore {
 
+#if !ENABLE(CLIENT_BASED_GEOLOCATION)
 GeolocationService::FactoryFunction* GeolocationService::s_factoryFunction = &GeolocationServiceEfl::create;
+#endif
 
 PassOwnPtr<GeolocationService> GeolocationServiceEfl::create(GeolocationServiceClient* client)
 {

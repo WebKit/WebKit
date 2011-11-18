@@ -1,3 +1,12 @@
+2011-11-18  Raphael Kubo da Costa  <kubo@profusion.mobi>
+
+        Unreviewed build fix; r100686 broke the EFL build when Geolocation
+        support is enabled.
+
+        * platform/efl/GeolocationServiceEfl.cpp: Only declare
+        s_factoryFunction if CLIENT_BASED_GEOLOCATION is off, otherwise it is
+        also declared in GeolocationService.cpp.
+
 2011-11-18  Igor Oliveira  <igor.oliveira@openbossa.org>
 
         [TextureMapper] computePerspectiveTransformIfNeeded is called twice in TextureMapperNode::syncCompositingState
