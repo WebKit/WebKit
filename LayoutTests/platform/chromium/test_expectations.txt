@@ -3819,7 +3819,8 @@ BUGRICOW : fast/js/toString-overrides.html = TEXT
 BUGRICOW : http/tests/security/xss-eval.html = TEXT
 
 BUGWK72052 MAC DEBUG CPU-CG GPU-CG : fast/dom/javascript-url-exception-isolation.html = CRASH
-BUGWK72053 MAC DEBUG : fast/borders/inline-mask-overlay-image-outset-vertical-rl.html = CRASH
+BUGWK72053 MAC DEBUG : fast/borders/inline-mask-overlay-image-outset-vertical-rl.html = PASS CRASH
+BUGWK72053 MAC DEBUG : fast/borders/block-mask-overlay-image-outset.html = PASS CRASH
 
 BUGWK70395 MAC : fast/dom/rtl-scroll-to-leftmost-and-resize.html = IMAGE+TEXT
 
