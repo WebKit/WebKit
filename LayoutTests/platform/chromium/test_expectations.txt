@@ -3942,3 +3942,6 @@ BUGWK72728 LEOPARD CPU-CG : fast/canvas/canvas-alphaImageData-behavior.html = TE
 BUGWK72747 SLOW WIN DEBUG : accessibility/loading-iframe-sends-notification.html = PASS
 
 BUGWK72761 : accessibility/anonymous-render-block-in-continuation-causes-crash.html = PASS TIMEOUT
+
+BUGWK72758 : http/tests/media/video-cookie.html = PASS TIMEOUT
+BUGWK72758 : http/tests/media/video-referer.html = PASS TIMEOUT
