@@ -61,6 +61,8 @@ module window {
                                                            in [Callback=FunctionOnly, Optional] NavigatorUserMediaErrorCallback errorCallback)
             raises(DOMException);
 #endif
+
+        readonly attribute [Conditional=GAMEPAD, EnabledAtRuntime] GamepadList webkitGamepads;
     };
 
 }

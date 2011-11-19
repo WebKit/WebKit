@@ -1,3 +1,15 @@
+2011-11-18  Scott Graham  <scottmg@chromium.org>
+
+        IDL changes for gamepad support
+        https://bugs.webkit.org/show_bug.cgi?id=71753
+
+        Reviewed by Adam Barth.
+
+        Runtime enable gamepad in chromium test shell.
+
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::TestShell):
+
 2011-10-27  Darin Fisher  <darin@chromium.org>
 
         [chromium] Improve fullscreen API

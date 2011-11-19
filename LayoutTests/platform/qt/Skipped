@@ -89,6 +89,9 @@ fast/forms/month
 fast/forms/time
 fast/forms/week
 
+# ENABLE_GAMEPAD not enabled.
+gamepad/
+
 # ENABLE(INPUT_SPEECH) is disabled.
 fast/speech
 

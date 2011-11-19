@@ -1,0 +1,3 @@
+EXPECTED (navigator.webkitGamepads !== 'undefined') OK
+END OF TEST
+Make sure the main polling access point exists on navigator.

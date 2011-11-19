@@ -32,6 +32,7 @@
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
+#include "GamepadList.h"
 #include "Geolocation.h"
 #include "PointerLock.h"
 #include "KURL.h"
@@ -301,6 +302,14 @@ void Navigator::webkitGetUserMedia(const String& options, PassRefPtr<NavigatorUs
     }
 
     request->start();
+}
+#endif
+
+#if ENABLE(GAMEPAD)
+GamepadList* Navigator::webkitGamepads()
+{
+    // Stubbed until platform/ changes landed.
+    return 0;
 }
 #endif
 

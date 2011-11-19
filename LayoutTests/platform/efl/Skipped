@@ -1909,6 +1909,9 @@ fast/forms/month
 fast/forms/time
 fast/forms/week
 
+# ENABLE_GAMEPAD not enabled.
+gamepad/
+
 # MutationObservers are net yet enabled. http://webkit.org/b/68729
 fast/mutation
 

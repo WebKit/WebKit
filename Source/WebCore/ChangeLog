@@ -1,3 +1,42 @@
+2011-11-18  Scott Graham  <scottmg@chromium.org>
+
+        IDL changes for gamepad support
+        https://bugs.webkit.org/show_bug.cgi?id=71753
+
+        Reviewed by Adam Barth.
+
+        IDL changes and associated plumbing to expose list of gamepad objects
+        on navigator object (per current spec). Full patch is
+        https://bugs.webkit.org/show_bug.cgi?id=69451. Only basic existence
+        test until more plumbing in future patches.
+
+        Test: gamepad/gamepad-api.html
+
+        * WebCore.gypi:
+        * bindings/generic/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::setWebkitGamepadsEnabled):
+        (WebCore::RuntimeEnabledFeatures::webkitGamepadsEnabled):
+        * page/Gamepad.cpp: Added.
+        (WebCore::Gamepad::Gamepad):
+        (WebCore::Gamepad::axes):
+        (WebCore::Gamepad::buttons):
+        (WebCore::Gamepad::~Gamepad):
+        * page/Gamepad.h: Added.
+        * page/Gamepad.idl: Added.
+        * page/GamepadList.cpp: Added.
+        (WebCore::GamepadList::~GamepadList):
+        (WebCore::GamepadList::set):
+        (WebCore::GamepadList::length):
+        (WebCore::GamepadList::item):
+        * page/GamepadList.h: Added.
+        (WebCore::GamepadList::create):
+        (WebCore::GamepadList::GamepadList):
+        * page/GamepadList.idl: Added.
+        * page/Navigator.cpp:
+        (WebCore::Navigator::webkitGamepads):
+        * page/Navigator.h:
+        * page/Navigator.idl:
+
 2011-11-18  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r100693.

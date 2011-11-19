@@ -1,3 +1,16 @@
+2011-11-18  Scott Graham  <scottmg@chromium.org>
+
+        IDL changes for gamepad support
+        https://bugs.webkit.org/show_bug.cgi?id=71753
+
+        Reviewed by Adam Barth.
+
+        Update to use vendor-prefixed enable.
+
+        * src/WebRuntimeFeatures.cpp:
+        (WebKit::WebRuntimeFeatures::enableGamepad):
+        (WebKit::WebRuntimeFeatures::isGamepadEnabled):
+
 2011-11-18  Daniel Cheng  <dcheng@chromium.org>
 
         [chromium] Use correct backing store for ChromiumDataObject in pasteboard writes.

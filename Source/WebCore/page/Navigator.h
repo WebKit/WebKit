@@ -31,6 +31,7 @@ namespace WebCore {
 class DOMMimeTypeArray;
 class DOMPluginArray;
 class Frame;
+class GamepadList;
 class Geolocation;
 class PointerLock;
 class NavigatorUserMediaErrorCallback;
@@ -72,6 +73,10 @@ public:
 
 #if ENABLE(MEDIA_STREAM)
     virtual void webkitGetUserMedia(const String& options, PassRefPtr<NavigatorUserMediaSuccessCallback>, PassRefPtr<NavigatorUserMediaErrorCallback>, ExceptionCode&);
+#endif
+
+#if ENABLE(GAMEPAD)
+    GamepadList* webkitGamepads();
 #endif
 
 private:

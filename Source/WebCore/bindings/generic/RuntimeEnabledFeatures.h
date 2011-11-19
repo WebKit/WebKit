@@ -172,8 +172,8 @@ public:
 #endif
 
 #if ENABLE(GAMEPAD)
-    static void setGamepadsEnabled(bool isEnabled) { isGamepadEnabled = isEnabled; }
-    static bool gamepadsEnabled() { return isGamepadEnabled; }
+    static void setWebkitGamepadsEnabled(bool isEnabled) { isGamepadEnabled = isEnabled; }
+    static bool webkitGamepadsEnabled() { return isGamepadEnabled; }
 #endif
 
 #if ENABLE(QUOTA)
