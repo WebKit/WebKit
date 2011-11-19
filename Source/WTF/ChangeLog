@@ -1,3 +1,56 @@
+2011-11-19  Mark Rowe  <mrowe@apple.com>
+
+        WTF should have an Xcode project
+        https://bugs.webkit.org/show_bug.cgi?id=71752
+
+        Reviewed by Adam Barth.
+
+        This adds an Xcode project that includes only Stub.cpp and Stub.h.
+        They’re built in to a library at the appropriate path for each
+        configuration (WebKitBuild/{Debug,Release}/libWTF.a and
+        /usr/local/lib/libWTF.a) and headers are installed in to the
+        appropriate location (WebKitBuild/{Debug,Release}/usr/local/include/wtf
+        and /usr/local/include/wtf). I tested building WTF in this project and
+        everything appears to build except for DateMath.cpp (due to bug 71747).
+        I have not yet done any work on making JavaScriptCore and other
+        projects use the built products of this new project.
+
+        * Configurations: Added.
+        * Configurations/Base.xcconfig: Copied from Source/JavaScriptCore/Configurations/Base.xcconfig.
+        * Configurations/CompilerVersion.xcconfig: Copied from Source/JavaScriptCore/Configurations/CompilerVersion.xcconfig.
+        * Configurations/DebugRelease.xcconfig: Copied from Source/JavaScriptCore/Configurations/DebugRelease.xcconfig.
+        * Configurations/WTF.xcconfig: Copied from Source/WebKit2/Configurations/Shim.xcconfig.
+        * WTF.xcodeproj: Added.
+        * WTF.xcodeproj/project.pbxproj: Added.
+        * config.h: Copied from Source/JavaScriptCore/config.h.
+        * icu: Added.
+        * icu/LICENSE: Copied from Source/JavaScriptCore/icu/LICENSE.
+        * icu/README: Copied from Source/JavaScriptCore/icu/README.
+        * icu/unicode: Added.
+        * icu/unicode/parseerr.h: Copied from Source/JavaScriptCore/icu/unicode/parseerr.h.
+        * icu/unicode/platform.h: Copied from Source/JavaScriptCore/icu/unicode/platform.h.
+        * icu/unicode/putil.h: Copied from Source/JavaScriptCore/icu/unicode/putil.h.
+        * icu/unicode/uchar.h: Copied from Source/JavaScriptCore/icu/unicode/uchar.h.
+        * icu/unicode/ucnv.h: Copied from Source/JavaScriptCore/icu/unicode/ucnv.h.
+        * icu/unicode/ucnv_err.h: Copied from Source/JavaScriptCore/icu/unicode/ucnv_err.h.
+        * icu/unicode/ucol.h: Copied from Source/JavaScriptCore/icu/unicode/ucol.h.
+        * icu/unicode/uconfig.h: Copied from Source/JavaScriptCore/icu/unicode/uconfig.h.
+        * icu/unicode/uenum.h: Copied from Source/JavaScriptCore/icu/unicode/uenum.h.
+        * icu/unicode/uiter.h: Copied from Source/JavaScriptCore/icu/unicode/uiter.h.
+        * icu/unicode/uloc.h: Copied from Source/JavaScriptCore/icu/unicode/uloc.h.
+        * icu/unicode/umachine.h: Copied from Source/JavaScriptCore/icu/unicode/umachine.h.
+        * icu/unicode/unorm.h: Copied from Source/JavaScriptCore/icu/unicode/unorm.h.
+        * icu/unicode/urename.h: Copied from Source/JavaScriptCore/icu/unicode/urename.h.
+        * icu/unicode/uscript.h: Copied from Source/JavaScriptCore/icu/unicode/uscript.h.
+        * icu/unicode/uset.h: Copied from Source/JavaScriptCore/icu/unicode/uset.h.
+        * icu/unicode/ustring.h: Copied from Source/JavaScriptCore/icu/unicode/ustring.h.
+        * icu/unicode/utf.h: Copied from Source/JavaScriptCore/icu/unicode/utf.h.
+        * icu/unicode/utf16.h: Copied from Source/JavaScriptCore/icu/unicode/utf16.h.
+        * icu/unicode/utf8.h: Copied from Source/JavaScriptCore/icu/unicode/utf8.h.
+        * icu/unicode/utf_old.h: Copied from Source/JavaScriptCore/icu/unicode/utf_old.h.
+        * icu/unicode/utypes.h: Copied from Source/JavaScriptCore/icu/unicode/utypes.h.
+        * icu/unicode/uversion.h: Copied from Source/JavaScriptCore/icu/unicode/uversion.h.
+
 2011-11-03  Adam Barth  <abarth@webkit.org>
 
         Add Stub.h and Stub.cpp to Source-level WTF project
