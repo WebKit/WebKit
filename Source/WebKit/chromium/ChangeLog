@@ -1,5 +1,14 @@
 2011-11-19  Nat Duca  <nduca@chromium.org>
 
+        Unreviewed, rolling out r100854.
+        http://trac.webkit.org/changeset/100854
+
+        Rollout DEPS roll. Made chromium bots cry.
+
+        * DEPS:
+
+2011-11-19  Nat Duca  <nduca@chromium.org>
+
         Unreviewed.  Rolled DEPS 109696->110838
 
         * DEPS:
