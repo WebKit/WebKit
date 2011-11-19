@@ -11,13 +11,13 @@
             if (window.layoutTestController)
                 layoutTestController.dumpAsText();
 
-            log("document.width = " + document.width);
-            log("document.height = " + document.height);
+            log("document.body.clientWidth = " + document.body.clientWidth);
+            log("document.body.clientHeight = " + document.body.clientHeight);
         }
     </script>
 </head>
 <body onload="test()">
-    <p>This tests that document.width and document.height cause a layout on use.  The test has passed if they have positive values.</p>
+    <p>This tests that document.body.clientWidth and document.body.clientHeight cause a layout on use.  The test has passed if they have positive values.</p>
     <pre id="console"></pre>
 </body>
 </html>

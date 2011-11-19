@@ -1,3 +1,16 @@
+2011-11-18  Vineet Chaudhary  <vineet.chaudhary@motorola.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=72591
+        Remove document.width / document.height
+
+        Reviewed by Darin Adler.
+
+        Removed document.width/document.height from JS bindings,
+        but keeping the same for ObjC bindings. Also it should use
+        document.body.clientWidth and document.body.clientHeight instead.
+
+        * html/HTMLDocument.idl:
+
 2011-11-18  Martin Robinson  <mrobinson@igalia.com>
 
         Fix the GTK+ build.

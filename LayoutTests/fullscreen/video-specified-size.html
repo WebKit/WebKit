@@ -5,13 +5,12 @@
     <script>
         setSrcById("video", findMediaFile("video", "../media/content/test"));
         var video = document.getElementById('video');
-
         // Bail out early if the full screen API is not enabled or is missing:
         if (Element.prototype.webkitRequestFullScreen == undefined) {
             logResult(false, "Element.prototype.webkitRequestFullScreen == undefined");
             endTest();
         } else {
-            waitForEventTestAndEnd(document, 'webkitfullscreenchange', "video.clientWidth==document.width");
+            waitForEventTestAndEnd(document, 'webkitfullscreenchange', "video.clientWidth==document.body.clientWidth");
             runWithKeyDown(function(){video.webkitRequestFullScreen()});
         }
     </script>
