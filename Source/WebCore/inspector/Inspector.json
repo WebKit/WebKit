@@ -931,7 +931,7 @@
                 "description": "Detailed application cache resource information.",
                 "properties": [
                     { "name": "url", "type": "string", "description": "Resource url." },
-                    { "name": "size", "type": "string", "description": "Resource size." },
+                    { "name": "size", "type": "integer", "description": "Resource size." },
                     { "name": "type", "type": "string", "description": "Resource type." }
                 ]
             },
