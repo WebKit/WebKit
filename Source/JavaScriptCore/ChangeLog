@@ -1,3 +1,12 @@
+2011-11-18  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Forgot to completely de-virtualize isDynamicScope
+        https://bugs.webkit.org/show_bug.cgi?id=72763
+
+        Reviewed by Darin Adler.
+
+        * runtime/JSActivation.h: Removed virtual keyword.
+
 2011-11-18  Filip Pizlo  <fpizlo@apple.com>
 
         Crash in JSC::DFG::OSRExitCompiler::compileExit(JSC::DFG::OSRExit const&, JSC::DFG::SpeculationRecovery*)
