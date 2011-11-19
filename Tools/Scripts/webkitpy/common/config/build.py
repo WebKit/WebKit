@@ -43,7 +43,7 @@ def _should_file_trigger_build(target_platform, file):
         # Directories that shouldn't trigger builds on any bots.
         ("Examples", []),
         ("PerformanceTests", []),
-        ("Source/WebCore/manual-tests", []),
+        ("ManualTests", []),
         ("Tools/BuildSlaveSupport/build.webkit.org-config/public_html", []),
         ("Websites", []),
         ("efl", []),

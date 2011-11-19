@@ -78,7 +78,7 @@ IF(NOT DEFINED CPACK_SOURCE_IGNORE_FILES)
   IF(NOT WEBKIT_CPACK_ADD_TESTS)
     LIST(APPEND CPACK_SOURCE_IGNORE_FILES
       "/LayoutTests/"
-      "/manual-tests/"
+      "/ManualTests/"
       "/tests/"
       )
   ENDIF(NOT WEBKIT_CPACK_ADD_TESTS)

@@ -1,3 +1,15 @@
+2011-11-18  Adam Barth  <abarth@webkit.org>
+
+        Prepare to move manual-tests out of WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=72782
+
+        Reviewed by Eric Seidel.
+
+        Update these files to refer to the new location of ManualTests.
+
+        * .gitattributes:
+        * Source/cmake/WebKitPackaging.cmake:
+
 2011-11-18  Patrick Gansterer  <paroga@webkit.org>
 
         [CMake] Add possibility to overwrite WEBKIT_PORT_DIR in platform specific files

@@ -187,6 +187,13 @@ LayoutTests/tables/mozilla_expected_failures/images/aboutHeader.gif -crlf
 LayoutTests/tables/mozilla_expected_failures/images/main-horizontal-scroll.gif -crlf
 LayoutTests/wml/resources/enter-card-with-events.wml -crlf
 LayoutTests/wml/resources/enter-first-card-with-events.wml -crlf
+ManualTests/DOMContextMenuEvent.html -crlf
+ManualTests/cursor-max-size.html -crlf
+ManualTests/drag-with-div-or-image-as-data-image.html -crlf
+ManualTests/empty-script-crash.html -crlf
+ManualTests/remove-form-node-with-radio-buttons-crash.html -crlf
+ManualTests/select-delete-item.html -crlf
+ManualTests/textarea-caret-position-after-auto-spell-correct.html -crlf
 PerformanceTests/PageLoad/svg/files/Harvey_Rayner.svg -crlf
 PerformanceTests/PageLoad/svg/files/cacuts_02.svg -crlf
 PerformanceTests/PageLoad/svg/files/crawfish2_ganson.svg -crlf
@@ -198,13 +205,6 @@ Source/WebCore/accessibility/AccessibilityAllInOne.cpp -crlf
 Source/WebCore/bindings/js/JSExceptionBase.cpp -crlf
 Source/WebCore/bindings/js/JSExceptionBase.h -crlf
 Source/WebCore/inspector/Inspector.json -crlf
-Source/WebCore/manual-tests/DOMContextMenuEvent.html -crlf
-Source/WebCore/manual-tests/cursor-max-size.html -crlf
-Source/WebCore/manual-tests/drag-with-div-or-image-as-data-image.html -crlf
-Source/WebCore/manual-tests/empty-script-crash.html -crlf
-Source/WebCore/manual-tests/remove-form-node-with-radio-buttons-crash.html -crlf
-Source/WebCore/manual-tests/select-delete-item.html -crlf
-Source/WebCore/manual-tests/textarea-caret-position-after-auto-spell-correct.html -crlf
 Source/WebCore/platform/chromium/SuddenTerminationChromium.cpp -crlf
 Source/WebCore/platform/network/win/NetworkStateNotifierWin.cpp -crlf
 Source/WebCore/platform/wx/wxcode/non-kerned-drawing.h -crlf
