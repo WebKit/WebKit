@@ -1,3 +1,48 @@
+2011-11-18  Igor Oliveira  <igor.oliveira@openbossa.org>
+
+        [WK2][Qt] Move Accelerated Composite animations to UIProcess
+        https://bugs.webkit.org/show_bug.cgi?id=72753
+
+        Currently, all the accelerated compositing animations are applied in WebProcess and
+        for each frame generated, WebProcess needs to sync with UIProcess.
+
+        This patch moves the accelerated compositing animations to UIProcess reducing the
+        amount of synchronization messages between WebProcess and UIProcess, this is done
+        sending animations information to UIProcess.
+
+        Reviewed by Noam Rosenthal.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (CoreIPC::::encode):
+        (CoreIPC::::decode):
+
+        Encode/Decode RefPtr<Animation> instead of Animation class. This facilitates
+        the data serialization.
+
+        * Shared/WebCoreArgumentCoders.h:
+        * Shared/WebLayerTreeInfo.cpp:
+        (WebKit::WebLayerInfo::encode):
+        (WebKit::WebLayerInfo::decode):
+        (WebKit::WebLayerAnimation::encode):
+        (WebKit::WebLayerAnimation::decode):
+
+        Create WebLayerAnimation struct, it is used to send animation information
+        to UIProcess.
+
+        * Shared/WebLayerTreeInfo.h:
+        (WebKit::WebLayerAnimation::WebLayerAnimation):
+        * UIProcess/LayerTreeHostProxy.h:
+        * UIProcess/qt/LayerTreeHostProxyQt.cpp:
+        (WebKit::LayerTreeHostProxy::LayerTreeHostProxy):
+        (WebKit::LayerTreeHostProxy::paintToCurrentGLContext):
+        (WebKit::LayerTreeHostProxy::updateSceneGraphUpdateTimerFired):
+        (WebKit::LayerTreeHostProxy::syncLayerParameters):
+        * WebProcess/WebCoreSupport/WebGraphicsLayer.cpp:
+        (WebCore::WebGraphicsLayer::addAnimation):
+        (WebCore::WebGraphicsLayer::pauseAnimation):
+        (WebCore::WebGraphicsLayer::removeAnimation):
+        (WebCore::WebGraphicsLayer::syncCompositingStateForThisLayerOnly):
+
 2011-11-18  Beth Dakin  <bdakin@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=72551

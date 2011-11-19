@@ -154,6 +154,7 @@ PassOwnPtr<GraphicsLayer> LayerTreeHostProxy::createLayer(WebLayerID layerID)
 LayerTreeHostProxy::LayerTreeHostProxy(DrawingAreaProxy* drawingAreaProxy)
     : m_animationTimer(RunLoop::main(), this, &LayerTreeHostProxy::updateViewport)
     , m_drawingAreaProxy(drawingAreaProxy)
+    , m_viewportUpdateTimer(this, &LayerTreeHostProxy::didFireViewportUpdateTimer)
     , m_rootLayerID(0)
 {
 }
@@ -208,8 +209,15 @@ void LayerTreeHostProxy::paintToCurrentGLContext(const TransformationMatrix& mat
 
     m_textureMapper->endPainting();
 
-    if (node->descendantsOrSelfHaveRunningAnimations())
-        updateViewport();
+    if (node->descendantsOrSelfHaveRunningAnimations()) {
+        node->syncAnimationsRecursively();
+        m_viewportUpdateTimer.startOneShot(0);
+    }
+}
+
+void LayerTreeHostProxy::didFireViewportUpdateTimer(Timer<LayerTreeHostProxy>*)
+{
+    updateViewport();
 }
 
 void LayerTreeHostProxy::updateViewport()
@@ -271,6 +279,26 @@ void LayerTreeHostProxy::syncLayerParameters(const WebLayerInfo& layerInfo)
         children.append(child);
     }
     layer->setChildren(children);
+
+    for (size_t i = 0; i < layerInfo.animations.size(); ++i) {
+        const WebKit::WebLayerAnimation anim = layerInfo.animations[i];
+
+        switch (anim.operation) {
+        case WebKit::WebLayerAnimation::AddAnimation: {
+            const IntSize boxSize = anim.boxSize;
+            double offset = WTF::currentTime() - anim.startTime;
+            layer->addAnimation(anim.keyframeList, boxSize, anim.animation.get(), anim.name, offset);
+            break;
+        }
+        case WebKit::WebLayerAnimation::RemoveAnimation:
+            layer->removeAnimation(anim.name);
+            break;
+        case WebKit::WebLayerAnimation::PauseAnimation:
+            double offset = WTF::currentTime() - anim.startTime;
+            layer->pauseAnimation(anim.name, offset);
+            break;
+        }
+    }
 
     if (layerInfo.isRootLayer && m_rootLayerID != id)
         setRootLayerID(id);
