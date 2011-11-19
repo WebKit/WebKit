@@ -296,7 +296,7 @@ void RenderBlock::updateBeforeAfterContent(PseudoId pseudoId)
     // If this is an anonymous wrapper, then the parent applies its own pseudo-element style to it.
     if (parent() && parent()->createsAnonymousWrapper())
         return;
-    return children()->updateBeforeAfterContent(this, pseudoId);
+    children()->updateBeforeAfterContent(this, pseudoId);
 }
 
 RenderBlock* RenderBlock::continuationBefore(RenderObject* beforeChild)
@@ -339,8 +339,10 @@ void RenderBlock::addChildToContinuation(RenderObject* newChild, RenderObject* b
             beforeChildParent = flow;
     }
 
-    if (newChild->isFloatingOrPositioned())
-        return beforeChildParent->addChildIgnoringContinuation(newChild, beforeChild);
+    if (newChild->isFloatingOrPositioned()) {
+        beforeChildParent->addChildIgnoringContinuation(newChild, beforeChild);
+        return;
+    }
 
     // A continuation always consists of two potential candidates: a block or an anonymous
     // column span box holding column span children.
@@ -348,16 +350,22 @@ void RenderBlock::addChildToContinuation(RenderObject* newChild, RenderObject* b
     bool bcpIsNormal = beforeChildParent->isInline() || !beforeChildParent->style()->columnSpan();
     bool flowIsNormal = flow->isInline() || !flow->style()->columnSpan();
 
-    if (flow == beforeChildParent)
-        return flow->addChildIgnoringContinuation(newChild, beforeChild);
+    if (flow == beforeChildParent) {
+        flow->addChildIgnoringContinuation(newChild, beforeChild);
+        return;
+    }
     
     // The goal here is to match up if we can, so that we can coalesce and create the
     // minimal # of continuations needed for the inline.
-    if (childIsNormal == bcpIsNormal)
-        return beforeChildParent->addChildIgnoringContinuation(newChild, beforeChild);
-    if (flowIsNormal == childIsNormal)
-        return flow->addChildIgnoringContinuation(newChild, 0); // Just treat like an append.
-    return beforeChildParent->addChildIgnoringContinuation(newChild, beforeChild);
+    if (childIsNormal == bcpIsNormal) {
+        beforeChildParent->addChildIgnoringContinuation(newChild, beforeChild);
+        return;
+    }
+    if (flowIsNormal == childIsNormal) {
+        flow->addChildIgnoringContinuation(newChild, 0); // Just treat like an append.
+        return;
+    }
+    beforeChildParent->addChildIgnoringContinuation(newChild, beforeChild);
 }
 
 
@@ -369,15 +377,19 @@ void RenderBlock::addChildToAnonymousColumnBlocks(RenderObject* newChild, Render
     RenderBlock* beforeChildParent = toRenderBlock(beforeChild && beforeChild->parent()->isRenderBlock() ? beforeChild->parent() : lastChild());
     
     // If the new child is floating or positioned it can just go in that block.
-    if (newChild->isFloatingOrPositioned())
-        return beforeChildParent->addChildIgnoringAnonymousColumnBlocks(newChild, beforeChild);
+    if (newChild->isFloatingOrPositioned()) {
+        beforeChildParent->addChildIgnoringAnonymousColumnBlocks(newChild, beforeChild);
+        return;
+    }
 
     // See if the child can be placed in the box.
     bool newChildHasColumnSpan = newChild->style()->columnSpan() && !newChild->isInline();
     bool beforeChildParentHoldsColumnSpans = beforeChildParent->isAnonymousColumnSpanBlock();
 
-    if (newChildHasColumnSpan == beforeChildParentHoldsColumnSpans)
-        return beforeChildParent->addChildIgnoringAnonymousColumnBlocks(newChild, beforeChild);
+    if (newChildHasColumnSpan == beforeChildParentHoldsColumnSpans) {
+        beforeChildParent->addChildIgnoringAnonymousColumnBlocks(newChild, beforeChild);
+        return;
+    }
 
     if (!beforeChild) {
         // Create a new block of the correct type.
@@ -394,8 +406,10 @@ void RenderBlock::addChildToAnonymousColumnBlocks(RenderObject* newChild, Render
             isPreviousBlockViable = !immediateChild->previousSibling();
         immediateChild = immediateChild->parent();
     }
-    if (isPreviousBlockViable && immediateChild->previousSibling())
-        return toRenderBlock(immediateChild->previousSibling())->addChildIgnoringAnonymousColumnBlocks(newChild, 0); // Treat like an append.
+    if (isPreviousBlockViable && immediateChild->previousSibling()) {
+        toRenderBlock(immediateChild->previousSibling())->addChildIgnoringAnonymousColumnBlocks(newChild, 0); // Treat like an append.
+        return;
+    }
         
     // Split our anonymous blocks.
     RenderObject* newBeforeChild = splitAnonymousBlocksAroundChild(beforeChild);
@@ -785,15 +799,17 @@ void RenderBlock::addChildIgnoringAnonymousColumnBlocks(RenderObject* newChild, 
 void RenderBlock::addChild(RenderObject* newChild, RenderObject* beforeChild)
 {
     if (continuation() && !isAnonymousBlock())
-        return addChildToContinuation(newChild, beforeChild);
-    return addChildIgnoringContinuation(newChild, beforeChild);
+        addChildToContinuation(newChild, beforeChild);
+    else
+        addChildIgnoringContinuation(newChild, beforeChild);
 }
 
 void RenderBlock::addChildIgnoringContinuation(RenderObject* newChild, RenderObject* beforeChild)
 {
     if (!isAnonymousBlock() && firstChild() && (firstChild()->isAnonymousColumnsBlock() || firstChild()->isAnonymousColumnSpanBlock()))
-        return addChildToAnonymousColumnBlocks(newChild, beforeChild);
-    return addChildIgnoringAnonymousColumnBlocks(newChild, beforeChild);
+        addChildToAnonymousColumnBlocks(newChild, beforeChild);
+    else
+        addChildIgnoringAnonymousColumnBlocks(newChild, beforeChild);
 }
 
 static void getInlineRun(RenderObject* start, RenderObject* boundary,

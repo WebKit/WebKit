@@ -1,3 +1,17 @@
+2011-11-18  Kelly Norton  <knorton@google.com>
+
+        Fixes several more void functions in RenderObject that return values.
+        https://bugs.webkit.org/show_bug.cgi?id=72750
+
+        Reviewed by Adam Barth.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::updateBeforeAfterContent):
+        (WebCore::RenderBlock::addChildToContinuation):
+        (WebCore::RenderBlock::addChildToAnonymousColumnBlocks):
+        (WebCore::RenderBlock::addChild):
+        (WebCore::RenderBlock::addChildIgnoringContinuation):
+
 2011-11-18  Shawn Singh  <shawnsingh@chromium.org>
 
         [chromium] Add some useful text to existing debug dump
