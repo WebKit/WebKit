@@ -1820,7 +1820,10 @@ IF (ENABLE_SVG)
         svg/properties/SVGPathSegListPropertyTearOff.cpp
     )
 
-    LIST(APPEND WebCore_IDL_FILES
+    # FIXME: The BlackBerry port doesn't support generating DOM bindings from the SVG IDL files.
+    # For now, we explicitly demarcate the SVG IDL files so that the BlackBerry port can skip them
+    # during DOM binding generation. See <https://bugs.webkit.org/show_bug.cgi?id=72773>.
+    SET(SVG_IDL_FILES
         svg/SVGAElement.idl
         svg/SVGAltGlyphDefElement.idl
         svg/SVGAltGlyphElement.idl
@@ -1962,6 +1965,10 @@ IF (ENABLE_SVG)
         svg/SVGViewElement.idl
         svg/SVGVKernElement.idl
         svg/SVGZoomEvent.idl
+    )
+
+    LIST(APPEND WebCore_IDL_FILES
+        ${SVG_IDL_FILES}
     )
 
     LIST(APPEND WebCore_CSS_PROPERTY_NAMES

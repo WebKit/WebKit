@@ -1,3 +1,24 @@
+2011-11-18  Daniel Bates  <dbates@rim.com>
+
+        Add CMake build infrastructure for the BlackBerry port
+        https://bugs.webkit.org/show_bug.cgi?id=72768
+
+        Reviewed by Antonio Gomes.
+
+        Add optional --blackberry command line argument to build-webkit to build the
+        BlackBerry port.
+
+        * Scripts/build-webkit:
+        * Scripts/webkitdirs.pm:
+        (determineBaseProductDir):
+        (argumentsForConfiguration):
+        (builtDylibPathForName):
+        (determineIsQt):
+        (isBlackBerry): Added.
+        (determineIsBlackBerry): Added.
+        (blackberryTargetArchitecture): Added.
+        (isAppleWebKit):
+
 2011-11-18  James Robinson  <jamesr@chromium.org>
 
         Unreviewed, rolling out r100835.

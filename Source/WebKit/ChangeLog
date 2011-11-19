@@ -1,3 +1,13 @@
+2011-11-18  Daniel Bates  <dbates@rim.com>
+
+        Add CMake build infrastructure for the BlackBerry port
+        https://bugs.webkit.org/show_bug.cgi?id=72768
+
+        Reviewed by Antonio Gomes.
+
+        * blackberry: Added.
+        * blackberry/CMakeListsBlackBerry.txt: Added.
+
 2011-11-18  Patrick Gansterer  <paroga@webkit.org>
 
         [CMake] Add possibility to overwrite WEBKIT_PORT_DIR in platform specific files

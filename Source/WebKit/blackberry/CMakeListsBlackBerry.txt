@@ -1,0 +1,178 @@
+LIST(INSERT WebKit_INCLUDE_DIRECTORIES 0
+    "${BLACKBERRY_THIRD_PARTY_DIR}" # For <unicode.h>, which is included from <sys/keycodes.h>.
+    "${BLACKBERRY_THIRD_PARTY_DIR}/icu"
+)
+
+LIST(APPEND WebKit_INCLUDE_DIRECTORIES
+    "${JAVASCRIPTCORE_DIR}/wtf/text"
+    "${WEBCORE_DIR}/bindings/cpp"
+    "${WEBCORE_DIR}/history/blackberry"
+    "${WEBCORE_DIR}/html/canvas"
+    "${WEBCORE_DIR}/html/parser" # For HTMLParserIdioms.h
+    "${WEBCORE_DIR}/loader/appcache"
+    "${WEBCORE_DIR}/notifications"
+    "${WEBCORE_DIR}/platform/blackberry"
+    "${WEBCORE_DIR}/platform/graphics/blackberry"
+    "${WEBCORE_DIR}/platform/graphics/blackberry/skia"
+    "${WEBCORE_DIR}/platform/graphics/skia"
+    "${WEBCORE_DIR}/platform/network/blackberry"
+    "${WEBCORE_DIR}/websockets"
+    "${WEBKIT_DIR}/blackberry/Api"
+    "${WEBKIT_DIR}/blackberry/WebCoreSupport"
+    "${WEBKIT_DIR}/blackberry/WebKitSupport"
+    "${CMAKE_SOURCE_DIR}" # For JavaScriptCore API headers
+)
+IF (ENABLE_DRT)
+    LIST(APPEND WebKit_INCLUDE_DIRECTORIES
+        # needed for DRT for now
+        "${JAVASCRIPTCORE_DIR}/wtf"
+        "${WEBCORE_DIR}/platform/mock"
+        "${WEBCORE_DIR}/svg/animation"
+        "${WEBCORE_DIR}/workers"
+        "${TOOLS_DIR}"
+        "${TOOLS_DIR}/DumpRenderTree"
+        "${TOOLS_DIR}/DumpRenderTree/blackberry"
+    )
+ENDIF ()
+
+ADD_DEFINITIONS(-DUSER_PROCESSES)
+
+LIST(APPEND WebKit_SOURCES
+    blackberry/Api/BackingStore.cpp
+    blackberry/Api/BlackBerryGlobal.cpp
+    blackberry/Api/WebString.cpp
+    blackberry/Api/ResourceHolderImpl.cpp
+    blackberry/Api/WebKitTextCodec.cpp
+    blackberry/Api/WebPage.cpp
+    blackberry/Api/WebPageGroupLoadDeferrer.cpp
+    blackberry/Api/WebSettings.cpp
+    blackberry/WebCoreSupport/CacheClientBlackBerry.cpp
+    blackberry/WebCoreSupport/ChromeClientBlackBerry.cpp
+    blackberry/WebCoreSupport/ClientExtension.cpp
+    blackberry/WebCoreSupport/ContextMenuClientBlackBerry.cpp
+    blackberry/WebCoreSupport/DeviceMotionClientBlackBerry.cpp
+    blackberry/WebCoreSupport/DeviceOrientationClientBlackBerry.cpp
+    blackberry/WebCoreSupport/DragClientBlackBerry.cpp
+    blackberry/WebCoreSupport/EditCommandBlackBerry.cpp
+    blackberry/WebCoreSupport/EditorClientBlackBerry.cpp
+    blackberry/WebCoreSupport/FrameLoaderClientBlackBerry.cpp
+    blackberry/WebCoreSupport/FrameNetworkingContextBlackBerry.cpp
+    blackberry/WebCoreSupport/GeolocationControllerClientBlackBerry.cpp
+    blackberry/WebCoreSupport/IconDatabaseClientBlackBerry.cpp
+    blackberry/WebCoreSupport/InspectorClientBlackBerry.cpp
+    blackberry/WebCoreSupport/JavaScriptDebuggerBlackBerry.cpp
+    blackberry/WebCoreSupport/NotificationPresenterImpl.cpp
+    blackberry/WebKitSupport/BackingStoreCompositingSurface.cpp
+    blackberry/WebKitSupport/BackingStoreTile.cpp
+    blackberry/WebKitSupport/BackingStoreClient.cpp
+    blackberry/WebKitSupport/DOMSupport.cpp
+    blackberry/WebKitSupport/FrameLayers.cpp
+    blackberry/WebKitSupport/InputHandler.cpp
+    blackberry/WebKitSupport/OutOfMemoryHandler.cpp
+    blackberry/WebKitSupport/RenderQueue.cpp
+    blackberry/WebKitSupport/SelectionHandler.cpp
+    blackberry/WebKitSupport/SurfacePool.cpp
+    blackberry/WebKitSupport/TouchEventHandler.cpp
+    blackberry/WebKitSupport/FatFingers.cpp
+    blackberry/WebKitSupport/WebPageCompositor.cpp
+)
+
+IF (ENABLE_DRT)
+    # DumpRenderTree sources
+    LIST(APPEND WebKit_SOURCES
+        blackberry/WebKitSupport/DumpRenderTreeSupport.cpp
+        ${TOOLS_DIR}/DumpRenderTree/blackberry/AccessibilityControllerBlackBerry.cpp
+        ${TOOLS_DIR}/DumpRenderTree/blackberry/AccessibilityUIElementBlackBerry.cpp
+        ${TOOLS_DIR}/DumpRenderTree/blackberry/DumpRenderTree.cpp
+        ${TOOLS_DIR}/DumpRenderTree/blackberry/EventSender.cpp
+        ${TOOLS_DIR}/DumpRenderTree/blackberry/GCControllerBlackBerry.cpp
+        ${TOOLS_DIR}/DumpRenderTree/blackberry/LayoutTestControllerBlackBerry.cpp
+        ${TOOLS_DIR}/DumpRenderTree/blackberry/PixelDumpSupportBlackBerry.cpp
+        ${TOOLS_DIR}/DumpRenderTree/blackberry/PNGImageEncoder.cpp
+        ${TOOLS_DIR}/DumpRenderTree/blackberry/WorkQueueItemBlackBerry.cpp
+        ${TOOLS_DIR}/DumpRenderTree/AccessibilityController.cpp
+        ${TOOLS_DIR}/DumpRenderTree/AccessibilityUIElement.cpp
+        ${TOOLS_DIR}/DumpRenderTree/AccessibilityTextMarker.cpp
+        ${TOOLS_DIR}/DumpRenderTree/LayoutTestController.cpp
+        ${TOOLS_DIR}/DumpRenderTree/CyclicRedundancyCheck.cpp
+        ${TOOLS_DIR}/DumpRenderTree/PixelDumpSupport.cpp
+        ${TOOLS_DIR}/DumpRenderTree/WorkQueue.cpp
+        ${TOOLS_DIR}/DumpRenderTree/GCController.cpp
+    )
+ENDIF ()
+
+SET(WebKit_LINK_FLAGS ${BLACKBERRY_LINK_FLAGS})
+
+LIST(APPEND WebKit_LIBRARIES
+    ${AOI_LIBRARY}
+    ${CLIPBOARD_LIBRARY}
+    ${CURL_LIBRARY}
+    ${Crypto_LIBRARY}
+    ${FONTCONFIG_LIBRARY}
+    ${FREETYPE_LIBRARY}
+    ${HARFBUZZ_LIBRARY}
+    ${ICUData_LIBRARY}
+    ${ICUI18N_LIBRARY}
+    ${ICUUC_LIBRARY}
+    ${IMG_LIBRARY}
+    ${INTL_LIBRARY}
+    ${Iconv_LIBRARY}
+    ${JavaScriptCore_LIBRARY_NAME}
+    ${MD_LIBRARY}
+    ${MMR_LIBRARY}
+    ${M_LIBRARY}
+    ${NBUTIL_LIBRARY}
+    ${PNG_LIBRARY}
+    ${PPSCache_LIBRARY}
+    ${SQLITE3_LIBRARY}
+    ${SSL_LIBRARY}
+    ${STRM_LIBRARY}
+    ${Screen_LIBRARY}
+    ${Skia_LIBRARY}
+    ${Skia_QNX_LIBRARY}
+    ${Socket_LIBRARY}
+    ${UUID_LIBRARY}
+    ${WebKitPlatform_LIBRARY}
+    ${XML2_LIBRARY}
+    ${XSLT_LIBRARY}
+    ${Z_LIBRARY}
+)
+
+IF (PROFILING)
+    LIST(APPEND WebKit_LIBRARIES
+        ${PROFILING_LIBRARY}
+    )
+ENDIF ()
+
+IF (WTF_USE_ACCELERATED_COMPOSITING)
+    LIST(APPEND WebKit_SOURCES
+        blackberry/WebCoreSupport/GLES2Context.cpp
+    )
+    LIST(APPEND WebKit_INCLUDE_DIRECTORIES
+        "${WEBCORE_DIR}/platform/graphics/gles2"
+    )
+    LIST(APPEND WebKit_LIBRARIES
+        ${GLESv2_LIBRARY}
+        ${EGL_LIBRARY}
+    )
+ENDIF ()
+
+FILE(GLOB BBWebKit_HEADERS "${CMAKE_CURRENT_SOURCE_DIR}/blackberry/Api/*.h")
+
+INSTALL(FILES ${BBWebKit_HEADERS} DESTINATION usr/include/browser/webkit)
+
+IF (ENABLE_DRT)
+    INSTALL(FILES ${TOOLS_DIR}/DumpRenderTree/blackberry/DumpRenderTreeBlackBerry.h
+            DESTINATION usr/include/browser/webkit)
+ENDIF ()
+
+SET(WebKit_INSTALL_DIR "${CMAKE_SYSTEM_PROCESSOR}/usr/lib/torch-webkit")
+
+# FIXME: We need to make this target more straight forward to read and modify. See <https://bugs.webkit.org/show_bug.cgi?id=72784>.
+ADD_CUSTOM_TARGET(
+    inspector ALL
+        # Note, we cannot "cat *.js" since the order of the JavaScript files is important for there to be no JavaScript errors.
+            COMMAND cat ${WEBCORE_DIR}/inspector/front-end/utilities.js ${WEBCORE_DIR}/inspector/front-end/BinarySearch.js ${WEBCORE_DIR}/inspector/front-end/treeoutline.js ${WEBCORE_DIR}/inspector/front-end/inspector.js ${DERIVED_SOURCES_WEBCORE_DIR}/InspectorBackendStub.js ${WEBCORE_DIR}/inspector/front-end/InspectorFrontendHostStub.js ${WEBCORE_DIR}/inspector/front-end/ExtensionRegistryStub.js ${WEBCORE_DIR}/inspector/front-end/Object.js ${WEBCORE_DIR}/inspector/front-end/Settings.js ${WEBCORE_DIR}/inspector/front-end/Checkbox.js ${WEBCORE_DIR}/inspector/front-end/ContextMenu.js ${WEBCORE_DIR}/inspector/front-end/SoftContextMenu.js ${WEBCORE_DIR}/inspector/front-end/KeyboardShortcut.js ${WEBCORE_DIR}/inspector/front-end/TextPrompt.js ${WEBCORE_DIR}/inspector/front-end/Popover.js ${WEBCORE_DIR}/inspector/front-end/TabbedPane.js ${WEBCORE_DIR}/inspector/front-end/Placard.js ${WEBCORE_DIR}/inspector/front-end/View.js ${WEBCORE_DIR}/inspector/front-end/IFrameView.js ${WEBCORE_DIR}/inspector/front-end/Drawer.js ${WEBCORE_DIR}/inspector/front-end/ConsoleView.js ${WEBCORE_DIR}/inspector/front-end/Panel.js ${WEBCORE_DIR}/inspector/front-end/TimelineGrid.js ${WEBCORE_DIR}/inspector/front-end/Resource.js ${WEBCORE_DIR}/inspector/front-end/CSSStyleModel.js ${WEBCORE_DIR}/inspector/front-end/NetworkManager.js ${WEBCORE_DIR}/inspector/front-end/ResourceTreeModel.js ${WEBCORE_DIR}/inspector/front-end/ResourceCategory.js ${WEBCORE_DIR}/inspector/front-end/TimelineManager.js ${WEBCORE_DIR}/inspector/front-end/Database.js ${WEBCORE_DIR}/inspector/front-end/DOMStorage.js ${WEBCORE_DIR}/inspector/front-end/DOMStorageItemsView.js ${WEBCORE_DIR}/inspector/front-end/DataGrid.js ${WEBCORE_DIR}/inspector/front-end/ShowMoreDataGridNode.js ${WEBCORE_DIR}/inspector/front-end/CookiesTable.js ${WEBCORE_DIR}/inspector/front-end/CookieItemsView.js ${WEBCORE_DIR}/inspector/front-end/ApplicationCacheItemsView.js ${WEBCORE_DIR}/inspector/front-end/Script.js ${WEBCORE_DIR}/inspector/front-end/SidebarPane.js ${WEBCORE_DIR}/inspector/front-end/ElementsTreeOutline.js ${WEBCORE_DIR}/inspector/front-end/SidebarTreeElement.js ${WEBCORE_DIR}/inspector/front-end/Section.js ${WEBCORE_DIR}/inspector/front-end/PropertiesSection.js ${WEBCORE_DIR}/inspector/front-end/RemoteObject.js ${WEBCORE_DIR}/inspector/front-end/ObjectPropertiesSection.js ${WEBCORE_DIR}/inspector/front-end/BreakpointsSidebarPane.js ${WEBCORE_DIR}/inspector/front-end/DOMBreakpointsSidebarPane.js ${WEBCORE_DIR}/inspector/front-end/CallStackSidebarPane.js ${WEBCORE_DIR}/inspector/front-end/ScopeChainSidebarPane.js ${WEBCORE_DIR}/inspector/front-end/WatchExpressionsSidebarPane.js ${WEBCORE_DIR}/inspector/front-end/WorkersSidebarPane.js ${WEBCORE_DIR}/inspector/front-end/MetricsSidebarPane.js ${WEBCORE_DIR}/inspector/front-end/PropertiesSidebarPane.js ${WEBCORE_DIR}/inspector/front-end/EventListenersSidebarPane.js ${WEBCORE_DIR}/inspector/front-end/Color.js ${WEBCORE_DIR}/inspector/front-end/CSSCompletions.js ${WEBCORE_DIR}/inspector/front-end/CSSKeywordCompletions.js ${WEBCORE_DIR}/inspector/front-end/StylesSidebarPane.js ${WEBCORE_DIR}/inspector/front-end/PanelEnablerView.js ${WEBCORE_DIR}/inspector/front-end/WelcomeView.js ${WEBCORE_DIR}/inspector/front-end/StatusBarButton.js ${WEBCORE_DIR}/inspector/front-end/ElementsPanel.js ${WEBCORE_DIR}/inspector/front-end/NetworkPanel.js ${WEBCORE_DIR}/inspector/front-end/InjectedFakeWorker.js ${WEBCORE_DIR}/inspector/front-end/TextViewer.js ${WEBCORE_DIR}/inspector/front-end/SourceFrame.js ${WEBCORE_DIR}/inspector/front-end/ResourceView.js ${WEBCORE_DIR}/inspector/front-end/ScriptsPanel.js ${WEBCORE_DIR}/inspector/front-end/ResourcesPanel.js ${WEBCORE_DIR}/inspector/front-end/ProfilesPanel.js ${WEBCORE_DIR}/inspector/front-end/ConsolePanel.js ${WEBCORE_DIR}/inspector/front-end/ExtensionAPI.js ${WEBCORE_DIR}/inspector/front-end/ExtensionAuditCategory.js ${WEBCORE_DIR}/inspector/front-end/ExtensionCommon.js ${WEBCORE_DIR}/inspector/front-end/ExtensionServer.js ${WEBCORE_DIR}/inspector/front-end/ExtensionPanel.js ${WEBCORE_DIR}/inspector/front-end/AuditsPanel.js ${WEBCORE_DIR}/inspector/front-end/AuditResultView.js ${WEBCORE_DIR}/inspector/front-end/AuditLauncherView.js ${WEBCORE_DIR}/inspector/front-end/AuditRules.js ${WEBCORE_DIR}/inspector/front-end/AuditCategories.js ${WEBCORE_DIR}/inspector/front-end/AuditFormatters.js ${WEBCORE_DIR}/inspector/front-end/NetworkItemView.js ${WEBCORE_DIR}/inspector/front-end/EmptyView.js ${WEBCORE_DIR}/inspector/front-end/ResourceHeadersView.js ${WEBCORE_DIR}/inspector/front-end/ResourceCookiesView.js ${WEBCORE_DIR}/inspector/front-end/ResourceTimingView.js ${WEBCORE_DIR}/inspector/front-end/ResourceJSONView.js ${WEBCORE_DIR}/inspector/front-end/ResourceHTMLView.js ${WEBCORE_DIR}/inspector/front-end/ResourceResponseView.js ${WEBCORE_DIR}/inspector/front-end/ResourcePreviewView.js ${WEBCORE_DIR}/inspector/front-end/ScriptFormatter.js ${WEBCORE_DIR}/inspector/front-end/DOMSyntaxHighlighter.js ${WEBCORE_DIR}/inspector/front-end/TextEditorModel.js ${WEBCORE_DIR}/inspector/front-end/TextEditorHighlighter.js ${WEBCORE_DIR}/inspector/front-end/SourceTokenizer.js ${WEBCORE_DIR}/inspector/front-end/SourceCSSTokenizer.js ${WEBCORE_DIR}/inspector/front-end/SourceHTMLTokenizer.js ${WEBCORE_DIR}/inspector/front-end/SourceJavaScriptTokenizer.js ${WEBCORE_DIR}/inspector/front-end/FontView.js ${WEBCORE_DIR}/inspector/front-end/ImageView.js ${WEBCORE_DIR}/inspector/front-end/DatabaseTableView.js ${WEBCORE_DIR}/inspector/front-end/DatabaseQueryView.js ${WEBCORE_DIR}/inspector/front-end/ProfileDataGridTree.js ${WEBCORE_DIR}/inspector/front-end/BottomUpProfileDataGridTree.js ${WEBCORE_DIR}/inspector/front-end/TopDownProfileDataGridTree.js ${WEBCORE_DIR}/inspector/front-end/ProfileView.js ${WEBCORE_DIR}/inspector/front-end/PartialQuickSort.js ${WEBCORE_DIR}/inspector/front-end/HeapSnapshot.js ${WEBCORE_DIR}/inspector/front-end/HeapSnapshotProxy.js ${WEBCORE_DIR}/inspector/front-end/HeapSnapshotWorkerDispatcher.js ${WEBCORE_DIR}/inspector/front-end/DetailedHeapshotGridNodes.js ${WEBCORE_DIR}/inspector/front-end/DetailedHeapshotView.js ${WEBCORE_DIR}/inspector/front-end/DebuggerModel.js ${WEBCORE_DIR}/inspector/front-end/DebuggerPresentationModel.js ${WEBCORE_DIR}/inspector/front-end/SourceFile.js ${WEBCORE_DIR}/inspector/front-end/DOMAgent.js ${WEBCORE_DIR}/inspector/front-end/TimelineAgent.js ${WEBCORE_DIR}/inspector/front-end/TimelinePanel.js ${WEBCORE_DIR}/inspector/front-end/TimelineOverviewPane.js ${WEBCORE_DIR}/inspector/front-end/TestController.js ${WEBCORE_DIR}/inspector/front-end/HelpScreen.js ${WEBCORE_DIR}/inspector/front-end/GoToLineDialog.js ${WEBCORE_DIR}/inspector/front-end/SettingsScreen.js ${WEBCORE_DIR}/inspector/front-end/ShortcutsScreen.js ${WEBCORE_DIR}/inspector/front-end/HAREntry.js ${WEBCORE_DIR}/inspector/front-end/CookieParser.js ${WEBCORE_DIR}/inspector/front-end/Toolbar.js ${WEBCORE_DIR}/inspector/front-end/SearchController.js ${WEBCORE_DIR}/inspector/front-end/WorkerManager.js ${WEBCORE_DIR}/inspector/front-end/UserMetrics.js ${WEBCORE_DIR}/inspector/front-end/JavaScriptContextManager.js ${WEBCORE_DIR}/../WebKit/blackberry/WebCoreSupport/inspectorBB.js > ${DERIVED_SOURCES_WEBCORE_DIR}/javascript.js
+    DEPENDS ${WebCore_LIBRARY_NAME}
+    COMMENT "Web Inspector resources building..."
+            )

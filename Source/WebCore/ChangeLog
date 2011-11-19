@@ -1,3 +1,14 @@
+2011-11-18  Daniel Bates  <dbates@rim.com>
+
+        Add CMake build infrastructure for the BlackBerry port
+        https://bugs.webkit.org/show_bug.cgi?id=72768
+
+        Reviewed by Antonio Gomes.
+
+        * CMakeLists.txt: At this time the BlackBerry port doesn't support generating
+          DOM bindings from the SVG IDLs. See WebKit bug #72773.
+        * PlatformBlackBerry.cmake: Added.
+
 2011-11-18  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r100826.

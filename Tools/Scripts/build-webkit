@@ -147,7 +147,7 @@ my @features = (
       define => "ENABLE_ACCELERATED_2D_CANVAS", default => 0, value => \$accelerated2dCanvasSupport },
 
     { option => "animation-api", desc => "Toggle animation API support",
-      define => "ENABLE_ANIMATION_API", default => 0, value => \$animationAPISupport },
+      define => "ENABLE_ANIMATION_API", default => isBlackBerry(), value => \$animationAPISupport },
 
     { option => "blob", desc => "Toggle Blob support",
       define => "ENABLE_BLOB", default => (isAppleMacWebKit() || isGtk() || isChromium()), value => \$blobSupport },
@@ -156,7 +156,7 @@ my @features = (
       define => "ENABLE_CHANNEL_MESSAGING", default => 1, value => \$channelMessagingSupport },
 
     { option => "client-based-geolocation", desc => "Toggle client-based Geolocation support",
-      define => "ENABLE_CLIENT_BASED_GEOLOCATION", default => (isAppleWebKit() || isGtk()), value => \$clientBasedGeolocationSupport },
+      define => "ENABLE_CLIENT_BASED_GEOLOCATION", default => (isAppleWebKit() || isGtk() || isBlackBerry()), value => \$clientBasedGeolocationSupport },
 
     { option => "css-filters", desc => "Toggle CSS Filters support",
       define => "ENABLE_CSS_FILTERS", default => isAppleWebKit(), value => \$cssFiltersSupport },
@@ -183,7 +183,7 @@ my @features = (
       define => "ENABLE_DETAILS", default => 1, value => \$detailsSupport },
 
     { option => "device-orientation", desc => "Toggle DeviceOrientation support",
-      define => "ENABLE_DEVICE_ORIENTATION", default => 0, value => \$deviceOrientationSupport },
+      define => "ENABLE_DEVICE_ORIENTATION", default => isBlackBerry(), value => \$deviceOrientationSupport },
 
     { option => "directory-upload", desc => "Toogle Directory upload support",
       define => "ENABLE_DIRECTORY_UPLOAD", default => 0, value => \$directoryUploadSupport },
@@ -195,7 +195,7 @@ my @features = (
       define => "ENABLE_FILE_SYSTEM", default => 0, value => \$fileSystemSupport },
 
     { option => "filters", desc => "Toggle SVG Filters support",
-      define => "ENABLE_FILTERS", default => (isAppleWebKit() || isGtk() || isQt() || isEfl()), value => \$filtersSupport },
+      define => "ENABLE_FILTERS", default => (isAppleWebKit() || isGtk() || isQt() || isEfl() || isBlackBerry()), value => \$filtersSupport },
 
     { option => "fullscreen-api", desc => "Toggle Fullscreen API support",
       define => "ENABLE_FULLSCREEN_API", default => (isAppleMacWebKit() || isGtk()), value => \$fullscreenAPISupport },
@@ -204,7 +204,7 @@ my @features = (
       define => "ENABLE_GAMEPAD", default => 0, value => \$gamepadSupport },
 
     { option => "geolocation", desc => "Toggle Geolocation support",
-      define => "ENABLE_GEOLOCATION", default => (isAppleWebKit() || isGtk()), value => \$geolocationSupport },
+      define => "ENABLE_GEOLOCATION", default => (isAppleWebKit() || isGtk() || isBlackBerry()), value => \$geolocationSupport },
 
     { option => "icon-database", desc => "Toggle Icon database support",
       define => "ENABLE_ICONDATABASE", default => 1, value => \$iconDatabaseSupport },
@@ -213,7 +213,7 @@ my @features = (
       define => "ENABLE_INDEXED_DATABASE", default => 0, value => \$indexedDatabaseSupport },
 
     { option => "input-color", desc => "Color Input support",
-      define => "ENABLE_INPUT_COLOR", default => 0, value => \$inputColorSupport },
+      define => "ENABLE_INPUT_COLOR", default => isBlackBerry(), value => \$inputColorSupport },
 
     { option => "input-speech", desc => "Speech Input API support",
       define => "ENABLE_INPUT_SPEECH", default => 0, value => \$inputSpeechSupport },
@@ -270,10 +270,10 @@ my @features = (
       define => "ENABLE_NETSCAPE_PLUGIN_API", default => !isEfl(), value => \$netscapePluginSupport },
 
     { option => "notifications", desc => "Toggle Desktop Notifications Support",
-      define => "ENABLE_NOTIFICATIONS", default => 0, value => \$notificationsSupport },
+      define => "ENABLE_NOTIFICATIONS", default => isBlackBerry(), value => \$notificationsSupport },
 
     { option => "orientation-events", desc => "Toggle Orientation Events support",
-      define => "ENABLE_ORIENTATION_EVENTS", default => 0, value => \$orientationEventsSupport },
+      define => "ENABLE_ORIENTATION_EVENTS", default => isBlackBerry(), value => \$orientationEventsSupport },
 
     { option => "page-visibility-api", desc => "Page Visibility API support",
       define => "ENABLE_PAGE_VISIBILITY_API", default => 0, value => \$pageVisibilityApiSupport },
@@ -291,7 +291,7 @@ my @features = (
       define => "USE_SYSTEM_MALLOC", default => 0, value => \$systemMallocSupport },
 
     { option => "shared-workers", desc => "Toggle SharedWorkers support",
-      define => "ENABLE_SHARED_WORKERS", default => (isAppleWebKit() || isGtk()), value => \$sharedWorkersSupport },
+      define => "ENABLE_SHARED_WORKERS", default => (isAppleWebKit() || isGtk() || isBlackBerry()), value => \$sharedWorkersSupport },
 
     { option => "svg", desc => "Toggle SVG support",
       define => "ENABLE_SVG", default => 1, value => \$svgSupport },
@@ -306,13 +306,13 @@ my @features = (
       define => "WTF_USE_TILED_BACKING_STORE", default => isQt(), value => \$tiledBackingStoreSupport },
 
     { option => "touch-events", desc => "Toggle Touch Events support",
-      define => "ENABLE_TOUCH_EVENTS", default => isQt(), value => \$touchEventsSupport },
+      define => "ENABLE_TOUCH_EVENTS", default => (isQt() || isBlackBerry()), value => \$touchEventsSupport },
 
     { option => "touch-icon-loading", desc => "Toggle Touch Icon Loading Support",
       define => "ENABLE_TOUCH_ICON_LOADING", default => 0, value => \$touchIconLoadingSupport },
 
     { option => "video", desc => "Toggle Video support",
-      define => "ENABLE_VIDEO", default => (isAppleWebKit() || isGtk()), value => \$videoSupport },
+      define => "ENABLE_VIDEO", default => (isAppleWebKit() || isGtk() || isBlackBerry()), value => \$videoSupport },
 
     { option => "web-audio", desc => "Toggle Web Audio support",
       define => "ENABLE_WEB_AUDIO", default => 0, value=> \$webAudioSupport },
@@ -324,7 +324,7 @@ my @features = (
       define => "ENABLE_WEB_TIMING", default => 0, value=> \$webTimingSupport },
 
     { option => "workers", desc => "Toggle Web Workers support",
-      define => "ENABLE_WORKERS", default => (isAppleWebKit() || isGtk()), value => \$workersSupport },
+      define => "ENABLE_WORKERS", default => (isAppleWebKit() || isGtk() || isBlackBerry()), value => \$workersSupport },
 
     { option => "xslt", desc => "Toggle XSLT support",
       define => "ENABLE_XSLT", default => 1, value => \$xsltSupport },
@@ -382,6 +382,7 @@ Usage: $programName [options] [options to pass to build system]
   --gyp                             Use GYP-generated project files
   --dsym                            Change debugging format to dwarf-with-dsym (Mac only)
 
+  --blackberry                      Build the BlackBerry port on Mac/Linux
   --chromium                        Build the Chromium port on Mac/Win/Linux
   --chromium-android                Build the Chromium port on Android
   --efl                             Build the EFL port
@@ -396,7 +397,7 @@ Usage: $programName [options] [options to pass to build system]
   --install-libs=<path>             Set installation path for the libraries (Qt only)
   --v8                              Use V8 as JavaScript engine (Qt only)
 
-  --prefix=<path>                   Set installation prefix to the given path (Gtk/Efl only)
+  --prefix=<path>                   Set installation prefix to the given path (Gtk/Efl/BlackBerry only)
   --makeargs=<arguments>            Optional Makefile flags
   --qmakearg=<arguments>            Optional qmake flags (Qt only, e.g. --qmakearg="CONFIG+=webkit2" to build WebKit2)
   --cmakearg=<arguments>            Optional CMake flags (e.g. --cmakearg="-DFOO=bar -DCMAKE_PREFIX_PATH=/usr/local")
@@ -628,6 +629,107 @@ if (isEfl()) {
 
 if (isWinCE()) {
     buildCMakeProjectOrExit($clean, "WinCE", $prefixPath, $makeArgs, ("-DCMAKE_WINCE_SDK=\"STANDARDSDK_500 (ARMV4I)\"", cMakeArgsFromFeatures()), $cmakeArgs);
+}
+
+if (isBlackBerry()) {
+    my %archInfo = blackberryTargetArchitecture();
+    my $arch = $archInfo{"arch"};
+    my $cpu = $archInfo{"cpu"};
+    my $cpuDir = $archInfo{"cpuDir"};
+    my $buSuffix = $archInfo{"buSuffix"};
+
+    my @cmakeExtraOptions;
+    if ($cpu eq "a9") {
+        $cpu = $arch . "v7le";
+        push @cmakeExtraOptions, '-DTARGETING_PLAYBOOK=1';
+    }
+
+    my $stageDir = $ENV{"STAGE_DIR"};
+    my $stageLib = File::Spec->catdir($stageDir, $cpuDir, "lib");
+    my $stageUsrLib = File::Spec->catdir($stageDir, $cpuDir, "usr", "lib");
+    my $stageInc = File::Spec->catdir($stageDir, "usr", "include");
+
+    my $qnxHost = $ENV{"QNX_HOST"};
+    my $numberOfJobs;
+    my $ccCommand;
+    my $cxxCommand;
+    if ($ENV{"USE_ICECC"}) {
+        chomp($ccCommand = `which icecc`);
+        $cxxCommand = $ccCommand;
+        $numberOfJobs = 50; # 50 is the number we choose for internal development
+    } else {
+        $ccCommand = File::Spec->catfile($qnxHost, "usr", "bin", "qcc");
+        $cxxCommand = $ccCommand;
+        $numberOfJobs = numberOfCPUs();
+    }
+    $makeArgs .= ($makeArgs ? " " : "") . "-j" . $numberOfJobs if $makeArgs !~ /-j\s*\d+/;
+
+    if ($ENV{"CCWRAP"}) {
+        $ccCommand = $ENV{"CCWRAP"};
+        push @cmakeExtraOptions, "-DCMAKE_C_COMPILER_ARG1=qcc";
+        push @cmakeExtraOptions, "-DCMAKE_CXX_COMPILER_ARG1=qcc";
+    }
+
+    push @cmakeExtraOptions, "-DCMAKE_SKIP_RPATH='ON'" if isDarwin();
+    push @cmakeExtraOptions, "-DENABLE_DRT=1" if $ENV{"ENABLE_DRT"};
+
+    my @includeSystemDirectories;
+    push @includeSystemDirectories, File::Spec->catdir($stageInc, "grskia", "skia");
+    push @includeSystemDirectories, File::Spec->catdir($stageInc, "grskia");
+    push @includeSystemDirectories, File::Spec->catdir($stageInc, "harfbuzz");
+    push @includeSystemDirectories, File::Spec->catdir($stageInc, "imf");
+    push @includeSystemDirectories, $stageInc;
+    push @includeSystemDirectories, File::Spec->catdir($stageInc, "browser", "platform");
+    push @includeSystemDirectories, File::Spec->catdir($stageInc, "browser", "qsk");
+
+    my @cxxFlags;
+    push @cxxFlags, "-Wl,-rpath-link,$stageLib";
+    push @cxxFlags, "-Wl,-rpath-link," . File::Spec->catfile($stageUsrLib, "torch-webkit");
+    push @cxxFlags, "-Wl,-rpath-link,$stageUsrLib";
+    push @cxxFlags, "-L$stageLib";
+    push @cxxFlags, "-L$stageUsrLib";
+
+    if ($ENV{"PROFILE"}) {
+        push @cmakeExtraOptions, "-DPROFILING=1";
+        push @cxxFlags, "-p";
+    }
+
+    my @cmakeArgs;
+    push @cmakeArgs, "-DPUBLIC_BUILD=0";
+    push @cmakeArgs, '-DCMAKE_SYSTEM_NAME="QNX"';
+    push @cmakeArgs, "-DCMAKE_SYSTEM_PROCESSOR=\"$cpuDir\"";
+    push @cmakeArgs, '-DCMAKE_SYSTEM_VERSION="1"';
+    push @cmakeArgs, "-DCMAKE_C_COMPILER=\"$ccCommand\"";
+    push @cmakeArgs, "-DCMAKE_CXX_COMPILER=\"$cxxCommand\"";
+    push @cmakeArgs, "-DCMAKE_C_FLAGS=\"-Vgcc_nto${cpu} -g @cxxFlags\"";
+    push @cmakeArgs, "-DCMAKE_CXX_FLAGS=\"-Vgcc_nto${cpu}_cpp-ne -g -lang-c++ @cxxFlags\"";
+
+    # We cannot use CMAKE_INCLUDE_PATH since this describes the search path for header files in user directories.
+    # And the QNX system headers are in user directories on the host OS (i.e. they aren't installed in the host OS's
+    # system header search path). So, we need to inform g++ that these user directories (@includeSystemDirectories)
+    # are to be taken as the host OS's system header directories when building our port.
+    #
+    # Also, we cannot use CMAKE_SYSTEM_INCLUDE_PATH since that will override the entire system header path.
+    # So, we define the additional system include paths in ADDITIONAL_SYSTEM_INCLUDE_PATH. This list will
+    # be processed in OptionsBlackBerry.cmake.
+    push @cmakeArgs, '-DADDITIONAL_SYSTEM_INCLUDE_PATH="' . join(';', @includeSystemDirectories) . '"';
+
+    # FIXME: Make this more general purpose such that we can pass a list of directories and files.
+    push @cmakeArgs, '-DTHIRD_PARTY_ICU_DIR="' . File::Spec->catdir($stageInc, "unicode") . '"';
+    push @cmakeArgs, '-DTHIRD_PARTY_UNICODE_FILE="' . File::Spec->catfile($stageInc, "unicode.h") . '"';
+
+    push @cmakeArgs, "-DCMAKE_LIBRARY_PATH=\"$stageLib;$stageUsrLib\"";
+    push @cmakeArgs, '-DCMAKE_AR="' . File::Spec->catfile($qnxHost, "usr", "bin", "nto${buSuffix}-ar") . '"';
+    push @cmakeArgs, '-DCMAKE_RANLIB="' . File::Spec->catfile($qnxHost, "usr", "bin", "nto${buSuffix}-ranlib") . '"';
+    push @cmakeArgs, '-DCMAKE_LD="'. File::Spec->catfile($qnxHost, "usr", "bin", "nto${buSuffix}-ld") . '"';
+    push @cmakeArgs, '-DCMAKE_LINKER="' . File::Spec->catfile($qnxHost, "usr", "bin", "nto${buSuffix}-ld") . '"';
+    push @cmakeArgs, "-DECLIPSE_CDT4_GENERATE_SOURCE_PROJECT=TRUE";
+    push @cmakeArgs, '-G"Eclipse CDT4 - Unix Makefiles"';
+    push @cmakeArgs, @cmakeExtraOptions;
+
+    $prefixPath = $stageDir unless $prefixPath;
+
+    buildCMakeProjectOrExit($clean, "BlackBerry", $prefixPath, $makeArgs, (@cmakeArgs, cMakeArgsFromFeatures()));
 }
 
 # Build, and abort if the build fails.

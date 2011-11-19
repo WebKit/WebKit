@@ -1,0 +1,15 @@
+LIST(APPEND JSC_LIBRARIES
+    ${ICUI18N_LIBRARY}
+    ${ICUUC_LIBRARY}
+    ${INTL_LIBRARY} # Required for x86 builds
+    ${M_LIBRARY}
+    ${Screen_LIBRARY}
+    ${Skia_QNX_LIBRARY}
+    ${WebKitPlatform_LIBRARY}
+)
+
+IF (PROFILING)
+    LIST(APPEND JSC_LIBRARIES
+        ${PROFILING_LIBRARY}
+    )
+ENDIF ()

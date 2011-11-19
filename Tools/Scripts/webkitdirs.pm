@@ -49,6 +49,7 @@ BEGIN {
        &XcodeOptionStringNoConfig
        &XcodeOptions
        &baseProductDir
+       &blackberryTargetArchitecture
        &chdirWebKit
        &checkFrameworks
        &currentSVNRevision
@@ -87,6 +88,7 @@ my $isWinCairo;
 my $isWx;
 my $isEfl;
 my @wxArgs;
+my $isBlackBerry;
 my $isChromium;
 my $isChromiumAndroid;
 my $isChromiumMacMake;
@@ -181,6 +183,11 @@ sub determineBaseProductDir
 
     if (!defined($baseProductDir)) { # Port-spesific checks failed, use default
         $baseProductDir = "$sourceDir/WebKitBuild";
+    }
+
+    if (isBlackBerry()) {
+        my %archInfo = blackberryTargetArchitecture();
+        $baseProductDir = "$baseProductDir/" . $archInfo{"cpuDir"};
     }
 
     if (isGit() && isGitBranchBuild() && !isChromium()) {
@@ -322,6 +329,7 @@ sub argumentsForConfiguration()
     push(@args, '--wincairo') if isWinCairo();
     push(@args, '--wince') if isWinCE();
     push(@args, '--wx') if isWx();
+    push(@args, '--blackberry') if isBlackBerry();
     push(@args, '--chromium') if isChromium() && !isChromiumAndroid();
     push(@args, '--chromium-android') if isChromiumAndroid();
     push(@args, '--inspector-frontend') if isInspectorFrontend();
@@ -637,6 +645,10 @@ sub builtDylibPathForName
     if (isChromium()) {
         return "$configurationProductDir/$libraryName";
     }
+    if (isBlackBerry()) {
+        my $libraryExtension = $libraryName =~ /^WebKit$/i ? ".so" : ".a";
+        return "$configurationProductDir/$libraryName/lib" . lc($libraryName) . $libraryExtension;
+    }
     if (isQt()) {
         $libraryName = "QtWebKit";
         if (isDarwin() and -d "$configurationProductDir/lib/$libraryName.framework") {
@@ -824,13 +836,45 @@ sub determineIsQt()
         return;
     }
 
-    # The presence of QTDIR only means Qt if --gtk or --wx or --efl are not on the command-line
-    if (isGtk() || isWx() || isEfl()) {
+    # The presence of QTDIR only means Qt if --gtk or --wx or --efl or --blackberry are not on the command-line
+    if (isGtk() || isWx() || isEfl() || isBlackBerry()) {
         $isQt = 0;
         return;
     }
     
     $isQt = defined($ENV{'QTDIR'});
+}
+
+sub isBlackBerry()
+{
+    determineIsBlackBerry();
+    return $isBlackBerry;
+}
+
+sub determineIsBlackBerry()
+{
+    return if defined($isBlackBerry);
+    $isBlackBerry = checkForArgumentAndRemoveFromARGV("--blackberry");
+}
+
+sub blackberryTargetArchitecture()
+{
+    my $arch = $ENV{"BLACKBERRY_ARCH_TYPE"} ? $ENV{"BLACKBERRY_ARCH_TYPE"} : "arm";
+    my $cpu = $ENV{"BLACKBERRY_ARCH_CPU"} ? $ENV{"BLACKBERRY_ARCH_CPU"} : "";
+    my $cpuDir;
+    my $buSuffix;
+    if (($cpu eq "v7le") || ($cpu eq "a9")) {
+        $cpuDir = $arch . "le-v7";
+        $buSuffix = $arch . "v7";
+    } else {
+        $cpu = $arch;
+        $cpuDir = $arch;
+        $buSuffix = $arch;
+    }
+    return ("arch" => $arch,
+            "cpu" => $cpu,
+            "cpuDir" => $cpuDir,
+            "buSuffix" => $buSuffix);
 }
 
 sub determineIsEfl()
@@ -1045,7 +1089,7 @@ sub isARM()
 
 sub isAppleWebKit()
 {
-    return !(isQt() or isGtk() or isWx() or isChromium() or isEfl() or isWinCE());
+    return !(isQt() or isGtk() or isWx() or isChromium() or isEfl() or isWinCE() or isBlackBerry());
 }
 
 sub isAppleMacWebKit()

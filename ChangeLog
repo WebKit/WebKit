@@ -1,3 +1,15 @@
+2011-11-18  Daniel Bates  <dbates@rim.com>
+
+        Add CMake build infrastructure for the BlackBerry port
+        https://bugs.webkit.org/show_bug.cgi?id=72768
+
+        Reviewed by Adam Barth and Antonio Gomes.
+
+        * Source/CMakeLists.txt: Add the BlackBerry port and support for building on QNX.
+        * Source/cmake/OptionsBlackBerry.cmake: Added.
+        * Source/cmake/OptionsCommon.cmake: Add QNX QCC-variant of CODE_GENERATOR_PREPROCESSOR.
+          We may be able to fold this into the non-MSVC CODE_GENERATOR_PREPROCESSOR.
+
 2011-11-18  Adam Barth  <abarth@webkit.org>
 
         Prepare to move manual-tests out of WebCore
