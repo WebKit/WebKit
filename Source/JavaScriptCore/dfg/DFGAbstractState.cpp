@@ -627,8 +627,10 @@ bool AbstractState::execute(NodeIndex nodeIndex)
             
     case InstanceOf:
         // Again, sadly, we don't propagate the fact that we've done InstanceOf
-        forNode(node.child1()).filter(PredictCell);
-        forNode(node.child2()).filter(PredictCell);
+        if (!(m_graph[node.child1()].prediction() & ~PredictCell) && !(forNode(node.child1()).m_type & ~PredictCell))
+            forNode(node.child1()).filter(PredictCell);
+        forNode(node.child3()).filter(PredictCell);
+        forNode(nodeIndex).set(PredictBoolean);
         break;
             
     case Phi:

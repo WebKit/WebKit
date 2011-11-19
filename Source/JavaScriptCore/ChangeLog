@@ -1,3 +1,37 @@
+2011-11-18  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG JIT fails speculation on InstanceOf if the base is not an object
+        https://bugs.webkit.org/show_bug.cgi?id=72709
+
+        Reviewed by Geoff Garen.
+        
+        InstanceOf already leverages the fact that we only allow the default
+        hasInstance implementation. So, if the base is predicted to possibly
+        be not an object and the CFA has not yet proven otherwise, InstanceOf
+        will abstain from speculating cell and instead return false if the
+        base is not a cell.
+        
+        This appears to be a 1% speed-up on V8 on the V8 harness. 3-4% or so
+        speed-up in earley-boyer. Neutral according to bencher on SunSpider,
+        V8, and Kraken. In 32-bit, it's a 0.5% win on SunSpider and a 1.9%
+        win on V8 even on my harness, due to a 12.5% win on earley-boyer.
+        
+        I also took this opportunity to make the code for InstanceOf common
+        between the two JITs. This was partially successful, in that the
+        "common code" has a bunch of #if's, but overall it seems like a code
+        size reduction.
+
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::execute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileInstanceOfForObject):
+        (JSC::DFG::SpeculativeJIT::compileInstanceOf):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
 2011-11-18  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Forgot to completely de-virtualize isDynamicScope

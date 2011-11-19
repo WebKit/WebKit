@@ -889,6 +889,9 @@ private:
     void nonSpeculativeNonPeepholeStrictEq(Node&, bool invert = false);
     bool nonSpeculativeStrictEq(Node&, bool invert = false);
     
+    void compileInstanceOfForObject(Node&, GPRReg valueReg, GPRReg prototypeReg, GPRReg scratchAndResultReg);
+    void compileInstanceOf(Node&);
+    
     MacroAssembler::Address addressOfCallData(int idx)
     {
         return MacroAssembler::Address(GPRInfo::callFrameRegister, (m_jit.codeBlock()->m_numCalleeRegisters + idx) * static_cast<int>(sizeof(Register)));

@@ -3723,39 +3723,7 @@ void SpeculativeJIT::compile(Node& node)
     }
 
     case InstanceOf: {
-        SpeculateCellOperand value(this, node.child1());
-        // Base unused since we speculate default InstanceOf behaviour in CheckHasInstance.
-        SpeculateCellOperand prototype(this, node.child3());
-
-        GPRTemporary scratch(this);
-
-        GPRReg valueReg = value.gpr();
-        GPRReg prototypeReg = prototype.gpr();
-        GPRReg scratchReg = scratch.gpr();
-
-        // Check that prototype is an object.
-        m_jit.loadPtr(MacroAssembler::Address(prototypeReg, JSCell::structureOffset()), scratchReg);
-        speculationCheck(JSValueRegs(), NoNode, m_jit.branch8(MacroAssembler::NotEqual, MacroAssembler::Address(scratchReg, Structure::typeInfoTypeOffset()), MacroAssembler::TrustedImm32(ObjectType)));
-
-        // Initialize scratchReg with the value being checked.
-        m_jit.move(valueReg, scratchReg);
-
-        // Walk up the prototype chain of the value (in scratchReg), comparing to prototypeReg.
-        MacroAssembler::Label loop(&m_jit);
-        m_jit.loadPtr(MacroAssembler::Address(scratchReg, JSCell::structureOffset()), scratchReg);
-        m_jit.load32(MacroAssembler::Address(scratchReg, Structure::prototypeOffset() + OBJECT_OFFSETOF(JSValue, u.asBits.payload)), scratchReg);
-        MacroAssembler::Jump isInstance = m_jit.branch32(MacroAssembler::Equal, scratchReg, prototypeReg);
-        m_jit.branchTest32(MacroAssembler::NonZero, scratchReg).linkTo(loop, &m_jit);
-
-        // No match - result is false.
-        m_jit.move(MacroAssembler::TrustedImm32(0), scratchReg);
-        MacroAssembler::Jump putResult = m_jit.jump();
-
-        isInstance.link(&m_jit);
-        m_jit.move(MacroAssembler::TrustedImm32(1), scratchReg);
-
-        putResult.link(&m_jit);
-        booleanResult(scratchReg, m_compileIndex);
+        compileInstanceOf(node);
         break;
     }
 

@@ -1473,6 +1473,106 @@ void SpeculativeJIT::compileGetByValOnByteArray(Node& node)
     integerResult(storageReg, m_compileIndex);
 }
 
+void SpeculativeJIT::compileInstanceOfForObject(Node&, GPRReg valueReg, GPRReg prototypeReg, GPRReg scratchReg)
+{
+    // Check that prototype is an object.
+    m_jit.loadPtr(MacroAssembler::Address(prototypeReg, JSCell::structureOffset()), scratchReg);
+    speculationCheck(JSValueRegs(), NoNode, m_jit.branchIfNotObject(scratchReg));
+    
+    // Initialize scratchReg with the value being checked.
+    m_jit.move(valueReg, scratchReg);
+    
+    // Walk up the prototype chain of the value (in scratchReg), comparing to prototypeReg.
+    MacroAssembler::Label loop(&m_jit);
+    m_jit.loadPtr(MacroAssembler::Address(scratchReg, JSCell::structureOffset()), scratchReg);
+#if USE(JSVALUE64)
+    m_jit.loadPtr(MacroAssembler::Address(scratchReg, Structure::prototypeOffset()), scratchReg);
+#else
+    m_jit.load32(MacroAssembler::Address(scratchReg, Structure::prototypeOffset() + OBJECT_OFFSETOF(JSValue, u.asBits.payload)), scratchReg);
+#endif
+    MacroAssembler::Jump isInstance = m_jit.branchPtr(MacroAssembler::Equal, scratchReg, prototypeReg);
+#if USE(JSVALUE64)
+    m_jit.branchTestPtr(MacroAssembler::Zero, scratchReg, GPRInfo::tagMaskRegister).linkTo(loop, &m_jit);
+#else
+    m_jit.branchTest32(MacroAssembler::NonZero, scratchReg).linkTo(loop, &m_jit);
+#endif
+    
+    // No match - result is false.
+#if USE(JSVALUE64)
+    m_jit.move(MacroAssembler::TrustedImmPtr(JSValue::encode(jsBoolean(false))), scratchReg);
+#else
+    m_jit.move(MacroAssembler::TrustedImm32(0), scratchReg);
+#endif
+    MacroAssembler::Jump putResult = m_jit.jump();
+    
+    isInstance.link(&m_jit);
+#if USE(JSVALUE64)
+    m_jit.move(MacroAssembler::TrustedImmPtr(JSValue::encode(jsBoolean(true))), scratchReg);
+#else
+    m_jit.move(MacroAssembler::TrustedImm32(1), scratchReg);
+#endif
+    
+    putResult.link(&m_jit);
+}
+
+void SpeculativeJIT::compileInstanceOf(Node& node)
+{
+    if (!!(at(node.child1()).prediction() & ~PredictCell) && !!(m_state.forNode(node.child1()).m_type & ~PredictCell)) {
+        // It might not be a cell. Speculate less aggressively.
+        
+        JSValueOperand value(this, node.child1());
+        SpeculateCellOperand prototype(this, node.child3());
+        GPRTemporary scratch(this);
+        
+        GPRReg prototypeReg = prototype.gpr();
+        GPRReg scratchReg = scratch.gpr();
+        
+#if USE(JSVALUE64)
+        GPRReg valueReg = value.gpr();
+        MacroAssembler::Jump isCell = m_jit.branchTestPtr(MacroAssembler::Zero, valueReg, GPRInfo::tagMaskRegister);
+        m_jit.move(MacroAssembler::TrustedImmPtr(JSValue::encode(jsBoolean(false))), scratchReg);
+#else
+        GPRReg valueTagReg = value.tagGPR();
+        GPRReg valueReg = value.payloadGPR();
+        MacroAssembler::Jump isCell = m_jit.branch32(MacroAssembler::Equal, valueTagReg, TrustedImm32(JSValue::CellTag));
+        m_jit.move(MacroAssembler::TrustedImm32(0), scratchReg);
+#endif
+
+        MacroAssembler::Jump done = m_jit.jump();
+        
+        isCell.link(&m_jit);
+        
+        compileInstanceOfForObject(node, valueReg, prototypeReg, scratchReg);
+        
+        done.link(&m_jit);
+
+#if USE(JSVALUE64)
+        jsValueResult(scratchReg, m_compileIndex, DataFormatJSBoolean);
+#else
+        booleanResult(scratchReg, m_compileIndex);
+#endif
+        return;
+    }
+    
+    SpeculateCellOperand value(this, node.child1());
+    // Base unused since we speculate default InstanceOf behaviour in CheckHasInstance.
+    SpeculateCellOperand prototype(this, node.child3());
+    
+    GPRTemporary scratch(this);
+    
+    GPRReg valueReg = value.gpr();
+    GPRReg prototypeReg = prototype.gpr();
+    GPRReg scratchReg = scratch.gpr();
+    
+    compileInstanceOfForObject(node, valueReg, prototypeReg, scratchReg);
+
+#if USE(JSVALUE64)
+    jsValueResult(scratchReg, m_compileIndex, DataFormatJSBoolean);
+#else
+    booleanResult(scratchReg, m_compileIndex);
+#endif
+}
+
 } } // namespace JSC::DFG
 
 #endif
