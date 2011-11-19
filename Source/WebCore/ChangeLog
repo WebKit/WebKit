@@ -1,3 +1,17 @@
+2011-11-18  Shawn Singh  <shawnsingh@chromium.org>
+
+        [chromium] Add some useful text to existing debug dump
+        https://bugs.webkit.org/show_bug.cgi?id=72576
+
+        Reviewed by James Robinson.
+
+        No new tests needed.
+
+        * platform/graphics/chromium/cc/CCLayerImpl.cpp:
+        (WebCore::CCLayerImpl::dumpLayerProperties):
+        * platform/graphics/chromium/cc/CCRenderSurface.cpp:
+        (WebCore::CCRenderSurface::dumpSurface):
+
 2011-11-18  Xiaomei Ji  <xji@chromium.org>
 
         REGRESSION: rtl horizontal scrollbar / resize bug - Body shifts on resize when scrolled all the way to the left
