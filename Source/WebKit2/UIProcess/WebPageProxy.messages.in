@@ -61,7 +61,6 @@ messages -> WebPageProxy {
     PrintFrame(uint64_t frameID) -> ()
     RunModal()
     NotifyScrollerThumbIsVisibleInRect(WebCore::IntRect scrollerThumb)
-    RecommendedScrollbarStyleDidChange(int32_t newStyle)
     DidChangeScrollbarsForMainFrame(bool hasHorizontalScrollbar, bool hasVerticalScrollbar)
     DidChangeScrollOffsetPinningForMainFrame(bool hasHorizontalScrollbar, bool hasVerticalScrollbar)
     DidChangePageCount(unsigned pageCount);

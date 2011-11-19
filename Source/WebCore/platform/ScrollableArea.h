@@ -139,7 +139,7 @@ public:
     virtual void didCompleteAnimatedScroll() const { }
     
     virtual bool shouldSuspendScrollAnimations() const { return true; }
-    virtual void scrollbarStyleChanged(int /*newStyle*/, bool /*forceUpdate*/) { }
+    virtual void scrollbarStyleChanged() { }
     virtual void setVisibleScrollerThumbRect(const IntRect&) { }
 
     virtual bool isOnActivePage() const { ASSERT_NOT_REACHED(); return true; }

@@ -1,3 +1,23 @@
+2011-11-18  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r100826.
+        http://trac.webkit.org/changeset/100826
+        https://bugs.webkit.org/show_bug.cgi?id=72786
+
+        Broke Chromium Mac build (Requested by aklein on #webkit).
+
+        * UIProcess/API/mac/PageClientImpl.h:
+        * UIProcess/API/mac/PageClientImpl.mm:
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/Plugins/PDF/BuiltInPDFView.cpp:
+        (WebKit::BuiltInPDFView::scrollbarStyleChanged):
+        * WebProcess/Plugins/PDF/BuiltInPDFView.h:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+
 2011-11-18  Igor Oliveira  <igor.oliveira@openbossa.org>
 
         [WK2][Qt] Move Accelerated Composite animations to UIProcess

@@ -292,7 +292,6 @@ public:
     void flushAnyPendingPostLayoutTasks();
 
     virtual bool shouldSuspendScrollAnimations() const;
-    virtual void scrollbarStyleChanged(int newStyle, bool forceUpdate);
 
     void setAnimatorsAreActive();
 

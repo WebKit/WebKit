@@ -177,7 +177,6 @@ public:
     virtual void dismissCorrectionPanel(WebCore::ReasonForDismissingCorrectionPanel) = 0;
     virtual String dismissCorrectionPanelSoon(WebCore::ReasonForDismissingCorrectionPanel) = 0;
     virtual void recordAutocorrectionResponse(WebCore::EditorClient::AutocorrectionResponseType, const String& replacedString, const String& replacementString) = 0;
-    virtual void recommendedScrollbarStyleDidChange(int32_t newStyle) = 0;
     
     virtual WKView* wkView() const = 0;
 #endif

@@ -785,11 +785,6 @@ void WebChromeClient::notifyScrollerThumbIsVisibleInRect(const IntRect& scroller
     m_page->send(Messages::WebPageProxy::NotifyScrollerThumbIsVisibleInRect(scrollerThumb));
 }
 
-void WebChromeClient::recommendedScrollbarStyleDidChange(int32_t newStyle)
-{
-    m_page->send(Messages::WebPageProxy::RecommendedScrollbarStyleDidChange(newStyle));
-}
-
 bool WebChromeClient::shouldRubberBandInDirection(WebCore::ScrollDirection direction) const
 {
     ASSERT(direction != WebCore::ScrollUp && direction != WebCore::ScrollDown);
