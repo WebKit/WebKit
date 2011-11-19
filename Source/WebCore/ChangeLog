@@ -1,3 +1,17 @@
+2011-11-19  David Barr  <davidbarr@chromium.org>
+
+        REGRESSION(r98542): Chromium: CSS text is rendered on page
+        https://bugs.webkit.org/show_bug.cgi?id=71703
+
+        Reviewed by Antti Koivisto.
+
+        Matched UA declarations uncacheable when using simpleDefaultStyleSheet.
+
+        Test: fast/css/style-tag-display-none.html
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::matchUARules):
+
 2011-11-19  Jay Civelli  <jcivelli@chromium.org>
 
         When loading a MHTML document, make sure we set the base URL before
