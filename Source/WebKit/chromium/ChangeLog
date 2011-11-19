@@ -1,3 +1,52 @@
+2011-11-18  Takashi Toyoshima  <toyoshim@chromium.org>
+
+        [Chromium] [WebSocket] export WebSocketChannel interface for plugins
+        https://bugs.webkit.org/show_bug.cgi?id=72016
+
+        Add WebSocket and WebSocketClient to WebKit API.
+
+        Currently, only WebSocketStreamHandle class is exported to WebKit API.
+        WebSocketStreamHandle implements bi-directional communication ports.
+        If plugins handles the WebSocket protocol, WebSocketChannel and
+        WebSocketChannelClient must be exported as WebSocket because they are
+        the classes which implement the WebSocket protocol stack.
+
+        Normally, we use WebWebSocketChannel and WebWebSocketChannelClient as
+        their class names. But here we use just WebSocket and WebSocketClient
+        because of avoiding WebWeb prefix and class name confliction on
+        header include.
+
+        Reviewed by Darin Fisher.
+
+        * WebKit.gyp:
+        * public/WebSocket.h: Added.
+        (WebKit::WebSocket::~WebSocket):
+        * public/WebSocketClient.h: Added.
+        (WebKit::WebSocketClient::~WebSocketClient):
+        * src/WebRuntimeFeatures.cpp: Insert websockets directory to include path in order to avoid filename confliction.
+        (WebKit::WebRuntimeFeatures::enableSockets): Use WebCore namespace explicitly.
+        * src/WebSocket.cpp: Added.
+        (WebKit::WebSocket::create):
+        * src/WebSocketImpl.cpp: Added.
+        (WebKit::WebSocketImpl::WebSocketImpl):
+        (WebKit::WebSocketImpl::~WebSocketImpl):
+        (WebKit::WebSocketImpl::connect):
+        (WebKit::WebSocketImpl::subprotocol):
+        (WebKit::WebSocketImpl::sendText):
+        (WebKit::WebSocketImpl::sendBinary):
+        (WebKit::WebSocketImpl::bufferedAmount):
+        (WebKit::WebSocketImpl::close):
+        (WebKit::WebSocketImpl::fail):
+        (WebKit::WebSocketImpl::disconnect):
+        (WebKit::WebSocketImpl::didConnect):
+        (WebKit::WebSocketImpl::didReceiveMessage):
+        (WebKit::WebSocketImpl::didReceiveBinaryData):
+        (WebKit::WebSocketImpl::didReceiveMessageError):
+        (WebKit::WebSocketImpl::didStartClosingHandshake):
+        (WebKit::WebSocketImpl::didClose):
+        * src/WebSocketImpl.h: Added.
+        (WebKit::WebSocketImpl::isNull):
+
 2011-11-18  Alpha Lam  <hclam@chromium.org>
 
         [chromium] composited layers are blurry with a zoom-in page scale factor

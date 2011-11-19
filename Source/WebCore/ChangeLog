@@ -1,3 +1,20 @@
+2011-11-18  Takashi Toyoshima  <toyoshim@chromium.org>
+
+        [Chromium] [WebSocket] export WebSocketChannel interface for plugins
+        https://bugs.webkit.org/show_bug.cgi?id=72016
+
+        Reviewed by Darin Fisher.
+
+        Add a interface to send raw binary data.
+        This interface is used by WebWebSocketChannel implementation
+        in WebKit API.
+
+        No new tests because just export a interface.
+
+        * websockets/WebSocketChannel.cpp:
+        (WebCore::WebSocketChannel::send):
+        * websockets/WebSocketChannel.h:
+
 2011-11-18  Vineet Chaudhary  <vineet.chaudhary@motorola.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=72591

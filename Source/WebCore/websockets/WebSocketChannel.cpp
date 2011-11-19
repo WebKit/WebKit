@@ -186,6 +186,14 @@ bool WebSocketChannel::send(const Blob& binaryData)
     return true;
 }
 
+bool WebSocketChannel::send(const char* data, int length)
+{
+    LOG(Network, "WebSocketChannel %p send binary %p (%dB)", this, data, length);
+    ASSERT(!m_useHixie76Protocol);
+    enqueueRawFrame(OpCodeBinary, data, length);
+    return true;
+}
+
 unsigned long WebSocketChannel::bufferedAmount() const
 {
     LOG(Network, "WebSocketChannel %p bufferedAmount", this);

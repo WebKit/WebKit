@@ -34,7 +34,7 @@
 #include "AbstractDatabase.h"
 #include "RuntimeEnabledFeatures.h"
 #include "WebMediaPlayerClientImpl.h"
-#include "WebSocket.h"
+#include "websockets/WebSocket.h"
 
 #include <wtf/UnusedParam.h>
 
@@ -101,7 +101,7 @@ bool WebRuntimeFeatures::isMediaPlayerEnabled()
 void WebRuntimeFeatures::enableSockets(bool enable)
 {
 #if ENABLE(WEB_SOCKETS)
-    WebSocket::setIsAvailable(enable);
+    WebCore::WebSocket::setIsAvailable(enable);
 #endif
 }
 

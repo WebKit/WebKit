@@ -68,6 +68,7 @@ public:
     virtual bool send(const String& message);
     virtual bool send(const ArrayBuffer&);
     virtual bool send(const Blob&);
+    virtual bool send(const char* data, int length);
     virtual unsigned long bufferedAmount() const;
     virtual void close(int code, const String& reason); // Start closing handshake.
     virtual void fail(const String& reason);
