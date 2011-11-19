@@ -1,3 +1,15 @@
+2011-11-18  Chris Evans  <cevans@google.com>
+
+        Crash with ranges across a detached, reparented node tree
+        https://bugs.webkit.org/show_bug.cgi?id=72757
+
+        Reviewed by Adam Barth.
+
+        Test: fast/dom/move-detached-child-in-range.html
+
+        * dom/RangeBoundaryPoint.h:
+        (WebCore::RangeBoundaryPoint::childBefore): protect the raw child node from getting pulled from under us.
+
 2011-11-18  Beth Dakin  <bdakin@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=72551
