@@ -1,3 +1,14 @@
+2011-11-19  Alexis Menard  <alexis.menard@openbossa.org>
+
+        [Qt] Add the map file symbols export as a dependency of the final qmake target.
+        https://bugs.webkit.org/show_bug.cgi?id=72740
+
+        Reviewed by Simon Hausmann.
+
+        Add the symbols file part of the target dependencies.
+
+        * Source/api.pri:
+
 2011-11-18  Daniel Bates  <dbates@rim.com>
 
         Add CMake build infrastructure for the BlackBerry port
