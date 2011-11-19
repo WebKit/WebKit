@@ -1,3 +1,14 @@
+2011-11-18  Daniel Cheng  <dcheng@chromium.org>
+
+        [chromium] Use correct backing store for ChromiumDataObject in pasteboard writes.
+        https://bugs.webkit.org/show_bug.cgi?id=72767
+
+        Reviewed by Tony Chang.
+
+        * src/WebDragData.cpp:
+        (WebKit::WebDragData::initialize):
+        (WebKit::WebDragData::assign):
+
 2011-10-24  Darin Fisher  <darin@chromium.org>
 
         [chromium] Improve fullscreen API

@@ -317,6 +317,7 @@ void ClipboardChromium::writePlainText(const String& text)
 
 bool ClipboardChromium::hasData()
 {
+    ASSERT(isForDragAndDrop());
     if (!m_dataObject)
         return false;
 

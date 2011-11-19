@@ -1,3 +1,28 @@
+2011-11-18  Daniel Cheng  <dcheng@chromium.org>
+
+        [chromium] Use correct backing store for ChromiumDataObject in pasteboard writes.
+        https://bugs.webkit.org/show_bug.cgi?id=72767
+
+        Reviewed by Tony Chang.
+
+        Covered by existing tests.
+
+        * editing/chromium/EditorChromium.cpp:
+        (WebCore::Editor::newGeneralClipboard):
+        * page/chromium/EventHandlerChromium.cpp:
+        (WebCore::EventHandler::createDraggingClipboard):
+        * platform/chromium/ChromiumDataObject.cpp:
+        (WebCore::ChromiumDataObject::types):
+        (WebCore::ChromiumDataObject::getData):
+        (WebCore::ChromiumDataObject::containsFilenames):
+        (WebCore::ChromiumDataObject::ChromiumDataObject):
+        * platform/chromium/ChromiumDataObject.h:
+        (WebCore::ChromiumDataObject::createFromPasteboard):
+        (WebCore::ChromiumDataObject::create):
+        (WebCore::ChromiumDataObject::storageMode):
+        * platform/chromium/ClipboardChromium.cpp:
+        (WebCore::ClipboardChromium::hasData):
+
 2011-11-18  Chris Evans  <cevans@google.com>
 
         Crash with ranges across a detached, reparented node tree

@@ -49,7 +49,7 @@ class WebDragDataPrivate : public ChromiumDataObject {
 
 void WebDragData::initialize()
 {
-    assign(static_cast<WebDragDataPrivate*>(ChromiumDataObject::create(Clipboard::DragAndDrop).leakRef()));
+    assign(static_cast<WebDragDataPrivate*>(ChromiumDataObject::create().leakRef()));
 }
 
 void WebDragData::reset()
@@ -223,6 +223,7 @@ WebDragData::operator WTF::PassRefPtr<WebCore::ChromiumDataObject>() const
 
 void WebDragData::assign(WebDragDataPrivate* p)
 {
+    ASSERT(!p || p->storageMode() == ChromiumDataObject::Buffered);
     // p is already ref'd for us by the caller
     if (m_private)
         m_private->deref();

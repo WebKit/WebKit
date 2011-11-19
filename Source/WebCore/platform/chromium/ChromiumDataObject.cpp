@@ -101,7 +101,7 @@ bool ChromiumDataObject::hasData() const
 
 HashSet<String> ChromiumDataObject::types() const
 {
-    if (m_clipboardType == Clipboard::CopyAndPaste) {
+    if (m_storageMode == Pasteboard) {
         bool ignoredContainsFilenames;
         return PlatformSupport::clipboardReadAvailableTypes(PasteboardPrivate::StandardBuffer,
                                                            &ignoredContainsFilenames);
@@ -129,7 +129,7 @@ HashSet<String> ChromiumDataObject::types() const
 String ChromiumDataObject::getData(const String& type, bool& success)
 {
     if (type == mimeTypeTextPlain) {
-        if (m_clipboardType == Clipboard::CopyAndPaste) {
+        if (m_storageMode == Pasteboard) {
             PasteboardPrivate::ClipboardBuffer buffer =
                 Pasteboard::generalPasteboard()->isSelectionMode() ?
                 PasteboardPrivate::SelectionBuffer :
@@ -153,7 +153,7 @@ String ChromiumDataObject::getData(const String& type, bool& success)
     }
 
     if (type == mimeTypeTextHTML) {
-        if (m_clipboardType == Clipboard::CopyAndPaste) {
+        if (m_storageMode == Pasteboard) {
             PasteboardPrivate::ClipboardBuffer buffer =
                 Pasteboard::generalPasteboard()->isSelectionMode() ?
                 PasteboardPrivate::SelectionBuffer :
@@ -235,7 +235,7 @@ uint64_t ChromiumDataObject::getSequenceNumber()
 bool ChromiumDataObject::containsFilenames() const
 {
     bool containsFilenames;
-    if (m_clipboardType == Clipboard::CopyAndPaste) {
+    if (m_storageMode == Pasteboard) {
         HashSet<String> ignoredResults =
             PlatformSupport::clipboardReadAvailableTypes(PasteboardPrivate::StandardBuffer,
                                                         &containsFilenames);
@@ -244,14 +244,14 @@ bool ChromiumDataObject::containsFilenames() const
     return containsFilenames;
 }
 
-ChromiumDataObject::ChromiumDataObject(Clipboard::ClipboardType clipboardType)
-    : m_clipboardType(clipboardType)
+ChromiumDataObject::ChromiumDataObject(StorageMode storageMode)
+    : m_storageMode(storageMode)
 {
 }
 
 ChromiumDataObject::ChromiumDataObject(const ChromiumDataObject& other)
     : RefCounted<ChromiumDataObject>()
-    , m_clipboardType(other.m_clipboardType)
+    , m_storageMode(other.m_storageMode)
     , m_urlTitle(other.m_urlTitle)
     , m_downloadMetadata(other.m_downloadMetadata)
     , m_fileExtension(other.m_fileExtension)
