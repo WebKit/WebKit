@@ -280,40 +280,15 @@ void WebGraphicsLayer::notifyAnimationStarted(double time)
 // We put these stub implementations here for when we implement accelerated cross-process animations.
 bool WebGraphicsLayer::addAnimation(const KeyframeValueList& valueList, const IntSize& boxSize, const Animation* anim, const String& keyframesName, double timeOffset)
 {
-    if (!anim || anim->isEmptyOrZeroDuration() || valueList.size() < 2 || (valueList.property() != AnimatedPropertyWebkitTransform && valueList.property() != AnimatedPropertyOpacity))
-        return false;
-
-    WebLayerAnimation webAnimation(valueList);
-    webAnimation.name = keyframesName;
-    webAnimation.operation = WebLayerAnimation::AddAnimation;
-    webAnimation.boxSize = boxSize;
-    webAnimation.animation = Animation::create(anim);
-    webAnimation.startTime = WTF::currentTime() - timeOffset;
-    m_layerInfo.animations.append(webAnimation);
-
-    m_hasPendingAnimations = true;
-    notifyChange();
-
-    return true;
+    return false;
 }
 
 void WebGraphicsLayer::pauseAnimation(const String& animationName, double timeOffset)
 {
-    WebLayerAnimation animation;
-    animation.name = animationName;
-    animation.operation = WebLayerAnimation::PauseAnimation;
-    animation.startTime = WTF::currentTime() - timeOffset;
-    m_layerInfo.animations.append(animation);
-    notifyChange();
 }
 
 void WebGraphicsLayer::removeAnimation(const String& animationName)
 {
-    WebLayerAnimation animation;
-    animation.name = animationName;
-    animation.operation = WebLayerAnimation::RemoveAnimation;
-    m_layerInfo.animations.append(animation);
-    notifyChange();
 }
 
 void WebGraphicsLayer::setContentsNeedsDisplay()
@@ -427,7 +402,6 @@ void WebGraphicsLayer::syncCompositingStateForThisLayerOnly()
     m_layerInfo.imageIsUpdated = false;
     if (m_hasPendingAnimations)
         notifyAnimationStarted(WTF::currentTime());
-    m_layerInfo.animations.clear();
     m_hasPendingAnimations = false;
 }
 

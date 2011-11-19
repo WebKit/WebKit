@@ -141,7 +141,6 @@ public:
 
     void syncCompositingState(GraphicsLayerTextureMapper*, int syncOptions = 0);
     void syncCompositingState(GraphicsLayerTextureMapper*, TextureMapper*, int syncOptions = 0);
-    void syncAnimationsRecursively();
     IntSize size() const { return IntSize(m_size.width(), m_size.height()); }
     void setTransform(const TransformationMatrix&);
     void setOpacity(float value) { m_opacity = value; }

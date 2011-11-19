@@ -125,11 +125,6 @@ protected:
     OwnPtr<GraphicsLayer> m_rootLayer;
     Vector<WebLayerID> m_layersToDelete;
 
-#if PLATFORM(QT)
-    void didFireViewportUpdateTimer(Timer<LayerTreeHostProxy>*);
-    Timer<LayerTreeHostProxy> m_viewportUpdateTimer;
-#endif
-
     LayerMap m_layers;
     WebLayerID m_rootLayerID;
     int m_id;

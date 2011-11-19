@@ -984,16 +984,6 @@ void TextureMapperNode::syncAnimations(GraphicsLayerTextureMapper* layer)
     }
 }
 
-void TextureMapperNode::syncAnimationsRecursively()
-{
-    syncAnimations(0);
-
-    computeAllTransforms();
-
-    for (int i = m_children.size() - 1; i >= 0; --i)
-        m_children[i]->syncAnimationsRecursively();
-}
-
 void TextureMapperNode::syncCompositingState(GraphicsLayerTextureMapper* graphicsLayer, TextureMapper* textureMapper, int options)
 {
     if (graphicsLayer && !(options & ComputationsOnly)) {
