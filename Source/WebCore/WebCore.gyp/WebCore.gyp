@@ -989,6 +989,7 @@
         'debugger_script_source',
         '../../JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.gyp:yarr',
         '../../JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.gyp:wtf',
+        '../../WTF/WTF.gyp/WTF.gyp:newwtf',
         '<(chromium_src_dir)/build/temp_gyp/googleurl.gyp:googleurl',
         '<(chromium_src_dir)/skia/skia.gyp:skia',
         '<(chromium_src_dir)/third_party/iccjpeg/iccjpeg.gyp:iccjpeg',
@@ -1110,6 +1111,7 @@
         '../../ThirdParty/glu/glu.gyp:libtess',
         '../../JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.gyp:yarr',
         '../../JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.gyp:wtf',
+        '../../WTF/WTF.gyp/WTF.gyp:newwtf',
         '<(chromium_src_dir)/build/temp_gyp/googleurl.gyp:googleurl',
         '<(chromium_src_dir)/skia/skia.gyp:skia',
         '<(chromium_src_dir)/third_party/iccjpeg/iccjpeg.gyp:iccjpeg',
@@ -1127,6 +1129,7 @@
       'export_dependent_settings': [
         '../../JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.gyp:yarr',
         '../../JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.gyp:wtf',
+        '../../WTF/WTF.gyp/WTF.gyp:newwtf',
         '<(chromium_src_dir)/build/temp_gyp/googleurl.gyp:googleurl',
         '<(chromium_src_dir)/skia/skia.gyp:skia',
         '<(chromium_src_dir)/third_party/iccjpeg/iccjpeg.gyp:iccjpeg',
@@ -1871,6 +1874,7 @@
         # Exported.
         'webcore_bindings',
         '../../JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.gyp:wtf',
+        '../../WTF/WTF.gyp/WTF.gyp:newwtf',
         '<(chromium_src_dir)/build/temp_gyp/googleurl.gyp:googleurl',
         '<(chromium_src_dir)/skia/skia.gyp:skia',
         '<(chromium_src_dir)/third_party/npapi/npapi.gyp:npapi',
@@ -1879,6 +1883,7 @@
       'export_dependent_settings': [
         'webcore_bindings',
         '../../JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.gyp:wtf',
+        '../../WTF/WTF.gyp/WTF.gyp:newwtf',
         '<(chromium_src_dir)/build/temp_gyp/googleurl.gyp:googleurl',
         '<(chromium_src_dir)/skia/skia.gyp:skia',
         '<(chromium_src_dir)/third_party/npapi/npapi.gyp:npapi',

@@ -32,7 +32,7 @@
     '../WTF.gypi',
   ],
   'targets': [{
-    'target_name': 'wtf',
+    'target_name': 'newwtf',
     'type': 'static_library',
     'include_dirs': [
       '../',

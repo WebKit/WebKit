@@ -1236,6 +1236,7 @@
                     ],
                     'dependencies': [
                         '../../JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.gyp:wtf',
+                        '../../WTF/WTF.gyp/WTF.gyp:newwtf',
                     ],
                 }],
                 ['inside_chromium_build==0', {
