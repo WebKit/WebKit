@@ -574,9 +574,6 @@ void FrameLoader::receivedFirstData()
     activeDocumentLoader()->writer()->begin(workingURL, false);
     activeDocumentLoader()->writer()->setDocumentWasLoadedAsPartOfNavigation();
 
-    dispatchDidCommitLoad();
-    dispatchDidClearWindowObjectsInAllWorlds();
-
 #if ENABLE(MHTML)
     if (m_archive) {
         // The origin is the MHTML file, we need to set the base URL to the document encoded in the MHTML so
@@ -584,6 +581,9 @@ void FrameLoader::receivedFirstData()
         m_frame->document()->setBaseURLOverride(m_archive->mainResource()->url());
     }
 #endif
+
+    dispatchDidCommitLoad();
+    dispatchDidClearWindowObjectsInAllWorlds();
 
     if (m_documentLoader) {
         StringWithDirection ptitle = m_documentLoader->title();

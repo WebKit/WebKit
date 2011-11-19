@@ -1,3 +1,15 @@
+2011-11-19  Jay Civelli  <jcivelli@chromium.org>
+
+        When loading a MHTML document, make sure we set the base URL before
+        we notify the frame was committed (so the document has the right base
+        URL when the notification happens). 
+        https://bugs.webkit.org/show_bug.cgi?id=72788
+
+        Reviewed by Adam Barth.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::receivedFirstData):
+
 2011-11-19  Adam Barth  <abarth@webkit.org>
 
         Integrate Source/WTF with the Chromium build system
