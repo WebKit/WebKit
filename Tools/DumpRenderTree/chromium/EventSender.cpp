@@ -716,6 +716,9 @@ void EventSender::scalePageBy(const CppArgumentList& arguments, CppVariant* resu
     float scaleFactor = static_cast<float>(arguments[0].toDouble());
     int x = arguments[1].toInt32();
     int y = arguments[2].toInt32();
+    float minimumPageScaleFactor = min(webview()->minimumPageScaleFactor(), scaleFactor);
+    float maximumPageScaleFactor = max(webview()->maximumPageScaleFactor(), scaleFactor);
+    webview()->setPageScaleFactorLimits(minimumPageScaleFactor, maximumPageScaleFactor);
     webview()->setPageScaleFactor(scaleFactor, WebPoint(x, y));
     result->setNull();
 }

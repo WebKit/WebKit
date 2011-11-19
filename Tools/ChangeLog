@@ -1,3 +1,15 @@
+2011-11-18  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Set min/max page scale factors when calling eventSender.scalePageBy to avoid clamping
+        https://bugs.webkit.org/show_bug.cgi?id=72778
+
+        Reviewed by Kenneth Russell.
+
+        Set the min/max page scale clamps when a test calls eventSender.scalePageBy() so that the scale isn't clamped.
+
+        * DumpRenderTree/chromium/EventSender.cpp:
+        (EventSender::scalePageBy):
+
 2011-11-18  Scott Graham  <scottmg@chromium.org>
 
         IDL changes for gamepad support
