@@ -1,3 +1,17 @@
+2011-11-18  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r100693.
+        http://trac.webkit.org/changeset/100693
+        https://bugs.webkit.org/show_bug.cgi?id=72779
+
+        This patch caused a rendering regression (see bug 72770)
+        (Requested by philip__ on #webkit).
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::setStyle):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::diff):
+
 2011-11-18  Simon Fraser  <simon.fraser@apple.com>
 
         Reflection on composited element doesn't update if the element changes to show no content

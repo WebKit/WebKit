@@ -563,7 +563,6 @@ StyleDifference RenderStyle::diff(const RenderStyle* other, unsigned& changedCon
         // to add a selfNeedsSimplifiedLayout bit in order to not get confused and taint every line).
         // In addition we need to solve the floating object issue when layers come and go. Right now
         // a full layout is necessary to keep floating object lists sane.
-        changedContextSensitiveProperties |= ContextSensitivePropertyOpacity;
         return StyleDifferenceLayout;
     }
 

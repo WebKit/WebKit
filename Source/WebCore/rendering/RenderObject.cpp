@@ -1772,11 +1772,7 @@ void RenderObject::setStyle(PassRefPtr<RenderStyle> style)
             setNeedsSimplifiedNormalFlowLayout();
     }
     
-    if (diff == StyleDifferenceRepaint && updatedDiff == StyleDifferenceRepaintLayer) {
-        // If there was no layer, we ignored StyleDifferenceRepaintLayer and processed it as
-        // StyleDifferenceRepaint, so do layers repaint now.
-        toRenderBoxModelObject(this)->layer()->repaintIncludingDescendants();
-    } else if (updatedDiff == StyleDifferenceRepaintLayer || updatedDiff == StyleDifferenceRepaint) {
+    if (updatedDiff == StyleDifferenceRepaintLayer || updatedDiff == StyleDifferenceRepaint) {
         // Do a repaint with the new style now, e.g., for example if we go from
         // not having an outline to having an outline.
         repaint();
