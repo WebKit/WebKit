@@ -1,3 +1,9 @@
+2011-11-19  Nat Duca  <nduca@chromium.org>
+
+        Unreviewed.  Rolled DEPS 109696->110838
+
+        * DEPS:
+
 2011-11-19  Adam Barth  <abarth@webkit.org>
 
         Integrate Source/WTF with the Chromium build system
