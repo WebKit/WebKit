@@ -32,6 +32,7 @@
 #include "GraphicsContext3D.h"
 #include "LayerRendererChromium.h"
 #include "ManagedTexture.h"
+#include "MathExtras.h"
 #include "TextStream.h"
 #include "cc/CCLayerImpl.h"
 #include "cc/CCTextureUpdater.h"
@@ -132,6 +133,16 @@ bool TiledLayerChromium::drawsContent() const
         return false;
 
     return !m_skipsDraw;
+}
+
+bool TiledLayerChromium::needsContentsScale() const
+{
+    return true;
+}
+
+IntSize TiledLayerChromium::contentBounds() const
+{
+    return IntSize(lroundf(bounds().width() * contentsScale()), lroundf(bounds().height() * contentsScale()));
 }
 
 void TiledLayerChromium::setLayerTreeHost(CCLayerTreeHost* host)
@@ -373,7 +384,7 @@ void TiledLayerChromium::prepareToUpdate(const IntRect& contentRect)
     // However, we can't free the memory backing the GraphicsContext until the paint finishes,
     // so we grab a local reference here to hold the updater alive until the paint completes.
     RefPtr<LayerTextureUpdater> protector(textureUpdater());
-    textureUpdater()->prepareToUpdate(m_paintRect, m_tiler->tileSize(), m_tiler->hasBorderTexels());
+    textureUpdater()->prepareToUpdate(m_paintRect, m_tiler->tileSize(), m_tiler->hasBorderTexels(), contentsScale());
 }
 
 }

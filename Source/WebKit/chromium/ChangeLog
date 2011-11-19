@@ -1,3 +1,16 @@
+2011-11-18  Alpha Lam  <hclam@chromium.org>
+
+        [chromium] composited layers are blurry with a zoom-in page scale factor
+        https://bugs.webkit.org/show_bug.cgi?id=71225
+
+        Reviewed by James.
+
+        Implements GraphicsLayerClient to return values for pageScaleFactor and deviceScaleFactor. They are used to determine contents scale factor compositer layers.
+
+        * src/PageOverlay.cpp:
+        (WebKit::OverlayGraphicsLayerClientImpl::deviceScaleFactor):
+        (WebKit::OverlayGraphicsLayerClientImpl::pageScaleFactor):
+
 2011-11-18  Scott Graham  <scottmg@chromium.org>
 
         IDL changes for gamepad support

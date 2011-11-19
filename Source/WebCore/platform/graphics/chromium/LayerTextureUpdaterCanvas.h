@@ -54,7 +54,7 @@ class LayerTextureUpdaterCanvas : public LayerTextureUpdater {
 protected:
     explicit LayerTextureUpdaterCanvas(PassOwnPtr<LayerPainterChromium>);
 
-    void paintContents(GraphicsContext&, const IntRect& contentRect);
+    void paintContents(GraphicsContext&, const IntRect& contentRect, float contentsScale);
     const IntRect& contentRect() const { return m_contentRect; }
 
 private:
@@ -70,7 +70,7 @@ public:
 
     virtual Orientation orientation() { return LayerTextureUpdater::BottomUpOrientation; }
     virtual SampledTexelFormat sampledTexelFormat(GC3Denum textureFormat);
-    virtual void prepareToUpdate(const IntRect& contentRect, const IntSize& tileSize, int borderTexels);
+    virtual void prepareToUpdate(const IntRect& contentRect, const IntSize& tileSize, int borderTexels, float contentsScale);
     virtual void updateTextureRect(GraphicsContext3D*, TextureAllocator*, ManagedTexture*, const IntRect& sourceRect, const IntRect& destRect);
 
 private:
@@ -87,7 +87,7 @@ public:
 
     virtual Orientation orientation() { return LayerTextureUpdater::TopDownOrientation; }
     virtual SampledTexelFormat sampledTexelFormat(GC3Denum textureFormat);
-    virtual void prepareToUpdate(const IntRect& contentRect, const IntSize& tileSize, int borderTexels);
+    virtual void prepareToUpdate(const IntRect& contentRect, const IntSize& tileSize, int borderTexels, float contentsScale);
     virtual void updateTextureRect(GraphicsContext3D*, TextureAllocator*, ManagedTexture*, const IntRect& sourceRect, const IntRect& destRect);
 
 private:

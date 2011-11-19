@@ -168,6 +168,7 @@ public:
     virtual void bindContentsTexture() { }
     virtual void pageScaleChanged() { m_pageScaleDirty = true; }
     virtual void protectVisibleTileTextures() { }
+    virtual bool needsContentsScale() const { return false; }
 
     // These exist just for debugging (via drawDebugBorder()).
     void setDebugBorderColor(const Color&);
@@ -196,6 +197,8 @@ public:
     void setScreenSpaceTransform(const TransformationMatrix& matrix) { m_screenSpaceTransform = matrix; }
     const IntRect& drawableContentRect() const { return m_drawableContentRect; }
     void setDrawableContentRect(const IntRect& rect) { m_drawableContentRect = rect; }
+    float contentsScale() const { return m_contentsScale; }
+    void setContentsScale(float);
 
     // Returns true if any of the layer's descendants has content to draw.
     bool descendantDrawsContent();
@@ -284,6 +287,7 @@ private:
     TransformationMatrix m_drawTransform;
     TransformationMatrix m_screenSpaceTransform;
     IntRect m_drawableContentRect;
+    float m_contentsScale;
 
     String m_name;
 

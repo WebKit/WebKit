@@ -2847,6 +2847,7 @@ void WebViewImpl::setIsAcceleratedCompositingActive(bool active)
         m_layerTreeHost = CCLayerTreeHost::create(this, ccSettings);
         if (m_layerTreeHost) {
             m_layerTreeHost->setHaveWheelEventHandlers(m_haveWheelEventHandlers);
+            m_layerTreeHost->setPageScaleFactorLimits(m_minimumPageScaleFactor, m_maximumPageScaleFactor);
             updateLayerTreeViewport();
             m_client->didActivateCompositor(m_layerTreeHost->compositorIdentifier());
             m_isAcceleratedCompositingActive = true;

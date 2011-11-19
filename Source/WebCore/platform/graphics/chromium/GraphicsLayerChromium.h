@@ -94,13 +94,13 @@ public:
 
     virtual void setDebugBackgroundColor(const Color&);
     virtual void setDebugBorder(const Color&, float borderWidth);
+    virtual void deviceOrPageScaleFactorChanged();
 
     // The following functions implement the CCLayerDelegate interface.
     virtual bool drawsContent() const;
     virtual void paintContents(GraphicsContext&, const IntRect& clip);
     virtual void notifySyncRequired();
 
-    virtual void deviceOrPageScaleFactorChanged();
 private:
     void updateOpacityOnLayer();
 
@@ -125,9 +125,11 @@ private:
     void updateContentsImage();
     void updateContentsVideo();
     void updateContentsRect();
+    void updateContentsScale();
 
     void setupContentsLayer(LayerChromium*);
     LayerChromium* contentsLayer() const { return m_contentsLayer.get(); }
+    float contentsScale() const;
 
     String m_nameBase;
 

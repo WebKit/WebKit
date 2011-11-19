@@ -1,3 +1,54 @@
+2011-11-18  Alpha Lam  <hclam@chromium.org>
+
+        [chromium] composited layers are blurry with a zoom-in page scale factor
+        https://bugs.webkit.org/show_bug.cgi?id=71225
+
+        Reviewed by James.
+
+        Pass contents scale factor to the compositor such that it can:
+        1. Adjust contentBounds() of the compositoer layers with content scale.
+        2. Apply the content scale in the painter for texture update in better resolution.
+        3. Apply the content scale to the dirty rect in CanvasLayerTextureUpdater.
+
+        This change fixed blurry problem for all tiled layer types and is not limited to
+        position:fixed layers.
+
+        Tests: compositing/geometry/fixed-position-composited-page-scale-down.html
+               compositing/geometry/fixed-position-composited-page-scale.html
+               compositing/geometry/fixed-position-iframe-composited-page-scale-down.html
+               compositing/geometry/fixed-position-iframe-composited-page-scale.html
+               compositing/geometry/fixed-position-transform-composited-page-scale-down.html
+               compositing/geometry/fixed-position-transform-composited-page-scale.html
+
+        * platform/graphics/chromium/GraphicsLayerChromium.cpp:
+        (WebCore::GraphicsLayerChromium::setTransform):
+        (WebCore::GraphicsLayerChromium::updateLayerPreserves3D):
+        (WebCore::GraphicsLayerChromium::updateContentsScale):
+        (WebCore::GraphicsLayerChromium::contentsScale):
+        (WebCore::GraphicsLayerChromium::deviceOrPageScaleFactorChanged):
+        * platform/graphics/chromium/GraphicsLayerChromium.h:
+        * platform/graphics/chromium/ImageLayerChromium.cpp:
+        (WebCore::ImageLayerTextureUpdater::prepareToUpdate):
+        (WebCore::ImageLayerChromium::needsContentsScale):
+        * platform/graphics/chromium/ImageLayerChromium.h:
+        * platform/graphics/chromium/LayerChromium.cpp:
+        (WebCore::LayerChromium::LayerChromium):
+        (WebCore::LayerChromium::setContentsScale):
+        * platform/graphics/chromium/LayerChromium.h:
+        (WebCore::LayerChromium::needsContentsScale):
+        (WebCore::LayerChromium::contentsScale):
+        * platform/graphics/chromium/LayerTextureUpdater.h:
+        * platform/graphics/chromium/LayerTextureUpdaterCanvas.cpp:
+        (WebCore::LayerTextureUpdaterCanvas::paintContents):
+        (WebCore::LayerTextureUpdaterBitmap::prepareToUpdate):
+        (WebCore::LayerTextureUpdaterSkPicture::prepareToUpdate):
+        * platform/graphics/chromium/LayerTextureUpdaterCanvas.h:
+        * platform/graphics/chromium/TiledLayerChromium.cpp:
+        (WebCore::TiledLayerChromium::needsContentsScale):
+        (WebCore::TiledLayerChromium::contentBounds):
+        (WebCore::TiledLayerChromium::prepareToUpdate):
+        * platform/graphics/chromium/TiledLayerChromium.h:
+
 2011-11-18  Igor Oliveira  <igor.oliveira@openbossa.org>
 
         [WK2][Qt] Move Accelerated Composite animations to UIProcess

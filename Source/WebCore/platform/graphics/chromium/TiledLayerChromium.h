@@ -49,6 +49,9 @@ public:
     virtual void pushPropertiesTo(CCLayerImpl*);
 
     virtual bool drawsContent() const;
+    virtual bool needsContentsScale() const;
+
+    virtual IntSize contentBounds() const;
 
     // Reserves all existing and valid tile textures to protect them from being
     // recycled by the texture manager.

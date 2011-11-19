@@ -70,6 +70,16 @@ public:
         m_pageOverlayClient->paintPageOverlay(context);
     }
 
+    virtual float deviceScaleFactor() const
+    {
+        return m_webViewImpl->deviceScaleFactor();
+    }
+
+    virtual float pageScaleFactor() const
+    {
+        return m_webViewImpl->pageScaleFactor();
+    }
+
     virtual bool showDebugBorders() const
     {
         return m_webViewImpl->page()->settings()->showDebugBorders();

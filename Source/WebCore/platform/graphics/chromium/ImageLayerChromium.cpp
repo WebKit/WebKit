@@ -61,7 +61,7 @@ public:
                 LayerTextureUpdater::SampledTexelFormatRGBA : LayerTextureUpdater::SampledTexelFormatBGRA;
     }
 
-    virtual void prepareToUpdate(const IntRect& contentRect, const IntSize& tileSize, int /* borderTexels */)
+    virtual void prepareToUpdate(const IntRect& contentRect, const IntSize& tileSize, int /* borderTexels */, float /* contentsScale */)
     {
         m_texSubImage.setSubImageSize(tileSize);
     }
@@ -182,6 +182,12 @@ bool ImageLayerChromium::drawsContent() const
 void ImageLayerChromium::createTextureUpdater(const CCLayerTreeHost* host)
 {
     m_textureUpdater = ImageLayerTextureUpdater::create(host->layerRendererCapabilities().usingMapSub);
+}
+
+bool ImageLayerChromium::needsContentsScale() const
+{
+    // Contents scale is not need for image layer because this can be done in compositor more efficiently.
+    return false;
 }
 
 }

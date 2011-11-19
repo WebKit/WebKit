@@ -111,12 +111,27 @@ LayerTextureUpdaterCanvas::LayerTextureUpdaterCanvas(PassOwnPtr<LayerPainterChro
 {
 }
 
-void LayerTextureUpdaterCanvas::paintContents(GraphicsContext& context, const IntRect& contentRect)
+void LayerTextureUpdaterCanvas::paintContents(GraphicsContext& context, const IntRect& contentRect, float contentsScale)
 {
     context.translate(-contentRect.x(), -contentRect.y());
     {
         TRACE_EVENT("LayerTextureUpdaterCanvas::paint", this, 0);
-        m_painter->paint(context, contentRect);
+
+        IntRect scaledContentRect = contentRect;
+
+        if (contentsScale != 1.0) {
+            context.save();
+            context.scale(FloatSize(contentsScale, contentsScale));
+
+            FloatRect rect = contentRect;
+            rect.scale(1 / contentsScale);
+            scaledContentRect = enclosingIntRect(rect);
+        }
+
+        m_painter->paint(context, scaledContentRect);
+
+        if (contentsScale != 1.0)
+            context.restore();
     }
     m_contentRect = contentRect;
 }
@@ -139,7 +154,7 @@ LayerTextureUpdater::SampledTexelFormat LayerTextureUpdaterBitmap::sampledTexelF
             LayerTextureUpdater::SampledTexelFormatRGBA : LayerTextureUpdater::SampledTexelFormatBGRA;
 }
 
-void LayerTextureUpdaterBitmap::prepareToUpdate(const IntRect& contentRect, const IntSize& tileSize, int borderTexels)
+void LayerTextureUpdaterBitmap::prepareToUpdate(const IntRect& contentRect, const IntSize& tileSize, int borderTexels, float contentsScale)
 {
     m_texSubImage.setSubImageSize(tileSize);
 
@@ -150,7 +165,7 @@ void LayerTextureUpdaterBitmap::prepareToUpdate(const IntRect& contentRect, cons
     PlatformCanvas::Painter::TextOption textOption =
         borderTexels ? PlatformCanvas::Painter::GrayscaleText : PlatformCanvas::Painter::SubpixelText;
     PlatformCanvas::Painter canvasPainter(&m_canvas, textOption);
-    paintContents(*canvasPainter.context(), contentRect);
+    paintContents(*canvasPainter.context(), contentRect, contentsScale);
 }
 
 void LayerTextureUpdaterBitmap::updateTextureRect(GraphicsContext3D* context, TextureAllocator* allocator, ManagedTexture* texture, const IntRect& sourceRect, const IntRect& destRect)
@@ -182,12 +197,12 @@ LayerTextureUpdater::SampledTexelFormat LayerTextureUpdaterSkPicture::sampledTex
     return LayerTextureUpdater::SampledTexelFormatRGBA;
 }
 
-void LayerTextureUpdaterSkPicture::prepareToUpdate(const IntRect& contentRect, const IntSize& tileSize, int borderTexels)
+void LayerTextureUpdaterSkPicture::prepareToUpdate(const IntRect& contentRect, const IntSize& tileSize, int borderTexels, float contentsScale)
 {
     SkCanvas* canvas = m_picture.beginRecording(contentRect.width(), contentRect.height());
     PlatformContextSkia platformContext(canvas);
     GraphicsContext graphicsContext(&platformContext);
-    paintContents(graphicsContext, contentRect);
+    paintContents(graphicsContext, contentRect, contentsScale);
     m_picture.endRecording();
 }
 

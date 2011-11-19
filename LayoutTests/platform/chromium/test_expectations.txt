@@ -3782,6 +3782,14 @@ BUGWK71543 : media/media-element-play-after-eos.html = PASS TIMEOUT
 
 BUGWK71653 : platform/chromium-cg-mac/editing/input/ime-candidate-window-position.html = PASS TIMEOUT
 
+// Need baselines on windows and linux
+BUGWK71225 MAC WIN : compositing/geometry/fixed-position-composited-page-scale.html = MISSING
+BUGWK71225 MAC WIN : compositing/geometry/fixed-position-iframe-composited-page-scale.html = MISSING
+BUGWK71225 MAC WIN : compositing/geometry/fixed-position-transform-composited-page-scale.html = MISSING
+BUGWK71225 MAC WIN : compositing/geometry/fixed-position-composited-page-scale-down.html = MISSING
+BUGWK71225 MAC WIN : compositing/geometry/fixed-position-iframe-composited-page-scale-down.html = MISSING
+BUGWK71225 MAC WIN : compositing/geometry/fixed-position-transform-composited-page-scale-down.html = MISSING
+
 // Intermittent assertion failures on snowleopard bots.
 BUGWK59552 SNOWLEOPARD DEBUG : fast/dom/Element/id-in-frame.html = PASS CRASH
 BUGWK59552 SNOWLEOPARD DEBUG : fast/dom/image-object.html = PASS CRASH

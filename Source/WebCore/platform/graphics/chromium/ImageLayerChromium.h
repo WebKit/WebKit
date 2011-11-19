@@ -54,6 +54,7 @@ public:
 
     virtual bool drawsContent() const;
     virtual void paintContentsIfDirty();
+    virtual bool needsContentsScale() const;
 
     void setContents(Image* image);
 

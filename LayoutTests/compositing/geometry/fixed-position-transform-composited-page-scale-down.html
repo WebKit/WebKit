@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+.fixed-no-z-index {
+  position: absolute;
+  left: 10px;
+  -webkit-transform: translateX(10px) rotate(20deg);
+}
+.fixed-with-z-index {
+  position: fixed;
+  z-index: 1;
+  left: 10px;
+  -webkit-transform: translateX(10px) rotate(20deg);
+}
+::-webkit-scrollbar {
+  width: 0px;
+  height: 0px;
+}
+</style>
+<script>
+  function scale() {
+    if (window.internals)
+      window.internals.setEnableCompositingForFixedPosition(document, true);
+    if (window.layoutTestController) {
+      layoutTestController.dumpAsText(true);
+      eventSender.scalePageBy(0.5, 0, 0);
+    }
+  }
+</script>
+</head>
+<body onload="scale();" style="width:2000px;height:2000px;">
+<div class="fixed-no-z-index">TEST</div><br>
+<div class="fixed-with-z-index">TEST</div>
+</body>
+</html>

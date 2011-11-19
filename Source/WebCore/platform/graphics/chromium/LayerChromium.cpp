@@ -73,6 +73,7 @@ LayerChromium::LayerChromium(CCLayerDelegate* delegate)
     , m_replicaLayer(0)
     , m_drawOpacity(0)
     , m_targetRenderSurface(0)
+    , m_contentsScale(1.0)
     , m_pageScaleDirty(false)
 {
 }
@@ -327,6 +328,13 @@ void LayerChromium::setDebugBorderWidth(float width)
 {
     m_debugBorderWidth = width;
     setNeedsCommit();
+}
+
+void LayerChromium::setContentsScale(float contentsScale)
+{
+    if (!needsContentsScale())
+        return;
+    m_contentsScale = contentsScale;
 }
 
 void LayerChromium::createRenderSurface()
