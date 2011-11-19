@@ -1338,9 +1338,14 @@ void GraphicsLayerCA::updateLayerDrawsContent(float pageScaleFactor, const Float
 
     if (m_drawsContent)
         m_layer->setNeedsDisplay();
-    else
+    else {
         m_layer->setContents(0);
-
+        if (m_layerClones) {
+            LayerMap::const_iterator end = m_layerClones->end();
+            for (LayerMap::const_iterator it = m_layerClones->begin(); it != end; ++it)
+                it->second->setContents(0);
+        }
+    }
     updateDebugIndicators();
 }
 

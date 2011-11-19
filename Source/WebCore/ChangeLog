@@ -1,3 +1,18 @@
+2011-11-18  Simon Fraser  <simon.fraser@apple.com>
+
+        Reflection on composited element doesn't update if the element changes to show no content
+        https://bugs.webkit.org/show_bug.cgi?id=72774
+
+        Reviewed by Chris Marrin.
+        
+        When a style change results in a reflected element losing its backing store,
+        we need to clear the backing stores on the layer clones as well.
+
+        Test: compositing/reflections/become-simple-composited-reflection.html
+
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::updateLayerDrawsContent):
+
 2011-11-18  Daniel Cheng  <dcheng@chromium.org>
 
         [chromium] Use correct backing store for ChromiumDataObject in pasteboard writes.
