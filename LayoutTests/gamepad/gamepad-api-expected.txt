@@ -1,3 +1,5 @@
-EXPECTED (navigator.webkitGamepads !== 'undefined') OK
-END OF TEST
+PASS navigator.webkitGamepads is defined.
+PASS successfullyParsed is true
+
+TEST COMPLETE
 Make sure the main polling access point exists on navigator.

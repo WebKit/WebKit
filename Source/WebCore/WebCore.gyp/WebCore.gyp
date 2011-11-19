@@ -48,6 +48,7 @@
     'webcore_include_dirs': [
       '../',
       '../..',
+      '../Modules/gamepad',
       '../accessibility',
       '../accessibility/chromium',
       '../bindings',

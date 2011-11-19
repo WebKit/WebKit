@@ -32,7 +32,6 @@
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
-#include "GamepadList.h"
 #include "Geolocation.h"
 #include "PointerLock.h"
 #include "KURL.h"
@@ -45,6 +44,10 @@
 #include "StorageNamespace.h"
 #include <wtf/HashSet.h>
 #include <wtf/StdLibExtras.h>
+
+#if ENABLE(GAMEPAD)
+#include "GamepadList.h"
+#endif
 
 #if ENABLE(MEDIA_STREAM)
 #include "NavigatorUserMediaErrorCallback.h"

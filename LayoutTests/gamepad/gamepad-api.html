@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <body>
-<script src="gamepad-test.js"></script>
+<script src="../fast/js/resources/js-test-pre.js"></script>
 <script>
-    testExpected("navigator.webkitGamepads", undefined, "!==");
-    endTest();
+    shouldBeDefined("navigator.webkitGamepads");
 </script>
+<script src="../fast/js/resources/js-test-post.js"></script>
 <p>Make sure the main polling access point exists on navigator.</p>
 </body>
