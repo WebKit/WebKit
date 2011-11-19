@@ -1610,6 +1610,7 @@ http/tests/websocket/tests/hybi/close-before-open.html
 http/tests/websocket/tests/hybi/close-code-and-reason.html
 http/tests/websocket/tests/hybi/close.html
 http/tests/websocket/tests/hybi/workers/close.html
+http/tests/websocket/tests/hybi/workers/close-code-and-reason.html
 
 # ============================================================================= #
 # new tests without expected results
