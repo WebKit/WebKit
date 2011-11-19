@@ -3,7 +3,7 @@
         [chromium] composited layers are blurry with a zoom-in page scale factor
         https://bugs.webkit.org/show_bug.cgi?id=71225
 
-        Reviewed by James.
+        Reviewed by James Robinson.
 
         Pass contents scale factor to the compositor such that it can:
         1. Adjust contentBounds() of the compositoer layers with content scale.

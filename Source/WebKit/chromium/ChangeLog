@@ -3,7 +3,7 @@
         [chromium] composited layers are blurry with a zoom-in page scale factor
         https://bugs.webkit.org/show_bug.cgi?id=71225
 
-        Reviewed by James.
+        Reviewed by James Robinson.
 
         Implements GraphicsLayerClient to return values for pageScaleFactor and deviceScaleFactor. They are used to determine contents scale factor compositer layers.
 
