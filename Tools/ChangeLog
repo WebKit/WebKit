@@ -1,3 +1,14 @@
+2011-11-18  James Robinson  <jamesr@chromium.org>
+
+        Unreviewed, rolling out r100835.
+        http://trac.webkit.org/changeset/100835
+        https://bugs.webkit.org/show_bug.cgi?id=72778
+
+        Broke some page scale tests
+
+        * DumpRenderTree/chromium/EventSender.cpp:
+        (EventSender::scalePageBy):
+
 2011-11-18  Adam Barth  <abarth@webkit.org>
 
         Prepare to move manual-tests out of WebCore
