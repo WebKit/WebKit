@@ -62,7 +62,9 @@ module window {
             raises(DOMException);
 #endif
 
-        readonly attribute [Conditional=GAMEPAD, EnabledAtRuntime] GamepadList webkitGamepads;
+#if defined(ENABLE_GAMEPAD) && ENABLE_GAMEPAD
+        readonly attribute [EnabledAtRuntime] GamepadList webkitGamepads;
+#endif
     };
 
 }

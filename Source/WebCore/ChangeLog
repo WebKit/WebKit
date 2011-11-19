@@ -1,3 +1,10 @@
+2011-11-18  Martin Robinson  <mrobinson@igalia.com>
+
+        Fix the GTK+ build.
+
+        * page/Navigator.idl: Properly disable the webkitGamepads API if gamepad
+        isn't enabled at compile time.
+
 2011-11-18  Daniel Bates  <dbates@rim.com>
 
         Add CMake build infrastructure for the BlackBerry port
