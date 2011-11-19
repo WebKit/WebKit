@@ -936,7 +936,7 @@
         Rename ThreadSafeShared to ThreadSafeRefCounted
         https://bugs.webkit.org/show_bug.cgi?id=56714
 
-        No new tests. Exposes no new functionality.§
+        No new tests. Exposes no new functionality.
 
         * ForwardingHeaders/wtf/ThreadSafeRefCounted.h: Copied from ForwardingHeaders/wtf/ThreadSafeShared.h.
         * ForwardingHeaders/wtf/ThreadSafeShared.h: Removed.
@@ -1221,7 +1221,7 @@
 
         Reviewed by Darin Adler.
 
-        OwnArraryPtr.h uses deleteOwnedPtr but doesnâ€™t include OwnPtrCommon.h
+        OwnArraryPtr.h uses deleteOwnedPtr but doesn't include OwnPtrCommon.h
         https://bugs.webkit.org/show_bug.cgi?id=52867
 
         * ForwardingHeaders/wtf/OwnArrayPtrCommon.h: Removed.
