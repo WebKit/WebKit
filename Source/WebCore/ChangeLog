@@ -1,3 +1,38 @@
+2011-11-18  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=72551
+        When the recommended scrollbar style changes, WKView's tracking options should 
+        adjust accordingly
+        -and corresponding-
+        <rdar://problem/10409328>
+
+        Reviewed by Darin Adler.
+
+        This new ChromeClient function is called when the recommended scrollbar style 
+        changes. This way, WebKit can respond to the change by adjusting its mouse 
+        tracking.
+        * page/ChromeClient.h:
+        (WebCore::ChromeClient::recommendedScrollbarStyleDidChange):
+
+        Existing ScrollableArea function scrollbarStyleChanged() now takes an int 
+        indicating the new scrollbar style and a bool indicating whether it is necessary 
+        to force an update. It used to be the case that this function was ONLY used to 
+        force an update (and only called when an updated was needed), but now that it must 
+        also call into the ChromeClient, it is necessary to include a bool tracking 
+        whether we need to force an update. New implementation on FrameView is responsible 
+        for calling ChromeClient, and then that calls into the pre-existing ScrollView 
+        function for the forceUpdate part.
+        * page/FrameView.cpp:
+        (WebCore::FrameView::scrollbarStyleChanged):
+        * page/FrameView.h:
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView:: scrollbarStyleChanged):
+        * platform/ScrollView.h:
+        * platform/ScrollableArea.h:
+        (WebCore::ScrollableArea::scrollbarStyleChanged):
+        * platform/mac/ScrollAnimatorMac.mm:
+        (WebCore::ScrollAnimatorMac::updateScrollerStyle):
+
 2011-11-18  Kelly Norton  <knorton@google.com>
 
         Fixes several more void functions in RenderObject that return values.
