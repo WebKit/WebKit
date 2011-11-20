@@ -1,3 +1,9 @@
+2011-11-19  Ojan Vafai  <ojan@chromium.org>
+
+        Fix jsonp callback code to add the callback if json content
+        is not jsonp.
+        * TestResultServer/handlers/testfilehandler.py:
+
 2011-11-19  Alice Boxhall  <aboxhall@chromium.org>
 
         Modify dashboard_base.js to optionally accept version 4 results json.

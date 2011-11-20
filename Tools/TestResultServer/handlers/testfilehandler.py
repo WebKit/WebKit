@@ -52,7 +52,10 @@ PARAM_CALLBACK = "callback"
 
 def _replace_jsonp_callback(json, callback_name):
     if callback_name and re.search(r"^[A-Za-z0-9_]+$", callback_name):
-        json = re.sub(r"^[A-Za-z0-9_]+[(]", callback_name + "(", json)
+        if re.search(r"^[A-Za-z0-9_]+[(]", json):
+            return re.sub(r"^[A-Za-z0-9_]+[(]", callback_name + "(", json)
+        return callback_name + "(" + json + ")"
+
     return json
 
 
