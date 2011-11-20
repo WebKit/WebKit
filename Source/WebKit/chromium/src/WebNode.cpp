@@ -166,6 +166,11 @@ bool WebNode::isElementNode() const
     return m_private->isElementNode();
 }
 
+bool WebNode::hasEventListeners(const WebString& eventType) const
+{
+    return m_private->hasEventListeners(eventType);
+}
+
 void WebNode::addEventListener(const WebString& eventType, WebDOMEventListener* listener, bool useCapture)
 {
     EventListenerWrapper* listenerWrapper =

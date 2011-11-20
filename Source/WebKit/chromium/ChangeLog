@@ -1,5 +1,19 @@
 2011-11-20  Adam Barth  <abarth@webkit.org>
 
+        Add WebNode::hasEventListeners for Android
+        https://bugs.webkit.org/show_bug.cgi?id=72817
+
+        Reviewed by Darin Fisher.
+
+        Expose this EventTarget interface in the Chromium WebKit API for use by
+        Android.
+
+        * public/WebNode.h:
+        * src/WebNode.cpp:
+        (WebKit::WebNode::hasEventListeners):
+
+2011-11-20  Adam Barth  <abarth@webkit.org>
+
         [Chromium] Add GestureFlingStart and GestureFlingCancel to WebGestureEvent for Android
         https://bugs.webkit.org/show_bug.cgi?id=72819
 
