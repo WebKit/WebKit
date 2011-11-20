@@ -70,9 +70,6 @@ JSON_RESULTS_TESTS_TEMPLATE = (
     '"results":[[TESTDATA_TEST_RESULTS]],'
     '"times":[[TESTDATA_TEST_TIMES]]}')
 
-JSON_RESULTS_PREFIX = "ADD_RESULTS("
-JSON_RESULTS_SUFFIX = ");"
-
 JSON_RESULTS_TEST_LIST_TEMPLATE = (
     '{"Webkit":{"tests":{[TESTDATA_TESTS]}}}')
 
@@ -83,17 +80,17 @@ class JsonResultsTest(unittest.TestCase):
 
     def test_strip_prefix_suffix(self):
         json = "['contents']"
-        self.assertEqual(JsonResults._strip_prefix_suffix(JSON_RESULTS_PREFIX + json + JSON_RESULTS_SUFFIX), json)
+        self.assertEqual(JsonResults._strip_prefix_suffix("ADD_RESULTS(" + json + ");"), json)
         self.assertEqual(JsonResults._strip_prefix_suffix(json), json)
 
     def _make_test_json(self, test_data):
         if not test_data:
-            return JSON_RESULTS_PREFIX + JSON_RESULTS_SUFFIX
+            return ""
 
         builds = test_data["builds"]
         tests = test_data["tests"]
         if not builds or not tests:
-            return JSON_RESULTS_PREFIX + JSON_RESULTS_SUFFIX
+            return ""
 
         json = JSON_RESULTS_TEMPLATE
 
@@ -127,7 +124,7 @@ class JsonResultsTest(unittest.TestCase):
 
         json = json.replace("[TESTDATA_TESTS]", ",".join(json_tests))
 
-        return JSON_RESULTS_PREFIX + json + JSON_RESULTS_SUFFIX
+        return json
 
     def _parse_tests_dict(self, name, test):
         if "results" in test:
@@ -161,10 +158,7 @@ class JsonResultsTest(unittest.TestCase):
         for test in expected_data:
             json_tests.append("\"" + test + "\":{}")
 
-        expected_results = (JSON_RESULTS_PREFIX +
-            JSON_RESULTS_TEST_LIST_TEMPLATE.replace("[TESTDATA_TESTS]", ",".join(json_tests)) +
-            JSON_RESULTS_SUFFIX)
-
+        expected_results = JSON_RESULTS_TEST_LIST_TEMPLATE.replace("[TESTDATA_TESTS]", ",".join(json_tests))
         actual_results = JsonResults.get_test_list(self._builder, input_results)
         self.assertEquals(actual_results, expected_results)
 

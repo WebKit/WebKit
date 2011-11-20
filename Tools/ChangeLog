@@ -1,5 +1,15 @@
 2011-11-19  Ojan Vafai  <ojan@chromium.org>
 
+        Stop storing results files as jsonp in the test results server
+        https://bugs.webkit.org/show_bug.cgi?id=72814
+
+        Reviewed by Adam Barth.
+
+        * TestResultServer/model/jsonresults.py:
+        * TestResultServer/model/jsonresults_unittest.py:
+
+2011-11-19  Ojan Vafai  <ojan@chromium.org>
+
         Remove the dependence on jsonp from more of new-run-webkit-tests and the test results server
         https://bugs.webkit.org/show_bug.cgi?id=72813
 

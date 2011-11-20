@@ -60,8 +60,7 @@ class JsonResults(object):
 
     @classmethod
     def _generate_file_data(cls, json, sort_keys=False):
-        data = simplejson.dumps(json, separators=(',', ':'), sort_keys=sort_keys)
-        return JSON_RESULTS_PREFIX + data + JSON_RESULTS_SUFFIX
+        return simplejson.dumps(json, separators=(',', ':'), sort_keys=sort_keys)
 
     @classmethod
     def _load_json(cls, file_data):
