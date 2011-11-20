@@ -1,3 +1,18 @@
+2011-11-19  Ojan Vafai  <ojan@chromium.org>
+
+        Allow json NRWT downloads to be pure json and not jsonp
+        https://bugs.webkit.org/show_bug.cgi?id=72809
+
+        Reviewed by Adam Barth.
+
+        I'm moving the server to storing and serving up raw json instead of jsonp.
+        You can still get the jsonp by passing a "callback" parameter, but there's no
+        need for run-webkit-tests to get jsonp when all it wants is the raw json.
+
+        * Scripts/webkitpy/layout_tests/layout_package/json_results_generator.py:
+        Make the wrapper stripping only happen if the json is actually wrapped.
+        * Scripts/webkitpy/layout_tests/layout_package/json_results_generator_unittest.py:
+
 2011-11-18  Daniel Bates  <dbates@rim.com>
 
         Add CMake build infrastructure for the BlackBerry port

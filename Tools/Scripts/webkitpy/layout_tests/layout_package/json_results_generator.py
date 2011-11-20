@@ -56,7 +56,9 @@ def has_json_wrapper(string):
 
 
 def strip_json_wrapper(json_content):
-    return json_content[len(_JSON_PREFIX):len(json_content) - len(_JSON_SUFFIX)]
+    if has_json_wrapper(json_content):
+        return json_content[len(_JSON_PREFIX):len(json_content) - len(_JSON_SUFFIX)]
+    return json_content
 
 
 def load_json(filesystem, file_path):

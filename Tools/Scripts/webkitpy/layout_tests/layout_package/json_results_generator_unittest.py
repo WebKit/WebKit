@@ -58,6 +58,11 @@ class JSONGeneratorTest(unittest.TestCase):
         self._FAILS_count = 0
         self._fixable_count = 0
 
+    def test_strip_json_wrapper(self):
+        json = "['contents']"
+        self.assertEqual(json_results_generator.strip_json_wrapper(json_results_generator._JSON_PREFIX + json + json_results_generator._JSON_SUFFIX), json)
+        self.assertEqual(json_results_generator.strip_json_wrapper(json), json)
+
     def _test_json_generation(self, passed_tests_list, failed_tests_list):
         tests_set = set(passed_tests_list) | set(failed_tests_list)
 
