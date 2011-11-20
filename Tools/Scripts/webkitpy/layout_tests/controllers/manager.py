@@ -1081,7 +1081,8 @@ class Manager(object):
         json_results_generator.write_json(self._fs, times_trie, times_json_path)
 
         full_results_path = self._fs.join(self._results_directory, "full_results.json")
-        json_results_generator.write_json(self._fs, summarized_results, full_results_path)
+        # We write full_results.json out as jsonp because we need to load it from a file url and Chromium doesn't allow that.
+        json_results_generator.write_json(self._fs, summarized_results, full_results_path, callback="ADD_RESULTS")
 
         generator = json_layout_results_generator.JSONLayoutResultsGenerator(
             self._port, self._options.builder_name, self._options.build_name,

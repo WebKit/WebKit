@@ -526,7 +526,7 @@ function appendJSONScriptElementFor(builderName)
     else
         resultsFilename = 'results-small.json';
 
-    appendScript(pathToBuilderResultsFile(builderName) + resultsFilename,
+    appendScript(pathToBuilderResultsFile(builderName) + resultsFilename + '&callback=ADD_RESULTS',
             partial(handleResourceLoadError, builderName),
             partial(handleScriptLoaded, builderName));
 }

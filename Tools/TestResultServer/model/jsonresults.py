@@ -53,10 +53,10 @@ JSON_RESULTS_MAX_BUILDS_SMALL = 200
 class JsonResults(object):
     @classmethod
     def _strip_prefix_suffix(cls, data):
-        assert(data.startswith(JSON_RESULTS_PREFIX))
-        assert(data.endswith(JSON_RESULTS_SUFFIX))
-
-        return data[len(JSON_RESULTS_PREFIX):len(data) - len(JSON_RESULTS_SUFFIX)]
+        # FIXME: Stop stripping jsonp callback once we upload pure json everywhere.
+        if data.startswith(JSON_RESULTS_PREFIX) and data.endswith(JSON_RESULTS_SUFFIX):
+            return data[len(JSON_RESULTS_PREFIX):len(data) - len(JSON_RESULTS_SUFFIX)]
+        return data
 
     @classmethod
     def _generate_file_data(cls, json, sort_keys=False):

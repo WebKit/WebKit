@@ -1,5 +1,25 @@
 2011-11-19  Ojan Vafai  <ojan@chromium.org>
 
+        Remove the dependence on jsonp from more of new-run-webkit-tests and the test results server
+        https://bugs.webkit.org/show_bug.cgi?id=72813
+
+        Reviewed by Adam Barth.
+
+        Once this lands, we can start storing pure json in the test results server and then
+        we can delete the code with all the FIXMEs added here.
+
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        * Scripts/webkitpy/layout_tests/layout_package/json_results_generator.py:
+        Only add jsonp for full_results.json.
+        * TestResultServer/model/jsonresults.py:
+        * TestResultServer/model/jsonresults_unittest.py:
+        Accept pure json uploads.
+        * TestResultServer/static-dashboards/dashboard_base.js:
+        (appendJSONScriptElementFor):
+        Use the callback parameter so that the server can start returning pure json if it's left out.
+
+2011-11-19  Ojan Vafai  <ojan@chromium.org>
+
         Allow json NRWT downloads to be pure json and not jsonp
         https://bugs.webkit.org/show_bug.cgi?id=72809
 

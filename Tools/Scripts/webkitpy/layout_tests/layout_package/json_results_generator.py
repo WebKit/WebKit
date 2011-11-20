@@ -56,6 +56,7 @@ def has_json_wrapper(string):
 
 
 def strip_json_wrapper(json_content):
+    # FIXME: Kill this code once the server returns json instead of jsonp.
     if has_json_wrapper(json_content):
         return json_content[len(_JSON_PREFIX):len(json_content) - len(_JSON_SUFFIX)]
     return json_content
@@ -67,10 +68,11 @@ def load_json(filesystem, file_path):
     return json.loads(content)
 
 
-def write_json(filesystem, json_object, file_path):
+def write_json(filesystem, json_object, file_path, callback=None):
     # Specify separators in order to get compact encoding.
-    json_data = json.dumps(json_object, separators=(',', ':'))
-    json_string = _JSON_PREFIX + json_data + _JSON_SUFFIX
+    json_string = json.dumps(json_object, separators=(',', ':'))
+    if callback:
+        json_string = callback + "(" + json_string + ");"
     filesystem.write_text_file(file_path, json_string)
 
 

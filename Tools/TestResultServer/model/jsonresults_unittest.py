@@ -81,6 +81,11 @@ class JsonResultsTest(unittest.TestCase):
     def setUp(self):
         self._builder = "Webkit"
 
+    def test_strip_prefix_suffix(self):
+        json = "['contents']"
+        self.assertEqual(JsonResults._strip_prefix_suffix(JSON_RESULTS_PREFIX + json + JSON_RESULTS_SUFFIX), json)
+        self.assertEqual(JsonResults._strip_prefix_suffix(json), json)
+
     def _make_test_json(self, test_data):
         if not test_data:
             return JSON_RESULTS_PREFIX + JSON_RESULTS_SUFFIX
