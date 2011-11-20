@@ -1,3 +1,9 @@
+2011-11-19  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Build fix after GeneratedImage refactoring.
+
+        * wscript:
+
 2011-11-19  Alexis Menard  <alexis.menard@openbossa.org>
 
         [Qt] Add the map file symbols export as a dependency of the final qmake target.

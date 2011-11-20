@@ -318,6 +318,10 @@ def build(bld):
         excludes.append('WebDOMScriptProfileNode.cpp')
         excludes.append('WebNativeEventListener.cpp')
         
+        # this file is unused by any port, not sure why it was
+        # left in the tree
+        excludes.append('GeneratedImage.cpp')
+        
         # features we don't build / use
         excludes.append('JSNavigatorCustom.cpp')
         excludes.append('WebGLContextEvent.cpp')
