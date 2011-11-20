@@ -1,5 +1,22 @@
 2011-11-20  Adam Barth  <abarth@webkit.org>
 
+        [Chromium] Add GestureFlingStart and GestureFlingCancel to WebGestureEvent for Android
+        https://bugs.webkit.org/show_bug.cgi?id=72819
+
+        Reviewed by Darin Fisher.
+
+        These gesture types are used with FlingAnimator for scrolling.
+
+        * public/WebInputEvent.h:
+        (WebKit::WebInputEvent::isScrollGestureEventType):
+        (WebKit::WebGestureEvent::WebGestureEvent):
+        * src/WebPopupMenuImpl.cpp:
+        (WebKit::WebPopupMenuImpl::handleInputEvent):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::handleInputEvent):
+
+2011-11-20  Adam Barth  <abarth@webkit.org>
+
         [Chromium] Add WebInputEventFactory for Android
         https://bugs.webkit.org/show_bug.cgi?id=67890
 

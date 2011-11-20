@@ -104,6 +104,8 @@ public:
         GestureScrollBegin,
         GestureScrollEnd,
         GestureScrollUpdate,
+        GestureFlingStart,
+        GestureFlingCancel,
         GestureTap,
 
         // WebTouchEvent
@@ -180,6 +182,17 @@ public:
             || type == MouseUp
             || type == TouchStart
             || type == TouchEnd;
+    }
+
+    // Returns true if the WebInputEvent |type| should be handled as scroll gesture.
+    static bool isScrollGestureEventType(int type)
+    {
+        return type == GestureScrollBegin
+            || type == GestureScrollEnd
+            || type == GestureScrollUpdate
+            || type == GestureFlingStart
+            || type == GestureFlingCancel
+            || type == GestureTap; // FIXME: Why is GestureTap on this list?
     }
 };
 
@@ -339,7 +352,8 @@ public:
     float deltaY;
 
     WebGestureEvent(unsigned sizeParam = sizeof(WebGestureEvent))
-        : x(0)
+        : WebInputEvent(sizeParam)
+        , x(0)
         , y(0)
         , globalX(0)
         , globalY(0)
