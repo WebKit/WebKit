@@ -262,7 +262,7 @@ sub GetCPPTypeGetter
     return $argName if $codeGenerator->IsPrimitiveType($type) or $codeGenerator->IsStringType($type);
     return "static_cast<WebCore::Range::CompareHow>($argName)" if $type eq "CompareHow";
     return "WebCore::SerializedScriptValue::create(WTF::String($argName))" if $type eq "SerializedScriptValue";
-    return "toWebCore($argName)";
+    return "to" . GetNamespaceForClass($argName) . "($argName)";
 }
 
 sub AddForwardDeclarationsForType
@@ -341,6 +341,16 @@ sub GenerateConditionalString
     }
 }
 
+sub GetNamespaceForClass
+{
+    my $type = shift;
+    return "WTF" if (($type eq "ArrayBuffer") or ($type eq "ArrayBufferView")); 
+    return "WTF" if (($type eq "Uint8Array") or ($type eq "Uint16Array") or ($type eq "Uint32Array")); 
+    return "WTF" if (($type eq "Int8Array") or ($type eq "Int16Array") or ($type eq "Int32Array")); 
+    return "WTF" if (($type eq "Float32Array") or ($type eq "Float64Array"));    
+    return "WebCore";
+}
+
 sub GenerateHeader
 {
     my $object = shift;
@@ -349,7 +359,8 @@ sub GenerateHeader
     my $interfaceName = $dataNode->name;
     my $className = GetClassName($interfaceName);
     my $implClassName = GetImplClassName($interfaceName);
-    my $implClassNameWithNamespace = "WebCore::" . $implClassName;
+    
+    my $implClassNameWithNamespace = GetNamespaceForClass($implClassName) . "::" . $implClassName;
 
     my $parentName = "";
     $parentName = GetParent($dataNode);
@@ -531,8 +542,9 @@ sub GenerateHeader
         push(@headerContent, "};\n\n");
     }
 
-    push(@headerContent, "WebCore::$implClassName* toWebCore(const $className&);\n");
-    push(@headerContent, "$className toWebKit(WebCore::$implClassName*);\n");
+    my $namespace = GetNamespaceForClass($implClassName);
+    push(@headerContent, "$namespace" . "::$implClassName* toWebCore(const $className&);\n");
+    push(@headerContent, "$className toWebKit($namespace" . "::$implClassName*);\n");
     if ($dataNode->extendedAttributes->{"PureInterface"}) {
         push(@headerContent, "$className toWebKit(WebUser$interfaceName*);\n");
     }
@@ -588,7 +600,7 @@ sub GenerateImplementation
     my $className = GetClassName($interfaceName);
     my $implClassName = GetImplClassName($interfaceName);
     my $parentImplClassName = GetParentImplClassName($dataNode);
-    my $implClassNameWithNamespace = "WebCore::" . $implClassName;
+    my $implClassNameWithNamespace = GetNamespaceForClass($implClassName) . "::" . $implClassName;
     my $baseClass = "WebDOM$parentImplClassName";
     my $conditional = $dataNode->extendedAttributes->{"Conditional"};
 
@@ -888,12 +900,13 @@ sub GenerateImplementation
     # END implementation
 
     # Generate internal interfaces
-    push(@implContent, "WebCore::$implClassName* toWebCore(const $className& wrapper)\n");
+    my $namespace = GetNamespaceForClass($implClassName);
+    push(@implContent, "$namespace" . "::$implClassName* toWebCore(const $className& wrapper)\n");
     push(@implContent, "{\n");
     push(@implContent, "    return wrapper.impl();\n");
     push(@implContent, "}\n\n");
 
-    push(@implContent, "$className toWebKit(WebCore::$implClassName* value)\n");
+    push(@implContent, "$className toWebKit($namespace" . "::$implClassName* value)\n");
     push(@implContent, "{\n");
     push(@implContent, "    return $className(value);\n");
     push(@implContent, "}\n");
