@@ -469,6 +469,7 @@ var g_resultsByBuilder = {};
 var g_expectations;
 function ADD_RESULTS(builds)
 {
+    var json_version = builds['version'];
     for (var builderName in builds) {
         if (builderName == 'version')
             continue;
@@ -481,10 +482,32 @@ function ADD_RESULTS(builds)
         if ((Date.now() / 1000) - lastRunSeconds > TWO_WEEKS_SECONDS)
             continue;
 
+        if (json_version >= 4)
+            builds[builderName][TESTS_KEY] = flattenTrie(builds[builderName][TESTS_KEY]);
         g_resultsByBuilder[builderName] = builds[builderName];
     }
 
     handleResourceLoad();
+}
+
+// TODO(aboxhall): figure out whether this is a performance bottleneck and
+// change calling code to understand the trie structure instead if necessary.
+function flattenTrie(trie, prefix)
+{
+    var result = {};
+    for (var name in trie) {
+        var fullName = prefix ? prefix + "/" + name : name;
+        var data = trie[name];
+        if ("results" in data)
+            result[fullName] = data;
+        else {
+            var partialResult = flattenTrie(data, fullName);
+            for (var key in partialResult) {
+                result[key] = partialResult[key];
+            }
+        }
+    }
+    return result;
 }
 
 function pathToBuilderResultsFile(builderName)

@@ -1,3 +1,15 @@
+2011-11-19  Alice Boxhall  <aboxhall@chromium.org>
+
+        Modify dashboard_base.js to optionally accept version 4 results json.
+
+        Reviewed by Ojan Vafai.
+
+        * TestResultServer/static-dashboards/dashboard_base.js:
+        (ADD_RESULTS):
+        (flattenTrie):
+        * TestResultServer/static-dashboards/flakiness_dashboard_tests.js:
+        (testFlattenTrie):
+
 2011-11-19  Ojan Vafai  <ojan@chromium.org>
 
         Stop storing results files as jsonp in the test results server

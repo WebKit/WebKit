@@ -95,7 +95,22 @@ function assertEquals(actual, expected, message)
     }
 }
 
-function throwError(resultsForTests, actual, expected) {}
+function testFlattenTrie()
+{
+    var tests = {
+        'bar.html': {'results': [[100, 'F']], 'times': [[100, 0]]},
+        'foo': {
+            'bar': {
+                'baz.html': {'results': [[100, 'F']], 'times': [[100, 0]]},
+            }
+        }
+    };
+    var expectedFlattenedTests = {
+        'bar.html': {'results': [[100, 'F']], 'times': [[100, 0]]},
+        'foo/bar/baz.html': {'results': [[100, 'F']], 'times': [[100, 0]]},
+    };
+    assertEquals(JSON.stringify(flattenTrie(tests)), JSON.stringify(expectedFlattenedTests))
+}
 
 function testReleaseFail()
 {
