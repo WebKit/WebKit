@@ -1,3 +1,14 @@
+2011-11-17  Mark Rowe  <mrowe@apple.com>
+
+        <http://webkit.org/b/72646> Disable deprecation warnings around code where we cannot easily
+        switch away from the deprecated APIs.
+
+        Reviewed by Sam Weinig.
+
+        * Plugins/WebBasePluginPackage.mm:
+        * Plugins/WebNetscapePluginPackage.mm:
+        (-[WebNetscapePluginPackage _tryLoad]):
+
 2011-11-18  Anton D'Auria  <adauria@apple.com>
 
         bool WebChromeClient::shouldInterruptJavaScript casts pointer to bool and always returns true

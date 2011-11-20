@@ -542,11 +542,22 @@ void SocketStreamHandle::reportErrorToClient(CFErrorRef error)
     String description;
 
 #if PLATFORM(MAC)
+
+#if COMPILER(CLANG)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+#endif
+
     if (CFEqual(CFErrorGetDomain(error), kCFErrorDomainOSStatus)) {
         const char* descriptionOSStatus = GetMacOSStatusCommentString(static_cast<OSStatus>(errorCode));
         if (descriptionOSStatus && descriptionOSStatus[0] != '\0')
             description = "OSStatus Error " + String::number(errorCode) + ": " + descriptionOSStatus;
     }
+
+#if COMPILER(CLANG)
+#pragma clang diagnostic pop
+#endif
+
 #endif
 
     if (description.isNull()) {
