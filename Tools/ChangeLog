@@ -1,3 +1,11 @@
+2011-11-20  Ojan Vafai  <ojan@chromium.org>
+
+        Include the master name when querying the test results server.
+        This will soon be required since leaving the master name out mean
+        that multiple files could match the query.
+
+        * Scripts/webkitpy/layout_tests/layout_package/json_results_generator.py:
+
 2011-11-19  Ojan Vafai  <ojan@chromium.org>
 
         Fix jsonp callback code to add the callback if json content

@@ -191,8 +191,7 @@ class JSONResultsGeneratorBase(object):
     TIMES_MS_FILENAME = "times_ms.json"
     INCREMENTAL_RESULTS_FILENAME = "incremental_results.json"
 
-    URL_FOR_TEST_LIST_JSON = \
-        "http://%s/testfile?builder=%s&name=%s&testlistjson=1&testtype=%s"
+    URL_FOR_TEST_LIST_JSON = "http://%s/testfile?builder=%s&name=%s&testlistjson=1&testtype=%s&master=%s"
 
     # FIXME: Remove generate_incremental_results once the reference to it in
     # http://src.chromium.org/viewvc/chrome/trunk/tools/build/scripts/slave/gtest_slave_utils.py
@@ -419,7 +418,8 @@ class JSONResultsGeneratorBase(object):
             (urllib2.quote(self._test_results_server),
              urllib2.quote(self._builder_name),
              self.RESULTS_FILENAME,
-             urllib2.quote(self._test_type)))
+             urllib2.quote(self._test_type),
+             urllib2.quote(self._master_name)))
 
         try:
             # FIXME: We should talk to the network via a Host object.
