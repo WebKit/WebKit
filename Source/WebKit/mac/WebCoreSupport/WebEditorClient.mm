@@ -290,9 +290,9 @@ void WebEditorClient::respondToChangedContents()
     [[NSNotificationCenter defaultCenter] postNotificationName:WebViewDidChangeNotification object:m_webView];    
 }
 
-void WebEditorClient::respondToChangedSelection()
+void WebEditorClient::respondToChangedSelection(Frame* frame)
 {
-    NSView<WebDocumentView> *documentView = [[[m_webView _selectedOrMainFrame] frameView] documentView];
+    NSView<WebDocumentView> *documentView = [[kit(frame) frameView] documentView];
     if ([documentView isKindOfClass:[WebHTMLView class]])
         [(WebHTMLView *)documentView _selectionChanged];
 

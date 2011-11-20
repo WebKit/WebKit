@@ -208,7 +208,7 @@ void WebEditorClient::respondToChangedContents()
     notImplemented();
 }
 
-void WebEditorClient::respondToChangedSelection()
+void WebEditorClient::respondToChangedSelection(Frame*)
 {
     m_webView->selectionChanged();
 

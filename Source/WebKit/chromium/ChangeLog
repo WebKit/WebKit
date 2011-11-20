@@ -1,3 +1,14 @@
+2011-10-17  Antonio Gomes  <agomes@rim.com>
+
+        Pass a Frame* parameter in EditorClient::respondToChangedSelection
+        https://bugs.webkit.org/show_bug.cgi?id=70248
+
+        Reviewed by Ryosuke Niwa.
+
+        * src/EditorClientImpl.cpp: Make use of the newly added Frame* parameter.
+        (WebKit::EditorClientImpl::respondToChangedSelection):
+        * src/EditorClientImpl.h: Change the method signature, as per base class change.
+
 2011-11-20  Adam Barth  <abarth@webkit.org>
 
         Add WebNode::hasEventListeners for Android

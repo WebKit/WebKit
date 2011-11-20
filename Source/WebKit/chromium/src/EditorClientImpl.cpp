@@ -260,10 +260,9 @@ void EditorClientImpl::didBeginEditing()
         m_webView->client()->didBeginEditing();
 }
 
-void EditorClientImpl::respondToChangedSelection()
+void EditorClientImpl::respondToChangedSelection(Frame* frame)
 {
     if (m_webView->client()) {
-        Frame* frame = m_webView->focusedWebCoreFrame();
         if (frame)
             m_webView->client()->didChangeSelection(!frame->selection()->isRange());
     }

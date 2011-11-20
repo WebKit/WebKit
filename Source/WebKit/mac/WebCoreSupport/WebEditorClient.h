@@ -98,7 +98,7 @@ public:
     TextCheckerClient* textChecker() OVERRIDE { return this; }
 
     virtual void respondToChangedContents() OVERRIDE;
-    virtual void respondToChangedSelection() OVERRIDE;
+    virtual void respondToChangedSelection(WebCore::Frame*) OVERRIDE;
 
     virtual void registerCommandForUndo(PassRefPtr<WebCore::EditCommand>) OVERRIDE;
     virtual void registerCommandForRedo(PassRefPtr<WebCore::EditCommand>) OVERRIDE;

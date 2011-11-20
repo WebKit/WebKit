@@ -133,25 +133,16 @@ void EditorClientEfl::respondToChangedContents()
     ewk_frame_editor_client_contents_changed(frame);
 }
 
-void EditorClientEfl::respondToChangedSelection()
+void EditorClientEfl::respondToChangedSelection(Frame* coreFrame)
 {
-    Evas_Object* frame = ewk_view_frame_focused_get(m_view);
-
-    if (!frame)
-        frame = ewk_view_frame_main_get(m_view);
-
-    if (!frame)
-        return;
-
-    WebCore::Frame* coreFrame = EWKPrivate::coreFrame(frame);
-
     if (!coreFrame)
         return;
 
     if (coreFrame->editor() && coreFrame->editor()->ignoreCompositionSelectionChange())
         return;
 
-    ewk_frame_editor_client_selection_changed(frame);
+    Evas_Object* webFrame = EWKPrivate::kitFrame(coreFrame);
+    ewk_frame_editor_client_selection_changed(webFrame);
 }
 
 void EditorClientEfl::didEndEditing()

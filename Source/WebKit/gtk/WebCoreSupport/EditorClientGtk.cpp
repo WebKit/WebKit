@@ -302,33 +302,31 @@ static void setSelectionPrimaryClipboardIfNeeded(WebKitWebView* webView)
 }
 #endif
 
-void EditorClient::respondToChangedSelection()
+void EditorClient::respondToChangedSelection(Frame* frame)
 {
     g_signal_emit_by_name(m_webView, "selection-changed");
 
-    WebKitWebViewPrivate* priv = m_webView->priv;
-    WebCore::Page* corePage = core(m_webView);
-    Frame* targetFrame = corePage->focusController()->focusedOrMainFrame();
-
-    if (!targetFrame)
+    if (!frame)
         return;
 
-    if (targetFrame->editor()->ignoreCompositionSelectionChange())
+    if (frame->editor()->ignoreCompositionSelectionChange())
         return;
 
 #if PLATFORM(X11)
     setSelectionPrimaryClipboardIfNeeded(m_webView);
 #endif
 
-    if (!targetFrame->editor()->hasComposition())
+    if (!frame->editor()->hasComposition())
         return;
 
     unsigned start;
     unsigned end;
-    if (!targetFrame->editor()->getCompositionSelection(start, end)) {
+    WebKitWebViewPrivate* priv = m_webView->priv;
+
+    if (!frame->editor()->getCompositionSelection(start, end)) {
         // gtk_im_context_reset() clears the composition for us.
         gtk_im_context_reset(priv->imContext.get());
-        targetFrame->editor()->cancelComposition();
+        frame->editor()->cancelComposition();
     }
 }
 

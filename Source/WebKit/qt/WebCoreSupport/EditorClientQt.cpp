@@ -201,7 +201,7 @@ void EditorClientQt::respondToChangedContents()
     emit m_page->contentsChanged();
 }
 
-void EditorClientQt::respondToChangedSelection()
+void EditorClientQt::respondToChangedSelection(Frame* frame)
 {
     if (dumpEditingCallbacks)
         printf("EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification\n");
@@ -212,7 +212,6 @@ void EditorClientQt::respondToChangedSelection()
 
     m_page->d->updateEditorActions();
     emit m_page->selectionChanged();
-    Frame* frame = m_page->d->page->focusController()->focusedOrMainFrame();
     if (!frame->editor()->ignoreCompositionSelectionChange())
         emit m_page->microFocusChanged();
 }

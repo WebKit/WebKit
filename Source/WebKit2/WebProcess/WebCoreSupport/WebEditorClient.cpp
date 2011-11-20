@@ -174,11 +174,10 @@ void WebEditorClient::respondToChangedContents()
     notImplemented();
 }
 
-void WebEditorClient::respondToChangedSelection()
+void WebEditorClient::respondToChangedSelection(Frame* frame)
 {
     DEFINE_STATIC_LOCAL(String, WebViewDidChangeSelectionNotification, ("WebViewDidChangeSelectionNotification"));
     m_page->injectedBundleEditorClient().didChangeSelection(m_page, WebViewDidChangeSelectionNotification.impl());
-    Frame* frame = m_page->corePage()->focusController()->focusedFrame();
     if (!frame)
         return;
 

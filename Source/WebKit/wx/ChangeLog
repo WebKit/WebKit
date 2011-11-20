@@ -1,3 +1,14 @@
+2011-10-17  Antonio Gomes  <agomes@rim.com>
+
+        Pass a Frame* parameter in EditorClient::respondToChangedSelection
+        https://bugs.webkit.org/show_bug.cgi?id=70248
+
+        Reviewed by Ryosuke Niwa.
+
+        * WebKitSupport/EditorClientWx.cpp: Make use of the newly added Frame* parameter.
+        (WebCore::EditorClientWx::respondToChangedSelection):
+        * WebKitSupport/EditorClientWx.h:
+
 2011-11-15  Anders Carlsson  <andersca@apple.com>
 
         HostWindow screenToWindow/windowToScreen should be screenToRootView/rootViewToScreen

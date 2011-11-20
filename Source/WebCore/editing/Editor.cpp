@@ -480,7 +480,7 @@ bool Editor::shouldShowDeleteInterface(HTMLElement* element) const
 void Editor::respondToChangedSelection(const VisibleSelection& oldSelection)
 {
     if (client())
-        client()->respondToChangedSelection();
+        client()->respondToChangedSelection(m_frame);
     m_deleteButtonController->respondToChangedSelection(oldSelection);
     m_spellingCorrector->respondToChangedSelection(oldSelection);
 }
@@ -2602,7 +2602,7 @@ void Editor::changeSelectionAfterCommand(const VisibleSelection& newSelection, b
     // does not call EditorClient::respondToChangedSelection(), which, on the Mac, sends selection change notifications and
     // starts a new kill ring sequence, but we want to do these things (matches AppKit).
     if (selectionDidNotChangeDOMPosition)
-        client()->respondToChangedSelection();
+        client()->respondToChangedSelection(m_frame);
 }
 
 String Editor::selectedText() const

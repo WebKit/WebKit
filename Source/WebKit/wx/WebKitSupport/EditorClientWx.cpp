@@ -487,9 +487,8 @@ void EditorClientWx::textDidChangeInTextArea(Element*)
     notImplemented();
 }
 
-void EditorClientWx::respondToChangedSelection()
+void EditorClientWx::respondToChangedSelection(Frame* frame)
 {
-    Frame* frame = m_page->focusController()->focusedOrMainFrame();
     if (frame) {
         wxWebView* webKitWin = dynamic_cast<wxWebView*>(frame->view()->hostWindow()->platformPageClient());
         if (webKitWin) {
