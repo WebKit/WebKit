@@ -252,16 +252,8 @@ WONTFIX SKIP : fast/canvas/canvas-gradient-addStop-error.html = FAIL
 // this test will always fail.
 WONTFIX SKIP LINUX WIN : fast/events/option-tab.html = FAIL
 
-// Compositor layer trees on mac different from other platforms, but it's not clear why
-BUGWK72402 MAC : compositing/geometry/limit-layer-bounds-clipping-ancestor.html = TEXT
-BUGWK72402 MAC : compositing/geometry/limit-layer-bounds-fixed-positioned.html = TEXT
-BUGWK72402 MAC : compositing/geometry/limit-layer-bounds-overflow-root.html = TEXT
-BUGWK72402 MAC : compositing/geometry/limit-layer-bounds-positioned-transition.html = TEXT
-BUGWK72402 MAC : compositing/geometry/limit-layer-bounds-positioned.html = TEXT
-BUGWK72402 MAC : compositing/geometry/limit-layer-bounds-transformed-overflow.html = TEXT
-BUGWK72402 MAC : compositing/geometry/limit-layer-bounds-transformed.html = TEXT
-BUGWK72402 MAC : compositing/layer-creation/scroll-partial-update.html = TEXT
-BUGWK72402 MAC : compositing/layer-creation/overflow-scroll-overlap.html = TEXT
+// Has a 150ms setTimeout and seems racy
+BUGWK72402 MAC DEBUG : compositing/layer-creation/overflow-scroll-overlap.html = TEXT
 
 // mac failures
 BUGWK72402 MAC : compositing/geometry/empty-embed-rects.html = TIMEOUT
@@ -2790,9 +2782,6 @@ BUGCR74710 LINUX MAC : svg/text/font-size-below-point-five.svg = PASS TEXT IMAGE
 
 BUGCR74766 WIN DEBUG : http/tests/security/javascriptURL/xss-ALLOWED-from-javascript-url-sub-frame-to-javascript-url-sub-frame.html = PASS CRASH
 
-// Chromium GPU draws scrollbars slightly differently in debug vs. release.
-//BUGWK58587 LINUX DEBUG : compositing/geometry/horizontal-scroll-composited.html = IMAGE
-
 // introduced by Dave Hyatt in WK r80582
 BUGCR75561 LINUX WIN : fast/writing-mode/text-orientation-basic.html = IMAGE+TEXT
 BUGCR75561 LEOPARD : fast/writing-mode/text-orientation-basic.html = IMAGE IMAGE+TEXT
@@ -3771,8 +3760,6 @@ BUGWK71451 SLOW : fast/frames/sandboxed-iframe-navigation-windowopen.html = PASS
 BUGWK71451 LINUX : http/tests/security/contentSecurityPolicy/policy-does-not-affect-child.html = TEXT PASS
 BUGWK71451 LINUX : http/tests/security/contentSecurityPolicy/object-src-none-allowed.html = TEXT PASS
 
-BUGWK72182 : compositing/scaling/tiled-layer-recursion.html = FAIL CRASH
-
 // This test sometimes exceeds 60-second time limit (for SLOW tests) on
 // win/linux debug. Since setting both SLOW and TIMEOUT is not allowed,
 // only TIMEOUT is specified here.
@@ -3781,14 +3768,6 @@ BUGWK71542 WIN LINUX DEBUG : inspector/styles/styles-formatting.html = PASS TIME
 BUGWK71543 : media/media-element-play-after-eos.html = PASS TIMEOUT
 
 BUGWK71653 : platform/chromium-cg-mac/editing/input/ime-candidate-window-position.html = PASS TIMEOUT
-
-// Need baselines on windows and linux
-BUGWK71225 MAC WIN : compositing/geometry/fixed-position-composited-page-scale.html = MISSING
-BUGWK71225 MAC WIN : compositing/geometry/fixed-position-iframe-composited-page-scale.html = MISSING
-BUGWK71225 MAC WIN : compositing/geometry/fixed-position-transform-composited-page-scale.html = MISSING
-BUGWK71225 MAC WIN : compositing/geometry/fixed-position-composited-page-scale-down.html = MISSING
-BUGWK71225 MAC WIN : compositing/geometry/fixed-position-iframe-composited-page-scale-down.html = MISSING
-BUGWK71225 MAC WIN : compositing/geometry/fixed-position-transform-composited-page-scale-down.html = MISSING
 
 // Intermittent assertion failures on snowleopard bots.
 BUGWK59552 SNOWLEOPARD DEBUG : fast/dom/Element/id-in-frame.html = PASS CRASH
@@ -3896,16 +3875,6 @@ BUGWK66953 MAC DEBUG : animations/play-state.html = TEXT PASS
 BUGWK66953 DEBUG : animations/play-state-paused.html = TEXT PASS
 BUGWK66953 DEBUG : animations/play-state-suspend.html = TEXT PASS
 BUGWK66953 DEBUG : animations/suspend-resume-animation.html = TEXT PASS
-
-BUGWK72487 SNOWLEOPARD CPU : compositing/layer-creation/spanOverlapsCanvas.html = TEXT
-BUGWK72487 SNOWLEOPARD : compositing/layers-inside-overflow-scroll.html = IMAGE
-BUGWK72487 SNOWLEOPARD : compositing/self-painting-layers.html = IMAGE
-BUGWK72487 SNOWLEOPARD : compositing/video-page-visibility.html = IMAGE
-BUGWK72487 SNOWLEOPARD : compositing/geometry/video-opacity-overlay.html = IMAGE
-BUGWK72487 SNOWLEOPARD : compositing/geometry/video-fixed-scrolling.html = IMAGE
-BUGWK72487 SNOWLEOPARD : compositing/geometry/clipped-video-controller.html = IMAGE
-BUGWK72487 SNOWLEOPARD : compositing/overflow/scroll-ancestor-update.html = IMAGE
-BUGWK72487 SNOWLEOPARD : compositing/overflow/overflow-compositing-descendant.html = IMAGE
 
 BUGWK72598 : css3/images/cross-fade-tiled.html = IMAGE
 BUGWK72598 : css3/images/cross-fade-invalidation.html = IMAGE
