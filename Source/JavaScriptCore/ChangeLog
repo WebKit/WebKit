@@ -1,3 +1,12 @@
+2011-11-21  Andy Wingo  <wingo@igalia.com>
+
+        Add .dir-locals.el file for better Emacs defaults
+        https://bugs.webkit.org/show_bug.cgi?id=72483
+
+        Reviewed by Xan Lopez.
+
+        * .dir-locals.el: Set appropriate directory-local variables for Emacs.
+
 2011-11-21  Filip Pizlo  <fpizlo@apple.com>
         
         Another attempt at a build fix.
