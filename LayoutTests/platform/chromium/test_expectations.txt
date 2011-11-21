@@ -3898,3 +3898,4 @@ BUGWK72761 : accessibility/anonymous-render-block-in-continuation-causes-crash.h
 BUGWK72758 : http/tests/media/video-cookie.html = PASS TIMEOUT
 BUGWK72758 : http/tests/media/video-referer.html = PASS TIMEOUT
 
+BUGWK72903 WIN LINUX : compositing/geometry/clipped-video-controller.html = PASS TEXT
