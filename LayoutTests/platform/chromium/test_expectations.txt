@@ -33,7 +33,7 @@ BUGCR24182 SLOW DEBUG : jquery/data.html = PASS
 BUGCR24182 SLOW DEBUG : jquery/dimensions.html = PASS
 BUGCR24182 DEBUG : jquery/event.html = PASS TIMEOUT
 BUGCR24182 DEBUG : jquery/manipulation.html = PASS TIMEOUT
-BUGCR24182 SLOW DEBUG : jquery/offset.html = PASS
+BUGCR24182 SLOW LINUX WIN LEOPARD DEBUG : jquery/offset.html = PASS
 BUGCR24182 SLOW LINUX WIN LEOPARD DEBUG : jquery/traversing.html = PASS
 BUGCR24182 SLOW SNOWLEOPARD DEBUG : fast/frames/sandboxed-iframe-navigation-parent.html = PASS
 BUGCR24182 SLOW SNOWLEOPARD DEBUG : fast/js/repeat-cached-vm-reentry.html = PASS
@@ -3776,6 +3776,7 @@ BUGWK59552 SNOWLEOPARD DEBUG : fast/frames/set-parent-src-synchronously.html = P
 BUGWK59552 SNOWLEOPARD DEBUG : fast/loader/opaque-base-url.html = PASS CRASH
 BUGWK59552 SNOWLEOPARD DEBUG : fast/parser/close-while-stopping.html = PASS CRASH
 BUGWK59552 SNOWLEOPARD DEBUG : http/tests/security/cross-frame-access-custom.html = PASS CRASH
+BUGWK59552 SLOW SNOWLEOPARD DEBUG : jquery/offset.html = PASS CRASH
 BUGWK59552 SNOWLEOPARD DEBUG : storage/domstorage/events/basic-body-attribute.html = PASS CRASH
 
 // Introduced due to BUGWK53512, fails under Skia right now
