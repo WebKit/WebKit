@@ -16,7 +16,8 @@ WebView {
             running: true
             interval: 1
             onTriggered: {
-                webView.messageFromAlertDialog = message
+                // Testing both attached property and id defined in the Component context.
+                parent.WebView.view.messageFromAlertDialog = message
                 webView.modelMessageEqualsMessage = Boolean(model.message == message)
                 model.dismiss()
             }
@@ -28,7 +29,7 @@ WebView {
             running: true
             interval: 1
             onTriggered: {
-                webView.confirmCount += 1
+                parent.WebView.view.confirmCount += 1
                 if (message == "ACCEPT")
                     model.accept()
                 else
@@ -42,7 +43,7 @@ WebView {
             running: true
             interval: 1
             onTriggered: {
-                webView.promptCount += 1
+                parent.WebView.view.promptCount += 1
                 if (message == "REJECT")
                     model.reject()
                 else {

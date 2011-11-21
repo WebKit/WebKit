@@ -1,3 +1,29 @@
+2011-11-21  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        [Qt] Add WebView.view attached property support for dialogs in QML
+        https://bugs.webkit.org/show_bug.cgi?id=72825
+
+        Reviewed by Simon Hausmann.
+
+        When creating new dialogs, fill their WebView.view attached property
+        with the WebView that's creating them. This follows the same pattern
+        as QtQuick's ListView, enabling the usage of the same dialog component
+        for different WebViews.
+
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewPrivate::runJavaScriptAlert):
+        (QQuickWebViewPrivate::runJavaScriptConfirm):
+        (QQuickWebViewPrivate::runJavaScriptPrompt):
+        (QQuickWebViewPrivate::setViewInAttachedProperties):
+        (QQuickWebViewAttached::QQuickWebViewAttached):
+        (QQuickWebViewAttached::setView):
+        (QQuickWebView::qmlAttachedProperties):
+        * UIProcess/API/qt/qquickwebview_p.h:
+        * UIProcess/API/qt/qquickwebview_p_p.h:
+        * UIProcess/API/qt/tests/qmltests/WebView/tst_javaScriptDialogs.qml:
+        * UIProcess/qt/QtDialogRunner.h:
+        (QtDialogRunner::dialog):
+
 2011-11-21  Jochen Eisinger  <jochen@chromium.org>
 
         Implement Meta referrer

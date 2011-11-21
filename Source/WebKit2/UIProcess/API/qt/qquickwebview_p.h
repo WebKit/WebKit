@@ -26,6 +26,7 @@
 
 class QDeclarativeComponent;
 class QQuickWebPage;
+class QQuickWebViewAttached;
 class QQuickWebViewPrivate;
 class QQuickWebViewExperimental;
 class QWebDownloadItem;
@@ -86,6 +87,7 @@ public:
     QQuickWebPage* page();
 
     QQuickWebViewExperimental* experimental() const;
+    static QQuickWebViewAttached* qmlAttachedProperties(QObject*);
 
 public Q_SLOTS:
     void load(const QUrl&);
@@ -135,6 +137,24 @@ private:
 };
 
 QML_DECLARE_TYPE(QQuickWebView)
+
+class QWEBKIT_EXPORT QQuickWebViewAttached : public QObject {
+    Q_OBJECT
+    Q_PROPERTY(QQuickWebView* view READ view NOTIFY viewChanged FINAL)
+
+public:
+    QQuickWebViewAttached(QObject* object);
+    QQuickWebView* view() const { return m_view; }
+    void setView(QQuickWebView*);
+
+Q_SIGNALS:
+    void viewChanged();
+
+private:
+    QQuickWebView* m_view;
+};
+
+QML_DECLARE_TYPEINFO(QQuickWebView, QML_HAS_ATTACHED_PROPERTIES)
 
 class QWEBKIT_EXPORT QQuickWebViewExperimental : public QObject {
     Q_OBJECT

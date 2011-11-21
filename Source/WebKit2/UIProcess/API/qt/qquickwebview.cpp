@@ -231,6 +231,7 @@ void QQuickWebViewPrivate::runJavaScriptAlert(const QString& alertText)
     QtDialogRunner dialogRunner;
     if (!dialogRunner.initForAlert(alertDialog, q, alertText))
         return;
+    setViewInAttachedProperties(dialogRunner.dialog());
 
     disableMouseEvents();
     dialogRunner.exec();
@@ -246,6 +247,7 @@ bool QQuickWebViewPrivate::runJavaScriptConfirm(const QString& message)
     QtDialogRunner dialogRunner;
     if (!dialogRunner.initForConfirm(confirmDialog, q, message))
         return true;
+    setViewInAttachedProperties(dialogRunner.dialog());
 
     disableMouseEvents();
     dialogRunner.exec();
@@ -267,6 +269,7 @@ QString QQuickWebViewPrivate::runJavaScriptPrompt(const QString& message, const 
         ok = true;
         return defaultValue;
     }
+    setViewInAttachedProperties(dialogRunner.dialog());
 
     disableMouseEvents();
     dialogRunner.exec();
@@ -337,6 +340,13 @@ void QQuickWebViewPrivate::setUseTraditionalDesktopBehaviour(bool enable)
         initializeTouch(q);
 }
 
+void QQuickWebViewPrivate::setViewInAttachedProperties(QObject* object)
+{
+    Q_Q(QQuickWebView);
+    QQuickWebViewAttached* attached = static_cast<QQuickWebViewAttached*>(qmlAttachedPropertiesObject<QQuickWebView>(object));
+    attached->setView(q);
+}
+
 static QtPolicyInterface::PolicyAction toPolicyAction(QQuickWebView::NavigationPolicy policy)
 {
     switch (policy) {
@@ -383,6 +393,21 @@ void QQuickWebViewPrivate::setPageProxy(QtWebPageProxy* pageProxy)
     Q_Q(QQuickWebView);
     this->pageProxy.reset(pageProxy);
     QObject::connect(pageProxy, SIGNAL(receivedMessageFromNavigatorQtObject(QVariantMap)), q, SIGNAL(messageReceived(QVariantMap)));
+}
+
+QQuickWebViewAttached::QQuickWebViewAttached(QObject* object)
+    : QObject(object)
+    , m_view(0)
+{
+
+}
+
+void QQuickWebViewAttached::setView(QQuickWebView* view)
+{
+    if (m_view == view)
+        return;
+    m_view = view;
+    emit viewChanged();
 }
 
 QQuickWebViewExperimental::QQuickWebViewExperimental(QQuickWebView *webView)
@@ -565,6 +590,11 @@ QWebPreferences* QQuickWebView::preferences() const
 QQuickWebViewExperimental* QQuickWebView::experimental() const
 {
     return m_experimental;
+}
+
+QQuickWebViewAttached* QQuickWebView::qmlAttachedProperties(QObject* object)
+{
+    return new QQuickWebViewAttached(object);
 }
 
 void QQuickWebView::geometryChanged(const QRectF& newGeometry, const QRectF& oldGeometry)

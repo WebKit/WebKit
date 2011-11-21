@@ -108,6 +108,9 @@ qwk_1.0 {
         *QQuickWebViewPrivateExtension;
         non-virtual?thunk?to?QQuickWebViewPrivateExtension*;
         QQuickWebViewPrivateExtension::*;
+        *QQuickWebViewAttached;
+        non-virtual?thunk?to?QQuickWebViewAttached*;
+        QQuickWebViewAttached::*;
         *QQuickWebViewExperimental;
         non-virtual?thunk?to?QQuickWebViewExperimental*;
         QQuickWebViewExperimental::*;

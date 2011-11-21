@@ -39,6 +39,8 @@ public:
     bool initForConfirm(QDeclarativeComponent*, QQuickItem* dialogParent, const QString& message);
     bool initForPrompt(QDeclarativeComponent*, QQuickItem* dialogParent, const QString& message, const QString& defaultValue);
 
+    QQuickItem* dialog() const { return m_dialog.get(); }
+
     bool wasAccepted() const { return m_wasAccepted; }
     QString result() const { return m_result; }
 

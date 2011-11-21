@@ -1,3 +1,14 @@
+2011-11-21  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        [Qt] Add WebView.view attached property support for dialogs in QML
+        https://bugs.webkit.org/show_bug.cgi?id=72825
+
+        Reviewed by Simon Hausmann.
+
+        Export QQuickWebViewAttached.
+
+        * Source/qtwebkit-export.map:
+
 2011-11-21  Noel Gordon  <noel.gordon@gmail.com>
 
         Update .gitignore for latest WebKitLibraries

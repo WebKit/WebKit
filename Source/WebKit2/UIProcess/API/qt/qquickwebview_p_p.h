@@ -109,6 +109,8 @@ private:
 
     bool isTransitioningToNewPage() const { return transitioningToNewPage; }
 
+    void setViewInAttachedProperties(QObject*);
+
     QScopedPointer<QQuickWebPage> pageView;
     QScopedPointer<QtViewportInteractionEngine> interactionEngine;
 
