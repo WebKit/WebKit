@@ -74,9 +74,9 @@ public:
         , m_fakeTextureUpdater(adoptRef(new FakeLayerTextureUpdater))
         , m_textureManager(textureManager)
     {
-        createTiler(CCLayerTilingData::NoBorderTexels);
         setTileSize(IntSize(100, 100));
         setTextureFormat(GraphicsContext3D::RGBA);
+        createTiler(CCLayerTilingData::NoBorderTexels);
     }
     virtual ~FakeTiledLayerChromium() { }
 
