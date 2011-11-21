@@ -50,10 +50,12 @@ short* feLightingConstantsForNeon()
     return s_FELightingConstantsForNeon;
 }
 
+#if ENABLE(PARALLEL_JOBS)
 void FELighting::platformApplyNeonWorker(FELightingPaintingDataForNeon* parameters)
 {
     neonDrawLighting(parameters);
 }
+#endif
 
 #define ASSTRING(str) #str
 #define TOSTRING(value) ASSTRING(value)

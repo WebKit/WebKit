@@ -105,6 +105,7 @@ private:
     ALWAYS_INLINE void setOuterPixels(PaintingData&, int x1, int y1, int x2, int y2);
 
     // Parallelization parts
+#if ENABLE(PARALLEL_JOBS)
     static const int s_minimalRectDimension = (100 * 100); // Empirical data limit for parallel jobs
 
     template<typename Type>
@@ -120,6 +121,7 @@ private:
     };
 
     static void setInteriorPixelsWorker(InteriorPixelParameters*);
+#endif
 
     IntSize m_kernelSize;
     float m_divisor;

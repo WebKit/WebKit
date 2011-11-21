@@ -167,6 +167,7 @@ inline void FELighting::platformApplyNeon(LightingData& data, LightSource::Paint
     if (floatArguments.diffuseConstant == 1)
         neonData.flags |= FLAG_DIFFUSE_CONST_IS_1;
 
+#if ENABLE(PARALLEL_JOBS)
     int optimalThreadNumber = ((data.widthDecreasedByOne - 1) * (data.heightDecreasedByOne - 1)) / s_minimalRectDimension;
     if (optimalThreadNumber > 1) {
         // Initialize parallel jobs
@@ -192,6 +193,7 @@ inline void FELighting::platformApplyNeon(LightingData& data, LightSource::Paint
             return;
         }
     }
+#endif
 
     neonDrawLighting(&neonData);
 }
