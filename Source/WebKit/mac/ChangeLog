@@ -1,3 +1,10 @@
+2011-11-21  Mark Rowe  <mrowe@apple.com>
+
+        Fix the SnowLeopard build.
+
+        * Misc/WebNSFileManagerExtras.mm: Forward-declare DADiskCreateFromVolumePath on SnowLeopard as it was
+        not yet declared in a public header.
+
 2011-11-20  Mark Rowe  <mrowe@apple.com>
 
         <http://webkit.org/b/72661> Switch to a more modern approach to retrieving the startup volume name

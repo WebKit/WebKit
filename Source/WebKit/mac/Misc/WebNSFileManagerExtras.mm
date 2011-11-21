@@ -36,6 +36,10 @@
 #import <sys/stat.h>
 #import <wtf/RetainPtr.h>
 
+#ifdef BUILDING_ON_SNOW_LEOPARD
+extern "C" DADiskRef DADiskCreateFromVolumePath(CFAllocatorRef allocator, DASessionRef session, CFURLRef path);
+#endif
+
 @implementation NSFileManager (WebNSFileManagerExtras)
 
 
