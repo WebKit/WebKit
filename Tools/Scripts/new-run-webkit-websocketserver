@@ -34,8 +34,8 @@ import logging
 import optparse
 import tempfile
 
-import webkitpy.layout_tests.port.factory as factory
-import webkitpy.layout_tests.servers.websocket_server as websocket_server
+from webkitpy.common.host import Host
+from webkitpy.layout_tests.servers import websocket_server
 
 
 def main():
@@ -91,7 +91,8 @@ def main():
     if options.pidfile:
         kwds['pidfile'] = options.pidfile
 
-    port_obj = factory.get(options=options)
+    host = Host()
+    port_obj = host.port_factory.get(options=options)
     pywebsocket = websocket_server.PyWebSocket(port_obj, options.output_dir, **kwds)
 
     log_level = logging.WARN
