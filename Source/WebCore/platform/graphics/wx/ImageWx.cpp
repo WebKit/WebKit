@@ -193,12 +193,12 @@ void Image::drawPattern(GraphicsContext* ctxt, const FloatRect& srcRect, const A
     ctxt->save();
     ctxt->clip(IntRect(dstRect.x(), dstRect.y(), dstRect.width(), dstRect.height()));
     
-    float adjustedX = 0;
-    float adjustedY = 0;
+    float adjustedX = dstRect.x();
+    float adjustedY = dstRect.y();
     
-    adjustedX = phase.x() - dstRect.x() *
+    adjustedX += phase.x() - dstRect.x() *
                       narrowPrecisionToFloat(patternTransform.a());
-    adjustedY = (phase.y() - dstRect.y() *
+    adjustedY += (phase.y() - dstRect.y() *
                       narrowPrecisionToFloat(patternTransform.d()));
     
 #if USE(WXGC)

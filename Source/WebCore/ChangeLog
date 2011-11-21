@@ -1,3 +1,13 @@
+2011-11-21  Robin Dunn  <robin@alldunn.com>
+
+        [wx] Fix image translation calculations.
+        https://bugs.webkit.org/show_bug.cgi?id=72892
+
+        Reviewed by Kevin Ollivier.
+
+        * platform/graphics/wx/ImageWx.cpp:
+        (WebCore::Image::drawPattern):
+
 2011-11-21  Scott Graham  <scottmg@chromium.org>
 
         copyright comment style to C from C++ for gamepad module
