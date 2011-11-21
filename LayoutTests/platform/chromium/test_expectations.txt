@@ -826,7 +826,6 @@ BUGCR8763 MAC : svg/custom/use-on-g-containing-foreignObject-and-image.svg = IMA
 BUGCR23463 LEOPARD : svg/W3C-SVG-1.1/struct-symbol-01-b.svg = IMAGE
 BUGCR23463 LINUX WIN : svg/W3C-SVG-1.1/struct-symbol-01-b.svg = IMAGE+TEXT
 BUGCR23463 LINUX WIN : svg/W3C-SVG-1.1/struct-use-01-t.svg = PASS IMAGE+TEXT IMAGE
-BUGCR23463 LINUX WIN : svg/W3C-SVG-1.1/struct-image-02-b.svg = IMAGE+TEXT
 
 // Merge 39744:39829 - regression
 BUGCR10284 MAC : svg/custom/path-bad-data.svg = FAIL
@@ -1818,8 +1817,6 @@ BUGCR35329 WIN : http/tests/appcache/resource-redirect-2.html = PASS TIMEOUT
 
 // More Webkit Roll to r51875
 // Some of these went from IMAGE+TEXT to just IMAGE at r57886
-BUGCR29737 MAC : svg/custom/use-elementInstance-event-target.svg = IMAGE
-BUGCR29737 MAC : svg/W3C-SVG-1.1/struct-image-02-b.svg = IMAGE
 BUGCR29737 MAC : svg/filters/sourceAlpha.svg = IMAGE
 
 // These tests got very flaky (failing 8/10 runs!) after
