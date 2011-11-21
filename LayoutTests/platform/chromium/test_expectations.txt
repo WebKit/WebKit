@@ -3896,4 +3896,3 @@ BUGWK72761 : accessibility/anonymous-render-block-in-continuation-causes-crash.h
 BUGWK72758 : http/tests/media/video-cookie.html = PASS TIMEOUT
 BUGWK72758 : http/tests/media/video-referer.html = PASS TIMEOUT
 
-BUGWK72887 LINUX : inspector/extensions/extensions-events.html = PASS TIMEOUT
