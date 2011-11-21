@@ -36,8 +36,8 @@
 #include <QtWidgets/QInputDialog>
 #include <WKOpenPanelResultListener.h>
 
-QQuickWebViewPrivate::QQuickWebViewPrivate()
-    : q_ptr(0)
+QQuickWebViewPrivate::QQuickWebViewPrivate(QQuickWebView* viewport, WKContextRef contextRef, WKPageGroupRef pageGroupRef)
+    : q_ptr(viewport)
     , alertDialog(0)
     , confirmDialog(0)
     , promptDialog(0)
@@ -45,6 +45,19 @@ QQuickWebViewPrivate::QQuickWebViewPrivate()
     , transitioningToNewPage(false)
     , useTraditionalDesktopBehaviour(false)
 {
+    viewport->setFlags(QQuickItem::ItemClipsChildrenToShape);
+
+    QObject::connect(viewport, SIGNAL(visibleChanged()), viewport, SLOT(_q_onVisibleChanged()));
+    pageView.reset(new QQuickWebPage(viewport));
+
+    QQuickWebPagePrivate* const pageViewPrivate = pageView.data()->d;
+    setPageProxy(new QtWebPageProxy(pageView.data(), q_ptr, 0, this, contextRef, pageGroupRef));
+    pageViewPrivate->setPageProxy(pageProxy.data());
+
+    QWebPreferencesPrivate::get(pageProxy->preferences())->setAttribute(QWebPreferencesPrivate::AcceleratedCompositingEnabled, true);
+    pageProxy->init();
+
+    QObject::connect(pageProxy.data(), SIGNAL(updateNavigationState()), q_ptr, SIGNAL(navigationStateChanged()));
 }
 
 void QQuickWebViewPrivate::enableMouseEvents()
@@ -63,24 +76,6 @@ void QQuickWebViewPrivate::disableMouseEvents()
     q->setAcceptHoverEvents(false);
     pageView->setAcceptedMouseButtons(Qt::NoButton);
     pageView->setAcceptHoverEvents(false);
-}
-
-void QQuickWebViewPrivate::initialize(QQuickWebView* viewport, WKContextRef contextRef, WKPageGroupRef pageGroupRef)
-{
-    q_ptr = viewport;
-    viewport->setFlags(QQuickItem::ItemClipsChildrenToShape);
-
-    QObject::connect(viewport, SIGNAL(visibleChanged()), viewport, SLOT(_q_onVisibleChanged()));
-    pageView.reset(new QQuickWebPage(viewport));
-
-    QQuickWebPagePrivate* const pageViewPrivate = pageView.data()->d;
-    setPageProxy(new QtWebPageProxy(pageView.data(), q_ptr, 0, this, contextRef, pageGroupRef));
-    pageViewPrivate->setPageProxy(pageProxy.data());
-
-    QWebPreferencesPrivate::get(pageProxy->preferences())->setAttribute(QWebPreferencesPrivate::AcceleratedCompositingEnabled, true);
-    pageProxy->init();
-
-    QObject::connect(pageProxy.data(), SIGNAL(updateNavigationState()), q_ptr, SIGNAL(navigationStateChanged()));
 }
 
 void QQuickWebViewPrivate::initializeDesktop(QQuickWebView* viewport)
@@ -474,21 +469,19 @@ void QQuickWebViewExperimental::setPromptDialog(QDeclarativeComponent* promptDia
 
 QQuickWebView::QQuickWebView(QQuickItem* parent)
     : QQuickItem(parent)
-    , d_ptr(new QQuickWebViewPrivate)
+    , d_ptr(new QQuickWebViewPrivate(this))
     , m_experimental(new QQuickWebViewExperimental(this))
 {
     Q_D(QQuickWebView);
-    d->initialize(this);
     d->initializeTouch(this);
 }
 
 QQuickWebView::QQuickWebView(WKContextRef contextRef, WKPageGroupRef pageGroupRef, QQuickItem* parent)
     : QQuickItem(parent)
-    , d_ptr(new QQuickWebViewPrivate)
+    , d_ptr(new QQuickWebViewPrivate(this, contextRef, pageGroupRef))
     , m_experimental(new QQuickWebViewExperimental(this))
 {
     Q_D(QQuickWebView);
-    d->initialize(this, contextRef, pageGroupRef);
     // Used by WebKitTestRunner.
     d->setUseTraditionalDesktopBehaviour(true);
 }

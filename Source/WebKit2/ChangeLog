@@ -1,3 +1,17 @@
+2011-11-21  Alexis Menard  <alexis.menard@openbossa.org>
+
+        [Qt] Remove unnecessary initialize method from QQuickWebView.
+        https://bugs.webkit.org/show_bug.cgi?id=72905
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        We don't need this level of indirection.
+
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewPrivate::QQuickWebViewPrivate):
+        (QQuickWebView::QQuickWebView):
+        * UIProcess/API/qt/qquickwebview_p_p.h:
+
 2011-11-21  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
 
         [Qt][WK2] Implement loadHtml API for QQuickWebView

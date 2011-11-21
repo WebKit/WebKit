@@ -45,10 +45,9 @@ class QQuickWebViewPrivate : public WebKit::QtPolicyInterface {
     friend class QQuickWebViewExperimental;
 
 public:
-    QQuickWebViewPrivate();
+    QQuickWebViewPrivate(QQuickWebView* viewport, WKContextRef contextRef = 0, WKPageGroupRef pageGroupRef = 0);
     virtual ~QQuickWebViewPrivate() { }
     void setPageProxy(QtWebPageProxy*);
-    void initialize(QQuickWebView* viewport, WKContextRef contextRef = 0, WKPageGroupRef pageGroupRef = 0);
     void initializeTouch(QQuickWebView* viewport);
     void initializeDesktop(QQuickWebView* viewport);
     void enableMouseEvents();
