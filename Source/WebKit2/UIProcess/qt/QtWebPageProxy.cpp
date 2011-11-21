@@ -493,7 +493,7 @@ bool QtWebPageProxy::isViewWindowActive()
 
 bool QtWebPageProxy::isViewFocused()
 {
-    return m_qmlWebPage->hasFocus();
+    return m_qmlWebView->hasFocus();
 }
 
 bool QtWebPageProxy::isViewVisible()

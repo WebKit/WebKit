@@ -1,3 +1,22 @@
+2011-11-21  Alexis Menard  <alexis.menard@openbossa.org>
+
+        [Qt][WK2] REGRESSION(100483): It made 2 API tests fail
+        https://bugs.webkit.org/show_bug.cgi?id=72612
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Make sure that when the view is focused, the page knows about it.
+        Also set a the view to be the focused item in the failing tests.
+
+        * UIProcess/API/qt/qquickwebpage_p.h:
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebView::focusInEvent):
+        (QQuickWebView::focusOutEvent):
+        * UIProcess/API/qt/qquickwebview_p.h:
+        * UIProcess/API/qt/tests/qmltests/DesktopBehavior/tst_linkHovered.qml:
+        * UIProcess/qt/QtWebPageProxy.cpp:
+        (QtWebPageProxy::isViewFocused):
+
 2011-11-21  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Speed up debug builds.

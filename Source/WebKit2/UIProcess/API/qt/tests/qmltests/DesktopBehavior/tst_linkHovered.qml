@@ -7,6 +7,7 @@ DesktopWebView {
     id: webView
     width: 200
     height: 400
+    focus: true
 
     property string lastUrl
     property string lastTitle

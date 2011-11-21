@@ -603,6 +603,18 @@ void QQuickWebView::geometryChanged(const QRectF& newGeometry, const QRectF& old
     }
 }
 
+void QQuickWebView::focusInEvent(QFocusEvent* event)
+{
+    Q_D(QQuickWebView);
+    d->pageView->event(event);
+}
+
+void QQuickWebView::focusOutEvent(QFocusEvent* event)
+{
+    Q_D(QQuickWebView);
+    d->pageView->event(event);
+}
+
 void QQuickWebView::touchEvent(QTouchEvent* event)
 {
     forceActiveFocus();

@@ -115,6 +115,8 @@ Q_SIGNALS:
 
 protected:
     virtual void geometryChanged(const QRectF&, const QRectF&);
+    virtual void focusInEvent(QFocusEvent*);
+    virtual void focusOutEvent(QFocusEvent*);
     virtual void touchEvent(QTouchEvent* event);
 
 private:
