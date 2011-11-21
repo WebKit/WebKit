@@ -1,4 +1,39 @@
 =================
+WebKitGTK+ 1.7.2
+=================
+
+What's new in WebKitGTK+ 1.7.2?
+
+  - Fix process freeze when right-clicking on windowless Flash.
+  - Performance improvements by avoiding unnecessary clips while
+    painting.
+  - Notify errors happening on downloads not started by a web view.
+  - Allow building with GLib >= 2.31.
+  - Significant JavaScript performance improvements on x86 and x86-64.
+  - Fix application cache directory in WebKit2.
+  - Add initial support for cookies in WebKit2.
+  - Implement support for downloads in WebKit2.
+  - Add methods to load HTML and plain text to WebKit2 GTK+ API.
+  - Add webkit_web_view_get_uri() to WebKit2 GTK+ API.
+  - Don't show items in option elements with display:none.
+  - Add webkit_web_view_load_request() to WebKit2 GTK+ API.
+  - Add support for WebAudio AudioFileReader.
+  - Port MiniBrowser to use WebKit2 GTK+ API instead of the C API.
+  - Add more settings to WebKitSettings in WebKit2 GTK+ API: Private
+    browsing, developer extras, resizable text areas, tabs to links,
+    caret mode, font settings, default charset.
+  - Fix windowless plugins drawing in WebKit2.
+  - Fix memory leak when fullscreening a video.
+  - Remove visited links from page's page group when clearing back
+    forward list.
+  - Switch to a backing store approach for painting WebKitWebView. It
+    improves scrolling performance.
+  - Add methods to get/set the settings of a web view to WebKit2 GTK+
+    API.
+  - Add webkit_settings_new_with_settings() to WebKit2 GTK+ API.
+  - Add title property to WebKitWebView in WebKit2 GTK+ API.
+
+=================
 WebKitGTK+ 1.7.1
 =================
 

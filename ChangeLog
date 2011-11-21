@@ -1,3 +1,12 @@
+2011-11-21  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Update NEWS and configure.ac for 1.7.2 release
+        https://bugs.webkit.org/show_bug.cgi?id=72868
+
+        Reviewed by Xan Lopez.
+
+        * configure.ac: Bumped version number.
+
 2011-11-19  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Build fix after GeneratedImage refactoring.
