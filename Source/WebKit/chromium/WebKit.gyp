@@ -276,6 +276,7 @@
                 'public/WebPrivateOwnPtr.h',
                 'public/WebRange.h',
                 'public/WebRect.h',
+                'public/WebReferrerPolicy.h',
                 'public/WebRegularExpression.h',
                 'public/WebRuntimeFeatures.h',
                 'public/WebScrollbar.h',

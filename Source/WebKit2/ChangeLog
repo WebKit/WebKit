@@ -1,3 +1,13 @@
+2011-11-21  Jochen Eisinger  <jochen@chromium.org>
+
+        Implement Meta referrer
+        https://bugs.webkit.org/show_bug.cgi?id=72674
+
+        Reviewed by Adam Barth.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::loadURL):
+
 2011-11-21  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix make distcheck build.

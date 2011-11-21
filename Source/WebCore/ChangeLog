@@ -1,3 +1,48 @@
+2011-11-21  Jochen Eisinger  <jochen@chromium.org>
+
+        Implement Meta referrer
+        https://bugs.webkit.org/show_bug.cgi?id=72674
+
+        Reviewed by Adam Barth.
+
+        http://wiki.whatwg.org/wiki/Meta_referrer
+
+        Tests: http/tests/security/referrer-policy-always.html
+               http/tests/security/referrer-policy-default.html
+               http/tests/security/referrer-policy-https-always.html
+               http/tests/security/referrer-policy-https-default.html
+               http/tests/security/referrer-policy-https-never.html
+               http/tests/security/referrer-policy-https-origin.html
+               http/tests/security/referrer-policy-never.html
+               http/tests/security/referrer-policy-origin.html
+               http/tests/security/referrer-policy-redirect.html
+               http/tests/security/referrer-policy-rel-noreferrer.html
+
+        * WebCore.exp.in: updated
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        (WebCore::Document::processReferrerPolicy):
+        * dom/Document.h:
+        (WebCore::Document::referrerPolicy):
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::handleClick):
+        * html/HTMLMetaElement.cpp:
+        (WebCore::HTMLMetaElement::process):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadFrameRequest):
+        (WebCore::FrameLoader::loadResourceSynchronously):
+        * loader/PingLoader.cpp:
+        (WebCore::PingLoader::loadImage):
+        (WebCore::PingLoader::sendPing):
+        (WebCore::PingLoader::reportContentSecurityPolicyViolation):
+        * loader/SubframeLoader.cpp:
+        (WebCore::SubframeLoader::loadSubframe):
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::create):
+        * page/SecurityPolicy.cpp:
+        (WebCore::SecurityPolicy::generateReferrerHeader):
+        * page/SecurityPolicy.h:
+
 2011-11-21  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: ApplicationCache view should show navigator.onLine indicator.

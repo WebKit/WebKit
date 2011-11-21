@@ -38,7 +38,24 @@ class SecurityOrigin;
 
 class SecurityPolicy {
 public:
+    enum ReferrerPolicy {
+        ReferrerPolicyAlways,
+        ReferrerPolicyDefault,
+        ReferrerPolicyNever,
+        // Same as ReferrerPolicyAlways, except that only the origin of the
+        // referring URL is send.
+        ReferrerPolicyOrigin,
+    };
+
+    // True if the referrer should be omitted according to the
+    // ReferrerPolicyDefault. If you intend to send a referrer header, you
+    // should use generateReferrerHeader instead.
     static bool shouldHideReferrer(const KURL&, const String& referrer);
+
+    // Returns the referrer modified according to the referrer policy for a
+    // navigation to a given URL. If the referrer returned is empty, the
+    // referrer header should be omitted.
+    static String generateReferrerHeader(ReferrerPolicy, const KURL&, const String& referrer);
 
     enum LocalLoadPolicy {
         AllowLocalLoadsForAll, // No restriction on local loads.

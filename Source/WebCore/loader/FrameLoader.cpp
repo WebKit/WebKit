@@ -1138,14 +1138,12 @@ void FrameLoader::loadFrameRequest(const FrameLoadRequest& request, bool lockHis
         return;
     }
 
-    String referrer;
     String argsReferrer = request.resourceRequest().httpReferrer();
-    if (!argsReferrer.isEmpty())
-        referrer = argsReferrer;
-    else
-        referrer = m_outgoingReferrer;
+    if (argsReferrer.isEmpty())
+        argsReferrer = m_outgoingReferrer;
 
-    if (SecurityPolicy::shouldHideReferrer(url, referrer) || shouldSendReferrer == NeverSendReferrer)
+    String referrer = SecurityPolicy::generateReferrerHeader(m_frame->document()->referrerPolicy(), url, argsReferrer);
+    if (shouldSendReferrer == NeverSendReferrer)
         referrer = String();
     
     FrameLoadType loadType;
@@ -2594,9 +2592,8 @@ void FrameLoader::loadPostRequest(const ResourceRequest& inRequest, const String
 
 unsigned long FrameLoader::loadResourceSynchronously(const ResourceRequest& request, StoredCredentials storedCredentials, ResourceError& error, ResourceResponse& response, Vector<char>& data)
 {
-    String referrer = m_outgoingReferrer;
-    if (SecurityPolicy::shouldHideReferrer(request.url(), referrer))
-        referrer = String();
+    ASSERT(m_frame->document());
+    String referrer = SecurityPolicy::generateReferrerHeader(m_frame->document()->referrerPolicy(), request.url(), m_outgoingReferrer);
     
     ResourceRequest initialRequest = request;
     initialRequest.setTimeoutInterval(10);

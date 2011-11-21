@@ -504,8 +504,8 @@ void HTMLAnchorElement::handleClick(Event* event)
         ResourceRequest request(kurl);
 
         if (!hasRel(RelationNoReferrer)) {
-            String referrer = frame->loader()->outgoingReferrer();
-            if (!referrer.isEmpty() && !SecurityPolicy::shouldHideReferrer(kurl, referrer))
+            String referrer = SecurityPolicy::generateReferrerHeader(document()->referrerPolicy(), kurl, frame->loader()->outgoingReferrer());
+            if (!referrer.isEmpty())
                 request.setHTTPReferrer(referrer);
             frame->loader()->addExtraFieldsToMainResourceRequest(request);
         }

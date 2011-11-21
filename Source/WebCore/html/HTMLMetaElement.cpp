@@ -72,6 +72,9 @@ void HTMLMetaElement::process()
     if (equalIgnoringCase(name(), "viewport"))
         document()->processViewport(contentValue);
 
+    if (equalIgnoringCase(name(), "referrer"))
+        document()->processReferrerPolicy(contentValue);
+
     // Get the document to process the tag, but only if we're actually part of DOM tree (changing a meta tag while
     // it's not in the tree shouldn't have any effect on the document)
     const AtomicString& httpEquivValue = fastGetAttribute(http_equivAttr);

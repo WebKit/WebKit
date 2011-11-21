@@ -172,8 +172,11 @@ WebNetscapePluginStream::WebNetscapePluginStream(NSURLRequest *request, NPP plug
     
     streams().add(&m_stream, plugin);
     
-    if (SecurityPolicy::shouldHideReferrer([request URL], core([view webFrame])->loader()->outgoingReferrer()))
+    String referrer = SecurityPolicy::generateReferrerHeader(core([view webFrame])->document()->referrerPolicy(), [request URL], core([view webFrame])->loader()->outgoingReferrer());
+    if (referrer.isEmpty())
         [m_request.get() _web_setHTTPReferrer:nil];
+    else
+        [m_request.get() _web_setHTTPReferrer:referrer];
 }
 
 WebNetscapePluginStream::~WebNetscapePluginStream()

@@ -90,7 +90,8 @@ PassRefPtr<SubresourceLoader> SubresourceLoader::create(Frame* frame, CachedReso
         outgoingOrigin = SecurityOrigin::createFromString(outgoingReferrer)->toString();
     }
 
-    if (SecurityPolicy::shouldHideReferrer(request.url(), outgoingReferrer))
+    outgoingReferrer = SecurityPolicy::generateReferrerHeader(frame->document()->referrerPolicy(), request.url(), outgoingReferrer);
+    if (outgoingReferrer.isEmpty())
         newRequest.clearHTTPReferrer();
     else if (!request.httpReferrer())
         newRequest.setHTTPReferrer(outgoingReferrer);

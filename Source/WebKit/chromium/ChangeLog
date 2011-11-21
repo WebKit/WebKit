@@ -1,3 +1,22 @@
+2011-11-21  Jochen Eisinger  <jochen@chromium.org>
+
+        Implement Meta referrer
+        https://bugs.webkit.org/show_bug.cgi?id=72674
+
+        Reviewed by Adam Barth.
+
+        * WebKit.gyp:
+        * public/WebFrame.h:
+        * public/WebReferrerPolicy.h: Added.
+        * public/WebSecurityPolicy.h:
+        * src/AssertMatchingEnums.cpp:
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::referrerPolicy):
+        (WebKit::WebFrameImpl::setReferrerForRequest):
+        * src/WebFrameImpl.h:
+        * src/WebSecurityPolicy.cpp:
+        (WebKit::WebSecurityPolicy::generateReferrerHeader):
+
 2011-11-21  Dominic Mazzoni  <dmazzoni@google.com>
 
         Accessibility: Multiselect list boxes need to report the active option in addition to which items are selected.

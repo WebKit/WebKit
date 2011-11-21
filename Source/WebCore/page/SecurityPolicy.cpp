@@ -64,6 +64,31 @@ bool SecurityPolicy::shouldHideReferrer(const KURL& url, const String& referrer)
     return !URLIsSecureURL;
 }
 
+String SecurityPolicy::generateReferrerHeader(ReferrerPolicy referrerPolicy, const KURL& url, const String& referrer)
+{
+    if (referrer.isEmpty())
+        return String();
+
+    switch (referrerPolicy) {
+    case ReferrerPolicyNever:
+        return String();
+    case ReferrerPolicyAlways:
+        return referrer;
+    case ReferrerPolicyOrigin: {
+        String origin = SecurityOrigin::createFromString(referrer)->toString();
+        if (origin == "null")
+            return String();
+        // A security origin is not a canonical URL as it lacks a path. Add /
+        // to turn it into a canonical URL we can use as referrer.
+        return origin + "/";
+    }
+    case ReferrerPolicyDefault:
+        break;
+    }
+
+    return shouldHideReferrer(url, referrer) ? String() : referrer;
+}
+
 void SecurityPolicy::setLocalLoadPolicy(LocalLoadPolicy policy)
 {
     localLoadPolicy = policy;

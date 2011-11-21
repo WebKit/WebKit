@@ -35,6 +35,7 @@
 #include "WebFileSystem.h"
 #include "WebIconURL.h"
 #include "WebNode.h"
+#include "WebReferrerPolicy.h"
 #include "WebURL.h"
 #include "WebURLLoaderOptions.h"
 
@@ -139,6 +140,9 @@ public:
     // WebIconURL::Type values, used to select from the available set of icon
     // URLs
     virtual WebVector<WebIconURL> iconURLs(int iconTypes) const = 0;
+
+    // The referrer policy of the document associated with this frame.
+    virtual WebReferrerPolicy referrerPolicy() const = 0;
 
 
     // Geometry -----------------------------------------------------------

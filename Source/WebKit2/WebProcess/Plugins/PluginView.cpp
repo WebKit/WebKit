@@ -985,8 +985,9 @@ void PluginView::loadURL(uint64_t requestID, const String& method, const String&
     frameLoadRequest.resourceRequest().setHTTPBody(FormData::create(httpBody.data(), httpBody.size()));
     frameLoadRequest.setFrameName(target);
 
-    if (!SecurityPolicy::shouldHideReferrer(frameLoadRequest.resourceRequest().url(), frame()->loader()->outgoingReferrer()))
-        frameLoadRequest.resourceRequest().setHTTPReferrer(frame()->loader()->outgoingReferrer());
+    String referrer = SecurityPolicy::generateReferrerHeader(frame()->document()->referrerPolicy(), frameLoadRequest.resourceRequest().url(), frame()->loader()->outgoingReferrer());
+    if (!referrer.isEmpty())
+        frameLoadRequest.resourceRequest().setHTTPReferrer(referrer);
 
     m_pendingURLRequests.append(URLRequest::create(requestID, frameLoadRequest, allowPopups));
     m_pendingURLRequestsTimer.startOneShot(0);

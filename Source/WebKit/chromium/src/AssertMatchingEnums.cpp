@@ -55,6 +55,7 @@
 #include "PageVisibilityState.h"
 #include "PasteboardPrivate.h"
 #include "PlatformCursor.h"
+#include "SecurityPolicy.h"
 #include "Settings.h"
 #include "StorageInfo.h"
 #include "TextAffinity.h"
@@ -82,6 +83,7 @@
 #include "WebMediaStreamSource.h"
 #include "WebNotificationPresenter.h"
 #include "WebPageVisibilityState.h"
+#include "WebReferrerPolicy.h"
 #include "WebScrollbar.h"
 #include "WebSettings.h"
 #include "WebStorageQuotaError.h"
@@ -467,3 +469,8 @@ COMPILE_ASSERT_MATCHING_ENUM(WebPageVisibilityStatePrerender, PageVisibilityStat
 COMPILE_ASSERT_MATCHING_ENUM(WebMediaStreamSource::TypeAudio, MediaStreamSource::TypeAudio);
 COMPILE_ASSERT_MATCHING_ENUM(WebMediaStreamSource::TypeVideo, MediaStreamSource::TypeVideo);
 #endif
+
+COMPILE_ASSERT_MATCHING_ENUM(WebReferrerPolicyAlways, SecurityPolicy::ReferrerPolicyAlways);
+COMPILE_ASSERT_MATCHING_ENUM(WebReferrerPolicyDefault, SecurityPolicy::ReferrerPolicyDefault);
+COMPILE_ASSERT_MATCHING_ENUM(WebReferrerPolicyNever, SecurityPolicy::ReferrerPolicyNever);
+COMPILE_ASSERT_MATCHING_ENUM(WebReferrerPolicyOrigin, SecurityPolicy::ReferrerPolicyOrigin);

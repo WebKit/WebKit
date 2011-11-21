@@ -42,6 +42,7 @@
 #include "PlatformScreen.h"
 #include "QualifiedName.h"
 #include "ScriptExecutionContext.h"
+#include "SecurityPolicy.h"
 #include "StringWithDirection.h"
 #include "Timer.h"
 #include "TreeScope.h"
@@ -322,6 +323,8 @@ public:
 #endif
 
     ViewportArguments viewportArguments() const { return m_viewportArguments; }
+
+    SecurityPolicy::ReferrerPolicy referrerPolicy() const { return m_referrerPolicy; }
 
     DocumentType* doctype() const { return m_docType.get(); }
 
@@ -805,6 +808,7 @@ public:
      */
     void processHttpEquiv(const String& equiv, const String& content);
     void processViewport(const String& features);
+    void processReferrerPolicy(const String& policy);
 
     // Returns the owning element in the parent document.
     // Returns 0 if this is the top level document.
@@ -1413,6 +1417,8 @@ private:
     Timer<Document> m_loadEventDelayTimer;
 
     ViewportArguments m_viewportArguments;
+
+    SecurityPolicy::ReferrerPolicy m_referrerPolicy;
 
     bool m_directionSetOnDocumentElement;
     bool m_writingModeSetOnDocumentElement;

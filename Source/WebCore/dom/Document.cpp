@@ -423,6 +423,7 @@ Document::Document(Frame* frame, const KURL& url, bool isXHTML, bool isHTML)
 #endif
     , m_loadEventDelayCount(0)
     , m_loadEventDelayTimer(this, &Document::loadEventDelayTimerFired)
+    , m_referrerPolicy(SecurityPolicy::ReferrerPolicyDefault)
     , m_directionSetOnDocumentElement(false)
     , m_writingModeSetOnDocumentElement(false)
     , m_writeRecursionIsTooDeep(false)
@@ -2740,6 +2741,20 @@ void Document::processViewport(const String& features)
         return;
 
     frame->page()->updateViewportArguments();
+}
+
+void Document::processReferrerPolicy(const String& policy)
+{
+    ASSERT(!policy.isNull());
+
+    m_referrerPolicy = SecurityPolicy::ReferrerPolicyDefault;
+
+    if (equalIgnoringCase(policy, "never"))
+        m_referrerPolicy = SecurityPolicy::ReferrerPolicyNever;
+    else if (equalIgnoringCase(policy, "always"))
+        m_referrerPolicy = SecurityPolicy::ReferrerPolicyAlways;
+    else if (equalIgnoringCase(policy, "origin"))
+        m_referrerPolicy = SecurityPolicy::ReferrerPolicyOrigin;
 }
 
 MouseEventWithHitTestResults Document::prepareMouseEvent(const HitTestRequest& request, const LayoutPoint& documentPoint, const PlatformMouseEvent& event)

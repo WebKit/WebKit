@@ -262,8 +262,8 @@ Frame* SubframeLoader::loadSubframe(HTMLFrameOwnerElement* ownerElement, const K
     if (!ownerElement->document()->contentSecurityPolicy()->allowChildFrameFromSource(url))
         return 0;
 
-    bool hideReferrer = SecurityPolicy::shouldHideReferrer(url, referrer);
-    RefPtr<Frame> frame = m_frame->loader()->client()->createFrame(url, name, ownerElement, hideReferrer ? String() : referrer, allowsScrolling, marginWidth, marginHeight);
+    String referrerToUse = SecurityPolicy::generateReferrerHeader(ownerElement->document()->referrerPolicy(), url, referrer);
+    RefPtr<Frame> frame = m_frame->loader()->client()->createFrame(url, name, ownerElement, referrerToUse, allowsScrolling, marginWidth, marginHeight);
 
     if (!frame)  {
         m_frame->loader()->checkCallImplicitClose();

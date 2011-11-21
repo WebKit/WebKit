@@ -591,6 +591,11 @@ WebVector<WebIconURL> WebFrameImpl::iconURLs(int iconTypes) const
     return WebVector<WebIconURL>();
 }
 
+WebReferrerPolicy WebFrameImpl::referrerPolicy() const
+{
+    return static_cast<WebReferrerPolicy>(m_frame->document()->referrerPolicy());
+}
+
 WebSize WebFrameImpl::scrollOffset() const
 {
     FrameView* view = frameView();
@@ -1073,7 +1078,8 @@ void WebFrameImpl::setReferrerForRequest(WebURLRequest& request, const WebURL& r
         referrer = m_frame->loader()->outgoingReferrer();
     else
         referrer = referrerURL.spec().utf16();
-    if (SecurityPolicy::shouldHideReferrer(request.url(), referrer))
+    referrer = SecurityPolicy::generateReferrerHeader(m_frame->document()->referrerPolicy(), request.url(), referrer);
+    if (referrer.isEmpty())
         return;
     request.setHTTPHeaderField(WebString::fromUTF8("Referer"), referrer);
 }

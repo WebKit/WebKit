@@ -60,8 +60,9 @@ void PingLoader::loadImage(Frame* frame, const KURL& url)
     request.setTargetType(ResourceRequest::TargetIsImage);
 #endif
     request.setHTTPHeaderField("Cache-Control", "max-age=0");
-    if (!SecurityPolicy::shouldHideReferrer(request.url(), frame->loader()->outgoingReferrer()))
-        request.setHTTPReferrer(frame->loader()->outgoingReferrer());
+    String referrer = SecurityPolicy::generateReferrerHeader(frame->document()->referrerPolicy(), request.url(), frame->loader()->outgoingReferrer());
+    if (!referrer.isEmpty())
+        request.setHTTPReferrer(referrer);
     frame->loader()->addExtraFieldsToSubresourceRequest(request);
     OwnPtr<PingLoader> pingLoader = adoptPtr(new PingLoader(frame, request));
 
@@ -89,8 +90,11 @@ void PingLoader::sendPing(Frame* frame, const KURL& pingURL, const KURL& destina
     request.setHTTPHeaderField("Ping-To", destinationURL);
     if (!SecurityPolicy::shouldHideReferrer(pingURL, frame->loader()->outgoingReferrer())) {
       request.setHTTPHeaderField("Ping-From", frame->document()->url());
-      if (!sourceOrigin->isSameSchemeHostPort(pingOrigin.get()))
-        request.setHTTPReferrer(frame->loader()->outgoingReferrer());
+      if (!sourceOrigin->isSameSchemeHostPort(pingOrigin.get())) {
+          String referrer = SecurityPolicy::generateReferrerHeader(frame->document()->referrerPolicy(), pingURL, frame->loader()->outgoingReferrer());
+          if (!referrer.isEmpty())
+              request.setHTTPReferrer(referrer);
+      }
     }
     OwnPtr<PingLoader> pingLoader = adoptPtr(new PingLoader(frame, request));
 
@@ -110,8 +114,9 @@ void PingLoader::reportContentSecurityPolicyViolation(Frame* frame, const KURL& 
     request.setHTTPBody(report);
     frame->loader()->addExtraFieldsToSubresourceRequest(request);
 
-    if (!SecurityPolicy::shouldHideReferrer(reportURL, frame->loader()->outgoingReferrer()))
-        request.setHTTPReferrer(frame->loader()->outgoingReferrer());
+    String referrer = SecurityPolicy::generateReferrerHeader(frame->document()->referrerPolicy(), reportURL, frame->loader()->outgoingReferrer());
+    if (!referrer.isEmpty())
+        request.setHTTPReferrer(referrer);
     OwnPtr<PingLoader> pingLoader = adoptPtr(new PingLoader(frame, request));
 
     // Leak the ping loader, since it will kill itself as soon as it receives a response.
