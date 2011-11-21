@@ -54,6 +54,7 @@ public:
     virtual bool accessibilityIsIgnored() const;
     virtual bool isSelected() const;
     virtual bool isEnabled() const;
+    virtual bool isSelectedOptionActive() const;
     virtual String stringValue() const;
     virtual Element* actionElement() const;
     virtual Node* node() const { return m_optionElement; }

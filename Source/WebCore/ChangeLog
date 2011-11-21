@@ -1,3 +1,18 @@
+2011-11-21  Dominic Mazzoni  <dmazzoni@google.com>
+
+        Accessibility: Multiselect list boxes need to report the active option in addition to which items are selected.
+        https://bugs.webkit.org/show_bug.cgi?id=72479
+
+        Reviewed by Chris Fleizach.
+
+        Test: accessibility/multiselect-list-reports-active-option.html
+
+        * accessibility/AccessibilityListBoxOption.cpp:
+        (WebCore::AccessibilityListBoxOption::isSelectedOptionActive):
+        * accessibility/AccessibilityListBoxOption.h:
+        * accessibility/AccessibilityObject.h:
+        (WebCore::AccessibilityObject::isSelectedOptionActive):
+
 2011-11-21  Yuta Kitamura  <yutak@chromium.org>
 
         [Qt] WebSocket close tests are failing

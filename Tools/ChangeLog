@@ -1,3 +1,25 @@
+2011-11-21  Dominic Mazzoni  <dmazzoni@google.com>
+
+        Accessibility: Multiselect list boxes need to report the active option in addition to which items are selected.
+        https://bugs.webkit.org/show_bug.cgi?id=72479
+
+        Reviewed by Chris Fleizach.
+
+        * DumpRenderTree/AccessibilityUIElement.cpp:
+        (getIsSelectedOptionActiveCallback):
+        (AccessibilityUIElement::getJSClass):
+        * DumpRenderTree/AccessibilityUIElement.h:
+        * DumpRenderTree/chromium/AccessibilityUIElement.cpp:
+        (AccessibilityUIElement::AccessibilityUIElement):
+        (AccessibilityUIElement::isSelectedOptionActiveGetterCallback):
+        * DumpRenderTree/chromium/AccessibilityUIElement.h:
+        * DumpRenderTree/gtk/AccessibilityUIElementGtk.cpp:
+        (AccessibilityUIElement::isSelectedOptionActive):
+        * DumpRenderTree/mac/AccessibilityUIElementMac.mm:
+        (AccessibilityUIElement::isSelectedOptionActive):
+        * DumpRenderTree/win/AccessibilityUIElementWin.cpp:
+        (AccessibilityUIElement::isSelectedOptionActive):
+
 2011-11-21  Takashi Toyoshima  <toyoshim@chromium.org>
 
         Use Host().port_factory instead of webkitpy.layout_tests.port.factory.

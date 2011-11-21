@@ -407,6 +407,9 @@ public:
     virtual bool isCollapsed() const { return false; }
     virtual void setIsExpanded(bool) { }
 
+    // In a multi-select list, many items can be selected but only one is active at a time.
+    virtual bool isSelectedOptionActive() const { return false; }
+
     virtual bool hasBoldFont() const { return false; }
     virtual bool hasItalicFont() const { return false; }
     bool hasMisspelling() const;

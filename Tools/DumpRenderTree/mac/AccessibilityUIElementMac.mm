@@ -1262,6 +1262,12 @@ bool AccessibilityUIElement::isMultiSelectable() const
     return false;
 }
 
+bool AccessibilityUIElement::isSelectedOptionActive() const
+{
+    // FIXME: implement
+    return false;
+}
+
 bool AccessibilityUIElement::isVisible() const
 {
     // FIXME: implement

@@ -81,6 +81,7 @@ private:
     void isSelectedGetterCallback(CppVariant*);
     void isSelectableGetterCallback(CppVariant*);
     void isMultiSelectableGetterCallback(CppVariant*);
+    void isSelectedOptionActiveGetterCallback(CppVariant*);
     void isExpandedGetterCallback(CppVariant*);
     void isCheckedGetterCallback(CppVariant*);
     void isVisibleGetterCallback(CppVariant*);

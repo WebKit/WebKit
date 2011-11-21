@@ -113,6 +113,7 @@ public:
     WEBKIT_EXPORT bool isReadOnly() const;
     WEBKIT_EXPORT bool isRequired() const;
     WEBKIT_EXPORT bool isSelected() const;
+    WEBKIT_EXPORT bool isSelectedOptionActive() const;
     WEBKIT_EXPORT bool isVertical() const;
     WEBKIT_EXPORT bool isVisible() const;
     WEBKIT_EXPORT bool isVisited() const;

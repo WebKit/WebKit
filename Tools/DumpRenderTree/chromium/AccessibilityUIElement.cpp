@@ -308,6 +308,7 @@ AccessibilityUIElement::AccessibilityUIElement(const WebAccessibilityObject& obj
     bindProperty("isSelected", &AccessibilityUIElement::isSelectedGetterCallback);
     bindProperty("isSelectable", &AccessibilityUIElement::isSelectableGetterCallback);
     bindProperty("isMultiSelectable", &AccessibilityUIElement::isMultiSelectableGetterCallback);
+    bindProperty("isSelectedOptionActive", &AccessibilityUIElement::isSelectedOptionActiveGetterCallback);
     bindProperty("isExpanded", &AccessibilityUIElement::isExpandedGetterCallback);
     bindProperty("isChecked", &AccessibilityUIElement::isCheckedGetterCallback);
     bindProperty("isVisible", &AccessibilityUIElement::isVisibleGetterCallback);
@@ -501,6 +502,11 @@ void AccessibilityUIElement::isSelectableGetterCallback(CppVariant* result)
 void AccessibilityUIElement::isMultiSelectableGetterCallback(CppVariant* result)
 {
     result->set(accessibilityObject().isMultiSelectable());
+}
+
+void AccessibilityUIElement::isSelectedOptionActiveGetterCallback(CppVariant* result)
+{
+    result->set(accessibilityObject().isSelectedOptionActive());
 }
 
 void AccessibilityUIElement::isExpandedGetterCallback(CppVariant* result)

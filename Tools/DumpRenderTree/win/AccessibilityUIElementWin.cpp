@@ -641,6 +641,12 @@ bool AccessibilityUIElement::isMultiSelectable() const
     return (state & multiSelectable) == multiSelectable;
 }
 
+bool AccessibilityUIElement::isSelectedOptionActive() const
+{
+    // FIXME: implement
+    return false;
+}
+
 bool AccessibilityUIElement::isVisible() const
 {
     DWORD state = accessibilityState(m_element);

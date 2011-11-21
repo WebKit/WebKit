@@ -397,6 +397,15 @@ bool WebAccessibilityObject::isSelected() const
     return m_private->isSelected();
 }
 
+bool WebAccessibilityObject::isSelectedOptionActive() const
+{
+    if (m_private.isNull())
+        return false;
+
+    m_private->updateBackingStore();
+    return m_private->isSelectedOptionActive();
+}
+
 bool WebAccessibilityObject::isVertical() const
 {
     if (m_private.isNull())

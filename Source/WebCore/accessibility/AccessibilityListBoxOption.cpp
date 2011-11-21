@@ -83,6 +83,15 @@ bool AccessibilityListBoxOption::isSelected() const
     return static_cast<HTMLOptionElement*>(m_optionElement)->selected();
 }
 
+bool AccessibilityListBoxOption::isSelectedOptionActive() const
+{
+    HTMLSelectElement* listBoxParentNode = listBoxOptionParentNode();
+    if (!listBoxParentNode)
+        return false;
+
+    return listBoxParentNode->activeSelectionEndListIndex() == listBoxOptionIndex();
+}
+
 LayoutRect AccessibilityListBoxOption::elementRect() const
 {
     LayoutRect rect;
