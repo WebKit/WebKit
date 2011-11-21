@@ -71,7 +71,7 @@ WebInspector.MetricsSidebarPane.prototype = {
                 return;
             this._updateMetrics(style);
         }
-        WebInspector.cssModel.getComputedStyleAsync(node.id, callback.bind(this));
+        WebInspector.cssModel.getComputedStyleAsync(node.id, WebInspector.panels.elements.sidebarPanes.styles.forcedPseudoClasses, callback.bind(this));
 
         function inlineStyleCallback(style)
         {
@@ -79,7 +79,7 @@ WebInspector.MetricsSidebarPane.prototype = {
                 return;
             this.inlineStyle = style;
         }
-        WebInspector.cssModel.getInlineStyleAsync(node.id, inlineStyleCallback.bind(this));
+        WebInspector.cssModel.getInlineStylesAsync(node.id, inlineStyleCallback.bind(this));
     },
 
     _styleSheetChanged: function()

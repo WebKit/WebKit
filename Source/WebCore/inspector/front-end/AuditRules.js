@@ -690,7 +690,7 @@ WebInspector.AuditRules.ImageDimensionsRule.prototype = {
             callback(entry ? result : null);
         }
 
-        function imageStylesReady(imageId, lastCall, styles)
+        function imageStylesReady(imageId, styles, isLastStyle, computedStyle)
         {
             const node = WebInspector.domAgent.nodeForId(imageId);
             var src = node.getAttribute("src");
@@ -705,9 +705,8 @@ WebInspector.AuditRules.ImageDimensionsRule.prototype = {
             if (completeSrc)
                 src = completeSrc;
 
-            const computedStyle = styles.computedStyle;
             if (computedStyle.getPropertyValue("position") === "absolute") {
-                if (lastCall)
+                if (isLastStyle)
                     doneCallback();
                 return;
             }
@@ -738,16 +737,34 @@ WebInspector.AuditRules.ImageDimensionsRule.prototype = {
                     urlToNoDimensionCount[src] = 1;
             }
 
-            if (lastCall)
+            if (isLastStyle)
                 doneCallback();
         }
 
         function getStyles(nodeIds)
         {
+            var targetResult = {};
+
+            function inlineCallback(inlineStyle, styleAttributes)
+            {
+                targetResult.inlineStyle = inlineStyle;
+                targetResult.styleAttributes = styleAttributes;
+            }
+
+            function matchedCallback(result)
+            {
+                if (result)
+                    targetResult.matchedCSSRules = result.matchedCSSRules;
+            }
+
             if (!nodeIds || !nodeIds.length)
                 doneCallback();
-            for (var i = 0; nodeIds && i < nodeIds.length; ++i)
-                WebInspector.cssModel.getStylesAsync(nodeIds[i], undefined, imageStylesReady.bind(this, nodeIds[i], i === nodeIds.length - 1));
+
+            for (var i = 0; nodeIds && i < nodeIds.length; ++i) {
+                WebInspector.cssModel.getMatchedStylesAsync(nodeIds[i], undefined, false, false, matchedCallback);
+                WebInspector.cssModel.getInlineStylesAsync(nodeIds[i], inlineCallback);
+                WebInspector.cssModel.getComputedStyleAsync(nodeIds[i], undefined, imageStylesReady.bind(null, nodeIds[i], targetResult, i === nodeIds.length - 1));
+            }
         }
 
         function onDocumentAvailable(root)

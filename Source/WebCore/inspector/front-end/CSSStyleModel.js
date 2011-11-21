@@ -53,16 +53,20 @@ WebInspector.CSSStyleModel.prototype = {
     /**
      * @param {DOMAgent.NodeId} nodeId
      * @param {?Array.<string>|undefined} forcedPseudoClasses
+     * @param {boolean} needPseudo
+     * @param {boolean} needInherited
      * @param {function(?*)} userCallback
      */
-    getStylesAsync: function(nodeId, forcedPseudoClasses, userCallback)
+    getMatchedStylesAsync: function(nodeId, forcedPseudoClasses, needPseudo, needInherited, userCallback)
     {
         /**
          * @param {function(?*)} userCallback
          * @param {?Protocol.Error} error
-         * @param {?CSSAgent.CSSNodeStyles} payload
+         * @param {?Array.<CSSAgent.CSSRule>} matchedPayload
+         * @param {?Array.<CSSAgent.PseudoIdRules>} pseudoPayload
+         * @param {?Array.<CSSAgent.InheritedStyleEntry>} inheritedPayload
          */
-        function callback(userCallback, error, payload)
+        function callback(userCallback, error, matchedPayload, pseudoPayload, inheritedPayload)
         {
             if (error) {
                 if (userCallback)
@@ -71,85 +75,85 @@ WebInspector.CSSStyleModel.prototype = {
             }
 
             var result = {};
-            if ("inlineStyle" in payload)
-                result.inlineStyle = WebInspector.CSSStyleDeclaration.parsePayload(payload.inlineStyle);
+            if (matchedPayload)
+                result.matchedCSSRules = WebInspector.CSSStyleModel.parseRuleArrayPayload(matchedPayload);
 
-            result.computedStyle = WebInspector.CSSStyleDeclaration.parsePayload(payload.computedStyle);
-            result.matchedCSSRules = WebInspector.CSSStyleModel.parseRuleArrayPayload(payload.matchedCSSRules);
-
-            result.styleAttributes = {};
-            var payloadStyleAttributes = payload.styleAttributes;
-            for (var i = 0; i < payloadStyleAttributes.length; ++i) {
-                var name = payloadStyleAttributes[i].name;
-                result.styleAttributes[name] = WebInspector.CSSStyleDeclaration.parsePayload(payloadStyleAttributes[i].style);
+            if (pseudoPayload) {
+                result.pseudoElements = [];
+                for (var i = 0; i < pseudoPayload.length; ++i) {
+                    var entryPayload = pseudoPayload[i];
+                    result.pseudoElements.push({ pseudoId: entryPayload.pseudoId, rules: WebInspector.CSSStyleModel.parseRuleArrayPayload(entryPayload.rules) });
+                }
             }
 
-            result.pseudoElements = [];
-            for (var i = 0; i < payload.pseudoElements.length; ++i) {
-                var entryPayload = payload.pseudoElements[i];
-                result.pseudoElements.push({ pseudoId: entryPayload.pseudoId, rules: WebInspector.CSSStyleModel.parseRuleArrayPayload(entryPayload.rules) });
-            }
-
-            result.inherited = [];
-            for (var i = 0; i < payload.inherited.length; ++i) {
-                var entryPayload = payload.inherited[i];
-                var entry = {};
-                if ("inlineStyle" in entryPayload)
-                    entry.inlineStyle = WebInspector.CSSStyleDeclaration.parsePayload(entryPayload.inlineStyle);
-                if ("matchedCSSRules" in entryPayload)
-                    entry.matchedCSSRules = WebInspector.CSSStyleModel.parseRuleArrayPayload(entryPayload.matchedCSSRules);
-                result.inherited.push(entry);
+            if (inheritedPayload) {
+                result.inherited = [];
+                for (var i = 0; i < inheritedPayload.length; ++i) {
+                    var entryPayload = inheritedPayload[i];
+                    var entry = {};
+                    if (entryPayload.inlineStyle)
+                        entry.inlineStyle = WebInspector.CSSStyleDeclaration.parsePayload(entryPayload.inlineStyle);
+                    if (entryPayload.matchedCSSRules)
+                        entry.matchedCSSRules = WebInspector.CSSStyleModel.parseRuleArrayPayload(entryPayload.matchedCSSRules);
+                    result.inherited.push(entry);
+                }
             }
 
             if (userCallback)
                 userCallback(result);
         }
 
-        CSSAgent.getStylesForNode(nodeId, forcedPseudoClasses || [], callback.bind(null, userCallback));
+        CSSAgent.getMatchedStylesForNode(nodeId, forcedPseudoClasses || [], needPseudo, needInherited, callback.bind(null, userCallback));
     },
 
     /**
      * @param {DOMAgent.NodeId} nodeId
+     * @param {?Array.<string>|undefined} forcedPseudoClasses
      * @param {function(?WebInspector.CSSStyleDeclaration)} userCallback
      */
-    getComputedStyleAsync: function(nodeId, userCallback)
+    getComputedStyleAsync: function(nodeId, forcedPseudoClasses, userCallback)
     {
         /**
          * @param {function(?WebInspector.CSSStyleDeclaration)} userCallback
-         * @param {?Protocol.Error} error
-         * @param {?CSSAgent.CSSStyle} stylePayload
          */
-        function callback(userCallback, error, stylePayload)
+        function callback(userCallback, error, computedPayload)
         {
-            if (error)
+            if (error || !computedPayload)
                 userCallback(null);
             else
-                userCallback(WebInspector.CSSStyleDeclaration.parsePayload(stylePayload));
+                userCallback(WebInspector.CSSStyleDeclaration.parsePayload(computedPayload));
         }
 
-        CSSAgent.getComputedStyleForNode(nodeId, callback.bind(null, userCallback));
+        CSSAgent.getComputedStyleForNode(nodeId, forcedPseudoClasses || [], callback.bind(null, userCallback));
     },
 
     /**
      * @param {DOMAgent.NodeId} nodeId
-     * @param {function(?WebInspector.CSSStyleDeclaration)} userCallback
+     * @param {function(?WebInspector.CSSStyleDeclaration, ?Object.<string, string>)} userCallback
      */
-    getInlineStyleAsync: function(nodeId, userCallback)
+    getInlineStylesAsync: function(nodeId, userCallback)
     {
         /**
-         * @param {function(?WebInspector.CSSStyleDeclaration)} userCallback
-         * @param {?Protocol.Error} error
-         * @param {?CSSAgent.CSSStyle} stylePayload
+         * @param {function(?WebInspector.CSSStyleDeclaration, ?Object.<string, string>)} userCallback
          */
-        function callback(userCallback, error, stylePayload)
+        function callback(userCallback, error, inlinePayload, attributesPayload)
         {
-            if (error)
-                userCallback(null);
-            else
-                userCallback(WebInspector.CSSStyleDeclaration.parsePayload(stylePayload));
+            if (error || !inlinePayload)
+                userCallback(null, null);
+            else {
+                var styleAttributes;
+                if (attributesPayload) {
+                    styleAttributes = {};
+                    for (var i = 0; i < attributesPayload.length; ++i) {
+                        var name = attributesPayload[i].name;
+                        styleAttributes[name] = WebInspector.CSSStyleDeclaration.parsePayload(attributesPayload[i].style);
+                    }
+                }
+                userCallback(WebInspector.CSSStyleDeclaration.parsePayload(inlinePayload), styleAttributes || null);
+            }
         }
 
-        CSSAgent.getInlineStyleForNode(nodeId, callback.bind(null, userCallback));
+        CSSAgent.getInlineStylesForNode(nodeId, callback.bind(null, userCallback));
     },
 
     /**

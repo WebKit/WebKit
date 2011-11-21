@@ -195,6 +195,11 @@ WebInspector.StylesSidebarPane.prototype = {
             contextMenu.show(event);
     },
 
+    get forcedPseudoClasses()
+    {
+        return this._forcedPseudoClasses;
+    },
+
     update: function(node, forceUpdate)
     {
         var refresh = false;
@@ -219,6 +224,38 @@ WebInspector.StylesSidebarPane.prototype = {
         this._innerUpdate(refresh);
     },
 
+    _executeRebuildUpdate: function(node, callback)
+    {
+        var resultStyles = {};
+
+        function stylesCallback(matchedResult)
+        {
+            if (matchedResult) {
+                resultStyles.matchedCSSRules = matchedResult.matchedCSSRules;
+                resultStyles.pseudoElements = matchedResult.pseudoElements;
+                resultStyles.inherited = matchedResult.inherited;
+                this._rebuildUpdate(node, resultStyles);
+            }
+            if (callback)
+                callback();
+        }
+
+        function inlineCallback(inlineStyle, styleAttributes)
+        {
+            resultStyles.inlineStyle = inlineStyle;
+            resultStyles.styleAttributes = styleAttributes;
+        }
+
+        function computedCallback(computedStyle)
+        {
+            resultStyles.computedStyle = computedStyle;
+        }
+
+        WebInspector.cssModel.getComputedStyleAsync(node.id, this._forcedPseudoClasses, computedCallback.bind(this));
+        WebInspector.cssModel.getInlineStylesAsync(node.id, inlineCallback.bind(this));
+        WebInspector.cssModel.getMatchedStylesAsync(node.id, this._forcedPseudoClasses, true, true, stylesCallback.bind(this));
+    },
+
     /**
      * @param {WebInspector.StylePropertiesSection=} editedSection
      * @param {function()=} userCallback
@@ -235,14 +272,6 @@ WebInspector.StylesSidebarPane.prototype = {
             return;
         }
 
-        function stylesCallback(styles)
-        {
-            if (this.node === node && styles)
-                this._rebuildUpdate(node, styles);
-            if (userCallback)
-                userCallback();
-        }
-
         function computedStyleCallback(computedStyle)
         {
             if (this.node === node && computedStyle)
@@ -252,9 +281,9 @@ WebInspector.StylesSidebarPane.prototype = {
         }
 
         if (refresh)
-            WebInspector.cssModel.getComputedStyleAsync(node.id, computedStyleCallback.bind(this));
+            WebInspector.cssModel.getComputedStyleAsync(node.id, this._forcedPseudoClasses, computedStyleCallback.bind(this));
         else
-            WebInspector.cssModel.getStylesAsync(node.id, this._forcedPseudoClasses, stylesCallback.bind(this));
+            this._executeRebuildUpdate(node, userCallback);
     },
 
     _styleSheetChanged: function()

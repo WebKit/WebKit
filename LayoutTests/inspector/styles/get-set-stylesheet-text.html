@@ -56,7 +56,7 @@ function test()
 
     function testNewElementStyles()
     {
-        function callback(error, styles)
+        function callback(error, matchedCSSRules)
         {
             if (error) {
                 InspectorTest.addResult("error: " + error);
@@ -64,13 +64,13 @@ function test()
             }
 
             InspectorTest.addResult("=== Matched rules for h1 after setText() ===");
-            dumpRulesArray(styles.matchedCSSRules);
+            dumpRulesArray(matchedCSSRules);
             InspectorTest.completeTest();
         }
 
         function nodeCallback(node)
         {
-            CSSAgent.getStylesForNode(node.id, undefined, callback);
+            CSSAgent.getMatchedStylesForNode(node.id, [], false, false, callback);
         }
 
         InspectorTest.selectNodeWithId("inspected", nodeCallback);

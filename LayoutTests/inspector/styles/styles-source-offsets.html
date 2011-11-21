@@ -35,21 +35,42 @@ function test()
     
     InspectorTest.selectNodeWithId("mainBody", step1);
 
-    function step1(node)
+    var resultStyles = {};
+
+    function inlineCallback(error, inlineStyle)
     {
-        CSSAgent.getStylesForNode(node.id, undefined, step2);
+        if (error) {
+             InspectorTest.addResult("error: " + error);
+             InspectorTest.completeTest();
+             return;
+        }
+
+        resultStyles.inlineStyle = inlineStyle;
     }
 
-    function step2(error, styles)
+    function matchedCallback(error, matchedCSSRules)
     {
-        if (error)
-            InspectorTest.addResult("error: " + error);
-        else {
-            var matchedCSSRules = styles.matchedCSSRules;
-            for (var i = 0; i < matchedCSSRules.length; ++i)
-                dumpStyleData(matchedCSSRules[i]);
-            dumpStyleData(styles.inlineStyle);
+        if (error) {
+             InspectorTest.addResult("error: " + error);
+             InspectorTest.completeTest();
+             return;
         }
+        resultStyles.matchedCSSRules = matchedCSSRules;
+        step2();
+    }
+
+    function step1(node)
+    {
+        CSSAgent.getInlineStylesForNode(node.id, inlineCallback);
+        CSSAgent.getMatchedStylesForNode(node.id, matchedCallback);
+    }
+
+    function step2()
+    {
+        var matchedCSSRules = resultStyles.matchedCSSRules;
+        for (var i = 0; i < matchedCSSRules.length; ++i)
+            dumpStyleData(matchedCSSRules[i]);
+        dumpStyleData(resultStyles.inlineStyle);
         InspectorTest.completeTest();
     }
 }

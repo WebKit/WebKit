@@ -237,69 +237,70 @@ bool InspectorCSSAgent::forcePseudoState(Element* element, CSSSelector::PseudoTy
     }
 }
 
-void InspectorCSSAgent::getStylesForNode(ErrorString* errorString, int nodeId, const RefPtr<InspectorArray>* forcedPseudoClasses, RefPtr<InspectorObject>* result)
+void InspectorCSSAgent::recalcStyleForPseudoStateIfNeeded(Element* element, InspectorArray* forcedPseudoClasses)
 {
-    Element* element = elementForId(errorString, nodeId);
-    if (!element)
-        return;
-
-    RefPtr<InspectorObject> resultObject = InspectorObject::create();
-
-    InspectorStyleSheetForInlineStyle* styleSheet = asInspectorStyleSheet(element);
-    if (styleSheet)
-        resultObject->setObject("inlineStyle", styleSheet->buildObjectForStyle(element->style()));
-
-    RefPtr<CSSComputedStyleDeclaration> computedStyleInfo = computedStyle(element, true); // Support the viewing of :visited information in computed style.
-    RefPtr<InspectorStyle> computedInspectorStyle = InspectorStyle::create(InspectorCSSId(), computedStyleInfo, 0);
-    resultObject->setObject("computedStyle", computedInspectorStyle->buildObjectForStyle());
-
-    unsigned forcePseudoState = computePseudoClassMask(forcedPseudoClasses ? forcedPseudoClasses->get() : 0);
+    unsigned forcePseudoState = computePseudoClassMask(forcedPseudoClasses);
     bool needStyleRecalc = element != m_lastElementWithPseudoState || forcePseudoState != m_lastPseudoState;
     m_lastPseudoState = forcePseudoState;
     m_lastElementWithPseudoState = element;
     if (needStyleRecalc)
         element->ownerDocument()->styleSelectorChanged(RecalcStyleImmediately);
-
-    CSSStyleSelector* selector = element->ownerDocument()->styleSelector();
-    RefPtr<CSSRuleList> matchedRules = selector->styleRulesForElement(element, CSSStyleSelector::AllCSSRules);
-    resultObject->setArray("matchedCSSRules", buildArrayForRuleList(matchedRules.get()));
-
-    resultObject->setArray("styleAttributes", buildArrayForAttributeStyles(element));
-
-    RefPtr<InspectorArray> pseudoElements = InspectorArray::create();
-    for (PseudoId pseudoId = FIRST_PUBLIC_PSEUDOID; pseudoId < AFTER_LAST_INTERNAL_PSEUDOID; pseudoId = static_cast<PseudoId>(pseudoId + 1)) {
-        RefPtr<CSSRuleList> matchedRules = selector->pseudoStyleRulesForElement(element, pseudoId, CSSStyleSelector::AllCSSRules);
-        if (matchedRules && matchedRules->length()) {
-            RefPtr<InspectorObject> pseudoStyles = InspectorObject::create();
-            pseudoStyles->setNumber("pseudoId", static_cast<int>(pseudoId));
-            pseudoStyles->setArray("rules", buildArrayForRuleList(matchedRules.get()));
-            pseudoElements->pushObject(pseudoStyles.release());
-        }
-    }
-    resultObject->setArray("pseudoElements", pseudoElements.release());
-
-    RefPtr<InspectorArray> inheritedStyles = InspectorArray::create();
-    Element* parentElement = element->parentElement();
-    while (parentElement) {
-        RefPtr<InspectorObject> parentStyle = InspectorObject::create();
-        if (parentElement->style() && parentElement->style()->length()) {
-            InspectorStyleSheetForInlineStyle* styleSheet = asInspectorStyleSheet(parentElement);
-            if (styleSheet)
-                parentStyle->setObject("inlineStyle", styleSheet->buildObjectForStyle(styleSheet->styleForId(InspectorCSSId(styleSheet->id(), 0))));
-        }
-
-        CSSStyleSelector* parentSelector = parentElement->ownerDocument()->styleSelector();
-        RefPtr<CSSRuleList> parentMatchedRules = parentSelector->styleRulesForElement(parentElement, CSSStyleSelector::AllCSSRules);
-        parentStyle->setArray("matchedCSSRules", buildArrayForRuleList(parentMatchedRules.get()));
-        inheritedStyles->pushObject(parentStyle.release());
-        parentElement = parentElement->parentElement();
-    }
-    resultObject->setArray("inherited", inheritedStyles.release());
-
-    *result = resultObject.release();
 }
 
-void InspectorCSSAgent::getInlineStyleForNode(ErrorString* errorString, int nodeId, RefPtr<InspectorObject>* style)
+
+void InspectorCSSAgent::getMatchedStylesForNode(ErrorString* errorString, int nodeId, const RefPtr<InspectorArray>* forcedPseudoClasses, bool* needPseudo, bool* needInherited, RefPtr<InspectorArray>* matchedCSSRules, RefPtr<InspectorArray>* pseudoIdRules, RefPtr<InspectorArray>* inheritedEntries)
+{
+    Element* element = elementForId(errorString, nodeId);
+    if (!element)
+        return;
+
+    recalcStyleForPseudoStateIfNeeded(element, forcedPseudoClasses ? forcedPseudoClasses->get() : 0);
+
+    // Matched rules.
+    CSSStyleSelector* selector = element->ownerDocument()->styleSelector();
+    RefPtr<CSSRuleList> matchedRules = selector->styleRulesForElement(element, CSSStyleSelector::AllCSSRules);
+    *matchedCSSRules = buildArrayForRuleList(matchedRules.get());
+
+    // Pseudo elements.
+    if (!needPseudo || *needPseudo) {
+        RefPtr<InspectorArray> pseudoElements = InspectorArray::create();
+        for (PseudoId pseudoId = FIRST_PUBLIC_PSEUDOID; pseudoId < AFTER_LAST_INTERNAL_PSEUDOID; pseudoId = static_cast<PseudoId>(pseudoId + 1)) {
+            RefPtr<CSSRuleList> matchedRules = selector->pseudoStyleRulesForElement(element, pseudoId, CSSStyleSelector::AllCSSRules);
+            if (matchedRules && matchedRules->length()) {
+                RefPtr<InspectorObject> pseudoStyles = InspectorObject::create();
+                pseudoStyles->setNumber("pseudoId", static_cast<int>(pseudoId));
+                pseudoStyles->setArray("rules", buildArrayForRuleList(matchedRules.get()));
+                pseudoElements->pushObject(pseudoStyles.release());
+            }
+        }
+
+        *pseudoIdRules = pseudoElements.release();
+    }
+
+    // Inherited styles.
+    if (!needInherited || *needInherited) {
+        RefPtr<InspectorArray> inheritedStyles = InspectorArray::create();
+        Element* parentElement = element->parentElement();
+        while (parentElement) {
+            RefPtr<InspectorObject> parentStyle = InspectorObject::create();
+            if (parentElement->style() && parentElement->style()->length()) {
+                InspectorStyleSheetForInlineStyle* styleSheet = asInspectorStyleSheet(parentElement);
+                if (styleSheet)
+                    parentStyle->setObject("inlineStyle", styleSheet->buildObjectForStyle(styleSheet->styleForId(InspectorCSSId(styleSheet->id(), 0))));
+            }
+
+            CSSStyleSelector* parentSelector = parentElement->ownerDocument()->styleSelector();
+            RefPtr<CSSRuleList> parentMatchedRules = parentSelector->styleRulesForElement(parentElement, CSSStyleSelector::AllCSSRules);
+            parentStyle->setArray("matchedCSSRules", buildArrayForRuleList(parentMatchedRules.get()));
+            inheritedStyles->pushObject(parentStyle.release());
+            parentElement = parentElement->parentElement();
+        }
+
+        *inheritedEntries = inheritedStyles.release();
+    }
+}
+
+void InspectorCSSAgent::getInlineStylesForNode(ErrorString* errorString, int nodeId, RefPtr<InspectorObject>* inlineStyle, RefPtr<InspectorArray>* attributes)
 {
     Element* element = elementForId(errorString, nodeId);
     if (!element)
@@ -309,14 +310,17 @@ void InspectorCSSAgent::getInlineStyleForNode(ErrorString* errorString, int node
     if (!styleSheet)
         return;
 
-    *style = styleSheet->buildObjectForStyle(element->style());
+    *inlineStyle = styleSheet->buildObjectForStyle(element->style());
+    *attributes = buildArrayForAttributeStyles(element);
 }
 
-void InspectorCSSAgent::getComputedStyleForNode(ErrorString* errorString, int nodeId, RefPtr<InspectorObject>* style)
+void InspectorCSSAgent::getComputedStyleForNode(ErrorString* errorString, int nodeId, const RefPtr<InspectorArray>* forcedPseudoClasses, RefPtr<InspectorObject>* style)
 {
     Element* element = elementForId(errorString, nodeId);
     if (!element)
         return;
+
+    recalcStyleForPseudoStateIfNeeded(element, forcedPseudoClasses ? forcedPseudoClasses->get() : 0);
 
     RefPtr<CSSComputedStyleDeclaration> computedStyleInfo = computedStyle(element, true);
     RefPtr<InspectorStyle> inspectorStyle = InspectorStyle::create(InspectorCSSId(), computedStyleInfo, 0);

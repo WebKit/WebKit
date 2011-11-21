@@ -16,13 +16,8 @@ function test()
     var bodyId;
     function test_styles(node)
     {
-        function callback(error, styles)
+        function callback(styles)
         {
-            if (error) {
-                InspectorTest.addResult("error: " + error);
-                return;
-            }
-
             InspectorTest.addResult("");
             InspectorTest.addResult("=== Computed style property count for body ===");
             var propCount = styles.computedStyle.cssProperties.length;
@@ -53,17 +48,55 @@ function test()
             test_tableStyles();
         }
 
+        var resultStyles = {};
+
+        function computedCallback(error, computedStyle)
+        {
+            if (error) {
+                InspectorTest.addResult("error: " + error);
+                InspectorTest.completeTest();
+                return;
+            }
+            resultStyles.computedStyle = computedStyle;
+        }
+
+        function inlineCallback(error, inlineStyle)
+        {
+            if (error) {
+                InspectorTest.addResult("error: " + error);
+                InspectorTest.completeTest();
+                return;
+            }
+            resultStyles.inlineStyle = inlineStyle;
+        }
+
+        function matchedCallback(error, matchedCSSRules, pseudoElements, inherited)
+        {
+            if (error) {
+                InspectorTest.addResult("error: " + error);
+                InspectorTest.completeTest();
+                return;
+            }
+
+            resultStyles.matchedCSSRules = matchedCSSRules;
+            resultStyles.pseudoElements = pseudoElements;
+            resultStyles.inherited = inherited;
+            callback(resultStyles);
+        }
+
         function nodeCallback(node)
         {
             bodyId = node.id;
-            CSSAgent.getStylesForNode(bodyId, undefined, callback);
+            CSSAgent.getComputedStyleForNode(node.id, [], computedCallback);
+            CSSAgent.getInlineStylesForNode(node.id, inlineCallback);
+            CSSAgent.getMatchedStylesForNode(node.id, [], true, true, matchedCallback);
         }
         InspectorTest.selectNodeWithId("mainBody", nodeCallback);
     }
 
     function test_tableStyles()
     {
-        function callback(error, styles)
+        function callback(error, inlineStyle, styleAttributes)
         {
             if (error) {
                 InspectorTest.addResult("error: " + error);
@@ -71,7 +104,6 @@ function test()
             }
             InspectorTest.addResult("");
             InspectorTest.addResult("=== Attribute styles for table ===");
-            var styleAttributes = styles.styleAttributes;
             for (var i = 0; i < styleAttributes.length; ++i) {
                 InspectorTest.addResult("Attribute: " + styleAttributes[i].name);
                 dumpRuleOrStyle(styleAttributes[i].style);
@@ -81,7 +113,7 @@ function test()
 
         function nodeCallback(node)
         {
-            CSSAgent.getStylesForNode(node.id, undefined, callback);
+            CSSAgent.getInlineStylesForNode(node.id, callback);
         }
         InspectorTest.nodeWithId("thetable", nodeCallback);
     }
@@ -158,7 +190,7 @@ function test()
 
     function test_addRule()
     {
-        function didGetStyles(error, styles)
+        function didGetStyles(error, matchedCSSRules)
         {
             if (error) {
                 InspectorTest.addResult("error: " + error);
@@ -166,7 +198,7 @@ function test()
             }
             InspectorTest.addResult("");
             InspectorTest.addResult("=== Matched rules after rule added ===");
-            dumpRulesArray(styles.matchedCSSRules);
+            dumpRulesArray(matchedCSSRules);
             test_disableProperty();
         }
 
@@ -176,7 +208,7 @@ function test()
                 InspectorTest.addResult("error: " + error);
                 return;
             }
-            CSSAgent.getStylesForNode(bodyId, undefined, didGetStyles);
+            CSSAgent.getMatchedStylesForNode(bodyId, [], false, false, didGetStyles);
         }
 
         function ruleAdded(error, rule)
@@ -205,7 +237,7 @@ function test()
             test_enableProperty(style.styleId);
         }
 
-        function stylesCallback(error, styles)
+        function stylesCallback(error, matchedCSSRules)
         {
             if (error) {
                 InspectorTest.addResult("error: " + error);
@@ -220,7 +252,7 @@ function test()
             // -moz-goog: 1***;
             // border-width: 0px;
 
-            var styleId = styles.matchedCSSRules[1].style.styleId;
+            var styleId = matchedCSSRules[1].style.styleId;
             CSSAgent.toggleProperty(styleId, 0, true); // height: 100%
             CSSAgent.toggleProperty(styleId, 7, true); // border-width: 0px
             CSSAgent.setPropertyText(styleId, 7, "font-size: 12px;", false);
@@ -244,7 +276,7 @@ function test()
 
         function nodeCallback(node)
         {
-            CSSAgent.getStylesForNode(node.id, undefined, stylesCallback);
+            CSSAgent.getMatchedStylesForNode(node.id, [], false, false, stylesCallback);
         }
         InspectorTest.nodeWithId("toggle", nodeCallback);
     }

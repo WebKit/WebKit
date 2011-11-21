@@ -1434,19 +1434,6 @@
                 "description": "This object identifies a CSS rule in a unique way."
             },
             {
-                "id": "CSSNodeStyles",
-                "type": "object",
-                "properties": [
-                    { "name": "inlineStyle", "$ref": "CSSStyle", "optional": true, "description": "The node's inline style, if any." },
-                    { "name": "computedStyle", "$ref": "CSSComputedStyle", "description": "The node's computed style." },
-                    { "name": "matchedCSSRules", "type": "array", "items": { "$ref": "CSSRule" }, "description": "CSS rules matching this node, from all applicable stylesheets." },
-                    { "name": "styleAttributes", "type": "array", "items": { "$ref": "CSSStyleAttribute" }, "description": "Entries for style-related element attributes (e.g. width=20)."},
-                    { "name": "pseudoElements", "type": "array", "items": { "$ref": "PseudoIdRules" }, "description": "Pseudo style rules for this node." },
-                    { "name": "inherited", "type": "array", "items": { "$ref": "InheritedStyleEntry" }, "description": "A chain of inherited styles (from the immediate node parent up to the DOM tree root)." }
-                ],
-                "description": "A holder for all CSS styles applicable to a particular DOM node."
-            },
-            {
                 "id": "PseudoIdRules",
                 "type": "object",
                 "properties": [
@@ -1569,35 +1556,41 @@
         ],
         "commands": [
             {
-                "name": "getStylesForNode",
+                "name": "getMatchedStylesForNode",
+                "parameters": [
+                    { "name": "nodeId", "$ref": "DOM.NodeId" },
+                    { "name": "forcedPseudoClasses", "type": "array", "items": { "type": "string", "enum": ["active", "focus", "hover", "visited"] }, "optional": true, "description": "Element pseudo classes to force when computing applicable style rules." },
+                    { "name": "includePseudo", "type": "boolean", "optional": true, "description": "Whether to include pseudo styles (default: true)." },
+                    { "name": "includeInherited", "type": "boolean", "optional": true, "description": "Whether to include inherited styles (default: true)." }
+                ],
+                "returns": [
+                    { "name": "matchedCSSRules", "type": "array", "items": { "$ref": "CSSRule" }, "optional": true, "description": "CSS rules matching this node, from all applicable stylesheets." },
+                    { "name": "pseudoElements", "type": "array", "items": { "$ref": "PseudoIdRules" }, "optional": true, "description": "Pseudo style rules for this node." },
+                    { "name": "inherited", "type": "array", "items": { "$ref": "InheritedStyleEntry" }, "optional": true, "description": "A chain of inherited styles (from the immediate node parent up to the DOM tree root)." }
+                ],
+                "description": "Returns requested styles for a DOM node identified by <code>nodeId</code>."
+            },
+            {
+                "name": "getInlineStylesForNode",
+                "parameters": [
+                    { "name": "nodeId", "$ref": "DOM.NodeId" }
+                ],
+                "returns": [
+                    { "name": "inlineStyle", "$ref": "CSSStyle", "optional": true, "description": "Inline style for the specified DOM node." },
+                    { "name": "styleAttributes", "type": "array", "items": { "$ref": "CSSStyleAttribute" }, "optional": true, "description": "Entries for style-related element attributes (e.g. width=20)."}
+                ],
+                "description": "Returns the styles defined inline (explicitly in the \"style\" attribute and implicitly, using DOM attributes) for a DOM node identified by <code>nodeId</code>."
+            },
+            {
+                "name": "getComputedStyleForNode",
                 "parameters": [
                     { "name": "nodeId", "$ref": "DOM.NodeId" },
                     { "name": "forcedPseudoClasses", "type": "array", "items": { "type": "string", "enum": ["active", "focus", "hover", "visited"] }, "optional": true, "description": "Element pseudo classes to force when computing applicable style rules." }
                 ],
                 "returns": [
-                    { "name": "styles", "$ref": "CSSNodeStyles", "description": "All styles for the specified DOM node." }
-                ],
-                "description": "Returns all styles for a DOM node identified by <code>nodeId</code>."
-            },
-            {
-                "name": "getComputedStyleForNode",
-                "parameters": [
-                    { "name": "nodeId", "$ref": "DOM.NodeId" }
-                ],
-                "returns": [
-                    { "name": "style", "$ref": "CSSStyle", "description": "Computed style for the specified DOM node." }
+                    { "name": "style", "$ref": "CSSComputedStyle", "description": "Computed style for the specified DOM node." }
                 ],
                 "description": "Returns the computed style for a DOM node identified by <code>nodeId</code>."
-            },
-            {
-                "name": "getInlineStyleForNode",
-                "parameters": [
-                    { "name": "nodeId", "$ref": "DOM.NodeId" }
-                ],
-                "returns": [
-                    { "name": "style", "$ref": "CSSStyle", "description": "Inline style for the specified DOM node." }
-                ],
-                "description": "Returns the inline style (if present) for a DOM node identified by <code>nodeId</code>."
             },
             {
                 "name": "getAllStyleSheets",
