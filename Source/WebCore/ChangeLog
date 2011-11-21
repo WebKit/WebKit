@@ -1,3 +1,19 @@
+2011-11-21  Scott Graham  <scottmg@chromium.org>
+
+        copyright comment style to C from C++ for gamepad module
+        https://bugs.webkit.org/show_bug.cgi?id=72894
+
+        Reviewed by Sam Weinig.
+
+        Just changes comment format, no code/test changes.
+
+        * Modules/gamepad/Gamepad.cpp:
+        * Modules/gamepad/Gamepad.h:
+        * Modules/gamepad/Gamepad.idl:
+        * Modules/gamepad/GamepadList.cpp:
+        * Modules/gamepad/GamepadList.h:
+        * Modules/gamepad/GamepadList.idl:
+
 2011-11-21  Andreas Kling  <kling@webkit.org>
 
         JSC/CSSOM: Merge root() for style declaration objects.
