@@ -29,60 +29,15 @@
 #import <WebKit/WebNSFileManagerExtras.h>
 
 #import "WebKitNSStringExtras.h"
+#import "WebNSObjectExtras.h"
 #import "WebNSURLExtras.h"
 #import <JavaScriptCore/Assertions.h>
 #import <WebKitSystemInterface.h>
 #import <sys/stat.h>
+#import <wtf/RetainPtr.h>
 
 @implementation NSFileManager (WebNSFileManagerExtras)
 
-- (NSString *)_webkit_carbonPathForPath:(NSString *)posixPath
-{
-    OSStatus error;
-    FSRef ref, rootRef, parentRef;
-    FSCatalogInfo info;
-    NSMutableArray *carbonPathPieces;
-    HFSUniStr255 nameString;
-
-    // Make an FSRef.
-    error = FSPathMakeRef((const UInt8 *)[posixPath fileSystemRepresentation], &ref, NULL);
-    if (error != noErr) {
-        return nil;
-    }
-
-    // Get volume refNum.
-    error = FSGetCatalogInfo(&ref, kFSCatInfoVolume, &info, NULL, NULL, NULL);
-    if (error != noErr) {
-        return nil;
-    }
-
-    // Get root directory FSRef.
-    error = FSGetVolumeInfo(info.volume, 0, NULL, kFSVolInfoNone, NULL, NULL, &rootRef);
-    if (error != noErr) {
-        return nil;
-    }
-
-    // Get the pieces of the path.
-    carbonPathPieces = [NSMutableArray array];
-    for (;;) {
-        error = FSGetCatalogInfo(&ref, kFSCatInfoNone, NULL, &nameString, NULL, &parentRef);
-        if (error != noErr) {
-            return nil;
-        }
-        [carbonPathPieces insertObject:[NSString stringWithCharacters:nameString.unicode length:nameString.length] atIndex:0];
-        if (FSCompareFSRefs(&ref, &rootRef) == noErr) {
-            break;
-        }
-        ref = parentRef;
-    }
-
-    // Volume names need trailing : character.
-    if ([carbonPathPieces count] == 1) {
-        [carbonPathPieces addObject:@""];
-    }
-
-    return [carbonPathPieces componentsJoinedByString:@":"];
-}
 
 typedef struct MetaDataInfo
 {
@@ -139,8 +94,11 @@ static void *setMetaData(void* context)
 
 - (NSString *)_webkit_startupVolumeName
 {
-    NSString *path = [self _webkit_carbonPathForPath:@"/"];
-    return [path substringToIndex:[path length]-1];
+    RetainPtr<DASessionRef> session(AdoptCF, DASessionCreate(kCFAllocatorDefault));
+    RetainPtr<DADiskRef> disk(AdoptCF, DADiskCreateFromVolumePath(kCFAllocatorDefault, session.get(), (CFURLRef)[NSURL fileURLWithPath:@"/"]));
+    RetainPtr<CFDictionaryRef> diskDescription(AdoptCF, DADiskCopyDescription(disk.get()));
+    RetainPtr<NSString> diskName = (NSString *)CFDictionaryGetValue(diskDescription.get(), kDADiskDescriptionVolumeNameKey);
+    return WebCFAutorelease(diskName.leakRef());
 }
 
 // -[NSFileManager fileExistsAtPath:] returns NO if there is a broken symlink at the path.

@@ -1,3 +1,15 @@
+2011-11-20  Mark Rowe  <mrowe@apple.com>
+
+        <http://webkit.org/b/72661> Switch to a more modern approach to retrieving the startup volume name
+
+        Use the DiskArbitration framework to retrieve the name of the startup volume rather than using Carbon
+        File Manager APIs.
+
+        Reviewed by Dan Bernstein.
+
+        * WebKit.xcodeproj/project.pbxproj: Link against DiskArbitration.framework. It lives in the shared cache
+        so it should add only negligible launch time overhead.
+
 2011-11-18  Daniel Bates  <dbates@rim.com>
 
         Add CMake build infrastructure for the BlackBerry port

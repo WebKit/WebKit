@@ -115,6 +115,7 @@
 		598AD9281201CF3200ABAE4E /* WebDeviceOrientationProviderMock.mm in Sources */ = {isa = PBXBuildFile; fileRef = 598AD9271201CF3200ABAE4E /* WebDeviceOrientationProviderMock.mm */; };
 		598AD92A1201CF3B00ABAE4E /* WebDeviceOrientationProviderMockInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 598AD9291201CF3B00ABAE4E /* WebDeviceOrientationProviderMockInternal.h */; };
 		598ADA461202275000ABAE4E /* WebDeviceOrientationProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 598ADA451202275000ABAE4E /* WebDeviceOrientationProvider.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		5D4DE0991479CBDF00EA3DF4 /* DiskArbitration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D4DE0981479CBDF00EA3DF4 /* DiskArbitration.framework */; };
 		5D7BF8140C2A1D90008CE06D /* WebInspector.h in Headers */ = {isa = PBXBuildFile; fileRef = 5D7BF8120C2A1D90008CE06D /* WebInspector.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5D7BF8150C2A1D90008CE06D /* WebInspector.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5D7BF8130C2A1D90008CE06D /* WebInspector.mm */; };
 		5DE83A7A0D0F7F9400CAD12A /* WebJavaScriptTextInputPanel.nib in Resources */ = {isa = PBXBuildFile; fileRef = 5DE83A740D0F7F9400CAD12A /* WebJavaScriptTextInputPanel.nib */; };
@@ -536,6 +537,7 @@
 		598AD9271201CF3200ABAE4E /* WebDeviceOrientationProviderMock.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebDeviceOrientationProviderMock.mm; sourceTree = "<group>"; };
 		598AD9291201CF3B00ABAE4E /* WebDeviceOrientationProviderMockInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebDeviceOrientationProviderMockInternal.h; sourceTree = "<group>"; };
 		598ADA451202275000ABAE4E /* WebDeviceOrientationProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebDeviceOrientationProvider.h; sourceTree = "<group>"; };
+		5D4DE0981479CBDF00EA3DF4 /* DiskArbitration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DiskArbitration.framework; path = /System/Library/Frameworks/DiskArbitration.framework; sourceTree = "<absolute>"; };
 		5D7BF8120C2A1D90008CE06D /* WebInspector.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebInspector.h; sourceTree = "<group>"; };
 		5D7BF8130C2A1D90008CE06D /* WebInspector.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = WebInspector.mm; sourceTree = "<group>"; };
 		5DE83A750D0F7F9400CAD12A /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/WebJavaScriptTextInputPanel.nib; sourceTree = SOURCE_ROOT; };
@@ -772,6 +774,7 @@
 				1A20D08B0ED384F20043FA9F /* QuartzCore.framework in Frameworks */,
 				9398112F0824BF01008DF038 /* Security.framework in Frameworks */,
 				9398112C0824BF01008DF038 /* WebCore.framework in Frameworks */,
+				5D4DE0991479CBDF00EA3DF4 /* DiskArbitration.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -819,6 +822,7 @@
 			children = (
 				F5C2869402846DCD018635CA /* Carbon.framework */,
 				F5C2869502846DCD018635CA /* Cocoa.framework */,
+				5D4DE0981479CBDF00EA3DF4 /* DiskArbitration.framework */,
 				CD8EAC7211CAC9A300774075 /* IOKit.framework */,
 				F738C9E903FAD3DF0321FBE0 /* JavaScriptCore.framework */,
 				93D623DD051E791F002F47DD /* libicucore.dylib */,

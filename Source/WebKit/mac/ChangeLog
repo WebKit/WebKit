@@ -1,3 +1,16 @@
+2011-11-20  Mark Rowe  <mrowe@apple.com>
+
+        <http://webkit.org/b/72661> Switch to a more modern approach to retrieving the startup volume name
+
+        Use the DiskArbitration framework to retrieve the name of the startup volume rather than using Carbon
+        File Manager APIs.
+
+        Reviewed by Dan Bernstein.
+
+        * Misc/WebNSFileManagerExtras.mm:
+        (-[NSFileManager _webkit_startupVolumeName]): Retrieve a DADiskRef for the startup volume and copy
+        the volume name from its description dictionary.
+
 2011-06-20  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: introduce InspectorFrontendAPI for actions initiated from the application menu.
