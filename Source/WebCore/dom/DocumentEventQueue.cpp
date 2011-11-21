@@ -70,10 +70,10 @@ DocumentEventQueue::~DocumentEventQueue()
 {
 }
 
-void DocumentEventQueue::enqueueEvent(PassRefPtr<Event> event)
+bool DocumentEventQueue::enqueueEvent(PassRefPtr<Event> event)
 {
     if (m_isClosed)
-        return;
+        return false;
 
     ASSERT(event->target());
     bool wasAdded = m_queuedEvents.add(event).second;
@@ -81,6 +81,8 @@ void DocumentEventQueue::enqueueEvent(PassRefPtr<Event> event)
     
     if (!m_pendingEventTimer->isActive())
         m_pendingEventTimer->startOneShot(0);
+
+    return true;
 }
 
 void DocumentEventQueue::enqueueOrDispatchScrollEvent(PassRefPtr<Node> target, ScrollEventTargetType targetType)

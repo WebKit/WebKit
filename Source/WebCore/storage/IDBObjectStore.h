@@ -83,7 +83,7 @@ private:
     IDBObjectStore(PassRefPtr<IDBObjectStoreBackendInterface>, IDBTransaction*);
     void removeTransactionFromPendingList();
 
-    RefPtr<IDBObjectStoreBackendInterface> m_objectStore;
+    RefPtr<IDBObjectStoreBackendInterface> m_backend;
     RefPtr<IDBTransaction> m_transaction;
 };
 

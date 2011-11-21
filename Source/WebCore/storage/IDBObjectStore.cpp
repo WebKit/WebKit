@@ -44,10 +44,10 @@ namespace WebCore {
 static const unsigned short defaultDirection = IDBCursor::NEXT;
 
 IDBObjectStore::IDBObjectStore(PassRefPtr<IDBObjectStoreBackendInterface> idbObjectStore, IDBTransaction* transaction)
-    : m_objectStore(idbObjectStore)
+    : m_backend(idbObjectStore)
     , m_transaction(transaction)
 {
-    ASSERT(m_objectStore);
+    ASSERT(m_backend);
     ASSERT(m_transaction);
     // We pass a reference to this object before it can be adopted.
     relaxAdoptionRequirement();
@@ -55,17 +55,17 @@ IDBObjectStore::IDBObjectStore(PassRefPtr<IDBObjectStoreBackendInterface> idbObj
 
 String IDBObjectStore::name() const
 {
-    return m_objectStore->name();
+    return m_backend->name();
 }
 
 String IDBObjectStore::keyPath() const
 {
-    return m_objectStore->keyPath();
+    return m_backend->keyPath();
 }
 
 PassRefPtr<DOMStringList> IDBObjectStore::indexNames() const
 {
-    return m_objectStore->indexNames();
+    return m_backend->indexNames();
 }
 
 IDBTransaction* IDBObjectStore::transaction() const
@@ -81,7 +81,7 @@ PassRefPtr<IDBRequest> IDBObjectStore::get(ScriptExecutionContext* context, Pass
     }
 
     RefPtr<IDBRequest> request = IDBRequest::create(context, IDBAny::create(this), m_transaction.get());
-    m_objectStore->get(key, request, m_transaction->backend(), ec);
+    m_backend->get(key, request, m_transaction->backend(), ec);
     if (ec) {
         request->markEarlyDeath();
         return 0;
@@ -97,7 +97,7 @@ PassRefPtr<IDBRequest> IDBObjectStore::add(ScriptExecutionContext* context, Pass
     }
 
     RefPtr<IDBRequest> request = IDBRequest::create(context, IDBAny::create(this), m_transaction.get());
-    m_objectStore->put(value, key, IDBObjectStoreBackendInterface::AddOnly, request, m_transaction->backend(), ec);
+    m_backend->put(value, key, IDBObjectStoreBackendInterface::AddOnly, request, m_transaction->backend(), ec);
     if (ec) {
         request->markEarlyDeath();
         return 0;
@@ -113,7 +113,7 @@ PassRefPtr<IDBRequest> IDBObjectStore::put(ScriptExecutionContext* context, Pass
     }
 
     RefPtr<IDBRequest> request = IDBRequest::create(context, IDBAny::create(this), m_transaction.get());
-    m_objectStore->put(value, key, IDBObjectStoreBackendInterface::AddOrUpdate, request, m_transaction->backend(), ec);
+    m_backend->put(value, key, IDBObjectStoreBackendInterface::AddOrUpdate, request, m_transaction->backend(), ec);
     if (ec) {
         request->markEarlyDeath();
         return 0;
@@ -129,7 +129,7 @@ PassRefPtr<IDBRequest> IDBObjectStore::deleteFunction(ScriptExecutionContext* co
     }
 
     RefPtr<IDBRequest> request = IDBRequest::create(context, IDBAny::create(this), m_transaction.get());
-    m_objectStore->deleteFunction(key, request, m_transaction->backend(), ec);
+    m_backend->deleteFunction(key, request, m_transaction->backend(), ec);
     if (ec) {
         request->markEarlyDeath();
         return 0;
@@ -140,7 +140,7 @@ PassRefPtr<IDBRequest> IDBObjectStore::deleteFunction(ScriptExecutionContext* co
 PassRefPtr<IDBRequest> IDBObjectStore::clear(ScriptExecutionContext* context, ExceptionCode& ec)
 {
     RefPtr<IDBRequest> request = IDBRequest::create(context, IDBAny::create(this), m_transaction.get());
-    m_objectStore->clear(request, m_transaction->backend(), ec);
+    m_backend->clear(request, m_transaction->backend(), ec);
     if (ec) {
         request->markEarlyDeath();
         return 0;
@@ -158,7 +158,7 @@ PassRefPtr<IDBIndex> IDBObjectStore::createIndex(const String& name, const Strin
     bool unique = false;
     options.get("unique", unique);
 
-    RefPtr<IDBIndexBackendInterface> index = m_objectStore->createIndex(name, keyPath, unique, m_transaction->backend(), ec);
+    RefPtr<IDBIndexBackendInterface> index = m_backend->createIndex(name, keyPath, unique, m_transaction->backend(), ec);
     ASSERT(!index != !ec); // If we didn't get an index, we should have gotten an exception code. And vice versa.
     if (!index)
         return 0;
@@ -167,7 +167,7 @@ PassRefPtr<IDBIndex> IDBObjectStore::createIndex(const String& name, const Strin
 
 PassRefPtr<IDBIndex> IDBObjectStore::index(const String& name, ExceptionCode& ec)
 {
-    RefPtr<IDBIndexBackendInterface> index = m_objectStore->index(name, ec);
+    RefPtr<IDBIndexBackendInterface> index = m_backend->index(name, ec);
     ASSERT(!index != !ec); // If we didn't get an index, we should have gotten an exception code. And vice versa.
     if (!index)
         return 0;
@@ -176,7 +176,7 @@ PassRefPtr<IDBIndex> IDBObjectStore::index(const String& name, ExceptionCode& ec
 
 void IDBObjectStore::deleteIndex(const String& name, ExceptionCode& ec)
 {
-    m_objectStore->deleteIndex(name, m_transaction->backend(), ec);
+    m_backend->deleteIndex(name, m_transaction->backend(), ec);
 }
 
 PassRefPtr<IDBRequest> IDBObjectStore::openCursor(ScriptExecutionContext* context, PassRefPtr<IDBKeyRange> range, unsigned short direction, ExceptionCode& ec)
@@ -189,7 +189,7 @@ PassRefPtr<IDBRequest> IDBObjectStore::openCursor(ScriptExecutionContext* contex
 
     RefPtr<IDBRequest> request = IDBRequest::create(context, IDBAny::create(this), m_transaction.get());
     request->setCursorType(IDBCursorBackendInterface::ObjectStoreCursor);
-    m_objectStore->openCursor(range, direction, request, m_transaction->backend(), ec);
+    m_backend->openCursor(range, direction, request, m_transaction->backend(), ec);
     if (ec) {
         request->markEarlyDeath();
         return 0;

@@ -129,7 +129,8 @@ void IDBTransactionBackendImpl::abort()
         task->performTask(0);
     }
 
-    m_callbacks->onAbort();
+    if (m_callbacks)
+        m_callbacks->onAbort();
     m_database->transactionCoordinator()->didFinishTransaction(this);
     ASSERT(!m_database->transactionCoordinator()->isActive(this));
     m_database->transactionFinished(this);
@@ -183,6 +184,7 @@ void IDBTransactionBackendImpl::commit()
     // alive while executing this method.
     RefPtr<IDBTransactionBackendImpl> self(this);
     ASSERT(m_state == Running);
+    ASSERT(m_taskQueue.isEmpty());
 
     m_state = Finished;
     closeOpenCursors();

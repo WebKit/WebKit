@@ -80,9 +80,9 @@ public:
     bool dispatchEvent(PassRefPtr<Event> event, ExceptionCode& ec) { return EventTarget::dispatchEvent(event, ec); }
 
     // ActiveDOMObject
-    virtual bool hasPendingActivity() const;
-    virtual bool canSuspend() const;
-    virtual void contextDestroyed();
+    virtual bool hasPendingActivity() const OVERRIDE;
+    virtual bool canSuspend() const OVERRIDE;
+    virtual void stop() OVERRIDE;
 
     using RefCounted<IDBTransactionCallbacks>::ref;
     using RefCounted<IDBTransactionCallbacks>::deref;
@@ -101,7 +101,8 @@ private:
     RefPtr<IDBTransactionBackendInterface> m_backend;
     RefPtr<IDBDatabase> m_database;
     unsigned short m_mode;
-    bool m_finished; // Is it possible that we'll fire any more events or allow any new transactions? If not, we're finished.
+    bool m_transactionFinished; // Is it possible that we'll fire any more events or allow any new requests? If not, we're finished.
+    bool m_contextStopped;
 
     ListHashSet<IDBRequest*> m_childRequests;
 

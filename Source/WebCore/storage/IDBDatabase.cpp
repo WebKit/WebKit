@@ -56,8 +56,8 @@ PassRefPtr<IDBDatabase> IDBDatabase::create(ScriptExecutionContext* context, Pas
 IDBDatabase::IDBDatabase(ScriptExecutionContext* context, PassRefPtr<IDBDatabaseBackendInterface> backend)
     : ActiveDOMObject(context, this)
     , m_backend(backend)
-    , m_noNewTransactions(false)
-    , m_stopped(false)
+    , m_closePending(false)
+    , m_contextStopped(false)
 {
     // We pass a reference of this object before it can be adopted.
     relaxAdoptionRequirement();
@@ -66,6 +66,7 @@ IDBDatabase::IDBDatabase(ScriptExecutionContext* context, PassRefPtr<IDBDatabase
 
 IDBDatabase::~IDBDatabase()
 {
+    close();
     m_databaseCallbacks->unregisterDatabase(this);
 }
 
@@ -149,7 +150,7 @@ PassRefPtr<IDBTransaction> IDBDatabase::transaction(ScriptExecutionContext* cont
         ec = IDBDatabaseException::CONSTRAINT_ERR;
         return 0;
     }
-    if (m_noNewTransactions) {
+    if (m_closePending) {
         ec = IDBDatabaseException::NOT_ALLOWED_ERR;
         return 0;
     }
@@ -170,7 +171,13 @@ PassRefPtr<IDBTransaction> IDBDatabase::transaction(ScriptExecutionContext* cont
 
 void IDBDatabase::close()
 {
-    if (m_noNewTransactions)
+    if (m_closePending)
+        return;
+
+    m_closePending = true;
+    m_backend->close(m_databaseCallbacks);
+
+    if (m_contextStopped || !scriptExecutionContext())
         return;
 
     EventQueue* eventQueue = scriptExecutionContext()->eventQueue();
@@ -182,13 +189,13 @@ void IDBDatabase::close()
         bool removed = eventQueue->cancelEvent(m_enqueuedEvents[i].get());
         ASSERT_UNUSED(removed, removed);
     }
-
-    m_noNewTransactions = true;
-    m_backend->close(m_databaseCallbacks);
 }
 
 void IDBDatabase::onVersionChange(const String& version)
 {
+    if (m_contextStopped || !scriptExecutionContext())
+        return;
+
     enqueueEvent(IDBVersionChangeEvent::create(version, eventNames().versionchangeEvent));
 }
 
@@ -199,7 +206,7 @@ bool IDBDatabase::hasPendingActivity() const
     //        get a handle to us or any derivative transaction/request object and any
     //        of those have event listeners. This is in order to handle user generated
     //        events properly.
-    return !m_stopped || ActiveDOMObject::hasPendingActivity();
+    return !m_contextStopped || ActiveDOMObject::hasPendingActivity();
 }
 
 void IDBDatabase::open()
@@ -209,6 +216,8 @@ void IDBDatabase::open()
 
 void IDBDatabase::enqueueEvent(PassRefPtr<Event> event)
 {
+    ASSERT(!m_contextStopped);
+    ASSERT(scriptExecutionContext());
     EventQueue* eventQueue = scriptExecutionContext()->eventQueue();
     event->setTarget(this);
     eventQueue->enqueueEvent(event.get());
@@ -227,10 +236,11 @@ bool IDBDatabase::dispatchEvent(PassRefPtr<Event> event)
 
 void IDBDatabase::stop()
 {
+    ActiveDOMObject::stop();
     // Stop fires at a deterministic time, so we need to call close in it.
     close();
 
-    m_stopped = true;
+    m_contextStopped = true;
 }
 
 const AtomicString& IDBDatabase::interfaceName() const

@@ -52,9 +52,9 @@ public:
     virtual ~DocumentEventQueue();
 
     // EventQueue
-    virtual void enqueueEvent(PassRefPtr<Event>);
-    virtual bool cancelEvent(Event*);
-    virtual void close();
+    virtual bool enqueueEvent(PassRefPtr<Event>) OVERRIDE;
+    virtual bool cancelEvent(Event*) OVERRIDE;
+    virtual void close() OVERRIDE;
 
     void enqueueOrDispatchScrollEvent(PassRefPtr<Node>, ScrollEventTargetType);
 

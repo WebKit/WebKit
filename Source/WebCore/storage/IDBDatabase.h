@@ -78,8 +78,8 @@ public:
     virtual void onVersionChange(const String& requestedVersion);
 
     // ActiveDOMObject
-    virtual bool hasPendingActivity() const;
-    virtual void stop();
+    virtual bool hasPendingActivity() const OVERRIDE;
+    virtual void stop() OVERRIDE;
 
     // EventTarget
     virtual const AtomicString& interfaceName() const;
@@ -105,8 +105,8 @@ private:
     RefPtr<IDBDatabaseBackendInterface> m_backend;
     RefPtr<IDBTransaction> m_versionChangeTransaction;
 
-    bool m_noNewTransactions;
-    bool m_stopped;
+    bool m_closePending;
+    bool m_contextStopped;
 
     EventTargetData m_eventTargetData;
 

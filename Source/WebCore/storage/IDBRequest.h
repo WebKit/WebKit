@@ -87,7 +87,8 @@ public:
     virtual void onBlocked();
 
     // ActiveDOMObject
-    virtual bool hasPendingActivity() const;
+    virtual bool hasPendingActivity() const OVERRIDE;
+    virtual void stop() OVERRIDE;
 
     // EventTarget
     virtual const AtomicString& interfaceName() const;
@@ -119,7 +120,8 @@ private:
     RefPtr<IDBTransaction> m_transaction;
 
     ReadyState m_readyState;
-    bool m_finished; // Is it possible that we'll fire any more events? If not, we're finished.
+    bool m_requestFinished; // Is it possible that we'll fire any more events? If not, we're finished.
+    bool m_contextStopped;
     Vector<RefPtr<Event> > m_enqueuedEvents;
 
     // Only used if the result type will be a cursor.

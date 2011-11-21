@@ -95,14 +95,15 @@ void WorkerEventQueue::removeEvent(Event* event)
     m_eventTaskMap.remove(event);
 }
 
-void WorkerEventQueue::enqueueEvent(PassRefPtr<Event> prpEvent)
+bool WorkerEventQueue::enqueueEvent(PassRefPtr<Event> prpEvent)
 {
     if (m_isClosed)
-        return;
+        return false;
     RefPtr<Event> event = prpEvent;
     OwnPtr<EventDispatcherTask> task = EventDispatcherTask::create(event, this);
     m_eventTaskMap.add(event.release(), task.get());
     m_scriptExecutionContext->postTask(task.release());
+    return true;
 }
 
 bool WorkerEventQueue::cancelEvent(Event* event)

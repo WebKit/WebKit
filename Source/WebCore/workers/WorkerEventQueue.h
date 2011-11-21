@@ -46,9 +46,9 @@ public:
     virtual ~WorkerEventQueue();
 
     // EventQueue
-    virtual void enqueueEvent(PassRefPtr<Event>);
-    virtual bool cancelEvent(Event*);
-    virtual void close();
+    virtual bool enqueueEvent(PassRefPtr<Event>) OVERRIDE;
+    virtual bool cancelEvent(Event*) OVERRIDE;
+    virtual void close() OVERRIDE;
 
 private:
     explicit WorkerEventQueue(ScriptExecutionContext*);

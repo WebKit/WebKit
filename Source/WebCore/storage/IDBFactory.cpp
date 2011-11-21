@@ -50,7 +50,7 @@
 namespace WebCore {
 
 IDBFactory::IDBFactory(IDBFactoryBackendInterface* factory)
-    : m_factoryBackend(factory)
+    : m_backend(factory)
 {
     // We pass a reference to this object before it can be adopted.
     relaxAdoptionRequirement();
@@ -73,7 +73,7 @@ PassRefPtr<IDBRequest> IDBFactory::getDatabaseNames(ScriptExecutionContext* cont
 
     RefPtr<IDBRequest> request = IDBRequest::create(document, IDBAny::create(this), 0);
     GroupSettings* groupSettings = document->page()->group().groupSettings();
-    m_factoryBackend->getDatabaseNames(request, document->securityOrigin(), document->frame(), groupSettings->indexedDBDatabasePath());
+    m_backend->getDatabaseNames(request, document->securityOrigin(), document->frame(), groupSettings->indexedDBDatabasePath());
     return request;
 }
 
@@ -95,7 +95,7 @@ PassRefPtr<IDBRequest> IDBFactory::open(ScriptExecutionContext* context, const S
 
     RefPtr<IDBRequest> request = IDBRequest::create(document, IDBAny::create(this), 0);
     GroupSettings* groupSettings = document->page()->group().groupSettings();
-    m_factoryBackend->open(name, request, document->securityOrigin(), document->frame(), groupSettings->indexedDBDatabasePath());
+    m_backend->open(name, request, document->securityOrigin(), document->frame(), groupSettings->indexedDBDatabasePath());
     return request;
 }
 
@@ -117,7 +117,7 @@ PassRefPtr<IDBVersionChangeRequest> IDBFactory::deleteDatabase(ScriptExecutionCo
 
     RefPtr<IDBVersionChangeRequest> request = IDBVersionChangeRequest::create(document, IDBAny::createNull(), "");
     GroupSettings* groupSettings = document->page()->group().groupSettings();
-    m_factoryBackend->deleteDatabase(name, request, document->securityOrigin(), document->frame(), groupSettings->indexedDBDatabasePath());
+    m_backend->deleteDatabase(name, request, document->securityOrigin(), document->frame(), groupSettings->indexedDBDatabasePath());
     return request;
 }
 

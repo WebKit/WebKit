@@ -66,7 +66,7 @@ public:
 private:
     IDBFactory(IDBFactoryBackendInterface*);
 
-    RefPtr<IDBFactoryBackendInterface> m_factoryBackend;
+    RefPtr<IDBFactoryBackendInterface> m_backend;
 };
 
 } // namespace WebCore
