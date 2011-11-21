@@ -1,3 +1,13 @@
+2011-11-21  Andreas Kling  <kling@webkit.org>
+
+        Unreviewed WinCE build fix after r100874.
+
+        * WebCoreSupport/EditorClientWinCE.h:
+        * WebCoreSupport/EditorClientWinCE.cpp:
+        (WebKit::EditorClientWinCE::respondToChangedSelection):
+
+            Add WebCore::Frame* parameter to respondToChangedSelection().
+
 2011-11-15  Anders Carlsson  <andersca@apple.com>
 
         HostWindow screenToWindow/windowToScreen should be screenToRootView/rootViewToScreen

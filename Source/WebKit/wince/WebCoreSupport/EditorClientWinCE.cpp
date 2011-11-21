@@ -124,7 +124,7 @@ void EditorClientWinCE::respondToChangedContents()
     notImplemented();
 }
 
-void EditorClientWinCE::respondToChangedSelection()
+void EditorClientWinCE::respondToChangedSelection(WebCore::Frame*)
 {
     notImplemented();
 }
