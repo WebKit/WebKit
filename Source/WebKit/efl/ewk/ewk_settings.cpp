@@ -269,6 +269,23 @@ const char* ewk_settings_application_cache_path_get()
     return s_offlineAppCachePath;
 }
 
+int64_t ewk_settings_application_cache_max_quota_get()
+{
+    return WebCore::cacheStorage().maximumSize();
+}
+
+void ewk_settings_application_cache_max_quota_set(int64_t maximumSize)
+{
+    ewk_settings_application_cache_clear();
+
+    WebCore::cacheStorage().setMaximumSize(maximumSize);
+}
+
+void ewk_settings_application_cache_clear()
+{
+    WebCore::cacheStorage().deleteAllEntries();
+}
+
 double ewk_settings_default_timer_interval_get(void)
 {
     return WebCore::Settings::defaultMinDOMTimerInterval();

@@ -160,6 +160,35 @@ EAPI void             ewk_settings_application_cache_path_set(const char *path);
 EAPI const char      *ewk_settings_application_cache_path_get(void);
 
 /**
+ * Returns the maximum size, in bytes, of the application cache for HTML5 Offline Web Applications.
+ *
+ * By default, applications are allowed unlimited storage space.
+ *
+ * @sa ewk_view_setting_offine_app_cache_set
+ */
+EAPI int64_t          ewk_settings_application_cache_max_quota_get(void);
+
+/**
+ * Sets the maximum size, in bytes, of the application cache for HTML5 Offline Web Applications.
+ *
+ * By default, applications are allowed unlimited storage space.
+ *
+ * Note that calling this function will delete all the entries currently in the app cache.
+ *
+ * @param maximum_size the new maximum size, in bytes.
+ *
+ * @sa ewk_view_setting_application_cache_enabled_set
+ */
+EAPI void             ewk_settings_application_cache_max_quota_set(int64_t maximum_size);
+
+/**
+ * Removes all entries from the HTML5 application cache.
+ *
+ * @sa ewk_view_setting_application_cache_enabled_set, ewk_settings_application_cache_path_set
+ */
+EAPI void             ewk_settings_application_cache_clear(void);
+
+/**
  * Gets status of the memory cache of WebCore.
  *
  * @return @c EINA_TRUE if the cache is enabled or @c EINA_FALSE if not

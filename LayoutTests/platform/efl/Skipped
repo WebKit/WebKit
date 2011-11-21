@@ -648,9 +648,6 @@ http/tests/misc/copy-resolves-urls.html
 # EFL's LayoutTestController does not implement setCacheModel
 fast/dom/HTMLScriptElement/nested-execution.html
 
-# EFL's LayoutTestController does not implement clearAllApplicationCaches
-http/tests/appcache
-
 # EFL's LayoutTestController does not implement setApplicationCacheOriginQuota
 http/tests/appcache
 

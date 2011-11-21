@@ -1,3 +1,16 @@
+2011-11-21  Raphael Kubo da Costa  <kubo@profusion.mobi>
+
+        [EFL] Add more appcache functions to ewk_settings.
+        https://bugs.webkit.org/show_bug.cgi?id=72143
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * DumpRenderTree/efl/LayoutTestControllerEfl.cpp:
+        (LayoutTestController::clearAllApplicationCaches):
+        (LayoutTestController::setAppCacheMaximumSize): Use the right
+        function, this is not related to the memory cache, but rather to the
+        appcache.
+
 2011-11-18  Adam Roben  <aroben@apple.com>
 
         Make NRWT consider all lines of output from parse-malloc-history, not just the first

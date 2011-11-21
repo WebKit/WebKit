@@ -506,8 +506,7 @@ void LayoutTestController::clearPersistentUserStyleSheet()
 
 void LayoutTestController::clearAllApplicationCaches()
 {
-    // FIXME: Implement to support application cache quotas.
-    notImplemented();
+    ewk_settings_application_cache_clear();
 }
 
 void LayoutTestController::setApplicationCacheOriginQuota(unsigned long long)
@@ -597,7 +596,7 @@ void LayoutTestController::setDefersLoading(bool)
 
 void LayoutTestController::setAppCacheMaximumSize(unsigned long long size)
 {
-    ewk_settings_cache_capacity_set(size);
+    ewk_settings_application_cache_max_quota_set(size);
 }
 
 bool LayoutTestController::pauseAnimationAtTimeOnElementWithId(JSStringRef animationName, double time, JSStringRef elementId)
