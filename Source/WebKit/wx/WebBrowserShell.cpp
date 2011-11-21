@@ -128,6 +128,7 @@ wxWebBrowserShell::wxWebBrowserShell(const wxString& title) :
     viewMenu->AppendSeparator();
     
     m_debugMenu = new wxMenu;
+    m_debugMenu->SetTitle(_("&Debug"));
     m_debugMenu->Append(ID_SET_SOURCE, _("Test SetPageSource"));
     m_debugMenu->Append(ID_RUN_SCRIPT, _("Test RunScript"));
     m_debugMenu->Append(ID_EDIT_COMMAND, _("Test EditCommand::Execute"));

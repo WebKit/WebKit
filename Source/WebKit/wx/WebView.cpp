@@ -586,6 +586,14 @@ void wxWebView::LoadURL(const wxString& url)
         m_mainFrame->LoadURL(url);
 }
 
+wxString wxWebView::GetMainFrameURL() const
+{
+    if (m_mainFrame)
+        return m_mainFrame->GetURL();
+    
+    return wxEmptyString;
+}
+
 bool wxWebView::GoBack()
 {
     if (m_mainFrame)

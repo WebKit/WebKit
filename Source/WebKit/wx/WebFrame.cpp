@@ -435,6 +435,15 @@ void wxWebFrame::LoadURL(const wxString& url)
     }
 }
 
+wxString wxWebFrame::GetURL() const
+{
+    if (m_impl->frame && m_impl->frame->document())
+        return m_impl->frame->document()->url().string();
+    
+    return wxEmptyString;
+}
+
+
 bool wxWebFrame::GoBack()
 {
     if (m_impl->frame && m_impl->frame->page())

@@ -1,3 +1,19 @@
+2011-11-21  Robin Dunn  <robin@alldunn.com>
+
+        Add wxWebKit API for retrieving frame and page URLs.
+        https://bugs.webkit.org/show_bug.cgi?id=72890
+
+        Reviewed by Kevin Ollivier.
+
+        * WebBrowserShell.cpp:
+        (wxWebBrowserShell::wxWebBrowserShell):
+        * WebFrame.cpp:
+        (wxWebFrame::GetURL):
+        * WebFrame.h:
+        * WebView.cpp:
+        (wxWebView::GetMainFrameURL):
+        * WebView.h:
+
 2011-10-17  Antonio Gomes  <agomes@rim.com>
 
         Pass a Frame* parameter in EditorClient::respondToChangedSelection

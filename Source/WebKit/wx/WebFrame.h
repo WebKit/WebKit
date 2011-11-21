@@ -111,6 +111,7 @@ public:
     ~wxWebFrame();
     
     void LoadURL(const wxString& url);
+    wxString GetURL() const;
     bool GoBack();
     bool GoForward();
     void Stop();

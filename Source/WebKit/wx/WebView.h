@@ -190,6 +190,8 @@ public:
     void SetPageTitle(const wxString& title) { m_title = title; }
     
     wxWebFrame* GetMainFrame() { return m_mainFrame; }
+    
+    wxString GetMainFrameURL() const;
 
     wxWebViewDOMElementInfo HitTest(const wxPoint& pos) const;
     
