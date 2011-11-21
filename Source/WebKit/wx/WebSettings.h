@@ -103,7 +103,7 @@ public:
         Sets whether or not images are loaded automatically. (e.g. in email 
         programs you may wish to not load images until you confirm it is not SPAM)
     */
-    void SetLoadsImagesAutomatically(bool loadAutomatically);
+    void SetLoadsImagesAutomatically(bool);
     
     /**
         Returns whether or not images are loaded automatically.
@@ -113,7 +113,7 @@ public:
     /**
         Sets whether or not the WebView runs JavaScript code.
     */
-    void SetJavaScriptEnabled(bool enabled);
+    void SetJavaScriptEnabled(bool);
 
     /**
         Returns whether or not the WebView runs JavaScript code.
@@ -143,12 +143,43 @@ public:
     /**
         Sets whether or not web pages can load plugins.
     */
-    void SetPluginsEnabled(bool enabled);
+    void SetPluginsEnabled(bool);
     
     /**
         Returns whether or not web pages can load plugins.
     */    
     bool ArePluginsEnabled() const;
+    
+    /**
+        Enables or disables private browsing mode. When on, wxWebKit will avoid storing
+        any sort of persistent data or storage on disk.
+    */
+    void SetPrivateBrowsingEnabled(bool);
+    
+    /**
+        Returns the current state of private browsing mode.
+    */
+    bool PrivateBrowsingEnabled();
+    
+    /**
+        Sets whether or not wxWebKit caches pages.
+    */
+    void SetUsesPageCache(bool);
+    
+    /**
+        Returns whether or not wxWebKit caches pages.
+    */
+    bool UsesPageCache();
+    
+    /**
+        Sets whether or not wxWebKit uses the offfline web application cache.
+    */
+    void SetOfflineWebApplicationCacheEnabled(bool);
+    
+    /**
+        Returns whether or not wxWebKit uses the offline web application cache.
+    */
+    bool OfflineWebApplicationCacheEnabled();
     
 private:
     WebCore::Settings* m_settings;

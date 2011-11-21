@@ -178,3 +178,45 @@ bool wxWebSettings::ArePluginsEnabled() const
         
     return false;
 }
+
+void wxWebSettings::SetPrivateBrowsingEnabled(bool enabled)
+{
+    if (m_settings)
+        m_settings->setPrivateBrowsingEnabled(enabled);
+}
+
+bool wxWebSettings::PrivateBrowsingEnabled()
+{
+    if (m_settings)
+        m_settings->privateBrowsingEnabled();
+
+    return false;
+}
+
+void wxWebSettings::SetUsesPageCache(bool enabled)
+{
+    if (m_settings)
+        m_settings->setUsesPageCache(enabled);
+}
+
+bool wxWebSettings::UsesPageCache()
+{
+    if (m_settings)
+        m_settings->usesPageCache();
+    
+    return false;
+}
+
+void wxWebSettings::SetOfflineWebApplicationCacheEnabled(bool enabled)
+{
+    if (m_settings)
+        m_settings->setOfflineWebApplicationCacheEnabled(enabled);
+}
+
+bool wxWebSettings::OfflineWebApplicationCacheEnabled()
+{
+    if (m_settings)
+        m_settings->offlineWebApplicationCacheEnabled();
+    
+    return false;
+}
