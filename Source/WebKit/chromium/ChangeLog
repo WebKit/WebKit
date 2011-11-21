@@ -1,3 +1,35 @@
+2011-11-21  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Avoid pushing dirty tiles to the impl layer
+        https://bugs.webkit.org/show_bug.cgi?id=72765
+
+        Reviewed by Kenneth Russell.
+
+        Add unit test for TiledLayerChromium's tile pushing behavior. Requires a fair amount of fake classes. If these
+        fakes are useful in other tests, they should be moved to a shared location.
+
+        * WebKit.gypi:
+        * tests/TiledLayerChromiumTest.cpp: Added.
+        (::FakeTextureAllocator::createTexture):
+        (::FakeTextureAllocator::deleteTexture):
+        (::FakeLayerTextureUpdater::FakeLayerTextureUpdater):
+        (::FakeLayerTextureUpdater::~FakeLayerTextureUpdater):
+        (::FakeLayerTextureUpdater::orientation):
+        (::FakeLayerTextureUpdater::sampledTexelFormat):
+        (::FakeLayerTextureUpdater::prepareToUpdate):
+        (::FakeLayerTextureUpdater::updateTextureRect):
+        (::FakeCCTiledLayerImpl::FakeCCTiledLayerImpl):
+        (::FakeCCTiledLayerImpl::~FakeCCTiledLayerImpl):
+        (::FakeCCTiledLayerImpl::hasTileAt):
+        (::FakeTiledLayerChromium::FakeTiledLayerChromium):
+        (::FakeTiledLayerChromium::~FakeTiledLayerChromium):
+        (::FakeTiledLayerChromium::invalidateRect):
+        (::FakeTiledLayerChromium::prepareToUpdate):
+        (::FakeTiledLayerChromium::textureManager):
+        (::FakeTiledLayerChromium::createTextureUpdater):
+        (::FakeTiledLayerChromium::textureUpdater):
+        (::TEST):
+
 2011-11-21  Dominic Mazzoni  <dmazzoni@google.com>
 
         [Chromium] WebAccessibilityNotification should use AssertMatchingEnums.

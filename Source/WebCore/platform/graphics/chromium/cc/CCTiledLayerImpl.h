@@ -67,8 +67,12 @@ public:
     typedef ProgramBinding<VertexShaderTile, FragmentShaderRGBATexClampAlphaAA> ProgramAA;
     typedef ProgramBinding<VertexShaderTile, FragmentShaderRGBATexClampSwizzleAlphaAA> ProgramSwizzleAA;
 
-private:
+protected:
     explicit CCTiledLayerImpl(int id);
+    // Exposed for testing.
+    bool hasTileAt(int, int) const;
+
+private:
 
     virtual const char* layerTypeAsString() const { return "ContentLayer"; }
 

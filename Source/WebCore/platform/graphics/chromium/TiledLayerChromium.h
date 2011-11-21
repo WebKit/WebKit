@@ -63,6 +63,11 @@ protected:
     virtual void cleanupResources();
     void updateTileSizeAndTilingOption();
 
+    // Exposed to subclasses for testing.
+    void setTileSize(const IntSize&);
+    void createTiler(CCLayerTilingData::BorderTexelOption);
+    void setTextureFormat(GC3Denum textureFormat) { m_textureFormat = textureFormat; }
+
     virtual void createTextureUpdater(const CCLayerTreeHost*) = 0;
     virtual LayerTextureUpdater* textureUpdater() const = 0;
 
@@ -72,6 +77,8 @@ protected:
     void prepareToUpdate(const IntRect& contentRect);
 
     virtual void protectVisibleTileTextures();
+
+    virtual TextureManager* textureManager() const;
 
 private:
     virtual PassRefPtr<CCLayerImpl> createCCLayerImpl();
@@ -84,20 +91,19 @@ private:
     UpdatableTile* tileAt(int, int) const;
     UpdatableTile* createTile(int, int);
 
-    TextureManager* textureManager() const;
-
     // Temporary state held between prepareToUpdate() and updateCompositorResources().
     IntRect m_requestedUpdateRect;
     // State held between prepareToUpdate() and pushPropertiesTo(). This represents the area
     // of the layer that is actually re-painted by WebKit.
     IntRect m_paintRect;
 
-    TilingOption m_tilingOption;
     GC3Denum m_textureFormat;
     bool m_skipsDraw;
     LayerTextureUpdater::Orientation m_textureOrientation;
     LayerTextureUpdater::SampledTexelFormat m_sampledTexelFormat;
 
+    TilingOption m_tilingOption;
+    IntSize m_tileSize;
     OwnPtr<CCLayerTilingData> m_tiler;
 };
 

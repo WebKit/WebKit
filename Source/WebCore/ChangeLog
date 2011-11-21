@@ -1,3 +1,32 @@
+2011-11-21  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Avoid pushing dirty tiles to the impl layer
+        https://bugs.webkit.org/show_bug.cgi?id=72765
+
+        Reviewed by Kenneth Russell.
+
+        If a tile has invalidations at pushPropertiesTo, then we know the contents of that tile are no longer valid even
+        if they still have valid backing textures. This avoids pushing that texture to the impl side so it is not
+        displayed to the user. The texture is still kept around (managed by the TextureManager) so that when we later do
+        decide to update the contents for that tile we can use partial results if they are still valid.
+
+        Covered by new unit test in TiledLayerChromiumTest.cpp
+
+        * platform/graphics/chromium/TiledLayerChromium.cpp:
+        (WebCore::UpdatableTile::isDirty):
+        (WebCore::TiledLayerChromium::updateTileSizeAndTilingOption):
+        (WebCore::TiledLayerChromium::setTileSize):
+        (WebCore::TiledLayerChromium::setLayerTreeHost):
+        (WebCore::TiledLayerChromium::createTiler):
+        (WebCore::TiledLayerChromium::updateCompositorResources):
+        (WebCore::TiledLayerChromium::pushPropertiesTo):
+        * platform/graphics/chromium/TiledLayerChromium.h:
+        (WebCore::TiledLayerChromium::setTextureFormat):
+        * platform/graphics/chromium/cc/CCTiledLayerImpl.cpp:
+        (WebCore::CCTiledLayerImpl::hasTileAt):
+        (WebCore::CCTiledLayerImpl::drawTiles):
+        * platform/graphics/chromium/cc/CCTiledLayerImpl.h:
+
 2011-11-21  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Speed up debug builds.

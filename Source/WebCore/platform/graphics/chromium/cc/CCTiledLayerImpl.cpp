@@ -80,6 +80,11 @@ void CCTiledLayerImpl::dumpLayerProperties(TextStream& ts, int indent) const
     ts << "skipsDraw: " << (!m_tiler || m_skipsDraw) << "\n";
 }
 
+bool CCTiledLayerImpl::hasTileAt(int i, int j) const
+{
+    return m_tiler->tileAt(i, j);
+}
+
 DrawableTile* CCTiledLayerImpl::tileAt(int i, int j) const
 {
     return static_cast<DrawableTile*>(m_tiler->tileAt(i, j));
@@ -219,6 +224,7 @@ void CCTiledLayerImpl::drawTiles(LayerRendererChromium* layerRenderer, const Int
     m_tiler->contentRectToTileIndices(contentRect, left, top, right, bottom);
     IntRect layerRect = m_tiler->contentRectToLayerRect(contentRect);
     float sign = FloatQuad(contentRect).isCounterclockwise() ? -1 : 1;
+    const GC3Dint filter = m_tiler->hasBorderTexels() ? GraphicsContext3D::LINEAR : GraphicsContext3D::NEAREST;
     for (int j = top; j <= bottom; ++j) {
         CCLayerQuad::Edge prevEdgeX = contentQuad.left();
 
@@ -343,6 +349,9 @@ void CCTiledLayerImpl::drawTiles(LayerRendererChromium* layerRenderer, const Int
 
             if (tile && tile->textureId()) {
                 context->bindTexture(GraphicsContext3D::TEXTURE_2D, tile->textureId());
+                GLC(context, context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MIN_FILTER, filter));
+                GLC(context, context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MAG_FILTER, filter));
+
                 layerRenderer->drawTexturedQuad(globalTransform,
                                                 tileRect.width(), tileRect.height(), opacity, quad,
                                                 program->vertexShader().matrixLocation(),
