@@ -42,10 +42,8 @@ function extension_testOnNavigated(nextTest)
     {
         if (loadCount !== urls.length)
             return;
-        if (loadCount === 1) {
-            evaluateOnFrontend("InspectorTest.runWhenPageLoads(reply);", onLoad);
-            webInspector.inspectedWindow.eval("location.href = location.origin + location.pathname");
-        }
+        if (loadCount === 1)
+            evaluateOnFrontend("InspectorTest.navigate(WebInspector.mainResource.url.substring(0, WebInspector.mainResource.url.indexOf('?')), reply)", onLoad);
         else {
             webInspector.network.onNavigated.removeListener(onNavigated);
             for (var i = 0; i < urls.length; ++i)
@@ -59,8 +57,7 @@ function extension_testOnNavigated(nextTest)
         processEvent();
     }
     webInspector.network.onNavigated.addListener(onNavigated);
-    evaluateOnFrontend("InspectorTest.runWhenPageLoads(reply);", onLoad);
-    webInspector.inspectedWindow.eval("location.href = location.href + '?navigated'");
+    evaluateOnFrontend("InspectorTest.navigate(WebInspector.mainResource.url + '?navigated', reply)", onLoad);
 }
 
 function extension_testViewShowHide(nextTest)
