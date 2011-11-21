@@ -1,3 +1,14 @@
+2011-11-21  Viatcheslav Ostapenko  <ostapenko.viatcheslav@nokia.com>
+
+        [Qt] [WK2] WebKitTestRunner doesn't build in debug
+        https://bugs.webkit.org/show_bug.cgi?id=72827
+
+        Reviewed by Andreas Kling.
+
+        Add exports to fix WebKitTestRunner debug build.
+
+        * Source/qtwebkit-export.map:
+
 2011-11-21  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         [Qt] Add WebView.view attached property support for dialogs in QML

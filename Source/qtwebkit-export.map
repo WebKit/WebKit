@@ -37,6 +37,8 @@ qwk_1.0 {
     JSValueProtect;
     JSEvaluateScript;
     _WKContextSetAdditionalPluginsDirectory;
+    WTFReportArgumentAssertionFailure;
+    WTFReportAssertionFailure;
     WTFReportBacktrace;
     extern "C++" {
         # WebKit 1 API
@@ -97,6 +99,8 @@ qwk_1.0 {
         WTF::fastMalloc*;
         WTF::fastFree*;
         WTF::fastZeroedMalloc*;
+        WTF::Mutex::*;
+        WTF::currentThread*;
 
         # WebKit 2 API
         *QQuickWebView;
