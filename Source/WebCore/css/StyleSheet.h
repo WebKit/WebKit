@@ -64,7 +64,6 @@ public:
     virtual String type() const = 0;
     virtual bool isLoading() = 0;
 
-    virtual KURL completeURL(const String& url) const;
     virtual bool parseString(const String&, bool strict = true) = 0;
 
     virtual bool isCSSStyleSheet() const { return false; }

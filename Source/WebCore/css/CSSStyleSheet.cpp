@@ -281,8 +281,10 @@ KURL CSSStyleSheet::completeURL(const String& url) const
     // Always return a null URL when passed a null string.
     // FIXME: Should we change the KURL constructor to have this behavior?
     // See also Document::completeURL(const String&)
-    if (url.isNull() || m_charset.isEmpty())
-        return StyleSheet::completeURL(url);
+    if (url.isNull())
+        return KURL();
+    if (m_charset.isEmpty())
+        return KURL(baseURL(), url);
     const TextEncoding encoding = TextEncoding(m_charset);
     return KURL(baseURL(), url, encoding);
 }

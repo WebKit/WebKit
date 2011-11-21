@@ -102,7 +102,7 @@ public:
 
     bool loadCompleted() const { return m_loadCompleted; }
 
-    virtual KURL completeURL(const String& url) const;
+    KURL completeURL(const String& url) const;
     void addSubresourceStyleURLs(ListHashSet<KURL>&);
 
     void setStrictParsing(bool b) { m_strictParsing = b; }

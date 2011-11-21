@@ -1,3 +1,19 @@
+2011-11-21  Andreas Kling  <kling@webkit.org>
+
+        StyleSheet: Move completeURL() to CSSStyleSheet.
+        <http://webkit.org/b/72888>
+
+        Reviewed by Antti Koivisto.
+
+        Since completeURL() is only used on CSSStyleSheets, move it there (and make
+        it non-virtual) to make StyleSheet a little leaner.
+
+        * css/CSSStyleSheet.cpp:
+        (WebCore::CSSStyleSheet::completeURL):
+        * css/CSSStyleSheet.h:
+        * css/StyleSheet.cpp:
+        * css/StyleSheet.h:
+
 2011-11-21  Robin Dunn  <robin@alldunn.com>
 
         [wx] Fix image translation calculations.
