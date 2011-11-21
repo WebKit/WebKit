@@ -171,6 +171,8 @@ namespace JSC {
         {
             seen = true;
         }
+        
+        void reset(RepatchBuffer&, JITCode::JITType);
 
         unsigned bytecodeIndex;
         CodeLocationCall callReturnLocation;
@@ -250,7 +252,7 @@ namespace JSC {
     }
 #endif
 
-    class CodeBlock : public UnconditionalFinalizer {
+    class CodeBlock : public UnconditionalFinalizer, public WeakReferenceHarvester {
         WTF_MAKE_FAST_ALLOCATED;
         friend class JIT;
     public:
@@ -294,10 +296,6 @@ namespace JSC {
         bool canProduceCopyWithBytecode() { return hasInstructions(); }
 
         void visitAggregate(SlotVisitor&);
-        
-        // Call this if you are not jettisoning a code block, and thus
-        // have no evidence to suggest that it will never be called into again.
-        void stronglyVisitWeakReferences(SlotVisitor&);
 
         static void dumpStatistics();
 
@@ -537,7 +535,7 @@ namespace JSC {
         JITCode::JITType getJITType() { return m_jitCode.jitType(); }
         ExecutableMemoryHandle* executableMemory() { return getJITCode().getExecutableMemory(); }
         virtual JSObject* compileOptimized(ExecState*, ScopeChainNode*) = 0;
-        virtual void jettison(JSGlobalData&) = 0;
+        virtual void jettison() = 0;
         virtual CodeBlock* replacement() = 0;
         virtual bool canCompileWithDFG() = 0;
         bool hasOptimizedReplacement()
@@ -1060,10 +1058,10 @@ namespace JSC {
 #endif
         
 #if ENABLE(JIT)
-        void reoptimize(JSGlobalData& globalData)
+        void reoptimize()
         {
             ASSERT(replacement() != this);
-            replacement()->jettison(globalData);
+            replacement()->jettison();
             countReoptimization();
             optimizeAfterWarmUp();
         }
@@ -1085,6 +1083,7 @@ namespace JSC {
         bool m_shouldDiscardBytecode;
 
     protected:
+        virtual void visitWeakReferences(SlotVisitor&);
         virtual void finalizeUnconditionally();
         
     private:
@@ -1101,6 +1100,33 @@ namespace JSC {
         void printPutByIdOp(ExecState*, int location, Vector<Instruction>::const_iterator&, const char* op) const;
 #endif
         void visitStructures(SlotVisitor&, Instruction* vPC) const;
+        
+#if ENABLE(DFG_JIT)
+        bool shouldImmediatelyAssumeLivenessDuringScan()
+        {
+            // Null m_dfgData means that this is a baseline JIT CodeBlock. Baseline JIT
+            // CodeBlocks don't need to be jettisoned when their weak references go
+            // stale. So if a basline JIT CodeBlock gets scanned, we can assume that
+            // this means that it's live.
+            if (!m_dfgData)
+                return true;
+            
+            // For simplicity, we don't attempt to jettison code blocks during GC if
+            // they are executing. Instead we strongly mark their weak references to
+            // allow them to continue to execute soundly.
+            if (m_dfgData->mayBeExecuting)
+                return true;
+
+            return false;
+        }
+#else
+        bool shouldImmediatelyAssumeLivenessDuringScan() { return true; }
+#endif
+        
+        void performTracingFixpointIteration(SlotVisitor&);
+        
+        void stronglyVisitStrongReferences(SlotVisitor&);
+        void stronglyVisitWeakReferences(SlotVisitor&);
 
         void createRareDataIfNecessary()
         {
@@ -1177,6 +1203,8 @@ namespace JSC {
             Vector<WriteBarrier<JSCell> > weakReferences;
             bool mayBeExecuting;
             bool isJettisoned;
+            bool livenessHasBeenProved; // Initialized and used on every GC.
+            bool allTransitionsHaveBeenMarked; // Initialized and used on every GC.
         };
         
         OwnPtr<DFGData> m_dfgData;
@@ -1278,7 +1306,7 @@ namespace JSC {
 #if ENABLE(JIT)
     protected:
         virtual JSObject* compileOptimized(ExecState*, ScopeChainNode*);
-        virtual void jettison(JSGlobalData&);
+        virtual void jettison();
         virtual CodeBlock* replacement();
         virtual bool canCompileWithDFG();
 #endif
@@ -1312,7 +1340,7 @@ namespace JSC {
 #if ENABLE(JIT)
     protected:
         virtual JSObject* compileOptimized(ExecState*, ScopeChainNode*);
-        virtual void jettison(JSGlobalData&);
+        virtual void jettison();
         virtual CodeBlock* replacement();
         virtual bool canCompileWithDFG();
 #endif
@@ -1349,7 +1377,7 @@ namespace JSC {
 #if ENABLE(JIT)
     protected:
         virtual JSObject* compileOptimized(ExecState*, ScopeChainNode*);
-        virtual void jettison(JSGlobalData&);
+        virtual void jettison();
         virtual CodeBlock* replacement();
         virtual bool canCompileWithDFG();
 #endif

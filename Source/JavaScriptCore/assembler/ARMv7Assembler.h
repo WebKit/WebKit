@@ -1894,6 +1894,11 @@ public:
 
         setPointer(reinterpret_cast<uint16_t*>(from) - 1, to);
     }
+    
+    static void* readCallTarget(void* from)
+    {
+        return readPointer(reinterpret_cast<uint16_t*>(from) - 1);
+    }
 
     static void repatchInt32(void* where, int32_t value)
     {

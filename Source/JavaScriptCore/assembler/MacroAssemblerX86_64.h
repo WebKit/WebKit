@@ -497,6 +497,11 @@ public:
     static bool supportsFloatingPointTruncate() { return true; }
     static bool supportsFloatingPointSqrt() { return true; }
     static bool supportsFloatingPointAbs() { return true; }
+    
+    static FunctionPtr readCallTarget(CodeLocationCall call)
+    {
+        return FunctionPtr(X86Assembler::readPointer(call.dataLabelPtrAtOffset(-REPTACH_OFFSET_CALL_R11).dataLocation()));
+    }
 
 private:
     friend class LinkBuffer;

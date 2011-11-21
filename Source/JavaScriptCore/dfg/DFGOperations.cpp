@@ -325,8 +325,9 @@ EncodedJSValue DFG_OPERATION operationGetMethodOptimizeWithReturnAddress(ExecSta
     JSValue baseValue(base);
     PropertySlot slot(baseValue);
     JSValue result = baseValue.get(exec, *propertyName, slot);
-
-    MethodCallLinkInfo& methodInfo = exec->codeBlock()->getMethodCallLinkInfo(returnAddress);
+    
+    CodeBlock* codeBlock = exec->codeBlock();
+    MethodCallLinkInfo& methodInfo = codeBlock->getMethodCallLinkInfo(returnAddress);
     if (methodInfo.seenOnce())
         dfgRepatchGetMethod(exec, baseValue, *propertyName, slot, methodInfo);
     else
@@ -367,7 +368,7 @@ EncodedJSValue DFG_OPERATION operationGetByIdOptimizeWithReturnAddress(ExecState
     JSValue baseValue(base);
     PropertySlot slot(baseValue);
     JSValue result = baseValue.get(exec, *propertyName, slot);
-
+    
     StructureStubInfo& stubInfo = exec->codeBlock()->getStubInfo(returnAddress);
     if (stubInfo.seen)
         dfgRepatchGetByID(exec, baseValue, *propertyName, slot, stubInfo);

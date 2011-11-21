@@ -1,3 +1,76 @@
+2011-11-18  Filip Pizlo  <fpizlo@apple.com>
+
+        Inline caches that refer to otherwise dead objects should be cleared
+        https://bugs.webkit.org/show_bug.cgi?id=72311
+
+        Reviewed by Geoff Garen.
+
+        DFG code blocks now participate in the weak reference harvester fixpoint
+        so that they only consider themselves to be live if either they are
+        currently executing, or their owner is live and all of their weak references
+        are live. If not, the relevant code blocks are jettisoned.
+
+        Inline caches in both the old JIT and the DFG are now cleared if any of
+        their references are not marked at the end of a GC.
+
+        This is performance-neutral on SunSpider, V8, and Kraken. With the clear-
+        all-code-on-GC policy that we currently have, it shows a slight reduction
+        in memory usage. If we turn that policy off, it's pretty easy to come up
+        with an example program that will cause ToT to experience linear heap
+        growth, while with this patch, the heap stays small and remains at a
+        constant size.
+
+        * assembler/ARMv7Assembler.h:
+        (JSC::ARMv7Assembler::readCallTarget):
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::readCallTarget):
+        * assembler/MacroAssemblerX86.h:
+        (JSC::MacroAssemblerX86::readCallTarget):
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::readCallTarget):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::visitAggregate):
+        (JSC::CodeBlock::performTracingFixpointIteration):
+        (JSC::CodeBlock::visitWeakReferences):
+        (JSC::CodeBlock::finalizeUnconditionally):
+        (JSC::CodeBlock::stronglyVisitStrongReferences):
+        (JSC::MethodCallLinkInfo::reset):
+        (JSC::ProgramCodeBlock::jettison):
+        (JSC::EvalCodeBlock::jettison):
+        (JSC::FunctionCodeBlock::jettison):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::reoptimize):
+        (JSC::CodeBlock::shouldImmediatelyAssumeLivenessDuringScan):
+        * bytecode/Instruction.h:
+        (JSC::PolymorphicAccessStructureList::visitWeak):
+        * bytecode/StructureStubInfo.cpp:
+        (JSC::StructureStubInfo::visitWeakReferences):
+        * bytecode/StructureStubInfo.h:
+        (JSC::isGetByIdAccess):
+        (JSC::isPutByIdAccess):
+        (JSC::StructureStubInfo::reset):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::link):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGRepatch.cpp:
+        (JSC::DFG::dfgRepatchByIdSelfAccess):
+        (JSC::DFG::dfgResetGetByID):
+        (JSC::DFG::dfgResetPutByID):
+        * dfg/DFGRepatch.h:
+        (JSC::DFG::dfgResetGetByID):
+        (JSC::DFG::dfgResetPutByID):
+        * jit/JIT.h:
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::resetPatchGetById):
+        (JSC::JIT::resetPatchPutById):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::resetPatchGetById):
+        (JSC::JIT::resetPatchPutById):
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * jit/JITWriteBarrier.h:
+        (JSC::JITWriteBarrierBase::clearToMaxUnsigned):
+
 2011-11-20  Filip Pizlo  <fpizlo@apple.com>
 
         Showing the data overlay in OpenStreetMap doesn't work, zooming partially broken

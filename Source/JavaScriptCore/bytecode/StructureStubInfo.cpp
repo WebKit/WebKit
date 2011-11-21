@@ -62,48 +62,55 @@ void StructureStubInfo::deref()
     }
 }
 
-void StructureStubInfo::visitAggregate(SlotVisitor& visitor)
+bool StructureStubInfo::visitWeakReferences()
 {
     switch (accessType) {
     case access_get_by_id_self:
-        visitor.append(&u.getByIdSelf.baseObjectStructure);
-        return;
+        if (!Heap::isMarked(u.getByIdSelf.baseObjectStructure.get()))
+            return false;
+        break;
     case access_get_by_id_proto:
-        visitor.append(&u.getByIdProto.baseObjectStructure);
-        visitor.append(&u.getByIdProto.prototypeStructure);
-        return;
+        if (!Heap::isMarked(u.getByIdProto.baseObjectStructure.get())
+            || !Heap::isMarked(u.getByIdProto.prototypeStructure.get()))
+            return false;
+        break;
     case access_get_by_id_chain:
-        visitor.append(&u.getByIdChain.baseObjectStructure);
-        visitor.append(&u.getByIdChain.chain);
-        return;
+        if (!Heap::isMarked(u.getByIdChain.baseObjectStructure.get())
+            || !Heap::isMarked(u.getByIdChain.chain.get()))
+            return false;
+        break;
     case access_get_by_id_self_list: {
         PolymorphicAccessStructureList* polymorphicStructures = u.getByIdSelfList.structureList;
-        polymorphicStructures->visitAggregate(visitor, u.getByIdSelfList.listSize);
-        return;
+        if (!polymorphicStructures->visitWeak(u.getByIdSelfList.listSize)) {
+            delete polymorphicStructures;
+            return false;
+        }
+        break;
     }
     case access_get_by_id_proto_list: {
         PolymorphicAccessStructureList* polymorphicStructures = u.getByIdProtoList.structureList;
-        polymorphicStructures->visitAggregate(visitor, u.getByIdProtoList.listSize);
-        return;
+        if (!polymorphicStructures->visitWeak(u.getByIdSelfList.listSize)) {
+            delete polymorphicStructures;
+            return false;
+        }
+        break;
     }
     case access_put_by_id_transition:
-        visitor.append(&u.putByIdTransition.previousStructure);
-        visitor.append(&u.putByIdTransition.structure);
-        visitor.append(&u.putByIdTransition.chain);
-        return;
+        if (!Heap::isMarked(u.putByIdTransition.previousStructure.get())
+            || !Heap::isMarked(u.putByIdTransition.structure.get())
+            || !Heap::isMarked(u.putByIdTransition.chain.get()))
+            return false;
+        break;
     case access_put_by_id_replace:
-        visitor.append(&u.putByIdReplace.baseObjectStructure);
-        return;
-    case access_unset:
-    case access_get_by_id_generic:
-    case access_put_by_id_generic:
-    case access_get_array_length:
-    case access_get_string_length:
-        // These instructions don't need to mark anything
-        return;
+        if (!Heap::isMarked(u.putByIdReplace.baseObjectStructure.get()))
+            return false;
+        break;
     default:
-        ASSERT_NOT_REACHED();
+        // The rest of the instructions don't require references, so there is no need to
+        // do anything.
+        break;
     }
+    return true;
 }
 #endif
 

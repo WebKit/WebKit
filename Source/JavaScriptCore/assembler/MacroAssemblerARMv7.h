@@ -1561,6 +1561,11 @@ protected:
     {
         return static_cast<ARMv7Assembler::Condition>(cond);
     }
+    
+    static FunctionPtr readCallTarget(CodeLocationCall call)
+    {
+        return ARMv7Assembler::readCallTarget(call.dataLocation());
+    }
 
 private:
     friend class LinkBuffer;

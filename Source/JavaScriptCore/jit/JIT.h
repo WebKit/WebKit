@@ -254,6 +254,8 @@ namespace JSC {
             return jit.privateCompileCTINativeCall(globalData, func);
         }
 
+        static void resetPatchGetById(RepatchBuffer&, StructureStubInfo*);
+        static void resetPatchPutById(RepatchBuffer&, StructureStubInfo*);
         static void patchGetByIdSelf(CodeBlock* codeblock, StructureStubInfo*, Structure*, size_t cachedOffset, ReturnAddressPtr returnAddress);
         static void patchPutByIdReplace(CodeBlock* codeblock, StructureStubInfo*, Structure*, size_t cachedOffset, ReturnAddressPtr returnAddress, bool direct);
         static void patchMethodCallProto(JSGlobalData&, CodeBlock* codeblock, MethodCallLinkInfo&, JSObject*, Structure*, JSObject*, ReturnAddressPtr);

@@ -1938,7 +1938,7 @@ DEFINE_STUB_FUNCTION(void, optimize_from_loop)
 #if ENABLE(JIT_VERBOSE_OSR)
             printf("Triggering reoptimization of %p(%p) (in loop).\n", codeBlock, codeBlock->replacement());
 #endif
-            codeBlock->reoptimize(callFrame->globalData());
+            codeBlock->reoptimize();
             return;
         }
     } else {
@@ -2008,7 +2008,7 @@ DEFINE_STUB_FUNCTION(void, optimize_from_loop)
 #if ENABLE(JIT_VERBOSE_OSR)
         printf("Triggering reoptimization of %p(%p) (in loop after OSR fail).\n", codeBlock, codeBlock->replacement());
 #endif
-        codeBlock->reoptimize(callFrame->globalData());
+        codeBlock->reoptimize();
         return;
     }
 
@@ -2040,11 +2040,9 @@ DEFINE_STUB_FUNCTION(void, optimize_from_ret)
 #if ENABLE(JIT_VERBOSE_OSR)
             printf("Triggering reoptimization of %p(%p) (in return).\n", codeBlock, codeBlock->replacement());
 #endif
-            codeBlock->reoptimize(callFrame->globalData());
+            codeBlock->reoptimize();
         }
         
-        codeBlock->optimizeSoon();
-
         codeBlock->optimizeSoon();
         return;
     }

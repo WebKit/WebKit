@@ -205,6 +205,12 @@ public:
     static bool supportsFloatingPointTruncate() { return isSSE2Present(); }
     static bool supportsFloatingPointSqrt() { return isSSE2Present(); }
     static bool supportsFloatingPointAbs() { return isSSE2Present(); }
+    
+    static FunctionPtr readCallTarget(CodeLocationCall call)
+    {
+        intptr_t offset = reinterpret_cast<int32_t*>(call.dataLocation())[-1];
+        return FunctionPtr(reinterpret_cast<void*>(reinterpret_cast<uintptr_t>(call.dataLocation()) + offset));
+    }
 
 private:
     friend class LinkBuffer;
