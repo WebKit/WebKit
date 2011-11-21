@@ -1,3 +1,14 @@
+2011-11-20  Kentaro Hara  <haraken@chromium.org>
+
+        Unreviewed. Rebaselined run-bindings-tests results.
+
+        * bindings/scripts/test/CPP/WebDOMFloat64Array.cpp:
+        (WebDOMFloat64Array::WebDOMFloat64Array):
+        (WebDOMFloat64Array::impl):
+        (toWebCore):
+        (toWebKit):
+        * bindings/scripts/test/CPP/WebDOMFloat64Array.h:
+
 2011-11-20  Adam Barth  <abarth@webkit.org>
 
         REGRESSION(r100691): Safari error pages and Growl notifications fail to load stylesheets

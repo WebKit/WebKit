@@ -31,22 +31,22 @@ WebDOMFloat64Array::WebDOMFloat64Array()
 {
 }
 
-WebDOMFloat64Array::WebDOMFloat64Array(WebCore::Float64Array* impl)
+WebDOMFloat64Array::WebDOMFloat64Array(WTF::Float64Array* impl)
     : WebDOMArrayBufferView(impl)
 {
 }
 
-WebCore::Float64Array* WebDOMFloat64Array::impl() const
+WTF::Float64Array* WebDOMFloat64Array::impl() const
 {
-    return static_cast<WebCore::Float64Array*>(WebDOMArrayBufferView::impl());
+    return static_cast<WTF::Float64Array*>(WebDOMArrayBufferView::impl());
 }
 
-WebCore::Float64Array* toWebCore(const WebDOMFloat64Array& wrapper)
+WTF::Float64Array* toWebCore(const WebDOMFloat64Array& wrapper)
 {
     return wrapper.impl();
 }
 
-WebDOMFloat64Array toWebKit(WebCore::Float64Array* value)
+WebDOMFloat64Array toWebKit(WTF::Float64Array* value)
 {
     return WebDOMFloat64Array(value);
 }
