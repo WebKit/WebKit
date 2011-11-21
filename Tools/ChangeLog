@@ -1,5 +1,22 @@
 2011-11-20  Ojan Vafai  <ojan@chromium.org>
 
+        Change the final place where we use version 3 of the results json output
+        https://bugs.webkit.org/show_bug.cgi?id=72838
+
+        Reviewed by Adam Barth.
+
+        This converts the json from being a flat map of test name --> results
+        to being hierarchical by directory. This will make the json files 
+        considerably smaller.
+
+        Also cleaned up some functions that were returning/checking boolean values
+        that were always True.
+
+        * TestResultServer/model/jsonresults.py:
+        * TestResultServer/model/jsonresults_unittest.py:
+
+2011-11-20  Ojan Vafai  <ojan@chromium.org>
+
         Include the master name when querying the test results server.
         This will soon be required since leaving the master name out mean
         that multiple files could match the query.

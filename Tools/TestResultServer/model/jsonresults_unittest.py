@@ -113,10 +113,8 @@ class JsonResultsTest(unittest.TestCase):
         json = json.replace("[TESTDATA_CHROMEREVISION]", ",".join(chrome_revision))
         json = json.replace("[TESTDATA_TIMES]", ",".join(times))
 
-        if "version" in test_data:
-            json = json.replace("[VERSION]", str(test_data["version"]))
-        else:
-            json = json.replace("[VERSION]", "3")
+        version = str(test_data["version"]) if "version" in test_data else "4"
+        json = json.replace("[VERSION]", version)
 
         json_tests = []
         for (name, test) in sorted(tests.iteritems()):
@@ -556,15 +554,23 @@ class JsonResultsTest(unittest.TestCase):
         self._test_merge(
             # Aggregated results
             {"builds": ["2", "1"],
-             "tests": {"foo/001.html": {
+             "tests": {"bar/003.html": {
+                           "results": "[25,\"F\"]",
+                           "times": "[25,0]"},
+                       "foo/001.html": {
                            "results": "[50,\"F\"]",
                            "times": "[50,0]"},
                        "foo/002.html": {
                            "results": "[100,\"I\"]",
-                           "times": "[100,0]"}}},
+                           "times": "[100,0]"}},
+             "version": 3},
             # Incremental results
             {"builds": ["3"],
-             "tests": {"foo": {
+             "tests": {"baz": {
+                           "004.html": {
+                               "results": "[1,\"I\"]",
+                               "times": "[1,0]"}},
+                       "foo": {
                            "001.html": {
                                "results": "[1,\"F\"]",
                                "times": "[1,0]"},
@@ -574,13 +580,22 @@ class JsonResultsTest(unittest.TestCase):
              "version": 4},
             # Expected results
             {"builds": ["3", "2", "1"],
-             "tests": {"foo/001.html": {
-                           "results": "[51,\"F\"]",
-                           "times": "[51,0]"},
-                       "foo/002.html": {
-                           "results": "[101,\"I\"]",
-                           "times": "[101,0]"}},
-             "version": 3})
+             "tests": {"bar": {
+                           "003.html": {
+                               "results": "[1,\"N\"],[25,\"F\"]",
+                               "times": "[26,0]"}},
+                       "baz": {
+                           "004.html": {
+                               "results": "[1,\"I\"]",
+                               "times": "[1,0]"}},
+                       "foo": {
+                           "001.html": {
+                               "results": "[51,\"F\"]",
+                               "times": "[51,0]"},
+                           "002.html": {
+                               "results": "[101,\"I\"]",
+                               "times": "[101,0]"}}},
+             "version": 4})
 
     # FIXME(aboxhall): Add some tests for xhtml/svg test results.
 
@@ -612,7 +627,8 @@ class JsonResultsTest(unittest.TestCase):
                        "foo.FAILS_bar3": {
                            "results": "[100,\"I\"]",
                            "times": "[100,0]"},
-                       }},
+                       },
+             "version": 3},
             # Incremental results
             {"builds": ["3"],
              "tests": {"foo.FLAKY_bar": {
@@ -648,7 +664,7 @@ class JsonResultsTest(unittest.TestCase):
                        "foo.bar4": {
                            "results": "[1,\"I\"]",
                            "times": "[1,0]"}},
-             "version": 3})
+             "version": 4})
 
 if __name__ == '__main__':
     unittest.main()
