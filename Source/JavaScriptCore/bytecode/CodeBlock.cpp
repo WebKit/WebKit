@@ -1695,10 +1695,12 @@ void CodeBlock::visitWeakReferences(SlotVisitor& visitor)
 
 void CodeBlock::finalizeUnconditionally()
 {
+#if ENABLE(JIT)
 #if ENABLE(JIT_VERBOSE_OSR)
     static const bool verboseUnlinking = true;
 #else
     static const bool verboseUnlinking = false;
+#endif
 #endif
     
 #if ENABLE(DFG_JIT)

@@ -44,7 +44,7 @@ void dfgResetPutByID(RepatchBuffer&, StructureStubInfo&);
 
 } } // namespace JSC::DFG
 
-#else // ENABLE(DFG_JIT)
+#elif ENABLE(JIT) // ENABLE(DFG_JIT)
 
 #include <wtf/Assertions.h>
 

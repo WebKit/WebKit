@@ -1,3 +1,11 @@
+2011-11-20  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed interpreter build fix.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::finalizeUnconditionally):
+        * dfg/DFGRepatch.h:
+
 2011-11-20  Yuqiang Xian  <yuqiang.xian@intel.com>
 
         Improve modulo operation on 32bit platforms
