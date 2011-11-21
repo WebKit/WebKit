@@ -1,3 +1,21 @@
+2011-11-18  Adam Roben  <aroben@apple.com>
+
+        Make NRWT consider all lines of output from parse-malloc-history, not just the first
+
+        Fixes <http://webkit.org/b/72652> REGRESSION (NRWT): NRWT always reports "1 unique leaks
+        found" even when there are more than 1 unique leaks
+
+        Reviewed by Darin Adler.
+
+        * Scripts/webkitpy/layout_tests/port/leakdetector.py:
+        (LeakDetector.count_total_bytes_and_unique_leaks): Pass re.MULTILINE to re.findall so that
+        "^" will be considered to match the beginning of any line, not only the beginning of the
+        string.
+
+        * Scripts/webkitpy/layout_tests/port/leakdetector_unittest.py:
+        (LeakDetectorTest.test_count_total_bytes_and_unique_leaks): Added a second callstack to the
+        fake output and updated expectations to match.
+
 2011-11-21  Andras Becsi  <andras.becsi@nokia.com>
 
         [Qt] Clean up MiniBrowser project file after recent changes

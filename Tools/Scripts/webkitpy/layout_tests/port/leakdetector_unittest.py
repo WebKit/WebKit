@@ -130,13 +130,15 @@ Binary Images:
             print "MOCK _run_script: %s %s" % (name, args)
             return """1 calls for 16 bytes: -[NSURLRequest mutableCopyWithZone:] | +[NSObject(NSObject) allocWithZone:] | _internal_class_createInstanceFromZone | calloc | malloc_zone_calloc
 
+147 calls for 9,408 bytes: _CFRuntimeCreateInstance | _ZN3WTF24StringWrapperCFAllocatorL8allocateElmPv StringImplCF.cpp:67 | WTF::fastMalloc(unsigned long) FastMalloc.cpp:268 | malloc | malloc_zone_malloc 
+
 total: 5,888 bytes (0 bytes excluded)."""
         detector._port._run_script = mock_run_script
 
         leak_files = ['/mock-results/DumpRenderTree-1234-leaks.txt', '/mock-results/DumpRenderTree-1235-leaks.txt']
         expected_stdout = "MOCK _run_script: parse-malloc-history ['--merge-depth', 5, '/mock-results/DumpRenderTree-1234-leaks.txt', '/mock-results/DumpRenderTree-1235-leaks.txt']\n"
         results_tuple = OutputCapture().assert_outputs(self, detector.count_total_bytes_and_unique_leaks, [leak_files], expected_stdout=expected_stdout)
-        self.assertEquals(results_tuple, ("5,888 bytes", 1))
+        self.assertEquals(results_tuple, ("5,888 bytes", 2))
 
     def test_count_total_leaks(self):
         detector = self._make_detector()

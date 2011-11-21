@@ -121,7 +121,7 @@ class LeakDetector(object):
             return
 
         # total: 5,888 bytes (0 bytes excluded).
-        unique_leak_count = len(re.findall(r'^(\d*)\scalls', parse_malloc_history_output))
+        unique_leak_count = len(re.findall(r'^(\d*)\scalls', parse_malloc_history_output, re.MULTILINE))
         total_bytes_string = re.search(r'^total\:\s(.+)\s\(', parse_malloc_history_output, re.MULTILINE).group(1)
         return (total_bytes_string, unique_leak_count)
 
