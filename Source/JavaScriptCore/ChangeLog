@@ -1,3 +1,15 @@
+2011-11-20  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG 32_64 should directly store double virtual registers on SetLocal
+        https://bugs.webkit.org/show_bug.cgi?id=72845
+
+        Reviewed by Oliver Hunt.
+        
+        2% win on Kraken.
+
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
 2011-11-20  Noel Gordon  <noel.gordon@gmail.com>
 
         [chromium] Remove DFG::JITCodeGenerator from the gyp projects

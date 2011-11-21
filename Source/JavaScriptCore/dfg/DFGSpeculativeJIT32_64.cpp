@@ -2142,7 +2142,11 @@ void SpeculativeJIT::compile(Node& node)
         m_codeOriginForOSR = nextNode.codeOrigin;
         
         PredictedType predictedType = node.variableAccessData()->prediction();
-        if (isInt32Prediction(predictedType)) {
+        if (m_generationInfo[at(node.child1()).virtualRegister()].registerFormat() == DataFormatDouble) {
+            DoubleOperand value(this, node.child1());
+            m_jit.storeDouble(value.fpr(), JITCompiler::addressFor(node.local()));
+            noResult(m_compileIndex);
+        } else if (isInt32Prediction(predictedType)) {
             SpeculateIntegerOperand value(this, node.child1());
             m_jit.store32(value.gpr(), JITCompiler::payloadFor(node.local()));
             noResult(m_compileIndex);
