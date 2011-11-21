@@ -115,6 +115,8 @@ LayoutTests/java/*.class
 # Ignore files installed by WebKitSupportLibrary/WebKitAuxiliaryLibrary
 /WebKitSupportLibrary.zip
 /WebKitLibraries/win/Software License Agreement for WebKit Support Libraries.rtf
+/WebKitLibraries/win/WebKitAuxiliaryLibrary.headers
+/WebKitLibraries/win/WebKitAuxiliaryLibraryVersion
 /WebKitLibraries/win/WebKitChangesToPthreads.diff
 /WebKitLibraries/win/include/ApplicationServices/
 /WebKitLibraries/win/include/AssertMacros.h
@@ -153,6 +155,8 @@ LayoutTests/java/*.class
 /WebKitLibraries/win/lib/icuin.lib
 /WebKitLibraries/win/lib/icuuc.lib
 /WebKitLibraries/win/lib/libdispatch.lib
+/WebKitLibraries/win/lib/libicuin.lib
+/WebKitLibraries/win/lib/libicuuc.lib
 /WebKitLibraries/win/lib/libxml2.lib
 /WebKitLibraries/win/lib/libxslt.lib
 /WebKitLibraries/win/lib/pthreadVC2.lib
