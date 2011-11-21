@@ -27,7 +27,7 @@
 
 #include "config.h"
 
-#if ENABLE(PARALLEL_JOBS) && ENABLE(THREADING_GENERIC)
+#if ENABLE(THREADING_GENERIC)
 
 #include "ParallelJobs.h"
 #include "UnusedParam.h"
@@ -46,6 +46,52 @@ namespace WTF {
 Vector< RefPtr<ParallelEnvironment::ThreadPrivate> >* ParallelEnvironment::s_threadPool = 0;
 
 int ParallelEnvironment::s_maxNumberOfParallelThreads = -1;
+
+ParallelEnvironment::ParallelEnvironment(ThreadFunction threadFunction, size_t sizeOfParameter, int requestedJobNumber) :
+    m_threadFunction(threadFunction),
+    m_sizeOfParameter(sizeOfParameter)
+{
+    ASSERT_ARG(requestedJobNumber, requestedJobNumber >= 1);
+
+    if (s_maxNumberOfParallelThreads == -1)
+        determineMaxNumberOfParallelThreads();
+
+    if (!requestedJobNumber || requestedJobNumber > s_maxNumberOfParallelThreads)
+        requestedJobNumber = static_cast<unsigned>(s_maxNumberOfParallelThreads);
+
+    if (!s_threadPool)
+        s_threadPool = new Vector< RefPtr<ThreadPrivate> >();
+
+    // The main thread should be also a worker.
+    int maxNumberOfNewThreads = requestedJobNumber - 1;
+
+    for (int i = 0; i < s_maxNumberOfParallelThreads && m_threads.size() < static_cast<unsigned>(maxNumberOfNewThreads); ++i) {
+        if (s_threadPool->size() < i + 1)
+            s_threadPool->append(ThreadPrivate::create());
+
+        if ((*s_threadPool)[i]->tryLockFor(this))
+            m_threads.append((*s_threadPool)[i]);
+    }
+
+    m_numberOfJobs = m_threads.size() + 1;
+}
+
+void ParallelEnvironment::execute(void* parameters)
+{
+    unsigned char* currentParameter = static_cast<unsigned char*>(parameters);
+    size_t i;
+    for (i = 0; i < m_threads.size(); ++i) {
+        m_threads[i]->execute(m_threadFunction, parameters);
+        currentParameter += m_sizeOfParameter;
+    }
+
+    // The work for the main thread.
+    (*m_threadFunction)(parameters);
+
+    // Wait until all jobs are done.
+    for (i = 0; i < m_threads.size(); ++i)
+        m_threads[i]->waitForFinish();
+}
 
 void ParallelEnvironment::determineMaxNumberOfParallelThreads()
 {
@@ -132,5 +178,4 @@ void* ParallelEnvironment::ThreadPrivate::workerThread(void* threadData)
 }
 
 } // namespace WTF
-
-#endif // ENABLE(PARALLEL_JOBS) && ENABLE(THREADING_GENERIC)
+#endif // ENABLE(THREADING_GENERIC)

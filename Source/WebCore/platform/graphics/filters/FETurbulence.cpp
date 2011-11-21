@@ -357,12 +357,10 @@ inline void FETurbulence::fillRegion(ByteArray* pixelArray, PaintingData& painti
     }
 }
 
-#if ENABLE(PARALLEL_JOBS)
 void FETurbulence::fillRegionWorker(FillRegionParameters* parameters)
 {
     parameters->filter->fillRegion(parameters->pixelArray, *parameters->paintingData, parameters->startY, parameters->endY);
 }
-#endif // ENABLE(PARALLEL_JOBS)
 
 void FETurbulence::platformApplySoftware()
 {
@@ -378,12 +376,10 @@ void FETurbulence::platformApplySoftware()
     PaintingData paintingData(m_seed, roundedIntSize(filterPrimitiveSubregion().size()));
     initPaint(paintingData);
 
-#if ENABLE(PARALLEL_JOBS)
-
     int optimalThreadNumber = (absolutePaintRect().width() * absolutePaintRect().height()) / s_minimalRectDimension;
     if (optimalThreadNumber > 1) {
         // Initialize parallel jobs
-        ParallelJobs<FillRegionParameters> parallelJobs(&WebCore::FETurbulence::fillRegionWorker, optimalThreadNumber);
+        WTF::ParallelJobs<FillRegionParameters> parallelJobs(&WebCore::FETurbulence::fillRegionWorker, optimalThreadNumber);
 
         // Fill the parameter array
         int i = parallelJobs.numberOfJobs();
@@ -405,14 +401,11 @@ void FETurbulence::platformApplySoftware()
 
             // Execute parallel jobs
             parallelJobs.execute();
-
             return;
         }
     }
-    // Fallback to sequential mode if there is no room for a new thread or the paint area is too small
 
-#endif // ENABLE(PARALLEL_JOBS)
-
+    // Fallback to single threaded mode if there is no room for a new thread or the paint area is too small.
     fillRegion(pixelArray, paintingData, 0, absolutePaintRect().height());
 }
 

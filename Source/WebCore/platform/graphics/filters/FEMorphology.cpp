@@ -158,16 +158,13 @@ void FEMorphology::platformApplyGeneric(PaintingData* paintingData, int yStart, 
     }
 }
 
-#if ENABLE(PARALLEL_JOBS)
 void FEMorphology::platformApplyWorker(PlatformApplyParameters* param)
 {
     param->filter->platformApplyGeneric(param->paintingData, param->startY, param->endY);
 }
-#endif
 
 void FEMorphology::platformApply(PaintingData* paintingData)
 {
-#if ENABLE(PARALLEL_JOBS)
     int optimalThreadNumber = (paintingData->width * paintingData->height) / s_minimalArea;
     if (optimalThreadNumber > 1) {
         ParallelJobs<PlatformApplyParameters> parallelJobs(&WebCore::FEMorphology::platformApplyWorker, optimalThreadNumber);
@@ -188,7 +185,7 @@ void FEMorphology::platformApply(PaintingData* paintingData)
         }
         // Fallback to single thread model
     }
-#endif
+
     platformApplyGeneric(paintingData, 0, paintingData->height);
 }
 
