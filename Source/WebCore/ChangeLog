@@ -1,3 +1,39 @@
+2011-11-21  Rakesh KN  <rakesh.kn@motorola.com>
+
+        Need support for dirname attribute
+        https://bugs.webkit.org/show_bug.cgi?id=65542
+
+        Reviewed by Eric Seidel.
+
+        Implemented 'dirname' form attribute.
+
+        Tests: fast/forms/form-dirname-attribute.html
+               fast/forms/submit-form-with-dirname-attribute-with-ancestor-dir-attribute.html
+               fast/forms/submit-form-with-dirname-attribute-with-nonhtml-ancestor.html
+               fast/forms/submit-form-with-dirname-attribute.html
+
+        * html/HTMLAttributeNames.in:
+        Added "dirname" attribute.
+        * html/HTMLInputElement.idl:
+        Add "dirName" property to HTMLInputElement interface.
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::appendFormData):
+        Append dirname form data.
+        * html/HTMLTextAreaElement.idl:
+        Add "dirName" property to HTMLTextAreaElement interface.
+        * html/HTMLTextFormControlElement.cpp:
+        (WebCore::parentHTMLElement):
+        Helper function which returns only HTML parent element.
+        (WebCore::HTMLTextFormControlElement::directionForFormData):
+        Helper function for finding directionality of the Element.
+        * html/HTMLTextFormControlElement.h:
+        Helper function for finding directionality of the Element.
+        * html/TextFieldInputType.cpp:
+        (WebCore::TextFieldInputType::appendFormData):
+        Append dirname form data.
+        * html/TextFieldInputType.h:
+        Append dirname form data.
+
 2011-11-21  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Close database connections, abort transactions, and terminate requests on stop()
