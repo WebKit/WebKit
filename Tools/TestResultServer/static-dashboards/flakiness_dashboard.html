@@ -1156,14 +1156,12 @@ var INTERNAL_BUG_REPLACE_VALUE = BUG_URL_PREFIX + 'b' + BUG_URL_POSTFIX;
 var EXTERNAL_BUG_REPLACE_VALUE = BUG_URL_PREFIX + 'crbug.com' + BUG_URL_POSTFIX;
 var WEBKIT_BUG_REPLACE_VALUE = BUG_URL_PREFIX + 'webkit.org/b' + WEBKIT_BUG_URL_POSTFIX;
 
-// Returns the BUG modifiers linking to the bug.
-// Bugs with 4 or 5 digits are crbug.com bugs. Bugs with 6 or 7 digits
-// are internal google bugs.
 function htmlForBugs(bugs)
 {
     bugs = bugs.replace(/BUG(CR)?(\d{4})(\ |$)/g, EXTERNAL_BUG_REPLACE_VALUE);
     bugs = bugs.replace(/BUG(CR)?(\d{5})(\ |$)/g, EXTERNAL_BUG_REPLACE_VALUE);
-    bugs = bugs.replace(/BUG(CR)?(\d{6})(\ |$)/g, INTERNAL_BUG_REPLACE_VALUE);
+    bugs = bugs.replace(/BUG(CR)?(1\d{5})(\ |$)/g, EXTERNAL_BUG_REPLACE_VALUE);
+    bugs = bugs.replace(/BUG(CR)?([2-9]\d{5})(\ |$)/g, INTERNAL_BUG_REPLACE_VALUE);
     bugs = bugs.replace(/BUG(CR)?(\d{7})(\ |$)/g, INTERNAL_BUG_REPLACE_VALUE);
     bugs = bugs.replace(/BUG(WK)(\d{5}\d*?)(\ |$)/g, WEBKIT_BUG_REPLACE_VALUE);
     return bugs;

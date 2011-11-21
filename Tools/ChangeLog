@@ -1,3 +1,15 @@
+2011-11-21  Adam Klein  <adamk@chromium.org>
+
+        Update flakiness dashboard linkification regexps for crbug.com/100000 and above
+        https://bugs.webkit.org/show_bug.cgi?id=72898
+
+        Reviewed by Ojan Vafai.
+
+        Also removed a comment that was going to be more trouble to keep up to
+        date than seemed worthwhile (the code is now the documentation).
+
+        * TestResultServer/static-dashboards/flakiness_dashboard.html:
+
 2011-11-21  Dominic Mazzoni  <dmazzoni@google.com>
 
         [Chromium] WebAccessibilityNotification should use AssertMatchingEnums.
