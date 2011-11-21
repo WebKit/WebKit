@@ -149,7 +149,7 @@ WebInspector.ScriptsPanel = function(presentationModel)
     this.element.appendChild(this.sidebarResizeElement);
 
     this.enableToggleButton = new WebInspector.StatusBarButton("", "enable-toggle-status-bar-item");
-    this.enableToggleButton.addEventListener("click", this._toggleDebugging, this);
+    this.enableToggleButton.addEventListener("click", this.toggleDebugging, this);
     if (Preferences.debuggerAlwaysEnabled)
         this.enableToggleButton.element.addStyleClass("hidden");
 
