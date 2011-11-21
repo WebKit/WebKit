@@ -38,6 +38,7 @@ class Frame;
 class Node;
 class TextCheckerClient;
 struct TextCheckingResult;
+class Range;
 
 class SpellChecker {
     WTF_MAKE_NONCOPYABLE(SpellChecker);
@@ -46,21 +47,22 @@ public:
     ~SpellChecker();
 
     bool isAsynchronousEnabled() const;
-    bool canCheckAsynchronously(Node*) const;
+    bool canCheckAsynchronously(Range*) const;
     bool isBusy() const;
     bool isValid(int sequence) const;
-    bool isCheckable(Node*) const;
-    void requestCheckingFor(TextCheckingTypeMask, Node*);
+    bool isCheckable(Range*) const;
+    void requestCheckingFor(TextCheckingTypeMask, PassRefPtr<Range>);
     void didCheck(int sequence, const Vector<TextCheckingResult>&);
 
 private:
-    bool initRequest(Node*);
+    bool initRequest(PassRefPtr<Range>);
     void clearRequest();
+    void doRequestCheckingFor(TextCheckingTypeMask, PassRefPtr<Range>);
     TextCheckerClient* client() const;
 
     Frame* m_frame;
 
-    RefPtr<Node> m_requestNode;
+    RefPtr<Range> m_requestRange;
     String m_requestText;
     int m_requestSequence;
 };

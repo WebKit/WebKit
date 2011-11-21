@@ -413,8 +413,11 @@ void Editor::replaceSelectionWithFragment(PassRefPtr<DocumentFragment> fragment,
     revealSelectionAfterEditingOperation();
 
     Node* nodeToCheck = m_frame->selection()->rootEditableElement();
-    if (m_spellChecker->canCheckAsynchronously(nodeToCheck))
-        m_spellChecker->requestCheckingFor(resolveTextCheckingTypeMask(TextCheckingTypeSpelling | TextCheckingTypeGrammar), nodeToCheck);
+    if (!nodeToCheck)
+        return;
+
+    m_spellChecker->requestCheckingFor(resolveTextCheckingTypeMask(TextCheckingTypeSpelling | TextCheckingTypeGrammar),
+        Range::create(m_frame->document(), firstPositionInNode(nodeToCheck), lastPositionInNode(nodeToCheck)));
 }
 
 void Editor::replaceSelectionWithText(const String& text, bool selectReplacement, bool smartReplace)

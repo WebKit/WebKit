@@ -1,3 +1,30 @@
+2011-11-21  Shinya Kawanaka  <shinyak@google.com>
+
+        Refactoring: SpellChecker::requestCheckingFor should take Range instead of Node.
+        https://bugs.webkit.org/show_bug.cgi?id=72847
+
+        Reviewed by Hajime Morita.
+
+        Covered by existing test.
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::replaceSelectionWithFragment):
+          Passes Range to requestCheckingFor instead of Node.
+        * editing/SpellChecker.cpp:
+          Changed argument type from Node to Range.
+          The corresponding changes are also done in dependent methods.
+        (WebCore::SpellChecker::initRequest):
+        (WebCore::SpellChecker::clearRequest):
+        (WebCore::SpellChecker::canCheckAsynchronously):
+        (WebCore::SpellChecker::isBusy):
+        (WebCore::SpellChecker::isValid):
+        (WebCore::SpellChecker::isCheckable):
+        (WebCore::SpellChecker::requestCheckingFor):
+          Changed argument type from Node to Range.
+        (WebCore::SpellChecker::doRequestCheckingFor):
+        (WebCore::SpellChecker::didCheck):
+        * editing/SpellChecker.h:
+
 2011-11-20  Kenichi Ishibashi  <bashi@chromium.org>
 
         [Chromium] Remove old getFontFamilyForCharacters() and familyForChars() APIs.
