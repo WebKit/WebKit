@@ -1,3 +1,11 @@
+2011-11-21  Filip Pizlo  <fpizlo@apple.com>
+        
+        Another attempt at a build fix.
+
+        * dfg/DFGRepatch.h:
+        (JSC::DFG::dfgResetGetByID):
+        (JSC::DFG::dfgResetPutByID):
+
 2011-11-20  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed interpreter build fix.

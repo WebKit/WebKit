@@ -44,14 +44,19 @@ void dfgResetPutByID(RepatchBuffer&, StructureStubInfo&);
 
 } } // namespace JSC::DFG
 
-#elif ENABLE(JIT) // ENABLE(DFG_JIT)
+#else // ENABLE(DFG_JIT)
 
 #include <wtf/Assertions.h>
 
-namespace JSC { namespace DFG {
+namespace JSC {
 
-void dfgResetGetByID(RepatchBuffer&, StructureStubInfo&) { ASSERT_NOT_REACHED(); }
-void dfgResetPutByID(RepatchBuffer&, StructureStubInfo&) { ASSERT_NOT_REACHED(); }
+class RepatchBuffer;
+class StructureStubInfo;
+
+namespace DFG {
+
+inline NO_RETURN_DUE_TO_ASSERT void dfgResetGetByID(RepatchBuffer&, StructureStubInfo&) { ASSERT_NOT_REACHED(); }
+inline NO_RETURN_DUE_TO_ASSERT void dfgResetPutByID(RepatchBuffer&, StructureStubInfo&) { ASSERT_NOT_REACHED(); }
 
 } } // namespace JSC::DFG
 
