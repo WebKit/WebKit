@@ -322,6 +322,14 @@ class ChangeLogTest(unittest.TestCase):
         self._assert_parse_reviewer_text_list('Reviewed by NOBODY (Build fix, forgot to svn add this file)', None)
         self._assert_parse_reviewer_text_list('Reviewed by nobody (trivial follow up fix), Joseph Pecoraro LGTM-ed.', None)
 
+    def _entry_with_author(self, author_text):
+        return ChangeLogEntry('''2009-08-19  AUTHOR_TEXT
+
+            Reviewed by Ryosuke Niwa
+
+            * Scripts/bugzilla-tool:
+'''.replace("AUTHOR_TEXT", author_text))
+
     def _entry_with_reviewer(self, reviewer_line):
         return ChangeLogEntry('''2009-08-19  Eric Seidel  <eric@webkit.org>
 
@@ -349,6 +357,19 @@ class ChangeLogTest(unittest.TestCase):
             ['Mark Rowe', 'but Dan Bernstein also reviewed', 'asked thoughtful questions'], ['Mark Rowe'])
         self._assert_fuzzy_reviewer_match('Reviewed by Darin Adler in <https://bugs.webkit.org/show_bug.cgi?id=47736>.', ['Darin Adler in'], ['Darin Adler'])
         self._assert_fuzzy_reviewer_match('Reviewed by Adam Barth.:w', ['Adam Barth.:w'], ['Adam Barth'])
+
+    def _assert_parse_authors(self, author_text, expected_contributors):
+        parsed_authors = [(author['name'], author['email']) for author in self._entry_with_author(author_text).authors()]
+        self.assertEquals(parsed_authors, expected_contributors)
+
+    def test_parse_authors(self):
+        self._assert_parse_authors(u'Aaron Colwell  <acolwell@chromium.org>', [(u'Aaron Colwell', u'acolwell@chromium.org')])
+        self._assert_parse_authors('Eric Seidel  <eric@webkit.org>, Ryosuke Niwa  <rniwa@webkit.org>',
+            [('Eric Seidel', 'eric@webkit.org'), ('Ryosuke Niwa', 'rniwa@webkit.org')])
+        self._assert_parse_authors('Zan Dobersek  <zandobersek@gmail.com> and Philippe Normand  <pnormand@igalia.com>',
+            [('Zan Dobersek', 'zandobersek@gmail.com'), ('Philippe Normand', 'pnormand@igalia.com')])
+        self._assert_parse_authors('New Contributor  <new@webkit.org> and Noob  <noob@webkit.org>',
+            [('New Contributor', 'new@webkit.org'), ('Noob', 'noob@webkit.org')])
 
     def _assert_has_valid_reviewer(self, reviewer_line, expected):
         self.assertEqual(self._entry_with_reviewer(reviewer_line).has_valid_reviewer(), expected)

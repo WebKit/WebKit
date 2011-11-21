@@ -594,13 +594,13 @@ class CommitterList(object):
         return contributorWithMinDistance, minDistance
 
     def account_by_login(self, login):
-        return self._login_to_account_map().get(login.lower())
+        return self._login_to_account_map().get(login.lower()) if login else None
 
     def account_by_email(self, email):
-        return self._email_to_account_map().get(email.lower())
+        return self._email_to_account_map().get(email.lower()) if email else None
 
     def contributor_by_name(self, name):
-        return self._name_to_contributor_map().get(name.lower())
+        return self._name_to_contributor_map().get(name.lower()) if name else None
 
     def contributor_by_email(self, email):
         return self._contributor_only(self.account_by_email(email))

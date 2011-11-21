@@ -34,6 +34,7 @@ import re
 import textwrap
 
 from webkitpy.common.config.committers import CommitterList
+from webkitpy.common.config.committers import Account
 import webkitpy.common.config.urls as config_urls
 from webkitpy.common.system.deprecated_logging import log
 
@@ -71,7 +72,7 @@ def parse_bug_id_from_changelog(message):
 
 class ChangeLogEntry(object):
     # e.g. 2009-06-03  Eric Seidel  <eric@webkit.org>
-    date_line_regexp = r'^(?P<date>\d{4}-\d{2}-\d{2})\s+(?P<name>.+?)\s+<(?P<email>[^<>]+)>$'
+    date_line_regexp = r'^(?P<date>\d{4}-\d{2}-\d{2})\s+(?P<authors>(?P<name>[^<]+?)\s+<(?P<email>[^<>]+)>.*?)$'
 
     # e.g. * Source/WebCore/page/EventHandler.cpp: Implement FooBarQuux.
     touched_files_regexp = r'^\s*\*\s*(?P<file>[A-Za-z0-9_\-\./\\]+)\s*\:'
@@ -135,15 +136,17 @@ class ChangeLogEntry(object):
         if not len(reviewer_text):
             return None, None
 
-        # FIXME: Canonicalize reviewer names; e.g. Andy "First Time Reviewer" Estes
-        # FIXME: Ignore NOBODY (\w+) and "a spell checker"
-        reviewer_list = re.split(r'\s*(?:(?:,(?:\s+and\s+|&)?)|(?:and\s+|&)|(?:[/+]))\s*', reviewer_text)
+        reviewer_list = ChangeLogEntry._split_contributor_names(reviewer_text)
 
         # Get rid of "reviewers" like "even though this is just a..." in "Reviewed by Sam Weinig, even though this is just a..."
         # and "who wrote the original code" in "Noam Rosenthal, who wrote the original code"
         reviewer_list = [reviewer for reviewer in reviewer_list if not re.match('^who\s|^([a-z]+(\s+|\.|$)){6,}$', reviewer)]
 
         return reviewer_text, reviewer_list
+
+    @staticmethod
+    def _split_contributor_names(text):
+        return re.split(r'\s*(?:,(?:\s+and\s+|&)?|(?:^|\s+)and\s+|[/+&])\s*', text)
 
     def _fuzz_match_reviewers(self, reviewers_text_list):
         if not reviewers_text_list:
@@ -152,29 +155,48 @@ class ChangeLogEntry(object):
         # Flatten lists and get rid of any reviewers with more than one candidate.
         return [reviewers[0] for reviewers in list_of_reviewers if len(reviewers) == 1]
 
+    @staticmethod
+    def _parse_author_name_and_email(author_name_and_email):
+        match = re.match(r'(?P<name>.+?)\s+<(?P<email>[^>]+)>', author_name_and_email)
+        return {'name': match.group("name"), 'email': match.group("email")}
+
+    @staticmethod
+    def _parse_author_text(text):
+        if not text:
+            return []
+        authors = ChangeLogEntry._split_contributor_names(text)
+        assert(authors and len(authors) >= 1)
+        return [ChangeLogEntry._parse_author_name_and_email(author) for author in authors]
+
     def _parse_entry(self):
         match = re.match(self.date_line_regexp, self._contents, re.MULTILINE)
         if not match:
             log("WARNING: Creating invalid ChangeLogEntry:\n%s" % self._contents)
 
         # FIXME: group("name") does not seem to be Unicode?  Probably due to self._contents not being unicode.
-        self._author_name = match.group("name") if match else None
-        self._author_email = match.group("email") if match else None
+        self._author_text = match.group("authors") if match else None
+        self._authors = ChangeLogEntry._parse_author_text(self._author_text)
 
         self._reviewer_text, self._reviewers_text_list = ChangeLogEntry._parse_reviewer_text(self._contents)
         self._reviewers = self._fuzz_match_reviewers(self._reviewers_text_list)
-        self._author = self._committer_list.contributor_by_email(self._author_email) or self._committer_list.contributor_by_name(self._author_name)
+        self._author = self._committer_list.contributor_by_email(self.author_email()) or self._committer_list.contributor_by_name(self.author_name())
 
         self._touched_files = re.findall(self.touched_files_regexp, self._contents, re.MULTILINE)
 
+    def author_text(self):
+        return self._author_text
+
     def author_name(self):
-        return self._author_name
+        return self._authors[0]['name']
 
     def author_email(self):
-        return self._author_email
+        return self._authors[0]['email']
 
     def author(self):
         return self._author  # Might be None
+
+    def authors(self):
+        return self._authors
 
     # FIXME: Eventually we would like to map reviwer names to reviewer objects.
     # See https://bugs.webkit.org/show_bug.cgi?id=26533
