@@ -350,8 +350,6 @@
             'dfg/DFGGenerationInfo.h',
             'dfg/DFGGraph.cpp',
             'dfg/DFGGraph.h',
-            'dfg/DFGJITCodeGenerator.cpp',
-            'dfg/DFGJITCodeGenerator.h',
             'dfg/DFGJITCompiler.cpp',
             'dfg/DFGJITCompiler.h',
             'dfg/DFGNode.h',
