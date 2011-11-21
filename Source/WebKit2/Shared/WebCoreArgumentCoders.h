@@ -288,9 +288,9 @@ template<> struct ArgumentCoder<WebCore::TransformOperations> {
     static bool decode(ArgumentDecoder*, WebCore::TransformOperations&);
 };
 
-template<> struct ArgumentCoder<WebCore::Animation> {
-    static void encode(ArgumentEncoder*, const WebCore::Animation&);
-    static bool decode(ArgumentDecoder*, WebCore::Animation&);
+template<> struct ArgumentCoder<RefPtr<WebCore::Animation> > {
+    static void encode(ArgumentEncoder*, const RefPtr<WebCore::Animation>&);
+    static bool decode(ArgumentDecoder*, RefPtr<WebCore::Animation>&);
 };
 #endif
 
