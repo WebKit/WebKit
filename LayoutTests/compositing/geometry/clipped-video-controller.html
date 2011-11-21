@@ -19,8 +19,10 @@
     
   </style>
   <script type="text/javascript" charset="utf-8">
-    if (window.layoutTestController)
+    if (window.layoutTestController) {
+      layoutTestController.dumpAsText(true);
       layoutTestController.waitUntilDone();
+    }
   </script>
 
 <body>

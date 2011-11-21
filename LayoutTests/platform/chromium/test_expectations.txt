@@ -3881,6 +3881,4 @@ BUGWK72747 SLOW WIN DEBUG : accessibility/loading-iframe-sends-notification.html
 
 BUGWK72761 : accessibility/anonymous-render-block-in-continuation-causes-crash.html = PASS TIMEOUT
 
-BUGWK72903 WIN LINUX : compositing/geometry/clipped-video-controller.html = PASS TEXT
-
 BUGWK72904 XP : http/tests/media/video-served-as-text.html = PASS TEXT
