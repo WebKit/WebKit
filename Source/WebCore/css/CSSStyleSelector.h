@@ -397,7 +397,6 @@ private:
     bool m_sameOriginOnly;
 
     RefPtr<CSSFontSelector> m_fontSelector;
-    Vector<CSSMutableStyleDeclaration*> m_additionalAttributeStyleDecls;
     Vector<MediaQueryResult*> m_viewportDependentMediaQueryResults;
 
     bool m_applyPropertyToRegularStyle;

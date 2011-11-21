@@ -1,3 +1,16 @@
+2011-11-21  Antti Koivisto  <antti@apple.com>
+
+        Remove CSSStyleSelector::m_additionalAttributeStyleDecls field
+        https://bugs.webkit.org/show_bug.cgi?id=72876
+
+        Reviewed by Andreas Kling.
+
+        There is no reason for this temporary to be a field.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::matchAllRules):
+        * css/CSSStyleSelector.h:
+
 2011-11-21  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: [REGRESSION] Assertion failed in ScriptsPanel.js

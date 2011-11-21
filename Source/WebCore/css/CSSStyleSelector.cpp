@@ -795,15 +795,15 @@ void CSSStyleSelector::matchAllRules(MatchResult& result)
         // Tables and table cells share an additional mapped rule that must be applied
         // after all attributes, since their mapped style depends on the values of multiple attributes.
         if (m_styledElement->canHaveAdditionalAttributeStyleDecls()) {
-            m_additionalAttributeStyleDecls.clear();
-            m_styledElement->additionalAttributeStyleDecls(m_additionalAttributeStyleDecls);
-            if (!m_additionalAttributeStyleDecls.isEmpty()) {
-                unsigned additionalDeclsSize = m_additionalAttributeStyleDecls.size();
+            Vector<CSSMutableStyleDeclaration*> additionalAttributeStyleDecls;
+            m_styledElement->additionalAttributeStyleDecls(additionalAttributeStyleDecls);
+            if (!additionalAttributeStyleDecls.isEmpty()) {
+                unsigned additionalDeclsSize = additionalAttributeStyleDecls.size();
                 if (result.firstAuthorRule == -1)
                     result.firstAuthorRule = m_matchedDecls.size();
                 result.lastAuthorRule = m_matchedDecls.size() + additionalDeclsSize - 1;
                 for (unsigned i = 0; i < additionalDeclsSize; ++i)
-                    addMatchedDeclaration(m_additionalAttributeStyleDecls[i]);
+                    addMatchedDeclaration(additionalAttributeStyleDecls[i]);
                 result.isCacheable = false;
             }
         }
