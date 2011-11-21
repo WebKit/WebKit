@@ -1835,12 +1835,12 @@ RegisterID* BytecodeGenerator::emitCall(OpcodeID opcodeID, RegisterID* dst, Regi
     return dst;
 }
 
-RegisterID* BytecodeGenerator::emitCallVarargs(RegisterID* dst, RegisterID* func, RegisterID* thisRegister, RegisterID* arguments, RegisterID* firstFreeRegister, unsigned divot, unsigned startOffset, unsigned endOffset)
+RegisterID* BytecodeGenerator::emitCallVarargs(RegisterID* dst, RegisterID* func, RegisterID* thisRegister, RegisterID* arguments, RegisterID* firstFreeRegister, RegisterID* profileHookRegister, unsigned divot, unsigned startOffset, unsigned endOffset)
 {
-    ASSERT(dst != func);
     if (m_shouldEmitProfileHooks) {
+        emitMove(profileHookRegister, func);
         emitOpcode(op_profile_will_call);
-        instructions().append(func->index());
+        instructions().append(profileHookRegister->index());
     }
     
     emitExpressionInfo(divot, startOffset, endOffset);
@@ -1857,7 +1857,7 @@ RegisterID* BytecodeGenerator::emitCallVarargs(RegisterID* dst, RegisterID* func
     }
     if (m_shouldEmitProfileHooks) {
         emitOpcode(op_profile_did_call);
-        instructions().append(func->index());
+        instructions().append(profileHookRegister->index());
     }
     return dst;
 }
