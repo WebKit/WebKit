@@ -32,4 +32,17 @@ class WebInspectorFrontendClient;
 - (id)initWithFrontendClient:(WebInspectorFrontendClient *)frontendClient;
 - (void)attach;
 - (void)detach;
+
+- (BOOL)isDebuggingEnabled;
+- (void)setDebuggingEnabled:(BOOL)enabled;
+
+- (BOOL)isTimelineProfilingEnabled;
+- (void)setTimelineProfilingEnabled:(BOOL)enabled;
+
+- (BOOL)isProfilingJavaScript;
+- (void)startProfilingJavaScript;
+- (void)stopProfilingJavaScript;
+
+- (void)showConsole;
+
 @end

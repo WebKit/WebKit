@@ -1,3 +1,37 @@
+2011-06-20  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: introduce InspectorFrontendAPI for actions initiated from the application menu.
+        https://bugs.webkit.org/show_bug.cgi?id=62985
+
+        Both: inspector protocol and WebCore/InspectorController have a number of unnecessary
+        methods for plumbing the menu action handlers through the WebKit and WebCore.
+        I intend to remove this menu support from the protocol and WebCore/InspectorController API.
+        I am starting with exposing the new front-end API in the WebCore and using it in the WebKit/mac port.
+        WebKit/win and WebKit2 to follow.
+
+        Reviewed by Yury Semikhatsky.
+
+        * WebInspector.cpp:
+        (WebInspector::createInstance):
+        (WebInspector::WebInspector):
+        (WebInspector::webViewClosed):
+        (WebInspector::showConsole):
+        (WebInspector::isDebuggingJavaScript):
+        (WebInspector::toggleDebuggingJavaScript):
+        (WebInspector::isProfilingJavaScript):
+        (WebInspector::toggleProfilingJavaScript):
+        (WebInspector::isJavaScriptProfilingEnabled):
+        (WebInspector::setJavaScriptProfilingEnabled):
+        (WebInspector::isTimelineProfilingEnabled):
+        (WebInspector::setTimelineProfilingEnabled):
+        * WebInspector.h:
+        * WebView.cpp:
+        (WebView::WebView):
+        (WebView::close):
+        (WebView::initWithFrame):
+        (WebView::inspector):
+        * WebView.h:
+
 2011-10-17  Antonio Gomes  <agomes@rim.com>
 
         Pass a Frame* parameter in EditorClient::respondToChangedSelection

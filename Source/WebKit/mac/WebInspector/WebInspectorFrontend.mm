@@ -48,4 +48,44 @@
     m_frontendClient->detachWindow();
 }
 
+- (BOOL)isDebuggingEnabled
+{
+    return m_frontendClient->isDebuggingEnabled();
+}
+
+- (void)setDebuggingEnabled:(BOOL)enabled
+{
+    m_frontendClient->setDebuggingEnabled(enabled);
+}
+
+- (BOOL)isProfilingJavaScript
+{
+    return m_frontendClient->isProfilingJavaScript();
+}
+
+- (void)startProfilingJavaScript
+{
+    m_frontendClient->startProfilingJavaScript();
+}
+
+- (void)stopProfilingJavaScript
+{
+    m_frontendClient->stopProfilingJavaScript();
+}
+
+- (BOOL)isTimelineProfilingEnabled
+{
+    return m_frontendClient->isTimelineProfilingEnabled();
+}
+
+- (void)setTimelineProfilingEnabled:(BOOL)enabled
+{
+    m_frontendClient->setTimelineProfilingEnabled(enabled);
+}
+
+- (void)showConsole
+{
+    m_frontendClient->showConsole();
+}
+
 @end

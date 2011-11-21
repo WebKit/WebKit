@@ -1,3 +1,69 @@
+2011-06-20  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: introduce InspectorFrontendAPI for actions initiated from the application menu.
+        https://bugs.webkit.org/show_bug.cgi?id=62985
+
+        Both: inspector protocol and WebCore/InspectorController have a number of unnecessary
+        methods for plumbing the menu action handlers through the WebKit and WebCore.
+        I intend to remove this menu support from the protocol and WebCore/InspectorController API.
+        I am starting with exposing the new front-end API in the WebCore and using it in the WebKit/mac port.
+        WebKit/win and WebKit2 to follow.
+
+        Reviewed by Yury Semikhatsky.
+
+        * WebCore.exp.in:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/InspectorFrontendClientLocal.cpp:
+        (WebCore::InspectorFrontendClientLocal::InspectorFrontendClientLocal):
+        (WebCore::InspectorFrontendClientLocal::frontendLoaded):
+        (WebCore::InspectorFrontendClientLocal::setAttachedWindow):
+        (WebCore::InspectorFrontendClientLocal::isDebuggingEnabled):
+        (WebCore::InspectorFrontendClientLocal::setDebuggingEnabled):
+        (WebCore::InspectorFrontendClientLocal::isJavaScriptProfilingEnabled):
+        (WebCore::InspectorFrontendClientLocal::setJavaScriptProfilingEnabled):
+        (WebCore::InspectorFrontendClientLocal::isTimelineProfilingEnabled):
+        (WebCore::InspectorFrontendClientLocal::setTimelineProfilingEnabled):
+        (WebCore::InspectorFrontendClientLocal::isProfilingJavaScript):
+        (WebCore::InspectorFrontendClientLocal::startProfilingJavaScript):
+        (WebCore::InspectorFrontendClientLocal::stopProfilingJavaScript):
+        (WebCore::InspectorFrontendClientLocal::evaluateAsBoolean):
+        (WebCore::InspectorFrontendClientLocal::evaluateOnLoad):
+        * inspector/InspectorFrontendClientLocal.h:
+        * inspector/front-end/InspectorFrontendAPI.js: Added.
+        (InspectorFrontendAPI.isDebuggingEnabled):
+        (InspectorFrontendAPI.setDebuggingEnabled):
+        (InspectorFrontendAPI.isJavaScriptProfilingEnabled):
+        (InspectorFrontendAPI.setJavaScriptProfilingEnabled):
+        (InspectorFrontendAPI.isTimelineProfilingEnabled):
+        (InspectorFrontendAPI.setTimelineProfilingEnabled):
+        (InspectorFrontendAPI.isProfilingJavaScript):
+        (InspectorFrontendAPI.startProfilingJavaScript):
+        (InspectorFrontendAPI.stopProfilingJavaScript):
+        (InspectorFrontendAPI.setAttachedWindow):
+        * inspector/front-end/ProfileView.js:
+        (WebInspector.CPUProfileType):
+        (WebInspector.CPUProfileType.prototype.isRecordingProfile):
+        (WebInspector.CPUProfileType.prototype.startRecordingProfile):
+        (WebInspector.CPUProfileType.prototype.stopRecordingProfile):
+        * inspector/front-end/ProfilesPanel.js:
+        (WebInspector.ProfilesPanel.prototype.get profilerEnabled):
+        (WebInspector.ProfilesPanel.prototype.enableProfiler):
+        (WebInspector.ProfilesPanel.prototype.disableProfiler):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel):
+        (WebInspector.ScriptsPanel.prototype.get debuggingEnabled):
+        (WebInspector.ScriptsPanel.prototype.enableDebugging):
+        (WebInspector.ScriptsPanel.prototype.disableDebugging):
+        (WebInspector.ScriptsPanel.prototype.toggleDebugging):
+        * inspector/front-end/TimelinePanel.js:
+        (WebInspector.TimelinePanel.prototype._memoryOverviewItemSelected):
+        (WebInspector.TimelinePanel.prototype.setTimelineProfilingEnabled):
+        (WebInspector.TimelinePanel.prototype.get timelineProfilingEnabled):
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/inspector.html:
+        * inspector/front-end/inspector.js:
+
 2011-11-18  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: [Protocol] Retain a single universal method for loading a required combination of element styles

@@ -46,6 +46,7 @@ class Page;
 
 }
 
+class WebInspectorFrontendClient;
 class WebNodeHighlight;
 class WebView;
 
@@ -67,6 +68,9 @@ public:
     void setInspectorStartsAttached(bool);
 
     void releaseFrontendPage();
+    void releaseFrontendClient();
+
+    WebInspectorFrontendClient* frontendClient() { return m_frontendClient; }
 
     void updateHighlight();
     void frontendClosing()
@@ -81,6 +85,7 @@ private:
 
     WebView* m_inspectedWebView;
     WebCore::Page* m_frontendPage;
+    WebInspectorFrontendClient* m_frontendClient;
     HWND m_inspectedWebViewHwnd;
     HWND m_frontendHwnd;
 

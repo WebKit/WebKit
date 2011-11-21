@@ -142,7 +142,7 @@ WebInspector.ScriptsPanel = function(presentationModel)
     var panelEnablerButton = WebInspector.UIString("Enable Debugging");
 
     this.panelEnablerView = new WebInspector.PanelEnablerView("scripts", panelEnablerHeading, panelEnablerDisclaimer, panelEnablerButton);
-    this.panelEnablerView.addEventListener("enable clicked", this._enableDebugging, this);
+    this.panelEnablerView.addEventListener("enable clicked", this.enableDebugging, this);
 
     this.element.appendChild(this.viewsContainerElement);
     this.element.appendChild(this.sidebarElement);
@@ -915,14 +915,26 @@ WebInspector.ScriptsPanel.prototype = {
         this._updateBackAndForwardButtons();
     },
 
-    _enableDebugging: function()
+    get debuggingEnabled()
+    {
+        return this._debuggerEnabled;
+    },
+
+    enableDebugging: function()
     {
         if (this._debuggerEnabled)
             return;
-        this._toggleDebugging(this.panelEnablerView.alwaysEnabled);
+        this.toggleDebugging(this.panelEnablerView.alwaysEnabled);
     },
 
-    _toggleDebugging: function(optionalAlways)
+    disableDebugging: function()
+    {
+        if (!this._debuggerEnabled)
+            return;
+        this.toggleDebugging(this.panelEnablerView.alwaysEnabled);
+    },
+
+    toggleDebugging: function(optionalAlways)
     {
         this._paused = false;
         this._waitingToPause = false;

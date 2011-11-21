@@ -69,6 +69,7 @@ static CFBundleRef getWebKitBundle()
 WebInspectorClient::WebInspectorClient(WebView* webView)
     : m_inspectedWebView(webView)
     , m_frontendPage(0)
+    , m_frontendClient(0)
 {
     ASSERT(m_inspectedWebView);
     m_inspectedWebView->viewWindow((OLE_HANDLE*)&m_inspectedWebViewHwnd);
@@ -171,7 +172,9 @@ void WebInspectorClient::openInspectorFrontend(InspectorController* inspectorCon
         return;
 
     m_frontendPage = core(frontendWebView.get());
-    m_frontendPage->inspectorController()->setInspectorFrontendClient(adoptPtr(new WebInspectorFrontendClient(m_inspectedWebView, m_inspectedWebViewHwnd, frontendHwnd, frontendWebView, frontendWebViewHwnd, this, createFrontendSettings())));
+    OwnPtr<WebInspectorFrontendClient> frontendClient = adoptPtr(new WebInspectorFrontendClient(m_inspectedWebView, m_inspectedWebViewHwnd, frontendHwnd, frontendWebView, frontendWebViewHwnd, this, createFrontendSettings()));
+    m_frontendClient = frontendClient.get();
+    m_frontendPage->inspectorController()->setInspectorFrontendClient(frontendClient.release());
     m_frontendHwnd = frontendHwnd;
 }
 
@@ -201,6 +204,11 @@ void WebInspectorClient::updateHighlight()
 {
     if (m_highlight && m_highlight->isShowing())
         m_highlight->update();
+}
+
+void WebInspectorClient::releaseFrontendClient()
+{
+    m_frontendClient = 0;
 }
 
 WebInspectorFrontendClient::WebInspectorFrontendClient(WebView* inspectedWebView, HWND inspectedWebViewHwnd, HWND frontendHwnd, const COMPtr<WebView>& frontendWebView, HWND frontendWebViewHwnd, WebInspectorClient* inspectorClient, PassOwnPtr<Settings> settings)
@@ -397,6 +405,8 @@ void WebInspectorFrontendClient::showWindowWithoutNotifications()
 
 void WebInspectorFrontendClient::destroyInspectorView(bool notifyInspectorController)
 {
+    m_inspectorClient->releaseFrontendClient();
+
     if (m_destroyingInspectorView)
         return;
     m_destroyingInspectorView = true;

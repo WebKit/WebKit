@@ -45,6 +45,7 @@ using namespace WebCore;
     if (!(self = [super init]))
         return nil;
     _webView = webView; // not retained to prevent a cycle
+
     return self;
 }
 
@@ -59,16 +60,21 @@ using namespace WebCore;
     _webView = nil;
 }
 
-- (void)show:(id)sender
+- (void)showWindow
 {
     if (Page* page = core(_webView))
         page->inspectorController()->show();
 }
 
+- (void)show:(id)sender
+{
+    [self showWindow];
+}
+
 - (void)showConsole:(id)sender
 {
-    if (Page* page = core(_webView))
-        page->inspectorController()->showConsole();
+    [self showWindow];
+    [_frontend showConsole];
 }
 
 - (void)showTimeline:(id)sender
@@ -78,60 +84,56 @@ using namespace WebCore;
 
 - (BOOL)isDebuggingJavaScript
 {
-    if (Page* page = core(_webView))
-        return page->inspectorController()->debuggerEnabled();
-    return NO;
+    return _frontend && [_frontend isDebuggingEnabled];
 }
 
 - (void)toggleDebuggingJavaScript:(id)sender
 {
+    [self showWindow];
+
     if ([self isDebuggingJavaScript])
-        [self stopDebuggingJavaScript:sender];
+        [_frontend setDebuggingEnabled:false];
     else
-        [self startDebuggingJavaScript:sender];
+        [_frontend setDebuggingEnabled:true];
 }
 
 - (void)startDebuggingJavaScript:(id)sender
 {
-    Page* page = core(_webView);
-    if (!page)
-        return;
-    page->inspectorController()->showAndEnableDebugger();
+    if (_frontend)
+        [_frontend setDebuggingEnabled:true];
 }
 
 - (void)stopDebuggingJavaScript:(id)sender
 {
-    if (Page* page = core(_webView))
-        page->inspectorController()->disableDebugger();
+    if (_frontend)
+        [_frontend setDebuggingEnabled:false];
 }
 
 - (BOOL)isProfilingJavaScript
 {
-    if (Page* page = core(_webView))
-        return page->inspectorController()->isRecordingUserInitiatedProfile();
-    return NO;
+    return _frontend && [_frontend isProfilingJavaScript];
 }
 
 - (void)toggleProfilingJavaScript:(id)sender
 {
+    [self showWindow];
+
     if ([self isProfilingJavaScript])
-        [self stopProfilingJavaScript:sender];
+        [_frontend stopProfilingJavaScript];
     else
-        [self startProfilingJavaScript:sender];
+        [_frontend startProfilingJavaScript];
 }
 
 - (void)startProfilingJavaScript:(id)sender
 {
-    if (Page* page = core(_webView))
-        page->inspectorController()->startUserInitiatedProfiling();
+    if (_frontend)
+        [_frontend startProfilingJavaScript];
 }
 
 - (void)stopProfilingJavaScript:(id)sender
 {
-    Page* page = core(_webView);
-    if (!page)
-        return;
-    page->inspectorController()->stopUserInitiatedProfiling();
+    if (_frontend)
+        [_frontend stopProfilingJavaScript];
 }
 
 - (BOOL)isJavaScriptProfilingEnabled
@@ -155,21 +157,13 @@ using namespace WebCore;
 
 - (BOOL)isTimelineProfilingEnabled
 {
-    if (Page* page = core(_webView))
-        return page->inspectorController()->timelineProfilerEnabled() ? YES : NO;
-    return NO;
+    return _frontend && [_frontend isTimelineProfilingEnabled];
 }
 
 - (void)setTimelineProfilingEnabled:(BOOL)enabled
 {
-    Page* page = core(_webView);
-    if (!page)
-        return;
-
-    if (enabled)
-        page->inspectorController()->startTimelineProfiler();
-    else
-        page->inspectorController()->stopTimelineProfiler();
+    if (_frontend)
+        [_frontend setTimelineProfilingEnabled:enabled];
 }
 
 - (void)close:(id)sender 
@@ -196,8 +190,13 @@ using namespace WebCore;
 
 - (void)setFrontend:(WebInspectorFrontend *)frontend
 {
-    [_frontend release];
     _frontend = [frontend retain];
+}
+
+- (void)releaseFrontend
+{
+    [_frontend release];
+    _frontend = 0;
 }
 @end
 
@@ -247,6 +246,6 @@ using namespace WebCore;
         logged = YES;
     }
 
-    [self show:sender];
+    [self showWindow];
 }
 @end

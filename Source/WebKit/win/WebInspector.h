@@ -32,12 +32,14 @@
 #include "WebKit.h"
 #include <wtf/Noncopyable.h>
 
+class WebInspectorClient;
+class WebInspectorFrontendClient;
 class WebView;
 
 class WebInspector : public IWebInspector, public IWebInspectorPrivate {
     WTF_MAKE_NONCOPYABLE(WebInspector);
 public:
-    static WebInspector* createInstance(WebView*);
+    static WebInspector* createInstance(WebView*, WebInspectorClient*);
 
     void webViewClosed();
 
@@ -67,11 +69,14 @@ public:
     virtual HRESULT STDMETHODCALLTYPE setTimelineProfilingEnabled(BOOL);
 
 private:
-    WebInspector(WebView*);
+    WebInspector(WebView*, WebInspectorClient*);
     ~WebInspector();
+
+    WebInspectorFrontendClient* frontendClient();
 
     ULONG m_refCount;
     WebView* m_webView;
+    WebInspectorClient* m_inspectorClient;
 };
 
 #endif // !defined(WebInspector_h)
