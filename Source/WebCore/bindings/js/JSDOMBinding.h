@@ -205,17 +205,10 @@ enum ParameterMissingPolicy {
             return root(parentRule);
         if (CSSStyleSheet* styleSheet = style->parentStyleSheet())
             return root(styleSheet);
-        return style;
-    }
-
-    inline void* root(CSSMutableStyleDeclaration* style)
-    {
-        if (CSSRule* parentRule = style->parentRule())
-            return root(parentRule);
-        if (CSSStyleSheet* styleSheet = style->parentStyleSheet())
-            return root(styleSheet);
-        if (Node* node = style->node())
-            return root(node);
+        if (style->isMutableStyleDeclaration()) {
+            if (Node* node = static_cast<CSSMutableStyleDeclaration*>(style)->node())
+                return root(node);
+        }
         return style;
     }
 

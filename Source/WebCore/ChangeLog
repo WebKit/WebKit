@@ -1,3 +1,16 @@
+2011-11-21  Andreas Kling  <kling@webkit.org>
+
+        JSC/CSSOM: Merge root() for style declaration objects.
+        <http://webkit.org/b/72881>
+
+        Reviewed by Antti Koivisto.
+
+        Fold root(CSSMutableStyleDeclaration*) into root(CSSStyleDeclaration*),
+        removing a duplicated chunk and making it a little easier on the eyes.
+
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::root):
+
 2011-11-21  Igor Oliveira  <igor.oliveira@openbossa.org>
 
         [WK2][Qt] Move Accelerated Composite animations to UIProcess
