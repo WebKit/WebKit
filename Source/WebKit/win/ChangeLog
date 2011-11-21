@@ -1,3 +1,11 @@
+2011-11-21  Pavel Feldman  <pfeldman@google.com>
+
+        Not reviewed: an attempt to fix windows build.
+
+        * WebInspector.cpp:
+        (WebInspector::isJavaScriptProfilingEnabled):
+        (WebInspector::setJavaScriptProfilingEnabled):
+
 2011-06-20  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: introduce InspectorFrontendAPI for actions initiated from the application menu.

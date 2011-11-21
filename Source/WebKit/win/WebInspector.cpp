@@ -210,21 +210,31 @@ HRESULT STDMETHODCALLTYPE WebInspector::isJavaScriptProfilingEnabled(BOOL* isPro
 
     *isProfilingEnabled = FALSE;
 
-    if (!frontendClient())
+    if (!m_webView)
         return S_OK;
 
-    *isProfilingEnabled = frontendClient()->isJavaScriptProfilingEnabled();
+    Page* page = m_webView->page();
+    if (!page)
+        return S_OK;
+
+    *isProfilingEnabled = page->inspectorController()->profilerEnabled();
     return S_OK;
 }
 
 HRESULT STDMETHODCALLTYPE WebInspector::setJavaScriptProfilingEnabled(BOOL enabled)
 {
-    show();
-
-    if (!frontendClient())
+    if (!m_webView)
         return S_OK;
 
-    frontendClient()->setJavaScriptProfilingEnabled(enabled);
+    Page* page = m_webView->page();
+    if (!page)
+        return S_OK;
+
+    if (enabled)
+        page->inspectorController()->enableProfiler();
+    else
+        page->inspectorController()->disableProfiler();
+
     return S_OK;
 }
 
