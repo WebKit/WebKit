@@ -1,3 +1,9 @@
+2011-11-21  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix make distcheck build.
+
+        * GNUmakefile.am:
+
 2011-10-17  Antonio Gomes  <agomes@rim.com>
 
         Pass a Frame* parameter in EditorClient::respondToChangedSelection

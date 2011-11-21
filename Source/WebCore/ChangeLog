@@ -1,3 +1,9 @@
+2011-11-21  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix make distcheck build.
+
+        * GNUmakefile.list.am:
+
 2011-11-21  Dominic Mazzoni  <dmazzoni@google.com>
 
         Accessibility: Multiselect list boxes need to report the active option in addition to which items are selected.

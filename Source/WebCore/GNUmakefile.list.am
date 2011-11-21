@@ -1882,6 +1882,7 @@ webcore_sources += \
 	Source/WebCore/html/LoadableTextTrack.h \
 	Source/WebCore/html/MediaController.cpp \
 	Source/WebCore/html/MediaController.h \
+	Source/WebCore/html/MediaControllerInterface.h \
 	Source/WebCore/html/MediaDocument.cpp \
 	Source/WebCore/html/MediaDocument.h \
 	Source/WebCore/html/MediaError.h \
@@ -2379,7 +2380,6 @@ webcore_sources += \
 	Source/WebCore/page/MemoryInfo.h \
 	Source/WebCore/page/MouseEventWithHitTestResults.cpp \
 	Source/WebCore/page/MouseEventWithHitTestResults.h \
-	Source/WebCore/page/MouseLockable.h \
 	Source/WebCore/page/Navigator.cpp \
 	Source/WebCore/page/Navigator.h \
 	Source/WebCore/page/NavigatorBase.cpp \
@@ -2402,6 +2402,7 @@ webcore_sources += \
 	Source/WebCore/page/PerformanceNavigation.h \
 	Source/WebCore/page/PerformanceTiming.cpp \
 	Source/WebCore/page/PerformanceTiming.h \
+	Source/WebCore/page/PointerLock.h \
 	Source/WebCore/page/PositionCallback.h \
 	Source/WebCore/page/PositionError.h \
 	Source/WebCore/page/PositionErrorCallback.h \
