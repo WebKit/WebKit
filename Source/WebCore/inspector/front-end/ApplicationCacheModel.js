@@ -42,6 +42,8 @@ WebInspector.ApplicationCacheModel = function()
     this._manifestURLsByFrame = {};
 
     this._mainFrameNavigated();
+    
+    this._onLine = true;
 }
 
 WebInspector.ApplicationCacheModel.EventTypes = {
@@ -170,6 +172,14 @@ WebInspector.ApplicationCacheModel.prototype = {
     },
     
     /**
+     * @return {number}
+     */
+    get onLine()
+    {
+        return this._onLine;
+    },
+    
+    /**
      * @param {string} frameId
      * @param {string} manifestURL
      * @param {number} status
@@ -204,6 +214,7 @@ WebInspector.ApplicationCacheModel.prototype = {
      */
     _networkStateUpdated: function(isNowOnline)
     {
+        this._onLine = isNowOnline;
         this.dispatchEventToListeners(WebInspector.ApplicationCacheModel.EventTypes.NetworkStateChanged, isNowOnline);
     }
 }

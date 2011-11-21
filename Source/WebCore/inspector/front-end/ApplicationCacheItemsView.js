@@ -27,7 +27,7 @@
  * @constructor
  * @extends {WebInspector.View}
  */
-WebInspector.ApplicationCacheItemsView = function(model, frameId, status)
+WebInspector.ApplicationCacheItemsView = function(model, frameId)
 {
     WebInspector.View.call(this);
     
@@ -64,15 +64,15 @@ WebInspector.ApplicationCacheItemsView = function(model, frameId, status)
     this._emptyView.show(this.element);
 
     this._markDirty();
+    
+    var status = this._model.frameManifestStatus(frameId);
     this.updateStatus(status);
+    
+    this.updateNetworkState(this._model.onLine);
 
     // FIXME: Status bar items don't work well enough yet, so they are being hidden.
     // http://webkit.org/b/41637 Web Inspector: Give Semantics to "Refresh" and "Delete" Buttons in ApplicationCache DataGrid
-    // http://webkit.org/b/72618 Web Inspector: ApplicationCache view should show navigator.onLine indicator.
     this.deleteButton.element.style.display = "none";
-    this.connectivityIcon.style.display = "none";
-    this.connectivityMessage.style.display = "none";
-    this.divider.style.display = "none";
 }
 
 WebInspector.ApplicationCacheItemsView.prototype = {
@@ -87,7 +87,6 @@ WebInspector.ApplicationCacheItemsView.prototype = {
 
     wasShown: function()
     {
-        this.updateNetworkState(navigator.onLine);
         this._maybeUpdate();
     },
 

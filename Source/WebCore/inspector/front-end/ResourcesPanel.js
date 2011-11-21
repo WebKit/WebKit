@@ -479,15 +479,8 @@ WebInspector.ResourcesPanel.prototype = {
 
     showApplicationCache: function(frameId)
     {
-        var status = this._applicationCacheModel.frameManifestStatus(frameId)
-
-        if (!this._applicationCacheViews[frameId]) {
-            this._applicationCacheViews[frameId] = new WebInspector.ApplicationCacheItemsView(this._applicationCacheModel, frameId, status);
-
-            // FIXME: Make sure this._cachedApplicationCacheNetworkState is always set and is always up to date.
-            if (typeof(this._cachedApplicationCacheNetworkState) === "number")
-                this._applicationCacheViews[frameId].updateNetworkState(this._cachedApplicationCacheNetworkState);
-        }
+        if (!this._applicationCacheViews[frameId])
+            this._applicationCacheViews[frameId] = new WebInspector.ApplicationCacheItemsView(this._applicationCacheModel, frameId);
 
         this._innerShowView(this._applicationCacheViews[frameId]);
     },
@@ -631,7 +624,6 @@ WebInspector.ResourcesPanel.prototype = {
     {
         var isNowOnline = event.data;
 
-        this._cachedApplicationCacheNetworkState = isNowOnline;
         for (var manifestURL in this._applicationCacheViews)
             this._applicationCacheViews[manifestURL].updateNetworkState(isNowOnline);
     },

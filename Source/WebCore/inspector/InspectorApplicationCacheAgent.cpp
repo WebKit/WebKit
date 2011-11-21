@@ -79,6 +79,9 @@ void InspectorApplicationCacheAgent::enable(ErrorString*)
 {
     m_state->setBoolean(ApplicationCacheAgentState::applicationCacheAgentEnabled, true);
     m_instrumentingAgents->setInspectorApplicationCacheAgent(this);
+
+    // We need to pass initial navigator.onOnline.
+    networkStateChanged();
 }
 
 void InspectorApplicationCacheAgent::updateApplicationCacheStatus(Frame* frame)
