@@ -318,7 +318,6 @@ void LayerRendererChromium::drawLayersOntoRenderSurfaces(CCLayerImpl* rootDrawLa
         CCLayerImpl* renderSurfaceLayer = renderSurfaceLayerList[surfaceIndex].get();
         CCRenderSurface* renderSurface = renderSurfaceLayer->renderSurface();
         ASSERT(renderSurface);
-        ASSERT(renderSurface->layerList().size());
         ASSERT(renderSurface->drawOpacity());
 
         if (useRenderSurface(renderSurface)) {

@@ -365,14 +365,12 @@ void CCLayerTreeHost::paintLayerContents(const LayerList& renderSurfaceLayerList
         LayerChromium* renderSurfaceLayer = renderSurfaceLayerList[surfaceIndex].get();
         RenderSurfaceChromium* renderSurface = renderSurfaceLayer->renderSurface();
         ASSERT(renderSurface);
-        ASSERT(renderSurface->layerList().size());
         ASSERT(renderSurface->drawOpacity());
 
         renderSurfaceLayer->setLayerTreeHost(this);
         paintMaskAndReplicaForRenderSurface(renderSurfaceLayer);
 
         const LayerList& layerList = renderSurface->layerList();
-        ASSERT(layerList.size());
         for (unsigned layerIndex = 0; layerIndex < layerList.size(); ++layerIndex) {
             LayerChromium* layer = layerList[layerIndex].get();
 
@@ -397,7 +395,6 @@ void CCLayerTreeHost::updateCompositorResources(GraphicsContext3D* context, CCTe
         LayerChromium* renderSurfaceLayer = m_updateList[surfaceIndex].get();
         RenderSurfaceChromium* renderSurface = renderSurfaceLayer->renderSurface();
         ASSERT(renderSurface);
-        ASSERT(renderSurface->layerList().size());
         ASSERT(renderSurface->drawOpacity());
 
         if (renderSurfaceLayer->maskLayer())
@@ -411,7 +408,6 @@ void CCLayerTreeHost::updateCompositorResources(GraphicsContext3D* context, CCTe
         }
         
         const LayerList& layerList = renderSurface->layerList();
-        ASSERT(layerList.size());
         for (unsigned layerIndex = 0; layerIndex < layerList.size(); ++layerIndex) {
             LayerChromium* layer = layerList[layerIndex].get();
             if (layer->renderSurface() && layer->renderSurface() != renderSurface)

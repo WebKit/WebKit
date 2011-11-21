@@ -1,3 +1,23 @@
+2011-11-21  Adrienne Walker  <enne@google.com>
+
+        [chromium] Remove incorrect render surface layer list asserts from compositor
+        https://bugs.webkit.org/show_bug.cgi?id=72744
+
+        Reviewed by James Robinson.
+
+        These asserts are incorrect, because it's valid for the default render
+        surface to be created but to have a root layer that doesn't draw. It
+        won't get added to the single render surface and it'll have an empty
+        layer list.
+
+        Test: compositor_unittests
+
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::drawLayersOntoRenderSurfaces):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.cpp:
+        (WebCore::CCLayerTreeHost::paintLayerContents):
+        (WebCore::CCLayerTreeHost::updateCompositorResources):
+
 2011-11-21  Andreas Kling  <kling@webkit.org>
 
         StyleSheet: Move completeURL() to CSSStyleSheet.
