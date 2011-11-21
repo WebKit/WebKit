@@ -1,3 +1,18 @@
+2011-11-17  Robert Hogan  <robert@webkit.org>
+
+        CSS 2.1 failure: empty-inline-003.htm fails
+        https://bugs.webkit.org/show_bug.cgi?id=72638
+
+        Reviewed by Ryosuke Niwa.
+
+        Empty inline elements need to share their inline height with siblings.
+
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::inlineFlowRequiresLineBox): In strict mode, add a LineBox for an empty element if it is
+        going to affect the line-height.
+        (WebCore::requiresLineBox): Pass LineInfo to inlineFlowRequiresLineBox
+        (WebCore::RenderBlock::LineBreaker::nextLineBreak): Pass LineInfo to inlineFlowRequiresLineBox
+
 2011-11-21  Adrienne Walker  <enne@google.com>
 
         [chromium] Remove incorrect render surface layer list asserts from compositor

@@ -1796,11 +1796,14 @@ static inline bool shouldCollapseWhiteSpace(const RenderStyle* style, const Line
         || (whitespacePosition == TrailingWhitespace && style->whiteSpace() == PRE_WRAP && (!lineInfo.isEmpty() || !lineInfo.previousLineBrokeCleanly()));
 }
 
-static bool inlineFlowRequiresLineBox(RenderInline* flow)
+static bool inlineFlowRequiresLineBox(RenderInline* flow, const LineInfo& lineInfo)
 {
     // FIXME: Right now, we only allow line boxes for inlines that are truly empty.
     // We need to fix this, though, because at the very least, inlines containing only
     // ignorable whitespace should should also have line boxes.
+    if (!flow->document()->inQuirksMode() && flow->style(lineInfo.isFirstLine())->lineHeight() != flow->parent()->style(lineInfo.isFirstLine())->lineHeight())
+        return true;
+
     return !flow->firstChild() && flow->hasInlineDirectionBordersPaddingOrMargin();
 }
 
@@ -1809,7 +1812,7 @@ static bool requiresLineBox(const InlineIterator& it, const LineInfo& lineInfo =
     if (it.m_obj->isFloatingOrPositioned())
         return false;
 
-    if (it.m_obj->isRenderInline() && !inlineFlowRequiresLineBox(toRenderInline(it.m_obj)))
+    if (it.m_obj->isRenderInline() && !inlineFlowRequiresLineBox(toRenderInline(it.m_obj), lineInfo))
         return false;
 
     if (!shouldCollapseWhiteSpace(it.m_obj->style(), lineInfo, whitespacePosition) || it.m_obj->isBR())
@@ -2181,7 +2184,7 @@ InlineIterator RenderBlock::LineBreaker::nextLineBreak(InlineBidiResolver& resol
             // to make sure that we stop to include this object and then start ignoring spaces again.
             // If this object is at the start of the line, we need to behave like list markers and
             // start ignoring spaces.
-            if (inlineFlowRequiresLineBox(flowBox)) {
+            if (inlineFlowRequiresLineBox(flowBox, lineInfo)) {
                 lineInfo.setEmpty(false, m_block, &width);
                 if (ignoringSpaces) {
                     trailingObjects.clear();
