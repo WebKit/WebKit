@@ -561,6 +561,9 @@ void WebViewHost::postAccessibilityNotification(const WebAccessibilityObject& ob
     case WebAccessibilityNotificationActiveDescendantChanged:
         notificationName = "ActiveDescendantChanged";
         break;
+    case WebAccessibilityNotificationAutocorrectionOccured:
+        notificationName = "AutocorrectionOccured";
+        break;
     case WebAccessibilityNotificationCheckedStateChanged:
         notificationName = "CheckedStateChanged";
         break;
@@ -591,6 +594,9 @@ void WebViewHost::postAccessibilityNotification(const WebAccessibilityObject& ob
     case WebAccessibilityNotificationLiveRegionChanged:
         notificationName = "LiveRegionChanged";
         break;
+    case WebAccessibilityNotificationMenuListItemSelected:
+        notificationName = "MenuListItemSelected";
+        break;
     case WebAccessibilityNotificationMenuListValueChanged:
         notificationName = "MenuListValueChanged";
         break;
@@ -602,6 +608,9 @@ void WebViewHost::postAccessibilityNotification(const WebAccessibilityObject& ob
         break;
     case WebAccessibilityNotificationRowExpanded:
         notificationName = "RowExpanded";
+        break;
+    case WebAccessibilityNotificationInvalidStatusChanged:
+        notificationName = "InvalidStatusChanged";
         break;
     default:
         notificationName = "UnknownNotification";

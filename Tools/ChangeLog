@@ -1,3 +1,13 @@
+2011-11-21  Dominic Mazzoni  <dmazzoni@google.com>
+
+        [Chromium] WebAccessibilityNotification should use AssertMatchingEnums.
+        https://bugs.webkit.org/show_bug.cgi?id=72895
+
+        Reviewed by Chris Fleizach.
+
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::postAccessibilityNotification):
+
 2011-11-21  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, run-gtk-tests temporary workaround after r98500.

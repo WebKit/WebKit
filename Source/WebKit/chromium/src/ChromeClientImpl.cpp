@@ -116,41 +116,8 @@ static WebPopupType convertPopupType(PopupContainer::PopupType type)
 // Converts a WebCore::AXObjectCache::AXNotification to a WebKit::WebAccessibilityNotification
 static WebAccessibilityNotification toWebAccessibilityNotification(AXObjectCache::AXNotification notification)
 {
-    switch (notification) {
-    case AXObjectCache::AXActiveDescendantChanged:
-        return WebAccessibilityNotificationActiveDescendantChanged;
-    case AXObjectCache::AXCheckedStateChanged:
-        return WebAccessibilityNotificationCheckedStateChanged;
-    case AXObjectCache::AXChildrenChanged:
-        return WebAccessibilityNotificationChildrenChanged;
-    case AXObjectCache::AXFocusedUIElementChanged:
-        return WebAccessibilityNotificationFocusedUIElementChanged;
-    case AXObjectCache::AXLayoutComplete:
-        return WebAccessibilityNotificationLayoutComplete;
-    case AXObjectCache::AXLoadComplete:
-        return WebAccessibilityNotificationLoadComplete;
-    case AXObjectCache::AXSelectedChildrenChanged:
-        return WebAccessibilityNotificationSelectedChildrenChanged;
-    case AXObjectCache::AXSelectedTextChanged:
-        return WebAccessibilityNotificationSelectedTextChanged;
-    case AXObjectCache::AXValueChanged:
-        return WebAccessibilityNotificationValueChanged;
-    case AXObjectCache::AXScrolledToAnchor:
-        return WebAccessibilityNotificationScrolledToAnchor;
-    case AXObjectCache::AXLiveRegionChanged:
-        return WebAccessibilityNotificationLiveRegionChanged;
-    case AXObjectCache::AXMenuListValueChanged:
-        return WebAccessibilityNotificationMenuListValueChanged;
-    case AXObjectCache::AXRowCountChanged:
-        return WebAccessibilityNotificationRowCountChanged;
-    case AXObjectCache::AXRowCollapsed:
-        return WebAccessibilityNotificationRowCollapsed;
-    case AXObjectCache::AXRowExpanded:
-        return WebAccessibilityNotificationRowExpanded;
-    default:
-        ASSERT_NOT_REACHED();
-        return WebAccessibilityNotificationInvalid;
-    }
+    // These enums have the same values; enforced in AssertMatchingEnums.cpp.
+    return static_cast<WebAccessibilityNotification>(notification);
 }
 
 ChromeClientImpl::ChromeClientImpl(WebViewImpl* webView)

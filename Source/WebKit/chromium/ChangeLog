@@ -1,3 +1,15 @@
+2011-11-21  Dominic Mazzoni  <dmazzoni@google.com>
+
+        [Chromium] WebAccessibilityNotification should use AssertMatchingEnums.
+        https://bugs.webkit.org/show_bug.cgi?id=72895
+
+        Reviewed by Chris Fleizach.
+
+        * public/WebAccessibilityNotification.h:
+        * src/AssertMatchingEnums.cpp:
+        * src/ChromeClientImpl.cpp:
+        (WebKit::toWebAccessibilityNotification):
+
 2011-11-21  Shinya Kawanaka  <shinyak@google.com>
 
         Implement a setter for UnifiedTextCheckerEnabled.

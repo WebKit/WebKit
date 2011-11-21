@@ -33,6 +33,7 @@
 
 #include "config.h"
 
+#include "AXObjectCache.h"
 #include "AccessibilityObject.h"
 #include "ApplicationCacheHost.h"
 #include "AsyncFileSystem.h"
@@ -64,6 +65,7 @@
 #include "UserScriptTypes.h"
 #include "UserStyleSheetTypes.h"
 #include "VideoFrameChromium.h"
+#include "WebAccessibilityNotification.h"
 #include "WebAccessibilityObject.h"
 #include "WebApplicationCacheHost.h"
 #include "WebClipboard.h"
@@ -109,6 +111,25 @@ namespace WebCore {
     using WTF::TextCaseSensitive;
     using WTF::TextCaseInsensitive;
 };
+
+COMPILE_ASSERT_MATCHING_ENUM(WebAccessibilityNotificationActiveDescendantChanged, AXObjectCache::AXActiveDescendantChanged);
+COMPILE_ASSERT_MATCHING_ENUM(WebAccessibilityNotificationAutocorrectionOccured, AXObjectCache::AXAutocorrectionOccured);
+COMPILE_ASSERT_MATCHING_ENUM(WebAccessibilityNotificationCheckedStateChanged, AXObjectCache::AXCheckedStateChanged);
+COMPILE_ASSERT_MATCHING_ENUM(WebAccessibilityNotificationChildrenChanged, AXObjectCache::AXChildrenChanged);
+COMPILE_ASSERT_MATCHING_ENUM(WebAccessibilityNotificationFocusedUIElementChanged, AXObjectCache::AXFocusedUIElementChanged);
+COMPILE_ASSERT_MATCHING_ENUM(WebAccessibilityNotificationLayoutComplete, AXObjectCache::AXLayoutComplete);
+COMPILE_ASSERT_MATCHING_ENUM(WebAccessibilityNotificationLoadComplete, AXObjectCache::AXLoadComplete);
+COMPILE_ASSERT_MATCHING_ENUM(WebAccessibilityNotificationSelectedChildrenChanged, AXObjectCache::AXSelectedChildrenChanged);
+COMPILE_ASSERT_MATCHING_ENUM(WebAccessibilityNotificationSelectedTextChanged, AXObjectCache::AXSelectedTextChanged);
+COMPILE_ASSERT_MATCHING_ENUM(WebAccessibilityNotificationValueChanged, AXObjectCache::AXValueChanged);
+COMPILE_ASSERT_MATCHING_ENUM(WebAccessibilityNotificationScrolledToAnchor, AXObjectCache::AXScrolledToAnchor);
+COMPILE_ASSERT_MATCHING_ENUM(WebAccessibilityNotificationLiveRegionChanged, AXObjectCache::AXLiveRegionChanged);
+COMPILE_ASSERT_MATCHING_ENUM(WebAccessibilityNotificationMenuListItemSelected, AXObjectCache::AXMenuListItemSelected);
+COMPILE_ASSERT_MATCHING_ENUM(WebAccessibilityNotificationMenuListValueChanged, AXObjectCache::AXMenuListValueChanged);
+COMPILE_ASSERT_MATCHING_ENUM(WebAccessibilityNotificationRowCountChanged, AXObjectCache::AXRowCountChanged);
+COMPILE_ASSERT_MATCHING_ENUM(WebAccessibilityNotificationRowCollapsed, AXObjectCache::AXRowCollapsed);
+COMPILE_ASSERT_MATCHING_ENUM(WebAccessibilityNotificationRowExpanded, AXObjectCache::AXRowExpanded);
+COMPILE_ASSERT_MATCHING_ENUM(WebAccessibilityNotificationInvalidStatusChanged, AXObjectCache::AXInvalidStatusChanged);
 
 COMPILE_ASSERT_MATCHING_ENUM(WebAccessibilityRoleUnknown, UnknownRole);
 COMPILE_ASSERT_MATCHING_ENUM(WebAccessibilityRoleButton, ButtonRole);

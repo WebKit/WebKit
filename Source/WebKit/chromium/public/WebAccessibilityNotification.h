@@ -33,8 +33,11 @@
 
 namespace WebKit {
 
+// These values must match WebCore::AXObjectCache::AXNotification values.
+// Enforced in AssertMatchingEnums.cpp.
 enum WebAccessibilityNotification {
     WebAccessibilityNotificationActiveDescendantChanged,
+    WebAccessibilityNotificationAutocorrectionOccured,
     WebAccessibilityNotificationCheckedStateChanged,
     WebAccessibilityNotificationChildrenChanged,
     WebAccessibilityNotificationFocusedUIElementChanged,
@@ -45,11 +48,17 @@ enum WebAccessibilityNotification {
     WebAccessibilityNotificationValueChanged,
     WebAccessibilityNotificationScrolledToAnchor,
     WebAccessibilityNotificationLiveRegionChanged,
+    WebAccessibilityNotificationMenuListItemSelected,
     WebAccessibilityNotificationMenuListValueChanged,
     WebAccessibilityNotificationRowCountChanged,
     WebAccessibilityNotificationRowCollapsed,
     WebAccessibilityNotificationRowExpanded,
-    WebAccessibilityNotificationInvalid
+    WebAccessibilityNotificationInvalidStatusChanged,
+
+    // FIXME: now that we're using AssertMatchingEnums, we don't need a
+    // catch-all "invalid" notification enum. Remove this once it's been
+    // removed from Chromium.
+    WebAccessibilityNotificationInvalid,
 };
 
 } // namespace WebKit
