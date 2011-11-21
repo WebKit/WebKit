@@ -706,7 +706,6 @@ BUGCR21841 MAC WIN DEBUG : plugins/destroy-during-npp-new.html = PASS CRASH
 BUGCR61799 BUGWK64319 SKIP : plugins/evaluate-js-after-removing-plugin-element.html = CRASH TIMEOUT TEXT
 BUGCR37962 MAC : plugins/iframe-shims.html = PASS TIMEOUT TEXT
 BUGCR10351 MAC : plugins/inner-html-display-none.html = FAIL
-BUGWK48164 : plugins/invalid-mime-with-valid-extension-shows-missing-plugin.html = TEXT
 // Object.keys on an NPObject produces the wrong output.
 BUGCR21901 : plugins/npruntime/enumerate.html = TEXT
 BUGCR50787 : plugins/npruntime/plugin-scriptable-object-invoke-default.html = TEXT
@@ -1157,10 +1156,6 @@ BUGCR30536 : http/tests/misc/favicon-as-image.html = FAIL
 BUGCR10323 WIN : http/tests/xmlhttprequest/xmlhttprequest-no-content-length-onProgress.html = FAIL
 
 // Post-MERGE failures: these will all need to be fixed one day
-
-// GURL/KURL difference in handling of "http:".
-// New test. We should fix it, but it doesn't need to block the current release
-BUGCR7386 : http/tests/security/postMessage/invalid-origin-throws-exception.html = FAIL
 
 // On Linux, we don't seem to be getting Helvetica Bold for all cases.
 BUGCR10328 LINUX : fast/css/font-face-multiple-faces.html = IMAGE+TEXT
@@ -3111,11 +3106,6 @@ BUGWK60822 : plugins/get-url-with-javascript-url.html = TIMEOUT
 // New test added at r86476, crashes.
 BUGWK60822 : plugins/get-url-notify-with-url-that-fails-to-load.html = PASS CRASH TIMEOUT
 
-// Started crashing after r86584.
-BUGWK60931 DEBUG : http/tests/security/aboutBlank/window-open-self-about-blank.html = CRASH
-BUGWK60931 DEBUG : http/tests/security/javascriptURL/xss-ALLOWED-from-javascript-url-window-open.html = CRASH
-BUGWK60931 DEBUG : http/tests/security/javascriptURL/xss-ALLOWED-to-javascript-url-window-open.html = CRASH
-
 // Flaky since added by r86478
 BUGCR82881 LINUX MAC VISTA XP : http/tests/appcache/interrupted-update.html = PASS TEXT
 
@@ -3615,8 +3605,6 @@ BUGWK69062 WIN : compositing/shadows/shadow-drawing.html = IMAGE
 
 BUGWK69070 MAC CPU-CG : svg/filters/animate-fill.svg = IMAGE
 
-BUGWK69077 DEBUG : http/tests/security/cookies/cookie-theft-with-javascript-doc.html = CRASH
-
 BUGABARTH LEOPARD : svg/custom/pattern-excessive-malloc.svg = IMAGE
 
 BUGWK69103 WIN LINUX : fast/text/line-initial-and-final-swashes.html = IMAGE+TEXT
@@ -3725,7 +3713,8 @@ BUGWK71282 WIN DEBUG : inspector/extensions = CRASH PASS TIMEOUT
 BUGWK71282 WIN DEBUG : http/tests/inspector/extensions-headers.html = CRASH PASS TIMEOUT
 BUGWK71282 WIN DEBUG : http/tests/inspector/extensions-network-redirect.html = CRASH PASS TIMEOUT
 BUGWK71282 WIN DEBUG : http/tests/inspector/extensions-useragent.html = CRASH PASS TIMEOUT
-BUGWK71084 WIN DEBUG : http/tests/inspector/extensions-ignore-cache.html = CRASH FAIL CRASH
+
+BUGWK71084 WIN DEBUG SLOW : http/tests/inspector/extensions-ignore-cache.html = PASS
 
 BUGWK70044 : svg/filters/invalidate-on-child-layout.svg = TEXT IMAGE IMAGE+TEXT
 
