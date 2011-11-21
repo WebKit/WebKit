@@ -3,7 +3,7 @@
     p > p { }
     @font-face {
         font-family: 'remote';
-        src: url(resources/Ahem.ttf);
+        src: url(../../resources/Ahem.ttf);
     }
 </style>
 <textarea style="width: 108px; height: 102px; font-family: remote; font-size: 100px; color: green; background-color: red; padding: 0;">A</textarea>

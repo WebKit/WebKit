@@ -11,9 +11,9 @@ resource: .../tests/inspector/inspector-test.js
 resource: .../inspector/extensions/extensions-network.html
 resource: .../inspector/extensions/extensions-network.html
 resource: .../extensions/resources/abe.png
-resource: .../extensions/resources/Ahem.ttf
 resource: .../extensions/resources/audits-style1.css
 resource: .../extensions/resources/missing-image.png
+resource: .../LayoutTests/resources/Ahem.ttf
 RUNNING TEST: extension_testGetRequestContent
 {
     0 : ".some-style {

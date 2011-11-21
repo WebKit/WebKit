@@ -26,7 +26,7 @@ function notifyDone()
 @font-face {
     font-family: webkit-ahem;
     font-style: normal;
-    src: url(firstInvalidURL), url(secondInvalidURL), url(resources/Ahem.ttf);
+    src: url(firstInvalidURL), url(secondInvalidURL), url(../resources/Ahem.ttf);
 }
 
 div.background {
@@ -502,12 +502,12 @@ div.webkit-mask-image-list {
 				<key>MIMEType</key>
 				<string>application/octet-stream</string>
 				<key>URL</key>
-				<string>file:///LayoutTests/webarchive/resources/Ahem.ttf</string>
+				<string>file:///LayoutTests/resources/Ahem.ttf</string>
 				<key>expectedContentLength</key>
 				<integer>12480</integer>
 			</dict>
 			<key>WebResourceURL</key>
-			<string>file:///LayoutTests/webarchive/resources/Ahem.ttf</string>
+			<string>file:///LayoutTests/resources/Ahem.ttf</string>
 		</dict>
 		<dict>
 			<key>WebResourceData</key>
