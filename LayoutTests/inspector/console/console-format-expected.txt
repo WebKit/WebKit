@@ -12,8 +12,8 @@ CONSOLE MESSAGE: line 54: test
 CONSOLE MESSAGE: line 55: test
 CONSOLE MESSAGE: line 54: test named "test"
 CONSOLE MESSAGE: line 55: test named "test"
-CONSOLE MESSAGE: line 54: Error: 
-CONSOLE MESSAGE: line 55: Error: 
+CONSOLE MESSAGE: line 54: Error
+CONSOLE MESSAGE: line 55: Error
 CONSOLE MESSAGE: line 54: [object HTMLBodyElement]
 CONSOLE MESSAGE: line 55: [object HTMLBodyElement]
 CONSOLE MESSAGE: line 54: function () { return 1; }
