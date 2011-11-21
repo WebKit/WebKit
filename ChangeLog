@@ -1,3 +1,9 @@
+2011-11-21  Adam Klein  <adamk@chromium.org>
+
+        Add GYP-generated WTF.xcodeproj to .gitignore after r100851.
+
+        * .gitignore:
+
 2011-11-21  Viatcheslav Ostapenko  <ostapenko.viatcheslav@nokia.com>
 
         [Qt] [WK2] WebKitTestRunner doesn't build in debug

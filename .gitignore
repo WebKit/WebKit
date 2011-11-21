@@ -32,6 +32,7 @@ Source/ThirdParty/glu/*.ninja
 Source/ThirdParty/glu/*.sln
 Source/ThirdParty/glu/*.vcproj
 Source/ThirdParty/glu/glu.xcodeproj
+Source/WTF/WTF.gyp/WTF.xcodeproj
 Source/WebCore/WebCore.gyp/*.Makefile
 Source/WebCore/WebCore.gyp/*.mk
 Source/WebCore/WebCore.gyp/*.ninja
