@@ -8,8 +8,11 @@ PASS successfullyParsed is true
 TEST COMPLETE
 PASS INPUT has a marker on 'foo bar'
 PASS INPUT has a marker on 'fo<b>o ba</b>r'
+PASS INPUT has a marker on 'zz zz zz'
 PASS TEXTAREA has a marker on 'foo bar'
 PASS TEXTAREA has a marker on 'fo<b>o ba</b>r'
+PASS TEXTAREA has a marker on 'zz zz zz'
 PASS DIV has a marker on 'foo bar'
 PASS DIV has a marker on 'fo<b>o ba</b>r'
+PASS DIV has a marker on 'zz zz zz'
 

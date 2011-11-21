@@ -1,3 +1,15 @@
+2011-11-20  Shinya Kawanaka  <shinyak@google.com>
+
+        [Chromium] Layout test does not return correct misspelling positions if there are multiple misspelled words.
+        https://bugs.webkit.org/show_bug.cgi?id=72655
+
+        Reviewed by Hajime Morita.
+
+        Fixed the calculation of offset.
+
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::finishLastTextCheck):
+
 2011-11-20  Ojan Vafai  <ojan@chromium.org>
 
         Change the final place where we use version 3 of the results json output

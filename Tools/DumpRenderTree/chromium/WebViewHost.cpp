@@ -458,7 +458,7 @@ void WebViewHost::finishLastTextCheck()
             break;
         results.append(WebTextCheckingResult(WebTextCheckingResult::ErrorSpelling, offset + misspelledPosition, misspelledLength));
         text = text.substring(misspelledPosition + misspelledLength);
-        offset += misspelledPosition;
+        offset += misspelledPosition + misspelledLength;
     }
 
     m_lastRequestedTextCheckingCompletion->didFinishCheckingText(results);
