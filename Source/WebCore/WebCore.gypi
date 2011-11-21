@@ -4284,8 +4284,6 @@
             'platform/qt/PlatformTouchEventQt.cpp',
             'platform/qt/PlatformTouchPointQt.cpp',
             'platform/qt/QWebPageClient.h',
-            'platform/qt/QtMobileWebStyle.cpp',
-            'platform/qt/QtMobileWebStyle.h',
             'platform/qt/QtStyleOptionWebComboBox.h',
             'platform/qt/RenderThemeQt.cpp',
             'platform/qt/RenderThemeQt.h',

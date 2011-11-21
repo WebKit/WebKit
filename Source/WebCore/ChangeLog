@@ -1,3 +1,14 @@
+2011-11-20  Noel Gordon  <noel.gordon@gmail.com>
+
+        [chromium] Remove qt/QtMobileWebStyle from the gyp projects
+        https://bugs.webkit.org/show_bug.cgi?id=72843
+
+        Reviewed by Antonio Gomes.
+
+        platform/qt/QtMobileWebStyle.{h,cpp} were removed in r100123
+
+        * WebCore.gypi: remove platform/qt/QtMobileWebStyle.{h,cpp}
+
 2011-11-20  Kentaro Hara  <haraken@chromium.org>
 
         Unreviewed. Rebaselined run-bindings-tests results.
