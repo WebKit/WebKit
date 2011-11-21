@@ -35,6 +35,4 @@ macx: QT += xml
 RESOURCES += MiniBrowser.qrc
 
 OTHER_FILES += \
-    qml/BrowserWindow.qml \
-    qml/DesktopView.qml \
-    qml/TouchView.qml
+    qml/BrowserWindow.qml
