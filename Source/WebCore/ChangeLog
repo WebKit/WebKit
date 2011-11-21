@@ -1,3 +1,15 @@
+2011-11-21  Yuta Kitamura  <yutak@chromium.org>
+
+        [Qt] WebSocket close tests are failing
+        https://bugs.webkit.org/show_bug.cgi?id=72865
+
+        Reviewed by Simon Hausmann.
+
+        * platform/network/qt/SocketStreamHandleQt.cpp:
+        (WebCore::SocketStreamHandlePrivate::close):
+        Emit didCloseSocketStream() callback even before the connection is established.
+        Call m_socket->abort() to prevent "connected" signal from firing.
+
 2011-11-21  Shinya Kawanaka  <shinyak@google.com>
 
         Refactoring: SpellChecker::requestCheckingFor should take Range instead of Node.
