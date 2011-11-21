@@ -29,7 +29,6 @@
 #if ENABLE(INSPECTOR)
 
 #include "WebInspector.h"
-#include "WebInspectorFrontendClient.h"
 #include "WebPage.h"
 #include <WebCore/InspectorController.h>
 #include <WebCore/Page.h>
@@ -49,8 +48,6 @@ void WebInspectorClient::openInspectorFrontend(InspectorController*)
     ASSERT(inspectorPage);
     if (!inspectorPage)
         return;
-
-    inspectorPage->corePage()->inspectorController()->setInspectorFrontendClient(adoptPtr(new WebInspectorFrontendClient(m_page, inspectorPage)));
 }
 
 void WebInspectorClient::highlight()

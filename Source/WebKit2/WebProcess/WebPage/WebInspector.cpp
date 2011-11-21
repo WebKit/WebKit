@@ -28,6 +28,7 @@
 
 #if ENABLE(INSPECTOR)
 
+#include "WebInspectorFrontendClient.h"
 #include "WebInspectorProxyMessages.h"
 #include "WebPage.h"
 #include "WebPageCreationParameters.h"
@@ -47,6 +48,7 @@ PassRefPtr<WebInspector> WebInspector::create(WebPage* page)
 WebInspector::WebInspector(WebPage* page)
     : m_page(page)
     , m_inspectorPage(0)
+    , m_frontendClient(0)
 {
 }
 
@@ -72,6 +74,9 @@ WebPage* WebInspector::createInspectorPage()
     m_inspectorPage = WebProcess::shared().webPage(inspectorPageID);
     ASSERT(m_inspectorPage);
 
+    OwnPtr<WebInspectorFrontendClient> frontendClient = adoptPtr(new WebInspectorFrontendClient(m_page, m_inspectorPage));
+    m_frontendClient = frontendClient.get();
+    m_inspectorPage->corePage()->inspectorController()->setInspectorFrontendClient(frontendClient.release());
     return m_inspectorPage;
 }
 
@@ -129,26 +134,35 @@ void WebInspector::evaluateScriptForTest(long callID, const String& script)
 
 void WebInspector::showConsole()
 {
-    m_page->corePage()->inspectorController()->showConsole();
+    m_page->corePage()->inspectorController()->show();
+    if (m_frontendClient)
+        m_frontendClient->showConsole();
 }
 
 void WebInspector::startJavaScriptDebugging()
 {
 #if ENABLE(JAVASCRIPT_DEBUGGER)
-    m_page->corePage()->inspectorController()->showAndEnableDebugger();
+    m_page->corePage()->inspectorController()->show();
+    if (m_frontendClient)
+        m_frontendClient->setDebuggingEnabled(true);
 #endif
 }
 
 void WebInspector::stopJavaScriptDebugging()
 {
 #if ENABLE(JAVASCRIPT_DEBUGGER)
-    m_page->corePage()->inspectorController()->disableDebugger();
+    m_page->corePage()->inspectorController()->show();
+    if (m_frontendClient)
+        m_frontendClient->setDebuggingEnabled(false);
 #endif
 }
 
 void WebInspector::setJavaScriptProfilingEnabled(bool enabled)
 {
 #if ENABLE(JAVASCRIPT_DEBUGGER)
+    m_page->corePage()->inspectorController()->show();
+    if (!m_frontendClient)
+        return;
     if (enabled)
         m_page->corePage()->inspectorController()->enableProfiler();
     else
@@ -159,26 +173,33 @@ void WebInspector::setJavaScriptProfilingEnabled(bool enabled)
 void WebInspector::startJavaScriptProfiling()
 {
 #if ENABLE(JAVASCRIPT_DEBUGGER)
-    m_page->corePage()->inspectorController()->startUserInitiatedProfiling();
+    m_page->corePage()->inspectorController()->show();
+    if (m_frontendClient)
+        m_frontendClient->startProfilingJavaScript();
 #endif
 }
 
 void WebInspector::stopJavaScriptProfiling()
 {
 #if ENABLE(JAVASCRIPT_DEBUGGER)
-    m_page->corePage()->inspectorController()->stopUserInitiatedProfiling();
+    m_page->corePage()->inspectorController()->show();
+    if (m_frontendClient)
+        m_frontendClient->stopProfilingJavaScript();
 #endif
 }
 
 void WebInspector::startPageProfiling()
 {
-    m_page->corePage()->inspectorController()->startTimelineProfiler();
+    m_page->corePage()->inspectorController()->show();
+    if (m_frontendClient)
+        m_frontendClient->setTimelineProfilingEnabled(true);
 }
 
 void WebInspector::stopPageProfiling()
 {
-    m_page->corePage()->inspectorController()->stopTimelineProfiler();
-    // FIXME: show the Timeline panel.
+    m_page->corePage()->inspectorController()->show();
+    if (m_frontendClient)
+        m_frontendClient->setTimelineProfilingEnabled(false);
 }
 
 } // namespace WebKit
