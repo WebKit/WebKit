@@ -1,3 +1,10 @@
+2011-11-21  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, run-gtk-tests temporary workaround after r98500.
+
+        * Scripts/run-gtk-tests: Try to find the build directory like in
+        build-gtkdoc, until webkit-build-directory --configuration gets fixed.
+
 2011-11-21  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Add a way to skip unit tests in the bots

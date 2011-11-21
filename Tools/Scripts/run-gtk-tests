@@ -29,8 +29,19 @@ class TestRunner:
     def __init__(self):
         self._executive = Executive()
 
-        build_directory_script = os.path.join(os.path.dirname(__file__), "webkit-build-directory")
-        build_directory = self._executive.run_command([build_directory_script, "--configuration"]).rstrip()
+        # FIXME: webkit-build-directory --configuration always returns
+        # Release because we never call set-webkit-configuration.
+        #build_directory_script = os.path.join(os.path.dirname(__file__), "webkit-build-directory")
+        #build_directory = self._executive.run_command([build_directory_script, "--configuration"]).rstrip()
+
+        def is_valid_build_directory(build_dir):
+            return os.path.exists(os.path.join(build_dir, ".libs"))
+
+        script_dir = os.path.dirname(__file__)
+        top_level = os.path.normpath(os.path.join(script_dir, "..", ".."))
+        build_directory = os.path.join(top_level, 'WebKitBuild', 'Release')
+        if not is_valid_build_directory(build_directory):
+            build_directory = os.path.join(top_level, 'WebKitBuild', 'Debug')
 
         self._programs_path = os.path.join(build_directory, "Programs")
         self._tests = []
