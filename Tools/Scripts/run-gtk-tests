@@ -1,6 +1,6 @@
-#!/usr/bin/perl
+#!/usr/bin/env python
 #
-# Copyright (C) 2009 Gustavo Noronha Silva <gns@gnome.org>
+# Copyright (C) 2011 Igalia S.L.
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Library General Public
@@ -17,52 +17,70 @@
 # the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 # Boston, MA 02110-1301, USA.
 
-use strict;
-use warnings;
+from webkitpy.common.system.executive import Executive
+import subprocess
+import os, sys
 
-use FindBin;
-use lib $FindBin::Bin;
-use webkitdirs;
+class TestRunner:
 
-# This initializes the correct configuration (Release/Debug)
-setConfiguration();
+    TEST_DIRS = [ "unittests", "WebKit2APITests" ]
+    SKIPPED = [ "unittests/testdownload" ]
 
-my @unitTests;
-my $programsDirectory = productDir() . "/Programs";
-push(@unitTests, glob($programsDirectory . "/unittests/*"));
-push(@unitTests, glob($programsDirectory . "/WebKit2APITests/*"));
+    def __init__(self):
+        self._executive = Executive()
 
-if ($#unitTests < 1) {
-    die "ERROR: tests not found in $programsDirectory.\n";
-}
+        build_directory_script = os.path.join(os.path.dirname(__file__), "webkit-build-directory")
+        build_directory = self._executive.run_command([build_directory_script, "--configuration"]).rstrip()
 
-my $pid = fork();
-if ($pid == 0) {
-    close(STDOUT) or die "Can't close STDOUT: $!\n";
-    close(STDERR) or die "Can't close STDERR: $!\n";
-    exec("Xvfb :31 -screen 0 800x600x24 -nolisten tcp");
-    exit 1;
-} elsif ($pid == -1) {
-    print "Failed to fork Xvfb.";
-    exit 1;
-}
+        self._programs_path = os.path.join(build_directory, "Programs")
+        self._tests = []
+        for test_dir in self.TEST_DIRS:
+            for test_file in os.listdir(os.path.join(self._programs_path, test_dir)):
+                test_relative_path = os.path.join(test_dir, test_file)
+                if test_relative_path in self.SKIPPED:
+                    sys.stdout.write("Skipping test %s\n" % (test_relative_path))
+                    sys.stdout.flush()
+                    continue
 
-$ENV{"DISPLAY"} = ':31';
+                test_path = os.path.join(self._programs_path, test_relative_path)
+                if os.path.isfile(test_path) and os.access(test_path, os.X_OK):
+                    self._tests.append(test_path)
 
-my $exitStatus = 0;
-foreach my $unitTest (@unitTests)
-{
-    next unless (-f $unitTest and -x $unitTest);
+    def run(self):
+        if not self._tests:
+            sys.stderr.write("ERROR: tests not found in %s.\n" % (self._programs_path))
+            sys.stderr.flush()
+            return 1
 
-    system "gtester $unitTest";
-    if ($?) {
-        $exitStatus = $?;
-    }
-}
+        test_env = os.environ
+        test_env["DISPLAY"] = ":31"
 
-kill 9, $pid unless $pid <= 0;
+        exit_status = [0]
+        def _error_handler(error):
+            exit_status[0] = error.exit_code
 
-if ($exitStatus) {
-    print "Tests failed\n";
-    exit $exitStatus;
-}
+        for test in self._tests:
+            out = self._executive.run_command(['gtester', test], env=test_env,
+                                              error_handler=_error_handler)
+            sys.stdout.write(out)
+            sys.stdout.flush()
+
+        if exit_status[0]:
+            sys.stdout.write("Tests failed\n")
+            sys.stdout.flush()
+
+        return exit_status[0]
+
+if __name__ == "__main__":
+    try:
+        xvfb = Executive().popen(["Xvfb", ":31", "-screen", "0", "800x600x24", "-nolisten", "tcp"],
+                                 stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    except:
+        sys.stderr.write("Failed to run Xvfb\n")
+        sys.stderr.flush()
+        sys.exit(1)
+
+    try:
+        sys.exit(TestRunner().run())
+    finally:
+        xvfb.kill()
