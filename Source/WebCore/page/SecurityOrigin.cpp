@@ -86,11 +86,6 @@ static KURL extractInnerURL(const KURL& url)
     return KURL(ParsedURLString, decodeURLEscapeSequences(url.path()));
 }
 
-static bool isDirectory(const String& path)
-{
-    return path.endsWith("/");
-}
-
 static bool shouldTreatAsUniqueOrigin(const KURL& url)
 {
     if (!url.isValid())
@@ -113,15 +108,6 @@ static bool shouldTreatAsUniqueOrigin(const KURL& url)
 
     if (SchemeRegistry::shouldTreatURLSchemeAsNoAccess(protocol))
         return true;
-
-    // We use unique origins for directory listings to make it harder to crawl
-    // a local filesystem. Notice that we apply this protection only when we
-    // use the outer URL for the security context because schemes that wrap
-    // other URLs don't have directory listings.
-    if (SchemeRegistry::shouldTreatURLSchemeAsLocal(protocol) && !shouldUseInnerURL(url)) {
-        if (!innerURL.hasPath() || isDirectory(innerURL.path()))
-            return true;
-    }
 
     // This is the common case.
     return false;
