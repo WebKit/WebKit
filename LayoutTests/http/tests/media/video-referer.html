@@ -30,7 +30,7 @@
         consoleWrite('FAIL, got error when loading media error: ' + video.error.code);
     });    
 
-    waitForEvent('canplaythrough', function () {
+    waitForEvent('canplay', function () {
         if (window.layoutTestController)
             window.layoutTestController.notifyDone();
     } );

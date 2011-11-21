@@ -28,7 +28,7 @@
         frame.src = "http://127.0.0.1:8000/media/resources/setCookie.cgi?name=" + movie;
     }
 
-    waitForEvent("canplaythrough", function () {
+    waitForEvent("canplay", function () {
         if (window.layoutTestController)
             window.layoutTestController.notifyDone();
     } );
