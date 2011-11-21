@@ -37,6 +37,8 @@ WebInspector.Object.prototype = {
      */
     addEventListener: function(eventType, listener, thisObject)
     {
+        console.assert(listener);
+
         if (!this._listeners)
             this._listeners = {};
         if (!this._listeners[eventType])
@@ -51,6 +53,8 @@ WebInspector.Object.prototype = {
      */
     removeEventListener: function(eventType, listener, thisObject)
     {
+        console.assert(listener);
+
         if (!this._listeners || !this._listeners[eventType])
             return;
         var listeners = this._listeners[eventType];

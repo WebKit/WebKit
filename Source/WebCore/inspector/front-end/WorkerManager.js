@@ -67,6 +67,8 @@ WebInspector.WorkerManager.loadCompleted = function()
     {
         WebInspector.WorkerManager._calculateWorkerInspectorTitle();
     }
+
+    WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.MainFrameNavigated, WebInspector.workerManager._mainFrameNavigated, WebInspector.workerManager);
 }
 
 WebInspector.WorkerManager._initializeDedicatedWorkerFrontend = function(workerId)
@@ -179,7 +181,7 @@ WebInspector.WorkerManager.prototype = {
             workerInspectorWindow.close();
     },
 
-    reset: function()
+    _mainFrameNavigated: function(event)
     {
         for (var workerId in this._workerIdToWindow)
             this.closeWorkerInspector(workerId);

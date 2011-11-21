@@ -671,24 +671,6 @@ WebInspector.startUserInitiatedDebugging = function()
     WebInspector.debuggerModel.enableDebugger();
 }
 
-WebInspector.reset = function()
-{
-    this.debuggerModel.reset();
-    for (var panelName in this.panels) {
-        var panel = this.panels[panelName];
-        if ("reset" in panel)
-            panel.reset();
-    }
-
-    this.domAgent.hideDOMNodeHighlight();
-
-    if (!WebInspector.settings.preserveConsoleLog.get())
-        this.console.clearMessages();
-    this.extensionServer.notifyInspectorReset();
-    if (this.workerManager)
-        this.workerManager.reset();
-}
-
 WebInspector.bringToFront = function()
 {
     InspectorFrontendHost.bringToFront();

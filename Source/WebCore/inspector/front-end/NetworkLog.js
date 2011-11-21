@@ -35,7 +35,7 @@ WebInspector.NetworkLog = function()
 {
     this._resources = [];
     WebInspector.networkManager.addEventListener(WebInspector.NetworkManager.EventTypes.ResourceStarted, this._onResourceStarted, this);
-    WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.FrameNavigated, this._frameNavigated, this);
+    WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.MainFrameNavigated, this._mainFrameNavigated, this);
 }
 
 WebInspector.NetworkLog.prototype = {
@@ -47,10 +47,8 @@ WebInspector.NetworkLog.prototype = {
         return this._resources;
     },
 
-    _frameNavigated: function(event)
+    _mainFrameNavigated: function(event)
     {
-        if (!event.data.isMainFrame)
-            return;
         // Preserve resources from the new session.
         var oldResources = this._resources.splice(0, this._resources.length);
         for (var i = 0; i < oldResources.length; ++i) {

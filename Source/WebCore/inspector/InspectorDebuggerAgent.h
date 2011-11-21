@@ -72,7 +72,7 @@ public:
     void setFrontend(InspectorFrontend*);
     void clearFrontend();
 
-    void inspectedURLChanged(const String& url);
+    void didClearMainFrameWindowObject();
 
     // Part of the protocol.
     void setBreakpointsActive(ErrorString*, bool active);

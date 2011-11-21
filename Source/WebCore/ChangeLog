@@ -1,3 +1,59 @@
+2011-11-18  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: get rid of Panel::reset in the front-end.
+        https://bugs.webkit.org/show_bug.cgi?id=72587
+
+        I'm slowly getting rid of the Inspector protocol domain. It currently
+        contains methods that did not find their home in the meaningful domains.
+        This change removes reset protocol method.
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/Inspector.json:
+        * inspector/InspectorAgent.cpp:
+        (WebCore::InspectorAgent::didCommitLoad):
+        * inspector/InspectorDebuggerAgent.cpp:
+        (WebCore::InspectorDebuggerAgent::didClearMainFrameWindowObject):
+        * inspector/InspectorDebuggerAgent.h:
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::didClearWindowObjectInWorldImpl):
+        (WebCore::InspectorInstrumentation::didCommitLoadImpl):
+        * inspector/front-end/ApplicationCacheModel.js:
+        (WebInspector.ApplicationCacheModel.prototype._frameNavigated):
+        (WebInspector.ApplicationCacheModel.prototype._frameDetached):
+        * inspector/front-end/DebuggerModel.js:
+        (WebInspector.DebuggerModel.prototype._globalObjectCleared):
+        (WebInspector.DebuggerDispatcher.prototype.globalObjectCleared):
+        * inspector/front-end/DebuggerPresentationModel.js:
+        (WebInspector.DebuggerPresentationModel):
+        (WebInspector.DebuggerPresentationModel.prototype._debuggerReset):
+        * inspector/front-end/ExtensionServer.js:
+        (WebInspector.ExtensionServer):
+        (WebInspector.ExtensionServer.prototype._mainFrameNavigated):
+        * inspector/front-end/JavaScriptContextManager.js:
+        (WebInspector.JavaScriptContextManager.prototype._frameDetached):
+        (WebInspector.FrameEvaluationContext.prototype.get frameId):
+        * inspector/front-end/NetworkLog.js:
+        (WebInspector.NetworkLog):
+        (WebInspector.NetworkLog.prototype._mainFrameNavigated):
+        * inspector/front-end/NetworkPanel.js:
+        (WebInspector.NetworkLogView):
+        (WebInspector.NetworkLogView.prototype._mainFrameNavigated):
+        * inspector/front-end/ResourceTreeModel.js:
+        (WebInspector.ResourceTreeModel.prototype._frameNavigated):
+        (WebInspector.ResourceTreeModel.prototype._frameDetached):
+        (WebInspector.ResourceTreeModel.prototype._clearChildFramesAndResources):
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.ResourcesPanel.prototype._reset):
+        (WebInspector.ResourcesPanel.prototype._frameDetached):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype._debuggerWasDisabled):
+        (WebInspector.ScriptsPanel.prototype._reset):
+        * inspector/front-end/WorkerManager.js:
+        (WebInspector.WorkerManager):
+        (WebInspector.WorkerManager.prototype._mainFrameNavigated):
+        * inspector/front-end/inspector.js:
+
 2011-06-20  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: introduce InspectorFrontendAPI for actions initiated from the application menu.

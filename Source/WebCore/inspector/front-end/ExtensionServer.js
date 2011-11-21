@@ -105,7 +105,7 @@ WebInspector.ExtensionServer.prototype = {
         this._postNotification("inspectedURLChanged", url);
     },
 
-    notifyInspectorReset: function()
+    _mainFrameNavigated: function(event)
     {
         this._postNotification("reset");
     },
@@ -548,6 +548,7 @@ WebInspector.ExtensionServer.prototype = {
 
         WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.InspectedURLChanged,
             this._inspectedURLChanged, this);
+        WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.MainFrameNavigated, this._mainFrameNavigated, this);
         InspectorExtensionRegistry.getExtensionsAsync();
     },
 

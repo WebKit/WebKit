@@ -165,7 +165,7 @@ WebInspector.ScriptsPanel = function(presentationModel)
 
     this._debuggerEnabled = Preferences.debuggerAlwaysEnabled;
 
-    this.reset();
+    this._reset(false);
 
     WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.DebuggerWasEnabled, this._debuggerWasEnabled, this);
     WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.DebuggerWasDisabled, this._debuggerWasDisabled, this);
@@ -182,6 +182,7 @@ WebInspector.ScriptsPanel = function(presentationModel)
     this._presentationModel.addEventListener(WebInspector.DebuggerPresentationModel.Events.CallFrameSelected, this._callFrameSelected, this);
     this._presentationModel.addEventListener(WebInspector.DebuggerPresentationModel.Events.ConsoleCommandEvaluatedInSelectedCallFrame, this._consoleCommandEvaluatedInSelectedCallFrame, this);
     this._presentationModel.addEventListener(WebInspector.DebuggerPresentationModel.Events.ExecutionLineChanged, this._executionLineChanged, this);
+    this._presentationModel.addEventListener(WebInspector.DebuggerPresentationModel.Events.DebuggerReset, this._reset.bind(this, false));
     
     var enableDebugger = Preferences.debuggerAlwaysEnabled || WebInspector.settings.debuggerEnabled.get();
     if (enableDebugger)
@@ -526,7 +527,7 @@ WebInspector.ScriptsPanel.prototype = {
             return;
 
         this._debuggerEnabled = true;
-        this.reset(true);
+        this._reset(true);
     },
 
     _debuggerWasDisabled: function()
@@ -535,10 +536,10 @@ WebInspector.ScriptsPanel.prototype = {
             return;
 
         this._debuggerEnabled = false;
-        this.reset(true);
+        this._reset(true);
     },
 
-    reset: function(preserveItems)
+    _reset: function(preserveItems)
     {
         this.visibleView = null;
 

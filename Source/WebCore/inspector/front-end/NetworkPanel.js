@@ -61,7 +61,7 @@ WebInspector.NetworkLogView = function()
     WebInspector.networkManager.addEventListener(WebInspector.NetworkManager.EventTypes.ResourceUpdated, this._onResourceUpdated, this);
     WebInspector.networkManager.addEventListener(WebInspector.NetworkManager.EventTypes.ResourceFinished, this._onResourceUpdated, this);
 
-    WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.FrameNavigated, this._frameNavigated, this);
+    WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.MainFrameNavigated, this._mainFrameNavigated, this);
     WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.OnLoad, this._onLoadEventFired, this);
     WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.DOMContentLoaded, this._domContentLoadedEventFired, this);
 
@@ -794,11 +794,8 @@ WebInspector.NetworkLogView.prototype = {
         this._reset();
     },
 
-    _frameNavigated: function(event)
+    _mainFrameNavigated: function(event)
     {
-        if (!event.data.isMainFrame)
-            return;
-
         var loaderId = event.data.loaderId;
         // Main frame committed load.
         if (this._preserveLogToggle.toggled)

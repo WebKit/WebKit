@@ -47,7 +47,7 @@ WebInspector.DebuggerPresentationModel = function()
     WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.FailedToParseScriptSource, this._failedToParseScriptSource, this);
     WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.DebuggerPaused, this._debuggerPaused, this);
     WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.DebuggerResumed, this._debuggerResumed, this);
-    WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.Reset, this._debuggerReset, this);
+    WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.GlobalObjectCleared, this._debuggerReset, this);
 
     WebInspector.console.addEventListener(WebInspector.ConsoleModel.Events.MessageAdded, this._consoleMessageAdded, this);
     WebInspector.console.addEventListener(WebInspector.ConsoleModel.Events.ConsoleCleared, this._consoleCleared, this);
@@ -65,6 +65,7 @@ WebInspector.DebuggerPresentationModel.Events = {
     BreakpointRemoved: "breakpoint-removed",
     DebuggerPaused: "debugger-paused",
     DebuggerResumed: "debugger-resumed",
+    DebuggerReset: "debugger-reset",
     CallFrameSelected: "call-frame-selected",
     ConsoleCommandEvaluatedInSelectedCallFrame: "console-command-evaluated-in-selected-call-frame",
     ExecutionLineChanged: "execution-line-changed"
@@ -658,6 +659,7 @@ WebInspector.DebuggerPresentationModel.prototype = {
         this._presentationCallFrames = [];
         this._selectedCallFrame = null;
         this._breakpointManager.debuggerReset();
+        this.dispatchEventToListeners(WebInspector.DebuggerPresentationModel.Events.DebuggerReset);
     }
 }
 

@@ -74,7 +74,7 @@ WebInspector.DebuggerModel.Events = {
     ParsedScriptSource: "parsed-script-source",
     FailedToParseScriptSource: "failed-to-parse-script-source",
     BreakpointResolved: "breakpoint-resolved",
-    Reset: "reset"
+    GlobalObjectCleared: "global-object-cleared"
 }
 
 WebInspector.DebuggerModel.BreakReason = {
@@ -218,11 +218,11 @@ WebInspector.DebuggerModel.prototype = {
         this.dispatchEventToListeners(WebInspector.DebuggerModel.Events.BreakpointResolved, {breakpointId: breakpointId, location: location});
     },
 
-    reset: function()
+    _globalObjectCleared: function()
     {
         this._debuggerPausedDetails = null;
         this._scripts = {};
-        this.dispatchEventToListeners(WebInspector.DebuggerModel.Events.Reset);
+        this.dispatchEventToListeners(WebInspector.DebuggerModel.Events.GlobalObjectCleared);
     },
 
     /**
@@ -393,6 +393,11 @@ WebInspector.DebuggerDispatcher.prototype = {
     debuggerWasDisabled: function()
     {
         this._debuggerModel._debuggerWasDisabled();
+    },
+
+    globalObjectCleared: function()
+    {
+        this._debuggerModel._globalObjectCleared();
     },
 
     /**

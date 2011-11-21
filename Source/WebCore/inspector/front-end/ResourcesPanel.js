@@ -142,7 +142,7 @@ WebInspector.ResourcesPanel.prototype = {
             this.showResource(WebInspector.mainResource);
     },
 
-    reset: function()
+    _reset: function()
     {
         this.resourcesListTreeElement.removeChildren();
         this._treeElementForFrameId = {};
@@ -189,7 +189,7 @@ WebInspector.ResourcesPanel.prototype = {
         WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.FrameDetached, this._frameDetached, this);
         WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.ResourceAdded, this._resourceAdded, this);
         WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.CachedResourcesLoaded, this._cachedResourcesLoaded, this);
-        WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.WillLoadCachedResources, this.reset, this);
+        WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.WillLoadCachedResources, this._reset, this);
 
         function populateFrame(frameId)
         {
@@ -224,12 +224,17 @@ WebInspector.ResourcesPanel.prototype = {
 
     _frameDetached: function(event)
     {
-        var frameId = event.data;
-        var frameTreeElement = this._treeElementForFrameId[frameId];
+        var frame = event.data;
+        if (!frame.parentId) {
+            // Reset on main frame detach
+            this._reset();
+        }
+
+        var frameTreeElement = this._treeElementForFrameId[frame.id];
         if (!frameTreeElement)
             return;
 
-        delete this._treeElementForFrameId[frameId];
+        delete this._treeElementForFrameId[frame.id];
         if (frameTreeElement.parent)
             frameTreeElement.parent.removeChild(frameTreeElement);
     },

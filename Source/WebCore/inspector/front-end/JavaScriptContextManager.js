@@ -61,12 +61,12 @@ WebInspector.JavaScriptContextManager.prototype = {
 
     _frameDetached: function(event)
     {
-        var frameId = event.data;
-        var context = this._frameIdToContext[frameId];
+        var frame = event.data;
+        var context = this._frameIdToContext[frame.id];
         if (!context)
             return;
         this._consoleView.removeContext(context);
-        delete this._frameIdToContext[frameId];
+        delete this._frameIdToContext[frame.id];
     },
 }
 
@@ -95,7 +95,7 @@ WebInspector.FrameEvaluationContext.prototype =
 
     get frameId()
     {
-        return this._frame.id
+        return this._frame.id;
     },
 
     get url()

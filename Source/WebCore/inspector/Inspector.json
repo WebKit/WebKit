@@ -17,9 +17,6 @@
                 "name": "disconnectFromBackend"
             },
             {
-                "name": "reset"
-            },
-            {
                 "name": "showPanel",
                 "parameters": [
                     { "name": "panel", "type": "string" }
@@ -1950,6 +1947,10 @@
                 "name": "debuggerWasDisabled",
                 "description": "Fired when debugger gets disabled (deprecated).",
                 "hidden": true
+            },
+            {
+                "name": "globalObjectCleared",
+                "description": "Called when global has been cleared and debugger client should reset its state. Happens upon navigation or reload."
             },
             {
                 "name": "scriptParsed",

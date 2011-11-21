@@ -136,9 +136,6 @@ void InspectorAgent::clearFrontend()
 void InspectorAgent::didCommitLoad()
 {
     m_didCommitLoadFired = true;
-    if (m_frontend)
-        m_frontend->inspector()->reset();
-
     m_injectedScriptManager->discardInjectedScripts();
 #if ENABLE(WORKERS)
     m_workers.clear();

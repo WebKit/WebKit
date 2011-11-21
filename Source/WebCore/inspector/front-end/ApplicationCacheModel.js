@@ -56,7 +56,7 @@ WebInspector.ApplicationCacheModel.EventTypes = {
 WebInspector.ApplicationCacheModel.prototype = {
     _frameNavigated: function(event)
     {
-        if (event.data.isMainFrame) {
+        if (event.data["isMainFrame"]) {
             this._mainFrameNavigated();
             return;
         }
@@ -68,8 +68,8 @@ WebInspector.ApplicationCacheModel.prototype = {
     
     _frameDetached: function(event)
     {
-        var frameId = event.data;
-        this._frameManifestRemoved(frameId);
+        var frame = event.data;
+        this._frameManifestRemoved(frame.id);
     },
     
     _mainFrameNavigated: function()

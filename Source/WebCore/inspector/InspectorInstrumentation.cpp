@@ -93,10 +93,17 @@ static bool eventHasListeners(const AtomicString& eventType, DOMWindow* window, 
 
 void InspectorInstrumentation::didClearWindowObjectInWorldImpl(InstrumentingAgents* instrumentingAgents, Frame* frame, DOMWrapperWorld* world)
 {
-    if (InspectorPageAgent* pageAgent = instrumentingAgents->inspectorPageAgent())
+    InspectorPageAgent* pageAgent = instrumentingAgents->inspectorPageAgent();
+    if (pageAgent)
         pageAgent->didClearWindowObjectInWorld(frame, world);
     if (InspectorAgent* inspectorAgent = instrumentingAgents->inspectorAgent())
         inspectorAgent->didClearWindowObjectInWorld(frame, world);
+#if ENABLE(JAVASCRIPT_DEBUGGER)
+    if (InspectorDebuggerAgent* debuggerAgent = instrumentingAgents->inspectorDebuggerAgent()) {
+        if (pageAgent && world == mainThreadNormalWorld() && frame == pageAgent->mainFrame())
+            debuggerAgent->didClearMainFrameWindowObject();
+    }
+#endif
 }
 
 void InspectorInstrumentation::inspectedPageDestroyedImpl(InstrumentingAgents* instrumentingAgents)
@@ -638,13 +645,6 @@ void InspectorInstrumentation::didCommitLoadImpl(InstrumentingAgents* instrument
 
         if (InspectorResourceAgent* resourceAgent = instrumentingAgents->inspectorResourceAgent())
             resourceAgent->mainFrameNavigated(loader);
-
-#if ENABLE(JAVASCRIPT_DEBUGGER)
-        if (InspectorDebuggerAgent* debuggerAgent = instrumentingAgents->inspectorDebuggerAgent()) {
-            KURL url = inspectorAgent->inspectedURLWithoutFragment();
-            debuggerAgent->inspectedURLChanged(url);
-        }
-#endif
 #if ENABLE(JAVASCRIPT_DEBUGGER) && USE(JSC)
         if (InspectorProfilerAgent* profilerAgent = instrumentingAgents->inspectorProfilerAgent()) {
             profilerAgent->stopUserInitiatedProfiling(true);

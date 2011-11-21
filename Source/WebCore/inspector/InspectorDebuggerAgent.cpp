@@ -164,10 +164,12 @@ void InspectorDebuggerAgent::setBreakpointsActive(ErrorString*, bool active)
         scriptDebugServer().deactivateBreakpoints();
 }
 
-void InspectorDebuggerAgent::inspectedURLChanged(const String&)
+void InspectorDebuggerAgent::didClearMainFrameWindowObject()
 {
     m_scripts.clear();
     m_breakpointIdToDebugServerBreakpointIds.clear();
+    if (m_frontend)
+        m_frontend->globalObjectCleared();
 }
 
 static PassRefPtr<InspectorObject> buildObjectForBreakpointCookie(const String& url, int lineNumber, int columnNumber, const String& condition, bool isRegex)

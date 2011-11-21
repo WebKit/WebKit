@@ -54,6 +54,7 @@ WebInspector.ResourceTreeModel.EventTypes = {
     FrameAdded: "FrameAdded",
     FrameNavigated: "FrameNavigated",
     FrameDetached: "FrameDetached",
+    MainFrameNavigated: "MainFrameNavigated",
     ResourceAdded: "ResourceAdded",
     WillLoadCachedResources: "WillLoadCachedResources",
     CachedResourcesLoaded: "CachedResourcesLoaded",
@@ -151,6 +152,8 @@ WebInspector.ResourceTreeModel.prototype = {
         }
         // Dispatch frame navigated event to clients prior to filling it with the resources.
         this.dispatchEventToListeners(WebInspector.ResourceTreeModel.EventTypes.FrameNavigated, { frame: frame, loaderId: loaderId, isMainFrame: isMainFrame });
+        if (isMainFrame)
+            this.dispatchEventToListeners(WebInspector.ResourceTreeModel.EventTypes.MainFrameNavigated, { frame: frame, loaderId: loaderId });
 
         // Fill frame with retained resources (the ones loaded using new loader).
         var resourcesForFrame = this._resourcesByFrameId[frame.id];
@@ -186,7 +189,7 @@ WebInspector.ResourceTreeModel.prototype = {
             delete this._frameIds[frameId];
         }
 
-        this.dispatchEventToListeners(WebInspector.ResourceTreeModel.EventTypes.FrameDetached, frameId);
+        this.dispatchEventToListeners(WebInspector.ResourceTreeModel.EventTypes.FrameDetached, frame);
     },
 
     _onResourceStarted: function(event)
@@ -309,7 +312,7 @@ WebInspector.ResourceTreeModel.prototype = {
         this._clearResources(frameId, loaderToPreserveId);
         var subframes = this._subframes[frameId];
         for (var i = 0; subframes && i < subframes.length; ++ i) {
-            this.dispatchEventToListeners(WebInspector.ResourceTreeModel.EventTypes.FrameDetached, subframes[i].id);
+            this.dispatchEventToListeners(WebInspector.ResourceTreeModel.EventTypes.FrameDetached, subframes[i]);
             this._clearChildFramesAndResources(subframes[i].id, loaderToPreserveId);
         }
         delete this._subframes[frameId];
