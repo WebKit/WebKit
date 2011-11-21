@@ -53,14 +53,9 @@ public:
     //
     // Returns a string with the font family on an empty string if the
     // request cannot be satisfied.
-    // FIXME: Depreciated API. Remove later.
-    virtual WebString getFontFamilyForCharacters(const WebUChar* characters, size_t numCharacters, const char* preferredLocale) { return WebString(); }
     // Returns a WebFontFamily instance with the font name. The instance has empty font name if the request cannot be satisfied.
     // FIXME: Make this to be a pure virtual function after transition.
-    virtual void getFontFamilyForCharacters(const WebUChar* characters, size_t numCharacters, const char* preferredLocale, WebFontFamily* family)
-    {
-        family->name = getFontFamilyForCharacters(characters, numCharacters, preferredLocale).utf8();
-    }
+    virtual void getFontFamilyForCharacters(const WebUChar* characters, size_t numCharacters, const char* preferredLocale, WebFontFamily*) = 0;
 
     virtual void getRenderStyleForStrike(const char* family, int sizeAndStyle, WebFontRenderStyle* style) = 0;
 };

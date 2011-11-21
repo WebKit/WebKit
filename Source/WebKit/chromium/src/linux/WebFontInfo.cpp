@@ -40,14 +40,6 @@
 
 namespace WebKit {
 
-// FIXME: Depreciated API. Remove later.
-WebCString WebFontInfo::familyForChars(const WebUChar* characters, size_t numCharacters, const char* preferredLocale)
-{
-    WebFontFamily family;
-    familyForChars(characters, numCharacters, preferredLocale, &family);
-    return family.name;
-}
-
 void WebFontInfo::familyForChars(const WebUChar* characters, size_t numCharacters, const char* preferredLocale, WebFontFamily* family)
 {
     FcCharSet* cset = FcCharSetCreate();

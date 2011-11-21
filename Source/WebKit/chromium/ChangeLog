@@ -1,3 +1,16 @@
+2011-11-20  Kenichi Ishibashi  <bashi@chromium.org>
+
+        [Chromium] Remove old getFontFamilyForCharacters() and familyForChars() APIs.
+        https://bugs.webkit.org/show_bug.cgi?id=72844
+
+        Removes old APIs for getting font family for given characters.
+
+        Reviewed by Darin Fisher.
+
+        * public/linux/WebFontInfo.h: Removed old familyForChars().
+        * public/linux/WebSandboxSupport.h: Removed old getFontFamilyForCharacters() and changed new getFontFamilyForCharacters() to be a pure virtual function.
+        * src/linux/WebFontInfo.cpp: Removes old familyForChars().
+
 2011-10-17  Antonio Gomes  <agomes@rim.com>
 
         Pass a Frame* parameter in EditorClient::respondToChangedSelection

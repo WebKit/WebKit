@@ -65,8 +65,6 @@ const SimpleFontData* FontCache::getFontDataForCharacters(const Font& font,
         return 0;
 
     AtomicString atomicFamily(family.name);
-    // FIXME: Remove this #if after API transition complete.
-#if 0
     // Changes weight and/or italic of given FontDescription depends on
     // the result of fontconfig so that keeping the correct font mapping
     // of the given characters. See http://crbug.com/32109 for details.
@@ -90,9 +88,6 @@ const SimpleFontData* FontCache::getFontDataForCharacters(const Font& font,
     platformData.setFakeBold(shouldSetFakeBold);
     platformData.setFakeItalic(shouldSetFakeItalic);
     return getCachedFontData(&platformData, DoNotRetain);
-#else
-    return getCachedFontData(getCachedFontPlatformData(font.fontDescription(), atomicFamily, DoNotRetain), DoNotRetain);
-#endif
 }
 
 SimpleFontData* FontCache::getSimilarFontPlatformData(const Font& font)

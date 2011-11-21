@@ -51,8 +51,6 @@ public:
     //
     // Returns: the font family or an empty string if the request could not be
     // satisfied.
-    // FIXME: Depreciated API. Remove later.
-    WEBKIT_EXPORT static WebCString familyForChars(const WebUChar* characters, size_t numCharacters, const char* preferredLocale);
     // Returns: the font family instance. The instance has an empty font name if the request could not be satisfied.
     WEBKIT_EXPORT static void familyForChars(const WebUChar* characters, size_t numCharacters, const char* preferredLocale, WebFontFamily*);
 
