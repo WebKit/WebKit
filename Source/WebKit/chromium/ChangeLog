@@ -1,5 +1,12 @@
 2011-11-21  James Robinson  <jamesr@chromium.org>
 
+        Fix chromium compile bustage - base interface added a parameter so my fake wasn't actually implementing it.
+
+        * tests/TiledLayerChromiumTest.cpp:
+        (WTF::FakeLayerTextureUpdater::prepareToUpdate):
+
+2011-11-21  James Robinson  <jamesr@chromium.org>
+
         [chromium] Avoid pushing dirty tiles to the impl layer
         https://bugs.webkit.org/show_bug.cgi?id=72765
 

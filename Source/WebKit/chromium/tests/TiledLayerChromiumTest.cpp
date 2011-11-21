@@ -51,7 +51,7 @@ public:
 
     virtual Orientation orientation() { return BottomUpOrientation; }
     virtual SampledTexelFormat sampledTexelFormat(GC3Denum) { return SampledTexelFormatRGBA; }
-    virtual void prepareToUpdate(const IntRect&, const IntSize&, int) { }
+    virtual void prepareToUpdate(const IntRect&, const IntSize&, int, float) { }
     virtual void updateTextureRect(GraphicsContext3D*, TextureAllocator*, ManagedTexture*, const IntRect&, const IntRect&) { }
 };
 
