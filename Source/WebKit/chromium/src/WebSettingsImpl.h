@@ -114,6 +114,7 @@ public:
     virtual void setMemoryInfoEnabled(bool);
     virtual void setHyperlinkAuditingEnabled(bool);
     virtual void setAsynchronousSpellCheckingEnabled(bool);
+    virtual void setUnifiedTextCheckerEnabled(bool);
     virtual void setCaretBrowsingEnabled(bool);
     virtual void setInteractiveFormValidationEnabled(bool);
     virtual void setValidationMessageTimerMagnification(int);

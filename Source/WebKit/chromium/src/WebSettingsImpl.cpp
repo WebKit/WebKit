@@ -399,6 +399,11 @@ void WebSettingsImpl::setAsynchronousSpellCheckingEnabled(bool enabled)
     m_settings->setAsynchronousSpellCheckingEnabled(enabled);
 }
 
+void WebSettingsImpl::setUnifiedTextCheckerEnabled(bool enabled)
+{
+    m_settings->setUnifiedTextCheckerEnabled(enabled);
+}
+
 void WebSettingsImpl::setCaretBrowsingEnabled(bool enabled)
 {
     m_settings->setCaretBrowsingEnabled(enabled);
