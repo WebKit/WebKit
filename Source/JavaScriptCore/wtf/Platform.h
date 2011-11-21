@@ -955,6 +955,12 @@
 #endif
 #endif
 
+#if CPU(X86) || CPU(X86_64) || CPU(MIPS)
+#if !defined(ENABLE_JIT_USE_SOFT_MODULO)
+#define ENABLE_JIT_USE_SOFT_MODULO 1
+#endif
+#endif
+
 #if CPU(X86) && COMPILER(MSVC)
 #define JSC_HOST_CALL __fastcall
 #elif CPU(X86) && COMPILER(GCC)

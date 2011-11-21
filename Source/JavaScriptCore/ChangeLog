@@ -1,3 +1,25 @@
+2011-11-20  Yuqiang Xian  <yuqiang.xian@intel.com>
+
+        Improve modulo operation on 32bit platforms
+        https://bugs.webkit.org/show_bug.cgi?id=72501
+
+        Reviewed by Filip Pizlo.
+
+        Extend softModulo to support X86 and MIPS in baseline JIT.
+        Apply the same optimization to 32bit DFG JIT.
+        1% gain on Kraken, tested on Linux Core i7 Nehalem 32bit.
+
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compileSoftModulo):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * jit/JITArithmetic32_64.cpp:
+        (JSC::JIT::emit_op_mod):
+        (JSC::JIT::emitSlow_op_mod):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::softModulo):
+        * wtf/Platform.h:
+
 2011-11-18  Filip Pizlo  <fpizlo@apple.com>
 
         Inline caches that refer to otherwise dead objects should be cleared

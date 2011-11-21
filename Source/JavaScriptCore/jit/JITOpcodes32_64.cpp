@@ -1660,11 +1660,10 @@ void JIT::emitSlow_op_get_argument_by_val(Instruction* currentInstruction, Vecto
 #if ENABLE(JIT_USE_SOFT_MODULO)
 void JIT::softModulo()
 {
-    push(regT1);
-    push(regT3);
     move(regT2, regT3);
     move(regT0, regT2);
     move(TrustedImm32(0), regT1);
+    JumpList exitBranch;
 
     // Check for negative result reminder
     Jump positiveRegT3 = branch32(GreaterThanOrEqual, regT3, TrustedImm32(0));
@@ -1680,19 +1679,26 @@ void JIT::softModulo()
     // Save the condition for negative reminder
     push(regT1);
 
-    Jump exitBranch = branch32(LessThan, regT2, regT3);
+    exitBranch.append(branch32(LessThan, regT2, regT3));
 
     // Power of two fast case
     move(regT3, regT0);
     sub32(TrustedImm32(1), regT0);
-    Jump powerOfTwo = branchTest32(NonZero, regT0, regT3);
+    Jump notPowerOfTwo = branchTest32(NonZero, regT0, regT3);
     and32(regT0, regT2);
-    powerOfTwo.link(this);
+    exitBranch.append(jump());
 
-    and32(regT3, regT0);
+    notPowerOfTwo.link(this);
 
-    Jump exitBranch2 = branchTest32(Zero, regT0);
-
+#if CPU(X86) || CPU(X86_64)
+    move(regT2, regT0);
+    m_assembler.cdq();
+    m_assembler.idivl_r(regT3);
+    move(regT1, regT2);
+#elif CPU(MIPS)
+    m_assembler.div(regT2, regT3);
+    m_assembler.mfhi(regT2);
+#else
     countLeadingZeros32(regT2, regT0);
     countLeadingZeros32(regT3, regT1);
     sub32(regT0, regT1);
@@ -1729,9 +1735,9 @@ void JIT::softModulo()
     Jump lower = branch32(Below, regT2, regT3);
     sub32(regT3, regT2);
     lower.link(this);
+#endif
 
     exitBranch.link(this);
-    exitBranch2.link(this);
 
     // Check for negative reminder
     pop(regT1);
@@ -1740,9 +1746,6 @@ void JIT::softModulo()
     positiveResult.link(this);
 
     move(regT2, regT0);
-
-    pop(regT3);
-    pop(regT1);
     ret();
 }
 #endif // ENABLE(JIT_USE_SOFT_MODULO)
