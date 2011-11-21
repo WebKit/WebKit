@@ -167,6 +167,7 @@ public:
     WKPageRef pageRef() const;
 
     void load(const QUrl& url);
+    void loadHTMLString(const QString& html, const QUrl& baseUrl);
     QUrl url() const;
 
     void setDrawingAreaSize(const QSize&);

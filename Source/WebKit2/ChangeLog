@@ -1,3 +1,23 @@
+2011-11-21  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
+
+        [Qt][WK2] Implement loadHtml API for QQuickWebView
+        https://bugs.webkit.org/show_bug.cgi?id=72161
+
+        Reviewed by Simon Hausmann.
+
+        Implement QQuickWebView::loadHtml that calls QtWebPageProxy::loadHTMLString.
+        This function will use WKPageLoadHTMLString in order to load HTML from a given string.
+
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebView::loadHtml):
+        * UIProcess/API/qt/qquickwebview.h:
+        * UIProcess/API/qt/tests/qmltests/WebView/tst_loadHtml.qml: Added.
+        * UIProcess/API/qt/tests/qmltests/DesktopBehavior/tst_loadHtml.qml: Added.
+        * UIProcess/API/qt/tests/qmltests/qmltests.pro:
+        * UIProcess/qt/QtWebPageProxy.cpp:
+        (QtWebPageProxy::loadHTMLString):
+        * UIProcess/qt/QtWebPageProxy.h:
+
 2011-11-21  Igor Oliveira  <igor.oliveira@openbossa.org>
 
         [WK2][Qt] Move Accelerated Composite animations to UIProcess

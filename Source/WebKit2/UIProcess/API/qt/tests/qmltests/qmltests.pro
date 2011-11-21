@@ -23,7 +23,9 @@ OTHER_FILES += \
     WebView/tst_loadProgressSignal.qml \
     WebView/tst_loadZeroSizeView.qml \
     WebView/tst_preferences.qml \
+    WebView/tst_loadHtml.qml \
     DesktopBehavior/tst_linkHovered.qml \
     DesktopBehavior/tst_messaging.qml \
     DesktopBehavior/tst_download.qml \
-    DesktopBehavior/tst_navigationPolicyForUrl.qml
+    DesktopBehavior/tst_navigationPolicyForUrl.qml \
+    DesktopBehavior/tst_loadHtml.qml

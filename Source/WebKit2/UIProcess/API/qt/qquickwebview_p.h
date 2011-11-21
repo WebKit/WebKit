@@ -92,6 +92,7 @@ public:
 public Q_SLOTS:
     void load(const QUrl&);
     void postMessage(const QString&);
+    void loadHtml(const QString& html, const QUrl& baseUrl = QUrl());
 
     void goBack();
     void goForward();

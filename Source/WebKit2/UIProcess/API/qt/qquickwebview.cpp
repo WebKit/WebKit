@@ -622,4 +622,18 @@ WKPageRef QQuickWebView::pageRef() const
     return d->pageProxy->pageRef();
 }
 
+/*!
+    Loads the specified \a html as the content of the web view.
+
+    External objects such as stylesheets or images referenced in the HTML
+    document are located relative to \a baseUrl.
+
+    \sa load()
+*/
+void QQuickWebView::loadHtml(const QString& html, const QUrl& baseUrl)
+{
+    Q_D(QQuickWebView);
+    d->pageProxy->loadHTMLString(html, baseUrl);
+}
+
 #include "moc_qquickwebview_p.cpp"

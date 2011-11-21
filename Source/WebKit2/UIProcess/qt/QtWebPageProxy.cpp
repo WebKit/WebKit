@@ -804,6 +804,14 @@ void QtWebPageProxy::postMessageToNavigatorQtObject(const QString& message)
     m_context->postMessageToInjectedBundle(messageName, body.get());
 }
 
+void QtWebPageProxy::loadHTMLString(const QString& html, const QUrl& baseUrl)
+{
+    WKRetainPtr<WKURLRef> wkUrl(WKURLCreateWithQUrl(baseUrl));
+    WKRetainPtr<WKStringRef> wkHtmlString(WKStringCreateWithQString(html));
+
+    WKPageLoadHTMLString(pageRef(), wkHtmlString.get(), wkUrl.get());
+}
+
 void QtWebPageProxy::load(const QUrl& url)
 {
     WKRetainPtr<WKURLRef> wkurl(WKURLCreateWithQUrl(url));
