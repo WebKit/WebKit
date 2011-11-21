@@ -2303,9 +2303,6 @@ fast/frames/iframe-onload-remove-self-no-crash.html
 fast/loader/create-frame-in-DOMContentLoaded.html
 fast/loader/frame-creation-removal.html
 
-# Web Inspector: LayoutTests/inspector/extensions/extensions-resources.html fails on Qt
-inspector/extensions/extensions-resources.html
-
 # [Qt] REGRESSION(r93937): 4 failing and 3 flaky tests
 # https://bugs.webkit.org/show_bug.cgi?id=67118
 # Flaky
@@ -2384,10 +2381,6 @@ fast/borders/inline-mask-overlay-image-outset.html
 # https://bugs.webkit.org/show_bug.cgi?id=70476
 fast/dom/error-to-string-stack-overflow.html
 
-# https://bugs.webkit.org/show_bug.cgi?id=70414
-inspector/extensions/extensions-events.html
-inspector/extensions/extensions-network.html
-
 # fast/events/touch/page-scaled-touch-gesture-click.html is failing
 # Introduced in r97988. Failure: "Gesture manager is not implemented."
 # https://bugs.webkit.org/show_bug.cgi?id=70593
@@ -2397,10 +2390,6 @@ fast/events/touch/page-scaled-touch-gesture-click.html
 # https://bugs.webkit.org/show_bug.cgi?id=70893
 fast/canvas/canvas-composite-image.html
 fast/canvas/canvas-composite-canvas.html
-
-# [Qt] inspector/extensions/extensions-console.html is failing
-# https://bugs.webkit.org/show_bug.cgi?id=70905
-inspector/extensions/extensions-console.html
 
 # REGRESSION(r99195)
 # https://bugs.webkit.org/show_bug.cgi?id=70609
@@ -2476,10 +2465,6 @@ fast/forms/file/file-input-reset.html
 # [Qt] new test css3/flexbox/line-wrapping.html failing
 # https://bugs.webkit.org/show_bug.cgi?id=72490
 css3/flexbox/line-wrapping.html
-
-# [Qt] new test inspector/extensions/extensions-sidebar.html crashing after r100433
-# https://bugs.webkit.org/show_bug.cgi?id=72493
-inspector/extensions/extensions-sidebar.html
 
 # [Qt] http/tests/misc/onload-remove-iframe-crash-2.html crashing after r100311
 # https://bugs.webkit.org/show_bug.cgi?id=72491
