@@ -6,6 +6,8 @@
 
 TEMPLATE = lib
 
+DEFINES += BUILDING_WebKit2
+
 load(javascriptcore)
 load(webcore)
 load(webkit2)

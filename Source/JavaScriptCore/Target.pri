@@ -6,9 +6,9 @@
 
 TEMPLATE = lib
 
-load(javascriptcore)
-
 DEFINES += BUILDING_JavaScriptCore BUILDING_WTF
+
+load(javascriptcore)
 
 CONFIG += javas
 CONFIG += staticlib

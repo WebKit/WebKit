@@ -1,3 +1,28 @@
+2011-11-21  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Speed up debug builds.
+        https://bugs.webkit.org/show_bug.cgi?id=72882
+
+        Reviewed by Tor Arne Vestbø.
+
+        Introduce a special type of build that replaces the static jsc/wc/wk2
+        static libraries with shared libraries, that individually are much faster
+        to link and don't require relinking into the big library when changing just
+        one file in one module. It can be enabled with
+        --qmakearg="CONFIG+=force_static_libs_as_shared"
+
+        * qmake/mkspecs/features/force_static_libs_as_shared.prf: Added. With this configuration,
+        disable symbol visibility, static linkage and enable rpath.
+        * qmake/mkspecs/features/functions.prf: Add a helper function to determine if
+        we need to link the convenience libraries together or not and renamed linkStaticLibrary
+        to just linkLibrary (because linkage is not necessarily static).
+        * qmake/mkspecs/features/qtwebkit.prf: When using the trick, make sure to also
+        link against jsc/wc/wk2 when linking app code against QtWebKit.
+        * qmake/mkspecs/features/javascriptcore.prf: Use new +needToLinkLibrary helper
+        function.
+        * qmake/mkspecs/features/webcore.prf: Ditto.
+        * qmake/mkspecs/features/webkit2.prf: Ditto.
+
 2011-11-21  Adam Klein  <adamk@chromium.org>
 
         Update flakiness dashboard linkification regexps for crbug.com/100000 and above

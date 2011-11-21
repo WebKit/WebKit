@@ -285,7 +285,7 @@ unix|win32-g++* {
 
 enable_fast_mobile_scrolling: DEFINES += ENABLE_FAST_MOBILE_SCROLLING=1
 
-config_step {
+needToLinkLibrary(WebCore) {
     pathToWebCoreOutput = $$buildDirForSource(Source/WebCore)/$$WEBCORE_DESTDIR
-    linkStaticLibrary($$pathToWebCoreOutput, $$WEBCORE_TARGET)
+    linkLibrary($$pathToWebCoreOutput, $$WEBCORE_TARGET)
 }

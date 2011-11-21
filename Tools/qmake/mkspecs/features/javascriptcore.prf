@@ -74,9 +74,9 @@ linux-*:!contains(DEFINES, USE_QTMULTIMEDIA=1) {
     }
 }
 
-config_step {
+needToLinkLibrary(JavaScriptCore) {
     pathToJavaScriptCoreOutput = $$buildDirForSource(Source/JavaScriptCore)/$$JAVASCRIPTCORE_DESTDIR
-    linkStaticLibrary($$pathToJavaScriptCoreOutput, $$JAVASCRIPTCORE_TARGET)
+    linkLibrary($$pathToJavaScriptCoreOutput, $$JAVASCRIPTCORE_TARGET)
 
     win32-* {
         LIBS += -lwinmm

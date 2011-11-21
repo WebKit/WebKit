@@ -1,3 +1,13 @@
+2011-11-21  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Speed up debug builds.
+        https://bugs.webkit.org/show_bug.cgi?id=72882
+
+        Reviewed by Tor Arne Vestbø.
+
+        * Target.pri: Make BUILDING_WebCore available earlier, so it can be
+        used by the build system.
+
 2011-11-17  Robert Hogan  <robert@webkit.org>
 
         CSS 2.1 failure: empty-inline-003.htm fails

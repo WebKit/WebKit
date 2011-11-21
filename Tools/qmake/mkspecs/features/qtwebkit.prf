@@ -25,5 +25,9 @@ config_step {
 
     DEPENDPATH += $$ROOT_WEBKIT_DIR/Source/WebKit/qt/Api
     INCLUDEPATH += $${ROOT_BUILD_DIR}/include/QtWebKit
+
+    force_static_libs_as_shared {
+        LIBS += -lwebkit2 -lwebcore -ljscore
+    }
 }
 

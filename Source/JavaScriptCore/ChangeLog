@@ -1,3 +1,13 @@
+2011-11-21  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Speed up debug builds.
+        https://bugs.webkit.org/show_bug.cgi?id=72882
+
+        Reviewed by Tor Arne Vestbø.
+
+        * Target.pri: Make BUILDING_JavaScriptCore available earlier, so it can be
+        used by the build system.
+
 2011-11-21  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r100913.

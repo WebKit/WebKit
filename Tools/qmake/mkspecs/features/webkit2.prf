@@ -64,7 +64,7 @@ WEBKIT2_INCLUDEPATH = \
 
 INCLUDEPATH = $$WEBKIT2_INCLUDEPATH $$WEBKIT2_GENERATED_SOURCES_DIR $$INCLUDEPATH
 
-config_step {
+needToLinkLibrary(WebKit2) {
     pathToWebKit2Output = $$buildDirForSource(Source/WebKit2)/$$WEBKIT2_DESTDIR
-    linkStaticLibrary($$pathToWebKit2Output, $$WEBKIT2_TARGET)
+    linkLibrary($$pathToWebKit2Output, $$WEBKIT2_TARGET)
 }

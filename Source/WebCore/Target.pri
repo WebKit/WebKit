@@ -6,10 +6,10 @@
 
 TEMPLATE = lib
 
+DEFINES += BUILDING_WebCore BUILDING_WTF
+
 load(webcore)
 load(javascriptcore)
-
-DEFINES += BUILDING_WebCore BUILDING_WTF
 
 CONFIG += staticlib
 
