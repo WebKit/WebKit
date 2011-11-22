@@ -243,6 +243,11 @@ void InspectorClientQt::openInspectorFrontend(WebCore::InspectorController* insp
 #endif
 }
 
+void InspectorClientQt::bringFrontendToFront()
+{
+    m_frontendClient->bringToFront();
+}
+
 void InspectorClientQt::releaseFrontendPage()
 {
     m_frontendWebPage = 0;

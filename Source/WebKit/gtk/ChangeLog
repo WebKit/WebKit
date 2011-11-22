@@ -1,5 +1,16 @@
 2011-11-22  Pavel Feldman  <pfeldman@google.com>
 
+        Web Inspector: remove Inspector::bringToFront from the protocol.
+        https://bugs.webkit.org/show_bug.cgi?id=72937
+
+        Reviewed by Yury Semikhatsky.
+
+        * WebCoreSupport/InspectorClientGtk.cpp:
+        (WebKit::InspectorClient::bringFrontendToFront):
+        * WebCoreSupport/InspectorClientGtk.h:
+
+2011-11-22  Pavel Feldman  <pfeldman@google.com>
+
         Web Inspector: strip unused InspectorController methods.
         https://bugs.webkit.org/show_bug.cgi?id=72886
 

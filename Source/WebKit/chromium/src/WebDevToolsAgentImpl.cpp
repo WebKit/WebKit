@@ -271,6 +271,10 @@ void WebDevToolsAgentImpl::openInspectorFrontend(InspectorController*)
 {
 }
 
+void WebDevToolsAgentImpl::bringFrontendToFront()
+{
+}
+
 // PageOverlayClient
 void WebDevToolsAgentImpl::paintPageOverlay(GraphicsContext& gc)
 {

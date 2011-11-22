@@ -842,7 +842,6 @@ WebInspector.addMainEventListeners = function(doc)
 WebInspector.frontendReused = function()
 {
     this.resourceTreeModel.frontendReused();
-    this.reset();
 }
 
 WebInspector._toolbarItemClicked = function(event)

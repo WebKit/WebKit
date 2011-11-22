@@ -1,3 +1,17 @@
+2011-11-22  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: remove Inspector::bringToFront from the protocol.
+        https://bugs.webkit.org/show_bug.cgi?id=72937
+
+        Reviewed by Yury Semikhatsky.
+
+        * src/InspectorClientImpl.cpp:
+        (WebKit::InspectorClientImpl::bringFrontendToFront):
+        * src/InspectorClientImpl.h:
+        * src/WebDevToolsAgentImpl.cpp:
+        (WebKit::WebDevToolsAgentImpl::bringFrontendToFront):
+        * src/WebDevToolsAgentImpl.h:
+
 2011-11-17  Nat Duca  <nduca@chromium.org>
 
         [chromium] Route willDraw/setNeedsRedraw to CCInputHandler and fix double-drawing issues that result

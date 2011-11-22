@@ -11,9 +11,6 @@
                 "name": "frontendReused"
             },
             {
-                "name": "bringToFront"
-            },
-            {
                 "name": "disconnectFromBackend"
             },
             {

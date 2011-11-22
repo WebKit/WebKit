@@ -285,7 +285,7 @@ void InspectorController::show()
         return;
 
     if (m_inspectorFrontend)
-        m_inspectorFrontend->inspector()->bringToFront();
+        m_inspectorClient->bringFrontendToFront();
     else {
         m_openingFrontend = true;
         m_inspectorClient->openInspectorFrontend(this);

@@ -54,6 +54,7 @@ namespace WebKit {
         virtual void inspectorDestroyed();
 
         virtual void openInspectorFrontend(WebCore::InspectorController*);
+        virtual void bringFrontendToFront();
 
         virtual void highlight();
         virtual void hideHighlight();

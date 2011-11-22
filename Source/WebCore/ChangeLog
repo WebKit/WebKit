@@ -1,3 +1,21 @@
+2011-11-22  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: remove Inspector::bringToFront from the protocol.
+        https://bugs.webkit.org/show_bug.cgi?id=72937
+
+        Inspector::bringToFront protocol method is currently used on the backend
+        in order to reveal the front-end window. We should do that by means of
+        the inspector client interface instead.
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/Inspector.json:
+        * inspector/InspectorClient.h:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::show):
+        * loader/EmptyClients.h:
+        (WebCore::EmptyInspectorClient::bringFrontendToFront):
+
 2011-11-21  Andrey Kosyakov  <caseq@chromium.org>
 
         Web Inspector: [Extensions API][refactoring] remove dependencies on the ExtensionsServer from most of the insepctor

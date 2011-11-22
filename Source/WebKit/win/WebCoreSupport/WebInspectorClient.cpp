@@ -178,6 +178,11 @@ void WebInspectorClient::openInspectorFrontend(InspectorController* inspectorCon
     m_frontendHwnd = frontendHwnd;
 }
 
+void WebInspectorClient::bringFrontendToFront()
+{
+    m_frontendClient->bringToFront();
+}
+
 void WebInspectorClient::highlight()
 {
     bool creatingHighlight = !m_highlight;

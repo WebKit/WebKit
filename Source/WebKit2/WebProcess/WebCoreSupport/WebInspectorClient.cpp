@@ -44,10 +44,12 @@ void WebInspectorClient::inspectorDestroyed()
 
 void WebInspectorClient::openInspectorFrontend(InspectorController*)
 {
-    WebPage* inspectorPage = m_page->inspector()->createInspectorPage();
-    ASSERT(inspectorPage);
-    if (!inspectorPage)
-        return;
+    ASSERT(m_page->inspector()->createInspectorPage());
+}
+
+void WebInspectorClient::bringFrontendToFront()
+{
+    m_page->inspector()->bringToFront();
 }
 
 void WebInspectorClient::highlight()

@@ -156,6 +156,11 @@ void InspectorClient::openInspectorFrontend(InspectorController* controller)
     m_frontendPage->setGroupName("");
 }
 
+void InspectorClient::bringFrontendToFront()
+{
+    m_frontendClient->bringToFront();
+}
+
 void InspectorClient::releaseFrontendPage()
 {
     m_frontendPage = 0;

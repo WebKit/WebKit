@@ -52,6 +52,11 @@ void InspectorClientWx::openInspectorFrontend(WebCore::InspectorController*)
     notImplemented();
 }
 
+void InspectorClientWx::bringFrontendToFront()
+{
+    notImplemented();
+}
+
 void InspectorClientWx::highlight()
 {
     notImplemented();

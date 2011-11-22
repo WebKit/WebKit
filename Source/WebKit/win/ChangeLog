@@ -1,3 +1,14 @@
+2011-11-22  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: remove Inspector::bringToFront from the protocol.
+        https://bugs.webkit.org/show_bug.cgi?id=72937
+
+        Reviewed by Yury Semikhatsky.
+
+        * WebCoreSupport/WebInspectorClient.cpp:
+        (WebInspectorClient::bringFrontendToFront):
+        * WebCoreSupport/WebInspectorClient.h:
+
 2011-11-21  Pavel Feldman  <pfeldman@google.com>
 
         Not reviewed: an attempt to fix windows build.

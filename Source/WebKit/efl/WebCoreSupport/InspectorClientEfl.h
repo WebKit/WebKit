@@ -43,6 +43,7 @@ public:
     virtual void inspectorDestroyed();
 
     virtual void openInspectorFrontend(InspectorController*);
+    virtual void bringFrontendToFront();
 
     virtual void highlight();
     virtual void hideHighlight();
