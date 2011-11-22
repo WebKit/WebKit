@@ -1,3 +1,14 @@
+2011-11-22  Scott Graham  <scottmg@chromium.org>
+
+        Roll Chromium DEPS
+        https://bugs.webkit.org/show_bug.cgi?id=72972
+
+        Add dbus in Chromium as pulled dep and update to HEAD.
+
+        Reviewed by Dirk Pranke.
+
+        * DEPS:
+
 2011-11-22  Dirk Pranke  <dpranke@chromium.org>
 
         Roll Chromium DEPS to r110960 and set the disable_nacl flag.
