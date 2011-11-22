@@ -2032,13 +2032,7 @@ BUGWK45991 LINUX WIN CPU : canvas/philip/tests/2d.path.arcTo.shape.curve2.html =
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.pattern.paint.norepeat.coord3.html = TEXT
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.pattern.paint.repeatx.coord1.html = TEXT
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.pattern.paint.repeaty.coord1.html = TEXT
-BUGWK45991 LINUX WIN : canvas/philip/tests/2d.shadow.canvas.basic.html = TEXT
-BUGWK45991 LINUX WIN : canvas/philip/tests/2d.shadow.canvas.transparent.2.html = TEXT
 BUGWK45991 LINUX WIN CPU : canvas/philip/tests/2d.shadow.enable.blur.html = TEXT
-BUGWK45991 LINUX WIN : canvas/philip/tests/2d.shadow.image.alpha.html = TEXT
-BUGWK45991 LINUX WIN : canvas/philip/tests/2d.shadow.image.basic.html = TEXT
-BUGWK45991 LINUX WIN : canvas/philip/tests/2d.shadow.image.scale.html = TEXT
-BUGWK45991 LINUX WIN : canvas/philip/tests/2d.shadow.image.transparent.2.html = TEXT
 BUGWK45991 LINUX WIN CPU : canvas/philip/tests/2d.transformation.setTransform.skewed.html = TEXT
 BUGWK45991 LINUX WIN CPU : canvas/philip/tests/2d.transformation.transform.skewed.html = TEXT
 
@@ -3456,8 +3450,6 @@ BUGWK62684 WIN LINUX : fast/ruby/overhang-horizontal.html = FAIL
 
 // We don't seem to load this glyph on windows
 BUGJAMESR WIN : fast/text/fallback-traits-fixup.html = IMAGE+TEXT
-
-BUGWK67515 LINUX WIN : canvas/philip/tests/2d.shadow.canvas.alpha.html = TEXT
 
 BUGCR54348 LINUX RELEASE : http/tests/security/xssAuditor/dom-write-innerHTML.html = PASS TEXT
 BUGWK67538 DEBUG : http/tests/security/xssAuditor/dom-write-innerHTML.html = PASS TEXT
