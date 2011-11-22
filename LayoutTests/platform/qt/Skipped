@@ -2477,3 +2477,7 @@ inspector/elements/elements-panel-selection-on-refresh.html
 # [Qt] fast/canvas/canvas-lineWidth.html timeouts intermittently on 64 bit
 # https://bugs.webkit.org/show_bug.cgi?id=72694
 fast/canvas/canvas-lineWidth.html
+
+# [Qt] inspector/extensions/extensions-events.html crashing after r100926
+# https://bugs.webkit.org/show_bug.cgi?id=72932
+inspector/extensions/extensions-events.html
