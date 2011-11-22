@@ -3463,8 +3463,6 @@ BUG_ABARTH WIN : svg/as-background-image/svg-as-background-3.html = PASS IMAGE
 
 BUGCR95972 WIN DEBUG : webaudio/sample-accurate-scheduling.html = CRASH
 
-// Failing after r94912.
-BUGWK67913 : media/video-zoom-controls.html = TEXT IMAGE+TEXT IMAGE
 BUGCR102677 MAC DEBUG : fast/reflections/reflection-masks-outset.html = CRASH PASS
 
 // Failing after r94946

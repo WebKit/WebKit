@@ -20,6 +20,11 @@ layer at (102,217) size 144x48
       RenderDeprecatedFlexibleBox {DIV} at (1,1) size 122x25
         RenderBlock {DIV} at (0,0) size 109x43
         RenderBlock {DIV} at (109,0) size 13x43
+layer at (245,226) size 0x30 scrollWidth 87 scrollHeight 31
+  RenderDeprecatedFlexibleBox {DIV} at (143,9) size 0x30 [color=#FFFFFF]
+    RenderBlock (anonymous) at (13,0) size 60x31
+      RenderText {#text} at (0,2) size 60x27
+        text run at (0,2) width 60: "00:00"
 layer at (113,219) size 13x43
   RenderBlock (relative positioned) {DIV} at (0,-9) size 13x43
 layer at (246,217) size 51x48
@@ -38,6 +43,11 @@ layer at (102,442) size 144x48
       RenderDeprecatedFlexibleBox {DIV} at (1,1) size 122x25
         RenderBlock {DIV} at (0,0) size 109x43
         RenderBlock {DIV} at (109,0) size 13x43
+layer at (245,451) size 0x30 scrollWidth 87 scrollHeight 31
+  RenderDeprecatedFlexibleBox {DIV} at (143,9) size 0x30 [color=#FFFFFF]
+    RenderBlock (anonymous) at (13,0) size 60x31
+      RenderText {#text} at (0,2) size 60x27
+        text run at (0,2) width 60: "00:00"
 layer at (113,444) size 13x43
   RenderBlock (relative positioned) {DIV} at (0,-9) size 13x43
 layer at (246,442) size 51x48
