@@ -26,8 +26,7 @@
 #include "config.h"
 #include "WebEventFactory.h"
 
-#include <WebCore/NotImplemented.h>
-#include <WebCore/PlatformKeyboardEvent.h>
+#include "EflKeyboardUtilities.h"
 #include <WebCore/Scrollbar.h>
 
 using namespace WebCore;
@@ -163,8 +162,8 @@ WebKeyboardEvent WebEventFactory::createWebKeyboardEvent(const Evas_Event_Key_Do
     return WebKeyboardEvent(WebEvent::KeyDown,
                             String::fromUTF8(event->string),
                             String::fromUTF8(event->string),
-                            PlatformKeyboardEvent::keyIdentifierForEvasKeyName(keyName),
-                            PlatformKeyboardEvent::windowsKeyCodeForEvasKeyName(keyName),
+                            keyIdentifierForEvasKeyName(keyName),
+                            windowsKeyCodeForEvasKeyName(keyName),
                             0 /* FIXME: nativeVirtualKeyCode */,
                             0 /* macCharCode */,
                             false /* FIXME: isAutoRepeat */,
@@ -180,8 +179,8 @@ WebKeyboardEvent WebEventFactory::createWebKeyboardEvent(const Evas_Event_Key_Up
     return WebKeyboardEvent(WebEvent::KeyUp,
                             String::fromUTF8(event->string),
                             String::fromUTF8(event->string),
-                            PlatformKeyboardEvent::keyIdentifierForEvasKeyName(keyName),
-                            PlatformKeyboardEvent::windowsKeyCodeForEvasKeyName(keyName),
+                            keyIdentifierForEvasKeyName(keyName),
+                            windowsKeyCodeForEvasKeyName(keyName),
                             0 /* FIXME: nativeVirtualKeyCode */,
                             0 /* macCharCode */,
                             false /* FIXME: isAutoRepeat */,

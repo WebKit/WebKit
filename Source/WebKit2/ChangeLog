@@ -1,3 +1,17 @@
+2011-11-22  Eunmi Lee  <eunmi15.lee@samsung.com>
+
+        [WK2] Modify EFL port's WebEventFactory to use EflKeyboardUtilities's
+        keyIdentifierForEvasKeyName() and windowsKeyCodeForEvasKeyName().
+        https://bugs.webkit.org/show_bug.cgi?id=72850
+
+        Reviewed by Anders Carlsson.
+
+        The EflKeyboardUtilities has been added, so we can use keyIdentifierForEvasKeyName() and
+        windowsKeyCodeForEvasKeyName() for EFL port's WebEventFactory.
+
+        * Shared/efl/WebEventFactory.cpp:
+        (WebKit::WebEventFactory::createWebKeyboardEvent):
+
 2011-11-21  Alexis Menard  <alexis.menard@openbossa.org>
 
         [Qt][WK2] REGRESSION(100483): It made 2 API tests fail
