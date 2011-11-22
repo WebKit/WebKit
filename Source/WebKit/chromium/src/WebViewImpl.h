@@ -81,6 +81,7 @@ class DeviceOrientationClientProxy;
 class DragScrollTimer;
 class GeolocationClientProxy;
 class SpeechInputClientImpl;
+class UserMediaClientImpl;
 class WebAccessibilityObject;
 class WebCompositorImpl;
 class WebDevToolsAgentClient;
@@ -624,6 +625,10 @@ private:
 
 #if ENABLE(GESTURE_RECOGNIZER)
     OwnPtr<WebCore::PlatformGestureRecognizer> m_gestureRecognizer;
+#endif
+
+#if ENABLE(MEDIA_STREAM)
+    OwnPtr<UserMediaClientImpl> m_userMediaClient;
 #endif
 };
 

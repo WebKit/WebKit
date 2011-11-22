@@ -1,3 +1,44 @@
+2011-11-21  Tommy Widenflycht  <tommyw@google.com>
+
+        [chromium] MediaStream API: Adding embedding code for GetUserMedia
+        https://bugs.webkit.org/show_bug.cgi?id=71678
+
+        Reviewed by Darin Fisher.
+
+        * WebKit.gyp:
+        * public/WebUserMediaClient.h: Added.
+        (WebKit::WebUserMediaClient::~WebUserMediaClient):
+        * public/WebUserMediaRequest.h: Added.
+        (WebKit::WebUserMediaRequest::WebUserMediaRequest):
+        (WebKit::WebUserMediaRequest::~WebUserMediaRequest):
+        (WebKit::WebUserMediaRequest::operator=):
+        (WebKit::WebUserMediaRequest::isNull):
+        (WebKit::operator==):
+        * public/WebViewClient.h:
+        (WebKit::WebViewClient::userMediaClient):
+        * src/UserMediaClientImpl.cpp: Added.
+        (WebKit::UserMediaClientImpl::UserMediaClientImpl):
+        (WebKit::UserMediaClientImpl::pageDestroyed):
+        (WebKit::UserMediaClientImpl::requestUserMedia):
+        (WebKit::UserMediaClientImpl::cancelUserMediaRequest):
+        * src/UserMediaClientImpl.h: Added.
+        * src/WebUserMediaRequest.cpp: Added.
+        (WebKit::WebUserMediaRequest::WebUserMediaRequest):
+        (WebKit::WebUserMediaRequest::reset):
+        (WebKit::WebUserMediaRequest::audio):
+        (WebKit::WebUserMediaRequest::video):
+        (WebKit::WebUserMediaRequest::cameraPreferenceUser):
+        (WebKit::WebUserMediaRequest::cameraPreferenceEnvironment):
+        (WebKit::WebUserMediaRequest::securityOrigin):
+        (WebKit::WebUserMediaRequest::requestSucceeded):
+        (WebKit::WebUserMediaRequest::requestFailed):
+        (WebKit::WebUserMediaRequest::equals):
+        (WebKit::WebUserMediaRequest::assign):
+        (WebKit::WebUserMediaRequest::operator PassRefPtr<UserMediaRequest>):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::WebViewImpl):
+        * src/WebViewImpl.h:
+
 2011-11-21  James Robinson  <jamesr@chromium.org>
 
         [chromium] Fix tiler initialization in TiledLayerChromiumTest
