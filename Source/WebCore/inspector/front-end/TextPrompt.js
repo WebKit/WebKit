@@ -350,6 +350,8 @@ WebInspector.TextPrompt.prototype = {
             shouldExit = true;
         else if (auto && !this._suggestBox && !force && !this.isCaretAtEndOfPrompt())
             shouldExit = true;
+        else if (!selection.isCollapsed)
+            shouldExit = true;
         else if (!force) {
             // BUG72018: Do not show suggest box if caret is followed by a non-stop character.
             var wordSuffixRange = selectionRange.startContainer.rangeOfWord(selectionRange.endOffset, this._completionStopCharacters, this._element, "forward");

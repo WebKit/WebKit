@@ -1,3 +1,13 @@
+2011-11-22  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: [SuggestBox] Grayed prompt displayed with non-collapsed selection in place
+        https://bugs.webkit.org/show_bug.cgi?id=72951
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/TextPrompt.js:
+        (WebInspector.TextPrompt.prototype.complete):
+
 2011-11-22  Pavel Feldman  <pfeldman@google.com>
 
         Not reviewed: fix inspector front-end compilation.
