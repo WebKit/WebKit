@@ -7,6 +7,7 @@ DesktopWebView {
     id: webView
     width: 200
     height: 400
+    focus: true
 
     property string lastUrl
 
@@ -29,6 +30,15 @@ DesktopWebView {
     TestCase {
         name: "DesktopWebViewLoadHtml"
 
+        // Delayed windowShown to workaround problems with Qt5 in debug mode.
+        when: false
+        Timer {
+            running: parent.windowShown
+            repeat: false
+            interval: 1
+            onTriggered: parent.when = true
+        }
+
         function init() {
             webView.lastUrl = ""
             linkHoveredSpy.clear()
@@ -36,7 +46,6 @@ DesktopWebView {
         }
 
         function test_baseUrlAfterLoadHtml() {
-            skip("Link Hovered is currently not working")
             loadSpy.clear()
             linkHoveredSpy.clear()
             compare(linkHoveredSpy.count, 0)
