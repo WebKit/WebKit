@@ -401,6 +401,8 @@ WebProcessProxy* WebContext::relaunchProcessIfNecessary()
 
 DownloadProxy* WebContext::download(WebPageProxy* initiatingPage, const ResourceRequest& request)
 {
+    ensureWebProcess();
+
     DownloadProxy* download = createDownloadProxy();
     uint64_t initiatingPageID = initiatingPage ? initiatingPage->pageID() : 0;
 
