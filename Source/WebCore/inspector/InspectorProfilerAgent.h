@@ -70,8 +70,8 @@ public:
     void enable(ErrorString*);
     void disable(ErrorString*);
     void isEnabled(ErrorString*, bool* result) { *result = enabled(); }
-    void start(ErrorString*) { startUserInitiatedProfiling(); }
-    void stop(ErrorString*) { stopUserInitiatedProfiling(); }
+    void start(ErrorString* = 0);
+    void stop(ErrorString* = 0);
 
     void disable();
     void enable(bool skipRecompile);
@@ -79,15 +79,12 @@ public:
     String getCurrentUserInitiatedProfileName(bool incrementProfileNumber = false);
     void getProfileHeaders(ErrorString* error, RefPtr<InspectorArray>* headers);
     void getProfile(ErrorString* error, const String& type, unsigned uid, RefPtr<InspectorObject>* profileObject);
-    bool isRecordingUserInitiatedProfile() { return m_recordingUserInitiatedProfile; }
     void removeProfile(ErrorString* error, const String& type, unsigned uid);
 
     void setFrontend(InspectorFrontend*);
     void clearFrontend();
     void restore();
 
-    void startUserInitiatedProfiling();
-    void stopUserInitiatedProfiling(bool ignoreProfile = false);
     void takeHeapSnapshot(ErrorString*);
     void toggleRecordButton(bool isProfiling);
 

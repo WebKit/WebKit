@@ -1,3 +1,14 @@
+2011-11-22  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: strip unused InspectorController methods.
+        https://bugs.webkit.org/show_bug.cgi?id=72886
+
+        Reviewed by Yury Semikhatsky.
+
+        * webkit/webkitwebinspector.cpp:
+        (webkit_web_inspector_set_property):
+        (webkit_web_inspector_get_property):
+
 2011-11-21  Yuta Kitamura  <yutak@chromium.org>
 
         [GTK] Enable WebSocket hybi tests

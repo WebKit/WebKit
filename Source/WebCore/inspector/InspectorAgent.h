@@ -63,7 +63,6 @@ public:
 
     KURL inspectedURL() const;
     KURL inspectedURLWithoutFragment() const;
-    void showConsole();
 
     void setFrontend(InspectorFrontend*);
     InspectorFrontend* frontend() const { return m_frontend; }
@@ -85,18 +84,12 @@ public:
 
     bool hasFrontend() const { return m_frontend; }
 
-
-#if ENABLE(JAVASCRIPT_DEBUGGER)
-    void showProfilesPanel();
-#endif
-
     // Generic code called from custom implementations.
     void evaluateForTestInFrontend(long testCallId, const String& script);
 
     void setInspectorExtensionAPI(const String& source);
 
 private:
-    void showPanel(const String& panel);
     void unbindAllResources();
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
@@ -112,7 +105,6 @@ private:
     InjectedScriptManager* m_injectedScriptManager;
 
     Vector<pair<long, String> > m_pendingEvaluateTestCommands;
-    String m_showPanelAfterVisible;
     String m_inspectorExtensionAPI;
 #if ENABLE(WORKERS)
     typedef HashMap<intptr_t, RefPtr<InspectorWorkerResource> > WorkersMap;

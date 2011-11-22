@@ -67,7 +67,6 @@ public:
     void getCapabilities(ErrorString*, RefPtr<InspectorArray>*);
     void enable(ErrorString*);
     void disable(ErrorString*);
-    bool enabled();
     void restore();
     void setFrontend(InspectorFrontend*);
     void clearFrontend();
@@ -123,6 +122,7 @@ protected:
 private:
     void enable();
     void disable();
+    bool enabled();
 
     PassRefPtr<InspectorArray> currentCallFrames();
 

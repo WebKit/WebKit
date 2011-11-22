@@ -242,7 +242,7 @@ void InspectorProfilerAgent::removeProfile(ErrorString*, const String& type, uns
 
 void InspectorProfilerAgent::resetState()
 {
-    stopUserInitiatedProfiling();
+    stop();
     m_profiles.clear();
     m_snapshots.clear();
     m_currentUserInitiatedProfileNumber = 1;
@@ -268,7 +268,7 @@ void InspectorProfilerAgent::setFrontend(InspectorFrontend* frontend)
 void InspectorProfilerAgent::clearFrontend()
 {
     m_frontend = 0;
-    stopUserInitiatedProfiling();
+    stop();
 }
 
 void InspectorProfilerAgent::restore()
@@ -279,7 +279,7 @@ void InspectorProfilerAgent::restore()
     // Revisit this.
     resetFrontendProfiles();
     if (m_inspectorState->getBoolean(ProfilerAgentState::userInitiatedProfiling))
-        startUserInitiatedProfiling();
+        start();
 }
 
 void InspectorProfilerAgent::restoreEnablement()
@@ -290,7 +290,7 @@ void InspectorProfilerAgent::restoreEnablement()
     }
 }
 
-void InspectorProfilerAgent::startUserInitiatedProfiling()
+void InspectorProfilerAgent::start(ErrorString*)
 {
     if (m_recordingUserInitiatedProfile)
         return;
@@ -311,7 +311,7 @@ void InspectorProfilerAgent::startUserInitiatedProfiling()
     m_inspectorState->setBoolean(ProfilerAgentState::userInitiatedProfiling, true);
 }
 
-void InspectorProfilerAgent::stopUserInitiatedProfiling(bool ignoreProfile)
+void InspectorProfilerAgent::stop(ErrorString*)
 {
     if (!m_recordingUserInitiatedProfile)
         return;
@@ -325,12 +325,8 @@ void InspectorProfilerAgent::stopUserInitiatedProfiling(bool ignoreProfile)
     ScriptState* scriptState = 0;
 #endif
     RefPtr<ScriptProfile> profile = ScriptProfiler::stop(scriptState, title);
-    if (profile) {
-        if (!ignoreProfile)
-            addProfile(profile, 0, String());
-        else
-            addProfileFinishedMessageToConsole(profile, 0, String());
-    }
+    if (profile)
+        addProfile(profile, 0, String());
     toggleRecordButton(false);
     m_inspectorState->setBoolean(ProfilerAgentState::userInitiatedProfiling, false);
 }

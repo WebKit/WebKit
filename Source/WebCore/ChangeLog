@@ -1,3 +1,60 @@
+2011-11-22  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: strip unused InspectorController methods.
+        https://bugs.webkit.org/show_bug.cgi?id=72886
+
+        This is a follow up to the https://bugs.webkit.org/show_bug.cgi?id=63009.
+        I am now able to remove following InspectorController methods:
+        ::startUserInitiatedProfiling,
+        ::isRecordingUserInitiatedProfile,
+        ::stopUserInitiatedProfiling,
+        ::showAndEnableDebugger,
+        ::debuggerEnabled,
+        ::disableDebugger,
+        ::startTimelineProfiler,
+        ::stopTimelineProfiler,
+        ::timelineProfilerEnabled,
+        ::showConsole.
+
+        Reviewed by Yury Semikhatsky.
+
+        * WebCore.exp.in:
+        * WebCore.order:
+        * inspector/Inspector.json:
+        * inspector/InspectorAgent.cpp:
+        (WebCore::InspectorAgent::setFrontend):
+        * inspector/InspectorAgent.h:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::InspectorController):
+        (WebCore::InspectorController::connectFrontend):
+        * inspector/InspectorController.h:
+        * inspector/InspectorDebuggerAgent.cpp:
+        (WebCore::InspectorDebuggerAgent::enable):
+        (WebCore::InspectorDebuggerAgent::disable):
+        * inspector/InspectorDebuggerAgent.h:
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::didCommitLoadImpl):
+        * inspector/InspectorProfilerAgent.cpp:
+        (WebCore::InspectorProfilerAgent::resetState):
+        (WebCore::InspectorProfilerAgent::clearFrontend):
+        (WebCore::InspectorProfilerAgent::restore):
+        (WebCore::InspectorProfilerAgent::start):
+        (WebCore::InspectorProfilerAgent::stop):
+        * inspector/InspectorProfilerAgent.h:
+        * inspector/InspectorTimelineAgent.cpp:
+        (WebCore::InspectorTimelineAgent::start):
+        (WebCore::InspectorTimelineAgent::stop):
+        * inspector/InspectorTimelineAgent.h:
+        * inspector/front-end/DebuggerModel.js:
+        (WebInspector.DebuggerModel.prototype.enableDebugger):
+        (WebInspector.DebuggerModel.prototype.disableDebugger):
+        * inspector/front-end/TimelineManager.js:
+        (WebInspector.TimelineManager.prototype.start):
+        (WebInspector.TimelineManager.prototype.stop):
+        (WebInspector.TimelineManager.prototype._started):
+        (WebInspector.TimelineManager.prototype._stopped):
+        * inspector/front-end/inspector.js:
+
 2011-11-17  Nat Duca  <nduca@chromium.org>
 
         [chromium] Route willDraw/setNeedsRedraw to CCInputHandler and fix double-drawing issues that result

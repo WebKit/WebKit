@@ -115,7 +115,6 @@ void InspectorDebuggerAgent::enable(ErrorString*)
     m_inspectorState->setBoolean(DebuggerAgentState::debuggerEnabled, true);
 
     ASSERT(m_frontend);
-    m_frontend->debuggerWasEnabled();
 }
 
 void InspectorDebuggerAgent::disable(ErrorString*)
@@ -125,9 +124,6 @@ void InspectorDebuggerAgent::disable(ErrorString*)
 
     disable();
     m_inspectorState->setBoolean(DebuggerAgentState::debuggerEnabled, false);
-
-    if (m_frontend)
-        m_frontend->debuggerWasDisabled();
 }
 
 void InspectorDebuggerAgent::restore()

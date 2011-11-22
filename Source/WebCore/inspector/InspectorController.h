@@ -95,7 +95,6 @@ public:
     void restoreInspectorStateFromCookie(const String& inspectorCookie);
     void setProcessId(long);
 
-    void showConsole();
     void inspect(Node*);
     void drawHighlight(GraphicsContext&) const;
     void hideHighlight();
@@ -103,20 +102,11 @@ public:
 
     void evaluateForTestInFrontend(long callId, const String& script);
 
-    void startTimelineProfiler();
-    void stopTimelineProfiler();
-    bool timelineProfilerEnabled();
-
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     bool profilerEnabled();
     void enableProfiler();
-    void startUserInitiatedProfiling();
-    bool isRecordingUserInitiatedProfile() const;
-    void stopUserInitiatedProfiling();
     void disableProfiler();
-    void showAndEnableDebugger();
-    bool debuggerEnabled();
-    void disableDebugger();
+
     void resume();
 #endif
 
@@ -158,7 +148,6 @@ private:
     Page* m_page;
     InspectorClient* m_inspectorClient;
     bool m_openingFrontend;
-    bool m_startUserInitiatedDebuggingWhenFrontedIsConnected;
 };
 
 }

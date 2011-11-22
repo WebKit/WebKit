@@ -17,15 +17,6 @@
                 "name": "disconnectFromBackend"
             },
             {
-                "name": "showPanel",
-                "parameters": [
-                    { "name": "panel", "type": "string" }
-                ]
-            },
-            {
-                "name": "startUserInitiatedDebugging"
-            },
-            {
                 "name": "evaluateForTestInFrontend",
                 "parameters": [
                     { "name": "testCallId", "type": "integer" },
@@ -1710,16 +1701,6 @@
         ],
         "events": [
             {
-                "name": "started",
-                "description": "Fired when timeline has been started.",
-                "hidden": true
-            },
-            {
-                "name": "stopped",
-                "description": "Fired when timeline has been stopped.",
-                "hidden": true
-            },
-            {
                 "name": "eventRecorded",
                 "parameters": [
                     { "name": "record", "$ref": "TimelineEvent", "description": "Timeline event record data." }
@@ -1938,16 +1919,6 @@
             }
         ],
         "events": [
-            {
-                "name": "debuggerWasEnabled",
-                "description": "Fired when debugger gets enabled (deprecated).",
-                "hidden": true
-            },
-            {
-                "name": "debuggerWasDisabled",
-                "description": "Fired when debugger gets disabled (deprecated).",
-                "hidden": true
-            },
             {
                 "name": "globalObjectCleared",
                 "description": "Called when global has been cleared and debugger client should reset its state. Happens upon navigation or reload."

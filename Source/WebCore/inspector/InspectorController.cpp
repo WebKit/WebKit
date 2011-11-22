@@ -121,7 +121,6 @@ InspectorController::InspectorController(Page* page, InspectorClient* inspectorC
     , m_page(page)
     , m_inspectorClient(inspectorClient)
     , m_openingFrontend(false)
-    , m_startUserInitiatedDebuggingWhenFrontedIsConnected(false)
 {
     ASSERT_ARG(inspectorClient, inspectorClient);
     m_injectedScriptManager->injectedScriptHost()->init(m_inspectorAgent.get()
@@ -174,18 +173,6 @@ void InspectorController::didClearWindowObjectInWorld(Frame* frame, DOMWrapperWo
     // client that it's cleared so that the client can expose inspector bindings.
     if (m_inspectorFrontendClient && frame == m_page->mainFrame())
         m_inspectorFrontendClient->windowObjectCleared();
-}
-
-void InspectorController::startTimelineProfiler()
-{
-    ErrorString error;
-    m_timelineAgent->start(&error, 0);
-}
-
-void InspectorController::stopTimelineProfiler()
-{
-    ErrorString error;
-    m_timelineAgent->stop(&error);
 }
 
 void InspectorController::connectFrontend()
@@ -247,11 +234,6 @@ void InspectorController::connectFrontend()
         , m_workerAgent.get()
 #endif
     ));
-
-    if (m_startUserInitiatedDebuggingWhenFrontedIsConnected) {
-        m_inspectorFrontend->inspector()->startUserInitiatedDebugging();
-        m_startUserInitiatedDebuggingWhenFrontedIsConnected = false;
-    }
 }
 
 void InspectorController::disconnectFrontend()
@@ -359,14 +341,6 @@ void InspectorController::drawHighlight(GraphicsContext& context) const
     m_domAgent->drawHighlight(context);
 }
 
-void InspectorController::showConsole()
-{
-    if (!enabled())
-        return;
-    show();
-    m_inspectorAgent->showConsole();
-}
-
 void InspectorController::inspect(Node* node)
 {
     if (!enabled())
@@ -385,11 +359,6 @@ bool InspectorController::enabled() const
 Page* InspectorController::inspectedPage() const
 {
     return m_page;
-}
-
-bool InspectorController::timelineProfilerEnabled()
-{
-    return m_timelineAgent->started();
 }
 
 void InspectorController::setInspectorExtensionAPI(const String& source)
@@ -430,48 +399,6 @@ void InspectorController::disableProfiler()
 bool InspectorController::profilerEnabled()
 {
     return m_profilerAgent->enabled();
-}
-
-bool InspectorController::debuggerEnabled()
-{
-    return m_debuggerAgent->enabled();
-}
-
-void InspectorController::showAndEnableDebugger()
-{
-    if (!enabled())
-        return;
-    show();
-
-    if (m_inspectorFrontend)
-        m_inspectorFrontend->inspector()->startUserInitiatedDebugging();
-    else
-        m_startUserInitiatedDebuggingWhenFrontedIsConnected = true;
-}
-
-void InspectorController::disableDebugger()
-{
-    ErrorString error;
-    m_debuggerAgent->disable(&error);
-}
-
-void InspectorController::startUserInitiatedProfiling()
-{
-    m_profilerAgent->startUserInitiatedProfiling();
-}
-
-void InspectorController::stopUserInitiatedProfiling()
-{
-    if (!enabled())
-        return;
-    show();
-    m_profilerAgent->stopUserInitiatedProfiling();
-    m_inspectorAgent->showProfilesPanel();
-}
-
-bool InspectorController::isRecordingUserInitiatedProfile() const
-{
-    return m_profilerAgent->isRecordingUserInitiatedProfile();
 }
 
 void InspectorController::resume()

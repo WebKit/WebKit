@@ -665,12 +665,6 @@ WebInspector.showPanel = function(panel)
     WebInspector.inspectorView.setCurrentPanel(this.panels[panel]);
 }
 
-WebInspector.startUserInitiatedDebugging = function()
-{
-    WebInspector.inspectorView.setCurrentPanel(this.panels.scripts);
-    WebInspector.debuggerModel.enableDebugger();
-}
-
 WebInspector.bringToFront = function()
 {
     InspectorFrontendHost.bringToFront();

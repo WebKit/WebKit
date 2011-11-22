@@ -147,28 +147,20 @@ void InspectorTimelineAgent::start(ErrorString*, int* maxCallStackDepth)
 
     m_instrumentingAgents->setInspectorTimelineAgent(this);
     ScriptGCEvent::addEventListener(this);
-    m_frontend->started();
     m_state->setBoolean(TimelineAgentState::timelineAgentEnabled, true);
 }
 
 void InspectorTimelineAgent::stop(ErrorString*)
 {
-    if (!started())
+    if (!m_state->getBoolean(TimelineAgentState::timelineAgentEnabled))
         return;
     m_instrumentingAgents->setInspectorTimelineAgent(0);
-    if (m_frontend)
-        m_frontend->stopped();
     ScriptGCEvent::removeEventListener(this);
 
     clearRecordStack();
     m_gcEvents.clear();
 
     m_state->setBoolean(TimelineAgentState::timelineAgentEnabled, false);
-}
-
-bool InspectorTimelineAgent::started() const
-{
-    return m_state->getBoolean(TimelineAgentState::timelineAgentEnabled);
 }
 
 void InspectorTimelineAgent::willCallFunction(const String& scriptName, int scriptLine)

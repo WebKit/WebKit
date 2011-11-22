@@ -68,7 +68,6 @@ public:
 
     void start(ErrorString*, int* maxCallStackDepth);
     void stop(ErrorString*);
-    bool started() const;
 
     int id() const { return m_id; }
 

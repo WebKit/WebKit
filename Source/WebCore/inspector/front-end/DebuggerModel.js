@@ -97,12 +97,12 @@ WebInspector.DebuggerModel.prototype = {
                 this._capabilitiesObject[capabilities[i]] = true;
         }
         DebuggerAgent.getCapabilities(callback.bind(this));
-        DebuggerAgent.enable();
+        DebuggerAgent.enable(this._debuggerWasEnabled.bind(this));
     },
 
     disableDebugger: function()
     {
-        DebuggerAgent.disable();
+        DebuggerAgent.disable(this._debuggerWasDisabled.bind(this));
     },
 
     /**
@@ -383,16 +383,6 @@ WebInspector.DebuggerDispatcher.prototype = {
     resumed: function()
     {
         this._debuggerModel._resumedScript();
-    },
-
-    debuggerWasEnabled: function()
-    {
-        this._debuggerModel._debuggerWasEnabled();
-    },
-
-    debuggerWasDisabled: function()
-    {
-        this._debuggerModel._debuggerWasDisabled();
     },
 
     globalObjectCleared: function()
