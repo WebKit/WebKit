@@ -68,8 +68,10 @@ public:
     Action nextAction() const;
     void updateState(Action);
 
-    // Indicates whether the system is inside a vsync callback.
-    void setInsideVSync(bool);
+    // Indicates that the system has entered and left a vsync callback.
+    // The scheduler will not draw more than once in a given vsync callback.
+    void didEnterVSync();
+    void didLeaveVSync();
 
     // Indicates whether the LayerTreeHostImpl is visible.
     void setVisible(bool);
@@ -99,6 +101,8 @@ public:
 protected:
     CommitState m_commitState;
 
+    int m_currentFrameNumber;
+    int m_lastFrameNumberWhereDrawWasCalled;
     bool m_needsRedraw;
     bool m_needsForcedRedraw;
     bool m_needsCommit;

@@ -29,15 +29,41 @@
 
 namespace WebCore {
 
-class CCScrollController;
+class IntPoint;
+class IntSize;
+
+// The CCInputHandler is a way for the embedders to interact with
+// the impl thread side of the compositor implementation.
+//
+// There is one CCInputHandler for every CCLayerTreeHost. It is
+// created and used only on the impl thread.
+//
+// The CCInputHandler is constructed with an InputHandlerClient, which is the
+// interface by which the handler can manipulate the LayerTree.
+class CCInputHandlerClient {
+    WTF_MAKE_NONCOPYABLE(CCInputHandlerClient);
+public:
+    virtual double currentTimeMs() const = 0;
+    virtual void setNeedsRedraw() = 0;
+    virtual void scrollRootLayer(const IntSize&) = 0;
+    virtual bool haveWheelEventHandlers() = 0;
+    virtual void pinchGestureBegin() = 0;
+    virtual void pinchGestureUpdate(float magnifyDelta, const IntPoint& anchor) = 0;
+    virtual void pinchGestureEnd() = 0;
+
+protected:
+    CCInputHandlerClient() { }
+    virtual ~CCInputHandlerClient() { }
+};
 
 class CCInputHandler {
     WTF_MAKE_NONCOPYABLE(CCInputHandler);
 public:
-    static PassOwnPtr<CCInputHandler> create(CCScrollController*);
+    static PassOwnPtr<CCInputHandler> create(CCInputHandlerClient*);
     virtual ~CCInputHandler() { }
 
     virtual int identifier() const = 0;
+    virtual void willDraw(double frameDisplayTimeMs) = 0;
 
 protected:
     CCInputHandler() { }

@@ -82,6 +82,10 @@ GraphicsContext3D* CCLayerTreeHostImpl::context()
     return m_layerRenderer ? m_layerRenderer->context() : 0;
 }
 
+void CCLayerTreeHostImpl::animate(double frameBeginTimeMs)
+{
+}
+
 void CCLayerTreeHostImpl::drawLayers()
 {
     TRACE_EVENT("CCLayerTreeHostImpl::drawLayers", this, 0);
@@ -280,6 +284,16 @@ void CCLayerTreeHostImpl::setZoomAnimatorTransform(const TransformationMatrix& z
         return;
 
     m_scrollLayerImpl->setZoomAnimatorTransform(zoom);
+}
+
+double CCLayerTreeHostImpl::currentTimeMs() const
+{
+    return monotonicallyIncreasingTime() * 1000.0;
+}
+
+void CCLayerTreeHostImpl::setNeedsRedraw()
+{
+    m_client->setNeedsRedrawOnImplThread();
 }
 
 void CCLayerTreeHostImpl::scrollRootLayer(const IntSize& scrollDelta)

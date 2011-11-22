@@ -1,3 +1,42 @@
+2011-11-17  Nat Duca  <nduca@chromium.org>
+
+        [chromium] Route willDraw/setNeedsRedraw to CCInputHandler and fix double-drawing issues that result
+        https://bugs.webkit.org/show_bug.cgi?id=72688
+
+        This allows CCInputFilter and CCLayerTreeHostImpl to
+        perform requestAnimationFrame-style animations. The bulk of
+        work here is to make the scheduler recover gracefully when you
+        call setNeedsRedraw inside scheduledActionDraw.
+
+        Reviewed by James Robinson.
+
+        * WebCore.gypi:
+        * platform/graphics/chromium/cc/CCInputHandler.h:
+        (WebCore::CCInputHandlerTarget::CCInputHandlerTarget):
+        (WebCore::CCInputHandlerTarget::~CCInputHandlerTarget):
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.cpp:
+        (WebCore::CCLayerTreeHostImpl::currentTimeMs):
+        (WebCore::CCLayerTreeHostImpl::setNeedsRedraw):
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.h:
+        * platform/graphics/chromium/cc/CCScheduler.cpp:
+        (WebCore::CCScheduler::CCScheduler):
+        (WebCore::CCScheduler::setVisible):
+        (WebCore::CCScheduler::setNeedsRedraw):
+        (WebCore::CCScheduler::beginFrame):
+        (WebCore::CCScheduler::processScheduledActions):
+        * platform/graphics/chromium/cc/CCScheduler.h:
+        * platform/graphics/chromium/cc/CCSchedulerStateMachine.cpp:
+        (WebCore::CCSchedulerStateMachine::CCSchedulerStateMachine):
+        (WebCore::CCSchedulerStateMachine::nextAction):
+        (WebCore::CCSchedulerStateMachine::updateState):
+        (WebCore::CCSchedulerStateMachine::setInsideVSync):
+        (WebCore::CCSchedulerStateMachine::setOutsideVSync):
+        * platform/graphics/chromium/cc/CCSchedulerStateMachine.h:
+        * platform/graphics/chromium/cc/CCScrollController.h: Removed.
+        * platform/graphics/chromium/cc/CCSingleThreadProxy.cpp:
+        * platform/graphics/chromium/cc/CCThreadProxy.cpp:
+        (WebCore::CCThreadProxy::scheduledActionDrawAndSwap):
+
 2011-11-22  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: Design of the autocomplete suggest

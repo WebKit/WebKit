@@ -30,6 +30,8 @@ namespace WebCore {
 
 CCSchedulerStateMachine::CCSchedulerStateMachine()
     : m_commitState(COMMIT_STATE_IDLE)
+    , m_currentFrameNumber(0)
+    , m_lastFrameNumberWhereDrawWasCalled(-1)
     , m_needsRedraw(false)
     , m_needsForcedRedraw(false)
     , m_needsCommit(false)
@@ -39,7 +41,8 @@ CCSchedulerStateMachine::CCSchedulerStateMachine()
 
 CCSchedulerStateMachine::Action CCSchedulerStateMachine::nextAction() const
 {
-    bool shouldDraw = (m_needsRedraw && m_insideVSync && m_visible) || m_needsForcedRedraw;
+    bool canDraw = m_currentFrameNumber != m_lastFrameNumberWhereDrawWasCalled;
+    bool shouldDraw = (m_needsRedraw && m_insideVSync && m_visible && canDraw) || m_needsForcedRedraw;
     switch (m_commitState) {
     case COMMIT_STATE_IDLE:
         if (shouldDraw)
@@ -100,6 +103,8 @@ void CCSchedulerStateMachine::updateState(Action action)
     case ACTION_DRAW:
         m_needsRedraw = false;
         m_needsForcedRedraw = false;
+        if (m_insideVSync)
+            m_lastFrameNumberWhereDrawWasCalled = m_currentFrameNumber;
         if (m_commitState == COMMIT_STATE_WAITING_FOR_FIRST_DRAW) {
             ASSERT(m_needsCommit);
             m_commitState = COMMIT_STATE_IDLE;
@@ -108,9 +113,15 @@ void CCSchedulerStateMachine::updateState(Action action)
     }
 }
 
-void CCSchedulerStateMachine::setInsideVSync(bool insideVSync)
+void CCSchedulerStateMachine::didEnterVSync()
 {
-    m_insideVSync = insideVSync;
+    m_insideVSync = true;
+}
+
+void CCSchedulerStateMachine::didLeaveVSync()
+{
+    m_currentFrameNumber++;
+    m_insideVSync = false;
 }
 
 void CCSchedulerStateMachine::setVisible(bool visible)

@@ -30,7 +30,6 @@
 #include "LayerRendererChromium.h"
 #include "TraceEvent.h"
 #include "cc/CCLayerTreeHost.h"
-#include "cc/CCScrollController.h"
 #include "cc/CCTextureUpdater.h"
 #include <wtf/CurrentTime.h>
 
@@ -284,6 +283,8 @@ bool CCSingleThreadProxy::doComposite()
 
     {
       DebugScopedSetImplThread impl;
+      double frameDisplayTimeMs = monotonicallyIncreasingTime() * 1000.0;
+      m_layerTreeHostImpl->animate(frameDisplayTimeMs);
       m_layerTreeHostImpl->drawLayers();
     }
 

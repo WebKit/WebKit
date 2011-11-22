@@ -37,10 +37,6 @@ namespace WTF {
 class Mutex;
 }
 
-namespace WebCore {
-class CCScrollController;
-}
-
 namespace WebKit {
 
 class WebCompositorClient;
@@ -50,9 +46,9 @@ class WebCompositorImpl : public WebCompositor, public WebCore::CCInputHandler {
 public:
     static WebCompositor* fromIdentifier(int identifier);
 
-    static PassOwnPtr<WebCompositorImpl> create(WebCore::CCScrollController* scrollController)
+    static PassOwnPtr<WebCompositorImpl> create(WebCore::CCInputHandlerClient* client)
     {
-        return adoptPtr(new WebCompositorImpl(scrollController));
+        return adoptPtr(new WebCompositorImpl(client));
     }
 
     virtual ~WebCompositorImpl();
@@ -63,13 +59,14 @@ public:
 
     // WebCore::CCInputHandler implementation
     virtual int identifier() const;
+    virtual void willDraw(double frameBeginTime);
 
 private:
-    explicit WebCompositorImpl(WebCore::CCScrollController*);
+    explicit WebCompositorImpl(WebCore::CCInputHandlerClient*);
 
     WebCompositorClient* m_client;
     int m_identifier;
-    WebCore::CCScrollController* m_scrollController;
+    WebCore::CCInputHandlerClient* m_inputHandlerClient;
 
     static int s_nextAvailableIdentifier;
     static HashSet<WebCompositorImpl*>* s_compositors;

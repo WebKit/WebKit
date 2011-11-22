@@ -34,7 +34,6 @@
 #include "cc/CCLayerTreeHost.h"
 #include "cc/CCScheduler.h"
 #include "cc/CCScopedThreadProxy.h"
-#include "cc/CCScrollController.h"
 #include "cc/CCTextureUpdater.h"
 #include "cc/CCThreadTask.h"
 #include <wtf/CurrentTime.h>
@@ -464,6 +463,11 @@ void CCThreadProxy::scheduledActionDrawAndSwap()
     if (!m_layerTreeHostImpl)
         return;
 
+    // FIXME: compute the frame display time more intelligently
+    double frameDisplayTimeMs = monotonicallyIncreasingTime() * 1000.0;
+
+    m_inputHandlerOnImplThread->willDraw(frameDisplayTimeMs);
+    m_layerTreeHostImpl->animate(frameDisplayTimeMs);
     m_layerTreeHostImpl->drawLayers();
 
     // Check for a pending compositeAndReadback.

@@ -30,7 +30,7 @@
 #include "CCThreadImpl.h"
 #include "WebCompositorClient.h"
 #include "WebInputEvent.h"
-#include "cc/CCScrollController.h"
+#include "cc/CCInputHandler.h"
 #include "cc/CCThreadProxy.h"
 #include <wtf/ThreadingPrimitives.h>
 
@@ -38,9 +38,9 @@ using namespace WebCore;
 
 namespace WebCore {
 
-PassOwnPtr<CCInputHandler> CCInputHandler::create(CCScrollController* scrollController)
+PassOwnPtr<CCInputHandler> CCInputHandler::create(CCInputHandlerClient* inputHandlerClient)
 {
-    return WebKit::WebCompositorImpl::create(scrollController);
+    return WebKit::WebCompositorImpl::create(inputHandlerClient);
 }
 
 }
@@ -78,10 +78,10 @@ WebCompositor* WebCompositorImpl::fromIdentifier(int identifier)
     return 0;
 }
 
-WebCompositorImpl::WebCompositorImpl(CCScrollController* scrollController)
+WebCompositorImpl::WebCompositorImpl(CCInputHandlerClient* inputHandlerClient)
     : m_client(0)
     , m_identifier(s_nextAvailableIdentifier++)
-    , m_scrollController(scrollController)
+    , m_inputHandlerClient(inputHandlerClient)
 {
     ASSERT(CCProxy::isImplThread());
 
@@ -117,9 +117,9 @@ void WebCompositorImpl::handleInputEvent(const WebInputEvent& event)
     ASSERT(CCProxy::isImplThread());
     ASSERT(m_client);
 
-    if (event.type == WebInputEvent::MouseWheel && !m_scrollController->haveWheelEventHandlers()) {
+    if (event.type == WebInputEvent::MouseWheel && !m_inputHandlerClient->haveWheelEventHandlers()) {
         const WebMouseWheelEvent& wheelEvent = *static_cast<const WebMouseWheelEvent*>(&event);
-        m_scrollController->scrollRootLayer(IntSize(-wheelEvent.deltaX, -wheelEvent.deltaY));
+        m_inputHandlerClient->scrollRootLayer(IntSize(-wheelEvent.deltaX, -wheelEvent.deltaY));
         m_client->didHandleInputEvent();
         return;
     }
@@ -130,6 +130,10 @@ int WebCompositorImpl::identifier() const
 {
     ASSERT(CCProxy::isImplThread());
     return m_identifier;
+}
+
+void WebCompositorImpl::willDraw(double frameBeginTimeMs)
+{
 }
 
 }

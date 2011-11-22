@@ -25,9 +25,9 @@
 #ifndef CCLayerTreeHostImpl_h
 #define CCLayerTreeHostImpl_h
 
+#include "cc/CCInputHandler.h"
 #include "cc/CCLayerTreeHost.h"
 #include "cc/CCLayerTreeHostCommon.h"
-#include "cc/CCScrollController.h"
 #include <wtf/RefPtr.h>
 
 #if USE(SKIA)
@@ -52,19 +52,25 @@ public:
 };
 
 // CCLayerTreeHostImpl owns the CCLayerImpl tree as well as associated rendering state
-class CCLayerTreeHostImpl : public CCScrollController {
+class CCLayerTreeHostImpl : public CCInputHandlerClient {
     WTF_MAKE_NONCOPYABLE(CCLayerTreeHostImpl);
 public:
     static PassOwnPtr<CCLayerTreeHostImpl> create(const CCSettings&, CCLayerTreeHostImplClient*);
     virtual ~CCLayerTreeHostImpl();
 
-    // CCScrollController implementation
+    // CCInputHandlerTarget implementation
+    virtual double currentTimeMs() const;
+    virtual void setNeedsRedraw();
     virtual void scrollRootLayer(const IntSize&);
     virtual bool haveWheelEventHandlers();
+    virtual void pinchGestureBegin();
+    virtual void pinchGestureUpdate(float, const IntPoint&);
+    virtual void pinchGestureEnd();
 
     // Virtual for testing
     virtual void beginCommit();
     virtual void commitComplete();
+    virtual void animate(double frameDisplayTimeMs);
     virtual void drawLayers();
 
     GraphicsContext3D* context();
@@ -104,9 +110,6 @@ public:
 
     const CCSettings& settings() const { return m_settings; }
 
-    virtual void pinchGestureBegin();
-    virtual void pinchGestureUpdate(float, const IntPoint&);
-    virtual void pinchGestureEnd();
     PassOwnPtr<CCScrollAndScaleSet> processScrollDeltas();
 
 protected:

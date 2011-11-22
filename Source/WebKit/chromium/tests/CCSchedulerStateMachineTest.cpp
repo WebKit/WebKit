@@ -76,9 +76,9 @@ TEST(CCSchedulerStateMachineTest, TestNextActionBeginsFrameIfNeeded)
         state.setUpdateMoreResourcesPending(false);
         state.setVisible(true);
 
-        state.setInsideVSync(false);
+        state.didLeaveVSync();
         EXPECT_EQ(CCSchedulerStateMachine::ACTION_NONE, state.nextAction());
-        state.setInsideVSync(true);
+        state.didEnterVSync();
         EXPECT_EQ(CCSchedulerStateMachine::ACTION_NONE, state.nextAction());
     }
 
@@ -109,6 +109,28 @@ TEST(CCSchedulerStateMachineTest, TestSetForcedRedrawDoesNotSetsNormalRedraw)
     EXPECT_FALSE(state.redrawPending());
 }
 
+TEST(CCSchedulerStateMachineTest, TestDoestDrawTwiceInSameFrame)
+{
+    CCSchedulerStateMachine state;
+    state.setVisible(true);
+    state.setNeedsRedraw();
+    state.didEnterVSync();
+    EXPECT_EQ(CCSchedulerStateMachine::ACTION_DRAW, state.nextAction());
+    state.updateState(CCSchedulerStateMachine::ACTION_DRAW);
+
+    // While still in the same vsync callback, set needs redraw again.
+    // This should not redraw.
+    state.setNeedsRedraw();
+    EXPECT_EQ(CCSchedulerStateMachine::ACTION_NONE, state.nextAction());
+
+    // Move to another frame. This should now draw.
+    state.didLeaveVSync();
+    state.didEnterVSync();
+
+    EXPECT_EQ(CCSchedulerStateMachine::ACTION_DRAW, state.nextAction());
+    state.updateState(CCSchedulerStateMachine::ACTION_DRAW);
+}
+
 TEST(CCSchedulerStateMachineTest, TestNextActionDrawsOnVSync)
 {
     // When not on vsync, or on vsync but not visible, don't draw.
@@ -118,10 +140,9 @@ TEST(CCSchedulerStateMachineTest, TestNextActionDrawsOnVSync)
             StateMachine state;
             state.setCommitState(allCommitStates[i]);
             if (!j) {
-                state.setInsideVSync(true);
+                state.didEnterVSync();
                 state.setVisible(false);
-            } else
-                state.setInsideVSync(false);
+            }
 
             // Case 1: needsCommit=false updateMoreResourcesPending=false.
             state.setNeedsCommit(false);
@@ -151,7 +172,7 @@ TEST(CCSchedulerStateMachineTest, TestNextActionDrawsOnVSync)
             StateMachine state;
             state.setCommitState(allCommitStates[i]);
             if (!j) {
-                state.setInsideVSync(true);
+                state.didEnterVSync();
                 state.setNeedsRedraw(true);
                 state.setVisible(true);
             } else
@@ -190,15 +211,15 @@ TEST(CCSchedulerStateMachineTest, TestNoCommitStatesRedrawWhenInvisible)
 {
     size_t numCommitStates = sizeof(allCommitStates) / sizeof(CCSchedulerStateMachine::CommitState);
     for (size_t i = 0; i < numCommitStates; ++i) {
-        StateMachine state;
-        state.setCommitState(allCommitStates[i]);
-        state.setVisible(false);
-        state.setNeedsRedraw(true);
-        state.setNeedsForcedRedraw(false);
-
         // There shouldn't be any drawing regardless of vsync.
         for (unsigned j = 0; j < 2; ++j) {
-            state.setInsideVSync(j == 1);
+            StateMachine state;
+            state.setCommitState(allCommitStates[i]);
+            state.setVisible(false);
+            state.setNeedsRedraw(true);
+            state.setNeedsForcedRedraw(false);
+            if (j == 1)
+                state.didEnterVSync();
 
             // Case 1: needsCommit=false updateMoreResourcesPending=false.
             state.setNeedsCommit(false);
@@ -232,23 +253,22 @@ TEST(CCSchedulerStateMachineTest, TestUpdates_NoRedraw_OneRoundOfUpdates)
     state.setVisible(true);
 
     // Verify we begin update, both for vsync and not vsync.
-    state.setInsideVSync(false);
     EXPECT_EQ(CCSchedulerStateMachine::ACTION_BEGIN_UPDATE_MORE_RESOURCES, state.nextAction());
-    state.setInsideVSync(true);
+    state.didEnterVSync();
     EXPECT_EQ(CCSchedulerStateMachine::ACTION_BEGIN_UPDATE_MORE_RESOURCES, state.nextAction());
 
     // Begin an update.
     state.updateState(CCSchedulerStateMachine::ACTION_BEGIN_UPDATE_MORE_RESOURCES);
 
     // Verify we don't do anything, both for vsync and not vsync.
-    state.setInsideVSync(false);
+    state.didLeaveVSync();
     EXPECT_EQ(CCSchedulerStateMachine::ACTION_NONE, state.nextAction());
-    state.setInsideVSync(true);
+    state.didEnterVSync();
     EXPECT_EQ(CCSchedulerStateMachine::ACTION_NONE, state.nextAction());
 
     // End update with no more updates pending.
     state.beginUpdateMoreResourcesComplete(false);
-    state.setInsideVSync(false);
+    state.didLeaveVSync();
     EXPECT_EQ(CCSchedulerStateMachine::ACTION_COMMIT, state.nextAction());
 }
 
@@ -261,38 +281,36 @@ TEST(CCSchedulerStateMachineTest, TestUpdates_NoRedraw_TwoRoundsOfUpdates)
     state.setVisible(true);
 
     // Verify the update begins, both for vsync and not vsync.
-    state.setInsideVSync(false);
+    state.didEnterVSync();
     EXPECT_EQ(CCSchedulerStateMachine::ACTION_BEGIN_UPDATE_MORE_RESOURCES, state.nextAction());
-    state.setInsideVSync(true);
+    state.didLeaveVSync();
     EXPECT_EQ(CCSchedulerStateMachine::ACTION_BEGIN_UPDATE_MORE_RESOURCES, state.nextAction());
 
     // Begin an update.
     state.updateState(CCSchedulerStateMachine::ACTION_BEGIN_UPDATE_MORE_RESOURCES);
 
     // Verify we do nothing, both for vsync and not vsync.
-    state.setInsideVSync(false);
     EXPECT_EQ(CCSchedulerStateMachine::ACTION_NONE, state.nextAction());
-    state.setInsideVSync(true);
+    state.didEnterVSync();
     EXPECT_EQ(CCSchedulerStateMachine::ACTION_NONE, state.nextAction());
 
     // Ack the update with more pending.
     state.beginUpdateMoreResourcesComplete(true);
 
     // Verify we update more, both for vsync and not vsync.
-    state.setInsideVSync(false);
+    state.didLeaveVSync();
     EXPECT_EQ(CCSchedulerStateMachine::ACTION_BEGIN_UPDATE_MORE_RESOURCES, state.nextAction());
-    state.setInsideVSync(true);
+    state.didEnterVSync();
     EXPECT_EQ(CCSchedulerStateMachine::ACTION_BEGIN_UPDATE_MORE_RESOURCES, state.nextAction());
 
     // Begin another update, while inside vsync. And, it updating.
-    state.setInsideVSync(true);
     state.updateState(CCSchedulerStateMachine::ACTION_BEGIN_UPDATE_MORE_RESOURCES);
     state.beginUpdateMoreResourcesComplete(false);
 
     // Make sure we commit, independent of vsync.
-    state.setInsideVSync(false);
+    state.didLeaveVSync();
     EXPECT_EQ(CCSchedulerStateMachine::ACTION_COMMIT, state.nextAction());
-    state.setInsideVSync(true);
+    state.didEnterVSync();
     EXPECT_EQ(CCSchedulerStateMachine::ACTION_COMMIT, state.nextAction());
 }
 
@@ -309,7 +327,7 @@ TEST(CCSchedulerStateMachineTest, TestUpdates_WithRedraw_OneRoundOfUpdates)
     state.updateState(CCSchedulerStateMachine::ACTION_BEGIN_UPDATE_MORE_RESOURCES);
 
     // Ensure we draw on the next vsync even though an update is in-progress.
-    state.setInsideVSync(true);
+    state.didEnterVSync();
     EXPECT_EQ(CCSchedulerStateMachine::ACTION_DRAW, state.nextAction());
     state.updateState(CCSchedulerStateMachine::ACTION_DRAW);
 
@@ -317,27 +335,29 @@ TEST(CCSchedulerStateMachineTest, TestUpdates_WithRedraw_OneRoundOfUpdates)
     EXPECT_EQ(CCSchedulerStateMachine::ACTION_NONE, state.nextAction());
 
     // Leave the vsync before we finish the update.
-    state.setInsideVSync(false);
+    state.didLeaveVSync();
 
     // Finish update but leave more resources pending.
     state.beginUpdateMoreResourcesComplete(true);
 
     // Verify that regardless of vsync, we update some more.
-    state.setInsideVSync(false);
+    state.didLeaveVSync();
     EXPECT_EQ(CCSchedulerStateMachine::ACTION_BEGIN_UPDATE_MORE_RESOURCES, state.nextAction());
-    state.setInsideVSync(true);
+    state.didEnterVSync();
+    EXPECT_EQ(CCSchedulerStateMachine::ACTION_BEGIN_UPDATE_MORE_RESOURCES, state.nextAction());
+    state.didEnterVSync();
     EXPECT_EQ(CCSchedulerStateMachine::ACTION_BEGIN_UPDATE_MORE_RESOURCES, state.nextAction());
 
     // Begin another update. Finish it immediately. Inside the vsync.
-    state.setInsideVSync(true);
+    state.didEnterVSync();
     state.updateState(CCSchedulerStateMachine::ACTION_BEGIN_UPDATE_MORE_RESOURCES);
-    state.setInsideVSync(false);
+    state.didLeaveVSync();
     state.beginUpdateMoreResourcesComplete(false);
 
     // Verify we commit regardless of vsync state
-    state.setInsideVSync(false);
+    state.didLeaveVSync();
     EXPECT_EQ(CCSchedulerStateMachine::ACTION_COMMIT, state.nextAction());
-    state.setInsideVSync(true);
+    state.didEnterVSync();
     EXPECT_EQ(CCSchedulerStateMachine::ACTION_COMMIT, state.nextAction());
 }
 
@@ -366,9 +386,9 @@ TEST(CCSchedulerStateMachineTest, TestSetNeedsCommitIsNotLost)
     EXPECT_EQ(CCSchedulerStateMachine::COMMIT_STATE_READY_TO_COMMIT, state.commitState());
 
     // Expect to commit regardless of vsync state.
-    state.setInsideVSync(false);
+    state.didLeaveVSync();
     EXPECT_EQ(CCSchedulerStateMachine::ACTION_COMMIT, state.nextAction());
-    state.setInsideVSync(true);
+    state.didEnterVSync();
     EXPECT_EQ(CCSchedulerStateMachine::ACTION_COMMIT, state.nextAction());
 
     // Commit and make sure we draw on next vsync
@@ -378,7 +398,7 @@ TEST(CCSchedulerStateMachineTest, TestSetNeedsCommitIsNotLost)
     state.updateState(CCSchedulerStateMachine::ACTION_DRAW);
 
     // Verify that another commit will begin.
-    state.setInsideVSync(false);
+    state.didLeaveVSync();
     EXPECT_EQ(CCSchedulerStateMachine::ACTION_BEGIN_FRAME, state.nextAction());
 }
 
@@ -417,10 +437,10 @@ TEST(CCSchedulerStateMachineTest, TestFullCycle)
     EXPECT_EQ(CCSchedulerStateMachine::ACTION_NONE, state.nextAction());
 
     // At vsync, draw.
-    state.setInsideVSync(true);
+    state.didEnterVSync();
     EXPECT_EQ(CCSchedulerStateMachine::ACTION_DRAW, state.nextAction());
     state.updateState(CCSchedulerStateMachine::ACTION_DRAW);
-    state.setInsideVSync(false);
+    state.didLeaveVSync();
 
     // Should be synchronized, no draw needed, no action needed.
     EXPECT_EQ(CCSchedulerStateMachine::COMMIT_STATE_IDLE, state.commitState());
@@ -467,10 +487,10 @@ TEST(CCSchedulerStateMachineTest, TestFullCycleWithCommitRequestInbetween)
     EXPECT_EQ(CCSchedulerStateMachine::ACTION_NONE, state.nextAction());
 
     // At vsync, draw.
-    state.setInsideVSync(true);
+    state.didEnterVSync();
     EXPECT_EQ(CCSchedulerStateMachine::ACTION_DRAW, state.nextAction());
     state.updateState(CCSchedulerStateMachine::ACTION_DRAW);
-    state.setInsideVSync(false);
+    state.didLeaveVSync();
 
     // Should be synchronized, no draw needed, no action needed.
     EXPECT_EQ(CCSchedulerStateMachine::COMMIT_STATE_IDLE, state.commitState());
@@ -524,9 +544,9 @@ TEST(CCSchedulerStateMachineTest, TestGoesInvisibleMidCommit)
     EXPECT_FALSE(state.needsCommit());
 
     // Expect to do nothing, both in and out of vsync.
-    state.setInsideVSync(false);
+    state.didLeaveVSync();
     EXPECT_EQ(CCSchedulerStateMachine::ACTION_NONE, state.nextAction());
-    state.setInsideVSync(true);
+    state.didEnterVSync();
     EXPECT_EQ(CCSchedulerStateMachine::ACTION_NONE, state.nextAction());
 }
 

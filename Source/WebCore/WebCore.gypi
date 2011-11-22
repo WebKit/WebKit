@@ -3585,7 +3585,6 @@
             'platform/graphics/chromium/cc/CCSchedulerStateMachine.cpp',
             'platform/graphics/chromium/cc/CCSchedulerStateMachine.h',
             'platform/graphics/chromium/cc/CCScopedThreadProxy.h',
-            'platform/graphics/chromium/cc/CCScrollController.h',
             'platform/graphics/chromium/cc/CCSingleThreadProxy.cpp',
             'platform/graphics/chromium/cc/CCSingleThreadProxy.h',
             'platform/graphics/chromium/cc/CCTextureUpdater.cpp',

@@ -60,7 +60,6 @@ public:
 
     void setVisible(bool);
 
-    void setNeedsAnimate();
     void setNeedsCommit();
     void setNeedsRedraw();
 
