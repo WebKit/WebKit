@@ -1,3 +1,9 @@
+2011-11-22  Adam Klein  <adamk@chromium.org>
+
+        Ignore more gyp-generated build files in WTF.gyp.
+
+        * .gitignore:
+
 2011-11-22  Andy Wingo  <wingo@igalia.com>
 
         Fix .dir-locals.el to only apply to specific modes
