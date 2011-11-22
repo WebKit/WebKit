@@ -135,6 +135,7 @@ private:
     QQuickWebViewExperimental* m_experimental;
 
     friend class QtWebPageProxy;
+    friend class QtWebPageUIClient;
     friend class WTR::PlatformWebView;
     friend class QQuickWebViewExperimental;
 };

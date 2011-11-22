@@ -74,11 +74,6 @@ public:
         WebActionCount
     };
 
-    enum FileChooserType {
-        SingleFileSelection,
-        MultipleFilesSelection
-    };
-
     QtWebPageProxy(QQuickWebPage*, QQuickWebView*, WebKit::QtViewportInteractionEngine* = 0, WebKit::QtPolicyInterface* = 0, WKContextRef = 0, WKPageGroupRef = 0);
     ~QtWebPageProxy();
 
@@ -210,18 +205,8 @@ public:
     void handleSingleTapEvent(const QTouchEvent::TouchPoint&);
     void handleDoubleTapEvent(const QTouchEvent::TouchPoint&);
 
-    void didChangeStatusText(const QString&);
-
     void showContextMenu(QSharedPointer<QMenu>);
     void hideContextMenu();
-
-    void runJavaScriptAlert(const QString&);
-    bool runJavaScriptConfirm(const QString&);
-    QString runJavaScriptPrompt(const QString&, const QString& defaultValue, bool& ok);
-
-    void chooseFiles(WKOpenPanelResultListenerRef, const QStringList& selectedFileNames, FileChooserType);
-
-    void didMouseMoveOverElement(const QUrl&, const QString&);
 
 public Q_SLOTS:
     void navigationStateChanged();
@@ -285,8 +270,6 @@ private:
     QBasicTimer m_tripleClickTimer;
 
     QSharedPointer<QMenu> activeMenu;
-    QUrl lastHoveredURL;
-    QString lastHoveredTitle;
 };
 
 #endif /* QtWebPageProxy_h */

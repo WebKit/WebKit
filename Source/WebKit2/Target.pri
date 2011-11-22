@@ -323,6 +323,7 @@ HEADERS += \
     UIProcess/qt/QtDialogRunner.h \
     UIProcess/qt/QtDownloadManager.h \
     UIProcess/qt/QtWebPageProxy.h \
+    UIProcess/qt/QtWebPageUIClient.h \
     UIProcess/qt/qwkhistory.h \
     UIProcess/qt/qwkhistory_p.h \
     UIProcess/qt/QtSGUpdateQueue.h \
@@ -628,6 +629,7 @@ SOURCES += \
     UIProcess/qt/QtDialogRunner.cpp \
     UIProcess/qt/QtDownloadManager.cpp \
     UIProcess/qt/QtWebPageProxy.cpp \
+    UIProcess/qt/QtWebPageUIClient.cpp \
     UIProcess/qt/qwkhistory.cpp \
     UIProcess/qt/QtSGUpdateQueue.cpp \
     UIProcess/qt/QtSGTileNode.cpp \

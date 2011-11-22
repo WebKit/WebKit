@@ -31,8 +31,6 @@
 #include <WKFrame.h>
 #include <WKFramePolicyListener.h>
 #include <WKHitTestResult.h>
-#include <WKOpenPanelParameters.h>
-#include <WKOpenPanelResultListener.h>
 #include <WKPage.h>
 #include <WKString.h>
 #include <WKType.h>
@@ -152,61 +150,6 @@ static void qt_wk_didFirstVisuallyNonEmptyLayoutForFrame(WKPageRef page, WKFrame
     toQtWebPageProxy(clientInfo)->didFinishFirstNonEmptyLayout();
 }
 
-static void qt_wk_runJavaScriptAlert(WKPageRef page, WKStringRef alertText, WKFrameRef frame, const void* clientInfo)
-{
-    QString qAlertText = WKStringCopyQString(alertText);
-    toQtWebPageProxy(clientInfo)->runJavaScriptAlert(qAlertText);
-}
-
-static bool qt_wk_runJavaScriptConfirm(WKPageRef, WKStringRef message, WKFrameRef, const void* clientInfo)
-{
-    QString qMessage = WKStringCopyQString(message);
-    return toQtWebPageProxy(clientInfo)->runJavaScriptConfirm(qMessage);
-}
-
-static inline WKStringRef createNullWKString()
-{
-    RefPtr<WebString> webString = WebString::createNull();
-    return toAPI(webString.release().leakRef());
-}
-
-static WKStringRef qt_wk_runJavaScriptPrompt(WKPageRef, WKStringRef message, WKStringRef defaultValue, WKFrameRef, const void* clientInfo)
-{
-    QString qMessage = WKStringCopyQString(message);
-    QString qDefaultValue = WKStringCopyQString(defaultValue);
-    bool ok = false;
-    QString result = toQtWebPageProxy(clientInfo)->runJavaScriptPrompt(qMessage, qDefaultValue, ok);
-    if (!ok)
-        return createNullWKString();
-    return WKStringCreateWithQString(result);
-}
-
-static void qt_wk_setStatusText(WKPageRef, WKStringRef text, const void *clientInfo)
-{
-    QString qText = WKStringCopyQString(text);
-    toQtWebPageProxy(clientInfo)->didChangeStatusText(qText);
-}
-
-static void qt_wk_runOpenPanel(WKPageRef, WKFrameRef, WKOpenPanelParametersRef parameters, WKOpenPanelResultListenerRef listener, const void* clientInfo)
-{
-    Vector<String> wkSelectedFileNames = toImpl(parameters)->selectedFileNames();
-
-    QStringList selectedFileNames;
-    if (!wkSelectedFileNames.isEmpty())
-        for (unsigned i = 0; wkSelectedFileNames.size(); ++i)
-            selectedFileNames += wkSelectedFileNames.at(i);
-
-    QtWebPageProxy::FileChooserType allowMultipleFiles = WKOpenPanelParametersGetAllowsMultipleFiles(parameters) ? QtWebPageProxy::MultipleFilesSelection : QtWebPageProxy::SingleFileSelection;
-    toQtWebPageProxy(clientInfo)->chooseFiles(listener, selectedFileNames, allowMultipleFiles);
-}
-
-static void qt_wk_mouseDidMoveOverElement(WKPageRef page, WKHitTestResultRef hitTestResult, WKEventModifiers modifiers, WKTypeRef userData, const void* clientInfo)
-{
-    const QUrl absoluteLinkUrl = WKURLCopyQUrl(WKHitTestResultCopyAbsoluteLinkURL(hitTestResult));
-    const QString linkTitle = WKStringCopyQString(WKHitTestResultCopyLinkTitle(hitTestResult));
-    toQtWebPageProxy(clientInfo)->didMouseMoveOverElement(absoluteLinkUrl, linkTitle);
-}
-
 static Qt::MouseButton toQtMouseButton(WKEventMouseButton button)
 {
     switch (button) {
@@ -319,21 +262,6 @@ void setupPageLoaderClient(QtWebPageProxy* qtWebPageProxy, WebPageProxy* webPage
     loadClient.didFinishProgress = qt_wk_didFinishProgress;
     loadClient.didFirstVisuallyNonEmptyLayoutForFrame = qt_wk_didFirstVisuallyNonEmptyLayoutForFrame;
     WKPageSetPageLoaderClient(qtWebPageProxy->pageRef(), &loadClient);
-}
-
-void setupPageUiClient(QtWebPageProxy* qtWebPageProxy, WebPageProxy* webPageProxy)
-{
-    WKPageUIClient uiClient;
-    memset(&uiClient, 0, sizeof(WKPageUIClient));
-    uiClient.version = kWKPageUIClientCurrentVersion;
-    uiClient.clientInfo = qtWebPageProxy;
-    uiClient.runJavaScriptAlert = qt_wk_runJavaScriptAlert;
-    uiClient.runJavaScriptConfirm = qt_wk_runJavaScriptConfirm;
-    uiClient.runJavaScriptPrompt = qt_wk_runJavaScriptPrompt;
-    uiClient.setStatusText = qt_wk_setStatusText;
-    uiClient.runOpenPanel = qt_wk_runOpenPanel;
-    uiClient.mouseDidMoveOverElement = qt_wk_mouseDidMoveOverElement;
-    WKPageSetPageUIClient(toAPI(webPageProxy), &uiClient);
 }
 
 void setupPagePolicyClient(QtPolicyInterface* policyInterface, WebPageProxy* webPageProxy)

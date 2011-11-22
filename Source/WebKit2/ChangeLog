@@ -1,3 +1,37 @@
+2011-11-22  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        [Qt] [WK2] Move PageUIClient related code to QtWebPageUIClient
+        https://bugs.webkit.org/show_bug.cgi?id=72910
+
+        Reviewed by Andreas Kling.
+
+        Split PageUIClient related code from QtWebPageProxy/ClientImpl. The new
+        QtWebPageUIClient registers itself with WKPageRef and it's owned by the
+        QQuickWebViewPrivate. This is a move to clean up QtWebPageProxy object.
+
+        * Target.pri:
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewPrivate::QQuickWebViewPrivate):
+        (QQuickWebViewPrivate::chooseFiles):
+        * UIProcess/API/qt/qquickwebview_p.h:
+        * UIProcess/API/qt/qquickwebview_p_p.h:
+        * UIProcess/qt/ClientImpl.cpp:
+        * UIProcess/qt/ClientImpl.h:
+        * UIProcess/qt/QtWebPageProxy.cpp:
+        (QtWebPageProxy::init):
+        * UIProcess/qt/QtWebPageProxy.h:
+        * UIProcess/qt/QtWebPageUIClient.cpp: Added.
+        (QtWebPageUIClient::QtWebPageUIClient):
+        (QtWebPageUIClient::runJavaScriptAlert):
+        (QtWebPageUIClient::runJavaScriptConfirm):
+        (QtWebPageUIClient::runJavaScriptPrompt):
+        (QtWebPageUIClient::runOpenPanel):
+        (QtWebPageUIClient::setStatusText):
+        (QtWebPageUIClient::mouseDidMoveOverElement):
+        (toQtWebPageUIClient):
+        (createNullWKString):
+        * UIProcess/qt/QtWebPageUIClient.h: Added.
+
 2011-11-22  Eunmi Lee  <eunmi15.lee@samsung.com>
 
         [WK2] Modify EFL port's WebEventFactory to use EflKeyboardUtilities's

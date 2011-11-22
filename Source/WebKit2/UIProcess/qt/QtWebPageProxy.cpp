@@ -157,7 +157,6 @@ void QtWebPageProxy::init()
     m_webPageProxy->initializeWebPage();
 
     setupPageLoaderClient(this, m_webPageProxy.get());
-    setupPageUiClient(this, m_webPageProxy.get());
 
     if (m_policyInterface)
         setupPagePolicyClient(m_policyInterface, m_webPageProxy.get());
@@ -355,20 +354,6 @@ void QtWebPageProxy::handleDoubleTapEvent(const QTouchEvent::TouchPoint& point)
     m_webPageProxy->findZoomableAreaForPoint(point.pos().toPoint());
 }
 
-void QtWebPageProxy::didChangeStatusText(const QString& newMessage)
-{
-    emit m_qmlWebView->statusBarMessageChanged(newMessage);
-}
-
-void QtWebPageProxy::didMouseMoveOverElement(const QUrl& linkURL, const QString& linkTitle)
-{
-    if (linkURL == lastHoveredURL && linkTitle == lastHoveredTitle)
-        return;
-    lastHoveredURL = linkURL;
-    lastHoveredTitle = linkTitle;
-    emit m_qmlWebView->linkHovered(lastHoveredURL, lastHoveredTitle);
-}
-
 void QtWebPageProxy::showContextMenu(QSharedPointer<QMenu> menu)
 {
     // Remove the active menu in case this function is called twice.
@@ -399,26 +384,6 @@ void QtWebPageProxy::hideContextMenu()
 {
     if (activeMenu)
         activeMenu->hide();
-}
-
-void QtWebPageProxy::runJavaScriptAlert(const QString& alertText)
-{
-    m_qmlWebView->d_func()->runJavaScriptAlert(alertText);
-}
-
-bool QtWebPageProxy::runJavaScriptConfirm(const QString& message)
-{
-    return m_qmlWebView->d_func()->runJavaScriptConfirm(message);
-}
-
-QString QtWebPageProxy::runJavaScriptPrompt(const QString& message, const QString& defaultValue, bool& ok)
-{
-    return m_qmlWebView->d_func()->runJavaScriptPrompt(message, defaultValue, ok);
-}
-
-void QtWebPageProxy::chooseFiles(WKOpenPanelResultListenerRef listenerRef, const QStringList& selectedFileNames, FileChooserType type)
-{
-    m_qmlWebView->d_func()->chooseFiles(listenerRef, selectedFileNames, type);
 }
 
 void QtWebPageProxy::timerEvent(QTimerEvent* ev)

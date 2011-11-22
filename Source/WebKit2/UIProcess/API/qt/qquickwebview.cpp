@@ -58,6 +58,8 @@ QQuickWebViewPrivate::QQuickWebViewPrivate(QQuickWebView* viewport, WKContextRef
     pageProxy->init();
 
     QObject::connect(pageProxy.data(), SIGNAL(updateNavigationState()), q_ptr, SIGNAL(navigationStateChanged()));
+
+    pageUIClient.reset(new QtWebPageUIClient(pageProxy->pageRef(), q_ptr));
 }
 
 void QQuickWebViewPrivate::enableMouseEvents()
@@ -274,7 +276,7 @@ QString QQuickWebViewPrivate::runJavaScriptPrompt(const QString& message, const 
     return dialogRunner.result();
 }
 
-void QQuickWebViewPrivate::chooseFiles(WKOpenPanelResultListenerRef listenerRef, const QStringList& selectedFileNames, QtWebPageProxy::FileChooserType type)
+void QQuickWebViewPrivate::chooseFiles(WKOpenPanelResultListenerRef listenerRef, const QStringList& selectedFileNames, QtWebPageUIClient::FileChooserType type)
 {
 #ifndef QT_NO_FILEDIALOG
     Q_Q(QQuickWebView);

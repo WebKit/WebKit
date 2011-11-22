@@ -29,7 +29,6 @@ class WebPageProxy;
 }
 
 void setupPageLoaderClient(QtWebPageProxy*, WebKit::WebPageProxy*);
-void setupPageUiClient(QtWebPageProxy*, WebKit::WebPageProxy*);
 void setupPagePolicyClient(WebKit::QtPolicyInterface*, WebKit::WebPageProxy*);
 
 void setupContextInjectedBundleClient(WKContextRef);
