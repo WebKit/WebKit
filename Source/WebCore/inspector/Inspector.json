@@ -1473,7 +1473,7 @@
                 "id": "CSSRule",
                 "type": "object",
                 "properties": [
-                    { "name": "ruleId", "$ref": "CSSRuleId", "description": "The CSS rule identifier."},
+                    { "name": "ruleId", "$ref": "CSSRuleId", "optional": true, "description": "The CSS rule identifier (absent for user agent stylesheet and user-specified stylesheet rules)."},
                     { "name": "selectorText", "type": "string", "description": "Rule selector."},
                     { "name": "sourceURL", "type": "string", "optional": true, "description": "Parent stylesheet resource URL (for regular rules)."},
                     { "name": "sourceLine", "type": "integer", "description": "Line ordinal of the rule selector start character in the resource."},
@@ -1498,20 +1498,24 @@
                 "type": "object"
             },
             {
-                "id": "CSSComputedStyle",
-                "type": "object"
+                "id": "CSSComputedStyleProperty",
+                "type": "object",
+                "properties": [
+                    { "name": "name", "type": "string", "description": "Computed style property name." },
+                    { "name": "value", "type": "string", "description": "Computed style property value." }
+                ]
             },            
             {
                 "id": "CSSStyle",
                 "type": "object",
                 "properties": [
-                    { "name": "styleId", "$ref": "CSSStyleId", "description": "The CSS style identifier."},
-                    { "name": "cssProperties", "type": "array", "items": { "$ref": "CSSProperty" }, "description": "CSS properties in the style."},
+                    { "name": "styleId", "$ref": "CSSStyleId", "optional": true, "description": "The CSS style identifier (absent for attribute styles)." },
+                    { "name": "cssProperties", "type": "array", "items": { "$ref": "CSSProperty" }, "description": "CSS properties in the style." },
                     { "name": "shorthandEntries", "type": "array", "items": { "$ref": "ShorthandEntry" }, "description": "Computed values for all shorthands found in the style." },
-                    { "name": "cssText", "type": "string", "optional": true, "description": "Style declaration text (if available)."},
+                    { "name": "cssText", "type": "string", "optional": true, "description": "Style declaration text (if available)." },
                     { "name": "range", "$ref": "SourceRange", "optional": true, "description": "Style declaration range in the enclosing stylesheet (if available)." },
-                    { "name": "width", "type": "integer", "description": "The effective \"width\" property value from this style." },
-                    { "name": "height", "type": "integer", "description": "The effective \"height\" property value from this style." }
+                    { "name": "width", "type": "string", "description": "The effective \"width\" property value from this style." },
+                    { "name": "height", "type": "string", "description": "The effective \"height\" property value from this style." }
                 ],
                 "description": "CSS style representation."
             },
@@ -1523,9 +1527,10 @@
                     { "name": "value", "type": "string", "description": "The property value." },
                     { "name": "priority", "type": "string", "optional": true, "description": "The property priority (implies \"\" if absent)." },
                     { "name": "implicit", "type": "boolean", "optional": true, "description": "Whether the property is implicit (implies <code>false</code> if absent)." },
+                    { "name": "text", "type": "string", "optional": true, "description": "The full property text as specified in the style." },
                     { "name": "parsedOk", "type": "boolean", "optional": true, "description": "Whether the property is understood by the browser (implies <code>true</code> if absent)." },
                     { "name": "status", "type": "string", "enum": ["active", "inactive", "disabled", "style"], "optional": true, "description": "The property status: \"active\" (implied if absent) if the property is effective in the style, \"inactive\" if the property is overridden by a same-named property in this style later on, \"disabled\" if the property is disabled by the user, \"style\" if the property is reported by the browser rather than by the CSS source parser." },
-                    { "name": "shorthandName", "type": "string", "description": "The related shorthand property name (absent if this property is not a longhand)." },
+                    { "name": "shorthandName", "type": "string", "optional": true, "description": "The related shorthand property name (absent if this property is not a longhand)." },
                     { "name": "range", "$ref": "SourceRange", "optional": true, "description": "The entire property range in the enclosing style declaration (if available)." }
                 ],
                 "description": "CSS style effective visual dimensions and source offsets."
@@ -1537,7 +1542,7 @@
                     { "name": "text", "type": "string", "description": "Media query text." },
                     { "name": "source", "type": "string", "enum": ["mediaRule", "importRule", "stylesheet"], "optional": true, "description": "Source of the media query: \"mediaRule\" if specified by a @media rule, \"importRule\" if specified by an @import rule, \"stylesheet\" (implied if absent) if specified by a \"media\" attribute in a stylesheet's LINK or STYLE tag." },
                     { "name": "sourceURL", "type": "string", "optional": true, "description": "URL of the document containing the media query description." },
-                    { "name": "sourceLine", "type": "string", "optional": true, "description": "Line in the document containing the media query (not defined for the \"stylesheet\" source)." }
+                    { "name": "sourceLine", "type": "integer", "optional": true, "description": "Line in the document containing the media query (not defined for the \"stylesheet\" source)." }
                 ],
                 "description": "CSS media query descriptor."
             }
@@ -1576,7 +1581,7 @@
                     { "name": "forcedPseudoClasses", "type": "array", "items": { "type": "string", "enum": ["active", "focus", "hover", "visited"] }, "optional": true, "description": "Element pseudo classes to force when computing applicable style rules." }
                 ],
                 "returns": [
-                    { "name": "style", "$ref": "CSSComputedStyle", "description": "Computed style for the specified DOM node." }
+                    { "name": "computedStyle", "type": "array", "items": { "$ref": "CSSComputedStyleProperty" }, "description": "Computed style for the specified DOM node." }
                 ],
                 "description": "Returns the computed style for a DOM node identified by <code>nodeId</code>."
             },

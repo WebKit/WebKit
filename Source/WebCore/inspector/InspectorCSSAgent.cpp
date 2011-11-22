@@ -314,7 +314,7 @@ void InspectorCSSAgent::getInlineStylesForNode(ErrorString* errorString, int nod
     *attributes = buildArrayForAttributeStyles(element);
 }
 
-void InspectorCSSAgent::getComputedStyleForNode(ErrorString* errorString, int nodeId, const RefPtr<InspectorArray>* forcedPseudoClasses, RefPtr<InspectorObject>* style)
+void InspectorCSSAgent::getComputedStyleForNode(ErrorString* errorString, int nodeId, const RefPtr<InspectorArray>* forcedPseudoClasses, RefPtr<InspectorArray>* style)
 {
     Element* element = elementForId(errorString, nodeId);
     if (!element)
@@ -324,7 +324,7 @@ void InspectorCSSAgent::getComputedStyleForNode(ErrorString* errorString, int no
 
     RefPtr<CSSComputedStyleDeclaration> computedStyleInfo = computedStyle(element, true);
     RefPtr<InspectorStyle> inspectorStyle = InspectorStyle::create(InspectorCSSId(), computedStyleInfo, 0);
-    *style = inspectorStyle->buildObjectForStyle();
+    *style = inspectorStyle->buildArrayForComputedStyle();
 }
 
 void InspectorCSSAgent::getAllStyleSheets(ErrorString*, RefPtr<InspectorArray>* styleInfos)

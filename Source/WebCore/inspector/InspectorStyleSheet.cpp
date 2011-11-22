@@ -257,6 +257,23 @@ PassRefPtr<InspectorObject> InspectorStyle::buildObjectForStyle() const
     return result.release();
 }
 
+PassRefPtr<InspectorArray> InspectorStyle::buildArrayForComputedStyle() const
+{
+    RefPtr<InspectorArray> result = InspectorArray::create();
+    Vector<InspectorStyleProperty> properties;
+    populateAllProperties(&properties);
+
+    for (Vector<InspectorStyleProperty>::iterator it = properties.begin(), itEnd = properties.end(); it != itEnd; ++it) {
+        const CSSPropertySourceData& propertyEntry = it->sourceData;
+        RefPtr<InspectorObject> entry = InspectorObject::create();
+        entry->setString("name", propertyEntry.name);
+        entry->setString("value", propertyEntry.value);
+        result->pushObject(entry);
+    }
+
+    return result.release();
+}
+
 // This method does the following preprocessing of |propertyText| with |overwrite| == false and |index| past the last active property:
 // - If the last property (if present) has no closing ";", the ";" is prepended to the current |propertyText| value.
 // - A heuristic formatting is attempted to retain the style structure.

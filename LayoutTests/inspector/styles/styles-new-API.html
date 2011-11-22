@@ -20,7 +20,7 @@ function test()
         {
             InspectorTest.addResult("");
             InspectorTest.addResult("=== Computed style property count for body ===");
-            var propCount = styles.computedStyle.cssProperties.length;
+            var propCount = styles.computedStyle.length;
             InspectorTest.addResult(propCount > 200 ? "OK" : "FAIL (" + propCount + ")");
 
             InspectorTest.addResult("");

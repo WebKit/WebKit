@@ -121,7 +121,7 @@ WebInspector.CSSStyleModel.prototype = {
             if (error || !computedPayload)
                 userCallback(null);
             else
-                userCallback(WebInspector.CSSStyleDeclaration.parsePayload(computedPayload));
+                userCallback(WebInspector.CSSStyleDeclaration.parseComputedStylePayload(computedPayload));
         }
 
         CSSAgent.getComputedStyleForNode(nodeId, forcedPseudoClasses || [], callback.bind(null, userCallback));
@@ -347,6 +347,15 @@ WebInspector.CSSStyleDeclaration.buildShorthandValueMap = function(shorthandEntr
 WebInspector.CSSStyleDeclaration.parsePayload = function(payload)
 {
     return new WebInspector.CSSStyleDeclaration(payload);
+}
+
+WebInspector.CSSStyleDeclaration.parseComputedStylePayload = function(payload)
+{
+    var newPayload = { cssProperties: [], shorthandEntries: [], width: "", height: "" };
+    if (payload)
+        newPayload.cssProperties = payload;
+
+    return new WebInspector.CSSStyleDeclaration(newPayload);
 }
 
 WebInspector.CSSStyleDeclaration.prototype = {

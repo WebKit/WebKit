@@ -129,6 +129,7 @@ public:
 
     CSSStyleDeclaration* cssStyle() const { return m_style.get(); }
     PassRefPtr<InspectorObject> buildObjectForStyle() const;
+    PassRefPtr<InspectorArray> buildArrayForComputedStyle() const;
     bool hasDisabledProperties() const { return !m_disabledProperties.isEmpty(); }
     bool setPropertyText(ErrorString*, unsigned index, const String& text, bool overwrite);
     bool toggleProperty(ErrorString*, unsigned index, bool disable);

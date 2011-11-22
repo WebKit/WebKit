@@ -1,3 +1,21 @@
+2011-11-22  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: [protocol] actual JSON messages do not conform to Inspector.json in CSS
+        https://bugs.webkit.org/show_bug.cgi?id=72733
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/Inspector.json:
+        * inspector/InspectorCSSAgent.cpp:
+        (WebCore::InspectorCSSAgent::getComputedStyleForNode):
+        * inspector/InspectorCSSAgent.h:
+        * inspector/InspectorStyleSheet.cpp:
+        (WebCore::InspectorStyle::buildArrayForComputedStyle):
+        * inspector/InspectorStyleSheet.h:
+        * inspector/front-end/CSSStyleModel.js:
+        (WebInspector.CSSStyleModel.prototype.getComputedStyleAsync):
+        (WebInspector.CSSStyleDeclaration.parseComputedStylePayload):
+
 2011-11-22  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: strip unused InspectorController methods.
