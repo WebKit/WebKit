@@ -1135,6 +1135,8 @@ void CSSStyleSelector::matchUARules(MatchResult& result)
     MatchingUARulesScope scope;
 
     // First we match rules from the user agent sheet.
+    if (simpleDefaultStyleSheet)
+        result.isCacheable = false;
     RuleSet* userAgentStyleSheet = m_medium->mediaTypeMatchSpecific("print")
         ? defaultPrintStyle : defaultStyle;
     matchRules(userAgentStyleSheet, result.firstUARule, result.lastUARule, false);

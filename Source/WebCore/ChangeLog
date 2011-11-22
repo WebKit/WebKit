@@ -1,3 +1,17 @@
+2011-11-21  David Barr  <davidbarr@chromium.org>
+
+        REGRESSION(r98542): Chromium: CSS text is rendered on page
+        https://bugs.webkit.org/show_bug.cgi?id=71703
+
+        Reviewed by Dimitri Glazkov.
+
+        Matched UA declarations uncacheable when using simpleDefaultStyleSheet.
+
+        Test: fast/css/style-tag-display-none.html
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::matchUARules):
+
 2011-11-21  Rob Brackett  <rob@robbrackett.com>
         
         If an event listener is a function, it should be called and not checked for handleEvent.
