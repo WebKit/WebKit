@@ -890,3 +890,13 @@ int DumpRenderTreeSupportGtk::numberOfPendingGeolocationPermissionRequests(WebKi
     return 0;
 #endif
 }
+
+void DumpRenderTreeSupportGtk::setHixie76WebSocketProtocolEnabled(WebKitWebView* webView, bool enabled)
+{
+#if ENABLE(WEB_SOCKETS)
+    core(webView)->settings()->setUseHixie76WebSocketProtocol(enabled);
+#else
+    UNUSED_PARAM(webView);
+    UNUSED_PARAM(enabled);
+#endif
+}

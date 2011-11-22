@@ -830,6 +830,9 @@ void LayoutTestController::overridePreference(JSStringRef key, JSStringRef value
     else if (g_str_equal(originalName.get(), "WebKitTabToLinksPreferenceKey")) {
         DumpRenderTreeSupportGtk::setLinksIncludedInFocusChain(!g_ascii_strcasecmp(valueAsString.get(), "true") || !g_ascii_strcasecmp(valueAsString.get(), "1"));
         return;
+    } else if (g_str_equal(originalName.get(), "WebKitHixie76WebSocketProtocolEnabled")) {
+        DumpRenderTreeSupportGtk::setHixie76WebSocketProtocolEnabled(webkit_web_frame_get_web_view(mainFrame), !g_ascii_strcasecmp(valueAsString.get(), "true") || !g_ascii_strcasecmp(valueAsString.get(), "1"));
+        return;
     } else {
         fprintf(stderr, "LayoutTestController::overridePreference tried to override "
                 "unknown preference '%s'.\n", originalName.get());

@@ -283,6 +283,8 @@ http/tests/misc/webtiming-two-redirects.php
 fast/filesystem
 http/tests/filesystem
 http/tests/security/filesystem-iframe-from-remote.html
+http/tests/websocket/tests/hybi/send-file-blob.html
+http/tests/websocket/tests/hybi/send-file-blob-fail.html
 
 # Requires WebP support.
 fast/canvas/canvas-toDataURL-webp.html
@@ -1477,9 +1479,6 @@ http/tests/misc/iframe-reparenting-id-collision.html
 http/tests/inspector
 http/tests/inspector-enabled
 inspector/
-
-# Skipped until new WebSocket protocol is implemented. http://webkit.org/b/50099
-http/tests/websocket/tests/hybi/
 
 # Text shadow extents are calculated incorrectly
 # https://bugs.webkit.org/show_bug.cgi?id=65035

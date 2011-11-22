@@ -126,6 +126,8 @@ public:
     static void setMockGeolocationError(WebKitWebView*, int errorCode, const gchar* errorMessage);
     static int numberOfPendingGeolocationPermissionRequests(WebKitWebView*);
 
+    static void setHixie76WebSocketProtocolEnabled(WebKitWebView*, bool enabled);
+
 private:
     static bool s_drtRun;
     static bool s_linksIncludedInTabChain;
