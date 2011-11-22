@@ -1,3 +1,17 @@
+2011-11-22  Dirk Pranke  <dpranke@chromium.org>
+
+        Roll Chromium DEPS to r110960 and set the disable_nacl flag.
+        https://bugs.webkit.org/show_bug.cgi?id=72911
+
+        Unreviewed, build fix.
+
+        ppapi starts to depend on the NaCl gyp files as of r109739, so
+        we need to pass disable_nacl when running gyp to avoid pulling
+        in too much of NaCl.
+
+        * DEPS:
+        * gyp_webkit:
+
 2011-11-22  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: [chromium] fix internactive ui test for scripts panel.
