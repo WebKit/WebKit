@@ -3698,7 +3698,7 @@ BUGWK71214 LEOPARD CPU-CG : css2.1/20110323/block-non-replaced-width-008.htm = F
 BUGWK71673 MAC : svg/zoom/page/zoom-img-preserveAspectRatio-support-1.html = TEXT IMAGE IMAGE+TEXT
 BUGWK71673 WIN LINUX : svg/zoom/page/zoom-img-preserveAspectRatio-support-1.html = PASS IMAGE IMAGE+TEXT
 
-BUGWK71278 SLOW WIN RELEASE : fast/events/dispatch-message-string-data.html = PASS
+BUGWK71278 SLOW WIN : fast/events/dispatch-message-string-data.html = PASS
 
 BUGWK71282 WIN DEBUG : inspector/extensions = CRASH PASS TIMEOUT
 BUGWK71282 WIN DEBUG : http/tests/inspector/extensions-headers.html = CRASH PASS TIMEOUT
