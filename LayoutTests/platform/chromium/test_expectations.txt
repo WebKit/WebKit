@@ -3663,7 +3663,7 @@ BUGWK70837 : compositing/video/video-poster.html = PASS TIMEOUT TEXT
 
 BUGWK70866 LINUX DEBUG : fast/forms/form-associated-element-crash3.html = TIMEOUT
 BUGWK72039 LINUX RELEASE : fast/forms/form-associated-element-crash.html = MISSING PASS
-BUGWK72039 LINUX RELEASE : fast/forms/form-associated-element-crash3.html = MISSING PASS
+BUGWK72039 RELEASE : fast/forms/form-associated-element-crash3.html = MISSING PASS
 BUGWK72039 LINUX RELEASE : fast/forms/form-attribute-elements.html = MISSING PASS
 BUGWK72039 LINUX RELEASE : fast/forms/form-attribute-elements-order.html = MISSING PASS
 BUGWK72039 LINUX RELEASE : fast/forms/form-attribute-elements-order2.html = MISSING PASS
