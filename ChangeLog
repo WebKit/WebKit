@@ -1,3 +1,13 @@
+2011-11-22  Andy Wingo  <wingo@igalia.com>
+
+        Fix .dir-locals.el to only apply to specific modes
+        https://bugs.webkit.org/show_bug.cgi?id=72963
+
+        Reviewed by Xan Lopez.
+
+        * .dir-locals.el: Remove `nil' block, as it was causing
+        makefile-mode not to insert tabs.
+
 2011-11-21  Adam Klein  <adamk@chromium.org>
 
         Add GYP-generated WTF.xcodeproj to .gitignore after r100851.

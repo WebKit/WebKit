@@ -2,10 +2,7 @@
 
 ;; Syntax: ((MODE (VAR . VAL) ...) ...)
 ;; MODE is a symbol like `c-mode', or `nil' for all modes.
-((nil
-  (indent-tabs-mode . nil)
-  (c-basic-offset . 4))
- (c-mode
+((c-mode
   (indent-tabs-mode . nil)
   (c-basic-offset . 4))
  (c++-mode
