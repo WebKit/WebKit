@@ -776,10 +776,7 @@ WONTFIX SKIP : media/audio-delete-while-step-button-clicked.html = TIMEOUT
 BUGCR33099 SKIP : media/video-reverse-play-duration.html = TIMEOUT
 BUGCR33099 SKIP : media/video-timeupdate-reverse-play.html = TIMEOUT
 
-BUGCR100798 LEOPARD : fullscreen/full-screen-remove-ancestor-after.html = IMAGE
-BUGCR100798 MAC : fullscreen/full-screen-iframe-zIndex.html = IMAGE
-BUGCR100798 MAC : fullscreen/full-screen-zIndex-after.html = IMAGE
-BUGCR100798 SNOWLEOPARD : fullscreen/full-screen-iframe-allowed.html = TEXT
+BUGCR100798 MAC DEBUG : fullscreen/full-screen-iframe-allowed.html = PASS TEXT
 BUGCR100798 SNOWLEOPARD : fullscreen/full-screen-remove-ancestor-during-transition.html = TIMEOUT PASS
 
 // Does not display courier for the letters, as the test requests.
@@ -3686,8 +3683,6 @@ BUGWK70988 SNOWLEOPARD : jquery/traversing.html = PASS TIMEOUT
 BUGWK70988 MAC DEBUG SLOW : fast/frames/calculate-fixed.html = PASS
 
 BUGWK71004 : inspector/storage-panel-dom-storage.html = PASS TIMEOUT
-
-BUGWK71074 MAC : fast/table/border-collapsing/border-collapsing-head-foot.html = IMAGE+TEXT
 
 BUGWK71181 : fast/forms/input-step-as-double.html = PASS TEXT
 BUGWK71209 LINUX MAC : compositing/visibility/visibility-image-layers.html = IMAGE
