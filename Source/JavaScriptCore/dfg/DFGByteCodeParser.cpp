@@ -2222,7 +2222,7 @@ void ByteCodeParser::processPhiStack()
             newPhiNode.children.fixed.child3 = phiNode->child3();
 
             phiNode->children.fixed.child1 = newPhi;
-            phiNode->children.fixed.child1 = valueInPredecessor;
+            phiNode->children.fixed.child2 = valueInPredecessor;
             phiNode->children.fixed.child3 = NoNode;
         }
     }
