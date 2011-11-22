@@ -1,5 +1,12 @@
 2011-11-22  Adam Roben  <aroben@apple.com>
 
+        Remove some debugging code I accidentally left in r101005
+
+        * Scripts/prepare-ChangeLog:
+        (get_function_line_ranges_for_python):
+
+2011-11-22  Adam Roben  <aroben@apple.com>
+
         Teach prepare-ChangeLog how to find changed classes/methods/functions in Python files
 
         Fixes <http://webkit.org/b/57008> prepare-ChangeLog doesn't find names of modified

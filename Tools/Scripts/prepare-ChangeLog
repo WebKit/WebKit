@@ -1298,9 +1298,6 @@ sub get_function_line_ranges_for_python($$)
         push @scopeStack, { line => $., indent => $indent, name => $fullName };
     }
 
-    foreach my $range (@ranges) {
-        printf "%3d:%3d %s\n", $range->[0], $range->[1], $range->[2];
-    }
     return @ranges;
 }
 
