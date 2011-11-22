@@ -49,6 +49,7 @@ public:
     virtual TextStream& externalRepresentation(TextStream&, int indention) const;
 
 private:
+#if ENABLE(PARALLEL_JOBS)
     static const int s_minimalRectDimension = 100 * 100; // Empirical data limit for parallel jobs
 
     template<typename Type>
@@ -65,6 +66,7 @@ private:
     };
 
     static void platformApplyWorker(PlatformApplyParameters*);
+#endif // ENABLE(PARALLEL_JOBS)
 
     FEGaussianBlur(Filter*, float, float);
 

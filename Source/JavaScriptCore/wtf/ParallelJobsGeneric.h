@@ -40,14 +40,55 @@ class ParallelEnvironment {
 public:
     typedef void (*ThreadFunction)(void*);
 
-    ParallelEnvironment(ThreadFunction, size_t sizeOfParameter, int requestedJobNumber);
+    ParallelEnvironment(ThreadFunction threadFunction, size_t sizeOfParameter, int requestedJobNumber) :
+        m_threadFunction(threadFunction),
+        m_sizeOfParameter(sizeOfParameter)
+    {
+        ASSERT_ARG(requestedJobNumber, requestedJobNumber >= 1);
+
+        if (s_maxNumberOfParallelThreads == -1)
+            determineMaxNumberOfParallelThreads();
+
+        if (!requestedJobNumber || requestedJobNumber > s_maxNumberOfParallelThreads)
+            requestedJobNumber = static_cast<unsigned>(s_maxNumberOfParallelThreads);
+
+        if (!s_threadPool)
+            s_threadPool = new Vector< RefPtr<ThreadPrivate> >();
+
+        // The main thread should be also a worker.
+        int maxNumberOfNewThreads = requestedJobNumber - 1;
+
+        for (int i = 0; i < s_maxNumberOfParallelThreads && m_threads.size() < maxNumberOfNewThreads; ++i) {
+            if (s_threadPool->size() < i + 1)
+                s_threadPool->append(ThreadPrivate::create());
+
+            if ((*s_threadPool)[i]->tryLockFor(this))
+                m_threads.append((*s_threadPool)[i]);
+        }
+
+        m_numberOfJobs = m_threads.size() + 1;
+    }
 
     int numberOfJobs()
     {
         return m_numberOfJobs;
     }
 
-    void execute(void* parameters);
+    void execute(unsigned char* parameters)
+    {
+        size_t i;
+        for (i = 0; i < m_threads.size(); ++i) {
+            m_threads[i]->execute(m_threadFunction, parameters);
+            parameters += m_sizeOfParameter;
+        }
+
+        // The work for the main thread
+        (*m_threadFunction)(parameters);
+
+        // Wait until all jobs are done.
+        for (i = 0; i < m_threads.size(); ++i)
+            m_threads[i]->waitForFinish();
+    }
 
     class ThreadPrivate : public RefCounted<ThreadPrivate> {
     public:

@@ -62,6 +62,7 @@ public:
         int radiusY;
     };
 
+#if ENABLE(PARALLEL_JOBS)
     static const int s_minimalArea = (300 * 300); // Empirical data limit for parallel jobs
 
     struct PlatformApplyParameters {
@@ -72,6 +73,7 @@ public:
     };
 
     static void platformApplyWorker(PlatformApplyParameters*);
+#endif
 
     inline void platformApply(PaintingData*);
     inline void platformApplyGeneric(PaintingData*, const int yStart, const int yEnd);

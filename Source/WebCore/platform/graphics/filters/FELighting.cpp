@@ -242,17 +242,20 @@ inline void FELighting::platformApplyGenericPaint(LightingData& data, LightSourc
     }
 }
 
+#if ENABLE(PARALLEL_JOBS)
 void FELighting::platformApplyGenericWorker(PlatformApplyGenericParameters* parameters)
 {
     parameters->filter->platformApplyGenericPaint(parameters->data, parameters->paintingData, parameters->yStart, parameters->yEnd);
 }
+#endif // ENABLE(PARALLEL_JOBS)
 
 inline void FELighting::platformApplyGeneric(LightingData& data, LightSource::PaintingData& paintingData)
 {
+#if ENABLE(PARALLEL_JOBS)
     int optimalThreadNumber = ((data.widthDecreasedByOne - 1) * (data.heightDecreasedByOne - 1)) / s_minimalRectDimension;
     if (optimalThreadNumber > 1) {
         // Initialize parallel jobs
-        WTF::ParallelJobs<PlatformApplyGenericParameters> parallelJobs(&platformApplyGenericWorker, optimalThreadNumber);
+        ParallelJobs<PlatformApplyGenericParameters> parallelJobs(&platformApplyGenericWorker, optimalThreadNumber);
 
         // Fill the parameter array
         int job = parallelJobs.numberOfJobs();
@@ -274,9 +277,8 @@ inline void FELighting::platformApplyGeneric(LightingData& data, LightSource::Pa
             parallelJobs.execute();
             return;
         }
-        // Fallback to single threaded mode.
     }
-
+#endif
     platformApplyGenericPaint(data, paintingData, 1, data.heightDecreasedByOne);
 }
 
