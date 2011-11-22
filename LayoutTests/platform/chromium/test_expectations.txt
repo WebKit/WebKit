@@ -3712,6 +3712,7 @@ BUGWK71282 WIN DEBUG : inspector/extensions = CRASH PASS TIMEOUT
 BUGWK71282 WIN DEBUG : http/tests/inspector/extensions-headers.html = CRASH PASS TIMEOUT
 BUGWK71282 WIN DEBUG : http/tests/inspector/extensions-network-redirect.html = CRASH PASS TIMEOUT
 BUGWK71282 WIN DEBUG : http/tests/inspector/extensions-useragent.html = CRASH PASS TIMEOUT
+BUGWK72966 WIN LINUX RELEASE : inspector/extensions/extensions-events.html = TIMEOUT
 
 BUGWK71084 WIN DEBUG SLOW : http/tests/inspector/extensions-ignore-cache.html = PASS
 
