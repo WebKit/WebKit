@@ -1,3 +1,20 @@
+2011-11-22  Shinya Kawanaka  <shinyak@google.com>
+
+        Spellcheck should be able to run asynchronously.
+        https://bugs.webkit.org/show_bug.cgi?id=71991
+
+        Reviewed by Hajime Morita.
+
+        Run asynchronous spell checker if both asynchronous flag and unified text checker flag are ON.
+
+        When multiple asynchronous spellchecking are requested, only the first request will be processed.
+
+        Test: editing/spelling/spellcheck-async.html
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::markAllMisspellingsAndBadGrammarInRanges):
+          Uses asynchronous spell checker if asynchronous flag is ON.
+
 2011-11-22  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: [SuggestBox] Grayed prompt displayed with non-collapsed selection in place

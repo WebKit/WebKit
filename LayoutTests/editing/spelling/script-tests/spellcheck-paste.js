@@ -39,6 +39,8 @@ function done()
     if (next)
         return window.setTimeout(next, 0);
     testRoot.style.display = "none";
+
+    layoutTestController.setAsynchronousSpellCheckingEnabled(false);
     layoutTestController.notifyDone();
 }
 

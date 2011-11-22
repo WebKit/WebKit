@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="../../fast/js/resources/js-test-style.css">
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+<script src="../editing.js"></script>
+<style>
+.editing {
+    border: 2px solid red;
+    padding: 6px;
+    font-size: 18px;
+}
+</style>
+</head>
+<body>
+<pre id="description"></pre>
+<pre id="console"></pre>
+<div id="container"></div>
+
+<script>
+description("Test for Unified Spell Checker & Async Spell Checker.");
+
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.setAsynchronousSpellCheckingEnabled(true);
+    layoutTestController.waitUntilDone();
+}
+
+if (window.internals)
+    internals.setUnifiedTextCheckingEnabled(document, true);
+
+var container = document.getElementById('container');
+function removeChildren(node) {
+    while (node.firstChild)
+        node.removeChild(node.firstChild);
+}
+
+var testData = [
+    { text: 'zz', marked: ['zz'] },
+    { text: 'apple,zz,orange', marked: ['zz'] },
+    { text: 'zz,zz', marked: ['zz','zz'] },
+    { text: 'zz zz zz', marked: ['zz', 'zz', 'zz'] },
+    { text: ' zz zz zz ', marked: ['zz', 'zz', 'zz'] },
+    { text: 'zz apple orange', marked: ['zz'] },
+    { text: 'apple zz orange', marked: ['zz'] },
+    { text: 'apple orange zz', marked: ['zz'] },
+    { text: 'zzz', marked: [] },
+    { text: 'I would like to sleep, zzz', marked: [] }
+];
+
+var testNo = 0;
+function doTestIfAny() {
+    var next = testData.shift();
+    if (next)
+        return window.setTimeout(function(){ doTest(++testNo, next.text, next.marked); }, 0);
+
+    // No more tests.
+    removeChildren(container);
+    if (window.internals)
+        internals.setUnifiedTextCheckingEnabled(document, false);
+
+    if (window.layoutTestController) {
+        layoutTestController.setAsynchronousSpellCheckingEnabled(false);
+        layoutTestController.notifyDone();
+    }
+}
+
+function createEditableElement(id) {
+    var e = document.createElement('div');
+    e.setAttribute("contentEditable", "true");
+    e.className = 'editing';
+    e.id = id;
+
+    return e;
+}
+
+function typeText(e, text) {
+    e.focus();
+    for (var i = 0; i < text.length; ++i) {
+        typeCharacterCommand(text[i]);
+    }
+    typeCharacterCommand('.');
+}
+
+function doTest(testNo, text, marked) {
+    removeChildren(container);
+    var id = "spelling" + testNo;
+    var e = createEditableElement(id);
+    container.appendChild(e);
+
+    typeText(e, text);
+
+    if (!window.internals)
+        return;
+
+    tryVerify(10, id, text, marked, 1);
+}
+
+function tryVerify(restTry, id, text, marked, nsleep) {
+    // No more try.
+    if (restTry <= 0) {
+        testFailed('text : "' + text + '" should have markers: [' + marked + ']');
+        setTimeout(doTestIfAny, 0);
+        return;
+    }
+
+    var success = true;
+    var e = document.getElementById(id);
+    var numMarked = internals.markerCountForNode(e.firstChild, "spelling");
+    var success = numMarked == marked.length;
+
+    if (success) {
+        for (var i = 0; i < numMarked; ++i) {
+            var range = internals.markerRangeForNode(e.firstChild, "spelling", i);
+            if (range.toString() != marked[i])
+                success = false;
+        }
+    }
+
+    if (success) {
+        testPassed('text : "' + text + '" has markers: [' + marked + ']');
+        setTimeout(doTestIfAny, 0);
+    } else {
+        // Type '.' to invoke asynchronouse spell checking again.
+        typeCharacterCommand('.');
+        setTimeout(function() { tryVerify(restTry - 1, id, text, marked, nsleep * 2); }, nsleep);
+    }
+}
+
+doTestIfAny();
+
+var successfullyParsed = true;
+</script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

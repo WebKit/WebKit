@@ -2042,6 +2042,16 @@ void Editor::markAllMisspellingsAndBadGrammarInRanges(TextCheckingTypeMask textC
         }
     }
 
+
+    bool asynchronous = m_frame && m_frame->settings() && m_frame->settings()->asynchronousSpellCheckingEnabled() && !shouldShowCorrectionPanel;
+    if (asynchronous) {
+        if (shouldMarkGrammar)
+            m_spellChecker->requestCheckingFor(resolveTextCheckingTypeMask(textCheckingOptions), grammarParagraph.paragraphRange());
+        else
+            m_spellChecker->requestCheckingFor(resolveTextCheckingTypeMask(textCheckingOptions), spellingParagraph.paragraphRange());
+        return;
+    }
+
     Vector<TextCheckingResult> results;
     if (shouldMarkGrammar)
         checkTextOfParagraph(textChecker(), grammarParagraph.textCharacters(), grammarParagraph.textLength(), 
