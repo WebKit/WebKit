@@ -1,3 +1,13 @@
+2011-11-22  Ryan Sleevi  <rsleevi@chromium.org>
+
+        Update flakiness dashboard for new Chromium builders and tests
+        https://bugs.webkit.org/show_bug.cgi?id=72931
+
+        Reviewed by Ojan Vafai.
+
+        * TestResultServer/static-dashboards/builders.js:
+        * TestResultServer/static-dashboards/dashboard_base.js:
+
 2011-11-22  Adam Roben  <aroben@apple.com>
 
         Remove some debugging code I accidentally left in r101005

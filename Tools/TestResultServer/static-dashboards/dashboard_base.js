@@ -112,15 +112,39 @@ var TWO_WEEKS_SECONDS = 60 * 60 * 24 * 14;
 
 // These should match the testtype uploaded to test-results.appspot.com.
 // See http://test-results.appspot.com/testfile.
-var TEST_TYPES = ['app_unittests', 'base_unittests', 'browser_tests',
-        'cache_invalidation_unittests', 'courgette_unittests',
-        'crypto_unittests', 'googleurl_unittests', 'gpu_unittests',
-        'installer_util_unittests', 'interactive_ui_tests', 'ipc_tests',
-        'jingle_unittests', 'layout-tests', 'media_unittests',
-        'mini_installer_test', 'nacl_ui_tests', 'net_unittests',
-        'printing_unittests', 'remoting_unittests', 'safe_browsing_tests',
-        'sync_unit_tests', 'sync_integration_tests',
-        'test_shell_tests', 'ui_tests', 'unit_tests'];
+var TEST_TYPES = [
+    'aura_unittests',
+    'aura_shell_unittests',
+    'base_unittests',
+    'browser_tests',
+    'cacheinvalidation_unittests',
+    'compositor_unittests',
+    'content_unittests',
+    'courgette_unittests',
+    'crypto_unittests',
+    'googleurl_unittests',
+    'gfx_unittests',
+    'gpu_unittests',
+    'installer_util_unittests',
+    'interactive_ui_tests',
+    'ipc_tests',
+    'jingle_unittests',
+    'layout-tests',
+    'media_unittests',
+    'mini_installer_test',
+    'nacl_ui_tests',
+    'net_unittests',
+    'printing_unittests',
+    'remoting_unittests',
+    'sql_unittests',
+    'safe_browsing_tests',
+    'sync_unit_tests',
+    'sync_integration_tests',
+    'test_shell_tests',
+    'ui_tests',
+    'unit_tests',
+    'views_unittests',
+];
 
 var RELOAD_REQUIRING_PARAMETERS = ['showAllRuns', 'group', 'testType'];
 
