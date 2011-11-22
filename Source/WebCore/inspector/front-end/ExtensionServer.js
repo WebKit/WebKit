@@ -44,70 +44,67 @@ WebInspector.ExtensionServer = function()
     this._registeredExtensions = {};
     this._status = new WebInspector.ExtensionStatus();
 
-    this._registerHandler("addAuditCategory", this._onAddAuditCategory.bind(this));
-    this._registerHandler("addAuditResult", this._onAddAuditResult.bind(this));
-    this._registerHandler("addConsoleMessage", this._onAddConsoleMessage.bind(this));
-    this._registerHandler("addRequestHeaders", this._onAddRequestHeaders.bind(this));
-    this._registerHandler("createPanel", this._onCreatePanel.bind(this));
-    this._registerHandler("createSidebarPane", this._onCreateSidebarPane.bind(this));
-    this._registerHandler("createStatusBarButton", this._onCreateStatusBarButton.bind(this));
-    this._registerHandler("evaluateOnInspectedPage", this._onEvaluateOnInspectedPage.bind(this));
-    this._registerHandler("getHAR", this._onGetHAR.bind(this));
-    this._registerHandler("getConsoleMessages", this._onGetConsoleMessages.bind(this));
-    this._registerHandler("getPageResources", this._onGetPageResources.bind(this));
-    this._registerHandler("getRequestContent", this._onGetRequestContent.bind(this));
-    this._registerHandler("getResourceContent", this._onGetResourceContent.bind(this));
-    this._registerHandler("log", this._onLog.bind(this));
-    this._registerHandler("reload", this._onReload.bind(this));
-    this._registerHandler("setOpenResourceHandler", this._onSetOpenResourceHandler.bind(this));
-    this._registerHandler("setResourceContent", this._onSetResourceContent.bind(this));
-    this._registerHandler("setSidebarHeight", this._onSetSidebarHeight.bind(this));
-    this._registerHandler("setSidebarContent", this._onSetSidebarContent.bind(this));
-    this._registerHandler("setSidebarPage", this._onSetSidebarPage.bind(this));
-    this._registerHandler("stopAuditCategoryRun", this._onStopAuditCategoryRun.bind(this));
-    this._registerHandler("subscribe", this._onSubscribe.bind(this));
-    this._registerHandler("unsubscribe", this._onUnsubscribe.bind(this));
-    this._registerHandler("updateButton", this._onUpdateButton.bind(this));
+    var commands = WebInspector.extensionAPI.Commands;
+
+    this._registerHandler(commands.AddAuditCategory, this._onAddAuditCategory.bind(this));
+    this._registerHandler(commands.AddAuditResult, this._onAddAuditResult.bind(this));
+    this._registerHandler(commands.AddConsoleMessage, this._onAddConsoleMessage.bind(this));
+    this._registerHandler(commands.AddRequestHeaders, this._onAddRequestHeaders.bind(this));
+    this._registerHandler(commands.CreatePanel, this._onCreatePanel.bind(this));
+    this._registerHandler(commands.CreateSidebarPane, this._onCreateSidebarPane.bind(this));
+    this._registerHandler(commands.CreateStatusBarButton, this._onCreateStatusBarButton.bind(this));
+    this._registerHandler(commands.EvaluateOnInspectedPage, this._onEvaluateOnInspectedPage.bind(this));
+    this._registerHandler(commands.GetHAR, this._onGetHAR.bind(this));
+    this._registerHandler(commands.GetConsoleMessages, this._onGetConsoleMessages.bind(this));
+    this._registerHandler(commands.GetPageResources, this._onGetPageResources.bind(this));
+    this._registerHandler(commands.GetRequestContent, this._onGetRequestContent.bind(this));
+    this._registerHandler(commands.GetResourceContent, this._onGetResourceContent.bind(this));
+    this._registerHandler(commands.Log, this._onLog.bind(this));
+    this._registerHandler(commands.Reload, this._onReload.bind(this));
+    this._registerHandler(commands.SetOpenResourceHandler, this._onSetOpenResourceHandler.bind(this));
+    this._registerHandler(commands.SetResourceContent, this._onSetResourceContent.bind(this));
+    this._registerHandler(commands.SetSidebarHeight, this._onSetSidebarHeight.bind(this));
+    this._registerHandler(commands.SetSidebarContent, this._onSetSidebarContent.bind(this));
+    this._registerHandler(commands.SetSidebarPage, this._onSetSidebarPage.bind(this));
+    this._registerHandler(commands.StopAuditCategoryRun, this._onStopAuditCategoryRun.bind(this));
+    this._registerHandler(commands.Subscribe, this._onSubscribe.bind(this));
+    this._registerHandler(commands.Unsubscribe, this._onUnsubscribe.bind(this));
+    this._registerHandler(commands.UpdateButton, this._onUpdateButton.bind(this));
 
     window.addEventListener("message", this._onWindowMessage.bind(this), false);
 }
 
 WebInspector.ExtensionServer.prototype = {
-    notifyObjectSelected: function(panelId, objectId)
-    {
-        this._postNotification("panel-objectSelected-" + panelId, objectId);
-    },
-
     notifySearchAction: function(panelId, action, searchString)
     {
-        this._postNotification("panel-search-" + panelId, action, searchString);
+        this._postNotification(WebInspector.extensionAPI.Events.PanelSearch + panelId, action, searchString);
     },
 
     notifyViewShown: function(identifier, frameIndex)
     {
-        this._postNotification("view-shown-" + identifier, frameIndex);
+        this._postNotification(WebInspector.extensionAPI.Events.ViewShown + identifier, frameIndex);
     },
 
     notifyViewHidden: function(identifier)
     {
-        this._postNotification("view-hidden-" + identifier);
+        this._postNotification(WebInspector.extensionAPI.Events.ViewHidden + identifier);
     },
 
     notifyButtonClicked: function(identifier)
     {
-        this._postNotification("button-clicked-" + identifier);
+        this._postNotification(WebInspector.extensionAPI.Events.ButtonClicked + identifier);
     },
 
     _inspectedURLChanged: function(event)
     {
         this._requests = {};
         var url = event.data;
-        this._postNotification("inspectedURLChanged", url);
+        this._postNotification(WebInspector.extensionAPI.Events.InspectedURLChanged, url);
     },
 
     _mainFrameNavigated: function(event)
     {
-        this._postNotification("reset");
+        this._postNotification(WebInspector.extensionAPI.Events.Reset);
     },
 
     startAuditRun: function(category, auditRun)
@@ -119,11 +116,6 @@ WebInspector.ExtensionServer.prototype = {
     stopAuditRun: function(auditRun)
     {
         delete this._clientObjects[auditRun.id];
-    },
-
-    notifyResourceContentCommitted: function(resource, content)
-    {
-        this._postNotification("resource-content-committed", this._makeResource(resource), content);
     },
 
     /**
@@ -525,12 +517,22 @@ WebInspector.ExtensionServer.prototype = {
 
     initExtensions: function()
     {
-        this._registerAutosubscriptionHandler("console-message-added",
+        this._registerAutosubscriptionHandler(WebInspector.extensionAPI.Events.ConsoleMessageAdded,
             WebInspector.console, WebInspector.ConsoleModel.Events.MessageAdded, this._notifyConsoleMessageAdded);
-        this._registerAutosubscriptionHandler("network-request-finished",
+        this._registerAutosubscriptionHandler(WebInspector.extensionAPI.Events.NetworkRequestFinished,
             WebInspector.networkManager, WebInspector.NetworkManager.EventTypes.ResourceFinished, this._notifyRequestFinished);
-        this._registerAutosubscriptionHandler("resource-added",
-            WebInspector.resourceTreeModel, WebInspector.ResourceTreeModel.EventTypes.ResourceAdded, this._notifyResourceAdded);
+        this._registerAutosubscriptionHandler(WebInspector.extensionAPI.Events.ResourceAdded,
+            WebInspector.resourceTreeModel,
+            WebInspector.ResourceTreeModel.EventTypes.ResourceAdded,
+            this._notifyResourceAdded);
+        this._registerAutosubscriptionHandler(WebInspector.extensionAPI.Events.ElementsPanelObjectSelected,
+            WebInspector.panels.elements.treeOutline,
+            WebInspector.ElementsTreeOutline.Events.SelectedNodeChanged,
+            this._notifyElementsSelectionChanged);
+        this._registerAutosubscriptionHandler(WebInspector.extensionAPI.Events.ResourceContentCommitted,
+            WebInspector.resourceTreeModel,
+            WebInspector.ResourceTreeModel.EventTypes.ResourceContentCommitted,
+            this._notifyResourceContentCommitted);
 
         function onTimelineSubscriptionStarted()
         {
@@ -544,7 +546,8 @@ WebInspector.ExtensionServer.prototype = {
             WebInspector.timelineManager.removeEventListener(WebInspector.TimelineManager.EventTypes.TimelineEventRecorded,
                 this._notifyTimelineEventRecorded, this);
         }
-        this._registerSubscriptionHandler("timeline-event-recorded", onTimelineSubscriptionStarted.bind(this), onTimelineSubscriptionStopped.bind(this));
+        this._registerSubscriptionHandler(WebInspector.extensionAPI.Events.TimelineEventRecorded,
+            onTimelineSubscriptionStarted.bind(this), onTimelineSubscriptionStopped.bind(this));
 
         WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.InspectedURLChanged,
             this._inspectedURLChanged, this);
@@ -554,24 +557,34 @@ WebInspector.ExtensionServer.prototype = {
 
     _notifyConsoleMessageAdded: function(event)
     {
-        this._postNotification("console-message-added", this._makeConsoleMessage(event.data));
+        this._postNotification(WebInspector.extensionAPI.Events.ConsoleMessageAdded, this._makeConsoleMessage(event.data));
     },
 
     _notifyResourceAdded: function(event)
     {
         var resource = event.data;
-        this._postNotification("resource-added", this._makeResource(resource));
+        this._postNotification(WebInspector.extensionAPI.Events.ResourceAdded, this._makeResource(resource));
+    },
+
+    _notifyResourceContentCommitted: function(event)
+    {
+        this._postNotification(WebInspector.extensionAPI.Events.ResourceContentCommitted, this._makeResource(event.data.resource), event.data.content);
     },
 
     _notifyRequestFinished: function(event)
     {
         var request = event.data;
-        this._postNotification("network-request-finished", this._requestId(request), (new WebInspector.HAREntry(request)).build());
+        this._postNotification(WebInspector.extensionAPI.Events.NetworkRequestFinished, this._requestId(request), (new WebInspector.HAREntry(request)).build());
+    },
+
+    _notifyElementsSelectionChanged: function()
+    {
+        this._postNotification(WebInspector.extensionAPI.Events.ElementsPanelObjectSelected);
     },
 
     _notifyTimelineEventRecorded: function(event)
     {
-        this._postNotification("timeline-event-recorded", event.data);
+        this._postNotification(WebInspector.extensionAPI.Events.TimelineEventRecorded, event.data);
     },
 
     /**
@@ -720,9 +733,9 @@ WebInspector.addExtensions = function(extensions)
     WebInspector.extensionServer._addExtensions(extensions);
 }
 
-WebInspector.extensionServer = new WebInspector.ExtensionServer();
-
 WebInspector.extensionAPI = {};
 defineCommonExtensionSymbols(WebInspector.extensionAPI);
+
+WebInspector.extensionServer = new WebInspector.ExtensionServer();
 
 window.addExtension = WebInspector.extensionServer._addExtension.bind(WebInspector.extensionServer);

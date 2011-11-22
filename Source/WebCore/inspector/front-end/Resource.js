@@ -249,7 +249,7 @@ WebInspector.Resource.persistRevision = function(resource)
 WebInspector.Resource.Events = {
     RevisionAdded: "revision-added",
     MessageAdded: "message-added",
-    MessagesCleared: "messages-cleared"
+    MessagesCleared: "messages-cleared",
 }
 
 WebInspector.Resource.prototype = {
@@ -855,10 +855,9 @@ WebInspector.Resource.prototype = {
         this._contentTimestamp = timestamp || new Date();
 
         this.dispatchEventToListeners(WebInspector.Resource.Events.RevisionAdded, revision);
-
         if (!restoringHistory)
             this._persistRevision();
-        WebInspector.extensionServer.notifyResourceContentCommitted(this, newContent);
+        WebInspector.resourceTreeModel.dispatchEventToListeners(WebInspector.ResourceTreeModel.EventTypes.ResourceContentCommitted, { resource: this, content: newContent });
     },
 
     _persistRevision: function()

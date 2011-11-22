@@ -56,6 +56,7 @@ WebInspector.ResourceTreeModel.EventTypes = {
     FrameDetached: "FrameDetached",
     MainFrameNavigated: "MainFrameNavigated",
     ResourceAdded: "ResourceAdded",
+    ResourceContentCommitted: "resource-content-committed",
     WillLoadCachedResources: "WillLoadCachedResources",
     CachedResourcesLoaded: "CachedResourcesLoaded",
     DOMContentLoaded: "DOMContentLoaded",

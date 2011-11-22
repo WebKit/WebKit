@@ -1,3 +1,19 @@
+2011-11-21  Andrey Kosyakov  <caseq@chromium.org>
+
+        Web Inspector: [Extensions API][refactoring] remove dependencies on the ExtensionsServer from most of the insepctor
+        https://bugs.webkit.org/show_bug.cgi?id=72899
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/ElementsPanel.js:
+        (WebInspector.ElementsPanel.prototype._selectedNodeChanged):
+        * inspector/front-end/ExtensionServer.js:
+        (WebInspector.ExtensionServer.prototype._notifyResourceContentCommitted):
+        (WebInspector.ExtensionServer.prototype._notifyElementsSelectionChanged):
+        * inspector/front-end/Resource.js:
+        (WebInspector.Resource.prototype.addRevision):
+        * inspector/front-end/externs.js:
+
 2011-11-22  Zoltan Horvath  <zoltan@webkit.org>
 
         [Qt] Build fix for MHTML support

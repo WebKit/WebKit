@@ -75,12 +75,6 @@ InspectorBackend.runAfterPendingDispatches = function(message) {}
 // FIXME: remove everything below.
 var WebInspector = {}
 
-WebInspector.extensionServer = {}
-WebInspector.extensionServer.notifyResourceContentCommitted = function(resource, content) {}
-WebInspector.extensionServer.notifyPanelShown = function(panel) {}
-WebInspector.extensionServer.notifyPanelHidden = function(panel) {}
-WebInspector.extensionServer.notifyObjectSelected = function(object) {}
-
 /**
  * @param {NetworkAgent.RequestId} requestId
  * @return {?WebInspector.Resource}

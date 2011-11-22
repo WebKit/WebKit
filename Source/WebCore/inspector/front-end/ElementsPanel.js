@@ -177,7 +177,6 @@ WebInspector.ElementsPanel.prototype = {
 
         if (selectedNode) {
             ConsoleAgent.addInspectedNode(selectedNode.id);
-            WebInspector.extensionServer.notifyObjectSelected(this.name);
             this._lastValidSelectedNode = selectedNode;
         }
     },

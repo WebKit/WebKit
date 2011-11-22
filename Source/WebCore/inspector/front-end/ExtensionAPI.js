@@ -48,6 +48,47 @@ function defineCommonExtensionSymbols(apiPrivate)
         Warning: "warning",
         Error: "error"
     };
+    apiPrivate.Events = {
+        AuditStarted: "audit-started-",
+        ButtonClicked: "button-clicked-",
+        ConsoleMessageAdded: "console-message-added",
+        ElementsPanelObjectSelected: "panel-objectSelected-elements",
+        NetworkRequestFinished: "network-request-finished",
+        Reset: "reset",
+        OpenResource: "open-resource",
+        PanelSearch: "panel-search-",
+        Reload: "Reload",
+        ResourceAdded: "resource-added",
+        ResourceContentCommitted: "resource-content-committed",
+        TimelineEventRecorded: "timeline-event-recorded",
+        ViewShown: "view-shown-",
+        ViewHidden: "view-hidden-"
+    };
+    apiPrivate.Commands = {
+        AddAuditCategory: "addAuditCategory",
+        AddAuditResult: "addAuditResult",
+        AddConsoleMessage: "addConsoleMessage",
+        AddRequestHeaders: "addRequestHeaders",
+        CreatePanel: "createPanel",
+        CreateSidebarPane: "createSidebarPane",
+        CreateStatusBarButton: "createStatusBarButton",
+        EvaluateOnInspectedPage: "evaluateOnInspectedPage",
+        GetConsoleMessages: "getConsoleMessages",
+        GetHAR: "getHAR",
+        GetPageResources: "getPageResources",
+        GetRequestContent: "getRequestContent",
+        GetResourceContent: "getResourceContent",
+        Subscribe: "subscribe",
+        SetOpenResourceHandler: "setOpenResourceHandler",
+        SetResourceContent: "setResourceContent",
+        SetSidebarContent: "setSidebarContent",
+        SetSidebarHeight: "setSidebarHeight",
+        SetSidebarPage: "setSidebarPage",
+        StopAuditCategoryRun: "stopAuditCategoryRun",
+        Unsubscribe: "unsubscribe",
+        UpdateButton: "updateButton",
+        InspectedURLChanged: "inspectedURLChanged"
+    };
 }
 
 function injectedExtensionAPI(injectedScriptId)
@@ -56,6 +97,9 @@ function injectedExtensionAPI(injectedScriptId)
 var apiPrivate = {};
 
 defineCommonExtensionSymbols(apiPrivate);
+
+var commands = apiPrivate.Commands;
+var events = apiPrivate.Events;
 
 // Here and below, all constructors are private to API implementation.
 // For a public type Foo, if internal fields are present, these are on
@@ -76,10 +120,10 @@ function EventSinkImpl(type, customDispatch)
 EventSinkImpl.prototype = {
     addListener: function(callback)
     {
-        if (typeof callback != "function")
+        if (typeof callback !== "function")
             throw "addListener: callback is not a function";
         if (this._listeners.length === 0)
-            extensionServer.sendRequest({ command: "subscribe", type: this._type });
+            extensionServer.sendRequest({ command: commands.Subscribe, type: this._type });
         this._listeners.push(callback);
         extensionServer.registerHandler("notify-" + this._type, bind(this._dispatch, this));
     },
@@ -95,7 +139,7 @@ EventSinkImpl.prototype = {
             }
         }
         if (this._listeners.length === 0)
-            extensionServer.sendRequest({ command: "unsubscribe", type: this._type });
+            extensionServer.sendRequest({ command: commands.Unsubscribe, type: this._type });
     },
 
     _fire: function()
@@ -127,7 +171,7 @@ function InspectorExtensionAPI()
     this.timeline = new Timeline();
     this.console = new Console();
 
-    this.onReset = new EventSink("reset");
+    this.onReset = new EventSink(events.Reset);
 }
 
 /**
@@ -136,7 +180,7 @@ function InspectorExtensionAPI()
 InspectorExtensionAPI.prototype = {
     log: function(message)
     {
-        extensionServer.sendRequest({ command: "log", message: message });
+        extensionServer.sendRequest({ command: commands.Log, message: message });
     }
 }
 
@@ -145,18 +189,18 @@ InspectorExtensionAPI.prototype = {
  */
 function Console()
 {
-    this.onMessageAdded = new EventSink("console-message-added");
+    this.onMessageAdded = new EventSink(events.ConsoleMessageAdded);
 }
 
 Console.prototype = {
     getMessages: function(callback)
     {
-        extensionServer.sendRequest({ command: "getConsoleMessages" }, callback);
+        extensionServer.sendRequest({ command: commands.GetConsoleMessages }, callback);
     },
 
     addMessage: function(severity, text, url, line)
     {
-        extensionServer.sendRequest({ command: "addConsoleMessage", severity: severity, text: text, url: url, line: line });
+        extensionServer.sendRequest({ command: commands.AddConsoleMessage, severity: severity, text: text, url: url, line: line });
     },
 
     get Severity()
@@ -176,9 +220,9 @@ function Network()
         request.__proto__ = new Request(message.arguments[0]);
         this._fire(request);
     }
-    this.onRequestFinished = new EventSink("network-request-finished", dispatchRequestEvent);
+    this.onRequestFinished = new EventSink(events.NetworkRequestFinished, dispatchRequestEvent);
     defineDeprecatedProperty(this, "network", "onFinished", "onRequestFinished");
-    this.onNavigated = new EventSink("inspectedURLChanged");
+    this.onNavigated = new EventSink(events.InspectedURLChanged);
 }
 
 Network.prototype = {
@@ -193,12 +237,12 @@ Network.prototype = {
             }
             callback(result);
         }
-        return extensionServer.sendRequest({ command: "getHAR" }, callback && callbackWrapper);
+        return extensionServer.sendRequest({ command: commands.GetHAR }, callback && callbackWrapper);
     },
 
     addRequestHeaders: function(headers)
     {
-        return extensionServer.sendRequest({ command: "addRequestHeaders", headers: headers, extensionId: window.location.hostname });
+        return extensionServer.sendRequest({ command: commands.AddRequestHeaders, headers: headers, extensionId: window.location.hostname });
     }
 }
 
@@ -217,7 +261,7 @@ RequestImpl.prototype = {
         {
             callback(response.content, response.encoding);
         }
-        extensionServer.sendRequest({ command: "getRequestContent", id: this._id }, callback && callbackWrapper);
+        extensionServer.sendRequest({ command: commands.GetRequestContent, id: this._id }, callback && callbackWrapper);
     }
 }
 
@@ -243,7 +287,7 @@ Panels.prototype = {
     {
         var id = "extension-panel-" + extensionServer.nextObjectId();
         var request = {
-            command: "createPanel",
+            command: commands.CreatePanel,
             id: id,
             title: title,
             icon: icon,
@@ -254,20 +298,20 @@ Panels.prototype = {
 
     setOpenResourceHandler: function(callback)
     {
-        var hadHandler = extensionServer.hasHandler("open-resource");
+        var hadHandler = extensionServer.hasHandler(events.OpenResource);
 
         if (!callback)
-            extensionServer.unregisterHandler("open-resource");
+            extensionServer.unregisterHandler(events.OpenResource);
         else {
             function callbackWrapper(message)
             {
                 callback.call(null, message.resource);
             }
-            extensionServer.registerHandler("open-resource", callbackWrapper);
+            extensionServer.registerHandler(events.OpenResource, callbackWrapper);
         }
         // Only send command if we either removed an existing handler or added handler and had none before.
         if (hadHandler === !callback)
-            extensionServer.sendRequest({ command: "setOpenResourceHandler", "handlerPresent": !!callback });
+            extensionServer.sendRequest({ command: commands.SetOpenResourceHandler, "handlerPresent": !!callback });
     }
 }
 
@@ -283,8 +327,8 @@ function ExtensionViewImpl(id)
         var frameIndex = message.arguments[0];
         this._fire(window.top.frames[frameIndex]);
     }
-    this.onShown = new EventSink("view-shown-" + id, dispatchShowEvent);
-    this.onHidden = new EventSink("view-hidden-" + id);
+    this.onShown = new EventSink(events.ViewShown + id, dispatchShowEvent);
+    this.onHidden = new EventSink(events.ViewHidden + id);
 }
 
 /**
@@ -300,7 +344,7 @@ PanelWithSidebarImpl.prototype = {
     {
         var id = "extension-sidebar-" + extensionServer.nextObjectId();
         var request = {
-            command: "createSidebarPane",
+            command: commands.CreateSidebarPane,
             panel: this._id,
             id: id,
             title: title
@@ -323,7 +367,7 @@ function ElementsPanel()
 {
     var id = "elements";
     PanelWithSidebar.call(this, id);
-    this.onSelectionChanged = new EventSink("panel-objectSelected-" + id);
+    this.onSelectionChanged = new EventSink(events.ElementsPanelObjectSelected);
 }
 
 /**
@@ -333,7 +377,7 @@ function ElementsPanel()
 function ExtensionPanelImpl(id)
 {
     ExtensionViewImpl.call(this, id);
-    this.onSearch = new EventSink("panel-search-" + id);
+    this.onSearch = new EventSink(events.PanelSearch + id);
 }
 
 ExtensionPanelImpl.prototype = {
@@ -341,7 +385,7 @@ ExtensionPanelImpl.prototype = {
     {
         var id = "button-" + extensionServer.nextObjectId();
         var request = {
-            command: "createStatusBarButton",
+            command: commands.CreateStatusBarButton,
             panel: this._id,
             id: id,
             icon: iconPath,
@@ -367,22 +411,22 @@ function ExtensionSidebarPaneImpl(id)
 ExtensionSidebarPaneImpl.prototype = {
     setHeight: function(height)
     {
-        extensionServer.sendRequest({ command: "setSidebarHeight", id: this._id, height: height });
+        extensionServer.sendRequest({ command: commands.SetSidebarHeight, id: this._id, height: height });
     },
 
     setExpression: function(expression, rootTitle, callback)
     {
-        extensionServer.sendRequest({ command: "setSidebarContent", id: this._id, expression: expression, rootTitle: rootTitle, evaluateOnPage: true }, callback);
+        extensionServer.sendRequest({ command: commands.SetSidebarContent, id: this._id, expression: expression, rootTitle: rootTitle, evaluateOnPage: true }, callback);
     },
 
     setObject: function(jsonObject, rootTitle, callback)
     {
-        extensionServer.sendRequest({ command: "setSidebarContent", id: this._id, expression: jsonObject, rootTitle: rootTitle }, callback);
+        extensionServer.sendRequest({ command: commands.SetSidebarContent, id: this._id, expression: jsonObject, rootTitle: rootTitle }, callback);
     },
 
     setPage: function(page)
     {
-        extensionServer.sendRequest({ command: "setSidebarPage", id: this._id, page: page });
+        extensionServer.sendRequest({ command: commands.SetSidebarPage, id: this._id, page: page });
     }
 }
 
@@ -392,14 +436,14 @@ ExtensionSidebarPaneImpl.prototype = {
 function ButtonImpl(id)
 {
     this._id = id;
-    this.onClicked = new EventSink("button-clicked-" + id);
+    this.onClicked = new EventSink(events.ButtonClicked + id);
 }
 
 ButtonImpl.prototype = {
     update: function(iconPath, tooltipText, disabled)
     {
         var request = {
-            command: "updateButton",
+            command: commands.UpdateButton,
             id: this._id,
             icon: iconPath,
             tooltip: tooltipText,
@@ -420,7 +464,7 @@ Audits.prototype = {
     addCategory: function(displayName, resultCount)
     {
         var id = "extension-audit-category-" + extensionServer.nextObjectId();
-        extensionServer.sendRequest({ command: "addAuditCategory", id: id, displayName: displayName, resultCount: resultCount });
+        extensionServer.sendRequest({ command: commands.AddAuditCategory, id: id, displayName: displayName, resultCount: resultCount });
         return new AuditCategory(id);
     }
 }
@@ -441,7 +485,7 @@ function AuditCategoryImpl(id)
         }
     }
     this._id = id;
-    this.onAuditStarted = new EventSink("audit-started-" + id, dispatchAuditEvent);
+    this.onAuditStarted = new EventSink(events.AuditStarted + id, dispatchAuditEvent);
 }
 
 /**
@@ -465,7 +509,7 @@ AuditResultImpl.prototype = {
             details = new AuditResultNode(details instanceof Array ? details : [details]);
 
         var request = {
-            command: "addAuditResult",
+            command: commands.AddAuditResult,
             resultId: this._id,
             displayName: displayName,
             description: description,
@@ -482,7 +526,7 @@ AuditResultImpl.prototype = {
 
     done: function()
     {
-        extensionServer.sendRequest({ command: "stopAuditCategoryRun", resultId: this._id });
+        extensionServer.sendRequest({ command: commands.StopAuditCategoryRun, resultId: this._id });
     },
 
     get Severity()
@@ -531,8 +575,8 @@ function InspectedWindow()
     {
         this._fire(new Resource(message.arguments[0]), message.arguments[1]);
     }
-    this.onResourceAdded = new EventSink("resource-added", dispatchResourceEvent);
-    this.onResourceContentCommitted = new EventSink("resource-content-committed", dispatchResourceContentEvent);
+    this.onResourceAdded = new EventSink(events.ResourceAdded, dispatchResourceEvent);
+    this.onResourceContentCommitted = new EventSink(events.ResourceContentCommitted, dispatchResourceContentEvent);
 }
 
 InspectedWindow.prototype = {
@@ -546,7 +590,7 @@ InspectedWindow.prototype = {
             console.warn("Passing userAgent as string parameter to inspectedWindow.reload() is deprecated. " +
                          "Use inspectedWindow.reload({ userAgent: value}) instead.");
         }
-        return extensionServer.sendRequest({ command: "reload", options: options });
+        return extensionServer.sendRequest({ command: commands.Reload, options: options });
     },
 
     eval: function(expression, callback)
@@ -555,7 +599,7 @@ InspectedWindow.prototype = {
         {
             callback(result.value, result.isException);
         }
-        return extensionServer.sendRequest({ command: "evaluateOnInspectedPage", expression: expression }, callback && callbackWrapper);
+        return extensionServer.sendRequest({ command: commands.EvaluateOnInspectedPage, expression: expression }, callback && callbackWrapper);
     },
 
     getResources: function(callback)
@@ -568,7 +612,7 @@ InspectedWindow.prototype = {
         {
             callback(resources.map(wrapResource));
         }
-        return extensionServer.sendRequest({ command: "getPageResources" }, callback && callbackWrapper);
+        return extensionServer.sendRequest({ command: commands.GetPageResources }, callback && callbackWrapper);
     }
 }
 
@@ -599,12 +643,12 @@ ResourceImpl.prototype = {
             callback(response.content, response.encoding);
         }
 
-        return extensionServer.sendRequest({ command: "getResourceContent", url: this._url }, callback && callbackWrapper);
+        return extensionServer.sendRequest({ command: commands.GetResourceContent, url: this._url }, callback && callbackWrapper);
     },
 
     setContent: function(content, commit, callback)
     {
-        return extensionServer.sendRequest({ command: "setResourceContent", url: this._url, content: content, commit: commit }, callback);
+        return extensionServer.sendRequest({ command: commands.SetResourceContent, url: this._url, content: content, commit: commit }, callback);
     }
 }
 
@@ -613,7 +657,7 @@ ResourceImpl.prototype = {
  */
 function TimelineImpl()
 {
-    this.onEventRecorded = new EventSink("timeline-event-recorded");
+    this.onEventRecorded = new EventSink(events.TimelineEventRecorded);
 }
 
 /**
