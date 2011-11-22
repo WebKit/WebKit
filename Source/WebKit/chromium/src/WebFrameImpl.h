@@ -192,6 +192,9 @@ public:
     virtual void increaseMatchCount(int count, int identifier);
     virtual void resetMatchCount();
 
+    virtual void handleIntentResult(int, const WebString&);
+    virtual void handleIntentFailure(int, const WebString&);
+
     virtual WebString contentAsText(size_t maxChars) const;
     virtual WebString contentAsMarkup() const;
     virtual WebString renderTreeAsText(RenderAsTextControls toShow = RenderAsTextNormal) const;

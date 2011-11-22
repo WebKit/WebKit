@@ -544,6 +544,20 @@ public:
     virtual void resetMatchCount() = 0;
 
 
+    // Web Intents ---------------------------------------------------------
+
+    // Forwards a web intents reply from the invoked activity back to the
+    // appropriate registered Javascript callback. The |intentIdentifier| is
+    // the WebIntent parameter received from the dispatchIntent method.
+    virtual void handleIntentResult(int intentIdentifier, const WebString&) = 0;
+
+    // Forwards a web intents failure notification from the invoked activity
+    // or intervening browser logic back to the appropriate registered
+    // Javascript callback. The |intentIdentifier| is the WebIntent parameter
+    // received from the dispatchIntent method.
+    virtual void handleIntentFailure(int intentIdentifier, const WebString&) = 0;
+
+
     // Utility -------------------------------------------------------------
 
     // Returns the contents of this frame as a string.  If the text is

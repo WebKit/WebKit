@@ -52,6 +52,8 @@ class WebCookieJar;
 class WebDataSource;
 class WebFormElement;
 class WebFrame;
+class WebIntentServiceInfo;
+class WebIntent;
 class WebMediaPlayer;
 class WebMediaPlayerClient;
 class WebNode;
@@ -380,6 +382,15 @@ public:
         WebFrame*, WebStorageQuotaType,
         unsigned long long newQuotaInBytes,
         WebStorageQuotaCallbacks*) { }
+
+    // Web Intents ---------------------------------------------------
+
+    // Register a service to handle Web Intents.
+    virtual void registerIntentService(WebFrame*, const WebIntentServiceInfo&) { }
+
+    // Start a Web Intents activity. Replies to this request should be sent to
+    // the WebFrame starting the activity.
+    virtual void dispatchIntent(WebFrame*, const WebIntent&) { }
 
 protected:
     ~WebFrameClient() { }

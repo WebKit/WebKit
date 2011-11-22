@@ -226,6 +226,8 @@
                 'public/WebIDBTransactionCallbacks.h',
                 'public/WebInputElement.h',
                 'public/WebInputEvent.h',
+                'public/WebIntent.h',
+                'public/WebIntentServiceInfo.h',
                 'public/WebKit.h',
                 'public/WebKitPlatformSupport.h',
                 'public/WebLabelElement.h',

@@ -1826,6 +1826,14 @@ void WebFrameImpl::resetMatchCount()
     m_framesScopingCount = 0;
 }
 
+void WebFrameImpl::handleIntentResult(int intentIdentifier, const WebString& reply)
+{
+}
+
+void WebFrameImpl::handleIntentFailure(int intentIdentifier, const WebString& reply)
+{
+}
+
 WebString WebFrameImpl::contentAsText(size_t maxChars) const
 {
     if (!m_frame)
