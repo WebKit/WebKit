@@ -1,3 +1,9 @@
+2011-11-22  Adam Klein  <adamk@chromium.org>
+
+        Move splitView.css (added in r100991) to the correct target.
+
+        * WebCore.gypi:
+
 2011-11-22  Andreas Kling  <kling@webkit.org>
 
         CSSProperty: Remove unnecessary operator overloads.
