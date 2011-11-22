@@ -48,15 +48,15 @@ JSValue JSCallbackData::invokeCallback(MarkedArgumentBuffer& args, bool* raisedE
     ASSERT(globalObject());
 
     ExecState* exec = globalObject()->globalExec();
-    JSValue function = callback()->get(exec, Identifier(exec, "handleEvent"));
+    JSValue function = callback();
 
     CallData callData;
-    CallType callType = getCallData(function, callData);
+    CallType callType = callback()->methodTable()->getCallData(callback(), callData);
     if (callType == CallTypeNone) {
-        callType = callback()->methodTable()->getCallData(callback(), callData);
+        function = callback()->get(exec, Identifier(exec, "handleEvent"));
+        callType = getCallData(function, callData);
         if (callType == CallTypeNone)
             return JSValue();
-        function = callback();
     }
     
     globalObject()->globalData().timeoutChecker.start();

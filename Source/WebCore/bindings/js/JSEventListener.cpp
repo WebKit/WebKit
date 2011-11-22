@@ -95,13 +95,14 @@ void JSEventListener::handleEvent(ScriptExecutionContext* scriptExecutionContext
     }
 
     ExecState* exec = globalObject->globalExec();
-    JSValue handleEventFunction = jsFunction->get(exec, Identifier(exec, "handleEvent"));
+    JSValue handleEventFunction = jsFunction;
 
     CallData callData;
     CallType callType = getCallData(handleEventFunction, callData);
+    // If jsFunction is not actually a function, see if it implements the EventListener interface and use that
     if (callType == CallTypeNone) {
-        handleEventFunction = JSValue();
-        callType = jsFunction->methodTable()->getCallData(jsFunction, callData);
+        handleEventFunction = jsFunction->get(exec, Identifier(exec, "handleEvent"));
+        callType = getCallData(handleEventFunction, callData);
     }
 
     if (callType != CallTypeNone) {
@@ -117,17 +118,10 @@ void JSEventListener::handleEvent(ScriptExecutionContext* scriptExecutionContext
         DynamicGlobalObjectScope globalObjectScope(globalData, globalData.dynamicGlobalObject ? globalData.dynamicGlobalObject : globalObject);
 
         globalData.timeoutChecker.start();
-        JSValue retval;
-        if (handleEventFunction) {
-            retval = scriptExecutionContext->isDocument()
-                ? JSMainThreadExecState::call(exec, handleEventFunction, callType, callData, jsFunction, args)
-                : JSC::call(exec, handleEventFunction, callType, callData, jsFunction, args);
-        } else {
-            JSValue currentTarget = toJS(exec, globalObject, event->currentTarget());
-            retval = scriptExecutionContext->isDocument()
-                ? JSMainThreadExecState::call(exec, jsFunction, callType, callData, currentTarget, args)
-                : JSC::call(exec, jsFunction, callType, callData, currentTarget, args);
-        }
+        JSValue thisValue = handleEventFunction == jsFunction ? toJS(exec, globalObject, event->currentTarget()) : jsFunction;
+        JSValue retval = scriptExecutionContext->isDocument()
+            ? JSMainThreadExecState::call(exec, handleEventFunction, callType, callData, thisValue, args)
+            : JSC::call(exec, handleEventFunction, callType, callData, thisValue, args);
         globalData.timeoutChecker.stop();
 
         globalObject->setCurrentEvent(savedEvent);
