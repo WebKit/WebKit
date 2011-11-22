@@ -134,6 +134,7 @@ private:
     QScopedPointer<QQuickWebViewPrivate> d_ptr;
     QQuickWebViewExperimental* m_experimental;
 
+    friend class QtWebPageLoadClient;
     friend class QtWebPageProxy;
     friend class QtWebPageUIClient;
     friend class WTR::PlatformWebView;

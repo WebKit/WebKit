@@ -101,7 +101,6 @@ public:
     virtual void pageClosed() { }
     virtual void didRelaunchProcess();
 
-    virtual void didFinishFirstNonEmptyLayout();
     virtual void didChangeContentsSize(const WebCore::IntSize&);
     virtual void didChangeViewportProperties(const WebCore::ViewportArguments&);
 
@@ -138,16 +137,6 @@ public:
     virtual void didFindZoomableArea(const WebCore::IntPoint&, const WebCore::IntRect&);
     virtual void didReceiveMessageFromNavigatorQtObject(const String&);
 
-    void didChangeUrl(const QUrl&);
-    void didChangeTitle(const QString&);
-
-    void loadDidBegin();
-    void loadDidCommit();
-    void loadDidSucceed();
-    void loadDidFail(const QtWebError&);
-    void didChangeLoadProgress(int);
-    int loadProgress() const { return m_loadProgress; }
-
     bool canGoBack() const;
     void goBack();
     bool canGoForward() const;
@@ -157,6 +146,7 @@ public:
     bool canReload() const;
     void reload();
 
+    void updateNavigationState();
     void updateEditorActions();
 
     WKPageRef pageRef() const;
@@ -209,12 +199,10 @@ public:
     void hideContextMenu();
 
 public Q_SLOTS:
-    void navigationStateChanged();
     void didReceiveDownloadResponse(QWebDownloadItem* downloadItem);
 
 public:
     Q_SIGNAL void zoomableAreaFound(const QRect&);
-    Q_SIGNAL void updateNavigationState();
     Q_SIGNAL void receivedMessageFromNavigatorQtObject(const QVariantMap&);
 
 protected:
@@ -263,7 +251,6 @@ private:
     mutable OwnPtr<QWebPreferences> m_preferences;
 
     OwnPtr<QUndoStack> m_undoStack;
-    int m_loadProgress;
 
     bool m_navigatorQtObjectEnabled;
     QPoint m_tripleClick;

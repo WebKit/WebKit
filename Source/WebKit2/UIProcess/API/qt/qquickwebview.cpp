@@ -57,9 +57,8 @@ QQuickWebViewPrivate::QQuickWebViewPrivate(QQuickWebView* viewport, WKContextRef
     QWebPreferencesPrivate::get(pageProxy->preferences())->setAttribute(QWebPreferencesPrivate::AcceleratedCompositingEnabled, true);
     pageProxy->init();
 
-    QObject::connect(pageProxy.data(), SIGNAL(updateNavigationState()), q_ptr, SIGNAL(navigationStateChanged()));
-
     pageUIClient.reset(new QtWebPageUIClient(pageProxy->pageRef(), q_ptr));
+    pageLoadClient.reset(new QtWebPageLoadClient(pageProxy->pageRef(), q_ptr));
 }
 
 void QQuickWebViewPrivate::enableMouseEvents()
@@ -543,7 +542,7 @@ QUrl QQuickWebView::url() const
 int QQuickWebView::loadProgress() const
 {
     Q_D(const QQuickWebView);
-    return d->pageProxy->loadProgress();
+    return d->pageLoadClient->loadProgress();
 }
 
 bool QQuickWebView::canGoBack() const

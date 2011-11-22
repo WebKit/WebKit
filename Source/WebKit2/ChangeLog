@@ -1,5 +1,49 @@
 2011-11-22  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
+        [Qt] [WK2] Move PageLoadClient related code to QtWebPageLoadClient
+        https://bugs.webkit.org/show_bug.cgi?id=72928
+
+        Reviewed by Andreas Kling.
+
+        Split PageLoadClient related code from QtWebPageProxy/ClientImpl. The new
+        QtWebPageLoadClient registers itself with WKPageRef and it's owned by the
+        QQuickWebViewPrivate. This is a move to clean up QtWebPageProxy object.
+
+        * Target.pri:
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewPrivate::QQuickWebViewPrivate):
+        (QQuickWebView::loadProgress):
+        * UIProcess/API/qt/qquickwebview_p.h:
+        * UIProcess/API/qt/qquickwebview_p_p.h:
+        * UIProcess/qt/ClientImpl.cpp:
+        * UIProcess/qt/ClientImpl.h:
+        * UIProcess/qt/QtWebPageLoadClient.cpp: Added.
+        (QtWebPageLoadClient::QtWebPageLoadClient):
+        (QtWebPageLoadClient::didStartProvisionalLoadForFrame):
+        (QtWebPageLoadClient::didCommitLoadForFrame):
+        (QtWebPageLoadClient::didSameDocumentNavigationForFrame):
+        (QtWebPageLoadClient::didReceiveTitleForFrame):
+        (QtWebPageLoadClient::didFirstVisuallyNonEmptyLayoutForFrame):
+        (QtWebPageLoadClient::dispatchLoadSucceeded):
+        (QtWebPageLoadClient::dispatchLoadFailed):
+        (QtWebPageLoadClient::setLoadProgress):
+        (toQtWebPageLoadClient):
+        (QtWebPageLoadClient::didFailProvisionalLoadWithErrorForFrame):
+        (QtWebPageLoadClient::didFinishLoadForFrame):
+        (QtWebPageLoadClient::didFailLoadWithErrorForFrame):
+        (QtWebPageLoadClient::didStartProgress):
+        (QtWebPageLoadClient::didChangeProgress):
+        (QtWebPageLoadClient::didFinishProgress):
+        * UIProcess/qt/QtWebPageLoadClient.h: Added.
+        (QtWebPageLoadClient::loadProgress):
+        * UIProcess/qt/QtWebPageProxy.cpp:
+        (QtWebPageProxy::QtWebPageProxy):
+        (QtWebPageProxy::init):
+        (QtWebPageProxy::updateNavigationState):
+        * UIProcess/qt/QtWebPageProxy.h:
+
+2011-11-22  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
         [Qt] [WK2] Move PageUIClient related code to QtWebPageUIClient
         https://bugs.webkit.org/show_bug.cgi?id=72910
 

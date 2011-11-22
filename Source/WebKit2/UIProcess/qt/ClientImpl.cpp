@@ -20,17 +20,13 @@
 #include "config.h"
 #include "ClientImpl.h"
 
-#include "QtWebError.h"
-#include "WebFrameProxy.h"
+#include "WebPageProxy.h"
 #include "WKAPICast.h"
-#include "WKStringQt.h"
 #include "WKURLQt.h"
 #include <QtPolicyInterface.h>
-#include <QtWebPageProxy.h>
 #include <WKArray.h>
 #include <WKFrame.h>
 #include <WKFramePolicyListener.h>
-#include <WKHitTestResult.h>
 #include <WKPage.h>
 #include <WKString.h>
 #include <WKType.h>
@@ -38,116 +34,10 @@
 
 using namespace WebKit;
 
-static QtWebPageProxy* toQtWebPageProxy(const void* clientInfo)
-{
-    if (clientInfo)
-        return reinterpret_cast<QtWebPageProxy*>(const_cast<void*>(clientInfo));
-    return 0;
-}
-
 static inline QtPolicyInterface* toQtPolicyInterface(const void* clientInfo)
 {
     ASSERT(clientInfo);
     return reinterpret_cast<QtPolicyInterface*>(const_cast<void*>(clientInfo));
-}
-
-static void dispatchLoadSucceeded(WKFrameRef frame, const void* clientInfo)
-{
-    if (!WKFrameIsMainFrame(frame))
-        return;
-
-    toQtWebPageProxy(clientInfo)->updateNavigationState();
-    toQtWebPageProxy(clientInfo)->loadDidSucceed();
-}
-
-static void dispatchLoadFailed(WKFrameRef frame, const void* clientInfo, WKErrorRef error)
-{
-    if (!WKFrameIsMainFrame(frame))
-        return;
-
-    toQtWebPageProxy(clientInfo)->updateNavigationState();
-
-    int errorCode = WKErrorGetErrorCode(error);
-    if (toImpl(error)->platformError().isCancellation() || errorCode == kWKErrorCodeFrameLoadInterruptedByPolicyChange || errorCode == kWKErrorCodePlugInWillHandleLoad)
-        return;
-
-    toQtWebPageProxy(clientInfo)->loadDidFail(QtWebError(error));
-}
-
-static void qt_wk_didStartProvisionalLoadForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void* clientInfo)
-{
-    if (!WKFrameIsMainFrame(frame))
-        return;
-
-    toQtWebPageProxy(clientInfo)->updateNavigationState();
-    toQtWebPageProxy(clientInfo)->loadDidBegin();
-}
-
-static void qt_wk_didFailProvisionalLoadWithErrorForFrame(WKPageRef page, WKFrameRef frame, WKErrorRef error, WKTypeRef userData, const void* clientInfo)
-{
-    dispatchLoadFailed(frame, clientInfo, error);
-}
-
-static void qt_wk_didCommitLoadForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void* clientInfo)
-{
-    if (!WKFrameIsMainFrame(frame))
-        return;
-    WebFrameProxy* wkframe = toImpl(frame);
-    QString urlStr(wkframe->url());
-    QUrl qUrl = urlStr;
-    toQtWebPageProxy(clientInfo)->updateNavigationState();
-    toQtWebPageProxy(clientInfo)->didChangeUrl(qUrl);
-    toQtWebPageProxy(clientInfo)->loadDidCommit();
-}
-
-static void qt_wk_didFinishLoadForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void* clientInfo)
-{
-    dispatchLoadSucceeded(frame, clientInfo);
-}
-
-static void qt_wk_didFailLoadWithErrorForFrame(WKPageRef page, WKFrameRef frame, WKErrorRef error, WKTypeRef userData, const void* clientInfo)
-{
-    dispatchLoadFailed(frame, clientInfo, error);
-}
-
-static void qt_wk_didSameDocumentNavigationForFrame(WKPageRef page, WKFrameRef frame, WKSameDocumentNavigationType type, WKTypeRef userData, const void* clientInfo)
-{
-    WebFrameProxy* wkframe = toImpl(frame);
-    QString urlStr(wkframe->url());
-    QUrl qUrl = urlStr;
-    toQtWebPageProxy(clientInfo)->updateNavigationState();
-    toQtWebPageProxy(clientInfo)->didChangeUrl(qUrl);
-}
-
-static void qt_wk_didReceiveTitleForFrame(WKPageRef page, WKStringRef title, WKFrameRef frame, WKTypeRef userData, const void* clientInfo)
-{
-    if (!WKFrameIsMainFrame(frame))
-        return;
-    QString qTitle = WKStringCopyQString(title);
-    toQtWebPageProxy(clientInfo)->didChangeTitle(qTitle);
-}
-
-static void qt_wk_didStartProgress(WKPageRef page, const void* clientInfo)
-{
-    toQtWebPageProxy(clientInfo)->didChangeLoadProgress(0);
-}
-
-static void qt_wk_didChangeProgress(WKPageRef page, const void* clientInfo)
-{
-    toQtWebPageProxy(clientInfo)->didChangeLoadProgress(WKPageGetEstimatedProgress(page) * 100);
-}
-
-static void qt_wk_didFinishProgress(WKPageRef page, const void* clientInfo)
-{
-    toQtWebPageProxy(clientInfo)->didChangeLoadProgress(100);
-}
-
-static void qt_wk_didFirstVisuallyNonEmptyLayoutForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void *clientInfo)
-{
-    if (!WKFrameIsMainFrame(frame))
-        return;
-
-    toQtWebPageProxy(clientInfo)->didFinishFirstNonEmptyLayout();
 }
 
 static Qt::MouseButton toQtMouseButton(WKEventMouseButton button)
@@ -242,26 +132,6 @@ void qt_wk_didReceiveMessageFromInjectedBundle(WKContextRef, WKStringRef message
     WKStringRef str = static_cast<WKStringRef>(WKArrayGetItemAtIndex(body, 1));
 
     toImpl(page)->didReceiveMessageFromNavigatorQtObject(toImpl(str)->string());
-}
-
-void setupPageLoaderClient(QtWebPageProxy* qtWebPageProxy, WebPageProxy* webPageProxy)
-{
-    WKPageLoaderClient loadClient;
-    memset(&loadClient, 0, sizeof(WKPageLoaderClient));
-    loadClient.version = kWKPageLoaderClientCurrentVersion;
-    loadClient.clientInfo = qtWebPageProxy;
-    loadClient.didStartProvisionalLoadForFrame = qt_wk_didStartProvisionalLoadForFrame;
-    loadClient.didFailProvisionalLoadWithErrorForFrame = qt_wk_didFailProvisionalLoadWithErrorForFrame;
-    loadClient.didCommitLoadForFrame = qt_wk_didCommitLoadForFrame;
-    loadClient.didFinishLoadForFrame = qt_wk_didFinishLoadForFrame;
-    loadClient.didFailLoadWithErrorForFrame = qt_wk_didFailLoadWithErrorForFrame;
-    loadClient.didSameDocumentNavigationForFrame = qt_wk_didSameDocumentNavigationForFrame;
-    loadClient.didReceiveTitleForFrame = qt_wk_didReceiveTitleForFrame;
-    loadClient.didStartProgress = qt_wk_didStartProgress;
-    loadClient.didChangeProgress = qt_wk_didChangeProgress;
-    loadClient.didFinishProgress = qt_wk_didFinishProgress;
-    loadClient.didFirstVisuallyNonEmptyLayoutForFrame = qt_wk_didFirstVisuallyNonEmptyLayoutForFrame;
-    WKPageSetPageLoaderClient(qtWebPageProxy->pageRef(), &loadClient);
 }
 
 void setupPagePolicyClient(QtPolicyInterface* policyInterface, WebPageProxy* webPageProxy)

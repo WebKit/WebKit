@@ -322,6 +322,7 @@ HEADERS += \
     UIProcess/qt/QtWebError.h \
     UIProcess/qt/QtDialogRunner.h \
     UIProcess/qt/QtDownloadManager.h \
+    UIProcess/qt/QtWebPageLoadClient.h \
     UIProcess/qt/QtWebPageProxy.h \
     UIProcess/qt/QtWebPageUIClient.h \
     UIProcess/qt/qwkhistory.h \
@@ -628,6 +629,7 @@ SOURCES += \
     UIProcess/qt/QtWebError.cpp \
     UIProcess/qt/QtDialogRunner.cpp \
     UIProcess/qt/QtDownloadManager.cpp \
+    UIProcess/qt/QtWebPageLoadClient.cpp \
     UIProcess/qt/QtWebPageProxy.cpp \
     UIProcess/qt/QtWebPageUIClient.cpp \
     UIProcess/qt/qwkhistory.cpp \

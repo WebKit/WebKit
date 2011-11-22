@@ -143,7 +143,6 @@ QtWebPageProxy::QtWebPageProxy(QQuickWebPage* qmlWebPage, QQuickWebView* qmlWebV
     , m_policyInterface(policyInterface)
     , m_context(contextRef ? toImpl(contextRef) : defaultWKContext())
     , m_undoStack(adoptPtr(new QUndoStack(this)))
-    , m_loadProgress(0)
     , m_navigatorQtObjectEnabled(false)
 {
     m_webPageProxy = m_context->createWebPage(this, toImpl(pageGroupRef));
@@ -155,9 +154,6 @@ QtWebPageProxy::QtWebPageProxy(QQuickWebPage* qmlWebPage, QQuickWebView* qmlWebV
 void QtWebPageProxy::init()
 {
     m_webPageProxy->initializeWebPage();
-
-    setupPageLoaderClient(this, m_webPageProxy.get());
-
     if (m_policyInterface)
         setupPagePolicyClient(m_policyInterface, m_webPageProxy.get());
 }
@@ -487,11 +483,6 @@ void QtWebPageProxy::pageDidRequestScroll(const IntPoint& pos)
     m_qmlWebView->d_func()->scrollPositionRequested(pos);
 }
 
-void QtWebPageProxy::didFinishFirstNonEmptyLayout()
-{
-    m_qmlWebView->d_func()->didFinishFirstNonEmptyLayout();
-}
-
 void QtWebPageProxy::didChangeContentsSize(const IntSize& newSize)
 {
     m_qmlWebView->d_func()->didChangeContentsSize(newSize);
@@ -615,42 +606,6 @@ void QtWebPageProxy::didReceiveMessageFromNavigatorQtObject(const String& messag
     emit receivedMessageFromNavigatorQtObject(variantMap);
 }
 
-void QtWebPageProxy::didChangeUrl(const QUrl& url)
-{
-    emit m_qmlWebView->urlChanged(url);
-}
-
-void QtWebPageProxy::didChangeTitle(const QString& newTitle)
-{
-    emit m_qmlWebView->titleChanged(newTitle);
-}
-
-void QtWebPageProxy::loadDidBegin()
-{
-    emit m_qmlWebView->loadStarted();
-}
-
-void QtWebPageProxy::loadDidCommit()
-{
-    m_qmlWebView->d_func()->loadDidCommit();
-}
-
-void QtWebPageProxy::loadDidSucceed()
-{
-    emit m_qmlWebView->loadSucceeded();
-}
-
-void QtWebPageProxy::loadDidFail(const QtWebError& error)
-{
-    emit m_qmlWebView->loadFailed(static_cast<QQuickWebView::ErrorType>(error.type()), error.errorCode(), error.url());
-}
-
-void QtWebPageProxy::didChangeLoadProgress(int percentageLoaded)
-{
-    m_loadProgress = percentageLoaded;
-    emit m_qmlWebView->loadProgressChanged(percentageLoaded);
-}
-
 bool QtWebPageProxy::canGoBack() const
 {
     return m_webPageProxy->canGoBack();
@@ -695,9 +650,9 @@ void QtWebPageProxy::reload()
     m_webPageProxy->reload(/* reloadFromOrigin */ true);
 }
 
-void QtWebPageProxy::navigationStateChanged()
+void QtWebPageProxy::updateNavigationState()
 {
-    emit updateNavigationState();
+    emit m_qmlWebView->navigationStateChanged();
 }
 
 void QtWebPageProxy::didRelaunchProcess()

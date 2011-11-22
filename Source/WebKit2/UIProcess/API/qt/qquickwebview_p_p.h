@@ -23,6 +23,7 @@
 
 #include "QtPolicyInterface.h"
 #include "QtViewportInteractionEngine.h"
+#include "QtWebPageLoadClient.h"
 #include "QtWebPageProxy.h"
 #include "QtWebPageUIClient.h"
 
@@ -112,6 +113,7 @@ private:
     void setViewInAttachedProperties(QObject*);
 
     QScopedPointer<QtWebPageUIClient> pageUIClient;
+    QScopedPointer<QtWebPageLoadClient> pageLoadClient;
 
     QScopedPointer<QQuickWebPage> pageView;
     QScopedPointer<QtViewportInteractionEngine> interactionEngine;
