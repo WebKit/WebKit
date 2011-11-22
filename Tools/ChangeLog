@@ -1,3 +1,20 @@
+2011-11-22  Adam Roben  <aroben@apple.com>
+
+        Teach prepare-ChangeLog how to find changed classes/methods/functions in Python files
+
+        Fixes <http://webkit.org/b/57008> prepare-ChangeLog doesn't find names of modified
+        classes/methods in Python source files
+
+        Reviewed by Dan Bates.
+
+        * Scripts/prepare-ChangeLog:
+        (get_function_line_ranges): Call get_function_line_ranges_for_python for files ending in .py
+        or that use python as their interpreter. Modified the code that extracts the interpreter to
+        ignore a leading "/usr/bin/env " in the interpreter line, as is common for our Python
+        scripts.
+        (get_function_line_ranges_for_python): Added. Does simple parsing of Python files to look
+        for class/def lines and generate ranges based on them.
+
 2011-11-21  Yuta Kitamura  <yutak@chromium.org>
 
         [GTK] Enable WebSocket hybi tests

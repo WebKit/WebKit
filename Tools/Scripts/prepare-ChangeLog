@@ -499,16 +499,18 @@ sub get_function_line_ranges($$)
     return get_function_line_ranges_for_javascript($file_handle, $file_name) if $file_name =~ /\.js$/;
     return get_selector_line_ranges_for_css($file_handle, $file_name) if $file_name =~ /\.css$/;
     return get_function_line_ranges_for_perl($file_handle, $file_name) if $file_name =~ /\.p[lm]$/;
+    return get_function_line_ranges_for_python($file_handle, $file_name) if $file_name =~ /\.py$/;
 
     # Try to determine the source language based on the script interpreter.
 
     my $first_line = <$file_handle>;
     seek($file_handle, 0, 0);
 
-    return () unless $first_line =~ /^#!(\S+)/;
+    return () unless $first_line =~ m|^#!(?:/usr/bin/env\s+)?(\S+)|;
     my $interpreter = $1;
 
     return get_function_line_ranges_for_perl($file_handle, $file_name) if $interpreter =~ /perl$/;
+    return get_function_line_ranges_for_python($file_handle, $file_name) if $interpreter =~ /python$/;
 
     return ();
 }
@@ -1243,6 +1245,62 @@ sub get_function_line_ranges_for_perl($$)
         }
     }
 
+    return @ranges;
+}
+
+# Read a file and get all the line ranges of the things that look like Python classes, methods, or functions.
+#
+# FIXME: Maybe we should use Python's ast module to do the parsing for us?
+#
+# Result is a list of triples: [ start_line, end_line, function ].
+
+sub get_function_line_ranges_for_python($$)
+{
+    my ($fileHandle, $fileName) = @_;
+
+    my @ranges;
+
+    my @scopeStack = ({ line => 0, indent => -1, name => undef });
+    while (<$fileHandle>) {
+        next unless /^(\s*)(\S.*)$/;
+        my $indent = length $1;
+        my $rest = $2;
+
+        my $scope = $scopeStack[-1];
+
+        if ($indent <= $scope->{indent}) {
+            # Find all the scopes that we have just exited.
+            my $i = 0;
+            for (; $i < @scopeStack; ++$i) {
+                last if $indent <= $scopeStack[$i]->{indent};
+            }
+            my @poppedScopes = splice @scopeStack, $i;
+
+            # For each scope that was just exited, add a range that goes from the start of that
+            # scope to the start of the next nested scope, or to the line just before this one for
+            # the innermost scope.
+            for ($i = 0; $i < @poppedScopes; ++$i) {
+                my $lineAfterEnd = $i + 1 == @poppedScopes ? $. : $poppedScopes[$i + 1]->{line};
+                push @ranges, [$poppedScopes[$i]->{line}, $lineAfterEnd - 1, $poppedScopes[$i]->{name}];
+            }
+            @scopeStack or warn "Popped off last scope at $fileName:$.\n";
+
+            # Set the now-current scope to start at the current line. Any lines within this scope
+            # before this point should already have been added to @ranges.
+            $scope = $scopeStack[-1];
+            $scope->{line} = $.;
+        }
+
+        next unless $rest =~ /(?:class|def)\s+(\w+)/;
+        my $name = $1;
+
+        my $fullName = $scope->{name} ? join('.', $scope->{name}, $name) : $name;
+        push @scopeStack, { line => $., indent => $indent, name => $fullName };
+    }
+
+    foreach my $range (@ranges) {
+        printf "%3d:%3d %s\n", $range->[0], $range->[1], $range->[2];
+    }
     return @ranges;
 }
 
