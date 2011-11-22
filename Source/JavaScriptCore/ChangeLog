@@ -1,5 +1,40 @@
 2011-11-21  Filip Pizlo  <fpizlo@apple.com>
 
+        DFG should have richer debug output for CFA and phi processing
+        https://bugs.webkit.org/show_bug.cgi?id=72922
+
+        Reviewed by Gavin Barraclough.
+        
+        In the default verbose mode, we now print information about variable
+        state at the bottom of basic blocks in addition to the top, and we
+        also print local variable linking. In the verbose propagation mode,
+        the state of phi processing is dumped more richly and CFA merging (the
+        most subtle part of CFA) is traced as well.
+
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::endBasicBlock):
+        (JSC::DFG::AbstractState::mergeStateAtTail):
+        * dfg/DFGAbstractValue.h:
+        (JSC::DFG::StructureAbstractValue::dump):
+        (JSC::DFG::AbstractValue::dump):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::processPhiStack):
+        (JSC::DFG::ByteCodeParser::parse):
+        * dfg/DFGCommon.h:
+        (JSC::DFG::NodeIndexTraits::dump):
+        * dfg/DFGDriver.cpp:
+        (JSC::DFG::compile):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dump):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::dumpChildren):
+        * dfg/DFGOSRExitCompiler.cpp:
+        * dfg/DFGOperands.h:
+        (JSC::DFG::OperandValueTraits::dump):
+        (JSC::DFG::dumpOperands):
+
+2011-11-21  Filip Pizlo  <fpizlo@apple.com>
+
         Showing the data overlay in OpenStreetMap doesn't work, zooming partially broken
         https://bugs.webkit.org/show_bug.cgi?id=71505
 

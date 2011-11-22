@@ -64,6 +64,10 @@ void compileOSRExit(ExecState* exec)
         
         LinkBuffer patchBuffer(*globalData, &jit);
         exit.m_code = patchBuffer.finalizeCode();
+
+#if DFG_ENABLE(DEBUG_VERBOSE)
+        fprintf(stderr, "OSR exit code at [%p, %p).\n", patchBuffer.debugAddress(), static_cast<char*>(patchBuffer.debugAddress()) + patchBuffer.debugSize());
+#endif
     }
     
     {

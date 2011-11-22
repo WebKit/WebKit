@@ -954,6 +954,21 @@ struct Node {
         return nodeCanSpeculateInteger(arithNodeFlags());
     }
     
+#ifndef NDEBUG
+    void dumpChildren(FILE* out)
+    {
+        if (child1() == NoNode)
+            return;
+        fprintf(out, "@%u", child1());
+        if (child2() == NoNode)
+            return;
+        fprintf(out, ", @%u", child2());
+        if (child3() == NoNode)
+            return;
+        fprintf(out, ", @%u", child3());
+    }
+#endif
+    
     // This enum value describes the type of the node.
     NodeType op;
     // Used to look up exception handling information (currently implemented as a bytecode index).

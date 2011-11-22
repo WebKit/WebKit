@@ -133,11 +133,19 @@ bool AbstractState::endBasicBlock(MergeMode mergeMode)
     bool changed = false;
     
     if (mergeMode != DontMerge || !ASSERT_DISABLED) {
-        for (size_t argument = 0; argument < block->variablesAtTail.numberOfArguments(); ++argument)
+        for (size_t argument = 0; argument < block->variablesAtTail.numberOfArguments(); ++argument) {
+#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
+            printf("        Merging state for argument %lu.\n", argument);
+#endif
             changed |= mergeStateAtTail(block->valuesAtTail.argument(argument), m_variables.argument(argument), block->variablesAtTail.argument(argument));
+        }
         
-        for (size_t local = 0; local < block->variablesAtTail.numberOfLocals(); ++local)
+        for (size_t local = 0; local < block->variablesAtTail.numberOfLocals(); ++local) {
+#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
+            printf("        Merging state for local %lu.\n", local);
+#endif
             changed |= mergeStateAtTail(block->valuesAtTail.local(local), m_variables.local(local), block->variablesAtTail.local(local));
+        }
     }
     
     ASSERT(mergeMode != DontMerge || !changed);
@@ -687,23 +695,36 @@ inline bool AbstractState::mergeStateAtTail(AbstractValue& destination, Abstract
     if (!node.refCount())
         return false;
     
+#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
+            printf("          It's live, node @%u.\n", nodeIndex);
+#endif
+
     switch (node.op) {
     case Phi:
     case SetArgument:
     case Flush:
         // The block transfers the value from head to tail.
         source = &inVariable;
+#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
+        printf("          Transfering from head to tail.\n");
+#endif
         break;
             
     case GetLocal:
         // The block refines the value with additional speculations.
         source = &forNode(nodeIndex);
+#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
+        printf("          Refining.\n");
+#endif
         break;
             
     case SetLocal:
         // The block sets the variable, and potentially refines it, both
         // before and after setting it.
         source = &forNode(node.child1());
+#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
+        printf("          Setting.\n");
+#endif
         break;
         
     default:
@@ -715,6 +736,9 @@ inline bool AbstractState::mergeStateAtTail(AbstractValue& destination, Abstract
     if (destination == *source) {
         // Abstract execution did not change the output value of the variable, for this
         // basic block, on this iteration.
+#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
+        printf("          Not changed!\n");
+#endif
         return false;
     }
     
@@ -722,6 +746,9 @@ inline bool AbstractState::mergeStateAtTail(AbstractValue& destination, Abstract
     // this variable after execution of this basic block. Update the state, and return
     // true to indicate that the fixpoint must go on!
     destination = *source;
+#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
+    printf("          Changed!\n");
+#endif
     return true;
 }
 

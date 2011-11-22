@@ -51,6 +51,7 @@ function doit() {
         "</script></body></html>"
     
     testFrame.contentDocument.write(code);
+    testFrame.contentDocument.close();
 }
 
 window.setTimeout(doit, 10);

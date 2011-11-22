@@ -42,6 +42,7 @@ template<typename T> struct OperandValueTraits;
 template<typename T>
 struct OperandValueTraits {
     static T defaultValue() { return T(); }
+    static void dump(const T& value, FILE* out) { value.dump(out); }
 };
 
 template<typename T, typename Traits = OperandValueTraits<T> >
@@ -137,19 +138,19 @@ private:
     Vector<T, 16> m_locals;
 };
 
-template<typename T>
-void dumpOperands(Operands<T>& operands, FILE* out)
+template<typename T, typename Traits>
+void dumpOperands(Operands<T, Traits>& operands, FILE* out)
 {
     for (size_t argument = 0; argument < operands.numberOfArguments(); ++argument) {
         if (argument)
             fprintf(out, " ");
-        operands.argument(argument).dump(out);
+        Traits::dump(operands.argument(argument), out);
     }
     fprintf(out, " : ");
     for (size_t local = 0; local < operands.numberOfLocals(); ++local) {
         if (local)
             fprintf(out, " ");
-        operands.local(local).dump(out);
+        Traits::dump(operands.local(local), out);
     }
 }
 

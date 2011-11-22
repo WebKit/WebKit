@@ -2164,13 +2164,25 @@ void ByteCodeParser::processPhiStack()
         unsigned varNo = entry.m_varNo;
         VariableAccessData* dataForPhi = m_graph[entry.m_phi].variableAccessData();
 
+#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
+        printf("   Handling phi entry for var %u, phi @%u.\n", entry.m_varNo, entry.m_phi);
+#endif
+
         for (size_t i = 0; i < predecessors.size(); ++i) {
+#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
+            printf("     Dealing with predecessor block %u.\n", predecessors[i]);
+#endif
+            
             BasicBlock* predecessorBlock = m_graph.m_blocks[predecessors[i]].get();
 
             NodeIndex& var = (stackType == ArgumentPhiStack) ? predecessorBlock->variablesAtTail.argument(varNo) : predecessorBlock->variablesAtTail.local(varNo);
-
+            
             NodeIndex valueInPredecessor = var;
             if (valueInPredecessor == NoNode) {
+#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
+                printf("      Did not find node, adding phi.\n");
+#endif
+
                 valueInPredecessor = addToGraph(Phi, OpInfo(newVariableAccessData(stackType == ArgumentPhiStack ? varNo - m_codeBlock->m_numParameters - RegisterFile::CallFrameHeaderSize : varNo)));
                 var = valueInPredecessor;
                 if (stackType == ArgumentPhiStack)
@@ -2179,6 +2191,10 @@ void ByteCodeParser::processPhiStack()
                     predecessorBlock->variablesAtHead.setLocalFirstTime(varNo, valueInPredecessor);
                 phiStack.append(PhiStackEntry(predecessorBlock, valueInPredecessor, varNo));
             } else if (m_graph[valueInPredecessor].op == GetLocal) {
+#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
+                printf("      Found GetLocal @%u.\n", valueInPredecessor);
+#endif
+
                 // We want to ensure that the VariableAccessDatas are identical between the
                 // GetLocal and its block-local Phi. Strictly speaking we only need the two
                 // to be unified. But for efficiency, we want the code that creates GetLocals
@@ -2186,6 +2202,10 @@ void ByteCodeParser::processPhiStack()
                 ASSERT(m_graph[valueInPredecessor].variableAccessData() == m_graph[m_graph[valueInPredecessor].child1()].variableAccessData());
                 
                 valueInPredecessor = m_graph[valueInPredecessor].child1();
+            } else {
+#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
+                printf("      Found @%u.\n", valueInPredecessor);
+#endif
             }
             ASSERT(m_graph[valueInPredecessor].op == SetLocal || m_graph[valueInPredecessor].op == Phi || m_graph[valueInPredecessor].op == Flush || (m_graph[valueInPredecessor].op == SetArgument && stackType == ArgumentPhiStack));
             
@@ -2194,24 +2214,59 @@ void ByteCodeParser::processPhiStack()
             dataForPredecessor->unify(dataForPhi);
 
             Node* phiNode = &m_graph[entry.m_phi];
-            if (phiNode->refCount())
+#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
+            printf("      Ref count of @%u = %u.\n", entry.m_phi, phiNode->refCount());
+#endif
+            if (phiNode->refCount()) {
+#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
+                printf("      Reffing @%u.\n", valueInPredecessor);
+#endif
                 m_graph.ref(valueInPredecessor);
+            }
 
             if (phiNode->child1() == NoNode) {
+#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
+                printf("      Setting @%u->child1 = @%u.\n", entry.m_phi, valueInPredecessor);
+#endif
                 phiNode->children.fixed.child1 = valueInPredecessor;
+#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
+                printf("      Children of @%u: ", entry.m_phi);
+                phiNode->dumpChildren(stdout);
+                printf(".\n");
+#endif
                 continue;
             }
             if (phiNode->child2() == NoNode) {
+#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
+                printf("      Setting @%u->child2 = @%u.\n", entry.m_phi, valueInPredecessor);
+#endif
                 phiNode->children.fixed.child2 = valueInPredecessor;
+#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
+                printf("      Children of @%u: ", entry.m_phi);
+                phiNode->dumpChildren(stdout);
+                printf(".\n");
+#endif
                 continue;
             }
             if (phiNode->child3() == NoNode) {
+#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
+                printf("      Setting @%u->child3 = @%u.\n", entry.m_phi, valueInPredecessor);
+#endif
                 phiNode->children.fixed.child3 = valueInPredecessor;
+#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
+                printf("      Children of @%u: ", entry.m_phi);
+                phiNode->dumpChildren(stdout);
+                printf(".\n");
+#endif
                 continue;
             }
             
             NodeIndex newPhi = addToGraph(Phi, OpInfo(dataForPhi));
             
+#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
+            printf("      Splitting @%u, created @%u.\n", entry.m_phi, newPhi);
+#endif
+
             phiNode = &m_graph[entry.m_phi]; // reload after vector resize
             Node& newPhiNode = m_graph[newPhi];
             if (phiNode->refCount())
@@ -2221,9 +2276,21 @@ void ByteCodeParser::processPhiStack()
             newPhiNode.children.fixed.child2 = phiNode->child2();
             newPhiNode.children.fixed.child3 = phiNode->child3();
 
+#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
+            printf("      Children of @%u: ", newPhi);
+            newPhiNode.dumpChildren(stdout);
+            printf(".\n");
+#endif
+
             phiNode->children.fixed.child1 = newPhi;
             phiNode->children.fixed.child2 = valueInPredecessor;
             phiNode->children.fixed.child3 = NoNode;
+
+#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
+            printf("      Children of @%u: ", entry.m_phi);
+            phiNode->dumpChildren(stdout);
+            printf(".\n");
+#endif
         }
     }
 }
@@ -2485,7 +2552,13 @@ bool ByteCodeParser::parse()
 
     linkBlocks(inlineStackEntry.m_unlinkedBlocks, inlineStackEntry.m_blockLinkingTargets);
     determineReachability();
+#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
+    printf("Processing local variable phis.\n");
+#endif
     processPhiStack<LocalPhiStack>();
+#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
+    printf("Processing argument phis.\n");
+#endif
     processPhiStack<ArgumentPhiStack>();
     
     m_graph.m_preservedVars = m_preservedVars;

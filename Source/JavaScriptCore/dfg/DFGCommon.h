@@ -81,6 +81,13 @@ static const BlockIndex NoBlock = UINT_MAX;
 
 struct NodeIndexTraits {
     static NodeIndex defaultValue() { return NoNode; }
+    static void dump(NodeIndex value, FILE* out)
+    {
+        if (value == NoNode)
+            fprintf(out, "-");
+        else
+            fprintf(out, "@%u", value);
+    }
 };
 
 } } // namespace JSC::DFG

@@ -275,14 +275,23 @@ void Graph::dump(CodeBlock* codeBlock)
     for (size_t b = 0; b < m_blocks.size(); ++b) {
         BasicBlock* block = m_blocks[b].get();
         printf("Block #%u (bc#%u): %s%s\n", (int)b, block->bytecodeBegin, block->isReachable ? "" : " (skipped)", block->isOSRTarget ? " (OSR target)" : "");
-        printf("  vars: ");
+        printf("  vars before: ");
         if (block->cfaHasVisited)
             dumpOperands(block->valuesAtHead, stdout);
         else
             printf("<empty>");
         printf("\n");
+        printf("  var links: ");
+        dumpOperands(block->variablesAtHead, stdout);
+        printf("\n");
         for (size_t i = block->begin; i < block->end; ++i)
             dump(i, codeBlock);
+        printf("  vars after: ");
+        if (block->cfaHasVisited)
+            dumpOperands(block->valuesAtTail, stdout);
+        else
+            printf("<empty>");
+        printf("\n");
     }
     printf("Phi Nodes:\n");
     for (size_t i = m_blocks.last()->end; i < size(); ++i)

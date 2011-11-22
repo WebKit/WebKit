@@ -42,6 +42,10 @@ inline bool compile(CompileMode compileMode, ExecState* exec, CodeBlock* codeBlo
     ASSERT(codeBlock);
     ASSERT(codeBlock->alternative());
     ASSERT(codeBlock->alternative()->getJITType() == JITCode::BaselineJIT);
+
+#if DFG_ENABLE(DEBUG_VERBOSE)
+    fprintf(stderr, "DFG compiling code block %p, number of instructions = %u.\n", codeBlock, codeBlock->instructionCount());
+#endif
     
     JSGlobalData* globalData = &exec->globalData();
     Graph dfg;
