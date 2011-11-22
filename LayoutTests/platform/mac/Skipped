@@ -487,6 +487,9 @@ fast/repaint/table-extra-bottom-grow.html
 # DRT doesn't support overridePreference("WebKit*FontMap"...)
 fast/text/international/locale-sensitive-fonts.html
 
+# Pointer Lock is not implemented.
+pointer-lock/
+
 # https://bugs.webkit.org/show_bug.cgi?id=72435
 fast/dom/Window/window-postmessage-arrays.html
 

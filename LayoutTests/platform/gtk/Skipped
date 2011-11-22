@@ -1591,6 +1591,9 @@ fast/frames/flattening/iframe-flattening-fixed-width-and-height-no-scrolling.htm
 # https://bugs.webkit.org/show_bug.cgi?id=72248
 editing/spelling/spelling-unified-emulation.html
 
+# Pointer Lock is not implemented.
+pointer-lock/
+
 # fast/dom/Window/window-postmessage-arrays.html fails on JSC platforms
 # https://bugs.webkit.org/show_bug.cgi?id=72363
 fast/dom/Window/window-postmessage-arrays.html

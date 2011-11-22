@@ -1967,5 +1967,8 @@ fast/events/platform-wheelevent-paging-y-in-non-scrolling-page.html
 fast/events/platform-wheelevent-paging-y-in-scrolling-div.html
 fast/events/platform-wheelevent-paging-y-in-scrolling-page.html
 
+# Pointer Lock is not implemented.
+pointer-lock/
+
 # DRT doesn't support overridePreference("WebKit*FontMap"...)
 fast/text/international/locale-sensitive-fonts.html

@@ -1,3 +1,14 @@
+2011-11-17  Vincent Scheib  <scheib@chromium.org>
+
+        Pointer Lock: Initial Tests for navigator.webkitPonter
+        https://bugs.webkit.org/show_bug.cgi?id=72659
+
+        Reviewed by Darin Fisher.
+
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::TestShell):
+            Enabling PointerLock in TestShell
+
 2011-11-22  Ryan Sleevi  <rsleevi@chromium.org>
 
         Update flakiness dashboard for new Chromium builders and tests

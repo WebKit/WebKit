@@ -18,6 +18,7 @@ navigator.userAgent is OK
 navigator.vendor is OK
 navigator.vendorSub is OK
 navigator.webkitGamepads is OK
+navigator.webkitPointer is OK
 navigator.appCodeName is OK
 navigator.appName is OK
 navigator.appVersion is OK
@@ -36,4 +37,5 @@ navigator.userAgent is OK
 navigator.vendor is OK
 navigator.vendorSub is OK
 navigator.webkitGamepads is OK
+navigator.webkitPointer is OK
 

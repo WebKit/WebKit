@@ -1,0 +1,16 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+    shouldBeDefined("navigator.webkitPointer");
+    shouldEvaluateTo("navigator.webkitPointer.isLocked()", false);
+    shouldThrow("navigator.webkitPointer.lock()", "'TypeError: Not enough arguments'");
+    shouldEvaluateTo("navigator.webkitPointer.lock(document)", "undefined");
+    shouldEvaluateTo("navigator.webkitPointer.unlock()", "undefined");
+</script>
+<script src="../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>
