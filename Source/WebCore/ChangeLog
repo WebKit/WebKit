@@ -1,3 +1,15 @@
+2011-11-22  Andrey Kosyakov  <caseq@chromium.org>
+
+        Layout Test inspector/extensions/extensions-events.html is timing out
+        https://bugs.webkit.org/show_bug.cgi?id=72966
+
+        Reviewed by Pavel Feldman.
+
+        - always bind to {add,remove}EventListener() of event target, not WebInspector.Object
+
+        * inspector/front-end/ExtensionServer.js:
+        (WebInspector.ExtensionServer.prototype._registerAutosubscriptionHandler):
+
 2011-11-22  Adam Klein  <adamk@chromium.org>
 
         Move splitView.css (added in r100991) to the correct target.

@@ -672,8 +672,8 @@ WebInspector.ExtensionServer.prototype = {
     _registerAutosubscriptionHandler: function(eventTopic, eventTarget, frontendEventType, handler)
     {
         this._registerSubscriptionHandler(eventTopic,
-            WebInspector.Object.prototype.addEventListener.bind(eventTarget, frontendEventType, handler, this),
-            WebInspector.Object.prototype.removeEventListener.bind(eventTarget, frontendEventType, handler, this));
+            eventTarget.addEventListener.bind(eventTarget, frontendEventType, handler, this),
+            eventTarget.removeEventListener.bind(eventTarget, frontendEventType, handler, this));
     },
 
     _expandResourcePath: function(extensionPath, resourcePath)
