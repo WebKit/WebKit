@@ -107,10 +107,8 @@ void CSSStyleDeclaration::setProperty(const String& propertyName, const String& 
 void CSSStyleDeclaration::setProperty(const String& propertyName, const String& value, const String& priority, ExceptionCode& ec)
 {
     int propID = cssPropertyID(propertyName);
-    if (!propID) {
-        // FIXME: Should we raise an exception here?
+    if (!propID)
         return;
-    }
     bool important = priority.find("important", 0, false) != notFound;
     setProperty(propID, value, important, ec);
 }

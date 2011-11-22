@@ -1,3 +1,19 @@
+2011-11-22  Andreas Kling  <kling@webkit.org>
+
+        CSSStyleDeclaration: Kill FIXME in setProperty().
+        <http://webkit.org/b/72958>
+
+        Reviewed by Antonio Gomes.
+
+        Remove FIXME about possibly throwing an exception when setProperty()
+        is called with an invalid property name. CSSOM specifies that the
+        method should simply return in this case.
+
+        Spec: http://dev.w3.org/csswg/cssom/#dom-cssstyledeclaration-setproperty
+
+        * css/CSSStyleDeclaration.cpp:
+        (WebCore::CSSStyleDeclaration::setProperty):
+
 2011-11-22  Shinya Kawanaka  <shinyak@google.com>
 
         Spellcheck should be able to run asynchronously.
