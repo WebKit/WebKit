@@ -2993,7 +2993,6 @@ BUGDPRANKE DEBUG : fast/css-generated-content/table-row-group-to-inline.html = P
 
 BUGDPRANKE : http/tests/navigation/lockedhistory-iframe.html = PASS TIMEOUT TEXT
 BUGDPRANKE : fast/parser/iframe-sets-parent-to-javascript-url.html = PASS TEXT
-BUGDPRANKE : fast/repaint/moving-shadow-on-path.html = PASS TEXT
 
 BUGDPRANKE WIN DEBUG : http/tests/misc/empty-file-formdata.html = PASS TIMEOUT
 BUGDPRANKE WIN DEBUG : http/tests/xmlhttprequest/access-control-preflight-headers-async.html = PASS TIMEOUT
