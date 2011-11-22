@@ -1,3 +1,10 @@
+2011-11-22  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed buildfix after r101001.
+
+        * WebProcess/WebCoreSupport/WebInspectorClient.cpp:
+        (WebKit::WebInspectorClient::openInspectorFrontend): Use ASSERT_UNUSED instead of ASSERT.
+
 2011-11-22  Pavel Feldman  <pfeldman@google.com>
 
         Not reviewed: moving inspector frontend creation out of assert in WebKit2.
