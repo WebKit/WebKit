@@ -32,11 +32,6 @@ String CSSProperty::cssText() const
     return String(getPropertyName(static_cast<CSSPropertyID>(id()))) + ": " + m_value->cssText() + (isImportant() ? " !important" : "") + "; ";
 }
 
-bool operator==(const CSSProperty& a, const CSSProperty& b)
-{
-    return a.m_id == b.m_id && a.m_important == b.m_important && a.m_value == b.m_value;
-}
-
 enum LogicalBoxSide { BeforeSide, EndSide, AfterSide, StartSide };
 enum PhysicalBoxSide { TopSide, RightSide, BottomSide, LeftSide };
 

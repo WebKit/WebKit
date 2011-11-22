@@ -42,16 +42,6 @@ public:
     {
     }
 
-    CSSProperty& operator=(const CSSProperty& other)
-    {
-        m_id = other.m_id;
-        m_shorthandID = other.m_shorthandID;
-        m_important = other.m_important;
-        m_implicit = other.m_implicit;
-        m_value = other.m_value;
-        return *this;
-    }
-
     int id() const { return m_id; }
     int shorthandID() const { return m_shorthandID; }
 
@@ -65,8 +55,6 @@ public:
 
     static int resolveDirectionAwareProperty(int propertyID, TextDirection, WritingMode);
     static bool isInheritedProperty(unsigned propertyID);
-
-    friend bool operator==(const CSSProperty&, const CSSProperty&);
 
     // Make sure the following fits in 4 bytes. Really.
     unsigned m_id : 14;

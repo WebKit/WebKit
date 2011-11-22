@@ -1,5 +1,18 @@
 2011-11-22  Andreas Kling  <kling@webkit.org>
 
+        CSSProperty: Remove unnecessary operator overloads.
+        <http://webkit.org/b/72953>
+
+        Reviewed by Antti Koivisto.
+
+        * css/CSSProperty.cpp:
+        * css/CSSProperty.h:
+
+            Remove operator= and operator== from CSSProperty. They were neither
+            implemented correctly nor used anywhere.
+
+2011-11-22  Andreas Kling  <kling@webkit.org>
+
         CSSStyleDeclaration: Kill FIXME in setProperty().
         <http://webkit.org/b/72958>
 
