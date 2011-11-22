@@ -38,11 +38,12 @@ WebInspector.ResourcesPanel = function(database)
 
     WebInspector.settings.resourcesLastSelectedItem = WebInspector.settings.createSetting("resourcesLastSelectedItem", {});
 
-    this.createSidebar();
+    this.createSplitViewWithSidebarTree();
     this.sidebarElement.addStyleClass("outline-disclosure");
     this.sidebarElement.addStyleClass("filter-all");
     this.sidebarElement.addStyleClass("children");
     this.sidebarElement.addStyleClass("small");
+
     this.sidebarTreeElement.removeStyleClass("sidebar-tree");
 
     this.resourcesListTreeElement = new WebInspector.StorageCategoryTreeElement(this, WebInspector.UIString("Frames"), "Frames", ["frame-storage-tree-item"]);
@@ -63,10 +64,8 @@ WebInspector.ResourcesPanel = function(database)
     this.applicationCacheListTreeElement = new WebInspector.StorageCategoryTreeElement(this, WebInspector.UIString("Application Cache"), "ApplicationCache", ["application-cache-storage-tree-item"]);
     this.sidebarTree.appendChild(this.applicationCacheListTreeElement);
 
-    this.storageViews = document.createElement("div");
-    this.storageViews.id = "storage-views";
-    this.storageViews.className = "diff-container";
-    this.element.appendChild(this.storageViews);
+    this.storageViews = this.splitView.mainElement;
+    this.storageViews.addStyleClass("diff-container");
 
     this.storageViewStatusBarItemsContainer = document.createElement("div");
     this.storageViewStatusBarItemsContainer.className = "status-bar-items";
@@ -76,7 +75,6 @@ WebInspector.ResourcesPanel = function(database)
     this._cookieViews = {};
     this._origins = {};
     this._domains = {};
-
 
     this.sidebarElement.addEventListener("mousemove", this._onmousemove.bind(this), false);
     this.sidebarElement.addEventListener("mouseout", this._onmouseout.bind(this), false);
@@ -99,11 +97,6 @@ WebInspector.ResourcesPanel.prototype = {
     get statusBarItems()
     {
         return [this.storageViewStatusBarItemsContainer];
-    },
-
-    elementsToRestoreScrollPositionsFor: function()
-    {
-        return [this.sidebarElement];
     },
 
     wasShown: function()
@@ -646,9 +639,9 @@ WebInspector.ResourcesPanel.prototype = {
         return null;
     },
 
-    updateMainViewWidth: function(width)
+    sidebarResized: function(event)
     {
-        this.storageViews.style.left = width + "px";
+        var width = event.data;
         this.storageViewStatusBarItemsContainer.style.left = width + "px";
     },
 

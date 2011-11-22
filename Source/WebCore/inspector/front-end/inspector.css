@@ -1614,15 +1614,8 @@ body.platform-windows .sidebar-pane-subtitle {
 }
 
 .sidebar {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    width: 200px;
-    overflow-y: auto;
     overflow-x: hidden;
     background-color: rgb(214, 221, 229);
-    border-right: 1px solid rgb(64%, 64%, 64%);
 }
 
 body.inactive .sidebar {

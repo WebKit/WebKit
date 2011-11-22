@@ -126,6 +126,7 @@
     <file>SourceHTMLTokenizer.js</file>
     <file>SourceJavaScriptTokenizer.js</file>
     <file>SourceTokenizer.js</file>
+    <file>SplitView.js</file>
     <file>StatusBarButton.js</file>
     <file>StylesSidebarPane.js</file>
     <file>TabbedPane.js</file>
@@ -169,6 +170,7 @@
     <file>resourceView.css</file>
     <file>resourcesPanel.css</file>
     <file>scriptsPanel.css</file>
+    <file>splitView.css</file>
     <file>textPrompt.css</file>
     <file>textViewer.css</file>
     <file>timelinePanel.css</file>

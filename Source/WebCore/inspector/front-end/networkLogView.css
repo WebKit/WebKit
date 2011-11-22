@@ -535,10 +535,6 @@
     display: none;
 }
 
-#network-container.brief-mode {
-    border-right: 1px solid rgb(163, 163, 163);
-}
-
 #network-container.brief-mode .network-log-grid.data-grid .data-grid-resizer {
     display: none;
 }

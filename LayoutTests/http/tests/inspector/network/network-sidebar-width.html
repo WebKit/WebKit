@@ -31,7 +31,7 @@ function test()
         setting.set(undefined);
         panel._showResource(resource);
         InspectorTest.addResult("Sidebar width: " + panel.sidebarElement.offsetWidth);
-        panel._closeVisibleResource(resource);
+        panel._toggleGridMode();
 
         setting.set(242);
         panel._showResource(resource);

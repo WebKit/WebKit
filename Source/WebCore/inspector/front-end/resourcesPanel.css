@@ -35,14 +35,6 @@
     top: 23px;
 }
 
-#storage-views {
-    position: absolute;
-    top: 0;
-    right: 0;
-    left: 200px;
-    bottom: 0;
-}
-
 .resources.panel .sidebar {
     padding-left: 0;
     z-index: 10;

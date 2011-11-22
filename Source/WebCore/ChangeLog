@@ -1,3 +1,68 @@
+2011-11-22  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Extract SplitView from Panel.createSidebar() method and reuse in Elements and Scripts panels.
+        https://bugs.webkit.org/show_bug.cgi?id=72920
+
+        Reviewed by Pavel Feldman.
+
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/compile-front-end.sh:
+        * inspector/front-end/ApplicationCacheModel.js:
+        * inspector/front-end/AuditsPanel.js:
+        (WebInspector.AuditsPanel):
+        * inspector/front-end/ElementsPanel.js:
+        (WebInspector.ElementsPanel):
+        (WebInspector.ElementsPanel.prototype.wasShown):
+        (WebInspector.ElementsPanel.prototype.sidebarResized):
+        (WebInspector.ElementsPanel.prototype.toggleSearchingForNode):
+        * inspector/front-end/NetworkPanel.js:
+        (WebInspector.NetworkPanel.prototype.wasShown):
+        (WebInspector.NetworkPanel.prototype._showResource):
+        (WebInspector.NetworkPanel.prototype._closeVisibleResource):
+        (WebInspector.NetworkPanel.prototype._toggleGridMode):
+        (WebInspector.NetworkPanel.prototype._toggleViewingResourceMode):
+        * inspector/front-end/Panel.js:
+        (WebInspector.Panel.prototype.wasShown):
+        (WebInspector.Panel.prototype.createSplitView):
+        (WebInspector.Panel.prototype.createSplitViewWithSidebarTree):
+        (WebInspector.Panel.prototype.sidebarResized):
+        * inspector/front-end/ProfilesPanel.js:
+        (WebInspector.ProfilesPanel.prototype._reset):
+        (WebInspector.ProfilesPanel.prototype.sidebarResized):
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.ResourcesPanel.prototype.sidebarResized):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype.wasShown):
+        (WebInspector.ScriptsPanel.prototype.sidebarResized):
+        * inspector/front-end/SplitView.js: Added.
+        (WebInspector.SplitView):
+        * inspector/front-end/TimelineOverviewPane.js:
+        (WebInspector.TimelineOverviewPane.prototype.sidebarResized):
+        * inspector/front-end/TimelinePanel.js:
+        (WebInspector.TimelinePanel):
+        (WebInspector.TimelinePanel.prototype.sidebarResized):
+        (WebInspector.TimelinePanel.prototype._refreshRecords):
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/auditsPanel.css:
+        * inspector/front-end/elementsPanel.css:
+        * inspector/front-end/inspector.css:
+        (.sidebar):
+        * inspector/front-end/inspector.html:
+        * inspector/front-end/networkLogView.css:
+        * inspector/front-end/networkPanel.css:
+        (#network-views):
+        * inspector/front-end/profilesPanel.css:
+        (#profile-views):
+        * inspector/front-end/resourcesPanel.css:
+        * inspector/front-end/scriptsPanel.css:
+        (#scripts-split-view):
+        * inspector/front-end/splitView.css: Added.
+        * inspector/front-end/timelinePanel.css:
+        (.timeline .sidebar):
+        (.timeline-sidebar-background):
+        (#resources-container-content):
+
 2011-11-22  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r100988.

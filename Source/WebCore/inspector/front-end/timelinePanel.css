@@ -39,16 +39,15 @@
     pointer-events: none;
 }
 
-.sidebar.timeline-sidebar-background {
-    top: 90px;
-    bottom: 0;
-}
-
 .timeline .sidebar {
     overflow-y: hidden;
-    z-index: 100;
     min-height: 100%;
     bottom: auto;
+}
+
+.timeline-sidebar-background {
+    top: 90px;
+    bottom: 0;
 }
 
 #timeline-overview-separator {
@@ -449,10 +448,7 @@
 }
 
 #resources-container-content {
-    position: absolute;
-    top: 0;
-    right: 0;
-    left: 200px;
+    overflow: visible;
     min-height: 100%;
 }
 

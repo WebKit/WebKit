@@ -27,34 +27,12 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#elements-content {
-    display: block;
-    overflow: auto;
-    padding: 0;
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 325px;
-    bottom: 0;
-}
-
 #elements-content.nowrap {
     white-space: nowrap;
 }
 
 #elements-content > ol {
     display: inline-block;
-}
-
-#elements-sidebar {
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    width: 325px;
-    border-left: 1px solid rgb(64%, 64%, 64%);
-    cursor: default;
-    overflow: auto;
 }
 
 .crumbs {

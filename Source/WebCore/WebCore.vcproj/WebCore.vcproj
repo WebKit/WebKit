@@ -69217,6 +69217,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\SplitView.js"
+					>
+				</File>
+				<File
+					RelativePath="..\inspector\front-end\splitView.css"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\StatusBarButton.js"
 					>
 				</File>

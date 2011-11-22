@@ -172,7 +172,7 @@ WebInspector.ApplicationCacheModel.prototype = {
     },
     
     /**
-     * @return {number}
+     * @return {boolean}
      */
     get onLine()
     {

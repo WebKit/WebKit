@@ -102,7 +102,7 @@ WebInspector.ProfilesPanel = function()
     this.registerRequiredCSS("heapProfiler.css");
     this.registerRequiredCSS("profilesPanel.css");
 
-    this.createSidebar();
+    this.createSplitViewWithSidebarTree();
 
     this._profileTypesByIdMap = {};
     this._profileTypeButtonsByIdMap = {};
@@ -115,7 +115,7 @@ WebInspector.ProfilesPanel = function()
 
     this.profileViews = document.createElement("div");
     this.profileViews.id = "profile-views";
-    this.element.appendChild(this.profileViews);
+    this.splitView.mainElement.appendChild(this.profileViews);
 
     this.enableToggleButton = new WebInspector.StatusBarButton("", "enable-toggle-status-bar-item");
     this.enableToggleButton.addEventListener("click", this._toggleProfiling.bind(this), false);
@@ -244,7 +244,7 @@ WebInspector.ProfilesPanel.prototype = {
         this.removeAllListeners();
 
         this._updateInterface();
-        this.welcomeView.show(this.element);
+        this.welcomeView.show(this.splitView.mainElement);
     },
 
     _clearProfiles: function()
@@ -824,10 +824,9 @@ WebInspector.ProfilesPanel.prototype = {
         this._profilesWereRequested = true;
     },
 
-    updateMainViewWidth: function(width)
+    sidebarResized: function(event)
     {
-        this.welcomeView.element.style.left = width + "px";
-        this.profileViews.style.left = width + "px";
+        var width = event.data;
         // Min width = <number of buttons on the left> * 31
         this.profileViewStatusBarItemsContainer.style.left = Math.max(6 * 31, width) + "px";
     },

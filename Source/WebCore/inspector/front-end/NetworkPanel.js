@@ -1214,16 +1214,17 @@ WebInspector.NetworkPanel = function()
     WebInspector.Panel.call(this, "network");
     this.registerRequiredCSS("networkPanel.css");
 
-    this.createSidebar();
-    this._networkLogView = new WebInspector.NetworkLogView();
+    this.createSplitView();
+    this.splitView.hideMainElement();
 
-    this._viewsContainerElement = document.createElement("div");
+    this._networkLogView = new WebInspector.NetworkLogView();
+    this._networkLogView.show(this.sidebarElement);
+
+    this._viewsContainerElement = this.splitView.mainElement;
     this._viewsContainerElement.id = "network-views";
-    this._viewsContainerElement.className = "hidden";
+    this._viewsContainerElement.addStyleClass("hidden");
     if (!this._networkLogView.useLargeRows)
         this._viewsContainerElement.addStyleClass("small");
-
-    this.element.appendChild(this._viewsContainerElement);
 
     this._networkLogView.addEventListener(WebInspector.NetworkLogView.EventTypes.ViewCleared, this._onViewCleared, this);
     this._networkLogView.addEventListener(WebInspector.NetworkLogView.EventTypes.RowSizeChanged, this._onRowSizeChanged, this);
@@ -1265,22 +1266,6 @@ WebInspector.NetworkPanel.prototype = {
         this._networkLogView._reset();
     },
 
-    restoreSidebarWidth: function()
-    {
-        if (!this._viewingResourceMode)
-            return;
-
-        var preferredWidth = WebInspector.Panel.prototype.preferredSidebarWidth.call(this);
-        if (typeof(preferredWidth) === "undefined")
-            preferredWidth = 200;
-        WebInspector.Panel.prototype.updateSidebarWidth.call(this, preferredWidth);
-    },
-
-    updateMainViewWidth: function(width)
-    {
-        this._viewsContainerElement.style.left = width + "px";
-    },
-
     handleShortcut: function(event)
     {
         if (this._viewingResourceMode && event.keyCode === WebInspector.KeyboardShortcut.Keys.Esc.code) {
@@ -1295,7 +1280,6 @@ WebInspector.NetworkPanel.prototype = {
     wasShown: function()
     {
         WebInspector.Panel.prototype.wasShown.call(this);
-        this._networkLogView.show(this.sidebarElement);
     },
 
     get resources()
@@ -1383,8 +1367,6 @@ WebInspector.NetworkPanel.prototype = {
         var view = new WebInspector.NetworkItemView(resource);
         view.show(this._viewsContainerElement);
         this.visibleView = view;
-
-        this.restoreSidebarWidth();
     },
 
     _closeVisibleResource: function()
@@ -1395,8 +1377,6 @@ WebInspector.NetworkPanel.prototype = {
             this.visibleView.detach();
             delete this.visibleView;
         }
-
-        this.restoreSidebarWidth();
     },
 
     _toggleGridMode: function()
@@ -1404,9 +1384,7 @@ WebInspector.NetworkPanel.prototype = {
         if (this._viewingResourceMode) {
             this._viewingResourceMode = false;
             this.element.removeStyleClass("viewing-resource");
-            this._viewsContainerElement.addStyleClass("hidden");
-            this.sidebarElement.style.right = 0;
-            this.sidebarElement.style.removeProperty("width");
+            this.splitView.hideMainElement();
         }
 
         this._networkLogView.switchToDetailedView();
@@ -1421,8 +1399,7 @@ WebInspector.NetworkPanel.prototype = {
         this._viewingResourceMode = true;
 
         this.element.addStyleClass("viewing-resource");
-        this._viewsContainerElement.removeStyleClass("hidden");
-        this.restoreSidebarWidth();
+        this.splitView.showMainElement();
         this._networkLogView.allowPopover = false;
         this._networkLogView.allowResourceSelection = true;
         this._networkLogView.switchToBriefView();

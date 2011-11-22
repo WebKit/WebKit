@@ -138,16 +138,6 @@
     border-left: 1px solid rgb(64%, 64%, 64%);
 }
 
-#script-resource-views {
-    display: block;
-    padding: 0;
-    position: absolute;
-    top: 23px;
-    left: 0;
-    right: 225px;
-    bottom: 0;
-}
-
 .script-view {
     display: none;
     overflow: hidden;
@@ -162,15 +152,8 @@
     display: block;
 }
 
-#scripts-sidebar {
-    position: absolute;
+#scripts-split-view {
     top: 23px;
-    right: 0;
-    bottom: 0;
-    width: 225px;
-    border-left: 1px solid rgb(64%, 64%, 64%);
-    cursor: default;
-    overflow: auto;
 }
 
 .dedicated-worker-item {

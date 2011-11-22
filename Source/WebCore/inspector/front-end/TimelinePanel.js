@@ -42,15 +42,14 @@ WebInspector.TimelinePanel = function()
     this.element.tabIndex = 0;
 
     this._sidebarBackgroundElement = document.createElement("div");
-    this._sidebarBackgroundElement.className = "sidebar timeline-sidebar-background";
+    this._sidebarBackgroundElement.className = "sidebar split-view-sidebar-left timeline-sidebar-background";
     this.element.appendChild(this._sidebarBackgroundElement);
 
-    this._containerElement = document.createElement("div");
+    this.createSplitViewWithSidebarTree();
+    this._containerElement = this.splitView.element;
     this._containerElement.id = "timeline-container";
     this._containerElement.addEventListener("scroll", this._onScroll.bind(this), false);
-    this.element.appendChild(this._containerElement);
 
-    this.createSidebar(this._containerElement, this._containerElement);
     var itemsTreeElement = new WebInspector.SidebarSectionTreeElement(WebInspector.UIString("RECORDS"), {}, true);
     itemsTreeElement.expanded = true;
     this.sidebarTree.appendChild(itemsTreeElement);
@@ -58,9 +57,8 @@ WebInspector.TimelinePanel = function()
     this._sidebarListElement = document.createElement("div");
     this.sidebarElement.appendChild(this._sidebarListElement);
 
-    this._containerContentElement = document.createElement("div");
+    this._containerContentElement = this.splitView.mainElement;
     this._containerContentElement.id = "resources-container-content";
-    this._containerElement.appendChild(this._containerContentElement);
 
     this._timelineGrid = new WebInspector.TimelineGrid();
     this._itemsGraphsElement = this._timelineGrid.itemsGraphsElement;
@@ -499,18 +497,13 @@ WebInspector.TimelinePanel.prototype = {
             this._timeStampRecords.push(formattedRecord);
     },
 
-    setSidebarWidth: function(width)
+    sidebarResized: function(event)
     {
-        WebInspector.Panel.prototype.setSidebarWidth.call(this, width);
+        var width = event.data;
         this._sidebarBackgroundElement.style.width = width + "px";
         this._topPaneSidebarElement.style.width = width + "px";
-    },
-
-    updateMainViewWidth: function(width)
-    {
-        this._containerContentElement.style.left = width + "px";
         this._scheduleRefresh(false);
-        this._overviewPane.updateMainViewWidth(width);
+        this._overviewPane.sidebarResized(width);
     },
 
     onResize: function()
@@ -675,7 +668,7 @@ WebInspector.TimelinePanel.prototype = {
         const top = (startIndex * rowHeight) + "px";
         this._topGapElement.style.height = top;
         this.sidebarElement.style.top = top;
-        this.sidebarResizeElement.style.top = top;
+        this.splitView.sidebarResizerElement.style.top = top;
         this._bottomGapElement.style.height = (recordsInWindow.length - endIndex) * rowHeight + "px";
 
         // Update visible rows.
@@ -729,7 +722,7 @@ WebInspector.TimelinePanel.prototype = {
 
         this._itemsGraphsElement.insertBefore(this._graphRowsElement, this._bottomGapElement);
         this._itemsGraphsElement.appendChild(this._expandElements);
-        this.sidebarResizeElement.style.height = this.sidebarElement.clientHeight + "px";
+        this.splitView.sidebarResizerElement.style.height = this.sidebarElement.clientHeight + "px";
         // Reserve some room for expand / collapse controls to the left for records that start at 0ms.
         var timelinePaddingLeft = this._calculator.windowLeft === 0 ? this._expandOffset : 0;
         if (updateBoundaries)

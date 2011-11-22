@@ -37,15 +37,6 @@
     content: url(Images/resourceDocumentIcon.png);
 }
 
-#audit-views {
-    position: absolute;
-    top: 0;
-    right: 0;
-    left: 200px;
-    bottom: 0;
-    overflow: auto;
-}
-
 .audit-launcher-view {
     z-index: 1000;
     position: absolute;

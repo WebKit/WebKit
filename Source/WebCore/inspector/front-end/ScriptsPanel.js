@@ -91,19 +91,18 @@ WebInspector.ScriptsPanel = function(presentationModel)
     this.debuggerStatusElement.id = "scripts-debugger-status";
     this.sidebarButtonsElement.appendChild(this.debuggerStatusElement);
 
-    this.viewsContainerElement = document.createElement("div");
-    this.viewsContainerElement.id = "script-resource-views";
+    const initialSidebarWidth = 225;
+    const minimalViewsContainerWidthPercent = 34;
+    this.createSplitView(this.element, WebInspector.SplitView.SidebarPosition.Right, initialSidebarWidth);
+    this.splitView.element.id = "scripts-split-view";
+    this.splitView.minimalSidebarWidth = Preferences.minScriptsSidebarWidth;
+    this.splitView.minimalMainWidthPercent = minimalViewsContainerWidthPercent;
 
-    this.sidebarElement = document.createElement("div");
-    this.sidebarElement.id = "scripts-sidebar";
-
-    this.sidebarResizeElement = document.createElement("div");
-    this.sidebarResizeElement.className = "sidebar-resizer-vertical";
-    this.sidebarResizeElement.addEventListener("mousedown", this._startSidebarResizeDrag.bind(this), false);
+    this.viewsContainerElement = this.splitView.mainElement;
 
     this.sidebarResizeWidgetElement = document.createElement("div");
     this.sidebarResizeWidgetElement.id = "scripts-sidebar-resizer-widget";
-    this.sidebarResizeWidgetElement.addEventListener("mousedown", this._startSidebarResizeDrag.bind(this), false);
+    this.splitView.installResizer(this.sidebarResizeWidgetElement);
     this.topStatusBar.appendChild(this.sidebarResizeWidgetElement);
 
     this.sidebarPanes = {};
@@ -143,10 +142,6 @@ WebInspector.ScriptsPanel = function(presentationModel)
 
     this.panelEnablerView = new WebInspector.PanelEnablerView("scripts", panelEnablerHeading, panelEnablerDisclaimer, panelEnablerButton);
     this.panelEnablerView.addEventListener("enable clicked", this.enableDebugging, this);
-
-    this.element.appendChild(this.viewsContainerElement);
-    this.element.appendChild(this.sidebarElement);
-    this.element.appendChild(this.sidebarResizeElement);
 
     this.enableToggleButton = new WebInspector.StatusBarButton("", "enable-toggle-status-bar-item");
     this.enableToggleButton.addEventListener("click", this.toggleDebugging, this);
@@ -224,7 +219,6 @@ WebInspector.ScriptsPanel.prototype = {
     wasShown: function()
     {
         WebInspector.Panel.prototype.wasShown.call(this);
-        this.sidebarResizeElement.style.right = (this.sidebarElement.offsetWidth - 3) + "px";
         if (Preferences.nativeInstrumentationEnabled)
             this.sidebarElement.insertBefore(this.sidebarPanes.domBreakpoints.element, this.sidebarPanes.xhrBreakpoints.element);
         this.sidebarPanes.watchExpressions.show();
@@ -777,40 +771,12 @@ WebInspector.ScriptsPanel.prototype = {
         this._showSourceFrameAndAddToHistory(uiSourceCode);
     },
 
-    _startSidebarResizeDrag: function(event)
+    sidebarResized: function(event)
     {
-        WebInspector.elementDragStart(this.sidebarElement, this._sidebarResizeDrag.bind(this), this._endSidebarResizeDrag.bind(this), event, "ew-resize");
+        var width = event.data;
 
-        if (event.target === this.sidebarResizeWidgetElement)
-            this._dragOffset = (event.target.offsetWidth - (event.pageX - event.target.totalOffsetLeft()));
-        else
-            this._dragOffset = 0;
-    },
-
-    _endSidebarResizeDrag: function(event)
-    {
-        WebInspector.elementDragEnd(event);
-        delete this._dragOffset;
-        this.saveSidebarWidth();
-    },
-
-    _sidebarResizeDrag: function(event)
-    {
-        var x = event.pageX + this._dragOffset;
-        var newWidth = Number.constrain(window.innerWidth - x, Preferences.minScriptsSidebarWidth, window.innerWidth * 0.66);
-        this.setSidebarWidth(newWidth);
-        event.preventDefault();
-    },
-
-    setSidebarWidth: function(newWidth)
-    {
-        this.sidebarElement.style.width = newWidth + "px";
-        this.sidebarButtonsElement.style.width = newWidth + "px";
-        this.viewsContainerElement.style.right = newWidth + "px";
-        this.sidebarResizeWidgetElement.style.right = newWidth + "px";
-        this.sidebarResizeElement.style.right = (newWidth - 3) + "px";
-
-        this.doResize();
+        this.sidebarButtonsElement.style.width = width + "px";
+        this.sidebarResizeWidgetElement.style.right = width + "px";
     },
 
     _setPauseOnExceptions: function(pauseOnExceptionsState)
@@ -1033,11 +999,6 @@ WebInspector.ScriptsPanel.prototype = {
         var selection = window.getSelection();
         if (selection.type === "Range" && !selection.isCollapsed)
             WebInspector.evaluateInConsole(selection.toString());
-    },
-
-    elementsToRestoreScrollPositionsFor: function()
-    {
-        return [ this.sidebarElement ];
     },
 
     _createSidebarButtons: function()

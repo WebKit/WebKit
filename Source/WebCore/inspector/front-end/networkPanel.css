@@ -32,12 +32,7 @@
 }
 
 #network-views {
-    position: absolute;
     background: rgb(203, 203, 203);
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
 }
 
 #network-close-button {

@@ -203,7 +203,7 @@ WebInspector.TimelineOverviewPane.prototype = {
         this._overviewGrid.addEventDividers(dividers);
     },
 
-    updateMainViewWidth: function(width, records)
+    sidebarResized: function(width)
     {
         this._overviewGrid.element.style.left = width + "px";
         // Min width = <number of buttons on the left> * 31

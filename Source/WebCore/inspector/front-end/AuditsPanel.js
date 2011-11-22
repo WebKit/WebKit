@@ -37,7 +37,7 @@ WebInspector.AuditsPanel = function()
     WebInspector.Panel.call(this, "audits");
     this.registerRequiredCSS("auditsPanel.css");
 
-    this.createSidebar();
+    this.createSplitViewWithSidebarTree();
     this.auditsTreeElement = new WebInspector.SidebarSectionTreeElement("", {}, true);
     this.sidebarTree.appendChild(this.auditsTreeElement);
     this.auditsTreeElement.listItemElement.addStyleClass("hidden");
@@ -53,9 +53,7 @@ WebInspector.AuditsPanel = function()
     this.clearResultsButton = new WebInspector.StatusBarButton(WebInspector.UIString("Clear audit results."), "clear-status-bar-item");
     this.clearResultsButton.addEventListener("click", this._clearButtonClicked, this);
 
-    this.viewsContainerElement = document.createElement("div");
-    this.viewsContainerElement.id = "audit-views";
-    this.element.appendChild(this.viewsContainerElement);
+    this.viewsContainerElement = this.splitView.mainElement;
 
     this._constructCategories();
 
@@ -250,11 +248,6 @@ WebInspector.AuditsPanel.prototype = {
         WebInspector.Panel.prototype.wasShown.call(this);
         if (!this._visibleView)
             this.auditsItemTreeElement.select();
-    },
-
-    updateMainViewWidth: function(width)
-    {
-        this.viewsContainerElement.style.left = width + "px";
     },
 
     _clearButtonClicked: function()
