@@ -3817,6 +3817,9 @@ contains(DEFINES, ENABLE_WEBGL=1) {
 }
 
 contains(DEFINES, ENABLE_MHTML=1) {
+
+    INCLUDEPATH += $$PWD/loader/archive/mhtml
+
     HEADERS += \
         loader/archive/Archive.h \
         page/PageSerializer.h

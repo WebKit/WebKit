@@ -1,3 +1,9 @@
+2011-11-22  Zoltan Horvath  <zoltan@webkit.org>
+
+        [Qt] Build fix for MHTML support
+
+        * Target.pri: Add missing includepath.
+
 2011-11-22  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Extract SplitView from Panel.createSidebar() method and reuse in Elements and Scripts panels.
