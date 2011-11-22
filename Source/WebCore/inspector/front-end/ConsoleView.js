@@ -113,6 +113,7 @@ WebInspector.ConsoleView = function(hideContextSelector)
 
     this.prompt = new WebInspector.TextPromptWithHistory(this.completions.bind(this), ExpressionStopCharacters + ".");
     this.prompt.setSuggestBoxEnabled("generic-suggest");
+    this.prompt.renderAsBlock();
     this.prompt.attach(this.promptElement);
     this.prompt.proxyElement.addEventListener("keydown", this._promptKeyDown.bind(this), false);
     this.prompt.setHistoryData(WebInspector.settings.consoleHistory.get());

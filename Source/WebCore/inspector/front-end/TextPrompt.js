@@ -39,6 +39,7 @@ WebInspector.TextPrompt = function(completions, stopCharacters)
      * @type {Element|undefined}
      */
     this._proxyElement;
+    this._proxyElementDisplay = "inline-block";
     this._loadCompletions = completions;
     this._completionStopCharacters = stopCharacters;
     this._suggestForceable = true;
@@ -63,6 +64,11 @@ WebInspector.TextPrompt.prototype = {
     setSuggestBoxEnabled: function(className)
     {
         this._suggestBoxClassName = className;
+    },
+
+    renderAsBlock: function()
+    {
+        this._proxyElementDisplay = "block";
     },
 
     /**
@@ -101,7 +107,7 @@ WebInspector.TextPrompt.prototype = {
         this._boundOnKeyDown = this.onKeyDown.bind(this);
         this._boundSelectStart = this._selectStart.bind(this);
         this._proxyElement = element.ownerDocument.createElement("span");
-        this._proxyElement.style.display = "inline-block";
+        this._proxyElement.style.display = this._proxyElementDisplay;
         element.parentElement.insertBefore(this.proxyElement, element);
         this.proxyElement.appendChild(element);
         this._element.addStyleClass("text-prompt");
@@ -269,26 +275,9 @@ WebInspector.TextPrompt.prototype = {
 
     acceptAutoComplete: function()
     {
-        if (!this.autoCompleteElement || !this.autoCompleteElement.parentNode)
-            return false;
-
         if (this.isSuggestBoxVisible())
-            this._suggestBox.acceptSuggestion();
-
-        var text = this.autoCompleteElement.textContent;
-        var textNode = document.createTextNode(text);
-        this.autoCompleteElement.parentNode.replaceChild(textNode, this.autoCompleteElement);
-        delete this.autoCompleteElement;
-
-        var finalSelectionRange = document.createRange();
-        finalSelectionRange.setStart(textNode, text.length);
-        finalSelectionRange.setEnd(textNode, text.length);
-
-        var selection = window.getSelection();
-        selection.removeAllRanges();
-        selection.addRange(finalSelectionRange);
-
-        return true;
+            return this._suggestBox.acceptSuggestion();
+        return this.acceptSuggestion();
     },
 
     /**
@@ -413,10 +402,8 @@ WebInspector.TextPrompt.prototype = {
         this._userEnteredRange = fullWordRange;
         this._userEnteredText = fullWordRange.toString();
 
-        if (this._suggestBox) {
+        if (this._suggestBox)
             this._suggestBox.updateSuggestions(this._boxForAnchorAtStart(selection, fullWordRange), completions);
-            return; // Do nothing, the suggest box is driving us.
-        }
 
         var wordPrefixLength = originalWordPrefixRange.toString().length;
 
@@ -502,6 +489,10 @@ WebInspector.TextPrompt.prototype = {
         var finalSelectionRange = document.createRange();
         var completionTextNode = document.createTextNode(completionText);
         this._userEnteredRange.insertNode(completionTextNode);
+        if (this.autoCompleteElement && this.autoCompleteElement.parentNode) {
+            this.autoCompleteElement.parentNode.removeChild(this.autoCompleteElement);
+            delete this.autoCompleteElement;
+        }
 
         if (isIntermediateSuggestion)
             finalSelectionRange.setStart(completionTextNode, wordPrefixLength);
@@ -519,10 +510,30 @@ WebInspector.TextPrompt.prototype = {
 
     acceptSuggestion: function()
     {
-        this.acceptAutoComplete();
+        if (this._isAcceptingSuggestion)
+            return false;
+
+        if (!this.autoCompleteElement || !this.autoCompleteElement.parentNode)
+            return false;
+
+        var text = this.autoCompleteElement.textContent;
+        var textNode = document.createTextNode(text);
+        this.autoCompleteElement.parentNode.replaceChild(textNode, this.autoCompleteElement);
+        delete this.autoCompleteElement;
+
+        var finalSelectionRange = document.createRange();
+        finalSelectionRange.setStart(textNode, text.length);
+        finalSelectionRange.setEnd(textNode, text.length);
+
+        var selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(finalSelectionRange);
+
         if (this._suggestBox)
             this._suggestBox.hide();
         this.dispatchEventToListeners(WebInspector.TextPrompt.Events.ItemAccepted);
+
+        return true;
     },
 
     isSuggestBoxVisible: function()
@@ -1088,7 +1099,7 @@ WebInspector.TextPrompt.SuggestBox.prototype = {
 
         this._updateItems(completions);
         this._updateBoxPosition(anchorBox);
-        if (this.contentElement.children.length && (this.contentElement.children.length > 1 || this.contentElement.children[0].textContent.length !== this._textPrompt._userEnteredText.length)) {
+        if (this.contentElement.children.length && this.contentElement.children.length > 1) {
             // Will not be shown if a sole suggestion is equal to the user input.
             this._element.addStyleClass("visible");
         } else

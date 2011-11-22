@@ -1,3 +1,27 @@
+2011-11-22  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: Design of the autocomplete suggest
+        https://bugs.webkit.org/show_bug.cgi?id=72798
+
+        Reviewed by Pavel Feldman.
+
+        Implemented a combination of grayed text for the first/only completion and hid
+        the suggest box for a single suggestion (the grayed text is displayed instead.)
+        Drive-by fix for the "trailing spaces in the prompt" issue
+        (got regressed when the suggest box was introduced for the first time.)
+
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsoleView): Fix the "trailing spaces" issue
+        * inspector/front-end/TextPrompt.js:
+        (WebInspector.TextPrompt):
+        (WebInspector.TextPrompt.prototype.renderAsBlock): Fix the "trailing spaces" issue
+        (WebInspector.TextPrompt.prototype._attachInternal):
+        (WebInspector.TextPrompt.prototype.acceptAutoComplete):
+        (WebInspector.TextPrompt.prototype._completionsReady):
+        (WebInspector.TextPrompt.prototype.applySuggestion):
+        (WebInspector.TextPrompt.prototype.acceptSuggestion):
+        (WebInspector.TextPrompt.SuggestBox.prototype._completionsReady):
+
 2011-11-21  David Barr  <davidbarr@chromium.org>
 
         REGRESSION(r98542): Chromium: CSS text is rendered on page
