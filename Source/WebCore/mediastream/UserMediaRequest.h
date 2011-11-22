@@ -34,6 +34,7 @@
 #if ENABLE(MEDIA_STREAM)
 
 #include "ActiveDOMObject.h"
+#include "MediaStreamCenter.h"
 #include "MediaStreamSource.h"
 #include "NavigatorUserMediaErrorCallback.h"
 #include "NavigatorUserMediaSuccessCallback.h"
@@ -45,7 +46,7 @@ namespace WebCore {
 
 class UserMediaClient;
 
-class UserMediaRequest : public RefCounted<UserMediaRequest>, public ContextDestructionObserver {
+class UserMediaRequest : public MediaStreamSourcesQueryClient, public ContextDestructionObserver {
 public:
     static PassRefPtr<UserMediaRequest> create(ScriptExecutionContext*, UserMediaClient*, const String& options, PassRefPtr<NavigatorUserMediaSuccessCallback>, PassRefPtr<NavigatorUserMediaErrorCallback>);
     ~UserMediaRequest();

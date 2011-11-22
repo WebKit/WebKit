@@ -28,62 +28,57 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MediaStreamDescriptor_h
-#define MediaStreamDescriptor_h
+#include "config.h"
 
 #if ENABLE(MEDIA_STREAM)
 
-#include "MediaStreamComponent.h"
-#include <wtf/RefCounted.h>
-#include <wtf/Vector.h>
+#include "MediaStreamCenter.h"
+
+#include "MainThread.h"
+#include "MediaStreamDescriptor.h"
 
 namespace WebCore {
 
-class MediaStreamDescriptorOwner {
-public:
-    virtual ~MediaStreamDescriptorOwner() { }
+MediaStreamCenter& MediaStreamCenter::instance()
+{
+    ASSERT(isMainThread());
+    DEFINE_STATIC_LOCAL(MediaStreamCenter, center, ());
+    return center;
+}
 
-    virtual void streamEnded() = 0;
-};
+void MediaStreamCenter::endLocalMediaStream(MediaStreamDescriptor* streamDescriptor)
+{
+    MediaStreamDescriptorOwner* owner = streamDescriptor->owner();
+    if (owner)
+        owner->streamEnded();
+    else
+        streamDescriptor->setEnded();
+}
 
-class MediaStreamDescriptor : public RefCounted<MediaStreamDescriptor> {
-public:
-    static PassRefPtr<MediaStreamDescriptor> create(const String& label, const MediaStreamSourceVector& sources)
-    {
-        return adoptRef(new MediaStreamDescriptor(label, sources));
-    }
+// FIXME: remove when real implementations are available
+// Empty implementations for ports that build with MEDIA_STREAM enabled by default.
+MediaStreamCenter::MediaStreamCenter()
+{
+}
 
-    MediaStreamDescriptorOwner* owner() const { return m_owner; }
-    void setOwner(MediaStreamDescriptorOwner* owner) { m_owner = owner; }
+MediaStreamCenter::~MediaStreamCenter()
+{
+}
 
-    String label() const { return m_label; }
+void MediaStreamCenter::queryMediaStreamSources(PassRefPtr<MediaStreamSourcesQueryClient> client)
+{
+    MediaStreamSourceVector sources;
+    client->mediaStreamSourcesQueryCompleted(sources);
+}
 
-    MediaStreamComponent* component(unsigned index) const { return m_components[index].get(); }
-    unsigned numberOfComponents() const { return m_components.size(); }
+void MediaStreamCenter::didSetMediaStreamTrackEnabled(MediaStreamDescriptor*, unsigned)
+{
+}
 
-    bool ended() const { return m_ended; }
-    void setEnded() { m_ended = true; }
-
-private:
-    MediaStreamDescriptor(const String& label, const MediaStreamSourceVector& sources)
-        : m_owner(0)
-        , m_label(label)
-        , m_ended(false)
-    {
-        for (size_t i = 0; i < sources.size(); i++)
-            m_components.append(MediaStreamComponent::create(sources[i]));
-    }
-
-    MediaStreamDescriptorOwner* m_owner;
-    String m_label;
-    Vector<RefPtr<MediaStreamComponent> > m_components;
-    bool m_ended;
-};
-
-typedef Vector<RefPtr<MediaStreamDescriptor> > MediaStreamDescriptorVector;
+void MediaStreamCenter::didStopLocalMediaStream(MediaStreamDescriptor*)
+{
+}
 
 } // namespace WebCore
 
 #endif // ENABLE(MEDIA_STREAM)
-
-#endif // MediaStreamDescriptor_h

@@ -28,6 +28,8 @@
 
 #if ENABLE(MEDIA_STREAM)
 
+#include "MediaStreamCenter.h"
+
 namespace WebCore {
 
 PassRefPtr<MediaStreamTrack> MediaStreamTrack::create(PassRefPtr<MediaStreamDescriptor> streamDescriptor, size_t trackIndex)
@@ -78,7 +80,7 @@ void MediaStreamTrack::setEnabled(bool enabled)
 
     m_streamDescriptor->component(m_trackIndex)->setEnabled(enabled);
 
-    // FIXME: tell the platform that the track was enabled/disabled
+    MediaStreamCenter::instance().didSetMediaStreamTrackEnabled(m_streamDescriptor.get(), m_trackIndex);
 }
 
 } // namespace WebCore

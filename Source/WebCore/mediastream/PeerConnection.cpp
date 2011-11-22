@@ -224,7 +224,7 @@ void PeerConnection::didRemoveRemoteStream(MediaStreamDescriptor* streamDescript
     ASSERT(scriptExecutionContext()->isContextThread());
     ASSERT(streamDescriptor->owner());
 
-    RefPtr<MediaStream> stream = streamDescriptor->owner();
+    RefPtr<MediaStream> stream = static_cast<MediaStream*>(streamDescriptor->owner());
     stream->streamEnded();
 
     if (m_readyState == CLOSED)

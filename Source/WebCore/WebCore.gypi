@@ -814,6 +814,8 @@
             'platform/mac/WebCoreSystemInterface.h',
             'platform/mac/WebCoreView.h',
             'platform/mac/WebFontCache.h',
+            'platform/mediastream/MediaStreamCenter.cpp',
+            'platform/mediastream/MediaStreamCenter.h',
             'platform/mediastream/MediaStreamComponent.h',
             'platform/mediastream/MediaStreamDescriptor.h',
             'platform/mediastream/MediaStreamSource.h',

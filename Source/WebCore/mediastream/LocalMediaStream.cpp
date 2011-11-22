@@ -28,6 +28,7 @@
 
 #if ENABLE(MEDIA_STREAM)
 
+#include "MediaStreamCenter.h"
 #include "UUID.h"
 
 namespace WebCore {
@@ -56,7 +57,7 @@ void LocalMediaStream::stopTimerFired(Timer<LocalMediaStream>* timer)
     if (readyState() == ENDED)
         return;
 
-    // FIXME: tell the platform that the stream was stopped
+    MediaStreamCenter::instance().didStopLocalMediaStream(descriptor());
 
     streamEnded();
 }

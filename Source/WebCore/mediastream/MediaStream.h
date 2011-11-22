@@ -38,7 +38,7 @@ namespace WebCore {
 
 class ScriptExecutionContext;
 
-class MediaStream : public RefCounted<MediaStream>, public EventTarget {
+class MediaStream : public RefCounted<MediaStream>, public MediaStreamDescriptorOwner, public EventTarget {
 public:
     // Must match the constants in the .idl file.
     enum ReadyState {

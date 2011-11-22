@@ -28,62 +28,53 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MediaStreamDescriptor_h
-#define MediaStreamDescriptor_h
+#ifndef MediaStreamCenter_h
+#define MediaStreamCenter_h
 
 #if ENABLE(MEDIA_STREAM)
 
-#include "MediaStreamComponent.h"
-#include <wtf/RefCounted.h>
-#include <wtf/Vector.h>
+#include "MediaStreamSource.h"
+#include <wtf/OwnPtr.h>
 
 namespace WebCore {
 
-class MediaStreamDescriptorOwner {
-public:
-    virtual ~MediaStreamDescriptorOwner() { }
+class MediaStreamDescriptor;
 
-    virtual void streamEnded() = 0;
+class MediaStreamSourcesQueryClient : public RefCounted<MediaStreamSourcesQueryClient> {
+public:
+    virtual ~MediaStreamSourcesQueryClient() { }
+
+    virtual bool audio() const = 0;
+    virtual bool video() const = 0;
+
+    virtual void mediaStreamSourcesQueryCompleted(const MediaStreamSourceVector&) = 0;
 };
 
-class MediaStreamDescriptor : public RefCounted<MediaStreamDescriptor> {
+class MediaStreamCenter {
+    WTF_MAKE_NONCOPYABLE(MediaStreamCenter);
+    WTF_MAKE_FAST_ALLOCATED;
 public:
-    static PassRefPtr<MediaStreamDescriptor> create(const String& label, const MediaStreamSourceVector& sources)
-    {
-        return adoptRef(new MediaStreamDescriptor(label, sources));
-    }
+    ~MediaStreamCenter();
 
-    MediaStreamDescriptorOwner* owner() const { return m_owner; }
-    void setOwner(MediaStreamDescriptorOwner* owner) { m_owner = owner; }
+    static MediaStreamCenter& instance();
 
-    String label() const { return m_label; }
+    void queryMediaStreamSources(PassRefPtr<MediaStreamSourcesQueryClient>);
 
-    MediaStreamComponent* component(unsigned index) const { return m_components[index].get(); }
-    unsigned numberOfComponents() const { return m_components.size(); }
+    // FIXME: add a way to mute a MediaStreamSource from the WebKit API layer
 
-    bool ended() const { return m_ended; }
-    void setEnded() { m_ended = true; }
+    // Calls from the DOM objects to notify the platform
+    void didSetMediaStreamTrackEnabled(MediaStreamDescriptor*, unsigned componentIndex);
+    void didStopLocalMediaStream(MediaStreamDescriptor*);
+
+    // Calls from the platform to update the DOM objects
+    void endLocalMediaStream(MediaStreamDescriptor*);
 
 private:
-    MediaStreamDescriptor(const String& label, const MediaStreamSourceVector& sources)
-        : m_owner(0)
-        , m_label(label)
-        , m_ended(false)
-    {
-        for (size_t i = 0; i < sources.size(); i++)
-            m_components.append(MediaStreamComponent::create(sources[i]));
-    }
-
-    MediaStreamDescriptorOwner* m_owner;
-    String m_label;
-    Vector<RefPtr<MediaStreamComponent> > m_components;
-    bool m_ended;
+    MediaStreamCenter();
 };
-
-typedef Vector<RefPtr<MediaStreamDescriptor> > MediaStreamDescriptorVector;
 
 } // namespace WebCore
 
 #endif // ENABLE(MEDIA_STREAM)
 
-#endif // MediaStreamDescriptor_h
+#endif // MediaStreamCenter_h

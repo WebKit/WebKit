@@ -68,7 +68,7 @@ UserMediaRequest::~UserMediaRequest()
 
 void UserMediaRequest::start()
 {
-    // FIXME: query the platform for available media stream sources, see http://webkit.org/b/70895
+    MediaStreamCenter::instance().queryMediaStreamSources(this);
 }
 
 void UserMediaRequest::mediaStreamSourcesQueryCompleted(const MediaStreamSourceVector& sources)
