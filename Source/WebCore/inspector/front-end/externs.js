@@ -175,3 +175,7 @@ WebInspector.openAnchorLocationRegistry = null;
 WebInspector.showPanelForAnchorNavigation = function(panel)
 {
 }
+
+WebInspector.showPanel = function(panel)
+{
+}

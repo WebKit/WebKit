@@ -1,3 +1,10 @@
+2011-11-22  Pavel Feldman  <pfeldman@google.com>
+
+        Not reviewed: fix inspector front-end compilation.
+
+        * inspector/front-end/externs.js:
+        (WebInspector.showPanel):
+
 2011-11-22  Adam Bergkvist  <adam.bergkvist@ericsson.com>
 
         Add WebCore platform interface needed by updated MediaStream API design
