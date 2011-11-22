@@ -3741,9 +3741,6 @@ BUGWK59552 SNOWLEOPARD DEBUG : storage/domstorage/events/basic-body-attribute.ht
 // Introduced due to BUGWK53512, fails under Skia right now
 BUGWK65939 : svg/custom/getBBox-path.svg = TEXT
 
-BUGWK71830 : svg/zoom/page/zoom-svg-as-relative-image.html = IMAGE
-BUGWK71830 WIN MAC : svg/zoom/page/relative-sized-document-scrollbars.svg = IMAGE+TEXT
-
 BUGWK72037 : storage/indexeddb/factory-deletedatabase-interactions.html = TEXT TIMEOUT PASS
 
 BUGRICOW : fast/js/array-functions-non-arrays.html = TEXT
@@ -3757,8 +3754,6 @@ BUGWK72053 MAC DEBUG : fast/borders/inline-mask-overlay-image-outset-vertical-rl
 BUGWK72053 MAC DEBUG : fast/borders/block-mask-overlay-image-outset.html = PASS CRASH
 
 BUGWK70395 MAC : fast/dom/rtl-scroll-to-leftmost-and-resize.html = IMAGE+TEXT
-
-BUGWK72189 WIN : accessibility/adjacent-continuations-cause-assertion-failure.html = TEXT
 
 BUGWK72264 MAC : inspector/debugger/script-formatter.html = TIMEOUT
 
