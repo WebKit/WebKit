@@ -394,12 +394,10 @@ ALWAYS_INLINE void FEConvolveMatrix::setOuterPixels(PaintingData& paintingData, 
         fastSetOuterPixels<false>(paintingData, x1, y1, x2, y2);
 }
 
-#if ENABLE(PARALLEL_JOBS)
 void FEConvolveMatrix::setInteriorPixelsWorker(InteriorPixelParameters* param)
 {
     param->filter->setInteriorPixels(*param->paintingData, param->clipRight, param->clipBottom, param->yStart, param->yEnd);
 }
-#endif
 
 void FEConvolveMatrix::platformApplySoftware()
 {
@@ -435,10 +433,9 @@ void FEConvolveMatrix::platformApplySoftware()
 
     if (clipRight >= 0 && clipBottom >= 0) {
 
-#if ENABLE(PARALLEL_JOBS)
         int optimalThreadNumber = (absolutePaintRect().width() * absolutePaintRect().height()) / s_minimalRectDimension;
         if (optimalThreadNumber > 1) {
-            ParallelJobs<InteriorPixelParameters> parallelJobs(&WebCore::FEConvolveMatrix::setInteriorPixelsWorker, optimalThreadNumber);
+            WTF::ParallelJobs<InteriorPixelParameters> parallelJobs(&WebCore::FEConvolveMatrix::setInteriorPixelsWorker, optimalThreadNumber);
             const int numOfThreads = parallelJobs.numberOfJobs();
             const int heightPerThread = clipBottom / numOfThreads;
             int startY = 0;
@@ -458,10 +455,10 @@ void FEConvolveMatrix::platformApplySoftware()
             }
 
             parallelJobs.execute();
-        } else
-            // Fallback to the default setInteriorPixels call.
-#endif
-        setInteriorPixels(paintingData, clipRight, clipBottom, 0, clipBottom);
+        } else {
+            // Fallback to single threaded mode.
+            setInteriorPixels(paintingData, clipRight, clipBottom, 0, clipBottom);
+        }
 
         clipRight += m_targetOffset.x() + 1;
         clipBottom += m_targetOffset.y() + 1;

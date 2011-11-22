@@ -58,9 +58,7 @@ public:
     bool stitchTiles() const;
     bool setStitchTiles(bool);
 
-#if ENABLE(PARALLEL_JOBS)
     static void fillRegionWorker(void*);
-#endif
 
     virtual void platformApplySoftware();
     virtual void dump();
@@ -72,9 +70,8 @@ public:
 private:
     static const int s_blockSize = 256;
     static const int s_blockMask = s_blockSize - 1;
-#if ENABLE(PARALLEL_JOBS)
-    static const int s_minimalRectDimension = (100 * 100); // Empirical data limit for parallel jobs
-#endif
+
+    static const int s_minimalRectDimension = (100 * 100); // Empirical data limit for parallel jobs.
 
     struct PaintingData {
         long seed;
@@ -90,7 +87,6 @@ private:
         inline long random();
     };
 
-#if ENABLE(PARALLEL_JOBS)
     template<typename Type>
     friend class ParallelJobs;
 
@@ -103,7 +99,6 @@ private:
     };
 
     static void fillRegionWorker(FillRegionParameters*);
-#endif
 
     FETurbulence(Filter*, TurbulenceType, float, float, int, float, bool);
 
