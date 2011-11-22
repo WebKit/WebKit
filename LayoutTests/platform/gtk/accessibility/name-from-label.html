@@ -12,12 +12,13 @@
 <div id="console"></div>
 <script>
   var webArea;
-  var child;
+  var form;
 
   function checkResults() {
     // Actually check the results
-    shouldBe("child.role", "'AXRole: entry'");
-    shouldBe("child.title", "'AXTitle: Full Name:'");
+    entry = form.childAtIndex(1);
+    shouldBe("entry.role", "'AXRole: entry'");
+    shouldBe("entry.title", "'AXTitle: Full Name:'");
     finishJSTest();
   }
 
@@ -30,7 +31,7 @@
 
     document.getElementById("body").focus();
     webArea = accessibilityController.focusedElement;
-    child = webArea.childAtIndex(1);
+    form = webArea.childAtIndex(0);
 
     // Check results on idle to ensure layout() is done
     window.setTimeout("checkResults()", 0);
