@@ -1,3 +1,10 @@
+2011-11-22  Pavel Feldman  <pfeldman@google.com>
+
+        Not reviewed: moving inspector frontend creation out of assert in WebKit2.
+
+        * WebProcess/WebCoreSupport/WebInspectorClient.cpp:
+        (WebKit::WebInspectorClient::openInspectorFrontend):
+
 2011-11-22  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
 
         [Qt][WK2] Fix and unskip loadHtml api test

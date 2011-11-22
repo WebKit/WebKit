@@ -44,7 +44,8 @@ void WebInspectorClient::inspectorDestroyed()
 
 void WebInspectorClient::openInspectorFrontend(InspectorController*)
 {
-    ASSERT(m_page->inspector()->createInspectorPage());
+    WebPage* inspectorPage = m_page->inspector()->createInspectorPage();
+    ASSERT(inspectorPage);
 }
 
 void WebInspectorClient::bringFrontendToFront()
