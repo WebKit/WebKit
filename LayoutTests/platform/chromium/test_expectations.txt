@@ -3348,31 +3348,6 @@ BUGWK67915 LINUX WIN : fast/borders/borderRadiusDashed06.html = IMAGE
 // Introduced in r92298, which might cause another test crashing.
 BUGZMO SKIP : fast/loader/reload-zero-byte-plugin.html = FAIL
 
-
-// These tests were disabled and re-enabled in r92545 and r92550.
-// Unfortunately they are failing for us.
-BUGWK63186 LINUX WIN : svg/zoom/page/zoom-svg-through-object-with-absolute-size-2.xhtml = IMAGE+TEXT
-BUGWK63186 MAC : svg/zoom/page/zoom-svg-through-object-with-absolute-size-2.xhtml = PASS IMAGE+TEXT IMAGE
-BUGWK63186 LINUX WIN : svg/zoom/page/zoom-svg-through-object-with-absolute-size.xhtml = IMAGE+TEXT
-BUGWK63186 MAC : svg/zoom/page/zoom-svg-through-object-with-absolute-size.xhtml = PASS IMAGE+TEXT IMAGE
-BUGWK63186 LINUX WIN : svg/zoom/page/zoom-svg-through-object-with-auto-size.html = IMAGE+TEXT
-BUGWK63186 MAC : svg/zoom/page/zoom-svg-through-object-with-auto-size.html = PASS IMAGE+TEXT
-BUGWK63186 LINUX WIN : svg/zoom/page/zoom-svg-through-object-with-huge-size.xhtml = IMAGE+TEXT
-BUGWK63186 LEOPARD : svg/zoom/page/zoom-svg-through-object-with-huge-size.xhtml = PASS IMAGE+TEXT IMAGE
-BUGWK63186 SNOWLEOPARD : svg/zoom/page/zoom-svg-through-object-with-huge-size.xhtml = PASS IMAGE+TEXT
-BUGWK63186 LINUX WIN : svg/zoom/page/zoom-svg-through-object-with-override-size.html = IMAGE+TEXT
-BUGWK63186 MAC : svg/zoom/page/zoom-svg-through-object-with-override-size.html = PASS IMAGE+TEXT IMAGE
-BUGWK63186 WIN : svg/zoom/page/zoom-svg-through-object-with-percentage-size.xhtml = IMAGE+TEXT IMAGE
-BUGWK63186 LINUX : svg/zoom/page/zoom-svg-through-object-with-percentage-size.xhtml = IMAGE+TEXT IMAGE
-BUGWK63186 LEOPARD : svg/zoom/page/zoom-svg-through-object-with-percentage-size.xhtml = IMAGE
-BUGWK63186 SNOWLEOPARD CPU-CG : svg/zoom/page/zoom-svg-through-object-with-percentage-size.xhtml = PASS IMAGE+TEXT IMAGE
-BUGWK63186 SNOWLEOPARD CPU : svg/zoom/page/zoom-svg-through-object-with-percentage-size.xhtml = PASS IMAGE+TEXT IMAGE
-BUGWK63186 LINUX WIN : svg/as-object/embedded-svg-immediate-offsetWidth-query.html = IMAGE+TEXT IMAGE
-BUGWK63186 LEOPARD : svg/as-object/embedded-svg-immediate-offsetWidth-query.html = IMAGE
-BUGWK63186 SNOWLEOPARD : svg/as-object/embedded-svg-immediate-offsetWidth-query.html = PASS IMAGE+TEXT
-BUGWK63186 LEOPARD LINUX WIN : svg/as-object/embedded-svg-size-changes.html = IMAGE
-BUGWK63186 SNOWLEOPARD DEBUG : svg/as-object/embedded-svg-size-changes.html = PASS IMAGE+TEXT
-BUGWK63186 LEOPARD LINUX WIN : svg/as-object/nested-embedded-svg-size-changes.html = IMAGE
 BUGWK65862 MAC DEBUG SLOW : storage/indexeddb/index-cursor.html = PASS
 
 // Performance issues with border radius clipping on Chromium not yet resolved
