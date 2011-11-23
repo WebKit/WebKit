@@ -41,6 +41,7 @@ import time
 
 from webkitpy.common.memoized import memoized
 from webkitpy.common.net.buildbot import BuildBot
+from webkitpy.common.system.environment import Environment
 from webkitpy.common.system.executive import Executive, ScriptError
 from webkitpy.layout_tests.port import builders, server_process, Port, Driver, DriverOutput
 
@@ -80,11 +81,6 @@ class WebKitPort(Port):
         expectations_directory = self._wk2_port_name() if self.get_option('webkit_test_runner') else self.port_name
         return self._filesystem.join(self._webkit_baseline_path(expectations_directory), 'test_expectations.txt')
 
-    def _driver_build_script_name(self):
-        if self.get_option('webkit_test_runner'):
-            return "build-webkittestrunner"
-        return "build-dumprendertree"
-
     def _port_flag_for_scripts(self):
         # This is overrriden by ports which need a flag passed to scripts to distinguish the use of that port.
         # For example --qt on linux, since a user might have both Gtk and Qt libraries installed.
@@ -101,24 +97,28 @@ class WebKitPort(Port):
             config_args.append(port_flag)
         return config_args
 
-    def _run_script(self, script_name, args=None, include_configuration_arguments=True, decode_output=True):
+    def _run_script(self, script_name, args=None, include_configuration_arguments=True, decode_output=True, env=None):
         run_script_command = [self._config.script_path(script_name)]
         if include_configuration_arguments:
             run_script_command.extend(self._arguments_for_configuration())
         if args:
             run_script_command.extend(args)
-        return self._executive.run_command(run_script_command, cwd=self._config.webkit_base_dir(), decode_output=decode_output)
+        return self._executive.run_command(run_script_command, cwd=self._config.webkit_base_dir(), decode_output=decode_output, env=env)
 
     def _build_driver(self):
+        environment = self.host.copy_current_environment()
+        environment.disable_gcc_smartquotes()
+        env = environment.to_dictionary()
+
         # FIXME: We build both DumpRenderTree and WebKitTestRunner for
         # WebKitTestRunner runs because DumpRenderTree still includes
         # the DumpRenderTreeSupport module and the TestNetscapePlugin.
         # These two projects should be factored out into their own
         # projects.
         try:
-            self._run_script("build-dumprendertree")
+            self._run_script("build-dumprendertree", env=env)
             if self.get_option('webkit_test_runner'):
-                self._run_script("build-webkittestrunner")
+                self._run_script("build-webkittestrunner", env=env)
         except ScriptError:
             _log.error("Failed to build %s" % self.driver_name())
             return False

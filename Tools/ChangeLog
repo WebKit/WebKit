@@ -1,3 +1,26 @@
+2011-11-23  Eric Seidel  <eric@webkit.org>
+
+        Add Environment object to Host and fix the GCC smartquotes trouble seen on the commit-queue
+        https://bugs.webkit.org/show_bug.cgi?id=71983
+
+        Reviewed by Adam Barth.
+
+        We'll add more code to Environment overtime,
+        allowing us to mock out more of our direct interactions with os.environ.
+
+        This patch also makes run_command print the passed in environment.
+
+        * Scripts/webkitpy/common/host_mock.py:
+        * Scripts/webkitpy/common/system/environment.py: Copied from Tools/Scripts/webkitpy/tool/steps/build.py.
+        * Scripts/webkitpy/common/system/environment_mock.py: Copied from Tools/Scripts/webkitpy/tool/steps/build.py.
+        * Scripts/webkitpy/common/system/environment_unittest.py: Copied from Tools/Scripts/webkitpy/tool/steps/build.py.
+        * Scripts/webkitpy/common/system/executive.py:
+        * Scripts/webkitpy/common/system/executive_mock.py:
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+        * Scripts/webkitpy/layout_tests/port/webkit_unittest.py:
+        * Scripts/webkitpy/tool/commands/download_unittest.py:
+        * Scripts/webkitpy/tool/steps/build.py:
+
 2011-11-23  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] Re-generate QtWebKit API forwarding headers when API changes
