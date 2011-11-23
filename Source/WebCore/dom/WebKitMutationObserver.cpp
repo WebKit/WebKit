@@ -141,6 +141,62 @@ void WebKitMutationObserver::deliverAllMutations()
     }
 }
 
+PassOwnPtr<MutationObserverInterestGroup> MutationObserverInterestGroup::createForChildListMutation(Node* target)
+{
+    return adoptPtr(new MutationObserverInterestGroup(target, WebKitMutationObserver::ChildList));
+}
+
+PassOwnPtr<MutationObserverInterestGroup> MutationObserverInterestGroup::createForCharacterDataMutation(Node* target)
+{
+    return adoptPtr(new MutationObserverInterestGroup(target, WebKitMutationObserver::CharacterData));
+}
+
+PassOwnPtr<MutationObserverInterestGroup> MutationObserverInterestGroup::createForAttributesMutation(Node* target, const AtomicString& attributeName)
+{
+    return adoptPtr(new MutationObserverInterestGroup(target, WebKitMutationObserver::Attributes, attributeName));
+}
+
+MutationObserverInterestGroup::MutationObserverInterestGroup(Node* target, WebKitMutationObserver::MutationType type, const AtomicString& attributeName)
+{
+    target->getRegisteredMutationObserversOfType(m_observers, type, attributeName);
+    if (type & WebKitMutationObserver::Attributes)
+        m_oldValueFlag = WebKitMutationObserver::AttributeOldValue;
+    else if (type & WebKitMutationObserver::CharacterData)
+        m_oldValueFlag = WebKitMutationObserver::CharacterDataOldValue;
+}
+
+bool MutationObserverInterestGroup::isOldValueRequested()
+{
+    for (HashMap<WebKitMutationObserver*, MutationRecordDeliveryOptions>::iterator iter = m_observers.begin(); iter != m_observers.end(); ++iter) {
+        if (hasOldValue(iter->second))
+            return true;
+    }
+    return false;
+}
+
+void MutationObserverInterestGroup::enqueueMutationRecord(PassRefPtr<MutationRecord> prpMutation)
+{
+    if (m_observers.isEmpty())
+        return;
+
+    RefPtr<MutationRecord> mutation = prpMutation;
+    RefPtr<MutationRecord> mutationWithNullOldValue;
+    for (HashMap<WebKitMutationObserver*, MutationRecordDeliveryOptions>::iterator iter = m_observers.begin(); iter != m_observers.end(); ++iter) {
+        WebKitMutationObserver* observer = iter->first;
+        if (hasOldValue(iter->second)) {
+            observer->enqueueMutationRecord(mutation);
+            continue;
+        }
+        if (!mutationWithNullOldValue) {
+            if (mutation->oldValue().isNull())
+                mutationWithNullOldValue = mutation;
+            else
+                mutationWithNullOldValue = MutationRecord::createWithNullOldValue(mutation).get();
+        }
+        observer->enqueueMutationRecord(mutationWithNullOldValue);
+    }
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(MUTATION_OBSERVERS)

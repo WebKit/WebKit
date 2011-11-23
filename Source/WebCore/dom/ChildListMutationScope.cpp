@@ -53,7 +53,7 @@ namespace {
 class ChildListMutationAccumulator : public RefCounted<ChildListMutationAccumulator> {
     WTF_MAKE_NONCOPYABLE(ChildListMutationAccumulator);
 public:
-    ChildListMutationAccumulator(PassRefPtr<Node>, HashMap<WebKitMutationObserver*, MutationObserverOptions>&);
+    ChildListMutationAccumulator(PassRefPtr<Node>, PassOwnPtr<MutationObserverInterestGroup> observers);
     ~ChildListMutationAccumulator();
 
     void childAdded(PassRefPtr<Node>);
@@ -73,7 +73,7 @@ private:
     RefPtr<Node> m_nextSibling;
     RefPtr<Node> m_lastAdded;
 
-    HashMap<WebKitMutationObserver*, MutationObserverOptions> m_observers;
+    OwnPtr<MutationObserverInterestGroup> m_observers;
 };
 
 class MutationAccumulationRouter {
@@ -100,10 +100,10 @@ private:
     static MutationAccumulationRouter* s_instance;
 };
 
-ChildListMutationAccumulator::ChildListMutationAccumulator(PassRefPtr<Node> target, HashMap<WebKitMutationObserver*, MutationObserverOptions>& observers)
+ChildListMutationAccumulator::ChildListMutationAccumulator(PassRefPtr<Node> target, PassOwnPtr<MutationObserverInterestGroup> observers)
     : m_target(target)
+    , m_observers(observers)
 {
-    m_observers.swap(observers);
     clear();
 }
 
@@ -166,12 +166,8 @@ void ChildListMutationAccumulator::enqueueMutationRecord()
         return;
     }
 
-    RefPtr<MutationRecord> mutation = MutationRecord::createChildList(
-        m_target, StaticNodeList::adopt(m_addedNodes), StaticNodeList::adopt(m_removedNodes), m_previousSibling.release(), m_nextSibling.release());
-
-    for (HashMap<WebKitMutationObserver*, MutationObserverOptions>::iterator iter = m_observers.begin(); iter != m_observers.end(); ++iter)
-        iter->first->enqueueMutationRecord(mutation);
-
+    m_observers->enqueueMutationRecord(MutationRecord::createChildList(
+            m_target, StaticNodeList::adopt(m_addedNodes), StaticNodeList::adopt(m_removedNodes), m_previousSibling.release(), m_nextSibling.release()));
     clear();
 }
 
@@ -244,12 +240,11 @@ void MutationAccumulationRouter::incrementScopingLevel(Node* target)
         return;
     }
 
-    HashMap<WebKitMutationObserver*, MutationRecordDeliveryOptions> observers;
-    target->getRegisteredMutationObserversOfType(observers, WebKitMutationObserver::ChildList);
-    if (observers.isEmpty())
+    OwnPtr<MutationObserverInterestGroup> observers = MutationObserverInterestGroup::createForChildListMutation(target);
+    if (observers->isEmpty())
         m_accumulations.set(target, 0);
     else
-        m_accumulations.set(target, adoptRef(new ChildListMutationAccumulator(target, observers)));
+        m_accumulations.set(target, adoptRef(new ChildListMutationAccumulator(target, observers.release())));
 }
 
 void MutationAccumulationRouter::decrementScopingLevel(Node* target)

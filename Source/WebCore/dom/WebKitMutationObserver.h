@@ -33,6 +33,7 @@
 
 #if ENABLE(MUTATION_OBSERVERS)
 
+#include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -92,6 +93,24 @@ private:
     RefPtr<MutationCallback> m_callback;
     Vector<RefPtr<MutationRecord> > m_records;
     HashSet<MutationObserverRegistration*> m_registrations;
+};
+
+class MutationObserverInterestGroup {
+public:
+    static PassOwnPtr<MutationObserverInterestGroup> createForChildListMutation(Node* target);
+    static PassOwnPtr<MutationObserverInterestGroup> createForCharacterDataMutation(Node* target);
+    static PassOwnPtr<MutationObserverInterestGroup> createForAttributesMutation(Node* target, const AtomicString& attributeName);
+
+    bool isOldValueRequested();
+    bool isEmpty() { return m_observers.isEmpty(); }
+    void enqueueMutationRecord(PassRefPtr<MutationRecord>);
+private:
+    MutationObserverInterestGroup(Node* target, WebKitMutationObserver::MutationType, const AtomicString& attributeName = nullAtom);
+
+    inline bool hasOldValue(MutationRecordDeliveryOptions options) { return options & m_oldValueFlag; }
+
+    HashMap<WebKitMutationObserver*, MutationRecordDeliveryOptions> m_observers;
+    WebKitMutationObserver::DeliveryFlags m_oldValueFlag;
 };
 
 }

@@ -1,3 +1,35 @@
+2011-11-23  Rafael Weinstein  <rafaelw@chromium.org>
+
+        [MutationObservers] Cleanup duplicated code in Element & CharacterData
+        https://bugs.webkit.org/show_bug.cgi?id=72986
+
+        Reviewed by Ojan Vafai.
+
+        This patch creates a MutationObserverInterestGroup which represents the set
+        of MutationObservers which should receive all mutations of a given type generated
+        from a specific node.
+
+        No tests needed. This patch is only a refactor.
+
+        * dom/CharacterData.cpp:
+        (WebCore::CharacterData::dispatchModifiedEvent):
+        * dom/ChildListMutationScope.cpp:
+        (WebCore::MutationAccumulationRouter::ChildListMutationAccumulator::ChildListMutationAccumulator):
+        (WebCore::MutationAccumulationRouter::ChildListMutationAccumulator::enqueueMutationRecord):
+        (WebCore::MutationAccumulationRouter::MutationAccumulationRouter::incrementScopingLevel):
+        * dom/Element.cpp:
+        (WebCore::enqueueAttributesMutationRecord):
+        * dom/WebKitMutationObserver.cpp:
+        (WebCore::MutationObserverInterestGroup::createForChildListMutation):
+        (WebCore::MutationObserverInterestGroup::createForCharacterDataMutation):
+        (WebCore::MutationObserverInterestGroup::createForAttributesMutation):
+        (WebCore::MutationObserverInterestGroup::MutationObserverInterestGroup):
+        (WebCore::MutationObserverInterestGroup::isOldValueRequested):
+        (WebCore::MutationObserverInterestGroup::enqueueMutationRecord):
+        * dom/WebKitMutationObserver.h:
+        (WebCore::MutationObserverInterestGroup::isEmpty):
+        (WebCore::MutationObserverInterestGroup::hasOldValue):
+
 2011-11-23  Marc-Andre Decoste  <mad@chromium.org>
 
         [chromium] HDC leak in Uniscribe Helper

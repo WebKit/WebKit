@@ -617,44 +617,10 @@ const AtomicString& Element::getAttributeNS(const String& namespaceURI, const St
 }
 
 #if ENABLE(MUTATION_OBSERVERS)
-static inline bool hasOldValue(MutationObserverOptions options)
+static void enqueueAttributesMutationRecord(Element* target, const QualifiedName& attributeName, const AtomicString& oldValue)
 {
-    return options & WebKitMutationObserver::AttributeOldValue;
-}
-
-static inline bool isOldValueRequested(const HashMap<WebKitMutationObserver*, MutationObserverOptions>& observers)
-{
-    for (HashMap<WebKitMutationObserver*, MutationObserverOptions>::const_iterator iter = observers.begin(); iter != observers.end(); ++iter) {
-        if (hasOldValue(iter->second))
-            return true;
-    }
-    return false;
-}
-
-static void enqueueAttributesMutationRecord(Element* element, const QualifiedName& name, const AtomicString& oldValue)
-{
-    HashMap<WebKitMutationObserver*, MutationRecordDeliveryOptions> observers;
-    element->getRegisteredMutationObserversOfType(observers, WebKitMutationObserver::Attributes, name.localName());
-    if (observers.isEmpty())
-        return;
-
-    // FIXME: Factor this logic out to avoid duplication with characterDataOldValue.
-    RefPtr<MutationRecord> mutation = MutationRecord::createAttributes(element, name, isOldValueRequested(observers) ? oldValue : nullAtom);
-    RefPtr<MutationRecord> mutationWithNullOldValue;
-    for (HashMap<WebKitMutationObserver*, MutationObserverOptions>::iterator iter = observers.begin(); iter != observers.end(); ++iter) {
-        WebKitMutationObserver* observer = iter->first;
-        if (hasOldValue(iter->second)) {
-            observer->enqueueMutationRecord(mutation);
-            continue;
-        }
-        if (!mutationWithNullOldValue) {
-            if (mutation->oldValue().isNull())
-                mutationWithNullOldValue = mutation;
-            else
-                mutationWithNullOldValue = MutationRecord::createWithNullOldValue(mutation).get();
-        }
-        observer->enqueueMutationRecord(mutationWithNullOldValue);
-    }
+    OwnPtr<MutationObserverInterestGroup> mutationRecipients = MutationObserverInterestGroup::createForAttributesMutation(target, attributeName.localName());
+    mutationRecipients->enqueueMutationRecord(MutationRecord::createAttributes(target, attributeName, oldValue));
 }
 #endif
 
