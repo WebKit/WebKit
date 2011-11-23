@@ -136,8 +136,8 @@ var TEST_TYPES = [
     'net_unittests',
     'printing_unittests',
     'remoting_unittests',
-    'sql_unittests',
     'safe_browsing_tests',
+    'sql_unittests',
     'sync_unit_tests',
     'sync_integration_tests',
     'test_shell_tests',
@@ -425,13 +425,17 @@ function currentBuilderGroup(opt_state)
     case 'layout-tests':
         return LAYOUT_TESTS_BUILDER_GROUPS[state.group]
         break;
-    case 'app_unittests':
+    case 'aura_unittests':
+    case 'aura_shell_unittests':
     case 'base_unittests':
     case 'browser_tests':
     case 'cacheinvalidation_unittests':
+    case 'compositor_unittests':
+    case 'content_unittests':
     case 'courgette_unittests':
     case 'crypto_unittests':
     case 'googleurl_unittests':
+    case 'gfx_unittests':
     case 'gpu_unittests':
     case 'installer_util_unittests':
     case 'interactive_ui_tests':
@@ -444,11 +448,13 @@ function currentBuilderGroup(opt_state)
     case 'printing_unittests':
     case 'remoting_unittests':
     case 'safe_browsing_tests':
+    case 'sql_unittests':
     case 'sync_unit_tests':
     case 'sync_integration_tests':
     case 'test_shell_tests':
     case 'ui_tests':
     case 'unit_tests':
+    case 'views_unittests':
         return G_TESTS_BUILDER_GROUP;
         break;
     default:

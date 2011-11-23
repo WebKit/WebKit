@@ -1,3 +1,13 @@
+2011-11-23  Ryan Sleevi  <rsleevi@chromium.org>
+
+        Add new Chromium tests to the flakiness dashboard
+        https://bugs.webkit.org/show_bug.cgi?id=72997
+
+        Reviewed by Ojan Vafai.
+
+        * TestResultServer/static-dashboards/dashboard_base.js:
+        ():
+
 2011-11-23  Adam Barth  <abarth@webkit.org>
 
         garden-o-matic should support AUDIO failures
