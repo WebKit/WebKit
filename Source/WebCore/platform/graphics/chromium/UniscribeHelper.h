@@ -40,7 +40,7 @@
 #include <unicode/uchar.h>
 #include <wtf/Vector.h>
 
-class UniscribeTest_TooBig_Test;  // A gunit test for UniscribeHelper.
+class UniscribeTest_TooBig_Test; // A gunit test for UniscribeHelper.
 
 namespace WebCore {
 
@@ -380,6 +380,9 @@ private:
     // NextWinFontData scans fallback fonts from the beginning.
     virtual void resetFontIndex() {}
 
+    // If m_cachedDC is 0, creates one that is compatible with the screen DC.
+    void EnsureCachedDCCreated();
+
     // The input data for this run of Uniscribe. See the constructor.
     const UChar* m_input;
     const int m_inputLength;
@@ -394,6 +397,8 @@ private:
     // m_height and m_style if they're known. Getters for them would have to
     // 'infer' their values from m_hfont ONLY when they're not set.
     HFONT m_hfont;
+    // We cache the DC to use with ScriptShape/ScriptPlace.
+    static HDC m_cachedDC;
     SCRIPT_CACHE* m_scriptCache;
     SCRIPT_FONTPROPERTIES* m_fontProperties;
     int m_ascent;
