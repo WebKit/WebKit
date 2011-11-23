@@ -29,9 +29,11 @@ typedef struct _GstCaps GstCaps;
 
 namespace WTF {
 
+template<> GRefPtr<GstElement> adoptGRef(GstElement* ptr);
 template<> GstElement* refGPtr<GstElement>(GstElement* ptr);
 template<> void derefGPtr<GstElement>(GstElement* ptr);
 
+template<> GRefPtr<GstPad> adoptGRef(GstPad* ptr);
 template<> GstPad* refGPtr<GstPad>(GstPad* ptr);
 template<> void derefGPtr<GstPad>(GstPad* ptr);
 

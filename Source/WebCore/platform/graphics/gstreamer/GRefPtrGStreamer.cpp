@@ -25,10 +25,19 @@
 
 namespace WTF {
 
+template <> GRefPtr<GstElement> adoptGRef(GstElement* ptr)
+{
+    ASSERT(!GST_OBJECT_IS_FLOATING(GST_OBJECT(ptr)));
+    return GRefPtr<GstElement>(ptr, GRefPtrAdopt);
+}
+
 template <> GstElement* refGPtr<GstElement>(GstElement* ptr)
 {
-    if (ptr)
-        gst_object_ref_sink(ptr);
+    if (ptr) {
+        gst_object_ref(GST_OBJECT(ptr));
+        gst_object_sink(GST_OBJECT(ptr));
+    }
+
     return ptr;
 }
 
@@ -38,10 +47,18 @@ template <> void derefGPtr<GstElement>(GstElement* ptr)
         gst_object_unref(ptr);
 }
 
+template <> GRefPtr<GstPad> adoptGRef(GstPad* ptr)
+{
+    ASSERT(!GST_OBJECT_IS_FLOATING(GST_OBJECT(ptr)));
+    return GRefPtr<GstPad>(ptr, GRefPtrAdopt);
+}
+
 template <> GstPad* refGPtr<GstPad>(GstPad* ptr)
 {
-    if (ptr)
-        gst_object_ref_sink(GST_OBJECT(ptr));
+    if (ptr) {
+        gst_object_ref(GST_OBJECT(ptr));
+        gst_object_sink(GST_OBJECT(ptr));
+    }
     return ptr;
 }
 

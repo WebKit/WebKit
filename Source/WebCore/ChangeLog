@@ -1,3 +1,19 @@
+2011-11-23  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] improper usage of gst_object_ref_sink
+        https://bugs.webkit.org/show_bug.cgi?id=73014
+
+        Reviewed by Martin Robinson.
+
+        No new tests. Existing tests cover this already.
+
+        * platform/graphics/gstreamer/GRefPtrGStreamer.cpp:
+        (WTF::adoptGRef): Ensure this is called with non-floating GstObjects.
+        (WTF::GstElement): Replace gst_object_ref_sink with
+        gst_object_ref+gst_object_sink like advised in the GstObject documentation.
+        (WTF::GstPad): Ditto.
+        * platform/graphics/gstreamer/GRefPtrGStreamer.h:
+
 2011-11-23  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: split console agent into worker and page console agents
