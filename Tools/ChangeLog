@@ -1,3 +1,13 @@
+2011-11-23  Johnny Ding  <jnd@chromium.org>
+
+        Set right default value to baseURL in LayoutTestController::queueLoadHTMLString.
+        https://bugs.webkit.org/show_bug.cgi?id=72950
+
+        Reviewed by Tony Chang.
+
+        * DumpRenderTree/chromium/LayoutTestController.cpp:
+        (LayoutTestController::queueLoadHTMLString):
+
 2011-11-23  Adam Barth  <abarth@webkit.org>
 
         garden-o-matic should display a message if it can't find results to display

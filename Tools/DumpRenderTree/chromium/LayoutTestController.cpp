@@ -572,7 +572,7 @@ void LayoutTestController::queueLoadHTMLString(const CppArgumentList& arguments,
 {
     if (arguments.size() > 0 && arguments[0].isString()) {
         string html = arguments[0].toString();
-        WebURL baseURL;
+        WebURL baseURL(GURL(""));
         if (arguments.size() > 1 && arguments[1].isString())
             baseURL = WebURL(GURL(arguments[1].toString()));
         if (arguments.size() > 2 && arguments[2].isString())

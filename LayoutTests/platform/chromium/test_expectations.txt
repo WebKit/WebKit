@@ -2473,7 +2473,6 @@ BUG_DRT DEBUG : fast/frames/calculate-round.html = PASS TIMEOUT
 BUGCR43890 SLOW DEBUG : fast/forms/implicit-submission.html = PASS TEXT
 BUG_DRT BUGCR21141 LINUX : fast/forms/select-double-onchange.html = FAIL
 BUG_DRT BUGCR21141 LINUX : fast/forms/select-script-onchange.html = FAIL
-BUG_DRT DEBUG : fast/loader/non-deferred-substitute-load.html = CRASH
 BUG_DRT : fast/repaint/iframe-scroll-repaint.html = IMAGE
 BUG_DRT LINUX : fast/repaint/repaint-across-writing-mode-boundary.html = IMAGE
 BUG_DRT LINUX : fast/text/justification-padding-mid-word.html = PASS TEXT
