@@ -1,3 +1,12 @@
+2011-10-08  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Enable WebGL by default
+        https://bugs.webkit.org/show_bug.cgi?id=69706
+
+        Reviewed by Xan Lopez.
+
+        * configure.ac: Enable WebGL by default if the build target is X11.
+
 2011-11-23  Raphael Kubo da Costa  <kubo@profusion.mobi>
 
         [CMake] Move the top-level logic to the top-level directory.

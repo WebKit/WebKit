@@ -382,9 +382,8 @@ AC_MSG_RESULT([$enable_3d_rendering])
 # check whether to enable WebGL support
 AC_MSG_CHECKING([whether to enable WebGL support])
 AC_ARG_ENABLE(webgl,
-              AC_HELP_STRING([--enable-webgl],
-                             [enable support for WebGL (experimental) [default=no]]),
-              [], [enable_webgl="no"])
+              AC_HELP_STRING([--enable-webgl], [enable support for WebGL [default=yes]]),
+              [], [if test "$with_target" = "x11"; then enable_webgl="yes"; else enable_webgl="no"; fi])
 AC_MSG_RESULT([$enable_webgl])
 
 if test "$enable_webgl" = "yes"; then

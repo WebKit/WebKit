@@ -363,6 +363,14 @@ http/tests/navigation/ping-same-origin.html
 http/tests/navigation/ping-cross-origin.html
 http/tests/navigation/ping-cookie.html
 
+# The GTK+ build bots don't yet have the muscle to run WebGL tests.
+compositing/webgl
+fast/canvas/webgl
+http/tests/canvas/webgl
+http/tests/security/webgl-remote-read-remote-image-allowed.html
+http/tests/security/webgl-remote-read-remote-image-blocked-no-crossorigin.html
+http/tests/security/webgl-remote-read-remote-image-allowed-with-credentials.html
+
 ###############################################################################
 # TESTS FAILING
 ###############################################################################
