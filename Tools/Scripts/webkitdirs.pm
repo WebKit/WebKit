@@ -1702,7 +1702,7 @@ sub generateBuildSystemFromCMakeProject
     push @args, @cmakeArgs if @cmakeArgs;
     push @args, $additionalCMakeArgs if $additionalCMakeArgs;
 
-    push @args, '"' . File::Spec->catdir(sourceDir(), "Source") . '"';
+    push @args, '"' . sourceDir() . '"';
 
     # We call system("cmake @args") instead of system("cmake", @args) so that @args is
     # parsed for shell metacharacters.

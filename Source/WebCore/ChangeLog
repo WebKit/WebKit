@@ -1,3 +1,15 @@
+2011-11-23  Raphael Kubo da Costa  <kubo@profusion.mobi>
+
+        [CMake] Move the top-level logic to the top-level directory.
+        https://bugs.webkit.org/show_bug.cgi?id=72685
+
+        Reviewed by Brent Fulgham.
+
+        No new tests, this is a buildsystem changes.
+
+        * CMakeLists.txt: Adjust the Source/ directory.
+        * PlatformBlackBerry.cmake: Ditto.
+
 2011-11-23  Mihnea Ovidenie  <mihnea@adobe.com>
 
         CSS Exclusions: update the name of the shape CSS properties

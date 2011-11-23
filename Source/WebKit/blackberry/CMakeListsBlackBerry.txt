@@ -20,7 +20,7 @@ LIST(APPEND WebKit_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/blackberry/Api"
     "${WEBKIT_DIR}/blackberry/WebCoreSupport"
     "${WEBKIT_DIR}/blackberry/WebKitSupport"
-    "${CMAKE_SOURCE_DIR}" # For JavaScriptCore API headers
+    "${CMAKE_SOURCE_DIR}/Source" # For JavaScriptCore API headers
 )
 IF (ENABLE_DRT)
     LIST(APPEND WebKit_INCLUDE_DIRECTORIES

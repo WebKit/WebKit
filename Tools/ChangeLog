@@ -1,3 +1,17 @@
+2011-11-23  Raphael Kubo da Costa  <kubo@profusion.mobi>
+
+        [CMake] Move the top-level logic to the top-level directory.
+        https://bugs.webkit.org/show_bug.cgi?id=72685
+
+        Reviewed by Brent Fulgham.
+
+        * CMakeLists.txt: Added.
+        * DumpRenderTree/efl/CMakeLists.txt: Keep building into Programs/.
+        * EWebLauncher/CMakeLists.txt: Renamed from Tools/CMakeListsEfl.txt.
+        * Scripts/webkitdirs.pm:
+        (generateBuildSystemFromCMakeProject):
+        * WinCELauncher/CMakeLists.txt: Renamed from Tools/CMakeListsWinCE.txt.
+
 2011-11-17  Vincent Scheib  <scheib@chromium.org>
 
         Pointer Lock: Initial Tests for navigator.webkitPonter

@@ -1,3 +1,13 @@
+2011-11-23  Raphael Kubo da Costa  <kubo@profusion.mobi>
+
+        [CMake] Move the top-level logic to the top-level directory.
+        https://bugs.webkit.org/show_bug.cgi?id=72685
+
+        Reviewed by Brent Fulgham.
+
+        * CMakeLists.txt: Point to the right Source/ directory.
+        * wtf/CMakeLists.txt: Ditto.
+
 2011-11-22  Yuqiang Xian  <yuqiang.xian@intel.com>
 
         Strength reduction for Mul and Mod operations for known constants in DFG

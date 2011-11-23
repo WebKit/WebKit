@@ -1,3 +1,17 @@
+2011-11-23  Raphael Kubo da Costa  <kubo@profusion.mobi>
+
+        [CMake] Move the top-level logic to the top-level directory.
+        https://bugs.webkit.org/show_bug.cgi?id=72685
+
+        Reviewed by Brent Fulgham.
+
+        Move most of the top-level code in Source/CMakeLists.txt to
+        CMakeLists.txt. This allows us to replace some INCLUDE() hacks with
+        proper ADD_SUBDIRECTORY() calls, and actually moves non-Source related
+        to a non-Source directory.
+
+        * CMakeLists.txt: Copied from Source/CMakeLists.txt.
+
 2011-11-22  Adam Klein  <adamk@chromium.org>
 
         Add new WebKit/chromium/dbus directory to .gitignore.
