@@ -34,13 +34,6 @@ module html {
         readonly attribute DOMString label;
         readonly attribute DOMString language;
 
-        const unsigned short NONE = 0;
-        const unsigned short LOADING = 1;
-        const unsigned short LOADED = 2;
-        // Reflect is used for TextTrack::ERROR because it conflicts with a windows define.
-        const [Reflect=HTML_ERROR] unsigned short ERROR = 3;
-        readonly attribute unsigned short readyState;
-
         const unsigned short DISABLED = 0;
         const unsigned short HIDDEN = 1;
         const unsigned short SHOWING = 2;

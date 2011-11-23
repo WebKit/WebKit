@@ -28,12 +28,18 @@ module html {
         Conditional=VIDEO_TRACK,
         EnabledAtRuntime=webkitVideoTrack
     ] HTMLTrackElement : HTMLElement {
-    attribute [Reflect, URL] DOMString src;
-    attribute DOMString kind;
-    attribute DOMString srclang;
-    attribute DOMString label;
-    attribute [Reflect=default] boolean isDefault;
+        attribute [Reflect, URL] DOMString src;
+        attribute DOMString kind;
+        attribute DOMString srclang;
+        attribute DOMString label;
+        attribute [Reflect=default] boolean isDefault;
 
-    readonly attribute TextTrack track;
+        const unsigned short NONE = 0;
+        const unsigned short LOADING = 1;
+        const unsigned short LOADED = 2;
+        const unsigned short ERROR = 3;
+        readonly attribute unsigned short readyState;
+
+        readonly attribute TextTrack track;
 };
 }

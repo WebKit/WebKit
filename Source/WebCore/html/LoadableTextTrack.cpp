@@ -64,13 +64,16 @@ void LoadableTextTrack::scheduleLoad(const KURL& url)
 
 void LoadableTextTrack::loadTimerFired(Timer<LoadableTextTrack>*)
 {
-    setReadyState(TextTrack::LOADING);
+    if (!m_trackElement)
+        return;
+
+    m_trackElement->setReadyState(HTMLTrackElement::LOADING);
     
     if (m_loader)
         m_loader->cancelLoad();
 
-    if (!m_trackElement || !m_trackElement->canLoadUrl(this, m_url)) {
-        setReadyState(TextTrack::HTML_ERROR);
+    if (!m_trackElement->canLoadUrl(this, m_url)) {
+        m_trackElement->setReadyState(HTMLTrackElement::ERROR);
         return;
     }
 
@@ -100,17 +103,18 @@ void LoadableTextTrack::cueLoadingStarted(TextTrackLoader* loader)
 {
     ASSERT_UNUSED(loader, m_loader == loader);
     
-    setReadyState(TextTrack::LOADING);
+    if (!m_trackElement)
+        return;
+    m_trackElement->setReadyState(HTMLTrackElement::LOADING);
 }
 
 void LoadableTextTrack::cueLoadingCompleted(TextTrackLoader* loader, bool loadingFailed)
 {
     ASSERT_UNUSED(loader, m_loader == loader);
 
-    loadingFailed ? setReadyState(TextTrack::HTML_ERROR) : setReadyState(TextTrack::LOADED);
-
-    if (m_trackElement)
-        m_trackElement->didCompleteLoad(this, loadingFailed);
+    if (!m_trackElement)
+        return;
+    m_trackElement->didCompleteLoad(this, loadingFailed);
 }
 
 void LoadableTextTrack::fireCueChangeEvent()

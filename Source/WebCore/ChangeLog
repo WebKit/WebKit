@@ -1,3 +1,37 @@
+2011-11-23  Anna Cavender  <annacc@chromium.org>
+
+        Move readyState from TextTrack to HTMLTrackElement
+        https://bugs.webkit.org/show_bug.cgi?id=72553
+
+        Reviewed by Eric Carlson.
+
+        * html/HTMLTrackElement.cpp:
+        (WebCore::HTMLTrackElement::HTMLTrackElement):
+            Set initial readyState to NONE.
+        (WebCore::HTMLTrackElement::didCompleteLoad):
+            Set readyState based on load completed status.
+        (WebCore::HTMLTrackElement::setReadyState):
+            This replaces textTrackReadyStateChanged() because only LoadableTextTrack
+            needs to notify HTMLTrackElement of readyState changes (i.e.
+            textTrackReadyStateChanged() is no longer required of TextTrackClient).
+        * html/HTMLTrackElement.h:
+            ReadyState enum and m_readyState member variable moved from TextTrack.
+        (WebCore::HTMLTrackElement::readyState):
+            New: readyState() getter.
+        * html/HTMLTrackElement.idl:
+            Add readyState attribute and associated constants.
+
+        * html/LoadableTextTrack.cpp:
+        (WebCore::LoadableTextTrack::loadTimerFired): Set readyState on HTMLTrackElement.
+        (WebCore::LoadableTextTrack::cueLoadingStarted): Ditto.
+        (WebCore::LoadableTextTrack::cueLoadingCompleted): Move code to set readyState
+            to HTMLTrackElement (it can set it based on loading status).
+
+        * html/TextTrack.cpp: Remove readyState from TextTrack.
+        (WebCore::TextTrack::TextTrack): Ditto.
+        * html/TextTrack.h: Ditto.
+        * html/TextTrack.idl: Ditto.
+
 2011-11-23  Raphael Kubo da Costa  <kubo@profusion.mobi>
 
         [CMake] Move the top-level logic to the top-level directory.

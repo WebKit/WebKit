@@ -75,7 +75,6 @@ TextTrack::TextTrack(ScriptExecutionContext* context, TextTrackClient* client, c
     : TrackBase(context, TrackBase::TextTrack)
     , m_label(label)
     , m_language(language)
-    , m_readyState(TextTrack::NONE)
     , m_mode(TextTrack::HIDDEN)
     , m_client(client)
     , m_trackType(type)
@@ -117,13 +116,6 @@ void TextTrack::setKind(const String& kind)
 
     if (m_client && oldKind != m_kind)
         m_client->textTrackKindChanged(this);
-}
-
-void TextTrack::setReadyState(ReadyState state)
-{
-    m_readyState = state;
-    if (m_client)
-        m_client->textTrackReadyStateChanged(this);
 }
 
 void TextTrack::setMode(unsigned short mode, ExceptionCode& ec)

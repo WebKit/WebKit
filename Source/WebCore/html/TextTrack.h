@@ -43,7 +43,6 @@ class TextTrackCueList;
 class TextTrackClient {
 public:
     virtual ~TextTrackClient() { }
-    virtual void textTrackReadyStateChanged(TextTrack*) = 0;
     virtual void textTrackKindChanged(TextTrack*) = 0;
     virtual void textTrackModeChanged(TextTrack*) = 0;
     virtual void textTrackAddCues(TextTrack*, const TextTrackCueList*) = 0;
@@ -76,9 +75,6 @@ public:
     String language() const { return m_language; }
     void setLanguage(const String& language) { m_language = language; }
 
-    enum ReadyState { NONE = 0, LOADING = 1, LOADED = 2, HTML_ERROR = 3 };
-    ReadyState readyState() const { return m_readyState; }
-
     enum Mode { DISABLED = 0, HIDDEN = 1, SHOWING = 2 };
     Mode mode() const { return m_mode; }
     void setMode(unsigned short, ExceptionCode&);
@@ -107,15 +103,12 @@ public:
 protected:
     TextTrack(ScriptExecutionContext*, TextTrackClient*, const String& kind, const String& label, const String& language, TextTrackType);
 
-    void setReadyState(ReadyState);
-
     RefPtr<TextTrackCueList> m_cues;
 
 private:
     String m_kind;
     String m_label;
     String m_language;
-    TextTrack::ReadyState m_readyState;
     TextTrack::Mode m_mode;
     TextTrackClient* m_client;
     TextTrackType m_trackType;
