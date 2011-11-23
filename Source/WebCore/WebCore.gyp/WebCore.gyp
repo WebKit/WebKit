@@ -1598,6 +1598,7 @@
             ['include', 'platform/graphics/cg/IntPointCG\\.cpp$'],
             ['include', 'platform/graphics/cg/IntRectCG\\.cpp$'],
             ['include', 'platform/graphics/cg/IntSizeCG\\.cpp$'],
+            ['exclude', 'platform/graphics/chromium/ImageChromiumMac\\.mm$'],
             ['exclude', 'platform/graphics/mac/FontMac\\.mm$'],
             ['exclude', 'platform/graphics/skia/GlyphPageTreeNodeSkia\\.cpp$'],
             ['exclude', 'platform/chromium/DragImageChromiumMac\\.cpp$'],
