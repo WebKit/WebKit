@@ -203,7 +203,7 @@ static void webkit_web_frame_class_init(WebKitWebFrameClass* frameClass)
             G_TYPE_NONE, 0);
 
     /**
-     * WebKitWebFrame::load-done
+     * WebKitWebFrame::load-committed
      * @web_frame: the object on which the signal is emitted
      *
      * Emitted when frame loading is done.

@@ -1,3 +1,13 @@
+2011-11-23  Kaustubh Atrawalkar  <kaustubh@motorola.com>
+
+        Documentation fix for load-committed in webkitwebframe
+        https://bugs.webkit.org/show_bug.cgi?id=72927
+
+        Reviewed by Martin Robinson.
+
+        * webkit/webkitwebframe.cpp:
+        (webkit_web_frame_class_init):
+
 2011-11-22  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: remove Inspector::bringToFront from the protocol.
