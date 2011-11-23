@@ -1,5 +1,20 @@
 2011-11-23  Adam Barth  <abarth@webkit.org>
 
+        garden-o-matic should display a message if it can't find results to display
+        https://bugs.webkit.org/show_bug.cgi?id=72991
+
+        Reviewed by Dimitri Glazkov.
+
+        Not all failures (e.g., TIMEOUT) have results that we can display.
+        This patch adds a short message so that the user can see that we're
+        done trying to load the results.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui/results.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui/results_unittests.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui_unittests.js:
+
+2011-11-23  Adam Barth  <abarth@webkit.org>
+
         garden-o-matic should explain more clearly what the builder lists at the top of the page mean
         https://bugs.webkit.org/show_bug.cgi?id=72992
 

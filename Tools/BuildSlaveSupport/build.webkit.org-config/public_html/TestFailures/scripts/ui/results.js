@@ -135,6 +135,9 @@ ui.results.ResultsGrid = base.extends('div', {
             }
             this.addComparison(resultType, resultsURLsByKind);
         }.bind(this));
+
+        if (!this.children.length)
+            this.textContent = 'No results to display.'
     }
 });
 

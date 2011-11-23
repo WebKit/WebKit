@@ -98,7 +98,7 @@ test("results.ResultsGrid (crashlog)", 1, function() {
 test("results.ResultsGrid (empty)", 1, function() {
     var grid = new ui.results.ResultsGrid()
     grid.addResults([]);
-    equal(grid.innerHTML, '');
+    equal(grid.innerHTML, 'No results to display.');
 });
 
 test("time", 6, function() {
