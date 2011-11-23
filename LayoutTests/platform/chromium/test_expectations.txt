@@ -3450,6 +3450,19 @@ BUGWK68436 SNOWLEOPARD CPU DEBUG : fast/repaint/background-clip-text.html = TIME
 BUGWK68436 SNOWLEOPARD CPU : fast/repaint/text-emphasis-h.html = TIMEOUT IMAGE
 BUGWK68436 SNOWLEOPARD CPU : svg/W3C-SVG-1.1/paths-data-12-t.svg = IMAGE+TEXT
 
+// New tests that needs rebaseling for chromium ports
+BUGWK71309 : svg/clip-path/clip-path-css-transform-1.svg = IMAGE
+BUGWK71309 : svg/clip-path/clip-path-css-transform-2.svg = IMAGE
+BUGWK71309 : svg/custom/clip-path-with-css-transform-1.svg = IMAGE
+BUGWK71309 : svg/custom/clip-path-with-css-transform-2.svg = IMAGE
+BUGWK71309 : svg/custom/pointer-events-image-css-transform.svg = IMAGE
+BUGWK71309 : svg/custom/pointer-events-text-css-transform.svg = IMAGE
+BUGWK71309 : svg/dynamic-updates/SVG-dynamic-css-transform.html = IMAGE
+BUGWK71309 : svg/dynamic-updates/SVGClipPathElement-css-transform-influences-hitTesting.html = IMAGE
+BUGWK71309 : svg/dom/css-transforms.xhtml = IMAGE
+BUGWK71309 : svg/transforms/svg-css-transforms-clip-path.xhtml = IMAGE
+BUGWK71309 : svg/transforms/svg-css-transforms.xhtml = IMAGE
+
 // Tests that are known to exhibit TEXT failures on Mac10.5 with Skia (CPU and/or GPU) graphics.
 BUGWK68437 LEOPARD CPU : canvas/philip/tests/2d.text.draw.fontface.notinpage.html = TEXT
 

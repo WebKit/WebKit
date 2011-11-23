@@ -1,3 +1,45 @@
+2011-11-23  Raul Hudea  <rhudea@adobe.com>
+
+        First step towards http://webkit.org/b/70025
+
+        Allow -webkit-transform to be have effect to SVG elements.
+        Currently, the CSS transform takes precedence over the SVG transform attribute
+
+        Allow SVG elements to be transformed using webkit-transform
+        https://bugs.webkit.org/show_bug.cgi?id=71309
+
+        Reviewed by Nikolas Zimmermann.
+
+        Tests: svg/clip-path/clip-path-css-transform-1.svg
+               svg/clip-path/clip-path-css-transform-2.svg
+               svg/custom/clip-path-with-css-transform-1.svg
+               svg/custom/clip-path-with-css-transform-2.svg
+               svg/custom/pointer-events-image-css-transform.svg
+               svg/custom/pointer-events-text-css-transform.svg
+               svg/dom/css-transforms.xhtml
+               svg/dynamic-updates/SVG-dynamic-css-transform.html
+               svg/dynamic-updates/SVGClipPathElement-css-transform-influences-hitTesting.html
+               svg/transforms/svg-css-transforms-clip-path.xhtml
+               svg/transforms/svg-css-transforms.xhtml
+
+        * manual-tests/svg-animation-css-transform.html: Added.
+        * manual-tests/svg-css-animate-compound.html: Added.
+        * manual-tests/svg-css-transition-compound.html: Added.
+        * rendering/svg/RenderSVGModelObject.cpp:
+        (WebCore::RenderSVGModelObject::styleWillChange):
+
+        Set the updateTransform flag on SVG elements whenever a CSS transform is present on the style
+
+        * svg/SVGStyledTransformableElement.cpp:
+        (WebCore::SVGStyledTransformableElement::animatedLocalTransform):
+
+        Use the RenderStyle's transform (if it exists) over the SVG's transform
+
+        * svg/SVGTextElement.cpp:
+        (WebCore::SVGTextElement::animatedLocalTransform):
+
+        Use the RenderStyle's transform (if it exists) over the SVG's transform
+
 2011-11-23  Rafael Weinstein  <rafaelw@chromium.org>
 
         [MutationObservers] Cleanup duplicated code in Element & CharacterData
