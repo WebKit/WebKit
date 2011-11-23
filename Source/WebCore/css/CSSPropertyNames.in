@@ -354,7 +354,8 @@ z-index
 -webkit-flow-into
 -webkit-flow-from
 -webkit-region-overflow
--webkit-wrap-shape
+-webkit-wrap-shape-inside
+-webkit-wrap-shape-outside
 -webkit-wrap-margin
 -webkit-wrap-padding
 -webkit-region-break-after

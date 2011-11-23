@@ -1,3 +1,39 @@
+2011-11-23  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        CSS Exclusions: update the name of the shape CSS properties
+        https://bugs.webkit.org/show_bug.cgi?id=71898
+        Instead of a single wrap-shape property, we have wrap-shape-inside and wrap-shape-outside.
+
+        Reviewed by Dean Jackson.
+
+        Tests: fast/exclusions/parsing-wrap-shape-inside.html
+               fast/exclusions/parsing-wrap-shape-outside.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::parseWrapShape):
+        * css/CSSParser.h:
+        * css/CSSProperty.cpp:
+        (WebCore::CSSProperty::isInheritedProperty):
+        * css/CSSPropertyNames.in:
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::diff):
+        * rendering/style/RenderStyle.h:
+        (WebCore::InheritedFlags::setWrapShapeInside):
+        (WebCore::InheritedFlags::wrapShapeInside):
+        (WebCore::InheritedFlags::setWrapShapeOutside):
+        (WebCore::InheritedFlags::wrapShapeOutside):
+        (WebCore::InheritedFlags::initialWrapShapeInside):
+        (WebCore::InheritedFlags::initialWrapShapeOutside):
+        * rendering/style/StyleRareNonInheritedData.cpp:
+        (WebCore::StyleRareNonInheritedData::StyleRareNonInheritedData):
+        (WebCore::StyleRareNonInheritedData::operator==):
+        * rendering/style/StyleRareNonInheritedData.h:
+
 2011-11-23  Andrey Kosyakov  <caseq@chromium.org>
 
         Web Inspector: [Extensions API] avoid exception in initExtensions() if elements panel is not present

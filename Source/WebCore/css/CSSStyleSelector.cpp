@@ -3860,16 +3860,24 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(columnAxis, ColumnAxis);
         return;
 
-    case CSSPropertyWebkitWrapShape:
-        HANDLE_INHERIT_AND_INITIAL(wrapShape, WrapShape);
+    case CSSPropertyWebkitWrapShapeInside:
+        HANDLE_INHERIT_AND_INITIAL(wrapShapeInside, WrapShapeInside);
         if (!primitiveValue)
             return;
-
         if (primitiveValue->getIdent() == CSSValueAuto)
-            m_style->setWrapShape(0);
+            m_style->setWrapShapeInside(0);
         else if (primitiveValue->primitiveType() == CSSPrimitiveValue::CSS_SHAPE)
-            m_style->setWrapShape(primitiveValue->getShapeValue());
+            m_style->setWrapShapeInside(primitiveValue->getShapeValue());
+        return;
 
+    case CSSPropertyWebkitWrapShapeOutside:
+        HANDLE_INHERIT_AND_INITIAL(wrapShapeOutside, WrapShapeOutside);
+        if (!primitiveValue)
+            return;
+        if (primitiveValue->getIdent() == CSSValueAuto)
+            m_style->setWrapShapeOutside(0);
+        else if (primitiveValue->primitiveType() == CSSPrimitiveValue::CSS_SHAPE)
+            m_style->setWrapShapeOutside(primitiveValue->getShapeValue());
         return;
 
     case CSSPropertyWebkitWrapFlow:

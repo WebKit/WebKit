@@ -129,7 +129,8 @@ public:
 
     LengthSize m_pageSize;
 
-    RefPtr<CSSWrapShape> m_wrapShape;
+    RefPtr<CSSWrapShape> m_wrapShapeInside;
+    RefPtr<CSSWrapShape> m_wrapShapeOutside;
     Length m_wrapMargin;
     Length m_wrapPadding;
     

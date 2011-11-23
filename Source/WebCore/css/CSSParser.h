@@ -129,7 +129,7 @@ public:
 
     bool parseShape(int propId, bool important);
 
-    bool parseWrapShape(bool important);
+    bool parseWrapShape(bool shapeInside, bool important);
     PassRefPtr<CSSWrapShape> parseWrapShapeRect(CSSParserValueList* args);
     PassRefPtr<CSSWrapShape> parseWrapShapeCircle(CSSParserValueList* args);
     PassRefPtr<CSSWrapShape> parseWrapShapeEllipse(CSSParserValueList* args);

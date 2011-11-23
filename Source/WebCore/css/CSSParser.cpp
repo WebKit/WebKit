@@ -2195,11 +2195,12 @@ bool CSSParser::parseValue(int propId, bool important)
             return parseFontFeatureSettings(important);
         break;
 
-    case CSSPropertyWebkitWrapShape:
+    case CSSPropertyWebkitWrapShapeInside:
+    case CSSPropertyWebkitWrapShapeOutside:
         if (id == CSSValueAuto)
             validPrimitive = true;
         else if (value->unit == CSSParserValue::Function)
-            return parseWrapShape(important);
+            return parseWrapShape((propId == CSSPropertyWebkitWrapShapeInside), important);
         break;
     case CSSPropertyWebkitWrapFlow:
         if (id == CSSValueAuto || id == CSSValueBoth || id == CSSValueLeft || id == CSSValueRight || id == CSSValueMaximum || id == CSSValueClear)
@@ -3948,7 +3949,7 @@ PassRefPtr<CSSWrapShape> CSSParser::parseWrapShapePolygon(CSSParserValueList* ar
     return shape;
 }
 
-bool CSSParser::parseWrapShape(bool important)
+bool CSSParser::parseWrapShape(bool shapeInside, bool important)
 {
     CSSParserValue* value = m_valueList->current();
     CSSParserValueList* args = value->function->args.get();
@@ -3968,7 +3969,7 @@ bool CSSParser::parseWrapShape(bool important)
         shape = parseWrapShapePolygon(args);
 
     if (shape) {
-        addProperty(CSSPropertyWebkitWrapShape, primitiveValueCache()->createValue(shape.release()), important);
+        addProperty(shapeInside ? CSSPropertyWebkitWrapShapeInside : CSSPropertyWebkitWrapShapeOutside, primitiveValueCache()->createValue(shape.release()), important);
         m_valueList->next();
         return true;
     }

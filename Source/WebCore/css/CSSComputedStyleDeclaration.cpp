@@ -2174,11 +2174,15 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
         case CSSPropertyWebkitTransition:
             break;
 
-        case CSSPropertyWebkitWrapShape:
-            if (!style->wrapShape())
+        case CSSPropertyWebkitWrapShapeInside:
+            if (!style->wrapShapeInside())
                 return primitiveValueCache->createIdentifierValue(CSSValueAuto);
+            return primitiveValueCache->createValue(style->wrapShapeInside());
 
-            return primitiveValueCache->createValue(style->wrapShape());
+        case CSSPropertyWebkitWrapShapeOutside:
+            if (!style->wrapShapeOutside())
+                return primitiveValueCache->createIdentifierValue(CSSValueAuto);
+            return primitiveValueCache->createValue(style->wrapShapeOutside());
 
         case CSSPropertyWebkitWrapFlow:
             return primitiveValueCache->createValue(style->wrapFlow());
