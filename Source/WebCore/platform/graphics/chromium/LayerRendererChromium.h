@@ -128,6 +128,8 @@ public:
     const CCCanvasLayerImpl::Program* canvasLayerProgram();
     const CCPluginLayerImpl::Program* pluginLayerProgram();
     const CCPluginLayerImpl::ProgramFlip* pluginLayerProgramFlip();
+    const CCPluginLayerImpl::TexRectProgram* pluginLayerTexRectProgram();
+    const CCPluginLayerImpl::TexRectProgramFlip* pluginLayerTexRectProgramFlip();
     const CCVideoLayerImpl::RGBAProgram* videoLayerRGBAProgram();
     const CCVideoLayerImpl::YUVProgram* videoLayerYUVProgram();
 
@@ -215,6 +217,8 @@ private:
     OwnPtr<CCCanvasLayerImpl::Program> m_canvasLayerProgram;
     OwnPtr<CCPluginLayerImpl::Program> m_pluginLayerProgram;
     OwnPtr<CCPluginLayerImpl::ProgramFlip> m_pluginLayerProgramFlip;
+    OwnPtr<CCPluginLayerImpl::TexRectProgram> m_pluginLayerTexRectProgram;
+    OwnPtr<CCPluginLayerImpl::TexRectProgramFlip> m_pluginLayerTexRectProgramFlip;
     OwnPtr<CCRenderSurface::MaskProgram> m_renderSurfaceMaskProgram;
     OwnPtr<CCRenderSurface::Program> m_renderSurfaceProgram;
     OwnPtr<CCRenderSurface::MaskProgramAA> m_renderSurfaceMaskProgramAA;

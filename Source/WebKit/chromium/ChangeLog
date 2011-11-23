@@ -1,3 +1,27 @@
+2011-11-22  Kenneth Russell  <kbr@google.com>
+
+        [chromium] Support Core Animation plugins in compositor
+        https://bugs.webkit.org/show_bug.cgi?id=72921
+
+        Reviewed by Stephen White.
+
+        Added IOSurface support to WebPluginContainer. This code path is
+        used only on Mac OS X, but is defined in the header on all
+        platforms for simplicity.
+
+        * public/WebGraphicsContext3D.h:
+        (WebKit::WebGraphicsContext3D::texImageIOSurface2DCHROMIUM):
+        * public/WebPluginContainer.h:
+        * src/Extensions3DChromium.cpp:
+        (WebCore::Extensions3DChromium::texImageIOSurface2DCHROMIUM):
+        * src/GraphicsContext3DChromium.cpp:
+        * src/GraphicsContext3DPrivate.h:
+        * src/WebPluginContainerImpl.cpp:
+        (WebKit::WebPluginContainerImpl::setBackingIOSurfaceId):
+        (WebKit::WebPluginContainerImpl::platformLayer):
+        (WebKit::WebPluginContainerImpl::handleKeyboardEvent):
+        * src/WebPluginContainerImpl.h:
+
 2011-11-22  Daniel Cheng  <dcheng@chromium.org>
 
         [chromium] Fix plumbing for differentiating between clipboard/selection pastes.

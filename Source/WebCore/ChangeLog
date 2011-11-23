@@ -1,3 +1,50 @@
+2011-11-22  Kenneth Russell  <kbr@google.com>
+
+        [chromium] Support Core Animation plugins in compositor
+        https://bugs.webkit.org/show_bug.cgi?id=72921
+
+        Reviewed by Stephen White.
+
+        Added support to PluginLayerChromium and CCPluginLayerImpl for
+        using an IOSurface as the backing store for a plugin. Added minimal
+        ARB_texture_rectangle support to Extensions3D.h and a Chromium-
+        specific extension for binding an IOSurface to a texture.
+
+        These changes themselves do not have any effect. A follow-on
+        Chromium CL will make the switch to this new code path.
+
+        Tested manually both with and without the Chromium side changes;
+        Chromium's DumpRenderTree port does not support Core Animation
+        plugins. Ran video and Stage3D in Flash, and Unity 3D content, to
+        verify.
+
+        * platform/graphics/Extensions3D.h:
+        * platform/graphics/chromium/Extensions3DChromium.h:
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::initialize):
+        (WebCore::LayerRendererChromium::pluginLayerTexRectProgram):
+        (WebCore::LayerRendererChromium::pluginLayerTexRectProgramFlip):
+        * platform/graphics/chromium/LayerRendererChromium.h:
+        * platform/graphics/chromium/PluginLayerChromium.cpp:
+        (WebCore::PluginLayerChromium::PluginLayerChromium):
+        (WebCore::PluginLayerChromium::setIOSurfaceProperties):
+        (WebCore::PluginLayerChromium::getIOSurfaceId):
+        (WebCore::PluginLayerChromium::pushPropertiesTo):
+        * platform/graphics/chromium/PluginLayerChromium.h:
+        * platform/graphics/chromium/ShaderChromium.cpp:
+        (WebCore::FragmentShaderRGBATexRectFlipAlpha::getShaderString):
+        (WebCore::FragmentShaderRGBATexRectAlpha::getShaderString):
+        * platform/graphics/chromium/ShaderChromium.h:
+        * platform/graphics/chromium/cc/CCPluginLayerImpl.cpp:
+        (PluginProgramBinding::TexStretchPluginProgramBinding::set):
+        (PluginProgramBinding::TexTransformPluginProgramBinding::set):
+        (WebCore::CCPluginLayerImpl::CCPluginLayerImpl):
+        (WebCore::CCPluginLayerImpl::~CCPluginLayerImpl):
+        (WebCore::CCPluginLayerImpl::draw):
+        (WebCore::CCPluginLayerImpl::setIOSurfaceProperties):
+        (WebCore::CCPluginLayerImpl::cleanupResources):
+        * platform/graphics/chromium/cc/CCPluginLayerImpl.h:
+
 2011-11-22  Daniel Cheng  <dcheng@chromium.org>
 
         [chromium] Fix plumbing for differentiating between clipboard/selection pastes.

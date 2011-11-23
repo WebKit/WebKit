@@ -375,6 +375,9 @@ public:
     // both command buffer port and in-process port.
     virtual WebString getTranslatedShaderSourceANGLE(WebGLId shader) { return WebString(); }
 
+    // GL_CHROMIUM_iosurface
+    virtual void texImageIOSurface2DCHROMIUM(WGC3Denum target, WGC3Dint width, WGC3Dint height, WGC3Duint ioSurfaceId, WGC3Duint plane) { }
+
 #if WEBKIT_USING_SKIA
     GrGLInterface* createGrGLInterface();
 #endif

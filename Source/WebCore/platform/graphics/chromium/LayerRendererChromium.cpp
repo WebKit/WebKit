@@ -211,6 +211,12 @@ bool LayerRendererChromium::initialize()
     if (m_capabilities.usingSetVisibility)
         extensions->ensureEnabled("GL_CHROMIUM_set_visibility");
 
+    if (extensions->supports("GL_CHROMIUM_iosurface")) {
+        ASSERT(extensions->supports("GL_ARB_texture_rectangle"));
+        extensions->ensureEnabled("GL_ARB_texture_rectangle");
+        extensions->ensureEnabled("GL_CHROMIUM_iosurface");
+    }
+
     GLC(m_context.get(), m_context->getIntegerv(GraphicsContext3D::MAX_TEXTURE_SIZE, &m_capabilities.maxTextureSize));
     m_capabilities.bestTextureFormat = PlatformColor::bestTextureFormat(m_context.get());
 
@@ -824,6 +830,28 @@ const CCPluginLayerImpl::ProgramFlip* LayerRendererChromium::pluginLayerProgramF
         m_pluginLayerProgramFlip->initialize(m_context.get());
     }
     return m_pluginLayerProgramFlip.get();
+}
+
+const CCPluginLayerImpl::TexRectProgram* LayerRendererChromium::pluginLayerTexRectProgram()
+{
+    if (!m_pluginLayerTexRectProgram)
+        m_pluginLayerTexRectProgram = adoptPtr(new CCPluginLayerImpl::TexRectProgram(m_context.get()));
+    if (!m_pluginLayerTexRectProgram->initialized()) {
+        TRACE_EVENT("LayerRendererChromium::pluginLayerTexRectProgram::initialize", this, 0);
+        m_pluginLayerTexRectProgram->initialize(m_context.get());
+    }
+    return m_pluginLayerTexRectProgram.get();
+}
+
+const CCPluginLayerImpl::TexRectProgramFlip* LayerRendererChromium::pluginLayerTexRectProgramFlip()
+{
+    if (!m_pluginLayerTexRectProgramFlip)
+        m_pluginLayerTexRectProgramFlip = adoptPtr(new CCPluginLayerImpl::TexRectProgramFlip(m_context.get()));
+    if (!m_pluginLayerTexRectProgramFlip->initialized()) {
+        TRACE_EVENT("LayerRendererChromium::pluginLayerTexRectProgramFlip::initialize", this, 0);
+        m_pluginLayerTexRectProgramFlip->initialize(m_context.get());
+    }
+    return m_pluginLayerTexRectProgramFlip.get();
 }
 
 const CCVideoLayerImpl::RGBAProgram* LayerRendererChromium::videoLayerRGBAProgram()

@@ -311,6 +311,37 @@ String FragmentShaderRGBATexAlpha::getShaderString() const
     );
 }
 
+String FragmentShaderRGBATexRectFlipAlpha::getShaderString() const
+{
+    // This must be paired with VertexShaderPosTexTransform to pick up the texTransform uniform.
+    // The necessary #extension preprocessing directive breaks the SHADER and SHADER0 macros.
+    return "#extension GL_ARB_texture_rectangle : require\n"
+            "precision mediump float;\n"
+            "varying vec2 v_texCoord;\n"
+            "uniform vec4 texTransform;\n"
+            "uniform sampler2DRect s_texture;\n"
+            "uniform float alpha;\n"
+            "void main()\n"
+            "{\n"
+            "    vec4 texColor = texture2DRect(s_texture, vec2(v_texCoord.x, texTransform.w - v_texCoord.y));\n"
+            "    gl_FragColor = vec4(texColor.x, texColor.y, texColor.z, texColor.w) * alpha;\n"
+            "}\n";
+}
+
+String FragmentShaderRGBATexRectAlpha::getShaderString() const
+{
+    return "#extension GL_ARB_texture_rectangle : require\n"
+            "precision mediump float;\n"
+            "varying vec2 v_texCoord;\n"
+            "uniform sampler2DRect s_texture;\n"
+            "uniform float alpha;\n"
+            "void main()\n"
+            "{\n"
+            "    vec4 texColor = texture2DRect(s_texture, v_texCoord);\n"
+            "    gl_FragColor = texColor * alpha;\n"
+            "}\n";
+}
+
 String FragmentShaderRGBATexOpaque::getShaderString() const
 {
     return SHADER(

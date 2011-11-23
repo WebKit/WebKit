@@ -45,6 +45,7 @@ public:
     //   GL_CHROMIUM_swapbuffers_complete_callback
     //   GL_CHROMIUM_rate_limit_offscreen_context
     //   GL_CHROMIUM_paint_framebuffer_canvas
+    //   GL_CHROMIUM_iosurface (Mac OS X specific)
 
     // Extensions3D methods.
     virtual bool supports(const String&);
@@ -90,6 +91,11 @@ public:
 
     // GL_CHROMIUM_paint_framebuffer_canvas
     void paintFramebufferToCanvas(int framebuffer, int width, int height, bool premultiplyAlpha, ImageBuffer*);
+
+    // GL_CHROMIUM_iosurface
+    // To avoid needing to expose extraneous enums, assumes internal format
+    // RGBA, format BGRA, and type UNSIGNED_INT_8_8_8_8_REV.
+    void texImageIOSurface2DCHROMIUM(unsigned target, int width, int height, uint32_t ioSurfaceId, unsigned plane);
 
 private:
     // Instances of this class are strictly owned by the GraphicsContext3D implementation and do not

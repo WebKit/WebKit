@@ -307,6 +307,9 @@ public:
     // GL_ANGLE_translated_shader_source
     String getTranslatedShaderSourceANGLE(Platform3DObject shader);
 
+    // GL_CHROMIUM_iosurface
+    void texImageIOSurface2DCHROMIUM(GC3Denum target, GC3Dint width, GC3Dint height, GC3Duint ioSurfaceId, GC3Duint plane);
+
 private:
     GraphicsContext3DPrivate(WebKit::WebViewImpl*, PassOwnPtr<WebKit::WebGraphicsContext3D>, GraphicsContext3D::Attributes);
 

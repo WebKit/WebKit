@@ -145,6 +145,11 @@ void Extensions3DChromium::paintFramebufferToCanvas(int framebuffer, int width, 
     m_private->paintFramebufferToCanvas(framebuffer, width, height, premultiplyAlpha, imageBuffer);
 }
 
+void Extensions3DChromium::texImageIOSurface2DCHROMIUM(unsigned target, int width, int height, uint32_t ioSurfaceId, unsigned plane)
+{
+    m_private->texImageIOSurface2DCHROMIUM(target, width, height, ioSurfaceId, plane);
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(WEBGL)

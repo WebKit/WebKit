@@ -180,6 +180,16 @@ public:
     String getShaderString() const;
 };
 
+class FragmentShaderRGBATexRectFlipAlpha : public FragmentTexAlphaBinding {
+public:
+    String getShaderString() const;
+};
+
+class FragmentShaderRGBATexRectAlpha : public FragmentTexAlphaBinding {
+public:
+    String getShaderString() const;
+};
+
 class FragmentShaderRGBATexOpaque : public FragmentTexOpaqueBinding {
 public:
     String getShaderString() const;

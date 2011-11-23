@@ -91,6 +91,9 @@ public:
     virtual void scrollRect(int dx, int dy, const WebRect&);
     virtual void reportGeometry();
     virtual void setBackingTextureId(unsigned);
+    virtual void setBackingIOSurfaceId(int width,
+                                       int height,
+                                       uint32_t ioSurfaceId);
     virtual void commitBackingTexture();
     virtual void clearScriptObjects();
     virtual NPObject* scriptableObjectForElement();

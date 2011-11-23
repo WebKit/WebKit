@@ -347,6 +347,25 @@ void WebPluginContainerImpl::setBackingTextureId(unsigned id)
 #endif
 }
 
+void WebPluginContainerImpl::setBackingIOSurfaceId(int width,
+                                                   int height,
+                                                   uint32_t ioSurfaceId)
+{
+#if OS(DARWIN) && USE(ACCELERATED_COMPOSITING)
+    uint32_t currentId = m_platformLayer->getIOSurfaceId();
+    if (ioSurfaceId == currentId)
+        return;
+
+    m_platformLayer->setIOSurfaceProperties(width, height, ioSurfaceId);
+
+    // If anyone of the IDs is zero we need to switch between hardware
+    // and software compositing. This is done by triggering a style recalc
+    // on the container element.
+    if (!(ioSurfaceId * currentId))
+        m_element->setNeedsStyleRecalc(WebCore::SyntheticStyleChange);
+#endif
+}
+
 void WebPluginContainerImpl::commitBackingTexture()
 {
 #if USE(ACCELERATED_COMPOSITING)
@@ -456,7 +475,7 @@ void WebPluginContainerImpl::willDestroyPluginLoadObserver(WebPluginLoadObserver
 #if USE(ACCELERATED_COMPOSITING)
 WebCore::LayerChromium* WebPluginContainerImpl::platformLayer() const
 {
-    return m_platformLayer->textureId() ? m_platformLayer.get() : 0;
+    return (m_platformLayer->textureId() || m_platformLayer->getIOSurfaceId()) ? m_platformLayer.get() : 0;
 }
 #endif
 
@@ -585,7 +604,7 @@ void WebPluginContainerImpl::handleKeyboardEvent(KeyboardEvent* event)
         return;
 
     if (webEvent.type == WebInputEvent::KeyDown) {
-#if defined(OS_MACOSX)
+#if OS(DARWIN)
         if (webEvent.modifiers == WebInputEvent::MetaKey
 #else
         if (webEvent.modifiers == WebInputEvent::ControlKey
