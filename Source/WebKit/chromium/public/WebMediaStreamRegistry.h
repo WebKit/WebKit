@@ -34,7 +34,7 @@ class WebURL;
 
 class WebMediaStreamRegistry {
 public:
-    static WebMediaStreamDescriptor lookupMediaStreamDescriptor(const WebURL&);
+    WEBKIT_EXPORT static WebMediaStreamDescriptor lookupMediaStreamDescriptor(const WebURL&);
 };
 
 } // namespace WebKit
