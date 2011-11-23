@@ -31,7 +31,7 @@
 #ifndef WorkerRuntimeAgent_h
 #define WorkerRuntimeAgent_h
 
-#if ENABLE(INSPECTOR)
+#if ENABLE(INSPECTOR) && ENABLE(WORKERS)
 
 #include "InspectorRuntimeAgent.h"
 

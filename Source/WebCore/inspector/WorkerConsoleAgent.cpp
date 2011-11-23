@@ -32,7 +32,7 @@
 
 #include "WorkerConsoleAgent.h"
 
-#if ENABLE(INSPECTOR)
+#if ENABLE(INSPECTOR) && ENABLE(WORKERS)
 
 namespace WebCore {
 
@@ -57,4 +57,4 @@ bool WorkerConsoleAgent::developerExtrasEnabled()
 
 } // namespace WebCore
 
-#endif // ENABLE(INSPECTOR)
+#endif // ENABLE(INSPECTOR) && ENABLE(WORKERS)

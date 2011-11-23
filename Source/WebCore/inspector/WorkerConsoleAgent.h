@@ -33,7 +33,7 @@
 
 #include "InspectorConsoleAgent.h"
 
-#if ENABLE(INSPECTOR)
+#if ENABLE(INSPECTOR) && ENABLE(WORKERS)
 
 namespace WebCore {
 
@@ -50,6 +50,6 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(INSPECTOR)
+#endif // ENABLE(INSPECTOR) && ENABLE(WORKERS)
 
 #endif // !defined(WorkerConsoleAgent_h)

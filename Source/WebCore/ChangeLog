@@ -1,3 +1,12 @@
+2011-11-23  Yury Semikhatsky  <yurys@chromium.org>
+
+        Unreviewed. Build fix. Added missing ENABLE(WORKERS) guards.
+
+        * inspector/WorkerConsoleAgent.cpp:
+        * inspector/WorkerConsoleAgent.h:
+        * inspector/WorkerRuntimeAgent.cpp:
+        * inspector/WorkerRuntimeAgent.h:
+
 2011-11-23  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] improper usage of gst_object_ref_sink

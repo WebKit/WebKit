@@ -32,7 +32,7 @@
 
 #include "WorkerRuntimeAgent.h"
 
-#if ENABLE(INSPECTOR)
+#if ENABLE(INSPECTOR) && ENABLE(WORKERS)
 
 #include "ScriptState.h"
 
@@ -60,4 +60,4 @@ ScriptState* WorkerRuntimeAgent::getDefaultInspectedState()
 
 } // namespace WebCore
 
-#endif // ENABLE(INSPECTOR)
+#endif // ENABLE(INSPECTOR) && ENABLE(WORKERS)
