@@ -80,6 +80,11 @@ static inline bool nodeCanIgnoreNegativeZero(ArithNodeFlags flags)
     return !(flags & NodeNeedsNegZero);
 }
 
+static inline bool nodeMayOverflow(ArithNodeFlags flags)
+{
+    return !!(flags & NodeMayOverflow);
+}
+
 static inline bool nodeCanSpeculateInteger(ArithNodeFlags flags)
 {
     if (flags & NodeMayOverflow)

@@ -2426,46 +2426,7 @@ void SpeculativeJIT::compile(Node& node)
     }
 
     case ArithMul: {
-        if (Node::shouldSpeculateInteger(at(node.child1()), at(node.child2())) && node.canSpeculateInteger()) {
-            SpeculateIntegerOperand op1(this, node.child1());
-            SpeculateIntegerOperand op2(this, node.child2());
-            GPRTemporary result(this);
-
-            GPRReg reg1 = op1.gpr();
-            GPRReg reg2 = op2.gpr();
-
-            // What is unfortunate is that we cannot take advantage of nodeCanTruncateInteger()
-            // here. A multiply on integers performed in the double domain and then truncated to
-            // an integer will give a different result than a multiply performed in the integer
-            // domain and then truncated, if the integer domain result would have resulted in
-            // something bigger than what a 32-bit integer can hold. JavaScript mandates that
-            // the semantics are always as if the multiply had been performed in the double
-            // domain.
-            
-            speculationCheck(JSValueRegs(), NoNode, m_jit.branchMul32(MacroAssembler::Overflow, reg1, reg2, result.gpr()));
-            
-            // Check for negative zero, if the users of this node care about such things.
-            if (!nodeCanIgnoreNegativeZero(node.arithNodeFlags())) {
-                MacroAssembler::Jump resultNonZero = m_jit.branchTest32(MacroAssembler::NonZero, result.gpr());
-                speculationCheck(JSValueRegs(), NoNode, m_jit.branch32(MacroAssembler::LessThan, reg1, TrustedImm32(0)));
-                speculationCheck(JSValueRegs(), NoNode, m_jit.branch32(MacroAssembler::LessThan, reg2, TrustedImm32(0)));
-                resultNonZero.link(&m_jit);
-            }
-
-            integerResult(result.gpr(), m_compileIndex);
-            break;
-        }
-
-        SpeculateDoubleOperand op1(this, node.child1());
-        SpeculateDoubleOperand op2(this, node.child2());
-        FPRTemporary result(this, op1, op2);
-
-        FPRReg reg1 = op1.fpr();
-        FPRReg reg2 = op2.fpr();
-        
-        m_jit.mulDouble(reg1, reg2, result.fpr());
-        
-        doubleResult(result.fpr(), m_compileIndex);
+        compileArithMul(node);
         break;
     }
 
@@ -2523,48 +2484,7 @@ void SpeculativeJIT::compile(Node& node)
     }
 
     case ArithMod: {
-        if (at(node.child1()).shouldNotSpeculateInteger() || at(node.child2()).shouldNotSpeculateInteger()
-            || !node.canSpeculateInteger()) {
-            SpeculateDoubleOperand op1(this, node.child1());
-            SpeculateDoubleOperand op2(this, node.child2());
-            
-            FPRReg op1FPR = op1.fpr();
-            FPRReg op2FPR = op2.fpr();
-            
-            flushRegisters();
-            
-            FPRResult result(this);
-
-            callOperation(fmod, result.fpr(), op1FPR, op2FPR);
-            
-            doubleResult(result.fpr(), m_compileIndex);
-            break;
-        }
-        
-        SpeculateIntegerOperand op1(this, node.child1());
-        SpeculateIntegerOperand op2(this, node.child2());
-        GPRTemporary eax(this, X86Registers::eax);
-        GPRTemporary edx(this, X86Registers::edx);
-        GPRReg op1Gpr = op1.gpr();
-        GPRReg op2Gpr = op2.gpr();
-
-        speculationCheck(JSValueRegs(), NoNode, m_jit.branchTest32(JITCompiler::Zero, op2Gpr));
-
-        GPRReg temp2 = InvalidGPRReg;
-        if (op2Gpr == X86Registers::eax || op2Gpr == X86Registers::edx) {
-            temp2 = allocate();
-            m_jit.move(op2Gpr, temp2);
-            op2Gpr = temp2;
-        }
-
-        m_jit.move(op1Gpr, eax.gpr());
-        m_jit.assembler().cdq();
-        m_jit.assembler().idivl_r(op2Gpr);
-
-        if (temp2 != InvalidGPRReg)
-            unlock(temp2);
-
-        integerResult(edx.gpr(), m_compileIndex);
+        compileArithMod(node);
         break;
     }
 

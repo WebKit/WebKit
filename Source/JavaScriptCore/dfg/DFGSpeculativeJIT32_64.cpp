@@ -33,17 +33,6 @@
 
 namespace JSC { namespace DFG {
 
-// On Windows we need to wrap fmod; on other platforms we can call it directly.
-// On ARMv7 we assert that all function pointers have to low bit set (point to thumb code).
-#if CALLING_CONVENTION_IS_STDCALL || CPU(ARM_THUMB2)
-static double DFG_OPERATION fmodAsDFGOperation(double x, double y)
-{
-    return fmod(x, y);
-}
-#else
-#define fmodAsDFGOperation fmod
-#endif
-
 #if USE(JSVALUE32_64)
 
 GPRReg SpeculativeJIT::fillInteger(NodeIndex nodeIndex, DataFormat& returnFormat)
@@ -2052,121 +2041,6 @@ void SpeculativeJIT::emitBranch(Node& node)
     }
 }
 
-void SpeculativeJIT::compileSoftModulo(Node& node)
-{
-    SpeculateIntegerOperand op1(this, node.child1());
-    SpeculateIntegerOperand op2(this, node.child2());
-    GPRReg op1Gpr = op1.gpr();
-    GPRReg op2Gpr = op2.gpr();
-
-    speculationCheck(JSValueRegs(), NoNode, m_jit.branchTest32(JITCompiler::Zero, op2Gpr));
-
-#if CPU(X86)
-    GPRTemporary eax(this, X86Registers::eax);
-    GPRTemporary edx(this, X86Registers::edx);
-    GPRReg temp2 = InvalidGPRReg;
-    if (op2Gpr == X86Registers::eax || op2Gpr == X86Registers::edx) {
-        temp2 = allocate();
-        m_jit.move(op2Gpr, temp2);
-        op2Gpr = temp2;
-    }
-    GPRReg resultGPR = edx.gpr();
-    GPRReg scratchGPR = eax.gpr();
-#else
-    GPRTemporary result(this);
-    GPRTemporary scratch(this);
-    GPRReg resultGPR = result.gpr();
-    GPRReg scratchGPR = scratch.gpr();
-#endif
-
-    GPRTemporary scratch2(this);
-    GPRReg scratchGPR2 = scratch2.gpr();
-    JITCompiler::JumpList exitBranch;
-
-    // resultGPR is to hold the ABS value of the dividend before final result is produced
-    m_jit.move(op1Gpr, resultGPR);
-    // scratchGPR2 is to hold the ABS value of the divisor
-    m_jit.move(op2Gpr, scratchGPR2);
-
-    // Check for negative result remainder
-    // According to ECMA-262, the sign of the result equals the sign of the dividend
-    JITCompiler::Jump positiveDividend = m_jit.branch32(JITCompiler::GreaterThanOrEqual, op1Gpr, TrustedImm32(0));
-    m_jit.neg32(resultGPR);
-    m_jit.move(TrustedImm32(1), scratchGPR);
-    JITCompiler::Jump saveCondition = m_jit.jump();
-
-    positiveDividend.link(&m_jit);
-    m_jit.move(TrustedImm32(0), scratchGPR);
-
-    // Save the condition for negative remainder
-    saveCondition.link(&m_jit);
-    m_jit.push(scratchGPR);
-
-    JITCompiler::Jump positiveDivisor = m_jit.branch32(JITCompiler::GreaterThanOrEqual, op2Gpr, TrustedImm32(0));
-    m_jit.neg32(scratchGPR2);
-
-    positiveDivisor.link(&m_jit);
-    exitBranch.append(m_jit.branch32(JITCompiler::LessThan, resultGPR, scratchGPR2));
-
-    // Power of two fast case
-    m_jit.move(scratchGPR2, scratchGPR);
-    m_jit.sub32(TrustedImm32(1), scratchGPR);
-    JITCompiler::Jump notPowerOfTwo = m_jit.branchTest32(JITCompiler::NonZero, scratchGPR, scratchGPR2);
-    m_jit.and32(scratchGPR, resultGPR);
-    exitBranch.append(m_jit.jump());
-
-    notPowerOfTwo.link(&m_jit);
-
-#if CPU(X86)
-    m_jit.move(resultGPR, eax.gpr());
-    m_jit.assembler().cdq();
-    m_jit.assembler().idivl_r(scratchGPR2);
-#elif CPU(ARM_THUMB2)
-    GPRTemporary scratch3(this);
-    GPRReg scratchGPR3 = scratch3.gpr();
-    m_jit.countLeadingZeros32(scratchGPR2, scratchGPR);
-    m_jit.countLeadingZeros32(resultGPR, scratchGPR3);
-    m_jit.sub32(scratchGPR3, scratchGPR);
-
-    JITCompiler::Jump useFullTable = m_jit.branch32(JITCompiler::Equal, scratchGPR, TrustedImm32(31));
-
-    m_jit.neg32(scratchGPR);
-    m_jit.add32(TrustedImm32(31), scratchGPR);
-
-    int elementSizeByShift = -1;
-    elementSizeByShift = 3;
-    m_jit.relativeTableJump(scratchGPR, elementSizeByShift);
-
-    useFullTable.link(&m_jit);
-    // Modulo table
-    for (int i = 31; i > 0; --i) {
-        ShiftTypeAndAmount shift(SRType_LSL, i);
-        m_jit.assembler().sub_S(scratchGPR, resultGPR, scratchGPR2, shift);
-        m_jit.assembler().it(ARMv7Assembler::ConditionCS);
-        m_jit.assembler().mov(resultGPR, scratchGPR);
-    }
-
-    JITCompiler::Jump lower = m_jit.branch32(JITCompiler::Below, resultGPR, scratchGPR2);
-    m_jit.sub32(scratchGPR2, resultGPR);
-    lower.link(&m_jit);
-#endif // CPU(X86)
-
-    exitBranch.link(&m_jit);
-
-    // Check for negative remainder
-    m_jit.pop(scratchGPR);
-    JITCompiler::Jump positiveResult = m_jit.branch32(JITCompiler::Equal, scratchGPR, TrustedImm32(0));
-    m_jit.neg32(resultGPR);
-    positiveResult.link(&m_jit);
-
-    integerResult(resultGPR, m_compileIndex);
-
-#if CPU(X86)
-    if (temp2 != InvalidGPRReg)
-        unlock(temp2);
-#endif
-}
-
 void SpeculativeJIT::compile(Node& node)
 {
     NodeType op = node.op;
@@ -2543,46 +2417,7 @@ void SpeculativeJIT::compile(Node& node)
     }
 
     case ArithMul: {
-        if (Node::shouldSpeculateInteger(at(node.child1()), at(node.child2())) && node.canSpeculateInteger()) {
-            SpeculateIntegerOperand op1(this, node.child1());
-            SpeculateIntegerOperand op2(this, node.child2());
-            GPRTemporary result(this);
-
-            GPRReg reg1 = op1.gpr();
-            GPRReg reg2 = op2.gpr();
-
-            // What is unfortunate is that we cannot take advantage of nodeCanTruncateInteger()
-            // here. A multiply on integers performed in the double domain and then truncated to
-            // an integer will give a different result than a multiply performed in the integer
-            // domain and then truncated, if the integer domain result would have resulted in
-            // something bigger than what a 32-bit integer can hold. JavaScript mandates that
-            // the semantics are always as if the multiply had been performed in the double
-            // domain.
-            
-            speculationCheck(JSValueRegs(), NoNode, m_jit.branchMul32(MacroAssembler::Overflow, reg1, reg2, result.gpr()));
-            
-            // Check for negative zero, if the users of this node care about such things.
-            if (!nodeCanIgnoreNegativeZero(node.arithNodeFlags())) {
-                MacroAssembler::Jump resultNonZero = m_jit.branchTest32(MacroAssembler::NonZero, result.gpr());
-                speculationCheck(JSValueRegs(), NoNode, m_jit.branch32(MacroAssembler::LessThan, reg1, TrustedImm32(0)));
-                speculationCheck(JSValueRegs(), NoNode, m_jit.branch32(MacroAssembler::LessThan, reg2, TrustedImm32(0)));
-                resultNonZero.link(&m_jit);
-            }
-
-            integerResult(result.gpr(), m_compileIndex);
-            break;
-        }
-
-        SpeculateDoubleOperand op1(this, node.child1());
-        SpeculateDoubleOperand op2(this, node.child2());
-        FPRTemporary result(this, op1, op2);
-
-        FPRReg reg1 = op1.fpr();
-        FPRReg reg2 = op2.fpr();
-        
-        m_jit.mulDouble(reg1, reg2, result.fpr());
-        
-        doubleResult(result.fpr(), m_compileIndex);
+        compileArithMul(node);
         break;
     }
 
@@ -2656,25 +2491,7 @@ void SpeculativeJIT::compile(Node& node)
     }
 
     case ArithMod: {
-        if (!at(node.child1()).shouldNotSpeculateInteger() && !at(node.child2()).shouldNotSpeculateInteger()
-            && node.canSpeculateInteger()) {
-            compileSoftModulo(node);
-            break;
-        }
-        
-        SpeculateDoubleOperand op1(this, node.child1());
-        SpeculateDoubleOperand op2(this, node.child2());
-        
-        FPRReg op1FPR = op1.fpr();
-        FPRReg op2FPR = op2.fpr();
-        
-        flushRegisters();
-        
-        FPRResult result(this);
-
-        callOperation(fmodAsDFGOperation, result.fpr(), op1FPR, op2FPR);
-        
-        doubleResult(result.fpr(), m_compileIndex);
+        compileArithMod(node);
         break;
     }
 

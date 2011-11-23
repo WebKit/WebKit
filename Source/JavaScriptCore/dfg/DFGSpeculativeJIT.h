@@ -1917,9 +1917,9 @@ private:
     void compileValueToInt32(Node&);
     void compileGetByValOnByteArray(Node&);
     void compilePutByValForByteArray(GPRReg base, GPRReg property, Node&);
-#if USE(JSVALUE32_64)
+    void compileArithMul(Node&);
+    void compileArithMod(Node&);
     void compileSoftModulo(Node&);
-#endif
 
     // It is acceptable to have structure be equal to scratch, so long as you're fine
     // with the structure GPR being clobbered.

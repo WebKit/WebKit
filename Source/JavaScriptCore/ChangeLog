@@ -1,3 +1,28 @@
+2011-11-22  Yuqiang Xian  <yuqiang.xian@intel.com>
+
+        Strength reduction for Mul and Mod operations for known constants in DFG
+        https://bugs.webkit.org/show_bug.cgi?id=72878
+
+        Reviewed by Filip Pizlo.
+
+        Also the code should be commonly shared by both 32_64 and 64.
+
+        * dfg/DFGNode.h:
+        (JSC::DFG::nodeMayOverflow):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::fmodAsDFGOperation):
+        (JSC::DFG::SpeculativeJIT::compileInstanceOf):
+        (JSC::DFG::isPowerOfTwo):
+        (JSC::DFG::logTwo):
+        (JSC::DFG::SpeculativeJIT::compileSoftModulo):
+        (JSC::DFG::SpeculativeJIT::compileArithMul):
+        (JSC::DFG::SpeculativeJIT::compileArithMod):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
 2011-11-22  Daniel Bates  <dbates@rim.com>
 
         Add WTF infrastructure for the BlackBerry port
