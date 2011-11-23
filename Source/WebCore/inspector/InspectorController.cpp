@@ -43,7 +43,6 @@
 #include "InspectorBackendDispatcher.h"
 #include "InspectorCSSAgent.h"
 #include "InspectorClient.h"
-#include "InspectorConsoleAgent.h"
 #include "InspectorDOMAgent.h"
 #include "InspectorDOMDebuggerAgent.h"
 #include "InspectorDOMStorageAgent.h"
@@ -55,43 +54,19 @@
 #include "InspectorPageAgent.h"
 #include "InspectorProfilerAgent.h"
 #include "InspectorResourceAgent.h"
-#include "InspectorRuntimeAgent.h"
 #include "InspectorState.h"
 #include "InspectorTimelineAgent.h"
 #include "InspectorWorkerAgent.h"
 #include "InstrumentingAgents.h"
+#include "PageConsoleAgent.h"
 #include "PageDebuggerAgent.h"
+#include "PageRuntimeAgent.h"
 #include "Page.h"
 #include "ScriptObject.h"
 #include "Settings.h"
 #include <wtf/UnusedParam.h>
 
 namespace WebCore {
-
-namespace {
-
-class PageRuntimeAgent : public InspectorRuntimeAgent {
-public:
-    PageRuntimeAgent(InstrumentingAgents* instrumentingAgents, InjectedScriptManager* injectedScriptManager, Page* page, InspectorPageAgent* pageAgent)
-        : InspectorRuntimeAgent(instrumentingAgents, injectedScriptManager)
-        , m_inspectedPage(page)
-        , m_pageAgent(pageAgent) { }
-    virtual ~PageRuntimeAgent() { }
-
-private:
-    virtual ScriptState* scriptStateForFrameId(const String& frameId)
-    {
-        Frame* frame = m_pageAgent->frameForId(frameId);
-        if (!frame)
-            return 0;
-        return mainWorldScriptState(frame);
-    }
-    virtual ScriptState* getDefaultInspectedState() { return mainWorldScriptState(m_inspectedPage->mainFrame()); }
-    Page* m_inspectedPage;
-    InspectorPageAgent* m_pageAgent;
-};
-
-}
 
 InspectorController::InspectorController(Page* page, InspectorClient* inspectorClient)
     : m_instrumentingAgents(adoptPtr(new InstrumentingAgents()))
@@ -109,7 +84,7 @@ InspectorController::InspectorController(Page* page, InspectorClient* inspectorC
     , m_applicationCacheAgent(adoptPtr(new InspectorApplicationCacheAgent(m_instrumentingAgents.get(), m_pageAgent.get(), m_state.get())))
     , m_resourceAgent(InspectorResourceAgent::create(m_instrumentingAgents.get(), m_pageAgent.get(), inspectorClient, m_state.get()))
     , m_runtimeAgent(adoptPtr(new PageRuntimeAgent(m_instrumentingAgents.get(), m_injectedScriptManager.get(), page, m_pageAgent.get())))
-    , m_consoleAgent(adoptPtr(new InspectorConsoleAgent(m_instrumentingAgents.get(), m_inspectorAgent.get(), m_state.get(), m_injectedScriptManager.get(), m_domAgent.get())))
+    , m_consoleAgent(adoptPtr(new PageConsoleAgent(m_instrumentingAgents.get(), m_inspectorAgent.get(), m_state.get(), m_injectedScriptManager.get(), m_domAgent.get())))
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     , m_debuggerAgent(PageDebuggerAgent::create(m_instrumentingAgents.get(), m_state.get(), page, m_injectedScriptManager.get()))
     , m_domDebuggerAgent(InspectorDOMDebuggerAgent::create(m_instrumentingAgents.get(), m_state.get(), m_domAgent.get(), m_debuggerAgent.get(), m_inspectorAgent.get()))

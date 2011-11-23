@@ -46,6 +46,7 @@ class InjectedScriptManager;
 class InspectorDebuggerAgent;
 #endif
 class InspectorBackendDispatcher;
+class InspectorConsoleAgent;
 class InspectorFrontend;
 class InspectorFrontendChannel;
 class InspectorInstrumentation;
@@ -82,6 +83,7 @@ private:
     OwnPtr<InspectorDebuggerAgent> m_debuggerAgent;
 #endif
     OwnPtr<InspectorRuntimeAgent> m_runtimeAgent;
+    OwnPtr<InspectorConsoleAgent> m_consoleAgent;
 
     OwnPtr<InspectorFrontendChannel> m_frontendChannel;
     OwnPtr<InspectorFrontend> m_frontend;

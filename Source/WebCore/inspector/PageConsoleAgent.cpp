@@ -29,46 +29,52 @@
  */
 
 #include "config.h"
-#include "WorkerDebuggerAgent.h"
 
-#if ENABLE(JAVASCRIPT_DEBUGGER) && ENABLE(INSPECTOR) && ENABLE(WORKERS)
-#include "ScriptDebugServer.h"
-#include "WorkerContext.h"
+#include "PageConsoleAgent.h"
+
+#if ENABLE(INSPECTOR)
+
+#include "DOMWindow.h"
+#include "InjectedScriptHost.h"
+#include "InjectedScriptManager.h"
+#include "InspectorAgent.h"
+#include "InspectorDOMAgent.h"
 
 namespace WebCore {
 
-const char* WorkerDebuggerAgent::debuggerTaskMode = "debugger";
-
-PassOwnPtr<WorkerDebuggerAgent> WorkerDebuggerAgent::create(InstrumentingAgents* instrumentingAgents, InspectorState* inspectorState, WorkerContext* inspectedWorkerContext, InjectedScriptManager* injectedScriptManager)
-{
-    return adoptPtr(new WorkerDebuggerAgent(instrumentingAgents, inspectorState, inspectedWorkerContext, injectedScriptManager));
-}
-
-WorkerDebuggerAgent::WorkerDebuggerAgent(InstrumentingAgents* instrumentingAgents, InspectorState* inspectorState, WorkerContext* inspectedWorkerContext, InjectedScriptManager* injectedScriptManager)
-    : InspectorDebuggerAgent(instrumentingAgents, inspectorState, injectedScriptManager)
-    , m_inspectedWorkerContext(inspectedWorkerContext)
+PageConsoleAgent::PageConsoleAgent(InstrumentingAgents* instrumentingAgents, InspectorAgent* inspectorAgent, InspectorState* state, InjectedScriptManager* injectedScriptManager, InspectorDOMAgent* domAgent)
+    : InspectorConsoleAgent(instrumentingAgents, state, injectedScriptManager)
+    , m_inspectorAgent(inspectorAgent)
+    , m_inspectorDOMAgent(domAgent)
 {
 }
 
-WorkerDebuggerAgent::~WorkerDebuggerAgent()
+PageConsoleAgent::~PageConsoleAgent()
 {
+    m_inspectorAgent = 0;
+    m_inspectorDOMAgent = 0;
 }
 
-void WorkerDebuggerAgent::startListeningScriptDebugServer()
+void PageConsoleAgent::clearMessages(ErrorString* errorString)
 {
-    scriptDebugServer().addListener(this, m_inspectedWorkerContext);
+    m_inspectorDOMAgent->releaseDanglingNodes();
+    InspectorConsoleAgent::clearMessages(errorString);
 }
 
-void WorkerDebuggerAgent::stopListeningScriptDebugServer()
+void PageConsoleAgent::addInspectedNode(ErrorString*, int nodeId)
 {
-    scriptDebugServer().removeListener(this, m_inspectedWorkerContext);
+    Node* node = m_inspectorDOMAgent->nodeForId(nodeId);
+    if (!node)
+        return;
+    m_injectedScriptManager->injectedScriptHost()->addInspectedNode(node);
 }
 
-WorkerScriptDebugServer& WorkerDebuggerAgent::scriptDebugServer()
+bool PageConsoleAgent::developerExtrasEnabled()
 {
-    return m_scriptDebugServer;
+    return m_inspectorAgent->enabled();
 }
+
 
 } // namespace WebCore
 
-#endif // ENABLE(JAVASCRIPT_DEBUGGER) && ENABLE(INSPECTOR) && ENABLE(WORKERS)
+#endif // ENABLE(INSPECTOR)

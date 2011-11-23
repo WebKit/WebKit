@@ -28,47 +28,30 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WorkerDebuggerAgent.h"
+#ifndef WorkerRuntimeAgent_h
+#define WorkerRuntimeAgent_h
 
-#if ENABLE(JAVASCRIPT_DEBUGGER) && ENABLE(INSPECTOR) && ENABLE(WORKERS)
-#include "ScriptDebugServer.h"
-#include "WorkerContext.h"
+#if ENABLE(INSPECTOR)
+
+#include "InspectorRuntimeAgent.h"
 
 namespace WebCore {
 
-const char* WorkerDebuggerAgent::debuggerTaskMode = "debugger";
+class WorkerContext;
 
-PassOwnPtr<WorkerDebuggerAgent> WorkerDebuggerAgent::create(InstrumentingAgents* instrumentingAgents, InspectorState* inspectorState, WorkerContext* inspectedWorkerContext, InjectedScriptManager* injectedScriptManager)
-{
-    return adoptPtr(new WorkerDebuggerAgent(instrumentingAgents, inspectorState, inspectedWorkerContext, injectedScriptManager));
-}
+class WorkerRuntimeAgent : public InspectorRuntimeAgent {
+public:
+    WorkerRuntimeAgent(InstrumentingAgents*, InjectedScriptManager*, WorkerContext*);
+    virtual ~WorkerRuntimeAgent();
 
-WorkerDebuggerAgent::WorkerDebuggerAgent(InstrumentingAgents* instrumentingAgents, InspectorState* inspectorState, WorkerContext* inspectedWorkerContext, InjectedScriptManager* injectedScriptManager)
-    : InspectorDebuggerAgent(instrumentingAgents, inspectorState, injectedScriptManager)
-    , m_inspectedWorkerContext(inspectedWorkerContext)
-{
-}
-
-WorkerDebuggerAgent::~WorkerDebuggerAgent()
-{
-}
-
-void WorkerDebuggerAgent::startListeningScriptDebugServer()
-{
-    scriptDebugServer().addListener(this, m_inspectedWorkerContext);
-}
-
-void WorkerDebuggerAgent::stopListeningScriptDebugServer()
-{
-    scriptDebugServer().removeListener(this, m_inspectedWorkerContext);
-}
-
-WorkerScriptDebugServer& WorkerDebuggerAgent::scriptDebugServer()
-{
-    return m_scriptDebugServer;
-}
+private:
+    virtual ScriptState* scriptStateForFrameId(const String& frameId);
+    virtual ScriptState* getDefaultInspectedState();
+    WorkerContext* m_workerContext;
+};
 
 } // namespace WebCore
 
-#endif // ENABLE(JAVASCRIPT_DEBUGGER) && ENABLE(INSPECTOR) && ENABLE(WORKERS)
+#endif // ENABLE(INSPECTOR)
+
+#endif // !defined(InspectorPagerAgent_h)

@@ -28,47 +28,28 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WorkerDebuggerAgent.h"
+#ifndef WorkerConsoleAgent_h
+#define WorkerConsoleAgent_h
 
-#if ENABLE(JAVASCRIPT_DEBUGGER) && ENABLE(INSPECTOR) && ENABLE(WORKERS)
-#include "ScriptDebugServer.h"
-#include "WorkerContext.h"
+#include "InspectorConsoleAgent.h"
+
+#if ENABLE(INSPECTOR)
 
 namespace WebCore {
 
-const char* WorkerDebuggerAgent::debuggerTaskMode = "debugger";
+class WorkerConsoleAgent : public InspectorConsoleAgent {
+    WTF_MAKE_NONCOPYABLE(WorkerConsoleAgent);
+public:
+    WorkerConsoleAgent(InstrumentingAgents*, InspectorState*, InjectedScriptManager*);
+    virtual ~WorkerConsoleAgent();
 
-PassOwnPtr<WorkerDebuggerAgent> WorkerDebuggerAgent::create(InstrumentingAgents* instrumentingAgents, InspectorState* inspectorState, WorkerContext* inspectedWorkerContext, InjectedScriptManager* injectedScriptManager)
-{
-    return adoptPtr(new WorkerDebuggerAgent(instrumentingAgents, inspectorState, inspectedWorkerContext, injectedScriptManager));
-}
-
-WorkerDebuggerAgent::WorkerDebuggerAgent(InstrumentingAgents* instrumentingAgents, InspectorState* inspectorState, WorkerContext* inspectedWorkerContext, InjectedScriptManager* injectedScriptManager)
-    : InspectorDebuggerAgent(instrumentingAgents, inspectorState, injectedScriptManager)
-    , m_inspectedWorkerContext(inspectedWorkerContext)
-{
-}
-
-WorkerDebuggerAgent::~WorkerDebuggerAgent()
-{
-}
-
-void WorkerDebuggerAgent::startListeningScriptDebugServer()
-{
-    scriptDebugServer().addListener(this, m_inspectedWorkerContext);
-}
-
-void WorkerDebuggerAgent::stopListeningScriptDebugServer()
-{
-    scriptDebugServer().removeListener(this, m_inspectedWorkerContext);
-}
-
-WorkerScriptDebugServer& WorkerDebuggerAgent::scriptDebugServer()
-{
-    return m_scriptDebugServer;
-}
+private:
+    virtual void addInspectedNode(ErrorString*, int nodeId);
+    virtual bool developerExtrasEnabled();
+};
 
 } // namespace WebCore
 
-#endif // ENABLE(JAVASCRIPT_DEBUGGER) && ENABLE(INSPECTOR) && ENABLE(WORKERS)
+#endif // ENABLE(INSPECTOR)
+
+#endif // !defined(WorkerConsoleAgent_h)

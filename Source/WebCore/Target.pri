@@ -886,13 +886,17 @@ SOURCES += \
     inspector/InspectorWorkerAgent.cpp \
     inspector/InstrumentingAgents.cpp \
     inspector/NetworkResourcesData.cpp \
+    inspector/PageConsoleAgent.cpp \
     inspector/PageDebuggerAgent.cpp \
+    inspector/PageRuntimeAgent.cpp \
     inspector/ScriptArguments.cpp \
     inspector/ScriptCallFrame.cpp \
     inspector/ScriptCallStack.cpp \
     inspector/TimelineRecordFactory.cpp \
+    inspector/WorkerConsoleAgent.cpp \
     inspector/WorkerDebuggerAgent.cpp \
     inspector/WorkerInspectorController.cpp \
+    inspector/WorkerRuntimeAgent.cpp \
     loader/appcache/ApplicationCache.cpp \
     loader/appcache/ApplicationCacheGroup.cpp \
     loader/appcache/ApplicationCacheHost.cpp \
@@ -1932,10 +1936,14 @@ HEADERS += \
     inspector/InspectorWorkerAgent.h \
     inspector/InstrumentingAgents.h \
     inspector/NetworkResourcesData.h \
+    inspector/PageConsoleAgent.h \
     inspector/PageDebuggerAgent.h \
+    inspector/PageRuntimeAgent.h \
     inspector/ScriptGCEventListener.h \
     inspector/TimelineRecordFactory.h \
+    inspector/WorkerConsoleAgent.h \
     inspector/WorkerDebuggerAgent.h \
+    inspector/WorkerRuntimeAgent.h \
     loader/appcache/ApplicationCacheGroup.h \
     loader/appcache/ApplicationCacheHost.h \
     loader/appcache/ApplicationCache.h \

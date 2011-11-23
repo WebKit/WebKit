@@ -39,8 +39,6 @@ namespace WebCore {
 
 class ConsoleMessage;
 class DOMWindow;
-class InspectorAgent;
-class InspectorDOMAgent;
 class InspectorFrontend;
 class InspectorState;
 class InjectedScriptManager;
@@ -56,12 +54,12 @@ typedef String ErrorString;
 class InspectorConsoleAgent {
     WTF_MAKE_NONCOPYABLE(InspectorConsoleAgent);
 public:
-    InspectorConsoleAgent(InstrumentingAgents*, InspectorAgent*, InspectorState*, InjectedScriptManager*, InspectorDOMAgent*);
-    ~InspectorConsoleAgent();
+    InspectorConsoleAgent(InstrumentingAgents*, InspectorState*, InjectedScriptManager*);
+    virtual ~InspectorConsoleAgent();
 
     void enable(ErrorString*);
     void disable(ErrorString*);
-    void clearMessages(ErrorString*);
+    virtual void clearMessages(ErrorString*);
     void reset();
     void restore();
     void setFrontend(InspectorFrontend*);
@@ -84,16 +82,16 @@ public:
     void addStartProfilingMessageToConsole(const String& title, unsigned lineNumber, const String& sourceURL);
 #endif
     void setMonitoringXHREnabled(ErrorString* error, bool enabled);
-    void addInspectedNode(ErrorString*, int nodeId);
+    virtual void addInspectedNode(ErrorString*, int nodeId) = 0;
 
-private:
+protected:
     void addConsoleMessage(PassOwnPtr<ConsoleMessage>);
 
+    virtual bool developerExtrasEnabled() = 0;
+
     InstrumentingAgents* m_instrumentingAgents;
-    InspectorAgent* m_inspectorAgent;
     InspectorState* m_inspectorState;
     InjectedScriptManager* m_injectedScriptManager;
-    InspectorDOMAgent* m_inspectorDOMAgent;
     InspectorFrontend::Console* m_frontend;
     ConsoleMessage* m_previousMessage;
     Vector<OwnPtr<ConsoleMessage> > m_consoleMessages;

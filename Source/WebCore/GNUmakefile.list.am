@@ -2109,8 +2109,12 @@ webcore_sources += \
 	Source/WebCore/inspector/InstrumentingAgents.h \
 	Source/WebCore/inspector/NetworkResourcesData.cpp \
 	Source/WebCore/inspector/NetworkResourcesData.h \
+	Source/WebCore/inspector/PageConsoleAgent.cpp \
+	Source/WebCore/inspector/PageConsoleAgent.h \
 	Source/WebCore/inspector/PageDebuggerAgent.cpp \
 	Source/WebCore/inspector/PageDebuggerAgent.h \
+	Source/WebCore/inspector/PageRuntimeAgent.cpp \
+	Source/WebCore/inspector/PageRuntimeAgent.h \
 	Source/WebCore/inspector/ScriptArguments.cpp \
 	Source/WebCore/inspector/ScriptArguments.h \
 	Source/WebCore/inspector/ScriptBreakpoint.h \
@@ -2122,10 +2126,14 @@ webcore_sources += \
 	Source/WebCore/inspector/ScriptGCEventListener.h \
 	Source/WebCore/inspector/TimelineRecordFactory.cpp \
 	Source/WebCore/inspector/TimelineRecordFactory.h \
+	Source/WebCore/inspector/WorkerConsoleAgent.cpp \
+	Source/WebCore/inspector/WorkerConsoleAgent.h \
 	Source/WebCore/inspector/WorkerDebuggerAgent.cpp \
 	Source/WebCore/inspector/WorkerDebuggerAgent.h \
 	Source/WebCore/inspector/WorkerInspectorController.cpp \
 	Source/WebCore/inspector/WorkerInspectorController.h \
+	Source/WebCore/inspector/WorkerRuntimeAgent.cpp \
+	Source/WebCore/inspector/WorkerRuntimeAgent.h \
 	Source/WebCore/loader/appcache/ApplicationCache.cpp \
 	Source/WebCore/loader/appcache/ApplicationCacheGroup.cpp \
 	Source/WebCore/loader/appcache/ApplicationCacheGroup.h \

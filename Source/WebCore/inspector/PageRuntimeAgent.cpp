@@ -29,46 +29,41 @@
  */
 
 #include "config.h"
-#include "WorkerDebuggerAgent.h"
 
-#if ENABLE(JAVASCRIPT_DEBUGGER) && ENABLE(INSPECTOR) && ENABLE(WORKERS)
-#include "ScriptDebugServer.h"
-#include "WorkerContext.h"
+#include "PageRuntimeAgent.h"
+
+#if ENABLE(INSPECTOR)
+
+#include "InspectorPageAgent.h"
+#include "Page.h"
+#include "ScriptState.h"
 
 namespace WebCore {
 
-const char* WorkerDebuggerAgent::debuggerTaskMode = "debugger";
-
-PassOwnPtr<WorkerDebuggerAgent> WorkerDebuggerAgent::create(InstrumentingAgents* instrumentingAgents, InspectorState* inspectorState, WorkerContext* inspectedWorkerContext, InjectedScriptManager* injectedScriptManager)
-{
-    return adoptPtr(new WorkerDebuggerAgent(instrumentingAgents, inspectorState, inspectedWorkerContext, injectedScriptManager));
-}
-
-WorkerDebuggerAgent::WorkerDebuggerAgent(InstrumentingAgents* instrumentingAgents, InspectorState* inspectorState, WorkerContext* inspectedWorkerContext, InjectedScriptManager* injectedScriptManager)
-    : InspectorDebuggerAgent(instrumentingAgents, inspectorState, injectedScriptManager)
-    , m_inspectedWorkerContext(inspectedWorkerContext)
+PageRuntimeAgent::PageRuntimeAgent(InstrumentingAgents* instrumentingAgents, InjectedScriptManager* injectedScriptManager, Page* page, InspectorPageAgent* pageAgent)
+    : InspectorRuntimeAgent(instrumentingAgents, injectedScriptManager)
+    , m_inspectedPage(page)
+    , m_pageAgent(pageAgent)
 {
 }
 
-WorkerDebuggerAgent::~WorkerDebuggerAgent()
+PageRuntimeAgent::~PageRuntimeAgent()
 {
 }
 
-void WorkerDebuggerAgent::startListeningScriptDebugServer()
+ScriptState* PageRuntimeAgent::scriptStateForFrameId(const String& frameId)
 {
-    scriptDebugServer().addListener(this, m_inspectedWorkerContext);
+    Frame* frame = m_pageAgent->frameForId(frameId);
+    if (!frame)
+        return 0;
+    return mainWorldScriptState(frame);
 }
 
-void WorkerDebuggerAgent::stopListeningScriptDebugServer()
+ScriptState* PageRuntimeAgent::getDefaultInspectedState()
 {
-    scriptDebugServer().removeListener(this, m_inspectedWorkerContext);
-}
-
-WorkerScriptDebugServer& WorkerDebuggerAgent::scriptDebugServer()
-{
-    return m_scriptDebugServer;
+    return mainWorldScriptState(m_inspectedPage->mainFrame());
 }
 
 } // namespace WebCore
 
-#endif // ENABLE(JAVASCRIPT_DEBUGGER) && ENABLE(INSPECTOR) && ENABLE(WORKERS)
+#endif // ENABLE(INSPECTOR)

@@ -29,46 +29,35 @@
  */
 
 #include "config.h"
-#include "WorkerDebuggerAgent.h"
 
-#if ENABLE(JAVASCRIPT_DEBUGGER) && ENABLE(INSPECTOR) && ENABLE(WORKERS)
-#include "ScriptDebugServer.h"
-#include "WorkerContext.h"
+#include "WorkerRuntimeAgent.h"
+
+#if ENABLE(INSPECTOR)
+
+#include "ScriptState.h"
 
 namespace WebCore {
 
-const char* WorkerDebuggerAgent::debuggerTaskMode = "debugger";
-
-PassOwnPtr<WorkerDebuggerAgent> WorkerDebuggerAgent::create(InstrumentingAgents* instrumentingAgents, InspectorState* inspectorState, WorkerContext* inspectedWorkerContext, InjectedScriptManager* injectedScriptManager)
-{
-    return adoptPtr(new WorkerDebuggerAgent(instrumentingAgents, inspectorState, inspectedWorkerContext, injectedScriptManager));
-}
-
-WorkerDebuggerAgent::WorkerDebuggerAgent(InstrumentingAgents* instrumentingAgents, InspectorState* inspectorState, WorkerContext* inspectedWorkerContext, InjectedScriptManager* injectedScriptManager)
-    : InspectorDebuggerAgent(instrumentingAgents, inspectorState, injectedScriptManager)
-    , m_inspectedWorkerContext(inspectedWorkerContext)
+WorkerRuntimeAgent::WorkerRuntimeAgent(InstrumentingAgents* instrumentingAgents, InjectedScriptManager* injectedScriptManager, WorkerContext* workerContext)
+    : InspectorRuntimeAgent(instrumentingAgents, injectedScriptManager)
+    , m_workerContext(workerContext)
 {
 }
 
-WorkerDebuggerAgent::~WorkerDebuggerAgent()
+WorkerRuntimeAgent::~WorkerRuntimeAgent()
 {
 }
 
-void WorkerDebuggerAgent::startListeningScriptDebugServer()
+ScriptState* WorkerRuntimeAgent::scriptStateForFrameId(const String&)
 {
-    scriptDebugServer().addListener(this, m_inspectedWorkerContext);
+    return 0;
 }
 
-void WorkerDebuggerAgent::stopListeningScriptDebugServer()
+ScriptState* WorkerRuntimeAgent::getDefaultInspectedState()
 {
-    scriptDebugServer().removeListener(this, m_inspectedWorkerContext);
-}
-
-WorkerScriptDebugServer& WorkerDebuggerAgent::scriptDebugServer()
-{
-    return m_scriptDebugServer;
+    return scriptStateFromWorkerContext(m_workerContext);
 }
 
 } // namespace WebCore
 
-#endif // ENABLE(JAVASCRIPT_DEBUGGER) && ENABLE(INSPECTOR) && ENABLE(WORKERS)
+#endif // ENABLE(INSPECTOR)

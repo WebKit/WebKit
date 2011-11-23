@@ -34,8 +34,6 @@
 #include "IdentifiersFactory.h"
 #include "InjectedScriptHost.h"
 #include "InjectedScriptManager.h"
-#include "InspectorAgent.h"
-#include "InspectorDOMAgent.h"
 #include "InspectorFrontend.h"
 #include "InspectorState.h"
 #include "ResourceError.h"
@@ -58,12 +56,10 @@ static const char monitoringXHR[] = "monitoringXHR";
 static const char consoleMessagesEnabled[] = "consoleMessagesEnabled";
 }
 
-InspectorConsoleAgent::InspectorConsoleAgent(InstrumentingAgents* instrumentingAgents, InspectorAgent* inspectorAgent, InspectorState* state, InjectedScriptManager* injectedScriptManager, InspectorDOMAgent* domAgent)
+InspectorConsoleAgent::InspectorConsoleAgent(InstrumentingAgents* instrumentingAgents, InspectorState* state, InjectedScriptManager* injectedScriptManager)
     : m_instrumentingAgents(instrumentingAgents)
-    , m_inspectorAgent(inspectorAgent)
     , m_inspectorState(state)
     , m_injectedScriptManager(injectedScriptManager)
-    , m_inspectorDOMAgent(domAgent)
     , m_frontend(0)
     , m_previousMessage(0)
     , m_expiredConsoleMessageCount(0)
@@ -75,10 +71,8 @@ InspectorConsoleAgent::~InspectorConsoleAgent()
 {
     m_instrumentingAgents->setInspectorConsoleAgent(0);
     m_instrumentingAgents = 0;
-    m_inspectorAgent = 0;
     m_inspectorState = 0;
     m_injectedScriptManager = 0;
-    m_inspectorDOMAgent = 0;
 }
 
 void InspectorConsoleAgent::enable(ErrorString*)
@@ -106,7 +100,6 @@ void InspectorConsoleAgent::clearMessages(ErrorString*)
     m_expiredConsoleMessageCount = 0;
     m_previousMessage = 0;
     m_injectedScriptManager->releaseObjectGroup("console");
-    m_inspectorDOMAgent->releaseDanglingNodes();
     if (m_frontend)
         m_frontend->messagesCleared();
 }
@@ -140,14 +133,14 @@ void InspectorConsoleAgent::clearFrontend()
 
 void InspectorConsoleAgent::addMessageToConsole(MessageSource source, MessageType type, MessageLevel level, const String& message, PassRefPtr<ScriptArguments> arguments, PassRefPtr<ScriptCallStack> callStack)
 {
-    if (!m_inspectorAgent->enabled())
+    if (!developerExtrasEnabled())
         return;
     addConsoleMessage(adoptPtr(new ConsoleMessage(source, type, level, message, arguments, callStack)));
 }
 
 void InspectorConsoleAgent::addMessageToConsole(MessageSource source, MessageType type, MessageLevel level, const String& message, unsigned lineNumber, const String& scriptId)
 {
-    if (!m_inspectorAgent->enabled())
+    if (!developerExtrasEnabled())
         return;
     addConsoleMessage(adoptPtr(new ConsoleMessage(source, type, level, message, lineNumber, scriptId)));
 }
@@ -216,7 +209,7 @@ void InspectorConsoleAgent::frameWindowDiscarded(DOMWindow* window)
 
 void InspectorConsoleAgent::resourceRetrievedByXMLHttpRequest(unsigned long identifier, const String& url, const String& sendURL, unsigned sendLineNumber)
 {
-    if (!m_inspectorAgent->enabled())
+    if (!developerExtrasEnabled())
         return;
     if (m_frontend && m_inspectorState->getBoolean(ConsoleAgentState::monitoringXHR)) {
         String message = "XHR finished loading: \"" + url + "\".";
@@ -229,7 +222,7 @@ void InspectorConsoleAgent::resourceRetrievedByXMLHttpRequest(unsigned long iden
 
 void InspectorConsoleAgent::didReceiveResponse(unsigned long identifier, const ResourceResponse& response)
 {
-    if (!m_inspectorAgent->enabled())
+    if (!developerExtrasEnabled())
         return;
 
     if (response.httpStatusCode() >= 400) {
@@ -241,7 +234,7 @@ void InspectorConsoleAgent::didReceiveResponse(unsigned long identifier, const R
 
 void InspectorConsoleAgent::didFailLoading(unsigned long identifier, const ResourceError& error)
 {
-    if (!m_inspectorAgent->enabled())
+    if (!developerExtrasEnabled())
         return;
     if (error.isCancellation()) // Report failures only.
         return;
@@ -257,14 +250,6 @@ void InspectorConsoleAgent::setMonitoringXHREnabled(ErrorString*, bool enabled)
     m_inspectorState->setBoolean(ConsoleAgentState::monitoringXHR, enabled);
 }
 
-void InspectorConsoleAgent::addInspectedNode(ErrorString*, int nodeId)
-{
-    Node* node = m_inspectorDOMAgent->nodeForId(nodeId);
-    if (!node)
-        return;
-    m_injectedScriptManager->injectedScriptHost()->addInspectedNode(node);
-}
-
 static bool isGroupMessage(MessageType type)
 {
     return type == StartGroupMessageType
@@ -274,7 +259,7 @@ static bool isGroupMessage(MessageType type)
 
 void InspectorConsoleAgent::addConsoleMessage(PassOwnPtr<ConsoleMessage> consoleMessage)
 {
-    ASSERT(m_inspectorAgent->enabled());
+    ASSERT(developerExtrasEnabled());
     ASSERT_ARG(consoleMessage, consoleMessage);
 
     if (m_previousMessage && !isGroupMessage(m_previousMessage->type()) && m_previousMessage->isEqual(consoleMessage.get())) {

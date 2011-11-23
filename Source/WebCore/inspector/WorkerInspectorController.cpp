@@ -40,40 +40,20 @@
 #include "InspectorClient.h"
 #include "InspectorFrontend.h"
 #include "InspectorFrontendChannel.h"
-#include "InspectorRuntimeAgent.h"
 #include "InspectorState.h"
 #include "InspectorStateClient.h"
 #include "InstrumentingAgents.h"
+#include "WorkerConsoleAgent.h"
 #include "WorkerContext.h"
 #include "WorkerDebuggerAgent.h"
 #include "WorkerReportingProxy.h"
+#include "WorkerRuntimeAgent.h"
 #include "WorkerThread.h"
 #include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 
 namespace {
-
-class WorkerRuntimeAgent : public InspectorRuntimeAgent {
-public:
-    WorkerRuntimeAgent(InstrumentingAgents* instrumentingAgents, InjectedScriptManager* injectedScriptManager, WorkerContext* workerContext)
-        : InspectorRuntimeAgent(instrumentingAgents, injectedScriptManager)
-        , m_workerContext(workerContext) { }
-    virtual ~WorkerRuntimeAgent() { }
-
-private:
-    virtual ScriptState* scriptStateForFrameId(const String&)
-    {
-        return 0;
-    }
-
-    virtual ScriptState* getDefaultInspectedState()
-    {
-        return scriptStateFromWorkerContext(m_workerContext);
-    }
-
-    WorkerContext* m_workerContext;
-};
 
 class PageInspectorProxy : public InspectorFrontendChannel {
 public:
@@ -114,6 +94,7 @@ WorkerInspectorController::WorkerInspectorController(WorkerContext* workerContex
     , m_debuggerAgent(WorkerDebuggerAgent::create(m_instrumentingAgents.get(), m_state.get(), workerContext, m_injectedScriptManager.get()))
 #endif
     , m_runtimeAgent(adoptPtr(new WorkerRuntimeAgent(m_instrumentingAgents.get(), m_injectedScriptManager.get(), workerContext)))
+    , m_consoleAgent(adoptPtr(new WorkerConsoleAgent(m_instrumentingAgents.get(), m_state.get(), m_injectedScriptManager.get())))
 {
     m_injectedScriptManager->injectedScriptHost()->init(0
         , 0

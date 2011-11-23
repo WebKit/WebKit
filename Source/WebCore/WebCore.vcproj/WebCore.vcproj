@@ -68574,11 +68574,27 @@
 				>
 			</File>
 			<File
+				RelativePath="..\inspector\PageConsoleAgent.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\inspector\PageConsoleAgent.h"
+				>
+			</File>
+			<File
 				RelativePath="..\inspector\PageDebuggerAgent.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\inspector\PageDebuggerAgent.h"
+				>
+			</File>
+			<File
+				RelativePath="..\inspector\PageRuntimeAgent.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\inspector\PageRuntimeAgent.h"
 				>
 			</File>
 			<File
@@ -68622,6 +68638,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\inspector\WorkerConsoleAgent.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\inspector\WorkerConsoleAgent.h"
+				>
+			</File>
+			<File
 				RelativePath="..\inspector\WorkerDebuggerAgent.cpp"
 				>
 			</File>
@@ -68635,6 +68659,14 @@
 			</File>
 			<File
 				RelativePath="..\inspector\WorkerInspectorController.h"
+				>
+			</File>
+			<File
+				RelativePath="..\inspector\WorkerRuntimeAgent.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\inspector\WorkerRuntimeAgent.h"
 				>
 			</File>
 			<Filter

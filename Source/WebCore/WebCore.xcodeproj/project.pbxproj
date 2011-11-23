@@ -6023,6 +6023,14 @@
 		F375CC071150D300008DDB81 /* InspectorWorkerResource.h in Headers */ = {isa = PBXBuildFile; fileRef = F375CC061150D300008DDB81 /* InspectorWorkerResource.h */; };
 		F3810C1B1365A49600ED6E33 /* InspectorWorkerAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F3810C191365A49600ED6E33 /* InspectorWorkerAgent.cpp */; };
 		F3810C1C1365A49600ED6E33 /* InspectorWorkerAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = F3810C1A1365A49600ED6E33 /* InspectorWorkerAgent.h */; };
+		F3820892147D35F90010BC06 /* PageConsoleAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F382088A147D35F90010BC06 /* PageConsoleAgent.cpp */; };
+		F3820893147D35F90010BC06 /* PageConsoleAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = F382088B147D35F90010BC06 /* PageConsoleAgent.h */; };
+		F3820894147D35F90010BC06 /* PageRuntimeAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F382088C147D35F90010BC06 /* PageRuntimeAgent.cpp */; };
+		F3820895147D35F90010BC06 /* PageRuntimeAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = F382088D147D35F90010BC06 /* PageRuntimeAgent.h */; };
+		F3820896147D35F90010BC06 /* WorkerConsoleAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F382088E147D35F90010BC06 /* WorkerConsoleAgent.cpp */; };
+		F3820897147D35F90010BC06 /* WorkerConsoleAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = F382088F147D35F90010BC06 /* WorkerConsoleAgent.h */; };
+		F3820898147D35F90010BC06 /* WorkerRuntimeAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F3820890147D35F90010BC06 /* WorkerRuntimeAgent.cpp */; };
+		F3820899147D35F90010BC06 /* WorkerRuntimeAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = F3820891147D35F90010BC06 /* WorkerRuntimeAgent.h */; };
 		F392249C126F11AE00A926D9 /* ScriptCallStackFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F392249A126F11AE00A926D9 /* ScriptCallStackFactory.cpp */; };
 		F392249D126F11AE00A926D9 /* ScriptCallStackFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = F392249B126F11AE00A926D9 /* ScriptCallStackFactory.h */; };
 		F39BE95B12673BF400E0A674 /* ScriptArguments.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F39BE95912673BF400E0A674 /* ScriptArguments.cpp */; };
@@ -13381,6 +13389,14 @@
 		F375CC061150D300008DDB81 /* InspectorWorkerResource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorWorkerResource.h; sourceTree = "<group>"; };
 		F3810C191365A49600ED6E33 /* InspectorWorkerAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorWorkerAgent.cpp; sourceTree = "<group>"; };
 		F3810C1A1365A49600ED6E33 /* InspectorWorkerAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorWorkerAgent.h; sourceTree = "<group>"; };
+		F382088A147D35F90010BC06 /* PageConsoleAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PageConsoleAgent.cpp; sourceTree = "<group>"; };
+		F382088B147D35F90010BC06 /* PageConsoleAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PageConsoleAgent.h; sourceTree = "<group>"; };
+		F382088C147D35F90010BC06 /* PageRuntimeAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PageRuntimeAgent.cpp; sourceTree = "<group>"; };
+		F382088D147D35F90010BC06 /* PageRuntimeAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PageRuntimeAgent.h; sourceTree = "<group>"; };
+		F382088E147D35F90010BC06 /* WorkerConsoleAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WorkerConsoleAgent.cpp; sourceTree = "<group>"; };
+		F382088F147D35F90010BC06 /* WorkerConsoleAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WorkerConsoleAgent.h; sourceTree = "<group>"; };
+		F3820890147D35F90010BC06 /* WorkerRuntimeAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WorkerRuntimeAgent.cpp; sourceTree = "<group>"; };
+		F3820891147D35F90010BC06 /* WorkerRuntimeAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WorkerRuntimeAgent.h; sourceTree = "<group>"; };
 		F392249A126F11AE00A926D9 /* ScriptCallStackFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptCallStackFactory.cpp; sourceTree = "<group>"; };
 		F392249B126F11AE00A926D9 /* ScriptCallStackFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptCallStackFactory.h; sourceTree = "<group>"; };
 		F39BE95912673BF400E0A674 /* ScriptArguments.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptArguments.cpp; sourceTree = "<group>"; };
@@ -14556,8 +14572,12 @@
 				BCC64F5F0DCFB84E0081EF3B /* localizedStrings.js */,
 				59C27F04138D28C10079B7E2 /* NetworkResourcesData.cpp */,
 				59C27F06138D28CF0079B7E2 /* NetworkResourcesData.h */,
+				F382088A147D35F90010BC06 /* PageConsoleAgent.cpp */,
+				F382088B147D35F90010BC06 /* PageConsoleAgent.h */,
 				F34742DA134362F000531BC2 /* PageDebuggerAgent.cpp */,
 				F34742DB134362F000531BC2 /* PageDebuggerAgent.h */,
+				F382088C147D35F90010BC06 /* PageRuntimeAgent.cpp */,
+				F382088D147D35F90010BC06 /* PageRuntimeAgent.h */,
 				F39BE95912673BF400E0A674 /* ScriptArguments.cpp */,
 				F39BE95A12673BF400E0A674 /* ScriptArguments.h */,
 				7AFD4A8A1131C2760035B883 /* ScriptBreakpoint.h */,
@@ -14570,10 +14590,14 @@
 				9FA37EF01172FD4100C4CD55 /* ScriptProfileNode.idl */,
 				7553CFE7108F473F00EA281E /* TimelineRecordFactory.cpp */,
 				7553CFE6108F473F00EA281E /* TimelineRecordFactory.h */,
+				F382088E147D35F90010BC06 /* WorkerConsoleAgent.cpp */,
+				F382088F147D35F90010BC06 /* WorkerConsoleAgent.h */,
 				F34742DE1343631F00531BC2 /* WorkerDebuggerAgent.cpp */,
 				F34742DF1343631F00531BC2 /* WorkerDebuggerAgent.h */,
 				F36E07A21358A8BE00AACBC9 /* WorkerInspectorController.cpp */,
 				F36E07A31358A8BE00AACBC9 /* WorkerInspectorController.h */,
+				F3820890147D35F90010BC06 /* WorkerRuntimeAgent.cpp */,
+				F3820891147D35F90010BC06 /* WorkerRuntimeAgent.h */,
 			);
 			path = inspector;
 			sourceTree = "<group>";
@@ -24727,6 +24751,10 @@
 				5038BE411472AD980095E0D1 /* CachedShader.h in Headers */,
 				A3E2643114748991005A8588 /* WorkerEventQueue.h in Headers */,
 				3138A9E51474434600B0ED12 /* StyleShader.h in Headers */,
+				F3820893147D35F90010BC06 /* PageConsoleAgent.h in Headers */,
+				F3820895147D35F90010BC06 /* PageRuntimeAgent.h in Headers */,
+				F3820897147D35F90010BC06 /* WorkerConsoleAgent.h in Headers */,
+				F3820899147D35F90010BC06 /* WorkerRuntimeAgent.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -27601,6 +27629,10 @@
 				5038BE2F1472AD230095E0D1 /* StyleCachedShader.cpp in Sources */,
 				5038BE401472AD980095E0D1 /* CachedShader.cpp in Sources */,
 				A3E2643014748991005A8588 /* WorkerEventQueue.cpp in Sources */,
+				F3820892147D35F90010BC06 /* PageConsoleAgent.cpp in Sources */,
+				F3820894147D35F90010BC06 /* PageRuntimeAgent.cpp in Sources */,
+				F3820896147D35F90010BC06 /* WorkerConsoleAgent.cpp in Sources */,
+				F3820898147D35F90010BC06 /* WorkerRuntimeAgent.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

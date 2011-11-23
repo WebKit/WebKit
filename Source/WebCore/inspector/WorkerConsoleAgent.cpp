@@ -29,46 +29,32 @@
  */
 
 #include "config.h"
-#include "WorkerDebuggerAgent.h"
 
-#if ENABLE(JAVASCRIPT_DEBUGGER) && ENABLE(INSPECTOR) && ENABLE(WORKERS)
-#include "ScriptDebugServer.h"
-#include "WorkerContext.h"
+#include "WorkerConsoleAgent.h"
+
+#if ENABLE(INSPECTOR)
 
 namespace WebCore {
 
-const char* WorkerDebuggerAgent::debuggerTaskMode = "debugger";
-
-PassOwnPtr<WorkerDebuggerAgent> WorkerDebuggerAgent::create(InstrumentingAgents* instrumentingAgents, InspectorState* inspectorState, WorkerContext* inspectedWorkerContext, InjectedScriptManager* injectedScriptManager)
-{
-    return adoptPtr(new WorkerDebuggerAgent(instrumentingAgents, inspectorState, inspectedWorkerContext, injectedScriptManager));
-}
-
-WorkerDebuggerAgent::WorkerDebuggerAgent(InstrumentingAgents* instrumentingAgents, InspectorState* inspectorState, WorkerContext* inspectedWorkerContext, InjectedScriptManager* injectedScriptManager)
-    : InspectorDebuggerAgent(instrumentingAgents, inspectorState, injectedScriptManager)
-    , m_inspectedWorkerContext(inspectedWorkerContext)
+WorkerConsoleAgent::WorkerConsoleAgent(InstrumentingAgents* instrumentingAgents, InspectorState* state, InjectedScriptManager* injectedScriptManager)
+    : InspectorConsoleAgent(instrumentingAgents, state, injectedScriptManager)
 {
 }
 
-WorkerDebuggerAgent::~WorkerDebuggerAgent()
+WorkerConsoleAgent::~WorkerConsoleAgent()
 {
 }
 
-void WorkerDebuggerAgent::startListeningScriptDebugServer()
+void WorkerConsoleAgent::addInspectedNode(ErrorString* error, int)
 {
-    scriptDebugServer().addListener(this, m_inspectedWorkerContext);
+    *error = "addInspectedNode is not supported for workers";
 }
 
-void WorkerDebuggerAgent::stopListeningScriptDebugServer()
+bool WorkerConsoleAgent::developerExtrasEnabled()
 {
-    scriptDebugServer().removeListener(this, m_inspectedWorkerContext);
-}
-
-WorkerScriptDebugServer& WorkerDebuggerAgent::scriptDebugServer()
-{
-    return m_scriptDebugServer;
+    return true;
 }
 
 } // namespace WebCore
 
-#endif // ENABLE(JAVASCRIPT_DEBUGGER) && ENABLE(INSPECTOR) && ENABLE(WORKERS)
+#endif // ENABLE(INSPECTOR)

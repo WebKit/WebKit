@@ -901,13 +901,17 @@ SET(WebCore_SOURCES
     inspector/InspectorWorkerAgent.cpp
     inspector/InstrumentingAgents.cpp
     inspector/NetworkResourcesData.cpp
+    inspector/PageConsoleAgent.cpp
     inspector/PageDebuggerAgent.cpp
+    inspector/PageRuntimeAgent.cpp
     inspector/ScriptArguments.cpp
     inspector/ScriptCallFrame.cpp
     inspector/ScriptCallStack.cpp
     inspector/TimelineRecordFactory.cpp
+    inspector/WorkerConsoleAgent.cpp
     inspector/WorkerDebuggerAgent.cpp
     inspector/WorkerInspectorController.cpp
+    inspector/WorkerRuntimeAgent.cpp
 
     loader/CrossOriginAccessControl.cpp
     loader/CrossOriginPreflightResultCache.cpp
