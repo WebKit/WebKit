@@ -16,12 +16,12 @@
             function trackLoaded()
             {
                 consoleWrite("EVENT(load)");
-                testExpected("track.readyState", HTMLTrackElement.LOADED);
+                testExpected("track.track.readyState", TextTrack.LOADED);
                 endTest();
             }
 
             track = document.getElementById('testTrackEmpty');
-            testExpected("track.readyState", HTMLTrackElement.NONE);
+            testExpected("track.track.readyState", TextTrack.NONE);
             track.addEventListener("load", function () { trackLoaded(); }, true);
             track.src = "captions-webvtt/tc004-webvtt-file.vtt";   
 

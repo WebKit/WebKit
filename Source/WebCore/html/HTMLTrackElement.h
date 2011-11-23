@@ -53,17 +53,12 @@ public:
 
     bool isDefault() const;
     void setIsDefault(bool);
-    
-    enum ReadyState { NONE = 0, LOADING = 1, LOADED = 2, ERROR = 3 };
-    ReadyState readyState() const { return m_readyState; }
 
     TextTrack* track();
     
     void scheduleLoad();
     virtual bool canLoadUrl(LoadableTextTrack*, const KURL&);
     virtual void didCompleteLoad(LoadableTextTrack*, bool /* loadingFailed */);
-    
-    void setReadyState(ReadyState);
 
 private:
     HTMLTrackElement(const QualifiedName&, Document*);
@@ -84,6 +79,7 @@ private:
     HTMLMediaElement* mediaElement() const;
 
     // TextTrackClient
+    virtual void textTrackReadyStateChanged(TextTrack*);
     virtual void textTrackModeChanged(TextTrack*);
     virtual void textTrackKindChanged(TextTrack*);
     virtual void textTrackAddCues(TextTrack*, const TextTrackCueList*);
@@ -93,7 +89,6 @@ private:
 
     LoadableTextTrack* ensureTrack();
 
-    HTMLTrackElement::ReadyState m_readyState;
     RefPtr<LoadableTextTrack> m_track;
 };
 

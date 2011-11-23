@@ -1,3 +1,28 @@
+2011-11-23  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r101057.
+        http://trac.webkit.org/changeset/101057
+        https://bugs.webkit.org/show_bug.cgi?id=73027
+
+        Broke Chromium Windows build (Requested by aklein on #webkit).
+
+        * html/HTMLTrackElement.cpp:
+        (WebCore::HTMLTrackElement::HTMLTrackElement):
+        (WebCore::HTMLTrackElement::didCompleteLoad):
+        (WebCore::HTMLTrackElement::textTrackReadyStateChanged):
+        * html/HTMLTrackElement.h:
+        * html/HTMLTrackElement.idl:
+        * html/LoadableTextTrack.cpp:
+        (WebCore::LoadableTextTrack::loadTimerFired):
+        (WebCore::LoadableTextTrack::cueLoadingStarted):
+        (WebCore::LoadableTextTrack::cueLoadingCompleted):
+        * html/TextTrack.cpp:
+        (WebCore::TextTrack::TextTrack):
+        (WebCore::TextTrack::setReadyState):
+        * html/TextTrack.h:
+        (WebCore::TextTrack::readyState):
+        * html/TextTrack.idl:
+
 2011-11-23  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed. Build fix. Added missing ENABLE(WORKERS) guards.

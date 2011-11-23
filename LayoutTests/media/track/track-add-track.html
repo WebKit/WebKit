@@ -21,7 +21,9 @@
                     consoleWrite("<br>** Test a TextTrack created with video.addTrack().");
                     run("tracks.push(video.addTrack('captions', 'Caption Track', 'en'))");
                     testExpected("video.textTracks.length", 2);
+                    testExpected("tracks[1].readyState", TextTrack.NONE);
                 } else {
+                    testExpected("tracks[1].readyState", TextTrack.NONE);
                     consoleWrite("");
                     endTest();
                 }
@@ -42,7 +44,7 @@
 
                 run("trackElement.src = 'captions-webvtt/tc004-webvtt-file.vtt'");
                 testExpected("video.textTracks.length", 1);
-                testExpected("trackElement.readyState", HTMLTrackElement.NONE);
+                testExpected("tracks[0].readyState", TextTrack.NONE);
             }
 
         </script>
