@@ -3178,12 +3178,6 @@ WONTFIX LINUX DEBUG SKIP : inspector/profiler/cpu-profiler-profiling.html = TIME
 BUGCR84093 VISTA : http/tests/history/redirect-200-refresh-2-seconds.pl = PASS TIMEOUT
 BUGCR84095 VISTA : svg/custom/use-detach.svg = PASS TIMEOUT
 
-// Flaky for a long time with no obvious cause.
-BUGADAMK VISTA : http/tests/history/redirect-301.html = PASS TIMEOUT
-
-// Weird failures only on debug bots after r87526.
-BUGADAMK DEBUG : svg/custom/object-sizing-explicit-height.xhtml = PASS IMAGE+TEXT
-BUGADAMK DEBUG : svg/custom/object-sizing-explicit-width.xhtml = PASS IMAGE+TEXT
 BUGWK66320 SNOWLEOPARD RELEASE : svg/wicd/test-rightsizing-a.xhtml = PASS IMAGE+TEXT
 BUGWK66320 DEBUG : svg/wicd/test-rightsizing-a.xhtml = PASS IMAGE IMAGE+TEXT
 
