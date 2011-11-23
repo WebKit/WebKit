@@ -9,6 +9,8 @@ TARGET = QtWebKit
 
 DESTDIR = $${ROOT_BUILD_DIR}/lib
 
+runSyncQt() # Generate forwarding headers for the QtWebKit API
+
 load(features)
 
 include(WebKit/WebKit.pri)
@@ -20,6 +22,10 @@ CONFIG += webcore
 !no_webkit2 {
     CONFIG += webkit2
     QT += declarative
+
+    # Ensure that changes to the WebKit2 API will trigger a qmake of this
+    # file, which in turn runs syncqt to update the forwarding headers.
+    QMAKE_INTERNAL_INCLUDED_FILES *= WebKit2/Target.pri
 }
 
 v8:linux-* {

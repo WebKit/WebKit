@@ -5,7 +5,6 @@
 # See 'Tools/qmake/README' for an overview of the build system
 # -------------------------------------------------------------------
 
-load(default_pre) # Load Qt's defaults
 load(functions)
 
 # FIXME: In this case we probably want to exit early so that we
@@ -44,6 +43,13 @@ for(ever) {
 }
 
 BUILD_SUBDIR = $$join(BUILD_SUBDIR, $${QMAKE_DIR_SEP})
+
+# We want the QtWebKit API forwarding includes to live in the root build dir,
+# except when we are running the config.tests in Tools/qmake.
+pro_file_name = $$basename(_PRO_FILE_)
+!equals(pro_file_name, configure.pro): QMAKE_SYNCQT_OUTDIR = $$ROOT_BUILD_DIR
+
+load(default_pre) # Load Qt's defaults after we've resolved the build directory
 
 equals(OUT_PWD, $${ROOT_BUILD_DIR}) {
     !recursive_include:CONFIG += root_project_file
