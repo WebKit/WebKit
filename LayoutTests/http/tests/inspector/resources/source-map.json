@@ -1,7 +1,8 @@
 {
 "version":3,
+"file":"compiled.js",
 "lineCount":2,
-"mappings":"AACAA,MAAAC,OAAA,CAAwBC,QAAA,EACxB,CACI,IAAIC,EAAMC,QAAAC,cAAsB,CAAC,KAAD,CAChCF,EAAAG,YAAA,CAAkB,KAClBH,EAAAI,iBAAoB,CAAC,OAAD,CAAUC,WAAV,CAAuB,CAAA,CAAvB,CACpBJ,SAAAK,KAAAC,YAAyB,CAACP,CAAD,CAErBQ,EAAAA,CAAMP,QAAAC,cAAsB,CAAC,KAAD,CAChCM,EAAAL,YAAA,CAAkB,ocAClBF;QAAAK,KAAAC,YAAyB,CAACC,CAAD,CAR7B,CAWSH,SAAAA,YAAW,CAACI,CAAD,CACpB,CAEIC,CAD8BC,IAAZC,YAClBF,QAAc,CAACD,CAAD,CAFlB,CCbSG,QAAAA,aAAY,EACrB,EAGAA,YAAAC,UAAAH,OAAA,CAAwCI,QAAA,CAACL,CAAD,CACxC,CACI,IAAIM,EAAUd,QAAAC,cAAsB,CAAC,KAAD,CACpCa,EAAAZ,YAAA,CAAsBM,CAAAO,UACtBf,SAAAK,KAAAC,YAAyB,CAACQ,CAAD,CAH7B;",
+"mappings":"AACAA,MAAAC,iBAAuB,CAAC,MAAD,CAAS,QAAQ,EACxC,CACI,IAAIC,EAASC,QAAAC,cAAsB,CAAC,QAAD,CACnCF,EAAAG,GAAA,CAAY,MACZH,EAAAD,iBAAuB,CAAC,OAAD,CAAUK,WAAV,CAAuB,CAAA,CAAvB,CACvBH,SAAAI,KAAAC,YAAyB,CAACN,CAAD,CAErBO,EAAAA,CAAMN,QAAAC,cAAsB,CAAC,KAAD,CAChCK,EAAAJ,GAAA,CAAS,ocACTF;QAAAI,KAAAC,YAAyB,CAACC,CAAD,CAR7B,CADuB,CAYvBH,SAASA,YAAW,CAACI,CAAD,CACpB,CAEIC,CAD8BC,IAAZC,YAClBF,QAAc,CAACD,CAAD,CAFlB,C,CCbAG,QAASA,aAAY,EACrB,EAGAA,YAAAC,UAAAH,OAAA,CAAgCI,QAAQ,EACxC,CACIC,OAAAC,IAAW,CAAC,iBAAD,CADf;",
 "sources":["source1.js","source2.js"],
-"names":["window","onload","window.onload","foo","document","createElement","textContent","addEventListener","handleClick","body","appendChild","bar","event","handle","handler","ClickHandler","prototype","ClickHandler.prototype.handle","element","timeStamp"]
+"names":["window","addEventListener","button","document","createElement","id","handleClick","body","appendChild","bar","event","handle","handler","ClickHandler","prototype","ClickHandler.prototype.handle","console","log"]
 }
