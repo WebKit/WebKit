@@ -1601,3 +1601,7 @@ fast/dom/Window/window-postmessage-arrays.html
 # fast/forms/checkbox-appearance-change-by-checked.html is failing after enabling reftests
 # https://bugs.webkit.org/show_bug.cgi?id=72569
 fast/forms/checkbox-appearance-change-by-checked.html
+
+# [Qt][GTK] editing/spelling/spellcheck-async.html fails
+# https://bugs.webkit.org/show_bug.cgi?id=73003
+editing/spelling/spellcheck-async.html
