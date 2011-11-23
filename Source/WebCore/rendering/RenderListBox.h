@@ -88,13 +88,13 @@ private:
     virtual bool shouldPanScroll() const { return true; }
     virtual void panScroll(const IntPoint&);
 
-    virtual LayoutUnit verticalScrollbarWidth() const;
-    virtual LayoutUnit scrollLeft() const;
-    virtual LayoutUnit scrollTop() const;
-    virtual LayoutUnit scrollWidth() const;
-    virtual LayoutUnit scrollHeight() const;
-    virtual void setScrollLeft(LayoutUnit);
-    virtual void setScrollTop(LayoutUnit);
+    virtual int verticalScrollbarWidth() const;
+    virtual int scrollLeft() const;
+    virtual int scrollTop() const;
+    virtual int scrollWidth() const;
+    virtual int scrollHeight() const;
+    virtual void setScrollLeft(int);
+    virtual void setScrollTop(int);
 
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const LayoutPoint& pointInContainer, const LayoutPoint& accumulatedOffset, HitTestAction);
 

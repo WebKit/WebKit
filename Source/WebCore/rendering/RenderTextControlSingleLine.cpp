@@ -707,41 +707,41 @@ void RenderTextControlSingleLine::autoscroll()
         layer->autoscroll();
 }
 
-LayoutUnit RenderTextControlSingleLine::scrollWidth() const
+int RenderTextControlSingleLine::scrollWidth() const
 {
     if (innerTextElement())
         return innerTextElement()->scrollWidth();
     return RenderBlock::scrollWidth();
 }
 
-LayoutUnit RenderTextControlSingleLine::scrollHeight() const
+int RenderTextControlSingleLine::scrollHeight() const
 {
     if (innerTextElement())
         return innerTextElement()->scrollHeight();
     return RenderBlock::scrollHeight();
 }
 
-LayoutUnit RenderTextControlSingleLine::scrollLeft() const
+int RenderTextControlSingleLine::scrollLeft() const
 {
     if (innerTextElement())
         return innerTextElement()->scrollLeft();
     return RenderBlock::scrollLeft();
 }
 
-LayoutUnit RenderTextControlSingleLine::scrollTop() const
+int RenderTextControlSingleLine::scrollTop() const
 {
     if (innerTextElement())
         return innerTextElement()->scrollTop();
     return RenderBlock::scrollTop();
 }
 
-void RenderTextControlSingleLine::setScrollLeft(LayoutUnit newLeft)
+void RenderTextControlSingleLine::setScrollLeft(int newLeft)
 {
     if (innerTextElement())
         innerTextElement()->setScrollLeft(newLeft);
 }
 
-void RenderTextControlSingleLine::setScrollTop(LayoutUnit newTop)
+void RenderTextControlSingleLine::setScrollTop(int newTop)
 {
     if (innerTextElement())
         innerTextElement()->setScrollTop(newTop);

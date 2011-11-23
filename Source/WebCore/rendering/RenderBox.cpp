@@ -475,7 +475,7 @@ LayoutUnit RenderBox::clientHeight() const
     return height() - borderTop() - borderBottom() - horizontalScrollbarHeight();
 }
 
-LayoutUnit RenderBox::scrollWidth() const
+int RenderBox::scrollWidth() const
 {
     if (hasOverflowClip())
         return layer()->scrollWidth();
@@ -483,10 +483,10 @@ LayoutUnit RenderBox::scrollWidth() const
     // FIXME: Need to work right with writing modes.
     if (style()->isLeftToRightDirection())
         return max(clientWidth(), maxXLayoutOverflow() - borderLeft());
-    return clientWidth() - min<LayoutUnit>(0, minXLayoutOverflow() - borderLeft());
+    return clientWidth() - min(0, minXLayoutOverflow() - borderLeft());
 }
 
-LayoutUnit RenderBox::scrollHeight() const
+int RenderBox::scrollHeight() const
 {
     if (hasOverflowClip())
         return layer()->scrollHeight();
@@ -495,23 +495,23 @@ LayoutUnit RenderBox::scrollHeight() const
     return max(clientHeight(), maxYLayoutOverflow() - borderTop());
 }
 
-LayoutUnit RenderBox::scrollLeft() const
+int RenderBox::scrollLeft() const
 {
     return hasOverflowClip() ? layer()->scrollXOffset() : 0;
 }
 
-LayoutUnit RenderBox::scrollTop() const
+int RenderBox::scrollTop() const
 {
     return hasOverflowClip() ? layer()->scrollYOffset() : 0;
 }
 
-void RenderBox::setScrollLeft(LayoutUnit newLeft)
+void RenderBox::setScrollLeft(int newLeft)
 {
     if (hasOverflowClip())
         layer()->scrollToXOffset(newLeft, RenderLayer::ScrollOffsetClamped);
 }
 
-void RenderBox::setScrollTop(LayoutUnit newTop)
+void RenderBox::setScrollTop(int newTop)
 {
     if (hasOverflowClip())
         layer()->scrollToYOffset(newTop, RenderLayer::ScrollOffsetClamped);
@@ -643,12 +643,12 @@ bool RenderBox::includeHorizontalScrollbarSize() const
         && (style()->overflowX() == OSCROLL || style()->overflowX() == OAUTO);
 }
 
-LayoutUnit RenderBox::verticalScrollbarWidth() const
+int RenderBox::verticalScrollbarWidth() const
 {
     return includeVerticalScrollbarSize() ? layer()->verticalScrollbarWidth() : 0;
 }
 
-LayoutUnit RenderBox::horizontalScrollbarHeight() const
+int RenderBox::horizontalScrollbarHeight() const
 {
     return includeHorizontalScrollbarSize() ? layer()->horizontalScrollbarHeight() : 0;
 }

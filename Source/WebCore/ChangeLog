@@ -1,3 +1,44 @@
+2011-11-23  Emil A Eklund  <eae@chromium.org>
+
+        Change remaining scrollTop/Left/Width/Height methods back to int
+        https://bugs.webkit.org/show_bug.cgi?id=72771
+
+        Reviewed by Eric Seidel.
+
+        Change remaining scrollTop/Left/Width/Height, setScrollLeft/Top and
+        verticalScrollbarWidth, horizontalScrollbarHeight methods back to int as
+        scrolling will remain int based to line up with device pixels.
+
+        No new tests.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::scrollWidth):
+        (WebCore::RenderBox::scrollHeight):
+        (WebCore::RenderBox::scrollLeft):
+        (WebCore::RenderBox::scrollTop):
+        (WebCore::RenderBox::setScrollLeft):
+        (WebCore::RenderBox::setScrollTop):
+        (WebCore::RenderBox::verticalScrollbarWidth):
+        (WebCore::RenderBox::horizontalScrollbarHeight):
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::scrollbarLogicalHeight):
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::verticalScrollbarWidth):
+        (WebCore::RenderListBox::scrollHeight):
+        (WebCore::RenderListBox::scrollLeft):
+        (WebCore::RenderListBox::setScrollLeft):
+        (WebCore::RenderListBox::scrollTop):
+        (WebCore::RenderListBox::setScrollTop):
+        * rendering/RenderListBox.h:
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::scrollWidth):
+        (WebCore::RenderTextControlSingleLine::scrollHeight):
+        (WebCore::RenderTextControlSingleLine::scrollLeft):
+        (WebCore::RenderTextControlSingleLine::scrollTop):
+        (WebCore::RenderTextControlSingleLine::setScrollLeft):
+        (WebCore::RenderTextControlSingleLine::setScrollTop):
+        * rendering/RenderTextControlSingleLine.h:
+
 2011-11-22  Kenneth Russell  <kbr@google.com>
 
         [chromium] Support Core Animation plugins in compositor

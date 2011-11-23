@@ -66,12 +66,12 @@ private:
     virtual void autoscroll();
 
     // Subclassed to forward to our inner div.
-    virtual LayoutUnit scrollLeft() const;
-    virtual LayoutUnit scrollTop() const;
-    virtual LayoutUnit scrollWidth() const;
-    virtual LayoutUnit scrollHeight() const;
-    virtual void setScrollLeft(LayoutUnit);
-    virtual void setScrollTop(LayoutUnit);
+    virtual int scrollLeft() const;
+    virtual int scrollTop() const;
+    virtual int scrollWidth() const;
+    virtual int scrollHeight() const;
+    virtual void setScrollLeft(int);
+    virtual void setScrollTop(int);
     virtual bool scroll(ScrollDirection, ScrollGranularity, float multiplier = 1, Node** stopNode = 0);
     virtual bool logicalScroll(ScrollLogicalDirection, ScrollGranularity, float multiplier = 1, Node** stopNode = 0);
 

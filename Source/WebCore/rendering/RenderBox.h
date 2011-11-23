@@ -199,12 +199,12 @@ public:
     // scrollLeft/Top return the current scroll position.  These methods are virtual so that objects like
     // textareas can scroll shadow content (but pretend that they are the objects that are
     // scrolling).
-    virtual LayoutUnit scrollLeft() const;
-    virtual LayoutUnit scrollTop() const;
-    virtual LayoutUnit scrollWidth() const;
-    virtual LayoutUnit scrollHeight() const;
-    virtual void setScrollLeft(LayoutUnit);
-    virtual void setScrollTop(LayoutUnit);
+    virtual int scrollLeft() const;
+    virtual int scrollTop() const;
+    virtual int scrollWidth() const;
+    virtual int scrollHeight() const;
+    virtual void setScrollLeft(int);
+    virtual void setScrollTop(int);
 
     virtual LayoutUnit marginTop() const { return m_marginTop; }
     virtual LayoutUnit marginBottom() const { return m_marginBottom; }
@@ -340,9 +340,9 @@ public:
     LayoutUnit availableWidth() const { return style()->isHorizontalWritingMode() ? availableLogicalWidth() : availableLogicalHeight(); }
     LayoutUnit availableHeight() const { return style()->isHorizontalWritingMode() ? availableLogicalHeight() : availableLogicalWidth(); }
 
-    virtual LayoutUnit verticalScrollbarWidth() const;
-    LayoutUnit horizontalScrollbarHeight() const;
-    LayoutUnit scrollbarLogicalHeight() const { return style()->isHorizontalWritingMode() ? horizontalScrollbarHeight() : verticalScrollbarWidth(); }
+    virtual int verticalScrollbarWidth() const;
+    int horizontalScrollbarHeight() const;
+    int scrollbarLogicalHeight() const { return style()->isHorizontalWritingMode() ? horizontalScrollbarHeight() : verticalScrollbarWidth(); }
     virtual bool scroll(ScrollDirection, ScrollGranularity, float multiplier = 1, Node** stopNode = 0);
     virtual bool logicalScroll(ScrollLogicalDirection, ScrollGranularity, float multiplier = 1, Node** stopNode = 0);
     bool canBeScrolledAndHasScrollableArea() const;

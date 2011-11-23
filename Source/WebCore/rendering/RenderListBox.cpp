@@ -634,7 +634,7 @@ LayoutUnit RenderListBox::itemHeight() const
     return style()->fontMetrics().height() + rowSpacing;
 }
 
-LayoutUnit RenderListBox::verticalScrollbarWidth() const
+int RenderListBox::verticalScrollbarWidth() const
 {
     return m_vBar && !m_vBar->isOverlayScrollbar() ? m_vBar->width() : LayoutUnit(0);
 }
@@ -647,26 +647,26 @@ LayoutUnit RenderListBox::scrollWidth() const
     return clientWidth();
 }
 
-LayoutUnit RenderListBox::scrollHeight() const
+int RenderListBox::scrollHeight() const
 {
     return max(clientHeight(), listHeight());
 }
 
-LayoutUnit RenderListBox::scrollLeft() const
+int RenderListBox::scrollLeft() const
 {
     return 0;
 }
 
-void RenderListBox::setScrollLeft(LayoutUnit)
+void RenderListBox::setScrollLeft(int)
 {
 }
 
-LayoutUnit RenderListBox::scrollTop() const
+int RenderListBox::scrollTop() const
 {
     return m_indexOffset * itemHeight();
 }
 
-void RenderListBox::setScrollTop(LayoutUnit newTop)
+void RenderListBox::setScrollTop(int newTop)
 {
     // Determine an index and scroll to it.    
     int index = newTop / itemHeight();
