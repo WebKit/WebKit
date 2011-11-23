@@ -79,7 +79,7 @@ static SkCanvas* createAcceleratedCanvas(const IntSize& size, ImageBufferData* d
     desc.fAALevel = kNone_GrAALevel;
     desc.fWidth = size.width();
     desc.fHeight = size.height();
-    desc.fFormat = kRGBA_8888_GrPixelConfig;
+    desc.fConfig = kRGBA_8888_GrPixelConfig;
     SkAutoTUnref<GrTexture> texture(gr->createUncachedTexture(desc, 0, 0));
     if (!texture.get())
         return 0;

@@ -1,3 +1,15 @@
+2011-11-23  Brian Salomon  <bsalomon@google.com>
+
+        Use new name for pixel config field of GrTextureDesc
+        https://bugs.webkit.org/show_bug.cgi?id=72543
+
+        Reviewed by Stephen White.
+
+        Tested by every canvas2d layout test.
+
+        * platform/graphics/skia/ImageBufferSkia.cpp:
+        (WebCore::createAcceleratedCanvas):
+
 2011-11-23  Emil A Eklund  <eae@chromium.org>
 
         Change remaining scrollTop/Left/Width/Height methods back to int
