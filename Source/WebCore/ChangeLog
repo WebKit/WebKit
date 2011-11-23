@@ -1,3 +1,12 @@
+2011-11-23  Dmitry Lomov  <dslomov@google.com>
+
+        Unreviewed, rebaseline binding tests after http://trac.webkit.org/changeset/101064.
+
+        * bindings/scripts/test/JS/JSFloat64Array.cpp:
+        (WebCore::toFloat64Array):
+        * bindings/scripts/test/V8/V8Float64Array.cpp:
+        (WebCore::V8Float64Array::wrapSlow):
+
 2011-11-23  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r101069.

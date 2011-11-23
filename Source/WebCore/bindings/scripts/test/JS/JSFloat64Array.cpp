@@ -246,11 +246,5 @@ Float64Array* toFloat64Array(JSC::JSValue value)
 {
     return value.inherits(&JSFloat64Array::s_info) ? static_cast<JSFloat64Array*>(asObject(value))->impl() : 0;
 }
-}
-namespace WTF {
-void Float64Array::neuterBinding(WebCore::ScriptExecutionContext*) {
-}
-}
-namespace WebCore {
 
 }
