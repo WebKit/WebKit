@@ -37,6 +37,7 @@
 #include "Clipboard.h"
 #include "ClipboardChromium.h"
 #include "ClipboardMimeTypes.h"
+#include "ClipboardUtilitiesChromium.h"
 #include "PlatformSupport.h"
 #include "SharedBuffer.h"
 #include "StringCallback.h"
@@ -80,25 +81,25 @@ void DataTransferItemChromium::getAsString(PassRefPtr<StringCallback> callback)
         || kind() != kindString)
         return;
 
-    if (static_cast<ClipboardChromium*>(owner())->platformClipboardChanged())
-        return;
-
     if (m_source == InternalSource) {
         callback->scheduleCallback(m_context, m_data);
         return;
     }
 
     ASSERT(m_source == PasteboardSource);
+    if (static_cast<ClipboardChromium*>(owner())->platformClipboardChanged())
+        return;
+
     // This is ugly but there's no real alternative.
     if (type() == mimeTypeTextPlain) {
-        callback->scheduleCallback(m_context, PlatformSupport::clipboardReadPlainText(PasteboardPrivate::StandardBuffer));
+        callback->scheduleCallback(m_context, PlatformSupport::clipboardReadPlainText(currentPasteboardBuffer()));
         return;
     }
     if (type() == mimeTypeTextHTML) {
         String html;
         KURL ignoredSourceURL;
         unsigned ignored;
-        PlatformSupport::clipboardReadHTML(PasteboardPrivate::StandardBuffer, &html, &ignoredSourceURL, &ignored, &ignored);
+        PlatformSupport::clipboardReadHTML(currentPasteboardBuffer(), &html, &ignoredSourceURL, &ignored, &ignored);
         callback->scheduleCallback(m_context, html);
         return;
     }

@@ -151,9 +151,10 @@ void PlatformSupport::cacheMetadata(const KURL& url, double responseTime, const 
 
 // Clipboard ------------------------------------------------------------------
 
-uint64_t PlatformSupport::clipboardGetSequenceNumber()
+uint64_t PlatformSupport::clipboardSequenceNumber(PasteboardPrivate::ClipboardBuffer buffer)
 {
-    return webKitPlatformSupport()->clipboard()->getSequenceNumber();
+    return webKitPlatformSupport()->clipboard()->sequenceNumber(
+        static_cast<WebClipboard::Buffer>(buffer));
 }
 
 bool PlatformSupport::clipboardIsFormatAvailable(

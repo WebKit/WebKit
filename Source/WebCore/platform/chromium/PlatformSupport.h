@@ -95,7 +95,7 @@ public:
     static void cacheMetadata(const KURL&, double responseTime, const Vector<char>&);
 
     // Clipboard ----------------------------------------------------------
-    static uint64_t clipboardGetSequenceNumber();
+    static uint64_t clipboardSequenceNumber(PasteboardPrivate::ClipboardBuffer);
 
     static bool clipboardIsFormatAvailable(PasteboardPrivate::ClipboardFormat, PasteboardPrivate::ClipboardBuffer);
     static HashSet<String> clipboardReadAvailableTypes(PasteboardPrivate::ClipboardBuffer, bool* containsFilenames);

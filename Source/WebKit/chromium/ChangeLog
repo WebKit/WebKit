@@ -1,3 +1,17 @@
+2011-11-22  Daniel Cheng  <dcheng@chromium.org>
+
+        [chromium] Fix plumbing for differentiating between clipboard/selection pastes.
+        https://bugs.webkit.org/show_bug.cgi?id=72056
+
+        Reviewed by tony@chromium.org.
+
+        Add a buffer parameter when retrieving the clipboard sequence number.
+
+        * public/WebClipboard.h:
+        (WebKit::WebClipboard::sequenceNumber):
+        * src/PlatformSupport.cpp:
+        (WebCore::PlatformSupport::clipboardSequenceNumber):
+
 2011-11-22  Greg Billock  <gbillock@google.com>
 
         Empty API for web intents

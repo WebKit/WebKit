@@ -32,9 +32,17 @@
 #include "ClipboardUtilitiesChromium.h"
 
 #include "KURL.h"
+#include "Pasteboard.h"
 #include "PlatformString.h"
 
 namespace WebCore {
+
+PasteboardPrivate::ClipboardBuffer currentPasteboardBuffer()
+{
+    return Pasteboard::generalPasteboard()->isSelectionMode() ?
+        PasteboardPrivate::SelectionBuffer :
+        PasteboardPrivate::StandardBuffer;
+}
 
 #if OS(WINDOWS)
 void replaceNewlinesWithWindowsStyleNewlines(String& str)

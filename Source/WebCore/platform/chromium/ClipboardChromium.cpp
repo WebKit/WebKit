@@ -42,6 +42,7 @@
 #include "Image.h"
 #include "MIMETypeRegistry.h"
 #include "NamedNodeMap.h"
+#include "PlatformSupport.h"
 #include "Range.h"
 #include "RenderImage.h"
 #include "ScriptExecutionContext.h"
@@ -77,7 +78,7 @@ ClipboardChromium::ClipboardChromium(ClipboardType clipboardType,
     : Clipboard(policy, clipboardType)
     , m_dataObject(dataObject)
     , m_frame(frame)
-    , m_originalSequenceNumber(m_dataObject->getSequenceNumber())
+    , m_originalSequenceNumber(PlatformSupport::clipboardSequenceNumber(currentPasteboardBuffer()))
 {
 }
 
@@ -111,7 +112,7 @@ String ClipboardChromium::getData(const String& type, bool& success) const
     if (policy() != ClipboardReadable || !m_dataObject)
         return String();
 
-    if (platformClipboardChanged())
+    if (isForCopyAndPaste() && platformClipboardChanged())
         return String();
 
     return m_dataObject->getData(normalizeType(type), success);
@@ -127,7 +128,7 @@ bool ClipboardChromium::setData(const String& type, const String& data)
 
 bool ClipboardChromium::platformClipboardChanged() const
 {
-    return m_dataObject->getSequenceNumber() != m_originalSequenceNumber;
+    return PlatformSupport::clipboardSequenceNumber(currentPasteboardBuffer()) != m_originalSequenceNumber;
 }
 
 // extensions beyond IE's API

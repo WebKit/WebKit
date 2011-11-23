@@ -77,7 +77,6 @@ public:
     HashSet<String> types() const;
     String getData(const String& type, bool& success);
     bool setData(const String& type, const String& data);
-    uint64_t getSequenceNumber();
 
     // Special handlers for URL/HTML metadata.
     String urlTitle() const { return m_urlTitle; }

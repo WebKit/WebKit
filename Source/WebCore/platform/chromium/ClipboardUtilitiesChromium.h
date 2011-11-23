@@ -31,12 +31,15 @@
 #ifndef ClipboardUtilitiesChromium_h
 #define ClipboardUtilitiesChromium_h
 
+#include "PasteboardPrivate.h"
+
 #include <wtf/Forward.h>
 
 namespace WebCore {
 
 class KURL;
 
+PasteboardPrivate::ClipboardBuffer currentPasteboardBuffer();
 #if OS(WINDOWS)
 void replaceNewlinesWithWindowsStyleNewlines(String&);
 #endif

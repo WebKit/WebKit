@@ -1,3 +1,29 @@
+2011-11-22  Daniel Cheng  <dcheng@chromium.org>
+
+        [chromium] Fix plumbing for differentiating between clipboard/selection pastes.
+        https://bugs.webkit.org/show_bug.cgi?id=72056
+
+        Reviewed by tony@chromium.org.
+
+        Add a buffer parameter when retrieving the clipboard sequence number and fix several call
+        sites that incorrectly assume use of the standard buffer in pastes.
+
+        * platform/chromium/ChromiumDataObject.cpp:
+        (WebCore::ChromiumDataObject::types):
+        (WebCore::ChromiumDataObject::getData):
+        (WebCore::ChromiumDataObject::containsFilenames):
+        * platform/chromium/ChromiumDataObject.h:
+        * platform/chromium/ClipboardChromium.cpp:
+        (WebCore::ClipboardChromium::ClipboardChromium):
+        (WebCore::ClipboardChromium::getData):
+        (WebCore::ClipboardChromium::platformClipboardChanged):
+        * platform/chromium/ClipboardUtilitiesChromium.cpp:
+        (WebCore::currentPasteboardBuffer):
+        * platform/chromium/ClipboardUtilitiesChromium.h:
+        * platform/chromium/DataTransferItemChromium.cpp:
+        (WebCore::DataTransferItemChromium::getAsString):
+        * platform/chromium/PlatformSupport.h:
+
 2011-11-22  Andrey Kosyakov  <caseq@chromium.org>
 
         Layout Test inspector/extensions/extensions-events.html is timing out

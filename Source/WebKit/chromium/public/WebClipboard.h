@@ -62,7 +62,7 @@ public:
 
     // Returns an identifier which can be used to determine whether the data
     // contained within the clipboard has changed.
-    virtual uint64 getSequenceNumber() { return 0; }
+    virtual uint64 sequenceNumber(Buffer) { return 0; }
 
     virtual bool isFormatAvailable(Format, Buffer) { return false; }
 
