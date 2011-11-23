@@ -370,6 +370,9 @@ WebViewImpl::WebViewImpl(WebViewClient* client)
 #if ENABLE(GESTURE_RECOGNIZER)
     , m_gestureRecognizer(WebCore::PlatformGestureRecognizer::create())
 #endif
+#if ENABLE(MEDIA_STREAM)
+    , m_userMediaClientImpl(this)
+#endif
 {
     // WebKit/win/WebView.cpp does the same thing, except they call the
     // KJS specific wrapper around this method. We need to have threading
@@ -392,6 +395,9 @@ WebViewImpl::WebViewImpl(WebViewClient* client)
     pageClients.deviceOrientationClient = m_deviceOrientationClientProxy.get();
     pageClients.geolocationClient = m_geolocationClientProxy.get();
     pageClients.backForwardClient = BackForwardListChromium::create(this);
+#if ENABLE(MEDIA_STREAM)
+    pageClients.userMediaClient = &m_userMediaClientImpl;
+#endif
 
     m_page = adoptPtr(new Page(pageClients));
 

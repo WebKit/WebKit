@@ -48,6 +48,7 @@
 #include "IntRect.h"
 #include "NotificationPresenterImpl.h"
 #include "PageOverlay.h"
+#include "UserMediaClientImpl.h"
 #include "cc/CCLayerTreeHost.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/RefCounted.h>
@@ -81,6 +82,7 @@ class DeviceOrientationClientProxy;
 class DragScrollTimer;
 class GeolocationClientProxy;
 class SpeechInputClientImpl;
+class UserMediaClientImpl;
 class WebAccessibilityObject;
 class WebCompositorImpl;
 class WebDevToolsAgentClient;
@@ -624,6 +626,10 @@ private:
 
 #if ENABLE(GESTURE_RECOGNIZER)
     OwnPtr<WebCore::PlatformGestureRecognizer> m_gestureRecognizer;
+#endif
+
+#if ENABLE(MEDIA_STREAM)
+    UserMediaClientImpl m_userMediaClientImpl;
 #endif
 };
 
