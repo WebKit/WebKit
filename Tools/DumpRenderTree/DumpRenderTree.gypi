@@ -16,6 +16,8 @@
             'chromium/DumpRenderTree.cpp',
             'chromium/EventSender.cpp',
             'chromium/EventSender.h',
+            'chromium/GamepadController.cpp',
+            'chromium/GamepadController.h',
             'chromium/LayoutTestController.cpp',
             'chromium/LayoutTestController.h',
             'chromium/MockSpellCheck.cpp',

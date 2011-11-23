@@ -47,6 +47,7 @@
 
 #if ENABLE(GAMEPAD)
 #include "GamepadList.h"
+#include "Gamepads.h"
 #endif
 
 #if ENABLE(MEDIA_STREAM)
@@ -311,8 +312,10 @@ void Navigator::webkitGetUserMedia(const String& options, PassRefPtr<NavigatorUs
 #if ENABLE(GAMEPAD)
 GamepadList* Navigator::webkitGamepads()
 {
-    // Stubbed until platform/ changes landed.
-    return 0;
+    if (!m_gamepads)
+        m_gamepads = GamepadList::create();
+    sampleGamepads(m_gamepads.get());
+    return m_gamepads.get();
 }
 #endif
 

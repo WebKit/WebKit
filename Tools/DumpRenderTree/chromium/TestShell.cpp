@@ -127,6 +127,7 @@ TestShell::TestShell(bool testShellMode)
 
     m_webPermissions = adoptPtr(new WebPermissions(this));
     m_accessibilityController = adoptPtr(new AccessibilityController(this));
+    m_gamepadController = adoptPtr(new GamepadController(this));
     m_layoutTestController = adoptPtr(new LayoutTestController(this));
     m_eventSender = adoptPtr(new EventSender(this));
     m_plainTextController = adoptPtr(new PlainTextController());
@@ -270,6 +271,7 @@ void TestShell::resetTestController()
     resetWebSettings(*webView());
     m_webPermissions->reset();
     m_accessibilityController->reset();
+    m_gamepadController->reset();
     m_layoutTestController->reset();
     m_eventSender->reset();
     m_webViewHost->reset();
@@ -673,6 +675,7 @@ void TestShell::bindJSObjectsToWindow(WebFrame* frame)
 {
     WebTestingSupport::injectInternalsObject(frame);
     m_accessibilityController->bindToJavascript(frame, WebString::fromUTF8("accessibilityController"));
+    m_gamepadController->bindToJavascript(frame, WebString::fromUTF8("gamepadController"));
     m_layoutTestController->bindToJavascript(frame, WebString::fromUTF8("layoutTestController"));
     m_eventSender->bindToJavascript(frame, WebString::fromUTF8("eventSender"));
     m_plainTextController->bindToJavascript(frame, WebString::fromUTF8("plainText"));

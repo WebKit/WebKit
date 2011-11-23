@@ -3240,6 +3240,7 @@
             'platform/chromium/FramelessScrollView.cpp',
             'platform/chromium/FramelessScrollView.h',
             'platform/chromium/FramelessScrollViewClient.h',
+            'platform/chromium/GamepadsChromium.cpp',
             'platform/chromium/GestureRecognizerChromium.cpp',
             'platform/chromium/GestureRecognizerChromium.h',
             'platform/chromium/KeyCodeConversion.h',

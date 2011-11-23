@@ -71,6 +71,7 @@ class Color;
 class Cursor;
 class Document;
 class Frame;
+class GamepadList;
 class GeolocationServiceBridge;
 class GeolocationServiceChromium;
 class GraphicsContext;
@@ -181,6 +182,9 @@ public:
     static void createIDBKeysFromSerializedValuesAndKeyPath(const Vector<RefPtr<SerializedScriptValue> >& values, const String& keyPath, Vector<RefPtr<IDBKey> >& keys);
     // Injects key via keyPath into value. Returns true on success.
     static PassRefPtr<SerializedScriptValue> injectIDBKeyIntoSerializedValue(PassRefPtr<IDBKey>, PassRefPtr<SerializedScriptValue>, const String& keyPath);
+
+    // Gamepad -----------------------------------------------------------
+    static void sampleGamepads(GamepadList* into);
 
     // JavaScript ---------------------------------------------------------
     static void notifyJSOutOfMemory(Frame*);

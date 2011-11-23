@@ -33,6 +33,7 @@
 
 #include "AccessibilityController.h"
 #include "EventSender.h"
+#include "GamepadController.h"
 #include "LayoutTestController.h"
 #include "NotificationPresenter.h"
 #include "PlainTextController.h"
@@ -91,6 +92,7 @@ public:
     LayoutTestController* layoutTestController() const { return m_layoutTestController.get(); }
     EventSender* eventSender() const { return m_eventSender.get(); }
     AccessibilityController* accessibilityController() const { return m_accessibilityController.get(); }
+    GamepadController* gamepadController() const { return m_gamepadController.get(); }
     NotificationPresenter* notificationPresenter() const { return m_notificationPresenter.get(); }
     TestEventPrinter* printer() const { return m_printer.get(); }
 
@@ -205,6 +207,7 @@ private:
     OwnPtr<DRTDevToolsAgent> m_drtDevToolsAgent;
     OwnPtr<DRTDevToolsClient> m_drtDevToolsClient;
     OwnPtr<AccessibilityController> m_accessibilityController;
+    OwnPtr<GamepadController> m_gamepadController;
     OwnPtr<EventSender> m_eventSender;
     OwnPtr<LayoutTestController> m_layoutTestController;
     OwnPtr<PlainTextController> m_plainTextController;

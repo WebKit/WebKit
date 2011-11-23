@@ -1,3 +1,23 @@
+2011-11-23  Scott Graham  <scottmg@chromium.org>
+
+        Adding gamepad support
+        https://bugs.webkit.org/show_bug.cgi?id=69451
+
+        Reviewed by Darin Fisher.
+
+        Plumb gamepad data access through platform.
+
+        Test: gamepad/gamepad-polling-access.html
+
+        * WebCore.gypi:
+        * page/Navigator.cpp:
+        (WebCore::Navigator::webkitGamepads):
+        * page/Navigator.h:
+        * platform/Gamepads.h: Added.
+        * platform/chromium/GamepadsChromium.cpp: Added.
+        (WebCore::sampleGamepads):
+        * platform/chromium/PlatformSupport.h:
+
 2011-11-23  Dmitry Lomov  <dslomov@google.com>
 
         Get rid of WebCore dependencies from TypedArray implementation types

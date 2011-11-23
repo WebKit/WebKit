@@ -90,6 +90,7 @@
 #include "Cookie.h"
 #include "Document.h"
 #include "FrameView.h"
+#include "GamepadList.h"
 #include "GraphicsContext.h"
 #include "IDBFactoryBackendProxy.h"
 #include "KURL.h"
@@ -524,6 +525,31 @@ void PlatformSupport::createIDBKeysFromSerializedValuesAndKeyPath(const Vector<R
 PassRefPtr<SerializedScriptValue> PlatformSupport::injectIDBKeyIntoSerializedValue(PassRefPtr<IDBKey> key, PassRefPtr<SerializedScriptValue> value, const String& keyPath)
 {
     return webKitPlatformSupport()->injectIDBKeyIntoSerializedValue(key, value, keyPath);
+}
+
+// Gamepad --------------------------------------------------------------------
+
+void PlatformSupport::sampleGamepads(GamepadList* into)
+{
+    WebGamepads gamepads;
+
+    webKitPlatformSupport()->sampleGamepads(gamepads);
+
+    for (unsigned i = 0; i < WebKit::WebGamepads::itemsLengthCap; ++i) {
+        WebGamepad& webGamepad = gamepads.items[i];
+        if (i < gamepads.length && webGamepad.connected) {
+            RefPtr<Gamepad> gamepad = into->item(i);
+            if (!gamepad)
+                gamepad = Gamepad::create();
+            gamepad->id(webGamepad.id);
+            gamepad->index(i);
+            gamepad->timestamp(webGamepad.timestamp);
+            gamepad->axes(webGamepad.axesLength, webGamepad.axes);
+            gamepad->buttons(webGamepad.buttonsLength, webGamepad.buttons);
+            into->set(i, gamepad);
+        } else
+            into->set(i, 0);
+    }
 }
 
 // Keygen ---------------------------------------------------------------------

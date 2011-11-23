@@ -85,6 +85,9 @@ private:
     mutable RefPtr<DOMPluginArray> m_plugins;
     mutable RefPtr<DOMMimeTypeArray> m_mimeTypes;
     mutable RefPtr<Geolocation> m_geolocation;
+#if ENABLE(GAMEPAD)
+    mutable RefPtr<GamepadList> m_gamepads;
+#endif
 #if ENABLE(POINTER_LOCK)
     mutable RefPtr<PointerLock> m_pointer;
 #endif

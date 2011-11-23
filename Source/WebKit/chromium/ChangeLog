@@ -1,3 +1,17 @@
+2011-11-23  Scott Graham  <scottmg@chromium.org>
+
+        Adding gamepad support
+        https://bugs.webkit.org/show_bug.cgi?id=69451
+
+        Add implementation of sampleGamepads in Chromium platform. Retrieves
+        gamepad data from Chromium port and converts to DOM format, i.e.
+        GamepadList.
+
+        Reviewed by Darin Fisher.
+
+        * src/PlatformSupport.cpp:
+        (WebCore::PlatformSupport::sampleGamepads):
+
 2011-11-23  Dmitry Lomov  <dslomov@google.com>
 
         Get rid of WebCore dependencies from TypedArray implementation types

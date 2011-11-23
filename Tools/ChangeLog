@@ -1,3 +1,34 @@
+2011-11-23  Scott Graham  <scottmg@chromium.org>
+
+        Adding gamepad support
+        https://bugs.webkit.org/show_bug.cgi?id=69451
+
+        Reviewed by Darin Fisher.
+
+        Add a 'gamepadController' to Chromium DRT. Allows for setting of mock
+        gamepad data that will be retrieved when JS code pulls via API access.
+
+        * DumpRenderTree/DumpRenderTree.gypi:
+        * DumpRenderTree/chromium/GamepadController.cpp: Added.
+        (GamepadController::GamepadController):
+        (GamepadController::bindToJavascript):
+        (GamepadController::reset):
+        (GamepadController::connect):
+        (GamepadController::disconnect):
+        (GamepadController::setId):
+        (GamepadController::setButtonCount):
+        (GamepadController::setButtonData):
+        (GamepadController::setAxisCount):
+        (GamepadController::setAxisData):
+        (GamepadController::fallbackCallback):
+        * DumpRenderTree/chromium/GamepadController.h: Added.
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::TestShell):
+        (TestShell::resetTestController):
+        (TestShell::bindJSObjectsToWindow):
+        * DumpRenderTree/chromium/TestShell.h:
+        (TestShell::gamepadController):
+
 2011-11-23  Raphael Kubo da Costa  <kubo@profusion.mobi>
 
         [CMake] Move the top-level logic to the top-level directory.

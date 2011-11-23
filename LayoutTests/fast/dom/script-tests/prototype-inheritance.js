@@ -12,6 +12,7 @@ var skippedProperties = [
     "objCController", "textInputController", "navigationController",
     "eventSender", "objCPlugin", "objCPluginFunction",
     "appleScriptController", "plainText", "accessibilityController",
+    "gamepadController",
     "internals",
     // Ignore these properties because they do not exist in all implementations. They will be tested separately
     "webkitNotifications",
