@@ -8,12 +8,11 @@ Item {
         id: webView
         width: 200
         height: 200
-        function navigationPolicyForUrl(url, button, modifiers) {
-            if (button == Qt.MiddleButton && modifiers & Qt.ControlModifier) {
-                otherWebView.load(url)
-                return DesktopWebView.IgnorePolicy
+        onNavigationRequested: {
+            if (request.button == Qt.MiddleButton && request.modifiers & Qt.ControlModifier) {
+                otherWebView.load(request.url)
+                request.action = WebView.IgnoreRequest
             }
-            return DesktopWebView.UsePolicy
         }
     }
 
@@ -34,7 +33,7 @@ Item {
     }
 
     TestCase {
-        name: "DesktopWebViewNavigationPolicyForUrl"
+        name: "DesktopWebViewNavigationRequested"
 
         // Delayed windowShown to workaround problems with Qt5 in debug mode.
         when: false
@@ -49,7 +48,6 @@ Item {
             webView.load(Qt.resolvedUrl("../common/test2.html"))
             spy.wait()
             spy.clear()
-            compare(spy.count, 0)
             mouseClick(webView, 100, 100, Qt.LeftButton)
             spy.wait()
             compare(spy.count, 1)

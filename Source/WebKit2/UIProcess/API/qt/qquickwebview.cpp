@@ -344,46 +344,17 @@ void QQuickWebViewPrivate::setViewInAttachedProperties(QObject* object)
     attached->setView(q);
 }
 
-static QtWebPagePolicyClient::PolicyAction toPolicyAction(QQuickWebView::NavigationPolicy policy)
-{
-    switch (policy) {
-    case QQuickWebView::UsePolicy:
-        return QtWebPagePolicyClient::Use;
-    case QQuickWebView::DownloadPolicy:
-        return QtWebPagePolicyClient::Download;
-    case QQuickWebView::IgnorePolicy:
-        return QtWebPagePolicyClient::Ignore;
-    }
-    ASSERT_NOT_REACHED();
-    return QtWebPagePolicyClient::Ignore;
-}
-
-static bool hasMetaMethod(QObject* object, const char* methodName)
-{
-    int methodIndex = object->metaObject()->indexOfMethod(QMetaObject::normalizedSignature(methodName));
-    return methodIndex >= 0 && methodIndex < object->metaObject()->methodCount();
-}
-
 /*!
-    \qmlmethod NavigationPolicy DesktopWebView::navigationPolicyForUrl(url, button, modifiers)
+    \qmlsignal WebView::onNavigationRequested(request)
 
-    This method should be implemented by the user of DesktopWebView element.
+    This signal is emitted for every navigation request. The request object contains url, button and modifiers properties
+    describing the navigation action, e.g. "a middle click with shift key pressed to 'http://qt-project.org'".
 
-    It will be called to decide the policy for a navigation: whether the WebView should ignore the navigation,
-    continue it or start a download. The return value must be one of the policies in the NavigationPolicy enumeration.
+    The navigation will be accepted by default. To change that, one can set the action property to WebView.IgnoreRequest to reject
+    the request or WebView.DownloadRequest to trigger a download instead of navigating to the url.
+
+    The request object cannot be used after the signal handler function ends.
 */
-QtWebPagePolicyClient::PolicyAction QQuickWebViewPrivate::navigationPolicyForURL(const QUrl& url, Qt::MouseButton button, Qt::KeyboardModifiers modifiers)
-{
-    Q_Q(QQuickWebView);
-    // We need to check this first because invokeMethod() warns if the method doesn't exist for the object.
-    if (!hasMetaMethod(q, "navigationPolicyForUrl(QVariant,QVariant,QVariant)"))
-        return QtWebPagePolicyClient::Use;
-
-    QVariant ret;
-    if (QMetaObject::invokeMethod(q, "navigationPolicyForUrl", Q_RETURN_ARG(QVariant, ret), Q_ARG(QVariant, url), Q_ARG(QVariant, button), Q_ARG(QVariant, QVariant(modifiers))))
-        return toPolicyAction(static_cast<QQuickWebView::NavigationPolicy>(ret.toInt()));
-    return QtWebPagePolicyClient::Use;
-}
 
 void QQuickWebViewPrivate::setPageProxy(QtWebPageProxy* pageProxy)
 {

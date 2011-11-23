@@ -70,8 +70,6 @@ public:
     void _q_onOpenPanelFinished(int result);
     void _q_onVisibleChanged();
 
-    QtWebPagePolicyClient::PolicyAction navigationPolicyForURL(const QUrl&, Qt::MouseButton, Qt::KeyboardModifiers);
-
     void chooseFiles(WKOpenPanelResultListenerRef, const QStringList& selectedFileNames, QtWebPageUIClient::FileChooserType);
     void runJavaScriptAlert(const QString&);
     bool runJavaScriptConfirm(const QString&);

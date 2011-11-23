@@ -1,5 +1,36 @@
 2011-11-22  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
+        [Qt] [WK2] Expose onNavigationRequested signal instead of expecting a slot be defined from QML
+        https://bugs.webkit.org/show_bug.cgi?id=72976
+
+        Reviewed by Tor Arne Vestbø.
+
+        Expecting slots/methods to be implemented in QML isn't very idiomatic in
+        comparison with the alternative of having a signal. So we now use a signal
+        for handling navigation requests, and expose a 'request' object with relevant
+        metadata. There's also a settable property 'action' used to indicate whether
+        the navigation should be ignored or trigger a download.
+
+        The pattern signal with an object parameter that can keep the reply is common in QML,
+        and used for example for mouse signals.
+
+        * UIProcess/API/qt/qquickwebview.cpp:
+        * UIProcess/API/qt/qquickwebview_p.h:
+        * UIProcess/API/qt/qquickwebview_p_p.h:
+        * UIProcess/API/qt/tests/qmltests/DesktopBehavior/tst_navigationRequested.qml: Renamed from Source/WebKit2/UIProcess/API/qt/tests/qmltests/DesktopBehavior/tst_navigationPolicyForUrl.qml.
+        * UIProcess/API/qt/tests/qmltests/qmltests.pro:
+        * UIProcess/qt/QtWebPagePolicyClient.cpp:
+        (NavigationRequest::NavigationRequest):
+        (NavigationRequest::url):
+        (NavigationRequest::button):
+        (NavigationRequest::modifiers):
+        (NavigationRequest::action):
+        (NavigationRequest::setAction):
+        (QtWebPagePolicyClient::decidePolicyForNavigationAction):
+        * UIProcess/qt/QtWebPagePolicyClient.h:
+
+2011-11-22  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
         [Qt] [WK2] Move PagePolicyClient related code to QtWebPagePolicyClient
         https://bugs.webkit.org/show_bug.cgi?id=72959
 

@@ -30,14 +30,8 @@ class QtWebPagePolicyClient {
 public:
     QtWebPagePolicyClient(WKPageRef, QQuickWebView*);
 
-    enum PolicyAction {
-        Use,
-        Download,
-        Ignore
-    };
-
 private:
-    PolicyAction decidePolicyForNavigationAction(const QUrl&, Qt::MouseButton, Qt::KeyboardModifiers);
+    void decidePolicyForNavigationAction(const QUrl&, Qt::MouseButton, Qt::KeyboardModifiers, WKFramePolicyListenerRef);
 
     // WKPagePolicyClient callbacks.
     static void decidePolicyForNavigationAction(WKPageRef, WKFrameRef, WKFrameNavigationType, WKEventModifiers, WKEventMouseButton, WKURLRequestRef, WKFramePolicyListenerRef, WKTypeRef userData, const void* clientInfo);

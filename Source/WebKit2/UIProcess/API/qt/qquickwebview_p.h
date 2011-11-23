@@ -56,13 +56,14 @@ class QWEBKIT_EXPORT QQuickWebView : public QQuickItem {
     Q_PROPERTY(bool canReload READ canReload NOTIFY navigationStateChanged FINAL)
     Q_PROPERTY(QWebPreferences* preferences READ preferences CONSTANT FINAL)
     Q_PROPERTY(QQuickWebPage* page READ page CONSTANT FINAL)
-    Q_ENUMS(NavigationPolicy)
+    Q_ENUMS(NavigationRequestAction)
     Q_ENUMS(ErrorType)
+
 public:
-    enum NavigationPolicy {
-        UsePolicy,
-        DownloadPolicy,
-        IgnorePolicy
+    enum NavigationRequestAction {
+        AcceptRequest,
+        IgnoreRequest,
+        DownloadRequest
     };
 
     enum ErrorType {
@@ -112,6 +113,7 @@ Q_SIGNALS:
     void linkHovered(const QUrl& url, const QString& title);
     void viewModeChanged();
     void navigationStateChanged();
+    void navigationRequested(QObject* request);
 
 protected:
     virtual void geometryChanged(const QRectF&, const QRectF&);

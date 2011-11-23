@@ -27,5 +27,5 @@ OTHER_FILES += \
     DesktopBehavior/tst_linkHovered.qml \
     DesktopBehavior/tst_messaging.qml \
     DesktopBehavior/tst_download.qml \
-    DesktopBehavior/tst_navigationPolicyForUrl.qml \
+    DesktopBehavior/tst_navigationRequested.qml \
     DesktopBehavior/tst_loadHtml.qml
