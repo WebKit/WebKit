@@ -3440,7 +3440,8 @@ BUGCR102677 MAC DEBUG : fast/reflections/reflection-masks-outset.html = CRASH PA
 // Failing after r94946
 BUGWK67926 WIN : fast/events/constructors/progress-event-constructor.html = TEXT
 
-BUG_LEVIN SNOWLEOPARD DEBUG : http/tests/loading/307-after-303-after-post.html = PASS TEXT
+BUGWK73030 MAC DEBUG : http/tests/loading/307-after-303-after-post.html = PASS TEXT
+
 BUG_LEVIN SNOWLEOPARD DEBUG : http/tests/security/mixedContent/insecure-image-in-main-frame.html = PASS TEXT
 BUG_LEVIN SNOWLEOPARD DEBUG : http/tests/security/mixedContent/insecure-script-in-iframe.html = PASS TEXT
 
