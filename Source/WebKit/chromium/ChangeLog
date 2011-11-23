@@ -1,3 +1,16 @@
+2011-11-22  Dirk Pranke  <dpranke@chromium.org>
+
+        Roll DEPS to r111325 to fix an issue with the linux build
+
+        https://bugs.webkit.org/show_bug.cgi?id=73004
+
+        Unreviewed, build fix.
+
+        There appears to be a bug in the Makefile generator for gyp
+        that is causing make to not rebuild DRT on Linux.
+
+        * DEPS:
+
 2011-11-22  Kenneth Russell  <kbr@google.com>
 
         [chromium] Support Core Animation plugins in compositor
