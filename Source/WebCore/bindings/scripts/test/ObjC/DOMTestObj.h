@@ -39,6 +39,9 @@
 @protocol DOMEventListener;
 
 enum {
+#if ENABLE(Condition1)
+    DOM_CONDITIONAL_CONST = 0,
+#endif
     DOM_CONST_VALUE_0 = 0,
     DOM_CONST_VALUE_1 = 1,
     DOM_CONST_VALUE_2 = 2,

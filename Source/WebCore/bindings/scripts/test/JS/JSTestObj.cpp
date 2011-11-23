@@ -147,6 +147,9 @@ static const HashTable JSTestObjTable = { 135, 127, JSTestObjTableValues, 0 };
 
 static const HashTableValue JSTestObjConstructorTableValues[] =
 {
+#if ENABLE(Condition1)
+    { "CONDITIONAL_CONST", DontDelete | ReadOnly, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjCONDITIONAL_CONST), (intptr_t)0 THUNK_GENERATOR(0) INTRINSIC(DFG::NoIntrinsic) },
+#endif
     { "CONST_VALUE_0", DontDelete | ReadOnly, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjCONST_VALUE_0), (intptr_t)0 THUNK_GENERATOR(0) INTRINSIC(DFG::NoIntrinsic) },
     { "CONST_VALUE_1", DontDelete | ReadOnly, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjCONST_VALUE_1), (intptr_t)0 THUNK_GENERATOR(0) INTRINSIC(DFG::NoIntrinsic) },
     { "CONST_VALUE_2", DontDelete | ReadOnly, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjCONST_VALUE_2), (intptr_t)0 THUNK_GENERATOR(0) INTRINSIC(DFG::NoIntrinsic) },
@@ -165,6 +168,9 @@ static const HashTableValue JSTestObjConstructorTableValues[] =
 #undef THUNK_GENERATOR
 static const HashTable JSTestObjConstructorTable = { 33, 31, JSTestObjConstructorTableValues, 0 };
 
+#if ENABLE(Condition1)
+COMPILE_ASSERT(0 == TestObj::CONDITIONAL_CONST, TestObjEnumCONDITIONAL_CONSTIsWrongUseDontCheckEnums);
+#endif
 COMPILE_ASSERT(0 == TestObj::CONST_VALUE_0, TestObjEnumCONST_VALUE_0IsWrongUseDontCheckEnums);
 COMPILE_ASSERT(1 == TestObj::CONST_VALUE_1, TestObjEnumCONST_VALUE_1IsWrongUseDontCheckEnums);
 COMPILE_ASSERT(2 == TestObj::CONST_VALUE_2, TestObjEnumCONST_VALUE_2IsWrongUseDontCheckEnums);
@@ -229,6 +235,9 @@ ConstructType JSTestObjConstructor::getConstructData(JSCell*, ConstructData& con
 
 static const HashTableValue JSTestObjPrototypeTableValues[] =
 {
+#if ENABLE(Condition1)
+    { "CONDITIONAL_CONST", DontDelete | ReadOnly, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjCONDITIONAL_CONST), (intptr_t)0 THUNK_GENERATOR(0) INTRINSIC(DFG::NoIntrinsic) },
+#endif
     { "CONST_VALUE_0", DontDelete | ReadOnly, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjCONST_VALUE_0), (intptr_t)0 THUNK_GENERATOR(0) INTRINSIC(DFG::NoIntrinsic) },
     { "CONST_VALUE_1", DontDelete | ReadOnly, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjCONST_VALUE_1), (intptr_t)0 THUNK_GENERATOR(0) INTRINSIC(DFG::NoIntrinsic) },
     { "CONST_VALUE_2", DontDelete | ReadOnly, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjCONST_VALUE_2), (intptr_t)0 THUNK_GENERATOR(0) INTRINSIC(DFG::NoIntrinsic) },
@@ -1908,6 +1917,14 @@ void JSTestObj::visitChildren(JSCell* cell, SlotVisitor& visitor)
 
 // Constant getters
 
+#if ENABLE(Condition1)
+JSValue jsTestObjCONDITIONAL_CONST(ExecState* exec, JSValue, const Identifier&)
+{
+    UNUSED_PARAM(exec);
+    return jsNumber(static_cast<int>(0));
+}
+
+#endif
 JSValue jsTestObjCONST_VALUE_0(ExecState* exec, JSValue, const Identifier&)
 {
     UNUSED_PARAM(exec);

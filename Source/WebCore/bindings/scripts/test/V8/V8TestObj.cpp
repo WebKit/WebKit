@@ -1450,6 +1450,9 @@ static const BatchedCallback TestObjCallbacks[] = {
 };
 
 static const BatchedConstant TestObjConsts[] = {
+#if ENABLE(Condition1)
+    {"CONDITIONAL_CONST", static_cast<signed int>(0)},
+#endif
     {"CONST_VALUE_0", static_cast<signed int>(0)},
     {"CONST_VALUE_1", static_cast<signed int>(1)},
     {"CONST_VALUE_2", static_cast<signed int>(2)},
@@ -1465,6 +1468,9 @@ static const BatchedConstant TestObjConsts[] = {
 };
 
 
+#if ENABLE(Condition1)
+COMPILE_ASSERT(0 == TestObj::CONDITIONAL_CONST, TestObjEnumCONDITIONAL_CONSTIsWrongUseDontCheckEnums);
+#endif
 COMPILE_ASSERT(0 == TestObj::CONST_VALUE_0, TestObjEnumCONST_VALUE_0IsWrongUseDontCheckEnums);
 COMPILE_ASSERT(1 == TestObj::CONST_VALUE_1, TestObjEnumCONST_VALUE_1IsWrongUseDontCheckEnums);
 COMPILE_ASSERT(2 == TestObj::CONST_VALUE_2, TestObjEnumCONST_VALUE_2IsWrongUseDontCheckEnums);

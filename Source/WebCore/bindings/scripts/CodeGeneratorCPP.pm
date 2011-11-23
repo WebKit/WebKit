@@ -318,24 +318,12 @@ sub AddIncludesForType
     $implIncludes{"WebDOM$type.h"} = 1;
 }
 
-sub GenerateConditionalStringFromAttributeValue
-{
-    my $conditional = shift;
-    if ($conditional =~ /&/) {
-        return "ENABLE(" . join(") && ENABLE(", split(/&/, $conditional)) . ")";
-    } elsif ($conditional =~ /\|/) {
-        return "ENABLE(" . join(") || ENABLE(", split(/\|/, $conditional)) . ")";
-    } else {
-        return "ENABLE(" . $conditional . ")";
-    }
-}
-
 sub GenerateConditionalString
 {
     my $node = shift;
     my $conditional = $node->extendedAttributes->{"Conditional"};
     if ($conditional) {
-        return GenerateConditionalStringFromAttributeValue($conditional);
+        return $codeGenerator->GenerateConditionalStringFromAttributeValue($conditional);
     } else {
         return "";
     }
@@ -414,17 +402,28 @@ sub GenerateHeader
     # - Add constants.
     if ($numConstants > 0) {
         my @headerConstants = ();
+        my @constants = @{$dataNode->constants};
+        my $combinedConstants = "";
 
         # FIXME: we need a way to include multiple enums.
-        foreach my $constant (@{$dataNode->constants}) {
+        foreach my $constant (@constants) {
             my $constantName = $constant->name;
             my $constantValue = $constant->value;
+            my $conditional = $constant->extendedAttributes->{"Conditional"};
+            my $notLast = $constant ne $constants[-1];
 
-            my $output = "WEBDOM_" . $constantName . " = " . $constantValue;
-            push(@headerConstants, "        " . $output);
+            if ($conditional) {
+                my $conditionalString = $codeGenerator->GenerateConditionalStringFromAttributeValue($conditional);
+                $combinedConstants .= "#if ${conditionalString}\n";
+            }
+            $combinedConstants .= "        WEBDOM_$constantName = $constantValue";
+            $combinedConstants .= "," if $notLast;
+            if ($conditional) {
+                $combinedConstants .= "\n#endif\n";
+            } elsif ($notLast) {
+                $combinedConstants .= "\n";
+            }
         }
-
-        my $combinedConstants = join(",\n", @headerConstants);
 
         push(@headerContent, "    ");
         push(@headerContent, "enum {\n");

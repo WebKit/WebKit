@@ -411,24 +411,12 @@ sub prototypeHashTableAccessor
     }
 }
 
-sub GenerateConditionalStringFromAttributeValue
-{
-    my $conditional = shift;
-    if ($conditional =~ /&/) {
-        return "ENABLE(" . join(") && ENABLE(", split(/&/, $conditional)) . ")";
-    } elsif ($conditional =~ /\|/) {
-        return "ENABLE(" . join(") || ENABLE(", split(/\|/, $conditional)) . ")";
-    } else {
-        return "ENABLE(" . $conditional . ")";
-    }
-}
-
 sub GenerateConditionalString
 {
     my $node = shift;
     my $conditional = $node->extendedAttributes->{"Conditional"};
     if ($conditional) {
-        return GenerateConditionalStringFromAttributeValue($conditional);
+        return $codeGenerator->GenerateConditionalStringFromAttributeValue($conditional);
     } else {
         return "";
     }
@@ -1123,7 +1111,13 @@ sub GenerateHeader
         push(@headerContent,"// Constants\n\n");
         foreach my $constant (@{$dataNode->constants}) {
             my $getter = "js" . $interfaceName . $codeGenerator->WK_ucfirst($constant->name);
+            my $conditional = $constant->extendedAttributes->{"Conditional"};
+            if ($conditional) {
+                my $conditionalString = $codeGenerator->GenerateConditionalStringFromAttributeValue($conditional);
+                push(@headerContent, "#if ${conditionalString}\n");
+            }
             push(@headerContent, "JSC::JSValue ${getter}(JSC::ExecState*, JSC::JSValue, const JSC::Identifier&);\n");
+            push(@headerContent, "#endif\n") if $conditional;
         }
     }
 
@@ -1362,19 +1356,27 @@ sub GenerateImplementation
         my @hashValue1 = ();
         my @hashValue2 = ();
         my @hashSpecials = ();
+        my %conditionals = ();
 
         # FIXME: we should not need a function for every constant.
         foreach my $constant (@{$dataNode->constants}) {
-            push(@hashKeys, $constant->name);
-            my $getter = "js" . $interfaceName . $codeGenerator->WK_ucfirst($constant->name);
+            my $name = $constant->name;
+            push(@hashKeys, $name);
+            my $getter = "js" . $interfaceName . $codeGenerator->WK_ucfirst($name);
             push(@hashValue1, $getter);
             push(@hashValue2, "0");
             push(@hashSpecials, "DontDelete | ReadOnly");
+
+            my $conditional = $constant->extendedAttributes->{"Conditional"};
+            if ($conditional) {
+                $conditionals{$name} = $conditional;
+            }
         }
 
         $object->GenerateHashTable($hashName, $hashSize,
                                    \@hashKeys, \@hashSpecials,
-                                   \@hashValue1, \@hashValue2);
+                                   \@hashValue1, \@hashValue2,
+                                   \%conditionals);
 
         push(@implContent, $codeGenerator->GenerateCompileTimeCheckForEnumsIfNeeded($dataNode));
 
@@ -1394,11 +1396,17 @@ sub GenerateImplementation
 
     # FIXME: we should not need a function for every constant.
     foreach my $constant (@{$dataNode->constants}) {
-        push(@hashKeys, $constant->name);
-        my $getter = "js" . $interfaceName . $codeGenerator->WK_ucfirst($constant->name);
+        my $name = $constant->name;
+        push(@hashKeys, $name);
+        my $getter = "js" . $interfaceName . $codeGenerator->WK_ucfirst($name);
         push(@hashValue1, $getter);
         push(@hashValue2, "0");
         push(@hashSpecials, "DontDelete | ReadOnly");
+
+        my $conditional = $constant->extendedAttributes->{"Conditional"};
+        if ($conditional) {
+            $conditionals{$name} = $conditional;
+        }
     }
 
     foreach my $function (@{$dataNode->functions}) {
@@ -1983,7 +1991,7 @@ sub GenerateImplementation
 
             my $conditional = $function->signature->extendedAttributes->{"Conditional"};
             if ($conditional) {
-                my $conditionalString = GenerateConditionalStringFromAttributeValue($conditional);
+                my $conditionalString = $codeGenerator->GenerateConditionalStringFromAttributeValue($conditional);
                 push(@implContent, "#if ${conditionalString}\n");
             }
 
@@ -2057,9 +2065,7 @@ sub GenerateImplementation
                 GenerateOverloadedPrototypeFunction($function, $dataNode, $implClassName);
             }
 
-            if ($conditional) {
-                push(@implContent, "#endif\n\n");
-            }
+            push(@implContent, "#endif\n\n") if $conditional;
         }
         
         if ($needsMarkChildren && !$dataNode->extendedAttributes->{"CustomMarkFunction"}) {
@@ -2092,6 +2098,12 @@ sub GenerateImplementation
 
         foreach my $constant (@{$dataNode->constants}) {
             my $getter = "js" . $interfaceName . $codeGenerator->WK_ucfirst($constant->name);
+            my $conditional = $constant->extendedAttributes->{"Conditional"};
+
+            if ($conditional) {
+                my $conditionalString = $codeGenerator->GenerateConditionalStringFromAttributeValue($conditional);
+                push(@implContent, "#if ${conditionalString}\n");
+            }
 
             # FIXME: this casts into int to match our previous behavior which turned 0xFFFFFFFF in -1 for NodeFilter.SHOW_ALL
             push(@implContent, "JSValue ${getter}(ExecState* exec, JSValue, const Identifier&)\n");
@@ -2103,6 +2115,7 @@ sub GenerateImplementation
                 push(@implContent, "    return jsNumber(static_cast<int>(" . $constant->value . "));\n");
             }
             push(@implContent, "}\n\n");
+            push(@implContent, "#endif\n") if $conditional;
         }
     }
 
@@ -3020,7 +3033,7 @@ sub GenerateHashTable
             $conditional = $conditionals->{$key};
         }
         if ($conditional) {
-            my $conditionalString = GenerateConditionalStringFromAttributeValue($conditional);
+            my $conditionalString = $codeGenerator->GenerateConditionalStringFromAttributeValue($conditional);
             push(@implContent, "#if ${conditionalString}\n");
         }
         
@@ -3030,9 +3043,7 @@ sub GenerateHashTable
             $targetType = "static_cast<PropertySlot::GetValueFunc>";
         }
         push(@implContent, "    { \"$key\", @$specials[$i], (intptr_t)" . $targetType . "(@$value1[$i]), (intptr_t)@$value2[$i] THUNK_GENERATOR(0) INTRINSIC(DFG::NoIntrinsic) },\n");
-        if ($conditional) {
-            push(@implContent, "#endif\n");
-        }
+        push(@implContent, "#endif\n") if $conditional;
         ++$i;
     }
     push(@implContent, "    { 0, 0, 0, 0 THUNK_GENERATOR(0) INTRINSIC(DFG::NoIntrinsic) }\n");
@@ -3128,7 +3139,7 @@ sub WriteData
             print $IMPL "#include $include\n";
         }
         foreach my $condition (sort keys %implIncludeConditions) {
-            print $IMPL "\n#if " . GenerateConditionalStringFromAttributeValue($condition) . "\n";
+            print $IMPL "\n#if " . $codeGenerator->GenerateConditionalStringFromAttributeValue($condition) . "\n";
             foreach my $include (sort @{$implIncludeConditions{$condition}}) {
                 print $IMPL "#include $include\n";
             }

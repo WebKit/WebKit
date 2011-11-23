@@ -48,6 +48,9 @@ public:
     virtual ~WebDOMTestObj();
 
     enum {
+#if ENABLE(Condition1)
+        WEBDOM_CONDITIONAL_CONST = 0,
+#endif
         WEBDOM_CONST_VALUE_0 = 0,
         WEBDOM_CONST_VALUE_1 = 1,
         WEBDOM_CONST_VALUE_2 = 2,

@@ -187,25 +187,12 @@ sub AddIncludesForType
     }
 }
 
-# If the node has a [Conditional=XXX] attribute, returns an "ENABLE(XXX)" string for use in an #if.
-sub GenerateConditionalStringFromAttributeValue
-{
-    my $conditional = shift;
-    if ($conditional =~ /&/) {
-        return "ENABLE(" . join(") && ENABLE(", split(/&/, $conditional)) . ")";
-    } elsif ($conditional =~ /\|/) {
-        return "ENABLE(" . join(") || ENABLE(", split(/\|/, $conditional)) . ")";
-    } else {
-        return "ENABLE(" . $conditional . ")";
-    }
-}
-
 sub GenerateConditionalString
 {
     my $node = shift;
     my $conditional = $node->extendedAttributes->{"Conditional"};
     if ($conditional) {
-        return GenerateConditionalStringFromAttributeValue($conditional);
+        return $codeGenerator->GenerateConditionalStringFromAttributeValue($conditional);
     } else {
         return "";
     }
@@ -2354,15 +2341,21 @@ END
         my $name = $constant->name;
         my $value = $constant->value;
         my $attrExt = $constant->extendedAttributes;
+        my $conditional = $attrExt->{"Conditional"};
         if ($attrExt->{"EnabledAtRuntime"}) {
             push(@constantsEnabledAtRuntime, $constant);
         } else {
             # FIXME: we need the static_cast here only because of one constant, NodeFilter.idl
             # defines "const unsigned long SHOW_ALL = 0xFFFFFFFF".  It would be better if we
             # handled this here, and converted it to a -1 constant in the c++ output.
+            if ($conditional) {
+                my $conditionalString = $codeGenerator->GenerateConditionalStringFromAttributeValue($conditional);
+                push(@implContent, "#if ${conditionalString}\n");
+            }
             push(@implContent, <<END);
     {"${name}", static_cast<signed int>($value)},
 END
+            push(@implContent, "#endif\n") if $conditional;
         }
     }
     if ($has_constants) {
@@ -3745,7 +3738,7 @@ sub WriteData
             print $IMPL "#include $include\n";
         }
         foreach my $condition (sort keys %implIncludeConditions) {
-            print $IMPL "\n#if " . GenerateConditionalStringFromAttributeValue($condition) . "\n";
+            print $IMPL "\n#if " . $codeGenerator->GenerateConditionalStringFromAttributeValue($condition) . "\n";
             foreach my $include (sort @{$implIncludeConditions{$condition}}) {
                 print $IMPL "#include $include\n";
             }

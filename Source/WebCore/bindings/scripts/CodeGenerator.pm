@@ -559,9 +559,22 @@ sub ShouldCheckEnums
     return not $dataNode->extendedAttributes->{"DontCheckEnums"};
 }
 
+sub GenerateConditionalStringFromAttributeValue
+{
+    my $generator = shift;
+    my $conditional = shift;
+    if ($conditional =~ /&/) {
+        return "ENABLE(" . join(") && ENABLE(", split(/&/, $conditional)) . ")";
+    } elsif ($conditional =~ /\|/) {
+        return "ENABLE(" . join(") || ENABLE(", split(/\|/, $conditional)) . ")";
+    } else {
+        return "ENABLE(" . $conditional . ")";
+    }
+}
+
 sub GenerateCompileTimeCheckForEnumsIfNeeded
 {
-    my ($object, $dataNode) = @_;
+    my ($generator, $dataNode) = @_;
     my $interfaceName = $dataNode->name;
     my @checks = ();
     # If necessary, check that all constants are available as enums with the same value.
@@ -571,7 +584,18 @@ sub GenerateCompileTimeCheckForEnumsIfNeeded
             my $reflect = $constant->extendedAttributes->{"Reflect"};
             my $name = $reflect ? $reflect : $constant->name;
             my $value = $constant->value;
+            my $conditional = $constant->extendedAttributes->{"Conditional"};
+
+            if ($conditional) {
+                my $conditionalString = $generator->GenerateConditionalStringFromAttributeValue($conditional);
+                push(@checks, "#if ${conditionalString}\n");
+            }
+
             push(@checks, "COMPILE_ASSERT($value == ${interfaceName}::$name, ${interfaceName}Enum${name}IsWrongUseDontCheckEnums);\n");
+
+            if ($conditional) {
+                push(@checks, "#endif\n");
+            }
         }
         push(@checks, "\n");
     }

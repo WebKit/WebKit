@@ -731,17 +731,28 @@ sub GenerateHeader
     # - Add constants.
     if ($numConstants > 0) {
         my @headerConstants = ();
+        my @constants = @{$dataNode->constants};
+        my $combinedConstants = "";
 
         # FIXME: we need a way to include multiple enums.
-        foreach my $constant (@{$dataNode->constants}) {
+        foreach my $constant (@constants) {
             my $constantName = $constant->name;
             my $constantValue = $constant->value;
+            my $conditional = $constant->extendedAttributes->{"Conditional"};
+            my $notLast = $constant ne $constants[-1];
 
-            my $output = "    DOM_" . $constantName . " = " . $constantValue;
-            push(@headerConstants, $output);
+            if ($conditional) {
+                my $conditionalString = $codeGenerator->GenerateConditionalStringFromAttributeValue($conditional);
+                $combinedConstants .= "#if ${conditionalString}\n";
+            }
+            $combinedConstants .= "    DOM_$constantName = $constantValue";
+            $combinedConstants .= "," if $notLast;
+            if ($conditional) {
+                $combinedConstants .= "\n#endif\n";
+            } elsif ($notLast) {
+                $combinedConstants .= "\n";
+            }
         }
-
-        my $combinedConstants = join(",\n", @headerConstants);
 
         # FIXME: the formatting of the enums should line up the equal signs.
         # FIXME: enums are unconditionally placed in the public header.
