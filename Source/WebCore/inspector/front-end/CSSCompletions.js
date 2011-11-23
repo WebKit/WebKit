@@ -109,7 +109,9 @@ WebInspector.CSSCompletions.prototype = {
 
     keySet: function()
     {
-        return this._values.keySet();
+        if (!this._keySet)
+            this._keySet = this._values.keySet();
+        return this._keySet;
     },
 
     next: function(str, prefix)

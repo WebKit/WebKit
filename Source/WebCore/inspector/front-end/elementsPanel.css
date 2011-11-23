@@ -230,15 +230,14 @@
     margin-left: 0px;
 }
 
-.styles-section .properties li.not-parsed-ok::before {
+.styles-section .properties li.not-parsed-ok img.exclamation-mark {
     content: url(Images/warningIcon.png);
     opacity: 0.75;
-    float: left;
-    width: 8px;
-    height: 8px;
-    margin-top: 0;
-    padding-right: 5px;
-    vertical-align: sub;
+    width: 12px;
+    height: 10px;
+    margin: 0;
+    padding-right: 2px;
+    vertical-align: baseline;
     -webkit-user-select: none;
     cursor: default;
 }
