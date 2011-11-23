@@ -3844,3 +3844,7 @@ BUGWK72990 WIN : accessibility/loading-iframe-updates-axtree.html = PASS TIMEOUT
 BUGWK72761 : accessibility/anonymous-render-block-in-continuation-causes-crash.html = PASS TIMEOUT
 
 BUGWK72904 XP : http/tests/media/video-served-as-text.html = PASS TEXT
+
+BUGCR105025 MAC CPU GPU : fast/canvas/webgl/css-webkit-canvas.html = IMAGE
+BUGCR105025 MAC CPU GPU : fast/canvas/webgl/css-webkit-canvas-repaint.html = IMAGE
+
