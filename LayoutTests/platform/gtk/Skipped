@@ -1545,6 +1545,7 @@ fast/events/drag-selects-image.html
 # https://bugs.webkit.org/show_bug.cgi?id=70606
 # Missing DRT AccessibilityController::addNotificationListener implementation
 accessibility/menu-list-sends-change-notification.html
+accessibility/multiselect-list-reports-active-option.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=71022
 fast/canvas/canvas-composite-image.html
