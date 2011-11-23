@@ -1,5 +1,11 @@
 2011-11-22  Adam Klein  <adamk@chromium.org>
 
+        Add new WebKit/chromium/dbus directory to .gitignore.
+
+        * .gitignore:
+
+2011-11-22  Adam Klein  <adamk@chromium.org>
+
         Ignore more gyp-generated build files in WTF.gyp.
 
         * .gitignore:
