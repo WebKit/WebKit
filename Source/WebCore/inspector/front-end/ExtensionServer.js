@@ -525,10 +525,12 @@ WebInspector.ExtensionServer.prototype = {
             WebInspector.resourceTreeModel,
             WebInspector.ResourceTreeModel.EventTypes.ResourceAdded,
             this._notifyResourceAdded);
-        this._registerAutosubscriptionHandler(WebInspector.extensionAPI.Events.ElementsPanelObjectSelected,
-            WebInspector.panels.elements.treeOutline,
-            WebInspector.ElementsTreeOutline.Events.SelectedNodeChanged,
-            this._notifyElementsSelectionChanged);
+        if (WebInspector.panels.elements) {
+            this._registerAutosubscriptionHandler(WebInspector.extensionAPI.Events.ElementsPanelObjectSelected,
+                WebInspector.panels.elements.treeOutline,
+                WebInspector.ElementsTreeOutline.Events.SelectedNodeChanged,
+                this._notifyElementsSelectionChanged);
+        }
         this._registerAutosubscriptionHandler(WebInspector.extensionAPI.Events.ResourceContentCommitted,
             WebInspector.resourceTreeModel,
             WebInspector.ResourceTreeModel.EventTypes.ResourceContentCommitted,

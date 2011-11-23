@@ -1,3 +1,12 @@
+2011-11-23  Andrey Kosyakov  <caseq@chromium.org>
+
+        Web Inspector: [Extensions API] avoid exception in initExtensions() if elements panel is not present
+        https://bugs.webkit.org/show_bug.cgi?id=73007
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/front-end/ExtensionServer.js:
+
 2011-11-23  Brian Salomon  <bsalomon@google.com>
 
         Use new name for pixel config field of GrTextureDesc
