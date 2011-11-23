@@ -1,3 +1,13 @@
+2011-11-23  George Staikos  <staikos@webkit.org>
+
+        Remove BlackBerry OS support from RandomNumberSeed, making QNX=UNIX.
+        https://bugs.webkit.org/show_bug.cgi?id=73028
+
+        Reviewed by Daniel Bates.
+
+        * wtf/RandomNumberSeed.h:
+        (WTF::initializeRandomNumberGenerator):
+
 2011-11-23  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Add flags/precision arguments to String::number(double) to allow fine-grained control over the result string
