@@ -1,3 +1,13 @@
+2011-11-23  Hajime Morrita  <morrita@chromium.org>
+
+        WTF::String has extra WTF_EXPORT_PRIVATE
+        https://bugs.webkit.org/show_bug.cgi?id=72858
+
+        Reviewed by Kevin Ollivier.
+
+        * wtf/text/WTFString.h:
+        (WTF::String::String):
+
 2011-11-23  Raphael Kubo da Costa  <kubo@profusion.mobi>
 
         [CMake] Move the top-level logic to the top-level directory.

@@ -95,7 +95,7 @@ template<bool isSpecialCharacter(UChar)> bool isAllSpecialCharacters(const UChar
 class String {
 public:
     // Construct a null string, distinguishable from an empty string.
-    WTF_EXPORT_PRIVATE String() { }
+    String() { }
 
     // Construct a string with UTF-16 data.
     WTF_EXPORT_PRIVATE String(const UChar* characters, unsigned length);
@@ -117,9 +117,9 @@ public:
     WTF_EXPORT_PRIVATE String(const char* characters);
 
     // Construct a string referencing an existing StringImpl.
-    WTF_EXPORT_PRIVATE String(StringImpl* impl) : m_impl(impl) { }
-    WTF_EXPORT_PRIVATE String(PassRefPtr<StringImpl> impl) : m_impl(impl) { }
-    WTF_EXPORT_PRIVATE String(RefPtr<StringImpl> impl) : m_impl(impl) { }
+    String(StringImpl* impl) : m_impl(impl) { }
+    String(PassRefPtr<StringImpl> impl) : m_impl(impl) { }
+    String(RefPtr<StringImpl> impl) : m_impl(impl) { }
 
     // Inline the destructor.
     ALWAYS_INLINE ~String() { }
