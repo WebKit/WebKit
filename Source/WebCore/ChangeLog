@@ -1,3 +1,12 @@
+2011-11-23  Nico Weber  <thakis@chromium.org>
+
+        Remove one static initializer (for kTickTime)
+        https://bugs.webkit.org/show_bug.cgi?id=73049
+
+        Reviewed by Adam Barth.
+
+        * platform/ScrollAnimatorNone.cpp:
+
 2011-11-23  Jonathan Backer  <backer@chromium.org>
 
         [chromium] Drop root layer tiles on platforms that cache the front buffer

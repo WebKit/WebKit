@@ -52,10 +52,10 @@ using namespace std;
 
 namespace WebCore {
 
-static double kFrameRate = 60;
-static double kTickTime = 1 / kFrameRate;
-static double kMinimumTimerInterval = .001;
-static double kZoomTicks = 11;
+const double kFrameRate = 60;
+const double kTickTime = 1 / kFrameRate;
+const double kMinimumTimerInterval = .001;
+const double kZoomTicks = 11;
 
 PassOwnPtr<ScrollAnimator> ScrollAnimator::create(ScrollableArea* scrollableArea)
 {
