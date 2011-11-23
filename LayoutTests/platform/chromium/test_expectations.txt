@@ -1102,6 +1102,26 @@ BUGWK70748 CPU LEOPARD : svg/W3C-I18N/tspan-dirLTR-ubOverride-in-rtl-context.svg
 BUGWK70748 CPU : svg/W3C-SVG-1.1/painting-marker-02-f.svg = IMAGE
 BUGWK70748 CPU LEOPARD : svg/W3C-SVG-1.1/masking-path-05-f.svg = IMAGE
 
+// Rebaseline after SK_ENABLE_FAST_SHADERMASK is enabled in skia.gyp
+// the image change should be very slight (only in low-bits of color components)
+//
+BUGCR105305 CPU : fast/backgrounds/size/contain-and-cover-zoomed.html = IMAGE
+BUGCR105305 CPU : fast/canvas/canvas-text-alignment.html = IMAGE
+BUGCR105305 CPU : media/audio-repaint.html = IMAGE
+BUGCR105305 CPU : svg/W3C-SVG-1.1/pservers-grad-11-b.svg = IMAGE
+BUGCR105305 CPU : svg/css/composite-shadow-text.svg = IMAGE
+BUGCR105305 CPU : svg/css/text-gradient-shadow.svg = IMAGE
+BUGCR105305 CPU : svg/custom/gradient-stroke-width.svg = IMAGE
+BUGCR105305 CPU : svg/custom/gradient-with-1d-boundingbox.svg = IMAGE
+BUGCR105305 CPU : svg/custom/js-late-gradient-and-object-creation.svg = IMAGE
+BUGCR105305 CPU : svg/custom/nested-pattern-boundingBoxModeContent.svg = IMAGE
+BUGCR105305 CPU : svg/custom/pattern-with-transformation.svg = IMAGE
+BUGCR105305 CPU : svg/custom/text-rotated-gradient.svg = IMAGE
+BUGCR105305 CPU : svg/text/text-gradient-positioning.svg = IMAGE
+BUGCR105305 CPU : svg/transforms/text-with-pattern-inside-transformed-html.xhtml = IMAGE
+BUGCR105305 : svg/text/selection-background-color.xhtml = PASS CRASH IMAGE
+BUGCR105305 : svg/text/selection-styles.xhtml = PASS CRASH IMAGE
+
 // -----------------------------------------------------------------
 // Other failures
 // -----------------------------------------------------------------
@@ -2268,9 +2288,6 @@ BUGCR57056 LINUX : svg/custom/circular-marker-reference-4.svg = PASS FAIL
 // Flaky since http://trac.webkit.org/changeset/68440 (where this test added at).
 BUGWK46689 : fast/dom/HTMLElement/class-list.html = PASS TEXT
 
-// To be rebaselined when the new gdi-aa-text code finalizes
-BUGCR98248 WIN : svg/css/text-gradient-shadow.svg = IMAGE
-
 // Flaky since r68438:r68445 or before that.
 BUGWK46693 MAC : fast/repaint/repaint-svg-after-style-change.html = TEXT
 
@@ -3007,7 +3024,6 @@ BUGCR80301 LEOPARD : fast/canvas/canvas-largedraws.html = TIMEOUT
 
 BUGWK60115 LEOPARD : fast/text/shadow-translucent-fill.html = IMAGE
 BUGWK60115 MAC CPU-CG : fast/transforms/shadows.html = PASS IMAGE
-BUGWK60115 WIN : svg/css/composite-shadow-text.svg = IMAGE
 BUGWK60115 WIN : svg/css/shadow-changes.svg = IMAGE
 
 BUGWK56702 WIN DEBUG : http/tests/navigation/ping-cross-origin-from-https.html = PASS TIMEOUT
@@ -3559,14 +3575,11 @@ BUGWK68747 : media/controls-right-click-on-timebar.html = TIMEOUT PASS
 
 BUGCR97657 MAC CPU-CG : media/audio-repaint.html = TIMEOUT IMAGE PASS
 
-BUGWK68881 DEBUG : svg/text/selection-background-color.xhtml = CRASH IMAGE
-BUGWK68881 DEBUG : svg/text/selection-styles.xhtml = CRASH IMAGE
-
 BUGWK68970 MAC CPU-CG : fast/multicol/float-paginate-empty-lines.html = IMAGE
 BUGWK68970 MAC CPU-CG : svg/custom/js-late-gradient-and-object-creation.svg = IMAGE
 BUGWK68970 MAC CPU-CG : svg/custom/pattern-in-defs.svg = IMAGE
 BUGWK68970 MAC CPU-CG : svg/custom/text-rotated-gradient.svg = IMAGE
-BUGWK68970 MAC CPU-CG RELEASE : svg/text/selection-background-color.xhtml = IMAGE
+
 
 BUGWK68982 : svg/custom/oversized-pattern-scale.svg = IMAGE PASS
 BUGWK68982 : svg/custom/transformed-pattern-clamp-svg-root.svg = IMAGE PASS
