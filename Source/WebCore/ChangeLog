@@ -1,3 +1,11 @@
+2011-11-23  Martin Robinson  <mrobinson@igalia.com>
+
+        Build fix for GTK+.
+
+        * platform/graphics/gtk/DrawingBufferGtk.cpp:
+        (WebCore::DrawingBuffer::DrawingBuffer): Update signature and ASSERT
+        for the GTK+ port.
+
 2011-11-23  Rafael Weinstein  <rafaelw@chromium.org>
 
         Remove notifyChange from the public interface of CSSMutableStyleDeclaration
