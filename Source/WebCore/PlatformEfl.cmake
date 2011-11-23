@@ -117,6 +117,9 @@ IF (WTF_USE_CAIRO)
       platform/graphics/freetype/GlyphPageTreeNodeFreeType.cpp
       platform/graphics/freetype/SimpleFontDataFreeType.cpp
     )
+    LIST(APPEND WebCore_LIBRARIES
+      ${ZLIB_LIBRARIES}
+    )
   ENDIF ()
 
   IF (WTF_USE_PANGO)

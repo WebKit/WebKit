@@ -1,3 +1,18 @@
+2011-11-23  Halton Huo  <halton.huo@intel.com>
+
+        [EFL] Add zlib depend when freetype is used.
+        https://bugs.webkit.org/show_bug.cgi?id=66365
+
+        Unreviewed build fix.
+
+        When freetype is enabled, uncompress() function is used by
+        WOFFFileFormat.cpp. Since zlib is not required by freetype, we need to
+        add libz as dependency for fix linking issue.
+
+        No new test because this change is only to fix linking issue.
+
+        * PlatformEfl.cmake: add ZLIB as dependency when using freetype
+
 2011-11-23  Mihnea Ovidenie  <mihnea@adobe.com>
 
         CSS Exclusions: parse the shorthand "wrap" property
