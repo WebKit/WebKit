@@ -56,7 +56,7 @@ inline void initializeRandomNumberGenerator()
     srand(GetTickCount());
 #elif COMPILER(MSVC) && defined(_CRT_RAND_S)
     // On Windows we use rand_s which initialises itself
-#elif OS(UNIX)
+#elif OS(UNIX) && !PLATFORM(BLACKBERRY)
     // srandomdev is not guaranteed to exist on linux so we use this poor seed, this should be improved
     timeval time;
     gettimeofday(&time, 0);

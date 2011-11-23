@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
  * Copyright (C) 2007-2009 Torch Mobile, Inc.
- * Copyright (C) Research In Motion Limited 2010. All rights reserved.
+ * Copyright (C) 2010, 2011 Research In Motion Limited. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -409,6 +409,7 @@
 /* PLATFORM(QT) */
 /* PLATFORM(WX) */
 /* PLATFORM(GTK) */
+/* PLATFORM(BLACKBERRY) */
 /* PLATFORM(MAC) */
 /* PLATFORM(WIN) */
 #if defined(BUILDING_CHROMIUM__)
@@ -419,6 +420,8 @@
 #define WTF_PLATFORM_WX 1
 #elif defined(BUILDING_GTK__)
 #define WTF_PLATFORM_GTK 1
+#elif defined(BUILDING_BLACKBERRY__)
+#define WTF_PLATFORM_BLACKBERRY 1
 #elif OS(DARWIN)
 #define WTF_PLATFORM_MAC 1
 #elif OS(WINDOWS)
@@ -468,6 +471,13 @@
 #define WTF_USE_SKIA 1
 #define WTF_USE_CHROMIUM_NET 1
 #endif
+#endif
+
+#if PLATFORM(BLACKBERRY)
+#define ENABLE_DRAG_SUPPORT 0
+#define USE_SYSTEM_MALLOC 1
+#define WTF_USE_MERSENNE_TWISTER_19937 1
+#define WTF_USE_SKIA 1
 #endif
 
 #if PLATFORM(GTK)

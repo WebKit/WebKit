@@ -55,6 +55,10 @@
 #include <execinfo.h>
 #endif
 
+#if PLATFORM(BLACKBERRY)
+#include <BlackBerryPlatformMisc.h>
+#endif
+
 extern "C" {
 
 WTF_ATTRIBUTE_PRINTF(1, 0)
@@ -77,7 +81,8 @@ static void vprintf_stderr_common(const char* format, va_list args)
         CFRelease(cfFormat);
         return;
     }
-
+#elif PLATFORM(BLACKBERRY)
+    BlackBerry::Platform::logV(BlackBerry::Platform::LogLevelInfo, format, args);
 #elif HAVE(ISDEBUGGERPRESENT)
     if (IsDebuggerPresent()) {
         size_t size = 1024;

@@ -1,3 +1,27 @@
+2011-11-22  Daniel Bates  <dbates@rim.com>
+
+        Add WTF infrastructure for the BlackBerry port
+        https://bugs.webkit.org/show_bug.cgi?id=72970
+
+        Reviewed by Antonio Gomes.
+
+        * wtf/Assertions.cpp: Added BlackBerry-specific logging directive.
+        * wtf/MathExtras.h:
+        (abs): Added; stdlib doesn't contain abs() on QNX.
+        * wtf/Platform.h: Define WTF_PLATFORM_BLACKBERRY and enable some platform features.
+        * wtf/RandomNumberSeed.h:
+        (WTF::initializeRandomNumberGenerator): For the BlackBerry port, we initialize
+        the bad pseudo random number generator using time(3) before initializing the
+        Mersenne Twister random number generator.
+        * wtf/ThreadingPthreads.cpp:
+        (WTF::createThreadInternal): Added.
+        * wtf/blackberry: Added.
+        * wtf/blackberry/MainThreadBlackBerry.cpp: Added.
+        (WTF::initializeMainThreadPlatform):
+        (WTF::scheduleDispatchFunctionsOnMainThread):
+        * wtf/text/WTFString.h: Added constructor and conversion operator for
+        BlackBerry WebString string object.
+
 2011-11-22  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r100988.
