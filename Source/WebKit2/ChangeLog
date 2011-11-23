@@ -1,3 +1,39 @@
+2011-11-22  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        [Qt] [WK2] Move PagePolicyClient related code to QtWebPagePolicyClient
+        https://bugs.webkit.org/show_bug.cgi?id=72959
+
+        Reviewed by Andreas Kling.
+
+        Split PagePolicyClient related code from QtWebPageProxy/ClientImpl. The new
+        QtWebPagePolicyClient registers itself with WKPageRef and it's owned by the
+        QQuickWebViewPrivate. This is a move to clean up QtWebPageProxy object.
+
+        QtPolicyInterface abstraction was not helping us as much as the separation of
+        the client code will. It was more useful when we had multiple WebViews.
+
+        * Target.pri:
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewPrivate::QQuickWebViewPrivate):
+        (toPolicyAction):
+        (QQuickWebViewPrivate::navigationPolicyForURL):
+        * UIProcess/API/qt/qquickwebview_p.h:
+        * UIProcess/API/qt/qquickwebview_p_p.h:
+        * UIProcess/qt/ClientImpl.cpp:
+        * UIProcess/qt/ClientImpl.h:
+        * UIProcess/qt/QtWebPagePolicyClient.cpp: Added.
+        (QtWebPagePolicyClient::QtWebPagePolicyClient):
+        (QtWebPagePolicyClient::decidePolicyForNavigationAction):
+        (toQtWebPagePolicyClient):
+        (toQtMouseButton):
+        (toQtKeyboardModifiers):
+        (QtWebPagePolicyClient::decidePolicyForResponse):
+        * UIProcess/qt/QtWebPagePolicyClient.h: Renamed from Source/WebKit2/UIProcess/qt/QtPolicyInterface.h.
+        * UIProcess/qt/QtWebPageProxy.cpp:
+        (QtWebPageProxy::QtWebPageProxy):
+        (QtWebPageProxy::init):
+        * UIProcess/qt/QtWebPageProxy.h:
+
 2011-11-23  Raphael Kubo da Costa  <kubo@profusion.mobi>
 
         [CMake] Move the top-level logic to the top-level directory.

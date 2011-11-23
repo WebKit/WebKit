@@ -314,7 +314,6 @@ HEADERS += \
     UIProcess/WebResourceLoadClient.h \
     UIProcess/WebUIClient.h \
     UIProcess/qt/ClientImpl.h \
-    UIProcess/qt/QtPolicyInterface.h \
     UIProcess/qt/QtGestureRecognizer.h \
     UIProcess/qt/QtPanGestureRecognizer.h \
     UIProcess/qt/QtPinchGestureRecognizer.h \
@@ -323,6 +322,7 @@ HEADERS += \
     UIProcess/qt/QtDialogRunner.h \
     UIProcess/qt/QtDownloadManager.h \
     UIProcess/qt/QtWebPageLoadClient.h \
+    UIProcess/qt/QtWebPagePolicyClient.h \
     UIProcess/qt/QtWebPageProxy.h \
     UIProcess/qt/QtWebPageUIClient.h \
     UIProcess/qt/qwkhistory.h \
@@ -630,6 +630,7 @@ SOURCES += \
     UIProcess/qt/QtDialogRunner.cpp \
     UIProcess/qt/QtDownloadManager.cpp \
     UIProcess/qt/QtWebPageLoadClient.cpp \
+    UIProcess/qt/QtWebPagePolicyClient.cpp \
     UIProcess/qt/QtWebPageProxy.cpp \
     UIProcess/qt/QtWebPageUIClient.cpp \
     UIProcess/qt/qwkhistory.cpp \

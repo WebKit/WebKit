@@ -51,14 +51,15 @@ QQuickWebViewPrivate::QQuickWebViewPrivate(QQuickWebView* viewport, WKContextRef
     pageView.reset(new QQuickWebPage(viewport));
 
     QQuickWebPagePrivate* const pageViewPrivate = pageView.data()->d;
-    setPageProxy(new QtWebPageProxy(pageView.data(), q_ptr, 0, this, contextRef, pageGroupRef));
+    setPageProxy(new QtWebPageProxy(pageView.data(), q_ptr, /* interactionEngine */ 0, contextRef, pageGroupRef));
     pageViewPrivate->setPageProxy(pageProxy.data());
 
     QWebPreferencesPrivate::get(pageProxy->preferences())->setAttribute(QWebPreferencesPrivate::AcceleratedCompositingEnabled, true);
     pageProxy->init();
 
-    pageUIClient.reset(new QtWebPageUIClient(pageProxy->pageRef(), q_ptr));
     pageLoadClient.reset(new QtWebPageLoadClient(pageProxy->pageRef(), q_ptr));
+    pagePolicyClient.reset(new QtWebPagePolicyClient(pageProxy->pageRef(), q_ptr));
+    pageUIClient.reset(new QtWebPageUIClient(pageProxy->pageRef(), q_ptr));
 }
 
 void QQuickWebViewPrivate::enableMouseEvents()
@@ -343,18 +344,18 @@ void QQuickWebViewPrivate::setViewInAttachedProperties(QObject* object)
     attached->setView(q);
 }
 
-static QtPolicyInterface::PolicyAction toPolicyAction(QQuickWebView::NavigationPolicy policy)
+static QtWebPagePolicyClient::PolicyAction toPolicyAction(QQuickWebView::NavigationPolicy policy)
 {
     switch (policy) {
     case QQuickWebView::UsePolicy:
-        return QtPolicyInterface::Use;
+        return QtWebPagePolicyClient::Use;
     case QQuickWebView::DownloadPolicy:
-        return QtPolicyInterface::Download;
+        return QtWebPagePolicyClient::Download;
     case QQuickWebView::IgnorePolicy:
-        return QtPolicyInterface::Ignore;
+        return QtWebPagePolicyClient::Ignore;
     }
     ASSERT_NOT_REACHED();
-    return QtPolicyInterface::Ignore;
+    return QtWebPagePolicyClient::Ignore;
 }
 
 static bool hasMetaMethod(QObject* object, const char* methodName)
@@ -371,17 +372,17 @@ static bool hasMetaMethod(QObject* object, const char* methodName)
     It will be called to decide the policy for a navigation: whether the WebView should ignore the navigation,
     continue it or start a download. The return value must be one of the policies in the NavigationPolicy enumeration.
 */
-QtPolicyInterface::PolicyAction QQuickWebViewPrivate::navigationPolicyForURL(const QUrl& url, Qt::MouseButton button, Qt::KeyboardModifiers modifiers)
+QtWebPagePolicyClient::PolicyAction QQuickWebViewPrivate::navigationPolicyForURL(const QUrl& url, Qt::MouseButton button, Qt::KeyboardModifiers modifiers)
 {
     Q_Q(QQuickWebView);
     // We need to check this first because invokeMethod() warns if the method doesn't exist for the object.
     if (!hasMetaMethod(q, "navigationPolicyForUrl(QVariant,QVariant,QVariant)"))
-        return QtPolicyInterface::Use;
+        return QtWebPagePolicyClient::Use;
 
     QVariant ret;
     if (QMetaObject::invokeMethod(q, "navigationPolicyForUrl", Q_RETURN_ARG(QVariant, ret), Q_ARG(QVariant, url), Q_ARG(QVariant, button), Q_ARG(QVariant, QVariant(modifiers))))
         return toPolicyAction(static_cast<QQuickWebView::NavigationPolicy>(ret.toInt()));
-    return QtPolicyInterface::Use;
+    return QtWebPagePolicyClient::Use;
 }
 
 void QQuickWebViewPrivate::setPageProxy(QtWebPageProxy* pageProxy)

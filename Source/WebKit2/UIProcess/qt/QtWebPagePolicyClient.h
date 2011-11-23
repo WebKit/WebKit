@@ -18,24 +18,32 @@
  *
  */
 
-#ifndef QtPolicyInterface_h
-#define QtPolicyInterface_h
+#ifndef QtWebPagePolicyClient_h
+#define QtWebPagePolicyClient_h
 
 #include <QtCore/QUrl>
+#include <WKPage.h>
 
-namespace WebKit {
+class QQuickWebView;
 
-class QtPolicyInterface {
+class QtWebPagePolicyClient {
 public:
+    QtWebPagePolicyClient(WKPageRef, QQuickWebView*);
+
     enum PolicyAction {
         Use,
         Download,
         Ignore
     };
 
-    virtual PolicyAction navigationPolicyForURL(const QUrl&, Qt::MouseButton, Qt::KeyboardModifiers) = 0;
+private:
+    PolicyAction decidePolicyForNavigationAction(const QUrl&, Qt::MouseButton, Qt::KeyboardModifiers);
+
+    // WKPagePolicyClient callbacks.
+    static void decidePolicyForNavigationAction(WKPageRef, WKFrameRef, WKFrameNavigationType, WKEventModifiers, WKEventMouseButton, WKURLRequestRef, WKFramePolicyListenerRef, WKTypeRef userData, const void* clientInfo);
+    static void decidePolicyForResponse(WKPageRef, WKFrameRef, WKURLResponseRef, WKURLRequestRef, WKFramePolicyListenerRef, WKTypeRef userData, const void* clientInfo);
+
+    QQuickWebView* m_webView;
 };
 
-}
-
-#endif // QtPolicyInterface_h
+#endif // QtWebPagePolicyClient_h

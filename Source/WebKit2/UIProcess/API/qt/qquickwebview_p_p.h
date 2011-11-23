@@ -21,9 +21,9 @@
 #ifndef qquickwebview_p_p_h
 #define qquickwebview_p_p_h
 
-#include "QtPolicyInterface.h"
 #include "QtViewportInteractionEngine.h"
 #include "QtWebPageLoadClient.h"
+#include "QtWebPagePolicyClient.h"
 #include "QtWebPageProxy.h"
 #include "QtWebPageUIClient.h"
 
@@ -41,8 +41,7 @@ class QDeclarativeComponent;
 class QFileDialog;
 QT_END_NAMESPACE
 
-class QQuickWebViewPrivate : public WebKit::QtPolicyInterface {
-
+class QQuickWebViewPrivate {
     Q_DECLARE_PUBLIC(QQuickWebView)
     friend class QQuickWebViewExperimental;
 
@@ -71,8 +70,7 @@ public:
     void _q_onOpenPanelFinished(int result);
     void _q_onVisibleChanged();
 
-    // QtPolicyInterface.
-    virtual QtPolicyInterface::PolicyAction navigationPolicyForURL(const QUrl&, Qt::MouseButton, Qt::KeyboardModifiers);
+    QtWebPagePolicyClient::PolicyAction navigationPolicyForURL(const QUrl&, Qt::MouseButton, Qt::KeyboardModifiers);
 
     void chooseFiles(WKOpenPanelResultListenerRef, const QStringList& selectedFileNames, QtWebPageUIClient::FileChooserType);
     void runJavaScriptAlert(const QString&);
@@ -112,8 +110,9 @@ private:
 
     void setViewInAttachedProperties(QObject*);
 
-    QScopedPointer<QtWebPageUIClient> pageUIClient;
     QScopedPointer<QtWebPageLoadClient> pageLoadClient;
+    QScopedPointer<QtWebPagePolicyClient> pagePolicyClient;
+    QScopedPointer<QtWebPageUIClient> pageUIClient;
 
     QScopedPointer<QQuickWebPage> pageView;
     QScopedPointer<QtViewportInteractionEngine> interactionEngine;

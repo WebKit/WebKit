@@ -22,13 +22,6 @@
 
 #include <WebKit2/WKContext.h>
 
-namespace WebKit {
-class QtPolicyInterface;
-class WebPageProxy;
-}
-
-void setupPagePolicyClient(WebKit::QtPolicyInterface*, WebKit::WebPageProxy*);
-
 void setupContextInjectedBundleClient(WKContextRef);
 
 #endif /* ClientImpl_h */

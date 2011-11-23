@@ -27,7 +27,6 @@
 #include "QtDownloadManager.h"
 #include "QtPanGestureRecognizer.h"
 #include "QtPinchGestureRecognizer.h"
-#include "QtPolicyInterface.h"
 #include "QtTapGestureRecognizer.h"
 #include "ShareableBitmap.h"
 #include "ViewportArguments.h"
@@ -74,7 +73,7 @@ public:
         WebActionCount
     };
 
-    QtWebPageProxy(QQuickWebPage*, QQuickWebView*, WebKit::QtViewportInteractionEngine* = 0, WebKit::QtPolicyInterface* = 0, WKContextRef = 0, WKPageGroupRef = 0);
+    QtWebPageProxy(QQuickWebPage*, QQuickWebView*, WebKit::QtViewportInteractionEngine* = 0, WKContextRef = 0, WKPageGroupRef = 0);
     ~QtWebPageProxy();
 
     virtual PassOwnPtr<DrawingAreaProxy> createDrawingAreaProxy();
@@ -213,7 +212,6 @@ protected:
     QtPanGestureRecognizer m_panGestureRecognizer;
     QtPinchGestureRecognizer m_pinchGestureRecognizer;
     QtTapGestureRecognizer m_tapGestureRecognizer;
-    WebKit::QtPolicyInterface* const m_policyInterface;
 
 private:
     bool handleKeyPressEvent(QKeyEvent*);

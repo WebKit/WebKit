@@ -44,7 +44,6 @@
 #include "NativeWebMouseEvent.h"
 #include "NativeWebWheelEvent.h"
 #include "NotImplemented.h"
-#include "QtPolicyInterface.h"
 #include "QtViewportInteractionEngine.h"
 #include "QtWebUndoCommand.h"
 #include "WebBackForwardList.h"
@@ -133,14 +132,13 @@ WebCore::DragOperation dropActionToDragOperation(Qt::DropActions actions)
     return (DragOperation)result;
 }
 
-QtWebPageProxy::QtWebPageProxy(QQuickWebPage* qmlWebPage, QQuickWebView* qmlWebView, QtViewportInteractionEngine* viewportInteractionEngine, QtPolicyInterface* policyInterface, WKContextRef contextRef, WKPageGroupRef pageGroupRef)
+QtWebPageProxy::QtWebPageProxy(QQuickWebPage* qmlWebPage, QQuickWebView* qmlWebView, QtViewportInteractionEngine* viewportInteractionEngine, WKContextRef contextRef, WKPageGroupRef pageGroupRef)
     : m_qmlWebPage(qmlWebPage)
     , m_qmlWebView(qmlWebView)
     , m_interactionEngine(viewportInteractionEngine)
     , m_panGestureRecognizer(viewportInteractionEngine)
     , m_pinchGestureRecognizer(viewportInteractionEngine)
     , m_tapGestureRecognizer(viewportInteractionEngine, this)
-    , m_policyInterface(policyInterface)
     , m_context(contextRef ? toImpl(contextRef) : defaultWKContext())
     , m_undoStack(adoptPtr(new QUndoStack(this)))
     , m_navigatorQtObjectEnabled(false)
@@ -154,8 +152,6 @@ QtWebPageProxy::QtWebPageProxy(QQuickWebPage* qmlWebPage, QQuickWebView* qmlWebV
 void QtWebPageProxy::init()
 {
     m_webPageProxy->initializeWebPage();
-    if (m_policyInterface)
-        setupPagePolicyClient(m_policyInterface, m_webPageProxy.get());
 }
 
 QtWebPageProxy::~QtWebPageProxy()
