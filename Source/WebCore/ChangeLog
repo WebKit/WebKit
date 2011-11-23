@@ -3,7 +3,7 @@
         [chromium] Fix plumbing for differentiating between clipboard/selection pastes.
         https://bugs.webkit.org/show_bug.cgi?id=72056
 
-        Reviewed by tony@chromium.org.
+        Reviewed by Tony Chang.
 
         Add a buffer parameter when retrieving the clipboard sequence number and fix several call
         sites that incorrectly assume use of the standard buffer in pastes.
