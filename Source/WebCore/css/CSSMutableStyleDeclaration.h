@@ -106,11 +106,11 @@ public:
 
     virtual PassRefPtr<CSSMutableStyleDeclaration> copy() const;
 
-    bool setProperty(int propertyID, int value, bool important = false, bool notifyChanged = true);
-    bool setProperty(int propertyId, double value, CSSPrimitiveValue::UnitTypes, bool important = false, bool notifyChanged = true);
-    bool setProperty(int propertyID, const String& value, bool important = false, bool notifyChanged = true);
+    bool setProperty(int propertyID, int value, bool important = false) { return setProperty(propertyID, value, important, true); }
+    bool setProperty(int propertyId, double value, CSSPrimitiveValue::UnitTypes unit, bool important = false) { return setProperty(propertyId, value, unit, important, true); }
+    bool setProperty(int propertyID, const String& value, bool important = false) { return setProperty(propertyID, value, important, true); }
 
-    String removeProperty(int propertyID, bool notifyChanged = true, bool returnText = false);
+    void removeProperty(int propertyID) { removeProperty(propertyID, true, false); }
 
     // setLengthProperty treats integers as pixels! (Needed for conversion of HTML attributes.)
     void setLengthProperty(int propertyId, const String& value, bool important, bool multiLength = false);
@@ -128,7 +128,7 @@ public:
 
     PassRefPtr<CSSMutableStyleDeclaration> copyBlockProperties() const;
     void removeBlockProperties();
-    void removePropertiesInSet(const int* set, unsigned length, bool notifyChanged = true);
+    void removePropertiesInSet(const int* set, unsigned length) { removePropertiesInSet(set, length, true); }
 
     void merge(const CSSMutableStyleDeclaration*, bool argOverridesOnConflict = true);
 
@@ -165,8 +165,13 @@ private:
     template<size_t size> String getCommonValue(const int (&properties)[size]) const { return getCommonValue(properties, size); }
     template<size_t size> String getLayeredShorthandValue(const int (&properties)[size]) const { return getLayeredShorthandValue(properties, size); }
 
+    bool setProperty(int propertyID, int value, bool important, bool notifyChanged);
+    bool setProperty(int propertyId, double value, CSSPrimitiveValue::UnitTypes, bool important, bool notifyChanged);
+    bool setProperty(int propertyID, const String& value, bool important, bool notifyChanged);
     void setPropertyInternal(const CSSProperty&, CSSProperty* slot = 0);
+    String removeProperty(int propertyID, bool notifyChanged, bool returnText);
     bool removeShorthandProperty(int propertyID, bool notifyChanged);
+    void removePropertiesInSet(const int* set, unsigned length, bool notifyChanged);
 
     Vector<CSSProperty>::const_iterator findPropertyWithId(int propertyId) const;
     Vector<CSSProperty>::iterator findPropertyWithId(int propertyId);

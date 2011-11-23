@@ -77,7 +77,7 @@ CSSMutableStyleDeclaration::CSSMutableStyleDeclaration(CSSRule* parent, const CS
         if (candidates.contains(property->id())) {
             if (!important && candidates.get(property->id()))
                 continue;
-            removeProperty(property->id(), false);
+            removeProperty(property->id(), false, false);
         }
         m_properties.append(*property);
         candidates.set(property->id(), important);
@@ -692,7 +692,7 @@ void CSSMutableStyleDeclaration::addParsedProperty(const CSSProperty& property)
 
     // Only add properties that have no !important counterpart present
     if (!getPropertyPriority(property.id()) || property.isImportant()) {
-        removeProperty(property.id(), false);
+        removeProperty(property.id(), false, false);
         m_properties.append(property);
     }
 }

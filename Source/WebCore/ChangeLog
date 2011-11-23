@@ -1,3 +1,27 @@
+2011-11-23  Rafael Weinstein  <rafaelw@chromium.org>
+
+        Remove notifyChange from the public interface of CSSMutableStyleDeclaration
+        https://bugs.webkit.org/show_bug.cgi?id=72660
+
+        Reviewed by Ojan Vafai.
+
+        No tests needed. This is only a refactor.
+
+        * css/CSSMutableStyleDeclaration.cpp:
+        (WebCore::CSSMutableStyleDeclaration::CSSMutableStyleDeclaration):
+        (WebCore::CSSMutableStyleDeclaration::addParsedProperty):
+        * css/CSSMutableStyleDeclaration.h:
+        (WebCore::CSSMutableStyleDeclaration::setProperty):
+        (WebCore::CSSMutableStyleDeclaration::removeProperty):
+        (WebCore::CSSMutableStyleDeclaration::removePropertiesInSet):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::leftToRightDeclaration):
+        (WebCore::rightToLeftDeclaration):
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::applyRelativeFontStyleChange):
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::setContentEditable):
+
 2011-11-23  Scott Graham  <scottmg@chromium.org>
 
         Adding gamepad support

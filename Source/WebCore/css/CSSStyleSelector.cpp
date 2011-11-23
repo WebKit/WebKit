@@ -326,7 +326,7 @@ static CSSMutableStyleDeclaration* leftToRightDeclaration()
 {
     DEFINE_STATIC_LOCAL(RefPtr<CSSMutableStyleDeclaration>, leftToRightDecl, (CSSMutableStyleDeclaration::create()));
     if (!leftToRightDecl->length()) {
-        leftToRightDecl->setProperty(CSSPropertyDirection, "ltr", false, false);
+        leftToRightDecl->setProperty(CSSPropertyDirection, "ltr", false);
         leftToRightDecl->setStrictParsing(false);
     }
     return leftToRightDecl.get();
@@ -336,7 +336,7 @@ static CSSMutableStyleDeclaration* rightToLeftDeclaration()
 {
     DEFINE_STATIC_LOCAL(RefPtr<CSSMutableStyleDeclaration>, rightToLeftDecl, (CSSMutableStyleDeclaration::create()));
     if (!rightToLeftDecl->length()) {
-        rightToLeftDecl->setProperty(CSSPropertyDirection, "rtl", false, false);
+        rightToLeftDecl->setProperty(CSSPropertyDirection, "rtl", false);
         rightToLeftDecl->setStrictParsing(false);
     }
     return rightToLeftDecl.get();

@@ -390,11 +390,11 @@ void ApplyStyleCommand::applyRelativeFontStyleChange(EditingStyle* style)
         float desiredFontSize = max(MinimumFontSize, startingFontSizes.get(node) + style->fontSizeDelta());
         RefPtr<CSSValue> value = inlineStyleDecl->getPropertyCSSValue(CSSPropertyFontSize);
         if (value) {
-            inlineStyleDecl->removeProperty(CSSPropertyFontSize, true);
+            inlineStyleDecl->removeProperty(CSSPropertyFontSize);
             currentFontSize = computedFontSize(node);
         }
         if (currentFontSize != desiredFontSize) {
-            inlineStyleDecl->setProperty(CSSPropertyFontSize, String::number(desiredFontSize) + "px", false, false);
+            inlineStyleDecl->setProperty(CSSPropertyFontSize, String::number(desiredFontSize) + "px", false);
             setNodeAttribute(element.get(), styleAttr, inlineStyleDecl->cssText());
         }
         if (inlineStyleDecl->isEmpty()) {
