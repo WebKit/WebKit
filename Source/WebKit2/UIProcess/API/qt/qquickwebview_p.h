@@ -109,7 +109,6 @@ Q_SIGNALS:
     void loadProgressChanged(int progress);
     void urlChanged(const QUrl& url);
     void messageReceived(const QVariantMap& message);
-    void downloadRequested(QWebDownloadItem* downloadItem);
     void linkHovered(const QUrl& url, const QString& title);
     void viewModeChanged();
     void navigationStateChanged();
@@ -188,10 +187,13 @@ Q_SIGNALS:
     void alertDialogChanged();
     void confirmDialogChanged();
     void promptDialogChanged();
+    void downloadRequested(QWebDownloadItem* downloadItem);
 
 private:
     QQuickWebView* q_ptr;
     QQuickWebViewPrivate* d_ptr;
+
+    friend class QtWebPageProxy;
 
     Q_DECLARE_PRIVATE(QQuickWebView)
     Q_DECLARE_PUBLIC(QQuickWebView)

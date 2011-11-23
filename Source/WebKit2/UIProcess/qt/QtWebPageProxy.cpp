@@ -834,7 +834,7 @@ void QtWebPageProxy::didReceiveDownloadResponse(QWebDownloadItem* downloadItem)
         return;
 
     QDeclarativeEngine::setObjectOwnership(downloadItem, QDeclarativeEngine::JavaScriptOwnership);
-    emit m_qmlWebView->downloadRequested(downloadItem);
+    emit m_qmlWebView->experimental()->downloadRequested(downloadItem);
 }
 
 PassOwnPtr<DrawingAreaProxy> QtWebPageProxy::createDrawingAreaProxy()

@@ -24,8 +24,8 @@ OTHER_FILES += \
     WebView/tst_loadZeroSizeView.qml \
     WebView/tst_preferences.qml \
     WebView/tst_loadHtml.qml \
+    WebView/tst_download.qml \
     DesktopBehavior/tst_linkHovered.qml \
     DesktopBehavior/tst_messaging.qml \
-    DesktopBehavior/tst_download.qml \
     DesktopBehavior/tst_navigationRequested.qml \
     DesktopBehavior/tst_loadHtml.qml
