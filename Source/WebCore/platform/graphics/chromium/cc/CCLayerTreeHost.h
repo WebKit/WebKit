@@ -71,6 +71,7 @@ struct CCSettings {
     CCSettings()
             : acceleratePainting(false)
             , compositeOffscreen(false)
+            , discardAllTextures(false)
             , enableCompositorThread(false)
             , showFPSCounter(false)
             , showPlatformLayerTree(false)
@@ -78,6 +79,7 @@ struct CCSettings {
 
     bool acceleratePainting;
     bool compositeOffscreen;
+    bool discardAllTextures;
     bool enableCompositorThread;
     bool showFPSCounter;
     bool showPlatformLayerTree;
@@ -88,6 +90,7 @@ struct CCSettings {
 struct LayerRendererCapabilities {
     LayerRendererCapabilities()
         : bestTextureFormat(0)
+        , usingFrontBufferCached(false)
         , usingPostSubBuffer(false)
         , usingMapSub(false)
         , usingAcceleratedPainting(false)
@@ -96,6 +99,7 @@ struct LayerRendererCapabilities {
         , maxTextureSize(0) { }
 
     GC3Denum bestTextureFormat;
+    bool usingFrontBufferCached;
     bool usingPostSubBuffer;
     bool usingMapSub;
     bool usingAcceleratedPainting;
