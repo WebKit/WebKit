@@ -40,12 +40,15 @@ var TEXT = 'TEXT';
 var CRASH = 'CRASH';
 var IMAGE = 'IMAGE';
 var IMAGE_TEXT = 'IMAGE+TEXT';
+var AUDIO = 'AUDIO';
 
-var kFailingResults = [TIMEOUT, TEXT, CRASH, IMAGE, IMAGE_TEXT];
+var kFailingResults = [TIMEOUT, TEXT, CRASH, IMAGE, IMAGE_TEXT, AUDIO];
 
 var kExpectedImageSuffix = '-expected.png';
 var kActualImageSuffix = '-actual.png';
 var kImageDiffSuffix = '-diff.png';
+var kExpectedAudioSuffix = '-expected.wav';
+var kActualAudioSuffix = '-actual.wav';
 var kExpectedTextSuffix = '-expected.txt';
 var kActualTextSuffix = '-actual.txt';
 var kDiffTextSuffix = '-diff.txt';
@@ -53,6 +56,7 @@ var kCrashLogSuffix = '-crash-log.txt';
 
 var kPNGExtension = 'png';
 var kTXTExtension = 'txt';
+var kWAVExtension = 'wav';
 
 var kPreferredSuffixOrder = [
     kExpectedImageSuffix,
@@ -62,6 +66,8 @@ var kPreferredSuffixOrder = [
     kActualTextSuffix,
     kDiffTextSuffix,
     kCrashLogSuffix,
+    kExpectedAudioSuffix,
+    kActualAudioSuffix,
     // FIXME: Add support for the rest of the result types.
 ];
 
@@ -73,6 +79,7 @@ results.kUnknownKind = 'unknown';
 
 // Types of tests.
 results.kImageType = 'image'
+results.kTextType = 'audio'
 results.kTextType = 'text'
 // FIXME: There are more types of tests.
 
@@ -85,6 +92,12 @@ function possibleSuffixListFor(failureTypeList)
         suffixList.push(kExpectedImageSuffix);
         suffixList.push(kActualImageSuffix);
         suffixList.push(kImageDiffSuffix);
+    }
+
+    function pushAudioSuffixes()
+    {
+        suffixList.push(kExpectedAudioSuffix);
+        suffixList.push(kActualAudioSuffix);
     }
 
     function pushTextSuffixes()
@@ -104,6 +117,9 @@ function possibleSuffixListFor(failureTypeList)
         case TEXT:
             pushTextSuffixes();
             break;
+        case AUDIO:
+            pushAudioSuffixes();
+            break;
         case IMAGE_TEXT:
             pushImageSuffixes();
             pushTextSuffixes();
@@ -115,8 +131,6 @@ function possibleSuffixListFor(failureTypeList)
             // FIXME: Add support for the rest of the result types.
             // '-expected.html',
             // '-expected-mismatch.html',
-            // '-expected.wav',
-            // '-actual.wav',
             // ... and possibly more.
             break;
         }
@@ -130,6 +144,8 @@ results.failureTypeToExtensionList = function(failureType)
     switch(failureType) {
     case IMAGE:
         return [kPNGExtension];
+    case AUDIO:
+        return [kWAVExtension];
     case TEXT:
         return [kTXTExtension];
     case IMAGE_TEXT:
@@ -138,8 +154,6 @@ results.failureTypeToExtensionList = function(failureType)
         // FIXME: Add support for the rest of the result types.
         // '-expected.html',
         // '-expected-mismatch.html',
-        // '-expected.wav',
-        // '-actual.wav',
         // ... and possibly more.
         return [];
     }
@@ -491,6 +505,8 @@ results.resultType = function(url)
 {
     if (/\.png$/.test(url))
         return results.kImageType;
+    if (/\.wav$/.test(url))
+        return results.kAudioType;
     return results.kTextType;
 }
 

@@ -1,3 +1,18 @@
+2011-11-23  Adam Barth  <abarth@webkit.org>
+
+        garden-o-matic should support AUDIO failures
+        https://bugs.webkit.org/show_bug.cgi?id=69477
+
+        Reviewed by Dimitri Glazkov.
+
+        This is a first iteration at supporting AUDIO failures in
+        garden-o-matic.  We'll probably need to iterate a bit when we have a
+        real audio failure in the tree to play with.  For example, we'll
+        probably want to add and <audio> element to the "Examine" view to hear
+        the differences, but that all can be done in a subsequent patch.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/results.js:
+
 2011-11-23  Scott Graham  <scottmg@chromium.org>
 
         Adding gamepad support
