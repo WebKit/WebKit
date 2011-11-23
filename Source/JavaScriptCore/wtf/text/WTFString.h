@@ -90,6 +90,12 @@ WTF_EXPORT_PRIVATE double charactersToDouble(const UChar*, size_t, bool* ok = 0,
 float charactersToFloat(const LChar*, size_t, bool* ok = 0, bool* didReadNumber = 0);
 float charactersToFloat(const UChar*, size_t, bool* ok = 0, bool* didReadNumber = 0);
 
+enum FloatConversionFlags {
+    ShouldRoundSignificantFigures = 1 << 0,
+    ShouldRoundDecimalPlaces = 1 << 1,
+    ShouldTruncateTrailingZeros = 1 << 2
+};
+
 template<bool isSpecialCharacter(UChar)> bool isAllSpecialCharacters(const UChar*, size_t);
 
 class String {
@@ -190,7 +196,7 @@ public:
     WTF_EXPORT_PRIVATE static String number(unsigned long);
     WTF_EXPORT_PRIVATE static String number(long long);
     WTF_EXPORT_PRIVATE static String number(unsigned long long);
-    WTF_EXPORT_PRIVATE static String number(double);
+    WTF_EXPORT_PRIVATE static String number(double, unsigned = ShouldRoundSignificantFigures | ShouldTruncateTrailingZeros, unsigned precision = 6);
 
     // Find a single character or string, also with match function & latin1 forms.
     size_t find(UChar c, unsigned start = 0) const
@@ -614,6 +620,7 @@ using WTF::find;
 using WTF::isAllSpecialCharacters;
 using WTF::isSpaceOrNewline;
 using WTF::reverseFind;
+using WTF::ShouldRoundDecimalPlaces;
 
 #include "AtomicString.h"
 #endif

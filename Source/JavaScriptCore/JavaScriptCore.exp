@@ -477,6 +477,8 @@ __ZN3WTF4SHA111computeHashERNS_6VectorIhLm20EEE
 __ZN3WTF4SHA18addBytesEPKhm
 __ZN3WTF4SHA1C1Ev
 __ZN3WTF4dtoaEPcdRbRiRj
+__ZN3WTF11dtoaRoundDPEPcdiRbRiRj
+__ZN3WTF11dtoaRoundSFEPcdiRbRiRj
 __ZN3WTF5Mutex4lockEv
 __ZN3WTF5Mutex6unlockEv
 __ZN3WTF5Mutex7tryLockEv
@@ -495,7 +497,7 @@ __ZN3WTF6String6appendERKS0_
 __ZN3WTF6String6appendEt
 __ZN3WTF6String6formatEPKcz
 __ZN3WTF6String6insertERKS0_j
-__ZN3WTF6String6numberEd
+__ZN3WTF6String6numberEdjj
 __ZN3WTF6String6numberEi
 __ZN3WTF6String6numberEj
 __ZN3WTF6String6numberEl

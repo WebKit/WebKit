@@ -1,3 +1,64 @@
+2011-11-23  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Add flags/precision arguments to String::number(double) to allow fine-grained control over the result string
+        https://bugs.webkit.org/show_bug.cgi?id=72793
+
+        Reviewed by Zoltan Herczeg.
+
+        This new code will be used in follow-up patches to replace the String::format("%.2f") usage in
+        platform/text/TextStream.cpp, and String::format("%.6lg") usage in svg/SVGPathStringBuilder.cpp.
+
+        The String::number(double) currently calls String::format("%.6lg") in trunk. In order to replace
+        this by a variant that properly rounds to six significant figures, JSC code could be refactored.
+        JSCs Number.toPrecision/toFixed uses wtf/dtoa/double-conversion which provides all features we need,
+        except truncating trailing zeros, needed to mimic the "g" format, which is either f or e but with
+        trailing zeros removed, producing shorter results. Changed the default signature to:
+
+        "static String number(double, unsigned = ShouldRoundSignificantFigures | ShouldTruncateTrailingZeros, unsigned precision = 6);".
+
+        In WebCore we can now replace String::format() calls like this:
+        String::format("%.2f", f) -> String::number(f, ShouldRoundDecimalPlaces, 2)
+        String::format("%.6lg", f) -> String::number(f)
+
+        The default parameters for precison & flags exactly match the format of the string produced now, except that the result
+        is rounded according to the rounding mode / formatting mode and precision. This paves the way towards reliable results
+        in the d="" attribute dumps of SVG paths  across platforms. The dtoa rounding code enforces a unique zero, resolving
+        all 0.0 vs. -0.0 issues currently seen on Windows, and some Gtk/Qt bots.
+
+        This patch needs a rebaseline of svg/dom/length-list-parser.html as we don't perfecly mimic the String::format() "lg" mode
+        result for exponentials, we used to return eg. "e-7" and now return "e-07" - the trailing zero truncation hasn't been
+        implemented for exponentials, as this really affects only this test and thus wasn't worth the trouble - in contrary the
+        trailing zero truncation is needed for thousands of other results in "f" notation, and thus needed to match the DRT results.
+
+        Here's a performance comparision using a JSC release build and some arbitary numbers:
+        Converting 123.456 using old approach took 95.527100ms. avg 0.000955ms/call.
+        Converting 123.456 using new approach took 28.126953ms. avg 0.000281ms/call.
+
+        Converting 123 using old approach took 85.411133ms. avg 0.000854ms/call.
+        Converting 123 using new approach took 24.190186ms. avg 0.000242ms/call.
+
+        Converting 0.1 using old approach took 92.622803ms. avg 0.000926ms/call.
+        Converting 0.1 using new approach took 23.317871ms. avg 0.000233ms/call.
+
+        Converting 1/i using old approach took 106.893066ms. avg 0.001069ms/call.
+        Converting 1/i using new approach took 27.164062ms. avg 0.000272ms/call.
+
+        For all numbers I've tested in RoundingSignificantFigures mode and 6 digit precision the speedup was at least 250%.
+
+        * JavaScriptCore.exp: Change String::number(double) signature.
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def: Ditto.
+        * runtime/NumberPrototype.cpp:
+        (JSC::numberProtoFuncToFixed): Refactor this into numberToFixedPrecisionString(), move to wtf/dtoa.cpp.
+        (JSC::numberProtoFuncToPrecision): Ditto, refactor this into numberToFixedWidthString.
+        * wtf/dtoa.cpp: Moved fixedWidth/Precision helpers into dtoa, extend numberToFixedPrecisionString(). Add a mode which allows to truncate trailing zeros/decimal point.
+                        to make it possible to use them to generate strings that match the output from String::format("%6.lg"), while using our dtoas rounding facilities.
+        * wtf/dtoa.h:
+        * wtf/dtoa/utils.h: Expose new helper method, which allows us to truncate the result, before generating the output const char*.
+        (WTF::double_conversion::StringBuilder::SetPosition):
+        * wtf/text/WTFString.cpp:
+        (WTF::String::number): Remove String::format("%6.lg") usage! Switch to rounding to six significant figures, while matching the output of String::format.
+        * wtf/text/WTFString.h:
+
 2011-11-23  Hajime Morrita  <morrita@chromium.org>
 
         WTF::String has extra WTF_EXPORT_PRIVATE

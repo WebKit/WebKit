@@ -248,10 +248,13 @@ EXPORTS
     ?name@JSFunction@JSC@@QAEABVUString@2@PAVExecState@2@@Z
     ?newUninitialized@CString@WTF@@SA?AV12@IAAPAD@Z
     ?nullptr@@3Vnullptr_t@std@@A
+    ?number@String@WTF@@SA?AV12@NII@Z
     ?number@UString@JSC@@SA?AV12@H@Z
     ?number@UString@JSC@@SA?AV12@I@Z
     ?number@UString@JSC@@SA?AV12@N@Z
     ?numberToString@WTF@@YAPBDNQAD@Z
+    ?numberToFixedPrecisionString@WTF@@YAPBDNIQAD_N@Z
+    ?numberToFixedWidthString@WTF@@YAPBDNIQAD@Z
     ?objectCount@Heap@JSC@@QAEIXZ
     ?objectProtoFuncToString@JSC@@YI_JPAVExecState@1@@Z
     ?objectTypeCounts@Heap@JSC@@QAE?AV?$PassOwnPtr@V?$HashCountedSet@PBDU?$PtrHash@PBD@WTF@@U?$HashTraits@PBD@2@@WTF@@@WTF@@XZ

@@ -197,6 +197,14 @@ namespace double_conversion {
             ASSERT(!is_finalized());
             return position_;
         }
+         
+        // Set the current position in the builder.
+        void SetPosition(int position)
+        {
+            ASSERT(!is_finalized());
+            ASSERT(position < size());
+            position_ = position;
+        }
         
         // Reset the position.
         void Reset() { position_ = 0; }

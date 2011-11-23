@@ -43,12 +43,16 @@ double strtod(const char* s00, char** se);
 const unsigned NumberToStringBufferLength = 96;
 typedef char NumberToStringBuffer[NumberToStringBufferLength];
 typedef UChar NumberToUStringBuffer[NumberToStringBufferLength];
-const char *numberToString(double, NumberToStringBuffer);
+const char* numberToString(double, NumberToStringBuffer);
+const char* numberToFixedPrecisionString(double, unsigned significantFigures, NumberToStringBuffer, bool truncateTrailingZeros = false);
+const char* numberToFixedWidthString(double, unsigned decimalPlaces, NumberToStringBuffer);
 
 } // namespace WTF
 
 using WTF::NumberToStringBuffer;
 using WTF::NumberToUStringBuffer;
 using WTF::numberToString;
+using WTF::numberToFixedPrecisionString;
+using WTF::numberToFixedWidthString;
 
 #endif // WTF_dtoa_h

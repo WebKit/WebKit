@@ -458,9 +458,16 @@ String String::number(unsigned long long n)
 #endif
 }
     
-String String::number(double n)
+String String::number(double number, unsigned flags, unsigned precision)
 {
-    return String::format("%.6lg", n);
+    NumberToStringBuffer buffer;
+
+    // Mimic String::format("%.[precision]g", ...), but use dtoas rounding facilities.
+    if (flags & ShouldRoundSignificantFigures)
+        return String(numberToFixedPrecisionString(number, precision, buffer, flags & ShouldTruncateTrailingZeros));
+
+    // Mimic String::format("%.[precision]f", ...), but use dtoas rounding facilities.
+    return String(numberToFixedWidthString(number, precision, buffer));
 }
 
 int String::toIntStrict(bool* ok, int base) const
