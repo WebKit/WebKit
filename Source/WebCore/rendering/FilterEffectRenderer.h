@@ -57,7 +57,6 @@ public:
         m_sourceDrawingRegion = sourceImageRect;
         setMaxEffectRects(sourceImageRect);
         setFilterRegion(sourceImageRect);
-        m_sourceGraphicBuffer = ImageBuffer::create(IntSize(sourceImageRect.width(), sourceImageRect.height()));
         m_graphicsBufferAttached = false;
     }
     virtual FloatRect sourceImageRect() const { return m_sourceDrawingRegion; }
@@ -96,7 +95,6 @@ private:
     
     FilterEffectList m_effects;
     RefPtr<SourceGraphic> m_sourceGraphic;
-    OwnPtr<ImageBuffer> m_sourceGraphicBuffer;
     
     bool m_graphicsBufferAttached;
 };

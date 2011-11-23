@@ -24,6 +24,9 @@
  */
 
 #include "config.h"
+
+#if ENABLE(CSS_FILTERS)
+
 #include "FilterEffectRenderer.h"
 
 #include "FEColorMatrix.h"
@@ -35,8 +38,6 @@
 
 #include <algorithm>
 #include <wtf/MathExtras.h>
-
-#if ENABLE(CSS_FILTERS)
 
 namespace WebCore {
 
@@ -73,6 +74,8 @@ GraphicsContext* FilterEffectRenderer::inputContext()
 
 void FilterEffectRenderer::build(const FilterOperations& operations, const LayoutRect& borderBox)
 {
+    m_effects.clear();
+
     RefPtr<FilterEffect> effect;
     RefPtr<FilterEffect> previousEffect;
     for (size_t i = 0; i < operations.operations().size(); ++i) {
@@ -232,7 +235,7 @@ void FilterEffectRenderer::build(const FilterOperations& operations, const Layou
         m_effects.append(FEMerge::create(this));
 
     m_effects.first()->inputEffects().append(m_sourceGraphic);
-    m_graphicsBufferAttached = false;
+    setMaxEffectRects(m_sourceDrawingRegion);
 }
 
 void FilterEffectRenderer::prepare()
@@ -241,7 +244,7 @@ void FilterEffectRenderer::prepare()
     // source image sizes set. We just need to attach the graphic
     // buffer if we have not yet done so.
     if (!m_graphicsBufferAttached) {
-        setSourceImage(m_sourceGraphicBuffer.release());
+        setSourceImage(ImageBuffer::create(IntSize(m_sourceDrawingRegion.width(), m_sourceDrawingRegion.height())));
         m_graphicsBufferAttached = true;
     }
     m_sourceGraphic->clearResult();

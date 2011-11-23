@@ -1,3 +1,26 @@
+2011-11-23  Alexandru Chiculita  <achicu@adobe.com>
+
+        [CSS Filters] WebKit crashes when changing the filter
+        https://bugs.webkit.org/show_bug.cgi?id=72723
+
+        Reviewed by Simon Fraser.
+
+        There are three things fixed with this patch:
+        1. The list of effects wasn't cleared when the FilterOperations were changed.
+        2. The sourceImage was going to be 0, because the m_sourceGraphicBuffer.release()
+        was also clearing the reference to m_sourceGraphicBuffer. Next time the build() method
+        was called m_graphicsBufferAttached was set to false, but the m_sourceGraphicBuffer was
+        not regenerated, because the size was not invalidated.
+        3. maxEffectRects were not updated when a new list of effects was built.
+         
+        Test: css3/filters/crash-filter-change.html
+
+        * rendering/FilterEffectRenderer.cpp:
+        (WebCore::FilterEffectRenderer::build):
+        (WebCore::FilterEffectRenderer::prepare):
+        * rendering/FilterEffectRenderer.h:
+        (WebCore::FilterEffectRenderer::setSourceImageRect):
+
 2011-11-23  Elliot Poger  <epoger@google.com>
 
         [Skia] fix duplicate symbol __ZN7WebCore11BitmapImage16initPlatformDataEv error
