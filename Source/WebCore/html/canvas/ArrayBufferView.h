@@ -118,7 +118,7 @@ class ArrayBufferView : public RefCounted<ArrayBufferView> {
         *numElements = std::min(remainingElements, *numElements);
     }
 
-    virtual void neuter(WebCore::ScriptExecutionContext*);
+    virtual void neuter();
 
     // This is the address of the ArrayBuffer's storage, plus the byte offset.
     void* m_baseAddress;

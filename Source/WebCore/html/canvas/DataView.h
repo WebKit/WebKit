@@ -74,8 +74,7 @@ public:
     void setFloat64(unsigned byteOffset, double value, bool littleEndian, ExceptionCode&);
 
 protected:
-    virtual void neuter(ScriptExecutionContext*);
-    void neuterBinding(ScriptExecutionContext*);
+    virtual void neuter();
 
 private:
     DataView(PassRefPtr<ArrayBuffer>, unsigned byteOffset, unsigned byteLength);

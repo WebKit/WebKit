@@ -236,11 +236,10 @@ void DataView::setFloat64(unsigned byteOffset, double value, bool littleEndian, 
     setData<double>(byteOffset, value, littleEndian, ec);
 }
 
-void DataView::neuter(ScriptExecutionContext* context)
+void DataView::neuter()
 {
-    ArrayBufferView::neuter(context);
+    ArrayBufferView::neuter();
     m_byteLength = 0;
-    neuterBinding(context);
 }
 
 }

@@ -106,7 +106,7 @@ void ArrayBufferView::calculateOffsetAndLength(int start, int end, unsigned arra
     *length = static_cast<unsigned>(end - start);
 }
 
-void ArrayBufferView::neuter(WebCore::ScriptExecutionContext*)
+void ArrayBufferView::neuter()
 {
     m_buffer = 0;
     m_byteOffset = 0;

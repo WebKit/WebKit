@@ -26,11 +26,9 @@
 #include "config.h"
 #include "ArrayBuffer.h"
 #include "ArrayBufferView.h"
-#include "ExceptionCode.h"
 
 #include <wtf/RefPtr.h>
-
-using namespace WebCore;
+#include <wtf/Vector.h>
 
 namespace WTF {
 
@@ -119,14 +117,13 @@ unsigned ArrayBuffer::clampIndex(int index) const
     return clampValue(index, 0, currentLength);
 }
 
-void ArrayBuffer::transfer(ScriptExecutionContext* context, ArrayBufferContents& result, ExceptionCode& ec)
+bool ArrayBuffer::transfer(ArrayBufferContents& result, Vector<ArrayBufferView*>& neuteredViews)
 {
     RefPtr<ArrayBuffer> keepAlive(this);
 
     if (!m_contents.m_data) {
-        ec = INVALID_STATE_ERR;
         result.m_data = 0;
-        return;
+        return false;
     }
 
     m_contents.transfer(result);
@@ -134,8 +131,10 @@ void ArrayBuffer::transfer(ScriptExecutionContext* context, ArrayBufferContents&
     while (m_firstView) {
         ArrayBufferView* current = m_firstView;
         removeView(current);
-        current->neuter(context);
+        current->neuter();
+        neuteredViews.append(current);
     }
+    return true;
 }
 
 ArrayBufferContents::~ArrayBufferContents()

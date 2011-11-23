@@ -46,9 +46,6 @@ public:
     PassRefPtr<Int8Array> subarray(int start) const;
     PassRefPtr<Int8Array> subarray(int start, int end) const;
 
-protected:
-    void neuterBinding(WebCore::ScriptExecutionContext*);
-
 private:
     Int8Array(PassRefPtr<ArrayBuffer> buffer,
                    unsigned byteOffset,

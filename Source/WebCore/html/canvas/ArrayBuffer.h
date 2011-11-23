@@ -26,15 +26,10 @@
 #ifndef ArrayBuffer_h
 #define ArrayBuffer_h
 
+#include <wtf/HashSet.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
-namespace WebCore {
-
-class ScriptExecutionContext;
-
-typedef int ExceptionCode;
-
-}
+#include <wtf/Vector.h>
 
 namespace WTF {
 
@@ -93,7 +88,7 @@ public:
     void addView(ArrayBufferView*);
     void removeView(ArrayBufferView*);
 
-    void transfer(WebCore::ScriptExecutionContext*, ArrayBufferContents&, WebCore::ExceptionCode&);
+    bool transfer(ArrayBufferContents&, Vector<ArrayBufferView*>& neuteredViews);
 
     ~ArrayBuffer() { }
 

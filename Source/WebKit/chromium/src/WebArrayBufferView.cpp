@@ -31,7 +31,7 @@
 
 #include "ArrayBufferView.h"
 
-using namespace WebCore;
+using namespace WTF;
 
 namespace WebKit {
 

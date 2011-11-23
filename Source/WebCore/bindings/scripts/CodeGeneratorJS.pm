@@ -2236,23 +2236,6 @@ sub GenerateImplementation
         push(@implContent, ";\n}\n");
     }
 
-    if ($parentClassName eq "JSArrayBufferView" and IsTypedArrayType($implType)) {
-        push(@implContent, <<END);
-}
-namespace WTF {
-void ${implType}::neuterBinding(WebCore::ScriptExecutionContext*) {
-}
-}
-namespace WebCore {
-END
-    } elsif ($parentClassName eq "JSArrayBufferView") {
-        push(@implContent, <<END);
-void ${implType}::neuterBinding(ScriptExecutionContext*) {
-}
-END
-    }
-
-
     push(@implContent, "\n}\n");
 
     my $conditionalString = GenerateConditionalString($dataNode);
