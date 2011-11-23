@@ -1,3 +1,28 @@
+2011-11-23  Rafael Weinstein  <rafaelw@chromium.org>
+
+        [MutationObservers] Modifications to the style property don't dispatch "attributes" Mutation Records
+        https://bugs.webkit.org/show_bug.cgi?id=70137
+
+        Reviewed by Ryosuke Niwa.
+
+        This patch adds a private AttributesMutationScope mechanism to CSSMutableStyleDeclaration (which uses
+        the RAII pattern similar to the public ChildListMutationScope). This manages the (sometimes conditional)
+        pre-change serialization of the style attribute (if an observer has requested oldValue), creation of
+        the mutation record, and dispatch if the declaration was actual affected.
+
+        * css/CSSMutableStyleDeclaration.cpp:
+        (WebCore::CSSMutableStyleDeclaration::removeProperty):
+        (WebCore::CSSMutableStyleDeclaration::setProperty):
+        (WebCore::CSSMutableStyleDeclaration::setPropertyInternal):
+        (WebCore::CSSMutableStyleDeclaration::parseDeclaration):
+        (WebCore::CSSMutableStyleDeclaration::addParsedProperties):
+        (WebCore::CSSMutableStyleDeclaration::addParsedProperty):
+        (WebCore::CSSMutableStyleDeclaration::setCssText):
+        (WebCore::CSSMutableStyleDeclaration::merge):
+        (WebCore::CSSMutableStyleDeclaration::removePropertiesInSet):
+        * dom/Element.cpp:
+        (WebCore::Element::setAttribute):
+
 2011-11-23  Dmitry Lomov  <dslomov@google.com>
 
         Unreviewed, rebaseline binding tests after http://trac.webkit.org/changeset/101064.

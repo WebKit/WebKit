@@ -638,6 +638,110 @@ function testAttributeFilterNonHTMLDocument() {
     start();
 }
 
+function testStyleAttributePropertyAccess() {
+    var svgDoc, div, path;
+    var observer;
+
+    function start() {
+        debug('Testing that modifying an elements style property dispatches Mutation Records.');
+
+        mutations = null;
+        observer = new WebKitMutationObserver(function(m) {
+            mutations = m;
+        });
+
+        div = document.createElement('div');
+        div.setAttribute('style', 'color: yellow; width: 100px; ');
+        observer.observe(div, { attributes: true });
+        div.style.color = 'red';
+        div.style.width = '200px';
+        div.style.color = 'blue';
+
+        setTimeout(checkAndContinue, 0);
+    }
+
+    function checkAndContinue() {
+        shouldBe('mutations.length', '3');
+        shouldBe('mutations[0].type', '"attributes"');
+        shouldBe('mutations[0].attributeName', '"style"');
+        shouldBe('mutations[0].oldValue', 'null');
+        shouldBe('mutations[1].type', '"attributes"');
+        shouldBe('mutations[1].attributeName', '"style"');
+        shouldBe('mutations[1].oldValue', 'null');
+        shouldBe('mutations[2].type', '"attributes"');
+        shouldBe('mutations[2].attributeName', '"style"');
+        shouldBe('mutations[2].oldValue', 'null');
+
+        mutations = null;
+        div.getAttribute('style');
+        setTimeout(finish, 0);
+    }
+
+    function finish() {
+        debug('...mutation record created.');
+
+        shouldBe('mutations', 'null');
+
+        observer.disconnect();
+        debug('');
+        runNextTest();
+    }
+
+    start();
+}
+
+function testStyleAttributePropertyAccessOldValue() {
+    var svgDoc, div, path;
+    var observer;
+
+    function start() {
+        debug('Testing that modifying an elements style property dispatches Mutation Records with correct oldValues.');
+
+        mutations = null;
+        observer = new WebKitMutationObserver(function(m) {
+            mutations = m;
+        });
+
+        div = document.createElement('div');
+        div.setAttribute('style', 'color: yellow; width: 100px; ');
+        observer.observe(div, { attributes: true, attributeOldValue: true });
+        div.style.color = 'red';
+        div.style.width = '200px';
+        div.style.color = 'blue';
+
+        setTimeout(checkAndContinue, 0);
+    }
+
+    function checkAndContinue() {
+        shouldBe('mutations.length', '3');
+        shouldBe('mutations[0].type', '"attributes"');
+        shouldBe('mutations[0].attributeName', '"style"');
+        shouldBe('mutations[0].oldValue', '"color: yellow; width: 100px; "');
+        shouldBe('mutations[1].type', '"attributes"');
+        shouldBe('mutations[1].attributeName', '"style"');
+        shouldBe('mutations[1].oldValue', '"width: 100px; color: red; "');
+        shouldBe('mutations[2].type', '"attributes"');
+        shouldBe('mutations[2].attributeName', '"style"');
+        shouldBe('mutations[2].oldValue', '"color: red; width: 200px; "');
+
+        mutations = null;
+        div.getAttribute('style');
+        setTimeout(finish, 0);
+    }
+
+    function finish() {
+        debug('...mutation record created.');
+
+        shouldBe('mutations', 'null');
+
+        observer.disconnect();
+        debug('');
+        runNextTest();
+    }
+
+    start();
+}
+
 var tests = [
     testBasic,
     testWrongType,
@@ -653,7 +757,9 @@ var tests = [
     testAttributeFilter,
     testAttributeFilterSubtree,
     testAttributeFilterNonHTMLElement,
-    testAttributeFilterNonHTMLDocument
+    testAttributeFilterNonHTMLDocument,
+    testStyleAttributePropertyAccess,
+    testStyleAttributePropertyAccessOldValue
 ];
 var testIndex = 0;
 

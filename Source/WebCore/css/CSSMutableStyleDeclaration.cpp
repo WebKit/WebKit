@@ -32,14 +32,80 @@
 #include "CSSValueList.h"
 #include "Document.h"
 #include "ExceptionCode.h"
+#include "HTMLNames.h"
 #include "InspectorInstrumentation.h"
+#include "MutationRecord.h"
 #include "StyledElement.h"
+#include "WebKitMutationObserver.h"
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>
 
 using namespace std;
 
 namespace WebCore {
+
+#if ENABLE(MUTATION_OBSERVERS)
+namespace {
+
+class StyleAttributeMutationScope {
+    WTF_MAKE_NONCOPYABLE(StyleAttributeMutationScope);
+public:
+    StyleAttributeMutationScope(CSSMutableStyleDeclaration* decl)
+    {
+        ++s_scopeCount;
+
+        if (s_scopeCount != 1) {
+            ASSERT(s_currentDecl == decl);
+            return;
+        }
+
+        ASSERT(!s_currentDecl);
+        s_currentDecl = decl;
+
+        if (!s_currentDecl->isInlineStyleDeclaration())
+            return;
+
+        s_mutationRecipients = MutationObserverInterestGroup::createForAttributesMutation(s_currentDecl->node(), HTMLNames::styleAttr);
+        if (s_mutationRecipients->isEmpty()) {
+            s_mutationRecipients.clear();
+            return;
+        }
+
+        Element* element = toElement(s_currentDecl->node());
+        AtomicString oldValue = s_mutationRecipients->isOldValueRequested() ? element->getAttribute(HTMLNames::styleAttr) : nullAtom;
+        s_mutation = MutationRecord::createAttributes(element, HTMLNames::styleAttr, oldValue);
+    }
+
+    ~StyleAttributeMutationScope()
+    {
+        --s_scopeCount;
+        if (!s_scopeCount)
+            s_currentDecl = 0;
+    }
+
+    void enqueueMutationRecord()
+    {
+        if (!s_mutation)
+            return;
+        s_mutationRecipients->enqueueMutationRecord(s_mutation);
+        s_mutation.clear();
+        s_mutationRecipients.clear();
+    }
+
+private:
+    static unsigned s_scopeCount;
+    static OwnPtr<MutationObserverInterestGroup> s_mutationRecipients;
+    static RefPtr<MutationRecord> s_mutation;
+    static CSSMutableStyleDeclaration* s_currentDecl;
+};
+
+unsigned StyleAttributeMutationScope::s_scopeCount = 0;
+OwnPtr<MutationObserverInterestGroup> StyleAttributeMutationScope::s_mutationRecipients;
+RefPtr<MutationRecord> StyleAttributeMutationScope::s_mutation;
+CSSMutableStyleDeclaration* StyleAttributeMutationScope::s_currentDecl = 0;
+
+} // namespace
+#endif // ENABLE(MUTATION_OBSERVERS)
 
 CSSMutableStyleDeclaration::CSSMutableStyleDeclaration()
     : CSSStyleDeclaration(0, /* isMutable */ true)
@@ -520,6 +586,10 @@ String CSSMutableStyleDeclaration::removeProperty(int propertyID, bool notifyCha
 {
     ASSERT(!m_iteratorCount);
 
+#if ENABLE(MUTATION_OBSERVERS)
+    StyleAttributeMutationScope mutationScope(this);
+#endif
+
     if (removeShorthandProperty(propertyID, notifyChanged)) {
         // FIXME: Return an equivalent shorthand when possible.
         return String();
@@ -534,6 +604,10 @@ String CSSMutableStyleDeclaration::removeProperty(int propertyID, bool notifyCha
     // A more efficient removal strategy would involve marking entries as empty
     // and sweeping them when the vector grows too big.
     m_properties.remove(foundProperty - m_properties.data());
+
+#if ENABLE(MUTATION_OBSERVERS)
+    mutationScope.enqueueMutationRecord();
+#endif
 
     if (notifyChanged)
         setNeedsStyleRecalc();
@@ -602,6 +676,10 @@ bool CSSMutableStyleDeclaration::setProperty(int propertyID, const String& value
 {
     ASSERT(!m_iteratorCount);
 
+#if ENABLE(MUTATION_OBSERVERS)
+    StyleAttributeMutationScope mutationScope(this);
+#endif
+
     // Setting the value to an empty string just removes the property in both IE and Gecko.
     // Setting it to null seems to produce less consistent results, but we treat it just the same.
     if (value.isEmpty()) {
@@ -615,15 +693,26 @@ bool CSSMutableStyleDeclaration::setProperty(int propertyID, const String& value
     if (!success) {
         // CSS DOM requires raising SYNTAX_ERR here, but this is too dangerous for compatibility,
         // see <http://bugs.webkit.org/show_bug.cgi?id=7296>.
-    } else if (notifyChanged)
+        return false;
+    }
+
+#if ENABLE(MUTATION_OBSERVERS)
+    mutationScope.enqueueMutationRecord();
+#endif
+
+    if (notifyChanged)
         setNeedsStyleRecalc();
 
-    return success;
+    return true;
 }
 
 void CSSMutableStyleDeclaration::setPropertyInternal(const CSSProperty& property, CSSProperty* slot)
 {
     ASSERT(!m_iteratorCount);
+
+#if ENABLE(MUTATION_OBSERVERS)
+    StyleAttributeMutationScope mutationScope(this);
+#endif
 
     if (!removeShorthandProperty(property.id(), false)) {
         CSSProperty* toReplace = slot ? slot : findPropertyWithId(property.id());
@@ -633,6 +722,10 @@ void CSSMutableStyleDeclaration::setPropertyInternal(const CSSProperty& property
         }
     }
     m_properties.append(property);
+
+#if ENABLE(MUTATION_OBSERVERS)
+    mutationScope.enqueueMutationRecord();
+#endif
 }
 
 bool CSSMutableStyleDeclaration::setProperty(int propertyID, int value, bool important, bool notifyChanged)
@@ -673,9 +766,18 @@ void CSSMutableStyleDeclaration::parseDeclaration(const String& styleDeclaration
 {
     ASSERT(!m_iteratorCount);
 
+#if ENABLE(MUTATION_OBSERVERS)
+    StyleAttributeMutationScope mutationScope(this);
+#endif
+
     m_properties.clear();
     CSSParser parser(useStrictParsing());
     parser.parseDeclaration(this, styleDeclaration);
+
+#if ENABLE(MUTATION_OBSERVERS)
+    mutationScope.enqueueMutationRecord();
+#endif
+
     setNeedsStyleRecalc();
 }
 
@@ -683,9 +785,17 @@ void CSSMutableStyleDeclaration::addParsedProperties(const CSSProperty* const* p
 {
     ASSERT(!m_iteratorCount);
 
+#if ENABLE(MUTATION_OBSERVERS)
+    StyleAttributeMutationScope mutationScope(this);
+#endif
+
     m_properties.reserveCapacity(numProperties);
     for (int i = 0; i < numProperties; ++i)
         addParsedProperty(*properties[i]);
+
+#if ENABLE(MUTATION_OBSERVERS)
+    mutationScope.enqueueMutationRecord();
+#endif
 
     // FIXME: This probably should have a call to setNeedsStyleRecalc() if something changed. We may also wish to add
     // a notifyChanged argument to this function to follow the model of other functions in this class.
@@ -695,11 +805,19 @@ void CSSMutableStyleDeclaration::addParsedProperty(const CSSProperty& property)
 {
     ASSERT(!m_iteratorCount);
 
+#if ENABLE(MUTATION_OBSERVERS)
+    StyleAttributeMutationScope mutationScope(this);
+#endif
+
     // Only add properties that have no !important counterpart present
     if (!getPropertyPriority(property.id()) || property.isImportant()) {
         removeProperty(property.id(), false, false);
         m_properties.append(property);
     }
+
+#if ENABLE(MUTATION_OBSERVERS)
+    mutationScope.enqueueMutationRecord();
+#endif
 }
 
 void CSSMutableStyleDeclaration::setLengthProperty(int propertyId, const String& value, bool important, bool /*multiLength*/)
@@ -790,10 +908,19 @@ void CSSMutableStyleDeclaration::setCssText(const String& text, ExceptionCode& e
 {
     ASSERT(!m_iteratorCount);
 
+#if ENABLE(MUTATION_OBSERVERS)
+    StyleAttributeMutationScope mutationScope(this);
+#endif
+
     ec = 0;
     m_properties.clear();
     CSSParser parser(useStrictParsing());
     parser.parseDeclaration(this, text);
+
+#if ENABLE(MUTATION_OBSERVERS)
+    mutationScope.enqueueMutationRecord();
+#endif
+
     // FIXME: Detect syntax errors and set ec.
     setNeedsStyleRecalc();
 }
@@ -801,6 +928,10 @@ void CSSMutableStyleDeclaration::setCssText(const String& text, ExceptionCode& e
 void CSSMutableStyleDeclaration::merge(const CSSMutableStyleDeclaration* other, bool argOverridesOnConflict)
 {
     ASSERT(!m_iteratorCount);
+
+#if ENABLE(MUTATION_OBSERVERS)
+    StyleAttributeMutationScope mutationScope(this);
+#endif
 
     unsigned size = other->m_properties.size();
     for (unsigned n = 0; n < size; ++n) {
@@ -813,6 +944,11 @@ void CSSMutableStyleDeclaration::merge(const CSSMutableStyleDeclaration* other, 
         } else
             m_properties.append(toMerge);
     }
+
+#if ENABLE(MUTATION_OBSERVERS)
+    mutationScope.enqueueMutationRecord();
+#endif
+
     // FIXME: This probably should have a call to setNeedsStyleRecalc() if something changed. We may also wish to add
     // a notifyChanged argument to this function to follow the model of other functions in this class.
 }
@@ -870,6 +1006,10 @@ void CSSMutableStyleDeclaration::removePropertiesInSet(const int* set, unsigned 
     if (m_properties.isEmpty())
         return;
 
+#if ENABLE(MUTATION_OBSERVERS)
+    StyleAttributeMutationScope mutationScope(this);
+#endif
+
     // FIXME: This is always used with static sets and in that case constructing the hash repeatedly is pretty pointless.
     HashSet<int> toRemove;
     for (unsigned i = 0; i < length; ++i)
@@ -892,8 +1032,14 @@ void CSSMutableStyleDeclaration::removePropertiesInSet(const int* set, unsigned 
     bool changed = newProperties.size() != m_properties.size();
     m_properties = newProperties;
 
-    if (changed && notifyChanged)
-        setNeedsStyleRecalc();
+    if (!changed || !notifyChanged)
+        return;
+
+#if ENABLE(MUTATION_OBSERVERS)
+    mutationScope.enqueueMutationRecord();
+#endif
+
+    setNeedsStyleRecalc();
 }
 
 PassRefPtr<CSSMutableStyleDeclaration> CSSMutableStyleDeclaration::makeMutable()

@@ -40,6 +40,7 @@
 #include "MutationObserverRegistration.h"
 #include "MutationRecord.h"
 #include "Node.h"
+#include "QualifiedName.h"
 #include <wtf/ListHashSet.h>
 
 namespace WebCore {
@@ -151,9 +152,9 @@ PassOwnPtr<MutationObserverInterestGroup> MutationObserverInterestGroup::createF
     return adoptPtr(new MutationObserverInterestGroup(target, WebKitMutationObserver::CharacterData));
 }
 
-PassOwnPtr<MutationObserverInterestGroup> MutationObserverInterestGroup::createForAttributesMutation(Node* target, const AtomicString& attributeName)
+PassOwnPtr<MutationObserverInterestGroup> MutationObserverInterestGroup::createForAttributesMutation(Node* target, const QualifiedName& attributeName)
 {
-    return adoptPtr(new MutationObserverInterestGroup(target, WebKitMutationObserver::Attributes, attributeName));
+    return adoptPtr(new MutationObserverInterestGroup(target, WebKitMutationObserver::Attributes, attributeName.localName()));
 }
 
 MutationObserverInterestGroup::MutationObserverInterestGroup(Node* target, WebKitMutationObserver::MutationType type, const AtomicString& attributeName)

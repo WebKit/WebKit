@@ -619,7 +619,7 @@ const AtomicString& Element::getAttributeNS(const String& namespaceURI, const St
 #if ENABLE(MUTATION_OBSERVERS)
 static void enqueueAttributesMutationRecord(Element* target, const QualifiedName& attributeName, const AtomicString& oldValue)
 {
-    OwnPtr<MutationObserverInterestGroup> mutationRecipients = MutationObserverInterestGroup::createForAttributesMutation(target, attributeName.localName());
+    OwnPtr<MutationObserverInterestGroup> mutationRecipients = MutationObserverInterestGroup::createForAttributesMutation(target, attributeName);
     mutationRecipients->enqueueMutationRecord(MutationRecord::createAttributes(target, attributeName, oldValue));
 }
 #endif
@@ -646,7 +646,8 @@ void Element::setAttribute(const AtomicString& name, const AtomicString& value, 
 
 #if ENABLE(MUTATION_OBSERVERS)
     // The call to attributeChanged below may dispatch DOMSubtreeModified, so it's important to enqueue a MutationRecord now.
-    enqueueAttributesMutationRecord(this, attributeName, old ? old->value() : nullAtom);
+    if (!isSynchronizingStyleAttribute())
+        enqueueAttributesMutationRecord(this, attributeName, old ? old->value() : nullAtom);
 #endif
 
     if (isIdAttributeName(old ? old->name() : attributeName))
@@ -684,7 +685,8 @@ void Element::setAttribute(const QualifiedName& name, const AtomicString& value,
 
 #if ENABLE(MUTATION_OBSERVERS)
     // The call to attributeChanged below may dispatch DOMSubtreeModified, so it's important to enqueue a MutationRecord now.
-    enqueueAttributesMutationRecord(this, name, old ? old->value() : nullAtom);
+    if (!isSynchronizingStyleAttribute())
+        enqueueAttributesMutationRecord(this, name, old ? old->value() : nullAtom);
 #endif
 
     if (isIdAttributeName(name))

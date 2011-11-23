@@ -47,6 +47,7 @@ class MutationCallback;
 class MutationObserverRegistration;
 class MutationRecord;
 class Node;
+class QualifiedName;
 
 typedef int ExceptionCode;
 
@@ -99,7 +100,7 @@ class MutationObserverInterestGroup {
 public:
     static PassOwnPtr<MutationObserverInterestGroup> createForChildListMutation(Node* target);
     static PassOwnPtr<MutationObserverInterestGroup> createForCharacterDataMutation(Node* target);
-    static PassOwnPtr<MutationObserverInterestGroup> createForAttributesMutation(Node* target, const AtomicString& attributeName);
+    static PassOwnPtr<MutationObserverInterestGroup> createForAttributesMutation(Node* target, const QualifiedName& attributeName);
 
     bool isOldValueRequested();
     bool isEmpty() { return m_observers.isEmpty(); }
