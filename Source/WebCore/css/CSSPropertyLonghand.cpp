@@ -134,6 +134,13 @@ static void initShorthandMap(ShorthandMap& shorthandMap)
     };
     SET_SHORTHAND_MAP_ENTRY(shorthandMap, CSSPropertyPadding, paddingProperties);
 
+    static const int webkitWrapProperties[] = {
+        CSSPropertyWebkitWrapFlow,
+        CSSPropertyWebkitWrapMargin,
+        CSSPropertyWebkitWrapPadding
+    };
+    SET_SHORTHAND_MAP_ENTRY(shorthandMap, CSSPropertyWebkitWrap, webkitWrapProperties);
+
     static const int textStrokeProperties[] = { CSSPropertyWebkitTextStrokeColor, CSSPropertyWebkitTextStrokeWidth };
     SET_SHORTHAND_MAP_ENTRY(shorthandMap, CSSPropertyWebkitTextStroke, textStrokeProperties);
 

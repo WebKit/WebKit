@@ -248,6 +248,11 @@ String CSSMutableStyleDeclaration::getPropertyValue(int propertyID) const
                                         CSSPropertyWebkitAnimationFillMode };
             return getLayeredShorthandValue(properties);
         }
+        case CSSPropertyWebkitWrap: {
+            const int properties[3] = { CSSPropertyWebkitWrapFlow, CSSPropertyWebkitWrapMargin,
+                CSSPropertyWebkitWrapPadding };
+            return getShorthandValue(properties);
+        }
 #if ENABLE(SVG)
         case CSSPropertyMarker: {
             RefPtr<CSSValue> value = getPropertyCSSValue(CSSPropertyMarkerStart);

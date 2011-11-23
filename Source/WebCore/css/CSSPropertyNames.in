@@ -363,6 +363,7 @@ z-index
 -webkit-region-break-inside
 -webkit-wrap-flow
 -webkit-wrap-through
+-webkit-wrap
 #if defined(ENABLE_TOUCH_EVENTS) && ENABLE_TOUCH_EVENTS
 -webkit-tap-highlight-color
 #endif

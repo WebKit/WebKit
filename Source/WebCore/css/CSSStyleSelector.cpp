@@ -3880,14 +3880,6 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             m_style->setWrapShapeOutside(primitiveValue->getShapeValue());
         return;
 
-    case CSSPropertyWebkitWrapFlow:
-        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(wrapFlow, WrapFlow);
-        return;
-
-    case CSSPropertyWebkitWrapThrough:
-        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(wrapThrough, WrapThrough);
-        return;
-
     // CSS Fonts Module Level 3
     case CSSPropertyWebkitFontFeatureSettings: {
         if (primitiveValue && primitiveValue->getIdent() == CSSValueNormal) {
@@ -4067,6 +4059,9 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSSPropertyWebkitTextEmphasisStyle:
     case CSSPropertyWebkitWrapMargin:
     case CSSPropertyWebkitWrapPadding:
+    case CSSPropertyWebkitWrapFlow:
+    case CSSPropertyWebkitWrapThrough:
+    case CSSPropertyWebkitWrap:
     case CSSPropertyZIndex:
         ASSERT_NOT_REACHED();
         return;

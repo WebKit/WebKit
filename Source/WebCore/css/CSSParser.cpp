@@ -2215,6 +2215,10 @@ bool CSSParser::parseValue(int propId, bool important)
     case CSSPropertyWebkitWrapPadding:
         validPrimitive = (!id && validUnit(value, FLength | FNonNeg, m_strict));
         break;
+    case CSSPropertyWebkitWrap: {
+        const int properties[] = { CSSPropertyWebkitWrapFlow, CSSPropertyWebkitWrapMargin, CSSPropertyWebkitWrapPadding };
+        return parseShorthand(propId, properties, WTF_ARRAY_LENGTH(properties), important);
+    }
 #if ENABLE(SVG)
     default:
         return parseSVGValue(propId, important);

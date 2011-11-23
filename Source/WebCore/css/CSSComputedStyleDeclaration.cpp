@@ -2058,10 +2058,22 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             return primitiveValueCache->createValue(style->regionThread(), CSSPrimitiveValue::CSS_STRING);
         case CSSPropertyWebkitRegionOverflow:
             return primitiveValueCache->createValue(style->regionOverflow());
+        case CSSPropertyWebkitWrapFlow:
+            return primitiveValueCache->createValue(style->wrapFlow());
         case CSSPropertyWebkitWrapMargin:
             return primitiveValueCache->createValue(style->wrapMargin());
         case CSSPropertyWebkitWrapPadding:
             return primitiveValueCache->createValue(style->wrapPadding());
+        case CSSPropertyWebkitWrapShapeInside:
+            if (!style->wrapShapeInside())
+                return primitiveValueCache->createIdentifierValue(CSSValueAuto);
+            return primitiveValueCache->createValue(style->wrapShapeInside());
+        case CSSPropertyWebkitWrapShapeOutside:
+            if (!style->wrapShapeOutside())
+                return primitiveValueCache->createIdentifierValue(CSSValueAuto);
+            return primitiveValueCache->createValue(style->wrapShapeOutside());
+        case CSSPropertyWebkitWrapThrough:
+            return primitiveValueCache->createValue(style->wrapThrough());
 #if ENABLE(CSS_FILTERS)
         case CSSPropertyWebkitFilter:
             return valueForFilter(style.get());
@@ -2172,22 +2184,9 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
         case CSSPropertyWebkitTransformOriginY:
         case CSSPropertyWebkitTransformOriginZ:
         case CSSPropertyWebkitTransition:
+        case CSSPropertyWebkitWrap:
             break;
 
-        case CSSPropertyWebkitWrapShapeInside:
-            if (!style->wrapShapeInside())
-                return primitiveValueCache->createIdentifierValue(CSSValueAuto);
-            return primitiveValueCache->createValue(style->wrapShapeInside());
-
-        case CSSPropertyWebkitWrapShapeOutside:
-            if (!style->wrapShapeOutside())
-                return primitiveValueCache->createIdentifierValue(CSSValueAuto);
-            return primitiveValueCache->createValue(style->wrapShapeOutside());
-
-        case CSSPropertyWebkitWrapFlow:
-            return primitiveValueCache->createValue(style->wrapFlow());
-        case CSSPropertyWebkitWrapThrough:
-            return primitiveValueCache->createValue(style->wrapThrough());
 #if ENABLE(SVG)
         case CSSPropertyClipPath:
         case CSSPropertyClipRule:
