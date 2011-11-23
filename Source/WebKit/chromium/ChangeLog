@@ -1,3 +1,15 @@
+2011-11-23  Antoine Labour  <piman@chromium.org>
+
+        [chromium] Expose showFPSCounter and showPlatformLayerTree in WebLayerTreeView::Settings
+        https://bugs.webkit.org/show_bug.cgi?id=72973
+
+        Reviewed by Darin Fisher.
+
+        * public/WebLayerTreeView.h:
+        (WebKit::WebLayerTreeView::Settings::Settings):
+        * src/WebLayerTreeView.cpp:
+        (WebKit::WebLayerTreeView::Settings::operator CCSettings):
+
 2011-11-22  Dirk Pranke  <dpranke@chromium.org>
 
         Roll DEPS to r111325 to fix an issue with the linux build

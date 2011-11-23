@@ -46,11 +46,15 @@ public:
         Settings()
             : acceleratePainting(false)
             , compositeOffscreen(false)
-            , enableCompositorThread(false) { }
+            , enableCompositorThread(false)
+            , showFPSCounter(false)
+            , showPlatformLayerTree(false) { }
 
         bool acceleratePainting;
         bool compositeOffscreen;
         bool enableCompositorThread;
+        bool showFPSCounter;
+        bool showPlatformLayerTree;
 #if WEBKIT_IMPLEMENTATION
         operator WebCore::CCSettings() const;
 #endif

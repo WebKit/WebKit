@@ -40,10 +40,8 @@ WebLayerTreeView::Settings::operator CCSettings() const
     settings.acceleratePainting = acceleratePainting;
     settings.compositeOffscreen = compositeOffscreen;
     settings.enableCompositorThread = enableCompositorThread;
-
-    // FIXME: showFPSCounter / showPlatformLayerTree aren't supported currently.
-    settings.showFPSCounter = false;
-    settings.showPlatformLayerTree = false;
+    settings.showFPSCounter = showFPSCounter;
+    settings.showPlatformLayerTree = showPlatformLayerTree;
     return settings;
 }
 
