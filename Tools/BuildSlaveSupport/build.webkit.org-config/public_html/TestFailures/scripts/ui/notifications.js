@@ -247,9 +247,9 @@ ui.notifications.FailingTestsSummary = base.extends(ui.notifications.FailingTest
 });
 
 ui.notifications.BuildersFailing = base.extends(ui.notifications.Failure, {
-    init: function()
+    init: function(message)
     {
-        this._problem.insertBefore(document.createTextNode('Build Failed:'), this._problem.firstChild);
+        this._problem.insertBefore(document.createTextNode(message + ':'), this._problem.firstChild);
     },
     setFailingBuilders: function(builderNameList)
     {

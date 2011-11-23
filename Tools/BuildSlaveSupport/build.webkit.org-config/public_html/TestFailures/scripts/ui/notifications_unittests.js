@@ -317,14 +317,14 @@ test('FailingTestsSummary (grouping)', 1, function() {
 });
 
 test('BuildersFailing', 1, function() {
-    var builderFailing = new ui.notifications.BuildersFailing();
+    var builderFailing = new ui.notifications.BuildersFailing('Disasterifying');
     builderFailing.setFailingBuilders(['Webkit Linux', 'Webkit Vista']);
     equal(builderFailing.innerHTML,
         '<div class="how">' +
             '<time class="relative"></time>' +
         '</div>' +
         '<div class="what">' +
-            '<div class="problem">Build Failed:' +
+            '<div class="problem">Disasterifying:' +
                 '<ul class="effects">' +
                     '<li class="builder"><a class="failing-builder" target="_blank" href="http://build.chromium.org/p/chromium.webkit/waterfall?builder=Webkit+Linux"><span class="version">lucid</span><span class="architecture">64-bit</span></a></li>' +
                     '<li class="builder"><a class="failing-builder" target="_blank" href="http://build.chromium.org/p/chromium.webkit/waterfall?builder=Webkit+Vista"><span class="version">vista</span></a></li>' +

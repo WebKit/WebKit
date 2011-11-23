@@ -32,7 +32,7 @@ var g_buildersFailing = null;
 
 var g_unexpectedFailuresController = null;
 
-var g_failingBuilders = null;
+var g_losingTestCoverageBuilders = null;
 
 function update()
 {
@@ -42,7 +42,7 @@ function update()
 
     g_info.add(updating);
 
-    builders.buildersFailingStepRequredForTestCoverage(g_failingBuilders.update.bind(g_failingBuilders));
+    builders.buildersFailingStepRequredForTestCoverage(g_losingTestCoverageBuilders.update.bind(g_losingTestCoverageBuilders));
 
     base.callInParallel([model.updateRecentCommits, model.updateResultsByBuilder], function() {
         updating.update('Analyzing test failures ...');
@@ -83,7 +83,7 @@ $(document).ready(function() {
     g_unexpectedFailuresController = new controllers.UnexpectedFailures(model.state, unexpectedFailuresView, onebarController);
 
     g_info = new ui.notifications.Stream();
-    g_failingBuilders = new controllers.FailingBuilders(g_info);
+    g_losingTestCoverageBuilders = new controllers.FailingBuilders(g_info, 'Losing test coverage');
 
     // FIXME: This should be an Action object.
     var updateButton = document.body.insertBefore(document.createElement('button'), document.body.firstChild);

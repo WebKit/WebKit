@@ -232,9 +232,10 @@ controllers.Failures = base.extends(FailureStreamController, {
 });
 
 controllers.FailingBuilders = base.extends(Object, {
-    init: function(view)
+    init: function(view, message)
     {
         this._view = view;
+        this._message = message;
         this._notification = null;
     },
     update: function(builderNameList)
@@ -247,7 +248,7 @@ controllers.FailingBuilders = base.extends(Object, {
             return;
         }
         if (!this._notification) {
-            this._notification = new ui.notifications.BuildersFailing();
+            this._notification = new ui.notifications.BuildersFailing(this._message);
             this._view.add(this._notification);
         }
         // FIXME: We should provide regression ranges for the failing builders.
