@@ -1,3 +1,17 @@
+2011-11-24  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Indexes should be secondarily sorted on primary key
+        https://bugs.webkit.org/show_bug.cgi?id=72567
+
+        Reviewed by Tony Chang.
+
+        Updates the IndexDataKey unit tests to include primary keys. The
+        deprecated sequenceNumber element of IndexDataKey is still tested,
+        although no longer used by callers.
+
+        * tests/IDBLevelDBCodingTest.cpp:
+        (IDBLevelDBCoding::TEST):
+
 2011-11-23  Greg Billock  <gbillock@google.com>
 
         Add simple implementation for web intents chromium API data classes.

@@ -261,20 +261,23 @@ class IndexDataKey {
 public:
     IndexDataKey();
     static const char* decode(const char* start, const char* limit, IndexDataKey* result);
-    static Vector<char> encode(int64_t databaseId, int64_t objectStoreId, int64_t indexId, const Vector<char>& encodedUserKey, int64_t sequenceNumber);
-    static Vector<char> encode(int64_t databaseId, int64_t objectStoreId, int64_t indexId, const IDBKey& userKey, int64_t sequenceNumber);
-    static Vector<char> encodeMaxKey(int64_t databaseId, int64_t objectStoreId);
-    int compare(const IndexDataKey& other, bool ignoreSequenceNumber);
+    static Vector<char> encode(int64_t databaseId, int64_t objectStoreId, int64_t indexId, const Vector<char>& encodedUserKey, const Vector<char>& encodedPrimaryKey, int64_t sequenceNumber = 0);
+    static Vector<char> encode(int64_t databaseId, int64_t objectStoreId, int64_t indexId, const IDBKey& userKey);
+    static Vector<char> encodeMinKey(int64_t databaseId, int64_t objectStoreId, int64_t indexId);
+    static Vector<char> encodeMaxKey(int64_t databaseId, int64_t objectStoreId, int64_t indexId);
+    int compare(const IndexDataKey& other, bool ignoreDuplicates);
     int64_t databaseId() const;
     int64_t objectStoreId() const;
     int64_t indexId() const;
     PassRefPtr<IDBKey> userKey() const;
+    PassRefPtr<IDBKey> primaryKey() const;
 
 private:
     int64_t m_databaseId;
     int64_t m_objectStoreId;
     int64_t m_indexId;
     Vector<char> m_encodedUserKey;
+    Vector<char> m_encodedPrimaryKey;
     int64_t m_sequenceNumber;
 };
 

@@ -109,12 +109,14 @@
 //
 // Index data:
 //
-//     The prefix is followed by a type byte. The user key is an encoded IDBKey. The sequence number is a variable length integer.
+//     The prefix is followed by a type byte. The index key is an encoded IDBKey. The sequence number is a variable length integer.
+//     The primary key is an encoded IDBKey.
 //
-//     <database id, object store id, index id, user key, sequence number> => "version", user key [IndexDataKey]
+//     <database id, object store id, index id, index key, sequence number, primary key> => "version", primary key [IndexDataKey]
 //
-//     (The sequence number is used to allow two entries with the same user key
-//     in non-unique indexes. The "version" field is used to weed out stale
+//     (The sequence number is obsolete; it was used to allow two entries with
+//     the same user (index) key in non-unique indexes prior to the inclusion of
+//     the primary key in the data. The "version" field is used to weed out stale
 //     index data. Whenever new object store data is inserted, it gets a new
 //     "version" number, and new index data is written with this number. When
 //     the index is used for look-ups, entries are validated against the
@@ -735,8 +737,8 @@ int compare(const LevelDBSlice& a, const LevelDBSlice& b, bool indexKeys)
         ASSERT(ptrA);
         ASSERT(ptrB);
 
-        bool ignoreSequenceNumber = indexKeys;
-        return indexDataKeyA.compare(indexDataKeyB, ignoreSequenceNumber);
+        bool ignoreDuplicates = indexKeys;
+        return indexDataKeyA.compare(indexDataKeyB, ignoreDuplicates);
     }
 
     ASSERT_NOT_REACHED();
@@ -1400,44 +1402,66 @@ const char* IndexDataKey::decode(const char* start, const char* limit, IndexData
     result->m_databaseId = prefix.m_databaseId;
     result->m_objectStoreId = prefix.m_objectStoreId;
     result->m_indexId = prefix.m_indexId;
+    result->m_sequenceNumber = -1;
+    result->m_encodedPrimaryKey = minIDBKey();
+
     p = extractEncodedIDBKey(p, limit, &result->m_encodedUserKey);
     if (!p)
         return 0;
-    if (p == limit) {
-        result->m_sequenceNumber = -1; // FIXME: We should change it so that all keys have a sequence number. Shouldn't need to handle this case.
+
+    // [optional] sequence number
+    if (p == limit)
         return p;
-    }
-    return decodeVarInt(p, limit, result->m_sequenceNumber);
+    p =  decodeVarInt(p, limit, result->m_sequenceNumber);
+    if (!p)
+        return 0;
+
+    // [optional] primary key
+    if (p == limit)
+        return p;
+    p = extractEncodedIDBKey(p, limit, &result->m_encodedPrimaryKey);
+    if (!p)
+        return 0;
+
+    return p;
 }
 
-Vector<char> IndexDataKey::encode(int64_t databaseId, int64_t objectStoreId, int64_t indexId, const Vector<char>& encodedUserKey, int64_t sequenceNumber)
+Vector<char> IndexDataKey::encode(int64_t databaseId, int64_t objectStoreId, int64_t indexId, const Vector<char>& encodedUserKey, const Vector<char>& encodedPrimaryKey, int64_t sequenceNumber)
 {
     KeyPrefix prefix(databaseId, objectStoreId, indexId);
     Vector<char> ret = prefix.encode();
     ret.append(encodedUserKey);
     ret.append(encodeVarInt(sequenceNumber));
+    ret.append(encodedPrimaryKey);
     return ret;
 }
 
-Vector<char> IndexDataKey::encode(int64_t databaseId, int64_t objectStoreId, int64_t indexId, const IDBKey& userKey, int64_t sequenceNumber)
+Vector<char> IndexDataKey::encode(int64_t databaseId, int64_t objectStoreId, int64_t indexId, const IDBKey& userKey)
 {
-    return encode(databaseId, objectStoreId, indexId, encodeIDBKey(userKey), sequenceNumber);
+    return encode(databaseId, objectStoreId, indexId, encodeIDBKey(userKey), minIDBKey());
 }
 
-Vector<char> IndexDataKey::encodeMaxKey(int64_t databaseId, int64_t objectStoreId)
+Vector<char> IndexDataKey::encodeMinKey(int64_t databaseId, int64_t objectStoreId, int64_t indexId)
 {
-    return encode(databaseId, objectStoreId, INT32_MAX, maxIDBKey(), INT64_MAX);
+    return encode(databaseId, objectStoreId, indexId, minIDBKey(), minIDBKey());
 }
 
-int IndexDataKey::compare(const IndexDataKey& other, bool ignoreSequenceNumber)
+Vector<char> IndexDataKey::encodeMaxKey(int64_t databaseId, int64_t objectStoreId, int64_t indexId)
+{
+    return encode(databaseId, objectStoreId, indexId, maxIDBKey(), maxIDBKey(), INT64_MAX);
+}
+
+int IndexDataKey::compare(const IndexDataKey& other, bool ignoreDuplicates)
 {
     ASSERT(m_databaseId >= 0);
     ASSERT(m_objectStoreId >= 0);
     ASSERT(m_indexId >= 0);
     if (int x = compareEncodedIDBKeys(m_encodedUserKey, other.m_encodedUserKey))
         return x;
-    if (ignoreSequenceNumber)
+    if (ignoreDuplicates)
         return 0;
+    if (int x = compareEncodedIDBKeys(m_encodedPrimaryKey, other.m_encodedPrimaryKey))
+        return x;
     return compareInts(m_sequenceNumber, other.m_sequenceNumber);
 }
 
@@ -1463,6 +1487,13 @@ PassRefPtr<IDBKey> IndexDataKey::userKey() const
 {
     RefPtr<IDBKey> key;
     decodeIDBKey(m_encodedUserKey.begin(), m_encodedUserKey.end(), key);
+    return key;
+}
+
+PassRefPtr<IDBKey> IndexDataKey::primaryKey() const
+{
+    RefPtr<IDBKey> key;
+    decodeIDBKey(m_encodedPrimaryKey.begin(), m_encodedPrimaryKey.end(), key);
     return key;
 }
 

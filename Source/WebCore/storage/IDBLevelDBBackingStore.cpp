@@ -779,8 +779,8 @@ void IDBLevelDBBackingStore::deleteIndex(int64_t databaseId, int64_t objectStore
         return;
     }
 
-    const Vector<char> indexDataStart = IndexDataKey::encode(databaseId, objectStoreId, indexId, minIDBKey(), 0);
-    const Vector<char> indexDataEnd = IndexDataKey::encode(databaseId, objectStoreId, indexId, maxIDBKey(), 0);
+    const Vector<char> indexDataStart = IndexDataKey::encodeMinKey(databaseId, objectStoreId, indexId);
+    const Vector<char> indexDataEnd = IndexDataKey::encodeMaxKey(databaseId, objectStoreId, indexId);
 
     if (!deleteRange(m_currentTransaction.get(), indexDataStart, indexDataEnd)) {
         LOG_ERROR("Internal Indexed DB error.");
@@ -794,8 +794,7 @@ bool IDBLevelDBBackingStore::putIndexDataForRecord(int64_t databaseId, int64_t o
     const LevelDBRecordIdentifier* levelDBRecordIdentifier = static_cast<const LevelDBRecordIdentifier*>(recordIdentifier);
 
     ASSERT(m_currentTransaction);
-    const int64_t globalSequenceNumber = getNewVersionNumber(m_currentTransaction.get(), databaseId, objectStoreId);
-    const Vector<char> indexDataKey = IndexDataKey::encode(databaseId, objectStoreId, indexId, key, globalSequenceNumber);
+    const Vector<char> indexDataKey = IndexDataKey::encode(databaseId, objectStoreId, indexId, encodeIDBKey(key), levelDBRecordIdentifier->primaryKey());
 
     Vector<char> data;
     data.append(encodeVarInt(levelDBRecordIdentifier->version()));
@@ -856,7 +855,7 @@ static bool findKeyInIndex(LevelDBTransaction* transaction, int64_t databaseId, 
 {
     ASSERT(foundEncodedPrimaryKey.isEmpty());
 
-    const Vector<char> leveldbKey = IndexDataKey::encode(databaseId, objectStoreId, indexId, key, 0);
+    const Vector<char> leveldbKey = IndexDataKey::encode(databaseId, objectStoreId, indexId, key);
     OwnPtr<LevelDBIterator> it = transaction->createIterator();
     it->seek(leveldbKey);
 
@@ -1293,15 +1292,15 @@ PassRefPtr<IDBBackingStore::Cursor> IDBLevelDBBackingStore::openIndexKeyCursor(i
     cursorOptions.unique = (direction == IDBCursor::NEXT_NO_DUPLICATE || direction == IDBCursor::PREV_NO_DUPLICATE);
 
     if (!lowerBound) {
-        cursorOptions.lowKey = IndexDataKey::encode(databaseId, objectStoreId, indexId, minIDBKey(), 0);
+        cursorOptions.lowKey = IndexDataKey::encodeMinKey(databaseId, objectStoreId, indexId);
         cursorOptions.lowOpen = false; // Included.
     } else {
-        cursorOptions.lowKey = IndexDataKey::encode(databaseId, objectStoreId, indexId, *range->lower(), 0);
+        cursorOptions.lowKey = IndexDataKey::encode(databaseId, objectStoreId, indexId, *range->lower());
         cursorOptions.lowOpen = range->lowerOpen();
     }
 
     if (!upperBound) {
-        cursorOptions.highKey = IndexDataKey::encode(databaseId, objectStoreId, indexId, maxIDBKey(), 0);
+        cursorOptions.highKey = IndexDataKey::encodeMaxKey(databaseId, objectStoreId, indexId);
         cursorOptions.highOpen = false; // Included.
 
         if (!cursorOptions.forward) { // We need a key that exists.
@@ -1310,7 +1309,7 @@ PassRefPtr<IDBBackingStore::Cursor> IDBLevelDBBackingStore::openIndexKeyCursor(i
             cursorOptions.highOpen = false;
         }
     } else {
-        cursorOptions.highKey = IndexDataKey::encode(databaseId, objectStoreId, indexId, *range->upper(), 0);
+        cursorOptions.highKey = IndexDataKey::encode(databaseId, objectStoreId, indexId, *range->upper());
         if (!findLastIndexKeyEqualTo(m_currentTransaction.get(), cursorOptions.highKey, cursorOptions.highKey)) // Seek to the *last* key in the set of non-unique keys.
             return 0;
         cursorOptions.highOpen = range->upperOpen();
@@ -1333,15 +1332,15 @@ PassRefPtr<IDBBackingStore::Cursor> IDBLevelDBBackingStore::openIndexCursor(int6
     cursorOptions.unique = (direction == IDBCursor::NEXT_NO_DUPLICATE || direction == IDBCursor::PREV_NO_DUPLICATE);
 
     if (!lowerBound) {
-        cursorOptions.lowKey = IndexDataKey::encode(databaseId, objectStoreId, indexId, minIDBKey(), 0);
+        cursorOptions.lowKey = IndexDataKey::encodeMinKey(databaseId, objectStoreId, indexId);
         cursorOptions.lowOpen = false; // Included.
     } else {
-        cursorOptions.lowKey = IndexDataKey::encode(databaseId, objectStoreId, indexId, *range->lower(), 0);
+        cursorOptions.lowKey = IndexDataKey::encode(databaseId, objectStoreId, indexId, *range->lower());
         cursorOptions.lowOpen = range->lowerOpen();
     }
 
     if (!upperBound) {
-        cursorOptions.highKey = IndexDataKey::encode(databaseId, objectStoreId, indexId, maxIDBKey(), 0);
+        cursorOptions.highKey = IndexDataKey::encodeMaxKey(databaseId, objectStoreId, indexId);
         cursorOptions.highOpen = false; // Included.
 
         if (!cursorOptions.forward) { // We need a key that exists.
@@ -1350,7 +1349,7 @@ PassRefPtr<IDBBackingStore::Cursor> IDBLevelDBBackingStore::openIndexCursor(int6
             cursorOptions.highOpen = false;
         }
     } else {
-        cursorOptions.highKey = IndexDataKey::encode(databaseId, objectStoreId, indexId, *range->upper(), 0);
+        cursorOptions.highKey = IndexDataKey::encode(databaseId, objectStoreId, indexId, *range->upper());
         if (!findLastIndexKeyEqualTo(m_currentTransaction.get(), cursorOptions.highKey, cursorOptions.highKey)) // Seek to the *last* key in the set of non-unique keys.
             return 0;
         cursorOptions.highOpen = range->upperOpen();

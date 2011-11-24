@@ -1,3 +1,30 @@
+2011-11-24  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Indexes should be secondarily sorted on primary key
+        https://bugs.webkit.org/show_bug.cgi?id=72567
+
+        Reviewed by Tony Chang.
+
+        Implemented by adding the primary key (i.e. unique key in the
+        object store) to the IndexDataKey (i.e. the composite key used
+        in the index. Previously, non-unique entries in the index were
+        stored with a unique (and hidden) sequenceNumber, so ordering was
+        not predictable by scripts (or per spec). The sequenceNumber
+        is now deprecated but still present in the LevelDB backing store
+        to avoid having to do a data migration.
+
+        Test: storage/indexeddb/cursor-primary-key-order.html
+
+        * storage/IDBLevelDBBackingStore.cpp:
+        (WebCore::IDBLevelDBBackingStore::putIndexDataForRecord):
+        * storage/IDBLevelDBCoding.cpp:
+        (WebCore::IDBLevelDBCoding::compare):
+        (WebCore::IDBLevelDBCoding::IndexDataKey::decode):
+        (WebCore::IDBLevelDBCoding::IndexDataKey::encode):
+        (WebCore::IDBLevelDBCoding::IndexDataKey::compare):
+        (WebCore::IDBLevelDBCoding::IndexDataKey::primaryKey):
+        * storage/IDBLevelDBCoding.h:
+
 2011-11-24  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: WebInspector.inspectedPageDomain is not calculated for about:blank

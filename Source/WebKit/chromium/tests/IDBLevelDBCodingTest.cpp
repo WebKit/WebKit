@@ -483,13 +483,17 @@ TEST(IDBLevelDBCodingTest, ComparisonTest)
     keys.append(ObjectStoreDataKey::encode(1, 1, maxIDBKey()));
     keys.append(ExistsEntryKey::encode(1, 1, minIDBKey()));
     keys.append(ExistsEntryKey::encode(1, 1, maxIDBKey()));
-    keys.append(IndexDataKey::encode(1, 1, 30, minIDBKey(), 0));
-    keys.append(IndexDataKey::encode(1, 1, 30, minIDBKey(), 1));
-    keys.append(IndexDataKey::encode(1, 1, 30, maxIDBKey(), 0));
-    keys.append(IndexDataKey::encode(1, 1, 30, maxIDBKey(), 1));
-    keys.append(IndexDataKey::encode(1, 1, 31, minIDBKey(), 0));
-    keys.append(IndexDataKey::encode(1, 2, 30, minIDBKey(), 0));
-    keys.append(IndexDataKey::encodeMaxKey(1, 2));
+    keys.append(IndexDataKey::encode(1, 1, 30, minIDBKey(), minIDBKey(), 0));
+    keys.append(IndexDataKey::encode(1, 1, 30, minIDBKey(), minIDBKey(), 1));
+    keys.append(IndexDataKey::encode(1, 1, 30, minIDBKey(), maxIDBKey(), 0));
+    keys.append(IndexDataKey::encode(1, 1, 30, minIDBKey(), maxIDBKey(), 1));
+    keys.append(IndexDataKey::encode(1, 1, 30, maxIDBKey(), minIDBKey(), 0));
+    keys.append(IndexDataKey::encode(1, 1, 30, maxIDBKey(), minIDBKey(), 1));
+    keys.append(IndexDataKey::encode(1, 1, 30, maxIDBKey(), maxIDBKey(), 0));
+    keys.append(IndexDataKey::encode(1, 1, 30, maxIDBKey(), maxIDBKey(), 1));
+    keys.append(IndexDataKey::encode(1, 1, 31, minIDBKey(), minIDBKey(), 0));
+    keys.append(IndexDataKey::encode(1, 2, 30, minIDBKey(), minIDBKey(), 0));
+    keys.append(IndexDataKey::encodeMaxKey(1, 2, INT32_MAX));
 
     for (size_t i = 0; i < keys.size(); ++i) {
         const LevelDBSlice keyA(keys[i]);
