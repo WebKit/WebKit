@@ -37,7 +37,7 @@ DEPENDPATH += $$OUT_PWD
 
 INCLUDEPATH += \
     $${ROOT_WEBKIT_DIR}/Source \
-    $$buildDirForSource(Source/include) \
+    $${ROOT_BUILD_DIR}/Source/include \
     $${QT.script.includes}
 
 CONFIG -= warn_on

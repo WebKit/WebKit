@@ -90,13 +90,6 @@ defineReplace(computeSubdirVariables) {
     return($$scope)
 }
 
-defineReplace(buildDirForSource) {
-    unset(source)
-    source = $$1
-
-    return($${ROOT_BUILD_DIR}$${QMAKE_DIR_SEP}$$replace(source, ^$${BUILD_SUBDIR}$${QMAKE_DIR_SEP},))
-}
-
 # Qmake has QMAKE_FILE_IN_PATH, but nothing for the out file
 # This allows you do do ${QMAKE_FUNC_FILE_OUT_PATH}
 defineReplace(PATH) {

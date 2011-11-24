@@ -15,7 +15,7 @@ else: WEBKIT2_TARGET = webkit2
 CONFIG(debug, debug|release) : WEBKIT2_DESTDIR = debug
 else: WEBKIT2_DESTDIR = release
 
-WEBKIT2_GENERATED_SOURCES_DIR = $$buildDirForSource(Source/WebKit2)/$${GENERATED_SOURCES_DESTDIR}
+WEBKIT2_GENERATED_SOURCES_DIR = $${ROOT_BUILD_DIR}/Source/WebKit2/$${GENERATED_SOURCES_DESTDIR}
 
 WEBKIT2_INCLUDEPATH = \
     $$SOURCE_DIR/WebKit2 \
@@ -65,6 +65,6 @@ WEBKIT2_INCLUDEPATH = \
 INCLUDEPATH = $$WEBKIT2_INCLUDEPATH $$WEBKIT2_GENERATED_SOURCES_DIR $$INCLUDEPATH
 
 needToLinkLibrary(WebKit2) {
-    pathToWebKit2Output = $$buildDirForSource(Source/WebKit2)/$$WEBKIT2_DESTDIR
+    pathToWebKit2Output = $${ROOT_BUILD_DIR}/Source/WebKit2/$$WEBKIT2_DESTDIR
     linkLibrary($$pathToWebKit2Output, $$WEBKIT2_TARGET)
 }

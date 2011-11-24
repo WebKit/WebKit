@@ -15,7 +15,7 @@ else: JAVASCRIPTCORE_TARGET = jscore
 CONFIG(debug, debug|release) : JAVASCRIPTCORE_DESTDIR = debug
 else: JAVASCRIPTCORE_DESTDIR = release
 
-JAVASCRIPTCORE_GENERATED_SOURCES_DIR = $$buildDirForSource(Source/JavaScriptCore)/$${GENERATED_SOURCES_DESTDIR}
+JAVASCRIPTCORE_GENERATED_SOURCES_DIR = $${ROOT_BUILD_DIR}/Source/JavaScriptCore/$${GENERATED_SOURCES_DESTDIR}
 
 JAVASCRIPTCORE_INCLUDEPATH = \
     $$JAVASCRIPTCORE_SOURCE_DIR \
@@ -75,7 +75,7 @@ linux-*:!contains(DEFINES, USE_QTMULTIMEDIA=1) {
 }
 
 needToLinkLibrary(JavaScriptCore) {
-    pathToJavaScriptCoreOutput = $$buildDirForSource(Source/JavaScriptCore)/$$JAVASCRIPTCORE_DESTDIR
+    pathToJavaScriptCoreOutput = $${ROOT_BUILD_DIR}/Source/JavaScriptCore/$$JAVASCRIPTCORE_DESTDIR
     linkLibrary($$pathToJavaScriptCoreOutput, $$JAVASCRIPTCORE_TARGET)
 
     win32-* {

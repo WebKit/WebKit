@@ -111,7 +111,7 @@ message_receiver_generator.depends = $$SCRIPTS
 message_receiver_generator.output_function = message_receiver_generator_output
 GENERATORS += message_receiver_generator
 
-fwheader_generator.commands = perl $${SOURCE_DIR}/WebKit2/Scripts/generate-forwarding-headers.pl $${SOURCE_DIR}/WebKit2 $$buildDirForSource(Source/include) qt
+fwheader_generator.commands = perl $${SOURCE_DIR}/WebKit2/Scripts/generate-forwarding-headers.pl $${SOURCE_DIR}/WebKit2 $${ROOT_BUILD_DIR}/Source/include qt
 fwheader_generator.depends = $${SOURCE_DIR}/WebKit2/Scripts/generate-forwarding-headers.pl
 generated_files.depends += fwheader_generator
 GENERATORS += fwheader_generator
@@ -121,7 +121,7 @@ for(HEADER, WEBCORE_GENERATED_HEADERS_FOR_WEBKIT2) {
     HEADER_PATH = $$HEADER
     HEADER_TARGET = $$replace(HEADER_PATH, [^a-zA-Z0-9_], -)
     HEADER_TARGET = "qtheader-$${HEADER_TARGET}"
-    DESTDIR = $$buildDirForSource(Source/include/WebCore)
+    DESTDIR = $${ROOT_BUILD_DIR}/Source/include/WebCore
 
     eval($${HEADER_TARGET}.target = $$DESTDIR/$$HEADER_NAME)
     eval($${HEADER_TARGET}.depends = $$HEADER_PATH)

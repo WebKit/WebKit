@@ -15,7 +15,7 @@ load(features)
 
 mac {
     # FIXME: This runs the perl script every time. Is there a way we can run it only when deps change?
-    fwheader_generator.commands = perl $${ROOT_WEBKIT_DIR}/Source/WebKit2/Scripts/generate-forwarding-headers.pl $${ROOT_WEBKIT_DIR}/Source/WebCore $$buildDirForSource(Source/include) mac
+    fwheader_generator.commands = perl $${ROOT_WEBKIT_DIR}/Source/WebKit2/Scripts/generate-forwarding-headers.pl $${ROOT_WEBKIT_DIR}/Source/WebCore $${ROOT_BUILD_DIR}/Source/include mac
     fwheader_generator.depends = $${ROOT_WEBKIT_DIR}/Source/WebKit2/Scripts/generate-forwarding-headers.pl
     GENERATORS += fwheader_generator
 }

@@ -1,3 +1,22 @@
+2011-11-24  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        [Qt] Get rid of the buildDirForSource() function in the build system
+
+        At some point the plan was to allow for running qmake on sub-trees
+        of the sources, into the top level build directory, but this is no
+        longer possible, so no reason to keep the convenience function around.
+
+        Reviewed by Simon Hausmann.
+
+        * WebKitTestRunner/DerivedSources.pri:
+        * WebKitTestRunner/InjectedBundle/DerivedSources.pri:
+        * qmake/mkspecs/features/default_post.prf:
+        * qmake/mkspecs/features/default_pre.prf:
+        * qmake/mkspecs/features/functions.prf:
+        * qmake/mkspecs/features/javascriptcore.prf:
+        * qmake/mkspecs/features/webcore.prf:
+        * qmake/mkspecs/features/webkit2.prf:
+
 2011-11-23  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r101107.

@@ -22,7 +22,7 @@ else: WEBCORE_TARGET = webcore
 CONFIG(debug, debug|release) : WEBCORE_DESTDIR = debug
 else: WEBCORE_DESTDIR = release
 
-WEBCORE_GENERATED_SOURCES_DIR = $$buildDirForSource(Source/WebCore)/$${GENERATED_SOURCES_DESTDIR}
+WEBCORE_GENERATED_SOURCES_DIR = $${ROOT_BUILD_DIR}/Source/WebCore/$${GENERATED_SOURCES_DESTDIR}
 
 v8 {
     !haveQt(5): error("To build QtWebKit+V8 you need qtscript-staging's v8 branch. (See: http://qt.gitorious.org/+qt-developers/qt/qtscript-staging)")
@@ -286,6 +286,6 @@ unix|win32-g++* {
 enable_fast_mobile_scrolling: DEFINES += ENABLE_FAST_MOBILE_SCROLLING=1
 
 needToLinkLibrary(WebCore) {
-    pathToWebCoreOutput = $$buildDirForSource(Source/WebCore)/$$WEBCORE_DESTDIR
+    pathToWebCoreOutput = $${ROOT_BUILD_DIR}/Source/WebCore/$$WEBCORE_DESTDIR
     linkLibrary($$pathToWebCoreOutput, $$WEBCORE_TARGET)
 }

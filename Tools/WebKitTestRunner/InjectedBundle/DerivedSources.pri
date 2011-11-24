@@ -36,5 +36,5 @@ idl.depends = $${ROOT_WEBKIT_DIR}/Source/WebCore/bindings/scripts/CodeGenerator.
               $${ROOT_WEBKIT_DIR}/Source/WebCore/bindings/scripts/generate-bindings.pl
 GENERATORS += idl
 
-INCLUDEPATH += $$buildDirForSource(Tools/WebKitTestRunner/InjectedBundle)/$${GENERATED_SOURCES_DESTDIR}
+INCLUDEPATH += $${ROOT_BUILD_DIR}/Tools/WebKitTestRunner/InjectedBundle/$${GENERATED_SOURCES_DESTDIR}
 
