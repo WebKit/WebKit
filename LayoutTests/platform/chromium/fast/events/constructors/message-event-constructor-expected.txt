@@ -80,19 +80,19 @@ PASS new MessageEvent('eventType', { ports: [channel.port1, channel.port2, chann
 PASS new MessageEvent('eventType', { ports: [] }).ports is []
 PASS new MessageEvent('eventType', { ports: undefined }).ports is []
 PASS new MessageEvent('eventType', { ports: null }).ports is []
-PASS new MessageEvent('eventType', { ports: [1, 2, 3] }).ports[2] threw exception TypeError: MessagePortArray argument must contain only MessagePorts.
-PASS new MessageEvent('eventType', { ports: test_object }).ports threw exception TypeError: MessagePortArray argument has no length attribute.
-PASS new MessageEvent('eventType', { ports: document }).ports threw exception TypeError: MessagePortArray argument has no length attribute.
-PASS new MessageEvent('eventType', { ports: false }).ports threw exception TypeError: MessagePortArray argument must be an object.
-PASS new MessageEvent('eventType', { ports: true }).ports threw exception TypeError: MessagePortArray argument must be an object.
-PASS new MessageEvent('eventType', { ports: '' }).ports threw exception TypeError: MessagePortArray argument must be an object.
-PASS new MessageEvent('eventType', { ports: 'chocolate' }).ports threw exception TypeError: MessagePortArray argument must be an object.
-PASS new MessageEvent('eventType', { ports: 12345 }).ports threw exception TypeError: MessagePortArray argument must be an object.
-PASS new MessageEvent('eventType', { ports: 18446744073709551615 }).ports threw exception TypeError: MessagePortArray argument must be an object.
-PASS new MessageEvent('eventType', { ports: NaN }).ports threw exception TypeError: MessagePortArray argument must be an object.
-PASS new MessageEvent('eventType', { get ports() { return 123; } }).ports threw exception TypeError: MessagePortArray argument must be an object.
+PASS new MessageEvent('eventType', { ports: [1, 2, 3] }).ports[2] threw exception TypeError: TransferArray argument must contain only Transferables.
+PASS new MessageEvent('eventType', { ports: test_object }).ports threw exception TypeError: TransferArray argument has no length attribute.
+PASS new MessageEvent('eventType', { ports: document }).ports threw exception TypeError: TransferArray argument has no length attribute.
+PASS new MessageEvent('eventType', { ports: false }).ports threw exception TypeError: TransferArray argument must be an object.
+PASS new MessageEvent('eventType', { ports: true }).ports threw exception TypeError: TransferArray argument must be an object.
+PASS new MessageEvent('eventType', { ports: '' }).ports threw exception TypeError: TransferArray argument must be an object.
+PASS new MessageEvent('eventType', { ports: 'chocolate' }).ports threw exception TypeError: TransferArray argument must be an object.
+PASS new MessageEvent('eventType', { ports: 12345 }).ports threw exception TypeError: TransferArray argument must be an object.
+PASS new MessageEvent('eventType', { ports: 18446744073709551615 }).ports threw exception TypeError: TransferArray argument must be an object.
+PASS new MessageEvent('eventType', { ports: NaN }).ports threw exception TypeError: TransferArray argument must be an object.
+PASS new MessageEvent('eventType', { get ports() { return 123; } }).ports threw exception TypeError: TransferArray argument must be an object.
 PASS new MessageEvent('eventType', { get ports() { throw 'MessageEvent Error'; } }) threw exception MessageEvent Error.
-PASS new MessageEvent('eventType', { ports: {valueOf: function () { return [channel.port1, channel.port2, channel.port2]; } } }).ports[0] threw exception TypeError: MessagePortArray argument has no length attribute.
+PASS new MessageEvent('eventType', { ports: {valueOf: function () { return [channel.port1, channel.port2, channel.port2]; } } }).ports[0] threw exception TypeError: TransferArray argument has no length attribute.
 PASS new MessageEvent('eventType', { bubbles: true, cancelable: true, data: test_object, origin: 'wonderful', lastEventId: 'excellent', source: window, ports: [channel.port1, channel.port2, channel.port2] }).bubbles is true
 PASS new MessageEvent('eventType', { bubbles: true, cancelable: true, data: test_object, origin: 'wonderful', lastEventId: 'excellent', source: window, ports: [channel.port1, channel.port2, channel.port2] }).cancelable is true
 PASS new MessageEvent('eventType', { bubbles: true, cancelable: true, data: test_object, origin: 'wonderful', lastEventId: 'excellent', source: window, ports: [channel.port1, channel.port2, channel.port2] }).data is test_object

@@ -33,11 +33,12 @@
 #if ENABLE(WORKERS)
 #include "V8DedicatedWorkerContext.h"
 
+#include "ArrayBuffer.h"
 #include "DedicatedWorkerContext.h"
 #include "WorkerContextExecutionProxy.h"
 #include "V8Binding.h"
-#include "V8MessagePortCustom.h"
 #include "V8Proxy.h"
+#include "V8Utilities.h"
 #include "V8WorkerContextEventListener.h"
 
 namespace WebCore {
@@ -45,17 +46,22 @@ namespace WebCore {
 static v8::Handle<v8::Value> handlePostMessageCallback(const v8::Arguments& args, bool doTransfer)
 {
     DedicatedWorkerContext* workerContext = V8DedicatedWorkerContext::toNative(args.Holder());
-    MessagePortArray portArray;
+    MessagePortArray ports;
+    ArrayBufferArray arrayBuffers;
     if (args.Length() > 1) {
-        if (!getMessagePortArray(args[1], portArray))
+        if (!extractTransferables(args[1], ports, arrayBuffers))
             return v8::Undefined();
     }
     bool didThrow = false;
-    RefPtr<SerializedScriptValue> message = SerializedScriptValue::create(args[0], doTransfer ? &portArray : 0, didThrow);
+    RefPtr<SerializedScriptValue> message =
+        SerializedScriptValue::create(args[0],
+                                      doTransfer ? &ports : 0,
+                                      doTransfer ? &arrayBuffers : 0,
+                                      didThrow);
     if (didThrow)
         return v8::Undefined();
-     ExceptionCode ec = 0;
-    workerContext->postMessage(message.release(), &portArray, ec);
+    ExceptionCode ec = 0;
+    workerContext->postMessage(message.release(), &ports, ec);
     return throwError(ec);
 }
 

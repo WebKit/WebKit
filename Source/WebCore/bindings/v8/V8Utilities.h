@@ -36,11 +36,16 @@
 
 #include "OwnHandle.h"
 
+namespace WTF {
+class ArrayBuffer;
+}
+
 namespace WebCore {
 
     class EventListener;
     class Frame;
     class KURL;
+    class MessagePort;
     class ScriptExecutionContext;
     class ScriptState;
 
@@ -73,6 +78,16 @@ namespace WebCore {
         v8::HandleScope m_handleScope;
         v8::Persistent<v8::Context> m_context;
     };
+
+    typedef WTF::Vector<RefPtr<MessagePort>, 1> MessagePortArray;
+    typedef WTF::Vector<RefPtr<ArrayBuffer>, 1> ArrayBufferArray;
+
+    // Helper function which pulls the values out of a JS sequence and into a MessagePortArray.
+    // Also validates the elements per sections 4.1.13 and 4.1.15 of the WebIDL spec and section 8.3.3 
+    // of the HTML5 spec and generates exceptions as appropriate.
+    // Returns true if the array was filled, or false if the passed value was not of an appropriate type.
+    bool extractTransferables(v8::Local<v8::Value>, MessagePortArray&, ArrayBufferArray&); 
+    bool getMessagePortArray(v8::Local<v8::Value>, MessagePortArray&);
 
     // 'FunctionOnly' is assumed for the created callback.
     template <typename V8CallbackType>

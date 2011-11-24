@@ -35,11 +35,11 @@
 
 #include "Worker.h"
 
+#include "ArrayBuffer.h"
 #include "ExceptionCode.h"
 #include "Frame.h"
 #include "SerializedScriptValue.h"
 #include "V8Binding.h"
-#include "V8MessagePortCustom.h"
 #include "V8Proxy.h"
 #include "V8Utilities.h"
 #include "WorkerContext.h"
@@ -51,17 +51,22 @@ static v8::Handle<v8::Value> handlePostMessageCallback(const v8::Arguments& args
 {
     INC_STATS("DOM.Worker.postMessage");
     Worker* worker = V8Worker::toNative(args.Holder());
-    MessagePortArray portArray;
+    MessagePortArray ports;
+    ArrayBufferArray arrayBuffers;
     if (args.Length() > 1) {
-        if (!getMessagePortArray(args[1], portArray))
+        if (!extractTransferables(args[1], ports, arrayBuffers))
             return v8::Undefined();
     }
     bool didThrow = false;
-    RefPtr<SerializedScriptValue> message = SerializedScriptValue::create(args[0], doTransfer ? &portArray : 0, didThrow);
+    RefPtr<SerializedScriptValue> message =
+        SerializedScriptValue::create(args[0],
+                                      doTransfer ? &ports : 0,
+                                      doTransfer ? &arrayBuffers : 0,
+                                      didThrow);
     if (didThrow)
         return v8::Undefined();
     ExceptionCode ec = 0;
-    worker->postMessage(message.release(), &portArray, ec);
+    worker->postMessage(message.release(), &ports, ec);
     return throwError(ec);
 }
 

@@ -1988,7 +1988,9 @@ void SerializedScriptValue::deserializeAndSetProperty(v8::Handle<v8::Object> obj
     deserializeAndSetProperty(object, propertyName, attribute, value.get());
 }
 
-PassRefPtr<SerializedScriptValue> SerializedScriptValue::create(v8::Handle<v8::Value> value, MessagePortArray* messagePorts, bool& didThrow)
+PassRefPtr<SerializedScriptValue> SerializedScriptValue::create(v8::Handle<v8::Value> value,
+                                                                MessagePortArray* messagePorts, ArrayBufferArray*,
+                                                                bool& didThrow)
 {
     return adoptRef(new SerializedScriptValue(value, messagePorts, didThrow));
 }

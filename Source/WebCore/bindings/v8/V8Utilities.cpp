@@ -31,20 +31,25 @@
 #include "config.h"
 #include "V8Utilities.h"
 
-#include <v8.h>
-
+#include "ArrayBuffer.h"
 #include "Document.h"
+#include "ExceptionCode.h"
 #include "Frame.h"
+#include "MessagePort.h"
 #include "ScriptExecutionContext.h"
 #include "ScriptState.h"
+#include "V8ArrayBuffer.h"
 #include "V8Binding.h"
 #include "V8BindingState.h"
+#include "V8MessagePort.h"
 #include "V8Proxy.h"
 #include "WorkerContext.h"
 #include "WorkerContextExecutionProxy.h"
 
 #include <wtf/Assertions.h>
 #include "Frame.h"
+
+#include <v8.h>
 
 namespace WebCore {
 
@@ -74,6 +79,68 @@ void createHiddenDependency(v8::Handle<v8::Object> object, v8::Local<v8::Value> 
 
     v8::Local<v8::Array> cacheArray = v8::Local<v8::Array>::Cast(cache);
     cacheArray->Set(v8::Integer::New(cacheArray->Length()), value);
+}
+
+bool extractTransferables(v8::Local<v8::Value> value, MessagePortArray& ports, ArrayBufferArray& arrayBuffers)
+{
+    if (isUndefinedOrNull(value)) {
+        ports.resize(0);
+        arrayBuffers.resize(0);
+        return true;
+    }
+
+    if (!value->IsObject()) {
+        throwError("TransferArray argument must be an object");
+        return false;
+    }
+    uint32_t length = 0;
+    v8::Local<v8::Object> transferrables = v8::Local<v8::Object>::Cast(value);
+
+    if (value->IsArray()) {
+        v8::Local<v8::Array> array = v8::Local<v8::Array>::Cast(value);
+        length = array->Length();
+    } else {
+        // Sequence-type object - get the length attribute
+        v8::Local<v8::Value> sequenceLength = transferrables->Get(v8::String::New("length"));
+        if (!sequenceLength->IsNumber()) {
+            throwError("TransferArray argument has no length attribute");
+            return false;
+        }
+        length = sequenceLength->Uint32Value();
+    }
+
+    // Validate the passed array of transferrables.
+    for (unsigned int i = 0; i < length; ++i) {
+        v8::Local<v8::Value> transferrable = transferrables->Get(i);
+        // Validation of non-null objects, per HTML5 spec 10.3.3.
+        if (isUndefinedOrNull(transferrable)) {
+            throwError(DATA_CLONE_ERR);
+            return false;
+        }
+        // Validation of Objects implementing an interface, per WebIDL spec 4.1.15.
+        if (V8MessagePort::HasInstance(transferrable))
+            ports.append(V8MessagePort::toNative(v8::Handle<v8::Object>::Cast(transferrable)));
+        else if (V8ArrayBuffer::HasInstance(transferrable))
+            arrayBuffers.append(V8ArrayBuffer::toNative(v8::Handle<v8::Object>::Cast(transferrable)));
+        else {
+            throwError("TransferArray argument must contain only Transferables");
+            return false;
+        }
+    }
+    return true;
+}
+
+bool getMessagePortArray(v8::Local<v8::Value> value, MessagePortArray& ports)
+{
+    ArrayBufferArray arrayBuffers;
+    bool result = extractTransferables(value, ports, arrayBuffers);
+    if (!result)
+        return false;
+    if (arrayBuffers.size() > 0) {
+        throwError("MessagePortArray argument must contain only MessagePorts");
+        return false;
+    }
+    return true;
 }
 
 void removeHiddenDependency(v8::Handle<v8::Object> object, v8::Local<v8::Value> value, int cacheIndex)

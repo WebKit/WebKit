@@ -31,6 +31,7 @@
 #include "config.h"
 #include "V8DOMWindow.h"
 
+#include "ArrayBuffer.h"
 #include "Chrome.h"
 #include "ContentSecurityPolicy.h"
 #include "DOMTimer.h"
@@ -42,6 +43,7 @@
 #include "HTMLCollection.h"
 #include "HTMLDocument.h"
 #include "MediaPlayer.h"
+#include "MessagePort.h"
 #include "Page.h"
 #include "PlatformScreen.h"
 #include "ScheduledAction.h"
@@ -57,7 +59,6 @@
 #include "V8GCForContextDispose.h"
 #include "V8HiddenPropertyName.h"
 #include "V8HTMLCollection.h"
-#include "V8MessagePortCustom.h"
 #include "V8Node.h"
 #include "V8Proxy.h"
 #include "V8Utilities.h"
@@ -297,11 +298,12 @@ static v8::Handle<v8::Value> handlePostMessageCallback(const v8::Arguments& args
     // or
     //   postMessage(message, targetOrigin);
     MessagePortArray portArray;
+    ArrayBufferArray arrayBufferArray;
     String targetOrigin;
     {
         v8::TryCatch tryCatch;
         if (args.Length() > 2) {
-            if (!getMessagePortArray(args[1], portArray))
+            if (!extractTransferables(args[1], portArray, arrayBufferArray))
                 return v8::Undefined();
             targetOrigin = toWebCoreStringWithNullOrUndefinedCheck(args[2]);
         } else
@@ -313,7 +315,11 @@ static v8::Handle<v8::Value> handlePostMessageCallback(const v8::Arguments& args
 
 
     bool didThrow = false;
-    RefPtr<SerializedScriptValue> message = SerializedScriptValue::create(args[0], doTransfer ? &portArray : 0, didThrow);
+    RefPtr<SerializedScriptValue> message =
+        SerializedScriptValue::create(args[0],
+                                      doTransfer ? &portArray : 0,
+                                      doTransfer ? &arrayBufferArray : 0,
+                                      didThrow);
     if (didThrow)
         return v8::Undefined();
 

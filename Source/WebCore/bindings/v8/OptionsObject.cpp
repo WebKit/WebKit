@@ -29,7 +29,7 @@
 #include "DOMStringList.h"
 #include "V8Binding.h"
 #include "V8DOMWindow.h"
-#include "V8MessagePortCustom.h"
+#include "V8Utilities.h"
 #include <wtf/MathExtras.h>
 
 #if ENABLE(INDEXED_DATABASE)

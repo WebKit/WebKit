@@ -799,7 +799,7 @@ static v8::Handle<v8::Value> serializedValueCallback(const v8::Arguments& args)
         return throwError("Not enough arguments", V8Proxy::TypeError);
     TestObj* imp = V8TestObj::toNative(args.Holder());
     bool serializedArgDidThrow = false;
-    RefPtr<SerializedScriptValue> serializedArg = SerializedScriptValue::create(args[0], 0, serializedArgDidThrow);
+    RefPtr<SerializedScriptValue> serializedArg = SerializedScriptValue::create(args[0], 0, 0, serializedArgDidThrow);
     if (serializedArgDidThrow)
         return v8::Undefined();
     imp->serializedValue(serializedArg);

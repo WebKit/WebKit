@@ -1,3 +1,36 @@
+2011-11-23  Dmitry Lomov  <dslomov@google.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=73054
+        [V8][Chromium] Add list of transferred ArrayBuffers to SerializedScriptValue::create.
+
+        Reviewed by David Levin.
+
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (GenerateParametersCheck):
+        * bindings/scripts/test/V8/V8TestObj.cpp:
+        (WebCore::TestObjInternal::serializedValueCallback):
+       * bindings/v8/OptionsObject.cpp:
+        * bindings/v8/SerializedScriptValue.cpp:
+        (WebCore::SerializedScriptValue::create):
+        * bindings/v8/SerializedScriptValue.h:
+        * bindings/v8/V8Utilities.cpp:
+        (WebCore::extractTransferables):
+        (WebCore::getMessagePortArray):
+        * bindings/v8/V8Utilities.h:
+        * bindings/v8/custom/V8DOMWindowCustom.cpp:
+        (WebCore::handlePostMessageCallback):
+        * bindings/v8/custom/V8DedicatedWorkerContextCustom.cpp:
+        (WebCore::handlePostMessageCallback):
+        * bindings/v8/custom/V8HistoryCustom.cpp:
+        (WebCore::V8History::pushStateCallback):
+        (WebCore::V8History::replaceStateCallback):
+        * bindings/v8/custom/V8MessageEventCustom.cpp:
+        * bindings/v8/custom/V8MessagePortCustom.cpp:
+        (WebCore::handlePostMessageCallback):
+        * bindings/v8/custom/V8MessagePortCustom.h: Removed.
+        * bindings/v8/custom/V8WorkerCustom.cpp:
+        (WebCore::handlePostMessageCallback):
+
 2011-11-23  Rafael Weinstein  <rafaelw@chromium.org>
 
         Cleanup #if usage in V8GCController

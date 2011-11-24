@@ -35,11 +35,16 @@
 #include <v8.h>
 #include <wtf/Threading.h>
 
+namespace WTF {
+class ArrayBuffer;
+}
+
 namespace WebCore {
 
 class MessagePort;
 
 typedef Vector<RefPtr<MessagePort>, 1> MessagePortArray;
+typedef Vector<RefPtr<WTF::ArrayBuffer>, 1> ArrayBufferArray;
 
 class SerializedScriptValue : public ThreadSafeRefCounted<SerializedScriptValue> {
 public:
@@ -53,7 +58,9 @@ public:
     // be thrown using v8::ThrowException(), and sets |didThrow|. In this case
     // the caller must not invoke any V8 operations until control returns to
     // V8. When serialization is successful, |didThrow| is false.
-    static PassRefPtr<SerializedScriptValue> create(v8::Handle<v8::Value>, MessagePortArray*, bool& didThrow);
+    static PassRefPtr<SerializedScriptValue> create(v8::Handle<v8::Value>,
+                                                    MessagePortArray*, ArrayBufferArray*,
+                                                    bool& didThrow);
     static PassRefPtr<SerializedScriptValue> create(v8::Handle<v8::Value>);
     static PassRefPtr<SerializedScriptValue> createFromWire(const String& data);
     static PassRefPtr<SerializedScriptValue> create(const String& data);
