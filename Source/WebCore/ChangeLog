@@ -1,3 +1,20 @@
+2011-11-23  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: shift focus to the source view when a resource is selected in the Scripts panel
+        https://bugs.webkit.org/show_bug.cgi?id=69738
+
+        Reviewed by Timothy Hatcher.
+
+        The source viewer is focused whenever a file name option is clicked, and is NOT focused when the script list
+        is traversed with the Up/Down keys.
+
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype._filesSelectChanged):
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype.focus):
+        * inspector/front-end/TextViewer.js:
+        (WebInspector.TextViewer.prototype.focus):
+
 2011-11-23  Pavel Podivilov  <podivilov@chromium.org>
 
         Web Inspector: add integration test for compiler source maps.

@@ -98,6 +98,11 @@ WebInspector.TextViewer.prototype = {
         return this._textModel;
     },
 
+    focus: function()
+    {
+        this._mainPanel.element.focus();
+    },
+
     revealLine: function(lineNumber)
     {
         this._mainPanel.revealLine(lineNumber);

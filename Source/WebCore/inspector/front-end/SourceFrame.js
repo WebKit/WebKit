@@ -99,6 +99,11 @@ WebInspector.SourceFrame.prototype = {
         this.setReadOnly(true);
     },
 
+    focus: function()
+    {
+        this._textViewer.focus();
+    },
+
     get statusBarItems()
     {
         return [this._editButton.element];

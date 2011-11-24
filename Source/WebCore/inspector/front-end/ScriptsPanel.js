@@ -69,8 +69,8 @@ WebInspector.ScriptsPanel = function(presentationModel)
     this._filesSelectElement = document.createElement("select");
     this._filesSelectElement.className = "status-bar-item";
     this._filesSelectElement.id = "scripts-files";
-    this._filesSelectElement.addEventListener("change", this._filesSelectChanged.bind(this), false);
-    this._filesSelectElement.addEventListener("keyup", this._filesSelectChanged.bind(this), false);
+    this._filesSelectElement.addEventListener("change", this._filesSelectChanged.bind(this, true), false);
+    this._filesSelectElement.addEventListener("keyup", this._filesSelectChanged.bind(this, false), false);
     this.topStatusBar.appendChild(this._filesSelectElement);
 
     this.functionsSelectElement = document.createElement("select");
@@ -762,13 +762,15 @@ WebInspector.ScriptsPanel.prototype = {
         this._updateExecutionLine(this._presentationModel.executionLineLocation);
     },
 
-    _filesSelectChanged: function()
+    _filesSelectChanged: function(focusSource)
     {
         if (this._filesSelectElement.selectedIndex === -1)
             return;
 
         var uiSourceCode = this._filesSelectElement[this._filesSelectElement.selectedIndex]._uiSourceCode;
-        this._showSourceFrameAndAddToHistory(uiSourceCode);
+        var sourceFrame = this._showSourceFrameAndAddToHistory(uiSourceCode);
+        if (sourceFrame && focusSource)
+            sourceFrame.focus();
     },
 
     sidebarResized: function(event)
