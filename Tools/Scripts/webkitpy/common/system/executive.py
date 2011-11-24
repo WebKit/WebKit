@@ -108,7 +108,7 @@ class Executive(object):
         # shows up on Mac and Linux.
         return sys.platform not in ('win32', 'cygwin')
 
-    def _run_command_with_teed_output(self, args, teed_output, **kwargs):
+    def _run_command_with_teed_output(self, args, teed_output, cwd=None):
         args = map(unicode, args)  # Popen will throw an exception if args are non-strings (like int())
         args = map(self._encode_argument_if_needed, args)
 
@@ -116,7 +116,7 @@ class Executive(object):
                                    stdout=self.PIPE,
                                    stderr=self.STDOUT,
                                    close_fds=self._should_close_fds(),
-                                   **kwargs)
+                                   cwd=cwd)
 
         # Use our own custom wait loop because Popen ignores a tee'd
         # stderr/stdout.
@@ -136,7 +136,7 @@ class Executive(object):
     # capture their output and print out to stdin.  Useful for things
     # like "build-webkit" where we want to display to the user that we're building
     # but still have the output to stuff into a log file.
-    def run_and_throw_if_fail(self, args, quiet=False, decode_output=True, **kwargs):
+    def run_and_throw_if_fail(self, args, quiet=False, decode_output=True, cwd=None):
         # Cache the child's output locally so it can be used for error reports.
         child_out_file = StringIO.StringIO()
         tee_stdout = sys.stdout
@@ -144,7 +144,7 @@ class Executive(object):
             dev_null = open(os.devnull, "w")  # FIXME: Does this need an encoding?
             tee_stdout = dev_null
         child_stdout = tee(child_out_file, tee_stdout)
-        exit_code = self._run_command_with_teed_output(args, child_stdout, **kwargs)
+        exit_code = self._run_command_with_teed_output(args, child_stdout, cwd=cwd)
         if quiet:
             dev_null.close()
 

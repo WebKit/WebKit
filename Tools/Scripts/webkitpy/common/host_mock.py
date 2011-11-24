@@ -31,7 +31,6 @@ from webkitpy.common.checkout.scm.scm_mock import MockSCM
 from webkitpy.common.net.bugzilla.bugzilla_mock import MockBugzilla
 from webkitpy.common.net.buildbot.buildbot_mock import MockBuildBot
 from webkitpy.common.net.web_mock import MockWeb
-from webkitpy.common.system.environment import Environment
 from webkitpy.common.system.executive_mock import MockExecutive
 from webkitpy.common.system.filesystem_mock import MockFileSystem
 from webkitpy.common.system.platforminfo_mock import MockPlatformInfo
@@ -66,9 +65,6 @@ class MockHost(object):
         self.port_factory = PortFactory(self)
 
         self._watch_list = MockWatchList()
-
-    def copy_current_environment(self):
-        return Environment({"MOCK_ENVIRON_COPY": '1'})
 
     def _initialize_scm(self, patch_directories=None):
         pass

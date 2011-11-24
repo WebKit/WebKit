@@ -44,12 +44,9 @@ class MockExecutive(object):
     def check_running_pid(self, pid):
         return pid in self._running_pids
 
-    def run_and_throw_if_fail(self, args, quiet=False, cwd=None, env=None):
+    def run_and_throw_if_fail(self, args, quiet=False, cwd=None):
         if self._should_log:
-            env_string = ""
-            if env:
-                env_string = ", env=%s" % env
-            log("MOCK run_and_throw_if_fail: %s, cwd=%s%s" % (args, cwd, env_string))
+            log("MOCK run_and_throw_if_fail: %s, cwd=%s" % (args, cwd))
         if self._should_throw_when_run.intersection(args):
             raise ScriptError("Exception for %s" % args)
         return "MOCK output of child process"
@@ -61,14 +58,10 @@ class MockExecutive(object):
                     error_handler=None,
                     return_exit_code=False,
                     return_stderr=True,
-                    decode_output=False,
-                    env=None):
+                    decode_output=False):
         assert(isinstance(args, list) or isinstance(args, tuple))
         if self._should_log:
-            env_string = ""
-            if env:
-                env_string = ", env=%s" % env
-            log("MOCK run_command: %s, cwd=%s%s" % (args, cwd, env_string))
+            log("MOCK run_command: %s, cwd=%s" % (args, cwd))
         if self._should_throw:
             raise ScriptError("MOCK ScriptError")
         return "MOCK output of child process"
@@ -99,8 +92,7 @@ class MockExecutive2(object):
                     error_handler=None,
                     return_exit_code=False,
                     return_stderr=True,
-                    decode_output=False,
-                    env=None):
+                    decode_output=False):
         assert(isinstance(args, list) or isinstance(args, tuple))
         if self._exception:
             raise self._exception
