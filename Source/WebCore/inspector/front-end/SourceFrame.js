@@ -491,6 +491,9 @@ WebInspector.SourceFrame.prototype = {
 
     populateTextAreaContextMenu: function(contextMenu)
     {
+        if (!window.getSelection().isCollapsed)
+            return;
+        WebInspector.populateResourceContextMenu(contextMenu, this._url);
     },
 
     suggestedFileName: function()

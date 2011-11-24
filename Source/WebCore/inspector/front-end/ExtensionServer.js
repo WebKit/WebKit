@@ -272,14 +272,14 @@ WebInspector.ExtensionServer.prototype = {
     {
         var name = this._registeredExtensions[port._extensionOrigin].name || ("Extension " + port._extensionOrigin);
         if (message.handlerPresent)
-            WebInspector.openAnchorLocationRegistry.registerHandler(name, this._handleAnchorClicked.bind(this, port));
+            WebInspector.openAnchorLocationRegistry.registerHandler(name, this._handleOpenURL.bind(this, port));
         else
             WebInspector.openAnchorLocationRegistry.unregisterHandler(name);
     },
 
-    _handleAnchorClicked: function(port, anchor)
+    _handleOpenURL: function(port, url)
     {
-        var resource = WebInspector.resourceForURL(anchor.href);
+        var resource = WebInspector.resourceForURL(url);
         if (!resource)
             return false;
         port.postMessage({

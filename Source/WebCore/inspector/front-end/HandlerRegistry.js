@@ -57,10 +57,22 @@ WebInspector.HandlerRegistry.prototype = {
         this._setting.set(value);
     },
 
-    dispatch: function()
+    /**
+     * @param {Object} data
+     */
+    dispatch: function(data)
     {
-        var handler = this._handlers[this._activeHandler];
-        var result = handler && handler.apply(null, arguments);
+        this.dispatchToHandler(this._activeHandler, data);
+    },
+
+    /**
+     * @param {string} name
+     * @param {Object} data
+     */
+    dispatchToHandler: function(name, data)
+    {
+        var handler = this._handlers[name];
+        var result = handler && handler(data);
         return !!result;
     },
 

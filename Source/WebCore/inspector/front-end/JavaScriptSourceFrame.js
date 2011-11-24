@@ -146,6 +146,7 @@ WebInspector.JavaScriptSourceFrame.prototype = {
 
     populateTextAreaContextMenu: function(contextMenu)
     {
+        WebInspector.SourceFrame.prototype.populateTextAreaContextMenu.call(this, contextMenu);
         var selection = window.getSelection();
         if (selection.type !== "Range" || selection.isCollapsed)
             return;
