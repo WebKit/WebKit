@@ -1,3 +1,36 @@
+2011-11-23  Greg Billock  <gbillock@google.com>
+
+        Add simple implementation for web intents chromium API data classes.
+        https://bugs.webkit.org/show_bug.cgi?id=73036
+
+        Reviewed by Darin Fisher.
+
+        * WebKit.gyp:
+        * public/WebIntent.h:
+        * public/WebIntentServiceInfo.h:
+        * src/WebIntent.cpp: Copied from Source/WebKit/chromium/public/WebIntent.h.
+        (WebKit::WebIntent::WebIntent):
+        (WebKit::WebIntent::action):
+        (WebKit::WebIntent::setAction):
+        (WebKit::WebIntent::type):
+        (WebKit::WebIntent::setType):
+        (WebKit::WebIntent::data):
+        (WebKit::WebIntent::setData):
+        (WebKit::WebIntent::identifier):
+        (WebKit::WebIntent::setIdentifier):
+        * src/WebIntentServiceInfo.cpp: Copied from Source/WebKit/chromium/public/WebIntentServiceInfo.h.
+        (WebKit::WebIntentServiceInfo::WebIntentServiceInfo):
+        (WebKit::WebIntentServiceInfo::url):
+        (WebKit::WebIntentServiceInfo::setURL):
+        (WebKit::WebIntentServiceInfo::title):
+        (WebKit::WebIntentServiceInfo::setTitle):
+        (WebKit::WebIntentServiceInfo::action):
+        (WebKit::WebIntentServiceInfo::setAction):
+        (WebKit::WebIntentServiceInfo::type):
+        (WebKit::WebIntentServiceInfo::setType):
+        (WebKit::WebIntentServiceInfo::disposition):
+        (WebKit::WebIntentServiceInfo::setDisposition):
+
 2011-11-23  Adam Barth  <abarth@webkit.org>
 
         [Chromium] Move WebKitPlatformSupport.h and dependencies to new public/platform directory

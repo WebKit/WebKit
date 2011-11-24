@@ -28,56 +28,51 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebIntentServiceInfo_h
-#define WebIntentServiceInfo_h
-
-#include "WebCommon.h"
-#include "WebString.h"
-#include "WebURL.h"
+#include "config.h"
+#include "WebIntent.h"
 
 namespace WebKit {
 
-// Holds data used to initialize a Web Intents service (handler).
-// See spec at http://www.chromium.org/developers/design-documents/webintentsapi
-class WebIntentServiceInfo {
-public:
-    ~WebIntentServiceInfo() { }
+WebIntent::WebIntent() { }
 
-    // The location of the handler page registered by the service.
-    WEBKIT_EXPORT WebURL url() const;
-    WEBKIT_EXPORT void setURL(const WebURL&);
+WebString WebIntent::action() const
+{
+    return m_action;
+}
 
-    // The short name the service will be known by when the user
-    // initiates an intent.
-    WEBKIT_EXPORT WebString title() const;
-    WEBKIT_EXPORT void setTitle(const WebString&);
+void WebIntent::setAction(const WebString& action)
+{
+    m_action = action;
+}
 
-    // The kind of intent the service will handle.
-    WEBKIT_EXPORT WebString action() const;
-    WEBKIT_EXPORT void setAction(const WebString&);
+WebString WebIntent::type() const
+{
+    return m_type;
+}
 
-    // The type of payload data which the service will handle.
-    WEBKIT_EXPORT WebString type() const;
-    WEBKIT_EXPORT void setType(const WebString&);
+void WebIntent::setType(const WebString& type)
+{
+    m_type = type;
+}
 
-    // A hint to the client about whether the service can be run within
-    // an "inline" context within the calling page, or in a new tab
-    // context (the default).
-    WEBKIT_EXPORT WebString disposition() const;
-    WEBKIT_EXPORT void setDisposition(const WebString&);
+WebString WebIntent::data() const
+{
+    return m_data;
+}
 
-#if WEBKIT_IMPLEMENTATION
-    WebIntentServiceInfo();
-#endif
+void WebIntent::setData(const WebString& data)
+{
+    m_data = data;
+}
 
-private:
-    WebString m_action;
-    WebString m_type;
-    WebURL m_href;
-    WebString m_title;
-    WebString m_disposition;
-};
+int WebIntent::identifier() const
+{
+    return m_identifier;
+}
+
+void WebIntent::setIdentifier(int identifier)
+{
+    m_identifier = identifier;
+}
 
 } // namespace WebKit
-
-#endif // WebIntentServiceInfo_h

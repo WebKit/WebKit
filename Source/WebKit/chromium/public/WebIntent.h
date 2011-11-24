@@ -31,9 +31,10 @@
 #ifndef WebIntent_h
 #define WebIntent_h
 
-namespace WebKit {
+#include "WebCommon.h"
+#include "WebString.h"
 
-class WebString;
+namespace WebKit {
 
 // Holds data passed through a Web Intents invocation call from the Javascript
 // Intent object.
@@ -53,6 +54,16 @@ public:
 
     WEBKIT_EXPORT int identifier() const;
     WEBKIT_EXPORT void setIdentifier(int);
+
+#if WEBKIT_IMPLEMENTATION
+    WebIntent();
+#endif
+
+private:
+    WebString m_action;
+    WebString m_type;
+    WebString m_data;
+    int m_identifier;
 };
 
 } // namespace WebKit

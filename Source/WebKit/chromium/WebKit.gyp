@@ -565,6 +565,8 @@
                 'src/WebInputEvent.cpp',
                 'src/WebInputEventConversion.cpp',
                 'src/WebInputEventConversion.h',
+                'src/WebIntent.cpp',
+                'src/WebIntentServiceInfo.cpp',
                 'src/WebKit.cpp',
                 'src/WebLabelElement.cpp',
                 'src/WebLayer.cpp',
