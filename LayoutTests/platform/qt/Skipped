@@ -2015,6 +2015,7 @@ svg/W3C-SVG-1.1/struct-frag-03-t.svg
 svg/W3C-SVG-1.1/text-align-04-b.svg
 svg/zoom/page/zoom-mask-with-percentages.svg
 svg/zoom/page/zoom-img-preserveAspectRatio-support-1.html
+svg/dom/css-transforms.xhtml
 
 # [Qt] inspector/styles/styles-disable-then-enable.html make inspector/styles/styles-iframe.html fail in debug mode
 # https://bugs.webkit.org/show_bug.cgi?id=58313
