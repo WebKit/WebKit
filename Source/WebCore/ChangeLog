@@ -1,5 +1,17 @@
 2011-11-23  Rafael Weinstein  <rafaelw@chromium.org>
 
+        Cleanup #if usage in V8GCController
+        https://bugs.webkit.org/show_bug.cgi?id=73060
+
+        Reviewed by Ojan Vafai.
+
+        No tests needed. Just code cleanup
+
+        * bindings/v8/V8GCController.cpp:
+        (WebCore::V8GCController::checkMemoryUsage):
+
+2011-11-23  Rafael Weinstein  <rafaelw@chromium.org>
+
         Change CSSMutableStyleDeclaration::m_node to m_element (along with getter/setter)
         https://bugs.webkit.org/show_bug.cgi?id=73050
 

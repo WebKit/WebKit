@@ -516,13 +516,10 @@ void V8GCController::checkMemoryUsage()
     const int lowMemoryUsageMB = PlatformSupport::lowMemoryUsageMB();
     const int highMemoryUsageMB = PlatformSupport::highMemoryUsageMB();
     const int highUsageDeltaMB = PlatformSupport::highUsageDeltaMB();
-#else
-    return;
-#endif
-
     int memoryUsageMB = getMemoryUsageInMB();
     if ((memoryUsageMB > lowMemoryUsageMB && memoryUsageMB > 2 * workingSetEstimateMB) || (memoryUsageMB > highMemoryUsageMB && memoryUsageMB > workingSetEstimateMB + highUsageDeltaMB))
         v8::V8::LowMemoryNotification();
+#endif
 }
 
 
