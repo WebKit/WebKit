@@ -1,0 +1,30 @@
+Microdata properties collection must update on adding or removing property.
+
+Created element of type: div
+Set attribute: itemscope, value: itemscope
+PASS element.properties.length == '1' is true
+PASS element.properties.item(0) == element.firstChild is true
+PASS element.properties[0] == element.firstChild is true
+
+Append a property with itemprop: bar.
+Created element of type: div
+Set attribute: itemprop, value: bar
+PASS element.properties.length == '2' is true
+PASS element.properties.item(1) == element.childNodes[1] is true
+PASS element.properties[1] == element.childNodes[1] is true
+
+Append a property with itemprop: foo.
+Created element of type: div
+Set attribute: itemprop, value: foo
+PASS element.properties.length == '3' is true
+PASS element.properties.item(2) == element.childNodes[1].firstChild is true
+PASS element.properties[2] == element.childNodes[1].firstChild is true
+
+Remove property with itemprop: foo.
+PASS element.properties.length == '2' is true
+PASS element.properties.item(2) == undefined is true
+PASS element.properties[2] == undefined is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

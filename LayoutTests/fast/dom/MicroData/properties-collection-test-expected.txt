@@ -1,0 +1,13 @@
+Microdata properties collection simple test.
+
+Created element of type: div
+
+The properties property must be defined.
+PASS element.properties is defined.
+
+The properties property must return a HTMLPropertiesCollection object.
+PASS element.properties == '[object HTMLPropertiesCollection]' is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

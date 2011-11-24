@@ -43,6 +43,7 @@
 #include "ClassNodeList.h"
 #include "ContextMenuController.h"
 #include "DOMImplementation.h"
+#include "DOMSettableTokenList.h"
 #include "Document.h"
 #include "DocumentType.h"
 #include "DynamicNodeList.h"
@@ -112,6 +113,10 @@
 
 #if USE(JSC)
 #include <runtime/JSGlobalData.h>
+#endif
+
+#if ENABLE(MICRODATA)
+#include "HTMLPropertiesCollection.h"
 #endif
 
 #define DUMP_NODE_STATISTICS 0
@@ -2996,6 +3001,43 @@ void Node::defaultEventHandler(Event* event)
         dispatchInputEvent();
     }
 }
+
+#if ENABLE(MICRODATA)
+DOMSettableTokenList* Node::itemProp()
+{
+    return ensureRareData()->itemProp();
+}
+
+void Node::setItemProp(const String& value)
+{
+    ensureRareData()->setItemProp(value);
+}
+
+DOMSettableTokenList* Node::itemRef()
+{
+    return ensureRareData()->itemRef();
+}
+
+void Node::setItemRef(const String& value)
+{
+    ensureRareData()->setItemRef(value);
+}
+
+DOMSettableTokenList* Node::itemType()
+{
+    return ensureRareData()->itemType();
+}
+
+void Node::setItemType(const String& value)
+{
+    ensureRareData()->setItemType(value);
+}
+
+HTMLPropertiesCollection* Node::properties()
+{
+    return ensureRareData()->properties(this);
+}
+#endif
 
 } // namespace WebCore
 

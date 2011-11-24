@@ -48,6 +48,7 @@ namespace WebCore {
 class Attribute;
 class ClassNodeList;
 class ContainerNode;
+class DOMSettableTokenList;
 class Document;
 class DynamicNodeList;
 class Element;
@@ -81,6 +82,10 @@ class SVGUseElement;
 #endif
 class TagNodeList;
 class TreeScope;
+
+#if ENABLE(MICRODATA)
+class HTMLPropertiesCollection;
+#endif
 
 typedef int ExceptionCode;
 
@@ -588,6 +593,11 @@ public:
 
 #if ENABLE(MICRODATA)
     void itemTypeAttributeChanged();
+
+    DOMSettableTokenList* itemProp();
+    DOMSettableTokenList* itemRef();
+    DOMSettableTokenList* itemType();
+    HTMLPropertiesCollection* properties();
 #endif
 
 #if ENABLE(MUTATION_OBSERVERS)
@@ -757,6 +767,12 @@ protected:
     bool hasRareSVGData() const { return getFlag(HasSVGRareDataFlag); }
     void setHasRareSVGData() { setFlag(HasSVGRareDataFlag); }
     void clearHasRareSVGData() { clearFlag(HasSVGRareDataFlag); }
+#endif
+
+#if ENABLE(MICRODATA)
+    void setItemProp(const String&);
+    void setItemRef(const String&);
+    void setItemType(const String&);
 #endif
 };
 

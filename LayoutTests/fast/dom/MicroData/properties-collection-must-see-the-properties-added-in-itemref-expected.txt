@@ -1,0 +1,11 @@
+This tests that properties.item and length must see the properties added with itemref.
+
+PASS propertiesCollection.length == '4' is true
+PASS propertiesCollection.item(0) == divs[0] is true
+PASS propertiesCollection.item(1) == divs[2] is true
+PASS propertiesCollection.item(2) == divs[3] is true
+PASS propertiesCollection.item(3) == divs[4] is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

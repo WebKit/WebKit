@@ -135,6 +135,7 @@
 #include "JSHashChangeEvent.cpp"
 #include "JSHistory.cpp"
 #include "JSHTMLAllCollection.cpp"
+#include "JSHTMLPropertiesCollection.cpp"
 #include "JSHTMLAnchorElement.cpp"
 #include "JSHTMLAppletElement.cpp"
 #include "JSHTMLAreaElement.cpp"

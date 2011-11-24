@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script src="resources/microdata-common.js"></script>
+</head>
+<body>
+<p>This test ensures that itemref must reference the first element with a given id.</p>
+<div id="console"></div>
+<script>
+var element = createElement('div',{},'<div itemscope itemref="id1"></div><div itemprop="foo" id="id1"><div itemprop="bar"></div></div><div itemprop="baz" id="id1"></div>');
+document.body.appendChild(element);
+var item = element.childNodes[0];
+
+shouldBeTrue("item.properties.length == '2'");
+shouldBeTrue("item.properties.item(0) == element.childNodes[1]");
+shouldBeTrue("item.properties.item(1) == element.childNodes[1].firstChild");
+
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

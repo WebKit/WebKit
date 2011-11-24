@@ -23,12 +23,8 @@
 #define NodeRareData_h
 
 #include "ClassNodeList.h"
+#include "DOMSettableTokenList.h"
 #include "DynamicNodeList.h"
-
-#if ENABLE(MICRODATA)
-#include "MicroDataItemList.h"
-#endif
-
 #include "MutationObserverRegistration.h"
 #include "NameNodeList.h"
 #include "QualifiedName.h"
@@ -39,6 +35,11 @@
 #include <wtf/PassOwnPtr.h>
 #include <wtf/text/AtomicString.h>
 #include <wtf/text/StringHash.h>
+
+#if ENABLE(MICRODATA)
+#include "HTMLPropertiesCollection.h"
+#include "MicroDataItemList.h"
+#endif
 
 namespace WebCore {
 
@@ -157,6 +158,64 @@ public:
     }
 #endif
 
+#if ENABLE(MICRODATA)
+    DOMSettableTokenList* itemProp() const
+    {
+        if (!m_itemProp)
+            m_itemProp = DOMSettableTokenList::create();
+
+        return m_itemProp.get();
+    }
+
+    void setItemProp(const String& value)
+    {
+        if (!m_itemProp)
+            m_itemProp = DOMSettableTokenList::create();
+
+        m_itemProp->setValue(value);
+    }
+
+    DOMSettableTokenList* itemRef() const
+    {
+        if (!m_itemRef)
+            m_itemRef = DOMSettableTokenList::create();
+
+        return m_itemRef.get();
+    }
+
+    void setItemRef(const String& value)
+    {
+        if (!m_itemRef)
+            m_itemRef = DOMSettableTokenList::create();
+
+        m_itemRef->setValue(value);
+    }
+
+    DOMSettableTokenList* itemType() const
+    {
+        if (!m_itemType)
+            m_itemType = DOMSettableTokenList::create();
+
+        return m_itemType.get();
+    }
+
+    void setItemType(const String& value)
+    {
+        if (!m_itemType)
+            m_itemType = DOMSettableTokenList::create();
+
+        m_itemType->setValue(value);
+    }
+
+    HTMLPropertiesCollection* properties(Node* node)
+    {
+        if (!m_properties)
+            m_properties = HTMLPropertiesCollection::create(node);
+
+        return m_properties.get();
+    }
+#endif
+
     bool isFocused() const { return m_isFocused; }
     void setFocused(bool focused) { m_isFocused = focused; }
 
@@ -177,6 +236,13 @@ private:
 #if ENABLE(MUTATION_OBSERVERS)
     OwnPtr<Vector<OwnPtr<MutationObserverRegistration> > > m_mutationObserverRegistry;
     OwnPtr<HashSet<MutationObserverRegistration*> > m_transientMutationObserverRegistry;
+#endif
+
+#if ENABLE(MICRODATA)
+    mutable RefPtr<DOMSettableTokenList> m_itemProp;
+    mutable RefPtr<DOMSettableTokenList> m_itemRef;
+    mutable RefPtr<DOMSettableTokenList> m_itemType;
+    mutable RefPtr<HTMLPropertiesCollection> m_properties;
 #endif
 };
 

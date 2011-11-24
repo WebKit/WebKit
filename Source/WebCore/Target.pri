@@ -760,6 +760,7 @@ SOURCES += \
     html/HTMLPlugInImageElement.cpp \
     html/HTMLPreElement.cpp \
     html/HTMLProgressElement.cpp \
+    html/HTMLPropertiesCollection.cpp \
     html/HTMLQuoteElement.cpp \
     html/HTMLScriptElement.cpp \
     html/HTMLSelectElement.cpp \
@@ -1837,6 +1838,7 @@ HEADERS += \
     html/HTMLPlugInImageElement.h \
     html/HTMLPreElement.h \
     html/HTMLProgressElement.h \
+    html/HTMLPropertiesCollection.h \
     html/HTMLQuoteElement.h \
     html/HTMLScriptElement.h \
     html/HTMLSelectElement.h \

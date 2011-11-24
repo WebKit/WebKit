@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script src="resources/microdata-common.js"></script>
+</head>
+<body>
+<p>This test ensures that properties collection of a Microdata item must be correct.</p>
+<div id="console"></div>
+<script>
+var element = createElement('div', {itemscope: 'itemscope'}, '<div itemprop="foo"></div><div itemprop="bar"><div itemprop="foo"></div></div><div itemprop="baz qux"></div>');
+var propertiesCollection = element.properties;
+var childNodes = element.childNodes;
+
+debug("<br>properties.length must be the total number of properties.");
+shouldBeTrue("propertiesCollection.length == '4'");
+
+debug("<br>properties.item(index) and properties[index] must give each property in tree order'");
+shouldBeTrue("propertiesCollection.item(0) == childNodes[0]");
+shouldBeTrue("propertiesCollection.item(1) == childNodes[1]");
+shouldBeTrue("propertiesCollection.item(2) == childNodes[1].childNodes[0]");
+shouldBeTrue("propertiesCollection.item(3) == childNodes[2]");
+debug('');
+
+shouldBeTrue("propertiesCollection[0] == childNodes[0]");
+shouldBeTrue("propertiesCollection[1] == childNodes[1]");
+shouldBeTrue("propertiesCollection[2] == childNodes[1].childNodes[0]");
+shouldBeTrue("propertiesCollection[3] == childNodes[2]");
+
+debug("properties[index] and properties.item(index) must return undefined for out of range index.");
+shouldBeTrue("propertiesCollection[4] == undefined");
+shouldBeTrue("propertiesCollection.item(4) == undefined");
+
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

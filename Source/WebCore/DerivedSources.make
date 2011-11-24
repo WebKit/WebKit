@@ -179,6 +179,7 @@ DOM_CLASSES = \
     Geolocation \
     Geoposition \
     HTMLAllCollection \
+    HTMLPropertiesCollection \
     HTMLAnchorElement \
     HTMLAppletElement \
     HTMLAreaElement \

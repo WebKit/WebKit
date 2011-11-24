@@ -28,6 +28,7 @@
 #if ENABLE(MICRODATA)
 #include "MicroDataItemList.h"
 
+#include "DOMSettableTokenList.h"
 #include "Document.h"
 #include "HTMLElement.h"
 #include "HTMLNames.h"

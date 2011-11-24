@@ -295,6 +295,7 @@ IDL_BINDINGS += \
     html/HTMLParamElement.idl \
     html/HTMLPreElement.idl \
     html/HTMLProgressElement.idl \
+    html/HTMLPropertiesCollection.idl \
     html/HTMLQuoteElement.idl \
     html/HTMLScriptElement.idl \
     html/HTMLSelectElement.idl \

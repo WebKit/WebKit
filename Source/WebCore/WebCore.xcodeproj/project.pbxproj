@@ -66,6 +66,10 @@
 		00CA93B513C6697C00F7FE95 /* NewXMLDocumentParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 00CA93B413C6697C00F7FE95 /* NewXMLDocumentParser.cpp */; };
 		00D0464A13C4D14500326FCC /* XMLCharacterReferenceParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 00D0464813C4D14500326FCC /* XMLCharacterReferenceParser.cpp */; };
 		00D0464B13C4D14500326FCC /* XMLCharacterReferenceParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 00D0464913C4D14500326FCC /* XMLCharacterReferenceParser.h */; };
+		033A6A7C147E07D200509B36 /* HTMLPropertiesCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = 033A6A7B147E07D200509B36 /* HTMLPropertiesCollection.h */; };
+		033A6A7E147E07E700509B36 /* HTMLPropertiesCollection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 033A6A7D147E07E700509B36 /* HTMLPropertiesCollection.cpp */; };
+		033A6A81147E088600509B36 /* JSHTMLPropertiesCollection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 033A6A80147E088600509B36 /* JSHTMLPropertiesCollection.cpp */; };
+		033A6A83147E08A600509B36 /* JSHTMLPropertiesCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = 033A6A82147E08A600509B36 /* JSHTMLPropertiesCollection.h */; };
 		052BFCE9128ABF1500FD338D /* GeolocationClientMock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 052BFCE8128ABF1500FD338D /* GeolocationClientMock.cpp */; };
 		052BFCEB128ABF2100FD338D /* GeolocationClientMock.h in Headers */ = {isa = PBXBuildFile; fileRef = 052BFCEA128ABF2100FD338D /* GeolocationClientMock.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		05FD69E012845D4300B2BEB3 /* DOMTimeStamp.h in Headers */ = {isa = PBXBuildFile; fileRef = 05FD69DF12845D4300B2BEB3 /* DOMTimeStamp.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -7104,6 +7108,11 @@
 		00CA93B413C6697C00F7FE95 /* NewXMLDocumentParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NewXMLDocumentParser.cpp; sourceTree = "<group>"; };
 		00D0464813C4D14500326FCC /* XMLCharacterReferenceParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XMLCharacterReferenceParser.cpp; sourceTree = "<group>"; };
 		00D0464913C4D14500326FCC /* XMLCharacterReferenceParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XMLCharacterReferenceParser.h; sourceTree = "<group>"; };
+		033A6A7B147E07D200509B36 /* HTMLPropertiesCollection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLPropertiesCollection.h; sourceTree = "<group>"; };
+		033A6A7D147E07E700509B36 /* HTMLPropertiesCollection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLPropertiesCollection.cpp; sourceTree = "<group>"; };
+		033A6A7F147E07F900509B36 /* HTMLPropertiesCollection.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HTMLPropertiesCollection.idl; sourceTree = "<group>"; };
+		033A6A80147E088600509B36 /* JSHTMLPropertiesCollection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLPropertiesCollection.cpp; sourceTree = "<group>"; };
+		033A6A82147E08A600509B36 /* JSHTMLPropertiesCollection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSHTMLPropertiesCollection.h; sourceTree = "<group>"; };
 		052BFCE8128ABF1500FD338D /* GeolocationClientMock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GeolocationClientMock.cpp; path = mock/GeolocationClientMock.cpp; sourceTree = "<group>"; };
 		052BFCEA128ABF2100FD338D /* GeolocationClientMock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GeolocationClientMock.h; path = mock/GeolocationClientMock.h; sourceTree = "<group>"; };
 		05FD69DF12845D4300B2BEB3 /* DOMTimeStamp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMTimeStamp.h; sourceTree = "<group>"; };
@@ -17314,6 +17323,9 @@
 				A43BF5961149290A00C643CA /* HTMLProgressElement.cpp */,
 				A43BF5971149290A00C643CA /* HTMLProgressElement.h */,
 				A4226EA51163D84D008B8397 /* HTMLProgressElement.idl */,
+				033A6A7B147E07D200509B36 /* HTMLPropertiesCollection.h */,
+				033A6A7D147E07E700509B36 /* HTMLPropertiesCollection.cpp */,
+				033A6A7F147E07F900509B36 /* HTMLPropertiesCollection.idl */,
 				A8CFF79B0A156978000A4234 /* HTMLQuoteElement.cpp */,
 				A8CFF7990A156978000A4234 /* HTMLQuoteElement.h */,
 				1AE2AEA30A1D28E800B42B25 /* HTMLQuoteElement.idl */,
@@ -17830,6 +17842,8 @@
 				1AE2ABA30A1CE90500B42B25 /* JSHTMLPreElement.h */,
 				A4226E591163D667008B8397 /* JSHTMLProgressElement.cpp */,
 				A4226E5B1163D695008B8397 /* JSHTMLProgressElement.h */,
+				033A6A80147E088600509B36 /* JSHTMLPropertiesCollection.cpp */,
+				033A6A82147E08A600509B36 /* JSHTMLPropertiesCollection.h */,
 				1AE2AEC30A1D297B00B42B25 /* JSHTMLQuoteElement.cpp */,
 				1AE2AEC40A1D297B00B42B25 /* JSHTMLQuoteElement.h */,
 				1AE2ABA40A1CE90500B42B25 /* JSHTMLScriptElement.cpp */,
@@ -24755,6 +24769,8 @@
 				F3820895147D35F90010BC06 /* PageRuntimeAgent.h in Headers */,
 				F3820897147D35F90010BC06 /* WorkerConsoleAgent.h in Headers */,
 				F3820899147D35F90010BC06 /* WorkerRuntimeAgent.h in Headers */,
+				033A6A7C147E07D200509B36 /* HTMLPropertiesCollection.h in Headers */,
+				033A6A83147E08A600509B36 /* JSHTMLPropertiesCollection.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -27633,6 +27649,8 @@
 				F3820894147D35F90010BC06 /* PageRuntimeAgent.cpp in Sources */,
 				F3820896147D35F90010BC06 /* WorkerConsoleAgent.cpp in Sources */,
 				F3820898147D35F90010BC06 /* WorkerRuntimeAgent.cpp in Sources */,
+				033A6A7E147E07E700509B36 /* HTMLPropertiesCollection.cpp in Sources */,
+				033A6A81147E088600509B36 /* JSHTMLPropertiesCollection.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

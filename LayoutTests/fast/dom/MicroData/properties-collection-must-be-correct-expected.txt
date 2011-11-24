@@ -1,0 +1,25 @@
+This test ensures that properties collection of a Microdata item must be correct.
+
+Created element of type: div
+Set attribute: itemscope, value: itemscope
+
+properties.length must be the total number of properties.
+PASS propertiesCollection.length == '4' is true
+
+properties.item(index) and properties[index] must give each property in tree order'
+PASS propertiesCollection.item(0) == childNodes[0] is true
+PASS propertiesCollection.item(1) == childNodes[1] is true
+PASS propertiesCollection.item(2) == childNodes[1].childNodes[0] is true
+PASS propertiesCollection.item(3) == childNodes[2] is true
+
+PASS propertiesCollection[0] == childNodes[0] is true
+PASS propertiesCollection[1] == childNodes[1] is true
+PASS propertiesCollection[2] == childNodes[1].childNodes[0] is true
+PASS propertiesCollection[3] == childNodes[2] is true
+properties[index] and properties.item(index) must return undefined for out of range index.
+PASS propertiesCollection[4] == undefined is true
+PASS propertiesCollection.item(4) == undefined is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script src="resources/microdata-common.js"></script>
+</head>
+<body>
+<p>Microdata properties collection simple test.</p>
+<div id="console"></div>
+<script>
+var element = createElement('div', {});
+
+debug("<br>The properties property must be defined.");
+shouldBeDefined("element.properties");
+
+debug("<br>The properties property must return a HTMLPropertiesCollection object.");
+shouldBeTrue("element.properties == '[object HTMLPropertiesCollection]'");
+
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

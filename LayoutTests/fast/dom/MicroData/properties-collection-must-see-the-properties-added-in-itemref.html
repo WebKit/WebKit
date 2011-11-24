@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script src="resources/microdata-common.js"></script>
+</head>
+<body>
+<p>This tests that properties.item and length must see the properties added with itemref.</p>
+
+<div itemprop="foo" id="id1"></div>
+<div itemscope itemref="id2 id1">
+<div itemprop="bar"></div>
+</div>
+<div itemprop="baz" id="id2">
+<div itemprop="qux"></div>
+</div>
+
+<div id="console"></div>
+<script>
+var item = document.getItems()[0];
+var propertiesCollection = item.properties;
+var divs = document.getElementsByTagName('div');
+
+shouldBeTrue("propertiesCollection.length == '4'");
+shouldBeTrue("propertiesCollection.item(0) == divs[0]");
+shouldBeTrue("propertiesCollection.item(1) == divs[2]");
+shouldBeTrue("propertiesCollection.item(2) == divs[3]");
+shouldBeTrue("propertiesCollection.item(3) == divs[4]");
+
+
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

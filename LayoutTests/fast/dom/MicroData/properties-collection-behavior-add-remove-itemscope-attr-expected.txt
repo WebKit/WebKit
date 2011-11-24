@@ -1,0 +1,22 @@
+This tests the behavior of properties collection on adding or removing itemscope attribute.
+
+Created element of type: div
+
+The properties collection must be empty if the element does not have an itemscope attribute.
+PASS element.properties.length == '0' is true
+PASS element.properties[0] == undefined is true
+PASS element.properties.item(0) == undefined is true
+
+The properties collection must become populated if we add itemscope attribute.
+PASS element.properties.length == '1' is true
+PASS element.properties[0] == element.firstChild is true
+PASS element.properties.item(0) == element.firstChild is true
+
+The properties collection must become empty if we remove itemscope attribute.
+PASS element.properties.length == '0' is true
+PASS element.properties[0] == undefined is true
+PASS element.properties.item(0) == undefined is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

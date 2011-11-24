@@ -1,3 +1,74 @@
+2011-11-24  Arko Saha  <arko@motorola.com>
+
+        Microdata: Support for properties attribute.
+        https://bugs.webkit.org/show_bug.cgi?id=71050
+
+        Reviewed by Adam Barth.
+
+        The properties attribute returns an HTMLPropertiesCollection object with all the element's
+        properties. Otherwise, an empty HTMLPropertiesCollection object.
+
+        Tests: fast/dom/MicroData/itemref-refers-first-element-with-given-id.html
+               fast/dom/MicroData/names-property-must-be-correct.html
+               fast/dom/MicroData/names-property-test.html
+               fast/dom/MicroData/properties-collection-add-remove-itemref.html
+               fast/dom/MicroData/properties-collection-add-remove-property.html
+               fast/dom/MicroData/properties-collection-behavior-add-remove-itemscope-attr.html
+               fast/dom/MicroData/properties-collection-must-be-correct.html
+               fast/dom/MicroData/properties-collection-must-ignore-properties-of-nested-items.html
+               fast/dom/MicroData/properties-collection-must-see-the-properties-added-in-itemref.html
+               fast/dom/MicroData/properties-collection-test.html
+
+        * CMakeLists.txt:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * DerivedSources.pri:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/gobject/GNUmakefile.am:
+        * bindings/js/JSHTMLCollectionCustom.cpp:
+        (WebCore::toJS):
+        * dom/MicroDataItemList.cpp:
+        * dom/Node.cpp:
+        (WebCore::Node::itemProp):
+        (WebCore::Node::setItemProp):
+        (WebCore::Node::itemRef):
+        (WebCore::Node::setItemRef):
+        (WebCore::Node::itemType):
+        (WebCore::Node::setItemType):
+        (WebCore::Node::properties):
+        * dom/Node.h:
+        * dom/NodeRareData.h:
+        (WebCore::NodeRareData::itemProp):
+        (WebCore::NodeRareData::setItemProp):
+        (WebCore::NodeRareData::itemRef):
+        (WebCore::NodeRareData::setItemRef):
+        (WebCore::NodeRareData::itemType):
+        (WebCore::NodeRareData::setItemType):
+        (WebCore::NodeRareData::properties):
+        * html/CollectionType.h:
+        * html/HTMLCollection.cpp:
+        (WebCore::HTMLCollection::itemAfter):
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::setItemValueText):
+        * html/HTMLElement.h:
+        * html/HTMLElement.idl:
+        * html/HTMLPropertiesCollection.cpp: Added.
+        (WebCore::compareTreeOrder):
+        (WebCore::HTMLPropertiesCollection::create):
+        (WebCore::HTMLPropertiesCollection::HTMLPropertiesCollection):
+        (WebCore::HTMLPropertiesCollection::~HTMLPropertiesCollection):
+        (WebCore::HTMLPropertiesCollection::findPropetiesOfAnItem): Finds the properties of an item.
+        (WebCore::HTMLPropertiesCollection::length): Returns the number of elements in the properties collection.
+        (WebCore::HTMLPropertiesCollection::item): Returns the element with index 'index' from the collection. The items are sorted in tree order.
+        (WebCore::HTMLPropertiesCollection::names): Returns a DOMStringList with the property names of the elements in the collection with the order preserved but with duplicates removed.
+        * html/HTMLPropertiesCollection.h: Added.
+        * html/HTMLPropertiesCollection.idl: Added.
+        * page/DOMWindow.idl:
+
 2011-11-24  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Indexes should be secondarily sorted on primary key

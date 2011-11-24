@@ -303,6 +303,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSHTMLPreElement.h \
 	DerivedSources/WebCore/JSHTMLProgressElement.cpp \
 	DerivedSources/WebCore/JSHTMLProgressElement.h \
+	DerivedSources/WebCore/JSHTMLPropertiesCollection.cpp \
+	DerivedSources/WebCore/JSHTMLPropertiesCollection.h \
 	DerivedSources/WebCore/JSHTMLQuoteElement.cpp \
 	DerivedSources/WebCore/JSHTMLQuoteElement.h \
 	DerivedSources/WebCore/JSHTMLScriptElement.cpp \
@@ -1817,6 +1819,8 @@ webcore_sources += \
 	Source/WebCore/html/HTMLPreElement.h \
 	Source/WebCore/html/HTMLProgressElement.cpp \
 	Source/WebCore/html/HTMLProgressElement.h \
+	Source/WebCore/html/HTMLPropertiesCollection.cpp \
+	Source/WebCore/html/HTMLPropertiesCollection.h \
 	Source/WebCore/html/HTMLQuoteElement.cpp \
 	Source/WebCore/html/HTMLQuoteElement.h \
 	Source/WebCore/html/HTMLScriptElement.cpp \

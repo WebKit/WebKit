@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script src="resources/microdata-common.js"></script>
+</head>
+<body>
+<p>Microdata properties collection should update properly on adding or removing itemref.</p>
+<div id="console"></div>
+<script>
+var element = createElement('div', {}, '<div id="id1" itemprop="foo"></div><div itemscope></div>');
+var item = element.childNodes[1];
+document.body.appendChild(element);
+
+shouldBeTrue("item.properties.length == '0'");
+
+debug("<br>Set itemref to id1.");
+item.setAttribute('itemref', 'id1');
+shouldBeTrue("item.properties.length == '1'");
+shouldBeTrue("item.properties.item(0) == element.firstChild");
+shouldBeTrue("item.properties[0] == element.firstChild");
+
+debug("<br>Remove itemref attribute.");
+item.removeAttribute('itemref');
+shouldBeTrue("item.properties.length == '0'");
+shouldBeTrue("item.properties.item(0) == undefined");
+shouldBeTrue("item.properties[0] == undefined");
+
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

@@ -54,6 +54,10 @@ enum CollectionType {
     DataListOptions,
     MapAreas,
 
+#if ENABLE(MICRODATA)
+    ItemProperties, // Microdata item properties in the document
+#endif
+
     OtherCollection
 };
 

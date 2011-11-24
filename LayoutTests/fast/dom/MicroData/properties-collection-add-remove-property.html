@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script src="resources/microdata-common.js"></script>
+</head>
+<body>
+<p>Microdata properties collection must update on adding or removing property.</p>
+<div id="console"></div>
+<script>
+var element = createElement('div', {itemscope: 'itemscope'}, '<div itemprop="foo"></div>');
+
+shouldBeTrue("element.properties.length == '1'");
+shouldBeTrue("element.properties.item(0) == element.firstChild");
+shouldBeTrue("element.properties[0] == element.firstChild");
+
+debug('<br>Append a property with itemprop: bar.');
+element.appendChild(createElement('div',{itemprop:'bar'}));
+shouldBeTrue("element.properties.length == '2'");
+shouldBeTrue("element.properties.item(1) == element.childNodes[1]");
+shouldBeTrue("element.properties[1] == element.childNodes[1]");
+
+debug('<br>Append a property with itemprop: foo.');
+element.lastChild.appendChild(createElement('div',{itemprop:'foo'}));
+shouldBeTrue("element.properties.length == '3'");
+shouldBeTrue("element.properties.item(2) == element.childNodes[1].firstChild");
+shouldBeTrue("element.properties[2] == element.childNodes[1].firstChild");
+
+debug('<br>Remove property with itemprop: foo.');
+element.lastChild.removeChild(element.lastChild.firstChild);
+shouldBeTrue("element.properties.length == '2'");
+shouldBeTrue("element.properties.item(2) == undefined");
+shouldBeTrue("element.properties[2] == undefined");
+
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

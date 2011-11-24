@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script src="resources/microdata-common.js"></script>
+</head>
+<body>
+<p>names property simple test.</p>
+<div id="console"></div>
+<script>
+var element = createElement('div', {});
+
+debug("<br>The names property must be defined.");
+shouldBeDefined("element.properties.names");
+
+debug("<br>The names property must return a DOMStringList object.");
+shouldBeTrue("element.properties.names == '[object DOMStringList]'");
+
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

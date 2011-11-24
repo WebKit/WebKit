@@ -1,0 +1,17 @@
+This tests that names.item() and names[index] must return correct property name in tree order and it should not contain duplicate tokens.
+
+Created element of type: div
+Set attribute: itemscope, value: itemscope
+PASS element.properties.names[0] == 'foo' is true
+PASS element.properties.names[1] == 'bar' is true
+PASS element.properties.names[2] == 'baz' is true
+PASS element.properties.names[3] == 'qux' is true
+
+PASS element.properties.names.item(0) == 'foo' is true
+PASS element.properties.names.item(1) == 'bar' is true
+PASS element.properties.names.item(2) == 'baz' is true
+PASS element.properties.names.item(3) == 'qux' is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

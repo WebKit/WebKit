@@ -1,0 +1,13 @@
+This test ensures thet properties.item and length must ignore properties of nested items.
+
+Created element of type: div
+Set attribute: itemscope, value: itemscope
+PASS propertiesCollection.length == '2' is true
+PASS propertiesCollection[0] == childNodes[0] is true
+PASS propertiesCollection.item(0) == childNodes[0] is true
+PASS propertiesCollection[1] == childNodes[1].firstChild is true
+PASS propertiesCollection.item(1) == childNodes[1].firstChild is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

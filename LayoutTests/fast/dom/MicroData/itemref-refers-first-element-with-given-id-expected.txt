@@ -1,0 +1,10 @@
+This test ensures that itemref must reference the first element with a given id.
+
+Created element of type: div
+PASS item.properties.length == '2' is true
+PASS item.properties.item(0) == element.childNodes[1] is true
+PASS item.properties.item(1) == element.childNodes[1].firstChild is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

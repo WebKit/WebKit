@@ -25,10 +25,6 @@
 
 #include "StyledElement.h"
 
-#if ENABLE(MICRODATA)
-#include "DOMSettableTokenList.h"
-#endif
-
 namespace WebCore {
 
 class DocumentFragment;
@@ -90,10 +86,6 @@ public:
     TextDirection directionalityIfhasDirAutoAttribute(bool& isAuto) const;
 
 #if ENABLE(MICRODATA)
-    PassRefPtr<DOMSettableTokenList> itemRef() const;
-    PassRefPtr<DOMSettableTokenList> itemProp() const;
-    PassRefPtr<DOMSettableTokenList> itemType() const;
-
     void setItemValue(const String&, ExceptionCode&);
     PassRefPtr<MicroDataItemValue> itemValue() const;
 #endif
@@ -128,16 +120,8 @@ private:
     TextDirection directionality(Node** strongDirectionalityTextNode= 0) const;
 
 #if ENABLE(MICRODATA)
-    void setItemProp(const String&);
-    void setItemRef(const String&);
-    void setItemType(const String&);
-
     virtual String itemValueText() const;
     virtual void setItemValueText(const String&, ExceptionCode&);
-
-    mutable RefPtr<DOMSettableTokenList> m_itemProp;
-    mutable RefPtr<DOMSettableTokenList> m_itemRef;
-    mutable RefPtr<DOMSettableTokenList> m_itemType;
 #endif
 };
 

@@ -166,6 +166,8 @@ webkitgtk_gdom_built_sources += \
 	DerivedSources/webkit/WebKitDOMHTMLParamElementPrivate.h \
 	DerivedSources/webkit/WebKitDOMHTMLPreElement.cpp \
 	DerivedSources/webkit/WebKitDOMHTMLPreElementPrivate.h \
+	DerivedSources/webkit/WebKitDOMHTMLPropertiesCollection.cpp \
+	DerivedSources/webkit/WebKitDOMHTMLPropertiesCollectionPrivate.h \
 	DerivedSources/webkit/WebKitDOMHTMLQuoteElement.cpp \
 	DerivedSources/webkit/WebKitDOMHTMLQuoteElementPrivate.h \
 	DerivedSources/webkit/WebKitDOMHTMLScriptElement.cpp \
@@ -343,6 +345,7 @@ webkitgtk_built_h_api += \
 	DerivedSources/webkit/WebKitDOMHTMLParagraphElement.h \
 	DerivedSources/webkit/WebKitDOMHTMLParamElement.h \
 	DerivedSources/webkit/WebKitDOMHTMLPreElement.h \
+	DerivedSources/webkit/WebKitDOMHTMLPropertiesCollection.h \
 	DerivedSources/webkit/WebKitDOMHTMLQuoteElement.h \
 	DerivedSources/webkit/WebKitDOMHTMLScriptElement.h \
 	DerivedSources/webkit/WebKitDOMHTMLSelectElement.h \

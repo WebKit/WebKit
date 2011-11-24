@@ -1,0 +1,13 @@
+names property simple test.
+
+Created element of type: div
+
+The names property must be defined.
+PASS element.properties.names is defined.
+
+The names property must return a DOMStringList object.
+PASS element.properties.names == '[object DOMStringList]' is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

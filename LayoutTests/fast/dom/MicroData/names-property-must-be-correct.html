@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script src="resources/microdata-common.js"></script>
+</head>
+<body>
+<p>This tests that names.item() and names[index] must return correct property name in tree order and it should not contain duplicate tokens.</p>
+<div id="console"></div>
+<script>
+var element = createElement('div', {itemscope: 'itemscope'},'<div itemprop="foo"></div><div itemprop="bar"><div itemprop="foo"></div><div itemprop="foo"></div></div><div itemprop="baz qux"></div>');
+shouldBeTrue("element.properties.names[0] == 'foo'");
+shouldBeTrue("element.properties.names[1] == 'bar'");
+shouldBeTrue("element.properties.names[2] == 'baz'");
+shouldBeTrue("element.properties.names[3] == 'qux'");
+
+debug('');
+shouldBeTrue("element.properties.names.item(0) == 'foo'");
+shouldBeTrue("element.properties.names.item(1) == 'bar'");
+shouldBeTrue("element.properties.names.item(2) == 'baz'");
+shouldBeTrue("element.properties.names.item(3) == 'qux'");
+
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

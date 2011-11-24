@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script src="resources/microdata-common.js"></script>
+</head>
+<body>
+<p>This test ensures thet properties.item and length must ignore properties of nested items.</p>
+<div id="console"></div>
+<script>
+var element = createElement('div', {itemscope: 'itemscope'}, '<div itemscope itemprop="foo"><div itemprop="bar"></div></div><div><div itemprop="baz"></div></div>');
+var propertiesCollection = element.properties;
+var childNodes = element.childNodes;
+
+shouldBeTrue("propertiesCollection.length == '2'");
+shouldBeTrue("propertiesCollection[0] == childNodes[0]");
+shouldBeTrue("propertiesCollection.item(0) == childNodes[0]");
+shouldBeTrue("propertiesCollection[1] == childNodes[1].firstChild");
+shouldBeTrue("propertiesCollection.item(1) == childNodes[1].firstChild");
+
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

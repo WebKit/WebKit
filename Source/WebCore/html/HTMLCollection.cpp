@@ -105,6 +105,9 @@ Element* HTMLCollection::itemAfter(Element* previous) const
         case SelectOptions:
         case DataListOptions:
         case WindowNamedItems:
+#if ENABLE(MICRODATA)
+        case ItemProperties:
+#endif
             break;
         case NodeChildren:
         case TRCells:
@@ -189,6 +192,12 @@ Element* HTMLCollection::itemAfter(Element* previous) const
             case DocAll:
             case NodeChildren:
                 return e;
+#if ENABLE(MICRODATA)
+            case ItemProperties:
+                if (e->isHTMLElement() && e->hasAttribute(itempropAttr))
+                    return e;
+                break;
+#endif
             case DocumentNamedItems:
             case OtherCollection:
             case WindowNamedItems:

@@ -74,6 +74,10 @@ module html {
         readonly attribute [Conditional=MICRODATA] DOMSettableTokenList itemRef;
         readonly attribute [Conditional=MICRODATA] DOMSettableTokenList itemProp;
 
+#if defined(ENABLE_MICRODATA) && ENABLE_MICRODATA
+        readonly attribute [Conditional=MICRODATA] HTMLPropertiesCollection properties;
+#endif
+
 #if !defined(LANGUAGE_CPP) || !LANGUAGE_CPP
 #if !defined(LANGUAGE_OBJECTIVE_C) || !LANGUAGE_OBJECTIVE_C
                  attribute [Conditional=MICRODATA, Custom] DOMObject itemValue

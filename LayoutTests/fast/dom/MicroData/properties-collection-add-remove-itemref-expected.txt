@@ -1,0 +1,18 @@
+Microdata properties collection should update properly on adding or removing itemref.
+
+Created element of type: div
+PASS item.properties.length == '0' is true
+
+Set itemref to id1.
+PASS item.properties.length == '1' is true
+PASS item.properties.item(0) == element.firstChild is true
+PASS item.properties[0] == element.firstChild is true
+
+Remove itemref attribute.
+PASS item.properties.length == '0' is true
+PASS item.properties.item(0) == undefined is true
+PASS item.properties[0] == undefined is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

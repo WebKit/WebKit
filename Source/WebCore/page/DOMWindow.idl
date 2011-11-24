@@ -488,6 +488,7 @@ module window {
 
         attribute HTMLCollectionConstructor HTMLCollection;
         attribute HTMLAllCollectionConstructor HTMLAllCollection;
+        attribute [Conditional=MICRODATA] HTMLPropertiesCollectionConstructor HTMLPropertiesCollection;
         attribute HTMLUnknownElementConstructor HTMLUnknownElement;
 
         attribute [JSCCustomGetter, CustomConstructor] HTMLImageElementConstructorConstructor Image; // Usable with new operator

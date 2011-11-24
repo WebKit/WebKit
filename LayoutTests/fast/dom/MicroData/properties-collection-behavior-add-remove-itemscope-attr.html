@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script src="resources/microdata-common.js"></script>
+</head>
+<body>
+<p>This tests the behavior of properties collection on adding or removing itemscope attribute.</p>
+<div id="console"></div>
+<script>
+var element = createElement('div', {}, '<div itemprop="foo">bar</div>');
+
+debug("<br>The properties collection must be empty if the element does not have an itemscope attribute.");
+shouldBeTrue("element.properties.length == '0'");
+shouldBeTrue("element.properties[0] == undefined");
+shouldBeTrue("element.properties.item(0) == undefined");
+
+debug("<br>The properties collection must become populated if we add itemscope attribute.");
+element.itemScope = true;
+shouldBeTrue("element.properties.length == '1'");
+shouldBeTrue("element.properties[0] == element.firstChild");
+shouldBeTrue("element.properties.item(0) == element.firstChild");
+
+debug("<br>The properties collection must become empty if we remove itemscope attribute.");
+element.itemScope = false;
+shouldBeTrue("element.properties.length == '0'");
+shouldBeTrue("element.properties[0] == undefined");
+shouldBeTrue("element.properties.item(0) == undefined");
+
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

@@ -997,38 +997,6 @@ bool HTMLElement::isURLAttribute(Attribute* attribute) const
 }
 
 #if ENABLE(MICRODATA)
-PassRefPtr<DOMSettableTokenList> HTMLElement::itemProp() const
-{
-    if (!m_itemProp)
-        m_itemProp = DOMSettableTokenList::create();
-
-    return m_itemProp;
-}
-
-void HTMLElement::setItemProp(const String& value)
-{
-    if (!m_itemProp)
-        m_itemProp = DOMSettableTokenList::create();
-
-    m_itemProp->setValue(value);
-}
-
-PassRefPtr<DOMSettableTokenList> HTMLElement::itemRef() const
-{
-    if (!m_itemRef)
-        m_itemRef = DOMSettableTokenList::create();
-
-    return m_itemRef;
-}
-
-void HTMLElement::setItemRef(const String& value)
-{
-    if (!m_itemRef)
-        m_itemRef = DOMSettableTokenList::create();
-
-    m_itemRef->setValue(value);
-}
-
 void HTMLElement::setItemValue(const String& value, ExceptionCode& ec)
 {
     if (!hasAttribute(itempropAttr) || hasAttribute(itemscopeAttr)) {
@@ -1058,22 +1026,6 @@ String HTMLElement::itemValueText() const
 void HTMLElement::setItemValueText(const String& value, ExceptionCode& ec)
 {
     setTextContent(value, ec);
-}
-
-PassRefPtr<DOMSettableTokenList> HTMLElement::itemType() const
-{
-    if (!m_itemType)
-        m_itemType = DOMSettableTokenList::create();
-
-    return m_itemType;
-}
-
-void HTMLElement::setItemType(const String& value)
-{
-    if (!m_itemType)
-        m_itemType = DOMSettableTokenList::create();
-
-    m_itemType->setValue(value);
 }
 #endif
 
