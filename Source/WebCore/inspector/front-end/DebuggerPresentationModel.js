@@ -157,7 +157,7 @@ WebInspector.DebuggerPresentationModel.prototype = {
     _bindScriptToRawSourceCode: function(script, rawSourceCode)
     {
         this._rawSourceCodeForScriptId[script.scriptId] = rawSourceCode;
-        this._rawSourceCodeForURL[script.sourceURL] = rawSourceCode; 
+        this._rawSourceCodeForURL[script.sourceURL] = rawSourceCode;
     },
 
     /**
@@ -333,6 +333,16 @@ WebInspector.DebuggerPresentationModel.prototype = {
         this._breakpointManager.reset();
         for (var id in this._rawSourceCodeForScriptId)
             this._rawSourceCodeForScriptId[id].setFormatted(this._formatSource);
+    },
+
+    /**
+     * @param {WebInspector.UISourceCode} uiSourceCode
+     * @param {string} sourceMappingURL
+     */
+    setCompilerSourceMapping: function(uiSourceCode, sourceMappingURL)
+    {
+        var sourceMapping = new WebInspector.ClosureCompilerSourceMapping(sourceMappingURL);
+        uiSourceCode.rawSourceCode.setCompilerSourceMapping(sourceMapping);
     },
 
     /**
@@ -551,11 +561,11 @@ WebInspector.DebuggerPresentationModel.prototype = {
                 callback(null, wasThrown, wasThrown ? null : result);
             else
                 callback(WebInspector.RemoteObject.fromPayload(result), wasThrown);
-            
+
             if (objectGroup === "console")
                 this.dispatchEventToListeners(WebInspector.DebuggerPresentationModel.Events.ConsoleCommandEvaluatedInSelectedCallFrame);
         }
-        
+
         this.selectedCallFrame.evaluate(code, objectGroup, includeCommandLineAPI, returnByValue, didEvaluate.bind(this));
     },
 
@@ -603,7 +613,7 @@ WebInspector.DebuggerPresentationModel.prototype = {
     {
         if (!this._selectedCallFrame.rawSourceCode.sourceMapping)
             return;
-        
+
         var rawLocation = this._selectedCallFrame._callFrame.location;
         var uiLocation = this._selectedCallFrame.rawSourceCode.sourceMapping.rawLocationToUILocation(rawLocation);
         return uiLocation;
@@ -910,7 +920,7 @@ WebInspector.DebuggerPresentationModel.DefaultLinkifierFormatter.prototype = {
         var uiLocation = rawSourceCode.sourceMapping.rawLocationToUILocation(anchor.rawLocation);
 
         anchor.textContent = WebInspector.formatLinkText(uiLocation.uiSourceCode.url, uiLocation.lineNumber);
-            
+
         var text = WebInspector.formatLinkText(uiLocation.uiSourceCode.url, uiLocation.lineNumber);
         if (this._maxLength)
             text = text.trimMiddle(this._maxLength);
@@ -944,7 +954,7 @@ WebInspector.DebuggerPresentationModel.Linkifier.prototype = {
         var rawSourceCode = this._model._rawSourceCodeForScriptWithURL(sourceURL);
         if (!rawSourceCode)
             return this.linkifyResource(sourceURL, lineNumber, classes);
-        
+
         return this.linkifyRawSourceCode(rawSourceCode, lineNumber, columnNumber, classes);
     },
 
@@ -1016,7 +1026,7 @@ WebInspector.DebuggerPresentationModel.Linkifier.prototype = {
         anchor.setAttribute("preferred_panel", "scripts");
         anchor.uiSourceCode = uiLocation.uiSourceCode;
         anchor.lineNumber = uiLocation.lineNumber;
-        
+
         this._formatter.formatRawSourceCodeAnchor(rawSourceCode, anchor);
     }
 }

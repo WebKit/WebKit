@@ -1,0 +1,121 @@
+<html>
+<head>
+<script src="inspector-test.js"></script>
+
+<script>
+
+function test()
+{
+    function checkMapping(compiledLineNumber, compiledColumnNumber, sourceURL, sourceLineNumber, sourceColumnNumber, mapping)
+    {
+        var sourceLocation = mapping.compiledLocationToSourceLocation(compiledLineNumber, compiledColumnNumber);
+        InspectorTest.assertEquals(sourceURL, sourceLocation.sourceURL);
+        InspectorTest.assertEquals(sourceLineNumber, sourceLocation.lineNumber);
+        InspectorTest.assertEquals(sourceColumnNumber, sourceLocation.columnNumber);
+    }
+
+    function checkReverseMapping(compiledLineNumber, compiledColumnNumber, sourceURL, sourceLineNumber, mapping)
+    {
+        var compiledLocation = mapping.sourceLocationToCompiledLocation(sourceURL, sourceLineNumber);
+        InspectorTest.assertEquals(compiledLineNumber, compiledLocation.lineNumber);
+        InspectorTest.assertEquals(compiledColumnNumber, compiledLocation.columnNumber);
+    }
+
+    InspectorTest.runTestSuite([
+        function testSimpleMapping(next)
+        {
+            /*
+                example.js:
+                0         1         2         3
+                012345678901234567890123456789012345
+                function add(variable_x, variable_y)
+                {
+                    return variable_x + variable_y;
+                }
+
+                var global = "foo";
+                ----------------------------------------
+                example-compiled.js:
+                0         1         2         3
+                012345678901234567890123456789012345
+                function add(a,b){return a+b}var global="foo";
+            */
+            var mappingPayload = {
+                "mappings":"AAASA,QAAAA,IAAG,CAACC,CAAD,CAAaC,CAAb,CACZ,CACI,MAAOD,EAAP,CAAoBC,CADxB,CAIA,IAAIC,OAAS;",
+                "sources":["example.js"]
+            };
+            var mapping = new WebInspector.ClosureCompilerSourceMapping();
+            mapping._parseMappingPayload(mappingPayload);
+
+            checkMapping(0, 9, "example.js", 0, 9, mapping);
+            checkMapping(0, 13, "example.js", 0, 13, mapping);
+            checkMapping(0, 15, "example.js", 0, 25, mapping);
+            checkMapping(0, 18, "example.js", 2, 4, mapping);
+            checkMapping(0, 25, "example.js", 2, 11, mapping);
+            checkMapping(0, 27, "example.js", 2, 24, mapping);
+
+            checkReverseMapping(0, 0, "example.js", 0, mapping);
+            checkReverseMapping(0, 17, "example.js", 1, mapping);
+            checkReverseMapping(0, 18, "example.js", 2, mapping);
+            checkReverseMapping(0, 29, "example.js", 4, mapping);
+            checkReverseMapping(0, 29, "example.js", 5, mapping);
+            InspectorTest.assertTrue(!mapping.sourceLocationToCompiledLocation("example.js", 6));
+
+            next();
+        },
+
+        function testNoMappingEntry(next)
+        {
+            var mappingPayload = {
+                "mappings":"AAAA,C,CAAE;",
+                "sources":["example.js"]
+            };
+            var mapping = new WebInspector.ClosureCompilerSourceMapping();
+            mapping._parseMappingPayload(mappingPayload);
+            checkMapping(0, 0, "example.js", 0, 0, mapping);
+            checkMapping(0, 2, "example.js", 0, 2, mapping);
+            next();
+        },
+
+        function testEmptyLine(next)
+        {
+            var mappingPayload = {
+                "mappings":"AAAA;;;CACA",
+                "sources":["example.js"]
+            };
+            var mapping = new WebInspector.ClosureCompilerSourceMapping();
+            mapping._parseMappingPayload(mappingPayload);
+            checkMapping(0, 0, "example.js", 0, 0, mapping);
+            checkReverseMapping(3, 1, "example.js", 1, mapping);
+            next();
+        },
+
+        function testLoad(next)
+        {
+            var sourceMapping = new WebInspector.ClosureCompilerSourceMapping("http://localhost:8000/inspector/resources/source-map.json");
+            var success = sourceMapping.load();
+            InspectorTest.assertTrue(success);
+
+            var sources = sourceMapping.sources();
+            InspectorTest.assertEquals(2, sources.length);
+            InspectorTest.assertEquals("source1.js", sources[0]);
+            InspectorTest.assertEquals("source2.js", sources[1]);
+
+            var sourceCode1 = sourceMapping.loadSourceCode(sourceMapping.sources()[0]);
+            InspectorTest.assertEquals(0, sourceCode1.indexOf("window.addEventListener"));
+
+            var sourceCode2 = sourceMapping.loadSourceCode(sourceMapping.sources()[1]);
+            InspectorTest.assertEquals(0, sourceCode2.indexOf("function ClickHandler()"));
+            next();
+        }
+    ]);
+};
+
+</script>
+
+</head>
+
+<body onload="runTest()">
+<p>Tests ClosureCompilerSourceMapping.</p>
+</body>
+</html>
