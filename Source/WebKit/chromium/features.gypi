@@ -142,9 +142,6 @@
           'ENABLE_ACCELERATED_2D_CANVAS=1',
         ],
       }],
-      ['touchui==1', {
-        'enable_touch_icon_loading': 1,
-      }],
       # Mac OS X uses Accelerate.framework FFT by default instead of FFmpeg.
       ['OS!="mac"', {
         'feature_defines': [
