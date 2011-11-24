@@ -758,6 +758,10 @@ void WebGLRenderingContext::activeTexture(GC3Denum texture, ExceptionCode& ec)
     }
     m_activeTextureUnit = texture - GraphicsContext3D::TEXTURE0;
     m_context->activeTexture(texture);
+
+    if (m_drawingBuffer)
+        m_drawingBuffer->setActiveTextureUnit(texture);
+
     cleanupAfterGraphicsCall(false);
 }
 
@@ -888,6 +892,10 @@ void WebGLRenderingContext::bindTexture(GC3Denum target, WebGLTexture* texture, 
     if (target == GraphicsContext3D::TEXTURE_2D) {
         m_textureUnits[m_activeTextureUnit].m_texture2DBinding = texture;
         maxLevel = m_maxTextureLevel;
+
+        if (m_drawingBuffer && !m_activeTextureUnit)
+            m_drawingBuffer->setTexture2DBinding(objectOrZero(texture));
+
     } else if (target == GraphicsContext3D::TEXTURE_CUBE_MAP) {
         m_textureUnits[m_activeTextureUnit].m_textureCubeMapBinding = texture;
         maxLevel = m_maxCubeMapTextureLevel;

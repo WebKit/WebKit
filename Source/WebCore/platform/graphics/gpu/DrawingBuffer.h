@@ -85,6 +85,14 @@ public:
     // can be disabled during calls to commit.
     void setScissorEnabled(bool scissorEnabled) { m_scissorEnabled = scissorEnabled; }
 
+    // The DrawingBuffer needs to track the texture bound to texture unit 0.
+    // The bound texture is tracked to avoid costly queries during rendering.
+    void setTexture2DBinding(GC3Dint texture) { m_texture2DBinding = texture; }
+
+    // Track the currently active texture unit. Texture unit 0 is used as host for a scratch
+    // texture.
+    void setActiveTextureUnit(GC3Dint textureUnit) { m_activeTextureUnit = textureUnit; }
+
     bool multisample() const;
 
     Platform3DObject platformColorBuffer() const;
@@ -112,6 +120,8 @@ private:
 
     bool m_separateBackingTexture;
     bool m_scissorEnabled;
+    Platform3DObject m_texture2DBinding;
+    GC3Denum m_activeTextureUnit;
 
     RefPtr<GraphicsContext3D> m_context;
     IntSize m_size;

@@ -40,6 +40,8 @@ DrawingBuffer::DrawingBuffer(GraphicsContext3D* context,
                              bool separateBackingTexture)
     : m_separateBackingTexture(separateBackingTexture)
     , m_scissorEnabled(false)
+    , m_texture2DBinding(0)
+    , m_activeTextureUnit(GraphicsContext3D::TEXTURE0)
     , m_context(context)
     , m_size(-1, -1)
     , m_multisampleExtensionSupported(multisampleExtensionSupported)

@@ -1,3 +1,31 @@
+2011-11-23  Jeff Timanus  <twiz@chromium.org>
+
+        [Chromium]  Prevent DrawingBuffer instances from corrupting the active
+        texture state of the WebGL contexts. The DrawingBuffer now tracks the
+        state of texture unit 0, and the active texture unit, so that state can
+        be restored.
+        https://bugs.webkit.org/show_bug.cgi?id=73033
+
+        Reviewed by Kenneth Russell.
+
+        Test: fast/canvas/webgl/webgl-texture-binding-preserved.html
+
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::activeTexture):
+        (WebCore::WebGLRenderingContext::bindTexture):
+        * platform/graphics/chromium/DrawingBufferChromium.cpp:
+        (WebCore::DrawingBuffer::DrawingBuffer):
+        (WebCore::DrawingBuffer::publishToPlatformLayer):
+        * platform/graphics/gpu/DrawingBuffer.h:
+        (WebCore::DrawingBuffer::setTexture2DBinding):
+        (WebCore::DrawingBuffer::setActiveTextureUnit):
+        * platform/graphics/gpu/mac/DrawingBufferMac.mm:
+        (WebCore::DrawingBuffer::DrawingBuffer):
+        * platform/graphics/gpu/qt/DrawingBufferQt.cpp:
+        (WebCore::DrawingBuffer::DrawingBuffer):
+        * platform/graphics/gtk/DrawingBufferGtk.cpp:
+        (WebCore::DrawingBuffer::DrawingBuffer):
+
 2011-11-23  Luke Macpherson   <macpherson@chromium.org>
 
         CSSValue: reorder ClassType enum to allow faster comparisons, add COMPILE_ASSERT on class size.

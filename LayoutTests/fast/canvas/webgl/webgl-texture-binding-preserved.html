@@ -1,0 +1,69 @@
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script src="resources/webgl-test.js"></script>
+<script src="resources/webgl-test-utils.js"> </script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<script>
+description("Checks that painting WebGL contents doesn't pollute the context state.");
+
+var wtu = WebGLTestUtils;
+
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+}
+
+var canvas;
+var context;
+var requestAnimationFrame;
+
+function draw() {
+  // Draw a blue quad to the screen.  The compositor should have executed
+  // before reaching this point.  If the texture state was corruted, then 
+  // a red quad will be drawn.  See crbug.com/105045.
+  wtu.drawQuad(context);
+
+  wtu.checkCanvasRect(context, 0, 0, 1, 1, [0, 0, 255, 255], "Should have rendered blue.", 1);
+  if (window.layoutTestController)
+      layoutTestController.notifyDone();
+}
+
+window.onload = function()
+{
+  if (window.initNonKhronosFramework) {
+    window.initNonKhronosFramework(false);
+  }
+
+  canvas = document.getElementById("webgl-canvas");
+  canvas.width = 50; canvas.height = 50;
+  context = create3DContext(canvas);
+
+  requestAnimationFrame = window.webkitRequestAnimationFrame
+
+  var program = wtu.setupTexturedQuad(context);
+  var bufferObjects = wtu.setupUnitQuad(context);
+  var texture = wtu.createColoredTexture(context, 1, 1, [0, 0, 255, 255]);
+
+  context.uniform1i(context.getUniformLocation(program, "tex"), 0);
+
+  context.activeTexture(context.TEXTURE_0 + 5);
+  context.bindTexture(context.TEXTURE_2D, texture);
+
+  context.viewport(0, 0, canvas.width, canvas.height);
+
+  context.clearColor(255, 0, 0, 255);
+  context.clear(context.COLOR_BUFFER_BIT | context.DEPTH_BUFFER_BIT);
+
+  // We need to ensure that the compositor has run before the drawing
+  // takes place.
+  setTimeout(draw, 100);
+}
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+<canvas id="webgl-canvas" width="32px" height="32px"></canvas>
+</body>
+</html>

@@ -62,6 +62,8 @@ DrawingBuffer::DrawingBuffer(GraphicsContext3D* context,
                              bool separateBackingTexture)
     : m_separateBackingTexture(separateBackingTexture)
     , m_scissorEnabled(false)
+    , m_texture2DBinding(0)
+    , m_activeTextureUnit(GraphicsContext3D::TEXTURE0)
     , m_context(context)
     , m_size(-1, -1)
     , m_multisampleExtensionSupported(multisampleExtensionSupported)
@@ -118,9 +120,16 @@ void DrawingBuffer::publishToPlatformLayer()
 
     if (m_separateBackingTexture) {
         m_context->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, m_fbo);
+
+        // This path always uses TEXTURE0, and restores its state below.
+        m_context->activeTexture(GraphicsContext3D::TEXTURE0);
         m_context->bindTexture(GraphicsContext3D::TEXTURE_2D, m_backingColorBuffer);
+
         unsigned colorFormat = m_context->getContextAttributes().alpha ? GraphicsContext3D::RGBA : GraphicsContext3D::RGB;
         m_context->copyTexImage2D(GraphicsContext3D::TEXTURE_2D, 0, colorFormat, 0, 0, size().width(), size().height(), 0);
+
+        m_context->bindTexture(GraphicsContext3D::TEXTURE_2D, m_texture2DBinding);
+        m_context->activeTexture(m_activeTextureUnit);
     }
 
     if (multisample())
