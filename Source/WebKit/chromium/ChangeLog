@@ -1,3 +1,16 @@
+2011-11-23  Adam Barth  <abarth@webkit.org>
+
+        [Chromium] Remove unused WebSecurityOrigin::isEmpty from WebKit API
+        https://bugs.webkit.org/show_bug.cgi?id=73065
+
+        Reviewed by Eric Seidel.
+
+        This API no longer has any callers.
+
+        * public/WebSecurityOrigin.h:
+        * src/WebSecurityOrigin.cpp:
+        (WebKit::WebSecurityOrigin::isUnique):
+
 2011-11-23  Dmitry Lomov  <dslomov@google.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=73054
