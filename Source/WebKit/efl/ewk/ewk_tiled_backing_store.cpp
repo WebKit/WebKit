@@ -379,7 +379,7 @@ static inline void _ewk_tiled_backing_store_item_process_idler_stop(Ewk_Tiled_Ba
 
 static inline void _ewk_tiled_backing_store_item_process_idler_start(Ewk_Tiled_Backing_Store_Data* priv)
 {
-    if (priv->render.idler)
+    if (priv->render.idler || !evas_object_visible_get(priv->self))
         return;
     priv->render.idler = ecore_idler_add(
         _ewk_tiled_backing_store_item_process_idler_cb, priv);
@@ -410,6 +410,9 @@ static Eina_Bool _ewk_tiled_backing_store_enable_render(Ewk_Tiled_Backing_Store_
 
 static inline Eina_Bool _ewk_tiled_backing_store_item_fill(Ewk_Tiled_Backing_Store_Data* priv, Ewk_Tiled_Backing_Store_Item* item, unsigned long column, unsigned long row)
 {
+    if (!evas_object_visible_get(priv->self))
+        return false;
+
     unsigned long currentColumn = priv->model.base.column + column;
     unsigned long currentRow = priv->model.base.row + row;
     double lastUsed = ecore_loop_time_get();
@@ -795,6 +798,18 @@ static void _ewk_tiled_backing_store_smart_resize(Evas_Object* ewkBackingStore, 
 
     priv->changed.size = true;
     _ewk_tiled_backing_store_changed(priv);
+}
+
+static void _ewk_tiled_backing_store_smart_show(Evas_Object* ewkBackingStore)
+{
+    ewk_tiled_backing_store_enable_render(ewkBackingStore);
+    _parent_sc.show(ewkBackingStore);
+}
+
+static void _ewk_tiled_backing_store_smart_hide(Evas_Object* ewkBackingStore)
+{
+    ewk_tiled_backing_store_disable_render(ewkBackingStore);
+    _parent_sc.hide(ewkBackingStore);
 }
 
 static void _ewk_tiled_backing_store_recalc_renderers(Ewk_Tiled_Backing_Store_Data* priv, Evas_Coord width, Evas_Coord height, Evas_Coord tileWidth, Evas_Coord tileHeight)
@@ -1382,6 +1397,8 @@ Evas_Object* ewk_tiled_backing_store_add(Evas* canvas)
         sc.del = _ewk_tiled_backing_store_smart_del;
         sc.resize = _ewk_tiled_backing_store_smart_resize;
         sc.move = _ewk_tiled_backing_store_smart_move;
+        sc.show = _ewk_tiled_backing_store_smart_show;
+        sc.hide = _ewk_tiled_backing_store_smart_hide;
         sc.calculate = _ewk_tiled_backing_store_smart_calculate;
         sc.member_add = _ewk_tiled_backing_store_smart_member_add;
         sc.member_del = _ewk_tiled_backing_store_smart_member_del;

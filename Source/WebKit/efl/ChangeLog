@@ -1,3 +1,20 @@
+2011-11-24  KwangHyuk Kim  <hyuki.kim@samsung.com>
+
+        [EFL] Add implementation considering ewk_tiled_backing_store's visible status.
+        https://bugs.webkit.org/show_bug.cgi?id=71791
+
+        Reviewed by Gustavo Noronha Silva.
+
+        In order to prevent rendering and pre-rendering while backing store is hidden,
+        its visibility is checked and pre-rendering is handled whenever backing store is shown or hidden.
+
+        * ewk/ewk_tiled_backing_store.cpp:
+        (_ewk_tiled_backing_store_item_process_idler_start):
+        (_ewk_tiled_backing_store_item_fill):
+        (_ewk_tiled_backing_store_smart_show):
+        (_ewk_tiled_backing_store_smart_hide):
+        (ewk_tiled_backing_store_add):
+
 2011-11-22  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: remove Inspector::bringToFront from the protocol.
