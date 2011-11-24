@@ -36,7 +36,7 @@ Attachment::Attachment()
 {
 }
 
-#if PLATFORM(MAC)
+#if OS(DARWIN)
 Attachment::Attachment(mach_port_name_t port, mach_msg_type_name_t disposition)
     : m_type(MachPortType)
 {

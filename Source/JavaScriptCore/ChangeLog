@@ -1,3 +1,16 @@
+2011-11-24  Zeno Albisser  <zeno@webkit.org>
+
+        [Qt]WK2][Mac] Use Mac port's IPC implementation instead of Unix sockets
+        https://bugs.webkit.org/show_bug.cgi?id=72495
+
+        Update defines to not use Unix Domain Sockets for platform Qt on Mac.
+        This enables Qt to reuse existing code for mach ports and Grand
+        Central Dispatch based IPC.
+
+        Reviewed by Simon Hausmann.
+
+        * wtf/Platform.h:
+
 2011-11-24  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] REGRESSION(r101131): WTF::scheduleDispatchFunctionsOnMainThread() doesn't work reliably

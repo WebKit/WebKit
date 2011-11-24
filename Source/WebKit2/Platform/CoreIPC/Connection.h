@@ -38,7 +38,7 @@
 #include <wtf/OwnPtr.h>
 #include <wtf/Threading.h>
 
-#if PLATFORM(MAC)
+#if OS(DARWIN)
 #include <mach/mach_port.h>
 #elif PLATFORM(WIN)
 #include <string>
@@ -108,7 +108,7 @@ public:
         virtual ~QueueClient() { }
     };
 
-#if PLATFORM(MAC)
+#if OS(DARWIN)
     typedef mach_port_t Identifier;
 #elif PLATFORM(WIN)
     typedef HANDLE Identifier;
@@ -121,7 +121,7 @@ public:
     static PassRefPtr<Connection> createClientConnection(Identifier, Client*, RunLoop* clientRunLoop);
     ~Connection();
 
-#if PLATFORM(MAC)
+#if OS(DARWIN)
     void setShouldCloseConnectionOnMachExceptions();
 #elif PLATFORM(QT)
     void setShouldCloseConnectionOnProcessTermination(WebKit::PlatformProcessIdentifier);
@@ -317,7 +317,7 @@ private:
     bool m_shouldWaitForSyncReplies;
     Vector<PendingSyncReply> m_pendingSyncReplies;
 
-#if PLATFORM(MAC)
+#if OS(DARWIN)
     // Called on the connection queue.
     void receiveSourceEventHandler();
     void initializeDeadNameSource();
@@ -350,7 +350,6 @@ private:
     Vector<int> m_fileDescriptors;
     size_t m_fileDescriptorsSize;
     int m_socketDescriptor;
-
 #if PLATFORM(QT)
     QSocketNotifier* m_socketNotifier;
 #endif

@@ -66,7 +66,7 @@ public:
 #endif
     private:
         friend class SharedMemory;
-#if PLATFORM(MAC)
+#if OS(DARWIN)
         mutable mach_port_t m_port;
 #elif PLATFORM(WIN)
         mutable HANDLE m_handle;
@@ -105,7 +105,7 @@ public:
 private:
     size_t m_size;
     void* m_data;
-#if PLATFORM(MAC)
+#if OS(DARWIN)
     mach_port_t m_port;
 #elif PLATFORM(WIN)
     HANDLE m_handle;

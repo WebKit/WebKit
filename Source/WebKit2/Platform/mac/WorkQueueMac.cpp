@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WorkQueue.h"
 
+#include <mach/mach_init.h>
 #include <mach/mach_port.h>
 #include <wtf/PassOwnPtr.h>
 

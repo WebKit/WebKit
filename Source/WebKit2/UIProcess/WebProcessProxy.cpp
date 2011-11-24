@@ -408,7 +408,7 @@ void WebProcessProxy::didFinishLaunching(CoreIPC::Connection::Identifier connect
     ASSERT(!m_connection);
     
     m_connection = CoreIPC::Connection::createServerConnection(connectionIdentifier, this, RunLoop::main());
-#if PLATFORM(MAC)
+#if OS(DARWIN)
     m_connection->setShouldCloseConnectionOnMachExceptions();
 #elif PLATFORM(QT)
     m_connection->setShouldCloseConnectionOnProcessTermination(processIdentifier());

@@ -55,6 +55,13 @@
 #include <signal.h>
 #endif
 
+#if OS(DARWIN)
+#include <mach/mach_init.h>
+#include <servers/bootstrap.h>
+
+extern "C" kern_return_t bootstrap_register2(mach_port_t, name_t, mach_port_t, uint64_t);
+#endif
+
 #if defined(SOCK_SEQPACKET) && !defined(Q_OS_MACX)
 #define SOCKET_TYPE SOCK_SEQPACKET
 #else
@@ -102,6 +109,22 @@ void ProcessLauncher::launchProcess()
         applicationPath = applicationPath.arg(QLatin1String("QtWebProcess"));
     }
 
+#if OS(DARWIN)
+    // Create the listening port.
+    mach_port_t connector;
+    mach_port_allocate(mach_task_self(), MACH_PORT_RIGHT_RECEIVE, &connector);
+
+    // Insert a send right so we can send to it.
+    mach_port_insert_right(mach_task_self(), connector, connector, MACH_MSG_TYPE_MAKE_SEND);
+
+    // Register port with a service name to the system.
+    QString serviceName = QString("com.nokia.Qt.WebKit.QtWebProcess-%1-%2");
+    serviceName = serviceName.arg(QString().setNum(getpid()), QString().setNum((size_t)this));
+    kern_return_t kr = bootstrap_register2(bootstrap_port, const_cast<char*>(serviceName.toUtf8().data()), connector, 0);
+    ASSERT_UNUSED(kr, kr == KERN_SUCCESS);
+
+    QString program(applicationPath.arg(serviceName));
+#else
     int sockets[2];
     if (socketpair(AF_UNIX, SOCKET_TYPE, 0, sockets) == -1) {
         qDebug() << "Creation of socket failed with errno:" << errno;
@@ -119,12 +142,15 @@ void ProcessLauncher::launchProcess()
         }
     }
 
+    int connector = sockets[1];
     QString program(applicationPath.arg(sockets[0]));
+#endif
 
     QProcess* webProcess = new QtWebProcess();
     webProcess->setProcessChannelMode(QProcess::ForwardedChannels);
     webProcess->start(program);
 
+#if !OS(DARWIN)
     // Don't expose the web socket to possible future web processes
     while (fcntl(sockets[0], F_SETFD, FD_CLOEXEC) == -1) {
         if (errno != EINTR) {
@@ -133,17 +159,22 @@ void ProcessLauncher::launchProcess()
             return;
         }
     }
+#endif
 
     if (!webProcess->waitForStarted()) {
         qDebug() << "Failed to start" << program;
         ASSERT_NOT_REACHED();
+#if OS(DARWIN)
+        mach_port_deallocate(mach_task_self(), connector);
+        mach_port_mod_refs(mach_task_self(), connector, MACH_PORT_RIGHT_RECEIVE, -1);
+#endif
         delete webProcess;
         return;
     }
 
     setpriority(PRIO_PROCESS, webProcess->pid(), 10);
 
-    RunLoop::main()->scheduleWork(WorkItem::create(this, &WebKit::ProcessLauncher::didFinishLaunchingProcess, webProcess, sockets[1]));
+    RunLoop::main()->scheduleWork(WorkItem::create(this, &WebKit::ProcessLauncher::didFinishLaunchingProcess, webProcess, connector));
 }
 
 void ProcessLauncher::terminateProcess()

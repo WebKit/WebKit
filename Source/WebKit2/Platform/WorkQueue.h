@@ -27,7 +27,7 @@
 #ifndef WorkQueue_h
 #define WorkQueue_h
 
-#if PLATFORM(MAC)
+#if OS(DARWIN)
 #if HAVE(DISPATCH_H)
 #include <dispatch/dispatch.h>
 #endif
@@ -40,7 +40,7 @@
 #include <wtf/Threading.h>
 #include <wtf/Vector.h>
 
-#if PLATFORM(QT)
+#if PLATFORM(QT) && !OS(DARWIN)
 #include <QSocketNotifier>
 #include "PlatformProcessIdentifier.h"
 class QObject;
@@ -67,7 +67,7 @@ public:
 
     void invalidate();
 
-#if PLATFORM(MAC)
+#if OS(DARWIN)
     enum MachPortEventType {
         // Fired when there is data on the given receive right.
         MachPortDataAvailable,
@@ -100,7 +100,7 @@ private:
     void platformInitialize(const char* name);
     void platformInvalidate();
 
-#if PLATFORM(MAC)
+#if OS(DARWIN)
 #if HAVE(DISPATCH_H)
     static void executeWorkItem(void*);
     Mutex m_eventSourcesMutex;

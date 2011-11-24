@@ -26,6 +26,11 @@
 #ifndef Attachment_h
 #define Attachment_h
 
+#if OS(DARWIN)
+#include <mach/mach_init.h>
+#include <mach/mach_traps.h>
+#endif
+
 namespace CoreIPC {
 
 class ArgumentDecoder;
@@ -37,7 +42,7 @@ public:
 
     enum Type {
         Uninitialized,
-#if PLATFORM(MAC)
+#if OS(DARWIN)
         MachPortType,
         MachOOLMemoryType,
 #elif USE(UNIX_DOMAIN_SOCKETS)
@@ -46,7 +51,7 @@ public:
 #endif
     };
 
-#if PLATFORM(MAC)
+#if OS(DARWIN)
     Attachment(mach_port_name_t port, mach_msg_type_name_t disposition);
     Attachment(void* address, mach_msg_size_t size, mach_msg_copy_options_t copyOptions, bool deallocate);
 #elif USE(UNIX_DOMAIN_SOCKETS)
@@ -56,7 +61,7 @@ public:
 
     Type type() const { return m_type; }
 
-#if PLATFORM(MAC)
+#if OS(DARWIN)
     void release();
 
     // MachPortType
@@ -83,7 +88,7 @@ public:
 private:
     Type m_type;
 
-#if PLATFORM(MAC)
+#if OS(DARWIN)
     union {
         struct {
             mach_port_name_t port;

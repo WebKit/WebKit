@@ -424,16 +424,12 @@ SOURCES += \
     Platform/CoreIPC/BinarySemaphore.cpp \
     Platform/CoreIPC/Connection.cpp \
     Platform/CoreIPC/DataReference.cpp \
-    Platform/CoreIPC/unix/AttachmentUnix.cpp \
-    Platform/CoreIPC/unix/ConnectionUnix.cpp \
     Platform/Logging.cpp \
     Platform/Module.cpp \
     Platform/RunLoop.cpp \
     Platform/WorkQueue.cpp \
     Platform/qt/ModuleQt.cpp \
     Platform/qt/RunLoopQt.cpp \
-    Platform/qt/WorkQueueQt.cpp \
-    Platform/unix/SharedMemoryUnix.cpp \
     PluginProcess/PluginControllerProxy.cpp \
     PluginProcess/PluginProcess.cpp \
     PluginProcess/WebProcessConnection.cpp \
@@ -754,6 +750,29 @@ SOURCES += \
     WebProcess/qt/WebProcessMainQt.cpp \
     WebProcess/qt/WebProcessQt.cpp \
     $$WEBKIT2_GENERATED_SOURCES
+
+mac: {
+    INCLUDEPATH += \
+        Platform/mac \
+        Platform/CoreIPC/mac
+
+    HEADERS += \
+        Platform/mac/MachUtilities.h \
+        Platform/CoreIPC/mac/MachPort.h
+
+    SOURCES += \
+        Platform/CoreIPC/mac/ConnectionMac.cpp \
+        Platform/mac/MachUtilities.cpp \
+        Platform/mac/WorkQueueMac.cpp \
+        Platform/mac/SharedMemoryMac.cpp
+
+} else {
+    SOURCES += \
+        Platform/CoreIPC/unix/AttachmentUnix.cpp \
+        Platform/CoreIPC/unix/ConnectionUnix.cpp \
+        Platform/qt/WorkQueueQt.cpp \
+        Platform/unix/SharedMemoryUnix.cpp
+}
 
 contains(DEFINES, ENABLE_TOUCH_EVENTS=1) {
     HEADERS += \
