@@ -33,15 +33,9 @@
 #include "ThreadCheck.h"
 #include "WebDOMDOMApplicationCache.h"
 #include "WebDOMDOMWindow.h"
-#include "WebDOMDedicatedWorkerContext.h"
 #include "WebDOMEventSource.h"
 #include "WebDOMMessagePort.h"
 #include "WebDOMNode.h"
-#include "WebDOMNotification.h"
-#include "WebDOMSharedWorker.h"
-#include "WebDOMSharedWorkerContext.h"
-#include "WebDOMWebSocket.h"
-#include "WebDOMWorker.h"
 #include "WebDOMXMLHttpRequest.h"
 #include "WebDOMXMLHttpRequestUpload.h"
 #include "WebExceptionHandler.h"
@@ -51,6 +45,24 @@
 #include "XMLHttpRequestUpload.h"
 
 #include <wtf/RefPtr.h>
+
+#if ENABLE(WORKERS)
+#include "WebDOMDedicatedWorkerContext.h"
+#include "WebDOMWorker.h"
+#endif
+
+#if ENABLE(SHARED_WORKERS)
+#include "WebDOMSharedWorker.h"
+#include "WebDOMSharedWorkerContext.h"
+#endif
+
+#if ENABLE(NOTIFICATIONS)
+#include "WebDOMNotification.h"
+#endif
+
+#if ENABLE(WEB_SOCKETS)
+#include "WebDOMWebSocket.h"
+#endif
 
 struct WebDOMEventTarget::WebDOMEventTargetPrivate {
     WebDOMEventTargetPrivate(WebCore::EventTarget* object = 0)

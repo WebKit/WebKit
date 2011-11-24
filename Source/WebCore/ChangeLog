@@ -1,3 +1,9 @@
+2011-11-24  Patrick Gansterer  <paroga@webkit.org>
+
+        Build fix for C++ bindings.
+
+        * bindings/cpp/WebDOMEventTarget.cpp: Added #if ENABLE() guards.
+
 2011-11-24  Arko Saha  <arko@motorola.com>
 
         Microdata: Support for properties attribute.
