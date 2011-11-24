@@ -81,5 +81,28 @@ template <> void derefGPtr<GstCaps>(GstCaps* ptr)
         gst_caps_unref(ptr);
 }
 
+
+template <> GRefPtr<GstTask> adoptGRef(GstTask* ptr)
+{
+    ASSERT(!GST_OBJECT_IS_FLOATING(GST_OBJECT(ptr)));
+    return GRefPtr<GstTask>(ptr, GRefPtrAdopt);
+}
+
+template <> GstTask* refGPtr<GstTask>(GstTask* ptr)
+{
+    if (ptr) {
+        gst_object_ref(GST_OBJECT(ptr));
+        gst_object_sink(GST_OBJECT(ptr));
+    }
+
+    return ptr;
+}
+
+template <> void derefGPtr<GstTask>(GstTask* ptr)
+{
+    if (ptr)
+        gst_object_unref(ptr);
+}
+
 }
 #endif // USE(GSTREAMER)

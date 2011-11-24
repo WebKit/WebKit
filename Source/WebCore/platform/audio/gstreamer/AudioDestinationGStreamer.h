@@ -22,6 +22,9 @@
 #include "AudioBus.h"
 #include "AudioDestination.h"
 
+typedef struct _GstElement GstElement;
+typedef struct _GstPad GstPad;
+
 namespace WebCore {
 
 class AudioDestinationGStreamer : public AudioDestination {
@@ -36,12 +39,17 @@ public:
     float sampleRate() const { return m_sampleRate; }
     AudioSourceProvider& sourceProvider() const { return m_provider; }
 
+    void finishBuildingPipelineAfterWavParserPadReady(GstPad*);
+
 private:
     AudioSourceProvider& m_provider;
     AudioBus m_renderBus;
 
     float m_sampleRate;
     bool m_isPlaying;
+    bool m_wavParserAvailable;
+    bool m_audioSinkAvailable;
+    GstElement* m_pipeline;
 };
 
 } // namespace WebCore

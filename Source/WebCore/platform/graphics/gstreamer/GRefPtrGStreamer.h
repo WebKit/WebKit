@@ -26,6 +26,7 @@
 typedef struct _GstElement GstElement;
 typedef struct _GstPad GstPad;
 typedef struct _GstCaps GstCaps;
+typedef struct _GstTask GstTask;
 
 namespace WTF {
 
@@ -39,6 +40,10 @@ template<> void derefGPtr<GstPad>(GstPad* ptr);
 
 template<> GstCaps* refGPtr<GstCaps>(GstCaps* ptr);
 template<> void derefGPtr<GstCaps>(GstCaps* ptr);
+
+template<> GRefPtr<GstTask> adoptGRef(GstTask* ptr);
+template<> GstTask* refGPtr<GstTask>(GstTask* ptr);
+template<> void derefGPtr<GstTask>(GstTask* ptr);
 
 }
 

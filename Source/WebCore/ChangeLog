@@ -1,3 +1,59 @@
+2011-10-27  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] WebAudio AudioDestination
+        https://bugs.webkit.org/show_bug.cgi?id=69835
+
+        Reviewed by Martin Robinson.
+
+        New GStreamer source element pulling data from the AudioBus and
+        outputing audio interleaved GstBuffers suitable for playback.
+
+        * GNUmakefile.list.am: Added the new GStreamer WebAudio element
+        source files to the build.
+        * platform/audio/gstreamer/AudioDestinationGStreamer.cpp:
+        (WebCore::onGStreamerWavparsePadAddedCallback): Function called
+        when the playback pipeline successfully parsed the audio source
+        into a WAV stream.
+        (WebCore::AudioDestinationGStreamer::AudioDestinationGStreamer):
+        Configure the initial playback pipeline up to the WAV parser. The
+        audio sink is added only after the WAV parser was configured.
+        (WebCore::AudioDestinationGStreamer::~AudioDestinationGStreamer):
+        Reset the playback pipeline and delete it.
+        (WebCore::AudioDestinationGStreamer::finishBuildingPipelineAfterWavParserPadReady):
+        Method to add the audio sink to the pipeline and link it to the
+        WAV parser.
+        (WebCore::AudioDestinationGStreamer::start): Set pipeline to
+        PLAYING, at the first run it will trigger the WAV parser and hence
+        the audio-sink plugging.
+        (WebCore::AudioDestinationGStreamer::stop): Pause the pipeline.
+        * platform/audio/gstreamer/AudioDestinationGStreamer.h:
+        * platform/audio/gstreamer/WebKitWebAudioSourceGStreamer.cpp: Added.
+        (getGStreamerMonoAudioCaps): Utility function to generate
+        GStreamer caps representing a single audio channel for a given
+        sample rate.
+        (webKitWebAudioGStreamerChannelPosition): Utility function to
+        convert AudioBus channel representations to GStreamer positional
+        audio channel values.
+        (webkit_web_audio_src_class_init): GObject configuration of the
+        GStreamer source element.
+        (webkit_web_audio_src_init): Initialization of the private data of
+        the element.
+        (webKitWebAudioSourceConstructed): Configure the GstBin elements
+        depending on the AudioBus layout.
+        (webKitWebAudioSourceFinalize): Clean up the GstBin and free private
+        data of the element.
+        (webKitWebAudioSourceSetProperty): GObject property setter.
+        (webKitWebAudioSourceGetProperty): GObject property getter.
+        (webKitWebAudioSourceLoop): GstTask used to pull data from the
+        AudioBus and push it as GstBuffers to the src pad of the element.
+        (webKitWebAudioSourceChangeState): Start or stop the above GstTask
+        depending on the asked state transition.
+        * platform/audio/gstreamer/WebKitWebAudioSourceGStreamer.h: Added.
+        * platform/graphics/gstreamer/GRefPtrGStreamer.cpp: GstTask support in GRefPtr.
+        (WTF::adoptGRef):
+        (WTF::GstTask):
+        * platform/graphics/gstreamer/GRefPtrGStreamer.h:
+
 2011-11-24  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] Get rid of the buildDirForSource() function in the build system
