@@ -1,3 +1,16 @@
+2011-11-24  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] REGRESSION(r101131): WTF::scheduleDispatchFunctionsOnMainThread() doesn't work reliably
+
+        Reviewed by Andreas Kling.
+
+        We must make sure that the MainThreadInvoker object lives in the gui thread. There are a few
+        ways of doing that and this fix seems like the least intrusive one by simply pushing the
+        invoker to the gui thread if it's not there already.
+
+        * wtf/qt/MainThreadQt.cpp:
+        (WTF::scheduleDispatchFunctionsOnMainThread):
+
 2011-11-24  Patrick Gansterer  <paroga@webkit.org>
 
         [Qt] Use QEvent for dispatchFunctionsFromMainThread()
