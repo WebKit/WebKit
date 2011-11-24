@@ -59,6 +59,10 @@
 
 namespace WebCore {
 
+#ifdef NDEBUG
+COMPILE_ASSERT((sizeof(CSSValue) - sizeof(RefCounted<CSSValue>)) <= 4, CSS_value_packs_into_four_bytes);
+#endif
+
 CSSValue::Type CSSValue::cssValueType() const
 {
     if (isInheritedValue())

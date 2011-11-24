@@ -56,8 +56,8 @@ public:
     String cssText() const;
     void setCssText(const String&, ExceptionCode&) { } // FIXME: Not implemented.
 
-    bool isPrimitiveValue() const { return m_isPrimitive; }
-    bool isValueList() const { return m_isList; }
+    bool isPrimitiveValue() const { return m_classType <= PrimitiveClass; }
+    bool isValueList() const { return m_classType >= ValueListClass; }
 
     bool isAspectRatioValue() const { return m_classType == AspectRatioClass; }
     bool isBorderImageValue() const { return m_classType == BorderImageClass; }
@@ -66,14 +66,14 @@ public:
     bool isFontFamilyValue() const { return m_classType == FontFamilyClass; }
     bool isFontFeatureValue() const { return m_classType == FontFeatureClass; }
     bool isFontValue() const { return m_classType == FontClass; }
-    bool isImageGeneratorValue() const { return m_classType == CanvasClass || m_classType == CrossfadeClass || m_classType == LinearGradientClass || m_classType == RadialGradientClass; }
+    bool isImageGeneratorValue() const { return m_classType >= CanvasClass && m_classType <= RadialGradientClass; }
     bool isImageValue() const { return m_classType == ImageClass || m_classType == CursorImageClass; }
     bool isImplicitInitialValue() const { return m_classType == InitialClass && m_isImplicit; }
     bool isInheritedValue() const { return m_classType == InheritedClass; }
     bool isInitialValue() const { return m_classType == InitialClass; }
     bool isReflectValue() const { return m_classType == ReflectClass; }
     bool isShadowValue() const { return m_classType == ShadowClass; }
-    bool isTimingFunctionValue() const { return m_classType == CubicBezierTimingFunctionClass || m_classType == LinearTimingFunctionClass || m_classType == StepsTimingFunctionClass; }
+    bool isTimingFunctionValue() const { return m_classType >= CubicBezierTimingFunctionClass && m_classType <= StepsTimingFunctionClass; }
     bool isWebKitCSSTransformValue() const { return m_classType == WebKitCSSTransformClass; }
     bool isCSSLineBoxContainValue() const { return m_classType == LineBoxContainClass; }
     bool isFlexValue() const { return m_classType == FlexClass; }
@@ -92,44 +92,57 @@ public:
 
 protected:
 
+    static const size_t ClassTypeBits = 5;
     enum ClassType {
+        // Primitive class types must appear before PrimitiveClass.
+        ImageClass,
+        CursorImageClass,
+        FontFamilyClass,
+        PrimitiveClass,
+
+        // Image generator classes.
+        CanvasClass,
+        CrossfadeClass,
+        LinearGradientClass,
+        RadialGradientClass,
+
+        // Timing function classes.
+        CubicBezierTimingFunctionClass,
+        LinearTimingFunctionClass,
+        StepsTimingFunctionClass,
+
+        // Other class types.
         AspectRatioClass,
         BorderImageClass,
         BorderImageSliceClass,
-        CanvasClass,
-        CursorImageClass,
-        FontFamilyClass,
         FontFeatureClass,
         FontClass,
         FontFaceSrcClass,
         FunctionClass,
-        LinearGradientClass,
-        RadialGradientClass,
-        CrossfadeClass,
-        ImageClass,
+
         InheritedClass,
         InitialClass,
-        PrimitiveClass,
+
         ReflectClass,
         ShadowClass,
-        LinearTimingFunctionClass,
-        CubicBezierTimingFunctionClass,
-        StepsTimingFunctionClass,
         UnicodeRangeClass,
-        ValueListClass,
-        WebKitCSSTransformClass,
         LineBoxContainClass,
         FlexClass,
-#if ENABLE(CSS_FILTERS)
-        WebKitCSSFilterClass,
-#if ENABLE(CSS_SHADERS)
+#if ENABLE(CSS_FILTERS) && ENABLE(CSS_SHADERS)
         WebKitCSSShaderClass,
 #endif
-#endif // ENABLE(CSS_FILTERS)
 #if ENABLE(SVG)
         SVGColorClass,
         SVGPaintClass,
 #endif
+
+        // List class types must appear after ValueListClass.
+        ValueListClass,
+#if ENABLE(CSS_FILTERS)
+        WebKitCSSFilterClass,
+#endif
+        WebKitCSSTransformClass,
+        // Do not append non-list class types here.
     };
 
     ClassType classType() const { return static_cast<ClassType>(m_classType); }
@@ -140,8 +153,6 @@ protected:
         , m_isQuirkValue(false)
         , m_isImplicit(false)
         , m_classType(classType)
-        , m_isPrimitive(isPrimitiveType(classType))
-        , m_isList(isListType(classType))
     {
     }
 
@@ -151,23 +162,6 @@ protected:
     ~CSSValue() { }
 
 private:
-    static bool isPrimitiveType(ClassType type)
-    {
-        return type == PrimitiveClass
-            || type == ImageClass
-            || type == CursorImageClass
-            || type == FontFamilyClass;
-    }
-
-    static bool isListType(ClassType type)
-    {
-        return type == ValueListClass
-#if ENABLE(CSS_FILTERS)
-            || type == WebKitCSSFilterClass
-#endif
-            || type == WebKitCSSTransformClass;
-    }
-
     void destroy();
 
 protected:
@@ -175,7 +169,7 @@ protected:
     // to maximize struct packing.
 
     // CSSPrimitiveValue bits:
-    unsigned m_primitiveUnitType : 7; // CSSPrimitiveValue::UnitTypes
+    unsigned char m_primitiveUnitType : 7; // CSSPrimitiveValue::UnitTypes
     mutable bool m_hasCachedCSSText : 1;
     bool m_isQuirkValue : 1;
 
@@ -183,9 +177,7 @@ protected:
     bool m_isImplicit : 1;
 
 private:
-    unsigned m_classType : 5; // ClassType
-    bool m_isPrimitive : 1;
-    bool m_isList : 1;
+    unsigned char m_classType : ClassTypeBits; // ClassType
 };
 
 } // namespace WebCore
