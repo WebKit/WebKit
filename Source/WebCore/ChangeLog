@@ -1,3 +1,13 @@
+2011-11-24  Philippe Normand  <pnormand@igalia.com>
+
+        Fix ASSERTs added in r101082.
+
+        Rubber-Stamped by Martin Robinson.
+
+        * platform/graphics/gstreamer/GRefPtrGStreamer.cpp:
+        (WTF::adoptGRef): Check for valid pointer before
+        GST_OBJECT_IS_FLOATING().
+
 2011-11-23  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: shift focus to the source view when a resource is selected in the Scripts panel
