@@ -132,7 +132,7 @@ WebInspector.AuditsPanel.prototype = {
             rulesRemaining += categories[i].ruleCount;
 
         var results = [];
-        var mainResourceURL = WebInspector.mainResource.url;
+        var mainResourceURL = WebInspector.inspectedPageURL;
 
         function ruleResultReadyCallback(categoryResult, ruleResult)
         {

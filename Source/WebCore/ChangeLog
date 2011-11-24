@@ -1,3 +1,38 @@
+2011-11-23  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: get rid of the WebInspector.mainResource, use WebInspector.inspectedPageURL instead.
+        https://bugs.webkit.org/show_bug.cgi?id=73024
+
+        We use it for the URL mostly, no need to create artificial resource for that upon
+        attaching to the existing page.
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/front-end/AuditsPanel.js:
+        * inspector/front-end/HAREntry.js:
+        (WebInspector.HARLog.prototype._buildPages):
+        (WebInspector.HARLog.prototype._pageEventTime):
+        * inspector/front-end/NetworkPanel.js:
+        (WebInspector.NetworkLogView.prototype._updateSummaryBar):
+        (WebInspector.NetworkLogView.prototype._exportAll):
+        * inspector/front-end/Resource.js:
+        (WebInspector.Resource.prototype.set url):
+        (WebInspector.Resource.prototype.get displayName):
+        (WebInspector.Resource.prototype.get displayDomain):
+        * inspector/front-end/ResourceTreeModel.js:
+        (WebInspector.ResourceTreeModel.prototype._processCachedResources):
+        (WebInspector.ResourceTreeModel.prototype._dispatchInspectedURLChanged):
+        (WebInspector.ResourceTreeModel.prototype._frameNavigated):
+        (WebInspector.ResourceTreeModel.prototype._addFramesRecursively):
+        * inspector/front-end/ResourceUtils.js:
+        (WebInspector.displayNameForURL):
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.ResourcesPanel.prototype._initDefaultSelection):
+        * inspector/front-end/TimelinePanel.js:
+        (WebInspector.TimelinePanel.prototype._addRecordToTimeline):
+        * inspector/front-end/utilities.js:
+        (String.prototype.asParsedURL):
+
 2011-11-23  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: exceptions in shared workers should be logged to web inspector console

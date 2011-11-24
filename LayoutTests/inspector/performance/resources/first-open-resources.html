@@ -7,7 +7,7 @@
 function test()
 {
     WebInspector.showPanel("resources");
-    WebInspector.settings.resourcesLastSelectedItem.set(WebInspector.mainResource._documentURL);
+    WebInspector.settings.resourcesLastSelectedItem.set(WebInspector.inspectedPageURL);
 
     function test(timer)
     {

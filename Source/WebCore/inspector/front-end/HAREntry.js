@@ -237,8 +237,8 @@ WebInspector.HARLog.prototype = {
     {
         return [
             {
-                startedDateTime: new Date(WebInspector.mainResource.startTime * 1000),
-                id: WebInspector.mainResource.documentURL,
+                startedDateTime: new Date(WebInspector.mainResourceStartTime * 1000),
+                id: WebInspector.inspectedPageURL,
                 title: "",
                 pageTimings: this.buildMainResourceTimings()
             }
@@ -260,7 +260,7 @@ WebInspector.HARLog.prototype = {
 
     _pageEventTime: function(time)
     {
-        var startTime = WebInspector.mainResource.startTime;
+        var startTime = WebInspector.mainResourceStartTime;
         if (time === -1 || startTime === -1)
             return -1;
         return WebInspector.HAREntry._toMilliseconds(time - startTime);

@@ -23,7 +23,7 @@ var test = function()
 
     function step1()
     {
-        var testName = WebInspector.mainResource.url;
+        var testName = WebInspector.inspectedPageURL;
         testName = testName.substring(testName.lastIndexOf('/') + 1);
         InspectorTest.showScriptSource(testName, step2);
     }

@@ -11,7 +11,7 @@ function testFunction()
 
 var test = function()
 {
-    var testName = WebInspector.mainResource.url;
+    var testName = WebInspector.inspectedPageURL;
     testName = testName.substring(testName.lastIndexOf('/') + 1);
 
     InspectorTest.startDebuggerTest(step1);

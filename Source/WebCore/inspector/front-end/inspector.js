@@ -341,7 +341,7 @@ WebInspector.doLoadedDone = function()
     this.consoleView = new WebInspector.ConsoleView(WebInspector.WorkerManager.isWorkerFrontend());
 
     this.networkManager = new WebInspector.NetworkManager();
-    this.resourceTreeModel = new WebInspector.ResourceTreeModel();
+    this.resourceTreeModel = new WebInspector.ResourceTreeModel(this.networkManager);
     this.networkLog = new WebInspector.NetworkLog();
     this.domAgent = new WebInspector.DOMAgent();
     new WebInspector.JavaScriptContextManager(this.resourceTreeModel, this.consoleView);

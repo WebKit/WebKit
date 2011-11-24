@@ -31,12 +31,13 @@
 /**
  * @constructor
  * @extends {WebInspector.Object}
+ * @param {WebInspector.NetworkManager} networkManager
  */
 WebInspector.ResourceTreeModel = function(networkManager)
 {
-    WebInspector.networkManager.addEventListener(WebInspector.NetworkManager.EventTypes.ResourceStarted, this._onResourceStarted, this);
-    WebInspector.networkManager.addEventListener(WebInspector.NetworkManager.EventTypes.ResourceUpdated, this._onResourceUpdated, this);
-    WebInspector.networkManager.addEventListener(WebInspector.NetworkManager.EventTypes.ResourceFinished, this._onResourceUpdated, this);
+    networkManager.addEventListener(WebInspector.NetworkManager.EventTypes.ResourceStarted, this._onResourceStarted, this);
+    networkManager.addEventListener(WebInspector.NetworkManager.EventTypes.ResourceUpdated, this._onResourceUpdated, this);
+    networkManager.addEventListener(WebInspector.NetworkManager.EventTypes.ResourceFinished, this._onResourceUpdated, this);
 
     WebInspector.console.addEventListener(WebInspector.ConsoleModel.Events.MessageAdded, this._consoleMessageAdded, this);
     WebInspector.console.addEventListener(WebInspector.ConsoleModel.Events.RepeatCountUpdated, this._consoleMessageAdded, this);
@@ -84,17 +85,21 @@ WebInspector.ResourceTreeModel.prototype = {
 
         this.dispatchEventToListeners(WebInspector.ResourceTreeModel.EventTypes.WillLoadCachedResources);
         this._addFramesRecursively(mainFramePayload);
-        this._dispatchInspectedURLChanged(WebInspector.mainResource.url);
+
+        WebInspector.inspectedPageURL = mainFramePayload.frame.url;
+        WebInspector.inspectedPageDomain = WebInspector.inspectedPageURL.asParsedURL().host;
+
+        this._dispatchInspectedURLChanged();
         this.dispatchEventToListeners(WebInspector.ResourceTreeModel.EventTypes.CachedResourcesLoaded);
         WebInspector.Resource.restoreRevisions();
 
         this._cachedResourcesProcessed = true;
     },
 
-    _dispatchInspectedURLChanged: function(url)
+    _dispatchInspectedURLChanged: function()
     {
-        InspectorFrontendHost.inspectedURLChanged(url);
-        this.dispatchEventToListeners(WebInspector.ResourceTreeModel.EventTypes.InspectedURLChanged, url);
+        InspectorFrontendHost.inspectedURLChanged(WebInspector.inspectedPageURL);
+        this.dispatchEventToListeners(WebInspector.ResourceTreeModel.EventTypes.InspectedURLChanged, WebInspector.inspectedPageURL);
     },
 
     _addFrame: function(frame)
@@ -136,8 +141,10 @@ WebInspector.ResourceTreeModel.prototype = {
 
         if (isMainFrame) {
             this._cleanupFramesAfterNavigation(frame);
-            if (this.resourceForURL(frame.url))
-                WebInspector.mainResource = this.resourceForURL(frame.url);
+            if (this.resourceForURL(frame.url)) {
+                WebInspector.inspectedPageURL = frame.url;
+                WebInspector.inspectedPageDomain = WebInspector.inspectedPageURL.asParsedURL().host;
+            }
         }
         // Do nothing unless cached resource tree is processed - it will overwrite everything.
         if (!this._cachedResourcesProcessed)
@@ -164,7 +171,7 @@ WebInspector.ResourceTreeModel.prototype = {
         }
 
         if (isMainFrame)
-            this._dispatchInspectedURLChanged(frame.url);
+            this._dispatchInspectedURLChanged();
     },
 
     _cleanupFramesAfterNavigation: function(newMainFrame)
@@ -373,7 +380,8 @@ WebInspector.ResourceTreeModel.prototype = {
         frameResource.finished = true;
 
         if (!framePayload.parentId) {
-            WebInspector.mainResource = frameResource;
+            WebInspector.inspectedPageURL = frameResource.url;
+            WebInspector.inspectedPageDomain = WebInspector.inspectedPageURL.asParsedURL().host;
             this._currentMainFrameId = framePayload.id;
         }
         this._addFrame(framePayload);
@@ -452,8 +460,3 @@ WebInspector.PageDispatcher.prototype = {
  * @type {WebInspector.ResourceTreeModel}
  */
 WebInspector.resourceTreeModel = null;
-
-/**
- * @type {WebInspector.Resource}
- */
-WebInspector.mainResource = null;

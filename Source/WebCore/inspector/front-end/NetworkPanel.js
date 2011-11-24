@@ -392,8 +392,10 @@ WebInspector.NetworkLogView.prototype = {
                 selectedRequestsNumber++;
                 selectedTransferSize += resourceTransferSize;
             }
-            if (resource === WebInspector.mainResource)
+            if (resource.url === WebInspector.inspectedPageURL) {
                 baseTime = resource.startTime;
+                WebInspector.mainResourceStartTime = resource.startTime;
+            }
             if (resource.endTime > maxTime)
                 maxTime = resource.endTime;
         }
@@ -980,7 +982,8 @@ WebInspector.NetworkLogView.prototype = {
         var harArchive = {
             log: (new WebInspector.HARLog(this._resources)).build()
         };
-        InspectorFrontendHost.saveAs(WebInspector.mainResource.domain + ".har", JSON.stringify(harArchive));
+        
+        InspectorFrontendHost.saveAs(WebInspector.inspectedPageDomain + ".har", JSON.stringify(harArchive));
     },
 
     _exportResource: function(resource)

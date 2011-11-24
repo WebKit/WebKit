@@ -29,7 +29,7 @@ var test = function()
         watchExpressionsSection.watchExpressions.push("windowa.document");
         watchExpressionsSection.update();
 
-        var testName = WebInspector.mainResource.url;
+        var testName = WebInspector.inspectedPageURL;
         testName = testName.substring(testName.lastIndexOf('/') + 1);
         InspectorTest.showScriptSource(testName, didShowScriptSource);
     }

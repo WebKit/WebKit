@@ -388,16 +388,6 @@ WebInspector.TimelinePanel.prototype = {
 
     _addRecordToTimeline: function(record)
     {
-        if (record.type === WebInspector.TimelineAgent.RecordType.ResourceSendRequest) {
-            var isMainResource = (record.data["requestId"] === WebInspector.mainResource.requestId);
-            if (isMainResource && this._mainRequestId !== record.data["requestId"]) {
-                // We are loading new main resource -> clear the panel. Check above is necessary since
-                // there may be several resource loads with main resource marker upon redirects, redirects are reported with
-                // the original request id.
-                this._mainRequestId = record.data["requestId"];
-                this._clearPanel();
-            }
-        }
         this._model._addRecord(record);
         this._innerAddRecordToTimeline(record, this._rootRecord);
         this._scheduleRefresh(false);

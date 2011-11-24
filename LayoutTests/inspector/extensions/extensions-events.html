@@ -43,7 +43,7 @@ function extension_testOnNavigated(nextTest)
         if (loadCount !== urls.length)
             return;
         if (loadCount === 1)
-            evaluateOnFrontend("InspectorTest.navigate(WebInspector.mainResource.url.substring(0, WebInspector.mainResource.url.indexOf('?')), reply)", onLoad);
+            evaluateOnFrontend("InspectorTest.navigate(WebInspector.inspectedPageURL.substring(0, WebInspector.inspectedPageURL.indexOf('?')), reply)", onLoad);
         else {
             webInspector.network.onNavigated.removeListener(onNavigated);
             for (var i = 0; i < urls.length; ++i)
@@ -57,7 +57,7 @@ function extension_testOnNavigated(nextTest)
         processEvent();
     }
     webInspector.network.onNavigated.addListener(onNavigated);
-    evaluateOnFrontend("InspectorTest.navigate(WebInspector.mainResource.url + '?navigated', reply)", onLoad);
+    evaluateOnFrontend("InspectorTest.navigate(WebInspector.inspectedPageURL + '?navigated', reply)", onLoad);
 }
 
 function extension_testViewShowHide(nextTest)

@@ -73,7 +73,7 @@ InspectorTest.runPerformanceTest = function(perfTest, executeTime, callback)
             for (var testName in this._times)
                 InspectorTest.dumpTestStats(testName, this._times[testName]);
 
-            var url = WebInspector.mainResource._documentURL;
+            var url = WebInspector.inspectedPageURL;
             var regExp = /([^\/]+)\.html/;
             var matches = regExp.exec(url);
             InspectorTest.dumpTestStats("heap-delta-kb-" + matches[1], this._heapSizeDeltas, 1024);

@@ -58,18 +58,19 @@ WebInspector.displayNameForURL = function(url)
     if (resource)
         return resource.displayName;
 
-    if (!WebInspector.mainResource)
+    if (!WebInspector.inspectedPageURL)
         return url.trimURL("");
 
-    var lastPathComponent = WebInspector.mainResource.lastPathComponent;
-    var index = WebInspector.mainResource.url.indexOf(lastPathComponent);
-    if (index !== -1 && index + lastPathComponent.length === WebInspector.mainResource.url.length) {
-        var baseURL = WebInspector.mainResource.url.substring(0, index);
+    var parsedURL = WebInspector.inspectedPageURL.asParsedURL();
+    var lastPathComponent = parsedURL.lastPathComponent;
+    var index = WebInspector.inspectedPageURL.indexOf(lastPathComponent);
+    if (index !== -1 && index + lastPathComponent.length === WebInspector.inspectedPageURL.length) {
+        var baseURL = WebInspector.inspectedPageURL.substring(0, index);
         if (url.indexOf(baseURL) === 0)
             return url.substring(index);
     }
 
-    return url.trimURL(WebInspector.mainResource.domain);
+    return url.trimURL(parsedURL.host);
 }
 
 /**

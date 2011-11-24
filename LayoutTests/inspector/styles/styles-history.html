@@ -9,7 +9,7 @@
 
 function test()
 {
-    if (!WebInspector.mainResource)
+    if (!WebInspector.resourceTreeModel._cachedResourcesProcessed)
         WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.CachedResourcesLoaded, runTestSuite);
     else
         runTestSuite();

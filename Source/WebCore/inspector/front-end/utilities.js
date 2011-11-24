@@ -453,6 +453,20 @@ String.prototype.asParsedURL = function()
     result.port = match[3];
     result.path = match[4] || "/";
     result.fragment = match[5];
+
+    result.lastPathComponent = "";
+    if (result.path) {
+        // First cut the query params.
+        var path = result.path;
+        var indexOfQuery = path.indexOf("?");
+        if (indexOfQuery !== -1)
+            path = path.substring(0, indexOfQuery);
+
+        // Then take last path component.
+        var lastSlashIndex = path.lastIndexOf("/");
+        if (lastSlashIndex !== -1)
+            result.lastPathComponent = path.substring(lastSlashIndex + 1);
+    } 
     return result;
 }
 

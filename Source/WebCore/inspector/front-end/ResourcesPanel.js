@@ -131,8 +131,9 @@ WebInspector.ResourcesPanel.prototype = {
             }
         }
 
-        if (WebInspector.mainResource && this.resourcesListTreeElement && this.resourcesListTreeElement.expanded)
-            this.showResource(WebInspector.mainResource);
+        var mainResource = WebInspector.inspectedPageURL && this.resourcesListTreeElement && this.resourcesListTreeElement.expanded && WebInspector.resourceTreeModel.resourceForURL(WebInspector.inspectedPageURL);
+        if (mainResource)
+            this.showResource(mainResource);
     },
 
     _reset: function()

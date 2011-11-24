@@ -26,7 +26,7 @@ function test()
     }
 
     WebInspector.showPanel("resources");
-    WebInspector.settings.resourcesLastSelectedItem.set(WebInspector.mainResource._documentURL);
+    WebInspector.settings.resourcesLastSelectedItem.set(WebInspector.inspectedPageURL);
 
     WebInspector.showPanel("network");
     InspectorTest.evaluateInPage("makeXHRRequests(200)", runTest);

@@ -21,7 +21,7 @@ function test()
                 return;
 
             var script = event.data;
-            if (script.sourceURL === WebInspector.mainResource._documentURL) {
+            if (script.sourceURL === WebInspector.inspectedPageURL) {
                 continued = true;
                 setTimeout(debuggerTest, 0);
             }
@@ -34,10 +34,10 @@ function test()
     function debuggerTest()
     {
         linkifier = WebInspector.debuggerPresentationModel.createLinkifier();
-        rawSourceCode = WebInspector.debuggerPresentationModel._rawSourceCodeForScriptWithURL(WebInspector.mainResource._documentURL);
+        rawSourceCode = WebInspector.debuggerPresentationModel._rawSourceCodeForScriptWithURL(WebInspector.inspectedPageURL);
 
         var count1 = listenersCount(rawSourceCode);
-        link = linkifier.linkifyLocation(WebInspector.mainResource._documentURL, 20, 0, "dummy-class");
+        link = linkifier.linkifyLocation(WebInspector.inspectedPageURL, 20, 0, "dummy-class");
         var count2 = listenersCount(rawSourceCode);
 
         InspectorTest.addResult("listeners added on raw source code: " + (count2 - count1));

@@ -270,19 +270,7 @@ WebInspector.Resource.prototype = {
         this.domain = parsedURL ? parsedURL.host : "";
         this.path = parsedURL ? parsedURL.path : "";
         this.urlFragment = parsedURL ? parsedURL.fragment : "";
-        this.lastPathComponent = "";
-        if (parsedURL && parsedURL.path) {
-            // First cut the query params.
-            var path = parsedURL.path;
-            var indexOfQuery = path.indexOf("?");
-            if (indexOfQuery !== -1)
-                path = path.substring(0, indexOfQuery);
-
-            // Then take last path component.
-            var lastSlashIndex = path.lastIndexOf("/");
-            if (lastSlashIndex !== -1)
-                this.lastPathComponent = path.substring(lastSlashIndex + 1);
-        }
+        this.lastPathComponent = parsedURL ? parsedURL.lastPathComponent : "";
         this.lastPathComponentLowerCase = this.lastPathComponent.toLowerCase();
     },
 
@@ -304,7 +292,7 @@ WebInspector.Resource.prototype = {
         if (!this._displayName)
             this._displayName = this.displayDomain;
         if (!this._displayName && this.url)
-            this._displayName = this.url.trimURL(WebInspector.mainResource ? WebInspector.mainResource.domain : "");
+            this._displayName = this.url.trimURL(WebInspector.inspectedPageDomain ? WebInspector.inspectedPageDomain : "");
         if (this._displayName === "/")
             this._displayName = this.url;
         return this._displayName;
@@ -323,7 +311,7 @@ WebInspector.Resource.prototype = {
     get displayDomain()
     {
         // WebInspector.Database calls this, so don't access more than this.domain.
-        if (this.domain && (!WebInspector.mainResource || (WebInspector.mainResource && this.domain !== WebInspector.mainResource.domain)))
+        if (this.domain && (!WebInspector.inspectedPageDomain || (WebInspector.inspectedPageDomain && this.domain !== WebInspector.inspectedPageDomain)))
             return this.domain;
         return "";
     },
