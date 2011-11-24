@@ -1,5 +1,16 @@
 2011-11-23  Ojan Vafai  <ojan@chromium.org>
 
+        Unreviewed, rolling out r101110.
+        http://trac.webkit.org/changeset/101110
+        https://bugs.webkit.org/show_bug.cgi?id=73057
+
+        The bots have now cycled and this patch is no longer needed.
+
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (Manager._upload_json_files):
+
+2011-11-23  Ojan Vafai  <ojan@chromium.org>
+
         Temporarily save the incremental results json in order to identify bug
         https://bugs.webkit.org/show_bug.cgi?id=73057
 
