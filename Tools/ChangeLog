@@ -1,5 +1,19 @@
 2011-11-23  Ojan Vafai  <ojan@chromium.org>
 
+        Temporarily save the incremental results json in order to identify bug
+        https://bugs.webkit.org/show_bug.cgi?id=73057
+
+        Reviewed by Dean Jackson.
+
+        The test results server needed to be rolled back from tip of tree
+        due to a JSON merging bug. It's hard to identify what the bug is without
+        the raw data.
+
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (Manager._upload_json_files):
+
+2011-11-23  Ojan Vafai  <ojan@chromium.org>
+
         Merging two version 4 results hits an error in the test results server
         https://bugs.webkit.org/show_bug.cgi?id=73042
 

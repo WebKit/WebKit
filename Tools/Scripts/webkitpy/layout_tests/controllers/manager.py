@@ -1104,7 +1104,11 @@ class Manager(object):
         # Remove these files from the results directory so they don't take up too much space on the buildbot.
         # The tools use the version we uploaded to the results server anyway.
         self._fs.remove(times_json_path)
-        self._fs.remove(incremental_results_path)
+
+        # FIXME: Uncomment this code after the bots have cycled once.
+        # Ojan wants to save the incremental results once so that he can figure out a bug
+        # in the json merging using the real data.
+        #self._fs.remove(incremental_results_path)
 
     def print_config(self):
         """Prints the configuration for the test run."""
