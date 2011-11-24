@@ -87,7 +87,6 @@ WebInspector.ResourceTreeModel.prototype = {
         this._addFramesRecursively(mainFramePayload);
 
         WebInspector.inspectedPageURL = mainFramePayload.frame.url;
-        WebInspector.inspectedPageDomain = WebInspector.inspectedPageURL.asParsedURL().host;
 
         this._dispatchInspectedURLChanged();
         this.dispatchEventToListeners(WebInspector.ResourceTreeModel.EventTypes.CachedResourcesLoaded);
@@ -141,10 +140,8 @@ WebInspector.ResourceTreeModel.prototype = {
 
         if (isMainFrame) {
             this._cleanupFramesAfterNavigation(frame);
-            if (this.resourceForURL(frame.url)) {
+            if (this.resourceForURL(frame.url))
                 WebInspector.inspectedPageURL = frame.url;
-                WebInspector.inspectedPageDomain = WebInspector.inspectedPageURL.asParsedURL().host;
-            }
         }
         // Do nothing unless cached resource tree is processed - it will overwrite everything.
         if (!this._cachedResourcesProcessed)
@@ -381,7 +378,6 @@ WebInspector.ResourceTreeModel.prototype = {
 
         if (!framePayload.parentId) {
             WebInspector.inspectedPageURL = frameResource.url;
-            WebInspector.inspectedPageDomain = WebInspector.inspectedPageURL.asParsedURL().host;
             this._currentMainFrameId = framePayload.id;
         }
         this._addFrame(framePayload);

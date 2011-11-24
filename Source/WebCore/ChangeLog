@@ -1,3 +1,18 @@
+2011-11-24  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: WebInspector.inspectedPageDomain is not calculated for about:blank
+        https://bugs.webkit.org/show_bug.cgi?id=73082
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/front-end/ResourceTreeModel.js:
+        (WebInspector.ResourceTreeModel.prototype._processCachedResources):
+        (WebInspector.ResourceTreeModel.prototype._frameNavigated):
+        (WebInspector.ResourceTreeModel.prototype._addFramesRecursively):
+        * inspector/front-end/inspector.js:
+        (WebInspector.networkResourceById):
+        (WebInspector.get inspectedPageDomain):
+
 2011-11-24  Andrey Kosyakov  <caseq@chromium.org>
 
         Web Inspector: provide context menu items to open resources using extensions

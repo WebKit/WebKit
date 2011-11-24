@@ -272,6 +272,12 @@ var WebInspector = {
     networkResourceById: function(id)
     {
         return this.panels.network.resourceById(id);
+    },
+
+    get inspectedPageDomain()
+    {
+        var parsedURL = WebInspector.inspectedPageURL && WebInspector.inspectedPageURL.asParsedURL();
+        return parsedURL ? parsedURL.host : "";
     }
 }
 
