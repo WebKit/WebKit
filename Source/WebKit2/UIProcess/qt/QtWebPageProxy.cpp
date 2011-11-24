@@ -730,7 +730,7 @@ void QtWebPageProxy::loadHTMLString(const QString& html, const QUrl& baseUrl)
 
 void QtWebPageProxy::load(const QUrl& url)
 {
-    WKRetainPtr<WKURLRef> wkurl(WKURLCreateWithQUrl(url));
+    WKRetainPtr<WKURLRef> wkurl = adoptWK(WKURLCreateWithQUrl(url));
     WKPageLoadURL(pageRef(), wkurl.get());
 }
 
@@ -739,12 +739,12 @@ QUrl QtWebPageProxy::url() const
     WKRetainPtr<WKFrameRef> frame = WKPageGetMainFrame(pageRef());
     if (!frame)
         return QUrl();
-    return WKURLCopyQUrl(WKFrameCopyURL(frame.get()));
+    return WKURLCopyQUrl(adoptWK(WKFrameCopyURL(frame.get())).get());
 }
 
 QString QtWebPageProxy::title() const
 {
-    return WKStringCopyQString(WKPageCopyTitle(toAPI(m_webPageProxy.get())));
+    return WKStringCopyQString(adoptWK(WKPageCopyTitle(toAPI(m_webPageProxy.get()))).get());
 }
 
 void QtWebPageProxy::setDrawingAreaSize(const QSize& size)

@@ -135,7 +135,7 @@ void QtWebPageUIClient::runOpenPanel(WKPageRef, WKFrameRef, WKOpenPanelParameter
 
 void QtWebPageUIClient::mouseDidMoveOverElement(WKPageRef page, WKHitTestResultRef hitTestResult, WKEventModifiers modifiers, WKTypeRef userData, const void* clientInfo)
 {
-    const QUrl absoluteLinkUrl = WKURLCopyQUrl(WKHitTestResultCopyAbsoluteLinkURL(hitTestResult));
-    const QString linkTitle = WKStringCopyQString(WKHitTestResultCopyLinkTitle(hitTestResult));
+    const QUrl absoluteLinkUrl = WKURLCopyQUrl(adoptWK(WKHitTestResultCopyAbsoluteLinkURL(hitTestResult)).get());
+    const QString linkTitle = WKStringCopyQString(adoptWK(WKHitTestResultCopyLinkTitle(hitTestResult)).get());
     toQtWebPageUIClient(clientInfo)->mouseDidMoveOverElement(absoluteLinkUrl, linkTitle);
 }

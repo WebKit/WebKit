@@ -55,7 +55,7 @@ static void qt_wk_didFinishDownload(WKContextRef context, WKDownloadRef download
 
 static void qt_wk_didFailDownload(WKContextRef context, WKDownloadRef download, WKErrorRef error, const void *clientInfo)
 {
-    QUrl failingUrl = WKURLCopyQUrl(WKErrorCopyFailingURL(error));
+    QUrl failingUrl = WKURLCopyQUrl(adoptWK(WKErrorCopyFailingURL(error)).get());
 
     toQtDownloadManager(clientInfo)->downloadFailed(toImpl(download), QtWebError(error));
 }
