@@ -10,7 +10,6 @@ SET(WebKit2_INCLUDE_DIRECTORIES
     "${WEBKIT2_DIR}/Shared/Plugins"
     "${WEBKIT2_DIR}/Shared/Plugins/Netscape"
     "${WEBKIT2_DIR}/Shared/Plugins/Netscape/x11"
-    "${WEBKIT2_DIR}/Shared/efl"
     "${WEBKIT2_DIR}/UIProcess"
     "${WEBKIT2_DIR}/UIProcess/API"
     "${WEBKIT2_DIR}/UIProcess/API/C"
@@ -19,7 +18,6 @@ SET(WebKit2_INCLUDE_DIRECTORIES
     "${WEBKIT2_DIR}/UIProcess/Downloads"
     "${WEBKIT2_DIR}/UIProcess/Launcher"
     "${WEBKIT2_DIR}/UIProcess/Plugins"
-    "${WEBKIT2_DIR}/UIProcess/efl"
     "${WEBKIT2_DIR}/WebProcess"
     "${WEBKIT2_DIR}/WebProcess/ApplicationCache"
     "${WEBKIT2_DIR}/WebProcess/Authentication"
@@ -93,6 +91,7 @@ SET(WebKit2_INCLUDE_DIRECTORIES
 )
 
 SET(WebKit2_SOURCES
+    Platform/CoreIPC/ArgumentCoders.cpp
     Platform/CoreIPC/ArgumentDecoder.cpp
     Platform/CoreIPC/ArgumentEncoder.cpp
     Platform/CoreIPC/Attachment.cpp
@@ -129,7 +128,7 @@ SET(WebKit2_SOURCES
     Shared/API/c/WKURLResponse.cpp
     Shared/API/c/WKUserContentURLPattern.cpp
 
-    Shared/ShareableBitmap.cpp
+    Shared/APIClientTraits.cpp
     Shared/ChildProcess.cpp
     Shared/ImmutableArray.cpp
     Shared/ImmutableDictionary.cpp
@@ -138,28 +137,19 @@ SET(WebKit2_SOURCES
     Shared/OriginAndDatabases.cpp
     Shared/PlatformPopupMenuData.cpp
     Shared/PrintInfo.cpp
-
-    Shared/Plugins/Netscape/NetscapePluginModule.cpp
-    Shared/Plugins/Netscape/NetscapePluginModuleNone.cpp
-
-    Shared/Plugins/NPIdentifierData.cpp
-    Shared/Plugins/NPObjectMessageReceiver.cpp
-    Shared/Plugins/NPObjectProxy.cpp
-    Shared/Plugins/NPRemoteObjectMap.cpp
-    Shared/Plugins/NPVariantData.cpp
-    Shared/Plugins/PluginProcessCreationParameters.cpp
-
     Shared/SecurityOriginData.cpp
     Shared/SessionState.cpp
+    Shared/ShareableBitmap.cpp
     Shared/StatisticsData.cpp
     Shared/UpdateInfo.cpp
     Shared/VisitedLinkTable.cpp
     Shared/WebBackForwardListItem.cpp
     Shared/WebContextMenuItem.cpp
     Shared/WebContextMenuItemData.cpp
+    Shared/WebCoreArgumentCoders.cpp
     Shared/WebError.cpp
-    Shared/WebEventConversion.cpp
     Shared/WebEvent.cpp
+    Shared/WebEventConversion.cpp
     Shared/WebGeolocationPosition.cpp
     Shared/WebGraphicsContext.cpp
     Shared/WebHitTestResult.cpp
@@ -178,6 +168,16 @@ SET(WebKit2_SOURCES
     Shared/WebURLResponse.cpp
     Shared/WebWheelEvent.cpp
 
+    Shared/Plugins/NPIdentifierData.cpp
+    Shared/Plugins/NPObjectMessageReceiver.cpp
+    Shared/Plugins/NPObjectProxy.cpp
+    Shared/Plugins/NPRemoteObjectMap.cpp
+    Shared/Plugins/NPVariantData.cpp
+    Shared/Plugins/PluginProcessCreationParameters.cpp
+
+    Shared/Plugins/Netscape/NetscapePluginModule.cpp
+    Shared/Plugins/Netscape/NetscapePluginModuleNone.cpp
+
     UIProcess/API/C/WKApplicationCacheManager.cpp
     UIProcess/API/C/WKAuthenticationChallenge.cpp
     UIProcess/API/C/WKAuthenticationDecisionListener.cpp
@@ -191,6 +191,10 @@ SET(WebKit2_SOURCES
     UIProcess/API/C/WKFormSubmissionListener.cpp
     UIProcess/API/C/WKFrame.cpp
     UIProcess/API/C/WKFramePolicyListener.cpp
+    UIProcess/API/C/WKGeolocationManager.cpp
+    UIProcess/API/C/WKGeolocationPermissionRequest.cpp
+    UIProcess/API/C/WKGeolocationPosition.cpp
+    UIProcess/API/C/WKGrammarDetail.cpp
     UIProcess/API/C/WKHitTestResult.cpp
     UIProcess/API/C/WKIconDatabase.cpp
     UIProcess/API/C/WKInspector.cpp
@@ -205,30 +209,14 @@ SET(WebKit2_SOURCES
     UIProcess/API/C/WKPreferences.cpp
     UIProcess/API/C/WKProtectionSpace.cpp
     UIProcess/API/C/WKResourceCacheManager.cpp
-
-    UIProcess/Authentication/AuthenticationChallengeProxy.cpp
-    UIProcess/Authentication/AuthenticationDecisionListener.cpp
-    UIProcess/Authentication/WebCredential.cpp
-    UIProcess/Authentication/WebProtectionSpace.cpp
+    UIProcess/API/C/WKTextChecker.cpp
 
     UIProcess/BackingStore.cpp
-
-    UIProcess/Downloads/DownloadProxy.cpp
-
     UIProcess/DrawingAreaProxy.cpp
     UIProcess/DrawingAreaProxyImpl.cpp
     UIProcess/FindIndicator.cpp
     UIProcess/GeolocationPermissionRequestManagerProxy.cpp
     UIProcess/GeolocationPermissionRequestProxy.cpp
-
-    UIProcess/Launcher/ProcessLauncher.cpp
-    UIProcess/Launcher/ThreadLauncher.cpp
-
-    UIProcess/Plugins/PluginInfoStore.cpp
-    UIProcess/Plugins/PluginProcessManager.cpp
-    UIProcess/Plugins/PluginProcessProxy.cpp
-    UIProcess/Plugins/WebPluginSiteDataManager.cpp
-
     UIProcess/ResponsivenessTimer.cpp
     UIProcess/TiledDrawingAreaProxy.cpp
     UIProcess/VisitedLinkProvider.cpp
@@ -239,8 +227,8 @@ SET(WebKit2_SOURCES
     UIProcess/WebContextMenuProxy.cpp
     UIProcess/WebCookieManagerProxy.cpp
     UIProcess/WebCookieManagerProxyClient.cpp
-    UIProcess/WebDatabaseManagerProxyClient.cpp
     UIProcess/WebDatabaseManagerProxy.cpp
+    UIProcess/WebDatabaseManagerProxyClient.cpp
     UIProcess/WebDownloadClient.cpp
     UIProcess/WebEditCommandProxy.cpp
     UIProcess/WebFindClient.cpp
@@ -252,13 +240,14 @@ SET(WebKit2_SOURCES
     UIProcess/WebFullScreenManagerProxy.cpp
     UIProcess/WebGeolocationManagerProxy.cpp
     UIProcess/WebGeolocationProvider.cpp
+    UIProcess/WebGrammarDetail.cpp
     UIProcess/WebHistoryClient.cpp
     UIProcess/WebIconDatabase.cpp
     UIProcess/WebIconDatabaseClient.cpp
     UIProcess/WebInspectorProxy.cpp
     UIProcess/WebKeyValueStorageManagerProxy.cpp
-    UIProcess/WebMediaCacheManagerProxy.cpp
     UIProcess/WebLoaderClient.cpp
+    UIProcess/WebMediaCacheManagerProxy.cpp
     UIProcess/WebNavigationData.cpp
     UIProcess/WebOpenPanelResultListenerProxy.cpp
     UIProcess/WebPageContextMenuClient.cpp
@@ -269,7 +258,27 @@ SET(WebKit2_SOURCES
     UIProcess/WebProcessProxy.cpp
     UIProcess/WebResourceCacheManagerProxy.cpp
     UIProcess/WebResourceLoadClient.cpp
+    UIProcess/WebTextChecker.cpp
+    UIProcess/WebTextCheckerClient.cpp
     UIProcess/WebUIClient.cpp
+
+    UIProcess/Authentication/AuthenticationChallengeProxy.cpp
+    UIProcess/Authentication/AuthenticationDecisionListener.cpp
+    UIProcess/Authentication/WebCredential.cpp
+    UIProcess/Authentication/WebProtectionSpace.cpp
+
+    UIProcess/Downloads/DownloadProxy.cpp
+
+    UIProcess/Launcher/ProcessLauncher.cpp
+    UIProcess/Launcher/ThreadLauncher.cpp
+
+    UIProcess/Plugins/PluginInfoStore.cpp
+    UIProcess/Plugins/PluginProcessManager.cpp
+    UIProcess/Plugins/PluginProcessProxy.cpp
+    UIProcess/Plugins/WebPluginSiteDataManager.cpp
+
+    WebProcess/WebKitMain.cpp
+    WebProcess/WebProcess.cpp
 
     WebProcess/ApplicationCache/WebApplicationCacheManager.cpp
 
@@ -278,6 +287,7 @@ SET(WebKit2_SOURCES
     WebProcess/Cookies/WebCookieManager.cpp
 
     WebProcess/Downloads/Download.cpp
+    WebProcess/Downloads/DownloadAuthenticationClient.cpp
     WebProcess/Downloads/DownloadManager.cpp
 
     WebProcess/FullScreen/WebFullScreenManager.cpp
@@ -286,23 +296,6 @@ SET(WebKit2_SOURCES
     WebProcess/Geolocation/WebGeolocationManager.cpp
 
     WebProcess/IconDatabase/WebIconDatabaseProxy.cpp
-
-    WebProcess/InjectedBundle/API/c/WKBundleBackForwardList.cpp
-    WebProcess/InjectedBundle/API/c/WKBundleBackForwardListItem.cpp
-    WebProcess/InjectedBundle/API/c/WKBundle.cpp
-    WebProcess/InjectedBundle/API/c/WKBundleFrame.cpp
-    WebProcess/InjectedBundle/API/c/WKBundleHitTestResult.cpp
-    WebProcess/InjectedBundle/API/c/WKBundleNavigationAction.cpp
-    WebProcess/InjectedBundle/API/c/WKBundleInspector.cpp
-    WebProcess/InjectedBundle/API/c/WKBundleNodeHandle.cpp
-    WebProcess/InjectedBundle/API/c/WKBundlePage.cpp
-    WebProcess/InjectedBundle/API/c/WKBundlePageGroup.cpp
-    WebProcess/InjectedBundle/API/c/WKBundlePageOverlay.cpp
-    WebProcess/InjectedBundle/API/c/WKBundleRangeHandle.cpp
-    WebProcess/InjectedBundle/API/c/WKBundleScriptWorld.cpp
-
-    WebProcess/InjectedBundle/DOM/InjectedBundleNodeHandle.cpp
-    WebProcess/InjectedBundle/DOM/InjectedBundleRangeHandle.cpp
 
     WebProcess/InjectedBundle/InjectedBundle.cpp
     WebProcess/InjectedBundle/InjectedBundleBackForwardList.cpp
@@ -313,31 +306,49 @@ SET(WebKit2_SOURCES
     WebProcess/InjectedBundle/InjectedBundlePageContextMenuClient.cpp
     WebProcess/InjectedBundle/InjectedBundlePageEditorClient.cpp
     WebProcess/InjectedBundle/InjectedBundlePageFormClient.cpp
+    WebProcess/InjectedBundle/InjectedBundlePageFullScreenClient.cpp
     WebProcess/InjectedBundle/InjectedBundlePageLoaderClient.cpp
     WebProcess/InjectedBundle/InjectedBundlePagePolicyClient.cpp
     WebProcess/InjectedBundle/InjectedBundlePageResourceLoadClient.cpp
     WebProcess/InjectedBundle/InjectedBundlePageUIClient.cpp
     WebProcess/InjectedBundle/InjectedBundleScriptWorld.cpp
 
+    WebProcess/InjectedBundle/API/c/WKBundle.cpp
+    WebProcess/InjectedBundle/API/c/WKBundleBackForwardList.cpp
+    WebProcess/InjectedBundle/API/c/WKBundleBackForwardListItem.cpp
+    WebProcess/InjectedBundle/API/c/WKBundleFrame.cpp
+    WebProcess/InjectedBundle/API/c/WKBundleHitTestResult.cpp
+    WebProcess/InjectedBundle/API/c/WKBundleInspector.cpp
+    WebProcess/InjectedBundle/API/c/WKBundleNavigationAction.cpp
+    WebProcess/InjectedBundle/API/c/WKBundleNodeHandle.cpp
+    WebProcess/InjectedBundle/API/c/WKBundlePage.cpp
+    WebProcess/InjectedBundle/API/c/WKBundlePageGroup.cpp
+    WebProcess/InjectedBundle/API/c/WKBundlePageOverlay.cpp
+    WebProcess/InjectedBundle/API/c/WKBundleRangeHandle.cpp
+    WebProcess/InjectedBundle/API/c/WKBundleScriptWorld.cpp
+
+    WebProcess/InjectedBundle/DOM/InjectedBundleNodeHandle.cpp
+    WebProcess/InjectedBundle/DOM/InjectedBundleRangeHandle.cpp
+
     WebProcess/KeyValueStorage/WebKeyValueStorageManager.cpp
 
     WebProcess/MediaCache/WebMediaCacheManager.cpp
-
-    WebProcess/Plugins/Netscape/JSNPMethod.cpp
-    WebProcess/Plugins/Netscape/JSNPObject.cpp
-    WebProcess/Plugins/Netscape/NetscapeBrowserFuncs.cpp
-    WebProcess/Plugins/Netscape/NetscapePlugin.cpp
-    WebProcess/Plugins/Netscape/NetscapePluginNone.cpp
-    WebProcess/Plugins/Netscape/NetscapePluginStream.cpp
-    WebProcess/Plugins/Netscape/NPJSObject.cpp
-    WebProcess/Plugins/Netscape/NPRuntimeObjectMap.cpp
-    WebProcess/Plugins/Netscape/NPRuntimeUtilities.cpp
 
     WebProcess/Plugins/Plugin.cpp
     WebProcess/Plugins/PluginProcessConnection.cpp
     WebProcess/Plugins/PluginProcessConnectionManager.cpp
     WebProcess/Plugins/PluginProxy.cpp
     WebProcess/Plugins/PluginView.cpp
+
+    WebProcess/Plugins/Netscape/JSNPMethod.cpp
+    WebProcess/Plugins/Netscape/JSNPObject.cpp
+    WebProcess/Plugins/Netscape/NPJSObject.cpp
+    WebProcess/Plugins/Netscape/NPRuntimeObjectMap.cpp
+    WebProcess/Plugins/Netscape/NPRuntimeUtilities.cpp
+    WebProcess/Plugins/Netscape/NetscapeBrowserFuncs.cpp
+    WebProcess/Plugins/Netscape/NetscapePlugin.cpp
+    WebProcess/Plugins/Netscape/NetscapePluginNone.cpp
+    WebProcess/Plugins/Netscape/NetscapePluginStream.cpp
 
     WebProcess/ResourceCache/WebResourceCacheManager.cpp
 
@@ -370,8 +381,6 @@ SET(WebKit2_SOURCES
     WebProcess/WebPage/WebOpenPanelResultListener.cpp
     WebProcess/WebPage/WebPage.cpp
     WebProcess/WebPage/WebPageGroupProxy.cpp
-
-    WebProcess/WebProcess.cpp
 )
 
 SET(WebKit2_MESSAGES_IN_FILES

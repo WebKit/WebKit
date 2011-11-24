@@ -1,3 +1,12 @@
+2011-11-24  Patrick Gansterer  <paroga@webkit.org>
+
+        [CMake] Add missing source files
+        https://bugs.webkit.org/show_bug.cgi?id=73052
+
+        Reviewed by Andreas Kling.
+
+        * CMakeLists.txt:
+
 2011-11-24  Philippe Normand  <pnormand@igalia.com>
 
         Fix ASSERTs added in r101082.
