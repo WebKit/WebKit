@@ -112,10 +112,10 @@ WebInspector.WorkerManager.showWorkerTerminatedScreen = function()
 {
     function onHide()
     {
-        WebInspector.debuggerModel.removeEventListener(WebInspector.DebuggerModel.Events.ParsedScriptSource, screen.hide, screen);
+        WebInspector.debuggerModel.removeEventListener(WebInspector.DebuggerModel.Events.GlobalObjectCleared, screen.hide, screen);
     }
     var screen = new WebInspector.WorkerTerminatedScreen();
-    WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.ParsedScriptSource, screen.hide, screen);
+    WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.GlobalObjectCleared, screen.hide, screen);
     screen.show(onHide.bind(this));
 }
 

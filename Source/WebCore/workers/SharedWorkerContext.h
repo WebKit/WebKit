@@ -61,6 +61,9 @@ namespace WebCore {
         SharedWorkerThread* thread();
     private:
         SharedWorkerContext(const String& name, const KURL&, const String&, SharedWorkerThread*);
+
+        virtual void logExceptionToConsole(const String& errorMessage, int lineNumber, const String& sourceURL, PassRefPtr<ScriptCallStack>);
+
         String m_name;
     };
 

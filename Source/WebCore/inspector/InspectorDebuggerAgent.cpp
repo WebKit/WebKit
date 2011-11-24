@@ -128,8 +128,10 @@ void InspectorDebuggerAgent::disable(ErrorString*)
 
 void InspectorDebuggerAgent::restore()
 {
-    if (enabled())
+    if (enabled()) {
+        m_frontend->globalObjectCleared();
         enable();
+    }
 }
 
 void InspectorDebuggerAgent::setFrontend(InspectorFrontend* frontend)

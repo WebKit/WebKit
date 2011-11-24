@@ -932,6 +932,15 @@ InstrumentingAgents* InspectorInstrumentation::instrumentingAgentsForPage(Page* 
     return instrumentationForPage(page);
 }
 
+#if ENABLE(WORKERS)
+InstrumentingAgents* InspectorInstrumentation::instrumentingAgentsForWorkerContext(WorkerContext* workerContext)
+{
+    if (!workerContext)
+        return 0;
+    return instrumentationForWorkerContext(workerContext);
+}
+#endif
+
 } // namespace WebCore
 
 #endif // !ENABLE(INSPECTOR)

@@ -177,6 +177,9 @@ namespace WebCore {
     protected:
         WorkerContext(const KURL&, const String&, WorkerThread*);
 
+        virtual void logExceptionToConsole(const String& errorMessage, int lineNumber, const String& sourceURL, PassRefPtr<ScriptCallStack>);
+        void addMessageToWorkerConsole(MessageSource, MessageType, MessageLevel, const String& message, unsigned lineNumber, const String& sourceURL, PassRefPtr<ScriptCallStack>);
+
     private:
         virtual void refScriptExecutionContext() { ref(); }
         virtual void derefScriptExecutionContext() { deref(); }
@@ -190,7 +193,6 @@ namespace WebCore {
         virtual KURL virtualCompleteURL(const String&) const;
 
         virtual EventTarget* errorEventTarget();
-        virtual void logExceptionToConsole(const String& errorMessage, int lineNumber, const String& sourceURL, PassRefPtr<ScriptCallStack>);
 
         KURL m_url;
         String m_userAgent;

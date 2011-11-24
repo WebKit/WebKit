@@ -380,9 +380,7 @@ WebInspector.doLoadedDone = function()
 
     this.extensionServer.initExtensions();
 
-    // There is no console agent for workers yet.
-    if (!WebInspector.WorkerManager.isWorkerFrontend())
-        this.console.enableAgent();
+    this.console.enableAgent();
     DatabaseAgent.enable();
     DOMStorageAgent.enable();
 

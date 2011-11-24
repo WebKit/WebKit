@@ -115,6 +115,7 @@ void InspectorConsoleAgent::reset()
 void InspectorConsoleAgent::restore()
 {
     if (m_inspectorState->getBoolean(ConsoleAgentState::consoleMessagesEnabled)) {
+        m_frontend->messagesCleared();
         ErrorString error;
         enable(&error);
     }

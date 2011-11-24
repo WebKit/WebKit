@@ -1,3 +1,42 @@
+2011-11-23  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: exceptions in shared workers should be logged to web inspector console
+        https://bugs.webkit.org/show_bug.cgi?id=73022
+
+        According to section "4.7 Runtime script errors" of Web Workers spec "For shared
+        workers, if the error is still not handled afterwards, or if the error occurred
+        while handling a previous script error, the error may be reported to the user."
+
+        This change adds uncaugh exceptions to the shared worker web inspector console.
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/InspectorConsoleAgent.cpp:
+        (WebCore::InspectorConsoleAgent::restore):
+        * inspector/InspectorConsoleInstrumentation.h:
+        (WebCore::InspectorInstrumentation::addMessageToConsole):
+        * inspector/InspectorDebuggerAgent.cpp:
+        (WebCore::InspectorDebuggerAgent::restore):
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::instrumentingAgentsForWorkerContext):
+        * inspector/InspectorInstrumentation.h:
+        * inspector/WorkerInspectorController.cpp:
+        (WebCore::WorkerInspectorController::connectFrontend):
+        (WebCore::WorkerInspectorController::disconnectFrontend):
+        (WebCore::WorkerInspectorController::restoreInspectorStateFromCookie):
+        * inspector/WorkerInspectorController.h:
+        * inspector/front-end/WorkerManager.js:
+        (WebInspector.WorkerManager.showWorkerTerminatedScreen):
+        * inspector/front-end/inspector.js:
+        * workers/SharedWorkerContext.cpp:
+        (WebCore::SharedWorkerContext::logExceptionToConsole):
+        * workers/SharedWorkerContext.h:
+        * workers/WorkerContext.cpp:
+        (WebCore::WorkerContext::addMessage): console messages are now added to
+        the worker console agent.
+        (WebCore::WorkerContext::addMessageToWorkerConsole):
+        * workers/WorkerContext.h:
+
 2011-11-23  Jeff Timanus  <twiz@chromium.org>
 
         [Chromium]  Prevent DrawingBuffer instances from corrupting the active

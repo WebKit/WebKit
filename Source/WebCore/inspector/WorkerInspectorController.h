@@ -49,6 +49,7 @@ class InspectorBackendDispatcher;
 class InspectorConsoleAgent;
 class InspectorFrontend;
 class InspectorFrontendChannel;
+class InspectorConsoleAgent;
 class InspectorInstrumentation;
 class InspectorRuntimeAgent;
 class InspectorState;

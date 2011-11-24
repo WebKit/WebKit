@@ -34,6 +34,7 @@
 #include "InspectorInstrumentation.h"
 #include "ScriptArguments.h"
 #include "ScriptCallStack.h"
+#include "ScriptProfile.h"
 #include <wtf/PassRefPtr.h>
 
 namespace WebCore {
@@ -53,6 +54,24 @@ inline void InspectorInstrumentation::addMessageToConsole(Page* page, MessageSou
         addMessageToConsoleImpl(instrumentingAgents, source, type, level, message, lineNumber, scriptId);
 #endif
 }
+
+#if ENABLE(WORKERS)
+inline void InspectorInstrumentation::addMessageToConsole(WorkerContext* workerContext, MessageSource source, MessageType type, MessageLevel level, const String& message, PassRefPtr<ScriptArguments> arguments, PassRefPtr<ScriptCallStack> callStack)
+{
+#if ENABLE(INSPECTOR)
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForWorkerContext(workerContext))
+        addMessageToConsoleImpl(instrumentingAgents, source, type, level, message, arguments, callStack);
+#endif
+}
+
+inline void InspectorInstrumentation::addMessageToConsole(WorkerContext* workerContext, MessageSource source, MessageType type, MessageLevel level, const String& message, unsigned lineNumber, const String& scriptId)
+{
+#if ENABLE(INSPECTOR)
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForWorkerContext(workerContext))
+        addMessageToConsoleImpl(instrumentingAgents, source, type, level, message, lineNumber, scriptId);
+#endif
+}
+#endif
 
 inline void InspectorInstrumentation::consoleCount(Page* page, PassRefPtr<ScriptArguments> arguments, PassRefPtr<ScriptCallStack> stack)
 {
