@@ -151,15 +151,14 @@ class JsonResults(object):
                 aggregated_json[test_name] = incremental_json[test_name]
                 continue
 
+            incremental_sub_result = incremental_json[test_name] if incremental_json and test_name in incremental_json else None
             if JSON_RESULTS_RESULTS not in aggregated_json[test_name]:
-                incremental_sub_result = incremental_json[test_name] if test_name in incremental_json else None
                 cls._merge_tests(aggregated_json[test_name], incremental_sub_result, num_runs)
                 continue
 
-            if incremental_json and test_name in incremental_json:
-                incremental_test = incremental_json[test_name]
-                results = incremental_test[JSON_RESULTS_RESULTS]
-                times = incremental_test[JSON_RESULTS_TIMES]
+            if incremental_sub_result:
+                results = incremental_sub_result[JSON_RESULTS_RESULTS]
+                times = incremental_sub_result[JSON_RESULTS_TIMES]
             else:
                 results = [[1, JSON_RESULTS_NO_DATA]]
                 times = [[1, 0]]

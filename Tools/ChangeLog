@@ -1,3 +1,20 @@
+2011-11-23  Ojan Vafai  <ojan@chromium.org>
+
+        Merging two version 4 results hits an error in the test results server
+        https://bugs.webkit.org/show_bug.cgi?id=73042
+
+        Reviewed by Adam Barth.
+
+        The old code assumed that if the aggregate results value was not a leaf
+        value that the incremental results would exist, which is just totally
+        wrong. Added a test for that case as well.
+
+        * TestResultServer/model/jsonresults.py:
+        (JsonResults._merge_tests):
+        * TestResultServer/model/jsonresults_unittest.py:
+        (JsonResultsTest.test_merge_build_directory_hierarchy_old_version):
+        (JsonResultsTest.test_merge_build_directory_hierarchy):
+
 2011-11-23  Eric Seidel  <eric@webkit.org>
 
         Add Environment object to Host and fix the GCC smartquotes trouble seen on the commit-queue

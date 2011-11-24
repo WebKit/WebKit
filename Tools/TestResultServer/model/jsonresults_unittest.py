@@ -550,7 +550,7 @@ class JsonResultsTest(unittest.TestCase):
                            "times": "[" + max_builds + ",0]"}}},
             int(max_builds))
 
-    def test_merge_build_directory_hierarchy(self):
+    def test_merge_build_directory_hierarchy_old_version(self):
         self._test_merge(
             # Aggregated results
             {"builds": ["2", "1"],
@@ -584,6 +584,55 @@ class JsonResultsTest(unittest.TestCase):
                            "003.html": {
                                "results": "[1,\"N\"],[25,\"F\"]",
                                "times": "[26,0]"}},
+                       "baz": {
+                           "004.html": {
+                               "results": "[1,\"I\"]",
+                               "times": "[1,0]"}},
+                       "foo": {
+                           "001.html": {
+                               "results": "[51,\"F\"]",
+                               "times": "[51,0]"},
+                           "002.html": {
+                               "results": "[101,\"I\"]",
+                               "times": "[101,0]"}}},
+             "version": 4})
+
+    def test_merge_build_directory_hierarchy(self):
+        self._test_merge(
+            # Aggregated results
+            {"builds": ["2", "1"],
+             "tests": {"bar": {"baz": {
+                           "003.html": {
+                                "results": "[25,\"F\"]",
+                                "times": "[25,0]"}}},
+                       "foo": {
+                           "001.html": {
+                                "results": "[50,\"F\"]",
+                                "times": "[50,0]"},
+                           "002.html": {
+                                "results": "[100,\"I\"]",
+                                "times": "[100,0]"}}},
+              "version": 4},
+            # Incremental results
+            {"builds": ["3"],
+             "tests": {"baz": {
+                           "004.html": {
+                               "results": "[1,\"I\"]",
+                               "times": "[1,0]"}},
+                       "foo": {
+                           "001.html": {
+                               "results": "[1,\"F\"]",
+                               "times": "[1,0]"},
+                           "002.html": {
+                               "results": "[1,\"I\"]",
+                               "times": "[1,0]"}}},
+             "version": 4},
+            # Expected results
+            {"builds": ["3", "2", "1"],
+             "tests": {"bar": {"baz": {
+                           "003.html": {
+                               "results": "[1,\"N\"],[25,\"F\"]",
+                               "times": "[26,0]"}}},
                        "baz": {
                            "004.html": {
                                "results": "[1,\"I\"]",
