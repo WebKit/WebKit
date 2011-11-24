@@ -65,15 +65,14 @@ public:
         if (!s_currentDecl->isInlineStyleDeclaration())
             return;
 
-        s_mutationRecipients = MutationObserverInterestGroup::createForAttributesMutation(s_currentDecl->node(), HTMLNames::styleAttr);
+        s_mutationRecipients = MutationObserverInterestGroup::createForAttributesMutation(s_currentDecl->element(), HTMLNames::styleAttr);
         if (s_mutationRecipients->isEmpty()) {
             s_mutationRecipients.clear();
             return;
         }
 
-        Element* element = toElement(s_currentDecl->node());
-        AtomicString oldValue = s_mutationRecipients->isOldValueRequested() ? element->getAttribute(HTMLNames::styleAttr) : nullAtom;
-        s_mutation = MutationRecord::createAttributes(element, HTMLNames::styleAttr, oldValue);
+        AtomicString oldValue = s_mutationRecipients->isOldValueRequested() ? s_currentDecl->element()->getAttribute(HTMLNames::styleAttr) : nullAtom;
+        s_mutation = MutationRecord::createAttributes(s_currentDecl->element(), HTMLNames::styleAttr, oldValue);
     }
 
     ~StyleAttributeMutationScope()
@@ -109,7 +108,7 @@ CSSMutableStyleDeclaration* StyleAttributeMutationScope::s_currentDecl = 0;
 
 CSSMutableStyleDeclaration::CSSMutableStyleDeclaration()
     : CSSStyleDeclaration(0, /* isMutable */ true)
-    , m_node(0)
+    , m_element(0)
 {
     // This constructor is used for various inline style declarations, so disable strict parsing.
     m_strictParsing = false;
@@ -117,14 +116,14 @@ CSSMutableStyleDeclaration::CSSMutableStyleDeclaration()
 
 CSSMutableStyleDeclaration::CSSMutableStyleDeclaration(CSSRule* parent)
     : CSSStyleDeclaration(parent, /* isMutable */ true)
-    , m_node(0)
+    , m_element(0)
 {
 }
 
 CSSMutableStyleDeclaration::CSSMutableStyleDeclaration(CSSRule* parent, const Vector<CSSProperty>& properties)
     : CSSStyleDeclaration(parent, /* isMutable */ true)
     , m_properties(properties)
-    , m_node(0)
+    , m_element(0)
 {
     m_properties.shrinkToFit();
     // FIXME: This allows duplicate properties.
@@ -132,7 +131,7 @@ CSSMutableStyleDeclaration::CSSMutableStyleDeclaration(CSSRule* parent, const Ve
 
 CSSMutableStyleDeclaration::CSSMutableStyleDeclaration(CSSRule* parent, const CSSProperty* const * properties, int numProperties)
     : CSSStyleDeclaration(parent, /* isMutable */ true)
-    , m_node(0)
+    , m_element(0)
 {
     m_properties.reserveInitialCapacity(numProperties);
     HashMap<int, bool> candidates;
@@ -157,7 +156,7 @@ CSSMutableStyleDeclaration::~CSSMutableStyleDeclaration()
 CSSMutableStyleDeclaration& CSSMutableStyleDeclaration::operator=(const CSSMutableStyleDeclaration& other)
 {
     ASSERT(!m_iteratorCount);
-    // don't attach it to the same node, just leave the current m_node value
+    // don't attach it to the same element, just leave the current m_element value
     m_properties = other.m_properties;
     m_strictParsing = other.m_strictParsing;
     return *this;
@@ -620,19 +619,19 @@ bool CSSMutableStyleDeclaration::isInlineStyleDeclaration()
     // FIXME: Ideally, this should be factored better and there
     // should be a subclass of CSSMutableStyleDeclaration just
     // for inline style declarations that handles this
-    return m_node && m_node->isStyledElement() && static_cast<StyledElement*>(m_node)->inlineStyleDecl() == this;
+    return m_element && m_element->inlineStyleDecl() == this;
 }
 
 void CSSMutableStyleDeclaration::setNeedsStyleRecalc()
 {
-    if (m_node) {
+    if (m_element) {
         if (isInlineStyleDeclaration()) {
-            m_node->setNeedsStyleRecalc(InlineStyleChange);
-            static_cast<StyledElement*>(m_node)->invalidateStyleAttribute();
-            if (m_node->document())
-                InspectorInstrumentation::didInvalidateStyleAttr(m_node->document(), m_node);
+            m_element->setNeedsStyleRecalc(InlineStyleChange);
+            m_element->invalidateStyleAttribute();
+            if (m_element->document())
+                InspectorInstrumentation::didInvalidateStyleAttr(m_element->document(), m_element);
         } else
-            m_node->setNeedsStyleRecalc(FullStyleChange);
+            m_element->setNeedsStyleRecalc(FullStyleChange);
         return;
     }
 

@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-class Node;
+class StyledElement;
 
 class CSSMutableStyleDeclarationConstIterator {
 public:
@@ -83,9 +83,9 @@ public:
     const_iterator begin() { return const_iterator(this, m_properties.begin()); }
     const_iterator end() { return const_iterator(this, m_properties.end()); }
 
-    void setNode(Node* node) { m_node = node; }
+    void setElement(StyledElement* element) { m_element = element; }
 
-    Node* node() const { return m_node; }
+    StyledElement* element() const { return m_element; }
 
     virtual String cssText() const;
     virtual void setCssText(const String&, ExceptionCode&);
@@ -178,7 +178,7 @@ private:
 
     Vector<CSSProperty, 4> m_properties;
 
-    Node* m_node;
+    StyledElement* m_element;
 
     friend class CSSMutableStyleDeclarationConstIterator;
 };

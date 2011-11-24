@@ -447,7 +447,7 @@ Element* InspectorCSSAgent::inlineStyleElement(CSSStyleDeclaration* style)
     CSSMutableStyleDeclaration* mutableStyle = static_cast<CSSMutableStyleDeclaration*>(style);
     if (!mutableStyle->isInlineStyleDeclaration())
         return 0;
-    return static_cast<Element*>(mutableStyle->node());
+    return mutableStyle->element();
 }
 
 InspectorStyleSheetForInlineStyle* InspectorCSSAgent::asInspectorStyleSheet(Element* element)

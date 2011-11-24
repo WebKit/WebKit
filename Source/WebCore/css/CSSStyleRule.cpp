@@ -28,6 +28,7 @@
 #include "CSSSelector.h"
 #include "CSSStyleSheet.h"
 #include "Document.h"
+#include "StyledElement.h"
 #include "StyleSheet.h"
 
 namespace WebCore {
@@ -66,7 +67,7 @@ void CSSStyleRule::setSelectorText(const String& selectorText)
         doc = styleSheet->findDocument();
 
     if (!doc)
-        doc = m_style->node() ? m_style->node()->document() : 0;
+        doc = m_style->element() ? m_style->element()->document() : 0;
 
     if (!doc)
         return;

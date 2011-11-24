@@ -131,14 +131,14 @@ void StyledElement::createInlineStyleDecl()
 {
     m_inlineStyleDecl = CSSMutableStyleDeclaration::create();
     m_inlineStyleDecl->setParentStyleSheet(document()->elementSheet());
-    m_inlineStyleDecl->setNode(this);
+    m_inlineStyleDecl->setElement(this);
     m_inlineStyleDecl->setStrictParsing(isHTMLElement() && !document()->inQuirksMode());
 }
 
 void StyledElement::destroyInlineStyleDecl()
 {
     if (m_inlineStyleDecl) {
-        m_inlineStyleDecl->setNode(0);
+        m_inlineStyleDecl->setElement(0);
         m_inlineStyleDecl->setParentStyleSheet(0);
         m_inlineStyleDecl = 0;
     }
@@ -196,7 +196,7 @@ void StyledElement::attributeChanged(Attribute* attr, bool preserveDecls)
         setMappedAttributeDecl(entry, attr, attr->decl());
         attr->decl()->setMappedState(entry, attr->name(), attr->value());
         attr->decl()->setParentStyleSheet(0);
-        attr->decl()->setNode(0);
+        attr->decl()->setElement(0);
         if (attributeMap())
             attributeMap()->declAdded();
     }
@@ -406,7 +406,7 @@ void StyledElement::createMappedDecl(Attribute* attr)
     RefPtr<CSSMappedAttributeDeclaration> decl = CSSMappedAttributeDeclaration::create();
     attr->setDecl(decl);
     decl->setParentStyleSheet(document()->elementSheet());
-    decl->setNode(this);
+    decl->setElement(this);
     decl->setStrictParsing(false); // Mapped attributes are just always quirky.
 }
 

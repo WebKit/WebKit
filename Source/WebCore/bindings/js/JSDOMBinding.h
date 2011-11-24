@@ -30,6 +30,7 @@
 #include "Document.h"
 #include "Element.h"
 #include "MediaList.h"
+#include "StyledElement.h"
 #include <heap/Weak.h>
 #include <runtime/FunctionPrototype.h>
 #include <runtime/Lookup.h>
@@ -206,7 +207,7 @@ enum ParameterMissingPolicy {
         if (CSSStyleSheet* styleSheet = style->parentStyleSheet())
             return root(styleSheet);
         if (style->isMutableStyleDeclaration()) {
-            if (Node* node = static_cast<CSSMutableStyleDeclaration*>(style)->node())
+            if (Node* node = static_cast<CSSMutableStyleDeclaration*>(style)->element())
                 return root(node);
         }
         return style;
