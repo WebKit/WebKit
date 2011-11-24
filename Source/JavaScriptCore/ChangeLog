@@ -1,3 +1,19 @@
+2011-11-24  Patrick Gansterer  <paroga@webkit.org>
+
+        [Qt] Use QEvent for dispatchFunctionsFromMainThread()
+        https://bugs.webkit.org/show_bug.cgi?id=72704
+
+        Reviewed by Simon Hausmann.
+
+        Replace QMetaObject::invokeMethod with QCoreApplication::postEvent.
+        This is the same as what invokeMethod does internally, but reduces
+        the dependency on some internal QThread stuff.
+
+        * wtf/qt/MainThreadQt.cpp:
+        (WTF::MainThreadInvoker::MainThreadInvoker):
+        (WTF::MainThreadInvoker::event):
+        (WTF::scheduleDispatchFunctionsOnMainThread):
+
 2011-11-23  George Staikos  <staikos@webkit.org>
 
         Remove BlackBerry OS support from RandomNumberSeed, making QNX=UNIX.

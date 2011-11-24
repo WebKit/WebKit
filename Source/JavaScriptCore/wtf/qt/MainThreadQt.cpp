@@ -31,29 +31,34 @@
 #include "config.h"
 #include "MainThread.h"
 
-#include <QtCore/QObject>
-#include <QtCore/QCoreApplication>
+#include <QCoreApplication>
+#include <QEvent>
+#include <QObject>
 #include <QThread>
 
 namespace WTF {
+
+static int s_mainThreadInvokerEventType;
 
 class MainThreadInvoker : public QObject {
     Q_OBJECT
 public:
     MainThreadInvoker();
-
-private Q_SLOTS:
-    void dispatch();
+    virtual bool event(QEvent*);
 };
 
 MainThreadInvoker::MainThreadInvoker()
 {
-    moveToThread(QCoreApplication::instance()->thread());
+    s_mainThreadInvokerEventType = QEvent::registerEventType();
 }
 
-void MainThreadInvoker::dispatch()
+bool MainThreadInvoker::event(QEvent* e)
 {
+    if (e->type() != s_mainThreadInvokerEventType)
+        return QObject::event(e);
+
     dispatchFunctionsFromMainThread();
+    return true;
 }
 
 Q_GLOBAL_STATIC(MainThreadInvoker, webkit_main_thread_invoker)
@@ -64,7 +69,7 @@ void initializeMainThreadPlatform()
 
 void scheduleDispatchFunctionsOnMainThread()
 {
-    QMetaObject::invokeMethod(webkit_main_thread_invoker(), "dispatch", Qt::QueuedConnection);
+    QCoreApplication::postEvent(webkit_main_thread_invoker(), new QEvent(static_cast<QEvent::Type>(s_mainThreadInvokerEventType)));
 }
 
 bool isMainThread()
