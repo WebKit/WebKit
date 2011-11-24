@@ -3749,8 +3749,7 @@ BUG_TONY MAC : css3/flexbox/repaint-rtl-column.html = PASS FAIL
 
 BUGWK72149 : media/track/tracklist-is-reachable.html = TEXT
 
-BUGV8_1821 WIN LINUX : http/tests/inspector-enabled/dedicated-workers-list.html = PASS CRASH
-BUGWK72133 SKIP MAC : http/tests/inspector-enabled/dedicated-workers-list.html = PASS CRASH TIMEOUT
+BUGWK72133 SKIP MAC : http/tests/inspector-enabled/dedicated-workers-list.html = PASS TIMEOUT
 
 // use Skia to draw vertical text directly instead of text-on-path
 BUG_CARYCLARK MAC CPU : editing/selection/vertical-lr-ltr-extend-line-backward-br.html = IMAGE
