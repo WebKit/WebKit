@@ -1,5 +1,221 @@
 2011-11-23  Adam Barth  <abarth@webkit.org>
 
+        [Chromium] Move WebKitPlatformSupport.h and dependencies to new public/platform directory
+        https://bugs.webkit.org/show_bug.cgi?id=73066
+
+        Reviewed by Darin Fisher.
+
+        This patch creates a new subdirectory in the Chromium WebKit API to
+        house "platform" header files.  As with the other Platform directories
+        in WebKit, the platform directory cannot depend on headers outside of
+        platform, but headers outside of platform can depend on platform.
+
+        This patch moves WebKitPlatformSupport and its dependencies into this
+        new directory and creates forwarding headers to easy migration for
+        embedders of this API.  Over time, we will migrate more headers into
+        this folder, as appropriate.
+
+        * public/WebAccessibilityObject.h:
+        * public/WebAccessibilityRole.h:
+        * public/WebAnimationController.h:
+        * public/WebApplicationCacheHost.h:
+        * public/WebApplicationCacheHostClient.h:
+        * public/WebArrayBufferView.h:
+        * public/WebAttribute.h:
+        * public/WebAudioBus.h: Replaced.
+        * public/WebAudioDevice.h: Replaced.
+        * public/WebAudioSourceProvider.h:
+        * public/WebBindings.h:
+        * public/WebBlob.h:
+        * public/WebBlobData.h:
+        * public/WebBlobRegistry.h:
+        * public/WebCString.h: Replaced.
+        * public/WebCache.h:
+        * public/WebCanvas.h:
+        * public/WebClipboard.h:
+        * public/WebColor.h:
+        * public/WebCommon.h: Replaced.
+        * public/WebCommonWorkerClient.h:
+        * public/WebCompositor.h:
+        * public/WebConsoleMessage.h:
+        * public/WebContentLayer.h:
+        * public/WebContextMenuData.h:
+        * public/WebCookie.h:
+        * public/WebCrossOriginPreflightResultCache.h:
+        * public/WebDOMEvent.h:
+        * public/WebDOMEventListener.h:
+        * public/WebDOMStringList.h:
+        * public/WebData.h: Replaced.
+        * public/WebDataSource.h:
+        * public/WebDatabase.h:
+        * public/WebDevToolsAgent.h:
+        * public/WebDevToolsAgentClient.h:
+        * public/WebDevToolsFrontend.h:
+        * public/WebDeviceOrientationClientMock.h:
+        * public/WebDeviceOrientationController.h:
+        * public/WebDocument.h:
+        * public/WebDragData.h:
+        * public/WebExternalPopupMenuClient.h:
+        * public/WebExternalTextureLayer.h:
+        * public/WebFileChooserParams.h:
+        * public/WebFileInfo.h:
+        * public/WebFileSystem.h:
+        * public/WebFileSystemCallbacks.h:
+        * public/WebFileSystemEntry.h:
+        * public/WebFileUtilities.h:
+        * public/WebFileWriter.h:
+        * public/WebFileWriterClient.h:
+        * public/WebFindOptions.h:
+        * public/WebFloatPoint.h:
+        * public/WebFloatQuad.h:
+        * public/WebFloatRect.h:
+        * public/WebFont.h:
+        * public/WebFontCache.h:
+        * public/WebFontDescription.h:
+        * public/WebFormControlElement.h:
+        * public/WebFormElement.h:
+        * public/WebFrame.h:
+        * public/WebFrameClient.h:
+        * public/WebGamepad.h: Replaced.
+        * public/WebGamepads.h: Replaced.
+        * public/WebGeolocationClientMock.h:
+        * public/WebGeolocationController.h:
+        * public/WebGeolocationError.h:
+        * public/WebGeolocationPermissionRequest.h:
+        * public/WebGeolocationPermissionRequestManager.h:
+        * public/WebGeolocationPosition.h:
+        * public/WebGlyphCache.h:
+        * public/WebGraphicsContext3D.h:
+        * public/WebHTTPBody.h:
+        * public/WebHTTPLoadInfo.h:
+        * public/WebHistoryItem.h:
+        * public/WebIDBCallbacks.h:
+        * public/WebIDBCursor.h:
+        * public/WebIDBDatabase.h:
+        * public/WebIDBDatabaseCallbacks.h:
+        * public/WebIDBDatabaseError.h:
+        * public/WebIDBFactory.h:
+        * public/WebIDBIndex.h:
+        * public/WebIDBKey.h:
+        * public/WebIDBKeyPath.h:
+        * public/WebIDBKeyRange.h:
+        * public/WebIDBObjectStore.h:
+        * public/WebIDBTransaction.h:
+        * public/WebIDBTransactionCallbacks.h:
+        * public/WebIconURL.h:
+        * public/WebImage.h:
+        * public/WebInputEvent.h:
+        * public/WebKit.h:
+        * public/WebKitPlatformSupport.h: Replaced.
+        * public/WebLayer.h:
+        * public/WebLayerTreeView.h:
+        * public/WebLocalizedString.h: Replaced.
+        * public/WebMediaPlayer.h:
+        * public/WebMediaStreamDescriptor.h:
+        * public/WebMediaStreamRegistry.h:
+        * public/WebMediaStreamSource.h:
+        * public/WebMenuItemInfo.h:
+        * public/WebMessagePortChannel.h:
+        * public/WebMimeRegistry.h:
+        * public/WebNamedNodeMap.h:
+        * public/WebNetworkStateNotifier.h:
+        * public/WebNode.h:
+        * public/WebNodeCollection.h:
+        * public/WebNodeList.h:
+        * public/WebNotification.h:
+        * public/WebNotificationPresenter.h:
+        * public/WebOptionElement.h:
+        * public/WebPageSerializer.h:
+        * public/WebPasswordFormData.h:
+        * public/WebPeerConnectionHandler.h:
+        * public/WebPerformance.h:
+        * public/WebPlugin.h:
+        * public/WebPluginParams.h:
+        * public/WebPoint.h:
+        * public/WebPopupMenu.h:
+        * public/WebPopupMenuInfo.h:
+        * public/WebPrivateOwnPtr.h: Replaced.
+        * public/WebPrivatePtr.h: Replaced.
+        * public/WebRange.h:
+        * public/WebRect.h:
+        * public/WebRegularExpression.h:
+        * public/WebRuntimeFeatures.h:
+        * public/WebScriptController.h:
+        * public/WebScriptSource.h:
+        * public/WebScrollbar.h:
+        * public/WebSearchableFormData.h:
+        * public/WebSecurityOrigin.h:
+        * public/WebSecurityPolicy.h:
+        * public/WebSelectElement.h:
+        * public/WebSerializedScriptValue.h: Replaced.
+        * public/WebSettings.h:
+        * public/WebSharedWorker.h:
+        * public/WebSharedWorkerRepository.h:
+        * public/WebSize.h:
+        * public/WebSocket.h:
+        * public/WebSocketClient.h:
+        * public/WebSocketStreamError.h:
+        * public/WebSocketStreamHandle.h:
+        * public/WebSocketStreamHandleClient.h:
+        * public/WebSpeechInputController.h:
+        * public/WebSpeechInputResult.h:
+        * public/WebSpellCheckClient.h:
+        * public/WebStorageArea.h:
+        * public/WebStorageEventDispatcher.h:
+        * public/WebStorageNamespace.h:
+        * public/WebString.h: Replaced.
+        * public/WebTestingSupport.h:
+        * public/WebTextCheckingCompletion.h:
+        * public/WebTextCheckingResult.h:
+        * public/WebTextRun.h:
+        * public/WebThread.h:
+        * public/WebThreadSafeData.h:
+        * public/WebTouchPoint.h:
+        * public/WebURL.h: Replaced.
+        * public/WebURLError.h:
+        * public/WebURLLoadTiming.h:
+        * public/WebURLLoader.h:
+        * public/WebURLRequest.h:
+        * public/WebURLResponse.h:
+        * public/WebUserMediaRequest.h:
+        * public/WebVector.h: Replaced.
+        * public/WebView.h:
+        * public/WebViewClient.h:
+        * public/WebWidget.h:
+        * public/WebWidgetClient.h:
+        * public/WebWindowFeatures.h:
+        * public/android/WebInputEventFactory.h:
+        * public/gtk/WebInputEventFactory.h:
+        * public/linux/WebFontFamily.h:
+        * public/linux/WebFontInfo.h:
+        * public/linux/WebFontRenderStyle.h:
+        * public/linux/WebFontRendering.h:
+        * public/linux/WebRenderTheme.h:
+        * public/linux/WebSandboxSupport.h:
+        * public/mac/WebInputEventFactory.h:
+        * public/mac/WebScreenInfoFactory.h:
+        * public/platform: Added.
+        * public/platform/WebAudioBus.h: Copied from Source/WebKit/chromium/public/WebAudioBus.h.
+        * public/platform/WebAudioDevice.h: Copied from Source/WebKit/chromium/public/WebAudioDevice.h.
+        * public/platform/WebCString.h: Copied from Source/WebKit/chromium/public/WebCString.h.
+        * public/platform/WebCommon.h: Copied from Source/WebKit/chromium/public/WebCommon.h.
+        * public/platform/WebData.h: Copied from Source/WebKit/chromium/public/WebData.h.
+        * public/platform/WebGamepad.h: Copied from Source/WebKit/chromium/public/WebGamepad.h.
+        * public/platform/WebGamepads.h: Copied from Source/WebKit/chromium/public/WebGamepads.h.
+        * public/platform/WebKitPlatformSupport.h: Copied from Source/WebKit/chromium/public/WebKitPlatformSupport.h.
+        * public/platform/WebLocalizedString.h: Copied from Source/WebKit/chromium/public/WebLocalizedString.h.
+        * public/platform/WebPrivateOwnPtr.h: Copied from Source/WebKit/chromium/public/WebPrivateOwnPtr.h.
+        * public/platform/WebPrivatePtr.h: Copied from Source/WebKit/chromium/public/WebPrivatePtr.h.
+        * public/platform/WebSerializedScriptValue.h: Copied from Source/WebKit/chromium/public/WebSerializedScriptValue.h.
+        * public/platform/WebString.h: Copied from Source/WebKit/chromium/public/WebString.h.
+        * public/platform/WebURL.h: Copied from Source/WebKit/chromium/public/WebURL.h.
+        * public/platform/WebVector.h: Copied from Source/WebKit/chromium/public/WebVector.h.
+        * public/win/WebInputEventFactory.h:
+        * public/win/WebScreenInfoFactory.h:
+        * public/x11/WebScreenInfoFactory.h:
+
+2011-11-23  Adam Barth  <abarth@webkit.org>
+
         [Chromium] Remove unused WebSecurityOrigin::isEmpty from WebKit API
         https://bugs.webkit.org/show_bug.cgi?id=73065
 

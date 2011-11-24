@@ -31,7 +31,7 @@
 #ifndef WebAnimationController_h
 #define WebAnimationController_h
 
-#include "WebCommon.h"
+#include "platform/WebCommon.h"
 
 namespace WebKit {
 

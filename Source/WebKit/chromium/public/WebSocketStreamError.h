@@ -31,7 +31,7 @@
 #ifndef WebSocketStreamError_h
 #define WebSocketStreamError_h
 
-#include "WebCommon.h"
+#include "platform/WebCommon.h"
 
 namespace WebKit {
 

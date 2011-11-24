@@ -27,8 +27,8 @@
 #define WebLayer_h
 
 #include "WebColor.h"
-#include "WebCommon.h"
-#include "WebPrivatePtr.h"
+#include "platform/WebCommon.h"
+#include "platform/WebPrivatePtr.h"
 
 class SkMatrix44;
 namespace WebCore { class LayerChromium; }

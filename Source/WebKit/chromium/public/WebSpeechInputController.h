@@ -31,7 +31,7 @@
 #ifndef WebSpeechInputController_h
 #define WebSpeechInputController_h
 
-#include "WebCommon.h"
+#include "platform/WebCommon.h"
 
 namespace WebKit {
 

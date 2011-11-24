@@ -31,9 +31,9 @@
 #ifndef WebNode_h
 #define WebNode_h
 
-#include "WebCommon.h"
-#include "WebPrivatePtr.h"
-#include "WebString.h"
+#include "platform/WebCommon.h"
+#include "platform/WebPrivatePtr.h"
+#include "platform/WebString.h"
 
 namespace WebCore { class Node; }
 

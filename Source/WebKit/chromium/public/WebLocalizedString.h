@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -28,56 +28,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebLocalizedString_h
-#define WebLocalizedString_h
-
-namespace WebKit {
-
-struct WebLocalizedString {
-    enum Name {
-        DetailsLabel,
-        SubmitButtonDefaultLabel,
-        InputElementAltText,
-        ResetButtonDefaultLabel,
-        FileButtonChooseFileLabel,
-        FileButtonChooseMultipleFilesLabel,
-        FileButtonNoFileSelectedLabel,
-        MultipleFileUploadText,
-        SearchableIndexIntroduction,
-        SearchMenuNoRecentSearchesText,
-        SearchMenuRecentSearchesText,
-        SearchMenuClearRecentSearchesText,
-        AXWebAreaText,
-        AXLinkText,
-        AXListMarkerText,
-        AXImageMapText,
-        AXHeadingText,
-        AXButtonActionVerb,
-        AXRadioButtonActionVerb,
-        AXTextFieldActionVerb,
-        AXCheckedCheckBoxActionVerb,
-        AXUncheckedCheckBoxActionVerb,
-        AXLinkActionVerb,
-        KeygenMenuHighGradeKeySize,
-        KeygenMenuMediumGradeKeySize,
-        ValidationValueMissing,
-        ValidationValueMissingForCheckbox,
-        ValidationValueMissingForFile,
-        ValidationValueMissingForMultipleFile,
-        ValidationValueMissingForRadio,
-        ValidationValueMissingForSelect,
-        ValidationTypeMismatch,
-        ValidationTypeMismatchForEmail,
-        ValidationTypeMismatchForMultipleEmail,
-        ValidationTypeMismatchForURL,
-        ValidationPatternMismatch,
-        ValidationTooLong,
-        ValidationRangeUnderflow,
-        ValidationRangeOverflow,
-        ValidationStepMismatch,
-    };
-};
-
-} // namespace WebKit
-
+#ifndef WEBKIT_MIGRATE_HEADERS_TO_PLATFORM
+#include "platform/WebLocalizedString.h"
 #endif

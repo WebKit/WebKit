@@ -31,9 +31,9 @@
 #ifndef WebPageSerializer_h
 #define WebPageSerializer_h
 
-#include "WebCString.h"
-#include "WebCommon.h"
-#include "WebURL.h"
+#include "platform/WebCString.h"
+#include "platform/WebCommon.h"
+#include "platform/WebURL.h"
 
 namespace WebKit {
 class WebFrame;

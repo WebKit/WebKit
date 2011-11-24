@@ -26,8 +26,8 @@
 #ifndef WebLayerTreeView_h
 #define WebLayerTreeView_h
 
-#include "WebCommon.h"
-#include "WebPrivatePtr.h"
+#include "platform/WebCommon.h"
+#include "platform/WebPrivatePtr.h"
 
 namespace WebCore {
 class CCLayerTreeHost;

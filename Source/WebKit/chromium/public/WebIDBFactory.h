@@ -29,12 +29,12 @@
 #ifndef WebIDBFactory_h
 #define WebIDBFactory_h
 
-#include "WebCommon.h"
 #include "WebDOMStringList.h"
 #include "WebIDBCallbacks.h"
 #include "WebSecurityOrigin.h"
-#include "WebString.h"
-#include "WebVector.h"
+#include "platform/WebCommon.h"
+#include "platform/WebString.h"
+#include "platform/WebVector.h"
 
 namespace WebKit {
 

@@ -31,8 +31,8 @@
 #ifndef WebSocketClient_h
 #define WebSocketClient_h
 
-#include "WebCommon.h"
-#include "WebData.h"
+#include "platform/WebCommon.h"
+#include "platform/WebData.h"
 
 namespace WebKit {
 

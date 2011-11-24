@@ -31,8 +31,8 @@
 #ifndef WebInputEvent_h
 #define WebInputEvent_h
 
-#include "WebCommon.h"
 #include "WebTouchPoint.h"
+#include "platform/WebCommon.h"
 
 #include <string.h>
 

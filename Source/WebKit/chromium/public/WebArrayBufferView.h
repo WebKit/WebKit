@@ -29,8 +29,8 @@
 #ifndef WebArrayBufferView_h
 #define WebArrayBufferView_h
 
-#include "WebCommon.h"
-#include "WebPrivatePtr.h"
+#include "platform/WebCommon.h"
+#include "platform/WebPrivatePtr.h"
 
 namespace WTF { class ArrayBufferView; }
 

@@ -31,7 +31,7 @@
 #ifndef WebImage_h
 #define WebImage_h
 
-#include "WebCommon.h"
+#include "platform/WebCommon.h"
 
 #if WEBKIT_USING_SKIA
 #include <SkBitmap.h>

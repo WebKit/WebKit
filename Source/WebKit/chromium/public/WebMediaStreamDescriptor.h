@@ -25,10 +25,10 @@
 #ifndef WebMediaStreamDescriptor_h
 #define WebMediaStreamDescriptor_h
 
-#include "WebCommon.h"
 #include "WebNonCopyable.h"
-#include "WebPrivatePtr.h"
-#include "WebVector.h"
+#include "platform/WebCommon.h"
+#include "platform/WebPrivatePtr.h"
+#include "platform/WebVector.h"
 
 namespace WebCore {
 class MediaStreamDescriptor;

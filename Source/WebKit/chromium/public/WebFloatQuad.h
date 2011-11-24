@@ -31,9 +31,9 @@
 #ifndef WebFloatQuad_h
 #define WebFloatQuad_h
 
-#include "WebCommon.h"
 #include "WebFloatPoint.h"
 #include "WebRect.h"
+#include "platform/WebCommon.h"
 #include <algorithm>
 #include <cmath>
 

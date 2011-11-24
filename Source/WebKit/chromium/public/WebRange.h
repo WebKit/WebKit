@@ -31,7 +31,7 @@
 #ifndef WebRange_h
 #define WebRange_h
 
-#include "WebCommon.h"
+#include "platform/WebCommon.h"
 
 #if WEBKIT_IMPLEMENTATION
 namespace WebCore { class Range; }

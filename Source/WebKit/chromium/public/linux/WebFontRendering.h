@@ -31,7 +31,7 @@
 #ifndef WebFontRendering_h
 #define WebFontRendering_h
 
-#include "../WebCommon.h"
+#include "../platform/WebCommon.h"
 #include <SkFontHost.h>
 #include <SkPaint.h>
 

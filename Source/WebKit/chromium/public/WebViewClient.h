@@ -38,10 +38,10 @@
 #include "WebFileChooserParams.h"
 #include "WebPageVisibilityState.h"
 #include "WebPopupType.h"
-#include "WebString.h"
 #include "WebTextAffinity.h"
 #include "WebTextDirection.h"
 #include "WebWidgetClient.h"
+#include "platform/WebString.h"
 
 namespace WebKit {
 

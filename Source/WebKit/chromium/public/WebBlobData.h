@@ -32,8 +32,8 @@
 #define WebBlobData_h
 
 #include "WebThreadSafeData.h"
-#include "WebString.h"
-#include "WebURL.h"
+#include "platform/WebString.h"
+#include "platform/WebURL.h"
 
 #if WEBKIT_IMPLEMENTATION
 namespace WebCore { class BlobData; }

@@ -33,7 +33,7 @@
 
 #include "WebNode.h"
 #include "WebSecurityOrigin.h"
-#include "WebVector.h"
+#include "platform/WebVector.h"
 
 #if WEBKIT_IMPLEMENTATION
 namespace WebCore {

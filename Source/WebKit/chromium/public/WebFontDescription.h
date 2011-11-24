@@ -31,7 +31,7 @@
 #ifndef WebFontDescription_h
 #define WebFontDescription_h
 
-#include "WebString.h"
+#include "platform/WebString.h"
 
 #if WEBKIT_IMPLEMENTATION
 namespace WebCore { class FontDescription; }

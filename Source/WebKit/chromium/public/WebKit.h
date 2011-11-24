@@ -31,7 +31,7 @@
 #ifndef WebKit_h
 #define WebKit_h
 
-#include "WebCommon.h"
+#include "platform/WebCommon.h"
 
 #define HAVE_WEBCOMPOSITOR
 

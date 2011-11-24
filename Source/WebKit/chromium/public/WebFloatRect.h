@@ -31,7 +31,7 @@
 #ifndef WebFloatRect_h
 #define WebFloatRect_h
 
-#include "WebCommon.h"
+#include "platform/WebCommon.h"
 
 #if WEBKIT_IMPLEMENTATION
 #include "FloatRect.h"

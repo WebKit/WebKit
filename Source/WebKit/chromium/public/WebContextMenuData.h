@@ -35,9 +35,9 @@
 #include "WebMenuItemInfo.h"
 #include "WebNode.h"
 #include "WebPoint.h"
-#include "WebString.h"
-#include "WebURL.h"
-#include "WebVector.h"
+#include "platform/WebString.h"
+#include "platform/WebURL.h"
+#include "platform/WebVector.h"
 
 #define WEBCONTEXT_MEDIATYPEFILE_DEFINED
 

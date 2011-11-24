@@ -31,8 +31,8 @@
 #ifndef WebScriptSource_h
 #define WebScriptSource_h
 
-#include "WebString.h"
-#include "WebURL.h"
+#include "platform/WebString.h"
+#include "platform/WebURL.h"
 
 namespace WebKit {
 

@@ -31,7 +31,7 @@
 #ifndef WebPoint_h
 #define WebPoint_h
 
-#include "WebCommon.h"
+#include "platform/WebCommon.h"
 
 #if WEBKIT_IMPLEMENTATION
 #include "IntPoint.h"

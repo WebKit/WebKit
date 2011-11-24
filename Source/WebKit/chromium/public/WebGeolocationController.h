@@ -26,8 +26,8 @@
 #ifndef WebGeolocationController_h
 #define WebGeolocationController_h
 
-#include "WebCommon.h"
 #include "WebNonCopyable.h"
+#include "platform/WebCommon.h"
 
 namespace WebCore { class GeolocationController; }
 

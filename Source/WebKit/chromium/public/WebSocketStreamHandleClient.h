@@ -31,7 +31,7 @@
 #ifndef WebSocketStreamHandleClient_h
 #define WebSocketStreamHandleClient_h
 
-#include "WebCommon.h"
+#include "platform/WebCommon.h"
 
 namespace WebKit {
 

@@ -33,7 +33,7 @@
 
 #define HAS_WEBAUDIO_RUNTIMEFEATURES 1
 
-#include "WebCommon.h"
+#include "platform/WebCommon.h"
 
 namespace WebKit {
 

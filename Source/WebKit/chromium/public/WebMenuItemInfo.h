@@ -31,10 +31,10 @@
 #ifndef WebMenuItemInfo_h
 #define WebMenuItemInfo_h
 
-#include "WebCommon.h"
-#include "WebString.h"
 #include "WebTextDirection.h"
-#include "WebVector.h"
+#include "platform/WebCommon.h"
+#include "platform/WebString.h"
+#include "platform/WebVector.h"
 
 namespace WebKit {
 

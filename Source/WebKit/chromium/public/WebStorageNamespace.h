@@ -31,7 +31,7 @@
 #ifndef WebStorageNamespace_h
 #define WebStorageNamespace_h
 
-#include "WebCommon.h"
+#include "platform/WebCommon.h"
 
 namespace WebKit {
 

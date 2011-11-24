@@ -31,9 +31,9 @@
 #ifndef WebBindings_h
 #define WebBindings_h
 
-#include "WebCommon.h"
-#include "WebString.h"
-#include "WebVector.h"
+#include "platform/WebCommon.h"
+#include "platform/WebString.h"
+#include "platform/WebVector.h"
 #include <bindings/npruntime.h>
 
 #if WEBKIT_USING_V8

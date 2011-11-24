@@ -26,8 +26,8 @@
 #define WebPeerConnectionHandler_h
 
 #include "WebSecurityOrigin.h"
-#include "WebString.h"
-#include "WebVector.h"
+#include "platform/WebString.h"
+#include "platform/WebVector.h"
 
 namespace WebKit {
 

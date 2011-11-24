@@ -32,8 +32,8 @@
 #define WebPasswordFormData_h
 
 #include "WebFormElement.h"
-#include "WebString.h"
-#include "WebURL.h"
+#include "platform/WebString.h"
+#include "platform/WebURL.h"
 
 namespace WebKit {
 

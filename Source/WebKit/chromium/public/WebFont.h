@@ -33,7 +33,7 @@
 
 #include "WebCanvas.h"
 #include "WebColor.h"
-#include "WebCommon.h"
+#include "platform/WebCommon.h"
 
 namespace WebKit {
 

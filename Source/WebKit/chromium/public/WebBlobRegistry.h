@@ -31,7 +31,7 @@
 #ifndef WebBlobRegistry_h
 #define WebBlobRegistry_h
 
-#include "WebCommon.h"
+#include "platform/WebCommon.h"
 
 namespace WebKit {
 

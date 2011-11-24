@@ -26,8 +26,8 @@
 #ifndef WebIDBDatabaseCallbacks_h
 #define WebIDBDatabaseCallbacks_h
 
-#include "WebCommon.h"
-#include "WebString.h"
+#include "platform/WebCommon.h"
+#include "platform/WebString.h"
 
 namespace WebKit {
 

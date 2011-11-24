@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -28,96 +28,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebCommon_h
-#define WebCommon_h
-
-// -----------------------------------------------------------------------------
-// Default configuration
-
-#if !defined(WEBKIT_IMPLEMENTATION)
-    #define WEBKIT_IMPLEMENTATION 0
-#endif
-
-#if !defined(WEBKIT_USING_SKIA)
-    #if !defined(__APPLE__) || defined(USE_SKIA)
-        #define WEBKIT_USING_SKIA 1
-    #else
-        #define WEBKIT_USING_SKIA 0
-    #endif
-#endif
-
-#if !defined(WEBKIT_USING_CG)
-    #if defined(__APPLE__) && !WEBKIT_USING_SKIA
-        #define WEBKIT_USING_CG 1
-    #else
-        #define WEBKIT_USING_CG 0
-    #endif
-#endif
-
-#if !defined(WEBKIT_USING_V8)
-    #define WEBKIT_USING_V8 1
-#endif
-
-#if !defined(WEBKIT_USING_JSC)
-    #define WEBKIT_USING_JSC 0
-#endif
-
-// -----------------------------------------------------------------------------
-// Exported symbols need to be annotated with WEBKIT_EXPORT
-
-#if defined(WEBKIT_DLL)
-    #if defined(WIN32)
-        #if WEBKIT_IMPLEMENTATION
-            #define WEBKIT_EXPORT __declspec(dllexport)
-        #else
-            #define WEBKIT_EXPORT __declspec(dllimport)
-        #endif
-    #else
-        #define WEBKIT_EXPORT __attribute__((visibility("default")))
-    #endif
-#else
-    #define WEBKIT_EXPORT
-#endif
-
-// -----------------------------------------------------------------------------
-// Basic types
-
-#include <stddef.h> // For size_t
-
-#if defined(WIN32)
-// Visual Studio doesn't have stdint.h.
-typedef short int16_t;
-typedef unsigned short uint16_t;
-typedef int int32_t;
-typedef unsigned int uint32_t;
-#endif
-
-namespace WebKit {
-
-// UTF-16 character type
-#if defined(WIN32)
-typedef wchar_t WebUChar;
-#else
-typedef unsigned short WebUChar;
-#endif
-
-// -----------------------------------------------------------------------------
-// Assertions
-
-WEBKIT_EXPORT void failedAssertion(const char* file, int line, const char* function, const char* assertion);
-
-} // namespace WebKit
-
-// Ideally, only use inside the public directory but outside of WEBKIT_IMPLEMENTATION blocks.  (Otherwise use WTF's ASSERT.)
-#if defined(NDEBUG)
-#define WEBKIT_ASSERT(assertion) ((void)0)
-#else
-#define WEBKIT_ASSERT(assertion) do { \
-    if (!(assertion)) \
-        failedAssertion(__FILE__, __LINE__, __FUNCTION__, #assertion); \
-} while (0)
-#endif
-
-#define WEBKIT_ASSERT_NOT_REACHED() WEBKIT_ASSERT(0)
-
+#ifndef WEBKIT_MIGRATE_HEADERS_TO_PLATFORM
+#include "platform/WebCommon.h"
 #endif

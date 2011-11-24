@@ -31,7 +31,7 @@
 #ifndef WebRect_h
 #define WebRect_h
 
-#include "WebCommon.h"
+#include "platform/WebCommon.h"
 
 #if WEBKIT_IMPLEMENTATION
 #include "IntRect.h"

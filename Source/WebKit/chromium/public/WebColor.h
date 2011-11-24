@@ -32,7 +32,7 @@
 #define WebColor_h
 
 #include "WebColorName.h"
-#include "WebCommon.h"
+#include "platform/WebCommon.h"
 
 namespace WebKit {
 

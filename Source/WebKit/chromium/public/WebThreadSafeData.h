@@ -31,8 +31,8 @@
 #ifndef WebThreadSafeData_h
 #define WebThreadSafeData_h
 
-#include "WebCommon.h"
-#include "WebPrivatePtr.h"
+#include "platform/WebCommon.h"
+#include "platform/WebPrivatePtr.h"
 
 #if !WEBKIT_IMPLEMENTATION
 #include <string>

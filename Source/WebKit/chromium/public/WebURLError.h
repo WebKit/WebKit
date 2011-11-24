@@ -31,8 +31,8 @@
 #ifndef WebURLError_h
 #define WebURLError_h
 
-#include "WebString.h"
-#include "WebURL.h"
+#include "platform/WebString.h"
+#include "platform/WebURL.h"
 
 #if defined(WEBKIT_IMPLEMENTATION)
 namespace WebCore { class ResourceError; }

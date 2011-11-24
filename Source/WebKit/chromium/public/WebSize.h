@@ -31,7 +31,7 @@
 #ifndef WebSize_h
 #define WebSize_h
 
-#include "WebCommon.h"
+#include "platform/WebCommon.h"
 
 #if WEBKIT_IMPLEMENTATION
 #include "IntSize.h"

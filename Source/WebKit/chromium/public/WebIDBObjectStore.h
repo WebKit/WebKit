@@ -26,12 +26,12 @@
 #ifndef WebIDBObjectStore_h
 #define WebIDBObjectStore_h
 
-#include "WebCommon.h"
 #include "WebExceptionCode.h"
 #include "WebDOMStringList.h"
 #include "WebIDBCallbacks.h"
 #include "WebIDBTransaction.h"
-#include "WebString.h"
+#include "platform/WebCommon.h"
+#include "platform/WebString.h"
 
 namespace WebKit {
 

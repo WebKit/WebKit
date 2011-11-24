@@ -31,8 +31,8 @@
 #ifndef WebFileSystem_h
 #define WebFileSystem_h
 
-#include "WebCommon.h"
-#include "WebURL.h"
+#include "platform/WebCommon.h"
+#include "platform/WebURL.h"
 
 namespace WebKit {
 

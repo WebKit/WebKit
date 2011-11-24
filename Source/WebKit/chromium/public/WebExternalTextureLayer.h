@@ -26,9 +26,9 @@
 #ifndef WebExternalTextureLayer_h
 #define WebExternalTextureLayer_h
 
-#include "WebCommon.h"
 #include "WebFloatRect.h"
 #include "WebLayer.h"
+#include "platform/WebCommon.h"
 
 namespace WebKit {
 class WebExternalTextureLayerImpl;

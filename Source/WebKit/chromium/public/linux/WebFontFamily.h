@@ -31,8 +31,8 @@
 #ifndef WebFontFamily_h
 #define WebFontFamily_h
 
-#include "../WebCString.h"
-#include "../WebCommon.h"
+#include "../platform/WebCString.h"
+#include "../platform/WebCommon.h"
 
 namespace WebKit {
 

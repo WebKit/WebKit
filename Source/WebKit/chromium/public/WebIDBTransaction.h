@@ -27,7 +27,7 @@
 #define WebIDBTransaction_h
 
 #include "WebExceptionCode.h"
-#include "WebString.h"
+#include "platform/WebString.h"
 
 namespace WebCore { class IDBTransactionBackendInterface; }
 

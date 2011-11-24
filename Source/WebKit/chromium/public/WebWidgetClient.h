@@ -31,10 +31,10 @@
 #ifndef WebWidgetClient_h
 #define WebWidgetClient_h
 
-#include "WebCommon.h"
 #include "WebNavigationPolicy.h"
 #include "WebRect.h"
 #include "WebScreenInfo.h"
+#include "platform/WebCommon.h"
 
 namespace WebKit {
 

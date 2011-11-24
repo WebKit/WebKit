@@ -31,9 +31,9 @@
 #ifndef WebApplicationCacheHost_h
 #define WebApplicationCacheHost_h
 
-#include "WebCommon.h"
-#include "WebURL.h"
-#include "WebVector.h"
+#include "platform/WebCommon.h"
+#include "platform/WebURL.h"
+#include "platform/WebVector.h"
 
 namespace WebKit {
 

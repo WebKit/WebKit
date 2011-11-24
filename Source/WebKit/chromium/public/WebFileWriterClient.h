@@ -31,8 +31,8 @@
 #ifndef WebFileWriterClient_h
 #define WebFileWriterClient_h
 
-#include "WebCommon.h"
 #include "WebFileError.h"
+#include "platform/WebCommon.h"
 
 namespace WebKit {
 

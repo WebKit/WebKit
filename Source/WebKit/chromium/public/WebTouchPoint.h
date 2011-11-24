@@ -31,8 +31,8 @@
 #ifndef WebTouchPoint_h
 #define WebTouchPoint_h
 
-#include "WebCommon.h"
 #include "WebPoint.h"
+#include "platform/WebCommon.h"
 
 namespace WebKit {
 

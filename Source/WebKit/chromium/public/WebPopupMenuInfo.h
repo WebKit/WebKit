@@ -32,7 +32,7 @@
 #define WebPopupMenuInfo_h
 
 #include "WebMenuItemInfo.h"
-#include "WebVector.h"
+#include "platform/WebVector.h"
 
 namespace WebKit {
 

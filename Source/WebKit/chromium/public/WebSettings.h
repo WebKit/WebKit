@@ -31,7 +31,7 @@
 #ifndef WebSettings_h
 #define WebSettings_h
 
-#include "WebCommon.h"
+#include "platform/WebCommon.h"
 #include <unicode/uscript.h>
 
 #define HAS_WEBAUDIO_FEATURE_ENABLE 1

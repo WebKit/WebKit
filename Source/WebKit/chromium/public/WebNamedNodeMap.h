@@ -31,8 +31,8 @@
 #ifndef WebNamedNodeMap_h
 #define WebNamedNodeMap_h
 
-#include "WebCommon.h"
-#include "WebPrivatePtr.h"
+#include "platform/WebCommon.h"
+#include "platform/WebPrivatePtr.h"
 
 namespace WebCore { class NamedNodeMap; }
 #if WEBKIT_IMPLEMENTATION

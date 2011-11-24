@@ -31,8 +31,8 @@
 #ifndef WebDevToolsAgentClient_h
 #define WebDevToolsAgentClient_h
 
-#include "WebCString.h"
-#include "WebCommon.h"
+#include "platform/WebCString.h"
+#include "platform/WebCommon.h"
 
 namespace WebKit {
 class WebString;

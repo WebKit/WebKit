@@ -26,9 +26,9 @@
 #ifndef WebIDBDatabase_h
 #define WebIDBDatabase_h
 
-#include "WebCommon.h"
 #include "WebDOMStringList.h"
 #include "WebExceptionCode.h"
+#include "platform/WebCommon.h"
 
 namespace WebKit {
 

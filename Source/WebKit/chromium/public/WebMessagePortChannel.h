@@ -31,8 +31,8 @@
 #ifndef WebMessagePortChannel_h
 #define WebMessagePortChannel_h
 
-#include "WebCommon.h"
-#include "WebVector.h"
+#include "platform/WebCommon.h"
+#include "platform/WebVector.h"
 
 namespace WebKit {
 

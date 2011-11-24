@@ -31,7 +31,7 @@
 #ifndef WebTextRun_h
 #define WebTextRun_h
 
-#include "WebString.h"
+#include "platform/WebString.h"
 
 #ifdef WEBKIT_IMPLEMENTATION
 namespace WebCore { class TextRun; }

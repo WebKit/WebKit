@@ -26,7 +26,7 @@
 #ifndef WebContentLayer_h
 #define WebContentLayer_h
 
-#include "WebCommon.h"
+#include "platform/WebCommon.h"
 #include "WebLayer.h"
 
 namespace WebKit {

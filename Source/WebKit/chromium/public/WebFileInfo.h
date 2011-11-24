@@ -31,7 +31,7 @@
 #ifndef WebFileInfo_h
 #define WebFileInfo_h
 
-#include "WebString.h"
+#include "platform/WebString.h"
 
 namespace WebKit {
 

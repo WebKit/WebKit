@@ -25,7 +25,7 @@
 #ifndef WebThread_h
 #define WebThread_h
 
-#include "WebCommon.h"
+#include "platform/WebCommon.h"
 
 namespace WebKit {
 

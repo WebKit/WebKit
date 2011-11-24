@@ -31,9 +31,9 @@
 #ifndef WebPerformance_h
 #define WebPerformance_h
 
-#include "WebCommon.h"
 #include "WebNavigationType.h"
-#include "WebPrivatePtr.h"
+#include "platform/WebCommon.h"
+#include "platform/WebPrivatePtr.h"
 
 namespace WebCore { class Performance; }
 

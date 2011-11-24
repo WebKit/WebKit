@@ -31,7 +31,7 @@
 #ifndef WebFloatPoint_h
 #define WebFloatPoint_h
 
-#include "WebCommon.h"
+#include "platform/WebCommon.h"
 
 #if WEBKIT_IMPLEMENTATION
 #include "FloatPoint.h"

@@ -31,9 +31,9 @@
 #ifndef WebFileUtilities_h
 #define WebFileUtilities_h
 
-#include "WebCommon.h"
-#include "WebString.h"
-#include "WebURL.h"
+#include "platform/WebCommon.h"
+#include "platform/WebString.h"
+#include "platform/WebURL.h"
 
 #ifdef WIN32
 typedef void *HANDLE;

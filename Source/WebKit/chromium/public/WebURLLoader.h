@@ -31,7 +31,7 @@
 #ifndef WebURLLoader_h
 #define WebURLLoader_h
 
-#include "WebCommon.h"
+#include "platform/WebCommon.h"
 
 namespace WebKit {
 

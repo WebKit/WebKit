@@ -31,10 +31,10 @@
 #ifndef WebHTTPBody_h
 #define WebHTTPBody_h
 
-#include "WebData.h"
 #include "WebNonCopyable.h"
-#include "WebString.h"
-#include "WebURL.h"
+#include "platform/WebData.h"
+#include "platform/WebString.h"
+#include "platform/WebURL.h"
 
 #if WEBKIT_IMPLEMENTATION
 namespace WebCore { class FormData; }

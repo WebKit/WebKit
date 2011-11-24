@@ -32,8 +32,8 @@
 #define WebPlugin_h
 
 #include "WebCanvas.h"
-#include "WebString.h"
-#include "WebURL.h"
+#include "platform/WebString.h"
+#include "platform/WebURL.h"
 
 struct NPObject;
 

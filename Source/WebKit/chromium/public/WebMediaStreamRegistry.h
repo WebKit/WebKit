@@ -25,7 +25,7 @@
 #ifndef WebMediaStreamRegistry_h
 #define WebMediaStreamRegistry_h
 
-#include "WebString.h"
+#include "platform/WebString.h"
 
 namespace WebKit {
 

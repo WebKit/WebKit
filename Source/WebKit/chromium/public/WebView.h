@@ -33,9 +33,9 @@
 
 #include "WebDragOperation.h"
 #include "WebPageVisibilityState.h"
-#include "WebString.h"
-#include "WebVector.h"
 #include "WebWidget.h"
+#include "platform/WebString.h"
+#include "platform/WebVector.h"
 
 namespace WebKit {
 

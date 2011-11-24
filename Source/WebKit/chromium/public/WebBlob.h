@@ -31,9 +31,9 @@
 #ifndef WebBlob_h
 #define WebBlob_h
 
-#include "WebCommon.h"
-#include "WebPrivatePtr.h"
-#include "WebString.h"
+#include "platform/WebCommon.h"
+#include "platform/WebPrivatePtr.h"
+#include "platform/WebString.h"
 
 #if WEBKIT_USING_V8
 namespace v8 {

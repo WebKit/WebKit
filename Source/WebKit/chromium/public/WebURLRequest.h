@@ -31,8 +31,8 @@
 #ifndef WebURLRequest_h
 #define WebURLRequest_h
 
-#include "WebCommon.h"
 #include "WebHTTPBody.h"
+#include "platform/WebCommon.h"
 
 #if defined(WEBKIT_IMPLEMENTATION)
 namespace WebCore { class ResourceRequest; }

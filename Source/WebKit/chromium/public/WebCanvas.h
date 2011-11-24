@@ -31,7 +31,7 @@
 #ifndef WebCanvas_h
 #define WebCanvas_h
 
-#include "WebCommon.h"
+#include "platform/WebCommon.h"
 
 #if WEBKIT_USING_SKIA
 class SkCanvas;

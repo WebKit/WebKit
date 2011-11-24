@@ -28,12 +28,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef   WebFileSystemCallbacks_h
-#define   WebFileSystemCallbacks_h
+#ifndef WebFileSystemCallbacks_h
+#define WebFileSystemCallbacks_h
 
 #include "WebFileError.h"
 #include "WebFileSystemEntry.h"
-#include "WebVector.h"
+#include "platform/WebVector.h"
 
 namespace WebKit {
 

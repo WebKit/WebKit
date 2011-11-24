@@ -26,8 +26,8 @@
 #ifndef WebIDBKeyRange_h
 #define WebIDBKeyRange_h
 
-#include "WebCommon.h"
-#include "WebPrivatePtr.h"
+#include "platform/WebCommon.h"
+#include "platform/WebPrivatePtr.h"
 
 namespace WebCore { class IDBKeyRange; }
 

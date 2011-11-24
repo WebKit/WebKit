@@ -32,7 +32,7 @@
 #define WebScrollbar_h
 
 #include "WebCanvas.h"
-#include "WebCommon.h"
+#include "platform/WebCommon.h"
 
 namespace WebKit {
 

@@ -31,7 +31,7 @@
 #ifndef WebInputEventFactory_h
 #define WebInputEventFactory_h
 
-#include "../WebCommon.h"
+#include "../platform/WebCommon.h"
 #include "../WebInputEvent.h"
 
 namespace WebKit {

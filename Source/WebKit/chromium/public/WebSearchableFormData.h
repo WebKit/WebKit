@@ -32,8 +32,8 @@
 #define WebSearchableFormData_h
 
 #include "WebInputElement.h"
-#include "WebString.h"
-#include "WebURL.h"
+#include "platform/WebString.h"
+#include "platform/WebURL.h"
 
 namespace WebKit {
 class WebFormElement;

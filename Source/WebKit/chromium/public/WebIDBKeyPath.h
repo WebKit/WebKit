@@ -26,9 +26,9 @@
 #ifndef WebIDBKeyPath_h
 #define WebIDBKeyPath_h
 
-#include "WebCommon.h"
-#include "WebPrivateOwnPtr.h"
-#include "WebVector.h"
+#include "platform/WebCommon.h"
+#include "platform/WebPrivateOwnPtr.h"
+#include "platform/WebVector.h"
 
 namespace WTF {
 template<typename T, size_t inlineCapacity> class Vector;

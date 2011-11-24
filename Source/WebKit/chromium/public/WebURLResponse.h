@@ -31,8 +31,8 @@
 #ifndef WebURLResponse_h
 #define WebURLResponse_h
 
-#include "WebCommon.h"
-#include "WebPrivateOwnPtr.h"
+#include "platform/WebCommon.h"
+#include "platform/WebPrivateOwnPtr.h"
 
 #if defined(WEBKIT_IMPLEMENTATION)
 namespace WebCore { class ResourceResponse; }

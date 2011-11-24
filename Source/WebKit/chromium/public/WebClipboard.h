@@ -31,10 +31,10 @@
 #ifndef WebClipboard_h
 #define WebClipboard_h
 
-#include "WebCommon.h"
-#include "WebData.h"
-#include "WebString.h"
-#include "WebVector.h"
+#include "platform/WebCommon.h"
+#include "platform/WebData.h"
+#include "platform/WebString.h"
+#include "platform/WebVector.h"
 
 namespace WebKit {
 

@@ -31,7 +31,7 @@
 #ifndef WebCrossOriginPreflightResultCache_h
 #define WebCrossOriginPreflightResultCache_h
 
-#include "WebCommon.h"
+#include "platform/WebCommon.h"
 
 namespace WebKit {
 

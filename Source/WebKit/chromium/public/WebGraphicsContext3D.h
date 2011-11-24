@@ -31,9 +31,9 @@
 #ifndef WebGraphicsContext3D_h
 #define WebGraphicsContext3D_h
 
-#include "WebCommon.h"
 #include "WebNonCopyable.h"
-#include "WebString.h"
+#include "platform/WebCommon.h"
+#include "platform/WebString.h"
 
 #define USE_WGC3D_TYPES
 
