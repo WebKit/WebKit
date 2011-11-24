@@ -121,4 +121,11 @@ bool VideoFrameChromiumImpl::hasPaddingBytes(unsigned plane) const
     return false;
 }
 
+unsigned VideoFrameChromiumImpl::textureId() const
+{
+    if (m_webVideoFrame)
+        return m_webVideoFrame->textureId();
+    return 0;
+}
+
 } // namespace WebKit

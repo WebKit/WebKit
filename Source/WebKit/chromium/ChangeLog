@@ -1,3 +1,15 @@
+2011-11-23  Ami Fischman  <fischman@chromium.org>
+
+        Teach VideoLayerChromium how to render native texture (to support HW video decode).
+        https://bugs.webkit.org/show_bug.cgi?id=73043
+
+        Reviewed by Kenneth Russell.
+
+        * public/WebVideoFrame.h:
+        * src/VideoFrameChromiumImpl.cpp:
+        (WebKit::VideoFrameChromiumImpl::textureId):
+        * src/VideoFrameChromiumImpl.h:
+
 2011-11-23  Vincent Scheib  <scheib@chromium.org>
 
         Pointer Lock: Plumb movement coordinates from PlatformMouseEvent to MouseEvents.

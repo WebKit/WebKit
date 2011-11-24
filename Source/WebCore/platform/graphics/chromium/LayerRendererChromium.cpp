@@ -320,7 +320,7 @@ void LayerRendererChromium::drawLayers()
 void LayerRendererChromium::drawLayersOntoRenderSurfaces(CCLayerImpl* rootDrawLayer, const CCLayerList& renderSurfaceLayerList)
 {
     TRACE_EVENT("LayerRendererChromium::drawLayersOntoRenderSurfaces", this, 0);
-    
+
     // Update the contents of the render surfaces. We traverse the render surfaces
     // from back to front to guarantee that nested render surfaces get rendered in
     // the correct order.
@@ -878,6 +878,17 @@ const CCVideoLayerImpl::YUVProgram* LayerRendererChromium::videoLayerYUVProgram(
         m_videoLayerYUVProgram->initialize(m_context.get());
     }
     return m_videoLayerYUVProgram.get();
+}
+
+const CCVideoLayerImpl::NativeTextureProgram* LayerRendererChromium::videoLayerNativeTextureProgram()
+{
+    if (!m_videoLayerNativeTextureProgram)
+        m_videoLayerNativeTextureProgram = adoptPtr(new CCVideoLayerImpl::NativeTextureProgram(m_context.get()));
+    if (!m_videoLayerNativeTextureProgram->initialized()) {
+        TRACE_EVENT("LayerRendererChromium::videoLayerNativeTextureProgram::initialize", this, 0);
+        m_videoLayerNativeTextureProgram->initialize(m_context.get());
+    }
+    return m_videoLayerNativeTextureProgram.get();
 }
 
 

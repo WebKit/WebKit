@@ -132,6 +132,7 @@ public:
     const CCPluginLayerImpl::TexRectProgramFlip* pluginLayerTexRectProgramFlip();
     const CCVideoLayerImpl::RGBAProgram* videoLayerRGBAProgram();
     const CCVideoLayerImpl::YUVProgram* videoLayerYUVProgram();
+    const CCVideoLayerImpl::NativeTextureProgram* videoLayerNativeTextureProgram();
 
     void getFramebufferPixels(void *pixels, const IntRect&);
 
@@ -225,6 +226,7 @@ private:
     OwnPtr<CCRenderSurface::ProgramAA> m_renderSurfaceProgramAA;
     OwnPtr<CCVideoLayerImpl::RGBAProgram> m_videoLayerRGBAProgram;
     OwnPtr<CCVideoLayerImpl::YUVProgram> m_videoLayerYUVProgram;
+    OwnPtr<CCVideoLayerImpl::NativeTextureProgram> m_videoLayerNativeTextureProgram;
 
     OwnPtr<TextureManager> m_renderSurfaceTextureManager;
     OwnPtr<TrackingTextureAllocator> m_contentsTextureAllocator;

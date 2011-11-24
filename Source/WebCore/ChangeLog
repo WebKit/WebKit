@@ -1,3 +1,29 @@
+2011-11-23  Ami Fischman  <fischman@chromium.org>
+
+        Teach VideoLayerChromium how to render native texture (to support HW video decode).
+        https://bugs.webkit.org/show_bug.cgi?id=73043
+
+        Reviewed by Kenneth Russell.
+
+        No new tests. (depends on chromium support landing, and supporting HW being available)
+
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::drawLayersOntoRenderSurfaces):
+        (WebCore::LayerRendererChromium::videoLayerNativeTextureProgram):
+        * platform/graphics/chromium/LayerRendererChromium.h:
+        * platform/graphics/chromium/VideoFrameChromium.h:
+        * platform/graphics/chromium/VideoLayerChromium.cpp:
+        (WebCore::VideoLayerChromium::VideoLayerChromium):
+        (WebCore::VideoLayerChromium::updateCompositorResources):
+        (WebCore::VideoLayerChromium::pushPropertiesTo):
+        (WebCore::VideoLayerChromium::determineTextureFormat):
+        * platform/graphics/chromium/VideoLayerChromium.h:
+        * platform/graphics/chromium/cc/CCVideoLayerImpl.cpp:
+        (WebCore::CCVideoLayerImpl::setNativeTexture):
+        (WebCore::CCVideoLayerImpl::draw):
+        (WebCore::CCVideoLayerImpl::drawNativeTexture):
+        * platform/graphics/chromium/cc/CCVideoLayerImpl.h:
+
 2011-11-23  Vincent Scheib  <scheib@chromium.org>
 
         Pointer Lock: Plumb movement coordinates from PlatformMouseEvent to MouseEvents.

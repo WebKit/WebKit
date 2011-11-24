@@ -57,6 +57,7 @@ VideoLayerChromium::VideoLayerChromium(CCLayerDelegate* delegate, VideoFrameProv
     , m_frameFormat(VideoFrameChromium::Invalid)
     , m_provider(provider)
     , m_planes(0)
+    , m_nativeTextureId(0)
 {
 }
 
@@ -113,6 +114,15 @@ void VideoLayerChromium::updateCompositorResources(GraphicsContext3D* context, C
         return;
     }
 
+    if (textureFormat == GraphicsContext3D::TEXTURE_2D) {
+        m_nativeTextureId = frame->textureId();
+        m_nativeTextureSize = IntSize(frame->width(), frame->height());
+        m_nativeTextureVisibleSize = IntSize(frame->width(), frame->height());
+        resetNeedsDisplay();
+        m_provider->putCurrentFrame(frame);
+        return;
+    }
+
     // Allocate textures for planes if they are not allocated already, or
     // reallocate textures that are the wrong size for the frame.
     bool texturesReserved = reserveTextures(frame, textureFormat);
@@ -155,6 +165,8 @@ void VideoLayerChromium::pushPropertiesTo(CCLayerImpl* layer)
     }
     for (unsigned i = m_planes; i < MaxPlanes; ++i)
         videoLayer->setTexture(i, 0, IntSize(), IntSize());
+    if (m_frameFormat == VideoFrameChromium::NativeTexture)
+        videoLayer->setNativeTexture(m_nativeTextureId, m_nativeTextureSize, m_nativeTextureVisibleSize);
 }
 
 void VideoLayerChromium::setLayerTreeHost(CCLayerTreeHost* host)
@@ -177,6 +189,8 @@ GC3Denum VideoLayerChromium::determineTextureFormat(const VideoFrameChromium* fr
         return GraphicsContext3D::LUMINANCE;
     case VideoFrameChromium::RGBA:
         return GraphicsContext3D::RGBA;
+    case VideoFrameChromium::NativeTexture:
+        return GraphicsContext3D::TEXTURE_2D;
     default:
         break;
     }

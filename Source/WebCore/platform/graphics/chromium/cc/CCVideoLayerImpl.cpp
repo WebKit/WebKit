@@ -77,6 +77,13 @@ void CCVideoLayerImpl::setTexture(size_t index, Platform3DObject textureId, cons
     m_textures[index].visibleSize = visibleSize;
 }
 
+void CCVideoLayerImpl::setNativeTexture(Platform3DObject textureId, const IntSize& size, const IntSize& visibleSize)
+{
+    m_nativeTextureId = textureId;
+    m_nativeTextureSize = size;
+    m_nativeTextureVisibleSize = visibleSize;
+}
+
 void CCVideoLayerImpl::draw(LayerRendererChromium* layerRenderer)
 {
     ASSERT(CCProxy::isImplThread());
@@ -91,6 +98,9 @@ void CCVideoLayerImpl::draw(LayerRendererChromium* layerRenderer)
         break;
     case VideoFrameChromium::RGBA:
         drawRGBA(layerRenderer);
+        break;
+    case VideoFrameChromium::NativeTexture:
+        drawNativeTexture(layerRenderer);
         break;
     default:
         // FIXME: Implement other paths.
@@ -163,6 +173,27 @@ void CCVideoLayerImpl::drawRGBA(LayerRendererChromium* layerRenderer) const
                                     -1);
 }
 
+void CCVideoLayerImpl::drawNativeTexture(LayerRendererChromium* layerRenderer) const
+{
+    const NativeTextureProgram* program = layerRenderer->videoLayerNativeTextureProgram();
+    ASSERT(program && program->initialized());
+
+    GraphicsContext3D* context = layerRenderer->context();
+
+    GLC(context, context->activeTexture(GraphicsContext3D::TEXTURE0));
+    GLC(context, context->bindTexture(GraphicsContext3D::TEXTURE_2D, m_nativeTextureId));
+
+    GLC(context, context->useProgram(program->program()));
+    float widthScaleFactor = static_cast<float>(m_nativeTextureVisibleSize.width()) / m_nativeTextureSize.width();
+    GLC(context, context->uniform4f(program->vertexShader().texTransformLocation(), 0, 0, widthScaleFactor, 1));
+
+    GLC(context, context->uniform1i(program->fragmentShader().samplerLocation(), 0));
+
+    layerRenderer->drawTexturedQuad(drawTransform(), bounds().width(), bounds().height(), drawOpacity(), layerRenderer->sharedGeometryQuad(),
+                                    program->vertexShader().matrixLocation(),
+                                    program->fragmentShader().alphaLocation(),
+                                    -1);
+}
 
 void CCVideoLayerImpl::dumpLayerProperties(TextStream& ts, int indent) const
 {

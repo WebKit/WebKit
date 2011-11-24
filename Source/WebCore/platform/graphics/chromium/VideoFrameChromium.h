@@ -59,6 +59,8 @@ public:
         NV12,
         Empty,
         ASCII,
+        I420,
+        NativeTexture,
     };
 
     virtual ~VideoFrameChromium();
@@ -72,6 +74,7 @@ public:
     virtual const void* data(unsigned plane) const = 0;
     virtual const IntSize requiredTextureSize(unsigned plane) const = 0;
     virtual bool hasPaddingBytes(unsigned plane) const = 0;
+    virtual unsigned textureId() const = 0;
 };
 
 } // namespace WebCore

@@ -85,6 +85,10 @@ private:
     enum { MaxPlanes = 3 };
     Texture m_textures[MaxPlanes];
     unsigned m_planes;
+
+    unsigned m_nativeTextureId;
+    IntSize m_nativeTextureSize;
+    IntSize m_nativeTextureVisibleSize;
 };
 
 }
