@@ -1,5 +1,11 @@
 2011-11-24  Patrick Gansterer  <paroga@webkit.org>
 
+        [CMake] Build fix for NOT ENABLE_WEB_SOCKETS.
+
+        * CMakeLists.txt: Move CloseEvent.idl to the unconditional files.
+
+2011-11-24  Patrick Gansterer  <paroga@webkit.org>
+
         Build fix for C++ bindings.
 
         * bindings/cpp/WebDOMEventTarget.cpp: Added #if ENABLE() guards.

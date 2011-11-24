@@ -374,6 +374,8 @@ SET(WebCore_IDL_FILES
     webaudio/LowPass2FilterNode.idl
     webaudio/RealtimeAnalyserNode.idl
 
+    websockets/CloseEvent.idl
+
     xml/DOMParser.idl
     xml/XMLHttpRequest.idl
     xml/XMLHttpRequestException.idl
@@ -2013,7 +2015,6 @@ IF (ENABLE_WEB_SOCKETS)
     )
 
     LIST(APPEND WebCore_IDL_FILES
-        websockets/CloseEvent.idl
         websockets/WebSocket.idl
     )
 ENDIF ()
