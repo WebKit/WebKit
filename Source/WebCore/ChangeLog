@@ -1,3 +1,31 @@
+2011-11-23  Vincent Scheib  <scheib@chromium.org>
+
+        Pointer Lock: Plumb movement coordinates from PlatformMouseEvent to MouseEvents.
+        https://bugs.webkit.org/show_bug.cgi?id=73031
+
+        Reviewed by Dimitri Glazkov.
+
+        No tests for now, but this patch gets us closer to being able to write layout tests for pointer lock.
+
+        * dom/MouseEvent.cpp:
+        (WebCore::MouseEvent::create):
+        (WebCore::MouseEvent::MouseEvent):
+        (WebCore::SimulatedMouseEvent::SimulatedMouseEvent):
+        * dom/MouseEvent.h:
+        (WebCore::MouseEvent::create):
+        * dom/MouseRelatedEvent.cpp:
+        (WebCore::MouseRelatedEvent::MouseRelatedEvent):
+        * dom/MouseRelatedEvent.h:
+        * dom/TouchEvent.cpp:
+        (WebCore::TouchEvent::TouchEvent):
+        * dom/WheelEvent.cpp:
+        (WebCore::WheelEvent::WheelEvent):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::dispatchDragEvent):
+        * platform/PlatformMouseEvent.h:
+        (WebCore::PlatformMouseEvent::movementX):
+        (WebCore::PlatformMouseEvent::movementY):
+
 2011-11-23  Nico Weber  <thakis@chromium.org>
 
         Remove one static initializer (for kTickTime)

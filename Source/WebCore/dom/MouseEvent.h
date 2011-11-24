@@ -42,10 +42,16 @@ class PlatformMouseEvent;
         }
         static PassRefPtr<MouseEvent> create(const AtomicString& type, bool canBubble, bool cancelable, PassRefPtr<AbstractView> view,
             int detail, int screenX, int screenY, int pageX, int pageY,
+#if ENABLE(POINTER_LOCK)
+            int movementX, int movementY,
+#endif
             bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, unsigned short button,
             PassRefPtr<EventTarget> relatedTarget, PassRefPtr<Clipboard> clipboard = 0, bool isSimulated = false)
         {
             return adoptRef(new MouseEvent(type, canBubble, cancelable, view, detail, screenX, screenY, pageX, pageY,
+#if ENABLE(POINTER_LOCK)
+                movementX, movementY,
+#endif
                 ctrlKey, altKey, shiftKey, metaKey, button, relatedTarget, clipboard, isSimulated));
         }
         static PassRefPtr<MouseEvent> create(const AtomicString& eventType, PassRefPtr<AbstractView>, const PlatformMouseEvent&, int detail, PassRefPtr<Node> relatedTarget);
@@ -80,6 +86,9 @@ class PlatformMouseEvent;
     protected:
         MouseEvent(const AtomicString& type, bool canBubble, bool cancelable, PassRefPtr<AbstractView>,
                    int detail, int screenX, int screenY, int pageX, int pageY,
+#if ENABLE(POINTER_LOCK)
+                   int movementX, int movementY,
+#endif
                    bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, unsigned short button,
                    PassRefPtr<EventTarget> relatedTarget, PassRefPtr<Clipboard> clipboard, bool isSimulated);
 

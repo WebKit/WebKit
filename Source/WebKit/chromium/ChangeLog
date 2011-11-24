@@ -1,3 +1,13 @@
+2011-11-23  Vincent Scheib  <scheib@chromium.org>
+
+        Pointer Lock: Plumb movement coordinates from PlatformMouseEvent to MouseEvents.
+        https://bugs.webkit.org/show_bug.cgi?id=73031
+
+        Reviewed by Dimitri Glazkov.
+
+        * src/WebInputEventConversion.cpp:
+        (WebKit::PlatformMouseEventBuilder::PlatformMouseEventBuilder):
+
 2011-11-23  Tommy Widenflycht  <tommyw@google.com>
 
         [chromium] MediaStream API: Missing WEBKIT_EXPORT in WebMediaStreamRegistry

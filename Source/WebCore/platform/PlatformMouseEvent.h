@@ -109,6 +109,10 @@ namespace WebCore {
         int y() const { return m_position.y(); }
         int globalX() const { return m_globalPosition.x(); }
         int globalY() const { return m_globalPosition.y(); }
+#if ENABLE(POINTER_LOCK)
+        int movementX() const { return m_movementDelta.x(); }
+        int movementY() const { return m_movementDelta.y(); }
+#endif
         MouseButton button() const { return m_button; }
         MouseEventType eventType() const { return m_eventType; }
         int clickCount() const { return m_clickCount; }
@@ -162,6 +166,9 @@ namespace WebCore {
     protected:
         IntPoint m_position;
         IntPoint m_globalPosition;
+#if ENABLE(POINTER_LOCK)
+        IntPoint m_movementDelta;
+#endif
         MouseButton m_button;
         MouseEventType m_eventType;
         int m_clickCount;

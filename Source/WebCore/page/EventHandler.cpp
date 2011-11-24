@@ -1765,6 +1765,9 @@ bool EventHandler::dispatchDragEvent(const AtomicString& eventType, Node* dragTa
     RefPtr<MouseEvent> me = MouseEvent::create(eventType,
         true, true, m_frame->document()->defaultView(),
         0, event.globalX(), event.globalY(), event.x(), event.y(),
+#if ENABLE(POINTER_LOCK)
+        event.movementX(), event.movementY(),
+#endif
         event.ctrlKey(), event.altKey(), event.shiftKey(), event.metaKey(),
         0, 0, clipboard);
 

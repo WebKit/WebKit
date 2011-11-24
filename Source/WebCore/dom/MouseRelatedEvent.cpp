@@ -54,9 +54,15 @@ static LayoutSize contentsScrollOffset(AbstractView* abstractView)
 
 MouseRelatedEvent::MouseRelatedEvent(const AtomicString& eventType, bool canBubble, bool cancelable, PassRefPtr<AbstractView> abstractView,
                                      int detail, const IntPoint& screenLocation, const IntPoint& windowLocation,
+#if ENABLE(POINTER_LOCK)
+                                     const IntPoint& movementDelta,
+#endif
                                      bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, bool isSimulated)
     : UIEventWithKeyState(eventType, canBubble, cancelable, abstractView, detail, ctrlKey, altKey, shiftKey, metaKey)
     , m_screenLocation(screenLocation)
+#if ENABLE(POINTER_LOCK)
+    , m_movementDelta(movementDelta)
+#endif
     , m_isSimulated(isSimulated)
 {
     LayoutPoint adjustedPageLocation;

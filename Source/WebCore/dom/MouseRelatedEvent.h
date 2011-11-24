@@ -64,6 +64,9 @@ namespace WebCore {
         MouseRelatedEvent();
         MouseRelatedEvent(const AtomicString& type, bool canBubble, bool cancelable, PassRefPtr<AbstractView>,
                           int detail, const IntPoint& screenLocation, const IntPoint& windowLocation,
+#if ENABLE(POINTER_LOCK)
+                          const IntPoint& movementDelta,
+#endif
                           bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, bool isSimulated = false);
 
         void initCoordinates();
