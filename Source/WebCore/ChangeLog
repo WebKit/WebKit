@@ -1,3 +1,20 @@
+2011-11-25  Kentaro Hara  <haraken@chromium.org>
+
+        Remove WebCore.gyp/scripts/rule_binding.py
+        https://bugs.webkit.org/show_bug.cgi?id=73109
+
+        Reviewed by Adam Barth.
+
+        rule_binding.py is used by WebCore.gyp only. rule_binding.py is just a wrapper
+        of generate-bindings.pl and thus we can remove it.
+
+        No new tests. No change in behavior.
+
+        * WebCore.gyp/WebCore.gyp: Replaces rule_binding.py with generate-bindings.pl.
+        * WebCore.gyp/scripts/rule_binding.py: Removed.
+        * bindings/scripts/preprocessor.pm: When '"ENABLE_SOMETHING=1" "ENABLE_OTHERS=0"' is passed as a define macro, the string is passed to our perl scripts without the double-quotations (") omitted. We need to omit the double quatations here.
+        (applyPreprocessor):
+
 2011-11-24  Yury Semikhatsky  <yurys@chromium.org>
 
         [Chromium] Web Inspector: remove legacy debugger support

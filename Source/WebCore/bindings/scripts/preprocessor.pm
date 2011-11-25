@@ -57,7 +57,7 @@ sub applyPreprocessor
         $defines = "";
     }
 
-    my $pid = open2(\*PP_OUT, \*PP_IN, split(' ', $preprocessor), (map { "-D$_" } split(' ', $defines)), $fileName);
+    my $pid = open2(\*PP_OUT, \*PP_IN, split(' ', $preprocessor), (map { $_ =~ s/^\"|\"$//g; "-D$_" if $_ } split(' ', $defines)), $fileName);
     close PP_IN;
     my @documentContent = <PP_OUT>;
     close PP_OUT;
