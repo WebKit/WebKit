@@ -1,3 +1,26 @@
+2011-11-24  Kentaro Hara  <haraken@chromium.org>
+
+        Fix the current working directory of run-bindings-tests
+        https://bugs.webkit.org/show_bug.cgi?id=73106
+
+        Reviewed by Adam Barth.
+
+        Currently, run-bindings-tests outputs the following error
+        (although it outputs "all tests passed!" in the end):
+
+            Testing the ObjC generator on TestObj.idl
+            gcc: WebCore/bindings/objc/PublicDOMInterfaces.h: No such file or directory
+            gcc: warning: '-x objective-c' after last input file has no effect
+            gcc: no input files
+
+        This is because CodeGeneratorObjC.pm assumes that the current working directory
+        is WebKit/Source/, but run-bindings-tests sets the current working directory to WebKit/.
+        Thus, this patch changes it to WebKit/Source/.
+
+        * Scripts/run-bindings-tests:
+        (generate_from_idl):
+        (main):
+
 2011-11-24  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] Get rid of the buildDirForSource() function in the build system

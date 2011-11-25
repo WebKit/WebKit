@@ -40,8 +40,8 @@ from webkitpy.common.checkout.scm.detection import detect_scm_system
 
 def generate_from_idl(generator, idl_file, output_directory):
     cmd = ['perl', '-w',
-           '-ISource/WebCore/bindings/scripts',
-           'Source/WebCore/bindings/scripts/generate-bindings.pl',
+           '-IWebCore/bindings/scripts',
+           'WebCore/bindings/scripts/generate-bindings.pl',
            # idl include directories (path relative to generate-bindings.pl)
            '--include', '.',
            '--defines', 'TESTING_%s' % generator,
@@ -109,7 +109,7 @@ def main(argv):
     reset_results = "--reset-results" in argv
 
     current_scm = detect_scm_system(os.curdir)
-    os.chdir(current_scm.checkout_root)
+    os.chdir(os.path.join(current_scm.checkout_root, 'Source'))
 
     all_tests_passed = True
 
@@ -122,8 +122,8 @@ def main(argv):
     ]
 
     for generator in generators:
-        input_directory = os.path.join('Source', 'WebCore', 'bindings', 'scripts', 'test')
-        reference_directory = os.path.join('Source', 'WebCore', 'bindings', 'scripts', 'test', generator)
+        input_directory = os.path.join('WebCore', 'bindings', 'scripts', 'test')
+        reference_directory = os.path.join('WebCore', 'bindings', 'scripts', 'test', generator)
         if not run_tests(generator, input_directory, reference_directory, reset_results):
             all_tests_passed = False
 
