@@ -1,3 +1,17 @@
+2011-11-25  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Eliminate warnings about the deprecated QQuickCanvas::sceneGraphEngine() function.
+
+        Reviewed by Andreas Kling.
+
+        We use the function in question to find out if we can connect to the scene graph's
+        afterRendering signal. The signal has been moved into QQuickCanvas right away, so
+        we can connect to it as soon as we have a canvas.
+
+        * UIProcess/API/qt/qquickwebpage.cpp:
+        (QQuickWebPagePrivate::initializeSceneGraphConnections):
+        * UIProcess/API/qt/qquickwebpage_p.h:
+
 2011-11-24  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
 
         [Qt][WK2] Move event handling out of QtWebPageProxy

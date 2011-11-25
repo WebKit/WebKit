@@ -28,7 +28,6 @@
 #include "qquickwebview_p.h"
 #include <QtCore/QUrl>
 #include <QtDeclarative/QQuickCanvas>
-#include <QtDeclarative/QSGEngine>
 
 QQuickWebPage::QQuickWebPage(QQuickItem* parent)
     : QQuickItem(parent)
@@ -181,10 +180,7 @@ void QQuickWebPagePrivate::initializeSceneGraphConnections()
     if (!q->canvas())
         return;
     paintingIsInitialized = true;
-    if (q->sceneGraphEngine())
-        _q_onSceneGraphInitialized();
-    else
-        QObject::connect(q->canvas(), SIGNAL(sceneGraphInitialized()), q, SLOT(_q_onSceneGraphInitialized()));
+    QObject::connect(q->canvas(), SIGNAL(afterRendering()), q, SLOT(_q_onAfterSceneRender()), Qt::DirectConnection);
 }
 
 void QQuickWebPagePrivate::setPageProxy(QtWebPageProxy* pageProxy)
@@ -241,12 +237,6 @@ void QQuickWebPagePrivate::_q_onAfterSceneRender()
 {
     // TODO: Allow painting before the scene or in the middle of the scene with an FBO.
     paintToCurrentGLContext();
-}
-
-void QQuickWebPagePrivate::_q_onSceneGraphInitialized()
-{
-    QSGEngine* engine = q->sceneGraphEngine();
-    QObject::connect(engine, SIGNAL(afterRendering()), q, SLOT(_q_onAfterSceneRender()), Qt::DirectConnection);
 }
 
 #include "moc_qquickwebpage_p.cpp"

@@ -69,7 +69,6 @@ protected:
 
 private:
     Q_PRIVATE_SLOT(d, void _q_onAfterSceneRender());
-    Q_PRIVATE_SLOT(d, void _q_onSceneGraphInitialized());
 
     QQuickWebPagePrivate* d;
     friend class QQuickWebView;
