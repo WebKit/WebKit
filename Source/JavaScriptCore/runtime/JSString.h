@@ -120,6 +120,7 @@ namespace JSC {
         {
             Base::finishCreation(globalData);
             m_length = 0;
+            m_is8Bit = true;
         }
 
         void finishCreation(JSGlobalData& globalData, size_t length)

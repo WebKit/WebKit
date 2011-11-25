@@ -1,5 +1,17 @@
 2011-11-24  Michael Saboff  <msaboff@apple.com>
 
+        Empty JSStrings are created as 16 bit
+        https://bugs.webkit.org/show_bug.cgi?id=72968
+
+        Clear m_is8Bit flag for empty strings.
+
+        Reviewed by Filip Pizlo.
+
+        * runtime/JSString.h:
+        (JSC::RopeBuilder::finishCreation):
+
+2011-11-24  Michael Saboff  <msaboff@apple.com>
+
         Tune JSStringBuilder for 8 bit Strings
         https://bugs.webkit.org/show_bug.cgi?id=72683
 
