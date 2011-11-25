@@ -1,3 +1,19 @@
+2011-11-25  Wei Charles  <charles.wei@torchmobile.com.cn>
+
+        Upstream the QNX/RIM specific HistoryItemViewState
+        https://bugs.webkit.org/show_bug.cgi?id=73114
+
+        Reviewed by Daniel Bates.
+
+        This patch is to upstream RIM/QNX specific HistoryItemViewState extension
+        to store some extra view state.
+
+        No new tests. It's not built yet.
+
+        * history/blackberry: Added.
+        * history/blackberry/HistoryItemViewState.h: Added.
+        (WebCore::HistoryItemViewState::HistoryItemViewState):
+
 2011-11-25  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Split scripts panel top status bar into debug toolbar and editor toolbar.
