@@ -964,6 +964,8 @@ static inline void constructBidiRuns(InlineBidiResolver& topResolver, BidiRunLis
         // FIXME: The fact that we have to construct an Iterator here
         // currently prevents this code from moving into BidiResolver.
         RenderObject* startObj = bidiFirstSkippingEmptyInlines(isolatedSpan, &isolatedResolver);
+        if (!startObj)
+            continue;
         isolatedResolver.setPosition(InlineIterator(isolatedSpan, startObj, 0));
 
         // FIXME: isolatedEnd should probably equal end or the last char in isolatedSpan.

@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<body>
+This test ensures WebKit does not crash when encountering an empty bdi element.
+<bdi></bdi>
+<script>
+
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+
+</script>
+</body>
+</html>

@@ -1,3 +1,20 @@
+2011-11-25  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Crash in BidiRunList<Run>::replaceRunWithRuns with an empty bdi element
+        https://bugs.webkit.org/show_bug.cgi?id=73116
+
+        Reviewed by Eric Seidel.
+
+        The assertion failure was caused because isolatedResolver is initialized with
+        null start object due to the isolated run being empty.
+
+        Fixed the failure by skipping empty isolated runs.
+
+        Test: fast/text/empty-bdi-crash.html
+
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::constructBidiRuns):
+
 2011-11-25  Antti Koivisto  <antti@apple.com>
 
         StyleGeneratedImage should ref CSSImageGeneratorValue
