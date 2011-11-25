@@ -1,3 +1,24 @@
+2011-11-25  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Cleanup in QML tests.
+
+        Reviewed by Tor Arne Vestbø.
+
+        Use a simple QML component for the "DesktopWebView" instead of a new QML type.
+        This will allow the use of the experimental extension in the future.
+
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewExperimental::useTraditionalDesktopBehaviour):
+        * UIProcess/API/qt/qquickwebview_p.h:
+        * UIProcess/API/qt/tests/qmltests/DesktopBehavior/DesktopWebView.qml: Added.
+        * UIProcess/API/qt/tests/qmltests/DesktopBehavior/tst_linkHovered.qml:
+        * UIProcess/API/qt/tests/qmltests/DesktopBehavior/tst_loadHtml.qml:
+        * UIProcess/API/qt/tests/qmltests/DesktopBehavior/tst_messaging.qml:
+        * UIProcess/API/qt/tests/qmltests/DesktopBehavior/tst_navigationRequested.qml:
+        * UIProcess/API/qt/tests/qmltests/qmltests.pro:
+        * UIProcess/API/qt/tests/qmltests/tst_qmltests.cpp:
+        (main):
+
 2011-11-24  Zeno Albisser  <zeno@webkit.org>
 
         [Qt]WK2][Mac] Use Mac port's IPC implementation instead of Unix sockets

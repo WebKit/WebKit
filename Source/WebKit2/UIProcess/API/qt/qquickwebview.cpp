@@ -440,6 +440,12 @@ void QQuickWebViewExperimental::setPromptDialog(QDeclarativeComponent* promptDia
     emit promptDialogChanged();
 }
 
+bool QQuickWebViewExperimental::useTraditionalDesktopBehaviour() const
+{
+    Q_D(const QQuickWebView);
+    return d->useTraditionalDesktopBehaviour;
+}
+
 QQuickWebView::QQuickWebView(QQuickItem* parent)
     : QQuickItem(parent)
     , d_ptr(new QQuickWebViewPrivate(this))

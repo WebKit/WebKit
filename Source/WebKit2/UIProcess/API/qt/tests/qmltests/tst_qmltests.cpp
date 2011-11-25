@@ -20,21 +20,9 @@
 #include "config.h"
 #include "../util.h"
 
-#include "qquickwebpage_p.h"
-#include "qquickwebview_p.h"
-
 #include <QVarLengthArray>
 #include <QtQuickTest/quicktest.h>
 #include <QtWidgets/QApplication>
-
-class DesktopWebView : public QQuickWebView {
-public:
-    DesktopWebView(QQuickItem* parent = 0)
-        : QQuickWebView(parent)
-    {
-        experimental()->setUseTraditionalDesktopBehaviour(true);
-    }
-};
 
 int main(int argc, char** argv)
 {
@@ -54,6 +42,5 @@ int main(int argc, char** argv)
     // Instantiate QApplication to prevent quick_test_main to instantiate a QGuiApplication.
     // This can be removed as soon as we do not use QtWidgets any more.
     QApplication app(argc, argv);
-    qmlRegisterType<DesktopWebView>("QtWebKitTest", 1, 0, "DesktopWebView");
     return quick_test_main(argc, argv, "qmltests", 0, QUICK_TEST_SOURCE_DIR);
 }
