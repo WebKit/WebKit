@@ -294,9 +294,9 @@ private:
 public:
     static RenderStyle* styleNotYetAvailable() { return s_styleNotYetAvailable; }
 
-    StyleImage* styleImage(CSSPropertyID, CSSValue*);
-    StyleImage* cachedOrPendingFromValue(CSSPropertyID, CSSImageValue*);
-    StyleImage* generatedOrPendingFromValue(CSSPropertyID, CSSImageGeneratorValue*);
+    PassRefPtr<StyleImage> styleImage(CSSPropertyID, CSSValue*);
+    PassRefPtr<StyleImage> cachedOrPendingFromValue(CSSPropertyID, CSSImageValue*);
+    PassRefPtr<StyleImage> generatedOrPendingFromValue(CSSPropertyID, CSSImageGeneratorValue*);
 
     bool applyPropertyToRegularStyle() const { return m_applyPropertyToRegularStyle; }
     bool applyPropertyToVisitedLinkStyle() const { return m_applyPropertyToVisitedLinkStyle; }
@@ -343,7 +343,7 @@ private:
     void applySVGProperty(int id, CSSValue*);
 #endif
 
-    StyleImage* loadPendingImage(StylePendingImage*);
+    PassRefPtr<StyleImage> loadPendingImage(StylePendingImage*);
     void loadPendingImages();
 
     struct MatchedStyleDeclaration {

@@ -47,7 +47,7 @@ public:
     {
     }
 
-    NinePieceImage(StyleImage* image, LengthBox imageSlices, bool fill, LengthBox borderSlices, LengthBox outset, ENinePieceImageRule h, ENinePieceImageRule v) 
+    NinePieceImage(PassRefPtr<StyleImage> image, LengthBox imageSlices, bool fill, LengthBox borderSlices, LengthBox outset, ENinePieceImageRule h, ENinePieceImageRule v) 
       : m_image(image)
       , m_imageSlices(imageSlices)
       , m_borderSlices(borderSlices)

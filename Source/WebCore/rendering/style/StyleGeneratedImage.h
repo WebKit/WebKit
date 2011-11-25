@@ -33,12 +33,12 @@ class CSSImageGeneratorValue;
 
 class StyleGeneratedImage : public StyleImage {
 public:
-    static PassRefPtr<StyleGeneratedImage> create(CSSImageGeneratorValue* val, bool fixedSize)
+    static PassRefPtr<StyleGeneratedImage> create(CSSImageGeneratorValue* value)
     {
-        return adoptRef(new StyleGeneratedImage(val, fixedSize));
+        return adoptRef(new StyleGeneratedImage(value));
     }
 
-    virtual WrappedImagePtr data() const { return m_generator; }
+    virtual WrappedImagePtr data() const { return m_imageGeneratorValue.get(); }
 
     virtual PassRefPtr<CSSValue> cssValue() const;
 
@@ -53,14 +53,9 @@ public:
     virtual PassRefPtr<Image> image(RenderObject*, const IntSize&) const;
     
 private:
-    StyleGeneratedImage(CSSImageGeneratorValue* val, bool fixedSize)
-        : m_generator(val)
-        , m_fixedSize(fixedSize)
-    {
-         m_isGeneratedImage = true;
-    }
+    StyleGeneratedImage(PassRefPtr<CSSImageGeneratorValue>);
     
-    CSSImageGeneratorValue* m_generator; // The generator holds a reference to us.
+    RefPtr<CSSImageGeneratorValue> m_imageGeneratorValue;
     IntSize m_containerSize;
     bool m_fixedSize;
 };

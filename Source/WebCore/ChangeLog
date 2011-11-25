@@ -1,3 +1,48 @@
+2011-11-25  Antti Koivisto  <antti@apple.com>
+
+        StyleGeneratedImage should ref CSSImageGeneratorValue
+        https://bugs.webkit.org/show_bug.cgi?id=73074
+
+        Reviewed by Andreas Kling and Nikolas Zimmermann.
+        
+        RenderStyle owns a bunch of StyleImage objects. However StyleGeneratedImage does not ref the
+        CSSImageGeneratorValue it holds so we currently rely on the stylesheet to keep the CSSImageGeneratorValues
+        alive as long as RenderStyle stays alive. While this works (RenderStyles are thrown away if stylesheets
+        change) it is not particularly robust or nice.
+
+        - Use RefPtr<CSSImageGeneratorValue> in StyleGeneratedImage
+        - Remove the RefPtr<StyleGeneratedImage> from CSSImageGeneratorValue.
+          There is no good reason to cache StyleGeneratedImage as it is a small and
+          uncommon object. With that the whole back-reference becomes unnecessary.
+        - Switch more places to use (Pass)RefPtr<StyleImage> for consistency.
+
+        * css/CSSImageGeneratorValue.cpp:
+        (WebCore::CSSImageGeneratorValue::CSSImageGeneratorValue):
+        * css/CSSImageGeneratorValue.h:
+        * css/CSSStyleApplyProperty.cpp:
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        (WebCore::CSSStyleSelector::styleImage):
+        (WebCore::CSSStyleSelector::cachedOrPendingFromValue):
+        (WebCore::CSSStyleSelector::generatedOrPendingFromValue):
+        (WebCore::CSSStyleSelector::loadPendingImage):
+        (WebCore::CSSStyleSelector::loadPendingImages):
+        * css/CSSStyleSelector.h:
+        * rendering/style/FillLayer.h:
+        (WebCore::FillLayer::setImage):
+        * rendering/style/NinePieceImage.h:
+        (WebCore::NinePieceImage::NinePieceImage):
+        * rendering/style/StyleGeneratedImage.cpp:
+        (WebCore::StyleGeneratedImage::StyleGeneratedImage):
+        (WebCore::StyleGeneratedImage::cssValue):
+        (WebCore::StyleGeneratedImage::imageSize):
+        (WebCore::StyleGeneratedImage::addClient):
+        (WebCore::StyleGeneratedImage::removeClient):
+        (WebCore::StyleGeneratedImage::image):
+        * rendering/style/StyleGeneratedImage.h:
+        (WebCore::StyleGeneratedImage::create):
+        (WebCore::StyleGeneratedImage::data):
+
 2011-11-25  Andreas Kling  <kling@webkit.org>
 
         Remove redundant setStrictParsing(false) calls on CSSMappedAttributeDeclarations.

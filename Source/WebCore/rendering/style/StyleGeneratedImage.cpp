@@ -29,16 +29,23 @@
 #include "RenderObject.h"
 
 namespace WebCore {
+    
+StyleGeneratedImage::StyleGeneratedImage(PassRefPtr<CSSImageGeneratorValue> value)
+    : m_imageGeneratorValue(value)  
+    , m_fixedSize(m_imageGeneratorValue->isFixedSize())
+{
+    m_isGeneratedImage = true;
+}
 
 PassRefPtr<CSSValue> StyleGeneratedImage::cssValue() const
 {
-    return m_generator;
+    return m_imageGeneratorValue;
 }
 
 IntSize StyleGeneratedImage::imageSize(const RenderObject* renderer, float multiplier) const
 {
     if (m_fixedSize) {
-        IntSize fixedSize = m_generator->fixedSize(renderer);
+        IntSize fixedSize = m_imageGeneratorValue->fixedSize(renderer);
         if (multiplier == 1.0f)
             return fixedSize;
 
@@ -68,18 +75,18 @@ void StyleGeneratedImage::computeIntrinsicDimensions(const RenderObject* rendere
 
 void StyleGeneratedImage::addClient(RenderObject* renderer)
 {
-    m_generator->addClient(renderer, IntSize());
+    m_imageGeneratorValue->addClient(renderer, IntSize());
 }
 
 void StyleGeneratedImage::removeClient(RenderObject* renderer)
 {
-    m_generator->removeClient(renderer);
+    m_imageGeneratorValue->removeClient(renderer);
 }
 
 PassRefPtr<Image> StyleGeneratedImage::image(RenderObject* renderer, const IntSize& size) const
 {
     renderer->document()->styleSelector()->setStyle(renderer->style());
-    return m_generator->image(renderer, size);
+    return m_imageGeneratorValue->image(renderer, size);
 }
 
 }

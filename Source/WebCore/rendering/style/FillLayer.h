@@ -92,7 +92,7 @@ public:
     bool isCompositeSet() const { return m_compositeSet; }
     bool isSizeSet() const { return m_sizeType != SizeNone; }
     
-    void setImage(StyleImage* i) { m_image = i; m_imageSet = true; }
+    void setImage(PassRefPtr<StyleImage> i) { m_image = i; m_imageSet = true; }
     void setXPosition(Length l) { m_xPosition = l; m_xPosSet = true; }
     void setYPosition(Length l) { m_yPosition = l; m_yPosSet = true; }
     void setAttachment(EFillAttachment attachment) { m_attachment = attachment; m_attachmentSet = true; }

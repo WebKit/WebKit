@@ -36,8 +36,6 @@ namespace WebCore {
 class CachedResourceLoader;
 class Image;
 class RenderObject;
-class StyleGeneratedImage;
-class StyleImage;
 
 struct SizeAndCount {
     SizeAndCount(IntSize newSize = IntSize(), int newCount = 0)
@@ -60,9 +58,6 @@ public:
     void removeClient(RenderObject*);
     PassRefPtr<Image> image(RenderObject*, const IntSize&);
 
-    StyleImage* generatedOrPendingImage();
-    StyleGeneratedImage* generatedImage();
-
     bool isFixedSize() const;
     IntSize fixedSize(const RenderObject*);
 
@@ -76,9 +71,6 @@ protected:
     Image* getImage(RenderObject*, const IntSize&);
     void putImage(const IntSize&, PassRefPtr<Image>);
     const RenderObjectSizeCountMap& clients() const { return m_clients; }
-
-    RefPtr<StyleImage> m_image;
-    bool m_accessedImage;
 
     HashCountedSet<IntSize> m_sizes; // A count of how many times a given image size is in use.
     RenderObjectSizeCountMap m_clients; // A map from RenderObjects (with entry count) to image sizes.

@@ -388,16 +388,28 @@ public:
     }
 };
 
+template <typename T>
+struct FillLayerAccessorTypes {
+    typedef T Setter;
+    typedef T Getter;
+};
+
+template <>
+struct FillLayerAccessorTypes<StyleImage*> {
+    typedef PassRefPtr<StyleImage> Setter;
+    typedef StyleImage* Getter;
+};
+
 template <typename T,
           CSSPropertyID propertyId,
           EFillLayerType fillLayerType,
           FillLayer* (RenderStyle::*accessLayersFunction)(),
           const FillLayer* (RenderStyle::*layersFunction)() const,
           bool (FillLayer::*testFunction)() const,
-          T (FillLayer::*getFunction)() const,
-          void (FillLayer::*setFunction)(T),
+          typename FillLayerAccessorTypes<T>::Getter (FillLayer::*getFunction)() const,
+          void (FillLayer::*setFunction)(typename FillLayerAccessorTypes<T>::Setter),
           void (FillLayer::*clearFunction)(),
-          T (*initialFunction)(EFillLayerType),
+          typename FillLayerAccessorTypes<T>::Getter (*initialFunction)(EFillLayerType),
           void (CSSStyleSelector::*mapFillFunction)(CSSPropertyID, FillLayer*, CSSValue*)>
 class ApplyPropertyFillLayer {
 public:

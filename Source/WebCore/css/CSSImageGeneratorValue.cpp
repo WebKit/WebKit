@@ -31,15 +31,12 @@
 #include "CSSGradientValue.h"
 #include "Image.h"
 #include "RenderObject.h"
-#include "StyleGeneratedImage.h"
-#include "StylePendingImage.h"
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 CSSImageGeneratorValue::CSSImageGeneratorValue(ClassType classType)
     : CSSValue(classType)
-    , m_accessedImage(false)
 {
 }
 
@@ -109,28 +106,6 @@ Image* CSSImageGeneratorValue::getImage(RenderObject* renderer, const IntSize& s
 void CSSImageGeneratorValue::putImage(const IntSize& size, PassRefPtr<Image> image)
 {
     m_images.add(size, image);
-}
-
-StyleImage* CSSImageGeneratorValue::generatedOrPendingImage()
-{
-    if (isPending())
-        m_image = StylePendingImage::create(this).get();
-    else if (!m_accessedImage) {
-        m_accessedImage = true;
-        m_image = StyleGeneratedImage::create(this, isFixedSize());
-    }
-
-    return m_image.get();
-}
-
-StyleGeneratedImage* CSSImageGeneratorValue::generatedImage()
-{
-    if (!m_accessedImage) {
-        m_accessedImage = true;
-        m_image = StyleGeneratedImage::create(this, isFixedSize());
-    }
-
-    return static_cast<StyleGeneratedImage*>(m_image.get());
 }
 
 PassRefPtr<Image> CSSImageGeneratorValue::image(RenderObject* renderer, const IntSize& size)
