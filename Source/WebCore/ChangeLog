@@ -1,3 +1,17 @@
+2011-11-25  Jeff Timanus  <twiz@chromium.org>
+
+        [Chromium] The DrawingBuffer::bind method was incorrectly resetting the
+        GL viewport parameters. This was unnecessary, and resulted in the corruption
+        of the WebGL context's state.
+        https://bugs.webkit.org/show_bug.cgi?id=73091
+
+        Reviewed by Stephen White.
+
+        Tests: fast/canvas/webgl/webgl-viewport-parameters-preserved.html
+
+        * platform/graphics/gpu/DrawingBuffer.cpp:
+        (WebCore::DrawingBuffer::bind):
+
 2011-11-25  Ryosuke Niwa  <rniwa@webkit.org>
 
         Crash in BidiRunList<Run>::replaceRunWithRuns with an empty bdi element

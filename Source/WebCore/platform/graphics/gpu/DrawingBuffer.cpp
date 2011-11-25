@@ -368,9 +368,8 @@ void DrawingBuffer::bind()
 {
     if (!m_context)
         return;
-        
+
     m_context->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, m_multisampleFBO ? m_multisampleFBO : m_fbo);
-    m_context->viewport(0, 0, m_size.width(), m_size.height());
 }
 
 } // namespace WebCore
