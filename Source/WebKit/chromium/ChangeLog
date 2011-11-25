@@ -1,5 +1,17 @@
 2011-11-25  Yury Semikhatsky  <yurys@chromium.org>
 
+        [Chromium] Web Inspector: assertion failure in InspectorController::restoreInspectorStateFromCookie
+        https://bugs.webkit.org/show_bug.cgi?id=73136
+
+        Don't call connectFrontend twice on reattach.
+
+        Reviewed by Pavel Feldman.
+
+        * src/WebDevToolsAgentImpl.cpp:
+        (WebKit::WebDevToolsAgentImpl::reattach):
+
+2011-11-25  Yury Semikhatsky  <yurys@chromium.org>
+
         Unreviewed. Chromium build fix.
 
         * public/WebDevToolsFrontendClient.h:

@@ -201,8 +201,12 @@ void WebDevToolsAgentImpl::attach()
 
 void WebDevToolsAgentImpl::reattach(const WebString& savedState)
 {
-    attach();
+    if (m_attached)
+        return;
+
+    ClientMessageLoopAdapter::ensureClientMessageLoopCreated(m_client);
     inspectorController()->restoreInspectorStateFromCookie(savedState);
+    m_attached = true;
 }
 
 void WebDevToolsAgentImpl::detach()
