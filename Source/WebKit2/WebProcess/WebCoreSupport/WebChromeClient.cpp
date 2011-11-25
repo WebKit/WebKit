@@ -427,40 +427,35 @@ PlatformPageClient WebChromeClient::platformPageClient() const
 
 void WebChromeClient::contentsSizeChanged(Frame* frame, const IntSize& size) const
 {
-#if PLATFORM(QT)
-#if USE(TILED_BACKING_STORE)
-    if (frame->page()->mainFrame() == frame)
-        m_page->resizeToContentsIfNeeded();
-#endif
-
-    WebFrame* webFrame = static_cast<WebFrameLoaderClient*>(frame->loader()->client())->webFrame();
-
-    if (!m_page->mainWebFrame() || m_page->mainWebFrame() != webFrame)
-        return;
-
-    m_page->send(Messages::WebPageProxy::DidChangeContentsSize(size));
-#endif
-
-    WebFrame* largestFrame = findLargestFrameInFrameSet(m_page);
-    if (largestFrame != m_cachedFrameSetLargestFrame.get()) {
-        m_cachedFrameSetLargestFrame = largestFrame;
-        m_page->send(Messages::WebPageProxy::FrameSetLargestFrameChanged(largestFrame ? largestFrame->frameID() : 0));
+    if (!m_page->corePage()->settings()->frameFlatteningEnabled()) {
+        WebFrame* largestFrame = findLargestFrameInFrameSet(m_page);
+        if (largestFrame != m_cachedFrameSetLargestFrame.get()) {
+            m_cachedFrameSetLargestFrame = largestFrame;
+            m_page->send(Messages::WebPageProxy::FrameSetLargestFrameChanged(largestFrame ? largestFrame->frameID() : 0));
+        }
     }
 
     if (frame->page()->mainFrame() != frame)
         return;
+
+#if PLATFORM(QT)
+    m_page->send(Messages::WebPageProxy::DidChangeContentsSize(size));
+
+    if (m_page->useFixedLayout())
+        m_page->resizeToContentsIfNeeded();
+#endif
+
     FrameView* frameView = frame->view();
-    if (!frameView)
-        return;
+    if (frameView && !frameView->delegatesScrolling())  {
+        bool hasHorizontalScrollbar = frameView->horizontalScrollbar();
+        bool hasVerticalScrollbar = frameView->verticalScrollbar();
 
-    bool hasHorizontalScrollbar = frameView->horizontalScrollbar();
-    bool hasVerticalScrollbar = frameView->verticalScrollbar();
+        if (hasHorizontalScrollbar != m_cachedMainFrameHasHorizontalScrollbar || hasVerticalScrollbar != m_cachedMainFrameHasVerticalScrollbar) {
+            m_page->send(Messages::WebPageProxy::DidChangeScrollbarsForMainFrame(hasHorizontalScrollbar, hasVerticalScrollbar));
 
-    if (hasHorizontalScrollbar != m_cachedMainFrameHasHorizontalScrollbar || hasVerticalScrollbar != m_cachedMainFrameHasVerticalScrollbar) {
-        m_page->send(Messages::WebPageProxy::DidChangeScrollbarsForMainFrame(hasHorizontalScrollbar, hasVerticalScrollbar));
-        
-        m_cachedMainFrameHasHorizontalScrollbar = hasHorizontalScrollbar;
-        m_cachedMainFrameHasVerticalScrollbar = hasVerticalScrollbar;
+            m_cachedMainFrameHasHorizontalScrollbar = hasHorizontalScrollbar;
+            m_cachedMainFrameHasVerticalScrollbar = hasVerticalScrollbar;
+        }
     }
 }
 
@@ -747,13 +742,13 @@ void WebChromeClient::dispatchViewportPropertiesDidChange(const ViewportArgument
 
 #if USE(TILED_BACKING_STORE)
     // When viewport properties change, recalculate and set the new recommended layout size in case of fixed layout rendering.
-    if (m_page->mainFrameView() && m_page->mainFrameView()->useFixedLayout()) {
-        Page* page = m_page->corePage();
-        Settings* settings = page->settings();
+    if (m_page->useFixedLayout()) {
+        Settings* settings = m_page->corePage()->settings();
 
         int minimumLayoutFallbackWidth = std::max(settings->layoutFallbackWidth(), m_page->viewportSize().width());
 
-        IntSize targetLayoutSize = computeViewportAttributes(page->viewportArguments(), minimumLayoutFallbackWidth, settings->deviceWidth(), settings->deviceHeight(),
+        IntSize targetLayoutSize = computeViewportAttributes(m_page->corePage()->viewportArguments(),
+            minimumLayoutFallbackWidth, settings->deviceWidth(), settings->deviceHeight(),
             settings->deviceDPI(), m_page->viewportSize()).layoutSize;
         m_page->setResizesToContentsUsingLayoutSize(targetLayoutSize);
     }

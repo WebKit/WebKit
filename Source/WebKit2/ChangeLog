@@ -1,3 +1,25 @@
+2011-11-25  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Clean up code in WK2/ChromeClientClient related to viewport handling
+        https://bugs.webkit.org/show_bug.cgi?id=73128
+
+        Reviewed by Simon Hausmann.
+
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::contentsSizeChanged):
+
+            Make sure that we only call resizeToContentsIfNeeded when we are
+            using the tiled backing store and fixed layout as well.
+
+            Guard the scrollbar code so that it is only called when scroll
+            delegation is not used. Do similarily for the frameset code,
+            which makes no sense with frame flattening.
+
+        (WebKit::WebChromeClient::dispatchViewportPropertiesDidChange):
+
+            This method is only called for the main frame, so the main frame
+            check has been removed.
+
 2011-11-25  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Eliminate warnings about the deprecated QQuickCanvas::sceneGraphEngine() function.
