@@ -42,7 +42,6 @@ public:
     void initializeSceneGraphConnections();
 
     void _q_onAfterSceneRender();
-    void _q_onSceneGraphInitialized();
     void paintToCurrentGLContext();
 
     QQuickWebPage* const q;

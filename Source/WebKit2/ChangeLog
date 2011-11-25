@@ -1,3 +1,14 @@
+2011-11-25  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        [Qt] Remove unneeded declaration from QQuickWebPagePrivate
+        https://bugs.webkit.org/show_bug.cgi?id=73141
+
+        Reviewed by Antonio Gomes.
+
+        Left-over from r101165.
+
+        * UIProcess/API/qt/qquickwebpage_p_p.h:
+
 2011-11-17  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Integrate build-gtkdoc into build-webkit and make
