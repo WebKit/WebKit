@@ -25,16 +25,16 @@
 #include "config.h"
 #include "QtTapGestureRecognizer.h"
 
-#include "QtWebPageProxy.h"
+#include "QtWebPageEventHandler.h"
 #include "QtViewportInteractionEngine.h"
 #include <QLineF>
 #include <QTouchEvent>
 
 namespace WebKit {
 
-QtTapGestureRecognizer::QtTapGestureRecognizer(QtViewportInteractionEngine* interactionEngine, QtWebPageProxy* page)
+QtTapGestureRecognizer::QtTapGestureRecognizer(QtViewportInteractionEngine* interactionEngine, QtWebPageEventHandler* eventHandler)
     : QtGestureRecognizer(interactionEngine)
-    , m_webPageProxy(page)
+    , m_eventHandler(eventHandler)
     , m_tapState(NoTap)
 {
     reset();
@@ -100,8 +100,8 @@ bool QtTapGestureRecognizer::recognize(const QTouchEvent* event, qint64 eventTim
                 const QTouchEvent::TouchPoint& touchPoint = event->touchPoints().first();
                 QPointF startPosition = touchPoint.startScreenPos();
                 QPointF endPosition = touchPoint.screenPos();
-                if (QLineF(endPosition, startPosition).length() < maxDoubleTapDistance && m_webPageProxy)
-                    m_webPageProxy->handleDoubleTapEvent(touchPoint);
+                if (QLineF(endPosition, startPosition).length() < maxDoubleTapDistance && m_eventHandler)
+                    m_eventHandler->handleDoubleTapEvent(touchPoint);
                 break;
             }
         case SingleTapStarted:
@@ -125,7 +125,7 @@ bool QtTapGestureRecognizer::recognize(const QTouchEvent* event, qint64 eventTim
 void QtTapGestureRecognizer::tapTimeout()
 {
     m_doubleTapTimer.stop();
-    m_webPageProxy->handleSingleTapEvent(m_touchBeginEventForTap->touchPoints().at(0));
+    m_eventHandler->handleSingleTapEvent(m_touchBeginEventForTap->touchPoints().at(0));
     m_touchBeginEventForTap.clear();
 }
 

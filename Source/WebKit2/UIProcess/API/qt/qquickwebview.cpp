@@ -51,11 +51,13 @@ QQuickWebViewPrivate::QQuickWebViewPrivate(QQuickWebView* viewport, WKContextRef
     pageView.reset(new QQuickWebPage(viewport));
 
     QQuickWebPagePrivate* const pageViewPrivate = pageView.data()->d;
-    setPageProxy(new QtWebPageProxy(pageView.data(), q_ptr, /* interactionEngine */ 0, contextRef, pageGroupRef));
+    setPageProxy(new QtWebPageProxy(pageView.data(), q_ptr, contextRef, pageGroupRef));
     pageViewPrivate->setPageProxy(pageProxy.data());
 
+    eventHandler.reset(new QtWebPageEventHandler(pageProxy->pageRef()));
+
     QWebPreferencesPrivate::get(pageProxy->preferences())->setAttribute(QWebPreferencesPrivate::AcceleratedCompositingEnabled, true);
-    pageProxy->init();
+    pageProxy->init(eventHandler.data());
 
     pageLoadClient.reset(new QtWebPageLoadClient(pageProxy->pageRef(), q_ptr));
     pagePolicyClient.reset(new QtWebPagePolicyClient(pageProxy->pageRef(), q_ptr));
@@ -87,14 +89,14 @@ void QQuickWebViewPrivate::initializeDesktop(QQuickWebView* viewport)
         QObject::disconnect(interactionEngine.data(), SIGNAL(viewportTrajectoryVectorChanged(const QPointF&)), viewport, SLOT(_q_viewportTrajectoryVectorChanged(const QPointF&)));
     }
     interactionEngine.reset(0);
-    pageProxy->setViewportInteractionEngine(0);
+    eventHandler->setViewportInteractionEngine(0);
     enableMouseEvents();
 }
 
 void QQuickWebViewPrivate::initializeTouch(QQuickWebView* viewport)
 {
     interactionEngine.reset(new QtViewportInteractionEngine(viewport, pageView.data()));
-    pageProxy->setViewportInteractionEngine(interactionEngine.data());
+    eventHandler->setViewportInteractionEngine(interactionEngine.data());
     disableMouseEvents();
     QObject::connect(interactionEngine.data(), SIGNAL(viewportUpdateRequested()), viewport, SLOT(_q_viewportUpdated()));
     QObject::connect(interactionEngine.data(), SIGNAL(viewportTrajectoryVectorChanged(const QPointF&)), viewport, SLOT(_q_viewportTrajectoryVectorChanged(const QPointF&)));

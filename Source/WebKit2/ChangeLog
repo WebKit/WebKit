@@ -1,3 +1,70 @@
+2011-11-24  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
+
+        [Qt][WK2] Move event handling out of QtWebPageProxy
+        https://bugs.webkit.org/show_bug.cgi?id=73089
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Move all logic related to event handling, gestures and the
+        interaction engine out of QtWebPageProxy, creating a separate
+        class called QtWebPageEventHandler. This handler will be created
+        by the QQuickWebViewPrivate and will be registered into QtWebPageProxy.
+        QQuickWebPage will now call handleEvent through this entity.
+
+        * Target.pri:
+        * UIProcess/API/qt/qquickwebpage.cpp:
+        (QQuickWebPage::event):
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewPrivate::QQuickWebViewPrivate):
+        (QQuickWebViewPrivate::initializeDesktop):
+        (QQuickWebViewPrivate::initializeTouch):
+        * UIProcess/API/qt/qquickwebview_p_p.h:
+        * UIProcess/qt/QtTapGestureRecognizer.cpp:
+        (WebKit::QtTapGestureRecognizer::QtTapGestureRecognizer):
+        (WebKit::QtTapGestureRecognizer::recognize):
+        (WebKit::QtTapGestureRecognizer::tapTimeout):
+        * UIProcess/qt/QtTapGestureRecognizer.h:
+        * UIProcess/qt/QtWebPageEventHandler.cpp: Added.
+        (QtWebPageEventHandler::dragOperationToDropAction):
+        (QtWebPageEventHandler::dragOperationToDropActions):
+        (QtWebPageEventHandler::dropActionToDragOperation):
+        (QtWebPageEventHandler::QtWebPageEventHandler):
+        (QtWebPageEventHandler::~QtWebPageEventHandler):
+        (QtWebPageEventHandler::handleEvent):
+        (QtWebPageEventHandler::handleMouseMoveEvent):
+        (QtWebPageEventHandler::handleMousePressEvent):
+        (QtWebPageEventHandler::handleMouseReleaseEvent):
+        (QtWebPageEventHandler::handleMouseDoubleClickEvent):
+        (QtWebPageEventHandler::handleWheelEvent):
+        (QtWebPageEventHandler::handleHoverLeaveEvent):
+        (QtWebPageEventHandler::handleHoverMoveEvent):
+        (QtWebPageEventHandler::handleDragEnterEvent):
+        (QtWebPageEventHandler::handleDragLeaveEvent):
+        (QtWebPageEventHandler::handleDragMoveEvent):
+        (QtWebPageEventHandler::handleDropEvent):
+        (QtWebPageEventHandler::handleSingleTapEvent):
+        (QtWebPageEventHandler::handleDoubleTapEvent):
+        (QtWebPageEventHandler::timerEvent):
+        (QtWebPageEventHandler::handleKeyPressEvent):
+        (QtWebPageEventHandler::handleKeyReleaseEvent):
+        (QtWebPageEventHandler::handleFocusInEvent):
+        (QtWebPageEventHandler::handleFocusOutEvent):
+        (QtWebPageEventHandler::setViewportInteractionEngine):
+        (QtWebPageEventHandler::touchEvent):
+        (QtWebPageEventHandler::resetGestureRecognizers):
+        (QtWebPageEventHandler::doneWithTouchEvent):
+        (QtWebPageEventHandler::didFindZoomableArea):
+        * UIProcess/qt/QtWebPageEventHandler.h: Added.
+        * UIProcess/qt/QtWebPageProxy.cpp:
+        (QtWebPageProxy::QtWebPageProxy):
+        (QtWebPageProxy::init):
+        (QtWebPageProxy::didFindZoomableArea):
+        (QtWebPageProxy::processDidCrash):
+        (QtWebPageProxy::startDrag):
+        (QtWebPageProxy::doneWithTouchEvent):
+        * UIProcess/qt/QtWebPageProxy.h:
+        (QtWebPageProxy::eventHandler):
+
 2011-11-25  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Cleanup in QML tests.

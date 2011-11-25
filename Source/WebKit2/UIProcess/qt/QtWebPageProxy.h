@@ -25,18 +25,12 @@
 #include "LayerTreeContext.h"
 #include "PageClient.h"
 #include "QtDownloadManager.h"
-#include "QtPanGestureRecognizer.h"
-#include "QtPinchGestureRecognizer.h"
-#include "QtTapGestureRecognizer.h"
 #include "ShareableBitmap.h"
 #include "ViewportArguments.h"
 #include "WebContext.h"
 #include "WebPageProxy.h"
 #include <wtf/RefPtr.h>
-#include <QBasicTimer>
 #include <QGraphicsView>
-#include <QKeyEvent>
-#include <QTouchEvent>
 #include <QMenu>
 #include <QSharedPointer>
 
@@ -44,6 +38,7 @@ QT_BEGIN_NAMESPACE
 class QUndoStack;
 QT_END_NAMESPACE
 
+class QtWebPageEventHandler;
 class QtWebError;
 class QWebPreferences;
 class QWKHistory;
@@ -51,8 +46,6 @@ class QQuickWebPage;
 class QQuickWebView;
 
 using namespace WebKit;
-
-WebCore::DragOperation dropActionToDragOperation(Qt::DropActions actions);
 
 // FIXME: needs focus in/out, window activation, support through viewStateDidChange().
 class QtWebPageProxy : public QObject, WebKit::PageClient {
@@ -73,12 +66,10 @@ public:
         WebActionCount
     };
 
-    QtWebPageProxy(QQuickWebPage*, QQuickWebView*, WebKit::QtViewportInteractionEngine* = 0, WKContextRef = 0, WKPageGroupRef = 0);
+    QtWebPageProxy(QQuickWebPage*, QQuickWebView*, WKContextRef = 0, WKPageGroupRef = 0);
     ~QtWebPageProxy();
 
     virtual PassOwnPtr<DrawingAreaProxy> createDrawingAreaProxy();
-
-    virtual bool handleEvent(QEvent*);
 
     // PageClient
     virtual void setViewNeedsDisplay(const WebCore::IntRect&);
@@ -166,8 +157,6 @@ public:
     void setNavigatorQtObjectEnabled(bool);
     bool navigatorQtObjectEnabled() const { return m_navigatorQtObjectEnabled; }
 
-    void setViewportInteractionEngine(QtViewportInteractionEngine*);
-
     void postMessageToNavigatorQtObject(const QString&);
 
     qreal textZoomFactor() const;
@@ -178,7 +167,6 @@ public:
 
     void setVisibleContentRectAndScale(const QRectF&, float);
     void setVisibleContentRectTrajectoryVector(const QPointF&);
-    void findZoomableAreaForPoint(const QPoint&);
     void renderToCurrentGLContext(const WebCore::TransformationMatrix&, float);
 
     QWKHistory* history() const;
@@ -189,13 +177,12 @@ public:
     }
 
     void handleDownloadRequest(DownloadProxy*);
-    void init();
-
-    void handleSingleTapEvent(const QTouchEvent::TouchPoint&);
-    void handleDoubleTapEvent(const QTouchEvent::TouchPoint&);
+    void init(QtWebPageEventHandler*);
 
     void showContextMenu(QSharedPointer<QMenu>);
     void hideContextMenu();
+
+    QtWebPageEventHandler* eventHandler() { return m_eventHandler; }
 
 public Q_SLOTS:
     void didReceiveDownloadResponse(QWebDownloadItem* downloadItem);
@@ -208,35 +195,11 @@ protected:
     QQuickWebPage* m_qmlWebPage;
     QQuickWebView* m_qmlWebView;
     RefPtr<WebKit::WebPageProxy> m_webPageProxy;
-    QtViewportInteractionEngine* m_interactionEngine;
-    QtPanGestureRecognizer m_panGestureRecognizer;
-    QtPinchGestureRecognizer m_pinchGestureRecognizer;
-    QtTapGestureRecognizer m_tapGestureRecognizer;
 
 private:
-    bool handleKeyPressEvent(QKeyEvent*);
-    bool handleKeyReleaseEvent(QKeyEvent*);
-    bool handleFocusInEvent(QFocusEvent*);
-    bool handleFocusOutEvent(QFocusEvent*);
-    bool handleMouseMoveEvent(QMouseEvent*);
-    bool handleMousePressEvent(QMouseEvent*);
-    bool handleMouseReleaseEvent(QMouseEvent*);
-    bool handleMouseDoubleClickEvent(QMouseEvent*);
-    bool handleWheelEvent(QWheelEvent*);
-    bool handleHoverLeaveEvent(QHoverEvent*);
-    bool handleHoverMoveEvent(QHoverEvent*);
-    bool handleDragEnterEvent(QDragEnterEvent*);
-    bool handleDragLeaveEvent(QDragLeaveEvent*);
-    bool handleDragMoveEvent(QDragMoveEvent*);
-    bool handleDropEvent(QDropEvent*);
-
-    virtual void timerEvent(QTimerEvent*);
-
 #if ENABLE(TOUCH_EVENTS)
     virtual void doneWithTouchEvent(const NativeWebTouchEvent&, bool wasEventHandled);
 #endif
-
-    void touchEvent(QTouchEvent*);
 
     static PassRefPtr<WebContext> defaultWKContext();
     static RefPtr<WebContext> s_defaultContext;
@@ -251,10 +214,9 @@ private:
     OwnPtr<QUndoStack> m_undoStack;
 
     bool m_navigatorQtObjectEnabled;
-    QPoint m_tripleClick;
-    QBasicTimer m_tripleClickTimer;
 
     QSharedPointer<QMenu> activeMenu;
+    QtWebPageEventHandler* m_eventHandler;
 };
 
 #endif /* QtWebPageProxy_h */

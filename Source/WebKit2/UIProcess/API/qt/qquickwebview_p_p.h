@@ -21,6 +21,7 @@
 #ifndef qquickwebview_p_p_h
 #define qquickwebview_p_p_h
 
+#include "QtWebPageEventHandler.h"
 #include "QtViewportInteractionEngine.h"
 #include "QtWebPageLoadClient.h"
 #include "QtWebPagePolicyClient.h"
@@ -107,6 +108,8 @@ private:
     bool isTransitioningToNewPage() const { return transitioningToNewPage; }
 
     void setViewInAttachedProperties(QObject*);
+
+    QScopedPointer<QtWebPageEventHandler> eventHandler;
 
     QScopedPointer<QtWebPageLoadClient> pageLoadClient;
     QScopedPointer<QtWebPagePolicyClient> pagePolicyClient;

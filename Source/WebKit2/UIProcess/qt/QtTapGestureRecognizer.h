@@ -43,13 +43,13 @@ const qreal maxDoubleTapDistance = 120;
 const int tapAndHoldTime = 800;
 const int doubleClickInterval = 400;
 
-class QtWebPageProxy;
+class QtWebPageEventHandler;
 
 namespace WebKit {
 
 class QtTapGestureRecognizer : public QObject, private QtGestureRecognizer {
 public:
-    QtTapGestureRecognizer(QtViewportInteractionEngine*, QtWebPageProxy*);
+    QtTapGestureRecognizer(QtViewportInteractionEngine*, QtWebPageEventHandler*);
     void setViewportInteractionEngine(QtViewportInteractionEngine*);
     bool recognize(const QTouchEvent*, qint64 eventTimestampMillis);
     void reset();
@@ -60,7 +60,7 @@ protected:
     void tapAndHoldTimeout();
 
 private:
-    QtWebPageProxy* m_webPageProxy;
+    QtWebPageEventHandler* m_eventHandler;
     QBasicTimer m_doubleTapTimer;
     QBasicTimer m_tapAndHoldTimer;
     OwnPtr<QTouchEvent> m_touchBeginEventForTap;

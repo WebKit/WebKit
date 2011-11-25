@@ -21,6 +21,7 @@
 #include "config.h"
 #include "qquickwebpage_p.h"
 
+#include "QtWebPageEventHandler.h"
 #include "QtWebPageProxy.h"
 #include "TransformationMatrix.h"
 #include "qquickwebpage_p_p.h"
@@ -146,7 +147,7 @@ void QQuickWebPage::geometryChanged(const QRectF& newGeometry, const QRectF& old
 
 bool QQuickWebPage::event(QEvent* ev)
 {
-    if (d->pageProxy->handleEvent(ev))
+    if (d->pageProxy->eventHandler()->handleEvent(ev))
         return true;
     if (ev->type() == QEvent::InputMethod)
         return false; // This is necessary to avoid an endless loop in connection with QQuickItem::event().

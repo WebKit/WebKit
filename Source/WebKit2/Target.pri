@@ -314,6 +314,7 @@ HEADERS += \
     UIProcess/WebResourceLoadClient.h \
     UIProcess/WebUIClient.h \
     UIProcess/qt/ClientImpl.h \
+    UIProcess/qt/QtWebPageEventHandler.h \
     UIProcess/qt/QtGestureRecognizer.h \
     UIProcess/qt/QtPanGestureRecognizer.h \
     UIProcess/qt/QtPinchGestureRecognizer.h \
@@ -618,6 +619,7 @@ SOURCES += \
     UIProcess/WebUIClient.cpp \
     UIProcess/qt/ClientImpl.cpp \
     UIProcess/qt/LayerTreeHostProxyQt.cpp \
+    UIProcess/qt/QtWebPageEventHandler.cpp \
     UIProcess/qt/QtGestureRecognizer.cpp \
     UIProcess/qt/QtPanGestureRecognizer.cpp \
     UIProcess/qt/QtPinchGestureRecognizer.cpp \
