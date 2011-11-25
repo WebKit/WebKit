@@ -34,14 +34,25 @@ use constant MODE_MODULE  => 10; # 'module' section
 use constant MODE_INTERFACE  => 11; # 'interface' section
 
 # Helper variables
-my @temporaryContent = "";
+my @temporaryContent;
 
-my $parseMode = MODE_UNDEF;
-my $preservedParseMode = MODE_UNDEF;
+my $parseMode;
+my $preservedParseMode;
 
 my $beQuiet; # Should not display anything on STDOUT?
-my $document = 0; # Will hold the resulting 'idlDocument'
-my $parentsOnly = 0; # If 1, parse only enough to populate parents list
+my $document; # Will hold the resulting 'idlDocument'
+my $parentsOnly; # If 1, parse only enough to populate parents list
+
+sub InitializeGlobalData
+{
+    @temporaryContent = "";
+
+    $parseMode = MODE_UNDEF;
+    $preservedParseMode = MODE_UNDEF;
+
+    $document = 0;
+    $parentsOnly = 0;
+}
 
 # Default Constructor
 sub new
@@ -49,7 +60,8 @@ sub new
     my $object = shift;
     my $reference = { };
 
-    $document = 0;
+    InitializeGlobalData();
+
     $beQuiet = shift;
 
     bless($reference, $object);

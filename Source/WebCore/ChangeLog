@@ -1,3 +1,23 @@
+2011-11-24  Kentaro Hara  <haraken@chromium.org>
+
+        Initialize global variables during IDLParser object creation
+        https://bugs.webkit.org/show_bug.cgi?id=73108
+
+        Reviewed by Adam Barth.
+
+        Currently, IDLParser.pm initializes global variables in a global scope,
+        which means that the global variables are initialized just once at the beginning.
+        On the other hand, implementing [Supplemental] IDL (bug 72138) requires a change
+        on generate-bindings.pl that initializes the global variables whenever a new IDLParser
+        object is created. Thus, this patch initializes the global variables during
+        the IDLParser object creation.
+
+        No new tests. No change in behavior.
+
+        * bindings/scripts/IDLParser.pm:
+        (InitializeGlobalData):
+        (new):
+
 2011-11-24  Patrick Gansterer  <paroga@webkit.org>
 
         [CMake] Build fix for NOT ENABLE_WEB_SOCKETS.
