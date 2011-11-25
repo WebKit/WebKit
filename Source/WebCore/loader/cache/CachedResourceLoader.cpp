@@ -441,7 +441,6 @@ CachedResource* CachedResourceLoader::requestResource(CachedResource::Type type,
 
     ASSERT(resource->url() == url.string());
     m_documentResources.set(resource->url(), resource);
-    
     return resource;
 }
     

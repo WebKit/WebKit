@@ -798,10 +798,11 @@ WebInspector.NetworkLogView.prototype = {
 
     _mainFrameNavigated: function(event)
     {
-        var loaderId = event.data.loaderId;
-        // Main frame committed load.
         if (this._preserveLogToggle.toggled)
             return;
+
+        var frame = /** @type {WebInspector.ResourceTreeFrame} */ event.data;
+        var loaderId = frame.loaderId;
 
         // Preserve provisional load resources.
         var resourcesToPreserve = [];

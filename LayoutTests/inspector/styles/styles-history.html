@@ -5,14 +5,12 @@
 
 <script src="../../http/tests/inspector/inspector-test.js"></script>
 <script src="../../http/tests/inspector/elements-test.js"></script>
+<script src="../../http/tests/inspector/resources-test.js"></script>
 <script>
 
 function test()
 {
-    if (!WebInspector.resourceTreeModel._cachedResourcesProcessed)
-        WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.CachedResourcesLoaded, runTestSuite);
-    else
-        runTestSuite();
+    InspectorTest.runAfterCachedResourcesProcessed(runTestSuite);
 
     var styleResource;
     var styleSheetId;

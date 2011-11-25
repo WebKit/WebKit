@@ -1,3 +1,81 @@
+2011-11-24  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: refactor resource tree model and introduce explicit class for ResourceTreeFrame.
+        https://bugs.webkit.org/show_bug.cgi?id=73078
+
+        Otherwise we are managing frames and their resources using too many maps.
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/Inspector.json:
+        * inspector/InspectorAgent.cpp:
+        (WebCore::InspectorAgent::restore):
+        * inspector/InspectorResourceAgent.cpp:
+        (WebCore::InspectorResourceAgent::didReceiveResponse):
+        * inspector/front-end/ApplicationCacheModel.js:
+        (WebInspector.ApplicationCacheModel.prototype._frameNavigated):
+        (WebInspector.ApplicationCacheModel.prototype._frameDetached):
+        * inspector/front-end/JavaScriptContextManager.js:
+        (WebInspector.JavaScriptContextManager.prototype._frameAdded):
+        (WebInspector.JavaScriptContextManager.prototype._frameNavigated):
+        (WebInspector.FrameEvaluationContext.prototype.get displayName):
+        * inspector/front-end/NetworkManager.js:
+        (WebInspector.NetworkDispatcher.prototype.requestWillBeSent):
+        (WebInspector.NetworkDispatcher.prototype.responseReceived):
+        (WebInspector.NetworkDispatcher.prototype.loadingFinished):
+        * inspector/front-end/NetworkPanel.js:
+        (WebInspector.NetworkLogView.prototype._mainFrameNavigated):
+        * inspector/front-end/ResourceTreeModel.js:
+        (WebInspector.ResourceTreeModel):
+        (WebInspector.ResourceTreeModel.prototype._fetchResourceTree):
+        (WebInspector.ResourceTreeModel.prototype._processCachedResources):
+        (WebInspector.ResourceTreeModel.prototype._addFrame):
+        (WebInspector.ResourceTreeModel.prototype._frameNavigated):
+        (WebInspector.ResourceTreeModel.prototype._frontendReused):
+        (WebInspector.ResourceTreeModel.prototype._frameDetached):
+        (WebInspector.ResourceTreeModel.prototype._onResourceUpdated):
+        (WebInspector.ResourceTreeModel.prototype._onResourceUpdateDropped):
+        (WebInspector.ResourceTreeModel.prototype.frameForId):
+        (WebInspector.ResourceTreeModel.prototype.forAllResources):
+        (WebInspector.ResourceTreeModel.prototype.resourceForURL):
+        (WebInspector.ResourceTreeModel.prototype._addFramesRecursively):
+        (WebInspector.ResourceTreeModel.prototype._createResourceFromFramePayload):
+        (WebInspector.ResourceTreeModel.prototype._createResource):
+        (WebInspector.ResourceTreeFrame):
+        (WebInspector.ResourceTreeFrame.prototype.get id):
+        (WebInspector.ResourceTreeFrame.prototype.get name):
+        (WebInspector.ResourceTreeFrame.prototype.get url):
+        (WebInspector.ResourceTreeFrame.prototype.get loaderId):
+        (WebInspector.ResourceTreeFrame.prototype.get parentFrame):
+        (WebInspector.ResourceTreeFrame.prototype.get childFrames):
+        (WebInspector.ResourceTreeFrame.prototype.isMainFrame):
+        (WebInspector.ResourceTreeFrame.prototype.navigate):
+        (WebInspector.ResourceTreeFrame.prototype.get mainResource):
+        (WebInspector.ResourceTreeFrame.prototype.addChildFrame):
+        (WebInspector.ResourceTreeFrame.prototype.removeChildFrame):
+        (WebInspector.ResourceTreeFrame.prototype._addResource):
+        (WebInspector.ResourceTreeFrame.prototype.resources):
+        (WebInspector.ResourceTreeFrame.prototype.resourceForURL.filter):
+        (WebInspector.ResourceTreeFrame.prototype.resourceForURL):
+        (WebInspector.ResourceTreeFrame.prototype._callForFrameResources):
+        (WebInspector.PageDispatcher.prototype.frameNavigated):
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.ResourcesPanel):
+        (WebInspector.ResourcesPanel.prototype.wasShown):
+        (WebInspector.ResourcesPanel.prototype._initialize):
+        (WebInspector.ResourcesPanel.prototype._resetWithFrames):
+        (WebInspector.ResourcesPanel.prototype._reset):
+        (WebInspector.ResourcesPanel.prototype._populateResourceTree.populateFrame):
+        (WebInspector.ResourcesPanel.prototype._populateResourceTree):
+        (WebInspector.ResourcesPanel.prototype._frameAdded):
+        (WebInspector.ResourcesPanel.prototype._frameDetached):
+        (WebInspector.ResourcesPanel.prototype._frameNavigated):
+        (WebInspector.ResourcesPanel.prototype._cachedResourcesLoaded):
+        * inspector/front-end/ScriptFormatter.js:
+        (WebInspector.ScriptFormatter.prototype.formatContent):
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::requestResource):
+
 2011-11-24  Kentaro Hara  <haraken@chromium.org>
 
         Initialize global variables during IDLParser object creation

@@ -9,7 +9,7 @@ function test()
     if (WebInspector.panels.network)
         WebInspector.panels.network._reset();
     WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.CachedResourcesLoaded, step2);
-    WebInspector.resourceTreeModel.frontendReused();
+    WebInspector.resourceTreeModel._fetchResourceTree();
 
     function step2()
     {

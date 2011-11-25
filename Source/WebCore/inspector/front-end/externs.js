@@ -181,3 +181,8 @@ WebInspector.showPanelForAnchorNavigation = function(panel)
 WebInspector.showPanel = function(panel)
 {
 }
+
+/**
+ * @type {string} 
+ */
+WebInspector.inspectedPageDomain;

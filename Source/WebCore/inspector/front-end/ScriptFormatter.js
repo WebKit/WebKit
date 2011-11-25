@@ -57,7 +57,7 @@ WebInspector.ScriptFormatter.prototype = {
     formatContent: function(mimeType, content, callback)
     {
         content = content.replace(/\r\n?|[\n\u2028\u2029]/g, "\n").replace(/^\uFEFF/, '');
-        var data = { mimeType: mimeType, content: content, indentString: WebInspector.settings.textEditorIndent.get() };
+        var data = { mimeType: mimeType, content: content, indentString: "    "  };
         this._tasks.push({ data: data, callback: callback });
         this._worker.postMessage(data);
     },

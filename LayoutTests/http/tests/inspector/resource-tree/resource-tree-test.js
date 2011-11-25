@@ -27,9 +27,10 @@ InspectorTest.dumpResources = function(formatter)
 InspectorTest.dumpResourcesURLMap = function()
 {
     var results = [];
-    for (var url in WebInspector.resourceTreeModel._resourcesByURL) {
-        var resource = WebInspector.resourceTreeModel._resourcesByURL[url];
-        results.push({ url: url, resource: resource });
+    WebInspector.resourceTreeModel.forAllResources(collect);
+    function collect(resource)
+    {
+        results.push({ url: resource.url, resource: WebInspector.resourceTreeModel.resourceForURL(resource.url) });
     }
 
     function comparator(result1, result2)

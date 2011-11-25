@@ -259,7 +259,7 @@ void InspectorResourceAgent::didReceiveResponse(unsigned long identifier, Docume
         m_resourcesData->responseReceived(requestId, m_pageAgent->frameId(loader->frame()), response);
     }
     m_resourcesData->setResourceType(requestId, type);
-    m_frontend->responseReceived(requestId, currentTime(), InspectorPageAgent::resourceTypeString(type), resourceResponse);
+    m_frontend->responseReceived(requestId, m_pageAgent->frameId(loader->frame()), m_pageAgent->loaderId(loader), currentTime(), InspectorPageAgent::resourceTypeString(type), resourceResponse);
     // If we revalidated the resource and got Not modified, send content length following didReceiveResponse
     // as there will be no calls to didReceiveData from the network stack.
     if (cachedResourceSize && response.httpStatusCode() == 304)

@@ -8,9 +8,6 @@
         ],
         "events": [
             {
-                "name": "frontendReused"
-            },
-            {
                 "name": "disconnectFromBackend"
             },
             {
@@ -104,7 +101,7 @@
                 "description": "Search result for resource.",
                 "properties": [
                     { "name": "url", "type": "string", "description": "Resource URL." },
-                    { "name": "frameId", "type": "string", "description": "Resource frame id." },
+                    { "name": "frameId", "$ref": "Network.FrameId", "description": "Resource frame id." },
                     { "name": "matchesCount", "type": "number", "description": "Number of matches in the resource content." }
                 ],
                 "hidden": true
@@ -206,7 +203,7 @@
                 "name": "getResourceContent",
                 "description": "Returns content of the given resource.",
                 "parameters": [
-                    { "name": "frameId", "type": "string", "description": "Frame id to get resource for." },
+                    { "name": "frameId", "$ref": "Network.FrameId", "description": "Frame id to get resource for." },
                     { "name": "url", "type": "string", "description": "URL of the resource to get content for." }
                 ],
                 "returns": [
@@ -219,7 +216,7 @@
                 "name": "searchInResource",
                 "description": "Searches for given string in resource content.",
                 "parameters": [
-                    { "name": "frameId", "type": "string", "description": "Frame id for resource to search in." },
+                    { "name": "frameId", "$ref": "Network.FrameId", "description": "Frame id for resource to search in." },
                     { "name": "url", "type": "string", "description": "URL of the resource to search in." },
                     { "name": "query", "type": "string", "description": "String to search for."  },
                     { "name": "caseSensitive", "type": "boolean", "optional": true, "description": "If true, search is case sensitive." },
@@ -270,7 +267,7 @@
                 "name": "frameDetached",
                 "description": "Fired when frame has been detached from its parent.",
                 "parameters": [
-                    { "name": "frameId", "type": "string", "description": "Id of the frame that has been detached." }
+                    { "name": "frameId", "$ref": "Network.FrameId", "description": "Id of the frame that has been detached." }
                 ],
                 "hidden": true
             }
@@ -332,7 +329,7 @@
                     { "name": "objectGroup", "type": "string", "optional": true, "description": "Symbolic group name that can be used to release multiple objects." },
                     { "name": "includeCommandLineAPI", "type": "boolean", "optional": true, "description": "Determines whether Command Line API should be available during the evaluation.", "hidden": true },
                     { "name": "doNotPauseOnExceptions", "type": "boolean", "optional": true, "description": "Specifies whether evaluation should stop on exceptions. Overrides setPauseOnException state.", "hidden": true },
-                    { "name": "frameId", "type": "string", "optional": true, "description": "Specifies in which frame to perform evaluation.", "hidden": true },
+                    { "name": "frameId", "$ref": "Network.FrameId", "optional": true, "description": "Specifies in which frame to perform evaluation.", "hidden": true },
                     { "name": "returnByValue", "type": "boolean", "optional": true, "description": "Whether the result is expected to be a JSON object that should be sent by value." }
                 ],
                 "returns": [
@@ -485,6 +482,12 @@
                 "id": "LoaderId",
                 "type": "string",
                 "description": "Unique loader identifier."
+            },
+            {
+                "id": "FrameId",
+                "type": "string",
+                "description": "Unique frame identifier.",
+                "hidden": true
             },
             {
                 "id": "RequestId",
@@ -651,7 +654,7 @@
                 "description": "Fired when page is about to send HTTP request.",
                 "parameters": [
                     { "name": "requestId", "$ref": "RequestId", "description": "Request identifier." },
-                    { "name": "frameId", "type": "string", "description": "Frame identifier.", "hidden": true },
+                    { "name": "frameId", "$ref": "FrameId", "description": "Frame identifier.", "hidden": true },
                     { "name": "loaderId", "$ref": "LoaderId", "description": "Loader identifier." },
                     { "name": "documentURL", "type": "string", "description": "URL of the document this request is loaded for." },
                     { "name": "request", "$ref": "Request", "description": "Request data." },
@@ -673,6 +676,8 @@
                 "description": "Fired when HTTP response is available.",
                 "parameters": [
                     { "name": "requestId", "$ref": "RequestId", "description": "Request identifier." },
+                    { "name": "frameId", "$ref": "FrameId", "description": "Frame identifier.", "hidden": true },
+                    { "name": "loaderId", "$ref": "LoaderId", "description": "Loader identifier." },
                     { "name": "timestamp", "$ref": "Timestamp", "description": "Timestamp." },
                     { "name": "type", "$ref": "Page.ResourceType", "description": "Resource type." },
                     { "name": "response", "$ref": "Response", "description": "Response data." }
@@ -711,7 +716,7 @@
                 "description": "Fired when HTTP request has been served from memory cache.",
                 "parameters": [
                     { "name": "requestId", "$ref": "RequestId", "description": "Request identifier." },
-                    { "name": "frameId", "type": "string", "description": "Frame identifier.", "hidden": true },
+                    { "name": "frameId", "$ref": "FrameId", "description": "Frame identifier.", "hidden": true },
                     { "name": "loaderId", "$ref": "LoaderId", "description": "Loader identifier." },
                     { "name": "documentURL", "type": "string", "description": "URL of the document this request is loaded for." },
                     { "name": "timestamp", "$ref": "Timestamp", "description": "Timestamp." },
@@ -937,7 +942,7 @@
                 "type": "object",
                 "description": "Frame identifier - manifest URL pair.",
                 "properties": [
-                    { "name": "frameId", "type": "string", "description": "Frame identifier." },
+                    { "name": "frameId", "$ref": "Network.FrameId", "description": "Frame identifier." },
                     { "name": "manifestURL", "type": "string", "description": "Manifest URL." },
                     { "name": "status", "type": "integer", "description": "Application cache status." }
                 ]
@@ -958,7 +963,7 @@
             {
                 "name": "getManifestForFrame",
                 "parameters": [
-                    { "name": "frameId", "type": "string", "description": "Identifier of the frame containing document whose manifest is retrieved." }
+                    { "name": "frameId", "$ref": "Network.FrameId", "description": "Identifier of the frame containing document whose manifest is retrieved." }
                 ],
                 "returns": [
                     { "name": "manifestURL", "type": "string", "description": "Manifest URL for document in the given frame." }
@@ -968,7 +973,7 @@
             {
                 "name": "getApplicationCacheForFrame",
                 "parameters": [
-                    { "name": "frameId", "type": "string", "description": "Identifier of the frame containing document whose application cache is retrieved." }
+                    { "name": "frameId", "$ref": "Network.FrameId", "description": "Identifier of the frame containing document whose application cache is retrieved." }
                 ],
                 "returns": [
                     { "name": "applicationCache", "$ref": "ApplicationCache", "description": "Relevant application cache data for the document in given frame." }
@@ -980,7 +985,7 @@
             {
                 "name": "applicationCacheStatusUpdated",
                 "parameters": [
-                    { "name": "frameId", "type": "string", "description": "Identifier of the frame containing document whose application cache updated status." },
+                    { "name": "frameId", "$ref": "Network.FrameId", "description": "Identifier of the frame containing document whose application cache updated status." },
                     { "name": "manifestURL", "type": "string", "description": "Manifest URL." },
                     { "name": "status", "type": "integer", "description": "Updated application cache status." }
                 ]
@@ -1270,7 +1275,7 @@
             {
                 "name": "highlightFrame",
                 "parameters": [
-                    { "name": "frameId", "type": "string", "description": "Identifier of the frame to highlight." },
+                    { "name": "frameId", "$ref": "Network.FrameId", "description": "Identifier of the frame to highlight." },
                     { "name": "contentColor", "$ref": "RGBA", "optional": true, "description": "The content box highlight fill color (default: transparent)." },
                     { "name": "contentOutlineColor", "$ref": "RGBA", "optional": true, "description": "The content box highlight outline color (default: transparent)." }
                 ],

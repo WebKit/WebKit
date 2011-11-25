@@ -86,6 +86,8 @@ WebInspector.ResourcesPanel = function(database)
     WebInspector.GoToLineDialog.install(this, viewGetter.bind(this));
 
     WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.OnLoad, this._onLoadEventFired, this);
+    WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.CachedResourcesLoaded, this._cachedResourcesLoaded, this);
+    WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.WillLoadCachedResources, this._resetWithFrames, this);
 }
 
 WebInspector.ResourcesPanel.prototype = {
@@ -102,11 +104,15 @@ WebInspector.ResourcesPanel.prototype = {
     wasShown: function()
     {
         WebInspector.Panel.prototype.wasShown.call(this);
-        if (!this._initialized) {
+        this._initialize();
+    },
+
+    _initialize: function()
+    {
+        if (!this._initialized && this.isShowing() && this._cachedResourcesWereLoaded) {
             this._populateResourceTree();
             this._populateApplicationCacheTree();
             this._initDefaultSelection();
-
             this._initialized = true;
         }
     },
@@ -136,11 +142,15 @@ WebInspector.ResourcesPanel.prototype = {
             this.showResource(mainResource);
     },
 
-    _reset: function()
+    _resetWithFrames: function()
     {
         this.resourcesListTreeElement.removeChildren();
         this._treeElementForFrameId = {};
+        this._reset();
+    },
 
+    _reset: function()
+    {
         this._origins = {};
         this._domains = {};
         for (var i = 0; i < this._databases.length; ++i) {
@@ -182,32 +192,28 @@ WebInspector.ResourcesPanel.prototype = {
         WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.FrameNavigated, this._frameNavigated, this);
         WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.FrameDetached, this._frameDetached, this);
         WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.ResourceAdded, this._resourceAdded, this);
-        WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.CachedResourcesLoaded, this._cachedResourcesLoaded, this);
-        WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.WillLoadCachedResources, this._reset, this);
 
-        function populateFrame(frameId)
+        function populateFrame(frame)
         {
-            var subframes = WebInspector.resourceTreeModel.subframes(frameId);
-            for (var i = 0; i < subframes.length; ++i) {
-                this._frameAdded({data:subframes[i]});
-                populateFrame.call(this, subframes[i].id);
-            }
+            this._frameAdded({data:frame});
+            for (var i = 0; i < frame.childFrames.length; ++i)
+                populateFrame.call(this, frame.childFrames[i]);
 
-            var resources = WebInspector.resourceTreeModel.resources(frameId);
+            var resources = frame.resources();
             for (var i = 0; i < resources.length; ++i)
                 this._resourceAdded({data:resources[i]});
         }
-        populateFrame.call(this, "");
+        populateFrame.call(this, WebInspector.resourceTreeModel.mainFrame);
     },
 
     _frameAdded: function(event)
     {
         var frame = event.data;
-        var parentFrameId = frame.parentId;
+        var parentFrame = frame.parentFrame;
 
-        var parentTreeElement = parentFrameId ? this._treeElementForFrameId[parentFrameId] : this.resourcesListTreeElement;
+        var parentTreeElement = parentFrame ? this._treeElementForFrameId[parentFrame.id] : this.resourcesListTreeElement;
         if (!parentTreeElement) {
-            console.warn("No frame with id:" + parentFrameId + " to route " + frame.name + "/" + frame.url + " to.")
+            console.warn("No frame to route " + frame.url + " to.")
             return;
         }
 
@@ -219,11 +225,6 @@ WebInspector.ResourcesPanel.prototype = {
     _frameDetached: function(event)
     {
         var frame = event.data;
-        if (!frame.parentId) {
-            // Reset on main frame detach
-            this._reset();
-        }
-
         var frameTreeElement = this._treeElementForFrameId[frame.id];
         if (!frameTreeElement)
             return;
@@ -253,19 +254,25 @@ WebInspector.ResourcesPanel.prototype = {
 
     _frameNavigated: function(event)
     {
-        var frameId = event.data.frame.id;
+        var frame = event.data;
+
+        if (!frame.parentFrame)
+            this._reset();
+
+        var frameId = frame.id;
         var frameTreeElement = this._treeElementForFrameId[frameId];
         if (frameTreeElement)
-            frameTreeElement.frameNavigated(event.data.frame);
+            frameTreeElement.frameNavigated(frame);
 
         var applicationCacheFrameTreeElement = this._applicationCacheFrameElements[frameId];
         if (applicationCacheFrameTreeElement)
-            applicationCacheFrameTreeElement.frameNavigated(event.data.frame);
+            applicationCacheFrameTreeElement.frameNavigated(frame);
     },
 
     _cachedResourcesLoaded: function()
     {
-        this._initDefaultSelection();
+        this._cachedResourcesWereLoaded = true;
+        this._initialize();
     },
 
     addDatabase: function(database)

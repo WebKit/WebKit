@@ -48,11 +48,13 @@ function test()
             WebInspector.showPanel("network");
 
             InspectorTest.addSniffer(WebInspector.SourceFrame.prototype, "show", didShowSourceFrame);
-            var resources = WebInspector.resourceTreeModel._resourcesByURL;
-            for (var url in resources) {
-                if (url.indexOf("debugger-test.js") !== -1) {
-                    WebInspector.panels.network._showResource(resources[url], 1);
-                    break;
+
+            WebInspector.resourceTreeModel.forAllResources(visit);
+            function visit(resource)
+            {
+                if (resource.url.indexOf("debugger-test.js") !== -1) {
+                    WebInspector.panels.network._showResource(resource, 1);
+                    return true;
                 }
             }
 

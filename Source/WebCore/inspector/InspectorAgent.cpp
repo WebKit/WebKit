@@ -92,7 +92,7 @@ void InspectorAgent::inspectedPageDestroyed()
 void InspectorAgent::restore()
 {
     if (m_didCommitLoadFired)
-        m_frontend->inspector()->frontendReused();
+        InspectorInstrumentation::didCommitLoad(m_inspectedPage->mainFrame(), m_inspectedPage->mainFrame()->loader()->documentLoader());
 }
 
 void InspectorAgent::didClearWindowObjectInWorld(Frame* frame, DOMWrapperWorld* world)

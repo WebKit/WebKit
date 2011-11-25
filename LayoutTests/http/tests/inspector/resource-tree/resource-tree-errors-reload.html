@@ -14,10 +14,10 @@ function test()
     var resourcesWereFinished = false;
     var pageWasReloaded = false;
 
-    WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.FrameDetached, frameDetached);
+    WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.MainFrameNavigated, frameNavigated);
     InspectorTest.reloadPage(pageReloaded);
 
-    function frameDetached()
+    function frameNavigated()
     {
         InspectorTest.runAfterResourcesAreFinished(["resource-tree-errors-reload.html"], resourcesFinished);
     }

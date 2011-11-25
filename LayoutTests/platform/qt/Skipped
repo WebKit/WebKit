@@ -526,10 +526,6 @@ http/tests/inspector/network/network-size.html
 # This test consistently fails if run with --singly flag
 inspector/timeline/timeline-paint.html
 
-# https://bugs.webkit.org/show_bug.cgi?id=56453
-# This test will fail if it's the first inspector test to run.
-inspector/styles/styles-add-blank-property.html
-
 # [Qt] New fails caused by change(s) between r79317-r79320.
 inspector/debugger/open-close-open.html
 
@@ -2158,8 +2154,6 @@ fast/parser/xhtml-innerhtml-null-byte.xhtml
 
 # new failing inspector tests
 inspector/console/console-trace-in-eval.html
-inspector/debugger/source-frame.html
-inspector/styles/styles-update-from-js.html
 
 # Test fails because script pretty-print does not work in inspector on JSC when paused on breakpoint. 
 # https://bugs.webkit.org/show_bug.cgi?id=71120

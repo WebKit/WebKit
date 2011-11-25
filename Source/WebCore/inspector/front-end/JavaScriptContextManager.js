@@ -45,7 +45,6 @@ WebInspector.JavaScriptContextManager.prototype = {
     _frameAdded: function(event)
     {
         var frame = event.data;
-        var parentFrameId = frame.parentId;
         var context = new WebInspector.FrameEvaluationContext(frame);
         this._frameIdToContext[frame.id] = context;
         this._consoleView.addContext(context);
@@ -53,7 +52,7 @@ WebInspector.JavaScriptContextManager.prototype = {
 
     _frameNavigated: function(event)
     {
-        var frame = event.data.frame;
+        var frame = event.data;
         var context = this._frameIdToContext[frame.id];
         if (context)
             context._frameNavigated(frame);
@@ -105,7 +104,7 @@ WebInspector.FrameEvaluationContext.prototype =
 
     get displayName()
     {
-        if (!this._frame.parentId)
+        if (!this._frame.parentFrame)
             return "<top frame>";
         var name = this._frame.name || "";
         var subtitle = WebInspector.Resource.displayName(this._frame.url);

@@ -3059,7 +3059,6 @@ BUGWK59673 : http/tests/history/cross-origin-replace-history-object-child.html =
 // Flakiness on canaries (noted ~ r85140)
 BUGKBR WIN DEBUG : fast/filesystem/file-writer-truncate-extend.html = PASS TEXT
 BUGWK70886 DEBUG : fast/events/change-overflow-on-overflow-change.html = PASS TIMEOUT
-BUGWK70884 LINUX WIN : http/tests/inspector/resource-tree/resource-tree-frame-navigate.html = PASS TIMEOUT TEXT
 
 BUGWK60112 : fast/css/epub-properties.html = TEXT
 
