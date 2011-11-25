@@ -80,9 +80,9 @@ WebCore::DragOperation QtWebPageEventHandler::dropActionToDragOperation(Qt::Drop
 QtWebPageEventHandler::QtWebPageEventHandler(WKPageRef pageRef, WebKit::QtViewportInteractionEngine* viewportInteractionEngine)
     : m_webPageProxy(toImpl(pageRef))
     , m_interactionEngine(viewportInteractionEngine)
-    , m_panGestureRecognizer(viewportInteractionEngine)
-    , m_pinchGestureRecognizer(viewportInteractionEngine)
-    , m_tapGestureRecognizer(viewportInteractionEngine, this)
+    , m_panGestureRecognizer(this)
+    , m_pinchGestureRecognizer(this)
+    , m_tapGestureRecognizer(this)
 {
 }
 
@@ -303,9 +303,6 @@ bool QtWebPageEventHandler::handleFocusOutEvent(QFocusEvent*)
 void QtWebPageEventHandler::setViewportInteractionEngine(QtViewportInteractionEngine* engine)
 {
     m_interactionEngine = engine;
-    m_panGestureRecognizer.setViewportInteractionEngine(engine);
-    m_pinchGestureRecognizer.setViewportInteractionEngine(engine);
-    m_tapGestureRecognizer.setViewportInteractionEngine(engine);
 }
 
 void QtWebPageEventHandler::touchEvent(QTouchEvent* event)

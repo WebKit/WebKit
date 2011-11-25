@@ -26,26 +26,20 @@
 
 #include "QtPanGestureRecognizer.h"
 
-#include "QtViewportInteractionEngine.h"
+#include "QtWebPageEventHandler.h"
 #include <QTouchEvent>
 
 namespace WebKit {
 
-QtPanGestureRecognizer::QtPanGestureRecognizer(QtViewportInteractionEngine* interactionEngine)
-    : QtGestureRecognizer(interactionEngine)
+QtPanGestureRecognizer::QtPanGestureRecognizer(QtWebPageEventHandler* eventHandler)
+    : QtGestureRecognizer(eventHandler)
 {
-    reset();
-}
-
-void QtPanGestureRecognizer::setViewportInteractionEngine(QtViewportInteractionEngine* engine)
-{
-    QtGestureRecognizer::setViewportInteractionEngine(engine);
     reset();
 }
 
 bool QtPanGestureRecognizer::recognize(const QTouchEvent* event, qint64 eventTimestampMillis)
 {
-    if (!m_viewportInteractionEngine)
+    if (interactionEngine())
         return false;
 
     // Pan gesture always starts on TouchBegin unless the engine is suspended, or
@@ -56,7 +50,7 @@ bool QtPanGestureRecognizer::recognize(const QTouchEvent* event, qint64 eventTim
     // Having multiple touch points cancel the panning gesture.
     if (event->touchPoints().size() > 1) {
         if (m_state == GestureRecognized)
-            m_viewportInteractionEngine->panGestureCancelled();
+            interactionEngine()->panGestureCancelled();
         reset();
         return false;
     }
@@ -79,16 +73,16 @@ bool QtPanGestureRecognizer::recognize(const QTouchEvent* event, qint64 eventTim
                 return false;
 
             m_state = GestureRecognized;
-            m_viewportInteractionEngine->panGestureStarted(touchPoint.pos(), eventTimestampMillis);
+            interactionEngine()->panGestureStarted(touchPoint.pos(), eventTimestampMillis);
         }
 
         ASSERT(m_state == GestureRecognized);
-        m_viewportInteractionEngine->panGestureRequestUpdate(touchPoint.pos(), eventTimestampMillis);
+        interactionEngine()->panGestureRequestUpdate(touchPoint.pos(), eventTimestampMillis);
         return true;
     }
     case QEvent::TouchEnd:
         if (m_state == GestureRecognized) {
-            m_viewportInteractionEngine->panGestureEnded(touchPoint.pos(), eventTimestampMillis);
+            interactionEngine()->panGestureEnded(touchPoint.pos(), eventTimestampMillis);
             reset();
             return true;
         }

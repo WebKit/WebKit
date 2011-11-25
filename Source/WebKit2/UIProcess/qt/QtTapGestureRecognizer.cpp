@@ -26,23 +26,15 @@
 #include "QtTapGestureRecognizer.h"
 
 #include "QtWebPageEventHandler.h"
-#include "QtViewportInteractionEngine.h"
 #include <QLineF>
 #include <QTouchEvent>
 
 namespace WebKit {
 
-QtTapGestureRecognizer::QtTapGestureRecognizer(QtViewportInteractionEngine* interactionEngine, QtWebPageEventHandler* eventHandler)
-    : QtGestureRecognizer(interactionEngine)
-    , m_eventHandler(eventHandler)
+QtTapGestureRecognizer::QtTapGestureRecognizer(QtWebPageEventHandler* eventHandler)
+    : QtGestureRecognizer(eventHandler)
     , m_tapState(NoTap)
 {
-    reset();
-}
-
-void QtTapGestureRecognizer::setViewportInteractionEngine(QtViewportInteractionEngine* engine)
-{
-    QtGestureRecognizer::setViewportInteractionEngine(engine);
     reset();
 }
 

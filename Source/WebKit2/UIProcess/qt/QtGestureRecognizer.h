@@ -26,6 +26,8 @@
 #ifndef QtGestureRecognizer_h
 #define QtGestureRecognizer_h
 
+class QtWebPageEventHandler;
+
 namespace WebKit {
 
 class QtViewportInteractionEngine;
@@ -35,16 +37,17 @@ public:
     bool isRecognized() const { return m_state == GestureRecognized; }
 
 protected:
-    QtGestureRecognizer(QtViewportInteractionEngine*);
-    void setViewportInteractionEngine(QtViewportInteractionEngine*);
+    QtGestureRecognizer(QtWebPageEventHandler*);
     void reset();
 
-    QtViewportInteractionEngine* m_viewportInteractionEngine;
+    QtWebPageEventHandler* m_eventHandler;
     enum State {
         NoGesture,
         GestureRecognitionStarted,
         GestureRecognized
     } m_state;
+
+    QtViewportInteractionEngine* interactionEngine();
 };
 
 }

@@ -26,10 +26,12 @@
 #include "config.h"
 #include "QtGestureRecognizer.h"
 
+#include "QtWebPageEventHandler.h"
+
 namespace WebKit {
 
-QtGestureRecognizer::QtGestureRecognizer(QtViewportInteractionEngine* viewportInteractionEngine)
-    : m_viewportInteractionEngine(viewportInteractionEngine)
+QtGestureRecognizer::QtGestureRecognizer(QtWebPageEventHandler* eventHandler)
+    : m_eventHandler(eventHandler)
     , m_state(NoGesture)
 {
 }
@@ -39,9 +41,9 @@ void QtGestureRecognizer::reset()
     m_state = NoGesture;
 }
 
-void QtGestureRecognizer::setViewportInteractionEngine(QtViewportInteractionEngine* engine)
+QtViewportInteractionEngine* QtGestureRecognizer::interactionEngine()
 {
-    m_viewportInteractionEngine = engine;
+    return m_eventHandler->interactionEngine();
 }
 
 }

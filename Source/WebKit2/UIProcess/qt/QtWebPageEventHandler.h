@@ -24,6 +24,7 @@
 #include "QtPanGestureRecognizer.h"
 #include "QtPinchGestureRecognizer.h"
 #include "QtTapGestureRecognizer.h"
+#include "QtViewportInteractionEngine.h"
 #include "WebPageProxy.h"
 #include <QBasicTimer>
 #include <QKeyEvent>
@@ -53,6 +54,8 @@ public:
     void didFindZoomableArea(const WebCore::IntPoint& target, const WebCore::IntRect& area);
     void doneWithTouchEvent(const NativeWebTouchEvent&, bool wasEventHandled);
     void resetGestureRecognizers();
+
+    QtViewportInteractionEngine* interactionEngine() { return m_interactionEngine; }
 
 protected:
     WebPageProxy* m_webPageProxy;
