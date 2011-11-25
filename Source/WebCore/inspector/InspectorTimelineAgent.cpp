@@ -165,7 +165,7 @@ void InspectorTimelineAgent::stop(ErrorString*)
 
 void InspectorTimelineAgent::willCallFunction(const String& scriptName, int scriptLine)
 {
-    pushCurrentRecord(TimelineRecordFactory::createFunctionCallData(scriptName, scriptLine), TimelineRecordType::FunctionCall);
+    pushCurrentRecord(TimelineRecordFactory::createFunctionCallData(scriptName, scriptLine), TimelineRecordType::FunctionCall, true);
 }
 
 void InspectorTimelineAgent::didCallFunction()
@@ -175,8 +175,7 @@ void InspectorTimelineAgent::didCallFunction()
 
 void InspectorTimelineAgent::willDispatchEvent(const Event& event)
 {
-    pushCurrentRecord(TimelineRecordFactory::createEventDispatchData(event),
-        TimelineRecordType::EventDispatch);
+    pushCurrentRecord(TimelineRecordFactory::createEventDispatchData(event), TimelineRecordType::EventDispatch, false);
 }
 
 void InspectorTimelineAgent::didDispatchEvent()
@@ -186,7 +185,7 @@ void InspectorTimelineAgent::didDispatchEvent()
 
 void InspectorTimelineAgent::willLayout()
 {
-    pushCurrentRecord(InspectorObject::create(), TimelineRecordType::Layout);
+    pushCurrentRecord(InspectorObject::create(), TimelineRecordType::Layout, true);
 }
 
 void InspectorTimelineAgent::didLayout()
@@ -196,7 +195,7 @@ void InspectorTimelineAgent::didLayout()
 
 void InspectorTimelineAgent::willRecalculateStyle()
 {
-    pushCurrentRecord(InspectorObject::create(), TimelineRecordType::RecalculateStyles);
+    pushCurrentRecord(InspectorObject::create(), TimelineRecordType::RecalculateStyles, true);
 }
 
 void InspectorTimelineAgent::didRecalculateStyle()
@@ -206,7 +205,7 @@ void InspectorTimelineAgent::didRecalculateStyle()
 
 void InspectorTimelineAgent::willPaint(const LayoutRect& rect)
 {
-    pushCurrentRecord(TimelineRecordFactory::createPaintData(rect), TimelineRecordType::Paint);
+    pushCurrentRecord(TimelineRecordFactory::createPaintData(rect), TimelineRecordType::Paint, true);
 }
 
 void InspectorTimelineAgent::didPaint()
@@ -216,7 +215,7 @@ void InspectorTimelineAgent::didPaint()
 
 void InspectorTimelineAgent::willWriteHTML(unsigned int length, unsigned int startLine)
 {
-    pushCurrentRecord(TimelineRecordFactory::createParseHTMLData(length, startLine), TimelineRecordType::ParseHTML);
+    pushCurrentRecord(TimelineRecordFactory::createParseHTMLData(length, startLine), TimelineRecordType::ParseHTML, true);
 }
 
 void InspectorTimelineAgent::didWriteHTML(unsigned int endLine)
@@ -230,17 +229,17 @@ void InspectorTimelineAgent::didWriteHTML(unsigned int endLine)
 
 void InspectorTimelineAgent::didInstallTimer(int timerId, int timeout, bool singleShot)
 {
-    appendRecord(TimelineRecordFactory::createTimerInstallData(timerId, timeout, singleShot), TimelineRecordType::TimerInstall);
+    appendRecord(TimelineRecordFactory::createTimerInstallData(timerId, timeout, singleShot), TimelineRecordType::TimerInstall, true);
 }
 
 void InspectorTimelineAgent::didRemoveTimer(int timerId)
 {
-    appendRecord(TimelineRecordFactory::createGenericTimerData(timerId), TimelineRecordType::TimerRemove);
+    appendRecord(TimelineRecordFactory::createGenericTimerData(timerId), TimelineRecordType::TimerRemove, true);
 }
 
 void InspectorTimelineAgent::willFireTimer(int timerId)
 {
-    pushCurrentRecord(TimelineRecordFactory::createGenericTimerData(timerId), TimelineRecordType::TimerFire);
+    pushCurrentRecord(TimelineRecordFactory::createGenericTimerData(timerId), TimelineRecordType::TimerFire, false);
 }
 
 void InspectorTimelineAgent::didFireTimer()
@@ -250,7 +249,7 @@ void InspectorTimelineAgent::didFireTimer()
 
 void InspectorTimelineAgent::willChangeXHRReadyState(const String& url, int readyState)
 {
-    pushCurrentRecord(TimelineRecordFactory::createXHRReadyStateChangeData(url, readyState), TimelineRecordType::XHRReadyStateChange);
+    pushCurrentRecord(TimelineRecordFactory::createXHRReadyStateChangeData(url, readyState), TimelineRecordType::XHRReadyStateChange, false);
 }
 
 void InspectorTimelineAgent::didChangeXHRReadyState()
@@ -260,7 +259,7 @@ void InspectorTimelineAgent::didChangeXHRReadyState()
 
 void InspectorTimelineAgent::willLoadXHR(const String& url) 
 {
-    pushCurrentRecord(TimelineRecordFactory::createXHRLoadData(url), TimelineRecordType::XHRLoad);
+    pushCurrentRecord(TimelineRecordFactory::createXHRLoadData(url), TimelineRecordType::XHRLoad, true);
 }
 
 void InspectorTimelineAgent::didLoadXHR()
@@ -270,7 +269,7 @@ void InspectorTimelineAgent::didLoadXHR()
 
 void InspectorTimelineAgent::willEvaluateScript(const String& url, int lineNumber)
 {
-    pushCurrentRecord(TimelineRecordFactory::createEvaluateScriptData(url, lineNumber), TimelineRecordType::EvaluateScript);
+    pushCurrentRecord(TimelineRecordFactory::createEvaluateScriptData(url, lineNumber), TimelineRecordType::EvaluateScript, true);
 }
     
 void InspectorTimelineAgent::didEvaluateScript()
@@ -280,7 +279,7 @@ void InspectorTimelineAgent::didEvaluateScript()
 
 void InspectorTimelineAgent::didScheduleResourceRequest(const String& url)
 {
-    appendRecord(TimelineRecordFactory::createScheduleResourceRequestData(url), TimelineRecordType::ScheduleResourceRequest);
+    appendRecord(TimelineRecordFactory::createScheduleResourceRequestData(url), TimelineRecordType::ScheduleResourceRequest, true);
 }
 
 void InspectorTimelineAgent::willSendResourceRequest(unsigned long identifier, const ResourceRequest& request)
@@ -297,7 +296,7 @@ void InspectorTimelineAgent::willSendResourceRequest(unsigned long identifier, c
 void InspectorTimelineAgent::willReceiveResourceData(unsigned long identifier)
 {
     String requestId = IdentifiersFactory::requestId(identifier);
-    pushCurrentRecord(TimelineRecordFactory::createReceiveResourceData(requestId), TimelineRecordType::ResourceReceivedData);
+    pushCurrentRecord(TimelineRecordFactory::createReceiveResourceData(requestId), TimelineRecordType::ResourceReceivedData, false);
 }
 
 void InspectorTimelineAgent::didReceiveResourceData()
@@ -308,7 +307,7 @@ void InspectorTimelineAgent::didReceiveResourceData()
 void InspectorTimelineAgent::willReceiveResourceResponse(unsigned long identifier, const ResourceResponse& response)
 {
     String requestId = IdentifiersFactory::requestId(identifier);
-    pushCurrentRecord(TimelineRecordFactory::createResourceReceiveResponseData(requestId, response), TimelineRecordType::ResourceReceiveResponse);
+    pushCurrentRecord(TimelineRecordFactory::createResourceReceiveResponseData(requestId, response), TimelineRecordType::ResourceReceiveResponse, false);
 }
 
 void InspectorTimelineAgent::didReceiveResourceResponse()
@@ -318,22 +317,22 @@ void InspectorTimelineAgent::didReceiveResourceResponse()
 
 void InspectorTimelineAgent::didFinishLoadingResource(unsigned long identifier, bool didFail, double finishTime)
 {
-    appendRecord(TimelineRecordFactory::createResourceFinishData(IdentifiersFactory::requestId(identifier), didFail, finishTime * 1000), TimelineRecordType::ResourceFinish);
+    appendRecord(TimelineRecordFactory::createResourceFinishData(IdentifiersFactory::requestId(identifier), didFail, finishTime * 1000), TimelineRecordType::ResourceFinish, false);
 }
 
 void InspectorTimelineAgent::didTimeStamp(const String& message)
 {
-    appendRecord(TimelineRecordFactory::createTimeStampData(message), TimelineRecordType::TimeStamp);
+    appendRecord(TimelineRecordFactory::createTimeStampData(message), TimelineRecordType::TimeStamp, true);
 }
 
 void InspectorTimelineAgent::didMarkDOMContentEvent()
 {
-    appendRecord(InspectorObject::create(), TimelineRecordType::MarkDOMContent);
+    appendRecord(InspectorObject::create(), TimelineRecordType::MarkDOMContent, false);
 }
 
 void InspectorTimelineAgent::didMarkLoadEvent()
 {
-    appendRecord(InspectorObject::create(), TimelineRecordType::MarkLoad);
+    appendRecord(InspectorObject::create(), TimelineRecordType::MarkLoad, false);
 }
 
 void InspectorTimelineAgent::didCommitLoad()
@@ -343,17 +342,17 @@ void InspectorTimelineAgent::didCommitLoad()
 
 void InspectorTimelineAgent::didRegisterAnimationFrameCallback(int callbackId)
 {
-    appendRecord(TimelineRecordFactory::createAnimationFrameCallbackData(callbackId), TimelineRecordType::RegisterAnimationFrameCallback);
+    appendRecord(TimelineRecordFactory::createAnimationFrameCallbackData(callbackId), TimelineRecordType::RegisterAnimationFrameCallback, true);
 }
 
 void InspectorTimelineAgent::didCancelAnimationFrameCallback(int callbackId)
 {
-    appendRecord(TimelineRecordFactory::createAnimationFrameCallbackData(callbackId), TimelineRecordType::CancelAnimationFrameCallback);
+    appendRecord(TimelineRecordFactory::createAnimationFrameCallbackData(callbackId), TimelineRecordType::CancelAnimationFrameCallback, true);
 }
 
 void InspectorTimelineAgent::willFireAnimationFrameEvent(int callbackId)
 {
-    pushCurrentRecord(TimelineRecordFactory::createAnimationFrameCallbackData(callbackId), TimelineRecordType::FireAnimationFrameEvent);
+    pushCurrentRecord(TimelineRecordFactory::createAnimationFrameCallbackData(callbackId), TimelineRecordType::FireAnimationFrameEvent, false);
 }
 
 void InspectorTimelineAgent::didFireAnimationFrameEvent()
@@ -409,19 +408,19 @@ InspectorTimelineAgent::InspectorTimelineAgent(InstrumentingAgents* instrumentin
 {
 }
 
-void InspectorTimelineAgent::appendRecord(PassRefPtr<InspectorObject> data, const String& type)
+void InspectorTimelineAgent::appendRecord(PassRefPtr<InspectorObject> data, const String& type, bool captureCallStack)
 {
     pushGCEventRecords();
-    RefPtr<InspectorObject> record = TimelineRecordFactory::createGenericRecord(WTF::currentTimeMS(), m_maxCallStackDepth);
+    RefPtr<InspectorObject> record = TimelineRecordFactory::createGenericRecord(WTF::currentTimeMS(), captureCallStack ? m_maxCallStackDepth : 0);
     record->setObject("data", data);
     record->setString("type", type);
     addRecordToTimeline(record.release(), type);
 }
 
-void InspectorTimelineAgent::pushCurrentRecord(PassRefPtr<InspectorObject> data, const String& type)
+void InspectorTimelineAgent::pushCurrentRecord(PassRefPtr<InspectorObject> data, const String& type, bool captureCallStack)
 {
     pushGCEventRecords();
-    RefPtr<InspectorObject> record = TimelineRecordFactory::createGenericRecord(WTF::currentTimeMS(), m_maxCallStackDepth);
+    RefPtr<InspectorObject> record = TimelineRecordFactory::createGenericRecord(WTF::currentTimeMS(), captureCallStack ? m_maxCallStackDepth : 0);
     m_recordStack.append(TimelineRecordEntry(record.release(), data, InspectorArray::create(), type));
 }
 

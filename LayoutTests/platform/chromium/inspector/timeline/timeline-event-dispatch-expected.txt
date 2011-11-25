@@ -4,7 +4,6 @@ Test Mouse Target
 EventDispatch Properties:
 {
     startTime : <number>
-    stackTrace : <object>
     data : {
         type : "mousedown"
     }

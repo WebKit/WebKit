@@ -1,3 +1,42 @@
+2011-11-25  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: unflake timeline-network tests
+        https://bugs.webkit.org/show_bug.cgi?id=73123
+
+        We should capture stack only when it makes sense. Otherwise loading from cache
+        results in different data sets (stacks) than regular load.
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/InspectorTimelineAgent.cpp:
+        (WebCore::InspectorTimelineAgent::willCallFunction):
+        (WebCore::InspectorTimelineAgent::willDispatchEvent):
+        (WebCore::InspectorTimelineAgent::willLayout):
+        (WebCore::InspectorTimelineAgent::willRecalculateStyle):
+        (WebCore::InspectorTimelineAgent::willPaint):
+        (WebCore::InspectorTimelineAgent::willWriteHTML):
+        (WebCore::InspectorTimelineAgent::didInstallTimer):
+        (WebCore::InspectorTimelineAgent::didRemoveTimer):
+        (WebCore::InspectorTimelineAgent::willFireTimer):
+        (WebCore::InspectorTimelineAgent::willChangeXHRReadyState):
+        (WebCore::InspectorTimelineAgent::willLoadXHR):
+        (WebCore::InspectorTimelineAgent::willEvaluateScript):
+        (WebCore::InspectorTimelineAgent::didScheduleResourceRequest):
+        (WebCore::InspectorTimelineAgent::willReceiveResourceData):
+        (WebCore::InspectorTimelineAgent::willReceiveResourceResponse):
+        (WebCore::InspectorTimelineAgent::didFinishLoadingResource):
+        (WebCore::InspectorTimelineAgent::didTimeStamp):
+        (WebCore::InspectorTimelineAgent::didMarkDOMContentEvent):
+        (WebCore::InspectorTimelineAgent::didMarkLoadEvent):
+        (WebCore::InspectorTimelineAgent::didRegisterAnimationFrameCallback):
+        (WebCore::InspectorTimelineAgent::didCancelAnimationFrameCallback):
+        (WebCore::InspectorTimelineAgent::willFireAnimationFrameEvent):
+        (WebCore::InspectorTimelineAgent::appendRecord):
+        (WebCore::InspectorTimelineAgent::pushCurrentRecord):
+        * inspector/InspectorTimelineAgent.h:
+        * inspector/TimelineRecordFactory.cpp:
+        (WebCore::TimelineRecordFactory::createGenericRecord):
+
 2011-11-25  Yury Semikhatsky  <yurys@chromium.org>
 
         [Chromium] Web Inspector: get rid of WebDevToolsFrontendClient::sendFrontendLoaded method

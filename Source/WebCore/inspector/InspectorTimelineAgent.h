@@ -140,11 +140,11 @@ private:
         
     InspectorTimelineAgent(InstrumentingAgents*, InspectorState*);
 
-    void pushCurrentRecord(PassRefPtr<InspectorObject>, const String& type);
+    void pushCurrentRecord(PassRefPtr<InspectorObject>, const String& type, bool captureCallStack);
     void setHeapSizeStatistic(InspectorObject* record);
         
     void didCompleteCurrentRecord(const String& type);
-    void appendRecord(PassRefPtr<InspectorObject> data, const String& type);
+    void appendRecord(PassRefPtr<InspectorObject> data, const String& type, bool captureCallStack);
 
     void addRecordToTimeline(PassRefPtr<InspectorObject>, const String& type);
 
