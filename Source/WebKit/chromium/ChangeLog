@@ -1,3 +1,9 @@
+2011-11-25  Yury Semikhatsky  <yurys@chromium.org>
+
+        Unreviewed. Update Chromium deps revision to 111575
+
+        * DEPS:
+
 2011-11-24  Fady Samuel  <fsamuel@chromium.org>
 
         [Chromium] Removed obsolete touchui flag
