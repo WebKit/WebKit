@@ -277,7 +277,8 @@ static double parseInt(const UString& s, int radix)
 
 static const int SizeOfInfinity = 8;
 
-static bool isInfinity(const UChar* data, const UChar* end)
+template <typename CharType>
+static bool isInfinity(const CharType* data, const CharType* end)
 {
     return (end - data) >= SizeOfInfinity
         && data[0] == 'I'
@@ -291,11 +292,12 @@ static bool isInfinity(const UChar* data, const UChar* end)
 }
 
 // See ecma-262 9.3.1
-static double jsHexIntegerLiteral(const UChar*& data, const UChar* end)
+template <typename CharType>
+static double jsHexIntegerLiteral(const CharType*& data, const CharType* end)
 {
     // Hex number.
     data += 2;
-    const UChar* firstDigitPosition = data;
+    const CharType* firstDigitPosition = data;
     double number = 0;
     while (true) {
         number = number * 16 + toASCIIHexValue(*data);
@@ -312,15 +314,16 @@ static double jsHexIntegerLiteral(const UChar*& data, const UChar* end)
 }
 
 // See ecma-262 9.3.1
-static double jsStrDecimalLiteral(const UChar*& data, const UChar* end)
+template <typename CharType>
+static double jsStrDecimalLiteral(const CharType*& data, const CharType* end)
 {
     ASSERT(data < end);
 
     // Copy the sting into a null-terminated byte buffer, and call strtod.
     Vector<char, 32> byteBuffer;
-    for (const UChar* characters = data; characters < end; ++characters) {
-        UChar character = *characters;
-        byteBuffer.append(isASCII(character) ? character : 0);
+    for (const CharType* characters = data; characters < end; ++characters) {
+        CharType character = *characters;
+        byteBuffer.append(isASCII(character) ? static_cast<char>(character) : 0);
     }
     byteBuffer.append(0);
     char* endOfNumber;
@@ -361,6 +364,38 @@ static double jsStrDecimalLiteral(const UChar*& data, const UChar* end)
     return std::numeric_limits<double>::quiet_NaN();
 }
 
+template <typename CharType>
+static double toDouble(const CharType* characters, unsigned size)
+{
+    const CharType* endCharacters = characters + size;
+
+    // Skip leading white space.
+    for (; characters < endCharacters; ++characters) {
+        if (!isStrWhiteSpace(*characters))
+            break;
+    }
+    
+    // Empty string.
+    if (characters == endCharacters)
+        return 0.0;
+    
+    double number;
+    if (characters[0] == '0' && characters + 2 < endCharacters && (characters[1] | 0x20) == 'x' && isASCIIHexDigit(characters[2]))
+        number = jsHexIntegerLiteral(characters, endCharacters);
+    else
+        number = jsStrDecimalLiteral(characters, endCharacters);
+    
+    // Allow trailing white space.
+    for (; characters < endCharacters; ++characters) {
+        if (!isStrWhiteSpace(*characters))
+            break;
+    }
+    if (characters != endCharacters)
+        return std::numeric_limits<double>::quiet_NaN();
+    
+    return number;
+}
+
 // See ecma-262 9.3.1
 double jsToNumber(const UString& s)
 {
@@ -375,34 +410,9 @@ double jsToNumber(const UString& s)
         return std::numeric_limits<double>::quiet_NaN();
     }
 
-    const UChar* data = s.characters();
-    const UChar* end = data + size;
-
-    // Skip leading white space.
-    for (; data < end; ++data) {
-        if (!isStrWhiteSpace(*data))
-            break;
-    }
-
-    // Empty string.
-    if (data == end)
-        return 0.0;
-
-    double number;
-    if (data[0] == '0' && data + 2 < end && (data[1] | 0x20) == 'x' && isASCIIHexDigit(data[2]))
-        number = jsHexIntegerLiteral(data, end);
-    else
-        number = jsStrDecimalLiteral(data, end);
-
-    // Allow trailing white space.
-    for (; data < end; ++data) {
-        if (!isStrWhiteSpace(*data))
-            break;
-    }
-    if (data != end)
-        return std::numeric_limits<double>::quiet_NaN();
-
-    return number;
+    if (s.is8Bit())
+        return toDouble(s.characters8(), size);
+    return toDouble(s.characters16(), size);
 }
 
 static double parseFloat(const UString& s)

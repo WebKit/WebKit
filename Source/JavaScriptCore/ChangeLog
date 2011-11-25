@@ -1,5 +1,23 @@
 2011-11-24  Michael Saboff  <msaboff@apple.com>
 
+        JavaScript string to number conversion functions use characters()
+        https://bugs.webkit.org/show_bug.cgi?id=72974
+
+        Change the various JS to number routines to process strings
+        using characters8() or characters16() as appropriate.
+        Implemented using static template methods.
+
+        Reviewed by Filip Pizlo.
+
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::isInfinity):
+        (JSC::jsHexIntegerLiteral):
+        (JSC::jsStrDecimalLiteral):
+        (JSC::toDouble):
+        (JSC::jsToNumber):
+
+2011-11-24  Michael Saboff  <msaboff@apple.com>
+
         Empty JSStrings are created as 16 bit
         https://bugs.webkit.org/show_bug.cgi?id=72968
 
