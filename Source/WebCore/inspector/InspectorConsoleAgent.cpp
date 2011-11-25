@@ -100,7 +100,7 @@ void InspectorConsoleAgent::clearMessages(ErrorString*)
     m_expiredConsoleMessageCount = 0;
     m_previousMessage = 0;
     m_injectedScriptManager->releaseObjectGroup("console");
-    if (m_frontend)
+    if (m_frontend && m_inspectorState->getBoolean(ConsoleAgentState::consoleMessagesEnabled))
         m_frontend->messagesCleared();
 }
 
@@ -265,12 +265,12 @@ void InspectorConsoleAgent::addConsoleMessage(PassOwnPtr<ConsoleMessage> console
 
     if (m_previousMessage && !isGroupMessage(m_previousMessage->type()) && m_previousMessage->isEqual(consoleMessage.get())) {
         m_previousMessage->incrementCount();
-        if (m_inspectorState->getBoolean(ConsoleAgentState::consoleMessagesEnabled) && m_frontend)
+        if (m_frontend && m_inspectorState->getBoolean(ConsoleAgentState::consoleMessagesEnabled))
             m_previousMessage->updateRepeatCountInConsole(m_frontend);
     } else {
         m_previousMessage = consoleMessage.get();
         m_consoleMessages.append(consoleMessage);
-        if (m_inspectorState->getBoolean(ConsoleAgentState::consoleMessagesEnabled) && m_frontend)
+        if (m_frontend && m_inspectorState->getBoolean(ConsoleAgentState::consoleMessagesEnabled))
             m_previousMessage->addToFrontend(m_frontend, m_injectedScriptManager);
     }
 
