@@ -1,5 +1,23 @@
 2011-11-25  Andreas Kling  <kling@webkit.org>
 
+        Remove redundant setStrictParsing(false) calls on CSSMappedAttributeDeclarations.
+        <http://webkit.org/b/73134>
+
+        Reviewed by Antti Koivisto.
+
+        CSSMappedAttributeDeclarations always use non-strict parsing since they use
+        the argument-less CSSMutableStyleDeclaration constructor.
+
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::createMappedDecl):
+        * html/HTMLTableElement.cpp:
+        (WebCore::HTMLTableElement::additionalAttributeStyleDecls):
+        (WebCore::HTMLTableElement::addSharedCellBordersDecl):
+        (WebCore::HTMLTableElement::addSharedCellPaddingDecl):
+        (WebCore::HTMLTableElement::addSharedGroupDecls):
+
+2011-11-25  Andreas Kling  <kling@webkit.org>
+
         Factor element pointer out of CSSMutableStyleDeclaration.
         <http://webkit.org/b/73121>
 

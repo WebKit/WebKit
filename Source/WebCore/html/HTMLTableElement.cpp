@@ -457,7 +457,6 @@ void HTMLTableElement::additionalAttributeStyleDecls(Vector<CSSMutableStyleDecla
         decl = CSSMappedAttributeDeclaration::create().leakRef(); // This single ref pins us in the table until the document dies.
         decl->setParentStyleSheet(document()->elementSheet());
         decl->setElement(this);
-        decl->setStrictParsing(false); // Mapped attributes are just always quirky.
         
         int v = m_borderColorAttr ? CSSValueSolid : CSSValueOutset;
         decl->setProperty(CSSPropertyBorderTopStyle, v, false);
@@ -515,7 +514,6 @@ void HTMLTableElement::addSharedCellBordersDecl(Vector<CSSMutableStyleDeclaratio
         decl = CSSMappedAttributeDeclaration::create().leakRef(); // This single ref pins us in the table until the document dies.
         decl->setParentStyleSheet(document()->elementSheet());
         decl->setElement(this);
-        decl->setStrictParsing(false); // Mapped attributes are just always quirky.
         
         switch (borders) {
             case SolidBordersColsOnly:
@@ -574,7 +572,6 @@ void HTMLTableElement::addSharedCellPaddingDecl(Vector<CSSMutableStyleDeclaratio
             m_paddingDecl = CSSMappedAttributeDeclaration::create();
             m_paddingDecl->setParentStyleSheet(document()->elementSheet());
             m_paddingDecl->setElement(this);
-            m_paddingDecl->setStrictParsing(false); // Mapped attributes are just always quirky.
             
             m_paddingDecl->setProperty(CSSPropertyPaddingTop, paddingValue, false);
             m_paddingDecl->setProperty(CSSPropertyPaddingRight, paddingValue, false);
@@ -601,7 +598,6 @@ void HTMLTableElement::addSharedGroupDecls(bool rows, Vector<CSSMutableStyleDecl
         decl = CSSMappedAttributeDeclaration::create().leakRef(); // This single ref pins us in the table until the document dies.
         decl->setParentStyleSheet(document()->elementSheet());
         decl->setElement(this);
-        decl->setStrictParsing(false); // Mapped attributes are just always quirky.
         
         if (rows) {
             decl->setProperty(CSSPropertyBorderTopWidth, CSSValueThin, false);

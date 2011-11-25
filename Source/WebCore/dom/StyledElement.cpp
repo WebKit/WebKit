@@ -407,7 +407,6 @@ void StyledElement::createMappedDecl(Attribute* attr)
     attr->setDecl(decl);
     decl->setParentStyleSheet(document()->elementSheet());
     decl->setElement(this);
-    decl->setStrictParsing(false); // Mapped attributes are just always quirky.
 }
 
 unsigned MappedAttributeHash::hash(const MappedAttributeKey& key)
