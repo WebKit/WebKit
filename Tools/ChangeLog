@@ -1,3 +1,19 @@
+2011-11-25  Yury Semikhatsky  <yurys@chromium.org>
+
+        [Chromium] Web Inspector: get rid of WebDevToolsFrontendClient::sendFrontendLoaded method
+        https://bugs.webkit.org/show_bug.cgi?id=73126
+
+        No need to have a separate client call for this. The front-end can store messages
+        which arrive before front-end loaded and dispatch them later. This happens in layout
+        tests only by the way as all other messages should be initiated by the front-end code.
+
+        Reviewed by Pavel Feldman.
+
+        * DumpRenderTree/chromium/DRTDevToolsAgent.cpp:
+        * DumpRenderTree/chromium/DRTDevToolsAgent.h:
+        * DumpRenderTree/chromium/DRTDevToolsClient.cpp:
+        * DumpRenderTree/chromium/DRTDevToolsClient.h:
+
 2011-11-24  Kentaro Hara  <haraken@chromium.org>
 
         Replace subprocess.call() with subprocess.Popen()

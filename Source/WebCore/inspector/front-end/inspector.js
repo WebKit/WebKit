@@ -318,7 +318,6 @@ WebInspector.loaded = function()
 WebInspector.doLoadedDone = function()
 {
     WebInspector.WorkerManager.loaded();
-    InspectorFrontendHost.loaded();
 
     WebInspector.installPortStyles();
 
@@ -394,6 +393,7 @@ WebInspector.doLoadedDone = function()
 
     WebInspector.CSSCompletions.requestCSSNameCompletions();
     WebInspector.WorkerManager.loadCompleted();
+    InspectorFrontendHost.loaded();
 }
 
 WebInspector.addPanel = function(panel)

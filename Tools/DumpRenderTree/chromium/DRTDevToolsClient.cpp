@@ -64,12 +64,6 @@ void DRTDevToolsClient::reset()
     m_taskList.revokeAll();
 }
 
-void DRTDevToolsClient::sendFrontendLoaded()
-{
-    if (m_drtDevToolsAgent)
-        m_drtDevToolsAgent->frontendLoaded();
-}
-
 void DRTDevToolsClient::sendMessageToBackend(const WebString& data)
 {
     if (m_drtDevToolsAgent)

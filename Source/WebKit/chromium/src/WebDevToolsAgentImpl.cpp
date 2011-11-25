@@ -195,6 +195,7 @@ void WebDevToolsAgentImpl::attach()
         return;
 
     ClientMessageLoopAdapter::ensureClientMessageLoopCreated(m_client);
+    inspectorController()->connectFrontend();
     m_attached = true;
 }
 
@@ -216,7 +217,6 @@ void WebDevToolsAgentImpl::detach()
 
 void WebDevToolsAgentImpl::frontendLoaded()
 {
-    inspectorController()->connectFrontend();
 }
 
 void WebDevToolsAgentImpl::didNavigate()

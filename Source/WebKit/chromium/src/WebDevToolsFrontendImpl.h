@@ -33,19 +33,9 @@
 
 #include "PlatformString.h"
 #include "WebDevToolsFrontend.h"
-#include <v8.h>
 #include <wtf/Forward.h>
-#include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/OwnPtr.h>
-#include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
-
-namespace WebCore {
-class ContextMenuItem;
-class Node;
-class Page;
-}
 
 namespace WebKit {
 
@@ -70,9 +60,13 @@ public:
     void frontendLoaded();
 
 private:
+    void doDispatchOnInspectorFrontend(const String& message);
+
     WebKit::WebViewImpl* m_webViewImpl;
     WebKit::WebDevToolsFrontendClient* m_client;
     String m_applicationLocale;
+    bool m_loaded;
+    Vector<String> m_pendingMessages;
 };
 
 } // namespace WebKit

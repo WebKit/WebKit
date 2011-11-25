@@ -87,14 +87,6 @@ void DRTDevToolsAgent::call(const WebString& args)
         agent->dispatchOnInspectorBackend(args);
 }
 
-void DRTDevToolsAgent::delayedFrontendLoaded()
-{
-    WebDevToolsAgent* agent = webDevToolsAgent();
-    if (agent)
-        agent->frontendLoaded();
-}
-
-
 WebDevToolsAgent* DRTDevToolsAgent::webDevToolsAgent()
 {
     if (!m_webView)
@@ -118,11 +110,6 @@ void DRTDevToolsAgent::detach()
     if (agent)
         agent->detach();
     m_drtDevToolsClient = 0;
-}
-
-void DRTDevToolsAgent::frontendLoaded()
-{
-    postTask(new DelayedFrontendLoadedTask(this));
 }
 
 bool DRTDevToolsAgent::setJavaScriptProfilingEnabled(bool enabled)
