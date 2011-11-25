@@ -47,11 +47,15 @@
     background-color: rgb(66, 129, 235);
 }
 
-#scripts-status-bar {
-    position: absolute;
-    top: -1px;
-    left: 0;
-    right: 0;
+#scripts-debug-toolbar {
+    position: relative;
+    margin-top: -1px;
+    height: 23px;
+}
+
+#scripts-editor-toolbar {
+    position: relative;
+    margin-top: -1px;
     height: 24px;
 }
 
@@ -116,11 +120,11 @@
     right: 8px;
 }
 
-#scripts-sidebar-resizer-widget {
+#scripts-debug-sidebar-resizer-widget {
     position: absolute;
     top: 0;
     bottom: 0;
-    right: 225px;
+    right: 0;
     width: 16px;
     cursor: ew-resize;
     background-image: url(Images/statusbarResizerHorizontal.png);
@@ -128,21 +132,11 @@
     background-position: center;
 }
 
-#scripts-sidebar-buttons {
-    position: absolute;
-    right: 0;
-    top: 0;
-    bottom: 0;
-    width: 225px;
-    overflow: hidden;
-    border-left: 1px solid rgb(64%, 64%, 64%);
-}
-
 .script-view {
     display: none;
     overflow: hidden;
     position: absolute;
-    top: 0;
+    top: 23px;
     left: 0;
     right: 0;
     bottom: 0;
@@ -150,10 +144,6 @@
 
 .script-view.visible {
     display: block;
-}
-
-#scripts-split-view {
-    top: 23px;
 }
 
 .dedicated-worker-item {

@@ -1,3 +1,21 @@
+2011-11-25  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Split scripts panel top status bar into debug toolbar and editor toolbar.
+        https://bugs.webkit.org/show_bug.cgi?id=73087
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype._reset):
+        (WebInspector.ScriptsPanel.prototype._createEditorToolbar):
+        (WebInspector.ScriptsPanel.prototype._createDebugToolbar):
+        (WebInspector.ScriptsPanel.prototype._createButtonAndRegisterShortcuts):
+        * inspector/front-end/scriptsPanel.css:
+        (#scripts-debug-toolbar):
+        (#scripts-editor-toolbar):
+        (#scripts-debug-sidebar-resizer-widget):
+        (.script-view):
+
 2011-11-25  Leo Yang  <leo.yang@torchmobile.com.cn>
 
         Upstream BlackBerry porting of platform/text

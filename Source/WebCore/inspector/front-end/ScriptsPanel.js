@@ -43,53 +43,8 @@ WebInspector.ScriptsPanel = function(presentationModel)
     }
     WebInspector.GoToLineDialog.install(this, viewGetter.bind(this));
 
-    this.topStatusBar = document.createElement("div");
-    this.topStatusBar.className = "status-bar";
-    this.topStatusBar.id = "scripts-status-bar";
-    this.element.appendChild(this.topStatusBar);
-
-    this.backButton = document.createElement("button");
-    this.backButton.className = "status-bar-item";
-    this.backButton.id = "scripts-back";
-    this.backButton.title = WebInspector.UIString("Show the previous script resource.");
-    this.backButton.disabled = true;
-    this.backButton.appendChild(document.createElement("img"));
-    this.backButton.addEventListener("click", this._goBack.bind(this), false);
-    this.topStatusBar.appendChild(this.backButton);
-
-    this.forwardButton = document.createElement("button");
-    this.forwardButton.className = "status-bar-item";
-    this.forwardButton.id = "scripts-forward";
-    this.forwardButton.title = WebInspector.UIString("Show the next script resource.");
-    this.forwardButton.disabled = true;
-    this.forwardButton.appendChild(document.createElement("img"));
-    this.forwardButton.addEventListener("click", this._goForward.bind(this), false);
-    this.topStatusBar.appendChild(this.forwardButton);
-
-    this._filesSelectElement = document.createElement("select");
-    this._filesSelectElement.className = "status-bar-item";
-    this._filesSelectElement.id = "scripts-files";
-    this._filesSelectElement.addEventListener("change", this._filesSelectChanged.bind(this, true), false);
-    this._filesSelectElement.addEventListener("keyup", this._filesSelectChanged.bind(this, false), false);
-    this.topStatusBar.appendChild(this._filesSelectElement);
-
-    this.functionsSelectElement = document.createElement("select");
-    this.functionsSelectElement.className = "status-bar-item";
-    this.functionsSelectElement.id = "scripts-functions";
-
-    // FIXME: append the functions select element to the top status bar when it is implemented.
-    // this.topStatusBar.appendChild(this.functionsSelectElement);
-
-    this._createSidebarButtons();
-
-    this.toggleBreakpointsButton = new WebInspector.StatusBarButton(WebInspector.UIString("Deactivate all breakpoints."), "toggle-breakpoints");
-    this.toggleBreakpointsButton.toggled = true;
-    this.toggleBreakpointsButton.addEventListener("click", this._toggleBreakpointsClicked, this);
-    this.sidebarButtonsElement.appendChild(this.toggleBreakpointsButton.element);
-
-    this.debuggerStatusElement = document.createElement("div");
-    this.debuggerStatusElement.id = "scripts-debugger-status";
-    this.sidebarButtonsElement.appendChild(this.debuggerStatusElement);
+    this.editorToolbar = this._createEditorToolbar();
+    this.debugToolbar = this._createDebugToolbar();
 
     const initialSidebarWidth = 225;
     const minimalViewsContainerWidthPercent = 34;
@@ -98,12 +53,15 @@ WebInspector.ScriptsPanel = function(presentationModel)
     this.splitView.minimalSidebarWidth = Preferences.minScriptsSidebarWidth;
     this.splitView.minimalMainWidthPercent = minimalViewsContainerWidthPercent;
 
+    this.splitView.sidebarElement.appendChild(this.debugToolbar);
+    this.splitView.mainElement.appendChild(this.editorToolbar);
+
     this.viewsContainerElement = this.splitView.mainElement;
 
-    this.sidebarResizeWidgetElement = document.createElement("div");
-    this.sidebarResizeWidgetElement.id = "scripts-sidebar-resizer-widget";
-    this.splitView.installResizer(this.sidebarResizeWidgetElement);
-    this.topStatusBar.appendChild(this.sidebarResizeWidgetElement);
+    this.debugSidebarResizeWidgetElement = document.createElement("div");
+    this.debugSidebarResizeWidgetElement.id = "scripts-debug-sidebar-resizer-widget";
+    this.splitView.installResizer(this.debugSidebarResizeWidgetElement);
+    this.editorToolbar.appendChild(this.debugSidebarResizeWidgetElement);
 
     this.sidebarPanes = {};
     this.sidebarPanes.watchExpressions = new WebInspector.WatchExpressionsSidebarPane();
@@ -550,7 +508,7 @@ WebInspector.ScriptsPanel.prototype = {
         delete this._filesSelectElement.initialSelectionProcessed;
 
         this.functionsSelectElement.removeChildren();
-        this.viewsContainerElement.removeChildren();
+        this.visibleView = null;
 
         this.sidebarPanes.jsBreakpoints.reset();
         this.sidebarPanes.watchExpressions.reset();
@@ -771,14 +729,6 @@ WebInspector.ScriptsPanel.prototype = {
         var sourceFrame = this._showSourceFrameAndAddToHistory(uiSourceCode);
         if (sourceFrame && focusSource)
             sourceFrame.focus();
-    },
-
-    sidebarResized: function(event)
-    {
-        var width = event.data;
-
-        this.sidebarButtonsElement.style.width = width + "px";
-        this.sidebarResizeWidgetElement.style.right = width + "px";
     },
 
     _setPauseOnExceptions: function(pauseOnExceptionsState)
@@ -1003,12 +953,54 @@ WebInspector.ScriptsPanel.prototype = {
             WebInspector.evaluateInConsole(selection.toString());
     },
 
-    _createSidebarButtons: function()
+    _createEditorToolbar: function()
     {
-        this.sidebarButtonsElement = document.createElement("div");
-        this.sidebarButtonsElement.id = "scripts-sidebar-buttons";
-        this.topStatusBar.appendChild(this.sidebarButtonsElement);
+        var editorToolbar = document.createElement("div");
+        editorToolbar.className = "status-bar";
+        editorToolbar.id = "scripts-editor-toolbar";
 
+        this.backButton = document.createElement("button");
+        this.backButton.className = "status-bar-item";
+        this.backButton.id = "scripts-back";
+        this.backButton.title = WebInspector.UIString("Show the previous script resource.");
+        this.backButton.disabled = true;
+        this.backButton.appendChild(document.createElement("img"));
+        this.backButton.addEventListener("click", this._goBack.bind(this), false);
+        editorToolbar.appendChild(this.backButton);
+
+        this.forwardButton = document.createElement("button");
+        this.forwardButton.className = "status-bar-item";
+        this.forwardButton.id = "scripts-forward";
+        this.forwardButton.title = WebInspector.UIString("Show the next script resource.");
+        this.forwardButton.disabled = true;
+        this.forwardButton.appendChild(document.createElement("img"));
+        this.forwardButton.addEventListener("click", this._goForward.bind(this), false);
+        editorToolbar.appendChild(this.forwardButton);
+
+        this._filesSelectElement = document.createElement("select");
+        this._filesSelectElement.className = "status-bar-item";
+        this._filesSelectElement.id = "scripts-files";
+        this._filesSelectElement.addEventListener("change", this._filesSelectChanged.bind(this, true), false);
+        this._filesSelectElement.addEventListener("keyup", this._filesSelectChanged.bind(this, false), false);
+        editorToolbar.appendChild(this._filesSelectElement);
+
+        this.functionsSelectElement = document.createElement("select");
+        this.functionsSelectElement.className = "status-bar-item";
+        this.functionsSelectElement.id = "scripts-functions";
+
+        // FIXME: append the functions select element to the top status bar when it
+        // is implemented.
+        // editorToolbar.appendChild(this.functionsSelectElement);
+        
+        return editorToolbar;
+    },
+
+    _createDebugToolbar: function()
+    {
+        var debugToolbar = document.createElement("div");
+        debugToolbar.className = "status-bar";
+        debugToolbar.id = "scripts-debug-toolbar";
+        
         var title, handler, shortcuts;
         var platformSpecificModifier = WebInspector.KeyboardShortcut.Modifiers.CtrlOrMeta;
 
@@ -1018,7 +1010,8 @@ WebInspector.ScriptsPanel.prototype = {
         shortcuts = [];
         shortcuts.push(WebInspector.KeyboardShortcut.makeDescriptor(WebInspector.KeyboardShortcut.Keys.F8));
         shortcuts.push(WebInspector.KeyboardShortcut.makeDescriptor(WebInspector.KeyboardShortcut.Keys.Slash, platformSpecificModifier));
-        this.pauseButton = this._createSidebarButtonAndRegisterShortcuts("scripts-pause", title, handler, shortcuts, WebInspector.UIString("Pause/Continue"));
+        this.pauseButton = this._createButtonAndRegisterShortcuts("scripts-pause", title, handler, shortcuts, WebInspector.UIString("Pause/Continue"));
+        debugToolbar.appendChild(this.pauseButton);
 
         // Step over.
         title = WebInspector.UIString("Step over next function call (%s).");
@@ -1026,7 +1019,8 @@ WebInspector.ScriptsPanel.prototype = {
         shortcuts = [];
         shortcuts.push(WebInspector.KeyboardShortcut.makeDescriptor(WebInspector.KeyboardShortcut.Keys.F10));
         shortcuts.push(WebInspector.KeyboardShortcut.makeDescriptor(WebInspector.KeyboardShortcut.Keys.SingleQuote, platformSpecificModifier));
-        this.stepOverButton = this._createSidebarButtonAndRegisterShortcuts("scripts-step-over", title, handler, shortcuts, WebInspector.UIString("Step over"));
+        this.stepOverButton = this._createButtonAndRegisterShortcuts("scripts-step-over", title, handler, shortcuts, WebInspector.UIString("Step over"));
+        debugToolbar.appendChild(this.stepOverButton);
 
         // Step into.
         title = WebInspector.UIString("Step into next function call (%s).");
@@ -1034,7 +1028,8 @@ WebInspector.ScriptsPanel.prototype = {
         shortcuts = [];
         shortcuts.push(WebInspector.KeyboardShortcut.makeDescriptor(WebInspector.KeyboardShortcut.Keys.F11));
         shortcuts.push(WebInspector.KeyboardShortcut.makeDescriptor(WebInspector.KeyboardShortcut.Keys.Semicolon, platformSpecificModifier));
-        this.stepIntoButton = this._createSidebarButtonAndRegisterShortcuts("scripts-step-into", title, handler, shortcuts, WebInspector.UIString("Step into"));
+        this.stepIntoButton = this._createButtonAndRegisterShortcuts("scripts-step-into", title, handler, shortcuts, WebInspector.UIString("Step into"));
+        debugToolbar.appendChild(this.stepIntoButton);
 
         // Step out.
         title = WebInspector.UIString("Step out of current function (%s).");
@@ -1042,10 +1037,22 @@ WebInspector.ScriptsPanel.prototype = {
         shortcuts = [];
         shortcuts.push(WebInspector.KeyboardShortcut.makeDescriptor(WebInspector.KeyboardShortcut.Keys.F11, WebInspector.KeyboardShortcut.Modifiers.Shift));
         shortcuts.push(WebInspector.KeyboardShortcut.makeDescriptor(WebInspector.KeyboardShortcut.Keys.Semicolon, WebInspector.KeyboardShortcut.Modifiers.Shift | platformSpecificModifier));
-        this.stepOutButton = this._createSidebarButtonAndRegisterShortcuts("scripts-step-out", title, handler, shortcuts, WebInspector.UIString("Step out"));
+        this.stepOutButton = this._createButtonAndRegisterShortcuts("scripts-step-out", title, handler, shortcuts, WebInspector.UIString("Step out"));
+        debugToolbar.appendChild(this.stepOutButton);
+        
+        this.toggleBreakpointsButton = new WebInspector.StatusBarButton(WebInspector.UIString("Deactivate all breakpoints."), "toggle-breakpoints");
+        this.toggleBreakpointsButton.toggled = true;
+        this.toggleBreakpointsButton.addEventListener("click", this._toggleBreakpointsClicked, this);
+        debugToolbar.appendChild(this.toggleBreakpointsButton.element);
+
+        this.debuggerStatusElement = document.createElement("div");
+        this.debuggerStatusElement.id = "scripts-debugger-status";
+        debugToolbar.appendChild(this.debuggerStatusElement);
+        
+        return debugToolbar;
     },
 
-    _createSidebarButtonAndRegisterShortcuts: function(buttonId, buttonTitle, handler, shortcuts, shortcutDescription)
+    _createButtonAndRegisterShortcuts: function(buttonId, buttonTitle, handler, shortcuts, shortcutDescription)
     {
         var button = document.createElement("button");
         button.className = "status-bar-item";
@@ -1054,7 +1061,6 @@ WebInspector.ScriptsPanel.prototype = {
         button.disabled = true;
         button.appendChild(document.createElement("img"));
         button.addEventListener("click", handler, false);
-        this.sidebarButtonsElement.appendChild(button);
 
         var shortcutNames = [];
         for (var i = 0; i < shortcuts.length; ++i) {
