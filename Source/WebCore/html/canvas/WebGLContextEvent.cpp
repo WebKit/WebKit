@@ -30,6 +30,10 @@
 
 namespace WebCore {
 
+WebGLContextEventInit::WebGLContextEventInit()
+{
+}
+
 WebGLContextEvent::WebGLContextEvent()
 {
 }
@@ -37,6 +41,12 @@ WebGLContextEvent::WebGLContextEvent()
 WebGLContextEvent::WebGLContextEvent(const AtomicString& type, bool canBubble, bool cancelable, const String& statusMessage)
     : Event(type, canBubble, cancelable)
     , m_statusMessage(statusMessage)
+{
+}
+
+WebGLContextEvent::WebGLContextEvent(const AtomicString& type, const WebGLContextEventInit& initializer)
+    : Event(type, initializer)
+    , m_statusMessage(initializer.statusMessage)
 {
 }
 

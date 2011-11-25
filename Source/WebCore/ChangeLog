@@ -1,3 +1,22 @@
+2011-11-25  Kentaro Hara  <haraken@chromium.org>
+
+        Implement the WebGLContextEvent constructor
+        https://bugs.webkit.org/show_bug.cgi?id=72856
+
+        Reviewed by Adam Barth.
+
+        This patch makes WebGLContextEvent constructable.
+        The spec: http://www.khronos.org/registry/webgl/specs/latest/#5.14
+
+        Test: fast/events/constructors/webgl-context-event-constructor.html
+
+        * html/canvas/WebGLContextEvent.cpp: Added an implementation of the WebGLContextEvent constructor.
+        (WebCore::WebGLContextEventInit::WebGLContextEventInit):
+        (WebCore::WebGLContextEvent::WebGLContextEvent):
+        * html/canvas/WebGLContextEvent.h: Added a definition of WebGLContextEventInit.
+        (WebCore::WebGLContextEvent::create):
+        * html/canvas/WebGLContextEvent.idl: Added [ConstructorTemplate=Event] IDL.
+
 2011-11-25  Jeff Timanus  <twiz@chromium.org>
 
         [Chromium] The DrawingBuffer::bind method was incorrectly resetting the
