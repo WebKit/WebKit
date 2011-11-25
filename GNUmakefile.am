@@ -207,7 +207,6 @@ include Source/WebKit/gtk/GNUmakefile.am
 include Source/WebCore/bindings/gobject/GNUmakefile.am
 include Tools/GNUmakefile.am
 include Source/WebKit/gtk/po/GNUmakefile.am
-include Source/WebKit/gtk/docs/GNUmakefile.am
 include Tools/DumpRenderTree/gtk/GNUmakefile.ImageDiff.am
 
 if ENABLE_WEBKIT2
@@ -265,3 +264,17 @@ clean-local:
 maintainer-clean-local: distclean-local
 distclean-local:
 	-rm -rf $(GENSOURCES) $(GENPROGRAMS)
+
+dist-hook: doc-dist-hook
+doc-dist-hook: docs-build.stamp
+	cp $(WebKit)/NEWS $(distdir)
+	@mkdir -p $(distdir)/Documentation/webkitgtk/html
+	@mkdir -p $(distdir)/Documentation/webkitgtk/tmpl
+	@-cp ./Documentation/webkitgtk/tmpl/*.sgml $(distdir)/Documentation/webkitgtk/tmpl
+	@cp ./Documentation/webkitgtk/html/* $(distdir)/Documentation/webkitgtk/html
+if ENABLE_WEBKIT2
+	@mkdir -p $(distdir)/Documentation/webkit2gtk/html
+	@mkdir -p $(distdir)/Documentation/webkit2gtk/tmpl
+	@-cp ./Documentation/webkit2gtk/tmpl/*.sgml $(distdir)/Documentation/webkit2gtk/tmpl
+	@cp ./Documentation/webkit2gtk/html/* $(distdir)/Documentation/webkit2gtk/html
+endif

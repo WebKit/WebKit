@@ -384,8 +384,12 @@ gsettings_SCHEMAS = $(top_builddir)/Source/WebKit/gtk/org.webkitgtk-@WEBKITGTK_A
 EXTRA_DIST += \
 	$(WebKit)/ChangeLog \
 	$(WebKit)/NEWS \
+	$(WebKit)/docs/webkitgtk-docs.sgml \
+	$(WebKit)/docs/webkitgtk-sections.txt \
+	$(WebKit)/docs/webkitgtk.types \
+	$(WebKit)/docs/webkitenvironment.xml \
+	$(WebKit)/docs/webkitgtk-overrides.txt \
 	$(WebKit)/webkitmarshal.list \
-	$(WebKit)/GNUmakefile.gtk-doc.am \
 	$(WebKit)/po/* \
 	$(WebKit)/resources/* \
 	$(WebKit)/tests/resources/* \
@@ -593,8 +597,6 @@ DISTCLEANFILES += \
 	$(top_builddir)/Source/WebKit/gtk/org.webkitgtk-@WEBKITGTK_API_VERSION@.gschema.xml \
 	$(top_builddir)/Source/WebKit/gtk/webkit/webkitversion.h
 
-dist-hook:
-	cp $(WebKit)/NEWS $(distdir)
 install-data-local: po-install-data-local
 installdirs-data-local: po-installdirs-data-local
 uninstall-local: po-uninstall-local

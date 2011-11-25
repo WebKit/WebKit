@@ -227,3 +227,55 @@ TestNetscapePlugin_libtestnetscapeplugin_la_LDFLAGS = \
 
 CLEANFILES += TestNetscapePlugin/libtestnetscapeplugin.la
 endif
+
+EXTRA_DIST += \
+	Tools/gtk/common.py \
+	Tools/gtk/generate-gtkdoc \
+	Tools/gtk/gtkdoc.py \
+	Tools/Scripts/VCSUtils.pm \
+	Tools/Scripts/webkit-build-directory \
+	Tools/Scripts/webkitdirs.pm
+
+docs: docs-build.stamp
+.PHONY : docs
+DISTCLEANFILES += docs-build.stamp
+
+if ENABLE_WEBKIT2
+docs-build.stamp: \
+	$(BUILT_SOURCES) \
+	Source/WebKit/gtk/docs/webkitenvironment.xml \
+	Source/WebKit/gtk/docs/webkitgtk-docs.sgml \
+	Source/WebKit/gtk/docs/webkitgtk-sections.txt \
+	libwebkitgtk-@WEBKITGTK_API_MAJOR_VERSION@.@WEBKITGTK_API_MINOR_VERSION@.la \
+	libwebkit2gtk-@WEBKITGTK_API_MAJOR_VERSION@.@WEBKITGTK_API_MINOR_VERSION@.la \
+	Source/WebKit2/UIProcess/API/gtk/docs/webkit2gtk-docs.sgml \
+	Source/WebKit2/UIProcess/API/gtk/docs/webkit2gtk-sections.txt
+	$(srcdir)/Tools/gtk/generate-gtkdoc
+	@touch docs-build.stamp
+else
+docs-build.stamp: \
+	$(BUILT_SOURCES) \
+	libwebkitgtk-@WEBKITGTK_API_MAJOR_VERSION@.@WEBKITGTK_API_MINOR_VERSION@.la \
+	Source/WebKit/gtk/docs/webkitenvironment.xml \
+	Source/WebKit/gtk/docs/webkitgtk-docs.sgml \
+	Source/WebKit/gtk/docs/webkitgtk-sections.txt
+	$(srcdir)/Tools/gtk/generate-gtkdoc
+	@touch docs-build.stamp
+endif
+
+clean-local: doc-clean-local
+doc-clean-local:
+	@rm -f Documentation/webkitgtk/*~ Documentation/webkitgtk*.bak
+	@rm -f Documentation/webkit2gtk/*~ Documentation/webkit2gtk*.bak
+distclean-local: doc-distclean-local
+doc-distclean-local:
+	@rm -rf Documentation
+maintainer-clean-local: doc-maintainer-clean-local
+doc-maintainer-clean-local: clean
+	@rm -rf Documentation/webkitgtk Documentation/webkit2gtk
+	-@rmdir Documentation
+
+if ENABLE_GTK_DOC
+all: docs-build.stamp
+endif
+

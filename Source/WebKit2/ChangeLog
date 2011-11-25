@@ -1,3 +1,13 @@
+2011-11-17  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Integrate build-gtkdoc into build-webkit and make
+        https://bugs.webkit.org/show_bug.cgi?id=72626
+
+        Reviewed by Philippe Normand.
+
+        * GNUmakefile.am: Removed references to build-gtkdoc and gtkdoc.py.
+        * UIProcess/API/gtk/docs/build-gtkdoc: Removed.
+
 2011-11-25  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Clean up code in WK2/ChromeClientClient related to viewport handling

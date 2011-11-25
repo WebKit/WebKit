@@ -1,19 +1,18 @@
-#  Copyright (C) 2011 Igalia S.L.
+# Copyright (C) 2011 Igalia S.L.
 #
-#  This library is free software; you can redistribute it and/or
-#  modify it under the terms of the GNU Lesser General Public
-#  License as published by the Free Software Foundation; either
-#  version 2 of the License, or (at your option) any later version.
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2 of the License, or (at your option) any later version.
 #
-#  This library is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-#  Lesser General Public License for more details.
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
 #
-#  You should have received a copy of the GNU Lesser General Public
-#  License along with this library; if not, write to the Free Software
-#  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
-#
+# You should have received a copy of the GNU Lesser General Public
+# License along with this library; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
 import errno
 import logging
@@ -170,8 +169,9 @@ class GTKDoc(object):
             answer = raw_input(question).lower()
         return answer == 'y'
 
-    def _run_command(self, args, env=None, cwd=None, print_output=True):
-        self.logger.info("Running %s", args[0])
+    def _run_command(self, args, env=None, cwd=None, print_output=True, ignore_warnings=False):
+        if print_output:
+            self.logger.info("Running %s", args[0])
         self.logger.debug("Full command args: %s", str(args))
 
         process = subprocess.Popen(args, env=env, cwd=cwd,
@@ -189,7 +189,7 @@ class GTKDoc(object):
             raise Exception('%s produced a non-zero return code %i'
                              % (args[0], process.returncode))
 
-        if 'warning' in stderr or 'warning' in stdout:
+        if not ignore_warnings and ('warning' in stderr or 'warning' in stdout):
             self.saw_warnings = True
             if not self._ask_yes_or_no_question('%s produced warnings, '
                                                 'try to continue?' % args[0]):
@@ -283,7 +283,12 @@ class GTKDoc(object):
         ldflags = self.ldflags
         if self.library_path:
             ldflags = ' "-L%s" ' % self.library_path + ldflags
-            env['RUN'] = 'LD_LIBRARY_PATH="%s" ' % self.library_path
+            current_ld_library_path = env.get('LD_LIBRARY_PATH')
+            if current_ld_library_path:
+                env['RUN'] = 'LD_LIBRARY_PATH="%s:%s" ' % (self.library_path, current_ld_library_path)
+            else:
+                env['RUN'] = 'LD_LIBRARY_PATH="%s" ' % self.library_path
+
         if ldflags:
             env['LDFLAGS'] = ldflags
         if self.cflags:
@@ -338,7 +343,8 @@ class GTKDoc(object):
         self._run_command(['gtkdoc-fixxref',
                            '--module-dir=html',
                            '--html-dir=html'],
-                          cwd=self.output_dir)
+                          cwd=self.output_dir,
+                          ignore_warnings=True)
 
 
 class PkgConfigGTKDoc(GTKDoc):

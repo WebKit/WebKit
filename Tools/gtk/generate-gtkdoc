@@ -1,0 +1,110 @@
+#!/usr/bin/env python
+# Copyright (C) 2011 Igalia S.L.
+#
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2 of the License, or (at your option) any later version.
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public
+# License along with this library; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+
+import common
+import glob
+import gtkdoc
+import logging
+import os.path
+import sys
+
+def configure_logging():
+    level = logging.DEBUG if '-v' in sys.argv else logging.INFO
+    logger = logging.getLogger('gtkdoc')
+    logger.setLevel(level)
+    handler = logging.StreamHandler()
+    handler.setLevel(level)
+    logger.addHandler(handler)
+    if level == logging.DEBUG:
+        handler.setFormatter(logging.Formatter('[%(asctime)s]  %(message)s'))
+    else:
+        handler.setFormatter(logging.Formatter('%(message)s'))
+
+def get_common_options():
+    return {
+        'decorator': 'WEBKIT_API',
+        'deprecation_guard': 'WEBKIT_DISABLE_DEPRECATED',
+        'library_path' : common.build_path('.libs'),
+    }
+
+def get_webkit2_options():
+    def derived_sources_path(*args):
+        return common.build_path(*(('DerivedSources', 'WebKit2') + args))
+    def src_path(*args):
+        return common.top_level_path(*(('Source', 'WebKit2', 'UIProcess', 'API', 'gtk') + args))
+
+    derived_sources = common.build_path('DerivedSources', 'WebKit2')
+    options = get_common_options().copy()
+    options.update({
+        'module_name' : 'webkit2gtk',
+        'doc_dir' : src_path('docs'),
+        'output_dir' : common.build_path('Documentation', 'webkit2gtk'),
+        'source_dirs' : [src_path()],
+        'cflags' : ' -I' + derived_sources_path('webkit2gtk', 'include') + \
+                   ' -I' + derived_sources_path('webkit2gtk') + \
+                   ' -I' + derived_sources_path('include') + \
+                   ' -I' + common.top_level_path('Source') + \
+                   ' -I' + src_path(),
+        'ignored_files': glob.glob(src_path('*Private.h')) + \
+                         glob.glob(src_path('PageClientImpl.*')) + \
+                         glob.glob(src_path('tests/*.h'))
+    })
+    return (common.build_path('Source', 'WebKit2', 'webkit2gtk-3.0.pc'), options)
+
+def get_webkit1_options():
+    def derived_sources_path(*args):
+        return common.build_path(*(('DerivedSources', 'WebKit2') + args))
+    def src_path(*args):
+        return common.top_level_path(*(('Source', 'WebKit', 'gtk') + args))
+
+    derived_sources = common.build_path('DerivedSources', 'WebKit2')
+    options = get_common_options().copy()
+    options.update({
+        'module_name' : 'webkitgtk',
+        'doc_dir' : src_path('docs'),
+        'output_dir' : common.build_path('Documentation', 'webkitgtk'),
+        'source_dirs' : [src_path('webkit'), common.build_path('Source', 'WebKit', 'gtk', 'webkit')],
+        'cflags' : ' -I' + common.build_path('WebKit', 'gtk') + \
+                   ' -I' + common.build_path('DerivedSources') + \
+                   ' -I' + src_path() + \
+                   ' -I' + common.top_level_path('Source') + \
+                   ' -I' + common.top_level_path('Source', 'JavaScriptCore', 'ForwardingHeaders'),
+        'ignored_files': glob.glob(src_path('webkit', '*private.*'))
+    })
+    return (common.build_path('Source', 'WebKit', 'gtk', 'webkitgtk-3.0.pc'), options)
+
+configure_logging()
+
+# We need to add the JavaScriptCore build directory to the PKG_CONFIG_PATH
+# so that pkgconfig can properly resolve the libjavascriptcore dependency.
+os.environ['PKG_CONFIG_PATH'] = common.build_path('Source', 'JavaScriptCore') \
+                                + ':' + os.environ.get('PKG_CONFIG_PATH')
+
+print "Generating WebKit1 documentation..."
+pkg_config_path, options = get_webkit1_options()
+generator = gtkdoc.PkgConfigGTKDoc(pkg_config_path, **options)
+generator.generate(html='--skip-html' not in sys.argv)
+saw_webkit1_warnings = generator.saw_warnings
+
+# WebKit2 might not be enabled, so check for the pkg-config file before building documentation.
+if os.path.exists(common.build_path('Source', 'WebKit2', 'webkit2gtk-3.0.pc')):
+    print "\nGenerating WebKit2 documentation..."
+    pkg_config_path, options = get_webkit2_options()
+    generator = gtkdoc.PkgConfigGTKDoc(pkg_config_path, **options)
+    generator.generate(html='--skip-html' not in sys.argv)
+
+sys.exit(generator.saw_warnings or saw_webkit1_warnings)

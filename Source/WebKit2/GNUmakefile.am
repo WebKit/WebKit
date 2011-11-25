@@ -1403,8 +1403,6 @@ Programs_WebKitPluginProcess_CXXFLAGS = \
 endif
 
 EXTRA_DIST += \
-	$(WebKit2)/UIProcess/API/gtk/docs/build-gtkdoc \
-	$(WebKit2)/UIProcess/API/gtk/docs/gtkdoc.py \
 	$(WebKit2)/UIProcess/API/gtk/docs/webkit2gtk-docs.sgml \
 	$(WebKit2)/UIProcess/API/gtk/docs/webkit2gtk-sections.txt \
 	$(WebKit2)/UIProcess/API/gtk/docs/webkit2gtk.types \

@@ -1,3 +1,16 @@
+2011-11-17  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Integrate build-gtkdoc into build-webkit and make
+        https://bugs.webkit.org/show_bug.cgi?id=72626
+
+        Reviewed by Philippe Normand.
+
+        * GNUmakefile.am: Added support for new scripts and "make docs".
+        * Scripts/webkitdirs.pm: Call generate-gtkdoc when building.
+        (buildAutotoolsProject):
+        * gtk/generate-gtkdoc: Added.
+        * gtk/gtkdoc.py: Renamed from Source/WebKit2/UIProcess/API/gtk/docs/gtkdoc.py.
+
 2011-11-25  Ádám Kallai  <Kallai.Adam@stud.u-szeged.hu>
 
         [Qt] Add support for using OWRT with Qt5

@@ -1209,7 +1209,6 @@ GNUmakefile
 
 AC_CONFIG_FILES([
 Source/WebKit/gtk/webkit/webkitversion.h
-Documentation/version.xml:Source/WebKit/gtk/docs/version.xml.in
 ])
 
 AC_CONFIG_FILES([
@@ -1245,6 +1244,7 @@ Build configuration:
  Font backend                                             : $with_font_backend
  Optimized memory allocator                               : $enable_fast_malloc
  JavaScript Engine                                        : $with_jsengine
+
 Features:
  3D Rendering                                             : $enable_3d_rendering
  WebGL                                                    : $enable_webgl
@@ -1304,6 +1304,7 @@ GTK+ configuration:
  GDK target                                               : $with_target
  Hildon UI extensions                                     : $with_hildon
  Introspection support                                    : $enable_introspection
+ Generate documentation                                   : $enable_gtk_doc
 "
 if test "$with_unicode_backend" = "glib"; then
    echo "     >> WARNING: the glib-based unicode backend is slow and incomplete <<"

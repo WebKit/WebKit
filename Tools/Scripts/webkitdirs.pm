@@ -1679,6 +1679,14 @@ sub buildAutotoolsProject($@)
     }
 
     chdir ".." or die;
+
+    if (isGtk()) {
+        my $relativeScriptsPath = relativeScriptsDir();
+        if (system("$relativeScriptsPath/../gtk/generate-gtkdoc --skip-html")) {
+            die "\n gtkdoc did not build without warnings\n";
+        }
+    }
+
     return 0;
 }
 
