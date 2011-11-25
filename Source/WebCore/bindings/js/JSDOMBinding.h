@@ -22,6 +22,7 @@
 #ifndef JSDOMBinding_h
 #define JSDOMBinding_h
 
+#include "CSSMutableStyleDeclaration.h"
 #include "CSSRule.h"
 #include "CSSStyleSheet.h"
 #include "JSDOMGlobalObject.h"
@@ -206,9 +207,9 @@ enum ParameterMissingPolicy {
             return root(parentRule);
         if (CSSStyleSheet* styleSheet = style->parentStyleSheet())
             return root(styleSheet);
-        if (style->isMutableStyleDeclaration()) {
-            if (Node* node = static_cast<CSSMutableStyleDeclaration*>(style)->element())
-                return root(node);
+        if (style->isElementStyleDeclaration()) {
+            if (StyledElement* element = static_cast<CSSElementStyleDeclaration*>(style)->element())
+                return root(element);
         }
         return style;
     }

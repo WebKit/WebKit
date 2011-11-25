@@ -25,7 +25,7 @@
 #include "StyledElement.h"
 
 #include "Attribute.h"
-#include "CSSMutableStyleDeclaration.h"
+#include "CSSInlineStyleDeclaration.h"
 #include "CSSStyleSelector.h"
 #include "CSSStyleSheet.h"
 #include "CSSValueKeywords.h"
@@ -129,7 +129,7 @@ PassRefPtr<Attribute> StyledElement::createAttribute(const QualifiedName& name, 
 
 void StyledElement::createInlineStyleDecl()
 {
-    m_inlineStyleDecl = CSSMutableStyleDeclaration::create();
+    m_inlineStyleDecl = CSSInlineStyleDeclaration::create();
     m_inlineStyleDecl->setParentStyleSheet(document()->elementSheet());
     m_inlineStyleDecl->setElement(this);
     m_inlineStyleDecl->setStrictParsing(isHTMLElement() && !document()->inQuirksMode());
@@ -249,7 +249,7 @@ void StyledElement::parseMappedAttribute(Attribute* attr)
     }
 }
 
-CSSMutableStyleDeclaration* StyledElement::getInlineStyleDecl()
+CSSInlineStyleDeclaration* StyledElement::getInlineStyleDecl()
 {
     if (!m_inlineStyleDecl)
         createInlineStyleDecl();
@@ -446,7 +446,7 @@ void StyledElement::copyNonAttributeProperties(const Element *sourceElement)
 
 void StyledElement::addSubresourceAttributeURLs(ListHashSet<KURL>& urls) const
 {
-    if (CSSMutableStyleDeclaration* style = inlineStyleDecl())
+    if (CSSInlineStyleDeclaration* style = inlineStyleDecl())
         style->addSubresourceStyleURLs(urls);
 }
 

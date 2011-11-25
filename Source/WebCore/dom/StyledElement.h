@@ -25,6 +25,7 @@
 #ifndef StyledElement_h
 #define StyledElement_h
 
+#include "CSSInlineStyleDeclaration.h"
 #include "Element.h"
 #include "MappedAttributeEntry.h"
 
@@ -32,7 +33,6 @@ namespace WebCore {
 
 class Attribute;
 class CSSMappedAttributeDeclaration;
-class CSSMutableStyleDeclaration;
 
 class StyledElement : public Element {
 public:
@@ -54,10 +54,10 @@ public:
     static CSSMappedAttributeDeclaration* getMappedAttributeDecl(MappedAttributeEntry, Attribute*);
     static void setMappedAttributeDecl(MappedAttributeEntry, Attribute*, CSSMappedAttributeDeclaration*);
 
-    CSSMutableStyleDeclaration* inlineStyleDecl() const { return m_inlineStyleDecl.get(); }
+    CSSInlineStyleDeclaration* inlineStyleDecl() const { return m_inlineStyleDecl.get(); }
     virtual bool canHaveAdditionalAttributeStyleDecls() const { return false; }
     virtual void additionalAttributeStyleDecls(Vector<CSSMutableStyleDeclaration*>&) { }
-    CSSMutableStyleDeclaration* getInlineStyleDecl();
+    CSSInlineStyleDeclaration* getInlineStyleDecl();
     CSSStyleDeclaration* style();
     void invalidateStyleAttribute();
 
@@ -93,7 +93,7 @@ private:
     void destroyInlineStyleDecl();
     virtual void updateStyleAttribute() const;
 
-    RefPtr<CSSMutableStyleDeclaration> m_inlineStyleDecl;
+    RefPtr<CSSInlineStyleDeclaration> m_inlineStyleDecl;
 };
 
 inline const SpaceSplitString& StyledElement::classNames() const

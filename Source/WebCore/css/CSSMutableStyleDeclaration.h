@@ -83,10 +83,6 @@ public:
     const_iterator begin() { return const_iterator(this, m_properties.begin()); }
     const_iterator end() { return const_iterator(this, m_properties.end()); }
 
-    void setElement(StyledElement* element) { m_element = element; }
-
-    StyledElement* element() const { return m_element; }
-
     virtual String cssText() const;
     virtual void setCssText(const String&, ExceptionCode&);
 
@@ -139,13 +135,11 @@ public:
 
     bool propertiesEqual(const CSSMutableStyleDeclaration* o) const { return m_properties == o->m_properties; }
 
-    bool isInlineStyleDeclaration();
-
 protected:
     CSSMutableStyleDeclaration(CSSRule* parentRule);
+    CSSMutableStyleDeclaration();
 
 private:
-    CSSMutableStyleDeclaration();
     CSSMutableStyleDeclaration(CSSRule* parentRule, const Vector<CSSProperty>&);
     CSSMutableStyleDeclaration(CSSRule* parentRule, const CSSProperty* const *, int numProperties);
 
@@ -178,9 +172,27 @@ private:
 
     Vector<CSSProperty, 4> m_properties;
 
-    StyledElement* m_element;
-
     friend class CSSMutableStyleDeclarationConstIterator;
+};
+
+class CSSElementStyleDeclaration : public CSSMutableStyleDeclaration {
+public:
+    StyledElement* element() const { return m_element; }
+    void setElement(StyledElement* element) { m_element = element; }
+
+protected:
+    CSSElementStyleDeclaration(bool isInline)
+        : CSSMutableStyleDeclaration()
+        , m_element(0)
+    {
+        m_isElementStyleDeclaration = true;
+        m_isInlineStyleDeclaration = isInline;
+    }
+
+    virtual ~CSSElementStyleDeclaration() { }
+
+private:
+    StyledElement* m_element;
 };
 
 inline CSSMutableStyleDeclarationConstIterator::CSSMutableStyleDeclarationConstIterator(const CSSMutableStyleDeclaration* decl, CSSProperty* current)

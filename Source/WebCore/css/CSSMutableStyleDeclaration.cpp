@@ -107,31 +107,27 @@ CSSMutableStyleDeclaration* StyleAttributeMutationScope::s_currentDecl = 0;
 #endif // ENABLE(MUTATION_OBSERVERS)
 
 CSSMutableStyleDeclaration::CSSMutableStyleDeclaration()
-    : CSSStyleDeclaration(0, /* isMutable */ true)
-    , m_element(0)
+    : CSSStyleDeclaration(0)
 {
     // This constructor is used for various inline style declarations, so disable strict parsing.
     m_strictParsing = false;
 }
 
 CSSMutableStyleDeclaration::CSSMutableStyleDeclaration(CSSRule* parent)
-    : CSSStyleDeclaration(parent, /* isMutable */ true)
-    , m_element(0)
+    : CSSStyleDeclaration(parent)
 {
 }
 
 CSSMutableStyleDeclaration::CSSMutableStyleDeclaration(CSSRule* parent, const Vector<CSSProperty>& properties)
-    : CSSStyleDeclaration(parent, /* isMutable */ true)
+    : CSSStyleDeclaration(parent)
     , m_properties(properties)
-    , m_element(0)
 {
     m_properties.shrinkToFit();
     // FIXME: This allows duplicate properties.
 }
 
 CSSMutableStyleDeclaration::CSSMutableStyleDeclaration(CSSRule* parent, const CSSProperty* const * properties, int numProperties)
-    : CSSStyleDeclaration(parent, /* isMutable */ true)
-    , m_element(0)
+    : CSSStyleDeclaration(parent)
 {
     m_properties.reserveInitialCapacity(numProperties);
     HashMap<int, bool> candidates;
@@ -156,7 +152,6 @@ CSSMutableStyleDeclaration::~CSSMutableStyleDeclaration()
 CSSMutableStyleDeclaration& CSSMutableStyleDeclaration::operator=(const CSSMutableStyleDeclaration& other)
 {
     ASSERT(!m_iteratorCount);
-    // don't attach it to the same element, just leave the current m_element value
     m_properties = other.m_properties;
     m_strictParsing = other.m_strictParsing;
     return *this;
@@ -614,24 +609,18 @@ String CSSMutableStyleDeclaration::removeProperty(int propertyID, bool notifyCha
     return value;
 }
 
-bool CSSMutableStyleDeclaration::isInlineStyleDeclaration()
-{
-    // FIXME: Ideally, this should be factored better and there
-    // should be a subclass of CSSMutableStyleDeclaration just
-    // for inline style declarations that handles this
-    return m_element && m_element->inlineStyleDecl() == this;
-}
-
 void CSSMutableStyleDeclaration::setNeedsStyleRecalc()
 {
-    if (m_element) {
-        if (isInlineStyleDeclaration()) {
-            m_element->setNeedsStyleRecalc(InlineStyleChange);
-            m_element->invalidateStyleAttribute();
-            if (m_element->document())
-                InspectorInstrumentation::didInvalidateStyleAttr(m_element->document(), m_element);
-        } else
-            m_element->setNeedsStyleRecalc(FullStyleChange);
+    if (isElementStyleDeclaration() && static_cast<CSSElementStyleDeclaration*>(this)->element()) {
+        StyledElement* element = static_cast<CSSElementStyleDeclaration*>(this)->element();
+        if (!isInlineStyleDeclaration())
+            element->setNeedsStyleRecalc(FullStyleChange);
+        else {
+            element->setNeedsStyleRecalc(InlineStyleChange);
+            element->invalidateStyleAttribute();
+            if (Document* document = element->document())
+                InspectorInstrumentation::didInvalidateStyleAttr(document, element);
+        }
         return;
     }
 

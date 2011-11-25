@@ -442,12 +442,9 @@ void InspectorCSSAgent::getSupportedCSSProperties(ErrorString*, RefPtr<Inspector
 // static
 Element* InspectorCSSAgent::inlineStyleElement(CSSStyleDeclaration* style)
 {
-    if (!style || !style->isMutableStyleDeclaration())
+    if (!style || !style->isInlineStyleDeclaration())
         return 0;
-    CSSMutableStyleDeclaration* mutableStyle = static_cast<CSSMutableStyleDeclaration*>(style);
-    if (!mutableStyle->isInlineStyleDeclaration())
-        return 0;
-    return mutableStyle->element();
+    return static_cast<CSSInlineStyleDeclaration*>(style)->element();
 }
 
 InspectorStyleSheetForInlineStyle* InspectorCSSAgent::asInspectorStyleSheet(Element* element)

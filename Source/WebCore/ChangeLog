@@ -1,3 +1,83 @@
+2011-11-25  Andreas Kling  <kling@webkit.org>
+
+        Factor element pointer out of CSSMutableStyleDeclaration.
+        <http://webkit.org/b/73121>
+
+        Reviewed by Antti Koivisto.
+
+        Move the StyledElement pointer out of CSSMutableStyleDeclaration and into a subclass
+        for the cases where it's needed. This reduces the size of vanilla style declarations
+        by one CPU word (4 or 8 bytes, depending on architecture.)
+
+        * css/CSSMutableStyleDeclaration.h:
+        (WebCore::CSSElementStyleDeclaration::element):
+        (WebCore::CSSElementStyleDeclaration::setElement):
+        (WebCore::CSSElementStyleDeclaration::CSSElementStyleDeclaration):
+        (WebCore::CSSElementStyleDeclaration::~CSSElementStyleDeclaration):
+
+            Added CSSElementStyleDeclaration, a common parent class for inline styles
+            and mapped attributes. It extends CSSMutableStyleDeclaration by adding a backpointer
+            to the StyledElement that owns it.
+
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSInlineStyleDeclaration.h: Added.
+        (WebCore::CSSInlineStyleDeclaration::~CSSInlineStyleDeclaration):
+        (WebCore::CSSInlineStyleDeclaration::create):
+        (WebCore::CSSInlineStyleDeclaration::CSSInlineStyleDeclaration):
+
+            Added CSSInlineStyleDeclaration.
+
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::root):
+        * css/CSSMutableStyleDeclaration.cpp:
+        (WebCore::CSSMutableStyleDeclaration::setNeedsStyleRecalc):
+        * css/CSSStyleRule.cpp:
+        (WebCore::CSSStyleRule::setSelectorText):
+
+            Only follow the associated element on CSSElementStyleDeclarations.
+
+        * css/CSSMutableStyleDeclaration.cpp:
+        (WebCore::CSSMutableStyleDeclaration::CSSMutableStyleDeclaration):
+        (WebCore::CSSMutableStyleDeclaration::operator=):
+
+            Remove comment about m_element since the field was moved to a subclass.
+
+        * css/CSSStyleDeclaration.cpp:
+        (WebCore::CSSStyleDeclaration::CSSStyleDeclaration):
+        * css/CSSStyleDeclaration.h:
+        (WebCore::CSSStyleDeclaration::isElementStyleDeclaration):
+        (WebCore::CSSStyleDeclaration::isInlineStyleDeclaration):
+
+            We no longer need to track whether a style declaration is mutable or not,
+            so the constructors are slightly simplified.
+            Added two bits (isElementStyleDeclaration and isInlineStyleDeclaration) for
+            runtime type checking. These are protected and set by the CSSElementStyleDeclaration
+            constructor.
+
+        * dom/CSSMappedAttributeDeclaration.h:
+        (WebCore::CSSMappedAttributeDeclaration::create):
+        (WebCore::CSSMappedAttributeDeclaration::CSSMappedAttributeDeclaration):
+
+            Remove pointless CSSRule* argument to constructor since we always passed 0.
+
+        * dom/StyledElement.h:
+        (WebCore::StyledElement::inlineStyleDecl):
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::createInlineStyleDecl):
+        (WebCore::StyledElement::getInlineStyleDecl):
+        (WebCore::StyledElement::addSubresourceAttributeURLs):
+
+            Make the inline style on StyledElement a CSSInlineStyleDeclaration.
+
+        * inspector/InspectorCSSAgent.cpp:
+        (WebCore::InspectorCSSAgent::inlineStyleElement):
+
+            Slightly simplified by having CSSInlineStyleDeclaration.
+
 2011-11-25  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: unflake timeline-network tests

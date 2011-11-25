@@ -102,22 +102,28 @@ public:
     void showStyle();
 #endif
 
-    bool isMutableStyleDeclaration() const { return m_isMutableStyleDeclaration; }
+    bool isElementStyleDeclaration() const { return m_isElementStyleDeclaration; }
+    bool isInlineStyleDeclaration() const { return m_isInlineStyleDeclaration; }
 
 protected:
-    CSSStyleDeclaration(CSSRule* parentRule = 0, bool isMutable = false);
+    CSSStyleDeclaration(CSSRule* parentRule = 0);
 
     virtual bool cssPropertyMatches(const CSSProperty*) const;
 
-    // These bits are only used by CSSMutableStyleDeclaration but kept here
+    // The bits in this section are only used by specific subclasses but kept here
     // to maximize struct packing.
+
+    // CSSMutableStyleDeclaration bits:
     bool m_strictParsing : 1;
 #ifndef NDEBUG
     unsigned m_iteratorCount : 4;
 #endif
 
+    // CSSElementStyleDeclaration bits:
+    bool m_isElementStyleDeclaration : 1;
+    bool m_isInlineStyleDeclaration : 1;
+
 private:
-    bool m_isMutableStyleDeclaration : 1;
     bool m_parentIsRule : 1;
     union {
         CSSRule* m_parentRule;

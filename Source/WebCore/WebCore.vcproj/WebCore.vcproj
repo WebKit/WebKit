@@ -32570,6 +32570,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\css\CSSInlineStyleDeclaration.h"
+				>
+			</File>
+			<File
 				RelativePath="..\css\CSSLineBoxContainValue.cpp"
 				>
 			</File>
