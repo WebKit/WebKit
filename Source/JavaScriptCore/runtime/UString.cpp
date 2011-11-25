@@ -96,9 +96,9 @@ UString::UString(const char* characters)
 
 UString UString::number(int i)
 {
-    UChar buf[1 + sizeof(i) * 3];
-    UChar* end = buf + WTF_ARRAY_LENGTH(buf);
-    UChar* p = end;
+    LChar buf[1 + sizeof(i) * 3];
+    LChar* end = buf + WTF_ARRAY_LENGTH(buf);
+    LChar* p = end;
 
     if (i == 0)
         *--p = '0';
@@ -125,9 +125,9 @@ UString UString::number(int i)
 
 UString UString::number(long long i)
 {
-    UChar buf[1 + sizeof(i) * 3];
-    UChar* end = buf + WTF_ARRAY_LENGTH(buf);
-    UChar* p = end;
+    LChar buf[1 + sizeof(i) * 3];
+    LChar* end = buf + WTF_ARRAY_LENGTH(buf);
+    LChar* p = end;
 
     if (i == 0)
         *--p = '0';
@@ -158,9 +158,9 @@ UString UString::number(long long i)
 
 UString UString::number(unsigned u)
 {
-    UChar buf[sizeof(u) * 3];
-    UChar* end = buf + WTF_ARRAY_LENGTH(buf);
-    UChar* p = end;
+    LChar buf[sizeof(u) * 3];
+    LChar* end = buf + WTF_ARRAY_LENGTH(buf);
+    LChar* p = end;
 
     if (u == 0)
         *--p = '0';
@@ -176,9 +176,9 @@ UString UString::number(unsigned u)
 
 UString UString::number(long l)
 {
-    UChar buf[1 + sizeof(l) * 3];
-    UChar* end = buf + WTF_ARRAY_LENGTH(buf);
-    UChar* p = end;
+    LChar buf[1 + sizeof(l) * 3];
+    LChar* end = buf + WTF_ARRAY_LENGTH(buf);
+    LChar* p = end;
 
     if (l == 0)
         *--p = '0';
@@ -224,19 +224,10 @@ UString UString::substringSharingImpl(unsigned offset, unsigned length) const
 
 bool operator==(const UString& s1, const char *s2)
 {
-    if (s2 == 0)
-        return s1.isEmpty();
+    if (s1.isEmpty())
+        return !s2;
 
-    const UChar* u = s1.characters();
-    const UChar* uend = u + s1.length();
-    while (u != uend && *s2) {
-        if (u[0] != (unsigned char)*s2)
-            return false;
-        s2++;
-        u++;
-    }
-
-    return u == uend && *s2 == 0;
+    return equal(s1.impl(), s2);
 }
 
 // This method assumes that all simple checks have been performed by
@@ -315,15 +306,29 @@ bool operator<(const UString& s1, const UString& s2)
     const unsigned l1 = s1.length();
     const unsigned l2 = s2.length();
     const unsigned lmin = l1 < l2 ? l1 : l2;
+    if (s1.is8Bit() && s2.is8Bit()) {
+        const LChar* c1 = s1.characters8();
+        const LChar* c2 = s2.characters8();
+        unsigned length = 0;
+        while (length < lmin && *c1 == *c2) {
+            c1++;
+            c2++;
+            length++;
+        }
+        if (length < lmin)
+            return (c1[0] < c2[0]);
+
+        return (l1 < l2);        
+    }
     const UChar* c1 = s1.characters();
     const UChar* c2 = s2.characters();
-    unsigned l = 0;
-    while (l < lmin && *c1 == *c2) {
+    unsigned length = 0;
+    while (length < lmin && *c1 == *c2) {
         c1++;
         c2++;
-        l++;
+        length++;
     }
-    if (l < lmin)
+    if (length < lmin)
         return (c1[0] < c2[0]);
 
     return (l1 < l2);
@@ -354,7 +359,22 @@ CString UString::ascii() const
     // preserved, characters outside of this range are converted to '?'.
 
     unsigned length = this->length();
-    const UChar* characters = this->characters();
+
+    if (this->is8Bit()) {
+        const LChar* characters = this->characters8();
+        
+        char* characterBuffer;
+        CString result = CString::newUninitialized(length, characterBuffer);
+        
+        for (unsigned i = 0; i < length; ++i) {
+            LChar ch = characters[i];
+            characterBuffer[i] = ch && (ch < 0x20 || ch > 0x7f) ? '?' : ch;
+        }
+        
+        return result;        
+    }
+
+    const UChar* characters = this->characters16();
 
     char* characterBuffer;
     CString result = CString::newUninitialized(length, characterBuffer);

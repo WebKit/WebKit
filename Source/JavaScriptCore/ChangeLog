@@ -1,5 +1,20 @@
 2011-11-24  Michael Saboff  <msaboff@apple.com>
 
+        UString methods are not character size aware
+        https://bugs.webkit.org/show_bug.cgi?id=72975
+
+        Changed the UString number constructors to build 8 bit strings.
+        Modified the other methods to check string bitness and process
+        with 8 bits wherre appropriate.
+
+        * runtime/UString.cpp:
+        (JSC::UString::number):
+        (JSC::operator==):
+        (JSC::operator<):
+        (JSC::UString::ascii):
+
+2011-11-24  Michael Saboff  <msaboff@apple.com>
+
         JavaScript string to number conversion functions use characters()
         https://bugs.webkit.org/show_bug.cgi?id=72974
 
