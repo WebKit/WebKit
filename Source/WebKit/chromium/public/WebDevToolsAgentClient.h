@@ -58,8 +58,6 @@ public:
     };
     virtual WebKitClientMessageLoop* createClientMessageLoop() { return 0; }
 
-    virtual bool exposeV8DebuggerProtocol() { return false; }
-
     virtual void clearBrowserCache() { }
     virtual void clearBrowserCookies() { }
 

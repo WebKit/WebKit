@@ -48,9 +48,6 @@ public:
     void addListener(ScriptDebugListener*, Page*);
     void removeListener(ScriptDebugListener*, Page*);
 
-    // v8-specific methods.
-    void setEnabled(bool value) { m_enabled = value; }
-    
     class ClientMessageLoop {
     public:
         virtual ~ClientMessageLoop() { }
@@ -71,7 +68,6 @@ private:
     ListenersMap m_listenersMap;
     OwnPtr<ClientMessageLoop> m_clientMessageLoop;
     Page* m_pausedPage;
-    bool m_enabled;
 };
 
 } // namespace WebCore

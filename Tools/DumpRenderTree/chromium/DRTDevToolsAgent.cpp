@@ -47,8 +47,6 @@ DRTDevToolsAgent::DRTDevToolsAgent()
     static int devToolsAgentCounter = 0;
 
     m_routingID = ++devToolsAgentCounter;
-    if (m_routingID == 1)
-        WebDevToolsAgent::setMessageLoopDispatchHandler(&DRTDevToolsAgent::dispatchMessageLoop);
 }
 
 void DRTDevToolsAgent::reset()
@@ -143,10 +141,4 @@ bool DRTDevToolsAgent::evaluateInWebInspector(long callID, const std::string& sc
         return false;
     agent->evaluateInWebInspector(callID, WebString::fromUTF8(script));
     return true;
-}
-
-// static method
-void DRTDevToolsAgent::dispatchMessageLoop()
-{
-    webkit_support::DispatchMessageLoop();
 }

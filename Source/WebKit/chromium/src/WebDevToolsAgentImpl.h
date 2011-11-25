@@ -50,7 +50,6 @@ class Node;
 
 namespace WebKit {
 
-class DebuggerAgentImpl;
 class WebDevToolsAgentClient;
 class WebFrame;
 class WebFrameImpl;
@@ -107,7 +106,6 @@ private:
     int m_hostId;
     WebDevToolsAgentClient* m_client;
     WebViewImpl* m_webViewImpl;
-    OwnPtr<DebuggerAgentImpl> m_debuggerAgentImpl;
     bool m_attached;
 };
 

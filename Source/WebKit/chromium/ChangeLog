@@ -1,3 +1,29 @@
+2011-11-24  Yury Semikhatsky  <yurys@chromium.org>
+
+        [Chromium] Web Inspector: remove legacy debugger support
+        https://bugs.webkit.org/show_bug.cgi?id=73081
+
+        Removed classed providing access to V8 debugging protocol. Clients should
+        use Web Inspector protocol instead.
+
+        Reviewed by Pavel Feldman.
+
+        * WebKit.gyp:
+        * public/WebDevToolsAgent.h:
+        * public/WebDevToolsAgentClient.h:
+        * src/DebuggerAgentImpl.cpp: Removed.
+        * src/DebuggerAgentImpl.h: Removed.
+        * src/DebuggerAgentManager.cpp: Removed.
+        * src/DebuggerAgentManager.h: Removed.
+        * src/WebDevToolsAgentImpl.cpp:
+        (WebKit::WebDevToolsAgentImpl::WebDevToolsAgentImpl):
+        (WebKit::WebDevToolsAgentImpl::~WebDevToolsAgentImpl):
+        (WebKit::WebDevToolsAgentImpl::attach):
+        (WebKit::WebDevToolsAgentImpl::detach):
+        (WebKit::WebDevToolsAgentImpl::didNavigate):
+        (WebKit::WebDevToolsAgentImpl::didClearWindowObject):
+        * src/WebDevToolsAgentImpl.h:
+
 2011-11-25  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed. Update Chromium deps revision to 111575

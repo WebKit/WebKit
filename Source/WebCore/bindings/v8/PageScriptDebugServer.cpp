@@ -71,15 +71,11 @@ PageScriptDebugServer& PageScriptDebugServer::shared()
 PageScriptDebugServer::PageScriptDebugServer()
     : ScriptDebugServer()
     , m_pausedPage(0)
-    , m_enabled(true)
 {
 }
 
 void PageScriptDebugServer::addListener(ScriptDebugListener* listener, Page* page)
 {
-    if (!m_enabled)
-        return;
-
     V8Proxy* proxy = V8Proxy::retrieve(page->mainFrame());
     if (!proxy)
         return;

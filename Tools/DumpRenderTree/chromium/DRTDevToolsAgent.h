@@ -76,7 +76,6 @@ public:
 private:
     void call(const WebKit::WebString& args);
     void delayedFrontendLoaded();
-    static void dispatchMessageLoop();
     WebKit::WebDevToolsAgent* webDevToolsAgent();
 
     class AsyncCallTask: public MethodTask<DRTDevToolsAgent> {

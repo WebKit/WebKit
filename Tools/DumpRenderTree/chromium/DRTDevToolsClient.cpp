@@ -76,11 +76,6 @@ void DRTDevToolsClient::sendMessageToBackend(const WebString& data)
         m_drtDevToolsAgent->asyncCall(data);
 }
 
-void DRTDevToolsClient::sendDebuggerCommandToAgent(const WebString& command)
-{
-    WebDevToolsAgent::executeDebuggerCommand(command, 1);
-}
-
 void DRTDevToolsClient::activateWindow()
 {
     // Not implemented.

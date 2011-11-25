@@ -1,3 +1,18 @@
+2011-11-24  Yury Semikhatsky  <yurys@chromium.org>
+
+        [Chromium] Web Inspector: remove legacy debugger support
+        https://bugs.webkit.org/show_bug.cgi?id=73081
+
+        Removed classed providing access to V8 debugging protocol. Clients should
+        use Web Inspector protocol instead.
+
+        Reviewed by Pavel Feldman.
+
+        * bindings/v8/PageScriptDebugServer.cpp:
+        (WebCore::PageScriptDebugServer::PageScriptDebugServer):
+        (WebCore::PageScriptDebugServer::addListener):
+        * bindings/v8/PageScriptDebugServer.h:
+
 2011-11-24  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: refactor resource tree model and introduce explicit class for ResourceTreeFrame.
