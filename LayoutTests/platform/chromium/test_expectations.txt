@@ -3076,10 +3076,6 @@ BUG_HCLAM : compositing/masks/layer-mask-placement.html = IMAGE
 // New test added in r85454. Actual failure.
 BUG_HCLAM : fast/js/mozilla/strict/assign-to-callee-name.html = TEXT
 
-// Flakiness around r85622.
-BUGWK65463 WIN RELEASE : http/tests/inspector/resource-tree/resource-tree-document-url.html = PASS TIMEOUT
-BUGWK65463 SLOW LINUX WIN DEBUG : http/tests/inspector/resource-tree/resource-tree-document-url.html = PASS
-
 // Failure introduced by Chromium r83848.
 BUG_HCLAM : fast/url/ipv6.html = TEXT
 
@@ -3391,10 +3387,6 @@ BUGWK66569 WIN RELEASE : http/tests/inspector/network/network-iframe-load-and-de
 BUGWK66569 SLOW LINUX WIN DEBUG : http/tests/inspector/network/network-iframe-load-and-delete.html = PASS
 
 BUGV8_1634 : fast/js/const.html = TEXT
-
-BUGWK66217 WIN RELEASE : http/tests/inspector/resource-tree/resource-tree-errors-reload.html = PASS TEXT
-BUGWK66217 SLOW LINUX WIN DEBUG : http/tests/inspector/resource-tree/resource-tree-errors-reload.html = PASS
-
 
 BUGWK66738 WIN LINUX : http/tests/inspector/network/download.html = PASS TEXT TIMEOUT
 
@@ -3787,8 +3779,6 @@ BUGWK72272 WIN : security/crypto-random-values-types.html = TEXT PASS
 
 BUGWK72279 : media/track/track-webvtt-tc004-magic-header.html = TIMEOUT PASS
 
-BUGWK59771 WIN : http/tests/inspector/resource-tree/resource-tree-frame-add.html = TIMEOUT PASS
-
 BUGWK72376 WIN : fast/forms/file/input-file-label.html = TEXT PASS
 
 BUGWK72434 : inspector/styles/svg-style.xhtml = PASS TEXT TIMEOUT
@@ -3809,8 +3799,6 @@ BUGWK72598 : css3/images/cross-fade-invalidation.html = IMAGE
 BUGWK72598 : css3/images/cross-fade-simple.html = IMAGE
 BUGWK72598 : css3/images/cross-fade-sizing.html = IMAGE
 BUGWK72598 : css3/images/cross-fade-blending.html = IMAGE
-
-BUGWK72622 WIN DEBUG : http/tests/inspector/resource-tree/resource-tree-no-xhrs.html = MISSING PASS TEXT
 
 BUGWK72631 LINUX : fast/filesystem/file-writer-abort.html = CRASH PASS
 BUGWK72631 MAC DEBUG : fast/filesystem/file-writer-abort.html = CRASH PASS
