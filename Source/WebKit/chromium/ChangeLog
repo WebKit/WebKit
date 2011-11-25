@@ -1,5 +1,13 @@
 2011-11-25  Yury Semikhatsky  <yurys@chromium.org>
 
+        Unreviewed. Chromium build fix.
+
+        * public/WebDevToolsFrontendClient.h:
+        (WebKit::WebDevToolsFrontendClient::sendFrontendLoaded): dowsntream implementation
+        with OVERRIDE modifier fails to compile without this stub.
+
+2011-11-25  Yury Semikhatsky  <yurys@chromium.org>
+
         [Chromium] Web Inspector: get rid of WebDevToolsFrontendClient::sendFrontendLoaded method
         https://bugs.webkit.org/show_bug.cgi?id=73126
 
