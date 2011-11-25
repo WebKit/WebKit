@@ -48,22 +48,32 @@ def generate_from_idl(generator, idl_file, output_directory):
            '--generator', generator,
            '--outputDir', output_directory,
            idl_file]
-    return subprocess.call(cmd) == 0
+
+    process = subprocess.Popen(cmd, stdout = subprocess.PIPE, stderr = subprocess.STDOUT)
+    exit_code = process.wait()
+    output = process.communicate()[0]
+    if output:
+        print output
+    return exit_code
 
 
-def detect_changes(work_directory, reference_directory):
+def detect_changes(generator, work_directory, reference_directory):
     changes_found = False
     for output_file in os.listdir(work_directory):
-        print 'Detecting changes in %s...' % output_file
         cmd = ['diff',
                '-u',
                os.path.join(reference_directory, output_file),
                os.path.join(work_directory, output_file)]
-        if subprocess.call(cmd) != 0:
-            print 'Detected changes in %s (see above)' % output_file
+
+        process = subprocess.Popen(cmd, stdout = subprocess.PIPE, stderr = subprocess.STDOUT)
+        process.wait()
+        output = process.communicate()[0]
+        if output:
+            print 'FAIL: (%s) %s' % (generator, output_file)
+            print output
             changes_found = True
         else:
-            print 'No changes found.'
+            print 'PASS: (%s) %s' % (generator, output_file)
 
     return changes_found
 
@@ -76,30 +86,30 @@ def run_tests(generator, input_directory, reference_directory, reset_results):
         (name, extension) = os.path.splitext(input_file)
         if extension != '.idl':
             continue
-        print 'Testing the %s generator on %s' % (generator, input_file)
-        # Generate output into the work directory (either the given one or a 
+        # Generate output into the work directory (either the given one or a
         # temp one if not reset_results is performed)
         if not reset_results:
             work_directory = tempfile.mkdtemp()
-        if not generate_from_idl(generator, os.path.join(input_directory,
-                                                         input_file),
-                                 work_directory):
+
+        if generate_from_idl(generator,
+                             os.path.join(input_directory, input_file),
+                             work_directory):
             passed = False
+
         if reset_results:
-            print "Overwrote reference files"
+            print "Reset results: (%s) %s" % (generator, input_file)
             continue
+
         # Detect changes
-        if detect_changes(work_directory, reference_directory):
+        if detect_changes(generator, work_directory, reference_directory):
             passed = False
         shutil.rmtree(work_directory)
 
-    if not passed:
-        print '%s generator failed.' % generator
     return passed
 
 
 def main(argv):
-    """Runs WebCore bindings code generators on test IDL files and compares 
+    """Runs WebCore bindings code generators on test IDL files and compares
     the results with reference files.
 
     Options:
@@ -127,11 +137,12 @@ def main(argv):
         if not run_tests(generator, input_directory, reference_directory, reset_results):
             all_tests_passed = False
 
+    print ''
     if all_tests_passed:
-        print 'All tests passed!'
+        print 'All tests PASS!'
         return 0
     else:
-        print '(To update the reference files, execute "run-bindings-tests --reset-results")'
+        print 'Some tests FAIL! (To update the reference files, execute "run-bindings-tests --reset-results")'
         return -1
 
 

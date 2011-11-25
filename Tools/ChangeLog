@@ -1,5 +1,52 @@
 2011-11-24  Kentaro Hara  <haraken@chromium.org>
 
+        Replace subprocess.call() with subprocess.Popen()
+        https://bugs.webkit.org/show_bug.cgi?id=73105
+
+        Reviewed by Adam Barth.
+
+        Currently, the stdout and stderr of the child processes of run-bindings-tests
+        are mixed (or even gone away) with the stdout and stderr of run-bindings-tests itself.
+        This is the problem of subprocess.call(), which does not synchronize the stdout and stderr
+        between a parent process and a child process. This patch replaces subprocess.call() with
+        subprocess.Popen() and synchronizes the stdout and stderr between them.
+        This patch also makes output messages of run-bindings-tests more readable.
+
+        With this patch, the output messages of run-bindings-tests look like as follows:
+
+            PASS: (CPP) WebDOMTestObj.h
+            PASS: (CPP) WebDOMTestObj.cpp
+            FAIL: (CPP) WebDOMTestInterface.h
+            --- Source/WebCore/bindings/scripts/test/CPP/WebDOMTestInterface.h      2011-11-25 13:34:09.313516268 +0900
+            +++ /tmp/tmpDAV87G/WebDOMTestInterface.h        2011-11-25 13:44:42.712946812 +0900
+            @@ -23,7 +23,7 @@
+             #ifndef WebDOMTestInterface_h
+             #define WebDOMTestInterface_h
+
+            -#if ENABLE(Condition1) || ENABLE(Condition2)
+            +#if ENABLE(Condition1) || ENABLE(Condition3)
+
+             #include <WebDOMObject.h>
+             #include <WebDOMString.h>
+             @@ -53,5 +53,5 @@
+             WebDOMTestInterface toWebKit(WebCore::TestInterface*);
+
+             #endif
+            -#endif // ENABLE(Condition1) || ENABLE(Condition2)
+            +#endif // ENABLE(Condition1) || ENABLE(Condition3)
+            PASS: (CPP) WebDOMFloat64Array.cpp
+            PASS: (CPP) WebDOMFloat64Array.h
+
+            Some tests FAIL! (To update the reference files, execute "run-bindings-tests --reset-results")
+
+        * Scripts/run-bindings-tests:
+        (generate_from_idl):
+        (detect_changes):
+        (run_tests):
+        (main):
+
+2011-11-24  Kentaro Hara  <haraken@chromium.org>
+
         Fix the current working directory of run-bindings-tests
         https://bugs.webkit.org/show_bug.cgi?id=73106
 
