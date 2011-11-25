@@ -19,6 +19,7 @@
 
 #include "qquickwebpage_p.h"
 #include "qquickwebview_p.h"
+#include "qwebdownloaditem_p.h"
 
 #include <QtDeclarative/qdeclarative.h>
 #include <QtDeclarative/qdeclarativeextensionplugin.h>
@@ -40,6 +41,7 @@ public:
     {
         Q_ASSERT(QLatin1String(uri) == QLatin1String("QtWebKit.experimental"));
 
+        qmlRegisterUncreatableType<QWebDownloadItem>(uri, 3, 0, "DownloadItem", QObject::tr("Cannot create separate instance of DownloadItem"));
         qmlRegisterExtendedType<QQuickWebView, QQuickWebViewExperimentalExtension>(uri, 3, 0, "WebView");
         qmlRegisterUncreatableType<QQuickWebViewExperimental>(uri, 3, 0, "QQuickWebViewExperimental",
             QObject::tr("Cannot create separate instance of QQuickWebViewExperimental"));
