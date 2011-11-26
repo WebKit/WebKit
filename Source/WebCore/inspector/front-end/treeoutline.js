@@ -706,7 +706,7 @@ TreeElement.prototype.collapse = function()
 
     this.expanded = false;
     if (this.treeOutline)
-        this.treeOutline._treeElementsExpandedState[this.identifier] = true;
+        this.treeOutline._treeElementsExpandedState[this.identifier] = false;
 
     if (this.oncollapse)
         this.oncollapse(this);

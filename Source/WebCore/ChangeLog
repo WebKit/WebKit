@@ -1,3 +1,16 @@
+2011-11-26  Timothy Hatcher  <timothy@apple.com>
+
+        Fix a bug in TreeOutline which would cause parent elements to show up as expanded and empty
+        when removed and added back to the tree.
+
+        https://bugs.webkit.org/show_bug.cgi?id=73155
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/treeoutline.js:
+        (TreeElement.prototype.collapse): Set _treeElementsExpandedState to false instead of true.
+        Only TreeElement.prototype.expand should set it to true, which it does.
+
 2011-11-26  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Fix some warnings in WebCore GTK+
