@@ -65,11 +65,6 @@ WebInspector.InspectorFrontendHostStub.prototype = {
         this._windowVisible = false;
     },
 
-    disconnectFromBackend: function()
-    {
-        this._windowVisible = false;
-    },
-
     attach: function()
     {
     },

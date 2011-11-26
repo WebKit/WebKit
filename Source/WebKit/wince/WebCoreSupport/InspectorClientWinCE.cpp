@@ -50,6 +50,11 @@ void InspectorClientWinCE::openInspectorFrontend(InspectorController* controller
     notImplemented();
 }
 
+void InspectorClientWinCE::closeInspectorFrontend()
+{
+    notImplemented();
+}
+
 void InspectorClientWinCE::bringFrontendToFront()
 {
     notImplemented();

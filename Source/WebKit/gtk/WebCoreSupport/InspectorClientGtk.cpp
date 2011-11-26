@@ -117,6 +117,7 @@ InspectorClient::~InspectorClient()
 
 void InspectorClient::inspectorDestroyed()
 {
+    closeInspectorFrontend();
     delete this;
 }
 
@@ -154,6 +155,12 @@ void InspectorClient::openInspectorFrontend(InspectorController* controller)
 
     // The inspector must be in it's own PageGroup to avoid deadlock while debugging.
     m_frontendPage->setGroupName("");
+}
+
+void InspectorClient::closeInspectorFrontend()
+{
+    if (m_frontendClient)
+        m_frontendClient->destroyInspectorWindow(false);
 }
 
 void InspectorClient::bringFrontendToFront()
@@ -273,11 +280,6 @@ void InspectorFrontendClient::bringToFront()
 void InspectorFrontendClient::closeWindow()
 {
     destroyInspectorWindow(true);
-}
-
-void InspectorFrontendClient::disconnectFromBackend()
-{
-    destroyInspectorWindow(false);
 }
 
 void InspectorFrontendClient::attachWindow()

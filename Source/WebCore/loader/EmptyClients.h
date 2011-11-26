@@ -590,6 +590,7 @@ public:
     virtual void inspectorDestroyed() { }
     
     virtual void openInspectorFrontend(InspectorController*) { }
+    virtual void closeInspectorFrontend() { }
     virtual void bringFrontendToFront() { }
 
     virtual void highlight() { }
