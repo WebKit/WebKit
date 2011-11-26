@@ -31,62 +31,27 @@
 
 namespace WebKit {
 
-static inline QtDownloadManager* toQtDownloadManager(const void* clientInfo)
+QtDownloadManager::QtDownloadManager(WebContext* context)
 {
-    ASSERT(clientInfo);
-    return reinterpret_cast<QtDownloadManager*>(const_cast<void*>(clientInfo));
-}
-
-static void qt_wk_didReceiveResponse(WKContextRef context, WKDownloadRef download, WKURLResponseRef response, const void *clientInfo)
-{
-    toQtDownloadManager(clientInfo)->downloadReceivedResponse(toImpl(download), toImpl(response)->resourceResponse());
-}
-
-static void qt_wk_didCreateDestination(WKContextRef context, WKDownloadRef download, WKStringRef path, const void *clientInfo)
-{
-    toQtDownloadManager(clientInfo)->downloadCreatedDestination(toImpl(download), WKStringCopyQString(path));
-}
-
-static void qt_wk_didFinishDownload(WKContextRef context, WKDownloadRef download, const void *clientInfo)
-{
-    toQtDownloadManager(clientInfo)->downloadFinished(toImpl(download));
-}
-
-static void qt_wk_didFailDownload(WKContextRef context, WKDownloadRef download, WKErrorRef error, const void *clientInfo)
-{
-    QUrl failingUrl = WKURLCopyQUrl(adoptWK(WKErrorCopyFailingURL(error)).get());
-
-    toQtDownloadManager(clientInfo)->downloadFailed(toImpl(download), QtWebError(error));
-}
-
-static void qt_wk_didReceiveDataForDownload(WKContextRef context, WKDownloadRef download, uint64_t length, const void *clientInfo)
-{
-    toQtDownloadManager(clientInfo)->downloadDataReceived(toImpl(download), length);
-}
-
-QtDownloadManager::QtDownloadManager()
-{
+    WKContextDownloadClient downloadClient;
+    memset(&downloadClient, 0, sizeof(WKContextDownloadClient));
+    downloadClient.version = kWKContextDownloadClientCurrentVersion;
+    downloadClient.clientInfo = this;
+    downloadClient.didReceiveResponse = didReceiveResponse;
+    downloadClient.didReceiveData = didReceiveDataForDownload;
+    downloadClient.didCreateDestination = didCreateDestination;
+    downloadClient.didFinish = didFinishDownload;
+    downloadClient.didFail = didFailDownload;
+    WKContextSetDownloadClient(toAPI(context), &downloadClient);
 }
 
 QtDownloadManager::~QtDownloadManager()
 {
 }
 
-PassRefPtr<QtDownloadManager> QtDownloadManager::create(WebContext* context)
+void QtDownloadManager::addDownload(DownloadProxy* download, QWebDownloadItem* downloadItem)
 {
-    QtDownloadManager* manager = new QtDownloadManager();
-
-    WKContextDownloadClient downloadClient;
-    memset(&downloadClient, 0, sizeof(WKContextDownloadClient));
-    downloadClient.version = kWKContextDownloadClientCurrentVersion;
-    downloadClient.clientInfo = manager;
-    downloadClient.didReceiveResponse = qt_wk_didReceiveResponse;
-    downloadClient.didReceiveData = qt_wk_didReceiveDataForDownload;
-    downloadClient.didCreateDestination = qt_wk_didCreateDestination;
-    downloadClient.didFinish = qt_wk_didFinishDownload;
-    downloadClient.didFail = qt_wk_didFailDownload;
-    WKContextSetDownloadClient(toAPI(context), &downloadClient);
-    return adoptRef(manager);
+    m_downloads[download->downloadID()] = downloadItem;
 }
 
 void QtDownloadManager::downloadReceivedResponse(DownloadProxy* download, const WebCore::ResourceResponse& response)
@@ -136,9 +101,35 @@ void QtDownloadManager::downloadDataReceived(DownloadProxy* download, uint64_t l
     emit downloadItem->totalBytesReceivedChanged(length);
 }
 
-void QtDownloadManager::addDownload(DownloadProxy* download, QWebDownloadItem* downloadItem)
+static inline QtDownloadManager* toQtDownloadManager(const void* clientInfo)
 {
-    m_downloads[download->downloadID()] = downloadItem;
+    ASSERT(clientInfo);
+    return reinterpret_cast<QtDownloadManager*>(const_cast<void*>(clientInfo));
+}
+
+void QtDownloadManager::didReceiveResponse(WKContextRef, WKDownloadRef download, WKURLResponseRef response, const void *clientInfo)
+{
+    toQtDownloadManager(clientInfo)->downloadReceivedResponse(toImpl(download), toImpl(response)->resourceResponse());
+}
+
+void QtDownloadManager::didCreateDestination(WKContextRef, WKDownloadRef download, WKStringRef path, const void *clientInfo)
+{
+    toQtDownloadManager(clientInfo)->downloadCreatedDestination(toImpl(download), WKStringCopyQString(path));
+}
+
+void QtDownloadManager::didFinishDownload(WKContextRef, WKDownloadRef download, const void *clientInfo)
+{
+    toQtDownloadManager(clientInfo)->downloadFinished(toImpl(download));
+}
+
+void QtDownloadManager::didFailDownload(WKContextRef, WKDownloadRef download, WKErrorRef error, const void *clientInfo)
+{
+    toQtDownloadManager(clientInfo)->downloadFailed(toImpl(download), QtWebError(error));
+}
+
+void QtDownloadManager::didReceiveDataForDownload(WKContextRef, WKDownloadRef download, uint64_t length, const void *clientInfo)
+{
+    toQtDownloadManager(clientInfo)->downloadDataReceived(toImpl(download), length);
 }
 
 }

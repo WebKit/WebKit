@@ -22,8 +22,7 @@
 #define QtDownloadManager_h
 
 #include <QMap>
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
+#include <WKContext.h>
 
 class QtWebError;
 class QWebDownloadItem;
@@ -37,21 +36,26 @@ namespace WebKit {
 class DownloadProxy;
 class WebContext;
 
-class QtDownloadManager : public RefCounted<QtDownloadManager> {
+class QtDownloadManager {
 public:
+    QtDownloadManager(WebContext*);
     ~QtDownloadManager();
 
     void addDownload(DownloadProxy*, QWebDownloadItem*);
 
+private:
     void downloadReceivedResponse(DownloadProxy*, const WebCore::ResourceResponse&);
     void downloadCreatedDestination(DownloadProxy*, const QString& path);
     void downloadFinished(DownloadProxy*);
     void downloadFailed(DownloadProxy*, const QtWebError&);
     void downloadDataReceived(DownloadProxy*, uint64_t length);
 
-    static PassRefPtr<QtDownloadManager> create(WebContext*);
-private:
-    QtDownloadManager();
+    // WKContextDownloadClient callbacks.
+    static void didReceiveResponse(WKContextRef, WKDownloadRef, WKURLResponseRef, const void* clientInfo);
+    static void didCreateDestination(WKContextRef, WKDownloadRef, WKStringRef path, const void* clientInfo);
+    static void didFinishDownload(WKContextRef, WKDownloadRef, const void* clientInfo);
+    static void didFailDownload(WKContextRef, WKDownloadRef, WKErrorRef, const void* clientInfo);
+    static void didReceiveDataForDownload(WKContextRef, WKDownloadRef, uint64_t length, const void* clientInfo);
 
     QMap<uint64_t, QWebDownloadItem*> m_downloads;
 };

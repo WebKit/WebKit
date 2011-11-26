@@ -1,3 +1,28 @@
+2011-11-26  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        [Qt] [WK2] QtDownloadManager doesn't need to be RefCounted
+        https://bugs.webkit.org/show_bug.cgi?id=73151
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        QtDownloadManager is owned by QtWebContext, and doesn't need to be a RefCounted
+        class. This commit also makes the callback handlers private -- following the similar
+        approach we take in other clients of the C API.
+
+        * UIProcess/qt/QtDownloadManager.cpp:
+        (WebKit::QtDownloadManager::QtDownloadManager):
+        (WebKit::QtDownloadManager::addDownload):
+        (WebKit::toQtDownloadManager):
+        (WebKit::QtDownloadManager::didReceiveResponse):
+        (WebKit::QtDownloadManager::didCreateDestination):
+        (WebKit::QtDownloadManager::didFinishDownload): remove unused failingUrl local variable.
+        (WebKit::QtDownloadManager::didFailDownload):
+        (WebKit::QtDownloadManager::didReceiveDataForDownload):
+        * UIProcess/qt/QtDownloadManager.h:
+        * UIProcess/qt/QtWebContext.cpp:
+        (WebKit::QtWebContext::initialize):
+        * UIProcess/qt/QtWebContext.h:
+
 2011-11-26  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r101193.

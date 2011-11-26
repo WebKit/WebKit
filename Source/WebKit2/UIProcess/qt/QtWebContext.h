@@ -22,6 +22,7 @@
 #define QtWebContext_h
 
 #include <WKContext.h>
+#include <wtf/OwnPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
@@ -59,7 +60,7 @@ private:
     static QtWebContext* s_defaultContext;
 
     RefPtr<WebContext> m_context;
-    RefPtr<QtDownloadManager> m_downloadManager;
+    OwnPtr<QtDownloadManager> m_downloadManager;
 };
 
 }

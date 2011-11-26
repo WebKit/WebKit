@@ -92,7 +92,7 @@ void QtWebContext::postMessageToNavigatorQtObject(WebPageProxy* webPageProxy, co
 
 void QtWebContext::initialize()
 {
-    m_downloadManager = QtDownloadManager::create(m_context.get());
+    m_downloadManager = adoptPtr(new QtDownloadManager(m_context.get()));
     initializeContextInjectedBundleClient();
 }
 
