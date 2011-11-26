@@ -1380,3 +1380,5 @@ sub GenerateInterface {
     $fname =~ s/_//g;
     $object->WriteData($fname);
 }
+
+1;
