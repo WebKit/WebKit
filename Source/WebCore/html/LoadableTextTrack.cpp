@@ -85,12 +85,13 @@ void LoadableTextTrack::newCuesAvailable(TextTrackLoader* loader)
     Vector<RefPtr<TextTrackCue> > newCues;
     m_loader->getNewCues(newCues);
 
-    for (size_t i = 0; i < newCues.size(); ++i)
-        newCues[i]->setTrack(this);
-
     if (!m_cues)
         m_cues = TextTrackCueList::create();    
-    m_cues->add(newCues);
+
+    for (size_t i = 0; i < newCues.size(); ++i) {
+        newCues[i]->setTrack(this);
+        m_cues->add(newCues[i]);
+    }
 
     if (client())
         client()->textTrackAddCues(this, m_cues.get());

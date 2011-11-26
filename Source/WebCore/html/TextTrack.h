@@ -93,10 +93,7 @@ public:
     TextTrackClient* client() { return m_client; }
 
     void addCue(PassRefPtr<TextTrackCue>, ExceptionCode&);
-    void removeCue(PassRefPtr<TextTrackCue>, ExceptionCode&);
-    
-    void newCuesLoaded();
-    void fetchNewestCues(Vector<TextTrackCue*>&);
+    void removeCue(TextTrackCue*, ExceptionCode&);
     
     virtual void fireCueChangeEvent();
     DEFINE_ATTRIBUTE_EVENT_LISTENER(cuechange);

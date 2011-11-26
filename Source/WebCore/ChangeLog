@@ -1,3 +1,41 @@
+2011-11-25  Eric Carlson  <eric.carlson@apple.com>
+
+        Implement addCue and removeCue in TextTrack
+        https://bugs.webkit.org/show_bug.cgi?id=72554
+
+        Reviewed by Darin Adler.
+
+        Test: media/track/track-add-remove-cue.html
+
+        * html/HTMLTrackElement.cpp:
+        (WebCore::HTMLTrackElement::ensureTrack): Go ahead and allocate a Track even if the feature 
+            is disabled, it just won't load anything.
+        (WebCore::HTMLTrackElement::scheduleLoad): Early return if the featue is disabled.
+        (WebCore::HTMLTrackElement::canLoadUrl): Ditto.
+
+        * html/LoadableTextTrack.cpp:
+        (WebCore::LoadableTextTrack::newCuesAvailable): Add new cues one at a time because 
+            cues->add(Vector<TextTrackCue*>&) is gone.
+
+        * html/TextTrack.cpp:
+        (WebCore::TextTrack::addCue): Implement.
+        (WebCore::TextTrack::removeCue): Ditto.
+        * html/TextTrack.h:
+
+        (WebCore::TextTrackCue::TextTrackCue): Initialize every member variable.
+        (WebCore::TextTrackCue::track): m_track is now a RefPtr.
+        (WebCore::TextTrackCue::setTrack): Ditto.
+        * html/TextTrackCue.h:
+
+        * html/TextTrackCueList.cpp:
+        (WebCore::TextTrackCueList::add): Don't ignore out of order cues, the spec text is not 
+            a conformance requirement. Return bool to indicate success or failure.
+        (WebCore::TextTrackCueList::remove): Return bool to indicate success or failure.
+        * html/TextTrackCueList.h:
+
+        * loader/TextTrackLoader.cpp:
+        (WebCore::TextTrackLoader::notifyFinished): Don't change m_state once it is set to Failed.
+
 2011-11-25  Kentaro Hara  <haraken@chromium.org>
 
         Refactoring CodeGenerator*.pm for bug 72138

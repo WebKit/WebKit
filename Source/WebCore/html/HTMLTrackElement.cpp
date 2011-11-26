@@ -158,9 +158,6 @@ void HTMLTrackElement::setIsDefault(bool isDefault)
 
 LoadableTextTrack* HTMLTrackElement::ensureTrack()
 {
-    if (!RuntimeEnabledFeatures::webkitVideoTrackEnabled())
-        return 0;
-
     if (!m_track) {
         // The kind attribute is an enumerated attribute, limited only to know values. It defaults to 'subtitles' if missing or invalid.
         String kind = getAttribute(kindAttr);
@@ -183,6 +180,9 @@ bool HTMLTrackElement::isURLAttribute(Attribute* attribute) const
 
 void HTMLTrackElement::scheduleLoad()
 {
+    if (!RuntimeEnabledFeatures::webkitVideoTrackEnabled())
+        return;
+
     if (!mediaElement())
         return;
 
@@ -194,6 +194,9 @@ void HTMLTrackElement::scheduleLoad()
 
 bool HTMLTrackElement::canLoadUrl(LoadableTextTrack*, const KURL& url)
 {
+    if (!RuntimeEnabledFeatures::webkitVideoTrackEnabled())
+        return false;
+
     HTMLMediaElement* parent = mediaElement();
     if (!parent)
         return false;

@@ -1,7 +1,0 @@
-Tests that cues that are temporally out of order are ignored.
-
-
-*** Testing text track 0
-EXPECTED (cues.length == '2') OK
-END OF TEST
-

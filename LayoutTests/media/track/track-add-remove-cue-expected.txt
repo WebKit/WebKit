@@ -1,0 +1,49 @@
+Tests TextTrackCue's addCue and removeCue
+
+
+*** Test cues loaded from the file.
+EXPECTED (cues.length == '4') OK
+EXPECTED (cues.getCueById('1').startTime == '0') OK
+EXPECTED (cues[1].startTime == '31') OK
+EXPECTED (cues[2].startTime == '61') OK
+EXPECTED (cues.getCueById('4').startTime == '121') OK
+EXPECTED (cues.getCueById('junk') == 'undefined') OK
+
+*** Create a new cue, check values
+RUN(textCue = new TextTrackCue('sausage-cue', 33, 3.4, 'Sausage?'))
+EXPECTED (textCue.track == 'null') OK
+EXPECTED (textCue.id == 'sausage-cue') OK
+EXPECTED (textCue.startTime == '33') OK
+EXPECTED (textCue.endTime == '3.4') OK
+EXPECTED (textCue.pauseOnExit == 'false') OK
+EXPECTED (textCue.direction == 'horizontal') OK
+EXPECTED (textCue.snapToLines == 'true') OK
+EXPECTED (textCue.linePosition == '-1') OK
+EXPECTED (textCue.textPosition == '50') OK
+EXPECTED (textCue.size == '100') OK
+EXPECTED (textCue.alignment == 'middle') OK
+
+*** Add the new cue to a track, make sure it is inserted correctly.
+RUN(testTrack.track.addCue(textCue))
+EXPECTED (textCue.track == '[object TextTrack]') OK
+EXPECTED (cues[1].startTime == '31') OK
+EXPECTED (cues[2].startTime == '33') OK
+EXPECTED (cues[3].startTime == '61') OK
+
+*** Remove a cue created with addCue().
+RUN(testTrack.track.removeCue(textCue))
+EXPECTED (textCue.track == 'null') OK
+EXPECTED (cues[1].startTime == '31') OK
+EXPECTED (cues[2].startTime == '61') OK
+
+*** Remove a cue added from the WebVTT file.
+RUN(textCue = cues[2])
+RUN(testTrack.track.removeCue(textCue))
+EXPECTED (textCue.track == 'null') OK
+EXPECTED (cues[1].startTime == '31') OK
+EXPECTED (cues[2].startTime == '121') OK
+
+*** Try to remove the cue again.
+TEST(testTrack.track.removeCue(textCue)) THROWS(DOMException.INVALID_STATE_ERR) OK
+END OF TEST
+

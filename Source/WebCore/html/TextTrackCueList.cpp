@@ -70,52 +70,43 @@ TextTrackCueList* TextTrackCueList::activeCues()
     return m_activeCues.get();
 }
 
-void TextTrackCueList::add(const Vector<RefPtr<TextTrackCue> >& newCues)
+bool TextTrackCueList::add(PassRefPtr<TextTrackCue> cue)
 {
-    for (size_t i = 0; i < newCues.size(); ++i)
-        add(newCues[i]);
+    return add(cue, 0, m_list.size());
 }
 
-void TextTrackCueList::add(PassRefPtr<TextTrackCue> cue)
-{
-    // WebVTT cue timings
-    // 1. The time represented by this WebVTT timestamp must be greater than or equal
-    // to the start time offsets of all previous cues in the file.
-    // http://www.whatwg.org/specs/web-apps/current-work/#webvtt-cue-timings
-    // Note: because this requirement is specific to WebVTT, we may want to check first
-    // whether the cues in this list came from a WebVTT file.
-    if (!m_list.isEmpty() && cue->startTime() < m_list.last()->startTime())
-        return;
-    add(cue, 0, m_list.size());
-}
-
-void TextTrackCueList::add(PassRefPtr<TextTrackCue> cue, size_t start, size_t end)
+bool TextTrackCueList::add(PassRefPtr<TextTrackCue> prpCue, size_t start, size_t end)
 {
     ASSERT(start <= m_list.size());
     ASSERT(end <= m_list.size());
 
     // Maintain text track cue order:
     // http://www.whatwg.org/specs/web-apps/current-work/#text-track-cue-order
-    RefPtr<TextTrackCue> newCue = cue;
+    RefPtr<TextTrackCue> cue = prpCue;
     if (start == end) {
-       m_list.insert(start, newCue);
-       return;
+        if (!m_list.isEmpty() && (m_list[start - 1].get() == cue.get()))
+            return false;
+
+       m_list.insert(start, cue);
+       return true;
     }
 
     size_t index = (start + end) / 2;
-    if (newCue->startTime() < m_list[index]->startTime() || (newCue->startTime() == m_list[index]->startTime() && newCue->endTime() > m_list[index]->endTime()))
-        add(newCue.release(), start, index);
-    else
-        add(newCue.release(), index + 1, end);
+    if (cue->startTime() < m_list[index]->startTime() || (cue->startTime() == m_list[index]->startTime() && cue->endTime() > m_list[index]->endTime()))
+        return add(cue.release(), start, index);
+
+    return add(cue.release(), index + 1, end);
 }
 
-void TextTrackCueList::remove(TextTrackCue* cue)
+bool TextTrackCueList::remove(TextTrackCue* cue)
 {
     size_t index = m_list.find(cue);
     if (index == notFound)
-        return;
+        return false;
+
     cue->setIsActive(false);
     m_list.remove(index);
+    return true;
 }
 
 bool TextTrackCueList::contains(TextTrackCue* cue) const

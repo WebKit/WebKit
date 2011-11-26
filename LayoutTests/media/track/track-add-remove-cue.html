@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+        <script src=../media-file.js></script>
+        <script src=../video-test.js></script>
+        <script>           
+
+            var cues;
+
+            function trackLoaded()
+            {
+                var testTrack = document.getElementById('testTrack');
+                cues = testTrack.track.cues;
+
+                consoleWrite("<br>*** Test cues loaded from the file.");
+                testExpected("cues.length", 4);
+                testExpected("cues.getCueById('1').startTime", 0);
+                testExpected("cues[1].startTime", 31);
+                testExpected("cues[2].startTime", 61);
+                testExpected("cues.getCueById('4').startTime", 121);
+                testExpected("cues.getCueById('junk')", undefined);
+
+                consoleWrite("<br>*** Create a new cue, check values");
+                run("textCue = new TextTrackCue('sausage-cue', 33, 3.4, 'Sausage?')");
+                testExpected("textCue.track", null);
+                testExpected("textCue.id", "sausage-cue");
+                testExpected("textCue.startTime", 33);
+                testExpected("textCue.endTime", 3.4);
+                testExpected("textCue.pauseOnExit", false);
+                testExpected("textCue.direction", "horizontal");
+                testExpected("textCue.snapToLines", true);
+                testExpected("textCue.linePosition", -1);
+                testExpected("textCue.textPosition", 50);
+                testExpected("textCue.size", 100);
+                testExpected("textCue.alignment", "middle");
+
+                consoleWrite("<br>*** Add the new cue to a track, make sure it is inserted correctly.");
+                run("testTrack.track.addCue(textCue)");
+                testExpected("textCue.track", testTrack.track);
+                testExpected("cues[1].startTime", 31);
+                testExpected("cues[2].startTime", 33);
+                testExpected("cues[3].startTime", 61);
+
+                consoleWrite("<br>*** Remove a cue created with addCue().");
+                run("testTrack.track.removeCue(textCue)");
+                testExpected("textCue.track", null);
+                testExpected("cues[1].startTime", 31);
+                testExpected("cues[2].startTime", 61);
+
+                consoleWrite("<br>*** Remove a cue added from the WebVTT file.");
+                run("textCue = cues[2]");
+                run("testTrack.track.removeCue(textCue)");
+                testExpected("textCue.track", null);
+                testExpected("cues[1].startTime", 31);
+                testExpected("cues[2].startTime", 121);
+
+                consoleWrite("<br>*** Try to remove the cue again.");
+                testException("testTrack.track.removeCue(textCue)", "DOMException.INVALID_STATE_ERR");
+
+                endTest();
+            }
+
+        </script>
+    </head>
+    <body>
+        <p>Tests TextTrackCue's addCue and removeCue</p>
+        <video>
+            <track id="testTrack" src="captions-webvtt/tc013-settings.vtt" kind="captions" onload="trackLoaded()">
+        </video>
+    </body>
+</html>

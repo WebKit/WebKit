@@ -57,7 +57,7 @@ public:
     virtual ~TextTrackCue();
 
     TextTrack* track() const;
-    void setTrack(TextTrack*);
+    void setTrack(PassRefPtr<TextTrack>);
 
     String id() const;
     double startTime() const;
@@ -100,25 +100,24 @@ private:
     virtual void refEventTarget() { ref(); }
     virtual void derefEventTarget() { deref(); }
     
-    TextTrack* m_track;
-    
     String m_id;
     double m_startTime;
     double m_endTime;
     String m_content;
-    bool m_pauseOnExit;
     Direction m_writingDirection;
-    bool m_snapToLines;
     int m_linePosition;
     int m_textPosition;
     int m_cueSize;
     Alignment m_cueAlignment;
     RefPtr<DocumentFragment> m_documentFragment;
+    RefPtr<TextTrack> m_track;
 
-    bool m_isActive;
-    
     EventTargetData m_eventTargetData;
     ScriptExecutionContext* m_scriptExecutionContext;
+
+    bool m_isActive;
+    bool m_pauseOnExit;
+    bool m_snapToLines;
 };
 
 } // namespace WebCore

@@ -49,14 +49,13 @@ public:
     TextTrackCue* getCueById(const String&) const;
     TextTrackCueList* activeCues();
 
-    void add(PassRefPtr<TextTrackCue>);
-    void add(const Vector<RefPtr<TextTrackCue> >&);
-    void remove(TextTrackCue*);
+    bool add(PassRefPtr<TextTrackCue>);
+    bool remove(TextTrackCue*);
     bool contains(TextTrackCue*) const;
 
 private:
     TextTrackCueList();
-    void add(PassRefPtr<TextTrackCue>, size_t, size_t);
+    bool add(PassRefPtr<TextTrackCue>, size_t, size_t);
     void clear();
     
     Vector<RefPtr<TextTrackCue> > m_list;

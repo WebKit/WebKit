@@ -145,7 +145,8 @@ void TextTrackLoader::notifyFinished(CachedResource* resource)
 
     processNewCueData(resource);
 
-    m_state = resource->errorOccurred() ? Failed : Finished;
+    if (m_state != Failed)
+        m_state = resource->errorOccurred() ? Failed : Finished;
 
     if (!m_cueLoadTimer.isActive())
         m_cueLoadTimer.startOneShot(0);
