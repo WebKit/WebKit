@@ -53,7 +53,7 @@ sub applyPreprocessor
         $preprocessor = $gccLocation . " -E -P -x c++";
     }
 
-    if (!$defines) {
+    if (!$defines || ($defines eq "\"\"")) {
         $defines = "";
     }
 

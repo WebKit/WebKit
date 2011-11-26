@@ -1,3 +1,13 @@
+2011-11-26  Alejandro G. Castro  <alex@igalia.com>
+
+        Fix compilation after r101157.
+
+        Reviewed by Martin Robinson.
+
+        * bindings/scripts/preprocessor.pm:
+        (applyPreprocessor): In case we have a string with
+        double-quotations (") we replace it with the empty string.
+
 2011-11-26  Igor Oliveira  <igor.oliveira@openbossa.org>
 
         [TexMapper][WK2][Qt] Simple opacity animations are not working
