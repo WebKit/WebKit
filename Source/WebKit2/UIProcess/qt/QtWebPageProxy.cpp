@@ -32,15 +32,14 @@
 #include "qwebpreferences_p.h"
 #include "qwebpreferences_p_p.h"
 
-#include "ClientImpl.h"
 #include "DownloadProxy.h"
 #include "DrawingAreaProxyImpl.h"
 #include "qwkhistory.h"
 #include "qwkhistory_p.h"
 #include "FindIndicator.h"
 #include "LocalizedStrings.h"
-#include "MutableArray.h"
 #include "NotImplemented.h"
+#include "QtDownloadManager.h"
 #include "QtWebPageEventHandler.h"
 #include "QtWebUndoCommand.h"
 #include "WebBackForwardList.h"
@@ -68,32 +67,15 @@
 using namespace WebKit;
 using namespace WebCore;
 
-RefPtr<WebContext> QtWebPageProxy::s_defaultContext;
-RefPtr<QtDownloadManager> QtWebPageProxy::s_downloadManager;
-
-unsigned QtWebPageProxy::s_defaultPageProxyCount = 0;
-
-PassRefPtr<WebContext> QtWebPageProxy::defaultWKContext()
-{
-    if (!s_defaultContext) {
-        s_defaultContext = WebContext::create(String());
-        setupContextInjectedBundleClient(toAPI(s_defaultContext.get()));
-        s_downloadManager = QtDownloadManager::create(s_defaultContext.get());
-    }
-    return s_defaultContext;
-}
-
 QtWebPageProxy::QtWebPageProxy(QQuickWebPage* qmlWebPage, QQuickWebView* qmlWebView, WKContextRef contextRef, WKPageGroupRef pageGroupRef)
     : m_qmlWebPage(qmlWebPage)
     , m_qmlWebView(qmlWebView)
-    , m_context(contextRef ? toImpl(contextRef) : defaultWKContext())
+    , m_context(contextRef ? QtWebContext::create(toImpl(contextRef)) : QtWebContext::defaultContext())
     , m_undoStack(adoptPtr(new QUndoStack(this)))
     , m_navigatorQtObjectEnabled(false)
 {
     m_webPageProxy = m_context->createWebPage(this, toImpl(pageGroupRef));
     m_history = QWKHistoryPrivate::createHistory(this, m_webPageProxy->backForwardList());
-    if (!contextRef)
-        s_defaultPageProxyCount++;
 }
 
 void QtWebPageProxy::init(QtWebPageEventHandler* eventHandler)
@@ -105,15 +87,6 @@ void QtWebPageProxy::init(QtWebPageEventHandler* eventHandler)
 QtWebPageProxy::~QtWebPageProxy()
 {
     m_webPageProxy->close();
-    // The context is the default one and we're deleting the last QtWebPageProxy.
-    if (m_context == s_defaultContext) {
-        ASSERT(s_defaultPageProxyCount > 0);
-        s_defaultPageProxyCount--;
-        if (!s_defaultPageProxyCount) {
-            s_defaultContext.clear();
-            s_downloadManager.clear();
-        }
-    }
     delete m_history;
 }
 
@@ -423,27 +396,15 @@ QString QtWebPageProxy::customUserAgent() const
 
 void QtWebPageProxy::setNavigatorQtObjectEnabled(bool enabled)
 {
-    static String messageName("SetNavigatorQtObjectEnabled");
-
     ASSERT(enabled != m_navigatorQtObjectEnabled);
     // FIXME: Currently we have to keep this information in both processes and the setting is asynchronous.
     m_navigatorQtObjectEnabled = enabled;
-    RefPtr<MutableArray> body = MutableArray::create();
-    body->append(m_webPageProxy.get());
-    RefPtr<WebBoolean> webEnabled = WebBoolean::create(enabled);
-    body->append(webEnabled.get());
-    m_context->postMessageToInjectedBundle(messageName, body.get());
+    m_context->setNavigatorQtObjectEnabled(m_webPageProxy.get(), enabled);
 }
 
 void QtWebPageProxy::postMessageToNavigatorQtObject(const QString& message)
 {
-    static String messageName("MessageToNavigatorQtObject");
-
-    RefPtr<MutableArray> body = MutableArray::create();
-    body->append(m_webPageProxy.get());
-    RefPtr<WebString> contents = WebString::create(String(message));
-    body->append(contents.get());
-    m_context->postMessageToInjectedBundle(messageName, body.get());
+    m_context->postMessageToNavigatorQtObject(m_webPageProxy.get(), message);
 }
 
 void QtWebPageProxy::loadHTMLString(const QString& html, const QUrl& baseUrl)
@@ -550,7 +511,7 @@ void QtWebPageProxy::handleDownloadRequest(DownloadProxy* download)
     downloadItem->d->downloadProxy = download;
 
     connect(downloadItem->d, SIGNAL(receivedResponse(QWebDownloadItem*)), this, SLOT(didReceiveDownloadResponse(QWebDownloadItem*)));
-    s_downloadManager->addDownload(download, downloadItem);
+    m_context->downloadManager()->addDownload(download, downloadItem);
 }
 
 void QtWebPageProxy::didReceiveDownloadResponse(QWebDownloadItem* downloadItem)

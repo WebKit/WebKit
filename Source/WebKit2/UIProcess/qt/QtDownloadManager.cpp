@@ -21,7 +21,6 @@
 #include "config.h"
 #include "QtDownloadManager.h"
 
-#include "ClientImpl.h"
 #include "DownloadProxy.h"
 #include "QtWebError.h"
 #include "WKStringQt.h"

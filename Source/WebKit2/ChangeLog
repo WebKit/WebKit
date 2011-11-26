@@ -1,3 +1,43 @@
+2011-11-25  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        [Qt] [WK2] Remove WebContext related code from QtWebPageProxy
+        https://bugs.webkit.org/show_bug.cgi?id=73150
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Creates a QtWebContext class that abstracts away from QtWebPageProxy the
+        handling of creating / maintaining the default WebContext, as well as the
+        code for the WKContextRef clients.
+
+        Another motivation for having this entity is to have a proper place to add
+        objects are bound to the context, like the QtDownloadManager.
+
+        * Target.pri:
+        * UIProcess/qt/ClientImpl.cpp: Removed.
+        * UIProcess/qt/ClientImpl.h: Removed.
+        * UIProcess/qt/QtDownloadManager.cpp:
+        * UIProcess/qt/QtWebContext.cpp: Added.
+        (WebKit::QtWebContext::QtWebContext):
+        (WebKit::QtWebContext::~QtWebContext):
+        (WebKit::QtWebContext::create):
+        (WebKit::QtWebContext::defaultContext):
+        (WebKit::QtWebContext::createWebPage):
+        (WebKit::QtWebContext::setNavigatorQtObjectEnabled):
+        (WebKit::QtWebContext::postMessageToNavigatorQtObject):
+        (WebKit::QtWebContext::initialize):
+        (WebKit::QtWebContext::initializeContextInjectedBundleClient):
+        (WebKit::toQtWebContext):
+        (WebKit::QtWebContext::didReceiveMessageFromInjectedBundle):
+        * UIProcess/qt/QtWebContext.h: Added.
+        (WebKit::QtWebContext::downloadManager):
+        * UIProcess/qt/QtWebPageProxy.cpp:
+        (QtWebPageProxy::QtWebPageProxy):
+        (QtWebPageProxy::~QtWebPageProxy):
+        (QtWebPageProxy::setNavigatorQtObjectEnabled):
+        (QtWebPageProxy::postMessageToNavigatorQtObject):
+        (QtWebPageProxy::handleDownloadRequest):
+        * UIProcess/qt/QtWebPageProxy.h:
+
 2011-11-25  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
 
         [Qt][WK2] Refactor GestureRecognizers to use QtWebPageEventHandler

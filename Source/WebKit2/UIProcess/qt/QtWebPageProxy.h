@@ -24,10 +24,9 @@
 #include "DrawingAreaProxy.h"
 #include "LayerTreeContext.h"
 #include "PageClient.h"
-#include "QtDownloadManager.h"
+#include "QtWebContext.h"
 #include "ShareableBitmap.h"
 #include "ViewportArguments.h"
-#include "WebContext.h"
 #include "WebPageProxy.h"
 #include <wtf/RefPtr.h>
 #include <QGraphicsView>
@@ -38,12 +37,17 @@ QT_BEGIN_NAMESPACE
 class QUndoStack;
 QT_END_NAMESPACE
 
-class QtWebPageEventHandler;
-class QtWebError;
-class QWebPreferences;
-class QWKHistory;
 class QQuickWebPage;
 class QQuickWebView;
+class QtWebError;
+class QtWebPageEventHandler;
+class QWebDownloadItem;
+class QWebPreferences;
+class QWKHistory;
+
+namespace WebKit {
+class QtWebContext;
+}
 
 using namespace WebKit;
 
@@ -201,12 +205,7 @@ private:
     virtual void doneWithTouchEvent(const NativeWebTouchEvent&, bool wasEventHandled);
 #endif
 
-    static PassRefPtr<WebContext> defaultWKContext();
-    static RefPtr<WebContext> s_defaultContext;
-    static RefPtr<QtDownloadManager> s_downloadManager;
-    static unsigned s_defaultPageProxyCount;
-
-    RefPtr<WebContext> m_context;
+    RefPtr<QtWebContext> m_context;
     QWKHistory* m_history;
 
     mutable OwnPtr<QWebPreferences> m_preferences;
