@@ -100,7 +100,7 @@ void TextureMapperNode::computePerspectiveTransformIfNeeded()
 
 int TextureMapperNode::countDescendantsWithContent() const
 {
-    if (!m_state.visible || m_opacity < 0.01 || (!m_size.width() && !m_size.height() && m_state.masksToBounds))
+    if (!m_state.visible || (!m_size.width() && !m_size.height() && m_state.masksToBounds))
         return 0;
     int count = (m_size.width() && m_size.height() && (m_state.drawsContent || m_currentContent.contentType != HTMLContentType)) ? 1 : 0;
     for (size_t i = 0; i < m_children.size(); ++i)
@@ -246,7 +246,7 @@ static void clampRect(IntRect& rect, int dimension)
 
 bool TextureMapperNode::collectVisibleContentsRects(NodeRectMap& rectMap, const FloatRect& rootVisibleRect)
 {
-    if (!m_state.visible || m_state.opacity < 0.01)
+    if (!m_state.visible)
         return false;
     bool exists = false;
 

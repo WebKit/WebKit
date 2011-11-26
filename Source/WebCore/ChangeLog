@@ -1,3 +1,26 @@
+2011-11-26  Igor Oliveira  <igor.oliveira@openbossa.org>
+
+        [TexMapper][WK2][Qt] Simple opacity animations are not working
+        https://bugs.webkit.org/show_bug.cgi?id=73157
+
+        LayerTreeHostQt needs to know what nodes in the TextureMapper are visible, to associate
+        a tile to it. It is done using TextureMapperNode::collectVisibleContentsRects.
+
+        However TextureMapperNode::collectVisibleContentsRects has an optimization to check if
+        the current tile has opacity greater than 0.01, otherwise it will not create a tile for
+        the current node.
+
+        For opacity animations from 0 to 1, it is a problem because the tile is never created
+        and the animation never happens.
+
+        This patch fixes opacity animations.
+
+        Reviewed by Noam Rosenthal.
+
+        * platform/graphics/texmap/TextureMapperNode.cpp:
+        (WebCore::TextureMapperNode::countDescendantsWithContent):
+        (WebCore::TextureMapperNode::collectVisibleContentsRects):
+
 2011-11-26  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r101193.
