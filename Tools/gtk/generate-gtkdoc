@@ -91,8 +91,10 @@ configure_logging()
 
 # We need to add the JavaScriptCore build directory to the PKG_CONFIG_PATH
 # so that pkgconfig can properly resolve the libjavascriptcore dependency.
-os.environ['PKG_CONFIG_PATH'] = common.build_path('Source', 'JavaScriptCore') \
-                                + ':' + os.environ.get('PKG_CONFIG_PATH')
+pkg_config_path = os.environ.get("PKG_CONFIG_PATH")
+os.environ['PKG_CONFIG_PATH'] = common.build_path('Source', 'JavaScriptCore')
+if pkg_config_path:
+    os.environ['PKG_CONFIG_PATH'] += + ':' + pkg_config_path
 
 print "Generating WebKit1 documentation..."
 pkg_config_path, options = get_webkit1_options()

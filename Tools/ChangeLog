@@ -1,3 +1,9 @@
+2011-11-26  Martin Robinson  <mrobinson@igalia.com>
+
+        Try to fix the build after r101174.
+
+        * gtk/generate-gtkdoc: Properly handle empty PKG_CONFIG_PATHs.
+
 2011-11-17  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Integrate build-gtkdoc into build-webkit and make
