@@ -83,7 +83,6 @@ WebInspectorClient::WebInspectorClient(WebView *webView)
 
 void WebInspectorClient::inspectorDestroyed()
 {
-    closeInspectorFrontend();
     delete this;
 }
 
@@ -98,12 +97,6 @@ void WebInspectorClient::openInspectorFrontend(InspectorController* inspectorCon
     RetainPtr<WebInspectorFrontend> webInspectorFrontend(AdoptNS, [[WebInspectorFrontend alloc] initWithFrontendClient:frontendClient.get()]);
     [[m_webView inspector] setFrontend:webInspectorFrontend.get()];
     m_frontendPage->inspectorController()->setInspectorFrontendClient(frontendClient.release());
-}
-
-void WebInspectorClient::closeInspectorFrontend()
-{
-    if (m_frontendClient)
-        m_frontendClient->disconnectFromBackend();
 }
 
 void WebInspectorClient::bringFrontendToFront()

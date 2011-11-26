@@ -1,3 +1,15 @@
+2011-11-26  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r101193.
+        http://trac.webkit.org/changeset/101193
+        https://bugs.webkit.org/show_bug.cgi?id=73158
+
+        Breaks Windows and Qt minimal. (Requested by pfeldman on
+        #webkit).
+
+        * WebCoreSupport/InspectorClientEfl.cpp:
+        * WebCoreSupport/InspectorClientEfl.h:
+
 2011-11-24  KwangHyuk Kim  <hyuki.kim@samsung.com>
 
         [EFL] Add implementation considering ewk_tiled_backing_store's visible status.

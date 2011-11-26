@@ -82,7 +82,6 @@ WebInspectorClient::~WebInspectorClient()
 
 void WebInspectorClient::inspectorDestroyed()
 {
-    closeInspectorFrontend();
     delete this;
 }
 
@@ -179,12 +178,6 @@ void WebInspectorClient::openInspectorFrontend(InspectorController* inspectorCon
     m_frontendHwnd = frontendHwnd;
 }
 
-void WebInspectorClient::closeInspectorFrontend()
-{
-    if (m_frontendClient)
-        m_frontendClient->destroyInspectorView(false);
-}
-
 void WebInspectorClient::bringFrontendToFront()
 {
     m_frontendClient->bringToFront();
@@ -276,6 +269,11 @@ void WebInspectorFrontendClient::bringToFront()
 void WebInspectorFrontendClient::closeWindow()
 {
     destroyInspectorView(true);
+}
+
+void WebInspectorFrontendClient::disconnectFromBackend()
+{
+    destroyInspectorView(false);
 }
 
 void WebInspectorFrontendClient::attachWindow()

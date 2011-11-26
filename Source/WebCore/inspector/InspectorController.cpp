@@ -271,8 +271,8 @@ void InspectorController::close()
 {
     if (!m_inspectorFrontend)
         return;
+    m_inspectorFrontend->inspector()->disconnectFromBackend();
     disconnectFrontend();
-    m_inspectorClient->closeInspectorFrontend();
 }
 
 void InspectorController::restoreInspectorStateFromCookie(const String& inspectorStateCookie)

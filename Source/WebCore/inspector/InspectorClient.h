@@ -44,7 +44,6 @@ public:
     virtual void inspectorDestroyed() = 0;
 
     virtual void openInspectorFrontend(InspectorController*) = 0;
-    virtual void closeInspectorFrontend() = 0;
     virtual void bringFrontendToFront() = 0;
 
     virtual void highlight() = 0;

@@ -46,6 +46,7 @@ private:
 
     virtual void bringToFront() OVERRIDE;
     virtual void closeWindow() OVERRIDE;
+    virtual void disconnectFromBackend() OVERRIDE;
 
     virtual void attachWindow() OVERRIDE;
     virtual void detachWindow() OVERRIDE;

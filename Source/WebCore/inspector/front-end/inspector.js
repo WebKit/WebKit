@@ -466,9 +466,12 @@ WebInspector.close = function(event)
     InspectorFrontendHost.closeWindow();
 }
 
-WebInspector.disconnectFromWorker = function()
+WebInspector.disconnectFromBackend = function()
 {
-    WebInspector.WorkerManager.showWorkerTerminatedScreen();
+    if (WebInspector.WorkerManager.isWorkerFrontend())
+        WebInspector.WorkerManager.showWorkerTerminatedScreen();
+    else
+        InspectorFrontendHost.disconnectFromBackend();
 }
 
 WebInspector.documentClick = function(event)

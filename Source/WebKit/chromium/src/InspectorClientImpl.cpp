@@ -69,12 +69,6 @@ void InspectorClientImpl::openInspectorFrontend(InspectorController* controller)
         agent->openInspectorFrontend(controller);
 }
 
-void InspectorClientImpl::closeInspectorFrontend()
-{
-    if (WebDevToolsAgentImpl* agent = devToolsAgent())
-        agent->closeInspectorFrontend();
-}
-
 void InspectorClientImpl::bringFrontendToFront()
 {
     if (WebDevToolsAgentImpl* agent = devToolsAgent())

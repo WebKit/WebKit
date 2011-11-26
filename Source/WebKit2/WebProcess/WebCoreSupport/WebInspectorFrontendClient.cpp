@@ -74,6 +74,11 @@ void WebInspectorFrontendClient::closeWindow()
     m_page->inspector()->didClose();
 }
 
+void WebInspectorFrontendClient::disconnectFromBackend()
+{
+    m_page->inspector()->didClose();
+}
+
 void WebInspectorFrontendClient::attachWindow()
 {
     m_page->inspector()->attach();

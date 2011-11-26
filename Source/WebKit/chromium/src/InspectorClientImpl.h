@@ -49,7 +49,6 @@ public:
     // InspectorClient methods:
     virtual void inspectorDestroyed();
     virtual void openInspectorFrontend(WebCore::InspectorController*);
-    virtual void closeInspectorFrontend();
     virtual void bringFrontendToFront();
 
     virtual void highlight();

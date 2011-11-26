@@ -39,7 +39,6 @@ namespace WebKit {
 
 void WebInspectorClient::inspectorDestroyed()
 {
-    closeInspectorFrontend();
     delete this;
 }
 
@@ -47,11 +46,6 @@ void WebInspectorClient::openInspectorFrontend(InspectorController*)
 {
     WebPage* inspectorPage = m_page->inspector()->createInspectorPage();
     ASSERT_UNUSED(inspectorPage, inspectorPage);
-}
-
-void WebInspectorClient::closeInspectorFrontend()
-{
-    m_page->inspector()->didClose();
 }
 
 void WebInspectorClient::bringFrontendToFront()

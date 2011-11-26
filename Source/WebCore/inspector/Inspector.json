@@ -8,7 +8,7 @@
         ],
         "events": [
             {
-                "name": "disconnectFromWorker"
+                "name": "disconnectFromBackend"
             },
             {
                 "name": "evaluateForTestInFrontend",

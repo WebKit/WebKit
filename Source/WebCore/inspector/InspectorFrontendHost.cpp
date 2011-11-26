@@ -169,6 +169,14 @@ void InspectorFrontendHost::closeWindow()
     }
 }
 
+void InspectorFrontendHost::disconnectFromBackend()
+{
+    if (m_client) {
+        m_client->disconnectFromBackend();
+        disconnectClient(); // Disconnect from client.
+    }
+}
+
 void InspectorFrontendHost::bringToFront()
 {
     if (m_client)

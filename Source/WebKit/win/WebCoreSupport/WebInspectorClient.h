@@ -58,7 +58,6 @@ public:
     virtual void inspectorDestroyed();
 
     virtual void openInspectorFrontend(WebCore::InspectorController*);
-    virtual void closeInspectorFrontend();
     virtual void bringFrontendToFront();
 
     virtual void highlight();
@@ -114,11 +113,11 @@ public:
     virtual void setAttachedWindowHeight(unsigned height);
     virtual void inspectedURLChanged(const WTF::String& newURL);
 
-    void destroyInspectorView(bool notifyInspectorController);
-
 private:
     void closeWindowWithoutNotifications();
     void showWindowWithoutNotifications();
+
+    void destroyInspectorView(bool notifyInspectorController);
 
     void updateWindowTitle();
 

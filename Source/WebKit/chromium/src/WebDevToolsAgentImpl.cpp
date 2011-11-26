@@ -268,10 +268,6 @@ void WebDevToolsAgentImpl::openInspectorFrontend(InspectorController*)
 {
 }
 
-void WebDevToolsAgentImpl::closeInspectorFrontend()
-{
-}
-
 void WebDevToolsAgentImpl::bringFrontendToFront()
 {
 }
@@ -389,7 +385,7 @@ WebString WebDevToolsAgent::disconnectEventAsText()
         String m_message;
     } channel;
     InspectorFrontend::Inspector inspector(&channel);
-    inspector.disconnectFromWorker();
+    inspector.disconnectFromBackend();
     return channel.m_message;
 }
 

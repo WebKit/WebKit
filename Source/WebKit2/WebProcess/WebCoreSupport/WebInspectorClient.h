@@ -53,7 +53,6 @@ private:
     virtual void inspectorDestroyed() OVERRIDE;
 
     virtual void openInspectorFrontend(WebCore::InspectorController*) OVERRIDE;
-    virtual void closeInspectorFrontend() OVERRIDE;
     virtual void bringFrontendToFront() OVERRIDE;
 
     virtual void highlight() OVERRIDE;

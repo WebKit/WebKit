@@ -36,6 +36,7 @@ module core {
     ] InspectorFrontendHost {
         void loaded();
         void closeWindow();
+        void disconnectFromBackend();
         void bringToFront();
         void inspectedURLChanged(in DOMString newURL);
 
