@@ -46,7 +46,6 @@ static GRefPtr<GdkCursor> createNamedCursor(CustomCursorType cursorType)
     if (c)
         return c;
 
-    IntSize cursorSize = IntSize(32, 32);
     RefPtr<cairo_surface_t> source = adoptRef(cairo_image_surface_create_for_data(const_cast<unsigned char*>(cursor.bits), CAIRO_FORMAT_A1, 32, 32, 4));
     RefPtr<cairo_surface_t> mask = adoptRef(cairo_image_surface_create_for_data(const_cast<unsigned char*>(cursor.mask_bits), CAIRO_FORMAT_A1, 32, 32, 4));
     RefPtr<cairo_surface_t> surface = adoptRef(cairo_image_surface_create(CAIRO_FORMAT_A1, 32, 32));

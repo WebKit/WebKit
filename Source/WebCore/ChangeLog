@@ -1,3 +1,19 @@
+2011-11-26  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Fix some warnings in WebCore GTK+
+        https://bugs.webkit.org/show_bug.cgi?id=73137
+
+        Reviewed by Philippe Normand.
+
+        No new tests. This patch just fixes compilation warnings.
+
+        * platform/gtk/CursorGtk.cpp:
+        (WebCore::createNamedCursor): Remove unused variable.
+        * platform/gtk/RenderThemeGtk3.cpp:
+        (WebCore::RenderThemeGtk::paintSliderTrack): ASSERT_UNUSED instead of ASSERT.
+        * platform/gtk/SharedTimerGtk.cpp: Ditto.
+        (WebCore::stopSharedTimer):
+
 2011-11-25  Eric Carlson  <eric.carlson@apple.com>
 
         Implement addCue and removeCue in TextTrack

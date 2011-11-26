@@ -62,12 +62,11 @@ void setSharedTimerFireInterval(double interval)
 
 void stopSharedTimer()
 {
-    gboolean s = FALSE;
     if (sharedTimer == 0)
         return;
 
-    s = g_source_remove(sharedTimer);
-    ASSERT(s);
+    gboolean removedSource = g_source_remove(sharedTimer);
+    ASSERT_UNUSED(removedSource, removedSource);
     sharedTimer = 0;
 }
 

@@ -596,7 +596,7 @@ bool RenderThemeGtk::paintTextField(RenderObject* renderObject, const PaintInfo&
 bool RenderThemeGtk::paintSliderTrack(RenderObject* renderObject, const PaintInfo& paintInfo, const IntRect& rect)
 {
     ControlPart part = renderObject->style()->appearance();
-    ASSERT(part == SliderHorizontalPart || part == SliderVerticalPart || part == MediaVolumeSliderPart);
+    ASSERT_UNUSED(part, part == SliderHorizontalPart || part == SliderVerticalPart || part == MediaVolumeSliderPart);
 
     GtkStyleContext* context = getStyleContext(GTK_TYPE_SCALE);
     gtk_style_context_save(context);
