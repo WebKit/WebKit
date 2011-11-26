@@ -1,3 +1,17 @@
+2011-11-25  Michael Saboff  <msaboff@apple.com>
+
+        Array.toString always uses StringImpl::characters()
+        https://bugs.webkit.org/show_bug.cgi?id=72969
+
+        If all component strings are 8 bit, create an 8 bit result string for toString().
+
+        This appears to be performance neutral to sunspider and v8.
+
+        Reviewed by Filip Pizlo.
+
+        * runtime/ArrayPrototype.cpp:
+        (JSC::arrayProtoFuncToString):
+
 2011-11-24  Michael Saboff  <msaboff@apple.com>
 
         UString methods are not character size aware

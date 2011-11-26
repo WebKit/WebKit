@@ -185,6 +185,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncToString(ExecState* exec)
 
     unsigned totalSize = length ? length - 1 : 0;
     Vector<RefPtr<StringImpl>, 256> strBuffer(length);
+    bool allStrings8Bit = true;
 
     for (unsigned k = 0; k < length; k++) {
         JSValue element;
@@ -199,6 +200,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncToString(ExecState* exec)
         UString str = element.toString(exec);
         strBuffer[k] = str.impl();
         totalSize += str.length();
+        allStrings8Bit = allStrings8Bit && str.is8Bit();
         
         if (!strBuffer.data()) {
             throwOutOfMemoryError(exec);
@@ -209,6 +211,23 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncToString(ExecState* exec)
     }
     if (!totalSize)
         return JSValue::encode(jsEmptyString(exec));
+
+    if (allStrings8Bit) {
+        Vector<LChar> buffer;
+        buffer.reserveCapacity(totalSize);
+        if (!buffer.data())
+            return JSValue::encode(throwOutOfMemoryError(exec));
+        
+        for (unsigned i = 0; i < length; i++) {
+            if (i)
+                buffer.append(',');
+            if (RefPtr<StringImpl> rep = strBuffer[i])
+                buffer.append(rep->characters8(), rep->length());
+        }
+        ASSERT(buffer.size() == totalSize);
+        return JSValue::encode(jsString(exec, UString::adopt(buffer)));        
+    }
+
     Vector<UChar> buffer;
     buffer.reserveCapacity(totalSize);
     if (!buffer.data())
