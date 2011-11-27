@@ -72,7 +72,7 @@ public:
     virtual bool parseString(const String &string, bool strict = true);
     
     virtual bool isLoading();
-    virtual void checkLoaded();
+    void checkLoaded();
 
     void loadChildSheets();
     void loadChildSheet(const String& href);

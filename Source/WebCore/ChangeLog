@@ -1,5 +1,18 @@
 2011-11-27  Andreas Kling  <kling@webkit.org>
 
+        CSS/XSLStyleSheet: checkLoaded() needn't be virtual.
+        <http://webkit.org/b/73169>
+
+        Reviewed by Antti Koivisto.
+
+        Devirtualize checkLoaded() in CSSStyleSheet and XSLStyleSheet as they
+        are not overriding anything, nor are they ever overridden.
+
+        * css/CSSStyleSheet.h:
+        * xml/XSLStyleSheet.h:
+
+2011-11-27  Andreas Kling  <kling@webkit.org>
+
         Add assertions that CSSMappedAttributeDeclarations aren't using strict parsing.
         <http://webkit.org/b/73167>
 
