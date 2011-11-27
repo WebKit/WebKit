@@ -1,5 +1,20 @@
 2011-11-27  Andreas Kling  <kling@webkit.org>
 
+        Add assertions that CSSMappedAttributeDeclarations aren't using strict parsing.
+        <http://webkit.org/b/73167>
+
+        Reviewed by Antti Koivisto.
+
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::createMappedDecl):
+        * html/HTMLTableElement.cpp:
+        (WebCore::HTMLTableElement::additionalAttributeStyleDecls):
+        (WebCore::HTMLTableElement::addSharedCellBordersDecl):
+        (WebCore::HTMLTableElement::addSharedCellPaddingDecl):
+        (WebCore::HTMLTableElement::addSharedGroupDecls):
+
+2011-11-27  Andreas Kling  <kling@webkit.org>
+
         CSSStyleSheet: Removed unused create() overload.
         <http://webkit.org/b/73170>
 
