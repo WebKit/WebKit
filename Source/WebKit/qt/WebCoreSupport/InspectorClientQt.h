@@ -52,6 +52,7 @@ public:
     virtual void inspectorDestroyed();
 
     virtual void openInspectorFrontend(WebCore::InspectorController*);
+    virtual void closeInspectorFrontend();
     virtual void bringFrontendToFront();
 
     virtual void highlight();
@@ -87,7 +88,6 @@ public:
 
     virtual void bringToFront();
     virtual void closeWindow();
-    virtual void disconnectFromBackend();
 
     virtual void attachWindow();
     virtual void detachWindow();

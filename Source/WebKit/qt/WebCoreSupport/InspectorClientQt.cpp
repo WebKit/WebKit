@@ -189,8 +189,7 @@ InspectorClientQt::InspectorClientQt(QWebPage* page)
 void InspectorClientQt::inspectorDestroyed()
 {
 #if ENABLE(INSPECTOR)
-    if (m_frontendClient)
-        m_frontendClient->inspectorClientDestroyed();
+    closeInspectorFrontend();
 
     InspectorServerQt* webInspectorServer = InspectorServerQt::server();
     if (webInspectorServer)
@@ -243,9 +242,19 @@ void InspectorClientQt::openInspectorFrontend(WebCore::InspectorController* insp
 #endif
 }
 
+void InspectorClientQt::closeInspectorFrontend()
+{
+#if ENABLE(INSPECTOR)
+    if (m_frontendClient)
+        m_frontendClient->inspectorClientDestroyed();
+#endif
+}
+
 void InspectorClientQt::bringFrontendToFront()
 {
+#if ENABLE(INSPECTOR)
     m_frontendClient->bringToFront();
+#endif
 }
 
 void InspectorClientQt::releaseFrontendPage()
@@ -348,11 +357,6 @@ void InspectorFrontendClientQt::closeWindow()
     destroyInspectorView(true);
 }
 
-void InspectorFrontendClientQt::disconnectFromBackend()
-{
-    destroyInspectorView(false);
-}
-
 void InspectorFrontendClientQt::attachWindow()
 {
     notImplemented();
@@ -407,6 +411,7 @@ void InspectorFrontendClientQt::destroyInspectorView(bool notifyInspectorControl
 
 void InspectorFrontendClientQt::inspectorClientDestroyed()
 {
+    destroyInspectorView(false);
     m_inspectorClient = 0;
     m_inspectedWebPage = 0;
 }

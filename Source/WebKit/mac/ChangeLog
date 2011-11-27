@@ -1,3 +1,15 @@
+2011-11-26  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: remove disconnectFromBackend from the protocol.
+        https://bugs.webkit.org/show_bug.cgi?id=73127
+
+        Reviewed by Yury Semikhatsky.
+
+        * WebCoreSupport/WebInspectorClient.h:
+        * WebCoreSupport/WebInspectorClient.mm:
+        (WebInspectorClient::inspectorDestroyed):
+        (WebInspectorClient::closeInspectorFrontend):
+
 2011-11-26  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r101193.

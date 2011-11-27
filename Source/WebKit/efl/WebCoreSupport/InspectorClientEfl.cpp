@@ -38,6 +38,11 @@ void InspectorClientEfl::openInspectorFrontend(InspectorController*)
     notImplemented();
 }
 
+void InspectorClientEfl::closeInspectorFrontend()
+{
+    notImplemented();
+}
+
 void InspectorClientEfl::bringFrontendToFront()
 {
     notImplemented();

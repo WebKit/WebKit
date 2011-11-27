@@ -61,7 +61,6 @@ public:
     void requestAttachWindow();
     void requestDetachWindow();
     void closeWindow();
-    void disconnectFromBackend();
     void bringToFront();
     void inspectedURLChanged(const String&);
 

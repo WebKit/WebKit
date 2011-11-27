@@ -83,8 +83,6 @@ InspectorAgent::~InspectorAgent()
 
 void InspectorAgent::inspectedPageDestroyed()
 {
-    if (m_frontend)
-        m_frontend->inspector()->disconnectFromBackend();
     ASSERT(m_inspectedPage);
     m_inspectedPage = 0;
 }
