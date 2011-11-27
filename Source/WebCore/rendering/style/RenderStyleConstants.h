@@ -98,6 +98,8 @@ enum EBorderStyle { BNONE, BHIDDEN, INSET, GROOVE, OUTSET, RIDGE, DOTTED, DASHED
 
 enum EBorderPrecedence { BOFF, BTABLE, BCOLGROUP, BCOL, BROWGROUP, BROW, BCELL };
 
+enum EEdgePrecedence { BAFTEREDGE, BENDEDGE, BBEFOREEDGE, BSTARTEDGE };
+
 enum OutlineIsAuto { AUTO_OFF = 0, AUTO_ON };
 
 enum EPosition {

@@ -1,3 +1,57 @@
+2011-11-27  Robert Hogan  <robert@webkit.org>
+
+        CSS 2.1 failure: border-conflict-element-*
+        https://bugs.webkit.org/show_bug.cgi?id=71244
+
+        Reviewed by Julien Chaffraix.
+        
+        From http://www.w3.org/TR/CSS21/tables.html#border-conflict-resolution :
+          "When two adjacent cells have the same border-width and the same border-style in a 
+          'border-collapse: collapse' table, then the color of the border from the leftmost cell wins
+          (if the table's 'direction' is 'ltr'; right, if it is 'rtl') and the color of the border
+          from the topmost cell wins."
+
+        So WebCore::compareBorders needs to account for the position of the cell when 
+        deciding which border wins the comparison. This will ensure that the winning border is 
+        sorted to the appropriate position in the sorted list of borders for painting.
+
+        When conflicting collapsed borders are in the same cell, the following order of
+        precedence is used (where 4 has highest precedence):
+
+                           __3__
+                          |     |
+                        4 |     | 1
+                          |_____|
+                             2
+
+        This fixes the following failing tests from the border-conflict-element-* set
+        in the CSS 2.1 test suite:
+          border-conflict-element-001d.htm
+          border-conflict-element-0037.htm
+
+        One test in the suite is known to be wrong, so a corrected version has been landed outside the 
+        css2.1 folder:
+          border-conflict-element-002.htm
+
+        This change entails rebaselining quite a few tests, see the LayoutTests ChangeLog for a full
+        explanation of the rebaselines.
+
+        * rendering/RenderTableCell.cpp:
+        (WebCore::compareBorders): Compare the cells' position from the left (in 'ltr') and right (in 'rtl')
+                                   of the table and the cells' position from the top of the table when nothing
+                                   else in the style, width, or grouping of the borders determines precedence.
+                                   If the conflicting borders are in the same cell, apply the same logic to the position of the borders.
+        (WebCore::RenderTableCell::collapsedStartBorder): Pass the cell's position and its table's direction to CollapsedBorderValue
+        (WebCore::RenderTableCell::collapsedEndBorder): ditto
+        (WebCore::RenderTableCell::collapsedBeforeBorder): ditto
+        (WebCore::RenderTableCell::collapsedAfterBorder): ditto
+        * rendering/style/CollapsedBorderValue.h:
+        (WebCore::CollapsedBorderValue::CollapsedBorderValue): Learn the position of the border's cell and the direction of its table
+        (WebCore::CollapsedBorderValue::columnOffset): the cell's offset from the top of the table
+        (WebCore::CollapsedBorderValue::rowOffset): the cell's offset from the start of the table
+        (WebCore::CollapsedBorderValue::edge): which edge of the cell the border is on
+        (WebCore::CollapsedBorderValue::operator==): cells with the same position in the table are equal
+
 2011-11-26  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: remove disconnectFromBackend from the protocol.

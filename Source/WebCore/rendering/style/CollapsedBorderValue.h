@@ -36,10 +36,23 @@ public:
     {
     }
 
+    CollapsedBorderValue(const BorderValue& b, Color c, EBorderPrecedence p, unsigned rowOffset, unsigned columnOffset, EEdgePrecedence edge)
+        : m_border(b)
+        , m_borderColor(c)
+        , m_precedence(p)
+        , m_rowOffset(rowOffset)
+        , m_columnOffset(columnOffset)
+        , m_edge(edge)
+    {
+    }
+
     CollapsedBorderValue(const BorderValue& b, Color c, EBorderPrecedence p)
         : m_border(b)
         , m_borderColor(c)
         , m_precedence(p)
+        , m_rowOffset(0)
+        , m_columnOffset(0)
+        , m_edge(BAFTEREDGE)
     {
     }
 
@@ -49,16 +62,22 @@ public:
     const Color& color() const { return m_borderColor; }
     bool isTransparent() const { return m_border.isTransparent(); }
     EBorderPrecedence precedence() const { return m_precedence; }
+    unsigned columnOffset() const { return m_columnOffset; }
+    unsigned rowOffset() const { return m_rowOffset; }
+    EEdgePrecedence edge() const { return m_edge; }
 
     bool operator==(const CollapsedBorderValue& o) const
     {
-        return m_border == o.m_border && m_borderColor == o.m_borderColor && m_precedence == o.m_precedence;
+        return m_border == o.m_border && m_borderColor == o.m_borderColor && m_precedence == o.m_precedence && m_rowOffset == o.m_rowOffset && m_columnOffset == o.m_columnOffset && m_edge == o.m_edge;
     }
 
 private:
     BorderValue m_border;
     Color m_borderColor;
     EBorderPrecedence m_precedence;
+    unsigned m_rowOffset;
+    unsigned m_columnOffset;
+    EEdgePrecedence m_edge;
 };
 
 } // namespace WebCore
