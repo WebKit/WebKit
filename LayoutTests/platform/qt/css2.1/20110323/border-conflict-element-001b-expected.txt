@@ -1,0 +1,35 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x285
+  RenderBlock {HTML} at (0,0) size 800x285
+    RenderBody {BODY} at (8,16) size 784x261
+      RenderBlock {P} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 338x21
+          text run at (0,0) width 338: "Test passes if there is a filled green square and "
+        RenderInline {STRONG} at (0,0) size 49x21
+          RenderText {#text} at (338,0) size 49x21
+            text run at (338,0) width 49: "no red"
+        RenderText {#text} at (387,0) size 4x21
+          text run at (387,0) width 4: "."
+      RenderTable {TABLE} at (40,61) size 200x200 [border: (20px none #808080)]
+        RenderTableSection {TBODY} at (0,20) size 200x160
+          RenderTableRow {TR} at (0,0) size 200x40
+            RenderTableCell {TD} at (0,0) size 50x40 [border: (20px solid #008000) none (20px solid #008000) none] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (50,0) size 50x40 [border: (20px solid #008000) none (20px solid #008000) none] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (100,0) size 50x40 [border: (20px solid #008000) none (20px solid #008000) none] [r=0 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (150,0) size 50x40 [border: (20px solid #008000) none (20px solid #008000) none] [r=0 c=3 rs=1 cs=1]
+          RenderTableRow {TR} at (0,40) size 200x40
+            RenderTableCell {TD} at (0,40) size 50x40 [border: (20px solid #FF0000) none (20px solid #008000) none] [r=1 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (50,40) size 50x40 [border: (20px solid #FF0000) none (20px solid #008000) none] [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (100,40) size 50x40 [border: (20px solid #FF0000) none (20px solid #008000) none] [r=1 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (150,40) size 50x40 [border: (20px solid #FF0000) none (20px solid #008000) none] [r=1 c=3 rs=1 cs=1]
+          RenderTableRow {TR} at (0,80) size 200x40
+            RenderTableCell {TD} at (0,80) size 50x40 [border: (20px solid #FF0000) none (20px solid #008000) none] [r=2 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (50,80) size 50x40 [border: (20px solid #FF0000) none (20px solid #008000) none] [r=2 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (100,80) size 50x40 [border: (20px solid #FF0000) none (20px solid #008000) none] [r=2 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (150,80) size 50x40 [border: (20px solid #FF0000) none (20px solid #008000) none] [r=2 c=3 rs=1 cs=1]
+          RenderTableRow {TR} at (0,120) size 200x40
+            RenderTableCell {TD} at (0,120) size 50x40 [border: (20px solid #FF0000) none (20px solid #008000) none] [r=3 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (50,120) size 50x40 [border: (20px solid #FF0000) none (20px solid #008000) none] [r=3 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (100,120) size 50x40 [border: (20px solid #FF0000) none (20px solid #008000) none] [r=3 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (150,120) size 50x40 [border: (20px solid #FF0000) none (20px solid #008000) none] [r=3 c=3 rs=1 cs=1]
