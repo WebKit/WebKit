@@ -1,3 +1,16 @@
+2011-11-26  Hajime Morrita  <morrita@chromium.org>
+
+        Needs WTF_INLINE and JS_INLINE
+        https://bugs.webkit.org/show_bug.cgi?id=72853
+
+        Reviewed by Kevin Ollivier.
+
+        Added WTF_HIDDEN, WTF_INLINE and JS_INLINE which
+        indirect __attribute__((visibility("hidden"))
+
+        * config.h:
+        * wtf/ExportMacros.h:
+
 2011-11-25  Michael Saboff  <msaboff@apple.com>
 
         String.prototype.toLower should be optimized for 8 bit strings
