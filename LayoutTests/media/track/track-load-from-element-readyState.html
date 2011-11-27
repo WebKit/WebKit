@@ -11,7 +11,7 @@
             {
                 consoleWrite("EVENT(load)");
                 track = document.getElementById('testTrackSrc'); 
-                testExpected("track.track.readyState", TextTrack.LOADED);
+                testExpected("track.readyState", HTMLTrackElement.LOADED);
                 endTest();
             }
 
