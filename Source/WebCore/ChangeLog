@@ -1,3 +1,12 @@
+2011-11-26  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Unreviewed build fix. Change the order of wx header includes
+        to avoid a windows.h inclusion order issue, and make sure a stub
+        method returns a value.
+
+        * platform/wx/FileSystemWx.cpp:
+        (WebCore::openFile):
+
 2011-11-26  Alejandro G. Castro  <alex@igalia.com>
 
         Fix compilation after r101157.

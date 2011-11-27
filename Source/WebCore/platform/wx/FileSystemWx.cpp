@@ -30,10 +30,6 @@
 #include "config.h"
 #include "FileSystem.h"
 
-#include "NotImplemented.h"
-#include "PlatformString.h"
-#include <wtf/text/CString.h>
-
 #include <wx/wx.h>
 #include <wx/datetime.h>
 #include <wx/dir.h>
@@ -41,6 +37,10 @@
 #include <wx/file.h>
 #include <wx/filefn.h>
 #include <wx/filename.h>
+
+#include "NotImplemented.h"
+#include "PlatformString.h"
+#include <wtf/text/CString.h>
 
 #if OS(DARWIN)
 #include <CoreFoundation/CoreFoundation.h>
@@ -122,6 +122,7 @@ String openTemporaryFile(const String& prefix, PlatformFileHandle& handle)
 PlatformFileHandle openFile(const String& path, FileOpenMode mode)
 {
     notImplemented();
+    return 0;
 }
     
 void closeFile(PlatformFileHandle& handle)

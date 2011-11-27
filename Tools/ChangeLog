@@ -1,3 +1,9 @@
+2011-11-26  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Unreviewed build fix. Enable the inspector.
+        
+        * waf/build/settings.py:
+
 2011-11-26  Martin Robinson  <mrobinson@igalia.com>
 
         Try to fix the build after r101174.
