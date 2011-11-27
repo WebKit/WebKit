@@ -91,6 +91,9 @@ void HTMLTrackElement::attributeChanged(Attribute* attr, bool preserveDecls)
 {
     HTMLElement::attributeChanged(attr, preserveDecls);
 
+    if (!RuntimeEnabledFeatures::webkitVideoTrackEnabled())
+        return;
+
     const QualifiedName& attrName = attr->name();
     if (attrName == srcAttr) {
         if (!getAttribute(srcAttr).isEmpty() && mediaElement())
