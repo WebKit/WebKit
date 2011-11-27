@@ -176,3 +176,6 @@ void (*wkSetCFURLResponseMIMEType)(CFURLResponseRef, CFStringRef mimeType);
 dispatch_source_t (*wkCreateVMPressureDispatchOnMainQueue)(void);
 #endif
 
+#if !defined(BUILDING_ON_SNOW_LEOPARD) && !defined(BUILDING_ON_LION)
+NSString *(*wkGetMacOSXVersionString)(void);
+#endif

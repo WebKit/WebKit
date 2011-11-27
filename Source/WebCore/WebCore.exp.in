@@ -1556,6 +1556,10 @@ _wkCursor
 _wkGetNSEventMomentumPhase
 #endif
 
+#if !defined(BUILDING_ON_SNOW_LEOPARD) && !defined(BUILDING_ON_LION)
+_wkGetMacOSXVersionString
+#endif
+
 _wkUnregisterUniqueIdForElement
 _wkAccessibilityHandleFocusChanged
 _wkGetAXTextMarkerTypeID

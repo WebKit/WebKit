@@ -1,3 +1,14 @@
+2011-11-27  Mark Rowe  <mrowe@apple.com>
+
+        <http://webkit.org/b/72665> Switch to a more modern approach to retrieving the OS marketing version
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::macOSXVersionString): Use WKGetMacOSXVersionString.
+        * WebProcess/WebCoreSupport/mac/WebSystemInterface.mm:
+        (InitWebCoreSystemInterface): Set up wkGetMacOSXVersionString.
+
 2011-11-26  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: remove disconnectFromBackend from the protocol.

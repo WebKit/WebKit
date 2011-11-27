@@ -37,6 +37,7 @@
 #import "TextChecker.h"
 #import "WebPageMessages.h"
 #import "WebProcessProxy.h"
+#import <WebKitSystemInterface.h>
 #import <wtf/text/StringConcatenate.h>
 
 @interface NSApplication (Details)
@@ -56,6 +57,18 @@ namespace WebKit {
 #else
 #error Unknown architecture
 #endif
+
+#if !defined(BUILDING_ON_SNOW_LEOPARD) && !defined(BUILDING_ON_LION)
+
+static String macOSXVersionString()
+{
+    // Use underscores instead of dots because when we first added the Mac OS X version to the user agent string
+    // we were concerned about old DHTML libraries interpreting "4." as Netscape 4. That's no longer a concern for us
+    // but we're sticking with the underscores for compatibility with the format used by older versions of Safari.
+    return [WKGetMacOSXVersionString() stringByReplacingOccurrencesOfString:@"." withString:@"_"];
+}
+
+#else
 
 static inline int callGestalt(OSType selector)
 {
@@ -79,6 +92,8 @@ static String macOSXVersionString()
         return String::format("%d_%d", major, minor);
     return String::format("%d", major);
 }
+
+#endif // !defined(BUILDING_ON_SNOW_LEOPARD) && !defined(BUILDING_ON_LION)
 
 static String userVisibleWebKitVersionString()
 {

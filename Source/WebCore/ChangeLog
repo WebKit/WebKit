@@ -1,3 +1,13 @@
+2011-11-27  Mark Rowe  <mrowe@apple.com>
+
+        <http://webkit.org/b/72665> Switch to a more modern approach to retrieving the OS marketing version
+
+        Reviewed by Dan Bernstein.
+
+        * WebCore.exp.in: Expose the necessary symbol.
+        * platform/mac/WebCoreSystemInterface.h: Ditto.
+        * platform/mac/WebCoreSystemInterface.mm: Ditto.
+
 2011-11-27  Anna Cavender  <annacc@chromium.org>
 
         Move readyState from TextTrack to HTMLTrackElement

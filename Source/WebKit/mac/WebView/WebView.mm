@@ -506,6 +506,18 @@ static CFMutableSetRef allWebViewsSet;
 
 @implementation WebView (WebPrivate)
 
+#if !defined(BUILDING_ON_SNOW_LEOPARD) && !defined(BUILDING_ON_LION)
+
+static NSString *createMacOSXVersionString()
+{
+    // Use underscores instead of dots because when we first added the Mac OS X version to the user agent string
+    // we were concerned about old DHTML libraries interpreting "4." as Netscape 4. That's no longer a concern for us
+    // but we're sticking with the underscores for compatibility with the format used by older versions of Safari.
+    return [WKGetMacOSXVersionString() stringByReplacingOccurrencesOfString:@"." withString:@"_"];
+}
+
+#else
+
 static inline int callGestalt(OSType selector)
 {
     SInt32 value = 0;
@@ -528,6 +540,8 @@ static NSString *createMacOSXVersionString()
         return [[NSString alloc] initWithFormat:@"%d_%d", major, minor];
     return [[NSString alloc] initWithFormat:@"%d", major];
 }
+
+#endif // !defined(BUILDING_ON_SNOW_LEOPARD) && !defined(BUILDING_ON_LION)
 
 static NSString *createUserVisibleWebKitVersionString()
 {

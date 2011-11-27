@@ -141,7 +141,7 @@ void InitWebCoreSystemInterface(void)
         INIT(CopyAXTextMarkerRangeEnd);
         INIT(AccessibilityHandleFocusChanged);
         INIT(CreateAXUIElementRef);
-        INIT(UnregisterUniqueIdForElement);        
+        INIT(UnregisterUniqueIdForElement);
 
         INIT(GetCFURLResponseMIMEType);
         INIT(GetCFURLResponseURL);
@@ -151,6 +151,10 @@ void InitWebCoreSystemInterface(void)
 
 #if !defined(BUILDING_ON_SNOW_LEOPARD)
         INIT(CreateVMPressureDispatchOnMainQueue);
+#endif
+
+#if !defined(BUILDING_ON_SNOW_LEOPARD) && !defined(BUILDING_ON_LION)
+        INIT(GetMacOSXVersionString);
 #endif
 
     });
