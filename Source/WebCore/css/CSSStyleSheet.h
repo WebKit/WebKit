@@ -44,10 +44,6 @@ public:
     {
         return adoptRef(new CSSStyleSheet(ownerNode, String(), KURL(), String()));
     }
-    static PassRefPtr<CSSStyleSheet> create(Node* ownerNode, const String& originalURL, const KURL& finalURL)
-    {
-        return adoptRef(new CSSStyleSheet(ownerNode, originalURL, finalURL, String()));
-    }
     static PassRefPtr<CSSStyleSheet> create(Node* ownerNode, const String& originalURL, const KURL& finalURL, const String& charset)
     {
         return adoptRef(new CSSStyleSheet(ownerNode, originalURL, finalURL, charset));

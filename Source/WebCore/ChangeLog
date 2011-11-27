@@ -1,3 +1,16 @@
+2011-11-27  Andreas Kling  <kling@webkit.org>
+
+        CSSStyleSheet: Removed unused create() overload.
+        <http://webkit.org/b/73170>
+
+        Reviewed by Antonio Gomes.
+
+        Nobody was using CSSStyleSheet::create(ownerNode, originalURL, finalURL)
+        so remove it.
+
+        * css/CSSStyleSheet.h:
+        (WebCore::CSSStyleSheet::create):
+
 2011-11-27  Robert Hogan  <robert@webkit.org>
 
         CSS 2.1 failure: border-conflict-element-*
