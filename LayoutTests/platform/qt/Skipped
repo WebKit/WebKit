@@ -2379,10 +2379,6 @@ fast/borders/inline-mask-overlay-image-outset-vertical-rl.html
 # https://bugs.webkit.org/show_bug.cgi?id=69933
 fast/borders/inline-mask-overlay-image-outset.html
 
-# REGRESSION(r97881): It broke fast/dom/error-to-string-stack-overflow.html
-# https://bugs.webkit.org/show_bug.cgi?id=70476
-fast/dom/error-to-string-stack-overflow.html
-
 # fast/events/touch/page-scaled-touch-gesture-click.html is failing
 # Introduced in r97988. Failure: "Gesture manager is not implemented."
 # https://bugs.webkit.org/show_bug.cgi?id=70593

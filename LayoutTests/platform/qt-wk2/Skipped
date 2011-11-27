@@ -359,7 +359,6 @@ fast/dom/DeviceOrientation/no-page-cache.html
 fast/dom/DeviceOrientation/no-synchronous-events.html
 fast/dom/DeviceOrientation/null-values.html
 fast/dom/DeviceOrientation/updates.html
-fast/dom/error-to-string-stack-overflow.html
 fast/dom/HTMLSelectElement/named-options.html
 fast/dom/NamedNodeMap-setNamedItem-crash.html
 fast/dom/navigation-type-back-forward.html
