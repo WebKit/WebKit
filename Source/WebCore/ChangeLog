@@ -1,5 +1,17 @@
 2011-11-27  Andreas Kling  <kling@webkit.org>
 
+        CSSMutableStyleDeclaration: setCssText() mostly duplicates parseDeclaration().
+        <http://webkit.org/b/73171>
+
+        Reviewed by Antti Koivisto.
+
+        Let setCssText() call parseDeclaration() instead of duplicating the functionality.
+
+        * css/CSSMutableStyleDeclaration.cpp:
+        (WebCore::CSSMutableStyleDeclaration::setCssText):
+
+2011-11-27  Andreas Kling  <kling@webkit.org>
+
         CSS/XSLStyleSheet: checkLoaded() needn't be virtual.
         <http://webkit.org/b/73169>
 

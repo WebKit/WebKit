@@ -894,23 +894,9 @@ String CSSMutableStyleDeclaration::cssText() const
 
 void CSSMutableStyleDeclaration::setCssText(const String& text, ExceptionCode& ec)
 {
-    ASSERT(!m_iteratorCount);
-
-#if ENABLE(MUTATION_OBSERVERS)
-    StyleAttributeMutationScope mutationScope(this);
-#endif
-
     ec = 0;
-    m_properties.clear();
-    CSSParser parser(useStrictParsing());
-    parser.parseDeclaration(this, text);
-
-#if ENABLE(MUTATION_OBSERVERS)
-    mutationScope.enqueueMutationRecord();
-#endif
-
     // FIXME: Detect syntax errors and set ec.
-    setNeedsStyleRecalc();
+    parseDeclaration(text);
 }
 
 void CSSMutableStyleDeclaration::merge(const CSSMutableStyleDeclaration* other, bool argOverridesOnConflict)
