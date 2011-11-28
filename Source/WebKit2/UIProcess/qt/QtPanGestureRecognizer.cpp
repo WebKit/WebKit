@@ -39,7 +39,7 @@ QtPanGestureRecognizer::QtPanGestureRecognizer(QtWebPageEventHandler* eventHandl
 
 bool QtPanGestureRecognizer::recognize(const QTouchEvent* event, qint64 eventTimestampMillis)
 {
-    if (interactionEngine())
+    if (!interactionEngine())
         return false;
 
     // Pan gesture always starts on TouchBegin unless the engine is suspended, or

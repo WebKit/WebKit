@@ -1,3 +1,16 @@
+2011-11-28  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
+
+        [Qt][WK2] Fix panning after r101179
+        https://bugs.webkit.org/show_bug.cgi?id=73224
+
+        Reviewed by Noam Rosenthal.
+
+        We were wrongly checking for interactionEngine() instead of
+        !interactionEngine() after the QtWebPageEventHandler refactor.
+
+        * UIProcess/qt/QtPanGestureRecognizer.cpp:
+        (WebKit::QtPanGestureRecognizer::recognize):
+
 2011-11-28  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Make sure the useFixedLayout feature is consistently handled
