@@ -34,7 +34,7 @@
             'chromium/TestNavigationController.h',
             'chromium/TestShell.cpp',
             'chromium/TestShell.h',
-            'chromium/TestShellLinux.cpp',
+            'chromium/TestShellAndroid.cpp',
             'chromium/TestShellGtk.cpp',
             'chromium/TestShellMac.mm',
             'chromium/TestShellWin.cpp',
@@ -73,11 +73,6 @@
             'TestNetscapePlugIn/main.cpp',
         ],
         'conditions': [
-            ['(OS=="linux" and toolkit_uses_gtk!=1) or OS=="android"', {
-                'drt_files': [
-                    'chromium/TestShellStub.cpp',
-                ],
-            }],
             ['OS=="win"', {
                 'drt_files': [
                     'chromium/WebThemeControlDRTWin.cpp',

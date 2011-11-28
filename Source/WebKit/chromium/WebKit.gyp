@@ -757,9 +757,6 @@
                     ],
                 }],
                 ['toolkit_uses_gtk == 1', {
-                    'defines': [
-                        'WTF_USE_GTK=1'
-                    ],
                     'dependencies': [
                         '<(chromium_src_dir)/build/linux/system.gyp:gtk',
                     ],
