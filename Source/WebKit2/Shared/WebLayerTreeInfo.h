@@ -39,7 +39,8 @@ enum { InvalidWebLayerID = 0 };
 struct WebLayerUpdateInfo {
     WebLayerUpdateInfo() { }
     WebLayerUpdateInfo(const IntRect& r)
-        : rect(r) { }
+        : layerID(InvalidWebLayerID)
+        , rect(r) { }
 
     WebLayerID layerID;
     IntRect rect;
@@ -50,14 +51,21 @@ struct WebLayerUpdateInfo {
 };
 
 struct WebLayerAnimation {
-    WebLayerAnimation() : keyframeList(AnimatedPropertyInvalid) { }
+    WebLayerAnimation()
+        : operation(InvalidAnimation)
+        , keyframeList(AnimatedPropertyInvalid)
+        , startTime(0) { }
     WebLayerAnimation(const KeyframeValueList& valueList) 
-        : keyframeList(valueList) { }
+        : operation(InvalidAnimation)
+        , keyframeList(valueList)
+        , startTime(0) { }
+
     String name;
     enum Operation {
         AddAnimation,
         RemoveAnimation,
-        PauseAnimation
+        PauseAnimation,
+        InvalidAnimation
     } operation;
     IntSize boxSize;
     RefPtr<Animation> animation;
@@ -69,6 +77,15 @@ struct WebLayerAnimation {
 };
 
 struct WebLayerInfo {
+    WebLayerInfo()
+        : id(InvalidWebLayerID)
+        , parent(InvalidWebLayerID)
+        , replica(InvalidWebLayerID)
+        , mask(InvalidWebLayerID)
+        , imageBackingStoreID(0)
+        , opacity(0)
+        , flags(0) { }
+
     String name;
     WebLayerID id;
     WebLayerID parent;
@@ -106,6 +123,10 @@ struct WebLayerInfo {
 };
 
 struct WebLayerTreeInfo {
+    WebLayerTreeInfo()
+        : rootLayerID(InvalidWebLayerID)
+        , contentScale(0) { }
+
     Vector<WebLayerInfo> layers;
     Vector<WebLayerID> deletedLayerIDs;
     WebLayerID rootLayerID;
