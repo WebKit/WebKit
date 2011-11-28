@@ -1,3 +1,24 @@
+2011-11-27  Tommy Widenflycht  <tommyw@google.com>
+
+        [chromium] MediaStream API: Updating the licences to the correct one.
+        https://bugs.webkit.org/show_bug.cgi?id=73129
+
+        Replacing the incorrect ones I have submitted with the correct ones.
+
+        Reviewed by Darin Fisher.
+
+        * bridge/PeerConnectionHandler.cpp:
+        * bridge/PeerConnectionHandlerInternal.cpp:
+        * bridge/PeerConnectionHandlerInternal.h:
+        * public/WebMediaStreamDescriptor.h:
+        * public/WebMediaStreamRegistry.h:
+        * public/WebMediaStreamSource.h:
+        * public/WebPeerConnectionHandler.h:
+        * public/WebPeerConnectionHandlerClient.h:
+        * src/WebMediaStreamDescriptor.cpp:
+        * src/WebMediaStreamRegistry.cpp:
+        * src/WebMediaStreamSource.cpp:
+
 2011-11-26  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: remove disconnectFromBackend from the protocol.
