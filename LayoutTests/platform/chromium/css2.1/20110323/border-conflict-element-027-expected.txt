@@ -1,12 +1,12 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x250
-  RenderBlock {HTML} at (0,0) size 800x250
-    RenderBody {BODY} at (8,16) size 784x226
-      RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 303x18
-          text run at (0,0) width 303: "Test passes if there is no red visible on the page."
-      RenderTable {TABLE} at (0,34) size 192x192 [border: (2px none #808080)]
+layer at (0,0) size 800x252
+  RenderBlock {HTML} at (0,0) size 800x252
+    RenderBody {BODY} at (8,16) size 784x228
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 290x19
+          text run at (0,0) width 290: "Test passes if there is no red visible on the page."
+      RenderTable {TABLE} at (0,36) size 192x192 [border: (2px none #808080)]
         RenderTableCol {COLGROUP} at (0,0) size 0x0
           RenderTableCol {COL} at (0,0) size 0x0 [border: (5px solid #FF0000)]
         RenderTableSection {TBODY} at (2,2) size 187x187 [border: (5px solid #000000)]
