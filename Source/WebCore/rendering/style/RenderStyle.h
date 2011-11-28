@@ -979,7 +979,7 @@ public:
     void setOverflowY(EOverflow v) { noninherited_flags._overflowY = v; }
     void setVisibility(EVisibility v) { inherited_flags._visibility = v; }
     void setVerticalAlign(EVerticalAlign v) { noninherited_flags._vertical_align = v; }
-    void setVerticalAlignLength(Length l) { SET_VAR(m_box, m_verticalAlign, l) }
+    void setVerticalAlignLength(Length length) { setVerticalAlign(LENGTH); SET_VAR(m_box, m_verticalAlign, length) }
 
     void setHasClip(bool b = true) { SET_VAR(visual, hasClip, b) }
     void setClipLeft(Length v) { SET_VAR(visual, clip.m_left, v) }

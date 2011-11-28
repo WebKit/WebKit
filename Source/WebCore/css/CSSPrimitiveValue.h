@@ -120,6 +120,7 @@ public:
                                                     type == CSSPrimitiveValue::CSS_REMS; }
 
     bool isLength() const { return isUnitTypeLength(m_primitiveUnitType); }
+    bool isPercentage() const { return m_primitiveUnitType == CSSPrimitiveValue::CSS_PERCENTAGE; }
 
     static PassRefPtr<CSSPrimitiveValue> createIdentifier(int identifier) { return adoptRef(new CSSPrimitiveValue(identifier)); }
     static PassRefPtr<CSSPrimitiveValue> createColor(unsigned rgbValue) { return adoptRef(new CSSPrimitiveValue(rgbValue)); }

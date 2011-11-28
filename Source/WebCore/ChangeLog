@@ -1,5 +1,28 @@
 2011-11-27  Luke Macpherson   <macpherson@chromium.org>
 
+        Implement vertical-align property in CSSStyleApplyProperty.
+        https://bugs.webkit.org/show_bug.cgi?id=72926
+
+        Reviewed by Andreas Kling.
+
+        Part of the ongoing refactoring of CSSStyleSelector::applyProperty.
+
+        Covered by several tests under fast/css.
+
+        * css/CSSPrimitiveValue.h:
+        (WebCore::CSSPrimitiveValue::isPercent):
+        * css/CSSStyleApplyProperty.cpp:
+        (WebCore::ApplyPropertyVerticalAlign::applyValue):
+        (WebCore::ApplyPropertyVerticalAlign::createHandler):
+        (WebCore::CSSStyleApplyProperty::CSSStyleApplyProperty):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        * rendering/style/RenderStyle.h:
+        (WebCore::InheritedFlags::setVerticalAlignLength):
+        Calling setVerticalAlignLength now automatically sets verticalAlign to LENGTH.
+
+2011-11-27  Luke Macpherson   <macpherson@chromium.org>
+
         Implement CSSPropertyTextAlign in CSSStyleApplyProperty.
         https://bugs.webkit.org/show_bug.cgi?id=73102
 

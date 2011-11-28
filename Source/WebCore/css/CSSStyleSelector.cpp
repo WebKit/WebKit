@@ -2656,28 +2656,6 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         m_style->setResize(r);
         return;
     }
-    case CSSPropertyVerticalAlign:
-    {
-        HANDLE_INHERIT_AND_INITIAL(verticalAlign, VerticalAlign)
-        if (!primitiveValue)
-            return;
-
-        if (primitiveValue->getIdent()) {
-          m_style->setVerticalAlign(*primitiveValue);
-          return;
-        }
-
-        int type = primitiveValue->primitiveType();
-        Length length;
-        if (CSSPrimitiveValue::isUnitTypeLength(type))
-            length = primitiveValue->computeLength<Length>(style(), m_rootElementStyle, zoomFactor);
-        else if (type == CSSPrimitiveValue::CSS_PERCENTAGE)
-            length = Length(primitiveValue->getDoubleValue(), Percent);
-
-        m_style->setVerticalAlign(LENGTH);
-        m_style->setVerticalAlignLength(length);
-        return;
-    }
     case CSSPropertyFontSize:
     {
         FontDescription fontDescription = m_style->fontDescription();
@@ -4010,6 +3988,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSSPropertyMaxHeight:
     case CSSPropertyHeight:
     case CSSPropertyMinHeight:
+    case CSSPropertyVerticalAlign:
     case CSSPropertyWebkitTransformOriginX:
     case CSSPropertyWebkitTransformOriginY:
     case CSSPropertyWebkitTransformOriginZ:
