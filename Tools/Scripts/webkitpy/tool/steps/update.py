@@ -43,8 +43,4 @@ class Update(AbstractStep):
         if not self._options.update:
             return
         log("Updating working directory")
-        self._tool.executive.run_and_throw_if_fail(self._update_command(), quiet=self._options.quiet, cwd=self._tool.scm().checkout_root)
-
-    def _update_command(self):
-        update_command = self._tool.port().update_webkit_command(self._options.non_interactive)
-        return update_command
+        self._tool.executive.run_and_throw_if_fail(self._tool.port().update_webkit_command(), quiet=self._options.quiet, cwd=self._tool.scm().checkout_root)

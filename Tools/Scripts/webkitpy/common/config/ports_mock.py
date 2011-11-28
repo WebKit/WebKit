@@ -37,7 +37,7 @@ class MockPort(object):
     def check_webkit_style_command(self):
         return ["mock-check-webkit-style"]
 
-    def update_webkit_command(self, non_interactive=False):
+    def update_webkit_command(self):
         return ["mock-update-webkit"]
 
     def build_webkit_command(self, build_style=None):

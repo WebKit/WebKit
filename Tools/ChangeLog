@@ -1,3 +1,19 @@
+2011-11-28  Tony Chang  <tony@chromium.org>
+
+        Revert r101279, broke the ews and cq bots.
+
+        * Scripts/update-webkit:
+        * Scripts/webkitdirs.pm:
+        (determineIsChromium):
+        (buildChromium):
+        * Scripts/webkitpy/common/config/ports.py:
+        (WebKitPort.update_webkit_command):
+        (ChromiumPort.update_webkit_command):
+        * Scripts/webkitpy/common/config/ports_mock.py:
+        (MockPort.update_webkit_command):
+        * Scripts/webkitpy/tool/steps/update.py:
+        * Scripts/webkitpy/tool/steps/update_unittest.py: Removed.
+
 2011-11-28  Ojan Vafai  <ojan@chromium.org>
 
         testlistjson on the test results server doesn't understand hierarchical results format
