@@ -563,7 +563,8 @@ bool AbstractState::execute(NodeIndex nodeIndex)
             m_isValid = false;
             break;
         }
-        forNode(node.child1()).filter(PredictCell);
+        if (isCellPrediction(m_graph[node.child1()].prediction()))
+            forNode(node.child1()).filter(PredictCell);
         clobberStructures(nodeIndex);
         forNode(nodeIndex).makeTop();
         break;

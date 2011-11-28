@@ -1,3 +1,28 @@
+2011-11-28  Filip Pizlo  <fpizlo@apple.com>
+
+        GetById should not always speculate cell
+        https://bugs.webkit.org/show_bug.cgi?id=73181
+
+        Reviewed by Gavin Barraclough.
+        
+        GetById will now speculate cell if the predictions of the base are cell.
+        Otherwise it will do like the old JIT (and like the old non-speculative
+        DFG JIT): if not cell, go straight to slow-path but otherwise don't OSR
+        out. This is a 1% speed-up on SunSpider.
+
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::execute):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::setupArgumentsWithExecState):
+        (JSC::DFG::SpeculativeJIT::callOperation):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::cachedGetById):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
 2011-11-28  Oliver Hunt  <oliver@apple.com>
 
         Move typed array implementations into wtf

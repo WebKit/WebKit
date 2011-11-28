@@ -72,6 +72,7 @@ typedef EncodedJSValue DFG_OPERATION (*J_DFGOperation_EJJ)(ExecState*, EncodedJS
 typedef EncodedJSValue DFG_OPERATION (*J_DFGOperation_EJ)(ExecState*, EncodedJSValue);
 typedef EncodedJSValue DFG_OPERATION (*J_DFGOperation_EJP)(ExecState*, EncodedJSValue, void*);
 typedef EncodedJSValue DFG_OPERATION (*J_DFGOperation_ECI)(ExecState*, JSCell*, Identifier*);
+typedef EncodedJSValue DFG_OPERATION (*J_DFGOperation_EJI)(ExecState*, EncodedJSValue, Identifier*);
 typedef EncodedJSValue DFG_OPERATION (*J_DFGOperation_EP)(ExecState*, void*);
 typedef EncodedJSValue DFG_OPERATION (*J_DFGOperation_EPP)(ExecState*, void*, void*);
 typedef EncodedJSValue DFG_OPERATION (*J_DFGOperation_EGI)(ExecState*, GlobalResolveInfo*, Identifier*);
@@ -99,10 +100,11 @@ EncodedJSValue DFG_OPERATION operationValueAdd(ExecState*, EncodedJSValue encode
 EncodedJSValue DFG_OPERATION operationValueAddNotNumber(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2);
 EncodedJSValue DFG_OPERATION operationGetByVal(ExecState*, EncodedJSValue encodedBase, EncodedJSValue encodedProperty);
 EncodedJSValue DFG_OPERATION operationGetByValCell(ExecState*, JSCell*, EncodedJSValue encodedProperty);
-EncodedJSValue DFG_OPERATION operationGetById(ExecState*, JSCell*, Identifier*);
-EncodedJSValue DFG_OPERATION operationGetByIdBuildList(ExecState*, JSCell*, Identifier*);
-EncodedJSValue DFG_OPERATION operationGetByIdProtoBuildList(ExecState*, JSCell*, Identifier*);
-EncodedJSValue DFG_OPERATION operationGetByIdOptimize(ExecState*, JSCell*, Identifier*);
+EncodedJSValue DFG_OPERATION operationGetById(ExecState*, EncodedJSValue, Identifier*);
+EncodedJSValue DFG_OPERATION operationGetByIdBuildList(ExecState*, EncodedJSValue, Identifier*);
+EncodedJSValue DFG_OPERATION operationGetByIdProtoBuildList(ExecState*, EncodedJSValue, Identifier*);
+EncodedJSValue DFG_OPERATION operationGetByIdOptimize(ExecState*, EncodedJSValue, Identifier*);
+EncodedJSValue DFG_OPERATION operationGetMethodOptimize(ExecState*, EncodedJSValue, Identifier*);
 EncodedJSValue DFG_OPERATION operationResolve(ExecState*, Identifier*);
 EncodedJSValue DFG_OPERATION operationResolveBase(ExecState*, Identifier*);
 EncodedJSValue DFG_OPERATION operationResolveBaseStrictPut(ExecState*, Identifier*);

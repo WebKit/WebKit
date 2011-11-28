@@ -3248,7 +3248,28 @@ void SpeculativeJIT::compile(Node& node)
             break;
         }
         
-        SpeculateCellOperand base(this, node.child1());
+        if (isCellPrediction(at(node.child1()).prediction())) {
+            SpeculateCellOperand base(this, node.child1());
+            GPRTemporary result(this, base);
+            
+            GPRReg baseGPR = base.gpr();
+            GPRReg resultGPR = result.gpr();
+            GPRReg scratchGPR;
+            
+            if (resultGPR == baseGPR)
+                scratchGPR = tryAllocate();
+            else
+                scratchGPR = resultGPR;
+            
+            base.use();
+            
+            cachedGetById(baseGPR, resultGPR, scratchGPR, node.identifierNumber());
+            
+            jsValueResult(resultGPR, m_compileIndex, UseChildrenCalledExplicitly);
+            break;
+        }
+        
+        JSValueOperand base(this, node.child1());
         GPRTemporary result(this, base);
         
         GPRReg baseGPR = base.gpr();
@@ -3261,10 +3282,13 @@ void SpeculativeJIT::compile(Node& node)
             scratchGPR = resultGPR;
         
         base.use();
-
-        cachedGetById(baseGPR, resultGPR, scratchGPR, node.identifierNumber());
-
+        
+        JITCompiler::Jump notCell = m_jit.branchTestPtr(JITCompiler::NonZero, baseGPR, GPRInfo::tagMaskRegister);
+        
+        cachedGetById(baseGPR, resultGPR, scratchGPR, node.identifierNumber(), notCell);
+        
         jsValueResult(resultGPR, m_compileIndex, UseChildrenCalledExplicitly);
+        
         break;
     }
 

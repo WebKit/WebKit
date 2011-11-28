@@ -839,7 +839,7 @@ void SpeculativeJIT::nonSpeculativeBasicArithOp(NodeType op, Node &node)
     jsValueResult(resultTagGPR, resultPayloadGPR, m_compileIndex, UseChildrenCalledExplicitly);
 }
 
-JITCompiler::Call SpeculativeJIT::cachedGetById(GPRReg basePayloadGPR, GPRReg resultTagGPR, GPRReg resultPayloadGPR, GPRReg scratchGPR, unsigned identifierNumber, JITCompiler::Jump slowPathTarget)
+JITCompiler::Call SpeculativeJIT::cachedGetById(GPRReg baseTagGPROrNone, GPRReg basePayloadGPR, GPRReg resultTagGPR, GPRReg resultPayloadGPR, GPRReg scratchGPR, unsigned identifierNumber, JITCompiler::Jump slowPathTarget)
 {
     m_jit.beginUninterruptedSequence();
     JITCompiler::DataLabelPtr structureToCompare;
@@ -860,7 +860,11 @@ JITCompiler::Call SpeculativeJIT::cachedGetById(GPRReg basePayloadGPR, GPRReg re
     JITCompiler::Label slowCase = m_jit.label();
 
     silentSpillAllRegisters(resultTagGPR, resultPayloadGPR);
-    JITCompiler::Call functionCall = callOperation(operationGetByIdOptimize, resultTagGPR, resultPayloadGPR, basePayloadGPR, identifier(identifierNumber));
+    JITCompiler::Call functionCall;
+    if (baseTagGPROrNone == InvalidGPRReg)
+        functionCall = callOperation(operationGetByIdOptimize, resultTagGPR, resultPayloadGPR, JSValue::CellTag, basePayloadGPR, identifier(identifierNumber));
+    else
+        functionCall = callOperation(operationGetByIdOptimize, resultTagGPR, resultPayloadGPR, baseTagGPROrNone, basePayloadGPR, identifier(identifierNumber));
     silentFillAllRegisters(resultTagGPR, resultPayloadGPR);
     
     done.link(&m_jit);
@@ -3299,24 +3303,50 @@ void SpeculativeJIT::compile(Node& node)
             break;
         }
         
-        SpeculateCellOperand base(this, node.child1());
+        if (isCellPrediction(at(node.child1()).prediction())) {
+            SpeculateCellOperand base(this, node.child1());
+            GPRTemporary resultTag(this, base);
+            GPRTemporary resultPayload(this);
+            
+            GPRReg baseGPR = base.gpr();
+            GPRReg resultTagGPR = resultTag.gpr();
+            GPRReg resultPayloadGPR = resultPayload.gpr();
+            GPRReg scratchGPR;
+            
+            if (resultTagGPR == baseGPR)
+                scratchGPR = resultPayloadGPR;
+            else
+                scratchGPR = resultTagGPR;
+            
+            base.use();
+            
+            cachedGetById(InvalidGPRReg, baseGPR, resultTagGPR, resultPayloadGPR, scratchGPR, node.identifierNumber());
+            
+            jsValueResult(resultTagGPR, resultPayloadGPR, m_compileIndex, UseChildrenCalledExplicitly);
+            break;
+        }
+        
+        JSValueOperand base(this, node.child1());
         GPRTemporary resultTag(this, base);
         GPRTemporary resultPayload(this);
         
-        GPRReg baseGPR = base.gpr();
+        GPRReg baseTagGPR = base.tagGPR();
+        GPRReg basePayloadGPR = base.payloadGPR();
         GPRReg resultTagGPR = resultTag.gpr();
         GPRReg resultPayloadGPR = resultPayload.gpr();
         GPRReg scratchGPR;
-        
-        if (resultTagGPR == baseGPR)
+
+        if (resultTagGPR == basePayloadGPR)
             scratchGPR = resultPayloadGPR;
         else
             scratchGPR = resultTagGPR;
         
         base.use();
-
-        cachedGetById(baseGPR, resultTagGPR, resultPayloadGPR, scratchGPR, node.identifierNumber());
-
+        
+        JITCompiler::Jump notCell = m_jit.branch32(JITCompiler::NotEqual, baseTagGPR, TrustedImm32(JSValue::CellTag));
+        
+        cachedGetById(baseTagGPR, basePayloadGPR, resultTagGPR, resultPayloadGPR, scratchGPR, node.identifierNumber(), notCell);
+        
         jsValueResult(resultTagGPR, resultPayloadGPR, m_compileIndex, UseChildrenCalledExplicitly);
         break;
     }
