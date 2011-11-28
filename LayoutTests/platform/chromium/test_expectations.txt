@@ -3841,4 +3841,5 @@ BUGCR105025 MAC CPU GPU : fast/canvas/webgl/css-webkit-canvas.html = IMAGE
 BUGCR105025 MAC CPU GPU : fast/canvas/webgl/css-webkit-canvas-repaint.html = IMAGE
 
 BUGWK73227 : fast/dom/clone-node-style.html = CRASH PASS
+BUGWK73250 DEBUG : fast/block/child-not-removed-from-parent-lineboxes-crash.html = CRASH PASS
 
