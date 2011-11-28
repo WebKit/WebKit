@@ -3524,30 +3524,6 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSSPropertyWebkitHyphens:
         HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(hyphens, Hyphens);
         return;
-    case CSSPropertyWebkitHyphenateLimitAfter: {
-        HANDLE_INHERIT_AND_INITIAL(hyphenationLimitAfter, HyphenationLimitAfter);
-        if (primitiveValue->getIdent() == CSSValueAuto)
-            m_style->setHyphenationLimitAfter(-1);
-        else
-            m_style->setHyphenationLimitAfter(primitiveValue->getValue<short>(CSSPrimitiveValue::CSS_NUMBER));
-        return;
-    }
-    case CSSPropertyWebkitHyphenateLimitBefore: {
-        HANDLE_INHERIT_AND_INITIAL(hyphenationLimitBefore, HyphenationLimitBefore);
-        if (primitiveValue->getIdent() == CSSValueAuto)
-            m_style->setHyphenationLimitBefore(-1);
-        else
-            m_style->setHyphenationLimitBefore(primitiveValue->getValue<short>(CSSPrimitiveValue::CSS_NUMBER));
-        return;
-    }
-    case CSSPropertyWebkitHyphenateLimitLines: {
-        HANDLE_INHERIT_AND_INITIAL(hyphenationLimitLines, HyphenationLimitLines);
-        if (primitiveValue->getIdent() == CSSValueNoLimit)
-            m_style->setHyphenationLimitLines(-1);
-        else
-            m_style->setHyphenationLimitLines(primitiveValue->getValue<short>(CSSPrimitiveValue::CSS_NUMBER));
-        return;
-    }
     case CSSPropertyWebkitLocale: {
         HANDLE_INHERIT_AND_INITIAL(locale, Locale);
         if (primitiveValue->getIdent() == CSSValueAuto)
@@ -4003,6 +3979,9 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSSPropertyWebkitFlowFrom:
     case CSSPropertyWebkitHighlight:
     case CSSPropertyWebkitHyphenateCharacter:
+    case CSSPropertyWebkitHyphenateLimitAfter:
+    case CSSPropertyWebkitHyphenateLimitBefore:
+    case CSSPropertyWebkitHyphenateLimitLines:
     case CSSPropertyWebkitTextCombine:
     case CSSPropertyWebkitTextEmphasisPosition:
     case CSSPropertyWebkitTextEmphasisStyle:
