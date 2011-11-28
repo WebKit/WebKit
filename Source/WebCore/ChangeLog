@@ -1,3 +1,16 @@
+2011-11-28  Peter Rybin  <peter.rybin@gmail.com>
+
+        Web Inspector: [protocol] generate C++ classes for protocol JSON named types
+        https://bugs.webkit.org/show_bug.cgi?id=72835
+
+        Reviewed by Pavel Feldman.
+
+        Extends python generator functionality.
+        Makes constructor in InspectorObject public.
+
+        * inspector/CodeGeneratorInspector.py:
+        * inspector/InspectorValues.h:
+
 2011-11-28  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] WTF should be built as separate static library
