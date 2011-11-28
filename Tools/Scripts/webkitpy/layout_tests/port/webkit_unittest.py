@@ -177,18 +177,18 @@ BUG_SKIPPED SKIP : media = FAIL""")
         # Delay setting _executive to avoid logging during construction
         port._executive = MockExecutive(should_log=True)
         port._options = MockOptions(configuration="Release")  # This should not be necessary, but I think TestWebKitPort is actually reading from disk (and thus detects the current configuration).
-        expected_stderr = "MOCK run_command: ['Tools/Scripts/build-dumprendertree', '--release'], cwd=/mock-checkout\n"
+        expected_stderr = "MOCK run_command: ['Tools/Scripts/build-dumprendertree', '--release'], cwd=/mock-checkout, env={'LC_ALL': 'C', 'MOCK_ENVIRON_COPY': '1'}\n"
         self.assertTrue(output.assert_outputs(self, port._build_driver, expected_stderr=expected_stderr))
 
         # Make sure when passed --webkit-test-runner web build the right tool.
         port._options = MockOptions(webkit_test_runner=True, configuration="Release")
-        expected_stderr = "MOCK run_command: ['Tools/Scripts/build-dumprendertree', '--release'], cwd=/mock-checkout\nMOCK run_command: ['Tools/Scripts/build-webkittestrunner', '--release'], cwd=/mock-checkout\n"
+        expected_stderr = "MOCK run_command: ['Tools/Scripts/build-dumprendertree', '--release'], cwd=/mock-checkout, env={'LC_ALL': 'C', 'MOCK_ENVIRON_COPY': '1'}\nMOCK run_command: ['Tools/Scripts/build-webkittestrunner', '--release'], cwd=/mock-checkout, env={'LC_ALL': 'C', 'MOCK_ENVIRON_COPY': '1'}\n"
         self.assertTrue(output.assert_outputs(self, port._build_driver, expected_stderr=expected_stderr))
 
         # Make sure that failure to build returns False.
         port._executive = MockExecutive(should_log=True, should_throw=True)
         # Because WK2 currently has to build both webkittestrunner and DRT, if DRT fails, that's the only one it tries.
-        expected_stderr = "MOCK run_command: ['Tools/Scripts/build-dumprendertree', '--release'], cwd=/mock-checkout\n"
+        expected_stderr = "MOCK run_command: ['Tools/Scripts/build-dumprendertree', '--release'], cwd=/mock-checkout, env={'LC_ALL': 'C', 'MOCK_ENVIRON_COPY': '1'}\n"
         self.assertFalse(output.assert_outputs(self, port._build_driver, expected_stderr=expected_stderr))
 
     def _assert_config_file_for_platform(self, port, platform, config_file):

@@ -28,6 +28,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import logging
+import os
 import sys
 
 from webkitpy.common.checkout import Checkout
@@ -36,6 +37,7 @@ from webkitpy.common.memoized import memoized
 from webkitpy.common.net import bugzilla, buildbot, web
 from webkitpy.common.net.buildbot.chromiumbuildbot import ChromiumBuildBot
 from webkitpy.common.system import executive, filesystem, platforminfo, user, workspace
+from webkitpy.common.system.environment import Environment
 from webkitpy.common.watchlist.watchlistloader import WatchListLoader
 from webkitpy.layout_tests.port.factory import PortFactory
 
@@ -93,6 +95,9 @@ class Host(object):
                 SVN.executable_name = 'svn.bat'
             except OSError, e:
                 _log.debug('Failed to engage svn.bat Windows hack.')
+
+    def copy_current_environment(self):
+        return Environment(os.environ.copy())
 
     def _initialize_scm(self, patch_directories=None):
         if sys.platform == "win32":

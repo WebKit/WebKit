@@ -1,19 +1,19 @@
-# Copyright (C) 2010 Google Inc. All rights reserved.
-# 
+# Copyright (C) 2011 Google Inc. All rights reserved.
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
 # met:
-# 
-#     * Redistributions of source code must retain the above copyright
+#
+#    * Redistributions of source code must retain the above copyright
 # notice, this list of conditions and the following disclaimer.
-#     * Redistributions in binary form must reproduce the above
+#    * Redistributions in binary form must reproduce the above
 # copyright notice, this list of conditions and the following disclaimer
 # in the documentation and/or other materials provided with the
 # distribution.
-#     * Neither the name of Google Inc. nor the names of its
+#    * Neither the name of Google Inc. nor the names of its
 # contributors may be used to endorse or promote products derived from
 # this software without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
 # "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
 # LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -26,35 +26,14 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from webkitpy.tool.steps.abstractstep import AbstractStep
-from webkitpy.tool.steps.options import Options
-from webkitpy.common.system.deprecated_logging import log
+import unittest
+
+from .environment import Environment
 
 
-class Build(AbstractStep):
-    @classmethod
-    def options(cls):
-        return AbstractStep.options() + [
-            Options.build,
-            Options.quiet,
-            Options.build_style,
-        ]
-
-    def build(self, build_style):
-        environment = self._tool.copy_current_environment()
+class EnvironmentTest(unittest.TestCase):
+    def test_disable_gcc_smartquotes(self):
+        environment = Environment({})
         environment.disable_gcc_smartquotes()
         env = environment.to_dictionary()
-
-        build_webkit_command = self._tool.port().build_webkit_command(build_style=build_style)
-        self._tool.executive.run_and_throw_if_fail(build_webkit_command, self._options.quiet,
-            cwd=self._tool.scm().checkout_root, env=env)
-
-    def run(self, state):
-        if not self._options.build:
-            return
-        log("Building WebKit")
-        if self._options.build_style == "both":
-            self.build("debug")
-            self.build("release")
-        else:
-            self.build(self._options.build_style)
+        self.assertEqual(env['LC_ALL'], 'C')
