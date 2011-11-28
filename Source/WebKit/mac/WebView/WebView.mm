@@ -513,7 +513,7 @@ static NSString *createMacOSXVersionString()
     // Use underscores instead of dots because when we first added the Mac OS X version to the user agent string
     // we were concerned about old DHTML libraries interpreting "4." as Netscape 4. That's no longer a concern for us
     // but we're sticking with the underscores for compatibility with the format used by older versions of Safari.
-    return [WKGetMacOSXVersionString() stringByReplacingOccurrencesOfString:@"." withString:@"_"];
+    return [[WKGetMacOSXVersionString() stringByReplacingOccurrencesOfString:@"." withString:@"_"] retain];
 }
 
 #else

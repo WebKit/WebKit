@@ -1,3 +1,16 @@
+2011-11-28  Adam Roben  <aroben@apple.com>
+
+        Properly retain the OS X version string
+
+        Fixes <http://webkit.org/b/73214> REGRESSION (r101215): Crash on launch beneath +[WebView
+        _standardUserAgentWithApplicationName:]
+
+        Reviewed by Antti Koivisto.
+
+        * WebView/WebView.mm:
+        (createMacOSXVersionString): Retain the string we're returning, since this function is
+        supposed to return an owning reference to the caller.
+
 2011-11-28  Hayato Ito  <hayato@chromium.org>
 
         Fix chromium canary build after r101215.
