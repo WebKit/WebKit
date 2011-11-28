@@ -1,3 +1,16 @@
+2011-11-28  Ken Buchanan  <kenrb@chromium.org>
+
+        Crash due to bidi style in isolated run
+        https://bugs.webkit.org/show_bug.cgi?id=72978
+
+        Reviewed by Eric Seidel.
+
+        Prevent the UBA from changing the embedding level when inside an isolated run.
+
+        * rendering/InlineIterator.h:
+        (WebCore::notifyObserverEnteredObject):
+        (WebCore::notifyObserverWillExitObject):
+
 2011-11-28  Martin Robinson  <mrobinson@igalia.com>
 
         Fix 'make dist' by adding two missing files to source list.

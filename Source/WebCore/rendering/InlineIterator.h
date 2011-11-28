@@ -139,7 +139,8 @@ static inline void notifyObserverEnteredObject(Observer* observer, RenderObject*
     }
 
     // FIXME: Should unicode-bidi: plaintext really be embedding override/embed characters here?
-    observer->embed(embedCharFromDirection(style->direction(), unicodeBidi), FromStyleOrDOM);
+    if (!observer->inIsolate())
+        observer->embed(embedCharFromDirection(style->direction(), unicodeBidi), FromStyleOrDOM);
 }
 
 template <class Observer>
@@ -157,7 +158,8 @@ static inline void notifyObserverWillExitObject(Observer* observer, RenderObject
     }
 
     // Otherwise we pop any embed/override character we added when we opened this tag.
-    observer->embed(WTF::Unicode::PopDirectionalFormat, FromStyleOrDOM);
+    if (!observer->inIsolate())
+        observer->embed(WTF::Unicode::PopDirectionalFormat, FromStyleOrDOM);
 }
 
 static inline bool isIteratorTarget(RenderObject* object)
