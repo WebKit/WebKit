@@ -2636,6 +2636,7 @@ webcore_sources += \
 	Source/WebCore/platform/graphics/Font.h \
 	Source/WebCore/platform/graphics/FontMetrics.h \
 	Source/WebCore/platform/graphics/FontOrientation.h \
+	Source/WebCore/platform/graphics/FontPlatformData.h \
 	Source/WebCore/platform/graphics/FontRenderingMode.h \
 	Source/WebCore/platform/graphics/FontSelector.h \
 	Source/WebCore/platform/graphics/FontSmoothingMode.h \
@@ -2798,6 +2799,7 @@ webcore_sources += \
 	Source/WebCore/platform/mediastream/MediaStreamDescriptor.h \
 	Source/WebCore/platform/mediastream/MediaStreamSource.h \
 	Source/WebCore/platform/mediastream/PeerConnectionHandler.h \
+	Source/WebCore/platform/mediastream/PeerConnectionHandlerClient.h \
 	Source/WebCore/platform/mediastream/gstreamer/PeerConnectionHandler.cpp \
 	Source/WebCore/platform/mock/DeviceOrientationClientMock.cpp \
 	Source/WebCore/platform/mock/DeviceOrientationClientMock.h \

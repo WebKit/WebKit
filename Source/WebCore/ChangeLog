@@ -1,3 +1,9 @@
+2011-11-28  Martin Robinson  <mrobinson@igalia.com>
+
+        Fix 'make dist' by adding two missing files to source list.
+
+        * GNUmakefile.list.am: Add missing files.
+
 2011-11-25  Ryosuke Niwa  <rniwa@webkit.org>
 
         dir=auto should imply unicode-bidi:isolate by default
