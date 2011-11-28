@@ -2448,6 +2448,19 @@ bool FrameView::shouldSuspendScrollAnimations() const
     return m_frame->loader()->state() != FrameStateComplete;
 }
 
+void FrameView::scrollbarStyleChanged(int newStyle, bool forceUpdate)
+{
+    Page* page = m_frame->page();
+    if (!page)
+        return;
+    if (page->mainFrame() != m_frame)
+        return;
+    page->chrome()->client()->recommendedScrollbarStyleDidChange(newStyle);
+
+    if (forceUpdate)
+        ScrollView::scrollbarStyleChanged(newStyle, forceUpdate);
+}
+
 void FrameView::setAnimatorsAreActive()
 {
     Page* page = m_frame->page();

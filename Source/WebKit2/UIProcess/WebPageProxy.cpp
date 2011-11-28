@@ -3302,6 +3302,13 @@ void WebPageProxy::notifyScrollerThumbIsVisibleInRect(const IntRect& scrollerThu
     m_visibleScrollerThumbRect = scrollerThumb;
 }
 
+void WebPageProxy::recommendedScrollbarStyleDidChange(int32_t newStyle)
+{
+#if PLATFORM(MAC)
+    m_pageClient->recommendedScrollbarStyleDidChange(newStyle);
+#endif
+}
+
 void WebPageProxy::didChangeScrollbarsForMainFrame(bool hasHorizontalScrollbar, bool hasVerticalScrollbar)
 {
     m_mainFrameHasHorizontalScrollbar = hasHorizontalScrollbar;

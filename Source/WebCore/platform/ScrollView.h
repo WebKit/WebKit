@@ -59,7 +59,7 @@ public:
     virtual void didCompleteRubberBand(const IntSize&) const;
     virtual void notifyPageThatContentAreaWillPaint() const;
     virtual bool isScrollCornerVisible() const;
-    virtual void scrollbarStyleChanged();
+    virtual void scrollbarStyleChanged(int newStyle, bool forceUpdate);
 
     // NOTE: This should only be called by the overriden setScrollOffset from ScrollableArea.
     virtual void scrollTo(const IntSize& newOffset);

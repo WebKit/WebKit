@@ -670,6 +670,7 @@ private:
     void requestGeolocationPermissionForFrame(uint64_t geolocationID, uint64_t frameID, String originIdentifier);
     void runModal();
     void notifyScrollerThumbIsVisibleInRect(const WebCore::IntRect&);
+    void recommendedScrollbarStyleDidChange(int32_t newStyle);
     void didChangeScrollbarsForMainFrame(bool hasHorizontalScrollbar, bool hasVerticalScrollbar);
     void didChangeScrollOffsetPinningForMainFrame(bool pinnedToLeftSide, bool pinnedToRightSide);
     void didChangePageCount(unsigned);

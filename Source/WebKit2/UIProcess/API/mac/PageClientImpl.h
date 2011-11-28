@@ -122,6 +122,8 @@ private:
     virtual String dismissCorrectionPanelSoon(WebCore::ReasonForDismissingCorrectionPanel);
     virtual void recordAutocorrectionResponse(WebCore::EditorClient::AutocorrectionResponseType, const String& replacedString, const String& replacementString);
 
+    virtual void recommendedScrollbarStyleDidChange(int32_t newStyle);
+
     virtual WKView* wkView() const { return m_wkView; }
 
     WKView* m_wkView;

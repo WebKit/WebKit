@@ -325,6 +325,7 @@ namespace WebCore {
         virtual void didCompleteAnimatedScroll() const { }
         
         virtual void notifyScrollerThumbIsVisibleInRect(const IntRect&) { }
+        virtual void recommendedScrollbarStyleDidChange(int /*newStyle*/) { }
 
         enum DialogType {
             AlertDialog = 0,

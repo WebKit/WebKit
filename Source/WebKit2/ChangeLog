@@ -1,3 +1,37 @@
+2011-11-28  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=72551
+        When the recommended scrollbar style changes, WKView's tracking options should 
+        adjust accordingly
+        -and corresponding-
+        <rdar://problem/10409328>
+
+        Reviewed by Darin Adler.
+
+        These new functions take care of passing along the 
+        recommendedScrollbarStyleDidChange() message that originates in the ChromeClient. 
+        * UIProcess/API/mac/PageClientImpl.h:
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::recommendedScrollbarStyleDidChange):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::recommendedScrollbarStyleDidChange):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+
+        This is where we actually respond to the recommendedScrollbarStyleDidChange 
+        message. We remove the existing tracking area and create a new tracking area with 
+        the appropriate tracking options.
+        * UIProcess/API/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::recommendedScrollbarStyleDidChange):
+
+        BuiltInPDFView inherits from WebCore::ScrollableArea, so scrollbarStyleChanged() 
+        must now take two parameters like the one in ScrollableArea.
+        * WebProcess/Plugins/PDF/BuiltInPDFView.cpp:
+        (WebKit::BuiltInPDFView::scrollbarStyleChanged):
+        * WebProcess/Plugins/PDF/BuiltInPDFView.h:
+
 2011-11-28  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
 
         [Qt][WK2] Fix panning after r101179
