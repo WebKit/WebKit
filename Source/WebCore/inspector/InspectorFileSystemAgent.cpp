@@ -33,6 +33,7 @@
 
 #if ENABLE(INSPECTOR) && ENABLE(FILE_SYSTEM)
 
+#include "DOMFileSystem.h"
 #include "InspectorState.h"
 #include "InstrumentingAgents.h"
 
