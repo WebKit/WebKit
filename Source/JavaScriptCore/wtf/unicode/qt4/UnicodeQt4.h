@@ -371,6 +371,7 @@ inline CharCategory category(UChar32 c)
     return (CharCategory) U_MASK(QChar::category(uint32_t(c)));
 }
 
-} }
+} // namespace Unicode
+} // namespace WTF
 
 #endif // WTF_UNICODE_QT4_H

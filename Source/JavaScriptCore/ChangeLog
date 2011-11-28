@@ -1,3 +1,10 @@
+2011-11-28  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Unreviewed prospective build fix. Touch the file to trigger correct
+        rebuild on the Qt mips/sh4/sl bot.
+
+        * wtf/unicode/qt4/UnicodeQt4.h:
+
 2011-11-28  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] Remove cruft from project file
