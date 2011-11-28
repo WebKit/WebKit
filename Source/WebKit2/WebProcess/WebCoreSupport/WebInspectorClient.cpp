@@ -51,7 +51,8 @@ void WebInspectorClient::openInspectorFrontend(InspectorController*)
 
 void WebInspectorClient::closeInspectorFrontend()
 {
-    m_page->inspector()->didClose();
+    if (m_page->inspector())
+        m_page->inspector()->didClose();
 }
 
 void WebInspectorClient::bringFrontendToFront()

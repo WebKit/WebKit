@@ -1,3 +1,13 @@
+2011-11-28  Pavel Feldman  <pfeldman@chromium.org>
+
+        REGRESSION (r101201): Crash inside WebKit::WebInspector::didClose() when closing any tab
+        https://bugs.webkit.org/show_bug.cgi?id=73183
+
+        Reviewed by Yury Semikhatsky.
+
+        * WebProcess/WebCoreSupport/WebInspectorClient.cpp:
+        (WebKit::WebInspectorClient::closeInspectorFrontend):
+
 2011-11-28  Balazs Kelemen  <kbalazs@webkit.org>
 
         Reviewed by Simon Hausmann.
