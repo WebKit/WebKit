@@ -1,3 +1,11 @@
+2011-11-28  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix make distcheck issues.
+
+        * GNUmakefile.list.am: Add missing files.
+        * bindings/gobject/GNUmakefile.am: Only build
+        WebKitDOMHTMLPropertiesCollection when microdate is enabled.
+
 2011-11-28  Luke Macpherson   <macpherson@chromium.org>
 
         Implement CSS border image properties in CSSStyleApplyProperty.

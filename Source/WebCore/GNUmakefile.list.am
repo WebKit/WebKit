@@ -2080,6 +2080,9 @@ webcore_sources += \
 	Source/WebCore/inspector/InspectorDOMStorageAgent.h \
 	Source/WebCore/inspector/InspectorDOMStorageResource.cpp \
 	Source/WebCore/inspector/InspectorDOMStorageResource.h \
+	Source/WebCore/inspector/InspectorFileSystemAgent.cpp \
+	Source/WebCore/inspector/InspectorFileSystemAgent.h \
+	Source/WebCore/inspector/InspectorFileSystemInstrumentation.h \
 	Source/WebCore/inspector/InspectorFrontendChannel.h \
 	Source/WebCore/inspector/InspectorFrontendClient.h \
 	Source/WebCore/inspector/InspectorFrontendClientLocal.cpp \
