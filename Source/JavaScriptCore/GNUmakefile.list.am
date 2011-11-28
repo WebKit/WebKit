@@ -11,27 +11,27 @@ javascriptcore_h_api += \
 	Source/JavaScriptCore/API/WebKitAvailability.h
 
 javascriptcore_built_nosources += \
-	Source/JavaScriptCore/KeywordLookup.h \
-	Source/JavaScriptCore/Lexer.lut.h \
-	Source/JavaScriptCore/RegExpJitTables.h \
-	Source/JavaScriptCore/runtime/ArrayConstructor.lut.h \
-	Source/JavaScriptCore/runtime/ArrayPrototype.lut.h \
-	Source/JavaScriptCore/runtime/BooleanPrototype.lut.h \
-	Source/JavaScriptCore/runtime/DateConstructor.lut.h \
-	Source/JavaScriptCore/runtime/DatePrototype.lut.h \
-	Source/JavaScriptCore/runtime/ErrorPrototype.lut.h \
-	Source/JavaScriptCore/runtime/JSGlobalObject.lut.h \
-	Source/JavaScriptCore/runtime/JSONObject.lut.h \
-	Source/JavaScriptCore/runtime/MathObject.lut.h \
-	Source/JavaScriptCore/runtime/NumberConstructor.lut.h \
-	Source/JavaScriptCore/runtime/NumberPrototype.lut.h \
-	Source/JavaScriptCore/runtime/ObjectConstructor.lut.h \
-	Source/JavaScriptCore/runtime/ObjectPrototype.lut.h \
-	Source/JavaScriptCore/runtime/RegExpConstructor.lut.h \
-	Source/JavaScriptCore/runtime/RegExpObject.lut.h \
-	Source/JavaScriptCore/runtime/RegExpPrototype.lut.h \
-	Source/JavaScriptCore/runtime/StringConstructor.lut.h \
-	Source/JavaScriptCore/runtime/StringPrototype.lut.h
+	DerivedSources/JavaScriptCore/KeywordLookup.h \
+	DerivedSources/JavaScriptCore/Lexer.lut.h \
+	DerivedSources/JavaScriptCore/RegExpJitTables.h \
+	DerivedSources/JavaScriptCore/ArrayConstructor.lut.h \
+	DerivedSources/JavaScriptCore/ArrayPrototype.lut.h \
+	DerivedSources/JavaScriptCore/BooleanPrototype.lut.h \
+	DerivedSources/JavaScriptCore/DateConstructor.lut.h \
+	DerivedSources/JavaScriptCore/DatePrototype.lut.h \
+	DerivedSources/JavaScriptCore/ErrorPrototype.lut.h \
+	DerivedSources/JavaScriptCore/JSGlobalObject.lut.h \
+	DerivedSources/JavaScriptCore/JSONObject.lut.h \
+	DerivedSources/JavaScriptCore/MathObject.lut.h \
+	DerivedSources/JavaScriptCore/NumberConstructor.lut.h \
+	DerivedSources/JavaScriptCore/NumberPrototype.lut.h \
+	DerivedSources/JavaScriptCore/ObjectConstructor.lut.h \
+	DerivedSources/JavaScriptCore/ObjectPrototype.lut.h \
+	DerivedSources/JavaScriptCore/RegExpConstructor.lut.h \
+	DerivedSources/JavaScriptCore/RegExpObject.lut.h \
+	DerivedSources/JavaScriptCore/RegExpPrototype.lut.h \
+	DerivedSources/JavaScriptCore/StringConstructor.lut.h \
+	DerivedSources/JavaScriptCore/StringPrototype.lut.h
 
 javascriptcore_sources += \
 	Source/JavaScriptCore/API/APICast.h \

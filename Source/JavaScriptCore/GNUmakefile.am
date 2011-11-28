@@ -65,9 +65,7 @@ javascriptcore_cppflags += \
 	-I$(srcdir)/Source/JavaScriptCore/wtf/text \
 	-I$(srcdir)/Source/JavaScriptCore/wtf/unicode \
 	-I$(srcdir)/Source/JavaScriptCore/yarr \
-	-I$(top_builddir)/Source/JavaScriptCore \
-	-I$(top_builddir)/Source/JavaScriptCore/parser \
-	-I$(top_builddir)/Source/JavaScriptCore/runtime
+	-I$(top_builddir)/DerivedSources/JavaScriptCore
 
 javascriptcore_cflags += \
 	$(global_cflags) \
@@ -76,16 +74,18 @@ javascriptcore_cflags += \
 
 pkgconfig_DATA += Source/JavaScriptCore/javascriptcoregtk-@WEBKITGTK_API_VERSION@.pc
 
-Source/JavaScriptCore/Lexer.lut.h: $(srcdir)/Source/JavaScriptCore/create_hash_table $(srcdir)/Source/JavaScriptCore/parser/Keywords.table
+$(shell mkdir -p DerivedSources/JavaScriptCore)
+
+DerivedSources/JavaScriptCore/Lexer.lut.h: $(srcdir)/Source/JavaScriptCore/create_hash_table $(srcdir)/Source/JavaScriptCore/parser/Keywords.table
 	$(AM_V_GEN)$(PERL) $^ > $@
 
-Source/JavaScriptCore/%.lut.h: $(srcdir)/Source/JavaScriptCore/create_hash_table $(srcdir)/Source/JavaScriptCore/%.cpp
+DerivedSources/JavaScriptCore/%.lut.h: $(srcdir)/Source/JavaScriptCore/create_hash_table $(srcdir)/Source/JavaScriptCore/runtime/%.cpp
 	$(AM_V_GEN)$(PERL) $^ -i > $@
 
-Source/JavaScriptCore/RegExpJitTables.h: $(srcdir)/Source/JavaScriptCore/create_regex_tables
+DerivedSources/JavaScriptCore/RegExpJitTables.h: $(srcdir)/Source/JavaScriptCore/create_regex_tables
 	$(AM_V_GEN)$(PYTHON) $^ > $@
 
-Source/JavaScriptCore/KeywordLookup.h: $(srcdir)/Source/JavaScriptCore/KeywordLookupGenerator.py $(srcdir)/Source/JavaScriptCore/parser/Keywords.table
+DerivedSources/JavaScriptCore/KeywordLookup.h: $(srcdir)/Source/JavaScriptCore/KeywordLookupGenerator.py $(srcdir)/Source/JavaScriptCore/parser/Keywords.table
 	$(AM_V_GEN)$(PYTHON) $^ > $@
 
 jsc: $(javascriptcore_built_nosources) Programs/jsc$(EXEEXT)
@@ -152,29 +152,8 @@ EXTRA_DIST += \
 	Source/JavaScriptCore/parser/Keywords.table \
 	Source/JavaScriptCore/THANKS
 
-# Clean rules for JavaScriptCore
-# FIXME: Should this list be generated from javascriptcore_built_nosources?
 CLEANFILES += \
-	Source/JavaScriptCore/Lexer.lut.h \
-	Source/JavaScriptCore/RegExpJitTables.h \
-	Source/JavaScriptCore/runtime/ArrayConstructor.lut.h \
-	Source/JavaScriptCore/runtime/ArrayPrototype.lut.h \
-	Source/JavaScriptCore/runtime/BooleanPrototype.lut.h \
-	Source/JavaScriptCore/runtime/DateConstructor.lut.h \
-	Source/JavaScriptCore/runtime/DatePrototype.lut.h \
-	Source/JavaScriptCore/runtime/ErrorPrototype.lut.h \
-	Source/JavaScriptCore/runtime/JSGlobalObject.lut.h \
-	Source/JavaScriptCore/runtime/JSONObject.lut.h \
-	Source/JavaScriptCore/runtime/MathObject.lut.h \
-	Source/JavaScriptCore/runtime/NumberConstructor.lut.h \
-	Source/JavaScriptCore/runtime/NumberPrototype.lut.h \
-	Source/JavaScriptCore/runtime/ObjectConstructor.lut.h \
-	Source/JavaScriptCore/runtime/ObjectPrototype.lut.h \
-	Source/JavaScriptCore/runtime/RegExpConstructor.lut.h \
-	Source/JavaScriptCore/runtime/RegExpObject.lut.h \
-	Source/JavaScriptCore/runtime/RegExpPrototype.lut.h \
-	Source/JavaScriptCore/runtime/StringConstructor.lut.h \
-	Source/JavaScriptCore/runtime/StringPrototype.lut.h \
+	$(javascriptcore_built_nosources) \
 	Programs/jsc \
 	Programs/jsc-@WEBKITGTK_API_MAJOR_VERSION@ \
 	Programs/minidom
