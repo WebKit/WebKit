@@ -1,3 +1,13 @@
+2011-11-28  Andrey Kosyakov  <caseq@chromium.org>
+
+        Web Inspector: resource status image is mis-aligned in the network headers view
+        https://bugs.webkit.org/show_bug.cgi?id=73211
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/ResourceHeadersView.js:
+        (WebInspector.ResourceHeadersView):
+
 2011-11-28  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: console evaluation doesn't work when navigating from a page with several frames to another one

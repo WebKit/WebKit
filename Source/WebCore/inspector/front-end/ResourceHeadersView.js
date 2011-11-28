@@ -35,6 +35,7 @@
 WebInspector.ResourceHeadersView = function(resource)
 {
     WebInspector.View.call(this);
+    this.registerRequiredCSS("resourceView.css");
     this.element.addStyleClass("resource-headers-view");
 
     this._resource = resource;
