@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -28,61 +28,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebHTTPLoadInfo_h
-#define WebHTTPLoadInfo_h
-
-#include "platform/WebCommon.h"
-#include "platform/WebPrivatePtr.h"
-
-namespace WebCore {
-struct ResourceLoadInfo;
-}
-
-namespace WebKit {
-class WebString;
-
-class WebHTTPLoadInfo {
-public:
-    WebHTTPLoadInfo() { initialize(); }
-    ~WebHTTPLoadInfo() { reset(); }
-    WebHTTPLoadInfo(const WebHTTPLoadInfo& r) { assign(r); }
-    WebHTTPLoadInfo& operator =(const WebHTTPLoadInfo& r)
-    { 
-        assign(r);
-        return *this;
-    }
-
-    WEBKIT_EXPORT void initialize();
-    WEBKIT_EXPORT void reset();
-    WEBKIT_EXPORT void assign(const WebHTTPLoadInfo& r);
-
-    WEBKIT_EXPORT int httpStatusCode() const;
-    WEBKIT_EXPORT void setHTTPStatusCode(int);
-
-    WEBKIT_EXPORT WebString httpStatusText() const;
-    WEBKIT_EXPORT void setHTTPStatusText(const WebString&);
-
-    WEBKIT_EXPORT long long encodedDataLength() const;
-    WEBKIT_EXPORT void setEncodedDataLength(long long);
-
-    WEBKIT_EXPORT void addRequestHeader(const WebString& name, const WebString& value);
-    WEBKIT_EXPORT void addResponseHeader(const WebString& name, const WebString& value);
-
-    WEBKIT_EXPORT WebString requestHeadersText() const;
-    WEBKIT_EXPORT void setRequestHeadersText(const WebString&);
-
-    WEBKIT_EXPORT WebString responseHeadersText() const;
-    WEBKIT_EXPORT void setResponseHeadersText(const WebString&);
-
-#if WEBKIT_IMPLEMENTATION
-    WebHTTPLoadInfo(WTF::PassRefPtr<WebCore::ResourceLoadInfo>);
-    operator WTF::PassRefPtr<WebCore::ResourceLoadInfo>() const;
-#endif
-
-private:
-    WebPrivatePtr<WebCore::ResourceLoadInfo> m_private;
-};
-
-} // namespace WebKit
-
+#ifndef WEBKIT_MIGRATE_HEADERS_TO_PLATFORM
+#include "platform/WebHTTPLoadInfo.h"
 #endif

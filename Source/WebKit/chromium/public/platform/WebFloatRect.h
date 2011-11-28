@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2010 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -28,6 +28,76 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WEBKIT_MIGRATE_HEADERS_TO_PLATFORM
-#include "platform/WebURLRequest.h"
+#ifndef WebFloatRect_h
+#define WebFloatRect_h
+
+#include "WebCommon.h"
+
+#if WEBKIT_IMPLEMENTATION
+#include "FloatRect.h"
+#endif
+
+namespace WebKit {
+
+struct WebFloatRect {
+    float x;
+    float y;
+    float width;
+    float height;
+
+    bool isEmpty() const { return width <= 0 || height <= 0; }
+
+    WebFloatRect()
+        : x(0.0f)
+        , y(0.0f)
+        , width(0.0f)
+        , height(0.0f)
+    {
+    }
+
+    WebFloatRect(float x, float y, float width, float height)
+        : x(x)
+        , y(y)
+        , width(width)
+        , height(height)
+    {
+    }
+
+#if WEBKIT_IMPLEMENTATION
+    WebFloatRect(const WebCore::FloatRect& r)
+        : x(r.x())
+        , y(r.y())
+        , width(r.width())
+        , height(r.height())
+    {
+    }
+
+    WebFloatRect& operator=(const WebCore::FloatRect& r)
+    {
+        x = r.x();
+        y = r.y();
+        width = r.width();
+        height = r.height();
+        return *this;
+    }
+
+    operator WebCore::FloatRect() const
+    {
+        return WebCore::FloatRect(x, y, width, height);
+    }
+#endif
+};
+
+inline bool operator==(const WebFloatRect& a, const WebFloatRect& b)
+{
+    return a.x == b.x && a.y == b.y && a.width == b.width && a.height == b.height;
+}
+
+inline bool operator!=(const WebFloatRect& a, const WebFloatRect& b)
+{
+    return !(a == b);
+}
+
+} // namespace WebKit
+
 #endif

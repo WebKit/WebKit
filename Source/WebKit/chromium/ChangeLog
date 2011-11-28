@@ -1,3 +1,58 @@
+2011-11-28  Adam Barth  <abarth@webkit.org>
+
+        [Chromium] Move "final" batch of headers into public/platform
+        https://bugs.webkit.org/show_bug.cgi?id=73198
+
+        Reviewed by Darin Fisher.
+
+        This patch moves another group of headers into the platform directory.
+        I found these headers by reading through the list of headers and
+        coorelating them with WebCore concepts.  This patch doesn't move all
+        the APIs that coorespond to WebCore platform concepts because some,
+        such as WebFontCache, are not used to support the WebCore platform but
+        rather to provide the embedder access to the WebCore concept.  This
+        patch should be the last bulk move of headers.
+
+        There are two main groups of headers that make up the bulk of this
+        patch:
+
+        1) URLLoader-related headers.
+        2) Geometry-related headers.
+
+        * public/WebArrayBufferView.h: Replaced.
+        * public/WebBlobData.h: Replaced.
+        * public/WebCookie.h: Replaced.
+        * public/WebExternalTextureLayer.h: Update include.
+        * public/WebFloatPoint.h: Replaced.
+        * public/WebFloatQuad.h: Replaced.
+        * public/WebFloatRect.h: Replaced.
+        * public/WebFrameClient.h: Update include.
+        * public/WebHTTPBody.h: Replaced.
+        * public/WebHTTPHeaderVisitor.h: Replaced.
+        * public/WebHTTPLoadInfo.h: Replaced.
+        * public/WebThreadSafeData.h: Replaced.
+        * public/WebURLError.h: Replaced.
+        * public/WebURLLoadTiming.h: Replaced.
+        * public/WebURLLoaderClient.h: Replaced.
+        * public/WebURLRequest.h: Replaced.
+        * public/WebURLResponse.h: Replaced.
+        * public/platform/WebArrayBufferView.h: Copied from Source/WebKit/chromium/public/WebArrayBufferView.h.
+        * public/platform/WebBlobData.h: Copied from Source/WebKit/chromium/public/WebBlobData.h.
+        * public/platform/WebCookie.h: Copied from Source/WebKit/chromium/public/WebCookie.h.
+        * public/platform/WebFloatPoint.h: Copied from Source/WebKit/chromium/public/WebFloatPoint.h.
+        * public/platform/WebFloatQuad.h: Copied from Source/WebKit/chromium/public/WebFloatQuad.h.
+        * public/platform/WebFloatRect.h: Copied from Source/WebKit/chromium/public/WebFloatRect.h.
+        * public/platform/WebHTTPBody.h: Copied from Source/WebKit/chromium/public/WebHTTPBody.h.
+        * public/platform/WebHTTPHeaderVisitor.h: Copied from Source/WebKit/chromium/public/WebHTTPHeaderVisitor.h.
+        * public/platform/WebHTTPLoadInfo.h: Copied from Source/WebKit/chromium/public/WebHTTPLoadInfo.h.
+        * public/platform/WebThreadSafeData.h: Copied from Source/WebKit/chromium/public/WebThreadSafeData.h.
+        * public/platform/WebURLError.h: Copied from Source/WebKit/chromium/public/WebURLError.h.
+        * public/platform/WebURLLoadTiming.h: Copied from Source/WebKit/chromium/public/WebURLLoadTiming.h.
+        * public/platform/WebURLLoader.h: Remove FIXME.
+        * public/platform/WebURLLoaderClient.h: Copied from Source/WebKit/chromium/public/WebURLLoaderClient.h.
+        * public/platform/WebURLRequest.h: Copied from Source/WebKit/chromium/public/WebURLRequest.h.
+        * public/platform/WebURLResponse.h: Copied from Source/WebKit/chromium/public/WebURLResponse.h.
+
 2011-11-25  Yury Semikhatsky  <yurys@chromium.org>
 
         [Chromium] Web Inspector: delete WebDevToolsAgent::frontendLoaded

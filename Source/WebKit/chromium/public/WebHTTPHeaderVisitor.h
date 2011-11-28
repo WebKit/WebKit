@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -28,21 +28,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebHTTPHeaderVisitor_h
-#define WebHTTPHeaderVisitor_h
-
-namespace WebKit {
-
-class WebString;
-
-class WebHTTPHeaderVisitor {
-public:
-    virtual void visitHeader(const WebString& name, const WebString& value) = 0;
-
-protected:
-    ~WebHTTPHeaderVisitor() { }
-};
-
-} // namespace WebKit
-
+#ifndef WEBKIT_MIGRATE_HEADERS_TO_PLATFORM
+#include "platform/WebHTTPHeaderVisitor.h"
 #endif

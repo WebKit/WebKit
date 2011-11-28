@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -28,50 +28,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebCookie_h
-#define WebCookie_h
-
-#include "platform/WebCommon.h"
-#include "platform/WebString.h"
-
-namespace WebKit {
-
-class WebString;
-
-// A cookie.
-//
-struct WebCookie {
-    WebCookie()
-        : expires(0)
-        , httpOnly(false)
-        , secure(false)
-        , session(false)
-    {
-    }
-
-    WebCookie(const WebString& name, const WebString& value, const WebString& domain,
-              const WebString& path, double expires, bool httpOnly, bool secure, bool session)
-        : name(name)
-        , value(value)
-        , domain(domain)
-        , path(path)
-        , expires(expires)
-        , httpOnly(httpOnly)
-        , secure(secure)
-        , session(session)
-    {
-    }
-
-    WebString name;
-    WebString value;
-    WebString domain;
-    WebString path;
-    double expires;
-    bool httpOnly;
-    bool secure;
-    bool session;
-};
-
-} // namespace WebKit
-
+#ifndef WEBKIT_MIGRATE_HEADERS_TO_PLATFORM
+#include "platform/WebCookie.h"
 #endif

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2010 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -28,6 +28,64 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WEBKIT_MIGRATE_HEADERS_TO_PLATFORM
-#include "platform/WebURLRequest.h"
+#ifndef WebFloatPoint_h
+#define WebFloatPoint_h
+
+#include "WebCommon.h"
+
+#if WEBKIT_IMPLEMENTATION
+#include "FloatPoint.h"
+#endif
+
+namespace WebKit {
+
+struct WebFloatPoint {
+    float x;
+    float y;
+
+    WebFloatPoint()
+        : x(0.0f)
+        , y(0.0f)
+    {
+    }
+
+    WebFloatPoint(float x, float y)
+        : x(x)
+        , y(y)
+    {
+    }
+
+#if WEBKIT_IMPLEMENTATION
+    WebFloatPoint(const WebCore::FloatPoint& p)
+        : x(p.x())
+        , y(p.y())
+    {
+    }
+
+    WebFloatPoint& operator=(const WebCore::FloatPoint& p)
+    {
+        x = p.x();
+        y = p.y();
+        return *this;
+    }
+
+    operator WebCore::FloatPoint() const
+    {
+        return WebCore::FloatPoint(x, y);
+    }
+#endif
+};
+
+inline bool operator==(const WebFloatPoint& a, const WebFloatPoint& b)
+{
+    return a.x == b.x && a.y == b.y;
+}
+
+inline bool operator!=(const WebFloatPoint& a, const WebFloatPoint& b)
+{
+    return !(a == b);
+}
+
+} // namespace WebKit
+
 #endif

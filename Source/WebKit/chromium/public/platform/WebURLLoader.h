@@ -35,7 +35,6 @@
 
 namespace WebKit {
 
-// FIXME: Move these classes into platform.
 class WebData;
 class WebURLLoaderClient;
 class WebURLRequest;

@@ -28,6 +28,55 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WEBKIT_MIGRATE_HEADERS_TO_PLATFORM
-#include "platform/WebURLRequest.h"
+#ifndef WebFloatQuad_h
+#define WebFloatQuad_h
+
+#include "WebCommon.h"
+#include "WebFloatPoint.h"
+#include "WebRect.h"
+
+#include <algorithm>
+#include <cmath>
+
+#if WEBKIT_IMPLEMENTATION
+#include "FloatQuad.h"
+#endif
+
+namespace WebKit {
+
+struct WebFloatQuad {
+    WebFloatPoint p[4];
+
+    WebFloatQuad()
+    {
+    }
+
+    WebFloatQuad(const WebFloatPoint& p0, const WebFloatPoint& p1, const WebFloatPoint& p2, const WebFloatPoint& p3)
+    {
+        p[0] = p0;
+        p[1] = p1;
+        p[2] = p2;
+        p[3] = p3;
+    }
+
+    WEBKIT_EXPORT WebRect enclosingRect() const;
+
+#if WEBKIT_IMPLEMENTATION
+    WebFloatQuad& operator=(const WebCore::FloatQuad& q)
+    {
+        p[0] = q.p1();
+        p[1] = q.p2();
+        p[2] = q.p3();
+        p[3] = q.p4();
+        return *this;
+    }
+    WebFloatQuad(const WebCore::FloatQuad& q)
+    {
+        *this = q;
+    }
+#endif
+};
+
+} // namespace WebKit
+
 #endif

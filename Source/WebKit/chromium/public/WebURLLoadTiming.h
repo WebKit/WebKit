@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -28,81 +28,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebURLLoadTiming_h
-#define WebURLLoadTiming_h
-
-#include "platform/WebCommon.h"
-#include "platform/WebPrivatePtr.h"
-
-namespace WebCore { class ResourceLoadTiming; }
-
-namespace WebKit {
-class WebString;
-
-class WebURLLoadTiming {
-public:
-    ~WebURLLoadTiming() { reset(); }
-
-    WebURLLoadTiming() { }
-    WebURLLoadTiming(const WebURLLoadTiming& d) { assign(d); }
-    WebURLLoadTiming& operator=(const WebURLLoadTiming& d)
-    {
-        assign(d);
-        return *this;
-    }
-
-    WEBKIT_EXPORT void initialize();
-    WEBKIT_EXPORT void reset();
-    WEBKIT_EXPORT void assign(const WebURLLoadTiming&);
-
-    bool isNull() const { return m_private.isNull(); }
-
-    WEBKIT_EXPORT double requestTime() const;
-    WEBKIT_EXPORT void setRequestTime(double time);
-
-    WEBKIT_EXPORT int proxyStart() const;
-    WEBKIT_EXPORT void setProxyStart(int start);
-
-    WEBKIT_EXPORT int proxyEnd() const;
-    WEBKIT_EXPORT void setProxyEnd(int end);
-
-    WEBKIT_EXPORT int dnsStart() const;
-    WEBKIT_EXPORT void setDNSStart(int start);
-
-    WEBKIT_EXPORT int dnsEnd() const;
-    WEBKIT_EXPORT void setDNSEnd(int end);
-
-    WEBKIT_EXPORT int connectStart() const;
-    WEBKIT_EXPORT void setConnectStart(int start);
-
-    WEBKIT_EXPORT int connectEnd() const;
-    WEBKIT_EXPORT void setConnectEnd(int end);
-
-    WEBKIT_EXPORT int sendStart() const;
-    WEBKIT_EXPORT void setSendStart(int start);
-
-    WEBKIT_EXPORT int sendEnd() const;
-    WEBKIT_EXPORT void setSendEnd(int end);
-
-    WEBKIT_EXPORT int receiveHeadersEnd() const;
-    WEBKIT_EXPORT void setReceiveHeadersEnd(int end);
-
-    WEBKIT_EXPORT int sslStart() const;
-    WEBKIT_EXPORT void setSSLStart(int start);
-
-    WEBKIT_EXPORT int sslEnd() const;
-    WEBKIT_EXPORT void setSSLEnd(int end);
-
-#if WEBKIT_IMPLEMENTATION
-    WebURLLoadTiming(const WTF::PassRefPtr<WebCore::ResourceLoadTiming>&);
-    WebURLLoadTiming& operator=(const WTF::PassRefPtr<WebCore::ResourceLoadTiming>&);
-    operator WTF::PassRefPtr<WebCore::ResourceLoadTiming>() const;
-#endif
-
-private:
-    WebPrivatePtr<WebCore::ResourceLoadTiming> m_private;
-};
-
-} // namespace WebKit
-
+#ifndef WEBKIT_MIGRATE_HEADERS_TO_PLATFORM
+#include "platform/WebURLLoadTiming.h"
 #endif

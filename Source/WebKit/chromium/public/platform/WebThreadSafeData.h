@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2010 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -28,6 +28,50 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WEBKIT_MIGRATE_HEADERS_TO_PLATFORM
-#include "platform/WebURLRequest.h"
+#ifndef WebThreadSafeData_h
+#define WebThreadSafeData_h
+
+#include "WebCommon.h"
+#include "WebPrivatePtr.h"
+
+#if !WEBKIT_IMPLEMENTATION
+#include <string>
+#endif
+
+namespace WebCore { class RawData; }
+
+namespace WebKit {
+
+// A container for raw bytes. It is inexpensive to copy a WebThreadSafeData object.
+// It is safe to pass a WebThreadSafeData across threads!!!
+class WebThreadSafeData {
+public:
+    WebThreadSafeData() { }
+    ~WebThreadSafeData() { reset(); }
+
+    WEBKIT_EXPORT void assign(const WebThreadSafeData&);
+    WEBKIT_EXPORT void reset();
+
+    WEBKIT_EXPORT size_t size() const;
+    WEBKIT_EXPORT const char* data() const;
+
+    bool isEmpty() const { return !size(); }
+
+#if WEBKIT_IMPLEMENTATION
+    WebThreadSafeData(const WTF::PassRefPtr<WebCore::RawData>&);
+    WebThreadSafeData& operator=(const WTF::PassRefPtr<WebCore::RawData>&);
+#else
+    operator std::string() const
+    {
+        size_t len = size();
+        return len ? std::string(data(), len) : std::string();
+    }
+#endif
+
+private:
+    WebPrivatePtr<WebCore::RawData> m_private;
+};
+
+} // namespace WebKit
+
 #endif
