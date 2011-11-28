@@ -1086,7 +1086,7 @@ WebInspector.HeapSnapshot.prototype = {
 
     createNodesProviderForClass: function(className, aggregatesKey)
     {
-        return new WebInspector.HeapSnapshotNodesProvider(this, null, this.aggregates(aggregatesKey)[className].idxs);
+        return new WebInspector.HeapSnapshotNodesProvider(this, null, this.aggregates(false, aggregatesKey)[className].idxs);
     },
 
     createNodesProviderForDominator: function(nodeIndex, filter)

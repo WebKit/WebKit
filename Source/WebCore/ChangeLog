@@ -1,3 +1,10 @@
+2011-11-28  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: chromium: Unreviewed one-line fix for Summary view filter.
+
+        * inspector/front-end/HeapSnapshot.js:
+        (WebInspector.HeapSnapshot.prototype.createNodesProviderForClass):
+
 2011-11-28  Pavel Feldman  <pfeldman@google.com>
 
         Not reviewed: disable filesystem instrumentation to unbreak Qt tests.
