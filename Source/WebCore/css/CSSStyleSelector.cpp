@@ -166,33 +166,6 @@ HANDLE_INHERIT_AND_INITIAL_WITH_VALUE(prop, Prop, Value) \
 if (primitiveValue) \
     m_style->set##Prop(*primitiveValue);
 
-#define HANDLE_INHERIT_COND(propID, prop, Prop) \
-if (id == propID) { \
-    m_style->set##Prop(m_parentStyle->prop()); \
-    return; \
-}
-
-#define HANDLE_INHERIT_COND_WITH_BACKUP(propID, prop, propAlt, Prop) \
-if (id == propID) { \
-    if (m_parentStyle->prop().isValid()) \
-        m_style->set##Prop(m_parentStyle->prop()); \
-    else \
-        m_style->set##Prop(m_parentStyle->propAlt()); \
-    return; \
-}
-
-#define HANDLE_INITIAL_COND(propID, Prop) \
-if (id == propID) { \
-    m_style->set##Prop(RenderStyle::initial##Prop()); \
-    return; \
-}
-
-#define HANDLE_INITIAL_COND_WITH_VALUE(propID, Prop, Value) \
-if (id == propID) { \
-    m_style->set##Prop(RenderStyle::initial##Value()); \
-    return; \
-}
-
 class RuleData {
 public:
     RuleData(CSSStyleRule*, CSSSelector*, unsigned position);
@@ -3161,32 +3134,6 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSSPropertyWebkitAppearance:
         HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(appearance, Appearance)
         return;
-    case CSSPropertyBorderImage:
-    case CSSPropertyWebkitBorderImage:
-    case CSSPropertyWebkitMaskBoxImage: {
-        if (isInherit) {
-            HANDLE_INHERIT_COND(CSSPropertyBorderImage, borderImage, BorderImage)
-            HANDLE_INHERIT_COND(CSSPropertyWebkitBorderImage, borderImage, BorderImage)
-            HANDLE_INHERIT_COND(CSSPropertyWebkitMaskBoxImage, maskBoxImage, MaskBoxImage)
-            return;
-        } else if (isInitial) {
-            HANDLE_INITIAL_COND_WITH_VALUE(CSSPropertyBorderImage, BorderImage, NinePieceImage)
-            HANDLE_INITIAL_COND_WITH_VALUE(CSSPropertyWebkitBorderImage, BorderImage, NinePieceImage)
-            HANDLE_INITIAL_COND_WITH_VALUE(CSSPropertyWebkitMaskBoxImage, MaskBoxImage, NinePieceImage)
-            return;
-        }
-
-        NinePieceImage image;
-        if (property == CSSPropertyWebkitMaskBoxImage)
-            image.setMaskDefaults();
-        mapNinePieceImage(property, value, image);
-
-        if (id != CSSPropertyWebkitMaskBoxImage)
-            m_style->setBorderImage(image);
-        else
-            m_style->setMaskBoxImage(image);
-        return;
-    }
     case CSSPropertyBorderImageOutset:
     case CSSPropertyWebkitMaskBoxImageOutset: {
         bool isBorderImage = id == CSSPropertyBorderImageOutset;
@@ -3873,6 +3820,9 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSSPropertyBorderStyle:
     case CSSPropertyBorderWidth:
     case CSSPropertyBorderColor:
+    case CSSPropertyBorderImage:
+    case CSSPropertyWebkitBorderImage:
+    case CSSPropertyWebkitMaskBoxImage:
     case CSSPropertyBorderTop:
     case CSSPropertyBorderRight:
     case CSSPropertyBorderBottom:

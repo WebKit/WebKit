@@ -1,5 +1,27 @@
 2011-11-28  Luke Macpherson   <macpherson@chromium.org>
 
+        Implement CSS border image properties in CSSStyleApplyProperty.
+        https://bugs.webkit.org/show_bug.cgi?id=72846
+
+        Reviewed by Andreas Kling.
+
+        Refactoring that implements CSS border image properties in CSSStyleApplyProperty.
+        Part of the larger refactoring aimed at removing CSSStyleSelector::applyProperty().
+
+        Covered by existing tests in fast/css.
+
+        * css/CSSStyleApplyProperty.cpp:
+        Implement property handlers based on existing code.
+        (WebCore::ApplyPropertyBorderImage::setValue):
+        (WebCore::ApplyPropertyBorderImage::applyValue):
+        (WebCore::ApplyPropertyBorderImage::createHandler):
+        (WebCore::CSSStyleApplyProperty::CSSStyleApplyProperty):
+        * css/CSSStyleSelector.cpp:
+        Remove old code.
+        (WebCore::CSSStyleSelector::applyProperty):
+
+2011-11-28  Luke Macpherson   <macpherson@chromium.org>
+
         Implement CSS hyphenate-limit properties in CSSStyleApplyProperty
         https://bugs.webkit.org/show_bug.cgi?id=73107
 
