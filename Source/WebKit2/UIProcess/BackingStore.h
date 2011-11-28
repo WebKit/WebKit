@@ -32,7 +32,7 @@
 
 #if PLATFORM(MAC)
 #include <wtf/RetainPtr.h>
-#elif PLATFORM(WIN)
+#elif PLATFORM(WIN) || PLATFORM(WIN_CAIRO)
 #include <wtf/OwnPtr.h>
 #endif
 
@@ -41,7 +41,7 @@
 #include <QtGui/QPixmap>
 #endif
 
-#if USE(CAIRO)
+#if USE(CAIRO) && !PLATFORM(WIN_CAIRO)
 #include <RefPtrCairo.h>
 #include <WebCore/WidgetBackingStore.h>
 #endif
@@ -94,7 +94,7 @@ private:
 
     RetainPtr<CGLayerRef> m_cgLayer;
     RetainPtr<CGContextRef> m_bitmapContext;
-#elif PLATFORM(WIN)
+#elif PLATFORM(WIN) || PLATFORM(WIN_CAIRO)
     OwnPtr<HBITMAP> m_bitmap;
 #elif PLATFORM(QT)
     QPixmap m_pixmap;

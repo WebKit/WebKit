@@ -1,3 +1,11 @@
+2011-11-28  Brent Fulgham  <bfulgham@webkit.org>
+
+        [WinCairo] Unreviewed build corrections.
+
+        * UIProcess/BackingStore.h: WinCairo doesn't need the Cairo backing
+          for widgets.
+        * win/WebKit2CFLite.def: Update to match WebKit2.def.
+
 2011-11-28  Beth Dakin  <bdakin@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=72551
