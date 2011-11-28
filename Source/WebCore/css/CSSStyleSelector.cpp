@@ -3846,6 +3846,10 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSSPropertyWebkitFlexFlow:
     case CSSPropertyFontStyle:
     case CSSPropertyFontVariant:
+#if ENABLE(CSS_GRID_LAYOUT)
+    case CSSPropertyWebkitGridColumns:
+    case CSSPropertyWebkitGridRows:
+#endif
     case CSSPropertyTextRendering:
     case CSSPropertyWebkitTextOrientation:
     case CSSPropertyWebkitFontSmoothing:

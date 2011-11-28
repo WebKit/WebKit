@@ -1772,6 +1772,11 @@ bool CSSParser::parseValue(int propId, bool important)
         }
         return false;
     }
+#if ENABLE(CSS_GRID_LAYOUT)
+    case CSSPropertyWebkitGridColumns:
+    case CSSPropertyWebkitGridRows:
+        return parseGridTrackList(propId, important);
+#endif
     case CSSPropertyWebkitMarginCollapse: {
         const int properties[2] = { CSSPropertyWebkitMarginBeforeCollapse,
             CSSPropertyWebkitMarginAfterCollapse };
@@ -3515,6 +3520,23 @@ bool CSSParser::parseAnimationProperty(int propId, RefPtr<CSSValue>& result)
     }
     return false;
 }
+
+#if ENABLE(CSS_GRID_LAYOUT)
+bool CSSParser::parseGridTrackList(int propId, bool important)
+{
+    CSSParserValue* value = m_valueList->current();
+    if (value->id == CSSValueNone || value->id == CSSValueAuto) {
+        addProperty(propId, primitiveValueCache()->createIdentifierValue(value->id), important);
+        return true;
+    }
+
+    if (validUnit(value, FLength | FPercent, m_strict)) {
+        addProperty(propId, createPrimitiveNumericValue(value), important);
+        return true;
+    }
+    return false;
+}
+#endif
 
 
 

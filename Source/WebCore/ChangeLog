@@ -1,3 +1,79 @@
+2011-11-28  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Add limited parsing support for grid-columns and grid-rows
+        https://bugs.webkit.org/show_bug.cgi?id=72531
+
+        Reviewed by Tony Chang.
+
+        Test: fast/css-grid-layout/grid-columns-rows-get-set.html
+
+        Added support for:
+        <track-list> := <length> | <percentage> | 'none' | 'auto'
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * rendering/style/StyleAllInOne.cpp:
+        Updated our build systems.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::valueForGridTrackList):
+        Helper function to convert our RenderStyle information to a proper CSSValue.
+        It doesn't do much now but it will be expanded as we add more support.
+
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue): Call the previous
+        function.
+
+        * css/CSSParser.h:
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::parseGridTrackList):
+        CSS parsing part of this change. Pretty simple for now.
+
+        * css/CSSPropertyNames.in:
+        Added -webkit-grid-columns and -webkit-grid-rows.
+
+        * css/CSSProperty.cpp:
+        (WebCore::CSSProperty::isInheritedProperty):
+        * css/CSSStyleApplyProperty.cpp:
+        (WebCore::CSSStyleApplyProperty::CSSStyleApplyProperty):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        Style application plumbing.
+
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::RenderStyle):
+        (WebCore::RenderStyle::diff):
+        This change is required for later when we add layout for our grid.
+
+        * rendering/style/RenderStyle.h:
+        (WebCore::InheritedFlags::gridColumns):
+        (WebCore::InheritedFlags::gridRows):
+        (WebCore::InheritedFlags::setGridColumns):
+        (WebCore::InheritedFlags::setGridRows):
+        (WebCore::InheritedFlags::initialGridColumns):
+        (WebCore::InheritedFlags::initialGridRows):
+        Getters / Setters and initial values.
+
+        * rendering/style/StyleGridData.cpp: Added.
+        (WebCore::StyleGridData::StyleGridData):
+        * rendering/style/StyleGridData.h: Added.
+        (WebCore::StyleGridData::create):
+        (WebCore::StyleGridData::copy):
+        (WebCore::StyleGridData::operator==):
+        (WebCore::StyleGridData::operator!=):
+        This class holds the grid element information. For now pretty simple
+        shell that will be used for the rest of the support.
+
+        * rendering/style/StyleRareNonInheritedData.cpp:
+        (WebCore::StyleRareNonInheritedData::StyleRareNonInheritedData):
+        (WebCore::StyleRareNonInheritedData::operator==):
+        * rendering/style/StyleRareNonInheritedData.h:
+        Added StyleGridElementData to StyleRareNonInheritedData.
+
 2011-11-28  Noel Gordon  <noel.gordon@gmail.com>
 
         [chromium] Use data decoding swizzle for turbo JPEG image decoding.

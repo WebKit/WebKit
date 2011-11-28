@@ -46,6 +46,9 @@ class StyleDeprecatedFlexibleBoxData;
 class StyleFilterData;
 #endif
 class StyleFlexibleBoxData;
+#if ENABLE(CSS_GRID_LAYOUT)
+class StyleGridData;
+#endif
 class StyleMarqueeData;
 class StyleMultiColData;
 class StyleReflection;
@@ -112,6 +115,10 @@ public:
 
 #if ENABLE(CSS_FILTERS)
     DataRef<StyleFilterData> m_filter; // Filter operations (url, sepia, blur, etc.)
+#endif
+
+#if ENABLE(CSS_GRID_LAYOUT)
+    DataRef<StyleGridData> m_grid;
 #endif
 
     OwnPtr<ContentData> m_content;

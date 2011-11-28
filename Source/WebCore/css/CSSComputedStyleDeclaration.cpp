@@ -220,6 +220,10 @@ static const int computedProperties[] = {
     CSSPropertyWebkitFlexAlign,
     CSSPropertyWebkitFlexFlow,
     CSSPropertyWebkitFontSmoothing,
+#if ENABLE(CSS_GRID_LAYOUT)
+    CSSPropertyWebkitGridColumns,
+    CSSPropertyWebkitGridRows,
+#endif
     CSSPropertyWebkitHighlight,
     CSSPropertyWebkitHyphenateCharacter,
     CSSPropertyWebkitHyphenateLimitAfter,
@@ -786,6 +790,19 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::valueForFilter(RenderStyle* st
     }
 
     return list.release();
+}
+#endif
+
+#if ENABLE(CSS_GRID_LAYOUT)
+static PassRefPtr<CSSValue> valueForGridTrackList(const Length& trackLength, const RenderStyle* style, CSSPrimitiveValueCache* primitiveValueCache)
+{
+    if (trackLength.isPercent())
+        return primitiveValueCache->createValue(trackLength);
+    if (trackLength.isAuto())
+        return primitiveValueCache->createIdentifierValue(CSSValueAuto);
+    if (trackLength.isUndefined())
+        return primitiveValueCache->createIdentifierValue(CSSValueNone);
+    return zoomAdjustedPixelValue(trackLength.value(), style, primitiveValueCache);
 }
 #endif
 
@@ -1496,6 +1513,16 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             }
             return list.release();
         }
+#if ENABLE(CSS_GRID_LAYOUT)
+        case CSSPropertyWebkitGridColumns: {
+            Length gridColumns = style->gridColumns();
+            return valueForGridTrackList(gridColumns, style.get(), primitiveValueCache);
+        }
+        case CSSPropertyWebkitGridRows: {
+            Length gridRows = style->gridRows();
+            return valueForGridTrackList(gridRows, style.get(), primitiveValueCache);
+        }
+#endif
         case CSSPropertyHeight:
             if (renderer)
                 return zoomAdjustedPixelValue(sizingBox(renderer).height(), style.get(), primitiveValueCache);

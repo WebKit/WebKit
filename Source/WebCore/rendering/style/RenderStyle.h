@@ -56,6 +56,9 @@
 #include "StyleFilterData.h"
 #endif
 #include "StyleFlexibleBoxData.h"
+#if ENABLE(CSS_GRID_LAYOUT)
+#include "StyleGridData.h"
+#endif
 #include "StyleInheritedData.h"
 #include "StyleMarqueeData.h"
 #include "StyleMultiColData.h"
@@ -724,6 +727,11 @@ public:
     EFlexAlign flexAlign() const { return static_cast<EFlexAlign>(rareNonInheritedData->m_flexibleBox->m_flexAlign); }
     EFlexFlow flexFlow() const { return static_cast<EFlexFlow>(rareNonInheritedData->m_flexibleBox->m_flexFlow); }
 
+#if ENABLE(CSS_GRID_LAYOUT)
+    Length gridColumns() const { return rareNonInheritedData->m_grid->m_gridColumns; }
+    Length gridRows() const { return rareNonInheritedData->m_grid->m_gridRows; }
+#endif
+
     const ShadowData* boxShadow() const { return rareNonInheritedData->m_boxShadow.get(); }
     void getBoxShadowExtent(LayoutUnit& top, LayoutUnit& right, LayoutUnit& bottom, LayoutUnit& left) const { getShadowExtent(boxShadow(), top, right, bottom, left); }
     void getBoxShadowHorizontalExtent(LayoutUnit& left, LayoutUnit& right) const { getShadowHorizontalExtent(boxShadow(), left, right); }
@@ -1136,6 +1144,11 @@ public:
     void setFlexPack(EFlexPack p) { SET_VAR(rareNonInheritedData.access()->m_flexibleBox, m_flexPack, p); }
     void setFlexAlign(EFlexAlign a) { SET_VAR(rareNonInheritedData.access()->m_flexibleBox, m_flexAlign, a); }
     void setFlexFlow(EFlexFlow flow) { SET_VAR(rareNonInheritedData.access()->m_flexibleBox, m_flexFlow, flow); }
+#if ENABLE(CSS_GRID_LAYOUT)
+    void setGridColumns(Length length) { SET_VAR(rareNonInheritedData.access()->m_grid, m_gridColumns, length); }
+    void setGridRows(Length length) { SET_VAR(rareNonInheritedData.access()->m_grid, m_gridRows, length); }
+#endif
+
     void setMarqueeIncrement(const Length& f) { SET_VAR(rareNonInheritedData.access()->m_marquee, increment, f); }
     void setMarqueeSpeed(int f) { SET_VAR(rareNonInheritedData.access()->m_marquee, speed, f); }
     void setMarqueeDirection(EMarqueeDirection d) { SET_VAR(rareNonInheritedData.access()->m_marquee, direction, d); }
@@ -1508,6 +1521,11 @@ public:
     static StyleImage* initialBorderImageSource() { return 0; }
     static StyleImage* initialMaskBoxImageSource() { return 0; }
     static PrintColorAdjust initialPrintColorAdjust() { return PrintColorAdjustEconomy; }
+
+#if ENABLE(CSS_GRID_LAYOUT)
+    static Length initialGridColumns() { return Length(Undefined); }
+    static Length initialGridRows() { return Length(Undefined); }
+#endif
 
     static const AtomicString& initialLineGrid() { return nullAtom; }
     static LineGridSnap initialLineGridSnap() { return LineGridSnapNone; }

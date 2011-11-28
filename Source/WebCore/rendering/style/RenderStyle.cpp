@@ -133,6 +133,9 @@ ALWAYS_INLINE RenderStyle::RenderStyle(bool)
 #if ENABLE(CSS_FILTERS)
     rareNonInheritedData.access()->m_filter.init();
 #endif
+#if ENABLE(CSS_GRID_LAYOUT)
+    rareNonInheritedData.access()->m_grid.init();
+#endif
     rareInheritedData.init();
     inherited.init();
 
@@ -425,6 +428,10 @@ StyleDifference RenderStyle::diff(const RenderStyle* other, unsigned& changedCon
             && *rareNonInheritedData->m_filter.get() != *other->rareNonInheritedData->m_filter.get()) {
             return StyleDifferenceLayout;
         }
+#endif
+#if ENABLE(CSS_GRID_LAYOUT)
+        if (rareNonInheritedData->m_grid.get() != other->rareNonInheritedData->m_grid.get())
+            return StyleDifferenceLayout;
 #endif
 
 #if !USE(ACCELERATED_COMPOSITING)

@@ -42,6 +42,7 @@
 #include "StyleFilterData.cpp"
 #include "StyleFlexibleBoxData.cpp"
 #include "StyleGeneratedImage.cpp"
+#include "StyleGridData.cpp"
 #include "StyleInheritedData.cpp"
 #include "StyleMarqueeData.cpp"
 #include "StyleMultiColData.cpp"

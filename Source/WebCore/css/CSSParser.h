@@ -125,6 +125,10 @@ public:
     bool parseTransitionShorthand(bool important);
     bool parseAnimationShorthand(bool important);
 
+#if ENABLE(CSS_GRID_LAYOUT)
+    bool parseGridTrackList(int propId, bool important);
+#endif
+
     bool parseDashboardRegions(int propId, bool important);
 
     bool parseShape(int propId, bool important);
