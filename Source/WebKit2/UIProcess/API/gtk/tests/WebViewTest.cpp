@@ -64,9 +64,9 @@ void WebViewTest::loadAlternateHTML(const char* html, const char* baseURI, const
     webkit_web_view_load_alternate_html(m_webView, html, baseURI, unreachableURI);
 }
 
-void WebViewTest::loadRequest(WebKitNetworkRequest* request)
+void WebViewTest::loadRequest(WebKitURIRequest* request)
 {
-    m_activeURI = webkit_network_request_get_uri(request);
+    m_activeURI = webkit_uri_request_get_uri(request);
     webkit_web_view_load_request(m_webView, request);
 }
 

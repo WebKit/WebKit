@@ -30,10 +30,10 @@
 
 #include <webkit2/WebKitBackForwardList.h>
 #include <webkit2/WebKitDefines.h>
-#include <webkit2/WebKitNetworkRequest.h>
 #include <webkit2/WebKitWebContext.h>
 #include <webkit2/WebKitWebLoaderClient.h>
 #include <webkit2/WebKitSettings.h>
+#include <webkit2/WebKitURIRequest.h>
 #include <webkit2/WebKitWebViewBase.h>
 
 G_BEGIN_DECLS
@@ -107,7 +107,7 @@ webkit_web_view_load_alternate_html          (WebKitWebView             *web_vie
                                               const gchar               *unreachable_uri);
 WEBKIT_API void
 webkit_web_view_load_request                 (WebKitWebView             *web_view,
-                                              WebKitNetworkRequest      *request);
+                                              WebKitURIRequest          *request);
 
 WEBKIT_API void
 webkit_web_view_stop_loading                 (WebKitWebView             *web_view);

@@ -35,7 +35,7 @@ public:
     void loadHtml(const char* html, const char* baseURI);
     void loadPlainText(const char* plainText);
     void loadAlternateHTML(const char* html, const char* baseURI, const char* unreachableURI);
-    void loadRequest(WebKitNetworkRequest*);
+    void loadRequest(WebKitURIRequest*);
     void goBack();
     void goForward();
     void goToBackForwardListItem(WebKitBackForwardListItem*);

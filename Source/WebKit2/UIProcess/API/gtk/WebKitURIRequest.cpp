@@ -18,7 +18,7 @@
  */
 
 #include "config.h"
-#include "WebKitNetworkRequest.h"
+#include "WebKitURIRequest.h"
 
 #include "WebKitPrivate.h"
 #include "WebURLRequest.h"
@@ -34,34 +34,34 @@ enum {
 
 using namespace WebCore;
 
-G_DEFINE_TYPE(WebKitNetworkRequest, webkit_network_request, G_TYPE_OBJECT)
+G_DEFINE_TYPE(WebKitURIRequest, webkit_uri_request, G_TYPE_OBJECT)
 
-struct _WebKitNetworkRequestPrivate {
+struct _WebKitURIRequestPrivate {
     CString uri;
 };
 
-static void webkitNetworkRequestFinalize(GObject* object)
+static void webkitURIRequestFinalize(GObject* object)
 {
-    WEBKIT_NETWORK_REQUEST(object)->priv->~WebKitNetworkRequestPrivate();
-    G_OBJECT_CLASS(webkit_network_request_parent_class)->finalize(object);
+    WEBKIT_URI_REQUEST(object)->priv->~WebKitURIRequestPrivate();
+    G_OBJECT_CLASS(webkit_uri_request_parent_class)->finalize(object);
 }
 
-static void webkitNetworkRequestGetProperty(GObject* object, guint propId, GValue* value, GParamSpec* paramSpec)
+static void webkitURIRequestGetProperty(GObject* object, guint propId, GValue* value, GParamSpec* paramSpec)
 {
-    WebKitNetworkRequest* request = WEBKIT_NETWORK_REQUEST(object);
+    WebKitURIRequest* request = WEBKIT_URI_REQUEST(object);
 
     switch (propId) {
     case PROP_URI:
-        g_value_set_string(value, webkit_network_request_get_uri(request));
+        g_value_set_string(value, webkit_uri_request_get_uri(request));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propId, paramSpec);
     }
 }
 
-static void webkitNetworkRequestSetProperty(GObject* object, guint propId, const GValue* value, GParamSpec* paramSpec)
+static void webkitURIRequestSetProperty(GObject* object, guint propId, const GValue* value, GParamSpec* paramSpec)
 {
-    WebKitNetworkRequest* request = WEBKIT_NETWORK_REQUEST(object);
+    WebKitURIRequest* request = WEBKIT_URI_REQUEST(object);
 
     switch (propId) {
     case PROP_URI:
@@ -72,16 +72,16 @@ static void webkitNetworkRequestSetProperty(GObject* object, guint propId, const
     }
 }
 
-static void webkit_network_request_class_init(WebKitNetworkRequestClass* requestClass)
+static void webkit_uri_request_class_init(WebKitURIRequestClass* requestClass)
 {
     GObjectClass* objectClass = G_OBJECT_CLASS(requestClass);
 
-    objectClass->finalize = webkitNetworkRequestFinalize;
-    objectClass->get_property = webkitNetworkRequestGetProperty;
-    objectClass->set_property = webkitNetworkRequestSetProperty;
+    objectClass->finalize = webkitURIRequestFinalize;
+    objectClass->get_property = webkitURIRequestGetProperty;
+    objectClass->set_property = webkitURIRequestSetProperty;
 
     /**
-     * WebKitNetworkRequest:uri:
+     * WebKitURIRequest:uri:
      *
      * The URI to which the request will be made.
      */
@@ -92,40 +92,40 @@ static void webkit_network_request_class_init(WebKitNetworkRequestClass* request
                                                         0,
                                                         static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)));
 
-    g_type_class_add_private(requestClass, sizeof(WebKitNetworkRequestPrivate));
+    g_type_class_add_private(requestClass, sizeof(WebKitURIRequestPrivate));
 }
 
-static void webkit_network_request_init(WebKitNetworkRequest* request)
+static void webkit_uri_request_init(WebKitURIRequest* request)
 {
-    WebKitNetworkRequestPrivate* priv = G_TYPE_INSTANCE_GET_PRIVATE(request, WEBKIT_TYPE_NETWORK_REQUEST, WebKitNetworkRequestPrivate);
+    WebKitURIRequestPrivate* priv = G_TYPE_INSTANCE_GET_PRIVATE(request, WEBKIT_TYPE_URI_REQUEST, WebKitURIRequestPrivate);
     request->priv = priv;
-    new (priv) WebKitNetworkRequestPrivate();
+    new (priv) WebKitURIRequestPrivate();
 }
 
 /**
- * webkit_network_request_new:
+ * webkit_uri_request_new:
  * @uri: an URI
  *
- * Creates a new #WebKitNetworkRequest for the given URI.
+ * Creates a new #WebKitURIRequest for the given URI.
  *
- * Returns: a new #WebKitNetworkRequest
+ * Returns: a new #WebKitURIRequest
  */
-WebKitNetworkRequest* webkit_network_request_new(const gchar* uri)
+WebKitURIRequest* webkit_uri_request_new(const gchar* uri)
 {
     g_return_val_if_fail(uri, 0);
 
-    return WEBKIT_NETWORK_REQUEST(g_object_new(WEBKIT_TYPE_NETWORK_REQUEST, "uri", uri, NULL));
+    return WEBKIT_URI_REQUEST(g_object_new(WEBKIT_TYPE_URI_REQUEST, "uri", uri, NULL));
 }
 
 /**
- * webkit_network_request_get_uri:
- * @request: a #WebKitNetworkRequest
+ * webkit_uri_request_get_uri:
+ * @request: a #WebKitURIRequest
  *
- * Returns: the uri of the #WebKitNetworkRequest
+ * Returns: the uri of the #WebKitURIRequest
  */
-const gchar* webkit_network_request_get_uri(WebKitNetworkRequest* request)
+const gchar* webkit_uri_request_get_uri(WebKitURIRequest* request)
 {
-    g_return_val_if_fail(WEBKIT_IS_NETWORK_REQUEST(request), 0);
+    g_return_val_if_fail(WEBKIT_IS_URI_REQUEST(request), 0);
 
     return request->priv->uri.data();
 }

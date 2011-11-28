@@ -28,8 +28,8 @@
 #include <webkit2/WebKitDefines.h>
 #include <webkit2/WebKitEnumTypes.h>
 #include <webkit2/WebKitError.h>
-#include <webkit2/WebKitNetworkRequest.h>
 #include <webkit2/WebKitSettings.h>
+#include <webkit2/WebKitURIRequest.h>
 #include <webkit2/WebKitWebContext.h>
 #include <webkit2/WebKitWebLoaderClient.h>
 #include <webkit2/WebKitWebViewBase.h>

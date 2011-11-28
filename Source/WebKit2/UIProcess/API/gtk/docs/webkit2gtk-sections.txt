@@ -230,23 +230,23 @@ webkit_settings_get_type
 </SECTION>
 
 <SECTION>
-<FILE>WebKitNetworkRequest</FILE>
-WebKitNetworkRequest
-webkit_network_request_new
-webkit_network_request_get_uri
+<FILE>WebKitURIRequest</FILE>
+WebKitURIRequest
+webkit_uri_request_new
+webkit_uri_request_get_uri
 
 <SUBSECTION Standard>
-WebKitNetworkRequestClass
-WEBKIT_TYPE_NETWORK_REQUEST
-WEBKIT_NETWORK_REQUEST
-WEBKIT_IS_NETWORK_REQUEST
-WEBKIT_NETWORK_REQUEST_CLASS
-WEBKIT_IS_NETWORK_REQUEST_CLASS
-WEBKIT_NETWORK_REQUEST_GET_CLASS
+WebKitURIRequestClass
+WEBKIT_TYPE_URI_REQUEST
+WEBKIT_URI_REQUEST
+WEBKIT_IS_URI_REQUEST
+WEBKIT_URI_REQUEST_CLASS
+WEBKIT_IS_URI_REQUEST_CLASS
+WEBKIT_URI_REQUEST_GET_CLASS
 
 <SUBSECTION Private>
-WebKitNetworkRequestPrivate
-webkit_network_request_get_type
+WebKitURIRequestPrivate
+webkit_uri_request_get_type
 </SECTION>
 
 <SECTION>

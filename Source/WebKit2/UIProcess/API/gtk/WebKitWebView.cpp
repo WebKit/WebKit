@@ -418,18 +418,18 @@ void webkit_web_view_load_alternate_html(WebKitWebView* webView, const gchar* co
 /**
  * webkit_web_view_load_request:
  * @web_view: a #WebKitWebView
- * @request: a #WebKitNetworkRequest to load
+ * @request: a #WebKitURIRequest to load
  *
- * Requests loading of the specified #WebKitNetworkRequest.
+ * Requests loading of the specified #WebKitURIRequest.
  * You can monitor the status of the load operation using the
  * #WebKitWebLoaderClient of @web_view. See webkit_web_view_get_loader_client().
  */
-void webkit_web_view_load_request(WebKitWebView* webView, WebKitNetworkRequest* request)
+void webkit_web_view_load_request(WebKitWebView* webView, WebKitURIRequest* request)
 {
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
-    g_return_if_fail(WEBKIT_IS_NETWORK_REQUEST(request));
+    g_return_if_fail(WEBKIT_IS_URI_REQUEST(request));
 
-    WKRetainPtr<WKURLRef> wkURL(AdoptWK, WKURLCreateWithUTF8CString(webkit_network_request_get_uri(request)));
+    WKRetainPtr<WKURLRef> wkURL(AdoptWK, WKURLCreateWithUTF8CString(webkit_uri_request_get_uri(request)));
     WKRetainPtr<WKURLRequestRef> wkRequest(AdoptWK, WKURLRequestCreateWithWKURL(wkURL.get()));
     WebPageProxy* page = webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(webView));
     WKPageLoadURLRequest(toAPI(page), wkRequest.get());

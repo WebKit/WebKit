@@ -86,7 +86,7 @@ static void testLoadAlternateContent(LoadTrackingTest* test, gconstpointer)
 
 static void testLoadRequest(LoadTrackingTest* test, gconstpointer)
 {
-    GRefPtr<WebKitNetworkRequest> request(webkit_network_request_new(kServer->getURIForPath("/normal").data()));
+    GRefPtr<WebKitURIRequest> request(webkit_uri_request_new(kServer->getURIForPath("/normal").data()));
     test->loadRequest(request.get());
     test->waitUntilLoadFinished();
     assertNormalLoadHappenedAndClearEvents(test->m_loadEvents);
