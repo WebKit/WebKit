@@ -6,9 +6,10 @@
 
 TEMPLATE = lib
 
-DEFINES += BUILDING_JavaScriptCore BUILDING_WTF
+DEFINES += BUILDING_JavaScriptCore
 
 load(javascriptcore)
+load(wtf)
 
 CONFIG += javas
 CONFIG += staticlib
@@ -36,7 +37,6 @@ wince* {
 }
 
 include(yarr/yarr.pri)
-include(wtf/wtf.pri)
 
 INSTALLDEPS += all
 

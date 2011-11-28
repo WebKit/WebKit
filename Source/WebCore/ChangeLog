@@ -1,3 +1,14 @@
+2011-11-28  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] WTF should be built as separate static library
+        https://bugs.webkit.org/show_bug.cgi?id=73201
+
+        Reviewed by Tor Arne Vestbø.
+
+        * Target.pri: Require wtf and don't claim to be building it
+        with BUILDING_WTF in DEFINES (otherwise we won't link it with
+        debug-shlib builds).
+
 2011-11-28  Taiju TSUIKI  <tzik@chromium.org>
 
         Fix build error on Chromium/Windows.

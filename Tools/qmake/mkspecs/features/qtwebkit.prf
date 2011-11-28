@@ -27,7 +27,7 @@ config_step {
     INCLUDEPATH += $${ROOT_BUILD_DIR}/include/QtWebKit
 
     force_static_libs_as_shared {
-        LIBS += -lwebkit2 -lwebcore -ljscore
+        LIBS += -lwebkit2 -lwebcore -ljscore -lwtf
     }
 }
 

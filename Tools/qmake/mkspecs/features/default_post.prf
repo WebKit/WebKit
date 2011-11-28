@@ -11,7 +11,7 @@
 CONFIG += config_step
 
 # Reorder CONFIG so that the link and include order is correct
-libraries = webkit2 webcore javascriptcore
+libraries = webkit2 webcore javascriptcore wtf
 for(library, libraries) {
     contains(CONFIG, $$library) {
         CONFIG -= $$library

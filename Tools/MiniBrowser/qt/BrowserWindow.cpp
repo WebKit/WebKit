@@ -28,7 +28,6 @@
 
 #include "BrowserWindow.h"
 
-#include "config.h"
 #include "qquickwebpage_p.h"
 #include "qquickwebview_p.h"
 #include "utils.h"

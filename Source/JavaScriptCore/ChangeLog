@@ -1,3 +1,16 @@
+2011-11-28  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] WTF should be built as separate static library
+        https://bugs.webkit.org/show_bug.cgi?id=73201
+
+        Reviewed by Tor Arne Vestbø.
+
+        * Target.pri: Don't claim to build WTF, as that would cause
+        the debug-with-shlibs build to not link in wtf.
+        * jsc.pro: Require wtf.
+        * wtf/wtf.pri: Removed.
+        * wtf/wtf.pro: Added. Pro file to build wtf statically.
+
 2011-11-28  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] JavaScriptCore generated sources should build in the DerivedSources directory

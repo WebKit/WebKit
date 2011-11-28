@@ -11,6 +11,7 @@ DESTDIR = $$ROOT_BUILD_DIR/bin
 
 CONFIG += uitools
 
+load(wtf)
 load(javascriptcore)
 load(webcore)
 

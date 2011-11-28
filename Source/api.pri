@@ -15,6 +15,8 @@ load(features)
 
 include(WebKit/WebKit.pri)
 
+CONFIG += wtf
+
 !v8:CONFIG += javascriptcore
 
 CONFIG += webcore
