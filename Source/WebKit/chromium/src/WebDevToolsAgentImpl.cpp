@@ -219,10 +219,6 @@ void WebDevToolsAgentImpl::detach()
     m_attached = false;
 }
 
-void WebDevToolsAgentImpl::frontendLoaded()
-{
-}
-
 void WebDevToolsAgentImpl::didNavigate()
 {
     ClientMessageLoopAdapter::didNavigate();
