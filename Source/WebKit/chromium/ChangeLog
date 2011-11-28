@@ -1,3 +1,12 @@
+2011-11-28  Adam Barth  <abarth@webkit.org>
+
+        Add missing forwaring headers.
+
+        * public/android/WebThemeEngine.h: Added.
+        * public/linux/WebThemeEngine.h: Added.
+        * public/mac/WebThemeEngine.h: Added.
+        * public/win/WebThemeEngine.h: Added.
+
 2011-11-27  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed. Revert r101226.
