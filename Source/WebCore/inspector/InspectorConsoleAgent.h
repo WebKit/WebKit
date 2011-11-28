@@ -26,6 +26,7 @@
 #define InspectorConsoleAgent_h
 
 #include "ConsoleTypes.h"
+#include "InspectorBaseAgent.h"
 #include "InspectorFrontend.h"
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
@@ -51,7 +52,7 @@ class ScriptProfile;
 
 typedef String ErrorString;
 
-class InspectorConsoleAgent {
+class InspectorConsoleAgent : public InspectorBaseAgent {
     WTF_MAKE_NONCOPYABLE(InspectorConsoleAgent);
 public:
     InspectorConsoleAgent(InstrumentingAgents*, InspectorState*, InjectedScriptManager*);
@@ -61,9 +62,10 @@ public:
     void disable(ErrorString*);
     virtual void clearMessages(ErrorString*);
     void reset();
-    void restore();
-    void setFrontend(InspectorFrontend*);
-    void clearFrontend();
+
+    virtual void setFrontend(InspectorFrontend*);
+    virtual void clearFrontend();
+    virtual void restore();
 
     void addMessageToConsole(MessageSource, MessageType, MessageLevel, const String& message, PassRefPtr<ScriptArguments>, PassRefPtr<ScriptCallStack>);
     void addMessageToConsole(MessageSource, MessageType, MessageLevel, const String& message, unsigned lineNumber, const String& scriptId);
@@ -89,8 +91,6 @@ protected:
 
     virtual bool developerExtrasEnabled() = 0;
 
-    InstrumentingAgents* m_instrumentingAgents;
-    InspectorState* m_inspectorState;
     InjectedScriptManager* m_injectedScriptManager;
     InspectorFrontend::Console* m_frontend;
     ConsoleMessage* m_previousMessage;

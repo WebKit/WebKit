@@ -30,6 +30,7 @@
 #ifndef InspectorAgent_h
 #define InspectorAgent_h
 
+#include "InspectorBaseAgent.h"
 #include "PlatformString.h"
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
@@ -50,11 +51,10 @@ class Page;
 
 typedef String ErrorString;
 
-class InspectorAgent {
+class InspectorAgent : public InspectorBaseAgent {
     WTF_MAKE_NONCOPYABLE(InspectorAgent);
-    WTF_MAKE_FAST_ALLOCATED;
 public:
-    InspectorAgent(Page*, InjectedScriptManager*, InstrumentingAgents*);
+    InspectorAgent(Page*, InjectedScriptManager*, InstrumentingAgents*, InspectorState*);
     virtual ~InspectorAgent();
 
     void inspectedPageDestroyed();
@@ -64,10 +64,11 @@ public:
     KURL inspectedURL() const;
     KURL inspectedURLWithoutFragment() const;
 
-    void setFrontend(InspectorFrontend*);
     InspectorFrontend* frontend() const { return m_frontend; }
-    void clearFrontend();
-    void restore();
+
+    virtual void setFrontend(InspectorFrontend*);
+    virtual void clearFrontend();
+    virtual void restore();
 
     void didClearWindowObjectInWorld(Frame*, DOMWrapperWorld*);
 
@@ -101,7 +102,6 @@ private:
 
     Page* m_inspectedPage;
     InspectorFrontend* m_frontend;
-    InstrumentingAgents* m_instrumentingAgents;
     InjectedScriptManager* m_injectedScriptManager;
 
     Vector<pair<long, String> > m_pendingEvaluateTestCommands;

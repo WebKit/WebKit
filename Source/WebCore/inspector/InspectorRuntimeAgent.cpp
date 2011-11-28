@@ -55,12 +55,12 @@ static bool asBool(const bool* const b)
     return b ? *b : false;
 }
 
-InspectorRuntimeAgent::InspectorRuntimeAgent(InstrumentingAgents* instrumentingAgents, InjectedScriptManager* injectedScriptManager)
-    : m_injectedScriptManager(injectedScriptManager)
+InspectorRuntimeAgent::InspectorRuntimeAgent(InstrumentingAgents* instrumentingAgents, InspectorState* state, InjectedScriptManager* injectedScriptManager)
+    : InspectorBaseAgent(instrumentingAgents, state)
+    , m_injectedScriptManager(injectedScriptManager)
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     , m_scriptDebugServer(0)
 #endif
-    , m_instrumentingAgents(instrumentingAgents)
     , m_paused(false)
 {
     m_instrumentingAgents->setInspectorRuntimeAgent(this);

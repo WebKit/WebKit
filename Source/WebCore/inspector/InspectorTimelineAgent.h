@@ -33,6 +33,7 @@
 
 #if ENABLE(INSPECTOR)
 
+#include "InspectorBaseAgent.h"
 #include "InspectorFrontend.h"
 #include "InspectorValues.h"
 #include "LayoutTypes.h"
@@ -52,7 +53,7 @@ class ResourceResponse;
 
 typedef String ErrorString;
 
-class InspectorTimelineAgent : ScriptGCEventListener {
+class InspectorTimelineAgent : public InspectorBaseAgent, ScriptGCEventListener {
     WTF_MAKE_NONCOPYABLE(InspectorTimelineAgent);
 public:
     static PassOwnPtr<InspectorTimelineAgent> create(InstrumentingAgents* instrumentingAgents, InspectorState* state)
@@ -62,9 +63,9 @@ public:
 
     ~InspectorTimelineAgent();
 
-    void setFrontend(InspectorFrontend*);
-    void clearFrontend();
-    void restore();
+    virtual void setFrontend(InspectorFrontend*);
+    virtual void clearFrontend();
+    virtual void restore();
 
     void start(ErrorString*, int* maxCallStackDepth);
     void stop(ErrorString*);
@@ -151,8 +152,6 @@ private:
     void pushGCEventRecords();
     void clearRecordStack();
 
-    InstrumentingAgents* m_instrumentingAgents;
-    InspectorState* m_state;
     InspectorFrontend::Timeline* m_frontend;
 
     Vector<TimelineRecordEntry> m_recordStack;

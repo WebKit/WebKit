@@ -32,6 +32,7 @@
 
 #if ENABLE(JAVASCRIPT_DEBUGGER) && ENABLE(INSPECTOR)
 
+#include "InspectorBaseAgent.h"
 #include "InspectorFrontend.h"
 #include "PlatformString.h"
 #include <wtf/Forward.h>
@@ -54,7 +55,7 @@ class ScriptProfile;
 
 typedef String ErrorString;
 
-class InspectorProfilerAgent {
+class InspectorProfilerAgent : public InspectorBaseAgent {
     WTF_MAKE_NONCOPYABLE(InspectorProfilerAgent); WTF_MAKE_FAST_ALLOCATED;
 public:
     static PassOwnPtr<InspectorProfilerAgent> create(InstrumentingAgents*, InspectorConsoleAgent*, Page*, InspectorState*, InjectedScriptManager*);
@@ -81,9 +82,9 @@ public:
     void getProfile(ErrorString* error, const String& type, unsigned uid, RefPtr<InspectorObject>* profileObject);
     void removeProfile(ErrorString* error, const String& type, unsigned uid);
 
-    void setFrontend(InspectorFrontend*);
-    void clearFrontend();
-    void restore();
+    virtual void setFrontend(InspectorFrontend*);
+    virtual void clearFrontend();
+    virtual void restore();
 
     void takeHeapSnapshot(ErrorString*);
     void toggleRecordButton(bool isProfiling);
@@ -101,10 +102,8 @@ private:
     PassRefPtr<InspectorObject> createProfileHeader(const ScriptProfile& profile);
     PassRefPtr<InspectorObject> createSnapshotHeader(const ScriptHeapSnapshot& snapshot);
 
-    InstrumentingAgents* m_instrumentingAgents;
     InspectorConsoleAgent* m_consoleAgent;
     Page* m_inspectedPage;
-    InspectorState* m_inspectorState;
     InjectedScriptManager* m_injectedScriptManager;
     InspectorFrontend::Profiler* m_frontend;
     bool m_enabled;

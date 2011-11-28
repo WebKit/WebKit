@@ -1,3 +1,109 @@
+2011-11-28  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: introduce InspectorBaseAgent.
+        https://bugs.webkit.org/show_bug.cgi?id=73203
+
+        Now that inspector controller does not depend on concrete inspector agent
+        classes, we can collect agent instances using abstract type.
+
+        Reviewed by Yury Semikhatsky.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * inspector/InspectorAgent.cpp:
+        (WebCore::InspectorAgent::InspectorAgent):
+        * inspector/InspectorAgent.h:
+        * inspector/InspectorApplicationCacheAgent.cpp:
+        (WebCore::InspectorApplicationCacheAgent::InspectorApplicationCacheAgent):
+        * inspector/InspectorApplicationCacheAgent.h:
+        * inspector/InspectorBaseAgent.cpp: Copied from Source/WebCore/inspector/InspectorFileSystemAgent.h.
+        (WebCore::InspectorBaseAgent::InspectorBaseAgent):
+        (WebCore::InspectorBaseAgent::~InspectorBaseAgent):
+        * inspector/InspectorBaseAgent.h: Copied from Source/WebCore/inspector/InspectorFileSystemAgent.h.
+        * inspector/InspectorCSSAgent.cpp:
+        (WebCore::InspectorCSSAgent::InspectorCSSAgent):
+        * inspector/InspectorCSSAgent.h:
+        (WebCore::InspectorCSSAgent::setFrontend):
+        (WebCore::InspectorCSSAgent::restore):
+        * inspector/InspectorConsoleAgent.cpp:
+        (WebCore::InspectorConsoleAgent::InspectorConsoleAgent):
+        (WebCore::InspectorConsoleAgent::~InspectorConsoleAgent):
+        (WebCore::InspectorConsoleAgent::enable):
+        (WebCore::InspectorConsoleAgent::disable):
+        (WebCore::InspectorConsoleAgent::clearMessages):
+        (WebCore::InspectorConsoleAgent::restore):
+        (WebCore::InspectorConsoleAgent::clearFrontend):
+        (WebCore::InspectorConsoleAgent::resourceRetrievedByXMLHttpRequest):
+        (WebCore::InspectorConsoleAgent::setMonitoringXHREnabled):
+        (WebCore::InspectorConsoleAgent::addConsoleMessage):
+        * inspector/InspectorConsoleAgent.h:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::InspectorController):
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::InspectorDOMAgent):
+        (WebCore::InspectorDOMAgent::clearFrontend):
+        (WebCore::InspectorDOMAgent::setDocument):
+        (WebCore::InspectorDOMAgent::getDocument):
+        (WebCore::InspectorDOMAgent::mainFrameDOMContentLoaded):
+        * inspector/InspectorDOMAgent.h:
+        * inspector/InspectorDOMStorageAgent.cpp:
+        (WebCore::InspectorDOMStorageAgent::InspectorDOMStorageAgent):
+        (WebCore::InspectorDOMStorageAgent::restore):
+        (WebCore::InspectorDOMStorageAgent::enable):
+        (WebCore::InspectorDOMStorageAgent::disable):
+        * inspector/InspectorDOMStorageAgent.h:
+        * inspector/InspectorDatabaseAgent.cpp:
+        (WebCore::InspectorDatabaseAgent::InspectorDatabaseAgent):
+        (WebCore::InspectorDatabaseAgent::enable):
+        (WebCore::InspectorDatabaseAgent::disable):
+        (WebCore::InspectorDatabaseAgent::restore):
+        * inspector/InspectorDatabaseAgent.h:
+        * inspector/InspectorDebuggerAgent.cpp:
+        (WebCore::InspectorDebuggerAgent::InspectorDebuggerAgent):
+        (WebCore::InspectorDebuggerAgent::disable):
+        (WebCore::InspectorDebuggerAgent::enabled):
+        (WebCore::InspectorDebuggerAgent::enable):
+        (WebCore::InspectorDebuggerAgent::clearFrontend):
+        (WebCore::InspectorDebuggerAgent::setBreakpointByUrl):
+        (WebCore::InspectorDebuggerAgent::removeBreakpoint):
+        (WebCore::InspectorDebuggerAgent::didParseSource):
+        * inspector/InspectorDebuggerAgent.h:
+        * inspector/InspectorFileSystemAgent.cpp:
+        (WebCore::InspectorFileSystemAgent::InspectorFileSystemAgent):
+        * inspector/InspectorFileSystemAgent.h:
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::InspectorPageAgent):
+        * inspector/InspectorPageAgent.h:
+        * inspector/InspectorProfilerAgent.cpp:
+        (WebCore::InspectorProfilerAgent::InspectorProfilerAgent):
+        (WebCore::InspectorProfilerAgent::enable):
+        (WebCore::InspectorProfilerAgent::disable):
+        (WebCore::InspectorProfilerAgent::restore):
+        (WebCore::InspectorProfilerAgent::restoreEnablement):
+        (WebCore::InspectorProfilerAgent::start):
+        (WebCore::InspectorProfilerAgent::stop):
+        * inspector/InspectorProfilerAgent.h:
+        * inspector/InspectorResourceAgent.cpp:
+        (WebCore::InspectorResourceAgent::InspectorResourceAgent):
+        * inspector/InspectorResourceAgent.h:
+        * inspector/InspectorTimelineAgent.cpp:
+        (WebCore::InspectorTimelineAgent::InspectorTimelineAgent):
+        * inspector/InspectorTimelineAgent.h:
+        * inspector/InspectorWorkerAgent.cpp:
+        (WebCore::InspectorWorkerAgent::InspectorWorkerAgent):
+        (WebCore::InspectorWorkerAgent::restore):
+        (WebCore::InspectorWorkerAgent::clearFrontend):
+        (WebCore::InspectorWorkerAgent::setWorkerInspectionEnabled):
+        (WebCore::InspectorWorkerAgent::setAutoconnectToWorkers):
+        (WebCore::InspectorWorkerAgent::shouldPauseDedicatedWorkerOnStart):
+        (WebCore::InspectorWorkerAgent::didStartWorkerContext):
+        (WebCore::InspectorWorkerAgent::createWorkerFrontendChannel):
+        * inspector/InspectorWorkerAgent.h:
+
 2011-11-28  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: chromium: Unreviewed one-line fix for Summary view filter.

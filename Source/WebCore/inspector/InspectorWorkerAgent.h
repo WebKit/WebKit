@@ -33,6 +33,7 @@
 
 #if ENABLE(WORKERS)
 
+#include "InspectorBaseAgent.h"
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 
@@ -46,14 +47,14 @@ class WorkerContextProxy;
 
 typedef String ErrorString;
 
-class InspectorWorkerAgent {
+class InspectorWorkerAgent : public InspectorBaseAgent {
 public:
     static PassOwnPtr<InspectorWorkerAgent> create(InstrumentingAgents*, InspectorState*);
     ~InspectorWorkerAgent();
 
-    void setFrontend(InspectorFrontend*);
-    void restore();
-    void clearFrontend();
+    virtual void setFrontend(InspectorFrontend*);
+    virtual void restore();
+    virtual void clearFrontend();
 
     // Called from InspectorInstrumentation
     bool shouldPauseDedicatedWorkerOnStart();
@@ -73,9 +74,7 @@ private:
     void createWorkerFrontendChannel(WorkerContextProxy*, const String& url);
     void destroyWorkerFrontendChannels();
 
-    InstrumentingAgents* m_instrumentingAgents;
     InspectorFrontend* m_inspectorFrontend;
-    InspectorState* m_inspectorState;
 
     class WorkerFrontendChannel;
     typedef HashMap<int, WorkerFrontendChannel*> WorkerChannels;

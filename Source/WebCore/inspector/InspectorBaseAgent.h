@@ -28,42 +28,30 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-
-#include "PageRuntimeAgent.h"
-
-#if ENABLE(INSPECTOR)
-
-#include "InspectorPageAgent.h"
-#include "Page.h"
-#include "ScriptState.h"
+#ifndef InspectorBaseAgent_h
+#define InspectorBaseAgent_h
 
 namespace WebCore {
 
-PageRuntimeAgent::PageRuntimeAgent(InstrumentingAgents* instrumentingAgents, InspectorState* state, InjectedScriptManager* injectedScriptManager, Page* page, InspectorPageAgent* pageAgent)
-    : InspectorRuntimeAgent(instrumentingAgents, state, injectedScriptManager)
-    , m_inspectedPage(page)
-    , m_pageAgent(pageAgent)
-{
-}
+class InspectorFrontend;
+class InspectorState;
+class InstrumentingAgents;
 
-PageRuntimeAgent::~PageRuntimeAgent()
-{
-}
+class InspectorBaseAgent {
+public:
+    virtual ~InspectorBaseAgent();
 
-ScriptState* PageRuntimeAgent::scriptStateForFrameId(const String& frameId)
-{
-    Frame* frame = m_pageAgent->frameForId(frameId);
-    if (!frame)
-        return 0;
-    return mainWorldScriptState(frame);
-}
+    virtual void setFrontend(InspectorFrontend*) = 0;
+    virtual void clearFrontend() = 0;
+    virtual void restore() = 0;
 
-ScriptState* PageRuntimeAgent::getDefaultInspectedState()
-{
-    return mainWorldScriptState(m_inspectedPage->mainFrame());
-}
+protected:
+    InspectorBaseAgent(InstrumentingAgents*, InspectorState*);
+
+    InstrumentingAgents* m_instrumentingAgents;
+    InspectorState* m_state;
+};
 
 } // namespace WebCore
 
-#endif // ENABLE(INSPECTOR)
+#endif // !defined(InspectorBaseAgent_h)

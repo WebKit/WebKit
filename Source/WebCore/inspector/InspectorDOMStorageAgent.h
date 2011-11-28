@@ -29,6 +29,7 @@
 #ifndef InspectorDOMStorageAgent_h
 #define InspectorDOMStorageAgent_h
 
+#include "InspectorBaseAgent.h"
 #include "PlatformString.h"
 #include <wtf/HashMap.h>
 #include <wtf/PassOwnPtr.h>
@@ -46,7 +47,7 @@ class StorageArea;
 
 typedef String ErrorString;
 
-class InspectorDOMStorageAgent {
+class InspectorDOMStorageAgent : public InspectorBaseAgent {
 public:
     static PassOwnPtr<InspectorDOMStorageAgent> create(InstrumentingAgents* instrumentingAgents, InspectorState* state)
     {
@@ -54,11 +55,11 @@ public:
     }
     ~InspectorDOMStorageAgent();
 
-    void setFrontend(InspectorFrontend*);
-    void clearFrontend();
+    virtual void setFrontend(InspectorFrontend*);
+    virtual void clearFrontend();
+    void restore();
 
     void clearResources();
-    void restore();
 
     // Called from the front-end.
     void enable(ErrorString*);
@@ -78,8 +79,6 @@ private:
 
     InspectorDOMStorageResource* getDOMStorageResourceForId(int storageId);
 
-    InstrumentingAgents* m_instrumentingAgents;
-    InspectorState* m_inspectorState;
     typedef HashMap<int, RefPtr<InspectorDOMStorageResource> > DOMStorageResourcesMap;
     DOMStorageResourcesMap m_resources;
     InspectorFrontend* m_frontend;

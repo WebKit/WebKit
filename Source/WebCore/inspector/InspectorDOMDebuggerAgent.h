@@ -33,6 +33,7 @@
 
 #if ENABLE(JAVASCRIPT_DEBUGGER) && ENABLE(INSPECTOR)
 
+#include "InspectorBaseAgent.h"
 #include "InspectorDebuggerAgent.h"
 #include "PlatformString.h"
 #include <wtf/HashMap.h>
@@ -53,14 +54,12 @@ class Node;
 
 typedef String ErrorString;
 
-class InspectorDOMDebuggerAgent : public InspectorDebuggerAgent::Listener {
+class InspectorDOMDebuggerAgent : public InspectorBaseAgent, public InspectorDebuggerAgent::Listener {
     WTF_MAKE_NONCOPYABLE(InspectorDOMDebuggerAgent);
 public:
     static PassOwnPtr<InspectorDOMDebuggerAgent> create(InstrumentingAgents*, InspectorState*, InspectorDOMAgent*, InspectorDebuggerAgent*, InspectorAgent*);
 
     virtual ~InspectorDOMDebuggerAgent();
-
-    void clearFrontend();
 
     // DOMDebugger API for InspectorFrontend
     void setXHRBreakpoint(ErrorString*, const String& url);
@@ -80,6 +79,10 @@ public:
     void willSendXMLHttpRequest(const String& url);
     void pauseOnNativeEventIfNeeded(const String& categoryType, const String& eventName, bool synchronous);
 
+    virtual void setFrontend(InspectorFrontend*) { }
+    virtual void clearFrontend();
+    virtual void restore() { }
+
 private:
     InspectorDOMDebuggerAgent(InstrumentingAgents*, InspectorState*, InspectorDOMAgent*, InspectorDebuggerAgent*, InspectorAgent*);
 
@@ -95,8 +98,6 @@ private:
 
     void clear();
 
-    InstrumentingAgents* m_instrumentingAgents;
-    InspectorState* m_inspectorState;
     InspectorDOMAgent* m_domAgent;
     InspectorDebuggerAgent* m_debuggerAgent;
     InspectorAgent* m_inspectorAgent;

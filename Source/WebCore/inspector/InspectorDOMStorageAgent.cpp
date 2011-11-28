@@ -56,8 +56,7 @@ static const char domStorageAgentEnabled[] = "domStorageAgentEnabled";
 typedef HashMap<int, RefPtr<InspectorDOMStorageResource> > DOMStorageResourcesMap;
 
 InspectorDOMStorageAgent::InspectorDOMStorageAgent(InstrumentingAgents* instrumentingAgents, InspectorState* state)
-    : m_instrumentingAgents(instrumentingAgents)
-    , m_inspectorState(state)
+    : InspectorBaseAgent(instrumentingAgents, state)
     , m_frontend(0)
     , m_enabled(false)
 {
@@ -86,7 +85,7 @@ void InspectorDOMStorageAgent::clearFrontend()
 
 void InspectorDOMStorageAgent::restore()
 {
-    m_enabled =  m_inspectorState->getBoolean(DOMStorageAgentState::domStorageAgentEnabled);
+    m_enabled =  m_state->getBoolean(DOMStorageAgentState::domStorageAgentEnabled);
 }
 
 void InspectorDOMStorageAgent::enable(ErrorString*)
@@ -94,7 +93,7 @@ void InspectorDOMStorageAgent::enable(ErrorString*)
     if (m_enabled)
         return;
     m_enabled = true;
-    m_inspectorState->setBoolean(DOMStorageAgentState::domStorageAgentEnabled, m_enabled);
+    m_state->setBoolean(DOMStorageAgentState::domStorageAgentEnabled, m_enabled);
 
     DOMStorageResourcesMap::iterator resourcesEnd = m_resources.end();
     for (DOMStorageResourcesMap::iterator it = m_resources.begin(); it != resourcesEnd; ++it)
@@ -106,7 +105,7 @@ void InspectorDOMStorageAgent::disable(ErrorString*)
     if (!m_enabled)
         return;
     m_enabled = false;
-    m_inspectorState->setBoolean(DOMStorageAgentState::domStorageAgentEnabled, m_enabled);
+    m_state->setBoolean(DOMStorageAgentState::domStorageAgentEnabled, m_enabled);
 }
 
 void InspectorDOMStorageAgent::getDOMStorageEntries(ErrorString*, int storageId, RefPtr<InspectorArray>* entries)

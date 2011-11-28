@@ -172,10 +172,9 @@ void RevalidateStyleAttributeTask::onTimer(Timer<RevalidateStyleAttributeTask>*)
 }
 
 InspectorDOMAgent::InspectorDOMAgent(InstrumentingAgents* instrumentingAgents, InspectorPageAgent* pageAgent, InspectorClient* client, InspectorState* inspectorState, InjectedScriptManager* injectedScriptManager)
-    : m_instrumentingAgents(instrumentingAgents)
+    : InspectorBaseAgent(instrumentingAgents, inspectorState)
     , m_pageAgent(pageAgent)
     , m_client(client)
-    , m_inspectorState(inspectorState)
     , m_injectedScriptManager(injectedScriptManager)
     , m_frontend(0)
     , m_domListener(0)
@@ -212,7 +211,7 @@ void InspectorDOMAgent::clearFrontend()
 
     m_frontend = 0;
     m_instrumentingAgents->setInspectorDOMAgent(0);
-    m_inspectorState->setBoolean(DOMAgentState::documentRequested, false);
+    m_state->setBoolean(DOMAgentState::documentRequested, false);
     reset();
 }
 
@@ -264,7 +263,7 @@ void InspectorDOMAgent::setDocument(Document* doc)
 
     m_document = doc;
 
-    if (!m_inspectorState->getBoolean(DOMAgentState::documentRequested))
+    if (!m_state->getBoolean(DOMAgentState::documentRequested))
         return;
 
     // Immediately communicate 0 document or document that has finished loading.
@@ -354,7 +353,7 @@ HTMLElement* InspectorDOMAgent::assertHTMLElement(ErrorString* errorString, int 
 
 void InspectorDOMAgent::getDocument(ErrorString*, RefPtr<InspectorObject>* root)
 {
-    m_inspectorState->setBoolean(DOMAgentState::documentRequested, true);
+    m_state->setBoolean(DOMAgentState::documentRequested, true);
 
     if (!m_document)
         return;
@@ -1312,7 +1311,7 @@ void InspectorDOMAgent::mainFrameDOMContentLoaded()
 {
     // Re-push document once it is loaded.
     discardBindings();
-    if (m_inspectorState->getBoolean(DOMAgentState::documentRequested))
+    if (m_state->getBoolean(DOMAgentState::documentRequested))
         m_frontend->documentUpdated();
 }
 

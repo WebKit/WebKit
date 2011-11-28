@@ -68,10 +68,9 @@ PassOwnPtr<InspectorProfilerAgent> InspectorProfilerAgent::create(InstrumentingA
 }
 
 InspectorProfilerAgent::InspectorProfilerAgent(InstrumentingAgents* instrumentingAgents, InspectorConsoleAgent* consoleAgent, Page* inspectedPage, InspectorState* inspectorState, InjectedScriptManager* injectedScriptManager)
-    : m_instrumentingAgents(instrumentingAgents)
+    : InspectorBaseAgent(instrumentingAgents, inspectorState)
     , m_consoleAgent(consoleAgent)
     , m_inspectedPage(inspectedPage)
-    , m_inspectorState(inspectorState)
     , m_injectedScriptManager(injectedScriptManager)
     , m_frontend(0)
     , m_enabled(false)
@@ -142,13 +141,13 @@ void InspectorProfilerAgent::enable(ErrorString*)
 {
     if (enabled())
         return;
-    m_inspectorState->setBoolean(ProfilerAgentState::profilerEnabled, true);
+    m_state->setBoolean(ProfilerAgentState::profilerEnabled, true);
     enable(false);
 }
 
 void InspectorProfilerAgent::disable(ErrorString*)
 {
-    m_inspectorState->setBoolean(ProfilerAgentState::profilerEnabled, false);
+    m_state->setBoolean(ProfilerAgentState::profilerEnabled, false);
     disable();
 }
 
@@ -273,18 +272,18 @@ void InspectorProfilerAgent::clearFrontend()
 
 void InspectorProfilerAgent::restore()
 {
-    // Need to restore enablement state here as in setFrontend m_inspectorState wasn't loaded yet.
+    // Need to restore enablement state here as in setFrontend m_state wasn't loaded yet.
     restoreEnablement();
 
     // Revisit this.
     resetFrontendProfiles();
-    if (m_inspectorState->getBoolean(ProfilerAgentState::userInitiatedProfiling))
+    if (m_state->getBoolean(ProfilerAgentState::userInitiatedProfiling))
         start();
 }
 
 void InspectorProfilerAgent::restoreEnablement()
 {
-    if (m_inspectorState->getBoolean(ProfilerAgentState::profilerEnabled)) {
+    if (m_state->getBoolean(ProfilerAgentState::profilerEnabled)) {
         ErrorString error;
         enable(&error);
     }
@@ -308,7 +307,7 @@ void InspectorProfilerAgent::start(ErrorString*)
     ScriptProfiler::start(scriptState, title);
     addStartProfilingMessageToConsole(title, 0, String());
     toggleRecordButton(true);
-    m_inspectorState->setBoolean(ProfilerAgentState::userInitiatedProfiling, true);
+    m_state->setBoolean(ProfilerAgentState::userInitiatedProfiling, true);
 }
 
 void InspectorProfilerAgent::stop(ErrorString*)
@@ -328,7 +327,7 @@ void InspectorProfilerAgent::stop(ErrorString*)
     if (profile)
         addProfile(profile, 0, String());
     toggleRecordButton(false);
-    m_inspectorState->setBoolean(ProfilerAgentState::userInitiatedProfiling, false);
+    m_state->setBoolean(ProfilerAgentState::userInitiatedProfiling, false);
 }
 
 namespace {

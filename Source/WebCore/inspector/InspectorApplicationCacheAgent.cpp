@@ -49,10 +49,9 @@ static const char applicationCacheAgentEnabled[] = "applicationCacheAgentEnabled
 }
 
 InspectorApplicationCacheAgent::InspectorApplicationCacheAgent(InstrumentingAgents* instrumentingAgents, InspectorPageAgent* pageAgent, InspectorState* state)
-    : m_instrumentingAgents(instrumentingAgents)
+    : InspectorBaseAgent(instrumentingAgents, state)
     , m_pageAgent(pageAgent)
     , m_frontend(0)
-    , m_state(state)
 {
 }
 

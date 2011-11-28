@@ -32,6 +32,7 @@
 
 #if ENABLE(JAVASCRIPT_DEBUGGER) && ENABLE(INSPECTOR)
 #include "InjectedScript.h"
+#include "InspectorBaseAgent.h"
 #include "InspectorFrontend.h"
 #include "ScriptBreakpoint.h"
 #include "ScriptDebugListener.h"
@@ -57,7 +58,7 @@ class ScriptValue;
 
 typedef String ErrorString;
 
-class InspectorDebuggerAgent : public ScriptDebugListener {
+class InspectorDebuggerAgent : public InspectorBaseAgent, public ScriptDebugListener {
     WTF_MAKE_NONCOPYABLE(InspectorDebuggerAgent); WTF_MAKE_FAST_ALLOCATED;
 public:
     static const char* backtraceObjectGroup;
@@ -67,9 +68,10 @@ public:
     void getCapabilities(ErrorString*, RefPtr<InspectorArray>*);
     void enable(ErrorString*);
     void disable(ErrorString*);
-    void restore();
-    void setFrontend(InspectorFrontend*);
-    void clearFrontend();
+
+    virtual void setFrontend(InspectorFrontend*);
+    virtual void clearFrontend();
+    virtual void restore();
 
     void didClearMainFrameWindowObject();
 
@@ -139,8 +141,6 @@ private:
     typedef HashMap<String, Script> ScriptsMap;
     typedef HashMap<String, Vector<String> > BreakpointIdToDebugServerBreakpointIdsMap;
 
-    InstrumentingAgents* m_instrumentingAgents;
-    InspectorState* m_inspectorState;
     InjectedScriptManager* m_injectedScriptManager;
     InspectorFrontend::Debugger* m_frontend;
     ScriptState* m_pausedScriptState;

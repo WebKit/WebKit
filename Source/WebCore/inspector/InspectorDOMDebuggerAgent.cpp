@@ -75,8 +75,7 @@ PassOwnPtr<InspectorDOMDebuggerAgent> InspectorDOMDebuggerAgent::create(Instrume
 }
 
 InspectorDOMDebuggerAgent::InspectorDOMDebuggerAgent(InstrumentingAgents* instrumentingAgents, InspectorState* inspectorState, InspectorDOMAgent* domAgent, InspectorDebuggerAgent* debuggerAgent, InspectorAgent* inspectorAgent)
-    : m_instrumentingAgents(instrumentingAgents)
-    , m_inspectorState(inspectorState)
+    : InspectorBaseAgent(instrumentingAgents, inspectorState)
     , m_domAgent(domAgent)
     , m_debuggerAgent(debuggerAgent)
     , m_inspectorAgent(inspectorAgent)
@@ -124,9 +123,9 @@ void InspectorDOMDebuggerAgent::setEventListenerBreakpoint(ErrorString* error, c
         return;
     }
 
-    RefPtr<InspectorObject> eventListenerBreakpoints = m_inspectorState->getObject(DOMDebuggerAgentState::eventListenerBreakpoints);
+    RefPtr<InspectorObject> eventListenerBreakpoints = m_state->getObject(DOMDebuggerAgentState::eventListenerBreakpoints);
     eventListenerBreakpoints->setBoolean(eventName, true);
-    m_inspectorState->setObject(DOMDebuggerAgentState::eventListenerBreakpoints, eventListenerBreakpoints);
+    m_state->setObject(DOMDebuggerAgentState::eventListenerBreakpoints, eventListenerBreakpoints);
 }
 
 void InspectorDOMDebuggerAgent::removeEventListenerBreakpoint(ErrorString* error, const String& eventName)
@@ -136,9 +135,9 @@ void InspectorDOMDebuggerAgent::removeEventListenerBreakpoint(ErrorString* error
         return;
     }
 
-    RefPtr<InspectorObject> eventListenerBreakpoints = m_inspectorState->getObject(DOMDebuggerAgentState::eventListenerBreakpoints);
+    RefPtr<InspectorObject> eventListenerBreakpoints = m_state->getObject(DOMDebuggerAgentState::eventListenerBreakpoints);
     eventListenerBreakpoints->remove(eventName);
-    m_inspectorState->setObject(DOMDebuggerAgentState::eventListenerBreakpoints, eventListenerBreakpoints);
+    m_state->setObject(DOMDebuggerAgentState::eventListenerBreakpoints, eventListenerBreakpoints);
 }
 
 void InspectorDOMDebuggerAgent::didInvalidateStyleAttr(Node* node)
@@ -331,7 +330,7 @@ void InspectorDOMDebuggerAgent::updateSubtreeBreakpoints(Node* node, uint32_t ro
 void InspectorDOMDebuggerAgent::pauseOnNativeEventIfNeeded(const String& categoryType, const String& eventName, bool synchronous)
 {
     String fullEventName = categoryType + ':' + eventName;
-    RefPtr<InspectorObject> eventListenerBreakpoints = m_inspectorState->getObject(DOMDebuggerAgentState::eventListenerBreakpoints);
+    RefPtr<InspectorObject> eventListenerBreakpoints = m_state->getObject(DOMDebuggerAgentState::eventListenerBreakpoints);
     if (eventListenerBreakpoints->find(fullEventName) == eventListenerBreakpoints->end())
         return;
 
@@ -346,34 +345,34 @@ void InspectorDOMDebuggerAgent::pauseOnNativeEventIfNeeded(const String& categor
 void InspectorDOMDebuggerAgent::setXHRBreakpoint(ErrorString*, const String& url)
 {
     if (url.isEmpty()) {
-        m_inspectorState->setBoolean(DOMDebuggerAgentState::pauseOnAllXHRs, true);
+        m_state->setBoolean(DOMDebuggerAgentState::pauseOnAllXHRs, true);
         return;
     }
 
-    RefPtr<InspectorObject> xhrBreakpoints = m_inspectorState->getObject(DOMDebuggerAgentState::xhrBreakpoints);
+    RefPtr<InspectorObject> xhrBreakpoints = m_state->getObject(DOMDebuggerAgentState::xhrBreakpoints);
     xhrBreakpoints->setBoolean(url, true);
-    m_inspectorState->setObject(DOMDebuggerAgentState::xhrBreakpoints, xhrBreakpoints);
+    m_state->setObject(DOMDebuggerAgentState::xhrBreakpoints, xhrBreakpoints);
 }
 
 void InspectorDOMDebuggerAgent::removeXHRBreakpoint(ErrorString*, const String& url)
 {
     if (url.isEmpty()) {
-        m_inspectorState->setBoolean(DOMDebuggerAgentState::pauseOnAllXHRs, false);
+        m_state->setBoolean(DOMDebuggerAgentState::pauseOnAllXHRs, false);
         return;
     }
 
-    RefPtr<InspectorObject> xhrBreakpoints = m_inspectorState->getObject(DOMDebuggerAgentState::xhrBreakpoints);
+    RefPtr<InspectorObject> xhrBreakpoints = m_state->getObject(DOMDebuggerAgentState::xhrBreakpoints);
     xhrBreakpoints->remove(url);
-    m_inspectorState->setObject(DOMDebuggerAgentState::xhrBreakpoints, xhrBreakpoints);
+    m_state->setObject(DOMDebuggerAgentState::xhrBreakpoints, xhrBreakpoints);
 }
 
 void InspectorDOMDebuggerAgent::willSendXMLHttpRequest(const String& url)
 {
     String breakpointURL;
-    if (m_inspectorState->getBoolean(DOMDebuggerAgentState::pauseOnAllXHRs))
+    if (m_state->getBoolean(DOMDebuggerAgentState::pauseOnAllXHRs))
         breakpointURL = "";
     else {
-        RefPtr<InspectorObject> xhrBreakpoints = m_inspectorState->getObject(DOMDebuggerAgentState::xhrBreakpoints);
+        RefPtr<InspectorObject> xhrBreakpoints = m_state->getObject(DOMDebuggerAgentState::xhrBreakpoints);
         for (InspectorObject::iterator it = xhrBreakpoints->begin(); it != xhrBreakpoints->end(); ++it) {
             if (url.contains(it->first)) {
                 breakpointURL = it->first;

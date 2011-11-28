@@ -28,6 +28,7 @@
 #if ENABLE(INSPECTOR)
 
 #include "ApplicationCacheHost.h"
+#include "InspectorBaseAgent.h"
 #include "InspectorFrontend.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/PassRefPtr.h>
@@ -48,16 +49,16 @@ class ResourceResponse;
 
 typedef String ErrorString;
 
-class InspectorApplicationCacheAgent {
+class InspectorApplicationCacheAgent : public InspectorBaseAgent {
     WTF_MAKE_NONCOPYABLE(InspectorApplicationCacheAgent); WTF_MAKE_FAST_ALLOCATED;
 public:
     InspectorApplicationCacheAgent(InstrumentingAgents*, InspectorPageAgent*, InspectorState*);
     ~InspectorApplicationCacheAgent() { }
 
-    // Inspector Controller API
-    void setFrontend(InspectorFrontend*);
-    void clearFrontend();
-    void restore();
+    // InspectorBaseAgent
+    virtual void setFrontend(InspectorFrontend*);
+    virtual void clearFrontend();
+    virtual void restore();
 
     // InspectorInstrumentation API
     void updateApplicationCacheStatus(Frame*);
@@ -76,10 +77,8 @@ private:
 
     DocumentLoader* assertFrameWithDocumentLoader(ErrorString*, String frameId);
 
-    InstrumentingAgents* m_instrumentingAgents;
     InspectorPageAgent* m_pageAgent;
     InspectorFrontend::ApplicationCache* m_frontend;
-    InspectorState* m_state;
 };
 
 } // namespace WebCore

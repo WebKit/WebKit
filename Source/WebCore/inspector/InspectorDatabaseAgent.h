@@ -29,6 +29,7 @@
 #ifndef InspectorDatabaseAgent_h
 #define InspectorDatabaseAgent_h
 
+#include "InspectorBaseAgent.h"
 #include "PlatformString.h"
 #include <wtf/HashMap.h>
 #include <wtf/PassOwnPtr.h>
@@ -44,7 +45,7 @@ class InstrumentingAgents;
 
 typedef String ErrorString;
 
-class InspectorDatabaseAgent {
+class InspectorDatabaseAgent : public InspectorBaseAgent {
 public:
     class FrontendProvider;
 
@@ -54,11 +55,11 @@ public:
     }
     ~InspectorDatabaseAgent();
 
-    void setFrontend(InspectorFrontend*);
-    void clearFrontend();
+    virtual void setFrontend(InspectorFrontend*);
+    virtual void clearFrontend();
+    virtual void restore();
 
     void clearResources();
-    void restore();
 
     // Called from the front-end.
     void enable(ErrorString*);
@@ -76,8 +77,6 @@ private:
     Database* databaseForId(int databaseId);
     InspectorDatabaseResource* findByFileName(const String& fileName);
 
-    InstrumentingAgents* m_instrumentingAgents;
-    InspectorState* m_inspectorState;
     typedef HashMap<int, RefPtr<InspectorDatabaseResource> > DatabaseResourcesMap;
     DatabaseResourcesMap m_resources;
     RefPtr<FrontendProvider> m_frontendProvider;

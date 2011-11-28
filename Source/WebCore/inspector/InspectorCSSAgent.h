@@ -26,6 +26,7 @@
 #define InspectorCSSAgent_h
 
 #include "CSSSelector.h"
+#include "InspectorBaseAgent.h"
 #include "InspectorDOMAgent.h"
 #include "InspectorStyleSheet.h"
 #include "InspectorValues.h"
@@ -51,17 +52,19 @@ class Node;
 
 #if ENABLE(INSPECTOR)
 
-class InspectorCSSAgent : public InspectorDOMAgent::DOMListener {
+class InspectorCSSAgent : public InspectorBaseAgent, public InspectorDOMAgent::DOMListener {
     WTF_MAKE_NONCOPYABLE(InspectorCSSAgent);
 public:
     static CSSStyleSheet* parentStyleSheet(CSSRule*);
     static CSSStyleRule* asCSSStyleRule(CSSRule*);
 
-    InspectorCSSAgent(InstrumentingAgents*, InspectorDOMAgent*);
+    InspectorCSSAgent(InstrumentingAgents*, InspectorState*, InspectorDOMAgent*);
     ~InspectorCSSAgent();
 
     bool forcePseudoState(Element*, CSSSelector::PseudoType);
-    void clearFrontend();
+    virtual void setFrontend(InspectorFrontend*) { }
+    virtual void clearFrontend();
+    virtual void restore() { }
     void reset();
 
     void getComputedStyleForNode(ErrorString*, int nodeId, const RefPtr<InspectorArray>* forcedPseudoClasses, RefPtr<InspectorArray>* style);
@@ -105,7 +108,6 @@ private:
 
     void clearPseudoState(bool recalcStyles);
 
-    InstrumentingAgents* m_instrumentingAgents;
     InspectorDOMAgent* m_domAgent;
     RefPtr<Element> m_lastElementWithPseudoState;
     unsigned m_lastPseudoState;

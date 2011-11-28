@@ -29,39 +29,20 @@
  */
 
 #include "config.h"
-
-#include "PageRuntimeAgent.h"
+#include "InspectorBaseAgent.h"
 
 #if ENABLE(INSPECTOR)
 
-#include "InspectorPageAgent.h"
-#include "Page.h"
-#include "ScriptState.h"
-
 namespace WebCore {
 
-PageRuntimeAgent::PageRuntimeAgent(InstrumentingAgents* instrumentingAgents, InspectorState* state, InjectedScriptManager* injectedScriptManager, Page* page, InspectorPageAgent* pageAgent)
-    : InspectorRuntimeAgent(instrumentingAgents, state, injectedScriptManager)
-    , m_inspectedPage(page)
-    , m_pageAgent(pageAgent)
+InspectorBaseAgent::InspectorBaseAgent(InstrumentingAgents* instrumentingAgents, InspectorState* inspectorState)
+    : m_instrumentingAgents(instrumentingAgents)
+    , m_state(inspectorState)
 {
 }
 
-PageRuntimeAgent::~PageRuntimeAgent()
+InspectorBaseAgent::~InspectorBaseAgent()
 {
-}
-
-ScriptState* PageRuntimeAgent::scriptStateForFrameId(const String& frameId)
-{
-    Frame* frame = m_pageAgent->frameForId(frameId);
-    if (!frame)
-        return 0;
-    return mainWorldScriptState(frame);
-}
-
-ScriptState* PageRuntimeAgent::getDefaultInspectedState()
-{
-    return mainWorldScriptState(m_inspectedPage->mainFrame());
 }
 
 } // namespace WebCore

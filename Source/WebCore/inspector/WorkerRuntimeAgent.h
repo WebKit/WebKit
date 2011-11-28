@@ -41,7 +41,7 @@ class WorkerContext;
 
 class WorkerRuntimeAgent : public InspectorRuntimeAgent {
 public:
-    WorkerRuntimeAgent(InstrumentingAgents*, InjectedScriptManager*, WorkerContext*);
+    WorkerRuntimeAgent(InstrumentingAgents*, InspectorState*, InjectedScriptManager*, WorkerContext*);
     virtual ~WorkerRuntimeAgent();
 
 private:

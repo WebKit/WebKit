@@ -53,8 +53,7 @@ static const char javaScriptBreakpoints[] = "javaScriptBreakopints";
 const char* InspectorDebuggerAgent::backtraceObjectGroup = "backtrace-object-group";
 
 InspectorDebuggerAgent::InspectorDebuggerAgent(InstrumentingAgents* instrumentingAgents, InspectorState* inspectorState, InjectedScriptManager* injectedScriptManager)
-    : m_instrumentingAgents(instrumentingAgents)
-    , m_inspectorState(inspectorState)
+    : InspectorBaseAgent(instrumentingAgents, inspectorState)
     , m_injectedScriptManager(injectedScriptManager)
     , m_frontend(0)
     , m_pausedScriptState(0)
@@ -84,7 +83,7 @@ void InspectorDebuggerAgent::enable()
 
 void InspectorDebuggerAgent::disable()
 {
-    m_inspectorState->setObject(DebuggerAgentState::javaScriptBreakpoints, InspectorObject::create());
+    m_state->setObject(DebuggerAgentState::javaScriptBreakpoints, InspectorObject::create());
     m_instrumentingAgents->setInspectorDebuggerAgent(0);
 
     stopListeningScriptDebugServer();
@@ -97,7 +96,7 @@ void InspectorDebuggerAgent::disable()
 
 bool InspectorDebuggerAgent::enabled()
 {
-    return m_inspectorState->getBoolean(DebuggerAgentState::debuggerEnabled);
+    return m_state->getBoolean(DebuggerAgentState::debuggerEnabled);
 }
 
 void InspectorDebuggerAgent::getCapabilities(ErrorString*, RefPtr<InspectorArray>* capabilities)
@@ -112,7 +111,7 @@ void InspectorDebuggerAgent::enable(ErrorString*)
         return;
 
     enable();
-    m_inspectorState->setBoolean(DebuggerAgentState::debuggerEnabled, true);
+    m_state->setBoolean(DebuggerAgentState::debuggerEnabled, true);
 
     ASSERT(m_frontend);
 }
@@ -123,7 +122,7 @@ void InspectorDebuggerAgent::disable(ErrorString*)
         return;
 
     disable();
-    m_inspectorState->setBoolean(DebuggerAgentState::debuggerEnabled, false);
+    m_state->setBoolean(DebuggerAgentState::debuggerEnabled, false);
 }
 
 void InspectorDebuggerAgent::restore()
@@ -151,7 +150,7 @@ void InspectorDebuggerAgent::clearFrontend()
     // FIXME: due to m_state->mute() hack in InspectorController, debuggerEnabled is actually set to false only
     // in InspectorState, but not in cookie. That's why after navigation debuggerEnabled will be true,
     // but after front-end re-open it will still be false.
-    m_inspectorState->setBoolean(DebuggerAgentState::debuggerEnabled, false);
+    m_state->setBoolean(DebuggerAgentState::debuggerEnabled, false);
 }
 
 void InspectorDebuggerAgent::setBreakpointsActive(ErrorString*, bool active)
@@ -203,14 +202,14 @@ void InspectorDebuggerAgent::setBreakpointByUrl(ErrorString* errorString, int li
     bool isRegex = optionalURLRegex;
 
     String breakpointId = (isRegex ? "/" + url + "/" : url) + ':' + String::number(lineNumber) + ':' + String::number(columnNumber);
-    RefPtr<InspectorObject> breakpointsCookie = m_inspectorState->getObject(DebuggerAgentState::javaScriptBreakpoints);
+    RefPtr<InspectorObject> breakpointsCookie = m_state->getObject(DebuggerAgentState::javaScriptBreakpoints);
     if (breakpointsCookie->find(breakpointId) != breakpointsCookie->end()) {
         *errorString = "Breakpoint at specified location already exists.";
         return;
     }
 
     breakpointsCookie->setObject(breakpointId, buildObjectForBreakpointCookie(url, lineNumber, columnNumber, condition, isRegex));
-    m_inspectorState->setObject(DebuggerAgentState::javaScriptBreakpoints, breakpointsCookie);
+    m_state->setObject(DebuggerAgentState::javaScriptBreakpoints, breakpointsCookie);
 
     ScriptBreakpoint breakpoint(lineNumber, columnNumber, condition);
     for (ScriptsMap::iterator it = m_scripts.begin(); it != m_scripts.end(); ++it) {
@@ -259,9 +258,9 @@ void InspectorDebuggerAgent::setBreakpoint(ErrorString* errorString, PassRefPtr<
 
 void InspectorDebuggerAgent::removeBreakpoint(ErrorString*, const String& breakpointId)
 {
-    RefPtr<InspectorObject> breakpointsCookie = m_inspectorState->getObject(DebuggerAgentState::javaScriptBreakpoints);
+    RefPtr<InspectorObject> breakpointsCookie = m_state->getObject(DebuggerAgentState::javaScriptBreakpoints);
     breakpointsCookie->remove(breakpointId);
-    m_inspectorState->setObject(DebuggerAgentState::javaScriptBreakpoints, breakpointsCookie);
+    m_state->setObject(DebuggerAgentState::javaScriptBreakpoints, breakpointsCookie);
 
     BreakpointIdToDebugServerBreakpointIdsMap::iterator debugServerBreakpointIdsIterator = m_breakpointIdToDebugServerBreakpointIds.find(breakpointId);
     if (debugServerBreakpointIdsIterator == m_breakpointIdToDebugServerBreakpointIds.end())
@@ -477,7 +476,7 @@ void InspectorDebuggerAgent::didParseSource(const String& scriptId, const Script
     if (script.url.isEmpty())
         return;
 
-    RefPtr<InspectorObject> breakpointsCookie = m_inspectorState->getObject(DebuggerAgentState::javaScriptBreakpoints);
+    RefPtr<InspectorObject> breakpointsCookie = m_state->getObject(DebuggerAgentState::javaScriptBreakpoints);
     for (InspectorObject::iterator it = breakpointsCookie->begin(); it != breakpointsCookie->end(); ++it) {
         RefPtr<InspectorObject> breakpointObject = it->second->asObject();
         bool isRegex;

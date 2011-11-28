@@ -68410,6 +68410,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\inspector\InspectorBaseAgent.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\inspector\InspectorBaseAgent.h"
+				>
+			</File>
+			<File
 				RelativePath="..\inspector\InspectorClient.cpp"
 				>
 			</File>

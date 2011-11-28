@@ -94,7 +94,7 @@ WorkerInspectorController::WorkerInspectorController(WorkerContext* workerContex
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     , m_debuggerAgent(WorkerDebuggerAgent::create(m_instrumentingAgents.get(), m_state.get(), workerContext, m_injectedScriptManager.get()))
 #endif
-    , m_runtimeAgent(adoptPtr(new WorkerRuntimeAgent(m_instrumentingAgents.get(), m_injectedScriptManager.get(), workerContext)))
+    , m_runtimeAgent(adoptPtr(new WorkerRuntimeAgent(m_instrumentingAgents.get(), m_state.get(), m_injectedScriptManager.get(), workerContext)))
     , m_consoleAgent(adoptPtr(new WorkerConsoleAgent(m_instrumentingAgents.get(), m_state.get(), m_injectedScriptManager.get())))
 {
     m_injectedScriptManager->injectedScriptHost()->init(0

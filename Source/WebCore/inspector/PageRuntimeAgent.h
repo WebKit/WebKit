@@ -42,7 +42,7 @@ class Page;
 
 class PageRuntimeAgent : public InspectorRuntimeAgent {
 public:
-    PageRuntimeAgent(InstrumentingAgents*, InjectedScriptManager*, Page*, InspectorPageAgent*);
+    PageRuntimeAgent(InstrumentingAgents*, InspectorState*, InjectedScriptManager*, Page*, InspectorPageAgent*);
     virtual ~PageRuntimeAgent();
 
 private:

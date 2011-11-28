@@ -34,6 +34,7 @@
 #if ENABLE(INSPECTOR)
 
 #include "Frame.h"
+#include "InspectorBaseAgent.h"
 #include "InspectorFrontend.h"
 #include "PlatformString.h"
 #include <wtf/HashMap.h>
@@ -59,7 +60,7 @@ class SharedBuffer;
 
 typedef String ErrorString;
 
-class InspectorPageAgent {
+class InspectorPageAgent : InspectorBaseAgent {
     WTF_MAKE_NONCOPYABLE(InspectorPageAgent);
 public:
     enum ResourceType {
@@ -108,9 +109,9 @@ public:
     void loaderDetachedFromFrame(DocumentLoader*);
 
     // Inspector Controller API
-    void setFrontend(InspectorFrontend*);
-    void clearFrontend();
-    void restore();
+    virtual void setFrontend(InspectorFrontend*);
+    virtual void clearFrontend();
+    virtual void restore();
 
     // Cross-agents API
     Frame* mainFrame();
@@ -126,11 +127,8 @@ private:
 
     PassRefPtr<InspectorObject> buildObjectForFrame(Frame*);
     PassRefPtr<InspectorObject> buildObjectForFrameTree(Frame*);
-
-    InstrumentingAgents* m_instrumentingAgents;
     Page* m_page;
     InjectedScriptManager* m_injectedScriptManager;
-    InspectorState* m_state;
     InspectorFrontend::Page* m_frontend;
     long m_lastScriptIdentifier;
     String m_pendingScriptToEvaluateOnLoadOnce;

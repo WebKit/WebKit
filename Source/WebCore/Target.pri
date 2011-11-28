@@ -862,6 +862,7 @@ SOURCES += \
     inspector/InjectedScriptManager.cpp \
     inspector/InspectorAgent.cpp \
     inspector/InspectorApplicationCacheAgent.cpp \
+    inspector/InspectorBaseAgent.cpp \
     inspector/InspectorCSSAgent.cpp \
     inspector/InspectorClient.cpp \
     inspector/InspectorConsoleAgent.cpp \
@@ -1913,6 +1914,7 @@ HEADERS += \
     inspector/InjectedScriptManager.h \
     inspector/InspectorAgent.h \
     inspector/InspectorApplicationCacheAgent.h \
+    inspector/InspectorBaseAgent.h \
     inspector/InspectorConsoleAgent.h \
     inspector/InspectorConsoleInstrumentation.h \
     inspector/InspectorController.h \

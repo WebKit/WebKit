@@ -33,6 +33,7 @@
 
 #if ENABLE(INSPECTOR)
 
+#include "InspectorBaseAgent.h"
 #include "ScriptState.h"
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
@@ -50,7 +51,7 @@ class WorkerContext;
 
 typedef String ErrorString;
 
-class InspectorRuntimeAgent {
+class InspectorRuntimeAgent : public InspectorBaseAgent {
     WTF_MAKE_NONCOPYABLE(InspectorRuntimeAgent);
 public:
     virtual ~InspectorRuntimeAgent();
@@ -77,6 +78,10 @@ public:
     void releaseObjectGroup(ErrorString*, const String& objectGroup);
     void run(ErrorString*);
 
+    virtual void setFrontend(InspectorFrontend*) { }
+    virtual void clearFrontend() { }
+    virtual void restore() { }
+
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     void setScriptDebugServer(ScriptDebugServer*);
 #if ENABLE(WORKERS)
@@ -85,7 +90,7 @@ public:
 #endif
 
 protected:
-    InspectorRuntimeAgent(InstrumentingAgents*, InjectedScriptManager*);
+    InspectorRuntimeAgent(InstrumentingAgents*, InspectorState*, InjectedScriptManager*);
     virtual ScriptState* scriptStateForFrameId(const String& frameId) = 0;
     virtual ScriptState* getDefaultInspectedState() = 0;
 
@@ -94,7 +99,6 @@ private:
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     ScriptDebugServer* m_scriptDebugServer;
 #endif
-    InstrumentingAgents* m_instrumentingAgents;
     bool m_paused;
 };
 

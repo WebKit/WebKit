@@ -111,9 +111,8 @@ PassOwnPtr<InspectorWorkerAgent> InspectorWorkerAgent::create(InstrumentingAgent
 }
 
 InspectorWorkerAgent::InspectorWorkerAgent(InstrumentingAgents* instrumentingAgents, InspectorState* inspectorState)
-    : m_instrumentingAgents(instrumentingAgents)
+    : InspectorBaseAgent(instrumentingAgents, inspectorState)
     , m_inspectorFrontend(0)
-    , m_inspectorState(inspectorState)
 {
     m_instrumentingAgents->setInspectorWorkerAgent(this);
 }
@@ -130,20 +129,20 @@ void InspectorWorkerAgent::setFrontend(InspectorFrontend* frontend)
 
 void InspectorWorkerAgent::restore()
 {
-    if (m_inspectorState->getBoolean(WorkerAgentState::workerInspectionEnabled))
+    if (m_state->getBoolean(WorkerAgentState::workerInspectionEnabled))
         createWorkerFrontendChannelsForExistingWorkers();
 }
 
 void InspectorWorkerAgent::clearFrontend()
 {
     m_inspectorFrontend = 0;
-    m_inspectorState->setBoolean(WorkerAgentState::autoconnectToWorkers, false);
+    m_state->setBoolean(WorkerAgentState::autoconnectToWorkers, false);
     destroyWorkerFrontendChannels();
 }
 
 void InspectorWorkerAgent::setWorkerInspectionEnabled(ErrorString*, bool value)
 {
-    m_inspectorState->setBoolean(WorkerAgentState::workerInspectionEnabled, value);
+    m_state->setBoolean(WorkerAgentState::workerInspectionEnabled, value);
     if (!m_inspectorFrontend)
         return;
     if (value)
@@ -181,18 +180,18 @@ void InspectorWorkerAgent::sendMessageToWorker(ErrorString* error, int workerId,
 
 void InspectorWorkerAgent::setAutoconnectToWorkers(ErrorString*, bool value)
 {
-    m_inspectorState->setBoolean(WorkerAgentState::autoconnectToWorkers, value);
+    m_state->setBoolean(WorkerAgentState::autoconnectToWorkers, value);
 }
 
 bool InspectorWorkerAgent::shouldPauseDedicatedWorkerOnStart()
 {
-    return m_inspectorState->getBoolean(WorkerAgentState::autoconnectToWorkers);
+    return m_state->getBoolean(WorkerAgentState::autoconnectToWorkers);
 }
 
 void InspectorWorkerAgent::didStartWorkerContext(WorkerContextProxy* workerContextProxy, const KURL& url)
 {
     m_dedicatedWorkers.set(workerContextProxy, url.string());
-    if (m_inspectorFrontend && m_inspectorState->getBoolean(WorkerAgentState::workerInspectionEnabled))
+    if (m_inspectorFrontend && m_state->getBoolean(WorkerAgentState::workerInspectionEnabled))
         createWorkerFrontendChannel(workerContextProxy, url.string());
 }
 
@@ -230,7 +229,7 @@ void InspectorWorkerAgent::createWorkerFrontendChannel(WorkerContextProxy* worke
     m_idToChannel.set(channel->id(), channel);
 
     ASSERT(m_inspectorFrontend);
-    bool autoconnectToWorkers = m_inspectorState->getBoolean(WorkerAgentState::autoconnectToWorkers);
+    bool autoconnectToWorkers = m_state->getBoolean(WorkerAgentState::autoconnectToWorkers);
     if (autoconnectToWorkers)
         channel->connectToWorkerContext();
     m_inspectorFrontend->worker()->workerCreated(channel->id(), url, autoconnectToWorkers);

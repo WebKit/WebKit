@@ -33,6 +33,7 @@
 
 #if ENABLE(INSPECTOR) && ENABLE(FILE_SYSTEM)
 
+#include "InspectorBaseAgent.h"
 #include "InspectorFrontend.h"
 
 #include <wtf/PassOwnPtr.h>
@@ -44,7 +45,7 @@ class InspectorFrontend;
 class InspectorState;
 class InstrumentingAgents;
 
-class InspectorFileSystemAgent {
+class InspectorFileSystemAgent : public InspectorBaseAgent {
 public:
     static PassOwnPtr<InspectorFileSystemAgent> create(InstrumentingAgents*, InspectorState*);
     virtual ~InspectorFileSystemAgent();
@@ -55,14 +56,12 @@ public:
     void enable(ErrorString*);
     void disable(ErrorString*);
 
-    void setFrontend(InspectorFrontend*);
-    void clearFrontend();
-    void restore();
+    virtual void setFrontend(InspectorFrontend*);
+    virtual void clearFrontend();
+    virtual void restore();
 private:
     InspectorFileSystemAgent(InstrumentingAgents*, InspectorState*);
 
-    InstrumentingAgents* m_instrumentingAgents;
-    InspectorState* m_state;
     InspectorFrontend::FileSystem* m_frontend;
     bool m_enabled;
 };

@@ -61,10 +61,10 @@ static const char scriptsPanelName[] = "scripts";
 static const char consolePanelName[] = "console";
 static const char profilesPanelName[] = "profiles";
 
-InspectorAgent::InspectorAgent(Page* page, InjectedScriptManager* injectedScriptManager, InstrumentingAgents* instrumentingAgents)
-    : m_inspectedPage(page)
+InspectorAgent::InspectorAgent(Page* page, InjectedScriptManager* injectedScriptManager, InstrumentingAgents* instrumentingAgents, InspectorState* state)
+    : InspectorBaseAgent(instrumentingAgents, state)
+    , m_inspectedPage(page)
     , m_frontend(0)
-    , m_instrumentingAgents(instrumentingAgents)
     , m_injectedScriptManager(injectedScriptManager)
     , m_canIssueEvaluateForTestInFrontend(false)
     , m_didCommitLoadFired(false)

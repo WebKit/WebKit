@@ -38,8 +38,8 @@
 
 namespace WebCore {
 
-WorkerRuntimeAgent::WorkerRuntimeAgent(InstrumentingAgents* instrumentingAgents, InjectedScriptManager* injectedScriptManager, WorkerContext* workerContext)
-    : InspectorRuntimeAgent(instrumentingAgents, injectedScriptManager)
+WorkerRuntimeAgent::WorkerRuntimeAgent(InstrumentingAgents* instrumentingAgents, InspectorState* state, InjectedScriptManager* injectedScriptManager, WorkerContext* workerContext)
+    : InspectorRuntimeAgent(instrumentingAgents, state, injectedScriptManager)
     , m_workerContext(workerContext)
 {
 }

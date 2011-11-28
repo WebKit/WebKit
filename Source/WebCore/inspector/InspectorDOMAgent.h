@@ -33,6 +33,7 @@
 #include "EventTarget.h"
 #include "InjectedScript.h"
 #include "InjectedScriptManager.h"
+#include "InspectorBaseAgent.h"
 #include "InspectorFrontend.h"
 #include "InspectorValues.h"
 #include "Timer.h"
@@ -86,7 +87,8 @@ struct EventListenerInfo {
     const EventListenerVector eventListenerVector;
 };
 
-class InspectorDOMAgent {
+class InspectorDOMAgent : public InspectorBaseAgent {
+    WTF_MAKE_NONCOPYABLE(InspectorDOMAgent);
 public:
     struct DOMListener {
         virtual ~DOMListener()
@@ -104,9 +106,9 @@ public:
 
     ~InspectorDOMAgent();
 
-    void setFrontend(InspectorFrontend*);
-    void clearFrontend();
-    void restore();
+    virtual void setFrontend(InspectorFrontend*);
+    virtual void clearFrontend();
+    virtual void restore();
 
     Vector<Document*> documents();
     void reset();
@@ -213,10 +215,8 @@ private:
 
     void discardBindings();
 
-    InstrumentingAgents* m_instrumentingAgents;
     InspectorPageAgent* m_pageAgent;
     InspectorClient* m_client;
-    InspectorState* m_inspectorState;
     InjectedScriptManager* m_injectedScriptManager;
     InspectorFrontend::DOM* m_frontend;
     DOMListener* m_domListener;
