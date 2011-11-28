@@ -388,7 +388,6 @@ WebInspector.doLoadedDone = function()
     this.console.enableAgent();
     DatabaseAgent.enable();
     DOMStorageAgent.enable();
-    FileSystemAgent.enable();
 
     WebInspector.showPanel(WebInspector.settings.lastActivePanel.get());
 
