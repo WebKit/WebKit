@@ -439,14 +439,6 @@ void InspectorCSSAgent::getSupportedCSSProperties(ErrorString*, RefPtr<Inspector
     *cssProperties = properties.release();
 }
 
-// static
-Element* InspectorCSSAgent::inlineStyleElement(CSSStyleDeclaration* style)
-{
-    if (!style || !style->isInlineStyleDeclaration())
-        return 0;
-    return static_cast<CSSInlineStyleDeclaration*>(style)->element();
-}
-
 InspectorStyleSheetForInlineStyle* InspectorCSSAgent::asInspectorStyleSheet(Element* element)
 {
     NodeToInspectorStyleSheet::iterator it = m_nodeToInspectorStyleSheet.find(element);

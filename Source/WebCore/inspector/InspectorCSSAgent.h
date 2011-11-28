@@ -86,8 +86,6 @@ private:
     typedef HashMap<Node*, RefPtr<InspectorStyleSheetForInlineStyle> > NodeToInspectorStyleSheet; // bogus "stylesheets" with elements' inline styles
     typedef HashMap<RefPtr<Document>, RefPtr<InspectorStyleSheet> > DocumentToViaInspectorStyleSheet; // "via inspector" stylesheets
 
-    static Element* inlineStyleElement(CSSStyleDeclaration*);
-
     void recalcStyleForPseudoStateIfNeeded(Element*, InspectorArray* forcedPseudoClasses);
     InspectorStyleSheetForInlineStyle* asInspectorStyleSheet(Element* element);
     Element* elementForId(ErrorString*, int nodeId);
