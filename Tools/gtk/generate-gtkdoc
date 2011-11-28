@@ -47,7 +47,6 @@ def get_webkit2_options():
     def src_path(*args):
         return common.top_level_path(*(('Source', 'WebKit2', 'UIProcess', 'API', 'gtk') + args))
 
-    derived_sources = common.build_path('DerivedSources', 'WebKit2')
     options = get_common_options().copy()
     options.update({
         'module_name' : 'webkit2gtk',
@@ -66,12 +65,9 @@ def get_webkit2_options():
     return (common.build_path('Source', 'WebKit2', 'webkit2gtk-3.0.pc'), options)
 
 def get_webkit1_options():
-    def derived_sources_path(*args):
-        return common.build_path(*(('DerivedSources', 'WebKit2') + args))
     def src_path(*args):
         return common.top_level_path(*(('Source', 'WebKit', 'gtk') + args))
 
-    derived_sources = common.build_path('DerivedSources', 'WebKit2')
     options = get_common_options().copy()
     options.update({
         'module_name' : 'webkitgtk',
@@ -94,7 +90,7 @@ configure_logging()
 pkg_config_path = os.environ.get("PKG_CONFIG_PATH")
 os.environ['PKG_CONFIG_PATH'] = common.build_path('Source', 'JavaScriptCore')
 if pkg_config_path:
-    os.environ['PKG_CONFIG_PATH'] += + ':' + pkg_config_path
+    os.environ['PKG_CONFIG_PATH'] += ':' + pkg_config_path
 
 print "Generating WebKit1 documentation..."
 pkg_config_path, options = get_webkit1_options()

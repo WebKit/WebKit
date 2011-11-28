@@ -1,3 +1,17 @@
+2011-11-28  Martin Robinson  <mrobinson@igalia.com>
+
+        [Gtk][gtkdoc] Syntax error in Tools/gtk/generate-gtkdoc
+        https://bugs.webkit.org/show_bug.cgi?id=73165
+
+        Reviewed by Philippe Normand.
+
+        Fix some syntax errors in this script and remove an unused variable.
+
+        * gtk/generate-gtkdoc:
+        (get_webkit2_options.src_path): 
+        (get_webkit2_options):
+        (get_webkit1_options.src_path):
+
 2011-11-26  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Unreviewed build fix. Enable the inspector.
