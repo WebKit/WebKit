@@ -1107,7 +1107,7 @@ BUGWK70748 CPU LEOPARD : svg/W3C-SVG-1.1/masking-path-05-f.svg = IMAGE
 //
 BUGCR105305 CPU : fast/backgrounds/size/contain-and-cover-zoomed.html = IMAGE
 BUGCR105305 CPU : fast/canvas/canvas-text-alignment.html = IMAGE
-BUGCR105305 CPU : media/audio-repaint.html = IMAGE
+BUGCR105305 CPU GPU : media/audio-repaint.html = IMAGE
 BUGCR105305 CPU : svg/W3C-SVG-1.1/pservers-grad-11-b.svg = IMAGE
 BUGCR105305 CPU : svg/css/composite-shadow-text.svg = IMAGE
 BUGCR105305 CPU : svg/css/text-gradient-shadow.svg = IMAGE
