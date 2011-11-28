@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -28,39 +28,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebSocketStreamHandleClient_h
-#define WebSocketStreamHandleClient_h
-
-#include "platform/WebCommon.h"
-
-namespace WebKit {
-
-class WebData;
-class WebSocketStreamError;
-class WebSocketStreamHandle;
-class WebURL;
-
-class WebSocketStreamHandleClient {
-public:
-
-    // Called when Socket Stream is opened.
-    virtual void didOpenStream(WebSocketStreamHandle*, int /* maxPendingSendAllowed */) = 0;
-
-    // Called when |amountSent| bytes are sent.
-    virtual void didSendData(WebSocketStreamHandle*, int /* amountSent */) = 0;
-
-    // Called when data are received.
-    virtual void didReceiveData(WebSocketStreamHandle*, const WebData&) = 0;
-
-    // Called when Socket Stream is closed.
-    virtual void didClose(WebSocketStreamHandle*) = 0;
-
-    // Called when Socket Stream has an error.
-    virtual void didFail(WebSocketStreamHandle*, const WebSocketStreamError&) = 0;
-
-    // FIXME: auth challenge for proxy
-};
-
-} // namespace WebKit
-
+#ifndef WEBKIT_MIGRATE_HEADERS_TO_PLATFORM
+#include "platform/WebSocketStreamHandleClient.h"
 #endif

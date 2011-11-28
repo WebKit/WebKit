@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -28,18 +28,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebSocketStreamError_h
-#define WebSocketStreamError_h
-
-#include "platform/WebCommon.h"
-
-namespace WebKit {
-
-class WebSocketStreamError {
-public:
-    // FIXME: Define SocketStream Error codes and accessor methods.
-};
-
-} // namespace WebKit
-
+#ifndef WEBKIT_MIGRATE_HEADERS_TO_PLATFORM
+#include "platform/WebSocketStreamError.h"
 #endif

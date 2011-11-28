@@ -31,7 +31,7 @@
 #ifndef WebPlugin_h
 #define WebPlugin_h
 
-#include "WebCanvas.h"
+#include "platform/WebCanvas.h"
 #include "platform/WebString.h"
 #include "platform/WebURL.h"
 

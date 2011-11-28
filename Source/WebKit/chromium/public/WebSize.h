@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -28,86 +28,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebSize_h
-#define WebSize_h
-
-#include "platform/WebCommon.h"
-
-#if WEBKIT_IMPLEMENTATION
-#include "IntSize.h"
-#else
-#include <ui/gfx/size.h>
-#endif
-
-namespace WebKit {
-
-struct WebSize {
-    int width;
-    int height;
-
-    bool isEmpty() const { return width <= 0 || height <= 0; }
-
-    WebSize()
-        : width(0)
-        , height(0)
-    {
-    }
-
-    WebSize(int width, int height)
-        : width(width)
-        , height(height)
-    {
-    }
-
-#if WEBKIT_IMPLEMENTATION
-    WebSize(const WebCore::IntSize& s)
-        : width(s.width())
-        , height(s.height())
-    {
-    }
-
-    WebSize& operator=(const WebCore::IntSize& s)
-    {
-        width = s.width();
-        height = s.height();
-        return *this;
-    }
-
-    operator WebCore::IntSize() const
-    {
-        return WebCore::IntSize(width, height);
-    }
-#else
-    WebSize(const gfx::Size& s)
-        : width(s.width())
-        , height(s.height())
-    {
-    }
-
-    WebSize& operator=(const gfx::Size& s)
-    {
-        width = s.width();
-        height = s.height();
-        return *this;
-    }
-
-    operator gfx::Size() const
-    {
-        return gfx::Size(width, height);
-    }
-#endif
-};
-
-inline bool operator==(const WebSize& a, const WebSize& b)
-{
-    return a.width == b.width && a.height == b.height;
-}
-
-inline bool operator!=(const WebSize& a, const WebSize& b)
-{
-    return !(a == b);
-}
-
-} // namespace WebKit
-
+#ifndef WEBKIT_MIGRATE_HEADERS_TO_PLATFORM
+#include "platform/WebSize.h"
 #endif

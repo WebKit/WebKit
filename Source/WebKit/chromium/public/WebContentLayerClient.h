@@ -26,7 +26,7 @@
 #ifndef WebContentLayerClient_h
 #define WebContentLayerClient_h
 
-#include "WebCanvas.h"
+#include "platform/WebCanvas.h"
 
 namespace WebKit {
 struct WebRect;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -28,84 +28,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebPoint_h
-#define WebPoint_h
-
-#include "platform/WebCommon.h"
-
-#if WEBKIT_IMPLEMENTATION
-#include "IntPoint.h"
-#else
-#include <ui/gfx/point.h>
-#endif
-
-namespace WebKit {
-
-struct WebPoint {
-    int x;
-    int y;
-
-    WebPoint()
-        : x(0)
-        , y(0)
-    {
-    }
-
-    WebPoint(int x, int y)
-        : x(x)
-        , y(y)
-    {
-    }
-
-#if WEBKIT_IMPLEMENTATION
-    WebPoint(const WebCore::IntPoint& p)
-        : x(p.x())
-        , y(p.y())
-    {
-    }
-
-    WebPoint& operator=(const WebCore::IntPoint& p)
-    {
-        x = p.x();
-        y = p.y();
-        return *this;
-    }
-
-    operator WebCore::IntPoint() const
-    {
-        return WebCore::IntPoint(x, y);
-    }
-#else
-    WebPoint(const gfx::Point& p)
-        : x(p.x())
-        , y(p.y())
-    {
-    }
-
-    WebPoint& operator=(const gfx::Point& p)
-    {
-        x = p.x();
-        y = p.y();
-        return *this;
-    }
-
-    operator gfx::Point() const
-    {
-        return gfx::Point(x, y);
-    }
-#endif
-};
-
-inline bool operator==(const WebPoint& a, const WebPoint& b)
-{
-    return a.x == b.x && a.y == b.y;
-}
-
-inline bool operator!=(const WebPoint& a, const WebPoint& b)
-{
-    return !(a == b);
-}
-
-} // namespace WebKit
-
+#ifndef WEBKIT_MIGRATE_HEADERS_TO_PLATFORM
+#include "platform/WebPoint.h"
 #endif

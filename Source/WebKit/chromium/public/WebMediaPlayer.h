@@ -31,8 +31,8 @@
 #ifndef WebMediaPlayer_h
 #define WebMediaPlayer_h
 
-#include "WebCanvas.h"
 #include "WebVideoFrame.h"
+#include "platform/WebCanvas.h"
 #include "platform/WebVector.h"
 
 namespace WebKit {

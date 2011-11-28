@@ -1,3 +1,117 @@
+2011-11-24  Adam Barth  <abarth@webkit.org>
+
+        [Chromium] Move the next traunch of headers into public/platform
+        https://bugs.webkit.org/show_bug.cgi?id=73073
+
+        Reviewed by Darin Fisher.
+
+        These headers are all the forward-declared classes in
+        WebKitPlatformSupport (and their dependencies) that wrap concepts in
+        WebCore/platform.
+
+        There are a number of forward-declared classes in WebKitPlatformSupport
+        that coorespond to WebCore concepts outside of WebCore/platform.  I've
+        marked these with FIXME comments.  We'll need to study them in more
+        detail to see whether they should move into WebCore/platform or whether
+        we need to move them out of WebKitPlaformSupport.h.  (One possible
+        resolution might be to introducing a WebKitClientSupport.h to hold
+        statics for client concepts).
+
+        * public/WebBlobRegistry.h: Replaced.
+        * public/WebCanvas.h: Replaced.
+        * public/WebClipboard.h: Replaced.
+        * public/WebColor.h: Replaced.
+        * public/WebColorName.h: Replaced.
+        * public/WebCommonWorkerClient.h:
+        * public/WebCompositionUnderline.h:
+        * public/WebContentLayerClient.h:
+        * public/WebContextMenuData.h:
+        * public/WebCookieJar.h: Replaced.
+        * public/WebCursorInfo.h:
+        * public/WebDragData.h: Replaced.
+        * public/WebFileSystem.h: Replaced.
+        * public/WebFloatQuad.h:
+        * public/WebFont.h:
+        * public/WebFrame.h:
+        * public/WebFrameClient.h:
+        * public/WebGeolocationController.h:
+        * public/WebGeolocationPermissionRequestManager.h:
+        * public/WebGraphicsContext3D.h: Replaced.
+        * public/WebHTTPBody.h:
+        * public/WebImage.h: Replaced.
+        * public/WebImageDecoder.h:
+        * public/WebLayer.h:
+        * public/WebMediaPlayer.h:
+        * public/WebMediaStreamDescriptor.h: Replaced.
+        * public/WebMediaStreamSource.h:
+        * public/WebMimeRegistry.h: Replaced.
+        * public/WebNonCopyable.h: Replaced.
+        * public/WebPeerConnectionHandler.h: Replaced.
+        * public/WebPeerConnectionHandlerClient.h: Replaced.
+        * public/WebPlugin.h:
+        * public/WebPoint.h: Replaced.
+        * public/WebRect.h: Replaced.
+        * public/WebRegularExpression.h:
+        * public/WebScreenInfo.h:
+        * public/WebScrollbar.h:
+        * public/WebSize.h: Replaced.
+        * public/WebSocketStreamError.h: Replaced.
+        * public/WebSocketStreamHandle.h: Replaced.
+        * public/WebSocketStreamHandleClient.h: Replaced.
+        * public/WebThread.h: Replaced.
+        * public/WebTouchPoint.h:
+        * public/WebURLLoader.h: Replaced.
+        * public/WebWidget.h:
+        * public/WebWidgetClient.h:
+        * public/android/WebSandboxSupport.h: Removed.
+        * public/android/WebThemeEngine.h: Removed.
+        * public/linux/WebFontFamily.h: Removed.
+        * public/linux/WebSandboxSupport.h: Removed.
+        * public/linux/WebThemeEngine.h: Removed.
+        * public/mac/WebSandboxSupport.h: Removed.
+        * public/mac/WebThemeEngine.h: Removed.
+        * public/platform/WebBlobRegistry.h: Copied from Source/WebKit/chromium/public/WebBlobRegistry.h.
+        * public/platform/WebCanvas.h: Copied from Source/WebKit/chromium/public/WebCanvas.h.
+        * public/platform/WebClipboard.h: Copied from Source/WebKit/chromium/public/WebClipboard.h.
+        * public/platform/WebColor.h: Copied from Source/WebKit/chromium/public/WebColor.h.
+        * public/platform/WebColorName.h: Copied from Source/WebKit/chromium/public/WebColorName.h.
+        * public/platform/WebCookieJar.h: Copied from Source/WebKit/chromium/public/WebCookieJar.h.
+        * public/platform/WebDragData.h: Copied from Source/WebKit/chromium/public/WebDragData.h.
+        * public/platform/WebFileSystem.h: Copied from Source/WebKit/chromium/public/WebFileSystem.h.
+        * public/platform/WebGraphicsContext3D.h: Copied from Source/WebKit/chromium/public/WebGraphicsContext3D.h.
+        * public/platform/WebImage.h: Copied from Source/WebKit/chromium/public/WebImage.h.
+        * public/platform/WebKitPlatformSupport.h:
+        * public/platform/WebMediaStreamDescriptor.h: Copied from Source/WebKit/chromium/public/WebMediaStreamDescriptor.h.
+        * public/platform/WebMimeRegistry.h: Copied from Source/WebKit/chromium/public/WebMimeRegistry.h.
+        * public/platform/WebNonCopyable.h: Copied from Source/WebKit/chromium/public/WebNonCopyable.h.
+        * public/platform/WebPeerConnectionHandler.h: Copied from Source/WebKit/chromium/public/WebPeerConnectionHandler.h.
+        * public/platform/WebPeerConnectionHandlerClient.h: Copied from Source/WebKit/chromium/public/WebPeerConnectionHandlerClient.h.
+        * public/platform/WebPoint.h: Copied from Source/WebKit/chromium/public/WebPoint.h.
+        * public/platform/WebRect.h: Copied from Source/WebKit/chromium/public/WebRect.h.
+        * public/platform/WebSize.h: Copied from Source/WebKit/chromium/public/WebSize.h.
+        * public/platform/WebSocketStreamError.h: Copied from Source/WebKit/chromium/public/WebSocketStreamError.h.
+        * public/platform/WebSocketStreamHandle.h: Copied from Source/WebKit/chromium/public/WebSocketStreamHandle.h.
+        * public/platform/WebSocketStreamHandleClient.h: Copied from Source/WebKit/chromium/public/WebSocketStreamHandleClient.h.
+        * public/platform/WebThread.h: Copied from Source/WebKit/chromium/public/WebThread.h.
+        * public/platform/WebURLLoader.h: Copied from Source/WebKit/chromium/public/WebURLLoader.h.
+        * public/platform/android: Added.
+        * public/platform/android/WebSandboxSupport.h: Copied from Source/WebKit/chromium/public/android/WebSandboxSupport.h.
+        * public/platform/android/WebThemeEngine.h: Copied from Source/WebKit/chromium/public/android/WebThemeEngine.h.
+        * public/platform/linux: Added.
+        * public/platform/linux/WebFontFamily.h: Copied from Source/WebKit/chromium/public/linux/WebFontFamily.h.
+        * public/platform/linux/WebSandboxSupport.h: Copied from Source/WebKit/chromium/public/linux/WebSandboxSupport.h.
+        * public/platform/linux/WebThemeEngine.h: Copied from Source/WebKit/chromium/public/linux/WebThemeEngine.h.
+        (WebKit::WebThemeEngine::paint):
+        * public/platform/mac: Added.
+        * public/platform/mac/WebSandboxSupport.h: Copied from Source/WebKit/chromium/public/mac/WebSandboxSupport.h.
+        * public/platform/mac/WebThemeEngine.h: Copied from Source/WebKit/chromium/public/mac/WebThemeEngine.h.
+        (WebKit::WebThemeEngine::paintScrollbarThumb):
+        * public/platform/win: Added.
+        * public/platform/win/WebSandboxSupport.h: Copied from Source/WebKit/chromium/public/win/WebSandboxSupport.h.
+        * public/platform/win/WebThemeEngine.h: Copied from Source/WebKit/chromium/public/win/WebThemeEngine.h.
+        * public/win/WebSandboxSupport.h: Removed.
+        * public/win/WebThemeEngine.h: Removed.
+
 2011-11-27  Tommy Widenflycht  <tommyw@google.com>
 
         [chromium] MediaStream API: Updating the licences to the correct one.

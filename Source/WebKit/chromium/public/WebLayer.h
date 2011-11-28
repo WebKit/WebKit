@@ -26,7 +26,7 @@
 #ifndef WebLayer_h
 #define WebLayer_h
 
-#include "WebColor.h"
+#include "platform/WebColor.h"
 #include "platform/WebCommon.h"
 #include "platform/WebPrivatePtr.h"
 

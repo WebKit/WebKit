@@ -31,7 +31,7 @@
 #ifndef WebScreenInfo_h
 #define WebScreenInfo_h
 
-#include "WebRect.h"
+#include "platform/WebRect.h"
 
 namespace WebKit {
 

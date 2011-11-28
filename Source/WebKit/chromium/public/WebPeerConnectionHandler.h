@@ -28,43 +28,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebPeerConnectionHandler_h
-#define WebPeerConnectionHandler_h
-
-#include "WebSecurityOrigin.h"
-#include "platform/WebString.h"
-#include "platform/WebVector.h"
-
-namespace WebKit {
-
-class WebMediaStreamDescriptor;
-class WebPeerConnectionHandlerClient;
-
-// Note:
-// SDP stands for Session Description Protocol, which is intended for describing
-// multimedia sessions for the purposes of session announcement, session
-// invitation, and other forms of multimedia session initiation.
-//
-// More information can be found here:
-// http://tools.ietf.org/html/rfc4566
-// http://en.wikipedia.org/wiki/Session_Description_Protocol
-
-
-class WebPeerConnectionHandler {
-public:
-    virtual ~WebPeerConnectionHandler() { }
-
-    virtual void initialize(const WebString& serverConfiguration, const WebSecurityOrigin&) = 0;
-
-    virtual void produceInitialOffer(const WebVector<WebMediaStreamDescriptor>& pendingAddStreams) = 0;
-    virtual void handleInitialOffer(const WebString& sdp) = 0;
-    virtual void processSDP(const WebString& sdp) = 0;
-    virtual void processPendingStreams(const WebVector<WebMediaStreamDescriptor>& pendingAddStreams, const WebVector<WebMediaStreamDescriptor>& pendingRemoveStreams) = 0;
-    virtual void sendDataStreamMessage(const char* data, size_t length) = 0;
-
-    virtual void stop() = 0;
-};
-
-} // namespace WebKit
-
-#endif // WebPeerConnectionHandler_h
+#ifndef WEBKIT_MIGRATE_HEADERS_TO_PLATFORM
+#include "platform/WebPeerConnectionHandler.h"
+#endif

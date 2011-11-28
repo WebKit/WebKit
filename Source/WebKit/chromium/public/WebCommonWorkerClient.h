@@ -32,7 +32,7 @@
 #define WebCommonWorkerClient_h
 
 #include "platform/WebCommon.h"
-#include "WebFileSystem.h"
+#include "platform/WebFileSystem.h"
 
 namespace WebKit {
 

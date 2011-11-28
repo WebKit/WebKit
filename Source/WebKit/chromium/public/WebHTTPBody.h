@@ -31,8 +31,8 @@
 #ifndef WebHTTPBody_h
 #define WebHTTPBody_h
 
-#include "WebNonCopyable.h"
 #include "platform/WebData.h"
+#include "platform/WebNonCopyable.h"
 #include "platform/WebString.h"
 #include "platform/WebURL.h"
 

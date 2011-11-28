@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2009 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -28,49 +28,23 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebThemeEngine_h
-#define WebThemeEngine_h
+#ifndef WebSandboxSupport_h
+#define WebSandboxSupport_h
 
-#include "../WebCanvas.h"
+typedef struct HFONT__* HFONT;
 
 namespace WebKit {
 
-struct WebRect;
-
-class WebThemeEngine {
+// Put methods here that are required due to sandbox restrictions.
+class WebSandboxSupport {
 public:
-    enum State {
-        StateDisabled,
-        StateInactive,
-        StateActive,
-        StatePressed,
-    };
-
-    enum Size {
-        SizeRegular,
-        SizeSmall,
-    };
-
-    enum ScrollbarOrientation {
-        ScrollbarOrientationHorizontal,
-        ScrollbarOrientationVertical,
-    };
-
-    enum ScrollbarParent {
-        ScrollbarParentScrollView,
-        ScrollbarParentRenderLayer,
-    };
-
-    struct ScrollbarInfo {
-        ScrollbarOrientation orientation;
-        ScrollbarParent parent;
-        int maxValue;
-        int currentValue;
-        int visibleSize;
-        int totalSize;
-    };
-
-    virtual void paintScrollbarThumb(WebCanvas*, State, Size, const WebRect&, const ScrollbarInfo&) {}
+    // Sometimes a Win32 API call will fail because a font is not loaded,
+    // and due to sandbox restrictions, the current process may be unable
+    // to access the filesystem to load the font. So, this call serves as
+    // a failover to ask the embedder to try some other way to load the
+    // font (usually by delegating to an empowered process to have it load
+    // the font). Returns true if the font was successfully loaded.
+    virtual bool ensureFontLoaded(HFONT) = 0;
 };
 
 } // namespace WebKit

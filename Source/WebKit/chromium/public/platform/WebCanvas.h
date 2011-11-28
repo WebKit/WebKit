@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2009 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -28,20 +28,27 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebFontFamily_h
-#define WebFontFamily_h
+#ifndef WebCanvas_h
+#define WebCanvas_h
 
-#include "../platform/WebCString.h"
-#include "../platform/WebCommon.h"
+#include "WebCommon.h"
+
+#if WEBKIT_USING_SKIA
+class SkCanvas;
+#elif WEBKIT_USING_CG
+struct CGContext;
+#endif
 
 namespace WebKit {
 
-struct WebFontFamily {
-    WebCString name;
-    bool isBold;
-    bool isItalic;
-};
+#if WEBKIT_USING_SKIA
+typedef SkCanvas WebCanvas;
+#elif WEBKIT_USING_CG
+typedef struct CGContext WebCanvas;
+#else
+#error "Need to define WebCanvas"
+#endif
 
 } // namespace WebKit
 
-#endif // WebFontFamily_h
+#endif

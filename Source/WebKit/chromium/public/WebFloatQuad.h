@@ -32,8 +32,9 @@
 #define WebFloatQuad_h
 
 #include "WebFloatPoint.h"
-#include "WebRect.h"
 #include "platform/WebCommon.h"
+#include "platform/WebRect.h"
+
 #include <algorithm>
 #include <cmath>
 

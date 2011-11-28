@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -28,22 +28,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebNonCopyable_h
-#define WebNonCopyable_h
-
-namespace WebKit {
-
-// A base class to extend from if you do not support copying.
-class WebNonCopyable {
-protected:
-    WebNonCopyable() { }
-    ~WebNonCopyable() { }
-
-private:
-    WebNonCopyable(const WebNonCopyable&);
-    WebNonCopyable& operator=(const WebNonCopyable&);
-};
-
-} // namespace WebKit
-
+#ifndef WEBKIT_MIGRATE_HEADERS_TO_PLATFORM
+#include "platform/WebNonCopyable.h"
 #endif

@@ -28,46 +28,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebMediaStreamDescriptor_h
-#define WebMediaStreamDescriptor_h
-
-#include "WebNonCopyable.h"
-#include "platform/WebCommon.h"
-#include "platform/WebPrivatePtr.h"
-#include "platform/WebVector.h"
-
-namespace WebCore {
-class MediaStreamDescriptor;
-}
-
-namespace WebKit {
-
-class WebMediaStreamSource;
-class WebString;
-
-class WebMediaStreamDescriptor {
-public:
-    WebMediaStreamDescriptor() { }
-    ~WebMediaStreamDescriptor() { reset(); }
-
-    WEBKIT_EXPORT void initialize(const WebString& label, const WebVector<WebMediaStreamSource>&);
-    WEBKIT_EXPORT void reset();
-    bool isNull() const { return m_private.isNull(); }
-
-    WEBKIT_EXPORT WebString label() const;
-    WEBKIT_EXPORT void sources(WebVector<WebMediaStreamSource>&) const;
-
-#if WEBKIT_IMPLEMENTATION
-    WebMediaStreamDescriptor(const WTF::PassRefPtr<WebCore::MediaStreamDescriptor>&);
-    operator WTF::PassRefPtr<WebCore::MediaStreamDescriptor>() const;
-    operator WebCore::MediaStreamDescriptor*() const;
-    WebMediaStreamDescriptor& operator=(const WTF::PassRefPtr<WebCore::MediaStreamDescriptor>&);
+#ifndef WEBKIT_MIGRATE_HEADERS_TO_PLATFORM
+#include "platform/WebMediaStreamDescriptor.h"
 #endif
-
-private:
-    WebPrivatePtr<WebCore::MediaStreamDescriptor> m_private;
-};
-
-} // namespace WebKit
-
-#endif // WebMediaStreamDescriptor_h

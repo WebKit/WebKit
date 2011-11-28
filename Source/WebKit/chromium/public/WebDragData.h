@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -28,88 +28,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebDragData_h
-#define WebDragData_h
-
-#include "platform/WebCommon.h"
-
-#if WEBKIT_IMPLEMENTATION
-namespace WebCore { class ChromiumDataObject; }
-namespace WTF { template <typename T> class PassRefPtr; }
-#endif
-
-namespace WebKit {
-
-class WebData;
-class WebDragDataPrivate;
-class WebString;
-class WebURL;
-template <typename T> class WebVector;
-
-// Holds data that may be exchanged through a drag-n-drop operation.  It is
-// inexpensive to copy a WebDragData object.
-class WebDragData {
-public:
-    ~WebDragData() { reset(); }
-
-    WebDragData() : m_private(0) { }
-    WebDragData(const WebDragData& d) : m_private(0) { assign(d); }
-    WebDragData& operator=(const WebDragData& d)
-    {
-        assign(d);
-        return *this;
-    }
-
-    WEBKIT_EXPORT void initialize();
-    WEBKIT_EXPORT void reset();
-    WEBKIT_EXPORT void assign(const WebDragData&);
-
-    bool isNull() const { return !m_private; }
-
-    WEBKIT_EXPORT WebString url() const;
-    WEBKIT_EXPORT void setURL(const WebURL&);
-
-    WEBKIT_EXPORT WebString urlTitle() const;
-    WEBKIT_EXPORT void setURLTitle(const WebString&);
-
-    WEBKIT_EXPORT WebString downloadMetadata() const;
-    WEBKIT_EXPORT void setDownloadMetadata(const WebString&);
-
-    WEBKIT_EXPORT WebString fileExtension() const;
-    WEBKIT_EXPORT void setFileExtension(const WebString&);
-
-    WEBKIT_EXPORT bool containsFilenames() const;
-    WEBKIT_EXPORT void filenames(WebVector<WebString>&) const;
-    WEBKIT_EXPORT void setFilenames(const WebVector<WebString>&);
-    WEBKIT_EXPORT void appendToFilenames(const WebString&);
-
-    WEBKIT_EXPORT WebString plainText() const;
-    WEBKIT_EXPORT void setPlainText(const WebString&);
-
-    WEBKIT_EXPORT WebString htmlText() const;
-    WEBKIT_EXPORT void setHTMLText(const WebString&);
-
-    WEBKIT_EXPORT WebURL htmlBaseURL() const;
-    WEBKIT_EXPORT void setHTMLBaseURL(const WebURL&);
-
-    WEBKIT_EXPORT WebString fileContentFilename() const;
-    WEBKIT_EXPORT void setFileContentFilename(const WebString&);
-
-    WEBKIT_EXPORT WebData fileContent() const;
-    WEBKIT_EXPORT void setFileContent(const WebData&);
-
-#if WEBKIT_IMPLEMENTATION
-    WebDragData(const WTF::PassRefPtr<WebCore::ChromiumDataObject>&);
-    WebDragData& operator=(const WTF::PassRefPtr<WebCore::ChromiumDataObject>&);
-    operator WTF::PassRefPtr<WebCore::ChromiumDataObject>() const;
-#endif
-
-private:
-    void assign(WebDragDataPrivate*);
-    void ensureMutable();
-    WebDragDataPrivate* m_private;
-};
-
-} // namespace WebKit
-
+#ifndef WEBKIT_MIGRATE_HEADERS_TO_PLATFORM
+#include "platform/WebDragData.h"
 #endif

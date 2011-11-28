@@ -34,7 +34,7 @@
 #include "WebHistoryItem.h"
 #include "WebMenuItemInfo.h"
 #include "WebNode.h"
-#include "WebPoint.h"
+#include "platform/WebPoint.h"
 #include "platform/WebString.h"
 #include "platform/WebURL.h"
 #include "platform/WebVector.h"

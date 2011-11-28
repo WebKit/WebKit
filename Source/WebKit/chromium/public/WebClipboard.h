@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -28,71 +28,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebClipboard_h
-#define WebClipboard_h
-
-#include "platform/WebCommon.h"
-#include "platform/WebData.h"
-#include "platform/WebString.h"
-#include "platform/WebVector.h"
-
-namespace WebKit {
-
-class WebDragData;
-class WebImage;
-class WebURL;
-
-class WebClipboard {
-public:
-    enum Format {
-        FormatPlainText,
-        FormatHTML,
-        FormatBookmark,
-        FormatSmartPaste
-    };
-
-    enum Buffer {
-        BufferStandard,
-        // Used on platforms like the X Window System that treat selection
-        // as a type of clipboard.
-        BufferSelection,
-        // Read-only buffer corresponding to the current drag operation, if any.
-        BufferDrag,
-    };
-
-    // Returns an identifier which can be used to determine whether the data
-    // contained within the clipboard has changed.
-    virtual uint64 sequenceNumber(Buffer) { return 0; }
-
-    virtual bool isFormatAvailable(Format, Buffer) { return false; }
-
-    virtual WebVector<WebString> readAvailableTypes(
-        Buffer, bool* containsFilenames) { return WebVector<WebString>(); }
-    virtual WebString readPlainText(Buffer) { return WebString(); }
-    // fragmentStart and fragmentEnd are indexes into the returned markup that
-    // indicate the start and end of the fragment if the returned markup
-    // contains additional context. If there is no additional context,
-    // fragmentStart will be zero and fragmentEnd will be the same as the length
-    // of the returned markup.
-    virtual WebString readHTML(
-        Buffer buffer, WebURL* pageURL, unsigned* fragmentStart,
-        unsigned* fragmentEnd) { return WebString(); }
-    virtual WebData readImage(Buffer) { return WebData(); }
-
-    virtual void writePlainText(const WebString&) { }
-    virtual void writeHTML(
-        const WebString& htmlText, const WebURL&,
-        const WebString& plainText, bool writeSmartPaste) { }
-    virtual void writeURL(
-        const WebURL&, const WebString& title) { }
-    virtual void writeImage(
-        const WebImage&, const WebURL&, const WebString& title) { }
-    virtual void writeDataObject(const WebDragData&) { }
-
-protected:
-    ~WebClipboard() {}
-};
-
-} // namespace WebKit
-
+#ifndef WEBKIT_MIGRATE_HEADERS_TO_PLATFORM
+#include "platform/WebClipboard.h"
 #endif

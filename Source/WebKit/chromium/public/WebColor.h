@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -28,19 +28,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebColor_h
-#define WebColor_h
-
-#include "WebColorName.h"
-#include "platform/WebCommon.h"
-
-namespace WebKit {
-
-typedef unsigned WebColor;  // RGBA quad. Equivalent to SkColor.
-
-// Sets the values of a set of named colors.
-WEBKIT_EXPORT void setNamedColors(const WebColorName*, const WebColor*, size_t length);
-
-} // namespace WebKit
-
+#ifndef WEBKIT_MIGRATE_HEADERS_TO_PLATFORM
+#include "platform/WebColor.h"
 #endif

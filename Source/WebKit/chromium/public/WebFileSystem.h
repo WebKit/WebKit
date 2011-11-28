@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -28,95 +28,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebFileSystem_h
-#define WebFileSystem_h
-
-#include "platform/WebCommon.h"
-#include "platform/WebURL.h"
-
-namespace WebKit {
-
-class WebFileSystemCallbacks;
-class WebFileWriter;
-class WebFileWriterClient;
-
-class WebFileSystem {
-public:
-    enum Type {
-        TypeTemporary,
-        TypePersistent,
-        TypeExternal,
-    };
-
-    // Moves a file or directory at |srcPath| to |destPath|.
-    // WebFileSystemCallbacks::didSucceed() must be called when the operation is completed successfully.
-    // WebFileSystemCallbacks::didFail() must be called otherwise.
-    virtual void move(const WebURL& srcPath, const WebURL& destPath, WebFileSystemCallbacks*) { WEBKIT_ASSERT_NOT_REACHED(); }
-
-    // Copies a file or directory at |srcPath| to |destPath|.
-    // WebFileSystemCallbacks::didSucceed() must be called when the operation is completed successfully.
-    // WebFileSystemCallbacks::didFail() must be called otherwise.
-    virtual void copy(const WebURL& srcPath, const WebURL& destPath, WebFileSystemCallbacks*) { WEBKIT_ASSERT_NOT_REACHED(); }
-
-    // Deletes a file or directory at a given |path|.
-    // It is an error to try to remove a directory that is not empty.
-    // WebFileSystemCallbacks::didSucceed() must be called when the operation is completed successfully.
-    // WebFileSystemCallbacks::didFail() must be called otherwise.
-    virtual void remove(const WebURL& path, WebFileSystemCallbacks*) { WEBKIT_ASSERT_NOT_REACHED(); }
-
-    // Deletes a file or directory recursively at a given |path|.
-    // WebFileSystemCallbacks::didSucceed() must be called when the operation is completed successfully.
-    // WebFileSystemCallbacks::didFail() must be called otherwise.
-    virtual void removeRecursively(const WebURL& path, WebFileSystemCallbacks*) { WEBKIT_ASSERT_NOT_REACHED(); }
-
-    // Retrieves the metadata information of the file or directory at the given |path|.
-    // WebFileSystemCallbacks::didReadMetadata() must be called with a valid metadata when the retrieval is completed successfully.
-    // WebFileSystemCallbacks::didFail() must be called otherwise.
-    virtual void readMetadata(const WebURL& path, WebFileSystemCallbacks*) { WEBKIT_ASSERT_NOT_REACHED(); }
-
-    // Creates a file at given |path|.
-    // If the |path| doesn't exist, it creates a new file at |path|.
-    // If |exclusive| is true, it fails if the |path| already exists.
-    // If |exclusive| is false, it succeeds if the |path| already exists or
-    // it has successfully created a new file at |path|.
-    //
-    // WebFileSystemCallbacks::didSucceed() must be called when the operation is completed successfully.
-    // WebFileSystemCallbacks::didFail() must be called otherwise.
-    virtual void createFile(const WebURL& path, bool exclusive, WebFileSystemCallbacks*) { WEBKIT_ASSERT_NOT_REACHED(); }
-
-    // Creates a directory at a given |path|.
-    // If the |path| doesn't exist, it creates a new directory at |path|.
-    // If |exclusive| is true, it fails if the |path| already exists.
-    // If |exclusive| is false, it succeeds if the |path| already exists or it has successfully created a new directory at |path|.
-    //
-    // WebFileSystemCallbacks::didSucceed() must be called when
-    // the operation is completed successfully.
-    // WebFileSystemCallbacks::didFail() must be called otherwise.
-    virtual void createDirectory(const WebURL& path, bool exclusive, WebFileSystemCallbacks*) { WEBKIT_ASSERT_NOT_REACHED(); }
-
-    // Checks if a file exists at a given |path|.
-    // WebFileSystemCallbacks::didSucceed() must be called when the operation is completed successfully.
-    // WebFileSystemCallbacks::didFail() must be called otherwise.
-    virtual void fileExists(const WebURL& path, WebFileSystemCallbacks*) { WEBKIT_ASSERT_NOT_REACHED(); }
-
-    // Checks if a directory exists at a given |path|.
-    // WebFileSystemCallbacks::didSucceed() must be called when the operation is completed successfully.
-    // WebFileSystemCallbacks::didFail() must be called otherwise.
-    virtual void directoryExists(const WebURL& path, WebFileSystemCallbacks*) { WEBKIT_ASSERT_NOT_REACHED(); }
-
-    // Reads directory entries of a given directory at |path|.
-    // WebFileSystemCallbacks::didReadDirectory() must be called when the operation is completed successfully.
-    // WebFileSystemCallbacks::didFail() must be called otherwise.
-    virtual void readDirectory(const WebURL& path, WebFileSystemCallbacks*) { WEBKIT_ASSERT_NOT_REACHED(); }
-
-    // Creates a WebFileWriter that can be used to write to the given file.
-    // This is a fast, synchronous call, and should not stat the filesystem.
-    virtual WebFileWriter* createFileWriter(const WebURL& path, WebFileWriterClient*) { WEBKIT_ASSERT_NOT_REACHED(); return 0; }
-
-protected:
-    virtual ~WebFileSystem() { }
-};
-
-} // namespace WebKit
-
+#ifndef WEBKIT_MIGRATE_HEADERS_TO_PLATFORM
+#include "platform/WebFileSystem.h"
 #endif

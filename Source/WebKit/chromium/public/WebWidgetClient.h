@@ -32,9 +32,9 @@
 #define WebWidgetClient_h
 
 #include "WebNavigationPolicy.h"
-#include "WebRect.h"
 #include "WebScreenInfo.h"
 #include "platform/WebCommon.h"
+#include "platform/WebRect.h"
 
 namespace WebKit {
 

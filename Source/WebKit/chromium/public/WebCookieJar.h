@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -28,29 +28,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebCookieJar_h
-#define WebCookieJar_h
-
-#include "WebString.h"
-
-namespace WebKit {
-class WebURL;
-struct WebCookie;
-template <typename T> class WebVector;
-
-class WebCookieJar {
-public:
-    virtual void setCookie(const WebURL&, const WebURL& firstPartyForCookies, const WebString& cookie) { }
-    virtual WebString cookies(const WebURL&, const WebURL& firstPartyForCookies) { return WebString(); }
-    virtual WebString cookieRequestHeaderFieldValue(const WebURL&, const WebURL& firstPartyForCookies) { return WebString(); }
-    virtual void rawCookies(const WebURL&, const WebURL& firstPartyForCookies, WebVector<WebCookie>&) { }
-    virtual void deleteCookie(const WebURL&, const WebString& cookieName) { }
-    virtual bool cookiesEnabled(const WebURL&, const WebURL& firstPartyForCookies) { return true; }
-
-protected:
-    ~WebCookieJar() { }
-};
-
-} // namespace WebKit
-
+#ifndef WEBKIT_MIGRATE_HEADERS_TO_PLATFORM
+#include "platform/WebCookieJar.h"
 #endif

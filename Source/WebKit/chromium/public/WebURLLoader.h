@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -28,44 +28,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebURLLoader_h
-#define WebURLLoader_h
-
-#include "platform/WebCommon.h"
-
-namespace WebKit {
-
-class WebData;
-class WebURLLoaderClient;
-class WebURLRequest;
-class WebURLResponse;
-struct WebURLError;
-
-class WebURLLoader {
-public:
-    // The WebURLLoader may be deleted in a call to its client.
-    virtual ~WebURLLoader() {}
-
-    // Load the request synchronously, returning results directly to the
-    // caller upon completion.  There is no mechanism to interrupt a
-    // synchronous load!!
-    virtual void loadSynchronously(const WebURLRequest&,
-        WebURLResponse&, WebURLError&, WebData& data) = 0;
-
-    // Load the request asynchronously, sending notifications to the given
-    // client.  The client will receive no further notifications if the
-    // loader is disposed before it completes its work.
-    virtual void loadAsynchronously(const WebURLRequest&,
-        WebURLLoaderClient*) = 0;
-
-    // Cancels an asynchronous load.  This will appear as a load error to
-    // the client.
-    virtual void cancel() = 0;
-
-    // Suspends/resumes an asynchronous load.
-    virtual void setDefersLoading(bool) = 0;
-};
-
-} // namespace WebKit
-
+#ifndef WEBKIT_MIGRATE_HEADERS_TO_PLATFORM
+#include "platform/WebURLLoader.h"
 #endif

@@ -31,8 +31,8 @@
 #ifndef WebCursorInfo_h
 #define WebCursorInfo_h
 
-#include "WebImage.h"
-#include "WebPoint.h"
+#include "platform/WebImage.h"
+#include "platform/WebPoint.h"
 
 #if WEBKIT_IMPLEMENTATION
 namespace WebCore { class Cursor; }

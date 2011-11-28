@@ -31,12 +31,12 @@
 #ifndef WebFrame_h
 #define WebFrame_h
 
-#include "WebCanvas.h"
-#include "WebFileSystem.h"
 #include "WebIconURL.h"
 #include "WebNode.h"
 #include "WebReferrerPolicy.h"
 #include "WebURLLoaderOptions.h"
+#include "platform/WebCanvas.h"
+#include "platform/WebFileSystem.h"
 #include "platform/WebURL.h"
 
 struct NPObject;

@@ -144,8 +144,7 @@ public:
     // the track while the height will be the minimum height.
     virtual WebSize getSize(Part) { return WebSize(); }
     // Paint the given the given theme part.
-    virtual void paint(
-        WebCanvas*, Part, State, const WebRect&, const ExtraParams*) {}
+    virtual void paint(WebCanvas*, Part, State, const WebRect&, const ExtraParams*) { }
 };
 
 } // namespace WebKit

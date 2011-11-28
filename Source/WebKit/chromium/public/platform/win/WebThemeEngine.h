@@ -31,9 +31,9 @@
 #ifndef WebThemeEngine_h
 #define WebThemeEngine_h
 
-#include "../WebCanvas.h"
-#include "../WebColor.h"
-#include "../WebSize.h"
+#include "WebCanvas.h"
+#include "WebColor.h"
+#include "WebSize.h"
 
 namespace WebKit {
 

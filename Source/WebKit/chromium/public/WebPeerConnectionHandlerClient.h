@@ -28,25 +28,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebPeerConnectionHandlerClient_h
-#define WebPeerConnectionHandlerClient_h
-
-namespace WebKit {
-
-class WebMediaStreamDescriptor;
-class WebString;
-
-class WebPeerConnectionHandlerClient {
-public:
-    virtual ~WebPeerConnectionHandlerClient() { }
-
-    virtual void didCompleteICEProcessing() = 0;
-    virtual void didGenerateSDP(const WebString& sdp) = 0;
-    virtual void didReceiveDataStreamMessage(const char* data, size_t length) = 0;
-    virtual void didAddRemoteStream(const WebMediaStreamDescriptor&) = 0;
-    virtual void didRemoveRemoteStream(const WebMediaStreamDescriptor&) = 0;
-};
-
-} // namespace WebKit
-
-#endif // WebPeerConnectionHandlerClient_h
+#ifndef WEBKIT_MIGRATE_HEADERS_TO_PLATFORM
+#include "platform/WebPeerConnectionHandlerClient.h"
+#endif

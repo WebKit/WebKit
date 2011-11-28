@@ -31,13 +31,13 @@
 #ifndef WebWidget_h
 #define WebWidget_h
 
-#include "WebCanvas.h"
 #include "WebCompositionUnderline.h"
-#include "WebRect.h"
-#include "WebSize.h"
 #include "WebTextInputType.h"
 #include "WebTextDirection.h"
+#include "platform/WebCanvas.h"
 #include "platform/WebCommon.h"
+#include "platform/WebRect.h"
+#include "platform/WebSize.h"
 
 #define WEBKIT_HAS_NEW_FULLSCREEN_API 1
 
