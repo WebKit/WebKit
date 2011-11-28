@@ -83,53 +83,53 @@ static void _ewk_view_tiled_smart_add(Evas_Object* ewkView)
 
 static Eina_Bool _ewk_view_tiled_smart_scrolls_process(Ewk_View_Smart_Data* smartData)
 {
-    const Ewk_Scroll_Request* sr;
-    const Ewk_Scroll_Request* sr_end;
+    const Ewk_Scroll_Request* scrollRequest;
+    const Ewk_Scroll_Request* endOfScrollRequest;
     size_t count;
-    Evas_Coord vw, vh;
+    Evas_Coord contentsWidth, contentsHeight;
 
-    ewk_frame_contents_size_get(smartData->main_frame, &vw, &vh);
+    ewk_frame_contents_size_get(smartData->main_frame, &contentsWidth, &contentsHeight);
 
-    sr = ewk_view_scroll_requests_get(smartData->_priv, &count);
-    sr_end = sr + count;
-    for (; sr < sr_end; sr++) {
-        if (sr->main_scroll)
+    scrollRequest = ewk_view_scroll_requests_get(smartData->_priv, &count);
+    endOfScrollRequest = scrollRequest + count;
+    for (; scrollRequest < endOfScrollRequest; scrollRequest++) {
+        if (scrollRequest->main_scroll)
             ewk_tiled_backing_store_scroll_full_offset_add
-                (smartData->backing_store, sr->dx, sr->dy);
+                (smartData->backing_store, scrollRequest->dx, scrollRequest->dy);
         else {
-            Evas_Coord sx, sy, sw, sh;
+            Evas_Coord scrollX, scrollY, scrollWidth, scrollHeight;
 
-            sx = sr->x;
-            sy = sr->y;
-            sw = sr->w;
-            sh = sr->h;
+            scrollX = scrollRequest->x;
+            scrollY = scrollRequest->y;
+            scrollWidth = scrollRequest->w;
+            scrollHeight = scrollRequest->h;
 
-            if (abs(sr->dx) >= sw || abs(sr->dy) >= sh) {
+            if (abs(scrollRequest->dx) >= scrollWidth || abs(scrollRequest->dy) >= scrollHeight) {
                 /* doubt webkit would be so     stupid... */
                 DBG("full page scroll %+03d,%+03d. convert to repaint %d,%d + %dx%d",
-                    sr->dx, sr->dy, sx, sy, sw, sh);
-                ewk_view_repaint_add(smartData->_priv, sx, sy, sw, sh);
+                    scrollRequest->dx, scrollRequest->dy, scrollX, scrollY, scrollWidth, scrollHeight);
+                ewk_view_repaint_add(smartData->_priv, scrollX, scrollY, scrollWidth, scrollHeight);
                 continue;
             }
 
-            if (sx + sw > vw)
-                sw = vw - sx;
-            if (sy + sh > vh)
-                sh = vh - sy;
+            if (scrollX + scrollWidth > contentsWidth)
+                scrollWidth = contentsWidth - scrollX;
+            if (scrollY + scrollHeight > contentsHeight)
+                scrollHeight = contentsHeight - scrollY;
 
-            if (sw < 0)
-                sw = 0;
-            if (sh < 0)
-                sh = 0;
+            if (scrollWidth < 0)
+                scrollWidth = 0;
+            if (scrollHeight < 0)
+                scrollHeight = 0;
 
-            if (!sw || !sh)
+            if (!scrollWidth || !scrollHeight)
                 continue;
 
-            sx -= abs(sr->dx);
-            sy -= abs(sr->dy);
-            sw += abs(sr->dx);
-            sh += abs(sr->dy);
-            ewk_view_repaint_add(smartData->_priv, sx, sy, sw, sh);
+            scrollX -= abs(scrollRequest->dx);
+            scrollY -= abs(scrollRequest->dy);
+            scrollWidth += abs(scrollRequest->dx);
+            scrollHeight += abs(scrollRequest->dy);
+            ewk_view_repaint_add(smartData->_priv, scrollX, scrollY, scrollWidth, scrollHeight);
             INF("using repaint for inner frame scolling!");
         }
     }
@@ -139,21 +139,21 @@ static Eina_Bool _ewk_view_tiled_smart_scrolls_process(Ewk_View_Smart_Data* smar
 
 static Eina_Bool _ewk_view_tiled_smart_repaints_process(Ewk_View_Smart_Data* smartData)
 {
-    const Eina_Rectangle* pr, * pr_end;
+    const Eina_Rectangle* paintRect, * endOfpaintRect;
     size_t count;
-    int sx, sy;
+    int scrollX, scrollY;
 
-    ewk_frame_scroll_pos_get(smartData->main_frame, &sx, &sy);
+    ewk_frame_scroll_pos_get(smartData->main_frame, &scrollX, &scrollY);
 
-    pr = ewk_view_repaints_get(smartData->_priv, &count);
-    pr_end = pr + count;
-    for (; pr < pr_end; pr++) {
-        Eina_Rectangle r;
-        r.x = pr->x + sx;
-        r.y = pr->y + sy;
-        r.w = pr->w;
-        r.h = pr->h;
-        ewk_tiled_backing_store_update(smartData->backing_store, &r);
+    paintRect = ewk_view_repaints_get(smartData->_priv, &count);
+    endOfpaintRect = paintRect + count;
+    for (; paintRect < endOfpaintRect; paintRect++) {
+        Eina_Rectangle rect;
+        rect.x = paintRect->x + scrollX;
+        rect.y = paintRect->y + scrollY;
+        rect.w = paintRect->w;
+        rect.h = paintRect->h;
+        ewk_tiled_backing_store_update(smartData->backing_store, &rect);
     }
     ewk_tiled_backing_store_updates_process(smartData->backing_store);
 
