@@ -166,7 +166,7 @@ void InitWebCoreSystemInterface(void)
     INIT(CreateVMPressureDispatchOnMainQueue);
 #endif
 
-#if !defined(BUILDING_ON_SNOW_LEOPARD) && !defined(BUILDING_ON_LION)
+#if PLATFORM(MAC) && !defined(BUILDING_ON_SNOW_LEOPARD) && !defined(BUILDING_ON_LION)
     INIT(GetMacOSXVersionString);
 #endif
 
