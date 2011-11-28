@@ -1653,10 +1653,8 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                     addToGraph(CheckStructure, OpInfo(m_graph.addStructureSet(methodCall.cachedPrototypeStructure.get())), cellConstant(methodCall.cachedPrototype.get()));
                 
                 set(getInstruction[1].u.operand, cellConstant(methodCall.cachedFunction.get()));
-            } else {
-                NodeIndex getMethod = addToGraph(GetMethod, OpInfo(identifier), OpInfo(prediction), base);
-                set(getInstruction[1].u.operand, getMethod);
-            }
+            } else
+                set(getInstruction[1].u.operand, addToGraph(GetById, OpInfo(identifier), OpInfo(prediction), base));
             
             m_currentIndex += OPCODE_LENGTH(op_method_check) + OPCODE_LENGTH(op_get_by_id);
             continue;

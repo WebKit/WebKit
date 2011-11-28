@@ -1,3 +1,17 @@
+2011-11-27  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG should not emit GetMethod node
+        https://bugs.webkit.org/show_bug.cgi?id=73175
+
+        Reviewed by Gavin Barraclough.
+        
+        Replaces all instances of the GetMethod node with GetById. This appears to
+        be a slight win on V8. This patch leaves GetMethod support in the code-base,
+        making this decision easy to reverse, for now.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+
 2011-11-26  Hajime Morrita  <morrita@chromium.org>
 
         Needs WTF_INLINE and JS_INLINE
