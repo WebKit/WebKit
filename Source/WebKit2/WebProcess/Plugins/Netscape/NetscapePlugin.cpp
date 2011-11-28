@@ -817,8 +817,9 @@ void NetscapePlugin::manualStreamDidFail(bool wasCancelled)
 {
     ASSERT(m_isStarted);
     ASSERT(m_loadManually);
-    ASSERT(m_manualStream);
 
+    if (!m_manualStream)
+        return;
     m_manualStream->didFail(wasCancelled);
 }
 
