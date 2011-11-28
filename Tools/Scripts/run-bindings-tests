@@ -62,6 +62,7 @@ def detect_changes(generator, work_directory, reference_directory):
     for output_file in os.listdir(work_directory):
         cmd = ['diff',
                '-u',
+               '-N',
                os.path.join(reference_directory, output_file),
                os.path.join(work_directory, output_file)]
 
