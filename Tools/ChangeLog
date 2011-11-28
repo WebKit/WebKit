@@ -1,3 +1,21 @@
+2011-11-28  Ojan Vafai  <ojan@chromium.org>
+
+        testlistjson on the test results server doesn't understand hierarchical results format
+        https://bugs.webkit.org/show_bug.cgi?id=73246
+
+        Reviewed by Tony Chang.
+
+        * TestResultServer/model/jsonresults.py:
+        (JsonResults._delete_results_and_times):
+        Instead of just getting the top-level keys, we now walk the tests tree and
+        delete the results and times values.
+
+        * TestResultServer/model/jsonresults_unittest.py:
+        Simplify the test harness to take in the same JSON format for the tests
+        that the actual results.json uses instead of something very similar but
+        needlessly different. This also allows for testing the broken case of
+        results and times values being at non-leaf level.
+
 2011-11-28  Tony Chang  <tony@chromium.org>
 
         ews bots should pass --force to update-webkit-chromium

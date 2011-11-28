@@ -313,6 +313,14 @@ class JsonResults(object):
         return True
 
     @classmethod
+    def _delete_results_and_times(cls, tests):
+        for key in tests.keys():
+            if key in (JSON_RESULTS_RESULTS, JSON_RESULTS_TIMES):
+                del tests[key]
+            else:
+                cls._delete_results_and_times(tests[key])
+
+    @classmethod
     def get_test_list(cls, builder, json_file_data):
         logging.debug("Loading test results json...")
         json = cls._load_json(json_file_data)
@@ -325,6 +333,6 @@ class JsonResults(object):
 
         test_list_json = {}
         tests = json[builder][JSON_RESULTS_TESTS]
-        test_list_json[builder] = {"tests": dict.fromkeys(tests, {})}
-
+        cls._delete_results_and_times(tests)
+        test_list_json[builder] = {"tests": tests}
         return cls._generate_file_data(test_list_json)
