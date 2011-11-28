@@ -2043,16 +2043,9 @@ void MethodCallLinkInfo::reset(RepatchBuffer& repatchBuffer, JITCode::JITType ji
     cachedPrototypeStructure.clearToMaxUnsigned();
     cachedFunction.clear();
     
-    if (jitType == JITCode::DFGJIT) {
-#if ENABLE(DFG_JIT)
-        repatchBuffer.relink(callReturnLocation, operationGetMethodOptimize);
-#else
-        ASSERT_NOT_REACHED();
-#endif
-    } else {
-        ASSERT(jitType == JITCode::BaselineJIT);
-        repatchBuffer.relink(callReturnLocation, cti_op_get_by_id_method_check);
-    }
+    ASSERT_UNUSED(jitType, jitType == JITCode::BaselineJIT);
+    
+    repatchBuffer.relink(callReturnLocation, cti_op_get_by_id_method_check);
 }
 
 void CodeBlock::unlinkCalls()

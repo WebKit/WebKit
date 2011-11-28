@@ -559,7 +559,6 @@ bool AbstractState::execute(NodeIndex nodeIndex)
         break;
             
     case GetById:
-    case GetMethod:
         if (!node.prediction()) {
             m_isValid = false;
             break;

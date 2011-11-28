@@ -1,3 +1,37 @@
+2011-11-28  Filip Pizlo  <fpizlo@apple.com>
+
+        Either remove the GetMethod node from the DFG backend, or find a use for it
+        https://bugs.webkit.org/show_bug.cgi?id=73178
+
+        Reviewed by Gavin Barraclough.
+        
+        More testing seemed to imply that the GetMethod code was indeed not profitable
+        in any major test. So, it's probably best to just remove it.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::MethodCallLinkInfo::reset):
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::execute):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::link):
+        * dfg/DFGJITCompiler.h:
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasIdentifier):
+        (JSC::DFG::Node::hasHeapPrediction):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGPropagator.cpp:
+        (JSC::DFG::Propagator::propagateNodePredictions):
+        * dfg/DFGRepatch.cpp:
+        * dfg/DFGRepatch.h:
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::cachedGetById):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::cachedGetById):
+        (JSC::DFG::SpeculativeJIT::compile):
+
 2011-11-28  Michael Saboff  <msaboff@apple.com>
 
         Change set 101187 from bug 73154 removed already lower case optimization

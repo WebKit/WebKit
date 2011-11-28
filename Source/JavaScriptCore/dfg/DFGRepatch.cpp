@@ -268,63 +268,6 @@ void dfgRepatchGetByID(ExecState* exec, JSValue baseValue, const Identifier& pro
         dfgRepatchCall(exec->codeBlock(), stubInfo.callReturnLocation, operationGetById);
 }
 
-static void dfgRepatchGetMethodFast(JSGlobalData* globalData, CodeBlock* codeBlock, MethodCallLinkInfo& methodInfo, JSObject* callee, Structure* structure, JSObject* slotBaseObject)
-{
-    ScriptExecutable* owner = codeBlock->ownerExecutable();
-    
-    RepatchBuffer repatchBuffer(codeBlock);
-
-    // Only optimize once!
-    repatchBuffer.relink(methodInfo.callReturnLocation, operationGetByIdOptimize);
-
-    methodInfo.cachedStructure.set(*globalData, owner, structure);
-    methodInfo.cachedPrototypeStructure.set(*globalData, owner, slotBaseObject->structure());
-    methodInfo.cachedPrototype.set(*globalData, owner, slotBaseObject);
-    methodInfo.cachedFunction.set(*globalData, owner, callee);
-}
-
-static bool tryCacheGetMethod(ExecState* exec, JSValue baseValue, const Identifier& propertyName, const PropertySlot& slot, MethodCallLinkInfo& methodInfo)
-{
-    CodeBlock* codeBlock = exec->codeBlock();
-    JSGlobalData* globalData = &exec->globalData();
-    
-    Structure* structure;
-    JSCell* specific;
-    JSObject* slotBaseObject;
-    if (baseValue.isCell()
-        && slot.isCacheableValue()
-        && !(structure = baseValue.asCell()->structure())->isUncacheableDictionary()
-        && (slotBaseObject = asObject(slot.slotBase()))->getPropertySpecificValue(exec, propertyName, specific)
-        && specific) {
-        
-        JSObject* callee = asObject(specific);
-        
-        // Since we're accessing a prototype in a loop, it's a good bet that it
-        // should not be treated as a dictionary.
-        if (slotBaseObject->structure()->isDictionary())
-            slotBaseObject->flattenDictionaryObject(exec->globalData());
-        
-        if (slot.slotBase() == structure->prototypeForLookup(exec)) {
-            dfgRepatchGetMethodFast(globalData, codeBlock, methodInfo, callee, structure, slotBaseObject);
-            return true;
-        }
-        
-        if (slot.slotBase() == baseValue) {
-            dfgRepatchGetMethodFast(globalData, codeBlock, methodInfo, callee, structure, exec->scopeChain()->globalObject->methodCallDummy());
-            return true;
-        }
-    }
-    
-    return false;
-}
-
-void dfgRepatchGetMethod(ExecState* exec, JSValue baseValue, const Identifier& propertyName, const PropertySlot& slot, MethodCallLinkInfo& methodInfo)
-{
-    bool cached = tryCacheGetMethod(exec, baseValue, propertyName, slot, methodInfo);
-    if (!cached)
-        dfgRepatchCall(exec->codeBlock(), methodInfo.callReturnLocation, operationGetByIdOptimize);
-}
-
 static bool tryBuildGetByIDList(ExecState* exec, JSValue baseValue, const Identifier&, const PropertySlot& slot, StructureStubInfo& stubInfo)
 {
     if (!baseValue.isCell()

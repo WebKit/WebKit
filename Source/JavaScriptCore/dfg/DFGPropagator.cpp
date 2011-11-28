@@ -456,7 +456,6 @@ private:
             break;
         }
             
-        case GetMethod:
         case GetByVal: {
             if (node.getHeapPrediction())
                 changed |= mergePrediction(node.getHeapPrediction());

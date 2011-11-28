@@ -238,7 +238,6 @@ static inline const char* arithNodeFlagsAsString(ArithNodeFlags flags)
     macro(GetArrayLength, NodeResultInt32) \
     macro(GetStringLength, NodeResultInt32) \
     macro(GetByteArrayLength, NodeResultInt32) \
-    macro(GetMethod, NodeResultJS | NodeMustGenerate) \
     macro(GetScopeChain, NodeResultJS) \
     macro(GetScopedVar, NodeResultJS | NodeMustGenerate) \
     macro(PutScopedVar, NodeMustGenerate | NodeClobbersWorld) \
@@ -495,7 +494,6 @@ struct Node {
         case GetById:
         case PutById:
         case PutByIdDirect:
-        case GetMethod:
         case Resolve:
         case ResolveBase:
         case ResolveBaseStrictPut:
@@ -710,7 +708,6 @@ struct Node {
     {
         switch (op) {
         case GetById:
-        case GetMethod:
         case GetByVal:
         case Call:
         case Construct:

@@ -103,7 +103,6 @@ EncodedJSValue DFG_OPERATION operationGetById(ExecState*, JSCell*, Identifier*);
 EncodedJSValue DFG_OPERATION operationGetByIdBuildList(ExecState*, JSCell*, Identifier*);
 EncodedJSValue DFG_OPERATION operationGetByIdProtoBuildList(ExecState*, JSCell*, Identifier*);
 EncodedJSValue DFG_OPERATION operationGetByIdOptimize(ExecState*, JSCell*, Identifier*);
-EncodedJSValue DFG_OPERATION operationGetMethodOptimize(ExecState*, JSCell*, Identifier*);
 EncodedJSValue DFG_OPERATION operationResolve(ExecState*, Identifier*);
 EncodedJSValue DFG_OPERATION operationResolveBase(ExecState*, Identifier*);
 EncodedJSValue DFG_OPERATION operationResolveBaseStrictPut(ExecState*, Identifier*);

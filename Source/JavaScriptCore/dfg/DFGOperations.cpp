@@ -319,23 +319,6 @@ EncodedJSValue DFG_OPERATION operationGetById(ExecState* exec, JSCell* base, Ide
     return JSValue::encode(baseValue.get(exec, *propertyName, slot));
 }
 
-J_FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_ECI(operationGetMethodOptimize);
-EncodedJSValue DFG_OPERATION operationGetMethodOptimizeWithReturnAddress(ExecState* exec, JSCell* base, Identifier* propertyName, ReturnAddressPtr returnAddress)
-{
-    JSValue baseValue(base);
-    PropertySlot slot(baseValue);
-    JSValue result = baseValue.get(exec, *propertyName, slot);
-    
-    CodeBlock* codeBlock = exec->codeBlock();
-    MethodCallLinkInfo& methodInfo = codeBlock->getMethodCallLinkInfo(returnAddress);
-    if (methodInfo.seenOnce())
-        dfgRepatchGetMethod(exec, baseValue, *propertyName, slot, methodInfo);
-    else
-        methodInfo.setSeen();
-
-    return JSValue::encode(result);
-}
-
 J_FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_ECI(operationGetByIdBuildList);
 EncodedJSValue DFG_OPERATION operationGetByIdBuildListWithReturnAddress(ExecState* exec, JSCell* base, Identifier* propertyName, ReturnAddressPtr returnAddress)
 {
