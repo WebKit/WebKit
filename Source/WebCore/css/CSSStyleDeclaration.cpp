@@ -45,9 +45,17 @@ CSSStyleDeclaration::CSSStyleDeclaration(CSSRule* parent)
 #endif
     , m_isElementStyleDeclaration(false)
     , m_isInlineStyleDeclaration(false)
-    , m_parentIsRule(true)
     , m_parentRule(parent)
 {
+}
+
+CSSStyleSheet* CSSStyleDeclaration::parentStyleSheet() const
+{
+    if (parentRule())
+        return parentRule()->parentStyleSheet();
+    if (isElementStyleDeclaration())
+        return static_cast<const CSSElementStyleDeclaration*>(this)->styleSheet();
+    return 0;
 }
 
 PassRefPtr<CSSValue> CSSStyleDeclaration::getPropertyCSSValue(const String& propertyName)

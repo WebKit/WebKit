@@ -1,3 +1,73 @@
+2011-11-28  Andreas Kling  <kling@webkit.org>
+
+        CSSStyleDeclaration: Remove ability to have style sheet as parent.
+        <http://webkit.org/b/73199>
+
+        Reviewed by Antti Koivisto.
+
+        Refactor so we don't have to support style sheets as parents of style declarations.
+        The users of this mechanism were mapped attributes and inline styles, which instead
+        now know how to find the relevant style sheet via their document().
+
+        * css/CSSMutableStyleDeclaration.h:
+        * css/CSSMutableStyleDeclaration.cpp:
+        (WebCore::CSSElementStyleDeclaration::styleSheet):
+
+            Added CSSElementStyleDeclaration::styleSheet(). The default implementation
+            returns the associated element's document()->elementSheet(). It is virtual
+            because SVGFontFaceElement needs document()->mappedElementSheet() instead.
+
+        * css/CSSStyleDeclaration.h:
+        (WebCore::CSSStyleDeclaration::parentRule):
+        (WebCore::CSSStyleDeclaration::setParentRule):
+        * css/CSSStyleDeclaration.cpp:
+        (WebCore::CSSStyleDeclaration::CSSStyleDeclaration):
+
+            Remove m_parentIsRule and m_parentStyleSheet, leaving only m_parentRule.
+
+        * css/CSSStyleDeclaration.cpp:
+        (WebCore::CSSStyleDeclaration::parentStyleSheet):
+
+            Out-of-lined so it can return the CSSElementStyleDeclaration::styleSheet() for
+            declarations with an associated element.
+
+        * css/WebKitCSSKeyframeRule.cpp:
+        (WebCore::WebKitCSSKeyframeRule::~WebKitCSSKeyframeRule):
+        (WebCore::WebKitCSSKeyframeRule::setDeclaration):
+
+            Use setParentRule() instead of setParentStyleSheet() on the internal
+            CSSMutableStyleDeclaration in keyframe rules.
+
+        * dom/StyledElement.h:
+
+            Removed StyledElement::didMoveToNewOwnerDocument() since we no longer need to
+            manually keep the inline style's parent style sheet pointer up-to-date.
+
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::createInlineStyleDecl):
+        (WebCore::StyledElement::destroyInlineStyleDecl):
+        (WebCore::StyledElement::attributeChanged):
+        (WebCore::StyledElement::createMappedDecl):
+        * html/HTMLTableElement.cpp:
+        (WebCore::HTMLTableElement::additionalAttributeStyleDecls):
+        (WebCore::HTMLTableElement::addSharedCellBordersDecl):
+        (WebCore::HTMLTableElement::addSharedCellPaddingDecl):
+        (WebCore::HTMLTableElement::addSharedGroupDecls):
+        * svg/SVGFontFaceElement.cpp:
+        (WebCore::SVGFontFaceElement::SVGFontFaceElement):
+
+            Remove setParentStyleSheet() calls on mapped attributes and inline styles.
+            They now find the relevant style sheet by following the associated element ptr.
+
+        * svg/SVGFontFaceElement.cpp:
+        (WebCore::FontFaceStyleDeclaration::FontFaceStyleDeclaration):
+        (WebCore::FontFaceStyleDeclaration::~FontFaceStyleDeclaration):
+        (WebCore::FontFaceStyleDeclaration::styleSheet):
+
+            Subclass CSSElementStyleDeclaration for SVG's font-face elment in order to
+            override styleSheet(). This is necessary because they operate on the document's
+            mappedElementSheet() rather than the elementSheet().
+
 2011-11-28  Peter Rybin  <peter.rybin@gmail.com>
 
         Web Inspector: [protocol] generate C++ classes for protocol JSON named types

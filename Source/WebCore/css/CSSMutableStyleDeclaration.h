@@ -180,6 +180,8 @@ public:
     StyledElement* element() const { return m_element; }
     void setElement(StyledElement* element) { m_element = element; }
 
+    virtual CSSStyleSheet* styleSheet() const;
+
 protected:
     CSSElementStyleDeclaration(bool isInline)
         : CSSMutableStyleDeclaration()

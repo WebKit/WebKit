@@ -130,7 +130,6 @@ PassRefPtr<Attribute> StyledElement::createAttribute(const QualifiedName& name, 
 void StyledElement::createInlineStyleDecl()
 {
     m_inlineStyleDecl = CSSInlineStyleDeclaration::create();
-    m_inlineStyleDecl->setParentStyleSheet(document()->elementSheet());
     m_inlineStyleDecl->setElement(this);
     m_inlineStyleDecl->setStrictParsing(isHTMLElement() && !document()->inQuirksMode());
 }
@@ -139,7 +138,6 @@ void StyledElement::destroyInlineStyleDecl()
 {
     if (m_inlineStyleDecl) {
         m_inlineStyleDecl->setElement(0);
-        m_inlineStyleDecl->setParentStyleSheet(0);
         m_inlineStyleDecl = 0;
     }
 }
@@ -195,7 +193,6 @@ void StyledElement::attributeChanged(Attribute* attr, bool preserveDecls)
         // Add the decl to the table in the appropriate spot.
         setMappedAttributeDecl(entry, attr, attr->decl());
         attr->decl()->setMappedState(entry, attr->name(), attr->value());
-        attr->decl()->setParentStyleSheet(0);
         attr->decl()->setElement(0);
         if (attributeMap())
             attributeMap()->declAdded();
@@ -405,7 +402,6 @@ void StyledElement::createMappedDecl(Attribute* attr)
 {
     RefPtr<CSSMappedAttributeDeclaration> decl = CSSMappedAttributeDeclaration::create();
     attr->setDecl(decl);
-    decl->setParentStyleSheet(document()->elementSheet());
     decl->setElement(this);
     ASSERT(!decl->useStrictParsing());
 }
@@ -448,15 +444,6 @@ void StyledElement::addSubresourceAttributeURLs(ListHashSet<KURL>& urls) const
 {
     if (CSSInlineStyleDeclaration* style = inlineStyleDecl())
         style->addSubresourceStyleURLs(urls);
-}
-
-
-void StyledElement::didMoveToNewOwnerDocument()
-{
-    if (m_inlineStyleDecl)
-        m_inlineStyleDecl->setParentStyleSheet(document()->elementSheet());
-
-    Element::didMoveToNewOwnerDocument();
 }
 
 }

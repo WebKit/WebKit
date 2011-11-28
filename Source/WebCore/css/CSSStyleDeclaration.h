@@ -39,31 +39,10 @@ public:
 
     static bool isPropertyName(const String&);
 
-    // FIXME: Refactor so CSSStyleDeclaration never needs to have a style sheet parent.
+    CSSRule* parentRule() const { return m_parentRule; }
+    void setParentRule(CSSRule* rule) { m_parentRule = rule; }
 
-    CSSRule* parentRule() const
-    {
-        return m_parentIsRule ? m_parentRule : 0;
-    }
-
-    void setParentRule(CSSRule* rule)
-    {
-        m_parentIsRule = true;
-        m_parentRule = rule;
-    }
-
-    void setParentStyleSheet(CSSStyleSheet* styleSheet)
-    {
-        m_parentIsRule = false;
-        m_parentStyleSheet = styleSheet;
-    }
-
-    CSSStyleSheet* parentStyleSheet() const
-    {
-        if (!m_parentIsRule)
-            return m_parentStyleSheet;
-        return m_parentRule ? m_parentRule->parentStyleSheet() : 0;
-    }
+    CSSStyleSheet* parentStyleSheet() const;
 
     virtual String cssText() const = 0;
     virtual void setCssText(const String&, ExceptionCode&) = 0;
@@ -124,11 +103,7 @@ protected:
     bool m_isInlineStyleDeclaration : 1;
 
 private:
-    bool m_parentIsRule : 1;
-    union {
-        CSSRule* m_parentRule;
-        CSSStyleSheet* m_parentStyleSheet;
-    };
+    CSSRule* m_parentRule;
 };
 
 } // namespace WebCore

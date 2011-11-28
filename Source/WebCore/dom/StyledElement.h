@@ -83,8 +83,6 @@ protected:
     // parseMappedAttribute (called via setAttribute()) and
     // svgAttributeChanged (called when element.className.baseValue is set)
     void classAttributeChanged(const AtomicString& newClassString);
-    
-    virtual void didMoveToNewOwnerDocument();
 
 private:
     void createMappedDecl(Attribute*);
