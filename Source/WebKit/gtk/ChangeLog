@@ -1,3 +1,14 @@
+2011-11-28  Stefan Zwanenburg  <stefanhetzwaantje@gmail.com>
+
+        WebKitGTK+-1.7.2 build error due to a reference to gdk_disable_multidevice()
+        https://bugs.webkit.org/show_bug.cgi?id=73206
+
+        Reviewed by Martin Robinson.
+
+        * tests/testatk.c:
+        (initializeTestingFramework): Don't use gdk_disable_multidevice()
+        when using GTK2.
+
 2011-11-26  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: remove disconnectFromBackend from the protocol.

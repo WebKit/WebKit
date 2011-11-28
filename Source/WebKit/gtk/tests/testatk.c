@@ -1686,7 +1686,12 @@ static void initializeTestingFramework(int argc, char** argv)
     g_test_init(&argc, &argv, 0);
     gtk_disable_setlocale();
     setlocale(LC_ALL, "C");
+
+#ifndef GTK_API_VERSION_2
+    /* gdk_disable_multidevice() available since GTK+ 3.0 only. */
     gdk_disable_multidevice();
+#endif
+
     gtk_init(&argc, &argv);
 }
 
