@@ -1,3 +1,30 @@
+2011-11-28  Noel Gordon  <noel.gordon@gmail.com>
+
+        [chromium] Use data decoding swizzle for turbo JPEG image decoding.
+        https://bugs.webkit.org/show_bug.cgi?id=59670
+
+        Reviewed by Kenneth Russell.
+
+        Add a BGRX row decode data swizzle for the little-endian ports that use libjpeg-turbo
+        (Chromium win/linux/mac) to reduce JPEG image decoding time by ~2x.
+
+        JPEG images of type JSC_GRAYSCALE are excluded since layout regressions were observed
+        for grayscale images produced by older tools (XV 3.10a 12/19/94). libjpeg decodes the
+        images without error; libjpeg-turbo caused visible artifacts (see bug for examples).
+
+        This patch is based on the work of Hironori Bono. He provided the original patch, and
+        the quantitative results confirming the significant performance improvement.
+
+        No new tests. Covered by many existing tests.
+
+        * platform/image-decoders/jpeg/JPEGImageDecoder.cpp:
+        (rgbOutputColorSpace):  If JCS_EXTENSIONS is defined (libjpeg-turbo), and the port is
+        little-endian, define a BGRX data swizzle for use when decoding pixel rows.
+        (turboSwizzled):
+        (WebCore::JPEGImageReader::decode):  Select a possibly swizzled rgbOutputColorSpace()
+        for JSC_RGB and JCS_YCbCr input color space images.  Exclude JSC_GRAYSCALE images.
+        (WebCore::JPEGImageDecoder::outputScanlines):  Swizzle decode, if applicable.
+
 2011-11-28  Fady Samuel  <fsamuel@chromium.org>
 
         Fix Aspect Ratio Property Inheritance And Make the Computed Value Equal the Specified Value

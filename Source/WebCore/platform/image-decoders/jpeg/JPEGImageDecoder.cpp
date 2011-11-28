@@ -63,6 +63,20 @@ extern "C" {
 
 #include <setjmp.h>
 
+#if CPU(BIG_ENDIAN) || CPU(MIDDLE_ENDIAN)
+#define ASSUME_LITTLE_ENDIAN 0
+#else
+#define ASSUME_LITTLE_ENDIAN 1
+#endif
+
+#if defined(JCS_EXTENSIONS) && ASSUME_LITTLE_ENDIAN
+#define TURBO_JPEG_RGB_SWIZZLE
+inline J_COLOR_SPACE rgbOutputColorSpace() { return JCS_EXT_BGRX; }
+inline bool turboSwizzled(J_COLOR_SPACE colorSpace) { return colorSpace == rgbOutputColorSpace(); }
+#else
+inline J_COLOR_SPACE rgbOutputColorSpace() { return JCS_RGB; }
+#endif
+
 namespace WebCore {
 
 struct decoder_error_mgr {
@@ -221,10 +235,11 @@ public:
                 // their color profile, CoreGraphics will "upsample" them
                 // again, resulting in horizontal distortions.
                 m_decoder->setIgnoreGammaAndColorProfile(true);
-                // Note fall-through!
+                m_info.out_color_space = JCS_RGB;
+                break;
             case JCS_YCbCr:
             case JCS_RGB:
-                m_info.out_color_space = JCS_RGB;
+                m_info.out_color_space = rgbOutputColorSpace();
                 break;
             case JCS_CMYK:
             case JCS_YCCK:
@@ -481,6 +496,19 @@ bool JPEGImageDecoder::outputScanlines()
     }
 
     jpeg_decompress_struct* info = m_reader->info();
+
+#if !ENABLE(IMAGE_DECODER_DOWN_SAMPLING) && defined(TURBO_JPEG_RGB_SWIZZLE)
+    if (turboSwizzled(info->out_color_space)) {
+         ASSERT(!m_scaled);
+         while (info->output_scanline < info->output_height) {
+             unsigned char* row = reinterpret_cast<unsigned char*>(buffer.getAddr(0, info->output_scanline));
+             if (jpeg_read_scanlines(info, &row, 1) != 1)
+                  return false;
+         }
+         return true;
+     }
+#endif
+
     JSAMPARRAY samples = m_reader->samples();
 
     while (info->output_scanline < info->output_height) {
