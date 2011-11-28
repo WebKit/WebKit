@@ -949,6 +949,7 @@ public:
     {
         if (!selector->parentStyle()->hasAspectRatio())
             return;
+        selector->style()->setHasAspectRatio(true);
         selector->style()->setAspectRatioDenominator(selector->parentStyle()->aspectRatioDenominator());
         selector->style()->setAspectRatioNumerator(selector->parentStyle()->aspectRatioNumerator());
     }

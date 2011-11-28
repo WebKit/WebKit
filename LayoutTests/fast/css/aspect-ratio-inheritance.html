@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+<div style="-webkit-aspect-ratio: 1 / 2;">
+  <div id="aspectRatioTest"></div>
+</div>
+<script>
+    function testComputedValue(elementId, value, styleAttribute)
+    {
+        var div = document.getElementById(elementId);
+        div.style[styleAttribute] = value;
+        var computedValue = window.getComputedStyle(div)[styleAttribute];
+        return computedValue;
+    }
+    shouldBeEqualToString('testComputedValue("aspectRatioTest", "1 / 4", "-webkit-aspect-ratio")', '1/4');
+    shouldBeEqualToString('testComputedValue("aspectRatioTest", "inherit", "-webkit-aspect-ratio")', '1/2');
+    shouldBeEqualToString('testComputedValue("aspectRatioTest", "none", "-webkit-aspect-ratio")', 'none');
+</script>
+<script src="../../fast/js/resources/js-test-post.js"></script>

@@ -1,3 +1,21 @@
+2011-11-28  Fady Samuel  <fsamuel@chromium.org>
+
+        Fix Aspect Ratio Property Inheritance And Make the Computed Value Equal the Specified Value
+        https://bugs.webkit.org/show_bug.cgi?id=73038
+
+        Reviewed by Ojan Vafai.
+
+        hasAspectRatio was not being set if the -webkit-aspect-ratio property was inherited from the parent.
+
+        Additionally, the computed value of -webkit-aspect-ratio was returning a number instead of a ratio.
+
+        Test: fast/css/aspect-ratio-inheritance.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/CSSStyleApplyProperty.cpp:
+        (WebCore::ApplyPropertyAspectRatio::applyInheritValue):
+
 2011-11-28  Ken Buchanan  <kenrb@chromium.org>
 
         Crash due to bidi style in isolated run

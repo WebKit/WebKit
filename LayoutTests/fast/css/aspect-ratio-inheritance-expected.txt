@@ -1,0 +1,7 @@
+PASS testComputedValue("aspectRatioTest", "1 / 4", "-webkit-aspect-ratio") is "1/4"
+PASS testComputedValue("aspectRatioTest", "inherit", "-webkit-aspect-ratio") is "1/2"
+PASS testComputedValue("aspectRatioTest", "none", "-webkit-aspect-ratio") is "none"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

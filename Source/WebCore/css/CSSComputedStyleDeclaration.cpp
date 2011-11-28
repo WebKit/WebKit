@@ -25,9 +25,7 @@
 #include "CSSComputedStyleDeclaration.h"
 
 #include "AnimationController.h"
-#include "ContentData.h"
-#include "CounterContent.h"
-#include "CursorList.h"
+#include "CSSAspectRatioValue.h"
 #include "CSSBorderImageValue.h"
 #include "CSSLineBoxContainValue.h"
 #include "CSSMutableStyleDeclaration.h"
@@ -40,6 +38,9 @@
 #include "CSSSelector.h"
 #include "CSSTimingFunctionValue.h"
 #include "CSSValueList.h"
+#include "ContentData.h"
+#include "CounterContent.h"
+#include "CursorList.h"
 #if ENABLE(CSS_SHADERS)
 #include "CustomFilterOperation.h"
 #endif
@@ -52,6 +53,7 @@
 #include "Rect.h"
 #include "RenderBox.h"
 #include "RenderLayer.h"
+#include "RenderStyle.h"
 #include "ShadowValue.h"
 #if ENABLE(CSS_FILTERS)
 #include "WebKitCSSFilterValue.h"
@@ -1895,7 +1897,7 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
         case CSSPropertyWebkitAspectRatio:
             if (!style->hasAspectRatio())
                 return primitiveValueCache->createIdentifierValue(CSSValueNone);
-            return primitiveValueCache->createValue(style->aspectRatio(), CSSPrimitiveValue::CSS_NUMBER);
+            return CSSAspectRatioValue::create(style->aspectRatioNumerator(), style->aspectRatioDenominator());
         case CSSPropertyWebkitBackfaceVisibility:
             return primitiveValueCache->createIdentifierValue((style->backfaceVisibility() == BackfaceVisibilityHidden) ? CSSValueHidden : CSSValueVisible);
         case CSSPropertyWebkitBorderImage:
