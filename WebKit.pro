@@ -18,7 +18,7 @@ WTF.file = Source/JavaScriptCore/wtf/wtf.pro
 WTF.makefile = Makefile.WTF
 SUBDIRS += WTF
 
-!CONFIG(v8) {
+!v8 {
     JavaScriptCore.file = Source/JavaScriptCore/JavaScriptCore.pro
     JavaScriptCore.makefile = Makefile.JavaScriptCore
 

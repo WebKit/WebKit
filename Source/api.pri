@@ -30,11 +30,6 @@ CONFIG += webcore
     QMAKE_INTERNAL_INCLUDED_FILES *= WebKit2/Target.pri
 }
 
-v8:linux-* {
-    QMAKE_LIBDIR += $${V8_LIB_DIR}
-    LIBS = -lv8 $$LIBS
-}
-
 QT += network
 haveQt(5): QT += widgets printsupport
 

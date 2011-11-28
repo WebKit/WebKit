@@ -65,6 +65,8 @@ INJECTED_SCRIPT_SOURCE = $$PWD/inspector/InjectedScriptSource.js
 
 DEBUGGER_SCRIPT_SOURCE = $$PWD/bindings/v8/DebuggerScript.js
 
+ARRAY_BUFFER_VIEW_CUSTOM_SCRIPT_SOURCE = $$PWD/bindings/v8/custom/V8ArrayBufferViewCustomScript.js
+
 contains(DEFINES, ENABLE_DASHBOARD_SUPPORT=1): DASHBOARDSUPPORTCSSPROPERTIES = $$PWD/css/DashboardSupportCSSPropertyNames.in
 
 XPATHBISON = $$PWD/xml/XPathGrammar.y
@@ -719,6 +721,12 @@ debuggerScriptSource.commands = perl $$PWD/inspector/xxd.pl DebuggerScriptSource
 debuggerScriptSource.add_output_to_sources = false
 GENERATORS += debuggerScriptSource
 
+arrayBufferViewCustomScript.output = V8ArrayBufferViewCustomScript.h
+arrayBufferViewCustomScript.input = ARRAY_BUFFER_VIEW_CUSTOM_SCRIPT_SOURCE
+arrayBufferViewCustomScript.commands = perl $$PWD/inspector/xxd.pl V8ArrayBufferViewCustomScript_js ${QMAKE_FILE_IN} ${QMAKE_FILE_OUT}
+arrayBufferViewCustomScript.add_output_to_sources = false
+GENERATORS += arrayBufferViewCustomScript
+
 # GENERATOR 3: tokenizer (flex)
 tokenizer.output = ${QMAKE_FILE_BASE}.cpp
 tokenizer.input = TOKENIZER
@@ -862,3 +870,12 @@ webkitversion.commands = perl $$webkitversion.script --config $$PWD/../WebKit/ma
 webkitversion.clean = ${QMAKE_FUNC_FILE_OUT_PATH}/WebKitVersion.h
 webkitversion.add_output_to_sources = false
 GENERATORS += webkitversion
+
+# Stolen from JavaScriptCore, needed for YARR
+v8 {
+    retgen.output = RegExpJitTables.h
+    retgen.script = $$PWD/../JavaScriptCore/create_regex_tables
+    retgen.input = retgen.script
+    retgen.commands = python $$retgen.script > ${QMAKE_FILE_OUT}
+    GENERATORS += retgen
+}

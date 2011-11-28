@@ -67,9 +67,6 @@ SOURCES += \
 
 v8 {
     include($$PWD/../JavaScriptCore/yarr/yarr.pri)
-    include($$PWD/../JavaScriptCore/wtf/wtf.pri)
-
-    INCLUDEPATH = $$PWD/../JavaScriptCore/wtf/qt $$INCLUDEPATH
 
     SOURCES += \
         platform/qt/PlatformSupportQt.cpp \
@@ -83,6 +80,7 @@ v8 {
 
     SOURCES += \
         bindings/v8/custom/V8ArrayBufferCustom.cpp \
+        bindings/v8/custom/V8ArrayBufferViewCustom.cpp \
         bindings/v8/custom/V8CustomXPathNSResolver.cpp \
         bindings/v8/custom/V8DataViewCustom.cpp \
         bindings/v8/custom/V8DeviceMotionEventCustom.cpp \
@@ -100,6 +98,7 @@ v8 {
         bindings/v8/DOMData.cpp \
         bindings/v8/DOMDataStore.cpp \
         bindings/v8/NPV8Object.cpp \
+        bindings/v8/OptionsObject.cpp \
         bindings/v8/PageScriptDebugServer.cpp \
         bindings/v8/RetainedDOMInfo.cpp \
         bindings/v8/ScheduledAction.cpp \
@@ -1350,7 +1349,6 @@ v8 {
         bindings/v8/custom/V8CustomXPathNSResolver.h \
         bindings/v8/custom/V8HTMLImageElementConstructor.h \
         bindings/v8/custom/V8HTMLSelectElementCustom.h \
-        bindings/v8/custom/V8MessagePortCustom.h \
         bindings/v8/custom/V8NamedNodesCollection.h \
         \
         bindings/v8/DateExtension.h \

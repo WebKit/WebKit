@@ -1,3 +1,14 @@
+2011-11-28  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Build system fixes against V8.
+
+        Reviewed by Tor Arne Vestbø.
+
+        * DerivedSources.pri: Add missing binding files to the build and also added
+        the regexp table generation needed for Yarr, which is compiled statically into
+        WebCore to implement WebCore::RegularExpression.
+        * Target.pri: Adapt to latest v8 binding files.
+
 2011-11-28  Andrey Kosyakov  <caseq@chromium.org>
 
         Web Inspector: resource status image is mis-aligned in the network headers view

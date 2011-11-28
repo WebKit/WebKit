@@ -1,3 +1,13 @@
+2011-11-28  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Build system fixes against V8.
+
+        Reviewed by Tor Arne Vestbø.
+
+        * qmake/mkspecs/features/webcore.prf: Get rid of old v8 cruft.
+        * qmake/mkspecs/features/wtf.prf: If requested, pull in v8 from Qt and configure
+        WTF accordingly to use v8. (WTF in the implementation needs it as well as users of WTF)
+
 2011-11-28  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Make sure the useFixedLayout feature is consistently handled

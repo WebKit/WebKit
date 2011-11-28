@@ -1,5 +1,14 @@
 2011-11-28  Simon Hausmann  <simon.hausmann@nokia.com>
 
+        [Qt] Build system fixes against V8.
+
+        Reviewed by Tor Arne Vestbø.
+
+        * Source/api.pri: Get rid of old v8 cruft.
+        * WebKit.pro: Don't build JavaScriptCore when configured with v8.
+
+2011-11-28  Simon Hausmann  <simon.hausmann@nokia.com>
+
         [Qt] WTF should be built as separate static library
         https://bugs.webkit.org/show_bug.cgi?id=73201
 

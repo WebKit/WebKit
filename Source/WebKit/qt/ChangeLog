@@ -1,3 +1,19 @@
+2011-11-28  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Build system fixes against V8.
+
+        Reviewed by Tor Arne Vestbø.
+
+        Add forwarding headers for building against Qt's v8 with
+        v8 include style.
+
+        * v8/ForwardingHeaders/v8-debug.h: Added.
+        * v8/ForwardingHeaders/v8-preparser.h: Added.
+        * v8/ForwardingHeaders/v8-profiler.h: Added.
+        * v8/ForwardingHeaders/v8-testing.h: Added.
+        * v8/ForwardingHeaders/v8.h: Added.
+        * v8/ForwardingHeaders/v8stdint.h: Added.
+
 2011-11-26  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: remove disconnectFromBackend from the protocol.
