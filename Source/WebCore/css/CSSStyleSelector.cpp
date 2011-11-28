@@ -3488,20 +3488,6 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSSPropertyWebkitMarqueeStyle:
         HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(marqueeBehavior, MarqueeBehavior)
         return;
-    case CSSPropertyWebkitFlowInto:
-        HANDLE_INHERIT_AND_INITIAL(flowThread, FlowThread);
-        if (primitiveValue->getIdent() == CSSValueAuto)
-            m_style->setFlowThread(nullAtom);
-        else
-            m_style->setFlowThread(primitiveValue->getStringValue());
-        return;
-    case CSSPropertyWebkitFlowFrom:
-        HANDLE_INHERIT_AND_INITIAL(regionThread, RegionThread);
-        if (primitiveValue->getIdent() == CSSValueNone)
-            m_style->setRegionThread(nullAtom);
-        else
-            m_style->setRegionThread(primitiveValue->getStringValue());
-        return;
     case CSSPropertyWebkitRegionOverflow:
         HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(regionOverflow, RegionOverflow);
         return;
@@ -4013,6 +3999,8 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSSPropertyWebkitColumnCount:
     case CSSPropertyWebkitColumnGap:
     case CSSPropertyWebkitColumnWidth:
+    case CSSPropertyWebkitFlowInto:
+    case CSSPropertyWebkitFlowFrom:
     case CSSPropertyWebkitHighlight:
     case CSSPropertyWebkitHyphenateCharacter:
     case CSSPropertyWebkitTextCombine:
