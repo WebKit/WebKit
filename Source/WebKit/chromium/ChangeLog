@@ -1,3 +1,9 @@
+2011-11-27  Yury Semikhatsky  <yurys@chromium.org>
+
+        Unreviewed. Update Chromium revision.
+
+        * DEPS:
+
 2011-11-24  Adam Barth  <abarth@webkit.org>
 
         [Chromium] Move the next traunch of headers into public/platform
