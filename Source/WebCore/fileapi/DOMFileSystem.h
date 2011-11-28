@@ -47,10 +47,7 @@ class FileWriterCallback;
 
 class DOMFileSystem : public DOMFileSystemBase, public ActiveDOMObject {
 public:
-    static PassRefPtr<DOMFileSystem> create(ScriptExecutionContext* context, const String& name, PassOwnPtr<AsyncFileSystem> asyncFileSystem)
-    {
-        return adoptRef(new DOMFileSystem(context, name, asyncFileSystem));
-    }
+    static PassRefPtr<DOMFileSystem> create(ScriptExecutionContext*, const String& name, PassOwnPtr<AsyncFileSystem>);
 
     PassRefPtr<DirectoryEntry> root();
 

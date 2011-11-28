@@ -42,6 +42,7 @@
 namespace WebCore {
 
 class CharacterData;
+class DOMFileSystem;
 class DOMWindow;
 class DOMWrapperWorld;
 class Database;
@@ -176,6 +177,10 @@ public:
     static void didOpenDatabase(ScriptExecutionContext*, PassRefPtr<Database>, const String& domain, const String& name, const String& version);
 #endif
 
+#if ENABLE(FILE_SYSTEM)
+    static void didOpenFileSystem(PassRefPtr<DOMFileSystem>);
+#endif
+
     static void didUseDOMStorage(Page*, StorageArea*, bool isLocalStorage, Frame*);
 
 #if ENABLE(WORKERS)
@@ -306,6 +311,10 @@ private:
 
 #if ENABLE(SQL_DATABASE)
     static void didOpenDatabaseImpl(InstrumentingAgents*, PassRefPtr<Database>, const String& domain, const String& name, const String& version);
+#endif
+
+#if ENABLE(FILE_SYSTEM)
+    static void didOpenFileSystemImpl(InstrumentingAgents*, PassRefPtr<DOMFileSystem>);
 #endif
 
     static void didUseDOMStorageImpl(InstrumentingAgents*, StorageArea*, bool isLocalStorage, Frame*);

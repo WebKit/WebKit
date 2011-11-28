@@ -53,6 +53,7 @@ class InspectorDOMDebuggerAgent;
 class InspectorDOMStorageAgent;
 class InspectorDatabaseAgent;
 class InspectorDebuggerAgent;
+class InspectorFileSystemAgent;
 class InspectorFrontend;
 class InspectorFrontendClient;
 class InspectorPageAgent;
@@ -126,6 +127,9 @@ private:
     OwnPtr<InspectorCSSAgent> m_cssAgent;
 #if ENABLE(SQL_DATABASE)
     OwnPtr<InspectorDatabaseAgent> m_databaseAgent;
+#endif
+#if ENABLE(FILE_SYSTEM)
+    OwnPtr<InspectorFileSystemAgent> m_fileSystemAgent;
 #endif
     OwnPtr<InspectorDOMStorageAgent> m_domStorageAgent;
     OwnPtr<InspectorTimelineAgent> m_timelineAgent;

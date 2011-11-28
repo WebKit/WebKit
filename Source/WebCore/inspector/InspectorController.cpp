@@ -48,6 +48,7 @@
 #include "InspectorDOMStorageAgent.h"
 #include "InspectorDatabaseAgent.h"
 #include "InspectorDebuggerAgent.h"
+#include "InspectorFileSystemAgent.h"
 #include "InspectorFrontend.h"
 #include "InspectorFrontendClient.h"
 #include "InspectorInstrumentation.h"
@@ -78,6 +79,9 @@ InspectorController::InspectorController(Page* page, InspectorClient* inspectorC
     , m_cssAgent(adoptPtr(new InspectorCSSAgent(m_instrumentingAgents.get(), m_domAgent.get())))
 #if ENABLE(SQL_DATABASE)
     , m_databaseAgent(InspectorDatabaseAgent::create(m_instrumentingAgents.get(), m_state.get()))
+#endif
+#if ENABLE(FILE_SYSTEM)
+    , m_fileSystemAgent(InspectorFileSystemAgent::create(m_instrumentingAgents.get(), m_state.get()))
 #endif
     , m_domStorageAgent(InspectorDOMStorageAgent::create(m_instrumentingAgents.get(), m_state.get()))
     , m_timelineAgent(InspectorTimelineAgent::create(m_instrumentingAgents.get(), m_state.get()))
@@ -171,6 +175,9 @@ void InspectorController::connectFrontend()
 #if ENABLE(SQL_DATABASE)
     m_databaseAgent->setFrontend(m_inspectorFrontend.get());
 #endif
+#if ENABLE(FILE_SYSTEM)
+    m_fileSystemAgent->setFrontend(m_inspectorFrontend.get());
+#endif
     m_domStorageAgent->setFrontend(m_inspectorFrontend.get());
 #if ENABLE(WORKERS)
     m_workerAgent->setFrontend(m_inspectorFrontend.get());
@@ -197,6 +204,9 @@ void InspectorController::connectFrontend()
 #endif
 #if ENABLE(JAVASCRIPT_DEBUGGER)
         m_debuggerAgent.get(),
+#endif
+#if ENABLE(FILE_SYSTEM)
+        m_fileSystemAgent.get(),
 #endif
         m_resourceAgent.get(),
         m_pageAgent.get(),
@@ -236,6 +246,9 @@ void InspectorController::disconnectFrontend()
     m_resourceAgent->clearFrontend();
 #if ENABLE(SQL_DATABASE)
     m_databaseAgent->clearFrontend();
+#endif
+#if ENABLE(FILE_SYSTEM)
+    m_fileSystemAgent->clearFrontend();
 #endif
     m_domStorageAgent->clearFrontend();
     m_pageAgent->clearFrontend();
@@ -289,6 +302,9 @@ void InspectorController::restoreInspectorStateFromCookie(const String& inspecto
     m_applicationCacheAgent->restore();
 #if ENABLE(SQL_DATABASE)
     m_databaseAgent->restore();
+#endif
+#if ENABLE(FILE_SYSTEM)
+    m_fileSystemAgent->restore();
 #endif
     m_domStorageAgent->restore();
 #if ENABLE(WORKERS)

@@ -46,6 +46,7 @@ class InspectorDOMAgent;
 class InspectorDOMStorageAgent;
 class InspectorDatabaseAgent;
 class InspectorDebuggerAgent;
+class InspectorFileSystemAgent;
 class InspectorProfilerAgent;
 class InspectorResourceAgent;
 class InspectorRuntimeAgent;
@@ -70,6 +71,9 @@ public:
         , m_inspectorDOMStorageAgent(0)
 #if ENABLE(SQL_DATABASE)
         , m_inspectorDatabaseAgent(0)
+#endif
+#if ENABLE(FILE_SYSTEM)
+        , m_inspectorFileSystemAgent(0)
 #endif
         , m_inspectorApplicationCacheAgent(0)
 #if ENABLE(JAVASCRIPT_DEBUGGER)
@@ -115,6 +119,11 @@ public:
     void setInspectorDatabaseAgent(InspectorDatabaseAgent* agent) { m_inspectorDatabaseAgent = agent; }
 #endif
 
+#if ENABLE(FILE_SYSTEM)
+    InspectorFileSystemAgent* inspectorFileSystemAgent() const { return m_inspectorFileSystemAgent; }
+    void setInspectorFileSystemAgent(InspectorFileSystemAgent* agent) { m_inspectorFileSystemAgent = agent; }
+#endif
+
     InspectorApplicationCacheAgent* inspectorApplicationCacheAgent() const { return m_inspectorApplicationCacheAgent; }
     void setInspectorApplicationCacheAgent(InspectorApplicationCacheAgent* agent) { m_inspectorApplicationCacheAgent = agent; }
 
@@ -145,6 +154,9 @@ private:
     InspectorDOMStorageAgent* m_inspectorDOMStorageAgent;
 #if ENABLE(SQL_DATABASE)
     InspectorDatabaseAgent* m_inspectorDatabaseAgent;
+#endif
+#if ENABLE(FILE_SYSTEM)
+    InspectorFileSystemAgent* m_inspectorFileSystemAgent;
 #endif
     InspectorApplicationCacheAgent* m_inspectorApplicationCacheAgent;
 #if ENABLE(JAVASCRIPT_DEBUGGER)

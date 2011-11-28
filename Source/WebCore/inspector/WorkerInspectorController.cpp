@@ -137,6 +137,9 @@ void WorkerInspectorController::connectFrontend()
 #if ENABLE(JAVASCRIPT_DEBUGGER)
         m_debuggerAgent.get(),
 #endif
+#if ENABLE(FILE_SYSTEM)
+        0, // InspectorFileSystemAgent
+#endif
         0, // InspectorResourceAgent
         0, // InspectorPageAgent
 #if ENABLE(JAVASCRIPT_DEBUGGER)

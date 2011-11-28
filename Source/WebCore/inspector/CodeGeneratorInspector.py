@@ -42,6 +42,7 @@ DOMAIN_DEFINE_NAME_MAP = {
     "Database": "ENABLE_SQL_DATABASE",
     "Debugger": "ENABLE_JAVASCRIPT_DEBUGGER",
     "DOMDebugger": "ENABLE_JAVASCRIPT_DEBUGGER",
+    "FileSystem": "ENABLE_FILE_SYSTEM",
     "Profiler": "ENABLE_JAVASCRIPT_DEBUGGER",
     "Worker": "ENABLE_WORKERS",
 }

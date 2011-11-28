@@ -68506,6 +68506,18 @@
 				>
 			</File>
 			<File
+				RelativePath="..\inspector\InspectorFileSystemAgent.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\inspector\InspectorFileSystemAgent.h"
+				>
+			</File>
+			<File
+				RelativePath="..\inspector\InspectorFileSystemInstrumentation.h"
+				>
+			</File>
+			<File
 				RelativePath="..\inspector\InspectorFrontendChannel.h"
 				>
 			</File>

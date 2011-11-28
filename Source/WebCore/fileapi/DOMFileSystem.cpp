@@ -45,11 +45,20 @@
 #include "FileWriter.h"
 #include "FileWriterBaseCallback.h"
 #include "FileWriterCallback.h"
+#include "InspectorFileSystemInstrumentation.h"
 #include "MetadataCallback.h"
 #include "ScriptExecutionContext.h"
 #include <wtf/OwnPtr.h>
 
 namespace WebCore {
+
+// static
+PassRefPtr<DOMFileSystem> DOMFileSystem::create(ScriptExecutionContext* context, const String& name, PassOwnPtr<AsyncFileSystem> asyncFileSystem)
+{
+    RefPtr<DOMFileSystem> fileSystem(adoptRef(new DOMFileSystem(context, name, asyncFileSystem)));
+    InspectorInstrumentation::didOpenFileSystem(fileSystem.get());
+    return fileSystem;
+}
 
 DOMFileSystem::DOMFileSystem(ScriptExecutionContext* context, const String& name, PassOwnPtr<AsyncFileSystem> asyncFileSystem)
     : DOMFileSystemBase(context, name, asyncFileSystem)

@@ -321,6 +321,9 @@
 		15C77094100D3CA8005BA267 /* JSValidityState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 15C77092100D3CA8005BA267 /* JSValidityState.cpp */; };
 		15C770A5100D41CD005BA267 /* DOMValidityState.mm in Sources */ = {isa = PBXBuildFile; fileRef = 15C770A3100D41CD005BA267 /* DOMValidityState.mm */; };
 		15C770A6100D41CD005BA267 /* DOMValidityState.h in Headers */ = {isa = PBXBuildFile; fileRef = 15C770A4100D41CD005BA267 /* DOMValidityState.h */; };
+		15D17D21147231EB005EBCA6 /* InspectorFileSystemAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 15D17D1E147231EB005EBCA6 /* InspectorFileSystemAgent.cpp */; };
+		15D17D22147231EB005EBCA6 /* InspectorFileSystemAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = 15D17D1F147231EB005EBCA6 /* InspectorFileSystemAgent.h */; };
+		15D17D23147231EB005EBCA6 /* InspectorFileSystemInstrumentation.h in Headers */ = {isa = PBXBuildFile; fileRef = 15D17D20147231EB005EBCA6 /* InspectorFileSystemInstrumentation.h */; };
 		163E88F7118A39D200ED9231 /* SimpleFontDataCoreText.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 163E88F5118A39D200ED9231 /* SimpleFontDataCoreText.cpp */; };
 		163E8B13118B3ADD00ED9231 /* SimpleFontDataATSUI.mm in Sources */ = {isa = PBXBuildFile; fileRef = 163E8B12118B3ADD00ED9231 /* SimpleFontDataATSUI.mm */; };
 		185BCF280F3279CE000EA262 /* ThreadTimers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 185BCF260F3279CE000EA262 /* ThreadTimers.cpp */; };
@@ -1383,6 +1386,7 @@
 		5038BE411472AD980095E0D1 /* CachedShader.h in Headers */ = {isa = PBXBuildFile; fileRef = 5038BE3F1472AD980095E0D1 /* CachedShader.h */; };
 		508CCA4F13CF106B003151F3 /* RenderFlowThread.h in Headers */ = {isa = PBXBuildFile; fileRef = 508CCA4D13CF106B003151F3 /* RenderFlowThread.h */; };
 		508CCA5013CF106B003151F3 /* RenderFlowThread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 508CCA4E13CF106B003151F3 /* RenderFlowThread.cpp */; };
+		50B42158146976960087E604 /* WebKitCSSShaderValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 50B42157146976960087E604 /* WebKitCSSShaderValue.h */; };
 		50E566D6139E38C500214433 /* CSSWrapShapes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 501BAAB11395114B00F7ACEB /* CSSWrapShapes.cpp */; };
 		510184690B08602A004A825F /* CachedPage.h in Headers */ = {isa = PBXBuildFile; fileRef = 510184670B08602A004A825F /* CachedPage.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5101846A0B08602A004A825F /* CachedPage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 510184680B08602A004A825F /* CachedPage.cpp */; };
@@ -7410,6 +7414,9 @@
 		15C77092100D3CA8005BA267 /* JSValidityState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSValidityState.cpp; sourceTree = "<group>"; };
 		15C770A3100D41CD005BA267 /* DOMValidityState.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMValidityState.mm; sourceTree = "<group>"; };
 		15C770A4100D41CD005BA267 /* DOMValidityState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMValidityState.h; sourceTree = "<group>"; };
+		15D17D1E147231EB005EBCA6 /* InspectorFileSystemAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorFileSystemAgent.cpp; sourceTree = "<group>"; };
+		15D17D1F147231EB005EBCA6 /* InspectorFileSystemAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorFileSystemAgent.h; sourceTree = "<group>"; };
+		15D17D20147231EB005EBCA6 /* InspectorFileSystemInstrumentation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorFileSystemInstrumentation.h; sourceTree = "<group>"; };
 		163E88F5118A39D200ED9231 /* SimpleFontDataCoreText.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SimpleFontDataCoreText.cpp; sourceTree = "<group>"; };
 		163E8B12118B3ADD00ED9231 /* SimpleFontDataATSUI.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SimpleFontDataATSUI.mm; sourceTree = "<group>"; };
 		185BCF260F3279CE000EA262 /* ThreadTimers.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ThreadTimers.cpp; sourceTree = "<group>"; };
@@ -14546,6 +14553,9 @@
 				7A74ECB9101839A600BF939E /* InspectorDOMStorageAgent.h */,
 				41F061730F5F00AC00A07EAC /* InspectorDOMStorageResource.cpp */,
 				41F061720F5F00AC00A07EAC /* InspectorDOMStorageResource.h */,
+				15D17D1E147231EB005EBCA6 /* InspectorFileSystemAgent.cpp */,
+				15D17D1F147231EB005EBCA6 /* InspectorFileSystemAgent.h */,
+				15D17D20147231EB005EBCA6 /* InspectorFileSystemInstrumentation.h */,
 				2277775F1345DEA9008EA455 /* InspectorFrontendChannel.h */,
 				F344C7121125B82C00F26EEE /* InspectorFrontendClient.h */,
 				F344C75711294FF600F26EEE /* InspectorFrontendClientLocal.cpp */,
@@ -23092,6 +23102,8 @@
 				F3D4C47912E07663003DA150 /* InspectorDOMDebuggerAgent.h in Headers */,
 				7A74ECBB101839A600BF939E /* InspectorDOMStorageAgent.h in Headers */,
 				41F061740F5F00AC00A07EAC /* InspectorDOMStorageResource.h in Headers */,
+				15D17D22147231EB005EBCA6 /* InspectorFileSystemAgent.h in Headers */,
+				15D17D23147231EB005EBCA6 /* InspectorFileSystemInstrumentation.h in Headers */,
 				227777601345DEA9008EA455 /* InspectorFrontendChannel.h in Headers */,
 				F344C7141125B82C00F26EEE /* InspectorFrontendClient.h in Headers */,
 				F344C75311294D9D00F26EEE /* InspectorFrontendClientLocal.h in Headers */,
@@ -26073,6 +26085,7 @@
 				F3D4C47812E07663003DA150 /* InspectorDOMDebuggerAgent.cpp in Sources */,
 				7A74ECBA101839A600BF939E /* InspectorDOMStorageAgent.cpp in Sources */,
 				41F061750F5F00AC00A07EAC /* InspectorDOMStorageResource.cpp in Sources */,
+				15D17D21147231EB005EBCA6 /* InspectorFileSystemAgent.cpp in Sources */,
 				4F4F5FFB11CBD2E100A186BF /* InspectorFrontend.cpp in Sources */,
 				F344C75811294FF600F26EEE /* InspectorFrontendClientLocal.cpp in Sources */,
 				7A0E770E10C00A8800A0276E /* InspectorFrontendHost.cpp in Sources */,
