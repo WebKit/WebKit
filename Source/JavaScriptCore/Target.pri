@@ -11,7 +11,6 @@ DEFINES += BUILDING_JavaScriptCore
 load(javascriptcore)
 load(wtf)
 
-CONFIG += javas
 CONFIG += staticlib
 
 # Don't use JavaScriptCore as the target name. qmake would create a

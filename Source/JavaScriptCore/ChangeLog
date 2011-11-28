@@ -1,3 +1,11 @@
+2011-11-28  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        [Qt] Remove cruft from project file
+
+        Reviewed by Simon Hausmann.
+
+        * Target.pri:
+
 2011-11-28  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] WTF should be built as separate static library
