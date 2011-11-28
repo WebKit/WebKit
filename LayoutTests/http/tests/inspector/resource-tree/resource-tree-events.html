@@ -1,0 +1,73 @@
+<html>
+<head>
+<script src="../inspector-test.js"></script>
+<script src="../resources-test.js"></script>
+<script src="resource-tree-test.js"></script>
+
+<script>
+
+function test()
+{
+    InspectorTest.runAfterResourcesAreFinished(["dummy-iframe.html", "inspector-test.js", "resources-test.js", "resource-tree-test.js"], step1);
+
+    function step1()
+    {
+        WebInspector.resourceTreeModel._frontendReused = function() { return false; }
+        WebInspector.resourceTreeModel._frameNavigated(createFramePayload("root1"));
+
+        for (var eventName in WebInspector.ResourceTreeModel.EventTypes)
+            WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes[eventName], eventHandler.bind(this, eventName));
+    
+        function eventHandler(eventName, event)
+        {
+            switch (eventName) {
+            case "FrameAdded":
+            case "FrameNavigated":
+            case "FrameDetached":
+            case "MainFrameNavigated":
+                var frame = event.data;
+                InspectorTest.addResult("    " + eventName + " : " + frame.id);
+                break;
+            default:
+            }
+            
+        }
+
+        InspectorTest.addResult("Navigating child frame 1");
+        WebInspector.resourceTreeModel._frameNavigated(createFramePayload("child1", "root1"));
+        InspectorTest.addResult("Navigating child frame 2");
+        WebInspector.resourceTreeModel._frameNavigated(createFramePayload("child2", "root1"));
+        InspectorTest.addResult("Detaching child frame 1");
+        WebInspector.resourceTreeModel._frameDetached("child1");
+
+        InspectorTest.addResult("Navigating root frame");
+        WebInspector.resourceTreeModel._frameNavigated(createFramePayload("root2"));
+        InspectorTest.completeTest();
+    }
+
+    function createFramePayload(id, parentId)
+    {
+        var framePayload = {};
+        framePayload.id = id;
+        framePayload.parentId = parentId || "";
+        framePayload.loaderId = "loader-" + id;
+        framePayload.name = "frame-" + id;
+        framePayload.url = "http://frame/" + id + ".html";
+        framePayload.mimeType = "text/html";
+        return framePayload;
+    }
+}
+
+</script>
+
+</head>
+
+<body>
+<p>
+Tests top frame navigation events.
+</p>
+
+<iframe src="resources/dummy-iframe.html" onload="runTest()">
+
+</body>
+</html>

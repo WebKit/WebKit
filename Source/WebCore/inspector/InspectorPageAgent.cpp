@@ -602,7 +602,7 @@ void InspectorPageAgent::frameNavigated(DocumentLoader* loader)
         m_scriptToEvaluateOnLoadOnce = m_pendingScriptToEvaluateOnLoadOnce;
         m_pendingScriptToEvaluateOnLoadOnce = String();
     }
-    m_frontend->frameNavigated(buildObjectForFrame(loader->frame()), loaderId(loader));
+    m_frontend->frameNavigated(buildObjectForFrame(loader->frame()));
 }
 
 void InspectorPageAgent::frameDetached(Frame* frame)

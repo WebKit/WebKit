@@ -121,7 +121,7 @@ WebInspector.ResourceTreeModel.prototype = {
         var frame = this._frames[framePayload.id];
         if (frame) {
             // Navigation within existing frame.
-            frame.navigate(framePayload);
+            frame._navigate(framePayload);
         } else {
             // Either a new frame or a main frame navigation to the new backend process. 
             var parentFrame = this._frames[framePayload.parentId];
@@ -169,10 +169,11 @@ WebInspector.ResourceTreeModel.prototype = {
         if (!frame)
             return;
 
-        if (frame.parentFrame) {
-            frame.parentFrame.removeChildFrame(frame);
-        } else {
+        if (frame.parentFrame)
+            frame.parentFrame._removeChildFrame(frame);
+        else {
             // Report that root is detached
+            frame._removeChildFrames();
             this.dispatchEventToListeners(WebInspector.ResourceTreeModel.EventTypes.FrameDetached, frame);
         }
     },
@@ -416,7 +417,7 @@ WebInspector.ResourceTreeFrame.prototype = {
     /**
      * @param {PageAgent.Frame} framePayload
      */
-    navigate: function(framePayload)
+    _navigate: function(framePayload)
     {
         this._loaderId = framePayload.loaderId;
         this._name = framePayload.name;
@@ -438,15 +439,7 @@ WebInspector.ResourceTreeFrame.prototype = {
     /**
      * @param {WebInspector.ResourceTreeFrame} frame
      */
-    addChildFrame: function(frame)
-    {
-        this._childFrames.push(frame);
-    },
-
-    /**
-     * @param {WebInspector.ResourceTreeFrame} frame
-     */
-    removeChildFrame: function(frame)
+    _removeChildFrame: function(frame)
     {
         frame._removeChildFrames();
         this._childFrames.remove(frame);
@@ -457,7 +450,7 @@ WebInspector.ResourceTreeFrame.prototype = {
     {
         var copy = this._childFrames.slice();
         for (var i = 0; i < copy.length; ++i)
-            this.removeChildFrame(copy[i]); 
+            this._removeChildFrame(copy[i]); 
     },
 
     /**

@@ -258,8 +258,7 @@
                 "name": "frameNavigated",
                 "description": "Fired once navigation of the frame has completed. Frame is now associated with the new loader.",
                 "parameters": [
-                    { "name": "frame", "$ref": "Frame", "description": "Frame object." },
-                    { "name": "loaderId", "$ref": "Network.LoaderId", "description": "Loader identifier." }
+                    { "name": "frame", "$ref": "Frame", "description": "Frame object." }
                 ],
                 "hidden": true
             },

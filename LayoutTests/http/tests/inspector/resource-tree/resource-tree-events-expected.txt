@@ -1,0 +1,18 @@
+Tests top frame navigation events.
+
+
+Navigating child frame 1
+    FrameAdded : child1
+    FrameNavigated : child1
+Navigating child frame 2
+    FrameAdded : child2
+    FrameNavigated : child2
+Detaching child frame 1
+    FrameDetached : child1
+Navigating root frame
+    FrameDetached : child2
+    FrameDetached : root1
+    FrameAdded : root2
+    FrameNavigated : root2
+    MainFrameNavigated : root2
+

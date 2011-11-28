@@ -1,5 +1,21 @@
 2011-11-28  Pavel Feldman  <pfeldman@google.com>
 
+        Web Inspector: console evaluation doesn't work when navigating from a page with several frames to another one
+        https://bugs.webkit.org/show_bug.cgi?id=73210
+
+        Reviewed by Yury Semikhatsky.
+
+        Test: http/tests/inspector/resource-tree/resource-tree-events.html
+
+        * inspector/Inspector.json:
+        * inspector/front-end/ResourceTreeModel.js:
+        (WebInspector.ResourceTreeModel.prototype._frameDetached):
+        (WebInspector.ResourceTreeFrame.prototype.navigate):
+        (WebInspector.ResourceTreeFrame.prototype.removeChildFrame):
+        (WebInspector.ResourceTreeFrame.prototype.removeChildFrames):
+
+2011-11-28  Pavel Feldman  <pfeldman@google.com>
+
         Web Inspector: introduce InspectorBaseAgent.
         https://bugs.webkit.org/show_bug.cgi?id=73203
 
