@@ -215,7 +215,10 @@ void AudioContext::uninitialize()
 {
     ASSERT(isMainThread());
 
-    if (m_isInitialized) {    
+    if (m_isInitialized) {
+        // Protect this object from being deleted before we finish uninitializing.
+        RefPtr<AudioContext> protect(this);
+
         // This stops the audio thread and all audio rendering.
         m_destinationNode->uninitialize();
 

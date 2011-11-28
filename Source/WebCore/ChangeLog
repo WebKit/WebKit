@@ -1,3 +1,18 @@
+2011-11-28  Jer Noble  <jer.noble@apple.com>
+
+        WebAudio: AudioContext::uninitialize() can caused AudioContext deletion before deleting marked nodes.
+        https://bugs.webkit.org/show_bug.cgi?id=72755
+
+        Reviewed by Eric Carlson.
+
+        No new tests.
+
+        Protect AudioContext from being deleted before uninitialize() returns. Fixes an assertion in ~AudioContext() and 
+        a potential source of leaks.
+
+        * webaudio/AudioContext.cpp:
+        (WebCore::AudioContext::uninitialize):
+
 2011-11-28  Andreas Kling  <kling@webkit.org>
 
         InspectorCSSAgent: Remove unused function inlineStyleElement().
