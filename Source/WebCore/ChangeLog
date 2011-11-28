@@ -1,3 +1,22 @@
+2011-11-28  Robert Hogan  <robert@webkit.org>
+
+        Unreviewed, rolling out r101202.
+        http://trac.webkit.org/changeset/101202
+        https://bugs.webkit.org/show_bug.cgi?id=71244
+
+        Caused performance regressions when painting collapsed borders
+
+        * rendering/RenderTableCell.cpp:
+        (WebCore::compareBorders):
+        (WebCore::RenderTableCell::collapsedStartBorder):
+        (WebCore::RenderTableCell::collapsedEndBorder):
+        (WebCore::RenderTableCell::collapsedBeforeBorder):
+        (WebCore::RenderTableCell::collapsedAfterBorder):
+        * rendering/style/CollapsedBorderValue.h:
+        (WebCore::CollapsedBorderValue::CollapsedBorderValue):
+        (WebCore::CollapsedBorderValue::operator==):
+        * rendering/style/RenderStyleConstants.h:
+
 2011-11-28  Beth Dakin  <bdakin@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=72551
