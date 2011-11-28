@@ -70,6 +70,22 @@ class Host(object):
         # FIXME: PortFactory doesn't belong on this Host object if Port is going to have a Host (circular dependency).
         self.port_factory = PortFactory(self)
 
+        self._engage_awesome_locale_hacks()
+
+    # We call this from the Host constructor, as it's one of the
+    # earliest calls made for all webkitpy-based programs.
+    def _engage_awesome_locale_hacks(self):
+        # To make life easier on our non-english users, we override
+        # the locale environment variables inside webkitpy.
+        # If we don't do this, programs like SVN will output localized
+        # messages and svn.py will fail to parse them.
+        # FIXME: We should do these overrides *only* for the subprocesses we know need them!
+        # This hack only works in unix environments.
+        os.environ['LANGUAGE'] = 'en'
+        os.environ['LANG'] = 'en_US.UTF-8'
+        os.environ['LC_MESSAGES'] = 'en_US.UTF-8'
+        os.environ['LC_ALL'] = ''
+
     # FIXME: This is a horrible, horrible hack for ChromiumWin and should be removed.
     # Maybe this belongs in SVN in some more generic "find the svn binary" codepath?
     # Or possibly Executive should have a way to emulate shell path-lookups?
