@@ -80,7 +80,7 @@ class WebKitPort(object):
         raise NotImplementedError("subclasses must implement")
 
     @classmethod
-    def update_webkit_command(cls):
+    def update_webkit_command(cls, non_interactive=False):
         return cls.script_shell_command("update-webkit")
 
     @classmethod
@@ -225,9 +225,11 @@ class ChromiumPort(WebKitPort):
         return "--port=chromium"
 
     @classmethod
-    def update_webkit_command(cls):
-        command = WebKitPort.update_webkit_command()
+    def update_webkit_command(cls, non_interactive=False):
+        command = WebKitPort.update_webkit_command(non_interactive=non_interactive)
         command.append("--chromium")
+        if non_interactive:
+            command.append("--force-update")
         return command
 
     @classmethod

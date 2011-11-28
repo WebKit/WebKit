@@ -92,6 +92,7 @@ my $isBlackBerry;
 my $isChromium;
 my $isChromiumAndroid;
 my $isChromiumMacMake;
+my $forceChromiumUpdate;
 my $isInspectorFrontend;
 my $isWK2;
 
@@ -964,6 +965,9 @@ sub determineIsChromium()
 {
     return if defined($isChromium);
     $isChromium = checkForArgumentAndRemoveFromARGV("--chromium");
+    if ($isChromium) {
+        $forceChromiumUpdate = checkForArgumentAndRemoveFromARGV("--force-update");
+    }
 }
 
 sub isChromiumAndroid()
@@ -999,6 +1003,11 @@ sub determineIsChromiumMacMake()
     $isChromiumMacMake = isDarwin() && $hasUpToDateMakefile;
 }
 
+sub forceChromiumUpdate()
+{
+    determineIsChromium();
+    return $forceChromiumUpdate;
+}
 
 sub isWinCairo()
 {
@@ -2008,7 +2017,7 @@ sub buildChromium($@)
 
     # We might need to update DEPS or re-run GYP if things have changed.
     if (checkForArgumentAndRemoveFromArrayRef("--update-chromium", \@options)) {
-        system("perl", "Tools/Scripts/update-webkit-chromium") == 0 or die $!;
+        system("perl", "Tools/Scripts/update-webkit-chromium", "--force") == 0 or die $!;
     }
 
     my $result = 1;
