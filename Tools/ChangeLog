@@ -1,5 +1,29 @@
 2011-11-28  Tony Chang  <tony@chromium.org>
 
+        ews bots should pass --force to update-webkit-chromium
+        https://bugs.webkit.org/show_bug.cgi?id=73230
+
+        Reviewed by Adam Barth.
+
+        This makes it less likely for gclient changes to break the bots (e.g.,
+        if a DEPS repository moves or is switched to a branch).
+
+        Also pass --force when using |build-webkit --update-chromium| since this
+        appears to only be used by the bots.
+
+        Take 2: Add Options.non_interactive to update.py's options() method.
+
+        * Scripts/update-webkit:
+        * Scripts/webkitdirs.pm:
+        (determineIsChromium): Add --force-update to update-webkit --chromium.
+        (forceChromiumUpdate):
+        (buildChromium): Pass --force to update-webkit-chromium.
+        * Scripts/webkitpy/tool/steps/update.py:
+        (Update.run): Add --force-update if non-interactive (i.e., bots).
+        * Scripts/webkitpy/tool/steps/update_unittest.py:
+
+2011-11-28  Tony Chang  <tony@chromium.org>
+
         Revert r101279, broke the ews and cq bots.
 
         * Scripts/update-webkit:

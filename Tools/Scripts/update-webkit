@@ -108,6 +108,7 @@ if (-d "../Internal") {
 
     my @chromiumUpdateArgs = ("perl", "Tools/Scripts/update-webkit-chromium");
     push @chromiumUpdateArgs, "--chromium-android" if isChromiumAndroid();
+    push @chromiumUpdateArgs, "--force" if forceChromiumUpdate();
     system(@chromiumUpdateArgs) == 0 or die $!;
 } elsif (isAppleWinWebKit()) {
     system("perl", "Tools/Scripts/update-webkit-auxiliary-libs") == 0 or die;
