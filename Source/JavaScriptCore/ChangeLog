@@ -1,3 +1,15 @@
+2011-11-28  Michael Saboff  <msaboff@apple.com>
+
+        Change set 101187 from bug 73154 removed already lower case optimization
+        https://bugs.webkit.org/show_bug.cgi?id=73174
+
+        Added back the "string is already lower case" optimization.
+
+        Reviewed by Geoffrey Garen.
+
+        * runtime/StringPrototype.cpp:
+        (JSC::stringProtoFuncToLowerCase):
+
 2011-11-28  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Unreviewed prospective build fix. Touch the file to trigger correct

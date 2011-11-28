@@ -1189,7 +1189,11 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncToLowerCase(ExecState* exec)
     if (!sSize)
         return JSValue::encode(sVal);
 
-    return JSValue::encode(jsString(exec, UString(s.impl()->lower())));
+    StringImpl* ourImpl = s.impl();   
+    RefPtr<StringImpl> lower = ourImpl->lower();
+    if (ourImpl == lower.get())
+        return JSValue::encode(sVal);
+    return JSValue::encode(jsString(exec, UString(lower.release())));
 }
 
 EncodedJSValue JSC_HOST_CALL stringProtoFuncToUpperCase(ExecState* exec)
