@@ -1,3 +1,12 @@
+2011-11-28  Fady Samuel  <fsamuel@chromium.org>
+
+        [Chromium] Fix broken DRT build for Aura Linux
+        https://bugs.webkit.org/show_bug.cgi?id=72667
+
+        Reviewed by Tony Chang.
+
+        * WebKit.gyp:
+
 2011-11-28  Adam Barth  <abarth@webkit.org>
 
         [Chromium] Move "final" batch of headers into public/platform

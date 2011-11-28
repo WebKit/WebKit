@@ -1,3 +1,32 @@
+2011-11-28  Fady Samuel  <fsamuel@chromium.org>
+
+        [Chromium] Fix broken DRT build for Aura Linux
+        https://bugs.webkit.org/show_bug.cgi?id=72667
+
+        Reviewed by Tony Chang.
+
+        DRT now builds for Aura Linux. This, more or less, shares the same code as Android.
+
+        The following changes have been made:
+
+          1. Renamed TestShellAndroid to TestShellLinux.
+          2. Stub code moved added in TestShellStub that will only compile on non-GTK Linux builds.
+          3. Code common to Gtk, Aura, and Android moved to TestShellLinux.
+
+        * DumpRenderTree/DumpRenderTree.gypi:
+        * DumpRenderTree/chromium/EventSender.cpp:
+        (EventSender::keyDown):
+        * DumpRenderTree/chromium/TestShellAndroid.cpp: Removed.
+        * DumpRenderTree/chromium/TestShellGtk.cpp:
+        * DumpRenderTree/chromium/TestShellLinux.cpp: Copied from Tools/DumpRenderTree/chromium/TestShellGtk.cpp.
+        (AlarmHandler):
+        (TestShell::waitTestFinished):
+        (setupFontconfig):
+        (platformInit):
+        * DumpRenderTree/chromium/TestShellStub.cpp: Added.
+        (checkLayoutTestSystemDependencies):
+        (openStartupDialog):
+
 2011-11-28  Eric Seidel  <eric@webkit.org>
 
         Add Environment object to Host and fix the GCC smartquotes trouble seen on the commit-queue
