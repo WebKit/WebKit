@@ -1,5 +1,15 @@
 2011-11-28  Adam Barth  <abarth@webkit.org>
 
+        More forwarding headers.  Turns out I forgot to svn add them.  :(
+
+        * public/android/WebSandboxSupport.h: Added.
+        * public/linux/WebFontFamily.h: Added.
+        * public/linux/WebSandboxSupport.h: Added.
+        * public/mac/WebSandboxSupport.h: Added.
+        * public/win/WebSandboxSupport.h: Added.
+
+2011-11-28  Adam Barth  <abarth@webkit.org>
+
         Add missing forwaring headers.
 
         * public/android/WebThemeEngine.h: Added.
