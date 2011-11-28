@@ -44,10 +44,7 @@
 
 namespace JSC { namespace Heuristics {
 
-unsigned maximumEvalOptimizationCandidateInstructionCount;
-unsigned maximumProgramOptimizationCandidateInstructionCount;
-unsigned maximumFunctionForCallOptimizationCandidateInstructionCount;
-unsigned maximumFunctionForConstructOptimizationCandidateInstructionCount;
+unsigned maximumOptimizationCandidateInstructionCount;
 
 unsigned maximumFunctionForCallInlineCandidateInstructionCount;
 unsigned maximumFunctionForConstructInlineCandidateInstructionCount;
@@ -126,13 +123,7 @@ void setHeuristic(T& variable, const char* name, U value)
 
 void initializeHeuristics()
 {
-    // FIXME: Must revisit these heuristics! The DFG, being an optimizing compiler, may
-    // take a long time for pathologically huge code blocks. The best way to cope with
-    // this is to refuse to optimize them.
-    SET(maximumEvalOptimizationCandidateInstructionCount,                 std::numeric_limits<unsigned>::max());
-    SET(maximumProgramOptimizationCandidateInstructionCount,              std::numeric_limits<unsigned>::max());
-    SET(maximumFunctionForCallOptimizationCandidateInstructionCount,      std::numeric_limits<unsigned>::max());
-    SET(maximumFunctionForConstructOptimizationCandidateInstructionCount, std::numeric_limits<unsigned>::max());
+    SET(maximumOptimizationCandidateInstructionCount, 1000);
     
     SET(maximumFunctionForCallInlineCandidateInstructionCount, 150);
     SET(maximumFunctionForConstructInlineCandidateInstructionCount, 80);

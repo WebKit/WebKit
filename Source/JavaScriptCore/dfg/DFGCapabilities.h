@@ -40,19 +40,19 @@ namespace JSC { namespace DFG {
 // check opcodes.
 inline bool mightCompileEval(CodeBlock* codeBlock)
 {
-    return codeBlock->instructionCount() <= Heuristics::maximumEvalOptimizationCandidateInstructionCount;
+    return codeBlock->instructionCount() <= Heuristics::maximumOptimizationCandidateInstructionCount;
 }
 inline bool mightCompileProgram(CodeBlock* codeBlock)
 {
-    return codeBlock->instructionCount() <= Heuristics::maximumProgramOptimizationCandidateInstructionCount;
+    return codeBlock->instructionCount() <= Heuristics::maximumOptimizationCandidateInstructionCount;
 }
 inline bool mightCompileFunctionForCall(CodeBlock* codeBlock)
 {
-    return codeBlock->instructionCount() <= Heuristics::maximumFunctionForCallOptimizationCandidateInstructionCount;
+    return codeBlock->instructionCount() <= Heuristics::maximumOptimizationCandidateInstructionCount;
 }
 inline bool mightCompileFunctionForConstruct(CodeBlock* codeBlock)
 {
-    return codeBlock->instructionCount() <= Heuristics::maximumFunctionForConstructOptimizationCandidateInstructionCount;
+    return codeBlock->instructionCount() <= Heuristics::maximumOptimizationCandidateInstructionCount;
 }
 
 inline bool mightInlineFunctionForCall(CodeBlock* codeBlock)

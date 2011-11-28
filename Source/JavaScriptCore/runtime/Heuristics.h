@@ -30,10 +30,7 @@
 
 namespace JSC { namespace Heuristics {
 
-extern unsigned maximumEvalOptimizationCandidateInstructionCount;
-extern unsigned maximumProgramOptimizationCandidateInstructionCount;
-extern unsigned maximumFunctionForCallOptimizationCandidateInstructionCount;
-extern unsigned maximumFunctionForConstructOptimizationCandidateInstructionCount;
+extern unsigned maximumOptimizationCandidateInstructionCount;
 
 extern unsigned maximumFunctionForCallInlineCandidateInstructionCount;
 extern unsigned maximumFunctionForConstructInlineCandidateInstructionCount;

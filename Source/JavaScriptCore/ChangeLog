@@ -1,3 +1,24 @@
+2011-11-27  Filip Pizlo  <fpizlo@apple.com>
+
+        Don't try to optimize huge code blocks
+        https://bugs.webkit.org/show_bug.cgi?id=73187
+
+        Reviewed by Oliver Hunt.
+        
+        This unifies the heuristics used for deciding if a code block is too big
+        to optimize, and sets this heuristic to 1000, which is intuitively better
+        than numeric_limits<unsigned>::max(). It also results in what looks like
+        a speed-up on both SunSpider and V8 (in Tools/Scripts/bencher).
+
+        * dfg/DFGCapabilities.h:
+        (JSC::DFG::mightCompileEval):
+        (JSC::DFG::mightCompileProgram):
+        (JSC::DFG::mightCompileFunctionForCall):
+        (JSC::DFG::mightCompileFunctionForConstruct):
+        * runtime/Heuristics.cpp:
+        (JSC::Heuristics::initializeHeuristics):
+        * runtime/Heuristics.h:
+
 2011-11-28  Filip Pizlo  <fpizlo@apple.com>
 
         Either remove the GetMethod node from the DFG backend, or find a use for it
