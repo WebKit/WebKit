@@ -1,3 +1,10 @@
+2011-11-28  Beth Dakin  <bdakin@apple.com>
+
+        Speculative Chromium build-fix.
+
+        * platform/chromium/ScrollAnimatorChromiumMac.mm:
+        (WebCore::ScrollAnimatorChromiumMac::updateScrollerStyle):
+
 2011-11-28  Oliver Hunt  <oliver@apple.com>
 
         Move typed array implementations into wtf
