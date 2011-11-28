@@ -1,5 +1,12 @@
 2011-11-28  Adam Barth  <abarth@webkit.org>
 
+        Update some sloppy includes.
+
+        * public/platform/linux/WebSandboxSupport.h:
+        * public/platform/win/WebThemeEngine.h:
+
+2011-11-28  Adam Barth  <abarth@webkit.org>
+
         More forwarding headers.  Turns out I forgot to svn add them.  :(
 
         * public/android/WebSandboxSupport.h: Added.
