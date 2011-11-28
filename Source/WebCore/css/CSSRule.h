@@ -109,7 +109,8 @@ public:
 
 protected:
     CSSRule(CSSStyleSheet* parent, Type type)
-        : m_parentIsRule(false)
+        : m_sourceLine(0)
+        , m_parentIsRule(false)
         , m_type(type)
         , m_parentStyleSheet(parent)
     {
@@ -120,15 +121,18 @@ protected:
 
     ~CSSRule() { }
 
-private:
-    void destroy();
+    // Only used by CSSStyleRule but kept here to maximize struct packing.
+    signed m_sourceLine : 27;
 
+private:
     bool m_parentIsRule : 1;
-    unsigned m_type : 31; // Plenty of space for additional flags here.
+    unsigned m_type : 4;
     union {
         CSSRule* m_parentRule;
         CSSStyleSheet* m_parentStyleSheet;
     };
+
+    void destroy();
 };
 
 } // namespace WebCore

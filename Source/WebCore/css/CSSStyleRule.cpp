@@ -35,8 +35,11 @@ namespace WebCore {
 
 CSSStyleRule::CSSStyleRule(CSSStyleSheet* parent, int sourceLine, CSSRule::Type type)
     : CSSRule(parent, type)
-    , m_sourceLine(sourceLine)
 {
+    m_sourceLine = sourceLine;
+
+    // m_sourceLine is a bitfield, so let's catch any overflow early in debug mode.
+    ASSERT(m_sourceLine == sourceLine);
 }
 
 CSSStyleRule::~CSSStyleRule()

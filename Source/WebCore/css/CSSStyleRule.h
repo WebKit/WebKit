@@ -63,7 +63,6 @@ protected:
 private:
     RefPtr<CSSMutableStyleDeclaration> m_style;
     CSSSelectorList m_selectorList;
-    int m_sourceLine;
 };
 
 } // namespace WebCore
