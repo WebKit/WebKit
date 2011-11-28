@@ -172,7 +172,6 @@ PassRefPtr<WebPage> WebPage::create(uint64_t pageID, const WebPageCreationParame
 
 WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     : m_viewSize(parameters.viewSize)
-    , m_useFixedLayout(false)
     , m_drawsBackground(true)
     , m_drawsTransparentBackground(false)
     , m_isInRedo(false)
@@ -238,6 +237,8 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     m_drawingArea->setPaintingEnabled(false);
 
     m_mainFrame = WebFrame::createMainFrame(this);
+
+    setUseFixedLayout(parameters.useFixedLayout);
 
     setDrawsBackground(parameters.drawsBackground);
     setDrawsTransparentBackground(parameters.drawsTransparentBackground);
@@ -700,6 +701,8 @@ void WebPage::setSize(const WebCore::IntSize& viewSize)
 #if USE(TILED_BACKING_STORE)
 void WebPage::setFixedVisibleContentRect(const IntRect& rect)
 {
+    ASSERT(m_useFixedLayout);
+
     Frame* frame = m_page->mainFrame();
 
     frame->view()->setFixedVisibleContentRect(rect);
@@ -707,14 +710,14 @@ void WebPage::setFixedVisibleContentRect(const IntRect& rect)
 
 void WebPage::setResizesToContentsUsingLayoutSize(const IntSize& targetLayoutSize)
 {
+    ASSERT(m_useFixedLayout);
+    ASSERT(!targetLayoutSize.isEmpty());
+
     FrameView* view = m_page->mainFrame()->view();
 
-    m_useFixedLayout = !targetLayoutSize.isEmpty();
-
-    // Set view attributes based on whether fixed layout is used.
-    view->setDelegatesScrolling(m_useFixedLayout);
-    view->setUseFixedLayout(m_useFixedLayout);
-    view->setPaintsEntireContents(m_useFixedLayout);
+    view->setDelegatesScrolling(true);
+    view->setUseFixedLayout(true);
+    view->setPaintsEntireContents(true);
 
     if (view->fixedLayoutSize() == targetLayoutSize)
         return;
@@ -731,6 +734,8 @@ void WebPage::setResizesToContentsUsingLayoutSize(const IntSize& targetLayoutSiz
 
 void WebPage::resizeToContentsIfNeeded()
 {
+    ASSERT(m_useFixedLayout);
+
     FrameView* view = m_page->mainFrame()->view();
 
     if (!view->useFixedLayout())
@@ -747,6 +752,8 @@ void WebPage::resizeToContentsIfNeeded()
 
 void WebPage::setViewportSize(const IntSize& size)
 {
+    ASSERT(m_useFixedLayout);
+
     if (m_viewportSize == size)
         return;
 
@@ -896,11 +903,7 @@ void WebPage::setUseFixedLayout(bool fixed)
 {
     m_useFixedLayout = fixed;
 
-    Frame* frame = m_mainFrame->coreFrame();
-    if (!frame)
-        return;
-
-    FrameView* view = frame->view();
+    FrameView* view = mainFrameView();
     if (!view)
         return;
 
@@ -911,11 +914,7 @@ void WebPage::setUseFixedLayout(bool fixed)
 
 void WebPage::setFixedLayoutSize(const IntSize& size)
 {
-    Frame* frame = m_mainFrame->coreFrame();
-    if (!frame)
-        return;
-    
-    FrameView* view = frame->view();
+    FrameView* view = mainFrameView();
     if (!view)
         return;
 

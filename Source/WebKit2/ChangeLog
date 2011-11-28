@@ -1,3 +1,43 @@
+2011-11-28  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Make sure the useFixedLayout feature is consistently handled
+        https://bugs.webkit.org/show_bug.cgi?id=73212
+
+        Reviewed by Simon Hausmann.
+
+        Set the fixed layout on the UI side so that it is part of the page
+        creation parameters and ensure that the page parameters are set
+        before creating the page.
+
+        The parameters are set to our defaults and are now altered in the
+        WebKitTestRunner.
+
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewPrivate::QQuickWebViewPrivate):
+        (QQuickWebViewPrivate::setUseTraditionalDesktopBehaviour):
+        (QQuickWebViewExperimental::setUseTraditionalDesktopBehaviour):
+        (QQuickWebView::QQuickWebView):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::setUseFixedLayout):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+
+            On the web process side the default value for useFixedLayout
+            wasn't actually read from the creation parameters. As it now may
+            be different than that of the FrameView, we now call
+            setFixedLayout in the constructor so make sure the value is
+            propagated to the FrameView.
+
+        (WebKit::WebPage::setFixedVisibleContentRect):
+        (WebKit::WebPage::setResizesToContentsUsingLayoutSize):
+        (WebKit::WebPage::resizeToContentsIfNeeded):
+        (WebKit::WebPage::setViewportSize):
+        (WebKit::WebPage::setUseFixedLayout):
+        (WebKit::WebPage::setFixedLayoutSize):
+
+            The methods that depends on fixed layout now have asserts to make
+            sure that they are used properly.
+
 2011-11-28  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Rename WebKitNetworkRequest to WebKitURIRequest

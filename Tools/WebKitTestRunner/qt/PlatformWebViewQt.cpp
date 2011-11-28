@@ -44,6 +44,7 @@ public:
         : QQuickView(QUrl("data:text/plain,import QtQuick 2.0\nItem { objectName: 'root' }"))
         , m_view(view)
     {
+        QQuickWebViewExperimental(view).setUseTraditionalDesktopBehaviour(true);
         connect(this, SIGNAL(statusChanged(QQuickView::Status)), SLOT(handleStatusChanged(QQuickView::Status)));
     }
 

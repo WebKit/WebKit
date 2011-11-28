@@ -1261,6 +1261,8 @@ void WebPageProxy::setUseFixedLayout(bool fixed)
     if (!isValid())
         return;
 
+    // This check is fine as the value is initialized in the web
+    // process as part of the creation parameters.
     if (fixed == m_useFixedLayout)
         return;
 
