@@ -277,7 +277,7 @@ def usage
   puts "--kraken-only        Only run Kraken."
   puts "--exclude-v8         Exclude V8 (only run SunSpider and Kraken)."
   puts "--exclude-sunspider  Exclude SunSpider (only run V8 and Kraken)."
-  puts "--exclude-kraken     Exclude SunSpider (only run SunSpider and V8)."
+  puts "--exclude-kraken     Exclude Kraken (only run SunSpider and V8)."
   puts "--benchmarks         Only run benchmarks matching the given regular expression."
   puts "--measure-gc         Turn off manual calls to gc(), so that GC time is measured."
   puts "                     Works best with large values of --inner.  You can also say"
