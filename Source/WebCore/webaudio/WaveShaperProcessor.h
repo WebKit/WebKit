@@ -28,7 +28,7 @@
 #include "AudioDSPKernel.h"
 #include "AudioDSPKernelProcessor.h"
 #include "AudioNode.h"
-#include "Float32Array.h"
+#include <wtf/Float32Array.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Threading.h>
 

@@ -30,10 +30,8 @@
 #include "JSWebGLRenderingContext.h"
 
 #include "ExceptionCode.h"
-#include "Float32Array.h"
 #include "HTMLCanvasElement.h"
 #include "HTMLImageElement.h"
-#include "Int32Array.h"
 #include "JSFloat32Array.h"
 #include "JSHTMLCanvasElement.h"
 #include "JSHTMLImageElement.h"
@@ -70,6 +68,8 @@
 #include <runtime/Error.h>
 #include <runtime/JSArray.h>
 #include <wtf/FastMalloc.h>
+#include <wtf/Float32Array.h>
+#include <wtf/Int32Array.h>
 #include <wtf/OwnFastMallocPtr.h>
 
 #if ENABLE(VIDEO)

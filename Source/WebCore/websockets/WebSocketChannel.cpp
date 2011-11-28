@@ -34,7 +34,6 @@
 
 #include "WebSocketChannel.h"
 
-#include "ArrayBuffer.h"
 #include "Blob.h"
 #include "CookieJar.h"
 #include "Document.h"
@@ -52,6 +51,7 @@
 #include "WebSocketChannelClient.h"
 #include "WebSocketHandshake.h"
 
+#include <wtf/ArrayBuffer.h>
 #include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/Deque.h>
 #include <wtf/FastMalloc.h>

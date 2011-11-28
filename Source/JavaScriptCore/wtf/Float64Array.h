@@ -34,9 +34,9 @@ namespace WTF {
 
 class Float64Array : public TypedArrayBase<double> {
 public:
-    static PassRefPtr<Float64Array> create(unsigned length);
-    static PassRefPtr<Float64Array> create(const double* array, unsigned length);
-    static PassRefPtr<Float64Array> create(PassRefPtr<ArrayBuffer>, unsigned byteOffset, unsigned length);
+    static inline PassRefPtr<Float64Array> create(unsigned length);
+    static inline PassRefPtr<Float64Array> create(const double* array, unsigned length);
+    static inline PassRefPtr<Float64Array> create(PassRefPtr<ArrayBuffer>, unsigned byteOffset, unsigned length);
 
     // Can’t use "using" here due to a bug in the RVCT compiler.
     bool set(TypedArrayBase<double>* array, unsigned offset) { return TypedArrayBase<double>::set(array, offset); }
@@ -57,11 +57,11 @@ public:
         return result;
     }
 
-    PassRefPtr<Float64Array> subarray(int start) const;
-    PassRefPtr<Float64Array> subarray(int start, int end) const;
+    inline PassRefPtr<Float64Array> subarray(int start) const;
+    inline PassRefPtr<Float64Array> subarray(int start, int end) const;
 
 private:
-    Float64Array(PassRefPtr<ArrayBuffer>,
+    inline Float64Array(PassRefPtr<ArrayBuffer>,
                  unsigned byteOffset,
                  unsigned length);
     // Make constructor visible to superclass.
@@ -70,6 +70,36 @@ private:
     // Overridden from ArrayBufferView.
     virtual bool isDoubleArray() const { return true; }
 };
+
+PassRefPtr<Float64Array> Float64Array::create(unsigned length)
+{
+    return TypedArrayBase<double>::create<Float64Array>(length);
+}
+
+PassRefPtr<Float64Array> Float64Array::create(const double* array, unsigned length)
+{
+    return TypedArrayBase<double>::create<Float64Array>(array, length);
+}
+
+PassRefPtr<Float64Array> Float64Array::create(PassRefPtr<ArrayBuffer> buffer, unsigned byteOffset, unsigned length)
+{
+    return TypedArrayBase<double>::create<Float64Array>(buffer, byteOffset, length);
+}
+
+Float64Array::Float64Array(PassRefPtr<ArrayBuffer> buffer, unsigned byteOffset, unsigned length)
+    : TypedArrayBase<double>(buffer, byteOffset, length)
+{
+}
+
+PassRefPtr<Float64Array> Float64Array::subarray(int start) const
+{
+    return subarray(start, length());
+}
+
+PassRefPtr<Float64Array> Float64Array::subarray(int start, int end) const
+{
+    return subarrayImpl<Float64Array>(start, end);
+}
 
 } // namespace WTF
 

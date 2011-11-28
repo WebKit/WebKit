@@ -30,15 +30,15 @@
 
 #include "WebGLGetInfo.h"
 
-#include "Float32Array.h"
-#include "Int32Array.h"
-#include "Uint8Array.h"
 #include "WebGLBuffer.h"
 #include "WebGLFramebuffer.h"
 #include "WebGLProgram.h"
 #include "WebGLRenderbuffer.h"
 #include "WebGLTexture.h"
 #include "WebGLVertexArrayObjectOES.h"
+#include <wtf/Float32Array.h>
+#include <wtf/Int32Array.h>
+#include <wtf/Uint8Array.h>
 
 namespace WebCore {
 

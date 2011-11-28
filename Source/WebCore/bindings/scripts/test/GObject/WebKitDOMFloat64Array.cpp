@@ -29,6 +29,8 @@
 #include "JSMainThreadExecState.h"
 #include "WebKitDOMBinding.h"
 #include "gobject/ConvertToUTF8String.h"
+#include "webkit/WebKitDOMFloat32Array.h"
+#include "webkit/WebKitDOMFloat32ArrayPrivate.h"
 #include "webkit/WebKitDOMFloat64Array.h"
 #include "webkit/WebKitDOMFloat64ArrayPrivate.h"
 #include "webkitdefines.h"
@@ -48,6 +50,21 @@ WebKitDOMFloat64Array* kit(WebCore::Float64Array* obj)
 }
     
 } // namespace WebKit //
+
+void
+webkit_dom_float64array_foo(WebKitDOMFloat64Array* self, WebKitDOMFloat32Array* array)
+{
+    g_return_if_fail(self);
+    WebCore::JSMainThreadNullState state;
+    WebCore::Float64Array * item = WebKit::core(self);
+    g_return_if_fail(array);
+    WebCore::Float32Array * converted_array = NULL;
+    if (array != NULL) {
+        converted_array = WebKit::core(array);
+        g_return_if_fail(converted_array);
+    }
+    item->foo(converted_array);
+}
 
 
 G_DEFINE_TYPE(WebKitDOMFloat64Array, webkit_dom_float64array, WEBKIT_TYPE_DOM_ARRAY_BUFFER_VIEW)

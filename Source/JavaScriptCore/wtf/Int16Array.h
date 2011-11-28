@@ -34,19 +34,19 @@ class ArrayBuffer;
 
 class Int16Array : public IntegralTypedArrayBase<short> {
 public:
-    static PassRefPtr<Int16Array> create(unsigned length);
-    static PassRefPtr<Int16Array> create(short* array, unsigned length);
-    static PassRefPtr<Int16Array> create(PassRefPtr<ArrayBuffer> buffer, unsigned byteOffset, unsigned length);
+    static inline PassRefPtr<Int16Array> create(unsigned length);
+    static inline PassRefPtr<Int16Array> create(short* array, unsigned length);
+    static inline PassRefPtr<Int16Array> create(PassRefPtr<ArrayBuffer>, unsigned byteOffset, unsigned length);
 
     // Can’t use "using" here due to a bug in the RVCT compiler.
     bool set(TypedArrayBase<short>* array, unsigned offset) { return TypedArrayBase<short>::set(array, offset); }
     void set(unsigned index, double value) { IntegralTypedArrayBase<short>::set(index, value); }
 
-    PassRefPtr<Int16Array> subarray(int start) const;
-    PassRefPtr<Int16Array> subarray(int start, int end) const;
+    inline PassRefPtr<Int16Array> subarray(int start) const;
+    inline PassRefPtr<Int16Array> subarray(int start, int end) const;
 
 private:
-    Int16Array(PassRefPtr<ArrayBuffer> buffer,
+    inline Int16Array(PassRefPtr<ArrayBuffer>,
                     unsigned byteOffset,
                     unsigned length);
     // Make constructor visible to superclass.
@@ -55,6 +55,36 @@ private:
     // Overridden from ArrayBufferView.
     virtual bool isShortArray() const { return true; }
 };
+
+PassRefPtr<Int16Array> Int16Array::create(unsigned length)
+{
+    return TypedArrayBase<short>::create<Int16Array>(length);
+}
+
+PassRefPtr<Int16Array> Int16Array::create(short* array, unsigned length)
+{
+    return TypedArrayBase<short>::create<Int16Array>(array, length);
+}
+
+PassRefPtr<Int16Array> Int16Array::create(PassRefPtr<ArrayBuffer> buffer, unsigned byteOffset, unsigned length)
+{
+    return TypedArrayBase<short>::create<Int16Array>(buffer, byteOffset, length);
+}
+
+Int16Array::Int16Array(PassRefPtr<ArrayBuffer> buffer, unsigned byteOffset, unsigned length)
+    : IntegralTypedArrayBase<short>(buffer, byteOffset, length)
+{
+}
+
+PassRefPtr<Int16Array> Int16Array::subarray(int start) const
+{
+    return subarray(start, length());
+}
+
+PassRefPtr<Int16Array> Int16Array::subarray(int start, int end) const
+{
+    return subarrayImpl<Int16Array>(start, end);
+}
 
 } // namespace WTF
 

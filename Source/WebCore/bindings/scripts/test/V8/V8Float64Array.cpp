@@ -21,13 +21,18 @@
 #include "config.h"
 #include "V8Float64Array.h"
 
+#include "ExceptionCode.h"
 #include "RuntimeEnabledFeatures.h"
 #include "V8ArrayBufferView.h"
 #include "V8Binding.h"
+#include "V8BindingMacros.h"
 #include "V8BindingState.h"
 #include "V8DOMWrapper.h"
+#include "V8Float32Array.h"
 #include "V8IsolatedContext.h"
 #include "V8Proxy.h"
+#include <wtf/Float32Array.h>
+#include <wtf/Float64Array.h>
 #include <wtf/UnusedParam.h>
 
 namespace WebCore {
@@ -37,6 +42,17 @@ WrapperTypeInfo V8Float64Array::info = { V8Float64Array::GetTemplate, V8Float64A
 namespace Float64ArrayInternal {
 
 template <typename T> void V8_USE(T) { }
+
+static v8::Handle<v8::Value> fooCallback(const v8::Arguments& args)
+{
+    INC_STATS("DOM.Float64Array.foo");
+    if (args.Length() < 1)
+        return throwError("Not enough arguments", V8Proxy::TypeError);
+    Float64Array* imp = V8Float64Array::toNative(args.Holder());
+    EXCEPTION_BLOCK(Float32Array*, array, V8Float32Array::HasInstance(MAYBE_MISSING_PARAMETER(args, 0, MissingIsUndefined)) ? V8Float32Array::toNative(v8::Handle<v8::Object>::Cast(MAYBE_MISSING_PARAMETER(args, 0, MissingIsUndefined))) : 0);
+    imp->foo(array);
+    return v8::Handle<v8::Value>();
+}
 
 } // namespace Float64ArrayInternal
 
@@ -50,7 +66,17 @@ static v8::Persistent<v8::FunctionTemplate> ConfigureV8Float64ArrayTemplate(v8::
         0, 0);
     UNUSED_PARAM(defaultSignature); // In some cases, it will not be used.
     desc->SetCallHandler(V8Float64Array::constructorCallback);
+    v8::Local<v8::ObjectTemplate> instance = desc->InstanceTemplate();
+    v8::Local<v8::ObjectTemplate> proto = desc->PrototypeTemplate();
+    UNUSED_PARAM(instance); // In some cases, it will not be used.
+    UNUSED_PARAM(proto); // In some cases, it will not be used.
     
+
+    // Custom Signature 'foo'
+    const int fooArgc = 1;
+    v8::Handle<v8::FunctionTemplate> fooArgv[fooArgc] = { V8Float32Array::GetRawTemplate() };
+    v8::Handle<v8::Signature> fooSignature = v8::Signature::New(desc, fooArgc, fooArgv);
+    proto->Set(v8::String::New("foo"), v8::FunctionTemplate::New(Float64ArrayInternal::fooCallback, v8::Handle<v8::Value>(), fooSignature));
 
     // Custom toString template
     desc->Set(getToStringName(), getToStringTemplate());

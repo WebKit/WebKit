@@ -809,8 +809,6 @@ SOURCES += \
     html/ValidationMessage.cpp \
     html/ValidityState.cpp \
     html/WeekInputType.cpp \
-    html/canvas/ArrayBuffer.cpp \
-    html/canvas/ArrayBufferView.cpp \
     html/canvas/CanvasGradient.cpp \
     html/canvas/CanvasPattern.cpp \
     html/canvas/CanvasPixelArray.cpp \
@@ -818,14 +816,6 @@ SOURCES += \
     html/canvas/CanvasRenderingContext2D.cpp \
     html/canvas/CanvasStyle.cpp \
     html/canvas/DataView.cpp \
-    html/canvas/Float32Array.cpp \
-    html/canvas/Float64Array.cpp \
-    html/canvas/Int16Array.cpp \
-    html/canvas/Int32Array.cpp \
-    html/canvas/Int8Array.cpp \
-    html/canvas/Uint16Array.cpp \
-    html/canvas/Uint32Array.cpp \
-    html/canvas/Uint8Array.cpp \
     html/parser/CSSPreloadScanner.cpp \
     html/parser/HTMLConstructionSite.cpp \
     html/parser/HTMLDocumentParser.cpp \
@@ -1751,8 +1741,6 @@ HEADERS += \
     history/CachedPage.h \
     history/HistoryItem.h \
     history/PageCache.h \
-    html/canvas/ArrayBuffer.h \
-    html/canvas/ArrayBufferView.h \
     html/canvas/CanvasGradient.h \
     html/canvas/CanvasPattern.h \
     html/canvas/CanvasPixelArray.h \
@@ -1760,14 +1748,6 @@ HEADERS += \
     html/canvas/CanvasRenderingContext2D.h \
     html/canvas/CanvasStyle.h \
     html/canvas/DataView.h \
-    html/canvas/Float32Array.h \
-    html/canvas/Float64Array.h \
-    html/canvas/Int16Array.h \
-    html/canvas/Int32Array.h \
-    html/canvas/Int8Array.h \
-    html/canvas/Uint16Array.h \
-    html/canvas/Uint32Array.h \
-    html/canvas/Uint8Array.h \
     html/ClassList.h \
     html/CollectionCache.h \
     html/DOMFormData.h \

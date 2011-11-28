@@ -21,8 +21,12 @@
 #include "config.h"
 #include "JSFloat64Array.h"
 
-#include "Float64Array.h"
+#include "ExceptionCode.h"
+#include "JSDOMBinding.h"
+#include "JSFloat32Array.h"
+#include <runtime/Error.h>
 #include <runtime/PropertyNameArray.h>
+#include <wtf/Float64Array.h>
 #include <wtf/GetPtr.h>
 
 using namespace JSC;
@@ -114,11 +118,12 @@ ConstructType JSFloat64ArrayConstructor::getConstructData(JSCell*, ConstructData
 
 static const HashTableValue JSFloat64ArrayPrototypeTableValues[] =
 {
+    { "foo", DontDelete | Function, (intptr_t)static_cast<NativeFunction>(jsFloat64ArrayPrototypeFunctionFoo), (intptr_t)1 THUNK_GENERATOR(0) INTRINSIC(DFG::NoIntrinsic) },
     { 0, 0, 0, 0 THUNK_GENERATOR(0) INTRINSIC(DFG::NoIntrinsic) }
 };
 
 #undef THUNK_GENERATOR
-static const HashTable JSFloat64ArrayPrototypeTable = { 1, 0, JSFloat64ArrayPrototypeTableValues, 0 };
+static const HashTable JSFloat64ArrayPrototypeTable = { 2, 1, JSFloat64ArrayPrototypeTableValues, 0 };
 static const HashTable* getJSFloat64ArrayPrototypeTable(ExecState* exec)
 {
     return getHashTableForGlobalData(exec->globalData(), &JSFloat64ArrayPrototypeTable);
@@ -129,6 +134,18 @@ const ClassInfo JSFloat64ArrayPrototype::s_info = { "Float64ArrayPrototype", &JS
 JSObject* JSFloat64ArrayPrototype::self(ExecState* exec, JSGlobalObject* globalObject)
 {
     return getDOMPrototype<JSFloat64Array>(exec, globalObject);
+}
+
+bool JSFloat64ArrayPrototype::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
+{
+    JSFloat64ArrayPrototype* thisObject = jsCast<JSFloat64ArrayPrototype*>(cell);
+    return getStaticFunctionSlot<JSObject>(exec, getJSFloat64ArrayPrototypeTable(exec), thisObject, propertyName, slot);
+}
+
+bool JSFloat64ArrayPrototype::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
+{
+    JSFloat64ArrayPrototype* thisObject = jsCast<JSFloat64ArrayPrototype*>(object);
+    return getStaticFunctionDescriptor<JSObject>(exec, getJSFloat64ArrayPrototypeTable(exec), thisObject, propertyName, descriptor);
 }
 
 static const HashTable* getJSFloat64ArrayTable(ExecState* exec)
@@ -230,6 +247,23 @@ void JSFloat64Array::getOwnPropertyNames(JSObject* object, ExecState* exec, Prop
 JSValue JSFloat64Array::getConstructor(ExecState* exec, JSGlobalObject* globalObject)
 {
     return getDOMConstructor<JSFloat64ArrayConstructor>(exec, static_cast<JSDOMGlobalObject*>(globalObject));
+}
+
+EncodedJSValue JSC_HOST_CALL jsFloat64ArrayPrototypeFunctionFoo(ExecState* exec)
+{
+    JSValue thisValue = exec->hostThisValue();
+    if (!thisValue.inherits(&JSFloat64Array::s_info))
+        return throwVMTypeError(exec);
+    JSFloat64Array* castedThis = static_cast<JSFloat64Array*>(asObject(thisValue));
+    ASSERT_GC_OBJECT_INHERITS(castedThis, &JSFloat64Array::s_info);
+    Float64Array* imp = static_cast<Float64Array*>(castedThis->impl());
+    if (exec->argumentCount() < 1)
+        return throwVMError(exec, createTypeError(exec, "Not enough arguments"));
+    Float32Array* array(toFloat32Array(MAYBE_MISSING_PARAMETER(exec, 0, MissingIsUndefined)));
+    if (exec->hadException())
+        return JSValue::encode(jsUndefined());
+    imp->foo(array);
+    return JSValue::encode(jsUndefined());
 }
 
 

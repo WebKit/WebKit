@@ -27,7 +27,7 @@
 #include "JSUint16Array.h"
 
 #include "JSArrayBufferViewHelper.h"
-#include "Uint16Array.h"
+#include <wtf/Uint16Array.h>
 
 using namespace JSC;
 

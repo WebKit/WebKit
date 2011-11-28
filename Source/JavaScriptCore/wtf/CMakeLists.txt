@@ -3,6 +3,8 @@ SET(WTF_HEADERS
     AVLTree.h
     Alignment.h
     AlwaysInline.h
+    ArrayBuffer.cpp
+    ArrayBufferView.cpp
     Assertions.h
     Atomics.h
     BitVector.h

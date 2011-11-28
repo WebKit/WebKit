@@ -1619,10 +1619,6 @@ webcore_sources += \
 	Source/WebCore/html/BaseTextInputType.h \
 	Source/WebCore/html/ButtonInputType.cpp \
 	Source/WebCore/html/ButtonInputType.h \
-	Source/WebCore/html/canvas/ArrayBuffer.cpp \
-	Source/WebCore/html/canvas/ArrayBuffer.h \
-	Source/WebCore/html/canvas/ArrayBufferView.cpp \
-	Source/WebCore/html/canvas/ArrayBufferView.h \
 	Source/WebCore/html/canvas/CanvasContextAttributes.cpp \
 	Source/WebCore/html/canvas/CanvasContextAttributes.h \
 	Source/WebCore/html/canvas/CanvasGradient.cpp \
@@ -1640,24 +1636,6 @@ webcore_sources += \
 	Source/WebCore/html/canvas/CheckedInt.h \
 	Source/WebCore/html/canvas/DataView.cpp \
 	Source/WebCore/html/canvas/DataView.h \
-	Source/WebCore/html/canvas/Float32Array.cpp \
-	Source/WebCore/html/canvas/Float32Array.h \
-	Source/WebCore/html/canvas/Float64Array.cpp \
-	Source/WebCore/html/canvas/Float64Array.h \
-	Source/WebCore/html/canvas/Int16Array.cpp \
-	Source/WebCore/html/canvas/Int16Array.h \
-	Source/WebCore/html/canvas/Int32Array.cpp \
-	Source/WebCore/html/canvas/Int32Array.h \
-	Source/WebCore/html/canvas/Int8Array.cpp \
-	Source/WebCore/html/canvas/Int8Array.h \
-	Source/WebCore/html/canvas/IntegralTypedArrayBase.h \
-	Source/WebCore/html/canvas/TypedArrayBase.h \
-	Source/WebCore/html/canvas/Uint16Array.cpp \
-	Source/WebCore/html/canvas/Uint16Array.h \
-	Source/WebCore/html/canvas/Uint32Array.cpp \
-	Source/WebCore/html/canvas/Uint32Array.h \
-	Source/WebCore/html/canvas/Uint8Array.cpp \
-	Source/WebCore/html/canvas/Uint8Array.h \
 	Source/WebCore/html/DOMSettableTokenList.cpp \
 	Source/WebCore/html/DOMSettableTokenList.h \
 	Source/WebCore/html/DOMTokenList.cpp \

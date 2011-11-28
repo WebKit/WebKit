@@ -154,6 +154,10 @@ sub AddIncludesForType
 
     # When we're finished with the one-file-per-class
     # reorganization, we won't need these special cases.
+    if (IsTypedArrayType($type)) {
+        AddToImplIncludes("wtf/${type}.h");
+        return;
+    }
     if (!$codeGenerator->IsPrimitiveType($type) and !$codeGenerator->IsStringType($type) and !$codeGenerator->AvoidInclusionOfType($type) and $type ne "Date") {
         # default, include the same named file
         AddToImplIncludes(GetV8HeaderName(${type}));
@@ -537,6 +541,7 @@ sub GetHeaderClassInclude
     if ($className =~ /SVGPathSeg/) {
         $className =~ s/Abs|Rel//;
     }
+    return "wtf/${className}.h" if IsTypedArrayType($className);
     return "" if ($codeGenerator->AvoidInclusionOfType($className));
     return "${className}.h";
 }

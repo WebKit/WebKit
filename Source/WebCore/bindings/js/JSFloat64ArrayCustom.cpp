@@ -26,8 +26,8 @@
 #include "config.h"
 #include "JSFloat64Array.h"
 
-#include "Float64Array.h"
 #include "JSArrayBufferViewHelper.h"
+#include <wtf/Float64Array.h>
 
 using namespace JSC;
 

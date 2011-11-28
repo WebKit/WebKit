@@ -613,6 +613,22 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\wtf\ArrayBuffer.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\wtf\ArrayBuffer.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\wtf\ArrayBufferView.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\wtf\ArrayBufferView.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\wtf\ASCIICType.h"
 			>
 		</File>
@@ -729,6 +745,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\wtf\Float32Array.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\wtf\Float64Array.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\wtf\dtoa.cpp"
 			>
 		</File>
@@ -830,6 +854,18 @@
 		</File>
 		<File
 			RelativePath="..\..\wtf\HexNumber.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\wtf\Int16Array.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\wtf\Int32Array.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\wtf\Int8Array.h"
 			>
 		</File>
 		<File
@@ -1154,6 +1190,18 @@
 		</File>
 		<File
 			RelativePath="..\..\wtf\TypeTraits.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\wtf\UInt16Array.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\wtf\UInt32Array.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\wtf\UInt8Array.h"
 			>
 		</File>
 		<File

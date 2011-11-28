@@ -823,8 +823,6 @@ SET(WebCore_SOURCES
     html/ValidityState.cpp
     html/WeekInputType.cpp
 
-    html/canvas/ArrayBuffer.cpp
-    html/canvas/ArrayBufferView.cpp
     html/canvas/CanvasContextAttributes.cpp
     html/canvas/CanvasGradient.cpp
     html/canvas/CanvasPattern.cpp
@@ -833,14 +831,6 @@ SET(WebCore_SOURCES
     html/canvas/CanvasRenderingContext2D.cpp
     html/canvas/CanvasStyle.cpp
     html/canvas/DataView.cpp
-    html/canvas/Float32Array.cpp
-    html/canvas/Float64Array.cpp
-    html/canvas/Int16Array.cpp
-    html/canvas/Int32Array.cpp
-    html/canvas/Int8Array.cpp
-    html/canvas/Uint16Array.cpp
-    html/canvas/Uint32Array.cpp
-    html/canvas/Uint8Array.cpp
 
     html/parser/CSSPreloadScanner.cpp
     html/parser/HTMLConstructionSite.cpp

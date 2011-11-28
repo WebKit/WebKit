@@ -21,10 +21,10 @@
 #ifndef JSFloat64Array_h
 #define JSFloat64Array_h
 
-#include "Float64Array.h"
 #include "JSArrayBufferView.h"
 #include "JSDOMBinding.h"
 #include <runtime/JSObject.h>
+#include <wtf/Float64Array.h>
 
 namespace WebCore {
 
@@ -80,6 +80,8 @@ public:
     }
 
     static const JSC::ClassInfo s_info;
+    static bool getOwnPropertySlot(JSC::JSCell*, JSC::ExecState*, const JSC::Identifier&, JSC::PropertySlot&);
+    static bool getOwnPropertyDescriptor(JSC::JSObject*, JSC::ExecState*, const JSC::Identifier&, JSC::PropertyDescriptor&);
     static JSC::Structure* createStructure(JSC::JSGlobalData& globalData, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)
     {
         return JSC::Structure::create(globalData, globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), &s_info);
@@ -88,7 +90,7 @@ public:
 private:
     JSFloat64ArrayPrototype(JSC::JSGlobalData& globalData, JSC::JSGlobalObject*, JSC::Structure* structure) : JSC::JSNonFinalObject(globalData, structure) { }
 protected:
-    static const unsigned StructureFlags = Base::StructureFlags;
+    static const unsigned StructureFlags = JSC::OverridesGetOwnPropertySlot | Base::StructureFlags;
 };
 
 class JSFloat64ArrayConstructor : public DOMConstructorObject {
@@ -118,6 +120,9 @@ protected:
     static JSC::ConstructType getConstructData(JSC::JSCell*, JSC::ConstructData&);
 };
 
+// Functions
+
+JSC::EncodedJSValue JSC_HOST_CALL jsFloat64ArrayPrototypeFunctionFoo(JSC::ExecState*);
 // Attributes
 
 JSC::JSValue jsFloat64ArrayConstructor(JSC::ExecState*, JSC::JSValue, const JSC::Identifier&);

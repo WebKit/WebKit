@@ -27,7 +27,6 @@
 #ifndef JSArrayBufferViewHelper_h
 #define JSArrayBufferViewHelper_h
 
-#include "ArrayBufferView.h"
 #include "ExceptionCode.h"
 #include "JSArrayBuffer.h"
 #include "JSDOMBinding.h"
@@ -36,6 +35,7 @@
 #include <runtime/Error.h>
 #include <runtime/JSObject.h>
 #include <runtime/JSValue.h>
+#include <wtf/ArrayBufferView.h>
 
 namespace WebCore {
 

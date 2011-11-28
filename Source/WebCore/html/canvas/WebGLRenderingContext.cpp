@@ -52,7 +52,6 @@
 #include "RenderBox.h"
 #include "RenderLayer.h"
 #include "Settings.h"
-#include "Uint16Array.h"
 #include "WebGLActiveInfo.h"
 #include "WebGLBuffer.h"
 #include "WebGLContextAttributes.h"
@@ -70,6 +69,7 @@
 #include <wtf/ByteArray.h>
 #include <wtf/OwnArrayPtr.h>
 #include <wtf/PassOwnArrayPtr.h>
+#include <wtf/Uint16Array.h>
 #include <wtf/text/StringBuilder.h>
 
 #if PLATFORM(QT)

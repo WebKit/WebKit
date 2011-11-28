@@ -29,7 +29,6 @@
 #include "config.h"
 #include "JSXMLHttpRequest.h"
 
-#include "ArrayBuffer.h"
 #include "Blob.h"
 #include "DOMFormData.h"
 #include "DOMWindow.h"
@@ -49,6 +48,7 @@
 #include "XMLHttpRequest.h"
 #include <runtime/Error.h>
 #include <interpreter/Interpreter.h>
+#include <wtf/ArrayBuffer.h>
 
 using namespace JSC;
 

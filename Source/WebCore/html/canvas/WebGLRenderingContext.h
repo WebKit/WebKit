@@ -28,15 +28,15 @@
 
 #include "CanvasRenderingContext.h"
 #include "DrawingBuffer.h"
-#include "Float32Array.h"
 #include "GraphicsContext3D.h"
-#include "Int32Array.h"
 #include "PlatformString.h"
 #include "Timer.h"
-#include "Uint8Array.h"
 #include "WebGLGetInfo.h"
 
+#include <wtf/Float32Array.h>
+#include <wtf/Int32Array.h>
 #include <wtf/OwnArrayPtr.h>
+#include <wtf/Uint8Array.h>
 
 namespace WebCore {
 

@@ -33,10 +33,12 @@
 #import "DOMCSSRuleInternal.h"
 #import "DOMCSSValueInternal.h"
 #import "DOMEventInternal.h"
+#import "DOMFloat32ArrayInternal.h"
 #import "DOMFloat64ArrayInternal.h"
 #import "DOMNodeInternal.h"
 #import "DOMStyleSheetInternal.h"
 #import "ExceptionHandlers.h"
+#import "Float32Array.h"
 #import "Float64Array.h"
 #import "JSMainThreadExecState.h"
 #import "ThreadCheck.h"
@@ -46,6 +48,12 @@
 #define IMPL static_cast<WebCore::Float64Array*>(reinterpret_cast<WebCore::Node*>(_internal))
 
 @implementation DOMFloat64Array
+
+- (void)foo:(DOMFloat32Array *)array
+{
+    WebCore::JSMainThreadNullState state;
+    IMPL->foo(core(array));
+}
 
 @end
 

@@ -22,7 +22,6 @@
 #include "config.h"
 #include "XMLHttpRequest.h"
 
-#include "ArrayBuffer.h"
 #include "Blob.h"
 #include "ContentSecurityPolicy.h"
 #include "CrossOriginAccessControl.h"
@@ -52,6 +51,7 @@
 #include "XMLHttpRequestProgressEvent.h"
 #include "XMLHttpRequestUpload.h"
 #include "markup.h"
+#include <wtf/ArrayBuffer.h>
 #include <wtf/RefCountedLeakCounter.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/UnusedParam.h>

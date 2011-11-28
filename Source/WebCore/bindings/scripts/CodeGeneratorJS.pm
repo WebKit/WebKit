@@ -296,6 +296,8 @@ sub AddIncludesForType
         $includesRef->{"JSDOMStringList.h"} = 1;
     } elsif ($isCallback) {
         $includesRef->{"JS${type}.h"} = 1;
+    } elsif (IsTypedArrayType($type)) {
+        $includesRef->{"<wtf/${type}.h>"} = 1;
     } else {
         # default, include the same named file
         $includesRef->{"${type}.h"} = 1;
@@ -691,7 +693,11 @@ sub GenerateHeader
     }
 
     if ($hasParent && $dataNode->extendedAttributes->{"GenerateNativeConverter"}) {
-        $headerIncludes{"$implClassName.h"} = 1;
+        if (IsTypedArrayType($implClassName)) {
+            $headerIncludes{"<wtf/$implClassName.h>"} = 1;
+        } else {
+            $headerIncludes{"$implClassName.h"} = 1;
+        }
     }
     
     $headerIncludes{"<runtime/JSObject.h>"} = 1;
@@ -2884,7 +2890,11 @@ sub NativeToJSValue
     } else {
         # Default, include header with same name.
         AddToImplIncludes("JS$type.h", $conditional);
-        AddToImplIncludes("$type.h", $conditional) if not $codeGenerator->AvoidInclusionOfType($type);
+        if (IsTypedArrayType($type)) {
+            AddToImplIncludes("<wtf/$type.h>", $conditional) if not $codeGenerator->AvoidInclusionOfType($type);
+        } else {
+            AddToImplIncludes("$type.h", $conditional) if not $codeGenerator->AvoidInclusionOfType($type);
+        }
     }
 
     return $value if $codeGenerator->IsSVGAnimatedType($type);

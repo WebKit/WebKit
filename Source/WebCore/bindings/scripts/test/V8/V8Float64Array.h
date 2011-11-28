@@ -21,11 +21,11 @@
 #ifndef V8Float64Array_h
 #define V8Float64Array_h
 
-#include "Float64Array.h"
 #include "V8ArrayBufferView.h"
 #include "V8DOMWrapper.h"
 #include "WrapperTypeInfo.h"
 #include <v8.h>
+#include <wtf/Float64Array.h>
 #include <wtf/HashMap.h>
 #include <wtf/text/StringHash.h>
 

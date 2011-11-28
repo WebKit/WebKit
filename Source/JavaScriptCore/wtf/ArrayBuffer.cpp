@@ -1,6 +1,5 @@
 /*
  * Copyright (C) 2009 Apple Inc. All rights reserved.
- * Copyright (C) 2009 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,38 +24,55 @@
  */
 
 #include "config.h"
-#include "Uint8Array.h"
+#include "ArrayBuffer.h"
+
+#include "ArrayBufferView.h"
+
+#include <wtf/RefPtr.h>
+#include <wtf/Vector.h>
 
 namespace WTF {
 
-PassRefPtr<Uint8Array> Uint8Array::create(unsigned length)
+bool ArrayBuffer::transfer(ArrayBufferContents& result, Vector<ArrayBufferView*>& neuteredViews)
 {
-    return TypedArrayBase<unsigned char>::create<Uint8Array>(length);
+    RefPtr<ArrayBuffer> keepAlive(this);
+
+    if (!m_contents.m_data) {
+        result.m_data = 0;
+        return false;
+    }
+
+    m_contents.transfer(result);
+
+    while (m_firstView) {
+        ArrayBufferView* current = m_firstView;
+        removeView(current);
+        current->neuter();
+        neuteredViews.append(current);
+    }
+    return true;
 }
 
-PassRefPtr<Uint8Array> Uint8Array::create(unsigned char* array, unsigned length)
+void ArrayBuffer::addView(ArrayBufferView* view)
 {
-    return TypedArrayBase<unsigned char>::create<Uint8Array>(array, length);
+    view->m_buffer = this;
+    view->m_prevView = 0;
+    view->m_nextView = m_firstView;
+    if (m_firstView)
+        m_firstView->m_prevView = view;
+    m_firstView = view;
 }
 
-PassRefPtr<Uint8Array> Uint8Array::create(PassRefPtr<ArrayBuffer> buffer, unsigned byteOffset, unsigned length)
+void ArrayBuffer::removeView(ArrayBufferView* view)
 {
-    return TypedArrayBase<unsigned char>::create<Uint8Array>(buffer, byteOffset, length);
-}
-
-Uint8Array::Uint8Array(PassRefPtr<ArrayBuffer> buffer, unsigned byteOffset, unsigned length)
-    : IntegralTypedArrayBase<unsigned char>(buffer, byteOffset, length)
-{
-}
-
-PassRefPtr<Uint8Array> Uint8Array::subarray(int start) const
-{
-    return subarray(start, length());
-}
-
-PassRefPtr<Uint8Array> Uint8Array::subarray(int start, int end) const
-{
-    return subarrayImpl<Uint8Array>(start, end);
+    ASSERT(this == view->m_buffer);
+    if (view->m_nextView)
+        view->m_nextView->m_prevView = view->m_prevView;
+    if (view->m_prevView)
+        view->m_prevView->m_nextView = view->m_nextView;
+    if (m_firstView == view)
+        m_firstView = view->m_nextView;
+    view->m_prevView = view->m_nextView = 0;
 }
 
 }

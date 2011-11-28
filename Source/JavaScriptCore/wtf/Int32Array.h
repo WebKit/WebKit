@@ -24,10 +24,36 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#include "Int32Array.h"
+#ifndef Int32Array_h
+#define Int32Array_h
+
+#include "IntegralTypedArrayBase.h"
 
 namespace WTF {
+
+class Int32Array : public IntegralTypedArrayBase<int> {
+public:
+    static inline PassRefPtr<Int32Array> create(unsigned length);
+    static inline PassRefPtr<Int32Array> create(int* array, unsigned length);
+    static inline PassRefPtr<Int32Array> create(PassRefPtr<ArrayBuffer>, unsigned byteOffset, unsigned length);
+
+    // Can’t use "using" here due to a bug in the RVCT compiler.
+    bool set(TypedArrayBase<int>* array, unsigned offset) { return TypedArrayBase<int>::set(array, offset); }
+    void set(unsigned index, double value) { IntegralTypedArrayBase<int>::set(index, value); }
+
+    inline PassRefPtr<Int32Array> subarray(int start) const;
+    inline PassRefPtr<Int32Array> subarray(int start, int end) const;
+
+private:
+    inline Int32Array(PassRefPtr<ArrayBuffer>,
+                  unsigned byteOffset,
+                  unsigned length);
+    // Make constructor visible to superclass.
+    friend class TypedArrayBase<int>;
+
+    // Overridden from ArrayBufferView.
+    virtual bool isIntArray() const { return true; }
+};
 
 PassRefPtr<Int32Array> Int32Array::create(unsigned length)
 {
@@ -59,4 +85,8 @@ PassRefPtr<Int32Array> Int32Array::subarray(int start, int end) const
     return subarrayImpl<Int32Array>(start, end);
 }
 
-}
+} // namespace WTF
+
+using WTF::Int32Array;
+
+#endif // Int32Array_h

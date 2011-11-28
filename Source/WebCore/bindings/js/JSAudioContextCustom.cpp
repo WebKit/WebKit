@@ -28,12 +28,12 @@
 
 #include "AudioContext.h"
 
-#include "ArrayBuffer.h"
 #include "AudioBuffer.h"
 #include "JSArrayBuffer.h"
 #include "JSAudioBuffer.h"
 #include "JSAudioContext.h"
 #include <runtime/Error.h>
+#include <wtf/ArrayBuffer.h>
 
 using namespace JSC;
 

@@ -1,3 +1,87 @@
+2011-11-28  Oliver Hunt  <oliver@apple.com>
+
+        Move typed array implementations into wtf
+        https://bugs.webkit.org/show_bug.cgi?id=73248
+
+        Reviewed by Sam Weinig.
+
+        Removed the typed array implementation files from WebCore and
+        added forwarding headers.
+
+        * CMakeLists.txt:
+        * ForwardingHeaders/wtf/ArrayBuffer.h: Added.
+        * ForwardingHeaders/wtf/ArrayBufferView.h: Added.
+        * ForwardingHeaders/wtf/Float32Array.h: Added.
+        * ForwardingHeaders/wtf/Float64Array.h: Added.
+        * ForwardingHeaders/wtf/Int16Array.h: Added.
+        * ForwardingHeaders/wtf/Int32Array.h: Added.
+        * ForwardingHeaders/wtf/Int8Array.h: Added.
+        * ForwardingHeaders/wtf/Uint16Array.h: Added.
+        * ForwardingHeaders/wtf/Uint32Array.h: Added.
+        * ForwardingHeaders/wtf/Uint8Array.h: Added.
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSArrayBufferCustom.cpp:
+        * bindings/js/JSArrayBufferViewHelper.h:
+        * bindings/js/JSAudioContextCustom.cpp:
+        * bindings/js/JSFileReaderCustom.cpp:
+        * bindings/js/JSFloat32ArrayCustom.cpp:
+        * bindings/js/JSFloat64ArrayCustom.cpp:
+        * bindings/js/JSInt16ArrayCustom.cpp:
+        * bindings/js/JSInt32ArrayCustom.cpp:
+        * bindings/js/JSInt8ArrayCustom.cpp:
+        * bindings/js/JSUint16ArrayCustom.cpp:
+        * bindings/js/JSUint32ArrayCustom.cpp:
+        * bindings/js/JSUint8ArrayCustom.cpp:
+        * bindings/js/JSWaveShaperNodeCustom.cpp:
+        * bindings/js/JSWebGLRenderingContextCustom.cpp:
+        * bindings/js/JSXMLHttpRequestCustom.cpp:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (AddIncludesForType):
+        (GenerateHeader):
+        (NativeToJSValue):
+        * bindings/scripts/test/JS/JSFloat64Array.cpp:
+        * bindings/scripts/test/JS/JSFloat64Array.h:
+        * dom/MessageEvent.h:
+        * fileapi/FileReader.cpp:
+        * fileapi/FileReaderLoader.cpp:
+        * fileapi/FileReaderSync.cpp:
+        * fileapi/WebKitBlobBuilder.cpp:
+        * html/HTMLMediaElement.cpp:
+        * html/canvas/ArrayBuffer.h: Removed.
+        * html/canvas/ArrayBufferView.cpp: Removed.
+        * html/canvas/DataView.h:
+        * html/canvas/Float64Array.cpp: Removed.
+        * html/canvas/Int16Array.h: Removed.
+        * html/canvas/Int32Array.h: Removed.
+        * html/canvas/Int8Array.h: Removed.
+        * html/canvas/Uint16Array.h: Removed.
+        * html/canvas/Uint32Array.h: Removed.
+        * html/canvas/Uint8Array.cpp: Removed.
+        * html/canvas/WebGLBuffer.cpp:
+        * html/canvas/WebGLBuffer.h:
+        * html/canvas/WebGLGetInfo.cpp:
+        * html/canvas/WebGLGetInfo.h:
+        * html/canvas/WebGLRenderingContext.cpp:
+        * html/canvas/WebGLRenderingContext.h:
+        * page/Crypto.cpp:
+        * platform/graphics/GraphicsContext3D.cpp:
+        * platform/graphics/mac/GraphicsContext3DMac.mm:
+        * platform/graphics/opengl/GraphicsContext3DOpenGL.cpp:
+        * webaudio/AsyncAudioDecoder.cpp:
+        * webaudio/AudioBuffer.h:
+        * webaudio/AudioContext.cpp:
+        * webaudio/AudioParam.h:
+        * webaudio/AudioParamTimeline.h:
+        * webaudio/JavaScriptAudioNode.cpp:
+        * webaudio/RealtimeAnalyser.cpp:
+        * webaudio/WaveShaperProcessor.h:
+        * websockets/WebSocketChannel.cpp:
+        * websockets/WorkerThreadableWebSocketChannel.cpp:
+        * xml/XMLHttpRequest.cpp:
+
 2011-11-28  Robert Hogan  <robert@webkit.org>
 
         Unreviewed, rolling out r101202.

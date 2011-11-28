@@ -28,9 +28,9 @@
 
 #include "WaveShaperNode.h"
 
-#include "Float32Array.h"
 #include "JSFloat32Array.h"
 #include "JSWaveShaperNode.h"
+#include <wtf/Float32Array.h>
 
 using namespace JSC;
 

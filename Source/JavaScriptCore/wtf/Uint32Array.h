@@ -35,19 +35,19 @@ class ArrayBuffer;
 
 class Uint32Array : public IntegralTypedArrayBase<unsigned int> {
 public:
-    static PassRefPtr<Uint32Array> create(unsigned length);
-    static PassRefPtr<Uint32Array> create(unsigned int* array, unsigned length);
-    static PassRefPtr<Uint32Array> create(PassRefPtr<ArrayBuffer> buffer, unsigned byteOffset, unsigned length);
+    static inline PassRefPtr<Uint32Array> create(unsigned length);
+    static inline PassRefPtr<Uint32Array> create(unsigned int* array, unsigned length);
+    static inline PassRefPtr<Uint32Array> create(PassRefPtr<ArrayBuffer>, unsigned byteOffset, unsigned length);
 
     // Can’t use "using" here due to a bug in the RVCT compiler.
     bool set(TypedArrayBase<unsigned int>* array, unsigned offset) { return TypedArrayBase<unsigned int>::set(array, offset); }
     void set(unsigned index, double value) { IntegralTypedArrayBase<unsigned int>::set(index, value); }
 
-    PassRefPtr<Uint32Array> subarray(int start) const;
-    PassRefPtr<Uint32Array> subarray(int start, int end) const;
+    inline PassRefPtr<Uint32Array> subarray(int start) const;
+    inline PassRefPtr<Uint32Array> subarray(int start, int end) const;
 
 private:
-    Uint32Array(PassRefPtr<ArrayBuffer> buffer,
+    inline Uint32Array(PassRefPtr<ArrayBuffer>,
                           unsigned byteOffset,
                           unsigned length);
     // Make constructor visible to superclass.
@@ -56,6 +56,36 @@ private:
     // Overridden from ArrayBufferView.
     virtual bool isUnsignedIntArray() const { return true; }
 };
+
+PassRefPtr<Uint32Array> Uint32Array::create(unsigned length)
+{
+    return TypedArrayBase<unsigned int>::create<Uint32Array>(length);
+}
+
+PassRefPtr<Uint32Array> Uint32Array::create(unsigned int* array, unsigned length)
+{
+    return TypedArrayBase<unsigned int>::create<Uint32Array>(array, length);
+}
+
+PassRefPtr<Uint32Array> Uint32Array::create(PassRefPtr<ArrayBuffer> buffer, unsigned byteOffset, unsigned length)
+{
+    return TypedArrayBase<unsigned int>::create<Uint32Array>(buffer, byteOffset, length);
+}
+
+Uint32Array::Uint32Array(PassRefPtr<ArrayBuffer> buffer, unsigned byteOffset, unsigned length)
+    : IntegralTypedArrayBase<unsigned int>(buffer, byteOffset, length)
+{
+}
+
+PassRefPtr<Uint32Array> Uint32Array::subarray(int start) const
+{
+    return subarray(start, length());
+}
+
+PassRefPtr<Uint32Array> Uint32Array::subarray(int start, int end) const
+{
+    return subarrayImpl<Uint32Array>(start, end);
+}
 
 } // namespace WTF
 

@@ -496,14 +496,18 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/runtime/WriteBarrier.h \
 	Source/JavaScriptCore/wtf/Alignment.h \
 	Source/JavaScriptCore/wtf/AlwaysInline.h \
+	Source/JavaScriptCore/wtf/ArrayBuffer.cpp \
+	Source/JavaScriptCore/wtf/ArrayBuffer.h \
+	Source/JavaScriptCore/wtf/ArrayBufferView.cpp \
+	Source/JavaScriptCore/wtf/ArrayBufferView.h \
 	Source/JavaScriptCore/wtf/ASCIICType.h \
 	Source/JavaScriptCore/wtf/Assertions.cpp \
 	Source/JavaScriptCore/wtf/Assertions.h \
 	Source/JavaScriptCore/wtf/Atomics.h \
 	Source/JavaScriptCore/wtf/AVLTree.h \
+	Source/JavaScriptCore/wtf/Bitmap.h \
 	Source/JavaScriptCore/wtf/BitVector.cpp \
 	Source/JavaScriptCore/wtf/BitVector.h \
-	Source/JavaScriptCore/wtf/Bitmap.h \
 	Source/JavaScriptCore/wtf/BlockStack.h \
 	Source/JavaScriptCore/wtf/BloomFilter.h \
 	Source/JavaScriptCore/wtf/BoundsCheckedPointer.h \
@@ -520,30 +524,30 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/wtf/DateMath.h \
 	Source/JavaScriptCore/wtf/DecimalNumber.cpp \
 	Source/JavaScriptCore/wtf/DecimalNumber.h \
-	Source/JavaScriptCore/wtf/dtoa/bignum-dtoa.cc \
-	Source/JavaScriptCore/wtf/dtoa/bignum.cc \
-	Source/JavaScriptCore/wtf/dtoa/cached-powers.cc \
-	Source/JavaScriptCore/wtf/dtoa/diy-fp.cc \
-	Source/JavaScriptCore/wtf/dtoa/double-conversion.cc \
-	Source/JavaScriptCore/wtf/dtoa/fast-dtoa.cc \
-	Source/JavaScriptCore/wtf/dtoa/fixed-dtoa.cc \
-	Source/JavaScriptCore/wtf/dtoa/strtod.cc \
-	Source/JavaScriptCore/wtf/dtoa/bignum-dtoa.h \
-	Source/JavaScriptCore/wtf/dtoa/bignum.h \
-	Source/JavaScriptCore/wtf/dtoa/cached-powers.h \
-	Source/JavaScriptCore/wtf/dtoa/diy-fp.h \
-	Source/JavaScriptCore/wtf/dtoa/double-conversion.h \
-	Source/JavaScriptCore/wtf/dtoa/double.h \
-	Source/JavaScriptCore/wtf/dtoa/fast-dtoa.h \
-	Source/JavaScriptCore/wtf/dtoa/fixed-dtoa.h \
-	Source/JavaScriptCore/wtf/dtoa/strtod.h \
-	Source/JavaScriptCore/wtf/dtoa/utils.h \
 	Source/JavaScriptCore/wtf/Decoder.h \
 	Source/JavaScriptCore/wtf/Deque.h \
 	Source/JavaScriptCore/wtf/DisallowCType.h \
 	Source/JavaScriptCore/wtf/DoublyLinkedList.h \
 	Source/JavaScriptCore/wtf/dtoa.cpp \
 	Source/JavaScriptCore/wtf/dtoa.h \
+	Source/JavaScriptCore/wtf/dtoa/bignum-dtoa.cc \
+	Source/JavaScriptCore/wtf/dtoa/bignum-dtoa.h \
+	Source/JavaScriptCore/wtf/dtoa/bignum.cc \
+	Source/JavaScriptCore/wtf/dtoa/bignum.h \
+	Source/JavaScriptCore/wtf/dtoa/cached-powers.cc \
+	Source/JavaScriptCore/wtf/dtoa/cached-powers.h \
+	Source/JavaScriptCore/wtf/dtoa/diy-fp.cc \
+	Source/JavaScriptCore/wtf/dtoa/diy-fp.h \
+	Source/JavaScriptCore/wtf/dtoa/double-conversion.cc \
+	Source/JavaScriptCore/wtf/dtoa/double-conversion.h \
+	Source/JavaScriptCore/wtf/dtoa/double.h \
+	Source/JavaScriptCore/wtf/dtoa/fast-dtoa.cc \
+	Source/JavaScriptCore/wtf/dtoa/fast-dtoa.h \
+	Source/JavaScriptCore/wtf/dtoa/fixed-dtoa.cc \
+	Source/JavaScriptCore/wtf/dtoa/fixed-dtoa.h \
+	Source/JavaScriptCore/wtf/dtoa/strtod.cc \
+	Source/JavaScriptCore/wtf/dtoa/strtod.h \
+	Source/JavaScriptCore/wtf/dtoa/utils.h \
 	Source/JavaScriptCore/wtf/DynamicAnnotations.cpp \
 	Source/JavaScriptCore/wtf/DynamicAnnotations.h \
 	Source/JavaScriptCore/wtf/Encoder.h \
@@ -551,6 +555,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/wtf/FastMalloc.cpp \
 	Source/JavaScriptCore/wtf/FastMalloc.h \
 	Source/JavaScriptCore/wtf/FixedArray.h \
+	Source/JavaScriptCore/wtf/Float32Array.h \
+	Source/JavaScriptCore/wtf/Float64Array.h \
 	Source/JavaScriptCore/wtf/Forward.h \
 	Source/JavaScriptCore/wtf/GetPtr.h \
 	Source/JavaScriptCore/wtf/gobject/GOwnPtr.cpp \
@@ -569,6 +575,10 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/wtf/HashTraits.h \
 	Source/JavaScriptCore/wtf/HexNumber.h \
 	Source/JavaScriptCore/wtf/InlineASM.h \
+	Source/JavaScriptCore/wtf/Int16Array.h \
+	Source/JavaScriptCore/wtf/Int32Array.h \
+	Source/JavaScriptCore/wtf/Int8Array.h \
+	Source/JavaScriptCore/wtf/IntegralTypedArrayBase.h \
 	Source/JavaScriptCore/wtf/ListHashSet.h \
 	Source/JavaScriptCore/wtf/ListRefPtr.h \
 	Source/JavaScriptCore/wtf/Locker.h \
@@ -578,12 +588,12 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/wtf/MathExtras.h \
 	Source/JavaScriptCore/wtf/MD5.cpp \
 	Source/JavaScriptCore/wtf/MD5.h \
+	Source/JavaScriptCore/wtf/MessageQueue.h \
 	Source/JavaScriptCore/wtf/MetaAllocator.cpp \
 	Source/JavaScriptCore/wtf/MetaAllocator.h \
 	Source/JavaScriptCore/wtf/MetaAllocatorHandle.h \
-	Source/JavaScriptCore/wtf/MessageQueue.h \
-	Source/JavaScriptCore/wtf/NonCopyingSort.h \
 	Source/JavaScriptCore/wtf/Noncopyable.h \
+	Source/JavaScriptCore/wtf/NonCopyingSort.h \
 	Source/JavaScriptCore/wtf/NotFound.h \
 	Source/JavaScriptCore/wtf/NullPtr.h \
 	Source/JavaScriptCore/wtf/OSAllocator.h \
@@ -591,24 +601,24 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/wtf/OSRandomSource.h \
 	Source/JavaScriptCore/wtf/OwnArrayPtr.h \
 	Source/JavaScriptCore/wtf/OwnFastMallocPtr.h \
-	Source/JavaScriptCore/wtf/OwnPtrCommon.h \
 	Source/JavaScriptCore/wtf/OwnPtr.h \
+	Source/JavaScriptCore/wtf/OwnPtrCommon.h \
 	Source/JavaScriptCore/wtf/PackedIntVector.h \
 	Source/JavaScriptCore/wtf/PageAllocation.h \
 	Source/JavaScriptCore/wtf/PageAllocationAligned.cpp \
 	Source/JavaScriptCore/wtf/PageAllocationAligned.h \
-	Source/JavaScriptCore/wtf/PageReservation.h \
 	Source/JavaScriptCore/wtf/PageBlock.cpp \
 	Source/JavaScriptCore/wtf/PageBlock.h \
-	Source/JavaScriptCore/wtf/PassOwnArrayPtr.h \
-	Source/JavaScriptCore/wtf/PassOwnPtr.h \
-	Source/JavaScriptCore/wtf/PassRefPtr.h \
-	Source/JavaScriptCore/wtf/PassTraits.h \
+	Source/JavaScriptCore/wtf/PageReservation.h \
 	Source/JavaScriptCore/wtf/ParallelJobs.h \
 	Source/JavaScriptCore/wtf/ParallelJobsGeneric.cpp \
 	Source/JavaScriptCore/wtf/ParallelJobsGeneric.h \
 	Source/JavaScriptCore/wtf/ParallelJobsLibdispatch.h \
 	Source/JavaScriptCore/wtf/ParallelJobsOpenMP.h \
+	Source/JavaScriptCore/wtf/PassOwnArrayPtr.h \
+	Source/JavaScriptCore/wtf/PassOwnPtr.h \
+	Source/JavaScriptCore/wtf/PassRefPtr.h \
+	Source/JavaScriptCore/wtf/PassTraits.h \
 	Source/JavaScriptCore/wtf/Platform.h \
 	Source/JavaScriptCore/wtf/PossiblyNull.h \
 	Source/JavaScriptCore/wtf/RandomNumber.cpp \
@@ -656,26 +666,30 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/wtf/text/TextPosition.h \
 	Source/JavaScriptCore/wtf/text/WTFString.cpp \
 	Source/JavaScriptCore/wtf/text/WTFString.h \
-	Source/JavaScriptCore/wtf/threads/BinarySemaphore.cpp \
-	Source/JavaScriptCore/wtf/threads/BinarySemaphore.h \
 	Source/JavaScriptCore/wtf/ThreadIdentifierDataPthreads.cpp \
 	Source/JavaScriptCore/wtf/ThreadIdentifierDataPthreads.h \
-	Source/JavaScriptCore/wtf/ThreadRestrictionVerifier.h \
 	Source/JavaScriptCore/wtf/Threading.cpp \
 	Source/JavaScriptCore/wtf/Threading.h \
 	Source/JavaScriptCore/wtf/ThreadingPrimitives.h \
 	Source/JavaScriptCore/wtf/ThreadingPthreads.cpp \
+	Source/JavaScriptCore/wtf/ThreadRestrictionVerifier.h \
+	Source/JavaScriptCore/wtf/threads/BinarySemaphore.cpp \
+	Source/JavaScriptCore/wtf/threads/BinarySemaphore.h \
 	Source/JavaScriptCore/wtf/ThreadSafeRefCounted.h \
 	Source/JavaScriptCore/wtf/ThreadSpecific.h \
+	Source/JavaScriptCore/wtf/TypedArrayBase.h \
 	Source/JavaScriptCore/wtf/TypeTraits.cpp \
 	Source/JavaScriptCore/wtf/TypeTraits.h \
-	Source/JavaScriptCore/wtf/UnionFind.h \
+	Source/JavaScriptCore/wtf/Uint16Array.h \
+	Source/JavaScriptCore/wtf/Uint32Array.h \
+	Source/JavaScriptCore/wtf/Uint8Array.h \
 	Source/JavaScriptCore/wtf/unicode/CharacterNames.h \
-	Source/JavaScriptCore/wtf/unicode/CollatorDefault.cpp \
 	Source/JavaScriptCore/wtf/unicode/Collator.h \
+	Source/JavaScriptCore/wtf/unicode/CollatorDefault.cpp \
 	Source/JavaScriptCore/wtf/unicode/Unicode.h \
 	Source/JavaScriptCore/wtf/unicode/UTF8.cpp \
 	Source/JavaScriptCore/wtf/unicode/UTF8.h \
+	Source/JavaScriptCore/wtf/UnionFind.h \
 	Source/JavaScriptCore/wtf/UnusedParam.h \
 	Source/JavaScriptCore/wtf/ValueCheck.h \
 	Source/JavaScriptCore/wtf/Vector.h \

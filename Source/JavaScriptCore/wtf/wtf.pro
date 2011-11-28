@@ -25,6 +25,8 @@ QT -= gui
 HEADERS += \
     Alignment.h \
     AlwaysInline.h \
+    ArrayBuffer.h \
+    ArrayBufferView.h \
     ASCIICType.h \
     Assertions.h \
     Atomics.h \
@@ -44,6 +46,7 @@ HEADERS += \
     Decoder.h \
     Deque.h \
     DisallowCType.h \
+    dtoa.h \
     dtoa/bignum-dtoa.h \
     dtoa/bignum.h \
     dtoa/cached-powers.h \
@@ -52,7 +55,6 @@ HEADERS += \
     dtoa/double.h \
     dtoa/fast-dtoa.h \
     dtoa/fixed-dtoa.h \
-    dtoa.h \
     dtoa/strtod.h \
     dtoa/utils.h \
     DynamicAnnotations.h \
@@ -60,6 +62,8 @@ HEADERS += \
     FastAllocBase.h \
     FastMalloc.h \
     FixedArray.h \
+    Float32Array.h \
+    Float64Array.h \
     Forward.h \
     GetPtr.h \
     HashCountedSet.h \
@@ -70,6 +74,9 @@ HEADERS += \
     HashTable.h \
     HashTraits.h \
     HexNumber.h \
+    Int16Array.h \
+    Int32Array.h \
+    Int8Array.h \
     ListHashSet.h \
     ListRefPtr.h \
     Locker.h \
@@ -88,15 +95,15 @@ HEADERS += \
     OSRandomSource.h \
     OwnArrayPtr.h \
     OwnFastMallocPtr.h \
-    OwnPtrCommon.h \
     OwnPtr.h \
+    OwnPtrCommon.h \
     PackedIntVector.h \
-    PageAllocationAligned.h \
     PageAllocation.h \
+    PageAllocationAligned.h \
     PageBlock.h \
     PageReservation.h \
-    ParallelJobsGeneric.h \
     ParallelJobs.h \
+    ParallelJobsGeneric.h \
     ParallelJobsLibdispatch.h \
     ParallelJobsOpenMP.h \
     PassOwnArrayPtr.h \
@@ -142,6 +149,9 @@ HEADERS += \
     ThreadSafeRefCounted.h \
     ThreadSpecific.h \
     TypeTraits.h \
+    Uint16Array.h \
+    Uint32Array.h \
+    Uint8Array.h \
     unicode/CharacterNames.h \
     unicode/Collator.h \
     unicode/icu/UnicodeIcu.h \
@@ -157,7 +167,10 @@ HEADERS += \
     VMTags.h \
     WTFThreadData.h
 
+
 SOURCES += \
+    ArrayBuffer.cpp \
+    ArrayBufferView.cpp \
     Assertions.cpp \
     BitVector.cpp \
     ByteArray.cpp \

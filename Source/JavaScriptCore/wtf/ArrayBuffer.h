@@ -23,16 +23,86 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#include "ArrayBuffer.h"
-#include "ArrayBufferView.h"
+#ifndef ArrayBuffer_h
+#define ArrayBuffer_h
 
-#include <wtf/RefPtr.h>
+#include <wtf/HashSet.h>
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 
 namespace WTF {
 
-static int clampValue(int x, int left, int right)
+class ArrayBuffer;
+class ArrayBufferView;
+
+class ArrayBufferContents {
+    WTF_MAKE_NONCOPYABLE(ArrayBufferContents);
+public:
+    ArrayBufferContents() 
+        : m_data(0)
+        , m_sizeInBytes(0)
+    { }
+
+    inline ~ArrayBufferContents();
+
+    void* data() { return m_data; }
+    unsigned sizeInBytes() { return m_sizeInBytes; }
+
+private:
+    ArrayBufferContents(void* data, unsigned sizeInBytes) 
+        : m_data(data)
+        , m_sizeInBytes(sizeInBytes)
+    { }
+
+    friend class ArrayBuffer;
+
+    static inline void tryAllocate(unsigned numElements, unsigned elementByteSize, ArrayBufferContents&);
+    void transfer(ArrayBufferContents& other) 
+    {
+        ASSERT(!other.m_data);
+        other.m_data = m_data;
+        other.m_sizeInBytes = m_sizeInBytes;
+        m_data = 0; 
+        m_sizeInBytes = 0; 
+    }
+
+    void* m_data;
+    unsigned m_sizeInBytes;
+};
+
+class ArrayBuffer : public RefCounted<ArrayBuffer> {
+public:
+    static inline PassRefPtr<ArrayBuffer> create(unsigned numElements, unsigned elementByteSize);
+    static inline PassRefPtr<ArrayBuffer> create(ArrayBuffer*);
+    static inline PassRefPtr<ArrayBuffer> create(const void* source, unsigned byteLength);
+    static inline PassRefPtr<ArrayBuffer> create(ArrayBufferContents&);
+
+    inline void* data();
+    inline const void* data() const;
+    inline unsigned byteLength() const;
+
+    inline PassRefPtr<ArrayBuffer> slice(int begin, int end) const;
+    inline PassRefPtr<ArrayBuffer> slice(int begin) const;
+
+    void addView(ArrayBufferView*);
+    void removeView(ArrayBufferView*);
+
+    bool transfer(ArrayBufferContents&, Vector<ArrayBufferView*>& neuteredViews);
+
+    ~ArrayBuffer() { }
+
+private:
+    inline ArrayBuffer(ArrayBufferContents&);
+    inline PassRefPtr<ArrayBuffer> sliceImpl(unsigned begin, unsigned end) const;
+    inline unsigned clampIndex(int index) const;
+    static inline int clampValue(int x, int left, int right);
+
+    ArrayBufferContents m_contents;
+    ArrayBufferView* m_firstView;
+};
+
+int ArrayBuffer::clampValue(int x, int left, int right)
 {
     ASSERT(left <= right);
     if (x < left)
@@ -117,31 +187,6 @@ unsigned ArrayBuffer::clampIndex(int index) const
     return clampValue(index, 0, currentLength);
 }
 
-bool ArrayBuffer::transfer(ArrayBufferContents& result, Vector<ArrayBufferView*>& neuteredViews)
-{
-    RefPtr<ArrayBuffer> keepAlive(this);
-
-    if (!m_contents.m_data) {
-        result.m_data = 0;
-        return false;
-    }
-
-    m_contents.transfer(result);
-
-    while (m_firstView) {
-        ArrayBufferView* current = m_firstView;
-        removeView(current);
-        current->neuter();
-        neuteredViews.append(current);
-    }
-    return true;
-}
-
-ArrayBufferContents::~ArrayBufferContents()
-{
-    WTF::fastFree(m_data);
-}
-
 void ArrayBufferContents::tryAllocate(unsigned numElements, unsigned elementByteSize, ArrayBufferContents& result)
 {
     // Do not allow 32-bit overflow of the total size.
@@ -162,26 +207,13 @@ void ArrayBufferContents::tryAllocate(unsigned numElements, unsigned elementByte
     result.m_data = 0;
 }
 
-void ArrayBuffer::addView(ArrayBufferView* view)
+ArrayBufferContents::~ArrayBufferContents()
 {
-    view->m_buffer = this;
-    view->m_prevView = 0;
-    view->m_nextView = m_firstView;
-    if (m_firstView)
-        m_firstView->m_prevView = view;
-    m_firstView = view;
+    WTF::fastFree(m_data);
 }
 
-void ArrayBuffer::removeView(ArrayBufferView* view)
-{
-    ASSERT(this == view->m_buffer);
-    if (view->m_nextView)
-        view->m_nextView->m_prevView = view->m_prevView;
-    if (view->m_prevView)
-        view->m_prevView->m_nextView = view->m_nextView;
-    if (m_firstView == view)
-        m_firstView = view->m_nextView;
-    view->m_prevView = view->m_nextView = 0;
-}
+} // namespace WTF
 
-}
+using WTF::ArrayBuffer;
+
+#endif // ArrayBuffer_h

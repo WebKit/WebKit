@@ -31,14 +31,14 @@
 #include "AudioBus.h"
 #include "AudioUtilities.h"
 #include "FFTFrame.h"
-#include "Float32Array.h"
-#include "Uint8Array.h"
 
 #include <algorithm>
 #include <limits.h>
 #include <wtf/Complex.h>
+#include <wtf/Float32Array.h>
 #include <wtf/MainThread.h>
 #include <wtf/MathExtras.h>
+#include <wtf/Uint8Array.h>
 
 using namespace std;
 

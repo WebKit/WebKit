@@ -1,6 +1,5 @@
 /*
  * Copyright (C) 2009 Apple Inc. All rights reserved.
- * Copyright (C) 2009 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,38 +24,32 @@
  */
 
 #include "config.h"
-#include "Int8Array.h"
+#include "ArrayBufferView.h"
+
+#include "ArrayBuffer.h"
 
 namespace WTF {
 
-PassRefPtr<Int8Array> Int8Array::create(unsigned length)
+ArrayBufferView::ArrayBufferView(PassRefPtr<ArrayBuffer> buffer,
+                       unsigned byteOffset)
+        : m_byteOffset(byteOffset)
+        , m_buffer(buffer)
 {
-    return TypedArrayBase<signed char>::create<Int8Array>(length);
+    m_baseAddress = m_buffer ? (static_cast<char*>(m_buffer->data()) + m_byteOffset) : 0;
+    if (m_buffer) 
+        m_buffer->addView(this);
 }
 
-PassRefPtr<Int8Array> Int8Array::create(signed char* array, unsigned length)
+ArrayBufferView::~ArrayBufferView()
 {
-    return TypedArrayBase<signed char>::create<Int8Array>(array, length);
+    if (m_buffer)
+        m_buffer->removeView(this);
 }
 
-PassRefPtr<Int8Array> Int8Array::create(PassRefPtr<ArrayBuffer> buffer, unsigned byteOffset, unsigned length)
+void ArrayBufferView::neuter()
 {
-    return TypedArrayBase<signed char>::create<Int8Array>(buffer, byteOffset, length);
-}
-
-Int8Array::Int8Array(PassRefPtr<ArrayBuffer> buffer, unsigned byteOffset, unsigned length)
-    : IntegralTypedArrayBase<signed char>(buffer, byteOffset, length)
-{
-}
-
-PassRefPtr<Int8Array> Int8Array::subarray(int start) const
-{
-    return subarray(start, length());
-}
-
-PassRefPtr<Int8Array> Int8Array::subarray(int start, int end) const
-{
-    return subarrayImpl<Int8Array>(start, end);
+    m_buffer = 0;
+    m_byteOffset = 0;
 }
 
 }

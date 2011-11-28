@@ -457,6 +457,20 @@
 		A7386554118697B400540279 /* SpecializedThunkJIT.h in Headers */ = {isa = PBXBuildFile; fileRef = A7386551118697B400540279 /* SpecializedThunkJIT.h */; };
 		A7386555118697B400540279 /* ThunkGenerators.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7386552118697B400540279 /* ThunkGenerators.cpp */; };
 		A7386556118697B400540279 /* ThunkGenerators.h in Headers */ = {isa = PBXBuildFile; fileRef = A7386553118697B400540279 /* ThunkGenerators.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A73BE168148420520091204B /* ArrayBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A73BE154148420520091204B /* ArrayBuffer.cpp */; };
+		A73BE169148420520091204B /* ArrayBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = A73BE155148420520091204B /* ArrayBuffer.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A73BE16A148420520091204B /* ArrayBufferView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A73BE156148420520091204B /* ArrayBufferView.cpp */; };
+		A73BE16B148420520091204B /* ArrayBufferView.h in Headers */ = {isa = PBXBuildFile; fileRef = A73BE157148420520091204B /* ArrayBufferView.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A73BE16D148420520091204B /* Float32Array.h in Headers */ = {isa = PBXBuildFile; fileRef = A73BE159148420520091204B /* Float32Array.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A73BE16F148420520091204B /* Float64Array.h in Headers */ = {isa = PBXBuildFile; fileRef = A73BE15B148420520091204B /* Float64Array.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A73BE171148420520091204B /* Int8Array.h in Headers */ = {isa = PBXBuildFile; fileRef = A73BE15D148420520091204B /* Int8Array.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A73BE173148420520091204B /* Int16Array.h in Headers */ = {isa = PBXBuildFile; fileRef = A73BE15F148420520091204B /* Int16Array.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A73BE175148420520091204B /* Int32Array.h in Headers */ = {isa = PBXBuildFile; fileRef = A73BE161148420520091204B /* Int32Array.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A73BE177148420520091204B /* Uint8Array.h in Headers */ = {isa = PBXBuildFile; fileRef = A73BE163148420520091204B /* Uint8Array.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A73BE179148420520091204B /* Uint16Array.h in Headers */ = {isa = PBXBuildFile; fileRef = A73BE165148420520091204B /* Uint16Array.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A73BE17B148420520091204B /* Uint32Array.h in Headers */ = {isa = PBXBuildFile; fileRef = A73BE167148420520091204B /* Uint32Array.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A73BE17E148420840091204B /* TypedArrayBase.h in Headers */ = {isa = PBXBuildFile; fileRef = A73BE17D148420840091204B /* TypedArrayBase.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A73BE180148420A80091204B /* IntegralTypedArrayBase.h in Headers */ = {isa = PBXBuildFile; fileRef = A73BE17F148420A80091204B /* IntegralTypedArrayBase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A7482B9311671147003B0712 /* JSWeakObjectMapRefPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = A7482B791166CDEA003B0712 /* JSWeakObjectMapRefPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A7482B9411671147003B0712 /* JSWeakObjectMapRefPrivate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7482B7A1166CDEA003B0712 /* JSWeakObjectMapRefPrivate.cpp */; };
 		A7482E93116A7CAD003B0712 /* JSWeakObjectMapRefInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = A7482E37116A697B003B0712 /* JSWeakObjectMapRefInternal.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1265,6 +1279,20 @@
 		A7386551118697B400540279 /* SpecializedThunkJIT.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpecializedThunkJIT.h; sourceTree = "<group>"; };
 		A7386552118697B400540279 /* ThunkGenerators.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ThunkGenerators.cpp; sourceTree = "<group>"; };
 		A7386553118697B400540279 /* ThunkGenerators.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThunkGenerators.h; sourceTree = "<group>"; };
+		A73BE154148420520091204B /* ArrayBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ArrayBuffer.cpp; sourceTree = "<group>"; };
+		A73BE155148420520091204B /* ArrayBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArrayBuffer.h; sourceTree = "<group>"; };
+		A73BE156148420520091204B /* ArrayBufferView.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ArrayBufferView.cpp; sourceTree = "<group>"; };
+		A73BE157148420520091204B /* ArrayBufferView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArrayBufferView.h; sourceTree = "<group>"; };
+		A73BE159148420520091204B /* Float32Array.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Float32Array.h; sourceTree = "<group>"; };
+		A73BE15B148420520091204B /* Float64Array.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Float64Array.h; sourceTree = "<group>"; };
+		A73BE15D148420520091204B /* Int8Array.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Int8Array.h; sourceTree = "<group>"; };
+		A73BE15F148420520091204B /* Int16Array.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Int16Array.h; sourceTree = "<group>"; };
+		A73BE161148420520091204B /* Int32Array.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Int32Array.h; sourceTree = "<group>"; };
+		A73BE163148420520091204B /* Uint8Array.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Uint8Array.h; sourceTree = "<group>"; };
+		A73BE165148420520091204B /* Uint16Array.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Uint16Array.h; sourceTree = "<group>"; };
+		A73BE167148420520091204B /* Uint32Array.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Uint32Array.h; sourceTree = "<group>"; };
+		A73BE17D148420840091204B /* TypedArrayBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TypedArrayBase.h; sourceTree = "<group>"; };
+		A73BE17F148420A80091204B /* IntegralTypedArrayBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IntegralTypedArrayBase.h; sourceTree = "<group>"; };
 		A7482B791166CDEA003B0712 /* JSWeakObjectMapRefPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWeakObjectMapRefPrivate.h; sourceTree = "<group>"; };
 		A7482B7A1166CDEA003B0712 /* JSWeakObjectMapRefPrivate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWeakObjectMapRefPrivate.cpp; sourceTree = "<group>"; };
 		A7482E37116A697B003B0712 /* JSWeakObjectMapRefInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWeakObjectMapRefInternal.h; sourceTree = "<group>"; };
@@ -1862,21 +1890,20 @@
 		65162EF108E6A21C007556CD /* wtf */ = {
 			isa = PBXGroup;
 			children = (
-				C22C524813FAF6EF00B7DC0D /* dtoa */,
-				06D358A00DAAD9C4003B174E /* mac */,
-				8656573E115BE35200291F40 /* text */,
-				1A082776142168D60090CCAC /* threads */,
-				E195678D09E7CF1200B89D13 /* unicode */,
 				A1D764511354448B00C5C7C0 /* Alignment.h */,
 				93AA4F770957251F0084B3A7 /* AlwaysInline.h */,
+				A73BE154148420520091204B /* ArrayBuffer.cpp */,
+				A73BE155148420520091204B /* ArrayBuffer.h */,
+				A73BE156148420520091204B /* ArrayBufferView.cpp */,
+				A73BE157148420520091204B /* ArrayBufferView.h */,
 				938C4F690CA06BC700D9310A /* ASCIICType.h */,
 				65E217B808E7EECC0023E5F6 /* Assertions.cpp */,
 				65E217B708E7EECC0023E5F6 /* Assertions.h */,
 				BC5F7BBB11823B590052C02C /* Atomics.h */,
 				E1A596370DE3E1C300C17E37 /* AVLTree.h */,
+				DD377CBB12072C18006A2517 /* Bitmap.h */,
 				0F16D724142C39A200CF784A /* BitVector.cpp */,
 				0FD82F491428069200179C94 /* BitVector.h */,
-				DD377CBB12072C18006A2517 /* Bitmap.h */,
 				A7C40C07130B057D00D002A1 /* BlockStack.h */,
 				E4D8CE9B12FC42E100BC9F5A /* BloomFilter.h */,
 				0FD82E82141F3FC900179C94 /* BoundsCheckedPointer.h */,
@@ -1898,6 +1925,7 @@
 				5186111D0CC824830081412B /* Deque.h */,
 				938C4F6B0CA06BCE00D9310A /* DisallowCType.h */,
 				14456A311314657800212CA3 /* DoublyLinkedList.h */,
+				C22C524813FAF6EF00B7DC0D /* dtoa */,
 				651F6412039D5B5F0078395C /* dtoa.cpp */,
 				651F6413039D5B5F0078395C /* dtoa.h */,
 				D75AF59512F8CB9500FC0ADF /* DynamicAnnotations.cpp */,
@@ -1907,6 +1935,8 @@
 				65E217B908E7EECC0023E5F6 /* FastMalloc.cpp */,
 				65E217BA08E7EECC0023E5F6 /* FastMalloc.h */,
 				A7F19ECD11DD490900931E70 /* FixedArray.h */,
+				A73BE159148420520091204B /* Float32Array.h */,
+				A73BE15B148420520091204B /* Float64Array.h */,
 				935AF46909E9D9DB00ACD1D8 /* Forward.h */,
 				93B6A0DE0AA64DA40076DE27 /* GetPtr.h */,
 				657EEBBF094E445E008C9C7B /* HashCountedSet.h */,
@@ -1919,9 +1949,14 @@
 				65DFC92F08EA173A00F7300B /* HashTraits.h */,
 				7186A6E813100B57004479E1 /* HexNumber.h */,
 				8699AA60146A0E2B00E23A73 /* InlineASM.h */,
+				A73BE15F148420520091204B /* Int16Array.h */,
+				A73BE161148420520091204B /* Int32Array.h */,
+				A73BE15D148420520091204B /* Int8Array.h */,
+				A73BE17F148420A80091204B /* IntegralTypedArrayBase.h */,
 				657EB7450B708F540063461B /* ListHashSet.h */,
 				148A1626095D16BB00666D0D /* ListRefPtr.h */,
 				E1EE79270D6C964500FEA3BA /* Locker.h */,
+				06D358A00DAAD9C4003B174E /* mac */,
 				06D358A20DAAD9C4003B174E /* MainThread.cpp */,
 				06D358A30DAAD9C4003B174E /* MainThread.h */,
 				5DBD18AF0C5401A700C15EAE /* MallocZoneSupport.h */,
@@ -1991,6 +2026,7 @@
 				6541BD6F08E80A17002CBEE7 /* TCSpinLock.h */,
 				6541BD7008E80A17002CBEE7 /* TCSystemAlloc.cpp */,
 				6541BD7108E80A17002CBEE7 /* TCSystemAlloc.h */,
+				8656573E115BE35200291F40 /* text */,
 				18BAB52710DADFCD000D945B /* ThreadIdentifierDataPthreads.cpp */,
 				18BAB52810DADFCD000D945B /* ThreadIdentifierDataPthreads.h */,
 				5D6A566A0F05995500266145 /* Threading.cpp */,
@@ -1998,10 +2034,16 @@
 				BC5F7BBC11823B590052C02C /* ThreadingPrimitives.h */,
 				E1EE793C0D6C9B9200FEA3BA /* ThreadingPthreads.cpp */,
 				0BAC949E1338728400CF135B /* ThreadRestrictionVerifier.h */,
+				1A082776142168D60090CCAC /* threads */,
 				BC5F7BBD11823B590052C02C /* ThreadSafeRefCounted.h */,
 				E1B7C8BD0DA3A3360074B0DC /* ThreadSpecific.h */,
+				A73BE17D148420840091204B /* TypedArrayBase.h */,
 				0B330C260F38C62300692DE3 /* TypeTraits.cpp */,
 				0B4D7E620F319AC800AD7E58 /* TypeTraits.h */,
+				A73BE165148420520091204B /* Uint16Array.h */,
+				A73BE167148420520091204B /* Uint32Array.h */,
+				A73BE163148420520091204B /* Uint8Array.h */,
+				E195678D09E7CF1200B89D13 /* unicode */,
 				0FD52AAC1430359D0026DC9F /* UnionFind.h */,
 				935AF46B09E9D9DB00ACD1D8 /* UnusedParam.h */,
 				E17FF770112131D200076A19 /* ValueCheck.h */,
@@ -2923,6 +2965,18 @@
 				0F5F08CF146C7633000472A9 /* UnconditionalFinalizer.h in Headers */,
 				978801411471AD920041B016 /* JSDateMath.h in Headers */,
 				0F2C556F14738F3100121E4F /* DFGCodeBlocks.h in Headers */,
+				A73BE169148420520091204B /* ArrayBuffer.h in Headers */,
+				A73BE16B148420520091204B /* ArrayBufferView.h in Headers */,
+				A73BE16D148420520091204B /* Float32Array.h in Headers */,
+				A73BE16F148420520091204B /* Float64Array.h in Headers */,
+				A73BE171148420520091204B /* Int8Array.h in Headers */,
+				A73BE173148420520091204B /* Int16Array.h in Headers */,
+				A73BE175148420520091204B /* Int32Array.h in Headers */,
+				A73BE177148420520091204B /* Uint8Array.h in Headers */,
+				A73BE179148420520091204B /* Uint16Array.h in Headers */,
+				A73BE17B148420520091204B /* Uint32Array.h in Headers */,
+				A73BE17E148420840091204B /* TypedArrayBase.h in Headers */,
+				A73BE180148420A80091204B /* IntegralTypedArrayBase.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3458,6 +3512,8 @@
 				0FC097A1146B28CA00CF2442 /* DFGThunks.cpp in Sources */,
 				978801401471AD920041B016 /* JSDateMath.cpp in Sources */,
 				0F2C557014738F3500121E4F /* DFGCodeBlocks.cpp in Sources */,
+				A73BE168148420520091204B /* ArrayBuffer.cpp in Sources */,
+				A73BE16A148420520091204B /* ArrayBufferView.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

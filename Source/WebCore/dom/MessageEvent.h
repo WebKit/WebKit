@@ -28,13 +28,13 @@
 #ifndef MessageEvent_h
 #define MessageEvent_h
 
-#include "ArrayBuffer.h"
 #include "Blob.h"
 #include "DOMWindow.h"
 #include "Event.h"
 #include "MessagePort.h"
 #include "ScriptValue.h"
 #include "SerializedScriptValue.h"
+#include <wtf/ArrayBuffer.h>
 
 namespace WebCore {
 

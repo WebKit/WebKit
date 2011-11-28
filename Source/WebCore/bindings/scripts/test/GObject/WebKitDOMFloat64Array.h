@@ -46,6 +46,17 @@ struct _WebKitDOMFloat64ArrayClass {
 WEBKIT_API GType
 webkit_dom_float64array_get_type (void);
 
+/**
+ * webkit_dom_float64array_foo:
+ * @self: A #WebKitDOMFloat64Array
+ * @array: A #WebKitDOMFloat32Array
+ *
+ * Returns:
+ *
+**/
+WEBKIT_API void
+webkit_dom_float64array_foo(WebKitDOMFloat64Array* self, WebKitDOMFloat32Array* array);
+
 G_END_DECLS
 
 #endif /* WebKitDOMFloat64Array_h */

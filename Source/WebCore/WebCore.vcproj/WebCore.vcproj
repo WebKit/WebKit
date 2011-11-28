@@ -52958,22 +52958,6 @@
 			Name="html"
 			>
 			<File
-				RelativePath="..\html\canvas\ArrayBuffer.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\html\canvas\ArrayBuffer.h"
-				>
-			</File>
-			<File
-				RelativePath="..\html\canvas\ArrayBufferView.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\html\canvas\ArrayBufferView.h"
-				>
-			</File>
-			<File
 				RelativePath="..\fileapi\AsyncFileWriter.h"
 				>
 			</File>
@@ -53463,22 +53447,6 @@
 			</File>
 			<File
 				RelativePath="..\fileapi\OperationNotAllowedException.h"
-				>
-			</File>
-			<File
-				RelativePath="..\html\canvas\Float32Array.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\html\canvas\Float32Array.h"
-				>
-			</File>
-			<File
-				RelativePath="..\html\canvas\Float64Array.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\html\canvas\Float64Array.h"
 				>
 			</File>
 			<File
@@ -57794,30 +57762,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\html\canvas\Int16Array.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\html\canvas\Int16Array.h"
-				>
-			</File>
-			<File
-				RelativePath="..\html\canvas\Int32Array.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\html\canvas\Int32Array.h"
-				>
-			</File>
-			<File
-				RelativePath="..\html\canvas\Int8Array.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\html\canvas\Int8Array.h"
-				>
-			</File>
-			<File
 				RelativePath="..\html\IsIndexInputType.cpp"
 				>
 			</File>
@@ -58019,30 +57963,6 @@
 			</File>
 			<File
 				RelativePath="..\html\TimeRanges.h"
-				>
-			</File>
-			<File
-				RelativePath="..\html\canvas\UInt16Array.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\html\canvas\UInt16Array.h"
-				>
-			</File>
-			<File
-				RelativePath="..\html\canvas\UInt32Array.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\html\canvas\UInt32Array.h"
-				>
-			</File>
-			<File
-				RelativePath="..\html\canvas\UInt8Array.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\html\canvas\UInt8Array.h"
 				>
 			</File>
 			<File

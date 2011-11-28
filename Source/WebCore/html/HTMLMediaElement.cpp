@@ -71,10 +71,10 @@
 #include "ShadowRoot.h"
 #include "TimeRanges.h"
 #include "UUID.h"
-#include "Uint8Array.h"
 #include <limits>
 #include <wtf/CurrentTime.h>
 #include <wtf/MathExtras.h>
+#include <wtf/Uint8Array.h>
 #include <wtf/text/CString.h>
 
 #if USE(ACCELERATED_COMPOSITING)

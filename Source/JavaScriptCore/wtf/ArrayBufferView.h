@@ -68,15 +68,15 @@ class ArrayBufferView : public RefCounted<ArrayBufferView> {
     virtual ~ArrayBufferView();
 
   protected:
-    ArrayBufferView(PassRefPtr<ArrayBuffer> buffer, unsigned byteOffset);
+    ArrayBufferView(PassRefPtr<ArrayBuffer>, unsigned byteOffset);
 
-    bool setImpl(ArrayBufferView*, unsigned byteOffset);
+    inline bool setImpl(ArrayBufferView*, unsigned byteOffset);
 
-    bool setRangeImpl(const char* data, size_t dataByteLength, unsigned byteOffset);
+    inline bool setRangeImpl(const char* data, size_t dataByteLength, unsigned byteOffset);
 
-    bool zeroRangeImpl(unsigned byteOffset, size_t rangeByteLength);
+    inline bool zeroRangeImpl(unsigned byteOffset, size_t rangeByteLength);
 
-    static void calculateOffsetAndLength(int start, int end, unsigned arraySize,
+    static inline void calculateOffsetAndLength(int start, int end, unsigned arraySize,
                                          unsigned* offset, unsigned* length);
 
     // Helper to verify that a given sub-range of an ArrayBuffer is
@@ -131,6 +131,65 @@ class ArrayBufferView : public RefCounted<ArrayBufferView> {
     ArrayBufferView* m_prevView;
     ArrayBufferView* m_nextView;
 };
+
+bool ArrayBufferView::setImpl(ArrayBufferView* array, unsigned byteOffset)
+{
+    if (byteOffset > byteLength()
+        || byteOffset + array->byteLength() > byteLength()
+        || byteOffset + array->byteLength() < byteOffset) {
+        // Out of range offset or overflow
+        return false;
+    }
+    
+    char* base = static_cast<char*>(baseAddress());
+    memmove(base + byteOffset, array->baseAddress(), array->byteLength());
+    return true;
+}
+
+bool ArrayBufferView::setRangeImpl(const char* data, size_t dataByteLength, unsigned byteOffset)
+{
+    if (byteOffset > byteLength()
+        || byteOffset + dataByteLength > byteLength()
+        || byteOffset + dataByteLength < byteOffset) {
+        // Out of range offset or overflow
+        return false;
+    }
+    
+    char* base = static_cast<char*>(baseAddress());
+    memmove(base + byteOffset, data, dataByteLength);
+    return true;
+}
+
+bool ArrayBufferView::zeroRangeImpl(unsigned byteOffset, size_t rangeByteLength)
+{
+    if (byteOffset > byteLength()
+        || byteOffset + rangeByteLength > byteLength()
+        || byteOffset + rangeByteLength < byteOffset) {
+        // Out of range offset or overflow
+        return false;
+    }
+    
+    char* base = static_cast<char*>(baseAddress());
+    memset(base + byteOffset, 0, rangeByteLength);
+    return true;
+}
+
+void ArrayBufferView::calculateOffsetAndLength(int start, int end, unsigned arraySize,
+                                               unsigned* offset, unsigned* length)
+{
+    if (start < 0)
+        start += arraySize;
+    if (start < 0)
+        start = 0;
+    if (end < 0)
+        end += arraySize;
+    if (end < 0)
+        end = 0;
+    if (end < start)
+        end = start;
+    *offset = static_cast<unsigned>(start);
+    *length = static_cast<unsigned>(end - start);
+}
 
 } // namespace WTF
 

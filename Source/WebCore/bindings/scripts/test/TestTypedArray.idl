@@ -34,5 +34,6 @@ module html {
         CustomToJS,
         DontCheckEnums
     ] Float64Array : ArrayBufferView {
+        void foo(in Float32Array array);
     };
 }

@@ -32,12 +32,12 @@
 
 #include "WebKitBlobBuilder.h"
 
-#include "ArrayBuffer.h"
 #include "Blob.h"
 #include "ExceptionCode.h"
 #include "File.h"
 #include "LineEnding.h"
 #include "TextEncoding.h"
+#include <wtf/ArrayBuffer.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/text/AtomicString.h>

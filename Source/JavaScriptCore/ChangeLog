@@ -1,3 +1,130 @@
+2011-11-28  Oliver Hunt  <oliver@apple.com>
+
+        Move typed array implementations into wtf
+        https://bugs.webkit.org/show_bug.cgi?id=73248
+
+        Reviewed by Sam Weinig.
+
+        Move typed array implementation files from WebCore to wtf.  Inline the
+        .cpp files for each of the array views to cut down on unnecessary exports
+        and function call overhead for trivial operations.
+
+        Added files to all the project files.
+
+        * GNUmakefile.list.am:
+        * JavaScriptCore.exp:
+        * JavaScriptCore.vcproj/WTF/WTF.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * wtf/ArrayBuffer.cpp: Renamed from Source/WebCore/html/canvas/Float32Array.cpp.
+        (WTF::ArrayBuffer::transfer):
+        (WTF::ArrayBuffer::addView):
+        (WTF::ArrayBuffer::removeView):
+        * wtf/ArrayBuffer.h: Renamed from Source/WebCore/html/canvas/ArrayBuffer.cpp.
+        (WTF::ArrayBufferContents::ArrayBufferContents):
+        (WTF::ArrayBufferContents::data):
+        (WTF::ArrayBufferContents::sizeInBytes):
+        (WTF::ArrayBufferContents::transfer):
+        (WTF::ArrayBuffer::~ArrayBuffer):
+        (WTF::ArrayBuffer::clampValue):
+        (WTF::ArrayBuffer::create):
+        (WTF::ArrayBuffer::ArrayBuffer):
+        (WTF::ArrayBuffer::data):
+        (WTF::ArrayBuffer::byteLength):
+        (WTF::ArrayBuffer::slice):
+        (WTF::ArrayBuffer::sliceImpl):
+        (WTF::ArrayBuffer::clampIndex):
+        (WTF::ArrayBufferContents::tryAllocate):
+        (WTF::ArrayBufferContents::~ArrayBufferContents):
+        * wtf/ArrayBufferView.cpp: Copied from Source/WebCore/bindings/js/JSArrayBufferCustom.cpp.
+        (WTF::ArrayBufferView::ArrayBufferView):
+        (WTF::ArrayBufferView::~ArrayBufferView):
+        (WTF::ArrayBufferView::neuter):
+        * wtf/ArrayBufferView.h: Renamed from Source/WebCore/html/canvas/ArrayBufferView.h.
+        (WTF::ArrayBufferView::isByteArray):
+        (WTF::ArrayBufferView::isUnsignedByteArray):
+        (WTF::ArrayBufferView::isShortArray):
+        (WTF::ArrayBufferView::isUnsignedShortArray):
+        (WTF::ArrayBufferView::isIntArray):
+        (WTF::ArrayBufferView::isUnsignedIntArray):
+        (WTF::ArrayBufferView::isFloatArray):
+        (WTF::ArrayBufferView::isDoubleArray):
+        (WTF::ArrayBufferView::isDataView):
+        (WTF::ArrayBufferView::buffer):
+        (WTF::ArrayBufferView::baseAddress):
+        (WTF::ArrayBufferView::byteOffset):
+        (WTF::ArrayBufferView::verifySubRange):
+        (WTF::ArrayBufferView::clampOffsetAndNumElements):
+        (WTF::ArrayBufferView::setImpl):
+        (WTF::ArrayBufferView::setRangeImpl):
+        (WTF::ArrayBufferView::zeroRangeImpl):
+        (WTF::ArrayBufferView::calculateOffsetAndLength):
+        * wtf/CMakeLists.txt:
+        * wtf/Float32Array.h: Renamed from Source/WebCore/html/canvas/Float32Array.h.
+        (WTF::Float32Array::set):
+        (WTF::Float32Array::item):
+        (WTF::Float32Array::isFloatArray):
+        (WTF::Float32Array::create):
+        (WTF::Float32Array::Float32Array):
+        (WTF::Float32Array::subarray):
+        * wtf/Float64Array.h: Renamed from Source/WebCore/html/canvas/Float64Array.h.
+        (WTF::Float64Array::set):
+        (WTF::Float64Array::item):
+        (WTF::Float64Array::isDoubleArray):
+        (WTF::Float64Array::create):
+        (WTF::Float64Array::Float64Array):
+        (WTF::Float64Array::subarray):
+        * wtf/Int16Array.h: Renamed from Source/WebCore/html/canvas/Int16Array.cpp.
+        (WTF::Int16Array::set):
+        (WTF::Int16Array::isShortArray):
+        (WTF::Int16Array::create):
+        (WTF::Int16Array::Int16Array):
+        (WTF::Int16Array::subarray):
+        * wtf/Int32Array.h: Renamed from Source/WebCore/html/canvas/Int32Array.cpp.
+        (WTF::Int32Array::set):
+        (WTF::Int32Array::isIntArray):
+        (WTF::Int32Array::create):
+        (WTF::Int32Array::Int32Array):
+        (WTF::Int32Array::subarray):
+        * wtf/Int8Array.h: Renamed from Source/WebCore/html/canvas/Int8Array.cpp.
+        (WTF::Int8Array::set):
+        (WTF::Int8Array::isByteArray):
+        (WTF::Int8Array::create):
+        (WTF::Int8Array::Int8Array):
+        (WTF::Int8Array::subarray):
+        * wtf/IntegralTypedArrayBase.h: Renamed from Source/WebCore/html/canvas/IntegralTypedArrayBase.h.
+        (WTF::IntegralTypedArrayBase::set):
+        (WTF::IntegralTypedArrayBase::item):
+        (WTF::IntegralTypedArrayBase::IntegralTypedArrayBase):
+        * wtf/TypedArrayBase.h: Renamed from Source/WebCore/html/canvas/TypedArrayBase.h.
+        (WTF::TypedArrayBase::data):
+        (WTF::TypedArrayBase::set):
+        (WTF::TypedArrayBase::setRange):
+        (WTF::TypedArrayBase::zeroRange):
+        (WTF::TypedArrayBase::length):
+        (WTF::TypedArrayBase::byteLength):
+        (WTF::TypedArrayBase::TypedArrayBase):
+        (WTF::TypedArrayBase::create):
+        (WTF::TypedArrayBase::subarrayImpl):
+        * wtf/Uint16Array.h: Renamed from Source/WebCore/html/canvas/Uint16Array.cpp.
+        (WTF::Uint16Array::set):
+        (WTF::Uint16Array::isUnsignedShortArray):
+        (WTF::Uint16Array::create):
+        (WTF::Uint16Array::Uint16Array):
+        (WTF::Uint16Array::subarray):
+        * wtf/Uint32Array.h: Renamed from Source/WebCore/html/canvas/Uint32Array.cpp.
+        (WTF::Uint32Array::set):
+        (WTF::Uint32Array::isUnsignedIntArray):
+        (WTF::Uint32Array::create):
+        (WTF::Uint32Array::Uint32Array):
+        (WTF::Uint32Array::subarray):
+        * wtf/Uint8Array.h: Renamed from Source/WebCore/html/canvas/Uint8Array.h.
+        (WTF::Uint8Array::set):
+        (WTF::Uint8Array::isUnsignedByteArray):
+        (WTF::Uint8Array::create):
+        (WTF::Uint8Array::Uint8Array):
+        (WTF::Uint8Array::subarray):
+        * wtf/wtf.pro:
+
 2011-11-27  Filip Pizlo  <fpizlo@apple.com>
 
         Don't try to optimize huge code blocks
