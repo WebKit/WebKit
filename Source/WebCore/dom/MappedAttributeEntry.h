@@ -40,6 +40,7 @@ enum MappedAttributeEntry {
     , eTable
     , eCell
     , eCaption
+    , eBDI
     , eBDO
     , ePre
 #if ENABLE(SVG)

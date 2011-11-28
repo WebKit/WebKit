@@ -1,3 +1,38 @@
+2011-11-25  Ryosuke Niwa  <rniwa@webkit.org>
+
+        dir=auto should imply unicode-bidi:isolate by default
+        https://bugs.webkit.org/show_bug.cgi?id=63903
+
+        Reviewed by Dan Bernstein.
+
+        Fixed WebKit's implementation of bdo, bdi, and output elements to match HTML5 spec section 10.3.5:
+        http://dev.w3.org/html5/spec/Overview.html#bidirectional-text
+
+        Any element with dir=auto other than bdo, textarea, and pre should use unicode-bidi: -webkit-isolate by default.
+
+        We still don't use -webkit-isolate for non-phrasing elements by default and unicode-override -webkit-isolate for
+        bdo[dir=auto] so these two cases are failing in the added test.
+
+        Test: fast/css/default-bidi-css-rules.html
+
+        * css/html.css:
+        (bdi, output): bdi and output should both use -webkit-isolate as the default value for unicode-bidi.
+        (bdo): bdo should use bidi-override as the default value for unicode-bidi.
+        * dom/MappedAttributeEntry.h: Add eBDI, which is used by bdi and output elements.
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::mapToEntry): Don't share the cache for dir attribute between bdi and other elements
+        just like we don't share the cache for dir attribute between bdo and other elements.
+        (WebCore::unicodeBidiAttributeForDirAuto): Don't set bidi-override for bdo element since this is done
+        in the UA stylesheet now. Set unicode-bidi to -webkit-isolate for elements other than pre and textarea now that
+        this function is called only when dir=auto.
+        called when dir=auto as the name implies.
+        (WebCore::HTMLElement::parseMappedAttribute): Don't call unicodeBidiAttributeForDirAuto when dir is not
+        auto. Also set unicode-bidi to embed when dir is not auto and the element is neither bdi, bdo, nor output.
+        * html/HTMLOutputElement.cpp:
+        (WebCore::HTMLOutputElement::mapToEntry): Don't share the cache for dir between output and other elements.
+        * html/HTMLOutputElement.h:
+        * html/HTMLTagNames.in:
+
 2011-11-28  Jer Noble  <jer.noble@apple.com>
 
         WebAudio: AudioContext::uninitialize() can caused AudioContext deletion before deleting marked nodes.

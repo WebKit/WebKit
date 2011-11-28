@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../js/resources/js-test-pre.js"></script>
+<p>This test checks <a href="http://dev.w3.org/html5/spec/Overview.html#bidirectional-text">the default rules for direction and unicode-bidi CSS properties</a>.</p>
+<div id="container"></div>
+<div id="console"></div>
+<script>
+
+var container = document.getElementById('container');
+
+function styleOf(name, attributes) {
+    var element = document.createElement(name);
+    for (var name in attributes) {
+        var value = attributes[name];
+        element.setAttribute(name, value);
+    }
+    container.appendChild(element);
+    return getComputedStyle(element);
+}
+
+var tests = [
+    ['div', {}, 'ltr', '-webkit-isolate'],
+    ['div', {'dir': 'ltr'}, 'ltr', 'embed'],
+    ['div', {'dir': 'rtl'}, 'rtl', 'embed'],
+    ['div', {'dir': 'auto'}, 'ltr', '-webkit-isolate'],
+    ['div', {'dir': ''}, 'ltr', 'embed'],
+
+    ['span', {}, 'ltr', 'normal'],
+    ['span', {'dir': 'ltr'}, 'ltr', 'embed'],
+    ['span', {'dir': 'rtl'}, 'rtl', 'embed'],
+    ['span', {'dir': 'auto'}, 'ltr', '-webkit-isolate'],
+    ['span', {'dir': ''}, 'ltr', 'embed'],
+
+    ['bdi', {}, 'ltr', '-webkit-isolate'],
+    ['bdi', {'dir': 'ltr'}, 'ltr', '-webkit-isolate'],
+    ['bdi', {'dir': 'rtl'}, 'rtl', '-webkit-isolate'],
+    ['bdi', {'dir': 'auto'}, 'ltr', '-webkit-isolate'],
+    ['bdi', {'dir': ''}, 'ltr', '-webkit-isolate'],
+
+    ['output', {}, 'ltr', '-webkit-isolate'],
+    ['output', {'dir': 'ltr'}, 'ltr', '-webkit-isolate'],
+    ['output', {'dir': 'rtl'}, 'rtl', '-webkit-isolate'],
+    ['output', {'dir': 'auto'}, 'ltr', '-webkit-isolate'],
+    ['output', {'dir': ''}, 'ltr', '-webkit-isolate'],
+
+    ['bdo', {}, 'ltr', 'bidi-override'],
+    ['bdo', {'dir': 'ltr'}, 'ltr', 'bidi-override'],
+    ['bdo', {'dir': 'rtl'}, 'rtl', 'bidi-override'],
+    ['bdo', {'dir': 'auto'}, 'ltr', 'bidi-override -webkit-isolate'],
+    ['bdo', {'dir': ''}, 'ltr', 'bidi-override'],
+
+    ['textarea', {}, 'ltr', 'normal'],
+    ['textarea', {'dir': 'ltr'}, 'ltr', 'embed'],
+    ['textarea', {'dir': 'rtl'}, 'rtl', 'embed'],
+    ['textarea', {'dir': 'auto'}, 'ltr', '-webkit-plaintext'],
+    ['textarea', {'dir': ''}, 'ltr', 'embed'],
+
+    ['pre', {}, 'ltr', 'normal'],
+    ['pre', {'dir': 'ltr'}, 'ltr', 'embed'],
+    ['pre', {'dir': 'rtl'}, 'rtl', 'embed'],
+    ['pre', {'dir': 'auto'}, 'ltr', '-webkit-plaintext'],
+    ['pre', {'dir': ''}, 'ltr', 'embed'],
+].forEach(function (test) {
+    shouldBe('styleOf("' + test[0] + '", ' + JSON.stringify(test[1]) + ').direction', '"' + test[2] + '"');
+    container.innerHTML = '';
+    shouldBe('styleOf("' + test[0] + '", ' + JSON.stringify(test[1]) + ').unicodeBidi', '"' + test[3] + '"');
+    container.innerHTML = '';
+});
+
+</script>
+<script src="../js/resources/js-test-post.js"></script>
+</body>
+</html>

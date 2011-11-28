@@ -127,7 +127,12 @@ bool HTMLElement::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry
         return false;
     }
     if (attrName == dirAttr) {
-        result = hasLocalName(bdoTag) ? eBDO : eUniversal;
+        if (hasLocalName(bdoTag))
+            result = eBDO;
+        else if (hasLocalName(bdiTag))
+            result = eBDI;
+        else
+            result = eUniversal;
         return true;
     }
 
@@ -136,11 +141,11 @@ bool HTMLElement::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry
 
 static inline int unicodeBidiAttributeForDirAuto(HTMLElement* element)
 {
-    if (element->hasLocalName(bdoTag))
-        return CSSValueBidiOverride;
     if (element->hasLocalName(preTag) || element->hasLocalName(textareaTag))
         return CSSValueWebkitPlaintext;
-    return CSSValueEmbed;
+    // FIXME: For bdo element, dir="auto" should result in "bidi-override isolate" but we don't support having multiple values in unicode-bidi yet.
+    // See https://bugs.webkit.org/show_bug.cgi?id=73164.
+    return CSSValueWebkitIsolate;
 }
 
 static unsigned parseBorderWidthAttribute(Attribute* attr)
@@ -190,10 +195,14 @@ void HTMLElement::parseMappedAttribute(Attribute* attr)
     } else if (attr->name() == langAttr) {
         // FIXME: Implement
     } else if (attr->name() == dirAttr) {
-        if (!equalIgnoringCase(attr->value(), "auto"))
+        bool dirIsAuto = equalIgnoringCase(attr->value(), "auto");
+        if (!dirIsAuto)
             addCSSProperty(attr, CSSPropertyDirection, attr->value());
         dirAttributeChanged(attr);
-        addCSSProperty(attr, CSSPropertyUnicodeBidi, unicodeBidiAttributeForDirAuto(this));
+        if (dirIsAuto)
+            addCSSProperty(attr, CSSPropertyUnicodeBidi, unicodeBidiAttributeForDirAuto(this));
+        else if (!hasTagName(bdiTag) && !hasTagName(bdoTag) && !hasTagName(outputTag))
+            addCSSProperty(attr, CSSPropertyUnicodeBidi, CSSValueEmbed);
     } else if (attr->name() == draggableAttr) {
         const AtomicString& value = attr->value();
         if (equalIgnoringCase(value, "true")) {

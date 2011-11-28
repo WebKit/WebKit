@@ -15,6 +15,7 @@ audio wrapperOnlyIfMediaIsAvailable, conditional=VIDEO
 b interfaceName=HTMLElement
 base
 basefont interfaceName=HTMLBaseFontElement
+bdi interfaceName=HTMLElement
 bdo interfaceName=HTMLElement
 bgsound interfaceName=HTMLElement
 big interfaceName=HTMLElement

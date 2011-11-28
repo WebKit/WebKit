@@ -992,8 +992,12 @@ summary::-webkit-details-marker {
     margin-right: 0.4em;
 }
 
-bdi {
+bdi, output {
     unicode-bidi: -webkit-isolate;
+}
+
+bdo {
+    unicode-bidi: bidi-override;
 }
 
 /* page */
