@@ -685,6 +685,31 @@ public:
     static PropertyHandler createHandler() { return PropertyHandler(&applyInheritValue, &applyInitialValue, &applyValue); }
 };
 
+class ApplyPropertyTextAlign {
+public:
+    static void applyValue(CSSStyleSelector* selector, CSSValue* value)
+    {
+        if (!value->isPrimitiveValue())
+            return;
+
+        CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
+
+        if (primitiveValue->getIdent() != CSSValueWebkitMatchParent)
+            selector->style()->setTextAlign(*primitiveValue);
+        else if (selector->parentStyle()->textAlign() == TASTART)
+            selector->style()->setTextAlign(selector->parentStyle()->isLeftToRightDirection() ? LEFT : RIGHT);
+        else if (selector->parentStyle()->textAlign() == TAEND)
+            selector->style()->setTextAlign(selector->parentStyle()->isLeftToRightDirection() ? RIGHT : LEFT);
+        else
+            selector->style()->setTextAlign(selector->parentStyle()->textAlign());
+    }
+    static PropertyHandler createHandler()
+    {
+        PropertyHandler handler = ApplyPropertyDefaultBase<ETextAlign, &RenderStyle::textAlign, ETextAlign, &RenderStyle::setTextAlign, ETextAlign, &RenderStyle::initialTextAlign>::createHandler();
+        return PropertyHandler(handler.inheritFunction(), handler.initialFunction(), &applyValue);
+    }
+};
+
 class ApplyPropertyTextEmphasisStyle {
 public:
     static void applyInheritValue(CSSStyleSelector* selector)
@@ -1011,6 +1036,8 @@ CSSStyleApplyProperty::CSSStyleApplyProperty()
     setPropertyHandler(CSSPropertyWebkitFontSmoothing, ApplyPropertyFont<FontSmoothingMode, &FontDescription::fontSmoothing, &FontDescription::setFontSmoothing, AutoSmoothing>::createHandler());
     setPropertyHandler(CSSPropertyWebkitTextOrientation, ApplyPropertyFont<TextOrientation, &FontDescription::textOrientation, &FontDescription::setTextOrientation, TextOrientationVerticalRight>::createHandler());
     setPropertyHandler(CSSPropertyFontWeight, ApplyPropertyFontWeight::createHandler());
+
+    setPropertyHandler(CSSPropertyTextAlign, ApplyPropertyTextAlign::createHandler());
 
     setPropertyHandler(CSSPropertyOutlineStyle, ApplyPropertyOutlineStyle::createHandler());
     setPropertyHandler(CSSPropertyOutlineColor, ApplyPropertyColor<InheritFromParent, &RenderStyle::outlineColor, &RenderStyle::setOutlineColor, &RenderStyle::setVisitedLinkOutlineColor, &RenderStyle::color>::createHandler());

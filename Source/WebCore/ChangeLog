@@ -1,3 +1,19 @@
+2011-11-27  Luke Macpherson   <macpherson@chromium.org>
+
+        Implement CSSPropertyTextAlign in CSSStyleApplyProperty.
+        https://bugs.webkit.org/show_bug.cgi?id=73102
+
+        Reviewed by Andreas Kling.
+
+        Covered by fast/css/text-align*.html
+
+        * css/CSSStyleApplyProperty.cpp:
+        (WebCore::ApplyPropertyTextAlign::applyValue):
+        (WebCore::ApplyPropertyTextAlign::createHandler):
+        (WebCore::CSSStyleApplyProperty::CSSStyleApplyProperty):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+
 2011-11-27  Andreas Kling  <kling@webkit.org>
 
         CSSStyleRule: Pack m_sourceLine with CSSRule bits.
