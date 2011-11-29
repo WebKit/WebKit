@@ -1,44 +1,44 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x305
-  RenderBlock {html} at (0,0) size 800x305
-    RenderBody {body} at (8,21) size 784x276
+layer at (0,0) size 800x301
+  RenderBlock {html} at (0,0) size 800x301
+    RenderBody {body} at (8,21) size 784x272
       RenderBlock {h1} at (0,0) size 784x37
-        RenderText {#text} at (0,0) size 749x36
-          text run at (0,0) width 749: "Test case for x/y attributes on root-most <svg> element"
-      RenderBlock {p} at (0,58) size 784x57
-        RenderText {#text} at (0,0) size 29x19
+        RenderText {#text} at (0,0) size 750x36
+          text run at (0,0) width 750: "Test case for x/y attributes on root-most <svg> element"
+      RenderBlock {p} at (0,58) size 784x54
+        RenderText {#text} at (0,0) size 29x17
           text run at (0,0) width 29: "The "
-        RenderInline {code} at (0,0) size 8x15
-          RenderText {#text} at (29,4) size 8x15
-            text run at (29,4) width 8: "x"
-        RenderText {#text} at (37,0) size 31x19
-          text run at (37,0) width 31: " and "
-        RenderInline {code} at (0,0) size 8x15
-          RenderText {#text} at (68,4) size 8x15
-            text run at (68,4) width 8: "y"
-        RenderText {#text} at (76,0) size 160x19
-          text run at (76,0) width 160: " attributes on a root-most "
+        RenderInline {code} at (0,0) size 9x15
+          RenderText {#text} at (28,3) size 9x15
+            text run at (28,3) width 9: "x"
+        RenderText {#text} at (36,0) size 32x17
+          text run at (36,0) width 32: " and "
+        RenderInline {code} at (0,0) size 9x15
+          RenderText {#text} at (67,3) size 9x15
+            text run at (67,3) width 9: "y"
+        RenderText {#text} at (75,0) size 166x17
+          text run at (75,0) width 166: " attributes on a root-most "
         RenderInline {code} at (0,0) size 40x15
-          RenderText {#text} at (236,4) size 40x15
-            text run at (236,4) width 40: "<svg>"
-        RenderText {#text} at (276,0) size 433x19
-          text run at (276,0) width 433: " element should be ignored, as specified by SVG 1.1. The root-most "
+          RenderText {#text} at (240,3) size 40x15
+            text run at (240,3) width 40: "<svg>"
+        RenderText {#text} at (279,0) size 440x17
+          text run at (279,0) width 440: " element should be ignored, as specified by SVG 1.1. The root-most "
         RenderInline {code} at (0,0) size 40x15
-          RenderText {#text} at (709,4) size 40x15
-            text run at (709,4) width 40: "<svg>"
-        RenderText {#text} at (0,19) size 742x38
-          text run at (0,19) width 742: "element is the element at the root of an SVG fragment. For the following test to pass, the green SVG square should be"
-          text run at (0,38) width 623: "rendered aligned to the top-left of the red CSS-rendered square, which is 10 pixels wider and taller."
-      RenderBlock {p} at (0,131) size 784x19
-        RenderText {#text} at (0,0) size 27x19
-          text run at (0,0) width 27: "See "
-        RenderInline {a} at (0,0) size 71x19 [color=#0000EE]
-          RenderText {#text} at (27,0) size 71x19
+          RenderText {#text} at (718,3) size 40x15
+            text run at (718,3) width 40: "<svg>"
+        RenderText {#text} at (0,18) size 756x35
+          text run at (0,18) width 756: "element is the element at the root of an SVG fragment. For the following test to pass, the green SVG square should be"
+          text run at (0,36) width 636: "rendered aligned to the top-left of the red CSS-rendered square, which is 10 pixels wider and taller."
+      RenderBlock {p} at (0,128) size 784x18
+        RenderText {#text} at (0,0) size 28x17
+          text run at (0,0) width 28: "See "
+        RenderInline {a} at (0,0) size 71x17 [color=#0000EE]
+          RenderText {#text} at (27,0) size 71x17
             text run at (27,0) width 71: "Bug 13828"
-        RenderText {#text} at (98,0) size 4x19
-          text run at (98,0) width 4: "."
-      RenderBlock {div} at (0,166) size 110x110 [bgcolor=#FF0000]
-        RenderSVGRoot {svg} at (8,187) size 100x100
-          RenderSVGPath {rect} at (8,187) size 100x100 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
+        RenderText {#text} at (97,0) size 5x17
+          text run at (97,0) width 5: "."
+      RenderBlock {div} at (0,162) size 110x110 [bgcolor=#FF0000]
+        RenderSVGRoot {svg} at (8,183) size 100x100
+          RenderSVGPath {rect} at (8,183) size 100x100 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
         RenderText {#text} at (0,0) size 0x0

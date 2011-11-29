@@ -5,34 +5,34 @@ layer at (0,0) size 784x995
     RenderBody {BODY} at (8,16) size 768x975
       RenderBlock {DIV} at (16,0) size 736x60
         RenderBlock {P} at (0,0) size 736x20
-          RenderInline {A} at (0,0) size 84x19 [color=#0000EE]
-            RenderText {#text} at (274,0) size 84x19
-              text run at (274,0) width 84: "Full version"
-          RenderText {#text} at (357,0) size 9x19
-            text run at (357,0) width 9: ", "
-          RenderInline {A} at (0,0) size 97x19 [color=#0000EE]
-            RenderText {#text} at (365,0) size 97x19
-              text run at (365,0) width 97: "Basic version"
+          RenderInline {A} at (0,0) size 82x17 [color=#0000EE]
+            RenderText {#text} at (275,1) size 82x17
+              text run at (275,1) width 82: "Full version"
+          RenderText {#text} at (356,1) size 10x17
+            text run at (356,1) width 10: ", "
+          RenderInline {A} at (0,0) size 96x17 [color=#0000EE]
+            RenderText {#text} at (365,1) size 96x17
+              text run at (365,1) width 96: "Basic version"
         RenderBlock {P} at (0,20) size 736x20
-          RenderText {#text} at (200,0) size 129x19
-            text run at (200,0) width 129: "Specification link: "
-          RenderInline {A} at (0,0) size 207x19 [color=#0000EE]
-            RenderText {#text} at (329,0) size 207x19
-              text run at (329,0) width 207: "3.4 How groups are rendered"
+          RenderText {#text} at (199,1) size 129x17
+            text run at (199,1) width 129: "Specification link: "
+          RenderInline {A} at (0,0) size 210x17 [color=#0000EE]
+            RenderText {#text} at (327,1) size 210x17
+              text run at (327,1) width 210: "3.4 How groups are rendered"
         RenderBlock {P} at (0,40) size 736x20
-          RenderInline {A} at (0,0) size 172x19 [color=#0000EE]
-            RenderText {#text} at (184,0) size 172x19
-              text run at (184,0) width 172: "pservers-pattern-01-b \x{2190}"
-          RenderText {#text} at (356,0) size 4x19
-            text run at (356,0) width 4: " "
-          RenderInline {A} at (0,0) size 39x19 [color=#0000EE]
-            RenderText {#text} at (360,0) size 39x19
-              text run at (360,0) width 39: "index"
-          RenderText {#text} at (399,0) size 4x19
-            text run at (399,0) width 4: " "
-          RenderInline {A} at (0,0) size 149x19 [color=#0000EE]
-            RenderText {#text} at (403,0) size 149x19
-              text run at (403,0) width 149: "\x{2192} script-handle-01-b"
+          RenderInline {A} at (0,0) size 175x17 [color=#0000EE]
+            RenderText {#text} at (182,1) size 175x17
+              text run at (182,1) width 175: "pservers-pattern-01-b \x{2190}"
+          RenderText {#text} at (356,1) size 6x17
+            text run at (356,1) width 6: " "
+          RenderInline {A} at (0,0) size 39x17 [color=#0000EE]
+            RenderText {#text} at (361,1) size 39x17
+              text run at (361,1) width 39: "index"
+          RenderText {#text} at (399,1) size 6x17
+            text run at (399,1) width 6: " "
+          RenderInline {A} at (0,0) size 150x17 [color=#0000EE]
+            RenderText {#text} at (404,1) size 150x17
+              text run at (404,1) width 150: "\x{2192} script-handle-01-b"
           RenderText {#text} at (0,0) size 0x0
       RenderTable {TABLE} at (0,64) size 1018x551
         RenderTableSection {TBODY} at (0,0) size 1018x551
@@ -43,15 +43,15 @@ layer at (0,0) size 784x995
                   RenderTableRow {TR} at (0,2) size 998x106
                     RenderTableCell {TD} at (2,2) size 994x106 [r=0 c=0 rs=1 cs=2]
                       RenderBlock {H1} at (8,29) size 978x48
-                        RenderText {#text} at (339,6) size 300x36
-                          text run at (339,6) width 300: "render-groups-01-b"
+                        RenderText {#text} at (341,6) size 296x36
+                          text run at (341,6) width 296: "render-groups-01-b"
                   RenderTableRow {TR} at (0,110) size 998x36 [color=#FFFFFF] [bgcolor=#000000]
                     RenderTableCell {TD} at (2,110) size 496x36 [r=1 c=0 rs=1 cs=1]
-                      RenderText {#text} at (206,8) size 84x19
-                        text run at (206,8) width 84: "SVG Image"
+                      RenderText {#text} at (205,9) size 86x17
+                        text run at (205,9) width 86: "SVG Image"
                     RenderTableCell {TD} at (500,110) size 496x36 [r=1 c=1 rs=1 cs=1]
-                      RenderText {#text} at (205,8) size 86x19
-                        text run at (205,8) width 86: "PNG Image"
+                      RenderText {#text} at (205,9) size 86x17
+                        text run at (205,9) width 86: "PNG Image"
                   RenderTableRow {TR} at (0,148) size 998x381
                     RenderTableCell {TD} at (2,148) size 496x381 [r=2 c=0 rs=1 cs=1]
                       RenderEmbeddedObject {EMBED} at (8,8) size 480x360
@@ -61,17 +61,17 @@ layer at (0,0) size 784x995
                           RenderSVGRoot {svg} at (0,0) size 480x360
                             RenderSVGContainer {g} at (35,9) size 429x306
                               RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-                              RenderSVGContainer {g} at (34,9) size 431x306 [transform={m=((1.80,0.00)(0.00,1.80)) t=(0.00,0.00)}]
+                              RenderSVGContainer {g} at (35,9) size 429x306 [transform={m=((1.80,0.00)(0.00,1.80)) t=(0.00,0.00)}]
                                 RenderSVGPath {rect} at (36,18) size 414x279 [fill={[type=SOLID] [color=#C0C0C0]}] [x=20.00] [y=10.00] [width=230.00] [height=155.00]
-                                RenderSVGPath {line} at (57,18) size 30x297 [stroke={[type=SOLID] [color=#FFFFFF] [stroke width=15.00]}] [fill={[type=SOLID] [color=#000000]}] [x1=40.00] [y1=10.00] [x2=40.00] [y2=175.00]
-                                RenderSVGPath {line} at (111,18) size 30x297 [stroke={[type=SOLID] [color=#FFFFFF] [stroke width=15.00]}] [fill={[type=SOLID] [color=#000000]}] [x1=70.00] [y1=10.00] [x2=70.00] [y2=175.00]
-                                RenderSVGPath {line} at (165,18) size 30x297 [stroke={[type=SOLID] [color=#FFFFFF] [stroke width=15.00]}] [fill={[type=SOLID] [color=#000000]}] [x1=100.00] [y1=10.00] [x2=100.00] [y2=175.00]
-                                RenderSVGPath {line} at (219,18) size 30x297 [stroke={[type=SOLID] [color=#FFFFFF] [stroke width=15.00]}] [fill={[type=SOLID] [color=#000000]}] [x1=130.00] [y1=10.00] [x2=130.00] [y2=175.00]
-                                RenderSVGPath {line} at (273,18) size 30x297 [stroke={[type=SOLID] [color=#FFFFFF] [stroke width=15.00]}] [fill={[type=SOLID] [color=#000000]}] [x1=160.00] [y1=10.00] [x2=160.00] [y2=175.00]
-                                RenderSVGPath {line} at (327,18) size 30x297 [stroke={[type=SOLID] [color=#FFFFFF] [stroke width=15.00]}] [fill={[type=SOLID] [color=#000000]}] [x1=190.00] [y1=10.00] [x2=190.00] [y2=175.00]
-                                RenderSVGPath {line} at (381,18) size 30x297 [stroke={[type=SOLID] [color=#FFFFFF] [stroke width=15.00]}] [fill={[type=SOLID] [color=#000000]}] [x1=220.00] [y1=10.00] [x2=220.00] [y2=175.00]
-                                RenderSVGPath {line} at (435,18) size 30x297 [stroke={[type=SOLID] [color=#FFFFFF] [stroke width=15.00]}] [fill={[type=SOLID] [color=#000000]}] [x1=250.00] [y1=10.00] [x2=250.00] [y2=175.00]
-                                RenderSVGPath {rect} at (34,16) size 418x283 [stroke={[type=SOLID] [color=#000000]}] [x=20.00] [y=10.00] [width=230.00] [height=155.00]
+                                RenderSVGPath {line} at (58,18) size 28x297 [stroke={[type=SOLID] [color=#FFFFFF] [stroke width=15.00]}] [fill={[type=SOLID] [color=#000000]}] [x1=40.00] [y1=10.00] [x2=40.00] [y2=175.00]
+                                RenderSVGPath {line} at (112,18) size 28x297 [stroke={[type=SOLID] [color=#FFFFFF] [stroke width=15.00]}] [fill={[type=SOLID] [color=#000000]}] [x1=70.00] [y1=10.00] [x2=70.00] [y2=175.00]
+                                RenderSVGPath {line} at (166,18) size 28x297 [stroke={[type=SOLID] [color=#FFFFFF] [stroke width=15.00]}] [fill={[type=SOLID] [color=#000000]}] [x1=100.00] [y1=10.00] [x2=100.00] [y2=175.00]
+                                RenderSVGPath {line} at (220,18) size 28x297 [stroke={[type=SOLID] [color=#FFFFFF] [stroke width=15.00]}] [fill={[type=SOLID] [color=#000000]}] [x1=130.00] [y1=10.00] [x2=130.00] [y2=175.00]
+                                RenderSVGPath {line} at (274,18) size 28x297 [stroke={[type=SOLID] [color=#FFFFFF] [stroke width=15.00]}] [fill={[type=SOLID] [color=#000000]}] [x1=160.00] [y1=10.00] [x2=160.00] [y2=175.00]
+                                RenderSVGPath {line} at (328,18) size 28x297 [stroke={[type=SOLID] [color=#FFFFFF] [stroke width=15.00]}] [fill={[type=SOLID] [color=#000000]}] [x1=190.00] [y1=10.00] [x2=190.00] [y2=175.00]
+                                RenderSVGPath {line} at (382,18) size 28x297 [stroke={[type=SOLID] [color=#FFFFFF] [stroke width=15.00]}] [fill={[type=SOLID] [color=#000000]}] [x1=220.00] [y1=10.00] [x2=220.00] [y2=175.00]
+                                RenderSVGPath {line} at (436,18) size 28x297 [stroke={[type=SOLID] [color=#FFFFFF] [stroke width=15.00]}] [fill={[type=SOLID] [color=#000000]}] [x1=250.00] [y1=10.00] [x2=250.00] [y2=175.00]
+                                RenderSVGPath {rect} at (35,17) size 416x281 [stroke={[type=SOLID] [color=#000000]}] [x=20.00] [y=10.00] [width=230.00] [height=155.00]
                                 RenderSVGContainer {g} at (54,9) size 382x270 [opacity=0.50]
                                   RenderSVGText {text} at (30,5) size 138x121 contains 1 chunk(s)
                                     RenderSVGInlineText {#text} at (0,0) size 138x121
@@ -81,7 +81,7 @@ layer at (0,0) size 784x995
                                   RenderSVGImage {image} at (291,135) size 145x144
                             RenderSVGText {text} at (10,304) size 264x45 contains 1 chunk(s)
                               RenderSVGInlineText {#text} at (0,0) size 264x45
-                                chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 264.00: "$Revision: 1.6 $"
+                                chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 263.34: "$Revision: 1.6 $"
                             RenderSVGPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
                       RenderText {#text} at (0,0) size 0x0
                     RenderTableCell {TD} at (500,148) size 496x381 [r=2 c=1 rs=1 cs=1]
@@ -89,52 +89,52 @@ layer at (0,0) size 784x995
                       RenderText {#text} at (0,0) size 0x0
       RenderBlock {DIV} at (23,626) size 722x313
         RenderBlock {P} at (0,0) size 722x40
-          RenderText {#text} at (0,0) size 689x39
-            text run at (0,0) width 647: "Verifies implicit rendering order (paragraph 3.3) and grouping mechanism (paragraphs 3.4). "
-            text run at (647,0) width 42: "It also"
-            text run at (0,20) width 345: "validates basic Shape, Image and text rendering."
+          RenderText {#text} at (0,1) size 694x37
+            text run at (0,1) width 651: "Verifies implicit rendering order (paragraph 3.3) and grouping mechanism (paragraphs 3.4). "
+            text run at (651,1) width 43: "It also"
+            text run at (0,21) width 347: "validates basic Shape, Image and text rendering."
         RenderBlock {P} at (0,51) size 722x140
-          RenderText {#text} at (0,0) size 718x139
-            text run at (0,0) width 135: "This test renders 3 "
-            text run at (135,0) width 247: "elements: a text string \"SVG\", then "
-            text run at (382,0) width 289: "a shape, then an image. Because of their"
-            text run at (0,20) width 306: "definition order and coordinates, the image "
-            text run at (306,20) width 406: "should be on top of the rectangle and the rectangle on top"
-            text run at (0,40) width 108: "of the text. The "
-            text run at (108,40) width 531: "test validates that groups are conceptually rendered offscreen before being "
-            text run at (639,40) width 64: "rendered"
-            text run at (0,60) width 529: "on the canvas. This is done by grouping the same overlapping objects and "
-            text run at (529,60) width 186: "rendering the group at half"
-            text run at (0,80) width 400: "opacity. The background pattern (vertical stripes) should "
-            text run at (400,80) width 318: "show throw all the group elements. However,"
-            text run at (0,100) width 311: "none of the \"SVG\" should show through the "
-            text run at (311,100) width 402: "rectangle and none of the rectangle should show through"
-            text run at (0,120) width 74: "the image."
+          RenderText {#text} at (0,1) size 719x137
+            text run at (0,1) width 137: "This test renders 3 "
+            text run at (136,1) width 252: "elements: a text string \"SVG\", then "
+            text run at (387,1) width 293: "a shape, then an image. Because of their"
+            text run at (0,21) width 308: "definition order and coordinates, the image "
+            text run at (307,21) width 411: "should be on top of the rectangle and the rectangle on top"
+            text run at (0,41) width 112: "of the text. The "
+            text run at (111,41) width 536: "test validates that groups are conceptually rendered offscreen before being "
+            text run at (646,41) width 65: "rendered"
+            text run at (0,61) width 531: "on the canvas. This is done by grouping the same overlapping objects and "
+            text run at (531,61) width 188: "rendering the group at half"
+            text run at (0,81) width 403: "opacity. The background pattern (vertical stripes) should "
+            text run at (402,81) width 249: "show throw all the group elements."
+            text run at (0,101) width 385: "However, none of the \"SVG\" should show through the "
+            text run at (384,101) width 305: "rectangle and none of the rectangle should"
+            text run at (0,121) width 176: "show through the image."
         RenderBlock {P} at (0,202) size 722x80
-          RenderText {#text} at (0,0) size 713x79
-            text run at (0,0) width 549: "Prerequisites: the test assumes proper handling of the fill stroke, stroke-width, "
-            text run at (549,0) width 119: "opacity, font-size"
-            text run at (0,20) width 497: "rendering properties. It uses the rect, line, text and image elements, as "
-            text run at (497,20) width 166: "well as all the elements"
-            text run at (0,40) width 429: "required for the test template. To ensure that the text string is "
-            text run at (429,40) width 284: "overlapped by the other elements and to"
-            text run at (0,60) width 411: "avoid a dependency on system fonts, an SVG font is used."
+          RenderText {#text} at (0,1) size 707x77
+            text run at (0,1) width 555: "Prerequisites: the test assumes proper handling of the fill stroke, stroke-width, "
+            text run at (554,1) width 121: "opacity, font-size"
+            text run at (0,21) width 505: "rendering properties. It uses the rect, line, text and image elements, as "
+            text run at (504,21) width 166: "well as all the elements"
+            text run at (0,41) width 438: "required for the test template. To ensure that the text string is "
+            text run at (437,41) width 270: "overlapped by the other elements and"
+            text run at (0,61) width 434: "to avoid a dependency on system fonts, an SVG font is used."
         RenderBlock {P} at (0,293) size 722x20
-          RenderText {#text} at (0,0) size 446x19
-            text run at (0,0) width 446: "The rendered image should match the reference image exactly."
+          RenderText {#text} at (0,1) size 450x17
+            text run at (0,1) width 450: "The rendered image should match the reference image exactly."
       RenderBlock {DIV} at (16,955) size 736x20
         RenderBlock {P} at (0,0) size 736x20
-          RenderInline {A} at (0,0) size 172x19 [color=#0000EE]
-            RenderText {#text} at (184,0) size 172x19
-              text run at (184,0) width 172: "pservers-pattern-01-b \x{2190}"
-          RenderText {#text} at (356,0) size 4x19
-            text run at (356,0) width 4: " "
-          RenderInline {A} at (0,0) size 39x19 [color=#0000EE]
-            RenderText {#text} at (360,0) size 39x19
-              text run at (360,0) width 39: "index"
-          RenderText {#text} at (399,0) size 4x19
-            text run at (399,0) width 4: " "
-          RenderInline {A} at (0,0) size 149x19 [color=#0000EE]
-            RenderText {#text} at (403,0) size 149x19
-              text run at (403,0) width 149: "\x{2192} script-handle-01-b"
+          RenderInline {A} at (0,0) size 175x17 [color=#0000EE]
+            RenderText {#text} at (182,1) size 175x17
+              text run at (182,1) width 175: "pservers-pattern-01-b \x{2190}"
+          RenderText {#text} at (356,1) size 6x17
+            text run at (356,1) width 6: " "
+          RenderInline {A} at (0,0) size 39x17 [color=#0000EE]
+            RenderText {#text} at (361,1) size 39x17
+              text run at (361,1) width 39: "index"
+          RenderText {#text} at (399,1) size 6x17
+            text run at (399,1) width 6: " "
+          RenderInline {A} at (0,0) size 150x17 [color=#0000EE]
+            RenderText {#text} at (404,1) size 150x17
+              text run at (404,1) width 150: "\x{2192} script-handle-01-b"
           RenderText {#text} at (0,0) size 0x0
