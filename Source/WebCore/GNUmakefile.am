@@ -509,14 +509,6 @@ DerivedSources/WebCore/XLinkNames.cpp : $(WebCore)/dom/make_names.pl $(WebCore)/
 if ENABLE_WEB_AUDIO
 FEATURE_DEFINES += ENABLE_WEB_AUDIO=1
 webcore_cppflags += -DENABLE_WEB_AUDIO=1
-
-if USE_WEBAUDIO_FFTW
-FEATURE_DEFINES += WTF_USE_WEBAUDIO_FFTW=1
-webcore_cppflags += -DWTF_USE_WEBAUDIO_FFTW=1
-webcore_sources += \
-	Source/WebCore/platform/audio/fftw/FFTFrameFFTW.cpp
-endif
-
 endif
 
 # ----

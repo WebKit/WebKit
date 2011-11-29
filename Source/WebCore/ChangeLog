@@ -1,3 +1,9 @@
+2011-11-29  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, GTK build fix after r101392.
+
+        * GNUmakefile.am: USE_WEBAUDIO_FFTW was removed, don't use it anymore.
+
 2011-11-28  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: TextPrompt should show suggest above or under so that it has maximal height.
