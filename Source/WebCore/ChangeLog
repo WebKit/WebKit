@@ -1,3 +1,14 @@
+2011-11-28  Yongjun Zhang  <yongjun_zhang@apple.com>
+
+        Size of ResourceRequestBase could be reduced by using bitfields.
+        https://bugs.webkit.org/show_bug.cgi?id=73271
+
+        Reviewed by Alexey Proskuryakov.
+
+        Add bitfield for bool members in ResourceRequestBase to reduce its memory size.
+
+        * platform/network/ResourceRequestBase.h:
+
 2011-11-28  Yuta Kitamura  <yutak@chromium.org>
 
         WebSocket: Split Hixie76 length-prefixed frames aren't handled correctly

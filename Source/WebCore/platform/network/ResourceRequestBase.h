@@ -184,12 +184,12 @@ namespace WebCore {
         Vector<String> m_responseContentDispositionEncodingFallbackArray;
 #endif
         RefPtr<FormData> m_httpBody;
-        bool m_allowCookies;
-        mutable bool m_resourceRequestUpdated;
-        mutable bool m_platformRequestUpdated;
-        bool m_reportUploadProgress;
-        bool m_reportLoadTiming;
-        bool m_reportRawHeaders;
+        bool m_allowCookies : 1;
+        mutable bool m_resourceRequestUpdated : 1;
+        mutable bool m_platformRequestUpdated : 1;
+        bool m_reportUploadProgress : 1;
+        bool m_reportLoadTiming : 1;
+        bool m_reportRawHeaders : 1;
         ResourceLoadPriority m_priority;
 
     private:
