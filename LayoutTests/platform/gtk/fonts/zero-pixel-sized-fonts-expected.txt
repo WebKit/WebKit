@@ -3,34 +3,34 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x38
-        RenderText {#text} at (0,0) size 582x19
-          text run at (0,0) width 428: "This test verifies that divs containing zero pixel fonts do not corrupt "
-          text run at (428,0) width 154: "the page rendering (bug "
-        RenderInline {A} at (0,0) size 40x19 [color=#0000EE]
-          RenderText {#text} at (582,0) size 40x19
-            text run at (582,0) width 40: "60917"
-        RenderText {#text} at (622,0) size 742x38
-          text run at (622,0) width 13: "). "
-          text run at (635,0) width 107: "There line below"
-          text run at (0,19) width 254: "should read \"GoldilocksBearBearBear\"."
-      RenderBlock {DIV} at (0,38) size 784x19
-        RenderBlock {DIV} at (0,0) size 69x19
-          RenderText {#text} at (0,0) size 69x19
-            text run at (0,0) width 69: "Goldilocks"
-        RenderText {#text} at (69,15) size 0x0
-          text run at (69,15) width 0: " "
-        RenderBlock {DIV} at (69,0) size 30x19
-          RenderText {#text} at (0,0) size 30x19
-            text run at (0,0) width 30: "Bear"
-        RenderText {#text} at (99,15) size 0x0
-          text run at (99,15) width 0: " "
-        RenderBlock {DIV} at (99,0) size 30x19
-          RenderText {#text} at (0,0) size 30x19
-            text run at (0,0) width 30: "Bear"
-        RenderText {#text} at (129,15) size 0x0
-          text run at (129,15) width 0: " "
-        RenderBlock {DIV} at (129,0) size 30x19
-          RenderText {#text} at (0,0) size 30x19
-            text run at (0,0) width 30: "Bear"
+      RenderBlock {DIV} at (0,0) size 784x36
+        RenderText {#text} at (0,0) size 596x17
+          text run at (0,0) width 440: "This test verifies that divs containing zero pixel fonts do not corrupt "
+          text run at (439,0) width 157: "the page rendering (bug "
+        RenderInline {A} at (0,0) size 41x17 [color=#0000EE]
+          RenderText {#text} at (595,0) size 41x17
+            text run at (595,0) width 41: "60917"
+        RenderText {#text} at (635,0) size 758x35
+          text run at (635,0) width 14: "). "
+          text run at (648,0) width 110: "There line below"
+          text run at (0,18) width 257: "should read \"GoldilocksBearBearBear\"."
+      RenderBlock {DIV} at (0,36) size 784x18
+        RenderBlock {DIV} at (0,0) size 71x18
+          RenderText {#text} at (0,0) size 71x17
+            text run at (0,0) width 71: "Goldilocks"
+        RenderText {#text} at (71,14) size 0x0
+          text run at (71,14) width 0: " "
+        RenderBlock {DIV} at (71,0) size 31x18
+          RenderText {#text} at (0,0) size 31x17
+            text run at (0,0) width 31: "Bear"
+        RenderText {#text} at (102,14) size 0x0
+          text run at (102,14) width 0: " "
+        RenderBlock {DIV} at (102,0) size 31x18
+          RenderText {#text} at (0,0) size 31x17
+            text run at (0,0) width 31: "Bear"
+        RenderText {#text} at (133,14) size 0x0
+          text run at (133,14) width 0: " "
+        RenderBlock {DIV} at (133,0) size 31x18
+          RenderText {#text} at (0,0) size 31x17
+            text run at (0,0) width 31: "Bear"
         RenderText {#text} at (0,0) size 0x0

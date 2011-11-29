@@ -3,10 +3,10 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock {DIV} at (0,0) size 784x54
-        RenderBlock {P} at (0,0) size 784x19
-          RenderText {#text} at (0,0) size 713x19
-            text run at (0,0) width 713: "This test verifies that the fonts which do not have an encoding that Fontconfig does not understand are not loaded"
-        RenderBlock {P} at (0,35) size 784x19
-          RenderText {#text} at (0,0) size 274x19
-            text run at (0,0) width 274: "The following text should be in a serif face."
+      RenderBlock {DIV} at (0,0) size 784x52
+        RenderBlock {P} at (0,0) size 784x18
+          RenderText {#text} at (0,0) size 727x17
+            text run at (0,0) width 727: "This test verifies that the fonts which do not have an encoding that Fontconfig does not understand are not loaded"
+        RenderBlock {P} at (0,34) size 784x18
+          RenderText {#text} at (0,0) size 280x17
+            text run at (0,0) width 280: "The following text should be in a serif face."

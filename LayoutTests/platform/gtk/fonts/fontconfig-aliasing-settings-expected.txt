@@ -3,110 +3,110 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock {P} at (0,0) size 784x19
-        RenderText {#text} at (0,0) size 490x19
-          text run at (0,0) width 490: "This test should be run in DumpRenderTree, as it requires a special fonts.conf"
-      RenderBlock {OL} at (0,35) size 784x461
-        RenderListItem {LI} at (40,0) size 744x54
-          RenderBlock {P} at (0,0) size 744x19
-            RenderListMarker at (-21,0) size 16x19: "1"
-            RenderText {#text} at (0,0) size 343x19
-              text run at (0,0) width 343: "The following text should render without anti-aliasing:"
-          RenderBlock {P} at (0,35) size 744x19
-            RenderText {#text} at (0,0) size 159x19
+      RenderBlock {P} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 500x17
+          text run at (0,0) width 500: "This test should be run in DumpRenderTree, as it requires a special fonts.conf"
+      RenderBlock {OL} at (0,34) size 784x446
+        RenderListItem {LI} at (40,0) size 744x52
+          RenderBlock {P} at (0,0) size 744x18
+            RenderListMarker at (-20,0) size 16x17: "1"
+            RenderText {#text} at (0,0) size 352x17
+              text run at (0,0) width 352: "The following text should render without anti-aliasing:"
+          RenderBlock {P} at (0,34) size 744x18
+            RenderText {#text} at (0,0) size 159x17
               text run at (0,0) width 159: "Non anti-aliased sans."
-        RenderListItem {LI} at (40,70) size 744x73
-          RenderBlock {P} at (0,0) size 744x38
-            RenderListMarker at (-21,0) size 16x19: "2"
-            RenderText {#text} at (0,0) size 715x38
-              text run at (0,0) width 387: "The following text should be slightly-hinted Liberation Serif. "
-              text run at (387,0) width 59: "The dots "
-              text run at (446,0) width 269: "should be equally spaced, and letters in the"
-              text run at (0,19) width 195: "word \"government\" should be "
-              text run at (195,19) width 106: "naturally spaced."
-          RenderBlock {P} at (0,54) size 744x19
-            RenderText {#text} at (0,0) size 207x19
-              text run at (0,0) width 207: "government ................................"
-        RenderListItem {LI} at (40,159) size 744x73
-          RenderBlock {P} at (0,0) size 744x38
-            RenderListMarker at (-21,0) size 16x19: "3"
-            RenderText {#text} at (0,0) size 732x38
-              text run at (0,0) width 450: "The following text should be unhinted Liberation Sans. The fontconfig "
-              text run at (450,0) width 282: "configuration for this is contradictory, setting"
-              text run at (0,19) width 106: "both full-hinting "
-              text run at (106,19) width 262: "and no-hinting. The latter should win out."
-          RenderBlock {P} at (0,54) size 744x19
-            RenderText {#text} at (0,0) size 553x19
-              text run at (0,0) width 386: "Here is Tigger doing what tiggers do best \x{2026} operating "
-              text run at (386,0) width 167: "hydraulic exoskeletons."
-        RenderListItem {LI} at (40,248) size 744x54
-          RenderBlock {P} at (0,0) size 744x19
-            RenderListMarker at (-21,0) size 16x19: "4"
-            RenderText {#text} at (0,0) size 634x19
-              text run at (0,0) width 350: "The following text should show a difference caused by "
-              text run at (350,0) width 284: "forcing autohinting. Note: the effect is subtle."
-          RenderBlock {P} at (0,35) size 744x19
-            RenderInline {SPAN} at (0,0) size 42x12
-              RenderText {#text} at (0,6) size 42x12
-                text run at (0,6) width 42: "autohinted"
-            RenderText {#text} at (42,0) size 4x19
-              text run at (42,0) width 4: " "
-            RenderInline {I} at (0,0) size 13x19
-              RenderText {#text} at (46,0) size 13x19
-                text run at (46,0) width 13: "vs"
-            RenderText {#text} at (59,0) size 4x19
-              text run at (59,0) width 4: " "
-            RenderInline {SPAN} at (0,0) size 58x12
-              RenderText {#text} at (63,6) size 58x12
-                text run at (63,6) width 58: "not-autohinted"
-        RenderListItem {LI} at (40,318) size 744x73
-          RenderBlock {P} at (0,0) size 744x38
-            RenderListMarker at (-21,0) size 16x19: "5"
-            RenderText {#text} at (0,0) size 543x19
-              text run at (0,0) width 405: "The following text should be the same. It verifies that, given the "
-              text run at (405,0) width 138: "contradictory settings "
+        RenderListItem {LI} at (40,68) size 744x70
+          RenderBlock {P} at (0,0) size 744x36
+            RenderListMarker at (-20,0) size 16x17: "2"
+            RenderText {#text} at (0,0) size 731x35
+              text run at (0,0) width 396: "The following text should be slightly-hinted Liberation Serif. "
+              text run at (395,0) width 61: "The dots "
+              text run at (455,0) width 276: "should be equally spaced, and letters in the"
+              text run at (0,18) width 197: "word \"government\" should be "
+              text run at (196,18) width 109: "naturally spaced."
+          RenderBlock {P} at (0,52) size 744x18
+            RenderText {#text} at (0,0) size 209x17
+              text run at (0,0) width 209: "government ................................"
+        RenderListItem {LI} at (40,154) size 744x70
+          RenderBlock {P} at (0,0) size 744x36
+            RenderListMarker at (-20,0) size 16x17: "3"
+            RenderText {#text} at (0,0) size 702x35
+              text run at (0,0) width 458: "The following text should be unhinted Liberation Sans. The fontconfig "
+              text run at (457,0) width 245: "configuration for this is contradictory,"
+              text run at (0,18) width 156: "setting both full-hinting "
+              text run at (155,18) width 268: "and no-hinting. The latter should win out."
+          RenderBlock {P} at (0,52) size 744x18
+            RenderText {#text} at (0,0) size 555x17
+              text run at (0,0) width 388: "Here is Tigger doing what tiggers do best \x{2026} operating "
+              text run at (387,0) width 168: "hydraulic exoskeletons."
+        RenderListItem {LI} at (40,240) size 744x52
+          RenderBlock {P} at (0,0) size 744x18
+            RenderListMarker at (-20,0) size 16x17: "4"
+            RenderText {#text} at (0,0) size 647x17
+              text run at (0,0) width 356: "The following text should show a difference caused by "
+              text run at (355,0) width 292: "forcing autohinting. Note: the effect is subtle."
+          RenderBlock {P} at (0,34) size 744x18
+            RenderInline {SPAN} at (0,0) size 43x11
+              RenderText {#text} at (0,5) size 43x11
+                text run at (0,5) width 43: "autohinted"
+            RenderText {#text} at (42,0) size 5x17
+              text run at (42,0) width 5: " "
+            RenderInline {I} at (0,0) size 14x17
+              RenderText {#text} at (46,0) size 14x17
+                text run at (46,0) width 14: "vs"
+            RenderText {#text} at (59,0) size 5x17
+              text run at (59,0) width 5: " "
+            RenderInline {SPAN} at (0,0) size 59x11
+              RenderText {#text} at (63,5) size 59x11
+                text run at (63,5) width 59: "not-autohinted"
+        RenderListItem {LI} at (40,308) size 744x70
+          RenderBlock {P} at (0,0) size 744x36
+            RenderListMarker at (-20,0) size 16x17: "5"
+            RenderText {#text} at (0,0) size 557x17
+              text run at (0,0) width 415: "The following text should be the same. It verifies that, given the "
+              text run at (414,0) width 143: "contradictory settings "
+            RenderInline {TT} at (0,0) size 63x15
+              RenderText {#text} at (556,3) size 63x15
+                text run at (556,3) width 63: "hintfull"
+            RenderText {#text} at (618,0) size 32x17
+              text run at (618,0) width 32: " and "
             RenderInline {TT} at (0,0) size 64x15
-              RenderText {#text} at (543,4) size 64x15
-                text run at (543,4) width 64: "hintfull"
-            RenderText {#text} at (607,0) size 31x19
-              text run at (607,0) width 31: " and "
-            RenderInline {TT} at (0,0) size 64x15
-              RenderText {#text} at (638,4) size 64x15
-                text run at (638,4) width 64: "autohint"
-            RenderText {#text} at (702,0) size 729x38
-              text run at (702,0) width 27: ", the"
-              text run at (0,19) width 93: "latter wins out:"
-          RenderBlock {P} at (0,54) size 744x19
-            RenderInline {SPAN} at (0,0) size 42x12
-              RenderText {#text} at (0,6) size 42x12
-                text run at (0,6) width 42: "autohinted"
-            RenderText {#text} at (42,0) size 4x19
-              text run at (42,0) width 4: " "
-            RenderInline {I} at (0,0) size 13x19
-              RenderText {#text} at (46,0) size 13x19
-                text run at (46,0) width 13: "vs"
-            RenderText {#text} at (59,0) size 4x19
-              text run at (59,0) width 4: " "
-            RenderInline {SPAN} at (0,0) size 83x12
-              RenderText {#text} at (63,6) size 83x12
-                text run at (63,6) width 83: "hopefully autohinted"
-        RenderListItem {LI} at (40,407) size 744x54
-          RenderBlock {P} at (0,0) size 744x19
-            RenderListMarker at (-21,0) size 16x19: "6"
-            RenderText {#text} at (0,0) size 626x19
-              text run at (0,0) width 440: "The following text should show that fontconfig can be used to enable "
-              text run at (440,0) width 186: "or disable subpixel rendering."
-          RenderBlock {P} at (0,35) size 744x19
-            RenderInline {SPAN} at (0,0) size 60x19
-              RenderText {#text} at (0,0) size 60x19
-                text run at (0,0) width 60: "subpixel"
-            RenderText {#text} at (60,0) size 4x19
-              text run at (60,0) width 4: " "
-            RenderInline {I} at (0,0) size 13x19
-              RenderText {#text} at (64,0) size 13x19
-                text run at (64,0) width 13: "vs"
-            RenderText {#text} at (77,0) size 4x19
-              text run at (77,0) width 4: " "
-            RenderInline {SPAN} at (0,0) size 82x19
-              RenderText {#text} at (81,0) size 82x19
-                text run at (81,0) width 82: "no subpixel"
+              RenderText {#text} at (649,3) size 64x15
+                text run at (649,3) width 64: "autohint"
+            RenderText {#text} at (712,0) size 740x35
+              text run at (712,0) width 28: ", the"
+              text run at (0,18) width 96: "latter wins out:"
+          RenderBlock {P} at (0,52) size 744x18
+            RenderInline {SPAN} at (0,0) size 43x11
+              RenderText {#text} at (0,5) size 43x11
+                text run at (0,5) width 43: "autohinted"
+            RenderText {#text} at (42,0) size 5x17
+              text run at (42,0) width 5: " "
+            RenderInline {I} at (0,0) size 14x17
+              RenderText {#text} at (46,0) size 14x17
+                text run at (46,0) width 14: "vs"
+            RenderText {#text} at (59,0) size 5x17
+              text run at (59,0) width 5: " "
+            RenderInline {SPAN} at (0,0) size 84x11
+              RenderText {#text} at (63,5) size 84x11
+                text run at (63,5) width 84: "hopefully autohinted"
+        RenderListItem {LI} at (40,394) size 744x52
+          RenderBlock {P} at (0,0) size 744x18
+            RenderListMarker at (-20,0) size 16x17: "6"
+            RenderText {#text} at (0,0) size 638x17
+              text run at (0,0) width 448: "The following text should show that fontconfig can be used to enable "
+              text run at (447,0) width 191: "or disable subpixel rendering."
+          RenderBlock {P} at (0,34) size 744x18
+            RenderInline {SPAN} at (0,0) size 59x17
+              RenderText {#text} at (0,0) size 59x17
+                text run at (0,0) width 59: "subpixel"
+            RenderText {#text} at (58,0) size 5x17
+              text run at (58,0) width 5: " "
+            RenderInline {I} at (0,0) size 15x17
+              RenderText {#text} at (62,0) size 15x17
+                text run at (62,0) width 15: "vs"
+            RenderText {#text} at (76,0) size 5x17
+              text run at (76,0) width 5: " "
+            RenderInline {SPAN} at (0,0) size 81x17
+              RenderText {#text} at (80,0) size 81x17
+                text run at (80,0) width 81: "no subpixel"
