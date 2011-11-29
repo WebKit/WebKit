@@ -124,22 +124,22 @@ enum ParameterMissingPolicy {
 
     // Overload these functions to provide a fast path for wrapper access.
     inline JSDOMWrapper* getInlineCachedWrapper(DOMWrapperWorld*, void*) { return 0; }
-    inline bool setInlineCachedWrapper(DOMWrapperWorld*, void*, JSDOMWrapper*) { return false; }
-    inline bool clearInlineCachedWrapper(DOMWrapperWorld*, void*, JSDOMWrapper*) { return false; }
+    inline bool setInlineCachedWrapper(DOMWrapperWorld*, void*, JSC::JSObject*) { return false; }
+    inline bool clearInlineCachedWrapper(DOMWrapperWorld*, void*, JSC::JSObject*) { return false; }
 
-    template <typename DOMClass> inline JSDOMWrapper* getCachedWrapper(DOMWrapperWorld* world, DOMClass* domObject)
+    template <typename DOMClass> inline JSC::JSObject* getCachedWrapper(DOMWrapperWorld* world, DOMClass* domObject)
     {
         if (JSDOMWrapper* wrapper = getInlineCachedWrapper(world, domObject))
             return wrapper;
         return world->m_wrappers.get(domObject).get();
     }
 
-    template <typename DOMClass> inline void cacheWrapper(DOMWrapperWorld* world, DOMClass* domObject, JSDOMWrapper* wrapper)
+    template <typename DOMClass> inline void cacheWrapper(DOMWrapperWorld* world, DOMClass* domObject, JSC::JSObject* wrapper)
     {
         if (setInlineCachedWrapper(world, domObject, wrapper))
             return;
         ASSERT(!world->m_wrappers.contains(domObject));
-        world->m_wrappers.set(domObject, JSC::Weak<JSDOMWrapper>(*world->globalData(), wrapper, wrapperOwner(world, domObject), wrapperContext(world, domObject)));
+        world->m_wrappers.set(domObject, JSC::Weak<JSC::JSObject>(*world->globalData(), wrapper, wrapperOwner(world, domObject), wrapperContext(world, domObject)));
     }
 
     template <typename DOMClass> inline void uncacheWrapper(DOMWrapperWorld* world, DOMClass* domObject, JSDOMWrapper* wrapper)
@@ -166,7 +166,7 @@ enum ParameterMissingPolicy {
     {
         if (!domObject)
             return JSC::jsNull();
-        if (JSDOMWrapper* wrapper = getCachedWrapper(currentWorld(exec), domObject))
+        if (JSC::JSObject* wrapper = getCachedWrapper(currentWorld(exec), domObject))
             return wrapper;
         return createWrapper<WrapperClass>(exec, globalObject, domObject);
     }

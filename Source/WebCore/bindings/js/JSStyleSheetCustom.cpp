@@ -50,7 +50,7 @@ JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, StyleSheet* style
     if (!styleSheet)
         return jsNull();
 
-    JSDOMWrapper* wrapper = getCachedWrapper(currentWorld(exec), styleSheet);
+    JSObject* wrapper = getCachedWrapper(currentWorld(exec), styleSheet);
     if (wrapper)
         return wrapper;
 

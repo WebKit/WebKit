@@ -33,7 +33,7 @@ class CSSValue;
 class JSDOMWrapper;
 class ScriptController;
 
-typedef HashMap<void*, JSC::Weak<JSDOMWrapper> > DOMObjectWrapperMap;
+typedef HashMap<void*, JSC::Weak<JSC::JSObject> > DOMObjectWrapperMap;
 typedef HashMap<StringImpl*, JSC::Weak<JSC::JSString> > JSStringCache;
 
 class JSDOMWrapperOwner : public JSC::WeakHandleOwner {
