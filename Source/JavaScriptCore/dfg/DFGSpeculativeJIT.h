@@ -1432,7 +1432,7 @@ private:
         m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
     }
 
-    ALWAYS_INLINE void setupArgumentsWithExecState(GPRReg arg1, TrustedImm32 arg2, TrustedImm32 arg3)
+    ALWAYS_INLINE void setupArgumentsWithExecState(GPRReg arg1, TrustedImm32 arg2, TrustedImmPtr arg3)
     {
         m_jit.move(arg1, GPRInfo::argumentGPR1);
         m_jit.move(arg2, GPRInfo::argumentGPR2);

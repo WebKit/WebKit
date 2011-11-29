@@ -1,3 +1,12 @@
+2011-11-28  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed build fixes for ARM.
+
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::readCallTarget):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::setupArgumentsWithExecState):
+
 2011-11-20  Roland Steiner  <rolandsteiner@chromium.org>
 
         <style scoped>: add ENABLE(STYLE_SCOPED) flag to WebKit

@@ -1468,6 +1468,11 @@ public:
         return m_assembler.executableOffsetFor(location);
     }
 
+    static FunctionPtr readCallTarget(CodeLocationCall call)
+    {
+        return FunctionPtr(reinterpret_cast<void(*)()>(ARMv7Assembler::readCallTarget(call.dataLocation())));
+    }
+
 protected:
     bool inUninterruptedSequence()
     {
@@ -1562,11 +1567,6 @@ protected:
         return static_cast<ARMv7Assembler::Condition>(cond);
     }
     
-    static FunctionPtr readCallTarget(CodeLocationCall call)
-    {
-        return ARMv7Assembler::readCallTarget(call.dataLocation());
-    }
-
 private:
     friend class LinkBuffer;
     friend class RepatchBuffer;
