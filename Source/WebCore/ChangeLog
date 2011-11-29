@@ -1,3 +1,16 @@
+2011-11-28  Wei Charles  <charles.wei@torchmobile.com.cn>
+
+        [blackberry] Upstream BlackBerry porting of plugin framework
+        https://bugs.webkit.org/show_bug.cgi?id=73185
+
+        Reviewed by Daniel Bates.
+
+        No new tests for now.
+
+        * plugins/blackberry: Added.
+        * plugins/blackberry/PluginDataBlackBerry.cpp: Added.
+        * plugins/blackberry/PluginPackageBlackBerry.cpp: Added.
+
 2011-11-28  Noel Gordon  <noel.gordon@gmail.com>
 
         [chromium] Remove V8MessagePortCustom.h from the gyp projects
