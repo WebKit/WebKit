@@ -180,6 +180,7 @@ SkColor PlatformContextSkia::State::applyAlpha(SkColor c) const
 PlatformContextSkia::PlatformContextSkia(SkCanvas* canvas)
     : m_canvas(canvas)
     , m_printing(false)
+    , m_deferred(false)
     , m_drawingToImageBuffer(false)
     , m_gpuContext(0)
 {

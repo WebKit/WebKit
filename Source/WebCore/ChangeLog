@@ -1,3 +1,31 @@
+2011-11-28  Stephen White  <senorblanco@chromium.org>
+
+        [chromium] Fix SVG filters when running in accelerated drawing mode.
+        https://bugs.webkit.org/show_bug.cgi?id=73249
+
+        Reviewed by Kenneth Russell.
+
+        Test: platform/chromium/compositing/accelerated-drawing/svg-filters.html
+
+        * platform/graphics/chromium/LayerTextureUpdaterCanvas.cpp:
+        (WebCore::LayerTextureUpdaterSkPicture::prepareToUpdate):
+        When doing accelerated drawing, mark the PlatformContextSkia as
+        deferred.
+        * platform/graphics/skia/ImageBufferSkia.cpp:
+        (WebCore::drawNeedsCopy):
+        When doing a cross-context draw, if the destination context is 
+        deferred, copy the image.  Also refactor conditions under which the
+        image is copied into a new function.
+        (WebCore::ImageBuffer::draw):
+        (WebCore::ImageBuffer::drawPattern):
+        Use the refactored function for conditional copies.
+        * platform/graphics/skia/PlatformContextSkia.cpp:
+        (WebCore::PlatformContextSkia::PlatformContextSkia):
+        * platform/graphics/skia/PlatformContextSkia.h:
+        (WebCore::PlatformContextSkia::isDeferred):
+        (WebCore::PlatformContextSkia::setDeferred):
+        Add m_isDeferred flag, initializer and accessors.
+
 2011-11-29  Roland Steiner  <rolandsteiner@chromium.org>
 
         <style scoped>: add ENABLE(STYLE_SCOPED) flag to WebKit

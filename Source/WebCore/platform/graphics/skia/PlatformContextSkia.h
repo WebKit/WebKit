@@ -181,6 +181,12 @@ public:
     bool isAccelerated() const { return m_gpuContext; }
     void setGraphicsContext3D(GraphicsContext3D*);
 
+    // True if this context is deferring draw calls to be executed later.
+    // We need to know this for context-to-context draws, in order to know if
+    // the source bitmap needs to be copied.
+    bool isDeferred() const { return m_deferred; }
+    void setDeferred(bool deferred) { m_deferred = deferred; }
+
 private:
     // Used when restoring and the state has an image clip. Only shows the pixels in
     // m_canvas that are also in imageBuffer.
@@ -208,6 +214,7 @@ private:
     IntSize m_imageResamplingHintSrcSize;
     FloatSize m_imageResamplingHintDstSize;
     bool m_printing;
+    bool m_deferred;
     bool m_drawingToImageBuffer;
     GraphicsContext3D* m_gpuContext;
 };

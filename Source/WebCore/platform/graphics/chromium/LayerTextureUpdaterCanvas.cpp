@@ -201,6 +201,7 @@ void LayerTextureUpdaterSkPicture::prepareToUpdate(const IntRect& contentRect, c
 {
     SkCanvas* canvas = m_picture.beginRecording(contentRect.width(), contentRect.height());
     PlatformContextSkia platformContext(canvas);
+    platformContext.setDeferred(true);
     GraphicsContext graphicsContext(&platformContext);
     paintContents(graphicsContext, contentRect, contentsScale);
     m_picture.endRecording();

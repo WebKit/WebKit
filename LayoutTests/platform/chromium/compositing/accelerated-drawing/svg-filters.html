@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script type="text/javascript">
+  if (window.layoutTestController)
+    layoutTestController.dumpAsText(true); // This is only useful as pixel test.
+
+  if (window.internals)
+    window.internals.setAcceleratedDrawingEnabled(document, true);
+</script>
+</head>
+
+<body>
+<div style="-webkit-transform: translateZ(0);">
+  <svg xmlns="http://www.w3.org/2000/svg" version="1.1" height=500>
+    <defs>
+      <filter id="f1">
+        <feOffset in="SourceGraphic" x="50"/>
+      </filter>
+    </defs>
+    <rect width="300" height="300" filter="url(#f1)" style="fill:green"/>
+  </svg>
+</div>
+</body>
+</html>

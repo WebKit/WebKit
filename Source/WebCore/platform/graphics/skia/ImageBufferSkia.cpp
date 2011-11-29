@@ -157,17 +157,22 @@ void ImageBuffer::clip(GraphicsContext* context, const FloatRect& rect) const
     context->platformContext()->beginLayerClippedToImage(rect, this);
 }
 
+static bool drawNeedsCopy(GraphicsContext* src, GraphicsContext* dst)
+{
+    return dst->platformContext()->isDeferred() || src == dst;
+}
+
 void ImageBuffer::draw(GraphicsContext* context, ColorSpace styleColorSpace, const FloatRect& destRect, const FloatRect& srcRect,
                        CompositeOperator op, bool useLowQualityScale)
 {
-    RefPtr<Image> image = BitmapImageSingleFrameSkia::create(*m_data.m_platformContext.bitmap(), context == m_context);
+    RefPtr<Image> image = BitmapImageSingleFrameSkia::create(*m_data.m_platformContext.bitmap(), drawNeedsCopy(m_context.get(), context));
     context->drawImage(image.get(), styleColorSpace, destRect, srcRect, op, useLowQualityScale);
 }
 
 void ImageBuffer::drawPattern(GraphicsContext* context, const FloatRect& srcRect, const AffineTransform& patternTransform,
                               const FloatPoint& phase, ColorSpace styleColorSpace, CompositeOperator op, const FloatRect& destRect)
 {
-    RefPtr<Image> image = BitmapImageSingleFrameSkia::create(*m_data.m_platformContext.bitmap(), context == m_context);
+    RefPtr<Image> image = BitmapImageSingleFrameSkia::create(*m_data.m_platformContext.bitmap(), drawNeedsCopy(m_context.get(), context));
     image->drawPattern(context, srcRect, patternTransform, phase, styleColorSpace, op, destRect);
 }
 
