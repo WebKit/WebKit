@@ -1,3 +1,21 @@
+2011-11-29  Alexandru Chiculita  <achicu@adobe.com>
+
+        [CSS Filters] Filters do not render correctly when the layer has a transform
+        https://bugs.webkit.org/show_bug.cgi?id=73077
+
+        Reviewed by Dean Jackson.
+
+        Corrected the root layer that was used when no transform was applied.
+        Using PaintLayerAppliedTransform when calling paintLayer again, to avoid
+        applying the transform inside the filter's graphics context. Now we apply that
+        on the result image.
+
+        Tests: css3/filters/filter-with-transform.html
+               css3/filters/nested-filter.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paintLayer):
+
 2011-11-28  Wei Charles  <charles.wei@torchmobile.com.cn>
 
         [blackberry] Upstream BlackBerry porting of plugin framework

@@ -2700,20 +2700,36 @@ void RenderLayer::paintLayer(RenderLayer* rootLayer, GraphicsContext* p,
         
         // Paint into the context that represents the SourceGraphic of the filter.
         GraphicsContext* sourceGraphicsContext = m_filter->inputContext();
+        
+        LayoutPoint layerOrigin;
+        convertToLayerCoords(rootLayer, layerOrigin);
+        
+        bool isRootLayer = paintsWithTransform(paintBehavior) && !(paintFlags & PaintLayerAppliedTransform);
+        if (!isRootLayer) {
+            sourceGraphicsContext->save();
+            sourceGraphicsContext->translate(-layerOrigin.x(), -layerOrigin.y());
+        }
 
         FloatRect paintRect = FloatRect(FloatPoint(), size());
         sourceGraphicsContext->clearRect(paintRect);
 
         // Now do the regular paint into the SourceGraphic.
-        paintLayer(this, sourceGraphicsContext, paintDirtyRect, paintBehavior, paintingRoot, region, overlapTestRequests, paintFlags | PaintLayerPaintingFilter);
-            
+        // Using PaintLayerAppliedTransform to avoid applying the transform again inside the context.
+        paintLayer(isRootLayer ? this : rootLayer, sourceGraphicsContext, paintDirtyRect, paintBehavior, paintingRoot, region, overlapTestRequests, 
+                   paintFlags | PaintLayerPaintingFilter | PaintLayerAppliedTransform);
+        
+        if (!isRootLayer)
+            sourceGraphicsContext->restore();
+        
         m_filter->apply();
         
-        LayoutPoint layerOrigin;
-        convertToLayerCoords(rootLayer, layerOrigin);
-        LayoutRect filterBounds = LayoutRect(layerOrigin.x(), layerOrigin.y(), size().width(), size().height());
-        
         // Get the filtered output and draw it in place.
+        GraphicsContextStateSaver stateSaver(*p);
+        TransformationMatrix transform(renderableTransform(paintBehavior));
+        transform.translateRight(layerOrigin.x(), layerOrigin.y());
+        p->concatCTM(transform.toAffineTransform());
+        
+        LayoutRect filterBounds = LayoutRect(0, 0, size().width(), size().height());
         p->drawImageBuffer(m_filter->output(), renderer()->style()->colorSpace(), filterBounds, CompositeSourceOver);
         return;
     }
