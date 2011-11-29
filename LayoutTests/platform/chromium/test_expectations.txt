@@ -1092,11 +1092,9 @@ BUGWK70748 CPU : svg/clip-path/clip-path-transform-2.svg = IMAGE
 BUGWK70748 CPU : svg/clip-path/clip-path-use-as-child.svg = IMAGE
 BUGWK70748 CPU : svg/clip-path/clip-path-userSpaceOnUse.svg = IMAGE
 BUGWK70748 CPU : svg/clip-path/clip-path-with-text-clipped.svg = IMAGE
-BUGWK70748 CPU : svg/css/text-shadow-multiple.xhtml = IMAGE
 BUGWK70748 CPU : svg/custom/resource-invalidate-on-target-update.svg = IMAGE
 BUGWK70748 CPU : svg/custom/use-on-clip-path-with-transformation.svg = IMAGE
 BUGWK70748 CPU LEOPARD : svg/W3C-I18N/tspan-dirLTR-ubOverride-in-rtl-context.svg = IMAGE
-BUGWK70748 CPU : svg/W3C-SVG-1.1/painting-marker-02-f.svg = IMAGE
 BUGWK70748 CPU LEOPARD : svg/W3C-SVG-1.1/masking-path-05-f.svg = IMAGE
 
 // Rebaseline after SK_ENABLE_FAST_SHADERMASK is enabled in skia.gyp
@@ -1112,7 +1110,6 @@ BUGCR105305 CPU : svg/custom/gradient-stroke-width.svg = IMAGE
 BUGCR105305 CPU : svg/custom/nested-pattern-boundingBoxModeContent.svg = IMAGE
 BUGCR105305 CPU : svg/custom/pattern-with-transformation.svg = IMAGE
 BUGCR105305 CPU : svg/text/text-gradient-positioning.svg = IMAGE
-BUGCR105305 CPU : svg/transforms/text-with-pattern-inside-transformed-html.xhtml = IMAGE
 BUGCR105305 : svg/text/selection-background-color.xhtml = PASS CRASH IMAGE
 BUGCR105305 : svg/text/selection-styles.xhtml = PASS CRASH IMAGE
 
@@ -1488,10 +1485,8 @@ BUGCR104128 WIN LINUX SNOWLEOPARD CPU : fast/text/shadow-translucent-fill.html =
 BUGCR104128 CPU : fast/text/stroking-decorations.html = IMAGE
 BUGCR104128 WIN LINUX SNOWLEOPARD CPU : fast/text/stroking.html = IMAGE
 BUGCR104128 CPU : fast/writing-mode/english-lr-text.html = IMAGE
-BUGCR104128 CPU : svg/css/group-with-shadow.svg = IMAGE
 BUGCR104128 CPU : svg/css/shadow-with-large-radius.svg = IMAGE
 BUGCR104128 CPU : svg/css/shadow-with-negative-offset.svg = IMAGE
-BUGCR104128 CPU : svg/css/stars-with-shadow.html = IMAGE
 BUGCR104128 CPU : transitions/svg-text-shadow-transition.html = IMAGE
 
 // rebaseline after skia rev. 2735 lands (improved luminance computation)
@@ -1531,7 +1526,6 @@ BUGCR10441 MAC WIN : transitions/transition-end-event-transform.html = PASS TEXT
 // Disable these while we're back to using GDI for text drawing. These give slightly
 // different results than with Skia. When we switch back to Skia, we can
 // reenable these.
-BUGCR99500 WIN : svg/batik/text/textStyles.svg = IMAGE
 BUGCR99500 WIN : svg/custom/simple-text-double-shadow.svg = IMAGE
 
 // Merge 41768:41807
@@ -1643,14 +1637,7 @@ BUGCR101797 CPU : svg/W3C-SVG-1.1-SE/paths-dom-02-f.svg = IMAGE
 BUGCR101797 CPU : svg/W3C-SVG-1.1-SE/pservers-pattern-03-f.svg = IMAGE
 BUGCR101797 CPU : svg/W3C-SVG-1.1-SE/struct-use-14-f.svg = IMAGE
 BUGCR101797 CPU : svg/W3C-SVG-1.1-SE/svgdom-over-01-f.svg = IMAGE
-BUGCR101797 CPU : svg/W3C-SVG-1.1/animate-elem-36-t.svg = IMAGE
-BUGCR101797 CPU : svg/W3C-SVG-1.1/coords-viewattr-03-b.svg = IMAGE
-BUGCR101797 CPU : svg/W3C-SVG-1.1/metadata-example-01-b.svg = IMAGE
 BUGCR101797 CPU : svg/as-background-image/svg-as-background-5.html = IMAGE
-BUGCR101797 CPU : svg/batik/text/textOnPathSpaces.svg = IMAGE
-BUGCR101797 CPU : svg/batik/text/verticalText.svg = IMAGE
-BUGCR101797 CPU : svg/batik/text/verticalTextOnPath.svg = IMAGE
-BUGCR101797 CPU : svg/custom/use-css-events.svg = IMAGE
 BUGCR101797 CPU : svg/custom/use-forward-refs.svg = IMAGE
 BUGCR101797 CPU : svg/filters/subRegion-one-effect.svg = IMAGE
 BUGCR101797 CPU : svg/filters/subRegion-two-effects.svg = IMAGE
@@ -2449,7 +2436,6 @@ BUG_YUTAK LEOPARD : fast/images/imagemap-polygon-focus-ring.html = IMAGE
 
 // Need to rebaseline now that we antialias rotated images
 BUGCR36902 LINUX WIN : fast/borders/border-image-rotate-transform.html = IMAGE
-BUGCR36902 LINUX WIN : svg/batik/filters/feTile.svg = IMAGE
 BUGCR36902 LINUX WIN : svg/custom/focus-ring.svg = IMAGE
 
 ///////////////////////////////////////////////////////////////////////////
@@ -2715,7 +2701,6 @@ BUGWK54322 SNOWLEOPARD : fast/text/international/text-combine-image-test.html = 
 BUGWK54322 SNOWLEOPARD : fonts/monospace.html = IMAGE
 BUGWK54322 SNOWLEOPARD : svg/custom/animate-path-discrete.svg = IMAGE
 BUGWK54322 SNOWLEOPARD : svg/W3C-SVG-1.1/coords-viewattr-01-b.svg = IMAGE+TEXT
-BUGWK54322 SNOWLEOPARD : svg/zoom/text/zoom-coords-viewattr-01-b.svg = IMAGE+TEXT
 BUGWK54322 SNOWLEOPARD : tables/mozilla/core/bloomberg.html = IMAGE
 BUGWK54322 SNOWLEOPARD : tables/mozilla/core/misc.html = IMAGE
 BUGWK54322 SNOWLEOPARD : tables/mozilla/core/row_span.html = IMAGE
@@ -3181,7 +3166,6 @@ WONTFIX LINUX DEBUG SKIP : inspector/profiler/cpu-profiler-profiling.html = TIME
 
 BUGCR84093 VISTA : http/tests/history/redirect-200-refresh-2-seconds.pl = PASS TIMEOUT
 
-BUGWK66320 SNOWLEOPARD RELEASE : svg/wicd/test-rightsizing-a.xhtml = PASS IMAGE+TEXT
 BUGWK66320 DEBUG : svg/wicd/test-rightsizing-a.xhtml = PASS IMAGE IMAGE+TEXT
 
 BUGABARTH LINUX : svg/text/scaling-font-with-geometric-precision.html = PASS IMAGE
@@ -3403,11 +3387,6 @@ BUGWK66974 DEBUG : fast/events/keydown-1.html = PASS TIMEOUT
 // These tests were disabled on our side until WebKit began running them.
 // They're now running them so these need to be triaged.
 BUGWK66989 : transforms/3d = PASS FAIL
-
-BUGWK67433 WIN LINUX : svg/custom/pattern-rotate-gaps.svg = IMAGE
-
-// Renders differently in 32 vs 64 bit mode and is flaky
-BUGJAMESR LINUX : svg/transforms/text-with-pattern-with-svg-transform.svg = IMAGE PASS
 
 // Temporary failure. This failure is going to be removed as a rebase line
 // after WebKit bug r62684 is landed.
