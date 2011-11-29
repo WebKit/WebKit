@@ -1,5 +1,24 @@
 2011-11-28  Timothy Hatcher  <timothy@apple.com>
 
+        Skip selecting TreeElements that are hidden when keyboard navigating.
+
+        We already skipped non-selectable tree elements in the common cases, this just makes selectable
+        take the hidden flag into account.
+
+        Reviewed by Brian Weinstein.
+
+        * inspector/front-end/treeoutline.js:
+        (TreeOutline.prototype._treeKeyDown): Skip non-selectable elements when pressing Left or Right,
+        similar to what we already do when pressing Up and Down.
+        (TreeElement): Set _selectable to true.
+        (TreeElement.prototype.get selectable): Added. Return false when hidden.
+        (TreeElement.prototype.set selectable): Added. Set _selectable.
+        (TreeElement.prototype.traverseNextTreeElement): Renamed skipHidden to skipUnrevealed to prevent confusion with
+        the hidden property of TreeElement.
+        (TreeElement.prototype.traversePreviousTreeElement): Ditto.
+
+2011-11-28  Timothy Hatcher  <timothy@apple.com>
+
         Use classList instead of addStyleClass and removeStyleClass in TreeOutline.
 
         https://webkit.org/b/72803

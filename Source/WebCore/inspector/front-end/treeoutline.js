@@ -378,6 +378,8 @@ TreeOutline.prototype._treeKeyDown = function(event)
             handled = true;
             if (this.selectedTreeElement.parent.selectable) {
                 nextSelectedElement = this.selectedTreeElement.parent;
+                while (nextSelectedElement && !nextSelectedElement.selectable)
+                    nextSelectedElement = nextSelectedElement.parent;
                 handled = nextSelectedElement ? true : false;
             } else if (this.selectedTreeElement.parent)
                 this.selectedTreeElement.parent.collapse();
@@ -390,6 +392,8 @@ TreeOutline.prototype._treeKeyDown = function(event)
             handled = true;
             if (this.selectedTreeElement.expanded) {
                 nextSelectedElement = this.selectedTreeElement.children[0];
+                while (nextSelectedElement && !nextSelectedElement.selectable)
+                    nextSelectedElement = nextSelectedElement.nextSibling;
                 handled = nextSelectedElement ? true : false;
             } else {
                 if (event.altKey)
@@ -468,6 +472,7 @@ function TreeElement(title, representedObject, hasChildren)
     }
 
     this._hidden = false;
+    this._selectable = true;
     this.expanded = false;
     this.selected = false;
     this.hasChildren = hasChildren;
@@ -480,8 +485,17 @@ function TreeElement(title, representedObject, hasChildren)
 }
 
 TreeElement.prototype = {
-    selectable: true,
     arrowToggleWidth: 10,
+
+    get selectable() {
+        if (this._hidden)
+            return false;
+        return this._selectable;
+    },
+
+    set selectable(x) {
+        this._selectable = x;
+    },
 
     get listItemElement() {
         return this._listItemNode;
@@ -888,13 +902,13 @@ TreeElement.prototype.onpopulate = function()
 }
 
 /**
- * @param {boolean} skipHidden
+ * @param {boolean} skipUnrevealed
  * @param {(TreeOutline|TreeElement)=} stayWithin
  * @param {boolean=} dontPopulate
  * @param {Object=} info
  * @return {TreeElement}
  */
-TreeElement.prototype.traverseNextTreeElement = function(skipHidden, stayWithin, dontPopulate, info)
+TreeElement.prototype.traverseNextTreeElement = function(skipUnrevealed, stayWithin, dontPopulate, info)
 {
     if (!dontPopulate && this.hasChildren)
         this.onpopulate();
@@ -902,8 +916,8 @@ TreeElement.prototype.traverseNextTreeElement = function(skipHidden, stayWithin,
     if (info)
         info.depthChange = 0;
 
-    var element = skipHidden ? (this.revealed() ? this.children[0] : null) : this.children[0];
-    if (element && (!skipHidden || (skipHidden && this.expanded))) {
+    var element = skipUnrevealed ? (this.revealed() ? this.children[0] : null) : this.children[0];
+    if (element && (!skipUnrevealed || (skipUnrevealed && this.expanded))) {
         if (info)
             info.depthChange = 1;
         return element;
@@ -912,12 +926,12 @@ TreeElement.prototype.traverseNextTreeElement = function(skipHidden, stayWithin,
     if (this === stayWithin)
         return null;
 
-    element = skipHidden ? (this.revealed() ? this.nextSibling : null) : this.nextSibling;
+    element = skipUnrevealed ? (this.revealed() ? this.nextSibling : null) : this.nextSibling;
     if (element)
         return element;
 
     element = this;
-    while (element && !element.root && !(skipHidden ? (element.revealed() ? element.nextSibling : null) : element.nextSibling) && element.parent !== stayWithin) {
+    while (element && !element.root && !(skipUnrevealed ? (element.revealed() ? element.nextSibling : null) : element.nextSibling) && element.parent !== stayWithin) {
         if (info)
             info.depthChange -= 1;
         element = element.parent;
@@ -926,24 +940,24 @@ TreeElement.prototype.traverseNextTreeElement = function(skipHidden, stayWithin,
     if (!element)
         return null;
 
-    return (skipHidden ? (element.revealed() ? element.nextSibling : null) : element.nextSibling);
+    return (skipUnrevealed ? (element.revealed() ? element.nextSibling : null) : element.nextSibling);
 }
 
 /**
- * @param {boolean} skipHidden
+ * @param {boolean} skipUnrevealed
  * @param {boolean=} dontPopulate
  * @return {TreeElement}
  */
-TreeElement.prototype.traversePreviousTreeElement = function(skipHidden, dontPopulate)
+TreeElement.prototype.traversePreviousTreeElement = function(skipUnrevealed, dontPopulate)
 {
-    var element = skipHidden ? (this.revealed() ? this.previousSibling : null) : this.previousSibling;
+    var element = skipUnrevealed ? (this.revealed() ? this.previousSibling : null) : this.previousSibling;
     if (!dontPopulate && element && element.hasChildren)
         element.onpopulate();
 
-    while (element && (skipHidden ? (element.revealed() && element.expanded ? element.children[element.children.length - 1] : null) : element.children[element.children.length - 1])) {
+    while (element && (skipUnrevealed ? (element.revealed() && element.expanded ? element.children[element.children.length - 1] : null) : element.children[element.children.length - 1])) {
         if (!dontPopulate && element.hasChildren)
             element.onpopulate();
-        element = (skipHidden ? (element.revealed() && element.expanded ? element.children[element.children.length - 1] : null) : element.children[element.children.length - 1]);
+        element = (skipUnrevealed ? (element.revealed() && element.expanded ? element.children[element.children.length - 1] : null) : element.children[element.children.length - 1]);
     }
 
     if (element)
