@@ -55,7 +55,7 @@ JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, TrackBa
     if (!track)
         return jsNull();
     
-    JSObject* wrapper = getCachedWrapper(currentWorld(exec), track);
+    JSDOMWrapper* wrapper = getCachedWrapper(currentWorld(exec), track);
     if (wrapper)
         return wrapper;
     

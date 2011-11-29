@@ -168,7 +168,7 @@ static JSC::JSValue toJSArrayBufferView(JSC::ExecState* exec, JSDOMGlobalObject*
     if (!object)
         return JSC::jsNull();
 
-    if (JSC::JSObject* wrapper = getCachedWrapper(currentWorld(exec), object))
+    if (JSDOMWrapper* wrapper = getCachedWrapper(currentWorld(exec), object))
         return wrapper;
 
     exec->heap()->reportExtraMemoryCost(object->byteLength());

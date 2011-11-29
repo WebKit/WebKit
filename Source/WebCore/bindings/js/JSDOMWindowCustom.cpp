@@ -424,7 +424,7 @@ bool JSDOMWindow::defineOwnProperty(JSC::JSObject* object, JSC::ExecState* exec,
 JSValue JSDOMWindow::history(ExecState* exec) const
 {
     History* history = impl()->history();
-    if (JSObject* wrapper = getCachedWrapper(currentWorld(exec), history))
+    if (JSDOMWrapper* wrapper = getCachedWrapper(currentWorld(exec), history))
         return wrapper;
 
     JSDOMWindow* window = const_cast<JSDOMWindow*>(this);
@@ -436,7 +436,7 @@ JSValue JSDOMWindow::history(ExecState* exec) const
 JSValue JSDOMWindow::location(ExecState* exec) const
 {
     Location* location = impl()->location();
-    if (JSObject* wrapper = getCachedWrapper(currentWorld(exec), location))
+    if (JSDOMWrapper* wrapper = getCachedWrapper(currentWorld(exec), location))
         return wrapper;
 
     JSDOMWindow* window = const_cast<JSDOMWindow*>(this);
