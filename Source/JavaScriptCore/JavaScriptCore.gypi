@@ -598,7 +598,7 @@
             'wtf/ThreadingWin.cpp',
             'wtf/TypeTraits.cpp',
             'wtf/TypedArrayBase.h',
-            'wtf/WTFThreadData.cpp'
+            'wtf/WTFThreadData.cpp',
             'wtf/Uint16Array.h',
             'wtf/Uint32Array.h',
             'wtf/Uint8Array.h',

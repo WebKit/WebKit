@@ -1,3 +1,9 @@
+2011-11-28  Oliver Hunt  <oliver@apple.com>
+
+        Fix gyp build
+
+        * JavaScriptCore.gypi:
+
 2011-11-28  Filip Pizlo  <fpizlo@apple.com>
 
         GetById should not always speculate cell
