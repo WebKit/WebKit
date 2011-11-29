@@ -1,3 +1,22 @@
+2011-11-28  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Crash in IsolateTracker::addFakeRunIfNecessary(), preceded by assertion failure (m_nestedIsolateCount >= 1)
+        in IsolateTracker::exitIsolate()
+        https://bugs.webkit.org/show_bug.cgi?id=69275
+
+        Reviewed by Eric Seidel.
+
+        The crash was caused by our false assumption that at most one isolated container exists between the start
+        and the root when appending a new run. Fixed the crash by computing the actual number of isolated containers
+        between the start and the root.
+
+        Test: fast/text/nested-bidi-isolate-crash.html
+
+        * rendering/InlineIterator.h:
+        (WebCore::numberOfIsolateAncestors):
+        (WebCore::IsolateTracker::IsolateTracker):
+        (WebCore::InlineBidiResolver::appendRun):
+
 2011-11-29  Oliver Hunt  <oliver@apple.com>
 
         Revert that last change, apparently it destroys everything in the world.
