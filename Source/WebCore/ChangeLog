@@ -1,3 +1,16 @@
+2011-11-29  Zoltan Herczeg  <zherczeg@webkit.org>
+
+        [Qt] Couple of tests have different results on 64 bit and/or in debug mode compared to 32 bit and/or release mode
+        https://bugs.webkit.org/show_bug.cgi?id=52810
+
+        Reviewed by Nikolas Zimmermann.
+
+        This avoids precision loss in getCTM, which is used whenever mapping repaint rects to a parent coordinate system
+        - it affects several DRT results on Mac, all of them are progressions.
+
+        * svg/SVGPreserveAspectRatio.cpp:
+        (WebCore::SVGPreserveAspectRatio::getCTM): Use double-precision internally.
+
 2011-11-25  Pavel Podivilov  <podivilov@chromium.org>
 
         Web Inspector: support concatenated source maps.

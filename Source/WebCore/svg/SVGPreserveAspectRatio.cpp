@@ -248,42 +248,48 @@ void SVGPreserveAspectRatio::transformRect(FloatRect& destRect, FloatRect& srcRe
     }
 }
 
-AffineTransform SVGPreserveAspectRatio::getCTM(float logicX, float logicY, float logicWidth, float logicHeight, float physWidth, float physHeight) const
+AffineTransform SVGPreserveAspectRatio::getCTM(float logicalX, float logicalY, float logicalWidth, float logicalHeight, float physicalWidth, float physicalHeight) const
 {
     AffineTransform transform;
     if (m_align == SVG_PRESERVEASPECTRATIO_UNKNOWN)
         return transform;
 
-    float logicalRatio = logicWidth / logicHeight;
-    float physRatio = physWidth / physHeight;
+    double extendedLogicalX = logicalX;
+    double extendedLogicalY = logicalY;
+    double extendedLogicalWidth = logicalWidth;
+    double extendedLogicalHeight = logicalHeight;
+    double extendedPhysicalWidth = physicalWidth;
+    double extendedPhysicalHeight = physicalHeight;
+    double logicalRatio = extendedLogicalWidth / extendedLogicalHeight;
+    double physicalRatio = extendedPhysicalWidth / extendedPhysicalHeight;
 
     if (m_align == SVG_PRESERVEASPECTRATIO_NONE) {
-        transform.scaleNonUniform(physWidth / logicWidth, physHeight / logicHeight);
-        transform.translate(-logicX, -logicY);
+        transform.scaleNonUniform(extendedPhysicalWidth / extendedLogicalWidth, extendedPhysicalHeight / extendedLogicalHeight);
+        transform.translate(-extendedLogicalX, -extendedLogicalY);
         return transform;
     }
 
-    if ((logicalRatio < physRatio && (m_meetOrSlice == SVG_MEETORSLICE_MEET)) || (logicalRatio >= physRatio && (m_meetOrSlice == SVG_MEETORSLICE_SLICE))) {
-        transform.scaleNonUniform(physHeight / logicHeight, physHeight / logicHeight);
+    if ((logicalRatio < physicalRatio && (m_meetOrSlice == SVG_MEETORSLICE_MEET)) || (logicalRatio >= physicalRatio && (m_meetOrSlice == SVG_MEETORSLICE_SLICE))) {
+        transform.scaleNonUniform(extendedPhysicalHeight / extendedLogicalHeight, extendedPhysicalHeight / extendedLogicalHeight);
 
         if (m_align == SVG_PRESERVEASPECTRATIO_XMINYMIN || m_align == SVG_PRESERVEASPECTRATIO_XMINYMID || m_align == SVG_PRESERVEASPECTRATIO_XMINYMAX)
-            transform.translate(-logicX, -logicY);
+            transform.translate(-extendedLogicalX, -extendedLogicalY);
         else if (m_align == SVG_PRESERVEASPECTRATIO_XMIDYMIN || m_align == SVG_PRESERVEASPECTRATIO_XMIDYMID || m_align == SVG_PRESERVEASPECTRATIO_XMIDYMAX)
-            transform.translate(-logicX - (logicWidth - physWidth * logicHeight / physHeight) / 2, -logicY);
+            transform.translate(-extendedLogicalX - (extendedLogicalWidth - extendedPhysicalWidth * extendedLogicalHeight / extendedPhysicalHeight) / 2, -extendedLogicalY);
         else
-            transform.translate(-logicX - (logicWidth - physWidth * logicHeight / physHeight), -logicY);
+            transform.translate(-extendedLogicalX - (extendedLogicalWidth - extendedPhysicalWidth * extendedLogicalHeight / extendedPhysicalHeight), -extendedLogicalY);
         
         return transform;
     }
 
-    transform.scaleNonUniform(physWidth / logicWidth, physWidth / logicWidth);
+    transform.scaleNonUniform(extendedPhysicalWidth / extendedLogicalWidth, extendedPhysicalWidth / extendedLogicalWidth);
 
     if (m_align == SVG_PRESERVEASPECTRATIO_XMINYMIN || m_align == SVG_PRESERVEASPECTRATIO_XMIDYMIN || m_align == SVG_PRESERVEASPECTRATIO_XMAXYMIN)
-        transform.translate(-logicX, -logicY);
+        transform.translate(-extendedLogicalX, -extendedLogicalY);
     else if (m_align == SVG_PRESERVEASPECTRATIO_XMINYMID || m_align == SVG_PRESERVEASPECTRATIO_XMIDYMID || m_align == SVG_PRESERVEASPECTRATIO_XMAXYMID)
-        transform.translate(-logicX, -logicY - (logicHeight - physHeight * logicWidth / physWidth) / 2);
+        transform.translate(-extendedLogicalX, -extendedLogicalY - (extendedLogicalHeight - extendedPhysicalHeight * extendedLogicalWidth / extendedPhysicalWidth) / 2);
     else
-        transform.translate(-logicX, -logicY - (logicHeight - physHeight * logicWidth / physWidth));
+        transform.translate(-extendedLogicalX, -extendedLogicalY - (extendedLogicalHeight - extendedPhysicalHeight * extendedLogicalWidth / extendedPhysicalWidth));
 
     return transform;
 }
