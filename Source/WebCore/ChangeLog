@@ -1,3 +1,30 @@
+2011-11-29  Sean Wang  <Xuewen.Wang@torchmobile.com.cn>
+
+        Upstream BlackBerry porting of platform/image-decoders
+        https://bugs.webkit.org/show_bug.cgi?id=73118
+
+        Reviewed by Daniel Bates.
+
+        Initial upstream, can't be built yet, no test cases.
+
+        The initial author is David Tapuska <dtapuska@rim.com>.
+
+        * platform/image-decoders/blackberry/JPEGImageDecoder.cpp: Added.
+        (WebCore::libInit):
+        (WebCore::ImageReader::ImageReader):
+        (WebCore::imgDecodeSetup):
+        (WebCore::ImageReader::updateData):
+        (WebCore::ImageReader::setSize):
+        (WebCore::ImageReader::sizeExtract):
+        (WebCore::ImageReader::decode):
+        (WebCore::JPEGImageDecoder::JPEGImageDecoder):
+        (WebCore::JPEGImageDecoder::setData):
+        (WebCore::JPEGImageDecoder::isSizeAvailable):
+        (WebCore::JPEGImageDecoder::frameBufferAtIndex):
+        * platform/image-decoders/blackberry/JPEGImageDecoder.h: Added.
+        (WebCore::JPEGImageDecoder::filenameExtension):
+        (WebCore::JPEGImageDecoder::supportsAlpha):
+
 2011-11-28  David Grogan  <dgrogan@chromium.org>
 
         WebWorkerRunLoop wrapper around WorkerRunLoop
