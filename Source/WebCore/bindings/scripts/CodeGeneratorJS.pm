@@ -648,6 +648,14 @@ my %usesToJSNewlyCreated = (
     "TouchList" => 1
 );
 
+sub GetFunctionName
+{
+    my ($className, $function) = @_;
+    my $isStatic = $function->signature->extendedAttributes->{"ClassMethod"};
+    my $kind = $isStatic ? "Constructor" : "Prototype";
+    return $codeGenerator->WK_lcfirst($className) . $kind . "Function" . $codeGenerator->WK_ucfirst($function->signature->name);
+}
+
 sub GenerateHeader
 {
     my $object = shift;
@@ -1086,7 +1094,7 @@ sub GenerateHeader
         push(@headerContent,"// Functions\n\n");
         foreach my $function (@{$dataNode->functions}) {
             next if $function->{overloadIndex} && $function->{overloadIndex} > 1;
-            my $functionName = $codeGenerator->WK_lcfirst($className) . "PrototypeFunction" . $codeGenerator->WK_ucfirst($function->signature->name);
+            my $functionName = GetFunctionName($className, $function);
             push(@headerContent, "JSC::EncodedJSValue JSC_HOST_CALL ${functionName}(JSC::ExecState*);\n");
         }
     }
@@ -1274,7 +1282,7 @@ sub GenerateFunctionParametersCheck
     return (join(" || ", @orExpression), @neededArguments);
 }
 
-sub GenerateOverloadedPrototypeFunction
+sub GenerateOverloadedFunction
 {
     my $function = shift;
     my $dataNode = shift;
@@ -1286,7 +1294,9 @@ sub GenerateOverloadedPrototypeFunction
     # overload is applicable, precedence is given according to the order of
     # declaration in the IDL.
 
-    my $functionName = "js${implClassName}PrototypeFunction" . $codeGenerator->WK_ucfirst($function->signature->name);
+    my $isStatic = $function->signature->extendedAttributes->{"ClassMethod"};
+    my $kind = $isStatic ? "Constructor" : "Prototype";
+    my $functionName = "js${implClassName}${kind}Function" . $codeGenerator->WK_ucfirst($function->signature->name);
 
     push(@implContent, "EncodedJSValue JSC_HOST_CALL ${functionName}(ExecState* exec)\n");
     push(@implContent, <<END);
@@ -1379,6 +1389,31 @@ sub GenerateImplementation
             }
         }
 
+        foreach my $function (@{$dataNode->functions}) {
+            next unless ($function->signature->extendedAttributes->{"ClassMethod"});
+            next if $function->{overloadIndex} && $function->{overloadIndex} > 1;
+            my $name = $function->signature->name;
+            push(@hashKeys, $name);
+
+            my $functionName = GetFunctionName($className, $function);
+            push(@hashValue1, $functionName);
+
+            my $numParameters = @{$function->parameters};
+            push(@hashValue2, $numParameters);
+
+            my @specials = ();
+            push(@specials, "DontDelete") unless $function->signature->extendedAttributes->{"Deletable"};
+            push(@specials, "DontEnum") if $function->signature->extendedAttributes->{"DontEnum"};
+            push(@specials, "Function");
+            my $special = (@specials > 0) ? join(" | ", @specials) : "0";
+            push(@hashSpecials, $special);
+
+            my $conditional = $function->signature->extendedAttributes->{"Conditional"};
+            if ($conditional) {
+                $conditionals{$name} = $conditional;
+            }
+        }
+
         $object->GenerateHashTable($hashName, $hashSize,
                                    \@hashKeys, \@hashSpecials,
                                    \@hashValue1, \@hashValue2,
@@ -1416,12 +1451,13 @@ sub GenerateImplementation
     }
 
     foreach my $function (@{$dataNode->functions}) {
+        next if ($function->signature->extendedAttributes->{"ClassMethod"});
         next if $function->{overloadIndex} && $function->{overloadIndex} > 1;
         my $name = $function->signature->name;
         push(@hashKeys, $name);
 
-        my $value = $codeGenerator->WK_lcfirst($className) . "PrototypeFunction" . $codeGenerator->WK_ucfirst($name);
-        push(@hashValue1, $value);
+        my $functionName = GetFunctionName($className, $function);
+        push(@hashValue1, $functionName);
 
         my $numParameters = @{$function->parameters};
         push(@hashValue2, $numParameters);
@@ -1979,11 +2015,12 @@ sub GenerateImplementation
         foreach my $function (@{$dataNode->functions}) {
             AddIncludesForTypeInImpl($function->signature->type);
 
-            my $functionName = $codeGenerator->WK_lcfirst($className) . "PrototypeFunction" . $codeGenerator->WK_ucfirst($function->signature->name);
             my $isCustom = $function->signature->extendedAttributes->{"Custom"} || $function->signature->extendedAttributes->{"JSCCustom"};
             my $isOverloaded = $function->{overloads} && @{$function->{overloads}} > 1;
 
             next if $isCustom && $isOverloaded && $function->{overloadIndex} > 1;
+
+            my $functionName = GetFunctionName($className, $function);
 
             if (!$isCustom && $isOverloaded) {
                 # Append a number to an overloaded method's name to make it unique:
@@ -2006,6 +2043,8 @@ sub GenerateImplementation
 
             $implIncludes{"<runtime/Error.h>"} = 1;
 
+            my $isStatic = $function->signature->extendedAttributes->{"ClassMethod"};
+
             if ($interfaceName eq "DOMWindow") {
                 push(@implContent, "    $className* castedThis = toJSDOMWindow(exec->hostThisValue().toThisObject(exec));\n");
                 push(@implContent, "    if (!castedThis)\n");
@@ -2014,25 +2053,27 @@ sub GenerateImplementation
                 push(@implContent, "    $className* castedThis = to${className}(exec->hostThisValue().toThisObject(exec));\n");
                 push(@implContent, "    if (!castedThis)\n");
                 push(@implContent, "        return throwVMTypeError(exec);\n");
-            } else {
+            } elsif (!$isStatic) {
                 push(@implContent, "    JSValue thisValue = exec->hostThisValue();\n");
                 push(@implContent, "    if (!thisValue.inherits(&${className}::s_info))\n");
                 push(@implContent, "        return throwVMTypeError(exec);\n");
                 push(@implContent, "    $className* castedThis = static_cast<$className*>(asObject(thisValue));\n");
             }
-            push(@implContent, "    ASSERT_GC_OBJECT_INHERITS(castedThis, &${className}::s_info);\n");
 
-            if ($dataNode->extendedAttributes->{"CheckDomainSecurity"} && 
-                !$function->signature->extendedAttributes->{"DoNotCheckDomainSecurity"}) {
+            push(@implContent, "    ASSERT_GC_OBJECT_INHERITS(castedThis, &${className}::s_info);\n") unless ($isStatic);
+
+            if ($dataNode->extendedAttributes->{"CheckDomainSecurity"} and
+                !$function->signature->extendedAttributes->{"DoNotCheckDomainSecurity"} and
+                !$isStatic) {
                 push(@implContent, "    if (!castedThis->allowsAccessFrom(exec))\n");
                 push(@implContent, "        return JSValue::encode(jsUndefined());\n");
             }
 
             if ($isCustom) {
-                push(@implContent, "    return JSValue::encode(castedThis->" . $functionImplementationName . "(exec));\n");
+                push(@implContent, "    return JSValue::encode(castedThis->" . $functionImplementationName . "(exec));\n") unless ($isStatic);
             } else {
-                push(@implContent, "    $implType* imp = static_cast<$implType*>(castedThis->impl());\n");
-                if ($svgPropertyType) {
+                push(@implContent, "    $implType* imp = static_cast<$implType*>(castedThis->impl());\n") unless ($isStatic);
+                if ($svgPropertyType and !$isStatic) {
                     push(@implContent, "    if (imp->role() == AnimValRole) {\n");
                     push(@implContent, "        setDOMException(exec, NO_MODIFICATION_ALLOWED_ERR);\n");
                     push(@implContent, "        return JSValue::encode(jsUndefined());\n");
@@ -2047,7 +2088,7 @@ sub GenerateImplementation
                     push(@implContent, "    ExceptionCode ec = 0;\n");
                 }
 
-                if ($function->signature->extendedAttributes->{"SVGCheckSecurityDocument"}) {
+                if ($function->signature->extendedAttributes->{"SVGCheckSecurityDocument"} and !$isStatic) {
                     push(@implContent, "    if (!checkNodeSecurity(exec, imp->getSVGDocument(" . (@{$function->raisesExceptions} ? "ec" : "") .")))\n");
                     push(@implContent, "        return JSValue::encode(jsUndefined());\n");
                     $implIncludes{"JSDOMBinding.h"} = 1;
@@ -2068,7 +2109,7 @@ sub GenerateImplementation
 
             if (!$isCustom && $isOverloaded && $function->{overloadIndex} == @{$function->{overloads}}) {
                 # Generate a function dispatching call to the rest of the overloads.
-                GenerateOverloadedPrototypeFunction($function, $dataNode, $implClassName);
+                GenerateOverloadedFunction($function, $dataNode, $implClassName);
             }
 
             push(@implContent, "#endif\n\n") if $conditional;
@@ -2297,10 +2338,19 @@ sub GenerateParametersCheck
     my $paramIndex = 0;
     my $argsIndex = 0;
     my $hasOptionalArguments = 0;
+    my $isStatic = $function->signature->extendedAttributes->{"ClassMethod"};
 
-    my $functionString = (($svgPropertyOrListPropertyType and !$svgListPropertyType) ? "podImp." : "imp->") . $functionImplementationName . "(";
+    my $functionBase = "";
+    if ($isStatic) {
+        $functionBase = "${implClassName}::";
+    } elsif ($svgPropertyOrListPropertyType and !$svgListPropertyType) {
+        $functionBase = "podImp.";
+    } else {
+        $functionBase = "imp->";
+    }
+    my $functionString = "$functionBase$functionImplementationName(";
 
-    if ($function->signature->extendedAttributes->{"CustomArgumentHandling"}) {
+    if ($function->signature->extendedAttributes->{"CustomArgumentHandling"} and !$isStatic) {
         push(@$outputArray, "    RefPtr<ScriptArguments> scriptArguments(createScriptArguments(exec, $numParameters));\n");
         push(@$outputArray, "    size_t maxStackSize = imp->shouldCaptureFullStackTrace() ? ScriptCallStack::maxCallStackSizeToCapture : 1;\n");
         push(@$outputArray, "    RefPtr<ScriptCallStack> callStack(createScriptCallStack(exec, maxStackSize));\n");
@@ -2629,11 +2679,13 @@ sub GenerateImplementationFunctionCall()
     }
     $functionString .= ")";
 
+    my $isStatic = $function->signature->extendedAttributes->{"ClassMethod"};
+
     if ($function->signature->type eq "void") {
         push(@implContent, $indent . "$functionString;\n");
         push(@implContent, $indent . "setDOMException(exec, ec);\n") if @{$function->raisesExceptions};
 
-        if ($svgPropertyType) {
+        if ($svgPropertyType and !$isStatic) {
             if (@{$function->raisesExceptions}) {
                 push(@implContent, $indent . "if (!ec)\n"); 
                 push(@implContent, $indent . "    imp->commitChange();\n");
@@ -3287,14 +3339,24 @@ sub GenerateConstructorDefinition
     push(@$outputArray, "    putDirect(exec->globalData(), exec->propertyNames().length, jsNumber(${numberOfconstructParameters}), ReadOnly | DontDelete | DontEnum);\n") if $numberOfconstructParameters;
     push(@$outputArray, "}\n\n");
 
+    my $hasStaticFunctions = 0;
+    foreach my $function (@{$dataNode->functions}) {
+        if ($function->signature->extendedAttributes->{"ClassMethod"}) {
+            $hasStaticFunctions = 1;
+            last;
+        }
+    }
+
+    my $kind = $hasStaticFunctions ? "Property" : "Value";
+
     push(@$outputArray, "bool ${constructorClassName}::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)\n");
     push(@$outputArray, "{\n");
-    push(@$outputArray, "    return getStaticValueSlot<${constructorClassName}, JSDOMWrapper>(exec, &${constructorClassName}Table, static_cast<${constructorClassName}*>(cell), propertyName, slot);\n");
+    push(@$outputArray, "    return getStatic${kind}Slot<${constructorClassName}, JSDOMWrapper>(exec, &${constructorClassName}Table, static_cast<${constructorClassName}*>(cell), propertyName, slot);\n");
     push(@$outputArray, "}\n\n");
 
     push(@$outputArray, "bool ${constructorClassName}::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)\n");
     push(@$outputArray, "{\n");
-    push(@$outputArray, "    return getStaticValueDescriptor<${constructorClassName}, JSDOMWrapper>(exec, &${constructorClassName}Table, static_cast<${constructorClassName}*>(object), propertyName, descriptor);\n");
+    push(@$outputArray, "    return getStatic${kind}Descriptor<${constructorClassName}, JSDOMWrapper>(exec, &${constructorClassName}Table, static_cast<${constructorClassName}*>(object), propertyName, descriptor);\n");
     push(@$outputArray, "}\n\n");
 
     if (IsConstructable($dataNode)) {

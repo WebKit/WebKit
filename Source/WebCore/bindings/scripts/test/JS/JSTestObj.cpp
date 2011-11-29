@@ -162,11 +162,13 @@ static const HashTableValue JSTestObjConstructorTableValues[] =
     { "CONST_VALUE_13", DontDelete | ReadOnly, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjCONST_VALUE_13), (intptr_t)0 THUNK_GENERATOR(0) INTRINSIC(DFG::NoIntrinsic) },
     { "CONST_VALUE_14", DontDelete | ReadOnly, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjCONST_VALUE_14), (intptr_t)0 THUNK_GENERATOR(0) INTRINSIC(DFG::NoIntrinsic) },
     { "CONST_JAVASCRIPT", DontDelete | ReadOnly, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjCONST_JAVASCRIPT), (intptr_t)0 THUNK_GENERATOR(0) INTRINSIC(DFG::NoIntrinsic) },
+    { "classMethod", DontDelete | Function, (intptr_t)static_cast<NativeFunction>(jsTestObjConstructorFunctionClassMethod), (intptr_t)0 THUNK_GENERATOR(0) INTRINSIC(DFG::NoIntrinsic) },
+    { "classMethodWithOptional", DontDelete | Function, (intptr_t)static_cast<NativeFunction>(jsTestObjConstructorFunctionClassMethodWithOptional), (intptr_t)1 THUNK_GENERATOR(0) INTRINSIC(DFG::NoIntrinsic) },
     { 0, 0, 0, 0 THUNK_GENERATOR(0) INTRINSIC(DFG::NoIntrinsic) }
 };
 
 #undef THUNK_GENERATOR
-static const HashTable JSTestObjConstructorTable = { 33, 31, JSTestObjConstructorTableValues, 0 };
+static const HashTable JSTestObjConstructorTable = { 35, 31, JSTestObjConstructorTableValues, 0 };
 
 #if ENABLE(Condition1)
 COMPILE_ASSERT(0 == TestObj::CONDITIONAL_CONST, TestObjEnumCONDITIONAL_CONSTIsWrongUseDontCheckEnums);
@@ -200,12 +202,12 @@ void JSTestObjConstructor::finishCreation(ExecState* exec, JSDOMGlobalObject* gl
 
 bool JSTestObjConstructor::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
-    return getStaticValueSlot<JSTestObjConstructor, JSDOMWrapper>(exec, &JSTestObjConstructorTable, static_cast<JSTestObjConstructor*>(cell), propertyName, slot);
+    return getStaticPropertySlot<JSTestObjConstructor, JSDOMWrapper>(exec, &JSTestObjConstructorTable, static_cast<JSTestObjConstructor*>(cell), propertyName, slot);
 }
 
 bool JSTestObjConstructor::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
 {
-    return getStaticValueDescriptor<JSTestObjConstructor, JSDOMWrapper>(exec, &JSTestObjConstructorTable, static_cast<JSTestObjConstructor*>(object), propertyName, descriptor);
+    return getStaticPropertyDescriptor<JSTestObjConstructor, JSDOMWrapper>(exec, &JSTestObjConstructorTable, static_cast<JSTestObjConstructor*>(object), propertyName, descriptor);
 }
 
 EncodedJSValue JSC_HOST_CALL JSTestObjConstructor::constructJSTestObj(ExecState* exec)
@@ -292,8 +294,6 @@ static const HashTableValue JSTestObjPrototypeTableValues[] =
     { "conditionalMethod3", DontDelete | Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionConditionalMethod3), (intptr_t)0 THUNK_GENERATOR(0) INTRINSIC(DFG::NoIntrinsic) },
 #endif
     { "overloadedMethod", DontDelete | Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionOverloadedMethod), (intptr_t)2 THUNK_GENERATOR(0) INTRINSIC(DFG::NoIntrinsic) },
-    { "classMethod", DontDelete | Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionClassMethod), (intptr_t)0 THUNK_GENERATOR(0) INTRINSIC(DFG::NoIntrinsic) },
-    { "classMethodWithOptional", DontDelete | Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionClassMethodWithOptional), (intptr_t)1 THUNK_GENERATOR(0) INTRINSIC(DFG::NoIntrinsic) },
     { 0, 0, 0, 0 THUNK_GENERATOR(0) INTRINSIC(DFG::NoIntrinsic) }
 };
 
@@ -1866,31 +1866,19 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod(ExecStat
     return throwVMTypeError(exec);
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionClassMethod(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL jsTestObjConstructorFunctionClassMethod(ExecState* exec)
 {
-    JSValue thisValue = exec->hostThisValue();
-    if (!thisValue.inherits(&JSTestObj::s_info))
-        return throwVMTypeError(exec);
-    JSTestObj* castedThis = static_cast<JSTestObj*>(asObject(thisValue));
-    ASSERT_GC_OBJECT_INHERITS(castedThis, &JSTestObj::s_info);
-    TestObj* imp = static_cast<TestObj*>(castedThis->impl());
-    imp->classMethod();
+    TestObj::classMethod();
     return JSValue::encode(jsUndefined());
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionClassMethodWithOptional(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL jsTestObjConstructorFunctionClassMethodWithOptional(ExecState* exec)
 {
-    JSValue thisValue = exec->hostThisValue();
-    if (!thisValue.inherits(&JSTestObj::s_info))
-        return throwVMTypeError(exec);
-    JSTestObj* castedThis = static_cast<JSTestObj*>(asObject(thisValue));
-    ASSERT_GC_OBJECT_INHERITS(castedThis, &JSTestObj::s_info);
-    TestObj* imp = static_cast<TestObj*>(castedThis->impl());
 
     size_t argsCount = exec->argumentCount();
     if (argsCount <= 0) {
 
-        JSC::JSValue result = jsNumber(imp->classMethodWithOptional());
+        JSC::JSValue result = jsNumber(TestObj::classMethodWithOptional());
         return JSValue::encode(result);
     }
 
@@ -1898,7 +1886,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionClassMethodWithOptional(E
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 
-    JSC::JSValue result = jsNumber(imp->classMethodWithOptional(arg));
+    JSC::JSValue result = jsNumber(TestObj::classMethodWithOptional(arg));
     return JSValue::encode(result);
 }
 

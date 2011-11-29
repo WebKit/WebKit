@@ -1,3 +1,32 @@
+2011-11-29  Erik Arvidsson  <arv@chromium.org>
+
+        Add support for [ClassMethod] to CodeGeneratorJS.pm
+        https://bugs.webkit.org/show_bug.cgi?id=73342
+
+        Reviewed by Adam Barth.
+
+        If a method is annotated with [ClassMethod] it will become a method on the JS constructor object and it will
+        call a static function on the C++ class. 
+
+        This was previously only implemented in CodeGeneratorV8.pm so this brings JSC up to par.
+
+        No new tests: Covered by bindings/scripts/test/
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GetFunctionName): Refactor to reduce code duplication.
+        (GenerateHeader): Ditto.
+        (GenerateOverloadedFunction): This now handles both prototype functions and constructor functions.
+        (GenerateImplementation): Define class methods too. 
+        (GenerateParametersCheck): Generate the right function access string.
+        (GenerateImplementationFunctionCall): SVG properties are not static methods.
+        (GenerateConstructorDefinition): For classes that have static methods we may now return function properties.
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::JSTestObjConstructor::getOwnPropertySlot): Ditto.
+        (WebCore::JSTestObjConstructor::getOwnPropertyDescriptor): Ditto.
+        (WebCore::jsTestObjConstructorFunctionClassMethod): Now calls a static function.
+        (WebCore::jsTestObjConstructorFunctionClassMethodWithOptional): Ditto.
+        * bindings/scripts/test/JS/JSTestObj.h:
+
 2011-11-29  Sam Weinig  <sam@webkit.org>
 
         Remove unused JSDOMWrapperOwner
