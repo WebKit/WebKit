@@ -233,8 +233,11 @@ bool ScrollbarGroup::shouldSuspendScrollAnimations() const
     return false;
 }
 
-void ScrollbarGroup::scrollbarStyleChanged()
+void ScrollbarGroup::scrollbarStyleChanged(int, bool forceUpdate)
 {
+    if (!forceUpdate)
+        return;
+
     if (m_horizontalScrollbar)
         m_horizontalScrollbar->scrollbarStyleChanged();
     if (m_verticalScrollbar)

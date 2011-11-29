@@ -1,3 +1,11 @@
+2011-11-28  Beth Dakin  <bdakin@apple.com>
+
+        Speculative Chromium build fix.
+
+        * src/ScrollbarGroup.cpp:
+        (WebKit::ScrollbarGroup::scrollbarStyleChanged):
+        * src/ScrollbarGroup.h:
+
 2011-11-28  Dana Jansens  <danakj@chromium.org>
 
         FloatQuad::isRectilinear() returns false for 180degree rotations

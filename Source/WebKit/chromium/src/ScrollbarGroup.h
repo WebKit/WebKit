@@ -70,7 +70,7 @@ public:
     virtual WebCore::IntSize overhangAmount() const;
     virtual WebCore::IntPoint currentMousePosition() const;
     virtual bool shouldSuspendScrollAnimations() const;
-    virtual void scrollbarStyleChanged();
+    virtual void scrollbarStyleChanged(int newStyle, bool forceUpdate);
     virtual bool isOnActivePage() const;
     virtual void disconnectFromPage();
 
