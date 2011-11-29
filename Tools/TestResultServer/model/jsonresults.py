@@ -235,16 +235,14 @@ class JsonResults(object):
     def _remove_gtest_modifiers(cls, builder, json):
         tests = json[builder][JSON_RESULTS_TESTS]
         new_tests = {}
-        # FIXME: This is wrong. If the test exists in the incremental results as both values, then one will overwrite the other.
-        # We should instead pick the one that doesn't have NO_DATA as its value.
-        # Alternately we could fix this by having the JSON generation code on the buildbot only include the test
-        # that was actually run.
-        for name, test in tests.iteritems():
+        for name, test in tests.items():
             new_name = name.replace('.FLAKY_', '.', 1)
             new_name = new_name.replace('.FAILS_', '.', 1)
             new_name = new_name.replace('.MAYBE_', '.', 1)
             new_name = new_name.replace('.DISABLED_', '.', 1)
-            new_tests[new_name] = test
+            if new_name not in new_tests or test[JSON_RESULTS_RESULTS][0][1] != JSON_RESULTS_NO_DATA:
+                new_tests[new_name] = test
+
         json[builder][JSON_RESULTS_TESTS] = new_tests
 
     @classmethod

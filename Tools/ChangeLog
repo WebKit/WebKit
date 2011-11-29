@@ -1,5 +1,22 @@
 2011-11-28  Ojan Vafai  <ojan@chromium.org>
 
+        gtest normalization in the test results server is sometimes wrong
+        https://bugs.webkit.org/show_bug.cgi?id=73262
+
+        Reviewed by Tony Chang.
+
+        If a gtest has it's modified changed (e.g. add FLAKY_) then it will have two
+        entries in the incremental JSON, one of the entries will have the correct data
+        from the run and the other will have dummy no-data values. Make sure to
+        always pick the one with real data.
+
+        * TestResultServer/model/jsonresults.py:
+        (JsonResults._remove_gtest_modifiers):
+        * TestResultServer/model/jsonresults_unittest.py:
+        (JsonResultsTest.test_remove_gtest_modifiers):
+
+2011-11-28  Ojan Vafai  <ojan@chromium.org>
+
         Some of the results.json files have results/times entries at the directory level
         https://bugs.webkit.org/show_bug.cgi?id=73261
 

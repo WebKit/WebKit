@@ -689,14 +689,17 @@ class JsonResultsTest(unittest.TestCase):
              "version": 3},
             # Incremental results
             {"builds": ["3"],
-             "tests": {"foo.FLAKY_bar": {
+             "tests": {"foo.DISABLED_bar": {
                            "results": [[1,"F"]],
                            "times": [[1,0]]},
-                       "foo.DISABLED_bar2": {
+                       "foo.FLAKY_bar2": {
+                           "results": [[1,"N"]],
+                           "times": [[1,0]]},
+                       "foo.bar2": {
                            "results": [[1,"I"]],
                            "times": [[1,0]]},
                        "foo.bar3": {
-                           "results": [[1,"I"]],
+                           "results": [[1,"N"]],
                            "times": [[1,0]]},
                        "foo.FAILS_bar3": {
                            "results": [[1,"I"]],
@@ -707,7 +710,10 @@ class JsonResultsTest(unittest.TestCase):
              "version": 4},
             # Expected results
             {"builds": ["3", "2", "1"],
-             "tests": {"foo.bar": {
+             "tests": {"foo.FAILS_bar3": {
+                           "results": [[1,"N"],[100,"I"]],
+                           "times": [[101,0]]},
+                       "foo.bar": {
                            "results": [[51,"F"]],
                            "times": [[51,0]]},
                        "foo.bar2": {
@@ -716,9 +722,6 @@ class JsonResultsTest(unittest.TestCase):
                        "foo.bar3": {
                            "results": [[1,"I"]],
                            "times": [[1,0]]},
-                       "foo.FAILS_bar3": {
-                              "results": [[1,"N"],[100,"I"]],
-                              "times": [[101,0]]},
                        "foo.bar4": {
                            "results": [[1,"I"]],
                            "times": [[1,0]]}},
