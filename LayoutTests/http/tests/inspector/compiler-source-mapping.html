@@ -90,6 +90,32 @@ function test()
             next();
         },
 
+        function testSections(next)
+        {
+            var mappingPayload = {
+                "sections": [{
+                    "offset": { "line": 1, "column": 0 },
+                    "map": {
+                        "mappings":"AAAA,CAEC",
+                        "sources":["source1.js"]
+                    }
+                }, {
+                    "offset": { "line": 3, "column": 10 },
+                    "map": {
+                        "mappings":"AAAA,CAEC",
+                        "sources":["source2.js"]
+                    }
+                }
+            ]};
+            var mapping = new WebInspector.ClosureCompilerSourceMapping();
+            mapping._parseMappingPayload(mappingPayload);
+            checkMapping(0, 0, "source1.js", 0, 0, mapping);
+            checkMapping(0, 1, "source1.js", 2, 1, mapping);
+            checkMapping(2, 10, "source2.js", 0, 0, mapping);
+            checkMapping(2, 11, "source2.js", 2, 1, mapping);
+            next();
+        },
+
         function testLoad(next)
         {
             var sourceMapping = new WebInspector.ClosureCompilerSourceMapping("http://localhost:8000/inspector/resources/source-map.json");
@@ -98,8 +124,8 @@ function test()
 
             var sources = sourceMapping.sources();
             InspectorTest.assertEquals(2, sources.length);
-            InspectorTest.assertEquals("source1.js", sources[0]);
-            InspectorTest.assertEquals("source2.js", sources[1]);
+            InspectorTest.assertEquals("http://localhost:8000/inspector/resources/source1.js", sources[0]);
+            InspectorTest.assertEquals("http://localhost:8000/inspector/resources/source2.js", sources[1]);
 
             var sourceCode1 = sourceMapping.loadSourceCode(sourceMapping.sources()[0]);
             InspectorTest.assertEquals(0, sourceCode1.indexOf("window.addEventListener"));

@@ -7,5 +7,7 @@ Running: testNoMappingEntry
 
 Running: testEmptyLine
 
+Running: testSections
+
 Running: testLoad
 
