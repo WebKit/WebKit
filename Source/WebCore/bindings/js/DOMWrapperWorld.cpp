@@ -30,13 +30,6 @@ using namespace JSC;
 
 namespace WebCore {
 
-void JSDOMWrapperOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
-{
-    JSDOMWrapper* wrapper = static_cast<JSDOMWrapper*>(handle.get().asCell());
-    void* domObject = context;
-    uncacheWrapper(m_world, domObject, wrapper);
-}
-
 void JSStringOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 {
     JSString* jsString = static_cast<JSString*>(handle.get().asCell());
@@ -48,7 +41,6 @@ void JSStringOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 DOMWrapperWorld::DOMWrapperWorld(JSC::JSGlobalData* globalData, bool isNormal)
     : m_globalData(globalData)
     , m_isNormal(isNormal)
-    , m_defaultWrapperOwner(this)
     , m_stringWrapperOwner(this)
 {
     JSGlobalData::ClientData* clientData = m_globalData->clientData;

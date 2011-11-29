@@ -1,3 +1,16 @@
+2011-11-29  Sam Weinig  <sam@webkit.org>
+
+        Remove unused JSDOMWrapperOwner
+        https://bugs.webkit.org/show_bug.cgi?id=73357
+
+        Reviewed by Adam Barth.
+
+        * bindings/js/DOMWrapperWorld.cpp:
+        (WebCore::DOMWrapperWorld::DOMWrapperWorld):
+        * bindings/js/DOMWrapperWorld.h:
+        (WebCore::DOMWrapperWorld::globalData):
+        Remove JSDOMWrapperOwner. It is unused.
+
 2011-11-29  Anders Carlsson  <andersca@apple.com>
 
         Use contentsToRootView when converting the mouse coordinates for the context menu key event
