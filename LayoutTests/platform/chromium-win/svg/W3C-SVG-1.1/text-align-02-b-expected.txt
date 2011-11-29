@@ -23,19 +23,19 @@ layer at (0,0) size 480x360
               chunk 1 text run 1 at (96.00,91.00) startOffset 0 endOffset 19 width 255.00: "baseline-shift:-70%"
           RenderSVGInlineText {#text} at (351,0) size 46x35
             chunk 1 text run 1 at (351.00,70.00) startOffset 0 endOffset 4 width 46.00: "text"
-        RenderSVGText {text} at (0,94) size 266x71 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,18) size 96x35
+        RenderSVGText {text} at (0,94) size 266x70 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,17) size 96x35
             chunk 1 text run 1 at (0.00,140.00) startOffset 0 endOffset 6 width 96.00: "Normal"
-          RenderSVGTSpan {tspan} at (0,0) size 49x36
-            RenderSVGInlineText {#text} at (96,35) size 49x36
+          RenderSVGTSpan {tspan} at (0,0) size 49x35
+            RenderSVGInlineText {#text} at (96,35) size 49x35
               chunk 1 text run 1 at (96.00,157.50) startOffset 0 endOffset 3 width 49.00: "sub"
-          RenderSVGTSpan {tspan} at (0,0) size 75x36
-            RenderSVGInlineText {#text} at (145,0) size 75x36
+          RenderSVGTSpan {tspan} at (0,0) size 75x35
+            RenderSVGInlineText {#text} at (145,0) size 75x35
               chunk 1 text run 1 at (145.00,122.50) startOffset 0 endOffset 5 width 75.00: "super"
-          RenderSVGTSpan {tspan} at (0,0) size 24x35
-            RenderSVGInlineText {#text} at (220,18) size 24x35
+          RenderSVGTSpan {tspan} at (0,0) size 24x36
+            RenderSVGInlineText {#text} at (220,17) size 24x35
               chunk 1 text run 1 at (220.00,140.00) startOffset 0 endOffset 2 width 24.00: "te"
-          RenderSVGInlineText {#text} at (244,18) size 22x35
+          RenderSVGInlineText {#text} at (244,17) size 22x35
             chunk 1 text run 1 at (244.00,140.00) startOffset 0 endOffset 2 width 22.00: "xt"
     RenderSVGText {text} at (10,304) size 261x46 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 261x46

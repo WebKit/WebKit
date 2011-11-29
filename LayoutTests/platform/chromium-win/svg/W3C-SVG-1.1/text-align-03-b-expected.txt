@@ -12,7 +12,7 @@ layer at (0,0) size 480x360
           RenderSVGInlineText {#text} at (0,0) size 226x35
             chunk 1 (end anchor) text run 1 at (-1.00,110.00) startOffset 0 endOffset 17 width 226.00: "Begin with \"end\","
           RenderSVGTSpan {tspan} at (0,0) size 396x35
-            RenderSVGInlineText {#text} at (28,50) size 396x35
+            RenderSVGInlineText {#text} at (28,50) size 395x35
               chunk 1 (middle anchor) text run 1 at (27.50,160.00) startOffset 0 endOffset 32 width 395.00: " switch to \"middle\" in a tspan, "
           RenderSVGTSpan {tspan} at (0,0) size 241x35
             RenderSVGInlineText {#text} at (226,100) size 241x35

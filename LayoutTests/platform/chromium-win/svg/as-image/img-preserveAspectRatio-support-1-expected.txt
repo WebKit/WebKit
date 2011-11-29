@@ -100,8 +100,8 @@ layer at (0,0) size 800x514
                 layer at (0,0) size 192x42
                   RenderSVGRoot {svg} at (75,0) size 31x31
                     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-                    RenderSVGContainer {g} at (74,0) size 32x31 [transform={m=((1.00,0.00)(0.00,1.00)) t=(-162.36,-403.29)}]
-                      RenderSVGPath {path} at (74,0) size 32x31 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#D9BB7A] [fill rule=EVEN-ODD]}] [data="M 525.714 585.219 C 525.714 685.419 444.486 766.648 344.286 766.648 C 244.085 766.648 162.857 685.419 162.857 585.219 C 162.857 485.019 244.085 403.791 344.286 403.791 C 444.486 403.791 525.714 485.019 525.714 585.219 Z"]
+                    RenderSVGContainer {g} at (75,0) size 31x31 [transform={m=((1.00,0.00)(0.00,1.00)) t=(-162.36,-403.29)}]
+                      RenderSVGPath {path} at (75,0) size 31x31 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#D9BB7A] [fill rule=EVEN-ODD]}] [data="M 525.714 585.219 C 525.714 685.419 444.486 766.648 344.286 766.648 C 244.085 766.648 162.857 685.419 162.857 585.219 C 162.857 485.019 244.085 403.791 344.286 403.791 C 444.486 403.791 525.714 485.019 525.714 585.219 Z"]
               RenderText {#text} at (0,0) size 0x0
           RenderTableRow {TR} at (0,321) size 670x57
             RenderTableCell {TH} at (98,338) size 162x22 [bgcolor=#DDDD99] [r=6 c=1 rs=1 cs=1]
@@ -117,8 +117,8 @@ layer at (0,0) size 800x514
                 layer at (0,0) size 192x42
                   RenderSVGRoot {svg} at (0,0) size 140x31
                     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-                    RenderSVGContainer {g} at (0,0) size 141x31 [transform={m=((1.00,0.00)(0.00,1.00)) t=(-162.36,-403.29)}]
-                      RenderSVGPath {path} at (0,0) size 141x31 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#D9BB7A] [fill rule=EVEN-ODD]}] [data="M 525.714 585.219 C 525.714 685.419 444.486 766.648 344.286 766.648 C 244.085 766.648 162.857 685.419 162.857 585.219 C 162.857 485.019 244.085 403.791 344.286 403.791 C 444.486 403.791 525.714 485.019 525.714 585.219 Z"]
+                    RenderSVGContainer {g} at (0,0) size 140x31 [transform={m=((1.00,0.00)(0.00,1.00)) t=(-162.36,-403.29)}]
+                      RenderSVGPath {path} at (0,0) size 140x31 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#D9BB7A] [fill rule=EVEN-ODD]}] [data="M 525.714 585.219 C 525.714 685.419 444.486 766.648 344.286 766.648 C 244.085 766.648 162.857 685.419 162.857 585.219 C 162.857 485.019 244.085 403.791 344.286 403.791 C 444.486 403.791 525.714 485.019 525.714 585.219 Z"]
               RenderText {#text} at (0,0) size 0x0
           RenderTableRow {TR} at (0,380) size 670x57
             RenderTableCell {TH} at (98,397) size 162x22 [bgcolor=#DDDD99] [r=7 c=1 rs=1 cs=1]
@@ -134,8 +134,8 @@ layer at (0,0) size 800x514
                 layer at (0,0) size 192x42
                   RenderSVGRoot {svg} at (75,0) size 31x31
                     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-                    RenderSVGContainer {g} at (74,0) size 32x31 [transform={m=((1.00,0.00)(0.00,1.00)) t=(-162.36,-403.29)}]
-                      RenderSVGPath {path} at (74,0) size 32x31 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#D9BB7A] [fill rule=EVEN-ODD]}] [data="M 525.714 585.219 C 525.714 685.419 444.486 766.648 344.286 766.648 C 244.085 766.648 162.857 685.419 162.857 585.219 C 162.857 485.019 244.085 403.791 344.286 403.791 C 444.486 403.791 525.714 485.019 525.714 585.219 Z"]
+                    RenderSVGContainer {g} at (75,0) size 31x31 [transform={m=((1.00,0.00)(0.00,1.00)) t=(-162.36,-403.29)}]
+                      RenderSVGPath {path} at (75,0) size 31x31 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#D9BB7A] [fill rule=EVEN-ODD]}] [data="M 525.714 585.219 C 525.714 685.419 444.486 766.648 344.286 766.648 C 244.085 766.648 162.857 685.419 162.857 585.219 C 162.857 485.019 244.085 403.791 344.286 403.791 C 444.486 403.791 525.714 485.019 525.714 585.219 Z"]
               RenderText {#text} at (0,0) size 0x0
           RenderTableRow {TR} at (0,439) size 670x57
             RenderTableCell {TH} at (98,456) size 162x22 [bgcolor=#DDDD99] [r=8 c=1 rs=1 cs=1]
@@ -151,6 +151,6 @@ layer at (0,0) size 800x514
                 layer at (0,0) size 192x42
                   RenderSVGRoot {svg} at (0,0) size 140x42
                     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-                    RenderSVGContainer {g} at (0,0) size 141x42 [transform={m=((1.00,0.00)(0.00,1.00)) t=(-162.36,-403.29)}]
-                      RenderSVGPath {path} at (0,0) size 141x42 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#D9BB7A] [fill rule=EVEN-ODD]}] [data="M 525.714 585.219 C 525.714 685.419 444.486 766.648 344.286 766.648 C 244.085 766.648 162.857 685.419 162.857 585.219 C 162.857 485.019 244.085 403.791 344.286 403.791 C 444.486 403.791 525.714 485.019 525.714 585.219 Z"]
+                    RenderSVGContainer {g} at (0,0) size 140x42 [transform={m=((1.00,0.00)(0.00,1.00)) t=(-162.36,-403.29)}]
+                      RenderSVGPath {path} at (0,0) size 140x42 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#D9BB7A] [fill rule=EVEN-ODD]}] [data="M 525.714 585.219 C 525.714 685.419 444.486 766.648 344.286 766.648 C 244.085 766.648 162.857 685.419 162.857 585.219 C 162.857 485.019 244.085 403.791 344.286 403.791 C 444.486 403.791 525.714 485.019 525.714 585.219 Z"]
               RenderText {#text} at (0,0) size 0x0

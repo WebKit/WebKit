@@ -13,22 +13,22 @@ layer at (0,0) size 480x360
               chunk 1 (vertical) text run 1 at (-10.50,0.00) startOffset 0 endOffset 1 height 35.00: "t"
               chunk 1 (vertical) text run 2 at (-10.50,35.00) startOffset 1 endOffset 2 height 35.00: "e"
             RenderSVGTSpan {tspan} at (0,0) size 18x35
-              RenderSVGInlineText {#text} at (6,70) size 18x35
+              RenderSVGInlineText {#text} at (6,70) size 17x35
                 chunk 1 (vertical) text run 1 at (-3.50,70.00) startOffset 0 endOffset 1 height 35.00: "7"
             RenderSVGInlineText {#text} at (1,105) size 14x70
               chunk 1 (vertical) text run 1 at (-10.50,105.00) startOffset 0 endOffset 1 height 35.00: "x"
               chunk 1 (vertical) text run 2 at (-10.50,140.00) startOffset 1 endOffset 2 height 35.00: "t"
           RenderSVGText {text} at (45,0) size 43x280 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (27,0) size 16x70
+            RenderSVGInlineText {#text} at (26,0) size 16x70
               chunk 1 (vertical) text run 1 at (69.50,0.00) startOffset 0 endOffset 1 height 35.00: "t"
               chunk 1 (vertical) text run 2 at (69.50,35.00) startOffset 1 endOffset 2 height 35.00: "e"
-            RenderSVGTSpan {tspan} at (0,0) size 28x140
-              RenderSVGInlineText {#text} at (0,70) size 28x140
+            RenderSVGTSpan {tspan} at (0,0) size 27x140
+              RenderSVGInlineText {#text} at (0,70) size 27x140
                 chunk 1 (vertical) text run 1 at (48.50,70.00) startOffset 0 endOffset 1 height 35.00: "-"
                 chunk 1 (vertical) text run 2 at (48.50,105.00) startOffset 1 endOffset 2 height 35.00: "7"
                 chunk 1 (vertical) text run 3 at (48.50,140.00) startOffset 2 endOffset 3 height 35.00: "0"
                 chunk 1 (vertical) text run 4 at (48.50,175.00) startOffset 3 endOffset 4 height 35.00: "%"
-            RenderSVGInlineText {#text} at (28,210) size 14x70
+            RenderSVGInlineText {#text} at (27,210) size 14x70
               chunk 1 (vertical) text run 1 at (69.50,210.00) startOffset 0 endOffset 1 height 35.00: "x"
               chunk 1 (vertical) text run 2 at (69.50,245.00) startOffset 1 endOffset 2 height 35.00: "t"
           RenderSVGText {text} at (154,0) size 34x245 contains 1 chunk(s)
