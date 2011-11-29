@@ -935,9 +935,6 @@ fast/js/exceptions-thrown-in-callbacks.html
 # requires video.buffered to be able to return multiple timeranges
 http/tests/media/video-buffered.html
 
-# Crashes http://webkit.org/b/55778
-fast/frames/iframe-plugin-load-remove-document-crash.html
-
 # No keygen support
 fast/html/keygen.html
 fast/invalid/residual-style.html
