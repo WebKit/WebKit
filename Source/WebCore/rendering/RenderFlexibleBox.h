@@ -89,7 +89,7 @@ private:
     Length marginEndStyleForChild(RenderBox* child) const;
     LayoutUnit preferredMainAxisContentExtentForFlexItem(RenderBox* child) const;
 
-    void layoutInlineDirection(bool relayoutChildren);
+    void layoutFlexItems(bool relayoutChildren);
 
     float positiveFlexForChild(RenderBox* child) const;
     float negativeFlexForChild(RenderBox* child) const;
@@ -98,10 +98,10 @@ private:
     LayoutUnit marginBoxAscent(RenderBox*);
 
     void computePreferredMainAxisExtent(bool relayoutChildren, TreeOrderIterator&, LayoutUnit&, float& totalPositiveFlexibility, float& totalNegativeFlexibility);
-    bool runFreeSpaceAllocationAlgorithmInlineDirection(FlexOrderIterator&, LayoutUnit& availableFreeSpace, float& totalPositiveFlexibility, float& totalNegativeFlexibility, InflexibleFlexItemSize&, WTF::Vector<LayoutUnit>& childSizes);
+    bool runFreeSpaceAllocationAlgorithm(FlexOrderIterator&, LayoutUnit& availableFreeSpace, float& totalPositiveFlexibility, float& totalNegativeFlexibility, InflexibleFlexItemSize&, WTF::Vector<LayoutUnit>& childSizes);
     void setLogicalOverrideSize(RenderBox* child, LayoutUnit childPreferredSize);
-    void layoutAndPlaceChildrenInlineDirection(FlexOrderIterator&, const WTF::Vector<LayoutUnit>& childSizes, LayoutUnit availableFreeSpace, float totalPositiveFlexibility);
-    void alignChildrenBlockDirection(FlexOrderIterator&, LayoutUnit maxAscent);
+    void layoutAndPlaceChildren(FlexOrderIterator&, const WTF::Vector<LayoutUnit>& childSizes, LayoutUnit availableFreeSpace, float totalPositiveFlexibility);
+    void alignChildren(FlexOrderIterator&, LayoutUnit maxAscent);
 };
 
 } // namespace WebCore

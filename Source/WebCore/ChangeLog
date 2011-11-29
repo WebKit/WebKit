@@ -1,3 +1,22 @@
+2011-11-29  Tony Chang  <tony@chromium.org>
+
+        Rename some flexbox functions to be less confusing
+        https://bugs.webkit.org/show_bug.cgi?id=73363
+
+        Reviewed by Ojan Vafai.
+
+        These methods no longer have anything to do with block/inline direction.
+
+        No new tests, just renaming some functions.
+
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::layoutBlock):
+        (WebCore::RenderFlexibleBox::layoutFlexItems):
+        (WebCore::RenderFlexibleBox::runFreeSpaceAllocationAlgorithm):
+        (WebCore::RenderFlexibleBox::layoutAndPlaceChildren):
+        (WebCore::RenderFlexibleBox::alignChildren):
+        * rendering/RenderFlexibleBox.h:
+
 2011-11-29  Erik Arvidsson  <arv@chromium.org>
 
         Add support for [ClassMethod] to CodeGeneratorJS.pm
