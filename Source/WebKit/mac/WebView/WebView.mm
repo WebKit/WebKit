@@ -6301,6 +6301,15 @@ static void glibContextIterationCallback(CFRunLoopObserverRef, CFRunLoopActivity
 }
 #endif
 
+- (NSPoint)_convertPointFromRootView:(NSPoint)point
+{
+    return NSMakePoint(point.x, [self bounds].size.height - point.y);
+}
+
+- (NSRect)_convertRectFromRootView:(NSRect)rect
+{
+    return NSMakeRect(rect.origin.x, [self bounds].size.height - rect.origin.y, rect.size.width, rect.size.height);
+}
 
 @end
 

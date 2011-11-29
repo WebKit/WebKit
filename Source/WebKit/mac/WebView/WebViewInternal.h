@@ -188,4 +188,8 @@ WebCore::FindOptions coreOptions(WebFindOptions options);
 - (void)_fullScreenRendererChanged:(WebCore::RenderBox*)renderer;
 #endif
 
+// Conversion functions between WebCore root view coordinates and web view coordinates.
+- (NSPoint)_convertPointFromRootView:(NSPoint)point;
+- (NSRect)_convertRectFromRootView:(NSRect)rect;
+
 @end

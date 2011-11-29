@@ -24,6 +24,7 @@
  */
 #import "CorrectionPanel.h"
 
+#import "WebViewInternal.h"
 #import "WebViewPrivate.h"
 
 #if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
@@ -74,7 +75,7 @@ void CorrectionPanel::show(WebView* view, CorrectionPanelInfo::PanelType type, c
             [alternativeStrings addObject:(NSString*)alternativeReplacementStrings[i]];
     }
 
-    [[NSSpellChecker sharedSpellChecker] showCorrectionIndicatorOfType:indicatorType primaryString:replacementStringAsNSString alternativeStrings:alternativeStrings forStringInRect:[view convertRect:boundingBoxOfReplacedString fromView:nil] view:m_view.get() completionHandler:^(NSString* acceptedString) {
+    [[NSSpellChecker sharedSpellChecker] showCorrectionIndicatorOfType:indicatorType primaryString:replacementStringAsNSString alternativeStrings:alternativeStrings forStringInRect:[view _convertRectFromRootView:boundingBoxOfReplacedString] view:m_view.get() completionHandler:^(NSString* acceptedString) {
         handleAcceptedReplacement(acceptedString, replacedStringAsNSString, replacementStringAsNSString, indicatorType);
     }];
 }

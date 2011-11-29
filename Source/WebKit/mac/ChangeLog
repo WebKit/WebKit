@@ -1,3 +1,20 @@
+2011-11-15  Anders Carlsson  <andersca@apple.com>
+
+        EditorClient::showCorrectionPanel should pass the string bounding box in root view coordinates
+        https://bugs.webkit.org/show_bug.cgi?id=72408
+
+        Reviewed by Sam Weinig.
+
+        * WebCoreSupport/CorrectionPanel.mm:
+        (CorrectionPanel::show):
+        Convert the bounding rect to web view coordinates.
+
+        * WebView/WebView.mm:
+        (-[WebView _convertPointFromRootView:]):
+        (-[WebView _convertRectFromRootView:]):
+        * WebView/WebViewInternal.h:
+        Add helper methods for converting from root view coordinates to web view coordinates.
+
 2011-11-29  Roland Steiner  <rolandsteiner@chromium.org>
 
         <style scoped>: add ENABLE(STYLE_SCOPED) flag to WebKit

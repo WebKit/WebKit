@@ -1,3 +1,18 @@
+2011-11-15  Anders Carlsson  <andersca@apple.com>
+
+        EditorClient::showCorrectionPanel should pass the string bounding box in root view coordinates
+        https://bugs.webkit.org/show_bug.cgi?id=72408
+
+        Reviewed by Sam Weinig.
+
+        Rename windowRectForRange to rootViewRectForRange and use contentsToRootView instead of contentsToWindow.
+
+        * editing/SpellingCorrectionController.cpp:
+        (WebCore::SpellingCorrectionController::show):
+        (WebCore::SpellingCorrectionController::correctionPanelTimerFired):
+        (WebCore::SpellingCorrectionController::rootViewRectForRange):
+        * editing/SpellingCorrectionController.h:
+        
 2011-11-29  Ojan Vafai  <ojan@chromium.org>
 
         invalid cast in WebCore::toRenderBox / WebCore::RenderBox::firstChildBox
