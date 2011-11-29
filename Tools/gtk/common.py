@@ -40,7 +40,7 @@ def get_build_path():
         return build_dir
 
     def is_valid_build_directory(path):
-        return os.path.exists(os.path.join(path, '.libs'))
+        return os.path.exists(os.path.join(path, 'GNUmakefile'))
 
     build_dir = top_level_path('WebKitBuild', 'Release')
     if is_valid_build_directory(build_dir):

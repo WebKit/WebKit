@@ -1,3 +1,21 @@
+2011-11-29  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Add a method to detect 'make dist' errors without running 'make dist'
+        https://bugs.webkit.org/show_bug.cgi?id=73216
+
+        Reviewed by Philippe Normand.
+
+        Add a script that tries to sniff out 'make dist' problems without running
+        'make dist.' 'make distcheck' takes a very long time to run and this should
+        reduce the amount of times it needs to be run consecutively.
+
+        * gtk/common.py:
+        (get_build_path.is_valid_build_directory): Guess the source directory
+        by the existence of the GNUmakefile instead of the .libs directory. This
+        allows one to run the script after running autogen.sh but before fully
+        building.
+        * gtk/find-make-dist-errors: Added.
+
 2011-11-29  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] Remove use of internal headers in the MiniBrowser
