@@ -2,8 +2,8 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 450x500
   RenderSVGRoot {svg} at (74,15) size 302x476
-    RenderSVGText {text} at (117,15) size 216x18 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 216x18
+    RenderSVGText {text} at (117,15) size 215x18 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 215x18
         chunk 1 (middle anchor) text run 1 at (117.50,30.00) startOffset 0 endOffset 31 width 215.00: "text-anchor on a single <tspan>"
     RenderSVGContainer {g} at (74,49) size 302x442
       RenderSVGContainer {g} at (74,49) size 302x142
@@ -65,7 +65,7 @@ layer at (0,0) size 450x500
             chunk 1 (middle anchor) text run 1 at (118.50,0.00) startOffset 0 endOffset 1 width 3.00: "i"
             chunk 1 (middle anchor) text run 1 at (137.50,10.00) startOffset 0 endOffset 1 width 8.00: "k"
         RenderSVGTSpan {tspan} at (0,0) size 38x19
-          RenderSVGInlineText {#text} at (150,10) size 38x19
+          RenderSVGInlineText {#text} at (150,10) size 37x19
             chunk 1 text run 1 at (145.50,10.00) startOffset 0 endOffset 7 width 37.00: " rules!"
       RenderSVGText {text} at (-10,-15) size 170x29 contains 1 chunk(s)
         RenderSVGTSpan {tspan} at (0,0) size 133x29
