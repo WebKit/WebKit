@@ -2013,6 +2013,29 @@ svg/zoom/page/zoom-mask-with-percentages.svg
 svg/zoom/page/zoom-img-preserveAspectRatio-support-1.html
 svg/dom/css-transforms.xhtml
 
+# [Qt] Couple of tests have different results on 64 bit and/or in debug mode compared to 32 bit and/or release mode
+# https://bugs.webkit.org/show_bug.cgi?id=52810
+# new failing tests after r101342 on 64 bit.
+svg/batik/text/textAnchor.svg
+svg/text/select-x-list-with-tspans-1.svg
+svg/text/select-x-list-with-tspans-3.svg
+svg/text/select-textLength-spacing-stretch-3.svg
+svg/text/select-textLength-spacingAndGlyphs-stretch-4.svg
+svg/text/select-x-list-2.svg
+svg/text/select-textLength-spacing-stretch-4.svg
+svg/text/select-textLength-spacing-squeeze-4.svg
+svg/text/select-textLength-spacing-stretch-1.svg
+svg/text/select-textLength-spacing-squeeze-1.svg
+svg/text/select-x-list-3.svg
+svg/text/select-x-list-with-tspans-4.svg
+svg/text/select-textLength-spacing-stretch-2.svg
+svg/text/select-x-list-4.svg
+svg/text/select-x-list-with-tspans-2.svg
+svg/text/select-textLength-spacing-squeeze-3.svg
+svg/text/select-x-list-1.svg
+svg/text/select-textLength-spacing-squeeze-2.svg
+svg/W3C-SVG-1.1/text-text-01-b.svg
+
 # [Qt] inspector/styles/styles-disable-then-enable.html make inspector/styles/styles-iframe.html fail in debug mode
 # https://bugs.webkit.org/show_bug.cgi?id=58313
 inspector/styles/styles-disable-then-enable.html
