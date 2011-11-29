@@ -3,24 +3,24 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderInline {A} at (0,0) size 20x19 [color=#0000EE]
-        RenderText {#text} at (0,0) size 20x19
+      RenderInline {A} at (0,0) size 20x17 [color=#0000EE]
+        RenderText {#text} at (0,0) size 20x17
           text run at (0,0) width 20: "\x{5EFA}\x{7BC9}"
-      RenderText {#text} at (20,0) size 8x19
-        text run at (20,0) width 8: ", "
-      RenderInline {A} at (0,0) size 30x19 [color=#0000EE]
-        RenderText {#text} at (28,0) size 30x19
-          text run at (28,0) width 30: "\x{7F8E}\x{8853}\x{9928}"
-      RenderText {#text} at (58,0) size 8x19
-        text run at (58,0) width 8: ", "
-      RenderInline {A} at (0,0) size 20x19 [color=#0000EE]
-        RenderText {#text} at (66,0) size 20x19
-          text run at (66,0) width 20: "\x{6B74}\x{53F2}"
-      RenderText {#text} at (86,0) size 8x19
-        text run at (86,0) width 8: ", "
-      RenderInline {A} at (0,0) size 20x19 [color=#0000EE]
-        RenderText {#text} at (94,0) size 20x19
-          text run at (94,0) width 20: "\x{6587}\x{5B66}"
-      RenderText {#text} at (114,0) size 23x19
-        text run at (114,0) width 4: " "
-        text run at (118,0) width 19: "...a"
+      RenderText {#text} at (19,0) size 9x17
+        text run at (19,0) width 9: ", "
+      RenderInline {A} at (0,0) size 30x17 [color=#0000EE]
+        RenderText {#text} at (27,0) size 30x17
+          text run at (27,0) width 30: "\x{7F8E}\x{8853}\x{9928}"
+      RenderText {#text} at (56,0) size 9x17
+        text run at (56,0) width 9: ", "
+      RenderInline {A} at (0,0) size 20x17 [color=#0000EE]
+        RenderText {#text} at (64,0) size 20x17
+          text run at (64,0) width 20: "\x{6B74}\x{53F2}"
+      RenderText {#text} at (83,0) size 9x17
+        text run at (83,0) width 9: ", "
+      RenderInline {A} at (0,0) size 20x17 [color=#0000EE]
+        RenderText {#text} at (91,0) size 20x17
+          text run at (91,0) width 20: "\x{6587}\x{5B66}"
+      RenderText {#text} at (110,0) size 24x17
+        text run at (110,0) width 5: " "
+        text run at (114,0) width 20: "...a"

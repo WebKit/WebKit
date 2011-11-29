@@ -3,18 +3,18 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x38
-        RenderText {#text} at (0,0) size 746x38
-          text run at (0,0) width 746: "This is subtle, but the shadow should match the color of the top H and not the color of the bottom H. The top H and its"
-          text run at (0,19) width 285: "shadow are both color-corrected from sRGB."
-      RenderBlock (anonymous) at (0,54) size 784x230
-        RenderInline {SPAN} at (0,0) size 78x112 [color=#560063]
-          RenderText {#text} at (0,1) size 78x112
-            text run at (0,1) width 78: "H"
-        RenderText {#text} at (78,76) size 4x19
-          text run at (78,76) width 4: " "
-        RenderBR {BR} at (82,91) size 0x0
-        RenderInline {SPAN} at (0,0) size 78x112 [color=#560063]
-          RenderText {#text} at (0,116) size 78x112
-            text run at (0,116) width 78: "H"
+      RenderBlock {P} at (0,0) size 784x36
+        RenderText {#text} at (0,0) size 759x35
+          text run at (0,0) width 759: "This is subtle, but the shadow should match the color of the top H and not the color of the bottom H. The top H and its"
+          text run at (0,18) width 289: "shadow are both color-corrected from sRGB."
+      RenderBlock (anonymous) at (0,52) size 784x230
+        RenderInline {SPAN} at (0,0) size 78x111 [color=#560063]
+          RenderText {#text} at (0,2) size 78x111
+            text run at (0,2) width 78: "H"
+        RenderText {#text} at (77,77) size 5x17
+          text run at (77,77) width 5: " "
+        RenderBR {BR} at (81,91) size 1x0
+        RenderInline {SPAN} at (0,0) size 78x111 [color=#560063]
+          RenderText {#text} at (0,117) size 78x111
+            text run at (0,117) width 78: "H"
         RenderText {#text} at (0,0) size 0x0

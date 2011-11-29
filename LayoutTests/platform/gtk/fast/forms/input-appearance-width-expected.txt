@@ -3,34 +3,34 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderText {#text} at (0,0) size 344x19
-        text run at (0,0) width 344: "This tests that the new text fields use the correct width."
-      RenderBR {BR} at (344,15) size 0x0
-      RenderTextControl {INPUT} at (2,21) size 194x25 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-      RenderBR {BR} at (198,39) size 0x0
-      RenderTextControl {INPUT} at (0,50) size 200x25 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-      RenderBR {BR} at (200,68) size 0x0
-      RenderTextControl {INPUT} at (2,79) size 464x25 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-      RenderBR {BR} at (468,97) size 0x0
-      RenderTextControl {INPUT} at (0,108) size 200x25 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-      RenderBR {BR} at (200,126) size 0x0
-      RenderTextControl {INPUT} at (2,137) size 104x25 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-      RenderBR {BR} at (108,155) size 0x0
-layer at (13,32) size 188x19
-  RenderBlock {DIV} at (3,3) size 188x19
-layer at (11,61) size 194x19
-  RenderBlock {DIV} at (3,3) size 194x19
-    RenderText {#text} at (1,0) size 132x19
+      RenderText {#text} at (0,0) size 353x17
+        text run at (0,0) width 353: "This tests that the new text fields use the correct width."
+      RenderBR {BR} at (352,14) size 1x0
+      RenderTextControl {INPUT} at (2,20) size 193x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+      RenderBR {BR} at (197,37) size 0x0
+      RenderTextControl {INPUT} at (0,48) size 200x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+      RenderBR {BR} at (200,65) size 0x0
+      RenderTextControl {INPUT} at (2,76) size 463x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+      RenderBR {BR} at (467,93) size 0x0
+      RenderTextControl {INPUT} at (0,104) size 200x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+      RenderBR {BR} at (200,121) size 0x0
+      RenderTextControl {INPUT} at (2,132) size 103x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+      RenderBR {BR} at (107,149) size 0x0
+layer at (13,31) size 187x18
+  RenderBlock {DIV} at (3,3) size 187x18
+layer at (11,59) size 194x18
+  RenderBlock {DIV} at (3,3) size 194x18
+    RenderText {#text} at (1,0) size 132x17
       text run at (1,0) width 132: "styled width 200px"
-layer at (13,90) size 458x19
-  RenderBlock {DIV} at (3,3) size 458x19
-    RenderText {#text} at (1,0) size 51x19
+layer at (13,87) size 457x18
+  RenderBlock {DIV} at (3,3) size 457x18
+    RenderText {#text} at (1,0) size 51x17
       text run at (1,0) width 51: "size 50"
-layer at (11,119) size 194x19 scrollWidth 209
-  RenderBlock {DIV} at (3,3) size 194x19
-    RenderText {#text} at (1,0) size 207x19
+layer at (11,115) size 194x18 scrollWidth 209
+  RenderBlock {DIV} at (3,3) size 194x18
+    RenderText {#text} at (1,0) size 207x17
       text run at (1,0) width 207: "styled width 200px & size=10"
-layer at (13,148) size 98x19
-  RenderBlock {DIV} at (3,3) size 98x19
-    RenderText {#text} at (1,0) size 51x19
+layer at (13,143) size 97x18
+  RenderBlock {DIV} at (3,3) size 97x18
+    RenderText {#text} at (1,0) size 51x17
       text run at (1,0) width 51: "size 10"

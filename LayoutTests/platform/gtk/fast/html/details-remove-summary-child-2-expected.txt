@@ -3,11 +3,11 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderDetails {DETAILS} at (0,0) size 784x19
-        RenderSummary {SUMMARY} at (0,0) size 784x19
-          RenderDetailsMarker {DIV} at (0,5) size 10x10: down
-          RenderText {#text} at (16,0) size 62x19
-            text run at (16,0) width 62: "summary "
-          RenderInline {SPAN} at (0,0) size 181x19
-            RenderText {#text} at (78,0) size 181x19
-              text run at (78,0) width 181: "shouldn't have any bold text."
+      RenderDetails {DETAILS} at (0,0) size 784x18
+        RenderSummary {SUMMARY} at (0,0) size 784x18
+          RenderDetailsMarker {DIV} at (0,4) size 10x10: down
+          RenderText {#text} at (16,0) size 64x17
+            text run at (16,0) width 64: "summary "
+          RenderInline {SPAN} at (0,0) size 185x17
+            RenderText {#text} at (79,0) size 185x17
+              text run at (79,0) width 185: "shouldn't have any bold text."

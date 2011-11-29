@@ -4,29 +4,29 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {HR} at (0,0) size 784x2 [border: (1px inset #000000)]
-      RenderBlock {P} at (0,18) size 784x19
-        RenderText {#text} at (0,0) size 53x19
-          text run at (0,0) width 53: "Test for "
-        RenderInline {I} at (0,0) size 669x19
-          RenderInline {A} at (0,0) size 348x19 [color=#0000EE]
-            RenderText {#text} at (53,0) size 348x19
-              text run at (53,0) width 348: "http://bugzilla.opendarwin.org/show_bug.cgi?id=9547"
-          RenderText {#text} at (401,0) size 321x19
-            text run at (401,0) width 4: " "
-            text run at (405,0) width 317: "Resize corner does not track the mouse accurately"
-        RenderText {#text} at (722,0) size 4x19
-          text run at (722,0) width 4: "."
-      RenderBlock {HR} at (0,53) size 784x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,188) size 784x194
-        RenderText {#text} at (169,106) size 4x19
-          text run at (169,106) width 4: " "
+      RenderBlock {P} at (0,18) size 784x18
+        RenderText {#text} at (0,0) size 55x17
+          text run at (0,0) width 55: "Test for "
+        RenderInline {I} at (0,0) size 680x17
+          RenderInline {A} at (0,0) size 354x17 [color=#0000EE]
+            RenderText {#text} at (54,0) size 354x17
+              text run at (54,0) width 354: "http://bugzilla.opendarwin.org/show_bug.cgi?id=9547"
+          RenderText {#text} at (407,0) size 327x17
+            text run at (407,0) width 5: " "
+            text run at (411,0) width 323: "Resize corner does not track the mouse accurately"
+        RenderText {#text} at (733,0) size 5x17
+          text run at (733,0) width 5: "."
+      RenderBlock {HR} at (0,52) size 784x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,187) size 784x192
+        RenderText {#text} at (169,107) size 4x17
+          text run at (169,107) width 4: " "
         RenderBR {BR} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
-layer at (8,71) size 173x125 clip at (10,73) size 169x121
-  RenderBlock {DIV} at (0,63) size 173x125 [border: (2px solid #0000FF)]
-layer at (8,196) size 169x121 clip at (10,198) size 165x117
+layer at (8,70) size 173x125 clip at (10,72) size 169x121
+  RenderBlock {DIV} at (0,62) size 173x125 [border: (2px solid #0000FF)]
+layer at (8,195) size 169x121 clip at (10,197) size 165x117
   RenderTextControl {TEXTAREA} at (0,0) size 169x121 [bgcolor=#FFFFFF] [border: (2px solid #0000FF)]
-    RenderBlock {DIV} at (4,4) size 161x19
-layer at (10,323) size 221x65 clip at (11,324) size 219x63
-  RenderTextControl {TEXTAREA} at (2,127) size 221x65 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
-    RenderBlock {DIV} at (3,3) size 215x19
+    RenderBlock {DIV} at (4,4) size 161x18
+layer at (10,322) size 221x63 clip at (11,323) size 219x61
+  RenderTextControl {TEXTAREA} at (2,127) size 221x63 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+    RenderBlock {DIV} at (3,3) size 215x18

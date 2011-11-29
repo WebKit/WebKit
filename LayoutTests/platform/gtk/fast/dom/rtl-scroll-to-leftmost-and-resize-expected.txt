@@ -4,5 +4,5 @@ layer at (0,0) size 334x4018
   RenderBlock {HTML} at (0,0) size 334x4018
     RenderBody {BODY} at (8,8) size 318x4002
       RenderBlock {DIV} at (-684,0) size 1002x4002 [border: (1px solid #FF0000)]
-        RenderText {#text} at (-491,1) size 1492x19
-          text run at (-491,1) width 1492: "BEGINddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddEND"
+        RenderText {#text} at (-488,1) size 1490x17
+          text run at (-488,1) width 1489: "BEGINddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddEND"

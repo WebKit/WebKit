@@ -3,52 +3,52 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock (anonymous) at (0,0) size 784x76
-        RenderText {#text} at (0,0) size 767x57
-          text run at (0,0) width 752: "This is a test for multiple ruby runs and line breaks. There is a div with a blue border and 10px padding. This contains a"
-          text run at (0,19) width 497: "single <ruby> markup in the text contained in the block, broken across 2 lines. "
-          text run at (497,19) width 270: "Part of it should be on the first line, the rest"
-          text run at (0,38) width 110: "on the other line. "
-        RenderBR {BR} at (110,53) size 0x0
-        RenderBR {BR} at (0,57) size 0x19
-      RenderBlock {DIV} at (0,76) size 284x72 [border: (2px solid #0000FF)]
-        RenderText {#text} at (12,12) size 155x19
-          text run at (12,12) width 155: "<ruby> is defined in the "
-        RenderRuby (inline) {RUBY} at (0,0) size 246x48
-          RenderRubyRun (anonymous) at (163,12) size 21x19
-            RenderRubyText {RT} at (0,-10) size 21x10
-              RenderText {#text} at (0,0) size 21x10
-                text run at (0,0) width 21: "Hyper"
-            RenderRubyBase (anonymous) at (0,0) size 21x19
-              RenderText {#text} at (4,0) size 13x19
-                text run at (4,0) width 13: "H"
-          RenderRubyRun (anonymous) at (184,12) size 15x19
-            RenderRubyText {RT} at (0,-10) size 15x10
-              RenderText {#text} at (0,0) size 15x10
+      RenderBlock (anonymous) at (0,0) size 784x72
+        RenderText {#text} at (0,0) size 767x53
+          text run at (0,0) width 767: "This is a test for multiple ruby runs and line breaks. There is a div with a blue border and 10px padding. This contains a"
+          text run at (0,18) width 507: "single <ruby> markup in the text contained in the block, broken across 2 lines. "
+          text run at (506,18) width 252: "Part of it should be on the first line, the"
+          text run at (0,36) width 140: "rest on the other line. "
+        RenderBR {BR} at (139,50) size 1x0
+        RenderBR {BR} at (0,54) size 0x17
+      RenderBlock {DIV} at (0,72) size 284x68 [border: (2px solid #0000FF)]
+        RenderText {#text} at (12,12) size 159x17
+          text run at (12,12) width 159: "<ruby> is defined in the "
+        RenderRuby (inline) {RUBY} at (0,0) size 248x43
+          RenderRubyRun (anonymous) at (166,12) size 20x18
+            RenderRubyText {RT} at (0,-9) size 20x9
+              RenderText {#text} at (0,0) size 20x9
+                text run at (0,0) width 20: "Hyper"
+            RenderRubyBase (anonymous) at (0,0) size 20x18
+              RenderText {#text} at (4,0) size 12x17
+                text run at (4,0) width 12: "H"
+          RenderRubyRun (anonymous) at (186,12) size 15x18
+            RenderRubyText {RT} at (0,-9) size 15x9
+              RenderText {#text} at (0,0) size 15x9
                 text run at (0,0) width 15: "Text"
-            RenderRubyBase (anonymous) at (0,0) size 15x19
-              RenderText {#text} at (2,0) size 11x19
+            RenderRubyBase (anonymous) at (0,0) size 15x18
+              RenderText {#text} at (2,0) size 11x17
                 text run at (2,0) width 11: "T"
-          RenderRubyRun (anonymous) at (199,12) size 26x19
-            RenderRubyText {RT} at (0,-10) size 26x10
-              RenderText {#text} at (0,0) size 26x10
+          RenderRubyRun (anonymous) at (201,12) size 26x18
+            RenderRubyText {RT} at (0,-9) size 26x9
+              RenderText {#text} at (0,0) size 26x9
                 text run at (0,0) width 26: "Markup"
-            RenderRubyBase (anonymous) at (0,0) size 26x19
-              RenderText {#text} at (6,0) size 14x19
-                text run at (6,0) width 14: "M"
-          RenderRubyRun (anonymous) at (225,12) size 33x19
-            RenderRubyText {RT} at (0,-10) size 33x10
-              RenderText {#text} at (0,0) size 33x10
-                text run at (0,0) width 33: "Language"
-            RenderRubyBase (anonymous) at (0,0) size 33x19
-              RenderText {#text} at (11,0) size 11x19
-                text run at (11,0) width 11: "L"
-          RenderRubyRun (anonymous) at (12,41) size 25x19
-            RenderRubyText {RT} at (0,-10) size 25x10
-              RenderText {#text} at (0,0) size 25x10
+            RenderRubyBase (anonymous) at (0,0) size 26x18
+              RenderText {#text} at (5,0) size 15x17
+                text run at (5,0) width 15: "M"
+          RenderRubyRun (anonymous) at (227,12) size 32x18
+            RenderRubyText {RT} at (0,-9) size 32x9
+              RenderText {#text} at (0,0) size 32x9
+                text run at (0,0) width 32: "Language"
+            RenderRubyBase (anonymous) at (0,0) size 32x18
+              RenderText {#text} at (11,0) size 10x17
+                text run at (11,0) width 10: "L"
+          RenderRubyRun (anonymous) at (12,38) size 25x18
+            RenderRubyText {RT} at (0,-9) size 25x9
+              RenderText {#text} at (0,0) size 25x9
                 text run at (0,0) width 25: "Level 5"
-            RenderRubyBase (anonymous) at (0,0) size 25x19
-              RenderText {#text} at (8,0) size 9x19
+            RenderRubyBase (anonymous) at (0,0) size 25x18
+              RenderText {#text} at (8,0) size 9x17
                 text run at (8,0) width 9: "5"
-        RenderText {#text} at (33,41) size 42x19
-          text run at (33,41) width 42: " specs."
+        RenderText {#text} at (33,38) size 43x17
+          text run at (33,38) width 43: " specs."

@@ -1,14 +1,14 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 138x600
-  RenderBlock {HTML} at (0,0) size 138x600
-    RenderBody {BODY} at (8,8) size 122x584
-      RenderTable {TABLE} at (0,0) size 122x366 [border: (2px outset #808080)]
-        RenderTableSection {TBODY} at (2,2) size 118x362
-          RenderTableRow {TR} at (0,2) size 114x362
-            RenderTableCell {TD} at (2,46) size 114x65 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (46,-42) size 54x116
-                text run at (46,-42) width 116: "\x{7B2C}\x{4E00}\x{6BB5}\x{843D}"
-            RenderTableCell {TD} at (2,124) size 114x236 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (3,2) size 107x232
-                text run at (3,2) width 232: "\x{7B2C}\x{4E8C}\x{6BB5}\x{843D}"
+layer at (0,0) size 139x600
+  RenderBlock {HTML} at (0,0) size 139x600
+    RenderBody {BODY} at (8,8) size 123x584
+      RenderTable {TABLE} at (0,0) size 123x365 [border: (2px outset #808080)]
+        RenderTableSection {TBODY} at (2,2) size 119x361
+          RenderTableRow {TR} at (0,2) size 115x361
+            RenderTableCell {TD} at (2,46) size 115x64 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (47,-42) size 53x116
+                text run at (47,-42) width 116: "\x{7B2C}\x{4E00}\x{6BB5}\x{843D}"
+            RenderTableCell {TD} at (2,124) size 115x235 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (4,2) size 107x231
+                text run at (4,2) width 231: "\x{7B2C}\x{4E8C}\x{6BB5}\x{843D}"

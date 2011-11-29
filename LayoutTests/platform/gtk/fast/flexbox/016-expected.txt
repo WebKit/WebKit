@@ -4,21 +4,21 @@ layer at (0,0) size 800x584
   RenderBlock {HTML} at (0,0) size 800x584 [bgcolor=#FFFFFF]
     RenderBody {BODY} at (0,0) size 800x584
       RenderDeprecatedFlexibleBox {DIV} at (0,0) size 800x584
-        RenderBlock {DIV} at (0,0) size 800x57
-          RenderText {#text} at (0,0) size 800x57
-            text run at (0,0) width 485: "This header should remain at the top of the browser window as you resize it. "
-            text run at (485,0) width 183: "It can wrap to multiple lines. "
-            text run at (668,0) width 132: "The center should be"
-            text run at (0,19) width 254: "filled with an olive-bordered green box. "
-            text run at (254,19) width 499: "It should start beneath the header, end above the footer, and fill the width of the"
-            text run at (0,38) width 111: "browser window."
-        RenderPartObject {IFRAME} at (0,57) size 812x508 [bgcolor=#008000] [border: (10px solid #808000)]
-          layer at (0,0) size 792x488
-            RenderView at (0,0) size 792x488
-          layer at (0,0) size 792x488
-            RenderBlock {HTML} at (0,0) size 792x488
-              RenderBody {BODY} at (8,8) size 776x472
-        RenderBlock {DIV} at (0,565) size 800x19
-          RenderText {#text} at (0,0) size 664x19
-            text run at (0,0) width 407: "This footer should remain at the bottom of the browser window. "
-            text run at (407,0) width 257: "It can wrap to multiple lines if necessary."
+        RenderBlock {DIV} at (0,0) size 800x54
+          RenderText {#text} at (0,0) size 796x53
+            text run at (0,0) width 494: "This header should remain at the top of the browser window as you resize it. "
+            text run at (493,0) width 189: "It can wrap to multiple lines. "
+            text run at (681,0) width 115: "The center should"
+            text run at (0,18) width 279: "be filled with an olive-bordered green box. "
+            text run at (278,18) width 510: "It should start beneath the header, end above the footer, and fill the width of the"
+            text run at (0,36) width 112: "browser window."
+        RenderPartObject {IFRAME} at (0,54) size 812x512 [bgcolor=#008000] [border: (10px solid #808000)]
+          layer at (0,0) size 792x492
+            RenderView at (0,0) size 792x492
+          layer at (0,0) size 792x492
+            RenderBlock {HTML} at (0,0) size 792x492
+              RenderBody {BODY} at (8,8) size 776x476
+        RenderBlock {DIV} at (0,566) size 800x18
+          RenderText {#text} at (0,0) size 679x17
+            text run at (0,0) width 415: "This footer should remain at the bottom of the browser window. "
+            text run at (414,0) width 265: "It can wrap to multiple lines if necessary."

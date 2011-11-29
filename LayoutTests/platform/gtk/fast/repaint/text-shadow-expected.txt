@@ -3,39 +3,40 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x562
-      RenderBlock {P} at (0,0) size 784x19
-        RenderText {#text} at (0,0) size 172x19
-          text run at (0,0) width 172: "This is a regression test for "
-        RenderInline {I} at (0,0) size 598x19
-          RenderInline {A} at (0,0) size 348x19 [color=#0000EE]
-            RenderText {#text} at (172,0) size 348x19
-              text run at (172,0) width 348: "http://bugzilla.opendarwin.org/show_bug.cgi?id=7301"
-          RenderText {#text} at (520,0) size 250x19
-            text run at (520,0) width 4: " "
-            text run at (524,0) width 246: "Text shadow does not repaint correctly"
-        RenderText {#text} at (770,0) size 4x19
-          text run at (770,0) width 4: "."
-      RenderBlock {HR} at (0,35) size 784x2 [border: (1px inset #000000)]
-      RenderBlock {DIV} at (30,67) size 724x21
-        RenderInline {SPAN} at (0,0) size 202x21 [bgcolor=#C0C0C0]
-          RenderText {#text} at (0,0) size 202x21
-            text run at (0,0) width 202: "Lorem ipsum dolor sit amet"
+      RenderBlock {P} at (0,0) size 784x36
+        RenderText {#text} at (0,0) size 177x17
+          text run at (0,0) width 177: "This is a regression test for "
+        RenderInline {I} at (0,0) size 723x35
+          RenderInline {A} at (0,0) size 355x17 [color=#0000EE]
+            RenderText {#text} at (176,0) size 355x17
+              text run at (176,0) width 355: "http://bugzilla.opendarwin.org/show_bug.cgi?id=7301"
+          RenderText {#text} at (530,0) size 723x35
+            text run at (530,0) width 5: " "
+            text run at (534,0) width 189: "Text shadow does not repaint"
+            text run at (0,18) width 58: "correctly"
+        RenderText {#text} at (57,18) size 5x17
+          text run at (57,18) width 5: "."
+      RenderBlock {HR} at (0,52) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {DIV} at (30,84) size 724x21
+        RenderInline {SPAN} at (0,0) size 200x20 [bgcolor=#C0C0C0]
+          RenderText {#text} at (0,0) size 200x20
+            text run at (0,0) width 200: "Lorem ipsum dolor sit amet"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {DIV} at (30,118) size 724x21
-        RenderInline {SPAN} at (0,0) size 202x21 [bgcolor=#C0C0C0]
-          RenderText {#text} at (0,0) size 202x21
-            text run at (0,0) width 202: "Lorem ipsum dolor sit amet"
+      RenderBlock {DIV} at (30,135) size 724x21
+        RenderInline {SPAN} at (0,0) size 200x20 [bgcolor=#C0C0C0]
+          RenderText {#text} at (0,0) size 200x20
+            text run at (0,0) width 200: "Lorem ipsum dolor sit amet"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {DIV} at (30,169) size 724x21
-        RenderText {#text} at (0,2) size 88x19
-          text run at (0,2) width 88: "Lorem ipsum "
-        RenderInline {SPAN} at (0,0) size 100x21 [bgcolor=#C0C0C0]
-          RenderText {#text} at (88,0) size 100x21
-            text run at (88,0) width 100: "dolor sit amet"
+      RenderBlock {DIV} at (30,186) size 724x21
+        RenderText {#text} at (0,2) size 90x17
+          text run at (0,2) width 90: "Lorem ipsum "
+        RenderInline {SPAN} at (0,0) size 100x20 [bgcolor=#C0C0C0]
+          RenderText {#text} at (89,0) size 100x20
+            text run at (89,0) width 100: "dolor sit amet"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {DIV} at (30,220) size 724x21
-        RenderInline {SPAN} at (0,0) size 97x21 [bgcolor=#C0C0C0]
-          RenderText {#text} at (0,0) size 97x21
+      RenderBlock {DIV} at (30,237) size 724x21
+        RenderInline {SPAN} at (0,0) size 97x20 [bgcolor=#C0C0C0]
+          RenderText {#text} at (0,0) size 97x20
             text run at (0,0) width 97: "Lorem ipsum"
-        RenderText {#text} at (97,2) size 89x19
-          text run at (97,2) width 89: " dolor sit amet"
+        RenderText {#text} at (96,2) size 93x17
+          text run at (96,2) width 93: " dolor sit amet"

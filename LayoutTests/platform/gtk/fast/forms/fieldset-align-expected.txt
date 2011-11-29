@@ -1,178 +1,178 @@
-layer at (0,0) size 784x1498
+layer at (0,0) size 784x1462
   RenderView at (0,0) size 784x600
-layer at (0,0) size 784x1498
-  RenderBlock {HTML} at (0,0) size 784x1498
-    RenderBody {BODY} at (8,8) size 768x1475
-      RenderBlock {P} at (0,0) size 768x19
-        RenderText {#text} at (0,0) size 108x19
-          text run at (0,0) width 108: "Legend align test"
-      RenderFieldSet {FIELDSET} at (2,35) size 764x65 [border: (2px groove #C0C0C0)]
-        RenderBlock {LEGEND} at (14,0) size 102x19
-          RenderText {#text} at (2,0) size 98x19
-            text run at (2,0) width 98: "My Legend left"
-        RenderBlock (anonymous) at (14,24) size 736x29
-          RenderTextControl {INPUT} at (2,2) size 194x25 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+layer at (0,0) size 784x1462
+  RenderBlock {HTML} at (0,0) size 784x1462
+    RenderBody {BODY} at (8,8) size 768x1439
+      RenderBlock {P} at (0,0) size 768x18
+        RenderText {#text} at (0,0) size 111x17
+          text run at (0,0) width 111: "Legend align test"
+      RenderFieldSet {FIELDSET} at (2,34) size 764x63 [border: (2px groove #C0C0C0)]
+        RenderBlock {LEGEND} at (14,0) size 104x18
+          RenderText {#text} at (2,0) size 100x17
+            text run at (2,0) width 100: "My Legend left"
+        RenderBlock (anonymous) at (14,23) size 736x28
+          RenderTextControl {INPUT} at (2,2) size 193x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
           RenderText {#text} at (0,0) size 0x0
-      RenderFieldSet {FIELDSET} at (2,100) size 764x65 [border: (2px groove #C0C0C0)]
-        RenderBlock {LEGEND} at (322,0) size 120x19
-          RenderText {#text} at (2,0) size 116x19
-            text run at (2,0) width 116: "My Legend center"
-        RenderBlock (anonymous) at (14,24) size 736x29
-          RenderTextControl {INPUT} at (2,2) size 194x25 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+      RenderFieldSet {FIELDSET} at (2,97) size 764x63 [border: (2px groove #C0C0C0)]
+        RenderBlock {LEGEND} at (321,0) size 122x18
+          RenderText {#text} at (2,0) size 118x17
+            text run at (2,0) width 118: "My Legend center"
+        RenderBlock (anonymous) at (14,23) size 736x28
+          RenderTextControl {INPUT} at (2,2) size 193x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
           RenderText {#text} at (0,0) size 0x0
-      RenderFieldSet {FIELDSET} at (2,165) size 764x65 [border: (2px groove #C0C0C0)]
-        RenderBlock {LEGEND} at (639,0) size 111x19
-          RenderText {#text} at (2,0) size 107x19
-            text run at (2,0) width 107: "My Legend right"
-        RenderBlock (anonymous) at (14,24) size 736x29
-          RenderTextControl {INPUT} at (2,2) size 194x25 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+      RenderFieldSet {FIELDSET} at (2,160) size 764x63 [border: (2px groove #C0C0C0)]
+        RenderBlock {LEGEND} at (637,0) size 113x18
+          RenderText {#text} at (2,0) size 109x17
+            text run at (2,0) width 109: "My Legend right"
+        RenderBlock (anonymous) at (14,23) size 736x28
+          RenderTextControl {INPUT} at (2,2) size 193x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
           RenderText {#text} at (0,0) size 0x0
-      RenderFieldSet {FIELDSET} at (2,230) size 764x65 [border: (2px groove #C0C0C0)]
-        RenderBlock {LEGEND} at (14,0) size 125x19
-          RenderText {#text} at (2,0) size 121x19
-            text run at (2,0) width 121: "My Legend default"
-        RenderBlock (anonymous) at (14,24) size 736x29
-          RenderTextControl {INPUT} at (2,2) size 194x25 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+      RenderFieldSet {FIELDSET} at (2,223) size 764x63 [border: (2px groove #C0C0C0)]
+        RenderBlock {LEGEND} at (14,0) size 127x18
+          RenderText {#text} at (2,0) size 123x17
+            text run at (2,0) width 123: "My Legend default"
+        RenderBlock (anonymous) at (14,23) size 736x28
+          RenderTextControl {INPUT} at (2,2) size 193x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
           RenderText {#text} at (0,0) size 0x0
-      RenderBlock {HR} at (0,303) size 768x2 [border: (1px inset #000000)]
-      RenderBlock {P} at (0,321) size 768x19
-        RenderText {#text} at (0,0) size 147x19
-          text run at (0,0) width 147: "Legend align test, RTL"
-      RenderBlock (anonymous) at (0,356) size 768x0
+      RenderBlock {HR} at (0,294) size 768x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,312) size 768x18
+        RenderText {#text} at (0,0) size 149x17
+          text run at (0,0) width 149: "Legend align test, RTL"
+      RenderBlock (anonymous) at (0,346) size 768x0
         RenderInline {SPAN} at (0,0) size 0x0
           RenderText {#text} at (0,0) size 0x0
-      RenderBlock (anonymous) at (0,356) size 768x260
-        RenderFieldSet {FIELDSET} at (2,0) size 764x65 [border: (2px groove #C0C0C0)]
-          RenderBlock {LEGEND} at (14,0) size 102x19
-            RenderText {#text} at (2,0) size 98x19
-              text run at (2,0) width 98: "My Legend left"
-          RenderBlock (anonymous) at (14,24) size 736x29
-            RenderTextControl {INPUT} at (540,2) size 194x25 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+      RenderBlock (anonymous) at (0,346) size 768x252
+        RenderFieldSet {FIELDSET} at (2,0) size 764x63 [border: (2px groove #C0C0C0)]
+          RenderBlock {LEGEND} at (14,0) size 104x18
+            RenderText {#text} at (2,0) size 100x17
+              text run at (2,0) width 100: "My Legend left"
+          RenderBlock (anonymous) at (14,23) size 736x28
+            RenderTextControl {INPUT} at (541,2) size 193x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
             RenderText {#text} at (0,0) size 0x0
-        RenderFieldSet {FIELDSET} at (2,65) size 764x65 [border: (2px groove #C0C0C0)]
-          RenderBlock {LEGEND} at (322,0) size 120x19
-            RenderText {#text} at (2,0) size 116x19
-              text run at (2,0) width 116: "My Legend center"
-          RenderBlock (anonymous) at (14,24) size 736x29
-            RenderTextControl {INPUT} at (540,2) size 194x25 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+        RenderFieldSet {FIELDSET} at (2,63) size 764x63 [border: (2px groove #C0C0C0)]
+          RenderBlock {LEGEND} at (321,0) size 122x18
+            RenderText {#text} at (2,0) size 118x17
+              text run at (2,0) width 118: "My Legend center"
+          RenderBlock (anonymous) at (14,23) size 736x28
+            RenderTextControl {INPUT} at (541,2) size 193x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
             RenderText {#text} at (0,0) size 0x0
-        RenderFieldSet {FIELDSET} at (2,130) size 764x65 [border: (2px groove #C0C0C0)]
-          RenderBlock {LEGEND} at (639,0) size 111x19
-            RenderText {#text} at (2,0) size 107x19
-              text run at (2,0) width 107: "My Legend right"
-          RenderBlock (anonymous) at (14,24) size 736x29
-            RenderTextControl {INPUT} at (540,2) size 194x25 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+        RenderFieldSet {FIELDSET} at (2,126) size 764x63 [border: (2px groove #C0C0C0)]
+          RenderBlock {LEGEND} at (637,0) size 113x18
+            RenderText {#text} at (2,0) size 109x17
+              text run at (2,0) width 109: "My Legend right"
+          RenderBlock (anonymous) at (14,23) size 736x28
+            RenderTextControl {INPUT} at (541,2) size 193x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
             RenderText {#text} at (0,0) size 0x0
-        RenderFieldSet {FIELDSET} at (2,195) size 764x65 [border: (2px groove #C0C0C0)]
-          RenderBlock {LEGEND} at (625,0) size 125x19
-            RenderText {#text} at (2,0) size 121x19
-              text run at (2,0) width 121: "My Legend default"
-          RenderBlock (anonymous) at (14,24) size 736x29
-            RenderTextControl {INPUT} at (540,2) size 194x25 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+        RenderFieldSet {FIELDSET} at (2,189) size 764x63 [border: (2px groove #C0C0C0)]
+          RenderBlock {LEGEND} at (623,0) size 127x18
+            RenderText {#text} at (2,0) size 123x17
+              text run at (2,0) width 123: "My Legend default"
+          RenderBlock (anonymous) at (14,23) size 736x28
+            RenderTextControl {INPUT} at (541,2) size 193x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
             RenderText {#text} at (0,0) size 0x0
-      RenderBlock (anonymous) at (0,616) size 768x0
-        RenderInline {SPAN} at (0,0) size 0x0
-        RenderText {#text} at (0,0) size 0x0
-      RenderBlock {HR} at (0,624) size 768x2 [border: (1px inset #000000)]
-      RenderBlock {P} at (0,642) size 768x19
-        RenderText {#text} at (0,0) size 270x19
-          text run at (0,0) width 270: "Legend align test with margin and padding"
-      RenderFieldSet {FIELDSET} at (15,677) size 738x80 [border: (2px groove #C0C0C0)]
-        RenderBlock {LEGEND} at (17,0) size 102x19
-          RenderText {#text} at (2,0) size 98x19
-            text run at (2,0) width 98: "My Legend left"
-        RenderBlock (anonymous) at (17,34) size 704x29
-          RenderTextControl {INPUT} at (2,2) size 194x25 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-          RenderText {#text} at (0,0) size 0x0
-      RenderFieldSet {FIELDSET} at (15,772) size 738x80 [border: (2px groove #C0C0C0)]
-        RenderBlock {LEGEND} at (309,0) size 120x19
-          RenderText {#text} at (2,0) size 116x19
-            text run at (2,0) width 116: "My Legend center"
-        RenderBlock (anonymous) at (17,34) size 704x29
-          RenderTextControl {INPUT} at (2,2) size 194x25 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-          RenderText {#text} at (0,0) size 0x0
-      RenderFieldSet {FIELDSET} at (15,867) size 738x80 [border: (2px groove #C0C0C0)]
-        RenderBlock {LEGEND} at (610,0) size 111x19
-          RenderText {#text} at (2,0) size 107x19
-            text run at (2,0) width 107: "My Legend right"
-        RenderBlock (anonymous) at (17,34) size 704x29
-          RenderTextControl {INPUT} at (2,2) size 194x25 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-          RenderText {#text} at (0,0) size 0x0
-      RenderFieldSet {FIELDSET} at (15,962) size 738x80 [border: (2px groove #C0C0C0)]
-        RenderBlock {LEGEND} at (17,0) size 125x19
-          RenderText {#text} at (2,0) size 121x19
-            text run at (2,0) width 121: "My Legend default"
-        RenderBlock (anonymous) at (17,34) size 704x29
-          RenderTextControl {INPUT} at (2,2) size 194x25 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-          RenderText {#text} at (0,0) size 0x0
-      RenderBlock {HR} at (0,1057) size 768x2 [border: (1px inset #000000)]
-      RenderBlock {P} at (0,1075) size 768x19
-        RenderText {#text} at (0,0) size 309x19
-          text run at (0,0) width 309: "Legend align test with margin and padding, RTL"
-      RenderBlock (anonymous) at (0,1110) size 768x0
-        RenderInline {SPAN} at (0,0) size 0x0
-          RenderText {#text} at (0,0) size 0x0
-      RenderBlock (anonymous) at (0,1110) size 768x365
-        RenderFieldSet {FIELDSET} at (15,0) size 738x80 [border: (2px groove #C0C0C0)]
-          RenderBlock {LEGEND} at (17,0) size 102x19
-            RenderText {#text} at (2,0) size 98x19
-              text run at (2,0) width 98: "My Legend left"
-          RenderBlock (anonymous) at (17,34) size 704x29
-            RenderTextControl {INPUT} at (508,2) size 194x25 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-            RenderText {#text} at (0,0) size 0x0
-        RenderFieldSet {FIELDSET} at (15,95) size 738x80 [border: (2px groove #C0C0C0)]
-          RenderBlock {LEGEND} at (309,0) size 120x19
-            RenderText {#text} at (2,0) size 116x19
-              text run at (2,0) width 116: "My Legend center"
-          RenderBlock (anonymous) at (17,34) size 704x29
-            RenderTextControl {INPUT} at (508,2) size 194x25 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-            RenderText {#text} at (0,0) size 0x0
-        RenderFieldSet {FIELDSET} at (15,190) size 738x80 [border: (2px groove #C0C0C0)]
-          RenderBlock {LEGEND} at (610,0) size 111x19
-            RenderText {#text} at (2,0) size 107x19
-              text run at (2,0) width 107: "My Legend right"
-          RenderBlock (anonymous) at (17,34) size 704x29
-            RenderTextControl {INPUT} at (508,2) size 194x25 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-            RenderText {#text} at (0,0) size 0x0
-        RenderFieldSet {FIELDSET} at (15,285) size 738x80 [border: (2px groove #C0C0C0)]
-          RenderBlock {LEGEND} at (596,0) size 125x19
-            RenderText {#text} at (2,0) size 121x19
-              text run at (2,0) width 121: "My Legend default"
-          RenderBlock (anonymous) at (17,34) size 704x29
-            RenderTextControl {INPUT} at (508,2) size 194x25 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-            RenderText {#text} at (0,0) size 0x0
-      RenderBlock (anonymous) at (0,1490) size 768x0
+      RenderBlock (anonymous) at (0,598) size 768x0
         RenderInline {SPAN} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
-layer at (29,72) size 188x19
-  RenderBlock {DIV} at (3,3) size 188x19
-layer at (29,137) size 188x19
-  RenderBlock {DIV} at (3,3) size 188x19
-layer at (29,202) size 188x19
-  RenderBlock {DIV} at (3,3) size 188x19
-layer at (29,267) size 188x19
-  RenderBlock {DIV} at (3,3) size 188x19
-layer at (567,393) size 188x19
-  RenderBlock {DIV} at (3,3) size 188x19
-layer at (567,458) size 188x19
-  RenderBlock {DIV} at (3,3) size 188x19
-layer at (567,523) size 188x19
-  RenderBlock {DIV} at (3,3) size 188x19
-layer at (567,588) size 188x19
-  RenderBlock {DIV} at (3,3) size 188x19
-layer at (45,724) size 188x19
-  RenderBlock {DIV} at (3,3) size 188x19
-layer at (45,819) size 188x19
-  RenderBlock {DIV} at (3,3) size 188x19
-layer at (45,914) size 188x19
-  RenderBlock {DIV} at (3,3) size 188x19
-layer at (45,1009) size 188x19
-  RenderBlock {DIV} at (3,3) size 188x19
-layer at (551,1157) size 188x19
-  RenderBlock {DIV} at (3,3) size 188x19
-layer at (551,1252) size 188x19
-  RenderBlock {DIV} at (3,3) size 188x19
-layer at (551,1347) size 188x19
-  RenderBlock {DIV} at (3,3) size 188x19
-layer at (551,1442) size 188x19
-  RenderBlock {DIV} at (3,3) size 188x19
+      RenderBlock {HR} at (0,606) size 768x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,624) size 768x18
+        RenderText {#text} at (0,0) size 275x17
+          text run at (0,0) width 275: "Legend align test with margin and padding"
+      RenderFieldSet {FIELDSET} at (15,658) size 738x78 [border: (2px groove #C0C0C0)]
+        RenderBlock {LEGEND} at (17,0) size 104x18
+          RenderText {#text} at (2,0) size 100x17
+            text run at (2,0) width 100: "My Legend left"
+        RenderBlock (anonymous) at (17,33) size 704x28
+          RenderTextControl {INPUT} at (2,2) size 193x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+          RenderText {#text} at (0,0) size 0x0
+      RenderFieldSet {FIELDSET} at (15,751) size 738x78 [border: (2px groove #C0C0C0)]
+        RenderBlock {LEGEND} at (308,0) size 122x18
+          RenderText {#text} at (2,0) size 118x17
+            text run at (2,0) width 118: "My Legend center"
+        RenderBlock (anonymous) at (17,33) size 704x28
+          RenderTextControl {INPUT} at (2,2) size 193x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+          RenderText {#text} at (0,0) size 0x0
+      RenderFieldSet {FIELDSET} at (15,844) size 738x78 [border: (2px groove #C0C0C0)]
+        RenderBlock {LEGEND} at (608,0) size 113x18
+          RenderText {#text} at (2,0) size 109x17
+            text run at (2,0) width 109: "My Legend right"
+        RenderBlock (anonymous) at (17,33) size 704x28
+          RenderTextControl {INPUT} at (2,2) size 193x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+          RenderText {#text} at (0,0) size 0x0
+      RenderFieldSet {FIELDSET} at (15,937) size 738x78 [border: (2px groove #C0C0C0)]
+        RenderBlock {LEGEND} at (17,0) size 127x18
+          RenderText {#text} at (2,0) size 123x17
+            text run at (2,0) width 123: "My Legend default"
+        RenderBlock (anonymous) at (17,33) size 704x28
+          RenderTextControl {INPUT} at (2,2) size 193x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+          RenderText {#text} at (0,0) size 0x0
+      RenderBlock {HR} at (0,1030) size 768x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,1048) size 768x18
+        RenderText {#text} at (0,0) size 313x17
+          text run at (0,0) width 313: "Legend align test with margin and padding, RTL"
+      RenderBlock (anonymous) at (0,1082) size 768x0
+        RenderInline {SPAN} at (0,0) size 0x0
+          RenderText {#text} at (0,0) size 0x0
+      RenderBlock (anonymous) at (0,1082) size 768x357
+        RenderFieldSet {FIELDSET} at (15,0) size 738x78 [border: (2px groove #C0C0C0)]
+          RenderBlock {LEGEND} at (17,0) size 104x18
+            RenderText {#text} at (2,0) size 100x17
+              text run at (2,0) width 100: "My Legend left"
+          RenderBlock (anonymous) at (17,33) size 704x28
+            RenderTextControl {INPUT} at (509,2) size 193x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+            RenderText {#text} at (0,0) size 0x0
+        RenderFieldSet {FIELDSET} at (15,93) size 738x78 [border: (2px groove #C0C0C0)]
+          RenderBlock {LEGEND} at (308,0) size 122x18
+            RenderText {#text} at (2,0) size 118x17
+              text run at (2,0) width 118: "My Legend center"
+          RenderBlock (anonymous) at (17,33) size 704x28
+            RenderTextControl {INPUT} at (509,2) size 193x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+            RenderText {#text} at (0,0) size 0x0
+        RenderFieldSet {FIELDSET} at (15,186) size 738x78 [border: (2px groove #C0C0C0)]
+          RenderBlock {LEGEND} at (608,0) size 113x18
+            RenderText {#text} at (2,0) size 109x17
+              text run at (2,0) width 109: "My Legend right"
+          RenderBlock (anonymous) at (17,33) size 704x28
+            RenderTextControl {INPUT} at (509,2) size 193x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+            RenderText {#text} at (0,0) size 0x0
+        RenderFieldSet {FIELDSET} at (15,279) size 738x78 [border: (2px groove #C0C0C0)]
+          RenderBlock {LEGEND} at (594,0) size 127x18
+            RenderText {#text} at (2,0) size 123x17
+              text run at (2,0) width 123: "My Legend default"
+          RenderBlock (anonymous) at (17,33) size 704x28
+            RenderTextControl {INPUT} at (509,2) size 193x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+            RenderText {#text} at (0,0) size 0x0
+      RenderBlock (anonymous) at (0,1454) size 768x0
+        RenderInline {SPAN} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
+layer at (29,70) size 187x18
+  RenderBlock {DIV} at (3,3) size 187x18
+layer at (29,133) size 187x18
+  RenderBlock {DIV} at (3,3) size 187x18
+layer at (29,196) size 187x18
+  RenderBlock {DIV} at (3,3) size 187x18
+layer at (29,259) size 187x18
+  RenderBlock {DIV} at (3,3) size 187x18
+layer at (568,382) size 187x18
+  RenderBlock {DIV} at (3,3) size 187x18
+layer at (568,445) size 187x18
+  RenderBlock {DIV} at (3,3) size 187x18
+layer at (568,508) size 187x18
+  RenderBlock {DIV} at (3,3) size 187x18
+layer at (568,571) size 187x18
+  RenderBlock {DIV} at (3,3) size 187x18
+layer at (45,704) size 187x18
+  RenderBlock {DIV} at (3,3) size 187x18
+layer at (45,797) size 187x18
+  RenderBlock {DIV} at (3,3) size 187x18
+layer at (45,890) size 187x18
+  RenderBlock {DIV} at (3,3) size 187x18
+layer at (45,983) size 187x18
+  RenderBlock {DIV} at (3,3) size 187x18
+layer at (552,1128) size 187x18
+  RenderBlock {DIV} at (3,3) size 187x18
+layer at (552,1221) size 187x18
+  RenderBlock {DIV} at (3,3) size 187x18
+layer at (552,1314) size 187x18
+  RenderBlock {DIV} at (3,3) size 187x18
+layer at (552,1407) size 187x18
+  RenderBlock {DIV} at (3,3) size 187x18

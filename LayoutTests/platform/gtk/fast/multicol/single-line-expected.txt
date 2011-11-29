@@ -1,42 +1,42 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x293
-  RenderBlock {HTML} at (0,0) size 800x293
-    RenderBody {BODY} at (8,16) size 784x261
-      RenderBlock {P} at (0,0) size 784x19
-        RenderText {#text} at (0,0) size 764x19
-          text run at (0,0) width 389: "This test checks if CSS3 multi-column layout properly works "
-          text run at (389,0) width 375: "when the multi-column block contains only one line of text."
-      RenderBlock {P} at (0,35) size 784x19
-        RenderText {#text} at (0,0) size 555x19
-          text run at (0,0) width 298: "Test successful if the following text is readable "
-          text run at (298,0) width 257: "(i.e. not split into two different columns)."
-      RenderBlock {DIV} at (0,242) size 784x19
-layer at (8,86) size 784x19
-  RenderBlock {P} at (0,70) size 784x19 [bgcolor=#EEEEEE]
-    RenderText {#text} at (0,0) size 65x19
-      text run at (0,0) width 65: "Short text."
-layer at (8,121) size 784x35
-  RenderBlock {P} at (0,105) size 784x35 [bgcolor=#EEEEEE]
-    RenderInline {SPAN} at (0,0) size 141x34
-      RenderText {#text} at (0,0) size 141x34
-        text run at (0,0) width 141: "Bigger text."
+layer at (0,0) size 800x286
+  RenderBlock {HTML} at (0,0) size 800x286
+    RenderBody {BODY} at (8,16) size 784x254
+      RenderBlock {P} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 780x17
+          text run at (0,0) width 397: "This test checks if CSS3 multi-column layout properly works "
+          text run at (396,0) width 384: "when the multi-column block contains only one line of text."
+      RenderBlock {P} at (0,34) size 784x18
+        RenderText {#text} at (0,0) size 571x17
+          text run at (0,0) width 306: "Test successful if the following text is readable "
+          text run at (305,0) width 266: "(i.e. not split into two different columns)."
+      RenderBlock {DIV} at (0,236) size 784x18
+layer at (8,84) size 784x18
+  RenderBlock {P} at (0,68) size 784x18 [bgcolor=#EEEEEE]
+    RenderText {#text} at (0,0) size 67x17
+      text run at (0,0) width 67: "Short text."
+layer at (8,118) size 784x34
+  RenderBlock {P} at (0,102) size 784x34 [bgcolor=#EEEEEE]
+    RenderInline {SPAN} at (0,0) size 142x33
+      RenderText {#text} at (0,0) size 142x33
+        text run at (0,0) width 142: "Bigger text."
     RenderText {#text} at (0,0) size 0x0
-layer at (8,172) size 784x35
-  RenderBlock {P} at (0,156) size 784x35 [bgcolor=#EEEEEE]
-    RenderText {#text} at (0,12) size 56x19
-      text run at (0,12) width 56: "Partially "
-    RenderInline {SPAN} at (0,0) size 38x34
-      RenderText {#text} at (56,0) size 38x34
-        text run at (56,0) width 38: "big"
-    RenderText {#text} at (94,12) size 31x19
-      text run at (94,12) width 31: " text."
-layer at (8,223) size 784x19
-  RenderBlock {DIV} at (0,207) size 784x19 [bgcolor=#EEEEEE]
-    RenderBlock {P} at (0,16) size 184x22
-      RenderText {#text} at (0,3) size 87x19
-        text run at (0,3) width 87: "Nested block."
-layer at (8,258) size 784x19
-  RenderBlock {P} at (0,0) size 784x19 [bgcolor=#EEEEEE]
-    RenderText {#text} at (0,0) size 107x19
-      text run at (0,0) width 107: "Nested block #2."
+layer at (8,168) size 784x34
+  RenderBlock {P} at (0,152) size 784x34 [bgcolor=#EEEEEE]
+    RenderText {#text} at (0,13) size 59x17
+      text run at (0,13) width 59: "Partially "
+    RenderInline {SPAN} at (0,0) size 39x33
+      RenderText {#text} at (58,0) size 39x33
+        text run at (58,0) width 39: "big"
+    RenderText {#text} at (96,13) size 33x17
+      text run at (96,13) width 33: " text."
+layer at (8,218) size 784x18
+  RenderBlock {DIV} at (0,202) size 784x18 [bgcolor=#EEEEEE]
+    RenderBlock {P} at (0,16) size 184x20
+      RenderText {#text} at (0,2) size 88x17
+        text run at (0,2) width 88: "Nested block."
+layer at (8,252) size 784x18
+  RenderBlock {P} at (0,0) size 784x18 [bgcolor=#EEEEEE]
+    RenderText {#text} at (0,0) size 108x17
+      text run at (0,0) width 108: "Nested block #2."

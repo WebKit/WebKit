@@ -3,28 +3,28 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x19
-        RenderText {#text} at (0,0) size 93x19
-          text run at (0,0) width 93: "This test is for "
-        RenderInline {A} at (0,0) size 299x19 [color=#0000EE]
-          RenderText {#text} at (93,0) size 299x19
-            text run at (93,0) width 299: "http://bugs.webkit.org/show_bug.cgi?id=14498"
-        RenderText {#text} at (392,0) size 4x19
-          text run at (392,0) width 4: "."
-      RenderBlock {P} at (0,35) size 784x19
-        RenderText {#text} at (0,0) size 402x19
-          text run at (0,0) width 402: "Click inside the right border. The caret should move after \x{201C}bar\x{201D}."
-      RenderBlock (anonymous) at (0,70) size 784x19
-        RenderInline {SPAN} at (0,0) size 65x39 [border: (10px solid #0000FF)]
+      RenderBlock {P} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 96x17
+          text run at (0,0) width 96: "This test is for "
+        RenderInline {A} at (0,0) size 305x17 [color=#0000EE]
+          RenderText {#text} at (95,0) size 305x17
+            text run at (95,0) width 305: "http://bugs.webkit.org/show_bug.cgi?id=14498"
+        RenderText {#text} at (399,0) size 5x17
+          text run at (399,0) width 5: "."
+      RenderBlock {P} at (0,34) size 784x18
+        RenderText {#text} at (0,0) size 411x17
+          text run at (0,0) width 411: "Click inside the right border. The caret should move after \x{201C}bar\x{201D}."
+      RenderBlock (anonymous) at (0,68) size 784x18
+        RenderInline {SPAN} at (0,0) size 67x37 [border: (10px solid #0000FF)]
           RenderText {#text} at (0,0) size 0x0
-          RenderBlock {DIV} at (10,0) size 21x19
-            RenderText {#text} at (0,0) size 21x19
-              text run at (0,0) width 21: "foo"
-          RenderText {#text} at (31,0) size 4x19
-            text run at (31,0) width 4: " "
-          RenderBlock {DIV} at (35,0) size 20x19
-            RenderText {#text} at (0,0) size 20x19
-              text run at (0,0) width 20: "bar"
+          RenderBlock {DIV} at (10,0) size 22x18
+            RenderText {#text} at (0,0) size 22x17
+              text run at (0,0) width 22: "foo"
+          RenderText {#text} at (32,0) size 4x17
+            text run at (32,0) width 4: " "
+          RenderBlock {DIV} at (36,0) size 21x18
+            RenderText {#text} at (0,0) size 21x17
+              text run at (0,0) width 21: "bar"
           RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
 caret: position 3 of child 0 {#text} of child 3 {DIV} of child 5 {SPAN} of body

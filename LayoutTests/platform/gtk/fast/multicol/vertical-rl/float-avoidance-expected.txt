@@ -1,18 +1,18 @@
-layer at (0,0) size 831x584
+layer at (0,0) size 826x584
   RenderView at (0,0) size 800x584
-layer at (-31,0) size 831x584 backgroundClip at (0,0) size 831x584 clip at (0,0) size 831x584 outlineClip at (0,0) size 831x584
-  RenderBlock {HTML} at (0,0) size 831x584
-    RenderBody {BODY} at (8,8) size 815x568
+layer at (-26,0) size 826x584 backgroundClip at (0,0) size 826x584 clip at (0,0) size 826x584 outlineClip at (0,0) size 826x584
+  RenderBlock {HTML} at (0,0) size 826x584
+    RenderBody {BODY} at (8,8) size 810x568
       RenderBlock (floating) {DIV} at (0,0) size 100x200 [bgcolor=#00FF00]
-layer at (545,8) size 147x435
-  RenderBlock {DIV} at (100,0) size 147x435 [border: (10px solid #000000)]
-    RenderBlock {P} at (26,10) size 95x415
-      RenderText {#text} at (0,0) size 95x415
+layer at (550,8) size 142x435
+  RenderBlock {DIV} at (100,0) size 142x435 [border: (10px solid #000000)]
+    RenderBlock {P} at (26,10) size 90x415
+      RenderText {#text} at (0,0) size 89x415
         text run at (0,0) width 415: "This technology preview of our award winning next generation"
-        text run at (19,0) width 56: "browser "
-        text run at (19,56) width 359: "is a sign of things to come from Mozilla. Powerful yet"
-        text run at (38,0) width 122: "easy to use. This "
-        text run at (38,122) width 293: "maintenance release provides a few updates"
-        text run at (57,0) width 246: "based on user feedback - including "
-        text run at (57,246) width 169: "changes to the Extension"
-        text run at (76,0) width 201: "System and icon improvements."
+        text run at (18,0) width 57: "browser "
+        text run at (18,56) width 359: "is a sign of things to come from Mozilla. Powerful yet"
+        text run at (36,0) width 121: "easy to use. This "
+        text run at (36,120) width 295: "maintenance release provides a few updates"
+        text run at (54,0) width 246: "based on user feedback - including "
+        text run at (54,245) width 169: "changes to the Extension"
+        text run at (72,0) width 206: "System and icon improvements."

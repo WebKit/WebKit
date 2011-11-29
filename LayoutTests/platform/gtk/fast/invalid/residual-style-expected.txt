@@ -1,879 +1,879 @@
-layer at (0,0) size 784x3571
+layer at (0,0) size 784x3481
   RenderView at (0,0) size 784x600
-layer at (0,0) size 784x3571
-  RenderBlock {HTML} at (0,0) size 784x3571
-    RenderBody {BODY} at (8,21) size 768x3542
+layer at (0,0) size 784x3481
+  RenderBlock {HTML} at (0,0) size 784x3481
+    RenderBody {BODY} at (8,21) size 768x3452
       RenderBlock {H1} at (0,0) size 768x37
-        RenderText {#text} at (0,0) size 500x36
-          text run at (0,0) width 500: "The Residual Style Master Test Case"
-      RenderBlock (anonymous) at (0,58) size 768x19
-        RenderText {#text} at (0,0) size 739x19
-          text run at (0,0) width 364: "This test case illustrates some residual style tag examples. "
-          text run at (364,0) width 375: "Unless otherwise noted, the behavior should match Firefox."
-      RenderBlock {H2} at (0,96) size 768x28
-        RenderText {#text} at (0,0) size 132x28
-          text run at (0,0) width 132: "Passing Tags"
-      RenderBlock {HR} at (0,143) size 768x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,153) size 768x19
-        RenderText {#text} at (0,0) size 20x19
+        RenderText {#text} at (0,0) size 503x36
+          text run at (0,0) width 503: "The Residual Style Master Test Case"
+      RenderBlock (anonymous) at (0,58) size 768x18
+        RenderText {#text} at (0,0) size 757x17
+          text run at (0,0) width 376: "This test case illustrates some residual style tag examples. "
+          text run at (375,0) width 382: "Unless otherwise noted, the behavior should match Firefox."
+      RenderBlock {H2} at (0,95) size 768x27
+        RenderText {#text} at (0,0) size 133x26
+          text run at (0,0) width 133: "Passing Tags"
+      RenderBlock {HR} at (0,141) size 768x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,151) size 768x18
+        RenderText {#text} at (0,0) size 20x17
           text run at (0,0) width 20: "A: "
-        RenderInline {A} at (0,0) size 63x19
-          RenderInline {FONT} at (0,0) size 63x19 [color=#008000]
-            RenderText {#text} at (20,0) size 63x19
-              text run at (20,0) width 63: "All of this"
-        RenderInline {FONT} at (0,0) size 104x19 [color=#008000]
-          RenderText {#text} at (83,0) size 104x19
-            text run at (83,0) width 104: " should be green"
+        RenderInline {A} at (0,0) size 65x17
+          RenderInline {FONT} at (0,0) size 65x17 [color=#008000]
+            RenderText {#text} at (20,0) size 65x17
+              text run at (20,0) width 65: "All of this"
+        RenderInline {FONT} at (0,0) size 107x17 [color=#008000]
+          RenderText {#text} at (84,0) size 107x17
+            text run at (84,0) width 107: " should be green"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {HR} at (0,180) size 768x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,190) size 768x19
-        RenderText {#text} at (0,0) size 53x19
+      RenderBlock {HR} at (0,177) size 768x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,187) size 768x18
+        RenderText {#text} at (0,0) size 53x17
           text run at (0,0) width 53: "ABBR: "
-        RenderInline {ABBR} at (0,0) size 63x19
-          RenderInline {FONT} at (0,0) size 63x19 [color=#008000]
-            RenderText {#text} at (53,0) size 63x19
-              text run at (53,0) width 63: "All of this"
-        RenderInline {FONT} at (0,0) size 104x19 [color=#008000]
-          RenderText {#text} at (116,0) size 104x19
-            text run at (116,0) width 104: " should be green"
+        RenderInline {ABBR} at (0,0) size 65x17
+          RenderInline {FONT} at (0,0) size 65x17 [color=#008000]
+            RenderText {#text} at (52,0) size 65x17
+              text run at (52,0) width 65: "All of this"
+        RenderInline {FONT} at (0,0) size 107x17 [color=#008000]
+          RenderText {#text} at (116,0) size 107x17
+            text run at (116,0) width 107: " should be green"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {HR} at (0,217) size 768x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,227) size 768x19
-        RenderText {#text} at (0,0) size 92x19
-          text run at (0,0) width 92: "ACRONYM: "
-        RenderInline {ACRONYM} at (0,0) size 63x19
-          RenderInline {FONT} at (0,0) size 63x19 [color=#008000]
-            RenderText {#text} at (92,0) size 63x19
-              text run at (92,0) width 63: "All of this"
-        RenderInline {FONT} at (0,0) size 104x19 [color=#008000]
-          RenderText {#text} at (155,0) size 104x19
-            text run at (155,0) width 104: " should be green"
+      RenderBlock {HR} at (0,213) size 768x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,223) size 768x18
+        RenderText {#text} at (0,0) size 91x17
+          text run at (0,0) width 91: "ACRONYM: "
+        RenderInline {ACRONYM} at (0,0) size 66x17
+          RenderInline {FONT} at (0,0) size 66x17 [color=#008000]
+            RenderText {#text} at (90,0) size 66x17
+              text run at (90,0) width 66: "All of this"
+        RenderInline {FONT} at (0,0) size 106x17 [color=#008000]
+          RenderText {#text} at (155,0) size 106x17
+            text run at (155,0) width 106: " should be green"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {HR} at (0,254) size 768x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,264) size 768x19
-        RenderText {#text} at (0,0) size 83x19
-          text run at (0,0) width 83: "ADDRESS: "
-        RenderInline {ADDRESS} at (0,0) size 63x19
-          RenderInline {FONT} at (0,0) size 63x19 [color=#008000]
-            RenderText {#text} at (83,0) size 63x19
-              text run at (83,0) width 63: "All of this"
-        RenderInline {FONT} at (0,0) size 104x19 [color=#008000]
-          RenderText {#text} at (146,0) size 104x19
-            text run at (146,0) width 104: " should be green"
+      RenderBlock {HR} at (0,249) size 768x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,259) size 768x18
+        RenderText {#text} at (0,0) size 82x17
+          text run at (0,0) width 82: "ADDRESS: "
+        RenderInline {ADDRESS} at (0,0) size 66x17
+          RenderInline {FONT} at (0,0) size 66x17 [color=#008000]
+            RenderText {#text} at (81,0) size 66x17
+              text run at (81,0) width 66: "All of this"
+        RenderInline {FONT} at (0,0) size 106x17 [color=#008000]
+          RenderText {#text} at (146,0) size 106x17
+            text run at (146,0) width 106: " should be green"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {HR} at (0,291) size 768x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,301) size 768x19
-        RenderText {#text} at (0,0) size 68x19
+      RenderBlock {HR} at (0,285) size 768x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,295) size 768x18
+        RenderText {#text} at (0,0) size 68x17
           text run at (0,0) width 68: "APPLET: "
-        RenderText {#text} at (68,0) size 171x19
-          text run at (68,0) width 171: "All of this should be green."
-      RenderBlock {HR} at (0,328) size 768x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,338) size 768x19
-        RenderText {#text} at (0,0) size 53x19
-          text run at (0,0) width 53: "AREA: "
-        RenderInline {MAP} at (0,0) size 0x19
-          RenderInline {FONT} at (0,0) size 0x19 [color=#008000]
-        RenderInline {FONT} at (0,0) size 171x19 [color=#008000]
-          RenderText {#text} at (53,0) size 171x19
-            text run at (53,0) width 171: "All of this should be green."
+        RenderText {#text} at (67,0) size 175x17
+          text run at (67,0) width 175: "All of this should be green."
+      RenderBlock {HR} at (0,321) size 768x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,331) size 768x18
+        RenderText {#text} at (0,0) size 52x17
+          text run at (0,0) width 52: "AREA: "
+        RenderInline {MAP} at (0,0) size 0x17
+          RenderInline {FONT} at (0,0) size 0x17 [color=#008000]
+        RenderInline {FONT} at (0,0) size 175x17 [color=#008000]
+          RenderText {#text} at (52,0) size 175x17
+            text run at (52,0) width 175: "All of this should be green."
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {HR} at (0,365) size 768x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,375) size 768x19
-        RenderText {#text} at (0,0) size 19x19
-          text run at (0,0) width 19: "B: "
-        RenderInline {B} at (0,0) size 0x19
-          RenderInline {FONT} at (0,0) size 0x19 [color=#008000]
-        RenderInline {FONT} at (0,0) size 171x19 [color=#008000]
-          RenderText {#text} at (19,0) size 171x19
-            text run at (19,0) width 171: "All of this should be green."
+      RenderBlock {HR} at (0,357) size 768x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,367) size 768x18
+        RenderText {#text} at (0,0) size 20x17
+          text run at (0,0) width 20: "B: "
+        RenderInline {B} at (0,0) size 1x17
+          RenderInline {FONT} at (0,0) size 1x17 [color=#008000]
+        RenderInline {FONT} at (0,0) size 175x17 [color=#008000]
+          RenderText {#text} at (19,0) size 175x17
+            text run at (19,0) width 175: "All of this should be green."
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {HR} at (0,402) size 768x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,412) size 768x19
-        RenderText {#text} at (0,0) size 43x19
+      RenderBlock {HR} at (0,393) size 768x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,403) size 768x18
+        RenderText {#text} at (0,0) size 43x17
           text run at (0,0) width 43: "BDO: "
-        RenderInline {BDO} at (0,0) size 0x19
-          RenderInline {FONT} at (0,0) size 0x19 [color=#008000]
-        RenderInline {FONT} at (0,0) size 171x19 [color=#008000]
-          RenderText {#text} at (43,0) size 171x19
-            text run at (43,0) width 171: "All of this should be green."
+        RenderInline {BDO} at (0,0) size 1x17
+          RenderInline {FONT} at (0,0) size 1x17 [color=#008000]
+        RenderInline {FONT} at (0,0) size 175x17 [color=#008000]
+          RenderText {#text} at (42,0) size 175x17
+            text run at (42,0) width 175: "All of this should be green."
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {HR} at (0,439) size 768x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,449) size 768x22
-        RenderText {#text} at (0,2) size 36x19
-          text run at (0,2) width 36: "BIG: "
-        RenderInline {BIG} at (0,0) size 0x22
-          RenderInline {FONT} at (0,0) size 0x22 [color=#008000]
-        RenderInline {FONT} at (0,0) size 171x19 [color=#008000]
-          RenderText {#text} at (36,2) size 171x19
-            text run at (36,2) width 171: "All of this should be green."
+      RenderBlock {HR} at (0,429) size 768x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,439) size 768x22
+        RenderText {#text} at (0,3) size 36x17
+          text run at (0,3) width 36: "BIG: "
+        RenderInline {BIG} at (0,0) size 0x21
+          RenderInline {FONT} at (0,0) size 0x21 [color=#008000]
+        RenderInline {FONT} at (0,0) size 175x17 [color=#008000]
+          RenderText {#text} at (36,3) size 175x17
+            text run at (36,3) width 175: "All of this should be green."
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {HR} at (0,479) size 768x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,489) size 768x19
-        RenderText {#text} at (0,0) size 120x19
-          text run at (0,0) width 120: "BLOCKQUOTE: "
-        RenderInline {BLOCKQUOTE} at (0,0) size 0x19
-          RenderInline {FONT} at (0,0) size 0x19 [color=#008000]
-        RenderInline {FONT} at (0,0) size 171x19 [color=#008000]
-          RenderText {#text} at (120,0) size 171x19
-            text run at (120,0) width 171: "All of this should be green."
+      RenderBlock {HR} at (0,469) size 768x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,479) size 768x18
+        RenderText {#text} at (0,0) size 117x17
+          text run at (0,0) width 117: "BLOCKQUOTE: "
+        RenderInline {BLOCKQUOTE} at (0,0) size 1x17
+          RenderInline {FONT} at (0,0) size 1x17 [color=#008000]
+        RenderInline {FONT} at (0,0) size 176x17 [color=#008000]
+          RenderText {#text} at (116,0) size 176x17
+            text run at (116,0) width 176: "All of this should be green."
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {HR} at (0,516) size 768x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,526) size 768x19
-        RenderText {#text} at (0,0) size 75x19
-          text run at (0,0) width 75: "BUTTON: "
-        RenderButton {BUTTON} at (75,9) size 4x4 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+      RenderBlock {HR} at (0,505) size 768x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,515) size 768x18
+        RenderText {#text} at (0,0) size 74x17
+          text run at (0,0) width 74: "BUTTON: "
+        RenderButton {BUTTON} at (73,8) size 4x4 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
           RenderBlock (anonymous) at (2,2) size 0x0
             RenderInline {FONT} at (0,0) size 0x0 [color=#008000]
-        RenderInline {FONT} at (0,0) size 171x19 [color=#008000]
-          RenderText {#text} at (79,0) size 171x19
-            text run at (79,0) width 171: "All of this should be green."
+        RenderInline {FONT} at (0,0) size 175x17 [color=#008000]
+          RenderText {#text} at (77,0) size 175x17
+            text run at (77,0) width 175: "All of this should be green."
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {HR} at (0,553) size 768x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,563) size 768x19
-        RenderText {#text} at (0,0) size 76x19
-          text run at (0,0) width 76: "CANVAS: "
-        RenderHTMLCanvas {CANVAS} at (76,15) size 0x0
-        RenderInline {FONT} at (0,0) size 171x19 [color=#008000]
-          RenderText {#text} at (76,0) size 171x19
-            text run at (76,0) width 171: "All of this should be green."
+      RenderBlock {HR} at (0,541) size 768x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,551) size 768x18
+        RenderText {#text} at (0,0) size 75x17
+          text run at (0,0) width 75: "CANVAS: "
+        RenderHTMLCanvas {CANVAS} at (74,14) size 0x0
+        RenderInline {FONT} at (0,0) size 175x17 [color=#008000]
+          RenderText {#text} at (74,0) size 175x17
+            text run at (74,0) width 175: "All of this should be green."
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {HR} at (0,590) size 768x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,600) size 768x19
-        RenderText {#text} at (0,0) size 79x19
-          text run at (0,0) width 79: "CAPTION: "
-        RenderInline {FONT} at (0,0) size 173x19 [color=#008000]
-          RenderTable {TABLE} at (79,15) size 2x0
+      RenderBlock {HR} at (0,577) size 768x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,587) size 768x18
+        RenderText {#text} at (0,0) size 78x17
+          text run at (0,0) width 78: "CAPTION: "
+        RenderInline {FONT} at (0,0) size 177x17 [color=#008000]
+          RenderTable {TABLE} at (78,14) size 2x0
             RenderBlock {CAPTION} at (0,0) size 2x0
               RenderInline {FONT} at (0,0) size 0x0 [color=#FF0000]
-          RenderText {#text} at (81,0) size 171x19
-            text run at (81,0) width 171: "All of this should be green."
+          RenderText {#text} at (79,0) size 175x17
+            text run at (79,0) width 175: "All of this should be green."
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {HR} at (0,627) size 768x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,637) size 768x19
-        RenderText {#text} at (0,0) size 72x19
-          text run at (0,0) width 72: "CENTER: "
-        RenderInline {CENTER} at (0,0) size 0x19
-          RenderInline {FONT} at (0,0) size 0x19 [color=#008000]
-        RenderInline {FONT} at (0,0) size 171x19 [color=#008000]
-          RenderText {#text} at (72,0) size 171x19
-            text run at (72,0) width 171: "All of this should be green."
+      RenderBlock {HR} at (0,613) size 768x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,623) size 768x18
+        RenderText {#text} at (0,0) size 71x17
+          text run at (0,0) width 71: "CENTER: "
+        RenderInline {CENTER} at (0,0) size 1x17
+          RenderInline {FONT} at (0,0) size 1x17 [color=#008000]
+        RenderInline {FONT} at (0,0) size 175x17 [color=#008000]
+          RenderText {#text} at (70,0) size 175x17
+            text run at (70,0) width 175: "All of this should be green."
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {HR} at (0,664) size 768x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,674) size 768x19
-        RenderText {#text} at (0,0) size 44x19
+      RenderBlock {HR} at (0,649) size 768x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,659) size 768x18
+        RenderText {#text} at (0,0) size 44x17
           text run at (0,0) width 44: "CITE: "
-        RenderInline {CITE} at (0,0) size 0x19
-          RenderInline {FONT} at (0,0) size 0x19 [color=#008000]
-        RenderInline {FONT} at (0,0) size 171x19 [color=#008000]
-          RenderText {#text} at (44,0) size 171x19
-            text run at (44,0) width 171: "All of this should be green."
+        RenderInline {CITE} at (0,0) size 1x17
+          RenderInline {FONT} at (0,0) size 1x17 [color=#008000]
+        RenderInline {FONT} at (0,0) size 176x17 [color=#008000]
+          RenderText {#text} at (43,0) size 176x17
+            text run at (43,0) width 176: "All of this should be green."
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {HR} at (0,701) size 768x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,711) size 768x19
-        RenderText {#text} at (0,0) size 53x19
-          text run at (0,0) width 53: "CODE: "
+      RenderBlock {HR} at (0,685) size 768x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,695) size 768x18
+        RenderText {#text} at (0,0) size 52x17
+          text run at (0,0) width 52: "CODE: "
         RenderInline {CODE} at (0,0) size 0x15
           RenderInline {FONT} at (0,0) size 0x15 [color=#008000]
-        RenderInline {FONT} at (0,0) size 171x19 [color=#008000]
-          RenderText {#text} at (53,0) size 171x19
-            text run at (53,0) width 171: "All of this should be green."
+        RenderInline {FONT} at (0,0) size 175x17 [color=#008000]
+          RenderText {#text} at (52,0) size 175x17
+            text run at (52,0) width 175: "All of this should be green."
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {HR} at (0,738) size 768x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,748) size 768x19
-        RenderText {#text} at (0,0) size 41x19
+      RenderBlock {HR} at (0,721) size 768x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,731) size 768x18
+        RenderText {#text} at (0,0) size 41x17
           text run at (0,0) width 41: "COL: "
-        RenderInline {FONT} at (0,0) size 173x19 [color=#008000]
-          RenderInline {FONT} at (0,0) size 0x19 [color=#FF0000]
-          RenderTable {TABLE} at (41,15) size 2x0
+        RenderInline {FONT} at (0,0) size 177x17 [color=#008000]
+          RenderInline {FONT} at (0,0) size 1x17 [color=#FF0000]
+          RenderTable {TABLE} at (40,14) size 2x0
             RenderTableCol {COLGROUP} at (0,0) size 0x0
               RenderTableCol {COL} at (0,0) size 0x0
-          RenderInline {FONT} at (0,0) size 171x19 [color=#FF0000]
-            RenderText {#text} at (43,0) size 171x19
-              text run at (43,0) width 171: "All of this should be green."
+          RenderInline {FONT} at (0,0) size 175x17 [color=#FF0000]
+            RenderText {#text} at (42,0) size 175x17
+              text run at (42,0) width 175: "All of this should be green."
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {HR} at (0,775) size 768x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,785) size 768x19
-        RenderText {#text} at (0,0) size 97x19
-          text run at (0,0) width 97: "COLGROUP: "
-        RenderInline {FONT} at (0,0) size 173x19 [color=#008000]
-          RenderInline {FONT} at (0,0) size 0x19 [color=#FF0000]
-          RenderTable {TABLE} at (97,15) size 2x0
+      RenderBlock {HR} at (0,757) size 768x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,767) size 768x18
+        RenderText {#text} at (0,0) size 95x17
+          text run at (0,0) width 95: "COLGROUP: "
+        RenderInline {FONT} at (0,0) size 177x17 [color=#008000]
+          RenderInline {FONT} at (0,0) size 1x17 [color=#FF0000]
+          RenderTable {TABLE} at (95,14) size 2x0
             RenderTableCol {COLGROUP} at (0,0) size 0x0
-          RenderInline {FONT} at (0,0) size 171x19 [color=#FF0000]
-            RenderText {#text} at (99,0) size 171x19
-              text run at (99,0) width 171: "All of this should be green."
+          RenderInline {FONT} at (0,0) size 175x17 [color=#FF0000]
+            RenderText {#text} at (96,0) size 175x17
+              text run at (96,0) width 175: "All of this should be green."
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {HR} at (0,812) size 768x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,822) size 768x19
-        RenderText {#text} at (0,0) size 32x19
+      RenderBlock {HR} at (0,793) size 768x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,803) size 768x18
+        RenderText {#text} at (0,0) size 32x17
           text run at (0,0) width 32: "DD: "
-        RenderInline {DL} at (0,0) size 0x19
-          RenderInline {DD} at (0,0) size 0x19
-            RenderInline {FONT} at (0,0) size 0x19 [color=#008000]
-        RenderInline {FONT} at (0,0) size 171x19 [color=#008000]
-          RenderText {#text} at (32,0) size 171x19
-            text run at (32,0) width 171: "All of this should be green."
+        RenderInline {DL} at (0,0) size 1x17
+          RenderInline {DD} at (0,0) size 1x17
+            RenderInline {FONT} at (0,0) size 1x17 [color=#008000]
+        RenderInline {FONT} at (0,0) size 175x17 [color=#008000]
+          RenderText {#text} at (31,0) size 175x17
+            text run at (31,0) width 175: "All of this should be green."
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {HR} at (0,849) size 768x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,859) size 768x19
-        RenderText {#text} at (0,0) size 40x19
+      RenderBlock {HR} at (0,829) size 768x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,839) size 768x18
+        RenderText {#text} at (0,0) size 40x17
           text run at (0,0) width 40: "DEL: "
-        RenderInline {DEL} at (0,0) size 0x19
-          RenderInline {FONT} at (0,0) size 0x19 [color=#008000]
-        RenderInline {FONT} at (0,0) size 171x19 [color=#008000]
-          RenderText {#text} at (40,0) size 171x19
-            text run at (40,0) width 171: "All of this should be green."
+        RenderInline {DEL} at (0,0) size 1x17
+          RenderInline {FONT} at (0,0) size 1x17 [color=#008000]
+        RenderInline {FONT} at (0,0) size 175x17 [color=#008000]
+          RenderText {#text} at (39,0) size 175x17
+            text run at (39,0) width 175: "All of this should be green."
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {HR} at (0,886) size 768x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,896) size 768x19
-        RenderText {#text} at (0,0) size 41x19
+      RenderBlock {HR} at (0,865) size 768x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,875) size 768x18
+        RenderText {#text} at (0,0) size 41x17
           text run at (0,0) width 41: "DFN: "
-        RenderInline {DFN} at (0,0) size 0x19
-          RenderInline {FONT} at (0,0) size 0x19 [color=#008000]
-        RenderInline {FONT} at (0,0) size 171x19 [color=#008000]
-          RenderText {#text} at (41,0) size 171x19
-            text run at (41,0) width 171: "All of this should be green."
+        RenderInline {DFN} at (0,0) size 1x17
+          RenderInline {FONT} at (0,0) size 1x17 [color=#008000]
+        RenderInline {FONT} at (0,0) size 175x17 [color=#008000]
+          RenderText {#text} at (40,0) size 175x17
+            text run at (40,0) width 175: "All of this should be green."
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {HR} at (0,923) size 768x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,933) size 768x19
-        RenderText {#text} at (0,0) size 36x19
+      RenderBlock {HR} at (0,901) size 768x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,911) size 768x18
+        RenderText {#text} at (0,0) size 36x17
           text run at (0,0) width 36: "DIR: "
-        RenderInline {DIR} at (0,0) size 0x19
-          RenderInline {FONT} at (0,0) size 0x19 [color=#008000]
-        RenderInline {FONT} at (0,0) size 171x19 [color=#008000]
-          RenderText {#text} at (36,0) size 171x19
-            text run at (36,0) width 171: "All of this should be green."
+        RenderInline {DIR} at (0,0) size 0x17
+          RenderInline {FONT} at (0,0) size 0x17 [color=#008000]
+        RenderInline {FONT} at (0,0) size 175x17 [color=#008000]
+          RenderText {#text} at (36,0) size 175x17
+            text run at (36,0) width 175: "All of this should be green."
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {HR} at (0,960) size 768x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,970) size 768x19
-        RenderText {#text} at (0,0) size 37x19
+      RenderBlock {HR} at (0,937) size 768x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,947) size 768x18
+        RenderText {#text} at (0,0) size 37x17
           text run at (0,0) width 37: "DIV: "
-        RenderInline {DIV} at (0,0) size 0x19
-          RenderInline {FONT} at (0,0) size 0x19 [color=#008000]
-        RenderInline {FONT} at (0,0) size 171x19 [color=#008000]
-          RenderText {#text} at (37,0) size 171x19
-            text run at (37,0) width 171: "All of this should be green."
+        RenderInline {DIV} at (0,0) size 1x17
+          RenderInline {FONT} at (0,0) size 1x17 [color=#008000]
+        RenderInline {FONT} at (0,0) size 176x17 [color=#008000]
+          RenderText {#text} at (36,0) size 176x17
+            text run at (36,0) width 176: "All of this should be green."
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {HR} at (0,997) size 768x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,1007) size 768x19
-        RenderText {#text} at (0,0) size 30x19
+      RenderBlock {HR} at (0,973) size 768x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,983) size 768x18
+        RenderText {#text} at (0,0) size 30x17
           text run at (0,0) width 30: "DL: "
-        RenderInline {DL} at (0,0) size 0x19
-          RenderInline {FONT} at (0,0) size 0x19 [color=#008000]
-        RenderInline {FONT} at (0,0) size 171x19 [color=#008000]
-          RenderText {#text} at (30,0) size 171x19
-            text run at (30,0) width 171: "All of this should be green."
+        RenderInline {DL} at (0,0) size 1x17
+          RenderInline {FONT} at (0,0) size 1x17 [color=#008000]
+        RenderInline {FONT} at (0,0) size 175x17 [color=#008000]
+          RenderText {#text} at (29,0) size 175x17
+            text run at (29,0) width 175: "All of this should be green."
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {HR} at (0,1034) size 768x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,1044) size 768x19
-        RenderText {#text} at (0,0) size 30x19
+      RenderBlock {HR} at (0,1009) size 768x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,1019) size 768x18
+        RenderText {#text} at (0,0) size 30x17
           text run at (0,0) width 30: "DT: "
-        RenderInline {DL} at (0,0) size 0x19
-          RenderInline {DT} at (0,0) size 0x19
-            RenderInline {FONT} at (0,0) size 0x19 [color=#008000]
-        RenderInline {FONT} at (0,0) size 171x19 [color=#008000]
-          RenderText {#text} at (30,0) size 171x19
-            text run at (30,0) width 171: "All of this should be green."
+        RenderInline {DL} at (0,0) size 1x17
+          RenderInline {DT} at (0,0) size 1x17
+            RenderInline {FONT} at (0,0) size 1x17 [color=#008000]
+        RenderInline {FONT} at (0,0) size 175x17 [color=#008000]
+          RenderText {#text} at (29,0) size 175x17
+            text run at (29,0) width 175: "All of this should be green."
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {HR} at (0,1071) size 768x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,1081) size 768x19
-        RenderText {#text} at (0,0) size 32x19
-          text run at (0,0) width 32: "EM: "
-        RenderInline {EM} at (0,0) size 0x19
-          RenderInline {FONT} at (0,0) size 0x19 [color=#008000]
-        RenderInline {FONT} at (0,0) size 171x19 [color=#008000]
-          RenderText {#text} at (32,0) size 171x19
-            text run at (32,0) width 171: "All of this should be green."
+      RenderBlock {HR} at (0,1045) size 768x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,1055) size 768x18
+        RenderText {#text} at (0,0) size 33x17
+          text run at (0,0) width 33: "EM: "
+        RenderInline {EM} at (0,0) size 1x17
+          RenderInline {FONT} at (0,0) size 1x17 [color=#008000]
+        RenderInline {FONT} at (0,0) size 175x17 [color=#008000]
+          RenderText {#text} at (32,0) size 175x17
+            text run at (32,0) width 175: "All of this should be green."
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {HR} at (0,1108) size 768x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,1118) size 768x19
-        RenderText {#text} at (0,0) size 65x19
+      RenderBlock {HR} at (0,1081) size 768x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,1091) size 768x18
+        RenderText {#text} at (0,0) size 65x17
           text run at (0,0) width 65: "EMBED: "
-        RenderEmbeddedObject {EMBED} at (65,15) size 0x0
-        RenderInline {FONT} at (0,0) size 171x19 [color=#008000]
-          RenderText {#text} at (65,0) size 171x19
-            text run at (65,0) width 171: "All of this should be green."
+        RenderEmbeddedObject {EMBED} at (64,14) size 0x0
+        RenderInline {FONT} at (0,0) size 175x17 [color=#008000]
+          RenderText {#text} at (64,0) size 175x17
+            text run at (64,0) width 175: "All of this should be green."
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {HR} at (0,1145) size 768x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,1155) size 768x19
-        RenderText {#text} at (0,0) size 83x19
+      RenderBlock {HR} at (0,1117) size 768x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,1127) size 768x18
+        RenderText {#text} at (0,0) size 83x17
           text run at (0,0) width 83: "FIELDSET: "
-        RenderFieldSet {FIELDSET} at (83,15) size 0x0
+        RenderFieldSet {FIELDSET} at (82,14) size 0x0
           RenderInline {FONT} at (0,0) size 0x0 [color=#008000]
-        RenderInline {FONT} at (0,0) size 171x19 [color=#008000]
-          RenderText {#text} at (83,0) size 171x19
-            text run at (83,0) width 171: "All of this should be green."
+        RenderInline {FONT} at (0,0) size 175x17 [color=#008000]
+          RenderText {#text} at (82,0) size 175x17
+            text run at (82,0) width 175: "All of this should be green."
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {HR} at (0,1182) size 768x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,1192) size 768x19
-        RenderText {#text} at (0,0) size 51x19
+      RenderBlock {HR} at (0,1153) size 768x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,1163) size 768x18
+        RenderText {#text} at (0,0) size 51x17
           text run at (0,0) width 51: "FONT: "
-        RenderInline {FONT} at (0,0) size 0x19 [color=#008000]
-          RenderInline {I} at (0,0) size 0x19
-        RenderInline {I} at (0,0) size 171x19 [color=#008000]
-          RenderText {#text} at (51,0) size 171x19
-            text run at (51,0) width 171: "All of this should be green."
+        RenderInline {FONT} at (0,0) size 1x17 [color=#008000]
+          RenderInline {I} at (0,0) size 1x17
+        RenderInline {I} at (0,0) size 175x17 [color=#008000]
+          RenderText {#text} at (50,0) size 175x17
+            text run at (50,0) width 175: "All of this should be green."
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {HR} at (0,1219) size 768x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,1229) size 768x19
-        RenderText {#text} at (0,0) size 54x19
+      RenderBlock {HR} at (0,1189) size 768x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,1199) size 768x18
+        RenderText {#text} at (0,0) size 54x17
           text run at (0,0) width 54: "FORM: "
-        RenderInline {FORM} at (0,0) size 171x19
-          RenderInline {FONT} at (0,0) size 171x19 [color=#008000]
-            RenderText {#text} at (54,0) size 171x19
-              text run at (54,0) width 171: "All of this should be green."
+        RenderInline {FORM} at (0,0) size 175x17
+          RenderInline {FONT} at (0,0) size 175x17 [color=#008000]
+            RenderText {#text} at (53,0) size 175x17
+              text run at (53,0) width 175: "All of this should be green."
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {HR} at (0,1256) size 768x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,1266) size 768x19
-        RenderText {#text} at (0,0) size 24x19
+      RenderBlock {HR} at (0,1225) size 768x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,1235) size 768x18
+        RenderText {#text} at (0,0) size 24x17
           text run at (0,0) width 24: "H1:"
-      RenderBlock {H1} at (0,1306) size 768x0
+      RenderBlock {H1} at (0,1274) size 768x0
         RenderInline {FONT} at (0,0) size 0x0 [color=#008000]
-      RenderBlock (anonymous) at (0,1306) size 768x19
-        RenderInline {FONT} at (0,0) size 171x19 [color=#008000]
-          RenderText {#text} at (0,0) size 171x19
-            text run at (0,0) width 171: "All of this should be green."
+      RenderBlock (anonymous) at (0,1274) size 768x18
+        RenderInline {FONT} at (0,0) size 175x17 [color=#008000]
+          RenderText {#text} at (0,0) size 175x17
+            text run at (0,0) width 175: "All of this should be green."
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {HR} at (0,1333) size 768x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,1343) size 768x19
-        RenderText {#text} at (0,0) size 24x19
+      RenderBlock {HR} at (0,1300) size 768x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,1310) size 768x18
+        RenderText {#text} at (0,0) size 24x17
           text run at (0,0) width 24: "H2:"
-      RenderBlock {H2} at (0,1381) size 768x0
+      RenderBlock {H2} at (0,1347) size 768x0
         RenderInline {FONT} at (0,0) size 0x0 [color=#008000]
-      RenderBlock (anonymous) at (0,1381) size 768x19
-        RenderInline {FONT} at (0,0) size 171x19 [color=#008000]
-          RenderText {#text} at (0,0) size 171x19
-            text run at (0,0) width 171: "All of this should be green."
+      RenderBlock (anonymous) at (0,1347) size 768x18
+        RenderInline {FONT} at (0,0) size 175x17 [color=#008000]
+          RenderText {#text} at (0,0) size 175x17
+            text run at (0,0) width 175: "All of this should be green."
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {HR} at (0,1408) size 768x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,1418) size 768x19
-        RenderText {#text} at (0,0) size 24x19
+      RenderBlock {HR} at (0,1373) size 768x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,1383) size 768x18
+        RenderText {#text} at (0,0) size 24x17
           text run at (0,0) width 24: "H3:"
-      RenderBlock {H3} at (0,1455) size 768x0
+      RenderBlock {H3} at (0,1419) size 768x0
         RenderInline {FONT} at (0,0) size 0x0 [color=#008000]
-      RenderBlock (anonymous) at (0,1455) size 768x19
-        RenderInline {FONT} at (0,0) size 171x19 [color=#008000]
-          RenderText {#text} at (0,0) size 171x19
-            text run at (0,0) width 171: "All of this should be green."
+      RenderBlock (anonymous) at (0,1419) size 768x18
+        RenderInline {FONT} at (0,0) size 175x17 [color=#008000]
+          RenderText {#text} at (0,0) size 175x17
+            text run at (0,0) width 175: "All of this should be green."
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {HR} at (0,1482) size 768x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,1492) size 768x19
-        RenderText {#text} at (0,0) size 24x19
+      RenderBlock {HR} at (0,1445) size 768x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,1455) size 768x18
+        RenderText {#text} at (0,0) size 24x17
           text run at (0,0) width 24: "H4:"
-      RenderBlock {H4} at (0,1532) size 768x0
+      RenderBlock {H4} at (0,1494) size 768x0
         RenderInline {FONT} at (0,0) size 0x0 [color=#008000]
-      RenderBlock (anonymous) at (0,1532) size 768x19
-        RenderInline {FONT} at (0,0) size 171x19 [color=#008000]
-          RenderText {#text} at (0,0) size 171x19
-            text run at (0,0) width 171: "All of this should be green."
+      RenderBlock (anonymous) at (0,1494) size 768x18
+        RenderInline {FONT} at (0,0) size 175x17 [color=#008000]
+          RenderText {#text} at (0,0) size 175x17
+            text run at (0,0) width 175: "All of this should be green."
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {HR} at (0,1559) size 768x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,1569) size 768x19
-        RenderText {#text} at (0,0) size 24x19
+      RenderBlock {HR} at (0,1520) size 768x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,1530) size 768x18
+        RenderText {#text} at (0,0) size 24x17
           text run at (0,0) width 24: "H5:"
-      RenderBlock {H5} at (0,1610) size 768x0
+      RenderBlock {H5} at (0,1570) size 768x0
         RenderInline {FONT} at (0,0) size 0x0 [color=#008000]
-      RenderBlock (anonymous) at (0,1610) size 768x19
-        RenderInline {FONT} at (0,0) size 171x19 [color=#008000]
-          RenderText {#text} at (0,0) size 171x19
-            text run at (0,0) width 171: "All of this should be green."
+      RenderBlock (anonymous) at (0,1570) size 768x18
+        RenderInline {FONT} at (0,0) size 175x17 [color=#008000]
+          RenderText {#text} at (0,0) size 175x17
+            text run at (0,0) width 175: "All of this should be green."
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {HR} at (0,1637) size 768x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,1647) size 768x19
-        RenderText {#text} at (0,0) size 24x19
+      RenderBlock {HR} at (0,1596) size 768x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,1606) size 768x18
+        RenderText {#text} at (0,0) size 24x17
           text run at (0,0) width 24: "H6:"
-      RenderBlock {H6} at (0,1690) size 768x0
+      RenderBlock {H6} at (0,1648) size 768x0
         RenderInline {FONT} at (0,0) size 0x0 [color=#008000]
-      RenderBlock (anonymous) at (0,1690) size 768x19
-        RenderInline {FONT} at (0,0) size 171x19 [color=#008000]
-          RenderText {#text} at (0,0) size 171x19
-            text run at (0,0) width 171: "All of this should be green."
+      RenderBlock (anonymous) at (0,1648) size 768x18
+        RenderInline {FONT} at (0,0) size 175x17 [color=#008000]
+          RenderText {#text} at (0,0) size 175x17
+            text run at (0,0) width 175: "All of this should be green."
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {HR} at (0,1717) size 768x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,1727) size 768x19
-        RenderText {#text} at (0,0) size 13x19
-          text run at (0,0) width 13: "I: "
-        RenderInline {I} at (0,0) size 0x19
-          RenderInline {FONT} at (0,0) size 0x19 [color=#008000]
-        RenderInline {FONT} at (0,0) size 171x19 [color=#008000]
-          RenderText {#text} at (13,0) size 171x19
-            text run at (13,0) width 171: "All of this should be green."
+      RenderBlock {HR} at (0,1674) size 768x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,1684) size 768x18
+        RenderText {#text} at (0,0) size 14x17
+          text run at (0,0) width 14: "I: "
+        RenderInline {I} at (0,0) size 1x17
+          RenderInline {FONT} at (0,0) size 1x17 [color=#008000]
+        RenderInline {FONT} at (0,0) size 175x17 [color=#008000]
+          RenderText {#text} at (13,0) size 175x17
+            text run at (13,0) width 175: "All of this should be green."
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {HR} at (0,1754) size 768x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,1764) size 768x19
-        RenderText {#text} at (0,0) size 34x19
-          text run at (0,0) width 34: "INS: "
-        RenderInline {INS} at (0,0) size 0x19
-          RenderInline {FONT} at (0,0) size 0x19 [color=#008000]
-        RenderInline {FONT} at (0,0) size 171x19 [color=#008000]
-          RenderText {#text} at (34,0) size 171x19
-            text run at (34,0) width 171: "All of this should be green."
+      RenderBlock {HR} at (0,1710) size 768x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,1720) size 768x18
+        RenderText {#text} at (0,0) size 35x17
+          text run at (0,0) width 35: "INS: "
+        RenderInline {INS} at (0,0) size 1x17
+          RenderInline {FONT} at (0,0) size 1x17 [color=#008000]
+        RenderInline {FONT} at (0,0) size 175x17 [color=#008000]
+          RenderText {#text} at (34,0) size 175x17
+            text run at (34,0) width 175: "All of this should be green."
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {HR} at (0,1791) size 768x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,1801) size 768x19
-        RenderText {#text} at (0,0) size 69x19
+      RenderBlock {HR} at (0,1746) size 768x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,1756) size 768x18
+        RenderText {#text} at (0,0) size 69x17
           text run at (0,0) width 69: "ISINDEX:"
         RenderInline {FORM} at (0,0) size 0x0
+      RenderBlock (anonymous) at (0,1782) size 768x2
+        RenderBlock {HR} at (0,0) size 768x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,1792) size 768x28
+        RenderInline {FORM} at (0,0) size 525x17
+          RenderInline {LABEL} at (0,0) size 525x17
+            RenderText {#text} at (0,5) size 328x17
+              text run at (0,5) width 328: "This is a searchable index. Enter search keywords: "
+            RenderTextControl {INPUT} at (329,2) size 193x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
       RenderBlock (anonymous) at (0,1828) size 768x2
         RenderBlock {HR} at (0,0) size 768x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,1838) size 768x29
-        RenderInline {FORM} at (0,0) size 520x19
-          RenderInline {LABEL} at (0,0) size 520x19
-            RenderText {#text} at (0,5) size 322x19
-              text run at (0,5) width 322: "This is a searchable index. Enter search keywords: "
-            RenderTextControl {INPUT} at (324,2) size 194x25 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-      RenderBlock (anonymous) at (0,1875) size 768x2
-        RenderBlock {HR} at (0,0) size 768x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,1885) size 768x19
+      RenderBlock (anonymous) at (0,1838) size 768x18
         RenderInline {FORM} at (0,0) size 0x0
-        RenderInline {FONT} at (0,0) size 171x19 [color=#008000]
-          RenderText {#text} at (0,0) size 171x19
-            text run at (0,0) width 171: "All of this should be green."
+        RenderInline {FONT} at (0,0) size 175x17 [color=#008000]
+          RenderText {#text} at (0,0) size 175x17
+            text run at (0,0) width 175: "All of this should be green."
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {HR} at (0,1912) size 768x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,1922) size 768x19
-        RenderText {#text} at (0,0) size 43x19
+      RenderBlock {HR} at (0,1864) size 768x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,1874) size 768x18
+        RenderText {#text} at (0,0) size 43x17
           text run at (0,0) width 43: "KBD: "
-        RenderInline {KBD} at (0,0) size 0x15
-          RenderInline {FONT} at (0,0) size 0x15 [color=#008000]
-        RenderInline {FONT} at (0,0) size 171x19 [color=#008000]
-          RenderText {#text} at (43,0) size 171x19
-            text run at (43,0) width 171: "All of this should be green."
+        RenderInline {KBD} at (0,0) size 1x15
+          RenderInline {FONT} at (0,0) size 1x15 [color=#008000]
+        RenderInline {FONT} at (0,0) size 175x17 [color=#008000]
+          RenderText {#text} at (42,0) size 175x17
+            text run at (42,0) width 175: "All of this should be green."
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {HR} at (0,1949) size 768x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,1959) size 768x33
-        RenderText {#text} at (0,7) size 76x19
-          text run at (0,7) width 76: "KEYGEN: "
-        RenderBlock {KEYGEN} at (78,2) size 27x29
-          RenderMenuList {SELECT} at (0,0) size 27x29 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
-            RenderBlock (anonymous) at (1,1) size 25x27
-              RenderBR at (4,4) size 0x19 [bgcolor=#FFFFFF]
-        RenderInline {FONT} at (0,0) size 171x19 [color=#008000]
-          RenderText {#text} at (107,7) size 171x19
-            text run at (107,7) width 171: "All of this should be green."
+      RenderBlock {HR} at (0,1900) size 768x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,1910) size 768x32
+        RenderText {#text} at (0,7) size 75x17
+          text run at (0,7) width 75: "KEYGEN: "
+        RenderBlock {KEYGEN} at (76,2) size 27x28
+          RenderMenuList {SELECT} at (0,0) size 27x28 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+            RenderBlock (anonymous) at (1,1) size 25x26
+              RenderBR at (4,4) size 0x17 [bgcolor=#FFFFFF]
+        RenderInline {FONT} at (0,0) size 175x17 [color=#008000]
+          RenderText {#text} at (105,7) size 175x17
+            text run at (105,7) width 175: "All of this should be green."
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {HR} at (0,2000) size 768x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,2010) size 768x19
-        RenderText {#text} at (0,0) size 61x19
-          text run at (0,0) width 61: "LABEL: "
-        RenderInline {LABEL} at (0,0) size 0x19
-          RenderInline {FONT} at (0,0) size 0x19 [color=#008000]
-        RenderInline {FONT} at (0,0) size 171x19 [color=#008000]
-          RenderText {#text} at (61,0) size 171x19
-            text run at (61,0) width 171: "All of this should be green."
+      RenderBlock {HR} at (0,1950) size 768x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,1960) size 768x18
+        RenderText {#text} at (0,0) size 60x17
+          text run at (0,0) width 60: "LABEL: "
+        RenderInline {LABEL} at (0,0) size 1x17
+          RenderInline {FONT} at (0,0) size 1x17 [color=#008000]
+        RenderInline {FONT} at (0,0) size 176x17 [color=#008000]
+          RenderText {#text} at (59,0) size 176x17
+            text run at (59,0) width 176: "All of this should be green."
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {HR} at (0,2037) size 768x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,2047) size 768x19
-        RenderText {#text} at (0,0) size 74x19
-          text run at (0,0) width 74: "LEGEND: "
-        RenderFieldSet {FIELDSET} at (74,15) size 4x0
+      RenderBlock {HR} at (0,1986) size 768x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,1996) size 768x18
+        RenderText {#text} at (0,0) size 73x17
+          text run at (0,0) width 73: "LEGEND: "
+        RenderFieldSet {FIELDSET} at (72,14) size 4x0
           RenderBlock {LEGEND} at (0,0) size 4x0
             RenderInline {FONT} at (0,0) size 0x0 [color=#008000]
-        RenderInline {FONT} at (0,0) size 171x19 [color=#008000]
-          RenderText {#text} at (78,0) size 171x19
-            text run at (78,0) width 171: "All of this should be green."
+        RenderInline {FONT} at (0,0) size 175x17 [color=#008000]
+          RenderText {#text} at (76,0) size 175x17
+            text run at (76,0) width 175: "All of this should be green."
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {HR} at (0,2074) size 768x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,2084) size 768x19
-        RenderText {#text} at (0,0) size 23x19
-          text run at (0,0) width 23: "LI: "
-        RenderInline {LI} at (0,0) size 0x19
-          RenderInline {FONT} at (0,0) size 0x19 [color=#008000]
-        RenderInline {FONT} at (0,0) size 171x19 [color=#008000]
-          RenderText {#text} at (23,0) size 171x19
-            text run at (23,0) width 171: "All of this should be green."
+      RenderBlock {HR} at (0,2022) size 768x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,2032) size 768x18
+        RenderText {#text} at (0,0) size 24x17
+          text run at (0,0) width 24: "LI: "
+        RenderInline {LI} at (0,0) size 1x17
+          RenderInline {FONT} at (0,0) size 1x17 [color=#008000]
+        RenderInline {FONT} at (0,0) size 175x17 [color=#008000]
+          RenderText {#text} at (23,0) size 175x17
+            text run at (23,0) width 175: "All of this should be green."
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {HR} at (0,2111) size 768x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,2121) size 768x19
-        RenderText {#text} at (0,0) size 67x19
+      RenderBlock {HR} at (0,2058) size 768x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,2068) size 768x18
+        RenderText {#text} at (0,0) size 67x17
           text run at (0,0) width 67: "LISTING:"
-      RenderBlock {LISTING} at (0,2153) size 768x0
+      RenderBlock {LISTING} at (0,2099) size 768x0
         RenderInline {FONT} at (0,0) size 0x0 [color=#008000]
-      RenderBlock (anonymous) at (0,2153) size 768x19
-        RenderInline {FONT} at (0,0) size 171x19 [color=#008000]
-          RenderText {#text} at (0,0) size 171x19
-            text run at (0,0) width 171: "All of this should be green."
+      RenderBlock (anonymous) at (0,2099) size 768x18
+        RenderInline {FONT} at (0,0) size 175x17 [color=#008000]
+          RenderText {#text} at (0,0) size 175x17
+            text run at (0,0) width 175: "All of this should be green."
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {HR} at (0,2180) size 768x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,2190) size 768x19
-        RenderText {#text} at (0,0) size 43x19
-          text run at (0,0) width 43: "MAP: "
-        RenderInline {MAP} at (0,0) size 0x19
-          RenderInline {FONT} at (0,0) size 0x19 [color=#008000]
-        RenderInline {FONT} at (0,0) size 171x19 [color=#008000]
-          RenderText {#text} at (43,0) size 171x19
-            text run at (43,0) width 171: "All of this should be green."
+      RenderBlock {HR} at (0,2125) size 768x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,2135) size 768x18
+        RenderText {#text} at (0,0) size 44x17
+          text run at (0,0) width 44: "MAP: "
+        RenderInline {MAP} at (0,0) size 1x17
+          RenderInline {FONT} at (0,0) size 1x17 [color=#008000]
+        RenderInline {FONT} at (0,0) size 175x17 [color=#008000]
+          RenderText {#text} at (43,0) size 175x17
+            text run at (43,0) width 175: "All of this should be green."
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {HR} at (0,2217) size 768x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,2227) size 768x57
-        RenderText {#text} at (0,0) size 89x19
-          text run at (0,0) width 89: "MARQUEE: "
-        RenderText {#text} at (0,38) size 171x19
-          text run at (0,38) width 171: "All of this should be green."
-      RenderBlock {HR} at (0,2292) size 768x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,2302) size 768x19
-        RenderText {#text} at (0,0) size 52x19
+      RenderBlock {HR} at (0,2161) size 768x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,2171) size 768x54
+        RenderText {#text} at (0,0) size 88x17
+          text run at (0,0) width 88: "MARQUEE: "
+        RenderText {#text} at (0,36) size 175x17
+          text run at (0,36) width 175: "All of this should be green."
+      RenderBlock {HR} at (0,2233) size 768x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,2243) size 768x18
+        RenderText {#text} at (0,0) size 52x17
           text run at (0,0) width 52: "MENU:"
-      RenderBlock {MENU} at (0,2337) size 768x0
+      RenderBlock {MENU} at (0,2277) size 768x0
         RenderInline {FONT} at (0,0) size 0x0 [color=#008000]
-      RenderBlock (anonymous) at (0,2337) size 768x19
-        RenderInline {FONT} at (0,0) size 171x19 [color=#008000]
-          RenderText {#text} at (0,0) size 171x19
-            text run at (0,0) width 171: "All of this should be green."
+      RenderBlock (anonymous) at (0,2277) size 768x18
+        RenderInline {FONT} at (0,0) size 175x17 [color=#008000]
+          RenderText {#text} at (0,0) size 175x17
+            text run at (0,0) width 175: "All of this should be green."
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {HR} at (0,2364) size 768x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,2374) size 768x19
-        RenderText {#text} at (0,0) size 54x19
-          text run at (0,0) width 54: "NOBR: "
-        RenderInline {NOBR} at (0,0) size 0x19
-          RenderInline {FONT} at (0,0) size 0x19 [color=#008000]
-        RenderInline {FONT} at (0,0) size 171x19 [color=#008000]
-          RenderText {#text} at (54,0) size 171x19
-            text run at (54,0) width 171: "All of this should be green."
+      RenderBlock {HR} at (0,2303) size 768x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,2313) size 768x18
+        RenderText {#text} at (0,0) size 53x17
+          text run at (0,0) width 53: "NOBR: "
+        RenderInline {NOBR} at (0,0) size 1x17
+          RenderInline {FONT} at (0,0) size 1x17 [color=#008000]
+        RenderInline {FONT} at (0,0) size 176x17 [color=#008000]
+          RenderText {#text} at (52,0) size 176x17
+            text run at (52,0) width 176: "All of this should be green."
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {HR} at (0,2401) size 768x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,2411) size 768x19
-        RenderText {#text} at (0,0) size 68x19
+      RenderBlock {HR} at (0,2339) size 768x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,2349) size 768x18
+        RenderText {#text} at (0,0) size 68x17
           text run at (0,0) width 68: "OBJECT: "
-        RenderInline {FONT} at (0,0) size 171x19 [color=#008000]
-          RenderInline {OBJECT} at (0,0) size 0x19
-            RenderInline {FONT} at (0,0) size 0x19 [color=#FF0000]
-          RenderText {#text} at (68,0) size 171x19
-            text run at (68,0) width 171: "All of this should be green."
+        RenderInline {FONT} at (0,0) size 175x17 [color=#008000]
+          RenderInline {OBJECT} at (0,0) size 1x17
+            RenderInline {FONT} at (0,0) size 1x17 [color=#FF0000]
+          RenderText {#text} at (67,0) size 175x17
+            text run at (67,0) width 175: "All of this should be green."
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {HR} at (0,2438) size 768x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,2448) size 768x19
-        RenderText {#text} at (0,0) size 26x19
+      RenderBlock {HR} at (0,2375) size 768x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,2385) size 768x18
+        RenderText {#text} at (0,0) size 26x17
           text run at (0,0) width 26: "OL:"
-      RenderBlock {OL} at (0,2483) size 768x0
+      RenderBlock {OL} at (0,2419) size 768x0
         RenderInline {FONT} at (0,0) size 0x0 [color=#008000]
-      RenderBlock (anonymous) at (0,2483) size 768x19
-        RenderInline {FONT} at (0,0) size 171x19 [color=#008000]
-          RenderText {#text} at (0,0) size 171x19
-            text run at (0,0) width 171: "All of this should be green."
+      RenderBlock (anonymous) at (0,2419) size 768x18
+        RenderInline {FONT} at (0,0) size 175x17 [color=#008000]
+          RenderText {#text} at (0,0) size 175x17
+            text run at (0,0) width 175: "All of this should be green."
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {HR} at (0,2510) size 768x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,2520) size 768x33
-        RenderText {#text} at (0,7) size 95x19
-          text run at (0,7) width 95: "OPTGROUP: "
-        RenderInline {FONT} at (0,0) size 236x19 [color=#008000]
-          RenderMenuList {SELECT} at (97,2) size 57x29 [color=#000000] [bgcolor=#FFFFFF] [border: (1px solid #000000)]
-            RenderBlock (anonymous) at (1,1) size 55x27
-              RenderText at (4,4) size 30x19
-                text run at (4,4) width 30: "One"
-          RenderText {#text} at (156,7) size 175x19
-            text run at (156,7) width 175: " All of this should be green."
+      RenderBlock {HR} at (0,2445) size 768x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,2455) size 768x32
+        RenderText {#text} at (0,7) size 93x17
+          text run at (0,7) width 93: "OPTGROUP: "
+        RenderInline {FONT} at (0,0) size 242x17 [color=#008000]
+          RenderMenuList {SELECT} at (95,2) size 58x28 [color=#000000] [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+            RenderBlock (anonymous) at (1,1) size 56x26
+              RenderText at (4,4) size 31x17
+                text run at (4,4) width 31: "One"
+          RenderText {#text} at (154,7) size 180x17
+            text run at (154,7) width 180: " All of this should be green."
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {HR} at (0,2561) size 768x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,2571) size 768x33
-        RenderText {#text} at (0,7) size 68x19
+      RenderBlock {HR} at (0,2495) size 768x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,2505) size 768x32
+        RenderText {#text} at (0,7) size 68x17
           text run at (0,7) width 68: "OPTION: "
-        RenderInline {FONT} at (0,0) size 237x19 [color=#008000]
-          RenderMenuList {SELECT} at (70,2) size 58x29 [color=#000000] [bgcolor=#FFFFFF] [border: (1px solid #000000)]
-            RenderBlock (anonymous) at (1,1) size 56x27
-              RenderText at (4,4) size 30x19
-                text run at (4,4) width 30: "One"
-          RenderText {#text} at (130,7) size 175x19
-            text run at (130,7) width 175: " All of this should be green."
+        RenderInline {FONT} at (0,0) size 241x17 [color=#008000]
+          RenderMenuList {SELECT} at (69,2) size 58x28 [color=#000000] [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+            RenderBlock (anonymous) at (1,1) size 56x26
+              RenderText at (4,4) size 31x17
+                text run at (4,4) width 31: "One"
+          RenderText {#text} at (129,7) size 179x17
+            text run at (129,7) width 179: " All of this should be green."
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {HR} at (0,2612) size 768x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,2622) size 768x19
-        RenderText {#text} at (0,0) size 17x19
-          text run at (0,0) width 17: "P: "
-        RenderInline {P} at (0,0) size 0x19
-          RenderInline {FONT} at (0,0) size 0x19 [color=#008000]
-        RenderInline {FONT} at (0,0) size 171x19 [color=#008000]
-          RenderText {#text} at (17,0) size 171x19
-            text run at (17,0) width 171: "All of this should be green."
+      RenderBlock {HR} at (0,2545) size 768x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,2555) size 768x18
+        RenderText {#text} at (0,0) size 18x17
+          text run at (0,0) width 18: "P: "
+        RenderInline {P} at (0,0) size 1x17
+          RenderInline {FONT} at (0,0) size 1x17 [color=#008000]
+        RenderInline {FONT} at (0,0) size 175x17 [color=#008000]
+          RenderText {#text} at (17,0) size 175x17
+            text run at (17,0) width 175: "All of this should be green."
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {HR} at (0,2649) size 768x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,2659) size 768x19
-        RenderText {#text} at (0,0) size 66x19
+      RenderBlock {HR} at (0,2581) size 768x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,2591) size 768x18
+        RenderText {#text} at (0,0) size 66x17
           text run at (0,0) width 66: "PARAM: "
-        RenderInline {FONT} at (0,0) size 171x19 [color=#008000]
-          RenderInline {OBJECT} at (0,0) size 0x19
-            RenderInline {FONT} at (0,0) size 0x19 [color=#FF0000]
-          RenderText {#text} at (66,0) size 171x19
-            text run at (66,0) width 171: "All of this should be green."
+        RenderInline {FONT} at (0,0) size 175x17 [color=#008000]
+          RenderInline {OBJECT} at (0,0) size 1x17
+            RenderInline {FONT} at (0,0) size 1x17 [color=#FF0000]
+          RenderText {#text} at (65,0) size 175x17
+            text run at (65,0) width 175: "All of this should be green."
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {HR} at (0,2686) size 768x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,2696) size 768x19
-        RenderText {#text} at (0,0) size 34x19
+      RenderBlock {HR} at (0,2617) size 768x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,2627) size 768x18
+        RenderText {#text} at (0,0) size 34x17
           text run at (0,0) width 34: "PRE:"
-      RenderBlock {PRE} at (0,2728) size 768x0
+      RenderBlock {PRE} at (0,2658) size 768x0
         RenderInline {FONT} at (0,0) size 0x0 [color=#008000]
-      RenderBlock (anonymous) at (0,2728) size 768x19
-        RenderInline {FONT} at (0,0) size 171x19 [color=#008000]
-          RenderText {#text} at (0,0) size 171x19
-            text run at (0,0) width 171: "All of this should be green."
+      RenderBlock (anonymous) at (0,2658) size 768x18
+        RenderInline {FONT} at (0,0) size 175x17 [color=#008000]
+          RenderText {#text} at (0,0) size 175x17
+            text run at (0,0) width 175: "All of this should be green."
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {HR} at (0,2755) size 768x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,2765) size 768x19
-        RenderText {#text} at (0,0) size 20x19
+      RenderBlock {HR} at (0,2684) size 768x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,2694) size 768x18
+        RenderText {#text} at (0,0) size 20x17
           text run at (0,0) width 20: "Q: "
-        RenderInline {Q} at (0,0) size 14x19
-          RenderInline (generated) at (0,0) size 7x19
-            RenderQuote at (20,0) size 7x19
+        RenderInline {Q} at (0,0) size 14x17
+          RenderInline (generated) at (0,0) size 7x17
+            RenderQuote at (20,0) size 7x17
               text run at (20,0) width 7: "\""
-          RenderInline {FONT} at (0,0) size 0x19 [color=#008000]
-          RenderInline (generated) at (0,0) size 7x19
-            RenderQuote at (27,0) size 7x19
-              text run at (27,0) width 7: "\""
-        RenderInline {FONT} at (0,0) size 171x19 [color=#008000]
-          RenderText {#text} at (34,0) size 171x19
-            text run at (34,0) width 171: "All of this should be green."
+          RenderInline {FONT} at (0,0) size 1x17 [color=#008000]
+          RenderInline (generated) at (0,0) size 8x17
+            RenderQuote at (26,0) size 8x17
+              text run at (26,0) width 8: "\""
+        RenderInline {FONT} at (0,0) size 175x17 [color=#008000]
+          RenderText {#text} at (33,0) size 175x17
+            text run at (33,0) width 175: "All of this should be green."
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {HR} at (0,2720) size 768x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,2730) size 768x18
+        RenderText {#text} at (0,0) size 18x17
+          text run at (0,0) width 18: "S: "
+        RenderInline {S} at (0,0) size 1x17
+          RenderInline {FONT} at (0,0) size 1x17 [color=#008000]
+        RenderInline {FONT} at (0,0) size 175x17 [color=#008000]
+          RenderText {#text} at (17,0) size 175x17
+            text run at (17,0) width 175: "All of this should be green."
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {HR} at (0,2756) size 768x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,2766) size 768x18
+        RenderText {#text} at (0,0) size 53x17
+          text run at (0,0) width 53: "SAMP: "
+        RenderInline {SAMP} at (0,0) size 1x15
+          RenderInline {FONT} at (0,0) size 1x15 [color=#008000]
+        RenderInline {FONT} at (0,0) size 175x17 [color=#008000]
+          RenderText {#text} at (52,0) size 175x17
+            text run at (52,0) width 175: "All of this should be green."
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {HR} at (0,2792) size 768x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,2802) size 768x19
-        RenderText {#text} at (0,0) size 17x19
-          text run at (0,0) width 17: "S: "
-        RenderInline {S} at (0,0) size 0x19
-          RenderInline {FONT} at (0,0) size 0x19 [color=#008000]
-        RenderInline {FONT} at (0,0) size 171x19 [color=#008000]
-          RenderText {#text} at (17,0) size 171x19
-            text run at (17,0) width 171: "All of this should be green."
-        RenderText {#text} at (0,0) size 0x0
-      RenderBlock {HR} at (0,2829) size 768x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,2839) size 768x19
-        RenderText {#text} at (0,0) size 52x19
-          text run at (0,0) width 52: "SAMP: "
-        RenderInline {SAMP} at (0,0) size 0x15
-          RenderInline {FONT} at (0,0) size 0x15 [color=#008000]
-        RenderInline {FONT} at (0,0) size 171x19 [color=#008000]
-          RenderText {#text} at (52,0) size 171x19
-            text run at (52,0) width 171: "All of this should be green."
-        RenderText {#text} at (0,0) size 0x0
-      RenderBlock {HR} at (0,2866) size 768x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,2876) size 768x33
-        RenderText {#text} at (0,7) size 68x19
+      RenderBlock (anonymous) at (0,2802) size 768x32
+        RenderText {#text} at (0,7) size 68x17
           text run at (0,7) width 68: "SELECT: "
-        RenderInline {FONT} at (0,0) size 202x19 [color=#008000]
-          RenderMenuList {SELECT} at (70,2) size 27x29 [color=#000000] [bgcolor=#FFFFFF] [border: (1px solid #000000)]
-            RenderBlock (anonymous) at (1,1) size 25x27
-              RenderBR at (4,4) size 0x19 [bgcolor=#FFFFFF]
-          RenderText {#text} at (99,7) size 171x19
-            text run at (99,7) width 171: "All of this should be green."
+        RenderInline {FONT} at (0,0) size 206x17 [color=#008000]
+          RenderMenuList {SELECT} at (69,2) size 27x28 [color=#000000] [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+            RenderBlock (anonymous) at (1,1) size 25x26
+              RenderBR at (4,4) size 0x17 [bgcolor=#FFFFFF]
+          RenderText {#text} at (98,7) size 175x17
+            text run at (98,7) width 175: "All of this should be green."
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {HR} at (0,2917) size 768x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,2927) size 768x19
-        RenderText {#text} at (0,0) size 63x19
+      RenderBlock {HR} at (0,2842) size 768x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,2852) size 768x18
+        RenderText {#text} at (0,0) size 63x17
           text run at (0,0) width 63: "SMALL: "
-        RenderInline {SMALL} at (0,0) size 0x15
-          RenderInline {FONT} at (0,0) size 0x15 [color=#008000]
-        RenderInline {FONT} at (0,0) size 171x19 [color=#008000]
-          RenderText {#text} at (63,0) size 171x19
-            text run at (63,0) width 171: "All of this should be green."
+        RenderInline {SMALL} at (0,0) size 1x15
+          RenderInline {FONT} at (0,0) size 1x15 [color=#008000]
+        RenderInline {FONT} at (0,0) size 175x17 [color=#008000]
+          RenderText {#text} at (62,0) size 175x17
+            text run at (62,0) width 175: "All of this should be green."
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {HR} at (0,2954) size 768x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,2964) size 768x19
-        RenderText {#text} at (0,0) size 50x19
+      RenderBlock {HR} at (0,2878) size 768x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,2888) size 768x18
+        RenderText {#text} at (0,0) size 50x17
           text run at (0,0) width 50: "SPAN: "
-        RenderInline {SPAN} at (0,0) size 0x19
-          RenderInline {FONT} at (0,0) size 0x19 [color=#008000]
-        RenderInline {FONT} at (0,0) size 171x19 [color=#008000]
-          RenderText {#text} at (50,0) size 171x19
-            text run at (50,0) width 171: "All of this should be green."
+        RenderInline {SPAN} at (0,0) size 1x17
+          RenderInline {FONT} at (0,0) size 1x17 [color=#008000]
+        RenderInline {FONT} at (0,0) size 175x17 [color=#008000]
+          RenderText {#text} at (49,0) size 175x17
+            text run at (49,0) width 175: "All of this should be green."
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {HR} at (0,2991) size 768x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,3001) size 768x19
-        RenderText {#text} at (0,0) size 65x19
+      RenderBlock {HR} at (0,2914) size 768x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,2924) size 768x18
+        RenderText {#text} at (0,0) size 65x17
           text run at (0,0) width 65: "STRIKE: "
-        RenderInline {STRIKE} at (0,0) size 0x19
-          RenderInline {FONT} at (0,0) size 0x19 [color=#008000]
-        RenderInline {FONT} at (0,0) size 171x19 [color=#008000]
-          RenderText {#text} at (65,0) size 171x19
-            text run at (65,0) width 171: "All of this should be green."
+        RenderInline {STRIKE} at (0,0) size 1x17
+          RenderInline {FONT} at (0,0) size 1x17 [color=#008000]
+        RenderInline {FONT} at (0,0) size 175x17 [color=#008000]
+          RenderText {#text} at (64,0) size 175x17
+            text run at (64,0) width 175: "All of this should be green."
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {HR} at (0,3028) size 768x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,3038) size 768x19
-        RenderText {#text} at (0,0) size 74x19
-          text run at (0,0) width 74: "STRONG: "
-        RenderInline {STRONG} at (0,0) size 0x19
-          RenderInline {FONT} at (0,0) size 0x19 [color=#008000]
-        RenderInline {FONT} at (0,0) size 171x19 [color=#008000]
-          RenderText {#text} at (74,0) size 171x19
-            text run at (74,0) width 171: "All of this should be green."
+      RenderBlock {HR} at (0,2950) size 768x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,2960) size 768x18
+        RenderText {#text} at (0,0) size 73x17
+          text run at (0,0) width 73: "STRONG: "
+        RenderInline {STRONG} at (0,0) size 1x17
+          RenderInline {FONT} at (0,0) size 1x17 [color=#008000]
+        RenderInline {FONT} at (0,0) size 175x17 [color=#008000]
+          RenderText {#text} at (72,0) size 175x17
+            text run at (72,0) width 175: "All of this should be green."
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {HR} at (0,3065) size 768x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,3075) size 768x22
-        RenderText {#text} at (0,0) size 40x19
+      RenderBlock {HR} at (0,2986) size 768x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,2996) size 768x22
+        RenderText {#text} at (0,0) size 40x17
           text run at (0,0) width 40: "SUB: "
-        RenderInline {SUB} at (0,0) size 0x15
-          RenderInline {FONT} at (0,0) size 0x15 [color=#008000]
-        RenderInline {FONT} at (0,0) size 171x19 [color=#008000]
-          RenderText {#text} at (40,0) size 171x19
-            text run at (40,0) width 171: "All of this should be green."
+        RenderInline {SUB} at (0,0) size 1x15
+          RenderInline {FONT} at (0,0) size 1x15 [color=#008000]
+        RenderInline {FONT} at (0,0) size 175x17 [color=#008000]
+          RenderText {#text} at (39,0) size 175x17
+            text run at (39,0) width 175: "All of this should be green."
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {HR} at (0,3105) size 768x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,3115) size 768x22
-        RenderText {#text} at (0,3) size 38x19
-          text run at (0,3) width 38: "SUP: "
-        RenderInline {SUP} at (0,0) size 0x15
-          RenderInline {FONT} at (0,0) size 0x15 [color=#008000]
-        RenderInline {FONT} at (0,0) size 171x19 [color=#008000]
-          RenderText {#text} at (38,3) size 171x19
-            text run at (38,3) width 171: "All of this should be green."
+      RenderBlock {HR} at (0,3026) size 768x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,3036) size 768x22
+        RenderText {#text} at (0,4) size 38x17
+          text run at (0,4) width 38: "SUP: "
+        RenderInline {SUP} at (0,0) size 1x15
+          RenderInline {FONT} at (0,0) size 1x15 [color=#008000]
+        RenderInline {FONT} at (0,0) size 175x17 [color=#008000]
+          RenderText {#text} at (37,4) size 175x17
+            text run at (37,4) width 175: "All of this should be green."
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {HR} at (0,3145) size 768x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,3155) size 768x19
-        RenderText {#text} at (0,0) size 61x19
-          text run at (0,0) width 61: "TABLE: "
-        RenderInline {FONT} at (0,0) size 173x19 [color=#008000]
-          RenderInline {FONT} at (0,0) size 0x19 [color=#FF0000]
-          RenderTable {TABLE} at (61,15) size 2x0
-          RenderInline {FONT} at (0,0) size 171x19 [color=#FF0000]
-            RenderText {#text} at (63,0) size 171x19
-              text run at (63,0) width 171: "All of this should be green."
+      RenderBlock {HR} at (0,3066) size 768x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,3076) size 768x18
+        RenderText {#text} at (0,0) size 60x17
+          text run at (0,0) width 60: "TABLE: "
+        RenderInline {FONT} at (0,0) size 178x17 [color=#008000]
+          RenderInline {FONT} at (0,0) size 1x17 [color=#FF0000]
+          RenderTable {TABLE} at (60,14) size 2x0
+          RenderInline {FONT} at (0,0) size 176x17 [color=#FF0000]
+            RenderText {#text} at (61,0) size 176x17
+              text run at (61,0) width 176: "All of this should be green."
           RenderText {#text} at (0,0) size 0x0
-      RenderBlock (anonymous) at (0,3182) size 768x2 [color=#008000]
+      RenderBlock (anonymous) at (0,3102) size 768x2 [color=#008000]
         RenderBlock {HR} at (0,0) size 768x2 [border: (1px inset #008000)]
-      RenderBlock (anonymous) at (0,3192) size 768x19
-        RenderInline {FONT} at (0,0) size 238x19 [color=#008000]
-          RenderText {#text} at (0,0) size 65x19
-            text run at (0,0) width 65: "TBODY: "
-          RenderInline {FONT} at (0,0) size 173x19
-            RenderInline {FONT} at (0,0) size 0x19
-            RenderTable {TABLE} at (65,13) size 2x2
+      RenderBlock (anonymous) at (0,3112) size 768x18
+        RenderInline {FONT} at (0,0) size 240x17 [color=#008000]
+          RenderText {#text} at (0,0) size 64x17
+            text run at (0,0) width 64: "TBODY: "
+          RenderInline {FONT} at (0,0) size 177x17
+            RenderInline {FONT} at (0,0) size 1x17
+            RenderTable {TABLE} at (64,12) size 2x2
               RenderTableSection {TBODY} at (0,0) size 2x2
-            RenderInline {FONT} at (0,0) size 171x19
-              RenderText {#text} at (67,0) size 171x19
-                text run at (67,0) width 171: "All of this should be green."
+            RenderInline {FONT} at (0,0) size 175x17
+              RenderText {#text} at (65,0) size 175x17
+                text run at (65,0) width 175: "All of this should be green."
             RenderText {#text} at (0,0) size 0x0
-      RenderBlock (anonymous) at (0,3219) size 768x2 [color=#008000]
+      RenderBlock (anonymous) at (0,3138) size 768x2 [color=#008000]
         RenderBlock {HR} at (0,0) size 768x2 [border: (1px inset #008000)]
-      RenderBlock (anonymous) at (0,3229) size 768x19
-        RenderInline {FONT} at (0,0) size 207x19 [color=#008000]
-          RenderInline {FONT} at (0,0) size 207x19
-            RenderText {#text} at (0,0) size 30x19
+      RenderBlock (anonymous) at (0,3148) size 768x18
+        RenderInline {FONT} at (0,0) size 210x17 [color=#008000]
+          RenderInline {FONT} at (0,0) size 210x17
+            RenderText {#text} at (0,0) size 30x17
               text run at (0,0) width 30: "TD: "
-            RenderInline {FONT} at (0,0) size 177x19
-              RenderTable {TABLE} at (30,9) size 6x6
+            RenderInline {FONT} at (0,0) size 181x17
+              RenderTable {TABLE} at (30,8) size 6x6
                 RenderTableSection {TBODY} at (0,0) size 6x6
                   RenderTableRow {TR} at (0,2) size 6x2
                     RenderTableCell {TD} at (2,2) size 2x2 [r=0 c=0 rs=1 cs=1]
                       RenderInline {FONT} at (0,0) size 0x0 [color=#FF0000]
-              RenderText {#text} at (36,0) size 171x19
-                text run at (36,0) width 171: "All of this should be green."
+              RenderText {#text} at (35,0) size 175x17
+                text run at (35,0) width 175: "All of this should be green."
             RenderText {#text} at (0,0) size 0x0
-      RenderBlock (anonymous) at (0,3256) size 768x2 [color=#008000]
+      RenderBlock (anonymous) at (0,3174) size 768x2 [color=#008000]
         RenderBlock {HR} at (0,0) size 768x2 [border: (1px inset #008000)]
-      RenderBlock (anonymous) at (0,3266) size 768x19
-        RenderInline {FONT} at (0,0) size 234x19 [color=#008000]
-          RenderInline {FONT} at (0,0) size 234x19
-            RenderText {#text} at (0,0) size 61x19
-              text run at (0,0) width 61: "TFOOT: "
-            RenderInline {FONT} at (0,0) size 173x19
-              RenderInline {FONT} at (0,0) size 0x19
-              RenderTable {TABLE} at (61,13) size 2x2
+      RenderBlock (anonymous) at (0,3184) size 768x18
+        RenderInline {FONT} at (0,0) size 237x17 [color=#008000]
+          RenderInline {FONT} at (0,0) size 237x17
+            RenderText {#text} at (0,0) size 60x17
+              text run at (0,0) width 60: "TFOOT: "
+            RenderInline {FONT} at (0,0) size 177x17
+              RenderInline {FONT} at (0,0) size 0x17
+              RenderTable {TABLE} at (60,12) size 2x2
                 RenderTableSection {TFOOT} at (0,0) size 2x2
-              RenderInline {FONT} at (0,0) size 171x19
-                RenderText {#text} at (63,0) size 171x19
-                  text run at (63,0) width 171: "All of this should be green."
+              RenderInline {FONT} at (0,0) size 175x17
+                RenderText {#text} at (62,0) size 175x17
+                  text run at (62,0) width 175: "All of this should be green."
               RenderText {#text} at (0,0) size 0x0
-      RenderBlock (anonymous) at (0,3293) size 768x2 [color=#008000]
+      RenderBlock (anonymous) at (0,3210) size 768x2 [color=#008000]
         RenderBlock {HR} at (0,0) size 768x2 [border: (1px inset #008000)]
-      RenderBlock (anonymous) at (0,3303) size 768x19
-        RenderInline {FONT} at (0,0) size 237x19 [color=#008000]
-          RenderInline {FONT} at (0,0) size 237x19
-            RenderInline {FONT} at (0,0) size 237x19
-              RenderText {#text} at (0,0) size 64x19
-                text run at (0,0) width 64: "THEAD: "
-              RenderInline {FONT} at (0,0) size 173x19
-                RenderInline {FONT} at (0,0) size 0x19
-                RenderTable {TABLE} at (64,13) size 2x2
+      RenderBlock (anonymous) at (0,3220) size 768x18
+        RenderInline {FONT} at (0,0) size 239x17 [color=#008000]
+          RenderInline {FONT} at (0,0) size 239x17
+            RenderInline {FONT} at (0,0) size 239x17
+              RenderText {#text} at (0,0) size 63x17
+                text run at (0,0) width 63: "THEAD: "
+              RenderInline {FONT} at (0,0) size 177x17
+                RenderInline {FONT} at (0,0) size 1x17
+                RenderTable {TABLE} at (63,12) size 2x2
                   RenderTableSection {THEAD} at (0,0) size 2x2
-                RenderInline {FONT} at (0,0) size 171x19
-                  RenderText {#text} at (66,0) size 171x19
-                    text run at (66,0) width 171: "All of this should be green."
+                RenderInline {FONT} at (0,0) size 175x17
+                  RenderText {#text} at (64,0) size 175x17
+                    text run at (64,0) width 175: "All of this should be green."
                 RenderText {#text} at (0,0) size 0x0
-      RenderBlock (anonymous) at (0,3330) size 768x2 [color=#008000]
+      RenderBlock (anonymous) at (0,3246) size 768x2 [color=#008000]
         RenderBlock {HR} at (0,0) size 768x2 [border: (1px inset #008000)]
-      RenderBlock (anonymous) at (0,3340) size 768x19
-        RenderInline {FONT} at (0,0) size 202x19 [color=#008000]
-          RenderInline {FONT} at (0,0) size 202x19
-            RenderInline {FONT} at (0,0) size 202x19
-              RenderInline {FONT} at (0,0) size 202x19
-                RenderText {#text} at (0,0) size 29x19
+      RenderBlock (anonymous) at (0,3256) size 768x18
+        RenderInline {FONT} at (0,0) size 206x17 [color=#008000]
+          RenderInline {FONT} at (0,0) size 206x17
+            RenderInline {FONT} at (0,0) size 206x17
+              RenderInline {FONT} at (0,0) size 206x17
+                RenderText {#text} at (0,0) size 29x17
                   text run at (0,0) width 29: "TR: "
-                RenderInline {FONT} at (0,0) size 173x19
-                  RenderInline {FONT} at (0,0) size 0x19
-                  RenderTable {TABLE} at (29,11) size 2x4
+                RenderInline {FONT} at (0,0) size 178x17
+                  RenderInline {FONT} at (0,0) size 1x17
+                  RenderTable {TABLE} at (29,10) size 2x4
                     RenderTableSection {TBODY} at (0,0) size 2x4
                       RenderTableRow {TR} at (0,2) size 2x0
-                  RenderInline {FONT} at (0,0) size 171x19
-                    RenderText {#text} at (31,0) size 171x19
-                      text run at (31,0) width 171: "All of this should be green."
+                  RenderInline {FONT} at (0,0) size 176x17
+                    RenderText {#text} at (30,0) size 176x17
+                      text run at (30,0) width 176: "All of this should be green."
                   RenderText {#text} at (0,0) size 0x0
-      RenderBlock (anonymous) at (0,3367) size 768x2 [color=#008000]
+      RenderBlock (anonymous) at (0,3282) size 768x2 [color=#008000]
         RenderBlock {HR} at (0,0) size 768x2 [border: (1px inset #008000)]
-      RenderBlock (anonymous) at (0,3377) size 768x19
-        RenderInline {FONT} at (0,0) size 199x19 [color=#008000]
-          RenderInline {FONT} at (0,0) size 199x19
-            RenderInline {FONT} at (0,0) size 199x19
-              RenderInline {FONT} at (0,0) size 199x19
-                RenderInline {FONT} at (0,0) size 199x19
-                  RenderText {#text} at (0,0) size 28x19
+      RenderBlock (anonymous) at (0,3292) size 768x18
+        RenderInline {FONT} at (0,0) size 203x17 [color=#008000]
+          RenderInline {FONT} at (0,0) size 203x17
+            RenderInline {FONT} at (0,0) size 203x17
+              RenderInline {FONT} at (0,0) size 203x17
+                RenderInline {FONT} at (0,0) size 203x17
+                  RenderText {#text} at (0,0) size 28x17
                     text run at (0,0) width 28: "TT: "
-                  RenderInline {TT} at (0,0) size 0x15
-                    RenderInline {FONT} at (0,0) size 0x15
-                  RenderInline {FONT} at (0,0) size 171x19
-                    RenderText {#text} at (28,0) size 171x19
-                      text run at (28,0) width 171: "All of this should be green."
+                  RenderInline {TT} at (0,0) size 1x15
+                    RenderInline {FONT} at (0,0) size 1x15
+                  RenderInline {FONT} at (0,0) size 176x17
+                    RenderText {#text} at (27,0) size 176x17
+                      text run at (27,0) width 176: "All of this should be green."
                   RenderText {#text} at (0,0) size 0x0
-      RenderBlock (anonymous) at (0,3404) size 768x2 [color=#008000]
+      RenderBlock (anonymous) at (0,3318) size 768x2 [color=#008000]
         RenderBlock {HR} at (0,0) size 768x2 [border: (1px inset #008000)]
-      RenderBlock (anonymous) at (0,3414) size 768x19
-        RenderInline {FONT} at (0,0) size 191x19 [color=#008000]
-          RenderInline {FONT} at (0,0) size 191x19
-            RenderInline {FONT} at (0,0) size 191x19
-              RenderInline {FONT} at (0,0) size 191x19
-                RenderInline {FONT} at (0,0) size 191x19
-                  RenderText {#text} at (0,0) size 20x19
+      RenderBlock (anonymous) at (0,3328) size 768x18
+        RenderInline {FONT} at (0,0) size 195x17 [color=#008000]
+          RenderInline {FONT} at (0,0) size 195x17
+            RenderInline {FONT} at (0,0) size 195x17
+              RenderInline {FONT} at (0,0) size 195x17
+                RenderInline {FONT} at (0,0) size 195x17
+                  RenderText {#text} at (0,0) size 20x17
                     text run at (0,0) width 20: "U: "
-                  RenderInline {U} at (0,0) size 0x19
-                    RenderInline {FONT} at (0,0) size 0x19
-                  RenderInline {FONT} at (0,0) size 171x19
-                    RenderText {#text} at (20,0) size 171x19
-                      text run at (20,0) width 171: "All of this should be green."
+                  RenderInline {U} at (0,0) size 0x17
+                    RenderInline {FONT} at (0,0) size 0x17
+                  RenderInline {FONT} at (0,0) size 175x17
+                    RenderText {#text} at (20,0) size 175x17
+                      text run at (20,0) width 175: "All of this should be green."
                   RenderText {#text} at (0,0) size 0x0
-      RenderBlock (anonymous) at (0,3441) size 768x2 [color=#008000]
+      RenderBlock (anonymous) at (0,3354) size 768x2 [color=#008000]
         RenderBlock {HR} at (0,0) size 768x2 [border: (1px inset #008000)]
-      RenderBlock (anonymous) at (0,3451) size 768x19
-        RenderInline {FONT} at (0,0) size 26x19 [color=#008000]
-          RenderInline {FONT} at (0,0) size 26x19
-            RenderInline {FONT} at (0,0) size 26x19
-              RenderInline {FONT} at (0,0) size 26x19
-                RenderInline {FONT} at (0,0) size 26x19
-                  RenderText {#text} at (0,0) size 26x19
+      RenderBlock (anonymous) at (0,3364) size 768x18
+        RenderInline {FONT} at (0,0) size 26x17 [color=#008000]
+          RenderInline {FONT} at (0,0) size 26x17
+            RenderInline {FONT} at (0,0) size 26x17
+              RenderInline {FONT} at (0,0) size 26x17
+                RenderInline {FONT} at (0,0) size 26x17
+                  RenderText {#text} at (0,0) size 26x17
                     text run at (0,0) width 26: "UL:"
-      RenderBlock (anonymous) at (0,3486) size 768x0 [color=#008000]
+      RenderBlock (anonymous) at (0,3398) size 768x0 [color=#008000]
         RenderBlock {UL} at (0,0) size 768x0
           RenderInline {FONT} at (0,0) size 0x0
-      RenderBlock (anonymous) at (0,3486) size 768x19
-        RenderInline {FONT} at (0,0) size 171x19 [color=#008000]
-          RenderInline {FONT} at (0,0) size 171x19
-            RenderInline {FONT} at (0,0) size 171x19
-              RenderInline {FONT} at (0,0) size 171x19
-                RenderInline {FONT} at (0,0) size 171x19
-                  RenderInline {FONT} at (0,0) size 171x19
-                    RenderText {#text} at (0,0) size 171x19
-                      text run at (0,0) width 171: "All of this should be green."
+      RenderBlock (anonymous) at (0,3398) size 768x18
+        RenderInline {FONT} at (0,0) size 175x17 [color=#008000]
+          RenderInline {FONT} at (0,0) size 175x17
+            RenderInline {FONT} at (0,0) size 175x17
+              RenderInline {FONT} at (0,0) size 175x17
+                RenderInline {FONT} at (0,0) size 175x17
+                  RenderInline {FONT} at (0,0) size 175x17
+                    RenderText {#text} at (0,0) size 175x17
+                      text run at (0,0) width 175: "All of this should be green."
                   RenderText {#text} at (0,0) size 0x0
-      RenderBlock (anonymous) at (0,3513) size 768x2 [color=#008000]
+      RenderBlock (anonymous) at (0,3424) size 768x2 [color=#008000]
         RenderBlock {HR} at (0,0) size 768x2 [border: (1px inset #008000)]
-      RenderBlock (anonymous) at (0,3523) size 768x19
-        RenderInline {FONT} at (0,0) size 214x19 [color=#008000]
-          RenderInline {FONT} at (0,0) size 214x19
-            RenderInline {FONT} at (0,0) size 214x19
-              RenderInline {FONT} at (0,0) size 214x19
-                RenderInline {FONT} at (0,0) size 214x19
-                  RenderText {#text} at (0,0) size 43x19
+      RenderBlock (anonymous) at (0,3434) size 768x18
+        RenderInline {FONT} at (0,0) size 217x17 [color=#008000]
+          RenderInline {FONT} at (0,0) size 217x17
+            RenderInline {FONT} at (0,0) size 217x17
+              RenderInline {FONT} at (0,0) size 217x17
+                RenderInline {FONT} at (0,0) size 217x17
+                  RenderText {#text} at (0,0) size 43x17
                     text run at (0,0) width 43: "VAR: "
-                  RenderInline {VAR} at (0,0) size 0x19
-                    RenderInline {FONT} at (0,0) size 0x19
-                  RenderInline {FONT} at (0,0) size 171x19
-                    RenderText {#text} at (43,0) size 171x19
-                      text run at (43,0) width 171: "All of this should be green."
+                  RenderInline {VAR} at (0,0) size 1x17
+                    RenderInline {FONT} at (0,0) size 1x17
+                  RenderInline {FONT} at (0,0) size 175x17
+                    RenderText {#text} at (42,0) size 175x17
+                      text run at (42,0) width 175: "All of this should be green."
                   RenderText {#text} at (0,0) size 0x0
-layer at (335,1864) size 188x19
-  RenderBlock {DIV} at (3,3) size 188x19
+layer at (340,1818) size 187x18
+  RenderBlock {DIV} at (3,3) size 187x18

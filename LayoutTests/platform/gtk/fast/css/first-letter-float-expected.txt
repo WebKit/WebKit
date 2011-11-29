@@ -3,51 +3,51 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock {P} at (0,0) size 784x38
-        RenderText {#text} at (0,0) size 53x19
-          text run at (0,0) width 53: "Test for "
-        RenderInline {I} at (0,0) size 776x38
-          RenderInline {A} at (0,0) size 301x19 [color=#0000EE]
-            RenderText {#text} at (53,0) size 301x19
-              text run at (53,0) width 301: "http://bugs.webkit.org/show_bug.cgi?id=17834"
-          RenderText {#text} at (354,0) size 776x38
-            text run at (354,0) width 4: " "
-            text run at (358,0) width 418: "REGRESSION: floated first-letter does not work when included in"
-            text run at (0,19) width 31: "table"
-        RenderText {#text} at (31,19) size 4x19
-          text run at (31,19) width 4: "."
-      RenderBlock {P} at (0,54) size 784x19
-        RenderText {#text} at (0,0) size 274x19
-          text run at (0,0) width 274: "The following three lines should look like \x{201C}"
-        RenderInline {SPAN} at (0,0) size 12x19 [color=#008000]
-          RenderText {#text} at (274,0) size 12x19
-            text run at (274,0) width 12: "A"
-        RenderText {#text} at (286,0) size 26x19
-          text run at (286,0) width 26: "-Z\x{201D}."
-      RenderTable {TABLE} at (0,89) size 33x25
-        RenderTableSection {TBODY} at (0,0) size 33x25
-          RenderTableRow {TR} at (0,2) size 33x21
-            RenderTableCell {TD} at (2,2) size 29x21 [r=0 c=0 rs=1 cs=1]
-              RenderBlock {DIV} at (1,1) size 27x19
-                RenderBlock {P} at (0,0) size 27x19
-                  RenderBlock (floating) at (0,0) size 12x19 [color=#008000]
-                    RenderText {#text} at (0,0) size 12x19
+      RenderBlock {P} at (0,0) size 784x36
+        RenderText {#text} at (0,0) size 55x17
+          text run at (0,0) width 55: "Test for "
+        RenderInline {I} at (0,0) size 772x35
+          RenderInline {A} at (0,0) size 306x17 [color=#0000EE]
+            RenderText {#text} at (54,0) size 306x17
+              text run at (54,0) width 306: "http://bugs.webkit.org/show_bug.cgi?id=17834"
+          RenderText {#text} at (359,0) size 772x35
+            text run at (359,0) width 5: " "
+            text run at (363,0) width 409: "REGRESSION: floated first-letter does not work when included"
+            text run at (0,18) width 49: "in table"
+        RenderText {#text} at (48,18) size 5x17
+          text run at (48,18) width 5: "."
+      RenderBlock {P} at (0,52) size 784x18
+        RenderText {#text} at (0,0) size 280x17
+          text run at (0,0) width 280: "The following three lines should look like \x{201C}"
+        RenderInline {SPAN} at (0,0) size 13x17 [color=#008000]
+          RenderText {#text} at (279,0) size 13x17
+            text run at (279,0) width 13: "A"
+        RenderText {#text} at (291,0) size 27x17
+          text run at (291,0) width 27: "-Z\x{201D}."
+      RenderTable {TABLE} at (0,86) size 34x24
+        RenderTableSection {TBODY} at (0,0) size 34x24
+          RenderTableRow {TR} at (0,2) size 34x20
+            RenderTableCell {TD} at (2,2) size 30x20 [r=0 c=0 rs=1 cs=1]
+              RenderBlock {DIV} at (1,1) size 28x18
+                RenderBlock {P} at (0,0) size 28x18
+                  RenderBlock (floating) at (0,0) size 12x18 [color=#008000]
+                    RenderText {#text} at (0,0) size 12x17
                       text run at (0,0) width 12: "A"
-                  RenderText {#text} at (12,0) size 15x19
-                    text run at (12,0) width 15: "-Z"
-      RenderTable {TABLE} at (0,114) size 33x25
-        RenderTableSection {TBODY} at (0,0) size 33x25
-          RenderTableRow {TR} at (0,2) size 33x21
-            RenderTableCell {TD} at (2,2) size 29x21 [r=0 c=0 rs=1 cs=1]
-              RenderBlock {P} at (1,1) size 27x19
-                RenderBlock (floating) at (0,0) size 12x19 [color=#008000]
-                  RenderText {#text} at (0,0) size 12x19
+                  RenderText {#text} at (12,0) size 16x17
+                    text run at (12,0) width 16: "-Z"
+      RenderTable {TABLE} at (0,110) size 34x24
+        RenderTableSection {TBODY} at (0,0) size 34x24
+          RenderTableRow {TR} at (0,2) size 34x20
+            RenderTableCell {TD} at (2,2) size 30x20 [r=0 c=0 rs=1 cs=1]
+              RenderBlock {P} at (1,1) size 28x18
+                RenderBlock (floating) at (0,0) size 12x18 [color=#008000]
+                  RenderText {#text} at (0,0) size 12x17
                     text run at (0,0) width 12: "A"
-                RenderText {#text} at (12,0) size 15x19
-                  text run at (12,0) width 15: "-Z"
-      RenderBlock {P} at (0,155) size 784x19
-        RenderBlock (floating) at (0,0) size 12x19 [color=#008000]
-          RenderText {#text} at (0,0) size 12x19
+                RenderText {#text} at (12,0) size 16x17
+                  text run at (12,0) width 16: "-Z"
+      RenderBlock {P} at (0,150) size 784x18
+        RenderBlock (floating) at (0,0) size 12x18 [color=#008000]
+          RenderText {#text} at (0,0) size 12x17
             text run at (0,0) width 12: "A"
-        RenderText {#text} at (12,0) size 15x19
-          text run at (12,0) width 15: "-Z"
+        RenderText {#text} at (12,0) size 16x17
+          text run at (12,0) width 16: "-Z"

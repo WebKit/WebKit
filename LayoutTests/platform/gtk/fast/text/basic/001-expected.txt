@@ -4,21 +4,21 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584 [color=#008000]
       RenderBlock (anonymous) at (0,0) size 784x37
-        RenderText {#text} at (0,0) size 399x37
-          text run at (0,0) width 399: "This is fixed pitch. "
-        RenderInline {FONT} at (0,0) size 50x13
-          RenderText {#text} at (399,17) size 50x13
-            text run at (399,17) width 50: "This is not."
-      RenderBlock (anonymous) at (0,37) size 784x31
-        RenderTable {TABLE} at (0,0) size 123x31 [border: (2px outset #808080)]
-          RenderTableSection {TBODY} at (2,2) size 119x27
-            RenderTableRow {TR} at (0,2) size 119x23
-              RenderTableCell {TD} at (2,2) size 115x23 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 111x19
-                  text run at (2,2) width 111: "This is also not."
-      RenderBlock (anonymous) at (0,68) size 784x37
-        RenderInline {FONT} at (0,0) size 43x13
-          RenderText {#text} at (0,17) size 43x13
-            text run at (0,17) width 43: "More text"
-        RenderText {#text} at (43,0) size 152x37
-          text run at (43,0) width 152: " Ending."
+        RenderText {#text} at (0,0) size 404x37
+          text run at (0,0) width 404: "This is fixed pitch. "
+        RenderInline {FONT} at (0,0) size 49x11
+          RenderText {#text} at (403,18) size 49x11
+            text run at (403,18) width 49: "This is not."
+      RenderBlock (anonymous) at (0,37) size 784x30
+        RenderTable {TABLE} at (0,0) size 124x30 [border: (2px outset #808080)]
+          RenderTableSection {TBODY} at (2,2) size 120x26
+            RenderTableRow {TR} at (0,2) size 120x22
+              RenderTableCell {TD} at (2,2) size 116x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (2,2) size 112x17
+                  text run at (2,2) width 112: "This is also not."
+      RenderBlock (anonymous) at (0,67) size 784x37
+        RenderInline {FONT} at (0,0) size 42x11
+          RenderText {#text} at (0,18) size 42x11
+            text run at (0,18) width 42: "More text"
+        RenderText {#text} at (41,0) size 155x37
+          text run at (41,0) width 155: " Ending."

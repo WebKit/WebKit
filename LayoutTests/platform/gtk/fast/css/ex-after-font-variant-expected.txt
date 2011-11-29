@@ -3,19 +3,19 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x19
-        RenderText {#text} at (0,0) size 53x19
-          text run at (0,0) width 53: "Test for "
-        RenderInline {I} at (0,0) size 683x19
-          RenderInline {A} at (0,0) size 348x19 [color=#0000EE]
-            RenderText {#text} at (53,0) size 348x19
-              text run at (53,0) width 348: "http://bugzilla.opendarwin.org/show_bug.cgi?id=4227"
-          RenderText {#text} at (401,0) size 335x19
-            text run at (401,0) width 4: " "
-            text run at (405,0) width 331: "The ex unit doesn't work for font-variant: small-caps"
-        RenderText {#text} at (736,0) size 4x19
-          text run at (736,0) width 4: "."
-      RenderBlock {P} at (0,35) size 784x19
-        RenderText {#text} at (0,0) size 244x19
-          text run at (0,0) width 244: "There should be a green square below:"
-      RenderBlock {DIV} at (0,70) size 160x160 [bgcolor=#008000]
+      RenderBlock {P} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 55x17
+          text run at (0,0) width 55: "Test for "
+        RenderInline {I} at (0,0) size 696x17
+          RenderInline {A} at (0,0) size 354x17 [color=#0000EE]
+            RenderText {#text} at (54,0) size 354x17
+              text run at (54,0) width 354: "http://bugzilla.opendarwin.org/show_bug.cgi?id=4227"
+          RenderText {#text} at (407,0) size 343x17
+            text run at (407,0) width 5: " "
+            text run at (411,0) width 339: "The ex unit doesn't work for font-variant: small-caps"
+        RenderText {#text} at (749,0) size 5x17
+          text run at (749,0) width 5: "."
+      RenderBlock {P} at (0,34) size 784x18
+        RenderText {#text} at (0,0) size 248x17
+          text run at (0,0) width 248: "There should be a green square below:"
+      RenderBlock {DIV} at (0,68) size 146x146 [bgcolor=#008000]

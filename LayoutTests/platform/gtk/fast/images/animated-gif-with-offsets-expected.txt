@@ -4,13 +4,13 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
       RenderBlock {P} at (0,0) size 784x104
-        RenderText {#text} at (0,85) size 96x19
-          text run at (0,85) width 96: "Layout test for "
-        RenderInline {A} at (0,0) size 40x19 [color=#0000EE]
-          RenderText {#text} at (96,85) size 40x19
-            text run at (96,85) width 40: "11760"
-        RenderText {#text} at (136,85) size 201x19
-          text run at (136,85) width 8: ". "
-          text run at (144,85) width 193: "If it doesn't crash, we're good. "
-        RenderImage {IMG} at (337,0) size 100x100
+        RenderText {#text} at (0,86) size 99x17
+          text run at (0,86) width 99: "Layout test for "
+        RenderInline {A} at (0,0) size 41x17 [color=#0000EE]
+          RenderText {#text} at (98,86) size 41x17
+            text run at (98,86) width 41: "11760"
+        RenderText {#text} at (138,86) size 205x17
+          text run at (138,86) width 9: ". "
+          text run at (146,86) width 197: "If it doesn't crash, we're good. "
+        RenderImage {IMG} at (342,0) size 100x100
         RenderText {#text} at (0,0) size 0x0

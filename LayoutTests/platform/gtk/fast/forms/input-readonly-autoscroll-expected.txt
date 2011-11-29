@@ -3,27 +3,27 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x19
-        RenderText {#text} at (0,0) size 53x19
-          text run at (0,0) width 53: "Test for "
-        RenderInline {A} at (0,0) size 68x19 [color=#0000EE]
-          RenderText {#text} at (53,0) size 68x19
-            text run at (53,0) width 68: "bug 11534"
-        RenderText {#text} at (121,0) size 4x19
-          text run at (121,0) width 4: "."
-      RenderBlock {P} at (0,35) size 784x19
-        RenderText {#text} at (0,0) size 351x19
-          text run at (0,0) width 351: "Readonly text fields don't scroll when selecting content."
-      RenderBlock (anonymous) at (0,70) size 784x29
-        RenderTextControl {INPUT} at (2,2) size 194x25 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+      RenderBlock {P} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 55x17
+          text run at (0,0) width 55: "Test for "
+        RenderInline {A} at (0,0) size 69x17 [color=#0000EE]
+          RenderText {#text} at (54,0) size 69x17
+            text run at (54,0) width 69: "bug 11534"
+        RenderText {#text} at (122,0) size 5x17
+          text run at (122,0) width 5: "."
+      RenderBlock {P} at (0,34) size 784x18
+        RenderText {#text} at (0,0) size 359x17
+          text run at (0,0) width 359: "Readonly text fields don't scroll when selecting content."
+      RenderBlock (anonymous) at (0,68) size 784x28
+        RenderTextControl {INPUT} at (2,2) size 193x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {DIV} at (0,99) size 784x19
-        RenderText {#text} at (0,0) size 87x19
-          text run at (0,0) width 87: "ScrollLeft: 19"
-        RenderBR {BR} at (87,15) size 0x0
-layer at (13,83) size 188x19 scrollX 19 scrollWidth 207
-  RenderBlock {DIV} at (3,3) size 188x19
-    RenderText {#text} at (1,0) size 205x19
-      text run at (1,0) width 205: "abcdefghijklmnopqrstuvwxyz"
+      RenderBlock {DIV} at (0,96) size 784x18
+        RenderText {#text} at (0,0) size 90x17
+          text run at (0,0) width 90: "ScrollLeft: 19"
+        RenderBR {BR} at (89,14) size 1x0
+layer at (13,81) size 187x18 scrollX 19 scrollWidth 206
+  RenderBlock {DIV} at (3,3) size 187x18
+    RenderText {#text} at (1,0) size 204x17
+      text run at (1,0) width 204: "abcdefghijklmnopqrstuvwxyz"
 selection start: position 1 of child 0 {#text} of child 0 {DIV} of {#shadow-root} of child 5 {INPUT} of body
 selection end:   position 26 of child 0 {#text} of child 0 {DIV} of {#shadow-root} of child 5 {INPUT} of body

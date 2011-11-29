@@ -4,20 +4,20 @@ layer at (0,0) size 800x584
   RenderBlock {HTML} at (0,0) size 800x584
     RenderBody {BODY} at (8,8) size 784x568
       RenderDetails {DETAILS} at (0,0) size 784x0
-      RenderDetails {DETAILS} at (0,0) size 784x19
-      RenderDetails {DETAILS} at (0,19) size 784x0
-layer at (50,150) size 48x19
-  RenderSummary {SUMMARY} at (50,150) size 48x19
-    RenderDetailsMarker {DIV} at (0,5) size 10x10: right
-    RenderText {#text} at (16,0) size 32x19
-      text run at (16,0) width 32: "fixed"
-layer at (158,158) size 784x19
-  RenderSummary {SUMMARY} at (0,0) size 784x19
-    RenderDetailsMarker {DIV} at (0,5) size 10x10: right
-    RenderText {#text} at (16,0) size 46x19
-      text run at (16,0) width 46: "relative"
-layer at (250,150) size 68x19
-  RenderSummary {SUMMARY} at (250,150) size 68x19
-    RenderDetailsMarker {DIV} at (0,5) size 10x10: right
-    RenderText {#text} at (16,0) size 52x19
-      text run at (16,0) width 52: "absolute"
+      RenderDetails {DETAILS} at (0,0) size 784x18
+      RenderDetails {DETAILS} at (0,18) size 784x0
+layer at (50,150) size 49x18
+  RenderSummary {SUMMARY} at (50,150) size 49x18
+    RenderDetailsMarker {DIV} at (0,4) size 10x10: right
+    RenderText {#text} at (16,0) size 33x17
+      text run at (16,0) width 33: "fixed"
+layer at (158,158) size 784x18
+  RenderSummary {SUMMARY} at (0,0) size 784x18
+    RenderDetailsMarker {DIV} at (0,4) size 10x10: right
+    RenderText {#text} at (16,0) size 48x17
+      text run at (16,0) width 48: "relative"
+layer at (250,150) size 70x18
+  RenderSummary {SUMMARY} at (250,150) size 70x18
+    RenderDetailsMarker {DIV} at (0,4) size 10x10: right
+    RenderText {#text} at (16,0) size 54x17
+      text run at (16,0) width 54: "absolute"

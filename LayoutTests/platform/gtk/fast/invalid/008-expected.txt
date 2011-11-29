@@ -3,10 +3,10 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x577
-      RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 29x18
-          text run at (0,0) width 29: "Test"
-layer at (250,50) size 243x63
-  RenderBlock (positioned) {DIV} at (250,50) size 243x63 [border: (2px solid #008000)]
-    RenderText {#text} at (22,22) size 199x19
-      text run at (22,22) width 199: "I should be absolute positioned."
+      RenderBlock {P} at (0,0) size 784x17
+        RenderText {#text} at (0,0) size 30x17
+          text run at (0,0) width 30: "Test"
+layer at (250,50) size 248x62
+  RenderBlock (positioned) {DIV} at (250,50) size 248x62 [border: (2px solid #008000)]
+    RenderText {#text} at (22,22) size 204x17
+      text run at (22,22) width 204: "I should be absolute positioned."

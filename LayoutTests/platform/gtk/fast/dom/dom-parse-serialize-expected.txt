@@ -4,57 +4,57 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {H1} at (0,0) size 784x37
-        RenderText {#text} at (0,0) size 438x36
-          text run at (0,0) width 438: "DOMParser/XMLSerializer test"
-      RenderBlock {DIV} at (0,58) size 784x38
-        RenderText {#text} at (0,0) size 779x38
-          text run at (0,0) width 779: "The \"text to parse\" and \"document object serialized\" boxes should show the same text, and it should be an XML document,"
-          text run at (0,19) width 160: "not \"@@No result@@\"."
-      RenderBlock {DIV} at (0,96) size 784x167 [border: (1px solid #000000)]
-        RenderBlock (anonymous) at (1,1) size 782x19
-          RenderInline {SPAN} at (0,0) size 83x19 [color=#800000]
-            RenderText {#text} at (0,0) size 83x19
-              text run at (0,0) width 83: "text to parse"
+        RenderText {#text} at (0,0) size 440x36
+          text run at (0,0) width 440: "DOMParser/XMLSerializer test"
+      RenderBlock {DIV} at (0,58) size 784x36
+        RenderText {#text} at (0,0) size 719x35
+          text run at (0,0) width 719: "The \"text to parse\" and \"document object serialized\" boxes should show the same text, and it should be an XML"
+          text run at (0,18) width 231: "document, not \"@@No result@@\"."
+      RenderBlock {DIV} at (0,94) size 784x166 [border: (1px solid #000000)]
+        RenderBlock (anonymous) at (1,1) size 782x18
+          RenderInline {SPAN} at (0,0) size 85x17 [color=#800000]
+            RenderText {#text} at (0,0) size 85x17
+              text run at (0,0) width 85: "text to parse"
           RenderText {#text} at (0,0) size 0x0
-        RenderBlock {PRE} at (27,33) size 756x120
-          RenderText {#text} at (0,0) size 576x120
-            text run at (0,0) width 168: "<?xml version=\"1.0\"?>"
-            text run at (168,0) width 0: " "
-            text run at (0,15) width 120: "<!DOCTYPE doc ["
-            text run at (120,15) width 0: " "
-            text run at (0,30) width 216: "<!ATTLIST d id ID #IMPLIED>"
-            text run at (216,30) width 0: " "
+        RenderBlock {PRE} at (27,32) size 756x120
+          RenderText {#text} at (0,0) size 562x120
+            text run at (0,0) width 164: "<?xml version=\"1.0\"?>"
+            text run at (163,0) width 1: " "
+            text run at (0,15) width 118: "<!DOCTYPE doc ["
+            text run at (117,15) width 1: " "
+            text run at (0,30) width 211: "<!ATTLIST d id ID #IMPLIED>"
+            text run at (210,30) width 1: " "
             text run at (0,45) width 16: "]>"
-            text run at (16,45) width 0: " "
+            text run at (15,45) width 1: " "
             text run at (0,60) width 40: "<doc>"
-            text run at (40,60) width 0: " "
-            text run at (0,75) width 536: "  <foo xmlns=\"foobar\">One</foo> <x:bar xmlns:x=\"barfoo\">Two</x:bar>"
-            text run at (536,75) width 0: " "
-            text run at (0,90) width 184: "  <d id=\"id3\">Three</d>"
-            text run at (184,90) width 0: " "
-            text run at (0,105) width 576: "<f id=\"&amp;&lt;&gt;\">Four&amp;&lt;&gt;</f><empty/><empty></empty></doc>"
-            text run at (576,105) width 0: " "
-      RenderBlock {DIV} at (0,271) size 784x62 [border: (1px solid #000000)]
-        RenderBlock (anonymous) at (1,1) size 782x19
-          RenderInline {SPAN} at (0,0) size 112x19 [color=#800000]
-            RenderText {#text} at (0,0) size 112x19
-              text run at (0,0) width 112: "document object"
+            text run at (39,60) width 1: " "
+            text run at (0,75) width 523: "  <foo xmlns=\"foobar\">One</foo> <x:bar xmlns:x=\"barfoo\">Two</x:bar>"
+            text run at (522,75) width 1: " "
+            text run at (0,90) width 180: "  <d id=\"id3\">Three</d>"
+            text run at (179,90) width 1: " "
+            text run at (0,105) width 562: "<f id=\"&amp;&lt;&gt;\">Four&amp;&lt;&gt;</f><empty/><empty></empty></doc>"
+            text run at (561,105) width 1: " "
+      RenderBlock {DIV} at (0,268) size 784x61 [border: (1px solid #000000)]
+        RenderBlock (anonymous) at (1,1) size 782x18
+          RenderInline {SPAN} at (0,0) size 114x17 [color=#800000]
+            RenderText {#text} at (0,0) size 114x17
+              text run at (0,0) width 114: "document object"
           RenderText {#text} at (0,0) size 0x0
-        RenderBlock {PRE} at (27,33) size 756x15
-          RenderText {#text} at (0,0) size 136x15
-            text run at (0,0) width 136: "[object Document]"
-      RenderBlock {DIV} at (0,341) size 784x107 [border: (1px solid #000000)]
-        RenderBlock (anonymous) at (1,1) size 782x19
-          RenderInline {SPAN} at (0,0) size 179x19 [color=#800000]
-            RenderText {#text} at (0,0) size 179x19
-              text run at (0,0) width 179: "document object serialized"
+        RenderBlock {PRE} at (27,32) size 756x15
+          RenderText {#text} at (0,0) size 133x15
+            text run at (0,0) width 133: "[object Document]"
+      RenderBlock {DIV} at (0,337) size 784x106 [border: (1px solid #000000)]
+        RenderBlock (anonymous) at (1,1) size 782x18
+          RenderInline {SPAN} at (0,0) size 183x17 [color=#800000]
+            RenderText {#text} at (0,0) size 183x17
+              text run at (0,0) width 183: "document object serialized"
           RenderText {#text} at (0,0) size 0x0
-        RenderBlock {PRE} at (27,33) size 756x60
-          RenderText {#text} at (0,0) size 536x60
-            text run at (0,0) width 152: "<!DOCTYPE doc><doc>"
-            text run at (152,0) width 0: " "
-            text run at (0,15) width 536: "  <foo xmlns=\"foobar\">One</foo> <x:bar xmlns:x=\"barfoo\">Two</x:bar>"
-            text run at (536,15) width 0: " "
-            text run at (0,30) width 184: "  <d id=\"id3\">Three</d>"
-            text run at (184,30) width 0: " "
-            text run at (0,45) width 520: "<f id=\"&amp;&lt;&gt;\">Four&amp;&lt;&gt;</f><empty/><empty/></doc>"
+        RenderBlock {PRE} at (27,32) size 756x60
+          RenderText {#text} at (0,0) size 523x60
+            text run at (0,0) width 149: "<!DOCTYPE doc><doc>"
+            text run at (148,0) width 1: " "
+            text run at (0,15) width 523: "  <foo xmlns=\"foobar\">One</foo> <x:bar xmlns:x=\"barfoo\">Two</x:bar>"
+            text run at (522,15) width 1: " "
+            text run at (0,30) width 180: "  <d id=\"id3\">Three</d>"
+            text run at (179,30) width 1: " "
+            text run at (0,45) width 508: "<f id=\"&amp;&lt;&gt;\">Four&amp;&lt;&gt;</f><empty/><empty/></doc>"

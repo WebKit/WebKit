@@ -3,34 +3,34 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock {P} at (0,0) size 784x38
-        RenderText {#text} at (0,0) size 682x38
-          text run at (0,0) width 595: "This tests our ability to correctly select radio buttons when we have nested label tags. This test "
-          text run at (595,0) width 87: "only works in"
-          text run at (0,19) width 534: "DumpRenderTree. It can be tested manually outside of DRT just by clicking around."
-      RenderBlock {FORM} at (0,54) size 784x41
+      RenderBlock {P} at (0,0) size 784x36
+        RenderText {#text} at (0,0) size 697x35
+          text run at (0,0) width 609: "This tests our ability to correctly select radio buttons when we have nested label tags. This test "
+          text run at (608,0) width 89: "only works in"
+          text run at (0,18) width 543: "DumpRenderTree. It can be tested manually outside of DRT just by clicking around."
+      RenderBlock {FORM} at (0,52) size 784x40
         RenderBlock (anonymous) at (0,0) size 784x22
           RenderBlock {INPUT} at (4,3) size 16x16
-          RenderInline {LABEL} at (0,0) size 188x19
-            RenderText {#text} at (24,2) size 27x19
-              text run at (24,2) width 27: "one "
+          RenderInline {LABEL} at (0,0) size 190x17
+            RenderText {#text} at (24,3) size 28x17
+              text run at (24,3) width 28: "one "
             RenderBlock {INPUT} at (55,3) size 16x16
-            RenderInline {LABEL} at (0,0) size 137x19
-              RenderText {#text} at (75,2) size 28x19
-                text run at (75,2) width 28: "two "
+            RenderInline {LABEL} at (0,0) size 139x17
+              RenderText {#text} at (75,3) size 29x17
+                text run at (75,3) width 29: "two "
               RenderBlock {INPUT} at (107,3) size 16x16
-              RenderInline {LABEL} at (0,0) size 85x19
-                RenderText {#text} at (127,2) size 35x19
-                  text run at (127,2) width 35: "three "
-                RenderBlock {INPUT} at (166,3) size 16x16
-                RenderInline {LABEL} at (0,0) size 26x19
-                  RenderText {#text} at (186,2) size 26x19
-                    text run at (186,2) width 26: "four"
-        RenderBlock (anonymous) at (0,22) size 784x19
-          RenderBlock {DIV} at (0,0) size 784x19
-            RenderText {#text} at (0,0) size 104x19
-              text run at (0,0) width 104: "Test Succeeded!"
-        RenderBlock (anonymous) at (0,41) size 784x0
+              RenderInline {LABEL} at (0,0) size 87x17
+                RenderText {#text} at (127,3) size 37x17
+                  text run at (127,3) width 37: "three "
+                RenderBlock {INPUT} at (167,3) size 16x16
+                RenderInline {LABEL} at (0,0) size 27x17
+                  RenderText {#text} at (187,3) size 27x17
+                    text run at (187,3) width 27: "four"
+        RenderBlock (anonymous) at (0,22) size 784x18
+          RenderBlock {DIV} at (0,0) size 784x18
+            RenderText {#text} at (0,0) size 106x17
+              text run at (0,0) width 106: "Test Succeeded!"
+        RenderBlock (anonymous) at (0,40) size 784x0
           RenderInline {LABEL} at (0,0) size 0x0
             RenderInline {LABEL} at (0,0) size 0x0
               RenderInline {LABEL} at (0,0) size 0x0

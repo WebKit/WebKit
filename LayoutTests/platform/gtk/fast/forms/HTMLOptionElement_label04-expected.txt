@@ -3,11 +3,11 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderText {#text} at (0,0) size 595x19
-        text run at (0,0) width 595: "The label attribute appears, but is missing the equals value piece, so the containing text is used."
-      RenderBR {BR} at (595,15) size 0x0
-      RenderMenuList {SELECT} at (2,21) size 587x29 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
-        RenderBlock (anonymous) at (1,1) size 585x27
-          RenderText at (4,4) size 560x19
-            text run at (4,4) width 560: "the label attribute is mentioned but no value is specified; this text should appear"
+      RenderText {#text} at (0,0) size 610x17
+        text run at (0,0) width 610: "The label attribute appears, but is missing the equals value piece, so the containing text is used."
+      RenderBR {BR} at (609,14) size 1x0
+      RenderMenuList {SELECT} at (2,20) size 591x28 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+        RenderBlock (anonymous) at (1,1) size 589x26
+          RenderText at (4,4) size 564x17
+            text run at (4,4) width 564: "the label attribute is mentioned but no value is specified; this text should appear"
       RenderText {#text} at (0,0) size 0x0

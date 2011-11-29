@@ -5,51 +5,51 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (0,20) size 800x580
 layer at (0,20) size 170x200
   RenderBlock {DIV} at (0,0) size 170x200 [border: (20px solid #C0C0C0)]
-    RenderText {#text} at (20,0) size 95x185
-      text run at (20,0) width 177: "Lorem ipsum dolor sit amet,"
-      text run at (39,0) width 75: "consectetur "
-      text run at (39,75) width 91: "adipiscing elit."
-      text run at (58,0) width 185: "Curabitur neque elit, pulvinar"
-      text run at (77,0) width 100: "eget lobortis at, "
-      text run at (77,100) width 72: "convallis ut"
-      text run at (96,0) width 44: "lectus. "
-    RenderText {#text} at (96,101) size 150x192
-      text run at (96,101) width 62: " vulputate"
-      text run at (115,0) width 147: "tincidunt leo, eu varius "
-      text run at (115,147) width 31: "nunc"
-      text run at (134,0) width 176: "ullamcorper vel. Integer nec"
-      text run at (170,0) width 192: "dolor sed ante pharetra lacinia."
-      text run at (189,0) width 187: "Integer dignissim iaculis nulla"
-      text run at (208,0) width 170: "et rutrum. Praesent pretium"
-      text run at (227,0) width 57: "euismod "
-      text run at (227,57) width 97: "est eget laoreet."
-    RenderText {#text} at (246,44) size 262x196
-      text run at (246,44) width 102: " suscipit suscipit"
-      text run at (265,0) width 182: "elementum. Duis consectetur"
-      text run at (284,0) width 189: "pulvinar tempor. In mi sapien,"
-      text run at (320,0) width 173: "malesuada vitae posuere ut,"
-      text run at (339,0) width 68: "adipiscing "
-      text run at (339,68) width 117: "id odio. Integer est"
-      text run at (358,0) width 194: "mi, luctus sed cursus in, cursus"
-      text run at (377,0) width 105: "vitae urna. Nam "
-      text run at (377,105) width 71: "consectetur"
-      text run at (396,0) width 167: "orci tempor nibh iaculis eu"
-      text run at (415,0) width 195: "dignissim odio laoreet. Aenean"
-      text run at (434,0) width 175: "congue fermentum nibh sed"
-      text run at (470,0) width 196: "malesuada. Curabitur enim leo,"
-      text run at (489,0) width 70: "porttitor ut "
-      text run at (489,70) width 75: "interdum et,"
-    RenderText {#text} at (508,52) size 19x60
-      text run at (508,52) width 60: " ut lorem."
-layer at (0,20) size 19x57
-  RenderInline (relative positioned) {SPAN} at (0,0) size 19x57 [bgcolor=#FFFF00]
-    RenderText {#text} at (96,44) size 19x57
-      text run at (96,44) width 57: "Vivamus"
-layer at (0,20) size 19x44
-  RenderInline (relative positioned) {SPAN} at (0,0) size 19x44 [bgcolor=#FFFF00]
-    RenderText {#text} at (246,0) size 19x44
-      text run at (246,0) width 44: "Integer"
-layer at (0,20) size 19x52
-  RenderInline (relative positioned) {SPAN} at (0,0) size 19x52 [bgcolor=#FFFF00]
-    RenderText {#text} at (508,0) size 19x52
-      text run at (508,0) width 52: "pulvinar"
+    RenderText {#text} at (20,0) size 89x190
+      text run at (20,0) width 182: "Lorem ipsum dolor sit amet,"
+      text run at (38,0) width 77: "consectetur "
+      text run at (38,76) width 95: "adipiscing elit."
+      text run at (56,0) width 190: "Curabitur neque elit, pulvinar"
+      text run at (74,0) width 104: "eget lobortis at, "
+      text run at (74,103) width 75: "convallis ut"
+      text run at (92,0) width 46: "lectus. "
+    RenderText {#text} at (92,103) size 131x197
+      text run at (92,103) width 64: " vulputate"
+      text run at (110,0) width 151: "tincidunt leo, eu varius "
+      text run at (110,150) width 32: "nunc"
+      text run at (128,0) width 181: "ullamcorper vel. Integer nec"
+      text run at (146,0) width 197: "dolor sed ante pharetra lacinia."
+      text run at (170,0) width 194: "Integer dignissim iaculis nulla"
+      text run at (188,0) width 176: "et rutrum. Praesent pretium"
+      text run at (206,0) width 59: "euismod "
+      text run at (206,58) width 100: "est eget laoreet."
+    RenderText {#text} at (224,45) size 221x200
+      text run at (224,45) width 106: " suscipit suscipit"
+      text run at (242,0) width 187: "elementum. Duis consectetur"
+      text run at (260,0) width 194: "pulvinar tempor. In mi sapien,"
+      text run at (278,0) width 177: "malesuada vitae posuere ut,"
+      text run at (296,0) width 70: "adipiscing "
+      text run at (296,69) width 120: "id odio. Integer est"
+      text run at (320,0) width 199: "mi, luctus sed cursus in, cursus"
+      text run at (338,0) width 107: "vitae urna. Nam "
+      text run at (338,106) width 73: "consectetur"
+      text run at (356,0) width 172: "orci tempor nibh iaculis eu"
+      text run at (374,0) width 200: "dignissim odio laoreet. Aenean"
+      text run at (392,0) width 179: "congue fermentum nibh sed"
+      text run at (410,0) width 173: "malesuada. Curabitur enim"
+      text run at (428,0) width 101: "leo, porttitor ut "
+      text run at (428,100) width 78: "interdum et,"
+    RenderText {#text} at (446,53) size 17x63
+      text run at (446,53) width 62: " ut lorem."
+layer at (0,20) size 17x59
+  RenderInline (relative positioned) {SPAN} at (0,0) size 17x59 [bgcolor=#FFFF00]
+    RenderText {#text} at (92,45) size 17x59
+      text run at (92,45) width 58: "Vivamus"
+layer at (0,20) size 17x46
+  RenderInline (relative positioned) {SPAN} at (0,0) size 17x46 [bgcolor=#FFFF00]
+    RenderText {#text} at (224,0) size 17x46
+      text run at (224,0) width 46: "Integer"
+layer at (0,20) size 17x54
+  RenderInline (relative positioned) {SPAN} at (0,0) size 17x54 [bgcolor=#FFFF00]
+    RenderText {#text} at (446,0) size 17x54
+      text run at (446,0) width 54: "pulvinar"

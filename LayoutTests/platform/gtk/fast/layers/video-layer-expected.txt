@@ -3,35 +3,35 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x38
-        RenderInline {A} at (0,0) size 305x19 [color=#0000EE]
-          RenderText {#text} at (0,0) size 305x19
-            text run at (0,0) width 305: "https://bugs.webkit.org/show_bug.cgi?id=25066"
-        RenderBR {BR} at (305,15) size 0x0
-        RenderText {#text} at (0,19) size 415x19
-          text run at (0,19) width 415: "controls should not be misplaced when video gets a RenderLayer."
-      RenderBlock (anonymous) at (0,54) size 784x252
+      RenderBlock {P} at (0,0) size 784x36
+        RenderInline {A} at (0,0) size 310x17 [color=#0000EE]
+          RenderText {#text} at (0,0) size 310x17
+            text run at (0,0) width 310: "https://bugs.webkit.org/show_bug.cgi?id=25066"
+        RenderBR {BR} at (309,14) size 1x0
+        RenderText {#text} at (0,18) size 422x17
+          text run at (0,18) width 422: "controls should not be misplaced when video gets a RenderLayer."
+      RenderBlock (anonymous) at (0,52) size 784x252
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
-layer at (58,112) size 302x152
+layer at (58,110) size 302x152
   RenderVideo {VIDEO} at (50,50) size 302x152 [border: (1px solid #000000)]
-layer at (59,113) size 300x150
+layer at (59,111) size 300x150
   RenderBlock (relative positioned) {DIV} at (1,1) size 300x150
-layer at (59,113) size 300x150 scrollHeight 160
+layer at (59,111) size 300x150 scrollHeight 160
   RenderDeprecatedFlexibleBox (positioned) {DIV} at (0,0) size 300x150
     RenderButton {INPUT} at (0,130) size 20x20
     RenderDeprecatedFlexibleBox {DIV} at (20,130) size 220x20 [border: (1px solid #FFFFFF33) none (1px solid #FFFFFF33)]
-      RenderBlock (anonymous) at (1,0) size 65x30
-        RenderDeprecatedFlexibleBox {DIV} at (0,0) size 65x30
-          RenderBlock (anonymous) at (5,5) size 55x20
-            RenderText {#text} at (0,0) size 55x12
-              text run at (0,0) width 55: "00:00 / 00:00"
-      RenderSlider {INPUT} at (66,0) size 153x20
-        RenderDeprecatedFlexibleBox {DIV} at (2,0) size 149x20
-          RenderBlock {DIV} at (0,4) size 137x12
-          RenderBlock {DIV} at (137,4) size 12x12
+      RenderBlock (anonymous) at (1,0) size 64x30
+        RenderDeprecatedFlexibleBox {DIV} at (0,0) size 64x30
+          RenderBlock (anonymous) at (5,5) size 54x20
+            RenderText {#text} at (0,0) size 54x11
+              text run at (0,0) width 54: "00:00 / 00:00"
+      RenderSlider {INPUT} at (65,0) size 154x20
+        RenderDeprecatedFlexibleBox {DIV} at (2,0) size 150x20
+          RenderBlock {DIV} at (0,4) size 138x12
+          RenderBlock {DIV} at (138,4) size 12x12
     RenderButton {INPUT} at (240,130) size 20x20
     RenderButton {INPUT} at (260,130) size 20x20
     RenderButton {INPUT} at (280,130) size 20x20
-layer at (147,247) size 12x12
+layer at (146,245) size 12x12
   RenderBlock (relative positioned) {DIV} at (0,0) size 12x12

@@ -1,40 +1,40 @@
-layer at (0,0) size 784x1189
+layer at (0,0) size 784x1188
   RenderView at (0,0) size 784x600
-layer at (0,0) size 784x1189
-  RenderBlock {HTML} at (0,0) size 784x1189
-    RenderBody {BODY} at (8,8) size 768x1173
-      RenderBlock (anonymous) at (0,0) size 768x19
-        RenderText {#text} at (0,0) size 339x19
-          text run at (0,0) width 339: "This test should scroll recursively to reveal the button."
+layer at (0,0) size 784x1188
+  RenderBlock {HTML} at (0,0) size 784x1188
+    RenderBody {BODY} at (8,8) size 768x1172
+      RenderBlock (anonymous) at (0,0) size 768x18
+        RenderText {#text} at (0,0) size 348x17
+          text run at (0,0) width 348: "This test should scroll recursively to reveal the button."
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {DIV} at (0,19) size 768x500
-      RenderBlock (anonymous) at (0,519) size 768x154
+      RenderBlock {DIV} at (0,18) size 768x500
+      RenderBlock (anonymous) at (0,518) size 768x154
         RenderPartObject {IFRAME} at (0,0) size 304x154 [border: (2px inset #000000)]
           layer at (0,0) size 308x316
             RenderView at (0,0) size 284x134
           layer at (0,0) size 284x316
             RenderBlock {HTML} at (0,0) size 284x316
               RenderBody {BODY} at (8,8) size 268x300
-          layer at (8,8) size 300x300 clip at (8,8) size 284x300 scrollY 544 scrollHeight 1269
+          layer at (8,8) size 300x300 clip at (8,8) size 284x300 scrollY 543 scrollHeight 1268
             RenderBlock {DIV} at (0,0) size 300x300
-              RenderBlock (anonymous) at (0,0) size 284x19
-                RenderText {#text} at (0,0) size 88x19
-                  text run at (0,0) width 88: "overflow:auto"
-              RenderBlock {DIV} at (0,19) size 284x600
-              RenderBlock {DIV} at (0,769) size 284x500
-          layer at (8,83) size 150x150 clip at (8,83) size 134x150 scrollY 479 scrollHeight 870
-            RenderBlock {DIV} at (0,619) size 150x150
-              RenderBlock (anonymous) at (0,0) size 134x19
-                RenderText {#text} at (0,0) size 88x19
-                  text run at (0,0) width 88: "overflow:auto"
-              RenderBlock {DIV} at (0,19) size 134x500
-              RenderBlock (anonymous) at (0,519) size 134x51
-                RenderBR {BR} at (0,0) size 0x19
-                RenderButton {INPUT} at (2,21) size 62x28 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
-                  RenderBlock (anonymous) at (8,4) size 46x19
-                    RenderText at (0,0) size 46x19
-                      text run at (0,0) width 46: "Button"
+              RenderBlock (anonymous) at (0,0) size 284x18
+                RenderText {#text} at (0,0) size 90x17
+                  text run at (0,0) width 90: "overflow:auto"
+              RenderBlock {DIV} at (0,18) size 284x600
+              RenderBlock {DIV} at (0,768) size 284x500
+          layer at (8,83) size 150x150 clip at (8,83) size 134x150 scrollY 477 scrollHeight 867
+            RenderBlock {DIV} at (0,618) size 150x150
+              RenderBlock (anonymous) at (0,0) size 134x18
+                RenderText {#text} at (0,0) size 90x17
+                  text run at (0,0) width 90: "overflow:auto"
+              RenderBlock {DIV} at (0,18) size 134x500
+              RenderBlock (anonymous) at (0,518) size 134x49
+                RenderBR {BR} at (0,0) size 0x17
+                RenderButton {INPUT} at (2,20) size 63x27 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+                  RenderBlock (anonymous) at (8,4) size 47x18
+                    RenderText at (0,0) size 47x17
+                      text run at (0,0) width 47: "Button"
                 RenderText {#text} at (0,0) size 0x0
-              RenderBlock {DIV} at (0,570) size 134x300
+              RenderBlock {DIV} at (0,567) size 134x300
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {DIV} at (0,673) size 768x500
+      RenderBlock {DIV} at (0,672) size 768x500

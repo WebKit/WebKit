@@ -16,8 +16,8 @@ layer at (0,-338) size 800x922 backgroundClip at (0,0) size 1600x584 clip at (0,
         RenderBR {BR} at (3,453) size 0x50
         RenderText {#text} at (3,503) size 250x50
           text run at (3,503) width 250: "Lorem"
-        RenderBR {BR} at (253,513) size 0x0
+        RenderBR {BR} at (252,513) size 1x0
         RenderInline {SPAN} at (0,0) size 250x50 [color=#FF0000]
           RenderText {#text} at (3,576) size 250x50
             text run at (3,576) width 250: "ipsum"
-          RenderBR {BR} at (253,586) size 0x0
+          RenderBR {BR} at (252,586) size 1x0

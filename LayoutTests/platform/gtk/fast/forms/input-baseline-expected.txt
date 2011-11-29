@@ -3,19 +3,19 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderText {#text} at (0,0) size 293x19
-        text run at (0,0) width 293: "This tests that text fields get the right baseline. "
-      RenderBR {BR} at (293,15) size 0x0
-      RenderBR {BR} at (0,19) size 0x19
-      RenderTextControl {INPUT} at (2,40) size 194x25 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-      RenderText {#text} at (198,43) size 424x19
-        text run at (198,43) width 424: "This text should line up with the bottom of the text in the text field. "
-      RenderBR {BR} at (622,58) size 0x0
-      RenderBR {BR} at (0,67) size 0x19
-      RenderTextControl {INPUT} at (2,88) size 194x129 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-      RenderText {#text} at (198,174) size 420x19
-        text run at (198,174) width 420: "This text should line up with the bottom of the text in the text field."
-layer at (13,51) size 188x19
-  RenderBlock {DIV} at (3,3) size 188x19
-layer at (13,99) size 188x123
-  RenderBlock {DIV} at (3,3) size 188x123
+      RenderText {#text} at (0,0) size 303x17
+        text run at (0,0) width 303: "This tests that text fields get the right baseline. "
+      RenderBR {BR} at (302,14) size 1x0
+      RenderBR {BR} at (0,18) size 0x17
+      RenderTextControl {INPUT} at (2,38) size 193x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+      RenderText {#text} at (197,41) size 435x17
+        text run at (197,41) width 435: "This text should line up with the bottom of the text in the text field. "
+      RenderBR {BR} at (631,55) size 1x0
+      RenderBR {BR} at (0,64) size 0x17
+      RenderTextControl {INPUT} at (2,84) size 193x130 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+      RenderText {#text} at (197,172) size 431x17
+        text run at (197,172) width 431: "This text should line up with the bottom of the text in the text field."
+layer at (13,49) size 187x18
+  RenderBlock {DIV} at (3,3) size 187x18
+layer at (13,95) size 187x124
+  RenderBlock {DIV} at (3,3) size 187x124

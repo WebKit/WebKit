@@ -3,66 +3,66 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock {P} at (0,0) size 784x19
-        RenderText {#text} at (0,0) size 509x19
-          text run at (0,0) width 509: "Tests that CSS-generated :before or :after content doesn't intrude into ruby bases."
-      RenderBlock {P} at (0,35) size 784x0
-      RenderBlock (anonymous) at (0,35) size 784x29
-        RenderText {#text} at (0,10) size 29x19
-          text run at (0,10) width 29: "Foo "
-        RenderRuby (inline) {RUBY} at (0,0) size 70x19
-          RenderInline (generated) at (0,0) size 50x19
-            RenderText at (29,10) size 50x19
-              text run at (29,10) width 50: "[before]"
-          RenderRubyRun (anonymous) at (75,10) size 28x19
-            RenderRubyText {RT} at (0,-10) size 28x10
-              RenderText {#text} at (0,0) size 28x10
-                text run at (0,0) width 28: "long text"
-            RenderRubyBase (anonymous) at (0,0) size 28x19
-              RenderText {#text} at (10,0) size 8x19
-                text run at (10,0) width 8: "b"
-        RenderText {#text} at (99,10) size 27x19
-          text run at (99,10) width 27: " Bar"
-        RenderBR {BR} at (126,25) size 0x0
-      RenderBlock {P} at (0,80) size 784x0
-      RenderBlock {P} at (0,80) size 784x0
-      RenderBlock (anonymous) at (0,80) size 784x29
-        RenderText {#text} at (0,10) size 29x19
-          text run at (0,10) width 29: "Foo "
-        RenderRuby (inline) {RUBY} at (0,0) size 58x19
-          RenderRubyRun (anonymous) at (25,10) size 28x19
-            RenderRubyText {RT} at (0,-10) size 28x10
-              RenderText {#text} at (0,0) size 28x10
-                text run at (0,0) width 28: "long text"
-            RenderRubyBase (anonymous) at (0,0) size 28x19
-              RenderText {#text} at (10,0) size 8x19
-                text run at (10,0) width 8: "b"
-          RenderInline (generated) at (0,0) size 38x19
-            RenderText at (49,10) size 38x19
-              text run at (49,10) width 38: "[after]"
-        RenderText {#text} at (87,10) size 27x19
-          text run at (87,10) width 27: " Bar"
-        RenderBR {BR} at (114,25) size 0x0
-      RenderBlock {P} at (0,125) size 784x0
-      RenderBlock {P} at (0,125) size 784x0
-      RenderBlock (anonymous) at (0,125) size 784x29
-        RenderText {#text} at (0,10) size 29x19
-          text run at (0,10) width 29: "Foo "
-        RenderRuby (inline) {RUBY} at (0,0) size 108x19
-          RenderInline (generated) at (0,0) size 50x19
-            RenderText at (29,10) size 50x19
-              text run at (29,10) width 50: "[before]"
-          RenderRubyRun (anonymous) at (75,10) size 28x19
-            RenderRubyText {RT} at (0,-10) size 28x10
-              RenderText {#text} at (0,0) size 28x10
-                text run at (0,0) width 28: "long text"
-            RenderRubyBase (anonymous) at (0,0) size 28x19
-              RenderText {#text} at (10,0) size 8x19
-                text run at (10,0) width 8: "b"
-          RenderInline (generated) at (0,0) size 38x19
-            RenderText at (99,10) size 38x19
-              text run at (99,10) width 38: "[after]"
-        RenderText {#text} at (137,10) size 27x19
-          text run at (137,10) width 27: " Bar"
-        RenderBR {BR} at (164,25) size 0x0
-      RenderBlock {P} at (0,170) size 784x0
+      RenderBlock {P} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 521x17
+          text run at (0,0) width 521: "Tests that CSS-generated :before or :after content doesn't intrude into ruby bases."
+      RenderBlock {P} at (0,34) size 784x0
+      RenderBlock (anonymous) at (0,34) size 784x27
+        RenderText {#text} at (0,9) size 29x17
+          text run at (0,9) width 29: "Foo "
+        RenderRuby (inline) {RUBY} at (0,0) size 74x17
+          RenderInline (generated) at (0,0) size 53x17
+            RenderText at (28,9) size 53x17
+              text run at (28,9) width 53: "[before]"
+          RenderRubyRun (anonymous) at (76,9) size 29x18
+            RenderRubyText {RT} at (0,-9) size 29x9
+              RenderText {#text} at (0,0) size 29x9
+                text run at (0,0) width 29: "long text"
+            RenderRubyBase (anonymous) at (0,0) size 29x18
+              RenderText {#text} at (10,0) size 9x17
+                text run at (10,0) width 9: "b"
+        RenderText {#text} at (101,9) size 28x17
+          text run at (101,9) width 28: " Bar"
+        RenderBR {BR} at (128,23) size 1x0
+      RenderBlock {P} at (0,77) size 784x0
+      RenderBlock {P} at (0,77) size 784x0
+      RenderBlock (anonymous) at (0,77) size 784x27
+        RenderText {#text} at (0,9) size 29x17
+          text run at (0,9) width 29: "Foo "
+        RenderRuby (inline) {RUBY} at (0,0) size 62x17
+          RenderRubyRun (anonymous) at (25,9) size 29x18
+            RenderRubyText {RT} at (0,-9) size 29x9
+              RenderText {#text} at (0,0) size 29x9
+                text run at (0,0) width 29: "long text"
+            RenderRubyBase (anonymous) at (0,0) size 29x18
+              RenderText {#text} at (10,0) size 9x17
+                text run at (10,0) width 9: "b"
+          RenderInline (generated) at (0,0) size 41x17
+            RenderText at (49,9) size 41x17
+              text run at (49,9) width 41: "[after]"
+        RenderText {#text} at (89,9) size 28x17
+          text run at (89,9) width 28: " Bar"
+        RenderBR {BR} at (116,23) size 1x0
+      RenderBlock {P} at (0,120) size 784x0
+      RenderBlock {P} at (0,120) size 784x0
+      RenderBlock (anonymous) at (0,120) size 784x27
+        RenderText {#text} at (0,9) size 29x17
+          text run at (0,9) width 29: "Foo "
+        RenderRuby (inline) {RUBY} at (0,0) size 114x17
+          RenderInline (generated) at (0,0) size 53x17
+            RenderText at (28,9) size 53x17
+              text run at (28,9) width 53: "[before]"
+          RenderRubyRun (anonymous) at (76,9) size 29x18
+            RenderRubyText {RT} at (0,-9) size 29x9
+              RenderText {#text} at (0,0) size 29x9
+                text run at (0,0) width 29: "long text"
+            RenderRubyBase (anonymous) at (0,0) size 29x18
+              RenderText {#text} at (10,0) size 9x17
+                text run at (10,0) width 9: "b"
+          RenderInline (generated) at (0,0) size 41x17
+            RenderText at (101,9) size 41x17
+              text run at (101,9) width 41: "[after]"
+        RenderText {#text} at (141,9) size 28x17
+          text run at (141,9) width 28: " Bar"
+        RenderBR {BR} at (168,23) size 1x0
+      RenderBlock {P} at (0,163) size 784x0

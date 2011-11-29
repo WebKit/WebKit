@@ -3,27 +3,27 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderText {#text} at (0,0) size 442x19
-        text run at (0,0) width 442: "This tests that you can tab out of a text field if an iframe comes after it."
-      RenderBR {BR} at (442,15) size 0x0
-      RenderTextControl {INPUT} at (2,153) size 194x25 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-      RenderText {#text} at (198,156) size 4x19
-        text run at (198,156) width 4: " "
-      RenderPartObject {IFRAME} at (202,19) size 302x152 [border: (1px solid #000000)]
+      RenderText {#text} at (0,0) size 455x17
+        text run at (0,0) width 455: "This tests that you can tab out of a text field if an iframe comes after it."
+      RenderBR {BR} at (454,14) size 1x0
+      RenderTextControl {INPUT} at (2,153) size 193x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+      RenderText {#text} at (197,156) size 4x17
+        text run at (197,156) width 4: " "
+      RenderPartObject {IFRAME} at (201,18) size 302x152 [border: (1px solid #000000)]
         layer at (0,0) size 300x150
           RenderView at (0,0) size 300x150
         layer at (0,0) size 300x150
           RenderBlock {HTML} at (0,0) size 300x150
             RenderBody {BODY} at (8,8) size 284x134
-      RenderText {#text} at (504,156) size 4x19
-        text run at (504,156) width 4: " "
-      RenderTextControl {INPUT} at (510,153) size 194x25 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+      RenderText {#text} at (503,156) size 4x17
+        text run at (503,156) width 4: " "
+      RenderTextControl {INPUT} at (509,153) size 193x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
       RenderText {#text} at (0,0) size 0x0
-layer at (13,164) size 188x19
-  RenderBlock {DIV} at (3,3) size 188x19
-layer at (521,164) size 188x19
-  RenderBlock {DIV} at (3,3) size 188x19
-    RenderText {#text} at (1,0) size 164x19
+layer at (13,164) size 187x18
+  RenderBlock {DIV} at (3,3) size 187x18
+layer at (520,164) size 187x18
+  RenderBlock {DIV} at (3,3) size 187x18
+    RenderText {#text} at (1,0) size 164x17
       text run at (1,0) width 164: "This should have focus"
 selection start: position 0 of child 0 {#text} of child 0 {DIV} of {#shadow-root} of child 7 {INPUT} of body
 selection end:   position 22 of child 0 {#text} of child 0 {DIV} of {#shadow-root} of child 7 {INPUT} of body

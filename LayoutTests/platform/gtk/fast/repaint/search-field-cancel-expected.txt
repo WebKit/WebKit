@@ -3,22 +3,22 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x19
-        RenderText {#text} at (0,0) size 53x19
-          text run at (0,0) width 53: "Test for "
-        RenderInline {A} at (0,0) size 305x19 [color=#0000EE]
-          RenderText {#text} at (53,0) size 305x19
-            text run at (53,0) width 305: "https://bugs.webkit.org/show_bug.cgi?id=23093"
-        RenderText {#text} at (358,0) size 322x19
-          text run at (358,0) width 322: ". The cancel button in a search field fails to redraw."
-      RenderBlock (anonymous) at (0,35) size 784x29
-        RenderTextControl {INPUT} at (2,2) size 194x25 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-          RenderDeprecatedFlexibleBox {DIV} at (3,3) size 188x19
+      RenderBlock {P} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 55x17
+          text run at (0,0) width 55: "Test for "
+        RenderInline {A} at (0,0) size 311x17 [color=#0000EE]
+          RenderText {#text} at (54,0) size 311x17
+            text run at (54,0) width 311: "https://bugs.webkit.org/show_bug.cgi?id=23093"
+        RenderText {#text} at (364,0) size 329x17
+          text run at (364,0) width 329: ". The cancel button in a search field fails to redraw."
+      RenderBlock (anonymous) at (0,34) size 784x28
+        RenderTextControl {INPUT} at (2,2) size 193x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+          RenderDeprecatedFlexibleBox {DIV} at (3,3) size 187x18
             RenderBlock {DIV} at (0,9) size 0x0
-            RenderBlock {DIV} at (0,0) size 172x19
-            RenderBlock {DIV} at (172,1) size 16x16
+            RenderBlock {DIV} at (0,0) size 171x18
+            RenderBlock {DIV} at (171,1) size 16x16
         RenderText {#text} at (0,0) size 0x0
-layer at (13,48) size 172x19
-  RenderBlock {DIV} at (0,0) size 172x19
-    RenderText {#text} at (1,0) size 68x19
-      text run at (1,0) width 68: "some text"
+layer at (13,47) size 171x18
+  RenderBlock {DIV} at (0,0) size 171x18
+    RenderText {#text} at (1,0) size 70x17
+      text run at (1,0) width 70: "some text"

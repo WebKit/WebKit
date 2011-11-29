@@ -3,38 +3,38 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderText {#text} at (0,0) size 442x19
-        text run at (0,0) width 442: "This tests that a scrollbar will appear when text overflows the textarea "
-      RenderBR {BR} at (442,15) size 0x0
+      RenderText {#text} at (0,0) size 453x17
+        text run at (0,0) width 453: "This tests that a scrollbar will appear when text overflows the textarea "
+      RenderBR {BR} at (452,14) size 1x0
       RenderText {#text} at (0,0) size 0x0
-layer at (10,29) size 202x120 clip at (11,30) size 184x118 scrollHeight 175
-  RenderTextControl {TEXTAREA} at (2,21) size 202x120 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
-    RenderBlock {DIV} at (3,3) size 180x171
-      RenderText {#text} at (0,0) size 9x76
+layer at (10,28) size 202x114 clip at (11,29) size 184x112 scrollHeight 166
+  RenderTextControl {TEXTAREA} at (2,20) size 202x114 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+    RenderBlock {DIV} at (3,3) size 180x162
+      RenderText {#text} at (0,0) size 9x71
         text run at (0,0) width 9: "1"
-        text run at (9,0) width 0: " "
-        text run at (0,19) width 9: "2"
-        text run at (9,19) width 0: " "
-        text run at (0,38) width 9: "3"
-        text run at (9,38) width 0: " "
-        text run at (0,57) width 9: "4"
-        text run at (9,57) width 0: " "
-      RenderText {#text} at (0,76) size 9x19
-        text run at (0,76) width 9: "5"
-      RenderText {#text} at (9,76) size 0x19
-        text run at (9,76) width 0: " "
-      RenderText {#text} at (0,95) size 9x19
-        text run at (0,95) width 9: "6"
-      RenderText {#text} at (9,95) size 0x19
-        text run at (9,95) width 0: " "
-      RenderText {#text} at (0,114) size 9x19
-        text run at (0,114) width 9: "7"
-      RenderText {#text} at (9,114) size 0x19
-        text run at (9,114) width 0: " "
-      RenderText {#text} at (0,133) size 9x19
-        text run at (0,133) width 9: "8"
-      RenderText {#text} at (9,133) size 0x19
-        text run at (9,133) width 0: " "
-      RenderText {#text} at (0,152) size 0x19
-        text run at (0,152) width 0: " "
+        text run at (8,0) width 1: " "
+        text run at (0,18) width 9: "2"
+        text run at (8,18) width 1: " "
+        text run at (0,36) width 9: "3"
+        text run at (8,36) width 1: " "
+        text run at (0,54) width 9: "4"
+        text run at (8,54) width 1: " "
+      RenderText {#text} at (0,72) size 9x17
+        text run at (0,72) width 9: "5"
+      RenderText {#text} at (8,72) size 1x17
+        text run at (8,72) width 1: " "
+      RenderText {#text} at (0,90) size 9x17
+        text run at (0,90) width 9: "6"
+      RenderText {#text} at (8,90) size 1x17
+        text run at (8,90) width 1: " "
+      RenderText {#text} at (0,108) size 9x17
+        text run at (0,108) width 9: "7"
+      RenderText {#text} at (8,108) size 1x17
+        text run at (8,108) width 1: " "
+      RenderText {#text} at (0,126) size 9x17
+        text run at (0,126) width 9: "8"
+      RenderText {#text} at (8,126) size 1x17
+        text run at (8,126) width 1: " "
+      RenderText {#text} at (0,144) size 0x17
+        text run at (0,144) width 0: " "
 caret: position 0 of child 9 {#text} of child 0 {DIV} of {#shadow-root} of child 3 {TEXTAREA} of body

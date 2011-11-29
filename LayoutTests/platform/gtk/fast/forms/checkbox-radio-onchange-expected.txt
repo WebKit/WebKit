@@ -3,23 +3,23 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock (anonymous) at (0,0) size 784x41
-        RenderText {#text} at (0,0) size 364x19
-          text run at (0,0) width 364: "This is to test onchange of checkboxes and radio buttons. "
-        RenderBR {BR} at (364,15) size 0x0
-        RenderBlock {INPUT} at (4,22) size 16x16
-        RenderText {#text} at (24,21) size 65x19
+      RenderBlock (anonymous) at (0,0) size 784x40
+        RenderText {#text} at (0,0) size 371x17
+          text run at (0,0) width 371: "This is to test onchange of checkboxes and radio buttons. "
+        RenderBR {BR} at (370,14) size 1x0
+        RenderBlock {INPUT} at (4,21) size 16x16
+        RenderText {#text} at (24,21) size 65x17
           text run at (24,21) width 65: "Checkbox"
-      RenderBlock {DIV} at (0,41) size 784x19
-        RenderText {#text} at (0,0) size 321x19
-          text run at (0,0) width 321: "Test 1 Passed. onChange event fired for checkbox."
-      RenderBlock (anonymous) at (0,60) size 784x22
+      RenderBlock {DIV} at (0,40) size 784x18
+        RenderText {#text} at (0,0) size 325x17
+          text run at (0,0) width 325: "Test 1 Passed. onChange event fired for checkbox."
+      RenderBlock (anonymous) at (0,58) size 784x22
         RenderBlock {INPUT} at (4,3) size 16x16
-        RenderText {#text} at (24,2) size 54x19
-          text run at (24,2) width 54: "Radio 1 "
+        RenderText {#text} at (24,3) size 55x17
+          text run at (24,3) width 55: "Radio 1 "
         RenderBlock {INPUT} at (82,3) size 16x16
-        RenderText {#text} at (102,2) size 50x19
-          text run at (102,2) width 50: "Radio 2"
-      RenderBlock {DIV} at (0,82) size 784x19
-        RenderText {#text} at (0,0) size 336x19
-          text run at (0,0) width 336: "Test 2 Passed. onChange event fired for radio button."
+        RenderText {#text} at (102,3) size 51x17
+          text run at (102,3) width 51: "Radio 2"
+      RenderBlock {DIV} at (0,80) size 784x18
+        RenderText {#text} at (0,0) size 342x17
+          text run at (0,0) width 342: "Test 2 Passed. onChange event fired for radio button."

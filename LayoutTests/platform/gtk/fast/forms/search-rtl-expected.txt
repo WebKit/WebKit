@@ -3,60 +3,60 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock {P} at (0,0) size 784x19
-        RenderText {#text} at (0,0) size 53x19
-          text run at (0,0) width 53: "Test for "
-        RenderInline {I} at (0,0) size 699x19
-          RenderInline {A} at (0,0) size 301x19 [color=#0000EE]
-            RenderText {#text} at (53,0) size 301x19
-              text run at (53,0) width 301: "http://bugs.webkit.org/show_bug.cgi?id=11916"
-          RenderText {#text} at (354,0) size 398x19
-            text run at (354,0) width 4: " "
-            text run at (358,0) width 394: "REGRESSION (SearchField): RTL search fields are mixed up"
-        RenderText {#text} at (752,0) size 4x19
-          text run at (752,0) width 4: "."
-      RenderBlock {P} at (0,35) size 784x87
-        RenderTextControl {INPUT} at (2,2) size 194x25 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-          RenderDeprecatedFlexibleBox {DIV} at (3,3) size 188x19
+      RenderBlock {P} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 55x17
+          text run at (0,0) width 55: "Test for "
+        RenderInline {I} at (0,0) size 707x17
+          RenderInline {A} at (0,0) size 306x17 [color=#0000EE]
+            RenderText {#text} at (54,0) size 306x17
+              text run at (54,0) width 306: "http://bugs.webkit.org/show_bug.cgi?id=11916"
+          RenderText {#text} at (359,0) size 402x17
+            text run at (359,0) width 5: " "
+            text run at (363,0) width 398: "REGRESSION (SearchField): RTL search fields are mixed up"
+        RenderText {#text} at (760,0) size 5x17
+          text run at (760,0) width 5: "."
+      RenderBlock {P} at (0,34) size 784x84
+        RenderTextControl {INPUT} at (2,2) size 193x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+          RenderDeprecatedFlexibleBox {DIV} at (3,3) size 187x18
             RenderBlock {DIV} at (0,1) size 16x16
-            RenderBlock {DIV} at (16,0) size 156x19
-            RenderBlock {DIV} at (172,1) size 16x16
-        RenderText {#text} at (198,5) size 4x19
-          text run at (198,5) width 4: " "
+            RenderBlock {DIV} at (16,0) size 155x18
+            RenderBlock {DIV} at (171,1) size 16x16
+        RenderText {#text} at (197,5) size 4x17
+          text run at (197,5) width 4: " "
         RenderBR {BR} at (0,0) size 0x0
-        RenderTextControl {INPUT} at (2,31) size 284x25 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-          RenderDeprecatedFlexibleBox {DIV} at (3,3) size 278x19
+        RenderTextControl {INPUT} at (2,30) size 283x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+          RenderDeprecatedFlexibleBox {DIV} at (3,3) size 277x18
             RenderBlock {DIV} at (0,1) size 16x16
-            RenderBlock {DIV} at (16,0) size 246x19
-            RenderBlock {DIV} at (262,1) size 16x16
-        RenderText {#text} at (288,34) size 4x19
-          text run at (288,34) width 4: " "
+            RenderBlock {DIV} at (16,0) size 245x18
+            RenderBlock {DIV} at (261,1) size 16x16
+        RenderText {#text} at (287,33) size 4x17
+          text run at (287,33) width 4: " "
         RenderBR {BR} at (0,0) size 0x0
-        RenderTextControl {INPUT} at (2,60) size 194x25 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-          RenderDeprecatedFlexibleBox {DIV} at (3,3) size 188x19
+        RenderTextControl {INPUT} at (2,58) size 193x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+          RenderDeprecatedFlexibleBox {DIV} at (3,3) size 187x18
             RenderBlock {DIV} at (0,1) size 16x16
-            RenderBlock {DIV} at (16,0) size 156x19
-            RenderBlock {DIV} at (172,1) size 16x16
+            RenderBlock {DIV} at (16,0) size 155x18
+            RenderBlock {DIV} at (171,1) size 16x16
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,138) size 784x19
-        RenderText {#text} at (0,0) size 39x19
+      RenderBlock {P} at (0,134) size 784x18
+        RenderText {#text} at (0,0) size 39x17
           text run at (0,0) width 39: "PASS"
-layer at (29,48) size 156x19 scrollX 21 scrollWidth 177
-  RenderBlock {DIV} at (0,0) size 156x19
-    RenderText {#text} at (-21,0) size 176x19
-      text run at (-21,0) width 28 RTL: " \x{5D5}\x{5D6}\x{5D4}\x{5D5}"
-      text run at (7,0) width 26: "she"
-      text run at (33,0) width 56 RTL: " \x{5D5}\x{5D4}\x{5D9}\x{5D0} \x{5D6}\x{5D4} "
-      text run at (89,0) width 18: "he"
-      text run at (107,0) width 48 RTL: "\x{5D4}\x{5D5}\x{5D0} \x{5D6}\x{5D4} "
-layer at (29,77) size 246x19
-  RenderBlock {DIV} at (0,0) size 246x19
-    RenderText {#text} at (69,0) size 176x19
-      text run at (69,0) width 28 RTL: " \x{5D5}\x{5D6}\x{5D4}\x{5D5}"
-      text run at (97,0) width 26: "she"
-      text run at (123,0) width 56 RTL: " \x{5D5}\x{5D4}\x{5D9}\x{5D0} \x{5D6}\x{5D4} "
-      text run at (179,0) width 18: "he"
-      text run at (197,0) width 48 RTL: "\x{5D4}\x{5D5}\x{5D0} \x{5D6}\x{5D4} "
-layer at (29,106) size 156x19
-  RenderBlock {DIV} at (0,0) size 156x19
+layer at (29,47) size 155x18 scrollX 28 scrollWidth 183
+  RenderBlock {DIV} at (0,0) size 155x18
+    RenderText {#text} at (-27,0) size 182x17
+      text run at (-27,0) width 30 RTL: " \x{5D5}\x{5D6}\x{5D4}\x{5D5}"
+      text run at (2,0) width 26: "she"
+      text run at (27,0) width 60 RTL: " \x{5D5}\x{5D4}\x{5D9}\x{5D0} \x{5D6}\x{5D4} "
+      text run at (86,0) width 19: "he"
+      text run at (104,0) width 50 RTL: "\x{5D4}\x{5D5}\x{5D0} \x{5D6}\x{5D4} "
+layer at (29,75) size 245x18
+  RenderBlock {DIV} at (0,0) size 245x18
+    RenderText {#text} at (62,0) size 182x17
+      text run at (62,0) width 31 RTL: " \x{5D5}\x{5D6}\x{5D4}\x{5D5}"
+      text run at (92,0) width 26: "she"
+      text run at (117,0) width 60 RTL: " \x{5D5}\x{5D4}\x{5D9}\x{5D0} \x{5D6}\x{5D4} "
+      text run at (176,0) width 19: "he"
+      text run at (194,0) width 50 RTL: "\x{5D4}\x{5D5}\x{5D0} \x{5D6}\x{5D4} "
+layer at (29,103) size 155x18
+  RenderBlock {DIV} at (0,0) size 155x18
 caret: position 0 of child 0 {DIV} of child 1 {DIV} of child 0 {DIV} of {#shadow-root} of child 9 {INPUT} of child 3 {P} of body

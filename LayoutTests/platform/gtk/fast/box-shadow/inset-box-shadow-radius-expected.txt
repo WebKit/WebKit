@@ -5,17 +5,17 @@ layer at (0,0) size 800x592
     RenderBody {BODY} at (8,8) size 784x576
       RenderBlock {DIV} at (4,4) size 280x280
         RenderText {#text} at (0,0) size 0x0
-      RenderText {#text} at (288,269) size 4x19
-        text run at (288,269) width 4: " "
+      RenderText {#text} at (288,270) size 4x17
+        text run at (288,270) width 4: " "
       RenderBlock {DIV} at (296,4) size 280x280
         RenderText {#text} at (0,0) size 0x0
-      RenderText {#text} at (580,269) size 4x19
-        text run at (580,269) width 4: " "
+      RenderText {#text} at (580,270) size 4x17
+        text run at (580,270) width 4: " "
       RenderBR {BR} at (0,0) size 0x0
       RenderBlock {DIV} at (4,292) size 280x280
         RenderText {#text} at (0,0) size 0x0
-      RenderText {#text} at (288,557) size 4x19
-        text run at (288,557) width 4: " "
+      RenderText {#text} at (288,558) size 4x17
+        text run at (288,558) width 4: " "
       RenderBlock {DIV} at (296,292) size 280x280
         RenderText {#text} at (0,0) size 0x0
       RenderText {#text} at (0,0) size 0x0

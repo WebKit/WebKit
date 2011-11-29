@@ -1,34 +1,34 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x241
-  RenderBlock {HTML} at (0,0) size 800x241
-    RenderBody {BODY} at (8,16) size 784x217
-      RenderBlock {P} at (0,0) size 784x19
-        RenderInline {B} at (0,0) size 62x19
-          RenderText {#text} at (0,0) size 62x19
+layer at (0,0) size 800x238
+  RenderBlock {HTML} at (0,0) size 800x238
+    RenderBody {BODY} at (8,16) size 784x214
+      RenderBlock {P} at (0,0) size 784x18
+        RenderInline {B} at (0,0) size 62x17
+          RenderText {#text} at (0,0) size 62x17
             text run at (0,0) width 62: "BUG ID:"
-        RenderText {#text} at (62,0) size 4x19
-          text run at (62,0) width 4: " "
-        RenderInline {A} at (0,0) size 117x19 [color=#0000EE]
-          RenderText {#text} at (66,0) size 117x19
-            text run at (66,0) width 117: "Bugzilla bug 6769"
-        RenderText {#text} at (183,0) size 489x19
-          text run at (183,0) width 489: " REGRESSION: Incomplete repaint when a cell's extra bottom margin grows"
-      RenderBlock {P} at (0,35) size 784x25 [bgcolor=#98FB98]
-        RenderInline {B} at (0,0) size 91x19
-          RenderText {#text} at (3,3) size 91x19
-            text run at (3,3) width 91: "TEST PASS:"
-        RenderText {#text} at (94,3) size 355x19
-          text run at (94,3) width 4: " "
-          text run at (98,3) width 351: "There should be only a green square below, and no red."
-      RenderBlock {P} at (0,76) size 784x25 [bgcolor=#FF3300]
-        RenderInline {B} at (0,0) size 90x19
-          RenderText {#text} at (3,3) size 90x19
-            text run at (3,3) width 90: "TEST FAIL:"
-        RenderText {#text} at (93,3) size 311x19
-          text run at (93,3) width 4: " "
-          text run at (97,3) width 307: "The lower-right quarter of the square will be red."
-      RenderTable {TABLE} at (0,117) size 100x100 [bgcolor=#008000]
+        RenderText {#text} at (61,0) size 5x17
+          text run at (61,0) width 5: " "
+        RenderInline {A} at (0,0) size 119x17 [color=#0000EE]
+          RenderText {#text} at (65,0) size 119x17
+            text run at (65,0) width 119: "Bugzilla bug 6769"
+        RenderText {#text} at (183,0) size 497x17
+          text run at (183,0) width 497: " REGRESSION: Incomplete repaint when a cell's extra bottom margin grows"
+      RenderBlock {P} at (0,34) size 784x24 [bgcolor=#98FB98]
+        RenderInline {B} at (0,0) size 90x17
+          RenderText {#text} at (3,3) size 90x17
+            text run at (3,3) width 90: "TEST PASS:"
+        RenderText {#text} at (92,3) size 359x17
+          text run at (92,3) width 5: " "
+          text run at (96,3) width 355: "There should be only a green square below, and no red."
+      RenderBlock {P} at (0,74) size 784x24 [bgcolor=#FF3300]
+        RenderInline {B} at (0,0) size 89x17
+          RenderText {#text} at (3,3) size 89x17
+            text run at (3,3) width 89: "TEST FAIL:"
+        RenderText {#text} at (91,3) size 318x17
+          text run at (91,3) width 5: " "
+          text run at (95,3) width 314: "The lower-right quarter of the square will be red."
+      RenderTable {TABLE} at (0,114) size 100x100 [bgcolor=#008000]
         RenderTableSection {TBODY} at (0,0) size 100x100
           RenderTableRow {TR} at (0,0) size 100x100
             RenderTableCell {TD} at (0,50) size 50x0 [r=0 c=0 rs=2 cs=1]

@@ -1,142 +1,142 @@
-layer at (0,0) size 784x1624
+layer at (0,0) size 784x1608
   RenderView at (0,0) size 784x600
-layer at (0,0) size 784x1624
-  RenderBlock {HTML} at (0,0) size 784x1624
-    RenderBody {BODY} at (8,16) size 768x1560 [bgcolor=#FFFFFF]
-      RenderBlock {P} at (0,0) size 768x19
-        RenderText {#text} at (0,0) size 165x19
-          text run at (0,0) width 165: "This page is part of the "
-        RenderInline {A} at (0,0) size 73x19 [color=#0000EE]
-          RenderText {#text} at (165,0) size 73x19
-            text run at (165,0) width 73: "CSS3.info"
-        RenderText {#text} at (238,0) size 4x19
-          text run at (238,0) width 4: " "
-        RenderInline {A} at (0,0) size 131x19 [color=#0000EE]
-          RenderText {#text} at (242,0) size 131x19
-            text run at (242,0) width 131: "CSS selectors test"
-        RenderText {#text} at (373,0) size 133x19
-          text run at (373,0) width 133: ". See more info on "
-        RenderInline {A} at (0,0) size 111x19 [color=#0000EE]
-          RenderText {#text} at (506,0) size 111x19
-            text run at (506,0) width 111: "CSS3 selectors"
-        RenderText {#text} at (617,0) size 4x19
-          text run at (617,0) width 4: "."
-      RenderBlock {DIV} at (0,35) size 768x0 [bgcolor=#009900]
-      RenderBlock {OL} at (0,35) size 768x1525
-        RenderListItem {LI} at (40,0) size 614x245 [bgcolor=#AAAAAA]
+layer at (0,0) size 784x1608
+  RenderBlock {HTML} at (0,0) size 784x1608
+    RenderBody {BODY} at (8,16) size 768x1544 [bgcolor=#FFFFFF]
+      RenderBlock {P} at (0,0) size 768x18
+        RenderText {#text} at (0,0) size 168x17
+          text run at (0,0) width 168: "This page is part of the "
+        RenderInline {A} at (0,0) size 73x17 [color=#0000EE]
+          RenderText {#text} at (167,0) size 73x17
+            text run at (167,0) width 73: "CSS3.info"
+        RenderText {#text} at (239,0) size 5x17
+          text run at (239,0) width 5: " "
+        RenderInline {A} at (0,0) size 133x17 [color=#0000EE]
+          RenderText {#text} at (243,0) size 133x17
+            text run at (243,0) width 133: "CSS selectors test"
+        RenderText {#text} at (375,0) size 136x17
+          text run at (375,0) width 136: ". See more info on "
+        RenderInline {A} at (0,0) size 111x17 [color=#0000EE]
+          RenderText {#text} at (510,0) size 111x17
+            text run at (510,0) width 111: "CSS3 selectors"
+        RenderText {#text} at (620,0) size 6x17
+          text run at (620,0) width 6: "."
+      RenderBlock {DIV} at (0,34) size 768x0 [bgcolor=#009900]
+      RenderBlock {OL} at (0,34) size 768x1510
+        RenderListItem {LI} at (40,0) size 614x242 [bgcolor=#AAAAAA]
           RenderBlock {DIV} at (16,16) size 582x24 [bgcolor=#990000]
             RenderBlock {DIV} at (0,0) size 582x24 [bgcolor=#009900]
-          RenderBlock {PRE} at (16,53) size 582x106 [bgcolor=#FFFFFF]
-            RenderListMarker at (-38,6) size 17x19: "1"
-            RenderText {#text} at (6,10) size 136x90
-              text run at (6,10) width 136: "div :only-child {"
-              text run at (142,10) width 0: " "
-              text run at (6,25) width 8: "}"
-              text run at (14,25) width 0: " "
-              text run at (6,40) width 0: " "
-              text run at (6,55) width 40: "<div>"
-              text run at (46,55) width 0: " "
-              text run at (6,70) width 112: "   <div></div>"
-              text run at (118,70) width 0: " "
-              text run at (6,85) width 48: "</div>"
-          RenderBlock {P} at (16,175) size 582x38
-            RenderText {#text} at (0,0) size 572x38
-              text run at (0,0) width 572: "The CSS selector should match the inner div element, because it is the only child"
-              text run at (0,19) width 165: "of the outer div element"
-        RenderListItem {LI} at (40,293) size 614x260 [bgcolor=#AAAAAA]
+          RenderBlock {PRE} at (16,53) size 582x105 [bgcolor=#FFFFFF]
+            RenderListMarker at (-36,6) size 16x17: "1"
+            RenderText {#text} at (6,9) size 133x90
+              text run at (6,9) width 133: "div :only-child {"
+              text run at (138,9) width 1: " "
+              text run at (6,24) width 8: "}"
+              text run at (13,24) width 1: " "
+              text run at (6,39) width 0: " "
+              text run at (6,54) width 40: "<div>"
+              text run at (45,54) width 1: " "
+              text run at (6,69) width 110: "   <div></div>"
+              text run at (115,69) width 1: " "
+              text run at (6,84) width 47: "</div>"
+          RenderBlock {P} at (16,174) size 582x36
+            RenderText {#text} at (0,0) size 574x35
+              text run at (0,0) width 574: "The CSS selector should match the inner div element, because it is the only child"
+              text run at (0,18) width 168: "of the outer div element"
+        RenderListItem {LI} at (40,290) size 614x257 [bgcolor=#AAAAAA]
           RenderBlock {DIV} at (16,16) size 582x24 [bgcolor=#990000]
             RenderBlock {DIV} at (0,0) size 582x24 [bgcolor=#009900]
-          RenderBlock {PRE} at (16,53) size 582x121 [bgcolor=#FFFFFF]
-            RenderListMarker at (-38,6) size 17x19: "2"
-            RenderText {#text} at (6,10) size 208x105
-              text run at (6,10) width 136: "div :only-child {"
-              text run at (142,10) width 0: " "
-              text run at (6,25) width 8: "}"
-              text run at (14,25) width 0: " "
-              text run at (6,40) width 0: " "
-              text run at (6,55) width 40: "<div>"
-              text run at (46,55) width 0: " "
-              text run at (6,70) width 112: "   <div></div>"
-              text run at (118,70) width 0: " "
-              text run at (6,85) width 208: "   <!-- Just a comment -->"
-              text run at (214,85) width 0: " "
-              text run at (6,100) width 48: "</div>"
-          RenderBlock {P} at (16,190) size 582x38
-            RenderText {#text} at (0,0) size 572x38
-              text run at (0,0) width 572: "The CSS selector should match the inner div element, because it is the only child"
-              text run at (0,19) width 165: "of the outer div element"
-        RenderListItem {LI} at (40,601) size 614x275 [bgcolor=#AAAAAA]
-          RenderBlock {DIV} at (16,16) size 582x43 [bgcolor=#990000]
+          RenderBlock {PRE} at (16,53) size 582x120 [bgcolor=#FFFFFF]
+            RenderListMarker at (-36,6) size 16x17: "2"
+            RenderText {#text} at (6,9) size 203x105
+              text run at (6,9) width 133: "div :only-child {"
+              text run at (138,9) width 1: " "
+              text run at (6,24) width 8: "}"
+              text run at (13,24) width 1: " "
+              text run at (6,39) width 0: " "
+              text run at (6,54) width 40: "<div>"
+              text run at (45,54) width 1: " "
+              text run at (6,69) width 110: "   <div></div>"
+              text run at (115,69) width 1: " "
+              text run at (6,84) width 203: "   <!-- Just a comment -->"
+              text run at (208,84) width 1: " "
+              text run at (6,99) width 47: "</div>"
+          RenderBlock {P} at (16,189) size 582x36
+            RenderText {#text} at (0,0) size 574x35
+              text run at (0,0) width 574: "The CSS selector should match the inner div element, because it is the only child"
+              text run at (0,18) width 168: "of the outer div element"
+        RenderListItem {LI} at (40,595) size 614x272 [bgcolor=#AAAAAA]
+          RenderBlock {DIV} at (16,16) size 582x42 [bgcolor=#990000]
             RenderBlock {DIV} at (0,0) size 582x24 [bgcolor=#009900]
-            RenderBlock (anonymous) at (0,24) size 582x19
-              RenderListMarker at (-38,0) size 17x19: "3"
-              RenderText {#text} at (0,0) size 4x19
-                text run at (0,0) width 4: "."
-          RenderBlock {PRE} at (16,72) size 582x117 [bgcolor=#FFFFFF]
-            RenderText {#text} at (6,6) size 224x105
-              text run at (6,6) width 136: "div :only-child {"
-              text run at (142,6) width 0: " "
+            RenderBlock (anonymous) at (0,24) size 582x18
+              RenderListMarker at (-36,0) size 16x17: "3"
+              RenderText {#text} at (0,0) size 5x17
+                text run at (0,0) width 5: "."
+          RenderBlock {PRE} at (16,71) size 582x117 [bgcolor=#FFFFFF]
+            RenderText {#text} at (6,6) size 219x105
+              text run at (6,6) width 133: "div :only-child {"
+              text run at (138,6) width 1: " "
               text run at (6,21) width 8: "}"
-              text run at (14,21) width 0: " "
+              text run at (13,21) width 1: " "
               text run at (6,36) width 0: " "
               text run at (6,51) width 40: "<div>"
-              text run at (46,51) width 0: " "
-              text run at (6,66) width 112: "   <div></div>"
-              text run at (118,66) width 0: " "
-              text run at (6,81) width 224: "   How about regular text..."
-              text run at (230,81) width 0: " "
-              text run at (6,96) width 48: "</div>"
-          RenderBlock {P} at (16,205) size 582x38
-            RenderText {#text} at (0,0) size 572x38
-              text run at (0,0) width 572: "The CSS selector should match the inner div element, because it is the only child"
-              text run at (0,19) width 165: "of the outer div element"
-        RenderListItem {LI} at (40,924) size 614x263 [bgcolor=#AAAAAA]
+              text run at (45,51) width 1: " "
+              text run at (6,66) width 110: "   <div></div>"
+              text run at (115,66) width 1: " "
+              text run at (6,81) width 219: "   How about regular text..."
+              text run at (224,81) width 1: " "
+              text run at (6,96) width 47: "</div>"
+          RenderBlock {P} at (16,204) size 582x36
+            RenderText {#text} at (0,0) size 574x35
+              text run at (0,0) width 574: "The CSS selector should match the inner div element, because it is the only child"
+              text run at (0,18) width 168: "of the outer div element"
+        RenderListItem {LI} at (40,915) size 614x260 [bgcolor=#AAAAAA]
           RenderBlock {DIV} at (16,16) size 582x24 [bgcolor=#009900]
             RenderBlock {DIV} at (0,0) size 582x24
             RenderBlock {BLOCKQUOTE} at (40,40) size 502x0
-          RenderBlock {PRE} at (16,56) size 582x121 [bgcolor=#FFFFFF]
-            RenderListMarker at (-38,6) size 17x19: "4"
-            RenderText {#text} at (6,10) size 224x105
-              text run at (6,10) width 136: "div :only-child {"
-              text run at (142,10) width 0: " "
-              text run at (6,25) width 8: "}"
-              text run at (14,25) width 0: " "
-              text run at (6,40) width 0: " "
-              text run at (6,55) width 48: "<div> "
-              text run at (54,55) width 0: " "
-              text run at (6,70) width 112: "   <div></div>"
-              text run at (118,70) width 0: " "
-              text run at (6,85) width 224: "   <blockquote></blockquote>"
-              text run at (230,85) width 0: " "
-              text run at (6,100) width 48: "</div>"
-          RenderBlock {P} at (16,193) size 582x38
-            RenderText {#text} at (0,0) size 570x38
-              text run at (0,0) width 570: "The CSS selector should not match the inner div element, because it not the only"
-              text run at (0,19) width 34: "child"
-        RenderListItem {LI} at (40,1235) size 614x290 [bgcolor=#AAAAAA]
+          RenderBlock {PRE} at (16,56) size 582x120 [bgcolor=#FFFFFF]
+            RenderListMarker at (-36,6) size 16x17: "4"
+            RenderText {#text} at (6,9) size 219x105
+              text run at (6,9) width 133: "div :only-child {"
+              text run at (138,9) width 1: " "
+              text run at (6,24) width 8: "}"
+              text run at (13,24) width 1: " "
+              text run at (6,39) width 0: " "
+              text run at (6,54) width 47: "<div> "
+              text run at (52,54) width 1: " "
+              text run at (6,69) width 110: "   <div></div>"
+              text run at (115,69) width 1: " "
+              text run at (6,84) width 219: "   <blockquote></blockquote>"
+              text run at (224,84) width 1: " "
+              text run at (6,99) width 47: "</div>"
+          RenderBlock {P} at (16,192) size 582x36
+            RenderText {#text} at (0,0) size 574x35
+              text run at (0,0) width 574: "The CSS selector should not match the inner div element, because it not the only"
+              text run at (0,18) width 33: "child"
+        RenderListItem {LI} at (40,1223) size 614x287 [bgcolor=#AAAAAA]
           RenderBlock {DIV} at (16,16) size 582x24 [bgcolor=#009900]
             RenderBlock {DIV} at (0,0) size 582x24
             RenderBlock {DIV} at (0,24) size 582x0
-          RenderBlock {PRE} at (16,53) size 582x151 [bgcolor=#FFFFFF]
-            RenderListMarker at (-38,6) size 17x19: "5"
-            RenderText {#text} at (6,10) size 480x135
-              text run at (6,10) width 136: "div :only-child {"
-              text run at (142,10) width 0: " "
-              text run at (6,25) width 8: "}"
-              text run at (14,25) width 0: " "
-              text run at (6,40) width 0: " "
-              text run at (6,55) width 40: "<div>"
-              text run at (46,55) width 0: " "
-              text run at (6,70) width 248: "   <div id='appendChild'></div>"
-              text run at (254,70) width 0: " "
-              text run at (6,85) width 48: "</div>"
-              text run at (54,85) width 0: " "
-              text run at (6,100) width 0: " "
-              text run at (6,115) width 384: "var ib = document.getElementById('appendChild');"
-              text run at (390,115) width 0: " "
-              text run at (6,130) width 480: "ib.parentElement.appendChild(document.createElement(\"div\"));"
-          RenderBlock {P} at (16,220) size 582x38
-            RenderText {#text} at (0,0) size 569x38
-              text run at (0,0) width 521: "The CSS selector should not match the original div element, because it is "
-              text run at (521,0) width 48: "not the"
-              text run at (0,19) width 505: "only child anymore after another child is append by the Javascript code."
+          RenderBlock {PRE} at (16,53) size 582x150 [bgcolor=#FFFFFF]
+            RenderListMarker at (-36,6) size 16x17: "5"
+            RenderText {#text} at (6,9) size 469x135
+              text run at (6,9) width 133: "div :only-child {"
+              text run at (138,9) width 1: " "
+              text run at (6,24) width 8: "}"
+              text run at (13,24) width 1: " "
+              text run at (6,39) width 0: " "
+              text run at (6,54) width 40: "<div>"
+              text run at (45,54) width 1: " "
+              text run at (6,69) width 242: "   <div id='appendChild'></div>"
+              text run at (247,69) width 1: " "
+              text run at (6,84) width 47: "</div>"
+              text run at (52,84) width 1: " "
+              text run at (6,99) width 0: " "
+              text run at (6,114) width 375: "var ib = document.getElementById('appendChild');"
+              text run at (380,114) width 1: " "
+              text run at (6,129) width 469: "ib.parentElement.appendChild(document.createElement(\"div\"));"
+          RenderBlock {P} at (16,219) size 582x36
+            RenderText {#text} at (0,0) size 572x35
+              text run at (0,0) width 523: "The CSS selector should not match the original div element, because it is "
+              text run at (522,0) width 50: "not the"
+              text run at (0,18) width 508: "only child anymore after another child is append by the Javascript code."

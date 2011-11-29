@@ -1,12 +1,12 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x308
-  RenderBlock {HTML} at (0,0) size 800x308
-    RenderBody {BODY} at (8,16) size 784x276
-      RenderBlock {P} at (0,0) size 784x19
-        RenderText {#text} at (0,0) size 230x19
-          text run at (0,0) width 230: "There should be no red on this page."
-      RenderTable {TABLE} at (0,35) size 106x206 [bgcolor=#FF0000] [border: (3px solid #000000)]
+layer at (0,0) size 800x306
+  RenderBlock {HTML} at (0,0) size 800x306
+    RenderBody {BODY} at (8,16) size 784x274
+      RenderBlock {P} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 233x17
+          text run at (0,0) width 233: "There should be no red on this page."
+      RenderTable {TABLE} at (0,34) size 106x206 [bgcolor=#FF0000] [border: (3px solid #000000)]
         RenderTableSection {TBODY} at (3,3) size 100x200
           RenderTableRow {TR} at (0,0) size 100x200
             RenderTableCell {TD} at (0,25) size 50x150 [bgcolor=#FFA500] [r=0 c=0 rs=1 cs=1]
@@ -18,11 +18,11 @@ layer at (0,0) size 800x308
               RenderBlock {DIV} at (0,50) size 50x50 [border: (50px solid #FFFF00) none]
               RenderBlock {DIV} at (0,100) size 50x50 [border: (50px solid #00FFFF) none]
               RenderBlock {DIV} at (0,150) size 50x50 [border: (50px solid #FFA500) none]
-      RenderBlock {P} at (0,257) size 784x19
-        RenderText {#text} at (0,0) size 241x19
-          text run at (0,0) width 241: "This test is irrelevant if you don't pass "
-        RenderInline {A} at (0,0) size 49x19 [color=#0000EE]
-          RenderText {#text} at (241,0) size 49x19
-            text run at (241,0) width 49: "test 056"
-        RenderText {#text} at (290,0) size 4x19
-          text run at (290,0) width 4: "."
+      RenderBlock {P} at (0,256) size 784x18
+        RenderText {#text} at (0,0) size 248x17
+          text run at (0,0) width 248: "This test is irrelevant if you don't pass "
+        RenderInline {A} at (0,0) size 51x17 [color=#0000EE]
+          RenderText {#text} at (247,0) size 51x17
+            text run at (247,0) width 51: "test 056"
+        RenderText {#text} at (297,0) size 5x17
+          text run at (297,0) width 5: "."

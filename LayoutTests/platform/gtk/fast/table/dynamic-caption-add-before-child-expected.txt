@@ -1,31 +1,31 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x244
-  RenderBlock {html} at (0,0) size 800x244
-    RenderBody {body} at (8,8) size 784x228
-      RenderTable {table} at (0,0) size 81x228
-        RenderBlock {caption} at (0,152) size 81x76
-          RenderText {#text} at (19,0) size 81x76
-            text run at (19,0) width 43: "PASS:"
-            text run at (0,19) width 81: "Dynamically"
-            text run at (21,38) width 39: "added"
-            text run at (17,57) width 47: "caption"
-        RenderBlock {caption} at (0,0) size 81x38
-          RenderText {#text} at (2,0) size 77x38
-            text run at (2,0) width 77: "PASS: Text"
-            text run at (3,19) width 75: "in caption 1"
-layer at (8,46) size 81x38
-  RenderBlock {caption} at (0,38) size 81x38
-    RenderText {#text} at (2,0) size 77x38
-      text run at (2,0) width 77: "PASS: Text"
-      text run at (3,19) width 75: "in caption 2"
-layer at (8,84) size 81x38
-  RenderBlock {caption} at (0,76) size 81x38
-    RenderText {#text} at (2,0) size 77x38
-      text run at (2,0) width 77: "PASS: Text"
-      text run at (3,19) width 75: "in caption 3"
-layer at (8,122) size 81x38
-  RenderBlock {caption} at (0,114) size 81x38
-    RenderText {#text} at (2,0) size 77x38
-      text run at (2,0) width 77: "PASS: Text"
-      text run at (3,19) width 75: "in caption 4"
+layer at (0,0) size 800x232
+  RenderBlock {html} at (0,0) size 800x232
+    RenderBody {body} at (8,8) size 784x216
+      RenderTable {table} at (0,0) size 83x216
+        RenderBlock {caption} at (0,144) size 83x72
+          RenderText {#text} at (20,0) size 83x71
+            text run at (20,0) width 43: "PASS:"
+            text run at (0,18) width 83: "Dynamically"
+            text run at (22,36) width 39: "added"
+            text run at (17,54) width 49: "caption"
+        RenderBlock {caption} at (0,0) size 83x36
+          RenderText {#text} at (3,0) size 77x35
+            text run at (3,0) width 77: "PASS: Text"
+            text run at (3,18) width 77: "in caption 1"
+layer at (8,44) size 83x36
+  RenderBlock {caption} at (0,36) size 83x36
+    RenderText {#text} at (3,0) size 77x35
+      text run at (3,0) width 77: "PASS: Text"
+      text run at (3,18) width 77: "in caption 2"
+layer at (8,80) size 83x36
+  RenderBlock {caption} at (0,72) size 83x36
+    RenderText {#text} at (3,0) size 77x35
+      text run at (3,0) width 77: "PASS: Text"
+      text run at (3,18) width 77: "in caption 3"
+layer at (8,116) size 83x36
+  RenderBlock {caption} at (0,108) size 83x36
+    RenderText {#text} at (3,0) size 77x35
+      text run at (3,0) width 77: "PASS: Text"
+      text run at (3,18) width 77: "in caption 4"

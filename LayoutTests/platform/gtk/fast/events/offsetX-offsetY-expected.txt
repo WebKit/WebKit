@@ -15,10 +15,10 @@ In RTL overflow
 Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 
 PASS: event at (112, 62) hit abs-box at offset (32, 37)
-FAIL: event at (157, 32) expected to hit rel-box at (22, 24) but hit rel-box at (22, 23)
+PASS: event at (157, 32) hit rel-box at offset (22, 24)
 PASS: event at (410, 30) hit fixed-box at offset (10, 10)
-FAIL: event at (36, 272) expected to hit with-bordertopextra at (4, 4) but hit with-bordertopextra at (4, 0)
-FAIL: event at (639, 207) expected to hit in-columns at (173, -189) but hit in-columns at (173, -210)
-FAIL: event at (563, 410) expected to hit inside-overflow at (7, 6) but hit inside-overflow at (7, 1)
-FAIL: event at (112, 369) expected to hit transformed at (11, 16) but hit transformed at (9, 9)
+PASS: event at (36, 272) hit with-bordertopextra at offset (4, 4)
+FAIL: event at (639, 207) expected to hit in-columns at (173, -189) but hit in-columns at (173, -199)
+PASS: event at (563, 410) hit inside-overflow at offset (7, 6)
+PASS: event at (112, 369) hit transformed at offset (11, 16)
 
