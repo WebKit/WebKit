@@ -102,6 +102,22 @@ QtViewportInteractionEngine::QtViewportInteractionEngine(const QQuickItem* viewp
 {
     reset();
 
+    QScrollerProperties properties = scroller()->scrollerProperties();
+
+    // The QtPanGestureRecognizer is responsible for recognizing the gesture
+    // thus we need to disable the drag start distance.
+    properties.setScrollMetric(QScrollerProperties::DragStartDistance, 0.0);
+
+    // Set some default QScroller constrains to mimic the physics engine of the N9 browser.
+    properties.setScrollMetric(QScrollerProperties::AxisLockThreshold, 0.66);
+    properties.setScrollMetric(QScrollerProperties::ScrollingCurve, QEasingCurve(QEasingCurve::OutExpo));
+    properties.setScrollMetric(QScrollerProperties::DecelerationFactor, 0.05);
+    properties.setScrollMetric(QScrollerProperties::MaximumVelocity, 0.635);
+    properties.setScrollMetric(QScrollerProperties::OvershootDragResistanceFactor, 0.33);
+    properties.setScrollMetric(QScrollerProperties::OvershootScrollDistanceFactor, 0.33);
+
+    scroller()->setScrollerProperties(properties);
+
     connect(m_content, SIGNAL(widthChanged()), this, SLOT(itemSizeChanged()), Qt::DirectConnection);
     connect(m_content, SIGNAL(heightChanged()), this, SLOT(itemSizeChanged()), Qt::DirectConnection);
 
@@ -308,21 +324,17 @@ void QtViewportInteractionEngine::zoomToAreaGestureEnded(const QPointF& touchPoi
     animateItemRectVisible(endVisibleContentRect);
 }
 
-void QtViewportInteractionEngine::ensureContentWithinViewportBoundary()
+void QtViewportInteractionEngine::ensureContentWithinViewportBoundary(bool immediate)
 {
     if (scrollAnimationActive() || scaleAnimationActive())
         return;
 
     qreal currentCSSScale = cssScaleFromItem(m_content->scale());
-    bool userHasScaledContent = m_userInteractionFlags & UserHasScaledContent;
-
-    if (!userHasScaledContent)
-        currentCSSScale = m_constraints.initialScale;
 
     qreal endItemScale = itemScaleFromCSS(innerBoundedCSSScale(currentCSSScale));
 
     const QRectF viewportRect = m_viewport->boundingRect();
-    const QPointF viewportHotspot = viewportRect.center();
+    QPointF viewportHotspot = viewportRect.center();
 
     QPointF endPosition = m_content->mapFromItem(m_viewport, viewportHotspot) * endItemScale - viewportHotspot;
 
@@ -331,7 +343,7 @@ void QtViewportInteractionEngine::ensureContentWithinViewportBoundary()
 
     QRectF endVisibleContentRect(endPosition / endItemScale, viewportRect.size() / endItemScale);
 
-    if (!userHasScaledContent)
+    if (immediate)
         setItemRectVisible(endVisibleContentRect);
     else
         animateItemRectVisible(endVisibleContentRect);
@@ -340,26 +352,11 @@ void QtViewportInteractionEngine::ensureContentWithinViewportBoundary()
 void QtViewportInteractionEngine::reset()
 {
     ViewportUpdateGuard guard(this);
+
     m_userInteractionFlags = UserHasNotInteractedWithContent;
 
     scroller()->stop();
     m_scaleAnimation->stop();
-
-    QScrollerProperties properties = scroller()->scrollerProperties();
-
-    // The QtPanGestureRecognizer is responsible for recognizing the gesture
-    // thus we need to disable the drag start distance.
-    properties.setScrollMetric(QScrollerProperties::DragStartDistance, 0.0);
-
-    // Set some default QScroller constrains to mimic the physics engine of the N9 browser.
-    properties.setScrollMetric(QScrollerProperties::AxisLockThreshold, 0.66);
-    properties.setScrollMetric(QScrollerProperties::ScrollingCurve, QEasingCurve(QEasingCurve::OutExpo));
-    properties.setScrollMetric(QScrollerProperties::DecelerationFactor, 0.05);
-    properties.setScrollMetric(QScrollerProperties::MaximumVelocity, 0.635);
-    properties.setScrollMetric(QScrollerProperties::OvershootDragResistanceFactor, 0.33);
-    properties.setScrollMetric(QScrollerProperties::OvershootScrollDistanceFactor, 0.33);
-
-    scroller()->setScrollerProperties(properties);
 }
 
 void QtViewportInteractionEngine::applyConstraints(const Constraints& constraints)
@@ -370,7 +367,15 @@ void QtViewportInteractionEngine::applyConstraints(const Constraints& constraint
     ViewportUpdateGuard guard(this);
     m_constraints = constraints;
 
-    ensureContentWithinViewportBoundary();
+    bool userHasScaledContent = m_userInteractionFlags & UserHasScaledContent;
+    if (!userHasScaledContent) {
+        qreal initialScale = innerBoundedCSSScale(m_constraints.initialScale);
+        m_content->setScale(itemScaleFromCSS(initialScale));
+    }
+
+    // If the web app changes successively changes the viewport on purpose
+    // it wants to be in control and we should disable animations.
+    ensureContentWithinViewportBoundary(/* immediate */ true);
 }
 
 bool QtViewportInteractionEngine::scrollAnimationActive() const

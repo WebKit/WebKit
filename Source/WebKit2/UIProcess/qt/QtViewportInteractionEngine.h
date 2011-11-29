@@ -111,7 +111,7 @@ private:
     qreal outerBoundedCSSScale(qreal);
 
     QRectF computePosRangeForItemAtScale(qreal itemScale) const;
-    void ensureContentWithinViewportBoundary();
+    void ensureContentWithinViewportBoundary(bool immediate = false);
 
     void scaleContent(const QPointF& centerInContentCoordinates, qreal scale);
 
