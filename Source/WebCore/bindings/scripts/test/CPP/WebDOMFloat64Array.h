@@ -31,6 +31,7 @@ class Float64Array;
 };
 
 class WebDOMFloat32Array;
+class WebDOMInt32Array;
 
 class WebDOMFloat64Array : public WebDOMArrayBufferView {
 public:
@@ -38,7 +39,7 @@ public:
     explicit WebDOMFloat64Array(WTF::Float64Array*);
     virtual ~WebDOMFloat64Array() { }
 
-    void foo(const WebDOMFloat32Array& array);
+    WebDOMInt32Array foo(const WebDOMFloat32Array& array);
 
     WTF::Float64Array* impl() const;
 };

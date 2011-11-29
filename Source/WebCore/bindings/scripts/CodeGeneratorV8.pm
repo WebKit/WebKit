@@ -156,7 +156,6 @@ sub AddIncludesForType
     # reorganization, we won't need these special cases.
     if (IsTypedArrayType($type)) {
         AddToImplIncludes("wtf/${type}.h");
-        return;
     }
     if (!$codeGenerator->IsPrimitiveType($type) and !$codeGenerator->IsStringType($type) and !$codeGenerator->AvoidInclusionOfType($type) and $type ne "Date") {
         # default, include the same named file

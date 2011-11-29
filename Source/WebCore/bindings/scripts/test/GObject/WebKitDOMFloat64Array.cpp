@@ -26,6 +26,7 @@
 #include "DOMObjectCache.h"
 #include "ExceptionCode.h"
 #include "Float64Array.h"
+#include "Int32Array.h"
 #include "JSMainThreadExecState.h"
 #include "WebKitDOMBinding.h"
 #include "gobject/ConvertToUTF8String.h"
@@ -33,6 +34,8 @@
 #include "webkit/WebKitDOMFloat32ArrayPrivate.h"
 #include "webkit/WebKitDOMFloat64Array.h"
 #include "webkit/WebKitDOMFloat64ArrayPrivate.h"
+#include "webkit/WebKitDOMInt32Array.h"
+#include "webkit/WebKitDOMInt32ArrayPrivate.h"
 #include "webkitdefines.h"
 #include "webkitglobalsprivate.h"
 #include "webkitmarshal.h"
@@ -51,19 +54,21 @@ WebKitDOMFloat64Array* kit(WebCore::Float64Array* obj)
     
 } // namespace WebKit //
 
-void
+WebKitDOMInt32Array*
 webkit_dom_float64array_foo(WebKitDOMFloat64Array* self, WebKitDOMFloat32Array* array)
 {
-    g_return_if_fail(self);
+    g_return_val_if_fail(self, 0);
     WebCore::JSMainThreadNullState state;
     WebCore::Float64Array * item = WebKit::core(self);
-    g_return_if_fail(array);
+    g_return_val_if_fail(array, 0);
     WebCore::Float32Array * converted_array = NULL;
     if (array != NULL) {
         converted_array = WebKit::core(array);
-        g_return_if_fail(converted_array);
+        g_return_val_if_fail(converted_array, 0);
     }
-    item->foo(converted_array);
+    PassRefPtr<WebCore::Int32Array> g_res = WTF::getPtr(item->foo(converted_array));
+    WebKitDOMInt32Array* res = WebKit::kit(g_res.get());
+    return res;
 }
 
 

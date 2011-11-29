@@ -29,10 +29,15 @@
 #include "V8BindingState.h"
 #include "V8DOMWrapper.h"
 #include "V8Float32Array.h"
+#include "V8Int32Array.h"
 #include "V8IsolatedContext.h"
 #include "V8Proxy.h"
 #include <wtf/Float32Array.h>
 #include <wtf/Float64Array.h>
+#include <wtf/GetPtr.h>
+#include <wtf/Int32Array.h>
+#include <wtf/RefCounted.h>
+#include <wtf/RefPtr.h>
 #include <wtf/UnusedParam.h>
 
 namespace WebCore {
@@ -50,8 +55,7 @@ static v8::Handle<v8::Value> fooCallback(const v8::Arguments& args)
         return throwError("Not enough arguments", V8Proxy::TypeError);
     Float64Array* imp = V8Float64Array::toNative(args.Holder());
     EXCEPTION_BLOCK(Float32Array*, array, V8Float32Array::HasInstance(MAYBE_MISSING_PARAMETER(args, 0, MissingIsUndefined)) ? V8Float32Array::toNative(v8::Handle<v8::Object>::Cast(MAYBE_MISSING_PARAMETER(args, 0, MissingIsUndefined))) : 0);
-    imp->foo(array);
-    return v8::Handle<v8::Value>();
+    return toV8(imp->foo(array));
 }
 
 } // namespace Float64ArrayInternal

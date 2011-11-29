@@ -24,10 +24,12 @@
 #include "ExceptionCode.h"
 #include "JSDOMBinding.h"
 #include "JSFloat32Array.h"
+#include "JSInt32Array.h"
 #include <runtime/Error.h>
 #include <runtime/PropertyNameArray.h>
 #include <wtf/Float64Array.h>
 #include <wtf/GetPtr.h>
+#include <wtf/Int32Array.h>
 
 using namespace JSC;
 
@@ -262,8 +264,9 @@ EncodedJSValue JSC_HOST_CALL jsFloat64ArrayPrototypeFunctionFoo(ExecState* exec)
     Float32Array* array(toFloat32Array(MAYBE_MISSING_PARAMETER(exec, 0, MissingIsUndefined)));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
-    imp->foo(array);
-    return JSValue::encode(jsUndefined());
+
+    JSC::JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(imp->foo(array)));
+    return JSValue::encode(result);
 }
 
 

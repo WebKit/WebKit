@@ -35,11 +35,13 @@
 #import "DOMEventInternal.h"
 #import "DOMFloat32ArrayInternal.h"
 #import "DOMFloat64ArrayInternal.h"
+#import "DOMInt32ArrayInternal.h"
 #import "DOMNodeInternal.h"
 #import "DOMStyleSheetInternal.h"
 #import "ExceptionHandlers.h"
 #import "Float32Array.h"
 #import "Float64Array.h"
+#import "Int32Array.h"
 #import "JSMainThreadExecState.h"
 #import "ThreadCheck.h"
 #import "WebScriptObjectPrivate.h"
@@ -49,10 +51,10 @@
 
 @implementation DOMFloat64Array
 
-- (void)foo:(DOMFloat32Array *)array
+- (DOMInt32Array *)foo:(DOMFloat32Array *)array
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->foo(core(array));
+    return kit(WTF::getPtr(IMPL->foo(core(array))));
 }
 
 @end

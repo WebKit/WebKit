@@ -1,3 +1,25 @@
+2011-11-28  Oliver Hunt  <oliver@apple.com>
+
+        Fix V8 bindings codegen and add yet more tests for the typed
+        array bindings.
+
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (AddIncludesForType):
+        * bindings/scripts/test/CPP/WebDOMFloat64Array.cpp:
+        (WebDOMFloat64Array::foo):
+        * bindings/scripts/test/CPP/WebDOMFloat64Array.h:
+        * bindings/scripts/test/GObject/WebKitDOMFloat64Array.cpp:
+        (webkit_dom_float64array_foo):
+        * bindings/scripts/test/GObject/WebKitDOMFloat64Array.h:
+        * bindings/scripts/test/JS/JSFloat64Array.cpp:
+        (WebCore::jsFloat64ArrayPrototypeFunctionFoo):
+        * bindings/scripts/test/ObjC/DOMFloat64Array.h:
+        * bindings/scripts/test/ObjC/DOMFloat64Array.mm:
+        (-[DOMFloat64Array foo:]):
+        * bindings/scripts/test/TestTypedArray.idl:
+        * bindings/scripts/test/V8/V8Float64Array.cpp:
+        (WebCore::Float64ArrayInternal::fooCallback):
+
 2011-11-28  Dana Jansens  <danakj@chromium.org>
 
         FloatQuad::isRectilinear() returns false for 180degree rotations

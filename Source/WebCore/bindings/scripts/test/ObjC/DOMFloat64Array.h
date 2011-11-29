@@ -29,9 +29,10 @@
 #if WEBKIT_VERSION_MAX_ALLOWED >= WEBKIT_VERSION_LATEST
 
 @class DOMFloat32Array;
+@class DOMInt32Array;
 
 @interface DOMFloat64Array : DOMArrayBufferView
-- (void)foo:(DOMFloat32Array *)array;
+- (DOMInt32Array *)foo:(DOMFloat32Array *)array;
 @end
 
 #endif

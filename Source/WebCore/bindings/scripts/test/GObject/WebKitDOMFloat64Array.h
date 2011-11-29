@@ -51,10 +51,10 @@ webkit_dom_float64array_get_type (void);
  * @self: A #WebKitDOMFloat64Array
  * @array: A #WebKitDOMFloat32Array
  *
- * Returns:
+ * Returns: (transfer none):
  *
 **/
-WEBKIT_API void
+WEBKIT_API WebKitDOMInt32Array*
 webkit_dom_float64array_foo(WebKitDOMFloat64Array* self, WebKitDOMFloat32Array* array);
 
 G_END_DECLS
