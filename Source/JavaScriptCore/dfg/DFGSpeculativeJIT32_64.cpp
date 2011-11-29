@@ -2400,8 +2400,8 @@ void SpeculativeJIT::compile(Node& node)
     }
 
     case ArithDiv: {
-#if CPU(X86)
         if (Node::shouldSpeculateInteger(at(node.child1()), at(node.child2())) && node.canSpeculateInteger()) {
+#if CPU(X86)
             SpeculateIntegerOperand op1(this, node.child1());
             SpeculateIntegerOperand op2(this, node.child2());
             GPRTemporary eax(this, X86Registers::eax);
@@ -2438,9 +2438,29 @@ void SpeculativeJIT::compile(Node& node)
             speculationCheck(JSValueRegs(), NoNode, m_jit.branchTest32(JITCompiler::NonZero, edx.gpr()));
             
             integerResult(eax.gpr(), m_compileIndex);
+#else // CPU(X86) -> so non-X86 code follows
+            SpeculateDoubleOperand op1(this, node.child1());
+            SpeculateDoubleOperand op2(this, node.child2());
+            FPRTemporary result(this);
+            FPRTemporary scratch(this);
+            GPRTemporary intResult(this);
+            
+            FPRReg op1FPR = op1.fpr();
+            FPRReg op2FPR = op2.fpr();
+            FPRReg resultFPR = result.fpr();
+            FPRReg scratchFPR = scratch.fpr();
+            GPRReg resultGPR = intResult.gpr();
+            
+            m_jit.divDouble(op1FPR, op2FPR, resultFPR);
+            
+            JITCompiler::JumpList failureCases;
+            m_jit.branchConvertDoubleToInt32(resultFPR, resultGPR, failureCases, scratchFPR);
+            speculationCheck(JSValueRegs(), NoNode, failureCases);
+
+            integerResult(resultGPR, m_compileIndex);
+#endif // CPU(X86)
             break;
         }
-#endif
         
         SpeculateDoubleOperand op1(this, node.child1());
         SpeculateDoubleOperand op2(this, node.child2());
@@ -2449,20 +2469,6 @@ void SpeculativeJIT::compile(Node& node)
         FPRReg reg1 = op1.fpr();
         FPRReg reg2 = op2.fpr();
         m_jit.divDouble(reg1, reg2, result.fpr());
-
-#if !CPU(X86)
-        if (Node::shouldSpeculateInteger(at(node.child1()), at(node.child2())) && node.canSpeculateInteger()) {
-            FPRTemporary scratch(this, op2);
-            GPRTemporary intResult(this);
-
-            JITCompiler::JumpList failureCases;
-            m_jit.branchConvertDoubleToInt32(result.fpr(), intResult.gpr(), failureCases, scratch.fpr());
-            speculationCheck(JSValueRegs(), NoNode, failureCases);
-
-            integerResult(intResult.gpr(), m_compileIndex);
-            break;
-        }
-#endif
 
         doubleResult(result.fpr(), m_compileIndex);
         break;

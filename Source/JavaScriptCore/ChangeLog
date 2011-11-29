@@ -1,5 +1,16 @@
 2011-11-28  Filip Pizlo  <fpizlo@apple.com>
 
+        DFG non-X86 ArithDiv does speculation failure after mutating state,
+        without a value recovery
+        https://bugs.webkit.org/show_bug.cgi?id=73286
+
+        Reviewed by Gavin Barraclough.
+
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
+2011-11-28  Filip Pizlo  <fpizlo@apple.com>
+
         Unreviewed build fixes for ARM.
 
         * assembler/MacroAssemblerARMv7.h:
