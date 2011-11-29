@@ -1,3 +1,19 @@
+2011-11-29  Jing Zhao  <jingzhao@chromium.org>
+
+        Assertion fails when opening two popup menus
+        https://bugs.webkit.org/show_bug.cgi?id=73189
+
+        Reviewed by Kent Tamura.
+
+        By using element.dispatchEvent(), a user written script can open two
+        popup menus, which causes the assertion in WebViewImpl::popupOpened()
+        fail.
+
+        Check if there is an opened popup menu before opening a popup menu.
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::popupOpened):
+
 2011-11-28  David Grogan  <dgrogan@chromium.org>
 
         WebWorkerRunLoop wrapper around WorkerRunLoop
