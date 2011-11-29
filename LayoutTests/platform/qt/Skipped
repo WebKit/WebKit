@@ -2498,3 +2498,11 @@ fast/canvas/canvas-lineWidth.html
 # [Qt] inspector/extensions/extensions-events.html crashing after r100926
 # https://bugs.webkit.org/show_bug.cgi?id=72932
 inspector/extensions/extensions-events.html
+
+# REGRESSION(r101268):fast/block/child-not-removed-from-parent-lineboxes-crash.html crashes in Debug
+# https://bugs.webkit.org/show_bug.cgi?id=73250
+fast/block/child-not-removed-from-parent-lineboxes-crash.html
+
+# REGRESSION(r101172): It made fast/dom/clone-node-style.html assert
+# https://bugs.webkit.org/show_bug.cgi?id=73227
+fast/dom/clone-node-style.html
