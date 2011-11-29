@@ -92,7 +92,7 @@ WebInspector.AuditRules.GzipRule.prototype = {
                 }
                 var savings = 2 * size / 3;
                 totalSavings += savings;
-                summary.addChild(String.sprintf("%s could save ~%s", WebInspector.AuditRuleResult.linkifyDisplayName(resource.url), Number.bytesToString(savings)));
+                summary.addFormatted("%r could save ~%s", resource.url, Number.bytesToString(savings));
                 result.violationCount++;
             }
         }
@@ -352,7 +352,7 @@ WebInspector.AuditRules.UnusedCssRule.prototype = {
                     var pctUnused = Math.round(100 * unusedStylesheetSize / stylesheetSize);
                     if (!summary)
                         summary = result.addChild("", true);
-                    var entry = summary.addChild(String.sprintf("%s: %s (%d%%) is not used by the current page.", url, Number.bytesToString(unusedStylesheetSize), pctUnused));
+                    var entry = summary.addFormatted("%s: %s (%d%%) is not used by the current page.", url, Number.bytesToString(unusedStylesheetSize), pctUnused);
 
                     for (var j = 0; j < unusedRules.length; ++j)
                         entry.addSnippet(unusedRules[j]);
@@ -681,10 +681,10 @@ WebInspector.AuditRules.ImageDimensionsRule.prototype = {
         {
             for (var url in urlToNoDimensionCount) {
                 var entry = entry || result.addChild("A width and height should be specified for all images in order to speed up page display. The following image(s) are missing a width and/or height:", true);
-                var value = WebInspector.AuditRuleResult.linkifyDisplayName(url);
+                var format = "%r";
                 if (urlToNoDimensionCount[url] > 1)
-                    value += String.sprintf(" (%d uses)", urlToNoDimensionCount[url]);
-                entry.addChild(value);
+                    format += " (%d uses)";
+                entry.addFormatted(format, url, urlToNoDimensionCount[url]);
                 result.violationCount++;
             }
             callback(entry ? result : null);
@@ -801,11 +801,11 @@ WebInspector.AuditRules.CssInHeadRule.prototype = {
             for (var url in evalResult) {
                 var urlViolations = evalResult[url];
                 if (urlViolations[0]) {
-                    result.addChild(String.sprintf("%s style block(s) in the %s body should be moved to the document head.", urlViolations[0], WebInspector.AuditRuleResult.linkifyDisplayName(url)));
+                    result.addFormatted("%s style block(s) in the %r body should be moved to the document head.", urlViolations[0], url);
                     result.violationCount += urlViolations[0];
                 }
                 for (var i = 0; i < urlViolations[1].length; ++i)
-                    result.addChild(String.sprintf("Link node %s should be moved to the document head in %s", WebInspector.AuditRuleResult.linkifyDisplayName(urlViolations[1][i]), WebInspector.AuditRuleResult.linkifyDisplayName(url)));
+                    result.addFormatted("Link node %r should be moved to the document head in %r", urlViolations[1][i], url);
                 result.violationCount += urlViolations[1].length;
             }
             summary.value = String.sprintf("CSS in the document body adversely impacts rendering performance.");

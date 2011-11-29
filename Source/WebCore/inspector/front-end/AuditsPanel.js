@@ -386,11 +386,17 @@ WebInspector.AuditRuleResult = function(value, expanded, className)
     this.className = className;
     this.expanded = expanded;
     this.violationCount = 0;
+    this._formatters = {
+        r: WebInspector.AuditRuleResult.linkifyDisplayName
+    };
+    var standardFormatters = Object.keys(String.standardFormatters);
+    for (var i = 0; i < standardFormatters.length; ++i)
+        this._formatters[standardFormatters[i]] = String.standardFormatters[standardFormatters[i]];
 }
 
 WebInspector.AuditRuleResult.linkifyDisplayName = function(url)
 {
-    return WebInspector.linkifyURL(url, WebInspector.displayNameForURL(url));
+    return WebInspector.linkifyURLAsNode(url, WebInspector.displayNameForURL(url));
 }
 
 WebInspector.AuditRuleResult.resourceDomain = function(domain)
@@ -426,6 +432,29 @@ WebInspector.AuditRuleResult.prototype = {
     addSnippet: function(snippet)
     {
         return this.addChild(snippet, false, "source-code");
+    },
+
+    /**
+     * @param {string} format
+     * @param {...*} vararg
+     */
+    addFormatted: function(format, vararg)
+    {
+        var substitutions = Array.prototype.slice.call(arguments, 1);
+        var fragment = document.createDocumentFragment();
+
+        var formattedResult = String.format(format, substitutions, this._formatters, fragment, this._append).formattedResult;
+        if (formattedResult instanceof Node)
+            formattedResult.normalize();
+        return this.addChild(formattedResult);
+    },
+
+    _append: function(a, b)
+    {
+        if (!(b instanceof Node))
+            b = document.createTextNode(b);
+        a.appendChild(b);
+        return a;
     }
 }
 

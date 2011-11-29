@@ -1,3 +1,46 @@
+2011-11-28  Andrey Kosyakov  <caseq@chromium.org>
+
+        Web Inspector: remove WebInspector.linkifyURL and TreeElement.titleHTML
+        https://bugs.webkit.org/show_bug.cgi?id=73217
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/AuditFormatters.js:
+        (WebInspector.applyFormatters):
+        * inspector/front-end/AuditResultView.js:
+        (WebInspector.AuditCategoryResultPane.prototype._appendResult):
+        * inspector/front-end/AuditRules.js:
+        (WebInspector.AuditRules.GzipRule.prototype.doRun):
+        (WebInspector.AuditRules.UnusedCssRule.prototype.doRun.evalCallback.selectorsCallback):
+        (WebInspector.AuditRules.ImageDimensionsRule.prototype.doRun):
+        (WebInspector.AuditRules.CssInHeadRule.prototype.doRun):
+        * inspector/front-end/AuditsPanel.js:
+        (WebInspector.AuditRuleResult):
+        (WebInspector.AuditRuleResult.linkifyDisplayName):
+        (WebInspector.AuditRuleResult.prototype.addSnippet):
+        (WebInspector.AuditRuleResult.prototype.addFormatted):
+        (WebInspector.AuditRuleResult.prototype._append):
+        * inspector/front-end/ElementsTreeOutline.js:
+        (WebInspector.ElementsTreeElement.prototype.adjustCollapsedRange):
+        * inspector/front-end/ObjectPropertiesSection.js:
+        (WebInspector.ObjectPropertiesSection.prototype.updateProperties):
+        * inspector/front-end/ResourceHeadersView.js:
+        (WebInspector.ResourceHeadersView.prototype._formatHeader):
+        (WebInspector.ResourceHeadersView.prototype._formatParameter):
+        (WebInspector.ResourceHeadersView.prototype._refreshURL):
+        (WebInspector.ResourceHeadersView.prototype._refreshUrlFragment):
+        (WebInspector.ResourceHeadersView.prototype._refreshRequestPayload):
+        (WebInspector.ResourceHeadersView.prototype._refreshParms):
+        (WebInspector.ResourceHeadersView.prototype._refreshHTTPInformation):
+        (WebInspector.ResourceHeadersView.prototype._refreshHeaders):
+        * inspector/front-end/ResourceUtils.js:
+        * inspector/front-end/StylesSidebarPane.js:
+        (WebInspector.ComputedStylePropertiesSection.prototype.rebuildComputedTrace):
+        * inspector/front-end/WorkersSidebarPane.js:
+        (WebInspector.WorkersSidebarPane.prototype.addWorker):
+        * inspector/front-end/treeoutline.js:
+        (TreeElement.prototype._setListItemNodeContent):
+
 2011-11-29  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r101302.

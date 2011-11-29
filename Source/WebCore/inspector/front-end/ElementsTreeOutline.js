@@ -884,8 +884,10 @@ WebInspector.ElementsTreeElement.prototype = {
         if (childNodeCount > this.expandedChildCount) {
             var targetButtonIndex = expandedChildCount;
             if (!this.expandAllButtonElement) {
-                var item = new TreeElement(null, null, false);
-                item.titleHTML = "<button class=\"show-all-nodes\" value=\"\" />";
+                var button = document.createElement("button");
+                button.className = "show-all-nodes";
+                button.value = "";
+                var item = new TreeElement(button, null, false);
                 item.selectable = false;
                 item.expandAllButton = true;
                 this.insertChild(item, targetButtonIndex);

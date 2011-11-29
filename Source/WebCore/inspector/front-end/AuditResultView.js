@@ -108,7 +108,7 @@ WebInspector.AuditCategoryResultPane.prototype = {
         }
 
         var treeElement = new TreeElement(null, null, !!result.children);
-        treeElement.titleHTML = title;
+        treeElement.title = title;
         parentTreeElement.appendChild(treeElement);
 
         if (result.className)

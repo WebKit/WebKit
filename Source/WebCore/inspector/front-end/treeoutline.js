@@ -530,16 +530,6 @@ TreeElement.prototype = {
         this.didChange();
     },
 
-    get titleHTML() {
-        return this._titleHTML;
-    },
-
-    set titleHTML(x) {
-        this._titleHTML = x;
-        this._setListItemNodeContent();
-        this.didChange();
-    },
-
     get tooltip() {
         return this._tooltip;
     },
@@ -630,17 +620,12 @@ TreeElement.prototype = {
         if (!this._listItemNode)
             return;
 
-        if (!this._titleHTML && !this._title)
-            this._listItemNode.removeChildren();
-        else if (typeof this._titleHTML === "string")
-            this._listItemNode.innerHTML = this._titleHTML;
-        else if (typeof this._title === "string")
+        if (typeof this._title === "string")
             this._listItemNode.textContent = this._title;
         else {
             this._listItemNode.removeChildren();
-            if (this._title.parentNode)
-                this._title.parentNode.removeChild(this._title);
-            this._listItemNode.appendChild(this._title);
+            if (this._title)
+                this._listItemNode.appendChild(this._title);
         }
     }
 }

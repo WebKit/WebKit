@@ -1361,12 +1361,17 @@ WebInspector.ComputedStylePropertiesSection.prototype = {
 
                 var treeElement = this._propertyTreeElements[property.name];
                 if (treeElement) {
-                    var selectorText = section.styleRule.selectorText;
-                    var value = property.value;
-                    var title = "<span style='color: gray'>" + selectorText + "</span> - " + value;
-                    var subtitle = " <span style='float:right'>" + section._selectorRefElement.innerHTML + "</span>";
-                    var childElement = new TreeElement(null, null, false);
-                    childElement.titleHTML = title + subtitle;
+                    var fragment = document.createDocumentFragment();
+                    var selector = fragment.createChild("span");
+                    selector.style.color = "gray";
+                    selector.textContent = section.styleRule.selectorText;
+                    fragment.appendChild(document.createTextNode(" - " + property.value + " "));
+                    var subtitle = fragment.createChild("span");
+                    subtitle.style.float = "right";
+                    var selectorRef = section._selectorRefElement.cloneNode(true);
+                    for (var n = 0; n < selectorRef.childNodes.length; ++n)
+                        subtitle.appendChild(selectorRef.childNodes[n]);
+                    var childElement = new TreeElement(fragment, null, false);
                     treeElement.appendChild(childElement);
                     if (section.isPropertyOverloaded(property.name))
                         childElement.listItemElement.addStyleClass("overloaded");

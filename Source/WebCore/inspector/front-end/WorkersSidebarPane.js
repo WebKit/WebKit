@@ -62,10 +62,8 @@ WebInspector.WorkersSidebarPane.prototype = {
         var worker = new WebInspector.Worker(id, url, isShared);
         this._workers[id] = worker;
 
-        var title = WebInspector.linkifyURL(url, WebInspector.displayNameForURL(url), "worker-item", true, url);
-        var treeElement = new TreeElement(null, worker, false);
-        treeElement.titleHTML = title;
-        this._treeOutline.appendChild(treeElement);
+        var title = WebInspector.linkifyURLAsNode(url, WebInspector.displayNameForURL(url), "worker-item", true, url);
+        this._treeOutline.appendChild(new TreeElement(title, worker, false));
     },
 
     removeWorker: function(id)

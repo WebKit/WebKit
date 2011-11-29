@@ -177,22 +177,6 @@ WebInspector.linkifyURLAsNode = function(url, linkText, classes, isExternal, too
 
 /**
  * @param {string} url
- * @param {string=} linkText
- * @param {string=} classes
- * @param {boolean=} isExternal
- * @param {string=} tooltipText
- * @return {string}
- * @deprecated
- */
-WebInspector.linkifyURL = function(url, linkText, classes, isExternal, tooltipText)
-{
-    // Use the DOM version of this function so as to avoid needing to escape attributes.
-    // FIXME:  Get rid of linkifyURL entirely.
-    return WebInspector.linkifyURLAsNode(url, linkText, classes, isExternal, tooltipText).outerHTML;
-}
-
-/**
- * @param {string} url
  * @param {number=} lineNumber
  * @return {string}
  */

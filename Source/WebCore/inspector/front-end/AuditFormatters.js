@@ -43,6 +43,8 @@ WebInspector.applyFormatters = function(value)
             break;
 
         case "object":
+            if (value instanceof Node)
+                return value;
             if (value instanceof Array) {
                 formatter = WebInspector.AuditFormatters.concat;
                 args = value;
