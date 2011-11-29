@@ -866,6 +866,7 @@ SOURCES += \
     inspector/InspectorFrontendClientLocal.cpp \
     inspector/InspectorFrontendHost.cpp \
     inspector/InspectorInstrumentation.cpp \
+    inspector/InspectorMetaAgent.cpp \
     inspector/InspectorPageAgent.cpp \
     inspector/InspectorProfilerAgent.cpp \
     inspector/InspectorResourceAgent.cpp \
@@ -1911,6 +1912,7 @@ HEADERS += \
     inspector/InspectorFrontendClientLocal.h \
     inspector/InspectorFrontendHost.h \
     inspector/InspectorInstrumentation.h \
+    inspector/InspectorMetaAgent.h \
     inspector/InspectorPageAgent.h \
     inspector/InspectorProfilerAgent.h \
     inspector/InspectorResourceAgent.h \

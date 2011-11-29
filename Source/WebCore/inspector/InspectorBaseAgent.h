@@ -32,6 +32,8 @@
 #define InspectorBaseAgent_h
 
 #include "InspectorBackendDispatcher.h"
+#include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -41,12 +43,18 @@ class InstrumentingAgents;
 
 class InspectorBaseAgentInterface {
 public:
-    InspectorBaseAgentInterface() { }
-    virtual ~InspectorBaseAgentInterface() { }
+    explicit InspectorBaseAgentInterface(const String& name);
+    virtual ~InspectorBaseAgentInterface();
+
     virtual void setFrontend(InspectorFrontend*) { }
     virtual void clearFrontend() { }
     virtual void restore() { }
     virtual void registerInDispatcher(InspectorBackendDispatcher*) = 0;
+    virtual void getCapabilities(InspectorArray*) { };
+
+    String name() { return m_name; }
+private:
+    String m_name;
 };
 
 template<typename T>
@@ -60,8 +68,9 @@ public:
     }
 
 protected:
-    InspectorBaseAgent(InstrumentingAgents* instrumentingAgents, InspectorState* inspectorState)
-        : m_instrumentingAgents(instrumentingAgents)
+    InspectorBaseAgent(const String& name, InstrumentingAgents* instrumentingAgents, InspectorState* inspectorState)
+        : InspectorBaseAgentInterface(name)
+        , m_instrumentingAgents(instrumentingAgents)
         , m_state(inspectorState)
     {
     }

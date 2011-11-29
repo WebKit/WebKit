@@ -107,7 +107,7 @@ void InspectorFileSystemAgent::restore()
 }
 
 InspectorFileSystemAgent::InspectorFileSystemAgent(InstrumentingAgents* instrumentingAgents, InspectorState* state)
-    : InspectorBaseAgent<InspectorFileSystemAgent>(instrumentingAgents, state),
+    : InspectorBaseAgent<InspectorFileSystemAgent>("FileSystem", instrumentingAgents, state),
       m_frontend(0),
       m_enabled(false)
 {

@@ -172,7 +172,7 @@ void RevalidateStyleAttributeTask::onTimer(Timer<RevalidateStyleAttributeTask>*)
 }
 
 InspectorDOMAgent::InspectorDOMAgent(InstrumentingAgents* instrumentingAgents, InspectorPageAgent* pageAgent, InspectorClient* client, InspectorState* inspectorState, InjectedScriptManager* injectedScriptManager)
-    : InspectorBaseAgent<InspectorDOMAgent>(instrumentingAgents, inspectorState)
+    : InspectorBaseAgent<InspectorDOMAgent>("DOM", instrumentingAgents, inspectorState)
     , m_pageAgent(pageAgent)
     , m_client(client)
     , m_injectedScriptManager(injectedScriptManager)

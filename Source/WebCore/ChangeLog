@@ -1,3 +1,76 @@
+2011-11-29  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: introduce generic capabilities concept, migrate debugger domain to generic capabilities.
+        https://bugs.webkit.org/show_bug.cgi?id=73311
+
+        This step is necessary for getting rid of the 'capability' aspect in the Preferences. As a result,
+        single front-end will be applicable to multiple backend configurations.
+
+        Reviewed by Yury Semikhatsky.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * inspector/Inspector.json:
+        * inspector/InspectorAgent.cpp:
+        (WebCore::InspectorAgent::InspectorAgent):
+        * inspector/InspectorApplicationCacheAgent.cpp:
+        (WebCore::InspectorApplicationCacheAgent::InspectorApplicationCacheAgent):
+        * inspector/InspectorBaseAgent.cpp:
+        (WebCore::InspectorBaseAgentInterface::InspectorBaseAgentInterface):
+        (WebCore::InspectorBaseAgentInterface::~InspectorBaseAgentInterface):
+        * inspector/InspectorBaseAgent.h:
+        (WebCore::InspectorBaseAgentInterface::getCapabilities):
+        (WebCore::InspectorBaseAgentInterface::name):
+        (WebCore::InspectorBaseAgent::InspectorBaseAgent):
+        * inspector/InspectorCSSAgent.cpp:
+        (WebCore::InspectorCSSAgent::InspectorCSSAgent):
+        * inspector/InspectorConsoleAgent.cpp:
+        (WebCore::InspectorConsoleAgent::InspectorConsoleAgent):
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::InspectorController):
+        * inspector/InspectorController.h:
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::InspectorDOMAgent):
+        * inspector/InspectorDOMDebuggerAgent.cpp:
+        (WebCore::InspectorDOMDebuggerAgent::InspectorDOMDebuggerAgent):
+        * inspector/InspectorDOMStorageAgent.cpp:
+        (WebCore::InspectorDOMStorageAgent::InspectorDOMStorageAgent):
+        * inspector/InspectorDatabaseAgent.cpp:
+        (WebCore::InspectorDatabaseAgent::InspectorDatabaseAgent):
+        * inspector/InspectorDebuggerAgent.cpp:
+        (WebCore::InspectorDebuggerAgent::InspectorDebuggerAgent):
+        (WebCore::InspectorDebuggerAgent::getCapabilities):
+        * inspector/InspectorDebuggerAgent.h:
+        * inspector/InspectorFileSystemAgent.cpp:
+        (WebCore::InspectorFileSystemAgent::InspectorFileSystemAgent):
+        * inspector/InspectorMetaAgent.cpp: Added.
+        (WebCore::InspectorMetaAgent::~InspectorMetaAgent):
+        (WebCore::InspectorMetaAgent::getCapabilities):
+        (WebCore::InspectorMetaAgent::InspectorMetaAgent):
+        * inspector/InspectorMetaAgent.h: Added.
+        (WebCore::InspectorMetaAgent::create):
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::InspectorPageAgent):
+        * inspector/InspectorProfilerAgent.cpp:
+        (WebCore::InspectorProfilerAgent::InspectorProfilerAgent):
+        * inspector/InspectorResourceAgent.cpp:
+        (WebCore::InspectorResourceAgent::InspectorResourceAgent):
+        * inspector/InspectorRuntimeAgent.cpp:
+        (WebCore::InspectorRuntimeAgent::InspectorRuntimeAgent):
+        * inspector/InspectorTimelineAgent.cpp:
+        (WebCore::InspectorTimelineAgent::InspectorTimelineAgent):
+        * inspector/InspectorValues.h:
+        (WebCore::InspectorArray::begin):
+        (WebCore::InspectorArray::end):
+        * inspector/InspectorWorkerAgent.cpp:
+        (WebCore::InspectorWorkerAgent::InspectorWorkerAgent):
+        * inspector/front-end/DebuggerModel.js:
+        (WebInspector.DebuggerModel.prototype.enableDebugger):
+
 2011-11-29  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Make WebKit/qt build with V8 and Qt 5

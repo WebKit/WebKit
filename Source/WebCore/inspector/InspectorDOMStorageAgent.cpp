@@ -56,7 +56,7 @@ static const char domStorageAgentEnabled[] = "domStorageAgentEnabled";
 typedef HashMap<int, RefPtr<InspectorDOMStorageResource> > DOMStorageResourcesMap;
 
 InspectorDOMStorageAgent::InspectorDOMStorageAgent(InstrumentingAgents* instrumentingAgents, InspectorState* state)
-    : InspectorBaseAgent<InspectorDOMStorageAgent>(instrumentingAgents, state)
+    : InspectorBaseAgent<InspectorDOMStorageAgent>("DOMStorage", instrumentingAgents, state)
     , m_frontend(0)
     , m_enabled(false)
 {

@@ -185,7 +185,7 @@ CSSStyleRule* InspectorCSSAgent::asCSSStyleRule(CSSRule* rule)
 }
 
 InspectorCSSAgent::InspectorCSSAgent(InstrumentingAgents* instrumentingAgents, InspectorState* state, InspectorDOMAgent* domAgent)
-    : InspectorBaseAgent<InspectorCSSAgent>(instrumentingAgents, state)
+    : InspectorBaseAgent<InspectorCSSAgent>("CSS", instrumentingAgents, state)
     , m_domAgent(domAgent)
     , m_lastPseudoState(0)
     , m_lastStyleSheetId(1)

@@ -41,6 +41,33 @@
         ]
     },
     {
+        "domain": "Meta",
+        "hidden": true,
+        "types": [
+            {
+                "id": "DomainCapabilities",
+                "type": "object",
+                "description": "Domain capabilities descriptor.",
+                "properties": [
+                    { "name": "domainName", "type": "string", "description": "Domain name." },
+                    { "name": "capabilities", "type": "array", "items": { "type": "string" }, "description": "List of the capabilities." }
+                ]
+            }
+        ],
+        "commands": [
+            {
+                "name": "getCapabilities",
+                "parameters": [
+                    { "name": "domainNames", "type": "array", "items":  { "type": "string" }, "description": "List of the domains to return capabilities for." }
+                ],
+                "returns": [
+                    { "name": "capabilities", "type": "array", "items": { "$ref": "DomainCapabilities"}, "description": "Array of the domain capabilities." }
+                ],
+                "description": "Returns capability descriptors for the given domain names."
+            }
+        ]
+    },
+    {
         "domain": "Page",
         "description": "Actions and events related to the inspected page belong to the page domain.",
         "types": [
@@ -1786,14 +1813,6 @@
             }
         ],
         "commands": [
-            {
-                "name": "getCapabilities",
-                "returns": [
-                    { "name": "capabilities", "type": "array", "items": { "type": "string"}, "description": "List of the debugger domain capabilities" }
-                ],
-                "description": "Returns the list of the debugger capabilities.",
-                "hidden": true
-            },
             {
                 "name": "enable",
                 "description": "Enables debugger for the given page. Clients should not assume that the debugging has been enabled until the result for this command is received."

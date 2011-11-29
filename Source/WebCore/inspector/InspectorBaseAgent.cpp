@@ -35,6 +35,15 @@
 
 namespace WebCore {
 
+InspectorBaseAgentInterface::InspectorBaseAgentInterface(const String& name)
+    : m_name(name)
+{
+}
+
+InspectorBaseAgentInterface::~InspectorBaseAgentInterface()
+{
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(INSPECTOR)

@@ -62,7 +62,7 @@ static const char consolePanelName[] = "console";
 static const char profilesPanelName[] = "profiles";
 
 InspectorAgent::InspectorAgent(Page* page, InjectedScriptManager* injectedScriptManager, InstrumentingAgents* instrumentingAgents, InspectorState* state)
-    : InspectorBaseAgent<InspectorAgent>(instrumentingAgents, state)
+    : InspectorBaseAgent<InspectorAgent>("Inspector", instrumentingAgents, state)
     , m_inspectedPage(page)
     , m_frontend(0)
     , m_injectedScriptManager(injectedScriptManager)

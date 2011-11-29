@@ -68,7 +68,7 @@ PassOwnPtr<InspectorProfilerAgent> InspectorProfilerAgent::create(InstrumentingA
 }
 
 InspectorProfilerAgent::InspectorProfilerAgent(InstrumentingAgents* instrumentingAgents, InspectorConsoleAgent* consoleAgent, Page* inspectedPage, InspectorState* inspectorState, InjectedScriptManager* injectedScriptManager)
-    : InspectorBaseAgent<InspectorProfilerAgent>(instrumentingAgents, inspectorState)
+    : InspectorBaseAgent<InspectorProfilerAgent>("Profiler", instrumentingAgents, inspectorState)
     , m_consoleAgent(consoleAgent)
     , m_inspectedPage(inspectedPage)
     , m_injectedScriptManager(injectedScriptManager)

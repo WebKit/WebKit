@@ -75,7 +75,7 @@ PassOwnPtr<InspectorDOMDebuggerAgent> InspectorDOMDebuggerAgent::create(Instrume
 }
 
 InspectorDOMDebuggerAgent::InspectorDOMDebuggerAgent(InstrumentingAgents* instrumentingAgents, InspectorState* inspectorState, InspectorDOMAgent* domAgent, InspectorDebuggerAgent* debuggerAgent, InspectorAgent* inspectorAgent)
-    : InspectorBaseAgent<InspectorDOMDebuggerAgent>(instrumentingAgents, inspectorState)
+    : InspectorBaseAgent<InspectorDOMDebuggerAgent>("DOMDebugger", instrumentingAgents, inspectorState)
     , m_domAgent(domAgent)
     , m_debuggerAgent(debuggerAgent)
     , m_inspectorAgent(inspectorAgent)

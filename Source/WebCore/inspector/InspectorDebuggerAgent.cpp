@@ -53,7 +53,7 @@ static const char javaScriptBreakpoints[] = "javaScriptBreakopints";
 const char* InspectorDebuggerAgent::backtraceObjectGroup = "backtrace-object-group";
 
 InspectorDebuggerAgent::InspectorDebuggerAgent(InstrumentingAgents* instrumentingAgents, InspectorState* inspectorState, InjectedScriptManager* injectedScriptManager)
-    : InspectorBaseAgent<InspectorDebuggerAgent>(instrumentingAgents, inspectorState)
+    : InspectorBaseAgent<InspectorDebuggerAgent>("Debugger", instrumentingAgents, inspectorState)
     , m_injectedScriptManager(injectedScriptManager)
     , m_frontend(0)
     , m_pausedScriptState(0)
@@ -99,10 +99,10 @@ bool InspectorDebuggerAgent::enabled()
     return m_state->getBoolean(DebuggerAgentState::debuggerEnabled);
 }
 
-void InspectorDebuggerAgent::getCapabilities(ErrorString*, RefPtr<InspectorArray>* capabilities)
+void InspectorDebuggerAgent::getCapabilities(InspectorArray* capabilities)
 {
     if (scriptDebugServer().canSetScriptSource())
-        (*capabilities)->pushString(InspectorFrontend::Debugger::capabilitySetScriptSource);
+        capabilities->pushString(InspectorFrontend::Debugger::capabilitySetScriptSource);
 }
 
 void InspectorDebuggerAgent::enable(ErrorString*)

@@ -56,7 +56,7 @@ static bool asBool(const bool* const b)
 }
 
 InspectorRuntimeAgent::InspectorRuntimeAgent(InstrumentingAgents* instrumentingAgents, InspectorState* state, InjectedScriptManager* injectedScriptManager)
-    : InspectorBaseAgent<InspectorRuntimeAgent>(instrumentingAgents, state)
+    : InspectorBaseAgent<InspectorRuntimeAgent>("Runtime", instrumentingAgents, state)
     , m_injectedScriptManager(injectedScriptManager)
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     , m_scriptDebugServer(0)

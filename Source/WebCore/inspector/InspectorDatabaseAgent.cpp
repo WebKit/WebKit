@@ -243,7 +243,7 @@ void InspectorDatabaseAgent::clearResources()
 }
 
 InspectorDatabaseAgent::InspectorDatabaseAgent(InstrumentingAgents* instrumentingAgents, InspectorState* state)
-    : InspectorBaseAgent<InspectorDatabaseAgent>(instrumentingAgents, state)
+    : InspectorBaseAgent<InspectorDatabaseAgent>("Database", instrumentingAgents, state)
     , m_enabled(false)
 {
     m_instrumentingAgents->setInspectorDatabaseAgent(this);

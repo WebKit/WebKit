@@ -65,13 +65,13 @@ public:
 
     virtual ~InspectorDebuggerAgent();
 
-    void getCapabilities(ErrorString*, RefPtr<InspectorArray>*);
     void enable(ErrorString*);
     void disable(ErrorString*);
 
     virtual void setFrontend(InspectorFrontend*);
     virtual void clearFrontend();
     virtual void restore();
+    virtual void getCapabilities(InspectorArray*);
 
     void didClearMainFrameWindowObject();
 

@@ -111,7 +111,7 @@ PassOwnPtr<InspectorWorkerAgent> InspectorWorkerAgent::create(InstrumentingAgent
 }
 
 InspectorWorkerAgent::InspectorWorkerAgent(InstrumentingAgents* instrumentingAgents, InspectorState* inspectorState)
-    : InspectorBaseAgent<InspectorWorkerAgent>(instrumentingAgents, inspectorState)
+    : InspectorBaseAgent<InspectorWorkerAgent>("Worker", instrumentingAgents, inspectorState)
     , m_inspectorFrontend(0)
 {
     m_instrumentingAgents->setInspectorWorkerAgent(this);
