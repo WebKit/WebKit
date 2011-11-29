@@ -34,6 +34,7 @@
 #if ENABLE(INSPECTOR)
 
 #include "InspectorRuntimeAgent.h"
+#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 
@@ -42,10 +43,15 @@ class Page;
 
 class PageRuntimeAgent : public InspectorRuntimeAgent {
 public:
-    PageRuntimeAgent(InstrumentingAgents*, InspectorState*, InjectedScriptManager*, Page*, InspectorPageAgent*);
+    static PassOwnPtr<PageRuntimeAgent> create(InstrumentingAgents* instrumentingAgents, InspectorState* state, InjectedScriptManager* injectedScriptManager, Page* page, InspectorPageAgent* pageAgent)
+    {
+        return adoptPtr(new PageRuntimeAgent(instrumentingAgents, state, injectedScriptManager, page, pageAgent));
+    }
     virtual ~PageRuntimeAgent();
 
 private:
+    PageRuntimeAgent(InstrumentingAgents*, InspectorState*, InjectedScriptManager*, Page*, InspectorPageAgent*);
+
     virtual ScriptState* scriptStateForFrameId(const String& frameId);
     virtual ScriptState* getDefaultInspectedState();
     Page* m_inspectedPage;

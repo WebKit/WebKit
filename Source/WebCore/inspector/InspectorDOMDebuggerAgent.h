@@ -54,7 +54,7 @@ class Node;
 
 typedef String ErrorString;
 
-class InspectorDOMDebuggerAgent : public InspectorBaseAgent, public InspectorDebuggerAgent::Listener {
+class InspectorDOMDebuggerAgent : public InspectorBaseAgent<InspectorDOMDebuggerAgent>, public InspectorDebuggerAgent::Listener {
     WTF_MAKE_NONCOPYABLE(InspectorDOMDebuggerAgent);
 public:
     static PassOwnPtr<InspectorDOMDebuggerAgent> create(InstrumentingAgents*, InspectorState*, InspectorDOMAgent*, InspectorDebuggerAgent*, InspectorAgent*);
@@ -79,9 +79,7 @@ public:
     void willSendXMLHttpRequest(const String& url);
     void pauseOnNativeEventIfNeeded(const String& categoryType, const String& eventName, bool synchronous);
 
-    virtual void setFrontend(InspectorFrontend*) { }
     virtual void clearFrontend();
-    virtual void restore() { }
 
 private:
     InspectorDOMDebuggerAgent(InstrumentingAgents*, InspectorState*, InspectorDOMAgent*, InspectorDebuggerAgent*, InspectorAgent*);

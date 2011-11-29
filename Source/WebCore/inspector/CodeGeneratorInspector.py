@@ -135,7 +135,6 @@ class DomainNameFixes:
 
         class Res(object):
             agent_type_name = agent_name_res
-            hidden = domain_name in cls.hidden_domains
             skip_js_bind = domain_name in cls.skip_js_bind_domains
             agent_field_name = field_name_res
 
@@ -157,8 +156,7 @@ class DomainNameFixes:
         return Res
 
     skip_js_bind_domains = set(["Runtime", "CSS", "DOMDebugger"])
-    hidden_domains = set(["Inspector"])
-    agent_type_map = {"Network": "InspectorResourceAgent"}
+    agent_type_map = {"Network": "InspectorResourceAgent", "Inspector": "InspectorAgent", }
 
 
 class CParamType(object):
@@ -505,9 +503,9 @@ ${fieldDeclarations}};
 #ifndef InspectorBackendDispatcher_h
 #define InspectorBackendDispatcher_h
 
-#include <PlatformString.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -522,10 +520,12 @@ typedef String ErrorString;
 
 class InspectorBackendDispatcher: public RefCounted<InspectorBackendDispatcher> {
 public:
-    InspectorBackendDispatcher(InspectorFrontendChannel* inspectorFrontendChannel$constructorParams)
+    InspectorBackendDispatcher(InspectorFrontendChannel* inspectorFrontendChannel)
         : m_inspectorFrontendChannel(inspectorFrontendChannel)
 $constructorInit
     { }
+
+$setters
 
     void clearFrontend() { m_inspectorFrontendChannel = 0; }
 
@@ -545,7 +545,6 @@ $constructorInit
     static bool getCommandName(const String& message, String* result);
 
     enum MethodNames {
-
 $methodNamesEnumContent
 };
 
@@ -585,8 +584,8 @@ $fieldDeclarations
 
 #include "InspectorAgent.h"
 #include "InspectorValues.h"
-#include "PlatformString.h"
 #include "InspectorFrontendChannel.h"
+#include <wtf/text/WTFString.h>
 $includes
 
 namespace WebCore {
@@ -916,7 +915,7 @@ bool InspectorBackendDispatcher::getCommandName(const String& message, String* r
 
 #include "InspectorFrontendChannel.h"
 #include "InspectorValues.h"
-#include "PlatformString.h"
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -1205,7 +1204,7 @@ class Generator:
     backend_js_domain_dispatcher_list = []
     backend_js_capabilities_list = []
 
-    backend_constructor_param_list = []
+    backend_setters_list = []
     backend_constructor_init_list = []
     backend_field_list = []
     backend_forward_list = []
@@ -1265,12 +1264,10 @@ class Generator:
             if domain_data.is_disabled(defines_map):
                 continue
 
-            if domain_data.hidden:
-                continue
             agent_type_name = domain_data.agent_type_name
             agent_field_name = domain_data.agent_field_name
-            Generator.backend_constructor_param_list.append(", %s* %s" % (agent_type_name, agent_field_name))
-            Generator.backend_constructor_init_list.append("        , m_%s(%s)" % (agent_field_name, agent_field_name))
+            Generator.backend_constructor_init_list.append("        , m_%s(0)" % agent_field_name)
+            Generator.backend_setters_list.append("    void registerAgent(%s* %s) { ASSERT(!m_%s); m_%s = %s; }" % (agent_type_name, agent_field_name, agent_field_name, agent_field_name, agent_field_name))
             Generator.backend_field_list.append("    %s* m_%s;" % (agent_type_name, agent_field_name))
             Generator.backend_forward_list.append("class %s;" % agent_type_name)
             Generator.backend_include_list.append("#include \"%s.h\"" % agent_type_name)
@@ -1426,7 +1423,7 @@ frontend_h_file.write(Templates.frontend_h.substitute(None,
 
 backend_h_file.write(Templates.backend_h.substitute(None,
     constructorInit=join(Generator.backend_constructor_init_list, "\n"),
-    constructorParams=join(Generator.backend_constructor_param_list, ""),
+    setters=join(Generator.backend_setters_list, "\n"),
     methodNamesEnumContent=join(Generator.method_name_enum_list, "\n"),
     methodDeclarations=join(Generator.backend_method_declaration_list, "\n"),
     fieldDeclarations=join(Generator.backend_field_list, "\n"),

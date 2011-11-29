@@ -34,6 +34,7 @@
 #if ENABLE(INSPECTOR) && ENABLE(WORKERS)
 
 #include "InspectorRuntimeAgent.h"
+#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 
@@ -41,10 +42,14 @@ class WorkerContext;
 
 class WorkerRuntimeAgent : public InspectorRuntimeAgent {
 public:
-    WorkerRuntimeAgent(InstrumentingAgents*, InspectorState*, InjectedScriptManager*, WorkerContext*);
+    static PassOwnPtr<WorkerRuntimeAgent> create(InstrumentingAgents* instrumentingAgents, InspectorState* state, InjectedScriptManager* injectedScriptManager, WorkerContext* context)
+    {
+        return adoptPtr(new WorkerRuntimeAgent(instrumentingAgents, state, injectedScriptManager, context));
+    }
     virtual ~WorkerRuntimeAgent();
 
 private:
+    WorkerRuntimeAgent(InstrumentingAgents*, InspectorState*, InjectedScriptManager*, WorkerContext*);
     virtual ScriptState* scriptStateForFrameId(const String& frameId);
     virtual ScriptState* getDefaultInspectedState();
     WorkerContext* m_workerContext;

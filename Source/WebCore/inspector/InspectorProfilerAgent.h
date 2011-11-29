@@ -55,7 +55,7 @@ class ScriptProfile;
 
 typedef String ErrorString;
 
-class InspectorProfilerAgent : public InspectorBaseAgent {
+class InspectorProfilerAgent : public InspectorBaseAgent<InspectorProfilerAgent> {
     WTF_MAKE_NONCOPYABLE(InspectorProfilerAgent); WTF_MAKE_FAST_ALLOCATED;
 public:
     static PassOwnPtr<InspectorProfilerAgent> create(InstrumentingAgents*, InspectorConsoleAgent*, Page*, InspectorState*, InjectedScriptManager*);

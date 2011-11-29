@@ -53,7 +53,7 @@ class ResourceResponse;
 
 typedef String ErrorString;
 
-class InspectorTimelineAgent : public InspectorBaseAgent, ScriptGCEventListener {
+class InspectorTimelineAgent : public InspectorBaseAgent<InspectorTimelineAgent>, ScriptGCEventListener {
     WTF_MAKE_NONCOPYABLE(InspectorTimelineAgent);
 public:
     static PassOwnPtr<InspectorTimelineAgent> create(InstrumentingAgents* instrumentingAgents, InspectorState* state)

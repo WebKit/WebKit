@@ -34,6 +34,7 @@
 #include "PlatformString.h"
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
+#include <wtf/PassOwnPtr.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -51,13 +52,15 @@ class Page;
 
 typedef String ErrorString;
 
-class InspectorAgent : public InspectorBaseAgent {
+class InspectorAgent : public InspectorBaseAgent<InspectorAgent> {
     WTF_MAKE_NONCOPYABLE(InspectorAgent);
 public:
-    InspectorAgent(Page*, InjectedScriptManager*, InstrumentingAgents*, InspectorState*);
-    virtual ~InspectorAgent();
+    static PassOwnPtr<InspectorAgent> create(Page* page, InjectedScriptManager* injectedScriptManager, InstrumentingAgents* instrumentingAgents, InspectorState* state)
+    {
+        return adoptPtr(new InspectorAgent(page, injectedScriptManager, instrumentingAgents, state));
+    }
 
-    void inspectedPageDestroyed();
+    virtual ~InspectorAgent();
 
     bool enabled() const;
 
@@ -68,12 +71,12 @@ public:
 
     virtual void setFrontend(InspectorFrontend*);
     virtual void clearFrontend();
-    virtual void restore();
 
     void didClearWindowObjectInWorld(Frame*, DOMWrapperWorld*);
 
     void didCommitLoad();
     void domContentLoadedEventFired();
+    void emitCommitLoadIfNeeded();
 
 #if ENABLE(WORKERS)
     enum WorkerAction { WorkerCreated, WorkerDestroyed };
@@ -91,6 +94,8 @@ public:
     void setInspectorExtensionAPI(const String& source);
 
 private:
+    InspectorAgent(Page*, InjectedScriptManager*, InstrumentingAgents*, InspectorState*);
+
     void unbindAllResources();
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)

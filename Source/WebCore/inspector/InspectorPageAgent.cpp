@@ -262,7 +262,7 @@ String InspectorPageAgent::cachedResourceTypeString(const CachedResource& cached
 }
 
 InspectorPageAgent::InspectorPageAgent(InstrumentingAgents* instrumentingAgents, Page* page, InspectorState* inspectorState, InjectedScriptManager* injectedScriptManager)
-    : InspectorBaseAgent(instrumentingAgents, inspectorState)
+    : InspectorBaseAgent<InspectorPageAgent>(instrumentingAgents, inspectorState)
     , m_page(page)
     , m_injectedScriptManager(injectedScriptManager)
     , m_frontend(0)

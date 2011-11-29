@@ -60,7 +60,7 @@ class SharedBuffer;
 
 typedef String ErrorString;
 
-class InspectorPageAgent : InspectorBaseAgent {
+class InspectorPageAgent : public InspectorBaseAgent<InspectorPageAgent> {
     WTF_MAKE_NONCOPYABLE(InspectorPageAgent);
 public:
     enum ResourceType {

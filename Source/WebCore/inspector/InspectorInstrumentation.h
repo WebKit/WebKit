@@ -77,7 +77,6 @@ typedef pair<InstrumentingAgents*, int> InspectorInstrumentationCookie;
 class InspectorInstrumentation {
 public:
     static void didClearWindowObjectInWorld(Frame*, DOMWrapperWorld*);
-    static void inspectedPageDestroyed(Page*);
 
     static void willInsertDOMNode(Document*, Node*, Node* parent);
     static void didInsertDOMNode(Document*, Node*);
@@ -215,7 +214,6 @@ public:
 private:
 #if ENABLE(INSPECTOR)
     static void didClearWindowObjectInWorldImpl(InstrumentingAgents*, Frame*, DOMWrapperWorld*);
-    static void inspectedPageDestroyedImpl(InstrumentingAgents*);
 
     static void willInsertDOMNodeImpl(InstrumentingAgents*, Node*, Node* parent);
     static void didInsertDOMNodeImpl(InstrumentingAgents*, Node*);
@@ -359,14 +357,6 @@ inline void InspectorInstrumentation::didClearWindowObjectInWorld(Frame* frame, 
 #if ENABLE(INSPECTOR)
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForFrame(frame))
         didClearWindowObjectInWorldImpl(instrumentingAgents, frame, world);
-#endif
-}
-
-inline void InspectorInstrumentation::inspectedPageDestroyed(Page* page)
-{
-#if ENABLE(INSPECTOR)
-    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForPage(page))
-        inspectedPageDestroyedImpl(instrumentingAgents);
 #endif
 }
 

@@ -31,7 +31,7 @@
 #include "InspectorBaseAgent.h"
 #include "InspectorFrontend.h"
 #include <wtf/Noncopyable.h>
-#include <wtf/PassRefPtr.h>
+#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 
@@ -49,10 +49,13 @@ class ResourceResponse;
 
 typedef String ErrorString;
 
-class InspectorApplicationCacheAgent : public InspectorBaseAgent {
+class InspectorApplicationCacheAgent : public InspectorBaseAgent<InspectorApplicationCacheAgent> {
     WTF_MAKE_NONCOPYABLE(InspectorApplicationCacheAgent); WTF_MAKE_FAST_ALLOCATED;
 public:
-    InspectorApplicationCacheAgent(InstrumentingAgents*, InspectorPageAgent*, InspectorState*);
+    static PassOwnPtr<InspectorApplicationCacheAgent> create(InstrumentingAgents* instrumentingAgents, InspectorState* state, InspectorPageAgent* pageAgent)
+    {
+        return adoptPtr(new InspectorApplicationCacheAgent(instrumentingAgents, state, pageAgent));
+    }
     ~InspectorApplicationCacheAgent() { }
 
     // InspectorBaseAgent
@@ -71,6 +74,7 @@ public:
     void getApplicationCacheForFrame(ErrorString*, const String& frameId, RefPtr<InspectorObject>* applicationCache);
 
 private:
+    InspectorApplicationCacheAgent(InstrumentingAgents*, InspectorState*, InspectorPageAgent*);
     PassRefPtr<InspectorObject> buildObjectForApplicationCache(const ApplicationCacheHost::ResourceInfoList&, const ApplicationCacheHost::CacheInfo&);
     PassRefPtr<InspectorArray> buildArrayForApplicationCacheResources(const ApplicationCacheHost::ResourceInfoList&);
     PassRefPtr<InspectorObject> buildObjectForApplicationCacheResource(const ApplicationCacheHost::ResourceInfo&);

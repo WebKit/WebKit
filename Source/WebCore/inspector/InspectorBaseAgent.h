@@ -31,22 +31,40 @@
 #ifndef InspectorBaseAgent_h
 #define InspectorBaseAgent_h
 
+#include "InspectorBackendDispatcher.h"
+
 namespace WebCore {
 
 class InspectorFrontend;
 class InspectorState;
 class InstrumentingAgents;
 
-class InspectorBaseAgent {
+class InspectorBaseAgentInterface {
 public:
-    virtual ~InspectorBaseAgent();
+    InspectorBaseAgentInterface() { }
+    virtual ~InspectorBaseAgentInterface() { }
+    virtual void setFrontend(InspectorFrontend*) { }
+    virtual void clearFrontend() { }
+    virtual void restore() { }
+    virtual void registerInDispatcher(InspectorBackendDispatcher*) = 0;
+};
 
-    virtual void setFrontend(InspectorFrontend*) = 0;
-    virtual void clearFrontend() = 0;
-    virtual void restore() = 0;
+template<typename T>
+class InspectorBaseAgent : public InspectorBaseAgentInterface {
+public:
+    virtual ~InspectorBaseAgent() { }
+
+    virtual void registerInDispatcher(InspectorBackendDispatcher* dispatcher)
+    {
+        dispatcher->registerAgent(static_cast<T*>(this));
+    }
 
 protected:
-    InspectorBaseAgent(InstrumentingAgents*, InspectorState*);
+    InspectorBaseAgent(InstrumentingAgents* instrumentingAgents, InspectorState* inspectorState)
+        : m_instrumentingAgents(instrumentingAgents)
+        , m_state(inspectorState)
+    {
+    }
 
     InstrumentingAgents* m_instrumentingAgents;
     InspectorState* m_state;

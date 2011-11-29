@@ -1356,7 +1356,7 @@
 		4F6FDD641341DEDD001F8EE3 /* InspectorPageAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4F6FDD621341DEDD001F8EE3 /* InspectorPageAgent.cpp */; };
 		4F6FDD651341DEDD001F8EE3 /* InspectorPageAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = 4F6FDD631341DEDD001F8EE3 /* InspectorPageAgent.h */; };
 		4F707A9911EF679400ACDA69 /* InspectorBackendDispatcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4F707A9711EF679400ACDA69 /* InspectorBackendDispatcher.cpp */; };
-		4F707A9A11EF679400ACDA69 /* InspectorBackendDispatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = 4F707A9811EF679400ACDA69 /* InspectorBackendDispatcher.h */; };
+		4F707A9A11EF679400ACDA69 /* InspectorBackendDispatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = 4F707A9811EF679400ACDA69 /* InspectorBackendDispatcher.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4FA3B90A125CD12200300BAD /* InspectorState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4FA3B908125CD12100300BAD /* InspectorState.cpp */; };
 		4FA3B90B125CD12200300BAD /* InspectorState.h in Headers */ = {isa = PBXBuildFile; fileRef = 4FA3B909125CD12200300BAD /* InspectorState.h */; };
 		4FD8D0F2119C718B002FA825 /* ScriptGCEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4FD8D0F0119C718B002FA825 /* ScriptGCEvent.cpp */; };
@@ -1810,7 +1810,7 @@
 		7A74ECBB101839A600BF939E /* InspectorDOMStorageAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = 7A74ECB9101839A600BF939E /* InspectorDOMStorageAgent.h */; };
 		7A74ECBD101839DA00BF939E /* JSInspectorFrontendHostCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A74ECBC101839DA00BF939E /* JSInspectorFrontendHostCustom.cpp */; };
 		7AA365EE12E7265400DCA242 /* InspectorRuntimeAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AA365ED12E7265400DCA242 /* InspectorRuntimeAgent.cpp */; };
-		7AA51B6E1483B61600AD2752 /* InspectorBaseAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = 7AA51B6C1483B61600AD2752 /* InspectorBaseAgent.h */; };
+		7AA51B6E1483B61600AD2752 /* InspectorBaseAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = 7AA51B6C1483B61600AD2752 /* InspectorBaseAgent.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7AA51B6F1483B61600AD2752 /* InspectorBaseAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AA51B6D1483B61600AD2752 /* InspectorBaseAgent.cpp */; };
 		7AB0B1C01211A62200A76940 /* InspectorDatabaseAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AB0B1BE1211A62200A76940 /* InspectorDatabaseAgent.cpp */; };
 		7AB0B1C11211A62200A76940 /* InspectorDatabaseAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = 7AB0B1BF1211A62200A76940 /* InspectorDatabaseAgent.h */; };
@@ -14476,8 +14476,6 @@
 		1C81B94D0E9732D900266E07 /* inspector */ = {
 			isa = PBXGroup;
 			children = (
-				7AA51B6C1483B61600AD2752 /* InspectorBaseAgent.h */,
-				7AA51B6D1483B61600AD2752 /* InspectorBaseAgent.cpp */,
 				1C81B9590E97330800266E07 /* front-end */,
 				41F0618D0F5F069800A07EAC /* ConsoleMessage.cpp */,
 				41F0618C0F5F069800A07EAC /* ConsoleMessage.h */,
@@ -14499,6 +14497,8 @@
 				4F2D205212EAE7B3005C2874 /* InspectorAgent.h */,
 				B885E8D211E06DD2009FFBF4 /* InspectorApplicationCacheAgent.cpp */,
 				B885E8D311E06DD2009FFBF4 /* InspectorApplicationCacheAgent.h */,
+				7AA51B6C1483B61600AD2752 /* InspectorBaseAgent.h */,
+				7AA51B6D1483B61600AD2752 /* InspectorBaseAgent.cpp */,
 				7A1F2B51126C61B20006A7E6 /* InspectorClient.cpp */,
 				1C81B9580E97330800266E07 /* InspectorClient.h */,
 				F3335BF612E07DC300D33011 /* InspectorConsoleAgent.cpp */,

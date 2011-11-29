@@ -45,7 +45,7 @@ class InspectorFrontend;
 class InspectorState;
 class InstrumentingAgents;
 
-class InspectorFileSystemAgent : public InspectorBaseAgent {
+class InspectorFileSystemAgent : public InspectorBaseAgent<InspectorFileSystemAgent> {
 public:
     static PassOwnPtr<InspectorFileSystemAgent> create(InstrumentingAgents*, InspectorState*);
     virtual ~InspectorFileSystemAgent();

@@ -91,12 +91,14 @@ WorkerInspectorController::WorkerInspectorController(WorkerContext* workerContex
     , m_state(adoptPtr(new InspectorState(m_stateClient.get())))
     , m_instrumentingAgents(adoptPtr(new InstrumentingAgents()))
     , m_injectedScriptManager(InjectedScriptManager::createForWorker())
-#if ENABLE(JAVASCRIPT_DEBUGGER)
-    , m_debuggerAgent(WorkerDebuggerAgent::create(m_instrumentingAgents.get(), m_state.get(), workerContext, m_injectedScriptManager.get()))
-#endif
-    , m_runtimeAgent(adoptPtr(new WorkerRuntimeAgent(m_instrumentingAgents.get(), m_state.get(), m_injectedScriptManager.get(), workerContext)))
-    , m_consoleAgent(adoptPtr(new WorkerConsoleAgent(m_instrumentingAgents.get(), m_state.get(), m_injectedScriptManager.get())))
 {
+
+#if ENABLE(JAVASCRIPT_DEBUGGER)
+    m_debuggerAgent = WorkerDebuggerAgent::create(m_instrumentingAgents.get(), m_state.get(), workerContext, m_injectedScriptManager.get());
+#endif
+    m_runtimeAgent = WorkerRuntimeAgent::create(m_instrumentingAgents.get(), m_state.get(), m_injectedScriptManager.get(), workerContext);
+    m_consoleAgent = WorkerConsoleAgent::create(m_instrumentingAgents.get(), m_state.get(), m_injectedScriptManager.get());
+
     m_injectedScriptManager->injectedScriptHost()->init(0
         , 0
 #if ENABLE(SQL_DATABASE)
@@ -121,34 +123,12 @@ void WorkerInspectorController::connectFrontend()
     m_state->unmute();
     m_frontendChannel = adoptPtr(new PageInspectorProxy(m_workerContext));
     m_frontend = adoptPtr(new InspectorFrontend(m_frontendChannel.get()));
-    m_backendDispatcher = adoptRef(new InspectorBackendDispatcher(
-        m_frontendChannel.get(),
-        0, // InspectorApplicationCacheAgent
-        0, // InspectorCSSAgent
-        m_consoleAgent.get(),
-        0, // InspectorDOMAgent
+    m_backendDispatcher = adoptRef(new InspectorBackendDispatcher(m_frontendChannel.get()));
+    m_consoleAgent->registerInDispatcher(m_backendDispatcher.get());
 #if ENABLE(JAVASCRIPT_DEBUGGER)
-        0, // InspectorDOMDebuggerAgent
+    m_debuggerAgent->registerInDispatcher(m_backendDispatcher.get());
 #endif
-        0, // InspectorDOMStorageAgent
-#if ENABLE(SQL_DATABASE)
-        0, // InspectorDatabaseAgent
-#endif
-#if ENABLE(JAVASCRIPT_DEBUGGER)
-        m_debuggerAgent.get(),
-#endif
-#if ENABLE(FILE_SYSTEM)
-        0, // InspectorFileSystemAgent
-#endif
-        0, // InspectorResourceAgent
-        0, // InspectorPageAgent
-#if ENABLE(JAVASCRIPT_DEBUGGER)
-        0, // InspectorProfilerAgent
-#endif
-        m_runtimeAgent.get(),
-        0, // InspectorTimelineAgent
-        0 // InspectorWorkerAgent
-    ));
+    m_runtimeAgent->registerInDispatcher(m_backendDispatcher.get());
 
     m_injectedScriptManager->injectedScriptHost()->setFrontend(m_frontend.get());
 #if ENABLE(JAVASCRIPT_DEBUGGER)

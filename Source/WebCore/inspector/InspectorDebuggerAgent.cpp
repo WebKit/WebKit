@@ -53,7 +53,7 @@ static const char javaScriptBreakpoints[] = "javaScriptBreakopints";
 const char* InspectorDebuggerAgent::backtraceObjectGroup = "backtrace-object-group";
 
 InspectorDebuggerAgent::InspectorDebuggerAgent(InstrumentingAgents* instrumentingAgents, InspectorState* inspectorState, InjectedScriptManager* injectedScriptManager)
-    : InspectorBaseAgent(instrumentingAgents, inspectorState)
+    : InspectorBaseAgent<InspectorDebuggerAgent>(instrumentingAgents, inspectorState)
     , m_injectedScriptManager(injectedScriptManager)
     , m_frontend(0)
     , m_pausedScriptState(0)

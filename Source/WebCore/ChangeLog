@@ -1,3 +1,103 @@
+2011-11-28  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: put inspector agents into a vector in the InspectorController.
+        https://bugs.webkit.org/show_bug.cgi?id=73225
+
+        Inspector controller should maintain agents in the vector, while accessing
+        them using the same base agent interface. We should not manually call
+        base agent methods on their concrete instances.
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/CodeGeneratorInspector.py:
+        (DomainNameFixes.get_fixed_data.Res):
+        (DomainNameFixes):
+        (Generator.go):
+        * inspector/InspectorAgent.cpp:
+        (WebCore::InspectorAgent::InspectorAgent):
+        (WebCore::PostWorkerNotificationToFrontendTask::performTask):
+        * inspector/InspectorAgent.h:
+        (WebCore::InspectorAgent::create):
+        * inspector/InspectorApplicationCacheAgent.cpp:
+        (WebCore::InspectorApplicationCacheAgent::InspectorApplicationCacheAgent):
+        * inspector/InspectorApplicationCacheAgent.h:
+        (WebCore::InspectorApplicationCacheAgent::create):
+        * inspector/InspectorBaseAgent.cpp:
+        * inspector/InspectorBaseAgent.h:
+        (WebCore::InspectorBaseAgentInterface::InspectorBaseAgentInterface):
+        (WebCore::InspectorBaseAgentInterface::~InspectorBaseAgentInterface):
+        (WebCore::InspectorBaseAgentInterface::setFrontend):
+        (WebCore::InspectorBaseAgentInterface::clearFrontend):
+        (WebCore::InspectorBaseAgentInterface::restore):
+        (WebCore::InspectorBaseAgentInterface::inspectedPageDestroyed):
+        (WebCore::InspectorBaseAgent::~InspectorBaseAgent):
+        (WebCore::InspectorBaseAgent::registerDispatcher):
+        (WebCore::InspectorBaseAgent::InspectorBaseAgent):
+        * inspector/InspectorCSSAgent.cpp:
+        (WebCore::InspectorCSSAgent::InspectorCSSAgent):
+        * inspector/InspectorCSSAgent.h:
+        (WebCore::InspectorCSSAgent::create):
+        * inspector/InspectorConsoleAgent.cpp:
+        (WebCore::InspectorConsoleAgent::InspectorConsoleAgent):
+        * inspector/InspectorConsoleAgent.h:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::InspectorController):
+        (WebCore::InspectorController::inspectedPageDestroyed):
+        (WebCore::InspectorController::connectFrontend):
+        (WebCore::InspectorController::disconnectFrontend):
+        (WebCore::InspectorController::restoreInspectorStateFromCookie):
+        * inspector/InspectorController.h:
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::InspectorDOMAgent):
+        * inspector/InspectorDOMAgent.h:
+        * inspector/InspectorDOMDebuggerAgent.cpp:
+        (WebCore::InspectorDOMDebuggerAgent::InspectorDOMDebuggerAgent):
+        * inspector/InspectorDOMDebuggerAgent.h:
+        (WebCore::InspectorDOMDebuggerAgent::inspectedPageDestroyed):
+        * inspector/InspectorDOMStorageAgent.cpp:
+        (WebCore::InspectorDOMStorageAgent::InspectorDOMStorageAgent):
+        * inspector/InspectorDOMStorageAgent.h:
+        * inspector/InspectorDatabaseAgent.cpp:
+        (WebCore::InspectorDatabaseAgent::InspectorDatabaseAgent):
+        * inspector/InspectorDatabaseAgent.h:
+        * inspector/InspectorDebuggerAgent.cpp:
+        (WebCore::InspectorDebuggerAgent::InspectorDebuggerAgent):
+        * inspector/InspectorDebuggerAgent.h:
+        (WebCore::InspectorDebuggerAgent::inspectedPageDestroyed):
+        * inspector/InspectorFileSystemAgent.cpp:
+        (WebCore::InspectorFileSystemAgent::InspectorFileSystemAgent):
+        * inspector/InspectorFileSystemAgent.h:
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::InspectorPageAgent):
+        * inspector/InspectorPageAgent.h:
+        * inspector/InspectorProfilerAgent.cpp:
+        (WebCore::InspectorProfilerAgent::InspectorProfilerAgent):
+        * inspector/InspectorProfilerAgent.h:
+        * inspector/InspectorResourceAgent.cpp:
+        (WebCore::InspectorResourceAgent::InspectorResourceAgent):
+        * inspector/InspectorResourceAgent.h:
+        (WebCore::InspectorResourceAgent::create):
+        * inspector/InspectorRuntimeAgent.cpp:
+        (WebCore::InspectorRuntimeAgent::InspectorRuntimeAgent):
+        * inspector/InspectorRuntimeAgent.h:
+        * inspector/InspectorTimelineAgent.cpp:
+        (WebCore::InspectorTimelineAgent::InspectorTimelineAgent):
+        * inspector/InspectorTimelineAgent.h:
+        * inspector/InspectorWorkerAgent.cpp:
+        (WebCore::InspectorWorkerAgent::InspectorWorkerAgent):
+        * inspector/InspectorWorkerAgent.h:
+        * inspector/PageConsoleAgent.h:
+        (WebCore::PageConsoleAgent::create):
+        * inspector/PageRuntimeAgent.h:
+        (WebCore::PageRuntimeAgent::create):
+        * inspector/WorkerConsoleAgent.h:
+        (WebCore::WorkerConsoleAgent::create):
+        * inspector/WorkerInspectorController.cpp:
+        (WebCore::WorkerInspectorController::WorkerInspectorController):
+        (WebCore::WorkerInspectorController::connectFrontend):
+        * inspector/WorkerRuntimeAgent.h:
+        (WebCore::WorkerRuntimeAgent::create):
+
 2011-11-25  Philippe Normand  <pnormand@igalia.com>
 
         [GTK] Improve FontMetrics accuracy

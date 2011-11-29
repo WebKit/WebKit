@@ -57,7 +57,7 @@ static const char consoleMessagesEnabled[] = "consoleMessagesEnabled";
 }
 
 InspectorConsoleAgent::InspectorConsoleAgent(InstrumentingAgents* instrumentingAgents, InspectorState* state, InjectedScriptManager* injectedScriptManager)
-    : InspectorBaseAgent(instrumentingAgents, state)
+    : InspectorBaseAgent<InspectorConsoleAgent>(instrumentingAgents, state)
     , m_injectedScriptManager(injectedScriptManager)
     , m_frontend(0)
     , m_previousMessage(0)

@@ -51,7 +51,7 @@ class WorkerContext;
 
 typedef String ErrorString;
 
-class InspectorRuntimeAgent : public InspectorBaseAgent {
+class InspectorRuntimeAgent : public InspectorBaseAgent<InspectorRuntimeAgent> {
     WTF_MAKE_NONCOPYABLE(InspectorRuntimeAgent);
 public:
     virtual ~InspectorRuntimeAgent();
@@ -77,10 +77,6 @@ public:
     void getProperties(ErrorString*, const String& objectId, const bool* const ownProperties, RefPtr<InspectorArray>* result);
     void releaseObjectGroup(ErrorString*, const String& objectGroup);
     void run(ErrorString*);
-
-    virtual void setFrontend(InspectorFrontend*) { }
-    virtual void clearFrontend() { }
-    virtual void restore() { }
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     void setScriptDebugServer(ScriptDebugServer*);

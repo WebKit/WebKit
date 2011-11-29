@@ -45,7 +45,7 @@ class InstrumentingAgents;
 
 typedef String ErrorString;
 
-class InspectorDatabaseAgent : public InspectorBaseAgent {
+class InspectorDatabaseAgent : public InspectorBaseAgent<InspectorDatabaseAgent> {
 public:
     class FrontendProvider;
 

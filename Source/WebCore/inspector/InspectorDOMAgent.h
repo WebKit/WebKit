@@ -87,7 +87,7 @@ struct EventListenerInfo {
     const EventListenerVector eventListenerVector;
 };
 
-class InspectorDOMAgent : public InspectorBaseAgent {
+class InspectorDOMAgent : public InspectorBaseAgent<InspectorDOMAgent> {
     WTF_MAKE_NONCOPYABLE(InspectorDOMAgent);
 public:
     struct DOMListener {

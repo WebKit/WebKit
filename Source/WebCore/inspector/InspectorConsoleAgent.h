@@ -52,7 +52,7 @@ class ScriptProfile;
 
 typedef String ErrorString;
 
-class InspectorConsoleAgent : public InspectorBaseAgent {
+class InspectorConsoleAgent : public InspectorBaseAgent<InspectorConsoleAgent> {
     WTF_MAKE_NONCOPYABLE(InspectorConsoleAgent);
 public:
     InspectorConsoleAgent(InstrumentingAgents*, InspectorState*, InjectedScriptManager*);

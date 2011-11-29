@@ -47,7 +47,7 @@ class StorageArea;
 
 typedef String ErrorString;
 
-class InspectorDOMStorageAgent : public InspectorBaseAgent {
+class InspectorDOMStorageAgent : public InspectorBaseAgent<InspectorDOMStorageAgent> {
 public:
     static PassOwnPtr<InspectorDOMStorageAgent> create(InstrumentingAgents* instrumentingAgents, InspectorState* state)
     {

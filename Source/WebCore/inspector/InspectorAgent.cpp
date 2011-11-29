@@ -62,7 +62,7 @@ static const char consolePanelName[] = "console";
 static const char profilesPanelName[] = "profiles";
 
 InspectorAgent::InspectorAgent(Page* page, InjectedScriptManager* injectedScriptManager, InstrumentingAgents* instrumentingAgents, InspectorState* state)
-    : InspectorBaseAgent(instrumentingAgents, state)
+    : InspectorBaseAgent<InspectorAgent>(instrumentingAgents, state)
     , m_inspectedPage(page)
     , m_frontend(0)
     , m_injectedScriptManager(injectedScriptManager)
@@ -76,18 +76,9 @@ InspectorAgent::InspectorAgent(Page* page, InjectedScriptManager* injectedScript
 InspectorAgent::~InspectorAgent()
 {
     m_instrumentingAgents->setInspectorAgent(0);
-
-    // These should have been cleared in inspectedPageDestroyed().
-    ASSERT(!m_inspectedPage);
 }
 
-void InspectorAgent::inspectedPageDestroyed()
-{
-    ASSERT(m_inspectedPage);
-    m_inspectedPage = 0;
-}
-
-void InspectorAgent::restore()
+void InspectorAgent::emitCommitLoadIfNeeded()
 {
     if (m_didCommitLoadFired)
         InspectorInstrumentation::didCommitLoad(m_inspectedPage->mainFrame(), m_inspectedPage->mainFrame()->loader()->documentLoader());
@@ -164,7 +155,7 @@ private:
     virtual void performTask(ScriptExecutionContext* scriptContext)
     {
         if (scriptContext->isDocument()) {
-            if (InspectorAgent* inspectorAgent = static_cast<Document*>(scriptContext)->page()->inspectorController()->m_inspectorAgent.get())
+            if (InspectorAgent* inspectorAgent = static_cast<Document*>(scriptContext)->page()->inspectorController()->m_inspectorAgent)
                 inspectorAgent->postWorkerNotificationToFrontend(*m_worker, m_action);
         }
     }

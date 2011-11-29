@@ -35,7 +35,7 @@
 #include "InspectorFrontend.h"
 #include "PlatformString.h"
 
-#include <wtf/PassRefPtr.h>
+#include <wtf/PassOwnPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 
@@ -73,11 +73,11 @@ class WebSocketHandshakeResponse;
 
 typedef String ErrorString;
 
-class InspectorResourceAgent : public InspectorBaseAgent, public RefCounted<InspectorResourceAgent> {
+class InspectorResourceAgent : public InspectorBaseAgent<InspectorResourceAgent> {
 public:
-    static PassRefPtr<InspectorResourceAgent> create(InstrumentingAgents* instrumentingAgents, InspectorPageAgent* pageAgent, InspectorClient* client, InspectorState* state)
+    static PassOwnPtr<InspectorResourceAgent> create(InstrumentingAgents* instrumentingAgents, InspectorPageAgent* pageAgent, InspectorClient* client, InspectorState* state)
     {
-        return adoptRef(new InspectorResourceAgent(instrumentingAgents, pageAgent, client, state));
+        return adoptPtr(new InspectorResourceAgent(instrumentingAgents, pageAgent, client, state));
     }
 
     virtual void setFrontend(InspectorFrontend*);

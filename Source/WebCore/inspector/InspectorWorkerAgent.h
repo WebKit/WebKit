@@ -47,7 +47,7 @@ class WorkerContextProxy;
 
 typedef String ErrorString;
 
-class InspectorWorkerAgent : public InspectorBaseAgent {
+class InspectorWorkerAgent : public InspectorBaseAgent<InspectorWorkerAgent> {
 public:
     static PassOwnPtr<InspectorWorkerAgent> create(InstrumentingAgents*, InspectorState*);
     ~InspectorWorkerAgent();

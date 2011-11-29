@@ -530,7 +530,7 @@ void InspectorResourceAgent::mainFrameNavigated(DocumentLoader* loader)
 }
 
 InspectorResourceAgent::InspectorResourceAgent(InstrumentingAgents* instrumentingAgents, InspectorPageAgent* pageAgent, InspectorClient* client, InspectorState* state)
-    : InspectorBaseAgent(instrumentingAgents, state)
+    : InspectorBaseAgent<InspectorResourceAgent>(instrumentingAgents, state)
     , m_pageAgent(pageAgent)
     , m_client(client)
     , m_frontend(0)

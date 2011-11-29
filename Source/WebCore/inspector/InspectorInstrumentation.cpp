@@ -108,12 +108,6 @@ void InspectorInstrumentation::didClearWindowObjectInWorldImpl(InstrumentingAgen
 #endif
 }
 
-void InspectorInstrumentation::inspectedPageDestroyedImpl(InstrumentingAgents* instrumentingAgents)
-{
-    if (InspectorAgent* inspectorAgent = instrumentingAgents->inspectorAgent())
-        inspectorAgent->inspectedPageDestroyed();
-}
-
 void InspectorInstrumentation::willInsertDOMNodeImpl(InstrumentingAgents* instrumentingAgents, Node* node, Node* parent)
 {
 #if ENABLE(JAVASCRIPT_DEBUGGER)

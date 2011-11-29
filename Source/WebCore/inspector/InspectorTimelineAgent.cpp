@@ -400,7 +400,7 @@ void InspectorTimelineAgent::didCompleteCurrentRecord(const String& type)
 }
 
 InspectorTimelineAgent::InspectorTimelineAgent(InstrumentingAgents* instrumentingAgents, InspectorState* state)
-    : InspectorBaseAgent(instrumentingAgents, state)
+    : InspectorBaseAgent<InspectorTimelineAgent>(instrumentingAgents, state)
     , m_frontend(0)
     , m_id(1)
     , m_maxCallStackDepth(5)

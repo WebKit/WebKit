@@ -58,7 +58,7 @@ class ScriptValue;
 
 typedef String ErrorString;
 
-class InspectorDebuggerAgent : public InspectorBaseAgent, public ScriptDebugListener {
+class InspectorDebuggerAgent : public InspectorBaseAgent<InspectorDebuggerAgent>, public ScriptDebugListener {
     WTF_MAKE_NONCOPYABLE(InspectorDebuggerAgent); WTF_MAKE_FAST_ALLOCATED;
 public:
     static const char* backtraceObjectGroup;

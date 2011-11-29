@@ -32,6 +32,7 @@
 #define PageConsoleAgent_h
 
 #include "InspectorConsoleAgent.h"
+#include <wtf/PassOwnPtr.h>
 
 #if ENABLE(INSPECTOR)
 
@@ -43,10 +44,14 @@ class InspectorDOMAgent;
 class PageConsoleAgent : public InspectorConsoleAgent {
     WTF_MAKE_NONCOPYABLE(PageConsoleAgent);
 public:
-    PageConsoleAgent(InstrumentingAgents*, InspectorAgent*, InspectorState*, InjectedScriptManager*, InspectorDOMAgent*);
+    static PassOwnPtr<PageConsoleAgent> create(InstrumentingAgents* instrumentingAgents, InspectorAgent* agent, InspectorState* state, InjectedScriptManager* injectedScriptManager, InspectorDOMAgent* domAgent)
+    {
+        return adoptPtr(new PageConsoleAgent(instrumentingAgents, agent, state, injectedScriptManager, domAgent));
+    }
     virtual ~PageConsoleAgent();
 
 private:
+    PageConsoleAgent(InstrumentingAgents*, InspectorAgent*, InspectorState*, InjectedScriptManager*, InspectorDOMAgent*);
     virtual void clearMessages(ErrorString*);
     virtual void addInspectedNode(ErrorString*, int nodeId);
     virtual bool developerExtrasEnabled();

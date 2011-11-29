@@ -45,25 +45,15 @@ class InjectedScriptManager;
 class InspectorAgent;
 class InspectorApplicationCacheAgent;
 class InspectorBackendDispatcher;
-class InspectorCSSAgent;
+class InspectorBaseAgentInterface;
 class InspectorClient;
-class InspectorConsoleAgent;
 class InspectorDOMAgent;
-class InspectorDOMDebuggerAgent;
-class InspectorDOMStorageAgent;
-class InspectorDatabaseAgent;
 class InspectorDebuggerAgent;
-class InspectorFileSystemAgent;
 class InspectorFrontend;
 class InspectorFrontendClient;
-class InspectorPageAgent;
 class InspectorProfilerAgent;
 class InspectorResourceAgent;
-class InspectorRuntimeAgent;
 class InspectorState;
-class InspectorStorageAgent;
-class InspectorTimelineAgent;
-class InspectorWorkerAgent;
 class InstrumentingAgents;
 class Page;
 class PostWorkerNotificationToFrontendTask;
@@ -120,30 +110,13 @@ private:
     OwnPtr<InstrumentingAgents> m_instrumentingAgents;
     OwnPtr<InjectedScriptManager> m_injectedScriptManager;
     OwnPtr<InspectorState> m_state;
-    OwnPtr<InspectorAgent> m_inspectorAgent;
 
-    OwnPtr<InspectorPageAgent> m_pageAgent;
-    OwnPtr<InspectorDOMAgent> m_domAgent;
-    OwnPtr<InspectorCSSAgent> m_cssAgent;
-#if ENABLE(SQL_DATABASE)
-    OwnPtr<InspectorDatabaseAgent> m_databaseAgent;
-#endif
-#if ENABLE(FILE_SYSTEM)
-    OwnPtr<InspectorFileSystemAgent> m_fileSystemAgent;
-#endif
-    OwnPtr<InspectorDOMStorageAgent> m_domStorageAgent;
-    OwnPtr<InspectorTimelineAgent> m_timelineAgent;
-    OwnPtr<InspectorApplicationCacheAgent> m_applicationCacheAgent;
-    RefPtr<InspectorResourceAgent> m_resourceAgent;
-    OwnPtr<InspectorRuntimeAgent> m_runtimeAgent;
-    OwnPtr<InspectorConsoleAgent> m_consoleAgent;
+    InspectorAgent* m_inspectorAgent;
+    InspectorDOMAgent* m_domAgent;
+    InspectorResourceAgent* m_resourceAgent;
 #if ENABLE(JAVASCRIPT_DEBUGGER)
-    OwnPtr<InspectorDebuggerAgent> m_debuggerAgent;
-    OwnPtr<InspectorDOMDebuggerAgent> m_domDebuggerAgent;
-    OwnPtr<InspectorProfilerAgent> m_profilerAgent;
-#endif
-#if ENABLE(WORKERS)
-    OwnPtr<InspectorWorkerAgent> m_workerAgent;
+    InspectorDebuggerAgent* m_debuggerAgent;
+    InspectorProfilerAgent* m_profilerAgent;
 #endif
 
     RefPtr<InspectorBackendDispatcher> m_inspectorBackendDispatcher;
@@ -152,6 +125,8 @@ private:
     Page* m_page;
     InspectorClient* m_inspectorClient;
     bool m_openingFrontend;
+    typedef Vector<OwnPtr<InspectorBaseAgentInterface> > Agents;
+    Agents m_agents;
 };
 
 }
