@@ -1,3 +1,34 @@
+2011-11-28  Leo Yang  <leo.yang@torchmobile.com.cn>
+
+        Upstream the BlackBerry porting of SocketStream
+        https://bugs.webkit.org/show_bug.cgi?id=73283
+
+        Reviewed by Daniel Bates.
+
+        Other main contributors:
+        Joe Mason <jmason@rim.com>
+        Lyon Chen <liachen@rim.com>
+
+        Initial upstream, can't be built yet, no new tests.
+
+        * platform/network/blackberry/SocketStreamError.h: Added.
+        (WebCore::SocketStreamError::SocketStreamError):
+        * platform/network/blackberry/SocketStreamHandle.h: Added.
+        (WebCore::SocketStreamHandle::create):
+        * platform/network/blackberry/SocketStreamHandleBlackBerry.cpp: Added.
+        (WebCore::SocketStreamHandle::SocketStreamHandle):
+        (WebCore::SocketStreamHandle::~SocketStreamHandle):
+        (WebCore::SocketStreamHandle::platformSend):
+        (WebCore::SocketStreamHandle::platformClose):
+        (WebCore::SocketStreamHandle::didReceiveAuthenticationChallenge):
+        (WebCore::SocketStreamHandle::receivedCredential):
+        (WebCore::SocketStreamHandle::receivedRequestToContinueWithoutCredential):
+        (WebCore::SocketStreamHandle::receivedCancellation):
+        (WebCore::SocketStreamHandle::notifyStatusReceived):
+        (WebCore::SocketStreamHandle::notifyDataReceived):
+        (WebCore::SocketStreamHandle::notifyReadyToSendData):
+        (WebCore::SocketStreamHandle::notifyClose):
+
 2011-11-28  Yongjun Zhang  <yongjun_zhang@apple.com>
 
         Size of ResourceRequestBase could be reduced by using bitfields.
