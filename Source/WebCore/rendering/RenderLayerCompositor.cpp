@@ -139,6 +139,19 @@ void RenderLayerCompositor::cacheAcceleratedCompositingFlags()
 
     if (Settings* settings = m_renderView->document()->settings()) {
         hasAcceleratedCompositing = settings->acceleratedCompositingEnabled();
+
+        // We allow the chrome to override the settings, in case the page is rendered
+        // on a chrome that doesn't allow accelerated compositing.
+        if (hasAcceleratedCompositing) {
+            Frame* frame = m_renderView->frameView()->frame();
+            Page* page = frame ? frame->page() : 0;
+            if (page) {
+                ChromeClient* chromeClient = page->chrome()->client();
+                m_compositingTriggers = chromeClient->allowedCompositingTriggers();
+                hasAcceleratedCompositing = m_compositingTriggers;
+            }
+        }
+
         showDebugBorders = settings->showDebugBorders();
         showRepaintCounter = settings->showRepaintCounter();
         forceCompositingMode = settings->forceCompositingMode() && hasAcceleratedCompositing;
@@ -147,17 +160,6 @@ void RenderLayerCompositor::cacheAcceleratedCompositingFlags()
             forceCompositingMode = settings->acceleratedCompositingForScrollableFramesEnabled() && requiresCompositingForScrollableFrame();
     }
 
-    // We allow the chrome to override the settings, in case the page is rendered
-    // on a chrome that doesn't allow accelerated compositing.
-    if (hasAcceleratedCompositing) {
-        Frame* frame = m_renderView->frameView()->frame();
-        Page* page = frame ? frame->page() : 0;
-        if (page) {
-            ChromeClient* chromeClient = page->chrome()->client();
-            m_compositingTriggers = chromeClient->allowedCompositingTriggers();
-            hasAcceleratedCompositing = m_compositingTriggers;
-        }
-    }
 
     if (hasAcceleratedCompositing != m_hasAcceleratedCompositing || showDebugBorders != m_showDebugBorders || showRepaintCounter != m_showRepaintCounter || forceCompositingMode != m_forceCompositingMode)
         setCompositingLayersNeedRebuild();

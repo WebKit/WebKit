@@ -1,3 +1,13 @@
+2011-11-28  Vangelis Kokkevis  <vangelis@chromium.org>
+
+        [chromium] Disable compositing for RTL pages even in forceCompositingMode
+        https://bugs.webkit.org/show_bug.cgi?id=73195
+
+        Reviewed by James Robinson.
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::cacheAcceleratedCompositingFlags):
+
 2011-11-29  Roland Steiner  <rolandsteiner@chromium.org>
 
         From @keyframes rules with the same name, the last rule should be used
