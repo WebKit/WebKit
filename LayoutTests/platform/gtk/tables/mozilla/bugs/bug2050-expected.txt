@@ -3,25 +3,25 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock (anonymous) at (0,0) size 784x19
-        RenderText {#text} at (0,0) size 318x19
-          text run at (0,0) width 318: "If the text is too low, then it is probably Bug 6920."
+      RenderBlock (anonymous) at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 324x17
+          text run at (0,0) width 324: "If the text is too low, then it is probably Bug 6920."
         RenderText {#text} at (0,0) size 0x0
-      RenderTable {TABLE} at (0,19) size 271x64 [bgcolor=#FFCC00] [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 269x62
-          RenderTableRow {TR} at (0,2) size 269x58
-            RenderTableCell {TD} at (2,2) size 265x58 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderBlock {DL} at (2,2) size 261x38
-                RenderBlock (anonymous) at (0,0) size 261x0
+      RenderTable {TABLE} at (0,18) size 274x62 [bgcolor=#FFCC00] [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 272x60
+          RenderTableRow {TR} at (0,2) size 272x56
+            RenderTableCell {TD} at (2,2) size 268x56 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderBlock {DL} at (2,2) size 264x36
+                RenderBlock (anonymous) at (0,0) size 264x0
                   RenderInline {FONT} at (0,0) size 0x0
                     RenderText {#text} at (0,0) size 0x0
-                RenderBlock (anonymous) at (0,0) size 261x19
-                  RenderBlock {DT} at (0,0) size 261x19
-                    RenderText {#text} at (0,0) size 25x19
+                RenderBlock (anonymous) at (0,0) size 264x18
+                  RenderBlock {DT} at (0,0) size 264x18
+                    RenderText {#text} at (0,0) size 25x17
                       text run at (0,0) width 25: "Baz"
-                RenderBlock (anonymous) at (0,19) size 261x0
+                RenderBlock (anonymous) at (0,18) size 264x0
                   RenderInline {FONT} at (0,0) size 0x0
                   RenderText {#text} at (0,0) size 0x0
-                RenderBlock {DD} at (40,19) size 221x19
-                  RenderText {#text} at (0,0) size 221x19
-                    text run at (0,0) width 221: "foo foo foo foo foo foo foo foo foo"
+                RenderBlock {DD} at (40,18) size 224x18
+                  RenderText {#text} at (0,0) size 224x17
+                    text run at (0,0) width 224: "foo foo foo foo foo foo foo foo foo"

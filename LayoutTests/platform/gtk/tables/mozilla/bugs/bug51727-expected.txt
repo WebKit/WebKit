@@ -1,22 +1,22 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x107
-  RenderBlock {HTML} at (0,0) size 800x107
-    RenderBody {BODY} at (8,8) size 784x91
-      RenderBlock {FORM} at (0,0) size 784x64
-        RenderButton {INPUT} at (2,2) size 201x28 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
-          RenderBlock (anonymous) at (8,4) size 185x19
-            RenderText at (0,0) size 185x19
+layer at (0,0) size 800x104
+  RenderBlock {HTML} at (0,0) size 800x104
+    RenderBody {BODY} at (8,8) size 784x88
+      RenderBlock {FORM} at (0,0) size 784x62
+        RenderButton {INPUT} at (2,2) size 201x27 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+          RenderBlock (anonymous) at (8,4) size 185x18
+            RenderText at (0,0) size 185x17
               text run at (0,0) width 185: "(1) Fill cell with long string"
-        RenderBR {BR} at (205,6) size 0x19
-        RenderButton {INPUT} at (2,34) size 205x28 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
-          RenderBlock (anonymous) at (8,4) size 189x19
-            RenderText at (0,0) size 189x19
-              text run at (0,0) width 189: "(2) Fill cell with short string"
-        RenderBR {BR} at (209,38) size 0x19
-      RenderTable {TABLE} at (0,64) size 83x27
-        RenderTableSection {TBODY} at (0,0) size 83x27
-          RenderTableRow {TR} at (0,2) size 83x23
-            RenderTableCell {TD} at (2,2) size 79x23 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 14x19
-                text run at (2,2) width 14: "aa"
+        RenderBR {BR} at (205,6) size 0x17
+        RenderButton {INPUT} at (2,33) size 206x27 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+          RenderBlock (anonymous) at (8,4) size 190x18
+            RenderText at (0,0) size 190x17
+              text run at (0,0) width 190: "(2) Fill cell with short string"
+        RenderBR {BR} at (210,37) size 0x17
+      RenderTable {TABLE} at (0,62) size 83x26
+        RenderTableSection {TBODY} at (0,0) size 83x26
+          RenderTableRow {TR} at (0,2) size 83x22
+            RenderTableCell {TD} at (2,2) size 79x22 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 15x17
+                text run at (2,2) width 15: "aa"

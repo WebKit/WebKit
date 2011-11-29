@@ -7,17 +7,17 @@ layer at (0,0) size 800x248
         RenderTableSection {TBODY} at (1,1) size 703x230
           RenderTableRow {TR} at (0,2) size 703x226
             RenderTableCell {TD} at (2,2) size 699x226 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderInline {A} at (0,0) size 108x36 [color=#0000EE]
-                RenderText {#text} at (2,2) size 108x36
-                  text run at (2,2) width 108: "Xandros"
+              RenderInline {A} at (0,0) size 109x36 [color=#0000EE]
+                RenderText {#text} at (2,2) size 109x36
+                  text run at (2,2) width 109: "Xandros"
               RenderText {#text} at (110,2) size 664x221
-                text run at (110,2) width 8: " "
-                text run at (118,2) width 545: "in the news. text text text text text text text"
+                text run at (110,2) width 9: " "
+                text run at (118,2) width 547: "in the news. text text text text text text text"
                 text run at (2,39) width 280: "text text text text text "
-                text run at (282,39) width 384: "text text text text text text text"
+                text run at (281,39) width 385: "text text text text text text text"
                 text run at (2,76) width 448: "text text text text text text text text "
-                text run at (450,76) width 216: "text text text text"
+                text run at (449,76) width 217: "text text text text"
                 text run at (2,113) width 616: "text text text text text text text text text text text "
-                text run at (618,113) width 48: "text"
+                text run at (617,113) width 49: "text"
                 text run at (2,150) width 664: "text text text text text text text text text text text text"
                 text run at (2,187) width 56: "text."

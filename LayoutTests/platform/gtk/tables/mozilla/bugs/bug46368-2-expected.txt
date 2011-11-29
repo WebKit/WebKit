@@ -3,39 +3,39 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {TABLE} at (0,0) size 784x66 [bgcolor=#00FFFF] [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 782x64
-          RenderTableRow {TR} at (0,2) size 782x60
-            RenderTableCell {TD} at (2,2) size 304x60 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderInline {FONT} at (0,0) size 99x36 [color=#0000FF]
-                RenderText {#text} at (2,2) size 99x36
-                  text run at (2,2) width 99: "Mozilla"
-              RenderText {#text} at (101,16) size 275x42
-                text run at (101,16) width 149: " code available under a "
-                text run at (250,16) width 27: "dual"
-                text run at (2,39) width 123: "MPL/GPL license. "
-                text run at (125,39) width 137: "See the for more info."
-              RenderBR {BR} at (262,54) size 0x0
-            RenderTableCell {TD} at (308,20) size 472x23 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 241x19
-                text run at (2,2) width 241: "foo bar foo bar foo bar foo bar foo bar"
-      RenderBlock (anonymous) at (0,66) size 784x51
-        RenderBR {BR} at (0,0) size 0x19
-        RenderButton {INPUT} at (2,21) size 68x28 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
-          RenderBlock (anonymous) at (8,4) size 52x19
-            RenderText at (0,0) size 52x19
-              text run at (0,0) width 52: "Reload"
-        RenderText {#text} at (72,25) size 8x19
-          text run at (72,25) width 8: "  "
-        RenderButton {INPUT} at (82,21) size 109x28 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
-          RenderBlock (anonymous) at (8,4) size 93x19
-            RenderText at (0,0) size 93x19
+      RenderTable {TABLE} at (0,0) size 784x65 [bgcolor=#00FFFF] [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 782x63
+          RenderTableRow {TR} at (0,2) size 782x59
+            RenderTableCell {TD} at (2,2) size 304x59 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderInline {FONT} at (0,0) size 100x36 [color=#0000FF]
+                RenderText {#text} at (2,2) size 100x36
+                  text run at (2,2) width 100: "Mozilla"
+              RenderText {#text} at (101,17) size 279x39
+                text run at (101,17) width 153: " code available under a "
+                text run at (253,17) width 28: "dual"
+                text run at (2,39) width 124: "MPL/GPL license. "
+                text run at (125,39) width 141: "See the for more info."
+              RenderBR {BR} at (265,53) size 1x0
+            RenderTableCell {TD} at (308,20) size 472x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 245x17
+                text run at (2,2) width 245: "foo bar foo bar foo bar foo bar foo bar"
+      RenderBlock (anonymous) at (0,65) size 784x49
+        RenderBR {BR} at (0,0) size 0x17
+        RenderButton {INPUT} at (2,20) size 67x27 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+          RenderBlock (anonymous) at (8,4) size 51x18
+            RenderText at (0,0) size 51x17
+              text run at (0,0) width 51: "Reload"
+        RenderText {#text} at (71,24) size 8x17
+          text run at (71,24) width 8: "  "
+        RenderButton {INPUT} at (81,20) size 109x27 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+          RenderBlock (anonymous) at (8,4) size 93x18
+            RenderText at (0,0) size 93x17
               text run at (0,0) width 93: "Change Font"
-        RenderText {#text} at (193,25) size 8x19
-          text run at (193,25) width 8: "  "
-        RenderTextControl {INPUT} at (203,22) size 194x25 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+        RenderText {#text} at (192,24) size 8x17
+          text run at (192,24) width 8: "  "
+        RenderTextControl {INPUT} at (202,21) size 193x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
         RenderText {#text} at (0,0) size 0x0
-layer at (214,99) size 188x19
-  RenderBlock {DIV} at (3,3) size 188x19
-    RenderText {#text} at (1,0) size 9x19
+layer at (213,97) size 187x18
+  RenderBlock {DIV} at (3,3) size 187x18
+    RenderText {#text} at (1,0) size 9x17
       text run at (1,0) width 9: "6"

@@ -1,194 +1,194 @@
-layer at (0,0) size 784x1510
+layer at (0,0) size 784x1507
   RenderView at (0,0) size 784x600
-layer at (0,0) size 784x1510
-  RenderBlock {HTML} at (0,0) size 784x1510
-    RenderBody {BODY} at (8,8) size 768x1494
-      RenderTable {TABLE} at (0,0) size 227x498
-        RenderTableSection {TBODY} at (0,0) size 227x498
-          RenderTableRow {TR} at (0,2) size 227x21
-            RenderTableCell {TD} at (2,2) size 223x21 [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 221x19
-                text run at (1,1) width 221: "Occasional height/width on images"
-          RenderTableRow {TR} at (0,25) size 227x34
-            RenderTableCell {TD} at (2,25) size 223x34 [r=1 c=0 rs=1 cs=1]
+layer at (0,0) size 784x1507
+  RenderBlock {HTML} at (0,0) size 784x1507
+    RenderBody {BODY} at (8,8) size 768x1491
+      RenderTable {TABLE} at (0,0) size 232x497
+        RenderTableSection {TBODY} at (0,0) size 232x497
+          RenderTableRow {TR} at (0,2) size 232x20
+            RenderTableCell {TD} at (2,2) size 228x20 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 226x17
+                text run at (1,1) width 226: "Occasional height/width on images"
+          RenderTableRow {TR} at (0,24) size 232x34
+            RenderTableCell {TD} at (2,24) size 228x34 [r=1 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 75x32
-          RenderTableRow {TR} at (0,61) size 227x24
-            RenderTableCell {TD} at (2,61) size 223x24 [r=2 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,60) size 232x24
+            RenderTableCell {TD} at (2,60) size 228x24 [r=2 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 44x22
-          RenderTableRow {TR} at (0,87) size 227x15
-            RenderTableCell {TD} at (2,87) size 223x15 [r=3 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,86) size 232x15
+            RenderTableCell {TD} at (2,86) size 228x15 [r=3 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 89x13
-          RenderTableRow {TR} at (0,104) size 227x15
-            RenderTableCell {TD} at (2,104) size 223x15 [r=4 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,103) size 232x15
+            RenderTableCell {TD} at (2,103) size 228x15 [r=4 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 89x13
-          RenderTableRow {TR} at (0,121) size 227x31
-            RenderTableCell {TD} at (2,121) size 223x31 [r=5 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,120) size 232x31
+            RenderTableCell {TD} at (2,120) size 228x31 [r=5 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 31x29
-          RenderTableRow {TR} at (0,154) size 227x23
-            RenderTableCell {TD} at (2,154) size 223x23 [r=6 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,153) size 232x23
+            RenderTableCell {TD} at (2,153) size 228x23 [r=6 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 62x21
-          RenderTableRow {TR} at (0,179) size 227x17
-            RenderTableCell {TD} at (2,179) size 223x17 [r=7 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,178) size 232x17
+            RenderTableCell {TD} at (2,178) size 228x17 [r=7 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 70x15
-          RenderTableRow {TR} at (0,198) size 227x28
-            RenderTableCell {TD} at (2,198) size 223x28 [r=8 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,197) size 232x28
+            RenderTableCell {TD} at (2,197) size 228x28 [r=8 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 42x26
-          RenderTableRow {TR} at (0,228) size 227x17
-            RenderTableCell {TD} at (2,228) size 223x17 [r=9 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,227) size 232x17
+            RenderTableCell {TD} at (2,227) size 228x17 [r=9 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 84x15
-          RenderTableRow {TR} at (0,247) size 227x17
-            RenderTableCell {TD} at (2,247) size 223x17 [r=10 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,246) size 232x17
+            RenderTableCell {TD} at (2,246) size 228x17 [r=10 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 90x15
-          RenderTableRow {TR} at (0,266) size 227x34
-            RenderTableCell {TD} at (2,266) size 223x34 [r=11 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,265) size 232x34
+            RenderTableCell {TD} at (2,265) size 228x34 [r=11 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 59x32
-          RenderTableRow {TR} at (0,302) size 227x17
-            RenderTableCell {TD} at (2,302) size 223x17 [r=12 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,301) size 232x17
+            RenderTableCell {TD} at (2,301) size 228x17 [r=12 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 90x15
-          RenderTableRow {TR} at (0,321) size 227x17
-            RenderTableCell {TD} at (2,321) size 223x17 [r=13 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,320) size 232x17
+            RenderTableCell {TD} at (2,320) size 228x17 [r=13 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 90x15
-          RenderTableRow {TR} at (0,340) size 227x21
-            RenderTableCell {TD} at (2,340) size 223x21 [r=14 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,339) size 232x21
+            RenderTableCell {TD} at (2,339) size 228x21 [r=14 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 83x19
-          RenderTableRow {TR} at (0,363) size 227x33
-            RenderTableCell {TD} at (2,363) size 223x33 [r=15 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,362) size 232x33
+            RenderTableCell {TD} at (2,362) size 228x33 [r=15 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 54x31
-          RenderTableRow {TR} at (0,398) size 227x27
-            RenderTableCell {TD} at (2,398) size 223x27 [r=16 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,397) size 232x27
+            RenderTableCell {TD} at (2,397) size 228x27 [r=16 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 56x25
-          RenderTableRow {TR} at (0,427) size 227x17
-            RenderTableCell {TD} at (2,427) size 223x17 [r=17 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,426) size 232x17
+            RenderTableCell {TD} at (2,426) size 228x17 [r=17 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 53x15
-          RenderTableRow {TR} at (0,446) size 227x31
-            RenderTableCell {TD} at (2,446) size 223x31 [r=18 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,445) size 232x31
+            RenderTableCell {TD} at (2,445) size 228x31 [r=18 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 31x29
-          RenderTableRow {TR} at (0,479) size 227x17
-            RenderTableCell {TD} at (2,479) size 223x17 [r=19 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,478) size 232x17
+            RenderTableCell {TD} at (2,478) size 228x17 [r=19 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 53x15
-      RenderTable {TABLE} at (0,498) size 265x498
-        RenderTableSection {TBODY} at (0,0) size 265x498
-          RenderTableRow {TR} at (0,2) size 265x21
-            RenderTableCell {TD} at (2,2) size 261x21 [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 259x19
-                text run at (1,1) width 259: "Images with height/width never specified"
-          RenderTableRow {TR} at (0,25) size 265x34
-            RenderTableCell {TD} at (2,25) size 261x34 [r=1 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (0,497) size 271x497
+        RenderTableSection {TBODY} at (0,0) size 271x497
+          RenderTableRow {TR} at (0,2) size 271x20
+            RenderTableCell {TD} at (2,2) size 267x20 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 265x17
+                text run at (1,1) width 265: "Images with height/width never specified"
+          RenderTableRow {TR} at (0,24) size 271x34
+            RenderTableCell {TD} at (2,24) size 267x34 [r=1 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 75x32
-          RenderTableRow {TR} at (0,61) size 265x24
-            RenderTableCell {TD} at (2,61) size 261x24 [r=2 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,60) size 271x24
+            RenderTableCell {TD} at (2,60) size 267x24 [r=2 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 44x22
-          RenderTableRow {TR} at (0,87) size 265x15
-            RenderTableCell {TD} at (2,87) size 261x15 [r=3 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,86) size 271x15
+            RenderTableCell {TD} at (2,86) size 267x15 [r=3 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 89x13
-          RenderTableRow {TR} at (0,104) size 265x15
-            RenderTableCell {TD} at (2,104) size 261x15 [r=4 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,103) size 271x15
+            RenderTableCell {TD} at (2,103) size 267x15 [r=4 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 89x13
-          RenderTableRow {TR} at (0,121) size 265x31
-            RenderTableCell {TD} at (2,121) size 261x31 [r=5 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,120) size 271x31
+            RenderTableCell {TD} at (2,120) size 267x31 [r=5 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 31x29
-          RenderTableRow {TR} at (0,154) size 265x23
-            RenderTableCell {TD} at (2,154) size 261x23 [r=6 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,153) size 271x23
+            RenderTableCell {TD} at (2,153) size 267x23 [r=6 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 62x21
-          RenderTableRow {TR} at (0,179) size 265x17
-            RenderTableCell {TD} at (2,179) size 261x17 [r=7 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,178) size 271x17
+            RenderTableCell {TD} at (2,178) size 267x17 [r=7 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 70x15
-          RenderTableRow {TR} at (0,198) size 265x28
-            RenderTableCell {TD} at (2,198) size 261x28 [r=8 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,197) size 271x28
+            RenderTableCell {TD} at (2,197) size 267x28 [r=8 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 42x26
-          RenderTableRow {TR} at (0,228) size 265x17
-            RenderTableCell {TD} at (2,228) size 261x17 [r=9 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,227) size 271x17
+            RenderTableCell {TD} at (2,227) size 267x17 [r=9 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 84x15
-          RenderTableRow {TR} at (0,247) size 265x17
-            RenderTableCell {TD} at (2,247) size 261x17 [r=10 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,246) size 271x17
+            RenderTableCell {TD} at (2,246) size 267x17 [r=10 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 90x15
-          RenderTableRow {TR} at (0,266) size 265x34
-            RenderTableCell {TD} at (2,266) size 261x34 [r=11 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,265) size 271x34
+            RenderTableCell {TD} at (2,265) size 267x34 [r=11 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 59x32
-          RenderTableRow {TR} at (0,302) size 265x17
-            RenderTableCell {TD} at (2,302) size 261x17 [r=12 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,301) size 271x17
+            RenderTableCell {TD} at (2,301) size 267x17 [r=12 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 90x15
-          RenderTableRow {TR} at (0,321) size 265x17
-            RenderTableCell {TD} at (2,321) size 261x17 [r=13 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,320) size 271x17
+            RenderTableCell {TD} at (2,320) size 267x17 [r=13 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 90x15
-          RenderTableRow {TR} at (0,340) size 265x21
-            RenderTableCell {TD} at (2,340) size 261x21 [r=14 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,339) size 271x21
+            RenderTableCell {TD} at (2,339) size 267x21 [r=14 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 83x19
-          RenderTableRow {TR} at (0,363) size 265x33
-            RenderTableCell {TD} at (2,363) size 261x33 [r=15 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,362) size 271x33
+            RenderTableCell {TD} at (2,362) size 267x33 [r=15 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 54x31
-          RenderTableRow {TR} at (0,398) size 265x27
-            RenderTableCell {TD} at (2,398) size 261x27 [r=16 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,397) size 271x27
+            RenderTableCell {TD} at (2,397) size 267x27 [r=16 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 56x25
-          RenderTableRow {TR} at (0,427) size 265x17
-            RenderTableCell {TD} at (2,427) size 261x17 [r=17 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,426) size 271x17
+            RenderTableCell {TD} at (2,426) size 267x17 [r=17 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 53x15
-          RenderTableRow {TR} at (0,446) size 265x31
-            RenderTableCell {TD} at (2,446) size 261x31 [r=18 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,445) size 271x31
+            RenderTableCell {TD} at (2,445) size 267x31 [r=18 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 31x29
-          RenderTableRow {TR} at (0,479) size 265x17
-            RenderTableCell {TD} at (2,479) size 261x17 [r=19 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,478) size 271x17
+            RenderTableCell {TD} at (2,478) size 267x17 [r=19 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 53x15
-      RenderTable {TABLE} at (0,996) size 274x498
-        RenderTableSection {TBODY} at (0,0) size 274x498
-          RenderTableRow {TR} at (0,2) size 274x21
-            RenderTableCell {TD} at (2,2) size 270x21 [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 268x19
-                text run at (1,1) width 268: "Images with height/width always specified"
-          RenderTableRow {TR} at (0,25) size 274x34
-            RenderTableCell {TD} at (2,25) size 270x34 [r=1 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (0,994) size 280x497
+        RenderTableSection {TBODY} at (0,0) size 280x497
+          RenderTableRow {TR} at (0,2) size 280x20
+            RenderTableCell {TD} at (2,2) size 276x20 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 274x17
+                text run at (1,1) width 274: "Images with height/width always specified"
+          RenderTableRow {TR} at (0,24) size 280x34
+            RenderTableCell {TD} at (2,24) size 276x34 [r=1 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 75x32
-          RenderTableRow {TR} at (0,61) size 274x24
-            RenderTableCell {TD} at (2,61) size 270x24 [r=2 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,60) size 280x24
+            RenderTableCell {TD} at (2,60) size 276x24 [r=2 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 44x22
-          RenderTableRow {TR} at (0,87) size 274x15
-            RenderTableCell {TD} at (2,87) size 270x15 [r=3 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,86) size 280x15
+            RenderTableCell {TD} at (2,86) size 276x15 [r=3 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 89x13
-          RenderTableRow {TR} at (0,104) size 274x15
-            RenderTableCell {TD} at (2,104) size 270x15 [r=4 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,103) size 280x15
+            RenderTableCell {TD} at (2,103) size 276x15 [r=4 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 89x13
-          RenderTableRow {TR} at (0,121) size 274x31
-            RenderTableCell {TD} at (2,121) size 270x31 [r=5 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,120) size 280x31
+            RenderTableCell {TD} at (2,120) size 276x31 [r=5 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 31x29
-          RenderTableRow {TR} at (0,154) size 274x23
-            RenderTableCell {TD} at (2,154) size 270x23 [r=6 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,153) size 280x23
+            RenderTableCell {TD} at (2,153) size 276x23 [r=6 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 62x21
-          RenderTableRow {TR} at (0,179) size 274x17
-            RenderTableCell {TD} at (2,179) size 270x17 [r=7 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,178) size 280x17
+            RenderTableCell {TD} at (2,178) size 276x17 [r=7 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 70x15
-          RenderTableRow {TR} at (0,198) size 274x28
-            RenderTableCell {TD} at (2,198) size 270x28 [r=8 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,197) size 280x28
+            RenderTableCell {TD} at (2,197) size 276x28 [r=8 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 42x26
-          RenderTableRow {TR} at (0,228) size 274x17
-            RenderTableCell {TD} at (2,228) size 270x17 [r=9 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,227) size 280x17
+            RenderTableCell {TD} at (2,227) size 276x17 [r=9 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 84x15
-          RenderTableRow {TR} at (0,247) size 274x17
-            RenderTableCell {TD} at (2,247) size 270x17 [r=10 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,246) size 280x17
+            RenderTableCell {TD} at (2,246) size 276x17 [r=10 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 90x15
-          RenderTableRow {TR} at (0,266) size 274x34
-            RenderTableCell {TD} at (2,266) size 270x34 [r=11 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,265) size 280x34
+            RenderTableCell {TD} at (2,265) size 276x34 [r=11 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 59x32
-          RenderTableRow {TR} at (0,302) size 274x17
-            RenderTableCell {TD} at (2,302) size 270x17 [r=12 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,301) size 280x17
+            RenderTableCell {TD} at (2,301) size 276x17 [r=12 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 90x15
-          RenderTableRow {TR} at (0,321) size 274x17
-            RenderTableCell {TD} at (2,321) size 270x17 [r=13 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,320) size 280x17
+            RenderTableCell {TD} at (2,320) size 276x17 [r=13 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 90x15
-          RenderTableRow {TR} at (0,340) size 274x21
-            RenderTableCell {TD} at (2,340) size 270x21 [r=14 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,339) size 280x21
+            RenderTableCell {TD} at (2,339) size 276x21 [r=14 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 83x19
-          RenderTableRow {TR} at (0,363) size 274x33
-            RenderTableCell {TD} at (2,363) size 270x33 [r=15 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,362) size 280x33
+            RenderTableCell {TD} at (2,362) size 276x33 [r=15 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 54x31
-          RenderTableRow {TR} at (0,398) size 274x27
-            RenderTableCell {TD} at (2,398) size 270x27 [r=16 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,397) size 280x27
+            RenderTableCell {TD} at (2,397) size 276x27 [r=16 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 56x25
-          RenderTableRow {TR} at (0,427) size 274x17
-            RenderTableCell {TD} at (2,427) size 270x17 [r=17 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,426) size 280x17
+            RenderTableCell {TD} at (2,426) size 276x17 [r=17 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 53x15
-          RenderTableRow {TR} at (0,446) size 274x31
-            RenderTableCell {TD} at (2,446) size 270x31 [r=18 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,445) size 280x31
+            RenderTableCell {TD} at (2,445) size 276x31 [r=18 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 31x29
-          RenderTableRow {TR} at (0,479) size 274x17
-            RenderTableCell {TD} at (2,479) size 270x17 [r=19 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,478) size 280x17
+            RenderTableCell {TD} at (2,478) size 276x17 [r=19 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 53x15
