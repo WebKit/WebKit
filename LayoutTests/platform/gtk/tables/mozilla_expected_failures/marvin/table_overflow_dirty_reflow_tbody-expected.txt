@@ -1,32 +1,32 @@
-layer at (0,0) size 781x731
-  RenderView at (0,0) size 781x600
-layer at (0,0) size 781x535
-  RenderBlock {HTML} at (0,0) size 781x535
-    RenderBody {BODY} at (8,8) size 765x519
-      RenderTable {TABLE} at (0,0) size 229x519 [border: (1px outset #808080)]
-        RenderBlock {CAPTION} at (0,0) size 227x206 [border: (3px solid #FFA500)]
-          RenderText {#text} at (102,3) size 23x19
-            text run at (102,3) width 23: "cap"
-        RenderTableSection {TBODY} at (1,207) size 227x311
-          RenderTableRow {TR} at (0,30) size 227x89
-            RenderTableCell {TD} at (30,49) size 53x51 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (16,16) size 21x19
-                text run at (16,16) width 21: "foo"
-            RenderTableCell {TD} at (113,30) size 84x89 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (16,16) size 20x19
-                text run at (16,16) width 20: "bar"
-              RenderBR {BR} at (36,16) size 0x19
-              RenderText {#text} at (16,35) size 22x19
-                text run at (16,35) width 22: "baz"
-              RenderBR {BR} at (38,35) size 0x19
-              RenderText {#text} at (16,54) size 22x19
-                text run at (16,54) width 22: "zap"
-          RenderTableRow {TR} at (0,149) size 227x132
-            RenderTableCell {TD} at (30,189) size 53x51 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (16,16) size 21x19
-                text run at (16,16) width 21: "foo"
-            RenderTableCell {TD} at (113,197) size 84x84 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+layer at (0,0) size 784x728
+  RenderView at (0,0) size 784x600
+layer at (0,0) size 784x532
+  RenderBlock {HTML} at (0,0) size 784x532
+    RenderBody {BODY} at (8,8) size 768x516
+      RenderTable {TABLE} at (0,0) size 230x516 [border: (1px outset #808080)]
+        RenderBlock {CAPTION} at (0,0) size 228x206 [border: (3px solid #FFA500)]
+          RenderText {#text} at (102,3) size 24x17
+            text run at (102,3) width 24: "cap"
+        RenderTableSection {TBODY} at (1,207) size 228x308
+          RenderTableRow {TR} at (0,30) size 228x86
+            RenderTableCell {TD} at (30,48) size 54x50 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (16,16) size 22x17
+                text run at (16,16) width 22: "foo"
+            RenderTableCell {TD} at (114,30) size 84x86 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (16,16) size 21x17
+                text run at (16,16) width 21: "bar"
+              RenderBR {BR} at (36,16) size 1x17
+              RenderText {#text} at (16,34) size 23x17
+                text run at (16,34) width 23: "baz"
+              RenderBR {BR} at (38,34) size 1x17
+              RenderText {#text} at (16,52) size 23x17
+                text run at (16,52) width 23: "zap"
+          RenderTableRow {TR} at (0,146) size 228x132
+            RenderTableCell {TD} at (30,187) size 54x50 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (16,16) size 22x17
+                text run at (16,16) width 22: "foo"
+            RenderTableCell {TD} at (114,194) size 84x84 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
               RenderBlock {DIV} at (16,16) size 52x52 [border: (1px solid #008000)]
                 RenderBlock {DIV} at (1,1) size 402x302 [border: (1px solid #FF0000)]
-                  RenderText {#text} at (1,1) size 8x19
+                  RenderText {#text} at (1,1) size 8x17
                     text run at (1,1) width 8: "d"

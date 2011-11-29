@@ -1,18 +1,20 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x64
-  RenderBlock {html} at (0,0) size 800x64
-    RenderBody {body} at (8,8) size 784x48
-      RenderTable {table} at (0,0) size 784x48 [bgcolor=#00FF00] [border: (1px outset #808080)]
-        RenderTableSection (anonymous) at (1,1) size 782x46
-          RenderTableRow {tr} at (0,2) size 782x42
-            RenderTableCell {td} at (2,2) size 388x42 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 383x38
-                text run at (2,2) width 309: "Here is a bordered table using the ID attribute for"
-                text run at (2,21) width 79: "background "
-                text run at (81,21) width 304: "color. The table should have a lime background."
-            RenderTableCell {td} at (392,2) size 388x42 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 383x38
-                text run at (2,2) width 309: "Here is a bordered table using the ID attribute for"
-                text run at (2,21) width 79: "background "
-                text run at (81,21) width 304: "color. The table should have a lime background."
+layer at (0,0) size 800x80
+  RenderBlock {html} at (0,0) size 800x80
+    RenderBody {body} at (8,8) size 784x64
+      RenderTable {table} at (0,0) size 784x64 [bgcolor=#00FF00] [border: (1px outset #808080)]
+        RenderTableSection (anonymous) at (1,1) size 782x62
+          RenderTableRow {tr} at (0,2) size 782x58
+            RenderTableCell {td} at (2,2) size 388x58 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 316x53
+                text run at (2,2) width 316: "Here is a bordered table using the ID attribute for"
+                text run at (2,20) width 80: "background "
+                text run at (81,20) width 226: "color. The table should have a lime"
+                text run at (2,38) width 80: "background."
+            RenderTableCell {td} at (392,2) size 388x58 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 316x53
+                text run at (2,2) width 316: "Here is a bordered table using the ID attribute for"
+                text run at (2,20) width 80: "background "
+                text run at (81,20) width 226: "color. The table should have a lime"
+                text run at (2,38) width 80: "background."
