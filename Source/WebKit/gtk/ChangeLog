@@ -1,3 +1,22 @@
+2011-11-29  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        [Gtk] Regression: text-inserted events lack text inserted and current line
+        https://bugs.webkit.org/show_bug.cgi?id=72830
+
+        Reviewed by Chris Fleizach.
+
+        Updated unit test to handle the new 'text-insert' and
+        'text-remove' signals, instead of the 'text-changed' one.
+
+        * tests/testatk.c:
+        (textChangedCb): Update a global variable with the result of the
+        text change, so we can check its value later.
+        (testWebkitAtkTextChangedNotifications): Connect to the
+        'text-insert' and 'text-remove' signals and check, in a way more
+        carefully way than it was done before, that the signals are being
+        properly emitted, and that the information attached to them is the
+        right one for each case (insert/remove, offset, count and text).
+
 2011-11-28  Stefan Zwanenburg  <stefanhetzwaantje@gmail.com>
 
         WebKitGTK+-1.7.2 build error due to a reference to gdk_disable_multidevice()

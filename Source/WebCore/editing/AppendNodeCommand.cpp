@@ -47,12 +47,11 @@ AppendNodeCommand::AppendNodeCommand(PassRefPtr<ContainerNode> parent, PassRefPt
 static void sendAXTextChangedIgnoringLineBreaks(Node* node, AXObjectCache::AXTextChange textChange)
 {
     String nodeValue = node->nodeValue();
-    unsigned len = nodeValue.length();
     // Don't consider linebreaks in this command
     if (nodeValue == "\n")
       return;
 
-    node->document()->axObjectCache()->nodeTextChangeNotification(node->renderer(), textChange, 0, len);
+    node->document()->axObjectCache()->nodeTextChangeNotification(node->renderer(), textChange, 0, nodeValue);
 }
 
 void AppendNodeCommand::doApply()

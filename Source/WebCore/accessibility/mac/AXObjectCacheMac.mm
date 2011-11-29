@@ -128,7 +128,7 @@ void AXObjectCache::postPlatformNotification(AccessibilityObject* obj, AXNotific
     [obj->wrapper() accessibilityPostedNotification:macNotification];
 }
 
-void AXObjectCache::nodeTextChangePlatformNotification(AccessibilityObject*, AXTextChange, unsigned, unsigned)
+void AXObjectCache::nodeTextChangePlatformNotification(AccessibilityObject*, AXTextChange, unsigned, const String&)
 {
 }
 

@@ -107,7 +107,7 @@ void AXObjectCache::postPlatformNotification(AccessibilityObject* obj, AXNotific
     NotifyWinEvent(msaaEvent, page->chrome()->platformPageClient(), OBJID_CLIENT, -static_cast<LONG>(obj->axObjectID()));
 }
 
-void AXObjectCache::nodeTextChangePlatformNotification(AccessibilityObject*, AXTextChange, unsigned, unsigned)
+void AXObjectCache::nodeTextChangePlatformNotification(AccessibilityObject*, AXTextChange, unsigned, const String&)
 {
 }
 

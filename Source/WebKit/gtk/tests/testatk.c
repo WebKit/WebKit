@@ -1548,24 +1548,20 @@ static void testWebkitAtkListsOfItems()
     g_object_unref(webView);
 }
 
-static gboolean textInserted = FALSE;
-static gboolean textDeleted = FALSE;
+typedef enum {
+  TEXT_CHANGE_INSERT = 1,
+  TEXT_CHANGE_REMOVE = 2
+} TextChangeType;
 
-static void textChangedCb(AtkText* text, gint pos, gint len, const gchar* detail)
+static gchar* textChangedResult = 0;
+
+static void textChangedCb(AtkText* text, gint pos, gint len, gchar* modifiedText, gpointer data)
 {
     g_assert(text && ATK_IS_OBJECT(text));
 
-    if (!g_strcmp0(detail, "insert"))
-        textInserted = TRUE;
-    else if (!g_strcmp0(detail, "delete"))
-        textDeleted = TRUE;
-}
-
-static gboolean checkTextChanges(gpointer unused)
-{
-    g_assert_cmpint(textInserted, ==, TRUE);
-    g_assert_cmpint(textDeleted, ==, TRUE);
-    return FALSE;
+    TextChangeType type = GPOINTER_TO_INT(data);
+    g_free(textChangedResult);
+    textChangedResult = g_strdup_printf("|%d|%d|%d|'%s'|", type, pos, len, modifiedText);
 }
 
 static void testWebkitAtkTextChangedNotifications()
@@ -1586,20 +1582,34 @@ static void testWebkitAtkTextChangedNotifications()
     g_assert(ATK_IS_EDITABLE_TEXT(textEntry));
     g_assert(atk_object_get_role(ATK_OBJECT(textEntry)) == ATK_ROLE_ENTRY);
 
-    g_signal_connect(textEntry, "text-changed::insert",
+    g_signal_connect(textEntry, "text-insert",
                      G_CALLBACK(textChangedCb),
-                     (gpointer)"insert");
-    g_signal_connect(textEntry, "text-changed::delete",
+                     GINT_TO_POINTER(TEXT_CHANGE_INSERT));
+    g_signal_connect(textEntry, "text-remove",
                      G_CALLBACK(textChangedCb),
-                     (gpointer)"delete");
+                     GINT_TO_POINTER(TEXT_CHANGE_REMOVE));
 
     gint pos = 0;
     atk_editable_text_insert_text(ATK_EDITABLE_TEXT(textEntry), "foo bar baz", 11, &pos);
-    atk_editable_text_delete_text(ATK_EDITABLE_TEXT(textEntry), 4, 7);
-    textInserted = FALSE;
-    textDeleted = FALSE;
+    char* text = atk_text_get_text(ATK_TEXT(textEntry), 0, -1);
+    g_assert_cmpstr(text, ==, "foo bar baz");
+    g_assert_cmpstr(textChangedResult, ==, "|1|0|11|'foo bar baz'|");
+    g_free(text);
 
-    g_idle_add((GSourceFunc)checkTextChanges, 0);
+    atk_editable_text_delete_text(ATK_EDITABLE_TEXT(textEntry), 4, 7);
+    text = atk_text_get_text(ATK_TEXT(textEntry), 0, -1);
+    g_assert_cmpstr(text, ==, "foo  baz");
+    g_assert_cmpstr(textChangedResult, ==, "|2|4|3|'bar'|");
+    g_free(text);
+
+    pos = 4;
+    atk_editable_text_insert_text(ATK_EDITABLE_TEXT(textEntry), "qux quux", 8, &pos);
+    text = atk_text_get_text(ATK_TEXT(textEntry), 0, -1);
+    g_assert_cmpstr(text, ==, "foo qux quux baz");
+    g_assert_cmpstr(textChangedResult, ==, "|1|4|8|'qux quux'|");
+    g_free(text);
+
+    g_free(textChangedResult);
 
     g_object_unref(form);
     g_object_unref(textEntry);

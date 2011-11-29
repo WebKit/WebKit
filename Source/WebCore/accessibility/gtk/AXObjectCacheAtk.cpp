@@ -158,9 +158,8 @@ void AXObjectCache::postPlatformNotification(AccessibilityObject* coreObject, AX
     }
 }
 
-static void emitTextChanged(AccessibilityObject* object, AXObjectCache::AXTextChange textChange, unsigned offset, unsigned count)
+static void emitTextChanged(AccessibilityObject* object, AXObjectCache::AXTextChange textChange, unsigned offset, const String& text)
 {
-    // Get the axObject for the parent object
     AtkObject* wrapper = object->parentObjectUnignored()->wrapper();
     if (!wrapper || !ATK_IS_TEXT(wrapper))
         return;
@@ -169,26 +168,26 @@ static void emitTextChanged(AccessibilityObject* object, AXObjectCache::AXTextCh
     CString detail;
     switch (textChange) {
     case AXObjectCache::AXTextInserted:
-        detail = "text-changed::insert";
+        detail = "text-insert";
         break;
     case AXObjectCache::AXTextDeleted:
-        detail = "text-changed::delete";
+        detail = "text-remove";
         break;
     }
 
     if (!detail.isNull())
-        g_signal_emit_by_name(wrapper, detail.data(), offset, count);
+        g_signal_emit_by_name(wrapper, detail.data(), offset, text.length(), text.utf8().data());
 }
 
-void AXObjectCache::nodeTextChangePlatformNotification(AccessibilityObject* object, AXTextChange textChange, unsigned offset, unsigned count)
+void AXObjectCache::nodeTextChangePlatformNotification(AccessibilityObject* object, AXTextChange textChange, unsigned offset, const String& text)
 {
     // Sanity check
-    if (count < 1 || !object || !object->isAccessibilityRenderObject())
+    if (!object || !object->isAccessibilityRenderObject() || text.isEmpty())
         return;
 
     Node* node = object->node();
     RefPtr<Range> range = Range::create(node->document(), node->parentNode(), 0, node, 0);
-    emitTextChanged(object, textChange, offset + TextIterator::rangeLength(range.get()), count);
+    emitTextChanged(object, textChange, offset + TextIterator::rangeLength(range.get()), text);
 }
 
 void AXObjectCache::handleFocusedUIElementChanged(RenderObject* oldFocusedRender, RenderObject* newFocusedRender)

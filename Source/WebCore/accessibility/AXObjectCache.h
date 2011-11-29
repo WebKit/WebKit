@@ -146,13 +146,13 @@ public:
         AXTextDeleted,
     };
 
-    void nodeTextChangeNotification(RenderObject*, AXTextChange, unsigned offset, unsigned count);
+    void nodeTextChangeNotification(RenderObject*, AXTextChange, unsigned offset, const String&);
 
     bool nodeHasRole(Node*, const AtomicString& role);
 
 protected:
     void postPlatformNotification(AccessibilityObject*, AXNotification);
-    void nodeTextChangePlatformNotification(AccessibilityObject*, AXTextChange, unsigned offset, unsigned count);
+    void nodeTextChangePlatformNotification(AccessibilityObject*, AXTextChange, unsigned offset, const String&);
 
 private:
     Document* m_document;
@@ -185,8 +185,8 @@ inline void AXObjectCache::selectedChildrenChanged(RenderObject*) { }
 inline void AXObjectCache::postNotification(RenderObject*, AXNotification, bool postToElement, PostType) { }
 inline void AXObjectCache::postNotification(AccessibilityObject*, Document*, AXNotification, bool postToElement, PostType) { }
 inline void AXObjectCache::postPlatformNotification(AccessibilityObject*, AXNotification) { }
-inline void AXObjectCache::nodeTextChangeNotification(RenderObject*, AXTextChange, unsigned, unsigned) { }
-inline void AXObjectCache::nodeTextChangePlatformNotification(AccessibilityObject*, AXTextChange, unsigned, unsigned) { }
+inline void AXObjectCache::nodeTextChangeNotification(RenderObject*, AXTextChange, unsigned, const String&) { }
+inline void AXObjectCache::nodeTextChangePlatformNotification(AccessibilityObject*, AXTextChange, unsigned, const String&) { }
 inline void AXObjectCache::handleFocusedUIElementChanged(RenderObject*, RenderObject*) { }
 inline void AXObjectCache::handleScrolledToAnchor(const Node*) { }
 inline void AXObjectCache::contentChanged(RenderObject*) { }

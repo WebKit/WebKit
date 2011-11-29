@@ -1,5 +1,65 @@
 2011-11-29  Mario Sanchez Prada  <msanchez@igalia.com>
 
+        [Gtk] Regression: text-inserted events lack text inserted and current line
+        https://bugs.webkit.org/show_bug.cgi?id=72830
+
+        Reviewed by Chris Fleizach.
+
+        Replace the emission of the old (and now deprecated) AtkObject's
+        'text-changed:insert' and 'text-changed:remove' signals with the
+        new 'text-insert' and 'text-remove' ones, which are better and
+        less fragile since they emit the modified text too, along with the
+        typical 'offset' and 'count' values associated to the change.
+
+        Also, change the signature of the nodeTextChangeNotification() and
+        nodeTextChangePlatformNotification() to allow specifying the text
+        being modified from the place we better know about it, that is,
+        the text editing commands.
+
+        * accessibility/gtk/AXObjectCacheAtk.cpp:
+        (WebCore::emitTextChanged): Emit 'text-insert' and 'text-remove',
+        instead of the old and now deprecated 'text-changed' signal.
+        (WebCore::AXObjectCache::nodeTextChangePlatformNotification):
+        Update this function to receive a String with the text being
+        modified, instead of just the number of characters.
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::nodeTextChangeNotification): Update this
+        function to receive a String with the text being modified.
+        * accessibility/AXObjectCache.h:
+        (WebCore::AXObjectCache::nodeTextChangeNotification): Ditto.
+        (WebCore::AXObjectCache::nodeTextChangePlatformNotification): Ditto.
+
+        Adapt the text editing commants to pass the whole text string
+        being modified, instead of just its number of characters.
+
+        * editing/AppendNodeCommand.cpp:
+        (WebCore::sendAXTextChangedIgnoringLineBreaks): Adapt to the new
+        signature of nodeTextChangeNotification(), so pass the whole text.
+        * editing/DeleteFromTextNodeCommand.cpp:
+        (WebCore::DeleteFromTextNodeCommand::doApply): Ditto.
+        (WebCore::DeleteFromTextNodeCommand::doUnapply): Ditto.
+        * editing/InsertIntoTextNodeCommand.cpp:
+        (WebCore::InsertIntoTextNodeCommand::doApply): Ditto.
+        (WebCore::InsertIntoTextNodeCommand::doUnapply): Ditto.
+        * editing/InsertNodeBeforeCommand.cpp:
+        (WebCore::InsertNodeBeforeCommand::doApply): Ditto.
+        (WebCore::InsertNodeBeforeCommand::doUnapply): Ditto.
+
+        Update mac, win and chromium's specific parts of AXObjectCache to
+        match the new signature for nodeTextChangePlatformNotification(),
+        which won't affect their behaviour as they were not implementing
+        that method anyway.
+
+        * accessibility/chromium/AXObjectCacheChromium.cpp:
+        (WebCore::AXObjectCache::nodeTextChangePlatformNotification):
+        * accessibility/mac/AXObjectCacheMac.mm:
+        (WebCore::AXObjectCache::nodeTextChangePlatformNotification):
+        * accessibility/win/AXObjectCacheWin.cpp:
+        (WebCore::AXObjectCache::nodeTextChangePlatformNotification):
+
+2011-11-29  Mario Sanchez Prada  <msanchez@igalia.com>
+
         [Gtk] Regression: Push buttons no longer expose their displayed text/name
         https://bugs.webkit.org/show_bug.cgi?id=72804
 
