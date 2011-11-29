@@ -1,3 +1,13 @@
+2011-11-29  Anders Carlsson  <andersca@apple.com>
+
+        Decorate adoptWK with WARN_UNUSED_RETURN
+        https://bugs.webkit.org/show_bug.cgi?id=73331
+
+        Reviewed by Sam Weinig.
+
+        * UIProcess/API/cpp/WKRetainPtr.h:
+        (WebKit::adoptWK):
+
 2011-11-29  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix GTK+ WebKit2 build after r101312.
