@@ -45,6 +45,18 @@ namespace JSC {
         IncludeDontEnumProperties
     };
 
+    enum TypedArrayType {
+        TypedArrayNone,
+        TypedArrayInt8,
+        TypedArrayInt16,
+        TypedArrayInt32,
+        TypedArrayUint8,
+        TypedArrayUint16,
+        TypedArrayUint32,
+        TypedArrayFloat32,
+        TypedArrayFloat64
+    };
+
     class JSCell {
         friend class JSValue;
         friend class MarkedBlock;
@@ -131,6 +143,7 @@ namespace JSC {
         Structure* unvalidatedStructure() { return m_structure.unvalidatedGet(); }
 #endif
         
+        static const TypedArrayType TypedArrayStorageType = TypedArrayNone;
     protected:
 
         void finishCreation(JSGlobalData&);

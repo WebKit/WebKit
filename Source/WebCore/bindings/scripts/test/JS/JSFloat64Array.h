@@ -57,6 +57,9 @@ public:
     {
         return static_cast<Float64Array*>(Base::impl());
     }
+    static const TypedArrayType TypedArrayStorageType = TypedArrayFloat64;
+    intptr_t m_storageLength;
+    void* m_storage;
 protected:
     JSFloat64Array(JSC::Structure*, JSDOMGlobalObject*, PassRefPtr<Float64Array>);
     void finishCreation(JSC::JSGlobalData&);

@@ -938,6 +938,21 @@ sub GenerateHeader
         push(@headerContent, "    }\n");
     }
 
+    if (IsTypedArrayType($implType) and ($implType ne "ArrayBufferView") and ($implType ne "ArrayBuffer")) {
+        push(@headerContent, "    static const JSC::TypedArrayType TypedArrayStorageType = JSC::");
+        push(@headerContent, "TypedArrayInt8") if $implType eq "Int8Array";
+        push(@headerContent, "TypedArrayInt16") if $implType eq "Int16Array";
+        push(@headerContent, "TypedArrayInt32") if $implType eq "Int32Array";
+        push(@headerContent, "TypedArrayUint8") if $implType eq "Uint8Array";
+        push(@headerContent, "TypedArrayUint16") if $implType eq "Uint16Array";
+        push(@headerContent, "TypedArrayUint32") if $implType eq "Uint32Array";
+        push(@headerContent, "TypedArrayFloat32") if $implType eq "Float32Array";
+        push(@headerContent, "TypedArrayFloat64") if $implType eq "Float64Array";
+        push(@headerContent, ";\n");
+        push(@headerContent, "    intptr_t m_storageLength;\n");
+        push(@headerContent, "    void* m_storage;\n");
+    }
+
     push(@headerContent, "protected:\n");
     # Constructor
     if ($interfaceName eq "DOMWindow") {
@@ -1604,6 +1619,12 @@ sub GenerateImplementation
         push(@implContent, "void ${className}::finishCreation(JSGlobalData& globalData)\n");
         push(@implContent, "{\n");
         push(@implContent, "    Base::finishCreation(globalData);\n");
+        if (IsTypedArrayType($implType) and ($implType ne "ArrayBufferView") and ($implType ne "ArrayBuffer")) {
+            push(@implContent, "    TypedArrayDescriptor descriptor(vptr(), OBJECT_OFFSETOF(${className}, m_storage), OBJECT_OFFSETOF(${className}, m_storageLength));\n");
+            push(@implContent, "    globalData.registerTypedArrayDescriptor(impl(), descriptor);\n");
+            push(@implContent, "    m_storage = impl()->data();\n");
+            push(@implContent, "    m_storageLength = impl()->length();\n");
+        }
         push(@implContent, "    ASSERT(inherits(&s_info));\n");
         push(@implContent, "}\n\n");
     }

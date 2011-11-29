@@ -103,6 +103,24 @@ namespace JSC {
         ThreadStackTypeSmall
     };
 
+    struct TypedArrayDescriptor {
+        TypedArrayDescriptor()
+            : m_vptr(0)
+            , m_storageOffset(0)
+            , m_lengthOffset(0)
+        {
+        }
+        TypedArrayDescriptor(void* vptr, size_t storageOffset, size_t lengthOffset)
+            : m_vptr(vptr)
+            , m_storageOffset(storageOffset)
+            , m_lengthOffset(lengthOffset)
+        {
+        }
+        void* m_vptr;
+        size_t m_storageOffset;
+        size_t m_lengthOffset;
+    };
+    
     class JSGlobalData : public RefCounted<JSGlobalData> {
     public:
         // WebCore has a one-to-one mapping of threads to JSGlobalDatas;
@@ -319,6 +337,22 @@ namespace JSC {
         unsigned m_timeoutCount;
 #endif
 
+#define registerTypedArrayFunction(type, capitalizedType) \
+        void registerTypedArrayDescriptor(const capitalizedType##Array*, const TypedArrayDescriptor& descriptor) \
+        { \
+            ASSERT(!m_##type##ArrayDescriptor.m_vptr || m_##type##ArrayDescriptor.m_vptr == descriptor.m_vptr); \
+            m_##type##ArrayDescriptor = descriptor; \
+        }
+        registerTypedArrayFunction(int8, Int8);
+        registerTypedArrayFunction(int16, Int16);
+        registerTypedArrayFunction(int32, Int32);
+        registerTypedArrayFunction(uint8, Uint8);
+        registerTypedArrayFunction(uint16, Uint16);
+        registerTypedArrayFunction(uint32, Uint32);
+        registerTypedArrayFunction(float32, Float32);
+        registerTypedArrayFunction(float64, Float64);
+#undef registerTypedArrayFunction
+
     private:
         JSGlobalData(GlobalDataType, ThreadStackType, HeapSize);
         static JSGlobalData*& sharedInstanceInternal();
@@ -330,6 +364,14 @@ namespace JSC {
 #if ENABLE(GC_VALIDATION)
         bool m_isInitializingObject;
 #endif
+        TypedArrayDescriptor m_int8ArrayDescriptor;
+        TypedArrayDescriptor m_int16ArrayDescriptor;
+        TypedArrayDescriptor m_int32ArrayDescriptor;
+        TypedArrayDescriptor m_uint8ArrayDescriptor;
+        TypedArrayDescriptor m_uint16ArrayDescriptor;
+        TypedArrayDescriptor m_uint32ArrayDescriptor;
+        TypedArrayDescriptor m_float32ArrayDescriptor;
+        TypedArrayDescriptor m_float64ArrayDescriptor;
     };
 
 #if ENABLE(GC_VALIDATION)
