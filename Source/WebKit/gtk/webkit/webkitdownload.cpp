@@ -941,6 +941,7 @@ void DownloadClient::didReceiveResponse(ResourceHandle*, const ResourceResponse&
 {
     webkit_download_set_response(m_download, response);
     if (response.httpStatusCode() >= 400) {
+        m_download->priv->resourceHandle->cancel();
         webkit_download_error(m_download, ResourceError(errorDomainDownload, response.httpStatusCode(),
                                                         response.url().string(), response.httpStatusText()));
     }

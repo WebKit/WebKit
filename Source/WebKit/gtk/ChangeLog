@@ -1,3 +1,17 @@
+2011-11-29  Sergio Villar Senin  <svillar@igalia.com>
+
+        [GTK] SIGSEV when a WebKitDownload fails
+        https://bugs.webkit.org/show_bug.cgi?id=72883
+
+        Reviewed by Xan Lopez.
+
+        After r100769 http status codes >= 400 trigger download
+        failures. We must ensure that the download is properly cancelled
+        before clearing the ResourceHandle client to avoid crashes.
+
+        * webkit/webkitdownload.cpp:
+        (DownloadClient::didReceiveResponse):
+
 2011-11-29  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Custom fonts on surlybikes.com and boingboing.net do not load
