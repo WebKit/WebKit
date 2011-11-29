@@ -34,6 +34,7 @@
 #include "LayerRendererChromium.h"
 #include "ManagedTexture.h"
 #include "TextStream.h"
+#include "cc/CCDamageTracker.h"
 #include "cc/CCLayerImpl.h"
 #include <wtf/text/CString.h>
 
@@ -46,6 +47,7 @@ CCRenderSurface::CCRenderSurface(CCLayerImpl* owningLayer)
     , m_surfacePropertyChanged(false)
     , m_drawOpacity(1)
 {
+    m_damageTracker = CCDamageTracker::create();
 }
 
 CCRenderSurface::~CCRenderSurface()
@@ -236,6 +238,10 @@ void CCRenderSurface::dumpSurface(TextStream& ts, int indent) const
     ts << m_drawTransform.m21() << ", " << m_drawTransform.m22() << ", " << m_drawTransform.m23() << ", " << m_drawTransform.m24() << "  //  ";
     ts << m_drawTransform.m31() << ", " << m_drawTransform.m32() << ", " << m_drawTransform.m33() << ", " << m_drawTransform.m34() << "  //  ";
     ts << m_drawTransform.m41() << ", " << m_drawTransform.m42() << ", " << m_drawTransform.m43() << ", " << m_drawTransform.m44() << "\n";
+
+    writeIndent(ts, indent+1);
+    ts << "damageRect is pos(" << m_damageTracker->currentDamageRect().x() << "," << m_damageTracker->currentDamageRect().y() << "), ";
+    ts << "size(" << m_damageTracker->currentDamageRect().width() << "," << m_damageTracker->currentDamageRect().height() << ")\n";
 }
 
 int CCRenderSurface::owningLayerId() const
@@ -273,6 +279,11 @@ bool CCRenderSurface::surfacePropertyChanged() const
     //
     ASSERT(m_owningLayer);
     return m_surfacePropertyChanged || m_owningLayer->layerPropertyChanged();
+}
+
+bool CCRenderSurface::surfacePropertyChangedOnlyFromDescendant() const
+{
+    return m_surfacePropertyChanged && !m_owningLayer->layerPropertyChanged();
 }
 
 }

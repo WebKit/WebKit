@@ -381,7 +381,7 @@ void CCLayerTreeHost::paintLayerContents(const LayerList& renderSurfaceLayerList
 
             // Layers that start a new render surface will be painted when the render
             // surface's list is processed.
-            if (layer->renderSurface() && layer->renderSurface() != renderSurface)
+            if (CCLayerTreeHostCommon::renderSurfaceContributesToTarget<LayerChromium>(layer, renderSurfaceLayer->id()))
                 continue;
 
             layer->setLayerTreeHost(this);
@@ -415,7 +415,8 @@ void CCLayerTreeHost::updateCompositorResources(GraphicsContext3D* context, CCTe
         const LayerList& layerList = renderSurface->layerList();
         for (unsigned layerIndex = 0; layerIndex < layerList.size(); ++layerIndex) {
             LayerChromium* layer = layerList[layerIndex].get();
-            if (layer->renderSurface() && layer->renderSurface() != renderSurface)
+
+            if (CCLayerTreeHostCommon::renderSurfaceContributesToTarget<LayerChromium>(layer, renderSurfaceLayer->id()))
                 continue;
 
             layer->updateCompositorResources(context, updater);

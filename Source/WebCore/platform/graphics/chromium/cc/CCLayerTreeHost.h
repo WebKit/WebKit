@@ -75,6 +75,7 @@ struct CCSettings {
             , enableCompositorThread(false)
             , showFPSCounter(false)
             , showPlatformLayerTree(false)
+            , useDamageTracker(false)
             , refreshRate(0) { }
 
     bool acceleratePainting;
@@ -83,6 +84,7 @@ struct CCSettings {
     bool enableCompositorThread;
     bool showFPSCounter;
     bool showPlatformLayerTree;
+    bool useDamageTracker;
     double refreshRate;
 };
 

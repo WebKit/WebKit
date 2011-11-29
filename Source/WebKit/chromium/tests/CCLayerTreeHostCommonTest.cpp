@@ -26,6 +26,7 @@
 
 #include "cc/CCLayerTreeHostCommon.h"
 
+#include "CCLayerTreeTestCommon.h"
 #include "LayerChromium.h"
 #include "TransformationMatrix.h"
 
@@ -35,27 +36,6 @@
 using namespace WebCore;
 
 namespace {
-
-// This is a macro instead of a function so that the gtest errors can give us useful line numbers associated with the test.
-// Even though TransformationMatrix values are double, there are many other floating-point values used, and so we
-// only expect them to be accurate up to floating-point precision.
-#define VERIFY_MATRIX_ALMOST_EQUAL(expected, actual)    \
-    EXPECT_FLOAT_EQ((expected).m11(), (actual).m11());  \
-    EXPECT_FLOAT_EQ((expected).m12(), (actual).m12());  \
-    EXPECT_FLOAT_EQ((expected).m13(), (actual).m13());  \
-    EXPECT_FLOAT_EQ((expected).m14(), (actual).m14());  \
-    EXPECT_FLOAT_EQ((expected).m21(), (actual).m21());  \
-    EXPECT_FLOAT_EQ((expected).m22(), (actual).m22());  \
-    EXPECT_FLOAT_EQ((expected).m23(), (actual).m23());  \
-    EXPECT_FLOAT_EQ((expected).m24(), (actual).m24());  \
-    EXPECT_FLOAT_EQ((expected).m31(), (actual).m31());  \
-    EXPECT_FLOAT_EQ((expected).m32(), (actual).m32());  \
-    EXPECT_FLOAT_EQ((expected).m33(), (actual).m33());  \
-    EXPECT_FLOAT_EQ((expected).m34(), (actual).m34());  \
-    EXPECT_FLOAT_EQ((expected).m41(), (actual).m41());  \
-    EXPECT_FLOAT_EQ((expected).m42(), (actual).m42());  \
-    EXPECT_FLOAT_EQ((expected).m43(), (actual).m43());  \
-    EXPECT_FLOAT_EQ((expected).m44(), (actual).m44())
 
 void setLayerPropertiesForTesting(LayerChromium* layer, const TransformationMatrix& transform, const TransformationMatrix& sublayerTransform, const FloatPoint& anchor, const FloatPoint& position, const IntSize& bounds, bool preserves3D)
 {
@@ -120,12 +100,12 @@ TEST(CCLayerTreeHostCommonTest, verifyTransformsForNoOpLayer)
 
     executeCalculateDrawTransformsAndVisibility(parent.get());
 
-    VERIFY_MATRIX_ALMOST_EQUAL(identityMatrix, parent->drawTransform());
-    VERIFY_MATRIX_ALMOST_EQUAL(identityMatrix, parent->screenSpaceTransform());
-    VERIFY_MATRIX_ALMOST_EQUAL(identityMatrix, child->drawTransform());
-    VERIFY_MATRIX_ALMOST_EQUAL(identityMatrix, child->screenSpaceTransform());
-    VERIFY_MATRIX_ALMOST_EQUAL(identityMatrix, grandChild->drawTransform());
-    VERIFY_MATRIX_ALMOST_EQUAL(identityMatrix, grandChild->screenSpaceTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(identityMatrix, parent->drawTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(identityMatrix, parent->screenSpaceTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(identityMatrix, child->drawTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(identityMatrix, child->screenSpaceTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(identityMatrix, grandChild->drawTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(identityMatrix, grandChild->screenSpaceTransform());
 }
 
 TEST(CCLayerTreeHostCommonTest, verifyTransformsForSingleLayer)
@@ -144,8 +124,8 @@ TEST(CCLayerTreeHostCommonTest, verifyTransformsForSingleLayer)
     arbitraryTranslation.translate(10.0, 20.0);
     setLayerPropertiesForTesting(layer.get(), identityMatrix, arbitraryTranslation, FloatPoint(0.0f, 0.0f), FloatPoint(0.0f, 0.0f), IntSize(0, 0), false);
     executeCalculateDrawTransformsAndVisibility(layer.get());
-    VERIFY_MATRIX_ALMOST_EQUAL(identityMatrix, layer->drawTransform());
-    VERIFY_MATRIX_ALMOST_EQUAL(identityMatrix, layer->screenSpaceTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(identityMatrix, layer->drawTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(identityMatrix, layer->screenSpaceTransform());
 
     // Case 2: setting the bounds of the layer should result in a draw transform that translates to half the width and height.
     //         The screen-space transform should remain as the identity, because it does not deal with transforming to/from the center of the layer.
@@ -153,22 +133,22 @@ TEST(CCLayerTreeHostCommonTest, verifyTransformsForSingleLayer)
     translationToCenter.translate(5.0, 6.0);
     setLayerPropertiesForTesting(layer.get(), identityMatrix, identityMatrix, FloatPoint(0.0f, 0.0f), FloatPoint(0.0f, 0.0f), IntSize(10, 12), false);
     executeCalculateDrawTransformsAndVisibility(layer.get());
-    VERIFY_MATRIX_ALMOST_EQUAL(translationToCenter, layer->drawTransform());
-    VERIFY_MATRIX_ALMOST_EQUAL(identityMatrix, layer->screenSpaceTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(translationToCenter, layer->drawTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(identityMatrix, layer->screenSpaceTransform());
 
     // Case 3: The anchor point by itself (without a layer transform) should have no effect on the transforms.
     setLayerPropertiesForTesting(layer.get(), identityMatrix, identityMatrix, FloatPoint(0.25f, 0.25f), FloatPoint(2.5f, 3.0f), IntSize(10, 12), false);
     executeCalculateDrawTransformsAndVisibility(layer.get());
-    VERIFY_MATRIX_ALMOST_EQUAL(translationToCenter, layer->drawTransform());
-    VERIFY_MATRIX_ALMOST_EQUAL(identityMatrix, layer->screenSpaceTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(translationToCenter, layer->drawTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(identityMatrix, layer->screenSpaceTransform());
 
     // Case 4: A change in "actual" position affects both the draw transform and screen space transform.
     TransformationMatrix positionTransform;
     positionTransform.translate(0.0, 1.2);
     setLayerPropertiesForTesting(layer.get(), identityMatrix, identityMatrix, FloatPoint(0.25f, 0.25f), FloatPoint(2.5f, 4.2f), IntSize(10, 12), false);
     executeCalculateDrawTransformsAndVisibility(layer.get());
-    VERIFY_MATRIX_ALMOST_EQUAL(positionTransform * translationToCenter, layer->drawTransform());
-    VERIFY_MATRIX_ALMOST_EQUAL(positionTransform, layer->screenSpaceTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(positionTransform * translationToCenter, layer->drawTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(positionTransform, layer->screenSpaceTransform());
 
     // Case 5: In the correct sequence of transforms, the layer transform should pre-multiply the translationToCenter. This is easily tested by
     //         using a scale transform, because scale and translation are not commutative.
@@ -176,8 +156,8 @@ TEST(CCLayerTreeHostCommonTest, verifyTransformsForSingleLayer)
     layerTransform.scale3d(2.0, 2.0, 1.0);
     setLayerPropertiesForTesting(layer.get(), layerTransform, identityMatrix, FloatPoint(0.0f, 0.0f), FloatPoint(0.0f, 0.0f), IntSize(10, 12), false);
     executeCalculateDrawTransformsAndVisibility(layer.get());
-    VERIFY_MATRIX_ALMOST_EQUAL(layerTransform * translationToCenter, layer->drawTransform());
-    VERIFY_MATRIX_ALMOST_EQUAL(layerTransform, layer->screenSpaceTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(layerTransform * translationToCenter, layer->drawTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(layerTransform, layer->screenSpaceTransform());
 
     // Case 6: The layer transform should occur with respect to the anchor point.
     TransformationMatrix translationToAnchor;
@@ -185,8 +165,8 @@ TEST(CCLayerTreeHostCommonTest, verifyTransformsForSingleLayer)
     TransformationMatrix expectedResult = translationToAnchor * layerTransform * translationToAnchor.inverse();
     setLayerPropertiesForTesting(layer.get(), layerTransform, identityMatrix, FloatPoint(0.5f, 0.0f), FloatPoint(5.0f, 0.0f), IntSize(10, 12), false);
     executeCalculateDrawTransformsAndVisibility(layer.get());
-    VERIFY_MATRIX_ALMOST_EQUAL(expectedResult * translationToCenter, layer->drawTransform());
-    VERIFY_MATRIX_ALMOST_EQUAL(expectedResult, layer->screenSpaceTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(expectedResult * translationToCenter, layer->drawTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(expectedResult, layer->screenSpaceTransform());
 
     // Case 7: Verify that position pre-multiplies the layer transform.
     //         The current implementation of calculateDrawTransformsAndVisibility does this implicitly, but it is
@@ -194,8 +174,8 @@ TEST(CCLayerTreeHostCommonTest, verifyTransformsForSingleLayer)
     expectedResult = positionTransform * translationToAnchor * layerTransform * translationToAnchor.inverse();
     setLayerPropertiesForTesting(layer.get(), layerTransform, identityMatrix, FloatPoint(0.5f, 0.0f), FloatPoint(5.0f, 1.2f), IntSize(10, 12), false);
     executeCalculateDrawTransformsAndVisibility(layer.get());
-    VERIFY_MATRIX_ALMOST_EQUAL(expectedResult * translationToCenter, layer->drawTransform());
-    VERIFY_MATRIX_ALMOST_EQUAL(expectedResult, layer->screenSpaceTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(expectedResult * translationToCenter, layer->drawTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(expectedResult, layer->screenSpaceTransform());
 }
 
 TEST(CCLayerTreeHostCommonTest, verifyTransformsForSimpleHierarchy)
@@ -216,10 +196,10 @@ TEST(CCLayerTreeHostCommonTest, verifyTransformsForSimpleHierarchy)
     setLayerPropertiesForTesting(child.get(), identityMatrix, identityMatrix, FloatPoint(0.0f, 0.0f), FloatPoint(0.0f, 0.0f), IntSize(16, 18), false);
     setLayerPropertiesForTesting(grandChild.get(), identityMatrix, identityMatrix, FloatPoint(0.0f, 0.0f), FloatPoint(0.0f, 0.0f), IntSize(76, 78), false);
     executeCalculateDrawTransformsAndVisibility(parent.get());
-    VERIFY_MATRIX_ALMOST_EQUAL(childTranslationToCenter, child->drawTransform());
-    VERIFY_MATRIX_ALMOST_EQUAL(identityMatrix, child->screenSpaceTransform());
-    VERIFY_MATRIX_ALMOST_EQUAL(grandChildTranslationToCenter, grandChild->drawTransform());
-    VERIFY_MATRIX_ALMOST_EQUAL(identityMatrix, grandChild->screenSpaceTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(childTranslationToCenter, child->drawTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(identityMatrix, child->screenSpaceTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(grandChildTranslationToCenter, grandChild->drawTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(identityMatrix, grandChild->screenSpaceTransform());
 
     // Case 2: parent's position affects child and grandChild.
     TransformationMatrix parentPositionTransform;
@@ -228,10 +208,10 @@ TEST(CCLayerTreeHostCommonTest, verifyTransformsForSimpleHierarchy)
     setLayerPropertiesForTesting(child.get(), identityMatrix, identityMatrix, FloatPoint(0.0f, 0.0f), FloatPoint(0.0f, 0.0f), IntSize(16, 18), false);
     setLayerPropertiesForTesting(grandChild.get(), identityMatrix, identityMatrix, FloatPoint(0.0f, 0.0f), FloatPoint(0.0f, 0.0f), IntSize(76, 78), false);
     executeCalculateDrawTransformsAndVisibility(parent.get());
-    VERIFY_MATRIX_ALMOST_EQUAL(parentPositionTransform * childTranslationToCenter, child->drawTransform());
-    VERIFY_MATRIX_ALMOST_EQUAL(parentPositionTransform, child->screenSpaceTransform());
-    VERIFY_MATRIX_ALMOST_EQUAL(parentPositionTransform * grandChildTranslationToCenter, grandChild->drawTransform());
-    VERIFY_MATRIX_ALMOST_EQUAL(parentPositionTransform, grandChild->screenSpaceTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(parentPositionTransform * childTranslationToCenter, child->drawTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(parentPositionTransform, child->screenSpaceTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(parentPositionTransform * grandChildTranslationToCenter, grandChild->drawTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(parentPositionTransform, grandChild->screenSpaceTransform());
 
     // Case 3: parent's local transform affects child and grandchild
     TransformationMatrix parentLayerTransform;
@@ -243,10 +223,10 @@ TEST(CCLayerTreeHostCommonTest, verifyTransformsForSimpleHierarchy)
     setLayerPropertiesForTesting(child.get(), identityMatrix, identityMatrix, FloatPoint(0.0f, 0.0f), FloatPoint(0.0f, 0.0f), IntSize(16, 18), false);
     setLayerPropertiesForTesting(grandChild.get(), identityMatrix, identityMatrix, FloatPoint(0.0f, 0.0f), FloatPoint(0.0f, 0.0f), IntSize(76, 78), false);
     executeCalculateDrawTransformsAndVisibility(parent.get());
-    VERIFY_MATRIX_ALMOST_EQUAL(parentCompositeTransform * childTranslationToCenter, child->drawTransform());
-    VERIFY_MATRIX_ALMOST_EQUAL(parentCompositeTransform, child->screenSpaceTransform());
-    VERIFY_MATRIX_ALMOST_EQUAL(parentCompositeTransform * grandChildTranslationToCenter, grandChild->drawTransform());
-    VERIFY_MATRIX_ALMOST_EQUAL(parentCompositeTransform, grandChild->screenSpaceTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(parentCompositeTransform * childTranslationToCenter, child->drawTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(parentCompositeTransform, child->screenSpaceTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(parentCompositeTransform * grandChildTranslationToCenter, grandChild->drawTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(parentCompositeTransform, grandChild->screenSpaceTransform());
 
     // Case 4: parent's sublayerMatrix affects child and grandchild
     //         scaling is used here again so that the correct sequence of transforms is properly tested.
@@ -264,10 +244,10 @@ TEST(CCLayerTreeHostCommonTest, verifyTransformsForSimpleHierarchy)
     setLayerPropertiesForTesting(child.get(), identityMatrix, identityMatrix, FloatPoint(0.0f, 0.0f), FloatPoint(0.0f, 0.0f), IntSize(16, 18), false);
     setLayerPropertiesForTesting(grandChild.get(), identityMatrix, identityMatrix, FloatPoint(0.0f, 0.0f), FloatPoint(0.0f, 0.0f), IntSize(76, 78), false);
     executeCalculateDrawTransformsAndVisibility(parent.get());
-    VERIFY_MATRIX_ALMOST_EQUAL(parentCompositeTransform * childTranslationToCenter, child->drawTransform());
-    VERIFY_MATRIX_ALMOST_EQUAL(parentCompositeTransform, child->screenSpaceTransform());
-    VERIFY_MATRIX_ALMOST_EQUAL(flattenedCompositeTransform * grandChildTranslationToCenter, grandChild->drawTransform());
-    VERIFY_MATRIX_ALMOST_EQUAL(flattenedCompositeTransform, grandChild->screenSpaceTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(parentCompositeTransform * childTranslationToCenter, child->drawTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(parentCompositeTransform, child->screenSpaceTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(flattenedCompositeTransform * grandChildTranslationToCenter, grandChild->drawTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(flattenedCompositeTransform, grandChild->screenSpaceTransform());
 
     // Case 5: same as Case 4, except that child does preserve 3D, so the grandChild should receive the non-flattened composite transform.
     //
@@ -275,10 +255,10 @@ TEST(CCLayerTreeHostCommonTest, verifyTransformsForSimpleHierarchy)
     setLayerPropertiesForTesting(child.get(), identityMatrix, identityMatrix, FloatPoint(0.0f, 0.0f), FloatPoint(0.0f, 0.0f), IntSize(16, 18), true);
     setLayerPropertiesForTesting(grandChild.get(), identityMatrix, identityMatrix, FloatPoint(0.0f, 0.0f), FloatPoint(0.0f, 0.0f), IntSize(76, 78), false);
     executeCalculateDrawTransformsAndVisibility(parent.get());
-    VERIFY_MATRIX_ALMOST_EQUAL(parentCompositeTransform * childTranslationToCenter, child->drawTransform());
-    VERIFY_MATRIX_ALMOST_EQUAL(parentCompositeTransform, child->screenSpaceTransform());
-    VERIFY_MATRIX_ALMOST_EQUAL(parentCompositeTransform * grandChildTranslationToCenter, grandChild->drawTransform());
-    VERIFY_MATRIX_ALMOST_EQUAL(parentCompositeTransform, grandChild->screenSpaceTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(parentCompositeTransform * childTranslationToCenter, child->drawTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(parentCompositeTransform, child->screenSpaceTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(parentCompositeTransform * grandChildTranslationToCenter, grandChild->drawTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(parentCompositeTransform, grandChild->screenSpaceTransform());
 }
 
 TEST(CCLayerTreeHostCommonTest, verifyTransformsForSingleRenderSurface)
@@ -321,12 +301,12 @@ TEST(CCLayerTreeHostCommonTest, verifyTransformsForSingleRenderSurface)
 
     // The child layer's draw transform should refer to its new render surface; they only differ by a translation to center.
     // The screen-space transform, however, should still refer to the root.
-    VERIFY_MATRIX_ALMOST_EQUAL(childTranslationToCenter, child->drawTransform());
-    VERIFY_MATRIX_ALMOST_EQUAL(parentCompositeTransform, child->screenSpaceTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(childTranslationToCenter, child->drawTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(parentCompositeTransform, child->screenSpaceTransform());
 
     // Without clipping, the origin transform and draw transform (in this particular case) should be the same.
-    VERIFY_MATRIX_ALMOST_EQUAL(parentCompositeTransform, child->targetRenderSurface()->originTransform());
-    VERIFY_MATRIX_ALMOST_EQUAL(parentCompositeTransform, child->targetRenderSurface()->drawTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(parentCompositeTransform, child->targetRenderSurface()->originTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(parentCompositeTransform, child->targetRenderSurface()->drawTransform());
 
 }
 
@@ -423,38 +403,38 @@ TEST(CCLayerTreeHostCommonTest, verifyTransformsForRenderSurfaceHierarchy)
     //  note that draw transforms are described with respect to the nearest ancestor render surface
     //  but screen space transforms are described with respect to the root.
     //
-    VERIFY_MATRIX_ALMOST_EQUAL(A * translationToCenter, parent->drawTransform());
-    VERIFY_MATRIX_ALMOST_EQUAL(A * B * A * translationToCenter, childOfRoot->drawTransform());
-    VERIFY_MATRIX_ALMOST_EQUAL(A * B * A * B * A * translationToCenter, grandChildOfRoot->drawTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(A * translationToCenter, parent->drawTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(A * B * A * translationToCenter, childOfRoot->drawTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(A * B * A * B * A * translationToCenter, grandChildOfRoot->drawTransform());
 
-    VERIFY_MATRIX_ALMOST_EQUAL(translationToCenter, renderSurface1->drawTransform());
-    VERIFY_MATRIX_ALMOST_EQUAL(B * A * translationToCenter, childOfRS1->drawTransform());
-    VERIFY_MATRIX_ALMOST_EQUAL(B * A * B * A * translationToCenter, grandChildOfRS1->drawTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(translationToCenter, renderSurface1->drawTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(B * A * translationToCenter, childOfRS1->drawTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(B * A * B * A * translationToCenter, grandChildOfRS1->drawTransform());
 
-    VERIFY_MATRIX_ALMOST_EQUAL(translationToCenter, renderSurface2->drawTransform());
-    VERIFY_MATRIX_ALMOST_EQUAL(B * A * translationToCenter, childOfRS2->drawTransform());
-    VERIFY_MATRIX_ALMOST_EQUAL(B * A * B * A * translationToCenter, grandChildOfRS2->drawTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(translationToCenter, renderSurface2->drawTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(B * A * translationToCenter, childOfRS2->drawTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(B * A * B * A * translationToCenter, grandChildOfRS2->drawTransform());
 
     // Verify layer screen-space transforms
     //
-    VERIFY_MATRIX_ALMOST_EQUAL(A, parent->screenSpaceTransform());
-    VERIFY_MATRIX_ALMOST_EQUAL(A * B * A, childOfRoot->screenSpaceTransform());
-    VERIFY_MATRIX_ALMOST_EQUAL(A * B * A * B * A, grandChildOfRoot->screenSpaceTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(A, parent->screenSpaceTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(A * B * A, childOfRoot->screenSpaceTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(A * B * A * B * A, grandChildOfRoot->screenSpaceTransform());
 
-    VERIFY_MATRIX_ALMOST_EQUAL(A * B * A, renderSurface1->screenSpaceTransform());
-    VERIFY_MATRIX_ALMOST_EQUAL(A * B * A * B * A, childOfRS1->screenSpaceTransform());
-    VERIFY_MATRIX_ALMOST_EQUAL(A * B * A * B * A * B * A, grandChildOfRS1->screenSpaceTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(A * B * A, renderSurface1->screenSpaceTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(A * B * A * B * A, childOfRS1->screenSpaceTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(A * B * A * B * A * B * A, grandChildOfRS1->screenSpaceTransform());
 
-    VERIFY_MATRIX_ALMOST_EQUAL(A * B * A * B * A, renderSurface2->screenSpaceTransform());
-    VERIFY_MATRIX_ALMOST_EQUAL(A * B * A * B * A * B * A, childOfRS2->screenSpaceTransform());
-    VERIFY_MATRIX_ALMOST_EQUAL(A * B * A * B * A * B * A * B * A, grandChildOfRS2->screenSpaceTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(A * B * A * B * A, renderSurface2->screenSpaceTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(A * B * A * B * A * B * A, childOfRS2->screenSpaceTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(A * B * A * B * A * B * A * B * A, grandChildOfRS2->screenSpaceTransform());
 
     // Verify render surface transforms.
     //
     // Origin transform of render surface 1 is described with respect to root.
-    VERIFY_MATRIX_ALMOST_EQUAL(A * B * A, renderSurface1->renderSurface()->originTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(A * B * A, renderSurface1->renderSurface()->originTransform());
     // Origin transform of render surface 2 is described with respect to render surface 2.
-    VERIFY_MATRIX_ALMOST_EQUAL(B * A, renderSurface2->renderSurface()->originTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(B * A, renderSurface2->renderSurface()->originTransform());
 
     // Sanity check. If these fail there is probably a bug in the test itself.
     // It is expected that we correctly set up transforms so that the y-component of the screen-space transform

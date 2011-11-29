@@ -331,6 +331,7 @@ void LayerRendererChromium::drawLayersOntoRenderSurfaces(CCLayerImpl* rootDrawLa
         ASSERT(renderSurface->drawOpacity());
 
         if (useRenderSurface(renderSurface)) {
+
             if (renderSurfaceLayer != rootDrawLayer) {
                 GLC(m_context.get(), m_context->disable(GraphicsContext3D::SCISSOR_TEST));
                 GLC(m_context.get(), m_context->clearColor(0, 0, 0, 0));
@@ -345,7 +346,7 @@ void LayerRendererChromium::drawLayersOntoRenderSurfaces(CCLayerImpl* rootDrawLa
     }
 
     // The next frame should start by assuming nothing has changed, and changes are noted as they occur.
-    rootDrawLayer->resetPropertyChangedFlagForSubtree();
+    rootDrawLayer->resetAllChangeTrackingForSubtree();
 }
 
 
@@ -583,7 +584,7 @@ bool LayerRendererChromium::useRenderSurface(CCRenderSurface* renderSurface)
 
 void LayerRendererChromium::drawLayer(CCLayerImpl* layer, CCRenderSurface* targetSurface)
 {
-    if (layer->renderSurface() && layer->renderSurface() != targetSurface) {
+    if (CCLayerTreeHostCommon::renderSurfaceContributesToTarget<CCLayerImpl>(layer, targetSurface->owningLayerId())) {
         layer->renderSurface()->draw(this, layer->getDrawRect());
         layer->renderSurface()->releaseContentsTexture();
         return;

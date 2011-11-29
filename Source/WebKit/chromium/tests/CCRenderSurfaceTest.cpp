@@ -59,18 +59,16 @@ TEST(CCRenderSurfaceTest, verifySurfaceChangesAreTrackedProperly)
     ASSERT_TRUE(owningLayer->renderSurface());
     CCRenderSurface* renderSurface = owningLayer->renderSurface();
     IntRect testRect = IntRect(IntPoint(3, 4), IntSize(5, 6));
-
-    owningLayer->resetPropertyChangedFlagForSubtree();
+    owningLayer->resetAllChangeTrackingForSubtree();
 
     // Currently, the contentRect, clipRect, and owningLayer->layerPropertyChanged() are
     // the only sources of change.
     EXECUTE_AND_VERIFY_SURFACE_CHANGED(renderSurface->setClipRect(testRect));
     EXECUTE_AND_VERIFY_SURFACE_CHANGED(renderSurface->setContentRect(testRect));
 
-    owningLayer->resetPropertyChangedFlagForSubtree();
     owningLayer->setOpacity(0.5f);
     EXPECT_TRUE(renderSurface->surfacePropertyChanged());
-    owningLayer->resetPropertyChangedFlagForSubtree();
+    owningLayer->resetAllChangeTrackingForSubtree();
 
     // Setting the surface properties to the same values again should not be considered "change".
     EXECUTE_AND_VERIFY_SURFACE_DID_NOT_CHANGE(renderSurface->setClipRect(testRect));

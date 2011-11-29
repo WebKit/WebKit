@@ -45,6 +45,8 @@ public:
     static void calculateDrawTransformsAndVisibility(LayerChromium*, LayerChromium* rootLayer, const TransformationMatrix& parentMatrix, const TransformationMatrix& fullHierarchyMatrix, Vector<RefPtr<LayerChromium> >& renderSurfaceLayerList, Vector<RefPtr<LayerChromium> >& layerList, int maxTextureSize);
     static void calculateDrawTransformsAndVisibility(CCLayerImpl*, CCLayerImpl* rootLayer, const TransformationMatrix& parentMatrix, const TransformationMatrix& fullHierarchyMatrix, Vector<RefPtr<CCLayerImpl> >& renderSurfaceLayerList, Vector<RefPtr<CCLayerImpl> >& layerList, CCLayerSorter*, int maxTextureSize);
 
+    template<typename LayerType> static bool renderSurfaceContributesToTarget(LayerType*, int targetSurfaceLayerID);
+
     struct ScrollUpdateInfo {
         int layerId;
         IntSize scrollDelta;
@@ -81,6 +83,20 @@ IntRect CCLayerTreeHostCommon::calculateVisibleLayerRect(LayerType* layer)
 
     IntRect visibleLayerRect = CCLayerTreeHostCommon::calculateVisibleRect(targetSurfaceRect, layerBoundRect, transform);
     return visibleLayerRect;
+}
+
+template<typename LayerType>
+bool CCLayerTreeHostCommon::renderSurfaceContributesToTarget(LayerType* layer, int targetSurfaceLayerID)
+{
+    // A layer will either contribute its own content, or its render surface's content, to
+    // the target surface. The layer contributes its surface's content when both the
+    // following are true:
+    //  (1) The layer actually has a renderSurface, and
+    //  (2) The layer's renderSurface is not the same as the targetSurface.
+    //
+    // Otherwise, the layer just contributes itself to the target surface.
+
+    return layer->renderSurface() && layer->id() != targetSurfaceLayerID;
 }
 
 } // namespace WebCore

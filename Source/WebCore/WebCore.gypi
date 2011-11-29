@@ -3577,6 +3577,8 @@
             'platform/graphics/chromium/WebGLLayerChromium.h',
             'platform/graphics/chromium/cc/CCCanvasLayerImpl.cpp',
             'platform/graphics/chromium/cc/CCCanvasLayerImpl.h',
+            'platform/graphics/chromium/cc/CCDamageTracker.cpp',
+            'platform/graphics/chromium/cc/CCDamageTracker.h',
             'platform/graphics/chromium/cc/CCDelayBasedTimeSource.cpp',
             'platform/graphics/chromium/cc/CCDelayBasedTimeSource.h',
             'platform/graphics/chromium/cc/CCFrameRateController.cpp',

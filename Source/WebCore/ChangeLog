@@ -1,3 +1,47 @@
+2011-11-28  Shawn Singh  <shawnsingh@chromium.org>
+
+        [chromium] Create CCDamageTracker class to determine regions of change for a surface.
+        https://bugs.webkit.org/show_bug.cgi?id=72520
+
+        Reviewed by James Robinson.
+
+        Added CCDamageTrackerTest and updated other tests.
+
+        * WebCore.gypi:
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::drawLayersOntoRenderSurfaces):
+        (WebCore::LayerRendererChromium::drawLayer):
+        * platform/graphics/chromium/cc/CCDamageTracker.cpp: Added.
+        (WebCore::CCDamageTracker::create):
+        (WebCore::CCDamageTracker::CCDamageTracker):
+        (WebCore::CCDamageTracker::~CCDamageTracker):
+        (WebCore::CCDamageTracker::updateDamageRectForNextFrame):
+        (WebCore::CCDamageTracker::removeRectFromCurrentFrame):
+        (WebCore::CCDamageTracker::saveRectForNextFrame):
+        (WebCore::CCDamageTracker::computeDamageFromActiveLayers):
+        (WebCore::CCDamageTracker::computeDamageFromSurfaceMask):
+        (WebCore::CCDamageTracker::computeDamageFromLeftoverRects):
+        (WebCore::CCDamageTracker::extendDamageForLayer):
+        (WebCore::CCDamageTracker::extendDamageForRenderSurface):
+        * platform/graphics/chromium/cc/CCDamageTracker.h: Added.
+        (WebCore::CCDamageTracker::currentDamageRect):
+        * platform/graphics/chromium/cc/CCLayerImpl.cpp:
+        (WebCore::CCLayerImpl::resetAllChangeTrackingForSubtree):
+        * platform/graphics/chromium/cc/CCLayerImpl.h:
+        * platform/graphics/chromium/cc/CCLayerTreeHost.cpp:
+        (WebCore::CCLayerTreeHost::paintLayerContents):
+        (WebCore::CCLayerTreeHost::updateCompositorResources):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.h:
+        (WebCore::CCSettings::CCSettings):
+        * platform/graphics/chromium/cc/CCLayerTreeHostCommon.h:
+        (WebCore::CCLayerTreeHostCommon::renderSurfaceContributesToTarget):
+        * platform/graphics/chromium/cc/CCRenderSurface.cpp:
+        (WebCore::CCRenderSurface::CCRenderSurface):
+        (WebCore::CCRenderSurface::dumpSurface):
+        (WebCore::CCRenderSurface::surfacePropertyChangedOnlyFromDescendant):
+        * platform/graphics/chromium/cc/CCRenderSurface.h:
+        (WebCore::CCRenderSurface::damageTracker):
+
 2011-11-28  Luke Macpherson   <macpherson@chromium.org>
 
         Implement CSSPropertySize in CSSStyleApplyProperty.

@@ -35,21 +35,21 @@ using namespace WebCore;
 namespace {
 
 #define EXECUTE_AND_VERIFY_SUBTREE_CHANGED(codeToTest)                  \
-    root->resetPropertyChangedFlagForSubtree();                         \
+    root->resetAllChangeTrackingForSubtree();                           \
     codeToTest;                                                         \
     EXPECT_TRUE(root->layerPropertyChanged());                          \
     EXPECT_TRUE(child->layerPropertyChanged());                         \
     EXPECT_TRUE(grandChild->layerPropertyChanged())
 
 #define EXECUTE_AND_VERIFY_SUBTREE_DID_NOT_CHANGE(codeToTest)           \
-    root->resetPropertyChangedFlagForSubtree();                         \
+    root->resetAllChangeTrackingForSubtree();                           \
     codeToTest;                                                         \
     EXPECT_FALSE(root->layerPropertyChanged());                         \
     EXPECT_FALSE(child->layerPropertyChanged());                        \
     EXPECT_FALSE(grandChild->layerPropertyChanged())
 
 #define EXECUTE_AND_VERIFY_ONLY_LAYER_CHANGED(codeToTest)               \
-    root->resetPropertyChangedFlagForSubtree();                         \
+    root->resetAllChangeTrackingForSubtree();                           \
     codeToTest;                                                         \
     EXPECT_TRUE(root->layerPropertyChanged());                          \
     EXPECT_FALSE(child->layerPropertyChanged());                        \
@@ -115,7 +115,7 @@ TEST(CCLayerImplTest, verifyLayerChangesAreTrackedProperly)
     EXECUTE_AND_VERIFY_ONLY_LAYER_CHANGED(root->setBackgroundColor(Color::gray));
 
     // Special case: check that sublayer transform changes all layer's descendants, but not the layer itself.
-    root->resetPropertyChangedFlagForSubtree();
+    root->resetAllChangeTrackingForSubtree();
     root->setSublayerTransform(arbitraryTransform);
     EXPECT_FALSE(root->layerPropertyChanged());
     EXPECT_TRUE(child->layerPropertyChanged());

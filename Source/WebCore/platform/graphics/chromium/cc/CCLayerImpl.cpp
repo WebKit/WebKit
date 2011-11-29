@@ -239,15 +239,22 @@ void CCLayerImpl::noteLayerPropertyChangedForDescendants()
         m_children[i]->noteLayerPropertyChangedForSubtree();
 }
 
-void CCLayerImpl::resetPropertyChangedFlagForSubtree()
+void CCLayerImpl::resetAllChangeTrackingForSubtree()
 {
     m_layerPropertyChanged = false;
+    m_updateRect = FloatRect();
 
     if (m_renderSurface)
         m_renderSurface->resetPropertyChangedFlag();
 
+    if (m_maskLayer)
+        m_maskLayer->resetAllChangeTrackingForSubtree();
+
+    if (m_replicaLayer)
+        m_replicaLayer->resetAllChangeTrackingForSubtree(); // also resets the replica mask, if it exists.
+
     for (size_t i = 0; i < m_children.size(); ++i)
-        m_children[i]->resetPropertyChangedFlagForSubtree();
+        m_children[i]->resetAllChangeTrackingForSubtree();
 }
 
 void CCLayerImpl::setBounds(const IntSize& bounds)

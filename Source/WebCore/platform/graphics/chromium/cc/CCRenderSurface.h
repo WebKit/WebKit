@@ -40,6 +40,7 @@
 
 namespace WebCore {
 
+class CCDamageTracker;
 class CCLayerImpl;
 class LayerRendererChromium;
 class ManagedTexture;
@@ -100,6 +101,9 @@ public:
 
     void resetPropertyChangedFlag() { m_surfacePropertyChanged = false; }
     bool surfacePropertyChanged() const;
+    bool surfacePropertyChangedOnlyFromDescendant() const;
+
+    CCDamageTracker* damageTracker() const { return m_damageTracker.get(); }
 
 private:
     void drawLayer(LayerRendererChromium*, CCLayerImpl*, const TransformationMatrix&);
@@ -120,6 +124,11 @@ private:
     TransformationMatrix m_originTransform;
     IntRect m_clipRect;
     Vector<RefPtr<CCLayerImpl> > m_layerList;
+
+    OwnPtr<CCDamageTracker> m_damageTracker;
+
+    // Stored in the "surface space" where this damage can be used for scissoring.
+    FloatRect m_damageRect;
 };
 
 }

@@ -54,6 +54,7 @@
         'webkit_unittest_files': [
             'tests/ArenaTestHelpers.h',
             'tests/AssociatedURLLoaderTest.cpp',
+            'tests/CCDamageTrackerTest.cpp',
             'tests/CCDelayBasedTimeSourceTest.cpp',
             'tests/CCFrameRateControllerTest.cpp',
             'tests/CCLayerImplTest.cpp',
@@ -61,6 +62,7 @@
             'tests/CCLayerTreeHostCommonTest.cpp',
             'tests/CCLayerTreeHostImplTest.cpp',
             'tests/CCLayerTreeHostTest.cpp',
+            'tests/CCLayerTreeTestCommon.h',
             'tests/CCRenderSurfaceTest.cpp',
             'tests/CCSchedulerTest.cpp',
             'tests/CCSchedulerStateMachineTest.cpp',
