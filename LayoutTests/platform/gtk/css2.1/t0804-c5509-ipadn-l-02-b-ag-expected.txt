@@ -1,18 +1,19 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x111
-  RenderBlock {HTML} at (0,0) size 800x111
-    RenderBody {BODY} at (8,16) size 784x80
-      RenderBlock {P} at (0,0) size 784x19
-        RenderText {#text} at (0,0) size 313x19
-          text run at (0,0) width 313: "There should be a small light green square below:"
-      RenderBlock {DIV} at (15,35) size 754x45
-        RenderBlock {P} at (0,0) size 75x45 [color=#FFFFFF]
-          RenderText {#text} at (0,0) size 30x30
-            text run at (0,0) width 30: "xx"
-            text run at (0,15) width 30: "xx"
-          RenderInline {SPAN} at (0,0) size 75x15 [color=#00FF00]
-            RenderText {#text} at (90,15) size 15x15
-              text run at (90,15) width 15: "x"
-          RenderText {#text} at (0,30) size 75x15
-            text run at (0,30) width 75: "xx xx"
+layer at (0,0) size 800x125
+  RenderBlock {HTML} at (0,0) size 800x125
+    RenderBody {BODY} at (8,16) size 784x94
+      RenderBlock {P} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 320x17
+          text run at (0,0) width 320: "There should be a small light green square below:"
+      RenderBlock {DIV} at (15,34) size 754x60
+        RenderBlock {P} at (0,0) size 75x60 [color=#FFFFFF]
+          RenderText {#text} at (0,0) size 31x30
+            text run at (0,0) width 31: "xx"
+            text run at (0,15) width 31: "xx"
+          RenderInline {SPAN} at (0,0) size 76x15 [color=#00FF00]
+            RenderText {#text} at (90,15) size 16x15
+              text run at (90,15) width 16: "x"
+          RenderText {#text} at (0,30) size 31x30
+            text run at (0,30) width 31: "xx"
+            text run at (0,45) width 31: "xx"
