@@ -347,7 +347,7 @@ void GraphicsLayer::distributeOpacity(float accumulatedOpacity)
     }
 }
 
-#if PLATFORM(QT)
+#if PLATFORM(QT) || PLATFORM(EFL)
 GraphicsLayer::GraphicsLayerFactory* GraphicsLayer::s_graphicsLayerFactory = 0;
 
 void GraphicsLayer::setGraphicsLayerFactory(GraphicsLayer::GraphicsLayerFactory factory)

@@ -1,3 +1,22 @@
+2011-11-29  Hyowon Kim  <hw1008.kim@samsung.com>
+
+        [Texmap][EFL] Accelerated compositing support using TextureMapper on EFL port
+        https://bugs.webkit.org/show_bug.cgi?id=73111
+
+        This patch adds Texture Mapper related files to PlatformEfl.cmake
+        and removes Qt-specific types in TextureMapperNode.cpp.
+
+        Reviewed by Noam Rosenthal.
+
+        * PlatformEfl.cmake:
+        * platform/graphics/GraphicsLayer.cpp:
+        * platform/graphics/GraphicsLayer.h:
+        * platform/graphics/efl/GraphicsLayerEfl.cpp: Removed.
+        * platform/graphics/efl/GraphicsLayerEfl.h: Removed.
+        * platform/graphics/texmap/TextureMapperNode.cpp:
+        (WebCore::solveCubicBezierFunction):
+        (WebCore::solveStepsFunction):
+
 2011-11-28  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: put inspector agents into a vector in the InspectorController.

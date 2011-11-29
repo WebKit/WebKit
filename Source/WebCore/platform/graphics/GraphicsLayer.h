@@ -68,6 +68,11 @@ namespace WebCore {
 class LayerChromium;
 typedef LayerChromium PlatformLayer;
 }
+#elif PLATFORM(EFL)
+namespace WebCore {
+class TextureMapperPlatformLayer;
+typedef TextureMapperPlatformLayer PlatformLayer;
+};
 #else
 typedef void* PlatformLayer;
 #endif
@@ -377,7 +382,7 @@ public:
 
     bool usingTiledLayer() const { return m_usingTiledLayer; }
 
-#if PLATFORM(QT)
+#if PLATFORM(QT) || PLATFORM(EFL)
     // This allows several alternative GraphicsLayer implementations in the same port,
     // e.g. if a different GraphicsLayer implementation is needed in WebKit1 vs. WebKit2.
     typedef PassOwnPtr<GraphicsLayer> GraphicsLayerFactory(GraphicsLayerClient*);
@@ -449,7 +454,7 @@ protected:
 
     int m_repaintCount;
 
-#if PLATFORM(QT)
+#if PLATFORM(QT) || PLATFORM(EFL)
     static GraphicsLayer::GraphicsLayerFactory* s_graphicsLayerFactory;
 #endif
 };
