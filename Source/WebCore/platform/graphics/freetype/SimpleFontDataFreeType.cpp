@@ -33,6 +33,7 @@
 #include "config.h"
 #include "SimpleFontData.h"
 
+#include "FloatConversion.h"
 #include "FloatRect.h"
 #include "Font.h"
 #include "FontCache.h"
@@ -55,26 +56,22 @@ void SimpleFontData::platformInit()
     cairo_text_extents_t text_extents;
     cairo_scaled_font_extents(m_platformData.scaledFont(), &font_extents);
 
-    m_fontMetrics.setAscent(font_extents.ascent);
-    m_fontMetrics.setDescent(font_extents.descent);
+    float ascent = narrowPrecisionToFloat(font_extents.ascent);
+    float descent = narrowPrecisionToFloat(font_extents.descent);
+    float lineGap = narrowPrecisionToFloat(font_extents.height - font_extents.ascent - font_extents.descent);
 
-    // There seems to be some rounding error in cairo (or in how we
-    // use cairo) with some fonts, like DejaVu Sans Mono, which makes
-    // cairo report a height smaller than ascent + descent, which is
-    // wrong and confuses WebCore's layout system. Workaround this
-    // while we figure out what's going on.
-    float lineSpacing = font_extents.height;
-    if (lineSpacing < font_extents.ascent + font_extents.descent)
-        lineSpacing = font_extents.ascent + font_extents.descent;
+    m_fontMetrics.setAscent(ascent);
+    m_fontMetrics.setDescent(descent);
 
-    m_fontMetrics.setLineSpacing(lroundf(lineSpacing));
-    m_fontMetrics.setLineGap(lineSpacing - font_extents.ascent - font_extents.descent);
+    // Match CoreGraphics metrics.
+    m_fontMetrics.setLineSpacing(lroundf(ascent) + lroundf(descent) + lroundf(lineGap));
+    m_fontMetrics.setLineGap(lineGap);
 
     cairo_scaled_font_text_extents(m_platformData.scaledFont(), "x", &text_extents);
-    m_fontMetrics.setXHeight(text_extents.height);
+    m_fontMetrics.setXHeight(narrowPrecisionToFloat(text_extents.height));
 
     cairo_scaled_font_text_extents(m_platformData.scaledFont(), " ", &text_extents);
-    m_spaceWidth = static_cast<float>(text_extents.x_advance);
+    m_spaceWidth = narrowPrecisionToFloat(text_extents.x_advance);
     
     m_syntheticBoldOffset = m_platformData.syntheticBold() ? 1.0f : 0.f;
 }

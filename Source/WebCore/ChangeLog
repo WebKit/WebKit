@@ -1,3 +1,16 @@
+2011-11-25  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK] Improve FontMetrics accuracy
+        https://bugs.webkit.org/show_bug.cgi?id=72614
+
+        Reviewed by Martin Robinson.
+        Patch by Nikolas Zimmermann.
+
+        * platform/graphics/freetype/FontPlatformDataFreeType.cpp:
+        (WebCore::setCairoFontOptionsFromFontConfigPattern):
+        * platform/graphics/freetype/SimpleFontDataFreeType.cpp:
+        (WebCore::SimpleFontData::platformInit):
+
 2011-11-29  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         SVG <path> DRT dumps have rounding problems across platforms
