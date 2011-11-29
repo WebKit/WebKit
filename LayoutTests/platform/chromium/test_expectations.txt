@@ -2308,7 +2308,6 @@ BUGCR58587 SKIP : fast/filesystem/file-writer-gc-blob.html = FAIL
 
 // Failing somewhere between after Webkit r69367 and r69417.
 BUGCR58970 LINUX : svg/text/text-tselect-02-f.svg = PASS IMAGE
-BUGCR58931 LINUX WIN : svg/W3C-SVG-1.1/pservers-grad-17-b.svg = PASS IMAGE
 
 // Failing from r69420, mac failing from r71493:r71496
 BUGCR58735 SLOW : http/tests/misc/prefetch-purpose.html = PASS
@@ -2322,7 +2321,6 @@ BUGWK46600 SKIP : fast/dom/nodesFromRect-links-and-text.html = TEXT
 BUGWK46600 SKIP : fast/dom/nodesFromRect-inner-documents.html = TEXT
 
 // Many flaky SVG tests
-BUGCR59671 LINUX : svg/W3C-SVG-1.1-SE/pservers-grad-17-b.svg = PASS IMAGE+TEXT
 BUGCR59671 LINUX : svg/custom/convolution-crash.svg = PASS TEXT
 BUGCR59671 LINUX : svg/custom/repaint-on-constant-size-change.svg = PASS IMAGE
 BUGCR59671 LINUX : svg/carto.net/slider.svg = PASS IMAGE
@@ -3367,9 +3365,6 @@ BUGWK66795 LINUX MAC SLOW : fast/js/reentrant-caching.html = PASS
 
 BUGWK66873 SLOW WIN RELEASE : http/tests/loading/redirect-methods.html = PASS TEXT
 
-BUGWK66882 WIN : svg/W3C-SVG-1.1-SE/text-intro-09-b.svg = PASS IMAGE+TEXT
-BUGWK66882 LINUX MAC : svg/W3C-SVG-1.1-SE/text-intro-09-b.svg = PASS IMAGE
-
 BUGWK66888 DEBUG : svg/animations/svginteger-animation-1.html = PASS TEXT
 
 BUGWK66900 LINUX DEBUG : fast/writing-mode/japanese-rl-text-with-broken-font.html = PASS IMAGE+TEXT
@@ -3579,8 +3574,6 @@ BUGWK70298 : fast/images/pdf-as-background.html = FAIL TIMEOUT PASS
 BUGWK70298 : fast/table/border-collapsing/cached-69296.html = IMAGE PASS
 BUGWK70298 : http/tests/security/xssAuditor/cookie-injection.html = TEXT PASS
 BUGWK70298 : plugins/hidden-iframe-with-swf-plugin.html = FAIL TIMEOUT PASS
-BUGWK70298 : svg/custom/js-late-gradient-creation.svg = IMAGE PASS
-BUGWK70298 : svg/custom/js-late-pattern-creation.svg = IMAGE PASS
 
 // Failing since ~r97700.
 BUGWK70298 WIN LINUX SNOWLEOPARD : fast/selectors/unqualified-hover-strict.html = IMAGE+TEXT PASS
