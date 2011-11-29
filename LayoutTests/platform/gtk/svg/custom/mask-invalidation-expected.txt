@@ -8,9 +8,9 @@ layer at (0,0) size 800x600
     RenderSVGContainer {g} at (50,50) size 453x299
       RenderSVGPath {rect} at (50,50) size 453x299 [fill={[type=SOLID] [color=#008000]}] [x=50.00] [y=50.00] [width=453.00] [height=299.00]
         [masker="mask"] RenderSVGResourceMasker {mask} at (50,50) size 460x316
-    RenderSVGText {text} at (14,5) size 83x19 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 83x19
-        chunk 1 text run 1 at (14.00,20.00) startOffset 0 endOffset 11 width 83.00: "Move Object"
-    RenderSVGText {text} at (208,5) size 94x19 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 94x19
-        chunk 1 text run 1 at (208.00,20.00) startOffset 0 endOffset 14 width 94.00: "Restore Object"
+    RenderSVGText {text} at (14,5) size 84x18 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 84x18
+        chunk 1 text run 1 at (14.00,20.00) startOffset 0 endOffset 11 width 83.98: "Move Object"
+    RenderSVGText {text} at (208,5) size 96x18 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 96x18
+        chunk 1 text run 1 at (208.00,20.00) startOffset 0 endOffset 14 width 95.52: "Restore Object"

@@ -15,48 +15,48 @@ layer at (0,0) size 400x400
     RenderSVGPath {rect} at (0,0) size 400x400 [fill={[type=LINEAR-GRADIENT] [id="gradient"]}] [x=0.00] [y=0.00] [width=400.00] [height=400.00]
     RenderSVGContainer {g} at (9,6) size 381x29 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,10.00)}]
       RenderSVGPath {rect} at (10,10) size 380x25 [opacity=0.50] [fill={[type=SOLID] [color=#FFFFFF]}] [x=0.00] [y=0.00] [width=380.00] [height=25.00]
-      RenderSVGContainer {g} at (8,8) size 382x27 [transform={m=((1.00,0.00)(0.00,1.00)) t=(-0.50,-0.50)}]
-        RenderSVGPath {line} at (9,8) size 381x3 [stroke={[type=LINEAR-GRADIENT] [id="h_stroke_gradient"]}] [fill={[type=SOLID] [color=#000000]}] [x1=0.00] [y1=0.00] [x2=380.00] [y2=0.00]
-        RenderSVGPath {line} at (8,8) size 3x27 [stroke={[type=LINEAR-GRADIENT] [id="v_stroke_gradient"]}] [fill={[type=SOLID] [color=#000000]}] [x1=0.00] [y1=-0.50] [x2=0.00] [y2=25.00]
-      RenderSVGText {text} at (2,-4) size 323x24 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 323x24
-          chunk 1 text run 1 at (2.00,14.40) startOffset 0 endOffset 40 width 323.00: "This is hanging from the top-left corner"
+      RenderSVGContainer {g} at (9,9) size 381x26 [transform={m=((1.00,0.00)(0.00,1.00)) t=(-0.50,-0.50)}]
+        RenderSVGPath {line} at (9,9) size 381x1 [stroke={[type=LINEAR-GRADIENT] [id="h_stroke_gradient"]}] [fill={[type=SOLID] [color=#000000]}] [x1=0.00] [y1=0.00] [x2=380.00] [y2=0.00]
+        RenderSVGPath {line} at (9,9) size 1x26 [stroke={[type=LINEAR-GRADIENT] [id="v_stroke_gradient"]}] [fill={[type=SOLID] [color=#000000]}] [x1=0.00] [y1=-0.50] [x2=0.00] [y2=25.00]
+      RenderSVGText {text} at (2,-4) size 317x23 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 317x23
+          chunk 1 text run 1 at (2.00,14.26) startOffset 0 endOffset 40 width 316.58: "This is hanging from the top-left corner"
     RenderSVGForeignObject {foreignObject} at (10,45) size 380x150
-      RenderBlock {html} at (0,0) size 380x130
-        RenderBody {body} at (8,0) size 364x130
-          RenderBlock {p} at (0,0) size 364x95
-            RenderText {#text} at (0,0) size 347x38
-              text run at (0,0) width 347: "The piece of text above should be aligned with the top-"
-              text run at (0,19) width 286: "left corner of the rectangle below it. Both the "
+      RenderBlock {html} at (0,0) size 380x124
+        RenderBody {body} at (8,0) size 364x124
+          RenderBlock {p} at (0,0) size 364x90
+            RenderText {#text} at (0,0) size 353x35
+              text run at (0,0) width 353: "The piece of text above should be aligned with the top-"
+              text run at (0,18) width 293: "left corner of the rectangle below it. Both the "
             RenderInline {code} at (0,0) size 48x15
-              RenderText {#text} at (286,23) size 48x15
-                text run at (286,23) width 48: "<text>"
-            RenderText {#text} at (334,19) size 361x38
-              text run at (334,19) width 27: " and"
-              text run at (0,38) width 23: "the "
+              RenderText {#text} at (292,21) size 48x15
+                text run at (292,21) width 48: "<text>"
+            RenderText {#text} at (0,36) size 51x17
+              text run at (0,36) width 51: "and the "
             RenderInline {code} at (0,0) size 48x15
-              RenderText {#text} at (23,42) size 48x15
-                text run at (23,42) width 48: "<rect>"
-            RenderText {#text} at (71,38) size 272x19
-              text run at (71,38) width 272: " are located at the same coordinates and the"
+              RenderText {#text} at (50,39) size 48x15
+                text run at (50,39) width 48: "<rect>"
+            RenderText {#text} at (97,36) size 353x35
+              text run at (97,36) width 256: " are located at the same coordinates and"
+              text run at (0,54) width 24: "the "
             RenderInline {code} at (0,0) size 48x15
-              RenderText {#text} at (0,61) size 48x15
-                text run at (0,61) width 48: "<text>"
-            RenderText {#text} at (48,57) size 111x19
-              text run at (48,57) width 111: " element uses the "
-            RenderInline {code} at (0,0) size 56x15
-              RenderText {#text} at (159,61) size 56x15
-                text run at (159,61) width 56: "hanging"
-            RenderText {#text} at (215,57) size 78x19
-              text run at (215,57) width 78: " value for its"
-            RenderInline {code} at (0,0) size 136x15
-              RenderText {#text} at (0,80) size 136x15
-                text run at (0,80) width 136: "dominant-baseline"
-            RenderText {#text} at (136,76) size 59x19
-              text run at (136,76) width 59: " attribute."
-          RenderBlock {p} at (0,111) size 364x19
-            RenderInline {a} at (0,0) size 91x19 [color=#800000]
-              RenderText {#text} at (0,0) size 91x19
-                text run at (0,0) width 91: "Antoine Quint"
-            RenderText {#text} at (91,0) size 89x19
-              text run at (91,0) width 89: ", January 27th"
+              RenderText {#text} at (23,57) size 48x15
+                text run at (23,57) width 48: "<text>"
+            RenderText {#text} at (70,54) size 115x17
+              text run at (70,54) width 115: " element uses the "
+            RenderInline {code} at (0,0) size 55x15
+              RenderText {#text} at (184,57) size 55x15
+                text run at (184,57) width 55: "hanging"
+            RenderText {#text} at (238,54) size 82x17
+              text run at (238,54) width 82: " value for its"
+            RenderInline {code} at (0,0) size 133x15
+              RenderText {#text} at (0,75) size 133x15
+                text run at (0,75) width 133: "dominant-baseline"
+            RenderText {#text} at (132,72) size 62x17
+              text run at (132,72) width 62: " attribute."
+          RenderBlock {p} at (0,106) size 364x18
+            RenderInline {a} at (0,0) size 92x17 [color=#800000]
+              RenderText {#text} at (0,0) size 92x17
+                text run at (0,0) width 92: "Antoine Quint"
+            RenderText {#text} at (91,0) size 92x17
+              text run at (91,0) width 92: ", January 27th"

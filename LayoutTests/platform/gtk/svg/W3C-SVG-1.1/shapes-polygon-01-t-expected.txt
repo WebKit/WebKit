@@ -11,5 +11,5 @@ layer at (0,0) size 480x360
       RenderSVGPath {polygon} at (265,179) size 162x105 [stroke={[type=SOLID] [color=#00FF00] [stroke width=8.00]}] [points="270 225 300 245 320 225 340 245 280 280 390 280 420 240 280 185"]
     RenderSVGText {text} at (10,304) size 264x45 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 264x45
-        chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 264.00: "$Revision: 1.7 $"
+        chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 263.34: "$Revision: 1.7 $"
     RenderSVGPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

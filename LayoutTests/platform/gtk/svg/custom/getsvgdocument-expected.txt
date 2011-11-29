@@ -3,29 +3,29 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x38
-        RenderText {#text} at (0,0) size 767x38
-          text run at (0,0) width 767: "This tests to see if HTMLEmbedElement.getSVGDocument() and HTMLObjectElement.getSVGDocument() work. You"
-          text run at (0,19) width 300: "should see SUCCESS printed twice below this:"
-      RenderBlock (anonymous) at (0,54) size 784x59
+      RenderBlock {P} at (0,0) size 784x36
+        RenderText {#text} at (0,0) size 775x35
+          text run at (0,0) width 775: "This tests to see if HTMLEmbedElement.getSVGDocument() and HTMLObjectElement.getSVGDocument() work. You"
+          text run at (0,18) width 304: "should see SUCCESS printed twice below this:"
+      RenderBlock (anonymous) at (0,52) size 784x58
         RenderEmbeddedObject {EMBED} at (0,0) size 85x20
           layer at (0,0) size 85x20
             RenderView at (0,0) size 85x20
           layer at (0,0) size 85x20
             RenderSVGRoot {svg} at (0,0) size 85x20
               RenderSVGPath {rect} at (0,0) size 85x20 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=85.00] [height=20.00]
-              RenderSVGText {text} at (5,1) size 71x19 contains 1 chunk(s)
-                RenderSVGInlineText {#text} at (0,0) size 71x19
-                  chunk 1 text run 1 at (5.00,16.00) startOffset 0 endOffset 7 width 71.00: "SUCCESS"
+              RenderSVGText {text} at (5,1) size 70x18 contains 1 chunk(s)
+                RenderSVGInlineText {#text} at (0,0) size 70x18
+                  chunk 1 text run 1 at (5.00,16.00) startOffset 0 endOffset 7 width 69.37: "SUCCESS"
         RenderBR {BR} at (85,20) size 0x0
-        RenderBR {BR} at (0,20) size 0x19
-        RenderEmbeddedObject {OBJECT} at (0,39) size 85x20
+        RenderBR {BR} at (0,20) size 0x17
+        RenderEmbeddedObject {OBJECT} at (0,38) size 85x20
           layer at (0,0) size 85x20
             RenderView at (0,0) size 85x20
           layer at (0,0) size 85x20
             RenderSVGRoot {svg} at (0,0) size 85x20
               RenderSVGPath {rect} at (0,0) size 85x20 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=85.00] [height=20.00]
-              RenderSVGText {text} at (5,1) size 71x19 contains 1 chunk(s)
-                RenderSVGInlineText {#text} at (0,0) size 71x19
-                  chunk 1 text run 1 at (5.00,16.00) startOffset 0 endOffset 7 width 71.00: "SUCCESS"
+              RenderSVGText {text} at (5,1) size 70x18 contains 1 chunk(s)
+                RenderSVGInlineText {#text} at (0,0) size 70x18
+                  chunk 1 text run 1 at (5.00,16.00) startOffset 0 endOffset 7 width 69.37: "SUCCESS"
         RenderText {#text} at (0,0) size 0x0

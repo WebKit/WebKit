@@ -11,10 +11,10 @@ layer at (0,0) size 800x600
         RenderSVGPath {rect} at (16,16) size 18x18 [fill={[type=SOLID] [color=#0000FF]}] [x=10.00] [y=10.00] [width=10.00] [height=10.00]
       RenderSVGText {text} at (-150,9) size 373x76 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 373x76
-          chunk 1 text run 1 at (-150.00,70.00) startOffset 0 endOffset 15 width 372.60: "Pattern on fill"
-      RenderSVGText {text} at (-150,79) size 461x76 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 461x76
-          chunk 1 text run 1 at (-150.00,140.00) startOffset 0 endOffset 17 width 460.20: "Pattern on stroke"
+          chunk 1 text run 1 at (-150.00,70.00) startOffset 0 endOffset 15 width 372.83: "Pattern on fill"
+      RenderSVGText {text} at (-150,79) size 460x76 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 460x76
+          chunk 1 text run 1 at (-150.00,140.00) startOffset 0 endOffset 17 width 459.44: "Pattern on stroke"
       RenderSVGText {text} at (-150,149) size 558x76 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 558x76
-          chunk 1 text run 1 at (-150.00,210.00) startOffset 0 endOffset 22 width 557.40: "Pattern on fill/stroke"
+          chunk 1 text run 1 at (-150.00,210.00) startOffset 0 endOffset 22 width 557.36: "Pattern on fill/stroke"

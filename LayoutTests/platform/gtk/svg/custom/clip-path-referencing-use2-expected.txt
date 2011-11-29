@@ -2,7 +2,7 @@ CONSOLE MESSAGE: line 1: Error: Not allowed to use indirect reference in <clip-p
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
-  RenderSVGRoot {svg} at (0,0) size 598x144
+  RenderSVGRoot {svg} at (0,0) size 611x144
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
       RenderSVGPath {rect} at (0,0) size 50x50 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=50.00] [height=50.00]
       RenderSVGContainer {use} at (0,0) size 50x50
@@ -17,9 +17,9 @@ layer at (0,0) size 800x600
     RenderSVGContainer {g} at (0,0) size 50x50
       [clipPath="clip"] RenderSVGResourceClipper {clipPath} at (0,0) size 50x50
       RenderSVGPath {rect} at (0,0) size 100x100 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
-    RenderSVGText {text} at (10,105) size 377x19 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 377x19
-        chunk 1 text run 1 at (10.00,120.00) startOffset 0 endOffset 56 width 377.00: "The graphic above should show a 100x100 green rectangle."
-    RenderSVGText {text} at (10,125) size 588x19 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 588x19
-        chunk 1 text run 1 at (10.00,140.00) startOffset 0 endOffset 96 width 588.00: "The red rectangle should not show since it uses a clipping path that uses an indirect reference."
+    RenderSVGText {text} at (10,105) size 381x18 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 381x18
+        chunk 1 text run 1 at (10.00,120.00) startOffset 0 endOffset 56 width 380.77: "The graphic above should show a 100x100 green rectangle."
+    RenderSVGText {text} at (10,125) size 601x18 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 601x18
+        chunk 1 text run 1 at (10.00,140.00) startOffset 0 endOffset 96 width 600.24: "The red rectangle should not show since it uses a clipping path that uses an indirect reference."
