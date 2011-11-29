@@ -1021,6 +1021,7 @@ sub GenerateNormalAttrSetter
     $svgNativeType* imp = V8${implClassName}::toNative(info.Holder());
 END
         } else {
+            AddToImplIncludes("ExceptionCode.h");
             push(@implContentDecls, "    $svgNativeType* wrapper = V8${implClassName}::toNative(info.Holder());\n");
             push(@implContentDecls, "    if (wrapper->role() == AnimValRole) {\n");
             push(@implContentDecls, "        V8Proxy::setDOMException(NO_MODIFICATION_ALLOWED_ERR);\n");
@@ -1324,6 +1325,7 @@ END
         if ($implClassName =~ /List$/) {
             push(@implContentDecls, "    $nativeClassName imp = V8${implClassName}::toNative(args.Holder());\n");
         } else {
+            AddToImplIncludes("ExceptionCode.h");
             push(@implContentDecls, "    $nativeClassName wrapper = V8${implClassName}::toNative(args.Holder());\n");
             push(@implContentDecls, "    if (wrapper->role() == AnimValRole) {\n");
             push(@implContentDecls, "        V8Proxy::setDOMException(NO_MODIFICATION_ALLOWED_ERR);\n");
