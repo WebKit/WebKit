@@ -1,3 +1,41 @@
+2011-11-29  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        [Qt] Add the infrastructure for enabling suspend/resume.
+
+        Reviewed by Simon Hausmann.
+
+        Also, remove the painting optimization as it is broken in some
+        situations, as there is an assumption in that comparison that
+        the guards cannot be nested, which goes against the design and
+        its use.
+
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewPrivate::initializeDesktop):
+        (QQuickWebViewPrivate::initializeTouch):
+        (QQuickWebViewPrivate::_q_suspend):
+        (QQuickWebViewPrivate::_q_resume):
+        * UIProcess/API/qt/qquickwebview_p.h:
+        * UIProcess/API/qt/qquickwebview_p_p.h:
+        * UIProcess/qt/QtViewportInteractionEngine.cpp:
+        (WebKit::ViewportUpdateGuard::ViewportUpdateGuard):
+        (WebKit::ViewportUpdateGuard::~ViewportUpdateGuard):
+        (WebKit::QtViewportInteractionEngine::QtViewportInteractionEngine):
+        (WebKit::QtViewportInteractionEngine::scaleAnimationStateChanged):
+        (WebKit::QtViewportInteractionEngine::scrollStateChanged):
+        (WebKit::QtViewportInteractionEngine::event):
+        (WebKit::QtViewportInteractionEngine::pagePositionRequest):
+        (WebKit::QtViewportInteractionEngine::ensureContentWithinViewportBoundary):
+        (WebKit::QtViewportInteractionEngine::reset):
+        (WebKit::QtViewportInteractionEngine::applyConstraints):
+        (WebKit::QtViewportInteractionEngine::panGestureRequestUpdate):
+        (WebKit::QtViewportInteractionEngine::panGestureEnded):
+        (WebKit::QtViewportInteractionEngine::pinchGestureActive):
+        (WebKit::QtViewportInteractionEngine::pinchGestureStarted):
+        (WebKit::QtViewportInteractionEngine::pinchGestureRequestUpdate):
+        (WebKit::QtViewportInteractionEngine::pinchGestureEnded):
+        (WebKit::QtViewportInteractionEngine::itemSizeChanged):
+        * UIProcess/qt/QtViewportInteractionEngine.h:
+
 2011-11-29  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Add WebKitURIResponse to WebKit2 GTK+ API

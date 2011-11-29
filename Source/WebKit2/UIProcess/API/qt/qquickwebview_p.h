@@ -126,7 +126,8 @@ private:
     QQuickWebView(WKContextRef, WKPageGroupRef, QQuickItem* parent = 0);
     WKPageRef pageRef() const;
 
-    Q_PRIVATE_SLOT(d_func(), void _q_viewportUpdated());
+    Q_PRIVATE_SLOT(d_func(), void _q_suspend());
+    Q_PRIVATE_SLOT(d_func(), void _q_resume());
     Q_PRIVATE_SLOT(d_func(), void _q_viewportTrajectoryVectorChanged(const QPointF&));
     Q_PRIVATE_SLOT(d_func(), void _q_onOpenPanelFilesSelected());
     Q_PRIVATE_SLOT(d_func(), void _q_onOpenPanelFinished(int result));

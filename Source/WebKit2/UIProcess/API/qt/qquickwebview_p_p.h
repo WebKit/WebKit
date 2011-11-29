@@ -65,7 +65,10 @@ public:
     void updateViewportSize();
     QtViewportInteractionEngine::Constraints computeViewportConstraints();
 
-    void _q_viewportUpdated();
+    void updateVisibleContentRect();
+
+    void _q_suspend();
+    void _q_resume();
     void _q_viewportTrajectoryVectorChanged(const QPointF&);
     void _q_onOpenPanelFilesSelected();
     void _q_onOpenPanelFinished(int result);

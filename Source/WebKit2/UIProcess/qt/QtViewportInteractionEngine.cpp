@@ -37,8 +37,6 @@ static const int kScaleAnimationDurationMillis = 250;
 // Updating content properties cause the notify signals to be sent by the content item itself.
 // We manage these differently, as we do not want to act on them when we are the ones changing the content.
 //
-// This guard makes sure that the signal viewportUpdateRequested() is sent only when necessary.
-//
 // When multiple guards are alive, their lifetime must be perfectly imbricated (e.g. if used ouside stack
 // frames). We rely on the first one to trigger the update at the end.
 //
@@ -48,39 +46,26 @@ class ViewportUpdateGuard {
 public:
     ViewportUpdateGuard(QtViewportInteractionEngine* engine)
         : engine(engine)
-        , startPosition(engine->m_content->pos())
-        , startScale(engine->m_content->scale())
-        , startWidth(engine->m_content->width())
-        , startHeight(engine->m_content->height())
-
     {
-        ++(engine->m_pendingUpdates);
+        if (engine->m_suspendCount++)
+            return;
+
+        engine->contentSuspendRequested();
     }
 
     ~ViewportUpdateGuard()
     {
-        if (--(engine->m_pendingUpdates))
+        if (--(engine->m_suspendCount))
             return;
+
+        emit engine->contentResumeRequested();
 
         // Make sure that tiles all around the viewport will be requested.
         emit engine->viewportTrajectoryVectorChanged(QPointF());
-
-        QQuickItem* item = engine->m_content;
-        bool needsRepaint = startPosition != item->pos() || startScale != item->scale()
-            || startWidth != item->width() || startHeight != item->height();
-
-        // We must notify the change so the client can rely on us for all changes of geometry.
-        if (needsRepaint)
-            emit engine->viewportUpdateRequested();
     }
 
 private:
     QtViewportInteractionEngine* const engine;
-
-    const QPointF startPosition;
-    const qreal startScale;
-    const qreal startWidth;
-    const qreal startHeight;
 };
 
 inline qreal QtViewportInteractionEngine::cssScaleFromItem(qreal itemScale)
@@ -96,7 +81,7 @@ inline qreal QtViewportInteractionEngine::itemScaleFromCSS(qreal cssScale)
 QtViewportInteractionEngine::QtViewportInteractionEngine(const QQuickItem* viewport, QQuickItem* content)
     : m_viewport(viewport)
     , m_content(content)
-    , m_pendingUpdates(0)
+    , m_suspendCount(0)
     , m_scaleAnimation(new ScaleAnimation(this))
     , m_pinchStartScale(1.f)
 {
@@ -125,6 +110,9 @@ QtViewportInteractionEngine::QtViewportInteractionEngine(const QQuickItem* viewp
             SLOT(scaleAnimationValueChanged(QVariant)), Qt::DirectConnection);
     connect(m_scaleAnimation, SIGNAL(stateChanged(QAbstractAnimation::State, QAbstractAnimation::State)),
             SLOT(scaleAnimationStateChanged(QAbstractAnimation::State, QAbstractAnimation::State)), Qt::DirectConnection);
+
+    connect(scroller(), SIGNAL(stateChanged(QScroller::State)),
+            SLOT(scrollStateChanged(QScroller::State)), Qt::DirectConnection);
 }
 
 QtViewportInteractionEngine::~QtViewportInteractionEngine()
@@ -179,10 +167,29 @@ void QtViewportInteractionEngine::scaleAnimationStateChanged(QAbstractAnimation:
 {
     switch (newState) {
     case QAbstractAnimation::Running:
-        m_pinchViewportUpdateDeferrer = adoptPtr(new ViewportUpdateGuard(this));
+        m_scaleUpdateDeferrer = adoptPtr(new ViewportUpdateGuard(this));
         break;
     case QAbstractAnimation::Stopped:
-        m_pinchViewportUpdateDeferrer.clear();
+        m_scaleUpdateDeferrer.clear();
+        break;
+    default:
+        break;
+    }
+}
+
+void QtViewportInteractionEngine::scrollStateChanged(QScroller::State newState)
+{
+    switch (newState) {
+    case QScroller::Inactive:
+        // FIXME: QScroller gets when even when tapping while it is scrolling.
+        m_scrollUpdateDeferrer.clear();
+        break;
+    case QScroller::Pressed:
+    case QScroller::Dragging:
+    case QScroller::Scrolling:
+        if (m_scrollUpdateDeferrer)
+            break;
+        m_scrollUpdateDeferrer = adoptPtr(new ViewportUpdateGuard(this));
         break;
     default:
         break;
@@ -209,8 +216,6 @@ bool QtViewportInteractionEngine::event(QEvent* event)
         QScrollEvent* scrollEvent = static_cast<QScrollEvent*>(event);
         QPointF newPos = -scrollEvent->contentPos() - scrollEvent->overshootDistance();
         if (m_content->pos() != newPos) {
-            ViewportUpdateGuard guard(this);
-
             QPointF currentPosInContentCoordinates = m_content->mapToItem(m_content->parentItem(), m_content->pos());
             QPointF newPosInContentCoordinates = m_content->mapToItem(m_content->parentItem(), newPos);
 
@@ -263,9 +268,9 @@ void QtViewportInteractionEngine::wheelEvent(QWheelEvent* ev)
 
 void QtViewportInteractionEngine::pagePositionRequest(const QPoint& pagePosition)
 {
-    // FIXME: Assert when we are suspending properly.
-    if (scrollAnimationActive() || scaleAnimationActive() || pinchGestureActive())
-        return; // Ignore.
+    // Ignore the request if suspended. Can only happen due to delay in event delivery.
+    if (m_suspendCount)
+        return;
 
     qreal endItemScale = m_content->scale(); // Stay at same scale.
 
@@ -326,6 +331,8 @@ void QtViewportInteractionEngine::zoomToAreaGestureEnded(const QPointF& touchPoi
 
 void QtViewportInteractionEngine::ensureContentWithinViewportBoundary(bool immediate)
 {
+    ASSERT(m_suspendCount);
+
     if (scrollAnimationActive() || scaleAnimationActive())
         return;
 
@@ -351,8 +358,6 @@ void QtViewportInteractionEngine::ensureContentWithinViewportBoundary(bool immed
 
 void QtViewportInteractionEngine::reset()
 {
-    ViewportUpdateGuard guard(this);
-
     m_userInteractionFlags = UserHasNotInteractedWithContent;
 
     scroller()->stop();
@@ -365,6 +370,7 @@ void QtViewportInteractionEngine::applyConstraints(const Constraints& constraint
         return;
 
     ViewportUpdateGuard guard(this);
+
     m_constraints = constraints;
 
     bool userHasScaledContent = m_userInteractionFlags & UserHasScaledContent;
@@ -406,7 +412,6 @@ void QtViewportInteractionEngine::panGestureStarted(const QPointF& touchPoint, q
 
 void QtViewportInteractionEngine::panGestureRequestUpdate(const QPointF& touchPoint, qint64 eventTimestampMillis)
 {
-    ViewportUpdateGuard guard(this);
     scroller()->handleInput(QScroller::InputMove, m_viewport->mapFromItem(m_content, touchPoint), eventTimestampMillis);
 }
 
@@ -419,7 +424,6 @@ void QtViewportInteractionEngine::panGestureCancelled()
 
 void QtViewportInteractionEngine::panGestureEnded(const QPointF& touchPoint, qint64 eventTimestampMillis)
 {
-    ViewportUpdateGuard guard(this);
     scroller()->handleInput(QScroller::InputRelease, m_viewport->mapFromItem(m_content, touchPoint), eventTimestampMillis);
 }
 
@@ -436,15 +440,18 @@ void QtViewportInteractionEngine::interruptScaleAnimation()
 
 bool QtViewportInteractionEngine::pinchGestureActive() const
 {
-    return !!m_pinchViewportUpdateDeferrer;
+    return !!m_scaleUpdateDeferrer;
 }
 
 void QtViewportInteractionEngine::pinchGestureStarted(const QPointF& pinchCenterInContentCoordinates)
 {
+    ASSERT(m_suspendCount);
+
     if (!m_constraints.isUserScalable)
         return;
 
-    m_pinchViewportUpdateDeferrer = adoptPtr(new ViewportUpdateGuard(this));
+    m_scaleUpdateDeferrer = adoptPtr(new ViewportUpdateGuard(this));
+
     m_lastPinchCenterInViewportCoordinates = m_viewport->mapFromItem(m_content, pinchCenterInContentCoordinates);
     m_userInteractionFlags |= UserHasScaledContent;
     m_userInteractionFlags |= UserHasMovedContent;
@@ -456,10 +463,10 @@ void QtViewportInteractionEngine::pinchGestureStarted(const QPointF& pinchCenter
 
 void QtViewportInteractionEngine::pinchGestureRequestUpdate(const QPointF& pinchCenterInContentCoordinates, qreal totalScaleFactor)
 {
+    ASSERT(m_suspendCount);
+
     if (!m_constraints.isUserScalable)
         return;
-
-    ViewportUpdateGuard guard(this);
 
     //  Changes of the center position should move the page even if the zoom factor
     //  does not change.
@@ -479,21 +486,20 @@ void QtViewportInteractionEngine::pinchGestureRequestUpdate(const QPointF& pinch
 
 void QtViewportInteractionEngine::pinchGestureEnded()
 {
+    ASSERT(m_suspendCount);
+
     if (!m_constraints.isUserScalable)
         return;
 
-    m_pinchViewportUpdateDeferrer.clear();
-    // FIXME: resume the engine after the animation.
     ensureContentWithinViewportBoundary();
 }
 
 void QtViewportInteractionEngine::itemSizeChanged()
 {
     // FIXME: This needs to be done smarter. What happens if it resizes when we were interacting?
-    if (m_pendingUpdates)
+    if (m_suspendCount)
         return;
 
-    ViewportUpdateGuard guard(this);
     ensureContentWithinViewportBoundary();
 }
 

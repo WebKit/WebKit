@@ -94,13 +94,16 @@ public:
     void zoomToAreaGestureEnded(const QPointF& touchPoint, const QRectF& endArea);
 
 Q_SIGNALS:
-    void viewportUpdateRequested();
+    void contentSuspendRequested();
+    void contentResumeRequested();
+
     void viewportTrajectoryVectorChanged(const QPointF&);
 
 private Q_SLOTS:
     // Respond to changes of content that are not driven by us, like the page resizing itself.
     void itemSizeChanged();
 
+    void scrollStateChanged(QScroller::State);
     void scaleAnimationStateChanged(QAbstractAnimation::State, QAbstractAnimation::State);
     void scaleAnimationValueChanged(QVariant value) { setItemRectVisible(value.toRectF()); }
 
@@ -124,8 +127,9 @@ private:
     QQuickItem* const m_content;
 
     Constraints m_constraints;
-    int m_pendingUpdates;
-    OwnPtr<ViewportUpdateGuard> m_pinchViewportUpdateDeferrer;
+    int m_suspendCount;
+    OwnPtr<ViewportUpdateGuard> m_scaleUpdateDeferrer;
+    OwnPtr<ViewportUpdateGuard> m_scrollUpdateDeferrer;
     enum UserInteractionFlag {
         UserHasNotInteractedWithContent = 0,
         UserHasMovedContent = 1,

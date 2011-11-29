@@ -87,7 +87,8 @@ void QQuickWebViewPrivate::disableMouseEvents()
 void QQuickWebViewPrivate::initializeDesktop(QQuickWebView* viewport)
 {
     if (interactionEngine) {
-        QObject::disconnect(interactionEngine.data(), SIGNAL(viewportUpdateRequested()), viewport, SLOT(_q_viewportUpdated()));
+        QObject::disconnect(interactionEngine.data(), SIGNAL(contentSuspendRequested()), viewport, SLOT(_q_suspend()));
+        QObject::disconnect(interactionEngine.data(), SIGNAL(contentResumeRequested()), viewport, SLOT(_q_resume()));
         QObject::disconnect(interactionEngine.data(), SIGNAL(viewportTrajectoryVectorChanged(const QPointF&)), viewport, SLOT(_q_viewportTrajectoryVectorChanged(const QPointF&)));
     }
     interactionEngine.reset(0);
@@ -100,7 +101,8 @@ void QQuickWebViewPrivate::initializeTouch(QQuickWebView* viewport)
     interactionEngine.reset(new QtViewportInteractionEngine(viewport, pageView.data()));
     eventHandler->setViewportInteractionEngine(interactionEngine.data());
     disableMouseEvents();
-    QObject::connect(interactionEngine.data(), SIGNAL(viewportUpdateRequested()), viewport, SLOT(_q_viewportUpdated()));
+    QObject::connect(interactionEngine.data(), SIGNAL(contentSuspendRequested()), viewport, SLOT(_q_suspend()));
+    QObject::connect(interactionEngine.data(), SIGNAL(contentResumeRequested()), viewport, SLOT(_q_resume()));
     QObject::connect(interactionEngine.data(), SIGNAL(viewportTrajectoryVectorChanged(const QPointF&)), viewport, SLOT(_q_viewportTrajectoryVectorChanged(const QPointF&)));
     updateViewportSize();
 }
@@ -153,7 +155,16 @@ void QQuickWebViewPrivate::scrollPositionRequested(const QPoint& pos)
         interactionEngine->pagePositionRequest(pos);
 }
 
-void QQuickWebViewPrivate::_q_viewportUpdated()
+void QQuickWebViewPrivate::_q_suspend()
+{
+}
+
+void QQuickWebViewPrivate::_q_resume()
+{
+    updateVisibleContentRect();
+}
+
+void QQuickWebViewPrivate::updateVisibleContentRect()
 {
     Q_Q(QQuickWebView);
     const QRectF visibleRectInPageViewCoordinates = q->mapRectToItem(pageView.data(), q->boundingRect()).intersected(pageView->boundingRect());
@@ -187,7 +198,7 @@ void QQuickWebViewPrivate::updateViewportSize()
     wkPage->setViewportSize(viewportSize);
 
     interactionEngine->applyConstraints(computeViewportConstraints());
-    _q_viewportUpdated();
+    updateVisibleContentRect();
 }
 
 QtViewportInteractionEngine::Constraints QQuickWebViewPrivate::computeViewportConstraints()
