@@ -35,25 +35,24 @@
 
 {(function () {
     Preferences.ignoreWhitespace = false;
-    Preferences.samplingCPUProfiler = true;
-    Preferences.heapProfilerPresent = true;
-    Preferences.detailedHeapProfiles = true;
-    Preferences.debuggerAlwaysEnabled = true;
-    Preferences.profilerAlwaysEnabled = true;
-    Preferences.nativeInstrumentationEnabled = true;
-    Preferences.fileSystemEnabled = false;
-    Preferences.showTimingTab = true;
-    Preferences.showCookiesTab = true;
     Preferences.saveAsAvailable = true;
     Preferences.useLowerCaseMenuTitlesOnWindows = true;
-    Preferences.canInspectWorkers = true;
-    Preferences.canClearCacheAndCookies = true;
-    Preferences.canDisableCache = true;
-    Preferences.showNetworkPanelInitiatorColumn = true;
-    Preferences.haveExtensions = true;
+    Preferences.hasExtensions = true;
     Preferences.sharedWorkersDebugNote = "Shared workers can be inspected in the Task Manager";
     Preferences.localizeUI = false;
     Preferences.applicationTitle = "Developer Tools - %s";
+
+    Capabilities.samplingCPUProfiler = true;
+    Capabilities.heapProfilerPresent = true;
+    Capabilities.detailedHeapProfiles = true;
+    Capabilities.debuggerAlwaysEnabled = true;
+    Capabilities.profilerAlwaysEnabled = true;
+    Capabilities.nativeInstrumentationEnabled = true;
+    Capabilities.showTimingTab = true;
+    Capabilities.showCookiesTab = true;
+    Capabilities.canInspectWorkers = true;
+    Capabilities.canClearCacheAndCookies = true;
+    Capabilities.canDisableCache = true;
 })();}
 
 /** Pending WebKit upstream by apavlov). Fixes iframe vs drag problem. */

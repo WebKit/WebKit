@@ -59,7 +59,7 @@ WebInspector.SettingsScreen = function()
         ], WebInspector.settings.textEditorIndent));
 
     p = this._appendSection(WebInspector.UIString("Network"), true);
-    if (Preferences.canDisableCache)
+    if (Capabilities.canDisableCache)
         p.appendChild(this._createCheckboxSetting(WebInspector.UIString("Disable cache"), WebInspector.settings.cacheDisabled));
     p.appendChild(this._createUserActionControl());
 
@@ -71,7 +71,7 @@ WebInspector.SettingsScreen = function()
     p.appendChild(this._createCheckboxSetting(WebInspector.UIString("Log XMLHttpRequests"), WebInspector.settings.monitoringXHREnabled));
     p.appendChild(this._createCheckboxSetting(WebInspector.UIString("Preserve log upon navigation"), WebInspector.settings.preserveConsoleLog));
 
-    if (Preferences.haveExtensions) {
+    if (Preferences.hasExtensions) {
         var handlerSelector = new WebInspector.HandlerSelector(WebInspector.openAnchorLocationRegistry);
         p = this._appendSection(WebInspector.UIString("Extensions"), true);
         p.appendChild(this._createCustomSetting(WebInspector.UIString("Open links in"), handlerSelector.element));

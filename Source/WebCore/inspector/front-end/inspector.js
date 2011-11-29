@@ -358,7 +358,7 @@ WebInspector.doLoadedDone = function()
     this.searchController = new WebInspector.SearchController();
     this.advancedSearchController = new WebInspector.AdvancedSearchController();
 
-    if (Preferences.nativeInstrumentationEnabled)
+    if (Capabilities.nativeInstrumentationEnabled)
         this.domBreakpointsSidebarPane = new WebInspector.DOMBreakpointsSidebarPane();
 
     this._createPanels();

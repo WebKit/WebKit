@@ -42,7 +42,7 @@ WebInspector.CPUProfileView = function(profile)
                     "calls": { title: WebInspector.UIString("Calls"), width: "54px", sortable: true },
                     "function": { title: WebInspector.UIString("Function"), disclosure: true, sortable: true } };
 
-    if (Preferences.samplingCPUProfiler) {
+    if (Capabilities.samplingCPUProfiler) {
         delete columns.average;
         delete columns.calls;
     }

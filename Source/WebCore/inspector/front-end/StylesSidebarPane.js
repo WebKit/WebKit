@@ -889,8 +889,6 @@ WebInspector.StylePropertiesSection = function(parentPane, styleRule, editable, 
     this._selectorElement = document.createElement("span");
     this._selectorElement.textContent = styleRule.selectorText;
     selectorContainer.appendChild(this._selectorElement);
-    if (Preferences.debugMode)
-        this._selectorElement.addEventListener("click", this._debugShowStyle.bind(this), false);
 
     var openBrace = document.createElement("span");
     openBrace.textContent = " {";
@@ -1133,39 +1131,6 @@ WebInspector.StylePropertiesSection.prototype = {
         item._newProperty = true;
         item.updateTitle();
         return item;
-    },
-
-    _debugShowStyle: function(event)
-    {
-        var boundHandler;
-        function removeStyleBox(element, event)
-        {
-            if (event.target === element) {
-                event.stopPropagation();
-                return;
-            }
-            document.body.removeChild(element);
-            document.getElementById("main").removeEventListener("mousedown", boundHandler, true);
-        }
-
-        if (!event.shiftKey)
-            return;
-
-        var container = document.createElement("div");
-        var element = document.createElement("span");
-        container.appendChild(element);
-        element.style.background = "yellow";
-        element.style.display = "inline-block";
-        container.style.cssText = "z-index: 2000000; position: absolute; top: 50px; left: 50px; white-space: pre; overflow: auto; background: white; font-family: monospace; font-size: 12px; border: 1px solid black; opacity: 0.85; -webkit-user-select: text; padding: 2px;";
-        container.style.width = (document.body.offsetWidth - 100) + "px";
-        container.style.height = (document.body.offsetHeight - 100) + "px";
-        document.body.appendChild(container);
-        if (this.rule)
-            element.textContent = this.rule.selectorText + " {" + ((this.styleRule.style.cssText !== undefined) ? this.styleRule.style.cssText : "<no cssText>") + "}";
-        else
-            element.textContent = this.styleRule.style.cssText;
-        boundHandler = removeStyleBox.bind(null, container);
-        document.getElementById("main").addEventListener("mousedown", boundHandler, true);
     },
 
     _handleEmptySpaceDoubleClick: function(event)

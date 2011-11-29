@@ -68,13 +68,13 @@ WebInspector.ScriptsPanel = function(presentationModel)
     this.sidebarPanes.callstack = new WebInspector.CallStackSidebarPane(this._presentationModel);
     this.sidebarPanes.scopechain = new WebInspector.ScopeChainSidebarPane();
     this.sidebarPanes.jsBreakpoints = new WebInspector.JavaScriptBreakpointsSidebarPane(this._presentationModel, this._showSourceLine.bind(this));
-    if (Preferences.nativeInstrumentationEnabled) {
+    if (Capabilities.nativeInstrumentationEnabled) {
         this.sidebarPanes.domBreakpoints = WebInspector.domBreakpointsSidebarPane;
         this.sidebarPanes.xhrBreakpoints = new WebInspector.XHRBreakpointsSidebarPane();
         this.sidebarPanes.eventListenerBreakpoints = new WebInspector.EventListenerBreakpointsSidebarPane();
     }
 
-    if (Preferences.canInspectWorkers && !WebInspector.WorkerManager.isWorkerFrontend()) {
+    if (Capabilities.canInspectWorkers && !WebInspector.WorkerManager.isWorkerFrontend()) {
         WorkerAgent.setWorkerInspectionEnabled(true);
         this.sidebarPanes.workerList = new WebInspector.WorkerListSidebarPane(WebInspector.workerManager);
     } else
@@ -103,7 +103,7 @@ WebInspector.ScriptsPanel = function(presentationModel)
 
     this.enableToggleButton = new WebInspector.StatusBarButton("", "enable-toggle-status-bar-item");
     this.enableToggleButton.addEventListener("click", this.toggleDebugging, this);
-    if (Preferences.debuggerAlwaysEnabled)
+    if (Capabilities.debuggerAlwaysEnabled)
         this.enableToggleButton.element.addStyleClass("hidden");
 
     this._pauseOnExceptionButton = new WebInspector.StatusBarButton("", "scripts-pause-on-exceptions-status-bar-item", 3);
@@ -116,7 +116,7 @@ WebInspector.ScriptsPanel = function(presentationModel)
     this._scriptViewStatusBarItemsContainer = document.createElement("div");
     this._scriptViewStatusBarItemsContainer.style.display = "inline-block";
 
-    this._debuggerEnabled = Preferences.debuggerAlwaysEnabled;
+    this._debuggerEnabled = Capabilities.debuggerAlwaysEnabled;
 
     this._reset(false);
 
@@ -137,7 +137,7 @@ WebInspector.ScriptsPanel = function(presentationModel)
     this._presentationModel.addEventListener(WebInspector.DebuggerPresentationModel.Events.ExecutionLineChanged, this._executionLineChanged, this);
     this._presentationModel.addEventListener(WebInspector.DebuggerPresentationModel.Events.DebuggerReset, this._reset.bind(this, false));
     
-    var enableDebugger = Preferences.debuggerAlwaysEnabled || WebInspector.settings.debuggerEnabled.get();
+    var enableDebugger = Capabilities.debuggerAlwaysEnabled || WebInspector.settings.debuggerEnabled.get();
     if (enableDebugger)
         WebInspector.debuggerModel.enableDebugger();
 
@@ -177,7 +177,7 @@ WebInspector.ScriptsPanel.prototype = {
     wasShown: function()
     {
         WebInspector.Panel.prototype.wasShown.call(this);
-        if (Preferences.nativeInstrumentationEnabled)
+        if (Capabilities.nativeInstrumentationEnabled)
             this.sidebarElement.insertBefore(this.sidebarPanes.domBreakpoints.element, this.sidebarPanes.xhrBreakpoints.element);
         this.sidebarPanes.watchExpressions.show();
     },
@@ -802,7 +802,7 @@ WebInspector.ScriptsPanel.prototype = {
         this.sidebarPanes.callstack.update(null);
         this.sidebarPanes.scopechain.update(null);
         this.sidebarPanes.jsBreakpoints.clearBreakpointHighlight();
-        if (Preferences.nativeInstrumentationEnabled) {
+        if (Capabilities.nativeInstrumentationEnabled) {
             this.sidebarPanes.domBreakpoints.clearBreakpointHighlight();
             this.sidebarPanes.eventListenerBreakpoints.clearBreakpointHighlight();
             this.sidebarPanes.xhrBreakpoints.clearBreakpointHighlight();

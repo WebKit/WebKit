@@ -70,7 +70,7 @@ WebInspector.ElementsPanel = function()
     this.sidebarPanes.styles = new WebInspector.StylesSidebarPane(this.sidebarPanes.computedStyle);
     this.sidebarPanes.metrics = new WebInspector.MetricsSidebarPane();
     this.sidebarPanes.properties = new WebInspector.PropertiesSidebarPane();
-    if (Preferences.nativeInstrumentationEnabled)
+    if (Capabilities.nativeInstrumentationEnabled)
         this.sidebarPanes.domBreakpoints = WebInspector.domBreakpointsSidebarPane;
     this.sidebarPanes.eventListeners = new WebInspector.EventListenersSidebarPane();
 
@@ -137,7 +137,7 @@ WebInspector.ElementsPanel.prototype = {
         if (!this.treeOutline.rootDOMNode)
             WebInspector.domAgent.requestDocument();
 
-        if (Preferences.nativeInstrumentationEnabled)
+        if (Capabilities.nativeInstrumentationEnabled)
             this.sidebarElement.insertBefore(this.sidebarPanes.domBreakpoints.element, this.sidebarPanes.eventListeners.element);
     },
 
@@ -201,7 +201,7 @@ WebInspector.ElementsPanel.prototype = {
             return;
         }
 
-        if (Preferences.nativeInstrumentationEnabled)
+        if (Capabilities.nativeInstrumentationEnabled)
             this.sidebarPanes.domBreakpoints.restoreBreakpoints();
 
         /**
@@ -319,7 +319,7 @@ WebInspector.ElementsPanel.prototype = {
 
     _populateContextMenu: function(contextMenu, node)
     {
-        if (Preferences.nativeInstrumentationEnabled) {
+        if (Capabilities.nativeInstrumentationEnabled) {
             // Add debbuging-related actions
             contextMenu.appendSeparator();
             var pane = this.sidebarPanes.domBreakpoints;

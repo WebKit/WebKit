@@ -89,7 +89,7 @@ WebInspector.DebuggerModel.prototype = {
     {
         /**
          * @param {Protocol.Error} error
-         * @param {Array.<string>} capabilities
+         * @param {Array.<MetaAgent.DomainCapabilities>} capabilities
          */
         function callback(error, capabilities)
         {

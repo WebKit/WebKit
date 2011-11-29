@@ -47,12 +47,12 @@ WebInspector.NetworkItemView = function(resource)
     this.appendTab("preview", WebInspector.UIString("Preview"), previewView);
     this.appendTab("response", WebInspector.UIString("Response"), responseView);
 
-    if (Preferences.showCookiesTab) {
+    if (Capabilities.showCookiesTab) {
         this._cookiesView = new WebInspector.ResourceCookiesView(resource);
         this.appendTab("cookies", WebInspector.UIString("Cookies"), this._cookiesView);
     }
 
-    if (Preferences.showTimingTab) {
+    if (Capabilities.showTimingTab) {
         var timingView = new WebInspector.ResourceTimingView(resource);
         this.appendTab("timing", WebInspector.UIString("Timing"), timingView);
     }

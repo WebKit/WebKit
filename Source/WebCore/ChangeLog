@@ -1,3 +1,43 @@
+2011-11-29  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: split Preferences into Preferences and Capabilities.
+        https://bugs.webkit.org/show_bug.cgi?id=73321
+
+        Part of the Preferences defined in Settings.js are in fact backend capabilities.
+        Split them into two separate objects for further capabilities refactoring.
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/front-end/DebuggerModel.js:
+        * inspector/front-end/ElementsPanel.js:
+        (WebInspector.ElementsPanel):
+        (WebInspector.ElementsPanel.prototype.wasShown):
+        (WebInspector.ElementsPanel.prototype._populateContextMenu):
+        * inspector/front-end/NetworkItemView.js:
+        (WebInspector.NetworkItemView):
+        * inspector/front-end/NetworkPanel.js:
+        (WebInspector.NetworkLogView.prototype._createTable):
+        (WebInspector.NetworkLogView.prototype.switchToDetailedView):
+        (WebInspector.NetworkLogView.prototype.switchToBriefView):
+        (WebInspector.NetworkLogView.prototype._contextMenu):
+        (WebInspector.NetworkDataGridNode.prototype.createCells):
+        (WebInspector.NetworkDataGridNode.prototype.refreshResource):
+        * inspector/front-end/ProfileDataGridTree.js:
+        (WebInspector.ProfileDataGridNode.prototype.get data.formatMilliseconds):
+        * inspector/front-end/ProfileView.js:
+        * inspector/front-end/ProfilesPanel.js:
+        (WebInspector.ProfilesPanel.prototype._enableDetailedHeapProfiles):
+        * inspector/front-end/Resource.js:
+        (WebInspector.Resource.prototype.populateImageSource):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype.wasShown):
+        (WebInspector.ScriptsPanel.prototype._clearInterface):
+        * inspector/front-end/Settings.js:
+        * inspector/front-end/SettingsScreen.js:
+        (WebInspector.SettingsScreen):
+        * inspector/front-end/StylesSidebarPane.js:
+        * inspector/front-end/inspector.js:
+
 2011-11-29  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Make WebCore compile with Qt 5 and V8

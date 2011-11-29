@@ -891,10 +891,7 @@ WebInspector.Resource.prototype = {
             image.src = this._contentURL();
         }
 
-        if (Preferences.useDataURLForResourceImageIcons)
-            this.requestContent(onResourceContent.bind(this));
-        else
-            image.src = this.url;
+        this.requestContent(onResourceContent.bind(this));
     },
 
     isHttpFamily: function()

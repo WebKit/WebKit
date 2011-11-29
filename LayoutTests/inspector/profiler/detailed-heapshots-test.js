@@ -13,7 +13,7 @@ InspectorTest.startProfilerTest = function(callback)
         InspectorTest._panelReset = InspectorTest.override(WebInspector.panels.profiles, "_reset", function(){}, true);
         InspectorTest.addSniffer(WebInspector.DetailedHeapshotView.prototype, "_updatePercentButton", InspectorTest._snapshotViewShown, true);
 
-        if (Preferences.detailedHeapProfiles)
+        if (Capabilities.detailedHeapProfiles)
             detailedHeapProfilesEnabled();
         else {
             InspectorTest.addSniffer(WebInspector.panels.profiles, "_populateProfiles", detailedHeapProfilesEnabled);
@@ -62,7 +62,7 @@ InspectorTest.completeProfilerTest = function()
 
 InspectorTest.runDetailedHeapshotTestSuite = function(testSuite)
 {
-    if (!Preferences.heapProfilerPresent) {
+    if (!Capabilities.heapProfilerPresent) {
         InspectorTest.addResult("Heap profiler is disabled");
         InspectorTest.completeTest();
         return;

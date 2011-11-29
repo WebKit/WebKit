@@ -37,27 +37,27 @@ var Preferences = {
     minScriptsSidebarWidth: 200,
     styleRulesExpandedState: {},
     showMissingLocalizedStrings: false,
-    samplingCPUProfiler: false,
     showColorNicknames: true,
-    debuggerAlwaysEnabled: false,
-    profilerAlwaysEnabled: false,
-    nativeInstrumentationEnabled: false,
-    useDataURLForResourceImageIcons: true,
-    showTimingTab: false,
-    showCookiesTab: false,
-    debugMode: false,
-    heapProfilerPresent: false,
-    detailedHeapProfiles: false,
     saveAsAvailable: false,
     useLowerCaseMenuTitlesOnWindows: false,
-    canInspectWorkers: false,
-    canClearCacheAndCookies: false,
-    canDisableCache: false,
-    showNetworkPanelInitiatorColumn: false,
-    haveExtensions: false,
+    hasExtensions: false,
     sharedWorkersDebugNote: undefined,
     localizeUI: true,
     applicationTitle: "Web Inspector - %s"
+}
+
+var Capabilities = {
+    samplingCPUProfiler: false,
+    debuggerAlwaysEnabled: false,
+    profilerAlwaysEnabled: false,
+    nativeInstrumentationEnabled: false,
+    showTimingTab: false,
+    showCookiesTab: false,
+    heapProfilerPresent: false,
+    detailedHeapProfiles: false,
+    canInspectWorkers: false,
+    canClearCacheAndCookies: false,
+    canDisableCache: false
 }
 
 /**

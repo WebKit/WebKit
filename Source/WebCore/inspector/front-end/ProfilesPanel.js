@@ -119,7 +119,7 @@ WebInspector.ProfilesPanel = function()
 
     this.enableToggleButton = new WebInspector.StatusBarButton("", "enable-toggle-status-bar-item");
     this.enableToggleButton.addEventListener("click", this._toggleProfiling.bind(this), false);
-    if (Preferences.profilerAlwaysEnabled)
+    if (Capabilities.profilerAlwaysEnabled)
         this.enableToggleButton.element.addStyleClass("hidden");
 
     this.clearResultsButton = new WebInspector.StatusBarButton(WebInspector.UIString("Clear all profiles."), "clear-status-bar-item");
@@ -131,16 +131,16 @@ WebInspector.ProfilesPanel = function()
     this.welcomeView = new WebInspector.WelcomeView("profiles", WebInspector.UIString("Welcome to the Profiles panel"));
 
     this._profiles = [];
-    this._profilerEnabled = Preferences.profilerAlwaysEnabled;
+    this._profilerEnabled = Capabilities.profilerAlwaysEnabled;
     this._reset();
 
     this._registerProfileType(new WebInspector.CPUProfileType());
-    if (Preferences.heapProfilerPresent)
+    if (Capabilities.heapProfilerPresent)
         this._registerProfileType(new WebInspector.DetailedHeapshotProfileType());
 
     InspectorBackend.registerProfilerDispatcher(new WebInspector.ProfilerDispatcher(this));
 
-    if (Preferences.profilerAlwaysEnabled || WebInspector.settings.profilerEnabled.get())
+    if (Capabilities.profilerAlwaysEnabled || WebInspector.settings.profilerEnabled.get())
         ProfilerAgent.enable();
     else {
         function onProfilerEnebled(error, value) {
@@ -889,7 +889,7 @@ WebInspector.ProfilesPanel.prototype = {
         var profileType = new WebInspector.DetailedHeapshotProfileType();
         profileType.treeElement = oldProfileType.treeElement;
         this._profileTypesByIdMap[profileType.id] = profileType;
-        Preferences.detailedHeapProfiles = true;
+        Capabilities.detailedHeapProfiles = true;
         this.detach();
         this.show();
     }
