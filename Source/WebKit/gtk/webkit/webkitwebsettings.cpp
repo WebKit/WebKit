@@ -172,26 +172,16 @@ static String webkitOSVersion()
     return uaOSVersion;
 }
 
-static String webkitUserAgent()
+static String chromeUserAgent()
 {
     // We mention Safari since many broken sites check for it (OmniWeb does this too)
     // We re-use the WebKit version, though it doesn't seem to matter much in practice
+    // We claim to be Chrome as well, which prevents sites that look for Safari and assume
+    // that since we are not OS X, that we are the mobile version of Safari.
 
     DEFINE_STATIC_LOCAL(const String, uaVersion, (makeString(String::number(WEBKIT_USER_AGENT_MAJOR_VERSION), '.', String::number(WEBKIT_USER_AGENT_MINOR_VERSION), '+')));
     DEFINE_STATIC_LOCAL(const String, staticUA, (makeString("Mozilla/5.0 (", webkitPlatform(), webkitOSVersion(), ") AppleWebKit/", uaVersion) +
-                                                 makeString(" (KHTML, like Gecko) Version/5.0 Safari/", uaVersion)));
-
-    return staticUA;
-}
-
-static String safariUserAgent()
-{
-    // We mention Safari since many broken sites check for it (OmniWeb does this too)
-    // We re-use the WebKit version, though it doesn't seem to matter much in practice
-
-    DEFINE_STATIC_LOCAL(const String, uaVersion, (makeString(String::number(WEBKIT_USER_AGENT_MAJOR_VERSION), '.', String::number(WEBKIT_USER_AGENT_MINOR_VERSION), '+')));
-    DEFINE_STATIC_LOCAL(const String, staticUA, (makeString("Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_6_7; en_US) AppleWebKit/", uaVersion) +
-                                                 makeString(" (KHTML, like Gecko) Version/5.0.5 Safari/", uaVersion)));
+                                                 makeString(" (KHTML, like Gecko) Chromium/15.0.874.120 Chrome/15.0.874.120 Safari/", uaVersion)));
 
     return staticUA;
 }
@@ -621,7 +611,7 @@ static void webkit_web_settings_class_init(WebKitWebSettingsClass* klass)
                                     g_param_spec_string("user-agent",
                                                         _("User Agent"),
                                                         _("The User-Agent string used by WebKitGtk"),
-                                                        webkitUserAgent().utf8().data(),
+                                                        "", // An empty string means the default user-agent.
                                                         flags));
 
     /**
@@ -1038,7 +1028,7 @@ static void webkit_web_settings_set_property(GObject* object, guint prop_id, con
         break;
     case PROP_USER_AGENT:
         if (!g_value_get_string(value) || !strlen(g_value_get_string(value)))
-            priv->userAgent = webkitUserAgent().utf8();
+            priv->userAgent = chromeUserAgent().utf8();
         else
             priv->userAgent = g_value_get_string(value);
         break;
@@ -1437,25 +1427,12 @@ static bool isGoogleDomain(String host)
     return false;
 }
 
-static bool isGoogleCalendar(const KURL& url)
-{
-    if (url.host().find("calendar.google.") == 0
-        || (url.host().find("google.com") && url.path().startsWith("/calendar")))
-        return true;
-
-    return false;
-}
-
 static String userAgentForURL(const KURL& url)
 {
     // For Google domains, drop the browser's custom User Agent string, and use the
-    // standard WebKit/Safari one, so they don't give us a broken experience. Calendar
-    // thinks "Linux WebKit" means mobile.
-    if (isGoogleCalendar(url))
-        return safariUserAgent();
-
+    // standard Chrome one, so they don't give us a broken experience.
     if (isGoogleDomain(url.host()))
-        return webkitUserAgent();
+        return chromeUserAgent();
 
     return String();
 }

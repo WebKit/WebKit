@@ -139,10 +139,6 @@ static void test_webkit_web_settings_user_agent(void)
     g_assert_cmpstr(userAgent, ==, "testwebsettings/0.1");
     g_free(userAgent);
 
-    userAgent = webkitWebSettingsUserAgentForURI(settings, "http://calendar.google.com/");
-    g_assert(g_str_has_prefix(userAgent, "Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_6_7; en_US) AppleWebKit/"));
-    g_free(userAgent);
-
     g_free(defaultUserAgent);
     g_object_unref(webView);
 }

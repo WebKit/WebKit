@@ -1,3 +1,25 @@
+2011-11-29  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Custom fonts on surlybikes.com and boingboing.net do not load
+        https://bugs.webkit.org/show_bug.cgi?id=69115
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Instead of pretending to be Safari/Linux, pretend to be a Linux Chrome.
+        This fixes pages that assume that if a browser is Safari, but not OS X, it is
+        the iOS version of Safari.
+
+        * tests/testwebsettings.c:
+        (test_webkit_web_settings_user_agent): Update the test to reflect that the
+        user agent does not change.
+        * webkit/webkitwebsettings.cpp:
+        (chromeUserAgent): Renamed this from webkitUserAgent to more accurately
+        describe what it is.
+        (webkit_web_settings_class_init): Just use an empty string when initializing
+        the user agent to reduce code duplication.
+        (webkit_web_settings_set_property): Updated to reflect new method name.
+        (userAgentForURL): We don't need to special case Google Calendar any longer.
+
 2011-11-29  Mario Sanchez Prada  <msanchez@igalia.com>
 
         [Gtk] Regression: text-inserted events lack text inserted and current line
