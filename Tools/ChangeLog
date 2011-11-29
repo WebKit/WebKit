@@ -1,3 +1,11 @@
+2011-11-29  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Fix debug-shlib build without webkit2
+
+        Reviewed by Tor Arne Vestbø.
+
+        * qmake/mkspecs/features/qtwebkit.prf: Respect no_webkit2.
+
 2011-11-28  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt][WK2] Unreviewed buildfix after r101307.
