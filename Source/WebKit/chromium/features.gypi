@@ -82,6 +82,7 @@
       'ENABLE_SHARED_WORKERS=1',
       'ENABLE_SMOOTH_SCROLLING=1',
       'ENABLE_SQL_DATABASE=1',
+      'ENABLE_STYLE_SCOPED=0',
       'ENABLE_SVG=<(enable_svg)',
       'ENABLE_SVG_FONTS=<(enable_svg)',
       'ENABLE_TOUCH_EVENTS=<(enable_touch_events)',

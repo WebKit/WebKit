@@ -1,3 +1,14 @@
+2011-11-20  Roland Steiner  <rolandsteiner@chromium.org>
+
+        <style scoped>: add ENABLE(STYLE_SCOPED) flag to WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=72848
+
+        Add ENABLE_STYLE_SCOPED flag.
+
+        Reviewed by Dimitri Glazkov.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2011-11-28  Jon Lee  <jonlee@apple.com>
 
         Create skeleton framework for notifications support in WK2

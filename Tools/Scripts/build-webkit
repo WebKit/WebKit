@@ -117,6 +117,7 @@ my (
     $quotaSupport,
     $registerProtocolHandlerSupport,
     $sharedWorkersSupport,
+    $styleScopedSupport,
     $svgSupport,
     $svgDOMObjCBindingsSupport,
     $svgFontsSupport,
@@ -292,6 +293,9 @@ my @features = (
 
     { option => "shared-workers", desc => "Toggle SharedWorkers support",
       define => "ENABLE_SHARED_WORKERS", default => (isAppleWebKit() || isGtk() || isBlackBerry()), value => \$sharedWorkersSupport },
+
+    { option => "style-scoped", desc => "Toggle <style scoped> support",
+      define => "ENABLE_STYLE_SCOPED", default => 0, value => \$styleScopedSupport },
 
     { option => "svg", desc => "Toggle SVG support",
       define => "ENABLE_SVG", default => 1, value => \$svgSupport },

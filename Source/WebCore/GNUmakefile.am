@@ -212,6 +212,14 @@ webcore_cppflags += -DENABLE_DATA_TRANSFER_ITEMS=1
 endif # END ENABLE_DATA_TRANSFER_ITEMS
 
 # ----
+# HTML5 <style scoped> support
+# ----
+if ENABLE_STYLE_SCOPED
+FEATURE_DEFINES += ENABLE_STYLE_SCOPED=1
+webcore_cppflags += -DENABLE_STYLE_SCOPED=1
+endif # END ENABLE_STYLE_SCOPED
+
+# ----
 # Indexed Database API support
 # ----
 if ENABLE_INDEXED_DATABASE
