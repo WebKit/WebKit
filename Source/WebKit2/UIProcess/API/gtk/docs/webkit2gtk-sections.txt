@@ -250,6 +250,27 @@ webkit_uri_request_get_type
 </SECTION>
 
 <SECTION>
+<FILE>WebKitURIResponse</FILE>
+WebKitURIResponse
+webkit_uri_response_get_uri
+webkit_uri_response_get_status_code
+webkit_uri_response_get_content_length
+
+<SUBSECTION Standard>
+WebKitURIResponseClass
+WEBKIT_TYPE_URI_RESPONSE
+WEBKIT_URI_RESPONSE
+WEBKIT_IS_URI_RESPONSE
+WEBKIT_URI_RESPONSE_CLASS
+WEBKIT_IS_URI_RESPONSE_CLASS
+WEBKIT_URI_RESPONSE_GET_CLASS
+
+<SUBSECTION Private>
+WebKitURIResponsePrivate
+webkit_uri_response_get_type
+</SECTION>
+
+<SECTION>
 <FILE>WebKitError</FILE>
 WEBKIT_NETWORK_ERROR
 WEBKIT_PLUGIN_ERROR

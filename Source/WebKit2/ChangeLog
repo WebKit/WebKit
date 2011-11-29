@@ -1,3 +1,36 @@
+2011-11-29  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Add WebKitURIResponse to WebKit2 GTK+ API
+        https://bugs.webkit.org/show_bug.cgi?id=72946
+
+        Reviewed by Martin Robinson.
+
+        * GNUmakefile.am: Add new files to compilation.
+        * UIProcess/API/gtk/WebKitURIResponse.cpp: Added.
+        (webkitURIResponseFinalize):
+        (webkitURIResponseGetProperty):
+        (webkitURIResponseSetProperty):
+        (webkit_uri_response_class_init):
+        (webkit_uri_response_init):
+        (webkit_uri_response_get_uri): Return the URI of the response.
+        (webkit_uri_response_get_status_code): Return the status code of
+        the response, or SOUP_STATUS_NONE.
+        (webkit_uri_response_get_content_length): Return the expected
+        content length of the response.
+        (webkitURIResponseCreateForSoupMessage): Private function to
+        create a response object from a SoupMessage.
+        (webkitURIResponseGetSoupMessage): Return the soup message
+        associated to the response.
+        (webkitURIResponseSetContentLength): Set the expected content
+        length of the response. This is useful for non http responses.
+        * UIProcess/API/gtk/WebKitURIResponse.h: Added.
+        * UIProcess/API/gtk/WebKitURIResponsePrivate.h: Added.
+        * UIProcess/API/gtk/docs/webkit2gtk-docs.sgml: Add new section.
+        * UIProcess/API/gtk/docs/webkit2gtk-sections.txt: Add new symbols.
+        * UIProcess/API/gtk/docs/webkit2gtk.types: Add
+        webkit_uri_response_get_type().
+        * UIProcess/API/gtk/webkit2.h: Add WebKitURIResponse.h.
+
 2011-11-29  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         [Qt] QQuickWebView gets wrong position after reload

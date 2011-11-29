@@ -6,3 +6,4 @@ webkit_web_context_get_type
 webkit_back_forward_list_get_type
 webkit_back_forward_list_item_get_type
 webkit_settings_get_type
+webkit_uri_response_get_type
