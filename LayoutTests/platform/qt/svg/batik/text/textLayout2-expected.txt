@@ -14,40 +14,40 @@ layer at (0,0) size 450x500
         RenderSVGInlineText {#text} at (0,0) size 90x13
           chunk 1 (middle anchor) text run 1 at (180.00,75.00) startOffset 0 endOffset 19 width 90.00: "Baseline Properties"
       RenderSVGContainer {g} at (152,85) size 146x53
-        RenderSVGText {text} at (156,85) size 138x40 contains 1 chunk(s)
-          RenderSVGTSpan {tspan} at (0,0) size 38x20
-            RenderSVGInlineText {#text} at (0,0) size 38x20
+        RenderSVGText {text} at (156,85) size 137x40 contains 1 chunk(s)
+          RenderSVGTSpan {tspan} at (0,0) size 37x20
+            RenderSVGInlineText {#text} at (0,0) size 37x20
               chunk 1 (middle anchor) text run 1 at (156.50,100.00) startOffset 0 endOffset 5 width 37.00: "super"
-          RenderSVGInlineText {#text} at (37,10) size 33x20
+          RenderSVGInlineText {#text} at (37,10) size 32x20
             chunk 1 (middle anchor) text run 1 at (193.50,110.00) startOffset 0 endOffset 5 width 32.00: " and "
-          RenderSVGTSpan {tspan} at (0,0) size 25x20
-            RenderSVGInlineText {#text} at (69,20) size 25x20
+          RenderSVGTSpan {tspan} at (0,0) size 24x20
+            RenderSVGInlineText {#text} at (69,20) size 24x20
               chunk 1 (middle anchor) text run 1 at (225.50,120.00) startOffset 0 endOffset 3 width 24.00: "sub"
-          RenderSVGInlineText {#text} at (93,10) size 45x20
+          RenderSVGInlineText {#text} at (93,10) size 44x20
             chunk 1 (middle anchor) text run 1 at (249.50,110.00) startOffset 0 endOffset 7 width 44.00: "scripts"
-        RenderSVGText {text} at (152,127) size 146x11 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 146x11
+        RenderSVGText {text} at (152,127) size 145x11 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 145x11
             chunk 1 (middle anchor) text run 1 at (152.50,135.00) startOffset 0 endOffset 43 width 145.00: "baseline-shift=\"super\"/baseline-shift=\"sub\""
       RenderSVGContainer {g} at (111,147) size 228x36
-        RenderSVGText {text} at (111,147) size 228x26 contains 1 chunk(s)
-          RenderSVGTSpan {tspan} at (0,0) size 51x20
-            RenderSVGInlineText {#text} at (0,0) size 51x20
+        RenderSVGText {text} at (111,147) size 227x26 contains 1 chunk(s)
+          RenderSVGTSpan {tspan} at (0,0) size 50x20
+            RenderSVGInlineText {#text} at (0,0) size 50x20
               chunk 1 (middle anchor) text run 1 at (111.50,162.00) startOffset 0 endOffset 8 width 50.00: "positive"
-          RenderSVGInlineText {#text} at (50,3) size 33x20
+          RenderSVGInlineText {#text} at (50,3) size 32x20
             chunk 1 (middle anchor) text run 1 at (161.50,165.00) startOffset 0 endOffset 5 width 32.00: " and "
-          RenderSVGTSpan {tspan} at (0,0) size 60x20
-            RenderSVGInlineText {#text} at (82,6) size 60x20
+          RenderSVGTSpan {tspan} at (0,0) size 59x20
+            RenderSVGInlineText {#text} at (82,6) size 59x20
               chunk 1 (middle anchor) text run 1 at (193.50,168.00) startOffset 0 endOffset 9 width 59.00: "negative "
-          RenderSVGInlineText {#text} at (141,3) size 87x20
+          RenderSVGInlineText {#text} at (141,3) size 86x20
             chunk 1 (middle anchor) text run 1 at (252.50,165.00) startOffset 0 endOffset 14 width 86.00: "baseline-shift"
-        RenderSVGText {text} at (184,172) size 82x11 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 82x11
+        RenderSVGText {text} at (184,172) size 81x11 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 81x11
             chunk 1 (middle anchor) text run 1 at (184.50,180.00) startOffset 0 endOffset 23 width 81.00: "baseline-shift=\"+/-20%\""
-      RenderSVGText {text} at (170,200) size 110x13 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 110x13
+      RenderSVGText {text} at (170,200) size 109x13 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 109x13
           chunk 1 (middle anchor) text run 1 at (170.50,210.00) startOffset 0 endOffset 25 width 109.00: "Multi-line Text Selection"
-      RenderSVGText {text} at (157,217) size 136x11 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 136x11
+      RenderSVGText {text} at (157,217) size 135x11 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 135x11
           chunk 1 (middle anchor) text run 1 at (157.50,225.00) startOffset 0 endOffset 42 width 135.00: "(Try selecting the following text regions)"
       RenderSVGText {text} at (120,235) size 221x35 contains 1 chunk(s)
         RenderSVGTSpan {tspan} at (0,0) size 217x20
@@ -93,11 +93,11 @@ layer at (0,0) size 450x500
           chunk 1 text run 1 at (0.00,60.00) startOffset 0 endOffset 1 width 11.00: "a"
           chunk 1 text run 1 at (0.00,40.00) startOffset 0 endOffset 1 width 7.00: "r"
           chunk 1 text run 1 at (0.00,20.00) startOffset 0 endOffset 1 width 11.00: "e"
-      RenderSVGText {text} at (147,433) size 156x24 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,2) size 64x20
+      RenderSVGText {text} at (147,433) size 155x23 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,1) size 63x20
           chunk 1 (middle anchor) text run 1 at (147.50,450.00) startOffset 0 endOffset 10 width 63.00: "Text with "
-        RenderSVGTSpan {tspan} at (0,0) size 49x24
-          RenderSVGInlineText {#text} at (62,0) size 49x24
+        RenderSVGTSpan {tspan} at (0,0) size 49x23
+          RenderSVGInlineText {#text} at (62,0) size 49x23
             chunk 1 (middle anchor) text run 1 at (210.50,450.00) startOffset 0 endOffset 1 width 5.00: "r"
             chunk 1 (middle anchor) text run 2 at (215.50,450.00) startOffset 1 endOffset 2 width 8.00: "o"
             chunk 1 (middle anchor) text run 3 at (223.50,450.00) startOffset 2 endOffset 3 width 4.00: "t"
@@ -105,10 +105,10 @@ layer at (0,0) size 450x500
             chunk 1 (middle anchor) text run 5 at (235.50,450.00) startOffset 4 endOffset 5 width 4.00: "t"
             chunk 1 (middle anchor) text run 6 at (239.50,450.00) startOffset 5 endOffset 6 width 8.00: "e"
             chunk 1 (middle anchor) text run 7 at (247.50,450.00) startOffset 6 endOffset 7 width 8.00: "d"
-        RenderSVGInlineText {#text} at (108,2) size 48x20
+        RenderSVGInlineText {#text} at (108,1) size 47x20
           chunk 1 (middle anchor) text run 1 at (255.50,450.00) startOffset 0 endOffset 7 width 47.00: " glyphs"
-      RenderSVGText {text} at (158,450) size 136x24 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 136x24
+      RenderSVGText {text} at (158,450) size 135x23 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 135x23
           chunk 1 (middle anchor) text run 1 at (160.00,465.00) startOffset 0 endOffset 1 width 13.00: "M"
           chunk 1 (middle anchor) text run 2 at (173.00,465.00) startOffset 1 endOffset 2 width 8.00: "o"
           chunk 1 (middle anchor) text run 3 at (181.00,465.00) startOffset 2 endOffset 3 width 5.00: "r"

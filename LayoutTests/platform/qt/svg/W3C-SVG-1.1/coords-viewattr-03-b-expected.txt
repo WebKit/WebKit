@@ -2,8 +2,8 @@ layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
-    RenderSVGText {text} at (129,8) size 222x26 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 222x26
+    RenderSVGText {text} at (129,8) size 221x26 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 221x26
         chunk 1 (middle anchor) text run 1 at (129.50,28.00) startOffset 0 endOffset 25 width 221.00: "<svg> 'viewBox' attribute"
     RenderSVGContainer {g} at (12,59) size 460x245
       RenderSVGViewportContainer {svg} at (44,59) size 82x82

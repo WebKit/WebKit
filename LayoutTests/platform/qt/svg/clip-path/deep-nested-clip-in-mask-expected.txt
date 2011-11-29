@@ -28,8 +28,8 @@ layer at (0,0) size 800x600
       RenderSVGResourceMasker {mask} [id="mask3"] [maskUnits=objectBoundingBox] [maskContentUnits=objectBoundingBox]
         RenderSVGPath {rect} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFFFFF]}] [x=0.00] [y=0.00] [width=1.00] [height=1.00]
           [masker="mask1b"] RenderSVGResourceMasker {mask} at (0,0) size 1x1
-    RenderSVGText {text} at (5,209) size 240x21 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 240x21
+    RenderSVGText {text} at (5,209) size 239x21 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 239x21
         chunk 1 (middle anchor) text run 1 at (5.50,225.00) startOffset 0 endOffset 33 width 239.00: "Both shapes should look identical"
     RenderSVGContainer {g} at (0,0) size 100x100
       [masker="mask1a"] RenderSVGResourceMasker {mask} at (0,0) size 100x100

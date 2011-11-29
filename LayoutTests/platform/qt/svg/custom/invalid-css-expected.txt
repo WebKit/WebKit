@@ -18,7 +18,7 @@ layer at (0,0) size 800x600
     RenderSVGText {text} at (0,17) size 199x21 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 199x21
         chunk 1 text run 1 at (0.00,33.00) startOffset 0 endOffset 25 width 198.60: "no markers and no dashes."
-    RenderSVGPath {path} at (48,65) size 87x87 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#008000]}] [data="M 30 40 L 80 40 L 80 90 L 30 90 Z"]
+    RenderSVGPath {path} at (49,65) size 86x86 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#008000]}] [data="M 30 40 L 80 40 L 80 90 L 30 90 Z"]
     RenderSVGPath {circle} at (265,65) size 70x70 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=LINEAR-GRADIENT] [id="grad"]}] [cx=180.00] [cy=60.00] [r=20.00]
     RenderSVGText {text} at (0,94) size 321x21 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 321x21

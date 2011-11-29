@@ -17,10 +17,10 @@ layer at (0,0) size 800x600
         RenderSVGInline {tref} at (0,0) size 188x21
           RenderSVGInlineText {#text} at (0,0) size 188x21
             chunk 1 text run 1 at (100.00,100.00) startOffset 0 endOffset 25 width 188.00: "Referenced character data"
-    RenderSVGText {text} at (96,123) size 110x33 contains 1 chunk(s)
-      RenderSVGInline {a} at (0,0) size 110x33
-        RenderSVGTextPath {textPath} at (0,0) size 110x33
-          RenderSVGInlineText {#text} at (0,0) size 110x33
+    RenderSVGText {text} at (96,123) size 109x32 contains 1 chunk(s)
+      RenderSVGInline {a} at (0,0) size 109x32
+        RenderSVGTextPath {textPath} at (0,0) size 109x32
+          RenderSVGInlineText {#text} at (0,0) size 109x32
             chunk 1 text run 1 at (101.96,149.61) startOffset 0 endOffset 1 width 4.00: "t"
             chunk 1 text run 2 at (108.33,148.33) startOffset 1 endOffset 2 width 9.00: "e"
             chunk 1 text run 3 at (116.67,146.67) startOffset 2 endOffset 3 width 8.00: "x"

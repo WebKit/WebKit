@@ -7,21 +7,21 @@ layer at (0,0) size 480x360
         RenderSVGText {text} at (37,-53) size 26x30 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 26x30
             chunk 1 (middle anchor) text run 1 at (37.00,-30.00) startOffset 0 endOffset 2 width 26.00: "no"
-        RenderSVGText {text} at (2,-23) size 96x30 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 96x30
+        RenderSVGText {text} at (2,-23) size 95x30 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 95x30
             chunk 1 (middle anchor) text run 1 at (2.50,0.00) startOffset 0 endOffset 8 width 95.00: "xml:base"
         RenderSVGImage {image} at (50,120) size 100x100
       RenderSVGContainer {g} at (190,47) size 100x173 [transform={m=((1.00,0.00)(0.00,1.00)) t=(180.00,100.00)}]
-        RenderSVGText {text} at (2,-53) size 96x30 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 96x30
+        RenderSVGText {text} at (2,-53) size 95x30 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 95x30
             chunk 1 (middle anchor) text run 1 at (2.50,-30.00) startOffset 0 endOffset 8 width 95.00: "xml:base"
-        RenderSVGText {text} at (1,-23) size 98x30 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 98x30
+        RenderSVGText {text} at (1,-23) size 97x30 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 97x30
             chunk 1 (middle anchor) text run 1 at (1.50,0.00) startOffset 0 endOffset 8 width 97.00: "on image"
         RenderSVGImage {image} at (190,120) size 100x100
       RenderSVGContainer {g} at (330,47) size 100x173 [transform={m=((1.00,0.00)(0.00,1.00)) t=(320.00,100.00)}]
-        RenderSVGText {text} at (2,-53) size 96x30 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 96x30
+        RenderSVGText {text} at (2,-53) size 95x30 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 95x30
             chunk 1 (middle anchor) text run 1 at (2.50,-30.00) startOffset 0 endOffset 8 width 95.00: "xml:base"
         RenderSVGText {text} at (0,-23) size 100x30 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 100x30

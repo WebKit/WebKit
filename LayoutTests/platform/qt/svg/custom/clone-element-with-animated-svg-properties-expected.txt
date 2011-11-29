@@ -7,6 +7,6 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 598x21
           text run at (0,0) width 598: "Here is an html paragraph. And below is a svg drawing. You should see two ellipses."
       RenderBlock {DIV} at (0,37) size 784x400
-        RenderSVGRoot {svg} at (46,233) size 224x44
-          RenderSVGPath {ellipse} at (46,233) size 124x44 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FF0000]}] [cx=50.00] [cy=50.00] [rx=30.00] [ry=10.00]
-          RenderSVGPath {ellipse} at (146,233) size 124x44 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FF0000]}] [cx=100.00] [cy=50.00] [rx=30.00] [ry=10.00]
+        RenderSVGRoot {svg} at (47,234) size 222x42
+          RenderSVGPath {ellipse} at (47,234) size 122x42 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FF0000]}] [cx=50.00] [cy=50.00] [rx=30.00] [ry=10.00]
+          RenderSVGPath {ellipse} at (147,234) size 122x42 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FF0000]}] [cx=100.00] [cy=50.00] [rx=30.00] [ry=10.00]

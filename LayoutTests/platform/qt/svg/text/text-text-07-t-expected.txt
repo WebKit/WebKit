@@ -3,8 +3,8 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
     RenderSVGContainer {g} at (16,43) size 679x476
-      RenderSVGText {text} at (240,26) size 177x185 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 177x185
+      RenderSVGText {text} at (240,26) size 177x184 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 177x184
           chunk 1 text run 1 at (240.00,60.00) startOffset 0 endOffset 1 width 28.80: "M"
           chunk 1 text run 1 at (260.00,80.00) startOffset 0 endOffset 1 width 19.20: "u"
           chunk 1 text run 1 at (280.00,100.00) startOffset 0 endOffset 1 width 7.80: "l"

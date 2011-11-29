@@ -19,33 +19,33 @@ layer at (0,0) size 480x360
             [feTurbulence type="NOISE" baseFrequency="0.10, 0.10" seed="0.00" numOctaves="1" stitchTiles="0"]
         RenderSVGPath {rect} at (25,25) size 100x75 [fill={[type=SOLID] [color=#000000]}] [x=25.00] [y=25.00] [width=100.00] [height=75.00]
           [filter="Turb1"] RenderSVGResourceFilter {filter} at (25,25) size 100x75
-        RenderSVGText {text} at (37,107) size 76x13 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 76x13
+        RenderSVGText {text} at (37,107) size 75x13 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 75x13
             chunk 1 (middle anchor) text run 1 at (37.50,117.00) startOffset 0 endOffset 15 width 75.00: "type=turbulence"
-        RenderSVGText {text} at (25,119) size 100x13 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 100x13
+        RenderSVGText {text} at (25,119) size 99x13 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 99x13
             chunk 1 (middle anchor) text run 1 at (25.50,129.00) startOffset 0 endOffset 18 width 99.00: "baseFrequency=0.05"
         RenderSVGText {text} at (40,131) size 70x13 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 70x13
             chunk 1 (middle anchor) text run 1 at (40.00,141.00) startOffset 0 endOffset 12 width 70.00: "numOctaves=2"
         RenderSVGPath {rect} at (175,25) size 100x75 [fill={[type=SOLID] [color=#000000]}] [x=175.00] [y=25.00] [width=100.00] [height=75.00]
           [filter="Turb2"] RenderSVGResourceFilter {filter} at (175,25) size 100x75
-        RenderSVGText {text} at (187,107) size 76x13 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 76x13
+        RenderSVGText {text} at (187,107) size 75x13 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 75x13
             chunk 1 (middle anchor) text run 1 at (187.50,117.00) startOffset 0 endOffset 15 width 75.00: "type=turbulence"
-        RenderSVGText {text} at (178,119) size 94x13 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 94x13
+        RenderSVGText {text} at (178,119) size 93x13 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 93x13
             chunk 1 (middle anchor) text run 1 at (178.50,129.00) startOffset 0 endOffset 17 width 93.00: "baseFrequency=0.1"
         RenderSVGText {text} at (190,131) size 70x13 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 70x13
             chunk 1 (middle anchor) text run 1 at (190.00,141.00) startOffset 0 endOffset 12 width 70.00: "numOctaves=2"
         RenderSVGPath {rect} at (325,25) size 100x75 [fill={[type=SOLID] [color=#000000]}] [x=325.00] [y=25.00] [width=100.00] [height=75.00]
           [filter="Turb3"] RenderSVGResourceFilter {filter} at (325,25) size 100x75
-        RenderSVGText {text} at (337,107) size 76x13 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 76x13
+        RenderSVGText {text} at (337,107) size 75x13 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 75x13
             chunk 1 (middle anchor) text run 1 at (337.50,117.00) startOffset 0 endOffset 15 width 75.00: "type=turbulence"
-        RenderSVGText {text} at (325,119) size 100x13 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 100x13
+        RenderSVGText {text} at (325,119) size 99x13 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 99x13
             chunk 1 (middle anchor) text run 1 at (325.50,129.00) startOffset 0 endOffset 18 width 99.00: "baseFrequency=0.05"
         RenderSVGText {text} at (340,131) size 70x13 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 70x13
@@ -55,8 +55,8 @@ layer at (0,0) size 480x360
         RenderSVGText {text} at (35,262) size 80x13 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 80x13
             chunk 1 (middle anchor) text run 1 at (35.00,272.00) startOffset 0 endOffset 17 width 80.00: "type=fractalNoise"
-        RenderSVGText {text} at (28,274) size 94x13 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 94x13
+        RenderSVGText {text} at (28,274) size 93x13 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 93x13
             chunk 1 (middle anchor) text run 1 at (28.50,284.00) startOffset 0 endOffset 17 width 93.00: "baseFrequency=0.1"
         RenderSVGText {text} at (40,286) size 70x13 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 70x13
@@ -66,8 +66,8 @@ layer at (0,0) size 480x360
         RenderSVGText {text} at (185,262) size 80x13 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 80x13
             chunk 1 (middle anchor) text run 1 at (185.00,272.00) startOffset 0 endOffset 17 width 80.00: "type=fractalNoise"
-        RenderSVGText {text} at (178,274) size 94x13 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 94x13
+        RenderSVGText {text} at (178,274) size 93x13 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 93x13
             chunk 1 (middle anchor) text run 1 at (178.50,284.00) startOffset 0 endOffset 17 width 93.00: "baseFrequency=0.4"
         RenderSVGText {text} at (190,286) size 70x13 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 70x13
@@ -77,8 +77,8 @@ layer at (0,0) size 480x360
         RenderSVGText {text} at (335,262) size 80x13 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 80x13
             chunk 1 (middle anchor) text run 1 at (335.00,272.00) startOffset 0 endOffset 17 width 80.00: "type=fractalNoise"
-        RenderSVGText {text} at (328,274) size 94x13 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 94x13
+        RenderSVGText {text} at (328,274) size 93x13 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 93x13
             chunk 1 (middle anchor) text run 1 at (328.50,284.00) startOffset 0 endOffset 17 width 93.00: "baseFrequency=0.1"
         RenderSVGText {text} at (340,286) size 70x13 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 70x13

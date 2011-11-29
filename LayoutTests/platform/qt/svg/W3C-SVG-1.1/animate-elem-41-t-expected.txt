@@ -2,8 +2,8 @@ layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
-    RenderSVGText {text} at (202,5) size 76x26 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 76x26
+    RenderSVGText {text} at (202,5) size 75x26 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 75x26
         chunk 1 (middle anchor) text run 1 at (202.50,25.00) startOffset 0 endOffset 8 width 75.00: "graphics"
     RenderSVGContainer {g} at (17,44) size 423x245 [transform={m=((1.00,0.00)(0.00,1.00)) t=(80.00,75.00)}]
       RenderSVGContainer {g} at (17,73) size 93x216 [transform={m=((1.00,0.00)(0.00,1.00)) t=(30.00,10.00)}]
@@ -41,8 +41,8 @@ layer at (0,0) size 480x360
           RenderSVGInlineText {#text} at (0,0) size 27x16
             chunk 1 (end anchor) text run 1 at (-27.00,200.00) startOffset 0 endOffset 5 width 27.00: "color"
       RenderSVGContainer {g} at (164,44) size 253x18 [transform={m=((1.00,0.00)(0.00,1.00)) t=(90.00,-20.00)}]
-        RenderSVGText {text} at (-6,-11) size 52x18 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 52x18
+        RenderSVGText {text} at (-6,-11) size 51x18 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 51x18
             chunk 1 (middle anchor) text run 1 at (-5.50,3.00) startOffset 0 endOffset 7 width 51.00: "element"
         RenderSVGText {text} at (118,-11) size 24x18 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 24x18

@@ -20,8 +20,8 @@ layer at (0,0) size 784x866
                 RenderSVGPath {rect} at (0,0) size 294x294 [fill={[type=SOLID] [color=#5588FF]}] [x=-3000.00] [y=-1000.00] [width=6200.00] [height=2200.00]
                 RenderSVGPath {circle} at (0,0) size 294x294 [fill={[type=SOLID] [color=#0000FF]}] [cx=100.00] [cy=100.00] [r=100.00]
                 RenderSVGContainer {g} at (36,83) size 222x132
-                  RenderSVGText {text} at (25,57) size 150x89 contains 1 chunk(s)
-                    RenderSVGInlineText {#text} at (0,0) size 150x89
+                  RenderSVGText {text} at (25,57) size 149x88 contains 1 chunk(s)
+                    RenderSVGInlineText {#text} at (0,0) size 149x88
                       chunk 1 (middle anchor) text run 1 at (25.85,125.00) startOffset 0 endOffset 3 width 148.30: "SVG"
           RenderText {#text} at (294,278) size 4x21
             text run at (294,278) width 4: " "
@@ -34,8 +34,8 @@ layer at (0,0) size 784x866
                 RenderSVGPath {rect} at (0,0) size 147x147 [fill={[type=SOLID] [color=#5588FF]}] [x=-3000.00] [y=-1000.00] [width=6200.00] [height=2200.00]
                 RenderSVGPath {circle} at (0,0) size 147x147 [fill={[type=SOLID] [color=#0000FF]}] [cx=100.00] [cy=100.00] [r=100.00]
                 RenderSVGContainer {g} at (19,42) size 109x66
-                  RenderSVGText {text} at (26,58) size 148x88 contains 1 chunk(s)
-                    RenderSVGInlineText {#text} at (0,0) size 148x88
+                  RenderSVGText {text} at (26,58) size 147x88 contains 1 chunk(s)
+                    RenderSVGInlineText {#text} at (0,0) size 147x88
                       chunk 1 (middle anchor) text run 1 at (26.53,125.00) startOffset 0 endOffset 3 width 146.94: "SVG"
           RenderText {#text} at (445,278) size 4x21
             text run at (445,278) width 4: " "
@@ -62,8 +62,8 @@ layer at (0,0) size 784x866
                 RenderSVGPath {rect} at (0,0) size 36x36 [fill={[type=SOLID] [color=#5588FF]}] [x=-3000.00] [y=-1000.00] [width=6200.00] [height=2200.00]
                 RenderSVGPath {circle} at (0,0) size 36x36 [fill={[type=SOLID] [color=#0000FF]}] [cx=100.00] [cy=100.00] [r=100.00]
                 RenderSVGContainer {g} at (3,9) size 30x18
-                  RenderSVGText {text} at (22,52) size 156x96 contains 1 chunk(s)
-                    RenderSVGInlineText {#text} at (0,0) size 156x96
+                  RenderSVGText {text} at (22,52) size 156x95 contains 1 chunk(s)
+                    RenderSVGInlineText {#text} at (0,0) size 156x95
                       chunk 1 (middle anchor) text run 1 at (22.22,125.00) startOffset 0 endOffset 3 width 155.56: "SVG"
           RenderText {#text} at (0,0) size 0x0
         RenderBlock {p} at (0,373) size 677x72

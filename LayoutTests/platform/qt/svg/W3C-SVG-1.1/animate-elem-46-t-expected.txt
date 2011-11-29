@@ -20,8 +20,8 @@ layer at (0,0) size 480x360
           RenderSVGInlineText {#text} at (0,0) size 70x18
             chunk 1 (end anchor) text run 1 at (-65.00,155.00) startOffset 0 endOffset 11 width 70.00: "font-weight"
       RenderSVGContainer {g} at (170,59) size 262x18 [transform={m=((1.00,0.00)(0.00,1.00)) t=(90.00,-10.00)}]
-        RenderSVGText {text} at (0,-11) size 40x18 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 40x18
+        RenderSVGText {text} at (0,-11) size 39x18 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 39x18
             chunk 1 (middle anchor) text run 1 at (0.50,3.00) startOffset 0 endOffset 6 width 39.00: "<text>"
         RenderSVGText {text} at (123,-11) size 24x18 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 24x18

@@ -11,7 +11,7 @@ layer at (0,0) size 450x450
     RenderSVGPath {rect} at (10,10) size 430x80 [fill={[type=LINEAR-GRADIENT] [id="gradient"]}] [x=10.00] [y=10.00] [width=430.00] [height=80.00]
     RenderSVGPath {rect} at (10,110) size 430x80 [fill={[type=LINEAR-GRADIENT] [id="linkedGradient1"]}] [x=10.00] [y=110.00] [width=430.00] [height=80.00]
     RenderSVGPath {rect} at (10,210) size 430x80 [fill={[type=LINEAR-GRADIENT] [id="linkedGradient2"]}] [x=10.00] [y=210.00] [width=430.00] [height=80.00]
-    RenderSVGText {text} at (11,304) size 418x21 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 418x21
+    RenderSVGText {text} at (11,304) size 417x21 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 417x21
         chunk 1 (middle anchor) text run 1 at (11.50,320.00) startOffset 0 endOffset 61 width 417.00: "All gradients should look the same, especially after clicking"
 caret: position 0 of child 0 {#text} of child 11 {text} of child 1 {svg} of document

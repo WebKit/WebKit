@@ -27,14 +27,14 @@ layer at (0,0) size 480x360
         RenderSVGText {text} at (-18,-29) size 36x18 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 36x18
             chunk 1 (middle anchor) text run 1 at (-18.00,-15.00) startOffset 0 endOffset 5 width 36.00: "never"
-        RenderSVGText {text} at (-15,-14) size 30x18 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 30x18
+        RenderSVGText {text} at (-15,-14) size 29x18 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 29x18
             chunk 1 (middle anchor) text run 1 at (-14.50,0.00) startOffset 0 endOffset 4 width 29.00: "here"
-        RenderSVGText {text} at (58,-29) size 44x18 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 44x18
+        RenderSVGText {text} at (58,-29) size 43x18 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 43x18
             chunk 1 (middle anchor) text run 1 at (58.50,-15.00) startOffset 0 endOffset 6 width 43.00: "always"
-        RenderSVGText {text} at (65,-14) size 30x18 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 30x18
+        RenderSVGText {text} at (65,-14) size 29x18 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 29x18
             chunk 1 (middle anchor) text run 1 at (65.50,0.00) startOffset 0 endOffset 4 width 29.00: "here"
       RenderSVGContainer {g} at (303,93) size 94x139 [transform={m=((1.00,0.00)(0.00,1.00)) t=(180.00,40.00)}]
         RenderSVGHiddenContainer {defs} at (0,0) size 0x0

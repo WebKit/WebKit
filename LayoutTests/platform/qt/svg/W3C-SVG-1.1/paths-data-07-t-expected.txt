@@ -13,7 +13,7 @@ layer at (0,0) size 480x360
         RenderSVGText {text} at (304,196) size 19x16 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 19x16
             chunk 1 text run 1 at (304.00,208.00) startOffset 0 endOffset 4 width 18.89: "v, z"
-        RenderSVGPath {path} at (70,70) size 166x166 [stroke={[type=SOLID] [color=#000000]}] [data="M 240 190 L 270 190 L 270 220 L 300 220 L 300 250 L 330 250 L 330 280 L 240 280 L 240 190 Z"]
+        RenderSVGPath {path} at (71,71) size 164x164 [stroke={[type=SOLID] [color=#000000]}] [data="M 240 190 L 270 190 L 270 220 L 300 220 L 300 250 L 330 250 L 330 280 L 240 280 L 240 190 Z"]
         RenderSVGPath {rect} at (68,68) size 8x8 [fill={[type=SOLID] [color=#0000FF]}] [x=238.00] [y=188.00] [width=4.00] [height=4.00]
         RenderSVGPath {rect} at (122,68) size 8x8 [fill={[type=SOLID] [color=#0000FF]}] [x=268.00] [y=188.00] [width=4.00] [height=4.00]
         RenderSVGPath {rect} at (122,122) size 8x8 [fill={[type=SOLID] [color=#0000FF]}] [x=268.00] [y=218.00] [width=4.00] [height=4.00]

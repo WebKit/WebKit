@@ -23,12 +23,12 @@ layer at (0,0) size 800x600
           RenderSVGTSpan {tspan} at (0,0) size 368x21
             RenderSVGInlineText {#text} at (0,0) size 368x21
               chunk 1 text run 1 at (25.00,190.00) startOffset 0 endOffset 50 width 367.80: "However, these lines of text are achieved by using"
-          RenderSVGInlineText {#text} at (367,0) size 6x21
+          RenderSVGInlineText {#text} at (367,0) size 5x21
             chunk 1 text run 1 at (392.80,190.00) startOffset 0 endOffset 1 width 4.80: " "
           RenderSVGTSpan {tspan} at (0,0) size 357x21
             RenderSVGInlineText {#text} at (0,25) size 357x21
               chunk 1 text run 1 at (25.00,215.00) startOffset 0 endOffset 51 width 356.40: "one 'tspan' per line, all contained within the same"
-          RenderSVGInlineText {#text} at (356,25) size 6x21
+          RenderSVGInlineText {#text} at (356,25) size 5x21
             chunk 1 text run 1 at (381.40,215.00) startOffset 0 endOffset 1 width 4.80: " "
           RenderSVGTSpan {tspan} at (0,0) size 353x21
             RenderSVGInlineText {#text} at (0,50) size 353x21

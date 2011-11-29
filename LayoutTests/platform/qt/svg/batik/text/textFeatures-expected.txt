@@ -7,8 +7,8 @@ layer at (0,0) size 450x500
         [feGaussianBlur stdDeviation="2.00, 2.00"]
           [SourceGraphic]
     RenderSVGContainer {g} at (45,35) size 405x454
-      RenderSVGText {text} at (150,35) size 150x20 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 150x20
+      RenderSVGText {text} at (150,35) size 149x20 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 149x20
           chunk 1 (middle anchor) text run 1 at (150.50,50.00) startOffset 0 endOffset 21 width 149.00: "Text Element Features"
       RenderSVGContainer {g} at (45,71) size 405x418
         RenderSVGText {text} at (45,71) size 353x38 contains 1 chunk(s)
@@ -76,35 +76,35 @@ layer at (0,0) size 450x500
               chunk 1 text run 1 at (300.00,275.00) startOffset 0 endOffset 9 width 55.00: "overline,"
           RenderSVGInlineText {#text} at (310,0) size 28x20
             chunk 1 text run 1 at (355.00,275.00) startOffset 0 endOffset 4 width 28.00: " and"
-        RenderSVGText {text} at (45,281) size 316x31 contains 1 chunk(s)
-          RenderSVGTSpan {tspan} at (0,0) size 89x20
-            RenderSVGInlineText {#text} at (0,4) size 89x20
+        RenderSVGText {text} at (45,281) size 316x30 contains 1 chunk(s)
+          RenderSVGTSpan {tspan} at (0,0) size 89x21
+            RenderSVGInlineText {#text} at (0,3) size 89x20
               chunk 1 text run 1 at (45.00,300.00) startOffset 0 endOffset 14 width 89.00: "strikethrough."
-          RenderSVGInlineText {#text} at (89,4) size 4x20
+          RenderSVGInlineText {#text} at (89,3) size 4x20
             chunk 1 text run 1 at (134.00,300.00) startOffset 0 endOffset 1 width 4.00: " "
-          RenderSVGTSpan {tspan} at (0,0) size 28x16
-            RenderSVGInlineText {#text} at (93,0) size 28x16
+          RenderSVGTSpan {tspan} at (0,0) size 28x15
+            RenderSVGInlineText {#text} at (93,0) size 28x15
               chunk 1 text run 1 at (138.00,292.50) startOffset 0 endOffset 5 width 28.00: "super"
-          RenderSVGInlineText {#text} at (121,4) size 38x20
+          RenderSVGInlineText {#text} at (121,3) size 38x20
             chunk 1 text run 1 at (166.00,300.00) startOffset 0 endOffset 6 width 38.00: "-and- "
-          RenderSVGTSpan {tspan} at (0,0) size 18x16
-            RenderSVGInlineText {#text} at (159,15) size 18x16
+          RenderSVGTSpan {tspan} at (0,0) size 18x15
+            RenderSVGInlineText {#text} at (159,15) size 18x15
               chunk 1 text run 1 at (204.00,307.50) startOffset 0 endOffset 3 width 18.00: "sub"
-          RenderSVGInlineText {#text} at (177,4) size 139x20
+          RenderSVGInlineText {#text} at (177,3) size 139x20
             chunk 1 text run 1 at (222.00,300.00) startOffset 0 endOffset 9 width 53.00: "-scripts "
             chunk 1 text run 1 at (275.00,300.00) startOffset 0 endOffset 14 width 86.00: "are available."
-        RenderSVGText {text} at (45,308) size 357x27 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,2) size 186x20
+        RenderSVGText {text} at (45,308) size 357x26 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,1) size 186x20
             chunk 1 text run 1 at (45.00,325.00) startOffset 0 endOffset 29 width 186.00: "Baseline can also be shifted "
-          RenderSVGTSpan {tspan} at (0,0) size 12x16
-            RenderSVGInlineText {#text} at (186,0) size 12x16
+          RenderSVGTSpan {tspan} at (0,0) size 12x15
+            RenderSVGInlineText {#text} at (186,0) size 12x15
               chunk 1 text run 1 at (231.00,319.50) startOffset 0 endOffset 2 width 12.00: "up"
-          RenderSVGInlineText {#text} at (198,2) size 32x20
+          RenderSVGInlineText {#text} at (198,1) size 32x20
             chunk 1 text run 1 at (243.00,325.00) startOffset 0 endOffset 5 width 32.00: " and "
-          RenderSVGTSpan {tspan} at (0,0) size 26x16
-            RenderSVGInlineText {#text} at (230,11) size 26x16
+          RenderSVGTSpan {tspan} at (0,0) size 26x15
+            RenderSVGInlineText {#text} at (230,11) size 26x15
               chunk 1 text run 1 at (275.00,330.50) startOffset 0 endOffset 4 width 26.00: "down"
-          RenderSVGInlineText {#text} at (256,2) size 101x20
+          RenderSVGInlineText {#text} at (256,1) size 101x20
             chunk 1 text run 1 at (301.00,325.00) startOffset 0 endOffset 1 width 4.00: " "
             chunk 1 text run 1 at (305.00,325.00) startOffset 0 endOffset 14 width 97.00: "by percentage."
         RenderSVGText {text} at (45,360) size 363x20 contains 1 chunk(s)
@@ -145,9 +145,9 @@ layer at (0,0) size 450x500
           RenderSVGInlineText {#text} at (0,0) size 158x20
             chunk 1 text run 1 at (45.00,475.00) startOffset 0 endOffset 25 width 158.00: "filtered and transformed."
         RenderSVGContainer {g} at (171,389) size 279x100 [transform={m=((1.00,0.00)(0.00,1.00)) t=(250.00,475.00)}]
-          RenderSVGText {text} at (0,-39) size 146x52 contains 1 chunk(s)
+          RenderSVGText {text} at (0,-39) size 146x51 contains 1 chunk(s)
             [filter="blur"] RenderSVGResourceFilter {filter} at (0,-80) size 200x100
-            RenderSVGInlineText {#text} at (0,0) size 146x52
+            RenderSVGInlineText {#text} at (0,0) size 146x51
               [filter="blur"] RenderSVGResourceFilter {filter} at (0,-80) size 200x100
               chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 6 width 145.34: "Shadow"
           RenderSVGText {text} at (0,-39) size 144x51 contains 1 chunk(s)

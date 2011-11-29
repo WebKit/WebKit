@@ -12,10 +12,10 @@ layer at (0,0) size 800x600
       RenderSVGContainer {g} at (0,0) size 101x101
         RenderSVGPath {rect} at (0,0) size 101x101 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [id="simpledots"]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
     RenderSVGContainer {g} at (37,19) size 135x135 [transform={m=((1.00,0.00)(0.00,1.00)) t=(80.00,20.00)}]
-      RenderSVGContainer {use} at (36,18) size 136x137 [transform={m=((0.91,0.42)(-0.42,0.91)) t=(0.00,0.00)}]
-        RenderSVGContainer {g} at (36,18) size 136x137
-          RenderSVGContainer {g} at (36,18) size 136x137
-            RenderSVGPath {rect} at (36,18) size 136x137 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [id="simpledots"]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
+      RenderSVGContainer {use} at (37,19) size 135x135 [transform={m=((0.91,0.42)(-0.42,0.91)) t=(0.00,0.00)}]
+        RenderSVGContainer {g} at (37,19) size 135x135
+          RenderSVGContainer {g} at (37,19) size 135x135
+            RenderSVGPath {rect} at (37,19) size 135x135 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [id="simpledots"]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
     RenderSVGContainer {g} at (10,188) size 207x46 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,200.00)}]
       RenderSVGText {text} at (0,-12) size 207x46 contains 1 chunk(s)
         RenderSVGTSpan {tspan} at (0,0) size 204x16

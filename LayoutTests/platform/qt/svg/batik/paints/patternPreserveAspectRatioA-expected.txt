@@ -837,11 +837,11 @@ layer at (0,0) size 450x500
         RenderSVGContainer {use} at (289,59) size 102x22
           RenderSVGContainer {g} at (289,59) size 102x22 [transform={m=((1.00,0.00)(0.00,1.00)) t=(200.00,0.00)}]
             RenderSVGPath {rect} at (289,59) size 102x22 [stroke={[type=SOLID] [color=#000000]}] [x=40.00] [y=-20.00] [width=100.00] [height=20.00]
-        RenderSVGText {text} at (72,-21) size 36x21 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 36x21
+        RenderSVGText {text} at (72,-21) size 35x21 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 35x21
             chunk 1 (middle anchor) text run 1 at (72.50,-5.00) startOffset 0 endOffset 4 width 35.00: "meet"
-        RenderSVGText {text} at (173,-21) size 34x21 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 34x21
+        RenderSVGText {text} at (173,-21) size 33x21 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 33x21
             chunk 1 (middle anchor) text run 1 at (173.50,-5.00) startOffset 0 endOffset 5 width 33.00: "slice"
         RenderSVGText {text} at (272,-21) size 36x21 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 36x21

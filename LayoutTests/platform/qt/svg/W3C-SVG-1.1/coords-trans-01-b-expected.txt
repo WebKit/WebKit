@@ -129,12 +129,12 @@ layer at (0,0) size 480x360
         RenderSVGContainer {g} at (50,240) size 260x40
           RenderSVGContainer {g} at (50,240) size 60x40 [transform={m=((3.00,0.00)(0.00,2.00)) t=(50.00,210.00)}]
             RenderSVGPath {rect} at (50,240) size 60x2 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=20.00] [height=1.00]
-            RenderSVGPath {rect} at (50,240) size 4x40 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=0.67] [height=20.00]
+            RenderSVGPath {rect} at (50,240) size 3x40 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=0.67] [height=20.00]
           RenderSVGContainer {g} at (250,240) size 60x40 [transform={m=((1.00,0.00)(0.00,1.00)) t=(200.00,0.00)}]
-            RenderSVGContainer {g} at (248,240) size 63x40 [transform={m=((3.00,0.00)(0.00,2.00)) t=(0.00,0.00)}]
-              RenderSVGContainer {g} at (248,240) size 63x40 [transform={m=((1.00,0.00)(0.00,1.00)) t=(16.67,105.00)}]
-                RenderSVGPath {rect} at (248,240) size 63x2 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=20.00] [height=1.00]
-                RenderSVGPath {rect} at (248,240) size 6x40 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=0.67] [height=20.00]
+            RenderSVGContainer {g} at (250,240) size 60x40 [transform={m=((3.00,0.00)(0.00,2.00)) t=(0.00,0.00)}]
+              RenderSVGContainer {g} at (250,240) size 60x40 [transform={m=((1.00,0.00)(0.00,1.00)) t=(16.67,105.00)}]
+                RenderSVGPath {rect} at (250,240) size 60x2 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=20.00] [height=1.00]
+                RenderSVGPath {rect} at (250,240) size 3x40 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=0.67] [height=20.00]
         RenderSVGContainer {g} at (40,214) size 428x69
           RenderSVGText {text} at (40,184) size 224x21 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 224x21
