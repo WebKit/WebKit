@@ -725,11 +725,7 @@ AC_ARG_ENABLE(web_sockets,
 AC_MSG_RESULT([$enable_web_sockets])
 
 # check whether to enable Web Audio support
-AC_MSG_CHECKING([whether to enable Web Audio support])
-AC_ARG_ENABLE(web_audio,
-              AC_HELP_STRING([--enable-web-audio],
-                             [enable support for Web Audio [default=no]]),
-              [],[enable_web_audio="no"])
+enable_web_audio=no
 AC_MSG_RESULT([$enable_web_audio])
 
 # check whether to enable Web Timing support
@@ -1142,9 +1138,6 @@ AM_CONDITIONAL([USE_PANGO], [test "$with_font_backend" = "pango"])
 
 # GStreamer feature conditional
 AM_CONDITIONAL([USE_GSTREAMER], [test "$have_gstreamer" = "yes"])
-
-# Web Audio feature conditional
-AM_CONDITIONAL([USE_WEBAUDIO_FFTW], [test "$have_fftw" = "yes"])
 
 # WebKit feature conditionals
 AM_CONDITIONAL([ENABLE_DEBUG],[test "$enable_debug_features" = "yes"])
