@@ -3,22 +3,13 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (0,0) size 800x600
-      RenderBlock {DIV} at (0,0) size 0x190
-        RenderText {#text} at (0,0) size 62x190
-          text run at (0,0) width 37: "Three"
-          text run at (0,19) width 35: "green"
-          text run at (0,38) width 40: "16x16"
-          text run at (0,57) width 31: "pixel"
-          text run at (0,76) width 47: "squares"
-          text run at (0,95) width 42: "should"
-          text run at (0,114) width 42: "appear"
-          text run at (0,133) width 43: "below,"
-          text run at (0,152) width 47: "stacked"
-          text run at (0,171) width 62: "vertically."
-      RenderBlock {DIV} at (0,190) size 18x18 [bgcolor=#FF0000] [border: (1px solid #000000)]
+      RenderBlock {DIV} at (0,0) size 800x18
+        RenderText {#text} at (0,0) size 470x17
+          text run at (0,0) width 470: "Three green 16x16 pixel squares should appear below, stacked vertically."
+      RenderBlock {DIV} at (0,18) size 18x18 [bgcolor=#FF0000] [border: (1px solid #000000)]
         RenderImage {IMG} at (1,1) size 16x16
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock (anonymous) at (0,208) size 800x36
+      RenderBlock (anonymous) at (0,36) size 800x36
         RenderPartObject {IFRAME} at (0,0) size 18x18 [bgcolor=#FF0000] [border: (1px solid #000000)]
           layer at (0,0) size 16x16
             RenderView at (0,0) size 16x16

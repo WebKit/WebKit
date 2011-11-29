@@ -4,17 +4,17 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x34
-        RenderText {#text} at (0,15) size 69x19
-          text run at (0,15) width 69: "Qt Plugin: "
-        RenderEmbeddedObject {OBJECT} at (69,0) size 300x30
+        RenderText {#text} at (0,16) size 71x17
+          text run at (0,16) width 71: "Qt Plugin: "
+        RenderEmbeddedObject {OBJECT} at (70,0) size 300x30
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {DIV} at (0,34) size 784x34
-        RenderText {#text} at (0,15) size 118x19
-          text run at (0,15) width 118: "Qt Styled Widget: "
-        RenderEmbeddedObject {OBJECT} at (118,0) size 300x30
+        RenderText {#text} at (0,16) size 121x17
+          text run at (0,16) width 121: "Qt Styled Widget: "
+        RenderEmbeddedObject {OBJECT} at (120,0) size 300x30
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {DIV} at (0,68) size 784x104
-        RenderText {#text} at (0,85) size 124x19
-          text run at (0,85) width 124: "Third-party plugin: "
-        RenderEmbeddedObject {EMBED} at (124,0) size 100x100
+        RenderText {#text} at (0,86) size 128x17
+          text run at (0,86) width 128: "Third-party plugin: "
+        RenderEmbeddedObject {EMBED} at (127,0) size 100x100
         RenderText {#text} at (0,0) size 0x0

@@ -9,6 +9,6 @@ layer at (0,0) size 800x600
         layer at (0,0) size 300x150
           RenderBlock {HTML} at (0,0) size 300x150
             RenderBody {BODY} at (8,8) size 284x134
-              RenderText {#text} at (0,0) size 71x19
-                text run at (0,0) width 71: "SUCCESS"
+              RenderText {#text} at (0,0) size 70x17
+                text run at (0,0) width 70: "SUCCESS"
       RenderText {#text} at (0,0) size 0x0
