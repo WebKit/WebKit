@@ -26,8 +26,6 @@ BUGWK61914 : svg/zoom/page/zoom-svg-through-object-with-absolute-size.xhtml = PA
 
 BUGWK68520 : svg/W3C-SVG-1.1-SE/filters-image-05-f.svg = PASS TEXT
 
-BUGWK68522 : http/tests/websocket/tests/hixie76/error-detect.html = PASS TEXT
-
 BUGWK68516 : fast/workers/shared-worker-lifecycle.html = PASS TEXT
 BUGWK68516 : fast/workers/shared-worker-frame-lifecycle.html = PASS TEXT
 BUGWK68516 : fast/workers/worker-close-more.html = PASS TEXT
