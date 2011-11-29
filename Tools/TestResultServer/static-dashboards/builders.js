@@ -123,7 +123,6 @@ var WEBKIT_TOT_BUILDERS = [
     ['Chromium Win Release (Tests)', BuilderGroup.DEFAULT_BUILDER],
     ['Chromium Linux Release (Tests)', BuilderGroup.EXPECTATIONS_BUILDER],
     ['Chromium Mac Release (Tests)'],
-    ['Leopard Intel Debug (Tests)'],
     ['SnowLeopard Intel Release (Tests)'],
     ['SnowLeopard Intel Debug (Tests)'],
     ['GTK Linux 32-bit Release'],
@@ -155,36 +154,11 @@ var CHROMIUM_GPU_MESA_BUILDERS = [
 ];
 associateBuildersWithMaster(CHROMIUM_GPU_MESA_BUILDERS, CHROMIUM_WEBKIT_BUILDER_MASTER);
 
-var CHROMIUM_GPU_HARDWARE_BUILDERS = [
-    ['GPU Win7 Tests - GPU', BuilderGroup.DEFAULT_BUILDER | BuilderGroup.EXPECTATIONS_BUILDER],
-    ['GPU Win7 Tests (dbg)(1) - GPU'],
-    ['GPU Win7 Tests (dbg)(2) - GPU'],
-    ['GPU Win7 x64 Tests (dbg)(1) - GPU'],
-    ['GPU Win7 x64 Tests (dbg)(2) - GPU'],
-    
-    ['GPU Vista Tests (dbg)(1) - GPU'],
-    ['GPU Vista Tests (dbg)(2) - GPU'],
-    ['GPU Vista x64 Tests (dbg) - GPU'],
-    
-    ['GPU Mac 10.6 Tests - GPU'],
-    ['GPU Mac 10.6 Tests (dbg) - GPU'],
-    ['GPU Mac 10.5 Tests (dbg) - GPU'],
-    
-    ['GPU Linux Tests (dbg)(1) - GPU'],
-    ['GPU Linux Tests (dbg)(2) - GPU'],
-    
-    ['GPU Win7 Tests (dbg)(1) - GPU'],
-    ['GPU Win7 Tests (dbg)(2) - GPU'],
-    ['GPU Linux Tests x64 - GPU']
-];
-associateBuildersWithMaster(CHROMIUM_GPU_HARDWARE_BUILDERS, CHROMIUM_GPU_BUILDER_MASTER);
-
 var LAYOUT_TESTS_BUILDER_GROUPS = {
     '@DEPS - chromium.org': new BuilderGroup(BuilderGroup.DEPS_WEBKIT, CHROMIUM_DEPS_BUILDERS),
     '@ToT - chromium.org': new BuilderGroup(BuilderGroup.TOT_WEBKIT, CHROMIUM_TOT_BUILDERS),
     '@ToT - webkit.org': new BuilderGroup(BuilderGroup.TOT_WEBKIT, WEBKIT_TOT_BUILDERS),
-    '@ToT GPU Mesa - chromium.org': new BuilderGroup(BuilderGroup.TOT_WEBKIT, CHROMIUM_GPU_MESA_BUILDERS),
-    '@ToT GPU Hardware - chromium.org': new BuilderGroup(BuilderGroup.TOT_WEBKIT, CHROMIUM_GPU_HARDWARE_BUILDERS)
+    '@ToT GPU Mesa - chromium.org': new BuilderGroup(BuilderGroup.TOT_WEBKIT, CHROMIUM_GPU_MESA_BUILDERS)
 };
 
 var LEGACY_BUILDER_MASTERS_TO_GROUPS = {

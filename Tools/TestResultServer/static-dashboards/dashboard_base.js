@@ -424,7 +424,6 @@ function currentBuilderGroup(opt_state)
     switch (state.testType) {
     case 'layout-tests':
         return LAYOUT_TESTS_BUILDER_GROUPS[state.group]
-        break;
     case 'aura_unittests':
     case 'aura_shell_unittests':
     case 'base_unittests':
@@ -456,7 +455,6 @@ function currentBuilderGroup(opt_state)
     case 'unit_tests':
     case 'views_unittests':
         return G_TESTS_BUILDER_GROUP;
-        break;
     default:
         console.log('invalid testType parameter: ' + state.testType);
     }
