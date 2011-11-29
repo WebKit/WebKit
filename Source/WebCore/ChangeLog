@@ -1,3 +1,9 @@
+2011-11-29  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix the GTK+ port build after r101307.
+
+        * GNUmakefile.list.am: Add missing files to compilation.
+
 2011-11-29  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: split Preferences into Preferences and Capabilities.

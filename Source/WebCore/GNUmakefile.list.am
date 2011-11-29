@@ -2299,6 +2299,8 @@ webcore_sources += \
 	Source/WebCore/notifications/NotificationCenter.cpp \
 	Source/WebCore/notifications/NotificationCenter.h \
 	Source/WebCore/notifications/NotificationContents.h \
+	Source/WebCore/notifications/NotificationController.cpp \
+	Source/WebCore/notifications/NotificationController.h \
 	Source/WebCore/notifications/Notification.cpp \
 	Source/WebCore/notifications/Notification.h \
 	Source/WebCore/notifications/NotificationPresenter.h \

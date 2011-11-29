@@ -57,6 +57,9 @@ libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_HEA
 	$(WebKit2)/UIProcess/API/C/WKInspector.h \
 	$(WebKit2)/UIProcess/API/C/WKKeyValueStorageManager.h \
 	$(WebKit2)/UIProcess/API/C/WKMediaCacheManager.h \
+	$(WebKit2)/UIProcess/API/C/WKNotification.h \
+	$(WebKit2)/UIProcess/API/C/WKNotificationManager.h \
+	$(WebKit2)/UIProcess/API/C/WKNotificationProvider.h \
 	$(WebKit2)/UIProcess/API/C/WKNativeEvent.h \
 	$(WebKit2)/UIProcess/API/C/WKNavigationData.h \
 	$(WebKit2)/UIProcess/API/C/WKOpenPanelParameters.h \
@@ -147,6 +150,8 @@ webkit2_built_sources += \
 	DerivedSources/WebKit2/WebMediaCacheManagerMessages.h \
 	DerivedSources/WebKit2/WebMediaCacheManagerProxyMessageReceiver.cpp \
 	DerivedSources/WebKit2/WebMediaCacheManagerProxyMessages.h \
+	DerivedSources/WebKit2/WebNotificationManagerProxyMessageReceiver.cpp \
+	DerivedSources/WebKit2/WebNotificationManagerProxyMessages.h \
 	DerivedSources/WebKit2/WebPageProxyMessageReceiver.cpp \
 	DerivedSources/WebKit2/WebPageProxyMessages.h \
 	DerivedSources/WebKit2/WebPageMessageReceiver.cpp \
@@ -471,6 +476,11 @@ libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_SOU
 	Source/WebKit2/UIProcess/API/C/WKNativeEvent.h \
 	Source/WebKit2/UIProcess/API/C/WKNavigationData.cpp \
 	Source/WebKit2/UIProcess/API/C/WKNavigationData.h \
+	Source/WebKit2/UIProcess/API/C/WKNotification.cpp \
+	Source/WebKit2/UIProcess/API/C/WKNotification.h \
+	Source/WebKit2/UIProcess/API/C/WKNotificationManager.cpp \
+	Source/WebKit2/UIProcess/API/C/WKNotificationManager.h \
+	Source/WebKit2/UIProcess/API/C/WKNotificationProvider.h \
 	Source/WebKit2/UIProcess/API/C/WKOpenPanelParameters.cpp \
 	Source/WebKit2/UIProcess/API/C/WKOpenPanelParameters.h \
 	Source/WebKit2/UIProcess/API/C/WKOpenPanelResultListener.cpp \
@@ -642,6 +652,12 @@ libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_SOU
 	Source/WebKit2/UIProcess/WebKeyValueStorageManagerProxy.h \
 	Source/WebKit2/UIProcess/WebMediaCacheManagerProxy.cpp \
 	Source/WebKit2/UIProcess/WebMediaCacheManagerProxy.h \
+	Source/WebKit2/UIProcess/WebNotification.cpp \
+	Source/WebKit2/UIProcess/WebNotification.h \
+	Source/WebKit2/UIProcess/WebNotificationManagerProxy.cpp \
+	Source/WebKit2/UIProcess/WebNotificationManagerProxy.h \
+	Source/WebKit2/UIProcess/WebNotificationProvider.cpp \
+	Source/WebKit2/UIProcess/WebNotificationProvider.h \
 	Source/WebKit2/UIProcess/WebLoaderClient.cpp \
 	Source/WebKit2/UIProcess/WebLoaderClient.h \
 	Source/WebKit2/UIProcess/WebNavigationData.cpp \
@@ -772,6 +788,8 @@ libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_SOU
 	Source/WebKit2/WebProcess/KeyValueStorage/WebKeyValueStorageManager.h \
 	Source/WebKit2/WebProcess/MediaCache/WebMediaCacheManager.cpp \
 	Source/WebKit2/WebProcess/MediaCache/WebMediaCacheManager.h \
+	Source/WebKit2/WebProcess/Notifications/WebNotificationManager.cpp \
+	Source/WebKit2/WebProcess/Notifications/WebNotificationManager.h \
 	Source/WebKit2/WebProcess/Plugins/Netscape/JSNPMethod.cpp \
 	Source/WebKit2/WebProcess/Plugins/Netscape/JSNPMethod.h \
 	Source/WebKit2/WebProcess/Plugins/Netscape/JSNPObject.cpp \
@@ -829,6 +847,8 @@ libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_SOU
 	Source/WebKit2/WebProcess/WebCoreSupport/WebInspectorClient.h \
 	Source/WebKit2/WebProcess/WebCoreSupport/WebInspectorFrontendClient.cpp \
 	Source/WebKit2/WebProcess/WebCoreSupport/WebInspectorFrontendClient.h \
+	Source/WebKit2/WebProcess/WebCoreSupport/WebNotificationClient.cpp \
+	Source/WebKit2/WebProcess/WebCoreSupport/WebNotificationClient.h \
 	Source/WebKit2/WebProcess/WebCoreSupport/WebPlatformStrategies.cpp \
 	Source/WebKit2/WebProcess/WebCoreSupport/WebPlatformStrategies.h \
 	Source/WebKit2/WebProcess/WebCoreSupport/WebPopupMenu.cpp \
@@ -923,6 +943,7 @@ libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_CPP
 	-I$(srcdir)/Source/WebKit2/WebProcess/KeyValueStorage \
 	-I$(srcdir)/Source/WebKit2/WebProcess/Launching \
 	-I$(srcdir)/Source/WebKit2/WebProcess/MediaCache \
+	-I$(srcdir)/Source/WebKit2/WebProcess/Notifications \
 	-I$(srcdir)/Source/WebKit2/WebProcess/ResourceCache \
 	-I$(srcdir)/Source/WebKit2/WebProcess/Plugins \
 	-I$(srcdir)/Source/WebKit2/WebProcess/Plugins/Netscape \
@@ -1040,6 +1061,7 @@ vpath %.messages.in = \
 	$(WebKit2)/WebProcess/IconDatabase \
 	$(WebKit2)/WebProcess/KeyValueStorage \
 	$(WebKit2)/WebProcess/MediaCache \
+	$(WebKit2)/WebProcess/Notifications \
 	$(WebKit2)/WebProcess/Plugins \
 	$(WebKit2)/WebProcess/ResourceCache \
 	$(WebKit2)/WebProcess/WebCoreSupport \

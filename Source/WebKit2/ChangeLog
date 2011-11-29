@@ -1,3 +1,9 @@
+2011-11-29  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix the GTK+ port build after r101307.
+
+        * GNUmakefile.am: Add missing files to compilation.
+
 2011-11-29  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         [Qt] Add the infrastructure for enabling suspend/resume.
