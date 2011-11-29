@@ -48,6 +48,11 @@ var description, debug, successfullyParsed, errorMessage;
         span.innerHTML = msg + '<br />';
     };
 
+    function isWorker()
+    {
+        return typeof document === 'undefined';
+    }
+
     var css =
         ".pass {" +
             "font-weight: bold;" +
@@ -69,7 +74,8 @@ var description, debug, successfullyParsed, errorMessage;
         (document.head || document.documentElement).appendChild(styleElement);
     }
     
-    insertStyleSheet();
+    if (!isWorker())
+        insertStyleSheet();
 
     window.onerror = function(message)
     {
