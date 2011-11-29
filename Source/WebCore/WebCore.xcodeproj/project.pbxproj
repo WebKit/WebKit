@@ -214,7 +214,7 @@
 		0B9056190F2578BE0095FF6A /* DocumentThreadableLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0B9056150F2578BE0095FF6A /* DocumentThreadableLoader.cpp */; };
 		0B90561A0F2578BF0095FF6A /* DocumentThreadableLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 0B9056160F2578BE0095FF6A /* DocumentThreadableLoader.h */; settings = {ATTRIBUTES = (); }; };
 		0B90561B0F2578BF0095FF6A /* ThreadableLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 0B9056170F2578BE0095FF6A /* ThreadableLoader.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		0B90561C0F2578BF0095FF6A /* ThreadableLoaderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 0B9056180F2578BE0095FF6A /* ThreadableLoaderClient.h */; settings = {ATTRIBUTES = (); }; };
+		0B90561C0F2578BF0095FF6A /* ThreadableLoaderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 0B9056180F2578BE0095FF6A /* ThreadableLoaderClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0B90561E0F257E930095FF6A /* ThreadableLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0B90561D0F257E930095FF6A /* ThreadableLoader.cpp */; };
 		0B9056F80F2685F30095FF6A /* WorkerThreadableLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0B9056F60F2685F30095FF6A /* WorkerThreadableLoader.cpp */; };
 		0B9056F90F2685F30095FF6A /* WorkerThreadableLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 0B9056F70F2685F30095FF6A /* WorkerThreadableLoader.h */; settings = {ATTRIBUTES = (); }; };
@@ -802,6 +802,9 @@
 		31288E730E3005D6003619AE /* WebKitCSSKeyframeRule.h in Headers */ = {isa = PBXBuildFile; fileRef = 31288E6F0E3005D6003619AE /* WebKitCSSKeyframeRule.h */; };
 		31288E740E3005D6003619AE /* WebKitCSSKeyframesRule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 31288E700E3005D6003619AE /* WebKitCSSKeyframesRule.cpp */; };
 		31288E750E3005D6003619AE /* WebKitCSSKeyframesRule.h in Headers */ = {isa = PBXBuildFile; fileRef = 31288E710E3005D6003619AE /* WebKitCSSKeyframesRule.h */; };
+		3128CA68147331520074C72A /* NotificationController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3128CA67147331520074C72A /* NotificationController.cpp */; };
+		3128CA6B147331630074C72A /* NotificationController.h in Headers */ = {isa = PBXBuildFile; fileRef = 3128CA6A147331630074C72A /* NotificationController.h */; };
+		312C0C41146DC6CC0016C911 /* Notification.h in Headers */ = {isa = PBXBuildFile; fileRef = 333F704F0FB49CA2008E12A6 /* Notification.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		31313F651443B35F006E2A90 /* FilterEffectRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 31313F631443B35E006E2A90 /* FilterEffectRenderer.cpp */; };
 		31313F661443B35F006E2A90 /* FilterEffectRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = 31313F641443B35E006E2A90 /* FilterEffectRenderer.h */; };
 		3138A9E51474434600B0ED12 /* StyleShader.h in Headers */ = {isa = PBXBuildFile; fileRef = 3138A9E41474434600B0ED12 /* StyleShader.h */; };
@@ -885,7 +888,7 @@
 		33503CC71017A1B1003B47E1 /* Notification.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 33503CC61017A1B1003B47E1 /* Notification.cpp */; };
 		3390CA550FFC157B00921962 /* NotificationCenter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3390CA510FFC157B00921962 /* NotificationCenter.cpp */; };
 		3390CA560FFC157B00921962 /* NotificationCenter.h in Headers */ = {isa = PBXBuildFile; fileRef = 3390CA520FFC157B00921962 /* NotificationCenter.h */; };
-		3390CA580FFC157B00921962 /* NotificationContents.h in Headers */ = {isa = PBXBuildFile; fileRef = 3390CA540FFC157B00921962 /* NotificationContents.h */; };
+		3390CA580FFC157B00921962 /* NotificationContents.h in Headers */ = {isa = PBXBuildFile; fileRef = 3390CA540FFC157B00921962 /* NotificationContents.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		339B5B63131DAA3200F48D02 /* CookiesStrategy.h in Headers */ = {isa = PBXBuildFile; fileRef = 339B5B62131DAA3200F48D02 /* CookiesStrategy.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		33C0CCD4112C5E6200CE057D /* SecureTextInput.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 33C0CCD2112C5E6200CE057D /* SecureTextInput.cpp */; };
 		33C0CCD5112C5E6200CE057D /* SecureTextInput.h in Headers */ = {isa = PBXBuildFile; fileRef = 33C0CCD3112C5E6200CE057D /* SecureTextInput.h */; };
@@ -7924,6 +7927,8 @@
 		31288E6F0E3005D6003619AE /* WebKitCSSKeyframeRule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKitCSSKeyframeRule.h; sourceTree = "<group>"; };
 		31288E700E3005D6003619AE /* WebKitCSSKeyframesRule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebKitCSSKeyframesRule.cpp; sourceTree = "<group>"; };
 		31288E710E3005D6003619AE /* WebKitCSSKeyframesRule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKitCSSKeyframesRule.h; sourceTree = "<group>"; };
+		3128CA67147331520074C72A /* NotificationController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NotificationController.cpp; path = notifications/NotificationController.cpp; sourceTree = "<group>"; };
+		3128CA6A147331630074C72A /* NotificationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NotificationController.h; path = notifications/NotificationController.h; sourceTree = "<group>"; };
 		31313F631443B35E006E2A90 /* FilterEffectRenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FilterEffectRenderer.cpp; sourceTree = "<group>"; };
 		31313F641443B35E006E2A90 /* FilterEffectRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FilterEffectRenderer.h; sourceTree = "<group>"; };
 		3138A9E41474434600B0ED12 /* StyleShader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StyleShader.h; path = style/StyleShader.h; sourceTree = "<group>"; };
@@ -14755,6 +14760,8 @@
 				3390CA530FFC157B00921962 /* NotificationCenter.idl */,
 				3390CA540FFC157B00921962 /* NotificationContents.h */,
 				33503C9910179A74003B47E1 /* NotificationPresenter.h */,
+				3128CA67147331520074C72A /* NotificationController.cpp */,
+				3128CA6A147331630074C72A /* NotificationController.h */,
 			);
 			name = notifications;
 			sourceTree = "<group>";
@@ -24722,6 +24729,8 @@
 				033A6A83147E08A600509B36 /* JSHTMLPropertiesCollection.h in Headers */,
 				7AA51B6E1483B61600AD2752 /* InspectorBaseAgent.h in Headers */,
 				A10DC76B14747BAB005E2471 /* StyleGridData.h in Headers */,
+				312C0C41146DC6CC0016C911 /* Notification.h in Headers */,
+				3128CA6B147331630074C72A /* NotificationController.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -27595,6 +27604,7 @@
 				033A6A81147E088600509B36 /* JSHTMLPropertiesCollection.cpp in Sources */,
 				7AA51B6F1483B61600AD2752 /* InspectorBaseAgent.cpp in Sources */,
 				A10DC76A14747BAB005E2471 /* StyleGridData.cpp in Sources */,
+				3128CA68147331520074C72A /* NotificationController.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

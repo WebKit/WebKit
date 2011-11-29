@@ -91,7 +91,7 @@ const QString NotificationWrapper::title() const
 #if ENABLE(NOTIFICATIONS)
     Notification* notification = NotificationPresenterClientQt::notificationPresenter()->notificationForWrapper(this);
     if (notification)
-        return notification->contents().title();
+        return notification->contents().title;
 #endif
     return QString();
 }
@@ -101,7 +101,7 @@ const QString NotificationWrapper::message() const
 #if ENABLE(NOTIFICATIONS)
     Notification* notification = NotificationPresenterClientQt::notificationPresenter()->notificationForWrapper(this);
     if (notification)
-        return notification->contents().body();
+        return notification->contents().body;
 #endif
     return QString();
 }
@@ -197,8 +197,8 @@ void NotificationPresenterClientQt::displayNotification(Notification* notificati
     if (notification->isHTML())
         message = notification->url().string();
     else {
-        title = notification->contents().title();
-        message = notification->contents().body();
+        title = notification->contents().title;
+        message = notification->contents().body;
     }
 
     if (m_platformPlugin.plugin() && m_platformPlugin.plugin()->supportsExtension(QWebKitPlatformPlugin::Notifications))
@@ -233,7 +233,7 @@ void NotificationPresenterClientQt::displayNotification(Notification* notificati
 #ifndef QT_NO_SYSTEMTRAYICON
     wrapper->connect(wrapper->m_notificationIcon.get(), SIGNAL(messageClicked()), wrapper, SLOT(notificationClicked()));
     wrapper->m_notificationIcon->show();
-    wrapper->m_notificationIcon->showMessage(notification->contents().title(), notification->contents().body());
+    wrapper->m_notificationIcon->showMessage(notification->contents().title, notification->contents().body);
 #endif
 }
 
@@ -243,7 +243,7 @@ void NotificationPresenterClientQt::cancel(Notification* notification)
         if (notification->isHTML())
             printf("DESKTOP NOTIFICATION CLOSED: %s\n", QString(notification->url().string()).toUtf8().constData());
         else
-            printf("DESKTOP NOTIFICATION CLOSED: %s\n", QString(notification->contents().title()).toUtf8().constData());
+            printf("DESKTOP NOTIFICATION CLOSED: %s\n", QString(notification->contents().title).toUtf8().constData());
     }
 
     NotificationsQueue::Iterator iter = m_notifications.find(notification);
@@ -283,7 +283,7 @@ void NotificationPresenterClientQt::notificationClicked(const QString& title)
         if (notification->isHTML())
             notificationTitle = notification->url().string();
         else
-            notificationTitle = notification->contents().title();
+            notificationTitle = notification->contents().title;
         if (notificationTitle == title)
             break;
         iter++;
@@ -419,7 +419,7 @@ void NotificationPresenterClientQt::detachNotification(Notification* notificatio
 void NotificationPresenterClientQt::dumpReplacedIdText(Notification* notification)
 {
     if (notification)
-        printf("REPLACING NOTIFICATION %s\n", notification->isHTML() ? QString(notification->url().string()).toUtf8().constData() : QString(notification->contents().title()).toUtf8().constData());
+        printf("REPLACING NOTIFICATION %s\n", notification->isHTML() ? QString(notification->url().string()).toUtf8().constData() : QString(notification->contents().title).toUtf8().constData());
 }
 
 void NotificationPresenterClientQt::dumpShowText(Notification* notification)
@@ -429,8 +429,8 @@ void NotificationPresenterClientQt::dumpShowText(Notification* notification)
     else {
         printf("DESKTOP NOTIFICATION:%s icon %s, title %s, text %s\n",
                 notification->dir() == "rtl" ? "(RTL)" : "",
-            QString(notification->contents().icon().string()).toUtf8().constData(), QString(notification->contents().title()).toUtf8().constData(),
-            QString(notification->contents().body()).toUtf8().constData());
+            QString(notification->contents().icon.string()).toUtf8().constData(), QString(notification->contents().title).toUtf8().constData(),
+            QString(notification->contents().body).toUtf8().constData());
     }
 }
 

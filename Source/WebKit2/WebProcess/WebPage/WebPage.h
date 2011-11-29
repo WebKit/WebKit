@@ -114,6 +114,7 @@ class WebImage;
 class WebInspector;
 class WebKeyboardEvent;
 class WebMouseEvent;
+class WebNotificationClient;
 class WebOpenPanelResultListener;
 class WebPageGroupProxy;
 class WebPopupMenu;

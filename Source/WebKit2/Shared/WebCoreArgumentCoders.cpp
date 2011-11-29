@@ -37,6 +37,7 @@
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/GraphicsLayer.h>
 #include <WebCore/Image.h>
+#include <WebCore/KURL.h>
 #include <WebCore/PluginData.h>
 #include <WebCore/ProtectionSpace.h>
 #include <WebCore/TextCheckerClient.h>
@@ -621,6 +622,20 @@ bool ArgumentCoder<DragSession>::decode(ArgumentDecoder* decoder, DragSession& r
         return false;
     if (!decoder->decode(result.numberOfItemsToBeAccepted))
         return false;
+    return true;
+}
+
+void ArgumentCoder<KURL>::encode(ArgumentEncoder* encoder, const KURL& result)
+{
+    encoder->encode(result.string());
+}
+    
+bool ArgumentCoder<KURL>::decode(ArgumentDecoder* decoder, KURL& result)
+{
+    String urlAsString;
+    if (!decoder->decode(urlAsString))
+        return false;
+    result = KURL(WebCore::ParsedURLString, urlAsString);
     return true;
 }
 

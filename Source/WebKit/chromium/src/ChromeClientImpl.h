@@ -130,9 +130,6 @@ public:
         WebCore::Frame*, const WTF::String& databaseName);
     virtual void reachedMaxAppCacheSize(int64_t spaceNeeded);
     virtual void reachedApplicationCacheOriginQuota(WebCore::SecurityOrigin*, int64_t totalSpaceNeeded);
-#if ENABLE(NOTIFICATIONS)
-    virtual WebCore::NotificationPresenter* notificationPresenter() const;
-#endif
     virtual bool paintCustomOverhangArea(WebCore::GraphicsContext*, const WebCore::IntRect&, const WebCore::IntRect&, const WebCore::IntRect&);
     virtual void requestGeolocationPermissionForFrame(WebCore::Frame*, WebCore::Geolocation*);
     virtual void cancelGeolocationPermissionRequestForFrame(WebCore::Frame*, WebCore::Geolocation*);

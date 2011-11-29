@@ -49,7 +49,6 @@
 #include "NavigationAction.h"
 #include "NetworkingContext.h"
 #include "NotImplemented.h"
-#include "NotificationPresenterClientQt.h"
 #include "Page.h"
 #include "PageClientQt.h"
 #include "PopupMenuQt.h"
@@ -556,13 +555,6 @@ void ChromeClientQt::reachedApplicationCacheOriginQuota(SecurityOrigin* origin, 
 
     emit m_webPage->applicationCacheQuotaExceeded(securityOrigin, defaultOriginQuota, static_cast<quint64>(totalSpaceNeeded));
 }
-
-#if ENABLE(NOTIFICATIONS)
-NotificationPresenter* ChromeClientQt::notificationPresenter() const
-{
-    return NotificationPresenterClientQt::notificationPresenter();
-}
-#endif
 
 void ChromeClientQt::runOpenPanel(Frame* frame, PassRefPtr<FileChooser> prpFileChooser)
 {

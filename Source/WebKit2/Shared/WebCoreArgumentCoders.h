@@ -43,6 +43,8 @@ namespace WebCore {
     class IntRect;
     class IntSize;
     class KeyframeValueList;
+    class KURL;
+    class Notification;
     class ProtectionSpace;
     class ResourceError;
     class ResourceRequest;
@@ -219,6 +221,11 @@ template<> struct ArgumentCoder<WebCore::TextCheckingResult> {
 template<> struct ArgumentCoder<WebCore::DragSession> {
     static void encode(ArgumentEncoder*, const WebCore::DragSession&);
     static bool decode(ArgumentDecoder*, WebCore::DragSession&);
+};
+
+template<> struct ArgumentCoder<WebCore::KURL> {
+    static void encode(ArgumentEncoder*, const WebCore::KURL&);
+    static bool decode(ArgumentDecoder*, WebCore::KURL&);
 };
 
 #if PLATFORM(QT)

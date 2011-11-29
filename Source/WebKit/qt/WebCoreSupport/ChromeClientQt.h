@@ -142,10 +142,6 @@ public:
     virtual void showContextMenu() { }
 #endif
 
-#if ENABLE(NOTIFICATIONS)
-    virtual NotificationPresenter* notificationPresenter() const;
-#endif
-
 #if USE(ACCELERATED_COMPOSITING)
     // This is a hook for WebCore to tell us what we need to do with the GraphicsLayers.
     virtual void attachRootGraphicsLayer(Frame*, GraphicsLayer*);

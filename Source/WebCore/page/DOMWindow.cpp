@@ -74,6 +74,7 @@
 #include "MessageEvent.h"
 #include "Navigator.h"
 #include "NotificationCenter.h"
+#include "NotificationController.h"
 #include "Page.h"
 #include "PageGroup.h"
 #include "PageTransitionEvent.h"
@@ -750,7 +751,7 @@ NotificationCenter* DOMWindow::webkitNotifications() const
     if (!page)
         return 0;
 
-    NotificationPresenter* provider = page->chrome()->notificationPresenter();
+    NotificationPresenter* provider = page->notificationController()->client();
     if (provider) 
         m_notifications = NotificationCenter::create(document, provider);    
       

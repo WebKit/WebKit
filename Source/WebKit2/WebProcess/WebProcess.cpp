@@ -140,6 +140,9 @@ WebProcess::WebProcess()
 #endif
     , m_textCheckerState()
     , m_geolocationManager(this)
+#if ENABLE(NOTIFICATIONS)
+    , m_notificationManager(this)
+#endif
     , m_iconDatabaseProxy(this)
 #if ENABLE(PLUGIN_PROCESS)
     , m_disablePluginProcessMessageTimeout(false)

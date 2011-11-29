@@ -54,7 +54,6 @@
 #include "IntRect.h"
 #include "NavigationAction.h"
 #include "Node.h"
-#include "NotificationPresenterImpl.h"
 #include "Page.h"
 #include "PlatformSupport.h"
 #include "PopupContainer.h"
@@ -784,13 +783,6 @@ void ChromeClientImpl::postAccessibilityNotification(AccessibilityObject* obj, A
     if (obj)
         m_webView->client()->postAccessibilityNotification(WebAccessibilityObject(obj), toWebAccessibilityNotification(notification));
 }
-
-#if ENABLE(NOTIFICATIONS)
-NotificationPresenter* ChromeClientImpl::notificationPresenter() const
-{
-    return m_webView->notificationPresenterImpl();
-}
-#endif
 
 bool ChromeClientImpl::paintCustomOverhangArea(GraphicsContext* context, const IntRect& horizontalOverhangArea, const IntRect& verticalOverhangArea, const IntRect& dirtyRect)
 {

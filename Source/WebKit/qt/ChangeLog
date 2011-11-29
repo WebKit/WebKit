@@ -1,3 +1,24 @@
+2011-11-28  Jon Lee  <jonlee@apple.com>
+
+        Create skeleton framework for notifications support in WK2
+        https://bugs.webkit.org/show_bug.cgi?id=73253
+        <rdar://problem/10356943>
+
+        Reviewed by Sam Weinig.
+
+        * Api/qwebpage.cpp: Add notification client to pageClients.
+        (QWebPagePrivate::QWebPagePrivate):
+        * WebCoreSupport/ChromeClientQt.cpp: Remove notification client from ChromeClient implementation.
+        * WebCoreSupport/ChromeClientQt.h:
+        * WebCoreSupport/NotificationPresenterClientQt.cpp: Refactor with change of NotificationContents to struct
+        (WebCore::NotificationWrapper::title):
+        (WebCore::NotificationWrapper::message):
+        (WebCore::NotificationPresenterClientQt::displayNotification):
+        (WebCore::NotificationPresenterClientQt::cancel):
+        (WebCore::NotificationPresenterClientQt::notificationClicked):
+        (WebCore::NotificationPresenterClientQt::dumpReplacedIdText):
+        (WebCore::NotificationPresenterClientQt::dumpShowText):
+
 2011-11-28  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Build system fixes against V8.

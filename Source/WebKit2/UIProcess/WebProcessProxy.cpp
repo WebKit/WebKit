@@ -302,6 +302,7 @@ void WebProcessProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC
         || messageID.is<CoreIPC::MessageClassWebIconDatabase>()
         || messageID.is<CoreIPC::MessageClassWebKeyValueStorageManagerProxy>()
         || messageID.is<CoreIPC::MessageClassWebMediaCacheManagerProxy>()
+        || messageID.is<CoreIPC::MessageClassWebNotificationManagerProxy>()
         || messageID.is<CoreIPC::MessageClassWebResourceCacheManagerProxy>()) {
         m_context->didReceiveMessage(connection, messageID, arguments);
         return;

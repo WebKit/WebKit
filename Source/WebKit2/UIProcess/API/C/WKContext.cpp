@@ -195,6 +195,11 @@ WKMediaCacheManagerRef WKContextGetMediaCacheManager(WKContextRef contextRef)
     return toAPI(toImpl(contextRef)->mediaCacheManagerProxy());
 }
 
+WKNotificationManagerRef WKContextGetNotificationManager(WKContextRef contextRef)
+{
+    return toAPI(toImpl(contextRef)->notificationManagerProxy());
+}
+
 WKPluginSiteDataManagerRef WKContextGetPluginSiteDataManager(WKContextRef contextRef)
 {
     return toAPI(toImpl(contextRef)->pluginSiteDataManager());

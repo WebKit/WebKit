@@ -89,6 +89,8 @@ public:
         TypeKeyValueStorageManager,
         TypeMediaCacheManager,
         TypeNavigationData,
+        TypeNotification,
+        TypeNotificationManager,
         TypeOpenPanelParameters,
         TypeOpenPanelResultListener,
         TypePage,

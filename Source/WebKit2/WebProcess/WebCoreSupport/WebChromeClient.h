@@ -183,10 +183,6 @@ private:
     virtual void scheduleCompositingLayerSync() OVERRIDE;
 #endif
 
-#if ENABLE(NOTIFICATIONS)
-    virtual WebCore::NotificationPresenter* notificationPresenter() const OVERRIDE;
-#endif
-
 #if ENABLE(TOUCH_EVENTS)
     virtual void needTouchEvents(bool) OVERRIDE;
 #endif

@@ -1,3 +1,22 @@
+2011-11-28  Jon Lee  <jonlee@apple.com>
+
+        Create skeleton framework for notifications support in WK2
+        https://bugs.webkit.org/show_bug.cgi?id=73253
+        <rdar://problem/10356943>
+
+        Reviewed by Sam Weinig.
+
+        Remove notificationPresenter() from the chrome client, since it is now managed by
+        the notification controller.
+
+        * src/ChromeClientImpl.cpp:
+        * src/ChromeClientImpl.h:
+        * src/WebNotification.cpp:
+        (WebKit::WebNotification::title): Refactoring with NotificationContents conversion to struct.
+        (WebKit::WebNotification::body): Ditto.
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::WebViewImpl): Set notification client in web view's page clients.
+
 2011-11-28  Beth Dakin  <bdakin@apple.com>
 
         Speculative Chromium build fix.

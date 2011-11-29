@@ -72,6 +72,9 @@ class WebInspectorProxy;
 class WebKeyValueStorageManagerProxy;
 class WebMediaCacheManagerProxy;
 class WebNavigationData;
+class WebNotification;
+class WebNotificationProvider;
+class WebNotificationManagerProxy;
 class WebOpenPanelParameters;
 class WebOpenPanelResultListenerProxy;
 class WebPageGroup;
@@ -104,6 +107,9 @@ WK_ADD_API_MAPPING(WKIconDatabaseRef, WebIconDatabase)
 WK_ADD_API_MAPPING(WKKeyValueStorageManagerRef, WebKeyValueStorageManagerProxy)
 WK_ADD_API_MAPPING(WKMediaCacheManagerRef, WebMediaCacheManagerProxy)
 WK_ADD_API_MAPPING(WKNavigationDataRef, WebNavigationData)
+WK_ADD_API_MAPPING(WKNotificationManagerRef, WebNotificationManagerProxy)
+WK_ADD_API_MAPPING(WKNotificationProviderRef, WebNotificationProvider)
+WK_ADD_API_MAPPING(WKNotificationRef, WebNotification)
 WK_ADD_API_MAPPING(WKOpenPanelParametersRef, WebOpenPanelParameters)
 WK_ADD_API_MAPPING(WKOpenPanelResultListenerRef, WebOpenPanelResultListenerProxy)
 WK_ADD_API_MAPPING(WKPageGroupRef, WebPageGroup)

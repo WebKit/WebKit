@@ -46,6 +46,10 @@
 class QNetworkAccessManager;
 #endif
 
+#if ENABLE(NOTIFICATIONS)
+#include "WebNotificationManager.h"
+#endif
+
 #if ENABLE(PLUGIN_PROCESS)
 #include "PluginProcessConnectionManager.h"
 #endif
@@ -119,6 +123,10 @@ public:
 
     // Geolocation
     WebGeolocationManager& geolocationManager() { return m_geolocationManager; }
+    
+#if ENABLE(NOTIFICATIONS)
+    WebNotificationManager& notificationManager() { return m_notificationManager; }
+#endif
 
     void clearResourceCaches(ResourceCachesToClear = AllResourceCaches);
     
@@ -241,6 +249,9 @@ private:
 
     TextCheckerState m_textCheckerState;
     WebGeolocationManager m_geolocationManager;
+#if ENABLE(NOTIFICATIONS)
+    WebNotificationManager m_notificationManager;
+#endif
     WebIconDatabaseProxy m_iconDatabaseProxy;
     
     String m_localStorageDirectory;

@@ -179,6 +179,7 @@ def struct_or_class(namespace, type):
         'WebCore::Length',
         'WebCore::MatrixTransformOperation',
         'WebCore::Matrix3DTransformOperation',
+        'WebCore::NotificationContents',
         'WebCore::PerspectiveTransformOperation',
         'WebCore::PluginInfo',
         'WebCore::PrintInfo',

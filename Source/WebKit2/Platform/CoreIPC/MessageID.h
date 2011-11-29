@@ -67,6 +67,7 @@ enum MessageClass {
     MessageClassWebInspectorProxy,
     MessageClassWebKeyValueStorageManagerProxy,
     MessageClassWebMediaCacheManagerProxy,
+    MessageClassWebNotificationManagerProxy,
     MessageClassWebPageProxy,
     MessageClassWebProcessProxy,
     MessageClassWebResourceCacheManagerProxy,

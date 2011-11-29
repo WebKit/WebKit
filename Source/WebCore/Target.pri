@@ -944,6 +944,7 @@ SOURCES += \
     loader/ThreadableLoader.cpp \
     notifications/Notification.cpp \
     notifications/NotificationCenter.cpp \
+    notifications/NotificationController.cpp \
     page/animation/AnimationBase.cpp \
     page/animation/AnimationController.cpp \
     page/animation/CompositeAnimation.cpp \
@@ -1985,6 +1986,7 @@ HEADERS += \
     notifications/NotificationCenter.h \
     notifications/NotificationPresenter.h \
     notifications/NotificationContents.h \
+    notifications/NotificationController.h \
     page/animation/AnimationBase.h \
     page/animation/AnimationController.h \
     page/animation/CompositeAnimation.h \

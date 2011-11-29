@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2009 Google Inc. All rights reserved.
- * Copyright (C) 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2009, 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -47,6 +47,11 @@
 
 namespace WebCore {
 
+Notification::Notification()
+    : ActiveDOMObject(0, this)
+{
+}
+
 Notification::Notification(const KURL& url, ScriptExecutionContext* context, ExceptionCode& ec, PassRefPtr<NotificationCenter> provider)
     : ActiveDOMObject(context, this)
     , m_isHTML(true)
@@ -80,7 +85,7 @@ Notification::Notification(const NotificationContents& contents, ScriptExecution
         return;
     }
 
-    if (!contents.icon().isEmpty() && !contents.icon().isValid()) {
+    if (!contents.icon.isEmpty() && !contents.icon.isValid()) {
         ec = SYNTAX_ERR;
         return;
     }

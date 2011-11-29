@@ -61,6 +61,7 @@
 #include "WebImage.h"
 #include "WebInspector.h"
 #include "WebInspectorClient.h"
+#include "WebNotificationClient.h"
 #include "WebOpenPanelResultListener.h"
 #include "WebPageCreationParameters.h"
 #include "WebPageGroupProxy.h"
@@ -216,6 +217,10 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
 #if ENABLE(INSPECTOR)
     pageClients.inspectorClient = new WebInspectorClient(this);
 #endif
+#if ENABLE(NOTIFICATIONS)
+    pageClients.notificationClient = new WebNotificationClient(this);
+#endif
+    
     m_page = adoptPtr(new Page(pageClients));
 
     // Qt does not yet call setIsInWindow. Until it does, just leave

@@ -72,6 +72,8 @@ namespace WebCore {
     class InspectorController;
     class MediaCanStartListener;
     class Node;
+    class NotificationController;
+    class NotificationPresenter;
     class PageGroup;
     class PluginData;
     class ProgressTracker;
@@ -117,6 +119,7 @@ namespace WebCore {
             DeviceOrientationClient* deviceOrientationClient;
             RefPtr<BackForwardList> backForwardClient;
             SpeechInputClient* speechInputClient;
+            NotificationPresenter* notificationClient;
             UserMediaClient* userMediaClient;
         };
 
@@ -182,6 +185,9 @@ namespace WebCore {
 #if ENABLE(DEVICE_ORIENTATION)
         DeviceMotionController* deviceMotionController() const { return m_deviceMotionController.get(); }
         DeviceOrientationController* deviceOrientationController() const { return m_deviceOrientationController.get(); }
+#endif
+#if ENABLE(NOTIFICATIONS)
+        NotificationController* notificationController() const { return m_notificationController.get(); }
 #endif
 #if ENABLE(INPUT_SPEECH)
         SpeechInput* speechInput();
@@ -364,6 +370,9 @@ namespace WebCore {
 #if ENABLE(DEVICE_ORIENTATION)
         OwnPtr<DeviceMotionController> m_deviceMotionController;
         OwnPtr<DeviceOrientationController> m_deviceOrientationController;
+#endif
+#if ENABLE(NOTIFICATIONS)
+        OwnPtr<NotificationController> m_notificationController;
 #endif
 #if ENABLE(INPUT_SPEECH)
         SpeechInputClient* m_speechInputClient;

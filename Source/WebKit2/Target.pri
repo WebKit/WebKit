@@ -50,6 +50,7 @@ WEBKIT2_GENERATED_HEADERS = \
     $$WEBKIT2_GENERATED_SOURCES_DIR/WebKeyValueStorageManagerProxyMessages.h \
     $$WEBKIT2_GENERATED_SOURCES_DIR/WebMediaCacheManagerMessages.h \
     $$WEBKIT2_GENERATED_SOURCES_DIR/WebMediaCacheManagerProxyMessages.h \
+    $$WEBKIT2_GENERATED_SOURCES_DIR/WebNotificationManagerProxyMessages.h \
     $$WEBKIT2_GENERATED_SOURCES_DIR/WebPageMessages.h \
     $$WEBKIT2_GENERATED_SOURCES_DIR/WebPageProxyMessages.h \
     $$WEBKIT2_GENERATED_SOURCES_DIR/WebProcessConnectionMessages.h \
@@ -90,6 +91,7 @@ WEBKIT2_GENERATED_SOURCES = \
     $$WEBKIT2_GENERATED_SOURCES_DIR/WebKeyValueStorageManagerProxyMessageReceiver.cpp \
     $$WEBKIT2_GENERATED_SOURCES_DIR/WebMediaCacheManagerMessageReceiver.cpp \
     $$WEBKIT2_GENERATED_SOURCES_DIR/WebMediaCacheManagerProxyMessageReceiver.cpp \
+    $$WEBKIT2_GENERATED_SOURCES_DIR/WebNotificationManagerProxyMessageReceiver.cpp \
     $$WEBKIT2_GENERATED_SOURCES_DIR/WebPageMessageReceiver.cpp \
     $$WEBKIT2_GENERATED_SOURCES_DIR/WebPageProxyMessageReceiver.cpp \
     $$WEBKIT2_GENERATED_SOURCES_DIR/WebProcessConnectionMessageReceiver.cpp \
@@ -232,6 +234,9 @@ HEADERS += \
     UIProcess/API/C/WKOpenPanelParameters.h \
     UIProcess/API/C/WKOpenPanelResultListener.h \
     UIProcess/API/C/WKNavigationData.h \
+    UIProcess/API/C/WKNotification.h \
+    UIProcess/API/C/WKNotificationManager.h \
+    UIProcess/API/C/WKNotificationProvider.h \
     UIProcess/API/C/WKPage.h \
     UIProcess/API/C/WKPageGroup.h \
     UIProcess/API/C/WKPagePrivate.h \
@@ -304,6 +309,9 @@ HEADERS += \
     UIProcess/WebLoaderClient.h \
     UIProcess/WebMediaCacheManagerProxy.h \
     UIProcess/WebNavigationData.h \
+    UIProcess/WebNotification.h \
+    UIProcess/WebNotificationManagerProxy.h \
+    UIProcess/WebNotificationProvider.h \
     UIProcess/WebOpenPanelResultListenerProxy.h \
     UIProcess/WebPageContextMenuClient.h \
     UIProcess/WebPageGroup.h \
@@ -372,6 +380,7 @@ HEADERS += \
     WebProcess/InjectedBundle/InjectedBundleUserMessageCoders.h \
     WebProcess/KeyValueStorage/WebKeyValueStorageManager.h \
     WebProcess/MediaCache/WebMediaCacheManager.h \
+    WebProcess/Notifications/WebNotificationManager.h \
     WebProcess/ResourceCache/WebResourceCacheManager.h \
     WebProcess/Plugins/Netscape/JSNPMethod.h \
     WebProcess/Plugins/Netscape/JSNPObject.h \
@@ -398,6 +407,7 @@ HEADERS += \
     WebProcess/WebCoreSupport/WebGraphicsLayer.h \
     WebProcess/WebCoreSupport/WebInspectorClient.h \
     WebProcess/WebCoreSupport/WebInspectorFrontendClient.h \
+    WebProcess/WebCoreSupport/WebNotificationClient.h \
     WebProcess/WebCoreSupport/WebPlatformStrategies.h \
     WebProcess/WebCoreSupport/WebPopupMenu.h \
     WebProcess/WebCoreSupport/WebSearchPopupMenu.h \
@@ -539,6 +549,8 @@ SOURCES += \
     UIProcess/API/C/WKHitTestResult.cpp \
     UIProcess/API/C/WKIconDatabase.cpp \
     UIProcess/API/C/WKInspector.cpp \
+    UIProcess/API/C/WKNotification.cpp \
+    UIProcess/API/C/WKNotificationManager.cpp \
     UIProcess/API/C/WKOpenPanelParameters.cpp \
     UIProcess/API/C/WKOpenPanelResultListener.cpp \
     UIProcess/API/C/WKNavigationData.cpp \
@@ -608,6 +620,9 @@ SOURCES += \
     UIProcess/WebLoaderClient.cpp \
     UIProcess/WebMediaCacheManagerProxy.cpp \
     UIProcess/WebNavigationData.cpp \
+    UIProcess/WebNotification.cpp \
+    UIProcess/WebNotificationManagerProxy.cpp \
+    UIProcess/WebNotificationProvider.cpp \
     UIProcess/WebOpenPanelResultListenerProxy.cpp \
     UIProcess/WebPageContextMenuClient.cpp \
     UIProcess/WebPageGroup.cpp \
@@ -692,6 +707,7 @@ SOURCES += \
     WebProcess/InjectedBundle/qt/InjectedBundleQt.cpp \
     WebProcess/KeyValueStorage/WebKeyValueStorageManager.cpp \
     WebProcess/MediaCache/WebMediaCacheManager.cpp \
+    WebProcess/Notifications/WebNotificationManager.cpp \
     WebProcess/ResourceCache/WebResourceCacheManager.cpp \
     WebProcess/Plugins/Netscape/JSNPMethod.cpp \
     WebProcess/Plugins/Netscape/JSNPObject.cpp \
@@ -719,6 +735,7 @@ SOURCES += \
     WebProcess/WebCoreSupport/WebGraphicsLayer.cpp \
     WebProcess/WebCoreSupport/WebInspectorClient.cpp \
     WebProcess/WebCoreSupport/WebInspectorFrontendClient.cpp \
+    WebProcess/WebCoreSupport/WebNotificationClient.cpp \
     WebProcess/WebCoreSupport/WebPlatformStrategies.cpp \
     WebProcess/WebCoreSupport/WebPopupMenu.cpp \
     WebProcess/WebCoreSupport/WebSearchPopupMenu.cpp \

@@ -187,10 +187,6 @@ public:
     virtual void reachedMaxAppCacheSize(int64_t) { }
     virtual void reachedApplicationCacheOriginQuota(SecurityOrigin*, int64_t) { }
 
-#if ENABLE(NOTIFICATIONS)
-    virtual NotificationPresenter* notificationPresenter() const { return 0; }
-#endif
-
 #if ENABLE(DIRECTORY_UPLOAD)
     virtual void enumerateChosenDirectory(FileChooser*) { }
 #endif

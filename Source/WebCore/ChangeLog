@@ -1,3 +1,57 @@
+2011-11-28  Jon Lee  <jonlee@apple.com>
+
+        Create skeleton framework for notifications support in WK2
+        https://bugs.webkit.org/show_bug.cgi?id=73253
+        <rdar://problem/10356943>
+
+        Reviewed by Sam Weinig.
+
+        Some refactoring was done to make notifications follow a similar pattern to our other clients, like
+        geolocation and context menu.
+
+        * Configurations/FeatureDefines.xcconfig: Split out ENABLE_NOTIFICATIONS based on platform.
+        * WebCore.xcodeproj/project.pbxproj: Adding new NotificationController class, and exposing
+        Notification and NotificationController as private headers.
+        * Target.pri: Ditto.
+        * WebCore.gypi: Ditto.
+
+        * notifications/NotificationContents.h: Converted class to struct. Members need to be accessible
+        in order to do WK2 argument encoding.
+        (WebCore::NotificationContents::NotificationContents):
+
+        * notifications/Notification.cpp: Update style of entire file.
+        (WebCore::Notification::Notification): Added default constructor (for WK2), and minor refactoring
+        with NotificationContents.
+        * notifications/Notification.h: Added set methods for WK2 serialization. Also, update indenting.
+        (WebCore::Notification::setHTML): Added.
+        (WebCore::Notification::setURL): Added.
+        (WebCore::Notification::contents): Added const version for WK2.
+        * notifications/NotificationCenter.h: Update style.
+
+        * notifications/NotificationController.cpp: Added.
+        (WebCore::NotificationController::NotificationController):
+        (WebCore::NotificationController::~NotificationController):
+        * notifications/NotificationController.h: Added.
+        (WebCore::NotificationController::client):
+        * notifications/NotificationPresenter.h: This acts like a client, and should probably be renamed as such.
+        Removed ifdef for exposure to WK2.
+        (WebCore::NotificationPresenter::~NotificationPresenter): Moved as protected instead of public.
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::webkitNotifications):  We move the request for the notification client from the chrome
+        to the controller.
+        * page/Page.cpp:
+        (WebCore::Page::Page): The page now owns a notification controller.
+        (WebCore::Page::PageClients::PageClients): Add notification client as a page client.
+        * page/Page.h:
+        (WebCore::Page::notificationController): Retrieve the notification controller.
+
+        * page/ChromeClient.h: We move the request for the notification client from the chrome to the controller.
+        Remove notificationPresenter().
+        * page/Chrome.cpp: Remove notificationPresenter().
+        * page/Chrome.h: Remove notificationPresenter().
+        * loader/EmptyClients.h: Remove notificationPresenter().
+
 2011-11-28  Noel Gordon  <noel.gordon@gmail.com>
 
         ImageDecoder setSize() should check for backing store allocation failure

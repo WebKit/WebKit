@@ -74,6 +74,8 @@
 		226E9E6B09D0AA8200F3A2BC /* WebNetscapeDeprecatedFunctions.c in Sources */ = {isa = PBXBuildFile; fileRef = 226E9E6909D0AA8200F3A2BC /* WebNetscapeDeprecatedFunctions.c */; settings = {COMPILER_FLAGS = "-Wno-deprecated-declarations"; }; };
 		22F219CC08D236730030E078 /* WebBackForwardListPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 22F219CB08D236730030E078 /* WebBackForwardListPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		29AEF960134C76FB00FE5096 /* OutlookQuirksUserScript.js in Resources */ = {isa = PBXBuildFile; fileRef = 29AEF95D134C755400FE5096 /* OutlookQuirksUserScript.js */; };
+		31C11A6E1476552E0049A4CC /* WebNotificationClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 31C11A6C1476552E0049A4CC /* WebNotificationClient.h */; };
+		31C11A6F1476552E0049A4CC /* WebNotificationClient.mm in Sources */ = {isa = PBXBuildFile; fileRef = 31C11A6D1476552E0049A4CC /* WebNotificationClient.mm */; };
 		37B6FB4E1063530C000FDB3B /* WebPDFDocumentExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = 37B6FB4C1063530C000FDB3B /* WebPDFDocumentExtras.h */; };
 		37B6FB4F1063530C000FDB3B /* WebPDFDocumentExtras.mm in Sources */ = {isa = PBXBuildFile; fileRef = 37B6FB4D1063530C000FDB3B /* WebPDFDocumentExtras.mm */; };
 		37D1DCA81065928C0068F7EF /* WebJSPDFDoc.h in Headers */ = {isa = PBXBuildFile; fileRef = 37D1DCA61065928C0068F7EF /* WebJSPDFDoc.h */; };
@@ -454,6 +456,8 @@
 		2D36FD5E03F78F9E00A80166 /* WebFormDelegatePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebFormDelegatePrivate.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		2D81DAB203EB0B2D00A80166 /* WebFormDelegate.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebFormDelegate.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		2D81DAB303EB0B2D00A80166 /* WebFormDelegate.m */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebFormDelegate.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		31C11A6C1476552E0049A4CC /* WebNotificationClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebNotificationClient.h; sourceTree = "<group>"; };
+		31C11A6D1476552E0049A4CC /* WebNotificationClient.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebNotificationClient.mm; sourceTree = "<group>"; };
 		35081D9202B6D4D80ACA2ACA /* WebHTMLRepresentation.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; indentWidth = 4; path = WebHTMLRepresentation.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		35081D9302B6D4D80ACA2ACA /* WebHTMLRepresentation.mm */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebHTMLRepresentation.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		35081D9402B6D4D80ACA2ACA /* WebHTMLView.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebHTMLView.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -1311,6 +1315,8 @@
 				9345D4EB0365C5B2008635CE /* WebJavaScriptTextInputPanel.m */,
 				84723BE3056D719E0044BFEA /* WebKeyGenerator.h */,
 				84723BE4056D719E0044BFEA /* WebKeyGenerator.mm */,
+				31C11A6C1476552E0049A4CC /* WebNotificationClient.h */,
+				31C11A6D1476552E0049A4CC /* WebNotificationClient.mm */,
 				A58A5797143E727000125F50 /* WebOpenPanelResultListener.h */,
 				A58A5798143E727000125F50 /* WebOpenPanelResultListener.mm */,
 				1AA879B411CBE9BF003C664F /* WebPlatformStrategies.h */,
@@ -1625,6 +1631,7 @@
 				B82958D3132707D0000D0E79 /* CorrectionPanel.h in Headers */,
 				A5687BDA135B791A0074CBCB /* WebNodeHighlighter.h in Headers */,
 				A58A5799143E727000125F50 /* WebOpenPanelResultListener.h in Headers */,
+				31C11A6E1476552E0049A4CC /* WebNotificationClient.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2010,6 +2017,7 @@
 				B82958D4132707D0000D0E79 /* CorrectionPanel.mm in Sources */,
 				A5687BDB135B791A0074CBCB /* WebNodeHighlighter.mm in Sources */,
 				A58A579A143E727000125F50 /* WebOpenPanelResultListener.mm in Sources */,
+				31C11A6F1476552E0049A4CC /* WebNotificationClient.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

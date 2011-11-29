@@ -1,3 +1,13 @@
+2011-11-28  Jon Lee  <jonlee@apple.com>
+
+        Create skeleton framework for notifications support in WK2
+        https://bugs.webkit.org/show_bug.cgi?id=73253
+        <rdar://problem/10356943>
+
+        Reviewed by Sam Weinig.
+
+        * WebKit.xcodeproj/project.pbxproj: Add WebNotificationClient class.
+
 2011-11-26  Jonathan Dong  <jonathan.dong@torchmobile.com.cn>
 
         [CMake] Clean up Web Inspector target in Source/WebKit/blackberry/CMakeListsBlackBerry.txt

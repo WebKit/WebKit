@@ -87,6 +87,7 @@
 #import "WebNSURLRequestExtras.h"
 #import "WebNSViewExtras.h"
 #import "WebNodeHighlight.h"
+#import "WebNotificationClient.h"
 #import "WebPDFView.h"
 #import "WebPanelAuthenticationHandler.h"
 #import "WebPlatformStrategies.h"
@@ -738,6 +739,9 @@ static NSString *leakOutlookQuirksUserScriptContents()
     pageClients.inspectorClient = new WebInspectorClient(self);
 #if ENABLE(CLIENT_BASED_GEOLOCATION)
     pageClients.geolocationClient = new WebGeolocationClient(self);
+#endif
+#if ENABLE(NOTIFICATIONS)
+    pageClients.notificationClient = new WebNotificationClient(self);
 #endif
 #if ENABLE(DEVICE_ORIENTATION)
     pageClients.deviceOrientationClient = new WebDeviceOrientationClient(self);

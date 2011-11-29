@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -33,25 +34,24 @@
 
 #if ENABLE(NOTIFICATIONS)
 
+#include "KURL.h"
+#include <wtf/text/WTFString.h>
+
 namespace WebCore {
 
-    class NotificationContents { 
-    public:
-        NotificationContents() {}
-        NotificationContents(const KURL& iconUrl, const String& title, const String& body)
-            : m_icon(iconUrl)
-            , m_title(title)
-            , m_body(body) {}
+struct NotificationContents { 
+public:
+    NotificationContents() { }
+    NotificationContents(const KURL& iconUrl, const String& notificationTitle, const String& notificationBody)
+        : icon(iconUrl)
+        , title(notificationTitle)
+        , body(notificationBody)
+    { }
 
-        KURL icon() const { return m_icon; }
-        String title() const { return m_title; }
-        String body() const { return m_body; }
-
-    private:
-        KURL m_icon;
-        String m_title;
-        String m_body;
-    };
+    KURL icon;
+    String title;
+    String body;
+};
 
 } // namespace WebCore
 

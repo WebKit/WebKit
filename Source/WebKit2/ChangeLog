@@ -1,3 +1,111 @@
+2011-11-28  Jon Lee  <jonlee@apple.com>
+
+        Create skeleton framework for notifications support in WK2
+        https://bugs.webkit.org/show_bug.cgi?id=73253
+        <rdar://problem/10356943>
+
+        Reviewed by Sam Weinig.
+
+        * WebKit2.xcodeproj/project.pbxproj: Added classes for notification support.
+        * win/WebKit2.vcproj: Ditto.
+        * Target.pri: Ditto.
+        * Configurations/FeatureDefines.xcconfig: Split out ENABLE_NOTIFICATIONS based on platform.
+        * DerivedSources.make: Add Notifications to VPATH.
+        * Platform/CoreIPC/MessageID.h: List WebNotificationManagerProxy as a class with messages.
+        * Scripts/webkit2/messages.py: Mark WebCore::NotificationContents as a struct.
+
+        * Shared/API/c/WKBase.h: Map opaque types to NotificationProvider, NotificationManager, and Notification.
+        * UIProcess/API/C/WKAPICast.h: Map WK types toNotificationProvider, NotificationManager, and Notification.
+        * Shared/APIObject.h: Add Notification and NotificationManager as APIObjects.
+        * Shared/WebCoreArgumentCoders.cpp: Added coders for KURL.
+        (CoreIPC::::encode):
+        (CoreIPC::::decode):
+        * Shared/WebCoreArgumentCoders.h:
+
+        * UIProcess/WebNotification.cpp: Added.
+        (WebKit::WebNotification::WebNotification):
+        (WebKit::WebNotification::~WebNotification):
+        (WebKit::WebNotification::encode):
+        (WebKit::WebNotification::decode):
+        * UIProcess/WebNotification.h: Added.
+        (WebKit::WebNotification::create):
+        (WebKit::WebNotification::title):
+        (WebKit::WebNotification::body):
+        (WebKit::WebNotification::type):
+        * UIProcess/API/C/WKNotification.cpp: Added as API.
+        (WKNotificationGetTypeID):
+        (WKNotificationCopyTitle):
+        (WKNotificationCopyBody):
+        * UIProcess/API/C/WKNotification.h: Added as API.
+
+        * WebProcess/Notifications/WebNotificationManager.h: Added. Contains for now show() and cancel().
+        The rest of the notification client methods will be added later. These two functions send messages
+        to the manager proxy.
+        * WebProcess/Notifications/WebNotificationManager.cpp: Added.
+        (WebKit::WebNotificationManager::WebNotificationManager):
+        (WebKit::WebNotificationManager::~WebNotificationManager):
+        (WebKit::WebNotificationManager::show):
+        (WebKit::WebNotificationManager::cancel):
+
+        * UIProcess/WebNotificationManagerProxy.cpp: Added.
+        (WebKit::WebNotificationManagerProxy::create):
+        (WebKit::WebNotificationManagerProxy::WebNotificationManagerProxy):
+        (WebKit::WebNotificationManagerProxy::~WebNotificationManagerProxy):
+        (WebKit::WebNotificationManagerProxy::invalidate):
+        (WebKit::WebNotificationManagerProxy::initializeProvider):
+        (WebKit::WebNotificationManagerProxy::didReceiveMessage):
+        (WebKit::WebNotificationManagerProxy::show):
+        (WebKit::WebNotificationManagerProxy::cancel):
+        * UIProcess/WebNotificationManagerProxy.h: Added.
+        (WebKit::WebNotificationManagerProxy::clearContext):
+        (WebKit::WebNotificationManagerProxy::type):
+        * UIProcess/WebNotificationManagerProxy.messages.in: Added.
+        * UIProcess/API/C/WKNotificationManager.cpp: Added.
+        (WKNotificationManagerGetTypeID):
+        (WKNotificationManagerSetProvider):
+        * UIProcess/API/C/WKNotificationManager.h: Added.
+
+        * UIProcess/WebContext.h: Add the notification manager to the web context.
+        (WebKit::WebContext::notificationManagerProxy): Access the manager.
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::WebContext): Boilerplate for managers.
+        (WebKit::WebContext::~WebContext): Boilerplate for managers.
+        (WebKit::WebContext::disconnectProcess): Boilerplate for managers.
+        (WebKit::WebContext::didReceiveMessage): Forward messages to the notification manager.
+        * UIProcess/API/C/WKContext.cpp: Expose as API.
+        (WKContextGetNotificationManager):
+        * UIProcess/API/C/WKContext.h: Expose as API.
+
+        * UIProcess/API/C/WKNotificationProvider.h: Added.
+        * UIProcess/WebNotificationProvider.h: Added as APIClient.
+        * UIProcess/WebNotificationProvider.cpp: Added.
+        (WebKit::WebNotificationProvider::show): Forward call to the client.
+        (WebKit::WebNotificationProvider::cancel): Forward call to the client.
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::didReceiveMessage): Forward messages for notification manager to the context.
+
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp: Remove notificationPresenter().
+        * WebProcess/WebCoreSupport/WebChromeClient.h: Remove notificationPresenter().
+
+        * WebProcess/WebCoreSupport/WebNotificationClient.h: Added. Forwards client methods to manager.
+        * WebProcess/WebCoreSupport/WebNotificationClient.cpp: Added. Mostly stub implementation for now.
+        (WebKit::WebNotificationClient::WebNotificationClient):
+        (WebKit::WebNotificationClient::~WebNotificationClient):
+        (WebKit::WebNotificationClient::show):
+        (WebKit::WebNotificationClient::cancel):
+        (WebKit::WebNotificationClient::notificationObjectDestroyed):
+        (WebKit::WebNotificationClient::requestPermission):
+        (WebKit::WebNotificationClient::cancelRequestsForPermission):
+        (WebKit::WebNotificationClient::checkPermission):
+
+        * WebProcess/WebPage/WebPage.h: Added WebNotificationClient as one of its page clients.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage): Set the notification client to WebNotificationClient.
+        * WebProcess/WebProcess.h: Added WebNotificationManager.
+        (WebKit::WebProcess::notificationManager):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::WebProcess): Initialize notificaton manager.
+
 2011-11-28  Brent Fulgham  <bfulgham@webkit.org>
 
         [WinCairo] Unreviewed build corrections.

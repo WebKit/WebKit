@@ -346,6 +346,9 @@ QWebPagePrivate::QWebPagePrivate(QWebPage *qq)
     else
         pageClients.geolocationClient = new GeolocationClientQt(q);
 #endif
+#if ENABLE(NOTIFICATIONS)
+    pageClients.notificationClient = NotificationPresenterClientQt::notificationPresenter();
+#endif
     page = new Page(pageClients);
 
     // By default each page is put into their own unique page group, which affects popup windows

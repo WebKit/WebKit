@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -34,51 +35,48 @@
 #include <wtf/PassRefPtr.h>
 #include "VoidCallback.h"
 
-#if ENABLE(NOTIFICATIONS)
-
 namespace WebCore {
 
-    class Document;
-    class Notification;
-    class KURL;
-    class ScriptExecutionContext;
+class Document;
+class Notification;
+class KURL;
+class ScriptExecutionContext;
 
-    class NotificationPresenter {
+class NotificationPresenter {
 
-    public:
-        enum Permission {
-            PermissionAllowed, // User has allowed notifications
-            PermissionNotAllowed, // User has not yet allowed
-            PermissionDenied // User has explicitly denied permission
-        };
-
-        virtual ~NotificationPresenter() {}
-
-        // Requests that a notification be shown.
-        virtual bool show(Notification*) = 0;
-
-        // Requests that a notification that has already been shown be canceled.
-        virtual void cancel(Notification*) = 0;
-
-        // Informs the presenter that a Notification object has been destroyed
-        // (such as by a page transition).  The presenter may continue showing
-        // the notification, but must not attempt to call the event handlers.
-        virtual void notificationObjectDestroyed(Notification*) = 0;
-
-        // Requests user permission to show desktop notifications from a particular
-        // script context. The callback parameter should be run when the user has
-        // made a decision.
-        virtual void requestPermission(ScriptExecutionContext*, PassRefPtr<VoidCallback>) = 0;
-
-        // Cancel all outstanding requests for the ScriptExecutionContext
-        virtual void cancelRequestsForPermission(ScriptExecutionContext*) = 0;
-
-        // Checks the current level of permission.
-        virtual Permission checkPermission(ScriptExecutionContext*) = 0;
+public:
+    enum Permission {
+        PermissionAllowed, // User has allowed notifications
+        PermissionNotAllowed, // User has not yet allowed
+        PermissionDenied // User has explicitly denied permission
     };
 
-} // namespace WebCore
+    // Requests that a notification be shown.
+    virtual bool show(Notification*) = 0;
 
-#endif // ENABLE(NOTIFICATIONS)
+    // Requests that a notification that has already been shown be canceled.
+    virtual void cancel(Notification*) = 0;
+
+    // Informs the presenter that a Notification object has been destroyed
+    // (such as by a page transition). The presenter may continue showing
+    // the notification, but must not attempt to call the event handlers.
+    virtual void notificationObjectDestroyed(Notification*) = 0;
+
+    // Requests user permission to show desktop notifications from a particular
+    // script context. The callback parameter should be run when the user has
+    // made a decision.
+    virtual void requestPermission(ScriptExecutionContext*, PassRefPtr<VoidCallback>) = 0;
+
+    // Cancel all outstanding requests for the ScriptExecutionContext
+    virtual void cancelRequestsForPermission(ScriptExecutionContext*) = 0;
+
+    // Checks the current level of permission.
+    virtual Permission checkPermission(ScriptExecutionContext*) = 0;
+
+protected:
+    virtual ~NotificationPresenter() { }
+};
+
+} // namespace WebCore
 
 #endif // NotificationPresenter_h

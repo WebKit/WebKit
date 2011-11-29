@@ -699,19 +699,19 @@
 				>
 			</File>
 			<File
-				RelativePath="..\Shared\WebImage.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\Shared\WebImage.h"
-				>
-			</File>
-			<File
 				RelativePath="..\Shared\WebHitTestResult.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\Shared\WebHitTestResult.h"
+				>
+			</File>
+			<File
+				RelativePath="..\Shared\WebImage.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\Shared\WebImage.h"
 				>
 			</File>
 			<File
@@ -854,19 +854,19 @@
 					>
 				</File>
 				<File
-					RelativePath="..\Shared\API\c\WKConnectionRef.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\Shared\API\c\WKConnectionRef.h"
-					>
-				</File>
-				<File
 					RelativePath="..\Shared\API\c\win\WKCertificateInfoWin.cpp"
 					>
 				</File>
 				<File
 					RelativePath="..\Shared\API\c\win\WKCertificateInfoWin.h"
+					>
+				</File>
+				<File
+					RelativePath="..\Shared\API\c\WKConnectionRef.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\Shared\API\c\WKConnectionRef.h"
 					>
 				</File>
 				<File
@@ -914,11 +914,11 @@
 					>
 				</File>
 				<File
-					RelativePath="..\Shared\API\c\WKGeometry.h"
+					RelativePath="..\Shared\API\c\WKGeometry.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\Shared\API\c\WKGeometry.cpp"
+					RelativePath="..\Shared\API\c\WKGeometry.h"
 					>
 				</File>
 				<File
@@ -1862,6 +1862,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\WebProcess\WebCoreSupport\WebNotificationClient.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\WebProcess\WebCoreSupport\WebNotificationClient.h"
+					>
+				</File>
+				<File
 					RelativePath="..\WebProcess\WebCoreSupport\WebPlatformStrategies.cpp"
 					>
 				</File>
@@ -2682,6 +2690,18 @@
 					</File>
 				</Filter>
 			</Filter>
+			<Filter
+				Name="Notifications (User)"
+				>
+				<File
+					RelativePath="..\WebProcess\Notifications\WebNotificationManager.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\WebProcess\Notifications\WebNotificationManager.h"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="UIProcess"
@@ -3039,6 +3059,34 @@
 				>
 			</File>
 			<File
+				RelativePath="..\UIProcess\WebNotification.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\UIProcess\WebNotification.h"
+				>
+			</File>
+			<File
+				RelativePath="..\UIProcess\WebNotificationManagerProxy.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\UIProcess\WebNotificationManagerProxy.h"
+				>
+			</File>
+			<File
+				RelativePath="..\UIProcess\WebNotificationManagerProxy.messages.in"
+				>
+			</File>
+			<File
+				RelativePath="..\UIProcess\WebNotificationProvider.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\UIProcess\WebNotificationProvider.h"
+				>
+			</File>
+			<File
 				RelativePath="..\UIProcess\WebOpenPanelResultListenerProxy.cpp"
 				>
 			</File>
@@ -3305,19 +3353,19 @@
 						>
 					</File>
 					<File
-						RelativePath="..\UIProcess\API\C\WKHitTestResult.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\UIProcess\API\C\WKHitTestResult.h"
-						>
-					</File>
-					<File
 						RelativePath="..\UIProcess\API\C\WKGrammarDetail.cpp"
 						>
 					</File>
 					<File
 						RelativePath="..\UIProcess\API\C\WKGrammarDetail.h"
+						>
+					</File>
+					<File
+						RelativePath="..\UIProcess\API\C\WKHitTestResult.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\UIProcess\API\C\WKHitTestResult.h"
 						>
 					</File>
 					<File
@@ -3362,6 +3410,26 @@
 					</File>
 					<File
 						RelativePath="..\UIProcess\API\C\WKNavigationData.h"
+						>
+					</File>
+					<File
+						RelativePath="..\UIProcess\API\C\WKNotification.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\UIProcess\API\C\WKNotification.h"
+						>
+					</File>
+					<File
+						RelativePath="..\UIProcess\API\C\WKNotificationManager.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\UIProcess\API\C\WKNotificationManager.h"
+						>
+					</File>
+					<File
+						RelativePath="..\UIProcess\API\C\WKNotificationProvider.h"
 						>
 					</File>
 					<File
@@ -4208,6 +4276,14 @@
 			</File>
 			<File
 				RelativePath="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\WebMediaCacheManagerProxyMessages.h"
+				>
+			</File>
+			<File
+				RelativePath="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\WebNotificationManagerProxyMessageReceiver.cpp"
+				>
+			</File>
+			<File
+				RelativePath="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\WebNotificationManagerProxyMessages.h"
 				>
 			</File>
 			<File

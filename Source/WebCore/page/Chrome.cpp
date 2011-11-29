@@ -508,13 +508,6 @@ void Chrome::scheduleAnimation()
 }
 #endif
 
-#if ENABLE(NOTIFICATIONS)
-NotificationPresenter* Chrome::notificationPresenter() const
-{
-    return m_client->notificationPresenter();
-}
-#endif
-
 // --------
 
 #if ENABLE(DASHBOARD_SUPPORT)

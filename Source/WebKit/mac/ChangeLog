@@ -1,3 +1,25 @@
+2011-11-28  Jon Lee  <jonlee@apple.com>
+
+        Create skeleton framework for notifications support in WK2
+        https://bugs.webkit.org/show_bug.cgi?id=73253
+        <rdar://problem/10356943>
+
+        Reviewed by Sam Weinig.
+
+        * Configurations/FeatureDefines.xcconfig: Split out ENABLE_NOTIFICATIONS based on platform.
+
+        * WebCoreSupport/WebNotificationClient.h: Added.
+        (WebNotificationClient::webView):
+        * WebCoreSupport/WebNotificationClient.mm: Added. Implemented as stubs for now.
+        (WebNotificationClient::WebNotificationClient):
+        (WebNotificationClient::show):
+        (WebNotificationClient::cancel):
+        (WebNotificationClient::notificationObjectDestroyed):
+        (WebNotificationClient::requestPermission):
+        (WebNotificationClient::cancelRequestsForPermission):
+        (WebNotificationClient::checkPermission):
+        * WebView/WebView.mm: Set PageClient's notification client to an instance of this stubbed class.
+
 2011-11-28  Adam Roben  <aroben@apple.com>
 
         Properly retain the OS X version string
