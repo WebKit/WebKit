@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../../js-test-resources/js-test-pre.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<script type="text/javascript">
+description("WebSocket: Hixie76 binary frames should be handled correctly even if frame header is split into multiple TCP packets.");
+
+window.jsTestIsAsync = true;
+
+var ws = new WebSocket("ws://localhost:8880/websocket/tests/hixie76/split-binary-frame-header");
+var errorCount = 0;
+
+ws.onopen = function()
+{
+    debug("Connected.");
+};
+
+ws.onmessage = function(messageEvent)
+{
+    testFailed("Should not receive message but received: \"" + messageEvent.data + "\"");
+};
+
+ws.onerror = function()
+{
+    debug("Error occurred.");
+    errorCount += 1;
+};
+
+var closeEvent;
+
+ws.onclose = function(event)
+{
+    debug("Closed.");
+    closeEvent = event;
+    shouldBeTrue("closeEvent.wasClean");
+    shouldEvaluateTo("errorCount", 1);
+
+    finishJSTest();
+};
+</script>
+<script src="../../../../js-test-resources/js-test-post.js"></script>
+</body>
+</html>

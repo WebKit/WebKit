@@ -759,6 +759,7 @@ bool WebSocketChannel::processFrameHixie76()
     if ((frameByte & 0x80) == 0x80) {
         size_t length = 0;
         bool errorFrame = false;
+        bool lengthFinished = false;
         while (p < end) {
             if (length > numeric_limits<size_t>::max() / 128) {
                 LOG(Network, "frame length overflow %lu", static_cast<unsigned long>(length));
@@ -781,9 +782,13 @@ bool WebSocketChannel::processFrameHixie76()
             }
             length = newLength;
             ++p;
-            if (!(msgByte & 0x80))
+            if (!(msgByte & 0x80)) {
+                lengthFinished = true;
                 break;
+            }
         }
+        if (!errorFrame && !lengthFinished)
+            return false;
         if (p + length < p) {
             LOG(Network, "frame buffer pointer wrap %p+%lu->%p", p, static_cast<unsigned long>(length), p + length);
             errorFrame = true;

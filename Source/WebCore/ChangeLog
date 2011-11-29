@@ -1,3 +1,16 @@
+2011-11-28  Yuta Kitamura  <yutak@chromium.org>
+
+        WebSocket: Split Hixie76 length-prefixed frames aren't handled correctly
+        https://bugs.webkit.org/show_bug.cgi?id=68522
+
+        Reviewed by Kent Tamura.
+
+        Test: http/tests/websocket/tests/hixie76/split-binary-frame-header.html
+
+        * websockets/WebSocketChannel.cpp:
+        (WebCore::WebSocketChannel::processFrameHixie76):
+        Do not consume the data if the length field is not finished.
+
 2011-11-28  Stephen White  <senorblanco@chromium.org>
 
         [chromium] Fix SVG filters when running in accelerated drawing mode.
