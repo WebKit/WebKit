@@ -4,25 +4,25 @@ layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
     RenderSVGPath {rect} at (3,6) size 379x78 [stroke={[type=SOLID] [color=#000000] [stroke width=3.00]}] [fill={[type=SOLID] [color=#C0C0C0]}] [x=5.00] [y=7.50] [width=375.00] [height=75.00]
     RenderSVGPath {rect} at (3,111) size 379x78 [stroke={[type=SOLID] [color=#000000] [stroke width=3.00]}] [fill={[type=SOLID] [color=#C0C0C0]}] [x=5.00] [y=112.50] [width=375.00] [height=75.00]
-    RenderSVGContainer {g} at (10,10) size 370x175 [transform={m=((1.50,0.00)(0.00,1.50)) t=(0.00,0.00)}]
-      RenderSVGPath {circle} at (10,10) size 70x70 [stroke={[type=SOLID] [color=#000000] [stroke width=5.00]}] [fill={[type=SOLID] [color=#800080]}] [cx=30.00] [cy=30.00] [r=20.00]
-      RenderSVGPath {circle} at (10,115) size 70x70 [stroke={[type=SOLID] [color=#000000] [stroke width=5.00]}] [fill={[type=SOLID] [color=#800080]}] [cx=30.00] [cy=100.00] [r=20.00]
+    RenderSVGContainer {g} at (11,11) size 368x173 [transform={m=((1.50,0.00)(0.00,1.50)) t=(0.00,0.00)}]
+      RenderSVGPath {circle} at (11,11) size 68x68 [stroke={[type=SOLID] [color=#000000] [stroke width=5.00]}] [fill={[type=SOLID] [color=#800080]}] [cx=30.00] [cy=30.00] [r=20.00]
+      RenderSVGPath {circle} at (11,116) size 68x68 [stroke={[type=SOLID] [color=#000000] [stroke width=5.00]}] [fill={[type=SOLID] [color=#800080]}] [cx=30.00] [cy=100.00] [r=20.00]
       RenderSVGHiddenContainer {g} at (0,0) size 0x0
-        RenderSVGPath {circle} at (85,10) size 70x70 [stroke={[type=SOLID] [color=#000000] [stroke width=5.00]}] [fill={[type=SOLID] [color=#008000]}] [cx=80.00] [cy=30.00] [r=20.00]
-      RenderSVGPath {circle} at (85,115) size 70x70 [stroke={[type=SOLID] [color=#000000] [stroke width=5.00]}] [fill={[type=SOLID] [color=#008000]}] [cx=80.00] [cy=100.00] [r=20.00]
-      RenderSVGPath {circle} at (160,115) size 70x70 [stroke={[type=SOLID] [color=#000000] [stroke width=5.00]}] [fill={[type=SOLID] [color=#FF0000]}] [cx=130.00] [cy=100.00] [r=20.00]
-      RenderSVGHiddenContainer {g} at (0,0) size 0x0
-        RenderSVGHiddenContainer {g} at (0,0) size 0x0
-          RenderSVGPath {circle} at (235,10) size 70x70 [stroke={[type=SOLID] [color=#000000] [stroke width=5.00]}] [fill={[type=SOLID] [color=#0000FF]}] [cx=180.00] [cy=30.00] [r=20.00]
-      RenderSVGPath {circle} at (235,115) size 70x70 [stroke={[type=SOLID] [color=#000000] [stroke width=5.00]}] [fill={[type=SOLID] [color=#0000FF]}] [cx=180.00] [cy=100.00] [r=20.00]
+        RenderSVGPath {circle} at (86,11) size 68x68 [stroke={[type=SOLID] [color=#000000] [stroke width=5.00]}] [fill={[type=SOLID] [color=#008000]}] [cx=80.00] [cy=30.00] [r=20.00]
+      RenderSVGPath {circle} at (86,116) size 68x68 [stroke={[type=SOLID] [color=#000000] [stroke width=5.00]}] [fill={[type=SOLID] [color=#008000]}] [cx=80.00] [cy=100.00] [r=20.00]
+      RenderSVGPath {circle} at (161,116) size 68x68 [stroke={[type=SOLID] [color=#000000] [stroke width=5.00]}] [fill={[type=SOLID] [color=#FF0000]}] [cx=130.00] [cy=100.00] [r=20.00]
       RenderSVGHiddenContainer {g} at (0,0) size 0x0
         RenderSVGHiddenContainer {g} at (0,0) size 0x0
-          RenderSVGPath {circle} at (235,10) size 70x70 [stroke={[type=SOLID] [color=#000000] [stroke width=5.00]}] [fill={[type=SOLID] [color=#FFFF00]}] [cx=180.00] [cy=30.00] [r=20.00]
-      RenderSVGPath {circle} at (235,115) size 70x70 [stroke={[type=SOLID] [color=#000000] [stroke width=5.00]}] [fill={[type=SOLID] [color=#FFFF00]}] [cx=180.00] [cy=100.00] [r=20.00]
-      RenderSVGContainer {g} at (310,10) size 70x70
-        RenderSVGPath {circle} at (310,10) size 70x70 [stroke={[type=SOLID] [color=#000000] [stroke width=5.00]}] [fill={[type=SOLID] [color=#00FFFF]}] [cx=230.00] [cy=30.00] [r=20.00]
-      RenderSVGContainer {g} at (310,115) size 70x70
-        RenderSVGPath {circle} at (310,115) size 70x70 [stroke={[type=SOLID] [color=#000000] [stroke width=5.00]}] [fill={[type=SOLID] [color=#00FFFF]}] [cx=230.00] [cy=100.00] [r=20.00]
+          RenderSVGPath {circle} at (236,11) size 68x68 [stroke={[type=SOLID] [color=#000000] [stroke width=5.00]}] [fill={[type=SOLID] [color=#0000FF]}] [cx=180.00] [cy=30.00] [r=20.00]
+      RenderSVGPath {circle} at (236,116) size 68x68 [stroke={[type=SOLID] [color=#000000] [stroke width=5.00]}] [fill={[type=SOLID] [color=#0000FF]}] [cx=180.00] [cy=100.00] [r=20.00]
+      RenderSVGHiddenContainer {g} at (0,0) size 0x0
+        RenderSVGHiddenContainer {g} at (0,0) size 0x0
+          RenderSVGPath {circle} at (236,11) size 68x68 [stroke={[type=SOLID] [color=#000000] [stroke width=5.00]}] [fill={[type=SOLID] [color=#FFFF00]}] [cx=180.00] [cy=30.00] [r=20.00]
+      RenderSVGPath {circle} at (236,116) size 68x68 [stroke={[type=SOLID] [color=#000000] [stroke width=5.00]}] [fill={[type=SOLID] [color=#FFFF00]}] [cx=180.00] [cy=100.00] [r=20.00]
+      RenderSVGContainer {g} at (311,11) size 68x68
+        RenderSVGPath {circle} at (311,11) size 68x68 [stroke={[type=SOLID] [color=#000000] [stroke width=5.00]}] [fill={[type=SOLID] [color=#00FFFF]}] [cx=230.00] [cy=30.00] [r=20.00]
+      RenderSVGContainer {g} at (311,116) size 68x68
+        RenderSVGPath {circle} at (311,116) size 68x68 [stroke={[type=SOLID] [color=#000000] [stroke width=5.00]}] [fill={[type=SOLID] [color=#00FFFF]}] [cx=230.00] [cy=100.00] [r=20.00]
     RenderSVGText {text} at (385,25) size 42x19 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 42x19
         chunk 1 text run 1 at (385.00,40.00) startOffset 0 endOffset 7 width 42.00: "display"
