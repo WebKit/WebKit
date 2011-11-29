@@ -29,7 +29,7 @@
   <div class="divider"></div> 
   <div id="secondRegion" class="region"></div> 
   <div class="article"> 
-    mnopqr mnopqr <span id="testSpan">m</span>nopqr mnopqr mnopqr mnopqr
+    mnopqr mnopqr <span id="testSpan">m</span>nopqr mnopqr
   </div>
   <p class="description">The two regions on either side of the divider should each have two text lines.</p>
   <p class="description">There should be no text line split between the regions.</p>
@@ -39,7 +39,7 @@
 
 <script>
   if (window.layoutTestController)
-    layoutTestController.dumpAsText(true);
+    layoutTestController.dumpAsText();
     
   var testElement = document.getElementById("testSpan")
   var testRect = testElement.getBoundingClientRect();
