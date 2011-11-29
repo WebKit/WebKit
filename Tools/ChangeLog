@@ -1,3 +1,15 @@
+2011-11-29  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        [Qt] Don't hard-code the list of WebKit2 generated sources
+
+        The generated sources are... wait for it... generated. So
+        use the generator itself to figure out which sources we need
+        to compile.
+
+        Reviewed by Simon Hausmann.
+
+        * qmake/mkspecs/features/default_post.prf:
+
 2011-11-29  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Add a method to detect 'make dist' errors without running 'make dist'

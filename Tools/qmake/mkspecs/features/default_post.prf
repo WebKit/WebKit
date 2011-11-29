@@ -98,20 +98,26 @@ contains(TEMPLATE, derived) {
     for(generator, GENERATORS) {
         isEqual($${generator}.add_output_to_sources, false): next()
 
-        isEmpty($${generator}.output_function) {
-            prependEach($${generator}.output, $${GENERATED_SOURCES_DESTDIR}/)
-        }
-
         output = $$eval($${generator}.output)
         input = $$eval($${generator}.input)
-        input = $$eval($$input)
+        input_files = $$eval($$input)
 
-        for(file, input) {
-            base = $$basename(file)
-            base ~= s/\\..+//
-            newfile = $$replace(output,\\$\\{QMAKE_FILE_BASE\\}, $$base)
+        isEmpty($${generator}.output_function) {
+            prependEach(output, $${GENERATED_SOURCES_DESTDIR}/)
 
-            SOURCES += $$newfile
+            for(input_file, input_files) {
+                base = $$basename(input_file)
+                base ~= s/\\..+//
+                output_file = $$replace(output,\\$\\{QMAKE_FILE_BASE\\}, $$base)
+
+                SOURCES += $$output_file
+            }
+        } else {
+            function = $$eval($${generator}.output_function)
+            for(input_file, input_files) {
+                eval(output_file = \$\$$$function\($$input_file\))
+                SOURCES += $$output_file
+            }
         }
 
         prependEach($${generator}.extra_sources, $${GENERATED_SOURCES_DESTDIR}/)

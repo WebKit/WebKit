@@ -20,86 +20,6 @@ DESTDIR = $$WEBKIT2_DESTDIR
 
 QT += declarative
 
-WEBKIT2_GENERATED_HEADERS = \
-    $$WEBKIT2_GENERATED_SOURCES_DIR/AuthenticationManagerMessages.h \
-    $$WEBKIT2_GENERATED_SOURCES_DIR/DownloadProxyMessages.h \
-    $$WEBKIT2_GENERATED_SOURCES_DIR/LayerTreeHostMessages.h \
-    $$WEBKIT2_GENERATED_SOURCES_DIR/LayerTreeHostProxyMessages.h \
-    $$WEBKIT2_GENERATED_SOURCES_DIR/NPObjectMessageReceiverMessages.h \
-    $$WEBKIT2_GENERATED_SOURCES_DIR/PluginControllerProxyMessages.h \
-    $$WEBKIT2_GENERATED_SOURCES_DIR/PluginProcessConnectionMessages.h \
-    $$WEBKIT2_GENERATED_SOURCES_DIR/PluginProcessMessages.h \
-    $$WEBKIT2_GENERATED_SOURCES_DIR/PluginProcessProxyMessages.h \
-    $$WEBKIT2_GENERATED_SOURCES_DIR/PluginProxyMessages.h \
-    $$WEBKIT2_GENERATED_SOURCES_DIR/WebApplicationCacheManagerMessages.h \
-    $$WEBKIT2_GENERATED_SOURCES_DIR/WebApplicationCacheManagerProxyMessages.h \
-    $$WEBKIT2_GENERATED_SOURCES_DIR/WebContextMessages.h \
-    $$WEBKIT2_GENERATED_SOURCES_DIR/WebCookieManagerMessages.h \
-    $$WEBKIT2_GENERATED_SOURCES_DIR/WebCookieManagerProxyMessages.h \
-    $$WEBKIT2_GENERATED_SOURCES_DIR/WebDatabaseManagerMessages.h \
-    $$WEBKIT2_GENERATED_SOURCES_DIR/WebDatabaseManagerProxyMessages.h \
-    $$WEBKIT2_GENERATED_SOURCES_DIR/WebFullScreenManagerMessages.h \
-    $$WEBKIT2_GENERATED_SOURCES_DIR/WebFullScreenManagerProxyMessages.h \
-    $$WEBKIT2_GENERATED_SOURCES_DIR/WebGeolocationManagerMessages.h \
-    $$WEBKIT2_GENERATED_SOURCES_DIR/WebGeolocationManagerProxyMessages.h \
-    $$WEBKIT2_GENERATED_SOURCES_DIR/WebIconDatabaseMessages.h \
-    $$WEBKIT2_GENERATED_SOURCES_DIR/WebIconDatabaseProxyMessages.h \
-    $$WEBKIT2_GENERATED_SOURCES_DIR/WebInspectorMessages.h \
-    $$WEBKIT2_GENERATED_SOURCES_DIR/WebInspectorProxyMessages.h \
-    $$WEBKIT2_GENERATED_SOURCES_DIR/WebKeyValueStorageManagerMessages.h \
-    $$WEBKIT2_GENERATED_SOURCES_DIR/WebKeyValueStorageManagerProxyMessages.h \
-    $$WEBKIT2_GENERATED_SOURCES_DIR/WebMediaCacheManagerMessages.h \
-    $$WEBKIT2_GENERATED_SOURCES_DIR/WebMediaCacheManagerProxyMessages.h \
-    $$WEBKIT2_GENERATED_SOURCES_DIR/WebNotificationManagerProxyMessages.h \
-    $$WEBKIT2_GENERATED_SOURCES_DIR/WebPageMessages.h \
-    $$WEBKIT2_GENERATED_SOURCES_DIR/WebPageProxyMessages.h \
-    $$WEBKIT2_GENERATED_SOURCES_DIR/WebProcessConnectionMessages.h \
-    $$WEBKIT2_GENERATED_SOURCES_DIR/WebProcessMessages.h \
-    $$WEBKIT2_GENERATED_SOURCES_DIR/WebProcessProxyMessages.h \
-    $$WEBKIT2_GENERATED_SOURCES_DIR/WebResourceCacheManagerMessages.h \
-    $$WEBKIT2_GENERATED_SOURCES_DIR/WebResourceCacheManagerProxyMessages.h
-
-WEBKIT2_GENERATED_SOURCES = \
-    $$WEBKIT2_GENERATED_SOURCES_DIR/AuthenticationManagerMessageReceiver.cpp \
-    $$WEBKIT2_GENERATED_SOURCES_DIR/DownloadProxyMessageReceiver.cpp \
-    $$WEBKIT2_GENERATED_SOURCES_DIR/DrawingAreaMessageReceiver.cpp \
-    $$WEBKIT2_GENERATED_SOURCES_DIR/DrawingAreaProxyMessageReceiver.cpp \
-    $$WEBKIT2_GENERATED_SOURCES_DIR/LayerTreeHostMessageReceiver.cpp \
-    $$WEBKIT2_GENERATED_SOURCES_DIR/LayerTreeHostProxyMessageReceiver.cpp \
-    $$WEBKIT2_GENERATED_SOURCES_DIR/NPObjectMessageReceiverMessageReceiver.cpp \
-    $$WEBKIT2_GENERATED_SOURCES_DIR/PluginControllerProxyMessageReceiver.cpp \
-    $$WEBKIT2_GENERATED_SOURCES_DIR/PluginProcessMessageReceiver.cpp \
-    $$WEBKIT2_GENERATED_SOURCES_DIR/PluginProcessConnectionMessageReceiver.cpp \
-    $$WEBKIT2_GENERATED_SOURCES_DIR/PluginProcessProxyMessageReceiver.cpp \
-    $$WEBKIT2_GENERATED_SOURCES_DIR/PluginProxyMessageReceiver.cpp \
-    $$WEBKIT2_GENERATED_SOURCES_DIR/WebApplicationCacheManagerMessageReceiver.cpp \
-    $$WEBKIT2_GENERATED_SOURCES_DIR/WebApplicationCacheManagerProxyMessageReceiver.cpp \
-    $$WEBKIT2_GENERATED_SOURCES_DIR/WebContextMessageReceiver.cpp \
-    $$WEBKIT2_GENERATED_SOURCES_DIR/WebCookieManagerMessageReceiver.cpp \
-    $$WEBKIT2_GENERATED_SOURCES_DIR/WebCookieManagerProxyMessageReceiver.cpp \
-    $$WEBKIT2_GENERATED_SOURCES_DIR/WebDatabaseManagerMessageReceiver.cpp \
-    $$WEBKIT2_GENERATED_SOURCES_DIR/WebDatabaseManagerProxyMessageReceiver.cpp \
-    $$WEBKIT2_GENERATED_SOURCES_DIR/WebFullScreenManagerMessageReceiver.cpp \
-    $$WEBKIT2_GENERATED_SOURCES_DIR/WebFullScreenManagerProxyMessageReceiver.cpp \
-    $$WEBKIT2_GENERATED_SOURCES_DIR/WebGeolocationManagerMessageReceiver.cpp \
-    $$WEBKIT2_GENERATED_SOURCES_DIR/WebGeolocationManagerProxyMessageReceiver.cpp \
-    $$WEBKIT2_GENERATED_SOURCES_DIR/WebIconDatabaseMessageReceiver.cpp \
-    $$WEBKIT2_GENERATED_SOURCES_DIR/WebIconDatabaseProxyMessageReceiver.cpp \
-    $$WEBKIT2_GENERATED_SOURCES_DIR/WebInspectorMessageReceiver.cpp \
-    $$WEBKIT2_GENERATED_SOURCES_DIR/WebInspectorProxyMessageReceiver.cpp \
-    $$WEBKIT2_GENERATED_SOURCES_DIR/WebKeyValueStorageManagerMessageReceiver.cpp \
-    $$WEBKIT2_GENERATED_SOURCES_DIR/WebKeyValueStorageManagerProxyMessageReceiver.cpp \
-    $$WEBKIT2_GENERATED_SOURCES_DIR/WebMediaCacheManagerMessageReceiver.cpp \
-    $$WEBKIT2_GENERATED_SOURCES_DIR/WebMediaCacheManagerProxyMessageReceiver.cpp \
-    $$WEBKIT2_GENERATED_SOURCES_DIR/WebNotificationManagerProxyMessageReceiver.cpp \
-    $$WEBKIT2_GENERATED_SOURCES_DIR/WebPageMessageReceiver.cpp \
-    $$WEBKIT2_GENERATED_SOURCES_DIR/WebPageProxyMessageReceiver.cpp \
-    $$WEBKIT2_GENERATED_SOURCES_DIR/WebProcessConnectionMessageReceiver.cpp \
-    $$WEBKIT2_GENERATED_SOURCES_DIR/WebProcessMessageReceiver.cpp \
-    $$WEBKIT2_GENERATED_SOURCES_DIR/WebProcessProxyMessageReceiver.cpp \
-    $$WEBKIT2_GENERATED_SOURCES_DIR/WebResourceCacheManagerMessageReceiver.cpp \
-    $$WEBKIT2_GENERATED_SOURCES_DIR/WebResourceCacheManagerProxyMessageReceiver.cpp
-
 HEADERS += \
     Platform/CoreIPC/ArgumentDecoder.h \
     Platform/CoreIPC/ArgumentEncoder.h \
@@ -425,8 +345,7 @@ HEADERS += \
     WebProcess/WebPage/WebPageGroupProxy.h \
     WebProcess/WebProcess.h \
     WebProcess/qt/QtBuiltinBundle.h \
-    WebProcess/qt/QtBuiltinBundlePage.h \
-    $$WEBKIT2_GENERATED_HEADERS
+    WebProcess/qt/QtBuiltinBundlePage.h
 
 SOURCES += \
     Platform/CoreIPC/ArgumentCoders.cpp \
@@ -768,8 +687,7 @@ SOURCES += \
     WebProcess/qt/QtBuiltinBundle.cpp \
     WebProcess/qt/QtBuiltinBundlePage.cpp \
     WebProcess/qt/WebProcessMainQt.cpp \
-    WebProcess/qt/WebProcessQt.cpp \
-    $$WEBKIT2_GENERATED_SOURCES
+    WebProcess/qt/WebProcessQt.cpp
 
 mac: {
     INCLUDEPATH += \
@@ -806,3 +724,5 @@ contains(DEFINES, ENABLE_GEOLOCATION=1): QT += location
 plugin_backend_xlib {
     DEFINES += XP_UNIX
 }
+
+include(DerivedSources.pri)
