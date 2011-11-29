@@ -1,3 +1,43 @@
+2011-11-28  David Grogan  <dgrogan@chromium.org>
+
+        WebWorkerRunLoop wrapper around WorkerRunLoop
+        https://bugs.webkit.org/show_bug.cgi?id=71757
+
+        This allows the embedder to post tasks to webcore-created worker
+        threads.  WebWorkerRunLoop is a thin wrapper that just holds a
+        WorkerRunLoop*.  As such, it is not heap allocated and can be copied.
+
+        Reviewed by Darin Fisher.
+
+        * WebKit.gyp: Added WebWorkerRunLoop.{cpp,h}
+
+        * public/WebWorkerRunLoop.h: Added. Interface the embedder will use to
+        post Tasks to worker threads created in WebCore.
+        (WebKit::WebWorkerRunLoop::Task::~Task):
+        (WebKit::operator==): These are the operators necessary to allow
+        WebWorkerRunLoop to be used as a key in a std::map using the value of
+        the underlying WebCore::WorkerRunLoop* for the meaningful comparisons.
+        (WebKit::operator<):
+
+        * public/platform/WebKitPlatformSupport.h: Stubs for the embedder to
+        implement.
+        (WebKit::WebKitPlatformSupport::didStartWorkerRunLoop):
+        (WebKit::WebKitPlatformSupport::didStopWorkerRunLoop):
+
+        * src/PlatformSupport.cpp: Wrap incoming WorkerRunLoop objects in
+        WebWorkerRunLoopImpl objects, forward them to WebKitPlatformSupport.
+        (WebCore::PlatformSupport::didStartWorkerRunLoop):
+        (WebCore::PlatformSupport::didStopWorkerRunLoop):
+
+        * src/WebWorkerRunLoop.cpp: Added.
+        (WebKit::WebWorkerRunLoop::WebWorkerRunLoop): Store incoming
+        WorkerRunLoop pointer.
+        (WebKit::WebWorkerRunLoop::postTask): Wrap incoming Task in
+        ScriptExecutionContext::Task, post to stored WorkerRunLoop.
+        (WebKit::WebWorkerRunLoop::equals): Support for the operators mentioned
+        above.
+        (WebKit::WebWorkerRunLoop::lessThan): Ditto.
+
 2011-11-29  Roland Steiner  <rolandsteiner@chromium.org>
 
         <style scoped>: add ENABLE(STYLE_SCOPED) flag to WebKit

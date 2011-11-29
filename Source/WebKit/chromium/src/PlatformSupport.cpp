@@ -61,6 +61,7 @@
 #include "WebViewClient.h"
 #include "WebViewImpl.h"
 #include "WebWorkerClientImpl.h"
+#include "WebWorkerRunLoop.h"
 
 #if USE(CG)
 #include <CoreGraphics/CGContext.h>
@@ -1097,6 +1098,16 @@ bool PlatformSupport::popupsAllowed(NPP npp)
 {
     // FIXME: Give the embedder a way to control this.
     return false;
+}
+
+void PlatformSupport::didStartWorkerRunLoop(WorkerRunLoop* loop)
+{
+    webKitPlatformSupport()->didStartWorkerRunLoop(WebWorkerRunLoop(loop));
+}
+
+void PlatformSupport::didStopWorkerRunLoop(WorkerRunLoop* loop)
+{
+    webKitPlatformSupport()->didStopWorkerRunLoop(WebWorkerRunLoop(loop));
 }
 
 #if ENABLE(WORKERS)

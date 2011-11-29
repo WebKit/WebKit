@@ -72,6 +72,7 @@ class WebStorageNamespace; // FIXME: Does this belong in platform?
 class WebThemeEngine;
 class WebThread;
 class WebURLLoader;
+class WebWorkerRunLoop;
 
 class WebKitPlatformSupport {
 public:
@@ -333,6 +334,9 @@ public:
 
     // May return null if WebRTC functionality is not avaliable or out of resources.
     virtual WebPeerConnectionHandler* createPeerConnectionHandler(WebPeerConnectionHandlerClient*) { return 0; }
+
+    virtual void didStartWorkerRunLoop(const WebWorkerRunLoop&) { }
+    virtual void didStopWorkerRunLoop(const WebWorkerRunLoop&) { }
 
 protected:
     ~WebKitPlatformSupport() { }

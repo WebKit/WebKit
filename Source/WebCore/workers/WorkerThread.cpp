@@ -136,6 +136,9 @@ void* WorkerThread::workerThread()
            m_workerContext->script()->forbidExecution();
         }
     }
+#if PLATFORM(CHROMIUM)
+    PlatformSupport::didStartWorkerRunLoop(&m_runLoop);
+#endif
 
     WorkerScriptController* script = m_workerContext->script();
 #if ENABLE(INSPECTOR)
@@ -148,6 +151,10 @@ void* WorkerThread::workerThread()
     m_startupData.clear();
 
     runEventLoop();
+
+#if PLATFORM(CHROMIUM)
+    PlatformSupport::didStopWorkerRunLoop(&m_runLoop);
+#endif
 
     ThreadIdentifier threadID = m_threadID;
 
