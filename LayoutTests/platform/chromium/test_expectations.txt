@@ -3840,9 +3840,6 @@ BUGWK72904 XP : http/tests/media/video-served-as-text.html = PASS TEXT
 BUGCR105025 MAC CPU GPU : fast/canvas/webgl/css-webkit-canvas.html = IMAGE
 BUGCR105025 MAC CPU GPU : fast/canvas/webgl/css-webkit-canvas-repaint.html = IMAGE
 
-// New test; needs new baselines.
-BUG_SENORBLANCO : platform/chromium/compositing/accelerated-drawing/svg-filters.html = MISSING
-
 BUGWK73227 : fast/dom/clone-node-style.html = CRASH PASS
 BUGWK73250 DEBUG : fast/block/child-not-removed-from-parent-lineboxes-crash.html = CRASH PASS
 
