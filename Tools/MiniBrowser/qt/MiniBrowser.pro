@@ -22,12 +22,7 @@ HEADERS += \
 TARGET = MiniBrowser
 DESTDIR = $${ROOT_BUILD_DIR}/bin
 
-CONFIG += qtwebkit
-
-# FIXME: When webkit-private works let's use it.
-load(javascriptcore)
-load(webcore)
-load(webkit2)
+CONFIG += qtwebkit qtwebkit-private
 
 QT += network declarative widgets
 macx: QT += xml

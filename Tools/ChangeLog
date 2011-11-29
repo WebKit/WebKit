@@ -1,3 +1,11 @@
+2011-11-29  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        [Qt] Remove use of internal headers in the MiniBrowser
+
+        Reviewed by Simon Hausmann.
+
+        * MiniBrowser/qt/MiniBrowser.pro:
+
 2011-11-29  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Fix debug-shlib build without webkit2
