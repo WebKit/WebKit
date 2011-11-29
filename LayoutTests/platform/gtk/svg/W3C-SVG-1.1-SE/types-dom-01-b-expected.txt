@@ -22,7 +22,7 @@ layer at (0,0) size 480x360
               chunk 1 text run 12 at (264.78,150.00) startOffset 27 endOffset 33 width 64.48: "GLocat"
               chunk 1 text run 13 at (329.24,150.00) startOffset 33 endOffset 37 width 37.80: "able"
           RenderSVGText {text} at (100,114) size 298x20 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 298x20
+            RenderSVGInlineText {#text} at (0,0) size 298x21
               chunk 1 text run 1 at (100.00,130.00) startOffset 0 endOffset 6 width 68.92: "Some o"
               chunk 1 text run 2 at (168.72,130.00) startOffset 6 endOffset 7 width 5.56: "t"
               chunk 1 text run 3 at (174.22,130.00) startOffset 7 endOffset 12 width 40.02: "her t"

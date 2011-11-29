@@ -5,7 +5,7 @@ layer at (0,0) size 480x360
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
     RenderSVGContainer {g} at (10,18) size 382x202
       RenderSVGText {text} at (10,18) size 382x14 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 382x14
+        RenderSVGInlineText {#text} at (0,0) size 382x15
           chunk 1 text run 1 at (10.00,30.00) startOffset 0 endOffset 1 width 8.55: "T"
           chunk 1 text run 2 at (17.22,30.00) startOffset 1 endOffset 3 width 14.78: "es"
           chunk 1 text run 3 at (31.97,30.00) startOffset 3 endOffset 6 width 11.68: "t t"

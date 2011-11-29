@@ -50,7 +50,7 @@ layer at (0,0) size 480x360
               chunk 1 text run 4 at (137.25,120.00) startOffset 13 endOffset 17 width 30.02: "t #5"
           RenderSVGPath {rect} at (19,154) size 17x17 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=125.00] [width=15.00] [height=15.00]
           RenderSVGText {text} at (20,125) size 148x18 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 148x19
+            RenderSVGInlineText {#text} at (0,0) size 148x18
               chunk 1 text run 1 at (20.00,140.00) startOffset 0 endOffset 1 width 12.01: "P"
               chunk 1 text run 2 at (31.50,140.00) startOffset 1 endOffset 11 width 87.05: "assed subt"
               chunk 1 text run 3 at (118.30,140.00) startOffset 11 endOffset 13 width 19.01: "es"
