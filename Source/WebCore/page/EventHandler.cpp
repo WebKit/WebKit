@@ -928,7 +928,7 @@ DragSourceAction EventHandler::updateDragSourceActionsAllowed() const
     if (!view)
         return DragSourceActionNone;
 
-    return page->dragController()->delegateDragSourceAction(view->contentsToWindow(m_mouseDownPos));
+    return page->dragController()->delegateDragSourceAction(view->contentsToRootView(m_mouseDownPos));
 }
 #endif // ENABLE(DRAG_SUPPORT)
     

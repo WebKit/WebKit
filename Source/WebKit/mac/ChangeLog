@@ -1,5 +1,16 @@
 2011-11-15  Anders Carlsson  <andersca@apple.com>
 
+        DragClient::dragSourceActionMaskForPoint should use root view coordinates
+        https://bugs.webkit.org/show_bug.cgi?id=72409
+
+        Reviewed by Sam Weinig.
+
+        * WebCoreSupport/WebDragClient.mm:
+        (WebDragClient::dragSourceActionMaskForPoint):
+        Use -[WebView _convertPointFromRootView:] to convert the point to the web view coordinate system.
+
+2011-11-15  Anders Carlsson  <andersca@apple.com>
+
         EditorClient::showCorrectionPanel should pass the string bounding box in root view coordinates
         https://bugs.webkit.org/show_bug.cgi?id=72408
 

@@ -59,8 +59,7 @@ namespace WebCore {
         virtual void willPerformDragSourceAction(DragSourceAction, const IntPoint&, Clipboard*) = 0;
         virtual DragDestinationAction actionMaskForDrag(DragData*) = 0;
 
-        // We work in window rather than view coordinates here.
-        virtual DragSourceAction dragSourceActionMaskForPoint(const IntPoint& windowPoint) = 0;
+        virtual DragSourceAction dragSourceActionMaskForPoint(const IntPoint& rootViewPoint) = 0;
         
         virtual void startDrag(DragImageRef dragImage, const IntPoint& dragImageOrigin, const IntPoint& eventPos, Clipboard*, Frame*, bool linkDrag = false) = 0;
         

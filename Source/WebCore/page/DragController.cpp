@@ -375,9 +375,9 @@ bool DragController::tryDocumentDrag(DragData* dragData, DragDestinationAction a
     return false;
 }
 
-DragSourceAction DragController::delegateDragSourceAction(const IntPoint& windowPoint)
+DragSourceAction DragController::delegateDragSourceAction(const IntPoint& rootViewPoint)
 {
-    m_dragSourceAction = m_client->dragSourceActionMaskForPoint(windowPoint);
+    m_dragSourceAction = m_client->dragSourceActionMaskForPoint(rootViewPoint);
     return m_dragSourceAction;
 }
 
