@@ -71,7 +71,7 @@ public:
     virtual void setFrontend(InspectorFrontend*);
     virtual void clearFrontend();
     virtual void restore();
-    virtual void getCapabilities(InspectorArray*);
+    virtual void getAgentCapabilities(InspectorArray*);
 
     void didClearMainFrameWindowObject();
 

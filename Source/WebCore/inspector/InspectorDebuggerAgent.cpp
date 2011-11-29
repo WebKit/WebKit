@@ -99,7 +99,7 @@ bool InspectorDebuggerAgent::enabled()
     return m_state->getBoolean(DebuggerAgentState::debuggerEnabled);
 }
 
-void InspectorDebuggerAgent::getCapabilities(InspectorArray* capabilities)
+void InspectorDebuggerAgent::getAgentCapabilities(InspectorArray* capabilities)
 {
     if (scriptDebugServer().canSetScriptSource())
         capabilities->pushString(InspectorFrontend::Debugger::capabilitySetScriptSource);

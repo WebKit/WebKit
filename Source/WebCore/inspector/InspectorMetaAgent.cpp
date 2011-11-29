@@ -60,7 +60,7 @@ void InspectorMetaAgent::getCapabilities(ErrorString*, const RefPtr<InspectorArr
         RefPtr<InspectorObject> domainDescriptor = InspectorObject::create();
         domainDescriptor->setString("domainName", agent->name());
         RefPtr<InspectorArray> agentCapabilities = InspectorArray::create();
-        agent->getCapabilities(agentCapabilities.get());
+        agent->getAgentCapabilities(agentCapabilities.get());
         domainDescriptor->setArray("capabilities", agentCapabilities);
         (*capabilities)->pushObject(domainDescriptor);
     }
