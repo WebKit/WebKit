@@ -2343,8 +2343,8 @@ bool EventHandler::sendContextMenuEventForKey()
 
     m_frame->view()->setCursor(pointerCursor());
 
-    IntPoint position = view->contentsToWindow(location);
-    IntPoint globalPosition = view->contentsToScreen(IntRect(location, IntSize())).location();
+    IntPoint position = view->contentsToRootView(location);
+    IntPoint globalPosition = view->hostWindow()->rootViewToScreen(IntRect(position, IntSize())).location();
 
     Node* targetNode = doc->focusedNode();
     if (!targetNode)
