@@ -1,5 +1,11 @@
 2011-11-28  Oliver Hunt  <oliver@apple.com>
 
+        Fix windows build.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+
+2011-11-28  Oliver Hunt  <oliver@apple.com>
+
         Fix gyp build
 
         * JavaScriptCore.gypi:

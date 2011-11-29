@@ -1,5 +1,6 @@
 EXPORTS
 
+    ??0ArrayBufferView@WTF@@IAE@V?$PassRefPtr@VArrayBuffer@WTF@@@1@I@Z
     ??0CString@WTF@@QAE@PBD@Z
     ??0CString@WTF@@QAE@PBDI@Z
     ??0Collator@WTF@@QAE@PBD@Z
@@ -25,6 +26,7 @@ EXPORTS
     ??0UString@JSC@@QAE@PB_WI@Z
     ??0WTFThreadData@WTF@@QAE@XZ
     ??0YarrPattern@Yarr@JSC@@QAE@ABVUString@2@_N1PAPBD@Z
+    ??1ArrayBufferView@WTF@@UAE@XZ
     ??1ClientData@JSGlobalData@JSC@@UAE@XZ
     ??1Collator@WTF@@QAE@XZ
     ??1Debugger@JSC@@UAE@XZ
@@ -246,6 +248,7 @@ EXPORTS
     ?msToYear@WTF@@YAHN@Z
     ?name@InternalFunction@JSC@@QAEABVUString@2@PAVExecState@2@@Z
     ?name@JSFunction@JSC@@QAEABVUString@2@PAVExecState@2@@Z
+    ?neuter@ArrayBufferView@WTF@@MAEXXZ
     ?newUninitialized@CString@WTF@@SA?AV12@IAAPAD@Z
     ?nullptr@@3Vnullptr_t@std@@A
     ?number@String@WTF@@SA?AV12@NII@Z
