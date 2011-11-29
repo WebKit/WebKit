@@ -29,21 +29,21 @@ layer at (0,0) size 800x600
     RenderSVGText {text} at (0,153) size 689x22 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 689x22
         chunk 1 text run 1 at (0.00,170.00) startOffset 0 endOffset 88 width 689.00: "You should see the same pattern again, just a bit scaled, by the viewBox of an inner svg"
-    RenderSVGViewportContainer {svg} at (91,180) size 572x122
-      RenderSVGContainer {g} at (91,180) size 122x122 [transform={m=((0.71,0.71)(-0.71,0.71)) t=(0.00,0.00)}]
+    RenderSVGViewportContainer {svg} at (91,181) size 571x121
+      RenderSVGContainer {g} at (91,181) size 121x121 [transform={m=((0.71,0.71)(-0.71,0.71)) t=(0.00,0.00)}]
         RenderSVGText {text} at (100,71) size 76x37 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 76x37
             chunk 1 text run 1 at (100.00,100.00) startOffset 0 endOffset 4 width 76.00: "TEST"
-      RenderSVGContainer {g} at (241,180) size 122x122 [transform={m=((1.00,0.00)(0.00,1.00)) t=(100.00,0.00)}]
-        RenderSVGContainer {g} at (241,180) size 122x122 [transform={m=((0.71,0.71)(-0.71,0.71)) t=(0.00,0.00)}]
+      RenderSVGContainer {g} at (241,181) size 121x121 [transform={m=((1.00,0.00)(0.00,1.00)) t=(100.00,0.00)}]
+        RenderSVGContainer {g} at (241,181) size 121x121 [transform={m=((0.71,0.71)(-0.71,0.71)) t=(0.00,0.00)}]
           RenderSVGText {text} at (100,71) size 76x37 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 76x37
               chunk 1 text run 1 at (100.00,100.00) startOffset 0 endOffset 4 width 76.00: "TEST"
-      RenderSVGContainer {g} at (391,180) size 122x122 [transform={m=((0.71,0.71)(-0.71,0.71)) t=(200.00,0.00)}]
+      RenderSVGContainer {g} at (391,181) size 121x121 [transform={m=((0.71,0.71)(-0.71,0.71)) t=(200.00,0.00)}]
         RenderSVGText {text} at (100,71) size 76x37 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 76x37
             chunk 1 text run 1 at (100.00,100.00) startOffset 0 endOffset 4 width 76.00: "TEST"
-      RenderSVGContainer {g} at (541,180) size 122x122 [transform={m=((0.71,0.71)(-0.71,0.71)) t=(300.00,0.00)}]
+      RenderSVGContainer {g} at (541,181) size 121x121 [transform={m=((0.71,0.71)(-0.71,0.71)) t=(300.00,0.00)}]
         RenderSVGText {text} at (100,71) size 76x37 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 76x37
             chunk 1 text run 1 at (100.00,100.00) startOffset 0 endOffset 4 width 76.00: "TEST"

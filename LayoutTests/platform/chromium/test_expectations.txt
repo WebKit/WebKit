@@ -882,9 +882,6 @@ BUGCR10296 LEOPARD : fast/text/international/bidi-menulist.html = FAIL
 // Maybe need to be rebaselined - should be looked at in more detail.
 BUGCR10296 LINUX : svg/batik/text/textLength.svg = FAIL
 
-// No anti-aliasing on the text.
-BUGCR10298 LINUX : svg/custom/use-on-disallowed-foreign-object-3.svg = FAIL
-
 // The failures listed below have never passed in Chromium and need to be
 // investigated, categorized, and (one hopes) fixed.
 
@@ -1114,7 +1111,6 @@ BUGCR105305 CPU : svg/css/text-gradient-shadow.svg = IMAGE
 BUGCR105305 CPU : svg/custom/gradient-stroke-width.svg = IMAGE
 BUGCR105305 CPU : svg/custom/nested-pattern-boundingBoxModeContent.svg = IMAGE
 BUGCR105305 CPU : svg/custom/pattern-with-transformation.svg = IMAGE
-BUGCR105305 CPU : svg/custom/text-rotated-gradient.svg = IMAGE
 BUGCR105305 CPU : svg/text/text-gradient-positioning.svg = IMAGE
 BUGCR105305 CPU : svg/transforms/text-with-pattern-inside-transformed-html.xhtml = IMAGE
 BUGCR105305 : svg/text/selection-background-color.xhtml = PASS CRASH IMAGE
@@ -3184,7 +3180,6 @@ BUGCR84032 WIN CPU : fast/dom/object-plugin-hides-properties.html = PASS TIMEOUT
 WONTFIX LINUX DEBUG SKIP : inspector/profiler/cpu-profiler-profiling.html = TIMEOUT PASS
 
 BUGCR84093 VISTA : http/tests/history/redirect-200-refresh-2-seconds.pl = PASS TIMEOUT
-BUGCR84095 VISTA : svg/custom/use-detach.svg = PASS TIMEOUT
 
 BUGWK66320 SNOWLEOPARD RELEASE : svg/wicd/test-rightsizing-a.xhtml = PASS IMAGE+TEXT
 BUGWK66320 DEBUG : svg/wicd/test-rightsizing-a.xhtml = PASS IMAGE IMAGE+TEXT

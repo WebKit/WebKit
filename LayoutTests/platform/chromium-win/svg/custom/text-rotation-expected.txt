@@ -24,7 +24,7 @@ layer at (0,0) size 800x600
         RenderSVGInlineText {#text} at (0,0) size 122x57
           chunk 1 text run 1 at (25.00,200.00) startOffset 0 endOffset 5 width 122.00: "More "
         RenderSVGTSpan {tspan} at (0,0) size 171x71
-          RenderSVGInlineText {#text} at (118,1) size 171x71
+          RenderSVGInlineText {#text} at (118,1) size 170x70
             chunk 1 text run 1 at (147.00,200.00) startOffset 0 endOffset 1 width 17.00: "r"
             chunk 1 text run 2 at (164.00,200.00) startOffset 1 endOffset 2 width 26.00: "o"
             chunk 1 text run 3 at (190.00,200.00) startOffset 2 endOffset 3 width 15.00: "t"
