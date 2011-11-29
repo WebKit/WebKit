@@ -30,9 +30,9 @@
 #include "FloatQuad.h"
 
 #include <algorithm>
+#include <limits>
 
-using std::max;
-using std::min;
+using namespace std;
 
 namespace WebCore {
 
@@ -85,10 +85,15 @@ FloatRect FloatQuad::boundingBox() const
     return FloatRect(left, top, right - left, bottom - top);
 }
 
+static inline bool withinEpsilon(float a, float b)
+{
+    return fabs(a - b) < numeric_limits<float>::epsilon();
+}
+
 bool FloatQuad::isRectilinear() const
 {
-    return (m_p1.x() == m_p2.x() && m_p2.y() == m_p3.y() && m_p3.x() == m_p4.x() && m_p4.y() == m_p1.y())
-        || (m_p1.y() == m_p2.y() && m_p2.x() == m_p3.x() && m_p3.y() == m_p4.y() && m_p4.x() == m_p1.x());
+    return (withinEpsilon(m_p1.x(), m_p2.x()) && withinEpsilon(m_p2.y(), m_p3.y()) && withinEpsilon(m_p3.x(), m_p4.x()) && withinEpsilon(m_p4.y(), m_p1.y()))
+        || (withinEpsilon(m_p1.y(), m_p2.y()) && withinEpsilon(m_p2.x(), m_p3.x()) && withinEpsilon(m_p3.y(), m_p4.y()) && withinEpsilon(m_p4.x(), m_p1.x()));
 }
 
 bool FloatQuad::containsPoint(const FloatPoint& p) const
