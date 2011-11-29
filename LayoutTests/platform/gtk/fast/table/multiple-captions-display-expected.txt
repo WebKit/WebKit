@@ -59,7 +59,7 @@ layer at (8,80) size 120x53
       text run at (15,0) width 98: "PASS: Caption"
       text run at (4,18) width 120: "with opacity 0.5 in"
       text run at (14,36) width 100: "one of its child."
-layer at (72,134) size 450x18
-  RenderBlock (positioned) {a} at (72,134) size 450x18
+layer at (8,134) size 450x18
+  RenderBlock (positioned) {a} at (8,134) size 450x18
     RenderText {#text} at (0,0) size 450x17
       text run at (0,0) width 450: "PASS: Caption with opacity 0.4 and fixed position of one of the child."
