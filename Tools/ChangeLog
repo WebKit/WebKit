@@ -1,3 +1,24 @@
+2011-11-28  Ojan Vafai  <ojan@chromium.org>
+
+        Some of the results.json files have results/times entries at the directory level
+        https://bugs.webkit.org/show_bug.cgi?id=73261
+
+        Reviewed by Tony Chang.
+
+        This is just a bug that got introduced in a temporary push of the results server.
+        This patch repairs the broken files. After all the bots have cycled, we can simplify
+        this code to just assert that results/times are not at the directory level.
+
+        Also, when catching exceptions, log the full stacktrace.
+
+        * TestResultServer/model/jsonresults.py:
+        (_is_directory):
+        (JsonResults._load_json):
+        (JsonResults._merge_tests):
+        (JsonResults.merge):
+        * TestResultServer/model/jsonresults_unittest.py:
+        (JsonResultsTest.test_merge_directory_hierarchy_extra_results_and_times):
+
 2011-11-28  Tony Chang  <tony@chromium.org>
 
         ews bots should pass --force to update-webkit-chromium

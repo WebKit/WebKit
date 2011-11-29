@@ -29,6 +29,8 @@
 from datetime import datetime
 from django.utils import simplejson
 import logging
+import sys
+import traceback
 
 from model.testfile import TestFile
 
@@ -79,6 +81,22 @@ def _trie_json_tests(tests):
     return trie
 
 
+def _is_directory(subtree):
+    # FIXME: Some data got corrupted and has results/times at the directory level.
+    # Once the data is fixed, this should assert that the directory level does not have
+    # results or times and just return "JSON_RESULTS_RESULTS not in subtree".
+    if JSON_RESULTS_RESULTS not in subtree:
+        return True
+
+    for key in subtree:
+        if key not in (JSON_RESULTS_RESULTS, JSON_RESULTS_TIMES):
+            del subtree[JSON_RESULTS_RESULTS]
+            del subtree[JSON_RESULTS_TIMES]
+            return True
+
+    return False
+
+
 class JsonResults(object):
     @classmethod
     def _strip_prefix_suffix(cls, data):
@@ -100,9 +118,9 @@ class JsonResults(object):
 
         try:
             return simplejson.loads(json_results_str)
-        except Exception, err:
+        except:
             logging.debug(json_results_str)
-            logging.error("Failed to load json results: %s", str(err))
+            logging.error("Failed to load json results: %s", traceback.print_exception(*sys.exc_info()))
             return None
 
     @classmethod
@@ -142,6 +160,14 @@ class JsonResults(object):
 
     @classmethod
     def _merge_tests(cls, aggregated_json, incremental_json, num_runs):
+        # FIXME: Some data got corrupted and has results/times at the directory level.
+        # Once the data is fixe, this should assert that the directory level does not have
+        # results or times and just return "JSON_RESULTS_RESULTS not in subtree".
+        if JSON_RESULTS_RESULTS in aggregated_json:
+            del aggregated_json[JSON_RESULTS_RESULTS]
+        if JSON_RESULTS_TIMES in aggregated_json:
+            del aggregated_json[JSON_RESULTS_TIMES]
+
         all_tests = set(aggregated_json.iterkeys())
         if incremental_json:
             all_tests |= set(incremental_json.iterkeys())
@@ -152,7 +178,7 @@ class JsonResults(object):
                 continue
 
             incremental_sub_result = incremental_json[test_name] if incremental_json and test_name in incremental_json else None
-            if JSON_RESULTS_RESULTS not in aggregated_json[test_name]:
+            if _is_directory(aggregated_json[test_name]):
                 cls._merge_tests(aggregated_json[test_name], incremental_sub_result, num_runs)
                 continue
 
@@ -275,8 +301,8 @@ class JsonResults(object):
         logging.info("Merging json results...")
         try:
             cls._merge_json(aggregated_json[builder], incremental_json[builder], num_runs)
-        except Exception, err:
-            logging.error("Failed to merge json results: %s", str(err))
+        except:
+            logging.error("Failed to merge json results: %s", traceback.print_exception(*sys.exc_info()))
             return None
 
         aggregated_json[JSON_RESULTS_VERSION_KEY] = JSON_RESULTS_HIERARCHICAL_VERSION

@@ -574,6 +574,32 @@ class JsonResultsTest(unittest.TestCase):
                                "times": [[101,0]]}}},
              "version": 4})
 
+    # FIXME: Some data got corrupted and has results and times at the directory level.
+    # Once we've purged this from all the data, we should throw an error on this case.
+    def test_merge_directory_hierarchy_extra_results_and_times(self):
+        self._test_merge(
+            # Aggregated results
+            {"builds": ["2", "1"],
+             "tests": {"baz": {
+                            "003.html": {
+                                "results": [[25,"F"]],
+                                "times": [[25,0]]}},
+                        "results": [[25,"F"]],
+                        "times": [[25,0]]}},
+             # Incremental results
+             {"builds": ["3"],
+             "tests": {"baz": {
+                            "003.html": {
+                                "results": [[1,"F"]],
+                                "times": [[1,0]]}}}},
+             # Expected results
+             {"builds": ["3", "2", "1"],
+             "tests": {"baz": {
+                            "003.html": {
+                                "results": [[26,"F"]],
+                                "times": [[26,0]]}}},
+              "version": 4})
+
     def test_merge_build_directory_hierarchy(self):
         self._test_merge(
             # Aggregated results
