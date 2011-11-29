@@ -9,13 +9,13 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x38
-        RenderText {#text} at (0,0) size 749x38
-          text run at (0,0) width 749: "When a user puts the caret at the very beginning of a blockquote and hits backspace, if the line before the blockquote is"
-          text run at (0,19) width 275: "empty, the blockquote should just move up."
-      RenderBlock {DIV} at (0,54) size 784x19
-        RenderBlock {BLOCKQUOTE} at (0,0) size 784x19 [color=#0000FF] [border: (3px solid #0000FF)]
-          RenderInline {SPAN} at (0,0) size 21x19
-            RenderText {#text} at (28,0) size 21x19
-              text run at (28,0) width 21: "foo"
+      RenderBlock {P} at (0,0) size 784x36
+        RenderText {#text} at (0,0) size 764x35
+          text run at (0,0) width 764: "When a user puts the caret at the very beginning of a blockquote and hits backspace, if the line before the blockquote is"
+          text run at (0,18) width 280: "empty, the blockquote should just move up."
+      RenderBlock {DIV} at (0,52) size 784x18
+        RenderBlock {BLOCKQUOTE} at (0,0) size 784x18 [color=#0000FF] [border: (3px solid #0000FF)]
+          RenderInline {SPAN} at (0,0) size 22x17
+            RenderText {#text} at (28,0) size 22x17
+              text run at (28,0) width 22: "foo"
 caret: position 0 of child 0 {#text} of child 0 {SPAN} of child 0 {BLOCKQUOTE} of child 2 {DIV} of body

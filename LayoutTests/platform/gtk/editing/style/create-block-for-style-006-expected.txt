@@ -1,0 +1,30 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of BODY > HTML > #document to 6 of BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 784x82 [border: (2px solid #0000FF)]
+        RenderText {#text} at (14,14) size 724x53
+          text run at (14,14) width 718: "Should see \"bar\" and \"baz\" centered in their own red boxes. The \"foo\" line"
+          text run at (731,14) width 7: " "
+          text run at (14,41) width 445: "should be in its own red box, but not centered."
+      RenderBlock {DIV} at (0,106) size 784x165
+        RenderBlock {DIV} at (0,0) size 784x55 [border: (2px solid #FF0000)]
+          RenderText {#text} at (14,14) size 32x26
+            text run at (14,14) width 32: "foo"
+        RenderBlock {DIV} at (0,55) size 784x55 [border: (2px solid #FF0000)]
+          RenderText {#text} at (376,14) size 32x26
+            text run at (376,14) width 32: "bar"
+        RenderBlock {DIV} at (0,110) size 784x55 [border: (2px solid #FF0000)]
+          RenderText {#text} at (375,14) size 34x26
+            text run at (375,14) width 34: "baz"
+selection start: position 1 of child 0 {#text} of child 3 {DIV} of child 3 {DIV} of body
+selection end:   position 2 of child 0 {#text} of child 5 {DIV} of child 3 {DIV} of body

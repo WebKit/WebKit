@@ -12,63 +12,63 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 148x167 [border: (2px solid #FF0000)]
-        RenderBlock {UL} at (14,14) size 120x139
-          RenderListItem {LI} at (0,0) size 120x21
-            RenderListMarker at (-14,5) size 5x13: bullet
-            RenderInline (generated) at (0,0) size 12x24
-              RenderText {#text} at (5,-4) size 12x24
-                text run at (5,-4) width 12: "\x{B7} "
+      RenderBlock {DIV} at (0,0) size 148x159 [border: (2px solid #FF0000)]
+        RenderBlock {UL} at (14,14) size 120x131
+          RenderListItem {LI} at (0,0) size 120x20
+            RenderListMarker at (-14,6) size 5x11: bullet
+            RenderInline (generated) at (0,0) size 12x22
+              RenderText {#text} at (5,-3) size 12x22
+                text run at (5,-3) width 12: "\x{B7} "
             RenderText {#text} at (0,0) size 0x0
-            RenderInline {A} at (0,0) size 49x13 [color=#0000EE]
-              RenderText {#text} at (17,5) size 49x13
-                text run at (17,5) width 49: "Appetizers"
-          RenderListItem {LI} at (0,21) size 120x21
-            RenderListMarker at (-14,5) size 5x13: bullet
-            RenderInline (generated) at (0,0) size 12x24
-              RenderText {#text} at (5,-4) size 12x24
-                text run at (5,-4) width 12: "\x{B7} "
+            RenderInline {A} at (0,0) size 48x11 [color=#0000EE]
+              RenderText {#text} at (16,6) size 48x11
+                text run at (16,6) width 48: "Appetizers"
+          RenderListItem {LI} at (0,20) size 120x20
+            RenderListMarker at (-14,6) size 5x11: bullet
+            RenderInline (generated) at (0,0) size 12x22
+              RenderText {#text} at (5,-3) size 12x22
+                text run at (5,-3) width 12: "\x{B7} "
             RenderText {#text} at (0,0) size 0x0
-            RenderInline {A} at (0,0) size 75x13 [color=#0000EE]
-              RenderText {#text} at (17,5) size 75x13
-                text run at (17,5) width 75: "Soups & Salads"
-          RenderListItem {LI} at (0,42) size 120x34
-            RenderListMarker at (-14,5) size 5x13: bullet
-            RenderInline (generated) at (0,0) size 12x24
-              RenderText {#text} at (5,-4) size 12x24
-                text run at (5,-4) width 12: "\x{B7} "
+            RenderInline {A} at (0,0) size 72x11 [color=#0000EE]
+              RenderText {#text} at (16,6) size 72x11
+                text run at (16,6) width 72: "Soups & Salads"
+          RenderListItem {LI} at (0,40) size 120x31
+            RenderListMarker at (-14,6) size 5x11: bullet
+            RenderInline (generated) at (0,0) size 12x22
+              RenderText {#text} at (5,-3) size 12x22
+                text run at (5,-3) width 12: "\x{B7} "
             RenderText {#text} at (0,0) size 0x0
-            RenderInline {A} at (0,0) size 70x26 [color=#0000EE]
-              RenderText {#text} at (17,5) size 70x26
-                text run at (17,5) width 66: "Sandwiches &"
-                text run at (83,5) width 3: " "
-                text run at (16,18) width 36: "Burgers"
-          RenderListItem {LI} at (0,76) size 120x21
-            RenderListMarker at (-14,5) size 5x13: bullet
-            RenderInline (generated) at (0,0) size 12x24
-              RenderText {#text} at (5,-4) size 12x24
-                text run at (5,-4) width 12: "\x{B7} "
+            RenderInline {A} at (0,0) size 67x22 [color=#0000EE]
+              RenderText {#text} at (16,6) size 67x22
+                text run at (16,6) width 64: "Sandwiches &"
+                text run at (79,6) width 4: " "
+                text run at (16,17) width 36: "Burgers"
+          RenderListItem {LI} at (0,71) size 120x20
+            RenderListMarker at (-14,6) size 5x11: bullet
+            RenderInline (generated) at (0,0) size 12x22
+              RenderText {#text} at (5,-3) size 12x22
+                text run at (5,-3) width 12: "\x{B7} "
             RenderText {#text} at (0,0) size 0x0
-            RenderInline {A} at (0,0) size 60x13 [color=#0000EE]
-              RenderText {#text} at (17,5) size 60x13
-                text run at (17,5) width 60: "Steak & Ribs"
-          RenderListItem {LI} at (0,97) size 120x21
-            RenderListMarker at (-14,5) size 5x13: bullet
-            RenderInline (generated) at (0,0) size 12x24
-              RenderText {#text} at (5,-4) size 12x24
-                text run at (5,-4) width 12: "\x{B7} "
+            RenderInline {A} at (0,0) size 58x11 [color=#0000EE]
+              RenderText {#text} at (16,6) size 58x11
+                text run at (16,6) width 58: "Steak & Ribs"
+          RenderListItem {LI} at (0,91) size 120x20
+            RenderListMarker at (-14,6) size 5x11: bullet
+            RenderInline (generated) at (0,0) size 12x22
+              RenderText {#text} at (5,-3) size 12x22
+                text run at (5,-3) width 12: "\x{B7} "
             RenderText {#text} at (0,0) size 0x0
-            RenderInline {A} at (0,0) size 40x13 [color=#0000EE]
-              RenderText {#text} at (17,5) size 40x13
-                text run at (17,5) width 40: "Seafood"
-          RenderListItem {LI} at (0,118) size 120x21
-            RenderListMarker at (-14,5) size 5x13: bullet
-            RenderInline (generated) at (0,0) size 12x24
-              RenderText {#text} at (5,-4) size 12x24
-                text run at (5,-4) width 12: "\x{B7} "
+            RenderInline {A} at (0,0) size 38x11 [color=#0000EE]
+              RenderText {#text} at (16,6) size 38x11
+                text run at (16,6) width 38: "Seafood"
+          RenderListItem {LI} at (0,111) size 120x20
+            RenderListMarker at (-14,6) size 5x11: bullet
+            RenderInline (generated) at (0,0) size 12x22
+              RenderText {#text} at (5,-3) size 12x22
+                text run at (5,-3) width 12: "\x{B7} "
             RenderText {#text} at (0,0) size 0x0
-            RenderInline {A} at (0,0) size 38x13 [color=#0000EE]
-              RenderText {#text} at (17,5) size 38x13
-                text run at (17,5) width 38: "Combos"
+            RenderInline {A} at (0,0) size 38x11 [color=#0000EE]
+              RenderText {#text} at (16,6) size 38x11
+                text run at (16,6) width 38: "Combos"
 selection start: position 0 of child 0 {#text} of child 1 {A} of child 1 {LI} of child 1 {UL} of child 1 {DIV} of body
 selection end:   position 5 of child 0 {#text} of child 1 {A} of child 7 {LI} of child 1 {UL} of child 1 {DIV} of body

@@ -17,18 +17,18 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584 [border: (2px solid #FF0000)]
-      RenderBlock {DIV} at (14,14) size 756x28
-        RenderInline {B} at (0,0) size 25x28
-          RenderText {#text} at (0,0) size 25x28
-            text run at (0,0) width 25: "on"
-        RenderInline {I} at (0,0) size 12x28
-          RenderText {#text} at (25,0) size 12x28
-            text run at (25,0) width 12: "o"
-      RenderBlock {DIV} at (14,42) size 756x28
-        RenderInline {B} at (0,0) size 54x28
-          RenderText {#text} at (0,0) size 54x28
+      RenderBlock {DIV} at (14,14) size 756x27
+        RenderInline {B} at (0,0) size 26x26
+          RenderText {#text} at (0,0) size 26x26
+            text run at (0,0) width 26: "on"
+        RenderInline {I} at (0,0) size 13x26
+          RenderText {#text} at (25,0) size 13x26
+            text run at (25,0) width 13: "o"
+      RenderBlock {DIV} at (14,41) size 756x27
+        RenderInline {B} at (0,0) size 54x26
+          RenderText {#text} at (0,0) size 54x26
             text run at (0,0) width 54: "three"
-        RenderInline {I} at (0,0) size 40x28
-          RenderText {#text} at (54,0) size 40x28
-            text run at (54,0) width 40: "four"
+        RenderInline {I} at (0,0) size 41x26
+          RenderText {#text} at (53,0) size 41x26
+            text run at (53,0) width 41: "four"
 caret: position 2 of child 0 {#text} of child 0 {B} of child 1 {DIV} of body

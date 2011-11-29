@@ -51,18 +51,18 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x137 [border: (2px solid #FF0000)]
-        RenderInline {SPAN} at (0,0) size 390x28
-          RenderText {#text} at (14,95) size 12x28
-            text run at (14,95) width 12: "x"
+        RenderInline {SPAN} at (0,0) size 390x26
+          RenderText {#text} at (14,96) size 12x26
+            text run at (14,96) width 12: "x"
           RenderImage {IMG} at (26,14) size 76x103
-          RenderText {#text} at (102,95) size 36x28
-            text run at (102,95) width 36: "xxx"
+          RenderText {#text} at (102,96) size 36x26
+            text run at (102,96) width 36: "xxx"
           RenderImage {IMG} at (138,14) size 76x103
-          RenderText {#text} at (214,95) size 36x28
-            text run at (214,95) width 36: "xxx"
-          RenderText {#text} at (250,95) size 42x28
-            text run at (250,95) width 42: " xxx"
+          RenderText {#text} at (214,96) size 36x26
+            text run at (214,96) width 36: "xxx"
+          RenderText {#text} at (250,96) size 42x26
+            text run at (250,96) width 42: " xxx"
           RenderImage {IMG} at (292,14) size 76x103
-          RenderText {#text} at (368,95) size 36x28
-            text run at (368,95) width 36: "xxx"
+          RenderText {#text} at (368,96) size 36x26
+            text run at (368,96) width 36: "xxx"
 caret: position 3 of child 7 {#text} of child 1 {SPAN} of child 1 {DIV} of body

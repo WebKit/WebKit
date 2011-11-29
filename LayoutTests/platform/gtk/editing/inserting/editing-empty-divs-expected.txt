@@ -42,45 +42,45 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x38
-        RenderText {#text} at (0,0) size 772x38
-          text run at (0,0) width 562: "This tests the ability to start editing in blocks that are visible, but have little or no content. "
-          text run at (562,0) width 210: "Each of the divs below should be"
-          text run at (0,19) width 135: "able to accept a caret."
-      RenderBlock {P} at (0,54) size 784x19
-        RenderText {#text} at (0,0) size 176x19
-          text run at (0,0) width 176: "This div contains some text."
-      RenderBlock {DIV} at (0,89) size 707x22 [border: (1px dotted #0000FF)]
-        RenderText {#text} at (1,1) size 38x19
-          text run at (1,1) width 38: "chello"
-      RenderBlock {P} at (0,127) size 784x19
-        RenderText {#text} at (0,0) size 186x19
-          text run at (0,0) width 186: "This div is completely empty."
-      RenderBlock {DIV} at (0,162) size 707x22 [border: (1px dotted #0000FF)]
-        RenderText {#text} at (1,1) size 7x19
-          text run at (1,1) width 7: "c"
-      RenderBlock {P} at (0,200) size 784x19
-        RenderText {#text} at (0,0) size 340x19
-          text run at (0,0) width 340: "This div contains some collapsable whitespace (a '\\n')."
-      RenderBlock {DIV} at (0,235) size 707x22 [border: (1px dotted #0000FF)]
-        RenderText {#text} at (1,1) size 7x19
-          text run at (1,1) width 7: "c"
+      RenderBlock {P} at (0,0) size 784x36
+        RenderText {#text} at (0,0) size 772x35
+          text run at (0,0) width 579: "This tests the ability to start editing in blocks that are visible, but have little or no content. "
+          text run at (578,0) width 194: "Each of the divs below should"
+          text run at (0,18) width 158: "be able to accept a caret."
+      RenderBlock {P} at (0,52) size 784x18
+        RenderText {#text} at (0,0) size 180x17
+          text run at (0,0) width 180: "This div contains some text."
+      RenderBlock {DIV} at (0,86) size 707x22 [border: (1px dotted #0000FF)]
+        RenderText {#text} at (1,1) size 40x17
+          text run at (1,1) width 40: "chello"
+      RenderBlock {P} at (0,124) size 784x18
+        RenderText {#text} at (0,0) size 191x17
+          text run at (0,0) width 191: "This div is completely empty."
+      RenderBlock {DIV} at (0,158) size 707x22 [border: (1px dotted #0000FF)]
+        RenderText {#text} at (1,1) size 8x17
+          text run at (1,1) width 8: "c"
+      RenderBlock {P} at (0,196) size 784x18
+        RenderText {#text} at (0,0) size 347x17
+          text run at (0,0) width 347: "This div contains some collapsable whitespace (a '\\n')."
+      RenderBlock {DIV} at (0,230) size 707x22 [border: (1px dotted #0000FF)]
+        RenderText {#text} at (1,1) size 8x17
+          text run at (1,1) width 8: "c"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,273) size 784x19
-        RenderText {#text} at (0,0) size 234x19
-          text run at (0,0) width 234: "This div contains a self-closing p tag."
-      RenderBlock {DIV} at (0,308) size 707x37 [border: (1px dotted #0000FF)]
-        RenderBlock (anonymous) at (1,1) size 705x19
-          RenderText {#text} at (0,0) size 7x19
-            text run at (0,0) width 7: "c"
-        RenderBlock {P} at (1,36) size 705x0
-      RenderBlock {P} at (0,361) size 784x19
-        RenderText {#text} at (0,0) size 720x19
-          text run at (0,0) width 720: "This div contains a self-closing p tag and some collapsable whitespace (two '\\n's before and after the self closing p."
-      RenderBlock {DIV} at (0,396) size 707x37 [border: (1px dotted #0000FF)]
-        RenderBlock (anonymous) at (1,1) size 705x19
-          RenderText {#text} at (0,0) size 7x19
-            text run at (0,0) width 7: "c"
+      RenderBlock {P} at (0,268) size 784x18
+        RenderText {#text} at (0,0) size 240x17
+          text run at (0,0) width 240: "This div contains a self-closing p tag."
+      RenderBlock {DIV} at (0,302) size 707x36 [border: (1px dotted #0000FF)]
+        RenderBlock (anonymous) at (1,1) size 705x18
+          RenderText {#text} at (0,0) size 8x17
+            text run at (0,0) width 8: "c"
+        RenderBlock {P} at (1,35) size 705x0
+      RenderBlock {P} at (0,354) size 784x18
+        RenderText {#text} at (0,0) size 736x17
+          text run at (0,0) width 736: "This div contains a self-closing p tag and some collapsable whitespace (two '\\n's before and after the self closing p."
+      RenderBlock {DIV} at (0,388) size 707x36 [border: (1px dotted #0000FF)]
+        RenderBlock (anonymous) at (1,1) size 705x18
+          RenderText {#text} at (0,0) size 8x17
+            text run at (0,0) width 8: "c"
           RenderText {#text} at (0,0) size 0x0
-        RenderBlock {P} at (1,36) size 705x0
+        RenderBlock {P} at (1,35) size 705x0
 caret: position 1 of child 0 {#text} of child 21 {DIV} of body

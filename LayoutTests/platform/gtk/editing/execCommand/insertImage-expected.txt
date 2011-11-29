@@ -12,13 +12,13 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock {P} at (0,0) size 784x38
-        RenderText {#text} at (0,0) size 748x38
-          text run at (0,0) width 306: "This is a test of execCommand(InsertImage, ...). "
-          text run at (306,0) width 442: "The first test passes execCommand a path to a valid image, the second"
-          text run at (0,19) width 369: "passes execCommand a path where no image should exist."
-      RenderBlock {DIV} at (0,54) size 784x103
+      RenderBlock {P} at (0,0) size 784x36
+        RenderText {#text} at (0,0) size 764x35
+          text run at (0,0) width 313: "This is a test of execCommand(InsertImage, ...). "
+          text run at (312,0) width 452: "The first test passes execCommand a path to a valid image, the second"
+          text run at (0,18) width 375: "passes execCommand a path where no image should exist."
+      RenderBlock {DIV} at (0,52) size 784x103
         RenderImage {IMG} at (0,0) size 76x103
-        RenderImage {IMG} at (76,83) size 20x20
-      RenderBlock {UL} at (0,173) size 784x0
+        RenderImage {IMG} at (76,99) size 4x4
+      RenderBlock {UL} at (0,171) size 784x0
 caret: position 1 of child 1 {IMG} of child 3 {DIV} of body

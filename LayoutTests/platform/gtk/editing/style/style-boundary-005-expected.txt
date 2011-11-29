@@ -32,38 +32,38 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x184 [border: (2px solid #0000FF)]
-        RenderBlock {DIV} at (14,14) size 756x56
-          RenderText {#text} at (0,0) size 67x28
-            text run at (0,0) width 67: "Tests: "
+      RenderBlock {DIV} at (0,0) size 784x179 [border: (2px solid #0000FF)]
+        RenderBlock {DIV} at (14,14) size 756x54
+          RenderText {#text} at (0,0) size 68x26
+            text run at (0,0) width 68: "Tests: "
           RenderBR {BR} at (0,0) size 0x0
-          RenderText {#text} at (0,28) size 698x28
-            text run at (0,28) width 698: "Pasting at style boundary does not crash or produce empty style span(s)."
-        RenderBlock {DIV} at (14,86) size 756x84
-          RenderBlock (anonymous) at (0,0) size 756x56
-            RenderText {#text} at (0,0) size 189x28
-              text run at (0,0) width 189: "Expected Results: "
-            RenderBR {BR} at (189,22) size 0x0
-            RenderText {#text} at (0,28) size 442x28
-              text run at (0,28) width 442: "Should see this content in the red box below: "
-            RenderBR {BR} at (442,50) size 0x0
-          RenderBlock {DIV} at (0,56) size 756x28
-            RenderText {#text} at (0,0) size 138x28
-              text run at (0,0) width 138: "one two three "
-            RenderInline {B} at (0,0) size 44x28
-              RenderText {#text} at (138,0) size 44x28
-                text run at (138,0) width 44: "four"
-            RenderText {#text} at (182,0) size 35x28
-              text run at (182,0) width 35: "one"
-      RenderBlock {DIV} at (0,208) size 784x23
-        RenderBlock {DIV} at (0,0) size 784x23 [border: (2px solid #FF0000)]
-          RenderText {#text} at (2,2) size 86x19
-            text run at (2,2) width 86: "one two three"
-          RenderInline {B} at (0,0) size 33x19
-            RenderText {#text} at (88,2) size 33x19
-              text run at (88,2) width 33: " four"
-          RenderText {#text} at (121,2) size 23x19
-            text run at (121,2) width 23: "one"
-        RenderBlock (anonymous) at (0,23) size 784x0
+          RenderText {#text} at (0,27) size 694x26
+            text run at (0,27) width 694: "Pasting at style boundary does not crash or produce empty style span(s)."
+        RenderBlock {DIV} at (14,84) size 756x81
+          RenderBlock (anonymous) at (0,0) size 756x54
+            RenderText {#text} at (0,0) size 190x26
+              text run at (0,0) width 190: "Expected Results: "
+            RenderBR {BR} at (189,21) size 1x0
+            RenderText {#text} at (0,27) size 438x26
+              text run at (0,27) width 438: "Should see this content in the red box below: "
+            RenderBR {BR} at (437,48) size 1x0
+          RenderBlock {DIV} at (0,54) size 756x27
+            RenderText {#text} at (0,0) size 137x26
+              text run at (0,0) width 137: "one two three "
+            RenderInline {B} at (0,0) size 45x26
+              RenderText {#text} at (136,0) size 45x26
+                text run at (136,0) width 45: "four"
+            RenderText {#text} at (180,0) size 36x26
+              text run at (180,0) width 36: "one"
+      RenderBlock {DIV} at (0,203) size 784x22
+        RenderBlock {DIV} at (0,0) size 784x22 [border: (2px solid #FF0000)]
+          RenderText {#text} at (2,2) size 88x17
+            text run at (2,2) width 88: "one two three"
+          RenderInline {B} at (0,0) size 34x17
+            RenderText {#text} at (89,2) size 34x17
+              text run at (89,2) width 34: " four"
+          RenderText {#text} at (122,2) size 24x17
+            text run at (122,2) width 24: "one"
+        RenderBlock (anonymous) at (0,22) size 784x0
           RenderText {#text} at (0,0) size 0x0
 caret: position 3 of child 2 {#text} of child 1 {DIV} of child 3 {DIV} of body

@@ -1,0 +1,38 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 3 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 1 of #text > B > DIV > DIV > BODY > HTML > #document to 1 of #text > B > DIV > DIV > BODY > HTML > #document toDOMRange:range from 2 of #text > B > DIV > DIV > BODY > HTML > #document to 2 of #text > B > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 784x152 [border: (2px solid #0000FF)]
+        RenderBlock {DIV} at (14,14) size 756x54
+          RenderText {#text} at (0,0) size 68x26
+            text run at (0,0) width 68: "Tests: "
+          RenderBR {BR} at (0,0) size 0x0
+          RenderText {#text} at (0,27) size 595x26
+            text run at (0,27) width 595: "Style checks performed on boundaries between style changes."
+        RenderBlock {DIV} at (14,84) size 756x54
+          RenderText {#text} at (0,0) size 190x26
+            text run at (0,0) width 190: "Expected Results: "
+          RenderBR {BR} at (189,21) size 1x0
+          RenderText {#text} at (0,27) size 438x26
+            text run at (0,27) width 438: "Should see this content in the red box below: "
+          RenderInline {B} at (0,0) size 27x26
+            RenderText {#text} at (437,27) size 27x26
+              text run at (437,27) width 27: "ab"
+          RenderText {#text} at (463,27) size 11x26
+            text run at (463,27) width 11: "c"
+      RenderBlock {DIV} at (0,176) size 784x31
+        RenderBlock {DIV} at (0,0) size 784x31 [border: (2px solid #FF0000)]
+          RenderInline {B} at (0,0) size 26x26
+            RenderText {#text} at (2,2) size 26x26
+              text run at (2,2) width 26: "ab"
+          RenderText {#text} at (27,2) size 11x26
+            text run at (27,2) width 11: "c"
+caret: position 2 of child 0 {#text} of child 0 {B} of child 1 {DIV} of child 3 {DIV} of body

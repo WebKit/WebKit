@@ -3,24 +3,24 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock {P} at (0,0) size 784x38
-        RenderText {#text} at (0,0) size 737x38
-          text run at (0,0) width 289: "This test for a bug in Insert{Un}OrderedList. "
-          text run at (289,0) width 448: "Inside an empty editable region, a new paragraph is added, then a list is"
-          text run at (0,19) width 53: "created. "
-          text run at (53,19) width 128: "The caret should be "
-        RenderInline {B} at (0,0) size 39x19
-          RenderText {#text} at (181,19) size 39x19
-            text run at (181,19) width 39: "inside"
-        RenderText {#text} at (220,19) size 123x19
-          text run at (220,19) width 123: " the empty list item."
-      RenderBlock {DIV} at (0,54) size 784x54
-        RenderBlock {DIV} at (0,0) size 784x19
-          RenderBR {BR} at (0,0) size 0x19
-        RenderBlock {DIV} at (0,35) size 784x19
-          RenderBlock {UL} at (0,0) size 784x19
-            RenderListItem {LI} at (40,0) size 744x19
-              RenderListMarker at (-18,0) size 7x19: bullet
-              RenderBR {BR} at (0,0) size 0x19
-          RenderBlock (anonymous) at (0,35) size 784x0
+      RenderBlock {P} at (0,0) size 784x36
+        RenderText {#text} at (0,0) size 751x35
+          text run at (0,0) width 294: "This test for a bug in Insert{Un}OrderedList. "
+          text run at (293,0) width 458: "Inside an empty editable region, a new paragraph is added, then a list is"
+          text run at (0,18) width 55: "created. "
+          text run at (54,18) width 130: "The caret should be "
+        RenderInline {B} at (0,0) size 41x17
+          RenderText {#text} at (183,18) size 41x17
+            text run at (183,18) width 41: "inside"
+        RenderText {#text} at (223,18) size 129x17
+          text run at (223,18) width 129: " the empty list item."
+      RenderBlock {DIV} at (0,52) size 784x52
+        RenderBlock {DIV} at (0,0) size 784x18
+          RenderBR {BR} at (0,0) size 0x17
+        RenderBlock {DIV} at (0,34) size 784x18
+          RenderBlock {UL} at (0,0) size 784x18
+            RenderListItem {LI} at (40,0) size 744x18
+              RenderListMarker at (-17,0) size 7x17: bullet
+              RenderBR {BR} at (0,0) size 0x17
+          RenderBlock (anonymous) at (0,34) size 784x0
 caret: position 0 of child 0 {BR} of child 0 {LI} of child 0 {UL} of child 1 {DIV} of child 2 {DIV} of body

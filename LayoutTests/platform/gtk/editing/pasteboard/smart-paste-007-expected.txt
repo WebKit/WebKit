@@ -25,30 +25,30 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x212 [border: (2px solid #0000FF)]
-        RenderBlock {DIV} at (14,14) size 756x56
-          RenderText {#text} at (0,0) size 67x28
-            text run at (0,0) width 67: "Tests: "
+      RenderBlock {DIV} at (0,0) size 784x206 [border: (2px solid #0000FF)]
+        RenderBlock {DIV} at (14,14) size 756x54
+          RenderText {#text} at (0,0) size 68x26
+            text run at (0,0) width 68: "Tests: "
           RenderBR {BR} at (0,0) size 0x0
-          RenderText {#text} at (0,28) size 460x28
-            text run at (0,28) width 460: "Smart paste when pasting between two periods."
-        RenderBlock {DIV} at (14,86) size 756x112
-          RenderText {#text} at (0,0) size 189x28
-            text run at (0,0) width 189: "Expected Results: "
-          RenderBR {BR} at (189,22) size 0x0
-          RenderText {#text} at (0,28) size 744x56
-            text run at (0,28) width 744: "A space should be added before, but not after the pasted word. It should look"
-            text run at (0,56) width 91: "like this: "
-          RenderBR {BR} at (91,78) size 0x0
-          RenderText {#text} at (0,84) size 52x28
-            text run at (0,84) width 52: ". test."
-      RenderBlock {DIV} at (0,236) size 784x32
-        RenderBlock {DIV} at (0,0) size 784x32 [border: (2px solid #FF0000)]
-          RenderText {#text} at (2,2) size 6x28
+          RenderText {#text} at (0,27) size 457x26
+            text run at (0,27) width 457: "Smart paste when pasting between two periods."
+        RenderBlock {DIV} at (14,84) size 756x108
+          RenderText {#text} at (0,0) size 190x26
+            text run at (0,0) width 190: "Expected Results: "
+          RenderBR {BR} at (189,21) size 1x0
+          RenderText {#text} at (0,27) size 739x53
+            text run at (0,27) width 739: "A space should be added before, but not after the pasted word. It should look"
+            text run at (0,54) width 90: "like this: "
+          RenderBR {BR} at (89,75) size 1x0
+          RenderText {#text} at (0,81) size 52x26
+            text run at (0,81) width 52: ". test."
+      RenderBlock {DIV} at (0,230) size 784x31
+        RenderBlock {DIV} at (0,0) size 784x31 [border: (2px solid #FF0000)]
+          RenderText {#text} at (2,2) size 6x26
             text run at (2,2) width 6: "."
-          RenderText {#text} at (8,2) size 40x28
+          RenderText {#text} at (8,2) size 40x26
             text run at (8,2) width 40: " test"
-          RenderText {#text} at (48,2) size 6x28
-            text run at (48,2) width 6: "."
-        RenderBlock (anonymous) at (0,32) size 784x0
+          RenderText {#text} at (47,2) size 7x26
+            text run at (47,2) width 7: "."
+        RenderBlock (anonymous) at (0,31) size 784x0
 caret: position 5 of child 1 {#text} of child 1 {DIV} of child 3 {DIV} of body

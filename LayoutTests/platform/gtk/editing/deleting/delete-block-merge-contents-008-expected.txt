@@ -14,18 +14,18 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x112 [border: (2px solid #FF0000)]
-        RenderBlock {DIV} at (14,14) size 756x84
-          RenderBlock (anonymous) at (0,0) size 756x28
-            RenderText {#text} at (0,0) size 84x28
+      RenderBlock {DIV} at (0,0) size 784x109 [border: (2px solid #FF0000)]
+        RenderBlock {DIV} at (14,14) size 756x81
+          RenderBlock (anonymous) at (0,0) size 756x27
+            RenderText {#text} at (0,0) size 84x26
               text run at (0,0) width 84: "OneTwo"
-          RenderBlock {DIV} at (0,28) size 756x56
-            RenderBlock {DIV} at (0,0) size 756x28
+          RenderBlock {DIV} at (0,27) size 756x54
+            RenderBlock {DIV} at (0,0) size 756x27
               RenderBlock (anonymous) at (0,0) size 756x0
-              RenderBlock {DIV} at (0,0) size 756x28
-                RenderText {#text} at (0,0) size 57x28
-                  text run at (0,0) width 57: "Three"
-            RenderBlock (anonymous) at (0,28) size 756x28
-              RenderText {#text} at (0,0) size 45x28
-                text run at (0,0) width 45: "Four"
+              RenderBlock {DIV} at (0,0) size 756x27
+                RenderText {#text} at (0,0) size 56x26
+                  text run at (0,0) width 56: "Three"
+            RenderBlock (anonymous) at (0,27) size 756x27
+              RenderText {#text} at (0,0) size 46x26
+                text run at (0,0) width 46: "Four"
 caret: position 3 of child 0 {#text} of child 1 {DIV} of child 1 {DIV} of body

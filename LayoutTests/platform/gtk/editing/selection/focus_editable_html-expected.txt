@@ -6,24 +6,24 @@ EDITING DELEGATE: webViewDidEndEditing:WebViewDidEndEditingNotification
 EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of BODY > HTML > #document to 9 of BODY > HTML > #document
 EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-layer at (0,0) size 2008x2092
+layer at (0,0) size 2008x2088
   RenderView at (0,0) size 784x584
-layer at (0,0) size 784x2092
-  RenderBlock {HTML} at (0,0) size 784x2092
-    RenderBody {BODY} at (8,8) size 768x2076
-      RenderBlock (anonymous) at (0,0) size 768x57
-        RenderText {#text} at (0,0) size 583x19
-          text run at (0,0) width 583: "This test makes sure that we don't scroll unnecessarily to reveal an editable HTML Element. "
-        RenderBR {BR} at (583,15) size 0x0
-        RenderText {#text} at (0,19) size 262x19
-          text run at (0,19) width 262: "If the document doesn't scroll, test passes."
-        RenderBR {BR} at (262,34) size 0x0
-        RenderInline {B} at (0,0) size 528x19
-          RenderText {#text} at (0,38) size 528x19
-            text run at (0,38) width 528: "This demonstrates a bug: normally, focusing an element will select its contents."
+layer at (0,0) size 784x2088
+  RenderBlock {HTML} at (0,0) size 784x2088
+    RenderBody {BODY} at (8,8) size 768x2072
+      RenderBlock (anonymous) at (0,0) size 768x54
+        RenderText {#text} at (0,0) size 595x17
+          text run at (0,0) width 595: "This test makes sure that we don't scroll unnecessarily to reveal an editable HTML Element. "
+        RenderBR {BR} at (594,14) size 1x0
+        RenderText {#text} at (0,18) size 269x17
+          text run at (0,18) width 269: "If the document doesn't scroll, test passes."
+        RenderBR {BR} at (268,32) size 1x0
+        RenderInline {B} at (0,0) size 538x17
+          RenderText {#text} at (0,36) size 538x17
+            text run at (0,36) width 538: "This demonstrates a bug: normally, focusing an element will select its contents."
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {DIV} at (0,57) size 2000x2000
-      RenderBlock (anonymous) at (0,2057) size 768x19
-        RenderText {#text} at (0,0) size 237x19
-          text run at (0,0) width 237: "If the document scrolls here, test fails."
+      RenderBlock {DIV} at (0,54) size 2000x2000
+      RenderBlock (anonymous) at (0,2054) size 768x18
+        RenderText {#text} at (0,0) size 245x17
+          text run at (0,0) width 245: "If the document scrolls here, test fails."
 caret: position 1 of child 0 {#text} of body

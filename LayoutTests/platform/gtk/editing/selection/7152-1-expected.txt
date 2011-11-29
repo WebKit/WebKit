@@ -8,29 +8,29 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x57
-        RenderText {#text} at (0,0) size 131x19
-          text run at (0,0) width 131: "This is a testcase for "
-        RenderInline {A} at (0,0) size 343x19 [color=#0000EE]
-          RenderText {#text} at (131,0) size 343x19
-            text run at (131,0) width 343: "http://bugzilla.opendarwin.org/show_bug.cgi?id=7152"
-        RenderText {#text} at (474,0) size 783x57
-          text run at (474,0) width 8: ". "
-          text run at (482,0) width 297: "Adding visible candidates after tables, at [table,"
-          text run at (779,0) width 4: " "
-          text run at (0,19) width 767: "numberOfChildren], threw RenderView::setSelection for a loop because it assumed the end of a selection would be inside"
-          text run at (767,19) width 4: " "
-          text run at (0,38) width 100: "an atomic node."
-      RenderBlock {HR} at (0,73) size 784x2 [border: (1px inset #000000)]
-      RenderTable {TABLE} at (0,83) size 161x54 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 159x52
-          RenderTableRow {TR} at (0,2) size 159x23
-            RenderTableCell {TD} at (2,2) size 155x23 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 151x19
-                text run at (2,2) width 151: "This should be selected."
-          RenderTableRow {TR} at (0,27) size 159x23
-            RenderTableCell {TD} at (2,27) size 155x23 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 151x19
-                text run at (2,2) width 151: "This should be selected."
+      RenderBlock {P} at (0,0) size 784x54
+        RenderText {#text} at (0,0) size 135x17
+          text run at (0,0) width 135: "This is a testcase for "
+        RenderInline {A} at (0,0) size 350x17 [color=#0000EE]
+          RenderText {#text} at (134,0) size 350x17
+            text run at (134,0) width 350: "http://bugzilla.opendarwin.org/show_bug.cgi?id=7152"
+        RenderText {#text} at (483,0) size 784x53
+          text run at (483,0) width 9: ". "
+          text run at (491,0) width 261: "Adding visible candidates after tables, at"
+          text run at (751,0) width 5: " "
+          text run at (0,18) width 783: "[table, numberOfChildren], threw RenderView::setSelection for a loop because it assumed the end of a selection would be"
+          text run at (782,18) width 2: " "
+          text run at (0,36) width 144: "inside an atomic node."
+      RenderBlock {HR} at (0,70) size 784x2 [border: (1px inset #000000)]
+      RenderTable {TABLE} at (0,80) size 164x52 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 162x50
+          RenderTableRow {TR} at (0,2) size 162x22
+            RenderTableCell {TD} at (2,2) size 158x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 154x17
+                text run at (2,2) width 154: "This should be selected."
+          RenderTableRow {TR} at (0,26) size 162x22
+            RenderTableCell {TD} at (2,26) size 158x22 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 154x17
+                text run at (2,2) width 154: "This should be selected."
 selection start: position 0 of child 0 {#text} of child 1 {P} of body
 selection end:   position 1 of child 5 {TABLE} of body

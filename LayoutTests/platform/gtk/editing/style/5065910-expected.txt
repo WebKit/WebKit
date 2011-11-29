@@ -3,22 +3,22 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x19
-        RenderText {#text} at (0,0) size 447x19
-          text run at (0,0) width 447: "This tests for a bug where the color of pasted text couldn't be changed.'"
-      RenderBlock {DIV} at (0,35) size 784x38
-        RenderBlock (anonymous) at (0,0) size 784x19
-          RenderInline {FONT} at (0,0) size 148x19 [color=#FF0000]
-            RenderText {#text} at (0,0) size 148x19
-              text run at (0,0) width 148: "This text should be red."
-        RenderBlock {DIV} at (0,19) size 784x19
-          RenderInline {FONT} at (0,0) size 124x19 [color=#0000FF]
-            RenderText {#text} at (0,0) size 124x19
-              text run at (0,0) width 124: "This text should be "
-          RenderInline {FONT} at (0,0) size 235x19 [color=#008000]
-            RenderText {#text} at (124,0) size 235x19
-              text run at (124,0) width 235: "a combination of green and blue, not "
-          RenderInline {FONT} at (0,0) size 24x19 [color=#0000FF]
-            RenderText {#text} at (359,0) size 24x19
-              text run at (359,0) width 24: "red."
+      RenderBlock {P} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 455x17
+          text run at (0,0) width 455: "This tests for a bug where the color of pasted text couldn't be changed.'"
+      RenderBlock {DIV} at (0,34) size 784x36
+        RenderBlock (anonymous) at (0,0) size 784x18
+          RenderInline {FONT} at (0,0) size 151x17 [color=#FF0000]
+            RenderText {#text} at (0,0) size 151x17
+              text run at (0,0) width 151: "This text should be red."
+        RenderBlock {DIV} at (0,18) size 784x18
+          RenderInline {FONT} at (0,0) size 127x17 [color=#0000FF]
+            RenderText {#text} at (0,0) size 127x17
+              text run at (0,0) width 127: "This text should be "
+          RenderInline {FONT} at (0,0) size 240x17 [color=#008000]
+            RenderText {#text} at (126,0) size 240x17
+              text run at (126,0) width 240: "a combination of green and blue, not "
+          RenderInline {FONT} at (0,0) size 25x17 [color=#0000FF]
+            RenderText {#text} at (365,0) size 25x17
+              text run at (365,0) width 25: "red."
 caret: position 37 of child 0 {#text} of child 1 {FONT} of child 1 {DIV} of child 2 {DIV} of body

@@ -12,24 +12,24 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {TABLE} at (0,0) size 78x25
-        RenderTableSection {TBODY} at (0,0) size 78x25
-          RenderTableRow {TR} at (0,2) size 78x21
-            RenderTableCell {TD} at (2,2) size 33x21 [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 31x19
-                text run at (1,1) width 31: "hello"
-            RenderTableCell {TD} at (37,2) size 39x21 [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 37x19
-                text run at (1,1) width 37: "world"
-      RenderBlock {DIV} at (0,25) size 784x25
-        RenderTable {TABLE} at (0,0) size 78x25
-          RenderTableSection {TBODY} at (0,0) size 78x25
-            RenderTableRow {TR} at (0,2) size 78x21
-              RenderTableCell {TD} at (2,2) size 33x21 [r=0 c=0 rs=1 cs=1]
-                RenderText {#text} at (1,1) size 31x19
-                  text run at (1,1) width 31: "hello"
-              RenderTableCell {TD} at (37,2) size 39x21 [r=0 c=1 rs=1 cs=1]
-                RenderText {#text} at (1,1) size 37x19
-                  text run at (1,1) width 37: "world"
-        RenderBlock (anonymous) at (0,25) size 784x0
+      RenderTable {TABLE} at (0,0) size 80x24
+        RenderTableSection {TBODY} at (0,0) size 80x24
+          RenderTableRow {TR} at (0,2) size 80x20
+            RenderTableCell {TD} at (2,2) size 34x20 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 32x17
+                text run at (1,1) width 32: "hello"
+            RenderTableCell {TD} at (38,2) size 40x20 [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 38x17
+                text run at (1,1) width 38: "world"
+      RenderBlock {DIV} at (0,24) size 784x24
+        RenderTable {TABLE} at (0,0) size 80x24
+          RenderTableSection {TBODY} at (0,0) size 80x24
+            RenderTableRow {TR} at (0,2) size 80x20
+              RenderTableCell {TD} at (2,2) size 34x20 [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (1,1) size 32x17
+                  text run at (1,1) width 32: "hello"
+              RenderTableCell {TD} at (38,2) size 40x20 [r=0 c=1 rs=1 cs=1]
+                RenderText {#text} at (1,1) size 38x17
+                  text run at (1,1) width 38: "world"
+        RenderBlock (anonymous) at (0,24) size 784x0
 caret: position 5 of child 0 {#text} of child 1 {TD} of child 0 {TR} of child 0 {TBODY} of child 0 {TABLE} of child 3 {DIV} of body

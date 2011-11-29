@@ -10,20 +10,20 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x19
-        RenderText {#text} at (0,0) size 717x19
-          text run at (0,0) width 361: "This tests deletion of a selection that spans multiple cells. "
-          text run at (361,0) width 356: "Just table content should be removed, not table structure."
-      RenderBlock {DIV} at (0,35) size 784x29
-        RenderTable {TABLE} at (0,0) size 343x29 [border: (1px outset #808080)]
-          RenderTableSection {TBODY} at (1,1) size 341x27
-            RenderTableRow {TR} at (0,2) size 341x23
-              RenderTableCell {TD} at (2,2) size 157x23 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                RenderBlock {DIV} at (2,2) size 153x19
-                  RenderText {#text} at (0,0) size 153x19
-                    text run at (0,0) width 153: "These two pieces of text"
-              RenderTableCell {TD} at (161,2) size 178x23 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-                RenderBlock {DIV} at (2,2) size 174x19
-                  RenderText {#text} at (0,0) size 174x19
-                    text run at (0,0) width 174: " should be in different cells."
+      RenderBlock {P} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 737x17
+          text run at (0,0) width 372: "This tests deletion of a selection that spans multiple cells. "
+          text run at (371,0) width 366: "Just table content should be removed, not table structure."
+      RenderBlock {DIV} at (0,34) size 784x28
+        RenderTable {TABLE} at (0,0) size 351x28 [border: (1px outset #808080)]
+          RenderTableSection {TBODY} at (1,1) size 349x26
+            RenderTableRow {TR} at (0,2) size 349x22
+              RenderTableCell {TD} at (2,2) size 160x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                RenderBlock {DIV} at (2,2) size 156x18
+                  RenderText {#text} at (0,0) size 156x17
+                    text run at (0,0) width 156: "These two pieces of text"
+              RenderTableCell {TD} at (164,2) size 183x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+                RenderBlock {DIV} at (2,2) size 179x18
+                  RenderText {#text} at (0,0) size 179x17
+                    text run at (0,0) width 179: " should be in different cells."
 caret: position 24 of child 0 {#text} of child 0 {DIV} of child 0 {TD} of child 0 {TR} of child 0 {TBODY} of child 0 {TABLE} of child 2 {DIV} of body

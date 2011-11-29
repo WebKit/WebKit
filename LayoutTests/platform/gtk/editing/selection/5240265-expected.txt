@@ -3,20 +3,20 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x57
-        RenderText {#text} at (0,0) size 782x57
-          text run at (0,0) width 757: "This tests to see that clicking on content outside of an editable region with -webkit-user-select: ignore doesn't remove the"
-          text run at (0,19) width 467: "selection from the editable region. To run it manually, click on the button. "
-          text run at (467,19) width 315: "The editable region should not be focused, but the"
-          text run at (0,38) width 216: "text inside of it should be selected."
-      RenderBlock (anonymous) at (0,73) size 784x32
-        RenderButton {INPUT} at (2,2) size 100x28 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
-          RenderBlock (anonymous) at (8,4) size 84x19
-            RenderText at (0,0) size 84x19
+      RenderBlock {P} at (0,0) size 784x54
+        RenderText {#text} at (0,0) size 776x53
+          text run at (0,0) width 776: "This tests to see that clicking on content outside of an editable region with -webkit-user-select: ignore doesn't remove the"
+          text run at (0,18) width 479: "selection from the editable region. To run it manually, click on the button. "
+          text run at (478,18) width 297: "The editable region should not be focused, but"
+          text run at (0,36) width 246: "the text inside of it should be selected."
+      RenderBlock (anonymous) at (0,70) size 784x31
+        RenderButton {INPUT} at (2,2) size 100x27 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+          RenderBlock (anonymous) at (8,4) size 84x18
+            RenderText at (0,0) size 84x17
               text run at (0,0) width 84: "Click on me"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {DIV} at (0,105) size 784x19
-        RenderText {#text} at (0,0) size 178x19
-          text run at (0,0) width 178: "This text should be selected."
+      RenderBlock {DIV} at (0,101) size 784x18
+        RenderText {#text} at (0,0) size 182x17
+          text run at (0,0) width 182: "This text should be selected."
 selection start: position 0 of child 0 {#text} of child 4 {DIV} of body
 selection end:   position 29 of child 0 {#text} of child 4 {DIV} of body

@@ -9,8 +9,8 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
       RenderBlock {DIV} at (0,0) size 425x75 [bgcolor=#FFFF00]
         RenderBlock {DIV} at (25,25) size 100x20 [bgcolor=#FFFFFF]
-      RenderBlock {P} at (0,91) size 784x38
-        RenderText {#text} at (0,0) size 780x38
-          text run at (0,0) width 780: "This test clicks inside an editable div element, and must result in the element receiving focus. If the test succeeds the element"
-          text run at (0,19) width 158: "should have a focus ring."
+      RenderBlock {P} at (0,91) size 784x36
+        RenderText {#text} at (0,0) size 747x35
+          text run at (0,0) width 747: "This test clicks inside an editable div element, and must result in the element receiving focus. If the test succeeds the"
+          text run at (0,18) width 216: "element should have a focus ring."
 caret: position 0 of child 0 {DIV} of child 0 {DIV} of body

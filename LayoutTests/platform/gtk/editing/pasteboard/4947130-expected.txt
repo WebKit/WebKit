@@ -3,19 +3,19 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x38
-        RenderText {#text} at (0,0) size 780x38
-          text run at (0,0) width 491: "This tests to see if dragging an image is a move drag by default (it should be). "
-          text run at (491,0) width 289: "You should only see one picture and it should"
-          text run at (0,19) width 200: "be somewhere near the middle. "
-        RenderInline {B} at (0,0) size 492x19
-          RenderText {#text} at (200,19) size 492x19
-            text run at (200,19) width 492: "This demonstrates a bug, the ghost of the drag caret is left after the drop."
-      RenderBlock {DIV} at (0,54) size 784x107
-        RenderText {#text} at (0,88) size 48x19
-          text run at (0,88) width 48: "xxxxxx"
+      RenderBlock {P} at (0,0) size 784x36
+        RenderText {#text} at (0,0) size 749x35
+          text run at (0,0) width 503: "This tests to see if dragging an image is a move drag by default (it should be). "
+          text run at (502,0) width 247: "You should only see one picture and it"
+          text run at (0,18) width 251: "should be somewhere near the middle. "
+        RenderInline {B} at (0,0) size 499x17
+          RenderText {#text} at (250,18) size 499x17
+            text run at (250,18) width 499: "This demonstrates a bug, the ghost of the drag caret is left after the drop."
+      RenderBlock {DIV} at (0,52) size 784x107
+        RenderText {#text} at (0,89) size 48x17
+          text run at (0,89) width 48: "xxxxxx"
         RenderImage {IMG} at (48,0) size 76x103
-        RenderText {#text} at (124,88) size 32x19
-          text run at (124,88) width 32: "xxxx"
+        RenderText {#text} at (124,89) size 32x17
+          text run at (124,89) width 32: "xxxx"
 selection start: position 0 of child 1 {IMG} of child 2 {DIV} of body
 selection end:   position 1 of child 1 {IMG} of child 2 {DIV} of body

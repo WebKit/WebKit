@@ -16,20 +16,20 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x84 [border: (2px solid #0000FF)]
-        RenderText {#text} at (14,14) size 753x56
-          text run at (14,14) width 747: "Should see \"XX\" in outer red box, and another \"XX\" in an orange box nested"
-          text run at (761,14) width 6: " "
-          text run at (14,42) width 144: "in a green box."
-      RenderBlock {DIV} at (0,108) size 784x140
-        RenderBlock {DIV} at (0,0) size 784x140 [border: (2px solid #FF0000)]
-          RenderBlock (anonymous) at (14,14) size 756x28
-            RenderText {#text} at (0,0) size 17x28
-              text run at (0,0) width 17: "X"
-            RenderText {#text} at (17,0) size 17x28
-              text run at (17,0) width 17: "X"
-          RenderBlock {DIV} at (14,42) size 756x84 [border: (2px solid #008000)]
-            RenderBlock {DIV} at (14,14) size 728x56 [border: (2px solid #FFA500)]
-              RenderText {#text} at (14,14) size 34x28
-                text run at (14,14) width 34: "XX"
+      RenderBlock {DIV} at (0,0) size 784x82 [border: (2px solid #0000FF)]
+        RenderText {#text} at (14,14) size 749x53
+          text run at (14,14) width 743: "Should see \"XX\" in outer red box, and another \"XX\" in an orange box nested"
+          text run at (756,14) width 7: " "
+          text run at (14,41) width 143: "in a green box."
+      RenderBlock {DIV} at (0,106) size 784x138
+        RenderBlock {DIV} at (0,0) size 784x138 [border: (2px solid #FF0000)]
+          RenderBlock (anonymous) at (14,14) size 756x27
+            RenderText {#text} at (0,0) size 18x26
+              text run at (0,0) width 18: "X"
+            RenderText {#text} at (17,0) size 18x26
+              text run at (17,0) width 18: "X"
+          RenderBlock {DIV} at (14,41) size 756x83 [border: (2px solid #008000)]
+            RenderBlock {DIV} at (14,14) size 728x55 [border: (2px solid #FFA500)]
+              RenderText {#text} at (14,14) size 35x26
+                text run at (14,14) width 35: "XX"
 caret: position 2 of child 0 {#text} of child 1 {DIV} of child 3 {DIV} of body

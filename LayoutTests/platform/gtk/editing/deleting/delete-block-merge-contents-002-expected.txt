@@ -14,11 +14,11 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x84 [border: (2px solid #FF0000)]
-        RenderBlock {DIV} at (14,14) size 756x56
-          RenderText {#text} at (0,0) size 84x28
+      RenderBlock {DIV} at (0,0) size 784x82 [border: (2px solid #FF0000)]
+        RenderBlock {DIV} at (14,14) size 756x54
+          RenderText {#text} at (0,0) size 84x26
             text run at (0,0) width 84: "OneTwo"
-          RenderBR {BR} at (84,22) size 0x0
-          RenderText {#text} at (0,28) size 57x28
-            text run at (0,28) width 57: "Three"
+          RenderBR {BR} at (83,21) size 1x0
+          RenderText {#text} at (0,27) size 56x26
+            text run at (0,27) width 56: "Three"
 caret: position 4 of child 0 {#text} of child 1 {DIV} of child 1 {DIV} of body

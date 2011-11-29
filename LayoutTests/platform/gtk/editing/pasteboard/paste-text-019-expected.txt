@@ -1,0 +1,58 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 3 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldInsertText:Bar replacingDOMRange:range from 4 of #text > SPAN > DIV > BODY > HTML > #document to 4 of #text > SPAN > DIV > BODY > HTML > #document givenAction:WebViewInsertActionPasted
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 4 of #text > SPAN > DIV > BODY > HTML > #document to 4 of #text > SPAN > DIV > BODY > HTML > #document toDOMRange:range from 7 of #text > SPAN > DIV > BODY > HTML > #document to 7 of #text > SPAN > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 784x281 [border: (2px solid #0000FF)]
+        RenderBlock {DIV} at (14,14) size 756x81
+          RenderText {#text} at (0,0) size 68x26
+            text run at (0,0) width 68: "Tests: "
+          RenderBR {BR} at (0,0) size 0x0
+          RenderText {#text} at (0,27) size 162x26
+            text run at (0,27) width 162: "Fix for this bug: "
+          RenderInline {A} at (0,0) size 551x26 [color=#0000EE]
+            RenderText {#text} at (161,27) size 551x26
+              text run at (161,27) width 551: "<http://bugzilla.opendarwin.org/show_bug.cgi?id=3429>"
+          RenderText {#text} at (0,54) size 722x26
+            text run at (0,54) width 722: "Text transformed with text-transform does not copy with transform applied"
+        RenderBlock {DIV} at (14,111) size 756x156
+          RenderBlock (anonymous) at (0,0) size 756x54
+            RenderText {#text} at (0,0) size 190x26
+              text run at (0,0) width 190: "Expected Results: "
+            RenderBR {BR} at (189,21) size 1x0
+            RenderText {#text} at (0,27) size 201x26
+              text run at (0,27) width 201: "Should see the string"
+          RenderBlock {PRE} at (0,78) size 756x27
+            RenderText {#text} at (0,0) size 217x27
+              text run at (0,0) width 217: "Foo Bar baz Bar"
+          RenderBlock (anonymous) at (0,129) size 756x27
+            RenderText {#text} at (0,0) size 154x26
+              text run at (0,0) width 154: "(case sensitive)."
+      RenderBlock {DIV} at (0,305) size 784x31 [border: (2px solid #FF0000)]
+        RenderInline {SPAN} at (0,0) size 152x26
+          RenderInline {SPAN} at (0,0) size 78x26
+            RenderText {#text} at (2,2) size 78x26
+              text run at (2,2) width 78: "Foo Bar"
+          RenderText {#text} at (80,2) size 74x26
+            text run at (80,2) width 74: " bazBar"
+        RenderText {#text} at (0,0) size 0x0
+caret: position 7 of child 1 {#text} of child 1 {SPAN} of child 3 {DIV} of body

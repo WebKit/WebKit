@@ -18,32 +18,32 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock (anonymous) at (0,0) size 784x57
-        RenderText {#text} at (0,0) size 85x19
-          text run at (0,0) width 85: "See this bug: "
-        RenderInline {A} at (0,0) size 167x19 [color=#0000EE]
-          RenderText {#text} at (85,0) size 167x19
-            text run at (85,0) width 167: "<rdar://problem/3918712>"
-        RenderText {#text} at (252,0) size 781x57
-          text run at (252,0) width 484: " \"Paste as Quotation\" in Mail just pastes (<blockquote> tag seems to be lost)."
-          text run at (736,0) width 4: " "
-          text run at (0,19) width 777: "Should see one box with blockquoted \"foo\" text, followed by another box with an \"x\" (not in a blockquote) and \"foo\" (in a"
-          text run at (777,19) width 4: " "
-          text run at (0,38) width 79: "blockquote)."
-      RenderBlock {DIV} at (0,57) size 784x24
-      RenderBlock {DIV} at (0,81) size 784x104 [border: (2px solid #FF0000)]
-        RenderBlock {DIV} at (14,38) size 756x28
-          RenderBlock {BLOCKQUOTE} at (40,0) size 676x28
-            RenderText {#text} at (0,0) size 32x28
+      RenderBlock (anonymous) at (0,0) size 784x54
+        RenderText {#text} at (0,0) size 87x17
+          text run at (0,0) width 87: "See this bug: "
+        RenderInline {A} at (0,0) size 172x17 [color=#0000EE]
+          RenderText {#text} at (86,0) size 172x17
+            text run at (86,0) width 172: "<rdar://problem/3918712>"
+        RenderText {#text} at (257,0) size 778x53
+          text run at (257,0) width 495: " \"Paste as Quotation\" in Mail just pastes (<blockquote> tag seems to be lost)."
+          text run at (751,0) width 5: " "
+          text run at (0,18) width 774: "Should see one box with blockquoted \"foo\" text, followed by another box with an \"x\" (not in a blockquote) and \"foo\" (in"
+          text run at (773,18) width 5: " "
+          text run at (0,36) width 92: "a blockquote)."
+      RenderBlock {DIV} at (0,54) size 784x24
+      RenderBlock {DIV} at (0,78) size 784x103 [border: (2px solid #FF0000)]
+        RenderBlock {DIV} at (14,38) size 756x27
+          RenderBlock {BLOCKQUOTE} at (40,0) size 676x27
+            RenderText {#text} at (0,0) size 32x26
               text run at (0,0) width 32: "foo"
-      RenderBlock {DIV} at (0,185) size 784x56 [border: (2px solid #FF0000)]
-        RenderText {#text} at (14,14) size 12x28
+      RenderBlock {DIV} at (0,181) size 784x55 [border: (2px solid #FF0000)]
+        RenderText {#text} at (14,14) size 12x26
           text run at (14,14) width 12: "x"
-      RenderBlock {DIV} at (0,241) size 784x132 [border: (2px solid #FF0000)]
-        RenderBlock {DIV} at (14,38) size 756x28
-          RenderBlock {BLOCKQUOTE} at (40,0) size 676x28
-            RenderText {#text} at (0,0) size 32x28
+      RenderBlock {DIV} at (0,236) size 784x130 [border: (2px solid #FF0000)]
+        RenderBlock {DIV} at (14,38) size 756x27
+          RenderBlock {BLOCKQUOTE} at (40,0) size 676x27
+            RenderText {#text} at (0,0) size 32x26
               text run at (0,0) width 32: "foo"
-        RenderBlock {DIV} at (14,90) size 756x28
-          RenderBR {BR} at (0,0) size 0x28
+        RenderBlock {DIV} at (14,89) size 756x27
+          RenderBR {BR} at (0,0) size 0x26
 caret: position 0 of child 0 {BR} of child 1 {DIV} of child 8 {DIV} of body

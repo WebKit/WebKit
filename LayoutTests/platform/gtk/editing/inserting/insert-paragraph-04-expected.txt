@@ -12,29 +12,29 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x57
-        RenderText {#text} at (0,0) size 782x38
-          text run at (0,0) width 402: "This tests inserting a paragraph separator after a horizontal rule. "
-          text run at (402,0) width 380: "You should see 'foo', empty paragraph, horizontal rule, 'bar',"
-          text run at (0,19) width 329: "and the caret should be just after the horizontal rule. "
-        RenderInline {B} at (0,0) size 777x38
-          RenderText {#text} at (329,19) size 777x38
-            text run at (329,19) width 168: "This demonstrates 8345. "
-            text run at (497,19) width 280: "The caret after a horizontal rule is drawn"
-            text run at (0,38) width 381: "in the same location as the caret before a horizontal rule."
-      RenderBlock (anonymous) at (0,73) size 784x0
+      RenderBlock {P} at (0,0) size 784x54
+        RenderText {#text} at (0,0) size 765x35
+          text run at (0,0) width 413: "This tests inserting a paragraph separator after a horizontal rule. "
+          text run at (412,0) width 353: "You should see 'foo', empty paragraph, horizontal rule,"
+          text run at (0,18) width 372: "'bar', and the caret should be just after the horizontal rule. "
+        RenderInline {B} at (0,0) size 776x35
+          RenderText {#text} at (371,18) size 776x35
+            text run at (371,18) width 171: "This demonstrates 8345. "
+            text run at (541,18) width 235: "The caret after a horizontal rule is"
+            text run at (0,36) width 436: "drawn in the same location as the caret before a horizontal rule."
+      RenderBlock (anonymous) at (0,70) size 784x0
         RenderInline {B} at (0,0) size 0x0
           RenderText {#text} at (0,0) size 0x0
-      RenderBlock (anonymous) at (0,73) size 784x75
-        RenderBlock {DIV} at (0,0) size 784x75
-          RenderBlock (anonymous) at (0,0) size 784x19
-            RenderText {#text} at (0,0) size 21x19
-              text run at (0,0) width 21: "foo"
-          RenderBlock {HR} at (0,27) size 784x2 [border: (1px inset #000000)]
-          RenderBlock (anonymous) at (0,37) size 784x38
-            RenderBR {BR} at (0,0) size 0x19
-            RenderText {#text} at (0,19) size 24x19
-              text run at (0,19) width 24: "bar"
-      RenderBlock (anonymous) at (0,148) size 784x0
+      RenderBlock (anonymous) at (0,70) size 784x72
+        RenderBlock {DIV} at (0,0) size 784x72
+          RenderBlock (anonymous) at (0,0) size 784x18
+            RenderText {#text} at (0,0) size 22x17
+              text run at (0,0) width 22: "foo"
+          RenderBlock {HR} at (0,26) size 784x2 [border: (1px inset #000000)]
+          RenderBlock (anonymous) at (0,36) size 784x36
+            RenderBR {BR} at (0,0) size 0x17
+            RenderText {#text} at (0,18) size 24x17
+              text run at (0,18) width 24: "bar"
+      RenderBlock (anonymous) at (0,142) size 784x0
         RenderInline {B} at (0,0) size 0x0
 caret: position 0 of child 2 {BR} of child 1 {DIV} of child 1 {B} of body

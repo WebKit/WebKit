@@ -14,19 +14,19 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock {P} at (0,0) size 784x19
-        RenderText {#text} at (0,0) size 235x19
-          text run at (0,0) width 235: "This tests Copy/Paste of a input field."
-      RenderBlock {DIV} at (0,35) size 784x29
-        RenderTextControl {INPUT} at (2,2) size 194x25 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-        RenderTextControl {INPUT} at (200,2) size 194x25 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-      RenderBlock {UL} at (0,80) size 784x19
-        RenderListItem {LI} at (40,0) size 744x19
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderText {#text} at (0,0) size 43x19
-            text run at (0,0) width 43: "Passed"
-layer at (13,48) size 188x19
-  RenderBlock {DIV} at (3,3) size 188x19
-layer at (211,48) size 188x19
-  RenderBlock {DIV} at (3,3) size 188x19
+      RenderBlock {P} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 241x17
+          text run at (0,0) width 241: "This tests Copy/Paste of a input field."
+      RenderBlock {DIV} at (0,34) size 784x28
+        RenderTextControl {INPUT} at (2,2) size 193x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+        RenderTextControl {INPUT} at (199,2) size 193x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+      RenderBlock {UL} at (0,78) size 784x18
+        RenderListItem {LI} at (40,0) size 744x18
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderText {#text} at (0,0) size 44x17
+            text run at (0,0) width 44: "Passed"
+layer at (13,47) size 187x18
+  RenderBlock {DIV} at (3,3) size 187x18
+layer at (210,47) size 187x18
+  RenderBlock {DIV} at (3,3) size 187x18
 caret: position 1 of child 1 {INPUT} of child 2 {DIV} of body

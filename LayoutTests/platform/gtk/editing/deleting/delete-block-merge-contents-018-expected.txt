@@ -15,19 +15,19 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x84 [border: (2px solid #0000FF)]
-        RenderText {#text} at (14,14) size 732x56
-          text run at (14,14) width 726: "Should see \"Test OK\" in top red box, followed by \"...more text\", in its own"
-          text run at (740,14) width 6: " "
-          text run at (14,42) width 79: "red box."
-      RenderBlock {DIV} at (0,108) size 784x112
-        RenderBlock {DIV} at (0,0) size 784x112 [border: (2px solid #FF0000)]
-          RenderBlock (anonymous) at (14,14) size 756x28
-            RenderText {#text} at (0,0) size 15x28
+      RenderBlock {DIV} at (0,0) size 784x82 [border: (2px solid #0000FF)]
+        RenderText {#text} at (14,14) size 728x53
+          text run at (14,14) width 722: "Should see \"Test OK\" in top red box, followed by \"...more text\", in its own"
+          text run at (735,14) width 7: " "
+          text run at (14,41) width 79: "red box."
+      RenderBlock {DIV} at (0,106) size 784x110
+        RenderBlock {DIV} at (0,0) size 784x110 [border: (2px solid #FF0000)]
+          RenderBlock (anonymous) at (14,14) size 756x27
+            RenderText {#text} at (0,0) size 15x26
               text run at (0,0) width 15: "T"
-            RenderText {#text} at (15,0) size 67x28
-              text run at (15,0) width 67: "est OK"
-          RenderBlock {DIV} at (14,42) size 756x56 [border: (2px solid #FF0000)]
-            RenderText {#text} at (14,14) size 111x28
-              text run at (14,14) width 111: "...more text"
+            RenderText {#text} at (14,0) size 68x26
+              text run at (14,0) width 68: "est OK"
+          RenderBlock {DIV} at (14,41) size 756x55 [border: (2px solid #FF0000)]
+            RenderText {#text} at (14,14) size 110x26
+              text run at (14,14) width 110: "...more text"
 caret: position 2 of child 0 {#text} of child 1 {DIV} of child 3 {DIV} of body

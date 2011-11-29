@@ -8,36 +8,36 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x38
-        RenderText {#text} at (0,0) size 104x19
-          text run at (0,0) width 104: "This is a test for "
-        RenderInline {I} at (0,0) size 751x38
-          RenderInline {A} at (0,0) size 348x19 [color=#0000EE]
-            RenderText {#text} at (104,0) size 348x19
-              text run at (104,0) width 348: "http://bugzilla.opendarwin.org/show_bug.cgi?id=8394"
-          RenderText {#text} at (452,0) size 751x38
-            text run at (452,0) width 4: " "
-            text run at (456,0) width 295: "Editable region does not accept dropped text if"
-            text run at (0,19) width 125: "there is no selection"
-        RenderText {#text} at (125,19) size 4x19
-          text run at (125,19) width 4: "."
-      RenderBlock {P} at (0,54) size 784x19
-        RenderText {#text} at (0,0) size 653x19
-          text run at (0,0) width 478: "The text field should accept drag-and-dropped text, such as the link, even if "
-          text run at (478,0) width 175: "no text is currently selected."
-      RenderBlock {HR} at (0,89) size 784x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,99) size 784x29
-        RenderTextControl {INPUT} at (2,2) size 194x25 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-        RenderText {#text} at (198,5) size 4x19
-          text run at (198,5) width 4: " "
-        RenderInline {A} at (0,0) size 162x19 [color=#0000EE]
-          RenderText {#text} at (202,5) size 162x19
-            text run at (202,5) width 162: "drop me into the text field"
+      RenderBlock {P} at (0,0) size 784x36
+        RenderText {#text} at (0,0) size 108x17
+          text run at (0,0) width 108: "This is a test for "
+        RenderInline {I} at (0,0) size 766x35
+          RenderInline {A} at (0,0) size 354x17 [color=#0000EE]
+            RenderText {#text} at (107,0) size 354x17
+              text run at (107,0) width 354: "http://bugzilla.opendarwin.org/show_bug.cgi?id=8394"
+          RenderText {#text} at (460,0) size 766x35
+            text run at (460,0) width 5: " "
+            text run at (464,0) width 302: "Editable region does not accept dropped text if"
+            text run at (0,18) width 129: "there is no selection"
+        RenderText {#text} at (128,18) size 5x17
+          text run at (128,18) width 5: "."
+      RenderBlock {P} at (0,52) size 784x18
+        RenderText {#text} at (0,0) size 668x17
+          text run at (0,0) width 488: "The text field should accept drag-and-dropped text, such as the link, even if "
+          text run at (487,0) width 181: "no text is currently selected."
+      RenderBlock {HR} at (0,86) size 784x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,96) size 784x28
+        RenderTextControl {INPUT} at (2,2) size 193x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+        RenderText {#text} at (197,5) size 4x17
+          text run at (197,5) width 4: " "
+        RenderInline {A} at (0,0) size 167x17 [color=#0000EE]
+          RenderText {#text} at (201,5) size 167x17
+            text run at (201,5) width 167: "drop me into the text field"
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
-layer at (13,112) size 188x19
-  RenderBlock {DIV} at (3,3) size 188x19
-    RenderText {#text} at (1,0) size 142x19
-      text run at (1,0) width 142: "http://www.ibm.com/"
+layer at (13,109) size 187x18
+  RenderBlock {DIV} at (3,3) size 187x18
+    RenderText {#text} at (1,0) size 145x17
+      text run at (1,0) width 145: "http://www.ibm.com/"
 selection start: position 0 of child 0 {#text} of child 0 {DIV} of {#shadow-root} of child 7 {INPUT} of body
 selection end:   position 19 of child 0 {#text} of child 0 {DIV} of {#shadow-root} of child 7 {INPUT} of body

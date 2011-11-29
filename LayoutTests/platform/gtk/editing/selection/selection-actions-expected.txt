@@ -9,32 +9,32 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderText {#text} at (0,0) size 772x38
-        text run at (0,0) width 772: "This tests whether certain NSResponder methods that should only operate on editable regions modify a selection that is not"
-        text run at (0,19) width 132: "in an editable region."
-      RenderBR {BR} at (132,34) size 0x0
-      RenderText {#text} at (0,38) size 84x19
-        text run at (0,38) width 84: "This is a para"
-      RenderInline {SPAN} at (0,0) size 8x19 [color=#0000FF]
-        RenderText {#text} at (84,38) size 8x19
-          text run at (84,38) width 8: "g"
-      RenderText {#text} at (92,38) size 32x19
-        text run at (92,38) width 32: "raph."
-      RenderBR {BR} at (124,53) size 0x0
-      RenderText {#text} at (0,57) size 63x19
-        text run at (0,57) width 63: "Some text"
-      RenderBR {BR} at (63,72) size 0x0
-      RenderText {#text} at (0,76) size 63x19
-        text run at (0,76) width 63: "Some text"
-      RenderBR {BR} at (63,91) size 0x0
-      RenderText {#text} at (0,95) size 63x19
-        text run at (0,95) width 63: "Some text"
-      RenderBR {BR} at (63,110) size 0x0
-      RenderText {#text} at (0,114) size 63x19
-        text run at (0,114) width 63: "Some text"
-      RenderBR {BR} at (63,129) size 0x0
-      RenderText {#text} at (0,133) size 124x19
-        text run at (0,133) width 124: "This is a paragraph."
+      RenderText {#text} at (0,0) size 764x35
+        text run at (0,0) width 764: "This tests whether certain NSResponder methods that should only operate on editable regions modify a selection that is"
+        text run at (0,18) width 160: "not in an editable region."
+      RenderBR {BR} at (159,32) size 1x0
+      RenderText {#text} at (0,36) size 86x17
+        text run at (0,36) width 86: "This is a para"
+      RenderInline {SPAN} at (0,0) size 9x17 [color=#0000FF]
+        RenderText {#text} at (85,36) size 9x17
+          text run at (85,36) width 9: "g"
+      RenderText {#text} at (93,36) size 34x17
+        text run at (93,36) width 34: "raph."
+      RenderBR {BR} at (126,50) size 1x0
+      RenderText {#text} at (0,54) size 65x17
+        text run at (0,54) width 65: "Some text"
+      RenderBR {BR} at (64,68) size 1x0
+      RenderText {#text} at (0,72) size 65x17
+        text run at (0,72) width 65: "Some text"
+      RenderBR {BR} at (64,86) size 1x0
+      RenderText {#text} at (0,90) size 65x17
+        text run at (0,90) width 65: "Some text"
+      RenderBR {BR} at (64,104) size 1x0
+      RenderText {#text} at (0,108) size 65x17
+        text run at (0,108) width 65: "Some text"
+      RenderBR {BR} at (64,122) size 1x0
+      RenderText {#text} at (0,126) size 127x17
+        text run at (0,126) width 127: "This is a paragraph."
       RenderText {#text} at (0,0) size 0x0
 selection start: position 11 of child 2 {#text} of body
 selection end:   position 1 of child 7 {BR} of body

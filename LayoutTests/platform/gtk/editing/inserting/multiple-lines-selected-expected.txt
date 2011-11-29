@@ -13,16 +13,16 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x38
-        RenderText {#text} at (0,0) size 783x38
-          text run at (0,0) width 556: "This tests inserting a paragraph separator into a selection that spans multiple paragraphs. "
-          text run at (556,0) width 227: "'ar' should be on the line after 'f' and"
-          text run at (0,19) width 232: "the caret should be just before the 'a'."
-      RenderBlock {DIV} at (0,54) size 784x38
-        RenderBlock {DIV} at (0,0) size 784x19
-          RenderText {#text} at (0,0) size 5x19
-            text run at (0,0) width 5: "f"
-        RenderBlock {DIV} at (0,19) size 784x19
-          RenderText {#text} at (0,0) size 12x19
-            text run at (0,0) width 12: "ar"
+      RenderBlock {P} at (0,0) size 784x36
+        RenderText {#text} at (0,0) size 775x35
+          text run at (0,0) width 571: "This tests inserting a paragraph separator into a selection that spans multiple paragraphs. "
+          text run at (570,0) width 205: "'ar' should be on the line after 'f'"
+          text run at (0,18) width 264: "and the caret should be just before the 'a'."
+      RenderBlock {DIV} at (0,52) size 784x36
+        RenderBlock {DIV} at (0,0) size 784x18
+          RenderText {#text} at (0,0) size 6x17
+            text run at (0,0) width 6: "f"
+        RenderBlock {DIV} at (0,18) size 784x18
+          RenderText {#text} at (0,0) size 13x17
+            text run at (0,0) width 13: "ar"
 caret: position 0 of child 0 {#text} of child 1 {DIV} of child 2 {DIV} of body

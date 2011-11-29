@@ -3,17 +3,17 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x38
-        RenderText {#text} at (0,0) size 767x38
-          text run at (0,0) width 351: "This tests inserting a line break at the end of a tab span. "
-          text run at (351,0) width 416: "Below you should see 'foo' followed by an empty paragraph, with"
-          text run at (0,19) width 85: "the caret in it."
-      RenderBlock {DIV} at (0,54) size 784x38
-        RenderText {#text} at (0,0) size 21x19
-          text run at (0,0) width 21: "foo"
-        RenderInline {SPAN} at (0,0) size 11x19
-          RenderText {#text} at (21,0) size 11x19
+      RenderBlock {P} at (0,0) size 784x36
+        RenderText {#text} at (0,0) size 780x35
+          text run at (0,0) width 360: "This tests inserting a line break at the end of a tab span. "
+          text run at (359,0) width 421: "Below you should see 'foo' followed by an empty paragraph, with"
+          text run at (0,18) width 88: "the caret in it."
+      RenderBlock {DIV} at (0,52) size 784x36
+        RenderText {#text} at (0,0) size 22x17
+          text run at (0,0) width 22: "foo"
+        RenderInline {SPAN} at (0,0) size 11x17
+          RenderText {#text} at (21,0) size 11x17
             text run at (21,0) width 11: "\x{9}"
-        RenderBR {BR} at (32,15) size 0x0
-        RenderBR {BR} at (0,19) size 0x19
+        RenderBR {BR} at (32,14) size 0x0
+        RenderBR {BR} at (0,18) size 0x17
 caret: position 0 of child 3 {BR} of child 2 {DIV} of body

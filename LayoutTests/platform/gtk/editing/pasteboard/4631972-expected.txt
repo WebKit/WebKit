@@ -9,17 +9,17 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x38
-        RenderText {#text} at (0,0) size 640x38
-          text run at (0,0) width 423: "This tests pasting a fragment containing an <iframe> after a <div>. "
-          text run at (423,0) width 215: "This used to fail on an assertion in"
-          text run at (0,19) width 325: "moveParagraphContentsToNewBlockIfNecessary. "
-          text run at (325,19) width 315: "You should see 'foo' and then an <iframe> below."
-      RenderBlock {DIV} at (0,54) size 784x71
-        RenderBlock {DIV} at (0,0) size 784x19
-          RenderText {#text} at (0,0) size 21x19
-            text run at (0,0) width 21: "foo"
-        RenderBlock (anonymous) at (0,19) size 784x52
+      RenderBlock {P} at (0,0) size 784x36
+        RenderText {#text} at (0,0) size 654x35
+          text run at (0,0) width 434: "This tests pasting a fragment containing an <iframe> after a <div>. "
+          text run at (433,0) width 221: "This used to fail on an assertion in"
+          text run at (0,18) width 328: "moveParagraphContentsToNewBlockIfNecessary. "
+          text run at (327,18) width 320: "You should see 'foo' and then an <iframe> below."
+      RenderBlock {DIV} at (0,52) size 784x70
+        RenderBlock {DIV} at (0,0) size 784x18
+          RenderText {#text} at (0,0) size 22x17
+            text run at (0,0) width 22: "foo"
+        RenderBlock (anonymous) at (0,18) size 784x52
           RenderPartObject {IFRAME} at (0,0) size 102x52 [border: (1px solid #000000)]
             layer at (0,0) size 100x50
               RenderView at (0,0) size 100x50

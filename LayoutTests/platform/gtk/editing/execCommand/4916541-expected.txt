@@ -3,20 +3,20 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x38
-        RenderText {#text} at (0,0) size 783x38
-          text run at (0,0) width 377: "This tests selection preservation during an indent operation. "
-          text run at (377,0) width 406: "The selection should start and end in the same parts of the words"
-          text run at (0,19) width 320: "'foo' and 'bar' before and after the indent operation."
-      RenderBlock {DIV} at (0,54) size 784x38
-        RenderBlock {BLOCKQUOTE} at (40,0) size 744x38
-          RenderInline {SPAN} at (0,0) size 21x19
-            RenderText {#text} at (0,0) size 21x19
-              text run at (0,0) width 21: "foo"
-            RenderBR {BR} at (21,15) size 0x0
-          RenderInline {SPAN} at (0,0) size 20x19
-            RenderText {#text} at (0,19) size 20x19
-              text run at (0,19) width 20: "bar"
-        RenderBlock (anonymous) at (0,38) size 784x0
+      RenderBlock {P} at (0,0) size 784x36
+        RenderText {#text} at (0,0) size 758x35
+          text run at (0,0) width 387: "This tests selection preservation during an indent operation. "
+          text run at (386,0) width 372: "The selection should start and end in the same parts of the"
+          text run at (0,18) width 369: "words 'foo' and 'bar' before and after the indent operation."
+      RenderBlock {DIV} at (0,52) size 784x36
+        RenderBlock {BLOCKQUOTE} at (40,0) size 744x36
+          RenderInline {SPAN} at (0,0) size 22x17
+            RenderText {#text} at (0,0) size 22x17
+              text run at (0,0) width 22: "foo"
+            RenderBR {BR} at (21,14) size 1x0
+          RenderInline {SPAN} at (0,0) size 21x17
+            RenderText {#text} at (0,18) size 21x17
+              text run at (0,18) width 21: "bar"
+        RenderBlock (anonymous) at (0,36) size 784x0
 selection start: position 1 of child 0 {#text} of child 0 {SPAN} of child 0 {BLOCKQUOTE} of child 2 {DIV} of body
 selection end:   position 2 of child 0 {#text} of child 1 {SPAN} of child 0 {BLOCKQUOTE} of child 2 {DIV} of body

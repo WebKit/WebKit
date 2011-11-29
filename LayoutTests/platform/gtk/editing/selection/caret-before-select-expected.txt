@@ -3,11 +3,11 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x107 [border: (5px solid #FF0000)]
-        RenderMenuList {SELECT} at (39,39) size 57x29 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
-          RenderBlock (anonymous) at (1,1) size 55x27
-            RenderText at (4,4) size 30x19
-              text run at (4,4) width 30: "One"
-        RenderText {#text} at (98,44) size 26x19
-          text run at (98,44) width 26: "blaa"
+      RenderBlock {DIV} at (0,0) size 784x106 [border: (5px solid #FF0000)]
+        RenderMenuList {SELECT} at (39,39) size 58x28 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+          RenderBlock (anonymous) at (1,1) size 56x26
+            RenderText at (4,4) size 31x17
+              text run at (4,4) width 31: "One"
+        RenderText {#text} at (99,44) size 27x17
+          text run at (99,44) width 27: "blaa"
 caret: position 0 of child 0 {SELECT} of child 0 {DIV} of body
