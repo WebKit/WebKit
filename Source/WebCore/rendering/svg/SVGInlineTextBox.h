@@ -37,11 +37,11 @@ public:
 
     virtual bool isSVGInlineTextBox() const { return true; }
 
-    virtual int virtualLogicalHeight() const { return m_logicalHeight; }
-    void setLogicalHeight(int height) { m_logicalHeight = height; }
+    virtual float virtualLogicalHeight() const { return m_logicalHeight; }
+    void setLogicalHeight(float height) { m_logicalHeight = height; }
 
     virtual int selectionTop() { return top(); }
-    virtual int selectionHeight() { return m_logicalHeight; }
+    virtual int selectionHeight() { return static_cast<int>(ceilf(m_logicalHeight)); }
     virtual int offsetForPosition(float x, bool includePartialGlyphs = true) const;
     virtual float positionForOffset(int offset) const;
 
@@ -51,7 +51,7 @@ public:
 
     bool mapStartEndPositionsIntoFragmentCoordinates(const SVGTextFragment&, int& startPosition, int& endPosition) const;
 
-    virtual IntRect calculateBoundaries() const;
+    virtual FloatRect calculateBoundaries() const;
 
     void clearTextFragments() { m_textFragments.clear(); }
     Vector<SVGTextFragment>& textFragments() { return m_textFragments; }
@@ -80,7 +80,7 @@ private:
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const LayoutPoint& pointInContainer, const LayoutPoint& accumulatedOffset, LayoutUnit lineTop, LayoutUnit lineBottom);
 
 private:
-    int m_logicalHeight;
+    float m_logicalHeight;
     int m_paintingResourceMode;
     bool m_startsNewTextChunk : 1;
     RenderSVGResource* m_paintingResource;

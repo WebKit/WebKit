@@ -27,6 +27,6 @@ layer at (0,0) size 800x600
     RenderSVGContainer {use} at (156,12) size 121x66 [transform={m=((0.25,0.00)(0.25,1.00)) t=(160.00,20.00)}]
       RenderSVGContainer {g} at (156,12) size 121x66
         RenderSVGPath {rect} at (156,12) size 121x66 [stroke={[type=SOLID] [color=#008000] [stroke width=15.00]}] [x=0.00] [y=0.00] [width=400.00] [height=50.00]
-    RenderSVGContainer {use} at (158,89) size 104x218 [transform={m=((0.25,0.36)(0.00,1.00)) t=(160.00,100.00)}]
-      RenderSVGContainer {g} at (158,89) size 104x218
-        RenderSVGPath {rect} at (158,89) size 104x218 [stroke={[type=SOLID] [color=#008000] [stroke width=15.00]}] [x=0.00] [y=0.00] [width=400.00] [height=50.00]
+    RenderSVGContainer {use} at (158,89) size 104x217 [transform={m=((0.25,0.36)(0.00,1.00)) t=(160.00,100.00)}]
+      RenderSVGContainer {g} at (158,89) size 104x217
+        RenderSVGPath {rect} at (158,89) size 104x217 [stroke={[type=SOLID] [color=#008000] [stroke width=15.00]}] [x=0.00] [y=0.00] [width=400.00] [height=50.00]

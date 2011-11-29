@@ -131,28 +131,12 @@ static void writeIfNotDefault(TextStream& ts, const char* name, ValueType value,
         writeNameValuePair(ts, name, value);
 }
 
-TextStream& operator<<(TextStream& ts, const FloatRect &r)
+TextStream& operator<<(TextStream& ts, const FloatRect& r)
 {
-    ts << "at ("; 
-    if (hasFractions(r.x())) 
-        ts << r.x();
-    else 
-        ts << int(r.x());
-    ts << ",";
-    if (hasFractions(r.y())) 
-        ts << r.y();
-    else 
-        ts << int(r.y());
-    ts << ") size ";
-    if (hasFractions(r.width())) 
-        ts << r.width(); 
-    else 
-        ts << int(r.width()); 
-    ts << "x";
-    if (hasFractions(r.height())) 
-        ts << r.height();
-    else 
-        ts << int(r.height());
+    ts << "at (" << formatNumberRespectingIntegers(r.x()); 
+    ts << "," << formatNumberRespectingIntegers(r.y());
+    ts << ") size " << formatNumberRespectingIntegers(r.width());
+    ts << "x" << formatNumberRespectingIntegers(r.height());
     return ts;
 }
 
@@ -396,16 +380,13 @@ static TextStream& operator<<(TextStream& ts, const RenderSVGRoot& root)
     return writePositionAndStyle(ts, root);
 }
 
-static void writeRenderSVGTextBox(TextStream& ts, const RenderBlock& text)
+static void writeRenderSVGTextBox(TextStream& ts, const RenderSVGText& text)
 {
     SVGRootInlineBox* box = static_cast<SVGRootInlineBox*>(text.firstRootBox());
     if (!box)
         return;
 
-    // FIXME: For now use an int for logicalWidth, although this makes it harder
-    // to detect any changes caused by the conversion to floating point. :(
-    int logicalWidth = ceilf(box->x() + box->logicalWidth()) - box->x();
-    ts << " at (" << text.x() << "," << text.y() << ") size " << logicalWidth << "x" << box->logicalHeight();
+    ts << " " << enclosingIntRect(FloatRect(text.x(), text.y(), box->logicalWidth(), box->logicalHeight()));
     
     // FIXME: Remove this hack, once the new text layout engine is completly landed. We want to preserve the old layout test results for now.
     ts << " contains 1 chunk(s)";
@@ -618,7 +599,7 @@ void write(TextStream& ts, const RenderSVGRoot& root, int indent)
     writeChildren(ts, root, indent);
 }
 
-void writeSVGText(TextStream& ts, const RenderBlock& text, int indent)
+void writeSVGText(TextStream& ts, const RenderSVGText& text, int indent)
 {
     writeStandardPrefix(ts, text, indent);
     writeRenderSVGTextBox(ts, text);
@@ -627,12 +608,10 @@ void writeSVGText(TextStream& ts, const RenderBlock& text, int indent)
     writeChildren(ts, text, indent);
 }
 
-void writeSVGInlineText(TextStream& ts, const RenderText& text, int indent)
+void writeSVGInlineText(TextStream& ts, const RenderSVGInlineText& text, int indent)
 {
     writeStandardPrefix(ts, text, indent);
-
-    // Why not just linesBoundingBox()?
-    ts << " " << FloatRect(text.firstRunOrigin(), text.linesBoundingBox().size()) << "\n";
+    ts << " " << enclosingIntRect(FloatRect(text.firstRunOrigin(), text.floatLinesBoundingBox().size())) << "\n";
     writeResources(ts, text, indent);
     writeSVGInlineTextBoxes(ts, text, indent);
 }

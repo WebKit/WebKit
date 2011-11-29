@@ -391,7 +391,7 @@ LayoutRect RenderSVGRoot::clippedOverflowRectForRepaint(RenderBoxModelObject* re
     return SVGRenderSupport::clippedOverflowRectForRepaint(this, repaintContainer);
 }
 
-void RenderSVGRoot::computeRectForRepaint(RenderBoxModelObject* repaintContainer, LayoutRect& repaintRect, bool fixed) const
+void RenderSVGRoot::computeFloatRectForRepaint(RenderBoxModelObject* repaintContainer, FloatRect& repaintRect, bool fixed) const
 {
     // Apply our local transforms (except for x/y translation), then our shadow, 
     // and then call RenderBox's method to handle all the normal CSS Box model bits
@@ -404,7 +404,9 @@ void RenderSVGRoot::computeRectForRepaint(RenderBoxModelObject* repaintContainer
     if (const ShadowData* shadow = svgStyle->shadow())
         shadow->adjustRectForShadow(repaintRect);
 
-    RenderBox::computeRectForRepaint(repaintContainer, repaintRect, fixed);
+    LayoutRect rect = enclosingIntRect(repaintRect);
+    RenderBox::computeRectForRepaint(repaintContainer, rect, fixed);
+    repaintRect = rect;
 }
 
 void RenderSVGRoot::mapLocalToContainer(RenderBoxModelObject* repaintContainer, bool fixed, bool useTransforms, TransformState& transformState, bool* wasFixed) const

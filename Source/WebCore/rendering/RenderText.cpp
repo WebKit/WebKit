@@ -343,8 +343,9 @@ void RenderText::absoluteRectsForRange(Vector<LayoutRect>& rects, unsigned start
     for (InlineTextBox* box = firstTextBox(); box; box = box->nextTextBox()) {
         // Note: box->end() returns the index of the last character, not the index past it
         if (start <= box->start() && box->end() < end) {
-            IntRect r = box->calculateBoundaries();
+            FloatRect r = box->calculateBoundaries();
             if (useSelectionHeight) {
+                // FIXME: localSelectionRect should switch to return FloatRect soon with the subpixellayout branch.
                 IntRect selectionRect = box->localSelectionRect(start, end);
                 if (box->isHorizontal()) {
                     r.setHeight(selectionRect.height());
@@ -354,7 +355,7 @@ void RenderText::absoluteRectsForRange(Vector<LayoutRect>& rects, unsigned start
                     r.setX(selectionRect.x());
                 }
             }
-            rects.append(localToAbsoluteQuad(FloatQuad(r), false, wasFixed).enclosingBoundingBox());
+            rects.append(localToAbsoluteQuad(r, false, wasFixed).enclosingBoundingBox());
         } else {
             // FIXME: This code is wrong. It's converting local to absolute twice. http://webkit.org/b/65722
             FloatRect rect = localQuadForTextBox(box, start, end, useSelectionHeight);
@@ -391,9 +392,10 @@ static IntRect ellipsisRectForBox(InlineTextBox* box, unsigned startPos, unsigne
 void RenderText::absoluteQuads(Vector<FloatQuad>& quads, bool* wasFixed, ClippingOption option) const
 {
     for (InlineTextBox* box = firstTextBox(); box; box = box->nextTextBox()) {
-        IntRect boundaries = box->calculateBoundaries();
+        FloatRect boundaries = box->calculateBoundaries();
 
         // Shorten the width of this text box if it ends in an ellipsis.
+        // FIXME: ellipsisRectForBox should switch to return FloatRect soon with the subpixellayout branch.
         IntRect ellipsisRect = (option == ClipToEllipsis) ? ellipsisRectForBox(box, 0, textLength()) : IntRect();
         if (!ellipsisRect.isEmpty()) {
             if (style()->isHorizontalWritingMode())
@@ -401,7 +403,7 @@ void RenderText::absoluteQuads(Vector<FloatQuad>& quads, bool* wasFixed, Clippin
             else
                 boundaries.setHeight(ellipsisRect.maxY() - boundaries.y());
         }
-        quads.append(localToAbsoluteQuad(FloatRect(boundaries), false, wasFixed));
+        quads.append(localToAbsoluteQuad(boundaries, false, wasFixed));
     }
 }
     
@@ -425,8 +427,9 @@ void RenderText::absoluteQuadsForRange(Vector<FloatQuad>& quads, unsigned start,
     for (InlineTextBox* box = firstTextBox(); box; box = box->nextTextBox()) {
         // Note: box->end() returns the index of the last character, not the index past it
         if (start <= box->start() && box->end() < end) {
-            IntRect r(box->calculateBoundaries());
+            FloatRect r = box->calculateBoundaries();
             if (useSelectionHeight) {
+                // FIXME: localSelectionRect should switch to return FloatRect soon with the subpixellayout branch.
                 IntRect selectionRect = box->localSelectionRect(start, end);
                 if (box->isHorizontal()) {
                     r.setHeight(selectionRect.height());
@@ -436,7 +439,7 @@ void RenderText::absoluteQuadsForRange(Vector<FloatQuad>& quads, unsigned start,
                     r.setX(selectionRect.x());
                 }
             }
-            quads.append(localToAbsoluteQuad(FloatRect(r), false, wasFixed));
+            quads.append(localToAbsoluteQuad(r, false, wasFixed));
         } else {
             FloatRect rect = localQuadForTextBox(box, start, end, useSelectionHeight);
             if (!rect.isZero())

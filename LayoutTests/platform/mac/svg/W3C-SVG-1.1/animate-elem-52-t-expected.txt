@@ -2,17 +2,17 @@ layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
-    RenderSVGText {text} at (65,22) size 22x36 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 22x36
+    RenderSVGText {text} at (65,22) size 22x35 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 22x35
         chunk 1 text run 1 at (65.00,50.00) startOffset 0 endOffset 1 width 22.00: "A"
-    RenderSVGText {text} at (165,22) size 20x36 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 20x36
+    RenderSVGText {text} at (165,22) size 20x35 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 20x35
         chunk 1 text run 1 at (165.00,50.00) startOffset 0 endOffset 1 width 20.00: "B"
-    RenderSVGText {text} at (265,22) size 20x36 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 20x36
+    RenderSVGText {text} at (265,22) size 20x35 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 20x35
         chunk 1 text run 1 at (265.00,50.00) startOffset 0 endOffset 1 width 20.00: "C"
-    RenderSVGText {text} at (365,22) size 22x36 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 22x36
+    RenderSVGText {text} at (365,22) size 22x35 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 22x35
         chunk 1 text run 1 at (365.00,50.00) startOffset 0 endOffset 1 width 22.00: "D"
     RenderSVGContainer {g} at (29,59) size 392x42 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,45.00)}]
       RenderSVGContainer {g} at (29,59) size 92x42
@@ -38,14 +38,14 @@ layer at (0,0) size 480x360
     RenderSVGText {text} at (15,150) size 287x32 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 287x32
         chunk 1 text run 1 at (15.00,175.00) startOffset 0 endOffset 26 width 287.00: "Test of Eventbase targets."
-    RenderSVGText {text} at (15,228) size 342x22 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 342x22
+    RenderSVGText {text} at (15,228) size 342x21 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 342x21
         chunk 1 text run 1 at (15.00,245.00) startOffset 0 endOffset 48 width 342.00: "Note that clicking rect D should give no result."
-    RenderSVGText {text} at (15,188) size 364x22 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 364x22
+    RenderSVGText {text} at (15,188) size 364x21 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 364x21
         chunk 1 text run 1 at (15.00,205.00) startOffset 0 endOffset 51 width 364.00: "Clicking a rectangle should change its color at the"
-    RenderSVGText {text} at (15,208) size 369x22 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 369x22
+    RenderSVGText {text} at (15,208) size 369x21 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 369x21
         chunk 1 text run 1 at (15.00,225.00) startOffset 0 endOffset 53 width 369.00: "time for the click + delay as indicated in each rect."
     RenderSVGText {text} at (10,304) size 264x46 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 264x46

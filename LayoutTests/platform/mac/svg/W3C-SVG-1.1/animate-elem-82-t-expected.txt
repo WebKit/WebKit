@@ -6,8 +6,8 @@ layer at (0,0) size 480x360
       RenderSVGInlineText {#text} at (0,0) size 264x46
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 264.00: "$Revision: 1.7 $"
     RenderSVGPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
-    RenderSVGText {text} at (173,11) size 134x18 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 134x18
+    RenderSVGText {text} at (173,11) size 133x18 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 133x18
         chunk 1 (middle anchor) text run 1 at (173.50,25.00) startOffset 0 endOffset 18 width 133.00: "<animateTransform>"
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
       RenderSVGContainer {g} at (0,0) size 45x45
@@ -29,10 +29,10 @@ layer at (0,0) size 480x360
       RenderSVGContainer {g} at (127,65) size 106x104 [transform={m=((1.00,0.00)(0.00,1.00)) t=(180.00,90.00)}]
         RenderSVGPath {rect} at (155,65) size 50x50 [transform={m=((0.71,0.71)(-0.71,0.71)) t=(0.00,0.00)}] [stroke={[type=SOLID] [color=#808080] [stroke width=4.00]}] [fill={[type=SOLID] [color=#E6E6E6]}] [x=-15.00] [y=-15.00] [width=30.00] [height=30.00]
         RenderSVGPath {rect} at (155,65) size 50x50 [transform={m=((0.71,0.71)(-0.71,0.71)) t=(0.00,0.00)}] [stroke={[type=SOLID] [color=#FFB400] [stroke width=4.00]}] [x=-15.00] [y=-15.00] [width=30.00] [height=30.00]
-        RenderSVGPath {rect} at (147,71) size 43x43 [transform={m=((0.38,0.92)(-0.92,0.38)) t=(-11.56,2.30)}] [stroke={[type=SOLID] [color=#FFB400]}] [x=-15.00] [y=-15.00] [width=30.00] [height=30.00]
+        RenderSVGPath {rect} at (148,72) size 41x41 [transform={m=((0.38,0.92)(-0.92,0.38)) t=(-11.56,2.30)}] [stroke={[type=SOLID] [color=#FFB400]}] [x=-15.00] [y=-15.00] [width=30.00] [height=30.00]
         RenderSVGPath {rect} at (134,74) size 32x32 [transform={m=((0.00,1.00)(-1.00,0.00)) t=(-30.00,0.00)}] [stroke={[type=SOLID] [color=#FFB400]}] [x=-15.00] [y=-15.00] [width=30.00] [height=30.00]
-        RenderSVGText {text} at (-53,46) size 106x18 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 106x18
+        RenderSVGText {text} at (-53,46) size 105x18 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 105x18
             chunk 1 (middle anchor) text run 1 at (-52.50,60.00) startOffset 0 endOffset 18 width 105.00: "different rotation"
         RenderSVGText {text} at (-22,61) size 44x18 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 44x18
@@ -74,14 +74,14 @@ layer at (0,0) size 480x360
         RenderSVGPath {rect} at (283,203) size 34x34 [stroke={[type=SOLID] [color=#FFB400] [stroke width=4.00]}] [x=-15.00] [y=-15.00] [width=30.00] [height=30.00]
         RenderSVGPath {rect} at (289,209) size 32x32 [transform={m=((0.00,1.00)(-1.00,0.00)) t=(5.00,5.00)}] [stroke={[type=SOLID] [color=#FFB400]}] [x=-15.00] [y=-15.00] [width=30.00] [height=30.00]
         RenderSVGPath {rect} at (344,304) size 32x32 [transform={m=((-1.00,0.00)(-0.00,-1.00)) t=(60.00,100.00)}] [stroke={[type=SOLID] [color=#FFB400]}] [x=-15.00] [y=-15.00] [width=30.00] [height=30.00]
-        RenderSVGText {text} at (-45,61) size 90x18 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 90x18
+        RenderSVGText {text} at (-45,61) size 89x18 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 89x18
             chunk 1 (middle anchor) text run 1 at (-44.50,75.00) startOffset 0 endOffset 14 width 89.00: "paced rotation"
       RenderSVGContainer {g} at (376,202) size 104x134 [transform={m=((1.00,0.00)(0.00,1.00)) t=(420.00,220.00)}]
         RenderSVGPath {rect} at (403,203) size 34x34 [stroke={[type=SOLID] [color=#808080] [stroke width=4.00]}] [fill={[type=SOLID] [color=#E6E6E6]}] [x=-15.00] [y=-15.00] [width=30.00] [height=30.00]
         RenderSVGPath {rect} at (403,203) size 34x34 [stroke={[type=SOLID] [color=#FFB400] [stroke width=4.00]}] [x=-15.00] [y=-15.00] [width=30.00] [height=30.00]
-        RenderSVGPath {rect} at (378,202) size 47x46 [transform={m=((0.71,0.71)(-0.71,0.71)) t=(-18.54,4.75)}] [stroke={[type=SOLID] [color=#FFB400]}] [x=-15.00] [y=-15.00] [width=30.00] [height=30.00]
+        RenderSVGPath {rect} at (379,202) size 45x45 [transform={m=((0.71,0.71)(-0.71,0.71)) t=(-18.54,4.75)}] [stroke={[type=SOLID] [color=#FFB400]}] [x=-15.00] [y=-15.00] [width=30.00] [height=30.00]
         RenderSVGPath {rect} at (464,304) size 16x32 [transform={m=((-1.00,0.00)(-0.00,-1.00)) t=(60.00,100.00)}] [stroke={[type=SOLID] [color=#FFB400]}] [x=-15.00] [y=-15.00] [width=30.00] [height=30.00]
-        RenderSVGText {text} at (-44,61) size 88x18 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 88x18
+        RenderSVGText {text} at (-44,61) size 87x18 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 87x18
             chunk 1 (middle anchor) text run 1 at (-43.50,75.00) startOffset 0 endOffset 15 width 87.00: "linear rotation"

@@ -42,8 +42,8 @@ public:
 
     virtual bool isSVGRootInlineBox() const { return true; }
 
-    virtual int virtualLogicalHeight() const { return m_logicalHeight; }
-    void setLogicalHeight(int height) { m_logicalHeight = height; }
+    virtual float virtualLogicalHeight() const { return m_logicalHeight; }
+    void setLogicalHeight(float height) { m_logicalHeight = height; }
 
     virtual void paint(PaintInfo&, const LayoutPoint&, LayoutUnit lineTop, LayoutUnit lineBottom);
 
@@ -57,11 +57,11 @@ public:
 private:
     void reorderValueLists(Vector<SVGTextLayoutAttributes>&);
     void layoutCharactersInTextBoxes(InlineFlowBox*, SVGTextLayoutEngine&);
-    void layoutChildBoxes(InlineFlowBox*, LayoutRect* = 0);
-    void layoutRootBox(const LayoutRect&);
+    void layoutChildBoxes(InlineFlowBox*, FloatRect* = 0);
+    void layoutRootBox(const FloatRect&);
 
 private:
-    int m_logicalHeight;
+    float m_logicalHeight;
 };
 
 } // namespace WebCore

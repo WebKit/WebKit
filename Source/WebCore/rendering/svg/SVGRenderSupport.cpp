@@ -54,21 +54,21 @@ LayoutRect SVGRenderSupport::clippedOverflowRectForRepaint(const RenderObject* o
 
     // Pass our local paint rect to computeRectForRepaint() which will
     // map to parent coords and recurse up the parent chain.
-    LayoutRect repaintRect = enclosingLayoutRect(object->repaintRectInLocalCoordinates());
-    object->computeRectForRepaint(repaintContainer, repaintRect);
-    return repaintRect;
+    FloatRect repaintRect = object->repaintRectInLocalCoordinates();
+    object->computeFloatRectForRepaint(repaintContainer, repaintRect);
+    return enclosingLayoutRect(repaintRect);
 }
 
-void SVGRenderSupport::computeRectForRepaint(const RenderObject* object, RenderBoxModelObject* repaintContainer, LayoutRect& repaintRect, bool fixed)
+void SVGRenderSupport::computeFloatRectForRepaint(const RenderObject* object, RenderBoxModelObject* repaintContainer, FloatRect& repaintRect, bool fixed)
 {
     const SVGRenderStyle* svgStyle = object->style()->svgStyle();
     if (const ShadowData* shadow = svgStyle->shadow())
         shadow->adjustRectForShadow(repaintRect);
     repaintRect.inflate(object->style()->outlineWidth());
 
-    // Translate to coords in our parent renderer, and then call computeRectForRepaint on our parent
+    // Translate to coords in our parent renderer, and then call computeFloatRectForRepaint() on our parent.
     repaintRect = object->localToParentTransform().mapRect(repaintRect);
-    object->parent()->computeRectForRepaint(repaintContainer, repaintRect, fixed);
+    object->parent()->computeFloatRectForRepaint(repaintContainer, repaintRect, fixed);
 }
 
 void SVGRenderSupport::mapLocalToContainer(const RenderObject* object, RenderBoxModelObject* repaintContainer, TransformState& transformState, bool* wasFixed)

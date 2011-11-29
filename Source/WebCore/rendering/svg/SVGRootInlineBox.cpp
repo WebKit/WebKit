@@ -92,7 +92,7 @@ void SVGRootInlineBox::computePerCharacterLayoutInformation()
 
     // Perform SVG text layout phase four
     // Position & resize all SVGInlineText/FlowBoxes in the inline box tree, resize the root box as well as the RenderSVGText parent block.
-    LayoutRect childRect;
+    FloatRect childRect;
     layoutChildBoxes(this, &childRect);
     layoutRootBox(childRect);
 }
@@ -136,10 +136,10 @@ void SVGRootInlineBox::layoutCharactersInTextBoxes(InlineFlowBox* start, SVGText
     }
 }
 
-void SVGRootInlineBox::layoutChildBoxes(InlineFlowBox* start, LayoutRect* childRect)
+void SVGRootInlineBox::layoutChildBoxes(InlineFlowBox* start, FloatRect* childRect)
 {
     for (InlineBox* child = start->firstChild(); child; child = child->nextOnLine()) {
-        LayoutRect boxRect;
+        FloatRect boxRect;
         if (child->isSVGInlineTextBox()) {
             ASSERT(child->renderer());
             ASSERT(child->renderer()->isSVGInlineText());
@@ -171,17 +171,15 @@ void SVGRootInlineBox::layoutChildBoxes(InlineFlowBox* start, LayoutRect* childR
     }
 }
 
-void SVGRootInlineBox::layoutRootBox(const LayoutRect& childRect)
+void SVGRootInlineBox::layoutRootBox(const FloatRect& childRect)
 {
     RenderBlock* parentBlock = block();
     ASSERT(parentBlock);
 
-    LayoutUnit widthBlock = childRect.width();
-    LayoutUnit heightBlock = childRect.height();
-
     // Finally, assign the root block position, now that all content is laid out.
-    parentBlock->setLocation(childRect.location());
-    parentBlock->setSize(childRect.size());
+    IntRect roundedChildRect = enclosingIntRect(childRect);
+    parentBlock->setLocation(roundedChildRect.location());
+    parentBlock->setSize(roundedChildRect.size());
 
     // Position all children relative to the parent block.
     for (InlineBox* child = firstChild(); child; child = child->nextOnLine()) {
@@ -194,9 +192,9 @@ void SVGRootInlineBox::layoutRootBox(const LayoutRect& childRect)
     // Position ourselves.
     setX(0);
     setY(0);
-    setLogicalWidth(widthBlock);
-    setLogicalHeight(heightBlock);
-    setLineTopBottomPositions(0, heightBlock, 0, heightBlock);
+    setLogicalWidth(childRect.width());
+    setLogicalHeight(childRect.height());
+    setLineTopBottomPositions(0, roundedChildRect.height(), 0, roundedChildRect.height());
 }
 
 InlineBox* SVGRootInlineBox::closestLeafChildForPosition(const LayoutPoint& point)

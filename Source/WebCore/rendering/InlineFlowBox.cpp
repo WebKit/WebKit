@@ -689,13 +689,13 @@ void InlineFlowBox::placeBoxesInBlockDirection(LayoutUnit top, LayoutUnit maxHei
         if (strictMode || hasTextChildren() || (descendantsHaveSameLineHeightAndBaseline() && hasTextDescendants())) {
             if (!setLineTop) {
                 setLineTop = true;
-                lineTop = logicalTop();
+                lineTop = pixelSnappedLogicalTop();
                 lineTopIncludingMargins = lineTop;
             } else {
-                lineTop = min(lineTop, logicalTop());
+                lineTop = min(lineTop, pixelSnappedLogicalTop());
                 lineTopIncludingMargins = min(lineTop, lineTopIncludingMargins);
             }
-            lineBottom = max(lineBottom, logicalTop() + logicalHeight());
+            lineBottom = max(lineBottom, pixelSnappedLogicalBottom());
             lineBottomIncludingMargins = max(lineBottom, lineBottomIncludingMargins);
         }
         
@@ -739,8 +739,8 @@ inline void InlineFlowBox::addBoxShadowVisualOverflow(LayoutRect& logicalVisualO
     LayoutUnit shadowLogicalTop = style->isFlippedLinesWritingMode() ? -boxShadowLogicalBottom : boxShadowLogicalTop;
     LayoutUnit shadowLogicalBottom = style->isFlippedLinesWritingMode() ? -boxShadowLogicalTop : boxShadowLogicalBottom;
     
-    LayoutUnit logicalTopVisualOverflow = min(logicalTop() + shadowLogicalTop, logicalVisualOverflow.y());
-    LayoutUnit logicalBottomVisualOverflow = max(logicalBottom() + shadowLogicalBottom, logicalVisualOverflow.maxY());
+    LayoutUnit logicalTopVisualOverflow = min(pixelSnappedLogicalTop() + shadowLogicalTop, logicalVisualOverflow.y());
+    LayoutUnit logicalBottomVisualOverflow = max(pixelSnappedLogicalBottom() + shadowLogicalBottom, logicalVisualOverflow.maxY());
     
     LayoutUnit boxShadowLogicalLeft;
     LayoutUnit boxShadowLogicalRight;
@@ -772,8 +772,8 @@ inline void InlineFlowBox::addBorderOutsetVisualOverflow(LayoutRect& logicalVisu
     LayoutUnit outsetLogicalTop = style->isFlippedLinesWritingMode() ? borderOutsetLogicalBottom : borderOutsetLogicalTop;
     LayoutUnit outsetLogicalBottom = style->isFlippedLinesWritingMode() ? borderOutsetLogicalTop : borderOutsetLogicalBottom;
 
-    LayoutUnit logicalTopVisualOverflow = min(logicalTop() - outsetLogicalTop, logicalVisualOverflow.y());
-    LayoutUnit logicalBottomVisualOverflow = max(logicalBottom() + outsetLogicalBottom, logicalVisualOverflow.maxY());
+    LayoutUnit logicalTopVisualOverflow = min(pixelSnappedLogicalTop() - outsetLogicalTop, logicalVisualOverflow.y());
+    LayoutUnit logicalBottomVisualOverflow = max(pixelSnappedLogicalBottom() + outsetLogicalBottom, logicalVisualOverflow.maxY());
     
     LayoutUnit borderOutsetLogicalLeft;
     LayoutUnit borderOutsetLogicalRight;
@@ -838,8 +838,8 @@ inline void InlineFlowBox::addTextBoxVisualOverflow(InlineTextBox* textBox, Glyp
     LayoutUnit childOverflowLogicalLeft = min<LayoutUnit>(textShadowLogicalLeft + leftGlyphOverflow, leftGlyphOverflow);
     LayoutUnit childOverflowLogicalRight = max<LayoutUnit>(textShadowLogicalRight + rightGlyphOverflow, rightGlyphOverflow);
 
-    LayoutUnit logicalTopVisualOverflow = min(textBox->logicalTop() + childOverflowLogicalTop, logicalVisualOverflow.y());
-    LayoutUnit logicalBottomVisualOverflow = max(textBox->logicalBottom() + childOverflowLogicalBottom, logicalVisualOverflow.maxY());
+    LayoutUnit logicalTopVisualOverflow = min(textBox->pixelSnappedLogicalTop() + childOverflowLogicalTop, logicalVisualOverflow.y());
+    LayoutUnit logicalBottomVisualOverflow = max(textBox->pixelSnappedLogicalBottom() + childOverflowLogicalBottom, logicalVisualOverflow.maxY());
     LayoutUnit logicalLeftVisualOverflow = min(textBox->pixelSnappedLogicalLeft() + childOverflowLogicalLeft, logicalVisualOverflow.x());
     LayoutUnit logicalRightVisualOverflow = max(textBox->pixelSnappedLogicalRight() + childOverflowLogicalRight, logicalVisualOverflow.maxX());
     

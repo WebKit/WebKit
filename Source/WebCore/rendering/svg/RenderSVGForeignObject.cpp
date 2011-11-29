@@ -91,9 +91,9 @@ LayoutRect RenderSVGForeignObject::clippedOverflowRectForRepaint(RenderBoxModelO
     return SVGRenderSupport::clippedOverflowRectForRepaint(this, repaintContainer);
 }
 
-void RenderSVGForeignObject::computeRectForRepaint(RenderBoxModelObject* repaintContainer, LayoutRect& repaintRect, bool fixed) const
+void RenderSVGForeignObject::computeFloatRectForRepaint(RenderBoxModelObject* repaintContainer, FloatRect& repaintRect, bool fixed) const
 {
-    SVGRenderSupport::computeRectForRepaint(this, repaintContainer, repaintRect, fixed);
+    SVGRenderSupport::computeFloatRectForRepaint(this, repaintContainer, repaintRect, fixed);
 }
 
 const AffineTransform& RenderSVGForeignObject::localToParentTransform() const

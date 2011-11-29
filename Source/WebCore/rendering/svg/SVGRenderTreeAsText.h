@@ -36,14 +36,14 @@ class Color;
 class FloatRect;
 class FloatSize;
 class Node;
-class RenderBlock;
 class RenderImage;
 class RenderObject;
 class RenderSVGGradientStop;
 class RenderSVGImage;
+class RenderSVGInlineText;
 class RenderSVGPath;
 class RenderSVGRoot;
-class RenderText;
+class RenderSVGText;
 class AffineTransform;
 class SVGUnitTypes;
 
@@ -54,8 +54,8 @@ void writeSVGGradientStop(TextStream&, const RenderSVGGradientStop&, int indent)
 void writeSVGResourceContainer(TextStream&, const RenderObject&, int indent);
 void writeSVGContainer(TextStream&, const RenderObject&, int indent);
 void writeSVGImage(TextStream&, const RenderSVGImage&, int indent);
-void writeSVGInlineText(TextStream&, const RenderText&, int indent);
-void writeSVGText(TextStream&, const RenderBlock&, int indent);
+void writeSVGInlineText(TextStream&, const RenderSVGInlineText&, int indent);
+void writeSVGText(TextStream&, const RenderSVGText&, int indent);
 void writeResources(TextStream&, const RenderObject&, int indent);
 
 // helper operators defined used in various classes to dump the render tree.

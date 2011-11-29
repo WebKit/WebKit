@@ -21,8 +21,8 @@ layer at (0,0) size 785x1358
                     RenderSVGGradientStop {stop} [offset=0.00] [color=#FFFFFF]
                     RenderSVGGradientStop {stop} [offset=1.00] [color=#FFEEAA]
                 RenderSVGPath {rect} at (0,0) size 384x128 [stroke={[type=SOLID] [color=#FFCC33] [stroke width=2.00]}] [fill={[type=LINEAR-GRADIENT] [id="surface"]}] [x=1.00] [y=1.00] [width=118.00] [height=38.00]
-                RenderSVGText {text} at (52,8) size 16x24 contains 1 chunk(s)
-                  RenderSVGInlineText {#text} at (0,0) size 16x24
+                RenderSVGText {text} at (52,8) size 15x24 contains 1 chunk(s)
+                  RenderSVGInlineText {#text} at (0,0) size 15x24
                     chunk 1 (middle anchor) text run 1 at (52.81,27.00) startOffset 0 endOffset 1 width 14.38: "A"
           RenderEmbeddedObject {object} at (384,0) size 384x128
             layer at (0,0) size 384x128
@@ -34,8 +34,8 @@ layer at (0,0) size 785x1358
                     RenderSVGGradientStop {stop} [offset=0.00] [color=#FFFFFF]
                     RenderSVGGradientStop {stop} [offset=1.00] [color=#FFEEAA]
                 RenderSVGPath {rect} at (0,0) size 384x128 [stroke={[type=SOLID] [color=#FFCC33] [stroke width=2.00]}] [fill={[type=LINEAR-GRADIENT] [id="surface"]}] [x=1.00] [y=1.00] [width=118.00] [height=38.00]
-                RenderSVGText {text} at (53,8) size 14x24 contains 1 chunk(s)
-                  RenderSVGInlineText {#text} at (0,0) size 14x24
+                RenderSVGText {text} at (53,8) size 13x24 contains 1 chunk(s)
+                  RenderSVGInlineText {#text} at (0,0) size 13x24
                     chunk 1 (middle anchor) text run 1 at (53.91,27.00) startOffset 0 endOffset 1 width 12.19: "L"
           RenderEmbeddedObject {object} at (0,128) size 256x448
             layer at (0,0) size 256x448
@@ -62,13 +62,13 @@ layer at (0,0) size 785x1358
                   RenderSVGPath {circle} at (128,160) size 128x128 [stroke={[type=SOLID] [color=#FFCC33] [stroke width=2.00]}] [fill={[type=LINEAR-GRADIENT] [id="surface"]}] [cx=60.00] [cy=70.00] [r=19.00]
                 RenderSVGContainer {a} at (0,320) size 128x128
                   RenderSVGPath {circle} at (0,320) size 128x128 [stroke={[type=SOLID] [color=#FFCC33] [stroke width=2.00]}] [fill={[type=LINEAR-GRADIENT] [id="surface"]}] [cx=20.00] [cy=120.00] [r=19.00]
-                  RenderSVGText {text} at (12,108) size 16x24 contains 1 chunk(s)
-                    RenderSVGInlineText {#text} at (0,0) size 16x24
+                  RenderSVGText {text} at (12,108) size 15x24 contains 1 chunk(s)
+                    RenderSVGInlineText {#text} at (0,0) size 15x24
                       chunk 1 (middle anchor) text run 1 at (12.81,127.00) startOffset 0 endOffset 1 width 14.38: "D"
                 RenderSVGContainer {a} at (128,320) size 128x128
                   RenderSVGPath {circle} at (128,320) size 128x128 [stroke={[type=SOLID] [color=#FFCC33] [stroke width=2.00]}] [fill={[type=LINEAR-GRADIENT] [id="surface"]}] [cx=60.00] [cy=120.00] [r=19.00]
-                  RenderSVGText {text} at (53,108) size 14x24 contains 1 chunk(s)
-                    RenderSVGInlineText {#text} at (0,0) size 14x24
+                  RenderSVGText {text} at (53,108) size 13x24 contains 1 chunk(s)
+                    RenderSVGInlineText {#text} at (0,0) size 13x24
                       chunk 1 (middle anchor) text run 1 at (53.91,127.00) startOffset 0 endOffset 1 width 12.19: "E"
           RenderBlock (floating) {div} at (256,128) size 256x448
             RenderEmbeddedObject {object} at (0,0) size 256x256
@@ -81,8 +81,8 @@ layer at (0,0) size 785x1358
                       RenderSVGGradientStop {stop} [offset=0.00] [color=#FFFFFF]
                       RenderSVGGradientStop {stop} [offset=1.00] [color=#FFEEAA]
                   RenderSVGPath {rect} at (0,0) size 256x256 [stroke={[type=SOLID] [color=#FFCC33] [stroke width=2.00]}] [fill={[type=LINEAR-GRADIENT] [id="surface"]}] [x=1.00] [y=1.00] [width=78.00] [height=78.00]
-                  RenderSVGText {text} at (32,28) size 16x24 contains 1 chunk(s)
-                    RenderSVGInlineText {#text} at (0,0) size 16x24
+                  RenderSVGText {text} at (32,28) size 15x24 contains 1 chunk(s)
+                    RenderSVGInlineText {#text} at (0,0) size 15x24
                       chunk 1 (middle anchor) text run 1 at (32.81,47.00) startOffset 0 endOffset 1 width 14.38: "K"
             RenderBR {br} at (256,0) size 0x18
             RenderEmbeddedObject {object} at (0,256) size 256x192
@@ -115,8 +115,8 @@ layer at (0,0) size 785x1358
                         chunk 1 (middle anchor) text run 1 at (11.09,27.00) startOffset 0 endOffset 1 width 17.81: "M"
                   RenderSVGContainer {a} at (128,0) size 128x128
                     RenderSVGPath {rect} at (128,0) size 128x128 [stroke={[type=SOLID] [color=#FFCC33] [stroke width=2.00]}] [fill={[type=LINEAR-GRADIENT] [id="surface"]}] [x=41.00] [y=1.00] [width=38.00] [height=38.00]
-                    RenderSVGText {text} at (52,8) size 16x24 contains 1 chunk(s)
-                      RenderSVGInlineText {#text} at (0,0) size 16x24
+                    RenderSVGText {text} at (52,8) size 15x24 contains 1 chunk(s)
+                      RenderSVGInlineText {#text} at (0,0) size 15x24
                         chunk 1 (middle anchor) text run 1 at (52.81,27.00) startOffset 0 endOffset 1 width 14.38: "N"
                   RenderSVGContainer {a} at (0,128) size 128x128
                     RenderSVGPath {rect} at (0,128) size 128x128 [stroke={[type=SOLID] [color=#FFCC33] [stroke width=2.00]}] [fill={[type=LINEAR-GRADIENT] [id="surface"]}] [x=1.00] [y=41.00] [width=38.00] [height=38.00]
@@ -125,8 +125,8 @@ layer at (0,0) size 785x1358
                         chunk 1 (middle anchor) text run 1 at (14.38,67.00) startOffset 0 endOffset 1 width 11.25: "P"
                   RenderSVGContainer {a} at (128,128) size 128x128
                     RenderSVGPath {rect} at (128,128) size 128x128 [stroke={[type=SOLID] [color=#FFCC33] [stroke width=2.00]}] [fill={[type=LINEAR-GRADIENT] [id="surface"]}] [x=41.00] [y=41.00] [width=38.00] [height=38.00]
-                    RenderSVGText {text} at (52,48) size 16x24 contains 1 chunk(s)
-                      RenderSVGInlineText {#text} at (0,0) size 16x24
+                    RenderSVGText {text} at (52,48) size 15x24 contains 1 chunk(s)
+                      RenderSVGInlineText {#text} at (0,0) size 15x24
                         chunk 1 (middle anchor) text run 1 at (52.81,67.00) startOffset 0 endOffset 1 width 14.38: "O"
             RenderEmbeddedObject {object} at (0,256) size 256x192
               layer at (0,0) size 256x192
@@ -138,8 +138,8 @@ layer at (0,0) size 785x1358
                       RenderSVGGradientStop {stop} [offset=0.00] [color=#FFFFFF]
                       RenderSVGGradientStop {stop} [offset=1.00] [color=#FFEEAA]
                   RenderSVGPath {ellipse} at (0,0) size 256x192 [stroke={[type=SOLID] [color=#FFCC33] [stroke width=2.00]}] [fill={[type=LINEAR-GRADIENT] [id="surface"]}] [cx=40.00] [cy=30.00] [rx=39.00] [ry=29.00]
-                  RenderSVGText {text} at (32,18) size 16x24 contains 1 chunk(s)
-                    RenderSVGInlineText {#text} at (0,0) size 16x24
+                  RenderSVGText {text} at (32,18) size 15x24 contains 1 chunk(s)
+                    RenderSVGInlineText {#text} at (0,0) size 15x24
                       chunk 1 (middle anchor) text run 1 at (32.81,37.00) startOffset 0 endOffset 1 width 14.38: "Q"
           RenderEmbeddedObject {object} at (0,576) size 384x128
             layer at (0,0) size 384x128
@@ -164,8 +164,8 @@ layer at (0,0) size 785x1358
                     RenderSVGGradientStop {stop} [offset=0.00] [color=#FFFFFF]
                     RenderSVGGradientStop {stop} [offset=1.00] [color=#FFEEAA]
                 RenderSVGPath {rect} at (0,0) size 384x128 [stroke={[type=SOLID] [color=#FFCC33] [stroke width=2.00]}] [fill={[type=LINEAR-GRADIENT] [id="surface"]}] [x=1.00] [y=1.00] [width=118.00] [height=38.00]
-                RenderSVGText {text} at (56,8) size 8x24 contains 1 chunk(s)
-                  RenderSVGInlineText {#text} at (0,0) size 8x24
+                RenderSVGText {text} at (56,8) size 7x24 contains 1 chunk(s)
+                  RenderSVGInlineText {#text} at (0,0) size 7x24
                     chunk 1 (middle anchor) text run 1 at (56.72,27.00) startOffset 0 endOffset 1 width 6.56: "I"
           RenderBlock (floating) {div} at (0,704) size 384x192
             RenderEmbeddedObject {object} at (0,0) size 96x192
@@ -188,8 +188,8 @@ layer at (0,0) size 785x1358
                       RenderSVGGradientStop {stop} [offset=0.00] [color=#FFFFFF]
                       RenderSVGGradientStop {stop} [offset=1.00] [color=#FFEEAA]
                   RenderSVGPath {rect} at (0,0) size 288x192 [stroke={[type=SOLID] [color=#FFCC33] [stroke width=2.00]}] [fill={[type=LINEAR-GRADIENT] [id="surface"]}] [x=1.00] [y=1.00] [width=88.00] [height=58.00]
-                  RenderSVGText {text} at (37,18) size 16x24 contains 1 chunk(s)
-                    RenderSVGInlineText {#text} at (0,0) size 16x24
+                  RenderSVGText {text} at (37,18) size 15x24 contains 1 chunk(s)
+                    RenderSVGInlineText {#text} at (0,0) size 15x24
                       chunk 1 (middle anchor) text run 1 at (37.81,37.00) startOffset 0 endOffset 1 width 14.38: "G"
           RenderBlock (floating) {div} at (384,704) size 384x192
             RenderEmbeddedObject {object} at (0,0) size 192x192
@@ -202,8 +202,8 @@ layer at (0,0) size 785x1358
                       RenderSVGGradientStop {stop} [offset=0.00] [color=#FFFFFF]
                       RenderSVGGradientStop {stop} [offset=1.00] [color=#FFEEAA]
                   RenderSVGPath {ellipse} at (0,0) size 192x192 [stroke={[type=SOLID] [color=#FFCC33] [stroke width=2.00]}] [fill={[type=LINEAR-GRADIENT] [id="surface"]}] [cx=30.00] [cy=30.00] [rx=29.00] [ry=29.00]
-                  RenderSVGText {text} at (22,18) size 16x24 contains 1 chunk(s)
-                    RenderSVGInlineText {#text} at (0,0) size 16x24
+                  RenderSVGText {text} at (22,18) size 15x24 contains 1 chunk(s)
+                    RenderSVGInlineText {#text} at (0,0) size 15x24
                       chunk 1 (middle anchor) text run 1 at (22.81,37.00) startOffset 0 endOffset 1 width 14.38: "H"
             RenderEmbeddedObject {object} at (192,0) size 192x192
               layer at (0,0) size 192x192
@@ -262,8 +262,8 @@ layer at (0,0) size 785x1358
                       RenderSVGGradientStop {stop} [offset=0.00] [color=#FFFFFF]
                       RenderSVGGradientStop {stop} [offset=1.00] [color=#FFEEAA]
                   RenderSVGPath {rect} at (0,0) size 96x128 [stroke={[type=SOLID] [color=#FFCC33] [stroke width=2.00]}] [fill={[type=LINEAR-GRADIENT] [id="surface"]}] [x=1.00] [y=1.00] [width=28.00] [height=38.00]
-                  RenderSVGText {text} at (8,8) size 14x24 contains 1 chunk(s)
-                    RenderSVGInlineText {#text} at (0,0) size 14x24
+                  RenderSVGText {text} at (8,8) size 13x24 contains 1 chunk(s)
+                    RenderSVGInlineText {#text} at (0,0) size 13x24
                       chunk 1 (middle anchor) text run 1 at (8.91,27.00) startOffset 0 endOffset 1 width 12.19: "T"
         RenderBlock {p} at (0,118) size 769x1042 [color=#FFFFFF]
           RenderBR {br} at (768,0) size 0x18

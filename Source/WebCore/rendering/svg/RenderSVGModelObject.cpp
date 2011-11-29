@@ -49,9 +49,9 @@ LayoutRect RenderSVGModelObject::clippedOverflowRectForRepaint(RenderBoxModelObj
     return SVGRenderSupport::clippedOverflowRectForRepaint(this, repaintContainer);
 }
 
-void RenderSVGModelObject::computeRectForRepaint(RenderBoxModelObject* repaintContainer, LayoutRect& repaintRect, bool fixed) const
+void RenderSVGModelObject::computeFloatRectForRepaint(RenderBoxModelObject* repaintContainer, FloatRect& repaintRect, bool fixed) const
 {
-    SVGRenderSupport::computeRectForRepaint(this, repaintContainer, repaintRect, fixed);
+    SVGRenderSupport::computeFloatRectForRepaint(this, repaintContainer, repaintRect, fixed);
 }
 
 void RenderSVGModelObject::mapLocalToContainer(RenderBoxModelObject* repaintContainer, bool /* fixed */, bool /* useTransforms */, TransformState& transformState, bool* wasFixed) const

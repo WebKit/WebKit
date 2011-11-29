@@ -1521,6 +1521,11 @@ void RenderObject::computeRectForRepaint(RenderBoxModelObject* repaintContainer,
     }
 }
 
+void RenderObject::computeFloatRectForRepaint(RenderBoxModelObject*, FloatRect&, bool) const
+{
+    ASSERT_NOT_REACHED();
+}
+
 void RenderObject::dirtyLinesFromChangedChild(RenderObject*)
 {
 }

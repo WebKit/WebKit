@@ -13,13 +13,13 @@ layer at (0,0) size 480x360
       RenderSVGText {text} at (20,121) size 430x46 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 430x46
           chunk 1 text run 1 at (20.00,160.00) startOffset 0 endOffset 18 width 429.20: "Gradient on stroke"
-    RenderSVGText {text} at (40,117) size 342x36 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 342x36
+    RenderSVGText {text} at (40,117) size 342x35 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 342x35
         chunk 1 text run 1 at (40.00,145.00) startOffset 0 endOffset 30 width 342.00: "Linear gradient on filled text"
-    RenderSVGText {text} at (30,252) size 386x36 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 386x36
+    RenderSVGText {text} at (30,252) size 386x35 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 386x35
         chunk 1 text run 1 at (30.00,280.00) startOffset 0 endOffset 33 width 386.00: "Linear gradient on stroke of text"
-    RenderSVGText {text} at (10,294) size 330x59 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 330x59
+    RenderSVGText {text} at (10,294) size 330x58 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 330x58
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 330.00: "$Revision: 1.7 $"
     RenderSVGPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

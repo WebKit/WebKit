@@ -19,9 +19,9 @@ layer at (0,0) size 800x600
           chunk 1 text run 2 at (22.50,0.00) startOffset 1 endOffset 2 width 7.50: "3"
       RenderSVGInlineText {#text} at (30,0) size 10x10
         chunk 1 text run 1 at (30.00,0.00) startOffset 0 endOffset 1 width 10.00: "4"
-    RenderSVGText {text} at (2,62) size 71x10 contains 1 chunk(s)
-      RenderSVGTextPath {textPath} at (0,0) size 71x10
-        RenderSVGInlineText {#text} at (0,0) size 71x10
+    RenderSVGText {text} at (2,62) size 70x10 contains 1 chunk(s)
+      RenderSVGTextPath {textPath} at (0,0) size 70x10
+        RenderSVGInlineText {#text} at (0,0) size 70x10
           chunk 1 text run 1 at (3.75,70.00) startOffset 0 endOffset 1 width 2.50: "1"
           chunk 1 text run 2 at (22.50,70.00) startOffset 1 endOffset 2 width 5.00: "2"
           chunk 1 text run 3 at (43.75,70.00) startOffset 2 endOffset 3 width 7.50: "3"

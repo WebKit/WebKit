@@ -72,9 +72,9 @@ void SVGInlineFlowBox::paint(PaintInfo& paintInfo, const LayoutPoint&, LayoutUni
     SVGRenderSupport::finishRenderSVGContent(boxRenderer, childPaintInfo, paintInfo.context);
 }
 
-IntRect SVGInlineFlowBox::calculateBoundaries() const
+FloatRect SVGInlineFlowBox::calculateBoundaries() const
 {
-    IntRect childRect;
+    FloatRect childRect;
     for (InlineBox* child = firstChild(); child; child = child->nextOnLine()) {
         if (!child->isSVGInlineTextBox() && !child->isSVGInlineFlowBox())
             continue;

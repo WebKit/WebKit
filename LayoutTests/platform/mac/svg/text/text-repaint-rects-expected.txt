@@ -8,44 +8,44 @@ layer at (0,0) size 800x155
           text run at (0,33) width 222: "The alphabet A through M is here: "
         RenderSVGRoot {svg} at (230,17) size 500x46
           RenderSVGContainer {g} at (230,17) size 500x46 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,47.00)}]
-            RenderSVGText {text} at (0,-46) size 36x59 contains 1 chunk(s)
-              RenderSVGInlineText {#text} at (0,0) size 36x59
+            RenderSVGText {text} at (0,-46) size 36x58 contains 1 chunk(s)
+              RenderSVGInlineText {#text} at (0,0) size 36x58
                 chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 1 width 36.00: "A"
-            RenderSVGText {text} at (0,-46) size 33x59 contains 1 chunk(s)
-              RenderSVGInlineText {#text} at (0,0) size 33x59
+            RenderSVGText {text} at (0,-46) size 33x58 contains 1 chunk(s)
+              RenderSVGInlineText {#text} at (0,0) size 33x58
                 chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 1 width 33.00: "B"
-            RenderSVGText {text} at (0,-46) size 33x59 contains 1 chunk(s)
-              RenderSVGInlineText {#text} at (0,0) size 33x59
+            RenderSVGText {text} at (0,-46) size 33x58 contains 1 chunk(s)
+              RenderSVGInlineText {#text} at (0,0) size 33x58
                 chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 1 width 33.00: "C"
-            RenderSVGText {text} at (0,-46) size 36x59 contains 1 chunk(s)
-              RenderSVGInlineText {#text} at (0,0) size 36x59
+            RenderSVGText {text} at (0,-46) size 36x58 contains 1 chunk(s)
+              RenderSVGInlineText {#text} at (0,0) size 36x58
                 chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 1 width 36.00: "D"
-            RenderSVGText {text} at (0,-46) size 31x59 contains 1 chunk(s)
-              RenderSVGInlineText {#text} at (0,0) size 31x59
+            RenderSVGText {text} at (0,-46) size 31x58 contains 1 chunk(s)
+              RenderSVGInlineText {#text} at (0,0) size 31x58
                 chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 1 width 31.00: "E"
-            RenderSVGText {text} at (0,-46) size 28x59 contains 1 chunk(s)
-              RenderSVGInlineText {#text} at (0,0) size 28x59
+            RenderSVGText {text} at (0,-46) size 28x58 contains 1 chunk(s)
+              RenderSVGInlineText {#text} at (0,0) size 28x58
                 chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 1 width 28.00: "F"
-            RenderSVGText {text} at (0,-46) size 36x59 contains 1 chunk(s)
-              RenderSVGInlineText {#text} at (0,0) size 36x59
+            RenderSVGText {text} at (0,-46) size 36x58 contains 1 chunk(s)
+              RenderSVGInlineText {#text} at (0,0) size 36x58
                 chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 1 width 36.00: "G"
-            RenderSVGText {text} at (0,-46) size 36x59 contains 1 chunk(s)
-              RenderSVGInlineText {#text} at (0,0) size 36x59
+            RenderSVGText {text} at (0,-46) size 36x58 contains 1 chunk(s)
+              RenderSVGInlineText {#text} at (0,0) size 36x58
                 chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 1 width 36.00: "H"
-            RenderSVGText {text} at (0,-46) size 17x59 contains 1 chunk(s)
-              RenderSVGInlineText {#text} at (0,0) size 17x59
+            RenderSVGText {text} at (0,-46) size 17x58 contains 1 chunk(s)
+              RenderSVGInlineText {#text} at (0,0) size 17x58
                 chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 1 width 17.00: "I"
-            RenderSVGText {text} at (0,-46) size 19x59 contains 1 chunk(s)
-              RenderSVGInlineText {#text} at (0,0) size 19x59
+            RenderSVGText {text} at (0,-46) size 19x58 contains 1 chunk(s)
+              RenderSVGInlineText {#text} at (0,0) size 19x58
                 chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 1 width 19.00: "J"
-            RenderSVGText {text} at (0,-46) size 36x59 contains 1 chunk(s)
-              RenderSVGInlineText {#text} at (0,0) size 36x59
+            RenderSVGText {text} at (0,-46) size 36x58 contains 1 chunk(s)
+              RenderSVGInlineText {#text} at (0,0) size 36x58
                 chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 1 width 36.00: "K"
-            RenderSVGText {text} at (0,-46) size 31x59 contains 1 chunk(s)
-              RenderSVGInlineText {#text} at (0,0) size 31x59
+            RenderSVGText {text} at (0,-46) size 31x58 contains 1 chunk(s)
+              RenderSVGInlineText {#text} at (0,0) size 31x58
                 chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 1 width 31.00: "L"
-            RenderSVGText {text} at (0,-46) size 44x59 contains 1 chunk(s)
-              RenderSVGInlineText {#text} at (0,0) size 44x59
+            RenderSVGText {text} at (0,-46) size 44x58 contains 1 chunk(s)
+              RenderSVGInlineText {#text} at (0,0) size 44x58
                 chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 1 width 44.00: "M"
         RenderText {#text} at (722,33) size 784x90
           text run at (722,33) width 4: " "

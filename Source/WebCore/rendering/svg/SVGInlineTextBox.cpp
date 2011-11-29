@@ -702,7 +702,7 @@ void SVGInlineTextBox::paintText(GraphicsContext* context, RenderStyle* style, R
         paintTextWithShadows(context, style, textRun, fragment, endPosition, fragment.length);
 }
 
-IntRect SVGInlineTextBox::calculateBoundaries() const
+FloatRect SVGInlineTextBox::calculateBoundaries() const
 {
     FloatRect textRect;
 
@@ -726,7 +726,7 @@ IntRect SVGInlineTextBox::calculateBoundaries() const
         textRect.unite(fragmentRect);
     }
 
-    return enclosingIntRect(textRect);
+    return textRect;
 }
 
 bool SVGInlineTextBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const LayoutPoint& pointInContainer, const LayoutPoint& accumulatedOffset, LayoutUnit, LayoutUnit)

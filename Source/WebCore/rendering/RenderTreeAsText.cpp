@@ -78,12 +78,19 @@ using namespace HTMLNames;
 
 static void writeLayers(TextStream&, const RenderLayer* rootLayer, RenderLayer*, const IntRect& paintDirtyRect, int indent = 0, RenderAsTextBehavior behavior = RenderAsTextBehaviorNormal);
 
-bool hasFractions(double val)
+static inline bool hasFractions(double val)
 {
     static const double s_epsilon = 0.0001;
     int ival = static_cast<int>(val);
     double dval = static_cast<double>(ival);
     return fabs(val - dval) > s_epsilon;
+}
+
+String formatNumberRespectingIntegers(double value)
+{
+    if (!hasFractions(value))
+        return String::number(static_cast<int>(value));
+    return String::number(value, ShouldRoundDecimalPlaces, 2);
 }
 
 TextStream& operator<<(TextStream& ts, const IntRect& r)
@@ -98,31 +105,16 @@ TextStream& operator<<(TextStream& ts, const IntPoint& p)
 
 TextStream& operator<<(TextStream& ts, const FloatPoint& p)
 {
-    ts << "(";    
-    if (hasFractions(p.x()))
-        ts << p.x();
-    else 
-        ts << int(p.x());    
-    ts << ",";
-    if (hasFractions(p.y())) 
-        ts << p.y();
-    else 
-        ts << int(p.y());    
-    return ts << ")";
+    ts << "(" << formatNumberRespectingIntegers(p.x());
+    ts << "," << formatNumberRespectingIntegers(p.y());
+    ts << ")";
+    return ts;
 }
 
 TextStream& operator<<(TextStream& ts, const FloatSize& s)
 {
-    ts << "width=";
-    if (hasFractions(s.width()))
-        ts << s.width();
-    else
-        ts << int(s.width());
-    ts << " height=";
-    if (hasFractions(s.height())) 
-        ts << s.height();
-    else
-        ts << int(s.height());
+    ts << "width=" << formatNumberRespectingIntegers(s.width());
+    ts << " height=" << formatNumberRespectingIntegers(s.height());
     return ts;
 }
 
@@ -545,11 +537,11 @@ void write(TextStream& ts, const RenderObject& o, int indent, RenderAsTextBehavi
         return;
     }
     if (o.isSVGText()) {
-        writeSVGText(ts, *toRenderBlock(&o), indent);
+        writeSVGText(ts, *toRenderSVGText(&o), indent);
         return;
     }
     if (o.isSVGInlineText()) {
-        writeSVGInlineText(ts, *toRenderText(&o), indent);
+        writeSVGInlineText(ts, *toRenderSVGInlineText(&o), indent);
         return;
     }
     if (o.isSVGImage()) {

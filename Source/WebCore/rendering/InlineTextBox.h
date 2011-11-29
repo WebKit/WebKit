@@ -108,7 +108,7 @@ private:
     TextRun constructTextRun(RenderStyle*, const Font&, const UChar*, int length, int maximumLength, BufferForAppendingHyphen* = 0) const;
 
 public:
-    virtual IntRect calculateBoundaries() const { return IntRect(x(), y(), width(), height()); }
+    virtual FloatRect calculateBoundaries() const { return FloatRect(x(), y(), width(), height()); }
 
     virtual IntRect localSelectionRect(int startPos, int endPos);
     bool isSelected(int startPos, int endPos) const;

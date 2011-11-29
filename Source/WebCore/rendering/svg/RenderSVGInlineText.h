@@ -45,6 +45,9 @@ public:
     void updateScaledFont();
     static void computeNewScaledFontForStyle(RenderObject*, const RenderStyle*, float& scalingFactor, Font& scaledFont);
 
+    // Preserves floating point precision for the use in DRT. It knows how to round and does a better job than enclosingIntRect.
+    FloatRect floatLinesBoundingBox() const;
+
 private:
     virtual const char* renderName() const { return "RenderSVGInlineText"; }
 
@@ -53,7 +56,7 @@ private:
     virtual void setStyle(PassRefPtr<RenderStyle>);
     virtual void styleDidChange(StyleDifference, const RenderStyle*);
 
-    virtual FloatRect objectBoundingBox() const { return linesBoundingBox(); }
+    virtual FloatRect objectBoundingBox() const { return floatLinesBoundingBox(); }
 
     virtual bool requiresLayer() const { return false; }
     virtual bool isSVGInlineText() const { return true; }

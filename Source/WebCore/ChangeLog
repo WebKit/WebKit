@@ -1,3 +1,129 @@
+2011-11-29  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        SVG <path> DRT dumps have rounding problems across platforms
+        https://bugs.webkit.org/show_bug.cgi?id=47467
+
+        Reviewed by Zoltan Herczeg.
+
+        Next step towards fixing rounding differences across 32/64, release/debug builds and various platforms.
+        Switch TextStream::operator<<(double) and SVGPathStringBuilder to use the newly introduced String::number(double, ConversionMode, precision)
+        instead of using snprintf/String::format() directly. This uses wtf/dtoas rounding facilities and has proven to be faster & more precise!
+
+        In order to make use of these new floating-point dumping facilities following work was done:
+        - The InlineBox logicalHeight is still integer based, while logicalWidth switched to float recently, continue that work and switch logicalTop/Bottom
+          to floats as well. This allows us to avoid calling enclosingIntRect() when figuring out the bounds of a RenderSVGText.
+          Instead DRT can ask for the floating point metrics and round on its own to the desired precision. It's not obviously clear why this makes a difference.
+          Consider a rect with width 9.99999999, enclosingIntRect() would yield 10 as width, on this machine, but another may store 10.000000003, yielding 11.
+          That's part of the reason why this is more safe and ultimately should eliminate the rounding error induced by this in the DRT results.
+
+        - absoluteClippedOverflowRectForRepaint(): when figuring out the repaint rect we'd retrieve the repaintRectInLocalCoordinates(), and call
+          enclosingIntRect on it. Instead of doing that, to avoid the error described above, add a computeFloatRectForRepaint() call to RenderObject that's
+          only used in a SVG subtree, just like its done for nodeAtFloatPoint. Do a single final enclosingIntRect() step when crossing the boundary from
+          the SVG subtree in RenderSVGRoot to its parent, thus reducing the rounding instabilities.
+
+        - The new String::number() implementation enforces a unique zero eliminating the 0.0 vs -0.0 issue for free.
+
+        This has been tested on Gtk&Mac - and requires lots of new baseline. The hope is to be able to share a lot more with Mac now, except for obvious
+        font family differences, that influence RenderSVGInlineText/Text results, and thus all containers that contains such objects.
+
+        * platform/text/TextStream.cpp:
+        (WebCore::TextStream::operator<<):
+        * rendering/InlineBox.cpp:
+        (WebCore::InlineBox::logicalHeight):
+        * rendering/InlineBox.h:
+        (WebCore::InlineBox::virtualLogicalHeight):
+        (WebCore::InlineBox::calculateBoundaries):
+        (WebCore::InlineBox::pixelSnappedLogicalTop):
+        (WebCore::InlineBox::pixelSnappedLogicalBottom):
+        (WebCore::InlineBox::logicalTop):
+        (WebCore::InlineBox::logicalBottom):
+        (WebCore::InlineBox::setLogicalTop):
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::placeBoxesInBlockDirection):
+        (WebCore::InlineFlowBox::addBoxShadowVisualOverflow):
+        (WebCore::InlineFlowBox::addBorderOutsetVisualOverflow):
+        (WebCore::InlineFlowBox::addTextBoxVisualOverflow):
+        * rendering/InlineTextBox.h:
+        (WebCore::InlineTextBox::calculateBoundaries):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::paintOutline):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::computeFloatRectForRepaint):
+        * rendering/RenderObject.h:
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::absoluteRectsForRange):
+        (WebCore::RenderText::absoluteQuads):
+        (WebCore::RenderText::absoluteQuadsForRange):
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::hasFractions):
+        (WebCore::formatNumberRespectingIntegers):
+        (WebCore::operator<<):
+        (WebCore::write):
+        * rendering/RenderTreeAsText.h:
+        * rendering/TrailingFloatsRootInlineBox.h:
+        (WebCore::TrailingFloatsRootInlineBox::virtualLogicalHeight):
+        * rendering/svg/RenderSVGForeignObject.cpp:
+        (WebCore::RenderSVGForeignObject::computeFloatRectForRepaint):
+        * rendering/svg/RenderSVGForeignObject.h:
+        * rendering/svg/RenderSVGInline.cpp:
+        (WebCore::RenderSVGInline::computeFloatRectForRepaint):
+        * rendering/svg/RenderSVGInline.h:
+        * rendering/svg/RenderSVGInlineText.cpp:
+        (WebCore::RenderSVGInlineText::floatLinesBoundingBox):
+        (WebCore::RenderSVGInlineText::linesBoundingBox):
+        (WebCore::RenderSVGInlineText::computeNewScaledFontForStyle):
+        * rendering/svg/RenderSVGInlineText.h:
+        (WebCore::RenderSVGInlineText::objectBoundingBox):
+        * rendering/svg/RenderSVGModelObject.cpp:
+        (WebCore::RenderSVGModelObject::computeFloatRectForRepaint):
+        * rendering/svg/RenderSVGModelObject.h:
+        * rendering/svg/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::computeFloatRectForRepaint):
+        * rendering/svg/RenderSVGRoot.h:
+        * rendering/svg/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::computeRectForRepaint):
+        (WebCore::RenderSVGText::computeFloatRectForRepaint):
+        * rendering/svg/RenderSVGText.h:
+        * rendering/svg/SVGInlineFlowBox.cpp:
+        (WebCore::SVGInlineFlowBox::calculateBoundaries):
+        * rendering/svg/SVGInlineFlowBox.h:
+        (WebCore::SVGInlineFlowBox::virtualLogicalHeight):
+        (WebCore::SVGInlineFlowBox::setLogicalHeight):
+        * rendering/svg/SVGInlineTextBox.cpp:
+        (WebCore::SVGInlineTextBox::calculateBoundaries):
+        * rendering/svg/SVGInlineTextBox.h:
+        (WebCore::SVGInlineTextBox::virtualLogicalHeight):
+        (WebCore::SVGInlineTextBox::setLogicalHeight):
+        (WebCore::SVGInlineTextBox::selectionHeight):
+        * rendering/svg/SVGRenderSupport.cpp:
+        (WebCore::SVGRenderSupport::clippedOverflowRectForRepaint):
+        (WebCore::SVGRenderSupport::computeFloatRectForRepaint):
+        * rendering/svg/SVGRenderSupport.h:
+        * rendering/svg/SVGRenderTreeAsText.cpp:
+        (WebCore::operator<<):
+        (WebCore::roundedFloatRect):
+        (WebCore::writeRenderSVGTextBox):
+        (WebCore::writeSVGText):
+        (WebCore::writeSVGInlineText):
+        * rendering/svg/SVGRenderTreeAsText.h:
+        * rendering/svg/SVGRootInlineBox.cpp:
+        (WebCore::SVGRootInlineBox::computePerCharacterLayoutInformation):
+        (WebCore::SVGRootInlineBox::layoutChildBoxes):
+        (WebCore::SVGRootInlineBox::layoutRootBox):
+        * rendering/svg/SVGRootInlineBox.h:
+        (WebCore::SVGRootInlineBox::virtualLogicalHeight):
+        (WebCore::SVGRootInlineBox::setLogicalHeight):
+        * svg/SVGPathStringBuilder.cpp:
+        (WebCore::SVGPathStringBuilder::moveTo):
+        (WebCore::SVGPathStringBuilder::lineTo):
+        (WebCore::SVGPathStringBuilder::lineToHorizontal):
+        (WebCore::SVGPathStringBuilder::lineToVertical):
+        (WebCore::SVGPathStringBuilder::curveToCubic):
+        (WebCore::SVGPathStringBuilder::curveToCubicSmooth):
+        (WebCore::SVGPathStringBuilder::curveToQuadratic):
+        (WebCore::SVGPathStringBuilder::curveToQuadraticSmooth):
+        (WebCore::SVGPathStringBuilder::arcTo):
+
 2011-11-28  Andrey Kosyakov  <caseq@chromium.org>
 
         Web Inspector: remove WebInspector.linkifyURL and TreeElement.titleHTML

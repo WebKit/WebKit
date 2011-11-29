@@ -157,7 +157,7 @@ public:
 
     bool hasVirtualLogicalHeight() const { return m_hasVirtualLogicalHeight; }
     void setHasVirtualLogicalHeight() { m_hasVirtualLogicalHeight = true; }
-    virtual int virtualLogicalHeight() const
+    virtual float virtualLogicalHeight() const
     {
         ASSERT_NOT_REACHED();
         return 0;
@@ -166,10 +166,10 @@ public:
     bool isHorizontal() const { return m_isHorizontal; }
     void setIsHorizontal(bool horizontal) { m_isHorizontal = horizontal; }
 
-    virtual IntRect calculateBoundaries() const
+    virtual FloatRect calculateBoundaries() const
     {
         ASSERT_NOT_REACHED();
-        return IntRect();
+        return FloatRect();
     }
 
     bool isConstructed() { return m_constructed; }
@@ -243,11 +243,13 @@ public:
     }
     int pixelSnappedLogicalLeft() const { return logicalLeft(); }
     int pixelSnappedLogicalRight() const { return ceilf(logicalRight()); }
+    int pixelSnappedLogicalTop() const { return logicalTop(); }
+    int pixelSnappedLogicalBottom() const { return ceilf(logicalBottom()); }
 
     // The logicalTop[ position is the top edge of the line box in a horizontal line and the left edge in a vertical line.
-    LayoutUnit logicalTop() const { return isHorizontal() ? m_topLeft.y() : m_topLeft.x(); }
-    LayoutUnit logicalBottom() const { return logicalTop() + logicalHeight(); }
-    void setLogicalTop(LayoutUnit top)
+    float logicalTop() const { return isHorizontal() ? m_topLeft.y() : m_topLeft.x(); }
+    float logicalBottom() const { return logicalTop() + logicalHeight(); }
+    void setLogicalTop(float top)
     {
         if (isHorizontal())
             setY(top);
@@ -260,7 +262,7 @@ public:
     float logicalWidth() const { return m_logicalWidth; }
 
     // The logical height is our extent in the block flow direction, i.e., height for horizontal text and width for vertical text.
-    LayoutUnit logicalHeight() const;
+    float logicalHeight() const;
 
     FloatRect logicalFrameRect() const { return isHorizontal() ? FloatRect(m_topLeft.x(), m_topLeft.y(), m_logicalWidth, logicalHeight()) : FloatRect(m_topLeft.y(), m_topLeft.x(), m_logicalWidth, logicalHeight()); }
 

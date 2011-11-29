@@ -23,12 +23,12 @@ layer at (0,0) size 800x600
           RenderSVGTSpan {tspan} at (0,0) size 367x19
             RenderSVGInlineText {#text} at (0,0) size 367x19
               chunk 1 text run 1 at (25.00,190.00) startOffset 0 endOffset 50 width 366.60: "However, these lines of text are achieved by using"
-          RenderSVGInlineText {#text} at (366,0) size 6x19
+          RenderSVGInlineText {#text} at (366,0) size 5x19
             chunk 1 text run 1 at (391.60,190.00) startOffset 0 endOffset 1 width 4.80: " "
           RenderSVGTSpan {tspan} at (0,0) size 356x19
             RenderSVGInlineText {#text} at (0,25) size 356x19
               chunk 1 text run 1 at (25.00,215.00) startOffset 0 endOffset 51 width 355.80: "one 'tspan' per line, all contained within the same"
-          RenderSVGInlineText {#text} at (355,25) size 6x19
+          RenderSVGInlineText {#text} at (355,25) size 5x19
             chunk 1 text run 1 at (380.80,215.00) startOffset 0 endOffset 1 width 4.80: " "
           RenderSVGTSpan {tspan} at (0,0) size 353x19
             RenderSVGInlineText {#text} at (0,50) size 353x19
@@ -39,8 +39,8 @@ layer at (0,0) size 800x600
             RenderSVGInlineText {#text} at (0,75) size 198x19
               chunk 1 text run 1 at (25.00,265.00) startOffset 0 endOffset 28 width 197.40: "four lines at the same time."
           RenderSVGInlineText {#text} at (0,0) size 0x0
-      RenderSVGText {text} at (10,303) size 269x48 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 269x48
+      RenderSVGText {text} at (10,303) size 269x47 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 269x47
           chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 268.20: "$Revision: 1.8 $"
       RenderSVGPath {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
 selection start: position 0 of child 0 {#text} of child 1 {text} of child 13 {g} of child 25 {svg} of document

@@ -1393,8 +1393,8 @@ void RenderInline::paintOutline(GraphicsContext* graphicsContext, const LayoutPo
     rects.append(LayoutRect());
     for (InlineFlowBox* curr = firstLineBox(); curr; curr = curr->nextLineBox()) {
         RootInlineBox* root = curr->root();
-        LayoutUnit top = max(root->lineTop(), curr->logicalTop());
-        LayoutUnit bottom = min(root->lineBottom(), curr->logicalBottom());
+        LayoutUnit top = max<LayoutUnit>(root->lineTop(), curr->logicalTop());
+        LayoutUnit bottom = min<LayoutUnit>(root->lineBottom(), curr->logicalBottom());
         rects.append(LayoutRect(curr->x(), top, curr->logicalWidth(), bottom - top));
     }
     rects.append(LayoutRect());

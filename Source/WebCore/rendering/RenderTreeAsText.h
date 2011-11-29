@@ -96,7 +96,7 @@ String counterValueForElement(Element*);
 
 String markerTextForListItem(Element*);
 
-bool hasFractions(double val);
+String formatNumberRespectingIntegers(double);
 
 } // namespace WebCore
 

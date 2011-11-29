@@ -52,7 +52,7 @@ public:
     virtual bool requiresLayer() const { return false; }
 
     virtual LayoutRect clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer) const;
-    virtual void computeRectForRepaint(RenderBoxModelObject* repaintContainer, LayoutRect&, bool fixed = false) const;
+    virtual void computeFloatRectForRepaint(RenderBoxModelObject* repaintContainer, FloatRect&, bool fixed = false) const;
     virtual LayoutRect outlineBoundsForRepaint(RenderBoxModelObject* repaintContainer, LayoutPoint*) const;
 
     virtual void absoluteRects(Vector<LayoutRect>&, const LayoutPoint& accumulatedOffset) const;

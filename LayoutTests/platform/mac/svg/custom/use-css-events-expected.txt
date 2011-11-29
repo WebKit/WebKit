@@ -7,8 +7,8 @@ layer at (0,0) size 800x600
     RenderSVGContainer {a} at (7,94) size 239x218
       RenderSVGContainer {use} at (7,166) size 146x146
         RenderSVGContainer {g} at (7,166) size 146x146 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,150.00)}]
-          RenderSVGViewportContainer {svg} at (6,166) size 147x147
-            RenderSVGPath {path} at (6,166) size 147x147 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M 143 103 L 143 117 C 143 130.909 112.555 142.185 75 142.185 C 37.4446 142.185 7.00001 130.909 7.00001 117 L 7 117 L 7 103 C 7 89.0906 37.4446 77.8148 75 77.8148 C 112.555 77.8148 143 89.0906 143 103 L 52 72 C 34.3123 70.6562 20.8513 55.5699 21.5237 37.8439 C 22.1961 20.118 36.7613 6.09483 54.5 6.09483 C 72.2387 6.09483 86.8039 20.118 87.4763 37.8439 C 88.1487 55.5699 74.6877 70.6562 57 72"]
+          RenderSVGViewportContainer {svg} at (7,166) size 146x146
+            RenderSVGPath {path} at (7,166) size 146x146 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M 143 103 L 143 117 C 143 130.909 112.555 142.185 75 142.185 C 37.4446 142.185 7.00001 130.909 7.00001 117 L 7 117 L 7 103 C 7 89.0906 37.4446 77.8148 75 77.8148 C 112.555 77.8148 143 89.0906 143 103 L 52 72 C 34.3123 70.6562 20.8513 55.5699 21.5237 37.8439 C 22.1961 20.118 36.7613 6.09483 54.5 6.09483 C 72.2387 6.09483 86.8039 20.118 87.4763 37.8439 C 88.1487 55.5699 74.6877 70.6562 57 72"]
       RenderSVGContainer {use} at (9,170) size 142x140
         RenderSVGContainer {g} at (9,170) size 142x140 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,150.00)}]
           RenderSVGViewportContainer {svg} at (9,170) size 142x140
@@ -21,7 +21,7 @@ layer at (0,0) size 800x600
       RenderSVGContainer {use} at (74,94) size 172x172
         RenderSVGContainer {g} at (74,94) size 172x172 [transform={m=((1.00,0.00)(0.00,1.00)) t=(80.00,90.00)}]
           RenderSVGViewportContainer {svg} at (74,94) size 172x172
-            RenderSVGPath {path} at (84,129) size 72x102 [stroke={[type=SOLID] [color=#FFFFFF]}] [fill={[type=SOLID] [color=#FFFFFF]}] [data="M 5 55 L 45 55 L 70 30 L 70 120 L 45 95 L 5 95 Z"]
+            RenderSVGPath {path} at (84,130) size 72x100 [stroke={[type=SOLID] [color=#FFFFFF]}] [fill={[type=SOLID] [color=#FFFFFF]}] [data="M 5 55 L 45 55 L 70 30 L 70 120 L 45 95 L 5 95 Z"]
             RenderSVGContainer {g} at (161,111) size 84x138
               RenderSVGPath {path} at (161,159) size 20x42 [stroke={[type=SOLID] [color=#FFFFFF] [stroke width=7.00] [line cap=ROUND]}] [data="M 80 60 C 90 70 90 80 80 90"]
               RenderSVGPath {path} at (177,143) size 25x74 [stroke={[type=SOLID] [color=#FFFFFF] [stroke width=7.00] [line cap=ROUND]}] [data="M 95 45 C 110 60 110 90 95 105"]

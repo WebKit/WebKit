@@ -23,8 +23,8 @@ layer at (0,0) size 480x360
         RenderSVGText {text} at (6,-52) size 88x28 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 88x28
             chunk 1 (middle anchor) text run 1 at (6.00,-30.00) startOffset 0 endOffset 8 width 88.00: "xml:base"
-        RenderSVGText {text} at (4,-22) size 92x28 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 92x28
+        RenderSVGText {text} at (4,-22) size 91x28 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 91x28
             chunk 1 (middle anchor) text run 1 at (4.50,0.00) startOffset 0 endOffset 9 width 91.00: "on parent"
         RenderSVGImage {image} at (330,120) size 100x100
     RenderSVGText {text} at (10,304) size 264x46 contains 1 chunk(s)

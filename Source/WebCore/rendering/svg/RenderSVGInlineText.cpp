@@ -125,12 +125,17 @@ LayoutRect RenderSVGInlineText::localCaretRect(InlineBox* box, int caretOffset, 
     return LayoutRect(x, rect.y(), caretWidth, rect.height());
 }
 
-LayoutRect RenderSVGInlineText::linesBoundingBox() const
+FloatRect RenderSVGInlineText::floatLinesBoundingBox() const
 {
-    LayoutRect boundingBox;
+    FloatRect boundingBox;
     for (InlineTextBox* box = firstTextBox(); box; box = box->nextTextBox())
         boundingBox.unite(box->calculateBoundaries());
     return boundingBox;
+}
+
+LayoutRect RenderSVGInlineText::linesBoundingBox() const
+{
+    return enclosingIntRect(floatLinesBoundingBox());
 }
 
 bool RenderSVGInlineText::characterStartsNewTextChunk(int position) const

@@ -39,7 +39,7 @@ public:
     }
 
 private:
-    virtual int virtualLogicalHeight() const { return 0; }
+    virtual float virtualLogicalHeight() const { return 0; }
 };
 
 } // namespace WebCore

@@ -4,16 +4,16 @@ layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
     RenderSVGContainer {g} at (127,72) size 226x136
       RenderSVGContainer {g} at (127,72) size 226x136
-        RenderSVGText {text} at (147,72) size 186x36 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 186x36
+        RenderSVGText {text} at (147,72) size 186x35 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 186x35
             chunk 1 (middle anchor) text run 1 at (147.00,100.00) startOffset 0 endOffset 13 width 186.00: "Good morning!"
-        RenderSVGText {text} at (127,172) size 226x36 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 87x36
+        RenderSVGText {text} at (127,172) size 225x35 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 86x35
             chunk 1 (middle anchor) text run 1 at (127.50,200.00) startOffset 0 endOffset 6 width 86.00: "Bonne "
-          RenderSVGTSpan {tspan} at (0,0) size 130x36
-            RenderSVGInlineText {#text} at (86,0) size 130x36
+          RenderSVGTSpan {tspan} at (0,0) size 129x35
+            RenderSVGInlineText {#text} at (86,0) size 129x35
               chunk 1 (middle anchor) text run 1 at (213.50,200.00) startOffset 0 endOffset 10 width 129.00: "avant-midi"
-          RenderSVGInlineText {#text} at (215,0) size 11x36
+          RenderSVGInlineText {#text} at (215,0) size 10x35
             chunk 1 (middle anchor) text run 1 at (342.50,200.00) startOffset 0 endOffset 1 width 10.00: "!"
     RenderSVGText {text} at (10,304) size 264x46 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 264x46
