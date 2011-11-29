@@ -1112,8 +1112,6 @@ BUGCR105305 CPU : svg/W3C-SVG-1.1/pservers-grad-11-b.svg = IMAGE
 BUGCR105305 CPU : svg/css/composite-shadow-text.svg = IMAGE
 BUGCR105305 CPU : svg/css/text-gradient-shadow.svg = IMAGE
 BUGCR105305 CPU : svg/custom/gradient-stroke-width.svg = IMAGE
-BUGCR105305 CPU : svg/custom/gradient-with-1d-boundingbox.svg = IMAGE
-BUGCR105305 CPU : svg/custom/js-late-gradient-and-object-creation.svg = IMAGE
 BUGCR105305 CPU : svg/custom/nested-pattern-boundingBoxModeContent.svg = IMAGE
 BUGCR105305 CPU : svg/custom/pattern-with-transformation.svg = IMAGE
 BUGCR105305 CPU : svg/custom/text-rotated-gradient.svg = IMAGE
@@ -2283,7 +2281,6 @@ BUGWK46596 : fast/dom/nodesFromRect-basic.html = TIMEOUT
 
 // Possibly regressed within 68216:68246 (flakiness rate increased)
 BUGCR57056 LINUX : svg/custom/clip-path-referencing-use2.svg = PASS FAIL
-BUGCR57056 LINUX : svg/custom/circular-marker-reference-4.svg = PASS FAIL
 
 // Flaky since http://trac.webkit.org/changeset/68440 (where this test added at).
 BUGWK46689 : fast/dom/HTMLElement/class-list.html = PASS TEXT
@@ -2611,9 +2608,6 @@ BUGCR69181 MAC : fast/js/large-expressions.html = TEXT
 
 // Flaky on Linux since r75250
 BUGCR69300 LINUX : svg/batik/text/textOnPath.svg = PASS IMAGE
-
-// Flaky since r75548; transformed character is occasionally corrupt
-BUGCR69411 LINUX : svg/custom/linking-a-03-b-transform.svg = PASS IMAGE
 
 // New test added in r75720
 BUGCR69571 : plugins/destroy-on-setwindow.html = CRASH TEXT
