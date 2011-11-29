@@ -495,3 +495,6 @@ pointer-lock/
 
 # https://bugs.webkit.org/show_bug.cgi?id=72435
 fast/dom/Window/window-postmessage-arrays.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=73148
+fast/canvas/webgl/webgl-texture-binding-preserved.html
