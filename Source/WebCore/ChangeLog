@@ -1,3 +1,15 @@
+2011-11-29  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r101302.
+        http://trac.webkit.org/changeset/101302
+        https://bugs.webkit.org/show_bug.cgi?id=73293
+
+        massive crashes on gtk/win bots - m_bytes assertion fires
+        (Requested by WildFox on #webkit).
+
+        * platform/image-decoders/ImageDecoder.cpp:
+        (WebCore::ImageFrame::setSize):
+
 2011-11-29  Sean Wang  <Xuewen.Wang@torchmobile.com.cn>
 
         Upstream BlackBerry porting of platform/image-decoders

@@ -189,14 +189,14 @@ bool ImageFrame::copyBitmapData(const ImageFrame& other)
 
 bool ImageFrame::setSize(int newWidth, int newHeight)
 {
-    ASSERT(!m_bytes);
-    size_t backingStoreSize = newWidth * newHeight;
-    if (!m_backingStore.tryReserveCapacity(backingStoreSize))
-        return false;
+    // NOTE: This has no way to check for allocation failure if the requested
+    // size was too big...
+    m_backingStore.resize(newWidth * newHeight);
     m_bytes = m_backingStore.data();
     m_size = IntSize(newWidth, newHeight);
 
     zeroFillPixelData();
+
     return true;
 }
 
