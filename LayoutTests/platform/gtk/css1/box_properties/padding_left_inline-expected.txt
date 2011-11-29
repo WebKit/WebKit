@@ -3,100 +3,99 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584 [bgcolor=#CCCCCC]
-      RenderBlock {P} at (0,0) size 784x19
-        RenderText {#text} at (0,0) size 355x19
-          text run at (0,0) width 355: "The style declarations which apply to the text below are:"
-      RenderBlock {PRE} at (0,35) size 784x45
-        RenderText {#text} at (0,0) size 408x45
-          text run at (0,0) width 400: ".one {padding-left: 25px; background-color: aqua;}"
-          text run at (400,0) width 0: " "
-          text run at (0,15) width 408: ".two {padding-left: -10px; background-color: aqua;}"
-          text run at (408,15) width 0: " "
+      RenderBlock {P} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 363x17
+          text run at (0,0) width 363: "The style declarations which apply to the text below are:"
+      RenderBlock {PRE} at (0,34) size 784x45
+        RenderText {#text} at (0,0) size 398x45
+          text run at (0,0) width 391: ".one {padding-left: 25px; background-color: aqua;}"
+          text run at (390,0) width 1: " "
+          text run at (0,15) width 398: ".two {padding-left: -10px; background-color: aqua;}"
+          text run at (397,15) width 1: " "
           text run at (0,30) width 0: " "
-      RenderBlock {HR} at (0,93) size 784x2 [border: (1px inset #000000)]
-      RenderBlock {P} at (0,111) size 784x57 [bgcolor=#808080]
-        RenderText {#text} at (0,0) size 543x19
-          text run at (0,0) width 389: "This element is unstyled save for a background color of gray. "
-          text run at (389,0) width 154: "However, it contains an "
-        RenderInline {SPAN} at (0,0) size 192x19 [bgcolor=#00FFFF]
-          RenderText {#text} at (568,0) size 143x19
-            text run at (568,0) width 143: "inline element of class "
-          RenderInline {TT} at (0,0) size 24x15
-            RenderText {#text} at (711,4) size 24x15
-              text run at (711,4) width 24: "one"
-        RenderText {#text} at (735,0) size 778x38
-          text run at (735,0) width 43: " which"
-          text run at (0,19) width 527: "should result in 25-pixel left padding (which should also be a light blue) only in the "
-        RenderInline {STRONG} at (0,0) size 27x19
-          RenderText {#text} at (527,19) size 27x19
-            text run at (527,19) width 27: "first"
-        RenderText {#text} at (554,19) size 730x38
-          text run at (554,19) width 176: " line in which the inline box"
-          text run at (0,38) width 52: "appears."
-      RenderBlock {P} at (0,184) size 784x38 [bgcolor=#808080]
-        RenderText {#text} at (0,0) size 543x19
-          text run at (0,0) width 389: "This element is unstyled save for a background color of gray. "
-          text run at (389,0) width 154: "However, it contains an "
-        RenderInline {SPAN} at (0,0) size 167x19 [bgcolor=#00FFFF]
-          RenderText {#text} at (543,0) size 143x19
-            text run at (543,0) width 143: "inline element of class "
-          RenderInline {TT} at (0,0) size 24x15
-            RenderText {#text} at (686,4) size 24x15
-              text run at (686,4) width 24: "two"
-        RenderText {#text} at (710,0) size 753x38
-          text run at (710,0) width 43: " which"
-          text run at (0,19) width 512: "should result in -10px left padding (which should also be a light blue) only in the "
-        RenderInline {STRONG} at (0,0) size 27x19
-          RenderText {#text} at (512,19) size 27x19
-            text run at (512,19) width 27: "first"
-        RenderText {#text} at (539,19) size 232x19
-          text run at (539,19) width 232: " line in which the inline box appears."
-      RenderTable {TABLE} at (0,238) size 784x167 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 782x165
-          RenderTableRow {TR} at (0,0) size 782x27
-            RenderTableCell {TD} at (0,0) size 782x27 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
-              RenderInline {STRONG} at (0,0) size 163x19
-                RenderText {#text} at (4,4) size 163x19
+      RenderBlock {HR} at (0,92) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,110) size 784x54 [bgcolor=#808080]
+        RenderText {#text} at (0,0) size 553x17
+          text run at (0,0) width 397: "This element is unstyled save for a background color of gray. "
+          text run at (396,0) width 157: "However, it contains an "
+        RenderInline {SPAN} at (0,0) size 197x17 [bgcolor=#00FFFF]
+          RenderText {#text} at (577,0) size 148x17
+            text run at (577,0) width 148: "inline element of class "
+          RenderInline {TT} at (0,0) size 25x15
+            RenderText {#text} at (724,3) size 25x15
+              text run at (724,3) width 25: "one"
+        RenderText {#text} at (0,18) size 582x17
+          text run at (0,18) width 582: "which should result in 25-pixel left padding (which should also be a light blue) only in the "
+        RenderInline {STRONG} at (0,0) size 30x17
+          RenderText {#text} at (581,18) size 30x17
+            text run at (581,18) width 30: "first"
+        RenderText {#text} at (610,18) size 762x35
+          text run at (610,18) width 152: " line in which the inline"
+          text run at (0,36) width 81: "box appears."
+      RenderBlock {P} at (0,180) size 784x54 [bgcolor=#808080]
+        RenderText {#text} at (0,0) size 553x17
+          text run at (0,0) width 397: "This element is unstyled save for a background color of gray. "
+          text run at (396,0) width 157: "However, it contains an "
+        RenderInline {SPAN} at (0,0) size 172x17 [bgcolor=#00FFFF]
+          RenderText {#text} at (552,0) size 148x17
+            text run at (552,0) width 148: "inline element of class "
+          RenderInline {TT} at (0,0) size 25x15
+            RenderText {#text} at (699,3) size 25x15
+              text run at (699,3) width 25: "two"
+        RenderText {#text} at (723,0) size 767x35
+          text run at (723,0) width 44: " which"
+          text run at (0,18) width 523: "should result in -10px left padding (which should also be a light blue) only in the "
+        RenderInline {STRONG} at (0,0) size 30x17
+          RenderText {#text} at (522,18) size 30x17
+            text run at (522,18) width 30: "first"
+        RenderText {#text} at (551,18) size 731x35
+          text run at (551,18) width 180: " line in which the inline box"
+          text run at (0,36) width 53: "appears."
+      RenderTable {TABLE} at (0,250) size 784x160 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 782x158
+          RenderTableRow {TR} at (0,0) size 782x26
+            RenderTableCell {TD} at (0,0) size 782x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+              RenderInline {STRONG} at (0,0) size 163x17
+                RenderText {#text} at (4,4) size 163x17
                   text run at (4,4) width 163: "TABLE Testing Section"
-          RenderTableRow {TR} at (0,27) size 782x138
-            RenderTableCell {TD} at (0,82) size 12x27 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (4,4) size 4x19
+          RenderTableRow {TR} at (0,26) size 782x132
+            RenderTableCell {TD} at (0,79) size 12x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (4,4) size 4x17
                 text run at (4,4) width 4: " "
-            RenderTableCell {TD} at (12,27) size 770x138 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-              RenderBlock {P} at (4,4) size 762x57 [bgcolor=#808080]
-                RenderText {#text} at (0,0) size 543x19
-                  text run at (0,0) width 389: "This element is unstyled save for a background color of gray. "
-                  text run at (389,0) width 154: "However, it contains an "
-                RenderInline {SPAN} at (0,0) size 192x19 [bgcolor=#00FFFF]
-                  RenderText {#text} at (568,0) size 143x19
-                    text run at (568,0) width 143: "inline element of class "
-                  RenderInline {TT} at (0,0) size 24x15
-                    RenderText {#text} at (711,4) size 24x15
-                      text run at (711,4) width 24: "one"
-                RenderText {#text} at (0,19) size 570x19
-                  text run at (0,19) width 570: "which should result in 25-pixel left padding (which should also be a light blue) only in the "
-                RenderInline {STRONG} at (0,0) size 27x19
-                  RenderText {#text} at (570,19) size 27x19
-                    text run at (570,19) width 27: "first"
-                RenderText {#text} at (597,19) size 745x38
-                  text run at (597,19) width 148: " line in which the inline"
-                  text run at (0,38) width 80: "box appears."
-              RenderBlock {P} at (4,77) size 762x57 [bgcolor=#808080]
-                RenderText {#text} at (0,0) size 543x19
-                  text run at (0,0) width 389: "This element is unstyled save for a background color of gray. "
-                  text run at (389,0) width 154: "However, it contains an "
-                RenderInline {SPAN} at (0,0) size 167x19 [bgcolor=#00FFFF]
-                  RenderText {#text} at (543,0) size 143x19
-                    text run at (543,0) width 143: "inline element of class "
-                  RenderInline {TT} at (0,0) size 24x15
-                    RenderText {#text} at (686,4) size 24x15
-                      text run at (686,4) width 24: "two"
-                RenderText {#text} at (710,0) size 753x38
-                  text run at (710,0) width 43: " which"
-                  text run at (0,19) width 512: "should result in -10px left padding (which should also be a light blue) only in the "
-                RenderInline {STRONG} at (0,0) size 27x19
-                  RenderText {#text} at (512,19) size 27x19
-                    text run at (512,19) width 27: "first"
-                RenderText {#text} at (539,19) size 715x38
-                  text run at (539,19) width 176: " line in which the inline box"
-                  text run at (0,38) width 52: "appears."
+            RenderTableCell {TD} at (12,26) size 770x132 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderBlock {P} at (4,4) size 762x54 [bgcolor=#808080]
+                RenderText {#text} at (0,0) size 553x17
+                  text run at (0,0) width 397: "This element is unstyled save for a background color of gray. "
+                  text run at (396,0) width 157: "However, it contains an "
+                RenderInline {SPAN} at (0,0) size 197x17 [bgcolor=#00FFFF]
+                  RenderText {#text} at (577,0) size 148x17
+                    text run at (577,0) width 148: "inline element of class "
+                  RenderInline {TT} at (0,0) size 25x15
+                    RenderText {#text} at (724,3) size 25x15
+                      text run at (724,3) width 25: "one"
+                RenderText {#text} at (0,18) size 582x17
+                  text run at (0,18) width 582: "which should result in 25-pixel left padding (which should also be a light blue) only in the "
+                RenderInline {STRONG} at (0,0) size 30x17
+                  RenderText {#text} at (581,18) size 30x17
+                    text run at (581,18) width 30: "first"
+                RenderText {#text} at (610,18) size 762x35
+                  text run at (610,18) width 152: " line in which the inline"
+                  text run at (0,36) width 81: "box appears."
+              RenderBlock {P} at (4,74) size 762x54 [bgcolor=#808080]
+                RenderText {#text} at (0,0) size 553x17
+                  text run at (0,0) width 397: "This element is unstyled save for a background color of gray. "
+                  text run at (396,0) width 157: "However, it contains an "
+                RenderInline {SPAN} at (0,0) size 172x17 [bgcolor=#00FFFF]
+                  RenderText {#text} at (552,0) size 148x17
+                    text run at (552,0) width 148: "inline element of class "
+                  RenderInline {TT} at (0,0) size 25x15
+                    RenderText {#text} at (699,3) size 25x15
+                      text run at (699,3) width 25: "two"
+                RenderText {#text} at (0,18) size 566x17
+                  text run at (0,18) width 566: "which should result in -10px left padding (which should also be a light blue) only in the "
+                RenderInline {STRONG} at (0,0) size 30x17
+                  RenderText {#text} at (565,18) size 30x17
+                    text run at (565,18) width 30: "first"
+                RenderText {#text} at (594,18) size 746x35
+                  text run at (594,18) width 152: " line in which the inline"
+                  text run at (0,36) width 81: "box appears."

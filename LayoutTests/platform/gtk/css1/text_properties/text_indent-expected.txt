@@ -1,136 +1,136 @@
-layer at (0,0) size 784x1282
+layer at (0,0) size 784x1246
   RenderView at (0,0) size 784x600
-layer at (0,0) size 784x1282
-  RenderBlock {HTML} at (0,0) size 784x1282
-    RenderBody {BODY} at (8,8) size 768x1266 [bgcolor=#CCCCCC]
-      RenderBlock {P} at (0,0) size 768x19
-        RenderText {#text} at (0,0) size 355x19
-          text run at (0,0) width 355: "The style declarations which apply to the text below are:"
-      RenderBlock {PRE} at (0,35) size 768x165
-        RenderText {#text} at (0,0) size 384x165
-          text run at (0,0) width 352: ".one {text-indent: 0.5in; background: aqua;}"
-          text run at (352,0) width 0: " "
-          text run at (0,15) width 336: ".two {text-indent: 2cm; background: aqua;}"
-          text run at (336,15) width 0: " "
-          text run at (0,30) width 360: ".three {text-indent: 20mm; background: aqua;}"
-          text run at (360,30) width 0: " "
-          text run at (0,45) width 352: ".four {text-indent: 24pt; background: aqua;}"
-          text run at (352,45) width 0: " "
-          text run at (0,60) width 344: ".five {text-indent: 2pc; background: aqua;}"
-          text run at (344,60) width 0: " "
-          text run at (0,75) width 336: ".six {text-indent: 2em; background: aqua;}"
-          text run at (336,75) width 0: " "
-          text run at (0,90) width 352: ".seven {text-indent: 2ex; background: aqua;}"
-          text run at (352,90) width 0: " "
-          text run at (0,105) width 352: ".eight {text-indent: 50%; background: aqua;}"
-          text run at (352,105) width 0: " "
-          text run at (0,120) width 352: ".nine {text-indent: 25px; background: aqua;}"
-          text run at (352,120) width 0: " "
-          text run at (0,135) width 384: "blockquote {text-indent: 50%; background: aqua;}"
-          text run at (384,135) width 0: " "
+layer at (0,0) size 784x1246
+  RenderBlock {HTML} at (0,0) size 784x1246
+    RenderBody {BODY} at (8,8) size 768x1230 [bgcolor=#CCCCCC]
+      RenderBlock {P} at (0,0) size 768x18
+        RenderText {#text} at (0,0) size 363x17
+          text run at (0,0) width 363: "The style declarations which apply to the text below are:"
+      RenderBlock {PRE} at (0,34) size 768x165
+        RenderText {#text} at (0,0) size 375x165
+          text run at (0,0) width 344: ".one {text-indent: 0.5in; background: aqua;}"
+          text run at (343,0) width 1: " "
+          text run at (0,15) width 328: ".two {text-indent: 2cm; background: aqua;}"
+          text run at (327,15) width 1: " "
+          text run at (0,30) width 352: ".three {text-indent: 20mm; background: aqua;}"
+          text run at (351,30) width 1: " "
+          text run at (0,45) width 344: ".four {text-indent: 24pt; background: aqua;}"
+          text run at (343,45) width 1: " "
+          text run at (0,60) width 336: ".five {text-indent: 2pc; background: aqua;}"
+          text run at (335,60) width 1: " "
+          text run at (0,75) width 328: ".six {text-indent: 2em; background: aqua;}"
+          text run at (327,75) width 1: " "
+          text run at (0,90) width 344: ".seven {text-indent: 2ex; background: aqua;}"
+          text run at (343,90) width 1: " "
+          text run at (0,105) width 344: ".eight {text-indent: 50%; background: aqua;}"
+          text run at (343,105) width 1: " "
+          text run at (0,120) width 344: ".nine {text-indent: 25px; background: aqua;}"
+          text run at (343,120) width 1: " "
+          text run at (0,135) width 375: "blockquote {text-indent: 50%; background: aqua;}"
+          text run at (374,135) width 1: " "
           text run at (0,150) width 0: " "
-      RenderBlock {HR} at (0,213) size 768x2 [border: (1px inset #000000)]
-      RenderBlock {P} at (0,231) size 768x19 [bgcolor=#00FFFF]
-        RenderText {#text} at (48,0) size 386x19
-          text run at (48,0) width 386: "The first line of this sentence should be indented half an inch."
-      RenderBlock {P} at (0,266) size 768x19 [bgcolor=#00FFFF]
-        RenderText {#text} at (75,0) size 411x19
-          text run at (75,0) width 411: "The first line of this sentence should be indented two centimeters."
-      RenderBlock {P} at (0,301) size 768x19 [bgcolor=#00FFFF]
-        RenderText {#text} at (75,0) size 428x19
-          text run at (75,0) width 428: "The first line of this sentence should be indented twenty millimeters."
-      RenderBlock {P} at (0,336) size 768x19 [bgcolor=#00FFFF]
-        RenderText {#text} at (32,0) size 428x19
-          text run at (32,0) width 428: "The first line of this sentence should be indented twenty-four points."
-      RenderBlock {P} at (0,371) size 768x19 [bgcolor=#00FFFF]
-        RenderText {#text} at (32,0) size 372x19
-          text run at (32,0) width 372: "The first line of this sentence should be indented two picas."
-      RenderBlock {P} at (0,406) size 768x19 [bgcolor=#00FFFF]
-        RenderText {#text} at (32,0) size 359x19
-          text run at (32,0) width 359: "The first line of this sentence should be indented two em."
-      RenderBlock {P} at (0,441) size 768x19 [bgcolor=#00FFFF]
-        RenderText {#text} at (16,0) size 355x19
-          text run at (16,0) width 355: "The first line of this sentence should be indented two ex."
-      RenderBlock {P} at (0,476) size 768x38 [bgcolor=#00FFFF]
-        RenderText {#text} at (384,0) size 743x38
-          text run at (384,0) width 359: "The first line of this sentence should be indented halfway"
-          text run at (0,19) width 555: "across the page, but the rest of it should be flush with the normal left margin of the page."
-      RenderBlock {P} at (0,530) size 768x38 [bgcolor=#00FFFF]
-        RenderText {#text} at (25,0) size 723x38
-          text run at (25,0) width 698: "The first line of this sentence should be indented 25 pixels, but the rest of it should be flush with the normal left"
-          text run at (0,19) width 122: "margin of the page."
-      RenderBlock {P} at (0,584) size 768x57 [bgcolor=#00FFFF]
-        RenderText {#text} at (48,0) size 416x19
-          text run at (48,0) width 416: "Only the first line of this sentence should be indented half an inch,"
-        RenderBR {BR} at (464,15) size 0x0
-        RenderText {#text} at (0,19) size 259x19
-          text run at (0,19) width 259: "no matter where the lines might start, and"
-        RenderBR {BR} at (259,34) size 0x0
-        RenderInline {EM} at (0,0) size 199x19
-          RenderText {#text} at (0,38) size 199x19
-            text run at (0,38) width 199: "regardless of any other markup"
-        RenderText {#text} at (199,38) size 146x19
-          text run at (199,38) width 146: " which may be present."
-      RenderBlock {BLOCKQUOTE} at (40,657) size 688x57 [bgcolor=#00FFFF]
-        RenderText {#text} at (384,0) size 646x57
-          text run at (384,0) width 221: "In the first half of the test page, this"
-          text run at (0,19) width 646: "BLOCKQUOTE element should have a text indent equal to 50% of the BODY element's width, since"
-          text run at (0,38) width 513: "BLOCKQUOTE is a child of BODY; in the second half, it is a child of TABLE."
-      RenderTable {TABLE} at (0,730) size 768x536 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 766x534
-          RenderTableRow {TR} at (0,0) size 766x27
-            RenderTableCell {TD} at (0,0) size 766x27 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
-              RenderInline {STRONG} at (0,0) size 163x19
-                RenderText {#text} at (4,4) size 163x19
+      RenderBlock {HR} at (0,212) size 768x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,230) size 768x18 [bgcolor=#00FFFF]
+        RenderText {#text} at (48,0) size 395x17
+          text run at (48,0) width 395: "The first line of this sentence should be indented half an inch."
+      RenderBlock {P} at (0,264) size 768x18 [bgcolor=#00FFFF]
+        RenderText {#text} at (75,0) size 421x17
+          text run at (75,0) width 421: "The first line of this sentence should be indented two centimeters."
+      RenderBlock {P} at (0,298) size 768x18 [bgcolor=#00FFFF]
+        RenderText {#text} at (75,0) size 440x17
+          text run at (75,0) width 440: "The first line of this sentence should be indented twenty millimeters."
+      RenderBlock {P} at (0,332) size 768x18 [bgcolor=#00FFFF]
+        RenderText {#text} at (32,0) size 438x17
+          text run at (32,0) width 438: "The first line of this sentence should be indented twenty-four points."
+      RenderBlock {P} at (0,366) size 768x18 [bgcolor=#00FFFF]
+        RenderText {#text} at (32,0) size 380x17
+          text run at (32,0) width 380: "The first line of this sentence should be indented two picas."
+      RenderBlock {P} at (0,400) size 768x18 [bgcolor=#00FFFF]
+        RenderText {#text} at (32,0) size 367x17
+          text run at (32,0) width 367: "The first line of this sentence should be indented two em."
+      RenderBlock {P} at (0,434) size 768x18 [bgcolor=#00FFFF]
+        RenderText {#text} at (14,0) size 363x17
+          text run at (14,0) width 363: "The first line of this sentence should be indented two ex."
+      RenderBlock {P} at (0,468) size 768x36 [bgcolor=#00FFFF]
+        RenderText {#text} at (384,0) size 751x35
+          text run at (384,0) width 367: "The first line of this sentence should be indented halfway"
+          text run at (0,18) width 568: "across the page, but the rest of it should be flush with the normal left margin of the page."
+      RenderBlock {P} at (0,520) size 768x36 [bgcolor=#00FFFF]
+        RenderText {#text} at (25,0) size 740x35
+          text run at (25,0) width 715: "The first line of this sentence should be indented 25 pixels, but the rest of it should be flush with the normal left"
+          text run at (0,18) width 125: "margin of the page."
+      RenderBlock {P} at (0,572) size 768x54 [bgcolor=#00FFFF]
+        RenderText {#text} at (48,0) size 426x17
+          text run at (48,0) width 426: "Only the first line of this sentence should be indented half an inch,"
+        RenderBR {BR} at (473,14) size 1x0
+        RenderText {#text} at (0,18) size 266x17
+          text run at (0,18) width 266: "no matter where the lines might start, and"
+        RenderBR {BR} at (265,32) size 1x0
+        RenderInline {EM} at (0,0) size 202x17
+          RenderText {#text} at (0,36) size 202x17
+            text run at (0,36) width 202: "regardless of any other markup"
+        RenderText {#text} at (201,36) size 149x17
+          text run at (201,36) width 149: " which may be present."
+      RenderBlock {BLOCKQUOTE} at (40,642) size 688x54 [bgcolor=#00FFFF]
+        RenderText {#text} at (384,0) size 651x53
+          text run at (384,0) width 228: "In the first half of the test page, this"
+          text run at (0,18) width 651: "BLOCKQUOTE element should have a text indent equal to 50% of the BODY element's width, since"
+          text run at (0,36) width 515: "BLOCKQUOTE is a child of BODY; in the second half, it is a child of TABLE."
+      RenderTable {TABLE} at (0,712) size 768x518 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 766x516
+          RenderTableRow {TR} at (0,0) size 766x26
+            RenderTableCell {TD} at (0,0) size 766x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+              RenderInline {STRONG} at (0,0) size 163x17
+                RenderText {#text} at (4,4) size 163x17
                   text run at (4,4) width 163: "TABLE Testing Section"
-          RenderTableRow {TR} at (0,27) size 766x507
-            RenderTableCell {TD} at (0,267) size 12x27 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (4,4) size 4x19
+          RenderTableRow {TR} at (0,26) size 766x490
+            RenderTableCell {TD} at (0,258) size 12x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (4,4) size 4x17
                 text run at (4,4) width 4: " "
-            RenderTableCell {TD} at (12,27) size 754x507 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-              RenderBlock {P} at (4,4) size 746x19 [bgcolor=#00FFFF]
-                RenderText {#text} at (48,0) size 386x19
-                  text run at (48,0) width 386: "The first line of this sentence should be indented half an inch."
-              RenderBlock {P} at (4,39) size 746x19 [bgcolor=#00FFFF]
-                RenderText {#text} at (75,0) size 411x19
-                  text run at (75,0) width 411: "The first line of this sentence should be indented two centimeters."
-              RenderBlock {P} at (4,74) size 746x19 [bgcolor=#00FFFF]
-                RenderText {#text} at (75,0) size 428x19
-                  text run at (75,0) width 428: "The first line of this sentence should be indented twenty millimeters."
-              RenderBlock {P} at (4,109) size 746x19 [bgcolor=#00FFFF]
-                RenderText {#text} at (32,0) size 428x19
-                  text run at (32,0) width 428: "The first line of this sentence should be indented twenty-four points."
-              RenderBlock {P} at (4,144) size 746x19 [bgcolor=#00FFFF]
-                RenderText {#text} at (32,0) size 372x19
-                  text run at (32,0) width 372: "The first line of this sentence should be indented two picas."
-              RenderBlock {P} at (4,179) size 746x19 [bgcolor=#00FFFF]
-                RenderText {#text} at (32,0) size 359x19
-                  text run at (32,0) width 359: "The first line of this sentence should be indented two em."
-              RenderBlock {P} at (4,214) size 746x19 [bgcolor=#00FFFF]
-                RenderText {#text} at (16,0) size 355x19
-                  text run at (16,0) width 355: "The first line of this sentence should be indented two ex."
-              RenderBlock {P} at (4,249) size 746x38 [bgcolor=#00FFFF]
-                RenderText {#text} at (373,0) size 732x38
-                  text run at (373,0) width 359: "The first line of this sentence should be indented halfway"
-                  text run at (0,19) width 555: "across the page, but the rest of it should be flush with the normal left margin of the page."
-              RenderBlock {P} at (4,303) size 746x38 [bgcolor=#00FFFF]
-                RenderText {#text} at (25,0) size 723x38
-                  text run at (25,0) width 698: "The first line of this sentence should be indented 25 pixels, but the rest of it should be flush with the normal left"
-                  text run at (0,19) width 122: "margin of the page."
-              RenderBlock {P} at (4,357) size 746x57 [bgcolor=#00FFFF]
-                RenderText {#text} at (48,0) size 416x19
-                  text run at (48,0) width 416: "Only the first line of this sentence should be indented half an inch,"
-                RenderBR {BR} at (464,15) size 0x0
-                RenderText {#text} at (0,19) size 259x19
-                  text run at (0,19) width 259: "no matter where the lines might start, and"
-                RenderBR {BR} at (259,34) size 0x0
-                RenderInline {EM} at (0,0) size 199x19
-                  RenderText {#text} at (0,38) size 199x19
-                    text run at (0,38) width 199: "regardless of any other markup"
-                RenderText {#text} at (199,38) size 146x19
-                  text run at (199,38) width 146: " which may be present."
-              RenderBlock {BLOCKQUOTE} at (44,430) size 666x57 [bgcolor=#00FFFF]
-                RenderText {#text} at (373,0) size 646x57
-                  text run at (373,0) width 221: "In the first half of the test page, this"
-                  text run at (0,19) width 646: "BLOCKQUOTE element should have a text indent equal to 50% of the BODY element's width, since"
-                  text run at (0,38) width 513: "BLOCKQUOTE is a child of BODY; in the second half, it is a child of TABLE."
+            RenderTableCell {TD} at (12,26) size 754x490 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderBlock {P} at (4,4) size 746x18 [bgcolor=#00FFFF]
+                RenderText {#text} at (48,0) size 395x17
+                  text run at (48,0) width 395: "The first line of this sentence should be indented half an inch."
+              RenderBlock {P} at (4,38) size 746x18 [bgcolor=#00FFFF]
+                RenderText {#text} at (75,0) size 421x17
+                  text run at (75,0) width 421: "The first line of this sentence should be indented two centimeters."
+              RenderBlock {P} at (4,72) size 746x18 [bgcolor=#00FFFF]
+                RenderText {#text} at (75,0) size 440x17
+                  text run at (75,0) width 440: "The first line of this sentence should be indented twenty millimeters."
+              RenderBlock {P} at (4,106) size 746x18 [bgcolor=#00FFFF]
+                RenderText {#text} at (32,0) size 438x17
+                  text run at (32,0) width 438: "The first line of this sentence should be indented twenty-four points."
+              RenderBlock {P} at (4,140) size 746x18 [bgcolor=#00FFFF]
+                RenderText {#text} at (32,0) size 380x17
+                  text run at (32,0) width 380: "The first line of this sentence should be indented two picas."
+              RenderBlock {P} at (4,174) size 746x18 [bgcolor=#00FFFF]
+                RenderText {#text} at (32,0) size 367x17
+                  text run at (32,0) width 367: "The first line of this sentence should be indented two em."
+              RenderBlock {P} at (4,208) size 746x18 [bgcolor=#00FFFF]
+                RenderText {#text} at (14,0) size 363x17
+                  text run at (14,0) width 363: "The first line of this sentence should be indented two ex."
+              RenderBlock {P} at (4,242) size 746x36 [bgcolor=#00FFFF]
+                RenderText {#text} at (373,0) size 740x35
+                  text run at (373,0) width 367: "The first line of this sentence should be indented halfway"
+                  text run at (0,18) width 568: "across the page, but the rest of it should be flush with the normal left margin of the page."
+              RenderBlock {P} at (4,294) size 746x36 [bgcolor=#00FFFF]
+                RenderText {#text} at (25,0) size 740x35
+                  text run at (25,0) width 715: "The first line of this sentence should be indented 25 pixels, but the rest of it should be flush with the normal left"
+                  text run at (0,18) width 125: "margin of the page."
+              RenderBlock {P} at (4,346) size 746x54 [bgcolor=#00FFFF]
+                RenderText {#text} at (48,0) size 426x17
+                  text run at (48,0) width 426: "Only the first line of this sentence should be indented half an inch,"
+                RenderBR {BR} at (473,14) size 1x0
+                RenderText {#text} at (0,18) size 266x17
+                  text run at (0,18) width 266: "no matter where the lines might start, and"
+                RenderBR {BR} at (265,32) size 1x0
+                RenderInline {EM} at (0,0) size 202x17
+                  RenderText {#text} at (0,36) size 202x17
+                    text run at (0,36) width 202: "regardless of any other markup"
+                RenderText {#text} at (201,36) size 149x17
+                  text run at (201,36) width 149: " which may be present."
+              RenderBlock {BLOCKQUOTE} at (44,416) size 666x54 [bgcolor=#00FFFF]
+                RenderText {#text} at (373,0) size 651x53
+                  text run at (373,0) width 228: "In the first half of the test page, this"
+                  text run at (0,18) width 651: "BLOCKQUOTE element should have a text indent equal to 50% of the BODY element's width, since"
+                  text run at (0,36) width 515: "BLOCKQUOTE is a child of BODY; in the second half, it is a child of TABLE."
