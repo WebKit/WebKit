@@ -1,5 +1,25 @@
 2011-11-29  Tony Chang  <tony@chromium.org>
 
+        flex-align:stretch + max-height needs to clamp to max-height and position appropriately
+        https://bugs.webkit.org/show_bug.cgi?id=70780
+
+        Reviewed by David Hyatt.
+
+        Test: css3/flexbox/flex-align-max.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::sizesToIntrinsicLogicalWidth): When laying out columns, if the flex item is stretching,
+        we don't need to shrink wrap.
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::isColumnFlow): Switch to RenderStyle helper method.
+        (WebCore::RenderFlexibleBox::alignChildrenBlockDirection): For columns, we don't need to do anything.
+        For rows, handle max logical height by setting the height and recomputing (which will take max-height
+        into consideration).
+        * rendering/style/RenderStyle.h:
+        (WebCore::InheritedFlags::isColumnFlexFlow): Helper method.
+
+2011-11-29  Tony Chang  <tony@chromium.org>
+
         [chromium] Remove unused variable (gcc 4.6 complains about this)
         https://bugs.webkit.org/show_bug.cgi?id=73335
 

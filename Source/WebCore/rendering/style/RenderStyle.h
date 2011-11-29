@@ -726,6 +726,7 @@ public:
     EFlexPack flexPack() const { return static_cast<EFlexPack>(rareNonInheritedData->m_flexibleBox->m_flexPack); }
     EFlexAlign flexAlign() const { return static_cast<EFlexAlign>(rareNonInheritedData->m_flexibleBox->m_flexAlign); }
     EFlexFlow flexFlow() const { return static_cast<EFlexFlow>(rareNonInheritedData->m_flexibleBox->m_flexFlow); }
+    bool isColumnFlexFlow() const { return flexFlow() == FlowColumn || flexFlow() == FlowColumnReverse; }
 
 #if ENABLE(CSS_GRID_LAYOUT)
     Length gridColumns() const { return rareNonInheritedData->m_grid->m_gridColumns; }

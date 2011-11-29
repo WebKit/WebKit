@@ -204,8 +204,7 @@ bool RenderFlexibleBox::hasOrthogonalFlow(RenderBox* child) const
 
 bool RenderFlexibleBox::isColumnFlow() const
 {
-    EFlexFlow flow = style()->flexFlow();
-    return flow == FlowColumn || flow == FlowColumnReverse;
+    return style()->isColumnFlexFlow();
 }
 
 bool RenderFlexibleBox::isHorizontalFlow() const
@@ -718,14 +717,11 @@ void RenderFlexibleBox::alignChildrenBlockDirection(FlexOrderIterator& iterator,
         // FIXME: Make sure this does the right thing with column flows.
         switch (child->style()->flexAlign()) {
         case AlignStretch: {
-            Length height = isHorizontalFlow() ? child->style()->height() : child->style()->width();
-            if (height.isAuto()) {
-                // FIXME: Clamp to max-height once it's spec'ed (should we align towards the start or center?).
-                LayoutUnit stretchedHeight = crossAxisExtentForChild(child) + RenderFlexibleBox::availableAlignmentSpaceForChild(child);
-                if (isHorizontalFlow())
-                    child->setHeight(stretchedHeight);
-                else
-                    child->setWidth(stretchedHeight);
+            if (!isColumnFlow() && child->style()->logicalHeight().isAuto()) {
+                LayoutUnit stretchedLogicalHeight = child->logicalHeight() + RenderFlexibleBox::availableAlignmentSpaceForChild(child);
+                child->setLogicalHeight(stretchedLogicalHeight);
+                child->computeLogicalHeight();
+                // FIXME: We need to relayout if the height changed.
             }
             break;
         }
