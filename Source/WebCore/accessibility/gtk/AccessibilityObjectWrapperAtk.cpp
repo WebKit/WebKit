@@ -206,6 +206,12 @@ static const gchar* webkit_accessible_get_name(AtkObject* object)
             return returnString(document->title());
     }
 
+    // Nothing worked so far, try with the AccessibilityObject's
+    // title() before going ahead with stringValue().
+    String axTitle = coreObject->title();
+    if (!axTitle.isEmpty())
+        return returnString(axTitle);
+
     return returnString(coreObject->stringValue());
 }
 
