@@ -1748,8 +1748,8 @@ BUGWK45957 LEOPARD : fast/multicol/column-rules-stacking.html = IMAGE
 BUGCR26291 : transforms/2d/hindi-rotated.html = IMAGE+TEXT IMAGE
 
 // I don't think we've ever passed this test correctly.
-BUG_SENORBLANCO WIN LINUX : fast/text/international/hindi-whitespace.html = IMAGE+TEXT
-BUG_SENORBLANCO LEOPARD : fast/text/international/hindi-whitespace.html = IMAGE PASS
+BUGWK73329 WIN LINUX : fast/text/international/hindi-whitespace.html = IMAGE+TEXT
+BUGWK73329 LEOPARD : fast/text/international/hindi-whitespace.html = IMAGE PASS
 
 // The following upstream patches add -Webkit-color-correction support:
 // http://trac.webkit.org/changeset/50760
