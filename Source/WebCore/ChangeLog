@@ -1,3 +1,13 @@
+2011-11-28  Dana Jansens  <danakj@chromium.org>
+
+        Synchronization problem in Canvas/WebGLRenderingContext when listener asks for image
+        https://bugs.webkit.org/show_bug.cgi?id=73228
+
+        Reviewed by Kenneth Russell.
+
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::markContextChanged):
+
 2011-11-28  Rafael Weinstein  <rafaelw@chromium.org>
 
         [MutationObservers] Fix build breakage after CSSInlineDeclaration refactor

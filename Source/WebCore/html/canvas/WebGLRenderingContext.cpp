@@ -541,16 +541,18 @@ void WebGLRenderingContext::markContextChanged()
     m_layerCleared = false;
 #if USE(ACCELERATED_COMPOSITING)
     RenderBox* renderBox = canvas()->renderBox();
-    if (renderBox && renderBox->hasLayer() && renderBox->layer()->hasAcceleratedCompositing())
+    if (renderBox && renderBox->hasLayer() && renderBox->layer()->hasAcceleratedCompositing()) {
+        m_markedCanvasDirty = true;
         renderBox->layer()->contentChanged(RenderLayer::CanvasChanged);
-    else {
+    } else {
 #endif
-        if (!m_markedCanvasDirty)
+        if (!m_markedCanvasDirty) {
+            m_markedCanvasDirty = true;
             canvas()->didDraw(FloatRect(0, 0, canvas()->width(), canvas()->height()));
+        }
 #if USE(ACCELERATED_COMPOSITING)
     }
 #endif
-    m_markedCanvasDirty = true;
 }
 
 bool WebGLRenderingContext::clearIfComposited(GC3Dbitfield mask)
