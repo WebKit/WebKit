@@ -2548,6 +2548,10 @@ body.platform-mac #drawer-status-bar .search-status-bar-progress {
    border-radius: 5px 5px 5px 0;
 }
 
+.suggest-box.generic-suggest.under-anchor {
+   border-radius: 0 5px 5px 5px;
+}
+
 /* Custom popup scrollers */
 
 .custom-popup-horizontal-scroll ::-webkit-scrollbar, .custom-popup-vertical-scroll ::-webkit-scrollbar {

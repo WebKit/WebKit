@@ -1,3 +1,18 @@
+2011-11-28  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: TextPrompt should show suggest above or under so that it has maximal height.
+        https://bugs.webkit.org/show_bug.cgi?id=73239
+
+        Reviewed by Pavel Feldman.
+
+        Fixed suggest box vertical position / height calculation.
+        Added round corners when suggest box is positioned under text prompt.
+
+        * inspector/front-end/TextPrompt.js:
+        (WebInspector.TextPrompt.SuggestBox.prototype._updateBoxPosition):
+        * inspector/front-end/inspector.css:
+        (.suggest-box.generic-suggest.under-anchor):
+
 2011-11-29  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix the GTK+ port build after r101307.

@@ -897,37 +897,38 @@ WebInspector.TextPrompt.SuggestBox.prototype = {
 
         // Lay out the suggest-box relative to the anchorBox.
         this._anchorBox = anchorBox;
-        const suggestBoxPaddingX = 21;
-        const suggestBoxPaddingY = 2;
         const spacer = 6;
-        const minHeight = 25;
+
+        const suggestBoxPaddingX = 21;
         var maxWidth = document.body.offsetWidth - anchorBox.x - spacer;
         var width = Math.min(contentWidth, maxWidth - suggestBoxPaddingX) + suggestBoxPaddingX;
-
-        var maxHeight = document.body.offsetHeight - anchorBox.y - anchorBox.height - spacer;
         var paddedWidth = contentWidth + suggestBoxPaddingX;
-        var paddedHeight = contentHeight + suggestBoxPaddingY;
-        var height = Math.min(paddedHeight, maxHeight);
         var boxX = anchorBox.x;
-        var boxY;
-        if (height >= minHeight || height === paddedHeight) {
-            // Locate the suggest box under the anchorBox.
-            boxY = anchorBox.y + anchorBox.height;
-            this._element.removeStyleClass("above-anchor");
-        } else {
-            // Locate the suggest box above the anchorBox.
-            maxHeight = anchorBox.y - spacer;
-            height = Math.min(contentHeight, maxHeight - suggestBoxPaddingY) + suggestBoxPaddingY;
-            boxY = anchorBox.y - height;
-            this._element.addStyleClass("above-anchor");
-        }
-
         if (width < paddedWidth) {
             // Shift the suggest box to the left to accommodate the content without trimming to the BODY edge.
             maxWidth = document.body.offsetWidth - spacer;
             width = Math.min(contentWidth, maxWidth - suggestBoxPaddingX) + suggestBoxPaddingX;
             boxX = document.body.offsetWidth - width;
         }
+
+        const suggestBoxPaddingY = 2;
+        var boxY;
+        var aboveHeight = anchorBox.y;
+        var underHeight = document.body.offsetHeight - anchorBox.y - anchorBox.height;
+        var maxHeight = Math.max(underHeight, aboveHeight) - spacer;
+        height = Math.min(contentHeight, maxHeight - suggestBoxPaddingY) + suggestBoxPaddingY;
+        if (underHeight >= aboveHeight) {
+            // Locate the suggest box under the anchorBox.
+            boxY = anchorBox.y + anchorBox.height;
+            this._element.removeStyleClass("above-anchor");
+            this._element.addStyleClass("under-anchor");
+        } else {
+            // Locate the suggest box above the anchorBox.
+            boxY = anchorBox.y - height;
+            this._element.removeStyleClass("under-anchor");
+            this._element.addStyleClass("above-anchor");
+        }
+
         this._element.positionAt(boxX, boxY);
         this._element.style.width = width + "px";
         this._element.style.height = height + "px";
