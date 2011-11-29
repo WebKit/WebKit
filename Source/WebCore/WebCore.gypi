@@ -2234,7 +2234,6 @@
             'bindings/v8/custom/V8MessageChannelConstructor.cpp',
             'bindings/v8/custom/V8MessageEventCustom.cpp',
             'bindings/v8/custom/V8MessagePortCustom.cpp',
-            'bindings/v8/custom/V8MessagePortCustom.h',
             'bindings/v8/custom/V8MutationCallbackCustom.cpp',
             'bindings/v8/custom/V8NamedNodeMapCustom.cpp',
             'bindings/v8/custom/V8NamedNodesCollection.cpp',

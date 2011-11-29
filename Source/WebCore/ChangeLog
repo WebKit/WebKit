@@ -1,3 +1,14 @@
+2011-11-28  Noel Gordon  <noel.gordon@gmail.com>
+
+        [chromium] Remove V8MessagePortCustom.h from the gyp projects
+        https://bugs.webkit.org/show_bug.cgi?id=73281
+
+        Reviewed by David Levin.
+
+        V8MessagePortCustom.h was removed in r101118
+
+        * WebCore.gypi: remove bindings\v8\custom\V8MessagePortCustom.h
+
 2011-11-28  Leo Yang  <leo.yang@torchmobile.com.cn>
 
         Upstream the BlackBerry porting of SocketStream
