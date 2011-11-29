@@ -395,7 +395,7 @@ WebViewImpl::WebViewImpl(WebViewClient* client)
     pageClients.deviceOrientationClient = m_deviceOrientationClientProxy.get();
     pageClients.geolocationClient = m_geolocationClientProxy.get();
 #if ENABLE(NOTIFICATIONS)
-    pageClients.notificationClient = &m_notificationPresenter;
+    pageClients.notificationClient = notificationPresenterImpl();
 #endif
     pageClients.backForwardClient = BackForwardListChromium::create(this);
 #if ENABLE(MEDIA_STREAM)
