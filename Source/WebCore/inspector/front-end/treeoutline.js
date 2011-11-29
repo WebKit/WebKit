@@ -92,6 +92,9 @@ TreeOutline.prototype.appendChild = function(child)
     }
 
     child._attach();
+
+    if (this.treeOutline.onadd)
+        this.treeOutline.onadd(child);
 }
 
 TreeOutline.prototype.insertChild = function(child, index)
@@ -140,6 +143,9 @@ TreeOutline.prototype.insertChild = function(child, index)
     }
 
     child._attach();
+
+    if (this.treeOutline.onadd)
+        this.treeOutline.onadd(child);
 }
 
 TreeOutline.prototype.removeChildAtIndex = function(childIndex)
@@ -335,6 +341,15 @@ TreeOutline.prototype.findTreeElement = function(representedObject, isAncestor, 
     return this.getCachedTreeElement(representedObject);
 }
 
+TreeOutline.prototype._treeElementDidChange = function(treeElement)
+{
+    if (treeElement.treeOutline !== this)
+        return;
+
+    if (this.onchange)
+        this.onchange(treeElement);
+}
+
 TreeOutline.prototype.treeElementFromPoint = function(x, y)
 {
     var node = this._childrenListNode.ownerDocument.elementFromPoint(x, y);
@@ -512,6 +527,7 @@ TreeElement.prototype = {
     set title(x) {
         this._title = x;
         this._setListItemNodeContent();
+        this.didChange();
     },
 
     get titleHTML() {
@@ -521,6 +537,7 @@ TreeElement.prototype = {
     set titleHTML(x) {
         this._titleHTML = x;
         this._setListItemNodeContent();
+        this.didChange();
     },
 
     get tooltip() {
@@ -531,6 +548,7 @@ TreeElement.prototype = {
         this._tooltip = x;
         if (this._listItemNode)
             this._listItemNode.title = x ? x : "";
+        this.didChange();
     },
 
     get hasChildren() {
@@ -552,6 +570,8 @@ TreeElement.prototype = {
             this._listItemNode.classList.remove("parent");
             this.collapse();
         }
+
+        this.didChange();
     },
 
     get hidden() {
@@ -585,6 +605,24 @@ TreeElement.prototype = {
         this._shouldRefreshChildren = x;
         if (x && this.expanded)
             this.expand();
+    },
+
+    _fireDidChange: function()
+    {
+        delete this._didChangeTimeoutIdentifier;
+
+        if (this.treeOutline)
+            this.treeOutline._treeElementDidChange(this);
+    },
+
+    didChange: function()
+    {
+        if (!this.treeOutline)
+            return;
+
+        // Prevent telling the TreeOutline multiple times in a row by delaying it with a timeout.
+        if (!this._didChangeTimeoutIdentifier)
+            this._didChangeTimeoutIdentifier = setTimeout(this._fireDidChange.bind(this), 0);
     },
 
     _setListItemNodeContent: function()
@@ -741,6 +779,14 @@ TreeElement.prototype.expand = function()
     if (!this.hasChildren || (this.expanded && !this._shouldRefreshChildren && this._childrenListNode))
         return;
 
+    // Set this before onpopulate. Since onpopulate can add elements and call onadd, this makes
+    // sure the expanded flag is true before calling those functions. This prevents the possibility
+    // of an infinite loop if onpopulate or onadd were to call expand.
+
+    this.expanded = true;
+    if (this.treeOutline)
+        this.treeOutline._treeElementsExpandedState[this.identifier] = true;
+
     if (this.treeOutline && (!this._childrenListNode || this._shouldRefreshChildren)) {
         if (this._childrenListNode && this._childrenListNode.parentNode)
             this._childrenListNode.parentNode.removeChild(this._childrenListNode);
@@ -768,10 +814,6 @@ TreeElement.prototype.expand = function()
 
     if (this._childrenListNode)
         this._childrenListNode.classList.add("expanded");
-
-    this.expanded = true;
-    if (this.treeOutline)
-        this.treeOutline._treeElementsExpandedState[this.identifier] = true;
 
     if (this.onexpand)
         this.onexpand(this);

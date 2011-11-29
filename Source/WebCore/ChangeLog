@@ -1,5 +1,25 @@
 2011-11-28  Timothy Hatcher  <timothy@apple.com>
 
+        Add support for knowing when a TreeElement is added or changed anywhere in a TreeOutline.
+
+        Reviewed by Brian Weinstein.
+
+        * inspector/front-end/treeoutline.js:
+        (TreeOutline.prototype.appendChild): Call onadd if it exists.
+        (TreeOutline.prototype.insertChild): Ditto.
+        (TreeOutline.prototype._treeElementDidChange): Added. Call onchange if it exists.
+        (TreeElement.prototype.set title): Call didChange.
+        (TreeElement.prototype.set titleHTML): Ditto.
+        (TreeElement.prototype.set tooltip): Ditto.
+        (TreeElement.prototype.set hasChildren): Ditto.
+        (TreeElement.prototype._fireDidChange): Added. Call TreeOutline._treeElementDidChange.
+        (TreeElement.prototype.didChange): Added. Schedule a timeout for _fireDidChange.
+        (TreeElement.prototype.expand): Move the code that sets the expanded flag to the beginning
+        which is before onpopulate. Since onpopulate can add elements and call onadd, this makes
+        sure the expanded flag is true before calling those functions.
+
+2011-11-28  Timothy Hatcher  <timothy@apple.com>
+
         Skip selecting TreeElements that are hidden when keyboard navigating.
 
         We already skipped non-selectable tree elements in the common cases, this just makes selectable
