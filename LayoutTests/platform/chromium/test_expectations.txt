@@ -3723,8 +3723,6 @@ BUGWK72052 MAC DEBUG CPU-CG GPU-CG : fast/dom/javascript-url-exception-isolation
 BUGWK72053 MAC DEBUG : fast/borders/inline-mask-overlay-image-outset-vertical-rl.html = PASS CRASH
 BUGWK72053 MAC DEBUG : fast/borders/block-mask-overlay-image-outset.html = PASS CRASH
 
-BUGWK70395 MAC : fast/dom/rtl-scroll-to-leftmost-and-resize.html = IMAGE+TEXT
-
 BUGWK72264 MAC : inspector/debugger/script-formatter.html = TIMEOUT
 
 // Fixed ES5 bugs during the V8 roll, upstream in progress.
