@@ -1,3 +1,17 @@
+2011-11-29  Roland Steiner  <rolandsteiner@chromium.org>
+
+        From @keyframes rules with the same name, the last rule should be used
+        https://bugs.webkit.org/show_bug.cgi?id=73113
+
+        Have later rules override previously stored rules.
+
+        Reviewed by Simon Fraser.
+
+        Test: animations/duplicated-keyframes-name.html
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::addKeyframeStyle):
+
 2011-11-28  Jacky Jiang  <zhajiang@rim.com>
 
         Upstream BlackBerry porting of page.

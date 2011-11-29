@@ -434,7 +434,7 @@ void CSSStyleSelector::addRegionStyleRule(PassRefPtr<CSSRegionStyleRule> regionS
 void CSSStyleSelector::addKeyframeStyle(PassRefPtr<WebKitCSSKeyframesRule> rule)
 {
     AtomicString s(rule->name());
-    m_keyframesRuleMap.add(s.impl(), rule);
+    m_keyframesRuleMap.set(s.impl(), rule);
 }
 
 CSSStyleSelector::~CSSStyleSelector()
