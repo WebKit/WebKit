@@ -86,9 +86,9 @@ TreeOutline.prototype.appendChild = function(child)
     if (!this._childrenListNode) {
         this._childrenListNode = this.treeOutline._childrenListNode.ownerDocument.createElement("ol");
         this._childrenListNode.parentTreeElement = this;
-        this._childrenListNode.addStyleClass("children");
+        this._childrenListNode.classList.add("children");
         if (this.hidden)
-            this._childrenListNode.addStyleClass("hidden");
+            this._childrenListNode.classList.add("hidden");
     }
 
     child._attach();
@@ -134,9 +134,9 @@ TreeOutline.prototype.insertChild = function(child, index)
     if (!this._childrenListNode) {
         this._childrenListNode = this.treeOutline._childrenListNode.ownerDocument.createElement("ol");
         this._childrenListNode.parentTreeElement = this;
-        this._childrenListNode.addStyleClass("children");
+        this._childrenListNode.classList.add("children");
         if (this.hidden)
-            this._childrenListNode.addStyleClass("hidden");
+            this._childrenListNode.classList.add("hidden");
     }
 
     child._attach();
@@ -533,9 +533,9 @@ TreeElement.prototype = {
             return;
 
         if (x)
-            this._listItemNode.addStyleClass("parent");
+            this._listItemNode.classList.add("parent");
         else {
-            this._listItemNode.removeStyleClass("parent");
+            this._listItemNode.classList.remove("parent");
             this.collapse();
         }
     },
@@ -552,14 +552,14 @@ TreeElement.prototype = {
 
         if (x) {
             if (this._listItemNode)
-                this._listItemNode.addStyleClass("hidden");
+                this._listItemNode.classList.add("hidden");
             if (this._childrenListNode)
-                this._childrenListNode.addStyleClass("hidden");
+                this._childrenListNode.classList.add("hidden");
         } else {
             if (this._listItemNode)
-                this._listItemNode.removeStyleClass("hidden");
+                this._listItemNode.classList.remove("hidden");
             if (this._childrenListNode)
-                this._childrenListNode.removeStyleClass("hidden");
+                this._childrenListNode.classList.remove("hidden");
         }
     },
 
@@ -612,13 +612,13 @@ TreeElement.prototype._attach = function()
         this._listItemNode.title = this._tooltip ? this._tooltip : "";
 
         if (this.hidden)
-            this._listItemNode.addStyleClass("hidden");
+            this._listItemNode.classList.add("hidden");
         if (this.hasChildren)
-            this._listItemNode.addStyleClass("parent");
+            this._listItemNode.classList.add("parent");
         if (this.expanded)
-            this._listItemNode.addStyleClass("expanded");
+            this._listItemNode.classList.add("expanded");
         if (this.selected)
-            this._listItemNode.addStyleClass("selected");
+            this._listItemNode.classList.add("selected");
 
         this._listItemNode.addEventListener("mousedown", TreeElement.treeElementMouseDown, false);
         this._listItemNode.addEventListener("click", TreeElement.treeElementToggled, false);
@@ -700,9 +700,9 @@ TreeElement.treeElementDoubleClicked = function(event)
 TreeElement.prototype.collapse = function()
 {
     if (this._listItemNode)
-        this._listItemNode.removeStyleClass("expanded");
+        this._listItemNode.classList.remove("expanded");
     if (this._childrenListNode)
-        this._childrenListNode.removeStyleClass("expanded");
+        this._childrenListNode.classList.remove("expanded");
 
     this.expanded = false;
     if (this.treeOutline)
@@ -733,10 +733,10 @@ TreeElement.prototype.expand = function()
 
         this._childrenListNode = this.treeOutline._childrenListNode.ownerDocument.createElement("ol");
         this._childrenListNode.parentTreeElement = this;
-        this._childrenListNode.addStyleClass("children");
+        this._childrenListNode.classList.add("children");
 
         if (this.hidden)
-            this._childrenListNode.addStyleClass("hidden");
+            this._childrenListNode.classList.add("hidden");
 
         this.onpopulate();
 
@@ -747,13 +747,13 @@ TreeElement.prototype.expand = function()
     }
 
     if (this._listItemNode) {
-        this._listItemNode.addStyleClass("expanded");
+        this._listItemNode.classList.add("expanded");
         if (this._childrenListNode && this._childrenListNode.parentNode != this._listItemNode.parentNode)
             this.parent._childrenListNode.insertBefore(this._childrenListNode, this._listItemNode.nextSibling);
     }
 
     if (this._childrenListNode)
-        this._childrenListNode.addStyleClass("expanded");
+        this._childrenListNode.classList.add("expanded");
 
     this.expanded = true;
     if (this.treeOutline)
@@ -849,7 +849,7 @@ TreeElement.prototype.select = function(omitFocus, selectedByUser)
         return;
     this.treeOutline.selectedTreeElement = this;
     if (this._listItemNode)
-        this._listItemNode.addStyleClass("selected");
+        this._listItemNode.classList.add("selected");
 
     if (this.onselect)
         this.onselect(this, selectedByUser);
@@ -875,7 +875,7 @@ TreeElement.prototype.deselect = function(supressOnDeselect)
     this.selected = false;
     this.treeOutline.selectedTreeElement = null;
     if (this._listItemNode)
-        this._listItemNode.removeStyleClass("selected");
+        this._listItemNode.classList.remove("selected");
 
     if (this.ondeselect && !supressOnDeselect)
         this.ondeselect(this);

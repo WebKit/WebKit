@@ -1,3 +1,22 @@
+2011-11-28  Timothy Hatcher  <timothy@apple.com>
+
+        Use classList instead of addStyleClass and removeStyleClass in TreeOutline.
+
+        https://webkit.org/b/72803
+
+        Reviewed by Dan Bernstein.
+
+        * inspector/front-end/treeoutline.js:
+        (TreeOutline.prototype.appendChild):
+        (TreeOutline.prototype.insertChild):
+        (TreeElement.prototype.set hasChildren):
+        (TreeElement.prototype.set hidden):
+        (TreeElement.prototype._attach):
+        (TreeElement.prototype.collapse):
+        (TreeElement.prototype.expand):
+        (TreeElement.prototype.select):
+        (TreeElement.prototype.deselect):
+
 2011-11-28  Leo Yang  <leo.yang@torchmobile.com.cn>
 
         Upstream platform/network/blackberry/AuthenticationChallenge.h
