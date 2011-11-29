@@ -116,22 +116,22 @@ WebInspector.ShortcutsSection._sequenceNumber = 0;
 WebInspector.ShortcutsSection.prototype = {
     addKey: function(key, description)
     {
-        this.addLine(this._renderKey(key), description);
+        this._addLine(this._renderKey(key), description);
     },
 
     addRelatedKeys: function(keys, description)
     {
-        this.addLine(this._renderSequence(keys, "/"), description);
+        this._addLine(this._renderSequence(keys, "/"), description);
     },
 
     addAlternateKeys: function(keys, description)
     {
-        this.addLine(this._renderSequence(keys, WebInspector.UIString("or")), description);
+        this._addLine(this._renderSequence(keys, WebInspector.UIString("or")), description);
     },
 
-    addLine: function(htmlKey, description)
+    _addLine: function(keyElement, description)
     {
-        this._lines.push({ key: htmlKey, text: description })
+        this._lines.push({ key: keyElement, text: description })
     },
 
     renderSection: function(parent)
@@ -140,7 +140,9 @@ WebInspector.ShortcutsSection.prototype = {
 
         for (var line = 0; line < this._lines.length; ++line) {
             var tr = parent.createChild("tr");
-            tr.createChild("td", "help-key-cell").innerHTML = this._lines[line].key + " : ";
+            var td = tr.createChild("td", "help-key-cell");
+            td.appendChild(this._lines[line].key);
+            td.appendChild(document.createTextNode(" : "));
             tr.createChild("td").textContent = this._lines[line].text;
         }
     },
@@ -155,21 +157,37 @@ WebInspector.ShortcutsSection.prototype = {
 
     _renderSequence: function(sequence, delimiter)
     {
-        var delimiterHtml = '<span class="help-key-delimiter">' + delimiter.escapeHTML() + '</span>'
-        return sequence.map(this._renderKey).join(delimiterHtml);
+        var delimiterSpan = this._createSpan("help-key-delimiter", delimiter);
+        return this._joinNodes(sequence.map(this._renderKey.bind(this)), delimiterSpan);
     },
 
     _renderKey: function(key)
     {
-        function renderLabel(label)
-        {
-            return '<span class="help-key monospace">' + label.escapeHTML() + '</span>';
-        }
-        return key.split(" + ").map(renderLabel).join('<span class="help-combine-keys">+</span>');
+        var plus = this._createSpan("help-combine-keys", "+");
+        return this._joinNodes(key.split(" + ").map(this._createSpan.bind(this, "help-key monospace")), plus);
     },
 
     get _height()
     {
         return this._lines.length + 2; // add some space for header
+    },
+
+    _createSpan: function(className, textContent)
+    {
+        var node = document.createElement("span");
+        node.className = className;
+        node.textContent = textContent;
+        return node;
+    },
+
+    _joinNodes: function(nodes, delimiter)
+    {
+        var result = document.createDocumentFragment();
+        for (var i = 0; i < nodes.length; ++i) {
+            if (i > 0)
+                result.appendChild(delimiter.cloneNode(true));
+            result.appendChild(nodes[i]);
+        }
+        return result;
     }
 }

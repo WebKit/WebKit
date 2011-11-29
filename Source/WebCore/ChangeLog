@@ -1,3 +1,26 @@
+2011-11-29  Andrey Kosyakov  <caseq@chromium.org>
+
+        Web Inspector: remove usage of innerHTML from inspector front-end
+        https://bugs.webkit.org/show_bug.cgi?id=73305
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/front-end/FontView.js:
+        (WebInspector.FontView.prototype._createContentIfNeeded):
+        * inspector/front-end/ShortcutsScreen.js:
+        (WebInspector.ShortcutsSection.prototype.addKey):
+        (WebInspector.ShortcutsSection.prototype.addRelatedKeys):
+        (WebInspector.ShortcutsSection.prototype.addAlternateKeys):
+        (WebInspector.ShortcutsSection.prototype._addLine):
+        (WebInspector.ShortcutsSection.prototype.renderSection):
+        (WebInspector.ShortcutsSection.prototype._renderSequence):
+        (WebInspector.ShortcutsSection.prototype._renderKey):
+        (WebInspector.ShortcutsSection.prototype.get _height):
+        (WebInspector.ShortcutsSection.prototype._createSpan):
+        (WebInspector.ShortcutsSection.prototype._joinNodes):
+        * inspector/front-end/WelcomeView.js:
+        (WebInspector.WelcomeView.prototype.addMessage):
+
 2011-11-29  Zoltan Herczeg  <zherczeg@webkit.org>
 
         [Qt] Couple of tests have different results on 64 bit and/or in debug mode compared to 32 bit and/or release mode

@@ -66,9 +66,7 @@ WebInspector.WelcomeView.prototype = {
         var messageElement = document.createElement("div");
         messageElement.className = "message";
         if (typeof message == "string")
-            // Message text can contain <br> tags for better text balancing, so we
-            // put it into elements using 'innerHTML', not 'textContent'.
-            messageElement.innerHTML = message;
+            messageElement.textContent = message;
         else
             messageElement.appendChild(message);
         this.instructionsElement.appendChild(messageElement);
