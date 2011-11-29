@@ -1,0 +1,7 @@
+<div style="display:-webkit-flexbox"><div id="inner"></div>If this page doesn't crash then this test passes.</div>
+<script>
+if (window.layoutTestController)
+    layoutTestController.dumpAsText()
+var inner = document.getElementById("inner");
+inner.parentNode.removeChild(inner);
+</script>

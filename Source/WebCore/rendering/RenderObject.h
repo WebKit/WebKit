@@ -367,7 +367,7 @@ public:
     }
 
     bool childrenInline() const { return m_childrenInline; }
-    void setChildrenInline(bool b = true) { m_childrenInline = b; }
+    void setChildrenInline(bool b) { m_childrenInline = b; }
     bool hasColumns() const { return m_hasColumns; }
     void setHasColumns(bool b = true) { m_hasColumns = b; }
 

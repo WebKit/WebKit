@@ -1,3 +1,22 @@
+2011-11-29  Ojan Vafai  <ojan@chromium.org>
+
+        invalid cast in WebCore::toRenderBox / WebCore::RenderBox::firstChildBox
+        https://bugs.webkit.org/show_bug.cgi?id=72668
+
+        Reviewed by David Hyatt.
+
+        For new flexible boxes, we were setting childrenInline to true when
+        merging anonymous blocks, which we should never do. Do the same thing
+        we do for the deprecated flexboxes.
+
+        Test: css3/flexbox/anonymous-block-merge-crash.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::removeChild):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::setChildrenInline):
+        The default value of true was never used. Better to keep it explicit.
+
 2011-11-28  Ryosuke Niwa  <rniwa@webkit.org>
 
         Crash in IsolateTracker::addFakeRunIfNecessary(), preceded by assertion failure (m_nestedIsolateCount >= 1)
