@@ -1,3 +1,28 @@
+2011-11-28  Luke Macpherson   <macpherson@chromium.org>
+
+        Implement CSSPropertySize in CSSStyleApplyProperty.
+        https://bugs.webkit.org/show_bug.cgi?id=73000
+
+        Reviewed by Andreas Kling.
+
+        This refactoring moves the implementation of the page size calculation into CSSStyleApplyProperty
+        and removes the existing code from CSSStyleSelector.
+
+        No new tests / refactoring only.
+
+        * css/CSSStyleApplyProperty.cpp:
+        (WebCore::ApplyPropertyPageSize::mmLength):
+        (WebCore::ApplyPropertyPageSize::inchLength):
+        (WebCore::ApplyPropertyPageSize::pageSizeFromName):
+        (WebCore::ApplyPropertyPageSize::applyInheritValue):
+        (WebCore::ApplyPropertyPageSize::applyInitialValue):
+        (WebCore::ApplyPropertyPageSize::applyValue):
+        (WebCore::ApplyPropertyPageSize::createHandler):
+        (WebCore::CSSStyleApplyProperty::CSSStyleApplyProperty):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        * css/CSSStyleSelector.h:
+
 2011-11-28  Timothy Hatcher  <timothy@apple.com>
 
         Add support for knowing when a TreeElement is added or changed anywhere in a TreeOutline.

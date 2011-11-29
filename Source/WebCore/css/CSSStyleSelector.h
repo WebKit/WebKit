@@ -335,10 +335,6 @@ private:
     bool canShareStyleWithControl(StyledElement*) const;
 
     void applyProperty(int id, CSSValue*);
-    void applyPageSizeProperty(CSSValue*);
-    bool pageSizeFromName(CSSPrimitiveValue*, CSSPrimitiveValue*, Length& width, Length& height);
-    Length mmLength(double mm) const;
-    Length inchLength(double inch) const;
 #if ENABLE(SVG)
     void applySVGProperty(int id, CSSValue*);
 #endif

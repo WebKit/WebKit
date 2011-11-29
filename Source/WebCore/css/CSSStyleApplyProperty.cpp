@@ -756,6 +756,147 @@ public:
     }
 };
 
+class ApplyPropertyPageSize {
+private:
+    static Length mmLength(double mm) { return CSSPrimitiveValue::create(mm, CSSPrimitiveValue::CSS_MM)->computeLength<Length>(0, 0); }
+    static Length inchLength(double inch) { return CSSPrimitiveValue::create(inch, CSSPrimitiveValue::CSS_IN)->computeLength<Length>(0, 0); }
+    static bool getPageSizeFromName(CSSPrimitiveValue* pageSizeName, CSSPrimitiveValue* pageOrientation, Length& width, Length& height)
+    {
+        static const Length a5Width = mmLength(148), a5Height = mmLength(210);
+        static const Length a4Width = mmLength(210), a4Height = mmLength(297);
+        static const Length a3Width = mmLength(297), a3Height = mmLength(420);
+        static const Length b5Width = mmLength(176), b5Height = mmLength(250);
+        static const Length b4Width = mmLength(250), b4Height = mmLength(353);
+        static const Length letterWidth = inchLength(8.5), letterHeight = inchLength(11);
+        static const Length legalWidth = inchLength(8.5), legalHeight = inchLength(14);
+        static const Length ledgerWidth = inchLength(11), ledgerHeight = inchLength(17);
+
+        if (!pageSizeName)
+            return false;
+
+        switch (pageSizeName->getIdent()) {
+        case CSSValueA5:
+            width = a5Width;
+            height = a5Height;
+            break;
+        case CSSValueA4:
+            width = a4Width;
+            height = a4Height;
+            break;
+        case CSSValueA3:
+            width = a3Width;
+            height = a3Height;
+            break;
+        case CSSValueB5:
+            width = b5Width;
+            height = b5Height;
+            break;
+        case CSSValueB4:
+            width = b4Width;
+            height = b4Height;
+            break;
+        case CSSValueLetter:
+            width = letterWidth;
+            height = letterHeight;
+            break;
+        case CSSValueLegal:
+            width = legalWidth;
+            height = legalHeight;
+            break;
+        case CSSValueLedger:
+            width = ledgerWidth;
+            height = ledgerHeight;
+            break;
+        default:
+            return false;
+        }
+
+        if (pageOrientation) {
+            switch (pageOrientation->getIdent()) {
+            case CSSValueLandscape:
+                std::swap(width, height);
+                break;
+            case CSSValuePortrait:
+                // Nothing to do.
+                break;
+            default:
+                return false;
+            }
+        }
+        return true;
+    }
+public:
+    static void applyInheritValue(CSSStyleSelector*) { }
+    static void applyInitialValue(CSSStyleSelector*) { }
+    static void applyValue(CSSStyleSelector* selector, CSSValue* value)
+    {
+        selector->style()->resetPageSizeType();
+        Length width;
+        Length height;
+        PageSizeType pageSizeType = PAGE_SIZE_AUTO;
+        CSSValueListInspector inspector(value);
+        switch (inspector.length()) {
+        case 2: {
+            // <length>{2} | <page-size> <orientation>
+            if (!inspector.first()->isPrimitiveValue() || !inspector.second()->isPrimitiveValue())
+                return;
+            CSSPrimitiveValue* first = static_cast<CSSPrimitiveValue*>(inspector.first());
+            CSSPrimitiveValue* second = static_cast<CSSPrimitiveValue*>(inspector.second());
+            if (first->isLength()) {
+                // <length>{2}
+                if (!second->isLength())
+                    return;
+                width = first->computeLength<Length>(selector->style(), selector->rootElementStyle());
+                height = second->computeLength<Length>(selector->style(), selector->rootElementStyle());
+            } else {
+                // <page-size> <orientation>
+                // The value order is guaranteed. See CSSParser::parseSizeParameter.
+                if (!getPageSizeFromName(first, second, width, height))
+                    return;
+            }
+            pageSizeType = PAGE_SIZE_RESOLVED;
+            break;
+        }
+        case 1: {
+            // <length> | auto | <page-size> | [ portrait | landscape]
+            if (!inspector.first()->isPrimitiveValue())
+                return;
+            CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(inspector.first());
+            if (primitiveValue->isLength()) {
+                // <length>
+                pageSizeType = PAGE_SIZE_RESOLVED;
+                width = height = primitiveValue->computeLength<Length>(selector->style(), selector->rootElementStyle());
+            } else {
+                if (primitiveValue->primitiveType() != CSSPrimitiveValue::CSS_IDENT)
+                    return;
+                switch (primitiveValue->getIdent()) {
+                case CSSValueAuto:
+                    pageSizeType = PAGE_SIZE_AUTO;
+                    break;
+                case CSSValuePortrait:
+                    pageSizeType = PAGE_SIZE_AUTO_PORTRAIT;
+                    break;
+                case CSSValueLandscape:
+                    pageSizeType = PAGE_SIZE_AUTO_LANDSCAPE;
+                    break;
+                default:
+                    // <page-size>
+                    pageSizeType = PAGE_SIZE_RESOLVED;
+                    if (!getPageSizeFromName(primitiveValue, 0, width, height))
+                        return;
+                }
+            }
+            break;
+        }
+        default:
+            return;
+        }
+        selector->style()->setPageSizeType(pageSizeType);
+        selector->style()->setPageSize(LengthSize(width, height));
+    }
+    static PropertyHandler createHandler() { return PropertyHandler(&applyInheritValue, &applyInitialValue, &applyValue); }
+};
+
 class ApplyPropertyTextEmphasisStyle {
 public:
     static void applyInheritValue(CSSStyleSelector* selector)
@@ -1175,6 +1316,8 @@ CSSStyleApplyProperty::CSSStyleApplyProperty()
     setPropertyHandler(CSSPropertyPadding, ApplyPropertyExpanding<SuppressValue, CSSPropertyPaddingTop, CSSPropertyPaddingRight, CSSPropertyPaddingBottom, CSSPropertyPaddingLeft>::createHandler());
 
     setPropertyHandler(CSSPropertyVerticalAlign, ApplyPropertyVerticalAlign::createHandler());
+
+    setPropertyHandler(CSSPropertySize, ApplyPropertyPageSize::createHandler());
 
     setPropertyHandler(CSSPropertyWebkitPerspectiveOriginX, ApplyPropertyLength<&RenderStyle::perspectiveOriginX, &RenderStyle::setPerspectiveOriginX, &RenderStyle::initialPerspectiveOriginX>::createHandler());
     setPropertyHandler(CSSPropertyWebkitPerspectiveOriginY, ApplyPropertyLength<&RenderStyle::perspectiveOriginY, &RenderStyle::setPerspectiveOriginY, &RenderStyle::initialPerspectiveOriginY>::createHandler());
