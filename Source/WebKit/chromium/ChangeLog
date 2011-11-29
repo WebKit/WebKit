@@ -1,3 +1,16 @@
+2011-11-29  Dirk Pranke  <dpranke@chromium.org>
+
+        add webkit_user_agent to DRT and webkit_unit_tests
+        https://bugs.webkit.org/show_bug.cgi?id=73362
+
+        Reviewed by Tony Chang.
+
+        In preparation for building webkit_glue as a separate component,
+        we need to explicitly declare DRT's and webkit_unit_tests'
+        dependencies on webkit_user_agent.
+
+        * WebKit.gyp:
+
 2011-11-28  Adam Klein  <adamk@chromium.org>
 
         [chromium] WebKitMutationObserver::deliverAllMutations should be exposed through the Chromium API

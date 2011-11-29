@@ -1008,6 +1008,7 @@
                 '<(chromium_src_dir)/base/base.gyp:base_i18n',
                 '<(chromium_src_dir)/base/base.gyp:test_support_base',
                 '<(chromium_src_dir)/webkit/support/webkit_support.gyp:webkit_support',
+                '<(chromium_src_dir)/webkit/support/webkit_support.gyp:webkit_user_agent',
             ],
             'sources': [
                 'tests/RunAllTests.cpp',
@@ -1082,6 +1083,7 @@
                 '<(chromium_src_dir)/v8/tools/gyp/v8.gyp:v8',
                 '<(chromium_src_dir)/webkit/support/webkit_support.gyp:blob',
                 '<(chromium_src_dir)/webkit/support/webkit_support.gyp:webkit_support',
+                '<(chromium_src_dir)/webkit/support/webkit_support.gyp:webkit_user_agent',
             ],
             'include_dirs': [
                 '<(chromium_src_dir)',
