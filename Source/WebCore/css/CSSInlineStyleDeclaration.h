@@ -47,6 +47,12 @@ private:
     }
 };
 
+inline CSSInlineStyleDeclaration* toCSSInlineStyleDeclaration(CSSMutableStyleDeclaration* decl)
+{
+    ASSERT(!decl || decl->isInlineStyleDeclaration());
+    return static_cast<CSSInlineStyleDeclaration*>(decl);
+}
+
 } // namespace WebCore
 
 #endif // CSSInlineStyleDeclaration_h
