@@ -23,17 +23,17 @@ layer at (0,0) size 800x600
           RenderSVGTSpan {tspan} at (0,0) size 364x20
             RenderSVGInlineText {#text} at (0,0) size 364x20
               chunk 1 text run 1 at (25.00,190.00) startOffset 0 endOffset 50 width 363.60: "However, these lines of text are achieved by using"
-          RenderSVGInlineText {#text} at (363,0) size 6x20
+          RenderSVGInlineText {#text} at (363,0) size 5x20
             chunk 1 text run 1 at (388.60,190.00) startOffset 0 endOffset 1 width 4.80: " "
           RenderSVGTSpan {tspan} at (0,0) size 356x20
             RenderSVGInlineText {#text} at (0,25) size 356x20
               chunk 1 text run 1 at (25.00,215.00) startOffset 0 endOffset 51 width 355.80: "one 'tspan' per line, all contained within the same"
-          RenderSVGInlineText {#text} at (355,25) size 6x20
+          RenderSVGInlineText {#text} at (355,25) size 5x20
             chunk 1 text run 1 at (380.80,215.00) startOffset 0 endOffset 1 width 4.80: " "
           RenderSVGTSpan {tspan} at (0,0) size 351x20
             RenderSVGInlineText {#text} at (0,50) size 351x20
               chunk 1 text run 1 at (25.00,240.00) startOffset 0 endOffset 51 width 351.00: "'text' element, so you should be able to select all"
-          RenderSVGInlineText {#text} at (350,50) size 6x20
+          RenderSVGInlineText {#text} at (350,50) size 5x20
             chunk 1 text run 1 at (376.00,240.00) startOffset 0 endOffset 1 width 4.80: " "
           RenderSVGTSpan {tspan} at (0,0) size 197x20
             RenderSVGInlineText {#text} at (0,75) size 197x20

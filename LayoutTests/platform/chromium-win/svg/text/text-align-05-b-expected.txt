@@ -10,8 +10,8 @@ layer at (0,0) size 800x600
         RenderSVGContainer {g} at (251,78) size 198x459 [transform={m=((1.00,0.00)(0.00,1.00)) t=(160.00,150.00)}]
           RenderSVGContainer {g} at (251,245) size 31x292
             RenderSVGPath {circle} at (261,245) size 11x10 [fill={[type=SOLID] [color=#000000]}] [cx=0.00] [cy=0.00] [r=3.00]
-            RenderSVGText {text} at (-9,0) size 18x172 contains 1 chunk(s)
-              RenderSVGInlineText {#text} at (0,0) size 18x172
+            RenderSVGText {text} at (-9,0) size 17x172 contains 1 chunk(s)
+              RenderSVGInlineText {#text} at (0,0) size 17x172
                 chunk 1 (vertical) text run 1 at (-10.50,0.00) startOffset 0 endOffset 1 height 34.20: "s"
                 chunk 1 (vertical) text run 2 at (-10.50,34.20) startOffset 1 endOffset 2 height 34.20: "t"
                 chunk 1 (vertical) text run 3 at (-10.50,68.40) startOffset 2 endOffset 3 height 34.20: "a"
@@ -29,8 +29,8 @@ layer at (0,0) size 800x600
                 chunk 1 (middle anchor, vertical) text run 6 at (-10.50,68.40) startOffset 5 endOffset 6 height 34.20: "e"
           RenderSVGContainer {g} at (418,78) size 31x177 [transform={m=((1.00,0.00)(0.00,1.00)) t=(100.00,0.00)}]
             RenderSVGPath {circle} at (428,245) size 11x10 [fill={[type=SOLID] [color=#000000]}] [cx=0.00] [cy=0.00] [r=3.00]
-            RenderSVGText {text} at (-9,-103) size 18x104 contains 1 chunk(s)
-              RenderSVGInlineText {#text} at (0,0) size 18x104
+            RenderSVGText {text} at (-9,-103) size 17x103 contains 1 chunk(s)
+              RenderSVGInlineText {#text} at (0,0) size 17x103
                 chunk 1 (end anchor, vertical) text run 1 at (-10.50,-102.60) startOffset 0 endOffset 1 height 34.20: "e"
                 chunk 1 (end anchor, vertical) text run 2 at (-10.50,-68.40) startOffset 1 endOffset 2 height 34.20: "n"
                 chunk 1 (end anchor, vertical) text run 3 at (-10.50,-34.20) startOffset 2 endOffset 3 height 34.20: "d"
