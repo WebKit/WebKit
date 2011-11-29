@@ -1,10 +1,3 @@
-argv[0] type video/quicktime
-argv[1] border 5px solid black
-argv[0] type video/quicktime
-argv[1] valign top
-argv[0] hidden yes
-argv[1] style border: 1px dashed black
-argv[2] type video/quicktime
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
