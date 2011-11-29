@@ -27,6 +27,7 @@
 #include "CallFrame.h"
 #elif USE(V8)
 #include "V8Binding.h"
+#include <QJSEngine>
 #endif
 #include "Document.h"
 #include "DocumentLoader.h"
@@ -690,10 +691,10 @@ void QWebFrame::addToJavaScriptWindowObject(const QString &name, QObject *object
     JSC::PutPropertySlot slot;
     window->methodTable()->put(window, exec, JSC::Identifier(&exec->globalData(), reinterpret_cast_ptr<const UChar*>(name.constData()), name.length()), runtimeObject, slot);
 #elif USE(V8)
-    QScriptEngine* engine = d->frame->script()->qtScriptEngine();
+    QJSEngine* engine = d->frame->script()->qtScriptEngine();
     if (!engine)
         return;
-    QScriptValue v = engine->newQObject(object, ownership);
+    QJSValue v = engine->newQObject(object); // FIXME: Ownership not propagated yet.
     engine->globalObject().property(QLatin1String("window")).setProperty(name, v);
 #endif
 }
@@ -1591,7 +1592,7 @@ QVariant QWebFrame::evaluateJavaScript(const QString& scriptSource)
 
         rc = JSC::Bindings::convertValueToQVariant(proxy->globalObject(mainThreadNormalWorld())->globalExec(), v, QMetaType::Void, &distance);
 #elif USE(V8)
-        QScriptEngine* engine = d->frame->script()->qtScriptEngine();
+        QJSEngine* engine = d->frame->script()->qtScriptEngine();
         if (!engine)
             return rc;
         rc = engine->evaluate(scriptSource).toVariant();

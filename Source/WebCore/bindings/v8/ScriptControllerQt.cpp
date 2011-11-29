@@ -28,11 +28,11 @@
 #include "config.h"
 #include "ScriptController.h"
 
-#include <QScriptEngine>
+#include <QJSEngine>
 
 namespace WebCore {
 
-QScriptEngine* ScriptController::qtScriptEngine()
+QJSEngine* ScriptController::qtScriptEngine()
 {
     if (!m_qtScriptEngine) {
         v8::HandleScope handleScope;
@@ -40,7 +40,7 @@ QScriptEngine* ScriptController::qtScriptEngine()
         v8::Context::Scope scope(v8Context);
         if (v8Context.IsEmpty())
             return 0;
-        m_qtScriptEngine = adoptPtr(new QScriptEngine(QScriptEngine::AdoptCurrentContext));
+        m_qtScriptEngine = adoptPtr(new QJSEngine(QJSEngine::AdoptCurrentContext));
      }
      return m_qtScriptEngine.get();
 }

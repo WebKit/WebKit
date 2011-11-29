@@ -61,10 +61,6 @@
 
 #include <QPainter>
 
-#if USE(V8)
-using namespace V8::Bindings;
-#endif
-
 using namespace WebCore;
 
 class QWebElementPrivate {
@@ -2089,6 +2085,7 @@ QList<QWebElement> QWebElementCollection::toList() const
     element pointed to by the \a other iterator.
 */
 
+#if USE(JSC)
 QWebElement QtWebElementRuntime::create(Element* element)
 {
     return QWebElement(element);
@@ -2124,6 +2121,7 @@ static JSC::JSValue convertWebElementVariantToJSValue(JSC::ExecState* exec, WebC
 {
     return WebCore::toJS(exec, globalObject, QtWebElementRuntime::get(variant.value<QWebElement>()));
 }
+#endif
 
 void QtWebElementRuntime::initialize()
 {
@@ -2131,6 +2129,9 @@ void QtWebElementRuntime::initialize()
     if (initialized)
         return;
     initialized = true;
+#if USE(JSC)
     int id = qRegisterMetaType<QWebElement>();
     JSC::Bindings::registerCustomType(id, convertJSValueToWebElementVariant, convertWebElementVariantToJSValue);
+#endif
 }
+

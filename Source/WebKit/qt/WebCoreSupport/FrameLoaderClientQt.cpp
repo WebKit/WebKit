@@ -395,10 +395,10 @@ void FrameLoaderClientQt::dispatchDidChangeLocationWithinPage()
 }
 
 #if USE(V8)
-void FrameLoaderClientQt::didCreateScriptContextForFrame()
+void FrameLoaderClientQt::didCreateScriptContext(v8::Handle<v8::Context>, int)
 {
 }
-void FrameLoaderClientQt::didDestroyScriptContextForFrame()
+void FrameLoaderClientQt::willReleaseScriptContext(v8::Handle<v8::Context>, int)
 {
 }
 void FrameLoaderClientQt::didCreateIsolatedScriptContext()

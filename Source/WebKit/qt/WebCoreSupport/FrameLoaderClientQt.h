@@ -223,8 +223,8 @@ public:
 
 #if USE(V8)
     // A frame's V8 context was created or destroyed.
-    virtual void didCreateScriptContextForFrame();
-    virtual void didDestroyScriptContextForFrame();
+    virtual void didCreateScriptContext(v8::Handle<v8::Context>, int);
+    virtual void willReleaseScriptContext(v8::Handle<v8::Context>, int);
 
     // A context untied to a frame was created (through evaluateInIsolatedWorld).
     // This context is not tied to the lifetime of its frame, and is destroyed

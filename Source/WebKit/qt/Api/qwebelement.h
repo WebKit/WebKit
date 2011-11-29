@@ -32,21 +32,6 @@ namespace WebCore {
     class Node;
 }
 
-
-#if defined(WTF_USE_V8) && WTF_USE_V8
-namespace V8 {
-    namespace Bindings {
-    class QtWebElementRuntime;
-    }
-}
-#else
-namespace JSC {
-    namespace Bindings {
-    class QtWebElementRuntime;
-    }
-}
-#endif
-
 QT_BEGIN_NAMESPACE
 class QPainter;
 QT_END_NAMESPACE
@@ -171,12 +156,7 @@ private:
     friend class QWebHitTestResultPrivate;
     friend class QWebPage;
     friend class QWebPagePrivate;
-
-#if defined(WTF_USE_V8) && WTF_USE_V8
-    friend class V8::Bindings::QtWebElementRuntime;
-#else
     friend class QtWebElementRuntime;
-#endif
 
     QWebElementPrivate* d;
     WebCore::Element* m_element;

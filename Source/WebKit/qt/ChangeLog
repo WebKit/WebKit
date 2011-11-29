@@ -1,3 +1,26 @@
+2011-11-29  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Make WebKit/qt build with V8 and Qt 5
+        https://bugs.webkit.org/show_bug.cgi?id=73315
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * Api/qwebelement.cpp:
+        (QtWebElementRuntime::initialize): #ifdef JSC code
+        properly. There's no V8 equivalent just yet.
+        * Api/qwebelement.h: Get rid of old V8 cruft.
+        * Api/qwebframe.cpp:
+        (QWebFrame::addToJavaScriptWindowObject): QScriptEngine -> QJSEngine.
+        (QWebFrame::evaluateJavaScript): Ditto.
+        * WebCoreSupport/DumpRenderTreeSupportQt.cpp:
+        (QtDRTNodeRuntime::initialize): #ifdef JSC code.
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::didCreateScriptContext): Adapt to FrameLoaderClient
+        V8 API changes that happened long time ago.
+        (WebCore::FrameLoaderClientQt::willReleaseScriptContext): Ditto.
+        * WebCoreSupport/FrameLoaderClientQt.h: Ditto.
+        * WebCoreSupport/InspectorClientQt.cpp: Add missing include for V8 build.
+
 2011-11-28  Jon Lee  <jonlee@apple.com>
 
         Create skeleton framework for notifications support in WK2

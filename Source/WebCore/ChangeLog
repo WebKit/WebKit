@@ -1,5 +1,20 @@
 2011-11-29  Simon Hausmann  <simon.hausmann@nokia.com>
 
+        [Qt] Make WebKit/qt build with V8 and Qt 5
+        https://bugs.webkit.org/show_bug.cgi?id=73315
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        For the Qt 5 / V8 build we use QJSEngine/QJSValue instead of
+        QScriptEngine/QScriptValue.
+
+        * bindings/v8/ScriptController.cpp:
+        * bindings/v8/ScriptController.h:
+        * bindings/v8/ScriptControllerQt.cpp:
+        (WebCore::ScriptController::qtScriptEngine):
+
+2011-11-29  Simon Hausmann  <simon.hausmann@nokia.com>
+
         [Qt][V8] Add missing ExceptionCode.h include for SVG bindings
         https://bugs.webkit.org/show_bug.cgi?id=73314
 

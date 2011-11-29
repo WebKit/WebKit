@@ -67,7 +67,7 @@
 #include <wtf/text/CString.h>
 
 #if PLATFORM(QT)
-#include <QScriptEngine>
+#include <QJSEngine>
 #endif
 
 namespace WebCore {

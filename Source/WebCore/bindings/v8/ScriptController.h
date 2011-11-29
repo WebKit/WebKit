@@ -47,7 +47,7 @@
 #if PLATFORM(QT)
 #include <qglobal.h>
 QT_BEGIN_NAMESPACE
-class QScriptEngine;
+class QJSEngine;
 QT_END_NAMESPACE
 #endif
 
@@ -181,7 +181,7 @@ public:
 #endif
 
 #if PLATFORM(QT)
-    QScriptEngine* qtScriptEngine();
+    QJSEngine* qtScriptEngine();
 #endif
 
     // Dummy method to avoid a bunch of ifdef's in WebCore.
@@ -199,7 +199,7 @@ private:
     OwnPtr<V8Proxy> m_proxy;
     typedef HashMap<Widget*, NPObject*> PluginObjectMap;
 #if PLATFORM(QT)
-    OwnPtr<QScriptEngine> m_qtScriptEngine;
+    OwnPtr<QJSEngine> m_qtScriptEngine;
 #endif
 
     // A mapping between Widgets and their corresponding script object.

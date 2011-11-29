@@ -45,6 +45,8 @@
 #include "FrameView.h"
 #if USE(JSC)
 #include "GCController.h"
+#include "JSNode.h"
+#include "qt_runtime.h"
 #elif USE(V8)
 #include "V8GCController.h"
 #include "V8Proxy.h"
@@ -57,7 +59,6 @@
 #include "HistoryItem.h"
 #include "HTMLInputElement.h"
 #include "InspectorController.h"
-#include "JSNode.h"
 #include "NodeList.h"
 #include "NotificationPresenterClientQt.h"
 #include "Page.h"
@@ -84,7 +85,6 @@
 #include "WorkerThread.h"
 #include <wtf/CurrentTime.h>
 
-#include "qt_runtime.h"
 #include "qwebelement.h"
 #include "qwebframe.h"
 #include "qwebframe_p.h"
@@ -151,6 +151,7 @@ QDRTNode& QDRTNode::operator=(const QDRTNode& other)
     return *this;
 }
 
+#if USE(JSC)
 QDRTNode QtDRTNodeRuntime::create(WebCore::Node* node)
 {
     return QDRTNode(node);
@@ -172,6 +173,7 @@ static JSC::JSValue convertNodeVariantToJSValue(JSC::ExecState* exec, WebCore::J
 {
     return toJS(exec, globalObject, QtDRTNodeRuntime::get(variant.value<QDRTNode>()));
 }
+#endif
 
 void QtDRTNodeRuntime::initialize()
 {
@@ -179,8 +181,10 @@ void QtDRTNodeRuntime::initialize()
     if (initialized)
         return;
     initialized = true;
+#if USE(JSC)
     int id = qRegisterMetaType<QDRTNode>();
     JSC::Bindings::registerCustomType(id, convertJSValueToNodeVariant, convertNodeVariantToJSValue);
+#endif
 }
 
 DumpRenderTreeSupportQt::DumpRenderTreeSupportQt()
