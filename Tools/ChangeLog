@@ -1,3 +1,9 @@
+2011-11-28  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt][WK2] Unreviewed buildfix after r101307.
+
+        * qmake/mkspecs/features/webkit2.prf: Add missing includepath.
+
 2011-11-29  Roland Steiner  <rolandsteiner@chromium.org>
 
         <style scoped>: add ENABLE(STYLE_SCOPED) flag to WebKit
