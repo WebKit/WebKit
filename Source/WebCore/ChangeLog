@@ -1,3 +1,22 @@
+2011-11-29  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Make WebCore compile with Qt 5 and V8
+        https://bugs.webkit.org/show_bug.cgi?id=73313
+
+        Reviewed by Tor Arne Vestbø.
+
+        * DerivedSources.pri: Add missing V8 specific IDL files to the build.
+        * Target.pri: Ditto.
+        * bindings/v8/ScriptController.h: V8 NPAPI bindings don't really support
+        building with ENABLE_NETSCAPE_PLUGIN_API=0. These functions are always
+        defined, so they also need to be declared.
+        * platform/qt/PlatformSupportQt.cpp: 
+        (WebCore::PlatformSupport::pluginScriptableObject): Don't return a
+        scriptable object when compiling without npapi.
+        * storage/StorageAreaImpl.cpp: Add missing Document.h include that is
+        included implicitly with the Chromium build but not with Qt.
+        * xml/XSLTProcessorQt.cpp: Ditto.
+
 2011-11-29  Pavel Feldman  <pfeldman@google.com>
 
         Not reviewed: fixing clang build.

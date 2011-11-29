@@ -25,6 +25,7 @@
 #include "Frame.h"
 #include "PluginView.h"
 #include "Widget.h"
+#include "npapi.h"
 
 namespace WebCore {
 
@@ -44,8 +45,12 @@ NPObject* PlatformSupport::pluginScriptableObject(Widget* widget)
     if (!widget->isPluginView())
         return 0;
 
+#if ENABLE(NETSCAPE_PLUGIN_API)
     PluginView* pluginView = static_cast<PluginView*>(widget);
     return pluginView->npObject();
+#else
+    return 0;
+#endif
 }
 
 }

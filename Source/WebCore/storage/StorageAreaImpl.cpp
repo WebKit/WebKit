@@ -26,6 +26,7 @@
 #include "config.h"
 #include "StorageAreaImpl.h"
 
+#include "Document.h"
 #include "ExceptionCode.h"
 #include "Frame.h"
 #include "Page.h"

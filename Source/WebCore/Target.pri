@@ -3648,7 +3648,10 @@ contains(DEFINES, ENABLE_WEBGL=1) {
         platform/graphics/gpu/DrawingBuffer.h \
         platform/graphics/qt/Extensions3DQt.h
 
-    !v8 {
+    v8 {
+        SOURCES += \
+            bindings/v8/custom/V8WebGLRenderingContextCustom.cpp
+    } else {
         SOURCES += \
             bindings/js/JSWebGLRenderingContextCustom.cpp
     }

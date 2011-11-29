@@ -175,10 +175,8 @@ public:
     void updatePlatformScriptObjects();
     void cleanupScriptObjectsForPlugin(Widget*);
 
-#if ENABLE(NETSCAPE_PLUGIN_API)
     NPObject* createScriptObjectForPluginElement(HTMLPlugInElement*);
     NPObject* windowScriptNPObject();
-#endif
 
 #if PLATFORM(QT)
     QJSEngine* qtScriptEngine();
@@ -207,7 +205,6 @@ private:
     // invalidate all sub-objects which are associated with that plugin.
     // The frame keeps a NPObject reference for each item on the list.
     PluginObjectMap m_pluginObjects;
-#if ENABLE(NETSCAPE_PLUGIN_API)
     // The window script object can get destroyed while there are outstanding
     // references to it. Please refer to ScriptController::clearScriptObjects
     // for more information as to why this is necessary. To avoid crashes due
@@ -216,7 +213,6 @@ private:
     // pointer in this object is cleared out when the window object is
     // destroyed.
     NPObject* m_wrappedWindowScriptNPObject;
-#endif
 };
 
 } // namespace WebCore

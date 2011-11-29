@@ -26,6 +26,7 @@
 #include "XSLTProcessor.h"
 
 #include "Console.h"
+#include "Document.h"
 #include "DOMWindow.h"
 #include "Frame.h"
 #include "SecurityOrigin.h"
