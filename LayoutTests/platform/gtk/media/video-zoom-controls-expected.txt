@@ -3,23 +3,23 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (12,12) size 776x543
-      RenderBlock {P} at (0,0) size 776x28
-        RenderText {#text} at (0,0) size 280x28
-          text run at (0,0) width 280: "Zoomed video with controls."
-layer at (57,85) size 240x180
-  RenderVideo {VIDEO} at (45,73) size 240x180
-layer at (57,85) size 240x180
+      RenderBlock {P} at (0,0) size 776x27
+        RenderText {#text} at (0,0) size 278x26
+          text run at (0,0) width 278: "Zoomed video with controls."
+layer at (57,84) size 240x180
+  RenderVideo {VIDEO} at (45,72) size 240x180
+layer at (57,84) size 240x180
   RenderBlock (relative positioned) {DIV} at (0,0) size 240x180
-layer at (57,85) size 240x180 scrollHeight 194
+layer at (57,84) size 240x180 scrollHeight 194
   RenderDeprecatedFlexibleBox (positioned) {DIV} at (0,0) size 240x180
     RenderButton {INPUT} at (0,150) size 30x30
     RenderDeprecatedFlexibleBox {DIV} at (30,150) size 90x30 [border: (1px solid #FFFFFF33) none (1px solid #FFFFFF33)]
       RenderBlock (anonymous) at (1,0) size 88x44
         RenderDeprecatedFlexibleBox {DIV} at (88,0) size 0x44
           RenderBlock (anonymous) at (7,7) size 74x30
-            RenderText {#text} at (15,0) size 44x36
+            RenderText {#text} at (15,0) size 44x33
               text run at (15,0) width 44: "00:00 /"
-              text run at (19,18) width 36: "00:06"
+              text run at (19,17) width 36: "00:06"
       RenderSlider {INPUT} at (89,0) size 6x30
         RenderDeprecatedFlexibleBox {DIV} at (3,0) size 0x30
           RenderBlock {DIV} at (0,9) size 0x12
@@ -28,22 +28,22 @@ layer at (57,85) size 240x180 scrollHeight 194
     RenderButton {INPUT} at (150,150) size 30x30
     RenderButton {INPUT} at (180,150) size 30x30
     RenderButton {INPUT} at (210,150) size 30x30
-layer at (179,244) size 12x12
+layer at (179,243) size 12x12
   RenderBlock (relative positioned) {DIV} at (0,0) size 12x12
-layer at (57,310) size 240x180
-  RenderVideo {VIDEO} at (45,298) size 240x180
-layer at (57,310) size 240x180
+layer at (57,309) size 240x180
+  RenderVideo {VIDEO} at (45,297) size 240x180
+layer at (57,309) size 240x180
   RenderBlock (relative positioned) {DIV} at (0,0) size 240x180
-layer at (57,310) size 240x180 scrollHeight 194
+layer at (57,309) size 240x180 scrollHeight 194
   RenderDeprecatedFlexibleBox (positioned) {DIV} at (0,0) size 240x180
     RenderButton {INPUT} at (0,150) size 30x30
     RenderDeprecatedFlexibleBox {DIV} at (30,150) size 90x30 [border: (1px solid #FFFFFF33) none (1px solid #FFFFFF33)]
       RenderBlock (anonymous) at (1,0) size 88x44
         RenderDeprecatedFlexibleBox {DIV} at (88,0) size 0x44
           RenderBlock (anonymous) at (7,7) size 74x30
-            RenderText {#text} at (15,0) size 44x36
+            RenderText {#text} at (15,0) size 44x33
               text run at (15,0) width 44: "00:00 /"
-              text run at (19,18) width 36: "00:06"
+              text run at (19,17) width 36: "00:06"
       RenderSlider {INPUT} at (89,0) size 6x30
         RenderDeprecatedFlexibleBox {DIV} at (3,0) size 0x30
           RenderBlock {DIV} at (0,9) size 0x12
@@ -52,5 +52,5 @@ layer at (57,310) size 240x180 scrollHeight 194
     RenderButton {INPUT} at (150,150) size 30x30
     RenderButton {INPUT} at (180,150) size 30x30
     RenderButton {INPUT} at (210,150) size 30x30
-layer at (179,469) size 12x12
+layer at (179,468) size 12x12
   RenderBlock (relative positioned) {DIV} at (0,0) size 12x12

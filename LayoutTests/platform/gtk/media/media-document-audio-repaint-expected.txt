@@ -3,11 +3,11 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x19
-        RenderText {#text} at (0,0) size 741x19
-          text run at (0,0) width 651: "This tests that in a standalone media document with audio content, the media element repaints correctly "
-          text run at (651,0) width 90: "while playing."
-      RenderBlock (anonymous) at (0,35) size 784x334
+      RenderBlock {P} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 759x17
+          text run at (0,0) width 667: "This tests that in a standalone media document with audio content, the media element repaints correctly "
+          text run at (666,0) width 93: "while playing."
+      RenderBlock (anonymous) at (0,34) size 784x334
         RenderPartObject {IFRAME} at (0,0) size 384x334 [border: (2px inset #000000)]
           layer at (0,0) size 380x330
             RenderView at (0,0) size 380x330
@@ -22,15 +22,15 @@ layer at (0,0) size 800x600
             RenderDeprecatedFlexibleBox (positioned) {DIV} at (0,0) size 300x1
               RenderButton {INPUT} at (0,-19) size 20x20
               RenderDeprecatedFlexibleBox {DIV} at (20,-19) size 220x20 [border: (1px solid #FFFFFF33) none (1px solid #FFFFFF33)]
-                RenderBlock (anonymous) at (1,0) size 65x30
-                  RenderDeprecatedFlexibleBox {DIV} at (0,0) size 65x30
-                    RenderBlock (anonymous) at (5,5) size 55x20
-                      RenderText {#text} at (0,0) size 55x12
-                        text run at (0,0) width 55: "00:00 / 00:01"
-                RenderSlider {INPUT} at (66,0) size 153x20
-                  RenderDeprecatedFlexibleBox {DIV} at (2,0) size 149x20
-                    RenderBlock {DIV} at (0,4) size 137x12
-                    RenderBlock {DIV} at (137,4) size 12x12
+                RenderBlock (anonymous) at (1,0) size 64x30
+                  RenderDeprecatedFlexibleBox {DIV} at (0,0) size 64x30
+                    RenderBlock (anonymous) at (5,5) size 54x20
+                      RenderText {#text} at (0,0) size 54x11
+                        text run at (0,0) width 54: "00:00 / 00:01"
+                RenderSlider {INPUT} at (65,0) size 154x20
+                  RenderDeprecatedFlexibleBox {DIV} at (2,0) size 150x20
+                    RenderBlock {DIV} at (0,4) size 138x12
+                    RenderBlock {DIV} at (138,4) size 12x12
               RenderButton {INPUT} at (240,-19) size 20x20
               RenderButton {INPUT} at (260,-19) size 20x20
               RenderButton {INPUT} at (280,-19) size 20x20

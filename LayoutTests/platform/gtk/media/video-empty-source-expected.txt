@@ -3,30 +3,30 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x19
-        RenderText {#text} at (0,0) size 430x19
-          text run at (0,0) width 430: "Slider drawing with no source. The controls should render correctly."
-      RenderBlock (anonymous) at (0,35) size 784x152
+      RenderBlock {P} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 438x17
+          text run at (0,0) width 438: "Slider drawing with no source. The controls should render correctly."
+      RenderBlock (anonymous) at (0,34) size 784x152
         RenderText {#text} at (0,0) size 0x0
-layer at (8,43) size 302x152
+layer at (8,42) size 302x152
   RenderVideo {VIDEO} at (0,0) size 302x152 [border: (1px solid #000000)]
-layer at (9,44) size 300x150
+layer at (9,43) size 300x150
   RenderBlock (relative positioned) {DIV} at (1,1) size 300x150
-layer at (9,44) size 300x150 scrollHeight 160
+layer at (9,43) size 300x150 scrollHeight 160
   RenderDeprecatedFlexibleBox (positioned) {DIV} at (0,0) size 300x150
     RenderButton {INPUT} at (0,130) size 20x20
     RenderDeprecatedFlexibleBox {DIV} at (20,130) size 220x20 [border: (1px solid #FFFFFF33) none (1px solid #FFFFFF33)]
-      RenderBlock (anonymous) at (1,0) size 65x30
-        RenderDeprecatedFlexibleBox {DIV} at (0,0) size 65x30
-          RenderBlock (anonymous) at (5,5) size 55x20
-            RenderText {#text} at (0,0) size 55x12
-              text run at (0,0) width 55: "00:00 / 00:00"
-      RenderSlider {INPUT} at (66,0) size 153x20
-        RenderDeprecatedFlexibleBox {DIV} at (2,0) size 149x20
-          RenderBlock {DIV} at (0,4) size 137x12
-          RenderBlock {DIV} at (137,4) size 12x12
+      RenderBlock (anonymous) at (1,0) size 64x30
+        RenderDeprecatedFlexibleBox {DIV} at (0,0) size 64x30
+          RenderBlock (anonymous) at (5,5) size 54x20
+            RenderText {#text} at (0,0) size 54x11
+              text run at (0,0) width 54: "00:00 / 00:00"
+      RenderSlider {INPUT} at (65,0) size 154x20
+        RenderDeprecatedFlexibleBox {DIV} at (2,0) size 150x20
+          RenderBlock {DIV} at (0,4) size 138x12
+          RenderBlock {DIV} at (138,4) size 12x12
     RenderButton {INPUT} at (240,130) size 20x20
     RenderButton {INPUT} at (260,130) size 20x20
     RenderButton {INPUT} at (280,130) size 20x20
-layer at (97,178) size 12x12
+layer at (96,177) size 12x12
   RenderBlock (relative positioned) {DIV} at (0,0) size 12x12

@@ -1,82 +1,82 @@
-layer at (0,0) size 784x763
+layer at (0,0) size 784x762
   RenderView at (0,0) size 784x600
 layer at (0,0) size 784x600
   RenderBlock {HTML} at (0,0) size 784x600
     RenderBody {BODY} at (8,8) size 768x584
-      RenderBlock {P} at (0,0) size 768x19
-        RenderText {#text} at (0,0) size 153x19
-          text run at (0,0) width 153: "Test controls placement."
-      RenderBlock {DIV} at (0,35) size 768x240
+      RenderBlock {P} at (0,0) size 768x18
+        RenderText {#text} at (0,0) size 157x17
+          text run at (0,0) width 157: "Test controls placement."
+      RenderBlock {DIV} at (0,34) size 768x240
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {DIV} at (0,275) size 768x240
+      RenderBlock {DIV} at (0,274) size 768x240
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {DIV} at (0,515) size 768x0
-layer at (8,43) size 320x240
+      RenderBlock {DIV} at (0,514) size 768x0
+layer at (8,42) size 320x240
   RenderVideo {VIDEO} at (0,0) size 320x240
-layer at (8,283) size 320x240
+layer at (8,282) size 320x240
   RenderVideo {VIDEO} at (0,0) size 320x240
-layer at (8,43) size 320x240
+layer at (8,42) size 320x240
   RenderBlock (relative positioned) {DIV} at (0,0) size 320x240
-layer at (8,43) size 320x240 scrollHeight 250
+layer at (8,42) size 320x240 scrollHeight 250
   RenderDeprecatedFlexibleBox (positioned) {DIV} at (0,0) size 320x240
     RenderButton {INPUT} at (0,220) size 20x20
     RenderDeprecatedFlexibleBox {DIV} at (20,220) size 220x20 [border: (1px solid #FFFFFF33) none (1px solid #FFFFFF33)]
-      RenderBlock (anonymous) at (1,0) size 65x30
-        RenderDeprecatedFlexibleBox {DIV} at (0,0) size 65x30
-          RenderBlock (anonymous) at (5,5) size 55x20
-            RenderText {#text} at (0,0) size 55x12
-              text run at (0,0) width 55: "00:00 / 00:06"
-      RenderSlider {INPUT} at (66,0) size 153x20
-        RenderDeprecatedFlexibleBox {DIV} at (2,0) size 149x20
-          RenderBlock {DIV} at (0,4) size 137x12
-          RenderBlock {DIV} at (137,4) size 12x12
+      RenderBlock (anonymous) at (1,0) size 64x30
+        RenderDeprecatedFlexibleBox {DIV} at (0,0) size 64x30
+          RenderBlock (anonymous) at (5,5) size 54x20
+            RenderText {#text} at (0,0) size 54x11
+              text run at (0,0) width 54: "00:00 / 00:06"
+      RenderSlider {INPUT} at (65,0) size 154x20
+        RenderDeprecatedFlexibleBox {DIV} at (2,0) size 150x20
+          RenderBlock {DIV} at (0,4) size 138x12
+          RenderBlock {DIV} at (138,4) size 12x12
     RenderButton {INPUT} at (240,220) size 20x20
     RenderButton {INPUT} at (260,220) size 20x20
     RenderButton {INPUT} at (280,220) size 20x20
     RenderButton {INPUT} at (300,220) size 20x20
-layer at (96,267) size 12x12
+layer at (95,266) size 12x12
   RenderBlock (relative positioned) {DIV} at (0,0) size 12x12
-layer at (8,283) size 320x240
+layer at (8,282) size 320x240
   RenderBlock (relative positioned) {DIV} at (0,0) size 320x240
-layer at (8,283) size 320x240 scrollHeight 250
+layer at (8,282) size 320x240 scrollHeight 250
   RenderDeprecatedFlexibleBox (positioned) {DIV} at (0,0) size 320x240
     RenderButton {INPUT} at (0,220) size 20x20
     RenderDeprecatedFlexibleBox {DIV} at (20,220) size 220x20 [border: (1px solid #FFFFFF33) none (1px solid #FFFFFF33)]
-      RenderBlock (anonymous) at (1,0) size 65x30
-        RenderDeprecatedFlexibleBox {DIV} at (0,0) size 65x30
-          RenderBlock (anonymous) at (5,5) size 55x20
-            RenderText {#text} at (0,0) size 55x12
-              text run at (0,0) width 55: "00:00 / 00:06"
-      RenderSlider {INPUT} at (66,0) size 153x20
-        RenderDeprecatedFlexibleBox {DIV} at (2,0) size 149x20
-          RenderBlock {DIV} at (0,4) size 137x12
-          RenderBlock {DIV} at (137,4) size 12x12
+      RenderBlock (anonymous) at (1,0) size 64x30
+        RenderDeprecatedFlexibleBox {DIV} at (0,0) size 64x30
+          RenderBlock (anonymous) at (5,5) size 54x20
+            RenderText {#text} at (0,0) size 54x11
+              text run at (0,0) width 54: "00:00 / 00:06"
+      RenderSlider {INPUT} at (65,0) size 154x20
+        RenderDeprecatedFlexibleBox {DIV} at (2,0) size 150x20
+          RenderBlock {DIV} at (0,4) size 138x12
+          RenderBlock {DIV} at (138,4) size 12x12
     RenderButton {INPUT} at (240,220) size 20x20
     RenderButton {INPUT} at (260,220) size 20x20
     RenderButton {INPUT} at (280,220) size 20x20
     RenderButton {INPUT} at (300,220) size 20x20
-layer at (96,507) size 12x12
+layer at (95,506) size 12x12
   RenderBlock (relative positioned) {DIV} at (0,0) size 12x12
-layer at (8,523) size 320x240
-  RenderVideo {VIDEO} at (8,523) size 320x240
-layer at (8,523) size 320x240
+layer at (8,522) size 320x240
+  RenderVideo {VIDEO} at (8,522) size 320x240
+layer at (8,522) size 320x240
   RenderBlock (relative positioned) {DIV} at (0,0) size 320x240
-layer at (8,523) size 320x240 scrollHeight 250
+layer at (8,522) size 320x240 scrollHeight 250
   RenderDeprecatedFlexibleBox (positioned) {DIV} at (0,0) size 320x240
     RenderButton {INPUT} at (0,220) size 20x20
     RenderDeprecatedFlexibleBox {DIV} at (20,220) size 220x20 [border: (1px solid #FFFFFF33) none (1px solid #FFFFFF33)]
-      RenderBlock (anonymous) at (1,0) size 65x30
-        RenderDeprecatedFlexibleBox {DIV} at (0,0) size 65x30
-          RenderBlock (anonymous) at (5,5) size 55x20
-            RenderText {#text} at (0,0) size 55x12
-              text run at (0,0) width 55: "00:00 / 00:06"
-      RenderSlider {INPUT} at (66,0) size 153x20
-        RenderDeprecatedFlexibleBox {DIV} at (2,0) size 149x20
-          RenderBlock {DIV} at (0,4) size 137x12
-          RenderBlock {DIV} at (137,4) size 12x12
+      RenderBlock (anonymous) at (1,0) size 64x30
+        RenderDeprecatedFlexibleBox {DIV} at (0,0) size 64x30
+          RenderBlock (anonymous) at (5,5) size 54x20
+            RenderText {#text} at (0,0) size 54x11
+              text run at (0,0) width 54: "00:00 / 00:06"
+      RenderSlider {INPUT} at (65,0) size 154x20
+        RenderDeprecatedFlexibleBox {DIV} at (2,0) size 150x20
+          RenderBlock {DIV} at (0,4) size 138x12
+          RenderBlock {DIV} at (138,4) size 12x12
     RenderButton {INPUT} at (240,220) size 20x20
     RenderButton {INPUT} at (260,220) size 20x20
     RenderButton {INPUT} at (280,220) size 20x20
     RenderButton {INPUT} at (300,220) size 20x20
-layer at (96,747) size 12x12
+layer at (95,746) size 12x12
   RenderBlock (relative positioned) {DIV} at (0,0) size 12x12
