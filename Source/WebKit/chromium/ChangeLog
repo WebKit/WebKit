@@ -1,3 +1,24 @@
+2011-11-28  Adam Klein  <adamk@chromium.org>
+
+        [chromium] WebKitMutationObserver::deliverAllMutations should be exposed through the Chromium API
+        https://bugs.webkit.org/show_bug.cgi?id=71242
+
+        Reviewed by Darin Fisher.
+
+        Add addTaskObserver and removeTaskObserver to WebThread,
+        along with a new WebThread::TaskObserver interface.
+
+        For mutation observers, add a TaskObserver to the main thread
+        to deliver mutations after each task runs.
+
+        The Chromium side of this patch is http://codereview.chromium.org/8586038/
+
+        * public/platform/WebThread.h:
+        (WebKit::WebThread::TaskObserver::~TaskObserver):
+        * src/WebKit.cpp:
+        (WebKit::initialize):
+        (WebKit::shutdown):
+
 2011-11-29  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: split Preferences into Preferences and Capabilities.
