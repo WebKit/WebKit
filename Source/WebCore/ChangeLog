@@ -1,3 +1,35 @@
+2011-11-28  Jacky Jiang  <zhajiang@rim.com>
+
+        Upstream BlackBerry porting of page.
+        https://bugs.webkit.org/show_bug.cgi?id=73143
+
+        Reviewed by Daniel Bates.
+
+        Upstream BlackBerry porting of WebCore/page.
+        Define DragImageRef for BlackBerry platform.
+
+        Initial upstream, can't be built yet, no test cases.
+
+        * page/blackberry/DragControllerBlackBerry.cpp: Added.
+        (WebCore::DragController::isCopyKeyDown):
+        (WebCore::DragController::maxDragImageSize):
+        (WebCore::DragController::cleanupAfterSystemDrag):
+        (WebCore::DragController::dragOperation):
+        * page/blackberry/EventHandlerBlackBerry.cpp: Added.
+        (WebCore::EventHandler::eventActivatedView):
+        (WebCore::EventHandler::passMouseMoveEventToSubframe):
+        (WebCore::EventHandler::passMousePressEventToSubframe):
+        (WebCore::EventHandler::passMouseReleaseEventToSubframe):
+        (WebCore::EventHandler::passWheelEventToWidget):
+        (WebCore::EventHandler::passWidgetMouseDownEventToWidget):
+        (WebCore::EventHandler::tabsToAllFormControls):
+        (WebCore::EventHandler::accessKeyModifiers):
+        (WebCore::EventHandler::focusDocumentView):
+        (WebCore::EventHandler::createDraggingClipboard):
+        * page/blackberry/FrameBlackBerry.cpp: Added.
+        (WebCore::Frame::dragImageForSelection):
+        * platform/DragImage.h:
+
 2011-11-28  Shawn Singh  <shawnsingh@chromium.org>
 
         [chromium] Create CCDamageTracker class to determine regions of change for a surface.
