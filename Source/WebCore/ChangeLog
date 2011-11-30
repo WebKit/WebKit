@@ -1,3 +1,9 @@
+2011-11-29  Kentaro Hara  <haraken@chromium.org>
+
+        Unreviewed. Rebaselined a run-bindings-tests result.
+
+        * bindings/scripts/test/JS/JSFloat64Array.h:
+
 2011-11-10  Xiaomei Ji  <xji@chromium.org>
 
         --webkit-visual-word should be able to reach end of text, instead of end of line

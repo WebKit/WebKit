@@ -57,7 +57,7 @@ public:
     {
         return static_cast<Float64Array*>(Base::impl());
     }
-    static const TypedArrayType TypedArrayStorageType = TypedArrayFloat64;
+    static const JSC::TypedArrayType TypedArrayStorageType = JSC::TypedArrayFloat64;
     intptr_t m_storageLength;
     void* m_storage;
 protected:
