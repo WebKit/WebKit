@@ -1313,6 +1313,10 @@ platform/mac/editing/pasteboard/text-precomposed.html
 # An empty layer is missing.
 platform/mac/fast/forms/input-appearance-spinbutton-up.html
 
+# [WK2] http/tests/security/local-image-from-remote-whitelisted.html crashes
+# https://bugs.webkit.org/show_bug.cgi?id=73435
+http/tests/security/local-image-from-remote-whitelisted.html
+
 ### END OF (3) Unclassified failures
 ########################################
 
