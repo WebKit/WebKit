@@ -386,7 +386,15 @@ AC_ARG_ENABLE(webgl,
               [], [if test "$with_target" = "x11"; then enable_webgl="yes"; else enable_webgl="no"; fi])
 AC_MSG_RESULT([$enable_webgl])
 
-if test "$enable_webgl" = "yes"; then
+# check whether to enable accelerated compositing support
+AC_MSG_CHECKING([whether to enable accelerated compositing support])
+AC_ARG_WITH(accelerated_compositing,
+            AC_HELP_STRING([--with-accelerated-compositing],
+                           [use accelerated compositing (experimental) [default=no]]),
+            [], [with_accelerated_compositing="no"])
+AC_MSG_RESULT([$with_accelerated_compositing])
+
+if test "$enable_webgl" = "yes" || test "with_accelerated_compositing" = "yes"; then
     AC_CHECK_HEADERS([GL/gl.h], [], AC_MSG_ERROR([OpenGL header not found]))
     AC_CHECK_HEADERS([GL/glx.h], [], AC_MSG_ERROR([GLX header not found]))
     OPENGL_LIBS="-lGL -ldl"
@@ -1139,6 +1147,9 @@ AM_CONDITIONAL([USE_PANGO], [test "$with_font_backend" = "pango"])
 # GStreamer feature conditional
 AM_CONDITIONAL([USE_GSTREAMER], [test "$have_gstreamer" = "yes"])
 
+# Accelerated compositing conditional
+AM_CONDITIONAL([USE_ACCELERATED_COMPOSITING], [test "$with_accelerated_compositing" = "yes"])
+
 # WebKit feature conditionals
 AM_CONDITIONAL([ENABLE_DEBUG],[test "$enable_debug_features" = "yes"])
 AM_CONDITIONAL([ENABLE_3D_RENDERING],[test "$enable_3d_rendering" = "yes"])
@@ -1246,6 +1257,7 @@ Build configuration:
  Font backend                                             : $with_font_backend
  Optimized memory allocator                               : $enable_fast_malloc
  JavaScript Engine                                        : $with_jsengine
+ Accelerated Compositing                                  : $with_accelerated_compositing
 
 Features:
  3D Rendering                                             : $enable_3d_rendering

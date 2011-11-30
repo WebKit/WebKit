@@ -90,8 +90,8 @@ private:
     virtual void startDrag(const WebCore::DragData&, PassRefPtr<ShareableBitmap> dragImage);
 
 #if USE(ACCELERATED_COMPOSITING)
-    virtual void pageDidEnterAcceleratedCompositing();
-    virtual void pageDidLeaveAcceleratedCompositing();
+    virtual void enterAcceleratedCompositingMode(const LayerTreeContext&);
+    virtual void exitAcceleratedCompositingMode();
 #endif
 
     virtual void didCommitLoadForMainFrame(bool useCustomRepresentation);

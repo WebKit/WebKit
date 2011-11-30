@@ -165,6 +165,11 @@ global_cppflags += \
 	-DWTF_USE_GSTREAMER=1
 endif
 
+if USE_ACCELERATED_COMPOSITING
+global_cppflags += \
+	-DWTF_USE_ACCELERATED_COMPOSITING=1
+endif
+
 # ----
 # GTK+ 2.x/3.x support
 # ----

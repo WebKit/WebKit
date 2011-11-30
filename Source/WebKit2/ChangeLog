@@ -1,3 +1,19 @@
+2011-11-30  Alejandro G. Castro  <alex@igalia.com>
+
+        [GTK] Add accelerated compositing compilation option
+        https://bugs.webkit.org/show_bug.cgi?id=73298
+
+        Compile whatever we have inside the USE(ACCELERATED_COMPOSITING)
+        define. Fix accelerated compositing compilation in WK2, update the
+        enter/exit functions.
+
+        Reviewed by Martin Robinson.
+
+        * UIProcess/API/gtk/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::enterAcceleratedCompositingMode):
+        (WebKit::PageClientImpl::exitAcceleratedCompositingMode):
+        * UIProcess/API/gtk/PageClientImpl.h:
+
 2011-11-29  Beth Dakin  <bdakin@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=72751
