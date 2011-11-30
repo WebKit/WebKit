@@ -57,7 +57,7 @@ void Module::unload()
 #endif
 
     // See the comment in Module.h for why we leak the bundle here.
-    m_bundle.releaseRef();
+    (void)m_bundle.leakRef();
 }
 
 void* Module::platformFunctionPointer(const char* functionName) const

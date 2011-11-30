@@ -109,9 +109,6 @@ namespace WTF {
         
         void swap(RetainPtr&);
 
-        // FIXME: Remove releaseRef once we change all callers to call leakRef instead.
-        PtrType releaseRef() { return leakRef(); }
-
     private:
         static PtrType hashTableDeletedValue() { return reinterpret_cast<PtrType>(-1); }
 

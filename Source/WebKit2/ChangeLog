@@ -1,3 +1,15 @@
+2011-11-29  Sam Weinig  <sam@webkit.org>
+
+        Remove RetainPtr::releaseRef
+        https://bugs.webkit.org/show_bug.cgi?id=73396
+
+        Reviewed by Dan Bernstein.
+
+        * Platform/mac/ModuleMac.mm:
+        (WebKit::Module::unload):
+        Replace the final use of RetainPtr::releaseRef() with RetainPtr::leakRef(),
+        its sexy replacement.
+
 2011-11-29  Jessie Berlin  <jberlin@apple.com>
 
         WKKeyValueStorageManagerGetKeyValueStorageOrigins may not report the correct list of origins
