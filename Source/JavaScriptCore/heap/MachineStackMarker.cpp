@@ -30,10 +30,6 @@
 #include <stdlib.h>
 #include <wtf/StdLibExtras.h>
 
-#if USE(PTHREAD_BASED_QT) && !defined(WTF_USE_PTHREADS)
-#define WTF_USE_PTHREADS 1
-#endif
-
 #if OS(DARWIN)
 
 #include <mach/mach_init.h>

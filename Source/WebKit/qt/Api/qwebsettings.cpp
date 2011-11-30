@@ -31,6 +31,7 @@
 #if ENABLE(ICONDATABASE)
 #include "IconDatabaseClientQt.h"
 #endif
+#include "InitWebCoreQt.h"
 #include "Page.h"
 #include "PageCache.h"
 #include "Settings.h"
@@ -278,8 +279,10 @@ void QWebSettingsPrivate::apply()
 QWebSettings* QWebSettings::globalSettings()
 {
     static QWebSettings* global = 0;
-    if (!global)
+    if (!global) {
+        WebCore::initializeWebCoreQt();
         global = new QWebSettings;
+    }
     return global;
 }
 
@@ -648,6 +651,7 @@ QString QWebSettings::defaultTextEncoding() const
 */
 void QWebSettings::setIconDatabasePath(const QString& path)
 {
+    WebCore::initializeWebCoreQt();
 #if ENABLE(ICONDATABASE)
     // Make sure that IconDatabaseClientQt is instantiated.
     WebCore::IconDatabaseClientQt::instance();
@@ -674,6 +678,7 @@ void QWebSettings::setIconDatabasePath(const QString& path)
 */
 QString QWebSettings::iconDatabasePath()
 {
+    WebCore::initializeWebCoreQt();
     if (WebCore::iconDatabase().isEnabled() && WebCore::iconDatabase().isOpen())
         return WebCore::iconDatabase().databasePath();
     else
@@ -685,6 +690,7 @@ QString QWebSettings::iconDatabasePath()
 */
 void QWebSettings::clearIconDatabase()
 {
+    WebCore::initializeWebCoreQt();
     if (WebCore::iconDatabase().isEnabled() && WebCore::iconDatabase().isOpen())
         WebCore::iconDatabase().removeAllIcons();
 }
@@ -701,6 +707,7 @@ void QWebSettings::clearIconDatabase()
 */
 QIcon QWebSettings::iconForUrl(const QUrl& url)
 {
+    WebCore::initializeWebCoreQt();
     WebCore::Image* image = WebCore::iconDatabase().synchronousIconForPageURL(WebCore::KURL(url).string(),
                                 WebCore::IntSize(16, 16));
     if (!image)
@@ -718,6 +725,7 @@ QIcon QWebSettings::iconForUrl(const QUrl& url)
 
 QWebPluginDatabase *QWebSettings::pluginDatabase()
 {
+    WebCore::initializeWebCoreQt();
     static QWebPluginDatabase* database = 0;
     if (!database)
         database = new QWebPluginDatabase();
@@ -751,6 +759,7 @@ static const char* resourceNameForWebGraphic(QWebSettings::WebGraphic type)
 */
 void QWebSettings::setWebGraphic(WebGraphic type, const QPixmap& graphic)
 {
+    WebCore::initializeWebCoreQt();
     WebCore::Image::setPlatformResource(resourceNameForWebGraphic(type), graphic);
 }
 
@@ -762,6 +771,7 @@ void QWebSettings::setWebGraphic(WebGraphic type, const QPixmap& graphic)
 */
 QPixmap QWebSettings::webGraphic(WebGraphic type)
 {
+    WebCore::initializeWebCoreQt();
     RefPtr<WebCore::Image> img = WebCore::Image::loadPlatformResource(resourceNameForWebGraphic(type));
     if (!img)
         return QPixmap();
@@ -779,6 +789,7 @@ QPixmap QWebSettings::webGraphic(WebGraphic type)
  */
 void QWebSettings::clearMemoryCaches()
 {
+    WebCore::initializeWebCoreQt();
     // Turn the cache on and off.  Disabling the object cache will remove all
     // resources from the cache.  They may still live on if they are referenced
     // by some Web page though.
@@ -822,6 +833,7 @@ void QWebSettings::setMaximumPagesInCache(int pages)
 */
 int QWebSettings::maximumPagesInCache()
 {
+    WebCore::initializeWebCoreQt();
     return WebCore::pageCache()->capacity();
 }
 
@@ -843,6 +855,7 @@ int QWebSettings::maximumPagesInCache()
 */
 void QWebSettings::setObjectCacheCapacities(int cacheMinDeadCapacity, int cacheMaxDead, int totalCapacity)
 {
+    WebCore::initializeWebCoreQt();
     bool disableCache = !cacheMinDeadCapacity && !cacheMaxDead && !totalCapacity;
     WebCore::memoryCache()->setDisabled(disableCache);
 
@@ -968,6 +981,7 @@ void QWebSettings::resetAttribute(WebAttribute attr)
 */
 void QWebSettings::setOfflineStoragePath(const QString& path)
 {
+    WebCore::initializeWebCoreQt();
 #if ENABLE(SQL_DATABASE)
     WebCore::DatabaseTracker::tracker().setDatabaseDirectoryPath(path);
 #endif
@@ -983,6 +997,7 @@ void QWebSettings::setOfflineStoragePath(const QString& path)
 */
 QString QWebSettings::offlineStoragePath()
 {
+    WebCore::initializeWebCoreQt();
 #if ENABLE(SQL_DATABASE)
     return WebCore::DatabaseTracker::tracker().databaseDirectoryPath();
 #else
@@ -1035,6 +1050,7 @@ qint64 QWebSettings::offlineStorageDefaultQuota()
 */
 void QWebSettings::setOfflineWebApplicationCachePath(const QString& path)
 {
+    WebCore::initializeWebCoreQt();
     WebCore::cacheStorage().setCacheDirectory(path);
 }
 
@@ -1048,6 +1064,7 @@ void QWebSettings::setOfflineWebApplicationCachePath(const QString& path)
 */
 QString QWebSettings::offlineWebApplicationCachePath()
 {
+    WebCore::initializeWebCoreQt();
     return WebCore::cacheStorage().cacheDirectory();
 }
 
@@ -1059,6 +1076,7 @@ QString QWebSettings::offlineWebApplicationCachePath()
 */
 void QWebSettings::setOfflineWebApplicationCacheQuota(qint64 maximumSize)
 {
+    WebCore::initializeWebCoreQt();
     WebCore::cacheStorage().empty();
     WebCore::cacheStorage().vacuumDatabaseFile();
     WebCore::cacheStorage().setMaximumSize(maximumSize);
@@ -1071,6 +1089,7 @@ void QWebSettings::setOfflineWebApplicationCacheQuota(qint64 maximumSize)
 */
 qint64 QWebSettings::offlineWebApplicationCacheQuota()
 {
+    WebCore::initializeWebCoreQt();
     return WebCore::cacheStorage().maximumSize();
 }
 
@@ -1119,6 +1138,7 @@ QString QWebSettings::localStoragePath() const
 */
 void QWebSettings::enablePersistentStorage(const QString& path)
 {
+    WebCore::initializeWebCoreQt();
 #ifndef QT_NO_DESKTOPSERVICES
     QString storagePath;
 

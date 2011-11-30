@@ -1,3 +1,10 @@
+2011-11-30  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Build fix. The removal of the Qt threading back-end also removed
+        an implicit QString inclusion/forward-declaration.
+
+        * UIProcess/qt/QtWebContext.h:
+
 2011-11-30  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         [Qt] Clean up the Qt viewport interaction engine

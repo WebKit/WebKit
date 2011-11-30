@@ -52,6 +52,7 @@ SOURCES += \
     $$PWD/WebKit/qt/WebCoreSupport/FrameLoaderClientQt.cpp \
     $$PWD/WebKit/qt/WebCoreSupport/FrameNetworkingContextQt.cpp \
     $$PWD/WebKit/qt/WebCoreSupport/GeolocationPermissionClientQt.cpp \
+    $$PWD/WebKit/qt/WebCoreSupport/InitWebCoreQt.cpp \
     $$PWD/WebKit/qt/WebCoreSupport/InspectorClientQt.cpp \
     $$PWD/WebKit/qt/WebCoreSupport/InspectorServerQt.cpp \
     $$PWD/WebKit/qt/WebCoreSupport/NotificationPresenterClientQt.cpp \
@@ -63,6 +64,7 @@ SOURCES += \
     $$PWD/WebKit/qt/WebCoreSupport/PlatformStrategiesQt.cpp
 
 HEADERS += \
+    $$PWD/WebKit/qt/WebCoreSupport/InitWebCoreQt.h \
     $$PWD/WebKit/qt/WebCoreSupport/InspectorServerQt.h \
     $$PWD/WebKit/qt/WebCoreSupport/QtFallbackWebPopup.h \
     $$PWD/WebKit/qt/WebCoreSupport/QtWebComboBox.h \

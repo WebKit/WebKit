@@ -27,6 +27,7 @@
 #endif
 
 #if PLATFORM(QT)
+#include <qglobal.h>
 QT_BEGIN_NAMESPACE
 class QObject;
 class QNetworkAccessManager;

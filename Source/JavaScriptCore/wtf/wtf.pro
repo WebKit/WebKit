@@ -168,6 +168,8 @@ HEADERS += \
     WTFThreadData.h
 
 
+unix: HEADERS += ThreadIdentifierDataPthreads.h
+
 SOURCES += \
     ArrayBuffer.cpp \
     ArrayBufferView.cpp \
@@ -198,7 +200,6 @@ SOURCES += \
     OSRandomSource.cpp \
     qt/MainThreadQt.cpp \
     qt/StringQt.cpp \
-    qt/ThreadingQt.cpp \
     PageAllocationAligned.cpp \
     PageBlock.cpp \
     ParallelJobsGeneric.cpp \
@@ -220,8 +221,15 @@ SOURCES += \
     unicode/icu/CollatorICU.cpp \
     unicode/UTF8.cpp
 
-unix: SOURCES += OSAllocatorPosix.cpp
-win*|wince*: SOURCES += OSAllocatorWin.cpp
+unix: SOURCES += \
+    OSAllocatorPosix.cpp \
+    ThreadIdentifierDataPthreads.cpp \
+    ThreadingPthreads.cpp
+
+win*|wince*: SOURCES += \
+    OSAllocatorWin.cpp \
+    ThreadSpecificWin.cpp \
+    ThreadingWin.cpp
 
 *sh4* {
     QMAKE_CXXFLAGS += -mieee -w

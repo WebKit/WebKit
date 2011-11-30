@@ -25,6 +25,11 @@
 #include <wtf/OwnPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <qglobal.h>
+
+QT_BEGIN_NAMESPACE
+class QString;
+QT_END_NAMESPACE
 
 namespace WebKit {
 

@@ -1,3 +1,14 @@
+2011-11-30  Andrew Wason  <rectalogic@rectalogic.com>
+
+        Replace Qt QThread threading back-end with pthread/Win32 threading back-ends
+        https://bugs.webkit.org/show_bug.cgi?id=72155
+
+        Reviewed by Simon Hausmann.
+
+        Add additional WebCoreSupport files for Qt.
+
+        * Source/api.pri:
+
 2011-11-30  Adenilson Cavalcanti  <adenilson.silva@openbossa.org>
 
         [Qt][WK2] Implement permission API for Qt port

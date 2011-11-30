@@ -1,3 +1,25 @@
+2011-11-30  Andrew Wason  <rectalogic@rectalogic.com>
+
+        Replace Qt QThread threading back-end with pthread/Win32 threading back-ends
+        https://bugs.webkit.org/show_bug.cgi?id=72155
+
+        Reviewed by Simon Hausmann.
+
+        Use ThreadingPthreads and ThreadingWin instead of ThreadingQt.
+
+        * heap/MachineStackMarker.cpp:
+        * wtf/MainThread.cpp:
+        (WTF::initializeMainThread):
+        * wtf/Platform.h:
+        * wtf/ThreadSpecific.h: Drop QThreadStorage related code.
+        (WTF::::destroy):
+        * wtf/ThreadingPrimitives.h:
+        * wtf/qt/MainThreadQt.cpp: Drop Qt specific isMainThread().
+        (WTF::initializeMainThreadPlatform): Initialize MainThreadInvoker on main thread to avoid infecting secondary thread with QAdoptedThread.
+        (WTF::scheduleDispatchFunctionsOnMainThread):
+        * wtf/qt/ThreadingQt.cpp: Removed.
+        * wtf/wtf.pro:
+
 2011-11-30  Csaba Osztrogonác  <ossy@webkit.org>
 
         MacroAssemblerARM does not implement readCallTarget

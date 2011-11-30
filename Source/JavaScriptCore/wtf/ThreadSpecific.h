@@ -45,8 +45,6 @@
 
 #if USE(PTHREADS)
 #include <pthread.h>
-#elif PLATFORM(QT)
-#include <QThreadStorage>
 #elif PLATFORM(GTK)
 #include <glib.h>
 #elif OS(WINDOWS)
@@ -90,9 +88,6 @@ private:
         WTF_MAKE_NONCOPYABLE(Data);
     public:
         Data(T* value, ThreadSpecific<T>* owner) : value(value), owner(owner) {}
-#if PLATFORM(QT)
-        ~Data() { owner->destroy(this); }
-#endif
 
         T* value;
         ThreadSpecific<T>* owner;
@@ -104,8 +99,6 @@ private:
 
 #if USE(PTHREADS)
     pthread_key_t m_key;
-#elif PLATFORM(QT)
-    QThreadStorage<Data*> m_key;
 #elif PLATFORM(GTK)
     GStaticPrivate m_key;
 #elif OS(WINDOWS)
@@ -134,28 +127,6 @@ inline void ThreadSpecific<T>::set(T* ptr)
 {
     ASSERT(!get());
     pthread_setspecific(m_key, new Data(ptr, this));
-}
-
-#elif PLATFORM(QT)
-
-template<typename T>
-inline ThreadSpecific<T>::ThreadSpecific()
-{
-}
-
-template<typename T>
-inline T* ThreadSpecific<T>::get()
-{
-    Data* data = static_cast<Data*>(m_key.localData());
-    return data ? data->value : 0;
-}
-
-template<typename T>
-inline void ThreadSpecific<T>::set(T* ptr)
-{
-    ASSERT(!get());
-    Data* data = new Data(ptr, this);
-    m_key.setLocalData(data);
 }
 
 #elif PLATFORM(GTK)
@@ -250,18 +221,12 @@ inline void ThreadSpecific<T>::destroy(void* ptr)
     // See comment as above
     g_static_private_set(&data->owner->m_key, data, 0);
 #endif
-#if PLATFORM(QT)
-    // See comment as above
-    data->owner->m_key.setLocalData(data);
-#endif
 
     data->value->~T();
     fastFree(data->value);
 
 #if USE(PTHREADS)
     pthread_setspecific(data->owner->m_key, 0);
-#elif PLATFORM(QT)
-    // Do nothing here
 #elif PLATFORM(GTK)
     g_static_private_set(&data->owner->m_key, 0, 0);
 #elif OS(WINDOWS)
@@ -270,9 +235,7 @@ inline void ThreadSpecific<T>::destroy(void* ptr)
 #error ThreadSpecific is not implemented for this platform.
 #endif
 
-#if !PLATFORM(QT)
     delete data;
-#endif
 }
 
 template<typename T>

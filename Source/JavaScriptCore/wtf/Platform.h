@@ -490,10 +490,6 @@
 #define WTF_USE_MERSENNE_TWISTER_19937 1
 #endif
 
-#if PLATFORM(QT) && OS(UNIX) && !OS(DARWIN)
-#define WTF_USE_PTHREAD_BASED_QT 1
-#endif
-
 /* On Windows, use QueryPerformanceCounter by default */
 #if OS(WINDOWS)
 #define WTF_USE_QUERY_PERFORMANCE_COUNTER  1
@@ -645,6 +641,9 @@
 #define WTF_USE_PTHREADS 1
 #define HAVE_PTHREAD_RWLOCK 1
 #endif
+#elif PLATFORM(QT) && OS(UNIX)
+#define WTF_USE_PTHREADS 1
+#define HAVE_PTHREAD_RWLOCK 1
 #endif
 
 #if !defined(HAVE_ACCESSIBILITY)

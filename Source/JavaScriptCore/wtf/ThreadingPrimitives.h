@@ -46,14 +46,6 @@
 #include <pthread.h>
 #endif
 
-#if PLATFORM(QT)
-#include <qglobal.h>
-QT_BEGIN_NAMESPACE
-class QMutex;
-class QWaitCondition;
-QT_END_NAMESPACE
-#endif
-
 namespace WTF {
 
 #if USE(PTHREADS)
@@ -64,10 +56,6 @@ typedef pthread_rwlock_t PlatformReadWriteLock;
 typedef void* PlatformReadWriteLock;
 #endif
 typedef pthread_cond_t PlatformCondition;
-#elif PLATFORM(QT)
-typedef QT_PREPEND_NAMESPACE(QMutex)* PlatformMutex;
-typedef void* PlatformReadWriteLock; // FIXME: Implement.
-typedef QT_PREPEND_NAMESPACE(QWaitCondition)* PlatformCondition;
 #elif OS(WINDOWS)
 struct PlatformMutex {
     CRITICAL_SECTION m_internalMutex;

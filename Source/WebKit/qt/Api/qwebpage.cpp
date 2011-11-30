@@ -22,7 +22,6 @@
 #include "config.h"
 #include "qwebpage.h"
 
-#include "qwebelement_p.h"
 #include "qwebview.h"
 #include "qwebframe.h"
 #include "qwebpage_p.h"
@@ -76,12 +75,12 @@
 #include "HashMap.h"
 #include "HitTestResult.h"
 #include "Image.h"
+#include "InitWebCoreQt.h"
 #include "InspectorClientQt.h"
 #include "InspectorController.h"
 #include "InspectorServerQt.h"
 #include "KURL.h"
 #include "LocalizedStrings.h"
-#include "Logging.h"
 #include "MIMETypeRegistry.h"
 #include "NavigationAction.h"
 #include "NetworkingContext.h"
@@ -93,7 +92,6 @@
 #include "PageGroup.h"
 #include "Pasteboard.h"
 #include "PlatformKeyboardEvent.h"
-#include "PlatformStrategiesQt.h"
 #include "PlatformTouchEvent.h"
 #include "PlatformWheelEvent.h"
 #include "PluginDatabase.h"
@@ -107,20 +105,14 @@
 #include "SchemeRegistry.h"
 #include "Scrollbar.h"
 #include "SecurityOrigin.h"
-#include "SecurityPolicy.h"
 #include "Settings.h"
 #if defined Q_OS_WIN32
 #include "SystemInfo.h"
 #endif // Q_OS_WIN32
 #include "TextIterator.h"
 #include "UtilsQt.h"
-#if USE(QTKIT)
-#include "WebSystemInterface.h"
-#endif
 #include "WindowFeatures.h"
 #include "WorkerThread.h"
-#include <runtime/InitializeThreading.h>
-#include <wtf/MainThread.h>
 
 #include <QApplication>
 #include <QBasicTimer>
@@ -318,17 +310,7 @@ QWebPagePrivate::QWebPagePrivate(QWebPage *qq)
     , inspectorIsInternalOnly(false)
     , m_lastDropAction(Qt::IgnoreAction)
 {
-    WebCore::InitializeLoggingChannelsIfNecessary();
-    ScriptController::initializeThreading();
-    WTF::initializeMainThread();
-    WebCore::SecurityPolicy::setLocalLoadPolicy(WebCore::SecurityPolicy::AllowLocalLoadsForLocalAndSubstituteData);
-
-    PlatformStrategiesQt::initialize();
-    QtWebElementRuntime::initialize();
-
-#if USE(QTKIT)
-    InitWebCoreSystemInterface();
-#endif
+    WebCore::initializeWebCoreQt();
 
     Page::PageClients pageClients;
     pageClients.chromeClient = new ChromeClientQt(q);

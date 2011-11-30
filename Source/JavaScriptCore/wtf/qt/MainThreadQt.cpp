@@ -65,21 +65,12 @@ Q_GLOBAL_STATIC(MainThreadInvoker, webkit_main_thread_invoker)
 
 void initializeMainThreadPlatform()
 {
+    webkit_main_thread_invoker();
 }
 
 void scheduleDispatchFunctionsOnMainThread()
 {
-    QObject* invoker = webkit_main_thread_invoker();
-    if (invoker->thread() != QCoreApplication::instance()->thread()) {
-        ASSERT(invoker->thread() == QThread::currentThread());
-        invoker->moveToThread(QCoreApplication::instance()->thread());
-    }
-    QCoreApplication::postEvent(invoker, new QEvent(static_cast<QEvent::Type>(s_mainThreadInvokerEventType)));
-}
-
-bool isMainThread()
-{
-    return QThread::currentThread() == QCoreApplication::instance()->thread();
+    QCoreApplication::postEvent(webkit_main_thread_invoker(), new QEvent(static_cast<QEvent::Type>(s_mainThreadInvokerEventType)));
 }
 
 } // namespace WTF
