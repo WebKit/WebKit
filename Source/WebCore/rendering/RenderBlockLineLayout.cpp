@@ -966,7 +966,7 @@ static inline void constructBidiRuns(InlineBidiResolver& topResolver, BidiRunLis
         RenderObject* startObj = bidiFirstSkippingEmptyInlines(isolatedSpan, &isolatedResolver);
         if (!startObj)
             continue;
-        isolatedResolver.setPosition(InlineIterator(isolatedSpan, startObj, 0));
+        isolatedResolver.setPositionIgnoringNestedIsolates(InlineIterator(isolatedSpan, startObj, 0));
 
         // FIXME: isolatedEnd should probably equal end or the last char in isolatedSpan.
         InlineIterator isolatedEnd = endOfLine;
@@ -1216,7 +1216,7 @@ void RenderBlock::layoutRunsAndFloatsInRange(LineLayoutState& layoutState, Inlin
 
         layoutState.lineInfo().setEmpty(true);
 
-        InlineIterator oldEnd = end;
+        const InlineIterator oldEnd = end;
         bool isNewUBAParagraph = layoutState.lineInfo().previousLineBrokeCleanly();
         FloatingObject* lastFloatFromPreviousLine = (m_floatingObjects && !m_floatingObjects->set().isEmpty()) ? m_floatingObjects->set().last() : 0;
         end = lineBreaker.nextLineBreak(resolver, layoutState.lineInfo(), lineBreakIteratorInfo, lastFloatFromPreviousLine, consecutiveHyphenatedLines);
@@ -1284,7 +1284,7 @@ void RenderBlock::layoutRunsAndFloatsInRange(LineLayoutState& layoutState, Inlin
                             lineBox->deleteLine(renderArena());
                             removeFloatingObjectsBelow(lastFloatFromPreviousLine, oldLogicalHeight);
                             setLogicalHeight(oldLogicalHeight + adjustment);
-                            resolver.setPosition(oldEnd);
+                            resolver.setPositionIgnoringNestedIsolates(oldEnd);
                             end = oldEnd;
                             continue;
                         }
@@ -1324,7 +1324,7 @@ void RenderBlock::layoutRunsAndFloatsInRange(LineLayoutState& layoutState, Inlin
         }
 
         lineMidpointState.reset();
-        resolver.setPosition(end);
+        resolver.setPosition(end, numberOfIsolateAncestors(end));
     }
 }
 
@@ -1639,7 +1639,8 @@ RootInlineBox* RenderBlock::determineStartPosition(LineLayoutState& layoutState,
 
     if (last) {
         setLogicalHeight(last->lineBottomWithLeading());
-        resolver.setPosition(InlineIterator(this, last->lineBreakObj(), last->lineBreakPos()));
+        InlineIterator iter = InlineIterator(this, last->lineBreakObj(), last->lineBreakPos());
+        resolver.setPosition(iter, numberOfIsolateAncestors(iter));
         resolver.setStatus(last->lineBreakBidiStatus());
     } else {
         TextDirection direction = style()->direction();
@@ -1648,7 +1649,8 @@ RootInlineBox* RenderBlock::determineStartPosition(LineLayoutState& layoutState,
             determineParagraphDirection(direction, InlineIterator(this, bidiFirstIncludingEmptyInlines(this), 0));
         }
         resolver.setStatus(BidiStatus(direction, style()->unicodeBidi() == Override));
-        resolver.setPosition(InlineIterator(this, bidiFirstSkippingEmptyInlines(this, &resolver), 0));
+        InlineIterator iter = InlineIterator(this, bidiFirstSkippingEmptyInlines(this, &resolver), 0);
+        resolver.setPosition(iter, numberOfIsolateAncestors(iter));
     }
     return curr;
 }

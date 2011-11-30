@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+This tests having an inline element with -webkit-isolate immediately following BR.
+WebKit should not hit an assertion.
+<br><span style="unicode-bidi:-webkit-isolate;"></span>
+<script>
+
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+
+</script>

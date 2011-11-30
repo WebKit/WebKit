@@ -177,7 +177,12 @@ public:
 #endif
 
     const Iterator& position() const { return m_current; }
-    void setPosition(const Iterator& position) { m_current = position; }
+    void setPositionIgnoringNestedIsolates(const Iterator& position) { m_current = position; }
+    void setPosition(const Iterator& position, unsigned nestedIsolatedCount)
+    {
+        m_current = position;
+        m_nestedIsolateCount = nestedIsolatedCount;
+    }
 
     void increment() { m_current.increment(); }
 

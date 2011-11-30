@@ -406,11 +406,13 @@ static inline RenderObject* containingIsolate(RenderObject* object, RenderObject
     return 0;
 }
 
-static inline unsigned numberOfIsolateAncestors(RenderObject* object, RenderObject* root)
+static inline unsigned numberOfIsolateAncestors(const InlineIterator& iter)
 {
-    ASSERT(object);
+    RenderObject* object = iter.object();
+    if (!object)
+        return 0;
     unsigned count = 0;
-    while (object && object != root) {
+    while (object && object != iter.root()) {
         if (isIsolatedInline(object))
             count++;
         object = object->parent();
@@ -482,7 +484,7 @@ inline void InlineBidiResolver::appendRun()
         // Keep track of when we enter/leave "unicode-bidi: isolate" inlines.
         // Initialize our state depending on if we're starting in the middle of such an inline.
         // FIXME: Could this initialize from this->inIsolate() instead of walking up the render tree?
-        IsolateTracker isolateTracker(numberOfIsolateAncestors(m_sor.m_obj, m_sor.root()));
+        IsolateTracker isolateTracker(numberOfIsolateAncestors(m_sor));
         int start = m_sor.m_pos;
         RenderObject* obj = m_sor.m_obj;
         while (obj && obj != m_eor.m_obj && obj != endOfLine.m_obj) {
