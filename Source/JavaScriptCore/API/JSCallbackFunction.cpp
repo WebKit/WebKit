@@ -87,20 +87,30 @@ CallType JSCallbackFunction::getCallData(JSCell*, CallData& callData)
 JSValueRef JSCallbackFunction::toStringCallback(JSContextRef ctx, JSObjectRef, JSObjectRef thisObject, size_t, const JSValueRef[], JSValueRef* exception)
 {
     JSObject* object = toJS(thisObject);
-    if (object->inherits(&JSCallbackObject<JSNonFinalObject>::s_info))
-        return jsCast<JSCallbackObject<JSNonFinalObject>*>(object)->classRef()->convertToType(ctx, thisObject, kJSTypeString, exception);
-    if (object->inherits(&JSCallbackObject<JSGlobalObject>::s_info))
-        return jsCast<JSCallbackObject<JSGlobalObject>*>(object)->classRef()->convertToType(ctx, thisObject, kJSTypeString, exception);
+    if (object->inherits(&JSCallbackObject<JSNonFinalObject>::s_info)) {
+        for (JSClassRef jsClass = jsCast<JSCallbackObject<JSNonFinalObject>*>(object)->classRef(); jsClass; jsClass = jsClass->parentClass)
+            if (jsClass->convertToType)
+                return jsClass->convertToType(ctx, thisObject, kJSTypeString, exception);
+    } else if (object->inherits(&JSCallbackObject<JSGlobalObject>::s_info)) {
+        for (JSClassRef jsClass = jsCast<JSCallbackObject<JSGlobalObject>*>(object)->classRef(); jsClass; jsClass = jsClass->parentClass)
+            if (jsClass->convertToType)
+                return jsClass->convertToType(ctx, thisObject, kJSTypeString, exception);
+    }
     return 0;
 }
 
 JSValueRef JSCallbackFunction::valueOfCallback(JSContextRef ctx, JSObjectRef, JSObjectRef thisObject, size_t, const JSValueRef[], JSValueRef* exception)
 {
     JSObject* object = toJS(thisObject);
-    if (object->inherits(&JSCallbackObject<JSNonFinalObject>::s_info))
-        return jsCast<JSCallbackObject<JSNonFinalObject>*>(object)->classRef()->convertToType(ctx, thisObject, kJSTypeNumber, exception);
-    if (object->inherits(&JSCallbackObject<JSGlobalObject>::s_info))
-        return jsCast<JSCallbackObject<JSGlobalObject>*>(object)->classRef()->convertToType(ctx, thisObject, kJSTypeNumber, exception);
+    if (object->inherits(&JSCallbackObject<JSNonFinalObject>::s_info)) {
+        for (JSClassRef jsClass = jsCast<JSCallbackObject<JSNonFinalObject>*>(object)->classRef(); jsClass; jsClass = jsClass->parentClass)
+            if (jsClass->convertToType)
+                return jsClass->convertToType(ctx, thisObject, kJSTypeNumber, exception);
+    } else if (object->inherits(&JSCallbackObject<JSGlobalObject>::s_info)) {
+        for (JSClassRef jsClass = jsCast<JSCallbackObject<JSGlobalObject>*>(object)->classRef(); jsClass; jsClass = jsClass->parentClass)
+            if (jsClass->convertToType)
+                return jsClass->convertToType(ctx, thisObject, kJSTypeNumber, exception);
+    }
     return 0;
 }
 

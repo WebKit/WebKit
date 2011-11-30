@@ -1,3 +1,19 @@
+2011-11-30  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        toStringCallback and valueOfCallback do not check the entire prototype chain for convertToType callback
+        https://bugs.webkit.org/show_bug.cgi?id=73368
+
+        Reviewed by Darin Adler.
+
+        We need to search the entire prototype chain for the convertToType callback, rather than just calling whatever
+        happens to be in the first class of the chain, which potentially could be null.
+
+        <rdar://problem/10493218>
+
+        * API/JSCallbackFunction.cpp:
+        (JSC::JSCallbackFunction::toStringCallback):
+        (JSC::JSCallbackFunction::valueOfCallback):
+
 2011-11-29  Sam Weinig  <sam@webkit.org>
 
         Add adoptCF and adoptNS convenience functions to RetainPtr.h
