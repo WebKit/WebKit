@@ -3516,7 +3516,6 @@ BUGWK68747 : media/controls-right-click-on-timebar.html = TIMEOUT PASS
 BUGCR97657 MAC CPU-CG : media/audio-repaint.html = TIMEOUT IMAGE PASS
 
 BUGWK68970 MAC CPU-CG : fast/multicol/float-paginate-empty-lines.html = IMAGE
-BUGWK68970 MAC CPU-CG : svg/custom/js-late-gradient-and-object-creation.svg = IMAGE
 BUGWK68970 MAC CPU-CG : svg/custom/pattern-in-defs.svg = IMAGE
 BUGWK68970 MAC CPU-CG : svg/custom/text-rotated-gradient.svg = IMAGE
 

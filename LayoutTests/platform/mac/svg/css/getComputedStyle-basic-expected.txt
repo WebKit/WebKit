@@ -292,6 +292,10 @@ rect: style.getPropertyValue(-webkit-flex-flow) : row
 rect: style.getPropertyCSSValue(-webkit-flex-flow) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-font-smoothing) : auto
 rect: style.getPropertyCSSValue(-webkit-font-smoothing) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(-webkit-grid-columns) : none
+rect: style.getPropertyCSSValue(-webkit-grid-columns) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(-webkit-grid-rows) : none
+rect: style.getPropertyCSSValue(-webkit-grid-rows) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-highlight) : none
 rect: style.getPropertyCSSValue(-webkit-highlight) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-hyphenate-character) : auto
@@ -796,6 +800,10 @@ g: style.getPropertyValue(-webkit-flex-flow) : row
 g: style.getPropertyCSSValue(-webkit-flex-flow) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-font-smoothing) : auto
 g: style.getPropertyCSSValue(-webkit-font-smoothing) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(-webkit-grid-columns) : none
+g: style.getPropertyCSSValue(-webkit-grid-columns) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(-webkit-grid-rows) : none
+g: style.getPropertyCSSValue(-webkit-grid-rows) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-highlight) : none
 g: style.getPropertyCSSValue(-webkit-highlight) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-hyphenate-character) : auto
