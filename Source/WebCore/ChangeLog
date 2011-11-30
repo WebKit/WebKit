@@ -1,3 +1,26 @@
+2011-11-30  Alexey Proskuryakov  <ap@apple.com>
+
+        Download page URL should be set by WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=73358
+
+        Reviewed by Darin Adler.
+
+        No change in behavior, just refactoring.
+
+        * loader/FrameLoader.h:
+        * loader/FrameLoader.cpp:
+        (WebCore::originatingURLFromBackForwardList):
+        (WebCore::FrameLoader::setOriginalURLForDownloadRequest):
+        Moved implementations from WebKit, added a bunch of FIXMEs.
+
+        * loader/MainResourceLoader.cpp: (WebCore::MainResourceLoader::continueAfterContentPolicy):
+        Set main document URL (incorrectly renamed to "first party for cookies" in WebCore), so that
+        CFNetwork would automatically use it.
+
+        * loader/PolicyChecker.cpp: (WebCore::PolicyChecker::continueAfterNavigationPolicy): Ditto
+        for requests that start as downloads (as opposed to being converted after reading first bits
+        of response).
+
 2011-11-30  Rafael Weinstein  <rafaelw@chromium.org>
 
         Remove unused isInlineCode from V8Proxy

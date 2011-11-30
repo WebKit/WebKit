@@ -146,10 +146,6 @@ using namespace std;
 @end
 #endif
 
-@interface NSURLDownload (WebNSURLDownloadDetails)
-- (void)_setOriginatingURL:(NSURL *)originatingURL;
-@end
-
 // For backwards compatibility with older WebKit plug-ins.
 NSString *WebPluginBaseURLKey = @"WebPluginBaseURL";
 NSString *WebPluginAttributesKey = @"WebPluginAttributes";
@@ -284,12 +280,11 @@ void WebFrameLoaderClient::download(ResourceHandle* handle, const ResourceReques
     ASSERT([WebDownload respondsToSelector:@selector(_downloadWithLoadingCFURLConnection:request:response:delegate:proxy:)]);
     WebView *webView = getWebView(m_webFrame.get());
     CFURLConnectionRef connection = handle->connection();
-    WebDownload *download = [WebDownload _downloadWithLoadingCFURLConnection:connection
+    [WebDownload _downloadWithLoadingCFURLConnection:connection
                                                                      request:request.cfURLRequest()
                                                                     response:response.cfURLResponse()
                                                                     delegate:[webView downloadDelegate]
                                                                        proxy:nil];
-    setOriginalURLForDownload(download, initialRequest);
 
     // Release the connection since the NSURLDownload (actually CFURLDownload) will retain the connection and use it.
     handle->releaseConnectionForDownload();
@@ -299,56 +294,12 @@ void WebFrameLoaderClient::download(ResourceHandle* handle, const ResourceReques
     ASSERT(proxy);
     
     WebView *webView = getWebView(m_webFrame.get());
-    WebDownload *download = [WebDownload _downloadWithLoadingConnection:handle->connection()
+    [WebDownload _downloadWithLoadingConnection:handle->connection()
                                                                 request:request.nsURLRequest()
                                                                response:response.nsURLResponse()
                                                                delegate:[webView downloadDelegate]
                                                                   proxy:proxy];
-    
-    setOriginalURLForDownload(download, initialRequest);    
 #endif
-}
-
-void WebFrameLoaderClient::setOriginalURLForDownload(WebDownload *download, const ResourceRequest& initialRequest) const
-{
-    NSURLRequest *initialURLRequest = initialRequest.nsURLRequest();
-    NSURL *originalURL = nil;
-    
-    // If there was no referrer, don't traverse the back/forward history
-    // since this download was initiated directly. <rdar://problem/5294691>
-    if ([initialURLRequest valueForHTTPHeaderField:@"Referer"]) {
-        // find the first item in the history that was originated by the user
-        WebView *webView = getWebView(m_webFrame.get());
-        WebBackForwardList *history = [webView backForwardList];
-        int backListCount = [history backListCount];
-        for (int backIndex = 0; backIndex <= backListCount && !originalURL; backIndex++) {
-            // FIXME: At one point we had code here to check a "was user gesture" flag.
-            // Do we need to restore that logic?
-            originalURL = [[history itemAtIndex:-backIndex] URL];
-        }
-    }
-
-    if (!originalURL)
-        originalURL = [initialURLRequest URL];
-
-    if ([download respondsToSelector:@selector(_setOriginatingURL:)]) {
-        NSString *scheme = [originalURL scheme];
-        NSString *host = [originalURL host];
-        if (scheme && host && [scheme length] && [host length]) {
-            NSNumber *port = [originalURL port];
-            if (port && [port intValue] < 0)
-                port = nil;
-            NSString *hostOnlyURLString;
-            if (port)
-                hostOnlyURLString = [[NSString alloc] initWithFormat:@"%@://%@:%d", scheme, host, [port intValue]];
-            else
-                hostOnlyURLString = [[NSString alloc] initWithFormat:@"%@://%@", scheme, host];
-            NSURL *hostOnlyURL = [[NSURL alloc] initWithString:hostOnlyURLString];
-            [hostOnlyURLString release];
-            [download _setOriginatingURL:hostOnlyURL];
-            [hostOnlyURL release];
-        }
-    }
 }
 
 bool WebFrameLoaderClient::dispatchDidLoadResourceFromMemoryCache(DocumentLoader* loader, const ResourceRequest& request, const ResourceResponse& response, int length)
@@ -866,9 +817,7 @@ void WebFrameLoaderClient::setMainFrameDocumentReady(bool ready)
 void WebFrameLoaderClient::startDownload(const ResourceRequest& request, const String& /* suggestedName */)
 {
     // FIXME: Should download full request.
-    WebDownload *download = [getWebView(m_webFrame.get()) _downloadURL:request.url()];
-    
-    setOriginalURLForDownload(download, request);
+    [getWebView(m_webFrame.get()) _downloadURL:request.url()];
 }
 
 void WebFrameLoaderClient::willChangeTitle(DocumentLoader* loader)

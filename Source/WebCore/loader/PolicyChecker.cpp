@@ -145,10 +145,13 @@ void PolicyChecker::continueAfterNavigationPolicy(PolicyAction policy)
         case PolicyIgnore:
             callback.clearRequest();
             break;
-        case PolicyDownload:
-            m_frame->loader()->client()->startDownload(callback.request());
+        case PolicyDownload: {
+            ResourceRequest request = callback.request();
+            m_frame->loader()->setOriginalURLForDownloadRequest(request);
+            m_frame->loader()->client()->startDownload(request);
             callback.clearRequest();
             break;
+        }
         case PolicyUse: {
             ResourceRequest request(callback.request());
 

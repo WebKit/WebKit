@@ -231,8 +231,6 @@ private:
     virtual RemoteAXObjectRef accessibilityRemoteObject() OVERRIDE { return 0; }
 #endif
     
-    void setOriginalURLForDownload(WebDownload *, const WebCore::ResourceRequest&) const;
-
     RetainPtr<WebFramePolicyListener> setUpPolicyListener(WebCore::FramePolicyFunction);
 
     NSDictionary *actionDictionary(const WebCore::NavigationAction&, PassRefPtr<WebCore::FormState>) const;
