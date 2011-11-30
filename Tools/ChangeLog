@@ -1,3 +1,29 @@
+2011-11-30  Adam Roben  <aroben@apple.com>
+
+        Add a way to set OutputCapture's log level
+
+        This will be used by some unit tests I'm planning to add.
+
+        Fixes <http://webkit.org/b/73469> OutputCapture can't be used to capture DEBUG messages
+
+        Reviewed by Eric Seidel.
+
+        * Scripts/webkitpy/common/system/outputcapture.py:
+        (OutputCapture.__init__): Initialize our internal logging level to INFO, which was the only
+        level we ever used before this patch.
+        (OutputCapture.set_log_level): Added. This is useful for testing what log level code that is
+        being tested uses. Sets the log level for any current or future logging handlers.
+        (OutputCapture.capture_output): Use our internal logging level instead of always using INFO.
+
+        * Scripts/webkitpy/common/system/outputcapture_unittest.py: Added.
+        (OutputCaptureTest.setUp): Create an OutputCapture to test.
+        (OutputCaptureTest.log_all_levels): Helper method to log a message at each log level.
+        (OutputCaptureTest.assertLogged): Helper method to assert that a particular set of strings
+        was logged.
+        (OutputCaptureTest.test_initial_log_level): Test that we start out at the INFO level.
+        (OutputCaptureTest.test_set_log_level): Test that set_log_level correctly modifies the log
+        level.
+
 2011-11-29  Beth Dakin  <bdakin@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=72751
