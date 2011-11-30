@@ -1,0 +1,24 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<link rel="stylesheet" href="../js/resources/js-test-style.css">
+<script src="../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+description('Test how setCustomValidity reacts to too few arguments.');
+var b = document.createElement('button');
+shouldThrow("b.setCustomValidity()");
+var fs = document.createElement('fieldset');
+shouldThrow("fs.setCustomValidity()");
+var i = document.createElement('input');
+shouldThrow("i.setCustomValidity()");
+var k = document.createElement('keygen');
+shouldThrow("k.setCustomValidity()");
+successfullyParsed = true;
+</script>
+<script src="../js/resources/js-test-post.js"></script>
+</body>
+</html>
