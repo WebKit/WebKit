@@ -1,3 +1,16 @@
+2011-11-29  Sam Weinig  <sam@webkit.org>
+
+        Add adoptCF and adoptNS convenience functions to RetainPtr.h
+        https://bugs.webkit.org/show_bug.cgi?id=73399
+
+        Reviewed by Anders Carlsson.
+
+        * wtf/RetainPtr.h:
+        (WTF::adoptCF):
+        (WTF::adoptNS):
+        These adoption functions match the pattern we use in other
+        smart pointer classes.
+
 2011-11-30  Adam Roben  <aroben@apple.com>
 
         Fix RetainPtr's move assignment operators
