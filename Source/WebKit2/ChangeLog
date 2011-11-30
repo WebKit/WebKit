@@ -1,3 +1,16 @@
+2011-11-30  Alexey Proskuryakov  <ap@apple.com>
+
+        -[WKView attributedSubstringForProposedRange:actualRange:] doesn't update actualRange when it's out of bounds
+        https://bugs.webkit.org/show_bug.cgi?id=67813
+
+        Reviewed by Simon Fraser.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView attributedSubstringForProposedRange:actualRange:]): Update actualRange to match
+        result length.
+        (-[WKView firstRectForCharacterRange:actualRange:]): Added a FIXME. This is harder to
+        implement, and it's unclear if clients care at this time.
+
 2011-11-29  Sam Weinig  <sam@webkit.org>
 
         Remove RetainPtr::releaseRef

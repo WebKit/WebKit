@@ -1513,8 +1513,10 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
     AttributedString result;
     _data->_page->getAttributedSubstringFromRange(nsRange.location, NSMaxRange(nsRange), result);
 
-    if (actualRange)
+    if (actualRange) {
         *actualRange = nsRange;
+        actualRange->length = [result.string.get() length];
+    }
 
     LOG(TextInput, "attributedSubstringFromRange:(%u, %u) -> \"%@\"", nsRange.location, nsRange.length, [result.string.get() string]);
     return [[result.string.get() retain] autorelease];
@@ -1552,8 +1554,10 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
     if (window)
         resultRect.origin = [window convertBaseToScreen:resultRect.origin];
 
-    if (actualRange)
+    if (actualRange) {
+        // FIXME: Update actualRange to match the range of first rect.
         *actualRange = theRange;
+    }
 
     LOG(TextInput, "firstRectForCharacterRange:(%u, %u) -> (%f, %f, %f, %f)", theRange.location, theRange.length, resultRect.origin.x, resultRect.origin.y, resultRect.size.width, resultRect.size.height);
     return resultRect;
