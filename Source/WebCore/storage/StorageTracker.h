@@ -52,6 +52,7 @@ public:
     void deleteAllOrigins();
     void deleteOrigin(SecurityOrigin*);
     void deleteOrigin(const String& originIdentifier);
+    bool originsLoaded() const { return m_finishedImportingOriginIdentifiers; }
     void origins(Vector<RefPtr<SecurityOrigin> >& result);
     long long diskUsageForOrigin(SecurityOrigin*);
     
@@ -80,6 +81,8 @@ private:
     void openTrackerDatabase(bool createIfDoesNotExist);
 
     void importOriginIdentifiers();
+    static void notifyFinishedImportingOriginIdentifiersOnMainThread(void*);
+    void finishedImportingOriginIdentifiers();
     
     void deleteTrackerFiles();
     String databasePathForOrigin(const String& originIdentifier);
@@ -111,6 +114,7 @@ private:
     
     bool m_isActive;
     bool m_needsInitialization;
+    bool m_finishedImportingOriginIdentifiers;
 };
     
 } // namespace WebCore

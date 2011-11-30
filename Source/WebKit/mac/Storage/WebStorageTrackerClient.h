@@ -36,6 +36,10 @@ public:
     virtual ~WebStorageTrackerClient();
     virtual void dispatchDidModifyOrigin(const String& originIdentifier);
     virtual void dispatchDidModifyOrigin(PassRefPtr<SecurityOrigin>);
+
 private:
     WebStorageTrackerClient();
+
+    // WebCore::StorageTrackerClient
+    virtual void didFinishLoadingOrigins() OVERRIDE;
 };

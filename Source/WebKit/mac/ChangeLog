@@ -1,3 +1,15 @@
+2011-11-29  Jessie Berlin  <jberlin@apple.com>
+
+        WKKeyValueStorageManagerGetKeyValueStorageOrigins may not report the correct list of origins
+        the first time it is called.
+        https://bugs.webkit.org/show_bug.cgi?id=73374 (<rdar://problem/10196057>)
+
+        Reviewed by Brady Eidson.
+
+        * Storage/WebStorageTrackerClient.h:
+        * Storage/WebStorageTrackerClient.mm:
+        (WebStorageTrackerClient::didFinishLoadingOrigins):
+
 2011-11-15  Anders Carlsson  <andersca@apple.com>
 
         DragClient::dragSourceActionMaskForPoint should use root view coordinates

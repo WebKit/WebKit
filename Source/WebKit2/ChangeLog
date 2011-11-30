@@ -1,3 +1,32 @@
+2011-11-29  Jessie Berlin  <jberlin@apple.com>
+
+        WKKeyValueStorageManagerGetKeyValueStorageOrigins may not report the correct list of origins
+        the first time it is called.
+        https://bugs.webkit.org/show_bug.cgi?id=73374 (<rdar://problem/10196057>)
+
+        Reviewed by Brady Eidson.
+
+        Queue any requests for the origins that have Local Storage until the StorageTracker is done
+        loading the list of those origins from disk.
+
+        * WebProcess/KeyValueStorage/WebKeyValueStorageManager.cpp:
+        (WebKit::keyValueStorageOriginIdentifiers):
+        Refactored here from getKeyValueStorageOrigins so it can be used by didFinishLoadingOrigins.
+        (WebKit::dispatchDidGetKeyValueStorageOrigins):
+        Ditto.
+        (WebKit::WebKeyValueStorageManager::getKeyValueStorageOrigins):
+        If the StorageTracker is not done loading the list of origins from disk, queue up the
+        request to be handled later.
+        (WebKit::WebKeyValueStorageManager::didFinishLoadingOrigins):
+        Dispatch the results for any requests that were make before the StorageTracker was done
+        loading the list of origins from disk.
+        (WebKit::WebKeyValueStorageManager::dispatchDidModifyOrigin):
+        * WebProcess/KeyValueStorage/WebKeyValueStorageManager.h:
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeWebProcess):
+        Set the WebKeyValueStorageManager as the StorageTrackerClient.
+
 2011-11-29  Anders Carlsson  <andersca@apple.com>
 
         Decorate adoptWK with WARN_UNUSED_RETURN

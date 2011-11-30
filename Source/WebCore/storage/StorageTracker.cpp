@@ -90,6 +90,7 @@ StorageTracker::StorageTracker(const String& storagePath)
     , m_thread(LocalStorageThread::create())
     , m_isActive(false)
     , m_needsInitialization(false)
+    , m_finishedImportingOriginIdentifiers(false)
 {
 }
 
@@ -140,6 +141,19 @@ void StorageTracker::importOriginIdentifiers()
     m_thread->scheduleTask(LocalStorageTask::createOriginIdentifiersImport());
 }
 
+void StorageTracker::notifyFinishedImportingOriginIdentifiersOnMainThread(void*)
+{
+    tracker().finishedImportingOriginIdentifiers();
+}
+
+void StorageTracker::finishedImportingOriginIdentifiers()
+{
+    m_finishedImportingOriginIdentifiers = true;
+    MutexLocker lockClient(m_clientGuard);
+    if (m_client)
+        m_client->didFinishLoadingOrigins();
+}
+
 void StorageTracker::syncImportOriginIdentifiers()
 {
     ASSERT(m_isActive);
@@ -188,6 +202,8 @@ void StorageTracker::syncImportOriginIdentifiers()
                 m_client->dispatchDidModifyOrigin(*it);
         }
     }
+
+    callOnMainThread(notifyFinishedImportingOriginIdentifiersOnMainThread, 0);
 }
     
 void StorageTracker::syncFileSystemAndTrackerDatabase()

@@ -76,3 +76,7 @@ void WebStorageTrackerClient::dispatchDidModifyOrigin(const String& originIdenti
 
     dispatchDidModifyOrigin(origin);
 }
+
+void WebStorageTrackerClient::didFinishLoadingOrigins()
+{
+}

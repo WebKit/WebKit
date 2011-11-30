@@ -54,29 +54,63 @@ void WebKeyValueStorageManager::didReceiveMessage(CoreIPC::Connection* connectio
     didReceiveWebKeyValueStorageManagerMessage(connection, messageID, arguments);
 }
 
-void WebKeyValueStorageManager::getKeyValueStorageOrigins(uint64_t callbackID)
+static void keyValueStorageOriginIdentifiers(Vector<SecurityOriginData>& identifiers)
 {
-    WebProcess::LocalTerminationDisabler terminationDisabler(WebProcess::shared());
+    ASSERT(identifiers.isEmpty());
 
     Vector<RefPtr<SecurityOrigin> > coreOrigins;
 
     StorageTracker::tracker().origins(coreOrigins);
 
     size_t size = coreOrigins.size();
-    Vector<SecurityOriginData> identifiers;
     identifiers.reserveCapacity(size);
 
-    for (size_t i = 0; i < size; ++i) {        
+    for (size_t i = 0; i < size; ++i) {
         SecurityOriginData originData;
-        
+
         originData.protocol = coreOrigins[i]->protocol();
         originData.host = coreOrigins[i]->host();
         originData.port = coreOrigins[i]->port();
 
         identifiers.uncheckedAppend(originData);
     }
+}
 
+static void dispatchDidGetKeyValueStorageOrigins(const Vector<SecurityOriginData>& identifiers, uint64_t callbackID)
+{
     WebProcess::shared().connection()->send(Messages::WebKeyValueStorageManagerProxy::DidGetKeyValueStorageOrigins(identifiers, callbackID), 0);
+}
+
+void WebKeyValueStorageManager::getKeyValueStorageOrigins(uint64_t callbackID)
+{
+    WebProcess::LocalTerminationDisabler terminationDisabler(WebProcess::shared());
+
+    if (!StorageTracker::tracker().originsLoaded()) {
+        m_originsRequestCallbackIDs.append(callbackID);
+        return;
+    }
+
+    Vector<SecurityOriginData> identifiers;
+    keyValueStorageOriginIdentifiers(identifiers);
+    dispatchDidGetKeyValueStorageOrigins(identifiers, callbackID);
+}
+
+void WebKeyValueStorageManager::didFinishLoadingOrigins()
+{
+    if (m_originsRequestCallbackIDs.isEmpty())
+        return;
+
+    Vector<SecurityOriginData> identifiers;
+    keyValueStorageOriginIdentifiers(identifiers);
+
+    for (size_t i = 0; i < m_originsRequestCallbackIDs.size(); ++i)
+        dispatchDidGetKeyValueStorageOrigins(identifiers, m_originsRequestCallbackIDs[i]);
+
+    m_originsRequestCallbackIDs.clear();
+}
+
+void WebKeyValueStorageManager::dispatchDidModifyOrigin(const String&)
+{
 }
 
 void WebKeyValueStorageManager::deleteEntriesForOrigin(const SecurityOriginData& originData)

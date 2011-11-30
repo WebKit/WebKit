@@ -26,6 +26,7 @@
 #ifndef WebKeyValueStorageManager_h
 #define WebKeyValueStorageManager_h
 
+#include <WebCore/StorageTrackerClient.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/text/WTFString.h>
 
@@ -39,7 +40,7 @@ namespace WebKit {
 
 struct SecurityOriginData;
 
-class WebKeyValueStorageManager {
+class WebKeyValueStorageManager : public WebCore::StorageTrackerClient {
     WTF_MAKE_NONCOPYABLE(WebKeyValueStorageManager);
 
 public:
@@ -54,7 +55,14 @@ private:
     void deleteEntriesForOrigin(const SecurityOriginData&);
     void deleteAllEntries();
 
+    // WebCore::StorageTrackerClient
+    virtual void dispatchDidModifyOrigin(const String&) OVERRIDE;
+    virtual void didFinishLoadingOrigins() OVERRIDE;
+
     void didReceiveWebKeyValueStorageManagerMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
+
+    Vector<uint64_t> m_originsRequestCallbackIDs;
+    bool m_originsLoaded;
 };
 
 } // namespace WebKit

@@ -34,6 +34,7 @@ class StorageTrackerClient {
 public:
     virtual ~StorageTrackerClient() { }
     virtual void dispatchDidModifyOrigin(const String& originIdentifier) = 0;
+    virtual void didFinishLoadingOrigins() = 0;
 };
 
 } // namespace WebCore
