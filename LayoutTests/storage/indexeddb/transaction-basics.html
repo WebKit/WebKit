@@ -9,8 +9,6 @@
 <script>
 
 description("Test IndexedDB transaction basics.");
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
 
 function test()
 {
@@ -34,7 +32,7 @@ function openSuccess()
 function cleanDatabase()
 {
     deleteAllObjectStores(db, checkMetadataEmpty);
-    commitAndContinue(testSetVersionAbort1);
+    event.target.result.oncomplete = testSetVersionAbort1;
 }
 
 function testSetVersionAbort1()
@@ -63,6 +61,8 @@ function addRemoveIDBObjects()
 
 function testSetVersionAbort2()
 {
+    debug("");
+    debug("testSetVersionAbort2():");
     checkMetadataEmpty();
     request = evalAndLog("request = startSetVersion('version fail')");
     request.onsuccess = addRemoveAddIDBObjects;
@@ -90,6 +90,8 @@ function addRemoveAddIDBObjects()
 
 function testSetVersionAbort3()
 {
+    debug("");
+    debug("testSetVersionAbort3():");
     shouldBeFalse("event.cancelable");
     checkMetadataEmpty();
     request = evalAndLog("request = startSetVersion('version fail')");
@@ -98,8 +100,8 @@ function testSetVersionAbort3()
 
 function addIDBObjects()
 {
-    shouldBeFalse("event.cancelable");
     debug("addIDBObjects():");
+    shouldBeFalse("event.cancelable");
     var trans = evalAndLog("trans = event.target.result");
     shouldBeTrue("trans !== null");
     trans.onabort = testSetVersionAbort4;
@@ -113,14 +115,16 @@ function addIDBObjects()
 
 function testSetVersionAbort4()
 {
+    debug("");
+    debug("testSetVersionAbort4():");
     checkMetadataEmpty();
     request = evalAndLog("request = startSetVersion('version fail')");
     request.onsuccess = addIDBObjectsAndCommit;
 }
 
-function addIDBObjects()
+function addIDBObjectsAndCommit()
 {
-    debug("addIDBObjects():");
+    debug("addIDBObjectsAndCommit():");
     var trans = evalAndLog("trans = event.target.result");
     shouldBeTrue("trans !== null");
     trans.onabort = unexpectedAbortCallback;
@@ -128,16 +132,13 @@ function addIDBObjects()
     var store = evalAndLog("store = db.createObjectStore('storeFail', null)");
     var index = evalAndLog("index = store.createIndex('indexFail', 'x', false)");
 
-    commitAndContinue(testSetVersionAbort5);
-}
-
-function commitAndContinue(continueFunction)
-{
-    window.setTimeout(continueFunction, 0);
+    trans.oncomplete = testSetVersionAbort5;
 }
 
 function testSetVersionAbort5()
 {
+    debug("");
+    debug("testSetVersionAbort5():");
     checkMetadataExistingObjectStore();
     request = evalAndLog("request = startSetVersion('version fail')");
     request.onsuccess = removeIDBObjects;
@@ -160,6 +161,8 @@ function removeIDBObjects()
 
 function testSetVersionAbort6()
 {
+    debug("");
+    debug("testSetVersionAbort6():");
     checkMetadataExistingObjectStore();
     setNewVersion();
 }
@@ -194,6 +197,7 @@ function setNewVersion()
 
 function setVersionSuccess()
 {
+    debug("");
     debug("setVersionSuccess():");
     window.trans = evalAndLog("trans = event.target.result");
     shouldBeTrue("trans !== null");
@@ -204,37 +208,28 @@ function setVersionSuccess()
     deleteAllObjectStores(db);
 
     evalAndLog("db.createObjectStore('storeName', null)");
-    transaction = evalAndLog("db.transaction(['storeName'])");
-    transaction.onabort = abortCallback;
-    var store = evalAndLog("store = transaction.objectStore('storeName')");
-    shouldBeEqualToString("store.name", "storeName");
 }
 
 function completeCallback()
 {
     shouldBeFalse("event.cancelable");
     testPassed("complete event fired");
-    window.completeEventFired = true;
+    transaction = evalAndLog("db.transaction(['storeName'])");
+    transaction.onabort = abortCallback;
+    var store = evalAndLog("store = transaction.objectStore('storeName')");
+    shouldBeEqualToString("store.name", "storeName");
 }
 
 function abortCallback()
 {
-    testPassed("complete event fired");
-    checkForCompleteEvent();
+    testPassed("abort event fired");
+    finishJSTest();
 }
 
-function checkForCompleteEvent()
-{
-    if (completeEventFired) {
-        testPassed("oncomplete event had fired");
-        done();
-    } else
-        setTimeout(checkForCompleteEvent, 1);
-}
-
-
+var jsTestIsAsync = true;
 test();
 
 </script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
 </body>
 </html>

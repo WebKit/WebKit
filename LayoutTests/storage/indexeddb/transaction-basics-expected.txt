@@ -21,6 +21,8 @@ store = db.createObjectStore('storeFail', null)
 index = store.createIndex('indexFail', 'x', false)
 db.deleteObjectStore('storeFail')
 store.deleteIndex('indexFail')
+
+testSetVersionAbort2():
 PASS window.db.objectStoreNames is []
 PASS window.db.objectStoreNames.length is 0
 PASS window.db.objectStoreNames.contains('storeFail') is false
@@ -34,16 +36,32 @@ db.deleteObjectStore('storeFail')
 store.deleteIndex('indexFail')
 store = db.createObjectStore('storeFail', null)
 index = store.createIndex('indexFail', 'x', false)
+
+testSetVersionAbort3():
 PASS event.cancelable is false
 PASS window.db.objectStoreNames is []
 PASS window.db.objectStoreNames.length is 0
 PASS window.db.objectStoreNames.contains('storeFail') is false
 request = startSetVersion('version fail')
 addIDBObjects():
+PASS event.cancelable is false
 trans = event.target.result
 PASS trans !== null is true
 store = db.createObjectStore('storeFail', null)
 index = store.createIndex('indexFail', 'x', false)
+
+testSetVersionAbort4():
+PASS window.db.objectStoreNames is []
+PASS window.db.objectStoreNames.length is 0
+PASS window.db.objectStoreNames.contains('storeFail') is false
+request = startSetVersion('version fail')
+addIDBObjectsAndCommit():
+trans = event.target.result
+PASS trans !== null is true
+store = db.createObjectStore('storeFail', null)
+index = store.createIndex('indexFail', 'x', false)
+
+testSetVersionAbort5():
 PASS db.objectStoreNames is ['storeFail']
 PASS db.objectStoreNames.length is 1
 PASS db.objectStoreNames.contains('storeFail') is true
@@ -54,22 +72,24 @@ PASS trans !== null is true
 store = trans.objectStore('storeFail')
 store.deleteIndex('indexFail')
 db.deleteObjectStore('storeFail')
+
+testSetVersionAbort6():
 PASS db.objectStoreNames is ['storeFail']
 PASS db.objectStoreNames.length is 1
 PASS db.objectStoreNames.contains('storeFail') is true
 db.setVersion('new version')
+
 setVersionSuccess():
 trans = event.target.result
 PASS trans !== null is true
 Deleted all object stores.
 db.createObjectStore('storeName', null)
+PASS event.cancelable is false
+PASS complete event fired
 db.transaction(['storeName'])
 store = transaction.objectStore('storeName')
 PASS store.name is "storeName"
-PASS complete event fired
-PASS event.cancelable is false
-PASS complete event fired
-PASS oncomplete event had fired
+PASS abort event fired
 PASS successfullyParsed is true
 
 TEST COMPLETE
