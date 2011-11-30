@@ -158,15 +158,15 @@ public:
     bool OnPrintPage(int pageNum)
     {
         wxPrinterDC* pdc = dynamic_cast<wxPrinterDC*>(GetDC());
+        wxGraphicsRenderer* renderer = 0;
 #if wxCHECK_VERSION(2, 9, 2) && defined(wxUSE_CAIRO) && wxUSE_CAIRO
-        wxGraphicsRenderer* renderer = wxGraphicsRenderer::GetCairoRenderer();
+        renderer = wxGraphicsRenderer::GetCairoRenderer();
+#endif
         if (!renderer)
             renderer = wxGraphicsRenderer::GetDefaultRenderer();
+        ASSERT(renderer);
         wxGraphicsContext* context = renderer->CreateContext(*pdc);
         wxGCDC gcdc(context);
-#else
-        wxGCDC gcdc(pdc);
-#endif
         if (!gcdc.IsOk())
             return false;
 
