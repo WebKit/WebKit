@@ -143,10 +143,6 @@ namespace WebCore {
         void clearForNavigation();
         void clearForClose();
 
-        // FIXME: Need comment. User Gesture related.
-        bool inlineCode() const { return m_inlineCode; }
-        void setInlineCode(bool value) { m_inlineCode = value; }
-
         void finishedWithEvent(Event*) { }
 
         // Evaluate JavaScript in a new isolated world. The script gets its own
@@ -163,7 +159,7 @@ namespace WebCore {
         v8::Local<v8::Value> evaluate(const ScriptSourceCode&, Node*);
 
         // Run an already compiled script.
-        v8::Local<v8::Value> runScript(v8::Handle<v8::Script>, bool isInlineCode);
+        v8::Local<v8::Value> runScript(v8::Handle<v8::Script>);
 
         // Call the function with the given receiver and arguments.
         v8::Local<v8::Value> callFunction(v8::Handle<v8::Function>, v8::Handle<v8::Object>, int argc, v8::Handle<v8::Value> argv[]);
@@ -298,10 +294,6 @@ namespace WebCore {
 
         // For the moment, we have one of these.  Soon we will have one per DOMWrapperWorld.
         RefPtr<V8DOMWindowShell> m_windowShell;
-
-        // True for <a href="javascript:foo()"> and false for <script>foo()</script>.
-        // Only valid during execution.
-        bool m_inlineCode;
 
         // All of the extensions registered with the context.
         static V8Extensions m_extensions;

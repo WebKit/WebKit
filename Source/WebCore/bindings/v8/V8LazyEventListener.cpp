@@ -123,7 +123,7 @@ void V8LazyEventListener::prepareListenerObject(ScriptExecutionContext* context)
     v8::Handle<v8::String> codeExternalString = v8ExternalString(code);
     v8::Handle<v8::Script> script = V8Proxy::compileScript(codeExternalString, m_sourceURL, m_position);
     if (!script.IsEmpty()) {
-        v8::Local<v8::Value> value = proxy->runScript(script, false);
+        v8::Local<v8::Value> value = proxy->runScript(script);
         if (!value.IsEmpty()) {
             ASSERT(value->IsFunction());
 

@@ -189,7 +189,6 @@ static v8::Local<v8::Value> handleMaxRecursionDepthExceeded()
 V8Proxy::V8Proxy(Frame* frame)
     : m_frame(frame)
     , m_windowShell(V8DOMWindowShell::create(frame))
-    , m_inlineCode(false)
 {
 }
 
@@ -374,10 +373,7 @@ v8::Local<v8::Value> V8Proxy::evaluate(const ScriptSourceCode& source, Node* nod
 
         PlatformSupport::traceEventBegin("v8.run", node, "");
 #endif
-        // Set inlineCode to true for <a href="javascript:doSomething()">
-        // and false for <script>doSomething</script>. We make a rough guess at
-        // this based on whether the script source has a URL.
-        result = runScript(script, source.url().string().isNull());
+        result = runScript(script);
     }
 #if PLATFORM(CHROMIUM)
     PlatformSupport::traceEventEnd("v8.run", node, "");
@@ -388,7 +384,7 @@ v8::Local<v8::Value> V8Proxy::evaluate(const ScriptSourceCode& source, Node* nod
     return result;
 }
 
-v8::Local<v8::Value> V8Proxy::runScript(v8::Handle<v8::Script> script, bool isInlineCode)
+v8::Local<v8::Value> V8Proxy::runScript(v8::Handle<v8::Script> script)
 {
     if (script.IsEmpty())
         return notHandledByInterceptor();
@@ -399,11 +395,6 @@ v8::Local<v8::Value> V8Proxy::runScript(v8::Handle<v8::Script> script, bool isIn
 
     if (handleOutOfMemory())
         ASSERT(script.IsEmpty());
-
-    // Save the previous value of the inlineCode flag and update the flag for
-    // the duration of the script invocation.
-    bool previousInlineCode = inlineCode();
-    setInlineCode(isInlineCode);
 
     // Keep Frame (and therefore ScriptController and V8Proxy) alive.
     RefPtr<Frame> protect(frame());
@@ -430,9 +421,6 @@ v8::Local<v8::Value> V8Proxy::runScript(v8::Handle<v8::Script> script, bool isIn
 
     if (result.IsEmpty())
         return notHandledByInterceptor();
-
-    // Restore inlineCode flag.
-    setInlineCode(previousInlineCode);
 
     if (v8::V8::IsDead())
         handleFatalErrorInV8();

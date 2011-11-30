@@ -1,3 +1,20 @@
+2011-11-30  Rafael Weinstein  <rafaelw@chromium.org>
+
+        Remove unused isInlineCode from V8Proxy
+        https://bugs.webkit.org/show_bug.cgi?id=73341
+
+        Reviewed by Adam Barth.
+
+        No tests needed. This patch only removes unnecessary code.
+
+        * bindings/v8/V8LazyEventListener.cpp:
+        (WebCore::V8LazyEventListener::prepareListenerObject):
+        * bindings/v8/V8Proxy.cpp:
+        (WebCore::V8Proxy::V8Proxy):
+        (WebCore::V8Proxy::evaluate):
+        (WebCore::V8Proxy::runScript):
+        * bindings/v8/V8Proxy.h:
+
 2011-11-30  Andrew Wason  <rectalogic@rectalogic.com>
 
         Replace Qt QThread threading back-end with pthread/Win32 threading back-ends
