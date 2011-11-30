@@ -69,3 +69,9 @@ def get_build_path():
 
 def build_path(*args):
     return os.path.join(*(get_build_path(),) + args)
+
+
+def number_of_cpus():
+    process = subprocess.Popen([script_path('num-cpus')], stdout=subprocess.PIPE)
+    stdout = process.communicate()[0]
+    return int(stdout)

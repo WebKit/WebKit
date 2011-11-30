@@ -1,0 +1,46 @@
+#!/usr/bin/env python
+# Copyright (C) 2011 Igalia S.L.
+#
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2 of the License, or (at your option) any later version.
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public
+# License along with this library; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+
+import sys
+
+__gtk_tools_directory = os.path.abspath(os.path.dirname(__file__))
+sys.path.append(__gtk_tools_directory)
+import common
+
+build_policy = 'updated'
+
+__module_file_path = os.path.join(__gtk_tools_directory, 'jhbuild.modules')
+moduleset = 'file://' + __module_file_path
+
+modules = [ 'webkitgtk-testing-dependencies' ]
+checkoutroot = os.path.abspath(common.top_level_path('WebKitBuild','Dependencies', 'Source'))
+prefix = os.path.abspath(common.top_level_path('WebKitBuild','Dependencies', 'Root'))
+
+nonotify = True
+notrayicon = True
+os.environ['MAKEFLAGS'] = '-j' + str(common.number_of_cpus())
+
+# Use system libraries while building.
+if use_lib64:
+    _libdir = 'lib64'
+else:
+    _libdir = 'lib'
+addpath('PKG_CONFIG_PATH', os.path.join(os.sep, 'usr', _libdir, 'pkgconfig'))
+addpath('PKG_CONFIG_PATH', os.path.join(os.sep, 'usr', 'share', 'pkgconfig'))
+
+addpath('XDG_DATA_DIRS', '/usr/share')
+addpath('XDG_CONFIG_DIRS', '/etc/xdg')

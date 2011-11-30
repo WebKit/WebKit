@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<!DOCTYPE moduleset SYSTEM "moduleset.dtd">
+<?xml-stylesheet type="text/xsl" href="moduleset.xsl"?>
+<moduleset>
+
+  <metamodule id="webkitgtk-testing-dependencies">
+    <dependencies>
+      <dep package="fonts"/>
+    </dependencies>
+  </metamodule>
+
+  <repository type="tarball" name="github.com"
+      href="https://github.com"/>
+
+  <autotools id="fonts"
+             skip-autogen="true">
+    <branch module="downloads/mrobinson/webkitgtk-test-fonts/webkitgtk-test-fonts-0.0.1.tar.gz" version="0.0.1"
+            repo="github.com"
+            hash="sha256:df40960ec98bd23de2f6ea8f5135ffc9485929aeddb4f08be5144881a1fd3887"
+            md5sum="2c752a694f41f3ff7aed6e3015250f69" size="6635293">
+    </branch>
+  </autotools>
+
+</moduleset>
