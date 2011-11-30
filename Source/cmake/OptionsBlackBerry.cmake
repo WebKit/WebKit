@@ -39,8 +39,6 @@ ADD_DEFINITIONS(-D__QNXNTO__)
 ADD_DEFINITIONS(-D_FILE_OFFSET_BITS=64)
 ADD_DEFINITIONS(-D_LARGEFILE64_SOURCE)
 
-SET(WEBKIT_BUILDINFO_GENERATOR perl ${TOOLS_DIR}/Scripts/generate-buildinfo)
-
 # Find a library only in the staging directory (which is the CMAKE_INSTALL_PATH)
 # TODO: CMAKE_INSTALL_PATH may not be staging directory.
 MACRO(FIND_STAGING_LIBRARY _var _libname)

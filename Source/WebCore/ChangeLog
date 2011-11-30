@@ -1,3 +1,12 @@
+2011-11-30  Mary Wu  <mary.wu@torchmobile.com.cn>
+
+        remove buildinformation from BlackBerry porting build system
+        https://bugs.webkit.org/show_bug.cgi?id=73276
+
+        Reviewed by Daniel Bates.
+
+        * PlatformBlackBerry.cmake: remove generated files BuildInformation.cpp/.h
+
 2011-11-30  Luke Macpherson   <macpherson@chromium.org>
 
         Implement Zoom Property in CSSSStyleApplyProperty.
