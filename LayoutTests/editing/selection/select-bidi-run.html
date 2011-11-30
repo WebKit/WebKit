@@ -8,6 +8,7 @@
 dt { width: 15ex; padding: 0px 10px; margin: 0px; }
 dd { font-size: 0.6em; margin: 0px; padding: 0px 10px; }
 .target { background-color: #bbeeff; }
+.targetContainer { position: absolute; left: 10px; top: 0px; z-index: -5; }
 </style>
 </head>
 <body>
@@ -44,6 +45,9 @@ Do the same by a mouse drag from right to left and expectations are after |.</p>
 <dt contenteditable><span class="target">אבג 123</span></dt>
 <dd>1,12, 123,C 123,BC 123,ABC 123|A,AB,ABC,ABC ,ABC 12,ABC 1,ABC 123</dd>
 
+<dt contenteditable style="position: relative;">aאבגb<div class="targetContainer">a<span class="target">אבג</span>b</div></dt>
+<dd>C,BC,ABC|A,AB,ABC</dd>
+
 <!--<dt contenteditable><span class="target">אבג 123 - 456</span></dt>
 <dd>1,12, 123,C 123,BC 123,ABC 123|A,AB,ABC,ABC ,ABC 12,ABC 1,ABC 123</dd>-->
 
@@ -70,6 +74,13 @@ function assertEqual(expected, actual) {
 function selectByMouseDragAndVerifyResult(target, leftToRight, expectations) {
     var y = target.offsetTop + target.offsetHeight / 2;
     var left = target.offsetLeft;
+
+    offsetParent = target.offsetParent;
+    while (offsetParent) {
+        y += offsetParent.offsetTop;
+        left += offsetParent.offsetLeft;
+        offsetParent = offsetParent.offsetParent;
+    }
 
     var startX = left + (leftToRight ? 0 : target.offsetWidth);
     eventSender.dragMode = false;
@@ -114,6 +125,7 @@ if (window.layoutTestController) {
         testExpectations[i].style.display = null;
 
         var target = tests[i].getElementsByClassName('target')[0];
+        var relativeTargets = tests[i].getElementsByClassName('relativeTarget');
         var testExpectation = testExpectations[i].textContent;
 
         debug('Test "' + target.textContent.fold() + '" in "' + target.parentNode.textContent.fold() + '":');

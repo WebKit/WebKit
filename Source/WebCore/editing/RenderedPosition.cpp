@@ -211,7 +211,7 @@ Position RenderedPosition::positionAtLeftBoundaryOfBiDiRun() const
     if (atLeftmostOffsetInBox())
         return createLegacyEditingPosition(m_renderer->node(), m_offset);
 
-    return createLegacyEditingPosition(nextLeafChild()->renderer()->node(), m_offset);
+    return createLegacyEditingPosition(nextLeafChild()->renderer()->node(), nextLeafChild()->caretLeftmostOffset());
 }
 
 Position RenderedPosition::positionAtRightBoundaryOfBiDiRun() const
@@ -221,7 +221,7 @@ Position RenderedPosition::positionAtRightBoundaryOfBiDiRun() const
     if (atRightmostOffsetInBox())
         return createLegacyEditingPosition(m_renderer->node(), m_offset);
 
-    return createLegacyEditingPosition(prevLeafChild()->renderer()->node(), m_offset);
+    return createLegacyEditingPosition(prevLeafChild()->renderer()->node(), prevLeafChild()->caretRightmostOffset());
 }
 
 LayoutRect RenderedPosition::absoluteRect(int* extraWidthToEndOfLine) const

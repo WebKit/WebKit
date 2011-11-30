@@ -112,6 +112,16 @@ PASS selected "ABC 12"
 PASS selected "ABC 1"
 FAIL selected "123" but expected "ABC 123"
 
+Test "ABC" in "aABCb":
+Selecting from left to right
+PASS selected "C"
+PASS selected "BC"
+PASS selected "ABC"
+Selecting from right to left
+PASS selected "A"
+PASS selected "AB"
+PASS selected "ABC"
+
 PASS successfullyParsed is true
 
 TEST COMPLETE
