@@ -640,6 +640,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\Tests\WTF\TemporarilyChange.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\Tests\WTF\VectorBasic.cpp"
 					>
 				</File>

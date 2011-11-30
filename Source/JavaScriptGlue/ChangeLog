@@ -1,3 +1,12 @@
+2011-11-29  David Levin  <levin@chromium.org>
+
+        Add a way to revert a variable to its previous value after leaving a scope.
+        https://bugs.webkit.org/show_bug.cgi?id=73371
+
+        Reviewed by Adam Barth.
+
+        * ForwardingHeaders/wtf/TemporarilyChange.h: Added.
+
 2011-11-11  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Add jsCast to replace static_cast

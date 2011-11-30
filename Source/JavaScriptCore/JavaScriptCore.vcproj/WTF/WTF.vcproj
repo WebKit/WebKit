@@ -1153,6 +1153,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\wtf\TemporarilyChange.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\wtf\Threading.cpp"
 			>
 		</File>

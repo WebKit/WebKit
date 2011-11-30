@@ -1,3 +1,18 @@
+2011-11-29  David Levin  <levin@chromium.org>
+
+        Add a way to revert a variable to its previous value after leaving a scope.
+        https://bugs.webkit.org/show_bug.cgi?id=73371
+
+        Reviewed by Adam Barth.
+
+        In case anyone from Chromium sees this, it is nearly identical to AutoReset
+        but if the same name were used, it causes unnecessary ambiguity.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * wtf/TemporarilyChange.h: Added.
+        (WTF::TemporarilyChange::TemporarilyChange):
+        (WTF::TemporarilyChange::~TemporarilyChange):
+
 2011-11-29  Sam Weinig  <sam@webkit.org>
 
         Add COMPILER_SUPPORTS macro to allow for compiler feature testing
