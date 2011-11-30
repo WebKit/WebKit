@@ -26,7 +26,7 @@
 module storage {
 
     interface StorageEvent : Event {
-        readonly attribute [ConvertNullStringTo=Null] DOMString key;
+        readonly attribute DOMString key;
         readonly attribute [ConvertNullStringTo=Null] DOMString oldValue;
         readonly attribute [ConvertNullStringTo=Null] DOMString newValue;
         readonly attribute DOMString url;

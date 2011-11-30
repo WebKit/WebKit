@@ -86,7 +86,7 @@ function step5()
 function step6()
 {
     shouldBe("storageEventList.length", "8");
-    shouldBeNull("storageEventList[7].key");
+    shouldBeEqualToString("storageEventList[7].key", "");
     shouldBeNull("storageEventList[7].oldValue");
     shouldBeNull("storageEventList[7].newValue");
  
