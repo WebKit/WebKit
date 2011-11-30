@@ -29556,10 +29556,6 @@
 					Name="filters"
 					>
 					<File
-						RelativePath="..\platform\graphics\filters\CustomFilterOperation.h"
-						>
-					</File>
-					<File
 						RelativePath="..\platform\graphics\filters\DistantLightSource.cpp"
 						>
 					</File>
@@ -29737,18 +29733,6 @@
 					</File>
 					<File
 						RelativePath="..\platform\graphics\filters\FilterEffect.h"
-						>
-					</File>
-					<File
-						RelativePath="..\platform\graphics\filters\FilterOperation.h"
-						>
-					</File>
-					<File
-						RelativePath="..\platform\graphics\filters\FilterOperations.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\platform\graphics\filters\FilterOperations.h"
 						>
 					</File>
 					<File
@@ -40076,6 +40060,22 @@
 				</File>
 				<File
 					RelativePath="..\rendering\style\FillLayer.h"
+					>
+				</File>
+				<File
+					RelativePath="..\rendering\style\CustomFilterOperation.h"
+					>
+				</File>
+				<File
+					RelativePath="..\rendering\style\FilterOperation.h"
+					>
+				</File>
+				<File
+					RelativePath="..\rendering\style\FilterOperations.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\rendering\style\FilterOperations.h"
 					>
 				</File>
 				<File

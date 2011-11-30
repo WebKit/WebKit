@@ -1124,7 +1124,6 @@ SET(WebCore_SOURCES
     platform/graphics/filters/FETile.cpp
     platform/graphics/filters/FETurbulence.cpp
     platform/graphics/filters/FilterEffect.cpp
-    platform/graphics/filters/FilterOperations.cpp
     platform/graphics/filters/LightSource.cpp
     platform/graphics/filters/PointLightSource.cpp
     platform/graphics/filters/SpotLightSource.cpp
@@ -1306,6 +1305,7 @@ SET(WebCore_SOURCES
     rendering/style/ContentData.cpp
     rendering/style/CounterDirectives.cpp
     rendering/style/FillLayer.cpp
+    rendering/style/FilterOperations.cpp
     rendering/style/KeyframeList.cpp
     rendering/style/NinePieceImage.cpp
     rendering/style/QuotesData.cpp

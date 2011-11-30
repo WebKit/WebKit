@@ -2068,7 +2068,6 @@ HEADERS += \
     platform/graphics/BitmapImage.h \
     platform/graphics/Color.h \
     platform/graphics/CrossfadeGeneratedImage.h \
-    platform/graphics/filters/CustomFilterOperation.h \
     platform/graphics/filters/FEBlend.h \
     platform/graphics/filters/FEColorMatrix.h \
     platform/graphics/filters/FEComponentTransfer.h \
@@ -2087,8 +2086,6 @@ HEADERS += \
     platform/graphics/filters/FETile.h \
     platform/graphics/filters/FETurbulence.h \
     platform/graphics/filters/FilterEffect.h \
-    platform/graphics/filters/FilterOperation.h \
-    platform/graphics/filters/FilterOperations.h \
     platform/graphics/filters/LightSource.h \
     platform/graphics/filters/SourceAlpha.h \
     platform/graphics/filters/SourceGraphic.h \
@@ -2360,7 +2357,10 @@ HEADERS += \
     rendering/style/CounterDirectives.h \
     rendering/style/CursorData.h \
     rendering/style/CursorList.h \
+    rendering/style/CustomFilterOperation.h \
     rendering/style/FillLayer.h \
+    rendering/style/FilterOperation.h \
+    rendering/style/FilterOperations.h \
     rendering/style/KeyframeList.h \
     rendering/style/NinePieceImage.h \
     rendering/style/QuotesData.h \
@@ -3246,7 +3246,6 @@ contains(DEFINES, ENABLE_FILTERS=1) {
         platform/graphics/filters/FETile.cpp \
         platform/graphics/filters/FETurbulence.cpp \
         platform/graphics/filters/FilterEffect.cpp \
-        platform/graphics/filters/FilterOperations.cpp \
         platform/graphics/filters/LightSource.cpp \
         platform/graphics/filters/PointLightSource.cpp \
         platform/graphics/filters/SpotLightSource.cpp \
@@ -3254,7 +3253,8 @@ contains(DEFINES, ENABLE_FILTERS=1) {
         platform/graphics/filters/SourceGraphic.cpp \
         platform/graphics/filters/arm/FECompositeArithmeticNEON.cpp \
         platform/graphics/filters/arm/FELightingNEON.cpp \
-        platform/graphics/filters/arm/FEGaussianBlurNEON.cpp
+        platform/graphics/filters/arm/FEGaussianBlurNEON.cpp \
+        rendering/style/FilterOperations.cpp
 }
 
 contains(DEFINES, ENABLE_MATHML=1) {

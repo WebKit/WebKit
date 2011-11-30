@@ -1,3 +1,23 @@
+2011-11-30  Alexandru Chiculita  <achicu@adobe.com>
+
+        FilterOperation* should stay in rendering/style, because it is directly referenced from RenderStyle
+        https://bugs.webkit.org/show_bug.cgi?id=72539
+
+        Reviewed by Dean Jackson.
+
+        No new tests, just moving some files.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * rendering/style/CustomFilterOperation.h: Renamed from Source/WebCore/platform/graphics/filters/CustomFilterOperation.h.
+        * rendering/style/FilterOperation.h: Renamed from Source/WebCore/platform/graphics/filters/FilterOperation.h.
+        * rendering/style/FilterOperations.cpp: Renamed from Source/WebCore/platform/graphics/filters/FilterOperations.cpp.
+        * rendering/style/FilterOperations.h: Renamed from Source/WebCore/platform/graphics/filters/FilterOperations.h.
+
 2011-11-29  Kentaro Hara  <haraken@chromium.org>
 
         StorageEvent.key should not be nullable
