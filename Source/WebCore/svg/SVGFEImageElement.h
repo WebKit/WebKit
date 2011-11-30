@@ -56,6 +56,7 @@ private:
     virtual void addSubresourceAttributeURLs(ListHashSet<KURL>&) const;
     virtual PassRefPtr<FilterEffect> build(SVGFilterBuilder*, Filter*);
 
+    void invalidateImageResource();
     void requestImageResource();
 
     BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGFEImageElement)

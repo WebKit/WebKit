@@ -1,0 +1,14 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (85,0) size 330x315
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+      RenderSVGResourceFilter {filter} [id="image"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+        [feImage image-size="200x200"]
+      RenderSVGResourceFilter {filter} [id="flood"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+        [feFlood flood-color="#008000" flood-opacity="1.00"]
+      RenderSVGPath {circle} at (0,0) size 250x150 [fill={[type=SOLID] [color=#0000FF]}] [cx=0.00] [cy=0.00] [r=100.00]
+    RenderSVGPath {rect} at (85,0) size 180x166 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
+      [filter="image"] RenderSVGResourceFilter {filter} at (-10,-10) size 120x120
+    RenderSVGPath {rect} at (235,135) size 180x180 [fill={[type=SOLID] [color=#000000]}] [x=100.00] [y=100.00] [width=100.00] [height=100.00]
+      [filter="flood"] RenderSVGResourceFilter {filter} at (90,90) size 120x120

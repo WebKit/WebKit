@@ -69,15 +69,28 @@ SVGFEImageElement::~SVGFEImageElement()
         m_cachedImage->removeClient(this);
 }
 
-void SVGFEImageElement::requestImageResource()
+void SVGFEImageElement::invalidateImageResource()
 {
     if (m_cachedImage) {
         m_cachedImage->removeClient(this);
         m_cachedImage = 0;
     }
 
-    Element* hrefElement = SVGURIReference::targetElementFromIRIString(href(), document());
+    m_targetImage.clear();
+}
+
+void SVGFEImageElement::requestImageResource()
+{
+    invalidateImageResource();
+
+    String fragmentIdentifier;
+    Element* hrefElement = SVGURIReference::targetElementFromIRIString(href(), document(), &fragmentIdentifier);
+
     if (hrefElement && hrefElement->isSVGElement() && hrefElement->renderer())
+        return;
+
+    // We have what appears to be a local fragment identifier, but it didn't resolve yet.
+    if (!fragmentIdentifier.isEmpty())
         return;
 
     ResourceRequest request(ownerDocument()->completeURL(href()));
@@ -139,8 +152,13 @@ void SVGFEImageElement::svgAttributeChanged(const QualifiedName& attrName)
         return;
     }
 
-    // FIXME: This can't be correct, I'm just preserving existing code. <feImage> + SVG DOM 'href' changes need testing.
-    if (SVGLangSpace::isKnownAttribute(attrName) || SVGExternalResourcesRequired::isKnownAttribute(attrName) || SVGURIReference::isKnownAttribute(attrName))
+    if (SVGURIReference::isKnownAttribute(attrName)) {
+        invalidateImageResource();
+        invalidate();
+        return;
+    }
+
+    if (SVGLangSpace::isKnownAttribute(attrName) || SVGExternalResourcesRequired::isKnownAttribute(attrName))
         return;
 
     ASSERT_NOT_REACHED();
@@ -162,6 +180,9 @@ void SVGFEImageElement::notifyFinished(CachedResource*)
 
 PassRefPtr<FilterEffect> SVGFEImageElement::build(SVGFilterBuilder*, Filter* filter)
 {
+    if (!m_cachedImage && !m_targetImage)
+        requestImageResource();
+
     if (!m_cachedImage && !m_targetImage) {
         Element* hrefElement = SVGURIReference::targetElementFromIRIString(href(), document());
         if (!hrefElement || !hrefElement->isSVGElement())
@@ -172,6 +193,10 @@ PassRefPtr<FilterEffect> SVGFEImageElement::build(SVGFilterBuilder*, Filter* fil
             return 0;
 
         IntRect targetRect = enclosingIntRect(renderer->objectBoundingBox());
+
+        if (targetRect.isEmpty())
+            return 0;
+
         m_targetImage = ImageBuffer::create(targetRect.size(), ColorSpaceLinearRGB);
 
         AffineTransform contentTransformation;

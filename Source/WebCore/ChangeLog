@@ -1,3 +1,26 @@
+2011-11-30  Tim Horton  <timothy_horton@apple.com>
+
+        feImage referencing a primitive draws incorrectly
+        https://bugs.webkit.org/show_bug.cgi?id=71731
+        <rdar://problem/10408178>
+
+        Reviewed by Simon Fraser.
+
+        If the target of an <feImage> appears to be a local fragment identifier, but
+        it hasn't resolved yet, defer resolution instead of loading a bogus image.
+
+        Invalidate <feImage> if the xlink:href attribute changes.
+
+        Don't attempt to render an <feImage> if the referenced element is of size 0x0.
+
+        Tests: svg/filters/feImage-reference-invalidation.svg
+               svg/filters/feImage-reference-svg-primitive.svg
+               svg/filters/feImage-zero-size-crash.svg
+
+        * svg/SVGFEImageElement.cpp:
+        (WebCore::SVGFEImageElement::parseMappedAttribute):
+        (WebCore::SVGFEImageElement::build):
+
 2011-11-30  Robin Dunn  <robin@alldunn.com>
 
         [wx] Ensure we always notify the popup client that the popup
