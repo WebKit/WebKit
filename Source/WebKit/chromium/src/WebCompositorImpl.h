@@ -52,8 +52,8 @@ private:
     static void shutdown();
 
     static bool s_initialized;
-    static OwnPtr<WebCore::CCThread> s_mainThread;
-    static OwnPtr<WebCore::CCThread> s_implThread;
+    static WebCore::CCThread* s_mainThread;
+    static WebCore::CCThread* s_implThread;
 };
 
 }

@@ -1,3 +1,13 @@
+2011-11-29  Nat Duca  <nduca@chromium.org>
+
+        Unreviewed. Fix clang build by using raw pointers instead of static OwnPtrs
+        for WebCompositor managment.
+
+        * src/WebCompositorImpl.cpp:
+        (WebKit::WebCompositorImpl::initialize):
+        (WebKit::WebCompositorImpl::shutdown):
+        * src/WebCompositorImpl.h:
+
 2011-11-18  Nat Duca  <nduca@chromium.org>
 
         [chromium] Enable threaded compositing via CCThreadProxy::hasThread only
