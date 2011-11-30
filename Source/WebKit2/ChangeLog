@@ -1,3 +1,10 @@
+2011-11-30  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Unreviewed prospective mac build fix after r101450.
+
+        * Platform/mac/ModuleMac.mm:
+        (WebKit::Module::unload): leakRef is declared with attribute warn_unused_result.
+
 2011-11-30  Adenilson Cavalcanti  <adenilson.silva@openbossa.org>
 
         [Qt][WK2] Implement permission API for Qt port
