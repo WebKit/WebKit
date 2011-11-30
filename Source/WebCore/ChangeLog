@@ -1,3 +1,30 @@
+2011-11-30  Brent Fulgham  <bfulgham@webkit.org>
+
+        [WinCairo] Correct SimpleFontData implementation to match Apple results.
+        https://bugs.webkit.org/show_bug.cgi?id=73474
+
+        Reviewed by Adam Roben.
+
+        Tested by existing dom/xhtml/level3/core/nodegetbaseuri05.xhtml
+        and dom/xhtml/level3/core/nodegetbaseuri07.xhtml
+
+        * platform/graphics/SimpleFontData.h: Add declaration for new
+          'ascentConsideringMacAscentHack' method.
+        * platform/graphics/win/SimpleFontDataCGWin.cpp: Remove implementation
+          of 'platformCharWidthInit' (moved to SimpleFontDataWin.cpp). Also
+          use new 'ascentConsideringMacAscentHack' method.
+        * platform/graphics/win/SimpleFontDataCairoWin.cpp: Remove dummy
+          implementation.
+        (WebCore::SimpleFontData::platformInit): Add logic to handle the
+          'shouldApplyMacAscentHack' case, as well as to identify system font
+          using the same criteria as the Apple port.
+        (WebCore::SimpleFontData::platformWidthForGlyph): Add check for
+          missing font data state.
+        * platform/graphics/win/SimpleFontDataWin.cpp:
+        (WebCore::SimpleFontData::ascentConsideringMacAscentHack): New
+        (WebCore::SimpleFontData::platformCharWidthInit): Moved from the
+          CG implementation.
+
 2011-11-30  David Levin  <levin@chromium.org>
 
         Make FrameView use TemporarilyChange in a few places.

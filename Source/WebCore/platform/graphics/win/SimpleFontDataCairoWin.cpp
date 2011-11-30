@@ -43,14 +43,20 @@ namespace WebCore {
 
 void SimpleFontData::platformInit()
 {
+    m_syntheticBoldOffset = m_platformData.syntheticBold() ? 1.0f : 0.f;
     m_scriptCache = 0;
     m_scriptFontProperties = 0;
     m_isSystemFont = false;
 
-    m_syntheticBoldOffset = m_platformData.syntheticBold() ? 1.0f : 0.f;
-
     if (m_platformData.useGDI())
        return initGDIFont();
+
+    if (!m_platformData.size()) {
+        m_fontMetrics.reset();
+        m_avgCharWidth = 0;
+        m_maxCharWidth = 0;
+        return;
+    }
 
     HDC hdc = GetDC(0);
     SaveDC(hdc);
@@ -66,6 +72,14 @@ void SimpleFontData::platformInit()
     float descent = textMetrics.tmDescent * metricsMultiplier;
     float xHeight = ascent * 0.56f; // Best guess for xHeight for non-Truetype fonts.
     float lineGap = textMetrics.tmExternalLeading * metricsMultiplier;
+
+    int faceLength = ::GetTextFace(hdc, 0, 0);
+    Vector<WCHAR> faceName(faceLength);
+    ::GetTextFace(hdc, faceLength, faceName.data());
+    m_isSystemFont = !wcscmp(faceName.data(), L"Lucida Grande");
+ 
+    ascent = ascentConsideringMacAscentHack(faceName.data(), ascent, descent);
+
     m_fontMetrics.setAscent(ascent);
     m_fontMetrics.setDescent(descent);
     m_fontMetrics.setLineGap(lineGap);
@@ -86,17 +100,8 @@ void SimpleFontData::platformInit()
     m_fontMetrics.setXHeight(xHeight);
     cairo_win32_scaled_font_done_font(scaledFont);
 
-    m_isSystemFont = false;
-    m_scriptCache = 0;
-    m_scriptFontProperties = 0;
-
     RestoreDC(hdc, -1);
     ReleaseDC(0, hdc);
-}
-
-void SimpleFontData::platformCharWidthInit()
-{
-    // charwidths are set in platformInit.
 }
 
 FloatRect SimpleFontData::platformBoundsForGlyph(Glyph glyph) const
@@ -111,6 +116,9 @@ float SimpleFontData::platformWidthForGlyph(Glyph glyph) const
 {
     if (m_platformData.useGDI())
        return widthForGDIGlyph(glyph);
+
+    if (!m_platformData.size())
+        return 0;
 
     HDC hdc = GetDC(0);
     SaveDC(hdc);

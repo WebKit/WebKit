@@ -199,6 +199,7 @@ public:
 #endif
     static void setShouldApplyMacAscentHack(bool);
     static bool shouldApplyMacAscentHack();
+    static float ascentConsideringMacAscentHack(const WCHAR*, float ascent, float descent);
 #endif
 
 #if PLATFORM(WX)

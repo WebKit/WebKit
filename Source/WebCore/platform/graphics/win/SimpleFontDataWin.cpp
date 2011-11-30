@@ -62,6 +62,24 @@ bool SimpleFontData::shouldApplyMacAscentHack()
     return g_shouldApplyMacAscentHack;
 }
 
+float SimpleFontData::ascentConsideringMacAscentHack(const WCHAR* faceName, float ascent, float descent)
+{
+    if (!shouldApplyMacAscentHack())
+        return ascent;
+
+    // This code comes from FontDataMac.mm. We only ever do this when running regression tests so that our metrics will match Mac.
+
+    // We need to adjust Times, Helvetica, and Courier to closely match the
+    // vertical metrics of their Microsoft counterparts that are the de facto
+    // web standard. The AppKit adjustment of 20% is too big and is
+    // incorrectly added to line spacing, so we use a 15% adjustment instead
+    // and add it to the ascent.
+    if (!wcscmp(faceName, L"Times") || !wcscmp(faceName, L"Helvetica") || !wcscmp(faceName, L"Courier"))
+        ascent += floorf(((ascent + descent) * 0.15f) + 0.5f);
+
+    return ascent;
+}
+
 void SimpleFontData::initGDIFont()
 {
     if (!m_platformData.size()) {
@@ -100,6 +118,16 @@ void SimpleFontData::initGDIFont()
      ReleaseDC(0, hdc);
 
      return;
+}
+
+void SimpleFontData::platformCharWidthInit()
+{
+    // GDI Fonts init charwidths in initGDIFont.
+    if (!m_platformData.useGDI()) {
+        m_avgCharWidth = 0.f;
+        m_maxCharWidth = 0.f;
+        initCharWidths();
+    }
 }
 
 void SimpleFontData::platformDestroy()
