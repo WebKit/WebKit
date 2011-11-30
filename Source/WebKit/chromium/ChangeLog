@@ -1,3 +1,17 @@
+2011-11-29  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r101418.
+        http://trac.webkit.org/changeset/101418
+        https://bugs.webkit.org/show_bug.cgi?id=73372
+
+        Chromium renderer crashes with ENABLE(MUTATION_OBSERVERS)
+        (Requested by aklein on #webkit).
+
+        * public/platform/WebThread.h:
+        * src/WebKit.cpp:
+        (WebKit::initialize):
+        (WebKit::shutdown):
+
 2011-11-29  Dirk Pranke  <dpranke@chromium.org>
 
         add webkit_user_agent to DRT and webkit_unit_tests
