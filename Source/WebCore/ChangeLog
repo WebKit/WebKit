@@ -1,3 +1,10 @@
+2011-11-30  Adam Roben  <aroben@apple.com>
+
+        Clang build fix after r101507
+
+        * websockets/WebSocketChannelClient.h:
+        (WebCore::WebSocketChannelClient::didUpdateBufferedAmount): Removed unused parameter.
+
 2011-11-30  Nikita Vasilyev  <me@elv1s.ru>
 
         Web Inspector: Preserve an indentation level when inserting a new line
