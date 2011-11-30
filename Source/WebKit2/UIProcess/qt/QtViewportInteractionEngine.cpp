@@ -358,7 +358,9 @@ void QtViewportInteractionEngine::ensureContentWithinViewportBoundary(bool immed
 
 void QtViewportInteractionEngine::reset()
 {
-    m_userInteractionFlags = UserHasNotInteractedWithContent;
+    ASSERT(!m_suspendCount);
+
+    m_hadUserInteraction = false;
 
     scroller()->stop();
     m_scaleAnimation->stop();
@@ -366,15 +368,14 @@ void QtViewportInteractionEngine::reset()
 
 void QtViewportInteractionEngine::applyConstraints(const Constraints& constraints)
 {
-    if (m_constraints == constraints)
-        return;
+    // We always have to apply the constrains even if they didn't change, as
+    // the initial scale might need to be applied.
 
     ViewportUpdateGuard guard(this);
 
     m_constraints = constraints;
 
-    bool userHasScaledContent = m_userInteractionFlags & UserHasScaledContent;
-    if (!userHasScaledContent) {
+    if (!m_hadUserInteraction) {
         qreal initialScale = innerBoundedCSSScale(m_constraints.initialScale);
         m_content->setScale(itemScaleFromCSS(initialScale));
     }
@@ -405,8 +406,7 @@ bool QtViewportInteractionEngine::panGestureActive() const
 
 void QtViewportInteractionEngine::panGestureStarted(const QPointF& touchPoint, qint64 eventTimestampMillis)
 {
-    // FIXME: suspend the Web engine (stop animated GIF, etc).
-    m_userInteractionFlags |= UserHasMovedContent;
+    m_hadUserInteraction = true;
     scroller()->handleInput(QScroller::InputPress, m_viewport->mapFromItem(m_content, touchPoint), eventTimestampMillis);
 }
 
@@ -440,7 +440,7 @@ void QtViewportInteractionEngine::interruptScaleAnimation()
 
 bool QtViewportInteractionEngine::pinchGestureActive() const
 {
-    return !!m_scaleUpdateDeferrer;
+    return m_pinchStartScale > 0;
 }
 
 void QtViewportInteractionEngine::pinchGestureStarted(const QPointF& pinchCenterInContentCoordinates)
@@ -450,11 +450,11 @@ void QtViewportInteractionEngine::pinchGestureStarted(const QPointF& pinchCenter
     if (!m_constraints.isUserScalable)
         return;
 
+    m_hadUserInteraction = true;
+
     m_scaleUpdateDeferrer = adoptPtr(new ViewportUpdateGuard(this));
 
     m_lastPinchCenterInViewportCoordinates = m_viewport->mapFromItem(m_content, pinchCenterInContentCoordinates);
-    m_userInteractionFlags |= UserHasScaledContent;
-    m_userInteractionFlags |= UserHasMovedContent;
     m_pinchStartScale = m_content->scale();
 
     // Reset the tiling look-ahead vector so that tiles all around the viewport will be requested on pinch-end.
@@ -491,6 +491,7 @@ void QtViewportInteractionEngine::pinchGestureEnded()
     if (!m_constraints.isUserScalable)
         return;
 
+    m_pinchStartScale = -1;
     ensureContentWithinViewportBoundary();
 }
 

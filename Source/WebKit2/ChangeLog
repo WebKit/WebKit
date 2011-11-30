@@ -1,3 +1,38 @@
+2011-11-30  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        [Qt] Clean up the Qt viewport interaction engine
+
+        Reviewed by Simon Hausmann.
+
+        * UIProcess/qt/QtViewportInteractionEngine.cpp:
+        (WebKit::QtViewportInteractionEngine::reset):
+
+            Make sure reset is not called while suspended.
+
+        (WebKit::QtViewportInteractionEngine::applyConstraints):
+
+            We always need to apply the constrains due to initial-scale.
+
+            Now that we only apply the constrains when we are ready to
+            paint, it is impossible for the user to have interacted with
+            the content in the case the viewport meta tag was declared
+            in the <head> tag, and it is thus always applied.
+
+        (WebKit::QtViewportInteractionEngine::panGestureStarted):
+        (WebKit::QtViewportInteractionEngine::pinchGestureActive):
+
+            Fix this method to actually do what it advertises, before
+            it would be true even if just animation a bounce back effect.
+
+        (WebKit::QtViewportInteractionEngine::pinchGestureStarted):
+        (WebKit::QtViewportInteractionEngine::pinchGestureEnded):
+        * UIProcess/qt/QtViewportInteractionEngine.h:
+
+            General, get rid of the interaction flags as we only need to
+            know whether the user interacted (panned, pinched, double-tapped).
+            Before we would still apply initial-scale if the user had panned
+            the content which can be pretty confusing.
+
 2011-11-30  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Unreviewed prospective mac build fix after r101450.

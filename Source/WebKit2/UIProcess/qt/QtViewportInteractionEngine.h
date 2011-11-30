@@ -130,13 +130,8 @@ private:
     int m_suspendCount;
     OwnPtr<ViewportUpdateGuard> m_scaleUpdateDeferrer;
     OwnPtr<ViewportUpdateGuard> m_scrollUpdateDeferrer;
-    enum UserInteractionFlag {
-        UserHasNotInteractedWithContent = 0,
-        UserHasMovedContent = 1,
-        UserHasScaledContent = 2,
-    };
-    Q_DECLARE_FLAGS(UserInteractionFlags, UserInteractionFlag);
-    UserInteractionFlags m_userInteractionFlags;
+
+    bool m_hadUserInteraction;
 
     class ScaleAnimation : public QVariantAnimation {
     public:
