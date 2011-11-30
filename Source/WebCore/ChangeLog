@@ -1,3 +1,16 @@
+2011-11-29  Philip Rogers  <pdr@google.com>
+
+        Fix for fill color not being applied inside visited links
+        https://bugs.webkit.org/show_bug.cgi?id=70434
+
+        Reviewed by Antti Koivisto.
+
+        Test: svg/custom/visited-link-color.svg
+
+        * rendering/style/SVGRenderStyle.h:
+        (WebCore::SVGRenderStyle::setFillPaint):
+        (WebCore::SVGRenderStyle::setStrokePaint):
+
 2011-11-29  David Levin  <levin@chromium.org>
 
         Add a way to revert a variable to its previous value after leaving a scope.

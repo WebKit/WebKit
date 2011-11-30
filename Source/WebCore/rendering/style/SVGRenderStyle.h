@@ -164,11 +164,11 @@ public:
                 fill.access()->paintUri = uri;
         }
         if (applyToVisitedLinkStyle) {
-            if (!(fill->paintType == type))
+            if (!(fill->visitedLinkPaintType == type))
                 fill.access()->visitedLinkPaintType = type;
-            if (!(fill->paintColor == color))
+            if (!(fill->visitedLinkPaintColor == color))
                 fill.access()->visitedLinkPaintColor = color;
-            if (!(fill->paintUri == uri))
+            if (!(fill->visitedLinkPaintUri == uri))
                 fill.access()->visitedLinkPaintUri = uri;
         }
     }
@@ -190,11 +190,11 @@ public:
                 stroke.access()->paintUri = uri;
         }
         if (applyToVisitedLinkStyle) {
-            if (!(stroke->paintType == type))
+            if (!(stroke->visitedLinkPaintType == type))
                 stroke.access()->visitedLinkPaintType = type;
-            if (!(stroke->paintColor == color))
+            if (!(stroke->visitedLinkPaintColor == color))
                 stroke.access()->visitedLinkPaintColor = color;
-            if (!(stroke->paintUri == uri))
+            if (!(stroke->visitedLinkPaintUri == uri))
                 stroke.access()->visitedLinkPaintUri = uri;
         }
     }
