@@ -1,3 +1,14 @@
+2011-11-30  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Remove dependency of Qt DRT on JavaScriptCore.
+
+        Reviewed by Csaba Osztrogonác.
+
+        * DumpRenderTree/WorkQueue.cpp: Include the correct header file we're using anyway,
+        instead of one that pulls in JavaScriptCore headers.
+        * DumpRenderTree/qt/DumpRenderTree.pro: There's no need to pull in the JSC headers
+        with load(javascriptcore).
+
 2011-11-30  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r101440 and r101442.
