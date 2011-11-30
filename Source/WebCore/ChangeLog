@@ -1,3 +1,23 @@
+2011-11-30  Andreas Kling  <kling@webkit.org>
+
+        REGRESSION(r101172): It made fast/dom/clone-node-style.html assert.
+        <http://webkit.org/b/73227>
+
+        Reviewed by Antti Koivisto.
+
+        r101172 inadvertently introduced a default assignment operator for CSSElementStyleDeclaration
+        which caused StyledElement::copyNonAttributeProperties() to associate the element's inline
+        style declaration with the element being cloned.
+
+        Replace CSSMutableStyleDeclaration::operator= by copyPropertiesAndStrictnessFrom()
+        that matches the old behavior.
+
+        * css/CSSMutableStyleDeclaration.cpp:
+        (WebCore::CSSMutableStyleDeclaration::copyPropertiesAndStrictnessFrom):
+        * css/CSSMutableStyleDeclaration.h:
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::copyNonAttributeProperties):
+
 2011-11-30  Mary Wu  <mary.wu@torchmobile.com.cn>
 
         remove buildinformation from BlackBerry porting build system

@@ -151,12 +151,11 @@ CSSMutableStyleDeclaration::~CSSMutableStyleDeclaration()
 {
 }
 
-CSSMutableStyleDeclaration& CSSMutableStyleDeclaration::operator=(const CSSMutableStyleDeclaration& other)
+void CSSMutableStyleDeclaration::copyPropertiesAndStrictnessFrom(const CSSMutableStyleDeclaration& other)
 {
     ASSERT(!m_iteratorCount);
     m_properties = other.m_properties;
     m_strictParsing = other.m_strictParsing;
-    return *this;
 }
 
 String CSSMutableStyleDeclaration::getPropertyValue(int propertyID) const

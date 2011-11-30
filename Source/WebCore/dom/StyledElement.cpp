@@ -433,7 +433,7 @@ void StyledElement::copyNonAttributeProperties(const Element *sourceElement)
     if (!source->m_inlineStyleDecl)
         return;
 
-    *getInlineStyleDecl() = *source->m_inlineStyleDecl;
+    getInlineStyleDecl()->copyPropertiesAndStrictnessFrom(*source->m_inlineStyleDecl);
     setIsStyleAttributeValid(source->isStyleAttributeValid());
     setIsSynchronizingStyleAttribute(source->isSynchronizingStyleAttribute());
     

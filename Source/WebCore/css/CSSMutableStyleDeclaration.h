@@ -76,7 +76,8 @@ public:
         return adoptRef(new CSSMutableStyleDeclaration(0, properties));
     }
 
-    CSSMutableStyleDeclaration& operator=(const CSSMutableStyleDeclaration&);
+    // Used by StyledElement::copyNonAttributeProperties().
+    void copyPropertiesAndStrictnessFrom(const CSSMutableStyleDeclaration&);
 
     typedef CSSMutableStyleDeclarationConstIterator const_iterator;
 
