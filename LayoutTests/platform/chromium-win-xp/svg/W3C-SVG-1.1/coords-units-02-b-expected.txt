@@ -1,0 +1,42 @@
+layer at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
+layer at (0,0) size 480x360
+  RenderSVGRoot {svg} at (0,0) size 480x360
+    RenderSVGContainer {g} at (0,20) size 399x256
+      RenderSVGText {text} at (60,20) size 316x19 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 316x19
+          chunk 1 text run 1 at (60.00,35.00) startOffset 0 endOffset 45 width 316.00: "CSS pixel coordinate to user space conversion"
+      RenderSVGContainer {g} at (25,20) size 20x20 [transform={m=((4.00,0.00)(0.00,4.00)) t=(5.00,0.00)}]
+        RenderSVGPath {circle} at (25,20) size 20x20 [fill={[type=SOLID] [color=#000000]}] [cx=7.50] [cy=7.50] [r=2.50]
+        RenderSVGPath {circle} at (29,24) size 12x12 [fill={[type=SOLID] [color=#FF0000]}] [cx=7.50] [cy=7.50] [r=1.50]
+      RenderSVGText {text} at (60,70) size 332x19 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 332x19
+          chunk 1 text run 1 at (60.00,85.00) startOffset 0 endOffset 47 width 332.00: "Percentage coordinates to user space conversion"
+      RenderSVGContainer {g} at (25,70) size 20x20 [transform={m=((4.00,0.00)(0.00,4.00)) t=(5.00,50.00)}]
+        RenderSVGPath {circle} at (25,70) size 20x20 [fill={[type=SOLID] [color=#000000]}] [cx=7.50] [cy=7.50] [r=2.50]
+        RenderSVGPath {circle} at (29,73) size 13x13 [fill={[type=SOLID] [color=#FF0000]}] [cx=7.50] [cy=7.50] [r=1.50]
+      RenderSVGText {text} at (60,125) size 289x19 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 289x19
+          chunk 1 text run 1 at (60.00,140.00) startOffset 0 endOffset 41 width 289.00: "CSS width/height to user space conversion"
+      RenderSVGContainer {g} at (10,115) size 40x40 [transform={m=((4.00,0.00)(0.00,4.00)) t=(30.00,115.00)}]
+        RenderSVGPath {rect} at (10,115) size 40x20 [fill={[type=SOLID] [color=#000000]}] [x=-5.00] [y=0.00] [width=10.00] [height=5.00]
+        RenderSVGPath {rect} at (10,135) size 40x20 [fill={[type=SOLID] [color=#FF0000]}] [x=-5.00] [y=5.00] [width=10.00] [height=5.00]
+      RenderSVGText {text} at (60,185) size 336x19 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 336x19
+          chunk 1 text run 1 at (60.00,200.00) startOffset 0 endOffset 48 width 336.00: "Percentage width/height to user space conversion"
+      RenderSVGContainer {g} at (10,175) size 40x41 [transform={m=((4.00,0.00)(0.00,4.00)) t=(30.00,175.00)}]
+        RenderSVGPath {rect} at (10,175) size 40x20 [fill={[type=SOLID] [color=#000000]}] [x=-5.00] [y=0.00] [width=10.00] [height=5.00]
+        RenderSVGPath {rect} at (10,195) size 40x21 [fill={[type=SOLID] [color=#FF0000]}] [x=-5.00] [y=5.00] [width=10.00] [height=5.00]
+      RenderSVGText {text} at (140,250) size 259x19 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 259x19
+          chunk 1 text run 1 at (140.00,265.00) startOffset 0 endOffset 36 width 259.00: "CSS and percentage length conversion"
+      RenderSVGContainer {g} at (0,244) size 146x32 [transform={m=((4.00,0.00)(4.00,4.00)) t=(30.00,260.00)}]
+        RenderSVGPath {circle} at (1,245) size 58x30 [fill={[type=SOLID] [color=#000000]}] [cx=0.00] [cy=0.00] [r=3.54]
+        RenderSVGPath {circle} at (41,245) size 58x30 [fill={[type=SOLID] [color=#FF0000]}] [cx=10.00] [cy=0.00] [r=3.54]
+        RenderSVGPath {circle} at (81,245) size 58x30 [fill={[type=SOLID] [color=#008000]}] [cx=20.00] [cy=0.00] [r=3.54]
+        RenderSVGPath {line} at (0,244) size 117x3 [stroke={[type=SOLID] [color=#CCCCCC] [stroke width=0.50]}] [x1=-3.54] [y1=-3.54] [x2=25.00] [y2=-3.54]
+        RenderSVGPath {line} at (29,273) size 117x3 [stroke={[type=SOLID] [color=#CCCCCC] [stroke width=0.50]}] [x1=-3.54] [y1=3.54] [x2=25.00] [y2=3.54]
+    RenderSVGText {text} at (10,304) size 261x46 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 261x46
+        chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 261.00: "$Revision: 1.4 $"
+    RenderSVGPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
