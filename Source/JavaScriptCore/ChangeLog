@@ -1,5 +1,15 @@
 2011-11-30  Simon Hausmann  <simon.hausmann@nokia.com>
 
+        Fix compilation with MingW.
+
+        Reviewed by Csaba Osztrogonác.
+
+        * wtf/ThreadingWin.cpp:
+        (WTF::initializeCurrentThreadInternal): MingW doesn't support MSVC exception handling, so for
+        the time being make the thread name setting unimplemented for MingW.
+
+2011-11-30  Simon Hausmann  <simon.hausmann@nokia.com>
+
         Unreviewed propective build fix for Qt/Windows part 2 after r101477.
 
         * wtf/ThreadSpecific.h: Fix the OS(WINDOWS) defines for the friend declaration for ThreadSpecific<T>::Data
