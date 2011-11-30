@@ -197,7 +197,7 @@ ScriptValue ScriptCallback::call(bool& hadException)
     for (size_t i = 0; i < m_arguments.size(); ++i)
         args[i] = m_arguments[i].v8Value();
 
-    v8::Handle<v8::Value> result = V8Proxy::callFunctionWithoutFrame(function, object, m_arguments.size(), args.get());
+    v8::Handle<v8::Value> result = V8Proxy::instrumentedCallFunction(0 /* page */, function, object, m_arguments.size(), args.get());
 
     if (exceptionCatcher.HasCaught()) {
         hadException = true;

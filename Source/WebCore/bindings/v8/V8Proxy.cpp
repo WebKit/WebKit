@@ -430,41 +430,18 @@ v8::Local<v8::Value> V8Proxy::runScript(v8::Handle<v8::Script> script)
 
 v8::Local<v8::Value> V8Proxy::callFunction(v8::Handle<v8::Function> function, v8::Handle<v8::Object> receiver, int argc, v8::Handle<v8::Value> args[])
 {
+    // Keep Frame (and therefore ScriptController and V8Proxy) alive.
+    RefPtr<Frame> protect(frame());
+    return V8Proxy::instrumentedCallFunction(m_frame->page(), function, receiver, argc, args);
+}
+
+v8::Local<v8::Value> V8Proxy::instrumentedCallFunction(Page* page, v8::Handle<v8::Function> function, v8::Handle<v8::Object> receiver, int argc, v8::Handle<v8::Value> args[])
+{
     V8GCController::checkMemoryUsage();
 
     if (recursionLevel() >= kMaxRecursionDepth)
         return handleMaxRecursionDepthExceeded();
 
-    // Keep Frame (and therefore ScriptController and V8Proxy) alive.
-    RefPtr<Frame> protect(frame());
-
-    v8::Local<v8::Value> result;
-    {
-        V8RecursionScope recursionScope;
-        result = V8Proxy::instrumentedCallFunction(m_frame->page(), function, receiver, argc, args);
-    }
-
-    didLeaveScriptContext();
-
-    if (v8::V8::IsDead())
-        handleFatalErrorInV8();
-
-    return result;
-}
-
-v8::Local<v8::Value> V8Proxy::callFunctionWithoutFrame(v8::Handle<v8::Function> function, v8::Handle<v8::Object> receiver, int argc, v8::Handle<v8::Value> args[])
-{
-    V8GCController::checkMemoryUsage();
-    v8::Local<v8::Value> result = function->Call(receiver, argc, args);
-
-    if (v8::V8::IsDead())
-        handleFatalErrorInV8();
-
-    return result;
-}
-
-v8::Local<v8::Value> V8Proxy::instrumentedCallFunction(Page* page, v8::Handle<v8::Function> function, v8::Handle<v8::Object> receiver, int argc, v8::Handle<v8::Value> args[])
-{
     InspectorInstrumentationCookie cookie;
     if (InspectorInstrumentation::hasFrontends()) {
         String resourceName("undefined");
@@ -476,8 +453,21 @@ v8::Local<v8::Value> V8Proxy::instrumentedCallFunction(Page* page, v8::Handle<v8
         }
         cookie = InspectorInstrumentation::willCallFunction(page, resourceName, lineNumber);
     }
-    v8::Local<v8::Value> result = function->Call(receiver, argc, args);
+
+    v8::Local<v8::Value> result;
+    {
+        V8RecursionScope recursionScope;
+        result = function->Call(receiver, argc, args);
+    }
+
+    // FIXME: Instrument any work that takes place when script exits to c++ (e.g. Mutation Observers).
+    didLeaveScriptContext();
+
     InspectorInstrumentation::didCallFunction(cookie);
+
+    if (v8::V8::IsDead())
+        handleFatalErrorInV8();
+
     return result;
 }
 

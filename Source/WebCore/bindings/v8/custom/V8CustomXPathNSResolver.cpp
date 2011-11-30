@@ -78,7 +78,7 @@ String V8CustomXPathNSResolver::lookupNamespaceURI(const String& prefix)
     v8::Handle<v8::Value> argv[argc] = { v8String(prefix) };
     v8::Handle<v8::Function> function = lookupNamespaceURIFunc.IsEmpty() ? v8::Handle<v8::Function>::Cast(m_resolver) : lookupNamespaceURIFunc;
 
-    v8::Handle<v8::Value> retval = V8Proxy::callFunctionWithoutFrame(function, m_resolver, argc, argv);
+    v8::Handle<v8::Value> retval = V8Proxy::instrumentedCallFunction(0 /* page */, function, m_resolver, argc, argv);
 
     // Eat exceptions from namespace resolver and return an empty string. This will most likely cause NAMESPACE_ERR.
     if (try_catch.HasCaught())
