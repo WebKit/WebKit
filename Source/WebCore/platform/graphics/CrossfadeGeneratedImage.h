@@ -26,7 +26,6 @@
 #ifndef CrossfadeGeneratedImage_h
 #define CrossfadeGeneratedImage_h
 
-#include "CachedImage.h"
 #include "GeneratedImage.h"
 #include "Image.h"
 #include "ImageObserver.h"
@@ -36,51 +35,28 @@
 namespace WebCore {
 
 class CSSCrossfadeValue;
-class CrossfadeSubimageObserverProxy;
 
 class CrossfadeGeneratedImage : public GeneratedImage {
-    friend class CrossfadeSubimageObserverProxy;
 public:
-    static PassRefPtr<CrossfadeGeneratedImage> create(CachedImage* fromImage, CachedImage* toImage, float percentage, ImageObserver* observer, IntSize crossfadeSize, const IntSize& size)
+    static PassRefPtr<CrossfadeGeneratedImage> create(Image* fromImage, Image* toImage, float percentage, IntSize crossfadeSize, const IntSize& size)
     {
-        return adoptRef(new CrossfadeGeneratedImage(fromImage, toImage, percentage, observer, crossfadeSize, size));
+        return adoptRef(new CrossfadeGeneratedImage(fromImage, toImage, percentage, crossfadeSize, size));
     }
-    virtual ~CrossfadeGeneratedImage();
 
 protected:
     virtual void draw(GraphicsContext*, const FloatRect& dstRect, const FloatRect& srcRect, ColorSpace styleColorSpace, CompositeOperator);
     virtual void drawPattern(GraphicsContext*, const FloatRect& srcRect, const AffineTransform& patternTransform, const FloatPoint& phase, ColorSpace styleColorSpace, CompositeOperator, const FloatRect& destRect);
 
-    CrossfadeGeneratedImage(CachedImage* fromImage, CachedImage* toImage, float percentage, ImageObserver*, IntSize crossfadeSize, const IntSize&);
-
-    void imageChanged(CachedImage*, const IntRect* = 0);
+    CrossfadeGeneratedImage(Image* fromImage, Image* toImage, float percentage, IntSize crossfadeSize, const IntSize&);
 
 private:
     void drawCrossfade(GraphicsContext*, const FloatRect& srcRect);
 
-    // These are owned by the CSSCrossfadeValue that owns us.
-    CachedImage* m_fromImage;
-    CachedImage* m_toImage;
+    Image* m_fromImage;
+    Image* m_toImage;
 
     float m_percentage;
     IntSize m_crossfadeSize;
-
-    ImageObserver* m_observer;
-    OwnPtr<CrossfadeSubimageObserverProxy> m_crossfadeSubimageObserver;
-};
-
-class CrossfadeSubimageObserverProxy : public CachedImageClient {
-public:
-    CrossfadeSubimageObserverProxy(CrossfadeGeneratedImage* ownerValue)
-        : m_ownerValue(ownerValue)
-        , m_ready(false) { }
-
-    virtual ~CrossfadeSubimageObserverProxy() { }
-    virtual void imageChanged(CachedImage*, const IntRect* = 0) OVERRIDE;
-    void setReady(bool ready) { m_ready = ready; }
-private:
-    CrossfadeGeneratedImage* m_ownerValue;
-    bool m_ready;
 };
 
 }
