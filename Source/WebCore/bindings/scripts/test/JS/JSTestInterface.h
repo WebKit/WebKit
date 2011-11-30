@@ -44,6 +44,7 @@ public:
     static JSC::JSObject* createPrototype(JSC::ExecState*, JSC::JSGlobalObject*);
     static bool getOwnPropertySlot(JSC::JSCell*, JSC::ExecState*, const JSC::Identifier& propertyName, JSC::PropertySlot&);
     static bool getOwnPropertyDescriptor(JSC::JSObject*, JSC::ExecState*, const JSC::Identifier& propertyName, JSC::PropertyDescriptor&);
+    static void put(JSC::JSCell*, JSC::ExecState*, const JSC::Identifier& propertyName, JSC::JSValue, JSC::PutPropertySlot&);
     static const JSC::ClassInfo s_info;
 
     static JSC::Structure* createStructure(JSC::JSGlobalData& globalData, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)
@@ -134,6 +135,11 @@ protected:
 
 // Attributes
 
+JSC::JSValue jsTestInterfaceStr1(JSC::ExecState*, JSC::JSValue, const JSC::Identifier&);
+JSC::JSValue jsTestInterfaceStr2(JSC::ExecState*, JSC::JSValue, const JSC::Identifier&);
+void setJSTestInterfaceStr2(JSC::ExecState*, JSC::JSObject*, JSC::JSValue);
+JSC::JSValue jsTestInterfaceStr3(JSC::ExecState*, JSC::JSValue, const JSC::Identifier&);
+void setJSTestInterfaceStr3(JSC::ExecState*, JSC::JSObject*, JSC::JSValue);
 JSC::JSValue jsTestInterfaceConstructor(JSC::ExecState*, JSC::JSValue, const JSC::Identifier&);
 
 } // namespace WebCore

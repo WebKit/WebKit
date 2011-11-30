@@ -876,8 +876,8 @@ sub GenerateHeader
         foreach (@{$dataNode->attributes}) {
             my $attribute = $_;
             $numCustomAttributes++ if $attribute->signature->extendedAttributes->{"Custom"} || $attribute->signature->extendedAttributes->{"JSCCustom"};
-            $numCustomAttributes++ if $attribute->signature->extendedAttributes->{"CustomGetter"} || $attribute->signature->extendedAttributes->{"JSCCustomGetter"};
-            $numCustomAttributes++ if $attribute->signature->extendedAttributes->{"CustomSetter"} || $attribute->signature->extendedAttributes->{"JSCCustomSetter"};
+            $numCustomAttributes++ if ($attribute->signature->extendedAttributes->{"CustomGetter"} || $attribute->signature->extendedAttributes->{"JSCCustomGetter"}) && !$attribute->signature->extendedAttributes->{"ImplementedBy"};
+            $numCustomAttributes++ if ($attribute->signature->extendedAttributes->{"CustomSetter"} || $attribute->signature->extendedAttributes->{"JSCCustomSetter"}) && !$attribute->signature->extendedAttributes->{"ImplementedBy"};
             if ($attribute->signature->extendedAttributes->{"CachedAttribute"}) {
                 push(@headerContent, "    JSC::WriteBarrier<JSC::Unknown> m_" . $attribute->signature->name . ";\n");
                 $numCachedAttributes++;
@@ -901,9 +901,9 @@ sub GenerateHeader
                 if ($attribute->type !~ /^readonly/) {
                     push(@headerContent, "    void set" . $codeGenerator->WK_ucfirst($attribute->signature->name) . "(JSC::ExecState*, JSC::JSValue);\n");
                 }
-            } elsif ($attribute->signature->extendedAttributes->{"CustomGetter"} || $attribute->signature->extendedAttributes->{"JSCCustomGetter"}) {
+            } elsif (($attribute->signature->extendedAttributes->{"CustomGetter"} || $attribute->signature->extendedAttributes->{"JSCCustomGetter"}) && !$attribute->signature->extendedAttributes->{"ImplementedBy"}) {
                 push(@headerContent, "    JSC::JSValue " . $codeGenerator->WK_lcfirst($attribute->signature->name) . "(JSC::ExecState*) const;\n");
-            } elsif ($attribute->signature->extendedAttributes->{"CustomSetter"} || $attribute->signature->extendedAttributes->{"JSCCustomSetter"}) {
+            } elsif (($attribute->signature->extendedAttributes->{"CustomSetter"} || $attribute->signature->extendedAttributes->{"JSCCustomSetter"}) && !$attribute->signature->extendedAttributes->{"ImplementedBy"}) {
                 if ($attribute->type !~ /^readonly/) {
                     push(@headerContent, "    void set" . $codeGenerator->WK_ucfirst($attribute->signature->name) . "(JSC::ExecState*, JSC::JSValue);\n");
                 }
@@ -1709,7 +1709,13 @@ sub GenerateImplementation
                 }
 
                 if ($attribute->signature->extendedAttributes->{"Custom"} || $attribute->signature->extendedAttributes->{"JSCCustom"} || $attribute->signature->extendedAttributes->{"CustomGetter"} || $attribute->signature->extendedAttributes->{"JSCCustomGetter"}) {
-                    push(@implContent, "    return castedThis->$implGetterFunctionName(exec);\n");
+                    if ($attribute->signature->extendedAttributes->{"ImplementedBy"}) {
+                        my $implementedBy = $attribute->signature->extendedAttributes->{"ImplementedBy"};
+                        $implIncludes{"JS${implementedBy}.h"} = 1;
+                        push(@implContent, "    return JS${implementedBy}::$implGetterFunctionName(castedThis, exec);\n");
+                    } else {
+                        push(@implContent, "    return castedThis->$implGetterFunctionName(exec);\n");
+                    }
                 } elsif ($attribute->signature->extendedAttributes->{"CheckNodeSecurity"}) {
                     $implIncludes{"JSDOMBinding.h"} = 1;
                     push(@implContent, "    $implClassName* imp = static_cast<$implClassName*>(castedThis->impl());\n");
@@ -1760,7 +1766,16 @@ sub GenerateImplementation
                             push(@implContent, "    JSValue result =  " . NativeToJSValue($attribute->signature, 0, $implClassName, "imp.$implGetterFunctionName()", "castedThis") . ";\n");
                         }
                     } else {
-                        my $getterExpression = "imp->" . $codeGenerator->GetterExpressionPrefix(\%implIncludes, $interfaceName, $attribute) . ")";
+                        my $getterExpressionPrefix = $codeGenerator->GetterExpressionPrefix(\%implIncludes, $interfaceName, $attribute);
+                        my $getterExpression;
+                        if ($attribute->signature->extendedAttributes->{"ImplementedBy"}) {
+                            my $implementedBy = $attribute->signature->extendedAttributes->{"ImplementedBy"};
+                            $implIncludes{"${implementedBy}.h"} = 1;
+                            $getterExpression = "${implementedBy}::${getterExpressionPrefix}imp)";
+                        } else {
+                            $getterExpression = "imp->" . $getterExpressionPrefix . ")";
+                        }
+
                         my $jsType = NativeToJSValue($attribute->signature, 0, $implClassName, $getterExpression, "castedThis");
                         push(@implContent, "    $implClassName* imp = static_cast<$implClassName*>(castedThis->impl());\n");
                         if ($codeGenerator->IsSVGAnimatedType($type)) {
@@ -1770,7 +1785,7 @@ sub GenerateImplementation
                             push(@implContent, "    JSValue result = $jsType;\n");
                         }
                     }
-                    
+
                     push(@implContent, "    m_" . $attribute->signature->name . ".set(exec->globalData(), this, result);\n") if ($attribute->signature->extendedAttributes->{"CachedAttribute"});
                     push(@implContent, "    return result;\n");
 
@@ -1883,7 +1898,13 @@ sub GenerateImplementation
                         }
 
                         if ($attribute->signature->extendedAttributes->{"Custom"} || $attribute->signature->extendedAttributes->{"JSCCustom"} || $attribute->signature->extendedAttributes->{"CustomSetter"} || $attribute->signature->extendedAttributes->{"JSCCustomSetter"}) {
-                            push(@implContent, "    static_cast<$className*>(thisObject)->set$implSetterFunctionName(exec, value);\n");
+                            if ($attribute->signature->extendedAttributes->{"ImplementedBy"}) {
+                                my $implementedBy = $attribute->signature->extendedAttributes->{"ImplementedBy"};
+                                $implIncludes{"JS${implementedBy}.h"} = 1;
+                                push(@implContent, "    JS${implementedBy}::set$implSetterFunctionName(static_cast<$className*>(thisObject), exec, value);\n");
+                            } else {
+                                push(@implContent, "    static_cast<$className*>(thisObject)->set$implSetterFunctionName(exec, value);\n");
+                            }
                         } elsif ($type eq "EventListener") {
                             $implIncludes{"JSEventListener.h"} = 1;
                             push(@implContent, "    UNUSED_PARAM(exec);\n");
@@ -1968,17 +1989,21 @@ sub GenerateImplementation
                                 }
                             } else {
                                 my $setterExpressionPrefix = $codeGenerator->SetterExpressionPrefix(\%implIncludes, $interfaceName, $attribute);
-                                push(@implContent, "    imp->$setterExpressionPrefix$nativeValue");
+                                if ($attribute->signature->extendedAttributes->{"ImplementedBy"}) {
+                                    my $implementedBy = $attribute->signature->extendedAttributes->{"ImplementedBy"};
+                                    $implIncludes{"${implementedBy}.h"} = 1;
+                                    push(@implContent, "    ${implementedBy}::${setterExpressionPrefix}imp, $nativeValue");
+                                } else {
+                                    push(@implContent, "    imp->$setterExpressionPrefix$nativeValue");
+                                }
                                 push(@implContent, ", ec") if @{$attribute->setterExceptions};
                                 push(@implContent, ");\n");
                                 push(@implContent, "    setDOMException(exec, ec);\n") if @{$attribute->setterExceptions};
                             }
                         }
-                        
+
                         push(@implContent, "}\n\n");
-
                         push(@implContent, "#endif\n") if $attributeConditionalString;
-
                         push(@implContent, "\n");
                     }
                 }

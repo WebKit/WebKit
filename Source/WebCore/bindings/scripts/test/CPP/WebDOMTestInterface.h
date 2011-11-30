@@ -41,6 +41,13 @@ public:
     WebDOMTestInterface& operator=(const WebDOMTestInterface&);
     virtual ~WebDOMTestInterface();
 
+#if ENABLE(Condition11) || ENABLE(Condition12)
+    WebDOMString str1() const;
+#endif
+#if ENABLE(Condition11) || ENABLE(Condition12)
+    WebDOMString str2() const;
+    void setStr2(const WebDOMString&);
+#endif
 
     WebCore::TestInterface* impl() const;
 

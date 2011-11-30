@@ -395,14 +395,16 @@ END
     foreach my $attribute (@{$dataNode->attributes}) {
         my $name = $attribute->signature->name;
         my $attrExt = $attribute->signature->extendedAttributes;
-        if ($attrExt->{"V8CustomGetter"} || $attrExt->{"CustomGetter"}
-            || $attrExt->{"V8Custom"} || $attrExt->{"Custom"}) {
+        if (($attrExt->{"V8CustomGetter"} || $attrExt->{"CustomGetter"} ||
+             $attrExt->{"V8Custom"} || $attrExt->{"Custom"}) &&
+            !$attrExt->{"ImplementedBy"}) {
             push(@headerContent, <<END);
     static v8::Handle<v8::Value> ${name}AccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo&);
 END
         }
-        if ($attrExt->{"V8CustomSetter"} || $attrExt->{"CustomSetter"}
-            || $attrExt->{"V8Custom"} || $attrExt->{"Custom"}) {
+        if (($attrExt->{"V8CustomSetter"} || $attrExt->{"CustomSetter"} ||
+             $attrExt->{"V8Custom"} || $attrExt->{"Custom"}) &&
+            !$attrExt->{"ImplementedBy"}) {
             push(@headerContent, <<END);
     static void ${name}AccessorSetter(v8::Local<v8::String> name, v8::Local<v8::Value>, const v8::AccessorInfo&);
 END
@@ -874,8 +876,16 @@ END
 
     my $getterString;
     if ($getterStringUsesImp) {
-        $getterString = "imp->" . $codeGenerator->GetterExpressionPrefix(\%implIncludes, $interfaceName, $attribute);
-        $getterString .= "ec" if $useExceptions;
+        my $getterExpressionPrefix = $codeGenerator->GetterExpressionPrefix(\%implIncludes, $interfaceName, $attribute);
+        if ($attribute->signature->extendedAttributes->{"ImplementedBy"}) {
+            my $implementedBy = $attribute->signature->extendedAttributes->{"ImplementedBy"};
+            AddToImplIncludes("${implementedBy}.h");
+            $getterString = "${implementedBy}::${getterExpressionPrefix}imp";
+            $getterString .= ", ec" if $useExceptions;
+        } else {
+            $getterString = "imp->$getterExpressionPrefix";
+            $getterString .= "ec" if $useExceptions;
+        }
         $getterString .= ")";
     } else {
         $getterString = "impInstance";
@@ -884,16 +894,16 @@ END
     my $result;
     my $wrapper;
 
-        if ($attribute->signature->type eq "EventListener" && $dataNode->name eq "DOMWindow") {
+    if ($attribute->signature->type eq "EventListener" && $dataNode->name eq "DOMWindow") {
         push(@implContentDecls, "    if (!imp->document())\n");
         push(@implContentDecls, "        return v8::Handle<v8::Value>();\n");
     }
 
     if ($useExceptions) {
         if ($nativeType =~ /^V8Parameter/) {
-          push(@implContentDecls, "    " . ConvertToV8Parameter($attribute->signature, $nativeType, "v", $getterString) . ";\n");
+            push(@implContentDecls, "    " . ConvertToV8Parameter($attribute->signature, $nativeType, "v", $getterString) . ";\n");
         } else {
-          push(@implContentDecls, "    $nativeType v = $getterString;\n");
+            push(@implContentDecls, "    $nativeType v = $getterString;\n");
         }
         push(@implContentDecls, GenerateSetDOMException("    "));
         $result = "v";
@@ -1116,7 +1126,13 @@ END
             }
         } else {
             my $setterExpressionPrefix = $codeGenerator->SetterExpressionPrefix(\%implIncludes, $interfaceName, $attribute);
-            push(@implContentDecls, "    imp->$setterExpressionPrefix$result");
+            if ($attribute->signature->extendedAttributes->{"ImplementedBy"}) {
+                my $implementedBy = $attribute->signature->extendedAttributes->{"ImplementedBy"};
+                AddToImplIncludes("${implementedBy}.h");
+                push(@implContentDecls, "    ${implementedBy}::${setterExpressionPrefix}imp, $result");
+            } else {
+                push(@implContentDecls, "    imp->$setterExpressionPrefix$result");
+            }
         }
         push(@implContentDecls, ", ec") if $useExceptions;
         push(@implContentDecls, ");\n");
@@ -1868,7 +1884,12 @@ sub GenerateSingleBatchedAttribute
         "";
     if ($customAccessor eq 1) {
         # use the naming convension, interface + (capitalize) attr name
-        $customAccessor = $interfaceName . "::" . $attrName;
+        if ($attribute->signature->extendedAttributes->{"ImplementedBy"}) {
+            $customAccessor = $attribute->signature->extendedAttributes->{"ImplementedBy"} . "::" . $attrName;
+            AddToImplIncludes("V8" . $attribute->signature->extendedAttributes->{"ImplementedBy"} . ".h");
+        } else {
+            $customAccessor = $interfaceName . "::" . $attrName;
+        }
     }
 
     my $getter;

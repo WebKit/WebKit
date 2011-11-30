@@ -24,8 +24,12 @@
 
 #include "WebDOMTestInterface.h"
 
+#include "KURL.h"
 #include "TestInterface.h"
+#include "TestSupplemental.h"
+#include "WebDOMString.h"
 #include "WebExceptionHandler.h"
+#include "wtf/text/AtomicString.h"
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
 
@@ -74,6 +78,34 @@ WebDOMTestInterface::~WebDOMTestInterface()
     m_impl = 0;
 }
 
+#if ENABLE(Condition11) || ENABLE(Condition12)
+WebDOMString WebDOMTestInterface::str1() const
+{
+    if (!impl())
+        return WebDOMString();
+
+    return static_cast<const WTF::String&>(TestSupplemental::str1(impl()));
+}
+
+#endif
+#if ENABLE(Condition11) || ENABLE(Condition12)
+WebDOMString WebDOMTestInterface::str2() const
+{
+    if (!impl())
+        return WebDOMString();
+
+    return static_cast<const WTF::String&>(TestSupplemental::str2(impl()));
+}
+
+void WebDOMTestInterface::setStr2(const WebDOMString& newStr2)
+{
+    if (!impl())
+        return;
+
+    TestSupplemental::setStr2(impl(), newStr2);
+}
+
+#endif
 WebCore::TestInterface* toWebCore(const WebDOMTestInterface& wrapper)
 {
     return wrapper.impl();

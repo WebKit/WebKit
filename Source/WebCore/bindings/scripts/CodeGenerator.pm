@@ -563,10 +563,13 @@ sub GenerateConditionalStringFromAttributeValue
 {
     my $generator = shift;
     my $conditional = shift;
-    if ($conditional =~ /&/) {
-        return "ENABLE(" . join(") && ENABLE(", split(/&/, $conditional)) . ")";
-    } elsif ($conditional =~ /\|/) {
-        return "ENABLE(" . join(") || ENABLE(", split(/\|/, $conditional)) . ")";
+
+    my $operator = ($conditional =~ /&/ ? '&' : ($conditional =~ /\|/ ? '|' : ''));
+    if ($operator) {
+        # Avoid duplicated conditions.
+        my %conditions;
+        map { $conditions{$_} = 1 } split('\\' . $operator, $conditional);
+        return "ENABLE(" . join(") $operator$operator ENABLE(", sort keys %conditions) . ")";
     } else {
         return "ENABLE(" . $conditional . ")";
     }

@@ -1,3 +1,101 @@
+2011-11-28  Kentaro Hara  <haraken@chromium.org>
+
+        Implement [Supplemental] IDL and support it in run-bindings-tests
+        https://bugs.webkit.org/show_bug.cgi?id=73162
+
+        Reviewed by Adam Barth.
+
+        - Overview:
+            - Implement the [Supplemental] IDL in resolve-supplemental.pl and generate-bindings.pl.
+            - Support the [Supplemental] IDL in run-bindings-tests.
+            - Add TestSupplemental.idl as a binding test and confirm that it works.
+
+        - The spec for the [Supplemental] IDL: http://dev.w3.org/2006/webapi/WebIDL/#dfn-supplemental-interface
+
+        - This patch affects run-bindings-tests results only and does not affect any real builds
+        since no [Supplemental] IDL has been written in real WebCore IDL files for now.
+
+        - This patch makes a change on CodeGenerator*.pm to support the [Supplemental] IDL
+        for (custom) getters and setters.
+
+        - Added perl scripts implement the [Supplemental] IDL as follows:
+
+            Previous build flow:
+                foreach $idl (all IDL files) {
+                    generate-bindings.pl depends on $idl;
+                    generate-bindings.pl reads $idl;
+                    generate-bindings.pl generates .h and .cpp files for $idl;
+                }
+
+            New build flow (See the discussions in bug 72138 for more details):
+                resolve-supplemental.pl depends on all IDL files;
+                resolve-supplemental.pl reads all IDL files;
+                resolve-supplemental.pl resolves the dependency of [Supplemental=XXXX];
+                resolve-supplemental.pl outputs supplemental_dependency.tmp;
+                foreach $idl (all IDL files) {
+                    generate-bindings.pl depends on $idl and supplemental_dependency.tmp;
+                    generate-bindings.pl reads $idl;
+                    generate-bindings.pl reads supplemental_dependency.tmp;
+                    generate-bindings.pl generates .h and .cpp files for $idl, including all attributes in IDL files which are implementing $idl;
+                }
+
+        Tests: bindings/scripts/test/TestSupplemental.idl
+
+        * bindings/scripts/generate-bindings.pl: The input is an IDL file |x| and the dependency file. generate-bindings.pl generates .h and .cpp files for the IDL file |x|, including all the attributes in the IDL files which are implementing the IDL file |x|. generate-bindings.pl addes the [ImplementedBy] IDL to the attributes with the [Supplemental] IDL in order to indicate what IDL is implementing the attributes.
+        * bindings/scripts/resolve-supplemental.pl: Added. resolve-supplemental.pl reads all IDL files, resolves [Supplemental=XXX] dependencies, and then outputs the dependency file. See the comment in resolve-supplemental.pl for the format of the dependency file.
+
+        * bindings/scripts/CodeGenerator.pm:
+        (GenerateConditionalStringFromAttributeValue): Avoids duplicated conditions.
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHeader): If an attribute is [ImplementedBy] another IDL, then we omit the declaration of the custom getter and setter.
+        (GenerateImplementation): If an attribute is [ImplementedBy] another IDL, then we call back the (custom) getter and setter of the IDL.
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (GenerateHeader): If an attribute is [ImplementedBy] another IDL, then we omit the declaration of the custom getter and setter.
+        (GenerateNormalAttrGetter): If an attribute is [ImplementedBy] another IDL, then we call back the getter of the IDL.
+        (GenerateNormalAttrSetter): If an attribute is [ImplementedBy] another IDL, then we call back the setter of the IDL.
+        (GenerateSingleBatchedAttribute): If an attribute is [ImplementedBy] another IDL, then we call back the custom getter or setter of the IDL.
+        * bindings/scripts/CodeGeneratorCPP.pm:
+        (GenerateImplementation): If an attribute is [ImplementedBy] another IDL, then we call back the getter and setter of the IDL. CodeGeneratorCPP.pm does not support a custom getter and setter.
+        * bindings/scripts/CodeGeneratorGObject.pm:
+        (GenerateProperty): Ditto.
+        * bindings/scripts/CodeGeneratorObjC.pm:
+        (GenerateImplementation): Ditto.
+
+        * bindings/scripts/test/TestSupplemental.idl: Added. A test case for the [Supplemental] IDL.
+        * bindings/scripts/test/CPP/WebDOMTestInterface.cpp: Updated a run-bindings-tests result.
+        (WebDOMTestInterface::str1):
+        (WebDOMTestInterface::str2):
+        (WebDOMTestInterface::setStr2):
+        * bindings/scripts/test/CPP/WebDOMTestInterface.h: Ditto.
+        * bindings/scripts/test/GObject/WebKitDOMTestInterface.cpp: Ditto.
+        (webkit_dom_test_interface_get_str1):
+        (webkit_dom_test_interface_get_str2):
+        (webkit_dom_test_interface_set_str2):
+        (webkit_dom_test_interface_set_property):
+        (webkit_dom_test_interface_get_property):
+        (webkit_dom_test_interface_class_init):
+        * bindings/scripts/test/GObject/WebKitDOMTestInterface.h: Ditto.
+        * bindings/scripts/test/JS/JSTestInterface.cpp: Ditto.
+        (WebCore::jsTestInterfaceStr1):
+        (WebCore::jsTestInterfaceStr2):
+        (WebCore::jsTestInterfaceStr3):
+        (WebCore::JSTestInterface::put):
+        (WebCore::setJSTestInterfaceStr2):
+        (WebCore::setJSTestInterfaceStr3):
+        * bindings/scripts/test/JS/JSTestInterface.h: Ditto.
+        * bindings/scripts/test/ObjC/DOMTestInterface.h: Ditto.
+        * bindings/scripts/test/ObjC/DOMTestInterface.mm: Ditto.
+        (-[DOMTestInterface str1]):
+        (-[DOMTestInterface str2]):
+        (-[DOMTestInterface setStr2:]):
+        (-[DOMTestInterface str3]):
+        (-[DOMTestInterface setStr3:]):
+        * bindings/scripts/test/V8/V8TestInterface.cpp: Ditto.
+        (WebCore::TestInterfaceInternal::str1AttrGetter):
+        (WebCore::TestInterfaceInternal::str2AttrGetter):
+        (WebCore::TestInterfaceInternal::str2AttrSetter):
+        (WebCore::ConfigureV8TestInterfaceTemplate):
+
 2011-11-29  Leo Yang  <leo.yang@torchmobile.com.cn>
 
         Upstream platform/network/blackberry/ProxyServerBlackBerry.cpp

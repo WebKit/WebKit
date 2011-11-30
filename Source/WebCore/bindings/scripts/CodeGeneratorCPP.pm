@@ -702,7 +702,15 @@ sub GenerateImplementation
             # - GETTER
             my $getterSig = "$attributeType $className\:\:$attributeName() const\n";
             my $hasGetterException = @{$attribute->getterExceptions};
-            my $getterContentHead = "impl()->" . $codeGenerator->GetterExpressionPrefix(\%implIncludes, $interfaceName, $attribute);
+            my $getterContentHead;
+            my $getterExpressionPrefix = $codeGenerator->GetterExpressionPrefix(\%implIncludes, $interfaceName, $attribute);
+            if ($attribute->signature->extendedAttributes->{"ImplementedBy"}) {
+                my $implementedBy = $attribute->signature->extendedAttributes->{"ImplementedBy"};
+                $implIncludes{"${implementedBy}.h"} = 1;
+                $getterContentHead = "${implementedBy}::${getterExpressionPrefix}impl()";
+            } else {
+                $getterContentHead = "impl()->${getterExpressionPrefix}";
+            }
             my $getterContentTail = ")";
 
             # Special cases
@@ -720,7 +728,7 @@ sub GenerateImplementation
 
             my $getterContent;
             if ($hasGetterException) {
-                $getterContent = $getterContentHead . "ec" . $getterContentTail;
+                $getterContent = $getterContentHead . ($getterContentHead =~ /\($/ ? "ec" : ", ec") . $getterContentTail;
             } else {
                 $getterContent = $getterContentHead . $getterContentTail;
             }
@@ -773,7 +781,13 @@ sub GenerateImplementation
                 push(@implContent, "    $exceptionInit\n") if $hasSetterException;
                 my $ec = $hasSetterException ? ", ec" : "";
                 my $setterExpressionPrefix = $codeGenerator->SetterExpressionPrefix(\%implIncludes, $interfaceName, $attribute);
-                push(@implContent, "    impl()->$setterExpressionPrefix$arg$ec);\n");
+                if ($attribute->signature->extendedAttributes->{"ImplementedBy"}) {
+                    my $implementedBy = $attribute->signature->extendedAttributes->{"ImplementedBy"};
+                    $implIncludes{"${implementedBy}.h"} = 1;
+                    push(@implContent, "    ${implementedBy}::${setterExpressionPrefix}impl(), ${arg}${ec});\n");
+                } else {
+                    push(@implContent, "    impl()->$setterExpressionPrefix$arg$ec);\n");
+                }
                 push(@implContent, "    $exceptionRaiseOnError\n") if $hasSetterException;
                 push(@implContent, "}\n\n");
             }

@@ -25,12 +25,14 @@
 
 #include "ExceptionCode.h"
 #include "RuntimeEnabledFeatures.h"
+#include "TestSupplemental.h"
 #include "V8Binding.h"
 #include "V8BindingMacros.h"
 #include "V8BindingState.h"
 #include "V8DOMWrapper.h"
 #include "V8IsolatedContext.h"
 #include "V8Proxy.h"
+#include "V8TestSupplemental.h"
 #include <wtf/UnusedParam.h>
 
 namespace WebCore {
@@ -41,7 +43,57 @@ namespace TestInterfaceInternal {
 
 template <typename T> void V8_USE(T) { }
 
+#if ENABLE(Condition11) || ENABLE(Condition12)
+
+static v8::Handle<v8::Value> str1AttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+{
+    INC_STATS("DOM.TestInterface.str1._get");
+    TestInterface* imp = V8TestInterface::toNative(info.Holder());
+    return v8String(TestSupplemental::str1(imp));
+}
+
+#endif // ENABLE(Condition11) || ENABLE(Condition12)
+
+#if ENABLE(Condition11) || ENABLE(Condition12)
+
+static v8::Handle<v8::Value> str2AttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+{
+    INC_STATS("DOM.TestInterface.str2._get");
+    TestInterface* imp = V8TestInterface::toNative(info.Holder());
+    return v8String(TestSupplemental::str2(imp));
+}
+
+#endif // ENABLE(Condition11) || ENABLE(Condition12)
+
+#if ENABLE(Condition11) || ENABLE(Condition12)
+
+static void str2AttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+{
+    INC_STATS("DOM.TestInterface.str2._set");
+    TestInterface* imp = V8TestInterface::toNative(info.Holder());
+    STRING_TO_V8PARAMETER_EXCEPTION_BLOCK_VOID(V8Parameter<>, v, value);
+    TestSupplemental::setStr2(imp, v);
+    return;
+}
+
+#endif // ENABLE(Condition11) || ENABLE(Condition12)
+
 } // namespace TestInterfaceInternal
+
+static const BatchedAttribute TestInterfaceAttrs[] = {
+#if ENABLE(Condition11) || ENABLE(Condition12)
+    // Attribute 'str1' (Type: 'readonly attribute' ExtAttr: 'Conditional ImplementedBy')
+    {"str1", TestInterfaceInternal::str1AttrGetter, 0, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+#endif // ENABLE(Condition11) || ENABLE(Condition12)
+#if ENABLE(Condition11) || ENABLE(Condition12)
+    // Attribute 'str2' (Type: 'attribute' ExtAttr: 'Conditional ImplementedBy')
+    {"str2", TestInterfaceInternal::str2AttrGetter, TestInterfaceInternal::str2AttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+#endif // ENABLE(Condition11) || ENABLE(Condition12)
+#if ENABLE(Condition11) || ENABLE(Condition12)
+    // Attribute 'str3' (Type: 'attribute' ExtAttr: 'CustomSetter CustomGetter Conditional ImplementedBy')
+    {"str3", V8TestSupplemental::str3AccessorGetter, V8TestSupplemental::str3AccessorSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+#endif // ENABLE(Condition11) || ENABLE(Condition12)
+};
 
 v8::Handle<v8::Value> V8TestInterface::constructorCallback(const v8::Arguments& args)
 {
@@ -81,7 +133,7 @@ static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestInterfaceTemplate(v8:
 
     v8::Local<v8::Signature> defaultSignature;
     defaultSignature = configureTemplate(desc, "TestInterface", v8::Persistent<v8::FunctionTemplate>(), V8TestInterface::internalFieldCount,
-        0, 0,
+        TestInterfaceAttrs, WTF_ARRAY_LENGTH(TestInterfaceAttrs),
         0, 0);
     UNUSED_PARAM(defaultSignature); // In some cases, it will not be used.
     desc->SetCallHandler(V8TestInterface::constructorCallback);

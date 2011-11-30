@@ -41,7 +41,9 @@
 #import "DOMTestInterfaceInternal.h"
 #import "ExceptionHandlers.h"
 #import "JSMainThreadExecState.h"
+#import "KURL.h"
 #import "TestInterface.h"
+#import "TestSupplemental.h"
 #import "ThreadCheck.h"
 #import "WebCoreObjCExtras.h"
 #import "WebScriptObjectPrivate.h"
@@ -67,6 +69,42 @@
         IMPL->deref();
     [super finalize];
 }
+
+#if ENABLE(Condition11) || ENABLE(Condition12)
+- (NSString *)str1
+{
+    WebCore::JSMainThreadNullState state;
+    return TestSupplemental::str1(IMPL);
+}
+#endif
+
+#if ENABLE(Condition11) || ENABLE(Condition12)
+- (NSString *)str2
+{
+    WebCore::JSMainThreadNullState state;
+    return TestSupplemental::str2(IMPL);
+}
+
+- (void)setStr2:(NSString *)newStr2
+{
+    WebCore::JSMainThreadNullState state;
+    TestSupplemental::setStr2(IMPL, newStr2);
+}
+#endif
+
+#if ENABLE(Condition11) || ENABLE(Condition12)
+- (NSString *)str3
+{
+    WebCore::JSMainThreadNullState state;
+    return TestSupplemental::str3(IMPL);
+}
+
+- (void)setStr3:(NSString *)newStr3
+{
+    WebCore::JSMainThreadNullState state;
+    TestSupplemental::setStr3(IMPL, newStr3);
+}
+#endif
 
 @end
 

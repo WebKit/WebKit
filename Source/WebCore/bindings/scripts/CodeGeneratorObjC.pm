@@ -1207,7 +1207,15 @@ sub GenerateImplementation
             $getterExpressionPrefix =~ s/\bownerDocument\b/document/;
 
             my $hasGetterException = @{$attribute->getterExceptions};
-            my $getterContentHead = "IMPL->$getterExpressionPrefix";
+            my $getterContentHead;
+            if ($attribute->signature->extendedAttributes->{"ImplementedBy"}) {
+                my $implementedBy = $attribute->signature->extendedAttributes->{"ImplementedBy"};
+                $implIncludes{"${implementedBy}.h"} = 1;
+                $getterContentHead = "${implementedBy}::${getterExpressionPrefix}IMPL";
+            } else {
+                $getterContentHead = "IMPL->$getterExpressionPrefix";
+            }
+
             my $getterContentTail = ")";
 
             if ($svgPropertyType) {
@@ -1341,7 +1349,7 @@ sub GenerateImplementation
 
             my $getterContent;
             if ($hasGetterException) {
-                $getterContent = $getterContentHead . "ec" . $getterContentTail;
+                $getterContent = $getterContentHead . ($getterContentHead =~ /\($|, $/ ? "ec" : ", ec") . $getterContentTail;
             } else {
                 $getterContent = $getterContentHead . $getterContentTail;
             }
@@ -1437,7 +1445,13 @@ sub GenerateImplementation
                     my $setterExpressionPrefix = $codeGenerator->SetterExpressionPrefix(\%implIncludes, $interfaceName, $attribute);
                     my $ec = $hasSetterException ? ", ec" : "";
                     push(@implContent, "    $exceptionInit\n") if $hasSetterException;
-                    push(@implContent, "    IMPL->$setterExpressionPrefix$arg$ec);\n");
+                    if ($attribute->signature->extendedAttributes->{"ImplementedBy"}) {
+                        my $implementedBy = $attribute->signature->extendedAttributes->{"ImplementedBy"};
+                        $implIncludes{"${implementedBy}.h"} = 1;
+                        push(@implContent, "    ${implementedBy}::${setterExpressionPrefix}IMPL, ${arg}${ec});\n");
+                    } else {
+                        push(@implContent, "    IMPL->$setterExpressionPrefix$arg$ec);\n");
+                    }
                     push(@implContent, "    $exceptionRaiseOnError\n") if $hasSetterException;
                 }
 

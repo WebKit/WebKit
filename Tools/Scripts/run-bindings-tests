@@ -38,7 +38,7 @@ import tempfile
 from webkitpy.common.checkout.scm.detection import detect_scm_system
 
 
-def generate_from_idl(generator, idl_file, output_directory):
+def generate_from_idl(generator, idl_file, output_directory, supplemental_dependency_file):
     cmd = ['perl', '-w',
            '-IWebCore/bindings/scripts',
            'WebCore/bindings/scripts/generate-bindings.pl',
@@ -47,6 +47,7 @@ def generate_from_idl(generator, idl_file, output_directory):
            '--defines', 'TESTING_%s' % generator,
            '--generator', generator,
            '--outputDir', output_directory,
+           '--supplementalDependencyFile', supplemental_dependency_file,
            idl_file]
 
     process = subprocess.Popen(cmd, stdout = subprocess.PIPE, stderr = subprocess.STDOUT)
@@ -54,6 +55,31 @@ def generate_from_idl(generator, idl_file, output_directory):
     output = process.communicate()[0]
     if output:
         print output
+    return exit_code
+
+
+def generate_supplemental_dependency(input_directory, supplemental_dependency_file):
+    idl_files_list = tempfile.mkstemp()
+    for input_file in os.listdir(input_directory):
+        (name, extension) = os.path.splitext(input_file)
+        if extension != '.idl':
+            continue
+        os.write(idl_files_list[0], os.path.join(input_directory, input_file) + "\n")
+    os.close(idl_files_list[0])
+
+    cmd = ['perl', '-w',
+           '-IWebCore/bindings/scripts',
+           'WebCore/bindings/scripts/resolve-supplemental.pl',
+           '--idlFilesList', idl_files_list[1],
+           '--defines', '',
+           '--supplementalDependencyFile', supplemental_dependency_file]
+    process = subprocess.Popen(cmd, stdout = subprocess.PIPE, stderr = subprocess.STDOUT)
+    exit_code = process.wait()
+    output = process.communicate()[0]
+    if output:
+        print output
+
+    os.remove(idl_files_list[1])
     return exit_code
 
 
@@ -79,7 +105,7 @@ def detect_changes(generator, work_directory, reference_directory):
     return changes_found
 
 
-def run_tests(generator, input_directory, reference_directory, reset_results):
+def run_tests(generator, input_directory, reference_directory, reset_results, supplemental_dependency_file):
     work_directory = reference_directory
 
     passed = True
@@ -94,7 +120,8 @@ def run_tests(generator, input_directory, reference_directory, reset_results):
 
         if generate_from_idl(generator,
                              os.path.join(input_directory, input_file),
-                             work_directory):
+                             work_directory,
+                             supplemental_dependency_file):
             passed = False
 
         if reset_results:
@@ -132,12 +159,20 @@ def main(argv):
         'CPP'
     ]
 
+    input_directory = os.path.join('WebCore', 'bindings', 'scripts', 'test')
+    supplemental_dependency_file = tempfile.mkstemp()[1]
+    if generate_supplemental_dependency(input_directory, supplemental_dependency_file):
+        print 'Failed to generate a supplemental dependency file.'
+        os.remove(supplemental_dependency_file)
+        return -1
+
     for generator in generators:
         input_directory = os.path.join('WebCore', 'bindings', 'scripts', 'test')
         reference_directory = os.path.join('WebCore', 'bindings', 'scripts', 'test', generator)
-        if not run_tests(generator, input_directory, reference_directory, reset_results):
+        if not run_tests(generator, input_directory, reference_directory, reset_results, supplemental_dependency_file):
             all_tests_passed = False
 
+    os.remove(supplemental_dependency_file)
     print ''
     if all_tests_passed:
         print 'All tests PASS!'

@@ -1,3 +1,24 @@
+2011-11-28  Kentaro Hara  <haraken@chromium.org>
+
+        Implement [Supplemental] IDL and support it in run-bindings-tests
+        https://bugs.webkit.org/show_bug.cgi?id=73162
+
+        Reviewed by Adam Barth.
+
+        run-bindings-tests supports the [Supplemental] IDL in the following way.
+            (1) It creates a file |x| listing all IDL files.
+            (2) It generates a supplemental dependency file |y| using resolve-supplemental.pl and |x|.
+            (3) For each IDL file |z|, it runs generate-bindings.pl with |y|.
+                Then, generate-bindings.pl generates .h and .cpp files for the IDL file |z|,
+                including all attributes in IDL files that are supplementing the IDL file |z|.
+
+        * Scripts/run-bindings-tests:
+        (generate_from_idl):
+        (generate_supplemental_dependency):
+        (detect_changes):
+        (run_tests):
+        (main):
+
 2011-11-18  Nat Duca  <nduca@chromium.org>
 
         [chromium] Enable threaded compositing via CCThreadProxy::hasThread only

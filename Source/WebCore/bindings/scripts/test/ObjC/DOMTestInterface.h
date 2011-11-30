@@ -28,7 +28,20 @@
 
 #if WEBKIT_VERSION_MAX_ALLOWED >= WEBKIT_VERSION_LATEST
 
+@class NSString;
+
 @interface DOMTestInterface : DOMObject
+#if ENABLE(Condition11) || ENABLE(Condition12)
+- (NSString *)str1;
+#endif
+#if ENABLE(Condition11) || ENABLE(Condition12)
+- (NSString *)str2;
+- (void)setStr2:(NSString *)newStr2;
+#endif
+#if ENABLE(Condition11) || ENABLE(Condition12)
+- (NSString *)str3;
+- (void)setStr3:(NSString *)newStr3;
+#endif
 @end
 
 #endif

@@ -46,6 +46,37 @@ struct _WebKitDOMTestInterfaceClass {
 WEBKIT_API GType
 webkit_dom_test_interface_get_type (void);
 
+/**
+ * webkit_dom_test_interface_get_str1:
+ * @self: A #WebKitDOMTestInterface
+ *
+ * Returns:
+ *
+**/
+WEBKIT_API gchar*
+webkit_dom_test_interface_get_str1(WebKitDOMTestInterface* self);
+
+/**
+ * webkit_dom_test_interface_get_str2:
+ * @self: A #WebKitDOMTestInterface
+ *
+ * Returns:
+ *
+**/
+WEBKIT_API gchar*
+webkit_dom_test_interface_get_str2(WebKitDOMTestInterface* self);
+
+/**
+ * webkit_dom_test_interface_set_str2:
+ * @self: A #WebKitDOMTestInterface
+ * @value: A #gchar
+ *
+ * Returns:
+ *
+**/
+WEBKIT_API void
+webkit_dom_test_interface_set_str2(WebKitDOMTestInterface* self, const gchar* value);
+
 G_END_DECLS
 
 #endif /* WebKitDOMTestInterface_h */
