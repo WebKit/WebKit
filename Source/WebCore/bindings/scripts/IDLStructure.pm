@@ -45,6 +45,7 @@ struct( domClass => {
 
 # Used to represent domClass contents (name of method, signature)
 struct( domFunction => {
+    isStatic => '$',
     signature => '$',    # Return type/Object name/extended attributes
     parameters => '@',    # List of 'domSignature'
     raisesExceptions => '@',  # Possibly raised exceptions.
@@ -103,7 +104,7 @@ our $setterRaisesSelector = '\bsetter\s+raises\s*\((' . $idlIdNsList . '*)\s*\)'
 our $typeNamespaceSelector = '((?:' . $idlId . '*::)*)\s*(' . $idlDataType . '*)';
 
 our $interfaceSelector = 'interface\s*((?:' . $extendedAttributeSyntax . ' )?)(' . $idlIdNs . '*)\s*(?::(\s*[^{]*))?{([-a-zA-Z0-9_"=\s(),;:\[\]&\|]*)';
-our $interfaceMethodSelector = '\s*((?:' . $extendedAttributeSyntax . ' )?)' . $supportedTypes . '\s*(' . $idlIdNs . '*)\s*\(\s*([a-zA-Z0-9:\s,=\[\]]*)';
+our $interfaceMethodSelector = '\s*(static\s+)?((?:' . $extendedAttributeSyntax . ' )?)' . $supportedTypes . '\s*(' . $idlIdNs . '*)\s*\(\s*([a-zA-Z0-9:\s,=\[\]]*)';
 our $interfaceParameterSelector = '(in|out)\s*((?:' . $extendedAttributeSyntax . ' )?)' . $supportedTypes . '\s*(' . $idlIdNs . '*)';
 
 our $interfaceAttributeSelector = '\s*(readonly attribute|attribute)\s*(' . $extendedAttributeSyntax . ' )?' . $supportedTypes . '\s*(' . $idlType . '*)';

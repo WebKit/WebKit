@@ -360,10 +360,11 @@ sub ParseInterface
             } elsif (($line !~ s/^\s*$//g) and ($line !~ /^\s*const/)) {
                 $line =~ /$IDLStructure::interfaceMethodSelector/ or die "Parsing error!\nSource:\n$line\n)";
 
-                my $methodExtendedAttributes = (defined($1) ? $1 : " "); chop($methodExtendedAttributes);
-                my $methodType = (defined($2) ? $2 : die("Parsing error!\nSource:\n$line\n)"));
-                my $methodName = (defined($3) ? $3 : die("Parsing error!\nSource:\n$line\n)"));
-                my $methodSignature = (defined($4) ? $4 : die("Parsing error!\nSource:\n$line\n)"));
+                my $isStatic = defined($1);
+                my $methodExtendedAttributes = (defined($2) ? $2 : " "); chop($methodExtendedAttributes);
+                my $methodType = (defined($3) ? $3 : die("Parsing error!\nSource:\n$line\n)"));
+                my $methodName = (defined($4) ? $4 : die("Parsing error!\nSource:\n$line\n)"));
+                my $methodSignature = (defined($5) ? $5 : die("Parsing error!\nSource:\n$line\n)"));
 
                 ('' =~ /^/); # Reset variables needed for regexp matching
 
@@ -372,6 +373,7 @@ sub ParseInterface
 
                 my $newDataNode = new domFunction();
 
+                $newDataNode->isStatic($isStatic);
                 $newDataNode->signature(new domSignature());
                 $newDataNode->signature->name($methodName);
                 $newDataNode->signature->type($methodType);

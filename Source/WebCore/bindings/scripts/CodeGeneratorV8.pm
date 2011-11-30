@@ -1335,7 +1335,7 @@ END
             push(@implContentDecls, "    $svgWrappedNativeType& impInstance = wrapper->propertyReference();\n");
             push(@implContentDecls, "    $svgWrappedNativeType* imp = &impInstance;\n");
         }
-    } elsif (!$function->signature->extendedAttributes->{"ClassMethod"}) {
+    } elsif (!$function->isStatic) {
         push(@implContentDecls, <<END);
     ${implClassName}* imp = V8${implClassName}::toNative(args.Holder());
 END
@@ -2307,7 +2307,7 @@ sub GenerateImplementation
         if ($attrExt->{"V8OnInstance"}) {
             next;
         }
-        if ($attrExt->{"ClassMethod"}) {
+        if ($function->isStatic) {
             next;
         }
         if ($attrExt->{"EnabledAtRuntime"} || RequiresCustomSignature($function) || $attrExt->{"V8DoNotCheckSignature"}) {
@@ -2526,7 +2526,7 @@ END
         if ($attrExt->{"V8OnInstance"}) {
             $template = "instance";
         }
-        if ($attrExt->{"ClassMethod"}) {
+        if ($function->isStatic) {
             $template = "desc";
         }
 
@@ -2559,38 +2559,38 @@ END
     // $commentInfo
     ${conditional}$template->SetAccessor(v8::String::New("$name"), ${interfaceName}Internal::${name}AttrGetter, 0, v8::Handle<v8::Value>(), v8::ALL_CAN_READ, static_cast<v8::PropertyAttribute>($property_attributes));
 END
-          $num_callbacks++;
-          next;
-      }
+            $num_callbacks++;
+            next;
+        }
 
-      my $signature = "defaultSignature";
-      if ($attrExt->{"V8DoNotCheckSignature"} || $attrExt->{"ClassMethod"}) {
-          $signature = "v8::Local<v8::Signature>()";
-      }
+        my $signature = "defaultSignature";
+        if ($attrExt->{"V8DoNotCheckSignature"} || $function->isStatic) {
+            $signature = "v8::Local<v8::Signature>()";
+        }
 
-      if (RequiresCustomSignature($function)) {
-          $signature = "${name}Signature";
-          push(@implContent, "\n    // Custom Signature '$name'\n", CreateCustomSignature($function));
-      }
+        if (RequiresCustomSignature($function)) {
+            $signature = "${name}Signature";
+            push(@implContent, "\n    // Custom Signature '$name'\n", CreateCustomSignature($function));
+        }
 
-      # Normal function call is a template
-      my $callback = GetFunctionTemplateCallbackName($function, $interfaceName);
+        # Normal function call is a template
+        my $callback = GetFunctionTemplateCallbackName($function, $interfaceName);
 
-      if ($property_attributes eq "v8::DontDelete") {
-          $property_attributes = "";
-      } else {
-          $property_attributes = ", static_cast<v8::PropertyAttribute>($property_attributes)";
-      }
+        if ($property_attributes eq "v8::DontDelete") {
+            $property_attributes = "";
+        } else {
+            $property_attributes = ", static_cast<v8::PropertyAttribute>($property_attributes)";
+        }
 
-      if ($template eq "proto" && $conditional eq "" && $signature eq "defaultSignature" && $property_attributes eq "") {
-          # Standard type of callback, already created in the batch, so skip it here.
-          next;
-      }
+        if ($template eq "proto" && $conditional eq "" && $signature eq "defaultSignature" && $property_attributes eq "") {
+            # Standard type of callback, already created in the batch, so skip it here.
+            next;
+        }
 
-      push(@implContent, <<END);
+        push(@implContent, <<END);
     ${conditional}$template->Set(v8::String::New("$name"), v8::FunctionTemplate::New($callback, v8::Handle<v8::Value>(), ${signature})$property_attributes);
 END
-      $num_callbacks++;
+        $num_callbacks++;
     }
 
     die "Wrong number of callbacks generated for $interfaceName ($num_callbacks, should be $total_functions)" if $num_callbacks != $total_functions;
@@ -3122,7 +3122,7 @@ sub GenerateFunctionCallString()
     }
 
     my $functionString = "imp->${name}(";
-    if ($function->signature->extendedAttributes->{"ClassMethod"}) {
+    if ($function->isStatic) {
         $functionString = "${implClassName}::${name}(";
     }
 

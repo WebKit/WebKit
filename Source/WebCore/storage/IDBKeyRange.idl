@@ -33,14 +33,13 @@ module storage {
         readonly attribute boolean lowerOpen;
         readonly attribute boolean upperOpen;
 
-        // FIXME: Make ClassMethod work for JSC as well.
-        [ClassMethod] IDBKeyRange only(in IDBKey value)
+        static IDBKeyRange only(in IDBKey value)
             raises (IDBDatabaseException);
-        [ClassMethod] IDBKeyRange lowerBound(in IDBKey bound, in [Optional] boolean open)
+        static IDBKeyRange lowerBound(in IDBKey bound, in [Optional] boolean open)
             raises (IDBDatabaseException);
-        [ClassMethod] IDBKeyRange upperBound(in IDBKey bound, in [Optional] boolean open)
+        static IDBKeyRange upperBound(in IDBKey bound, in [Optional] boolean open)
             raises (IDBDatabaseException);
-        [ClassMethod] IDBKeyRange bound(in IDBKey lower, in IDBKey upper, in [Optional] boolean lowerOpen, in [Optional] boolean upperOpen)
+        static IDBKeyRange bound(in IDBKey lower, in IDBKey upper, in [Optional] boolean lowerOpen, in [Optional] boolean upperOpen)
             raises (IDBDatabaseException);
     };
 

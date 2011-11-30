@@ -162,8 +162,8 @@ module test {
 #endif
 
         // Class methods within JavaScript (like what's used for IDBKeyRange).
-        [ClassMethod] void classMethod();
-        [ClassMethod] long classMethodWithOptional(in [Optional] long arg);
+        static void classMethod();
+        static long classMethodWithOptional(in [Optional] long arg);
 
 #if defined(TESTING_V8)
         // 'EnabledAtRuntime' methods and attributes.
