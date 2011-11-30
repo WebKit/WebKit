@@ -1,3 +1,18 @@
+2011-11-30  James Simonsen  <simonjam@chromium.org>
+
+        Fix valgrind issue in SubresourceLoader::didFinishLoading
+        https://bugs.webkit.org/show_bug.cgi?id=72787
+
+        Hang on to CachedResource until finish() is called.
+
+        Reviewed by Nate Chapin.
+
+        Test: fast/loader/subresource-load-failed-crash.html (under asan)
+
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::didFinishLoading):
+        (WebCore::SubresourceLoader::didFail):
+
 2011-11-30  Tim Horton  <timothy_horton@apple.com>
 
         feImage referencing a primitive draws incorrectly

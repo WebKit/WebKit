@@ -240,6 +240,7 @@ void SubresourceLoader::didFinishLoading(double finishTime)
     LOG(ResourceLoading, "Received '%s'.", m_resource->url().string().latin1().data());
 
     RefPtr<SubresourceLoader> protect(this);
+    CachedResourceHandle<CachedResource> protectResource(m_resource);
     m_state = Finishing;
     m_resource->setLoadFinishTime(finishTime);
     m_resource->data(resourceData(), true);
@@ -256,6 +257,7 @@ void SubresourceLoader::didFail(const ResourceError& error)
     LOG(ResourceLoading, "Failed to load '%s'.\n", m_resource->url().string().latin1().data());
 
     RefPtr<SubresourceLoader> protect(this);
+    CachedResourceHandle<CachedResource> protectResource(m_resource);
     m_state = Finishing;
     m_resource->error(CachedResource::LoadError);
     if (!m_resource->isPreloaded())
