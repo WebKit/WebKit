@@ -1,3 +1,17 @@
+2011-11-29  Sam Weinig  <sam@webkit.org>
+
+        Add move semantics to RetainPtr
+        https://bugs.webkit.org/show_bug.cgi?id=73393
+
+        Reviewed by Anders Carlsson.
+
+        * wtf/RetainPtr.h:
+        (WTF::RetainPtr::RetainPtr):
+        Add a move constructor and move enabled assignment operators
+        to RetainPtr if the compiler being used supports rvalue
+        references. If the compiler does not support it, we fallback
+        to the copy semantics we have always had.
+
 2011-11-29  Yuqiang Xian  <yuqiang.xian@intel.com>
 
         DFG local CSE may cause incorrect reference counting for a node
