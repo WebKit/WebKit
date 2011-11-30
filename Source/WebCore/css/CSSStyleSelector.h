@@ -308,6 +308,7 @@ public:
         void mapAnimationTimingFunction(Animation*, CSSValue*);
 
         void mapNinePieceImage(CSSPropertyID, CSSValue*, NinePieceImage&);
+        void mapNinePieceImageSlice(CSSValue*, NinePieceImage&);
 
         void applyProperty(int id, CSSValue*);
         void applyPageSizeProperty(CSSValue*);

@@ -2263,6 +2263,8 @@
             'config.h',
             'css/CSSBorderImageValue.cpp',
             'css/CSSBorderImageValue.h',
+            'css/CSSBorderImageSliceValue.cpp',
+            'css/CSSBorderImageSliceValue.h',
             'css/CSSCanvasValue.cpp',
             'css/CSSCanvasValue.h',
             'css/CSSCharsetRule.cpp',

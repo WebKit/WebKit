@@ -456,6 +456,7 @@ SET(WebCore_SOURCES
     bindings/js/CallbackFunction.cpp
 
     css/CSSBorderImageValue.cpp
+    css/CSSBorderImageSliceValue.cpp
     css/CSSCanvasValue.cpp
     css/CSSCharsetRule.cpp
     css/CSSComputedStyleDeclaration.cpp

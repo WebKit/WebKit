@@ -26,9 +26,9 @@
 
 namespace WebCore {
 
-CSSBorderImageValue::CSSBorderImageValue(PassRefPtr<CSSValue> image, PassRefPtr<Rect> imageRect, int horizontalRule, int verticalRule)
+CSSBorderImageValue::CSSBorderImageValue(PassRefPtr<CSSValue> image, PassRefPtr<CSSBorderImageSliceValue> slice, int horizontalRule, int verticalRule)
     : m_image(image)
-    , m_imageSliceRect(imageRect)
+    , m_slice(slice)
     , m_horizontalSizeRule(horizontalRule)
     , m_verticalSizeRule(verticalRule)
 {
@@ -44,14 +44,8 @@ String CSSBorderImageValue::cssText() const
     String text(m_image->cssText());
     text += " ";
 
-    // Now the rect, but it isn't really a rect, so we dump manually
-    text += m_imageSliceRect->top()->cssText();
-    text += " ";
-    text += m_imageSliceRect->right()->cssText();
-    text += " ";
-    text += m_imageSliceRect->bottom()->cssText();
-    text += " ";
-    text += m_imageSliceRect->left()->cssText();
+    // Now the slices.
+    text += m_slice->cssText();
 
     // Now the keywords.
     text += " ";
