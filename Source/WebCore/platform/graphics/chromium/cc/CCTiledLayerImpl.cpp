@@ -130,13 +130,8 @@ void CCTiledLayerImpl::draw(LayerRendererChromium* layerRenderer)
     CCLayerQuad deviceRect = CCLayerQuad(FloatQuad(quad.boundingBox()));
     CCLayerQuad layerQuad = CCLayerQuad(quad);
 
-#if defined(OS_CHROMEOS)
-    // FIXME: Disable anti-aliasing to workaround broken driver.
-    bool useAA = false;
-#else
     // Use anti-aliasing programs only when necessary.
     bool useAA = (m_tiler->hasBorderTexels() && (!quad.isRectilinear() || !quad.boundingBox().isExpressibleAsIntRect()));
-#endif
 
     if (useAA) {
         deviceRect.inflateAntiAliasingDistance();
