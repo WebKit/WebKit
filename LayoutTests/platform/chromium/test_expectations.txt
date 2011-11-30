@@ -1107,6 +1107,8 @@ BUGCR105305 CPU : svg/custom/pattern-with-transformation.svg = IMAGE
 BUGCR105305 CPU : svg/text/text-gradient-positioning.svg = IMAGE
 BUGCR105305 : svg/text/selection-background-color.xhtml = PASS CRASH IMAGE
 BUGCR105305 : svg/text/selection-styles.xhtml = PASS CRASH IMAGE
+BUGCR105305 MAC : fast/borders/border-image-rotate-transform.html = IMAGE
+BUGCR105305 MAC : svg/transforms/text-with-pattern-with-svg-transform.svg = IMAGE
 
 // -----------------------------------------------------------------
 // Other failures
