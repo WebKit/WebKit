@@ -39,9 +39,12 @@ WebLayerTreeView::Settings::operator CCSettings() const
     CCSettings settings;
     settings.acceleratePainting = acceleratePainting;
     settings.compositeOffscreen = compositeOffscreen;
-    settings.enableCompositorThread = enableCompositorThread;
     settings.showFPSCounter = showFPSCounter;
     settings.showPlatformLayerTree = showPlatformLayerTree;
+
+    // FIXME: showFPSCounter / showPlatformLayerTree aren't supported currently.
+    settings.showFPSCounter = false;
+    settings.showPlatformLayerTree = false;
     return settings;
 }
 
@@ -67,7 +70,7 @@ bool WebLayerTreeView::equals(const WebLayerTreeView& n) const
 
 void WebLayerTreeView::composite()
 {
-    if (m_private->settings().enableCompositorThread)
+    if (CCProxy::hasImplThread())
         m_private->setNeedsCommit();
     else
         m_private->composite();

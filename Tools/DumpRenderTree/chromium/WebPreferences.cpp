@@ -109,7 +109,6 @@ void WebPreferences::reset()
     hyperlinkAuditingEnabled = false;
     acceleratedCompositingForVideoEnabled = false;
     acceleratedCompositingEnabled = false;
-    threadedCompositingEnabled = false;
     compositeToTexture = false;
     accelerated2dCanvasEnabled = false;
     legacyAccelerated2dCanvasEnabled = false;
@@ -213,7 +212,6 @@ void WebPreferences::applyTo(WebView* webView)
     settings->setCaretBrowsingEnabled(caretBrowsingEnabled);
     settings->setAcceleratedCompositingEnabled(acceleratedCompositingEnabled);
     settings->setAcceleratedCompositingForVideoEnabled(acceleratedCompositingForVideoEnabled);
-    settings->setUseThreadedCompositor(threadedCompositingEnabled);
     settings->setCompositeToTextureEnabled(compositeToTexture);
     settings->setForceCompositingMode(forceCompositingMode);
     settings->setAccelerated2dCanvasEnabled(accelerated2dCanvasEnabled);

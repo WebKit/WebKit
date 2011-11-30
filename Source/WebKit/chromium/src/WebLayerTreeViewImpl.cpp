@@ -35,6 +35,7 @@
 #include "WebLayerTreeViewClient.h"
 #include "WebSize.h"
 #include "WebThread.h"
+#include "cc/CCThreadProxy.h"
 
 using namespace WebCore;
 
@@ -92,7 +93,7 @@ PassRefPtr<GraphicsContext3D> WebLayerTreeViewImpl::createLayerTreeHostContext3D
     attributes.preserveDrawingBuffer = false;
 
     GraphicsContext3D::RenderStyle style = GraphicsContext3D::RenderDirectlyToHostWindow;
-    GraphicsContext3DPrivate::ThreadUsage usage = settings().enableCompositorThread ? GraphicsContext3DPrivate::ForUseOnAnotherThread : GraphicsContext3DPrivate::ForUseOnThisThread;
+    GraphicsContext3DPrivate::ThreadUsage usage = CCProxy::hasImplThread() ? GraphicsContext3DPrivate::ForUseOnAnotherThread : GraphicsContext3DPrivate::ForUseOnThisThread;
     return GraphicsContext3DPrivate::createGraphicsContextFromWebContext(webContext.release(), attributes, 0, style, usage);
 }
 

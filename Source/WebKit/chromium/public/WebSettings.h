@@ -117,8 +117,6 @@ public:
     virtual void setLegacyAccelerated2dCanvasEnabled(bool) = 0;
     virtual void setMinimumAccelerated2dCanvasSize(int) = 0;
     virtual void setAcceleratedDrawingEnabled(bool) = 0;
-    virtual void setUseThreadedCompositor(bool) = 0;
-    virtual bool useThreadedCompositor() const = 0;
     virtual void setMemoryInfoEnabled(bool) = 0;
     virtual void setHyperlinkAuditingEnabled(bool) = 0;
     virtual void setAsynchronousSpellCheckingEnabled(bool) = 0;

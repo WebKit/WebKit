@@ -27,23 +27,33 @@
 #define WebCompositor_h
 
 #include "platform/WebCommon.h"
+#include "WebCompositorInputHandler.h"
 
 namespace WebKit {
 
-class WebCompositorClient;
 class WebInputEvent;
 class WebThread;
 
-// This represents the compositor associated with a WebWidget. All calls to the WebCompositor must
-// be made from the compositor thread.
-class WebCompositor {
-public:
-    // This must be called once with a non-null WebThread before any compositors attempt to initialize.
-    WEBKIT_EXPORT static void setThread(WebThread*);
-    WEBKIT_EXPORT static WebCompositor* fromIdentifier(int);
+#define WEBCOMPOSITOR_HAS_INITIALIZE
 
-    virtual void setClient(WebCompositorClient*) = 0;
-    virtual void handleInputEvent(const WebInputEvent&) = 0;
+// This class contains global routines for interacting with the
+// compositor.
+//
+// All calls to the WebCompositor must be made from the main thread.
+//
+// This class currently temporarily inherits from WebCompositorInputHandler
+// while we migrate downstream code to use WebCompositorInputHandler directly.
+class WebCompositor : public WebCompositorInputHandler {
+public:
+    // Initializes the compositor. Threaded compositing is enabled by passing in
+    // a non-null WebThread. No compositor classes or methods should be used
+    // prior to calling initialize.
+    WEBKIT_EXPORT static void initialize(WebThread*);
+
+    // Shuts down the compositor. This must be called when all compositor data
+    // types have been deleted. No compositor classes or methods should be used
+    // after shutdown.
+    WEBKIT_EXPORT static void shutdown();
 
 protected:
     virtual ~WebCompositor() { }

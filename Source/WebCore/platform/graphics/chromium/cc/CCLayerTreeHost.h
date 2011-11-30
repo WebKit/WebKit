@@ -72,7 +72,6 @@ struct CCSettings {
             : acceleratePainting(false)
             , compositeOffscreen(false)
             , discardAllTextures(false)
-            , enableCompositorThread(false)
             , showFPSCounter(false)
             , showPlatformLayerTree(false)
             , useDamageTracker(false)
@@ -81,7 +80,6 @@ struct CCSettings {
     bool acceleratePainting;
     bool compositeOffscreen;
     bool discardAllTextures;
-    bool enableCompositorThread;
     bool showFPSCounter;
     bool showPlatformLayerTree;
     bool useDamageTracker;
@@ -114,6 +112,9 @@ class CCLayerTreeHost : public RefCounted<CCLayerTreeHost> {
 public:
     static PassRefPtr<CCLayerTreeHost> create(CCLayerTreeHostClient*, const CCSettings&);
     virtual ~CCLayerTreeHost();
+
+    // Returns true if any CCLayerTreeHost is alive.
+    static bool anyLayerTreeHostInstanceExists();
 
     // CCLayerTreeHost interface to CCProxy.
     void animateAndLayout(double frameBeginTime);

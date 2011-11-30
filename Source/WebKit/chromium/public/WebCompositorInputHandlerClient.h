@@ -23,39 +23,29 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebCompositorImpl_h
-#define WebCompositorImpl_h
-
-#include "WebCompositor.h"
-
-#include <wtf/HashSet.h>
-#include <wtf/Noncopyable.h>
-#include <wtf/OwnPtr.h>
-
-namespace WebCore {
-class CCThread;
-}
+#ifndef WebCompositorInputHandlerClient_h
+#define WebCompositorInputHandlerClient_h
 
 namespace WebKit {
 
-class WebThread;
-
-class WebCompositorImpl : public WebCompositor {
-    WTF_MAKE_NONCOPYABLE(WebCompositorImpl);
+class WebCompositorInputHandlerClient {
 public:
-    static bool initialized();
+    // Callbacks invoked from the compositor thread.
+    virtual void willShutdown() = 0;
 
-private:
+    // Exactly one of the following two callbacks will be invoked after every call to WebCompositor::handleInputEvent():
 
-    friend class WebCompositor;
-    static void initialize(WebThread* implThread);
-    static void shutdown();
+    // Called when the WebCompositor handled the input event and no further processing is required.
+    virtual void didHandleInputEvent() = 0;
 
-    static bool s_initialized;
-    static OwnPtr<WebCore::CCThread> s_mainThread;
-    static OwnPtr<WebCore::CCThread> s_implThread;
+    // Called when the WebCompositor did not handle the input event. If sendToWidget is true, the input event
+    // should be forwarded to the WebWidget associated with this compositor for further processing.
+    virtual void didNotHandleInputEvent(bool sendToWidget) = 0;
+
+protected:
+    virtual ~WebCompositorInputHandlerClient() { }
 };
 
-}
+} // namespace WebKit
 
-#endif // WebCompositorImpl_h
+#endif

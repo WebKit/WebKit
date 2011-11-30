@@ -28,112 +28,60 @@
 #include "WebCompositorImpl.h"
 
 #include "CCThreadImpl.h"
+#include "WebKit.h"
+#include "WebKitPlatformSupport.h"
 #include "WebCompositorClient.h"
 #include "WebInputEvent.h"
-#include "cc/CCInputHandler.h"
-#include "cc/CCThreadProxy.h"
+#include "cc/CCProxy.h"
+#include "cc/CCLayerTreeHost.h"
 #include <wtf/ThreadingPrimitives.h>
 
 using namespace WebCore;
 
-namespace WebCore {
-
-PassOwnPtr<CCInputHandler> CCInputHandler::create(CCInputHandlerClient* inputHandlerClient)
-{
-    return WebKit::WebCompositorImpl::create(inputHandlerClient);
-}
-
-}
-
 namespace WebKit {
 
-void WebCompositor::setThread(WebThread* compositorThread)
+bool WebCompositorImpl::s_initialized = false;
+OwnPtr<CCThread> WebCompositorImpl::s_mainThread;
+OwnPtr<CCThread> WebCompositorImpl::s_implThread;
+
+void WebCompositor::initialize(WebThread* implThread)
 {
-    ASSERT(compositorThread);
-    CCThreadProxy::setImplThread(CCThreadImpl::create(compositorThread).leakPtr());
+    WebCompositorImpl::initialize(implThread);
+}
+void WebCompositor::shutdown()
+{
+    WebCompositorImpl::shutdown();
 }
 
-
-// These statics may only be accessed from the compositor thread.
-int WebCompositorImpl::s_nextAvailableIdentifier = 1;
-HashSet<WebCompositorImpl*>* WebCompositorImpl::s_compositors = 0;
-
-WebCompositor* WebCompositor::fromIdentifier(int identifier)
+void WebCompositorImpl::initialize(WebThread* implThread)
 {
-    ASSERT(CCProxy::isImplThread());
-    return WebCompositorImpl::fromIdentifier(identifier);
+    ASSERT(!s_initialized);
+    s_initialized = true;
+
+    s_mainThread = CCThreadImpl::create(webKitPlatformSupport()->currentThread());
+    CCProxy::setMainThread(s_mainThread.get());
+    if (implThread) {
+        s_implThread = CCThreadImpl::create(implThread);
+        CCProxy::setImplThread(s_implThread.get());
+    } else
+        CCProxy::setImplThread(0);
 }
 
-WebCompositor* WebCompositorImpl::fromIdentifier(int identifier)
+bool WebCompositorImpl::initialized()
 {
-    ASSERT(CCProxy::isImplThread());
-
-    if (!s_compositors)
-        return 0;
-
-    for (HashSet<WebCompositorImpl*>::iterator it = s_compositors->begin(); it != s_compositors->end(); ++it) {
-        if ((*it)->identifier() == identifier)
-            return *it;
-    }
-    return 0;
+    return s_initialized;
 }
 
-WebCompositorImpl::WebCompositorImpl(CCInputHandlerClient* inputHandlerClient)
-    : m_client(0)
-    , m_identifier(s_nextAvailableIdentifier++)
-    , m_inputHandlerClient(inputHandlerClient)
+void WebCompositorImpl::shutdown()
 {
-    ASSERT(CCProxy::isImplThread());
+    ASSERT(s_initialized);
+    ASSERT(!CCLayerTreeHost::anyLayerTreeHostInstanceExists());
 
-    if (!s_compositors)
-        s_compositors = new HashSet<WebCompositorImpl*>;
-    s_compositors->add(this);
-}
-
-WebCompositorImpl::~WebCompositorImpl()
-{
-    ASSERT(CCProxy::isImplThread());
-    if (m_client)
-        m_client->willShutdown();
-
-    ASSERT(s_compositors);
-    s_compositors->remove(this);
-    if (!s_compositors->size()) {
-        delete s_compositors;
-        s_compositors = 0;
-    }
-}
-
-void WebCompositorImpl::setClient(WebCompositorClient* client)
-{
-    ASSERT(CCProxy::isImplThread());
-    // It's valid to set a new client if we've never had one or to clear the client, but it's not valid to change from having one client to a different one.
-    ASSERT(!m_client || !client);
-    m_client = client;
-}
-
-void WebCompositorImpl::handleInputEvent(const WebInputEvent& event)
-{
-    ASSERT(CCProxy::isImplThread());
-    ASSERT(m_client);
-
-    if (event.type == WebInputEvent::MouseWheel && !m_inputHandlerClient->haveWheelEventHandlers()) {
-        const WebMouseWheelEvent& wheelEvent = *static_cast<const WebMouseWheelEvent*>(&event);
-        m_inputHandlerClient->scrollRootLayer(IntSize(-wheelEvent.deltaX, -wheelEvent.deltaY));
-        m_client->didHandleInputEvent();
-        return;
-    }
-    m_client->didNotHandleInputEvent(true /* sendToWidget */);
-}
-
-int WebCompositorImpl::identifier() const
-{
-    ASSERT(CCProxy::isImplThread());
-    return m_identifier;
-}
-
-void WebCompositorImpl::willDraw(double frameBeginTimeMs)
-{
+    s_implThread.clear();
+    s_mainThread.clear();
+    CCProxy::setImplThread(0);
+    CCProxy::setMainThread(0);
+    s_initialized = false;
 }
 
 }

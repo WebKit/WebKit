@@ -201,7 +201,6 @@ void TestShell::resetWebSettings(WebView& webView)
     m_prefs.reset();
     m_prefs.acceleratedCompositingEnabled = true;
     m_prefs.acceleratedCompositingForVideoEnabled = m_acceleratedCompositingForVideoEnabled;
-    m_prefs.threadedCompositingEnabled = m_threadedCompositingEnabled;
     m_prefs.compositeToTexture = m_compositeToTexture;
     m_prefs.forceCompositingMode = m_forceCompositingMode;
     m_prefs.accelerated2dCanvasEnabled = m_accelerated2dCanvasEnabled;

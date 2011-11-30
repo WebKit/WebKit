@@ -26,22 +26,14 @@
 #ifndef WebCompositorClient_h
 #define WebCompositorClient_h
 
+#include "WebCompositorInputHandlerClient.h"
+
 namespace WebKit {
 
-class WebCompositorClient {
+// This class will go away once downstream code has transitioned
+// to WebCompositorInputHandlerClient.
+class WebCompositorClient : public WebCompositorInputHandlerClient {
 public:
-    // Callbacks invoked from the compositor thread.
-    virtual void willShutdown() = 0;
-
-    // Exactly one of the following two callbacks will be invoked after every call to WebCompositor::handleInputEvent():
-
-    // Called when the WebCompositor handled the input event and no further processing is required.
-    virtual void didHandleInputEvent() = 0;
-
-    // Called when the WebCompositor did not handle the input event. If sendToWidget is true, the input event
-    // should be forwarded to the WebWidget associated with this compositor for further processing.
-    virtual void didNotHandleInputEvent(bool sendToWidget) = 0;
-
 protected:
     virtual ~WebCompositorClient() { }
 };
