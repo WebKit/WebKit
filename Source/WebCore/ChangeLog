@@ -1,3 +1,28 @@
+2011-11-30  John Knottenbelt  <jknotten@chromium.org>
+
+        Remove unnecessary asserts in HTMLTextAreaElement.
+        https://bugs.webkit.org/show_bug.cgi?id=73135
+
+        http://code.google.com/p/chromium/issues/detail?id=103228 shows
+        that sometimes we are hitting the following assert in
+        HTMLTextAreaElement::updateFocusAppearance:
+
+        ASSERT(!document()->childNeedsAndNotInStyleRecalc());
+
+        This assert was added by https://bugs.webkit.org/show_bug.cgi?id=27474
+        as part of a fix for a crash when the selection is set immediately
+        after setting display:none.
+
+        All the methods called by updateFocusAppearance already handle the
+        case of the document having the childNeedsStyleRecalc flag set, so
+        this assert is unnecessary. The ASSERT(renderer()) is similarly
+        redundant.
+
+        Reviewed by Kent Tamura.
+
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::updateFocusAppearance):
+
 2011-11-30  Adam Roben  <aroben@apple.com>
 
         Clang build fix after r101507

@@ -198,9 +198,6 @@ bool HTMLTextAreaElement::isMouseFocusable() const
 
 void HTMLTextAreaElement::updateFocusAppearance(bool restorePreviousSelection)
 {
-    ASSERT(renderer());
-    ASSERT(!document()->childNeedsAndNotInStyleRecalc());
-
     if (!restorePreviousSelection || !hasCachedSelection()) {
         // If this is the first focus, set a caret at the beginning of the text.  
         // This matches some browsers' behavior; see bug 11746 Comment #15.
