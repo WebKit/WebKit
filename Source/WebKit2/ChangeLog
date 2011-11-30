@@ -1,3 +1,16 @@
+2011-11-29  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=72751
+        WebKit2.MouseMoveAfterCrash API test is failing 
+
+        Reviewed by Sam Weinig.
+
+        windowIsFocused() is too restrictive. All we need to know is that the page is 
+        active.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::mouseEvent):
+        (WebKit::WebPage::mouseEventSyncForTesting):
+
 2011-11-29  Sam Weinig  <sam@webkit.org>
 
         Add move semantics to WKRetainPtr

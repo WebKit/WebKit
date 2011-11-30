@@ -1179,7 +1179,7 @@ void WebPage::mouseEvent(const WebMouseEvent& mouseEvent)
     if (!handled) {
         CurrentEvent currentEvent(mouseEvent);
 
-        handled = handleMouseEvent(mouseEvent, m_page.get(), !windowIsFocused());
+        handled = handleMouseEvent(mouseEvent, m_page.get(), !m_page->focusController()->isActive());
     }
 
     send(Messages::WebPageProxy::DidReceiveEvent(static_cast<uint32_t>(mouseEvent.type()), handled));
@@ -1197,7 +1197,7 @@ void WebPage::mouseEventSyncForTesting(const WebMouseEvent& mouseEvent, bool& ha
 
     if (!handled) {
         CurrentEvent currentEvent(mouseEvent);
-        handled = handleMouseEvent(mouseEvent, m_page.get(), !windowIsFocused());
+        handled = handleMouseEvent(mouseEvent, m_page.get(), !m_page->focusController()->isActive());
     }
 }
 
