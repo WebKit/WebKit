@@ -3009,33 +3009,6 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         m_style->setTextDecoration(t);
         return;
     }
-
-    case CSSPropertyZoom:
-    {
-        // Reset the zoom in effect before we do anything.  This allows the setZoom method to accurately compute a new
-        // zoom in effect.
-        setEffectiveZoom(m_parentStyle ? m_parentStyle->effectiveZoom() : RenderStyle::initialZoom());
-
-        if (isInherit)
-            setZoom(m_parentStyle->zoom());
-        else if (isInitial || primitiveValue->getIdent() == CSSValueNormal)
-            setZoom(RenderStyle::initialZoom());
-        else if (primitiveValue->getIdent() == CSSValueReset) {
-            setEffectiveZoom(RenderStyle::initialZoom());
-            setZoom(RenderStyle::initialZoom());
-        } else if (primitiveValue->getIdent() == CSSValueDocument) {
-            float docZoom = m_checker.document()->renderer()->style()->zoom();
-            setEffectiveZoom(docZoom);
-            setZoom(docZoom);
-        } else if (primitiveValue->primitiveType() == CSSPrimitiveValue::CSS_PERCENTAGE) {
-            if (primitiveValue->getFloatValue())
-                setZoom(primitiveValue->getFloatValue() / 100.0f);
-        } else if (primitiveValue->primitiveType() == CSSPrimitiveValue::CSS_NUMBER) {
-            if (primitiveValue->getFloatValue())
-                setZoom(primitiveValue->getFloatValue());
-        }
-        return;
-    }
 // shorthand properties
     case CSSPropertyBackground:
         if (isInitial) {
@@ -3943,6 +3916,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSSPropertyWebkitWrapThrough:
     case CSSPropertyWebkitWrap:
     case CSSPropertyZIndex:
+    case CSSPropertyZoom:
         ASSERT_NOT_REACHED();
         return;
 #if ENABLE(SVG)

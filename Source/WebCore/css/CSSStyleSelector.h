@@ -118,6 +118,7 @@ public:
     RenderStyle* parentStyle() const { return m_parentStyle; }
     RenderStyle* rootElementStyle() const { return m_rootElementStyle; }
     Element* element() const { return m_element; }
+    Document* document() const { return m_checker.document(); }
     FontDescription fontDescription() { return style()->fontDescription(); }
     FontDescription parentFontDescription() {return parentStyle()->fontDescription(); }
     void setFontDescription(FontDescription fontDescription) { m_fontDirty |= style()->setFontDescription(fontDescription); }

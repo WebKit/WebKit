@@ -35,6 +35,7 @@
 #include "Document.h"
 #include "Element.h"
 #include "Pair.h"
+#include "RenderObject.h"
 #include "RenderStyle.h"
 #include <wtf/StdLibExtras.h>
 #include <wtf/UnusedParam.h>
@@ -1120,6 +1121,59 @@ public:
     }
 };
 
+class ApplyPropertyZoom {
+private:
+    static void resetEffectiveZoom(CSSStyleSelector* selector)
+    {
+        // Reset the zoom in effect. This allows the setZoom method to accurately compute a new zoom in effect.
+        selector->setEffectiveZoom(selector->parentStyle() ? selector->parentStyle()->effectiveZoom() : RenderStyle::initialZoom());
+    }
+
+public:
+    static void applyInheritValue(CSSStyleSelector* selector)
+    {
+        resetEffectiveZoom(selector);
+        selector->setZoom(selector->parentStyle()->zoom());
+    }
+
+    static void applyInitialValue(CSSStyleSelector* selector)
+    {
+        resetEffectiveZoom(selector);
+        selector->setZoom(RenderStyle::initialZoom());
+    }
+
+    static void applyValue(CSSStyleSelector* selector, CSSValue* value)
+    {
+        ASSERT(value->isPrimitiveValue());
+        CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
+
+        if (primitiveValue->getIdent() == CSSValueNormal) {
+            resetEffectiveZoom(selector);
+            selector->setZoom(RenderStyle::initialZoom());
+        } else if (primitiveValue->getIdent() == CSSValueReset) {
+            selector->setEffectiveZoom(RenderStyle::initialZoom());
+            selector->setZoom(RenderStyle::initialZoom());
+        } else if (primitiveValue->getIdent() == CSSValueDocument) {
+            float docZoom = selector->document()->renderer()->style()->zoom();
+            selector->setEffectiveZoom(docZoom);
+            selector->setZoom(docZoom);
+        } else if (primitiveValue->primitiveType() == CSSPrimitiveValue::CSS_PERCENTAGE) {
+            resetEffectiveZoom(selector);
+            if (float percent = primitiveValue->getFloatValue())
+                selector->setZoom(percent / 100.0f);
+        } else if (primitiveValue->primitiveType() == CSSPrimitiveValue::CSS_NUMBER) {
+            resetEffectiveZoom(selector);
+            if (float number = primitiveValue->getFloatValue())
+                selector->setZoom(number);
+        }
+    }
+
+    static PropertyHandler createHandler()
+    {
+        return PropertyHandler(&applyInheritValue, &applyInitialValue, &applyValue);
+    }
+};
+
 const CSSStyleApplyProperty& CSSStyleApplyProperty::sharedCSSStyleApplyProperty()
 {
     DEFINE_STATIC_LOCAL(CSSStyleApplyProperty, cssStyleApplyPropertyInstance, ());
@@ -1367,6 +1421,7 @@ CSSStyleApplyProperty::CSSStyleApplyProperty()
     setPropertyHandler(CSSPropertyWebkitWrap, ApplyPropertyExpanding<SuppressValue, CSSPropertyWebkitWrapFlow, CSSPropertyWebkitWrapMargin, CSSPropertyWebkitWrapPadding>::createHandler());
 
     setPropertyHandler(CSSPropertyZIndex, ApplyPropertyAuto<int, &RenderStyle::zIndex, &RenderStyle::setZIndex, &RenderStyle::hasAutoZIndex, &RenderStyle::setHasAutoZIndex>::createHandler());
+    setPropertyHandler(CSSPropertyZoom, ApplyPropertyZoom::createHandler());
 }
 
 
