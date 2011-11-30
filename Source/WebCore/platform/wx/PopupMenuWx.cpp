@@ -50,11 +50,8 @@ public:
 
     void OnMenuItemSelected(wxCommandEvent& event)
     {
-        if (m_client) {
+        if (m_client)
             m_client->valueChanged(event.GetId() - s_menuStartId);
-            m_client->popupDidHide();
-        }
-        // TODO: Do we need to call Disconnect here? Do we have a ref to the native window still?
     }
 
 private:
@@ -101,16 +98,18 @@ void PopupMenuWx::show(const IntRect& r, FrameView* v, int index)
                 m_menu->AppendSeparator();
             }
             else {
-                // FIXME: appending a menu item with an empty label asserts in
-                // wx. This needs to be fixed at wx level so that we can have
-                // the concept of "no selection" in choice boxes, etc.
+                // NOTE: appending a menu item with an empty label asserts in wx.
                 if (!client()->itemText(i).isEmpty())
                     m_menu->Append(s_menuStartId + i, client()->itemText(i));
+                else
+                    m_menu->Append(s_menuStartId + i, " ");
             }
         }
         nativeWin->Connect(s_menuStartId, s_menuStartId + (size-1), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(PopupMenuEventHandler::OnMenuItemSelected), 0, m_popupHandler);
         nativeWin->PopupMenu(m_menu, r.x() - v->scrollX(), r.y() - v->scrollY());
         nativeWin->Disconnect(s_menuStartId, s_menuStartId + (size-1), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(PopupMenuEventHandler::OnMenuItemSelected), 0, m_popupHandler);
+        
+        client()->popupDidHide();
     }
 }
 

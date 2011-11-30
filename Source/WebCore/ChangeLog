@@ -1,3 +1,15 @@
+2011-11-30  Robin Dunn  <robin@alldunn.com>
+
+        [wx] Ensure we always notify the popup client that the popup
+        was hidden, and fix handling of empty menu items.
+        https://bugs.webkit.org/show_bug.cgi?id=73464
+        
+        Reviewed by Kevin Ollivier.
+
+        * platform/wx/PopupMenuWx.cpp:
+        (WebCore::PopupMenuEventHandler::OnMenuItemSelected):
+        (WebCore::PopupMenuWx::show):
+
 2011-11-30  Tim Horton  <timothy_horton@apple.com>
 
         dx causes non-BMP characters to fail to render
@@ -14,7 +26,7 @@
         * rendering/svg/SVGTextLayoutAttributesBuilder.cpp:
         (WebCore::SVGTextLayoutAttributesBuilder::propagateLayoutAttributes):
 
-2011-11-29  Robin Dunn  <robin@alldunn.com>
+2011-11-30  Robin Dunn  <robin@alldunn.com>
 
         [wx] Add a scope for the raw bitmap access so that wx
         will not make a copy when creating the wxMemoryDC.
