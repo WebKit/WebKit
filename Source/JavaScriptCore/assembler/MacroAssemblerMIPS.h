@@ -1815,12 +1815,6 @@ public:
         m_assembler.nop();
     }
 
-    static FunctionPtr readCallTarget(CodeLocationCall call)
-    {
-        return FunctionPtr(reinterpret_cast<void(*)()>(MIPSAssembler::readCallTarget(call.dataLocation())));
-    }
-
-
 private:
     // If m_fixedWidth is true, we will generate a fixed number of instructions.
     // Otherwise, we can emit any number of instructions.
