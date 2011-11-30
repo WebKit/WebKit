@@ -1,3 +1,17 @@
+2011-11-29  Sam Weinig  <sam@webkit.org>
+
+        Add move semantics to WKRetainPtr
+        https://bugs.webkit.org/show_bug.cgi?id=73400
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/cpp/WKRetainPtr.h:
+        (WebKit::WKRetainPtr::WKRetainPtr):
+        Add a move constructor and move enabled assignment operators
+        to WKRetainPtr if the compiler being used supports rvalue
+        references. If the compiler does not support it, we fallback
+        to the copy semantics we have always had.
+
 2011-11-30  Mario Sanchez Prada  <msanchez@igalia.com>
 
         [Gtk] Links should be Tab-focusable by default

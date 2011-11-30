@@ -68,6 +68,18 @@ public:
             WKRetain(ptr);
     }
 
+#if COMPILER_SUPPORTS(CXX_RVALUE_REFERENCES)
+    template<typename U> WKRetainPtr(WKRetainPtr<U>&& o)
+        : m_ptr(o.leakRef())
+    {
+    }
+    
+    WKRetainPtr(WKRetainPtr&& o)
+        : m_ptr(o.leakRef())
+    {
+    }
+#endif
+
     ~WKRetainPtr()
     {
         if (PtrType ptr = m_ptr)
@@ -102,6 +114,11 @@ public:
     template<typename U> WKRetainPtr& operator=(const WKRetainPtr<U>&);
     WKRetainPtr& operator=(PtrType);
     template<typename U> WKRetainPtr& operator=(U*);
+
+#if COMPILER_SUPPORTS(CXX_RVALUE_REFERENCES)
+    WKRetainPtr& operator=(WKRetainPtr&&);
+    template<typename U> WKRetainPtr& operator=(WKRetainPtr<U>&&);
+#endif
 
     void adopt(PtrType);
     void swap(WKRetainPtr&);
@@ -145,14 +162,6 @@ template<typename T> inline WKRetainPtr<T>& WKRetainPtr<T>::operator=(PtrType op
     return *this;
 }
 
-template<typename T> inline void WKRetainPtr<T>::adopt(PtrType optr)
-{
-    PtrType ptr = m_ptr;
-    m_ptr = optr;
-    if (ptr)
-        WKRelease(ptr);
-}
-
 template<typename T> template<typename U> inline WKRetainPtr<T>& WKRetainPtr<T>::operator=(U* optr)
 {
     if (optr)
@@ -162,6 +171,28 @@ template<typename T> template<typename U> inline WKRetainPtr<T>& WKRetainPtr<T>:
     if (ptr)
         WKRelease(ptr);
     return *this;
+}
+
+#if COMPILER_SUPPORTS(CXX_RVALUE_REFERENCES)
+template<typename T> inline WKRetainPtr<T>& WKRetainPtr<T>::operator=(WKRetainPtr<T>&& o)
+{
+    adopt(o.leakRef());
+    return *this;
+}
+
+template<typename T> template<typename U> inline WKRetainPtr<T>& WKRetainPtr<T>::operator=(WKRetainPtr<U>&& o)
+{
+    adopt(o.leakRef());
+    return *this;
+}
+#endif
+
+template<typename T> inline void WKRetainPtr<T>::adopt(PtrType optr)
+{
+    PtrType ptr = m_ptr;
+    m_ptr = optr;
+    if (ptr)
+        WKRelease(ptr);
 }
 
 template<typename T> inline void WKRetainPtr<T>::swap(WKRetainPtr<T>& o)
