@@ -998,6 +998,7 @@ TreeElement.prototype.traversePreviousTreeElement = function(skipUnrevealed, don
 
 TreeElement.prototype.isEventWithinDisclosureTriangle = function(event)
 {
-    var left = this._listItemNode.totalOffsetLeft();
+    const leftPadding = 14;
+    var left = this._listItemNode.totalOffsetLeft() + leftPadding;
     return event.pageX >= left && event.pageX <= left + this.arrowToggleWidth && this.hasChildren;
 }

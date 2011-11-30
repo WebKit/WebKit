@@ -27,11 +27,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.resources .outline-disclosure li {
-    text-indent: -1px;
-}
-
-.resources .sidebar-resizer-vertical {
+.resources.panel .sidebar-resizer-vertical {
     top: 23px;
 }
 
@@ -43,13 +39,6 @@
 .resources.panel .sidebar li {
     height: 17px;
     white-space: nowrap;
-    text-indent: 0;
-    margin-left: -2px;
-}
-
-.resources.panel .sidebar li.parent {
-    text-indent: 0;
-    margin-left: -12px;
 }
 
 .resources.panel .sidebar li.selected {

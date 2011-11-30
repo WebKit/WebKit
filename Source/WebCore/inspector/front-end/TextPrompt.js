@@ -916,7 +916,7 @@ WebInspector.TextPrompt.SuggestBox.prototype = {
         var aboveHeight = anchorBox.y;
         var underHeight = document.body.offsetHeight - anchorBox.y - anchorBox.height;
         var maxHeight = Math.max(underHeight, aboveHeight) - spacer;
-        height = Math.min(contentHeight, maxHeight - suggestBoxPaddingY) + suggestBoxPaddingY;
+        var height = Math.min(contentHeight, maxHeight - suggestBoxPaddingY) + suggestBoxPaddingY;
         if (underHeight >= aboveHeight) {
             // Locate the suggest box under the anchorBox.
             boxY = anchorBox.y + anchorBox.height;

@@ -1,3 +1,28 @@
+2011-11-28  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: TreeOutline elements should be formatted using margin-left instead of text-indent.
+        https://bugs.webkit.org/show_bug.cgi?id=73234
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/ResourceHeadersView.js:
+        (WebInspector.ResourceHeadersView.prototype._refreshHeadersText):
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.BaseStorageTreeElement.prototype.get searchMatchesCount):
+        * inspector/front-end/auditsPanel.css:
+        (.audit-result-tree li):
+        (.audit-result-tree li.parent):
+        (.audit-result img):
+        * inspector/front-end/inspector.css:
+        (.outline-disclosure li):
+        (.outline-disclosure li.parent):
+        * inspector/front-end/networkPanel.css:
+        * inspector/front-end/resourcesPanel.css:
+        (.resources.panel .sidebar-resizer-vertical):
+        (.resources.panel .sidebar li):
+        * inspector/front-end/treeoutline.js:
+        (TreeElement.prototype.isEventWithinDisclosureTriangle):
+
 2011-11-30  Kentaro Hara  <haraken@chromium.org>
 
         Implement the [NamedConstructor] IDL in CodeGeneratorJS.pm

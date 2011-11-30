@@ -1000,16 +1000,6 @@ WebInspector.BaseStorageTreeElement.prototype = {
     get searchMatchesCount()
     {
         return 0;
-    },
-
-    isEventWithinDisclosureTriangle: function(event)
-    {
-        // Override it since we use margin-left in place of treeoutline's text-indent.
-        // Hence we need to take padding into consideration. This all is needed for leading
-        // icons in the tree.
-        const paddingLeft = 14;
-        var left = this.listItemElement.totalOffsetLeft() + paddingLeft;
-        return event.pageX >= left && event.pageX <= left + this.arrowToggleWidth && this.hasChildren;
     }
 }
 

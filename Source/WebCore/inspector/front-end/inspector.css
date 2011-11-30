@@ -1042,8 +1042,8 @@ iframe.panel.extension {
     padding: 0 0 0 14px;
     margin-top: 1px;
     margin-bottom: 1px;
+    margin-left: -2px;
     word-wrap: break-word;
-    text-indent: -2px;
 }
 
 .outline-disclosure ol:focus li.selected {
@@ -1055,7 +1055,7 @@ iframe.panel.extension {
 }
 
 .outline-disclosure li.parent {
-    text-indent: -12px
+    margin-left: -12px
 }
 
 .outline-disclosure li .webkit-html-tag.close {

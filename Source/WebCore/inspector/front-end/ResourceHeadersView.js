@@ -373,7 +373,6 @@ WebInspector.ResourceHeadersView.prototype = {
         var headerTreeElement = new TreeElement(null, null, false);
         headerTreeElement.selectable = false;
         headersTreeElement.appendChild(headerTreeElement);
-        headerTreeElement.listItemElement.addStyleClass("headers-text");
 
         var headersTextElement = document.createElement("span");
         headersTextElement.addStyleClass("header-value");
