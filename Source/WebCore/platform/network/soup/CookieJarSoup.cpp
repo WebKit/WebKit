@@ -124,17 +124,40 @@ void deleteCookie(const Document*, const KURL&, const String&)
 
 void getHostnamesWithCookies(HashSet<String>& hostnames)
 {
-    // FIXME: Not yet implemented
+    SoupCookieJar* cookieJar = WebCore::defaultCookieJar();
+    GSList* cookies = soup_cookie_jar_all_cookies(cookieJar);
+    for (GSList* item = cookies; item; item = item->next) {
+        SoupCookie* soupCookie = static_cast<SoupCookie*>(item->data);
+        if (char* domain = const_cast<char*>(soup_cookie_get_domain(soupCookie)))
+            hostnames.add(String::fromUTF8(domain));
+    }
+
+    soup_cookies_free(cookies);
 }
 
 void deleteCookiesForHostname(const String& hostname)
 {
-    // FIXME: Not yet implemented
+    CString hostNameString = hostname.utf8();
+
+    SoupCookieJar* cookieJar = WebCore::defaultCookieJar();
+    GSList* cookies = soup_cookie_jar_all_cookies(cookieJar);
+    for (GSList* item = cookies; item; item = item->next) {
+        SoupCookie* soupCookie = static_cast<SoupCookie*>(item->data);
+        if (hostNameString == soup_cookie_get_domain(soupCookie))
+            soup_cookie_jar_delete_cookie(cookieJar, soupCookie);
+    }
+
+    soup_cookies_free(cookies);
 }
 
 void deleteAllCookies()
 {
-    // FIXME: Not yet implemented
+    SoupCookieJar* cookieJar = WebCore::defaultCookieJar();
+    GSList* cookies = soup_cookie_jar_all_cookies(cookieJar);
+    for (GSList* item = cookies; item; item = item->next)
+        soup_cookie_jar_delete_cookie(cookieJar, static_cast<SoupCookie*>(item->data));
+
+    soup_cookies_free(cookies);
 }
 
 }

@@ -1,3 +1,19 @@
+2011-11-30  Jongseok Yang  <js45.yang@samsung.com>
+
+        [SOUP][WK2] Implement the functions to manager cookies in CookieJar for WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=72353
+
+        r79722 inserted the functions to manange cookies from web process.
+        (getHostnamesWithCookies,deleteCookiesForHostname,deleteAllCookies)
+        Implement the functions for soup network backend.
+
+        Reviewed by Martin Robinson.
+
+        * platform/network/soup/CookieJarSoup.cpp:
+        (WebCore::getHostnamesWithCookies):
+        (WebCore::deleteCookiesForHostname):
+        (WebCore::deleteAllCookies):
+
 2011-11-30  Daniel Sievers  <sievers@chromium.org>
 
         [Chromium] Avoid ASSERT_NOT_REACHED() from creating FBO with content texture of size 0
