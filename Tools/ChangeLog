@@ -1,5 +1,38 @@
 2011-11-30  Adam Roben  <aroben@apple.com>
 
+        Make NRWT show DRT/WTR build logs when the build fails or --verbose is passed
+
+        This will make it a lot easier to investigate build failures on the bots.
+
+        Fixes <http://webkit.org/b/71160> NRWT doesn't show build output when building DRT
+
+        Reviewed by Eric Seidel.
+
+        * Scripts/webkitpy/common/system/executive_mock.py:
+        (MockExecutive.run_command): Include the mock output in the ScriptError we raise since it
+        makes the expected output in WebKitPortTest.test_build_driver more closely mimic the output
+        seen in practice.
+
+        * Scripts/webkitpy/layout_tests/controllers/manager_unittest.py:
+        (ManagerTest.test_http_locking): Pass False for the configure_logging parameter to Printer.
+        The Printer was modifying the root logger in way that would cause my new tests in
+        WebKitPort.test_build_driver to fail. The value of the configure_logging parameter doesn't
+        seem important to the functioning of this test, and passing False makes Printer not modify
+        the root logger.
+
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+        (WebKitPort._run_script): Log the output of the command at the DEBUG level so it will show
+        up when --verbose is passed but not otherwise.
+        (WebKitPort._build_driver): When an error occurs, log the error message and the script's
+        output at the ERROR level so it will always show up.
+
+        * Scripts/webkitpy/layout_tests/port/webkit_unittest.py:
+        (WebKitPortTest.test_build_driver): Test that nothing is logged in the normal, successful
+        cases. Test that the build scripts' output is logged when --verbose is passed or the build
+        fails.
+
+2011-11-30  Adam Roben  <aroben@apple.com>
+
         Add a way to set OutputCapture's log level
 
         This will be used by some unit tests I'm planning to add.

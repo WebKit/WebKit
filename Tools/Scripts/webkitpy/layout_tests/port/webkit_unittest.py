@@ -25,6 +25,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import logging
 import unittest
 
 from webkitpy.common.host_mock import MockHost
@@ -178,18 +179,27 @@ BUG_SKIPPED SKIP : media = FAIL""")
         port._executive = MockExecutive(should_log=True)
         port._options = MockOptions(configuration="Release")  # This should not be necessary, but I think TestWebKitPort is actually reading from disk (and thus detects the current configuration).
         expected_stderr = "MOCK run_command: ['Tools/Scripts/build-dumprendertree', '--release'], cwd=/mock-checkout, env={'LC_ALL': 'C', 'MOCK_ENVIRON_COPY': '1'}\n"
-        self.assertTrue(output.assert_outputs(self, port._build_driver, expected_stderr=expected_stderr))
+        self.assertTrue(output.assert_outputs(self, port._build_driver, expected_stderr=expected_stderr, expected_logs=''))
 
-        # Make sure when passed --webkit-test-runner web build the right tool.
+        # Make sure when passed --webkit-test-runner we build the right tool.
         port._options = MockOptions(webkit_test_runner=True, configuration="Release")
         expected_stderr = "MOCK run_command: ['Tools/Scripts/build-dumprendertree', '--release'], cwd=/mock-checkout, env={'LC_ALL': 'C', 'MOCK_ENVIRON_COPY': '1'}\nMOCK run_command: ['Tools/Scripts/build-webkittestrunner', '--release'], cwd=/mock-checkout, env={'LC_ALL': 'C', 'MOCK_ENVIRON_COPY': '1'}\n"
-        self.assertTrue(output.assert_outputs(self, port._build_driver, expected_stderr=expected_stderr))
+        self.assertTrue(output.assert_outputs(self, port._build_driver, expected_stderr=expected_stderr, expected_logs=''))
+
+        # Make sure we show the build log when --verbose is passed, which we simulate by setting the logging level to DEBUG.
+        output.set_log_level(logging.DEBUG)
+        port._options = MockOptions(configuration="Release")
+        expected_stderr = "MOCK run_command: ['Tools/Scripts/build-dumprendertree', '--release'], cwd=/mock-checkout, env={'LC_ALL': 'C', 'MOCK_ENVIRON_COPY': '1'}\n"
+        expected_logs = "Output of ['Tools/Scripts/build-dumprendertree', '--release']:\nMOCK output of child process\n"
+        self.assertTrue(output.assert_outputs(self, port._build_driver, expected_stderr=expected_stderr, expected_logs=expected_logs))
+        output.set_log_level(logging.INFO)
 
         # Make sure that failure to build returns False.
         port._executive = MockExecutive(should_log=True, should_throw=True)
         # Because WK2 currently has to build both webkittestrunner and DRT, if DRT fails, that's the only one it tries.
         expected_stderr = "MOCK run_command: ['Tools/Scripts/build-dumprendertree', '--release'], cwd=/mock-checkout, env={'LC_ALL': 'C', 'MOCK_ENVIRON_COPY': '1'}\n"
-        self.assertFalse(output.assert_outputs(self, port._build_driver, expected_stderr=expected_stderr))
+        expected_logs = "MOCK ScriptError\n\nMOCK output of child process\n"
+        self.assertFalse(output.assert_outputs(self, port._build_driver, expected_stderr=expected_stderr, expected_logs=expected_logs))
 
     def _assert_config_file_for_platform(self, port, platform, config_file):
         self.assertEquals(port._apache_config_file_name_for_platform(platform), config_file)

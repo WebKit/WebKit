@@ -103,7 +103,9 @@ class WebKitPort(Port):
             run_script_command.extend(self._arguments_for_configuration())
         if args:
             run_script_command.extend(args)
-        return self._executive.run_command(run_script_command, cwd=self._config.webkit_base_dir(), decode_output=decode_output, env=env)
+        output = self._executive.run_command(run_script_command, cwd=self._config.webkit_base_dir(), decode_output=decode_output, env=env)
+        _log.debug('Output of %s:\n%s' % (run_script_command, output))
+        return output
 
     def _build_driver(self):
         environment = self.host.copy_current_environment()
@@ -119,8 +121,8 @@ class WebKitPort(Port):
             self._run_script("build-dumprendertree", env=env)
             if self.get_option('webkit_test_runner'):
                 self._run_script("build-webkittestrunner", env=env)
-        except ScriptError:
-            _log.error("Failed to build %s" % self.driver_name())
+        except ScriptError, e:
+            _log.error(e.message_with_output(output_limit=None))
             return False
         return True
 

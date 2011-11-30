@@ -69,9 +69,10 @@ class MockExecutive(object):
             if env:
                 env_string = ", env=%s" % env
             log("MOCK run_command: %s, cwd=%s%s" % (args, cwd, env_string))
+        output = "MOCK output of child process"
         if self._should_throw:
-            raise ScriptError("MOCK ScriptError")
-        return "MOCK output of child process"
+            raise ScriptError("MOCK ScriptError", output=output)
+        return output
 
 
 class MockExecutive2(object):
