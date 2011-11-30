@@ -25,6 +25,7 @@
 #include "WKURLQt.h"
 #include "qquickwebview_p.h"
 #include "qquickwebview_p_p.h"
+#include "qwebpermissionrequest_p.h"
 #include <WKAPICast.h>
 #include <WKHitTestResult.h>
 #include <WKOpenPanelParameters.h>
@@ -43,6 +44,7 @@ QtWebPageUIClient::QtWebPageUIClient(WKPageRef pageRef, QQuickWebView* webView)
     uiClient.setStatusText = setStatusText;
     uiClient.runOpenPanel = runOpenPanel;
     uiClient.mouseDidMoveOverElement = mouseDidMoveOverElement;
+    uiClient.decidePolicyForGeolocationPermissionRequest = policyForGeolocationPermissionRequest;
     WKPageSetPageUIClient(pageRef, &uiClient);
 }
 
@@ -78,6 +80,12 @@ void QtWebPageUIClient::mouseDidMoveOverElement(const QUrl& linkURL, const QStri
     m_lastHoveredURL = linkURL;
     m_lastHoveredTitle = linkTitle;
     emit m_webView->linkHovered(m_lastHoveredURL, m_lastHoveredTitle);
+}
+
+void QtWebPageUIClient::permissionRequest(QWebPermissionRequest* request)
+{
+    request->setParent(m_webView);
+    emit m_webView->experimental()->permissionRequested(request);
 }
 
 static QtWebPageUIClient* toQtWebPageUIClient(const void* clientInfo)
@@ -139,3 +147,13 @@ void QtWebPageUIClient::mouseDidMoveOverElement(WKPageRef page, WKHitTestResultR
     const QString linkTitle = WKStringCopyQString(adoptWK(WKHitTestResultCopyLinkTitle(hitTestResult)).get());
     toQtWebPageUIClient(clientInfo)->mouseDidMoveOverElement(absoluteLinkUrl, linkTitle);
 }
+
+void QtWebPageUIClient::policyForGeolocationPermissionRequest(WKPageRef page, WKFrameRef frame, WKSecurityOriginRef origin, WKGeolocationPermissionRequestRef request, const void* clientInfo)
+{
+    if (!request)
+        return;
+
+    QWebPermissionRequest* req = QWebPermissionRequest::create(origin, request);
+    toQtWebPageUIClient(clientInfo)->permissionRequest(req);
+}
+

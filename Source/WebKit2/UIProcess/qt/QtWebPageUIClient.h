@@ -23,9 +23,13 @@
 
 #include <QtCore/QString>
 #include <QtCore/QUrl>
+#include <WKFrame.h>
+#include <WKGeolocationPermissionRequest.h>
 #include <WKPage.h>
+#include <WKSecurityOrigin.h>
 
 class QQuickWebView;
+class QWebPermissionRequest;
 
 class QtWebPageUIClient {
 public:
@@ -43,6 +47,7 @@ private:
     void setStatusText(const QString&);
     void runOpenPanel(WKOpenPanelResultListenerRef, const QStringList& selectedFileNames, FileChooserType);
     void mouseDidMoveOverElement(const QUrl& linkURL, const QString& linkTitle);
+    void permissionRequest(QWebPermissionRequest*);
 
     // WKPageUIClient callbacks.
     static void runJavaScriptAlert(WKPageRef, WKStringRef alertText, WKFrameRef, const void* clientInfo);
@@ -51,6 +56,7 @@ private:
     static void setStatusText(WKPageRef, WKStringRef, const void *clientInfo);
     static void runOpenPanel(WKPageRef, WKFrameRef, WKOpenPanelParametersRef, WKOpenPanelResultListenerRef, const void* clientInfo);
     static void mouseDidMoveOverElement(WKPageRef, WKHitTestResultRef, WKEventModifiers, WKTypeRef userData, const void* clientInfo);
+    static void policyForGeolocationPermissionRequest(WKPageRef, WKFrameRef, WKSecurityOriginRef, WKGeolocationPermissionRequestRef, const void*);
 
     QQuickWebView* m_webView;
     QUrl m_lastHoveredURL;

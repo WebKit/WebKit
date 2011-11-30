@@ -1,3 +1,38 @@
+2011-11-30  Adenilson Cavalcanti  <adenilson.silva@openbossa.org>
+
+        [Qt][WK2] Implement permission API for Qt port
+        https://bugs.webkit.org/show_bug.cgi?id=59200
+
+        Permission API hookup for Geolocation, it allows to receive in WebView
+        a signal when a permission request is done (e.g. to grant permission
+        for accessing geolocation information) and set it accordingly.
+
+        Reviewed by Simon Hausmann.
+
+        * Target.pri:
+        * UIProcess/API/qt/qquickwebview_p.h:
+        * UIProcess/API/qt/qwebpermissionrequest.cpp: Added.
+        (QWebPermissionRequestPrivate::QWebPermissionRequestPrivate):
+        (QWebPermissionRequestPrivate::~QWebPermissionRequestPrivate):
+        (QWebPermissionRequest::create):
+        (QWebPermissionRequest::QWebPermissionRequest):
+        (QWebPermissionRequest::~QWebPermissionRequest):
+        (QWebPermissionRequest::type):
+        (QWebPermissionRequest::setAllow):
+        (QWebPermissionRequest::allow):
+        (QWebPermissionRequest::scheme):
+        (QWebPermissionRequest::host):
+        (QWebPermissionRequest::port):
+        * UIProcess/API/qt/qwebpermissionrequest_p.h: Added.
+        * UIProcess/API/qt/tests/qmltests/WebView/tst_geopermission.qml: Added.
+        * UIProcess/API/qt/tests/qmltests/common/geolocation.html: Added.
+        * UIProcess/API/qt/tests/qmltests/qmltests.pro:
+        * UIProcess/qt/QtWebPageUIClient.cpp:
+        (QtWebPageUIClient::QtWebPageUIClient):
+        (QtWebPageUIClient::permissionRequest):
+        (QtWebPageUIClient::policyForGeolocationPermissionRequest):
+        * UIProcess/qt/QtWebPageUIClient.h:
+
 2011-11-30  Alexey Proskuryakov  <ap@apple.com>
 
         -[WKView attributedSubstringForProposedRange:actualRange:] doesn't update actualRange when it's out of bounds

@@ -174,6 +174,7 @@ HEADERS += \
     UIProcess/API/qt/qwebpreferences_p_p.h \
     UIProcess/API/qt/qwebdownloaditem_p.h \
     UIProcess/API/qt/qwebdownloaditem_p_p.h \
+    UIProcess/API/qt/qwebpermissionrequest_p.h \
     UIProcess/API/qt/qquickwebpage_p.h \
     UIProcess/API/qt/qquickwebpage_p_p.h \
     UIProcess/API/qt/qquickwebview_p.h \
@@ -482,6 +483,7 @@ SOURCES += \
     UIProcess/API/cpp/qt/WKStringQt.cpp \
     UIProcess/API/cpp/qt/WKURLQt.cpp \
     UIProcess/API/qt/qwebdownloaditem.cpp \
+    UIProcess/API/qt/qwebpermissionrequest.cpp \
     UIProcess/API/qt/qquickwebpage.cpp \
     UIProcess/API/qt/qquickwebview.cpp \
     UIProcess/API/qt/qwebpreferences.cpp \

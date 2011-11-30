@@ -31,6 +31,7 @@ class QQuickWebViewPrivate;
 class QQuickWebViewExperimental;
 class QWebDownloadItem;
 class QWebPreferences;
+class QWebPermissionRequest;
 
 namespace WTR {
 class PlatformWebView;
@@ -192,12 +193,14 @@ Q_SIGNALS:
     void confirmDialogChanged();
     void promptDialogChanged();
     void downloadRequested(QWebDownloadItem* downloadItem);
+    void permissionRequested(QWebPermissionRequest* permission);
 
 private:
     QQuickWebView* q_ptr;
     QQuickWebViewPrivate* d_ptr;
 
     friend class QtWebPageProxy;
+    friend class QtWebPageUIClient;
 
     Q_DECLARE_PRIVATE(QQuickWebView)
     Q_DECLARE_PUBLIC(QQuickWebView)

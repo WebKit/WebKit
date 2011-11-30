@@ -25,6 +25,7 @@ OTHER_FILES += \
     WebView/tst_preferences.qml \
     WebView/tst_loadHtml.qml \
     WebView/tst_download.qml \
+    WebView/tst_geopermission.qml \
     DesktopBehavior/tst_linkHovered.qml \
     DesktopBehavior/tst_messaging.qml \
     DesktopBehavior/tst_navigationRequested.qml \

@@ -1,3 +1,16 @@
+2011-11-30  Adenilson Cavalcanti  <adenilson.silva@openbossa.org>
+
+        [Qt][WK2] Implement permission API for Qt port
+        https://bugs.webkit.org/show_bug.cgi?id=59200
+
+        Permission API hookup for Geolocation, it allows to receive in WebView
+        a signal when a permission request is done (e.g. to grant permission
+        for accessing geolocation information) and set it accordingly.
+
+        Reviewed by Simon Hausmann.
+
+        * Source/qtwebkit-export.map:
+
 2011-11-29  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Unreviewed build fix for Leopard compilation.

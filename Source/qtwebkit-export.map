@@ -127,6 +127,10 @@ qwk_1.0 {
         *QQuickWebPage;
         non-virtual?thunk?to?QQuickWebPage*;
         QQuickWebPage::*;
+        *QWebPermissionRequest;
+        non-virtual?thunk?to?QWebPermissionRequest*;
+        QWebPermissionRequest::*;
+
 
         # WebKit 2 C API mangled in C++
         WKStringCopyQString*;
