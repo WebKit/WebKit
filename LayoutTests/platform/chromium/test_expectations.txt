@@ -2698,7 +2698,6 @@ BUGWK54322 SNOWLEOPARD : fast/text/international/pop-up-button-text-alignment-an
 BUGWK54322 SNOWLEOPARD : fast/text/international/text-combine-image-test.html = IMAGE
 BUGWK54322 SNOWLEOPARD : fonts/monospace.html = IMAGE
 BUGWK54322 SNOWLEOPARD : svg/custom/animate-path-discrete.svg = IMAGE
-BUGWK54322 SNOWLEOPARD : svg/W3C-SVG-1.1/coords-viewattr-01-b.svg = IMAGE+TEXT
 BUGWK54322 SNOWLEOPARD : tables/mozilla/core/bloomberg.html = IMAGE
 BUGWK54322 SNOWLEOPARD : tables/mozilla/core/misc.html = IMAGE
 BUGWK54322 SNOWLEOPARD : tables/mozilla/core/row_span.html = IMAGE
