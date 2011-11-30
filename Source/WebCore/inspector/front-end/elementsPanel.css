@@ -272,6 +272,15 @@
     color: inherit;
 }
 
+.styles-section a[data-uncopyable] {
+    display: inline-block;
+}
+
+.styles-section a[data-uncopyable]::before {
+    content: attr(data-uncopyable);
+    text-decoration: underline;
+}
+
 .styles-section .properties {
     display: none;
     margin: 0;

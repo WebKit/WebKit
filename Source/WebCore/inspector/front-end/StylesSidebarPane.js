@@ -907,46 +907,18 @@ WebInspector.StylePropertiesSection = function(parentPane, styleRule, editable, 
     this.editable = editable;
     this.isInherited = isInherited;
 
-    // Prevent editing the user agent and user rules.
-    var isUserAgent = this.rule && this.rule.isUserAgent;
-    var isUser = this.rule && this.rule.isUser;
-    var isViaInspector = this.rule && this.rule.isViaInspector;
-
-    if (isUserAgent || isUser)
-        this.editable = false;
+    if (this.rule) {
+        // Prevent editing the user agent and user rules.
+        if (this.rule.isUserAgent || this.rule.isUser)
+            this.editable = false;
+        this.titleElement.addStyleClass("styles-selector");
+    }
 
     this._usedProperties = styleRule.usedProperties;
 
-    if (this.rule)
-        this.titleElement.addStyleClass("styles-selector");
-
-    function linkifyUncopyable(url, line)
-    {
-        var link = WebInspector.linkifyResourceAsNode(url, line);
-        return link;
-    }
-
     this._selectorRefElement = document.createElement("div");
     this._selectorRefElement.className = "subtitle";
-
-    var subtitle = "";
-    if (this.styleRule.sourceURL)
-        this._selectorRefElement.appendChild(linkifyUncopyable(this.styleRule.sourceURL, this.rule.sourceLine));
-    else if (isUserAgent)
-        subtitle = WebInspector.UIString("user agent stylesheet");
-    else if (isUser)
-        subtitle = WebInspector.UIString("user stylesheet");
-    else if (isViaInspector)
-        subtitle = WebInspector.UIString("via inspector");
-    else if (this.rule && this.rule.sourceURL)
-        this._selectorRefElement.appendChild(linkifyUncopyable(this.rule.sourceURL, this.rule.sourceLine));
-
-    this.identifier = styleRule.selectorText;
-    if (subtitle) {
-        this._selectorRefElement.textContent = subtitle;
-        this.identifier += ":" + subtitle;
-    }
-
+    this._selectorRefElement.appendChild(this._createRuleOriginNode());
     selectorContainer.appendChild(this._selectorRefElement);
     this.titleElement.appendChild(selectorContainer);
 
@@ -1133,6 +1105,32 @@ WebInspector.StylePropertiesSection.prototype = {
         return item;
     },
 
+    _createRuleOriginNode: function()
+    {
+        function linkifyUncopyable(url, line)
+        {
+            var link = WebInspector.linkifyResourceAsNode(url, line);
+            link.classList.add("webkit-html-resource-link");
+            link.setAttribute("data-uncopyable", link.textContent);
+            link.textContent = "";
+            return link;
+        }
+
+        if (this.styleRule.sourceURL)
+            return linkifyUncopyable(this.styleRule.sourceURL, this.rule.sourceLine);
+        if (!this.rule)
+            return document.createTextNode("");
+
+        var origin = "";
+        if (this.rule.isUserAgent)
+            origin = WebInspector.UIString("user agent stylesheet");
+        else if (this.rule.isUser)
+            origin = WebInspector.UIString("user stylesheet");
+        else if (this.rule.isViaInspector)
+            origin = WebInspector.UIString("via inspector");
+        return document.createTextNode(origin);
+    },
+
     _handleEmptySpaceDoubleClick: function(event)
     {
         if (event.target.hasStyleClass("header") || this.element.hasStyleClass("read-only") || event.target.enclosingNodeOrSelfWithClass("media")) {
@@ -1224,9 +1222,6 @@ WebInspector.StylePropertiesSection.prototype = {
 
             this.rule = newRule;
             this.styleRule = { section: this, style: newRule.style, selectorText: newRule.selectorText, media: newRule.media, sourceURL: newRule.sourceURL, rule: newRule };
-
-            var oldIdentifier = this.identifier;
-            this.identifier = newRule.selectorText + ":" + this._selectorRefElement.textContent;
 
             this.pane.update();
 
@@ -1333,9 +1328,7 @@ WebInspector.ComputedStylePropertiesSection.prototype = {
                     fragment.appendChild(document.createTextNode(" - " + property.value + " "));
                     var subtitle = fragment.createChild("span");
                     subtitle.style.float = "right";
-                    var selectorRef = section._selectorRefElement.cloneNode(true);
-                    for (var n = 0; n < selectorRef.childNodes.length; ++n)
-                        subtitle.appendChild(selectorRef.childNodes[n]);
+                    subtitle.appendChild(section._createRuleOriginNode());
                     var childElement = new TreeElement(fragment, null, false);
                     treeElement.appendChild(childElement);
                     if (section.isPropertyOverloaded(property.name))
@@ -1419,7 +1412,6 @@ WebInspector.BlankStylePropertiesSection.prototype = {
         this.element.removeStyleClass("blank-section");
         this.styleRule = styleRule;
         this.rule = styleRule.rule;
-        this.identifier = styleRule.selectorText + ":via inspector";
 
         // FIXME: replace this instance by a normal WebInspector.StylePropertiesSection.
         this._normal = true;

@@ -112,6 +112,15 @@ InspectorTest.selectNodeAndWaitForStyles = function(idValue, callback)
 
 InspectorTest.dumpSelectedElementStyles = function(excludeComputed, excludeMatched, omitLonghands)
 {
+    function extractText(element)
+    {
+        var text = element.textContent;
+        if (text)
+            return text;
+        element = element.querySelector("[data-uncopyable]");
+        return element ? element.getAttribute("data-uncopyable") : "";
+    }
+
     var styleSections = WebInspector.panels.elements.sidebarPanes.styles.sections;
     for (var pseudoId in styleSections) {
         var pseudoName = WebInspector.StylesSidebarPane.PseudoIdNames[pseudoId];
@@ -132,7 +141,7 @@ InspectorTest.dumpSelectedElementStyles = function(excludeComputed, excludeMatch
                 if (chainEntry.children[2])
                     entryLine += " " + chainEntry.children[1].textContent;
                 if (chainEntry.children.length > 1)
-                    entryLine += " (" + chainEntry.lastChild.textContent + ")";
+                    entryLine += " (" + extractText(chainEntry.lastChild) + ")";
                 InspectorTest.addResult(entryLine);
             }
             section.expand();
