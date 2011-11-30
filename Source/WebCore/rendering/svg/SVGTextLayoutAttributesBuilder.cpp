@@ -203,18 +203,22 @@ void SVGTextLayoutAttributesBuilder::propagateLayoutAttributes(RenderObject* sta
             for (unsigned textPosition = 0; textPosition < textLength; textPosition += metricsLength) {
                 const UChar& currentCharacter = characters[textPosition];
 
-                SVGTextMetrics startToCurrentMetrics = SVGTextMetrics::measureCharacterRange(text, 0, textPosition + 1);
-                SVGTextMetrics currentMetrics = SVGTextMetrics::measureCharacterRange(text, textPosition, 1);
-                metricsLength = currentMetrics.length();
+                SVGTextMetrics startToCurrentMetrics;
+                SVGTextMetrics currentMetrics;
+                unsigned valueListAdvance = 0;
 
-                // Eventually handle surrogate pairs here.
-                if (!metricsLength) {
-                    if (textPosition + 1 == textLength)
-                        break;
-
+                if (U16_IS_LEAD(currentCharacter) && (textPosition + 1) < textLength && U16_IS_TRAIL(characters[textPosition + 1])) {
+                    // Handle surrogate pairs.
                     startToCurrentMetrics = SVGTextMetrics::measureCharacterRange(text, 0, textPosition + 2);
                     currentMetrics = SVGTextMetrics::measureCharacterRange(text, textPosition, 2);
                     metricsLength = currentMetrics.length();
+                    valueListAdvance = 1;
+                } else {
+                    // Handle BMP characters.
+                    startToCurrentMetrics = SVGTextMetrics::measureCharacterRange(text, 0, textPosition + 1);
+                    currentMetrics = SVGTextMetrics::measureCharacterRange(text, textPosition, 1);
+                    metricsLength = currentMetrics.length();
+                    valueListAdvance = metricsLength;
                 }
 
                 if (!metricsLength)
@@ -247,7 +251,7 @@ void SVGTextLayoutAttributesBuilder::propagateLayoutAttributes(RenderObject* sta
                 }
 
                 lastCharacter = currentCharacter;
-                valueListPosition += metricsLength;
+                valueListPosition += valueListAdvance;
             }
 
 #if DUMP_TEXT_LAYOUT_ATTRIBUTES > 0
