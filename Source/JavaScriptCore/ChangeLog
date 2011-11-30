@@ -1,3 +1,35 @@
+2011-11-29  Filip Pizlo  <fpizlo@apple.com>
+
+        Resetting a put_by_id inline cache should preserve the "isDirect" bit
+        https://bugs.webkit.org/show_bug.cgi?id=73375
+
+        Reviewed by Gavin Barraclough.
+        
+        For the replace case, we can find out if it was direct by looking at the
+        slow call. For the transition case, we explicitly remember if it was
+        direct.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::printStructureStubInfo):
+        * bytecode/StructureStubInfo.cpp:
+        (JSC::StructureStubInfo::deref):
+        (JSC::StructureStubInfo::visitWeakReferences):
+        * bytecode/StructureStubInfo.h:
+        (JSC::isPutByIdAccess):
+        (JSC::StructureStubInfo::initPutByIdTransition):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGRepatch.cpp:
+        (JSC::DFG::tryCachePutByID):
+        * jit/JIT.h:
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::resetPatchPutById):
+        (JSC::JIT::isDirectPutById):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::resetPatchPutById):
+        * jit/JITStubs.cpp:
+        (JSC::JITThunks::tryCachePutByID):
+
 2011-11-29  Sam Weinig  <sam@webkit.org>
 
         Remove RetainPtr::releaseRef

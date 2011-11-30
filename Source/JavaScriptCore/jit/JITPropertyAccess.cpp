@@ -1054,7 +1054,10 @@ void JIT::resetPatchGetById(RepatchBuffer& repatchBuffer, StructureStubInfo* stu
 
 void JIT::resetPatchPutById(RepatchBuffer& repatchBuffer, StructureStubInfo* stubInfo)
 {
-    repatchBuffer.relink(stubInfo->callReturnLocation, cti_op_put_by_id);
+    if (isDirectPutById(stubInfo))
+        repatchBuffer.relink(stubInfo->callReturnLocation, cti_op_put_by_id_direct);
+    else
+        repatchBuffer.relink(stubInfo->callReturnLocation, cti_op_put_by_id);
     repatchBuffer.repatch(stubInfo->hotPathBegin.dataLabelPtrAtOffset(patchOffsetPutByIdStructure), reinterpret_cast<void*>(-1));
     repatchBuffer.repatch(stubInfo->hotPathBegin.dataLabelCompactAtOffset(patchOffsetPutByIdPropertyMapOffset), 0);
 }
@@ -1143,6 +1146,31 @@ void JIT::patchMethodCallProto(JSGlobalData& globalData, CodeBlock* codeBlock, M
     methodCallLinkInfo.cachedPrototype.set(globalData, structureLocation.dataLabelPtrAtOffset(patchOffsetMethodCheckProtoObj), codeBlock->ownerExecutable(), proto);
     methodCallLinkInfo.cachedFunction.set(globalData, structureLocation.dataLabelPtrAtOffset(patchOffsetMethodCheckPutFunction), codeBlock->ownerExecutable(), callee);
     repatchBuffer.relinkCallerToFunction(returnAddress, FunctionPtr(cti_op_get_by_id_method_check_update));
+}
+
+bool JIT::isDirectPutById(StructureStubInfo* stubInfo)
+{
+    switch (stubInfo->accessType) {
+    case access_put_by_id_transition_normal:
+        return false;
+    case access_put_by_id_transition_direct:
+        return true;
+    case access_put_by_id_replace:
+    case access_put_by_id_generic: {
+        void* oldCall = MacroAssembler::readCallTarget(stubInfo->callReturnLocation).executableAddress();
+        if (oldCall == bitwise_cast<void*>(cti_op_put_by_id_direct)
+            || oldCall == bitwise_cast<void*>(cti_op_put_by_id_direct_generic)
+            || oldCall == bitwise_cast<void*>(cti_op_put_by_id_direct_fail))
+            return true;
+        ASSERT(oldCall == bitwise_cast<void*>(cti_op_put_by_id)
+               || oldCall == bitwise_cast<void*>(cti_op_put_by_id_generic)
+               || oldCall == bitwise_cast<void*>(cti_op_put_by_id_fail));
+        return false;
+    }
+    default:
+        ASSERT_NOT_REACHED();
+        return false;
+    }
 }
 
 } // namespace JSC

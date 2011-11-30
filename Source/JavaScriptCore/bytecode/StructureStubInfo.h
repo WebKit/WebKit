@@ -41,7 +41,8 @@ namespace JSC {
         access_get_by_id_chain,
         access_get_by_id_self_list,
         access_get_by_id_proto_list,
-        access_put_by_id_transition,
+        access_put_by_id_transition_normal,
+        access_put_by_id_transition_direct,
         access_put_by_id_replace,
         access_unset,
         access_get_by_id_generic,
@@ -70,7 +71,8 @@ namespace JSC {
     inline bool isPutByIdAccess(AccessType accessType)
     {
         switch (accessType) {
-        case access_put_by_id_transition:
+        case access_put_by_id_transition_normal:
+        case access_put_by_id_transition_direct:
         case access_put_by_id_replace:
         case access_put_by_id_generic:
             return true;
@@ -127,9 +129,12 @@ namespace JSC {
 
         // PutById*
 
-        void initPutByIdTransition(JSGlobalData& globalData, JSCell* owner, Structure* previousStructure, Structure* structure, StructureChain* chain)
+        void initPutByIdTransition(JSGlobalData& globalData, JSCell* owner, Structure* previousStructure, Structure* structure, StructureChain* chain, bool isDirect)
         {
-            accessType = access_put_by_id_transition;
+            if (isDirect)
+                accessType = access_put_by_id_transition_direct;
+            else
+                accessType = access_put_by_id_transition_normal;
 
             u.putByIdTransition.previousStructure.set(globalData, owner, previousStructure);
             u.putByIdTransition.structure.set(globalData, owner, structure);

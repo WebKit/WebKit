@@ -48,7 +48,8 @@ void StructureStubInfo::deref()
     case access_get_by_id_self:
     case access_get_by_id_proto:
     case access_get_by_id_chain:
-    case access_put_by_id_transition:
+    case access_put_by_id_transition_normal:
+    case access_put_by_id_transition_direct:
     case access_put_by_id_replace:
     case access_unset:
     case access_get_by_id_generic:
@@ -95,7 +96,8 @@ bool StructureStubInfo::visitWeakReferences()
         }
         break;
     }
-    case access_put_by_id_transition:
+    case access_put_by_id_transition_normal:
+    case access_put_by_id_transition_direct:
         if (!Heap::isMarked(u.putByIdTransition.previousStructure.get())
             || !Heap::isMarked(u.putByIdTransition.structure.get())
             || !Heap::isMarked(u.putByIdTransition.chain.get()))

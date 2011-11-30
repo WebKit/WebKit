@@ -1797,7 +1797,8 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                     break;
                 }
                     
-                case access_put_by_id_transition: {
+                case access_put_by_id_transition_normal:
+                case access_put_by_id_transition_direct: {
                     Structure* previousStructure = stubInfo.u.putByIdTransition.previousStructure.get();
                     Structure* newStructure = stubInfo.u.putByIdTransition.structure.get();
                     

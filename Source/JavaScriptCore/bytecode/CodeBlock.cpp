@@ -257,7 +257,8 @@ static void printStructureStubInfo(const StructureStubInfo& stubInfo, unsigned i
     case access_get_by_id_proto_list:
         printf("  [%4d] %s: %s (%d)\n", instructionOffset, "op_get_by_id_proto_list", pointerToSourceString(stubInfo.u.getByIdProtoList.structureList).utf8().data(), stubInfo.u.getByIdProtoList.listSize);
         return;
-    case access_put_by_id_transition:
+    case access_put_by_id_transition_normal:
+    case access_put_by_id_transition_direct:
         printf("  [%4d] %s: %s, %s, %s\n", instructionOffset, "put_by_id_transition", pointerToSourceString(stubInfo.u.putByIdTransition.previousStructure).utf8().data(), pointerToSourceString(stubInfo.u.putByIdTransition.structure).utf8().data(), pointerToSourceString(stubInfo.u.putByIdTransition.chain).utf8().data());
         return;
     case access_put_by_id_replace:

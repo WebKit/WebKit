@@ -1118,7 +1118,10 @@ void JIT::resetPatchGetById(RepatchBuffer& repatchBuffer, StructureStubInfo* stu
 
 void JIT::resetPatchPutById(RepatchBuffer& repatchBuffer, StructureStubInfo* stubInfo)
 {
-    repatchBuffer.relink(stubInfo->callReturnLocation, cti_op_put_by_id);
+    if (isDirectPutById(stubInfo))
+        repatchBuffer.relink(stubInfo->callReturnLocation, cti_op_put_by_id_direct);
+    else
+        repatchBuffer.relink(stubInfo->callReturnLocation, cti_op_put_by_id);
     repatchBuffer.repatch(stubInfo->hotPathBegin.dataLabelPtrAtOffset(patchOffsetPutByIdStructure), reinterpret_cast<void*>(-1));
     repatchBuffer.repatch(stubInfo->hotPathBegin.dataLabelCompactAtOffset(patchOffsetPutByIdPropertyMapOffset1), 0);
     repatchBuffer.repatch(stubInfo->hotPathBegin.dataLabelCompactAtOffset(patchOffsetPutByIdPropertyMapOffset2), 0);

@@ -298,6 +298,8 @@ namespace JSC {
         CodeRef privateCompileCTINativeCall(JSGlobalData*, NativeFunction);
         void privateCompilePatchGetArrayLength(ReturnAddressPtr returnAddress);
 
+        static bool isDirectPutById(StructureStubInfo*);
+
         void addSlowCase(Jump);
         void addSlowCase(JumpList);
         void addSlowCase();
