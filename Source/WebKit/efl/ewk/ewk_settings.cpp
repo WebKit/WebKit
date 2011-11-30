@@ -40,12 +40,17 @@
 #include <eina_safety_checks.h>
 #include <errno.h>
 #include <string.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <sys/utsname.h>
 #include <unistd.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringConcatenate.h>
+
+#if OS(UNIX)
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <sys/utsname.h>
+#elif OS(WINDOWS)
+#include "SystemInfo.h"
+#endif
 
 static const char* s_offlineAppCachePath = 0;
 
@@ -68,13 +73,24 @@ static WTF::String _ewk_settings_webkit_platform_get()
 static WTF::String _ewk_settings_webkit_os_version_get()
 {
     WTF::String uaOsVersion;
+#if OS(DARWIN)
+#if CPU(X86)
+    uaOsVersion = "Intel Mac OS X";
+#else
+    uaOsVersion = "PPC Mac OS X";
+#endif
+#elif OS(UNIX)
     struct utsname name;
 
     if (uname(&name) != -1)
         uaOsVersion = makeString(name.sysname, ' ', name.machine);
     else
         uaOsVersion = "Unknown";
-
+#elif OS(WINDOWS)
+    uaOsVersion = windowsVersionFroUAString();
+#else
+    uaOsVersion = "Unknown";
+#endif
     return uaOsVersion;
 }
 
@@ -250,7 +266,7 @@ void ewk_settings_repaint_throttling_set(double deferredRepaintDelay, double ini
  *
  * @return a pointer to an eina_stringshare containing the user agent string
  */
-const char* ewk_settings_default_user_agent_get(void)
+const char* ewk_settings_default_user_agent_get()
 {
     WTF::String uaVersion = makeString(String::number(WEBKIT_USER_AGENT_MAJOR_VERSION), '.', String::number(WEBKIT_USER_AGENT_MINOR_VERSION), '+');
     WTF::String staticUa = makeString("Mozilla/5.0 (", _ewk_settings_webkit_platform_get(), "; ", _ewk_settings_webkit_os_version_get(), ") AppleWebKit/", uaVersion) + makeString(" (KHTML, like Gecko) Version/5.0 Safari/", uaVersion);

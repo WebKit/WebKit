@@ -1,3 +1,20 @@
+2011-11-30  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [EFL] Remove duplicated UA information function.
+        https://bugs.webkit.org/show_bug.cgi?id=73104
+
+        Reviewed by Filip Pizlo.
+
+        Though ewk_setting already implemented an internal function for UA(user agent) information,
+        FrameLoaderClientEfl has used duplicated function for UA information. So, this patch removes
+        the UA information function of FrameLoaderClientEfl and uses an internal UA information function
+        of ewk_setting. In addition, UA infomation function is enhanced for other ports.
+
+        * WebCoreSupport/FrameLoaderClientEfl.cpp:
+        (WebCore::composeUserAgent):
+        * ewk/ewk_settings.cpp:
+        (ewk_settings_default_user_agent_get):
+
 2011-11-30  Tomasz Morawski  <t.morawski@samsung.com>
 
         [EFL] Added DEFAULT_CACHE_SIZE define.

@@ -56,12 +56,6 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/StringConcatenate.h>
 
-#if OS(UNIX)
-#include <sys/utsname.h>
-#elif OS(WINDOWS)
-#include "SystemInfo.h"
-#endif
-
 #include <Ecore_Evas.h>
 
 using namespace WebCore;
@@ -79,32 +73,9 @@ FrameLoaderClientEfl::FrameLoaderClientEfl(Evas_Object* view)
 {
 }
 
-static String agentOS()
-{
-#if OS(DARWIN)
-#if CPU(X86)
-    return "Intel Mac OS X";
-#else
-    return "PPC Mac OS X";
-#endif
-#elif OS(UNIX)
-    struct utsname name;
-    if (uname(&name) != -1)
-        return makeString(name.sysname, ' ', name.machine);
-
-    return "Unknown";
-#elif OS(WINDOWS)
-    return windowsVersionForUAString();
-#else
-    notImplemented();
-    return "Unknown";
-#endif
-}
-
 static String composeUserAgent()
 {
-    String webKitVersion = String::format("%d.%d", WEBKIT_MAJOR_VERSION, WEBKIT_MINOR_VERSION);
-    return makeString("Mozilla/5.0 (", agentOS(), ") AppleWebKit/", webKitVersion, " (KHTML, like Gecko) Safari/", webKitVersion);
+    return String(ewk_settings_default_user_agent_get());
 }
 
 void FrameLoaderClientEfl::setCustomUserAgent(const String& agent)
