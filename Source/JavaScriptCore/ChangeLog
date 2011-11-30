@@ -1,3 +1,10 @@
+2011-11-30  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Unreviewed propective build fix for Qt/Windows after r101477.
+
+        * wtf/ThreadSpecific.h: Use OS(WINDOWS) for declaring "destructor", as it's
+        only referenced from within another OS(WINDOWS) section.
+
 2011-11-30  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed speculative buildfix after r101457.

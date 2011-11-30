@@ -91,7 +91,7 @@ private:
 
         T* value;
         ThreadSpecific<T>* owner;
-#if !USE(PTHREADS) && !PLATFORM(QT) && !PLATFORM(GTK)
+#if OS(WINDOWS)
         void (*destructor)(void*);
 #endif
     };
