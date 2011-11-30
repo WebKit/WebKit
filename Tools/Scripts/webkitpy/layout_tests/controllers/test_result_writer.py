@@ -71,7 +71,9 @@ def write_test_result(port, test_name, driver_output,
             # FIXME: We should always have 2 images here.
             if driver_output.image and expected_driver_output.image:
                 image_diff = port.diff_image(driver_output.image, expected_driver_output.image)[0]
-                writer.write_image_diff_files(image_diff)
+                # Non-chromium ports return 'None' since they don't implement diff_image.
+                if image_diff is not None:
+                    writer.write_image_diff_files(image_diff)
             writer.copy_file(failure.reference_filename)
         elif isinstance(failure, test_failures.FailureReftestMismatchDidNotOccur):
             writer.write_image_files(driver_output.image, expected_image=None)

@@ -1,3 +1,16 @@
+2011-11-29  Hayato Ito  <hayato@chromium.org>
+
+        Skip writing the result of diff_image since non-chromium ports don't implement diff_image.
+        https://bugs.webkit.org/show_bug.cgi?id=73381
+
+        Reviewed by Ryosuke Niwa.
+
+        This is a quick fix for the breakage of tests on non-chromium port.
+        We should implement diff_image later on non-chromium ports.
+
+        * Scripts/webkitpy/layout_tests/controllers/test_result_writer.py:
+        (write_test_result):
+
 2011-11-29  Balazs Ankes  <Ankes.Balazs@stud.u-szeged.hu>
 
         [NRWT] Fix --platform=qt-5.0 --new-baseline combo
