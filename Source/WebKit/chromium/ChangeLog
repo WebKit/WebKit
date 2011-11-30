@@ -1,3 +1,29 @@
+2011-11-30  Michael Nordman  <michaeln@google.com>
+
+        [chromium] WebSQLDatabase could use some better error reporting.
+        Instruments the database classes to report errors a the DatabaseObserver.
+        https://bugs.webkit.org/show_bug.cgi?id=73258
+
+        Reviewed by David Levin.
+
+        * public/WebDatabase.h:
+        * public/WebDatabaseObserver.h:
+        (WebKit::WebDatabaseObserver::reportOpenDatabaseResult):
+        (WebKit::WebDatabaseObserver::reportChangeVersionResult):
+        (WebKit::WebDatabaseObserver::reportStartTransactionResult):
+        (WebKit::WebDatabaseObserver::reportCommitTransactionResult):
+        (WebKit::WebDatabaseObserver::reportExecuteStatementResult):
+        (WebKit::WebDatabaseObserver::reportVacuumDatabaseResult):
+        * src/DatabaseObserver.cpp:
+        (WebCore::DatabaseObserver::reportOpenDatabaseResult):
+        (WebCore::DatabaseObserver::reportChangeVersionResult):
+        (WebCore::DatabaseObserver::reportStartTransactionResult):
+        (WebCore::DatabaseObserver::reportCommitTransactionResult):
+        (WebCore::DatabaseObserver::reportExecuteStatementResult):
+        (WebCore::DatabaseObserver::reportVacuumDatabaseResult):
+        * src/WebDatabase.cpp:
+        (WebKit::WebDatabase::isSyncDatabase):
+
 2011-11-30  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r101440 and r101442.

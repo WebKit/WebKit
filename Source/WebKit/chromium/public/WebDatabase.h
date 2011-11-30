@@ -47,6 +47,7 @@ public:
     WEBKIT_EXPORT WebString displayName() const;
     WEBKIT_EXPORT unsigned long estimatedSize() const;
     WEBKIT_EXPORT WebSecurityOrigin securityOrigin() const;
+    WEBKIT_EXPORT bool isSyncDatabase() const;
 
     WEBKIT_EXPORT static void setObserver(WebDatabaseObserver*);
     WEBKIT_EXPORT static WebDatabaseObserver* observer();

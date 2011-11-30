@@ -120,7 +120,7 @@ PassRefPtr<Database> Database::openDatabase(ScriptExecutionContext* context, con
 }
 
 Database::Database(ScriptExecutionContext* context, const String& name, const String& expectedVersion, const String& displayName, unsigned long estimatedSize)
-    : AbstractDatabase(context, name, expectedVersion, displayName, estimatedSize)
+    : AbstractDatabase(context, name, expectedVersion, displayName, estimatedSize, AsyncDatabase)
     , m_transactionInProgress(false)
     , m_isTransactionQueueEnabled(true)
     , m_deleted(false)

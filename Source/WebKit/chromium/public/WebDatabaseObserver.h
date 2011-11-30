@@ -39,6 +39,14 @@ public:
     virtual void databaseOpened(const WebDatabase&) = 0;
     virtual void databaseModified(const WebDatabase&) = 0;
     virtual void databaseClosed(const WebDatabase&) = 0;
+
+    virtual void reportOpenDatabaseResult(const WebDatabase&, int errorSite, int webSqlErrorCode, int sqliteErrorCode) { }
+    virtual void reportChangeVersionResult(const WebDatabase&, int errorSite, int webSqlErrorCode, int sqliteErrorCode) { }
+    virtual void reportStartTransactionResult(const WebDatabase&, int errorSite, int webSqlErrorCode, int sqliteErrorCode) { }
+    virtual void reportCommitTransactionResult(const WebDatabase&, int errorSite, int webSqlErrorCode, int sqliteErrorCode) { }
+    virtual void reportExecuteStatementResult(const WebDatabase&, int errorSite, int webSqlErrorCode, int sqliteErrorCode) { }
+    virtual void reportVacuumDatabaseResult(const WebDatabase&, int sqliteErrorCode) { }
+
 protected:
     ~WebDatabaseObserver() {}
 };

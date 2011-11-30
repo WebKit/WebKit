@@ -1,3 +1,52 @@
+2011-11-30  Michael Nordman  <michaeln@google.co>
+
+        [chromium] WebSQLDatabase could use some better error reporting.
+        Instruments the database classes to report errors to a DatabaseObserver.
+        https://bugs.webkit.org/show_bug.cgi?id=73258
+
+        Reviewed by David Levin.
+
+        No new tests, no content observable artifacts.
+
+        * storage/AbstractDatabase.cpp:
+        (WebCore::AbstractDatabase::AbstractDatabase):
+        (WebCore::AbstractDatabase::performOpenAndVerify):
+        (WebCore::AbstractDatabase::incrementalVacuumIfNeeded):
+        (WebCore::AbstractDatabase::reportOpenDatabaseResult):
+        (WebCore::AbstractDatabase::reportChangeVersionResult):
+        (WebCore::AbstractDatabase::reportStartTransactionResult):
+        (WebCore::AbstractDatabase::reportCommitTransactionResult):
+        (WebCore::AbstractDatabase::reportExecuteStatementResult):
+        (WebCore::AbstractDatabase::reportVacuumDatabaseResult):
+        * storage/AbstractDatabase.h:
+        (WebCore::AbstractDatabase::isSyncDatabase):
+        * storage/ChangeVersionWrapper.cpp:
+        (WebCore::ChangeVersionWrapper::performPreflight):
+        (WebCore::ChangeVersionWrapper::performPostflight):
+        * storage/Database.cpp:
+        (WebCore::Database::Database):
+        * storage/DatabaseSync.cpp:
+        (WebCore::DatabaseSync::DatabaseSync):
+        (WebCore::DatabaseSync::changeVersion):
+        * storage/SQLStatement.cpp:
+        (WebCore::SQLStatement::execute):
+        (WebCore::SQLStatement::setDatabaseDeletedError):
+        (WebCore::SQLStatement::setVersionMismatchedError):
+        (WebCore::SQLStatement::setFailureDueToQuota):
+        * storage/SQLStatement.h:
+        * storage/SQLTransaction.cpp:
+        (WebCore::SQLTransaction::executeSQL):
+        (WebCore::SQLTransaction::openTransactionAndPreflight):
+        (WebCore::SQLTransaction::deliverTransactionCallback):
+        (WebCore::SQLTransaction::runCurrentStatement):
+        (WebCore::SQLTransaction::handleCurrentStatementError):
+        (WebCore::SQLTransaction::deliverStatementCallback):
+        (WebCore::SQLTransaction::postflightAndCommit):
+        * storage/SQLTransactionSync.cpp:
+        (WebCore::SQLTransactionSync::begin):
+        (WebCore::SQLTransactionSync::commit):
+        * storage/chromium/DatabaseObserver.h:
+
 2011-11-30  Rafael Weinstein  <rafaelw@chromium.org>
 
         [MutationObservers] V8 bindings don't properly wrap all calls into JS

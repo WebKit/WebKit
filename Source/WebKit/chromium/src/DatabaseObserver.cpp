@@ -197,6 +197,36 @@ void DatabaseObserver::databaseClosed(AbstractDatabase* database)
     WebDatabase::observer()->databaseClosed(WebDatabase(database));
 }
 
+void DatabaseObserver::reportOpenDatabaseResult(AbstractDatabase* database, int errorSite, int webSqlErrorCode, int sqliteErrorCode)
+{
+    WebDatabase::observer()->reportOpenDatabaseResult(WebDatabase(database), errorSite, webSqlErrorCode, sqliteErrorCode);
+}
+
+void DatabaseObserver::reportChangeVersionResult(AbstractDatabase* database, int errorSite, int webSqlErrorCode, int sqliteErrorCode)
+{
+    WebDatabase::observer()->reportChangeVersionResult(WebDatabase(database), errorSite, webSqlErrorCode, sqliteErrorCode);
+}
+
+void DatabaseObserver::reportStartTransactionResult(AbstractDatabase* database, int errorSite, int webSqlErrorCode, int sqliteErrorCode)
+{
+    WebDatabase::observer()->reportStartTransactionResult(WebDatabase(database), errorSite, webSqlErrorCode, sqliteErrorCode);
+}
+
+void DatabaseObserver::reportCommitTransactionResult(AbstractDatabase* database, int errorSite, int webSqlErrorCode, int sqliteErrorCode)
+{
+    WebDatabase::observer()->reportCommitTransactionResult(WebDatabase(database), errorSite, webSqlErrorCode, sqliteErrorCode);
+}
+
+void DatabaseObserver::reportExecuteStatementResult(AbstractDatabase* database, int errorSite, int webSqlErrorCode, int sqliteErrorCode)
+{
+    WebDatabase::observer()->reportExecuteStatementResult(WebDatabase(database), errorSite, webSqlErrorCode, sqliteErrorCode);
+}
+
+void DatabaseObserver::reportVacuumDatabaseResult(AbstractDatabase* database, int sqliteErrorCode)
+{
+    WebDatabase::observer()->reportVacuumDatabaseResult(WebDatabase(database), sqliteErrorCode);
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(SQL_DATABASE)

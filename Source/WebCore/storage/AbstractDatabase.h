@@ -58,6 +58,7 @@ public:
 
     bool opened() const { return m_opened; }
     bool isNew() const { return m_new; }
+    bool isSyncDatabase() const { return m_isSyncDatabase; }
 
     virtual ScriptExecutionContext* scriptExecutionContext() const;
     virtual SecurityOrigin* securityOrigin() const;
@@ -86,12 +87,19 @@ public:
     virtual void closeImmediately() = 0;
 
 protected:
+    friend class ChangeVersionWrapper;
+    friend class SQLStatement;
+    friend class SQLStatementSync;
     friend class SQLTransactionSync;
     friend class SQLTransaction;
-    friend class ChangeVersionWrapper;
+
+    enum DatabaseType {
+        AsyncDatabase,
+        SyncDatabase
+    };
 
     AbstractDatabase(ScriptExecutionContext*, const String& name, const String& expectedVersion,
-                     const String& displayName, unsigned long estimatedSize);
+                     const String& displayName, unsigned long estimatedSize, DatabaseType);
 
     void closeDatabase();
 
@@ -106,6 +114,13 @@ protected:
     bool getActualVersionForTransaction(String& version);
 
     void logErrorMessage(const String& message);
+
+    void reportOpenDatabaseResult(int errorSite, int webSqlErrorCode, int sqliteErrorCode);
+    void reportChangeVersionResult(int errorSite, int webSqlErrorCode, int sqliteErrorCode);
+    void reportStartTransactionResult(int errorSite, int webSqlErrorCode, int sqliteErrorCode);
+    void reportCommitTransactionResult(int errorSite, int webSqlErrorCode, int sqliteErrorCode);
+    void reportExecuteStatementResult(int errorSite, int webSqlErrorCode, int sqliteErrorCode);
+    void reportVacuumDatabaseResult(int sqliteErrorCode);
 
     static const char* databaseInfoTableName();
 
@@ -126,6 +141,7 @@ private:
     int m_guid;
     bool m_opened;
     bool m_new;
+    const bool m_isSyncDatabase;
 
     SQLiteDatabase m_sqliteDatabase;
 

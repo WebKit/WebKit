@@ -48,6 +48,13 @@ public:
     static void databaseOpened(AbstractDatabase*);
     static void databaseModified(AbstractDatabase*);
     static void databaseClosed(AbstractDatabase*);
+
+    static void reportOpenDatabaseResult(AbstractDatabase*, int callsite, int webSqlErrorCode, int sqliteErrorCode);
+    static void reportChangeVersionResult(AbstractDatabase*, int callsite, int webSqlErrorCode, int sqliteErrorCode);
+    static void reportStartTransactionResult(AbstractDatabase*, int callsite, int webSqlErrorCode, int sqliteErrorCode);
+    static void reportCommitTransactionResult(AbstractDatabase*, int callsite, int webSqlErrorCode, int sqliteErrorCode);
+    static void reportExecuteStatementResult(AbstractDatabase*, int callsite, int webSqlErrorCode, int sqliteErrorCode);
+    static void reportVacuumDatabaseResult(AbstractDatabase*, int sqliteErrorCode);
 };
 
 }

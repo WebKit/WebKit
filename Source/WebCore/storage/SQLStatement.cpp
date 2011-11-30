@@ -82,6 +82,7 @@ bool SQLStatement::execute(Database* db)
             m_error = SQLError::create(SQLError::DATABASE_ERR, "could not prepare statement", result, "interrupted");
         else
             m_error = SQLError::create(SQLError::SYNTAX_ERR, "could not prepare statement", result, database->lastErrorMsg());
+        db->reportExecuteStatementResult(1, m_error->code(), result);
         return false;
     }
 
@@ -90,18 +91,20 @@ bool SQLStatement::execute(Database* db)
     if (statement.bindParameterCount() != m_arguments.size()) {
         LOG(StorageAPI, "Bind parameter count doesn't match number of question marks");
         m_error = SQLError::create(db->isInterrupted() ? SQLError::DATABASE_ERR : SQLError::SYNTAX_ERR, "number of '?'s in statement string does not match argument count");
+        db->reportExecuteStatementResult(2, m_error->code(), 0);
         return false;
     }
 
     for (unsigned i = 0; i < m_arguments.size(); ++i) {
         result = statement.bindValue(i + 1, m_arguments[i]);
         if (result == SQLResultFull) {
-            setFailureDueToQuota();
+            setFailureDueToQuota(db);
             return false;
         }
 
         if (result != SQLResultOk) {
             LOG(StorageAPI, "Failed to bind value index %i to statement for query '%s'", i + 1, m_statement.ascii().data());
+            db->reportExecuteStatementResult(3, SQLError::DATABASE_ERR, result);
             m_error = SQLError::create(SQLError::DATABASE_ERR, "could not bind value", result, database->lastErrorMsg());
             return false;
         }
@@ -126,6 +129,7 @@ bool SQLStatement::execute(Database* db)
         } while (result == SQLResultRow);
 
         if (result != SQLResultDone) {
+            db->reportExecuteStatementResult(4, SQLError::DATABASE_ERR, result);
             m_error = SQLError::create(SQLError::DATABASE_ERR, "could not iterate results", result, database->lastErrorMsg());
             return false;
         }
@@ -135,9 +139,10 @@ bool SQLStatement::execute(Database* db)
             resultSet->setInsertId(database->lastInsertRowID());
     } else if (result == SQLResultFull) {
         // Return the Quota error - the delegate will be asked for more space and this statement might be re-run
-        setFailureDueToQuota();
+        setFailureDueToQuota(db);
         return false;
     } else {
+        db->reportExecuteStatementResult(5, SQLError::DATABASE_ERR, result);
         m_error = SQLError::create(SQLError::DATABASE_ERR, "could not execute statement", result, database->lastErrorMsg());
         return false;
     }
@@ -148,18 +153,21 @@ bool SQLStatement::execute(Database* db)
     resultSet->setRowsAffected(database->lastChanges());
 
     m_resultSet = resultSet;
+    db->reportExecuteStatementResult(0, -1, 0); // OK
     return true;
 }
 
-void SQLStatement::setDatabaseDeletedError()
+void SQLStatement::setDatabaseDeletedError(Database* database)
 {
     ASSERT(!m_error && !m_resultSet);
+    database->reportExecuteStatementResult(6, SQLError::UNKNOWN_ERR, 0);
     m_error = SQLError::create(SQLError::UNKNOWN_ERR, "unable to execute statement, because the user deleted the database");
 }
 
-void SQLStatement::setVersionMismatchedError()
+void SQLStatement::setVersionMismatchedError(Database* database)
 {
     ASSERT(!m_error && !m_resultSet);
+    database->reportExecuteStatementResult(7, SQLError::VERSION_ERR, 0);
     m_error = SQLError::create(SQLError::VERSION_ERR, "current version of the database and `oldVersion` argument do not match");
 }
 
@@ -183,9 +191,10 @@ bool SQLStatement::performCallback(SQLTransaction* transaction)
     return callbackError;
 }
 
-void SQLStatement::setFailureDueToQuota()
+void SQLStatement::setFailureDueToQuota(Database* database)
 {
     ASSERT(!m_error && !m_resultSet);
+    database->reportExecuteStatementResult(8, SQLError::QUOTA_ERR, 0);
     m_error = SQLError::create(SQLError::QUOTA_ERR, "there was not enough remaining storage space, or the storage quota was reached and the user declined to allow more space");
 }
 

@@ -55,8 +55,8 @@ public:
     bool hasStatementCallback() const { return m_statementCallbackWrapper.hasCallback(); }
     bool hasStatementErrorCallback() const { return m_statementErrorCallbackWrapper.hasCallback(); }
 
-    void setDatabaseDeletedError();
-    void setVersionMismatchedError();
+    void setDatabaseDeletedError(Database*);
+    void setVersionMismatchedError(Database*);
 
     bool performCallback(SQLTransaction*);
 
@@ -64,7 +64,7 @@ public:
 private:
     SQLStatement(Database*, const String& statement, const Vector<SQLValue>& arguments, PassRefPtr<SQLStatementCallback>, PassRefPtr<SQLStatementErrorCallback>, int permissions);
 
-    void setFailureDueToQuota();
+    void setFailureDueToQuota(Database*);
     void clearFailureDueToQuota();
 
     String m_statement;

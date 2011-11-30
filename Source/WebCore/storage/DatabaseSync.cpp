@@ -78,7 +78,7 @@ PassRefPtr<DatabaseSync> DatabaseSync::openDatabaseSync(ScriptExecutionContext* 
 
 DatabaseSync::DatabaseSync(ScriptExecutionContext* context, const String& name, const String& expectedVersion,
                            const String& displayName, unsigned long estimatedSize)
-    : AbstractDatabase(context, name, expectedVersion, displayName, estimatedSize)
+    : AbstractDatabase(context, name, expectedVersion, displayName, estimatedSize, SyncDatabase)
 {
 }
 
@@ -97,6 +97,7 @@ void DatabaseSync::changeVersion(const String& oldVersion, const String& newVers
     ASSERT(m_scriptExecutionContext->isContextThread());
 
     if (sqliteDatabase().transactionInProgress()) {
+        reportChangeVersionResult(1, SQLException::DATABASE_ERR, 0);
         setLastErrorMessage("unable to changeVersion from within a transaction");
         ec = SQLException::DATABASE_ERR;
         return;
@@ -110,12 +111,14 @@ void DatabaseSync::changeVersion(const String& oldVersion, const String& newVers
 
     String actualVersion;
     if (!getVersionFromDatabase(actualVersion)) {
+        reportChangeVersionResult(2, SQLException::UNKNOWN_ERR, sqliteDatabase().lastError());
         setLastErrorMessage("unable to read the current version", sqliteDatabase().lastError(), sqliteDatabase().lastErrorMsg());
         ec = SQLException::UNKNOWN_ERR;
         return;
     }
 
     if (actualVersion != oldVersion) {
+        reportChangeVersionResult(3, SQLException::VERSION_ERR, 0);
         setLastErrorMessage("current version of the database and `oldVersion` argument do not match");
         ec = SQLException::VERSION_ERR;
         return;
@@ -127,6 +130,7 @@ void DatabaseSync::changeVersion(const String& oldVersion, const String& newVers
     }
 
     if (!setVersionInDatabase(newVersion)) {
+        reportChangeVersionResult(4, SQLException::UNKNOWN_ERR, sqliteDatabase().lastError());
         setLastErrorMessage("unable to set the new version", sqliteDatabase().lastError(), sqliteDatabase().lastErrorMsg());
         ec = SQLException::UNKNOWN_ERR;
         return;
@@ -137,6 +141,8 @@ void DatabaseSync::changeVersion(const String& oldVersion, const String& newVers
         setCachedVersion(oldVersion);
         return;
     }
+
+    reportChangeVersionResult(0, -1, 0); // OK
 
     setExpectedVersion(newVersion);
     setLastErrorMessage("");

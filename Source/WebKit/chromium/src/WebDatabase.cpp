@@ -82,6 +82,12 @@ WebSecurityOrigin WebDatabase::securityOrigin() const
     return WebSecurityOrigin(m_database->securityOrigin());
 }
 
+bool WebDatabase::isSyncDatabase() const
+{
+    ASSERT(m_database);
+    return m_database->isSyncDatabase();
+}
+
 void WebDatabase::setObserver(WebDatabaseObserver* observer)
 {
     databaseObserver = observer;
