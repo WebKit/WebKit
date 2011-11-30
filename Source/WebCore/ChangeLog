@@ -1,3 +1,17 @@
+2011-11-30  Jacky Jiang  <zhajiang@rim.com>
+
+        Upstream BlackBerry porting of WebCore/editing.
+        https://bugs.webkit.org/show_bug.cgi?id=73275
+
+        Reviewed by Daniel Bates.
+
+        Initial upstream, no new tests.
+
+        * editing/blackberry/EditorBlackBerry.cpp: Added.
+        (WebCore::Editor::newGeneralClipboard):
+        * editing/blackberry/SmartReplaceBlackBerry.cpp: Added.
+        (WebCore::isCharacterSmartReplaceExempt):
+
 2011-11-30  Noel Gordon  <noel.gordon@gmail.com>
 
         JPEGImageDecoder: Code input color space case entries in numerical order
