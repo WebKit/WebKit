@@ -1,7 +1,7 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
-  RenderSVGRoot {svg} at (0,0) size 240x121
+  RenderSVGRoot {svg} at (0,0) size 241x121
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
       RenderSVGResourceFilter {filter} [id="MyFilter1"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
         [feMerge mergeNodes="1"]
