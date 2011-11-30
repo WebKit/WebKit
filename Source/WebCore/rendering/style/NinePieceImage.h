@@ -30,7 +30,7 @@
 namespace WebCore {
 
 enum ENinePieceImageRule {
-    StretchImageRule, RoundImageRule, RepeatImageRule
+    StretchImageRule, RoundImageRule, SpaceImageRule, RepeatImageRule
 };
 
 class NinePieceImage {
@@ -76,6 +76,12 @@ public:
     {
         m_slices = other.m_slices;
         m_fill = other.m_fill;
+    }
+
+    void copyRepeatFrom(const NinePieceImage& other)
+    {
+        m_horizontalRule = other.m_horizontalRule;
+        m_verticalRule = other.m_verticalRule;
     }
 
 private:

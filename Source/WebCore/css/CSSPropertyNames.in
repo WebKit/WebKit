@@ -56,6 +56,7 @@ border-bottom-style
 border-bottom-width
 border-collapse
 border-color
+border-image-repeat
 border-image-slice
 border-image-source
 border-left
@@ -272,6 +273,7 @@ z-index
 -webkit-mask
 -webkit-mask-attachment
 -webkit-mask-box-image
+-webkit-mask-box-image-repeat
 -webkit-mask-box-image-slice
 -webkit-mask-box-image-source
 -webkit-mask-clip

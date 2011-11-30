@@ -26,11 +26,10 @@
 
 namespace WebCore {
 
-CSSBorderImageValue::CSSBorderImageValue(PassRefPtr<CSSValue> image, PassRefPtr<CSSBorderImageSliceValue> slice, int horizontalRule, int verticalRule)
+CSSBorderImageValue::CSSBorderImageValue(PassRefPtr<CSSValue> image, PassRefPtr<CSSBorderImageSliceValue> slice, PassRefPtr<CSSValue> repeat)
     : m_image(image)
     , m_slice(slice)
-    , m_horizontalSizeRule(horizontalRule)
-    , m_verticalSizeRule(verticalRule)
+    , m_repeat(repeat)
 {
 }
 
@@ -49,9 +48,7 @@ String CSSBorderImageValue::cssText() const
 
     // Now the keywords.
     text += " ";
-    text += CSSPrimitiveValue::createIdentifier(m_horizontalSizeRule)->cssText();
-    text += " ";
-    text += CSSPrimitiveValue::createIdentifier(m_verticalSizeRule)->cssText();
+    text += m_repeat->cssText();
 
     return text;
 }

@@ -31,9 +31,9 @@ class Rect;
 
 class CSSBorderImageValue : public CSSValue {
 public:
-    static PassRefPtr<CSSBorderImageValue> create(PassRefPtr<CSSValue> image, PassRefPtr<CSSBorderImageSliceValue> slice, int horizontalRule, int verticalRule)
+    static PassRefPtr<CSSBorderImageValue> create(PassRefPtr<CSSValue> image, PassRefPtr<CSSBorderImageSliceValue> slice, PassRefPtr<CSSValue> repeat)
     {
-        return adoptRef(new CSSBorderImageValue(image, slice, horizontalRule, verticalRule));
+        return adoptRef(new CSSBorderImageValue(image, slice, repeat));
     }
     virtual ~CSSBorderImageValue();
 
@@ -51,11 +51,10 @@ public:
     RefPtr<CSSBorderImageSliceValue> m_slice;
 
     // Values for how to handle the scaling/stretching/tiling of the image slices.
-    int m_horizontalSizeRule; // Rule for how to adjust the widths of the top/middle/bottom
-    int m_verticalSizeRule; // Rule for how to adjust the heights of the left/middle/right
+    RefPtr<CSSValue> m_repeat;
 
 private:
-    CSSBorderImageValue(PassRefPtr<CSSValue> image, PassRefPtr<CSSBorderImageSliceValue>, int horizontalRule, int verticalRule);
+    CSSBorderImageValue(PassRefPtr<CSSValue> image, PassRefPtr<CSSBorderImageSliceValue>, PassRefPtr<CSSValue> repeat);
     virtual bool isBorderImageValue() const { return true; }
 };
 
