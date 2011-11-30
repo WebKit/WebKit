@@ -1,3 +1,9 @@
+2011-11-29  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Unreviewed build fix for Leopard compilation.
+
+        * wscript:
+
 2011-11-29  Philippe Normand  <pnormand@igalia.com>
 
         [GTK] hide WebAudio build option until support for FFTW is removed

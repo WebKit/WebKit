@@ -177,7 +177,6 @@ def build(bld):
         elif sys.platform.startswith('darwin'):
             webcore_dirs.append('Source/WebCore/plugins/mac')
             webcore_dirs.append('Source/WebCore/platform/wx/wxcode/mac/carbon')
-            webcore_dirs.append('Source/WebCore/platform/mac')
             webcore_dirs.append('Source/WebCore/platform/text/mac')
             webcore_sources['wx-mac'] = [
                    'Source/WebCore/platform/mac/PurgeableBufferMac.cpp',
@@ -354,7 +353,7 @@ def build(bld):
         excludes.append('HyphenationCF.cpp')
         
         if sys.platform.startswith('darwin'):
-            webcore.includes += ' Source/WebKit/mac/WebCoreSupport WebCore/platform/mac'
+            webcore.includes += ' Source/WebKit/mac/WebCoreSupport Source/WebCore/platform/mac'
             webcore.source += ' Source/WebKit/mac/WebCoreSupport/WebSystemInterface.mm'
             
         if building_on_win32:
