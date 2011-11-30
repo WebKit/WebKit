@@ -186,13 +186,13 @@ namespace WTF {
 #if COMPILER_SUPPORTS(CXX_RVALUE_REFERENCES)
     template<typename T> inline RetainPtr<T>& RetainPtr<T>::operator=(RetainPtr<T>&& o)
     {
-        adoptCF(leakRef());
+        adoptCF(o.leakRef());
         return *this;
     }
     
     template<typename T> template<typename U> inline RetainPtr<T>& RetainPtr<T>::operator=(RetainPtr<U>&& o)
     {
-        adoptCF(leakRef());
+        adoptCF(o.leakRef());
         return *this;
     }
 #endif

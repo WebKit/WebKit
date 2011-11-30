@@ -1,3 +1,19 @@
+2011-11-30  Adam Roben  <aroben@apple.com>
+
+        Fix RetainPtr's move assignment operators
+
+        Fixes <http://webkit.org/b/73449> RetainPtr's move assignment operators don't modify the
+        pointer being assigned to
+
+        I didn't write a test for this because we don't have a way of unit testing C++11 code (see
+        <http://webkit.org/b/73448>).
+
+        Reviewed by Anders Carlsson.
+
+        * wtf/RetainPtr.h:
+        (WTF::RetainPtr::operator=): Adopt the passed-in RetainPtr's underlying pointer, not our own
+        pointer.
+
 2011-11-30  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed rolling out incorrect r101481.
