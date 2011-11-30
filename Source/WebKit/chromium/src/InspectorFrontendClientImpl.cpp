@@ -77,7 +77,6 @@ void InspectorFrontendClientImpl::windowObjectCleared()
 
 void InspectorFrontendClientImpl::frontendLoaded()
 {
-    m_frontend->frontendLoaded();
 }
 
 void InspectorFrontendClientImpl::moveWindowBy(float x, float y)

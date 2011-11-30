@@ -57,16 +57,12 @@ public:
     // WebDevToolsFrontend implementation.
     virtual void dispatchOnInspectorFrontend(const WebString& message);
 
-    void frontendLoaded();
-
 private:
     void doDispatchOnInspectorFrontend(const String& message);
 
     WebKit::WebViewImpl* m_webViewImpl;
     WebKit::WebDevToolsFrontendClient* m_client;
     String m_applicationLocale;
-    bool m_loaded;
-    Vector<String> m_pendingMessages;
 };
 
 } // namespace WebKit

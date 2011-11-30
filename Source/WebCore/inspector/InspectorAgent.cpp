@@ -67,7 +67,6 @@ InspectorAgent::InspectorAgent(Page* page, InjectedScriptManager* injectedScript
     , m_inspectedPage(page)
     , m_frontend(0)
     , m_injectedScriptManager(injectedScriptManager)
-    , m_canIssueEvaluateForTestInFrontend(false)
     , m_didCommitLoadFired(false)
 {
     ASSERT_ARG(page, page);
@@ -97,14 +96,10 @@ void InspectorAgent::didClearWindowObjectInWorld(Frame* frame, DOMWrapperWorld* 
 void InspectorAgent::setFrontend(InspectorFrontend* inspectorFrontend)
 {
     m_frontend = inspectorFrontend;
-
-    // Dispatch pending frontend commands
-    issueEvaluateForTestCommands();
 }
 
 void InspectorAgent::clearFrontend()
 {
-    m_canIssueEvaluateForTestInFrontend = false;
     m_pendingEvaluateTestCommands.clear();
     m_frontend = 0;
     m_didCommitLoadFired = false;
@@ -133,6 +128,10 @@ void InspectorAgent::enable(ErrorString*)
         m_frontend->inspector()->didCreateWorker(worker->id(), worker->url(), worker->isSharedWorker());
     }
 #endif
+
+    for (Vector<pair<long, String> >::iterator it = m_pendingEvaluateTestCommands.begin(); m_frontend && it != m_pendingEvaluateTestCommands.end(); ++it)
+        m_frontend->inspector()->evaluateForTestInFrontend((*it).first, (*it).second);
+    m_pendingEvaluateTestCommands.clear();
 }
 
 void InspectorAgent::disable(ErrorString*)
@@ -222,9 +221,10 @@ void InspectorAgent::didDestroyWorker(intptr_t id)
 
 void InspectorAgent::evaluateForTestInFrontend(long callId, const String& script)
 {
-    m_pendingEvaluateTestCommands.append(pair<long, String>(callId, script));
-    if (m_canIssueEvaluateForTestInFrontend)
-        issueEvaluateForTestCommands();
+    if (m_state->getBoolean(InspectorAgentState::inspectorAgentEnabled))
+        m_frontend->inspector()->evaluateForTestInFrontend(callId, script);
+    else
+        m_pendingEvaluateTestCommands.append(pair<long, String>(callId, script));
 }
 
 void InspectorAgent::setInspectorExtensionAPI(const String& source)
@@ -249,17 +249,6 @@ bool InspectorAgent::developerExtrasEnabled() const
     if (!m_inspectedPage)
         return false;
     return m_inspectedPage->settings()->developerExtrasEnabled();
-}
-
-void InspectorAgent::issueEvaluateForTestCommands()
-{
-    if (m_frontend) {
-        Vector<pair<long, String> > copy = m_pendingEvaluateTestCommands;
-        m_pendingEvaluateTestCommands.clear();
-        for (Vector<pair<long, String> >::iterator it = copy.begin(); m_frontend && it != copy.end(); ++it)
-            m_frontend->inspector()->evaluateForTestInFrontend((*it).first, (*it).second);
-        m_canIssueEvaluateForTestInFrontend = true;
-    }
 }
 
 } // namespace WebCore

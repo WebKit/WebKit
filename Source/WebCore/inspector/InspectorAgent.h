@@ -107,7 +107,6 @@ private:
 #endif
 
     bool isMainResourceLoader(DocumentLoader*, const KURL& requestUrl);
-    void issueEvaluateForTestCommands();
 
     Page* m_inspectedPage;
     InspectorFrontend* m_frontend;
@@ -119,7 +118,6 @@ private:
     typedef HashMap<intptr_t, RefPtr<InspectorWorkerResource> > WorkersMap;
     WorkersMap m_workers;
 #endif
-    bool m_canIssueEvaluateForTestInFrontend;
     bool m_didCommitLoadFired;
 };
 

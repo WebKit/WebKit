@@ -91,7 +91,6 @@ WebDevToolsFrontendImpl::WebDevToolsFrontendImpl(
     : m_webViewImpl(webViewImpl)
     , m_client(client)
     , m_applicationLocale(applicationLocale)
-    , m_loaded(false)
 {
     InspectorController* ic = m_webViewImpl->page()->inspectorController();
     ic->setInspectorFrontendClient(adoptPtr(new InspectorFrontendClientImpl(m_webViewImpl->page(), m_client, this)));
@@ -106,22 +105,6 @@ WebDevToolsFrontendImpl::~WebDevToolsFrontendImpl()
 }
 
 void WebDevToolsFrontendImpl::dispatchOnInspectorFrontend(const WebString& message)
-{
-    if (m_loaded)
-        doDispatchOnInspectorFrontend(message);
-    else
-        m_pendingMessages.append(message);
-}
-
-void WebDevToolsFrontendImpl::frontendLoaded()
-{
-    m_loaded = true;
-    for (Vector<String>::iterator it = m_pendingMessages.begin(); it != m_pendingMessages.end(); ++it)
-        doDispatchOnInspectorFrontend(*it);
-    m_pendingMessages.clear();
-}
-
-void WebDevToolsFrontendImpl::doDispatchOnInspectorFrontend(const String& message)
 {
     WebFrameImpl* frame = m_webViewImpl->mainFrameImpl();
     v8::HandleScope scope;

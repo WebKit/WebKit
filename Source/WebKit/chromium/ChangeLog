@@ -1,3 +1,16 @@
+2011-11-30  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: get rid of deferred backend->front-end commands processing.
+        https://bugs.webkit.org/show_bug.cgi?id=73439
+
+        Reviewed by Yury Semikhatsky.
+
+        * src/WebDevToolsFrontendImpl.cpp:
+        (WebKit::WebDevToolsFrontendImpl::WebDevToolsFrontendImpl):
+        (WebKit::WebDevToolsFrontendImpl::frontendLoaded):
+        (WebKit::WebDevToolsFrontendImpl::dispatchOnInspectorFrontend):
+        * src/WebDevToolsFrontendImpl.h:
+
 2011-11-30  Michael Nordman  <michaeln@google.com>
 
         [chromium] WebSQLDatabase could use some better error reporting.
