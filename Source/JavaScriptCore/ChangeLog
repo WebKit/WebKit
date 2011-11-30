@@ -1,3 +1,12 @@
+2011-11-30  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed speculative buildfix after r101457.
+
+        * assembler/MIPSAssembler.h:
+        (JSC::MIPSAssembler::readCallTarget):
+        * assembler/MacroAssemblerMIPS.h:
+        (JSC::MacroAssemblerMIPS::readCallTarget):
+
 2011-11-30  Andrew Wason  <rectalogic@rectalogic.com>
 
         Replace Qt QThread threading back-end with pthread/Win32 threading back-ends

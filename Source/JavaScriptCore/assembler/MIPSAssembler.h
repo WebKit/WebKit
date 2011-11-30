@@ -734,6 +734,11 @@ public:
         ExecutableAllocator::cacheFlush(start, size);
     }
 
+    static void* readCallTarget(void* from)
+    {
+        return readPointer(reinterpret_cast<void*>(getAbsoluteJumpAddress(from)));
+    }
+
     static void repatchInt32(void* from, int32_t to)
     {
         MIPSWord* insn = reinterpret_cast<MIPSWord*>(from);
