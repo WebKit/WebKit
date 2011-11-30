@@ -53,11 +53,14 @@ sub applyPreprocessor
         $preprocessor = $gccLocation . " -E -P -x c++";
     }
 
-    if (!$defines || ($defines eq "\"\"")) {
-        $defines = "";
-    }
+    # Remove double quotations from $defines and extract macros.
+    # For example, if $defines is ' "A=1" "B=1" C=1 ""    D  ',
+    # then it is converted into four macros -DA=1, -DB=1, -DC=1 and -DD.
+    $defines =~ s/\"//g;
+    my @macros = grep { $_ } split(/\s+/, $defines); # grep skips empty macros.
+    @macros = map { "-D$_" } @macros;
 
-    my $pid = open2(\*PP_OUT, \*PP_IN, split(' ', $preprocessor), (map { $_ =~ s/^\"|\"$//g; "-D$_" if $_ } split(' ', $defines)), $fileName);
+    my $pid = open2(\*PP_OUT, \*PP_IN, split(' ', $preprocessor), @macros, $fileName);
     close PP_IN;
     my @documentContent = <PP_OUT>;
     close PP_OUT;

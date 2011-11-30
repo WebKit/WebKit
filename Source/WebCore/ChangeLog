@@ -1,3 +1,22 @@
+2011-11-30  Kentaro Hara  <haraken@chromium.org>
+
+        [Refactoring] In preprocessor.pm, remove double quotations from $defines
+        https://bugs.webkit.org/show_bug.cgi?id=73160
+
+        Reviewed by Adam Barth.
+
+        In preprocessor.pm, we need to extract gcc macros from $defines.
+        $defines can contain unnecessary double quotations.
+        For example, if $defines is ' "A=1" "B=1" C=1 ""    D  ',
+        then it should be converted into four macros, -DA=1, -DB=1, -DC=1 and -DD.
+        This patch refactors the logic in preprocessor.pm.
+
+        No new tests. No change in behavior.
+
+        * bindings/scripts/generate-bindings.pl: Removed a code for $defines conversion, since it is now done in preprocessor.pm.
+        * bindings/scripts/preprocessor.pm:
+        (applyPreprocessor):
+
 2011-11-30  Kenichi Ishibashi  <bashi@chromium.org>
 
         @font-face: unquoted local font names containing spaces don't work
