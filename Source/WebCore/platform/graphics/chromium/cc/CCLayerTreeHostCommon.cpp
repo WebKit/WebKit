@@ -378,22 +378,6 @@ static void calculateDrawTransformsAndVisibilityInternal(LayerType* layer, Layer
         }
     }
 
-    if (layer->renderSurface() && !layer->renderSurface()->layerList().size()) {
-        // If a render surface has no layer list, then it and none of its
-        // children needed to get drawn. Therefore, it should be the last layer
-        // in the render surface list and we can trivially remove it.
-        if (layer != rootLayer) {
-            ASSERT(renderSurfaceLayerList.last() == layer);
-            renderSurfaceLayerList.removeLast();
-            layer->clearRenderSurface();
-        }
-        return;
-    }
-
-    // If neither this layer nor any of its children were added, early out.
-    if (sortingStartIndex == descendants.size())
-        return;
-
     if (layer->masksToBounds() || useSurfaceForMasking) {
         IntRect drawableContentRect = layer->drawableContentRect();
         drawableContentRect.intersect(transformedLayerRect);
@@ -447,7 +431,21 @@ static void calculateDrawTransformsAndVisibilityInternal(LayerType* layer, Layer
             replicaDrawTransform.translate3d(surfaceCenter.x() - anchorPoint.x() * bounds.width(), surfaceCenter.y() - anchorPoint.y() * bounds.height(), 0);
             renderSurface->setReplicaDrawTransform(replicaDrawTransform);
         }
+
+        // If a render surface has no layer list, then it and none of its
+        // children needed to get drawn. Therefore, it should be the last layer
+        // in the render surface list and we can trivially remove it.
+        if (!layer->renderSurface()->layerList().size()) {
+            ASSERT(renderSurfaceLayerList.last() == layer);
+            renderSurfaceLayerList.removeLast();
+            layer->clearRenderSurface();
+            return;
+        }
     }
+
+    // If neither this layer nor any of its children were added, early out.
+    if (sortingStartIndex == descendants.size())
+        return;
 
     // If preserves-3d then sort all the descendants in 3D so that they can be
     // drawn from back to front. If the preserves-3d property is also set on the parent then

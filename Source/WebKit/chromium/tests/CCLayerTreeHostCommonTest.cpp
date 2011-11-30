@@ -452,6 +452,35 @@ TEST(CCLayerTreeHostCommonTest, verifyTransformsForRenderSurfaceHierarchy)
     EXPECT_FLOAT_EQ(5.0, grandChildOfRS2->screenSpaceTransform().m42());
 }
 
+TEST(CCLayerTreeHostCommonTest, verifyRenderSurfaceListForClipLayer)
+{
+    RefPtr<LayerChromium> parent = LayerChromium::create(0);
+    RefPtr<LayerChromium> renderSurface1 = LayerChromium::create(0);
+    RefPtr<LayerChromiumWithForcedDrawsContent> child = adoptRef(new LayerChromiumWithForcedDrawsContent(0));
+    renderSurface1->setOpacity(0.9);
+
+    const TransformationMatrix identityMatrix;
+    setLayerPropertiesForTesting(renderSurface1.get(), identityMatrix, identityMatrix, FloatPoint::zero(), FloatPoint::zero(), IntSize(10, 10), false);
+    setLayerPropertiesForTesting(child.get(), identityMatrix, identityMatrix, FloatPoint::zero(), FloatPoint(30, 30), IntSize(10, 10), false);
+
+    parent->createRenderSurface();
+    parent->setClipRect(IntRect(0, 0, 10, 10));
+    parent->addChild(renderSurface1);
+    renderSurface1->createRenderSurface();
+    renderSurface1->addChild(child);
+
+    Vector<RefPtr<LayerChromium> > renderSurfaceLayerList;
+    Vector<RefPtr<LayerChromium> > dummyLayerList;
+    int dummyMaxTextureSize = 512;
+    CCLayerTreeHostCommon::calculateDrawTransformsAndVisibility(parent.get(), parent.get(), identityMatrix, identityMatrix, renderSurfaceLayerList, dummyLayerList, dummyMaxTextureSize);
+
+    // The child layer's content is entirely outside the parent's clip rect, so the intermediate
+    // render surface should have been removed. Render surfaces without children or visible
+    // content are unexpected at draw time (e.g. we might try to create a content texture of size 0).
+    ASSERT_FALSE(renderSurface1->renderSurface());
+    EXPECT_EQ(renderSurfaceLayerList.size(), 0U);
+}
+
 // FIXME:
 // continue working on https://bugs.webkit.org/show_bug.cgi?id=68942
 //  - add a test to verify clipping that changes the "center point"

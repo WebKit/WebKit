@@ -1,3 +1,13 @@
+2011-11-30  Daniel Sievers  <sievers@chromium.org>
+
+        [Chromium] Avoid ASSERT_NOT_REACHED() from creating FBO with content texture of size 0
+        https://bugs.webkit.org/show_bug.cgi?id=73266
+
+        Reviewed by James Robinson.
+
+        * tests/CCLayerTreeHostCommonTest.cpp:
+        (WebCore::TEST):
+
 2011-11-30  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: do not report worker-related events unless inspector agent is enabled.

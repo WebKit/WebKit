@@ -1,3 +1,27 @@
+2011-11-30  Daniel Sievers  <sievers@chromium.org>
+
+        [Chromium] Avoid ASSERT_NOT_REACHED() from creating FBO with content texture of size 0
+        https://bugs.webkit.org/show_bug.cgi?id=73266
+
+        Remove render surface layers with no children after clipping to
+        the parent layer.
+
+        Move the check for empty render surfaces after the piece of code
+        used to apply the parent's clip, as we might end up calling
+        renderSurface->clearLayerList().
+
+        Render surfaces with no children or visible content are unexpected
+        especially at draw time where we might try to create a content
+        texture and FBO with a size of zero, which will fail. This fixes
+        an ASSERT_NOT_REACHED() for checkFramebufferStatus() != COMPLETE
+
+        Reviewed by James Robinson.
+
+        Added unit test.
+
+        * platform/graphics/chromium/cc/CCLayerTreeHostCommon.cpp:
+        (WebCore::calculateDrawTransformsAndVisibilityInternal):
+
 2011-11-30  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: do not report worker-related events unless inspector agent is enabled.
