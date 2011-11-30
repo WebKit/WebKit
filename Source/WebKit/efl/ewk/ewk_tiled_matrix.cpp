@@ -64,6 +64,9 @@ struct _Ewk_Tile_Matrix {
 #endif
 };
 
+// Default 40 MB size of newly created cache
+static const size_t DEFAULT_CACHE_SIZE = 40 * 1024 * 1024;
+
 #ifdef DEBUG_MEM_LEAKS
 static uint64_t tiles_leaked = 0;
 static uint64_t bytes_leaked = 0;
@@ -210,7 +213,7 @@ Ewk_Tile_Matrix* ewk_tile_matrix_new(Ewk_Tile_Unused_Cache* tileUnusedCache, uns
     if (tileUnusedCache)
         tileMatrix->tilieUnusedCache = ewk_tile_unused_cache_ref(tileUnusedCache);
     else {
-        tileMatrix->tilieUnusedCache = ewk_tile_unused_cache_new(40960000);
+        tileMatrix->tilieUnusedCache = ewk_tile_unused_cache_new(DEFAULT_CACHE_SIZE);
         if (!tileMatrix->tilieUnusedCache) {
             ERR("no cache of unused tile!");
             eina_matrixsparse_free(tileMatrix->matrix);

@@ -1,3 +1,16 @@
+2011-11-30  Tomasz Morawski  <t.morawski@samsung.com>
+
+        [EFL] Added DEFAULT_CACHE_SIZE define.
+        https://bugs.webkit.org/show_bug.cgi?id=73120
+
+        Reviewed by Filip Pizlo.
+
+        Remove form code 40960000 value used in code directly and replaced it by DEFAULT_CACHE_SIZE define. The code
+        looks cleaner now.
+
+        * ewk/ewk_tiled_matrix.cpp:
+        (ewk_tile_matrix_new):
+
 2011-11-28  JungJik Lee  <jungjik.lee@samsung.com>
 
         [EFL] Rename abbreviated value names to cpp style names.
