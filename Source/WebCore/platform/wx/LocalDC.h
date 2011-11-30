@@ -47,18 +47,22 @@ public:
         int width = r.width();
         int height = r.height();
         m_bitmap = new wxBitmap(width, height, 32);
-        wxAlphaPixelData pixData(*m_bitmap, wxPoint(0,0), wxSize(width, height));
-        ASSERT(pixData);
-        if (pixData) {
-            wxAlphaPixelData::Iterator p(pixData);
-            for (int y=0; y<height; y++) {
-                wxAlphaPixelData::Iterator rowStart = p;
-                for (int x=0; x<width; x++) {
-                    p.Alpha() = 0;
-                    ++p; 
+        // we scope this to make sure that wxAlphaPixelData isn't holding a ref
+        // to m_bitmap when we create the wxMemoryDC, as this will invoke a copy op.
+        {
+            wxAlphaPixelData pixData(*m_bitmap, wxPoint(0,0), wxSize(width, height));
+            ASSERT(pixData);
+            if (pixData) {
+                wxAlphaPixelData::Iterator p(pixData);
+                for (int y=0; y<height; y++) {
+                    wxAlphaPixelData::Iterator rowStart = p;
+                    for (int x=0; x<width; x++) {
+                        p.Alpha() = 0;
+                        ++p; 
+                    }
+                    p = rowStart;
+                    p.OffsetY(pixData, 1);
                 }
-                p = rowStart;
-                p.OffsetY(pixData, 1);
             }
         }
 
