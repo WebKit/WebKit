@@ -1,3 +1,29 @@
+2011-11-30  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Inspect element does not highlight element in elements panel when inspector is opened.
+        https://bugs.webkit.org/show_bug.cgi?id=73459
+
+        Reviewed by Pavel Feldman.
+
+        This regressed in r101503.
+
+        * inspector/InjectedScriptHost.cpp:
+        (WebCore::InjectedScriptHost::InjectedScriptHost):
+        (WebCore::InjectedScriptHost::disconnect):
+        (WebCore::InjectedScriptHost::inspectImpl):
+        * inspector/InjectedScriptHost.h:
+        (WebCore::InjectedScriptHost::init):
+        * inspector/InspectorAgent.cpp:
+        (WebCore::InspectorAgent::enable):
+        (WebCore::InspectorAgent::inspect):
+        * inspector/InspectorAgent.h:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::connectFrontend):
+        (WebCore::InspectorController::disconnectFrontend):
+        * inspector/WorkerInspectorController.cpp:
+        (WebCore::WorkerInspectorController::connectFrontend):
+        (WebCore::WorkerInspectorController::disconnectFrontend):
+
 2011-11-30  Tony Chang  <tony@chromium.org>
 
         Remove dead flexible box code

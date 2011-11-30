@@ -192,7 +192,6 @@ void InspectorController::connectFrontend()
 {
     m_openingFrontend = false;
     m_inspectorFrontend = adoptPtr(new InspectorFrontend(m_inspectorClient));
-    m_injectedScriptManager->injectedScriptHost()->setFrontend(m_inspectorFrontend.get());
     // We can reconnect to existing front-end -> unmute state.
     m_state->unmute();
 
@@ -225,8 +224,6 @@ void InspectorController::disconnectFrontend()
 
     for (Agents::iterator it = m_agents.begin(); it != m_agents.end(); ++it)
         (*it)->clearFrontend();
-
-    m_injectedScriptManager->injectedScriptHost()->clearFrontend();
 
     m_inspectorFrontend.clear();
 

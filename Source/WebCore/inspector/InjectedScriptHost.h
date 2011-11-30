@@ -72,8 +72,6 @@ public:
 #endif
         m_domStorageAgent = domStorageAgent;
     }
-    void setFrontend(InspectorFrontend* frontend) { m_frontend = frontend; }
-    void clearFrontend() { m_frontend = 0; }
 
     static Node* scriptValueAsNode(ScriptValue);
     static ScriptValue nodeAsScriptValue(ScriptState*, Node*);
@@ -106,7 +104,6 @@ private:
     InspectorDatabaseAgent* m_databaseAgent;
 #endif
     InspectorDOMStorageAgent* m_domStorageAgent;
-    InspectorFrontend* m_frontend;
     long m_lastWorkerId;
     Vector<RefPtr<Node> > m_inspectedNodes;
 };

@@ -73,7 +73,6 @@ InjectedScriptHost::InjectedScriptHost()
     , m_databaseAgent(0)
 #endif
     , m_domStorageAgent(0)
-    , m_frontend(0)
     , m_lastWorkerId(1 << 31) // Distinguish ids of fake workers from real ones, to minimize the chances they overlap.
 {
 }
@@ -90,7 +89,6 @@ void InjectedScriptHost::disconnect()
     m_databaseAgent = 0;
 #endif
     m_domStorageAgent = 0;
-    m_frontend = 0;
 }
 
 void InjectedScriptHost::addInspectedNode(Node* node)
@@ -107,8 +105,8 @@ void InjectedScriptHost::clearInspectedNodes()
 
 void InjectedScriptHost::inspectImpl(PassRefPtr<InspectorValue> object, PassRefPtr<InspectorValue> hints)
 {
-    if (m_frontend)
-        m_frontend->inspector()->inspect(object->asObject(), hints->asObject());
+    if (m_inspectorAgent)
+        m_inspectorAgent->inspect(object->asObject(), hints->asObject());
 }
 
 void InjectedScriptHost::clearConsoleMessages()

@@ -97,6 +97,8 @@ public:
 
     void setInspectorExtensionAPI(const String& source);
 
+    void inspect(PassRefPtr<InspectorObject> objectToInspect, PassRefPtr<InspectorObject> hints);
+
 private:
     InspectorAgent(Page*, InjectedScriptManager*, InstrumentingAgents*, InspectorState*);
 
@@ -113,6 +115,7 @@ private:
     InjectedScriptManager* m_injectedScriptManager;
 
     Vector<pair<long, String> > m_pendingEvaluateTestCommands;
+    pair<RefPtr<InspectorObject>, RefPtr<InspectorObject> > m_pendingInspectData;
     String m_inspectorExtensionAPI;
 #if ENABLE(WORKERS)
     typedef HashMap<intptr_t, RefPtr<InspectorWorkerResource> > WorkersMap;

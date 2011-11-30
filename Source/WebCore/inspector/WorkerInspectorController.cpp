@@ -130,7 +130,6 @@ void WorkerInspectorController::connectFrontend()
 #endif
     m_runtimeAgent->registerInDispatcher(m_backendDispatcher.get());
 
-    m_injectedScriptManager->injectedScriptHost()->setFrontend(m_frontend.get());
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     m_debuggerAgent->setFrontend(m_frontend.get());
 #endif
@@ -150,7 +149,6 @@ void WorkerInspectorController::disconnectFrontend()
     m_debuggerAgent->clearFrontend();
 #endif
     m_consoleAgent->clearFrontend();
-    m_injectedScriptManager->injectedScriptHost()->clearFrontend();
 
     m_frontend.clear();
     m_frontendChannel.clear();

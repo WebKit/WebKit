@@ -129,6 +129,9 @@ void InspectorAgent::enable(ErrorString*)
     }
 #endif
 
+    if (m_pendingInspectData.first)
+        inspect(m_pendingInspectData.first, m_pendingInspectData.second);
+
     for (Vector<pair<long, String> >::iterator it = m_pendingEvaluateTestCommands.begin(); m_frontend && it != m_pendingEvaluateTestCommands.end(); ++it)
         m_frontend->inspector()->evaluateForTestInFrontend((*it).first, (*it).second);
     m_pendingEvaluateTestCommands.clear();
@@ -230,6 +233,18 @@ void InspectorAgent::evaluateForTestInFrontend(long callId, const String& script
 void InspectorAgent::setInspectorExtensionAPI(const String& source)
 {
     m_inspectorExtensionAPI = source;
+}
+
+void InspectorAgent::inspect(PassRefPtr<InspectorObject> objectToInspect, PassRefPtr<InspectorObject> hints)
+{
+    if (m_state->getBoolean(InspectorAgentState::inspectorAgentEnabled) && m_frontend) {
+        m_frontend->inspector()->inspect(objectToInspect, hints);
+        m_pendingInspectData.first = 0;
+        m_pendingInspectData.second = 0;
+        return;
+    }
+    m_pendingInspectData.first = objectToInspect;
+    m_pendingInspectData.second = hints;
 }
 
 KURL InspectorAgent::inspectedURL() const
