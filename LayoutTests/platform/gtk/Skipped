@@ -1483,16 +1483,41 @@ fast/dom/Range/getBoundingClientRect.html
 fast/dom/Range/getClientRects.html
 
 # 1 pixel difference between 64-bits and 32-bits
+# Some of these also present rounding issues and xx.00 vs xx.
+svg/as-image/img-preserveAspectRatio-support-1.html
+svg/batik/masking/maskRegions.svg
+svg/clip-path/deep-nested-clip-in-mask-different-unitTypes.svg
+svg/css/composite-shadow-example.html
+svg/css/composite-shadow-with-opacity.html
+svg/css/stars-with-shadow.html
+svg/custom/circular-marker-reference-4.svg
+svg/custom/embedding-external-svgs.xhtml
+svg/custom/empty-merge.svg
+svg/custom/image-with-transform-clip-filter.svg
+svg/custom/relative-sized-inner-svg.xhtml
+svg/custom/relative-sized-use-without-attributes-on-symbol.xhtml
+svg/custom/use-css-events.svg
+svg/dom/css-transforms.xhtml
+svg/filters/feColorMatrix-saturate.svg
+svg/overflow/overflow-on-inner-svg-element.svg
+svg/zoom/page/zoom-img-preserveAspectRatio-support-1.html
+svg/zoom/page/zoom-mask-with-percentages.svg
+svg/W3C-SVG-1.1/animate-elem-80-t.svg
+svg/W3C-SVG-1.1/extend-namespace-01-f.svg
+svg/W3C-SVG-1.1/metadata-example-01-b.svg
+svg/W3C-SVG-1.1/paths-data-03-f.svg
+svg/W3C-SVG-1.1/text-align-08-b.svg
 svg/W3C-SVG-1.1-SE/coords-dom-03-f.svg
 svg/W3C-SVG-1.1-SE/coords-dom-04-f.svg
 svg/W3C-SVG-1.1-SE/coords-units-03-b.svg
 svg/W3C-SVG-1.1-SE/interact-pointer-03-t.svg
+svg/W3C-SVG-1.1-SE/linking-uri-01-b.svg
 svg/W3C-SVG-1.1-SE/styling-pres-02-f.svg
 svg/W3C-SVG-1.1-SE/text-tspan-02-b.svg
 svg/W3C-SVG-1.1-SE/types-dom-01-b.svg
+svg/W3C-SVG-1.1-SE/types-dom-02-f.svg
 svg/W3C-SVG-1.1-SE/types-dom-04-b.svg
 svg/W3C-SVG-1.1-SE/types-dom-07-f.svg
-svg/W3C-SVG-1.1/text-align-08-b.svg
 tables/mozilla/marvin/backgr_layers-opacity.html
 tables/mozilla/marvin/backgr_position-table.html
 tables/mozilla/marvin/backgr_simple-table-cell.html
@@ -1521,3 +1546,20 @@ tables/mozilla_expected_failures/marvin/backgr_position-table-row.html
 fast/forms/placeholder-set-attribute.html
 fast/forms/search-placeholder-value-changed.html
 fast/forms/textarea-placeholder-set-attribute.html
+
+# Failing since font metrics change
+fast/block/float/overhanging-tall-block.html
+fast/css/percentage-non-integer.html
+fast/css/word-space-extra.html
+fast/css/zoom-body-scroll.html
+fast/repaint/moving-shadow-on-container.html
+fast/repaint/moving-shadow-on-path.html
+css3/flexbox/line-wrapping.html
+editing/selection/move-by-word-visually-multi-line.html
+fast/block/float/overhanging-tall-block.html
+fast/css/font-face-data-uri.html
+fast/css/font-face-download-error.html
+fast/events/keydown-1.html
+fast/forms/cursor-at-editable-content-boundary.html
+fast/text/glyph-reordering.html
+fast/text/ipa-tone-letters.html
