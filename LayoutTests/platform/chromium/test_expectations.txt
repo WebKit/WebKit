@@ -1472,7 +1472,6 @@ BUGCR104128 CPU : fast/canvas/shadow-offset-6.html = IMAGE
 BUGCR104128 CPU : fast/canvas/shadow-offset-7.html = IMAGE
 BUGCR104128 CPU : fast/repaint/box-shadow-h.html = IMAGE
 BUGCR104128 CPU : fast/repaint/box-shadow-v.html = IMAGE
-BUGCR104128 CPU : fast/repaint/moving-shadow-on-container.html = IMAGE
 BUGCR104128 CPU : fast/repaint/text-shadow-horizontal.html = IMAGE
 BUGCR104128 CPU : fast/repaint/text-shadow.html = IMAGE
 BUGCR104128 CPU : fast/text/shadow-no-blur.html = IMAGE
@@ -3211,9 +3210,6 @@ BUGWK56591 : compositing/rtl/rtl-relative.html = TEXT
 
 BUGWK63033 : svg/custom/absolute-root-position-masking.xhtml = IMAGE
 BUGWK63036 MAC : svg/dom/SVGTransformList-basics.xhtml = IMAGE
-
-BUGCR86974 : svg/css/composite-shadow-example.html = PASS TEXT IMAGE
-BUGCR86974 : svg/css/composite-shadow-with-opacity.html = PASS TEXT IMAGE
 
 BUGCR89282 SNOWLEOPARD : fast/forms/range/input-appearance-range.html = IMAGE
 
