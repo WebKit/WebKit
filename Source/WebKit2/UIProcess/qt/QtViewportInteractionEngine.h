@@ -38,7 +38,7 @@ QT_END_NAMESPACE
 
 namespace WebKit {
 
-class ViewportUpdateGuard;
+class ViewportUpdateDeferrer;
 
 class QtViewportInteractionEngine : public QObject {
     Q_OBJECT
@@ -108,6 +108,8 @@ private Q_SLOTS:
     void scaleAnimationValueChanged(QVariant value) { setItemRectVisible(value.toRectF()); }
 
 private:
+    friend class ViewportUpdateDeferrer;
+
     qreal cssScaleFromItem(qreal);
     qreal itemScaleFromCSS(qreal);
     qreal innerBoundedCSSScale(qreal);
@@ -121,15 +123,15 @@ private:
     // As long as the object exists this function will always return the same QScroller instance.
     QScroller* scroller() { return QScroller::scroller(this); }
 
-    friend class ViewportUpdateGuard;
 
     const QQuickItem* const m_viewport;
     QQuickItem* const m_content;
 
     Constraints m_constraints;
+
     int m_suspendCount;
-    OwnPtr<ViewportUpdateGuard> m_scaleUpdateDeferrer;
-    OwnPtr<ViewportUpdateGuard> m_scrollUpdateDeferrer;
+    OwnPtr<ViewportUpdateDeferrer> m_scaleUpdateDeferrer;
+    OwnPtr<ViewportUpdateDeferrer> m_scrollUpdateDeferrer;
 
     bool m_hadUserInteraction;
 

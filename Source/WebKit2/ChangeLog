@@ -1,3 +1,20 @@
+2011-11-30  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Rename WebKit::ViewportUpdateGuard to *Deferrer and add some better
+        comments to explain its purpose.
+
+        Reviewed by Simon Hausmann.
+
+        * UIProcess/qt/QtViewportInteractionEngine.cpp:
+        (WebKit::ViewportUpdateDeferrer::ViewportUpdateDeferrer):
+        (WebKit::ViewportUpdateDeferrer::~ViewportUpdateDeferrer):
+        (WebKit::QtViewportInteractionEngine::setItemRectVisible):
+        (WebKit::QtViewportInteractionEngine::scaleAnimationStateChanged):
+        (WebKit::QtViewportInteractionEngine::scrollStateChanged):
+        (WebKit::QtViewportInteractionEngine::applyConstraints):
+        (WebKit::QtViewportInteractionEngine::pinchGestureStarted):
+        * UIProcess/qt/QtViewportInteractionEngine.h:
+
 2011-11-30  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Build fix. The removal of the Qt threading back-end also removed

@@ -34,26 +34,42 @@ namespace WebKit {
 
 static const int kScaleAnimationDurationMillis = 250;
 
-// Updating content properties cause the notify signals to be sent by the content item itself.
-// We manage these differently, as we do not want to act on them when we are the ones changing the content.
+// UPDATE DEFERRING (SUSPEND/RESUME)
+// =================================
 //
-// When multiple guards are alive, their lifetime must be perfectly imbricated (e.g. if used ouside stack
-// frames). We rely on the first one to trigger the update at the end.
+// When interaction with the content, either by animating or by the hand of the user,
+// it is important to ensure smooth animations of at least 60fps in order to give a
+// good user experience.
 //
-// Our public QtViewportInteractionEngine methods should use the guard if they update content in any situation.
+// In order to do this we need to get rid of unknown factors. These include device
+// sensors (geolocation, orientation updates etc), CSS3 animations, JavaScript
+// exectution, sub resource loads etc. We do this by emitting suspend and resume
+// signals, which are then handled by the viewport and propagates to the right place.
+//
+// For this reason the ViewportUpdateDeferrer guard must be used when we interact
+// or animate the content.
+//
+// It should be noted that when we update content properties, we might receive notify
+// signals send my the content item itself, and care should be taken to not act on
+// these unconditionally. An example of this is the pinch zoom, which changes the
+// position and will thus result in a QQuickWebPage::geometryChanged() signal getting
+// emitted.
+//
+// If something should only be executed during update deferring, it is possible to
+// check for that using ASSERT(m_suspendCount).
 
-class ViewportUpdateGuard {
+class ViewportUpdateDeferrer {
 public:
-    ViewportUpdateGuard(QtViewportInteractionEngine* engine)
+    ViewportUpdateDeferrer(QtViewportInteractionEngine* engine)
         : engine(engine)
     {
         if (engine->m_suspendCount++)
             return;
 
-        engine->contentSuspendRequested();
+        emit engine->contentSuspendRequested();
     }
 
-    ~ViewportUpdateGuard()
+    ~ViewportUpdateDeferrer()
     {
         if (--(engine->m_suspendCount))
             return;
@@ -137,7 +153,7 @@ qreal QtViewportInteractionEngine::outerBoundedCSSScale(qreal cssScale)
 
 void QtViewportInteractionEngine::setItemRectVisible(const QRectF& itemRect)
 {
-    ViewportUpdateGuard guard(this);
+    ViewportUpdateDeferrer guard(this);
 
     qreal itemScale = m_viewport->width() / itemRect.width();
 
@@ -167,7 +183,7 @@ void QtViewportInteractionEngine::scaleAnimationStateChanged(QAbstractAnimation:
 {
     switch (newState) {
     case QAbstractAnimation::Running:
-        m_scaleUpdateDeferrer = adoptPtr(new ViewportUpdateGuard(this));
+        m_scaleUpdateDeferrer = adoptPtr(new ViewportUpdateDeferrer(this));
         break;
     case QAbstractAnimation::Stopped:
         m_scaleUpdateDeferrer.clear();
@@ -189,7 +205,7 @@ void QtViewportInteractionEngine::scrollStateChanged(QScroller::State newState)
     case QScroller::Scrolling:
         if (m_scrollUpdateDeferrer)
             break;
-        m_scrollUpdateDeferrer = adoptPtr(new ViewportUpdateGuard(this));
+        m_scrollUpdateDeferrer = adoptPtr(new ViewportUpdateDeferrer(this));
         break;
     default:
         break;
@@ -371,7 +387,7 @@ void QtViewportInteractionEngine::applyConstraints(const Constraints& constraint
     // We always have to apply the constrains even if they didn't change, as
     // the initial scale might need to be applied.
 
-    ViewportUpdateGuard guard(this);
+    ViewportUpdateDeferrer guard(this);
 
     m_constraints = constraints;
 
@@ -452,7 +468,7 @@ void QtViewportInteractionEngine::pinchGestureStarted(const QPointF& pinchCenter
 
     m_hadUserInteraction = true;
 
-    m_scaleUpdateDeferrer = adoptPtr(new ViewportUpdateGuard(this));
+    m_scaleUpdateDeferrer = adoptPtr(new ViewportUpdateDeferrer(this));
 
     m_lastPinchCenterInViewportCoordinates = m_viewport->mapFromItem(m_content, pinchCenterInContentCoordinates);
     m_pinchStartScale = m_content->scale();
