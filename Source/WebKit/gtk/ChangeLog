@@ -1,3 +1,14 @@
+2011-11-30  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK] HTML5 Youtube video fullscreen button doesn't work
+        https://bugs.webkit.org/show_bug.cgi?id=73456
+
+        Reviewed by Martin Robinson.
+
+        * WebCoreSupport/ChromeClientGtk.cpp:
+        (WebKit::ChromeClient::supportsFullScreenForElement): Ignore
+        withKeyboard argument value, like Chrome's implementation.
+
 2011-11-29  Sergio Villar Senin  <svillar@igalia.com>
 
         [GTK] SIGSEV when a WebKitDownload fails

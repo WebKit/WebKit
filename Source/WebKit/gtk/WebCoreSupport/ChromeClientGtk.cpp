@@ -880,9 +880,6 @@ void ChromeClient::exitFullscreenForNode(Node* node)
 #if ENABLE(FULLSCREEN_API)
 bool ChromeClient::supportsFullScreenForElement(const WebCore::Element* element, bool withKeyboard)
 {
-    if (withKeyboard)
-        return false;
-
     return true;
 }
 
