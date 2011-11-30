@@ -1,3 +1,14 @@
+2011-11-30  Fady Samuel  <fsamuel@chromium.org>
+
+        [Chromium] Set Result Before Early Exit for Fixed Layout Methods in LayoutTestController
+        https://bugs.webkit.org/show_bug.cgi?id=73328
+
+        Reviewed by Kent Tamura.
+
+        * DumpRenderTree/chromium/LayoutTestController.cpp:
+        (LayoutTestController::enableFixedLayoutMode):
+        (LayoutTestController::setFixedLayoutSize):
+
 2011-11-29  Hayato Ito  <hayato@chromium.org>
 
         Skip writing the result of diff_image since non-chromium ports don't implement diff_image.
