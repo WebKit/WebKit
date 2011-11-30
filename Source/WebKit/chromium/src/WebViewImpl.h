@@ -323,6 +323,13 @@ public:
     // load.
     void didCommitLoad(bool* isNewNavigation);
 
+    // Indicates two things:
+    //   1) This view may have a new layout now.
+    //   2) Calling layout() is a no-op.
+    // After calling WebWidget::layout(), expect to get this notification
+    // unless the view did not need a layout.
+    void layoutUpdated(WebFrameImpl*);
+
     // Returns true if popup menus should be rendered by the browser, false if
     // they should be rendered by WebKit (which is the default).
     static bool useExternalPopupMenus();

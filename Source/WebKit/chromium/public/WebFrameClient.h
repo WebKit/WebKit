@@ -111,13 +111,6 @@ public:
     // This frame is about to be closed.
     virtual void willClose(WebFrame*) { }
 
-    // Indicates two things:
-    //   1) This frame may have a new layout now.
-    //   2) Calling layout() is a no-op.
-    // After calling WebWidget::layout(), expect to get this notification
-    // for each frame unless the frame did not need a layout.
-    virtual void didUpdateLayout(WebFrame*) { }
-
     // Load commands -------------------------------------------------------
 
     // The client should handle the navigation externally.

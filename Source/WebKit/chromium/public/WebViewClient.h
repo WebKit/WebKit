@@ -74,6 +74,7 @@ struct WebConsoleMessage;
 struct WebContextMenuData;
 struct WebPoint;
 struct WebPopupMenuInfo;
+struct WebSize;
 struct WebWindowFeatures;
 
 // Since a WebView is a WebWidget, a WebViewClient is a WebWidgetClient.
@@ -246,6 +247,13 @@ public:
     virtual void focusedNodeChanged(const WebNode&) { }
 
     virtual void numberOfWheelEventHandlersChanged(unsigned) { }
+
+    // Indicates two things:
+    //   1) This view may have a new layout now.
+    //   2) Calling layout() is a no-op.
+    // After calling WebWidget::layout(), expect to get this notification
+    // unless the view did not need a layout.
+    virtual void didUpdateLayout() { }
 
     // Session history -----------------------------------------------------
 

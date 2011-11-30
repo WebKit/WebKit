@@ -1,3 +1,19 @@
+2011-11-30  David Levin  <levin@chromium.org>
+
+        [chromium] Move didUpdateLayout from WebFrameClient to WebViewClient.
+        https://bugs.webkit.org/show_bug.cgi?id=73415
+
+        Reviewed by Darin Fisher.
+
+        * public/WebFrameClient.h: Move didUpdateLayout to WebViewClient.
+        * public/WebViewClient.h:
+        (WebKit::WebViewClient::didUpdateLayout): Ditto.
+        * src/ChromeClientImpl.cpp: Call WebViewImpl now.
+        (WebKit::ChromeClientImpl::layoutUpdated):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::layoutUpdated):
+        * src/WebViewImpl.h: Added layoutUpdated.
+
 2011-11-30  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: get rid of deferred backend->front-end commands processing.

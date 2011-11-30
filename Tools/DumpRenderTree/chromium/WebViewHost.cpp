@@ -535,6 +535,23 @@ void WebViewHost::startDragging(const WebDragData& data, WebDragOperationsMask m
     m_shell->eventSender()->doDragDrop(mutableDragData, mask);
 }
 
+void WebViewHost::didUpdateLayout()
+{
+#if OS(MAC_OS_X)
+    static bool queryingPreferredSize = false;
+    if (queryingPreferredSize)
+        return;
+
+    queryingPreferredSize = true;
+    // Query preferred width to emulate the same functionality in Chromium:
+    // see RenderView::CheckPreferredSize (src/content/renderer/render_view.cc)
+    // and TabContentsViewMac::RenderViewCreated (src/chrome/browser/tab_contents/tab_contents_view_mac.mm)
+    webView()->mainFrame()->contentsPreferredWidth();
+    webView()->mainFrame()->documentElementScrollHeight();
+    queryingPreferredSize = false;
+#endif
+}
+
 void WebViewHost::navigateBackForwardSoon(int offset)
 {
     navigationController()->goToOffset(offset);
@@ -830,24 +847,6 @@ WebApplicationCacheHost* WebViewHost::createApplicationCacheHost(WebFrame* frame
 {
     return webkit_support::CreateApplicationCacheHost(frame, client);
 }
-
-void WebViewHost::didUpdateLayout(WebFrame*)
-{
-#if OS(MAC_OS_X)
-    static bool queryingPreferredSize = false;
-    if (queryingPreferredSize)
-        return;
-
-    queryingPreferredSize = true;
-    // Query preferred width to emulate the same functionality in Chromium:
-    // see RenderView::CheckPreferredSize (src/content/renderer/render_view.cc)
-    // and TabContentsViewMac::RenderViewCreated (src/chrome/browser/tab_contents/tab_contents_view_mac.mm)
-    webView()->mainFrame()->contentsPreferredWidth();
-    webView()->mainFrame()->documentElementScrollHeight();
-    queryingPreferredSize = false;
-#endif
-}
-
 
 void WebViewHost::loadURLExternally(WebFrame* frame, const WebURLRequest& request, WebNavigationPolicy policy)
 {

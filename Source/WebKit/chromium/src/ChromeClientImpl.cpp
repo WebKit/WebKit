@@ -557,9 +557,7 @@ void ChromeClientImpl::contentsSizeChanged(Frame* frame, const IntSize& size) co
 
 void ChromeClientImpl::layoutUpdated(Frame* frame) const
 {
-    WebFrameImpl* webframe = WebFrameImpl::fromFrame(frame);
-    if (webframe->client())
-        webframe->client()->didUpdateLayout(webframe);
+    m_webView->layoutUpdated(WebFrameImpl::fromFrame(frame));
 }
 
 void ChromeClientImpl::scrollbarsModeDidChange() const

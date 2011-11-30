@@ -141,6 +141,7 @@ class WebViewHost : public WebKit::WebSpellCheckClient, public WebKit::WebViewCl
     virtual void showContextMenu(WebKit::WebFrame*, const WebKit::WebContextMenuData&);
     virtual void setStatusText(const WebKit::WebString&);
     virtual void startDragging(const WebKit::WebDragData&, WebKit::WebDragOperationsMask, const WebKit::WebImage&, const WebKit::WebPoint&);
+    virtual void didUpdateLayout();
     virtual void navigateBackForwardSoon(int offset);
     virtual int historyBackListCount();
     virtual int historyForwardListCount();
@@ -176,7 +177,6 @@ class WebViewHost : public WebKit::WebSpellCheckClient, public WebKit::WebViewCl
     virtual WebKit::WebWorker* createWorker(WebKit::WebFrame*, WebKit::WebWorkerClient*);
     virtual WebKit::WebMediaPlayer* createMediaPlayer(WebKit::WebFrame*, WebKit::WebMediaPlayerClient*);
     virtual WebKit::WebApplicationCacheHost* createApplicationCacheHost(WebKit::WebFrame*, WebKit::WebApplicationCacheHostClient*);
-    virtual void didUpdateLayout(WebKit::WebFrame*);
     virtual void loadURLExternally(WebKit::WebFrame*, const WebKit::WebURLRequest&, WebKit::WebNavigationPolicy);
     virtual void loadURLExternally(WebKit::WebFrame*, const WebKit::WebURLRequest&, WebKit::WebNavigationPolicy, const WebKit::WebString& downloadName);
     virtual WebKit::WebNavigationPolicy decidePolicyForNavigation(

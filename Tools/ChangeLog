@@ -1,3 +1,15 @@
+2011-11-30  David Levin  <levin@chromium.org>
+
+        [chromium] Move didUpdateLayout from WebFrameClient to WebViewClient.
+        https://bugs.webkit.org/show_bug.cgi?id=73415
+
+        Reviewed by Darin Fisher.
+
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::didUpdateLayout): Move didUpdateLayout to account for
+        it being moved to a new interface and having the parameter removed.
+        * DumpRenderTree/chromium/WebViewHost.h: Ditto.
+
 2011-11-30  Adam Roben  <aroben@apple.com>
 
         Make NRWT show DRT/WTR build logs when the build fails or --verbose is passed

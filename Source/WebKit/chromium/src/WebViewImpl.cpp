@@ -2543,6 +2543,14 @@ void WebViewImpl::didCommitLoad(bool* isNewNavigation)
     m_observedNewNavigation = false;
 }
 
+void WebViewImpl::layoutUpdated(WebFrameImpl* webframe)
+{
+    if (!m_client || webframe != mainFrameImpl())
+        return;
+
+    m_client->didUpdateLayout();
+}
+
 bool WebViewImpl::useExternalPopupMenus()
 {
     return shouldUseExternalPopupMenus;
