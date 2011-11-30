@@ -1,3 +1,15 @@
+2011-11-30  Noel Gordon  <noel.gordon@gmail.com>
+
+        JPEGImageDecoder: Code input color space case entries in numerical order
+        https://bugs.webkit.org/show_bug.cgi?id=73287
+
+        Reviewed by Adam Barth.
+
+        No new tests. Covered by existing tests.
+
+        * platform/image-decoders/jpeg/JPEGImageDecoder.cpp:
+        (WebCore::JPEGImageReader::decode): JCS_YCbCr is one greater than JSC_RGB.
+
 2011-11-30  Alexandru Chiculita  <achicu@adobe.com>
 
         FilterOperation* should stay in rendering/style, because it is directly referenced from RenderStyle

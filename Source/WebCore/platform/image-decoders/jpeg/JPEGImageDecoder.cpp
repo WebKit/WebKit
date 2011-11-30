@@ -237,8 +237,8 @@ public:
                 m_decoder->setIgnoreGammaAndColorProfile(true);
                 m_info.out_color_space = JCS_RGB;
                 break;
-            case JCS_YCbCr:
             case JCS_RGB:
+            case JCS_YCbCr:
                 m_info.out_color_space = rgbOutputColorSpace();
                 break;
             case JCS_CMYK:
