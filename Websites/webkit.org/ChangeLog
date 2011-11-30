@@ -1,3 +1,15 @@
+2011-11-30  Ryosuke Niwa  <rniwa@webkit.org>
+
+        commit-review-policy.html should make clear committers shouldn't land patches without authors' consent
+        https://bugs.webkit.org/show_bug.cgi?id=73098
+
+        Reviewed by Antti Koivisto.
+
+        Revise the sentence about committers being allowed to land patches by others to explicitly state that
+        they can only land patches by others if asked by authors themselves.
+
+        * coding/commit-review-policy.html:
+
 2011-11-14  Mark Rowe  <mrowe@apple.com>
 
         Upgrade WordPress's Akismet plug-in to the latest version.
