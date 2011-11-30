@@ -795,6 +795,11 @@ namespace JSC {
             patchPointerInternal(getAbsoluteJumpAddress(from), to);
         }
 
+        static void* readCallTarget(void* from)
+        {
+            return reinterpret_cast<void*>(readPointer(reinterpret_cast<void*>(getAbsoluteJumpAddress(from))));
+        }
+
         // Address operations
 
         static void* getRelocatedAddress(void* code, AssemblerLabel label)

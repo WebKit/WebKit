@@ -947,6 +947,11 @@ public:
         m_assembler.nop();
     }
 
+    static FunctionPtr readCallTarget(CodeLocationCall call)
+    {
+        return FunctionPtr(reinterpret_cast<void(*)()>(ARMAssembler::readCallTarget(call.dataLocation())));
+    }
+
 protected:
     ARMAssembler::Condition ARMCondition(RelationalCondition cond)
     {
