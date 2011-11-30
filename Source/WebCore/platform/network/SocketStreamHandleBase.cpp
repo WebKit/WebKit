@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Google Inc.  All rights reserved.
+ * Copyright (C) 2009, 2011 Google Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -60,6 +60,8 @@ bool SocketStreamHandleBase::send(const char* data, int length)
             return false;
         }
         m_buffer.append(data, length);
+        if (m_client)
+            m_client->didUpdateBufferedAmount(static_cast<SocketStreamHandle*>(this), bufferedAmount());
         return true;
     }
     int bytesWritten = 0;
@@ -71,8 +73,11 @@ bool SocketStreamHandleBase::send(const char* data, int length)
         // FIXME: report error to indicate that buffer has no more space.
         return false;
     }
-    if (bytesWritten < length)
+    if (bytesWritten < length) {
         m_buffer.append(data + bytesWritten, length - bytesWritten);
+        if (m_client)
+            m_client->didUpdateBufferedAmount(static_cast<SocketStreamHandle*>(this), bufferedAmount());
+    }
     return true;
 }
 
@@ -119,6 +124,8 @@ bool SocketStreamHandleBase::sendPendingData()
     ASSERT(m_buffer.size() - bytesWritten <= bufferSize);
     remainingData.append(m_buffer.data() + bytesWritten, m_buffer.size() - bytesWritten);
     m_buffer.swap(remainingData);
+    if (m_client)
+        m_client->didUpdateBufferedAmount(static_cast<SocketStreamHandle*>(this), bufferedAmount());
     return true;
 }
 

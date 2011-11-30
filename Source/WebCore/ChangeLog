@@ -1,3 +1,37 @@
+2011-11-30  Takashi Toyoshima  <toyoshim@chromium.org>
+
+        Add didUpdateBufferedAmount() callback to SocketStreamHandleClient
+        and WebSocketChannelClient.
+        https://bugs.webkit.org/show_bug.cgi?id=73290
+
+        Reviewed by Kent Tamura.
+
+        No new tests because this callback is not used in WebCore.
+
+        * platform/network/SocketStreamHandleBase.cpp: Invoke new callback.
+        (WebCore::SocketStreamHandleBase::send):
+        (WebCore::SocketStreamHandleBase::sendPendingData):
+        * platform/network/SocketStreamHandleBase.h: Change returning value type.
+        (WebCore::SocketStreamHandleBase::bufferedAmount):
+        * platform/network/SocketStreamHandleClient.h: Add new callback definition.
+        (WebCore::SocketStreamHandleClient::didUpdateBufferedAmount):
+        * websockets/ThreadableWebSocketChannelClientWrapper.cpp: Add new callback handling.
+        (WebCore::ThreadableWebSocketChannelClientWrapper::didUpdateBufferedAmount):
+        (WebCore::ThreadableWebSocketChannelClientWrapper::didUpdateBufferedAmountCallback):
+        * websockets/ThreadableWebSocketChannelClientWrapper.h: Add new callback inheritance and its helper method.
+        * websockets/WebSocket.cpp: Add new callback handling.
+        (WebCore::WebSocket::didUpdateBufferedAmount):
+        * websockets/WebSocket.h: Add new callback inheritance.
+        * websockets/WebSocketChannel.cpp: Add new callback handling.
+        (WebCore::WebSocketChannel::didUpdateBufferedAmount):
+        * websockets/WebSocketChannel.h: Add new callback inheritacne.
+        * websockets/WebSocketChannelClient.h: Add new callback definition.
+        (WebCore::WebSocketChannelClient::didUpdateBufferedAmount):
+        * websockets/WorkerThreadableWebSocketChannel.cpp: Add new callback handling.
+        (WebCore::workerContextDidUpdateBufferedAmount):
+        (WebCore::WorkerThreadableWebSocketChannel::Peer::didUpdateBufferedAmount):
+        * websockets/WorkerThreadableWebSocketChannel.h: Add new callback inheritance and its helper method.
+
 2011-11-30  Kentaro Hara  <haraken@chromium.org>
 
         [Refactoring] In preprocessor.pm, remove double quotations from $defines

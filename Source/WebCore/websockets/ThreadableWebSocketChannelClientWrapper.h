@@ -74,6 +74,7 @@ public:
     void didConnect();
     void didReceiveMessage(const String& message);
     void didReceiveBinaryData(PassOwnPtr<Vector<char> >);
+    void didUpdateBufferedAmount(unsigned long bufferedAmount);
     void didStartClosingHandshake();
     void didClose(unsigned long unhandledBufferedAmount, WebSocketChannelClient::ClosingHandshakeCompletionStatus, unsigned short code, const String& reason);
 
@@ -87,6 +88,7 @@ protected:
     static void didConnectCallback(ScriptExecutionContext*, ThreadableWebSocketChannelClientWrapper*);
     static void didReceiveMessageCallback(ScriptExecutionContext*, ThreadableWebSocketChannelClientWrapper*, const String& message);
     static void didReceiveBinaryDataCallback(ScriptExecutionContext*, ThreadableWebSocketChannelClientWrapper*, PassOwnPtr<Vector<char> >);
+    static void didUpdateBufferedAmountCallback(ScriptExecutionContext*, ThreadableWebSocketChannelClientWrapper*, unsigned long bufferedAmount);
     static void didStartClosingHandshakeCallback(ScriptExecutionContext*, ThreadableWebSocketChannelClientWrapper*);
     static void didCloseCallback(ScriptExecutionContext*, ThreadableWebSocketChannelClientWrapper*, unsigned long unhandledBufferedAmount, WebSocketChannelClient::ClosingHandshakeCompletionStatus, unsigned short code, const String& reason);
 

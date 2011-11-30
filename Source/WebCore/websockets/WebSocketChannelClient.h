@@ -46,6 +46,7 @@ namespace WebCore {
         virtual void didReceiveMessage(const String&) { }
         virtual void didReceiveBinaryData(PassOwnPtr<Vector<char> >) { }
         virtual void didReceiveMessageError() { }
+        virtual void didUpdateBufferedAmount(unsigned long bufferedAmount) { }
         virtual void didStartClosingHandshake() { }
         enum ClosingHandshakeCompletionStatus {
             ClosingHandshakeIncomplete,

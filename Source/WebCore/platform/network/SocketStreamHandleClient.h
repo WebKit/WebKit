@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2009 Apple Inc. All rights reserved.
- * Copyright (C) 2009 Google Inc.  All rights reserved.
+ * Copyright (C) 2009, 2011 Google Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -46,6 +46,7 @@ namespace WebCore {
         virtual void didOpenSocketStream(SocketStreamHandle*) { }
         virtual void didCloseSocketStream(SocketStreamHandle*) { }
         virtual void didReceiveSocketStreamData(SocketStreamHandle*, const char* /*data*/, int /*length*/) { }
+        virtual void didUpdateBufferedAmount(SocketStreamHandle*, size_t bufferedAmount) { }
 
         virtual void didFailSocketStream(SocketStreamHandle*, const SocketStreamError&) { }
 

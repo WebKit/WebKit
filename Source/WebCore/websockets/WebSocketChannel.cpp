@@ -325,6 +325,12 @@ void WebSocketChannel::didReceiveSocketStreamData(SocketStreamHandle* handle, co
             break;
 }
 
+void WebSocketChannel::didUpdateBufferedAmount(SocketStreamHandle* handle, size_t bufferedAmount)
+{
+    if (m_client)
+        m_client->didUpdateBufferedAmount(bufferedAmount);
+}
+
 void WebSocketChannel::didFailSocketStream(SocketStreamHandle* handle, const SocketStreamError& error)
 {
     LOG(Network, "WebSocketChannel %p didFailSocketStream", this);

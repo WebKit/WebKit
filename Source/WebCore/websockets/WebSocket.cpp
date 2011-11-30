@@ -505,6 +505,11 @@ void WebSocket::didReceiveMessageError()
     dispatchEvent(Event::create(eventNames().errorEvent, false, false));
 }
 
+void WebSocket::didUpdateBufferedAmount(unsigned long bufferedAmount)
+{
+    LOG(Network, "WebSocket %p didUpdateBufferedAmount %lu", this, bufferedAmount);
+}
+
 void WebSocket::didStartClosingHandshake()
 {
     LOG(Network, "WebSocket %p didStartClosingHandshake", this);
