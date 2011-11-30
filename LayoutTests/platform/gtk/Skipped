@@ -1660,3 +1660,8 @@ tables/mozilla_expected_failures/marvin/backgr_position-table-column-group.html
 tables/mozilla_expected_failures/marvin/backgr_position-table-column.html
 tables/mozilla_expected_failures/marvin/backgr_position-table-row-group.html
 tables/mozilla_expected_failures/marvin/backgr_position-table-row.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=73409
+fast/forms/placeholder-set-attribute.html
+fast/forms/search-placeholder-value-changed.html
+fast/forms/textarea-placeholder-set-attribute.html
