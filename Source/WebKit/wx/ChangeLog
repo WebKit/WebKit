@@ -1,5 +1,17 @@
 2011-11-30  Robin Dunn  <robin@alldunn.com>
 
+        Generate a more robust user agent string.
+        https://bugs.webkit.org/show_bug.cgi?id=73465
+        
+        Reviewed by Kevin Ollivier.
+        
+        * WebKitSupport/FrameLoaderClientWx.cpp:
+        (WebCore::agentOS):
+        (WebCore::composeUserAgent):
+        (WebCore::FrameLoaderClientWx::userAgent):
+
+2011-11-30  Robin Dunn  <robin@alldunn.com>
+
         Use the wxGCDC(wxGraphicsContext) constructor on Mac as well
         to avoid issues with the wxGCDC(wxPrinterDC) constructor.
         https://bugs.webkit.org/show_bug.cgi?id=73463

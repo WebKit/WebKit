@@ -58,6 +58,7 @@
 #include "FrameNetworkingContextWx.h"
 #include "WebFrame.h"
 #include "WebFramePrivate.h"
+#include "WebKitVersion.h"
 #include "WebView.h"
 #include "WebViewPrivate.h"
 
@@ -539,11 +540,39 @@ void FrameLoaderClientWx::setTitle(const StringWithDirection& title, const KURL&
     notImplemented();
 }
 
+static String agentOS()
+{
+#if OS(DARWIN)
+#if CPU(X86)
+    return "Intel Mac OS X";
+#else
+    return "PPC Mac OS X";
+#endif
+#elif OS(UNIX)
+    struct utsname name;
+    if (uname(&name) != -1)
+        return makeString(name.sysname, ' ', name.machine);
+    
+    return "Unknown";
+#elif OS(WINDOWS)
+    return windowsVersionForUAString();
+#else
+    notImplemented();
+    return "Unknown";
+#endif
+}
 
+static String composeUserAgent()
+{
+    String webKitVersion = String::format("%d.%d", WEBKIT_MAJOR_VERSION, WEBKIT_MINOR_VERSION);
+    return makeString("Mozilla/5.0 (", agentOS(), ") AppleWebKit/", webKitVersion, " (KHTML, like Gecko) version/5.1.1 Safari/", webKitVersion);
+}
+
+    
 String FrameLoaderClientWx::userAgent(const KURL&)
 {
     // FIXME: Use the new APIs introduced by the GTK port to fill in these values.
-    return String("Mozilla/5.0 (Macintosh; Intel Mac OS X) AppleWebKit/418.9.1 (KHTML, like Gecko) Safari/419.3");
+    return composeUserAgent();
 }
 
 void FrameLoaderClientWx::dispatchDidReceiveIcon()
