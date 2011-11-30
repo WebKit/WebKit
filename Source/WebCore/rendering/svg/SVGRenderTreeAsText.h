@@ -41,14 +41,14 @@ class RenderObject;
 class RenderSVGGradientStop;
 class RenderSVGImage;
 class RenderSVGInlineText;
-class RenderSVGPath;
+class RenderSVGShape;
 class RenderSVGRoot;
 class RenderSVGText;
 class AffineTransform;
 class SVGUnitTypes;
 
 // functions used by the main RenderTreeAsText code
-void write(TextStream&, const RenderSVGPath&, int indent);
+void write(TextStream&, const RenderSVGShape&, int indent);
 void write(TextStream&, const RenderSVGRoot&, int indent);
 void writeSVGGradientStop(TextStream&, const RenderSVGGradientStop&, int indent);
 void writeSVGResourceContainer(TextStream&, const RenderObject&, int indent);
