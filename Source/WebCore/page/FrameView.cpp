@@ -63,7 +63,9 @@
 #include "ScrollAnimator.h"
 #include "Settings.h"
 #include "TextResourceDecoder.h"
+
 #include <wtf/CurrentTime.h>
+#include <wtf/TemporarilyChange.h>
 
 #if USE(ACCELERATED_COMPOSITING)
 #include "RenderLayerCompositor.h"
@@ -896,7 +898,8 @@ inline void FrameView::forceLayoutParentViewIfNeeded()
     if (!svgRoot->needsSizeNegotiationWithHostDocument())
         return;
 
-    m_inLayoutParentView = true;
+    ASSERT(!m_inLayoutParentView);
+    TemporarilyChange<bool> resetInLayoutParentView(m_inLayoutParentView, true);
 
     // Clear needs-size-negotiation flag in RenderSVGRoot, so the next call to our
     // layout() method won't fire the size negotiation logic again.
@@ -916,8 +919,6 @@ inline void FrameView::forceLayoutParentViewIfNeeded()
     FrameView* frameView = ownerRenderer->frame()->view();
     ASSERT(frameView);
     frameView->layout();
-
-    m_inLayoutParentView = false;
 #endif
 }
 
@@ -969,138 +970,145 @@ void FrameView::layout(bool allowSubtree)
     ASSERT(m_frame->view() == this);
 
     Document* document = m_frame->document();
-
-    m_layoutSchedulingEnabled = false;
-
-    if (!m_nestedLayoutCount && !m_inSynchronousPostLayout && m_hasPendingPostLayoutTasks && !inSubframeLayoutWithFrameFlattening) {
-        // This is a new top-level layout. If there are any remaining tasks from the previous
-        // layout, finish them now.
-        m_inSynchronousPostLayout = true;
-        m_postLayoutTasksTimer.stop();
-        performPostLayoutTasks();
-        m_inSynchronousPostLayout = false;
-    }
-
-    // Viewport-dependent media queries may cause us to need completely different style information.
-    // Check that here.
-    if (document->styleSelector()->affectedByViewportChange())
-        document->styleSelectorChanged(RecalcStyleImmediately);
-
-    // Always ensure our style info is up-to-date.  This can happen in situations where
-    // the layout beats any sort of style recalc update that needs to occur.
-    document->updateStyleIfNeeded();
-    
-    bool subtree = m_layoutRoot;
-
-    // If there is only one ref to this view left, then its going to be destroyed as soon as we exit, 
-    // so there's no point to continuing to layout
-    if (protector->hasOneRef())
-        return;
-
-    RenderObject* root = subtree ? m_layoutRoot : document->renderer();
-    if (!root) {
-        // FIXME: Do we need to set m_size here?
-        m_layoutSchedulingEnabled = true;
-        return;
-    }
-
-    FontCachePurgePreventer fontCachePurgePreventer;
-
-    m_nestedLayoutCount++;
-
-    if (!m_layoutRoot) {
-        Document* document = m_frame->document();
-        Node* body = document->body();
-        if (body && body->renderer()) {
-            if (body->hasTagName(framesetTag) && m_frame->settings() && !m_frame->settings()->frameFlatteningEnabled()) {
-                body->renderer()->setChildNeedsLayout(true);
-            } else if (body->hasTagName(bodyTag)) {
-                if (!m_firstLayout && m_size.height() != layoutHeight() && body->renderer()->enclosingBox()->stretchesToViewport())
-                    body->renderer()->setChildNeedsLayout(true);
-            }
-        }
-        
-#ifdef INSTRUMENT_LAYOUT_SCHEDULING
-        if (m_firstLayout && !m_frame->ownerElement())
-            printf("Elapsed time before first layout: %d\n", document->elapsedTime());
-#endif        
-    }
-
-    ScrollbarMode hMode;
-    ScrollbarMode vMode;    
-    calculateScrollbarModesForLayout(hMode, vMode);
-
-    m_doFullRepaint = !subtree && (m_firstLayout || toRenderView(root)->printing());
-
-    if (!subtree) {
-        // Now set our scrollbar state for the layout.
-        ScrollbarMode currentHMode = horizontalScrollbarMode();
-        ScrollbarMode currentVMode = verticalScrollbarMode();
-
-        if (m_firstLayout || (hMode != currentHMode || vMode != currentVMode)) {
-            if (m_firstLayout) {
-                setScrollbarsSuppressed(true);
-
-                m_firstLayout = false;
-                m_firstLayoutCallbackPending = true;
-                m_lastLayoutSize = LayoutSize(width(), height());
-                m_lastZoomFactor = root->style()->zoom();
-
-                // Set the initial vMode to AlwaysOn if we're auto.
-                if (vMode == ScrollbarAuto)
-                    setVerticalScrollbarMode(ScrollbarAlwaysOn); // This causes a vertical scrollbar to appear.
-                // Set the initial hMode to AlwaysOff if we're auto.
-                if (hMode == ScrollbarAuto)
-                    setHorizontalScrollbarMode(ScrollbarAlwaysOff); // This causes a horizontal scrollbar to disappear.
-
-                setScrollbarModes(hMode, vMode);
-                setScrollbarsSuppressed(false, true);
-            } else
-                setScrollbarModes(hMode, vMode);
-        }
-
-        LayoutSize oldSize = m_size;
-
-        m_size = LayoutSize(layoutWidth(), layoutHeight());
-
-        if (oldSize != m_size) {
-            m_doFullRepaint = true;
-            if (!m_firstLayout) {
-                RenderBox* rootRenderer = document->documentElement() ? document->documentElement()->renderBox() : 0;
-                RenderBox* bodyRenderer = rootRenderer && document->body() ? document->body()->renderBox() : 0;
-                if (bodyRenderer && bodyRenderer->stretchesToViewport())
-                    bodyRenderer->setChildNeedsLayout(true);
-                else if (rootRenderer && rootRenderer->stretchesToViewport())
-                    rootRenderer->setChildNeedsLayout(true);
-            }
-        }
-    }
-
-    RenderLayer* layer = root->enclosingLayer();
-
-    m_actionScheduler->pause();
+    bool subtree;
+    RenderObject* root;
 
     {
-        bool disableLayoutState = false;
-        if (subtree) {
-            RenderView* view = root->view();
-            disableLayoutState = view->shouldDisableLayoutStateForSubtree(root);
-            view->pushLayoutState(root);
+        TemporarilyChange<bool> changeSchedulingEnabled(m_layoutSchedulingEnabled, false);
+
+        if (!m_nestedLayoutCount && !m_inSynchronousPostLayout && m_hasPendingPostLayoutTasks && !inSubframeLayoutWithFrameFlattening) {
+            // This is a new top-level layout. If there are any remaining tasks from the previous
+            // layout, finish them now.
+            m_inSynchronousPostLayout = true;
+            m_postLayoutTasksTimer.stop();
+            performPostLayoutTasks();
+            m_inSynchronousPostLayout = false;
         }
-        LayoutStateDisabler layoutStateDisabler(disableLayoutState ? root->view() : 0);
 
-        m_inLayout = true;
-        beginDeferredRepaints();
-        root->layout();
-        endDeferredRepaints();
-        m_inLayout = false;
+        // Viewport-dependent media queries may cause us to need completely different style information.
+        // Check that here.
+        if (document->styleSelector()->affectedByViewportChange())
+            document->styleSelectorChanged(RecalcStyleImmediately);
 
-        if (subtree)
-            root->view()->popLayoutState(root);
-    }
-    m_layoutRoot = 0;
+        // Always ensure our style info is up-to-date. This can happen in situations where
+        // the layout beats any sort of style recalc update that needs to occur.
+        document->updateStyleIfNeeded();
 
-    m_layoutSchedulingEnabled = true;
+        subtree = m_layoutRoot;
+
+        // If there is only one ref to this view left, then its going to be destroyed as soon as we exit, 
+        // so there's no point to continuing to layout
+        if (protector->hasOneRef())
+            return;
+
+        root = subtree ? m_layoutRoot : document->renderer();
+        if (!root) {
+            // FIXME: Do we need to set m_size here?
+            return;
+        }
+    } // Reset m_layoutSchedulingEnabled to its previous value.
+    // The only reason the scoping was closed here is allow fontCachePurgePreventer
+    // to outlive the change and reset of m_layoutSchedulingEnabled.
+
+    FontCachePurgePreventer fontCachePurgePreventer;
+    RenderLayer* layer;
+    {
+        TemporarilyChange<bool> changeSchedulingEnabled(m_layoutSchedulingEnabled, false);
+
+        m_nestedLayoutCount++;
+
+        if (!m_layoutRoot) {
+            Document* document = m_frame->document();
+            Node* body = document->body();
+            if (body && body->renderer()) {
+                if (body->hasTagName(framesetTag) && m_frame->settings() && !m_frame->settings()->frameFlatteningEnabled()) {
+                    body->renderer()->setChildNeedsLayout(true);
+                } else if (body->hasTagName(bodyTag)) {
+                    if (!m_firstLayout && m_size.height() != layoutHeight() && body->renderer()->enclosingBox()->stretchesToViewport())
+                        body->renderer()->setChildNeedsLayout(true);
+                }
+            }
+
+#ifdef INSTRUMENT_LAYOUT_SCHEDULING
+            if (m_firstLayout && !m_frame->ownerElement())
+                printf("Elapsed time before first layout: %d\n", document->elapsedTime());
+#endif        
+        }
+
+        ScrollbarMode hMode;
+        ScrollbarMode vMode;    
+        calculateScrollbarModesForLayout(hMode, vMode);
+
+        m_doFullRepaint = !subtree && (m_firstLayout || toRenderView(root)->printing());
+
+        if (!subtree) {
+            // Now set our scrollbar state for the layout.
+            ScrollbarMode currentHMode = horizontalScrollbarMode();
+            ScrollbarMode currentVMode = verticalScrollbarMode();
+
+            if (m_firstLayout || (hMode != currentHMode || vMode != currentVMode)) {
+                if (m_firstLayout) {
+                    setScrollbarsSuppressed(true);
+
+                    m_firstLayout = false;
+                    m_firstLayoutCallbackPending = true;
+                    m_lastLayoutSize = LayoutSize(width(), height());
+                    m_lastZoomFactor = root->style()->zoom();
+
+                    // Set the initial vMode to AlwaysOn if we're auto.
+                    if (vMode == ScrollbarAuto)
+                        setVerticalScrollbarMode(ScrollbarAlwaysOn); // This causes a vertical scrollbar to appear.
+                    // Set the initial hMode to AlwaysOff if we're auto.
+                    if (hMode == ScrollbarAuto)
+                        setHorizontalScrollbarMode(ScrollbarAlwaysOff); // This causes a horizontal scrollbar to disappear.
+
+                    setScrollbarModes(hMode, vMode);
+                    setScrollbarsSuppressed(false, true);
+                } else
+                    setScrollbarModes(hMode, vMode);
+            }
+
+            LayoutSize oldSize = m_size;
+
+            m_size = LayoutSize(layoutWidth(), layoutHeight());
+
+            if (oldSize != m_size) {
+                m_doFullRepaint = true;
+                if (!m_firstLayout) {
+                    RenderBox* rootRenderer = document->documentElement() ? document->documentElement()->renderBox() : 0;
+                    RenderBox* bodyRenderer = rootRenderer && document->body() ? document->body()->renderBox() : 0;
+                    if (bodyRenderer && bodyRenderer->stretchesToViewport())
+                        bodyRenderer->setChildNeedsLayout(true);
+                    else if (rootRenderer && rootRenderer->stretchesToViewport())
+                        rootRenderer->setChildNeedsLayout(true);
+                }
+            }
+        }
+
+        layer = root->enclosingLayer();
+
+        m_actionScheduler->pause();
+
+        {
+            bool disableLayoutState = false;
+            if (subtree) {
+                RenderView* view = root->view();
+                disableLayoutState = view->shouldDisableLayoutStateForSubtree(root);
+                view->pushLayoutState(root);
+            }
+            LayoutStateDisabler layoutStateDisabler(disableLayoutState ? root->view() : 0);
+
+            m_inLayout = true;
+            beginDeferredRepaints();
+            root->layout();
+            endDeferredRepaints();
+            m_inLayout = false;
+
+            if (subtree)
+                root->view()->popLayoutState(root);
+        }
+        m_layoutRoot = 0;
+    } // Reset m_layoutSchedulingEnabled to its previous value.
 
     if (!subtree && !toRenderView(root)->printing())
         adjustViewSize();
@@ -1664,11 +1672,9 @@ void FrameView::scrollElementToRect(Element* element, const IntRect& rect)
 
 void FrameView::setScrollPosition(const IntPoint& scrollPoint)
 {
-    bool wasInProgrammaticScroll = m_inProgrammaticScroll;
-    m_inProgrammaticScroll = true;
+    TemporarilyChange<bool> changeInProgrammaticScroll(m_inProgrammaticScroll, true);
     m_maintainScrollPositionAnchor = 0;
     ScrollView::setScrollPosition(scrollPoint);
-    m_inProgrammaticScroll = wasInProgrammaticScroll;
 }
 
 void FrameView::setFixedVisibleContentRect(const IntRect& visibleContentRect)

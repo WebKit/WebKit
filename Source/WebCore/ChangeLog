@@ -1,3 +1,26 @@
+2011-11-30  David Levin  <levin@chromium.org>
+
+        Make FrameView use TemporarilyChange in a few places.
+        https://bugs.webkit.org/show_bug.cgi?id=73403
+
+        Reviewed by Dmitry Titov.
+
+        No new functionality exposed so no new tests.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::forceLayoutParentViewIfNeeded): Since this function isn't
+        re-entrant, TemporarilyChange does the same thing but in a more robust manner
+        in case there would be a return added in the function.
+        (WebCore::FrameView::layout): This place is the key reason for the change.
+        layout is re-entrant, but layout will set m_layoutSchedulingEnabled to true when
+        leaving though the "layout" function higher in the stack would still have it set
+        to false (which works ok but is hit by another change I'm working on).
+        The majority of the change is due to indenting the code to make m_layoutSchedulingEnabled
+        and TemporarilyChange behave like they did before. A few variables were moved before
+        the scoping to allow them to be used after the scope is closed.
+        (WebCore::FrameView::setScrollPosition): TemporarilyChange does exactly what
+        this code did before (saving the old value and restoring it).
+
 2011-11-30  Alejandro G. Castro  <alex@igalia.com>
 
         [GTK] Add TextureMapperCairo boilerplate implementation
