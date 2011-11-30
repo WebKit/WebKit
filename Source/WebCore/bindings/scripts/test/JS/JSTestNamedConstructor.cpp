@@ -21,7 +21,10 @@
 #include "config.h"
 #include "JSTestNamedConstructor.h"
 
+#include "ExceptionCode.h"
+#include "JSDOMBinding.h"
 #include "TestNamedConstructor.h"
+#include <runtime/Error.h>
 #include <wtf/GetPtr.h>
 
 using namespace JSC;
@@ -91,6 +94,49 @@ bool JSTestNamedConstructorConstructor::getOwnPropertySlot(JSCell* cell, ExecSta
 bool JSTestNamedConstructorConstructor::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
 {
     return getStaticValueDescriptor<JSTestNamedConstructorConstructor, JSDOMWrapper>(exec, &JSTestNamedConstructorConstructorTable, static_cast<JSTestNamedConstructorConstructor*>(object), propertyName, descriptor);
+}
+
+const ClassInfo JSTestNamedConstructorNamedConstructor::s_info = { "TestNamedConstructorConstructor", &DOMConstructorObject::s_info, 0, 0, CREATE_METHOD_TABLE(JSTestNamedConstructorNamedConstructor) };
+
+JSTestNamedConstructorNamedConstructor::JSTestNamedConstructorNamedConstructor(Structure* structure, JSDOMGlobalObject* globalObject)
+    : DOMConstructorWithDocument(structure, globalObject)
+{
+}
+
+void JSTestNamedConstructorNamedConstructor::finishCreation(ExecState* exec, JSDOMGlobalObject* globalObject)
+{
+    Base::finishCreation(globalObject);
+    ASSERT(inherits(&s_info));
+    putDirect(exec->globalData(), exec->propertyNames().prototype, JSTestNamedConstructorPrototype::self(exec, globalObject), None);
+}
+
+EncodedJSValue JSC_HOST_CALL JSTestNamedConstructorNamedConstructor::constructJSTestNamedConstructor(ExecState* exec)
+{
+    JSTestNamedConstructorNamedConstructor* jsConstructor = static_cast<JSTestNamedConstructorNamedConstructor*>(exec->callee());
+    if (exec->argumentCount() < 1)
+        return throwVMError(exec, createTypeError(exec, "Not enough arguments"));
+    ExceptionCode ec = 0;
+    const String& str1(ustringToString(MAYBE_MISSING_PARAMETER(exec, 0, MissingIsUndefined).isEmpty() ? UString() : MAYBE_MISSING_PARAMETER(exec, 0, MissingIsUndefined).toString(exec)));
+    if (exec->hadException())
+        return JSValue::encode(jsUndefined());
+    const String& str2(ustringToString(MAYBE_MISSING_PARAMETER(exec, 1, MissingIsUndefined).isEmpty() ? UString() : MAYBE_MISSING_PARAMETER(exec, 1, MissingIsUndefined).toString(exec)));
+    if (exec->hadException())
+        return JSValue::encode(jsUndefined());
+    const String& str3(ustringToString(MAYBE_MISSING_PARAMETER(exec, 2, MissingIsEmpty).isEmpty() ? UString() : MAYBE_MISSING_PARAMETER(exec, 2, MissingIsEmpty).toString(exec)));
+    if (exec->hadException())
+        return JSValue::encode(jsUndefined());
+    RefPtr<TestNamedConstructor> object = TestNamedConstructor::createForJSConstructor(jsConstructor->document(), str1, str2, str3, ec);
+    if (ec) {
+        setDOMException(exec, ec);
+        return JSValue::encode(JSValue());
+    }
+    return JSValue::encode(asObject(toJS(exec, jsConstructor->globalObject(), object.get())));
+}
+
+ConstructType JSTestNamedConstructorNamedConstructor::getConstructData(JSCell*, ConstructData& constructData)
+{
+    constructData.native.function = constructJSTestNamedConstructor;
+    return ConstructTypeHost;
 }
 
 /* Hash table for prototype */

@@ -1099,7 +1099,7 @@ sub GenerateHeader
 
     push(@headerContent, "};\n\n");
 
-    if ($dataNode->extendedAttributes->{"JSCustomConstructor"} || $dataNode->extendedAttributes->{"CustomConstructor"} || !$dataNode->extendedAttributes->{"OmitConstructor"}) {
+    if (!$dataNode->extendedAttributes->{"OmitConstructor"}) {
         $headerIncludes{"JSDOMBinding.h"} = 1;
         GenerateConstructorDeclaration(\@headerContent, $className, $dataNode, $interfaceName);
     }
@@ -1436,6 +1436,9 @@ sub GenerateImplementation
 
         my $protoClassName = "${className}Prototype";
         GenerateConstructorDefinition(\@implContent, $className, $protoClassName, $interfaceName, $visibleClassName, $dataNode);
+        if ($dataNode->extendedAttributes->{"NamedConstructor"}) {
+            GenerateConstructorDefinition(\@implContent, $className, $protoClassName, $interfaceName, $visibleClassName, $dataNode, "GeneratingNamedConstructor");
+        }
     }
 
     # - Add functions and constants to a hashtable definition
@@ -3335,7 +3338,7 @@ sub GenerateConstructorDeclaration
     push(@$outputArray, "protected:\n");
     push(@$outputArray, "    static const unsigned StructureFlags = JSC::OverridesGetOwnPropertySlot | JSC::ImplementsHasInstance | DOMConstructorObject::StructureFlags;\n");
 
-    if (IsConstructable($dataNode)) {
+    if (IsConstructable($dataNode) && !$dataNode->extendedAttributes->{"NamedConstructor"}) {
         push(@$outputArray, "    static JSC::EncodedJSValue JSC_HOST_CALL construct${className}(JSC::ExecState*);\n");
         push(@$outputArray, "    static JSC::ConstructType getConstructData(JSC::JSCell*, JSC::ConstructData&);\n");
     }
@@ -3343,6 +3346,36 @@ sub GenerateConstructorDeclaration
 
     if (IsConstructorTemplate($dataNode, "Event")) {
         push(@$outputArray, "bool fill${interfaceName}Init(${interfaceName}Init&, JSDictionary&);\n\n");
+    }
+
+    if ($dataNode->extendedAttributes->{"NamedConstructor"}) {
+        push(@$outputArray, <<END);
+class JS${interfaceName}NamedConstructor : public DOMConstructorWithDocument {
+public:
+    typedef DOMConstructorWithDocument Base;
+
+    static JS${interfaceName}NamedConstructor* create(JSC::ExecState* exec, JSC::Structure* structure, JSDOMGlobalObject* globalObject)
+    {
+        JS${interfaceName}NamedConstructor* constructor = new (JSC::allocateCell<JS${interfaceName}NamedConstructor>(*exec->heap())) JS${interfaceName}NamedConstructor(structure, globalObject);
+        constructor->finishCreation(exec, globalObject);
+        return constructor;
+    }
+
+    static JSC::Structure* createStructure(JSC::JSGlobalData& globalData, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)
+    {
+        return JSC::Structure::create(globalData, globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), &s_info);
+    }
+
+    static const JSC::ClassInfo s_info;
+
+private:
+    JS${interfaceName}NamedConstructor(JSC::Structure*, JSDOMGlobalObject*);
+    static JSC::EncodedJSValue JSC_HOST_CALL constructJS${interfaceName}(JSC::ExecState*);
+    static JSC::ConstructType getConstructData(JSC::JSCell*, JSC::ConstructData&);
+    void finishCreation(JSC::ExecState*, JSDOMGlobalObject*);
+};
+
+END
     }
 }
 
@@ -3355,48 +3388,64 @@ sub GenerateConstructorDefinition
     my $interfaceName = shift;
     my $visibleClassName = shift;
     my $dataNode = shift;
+    my $generatingNamedConstructor = shift;
 
-    my $constructorClassName = "${className}Constructor";
+    my $constructorClassName = $generatingNamedConstructor ? "${className}NamedConstructor" : "${className}Constructor";
     my $numberOfconstructParameters = $dataNode->extendedAttributes->{"ConstructorParameters"};
 
-    push(@$outputArray, "const ClassInfo ${constructorClassName}::s_info = { \"${visibleClassName}Constructor\", &DOMConstructorObject::s_info, &${constructorClassName}Table, 0, CREATE_METHOD_TABLE($constructorClassName) };\n\n");
-
-    push(@$outputArray, "${constructorClassName}::${constructorClassName}(Structure* structure, JSDOMGlobalObject* globalObject)\n");
-    push(@$outputArray, "    : DOMConstructorObject(structure, globalObject)\n");
-    push(@$outputArray, "{\n");
-    push(@$outputArray, "}\n\n");
+    if ($generatingNamedConstructor) {
+        push(@$outputArray, "const ClassInfo ${constructorClassName}::s_info = { \"${visibleClassName}Constructor\", &DOMConstructorObject::s_info, 0, 0, CREATE_METHOD_TABLE($constructorClassName) };\n\n");
+        push(@$outputArray, "${constructorClassName}::${constructorClassName}(Structure* structure, JSDOMGlobalObject* globalObject)\n");
+        push(@$outputArray, "    : DOMConstructorWithDocument(structure, globalObject)\n");
+        push(@$outputArray, "{\n");
+        push(@$outputArray, "}\n\n");
+    } else {
+        push(@$outputArray, "const ClassInfo ${constructorClassName}::s_info = { \"${visibleClassName}Constructor\", &DOMConstructorObject::s_info, &${constructorClassName}Table, 0, CREATE_METHOD_TABLE($constructorClassName) };\n\n");
+        push(@$outputArray, "${constructorClassName}::${constructorClassName}(Structure* structure, JSDOMGlobalObject* globalObject)\n");
+        push(@$outputArray, "    : DOMConstructorObject(structure, globalObject)\n");
+        push(@$outputArray, "{\n");
+        push(@$outputArray, "}\n\n");
+    }
 
     push(@$outputArray, "void ${constructorClassName}::finishCreation(ExecState* exec, JSDOMGlobalObject* globalObject)\n");
     push(@$outputArray, "{\n");
-    push(@$outputArray, "    Base::finishCreation(exec->globalData());\n");
-    push(@$outputArray, "    ASSERT(inherits(&s_info));\n");
     if ($interfaceName eq "DOMWindow") {
+        push(@$outputArray, "    Base::finishCreation(exec->globalData());\n");
+        push(@$outputArray, "    ASSERT(inherits(&s_info));\n");
         push(@$outputArray, "    putDirect(exec->globalData(), exec->propertyNames().prototype, globalObject->prototype(), DontDelete | ReadOnly);\n");
+    } elsif ($generatingNamedConstructor) {
+        push(@$outputArray, "    Base::finishCreation(globalObject);\n");
+        push(@$outputArray, "    ASSERT(inherits(&s_info));\n");
+        push(@$outputArray, "    putDirect(exec->globalData(), exec->propertyNames().prototype, ${className}Prototype::self(exec, globalObject), None);\n");
     } else {
+        push(@$outputArray, "    Base::finishCreation(exec->globalData());\n");
+        push(@$outputArray, "    ASSERT(inherits(&s_info));\n");
         push(@$outputArray, "    putDirect(exec->globalData(), exec->propertyNames().prototype, ${protoClassName}::self(exec, globalObject), DontDelete | ReadOnly);\n");
     }
     push(@$outputArray, "    putDirect(exec->globalData(), exec->propertyNames().length, jsNumber(${numberOfconstructParameters}), ReadOnly | DontDelete | DontEnum);\n") if $numberOfconstructParameters;
     push(@$outputArray, "}\n\n");
 
-    my $hasStaticFunctions = 0;
-    foreach my $function (@{$dataNode->functions}) {
-        if ($function->isStatic) {
-            $hasStaticFunctions = 1;
-            last;
+    if (!$generatingNamedConstructor) {
+        my $hasStaticFunctions = 0;
+        foreach my $function (@{$dataNode->functions}) {
+            if ($function->isStatic) {
+                $hasStaticFunctions = 1;
+                last;
+            }
         }
+
+        my $kind = $hasStaticFunctions ? "Property" : "Value";
+
+        push(@$outputArray, "bool ${constructorClassName}::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)\n");
+        push(@$outputArray, "{\n");
+        push(@$outputArray, "    return getStatic${kind}Slot<${constructorClassName}, JSDOMWrapper>(exec, &${constructorClassName}Table, static_cast<${constructorClassName}*>(cell), propertyName, slot);\n");
+        push(@$outputArray, "}\n\n");
+
+        push(@$outputArray, "bool ${constructorClassName}::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)\n");
+        push(@$outputArray, "{\n");
+        push(@$outputArray, "    return getStatic${kind}Descriptor<${constructorClassName}, JSDOMWrapper>(exec, &${constructorClassName}Table, static_cast<${constructorClassName}*>(object), propertyName, descriptor);\n");
+        push(@$outputArray, "}\n\n");
     }
-
-    my $kind = $hasStaticFunctions ? "Property" : "Value";
-
-    push(@$outputArray, "bool ${constructorClassName}::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)\n");
-    push(@$outputArray, "{\n");
-    push(@$outputArray, "    return getStatic${kind}Slot<${constructorClassName}, JSDOMWrapper>(exec, &${constructorClassName}Table, static_cast<${constructorClassName}*>(cell), propertyName, slot);\n");
-    push(@$outputArray, "}\n\n");
-
-    push(@$outputArray, "bool ${constructorClassName}::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)\n");
-    push(@$outputArray, "{\n");
-    push(@$outputArray, "    return getStatic${kind}Descriptor<${constructorClassName}, JSDOMWrapper>(exec, &${constructorClassName}Table, static_cast<${constructorClassName}*>(object), propertyName, descriptor);\n");
-    push(@$outputArray, "}\n\n");
 
     if (IsConstructable($dataNode)) {
         if (IsConstructorTemplate($dataNode, "Event")) {
@@ -3463,7 +3512,7 @@ END
 }
 
 END
-        } elsif (!($dataNode->extendedAttributes->{"JSCustomConstructor"} || $dataNode->extendedAttributes->{"CustomConstructor"})) {
+        } elsif (!($dataNode->extendedAttributes->{"JSCustomConstructor"} || $dataNode->extendedAttributes->{"CustomConstructor"}) && (!$dataNode->extendedAttributes->{"NamedConstructor"} || $generatingNamedConstructor)) {
             push(@$outputArray, "EncodedJSValue JSC_HOST_CALL ${constructorClassName}::construct${className}(ExecState* exec)\n");
             push(@$outputArray, "{\n");
 
@@ -3493,6 +3542,9 @@ END
                 push(@$outputArray, "    if (!context)\n");
                 push(@$outputArray, "        return throwVMError(exec, createReferenceError(exec, \"${interfaceName} constructor associated document is unavailable\"));\n");
             }
+            if ($generatingNamedConstructor) {
+                push(@constructorArgList, "jsConstructor->document()");
+            }
 
             my $index = 0;
             foreach my $parameter (@{$function->parameters}) {
@@ -3505,7 +3557,12 @@ END
                 push(@constructorArgList, "ec");
             }
             my $constructorArg = join(", ", @constructorArgList);
-            push(@$outputArray, "    RefPtr<${interfaceName}> object = ${interfaceName}::create(${constructorArg});\n");
+            if ($generatingNamedConstructor) {
+                push(@$outputArray, "    RefPtr<${interfaceName}> object = ${interfaceName}::createForJSConstructor(${constructorArg});\n");
+            } else {
+                push(@$outputArray, "    RefPtr<${interfaceName}> object = ${interfaceName}::create(${constructorArg});\n");
+            }
+
             if ($dataNode->extendedAttributes->{"ConstructorRaisesException"}) {
                 push(@$outputArray, "    if (ec) {\n");
                 push(@$outputArray, "        setDOMException(exec, ec);\n");
@@ -3517,11 +3574,13 @@ END
             push(@$outputArray, "}\n\n");
         }
 
-        push(@$outputArray, "ConstructType ${constructorClassName}::getConstructData(JSCell*, ConstructData& constructData)\n");
-        push(@$outputArray, "{\n");
-        push(@$outputArray, "    constructData.native.function = construct${className};\n");
-        push(@$outputArray, "    return ConstructTypeHost;\n");
-        push(@$outputArray, "}\n\n");
+        if (!$dataNode->extendedAttributes->{"NamedConstructor"} || $generatingNamedConstructor) {
+            push(@$outputArray, "ConstructType ${constructorClassName}::getConstructData(JSCell*, ConstructData& constructData)\n");
+            push(@$outputArray, "{\n");
+            push(@$outputArray, "    constructData.native.function = construct${className};\n");
+            push(@$outputArray, "    return ConstructTypeHost;\n");
+            push(@$outputArray, "}\n\n");
+        }
     }
 }
 
@@ -3529,7 +3588,7 @@ sub IsConstructable
 {
     my $dataNode = shift;
 
-    return $dataNode->extendedAttributes->{"CustomConstructor"} || $dataNode->extendedAttributes->{"JSCustomConstructor"} || $dataNode->extendedAttributes->{"Constructor"} || $dataNode->extendedAttributes->{"JSConstructorTemplate"} || $dataNode->extendedAttributes->{"ConstructorTemplate"};
+    return $dataNode->extendedAttributes->{"CustomConstructor"} || $dataNode->extendedAttributes->{"JSCustomConstructor"} || $dataNode->extendedAttributes->{"Constructor"} || $dataNode->extendedAttributes->{"NamedConstructor"} || $dataNode->extendedAttributes->{"JSConstructorTemplate"} || $dataNode->extendedAttributes->{"ConstructorTemplate"};
 }
 
 sub IsConstructorTemplate

@@ -1,3 +1,31 @@
+2011-11-30  Kentaro Hara  <haraken@chromium.org>
+
+        Implement the [NamedConstructor] IDL in CodeGeneratorJS.pm
+        https://bugs.webkit.org/show_bug.cgi?id=73307
+
+        Reviewed by Adam Barth.
+
+        This patch implements the [NamedConstructor] IDL for JSC.
+        The spec: http://www.w3.org/TR/WebIDL/#NamedConstructor
+
+        Tests: bindings/scripts/test/JS/JSTestNamedConstructor.idl
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHeader): Removed unnecessary conditions '$dataNode->extendedAttributes->{"JSCustomConstructor"} || $dataNode->extendedAttributes->{"CustomConstructor"}'.
+        (GenerateImplementation): Calls GenerateConstructorDefinition() to generate a NamedConstructor.
+        (GenerateConstructorDeclaration): Generates a header for a NamedConstructor.
+        (GenerateConstructorDefinition): Generates a NamedConstructor implementation and getConstructData() for the NamedConstructor.
+        (IsConstructable): Added a NamedConstructor condition.
+
+        * bindings/scripts/test/JS/JSTestNamedConstructor.cpp: Updated a run-bindings-tests result.
+        (WebCore::JSTestNamedConstructorNamedConstructor::JSTestNamedConstructorNamedConstructor):
+        (WebCore::JSTestNamedConstructorNamedConstructor::finishCreation):
+        (WebCore::JSTestNamedConstructorNamedConstructor::constructJSTestNamedConstructor):
+        (WebCore::JSTestNamedConstructorNamedConstructor::getConstructData):
+        * bindings/scripts/test/JS/JSTestNamedConstructor.h: Ditto.
+        (WebCore::JSTestNamedConstructorNamedConstructor::create):
+        (WebCore::JSTestNamedConstructorNamedConstructor::createStructure):
+
 2011-11-30  Takashi Toyoshima  <toyoshim@chromium.org>
 
         Add didUpdateBufferedAmount() callback to SocketStreamHandleClient
