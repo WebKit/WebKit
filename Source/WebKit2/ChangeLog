@@ -1,3 +1,16 @@
+2011-11-30  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        [Gtk] Links should be Tab-focusable by default
+        https://bugs.webkit.org/show_bug.cgi?id=73427
+
+        Reviewed by Martin Robinson.
+
+        * UIProcess/API/gtk/WebKitSettings.cpp:
+        (webkit_settings_class_init): Switch the default value for
+        'enable-tabs-to-links' property from FALSE to TRUE.
+        * UIProcess/API/gtk/tests/TestWebKitSettings.cpp:
+        (testWebKitSettings): Updated unit test.
+
 2011-11-30  Alexey Proskuryakov  <ap@apple.com>
 
         Download page URL should be set by WebCore

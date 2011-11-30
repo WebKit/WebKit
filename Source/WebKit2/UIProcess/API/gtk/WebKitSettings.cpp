@@ -691,7 +691,7 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
                                     g_param_spec_boolean("enable-tabs-to-links",
                                                          _("Enable tabs to links"),
                                                          _("Whether to enable tabs to links"),
-                                                         FALSE,
+                                                         TRUE,
                                                          readWriteConstructParamFlags));
 
     /**
