@@ -58,6 +58,7 @@
 #include "GeolocationPosition.h"
 #include "HistoryItem.h"
 #include "HTMLInputElement.h"
+#include "InitWebCoreQt.h"
 #include "InspectorController.h"
 #include "NodeList.h"
 #include "NotificationPresenterClientQt.h"
@@ -197,6 +198,7 @@ DumpRenderTreeSupportQt::~DumpRenderTreeSupportQt()
 
 void DumpRenderTreeSupportQt::initialize()
 {
+    WebCore::initializeWebCoreQt();
     QtDRTNodeRuntime::initialize();
 }
 

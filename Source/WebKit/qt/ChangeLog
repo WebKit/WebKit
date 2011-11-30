@@ -1,3 +1,15 @@
+2011-11-30  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Fix crashing layout tests
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Fix ASSERTION FAILED: m_key != PTHREAD_KEYS_MAX in ThreadIdentifierDataPthreads.cpp(65)
+        static WTF::ThreadIdentifier WTF::ThreadIdentifierData::identifier()
+
+        * WebCoreSupport/DumpRenderTreeSupportQt.cpp:
+        (DumpRenderTreeSupportQt::initialize): Add missing WebCore::initializeWebCoreQt().
+
 2011-11-30  Andrew Wason  <rectalogic@rectalogic.com>
 
         Replace Qt QThread threading back-end with pthread/Win32 threading back-ends
