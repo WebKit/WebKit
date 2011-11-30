@@ -53,7 +53,7 @@
 
 namespace WTF {
 
-#if !USE(PTHREADS) && !PLATFORM(QT) && !PLATFORM(GTK) && OS(WINDOWS)
+#if OS(WINDOWS)
 // ThreadSpecificThreadExit should be called each time when a thread is detached.
 // This is done automatically for threads created with WTF::createThread.
 void ThreadSpecificThreadExit();
@@ -69,7 +69,7 @@ public:
     T& operator*();
 
 private:
-#if !USE(PTHREADS) && !PLATFORM(QT) && !PLATFORM(GTK) && OS(WINDOWS)
+#if OS(WINDOWS)
     friend void ThreadSpecificThreadExit();
 #endif
 

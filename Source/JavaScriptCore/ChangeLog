@@ -1,5 +1,11 @@
 2011-11-30  Simon Hausmann  <simon.hausmann@nokia.com>
 
+        Unreviewed propective build fix for Qt/Windows part 2 after r101477.
+
+        * wtf/ThreadSpecific.h: Fix the OS(WINDOWS) defines for the friend declaration for ThreadSpecific<T>::Data
+
+2011-11-30  Simon Hausmann  <simon.hausmann@nokia.com>
+
         Unreviewed propective build fix for Qt/Windows after r101477.
 
         * wtf/ThreadSpecific.h: Use OS(WINDOWS) for declaring "destructor", as it's
