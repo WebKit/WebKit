@@ -99,7 +99,7 @@ FloatRect RenderSVGRect::strokeBoundingBox() const
 void RenderSVGRect::fillShape(GraphicsContext* context) const
 {
     if (!isPaintingFallback()) {
-#if PLATFORM(MAC) || (PLATFORM(CHROMIUM) && OS(MAC_OS_X))
+#if USE(CG)
         // FIXME: CG implementation of GraphicsContextCG::fillRect has an own
         // shadow drawing method, which draws an extra shadow.
         // This is a workaround for switching off the extra shadow.

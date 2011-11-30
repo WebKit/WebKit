@@ -1,3 +1,12 @@
+2011-11-30  Renata Hodovan  <reni@webkit.org>
+
+        CG buildfix after r101517.
+
+        Rubber stamped by Zoltan Herczeg.
+
+        * rendering/svg/RenderSVGRect.cpp:
+        (WebCore::RenderSVGRect::fillShape):
+
 2011-11-30  Anna Cavender  <annacc@chromium.org>
 
         Missing RuntimeEnabled check for <track>
