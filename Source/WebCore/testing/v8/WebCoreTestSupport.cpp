@@ -55,7 +55,7 @@ void resetInternalsObject(v8::Local<v8::Context> context)
     v8::HandleScope scope;
 
     v8::Handle<v8::Object> object = v8::Handle<v8::Object>::Cast(context->Global()->Get(v8::String::New(Internals::internalsId)));
-    Internals* internals = V8Internals::toNative(object);
+    Internals* internals = object->IsUndefined() ? 0 : V8Internals::toNative(object);
     if (internals) {
         ScriptExecutionContext* scriptContext = getScriptExecutionContext();
         if (scriptContext->isDocument())

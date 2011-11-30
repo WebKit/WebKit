@@ -1,3 +1,19 @@
+2011-11-30  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [V8] Make WebCoreTestingSupport::resetInternalsObject more robust
+        https://bugs.webkit.org/show_bug.cgi?id=73437
+
+        Reviewed by Adam Barth.
+
+        The Qt DRT may end up calling resetInternalsObject at a time when
+        there's no internals object yet. In that case the looking of the internals
+        object in the global object fails and returns undefined. V8Internals::toNative
+        doesn't handle that and causing failing assertions. This patch adds a simple
+        check to handle this case.
+
+        * testing/v8/WebCoreTestSupport.cpp:
+        (WebCoreTestSupport::resetInternalsObject):
+
 2011-11-30  James Simonsen  <simonjam@chromium.org>
 
         Fix valgrind issue in SubresourceLoader::didFinishLoading
