@@ -1,3 +1,23 @@
+2011-11-30  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        [Qt] Add a fullscreen option to MiniBrowser.
+        https://bugs.webkit.org/show_bug.cgi?id=73445
+
+        Reviewed by Noam Rosenthal.
+
+        This bypasses the compositor on the N9 to increase performances
+        and remove the huge useless gray bar part of the window frame
+        at the bottom.
+
+        * MiniBrowser/qt/BrowserWindow.cpp:
+        (BrowserWindow::BrowserWindow):
+        * MiniBrowser/qt/MiniBrowserApplication.cpp:
+        (printHelp):
+        (MiniBrowserApplication::handleUserOptions):
+        * MiniBrowser/qt/MiniBrowserApplication.h:
+        (WindowOptions::setStartFullScreen):
+        (WindowOptions::startFullScreen):
+
 2011-11-30  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Add an initial jhbuild setup which installs fonts into the WebKitBuild

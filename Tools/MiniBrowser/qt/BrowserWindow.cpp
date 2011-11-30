@@ -53,11 +53,15 @@ BrowserWindow::BrowserWindow(WindowOptions* options)
     connect(rootObject(), SIGNAL(pageTitleChanged(QString)), this, SLOT(setWindowTitle(QString)));
     if (!options->useTouchWebView())
         webView()->experimental()->setUseTraditionalDesktopBehaviour(true);
-    if (options->startMaximized())
-        setWindowState(Qt::WindowMaximized);
-    else
-        resize(options->requestedWindowSize());
-    show();
+    if (options->startFullScreen())
+        showFullScreen();
+    else {
+        if (options->startMaximized())
+            setWindowState(Qt::WindowMaximized);
+        else
+            resize(options->requestedWindowSize());
+        show();
+    }
 }
 
 QQuickWebView* BrowserWindow::webView() const

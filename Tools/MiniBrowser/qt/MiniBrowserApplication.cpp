@@ -169,11 +169,12 @@ static void printHelp(const QString& programName)
 {
     qDebug() << "Usage:" << programName.toLatin1().data()
          << "[--touch]"
-         << "[--maximize]"
-         << "[--window-size (width)x(height)]"
          << "[-r list]"
          << "[--robot-timeout seconds]"
          << "[--robot-extra-time seconds]"
+         << "[--window-size (width)x(height)]"
+         << "[--maximize]"
+         << "[-f]                                    Full screen mode."
          << "[-v]"
          << "URL";
 }
@@ -194,6 +195,7 @@ void MiniBrowserApplication::handleUserOptions()
     m_windowOptions.setUseTouchWebView(takeOptionFlag(&args, "--touch"));
     m_windowOptions.setPrintLoadedUrls(takeOptionFlag(&args, "-v"));
     m_windowOptions.setStartMaximized(takeOptionFlag(&args, "--maximize"));
+    m_windowOptions.setStartFullScreen(takeOptionFlag(&args, "-f"));
 
     if (args.contains("--window-size")) {
         QString value = takeOptionValue(&args, "--window-size");

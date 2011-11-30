@@ -60,6 +60,8 @@ public:
     bool useTouchWebView() const { return m_useTouchWebView; }
     void setStartMaximized(bool enabled) { m_startMaximized = enabled; }
     bool startMaximized() const { return m_startMaximized; }
+    void setStartFullScreen(bool enabled) { m_startFullScreen = enabled; }
+    bool startFullScreen() const { return m_startFullScreen; }
     void setRequestedWindowSize(const QSize& size) { m_windowSize = size; }
     QSize requestedWindowSize() const { return m_windowSize; }
 
@@ -67,6 +69,7 @@ private:
     bool m_printLoadedUrls;
     bool m_useTouchWebView;
     bool m_startMaximized;
+    bool m_startFullScreen;
     QSize m_windowSize;
 };
 
