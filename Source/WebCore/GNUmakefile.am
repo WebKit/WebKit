@@ -562,6 +562,14 @@ webcore_cppflags += -DENABLE_3D_RENDERING=1
 endif  # END ENABLE_3D_RENDERING
 
 # ---
+# Compile with accelerated compositing support
+# ---
+if USE_ACCELERATED_COMPOSITING
+webcore_cppflags += \
+	-I$(srcdir)/Source/WebCore/platform/graphics/texmap
+endif  # USE_ACCELERATED_COMPOSITING
+
+# ---
 # MHTML support
 # ---
 if ENABLE_MHTML

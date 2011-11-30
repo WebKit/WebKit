@@ -899,22 +899,22 @@ void ChromeClient::exitFullScreenForElement(WebCore::Element* element)
 #if USE(ACCELERATED_COMPOSITING)
 void ChromeClient::attachRootGraphicsLayer(Frame* frame, GraphicsLayer* rootLayer)
 {
-    notImplemented();
+    webViewSetRootGraphicsLayer(m_webView, rootLayer);
 }
 
 void ChromeClient::setNeedsOneShotDrawingSynchronization()
 {
-    notImplemented();
+    webViewMarkForSync(m_webView, FALSE);
 }
 
 void ChromeClient::scheduleCompositingLayerSync()
 {
-    notImplemented();
+    webViewMarkForSync(m_webView, TRUE);
 }
 
 ChromeClient::CompositingTriggerFlags ChromeClient::allowedCompositingTriggers() const
 {
-    return 0;
+    return AllTriggers;
 }
 #endif
 

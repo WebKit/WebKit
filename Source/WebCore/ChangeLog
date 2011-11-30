@@ -1,3 +1,53 @@
+2011-11-30  Alejandro G. Castro  <alex@igalia.com>
+
+        [GTK] Add TextureMapperCairo boilerplate implementation
+        https://bugs.webkit.org/show_bug.cgi?id=73440
+
+        Add TextureMapperCairo class and TextureMapper classes compilation
+        for GTK+.
+
+        Reviewed by Martin Robinson.
+
+        * GNUmakefile.am:
+        * GNUmakefile.list.am:
+        * platform/graphics/GraphicsContext3D.h:
+        * platform/graphics/GraphicsLayer.cpp:
+        * platform/graphics/GraphicsLayer.h:
+        * platform/graphics/cairo/GraphicsContext3DCairo.cpp:
+        (WebCore::GraphicsContext3D::platformLayer):
+        * platform/graphics/cairo/TextureMapperCairo.cpp: Added.
+        (WebCore::BitmapTextureCairo::destroy):
+        (WebCore::BitmapTextureCairo::size):
+        (WebCore::BitmapTextureCairo::reset):
+        (WebCore::BitmapTextureCairo::beginPaint):
+        (WebCore::BitmapTextureCairo::endPaint):
+        (WebCore::BitmapTextureCairo::updateContents):
+        (WebCore::BitmapTextureCairo::save):
+        (WebCore::BitmapTextureCairo::setContentsToImage):
+        (WebCore::TextureMapperCairo::beginClip):
+        (WebCore::TextureMapperCairo::endClip):
+        (WebCore::TextureMapperCairo::viewportSize):
+        (WebCore::TextureMapperCairo::TextureMapperCairo):
+        (WebCore::TextureMapperCairo::setGraphicsContext):
+        (WebCore::TextureMapperCairo::graphicsContext):
+        (WebCore::TextureMapperCairo::bindSurface):
+        (WebCore::TextureMapperCairo::drawTexture):
+        (WebCore::TextureMapper::create):
+        (WebCore::TextureMapperCairo::createTexture):
+        (WebCore::BitmapTextureCairo::BitmapTextureCairo):
+        (WebCore::TextureMapperCairo::beginPainting):
+        (WebCore::TextureMapperCairo::endPainting):
+        * platform/graphics/cairo/TextureMapperCairo.h: Added.
+        (WebCore::BitmapTextureCairo::~BitmapTextureCairo):
+        (WebCore::BitmapTextureCairo::isValid):
+        (WebCore::BitmapTextureCairo::sourceRect):
+        (WebCore::BitmapTextureCairo::pack):
+        (WebCore::BitmapTextureCairo::unpack):
+        (WebCore::BitmapTextureCairo::isPacked):
+        (WebCore::BitmapTextureCairo::cr):
+        (WebCore::TextureMapperCairo::allowSurfaceForRoot):
+        (WebCore::TextureMapperCairo::create):
+
 2011-11-30  Tim Horton  <timothy_horton@apple.com>
 
         Implement CSS3 Images cross-fade() image function

@@ -1,3 +1,22 @@
+2011-11-30  Alejandro G. Castro  <alex@igalia.com>
+
+        [GTK] Add TextureMapperCairo boilerplate implementation
+        https://bugs.webkit.org/show_bug.cgi?id=73440
+
+        Add texture mapper glue to the widget and chrome client.
+
+        Reviewed by Martin Robinson.
+
+        * WebCoreSupport/ChromeClientGtk.cpp:
+        (WebKit::ChromeClient::attachRootGraphicsLayer):
+        (WebKit::ChromeClient::setNeedsOneShotDrawingSynchronization):
+        (WebKit::ChromeClient::scheduleCompositingLayerSync):
+        (WebKit::ChromeClient::allowedCompositingTriggers):
+        * webkit/webkitwebview.cpp:
+        (webViewSetRootGraphicsLayer):
+        (webViewMarkForSync):
+        * webkit/webkitwebviewprivate.h:
+
 2011-11-30  Philippe Normand  <pnormand@igalia.com>
 
         [GTK] HTML5 Youtube video fullscreen button doesn't work

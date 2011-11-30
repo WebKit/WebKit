@@ -112,6 +112,10 @@ GtkMenu* webkit_web_view_get_context_menu(WebKitWebView*);
 void webViewEnterFullscreen(WebKitWebView* webView, WebCore::Node*);
 void webViewExitFullscreen(WebKitWebView* webView);
 
+#if USE(ACCELERATED_COMPOSITING)
+void webViewSetRootGraphicsLayer(WebKitWebView*, WebCore::GraphicsLayer*);
+void webViewMarkForSync(WebKitWebView*, gboolean);
+#endif
 }
 
 #endif

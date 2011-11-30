@@ -115,6 +115,13 @@ void GraphicsContext3D::setContextLostCallback(PassOwnPtr<ContextLostCallback>)
 {
 }
 
+#if USE(ACCELERATED_COMPOSITING)
+PlatformLayer* GraphicsContext3D::platformLayer() const
+{
+    return 0;
+}
+#endif
+
 } // namespace WebCore
 
 #endif // ENABLE(WEBGL)

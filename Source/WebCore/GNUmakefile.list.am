@@ -2529,8 +2529,6 @@ webcore_sources += \
 	Source/WebCore/platform/graphics/cairo/RefPtrCairo.cpp \
 	Source/WebCore/platform/graphics/cairo/RefPtrCairo.h \
 	Source/WebCore/platform/graphics/cairo/TransformationMatrixCairo.cpp \
-	Source/WebCore/platform/graphics/clutter/GraphicsLayerClutter.h \
-	Source/WebCore/platform/graphics/clutter/GraphicsLayerClutter.cpp \
 	Source/WebCore/platform/graphics/filters/DistantLightSource.cpp \
 	Source/WebCore/platform/graphics/filters/DistantLightSource.h \
 	Source/WebCore/platform/graphics/filters/FEBlend.cpp \
@@ -5070,3 +5068,19 @@ webcore_sources += \
     Source/WebCore/dom/ScriptedAnimationController.cpp \
     Source/WebCore/dom/ScriptedAnimationController.h
 endif  # END ENABLE_REQUEST_ANIMATION_FRAME
+
+# ---
+# Compile with accelerated compositing support
+# ---
+if USE_ACCELERATED_COMPOSITING
+webcore_sources += \
+	Source/WebCore/platform/graphics/texmap/GraphicsLayerTextureMapper.cpp \
+	Source/WebCore/platform/graphics/texmap/GraphicsLayerTextureMapper.h \
+	Source/WebCore/platform/graphics/texmap/TextureMapper.h \
+	Source/WebCore/platform/graphics/texmap/TextureMapperNode.cpp \
+	Source/WebCore/platform/graphics/texmap/TextureMapperNode.h \
+	Source/WebCore/platform/graphics/texmap/TextureMapperPlatformLayer.h
+webcoregtk_sources += \
+	Source/WebCore/platform/graphics/cairo/TextureMapperCairo.cpp \
+	Source/WebCore/platform/graphics/cairo/TextureMapperCairo.h
+endif  # USE_ACCELERATED_COMPOSITING

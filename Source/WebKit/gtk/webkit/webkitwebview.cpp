@@ -4873,6 +4873,18 @@ void webViewExitFullscreen(WebKitWebView* webView)
 #endif
 }
 
+#if USE(ACCELERATED_COMPOSITING)
+void webViewSetRootGraphicsLayer(WebKitWebView* webView, GraphicsLayer* graphicsLayer)
+{
+    notImplemented();
+}
+
+void webViewMarkForSync(WebKitWebView* webView, gboolean scheduleSync)
+{
+    notImplemented();
+}
+#endif
+
 namespace WebKit {
 
 WebCore::Page* core(WebKitWebView* webView)

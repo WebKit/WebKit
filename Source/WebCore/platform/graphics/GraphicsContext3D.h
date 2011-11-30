@@ -486,6 +486,9 @@ public:
 #elif PLATFORM(GTK)
     PlatformGraphicsContext3D platformGraphicsContext3D();
     Platform3DObject platformTexture() const { return m_texture; }
+#if USE(ACCELERATED_COMPOSITING)
+    PlatformLayer* platformLayer() const;
+#endif
 #elif PLATFORM(EFL)
     PlatformGraphicsContext3D platformGraphicsContext3D() const;
 #if USE(ACCELERATED_COMPOSITING)
