@@ -78,15 +78,11 @@ private:
     LayoutUnit flowAwareMarginAfterForChild(RenderBox* child) const;
     LayoutUnit crossAxisMarginExtentForChild(RenderBox* child) const;
     LayoutPoint flowAwareLocationForChild(RenderBox* child) const;
-    void setFlowAwareMarginStartForChild(RenderBox* child, LayoutUnit);
-    void setFlowAwareMarginEndForChild(RenderBox* child, LayoutUnit);
     // FIXME: Supporting layout deltas.
     void setFlowAwareLocationForChild(RenderBox* child, const LayoutPoint&);
     void adjustAlignmentForChild(RenderBox* child, LayoutUnit);
     LayoutUnit mainAxisBorderAndPaddingExtentForChild(RenderBox* child) const;
     LayoutUnit mainAxisScrollbarExtentForChild(RenderBox* child) const;
-    Length marginStartStyleForChild(RenderBox* child) const;
-    Length marginEndStyleForChild(RenderBox* child) const;
     LayoutUnit preferredMainAxisContentExtentForFlexItem(RenderBox* child) const;
 
     void layoutFlexItems(bool relayoutChildren);

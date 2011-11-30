@@ -425,36 +425,6 @@ LayoutPoint RenderFlexibleBox::flowAwareLocationForChild(RenderBox* child) const
     return isHorizontalFlow() ? child->location() : child->location().transposedPoint();
 }
 
-void RenderFlexibleBox::setFlowAwareMarginStartForChild(RenderBox* child, LayoutUnit margin)
-{
-    if (isHorizontalFlow()) {
-        if (isLeftToRightFlow())
-            child->setMarginLeft(margin);
-        else
-            child->setMarginRight(margin);
-    } else {
-        if (isLeftToRightFlow())
-            child->setMarginTop(margin);
-        else
-            child->setMarginBottom(margin);
-    }
-}
-
-void RenderFlexibleBox::setFlowAwareMarginEndForChild(RenderBox* child, LayoutUnit margin)
-{
-    if (isHorizontalFlow()) {
-        if (isLeftToRightFlow())
-            child->setMarginRight(margin);
-        else
-            child->setMarginLeft(margin);
-    } else {
-        if (isLeftToRightFlow())
-            child->setMarginBottom(margin);
-        else
-            child->setMarginTop(margin);
-    }
-}
-
 void RenderFlexibleBox::setFlowAwareLocationForChild(RenderBox* child, const LayoutPoint& location)
 {
     if (isHorizontalFlow())
@@ -471,20 +441,6 @@ LayoutUnit RenderFlexibleBox::mainAxisBorderAndPaddingExtentForChild(RenderBox* 
 LayoutUnit RenderFlexibleBox::mainAxisScrollbarExtentForChild(RenderBox* child) const
 {
     return isHorizontalFlow() ? child->verticalScrollbarWidth() : child->horizontalScrollbarHeight();
-}
-
-Length RenderFlexibleBox::marginStartStyleForChild(RenderBox* child) const
-{
-    if (isHorizontalFlow())
-        return isLeftToRightFlow() ? child->style()->marginLeft() : child->style()->marginRight();
-    return isLeftToRightFlow() ? child->style()->marginTop() : child->style()->marginBottom();
-}
-
-Length RenderFlexibleBox::marginEndStyleForChild(RenderBox* child) const
-{
-    if (isHorizontalFlow())
-        return isLeftToRightFlow() ? child->style()->marginRight() : child->style()->marginLeft();
-    return isLeftToRightFlow() ? child->style()->marginBottom() : child->style()->marginTop();
 }
 
 LayoutUnit RenderFlexibleBox::preferredMainAxisContentExtentForFlexItem(RenderBox* child) const

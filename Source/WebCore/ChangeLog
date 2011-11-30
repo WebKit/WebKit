@@ -1,3 +1,18 @@
+2011-11-30  Tony Chang  <tony@chromium.org>
+
+        Remove dead flexible box code
+        https://bugs.webkit.org/show_bug.cgi?id=73377
+
+        Reviewed by Darin Adler.
+
+        We used to use these with an earlier version of the spec where margins
+        set to auto were treated as flex(1).
+
+        No new tests, just removing some uncalled methods.
+
+        * rendering/RenderFlexibleBox.cpp:
+        * rendering/RenderFlexibleBox.h:
+
 2011-11-30  Antti Koivisto  <antti@apple.com>
 
         Reuse cached style fully if the parent inherited styles are equal 
