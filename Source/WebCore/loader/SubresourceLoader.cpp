@@ -105,6 +105,14 @@ PassRefPtr<SubresourceLoader> SubresourceLoader::create(Frame* frame, CachedReso
     return subloader.release();
 }
 
+void SubresourceLoader::cancelIfNotFinishing()
+{
+    if (m_state != Initialized)
+        return;
+
+    ResourceLoader::cancel();
+}
+
 bool SubresourceLoader::init(const ResourceRequest& request)
 {
     if (!ResourceLoader::init(request))

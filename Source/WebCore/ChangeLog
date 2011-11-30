@@ -1,3 +1,16 @@
+2011-11-30  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: [Regression] Successfully loaded XHRs are shown as canceled.
+        https://bugs.webkit.org/show_bug.cgi?id=72873
+
+        Reviewed by Nate Chapin.
+
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::cancelIfNotFinishing):
+        * loader/SubresourceLoader.h:
+        * loader/cache/CachedRawResource.cpp:
+        (WebCore::CachedRawResource::allClientsRemoved):
+
 2011-11-30  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [V8] Make WebCoreTestingSupport::resetInternalsObject more robust
