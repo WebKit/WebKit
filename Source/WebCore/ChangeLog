@@ -1,3 +1,23 @@
+2011-11-10  Xiaomei Ji  <xji@chromium.org>
+
+        --webkit-visual-word should be able to reach end of text, instead of end of line
+        https://bugs.webkit.org/show_bug.cgi?id=72048
+
+        Reviewed by Ryosuke Niwa.
+
+        Revert r92223 -- webkit-visual-word should reach boundary of line.
+        When there is no more left or right words in the same editing boundary and
+        current position is an editable position, return start or end position in this
+        editable content.
+
+        Test: editing/selection/move-by-word-visually-textarea.html
+
+        * editing/visible_units.cpp:
+        (WebCore::collectWordBreaksInBoxInsideBlockWithSameDirectionality):
+        (WebCore::collectWordBreaksInBoxInsideBlockWithDifferntDirectionality):
+        (WebCore::leftWordPosition):
+        (WebCore::rightWordPosition):
+
 2011-11-29  Oliver Hunt  <oliver@apple.com>
 
         Allow WebCore to describe typed arrays to JSC

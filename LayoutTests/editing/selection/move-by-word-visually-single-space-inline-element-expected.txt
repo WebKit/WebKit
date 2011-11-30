@@ -75,11 +75,7 @@ Test 12, LTR:
 Move right by one word
 "ABD DSU "[0], "FFZ LIG"[3], "ABD DSU "[8], "abc def"[4], "ABD DSU "[7, 3], "FFZ LIG"[7]
 Move left by one word
-"FFZ LIG"[7], "ABD DSU "[3, 7], "abc def"[4], "ABD DSU "[8], "FFZ LIG"[3]    FAIL expected: ["FFZ LIG"[ 7, ]"ABD DSU "[ 3,  7, ]"abc def"[ 4, ]"ABD DSU "[ 8, ]"FFZ LIG"[ 3, ]"ABD DSU "[ 0]
-"FFZ LIG"[3, 3]   FAIL expected "ABD DSU "[ 0]
-"FFZ LIG"[4, 4]   FAIL expected "ABD DSU "[ 0]
-"FFZ LIG"[5, 5]   FAIL expected "ABD DSU "[ 0]
-"FFZ LIG"[6, 6]   FAIL expected "ABD DSU "[ 0]
+"FFZ LIG"[7], "ABD DSU "[3, 7], "abc def"[4], "ABD DSU "[8], "FFZ LIG"[3], "ABD DSU "[0]
 Test 13, RTL:
 Move left by one word
 "ABD DSU "[0, 4, 8], "abc def"[3], "FFZ LIG"[4, 7]

@@ -1100,12 +1100,6 @@ VisiblePosition rightBoundaryOfLine(const VisiblePosition& c, TextDirection dire
 static const int invalidOffset = -1;
 static const int offsetNotFound = -1;
 
-static bool isBoxVisuallyLastInLine(const InlineBox* box, TextDirection blockDirection)
-{
-    return blockDirection == LTR ? !box->nextLeafChild() || box->nextLeafChild()->renderer()->isBR()
-        : !box->prevLeafChild() || box->prevLeafChild()->renderer()->isBR();
-}
-
 static bool positionIsInBox(const VisiblePosition& wordBreak, const InlineBox* box, int& offsetOfWordBreak)
 {
     if (wordBreak.isNull())
@@ -1292,22 +1286,10 @@ struct WordBoundaryEntry {
     
 typedef Vector<WordBoundaryEntry, 50> WordBoundaryVector;
     
-static void appendPositionAtLogicalEndOfLine(const InlineBox* box, WordBoundaryVector& orderedWordBoundaries)
-{
-    VisiblePosition endOfBlock = logicalEndOfLine(createLegacyEditingPosition(box->renderer()->node(), box->caretMaxOffset()));
-
-    int offsetOfEndOfBlock;
-    if (positionIsInBox(endOfBlock, box, offsetOfEndOfBlock))
-        orderedWordBoundaries.append(WordBoundaryEntry(endOfBlock, offsetOfEndOfBlock));
-}
-    
 static void collectWordBreaksInBoxInsideBlockWithSameDirectionality(const InlineBox* box, WordBoundaryVector& orderedWordBoundaries)
 {
     orderedWordBoundaries.clear();
 
-    if (!box->renderer()->isBR() && isBoxVisuallyLastInLine(box, box->direction()))
-        appendPositionAtLogicalEndOfLine(box, orderedWordBoundaries);
-    
     VisiblePosition wordBreak;
     int offsetOfWordBreak = invalidOffset;
     while (1) {
@@ -1322,9 +1304,6 @@ static void collectWordBreaksInBoxInsideBlockWithSameDirectionality(const Inline
 static void collectWordBreaksInBoxInsideBlockWithDifferntDirectionality(const InlineBox* box, WordBoundaryVector& orderedWordBoundaries)
 {
     orderedWordBoundaries.clear();
-    
-    if (!box->renderer()->isBR() && isBoxVisuallyLastInLine(box, box->direction() == LTR ? RTL : LTR))
-        appendPositionAtLogicalEndOfLine(box, orderedWordBoundaries);
     
     VisiblePosition wordBreak;
     int offsetOfWordBreak = invalidOffset;
@@ -1631,7 +1610,14 @@ VisiblePosition leftWordPosition(const VisiblePosition& visiblePosition)
         return VisiblePosition();
 
     VisiblePosition leftWordBreak = leftWordPositionIgnoringEditingBoundary(visiblePosition);
-    return visiblePosition.honorEditingBoundaryAtOrBefore(leftWordBreak);
+    leftWordBreak = visiblePosition.honorEditingBoundaryAtOrBefore(leftWordBreak);
+    
+    // FIXME: How should we handle a non-editable position?
+    if (leftWordBreak.isNull() && isEditablePosition(visiblePosition.deepEquivalent())) {
+        TextDirection blockDirection = directionOfEnclosingBlock(visiblePosition.deepEquivalent());
+        leftWordBreak = blockDirection == LTR ? startOfEditableContent(visiblePosition) : endOfEditableContent(visiblePosition);
+    }
+    return leftWordBreak;
 }
 
 VisiblePosition rightWordPosition(const VisiblePosition& visiblePosition)
@@ -1640,7 +1626,14 @@ VisiblePosition rightWordPosition(const VisiblePosition& visiblePosition)
         return VisiblePosition();
 
     VisiblePosition rightWordBreak = rightWordPositionIgnoringEditingBoundary(visiblePosition);
-    return visiblePosition.honorEditingBoundaryAtOrBefore(rightWordBreak);
+    rightWordBreak = visiblePosition.honorEditingBoundaryAtOrBefore(rightWordBreak);
+
+    // FIXME: How should we handle a non-editable position?
+    if (rightWordBreak.isNull() && isEditablePosition(visiblePosition.deepEquivalent())) {
+        TextDirection blockDirection = directionOfEnclosingBlock(visiblePosition.deepEquivalent());
+        rightWordBreak = blockDirection == LTR ? endOfEditableContent(visiblePosition) : startOfEditableContent(visiblePosition);
+    }
+    return rightWordBreak;
 }
 
 }
