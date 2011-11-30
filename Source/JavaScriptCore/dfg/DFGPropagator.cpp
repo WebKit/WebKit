@@ -1190,7 +1190,7 @@ private:
         return NoNode;
     }
     
-    void performSubstitution(NodeIndex& child)
+    void performSubstitution(NodeIndex& child, bool addRef = true)
     {
         // Check if this operand is actually unused.
         if (child == NoNode)
@@ -1207,7 +1207,8 @@ private:
         // have a replacement.
         ASSERT(m_replacements[child] == NoNode);
         
-        m_graph[child].ref();
+        if (addRef)
+            m_graph[child].ref();
     }
     
     void setReplacement(NodeIndex replacement)
@@ -1246,16 +1247,18 @@ private:
     
     void performNodeCSE(Node& node)
     {
+        bool shouldGenerate = node.shouldGenerate();
+
         if (node.op & NodeHasVarArgs) {
             for (unsigned childIdx = node.firstChild(); childIdx < node.firstChild() + node.numChildren(); childIdx++)
-                performSubstitution(m_graph.m_varArgChildren[childIdx]);
+                performSubstitution(m_graph.m_varArgChildren[childIdx], shouldGenerate);
         } else {
-            performSubstitution(node.children.fixed.child1);
-            performSubstitution(node.children.fixed.child2);
-            performSubstitution(node.children.fixed.child3);
+            performSubstitution(node.children.fixed.child1, shouldGenerate);
+            performSubstitution(node.children.fixed.child2, shouldGenerate);
+            performSubstitution(node.children.fixed.child3, shouldGenerate);
         }
         
-        if (!node.shouldGenerate())
+        if (!shouldGenerate)
             return;
         
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)

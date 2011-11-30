@@ -1,3 +1,22 @@
+2011-11-29  Yuqiang Xian  <yuqiang.xian@intel.com>
+
+        DFG local CSE may cause incorrect reference counting for a node
+        https://bugs.webkit.org/show_bug.cgi?id=73390
+
+        Reviewed by Filip Pizlo.
+
+        When performing a node substitution, the ref count of the replaced
+        child will be increased, no matter whether the user node is skipped in
+        code generation or not. This will cause the reference count of the
+        replaced child never get the chance to become zero and so the
+        registers occupied by it cannot be reused simply without spilling, if
+        it's used by a "skipped" node.
+        This is a 1% gain on V8 benchmark, tested on IA32 Linux.
+
+        * dfg/DFGPropagator.cpp:
+        (JSC::DFG::Propagator::performSubstitution):
+        (JSC::DFG::Propagator::performNodeCSE):
+
 2011-11-29  David Levin  <levin@chromium.org>
 
         Add a way to revert a variable to its previous value after leaving a scope.
