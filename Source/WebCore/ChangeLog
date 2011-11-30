@@ -1,3 +1,13 @@
+2011-11-30  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: Display of data URIs cumbersome in the Elements panel
+        https://bugs.webkit.org/show_bug.cgi?id=73438
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/ElementsTreeOutline.js:
+        (WebInspector.ElementsTreeElement.prototype._buildAttributeDOM):
+
 2011-11-28  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: TreeOutline elements should be formatted using margin-left instead of text-indent.

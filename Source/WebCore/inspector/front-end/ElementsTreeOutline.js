@@ -1472,8 +1472,11 @@ WebInspector.ElementsTreeElement.prototype = {
             if (rewrittenHref === null) {
                 var attrValueElement = attrSpanElement.createChild("span", "webkit-html-attribute-value");
                 attrValueElement.textContent = value;
-            } else
+            } else {
+                if (value.indexOf("data:") === 0)
+                    value = value.trimMiddle(60);
                 attrSpanElement.appendChild(linkify(rewrittenHref, value, "webkit-html-attribute-value", node.nodeName().toLowerCase() === "a"));
+            }
         } else {
             value = value.replace(/([\/;:\)\]\}])/g, "$1\u200B");
             var attrValueElement = attrSpanElement.createChild("span", "webkit-html-attribute-value");
