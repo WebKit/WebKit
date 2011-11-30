@@ -1,3 +1,12 @@
+2011-11-30  Fady Samuel  <fsamuel@chromium.org>
+
+        [Chromium] Fix broken DRT build for Aura Linux
+        https://bugs.webkit.org/show_bug.cgi?id=72667
+
+        Reviewed by Tony Chang.
+
+        * WebKit.gyp:
+
 2011-11-29  Nat Duca  <nduca@chromium.org>
 
         Unreviewed. Fix clang build by using raw pointers instead of static OwnPtrs

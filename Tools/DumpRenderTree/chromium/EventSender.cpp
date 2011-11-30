@@ -576,7 +576,7 @@ void EventSender::keyDown(const CppArgumentList& arguments, CppVariant* result)
     eventDown.type = WebInputEvent::RawKeyDown;
     eventDown.modifiers = 0;
     eventDown.windowsKeyCode = code;
-#if OS(LINUX)
+#if OS(LINUX) && USE(GTK)
     eventDown.nativeKeyCode = webkit_support::NativeKeyCodeForWindowsKeyCode(code, needsShiftKeyModifier);
 #endif
 

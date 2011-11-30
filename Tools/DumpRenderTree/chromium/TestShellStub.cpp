@@ -28,54 +28,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+
 #include "config.h"
+
 #include "TestShell.h"
 
-#include "SkTypeface.h"
-#include "WebView.h"
-#include "webkit/support/webkit_support.h"
-
-#include <signal.h>
-#include <unistd.h>
-
-static void AlarmHandler(int)
+bool checkLayoutTestSystemDependencies()
 {
-    // If the alarm alarmed, kill the process since we have a really bad hang.
-    puts("\n#TEST_TIMED_OUT\n");
-    puts("#EOF\n");
-    fflush(stdout);
-    webkit_support::TearDownTestEnvironment();
-    exit(0);
-}
-
-void TestShell::waitTestFinished()
-{
-    ASSERT(!m_testIsPending);
-    m_testIsPending = true;
-
-    // Install an alarm signal handler that will kill us if we time out.
-    struct sigaction alarmAction;
-    alarmAction.sa_handler = AlarmHandler;
-    sigemptyset(&alarmAction.sa_mask);
-    alarmAction.sa_flags = 0;
-
-    struct sigaction oldAction;
-    sigaction(SIGALRM, &alarmAction, &oldAction);
-    alarm(layoutTestTimeoutForWatchDog() / 1000);
-
-    // TestFinished() will post a quit message to break this loop when the page
-    // finishes loading.
-    while (m_testIsPending)
-        webkit_support::RunMessageLoop();
-
-    // Remove the alarm.
-    alarm(0);
-    sigaction(SIGALRM, &oldAction, 0);
-}
-
-void platformInit(int* argc, char*** argv)
-{
-    // Nothing to do here.
+    return true;
 }
 
 void openStartupDialog()
@@ -83,8 +43,3 @@ void openStartupDialog()
     // FIXME: Not implemented.
 }
 
-bool checkLayoutTestSystemDependencies()
-{
-    // Nothing to do here.
-    return true;
-}
