@@ -31,6 +31,7 @@
 
 #include "AXObjectCache.h"
 #include "AccessibilityRenderObject.h"
+#include "AccessibilityTable.h"
 #include "FloatRect.h"
 #include "FocusController.h"
 #include "Frame.h"
@@ -384,7 +385,14 @@ void AccessibilityObject::findMatchingObjects(AccessibilitySearchCriteria* crite
         } else if (searchObject == startObject)
             didFindStartObject = true;
         
-        AccessibilityChildrenVector searchChildren = searchObject->children();
+        AccessibilityChildrenVector searchChildren;
+        // A table's children includes elements whose own children are also the table's children (due to the way the Mac exposes tables).
+        // The table's cells are what are desired in this case, since that's where the content resides.
+        if (searchObject->isAccessibilityTable())
+            toAccessibilityTable(searchObject)->cells(searchChildren);
+        else
+            searchChildren = searchObject->children();
+        
         size_t childrenSize = searchChildren.size();
         for (size_t i = isForward ? childrenSize : 0; isForward ? i > 0 : i < childrenSize; isForward ? i-- : i++) {
             // FIXME: Handle attachments.

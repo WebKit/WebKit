@@ -1,3 +1,19 @@
+2011-11-30 Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Searching mechanism gets stuck when searching tables
+        https://bugs.webkit.org/show_bug.cgi?id=72519
+
+        When searching through the elements within a data table, the children() method should not
+        be used, since that contains elements (like a table header column) which have the same children
+        as the table itself. Instead the cells() should be searched.
+
+        Reviewed by Beth Dakin.
+
+        Test: platform/mac/accessibility/search-when-element-starts-in-table.html
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::findMatchingObjects):
+
 2011-11-29  Ryosuke Niwa  <rniwa@webkit.org>
 
         Assertion failure (m_nestedIsolateCount >= 1) in BidiResolver::exitIsolate()

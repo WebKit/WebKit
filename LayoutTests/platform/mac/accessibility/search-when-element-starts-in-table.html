@@ -1,0 +1,48 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<table border=1>
+<tr><th>Column</th></tr>
+<tr><td><h1 tabindex="0" id="heading">heading</h1></td></tr>
+</table>
+
+<h1>outside heading</h1>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+    description("This tests that when we start searching from an element within a table, we do not get as a result, the same element.");
+    
+    if (window.accessibilityController) {
+        document.getElementById("body").focus();
+        var containerElement = accessibilityController.focusedElement;
+
+        document.getElementById("heading").focus();
+        var heading = accessibilityController.focusedElement;
+
+        // The next heading should be outside the table
+        searchKey = "AXHeadingSearchKey";
+        resultElement = containerElement.uiElementForSearchPredicate(heading, true, searchKey, "");
+        shouldBe("resultElement.role", "'AXRole: AXHeading'");
+        shouldBe("resultElement.title", "'AXTitle: outside heading'");        
+
+        // A search for the previous heading should return nothing.
+        resultElement = containerElement.uiElementForSearchPredicate(heading, false, searchKey, "");
+        shouldBe("resultElement.role", "'AXRole: '");
+
+        // The previous any type of element should be an AXCell.
+        searchKey = "AXAnyTypeSearchKey";
+        resultElement = containerElement.uiElementForSearchPredicate(heading.childAtIndex(0), false, searchKey, "");
+        shouldBe("resultElement.role", "'AXRole: AXCell'");
+    }
+    
+</script>
+
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>
