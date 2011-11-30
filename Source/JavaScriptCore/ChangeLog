@@ -1,3 +1,14 @@
+2011-11-29  Sam Weinig  <sam@webkit.org>
+
+        Add COMPILER_SUPPORTS macro to allow for compiler feature testing
+        https://bugs.webkit.org/show_bug.cgi?id=73386
+
+        Reviewed by Anders Carlsson.
+
+        * wtf/Compiler.h:
+        Add COMPILER_SUPPORTS and #defines for C++11 variadic templates and
+        rvalue references for Clang.
+
 2011-11-29  Oliver Hunt  <oliver@apple.com>
 
         Allow WebCore to describe typed arrays to JSC
