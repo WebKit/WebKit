@@ -325,7 +325,7 @@ void WebSocketChannel::didReceiveSocketStreamData(SocketStreamHandle* handle, co
             break;
 }
 
-void WebSocketChannel::didUpdateBufferedAmount(SocketStreamHandle* handle, size_t bufferedAmount)
+void WebSocketChannel::didUpdateBufferedAmount(SocketStreamHandle*, size_t bufferedAmount)
 {
     if (m_client)
         m_client->didUpdateBufferedAmount(bufferedAmount);

@@ -507,6 +507,7 @@ void WebSocket::didReceiveMessageError()
 
 void WebSocket::didUpdateBufferedAmount(unsigned long bufferedAmount)
 {
+    UNUSED_PARAM(bufferedAmount);
     LOG(Network, "WebSocket %p didUpdateBufferedAmount %lu", this, bufferedAmount);
 }
 

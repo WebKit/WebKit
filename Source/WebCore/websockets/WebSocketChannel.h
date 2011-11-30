@@ -81,7 +81,7 @@ public:
     virtual void didOpenSocketStream(SocketStreamHandle*);
     virtual void didCloseSocketStream(SocketStreamHandle*);
     virtual void didReceiveSocketStreamData(SocketStreamHandle*, const char*, int);
-    virtual void didUpdateBufferedAmount(SocketStreamHandle*, size_t bufferedAmount);
+    virtual void didUpdateBufferedAmount(SocketStreamHandle*, size_t);
     virtual void didFailSocketStream(SocketStreamHandle*, const SocketStreamError&);
     virtual void didReceiveAuthenticationChallenge(SocketStreamHandle*, const AuthenticationChallenge&);
     virtual void didCancelAuthenticationChallenge(SocketStreamHandle*, const AuthenticationChallenge&);

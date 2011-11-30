@@ -1,3 +1,18 @@
+2011-11-30  Renata Hodovan  <reni@webkit.org>
+
+        MAC build fix after r101507.
+
+        Rubber stamped by Csaba Osztrogonac.
+
+        * platform/network/SocketStreamHandleClient.h:
+        (WebCore::SocketStreamHandleClient::didUpdateBufferedAmount):
+        * websockets/WebSocket.cpp:
+        (WebCore::WebSocket::didUpdateBufferedAmount):
+        * websockets/WebSocket.h:
+        * websockets/WebSocketChannel.cpp:
+        (WebCore::WebSocketChannel::didUpdateBufferedAmount):
+        * websockets/WebSocketChannel.h:
+
 2011-11-30  John Knottenbelt  <jknotten@chromium.org>
 
         Remove unnecessary asserts in HTMLTextAreaElement.

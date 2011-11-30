@@ -46,7 +46,7 @@ namespace WebCore {
         virtual void didOpenSocketStream(SocketStreamHandle*) { }
         virtual void didCloseSocketStream(SocketStreamHandle*) { }
         virtual void didReceiveSocketStreamData(SocketStreamHandle*, const char* /*data*/, int /*length*/) { }
-        virtual void didUpdateBufferedAmount(SocketStreamHandle*, size_t bufferedAmount) { }
+        virtual void didUpdateBufferedAmount(SocketStreamHandle*, size_t /*bufferedAmount*/) { }
 
         virtual void didFailSocketStream(SocketStreamHandle*, const SocketStreamError&) { }
 
