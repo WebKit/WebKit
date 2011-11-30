@@ -249,7 +249,15 @@ protected:
     CCLayerTreeHostTest()
         : m_beginning(false)
         , m_endWhenBeginReturns(false)
-        , m_timedOut(false) { }
+        , m_timedOut(false)
+    {
+        m_webThread = adoptPtr(webKitPlatformSupport()->createThread("CCLayerTreeHostTest"));
+        ASSERT(CCProxy::mainThread());
+
+        WebCompositor::setThread(m_webThread.get());
+        ASSERT(CCProxy::isMainThread());
+        m_mainThreadProxy = CCScopedThreadProxy::create(CCProxy::mainThread());
+    }
 
     void doBeginTest();
 
@@ -263,6 +271,9 @@ protected:
         ASSERT(isMainThread());
         webkit_support::QuitMessageLoop();
         webkit_support::RunAllPendingMessages();
+        CCLayerTreeHostTest* test = static_cast<CCLayerTreeHostTest*>(self);
+        ASSERT_TRUE(test);
+        test->m_layerTreeHost.clear();
     }
 
     static void dispatchSetNeedsAnimate(void* self)
@@ -351,26 +362,13 @@ protected:
 
     virtual void runTest(bool threaded)
     {
+        m_settings.enableCompositorThread = threaded;
         m_settings.refreshRate = 100.0;
-
-        if (threaded) {
-            m_webThread = adoptPtr(webKitPlatformSupport()->createThread("CCLayerTreeHostTest"));
-            WebCompositor::initialize(m_webThread.get());
-        } else
-            WebCompositor::initialize(0);
-
-        ASSERT(CCProxy::isMainThread());
-        m_mainThreadProxy = CCScopedThreadProxy::create(CCProxy::mainThread());
-
         webkit_support::PostDelayedTask(CCLayerTreeHostTest::onBeginTest, static_cast<void*>(this), 0);
         m_timeoutTask = new TimeoutTask(this);
         webkit_support::PostDelayedTask(m_timeoutTask, 5000); // webkit_support takes ownership of the task
         webkit_support::RunMessageLoop();
         webkit_support::RunAllPendingMessages();
-
-        if (m_layerTreeHost && m_layerTreeHost->rootLayer())
-            m_layerTreeHost->rootLayer()->setLayerTreeHost(0);
-        m_layerTreeHost.clear();
 
         if (m_timeoutTask)
             m_timeoutTask->clearTest();
@@ -379,11 +377,10 @@ protected:
         m_client.clear();
         if (m_timedOut) {
             FAIL() << "Test timed out";
-            WebCompositor::shutdown();
             return;
         }
+        m_rootLayer->setLayerTreeHost(0);
         afterTest();
-        WebCompositor::shutdown();
     }
 
     CCSettings m_settings;
@@ -395,6 +392,7 @@ private:
     bool m_endWhenBeginReturns;
     bool m_timedOut;
 
+    RefPtr<LayerChromium> m_rootLayer;
     OwnPtr<WebThread> m_webThread;
     RefPtr<CCScopedThreadProxy> m_mainThreadProxy;
     TimeoutTask* m_timeoutTask;
@@ -405,10 +403,10 @@ void CCLayerTreeHostTest::doBeginTest()
     ASSERT(isMainThread());
     m_client = MockLayerTreeHostClient::create(this);
 
-    RefPtr<LayerChromium> rootLayer = LayerChromium::create(0);
-    m_layerTreeHost = MockLayerTreeHost::create(this, m_client.get(), rootLayer, m_settings);
+    m_rootLayer = LayerChromium::create(0);
+    m_layerTreeHost = MockLayerTreeHost::create(this, m_client.get(), m_rootLayer, m_settings);
     ASSERT_TRUE(m_layerTreeHost);
-    rootLayer->setLayerTreeHost(m_layerTreeHost.get());
+    m_rootLayer->setLayerTreeHost(m_layerTreeHost.get());
 
     m_beginning = true;
     beginTest();
@@ -447,10 +445,6 @@ public:
 
     virtual void beginTest()
     {
-        // Kill the layerTreeHost immediately.
-        m_layerTreeHost->rootLayer()->setLayerTreeHost(0);
-        m_layerTreeHost.clear();
-
         endTest();
     }
 
@@ -479,11 +473,6 @@ public:
     virtual void beginTest()
     {
         postSetNeedsCommitToMainThread();
-
-        // Kill the layerTreeHost immediately.
-        m_layerTreeHost->rootLayer()->setLayerTreeHost(0);
-        m_layerTreeHost.clear();
-
         endTest();
     }
 
@@ -502,11 +491,6 @@ public:
     virtual void beginTest()
     {
         postSetNeedsRedrawToMainThread();
-
-        // Kill the layerTreeHost immediately.
-        m_layerTreeHost->rootLayer()->setLayerTreeHost(0);
-        m_layerTreeHost.clear();
-
         endTest();
     }
 
@@ -517,8 +501,8 @@ public:
 
 SINGLE_AND_MULTI_THREAD_TEST_F(CCLayerTreeHostTestShortlived3)
 
-// Test interleaving of redraws and commits
-class CCLayerTreeHostTestCommitingWithContinuousRedraw : public CCLayerTreeHostTestThreadOnly {
+// Constantly redrawing layerTreeHosts shouldn't die when they commit
+class CCLayerTreeHostTestCommitingWithContinuousRedraw : public CCLayerTreeHostTest {
 public:
     CCLayerTreeHostTestCommitingWithContinuousRedraw()
         : m_numCompleteCommits(0)
@@ -529,6 +513,7 @@ public:
     virtual void beginTest()
     {
         postSetNeedsCommitToMainThread();
+        endTest();
     }
 
     virtual void commitCompleteOnCCThread(CCLayerTreeHostImpl*)
@@ -555,10 +540,7 @@ private:
     int m_numDraws;
 };
 
-TEST_F(CCLayerTreeHostTestCommitingWithContinuousRedraw, runMultiThread)
-{
-    runTestThreaded();
-}
+SINGLE_AND_MULTI_THREAD_TEST_F(CCLayerTreeHostTestCommitingWithContinuousRedraw)
 
 // Two setNeedsCommits in a row should lead to at least 1 commit and at least 1
 // draw with frame 0.
@@ -1009,9 +991,6 @@ public:
         // amout of times as paintContentsIfDirty().
         EXPECT_EQ(m_updateCheckLayer->paintContentsCount(),
                   m_updateCheckLayer->updateCount());
-
-        // clear m_updateCheckLayer so CCLayerTreeHost dies.
-        m_updateCheckLayer.clear();
     }
 
 private:

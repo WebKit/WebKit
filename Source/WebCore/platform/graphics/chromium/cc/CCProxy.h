@@ -53,7 +53,6 @@ public:
     static void setMainThread(CCThread*);
     static CCThread* mainThread();
 
-    static bool hasImplThread();
     static void setImplThread(CCThread*);
     static CCThread* implThread();
 
@@ -92,7 +91,7 @@ public:
     virtual void loseCompositorContext(int numTimes) = 0;
 
 #ifndef NDEBUG
-    static void setCurrentThreadIsImplThread(bool);
+    static void setImplThread(bool);
 #endif
 
 protected:

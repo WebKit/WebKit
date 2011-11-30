@@ -1,3 +1,70 @@
+2011-11-30  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r101440 and r101442.
+        http://trac.webkit.org/changeset/101440
+        http://trac.webkit.org/changeset/101442
+        https://bugs.webkit.org/show_bug.cgi?id=73429
+
+        multiple crashes on layout tests (Requested by hayato on
+        #webkit).
+
+        * WebKit.gyp:
+        * WebKit.gypi:
+        * public/WebCompositor.h:
+        * public/WebCompositorClient.h:
+        * public/WebCompositorInputHandler.h: Removed.
+        * public/WebCompositorInputHandlerClient.h: Removed.
+        * public/WebLayerTreeView.h:
+        (WebKit::WebLayerTreeView::Settings::Settings):
+        * public/WebSettings.h:
+        * src/WebCompositorImpl.cpp:
+        (WebCore::CCInputHandler::create):
+        (WebKit::WebCompositor::setThread):
+        (WebKit::WebCompositor::fromIdentifier):
+        (WebKit::WebCompositorImpl::fromIdentifier):
+        (WebKit::WebCompositorImpl::WebCompositorImpl):
+        (WebKit::WebCompositorImpl::~WebCompositorImpl):
+        (WebKit::WebCompositorImpl::setClient):
+        (WebKit::WebCompositorImpl::handleInputEvent):
+        (WebKit::WebCompositorImpl::identifier):
+        (WebKit::WebCompositorImpl::willDraw):
+        * src/WebCompositorImpl.h:
+        (WebKit::WebCompositorImpl::create):
+        * src/WebCompositorInputHandlerImpl.cpp: Removed.
+        * src/WebCompositorInputHandlerImpl.h: Removed.
+        * src/WebKit.cpp:
+        (WebKit::initializeWithoutV8):
+        (WebKit::shutdown):
+        * src/WebLayerTreeView.cpp:
+        (WebKit::WebLayerTreeView::Settings::operator CCSettings):
+        (WebKit::WebLayerTreeView::composite):
+        * src/WebLayerTreeViewImpl.cpp:
+        (WebKit::WebLayerTreeViewImpl::createLayerTreeHostContext3D):
+        * src/WebSettingsImpl.cpp:
+        (WebKit::WebSettingsImpl::WebSettingsImpl):
+        (WebKit::WebSettingsImpl::setUseThreadedCompositor):
+        * src/WebSettingsImpl.h:
+        (WebKit::WebSettingsImpl::useThreadedCompositor):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::animate):
+        (WebKit::WebViewImpl::composite):
+        (WebKit::WebViewImpl::scheduleAnimation):
+        (WebKit::WebViewImpl::setIsAcceleratedCompositingActive):
+        (WebKit::WebViewImpl::createLayerTreeHostContext3D):
+        (WebKit::WebViewImpl::scheduleComposite):
+        (WebKit::WebViewImpl::graphicsContext3D):
+        * tests/CCLayerTreeHostTest.cpp:
+        (WTF::CCLayerTreeHostTest::CCLayerTreeHostTest):
+        (WTF::CCLayerTreeHostTest::onEndTest):
+        (WTF::CCLayerTreeHostTest::runTest):
+        (WTF::CCLayerTreeHostTest::doBeginTest):
+        (WTF::CCLayerTreeHostTestShortlived1::beginTest):
+        (WTF::CCLayerTreeHostTestShortlived2::beginTest):
+        (WTF::CCLayerTreeHostTestShortlived3::beginTest):
+        (WTF::CCLayerTreeHostTestCommitingWithContinuousRedraw::beginTest):
+        (WTF::CCLayerTreeHostTestOpacityChange::afterTest):
+        * tests/WebCompositorImplTest.cpp: Renamed from Source/WebKit/chromium/tests/WebCompositorInputHandlerImplTest.cpp.
+
 2011-11-30  Daniel Sievers  <sievers@chromium.org>
 
         [Chromium] Avoid ASSERT_NOT_REACHED() from creating FBO with content texture of size 0

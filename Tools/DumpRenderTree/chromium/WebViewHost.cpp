@@ -1211,11 +1211,8 @@ WebViewHost::WebViewHost(TestShell* shell)
 {
     WTF::initializeThreading();
 
-    if (shell->threadedCompositingEnabled()) {
-        m_compositorThread = adoptPtr(WebKit::webKitPlatformSupport()->createThread("Compositor"));
-        WebCompositor::initialize(m_compositorThread.get());
-    } else
-        WebCompositor::initialize(0);
+    m_compositorThread = adoptPtr(WebKit::webKitPlatformSupport()->createThread("Compositor"));
+    WebCompositor::setThread(m_compositorThread.get());
 
     reset();
 }
@@ -1237,8 +1234,6 @@ WebViewHost::~WebViewHost()
     webWidget()->close();
     if (m_inModalLoop)
         webkit_support::QuitMessageLoop();
-
-    WebCompositor::shutdown();
 }
 
 void WebViewHost::setWebWidget(WebKit::WebWidget* widget)

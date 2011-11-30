@@ -37,8 +37,7 @@ namespace WebCore {
 
 namespace {
 #ifndef NDEBUG
-bool implThreadIsOverridden = false;
-ThreadIdentifier threadIDOverridenToBeImplThread;
+bool fakeImplThread = false;
 #endif
 CCThread* s_mainThread = 0;
 CCThread* s_implThread = 0;
@@ -52,11 +51,6 @@ void CCProxy::setMainThread(CCThread* thread)
 CCThread* CCProxy::mainThread()
 {
     return s_mainThread;
-}
-
-bool CCProxy::hasImplThread()
-{
-    return s_implThread;
 }
 
 void CCProxy::setImplThread(CCThread* thread)
@@ -73,24 +67,18 @@ CCThread* CCProxy::implThread()
 bool CCProxy::isMainThread()
 {
     ASSERT(s_mainThread);
-    if (implThreadIsOverridden && currentThread() == threadIDOverridenToBeImplThread)
-        return false;
-    return currentThread() == s_mainThread->threadID();
+    return !fakeImplThread && currentThread() == s_mainThread->threadID();
 }
 
 bool CCProxy::isImplThread()
 {
     WTF::ThreadIdentifier implThreadID = s_implThread ? s_implThread->threadID() : 0;
-    if (implThreadIsOverridden && currentThread() == threadIDOverridenToBeImplThread)
-        return true;
-    return currentThread() == implThreadID;
+    return fakeImplThread || currentThread() == implThreadID;
 }
 
-void CCProxy::setCurrentThreadIsImplThread(bool isImplThread)
+void CCProxy::setImplThread(bool isImplThread)
 {
-    implThreadIsOverridden = isImplThread;
-    if (isImplThread)
-        threadIDOverridenToBeImplThread = currentThread();
+    fakeImplThread = isImplThread;
 }
 #endif
 

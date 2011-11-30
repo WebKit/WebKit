@@ -91,13 +91,13 @@ public:
     DebugScopedSetImplThread()
     {
 #if !ASSERT_DISABLED
-        CCProxy::setCurrentThreadIsImplThread(true);
+        CCProxy::setImplThread(true);
 #endif
     }
     ~DebugScopedSetImplThread()
     {
 #if !ASSERT_DISABLED
-        CCProxy::setCurrentThreadIsImplThread(false);
+        CCProxy::setImplThread(false);
 #endif
     }
 };

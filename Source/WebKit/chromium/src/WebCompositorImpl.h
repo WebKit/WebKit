@@ -28,32 +28,48 @@
 
 #include "WebCompositor.h"
 
+#include "cc/CCInputHandler.h"
 #include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/OwnPtr.h>
+#include <wtf/PassOwnPtr.h>
 
-namespace WebCore {
-class CCThread;
+namespace WTF {
+class Mutex;
 }
 
 namespace WebKit {
 
-class WebThread;
+class WebCompositorClient;
 
-class WebCompositorImpl : public WebCompositor {
+class WebCompositorImpl : public WebCompositor, public WebCore::CCInputHandler {
     WTF_MAKE_NONCOPYABLE(WebCompositorImpl);
 public:
-    static bool initialized();
+    static WebCompositor* fromIdentifier(int identifier);
+
+    static PassOwnPtr<WebCompositorImpl> create(WebCore::CCInputHandlerClient* client)
+    {
+        return adoptPtr(new WebCompositorImpl(client));
+    }
+
+    virtual ~WebCompositorImpl();
+
+    // WebCompositor implementation
+    virtual void setClient(WebCompositorClient*);
+    virtual void handleInputEvent(const WebInputEvent&);
+
+    // WebCore::CCInputHandler implementation
+    virtual int identifier() const;
+    virtual void willDraw(double frameBeginTime);
 
 private:
+    explicit WebCompositorImpl(WebCore::CCInputHandlerClient*);
 
-    friend class WebCompositor;
-    static void initialize(WebThread* implThread);
-    static void shutdown();
+    WebCompositorClient* m_client;
+    int m_identifier;
+    WebCore::CCInputHandlerClient* m_inputHandlerClient;
 
-    static bool s_initialized;
-    static WebCore::CCThread* s_mainThread;
-    static WebCore::CCThread* s_implThread;
+    static int s_nextAvailableIdentifier;
+    static HashSet<WebCompositorImpl*>* s_compositors;
 };
 
 }
