@@ -1,3 +1,10 @@
+2011-11-30  Adam Roben  <aroben@apple.com>
+
+        Another Clang build fix after r101507
+
+        * platform/network/SocketStreamHandleClient.h:
+        (WebCore::SocketStreamHandleClient::didUpdateBufferedAmount): Removed unused parameter.
+
 2011-11-30  Renata Hodovan  <reni@webkit.org>
 
         MAC build fix after r101507.
