@@ -59,17 +59,22 @@ class QtPort(WebKitPort):
         return None
 
     # sys_platform exists only for unit testing.
-    def __init__(self, host, sys_platform=None, **kwargs):
-        WebKitPort.__init__(self, host, **kwargs)
+    def __init__(self, host, port_name=None, sys_platform=None, **kwargs):
+        port_name = port_name or self.port_name
+        WebKitPort.__init__(self, host, port_name=None, **kwargs)
         self._operating_system = self._operating_system_for_platform(sys_platform or sys.platform)
         self._version = self._operating_system
 
         # FIXME: This will allow WebKitPort.baseline_search_path and WebKitPort._skipped_file_search_paths
         # to do the right thing, but doesn't include support for qt-4.8 or qt-arm (seen in LayoutTests/platform) yet.
-        name_components = [self.port_name]
-        if self._operating_system:
-            name_components.append(self._operating_system)
-        self._name = "-".join(name_components)
+
+        if port_name != self.port_name:
+            self._name = port_name
+        else:
+            name_components = [self.port_name]
+            if self._operating_system:
+                name_components.append(self._operating_system)
+            self._name = "-".join(name_components)
 
     def _generate_all_test_configurations(self):
         configurations = []

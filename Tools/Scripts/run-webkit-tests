@@ -99,7 +99,14 @@ if (useNewRunWebKitTests()) {
 # webkitdirs.pm strips --qt and --gtk from @ARGV when we call isQt/isGtk.
 # We have to add back any --PORT arguments which may have been removed by isPort() checks above.
 if (isQt()) {
-    push(@ARGV, "--qt");
+    my $isPlatformSet = 0;
+    for (@ARGV){
+        # Pass --qt if platform isn't passed explicitly (eg. qt-5.0, qt-wk2, ...)
+        if(/^--platform.*/){
+            $isPlatformSet = 1;
+        }
+    }
+    push(@ARGV, "--qt") if(!$isPlatformSet);
 } elsif (isGtk()) {
     push(@ARGV, "--gtk");
 }

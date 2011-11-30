@@ -1,3 +1,14 @@
+2011-11-29  Balazs Ankes  <Ankes.Balazs@stud.u-szeged.hu>
+
+        [NRWT] Fix --platform=qt-5.0 --new-baseline combo
+        https://bugs.webkit.org/show_bug.cgi?id=72489
+
+        Reviewed by Eric Seidel.
+
+        Before the this fix always added "qt" option for the option list
+        * Scripts/run-webkit-tests:
+        * Scripts/webkitpy/layout_tests/port/qt.py:
+
 2011-11-29  David Levin  <levin@chromium.org>
 
         Add a way to revert a variable to its previous value after leaving a scope.
