@@ -386,6 +386,8 @@ WebInspector.doLoadedDone = function()
     this.extensionServer.initExtensions();
 
     this.console.enableAgent();
+
+    InspectorAgent.enable();
     DatabaseAgent.enable();
     DOMStorageAgent.enable();
 
@@ -464,11 +466,6 @@ WebInspector.close = function(event)
     this._isClosing = true;
     this.notifications.dispatchEventToListeners(WebInspector.Events.InspectorClosing);
     InspectorFrontendHost.closeWindow();
-}
-
-WebInspector.disconnectFromWorker = function()
-{
-    WebInspector.WorkerManager.showWorkerTerminatedScreen();
 }
 
 WebInspector.documentClick = function(event)

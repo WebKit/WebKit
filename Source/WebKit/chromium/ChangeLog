@@ -1,3 +1,13 @@
+2011-11-30  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: do not report worker-related events unless inspector agent is enabled.
+        https://bugs.webkit.org/show_bug.cgi?id=73411
+
+        Reviewed by Yury Semikhatsky.
+
+        * src/WebDevToolsAgentImpl.cpp:
+        (WebKit::WebDevToolsAgent::disconnectEventAsText):
+
 2011-11-30  Fady Samuel  <fsamuel@chromium.org>
 
         [Chromium] Fix broken DRT build for Aura Linux

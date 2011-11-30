@@ -35,7 +35,7 @@
 WebInspector.WorkerManager = function()
 {
     this._workerIdToWindow = {};
-    InspectorBackend.registerWorkerDispatcher(new WebInspector.DedicatedWorkerMessageForwarder(this));
+    InspectorBackend.registerWorkerDispatcher(new WebInspector.WorkerDispatcher(this));
 }
 
 WebInspector.WorkerManager.isWorkerFrontend = function()
@@ -106,17 +106,6 @@ WebInspector.WorkerManager._calculateWorkerInspectorTitle = function()
         }
         InspectorFrontendHost.inspectedURLChanged(result.value);
     }
-}
-
-WebInspector.WorkerManager.showWorkerTerminatedScreen = function()
-{
-    function onHide()
-    {
-        WebInspector.debuggerModel.removeEventListener(WebInspector.DebuggerModel.Events.GlobalObjectCleared, screen.hide, screen);
-    }
-    var screen = new WebInspector.WorkerTerminatedScreen();
-    WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.GlobalObjectCleared, screen.hide, screen);
-    screen.show(onHide.bind(this));
 }
 
 WebInspector.WorkerManager.Events = {
@@ -203,6 +192,17 @@ WebInspector.WorkerManager.prototype = {
             return;
         delete this._workerIdToWindow[workerId];
         WorkerAgent.disconnectFromWorker(workerId);
+    },
+
+    _disconnectedFromWorker: function()
+    {
+        function onHide()
+        {
+            WebInspector.debuggerModel.removeEventListener(WebInspector.DebuggerModel.Events.GlobalObjectCleared, screen.hide, screen);
+        }
+        var screen = new WebInspector.WorkerTerminatedScreen();
+        WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.GlobalObjectCleared, screen.hide, screen);
+        screen.show(onHide.bind(this));
     }
 }
 
@@ -212,13 +212,13 @@ WebInspector.WorkerManager.prototype.__proto__ = WebInspector.Object.prototype;
  * @constructor
  * @implements {WorkerAgent.Dispatcher}
  */
-WebInspector.DedicatedWorkerMessageForwarder = function(workerManager)
+WebInspector.WorkerDispatcher = function(workerManager)
 {
     this._workerManager = workerManager;
     window.addEventListener("message", this._receiveMessage.bind(this), true);
 }
 
-WebInspector.DedicatedWorkerMessageForwarder.prototype = {
+WebInspector.WorkerDispatcher.prototype = {
     _receiveMessage: function(event)
     {
         var workerId = event.data["workerId"];
@@ -243,6 +243,11 @@ WebInspector.DedicatedWorkerMessageForwarder.prototype = {
     dispatchMessageFromWorker: function(workerId, message)
     {
         this._workerManager._sendMessageToWorkerInspector(workerId, message);
+    },
+
+    disconnectedFromWorker: function()
+    {
+        this._workerManager._disconnectedFromWorker();
     }
 }
 

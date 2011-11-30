@@ -72,7 +72,7 @@ using namespace std;
 namespace WebCore {
 
 namespace PageAgentState {
-static const char pageAgentEnabled[] = "resourceAgentEnabled";
+static const char pageAgentEnabled[] = "pageAgentEnabled";
 static const char pageAgentScriptsToEvaluateOnLoad[] = "pageAgentScriptsToEvaluateOnLoad";
 }
 

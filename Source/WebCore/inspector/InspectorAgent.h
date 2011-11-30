@@ -62,7 +62,11 @@ public:
 
     virtual ~InspectorAgent();
 
-    bool enabled() const;
+    bool developerExtrasEnabled() const;
+
+    // Inspector front-end API.
+    void enable(ErrorString*);
+    void disable(ErrorString*);
 
     KURL inspectedURL() const;
     KURL inspectedURLWithoutFragment() const;

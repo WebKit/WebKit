@@ -1,3 +1,41 @@
+2011-11-30  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: do not report worker-related events unless inspector agent is enabled.
+        https://bugs.webkit.org/show_bug.cgi?id=73411
+
+        Backend should not generate messages until the client requests that they are sent.
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/Inspector.json:
+        * inspector/InspectorAgent.cpp:
+        (WebCore::InspectorAgent::setFrontend):
+        (WebCore::InspectorAgent::clearFrontend):
+        (WebCore::InspectorAgent::enable):
+        (WebCore::InspectorAgent::disable):
+        (WebCore::InspectorAgent::postWorkerNotificationToFrontend):
+        (WebCore::InspectorAgent::didCreateWorker):
+        (WebCore::InspectorAgent::didDestroyWorker):
+        (WebCore::InspectorAgent::developerExtrasEnabled):
+        * inspector/InspectorAgent.h:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::enabled):
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::didLoadResourceFromMemoryCacheImpl):
+        (WebCore::InspectorInstrumentation::didCommitLoadImpl):
+        (WebCore::InspectorInstrumentation::didOpenDatabaseImpl):
+        (WebCore::InspectorInstrumentation::didUseDOMStorageImpl):
+        (WebCore::InspectorInstrumentation::didCreateWebSocketImpl):
+        * inspector/InspectorPageAgent.cpp:
+        * inspector/PageConsoleAgent.cpp:
+        (WebCore::PageConsoleAgent::developerExtrasEnabled):
+        * inspector/front-end/WorkerManager.js:
+        (WebInspector.WorkerManager.prototype._workerInspectorClosing):
+        (WebInspector.WorkerManager.prototype._disconnectedFromWorker):
+        (WebInspector.DedicatedWorkerMessageForwarder.prototype.dispatchMessageFromWorker):
+        (WebInspector.DedicatedWorkerMessageForwarder.prototype.disconnectedFromWorker):
+        * inspector/front-end/inspector.js:
+
 2011-11-30  Jacky Jiang  <zhajiang@rim.com>
 
         Upstream BlackBerry porting of WebCore/editing.

@@ -42,6 +42,7 @@
 #include "InspectorController.h"
 #include "InspectorFrontend.h"
 #include "InspectorInstrumentation.h"
+#include "InspectorState.h"
 #include "InspectorValues.h"
 #include "InspectorWorkerResource.h"
 #include "InstrumentingAgents.h"
@@ -57,9 +58,9 @@ using namespace std;
 
 namespace WebCore {
 
-static const char scriptsPanelName[] = "scripts";
-static const char consolePanelName[] = "console";
-static const char profilesPanelName[] = "profiles";
+namespace InspectorAgentState {
+static const char inspectorAgentEnabled[] = "inspectorAgentEnabled";
+}
 
 InspectorAgent::InspectorAgent(Page* page, InjectedScriptManager* injectedScriptManager, InstrumentingAgents* instrumentingAgents, InspectorState* state)
     : InspectorBaseAgent<InspectorAgent>("Inspector", instrumentingAgents, state)
@@ -97,14 +98,6 @@ void InspectorAgent::setFrontend(InspectorFrontend* inspectorFrontend)
 {
     m_frontend = inspectorFrontend;
 
-#if ENABLE(JAVASCRIPT_DEBUGGER) && ENABLE(WORKERS)
-    WorkersMap::iterator workersEnd = m_workers.end();
-    for (WorkersMap::iterator it = m_workers.begin(); it != workersEnd; ++it) {
-        InspectorWorkerResource* worker = it->second.get();
-        m_frontend->inspector()->didCreateWorker(worker->id(), worker->url(), worker->isSharedWorker());
-    }
-#endif
-
     // Dispatch pending frontend commands
     issueEvaluateForTestCommands();
 }
@@ -116,6 +109,8 @@ void InspectorAgent::clearFrontend()
     m_frontend = 0;
     m_didCommitLoadFired = false;
     m_injectedScriptManager->discardInjectedScripts();
+    ErrorString error;
+    disable(&error);
 }
 
 void InspectorAgent::didCommitLoad()
@@ -125,6 +120,24 @@ void InspectorAgent::didCommitLoad()
 #if ENABLE(WORKERS)
     m_workers.clear();
 #endif
+}
+
+void InspectorAgent::enable(ErrorString*)
+{
+    m_state->setBoolean(InspectorAgentState::inspectorAgentEnabled, true);
+
+#if ENABLE(JAVASCRIPT_DEBUGGER) && ENABLE(WORKERS)
+    WorkersMap::iterator workersEnd = m_workers.end();
+    for (WorkersMap::iterator it = m_workers.begin(); it != workersEnd; ++it) {
+        InspectorWorkerResource* worker = it->second.get();
+        m_frontend->inspector()->didCreateWorker(worker->id(), worker->url(), worker->isSharedWorker());
+    }
+#endif
+}
+
+void InspectorAgent::disable(ErrorString*)
+{
+    m_state->setBoolean(InspectorAgentState::inspectorAgentEnabled, false);
 }
 
 void InspectorAgent::domContentLoadedEventFired()
@@ -167,8 +180,9 @@ private:
 
 void InspectorAgent::postWorkerNotificationToFrontend(const InspectorWorkerResource& worker, InspectorAgent::WorkerAction action)
 {
-    if (!m_frontend)
+    if (!m_frontend || !m_state->getBoolean(InspectorAgentState::inspectorAgentEnabled))
         return;
+
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     switch (action) {
     case InspectorAgent::WorkerCreated:
@@ -183,24 +197,24 @@ void InspectorAgent::postWorkerNotificationToFrontend(const InspectorWorkerResou
 
 void InspectorAgent::didCreateWorker(intptr_t id, const String& url, bool isSharedWorker)
 {
-    if (!enabled())
+    if (!developerExtrasEnabled())
         return;
 
     RefPtr<InspectorWorkerResource> workerResource(InspectorWorkerResource::create(id, url, isSharedWorker));
     m_workers.set(id, workerResource);
-    if (m_inspectedPage && m_frontend)
+    if (m_inspectedPage && m_frontend && m_state->getBoolean(InspectorAgentState::inspectorAgentEnabled))
         m_inspectedPage->mainFrame()->document()->postTask(PostWorkerNotificationToFrontendTask::create(workerResource, InspectorAgent::WorkerCreated));
 }
 
 void InspectorAgent::didDestroyWorker(intptr_t id)
 {
-    if (!enabled())
+    if (!developerExtrasEnabled())
         return;
 
     WorkersMap::iterator workerResource = m_workers.find(id);
     if (workerResource == m_workers.end())
         return;
-    if (m_inspectedPage && m_frontend)
+    if (m_inspectedPage && m_frontend && m_state->getBoolean(InspectorAgentState::inspectorAgentEnabled))
         m_inspectedPage->mainFrame()->document()->postTask(PostWorkerNotificationToFrontendTask::create(workerResource->second, InspectorAgent::WorkerDestroyed));
     m_workers.remove(workerResource);
 }
@@ -230,7 +244,7 @@ KURL InspectorAgent::inspectedURLWithoutFragment() const
     return url;
 }
 
-bool InspectorAgent::enabled() const
+bool InspectorAgent::developerExtrasEnabled() const
 {
     if (!m_inspectedPage)
         return false;

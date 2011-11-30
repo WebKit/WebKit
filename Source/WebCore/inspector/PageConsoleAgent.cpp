@@ -71,7 +71,7 @@ void PageConsoleAgent::addInspectedNode(ErrorString*, int nodeId)
 
 bool PageConsoleAgent::developerExtrasEnabled()
 {
-    return m_inspectorAgent->enabled();
+    return m_inspectorAgent->developerExtrasEnabled();
 }
 
 

@@ -5,11 +5,16 @@
         "hidden": true,
         "types": [],
         "commands": [
+            {
+                "name": "enable",
+                "description": "Enables inspector domain notifications."
+            },
+            {
+                "name": "disable",
+                "description": "Disables inspector domain notifications."
+            }
         ],
         "events": [
-            {
-                "name": "disconnectFromWorker"
-            },
             {
                 "name": "evaluateForTestInFrontend",
                 "parameters": [
@@ -2248,6 +2253,9 @@
                     { "name": "workerId", "type": "integer" },
                     { "name": "message", "type": "object" }
                 ]
+            },
+            {
+                "name": "disconnectedFromWorker"
             }
         ]
     }]

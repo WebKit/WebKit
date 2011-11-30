@@ -297,7 +297,7 @@ void InspectorController::inspect(Node* node)
 
 bool InspectorController::enabled() const
 {
-    return m_inspectorAgent->enabled();
+    return m_inspectorAgent->developerExtrasEnabled();
 }
 
 Page* InspectorController::inspectedPage() const

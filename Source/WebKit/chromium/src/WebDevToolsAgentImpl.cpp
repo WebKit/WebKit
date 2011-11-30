@@ -384,8 +384,8 @@ WebString WebDevToolsAgent::disconnectEventAsText()
         }
         String m_message;
     } channel;
-    InspectorFrontend::Inspector inspector(&channel);
-    inspector.disconnectFromWorker();
+    InspectorFrontend::Worker inspector(&channel);
+    inspector.disconnectedFromWorker();
     return channel.m_message;
 }
 
