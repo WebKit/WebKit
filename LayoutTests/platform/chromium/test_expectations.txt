@@ -40,10 +40,6 @@ BUGCR24182 SLOW SNOWLEOPARD DEBUG : fast/js/repeat-cached-vm-reentry.html = PASS
 BUGCR24182 SLOW SNOWLEOPARD DEBUG : fast/dom/Window/window-postmessage-clone-deep-array.html = PASS
 BUGCR24182 SLOW SNOWLEOPARD DEBUG : fast/frames/calculate-percentage.html = PASS
 // See BUGCR104797
-//BUGCR24182 SLOW DEBUG SNOWLEOPARD : svg/hixie/perf/007.xml = PASS
-//BUGCR24182 DEBUG LEOPARD : svg/hixie/perf/007.xml = IMAGE
-
-
 
 // -----------------------------------------------------------------
 // TEMPORARILY SKIPPED TESTS
@@ -1094,7 +1090,6 @@ BUGWK70748 CPU : svg/clip-path/clip-path-userSpaceOnUse.svg = IMAGE
 BUGWK70748 CPU : svg/clip-path/clip-path-with-text-clipped.svg = IMAGE
 BUGWK70748 CPU : svg/custom/resource-invalidate-on-target-update.svg = IMAGE
 BUGWK70748 CPU : svg/custom/use-on-clip-path-with-transformation.svg = IMAGE
-BUGWK70748 CPU LEOPARD : svg/W3C-I18N/tspan-dirLTR-ubOverride-in-rtl-context.svg = IMAGE
 BUGWK70748 CPU LEOPARD : svg/W3C-SVG-1.1/masking-path-05-f.svg = IMAGE
 
 // Rebaseline after SK_ENABLE_FAST_SHADERMASK is enabled in skia.gyp
@@ -1641,10 +1636,6 @@ BUGCR101797 CPU : svg/as-background-image/svg-as-background-5.html = IMAGE
 BUGCR101797 CPU : svg/custom/use-forward-refs.svg = IMAGE
 BUGCR101797 CPU : svg/filters/subRegion-one-effect.svg = IMAGE
 BUGCR101797 CPU : svg/filters/subRegion-two-effects.svg = IMAGE
-// Already marked as flaky under BUGCR10479
-// BUGCR101797 CPU : svg/hixie/perf/001.xml = IMAGE
-// BUGCR101797 CPU : svg/hixie/perf/002.xml = IMAGE
-BUGCR101797 CPU SLOW : svg/hixie/perf/007.xml = IMAGE
 
 // Flaky for a while; also related to BUGCR17974
 BUGCR15267 LINUX WIN : transitions/cancel-transition.html = PASS FAIL
@@ -2702,7 +2693,6 @@ BUGWK54322 SNOWLEOPARD : tables/mozilla/core/bloomberg.html = IMAGE
 BUGWK54322 SNOWLEOPARD : tables/mozilla/core/misc.html = IMAGE
 BUGWK54322 SNOWLEOPARD : tables/mozilla/core/row_span.html = IMAGE
 BUGWK54322 SNOWLEOPARD : tables/mozilla/other/cell_widths.html = IMAGE
-BUGWK54322 SNOWLEOPARD : transforms/svg-vs-css.xhtml = IMAGE
 BUGWK54322 SNOWLEOPARD : transitions/move-after-transition.html = IMAGE
 BUGWK54322 SNOWLEOPARD : fast/dom/scroll-reveal-left-overflow.html = IMAGE
 
@@ -3517,8 +3507,6 @@ BUGCR97657 MAC CPU-CG : media/audio-repaint.html = TIMEOUT IMAGE PASS
 
 BUGWK68970 MAC CPU-CG : fast/multicol/float-paginate-empty-lines.html = IMAGE
 BUGWK68970 MAC CPU-CG : svg/custom/pattern-in-defs.svg = IMAGE
-BUGWK68970 MAC CPU-CG : svg/custom/text-rotated-gradient.svg = IMAGE
-
 
 BUGWK68982 : svg/custom/oversized-pattern-scale.svg = IMAGE PASS
 BUGWK68982 : svg/custom/transformed-pattern-clamp-svg-root.svg = IMAGE PASS
