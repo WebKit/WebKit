@@ -1,3 +1,16 @@
+2011-11-30  Anna Cavender  <annacc@chromium.org>
+
+        Missing RuntimeEnabled check for <track>
+        https://bugs.webkit.org/show_bug.cgi?id=73398
+
+        Reviewed by Eric Carlson.
+
+        No new tests. This fixes a problem when --enable-video-track is not used,
+        but the tests use this flag.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::trackWillBeRemoved):
+
 2011-11-30  Andrey Kosyakov  <caseq@chromium.org>
 
         Web Inspector: [refactoring] do not clone nodes that contain linkified URLs

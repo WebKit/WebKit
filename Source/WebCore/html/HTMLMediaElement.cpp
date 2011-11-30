@@ -2186,6 +2186,9 @@ void HTMLMediaElement::trackWasAdded(HTMLTrackElement* trackElement)
  
 void HTMLMediaElement::trackWillBeRemoved(HTMLTrackElement* trackElement)
 {
+    if (!RuntimeEnabledFeatures::webkitVideoTrackEnabled())
+        return;
+
 #if !LOG_DISABLED
     if (trackElement->hasTagName(trackTag)) {
         KURL url = trackElement->getNonEmptyURLAttribute(srcAttr);
