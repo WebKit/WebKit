@@ -1,5 +1,17 @@
 2011-11-30  Simon Hausmann  <simon.hausmann@nokia.com>
 
+        [Qt] Fix crash when using Qt DRT with V8.
+
+        Reviewed by Csaba Osztrogonác.
+
+        Add missing handle scopes for the handles returned by mainWorldContext.
+
+        * WebCoreSupport/DumpRenderTreeSupportQt.cpp:
+        (DumpRenderTreeSupportQt::injectInternalsObject):
+        (DumpRenderTreeSupportQt::resetInternalsObject):
+
+2011-11-30  Simon Hausmann  <simon.hausmann@nokia.com>
+
         [Qt] Fix crashing layout tests
 
         Reviewed by Kenneth Rohde Christiansen.

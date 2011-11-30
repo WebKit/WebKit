@@ -1214,6 +1214,7 @@ void DumpRenderTreeSupportQt::injectInternalsObject(QWebFrame* frame)
     JSContextRef context = toRef(exec);
     WebCoreTestSupport::injectInternalsObject(context);
 #elif USE(V8)
+    v8::HandleScope handleScope;
     WebCoreTestSupport::injectInternalsObject(V8Proxy::mainWorldContext(coreFrame));
 #endif
 }
@@ -1240,6 +1241,7 @@ void DumpRenderTreeSupportQt::resetInternalsObject(QWebFrame* frame)
     JSContextRef context = toRef(exec);
     WebCoreTestSupport::resetInternalsObject(context);
 #elif USE(V8)
+    v8::HandleScope handleScope;
     WebCoreTestSupport::resetInternalsObject(V8Proxy::mainWorldContext(coreFrame));
 #endif
 }
