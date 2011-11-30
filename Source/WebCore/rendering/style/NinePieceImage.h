@@ -55,7 +55,7 @@ public:
 
     bool hasImage() const { return m_image != 0; }
     StyleImage* image() const { return m_image.get(); }
-    void setImage(StyleImage* image) { m_image = image; }
+    void setImage(PassRefPtr<StyleImage> image) { m_image = image; }
     
     const LengthBox& slices() const { return m_slices; }
     void setSlices(const LengthBox& l) { m_slices = l; }
@@ -65,6 +65,8 @@ public:
     
     ENinePieceImageRule verticalRule() const { return static_cast<ENinePieceImageRule>(m_verticalRule); }
     void setVerticalRule(ENinePieceImageRule rule) { m_verticalRule = rule; }
+
+friend class RenderStyle;
 
 private:
     RefPtr<StyleImage> m_image;

@@ -70,6 +70,7 @@ static const int computedProperties[] = {
     CSSPropertyBorderBottomStyle,
     CSSPropertyBorderBottomWidth,
     CSSPropertyBorderCollapse,
+    CSSPropertyBorderImageSource,
     CSSPropertyBorderLeftColor,
     CSSPropertyBorderLeftStyle,
     CSSPropertyBorderLeftWidth,
@@ -213,6 +214,7 @@ static const int computedProperties[] = {
     CSSPropertyWebkitMarqueeStyle,
     CSSPropertyWebkitMaskAttachment,
     CSSPropertyWebkitMaskBoxImage,
+    CSSPropertyWebkitMaskBoxImageSource,
     CSSPropertyWebkitMaskClip,
     CSSPropertyWebkitMaskComposite,
     CSSPropertyWebkitMaskImage,
@@ -977,6 +979,10 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             return zoomAdjustedPixelValue(style->horizontalBorderSpacing(), style.get(), primitiveValueCache);
         case CSSPropertyWebkitBorderVerticalSpacing:
             return zoomAdjustedPixelValue(style->verticalBorderSpacing(), style.get(), primitiveValueCache);
+        case CSSPropertyBorderImageSource:
+            if (style->borderImageSource())
+                return style->borderImageSource()->cssValue();
+            return primitiveValueCache->createIdentifierValue(CSSValueNone);
         case CSSPropertyBorderTopColor:
             return m_allowVisitedStyle ? primitiveValueCache->createColorValue(style->visitedDependentColor(CSSPropertyBorderTopColor).rgb()) : currentColorOrValidColor(style.get(), style->borderTopColor());
         case CSSPropertyBorderRightColor:
@@ -1538,6 +1544,10 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             return valueForNinePieceImage(style->borderImage(), primitiveValueCache);
         case CSSPropertyWebkitMaskBoxImage:
             return valueForNinePieceImage(style->maskBoxImage(), primitiveValueCache);
+        case CSSPropertyWebkitMaskBoxImageSource:
+            if (style->maskBoxImageSource())
+                return style->maskBoxImageSource()->cssValue();
+            return primitiveValueCache->createIdentifierValue(CSSValueNone);
         case CSSPropertyWebkitFontSizeDelta:
             // Not a real style property -- used by the editing engine -- so has no computed value.
             break;
