@@ -1,3 +1,20 @@
+2011-11-30  Kenichi Ishibashi  <bashi@chromium.org>
+
+        @font-face: unquoted local font names containing spaces don't work
+        https://bugs.webkit.org/show_bug.cgi?id=64783
+
+        Allows local font names with spaces.
+        Rejects the src descriptor if there is invalid identifiers in local(), as the same as Firefox.
+
+        Reviewed by Ryosuke Niwa.
+
+        Tests: fast/css/font-face-unquoted-local-expected.html
+               fast/css/font-face-unquoted-local.html
+
+        * css/CSSParser.cpp:
+        (WebCore::parseFontFaceSrcFunction): Added. Treats multiple identifiers in local() as a font name separated by spaces.
+        (WebCore::CSSParser::parseFontFaceSrc): Moved the code block which parses local() and format() to parseFontFaceSrcFunction().
+
 2011-11-30  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: get rid of deferred backend->front-end commands processing.

@@ -88,6 +88,7 @@
 #include <wtf/HexNumber.h>
 #include <wtf/dtoa.h>
 #include <wtf/text/StringBuffer.h>
+#include <wtf/text/StringBuilder.h>
 
 #if ENABLE(DASHBOARD_SUPPORT)
 #include "DashboardRegion.h"
@@ -4359,6 +4360,39 @@ static bool isValidFormatFunction(CSSParserValue* val)
     return equalIgnoringCase(val->function->name, "format(") && (args->current()->unit == CSSPrimitiveValue::CSS_STRING || args->current()->unit == CSSPrimitiveValue::CSS_IDENT);
 }
 
+static bool parseFontFaceSrcFunction(CSSParserValue* value, bool& expectComma, bool& allowFormat, RefPtr<CSSFontFaceSrcValue>& uriValue, RefPtr<CSSFontFaceSrcValue>& parsedValue)
+{
+    CSSParserValueList* args = value->function->args.get();
+    if (!args || !args->size())
+        return false;
+
+    if (equalIgnoringCase(value->function->name, "local(") && !expectComma) {
+        expectComma = true;
+        allowFormat = false;
+        uriValue.clear();
+        if (args->current()->unit == CSSPrimitiveValue::CSS_STRING)
+            parsedValue = CSSFontFaceSrcValue::createLocal(args->current()->string);
+        else if (args->current()->unit == CSSPrimitiveValue::CSS_IDENT) {
+            StringBuilder builder;
+            for (CSSParserValue* localValue = args->current(); localValue; localValue = args->next()) {
+                if (localValue->unit != CSSPrimitiveValue::CSS_IDENT)
+                    return false;
+                if (!builder.isEmpty())
+                    builder.append(' ');
+                builder.append(localValue->string);
+            }
+            parsedValue = CSSFontFaceSrcValue::createLocal(builder.toString());
+        }
+    } else if (args->size() == 1 && allowFormat && uriValue && isValidFormatFunction(value)) {
+        expectComma = true;
+        allowFormat = false;
+        uriValue->setFormat(args->current()->string);
+        uriValue.clear();
+        parsedValue.clear();
+    }
+    return true;
+}
+
 bool CSSParser::parseFontFaceSrc()
 {
     RefPtr<CSSValueList> values(CSSValueList::createCommaSeparated());
@@ -4377,24 +4411,14 @@ bool CSSParser::parseFontFaceSrc()
             allowFormat = true;
             expectComma = true;
         } else if (val->unit == CSSParserValue::Function) {
-            // There are two allowed functions: local() and format().
-            CSSParserValueList* args = val->function->args.get();
-            if (args && args->size() == 1) {
-                if (equalIgnoringCase(val->function->name, "local(") && !expectComma && (args->current()->unit == CSSPrimitiveValue::CSS_STRING || args->current()->unit == CSSPrimitiveValue::CSS_IDENT)) {
-                    expectComma = true;
-                    allowFormat = false;
-                    CSSParserValue* a = args->current();
-                    uriValue.clear();
-                    parsedValue = CSSFontFaceSrcValue::createLocal(a->string);
-                } else if (allowFormat && uriValue && isValidFormatFunction(val)) {
-                    expectComma = true;
-                    allowFormat = false;
-                    uriValue->setFormat(args->current()->string);
-                    uriValue.clear();
-                    m_valueList->next();
-                    continue;
-                }
+            if (!parseFontFaceSrcFunction(val, expectComma, allowFormat, uriValue, parsedValue)) {
+                failed = true;
+                break;
             }
+            if (parsedValue)
+                values->append(parsedValue.release());
+            m_valueList->next();
+            continue;
         } else if (val->unit == CSSParserValue::Operator && val->iValue == ',' && expectComma) {
             expectComma = false;
             allowFormat = false;
