@@ -1,3 +1,52 @@
+2011-11-30  Antti Koivisto  <antti@apple.com>
+
+        Reuse cached style fully if the parent inherited styles are equal 
+        https://bugs.webkit.org/show_bug.cgi?id=73421
+
+        Reviewed by Oliver Hunt.
+
+        The matched declaration cache currently restores the non-inherted properties from the cache
+        entry but still applies all inherited properties normally. In case the current parent
+        inherited style is equivalent to the cache entry's, also the inherited style can be reused
+        and no properties need to be applied. This is faster and saves memory (by sharing the
+        style substructures better).
+        
+        The new optimized code path has a pretty good hit rate, >50% of all cases on many pages.
+        
+        Loading the HTML5 spec this reduces style memory consumption by ~20% (5MB, ~2.5% of total) and 
+        speeds up style applying by ~25% for ~0.4s (2-3%) gain in the spec loading benchmark.
+        
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyDeclaration):
+        (WebCore::CSSStyleSelector::applyDeclarations):
+        
+            Remove the code that dynamically disables inherited only applying. We now don't allow
+            styles with explicitly inherited properties to be cached in the first place.
+        
+        (WebCore::CSSStyleSelector::findFromMatchedDeclarationCache):
+        
+            Return the full cache item.
+        
+        (WebCore::CSSStyleSelector::addToMatchedDeclarationCache):
+        
+            Also the parent style is now needed for the check for full sharing.
+        
+        (WebCore::isCacheableInMatchedDeclarationCache):
+
+            Don't allow styles with explicitly inherited properties to be cached at all.
+        
+        (WebCore::CSSStyleSelector::applyMatchedDeclarations):
+        
+            If the parent inherited styles are equal reuse the cache entry fully and return without
+            doing anything else.
+        
+        * css/CSSStyleSelector.h:
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::inheritedDataShared):
+        * rendering/style/RenderStyle.h:
+        
+            Add fast check for equal inherited properties.
+
 2011-11-30  Renata Hodovan  <reni@webkit.org>
 
         CG buildfix after r101517.

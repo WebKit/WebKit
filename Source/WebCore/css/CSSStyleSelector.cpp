@@ -2119,7 +2119,7 @@ static Length convertToFloatLength(CSSPrimitiveValue* primitiveValue, RenderStyl
 }
 
 template <bool applyFirst>
-void CSSStyleSelector::applyDeclaration(CSSMutableStyleDeclaration* styleDeclaration, bool isImportant, bool& inheritedOnly)
+void CSSStyleSelector::applyDeclaration(CSSMutableStyleDeclaration* styleDeclaration, bool isImportant, bool inheritedOnly)
 {
     CSSMutableStyleDeclaration::const_iterator end = styleDeclaration->end();
     for (CSSMutableStyleDeclaration::const_iterator it = styleDeclaration->begin(); it != end; ++it) {
@@ -2127,12 +2127,11 @@ void CSSStyleSelector::applyDeclaration(CSSMutableStyleDeclaration* styleDeclara
         if (isImportant != current.isImportant())
             continue;
         if (inheritedOnly && !current.isInherited()) {
-            if (!current.value()->isInheritedValue())
-                continue;
             // If the property value is explicitly inherited, we need to apply further non-inherited properties
-            // as they might override the value inherited here. This is really per-property but that is
-            // probably not worth optimizing for.
-            inheritedOnly = false;
+            // as they might override the value inherited here. For this reason we don't allow declarations with
+            // explicitly inherited properties to be cached.
+            ASSERT(!current.value()->isInheritedValue());
+            continue;
         }
         int property = current.id();
         if (applyFirst) {
@@ -2156,7 +2155,7 @@ void CSSStyleSelector::applyDeclaration(CSSMutableStyleDeclaration* styleDeclara
 }
 
 template <bool applyFirst>
-void CSSStyleSelector::applyDeclarations(bool isImportant, int startIndex, int endIndex, bool& inheritedOnly)
+void CSSStyleSelector::applyDeclarations(bool isImportant, int startIndex, int endIndex, bool inheritedOnly)
 {
     if (startIndex == -1)
         return;
@@ -2210,7 +2209,7 @@ bool operator!=(const CSSStyleSelector::MatchedStyleDeclaration& a, const CSSSty
     return !(a == b);
 }
 
-const RenderStyle* CSSStyleSelector::findFromMatchedDeclarationCache(unsigned hash, const MatchResult& matchResult)
+const CSSStyleSelector::MatchedStyleDeclarationCacheItem* CSSStyleSelector::findFromMatchedDeclarationCache(unsigned hash, const MatchResult& matchResult)
 {
     ASSERT(hash);
 
@@ -2229,18 +2228,19 @@ const RenderStyle* CSSStyleSelector::findFromMatchedDeclarationCache(unsigned ha
     }
     if (cacheItem.matchResult != matchResult)
         return 0;
-    return cacheItem.renderStyle.get();
+    return &cacheItem;
 }
 
-void CSSStyleSelector::addToMatchedDeclarationCache(const RenderStyle* style, unsigned hash, const MatchResult& matchResult)
+void CSSStyleSelector::addToMatchedDeclarationCache(const RenderStyle* style, const RenderStyle* parentStyle, unsigned hash, const MatchResult& matchResult)
 {
     ASSERT(hash);
     MatchedStyleDeclarationCacheItem cacheItem;
     cacheItem.matchedStyleDeclarations.append(m_matchedDecls);
     cacheItem.matchResult = matchResult;
     // Note that we don't cache the original RenderStyle instance. It may be further modified.
-    // The RenderStyle in the cache is really just a holder for the non-inherited substructures and never used as-is.
+    // The RenderStyle in the cache is really just a holder for the substructures and never used as-is.
     cacheItem.renderStyle = RenderStyle::clone(style);
+    cacheItem.parentRenderStyle = RenderStyle::clone(parentStyle);
     m_matchStyleDeclarationCache.add(hash, cacheItem);
 }
 
@@ -2252,6 +2252,9 @@ static bool isCacheableInMatchedDeclarationCache(const RenderStyle* style, const
         return false;
     if (style->zoom() != RenderStyle::initialZoom())
         return false;
+    // The cache assumes static knowledge about which properties are inherited.
+    if (parentStyle->hasExplicitlyInheritedProperties())
+        return false;
     return true;
 }
 
@@ -2259,12 +2262,21 @@ void CSSStyleSelector::applyMatchedDeclarations(const MatchResult& matchResult)
 {
     unsigned cacheHash = matchResult.isCacheable ? computeDeclarationHash(m_matchedDecls.data(), m_matchedDecls.size()) : 0;
     bool applyInheritedOnly = false;
-    const RenderStyle* cachedStyle = 0;
-    if (cacheHash && (cachedStyle = findFromMatchedDeclarationCache(cacheHash, matchResult))) {
+    const MatchedStyleDeclarationCacheItem* cacheItem = 0;
+    if (cacheHash && (cacheItem = findFromMatchedDeclarationCache(cacheHash, matchResult))) {
         // We can build up the style by copying non-inherited properties from an earlier style object built using the same exact
         // style declarations. We then only need to apply the inherited properties, if any, as their values can depend on the 
         // element context. This is fast and saves memory by reusing the style data structures.
-        m_style->copyNonInheritedFrom(cachedStyle);
+        m_style->copyNonInheritedFrom(cacheItem->renderStyle.get());
+        if (m_parentStyle->inheritedDataShared(cacheItem->parentRenderStyle.get())) {
+            EInsideLink linkStatus = m_style->insideLink();
+            // If the cache item parent style has identical inherited properties to the current parent style then the
+            // resulting style will be identical too. We copy the inherited properties over from the cache and are done.
+            m_style->inheritFrom(cacheItem->renderStyle.get());
+            // Unfortunately the link status is treated like an inherited property. We need to explicitly restore it.
+            m_style->setInsideLink(linkStatus);
+            return;
+        }
         applyInheritedOnly = true; 
     }
     // Now we have all of the matched rules in the appropriate order. Walk the rules and apply
@@ -2277,7 +2289,7 @@ void CSSStyleSelector::applyMatchedDeclarations(const MatchResult& matchResult)
     applyDeclarations<true>(true, matchResult.firstUserRule, matchResult.lastUserRule, applyInheritedOnly);
     applyDeclarations<true>(true, matchResult.firstUARule, matchResult.lastUARule, applyInheritedOnly);
 
-    if (cachedStyle && cachedStyle->effectiveZoom() != m_style->effectiveZoom()) {
+    if (cacheItem && cacheItem->renderStyle->effectiveZoom() != m_style->effectiveZoom()) {
         m_fontDirty = true;
         applyInheritedOnly = false;
     }
@@ -2290,7 +2302,7 @@ void CSSStyleSelector::applyMatchedDeclarations(const MatchResult& matchResult)
         applyProperty(CSSPropertyLineHeight, m_lineHeightValue);
 
     // Many properties depend on the font. If it changes we just apply all properties.
-    if (cachedStyle && cachedStyle->fontDescription() != m_style->fontDescription())
+    if (cacheItem && cacheItem->renderStyle->fontDescription() != m_style->fontDescription())
         applyInheritedOnly = false;
 
     // Now do the normal priority UA properties.
@@ -2313,11 +2325,11 @@ void CSSStyleSelector::applyMatchedDeclarations(const MatchResult& matchResult)
     
     ASSERT(!m_fontDirty);
     
-    if (cachedStyle || !cacheHash)
+    if (cacheItem || !cacheHash)
         return;
     if (!isCacheableInMatchedDeclarationCache(m_style.get(), m_parentStyle))
         return;
-    addToMatchedDeclarationCache(m_style.get(), cacheHash, matchResult);
+    addToMatchedDeclarationCache(m_style.get(), m_parentStyle, cacheHash, matchResult);
 }
 
 void CSSStyleSelector::matchPageRules(RuleSet* rules, bool isLeftPage, bool isFirstPage, const String& pageName)

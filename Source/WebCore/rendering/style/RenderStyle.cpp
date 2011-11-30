@@ -321,6 +321,17 @@ bool RenderStyle::inheritedNotEqual(const RenderStyle* other) const
            || rareInheritedData != other->rareInheritedData;
 }
 
+bool RenderStyle::inheritedDataShared(const RenderStyle* other) const
+{
+    // This is a fast check that only looks if the data structures are shared.
+    return inherited_flags == other->inherited_flags
+        && inherited.get() == other->inherited.get()
+#if ENABLE(SVG)
+        && m_svgStyle.get() == other->m_svgStyle.get()
+#endif
+        && rareInheritedData.get() == other->rareInheritedData.get();
+}
+
 static bool positionedObjectMoved(const LengthBox& a, const LengthBox& b)
 {
     // If any unit types are different, then we can't guarantee

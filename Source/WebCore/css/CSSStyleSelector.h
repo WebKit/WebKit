@@ -265,9 +265,9 @@ private:
 
     void applyMatchedDeclarations(const MatchResult&);
     template <bool firstPass>
-    void applyDeclarations(bool important, int startIndex, int endIndex, bool& inheritedOnly);
+    void applyDeclarations(bool important, int startIndex, int endIndex, bool inheritedOnly);
     template <bool firstPass>
-    void applyDeclaration(CSSMutableStyleDeclaration*, bool isImportant, bool& inheritedOnly);
+    void applyDeclaration(CSSMutableStyleDeclaration*, bool isImportant, bool inheritedOnly);
 
     void matchPageRules(RuleSet*, bool isLeftPage, bool isFirstPage, const String& pageName);
     void matchPageRulesForList(const Vector<RuleData>*, bool isLeftPage, bool isFirstPage, const String& pageName);
@@ -349,20 +349,21 @@ private:
         unsigned linkMatchType;
     };
     static unsigned computeDeclarationHash(MatchedStyleDeclaration*, unsigned size);
-    const RenderStyle* findFromMatchedDeclarationCache(unsigned hash, const MatchResult&);   
-    void addToMatchedDeclarationCache(const RenderStyle*, unsigned hash, const MatchResult&);
+    struct MatchedStyleDeclarationCacheItem {
+        Vector<MatchedStyleDeclaration> matchedStyleDeclarations;
+        MatchResult matchResult;
+        RefPtr<RenderStyle> renderStyle;
+        RefPtr<RenderStyle> parentRenderStyle;
+    };
+    const MatchedStyleDeclarationCacheItem* findFromMatchedDeclarationCache(unsigned hash, const MatchResult&);
+    void addToMatchedDeclarationCache(const RenderStyle*, const RenderStyle* parentStyle, unsigned hash, const MatchResult&);
 
     // We collect the set of decls that match in |m_matchedDecls|. We then walk the
     // set of matched decls four times, once for those properties that others depend on (like font-size),
     // and then a second time for all the remaining properties. We then do the same two passes
     // for any !important rules.
     Vector<MatchedStyleDeclaration, 64> m_matchedDecls;
-    
-    struct MatchedStyleDeclarationCacheItem {
-        Vector<MatchedStyleDeclaration> matchedStyleDeclarations;
-        MatchResult matchResult;
-        RefPtr<RenderStyle> renderStyle;
-    };
+
     typedef HashMap<unsigned, MatchedStyleDeclarationCacheItem> MatchedStyleDeclarationCache;
     MatchedStyleDeclarationCache m_matchStyleDeclarationCache;
 
