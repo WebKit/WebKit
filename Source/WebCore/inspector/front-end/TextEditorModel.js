@@ -50,6 +50,19 @@ WebInspector.TextRange.prototype = {
         return this.endLine - this.startLine;
     },
 
+    collapseToEnd: function()
+    {
+        return new WebInspector.TextRange(this.endLine, this.endColumn, this.endLine, this.endColumn);
+    },
+
+    normalize: function()
+    {
+        if (this.startLine > this.endLine || (this.startLine === this.endLine && this.startColumn > this.endColumn))
+            return new WebInspector.TextRange(this.endLine, this.endColumn, this.startLine, this.startColumn);
+        else
+            return this;
+    },
+
     clone: function()
     {
         return new WebInspector.TextRange(this.startLine, this.startColumn, this.endLine, this.endColumn);
@@ -75,6 +88,8 @@ WebInspector.TextEditorModel.Indent = {
     TabCharacter: "\t"
 }
 
+WebInspector.TextEditorModel.endsWithBracketRegex = /[{(\[]\s*$/;
+
 WebInspector.TextEditorModel.prototype = {
     set changeListener(changeListener)
     {
@@ -89,6 +104,11 @@ WebInspector.TextEditorModel.prototype = {
     get text()
     {
         return this._lines.join(this._lineBreak);
+    },
+
+    get lineBreak()
+    {
+        return this._lineBreak;
     },
 
     line: function(lineNumber)

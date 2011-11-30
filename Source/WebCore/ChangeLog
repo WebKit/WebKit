@@ -1,3 +1,21 @@
+2011-11-30  Nikita Vasilyev  <me@elv1s.ru>
+
+        Web Inspector: Preserve an indentation level when inserting a new line
+        https://bugs.webkit.org/show_bug.cgi?id=71625
+
+        Indent one level more when a line ends with either "{", "[" or "(".
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/TextEditorModel.js:
+        (WebInspector.TextRange.prototype.collapseToEnd):
+        (WebInspector.TextRange.prototype.normalize):
+        * inspector/front-end/TextViewer.js:
+        (WebInspector.TextViewer.prototype._registerShortcuts):
+        (WebInspector.TextViewer.prototype._handleKeyDown):
+        (WebInspector.TextEditorMainPanel.prototype.handleEnterKey):
+        (WebInspector.TextEditorMainPanel.prototype._getSelection):
+
 2011-11-30  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: Display of data URIs cumbersome in the Elements panel
