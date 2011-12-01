@@ -1,3 +1,15 @@
+2011-12-01  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Elements Panel edit as html looks weird with an arrow inside edit box.
+        https://bugs.webkit.org/show_bug.cgi?id=73462
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/elementsPanel.css:
+        (#elements-content .editing):
+        (.elements-tree-editor):
+        * inspector/front-end/inspector.css:
+
 2011-12-01  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: [Styles] Exclamation mark hint ignores property case

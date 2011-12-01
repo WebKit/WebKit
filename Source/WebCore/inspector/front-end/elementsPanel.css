@@ -35,6 +35,15 @@
     display: inline-block;
 }
 
+#elements-content .editing {
+    margin-left: 8px;
+}
+
+.elements-tree-editor {
+    -webkit-user-select: text;
+    -webkit-user-modify: read-write-plaintext-only;
+}
+
 .crumbs {
     display: inline-block;
     font-size: 11px;
