@@ -134,12 +134,19 @@ void WebKitMutationObserver::deliver()
 
 void WebKitMutationObserver::deliverAllMutations()
 {
+    static bool deliveryInProgress = false;
+    if (deliveryInProgress)
+        return;
+    deliveryInProgress = true;
+
     while (!activeMutationObservers().isEmpty()) {
         MutationObserverSet::iterator iter = activeMutationObservers().begin();
         RefPtr<WebKitMutationObserver> observer = *iter;
         activeMutationObservers().remove(iter);
         observer->deliver();
     }
+
+    deliveryInProgress = false;
 }
 
 PassOwnPtr<MutationObserverInterestGroup> MutationObserverInterestGroup::createForChildListMutation(Node* target)

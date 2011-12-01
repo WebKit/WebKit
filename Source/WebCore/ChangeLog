@@ -1,3 +1,15 @@
+2011-11-30  Rafael Weinstein  <rafaelw@chromium.org>
+
+        [MutationObservers] Make WebKitMutationObserver::deliverAllMutations() tolerant of re-entrant calls
+        https://bugs.webkit.org/show_bug.cgi?id=73472
+
+        Reviewed by Ojan Vafai.
+
+        No new tests. This patch just adds a static guard which makes more explicit the current semantics.
+
+        * dom/WebKitMutationObserver.cpp:
+        (WebCore::WebKitMutationObserver::deliverAllMutations):
+
 2011-11-30  Takashi Toyoshima  <toyoshim@chromium.org>
 
         Add OVERRIDE to WebSocket related sources for safe inheritances.
