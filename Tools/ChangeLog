@@ -1,3 +1,16 @@
+2011-12-01  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] build-jsc should not trigger gtkdoc generation
+        https://bugs.webkit.org/show_bug.cgi?id=73552
+
+        Reviewed by Philippe Normand.
+
+        Do not generate gtkdoc when building projects other than WebKit. In particular, this ensures
+        that build-jsc does not try to generate gtkdoc.
+
+        * Scripts/webkitdirs.pm:
+        (buildAutotoolsProject): Only generate gtkdoc if the project is "WebKit".
+
 2011-12-01  Kristóf Kosztyó  <kkristof@inf.u-szeged.hu>
 
         tests_run0.txt gets clobbered when re-running failing tests

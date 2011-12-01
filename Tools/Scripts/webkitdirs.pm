@@ -1674,13 +1674,13 @@ sub buildAutotoolsProject($@)
     # have changed. The makefile should be smart enough to track autotools
     # dependencies and re-run autogen.sh when build files change.
     my $autogenArgumentsFile = "previous-autogen-arguments.txt";
-    my $saveAutogenArguments = $project eq "WebKit";
+    my $buildingWebKit = $project eq "WebKit";
     if (!(-e "GNUmakefile")) {
-        runAutogenForAutotoolsProject($dir, $prefix, $sourceDir, $saveAutogenArguments, $autogenArgumentsFile, @buildArgs);
+        runAutogenForAutotoolsProject($dir, $prefix, $sourceDir, $buildingWebKit, $autogenArgumentsFile, @buildArgs);
     }
 
-    if ($saveAutogenArguments and autogenArgumentsHaveChanged($autogenArgumentsFile, @buildArgs)) {
-        runAutogenForAutotoolsProject($dir, $prefix, $sourceDir, $saveAutogenArguments, $autogenArgumentsFile, @buildArgs);
+    if ($buildingWebKit and autogenArgumentsHaveChanged($autogenArgumentsFile, @buildArgs)) {
+        runAutogenForAutotoolsProject($dir, $prefix, $sourceDir, $buildingWebKit, $autogenArgumentsFile, @buildArgs);
     }
 
     if (system("$make $makeArgs") ne 0) {
@@ -1689,7 +1689,7 @@ sub buildAutotoolsProject($@)
 
     chdir ".." or die;
 
-    if (isGtk()) {
+    if (isGtk() && $buildingWebKit) {
         my $relativeScriptsPath = relativeScriptsDir();
         if (system("$relativeScriptsPath/../gtk/generate-gtkdoc --skip-html")) {
             die "\n gtkdoc did not build without warnings\n";
