@@ -1,3 +1,36 @@
+2011-12-01  Filip Pizlo  <fpizlo@apple.com>
+
+        BitVector isInline check could fail
+        https://bugs.webkit.org/show_bug.cgi?id=70691
+
+        Reviewed by Gavin Barraclough.
+        
+        Switch back to using the high bit as the inline marker, to make
+        all of the bit indexing operations simpler. Computing the size in
+        words and in bytes of a bitvector, using the number of bits as
+        input is error-prone enough; and with the current approach to
+        solving the X86 bug we end up getting it wrong. Making it right
+        seems hard.
+        
+        So instead, to solve the original problem (the high bit may be
+        meaningful on 32-bit systems), the out-of-line storage pointer is
+        right-shifted by 1. Compared to the original BitVector code, this
+        is a much smaller change (just three lines).
+        
+        This solves a bug where the DFG was corrupting its call frame
+        because BitVector lost track of some bits.
+
+        * wtf/BitVector.cpp:
+        (WTF::BitVector::setSlow):
+        (WTF::BitVector::resizeOutOfLine):
+        * wtf/BitVector.h:
+        (WTF::BitVector::quickGet):
+        (WTF::BitVector::quickSet):
+        (WTF::BitVector::quickClear):
+        (WTF::BitVector::makeInlineBits):
+        (WTF::BitVector::isInline):
+        (WTF::BitVector::outOfLineBits):
+
 2011-11-30  Filip Pizlo  <fpizlo@apple.com>
 
         DFG should make it easier to notice node boundaries in disassembly
