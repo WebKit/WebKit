@@ -415,7 +415,7 @@ public:
 
     virtual void computePageRects(const FloatRect& printRect, float headerHeight, float footerHeight, float userScaleFactor, float& outPageHeight)
     {
-        return PrintContext::computePageRects(printRect, headerHeight, footerHeight, userScaleFactor, outPageHeight);
+        PrintContext::computePageRects(printRect, headerHeight, footerHeight, userScaleFactor, outPageHeight);
     }
 
     virtual int pageCount() const

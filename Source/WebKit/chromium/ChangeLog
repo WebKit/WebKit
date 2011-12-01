@@ -1,3 +1,13 @@
+2011-12-01  Kelly Norton  <knorton@google.com>
+
+        More void functions eager to return values in RenderObject & WebFrameImpl
+        https://bugs.webkit.org/show_bug.cgi?id=73571
+
+        Reviewed by Adam Barth.
+
+        * src/WebFrameImpl.cpp:
+        (WebKit::ChromePrintContext::computePageRects):
+
 2011-12-01  Daniel Sievers  <sievers@chromium.org>
 
         [Chromium] Early returns in calculateDrawTransformsAndVisibilityInternal() are not respected by parent.

@@ -711,7 +711,7 @@ public:
     // that rect in view coordinates.
     void computeAbsoluteRepaintRect(LayoutRect& r, bool fixed = false) const
     {
-        return computeRectForRepaint(0, r, fixed);
+        computeRectForRepaint(0, r, fixed);
     }
     // Given a rect in the object's coordinate space, compute a rect suitable for repainting
     // that rect in the coordinate space of repaintContainer.
