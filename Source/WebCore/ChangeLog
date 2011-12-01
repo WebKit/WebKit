@@ -1,3 +1,60 @@
+2011-12-01  Andreas Kling  <kling@webkit.org>
+
+        StyledElement: Clean up inline style accessors.
+        <http://webkit.org/b/73568>
+
+        Reviewed by Antti Koivisto.
+
+        Renamed StyledElement's getInlineStyleDecl() to ensureInlineStyleDecl() to
+        make it clear that it will always return non-null as opposed to inlineStyleDecl().
+
+        Also updated call sites to store the return value in a CSSInlineStyleDeclaration*
+        rather than a CSSMutableStyleDeclaration*, and reduced scoping of temporaries
+        in some cases.
+
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::createInlineStyleDecl):
+        (WebCore::StyledElement::destroyInlineStyleDecl):
+        (WebCore::StyledElement::parseMappedAttribute):
+        (WebCore::StyledElement::ensureInlineStyleDecl):
+        (WebCore::StyledElement::style):
+        (WebCore::StyledElement::copyNonAttributeProperties):
+        (WebCore::StyledElement::addSubresourceAttributeURLs):
+        * dom/StyledElement.h:
+        (WebCore::StyledElement::inlineStyleDecl):
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::applyRelativeFontStyleChange):
+        (WebCore::ApplyStyleCommand::removeEmbeddingUpToEnclosingBlock):
+        (WebCore::ApplyStyleCommand::applyInlineStyleToNodeRange):
+        (WebCore::ApplyStyleCommand::addBlockStyle):
+        (WebCore::ApplyStyleCommand::addInlineStyleIfNeeded):
+        * editing/DeleteButtonController.cpp:
+        (WebCore::DeleteButtonController::createDeletionUI):
+        (WebCore::DeleteButtonController::show):
+        (WebCore::DeleteButtonController::hide):
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::removeRedundantStylesAndKeepStyleSpanInline):
+        (WebCore::ReplaceSelectionCommand::handleStyleSpans):
+        * html/HTMLTextFormControlElement.cpp:
+        (WebCore::HTMLTextFormControlElement::updatePlaceholderVisibility):
+        * html/ValidationMessage.cpp:
+        (WebCore::adjustBubblePosition):
+        * html/shadow/MediaControlElements.cpp:
+        (WebCore::MediaControlElement::show):
+        (WebCore::MediaControlElement::hide):
+        (WebCore::MediaControlPanelElement::setPosition):
+        (WebCore::MediaControlPanelElement::resetPosition):
+        (WebCore::MediaControlPanelElement::makeOpaque):
+        (WebCore::MediaControlPanelElement::makeTransparent):
+        (WebCore::MediaControlInputElement::show):
+        (WebCore::MediaControlInputElement::hide):
+        * html/shadow/MeterShadowElement.cpp:
+        (WebCore::MeterValueElement::setWidthPercentage):
+        * html/shadow/ProgressShadowElement.cpp:
+        (WebCore::ProgressValueElement::setWidthPercentage):
+        * html/shadow/SliderThumbElement.cpp:
+        (WebCore::TrackLimiterElement::create):
+
 2011-12-01  Kelly Norton  <knorton@google.com>
 
         More void functions eager to return values in RenderObject & WebFrameImpl

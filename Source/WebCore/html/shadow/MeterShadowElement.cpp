@@ -93,7 +93,7 @@ const AtomicString& MeterValueElement::shadowPseudoId() const
 
 void MeterValueElement::setWidthPercentage(double width)
 {
-    getInlineStyleDecl()->setProperty(CSSPropertyWidth, width, CSSPrimitiveValue::CSS_PERCENTAGE);
+    ensureInlineStyleDecl()->setProperty(CSSPropertyWidth, width, CSSPrimitiveValue::CSS_PERCENTAGE);
 }
 
 

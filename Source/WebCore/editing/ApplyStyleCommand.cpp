@@ -385,7 +385,7 @@ void ApplyStyleCommand::applyRelativeFontStyleChange(EditingStyle* style)
         }
         lastStyledNode = node;
 
-        CSSMutableStyleDeclaration* inlineStyleDecl = element->getInlineStyleDecl();
+        CSSInlineStyleDeclaration* inlineStyleDecl = element->ensureInlineStyleDecl();
         float currentFontSize = computedFontSize(node);
         float desiredFontSize = max(MinimumFontSize, startingFontSizes.get(node) + style->fontSizeDelta());
         RefPtr<CSSValue> value = inlineStyleDecl->getPropertyCSSValue(CSSPropertyFontSize);
@@ -512,7 +512,7 @@ void ApplyStyleCommand::removeEmbeddingUpToEnclosingBlock(Node* node, Node* unsp
             // other attributes, like we (should) do with B and I elements.
             removeNodeAttribute(element, dirAttr);
         } else {
-            RefPtr<CSSMutableStyleDeclaration> inlineStyle = element->getInlineStyleDecl()->copy();
+            RefPtr<CSSMutableStyleDeclaration> inlineStyle = element->ensureInlineStyleDecl()->copy();
             inlineStyle->setProperty(CSSPropertyUnicodeBidi, CSSValueNormal);
             inlineStyle->removeProperty(CSSPropertyDirection);
             setNodeAttribute(element, styleAttr, inlineStyle->cssText());
@@ -726,7 +726,7 @@ void ApplyStyleCommand::applyInlineStyleToNodeRange(EditingStyle* style, Node* n
                 break;
             // Add to this element's inline style and skip over its contents.
             HTMLElement* element = toHTMLElement(node);
-            RefPtr<CSSMutableStyleDeclaration> inlineStyle = element->getInlineStyleDecl()->copy();
+            RefPtr<CSSMutableStyleDeclaration> inlineStyle = element->ensureInlineStyleDecl()->copy();
             inlineStyle->merge(style->style());
             setNodeAttribute(element, styleAttr, inlineStyle->cssText());
             next = node->traverseNextSibling();
@@ -1313,8 +1313,7 @@ void ApplyStyleCommand::addBlockStyle(const StyleChange& styleChange, HTMLElemen
         return;
         
     String cssText = styleChange.cssStyle();
-    CSSMutableStyleDeclaration* decl = block->inlineStyleDecl();
-    if (decl)
+    if (CSSMutableStyleDeclaration* decl = block->inlineStyleDecl())
         cssText += decl->cssText();
     setNodeAttribute(block, styleAttr, cssText);
 }
@@ -1379,8 +1378,7 @@ void ApplyStyleCommand::addInlineStyleIfNeeded(EditingStyle* style, PassRefPtr<N
 
     if (styleChange.cssStyle().length()) {
         if (styleContainer) {
-            CSSMutableStyleDeclaration* existingStyle = styleContainer->inlineStyleDecl();
-            if (existingStyle)
+            if (CSSInlineStyleDeclaration* existingStyle = styleContainer->inlineStyleDecl())
                 setNodeAttribute(styleContainer, styleAttr, existingStyle->cssText() + styleChange.cssStyle());
             else
                 setNodeAttribute(styleContainer, styleAttr, styleChange.cssStyle());

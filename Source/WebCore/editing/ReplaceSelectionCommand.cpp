@@ -529,9 +529,9 @@ void ReplaceSelectionCommand::removeRedundantStylesAndKeepStyleSpanInline(Insert
             // results. We already know one issue because td elements ignore their display property
             // in quirks mode (which Mail.app is always in). We should look for an alternative.
             if (isBlock(element))
-                element->getInlineStyleDecl()->setProperty(CSSPropertyDisplay, CSSValueInline);
+                element->ensureInlineStyleDecl()->setProperty(CSSPropertyDisplay, CSSValueInline);
             if (element->renderer() && element->renderer()->style()->isFloating())
-                element->getInlineStyleDecl()->setProperty(CSSPropertyFloat, CSSValueNone);
+                element->ensureInlineStyleDecl()->setProperty(CSSPropertyFloat, CSSValueNone);
         }
     }
 }
@@ -646,7 +646,7 @@ void ReplaceSelectionCommand::handleStyleSpans(InsertedNodes& insertedNodes)
     if (!wrappingStyleSpan)
         return;
 
-    RefPtr<EditingStyle> style = EditingStyle::create(wrappingStyleSpan->getInlineStyleDecl());
+    RefPtr<EditingStyle> style = EditingStyle::create(wrappingStyleSpan->ensureInlineStyleDecl());
     ContainerNode* context = wrappingStyleSpan->parentNode();
 
     // If Mail wraps the fragment with a Paste as Quotation blockquote, or if you're pasting into a quoted region,

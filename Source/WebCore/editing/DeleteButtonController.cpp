@@ -204,7 +204,7 @@ void DeleteButtonController::createDeletionUI()
     RefPtr<HTMLDivElement> container = HTMLDivElement::create(m_target->document());
     container->setIdAttribute(containerElementIdentifier);
 
-    CSSMutableStyleDeclaration* style = container->getInlineStyleDecl();
+    CSSInlineStyleDeclaration* style = container->ensureInlineStyleDecl();
     style->setProperty(CSSPropertyWebkitUserDrag, CSSValueNone);
     style->setProperty(CSSPropertyWebkitUserSelect, CSSValueNone);
     style->setProperty(CSSPropertyWebkitUserModify, CSSValueReadOnly);
@@ -222,7 +222,7 @@ void DeleteButtonController::createDeletionUI()
     const int borderWidth = 4;
     const int borderRadius = 6;
 
-    style = outline->getInlineStyleDecl();
+    style = outline->ensureInlineStyleDecl();
     style->setProperty(CSSPropertyPosition, CSSValueAbsolute);
     style->setProperty(CSSPropertyZIndex, String::number(-1000000));
     style->setProperty(CSSPropertyTop, String::number(-borderWidth - m_target->renderBox()->borderTop()) + "px");
@@ -246,7 +246,7 @@ void DeleteButtonController::createDeletionUI()
     const int buttonHeight = 30;
     const int buttonBottomShadowOffset = 2;
 
-    style = button->getInlineStyleDecl();
+    style = button->ensureInlineStyleDecl();
     style->setProperty(CSSPropertyPosition, CSSValueAbsolute);
     style->setProperty(CSSPropertyZIndex, String::number(1000000));
     style->setProperty(CSSPropertyTop, String::number((-buttonHeight / 2) - m_target->renderBox()->borderTop() - (borderWidth / 2) + buttonBottomShadowOffset) + "px");
@@ -309,12 +309,12 @@ void DeleteButtonController::show(HTMLElement* element)
     }
 
     if (m_target->renderer()->style()->position() == StaticPosition) {
-        m_target->getInlineStyleDecl()->setProperty(CSSPropertyPosition, CSSValueRelative);
+        m_target->ensureInlineStyleDecl()->setProperty(CSSPropertyPosition, CSSValueRelative);
         m_wasStaticPositioned = true;
     }
 
     if (m_target->renderer()->style()->hasAutoZIndex()) {
-        m_target->getInlineStyleDecl()->setProperty(CSSPropertyZIndex, "0");
+        m_target->ensureInlineStyleDecl()->setProperty(CSSPropertyZIndex, "0");
         m_wasAutoZIndex = true;
     }
 }
@@ -330,9 +330,9 @@ void DeleteButtonController::hide()
 
     if (m_target) {
         if (m_wasStaticPositioned)
-            m_target->getInlineStyleDecl()->setProperty(CSSPropertyPosition, CSSValueStatic);
+            m_target->ensureInlineStyleDecl()->setProperty(CSSPropertyPosition, CSSValueStatic);
         if (m_wasAutoZIndex)
-            m_target->getInlineStyleDecl()->setProperty(CSSPropertyZIndex, CSSValueAuto);
+            m_target->ensureInlineStyleDecl()->setProperty(CSSPropertyZIndex, CSSValueAuto);
     }
 
     m_wasStaticPositioned = false;

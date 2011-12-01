@@ -129,6 +129,7 @@ PassRefPtr<Attribute> StyledElement::createAttribute(const QualifiedName& name, 
 
 void StyledElement::createInlineStyleDecl()
 {
+    ASSERT(!m_inlineStyleDecl);
     m_inlineStyleDecl = CSSInlineStyleDeclaration::create();
     m_inlineStyleDecl->setElement(this);
     m_inlineStyleDecl->setStrictParsing(isHTMLElement() && !document()->inQuirksMode());
@@ -136,10 +137,10 @@ void StyledElement::createInlineStyleDecl()
 
 void StyledElement::destroyInlineStyleDecl()
 {
-    if (m_inlineStyleDecl) {
-        m_inlineStyleDecl->setElement(0);
-        m_inlineStyleDecl = 0;
-    }
+    if (!m_inlineStyleDecl)
+        return;
+    m_inlineStyleDecl->setElement(0);
+    m_inlineStyleDecl = 0;
 }
 
 void StyledElement::attributeChanged(Attribute* attr, bool preserveDecls)
@@ -240,13 +241,13 @@ void StyledElement::parseMappedAttribute(Attribute* attr)
         if (attr->isNull())
             destroyInlineStyleDecl();
         else if (document()->contentSecurityPolicy()->allowInlineStyle())
-            getInlineStyleDecl()->parseDeclaration(attr->value());
+            ensureInlineStyleDecl()->parseDeclaration(attr->value());
         setIsStyleAttributeValid();
         setNeedsStyleRecalc();
     }
 }
 
-CSSInlineStyleDeclaration* StyledElement::getInlineStyleDecl()
+CSSInlineStyleDeclaration* StyledElement::ensureInlineStyleDecl()
 {
     if (!m_inlineStyleDecl)
         createInlineStyleDecl();
@@ -255,7 +256,7 @@ CSSInlineStyleDeclaration* StyledElement::getInlineStyleDecl()
 
 CSSStyleDeclaration* StyledElement::style()
 {
-    return getInlineStyleDecl();
+    return ensureInlineStyleDecl();
 }
 
 void StyledElement::addCSSProperty(Attribute* attribute, int id, const String &value)
@@ -436,7 +437,7 @@ void StyledElement::copyNonAttributeProperties(const Element* sourceElement)
     if (!source->inlineStyleDecl())
         return;
 
-    CSSInlineStyleDeclaration* inlineStyle = getInlineStyleDecl();
+    CSSInlineStyleDeclaration* inlineStyle = ensureInlineStyleDecl();
     inlineStyle->copyPropertiesFrom(*source->inlineStyleDecl());
     inlineStyle->setStrictParsing(source->inlineStyleDecl()->useStrictParsing());
 
@@ -448,8 +449,9 @@ void StyledElement::copyNonAttributeProperties(const Element* sourceElement)
 
 void StyledElement::addSubresourceAttributeURLs(ListHashSet<KURL>& urls) const
 {
-    if (CSSInlineStyleDeclaration* style = inlineStyleDecl())
-        style->addSubresourceStyleURLs(urls);
+    if (!m_inlineStyleDecl)
+        return;
+    m_inlineStyleDecl->addSubresourceStyleURLs(urls);
 }
 
 }

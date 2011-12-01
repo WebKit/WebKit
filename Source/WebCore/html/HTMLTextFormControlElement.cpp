@@ -153,7 +153,7 @@ void HTMLTextFormControlElement::updatePlaceholderVisibility(bool placeholderVal
     if (!placeholder)
         return;
     ExceptionCode ec = 0;
-    placeholder->getInlineStyleDecl()->setProperty(CSSPropertyVisibility, placeholderShouldBeVisible() ? "visible" : "hidden", ec);
+    placeholder->ensureInlineStyleDecl()->setProperty(CSSPropertyVisibility, placeholderShouldBeVisible() ? "visible" : "hidden", ec);
     ASSERT(!ec);
 }
 
