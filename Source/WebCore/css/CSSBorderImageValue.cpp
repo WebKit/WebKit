@@ -26,9 +26,11 @@
 
 namespace WebCore {
 
-CSSBorderImageValue::CSSBorderImageValue(PassRefPtr<CSSValue> image, PassRefPtr<CSSBorderImageSliceValue> slice, PassRefPtr<CSSValue> repeat)
+CSSBorderImageValue::CSSBorderImageValue(PassRefPtr<CSSValue> image, PassRefPtr<CSSBorderImageSliceValue> imageSlice,
+    PassRefPtr<CSSValue> borderSlice, PassRefPtr<CSSValue> repeat)
     : m_image(image)
-    , m_slice(slice)
+    , m_imageSlice(imageSlice)
+    , m_borderSlice(borderSlice)
     , m_repeat(repeat)
 {
 }
@@ -44,11 +46,19 @@ String CSSBorderImageValue::cssText() const
     text += " ";
 
     // Now the slices.
-    text += m_slice->cssText();
+    text += m_imageSlice->cssText();
 
-    // Now the keywords.
-    text += " ";
-    text += m_repeat->cssText();
+    // Now the border widths.
+    if (m_borderSlice) {
+        text += " / ";
+        text += m_borderSlice->cssText();
+    }
+
+    if (m_repeat) {
+        // Now the keywords.
+        text += " ";
+        text += m_repeat->cssText();
+    }
 
     return text;
 }

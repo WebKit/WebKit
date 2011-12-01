@@ -194,6 +194,13 @@ void CSSPrimitiveValue::init(PassRefPtr<Rect> r)
     m_value.rect = r.releaseRef();
 }
 
+void CSSPrimitiveValue::init(PassRefPtr<Quad> quad)
+{
+    m_type = CSS_QUAD;
+    m_hasCachedCSSText = false;
+    m_value.quad = quad.releaseRef();
+}
+
 #if ENABLE(DASHBOARD_SUPPORT)
 void CSSPrimitiveValue::init(PassRefPtr<DashboardRegion> r)
 {
@@ -230,6 +237,9 @@ void CSSPrimitiveValue::cleanup()
             break;
         case CSS_RECT:
             m_value.rect->deref();
+            break;
+        case CSS_QUAD:
+            m_value.quad->deref();
             break;
         case CSS_PAIR:
             m_value.pair->deref();
@@ -563,6 +573,17 @@ Rect* CSSPrimitiveValue::getRectValue(ExceptionCode& ec) const
     return m_value.rect;
 }
 
+Quad* CSSPrimitiveValue::getQuadValue(ExceptionCode& ec) const
+{
+    ec = 0;
+    if (m_type != CSS_QUAD) {
+        ec = INVALID_ACCESS_ERR;
+        return 0;
+    }
+
+    return m_value.quad;
+}
+
 PassRefPtr<RGBColor> CSSPrimitiveValue::getRGBColorValue(ExceptionCode& ec) const
 {
     ec = 0;
@@ -747,6 +768,27 @@ String CSSPrimitiveValue::cssText() const
             text = String::adopt(result);
             break;
         }
+        case CSS_QUAD: {
+            Quad* quadVal = getQuadValue();
+            Vector<UChar> result;
+            result.reserveInitialCapacity(32);
+            append(result, quadVal->top()->cssText());
+            if (quadVal->right() != quadVal->top() || quadVal->bottom() != quadVal->top() || quadVal->left() != quadVal->top()) {
+                result.append(' ');
+                append(result, quadVal->right()->cssText());
+                if (quadVal->bottom() != quadVal->top() || quadVal->right() != quadVal->left()) {
+                    result.append(' ');
+                    append(result, quadVal->bottom()->cssText());
+                    if (quadVal->left() != quadVal->right()) {
+                        result.append(' ');
+                        append(result, quadVal->left()->cssText());
+                    }
+                }
+            }
+            
+            text = String::adopt(result);
+            break;
+        }
         case CSS_RGBCOLOR:
         case CSS_PARSER_HEXCOLOR: {
             DEFINE_STATIC_LOCAL(const String, commaSpace, (", "));
@@ -783,8 +825,10 @@ String CSSPrimitiveValue::cssText() const
         }
         case CSS_PAIR:
             text = m_value.pair->first()->cssText();
-            text += " ";
-            text += m_value.pair->second()->cssText();
+            if (m_value.pair->second() != m_value.pair->first()) {
+                text += " ";
+                text += m_value.pair->second()->cssText();
+            }
             break;
 #if ENABLE(DASHBOARD_SUPPORT)
         case CSS_DASHBOARD_REGION:

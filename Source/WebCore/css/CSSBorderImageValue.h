@@ -31,9 +31,10 @@ class Rect;
 
 class CSSBorderImageValue : public CSSValue {
 public:
-    static PassRefPtr<CSSBorderImageValue> create(PassRefPtr<CSSValue> image, PassRefPtr<CSSBorderImageSliceValue> slice, PassRefPtr<CSSValue> repeat)
+    static PassRefPtr<CSSBorderImageValue> create(PassRefPtr<CSSValue> image, PassRefPtr<CSSBorderImageSliceValue> imageSlice,
+        PassRefPtr<CSSValue> borderSlice, PassRefPtr<CSSValue> repeat)
     {
-        return adoptRef(new CSSBorderImageValue(image, slice, repeat));
+        return adoptRef(new CSSBorderImageValue(image, imageSlice, borderSlice, repeat));
     }
     virtual ~CSSBorderImageValue();
 
@@ -48,13 +49,17 @@ public:
 
     // These four values are used to make "cuts" in the image.  They can be numbers
     // or percentages.
-    RefPtr<CSSBorderImageSliceValue> m_slice;
+    RefPtr<CSSBorderImageSliceValue> m_imageSlice;
+
+    // These four values are used to make "cuts" in the border image drawing area.
+    // They can be numbers, percentages or lengths.
+    RefPtr<CSSValue> m_borderSlice;
 
     // Values for how to handle the scaling/stretching/tiling of the image slices.
     RefPtr<CSSValue> m_repeat;
 
 private:
-    CSSBorderImageValue(PassRefPtr<CSSValue> image, PassRefPtr<CSSBorderImageSliceValue>, PassRefPtr<CSSValue> repeat);
+    CSSBorderImageValue(PassRefPtr<CSSValue> image, PassRefPtr<CSSBorderImageSliceValue>, PassRefPtr<CSSValue> borderSlice, PassRefPtr<CSSValue> repeat);
     virtual bool isBorderImageValue() const { return true; }
 };
 
