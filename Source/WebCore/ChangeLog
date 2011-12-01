@@ -1,3 +1,16 @@
+2011-12-01  Andreas Kling  <kling@webkit.org>
+
+        CSSMutableStyleDeclaration: Unnecessary double hash lookup in construction.
+        <http://webkit.org/b/73564>
+
+        Reviewed by Antti Koivisto.
+
+        Use HashMap::find() instead of contains() followed by get() on
+        successful lookup.
+
+        * css/CSSMutableStyleDeclaration.cpp:
+        (WebCore::CSSMutableStyleDeclaration::CSSMutableStyleDeclaration):
+
 2011-11-30  Benjamin Poulain  <benjamin@webkit.org>
 
         URLs are encoded in UTF-8, then decoded as if they are Latin1

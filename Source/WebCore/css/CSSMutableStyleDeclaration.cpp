@@ -137,11 +137,14 @@ CSSMutableStyleDeclaration::CSSMutableStyleDeclaration(CSSRule* parent, const CS
         const CSSProperty *property = properties[i];
         ASSERT(property);
         bool important = property->isImportant();
-        if (candidates.contains(property->id())) {
-            if (!important && candidates.get(property->id()))
+
+        HashMap<int, bool>::iterator it = candidates.find(property->id());
+        if (it != candidates.end()) {
+            if (!important && it->second)
                 continue;
             removeProperty(property->id(), false, false);
         }
+
         m_properties.append(*property);
         candidates.set(property->id(), important);
     }
