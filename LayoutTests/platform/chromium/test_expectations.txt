@@ -698,7 +698,7 @@ BUGWK73510 : editing/pasteboard/paste-without-nesting.html = TEXT
 // Plugin tests
 // -----------------------------------------------------------------
 
-BUGWK69791 WIN LINUX : plugins/iframe-plugin-bgcolor.html = TEXT
+BUGWK69791 : plugins/iframe-plugin-bgcolor.html = TEXT TIMEOUT PASS
 
 BUGCR21841 MAC WIN DEBUG : plugins/destroy-during-npp-new.html = PASS CRASH
 
@@ -3804,3 +3804,4 @@ BUGWK73517 WIN DEBUG : inspector/debugger/debugger-activation-crash2.html = CRAS
 BUGWK73517 WIN DEBUG : inspector/debugger/debugger-set-breakpoint-regex.html = CRASH TIMEOUT TEXT
 BUGWK73517 WIN DEBUG : inspector/profiler/detailed-heapshots-dominators-expansion-preserved-when-sorting.html = CRASH
 BUGWK73518 DEBUG : fast/forms/select-popup-pagekeys.html = CRASH
+BUGWK73549 : fast/text/international/hebrew-vowels.html = IMAGE+TEXT PASS
