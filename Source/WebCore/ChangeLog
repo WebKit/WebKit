@@ -1,3 +1,12 @@
+2011-12-01  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: [Styles] Exclamation mark hint ignores property case
+        https://bugs.webkit.org/show_bug.cgi?id=73535
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/StylesSidebarPane.js:
+
 2011-12-01  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: fix dedicated workers inspection (undefined is not an object).
