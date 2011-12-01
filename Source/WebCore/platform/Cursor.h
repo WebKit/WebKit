@@ -187,7 +187,6 @@ namespace WebCore {
     };
 
     IntPoint determineHotSpot(Image*, const IntPoint& specifiedHotSpot);
-    const char* nameForCursorType(Cursor::Type);
     
     const Cursor& pointerCursor();
     const Cursor& crossCursor();

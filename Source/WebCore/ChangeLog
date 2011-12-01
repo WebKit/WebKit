@@ -1,3 +1,17 @@
+2011-12-01  Benjamin Poulain  <bpoulain@apple.com>
+
+        Get rid of the unused function nameForCursorType()
+        https://bugs.webkit.org/show_bug.cgi?id=73529
+
+        Reviewed by Joseph Pecoraro.
+
+        The function nameForCursorType was introduced in r63339 and has not been used anywhere
+        since that commit.
+
+        * WebCore.exp.in:
+        * platform/Cursor.cpp:
+        * platform/Cursor.h:
+
 2011-12-01  Andreas Kling  <kling@webkit.org>
 
         CSSMutableStyleDeclaration: Unnecessary double hash lookup in construction.
