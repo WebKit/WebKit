@@ -286,8 +286,7 @@ void LayerTreeHostProxy::syncLayerParameters(const WebLayerInfo& layerInfo)
         switch (anim.operation) {
         case WebKit::WebLayerAnimation::AddAnimation: {
             const IntSize boxSize = anim.boxSize;
-            double offset = WTF::currentTime() - anim.startTime;
-            layer->addAnimation(anim.keyframeList, boxSize, anim.animation.get(), anim.name, offset);
+            layer->addAnimation(anim.keyframeList, boxSize, anim.animation.get(), anim.name, anim.startTime);
             break;
         }
         case WebKit::WebLayerAnimation::RemoveAnimation:

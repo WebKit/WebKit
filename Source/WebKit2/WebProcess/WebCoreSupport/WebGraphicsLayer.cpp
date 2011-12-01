@@ -287,7 +287,7 @@ bool WebGraphicsLayer::addAnimation(const KeyframeValueList& valueList, const In
     webAnimation.operation = WebLayerAnimation::AddAnimation;
     webAnimation.boxSize = boxSize;
     webAnimation.animation = Animation::create(anim);
-    webAnimation.startTime = WTF::currentTime() - timeOffset;
+    webAnimation.startTime = timeOffset;
     m_layerInfo.animations.append(webAnimation);
 
     m_hasPendingAnimations = true;

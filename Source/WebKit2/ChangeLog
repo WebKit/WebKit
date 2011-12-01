@@ -1,3 +1,26 @@
+2011-11-30  Igor Oliveira  <igor.oliveira@openbossa.org>
+
+        [WK2][Qt] AC animation startTime is wrong
+
+        [WK2][Qt] AC animation startTime is wrong
+        https://bugs.webkit.org/show_bug.cgi?id=73467
+
+        When WebProcess sends animation information to UIProcess, It uses the 
+        current time(WTF::currentTime) minus the timeOffset to set the start time 
+        animation. 
+
+        But there is a latency between the WebProcess and UIProcess communication 
+        and sometimes the animation transition starts late.
+
+        This patch fixes the bug moving the startTime calculation to UIProcess.
+
+        Reviewed by Noam Rosenthal.
+
+        * UIProcess/qt/LayerTreeHostProxyQt.cpp:
+        (WebKit::LayerTreeHostProxy::syncLayerParameters):
+        * WebProcess/WebCoreSupport/WebGraphicsLayer.cpp:
+        (WebCore::WebGraphicsLayer::addAnimation):
+
 2011-11-30  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Buildfix for generating forwarding headers
