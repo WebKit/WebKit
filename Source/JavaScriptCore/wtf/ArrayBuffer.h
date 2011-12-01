@@ -58,13 +58,13 @@ private:
     friend class ArrayBuffer;
 
     static inline void tryAllocate(unsigned numElements, unsigned elementByteSize, ArrayBufferContents&);
-    void transfer(ArrayBufferContents& other) 
+    void transfer(ArrayBufferContents& other)
     {
         ASSERT(!other.m_data);
         other.m_data = m_data;
         other.m_sizeInBytes = m_sizeInBytes;
-        m_data = 0; 
-        m_sizeInBytes = 0; 
+        m_data = 0;
+        m_sizeInBytes = 0;
     }
 
     void* m_data;
@@ -88,7 +88,8 @@ public:
     void addView(ArrayBufferView*);
     void removeView(ArrayBufferView*);
 
-    bool transfer(ArrayBufferContents&, Vector<ArrayBufferView*>& neuteredViews);
+    bool transfer(ArrayBufferContents&, Vector<RefPtr<ArrayBufferView> >& neuteredViews);
+    bool isNeutered() { return !m_contents.m_data; }
 
     ~ArrayBuffer() { }
 

@@ -33,7 +33,7 @@
 
 namespace WTF {
 
-bool ArrayBuffer::transfer(ArrayBufferContents& result, Vector<ArrayBufferView*>& neuteredViews)
+bool ArrayBuffer::transfer(ArrayBufferContents& result, Vector<RefPtr<ArrayBufferView> >& neuteredViews)
 {
     RefPtr<ArrayBuffer> keepAlive(this);
 

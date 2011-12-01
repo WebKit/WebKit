@@ -2503,3 +2503,6 @@ inspector/extensions/extensions-events.html
 # REGRESSION(r101268):fast/block/child-not-removed-from-parent-lineboxes-crash.html crashes in Debug
 # https://bugs.webkit.org/show_bug.cgi?id=73250
 fast/block/child-not-removed-from-parent-lineboxes-crash.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=73493
+fast/canvas/webgl/arraybuffer-transfer-of-control.html

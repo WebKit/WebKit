@@ -1,3 +1,19 @@
+2011-11-30  Dmitry Lomov  <dslomov@google.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=73503
+        [Chromium][V8] Implement ArrayBuffer transfer in chromium.
+        Portions of this patch come from Luke Zarko.
+
+        Reviewed by David Levin.
+
+        * wtf/ArrayBuffer.cpp:
+        (WTF::ArrayBuffer::transfer): Changed prototype from pointers to RefPtr.
+        * wtf/ArrayBuffer.h:
+        (WTF::ArrayBufferContents::transfer): Changed prototype from pointers to RefPtr.
+        (WTF::ArrayBuffer::isNeutered):
+        * wtf/TypedArrayBase.h:
+        (WTF::TypedArrayBase::neuter):
+
 2011-12-01  Chao-ying Fu  <fu@mips.com>
 
         MacroAssemblerMIPS does not implement readCallTarget

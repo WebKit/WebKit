@@ -112,6 +112,12 @@ protected:
         return create<Subclass>(buffer(), offset, length);
     }
 
+    virtual void neuter()
+    {
+        ArrayBufferView::neuter();
+        m_length = 0;
+    }
+
     // We do not want to have to access this via a virtual function in subclasses,
     // which is why it is protected rather than private.
     unsigned m_length;

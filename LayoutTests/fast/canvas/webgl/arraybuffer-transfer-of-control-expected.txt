@@ -1,0 +1,50 @@
+Test transfer of control semantics for ArrayBuffers.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS sanity check
+PASS raw ArrayBuffer
+PASS sending buffers is sane even if cloning doesn't special-case
+PASS send every view
+PASS transfer list multiple
+PASS transfer neuters unmentioned
+PASS raw Int32
+PASS raw Uint32
+PASS raw Int8
+PASS raw Uint8
+PASS raw Int16
+PASS raw Uint16
+PASS raw Float32
+PASS raw Float64
+PASS raw DataView
+PASS send view, buffer for Int32
+PASS send view, buffer for Uint32
+PASS send view, buffer for Int8
+PASS send view, buffer for Uint8
+PASS send view, buffer for Int16
+PASS send view, buffer for Uint16
+PASS send view, buffer for Float32
+PASS send view, buffer for Float64
+PASS send view, buffer for DataView
+PASS send buffer, view for Int32
+PASS send buffer, view for Uint32
+PASS send buffer, view for Int8
+PASS send buffer, view for Uint8
+PASS send buffer, view for Int16
+PASS send buffer, view for Uint16
+PASS send buffer, view for Float32
+PASS send buffer, view for Float64
+PASS send buffer, view for DataView
+PASS squash unrelated views for Int32
+PASS squash unrelated views for Uint32
+PASS squash unrelated views for Int8
+PASS squash unrelated views for Uint8
+PASS squash unrelated views for Int16
+PASS squash unrelated views for Uint16
+PASS squash unrelated views for Float32
+PASS squash unrelated views for Float64
+PASS squash unrelated views for DataView
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -60,6 +60,24 @@ tryPostMessageFunction(window.webkitPostMessage, channel4.port1, [channel4.port1
 var channel5 = new MessageChannel;
 tryPostMessageFunction(window.webkitPostMessage, [channel5.port1, channel5.port2], [channel5.port1, channel5.port2], '*');
 
+var arrayBuffer = new ArrayBuffer(30);
+var int8View = new Int8Array(arrayBuffer, 2, 10);
+tryPostMessageFunction(window.webkitPostMessage, arrayBuffer, [arrayBuffer], '*');
+if (!(arrayBuffer.byteLength === 0)) {
+    console.innerHTML += "FAIL: arrayBuffer not neutered; byteLength = " + arrayBuffer.byteLength + "<br>";
+}
+else {
+    console.innerHTML += "PASS: arrayBuffer neutered<br>";
+}
+
+if (!(int8View.length == 0)) {
+    console.innerHTML += "FAIL: view was not neutered; length = " + int8View.length + "<br>";
+}
+else {
+    console.innerHTML += "PASS: view neutered<br>"
+}
+
+
 tryPostMessageFunction(window.postMessage, 'done', '*');
 </script>
 </body>
