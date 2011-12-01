@@ -532,7 +532,7 @@ TEST_F(LayerChromiumTest, getRootLayerAfterTreeManipulations)
 TEST_F(LayerChromiumTest, checkSetNeedsDisplayCausesCorrectBehavior)
 {
     // The semantics for setNeedsDisplay which are tested here:
-    //   1. creates a unioned dirtyRect appropriately.
+    //   1. sets needsDisplay flag appropriately.
     //   2. indirectly calls notifySyncRequired, exactly once for each call to setNeedsDisplay.
 
     MockLayerDelegate mockDelegate;
@@ -544,40 +544,45 @@ TEST_F(LayerChromiumTest, checkSetNeedsDisplayCausesCorrectBehavior)
     FloatRect emptyDirtyRect = FloatRect(40.0f, 45.0f, 0, 0);
     FloatRect outOfBoundsDirtyRect = FloatRect(400.0f, 405.0f, 500.0f, 502.0f);
 
-    // Before anything, testLayer should have an empty dirty rect.
-    EXPECT_TRUE(testLayer->dirtyRect().isEmpty());
+    // Before anything, testLayer should not be dirty.
+    EXPECT_FALSE(testLayer->needsDisplay());
 
     // This is just initialization, but notifySyncRequired behavior is verified anyway to avoid warnings.
     EXECUTE_AND_VERIFY_NOTIFY_SYNC_BEHAVIOR(mockDelegate, 1, testLayer->setBounds(testBounds));
-    EXECUTE_AND_VERIFY_NOTIFY_SYNC_BEHAVIOR(mockDelegate, 0, testLayer->resetNeedsDisplay());
-    EXPECT_TRUE(testLayer->dirtyRect().isEmpty());
+    testLayer = LayerChromium::create(&mockDelegate);
+    EXPECT_FALSE(testLayer->needsDisplay());
 
     // The real test begins here.
 
-    // Case 1: basic
-    EXECUTE_AND_VERIFY_NOTIFY_SYNC_BEHAVIOR(mockDelegate, 1, testLayer->setNeedsDisplay(dirty1));
-    EXPECT_FLOAT_RECT_EQ(dirty1, testLayer->dirtyRect());
+    // Case 1: needsDisplay flag should not change because of an empty dirty rect.
+    EXECUTE_AND_VERIFY_NOTIFY_SYNC_BEHAVIOR(mockDelegate, 1, testLayer->setNeedsDisplayRect(emptyDirtyRect));
+    EXPECT_FALSE(testLayer->needsDisplay());
 
-    // Case 2: a second dirty rect should be unioned of dirty1 and dirty2.
-    EXECUTE_AND_VERIFY_NOTIFY_SYNC_BEHAVIOR(mockDelegate, 1, testLayer->setNeedsDisplay(dirty2));
-    EXPECT_FLOAT_RECT_EQ(FloatRect(10.0f, 15.0f, 13.0f, 14.0f), testLayer->dirtyRect());
+    // Case 2: basic.
+    EXECUTE_AND_VERIFY_NOTIFY_SYNC_BEHAVIOR(mockDelegate, 1, testLayer->setNeedsDisplayRect(dirty1));
+    EXPECT_TRUE(testLayer->needsDisplay());
 
-    // Case 3: dirty rect should not change because of an empty dirty rect.
-    EXECUTE_AND_VERIFY_NOTIFY_SYNC_BEHAVIOR(mockDelegate, 1, testLayer->setNeedsDisplay(emptyDirtyRect));
-    EXPECT_FLOAT_RECT_EQ(FloatRect(10.0f, 15.0f, 13.0f, 14.0f), testLayer->dirtyRect());
+    // Case 3: a second dirty rect.
+    EXECUTE_AND_VERIFY_NOTIFY_SYNC_BEHAVIOR(mockDelegate, 1, testLayer->setNeedsDisplayRect(dirty2));
+    EXPECT_TRUE(testLayer->needsDisplay());
 
-    // Case 4: LayerChromium should accept dirty rects that go beyond its bounds
-    EXECUTE_AND_VERIFY_NOTIFY_SYNC_BEHAVIOR(mockDelegate, 1, testLayer->setNeedsDisplay(outOfBoundsDirtyRect));
-    EXPECT_FLOAT_RECT_EQ(FloatRect(10.0f, 15.0f, 890.0f, 892.0f), testLayer->dirtyRect());
+    // Case 4: LayerChromium should accept dirty rects that go beyond its bounds.
+    testLayer = LayerChromium::create(&mockDelegate);
+    EXECUTE_AND_VERIFY_NOTIFY_SYNC_BEHAVIOR(mockDelegate, 1, testLayer->setBounds(testBounds));
+    EXECUTE_AND_VERIFY_NOTIFY_SYNC_BEHAVIOR(mockDelegate, 1, testLayer->setNeedsDisplayRect(outOfBoundsDirtyRect));
+    EXPECT_TRUE(testLayer->needsDisplay());
 
-    // Case 5: setNeedsDisplay() without the dirty rect arg should cause the entire bounds to be dirty,
-    //         overriding any existing dirty rect.
+    // Case 5: setNeedsDisplay() without the dirty rect arg.
+    testLayer = LayerChromium::create(&mockDelegate);
+    EXECUTE_AND_VERIFY_NOTIFY_SYNC_BEHAVIOR(mockDelegate, 1, testLayer->setBounds(testBounds));
     EXECUTE_AND_VERIFY_NOTIFY_SYNC_BEHAVIOR(mockDelegate, 1, testLayer->setNeedsDisplay());
-    EXPECT_FLOAT_RECT_EQ(FloatRect(0, 0, testBounds.width(), testBounds.height()), testLayer->dirtyRect());
+    EXPECT_TRUE(testLayer->needsDisplay());
 
-    // resetNeedsDisplay should empty the dirty rect, and NOT call notifySyncRequired.
-    EXECUTE_AND_VERIFY_NOTIFY_SYNC_BEHAVIOR(mockDelegate, 0, testLayer->resetNeedsDisplay());
-    EXPECT_TRUE(testLayer->dirtyRect().isEmpty());
+    // Case 6: setNeedsDisplay() without the dirty rect arg should not cause
+    // needsDisplay flag to change for LayerChromium with empty bounds.
+    testLayer = LayerChromium::create(&mockDelegate);
+    EXECUTE_AND_VERIFY_NOTIFY_SYNC_BEHAVIOR(mockDelegate, 1, testLayer->setNeedsDisplay());
+    EXPECT_FALSE(testLayer->needsDisplay());
 }
 
 TEST_F(LayerChromiumTest, checkSetNeedsDisplayWithNullDelegate)
@@ -590,13 +595,13 @@ TEST_F(LayerChromiumTest, checkSetNeedsDisplayWithNullDelegate)
     FloatRect dirty = FloatRect(10.0f, 15.0f, 1.0f, 2.0f);
 
     testLayer->setBounds(testBounds);
-    EXPECT_FLOAT_RECT_EQ(FloatRect(0.0f, 0.0f, 501.0f, 508.0f), testLayer->dirtyRect());
+    EXPECT_TRUE(testLayer->needsDisplay());
 
-    testLayer->resetNeedsDisplay();
-    EXPECT_TRUE(testLayer->dirtyRect().isEmpty());
+    testLayer = LayerChromium::create(0);
+    EXPECT_FALSE(testLayer->needsDisplay());
 
-    testLayer->setNeedsDisplay(dirty);
-    EXPECT_FLOAT_RECT_EQ(dirty, testLayer->dirtyRect());
+    testLayer->setNeedsDisplayRect(dirty);
+    EXPECT_TRUE(testLayer->needsDisplay());
 }
 
 TEST_F(LayerChromiumTest, checkPropertyChangeCausesCorrectBehavior)
@@ -607,10 +612,10 @@ TEST_F(LayerChromiumTest, checkPropertyChangeCausesCorrectBehavior)
     RefPtr<LayerChromium> dummyLayer = LayerChromium::create(&m_silentDelegate); // just a dummy layer for this test case.
 
     // sanity check of initial test condition
-    EXPECT_TRUE(testLayer->dirtyRect().isEmpty());
+    EXPECT_FALSE(testLayer->needsDisplay());
 
     // Test properties that should not call needsDisplay and needsCommit when changed.
-    // notifySyncRequired should not be called, and the dirtyRect should remain still empty.
+    // notifySyncRequired should not be called, and the needsDisplay flag should remain false.
     EXPECT_CALL(initialDelegate, notifySyncRequired()).Times(0); // old delegate should not be used when setDelegate gives a new delegate.
     EXECUTE_AND_VERIFY_NOTIFY_SYNC_BEHAVIOR(mockDelegate, 0, testLayer->setDelegate(&mockDelegate));
     EXECUTE_AND_VERIFY_NOTIFY_SYNC_BEHAVIOR(mockDelegate, 0, testLayer->setName("Test Layer"));
@@ -625,10 +630,10 @@ TEST_F(LayerChromiumTest, checkPropertyChangeCausesCorrectBehavior)
     EXECUTE_AND_VERIFY_NOTIFY_SYNC_BEHAVIOR(mockDelegate, 0, testLayer->setDrawTransform(TransformationMatrix()));
     EXECUTE_AND_VERIFY_NOTIFY_SYNC_BEHAVIOR(mockDelegate, 0, testLayer->setScreenSpaceTransform(TransformationMatrix()));
     EXECUTE_AND_VERIFY_NOTIFY_SYNC_BEHAVIOR(mockDelegate, 0, testLayer->setDrawableContentRect(IntRect(4, 5, 6, 7)));
-    EXPECT_TRUE(testLayer->dirtyRect().isEmpty());
+    EXPECT_FALSE(testLayer->needsDisplay());
 
     // Next, test properties that should call setNeedsCommit (but not setNeedsDisplay)
-    // These properties should indirectly call notifySyncRequired, but the dirty rect should not change.
+    // These properties should indirectly call notifySyncRequired, but the needsDisplay flag should not change.
     // Note that for many of these properties it is important to test setting the property to a value that
     // is different than what the constructor initializes it to.
     EXECUTE_AND_VERIFY_NOTIFY_SYNC_BEHAVIOR(mockDelegate, 1, testLayer->setAnchorPoint(FloatPoint(1.23f, 4.56f)));
@@ -644,15 +649,13 @@ TEST_F(LayerChromiumTest, checkPropertyChangeCausesCorrectBehavior)
     EXECUTE_AND_VERIFY_NOTIFY_SYNC_BEHAVIOR(mockDelegate, 1, testLayer->setTransform(TransformationMatrix()));
     EXECUTE_AND_VERIFY_NOTIFY_SYNC_BEHAVIOR(mockDelegate, 1, testLayer->setDoubleSided(false));
 
-    // The above tests should not have caused a non-empty dirty rect.
-    EXPECT_TRUE(testLayer->dirtyRect().isEmpty());
+    // The above tests should not have caused a change to the needsDisplay flag.
+    EXPECT_FALSE(testLayer->needsDisplay());
 
     // Test properties that should call setNeedsDisplay
-    // These properties will call notifySyncRequired and change the dirty rect.
+    // These properties will call notifySyncRequired and change the needsDisplay flag.
     EXECUTE_AND_VERIFY_NOTIFY_SYNC_BEHAVIOR(mockDelegate, 1, testLayer->setBounds(IntSize(5, 10)));
-    EXPECT_FLOAT_RECT_EQ(FloatRect(0.0f, 0.0f, 5.0f, 10.0f), testLayer->dirtyRect());
-    testLayer->resetNeedsDisplay();
-    EXPECT_TRUE(testLayer->dirtyRect().isEmpty());
+    EXPECT_TRUE(testLayer->needsDisplay());
 
     // FIXME: need to add a test for setLayerTreeHost with a non-null stubbed CCLayerTreeHost.
 }

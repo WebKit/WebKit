@@ -163,20 +163,19 @@ void ImageLayerChromium::setContents(Image* contents)
 
     m_contents = contents;
     m_imageForCurrentFrame = m_contents->nativeImageForCurrentFrame();
-    m_dirtyRect = IntRect(IntPoint(0, 0), bounds());
     setNeedsDisplay();
     setOpaque(!m_contents->currentFrameHasAlpha());
 }
 
 void ImageLayerChromium::paintContentsIfDirty()
 {
-    if (!m_dirtyRect.isEmpty()) {
+    if (m_needsDisplay) {
         m_textureUpdater->updateFromImage(m_contents->nativeImageForCurrentFrame());
         updateTileSizeAndTilingOption();
         IntRect paintRect(IntPoint(), contentBounds());
-        if (!m_dirtyRect.isEmpty()) {
+        if (m_needsDisplay) {
             invalidateRect(paintRect);
-            resetNeedsDisplay();
+            m_needsDisplay = false;
         }
     }
 

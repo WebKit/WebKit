@@ -284,12 +284,17 @@ UpdatableTile* TiledLayerChromium::createTile(int i, int j)
     return tile.get();
 }
 
+void TiledLayerChromium::setNeedsDisplayRect(const FloatRect& dirtyRect)
+{
+    IntRect dirty = enclosingIntRect(dirtyRect);
+    invalidateRect(dirty);
+    LayerChromium::setNeedsDisplayRect(dirtyRect);
+}
+
 void TiledLayerChromium::invalidateRect(const IntRect& contentRect)
 {
     if (!m_tiler || contentRect.isEmpty() || m_skipsDraw)
         return;
-
-    m_tiler->growLayerToContain(contentRect);
 
     // Dirty rects are always in layer space, as the layer could be repositioned
     // after invalidation.

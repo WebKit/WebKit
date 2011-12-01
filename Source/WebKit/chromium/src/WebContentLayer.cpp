@@ -48,17 +48,12 @@ bool WebContentLayer::drawsContent() const
 
 void WebContentLayer::invalidateRect(const WebFloatRect& dirtyRect)
 {
-    unwrap<WebContentLayerImpl>()->setNeedsDisplay(dirtyRect);
+    unwrap<WebContentLayerImpl>()->setNeedsDisplayRect(dirtyRect);
 }
 
 void WebContentLayer::invalidate()
 {
     unwrap<WebContentLayerImpl>()->setNeedsDisplay();
-}
-
-WebFloatRect WebContentLayer::invalidRect() const
-{
-    return WebFloatRect(constUnwrap<WebContentLayerImpl>()->dirtyRect());
 }
 
 WebContentLayer::WebContentLayer(const PassRefPtr<WebContentLayerImpl>& node)

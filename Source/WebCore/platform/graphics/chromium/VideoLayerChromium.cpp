@@ -83,7 +83,7 @@ void VideoLayerChromium::updateCompositorResources(GraphicsContext3D* context, C
     if (!m_delegate || !m_provider || !drawsContent())
         return;
 
-    if (m_dirtyRect.isEmpty() && texturesValid()) {
+    if (!m_needsDisplay && texturesValid()) {
         for (unsigned plane = 0; plane < m_planes; plane++) {
             ManagedTexture* tex = m_textures[plane].m_texture.get();
             if (!tex->reserve(tex->size(), tex->format())) {
@@ -118,7 +118,7 @@ void VideoLayerChromium::updateCompositorResources(GraphicsContext3D* context, C
         m_nativeTextureId = frame->textureId();
         m_nativeTextureSize = IntSize(frame->width(), frame->height());
         m_nativeTextureVisibleSize = IntSize(frame->width(), frame->height());
-        resetNeedsDisplay();
+        m_needsDisplay = false;
         m_provider->putCurrentFrame(frame);
         return;
     }
@@ -144,7 +144,7 @@ void VideoLayerChromium::updateCompositorResources(GraphicsContext3D* context, C
     ASSERT(m_planes <= MaxPlanes);
 
     m_updateRect = FloatRect(FloatPoint(), bounds());
-    resetNeedsDisplay();
+    m_needsDisplay = false;
 
     m_provider->putCurrentFrame(frame);
 }

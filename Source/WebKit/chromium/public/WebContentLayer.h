@@ -60,9 +60,6 @@ public:
     // Sets the entire layer as invalid, i.e. needs to update its content.
     WEBKIT_EXPORT void invalidate();
 
-    // Returns the region of the layer that is currently invalid.
-    WEBKIT_EXPORT WebFloatRect invalidRect() const;
-
 #if WEBKIT_IMPLEMENTATION
     WebContentLayer(const WTF::PassRefPtr<WebContentLayerImpl>&);
     WebContentLayer& operator=(const WTF::PassRefPtr<WebContentLayerImpl>&);

@@ -1,3 +1,23 @@
+2011-11-30  David Reveman  <reveman@chromium.org>
+
+        [Chromium] Improve tile invalidation.
+        https://bugs.webkit.org/show_bug.cgi?id=71872
+
+        Reviewed by James Robinson.
+
+        Remove public API function WebContentLayer::invalidRect(). Add new
+        test case to
+        LayerChromiumTest.checkSetNeedsDisplayCausesCorrectBehavior that
+        verifies that calling setNeedsDisplay() on a LayerChromium with
+        empty bounds is handled correctly.
+
+        * public/WebContentLayer.h:
+        * src/WebContentLayer.cpp:
+        (WebKit::WebContentLayer::invalidateRect):
+        * src/WebMediaPlayerClientImpl.cpp:
+        (WebKit::WebMediaPlayerClientImpl::repaint):
+        * tests/LayerChromiumTest.cpp:
+
 2011-11-30  Takashi Toyoshima  <toyoshim@chromium.org>
 
         Add didUpdateBufferedAmount callback to WebSocketClient API

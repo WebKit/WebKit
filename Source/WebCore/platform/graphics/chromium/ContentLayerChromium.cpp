@@ -104,12 +104,8 @@ void ContentLayerChromium::paintContentsIfDirty()
     if (drawsContent())
         layerRect = visibleLayerRect();
 
-    IntRect dirty = enclosingIntRect(m_dirtyRect);
-    dirty.intersect(IntRect(IntPoint(), contentBounds()));
-    invalidateRect(dirty);
-
     prepareToUpdate(layerRect);
-    resetNeedsDisplay();
+    m_needsDisplay = false;
 }
 
 bool ContentLayerChromium::drawsContent() const

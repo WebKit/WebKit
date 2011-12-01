@@ -53,6 +53,8 @@ public:
 
     virtual IntSize contentBounds() const;
 
+    virtual void setNeedsDisplayRect(const FloatRect&);
+
     // Reserves all existing and valid tile textures to protect them from being
     // recycled by the texture manager.
     void protectTileTextures(const IntRect& contentRect);

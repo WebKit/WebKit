@@ -325,7 +325,7 @@ void GraphicsLayerChromium::setNeedsDisplay()
 void GraphicsLayerChromium::setNeedsDisplayInRect(const FloatRect& rect)
 {
     if (drawsContent())
-        m_layer->setNeedsDisplay(rect);
+        m_layer->setNeedsDisplayRect(rect);
 }
 
 void GraphicsLayerChromium::setContentsRect(const IntRect& rect)

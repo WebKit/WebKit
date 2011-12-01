@@ -56,6 +56,7 @@ PassRefPtr<LayerChromium> LayerChromium::create(CCLayerDelegate* delegate)
 
 LayerChromium::LayerChromium(CCLayerDelegate* delegate)
     : m_delegate(delegate)
+    , m_needsDisplay(false)
     , m_layerId(s_nextLayerId++)
     , m_parent(0)
     , m_scrollable(false)
@@ -214,7 +215,7 @@ void LayerChromium::setBounds(const IntSize& size)
     m_bounds = size;
 
     if (firstResize || m_pageScaleDirty)
-        setNeedsDisplay(FloatRect(0, 0, bounds().width(), bounds().height()));
+        setNeedsDisplayRect(FloatRect(0, 0, bounds().width(), bounds().height()));
     else
         setNeedsCommit();
 
@@ -258,25 +259,15 @@ void LayerChromium::setName(const String& name)
     m_name = name;
 }
 
-void LayerChromium::setNeedsDisplay(const FloatRect& dirtyRect)
+void LayerChromium::setNeedsDisplayRect(const FloatRect& dirtyRect)
 {
     // Simply mark the contents as dirty. For non-root layers, the call to
     // setNeedsCommit will schedule a fresh compositing pass.
     // For the root layer, setNeedsCommit has no effect.
-    m_dirtyRect.unite(dirtyRect);
-    setNeedsCommit();
-}
+    if (!dirtyRect.isEmpty())
+        m_needsDisplay = true;
 
-void LayerChromium::setNeedsDisplay()
-{
-    m_dirtyRect.setLocation(FloatPoint());
-    m_dirtyRect.setSize(bounds());
     setNeedsCommit();
-}
-
-void LayerChromium::resetNeedsDisplay()
-{
-    m_dirtyRect = FloatRect();
 }
 
 void LayerChromium::pushPropertiesTo(CCLayerImpl* layer)

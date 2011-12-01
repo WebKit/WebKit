@@ -105,10 +105,9 @@ public:
     void setMaskLayer(LayerChromium* maskLayer) { m_maskLayer = maskLayer; setNeedsCommit(); }
     LayerChromium* maskLayer() const { return m_maskLayer.get(); }
 
-    void setNeedsDisplay(const FloatRect& dirtyRect);
-    void setNeedsDisplay();
-    const FloatRect& dirtyRect() const { return m_dirtyRect; }
-    void resetNeedsDisplay();
+    virtual void setNeedsDisplayRect(const FloatRect& dirtyRect);
+    void setNeedsDisplay() { setNeedsDisplayRect(FloatRect(FloatPoint(), contentBounds())); }
+    virtual bool needsDisplay() const { return m_needsDisplay; }
 
     void setOpacity(float opacity) { m_opacity = opacity; setNeedsCommit(); }
     float opacity() const { return m_opacity; }
@@ -218,8 +217,8 @@ protected:
 
     void setNeedsCommit();
 
-    // The dirty rect is the union of damaged regions that need repainting/updating.
-    FloatRect m_dirtyRect;
+    // This flag is set when layer need repainting/updating.
+    bool m_needsDisplay;
 
     // The update rect is the region of the compositor resource that was actually updated by the compositor.
     // For layers that may do updating outside the compositor's control (i.e. plugin layers), this information

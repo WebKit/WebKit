@@ -1,3 +1,44 @@
+2011-11-30  David Reveman  <reveman@chromium.org>
+
+        [Chromium] Improve tile invalidation
+        https://bugs.webkit.org/show_bug.cgi?id=71872
+
+        Reviewed by James Robinson.
+
+        Virtualize LayerChromium::setNeedsDisplay so that dirty rectangles can
+        be handled directly by the TiledLayerChromium class. Replace
+        LayerChromium::dirtyRect() with LayerChromium::needsDisplay() and
+        remove unnecessary union of dirty rectangles. By invalidating existing
+        tiles using the initial dirty rectangles instead of their union we
+        avoid a large amount of unnecessary tile updates.
+
+        Update LayerChromiumTest.
+
+        * platform/graphics/chromium/Canvas2DLayerChromium.cpp:
+        (WebCore::Canvas2DLayerChromium::updateCompositorResources):
+        * platform/graphics/chromium/ContentLayerChromium.cpp:
+        (WebCore::ContentLayerChromium::paintContentsIfDirty):
+        * platform/graphics/chromium/GraphicsLayerChromium.cpp:
+        (WebCore::GraphicsLayerChromium::setNeedsDisplayInRect):
+        * platform/graphics/chromium/ImageLayerChromium.cpp:
+        (WebCore::ImageLayerChromium::setContents):
+        (WebCore::ImageLayerChromium::paintContentsIfDirty):
+        * platform/graphics/chromium/LayerChromium.cpp:
+        (WebCore::LayerChromium::LayerChromium):
+        (WebCore::LayerChromium::setBounds):
+        (WebCore::LayerChromium::setNeedsDisplayRect):
+        * platform/graphics/chromium/LayerChromium.h:
+        (WebCore::LayerChromium::setNeedsDisplay):
+        (WebCore::LayerChromium::needsDisplay):
+        * platform/graphics/chromium/TiledLayerChromium.cpp:
+        (WebCore::TiledLayerChromium::setNeedsDisplayRect):
+        (WebCore::TiledLayerChromium::invalidateRect):
+        * platform/graphics/chromium/TiledLayerChromium.h:
+        * platform/graphics/chromium/VideoLayerChromium.cpp:
+        (WebCore::VideoLayerChromium::updateCompositorResources):
+        * platform/graphics/chromium/WebGLLayerChromium.cpp:
+        (WebCore::WebGLLayerChromium::updateCompositorResources):
+
 2011-11-30  Alexey Proskuryakov  <ap@apple.com>
 
         SocketStreamHandleCFNet doesn't check for proxy errors

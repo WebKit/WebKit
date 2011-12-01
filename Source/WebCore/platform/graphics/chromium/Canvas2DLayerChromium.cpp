@@ -67,7 +67,7 @@ bool Canvas2DLayerChromium::drawsContent() const
 
 void Canvas2DLayerChromium::updateCompositorResources(GraphicsContext3D*, CCTextureUpdater&)
 {
-    if (m_dirtyRect.isEmpty() || !drawsContent())
+    if (!m_needsDisplay || !drawsContent())
         return;
 
     if (m_context) {
@@ -82,7 +82,7 @@ void Canvas2DLayerChromium::updateCompositorResources(GraphicsContext3D*, CCText
     }
 
     m_updateRect = FloatRect(FloatPoint(), bounds());
-    resetNeedsDisplay();
+    m_needsDisplay = false;
 }
 
 void Canvas2DLayerChromium::contentChanged()

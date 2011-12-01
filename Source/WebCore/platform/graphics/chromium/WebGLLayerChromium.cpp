@@ -71,7 +71,7 @@ void WebGLLayerChromium::updateCompositorResources(GraphicsContext3D* rendererCo
     if (!drawsContent())
         return;
 
-    if (m_dirtyRect.isEmpty())
+    if (!m_needsDisplay)
         return;
 
     if (m_textureChanged) {
@@ -85,12 +85,12 @@ void WebGLLayerChromium::updateCompositorResources(GraphicsContext3D* rendererCo
         m_textureChanged = false;
     }
     // Update the contents of the texture used by the compositor.
-    if (!m_dirtyRect.isEmpty() && m_textureUpdated) {
+    if (m_needsDisplay && m_textureUpdated) {
         // publishToPlatformLayer prepares the contents of the off-screen render target for use by the compositor.
         drawingBuffer()->publishToPlatformLayer();
         context()->markLayerComposited();
         m_updateRect = FloatRect(FloatPoint(), bounds());
-        resetNeedsDisplay();
+        m_needsDisplay = false;
         m_textureUpdated = false;
     }
 }
