@@ -84,6 +84,9 @@ public:
     bool canSetScriptSource();
     bool setScriptSource(const String& sourceID, const String& newContent, bool preview, String* error, ScriptValue* newCallFrames, ScriptObject* result);
 
+    bool causesRecompilation() { return true; }
+    bool supportsNativeBreakpoints() { return false; }
+
     void recompileAllJSFunctionsSoon();
     virtual void recompileAllJSFunctions(Timer<ScriptDebugServer>* = 0) = 0;
 

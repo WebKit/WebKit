@@ -99,10 +99,19 @@ bool InspectorDebuggerAgent::enabled()
     return m_state->getBoolean(DebuggerAgentState::debuggerEnabled);
 }
 
-void InspectorDebuggerAgent::getAgentCapabilities(InspectorArray* capabilities)
+void InspectorDebuggerAgent::causesRecompilation(ErrorString*, bool* result)
 {
-    if (scriptDebugServer().canSetScriptSource())
-        capabilities->pushString(InspectorFrontend::Debugger::capabilitySetScriptSource);
+    *result = scriptDebugServer().causesRecompilation();
+}
+
+void InspectorDebuggerAgent::canSetScriptSource(ErrorString*, bool* result)
+{
+    *result = scriptDebugServer().canSetScriptSource();
+}
+
+void InspectorDebuggerAgent::supportsNativeBreakpoints(ErrorString*, bool* result)
+{
+    *result = scriptDebugServer().supportsNativeBreakpoints();
 }
 
 void InspectorDebuggerAgent::enable(ErrorString*)

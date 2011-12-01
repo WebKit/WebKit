@@ -59,6 +59,9 @@ public:
     static void start(ScriptState* state, const String& title);
     static PassRefPtr<ScriptProfile> stop(ScriptState* state, const String& title);
     static PassRefPtr<ScriptHeapSnapshot> takeHeapSnapshot(const String& title, HeapSnapshotProgress*);
+    static bool causesRecompilation() { return false; }
+    static bool isSampling() { return true; }
+    static bool hasHeapProfiler() { return true; }
     static void initialize();
 };
 

@@ -278,6 +278,13 @@ var WebInspector = {
     {
         var parsedURL = WebInspector.inspectedPageURL && WebInspector.inspectedPageURL.asParsedURL();
         return parsedURL ? parsedURL.host : "";
+    },
+
+    _initializeCapability: function(name, callback, error, result)
+    {
+        Capabilities[name] = result;
+        if (callback)
+            callback();
     }
 }
 
@@ -317,18 +324,26 @@ WebInspector.loaded = function()
 
 WebInspector.doLoadedDone = function()
 {
-    InspectorFrontendHost.loaded();
-
-    WebInspector.WorkerManager.loaded();
-
+    // Install styles and themes
     WebInspector.installPortStyles();
-
     if (WebInspector.socket)
         document.body.addStyleClass("remote");
 
     if (WebInspector.queryParamsObject.toolbarColor && WebInspector.queryParamsObject.textColor)
         WebInspector.setToolbarColors(WebInspector.queryParamsObject.toolbarColor, WebInspector.queryParamsObject.textColor);
 
+    InspectorFrontendHost.loaded();
+    WebInspector.WorkerManager.loaded();
+
+    DebuggerAgent.causesRecompilation(WebInspector._initializeCapability.bind(WebInspector, "debuggerCausesRecompilation", null));
+    DebuggerAgent.supportsNativeBreakpoints(WebInspector._initializeCapability.bind(WebInspector, "nativeInstrumentationEnabled", null));
+    ProfilerAgent.causesRecompilation(WebInspector._initializeCapability.bind(WebInspector, "profilerCausesRecompilation", null));
+    ProfilerAgent.isSampling(WebInspector._initializeCapability.bind(WebInspector, "samplingCPUProfiler", null));
+    ProfilerAgent.hasHeapProfiler(WebInspector._initializeCapability.bind(WebInspector, "heapProfilerPresent", WebInspector._doLoadedDoneWithCapabilities.bind(WebInspector)));
+}
+
+WebInspector._doLoadedDoneWithCapabilities = function()
+{
     WebInspector.shortcutsScreen = new WebInspector.ShortcutsScreen();
     this._registerShortcuts();
 

@@ -59,7 +59,9 @@ public:
 
     virtual void updateInspectorStateCookie(const WTF::String&);
 
+    virtual bool canClearBrowserCache();
     virtual void clearBrowserCache();
+    virtual bool canClearBrowserCookies();
     virtual void clearBrowserCookies();
 private:
     WebDevToolsAgentImpl* devToolsAgent();

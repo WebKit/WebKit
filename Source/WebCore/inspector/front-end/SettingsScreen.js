@@ -59,7 +59,7 @@ WebInspector.SettingsScreen = function()
         ], WebInspector.settings.textEditorIndent));
 
     p = this._appendSection(WebInspector.UIString("Network"), true);
-    if (Capabilities.canDisableCache)
+    if (Preferences.exposeDisableCache)
         p.appendChild(this._createCheckboxSetting(WebInspector.UIString("Disable cache"), WebInspector.settings.cacheDisabled));
     p.appendChild(this._createUserActionControl());
 

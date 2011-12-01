@@ -43,21 +43,17 @@ var Preferences = {
     hasExtensions: false,
     sharedWorkersDebugNote: undefined,
     localizeUI: true,
+    exposeDisableCache: false,
+    exposeWorkersInspection: false,
     applicationTitle: "Web Inspector - %s"
 }
 
 var Capabilities = {
     samplingCPUProfiler: false,
-    debuggerAlwaysEnabled: false,
-    profilerAlwaysEnabled: false,
+    debuggerCausesRecompilation: true,
+    profilerCausesRecompilation: true,
     nativeInstrumentationEnabled: false,
-    showTimingTab: false,
-    showCookiesTab: false,
-    heapProfilerPresent: false,
-    detailedHeapProfiles: false,
-    canInspectWorkers: false,
-    canClearCacheAndCookies: false,
-    canDisableCache: false
+    heapProfilerPresent: false
 }
 
 /**

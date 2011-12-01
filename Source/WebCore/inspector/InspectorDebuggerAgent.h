@@ -65,13 +65,16 @@ public:
 
     virtual ~InspectorDebuggerAgent();
 
+    void causesRecompilation(ErrorString*, bool*);
+    void canSetScriptSource(ErrorString*, bool*);
+    void supportsNativeBreakpoints(ErrorString*, bool*);
+
     void enable(ErrorString*);
     void disable(ErrorString*);
 
     virtual void setFrontend(InspectorFrontend*);
     virtual void clearFrontend();
     virtual void restore();
-    virtual void getAgentCapabilities(InspectorArray*);
 
     void didClearMainFrameWindowObject();
 

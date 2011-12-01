@@ -119,7 +119,7 @@ WebInspector.ProfilesPanel = function()
 
     this.enableToggleButton = new WebInspector.StatusBarButton("", "enable-toggle-status-bar-item");
     this.enableToggleButton.addEventListener("click", this._toggleProfiling.bind(this), false);
-    if (Capabilities.profilerAlwaysEnabled)
+    if (!Capabilities.profilerCausesRecompilation)
         this.enableToggleButton.element.addStyleClass("hidden");
 
     this.clearResultsButton = new WebInspector.StatusBarButton(WebInspector.UIString("Clear all profiles."), "clear-status-bar-item");
@@ -131,7 +131,7 @@ WebInspector.ProfilesPanel = function()
     this.welcomeView = new WebInspector.WelcomeView("profiles", WebInspector.UIString("Welcome to the Profiles panel"));
 
     this._profiles = [];
-    this._profilerEnabled = Capabilities.profilerAlwaysEnabled;
+    this._profilerEnabled = !Capabilities.profilerCausesRecompilation;
     this._reset();
 
     this._registerProfileType(new WebInspector.CPUProfileType());
@@ -140,15 +140,8 @@ WebInspector.ProfilesPanel = function()
 
     InspectorBackend.registerProfilerDispatcher(new WebInspector.ProfilerDispatcher(this));
 
-    if (Capabilities.profilerAlwaysEnabled || WebInspector.settings.profilerEnabled.get())
-        ProfilerAgent.enable();
-    else {
-        function onProfilerEnebled(error, value) {
-            if (value)
-                this._profilerWasEnabled();
-        }
-        ProfilerAgent.isEnabled(onProfilerEnebled.bind(this));
-    }
+    if (!Capabilities.profilerCausesRecompilation || WebInspector.settings.profilerEnabled.get())
+        ProfilerAgent.enable(this._profilerWasEnabled.bind(this));
 }
 
 WebInspector.ProfilesPanel.prototype = {
@@ -797,10 +790,10 @@ WebInspector.ProfilesPanel.prototype = {
     {
         if (this._profilerEnabled) {
             WebInspector.settings.profilerEnabled.set(false);
-            ProfilerAgent.disable();
+            ProfilerAgent.disable(this._profilerWasDisabled.bind(this));
         } else {
             WebInspector.settings.profilerEnabled.set(!!optionalAlways);
-            ProfilerAgent.enable();
+            ProfilerAgent.enable(this._profilerWasEnabled.bind(this));
         }
     },
 
@@ -877,21 +870,6 @@ WebInspector.ProfilesPanel.prototype = {
             if (done >= total)
                 this._removeProfileHeader(this._temporaryTakingSnapshot);
         }
-    },
-
-    _enableDetailedHeapProfiles: function(resetAgent)
-    {
-        if (resetAgent)
-            this._clearProfiles();
-        else
-            this._reset();
-        var oldProfileType = this._profileTypesByIdMap[WebInspector.DetailedHeapshotProfileType.TypeId];
-        var profileType = new WebInspector.DetailedHeapshotProfileType();
-        profileType.treeElement = oldProfileType.treeElement;
-        this._profileTypesByIdMap[profileType.id] = profileType;
-        Capabilities.detailedHeapProfiles = true;
-        this.detach();
-        this.show();
     }
 }
 
@@ -904,16 +882,6 @@ WebInspector.ProfilerDispatcher = function(profiler)
 }
 
 WebInspector.ProfilerDispatcher.prototype = {
-    profilerWasEnabled: function()
-    {
-        this._profiler._profilerWasEnabled();
-    },
-
-    profilerWasDisabled: function()
-    {
-        this._profiler._profilerWasDisabled();
-    },
-
     resetProfiles: function()
     {
         this._profiler._reset();

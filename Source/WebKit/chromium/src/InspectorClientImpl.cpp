@@ -106,10 +106,20 @@ void InspectorClientImpl::updateInspectorStateCookie(const WTF::String& inspecto
         agent->updateInspectorStateCookie(inspectorState);
 }
 
+bool InspectorClientImpl::canClearBrowserCache()
+{
+    return true;
+}
+
 void InspectorClientImpl::clearBrowserCache()
 {
     if (WebDevToolsAgentImpl* agent = devToolsAgent())
         agent->clearBrowserCache();
+}
+
+bool InspectorClientImpl::canClearBrowserCookies()
+{
+    return true;
 }
 
 void InspectorClientImpl::clearBrowserCookies()

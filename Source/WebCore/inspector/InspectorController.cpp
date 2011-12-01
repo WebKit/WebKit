@@ -77,7 +77,6 @@ InspectorController::InspectorController(Page* page, InspectorClient* inspectorC
     , m_state(adoptPtr(new InspectorState(inspectorClient)))
     , m_page(page)
     , m_inspectorClient(inspectorClient)
-    , m_openingFrontend(false)
 {
     OwnPtr<InspectorAgent> inspectorAgentPtr(InspectorAgent::create(page, m_injectedScriptManager.get(), m_instrumentingAgents.get(), m_state.get()));
     m_inspectorAgent = inspectorAgentPtr.get();
@@ -190,7 +189,6 @@ void InspectorController::didClearWindowObjectInWorld(Frame* frame, DOMWrapperWo
 
 void InspectorController::connectFrontend()
 {
-    m_openingFrontend = false;
     m_inspectorFrontend = adoptPtr(new InspectorFrontend(m_inspectorClient));
     // We can reconnect to existing front-end -> unmute state.
     m_state->unmute();
@@ -237,14 +235,11 @@ void InspectorController::show()
     if (!enabled())
         return;
 
-    if (m_openingFrontend)
-        return;
-
     if (m_inspectorFrontend)
         m_inspectorClient->bringFrontendToFront();
     else {
-        m_openingFrontend = true;
         m_inspectorClient->openInspectorFrontend(this);
+        connectFrontend();
     }
 }
 

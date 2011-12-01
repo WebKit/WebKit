@@ -130,7 +130,9 @@ public:
     void getResponseBody(ErrorString*, const String& requestId, String* content, bool* base64Encoded);
     void clearCache(ErrorString*, const String* const optionalPreservedLoaderId);
 
+    void canClearBrowserCache(ErrorString*, bool*);
     void clearBrowserCache(ErrorString*);
+    void canClearBrowserCookies(ErrorString*, bool*);
     void clearBrowserCookies(ErrorString*);
     void setCacheDisabled(ErrorString*, bool cacheDisabled);
 

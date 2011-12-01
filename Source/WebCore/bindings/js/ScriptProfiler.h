@@ -55,6 +55,9 @@ public:
     static void start(ScriptState* state, const String& title);
     static PassRefPtr<ScriptProfile> stop(ScriptState* state, const String& title);
     static PassRefPtr<ScriptHeapSnapshot> takeHeapSnapshot(const String&, HeapSnapshotProgress*) { return 0; }
+    static bool causesRecompilation() { return true; }
+    static bool isSampling() { return false; }
+    static bool hasHeapProfiler() { return false; }
 };
 
 } // namespace WebCore

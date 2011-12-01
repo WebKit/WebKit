@@ -201,12 +201,12 @@ void InspectorFrontendHost::setExtensionAPI(const String& script)
 
 String InspectorFrontendHost::localizedStringsURL()
 {
-    return m_client->localizedStringsURL();
+    return m_client ? m_client->localizedStringsURL() : "";
 }
 
 String InspectorFrontendHost::hiddenPanels()
 {
-    return m_client->hiddenPanels();
+    return m_client ? m_client->hiddenPanels() : "";
 }
 
 void InspectorFrontendHost::copyText(const String& text)

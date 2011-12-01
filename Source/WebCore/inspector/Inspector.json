@@ -664,8 +664,22 @@
                 ]
             },
             {
+                "name": "canClearBrowserCache",
+                "description": "Tells whether clearing browser cache is supported.",
+                "returns": [
+                    { "name": "result", "type": "boolean", "description": "True if browser cache can be cleared." }
+                ]
+            },
+            {
                 "name": "clearBrowserCache",
                 "description": "Clears browser cache."
+            },
+            {
+                "name": "canClearBrowserCookies",
+                "description": "Tells whether clearing browser cookies is supported.",
+                "returns": [
+                    { "name": "result", "type": "boolean", "description": "True if browser cookies can be cleared." }
+                ]
             },
             {
                 "name": "clearBrowserCookies",
@@ -1819,6 +1833,22 @@
         ],
         "commands": [
             {
+                "name": "causesRecompilation",
+                "returns": [
+                    { "name": "result", "type": "boolean", "description": "True if enabling debugger causes scripts recompilation." }
+                ],
+                "hidden": true,
+                "description": "Tells whether enabling debugger causes scripts recompilation."
+            },
+            {
+                "name": "supportsNativeBreakpoints",
+                "returns": [
+                    { "name": "result", "type": "boolean", "description": "True if debugger supports native breakpoints." }
+                ],
+                "hidden": true,
+                "description": "Tells whether debugger supports native breakpoints."
+            },
+            {
                 "name": "enable",
                 "description": "Enables debugger for the given page. Clients should not assume that the debugging has been enabled until the result for this command is received."
             },
@@ -1906,6 +1936,13 @@
                     { "name": "result", "type": "array", "items": { "$ref": "Page.SearchMatch" }, "description": "List of search matches." }
                 ],
                 "description": "Searches for given string in script content."
+            },
+            {
+                "name": "canSetScriptSource",
+                "returns": [
+                    { "name": "result", "type": "boolean", "description": "True if <code>setScriptSource</code> is supported." }
+                ],
+                "description": "Tells whether <code>setScriptSource</code> is supported."
             },
             {
                 "name": "setScriptSource",
@@ -2091,16 +2128,28 @@
         ],
         "commands": [
             {
+                "name": "causesRecompilation",
+                "returns": [
+                    { "name": "result", "type": "boolean" }
+                ]
+            },
+            {
+                "name": "isSampling",
+                "returns": [
+                    { "name": "result", "type": "boolean" }
+                ]
+            },
+            {
+                "name": "hasHeapProfiler",
+                "returns": [
+                    { "name": "result", "type": "boolean" }
+                ]
+            },
+            {
                 "name": "enable"
             },
             {
                 "name": "disable"
-            },
-            {
-                "name": "isEnabled",
-                "returns": [
-                    { "name": "state", "type": "boolean" }
-                ]
             },
             {
                 "name": "start"
@@ -2151,12 +2200,6 @@
             }
         ],
         "events": [
-            {
-                "name": "profilerWasEnabled"
-            },
-            {
-                "name": "profilerWasDisabled"
-            },
             {
                 "name": "addProfileHeader",
                 "parameters": [

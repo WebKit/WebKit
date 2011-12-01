@@ -74,7 +74,7 @@ WebInspector.ScriptsPanel = function(presentationModel)
         this.sidebarPanes.eventListenerBreakpoints = new WebInspector.EventListenerBreakpointsSidebarPane();
     }
 
-    if (Capabilities.canInspectWorkers && !WebInspector.WorkerManager.isWorkerFrontend()) {
+    if (Preferences.exposeWorkersInspection && !WebInspector.WorkerManager.isWorkerFrontend()) {
         WorkerAgent.setWorkerInspectionEnabled(true);
         this.sidebarPanes.workerList = new WebInspector.WorkerListSidebarPane(WebInspector.workerManager);
     } else
@@ -103,7 +103,7 @@ WebInspector.ScriptsPanel = function(presentationModel)
 
     this.enableToggleButton = new WebInspector.StatusBarButton("", "enable-toggle-status-bar-item");
     this.enableToggleButton.addEventListener("click", this.toggleDebugging, this);
-    if (Capabilities.debuggerAlwaysEnabled)
+    if (!Capabilities.debuggerCausesRecompilation)
         this.enableToggleButton.element.addStyleClass("hidden");
 
     this._pauseOnExceptionButton = new WebInspector.StatusBarButton("", "scripts-pause-on-exceptions-status-bar-item", 3);
@@ -116,7 +116,7 @@ WebInspector.ScriptsPanel = function(presentationModel)
     this._scriptViewStatusBarItemsContainer = document.createElement("div");
     this._scriptViewStatusBarItemsContainer.style.display = "inline-block";
 
-    this._debuggerEnabled = Capabilities.debuggerAlwaysEnabled;
+    this._debuggerEnabled = !Capabilities.debuggerCausesRecompilation;
 
     this._reset(false);
 
@@ -137,7 +137,7 @@ WebInspector.ScriptsPanel = function(presentationModel)
     this._presentationModel.addEventListener(WebInspector.DebuggerPresentationModel.Events.ExecutionLineChanged, this._executionLineChanged, this);
     this._presentationModel.addEventListener(WebInspector.DebuggerPresentationModel.Events.DebuggerReset, this._reset.bind(this, false));
     
-    var enableDebugger = Capabilities.debuggerAlwaysEnabled || WebInspector.settings.debuggerEnabled.get();
+    var enableDebugger = !Capabilities.debuggerCausesRecompilation || WebInspector.settings.debuggerEnabled.get();
     if (enableDebugger)
         WebInspector.debuggerModel.enableDebugger();
 

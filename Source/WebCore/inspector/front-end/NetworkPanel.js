@@ -66,6 +66,17 @@ WebInspector.NetworkLogView = function()
     WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.DOMContentLoaded, this._domContentLoadedEventFired, this);
 
     this._initializeView();
+    function onCanClearBrowserCache(error, result)
+    {
+        this._canClearBrowserCache = result;
+    }
+    NetworkAgent.canClearBrowserCache(onCanClearBrowserCache.bind(this));
+
+    function onCanClearBrowserCookies(error, result)
+    {
+        this._canClearBrowserCookies = result;
+    }
+    NetworkAgent.canClearBrowserCache(onCanClearBrowserCookies.bind(this));
 }
 
 WebInspector.NetworkLogView.prototype = {
@@ -940,11 +951,12 @@ WebInspector.NetworkLogView.prototype = {
             contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Save all as HAR" : "Save All as HAR"), this._exportAll.bind(this));
         }
 
-        if (Capabilities.canClearCacheAndCookies) {
+        if (this._canClearBrowserCache || this._canClearBrowserCookies)
             contextMenu.appendSeparator();
+        if (this._canClearBrowserCache)
             contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Clear browser cache" : "Clear Browser Cache"), this._clearBrowserCache.bind(this));
+        if (this._canClearBrowserCookies)
             contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Clear browser cookies" : "Clear Browser Cookies"), this._clearBrowserCookies.bind(this));
-        }
 
         contextMenu.show(event);
     },

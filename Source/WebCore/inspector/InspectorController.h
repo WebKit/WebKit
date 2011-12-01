@@ -124,7 +124,6 @@ private:
     OwnPtr<InspectorFrontend> m_inspectorFrontend;
     Page* m_page;
     InspectorClient* m_inspectorClient;
-    bool m_openingFrontend;
     typedef Vector<OwnPtr<InspectorBaseAgentInterface> > Agents;
     Agents m_agents;
 };

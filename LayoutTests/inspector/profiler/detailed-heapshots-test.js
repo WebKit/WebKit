@@ -13,12 +13,7 @@ InspectorTest.startProfilerTest = function(callback)
         InspectorTest._panelReset = InspectorTest.override(WebInspector.panels.profiles, "_reset", function(){}, true);
         InspectorTest.addSniffer(WebInspector.DetailedHeapshotView.prototype, "_updatePercentButton", InspectorTest._snapshotViewShown, true);
 
-        if (Capabilities.detailedHeapProfiles)
-            detailedHeapProfilesEnabled();
-        else {
-            InspectorTest.addSniffer(WebInspector.panels.profiles, "_populateProfiles", detailedHeapProfilesEnabled);
-            WebInspector.panels.profiles._enableDetailedHeapProfiles(true);
-        }
+        detailedHeapProfilesEnabled();
     }
 
     function detailedHeapProfilesEnabled()

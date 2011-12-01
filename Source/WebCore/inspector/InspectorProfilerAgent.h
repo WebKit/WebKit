@@ -68,9 +68,12 @@ public:
     void clearProfiles(ErrorString*) { resetState(); }
     void resetState();
 
+    void causesRecompilation(ErrorString*, bool*);
+    void isSampling(ErrorString*, bool*);
+    void hasHeapProfiler(ErrorString*, bool*);
+
     void enable(ErrorString*);
     void disable(ErrorString*);
-    void isEnabled(ErrorString*, bool* result) { *result = enabled(); }
     void start(ErrorString* = 0);
     void stop(ErrorString* = 0);
 

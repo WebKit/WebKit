@@ -1,3 +1,78 @@
+2011-12-01  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: query backend for capabilities explicitly.
+        https://bugs.webkit.org/show_bug.cgi?id=73442
+
+        Reviewed by Yury Semikhatsky.
+
+        This change removes the hardcoded Capabilities values in favor of
+        explicit query commands issued against the backend. I'll remove the
+        Meta agent in a subsequent change.
+
+        * bindings/js/ScriptDebugServer.h:
+        (WebCore::ScriptDebugServer::causesRecompilation):
+        (WebCore::ScriptDebugServer::supportsNativeBreakpoints):
+        * bindings/js/ScriptProfiler.h:
+        (WebCore::ScriptProfiler::causesRecompilation):
+        (WebCore::ScriptProfiler::isSampling):
+        (WebCore::ScriptProfiler::hasHeapProfiler):
+        * bindings/v8/ScriptDebugServer.h:
+        (WebCore::ScriptDebugServer::causesRecompilation):
+        (WebCore::ScriptDebugServer::supportsNativeBreakpoints):
+        * bindings/v8/ScriptProfiler.h:
+        (WebCore::ScriptProfiler::causesRecompilation):
+        (WebCore::ScriptProfiler::isSampling):
+        (WebCore::ScriptProfiler::hasHeapProfiler):
+        * inspector/Inspector.json:
+        * inspector/InspectorClient.h:
+        (WebCore::InspectorClient::canClearBrowserCache):
+        (WebCore::InspectorClient::canClearBrowserCookies):
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::InspectorController):
+        (WebCore::InspectorController::connectFrontend):
+        (WebCore::InspectorController::show):
+        * inspector/InspectorController.h:
+        * inspector/InspectorDebuggerAgent.cpp:
+        (WebCore::InspectorDebuggerAgent::causesRecompilation):
+        (WebCore::InspectorDebuggerAgent::canSetScriptSource):
+        (WebCore::InspectorDebuggerAgent::supportsNativeBreakpoints):
+        * inspector/InspectorDebuggerAgent.h:
+        * inspector/InspectorFrontendClientLocal.cpp:
+        (WebCore::InspectorFrontendClientLocal::frontendLoaded):
+        * inspector/InspectorProfilerAgent.cpp:
+        (WebCore::InspectorProfilerAgent::causesRecompilation):
+        (WebCore::InspectorProfilerAgent::isSampling):
+        (WebCore::InspectorProfilerAgent::hasHeapProfiler):
+        (WebCore::InspectorProfilerAgent::disable):
+        (WebCore::InspectorProfilerAgent::enable):
+        (WebCore::InspectorProfilerAgent::setFrontend):
+        * inspector/InspectorProfilerAgent.h:
+        * inspector/InspectorResourceAgent.cpp:
+        (WebCore::InspectorResourceAgent::canClearBrowserCache):
+        (WebCore::InspectorResourceAgent::canClearBrowserCookies):
+        * inspector/InspectorResourceAgent.h:
+        * inspector/front-end/DebuggerModel.js:
+        (WebInspector.DebuggerModel):
+        (WebInspector.DebuggerModel.prototype.enableDebugger):
+        (WebInspector.DebuggerModel.prototype.canSetScriptSource):
+        * inspector/front-end/NetworkItemView.js:
+        (WebInspector.NetworkItemView):
+        * inspector/front-end/NetworkPanel.js:
+        (WebInspector.NetworkLogView.onCanClearBrowserCache):
+        (WebInspector.NetworkLogView.onCanClearBrowserCookies):
+        (WebInspector.NetworkLogView):
+        (WebInspector.NetworkLogView.prototype._contextMenu):
+        * inspector/front-end/ProfilesPanel.js:
+        (WebInspector.ProfilesPanel.prototype._reportHeapSnapshotProgress):
+        * inspector/front-end/ScriptsPanel.js:
+        * inspector/front-end/Settings.js:
+        * inspector/front-end/SettingsScreen.js:
+        (WebInspector.SettingsScreen):
+        * inspector/front-end/inspector.js:
+        (WebInspector.get inspectedPageDomain):
+        (WebInspector._initializeCapability):
+        (WebInspector.doLoadedDone):
+
 2011-11-28  Hans Wennborg  <hans@chromium.org>
 
         IndexedDB: Fix reverse cursor with non-existent upper bound

@@ -506,9 +506,19 @@ void InspectorResourceAgent::getResponseBody(ErrorString* errorString, const Str
     *errorString = "No data found for resource with given identifier";
 }
 
+void InspectorResourceAgent::canClearBrowserCache(ErrorString*, bool* result)
+{
+    *result = m_client->canClearBrowserCache();
+}
+
 void InspectorResourceAgent::clearBrowserCache(ErrorString*)
 {
     m_client->clearBrowserCache();
+}
+
+void InspectorResourceAgent::canClearBrowserCookies(ErrorString*, bool* result)
+{
+    *result = m_client->canClearBrowserCookies();
 }
 
 void InspectorResourceAgent::clearBrowserCookies(ErrorString*)

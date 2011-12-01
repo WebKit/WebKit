@@ -115,13 +115,15 @@ InspectorFrontendClientLocal::~InspectorFrontendClientLocal()
 {
     if (m_frontendHost)
         m_frontendHost->disconnectClient();
-    m_frontendScriptState = 0;
     m_frontendPage = 0;
+    m_frontendScriptState = 0;
     m_inspectorController = 0;
 }
 
 void InspectorFrontendClientLocal::windowObjectCleared()
 {
+    if (m_frontendHost)
+        m_frontendHost->disconnectClient();
     // FIXME: don't keep reference to the script state
     m_frontendScriptState = scriptStateFromPage(debuggerWorld(), m_frontendPage);
     m_frontendHost = InspectorFrontendHost::create(this, m_frontendPage);
@@ -131,7 +133,6 @@ void InspectorFrontendClientLocal::windowObjectCleared()
 void InspectorFrontendClientLocal::frontendLoaded()
 {
     bringToFront();
-    m_inspectorController->connectFrontend();
     m_frontendLoaded = true;
     if (!m_evaluateOnLoad.isEmpty())
         evaluateOnLoad(m_evaluateOnLoad);

@@ -1,3 +1,16 @@
+2011-12-01  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: query backend for capabilities explicitly.
+        https://bugs.webkit.org/show_bug.cgi?id=73442
+
+        Reviewed by Yury Semikhatsky.
+
+        * src/InspectorClientImpl.cpp:
+        (WebKit::InspectorClientImpl::canClearBrowserCache):
+        (WebKit::InspectorClientImpl::canClearBrowserCookies):
+        * src/InspectorClientImpl.h:
+        * src/js/DevTools.js:
+
 2011-11-29  Hans Wennborg  <hans@chromium.org>
 
         IndexedDB: Cursor pre-fetching

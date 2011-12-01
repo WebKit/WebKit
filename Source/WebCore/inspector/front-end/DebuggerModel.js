@@ -40,7 +40,7 @@ WebInspector.DebuggerModel = function()
      */
     this._scripts = {};
 
-    this._capabilitiesObject = {};
+    this._canSetScriptSource = false;
 
     InspectorBackend.registerDebuggerDispatcher(new WebInspector.DebuggerDispatcher(this));
 }
@@ -87,22 +87,11 @@ WebInspector.DebuggerModel.BreakReason = {
 WebInspector.DebuggerModel.prototype = {
     enableDebugger: function()
     {
-        /**
-         * @param {Protocol.Error} error
-         * @param {Array.<MetaAgent.DomainCapabilities>} capabilities
-         */
-        function callback(error, capabilities)
+        function callback(error, result)
         {
-            for (var i = 0; i < capabilities.length; ++i) {
-                if (capabilities[i].domainName !== "Debugger")
-                    continue;
-
-                var capabilitiesList = capabilities[i].capabilities;
-                for (var j = 0; j < capabilitiesList.length; ++j)
-                    this._capabilitiesObject[capabilitiesList[j]] = true;
-            }
+            this._canSetScriptSource = result;
         }
-        MetaAgent.getCapabilities(["Debugger"], callback.bind(this));
+        DebuggerAgent.canSetScriptSource(callback.bind(this));
         DebuggerAgent.enable(this._debuggerWasEnabled.bind(this));
     },
 
@@ -116,7 +105,7 @@ WebInspector.DebuggerModel.prototype = {
      */
     canSetScriptSource: function()
     {
-        return !!this._capabilitiesObject[DebuggerAgent.capabilitySetScriptSource];
+        return this._canSetScriptSource;
     },
 
     _debuggerWasEnabled: function()

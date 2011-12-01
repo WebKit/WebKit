@@ -41,18 +41,8 @@
     Preferences.sharedWorkersDebugNote = "Shared workers can be inspected in the Task Manager";
     Preferences.localizeUI = false;
     Preferences.applicationTitle = "Developer Tools - %s";
-
-    Capabilities.samplingCPUProfiler = true;
-    Capabilities.heapProfilerPresent = true;
-    Capabilities.detailedHeapProfiles = true;
-    Capabilities.debuggerAlwaysEnabled = true;
-    Capabilities.profilerAlwaysEnabled = true;
-    Capabilities.nativeInstrumentationEnabled = true;
-    Capabilities.showTimingTab = true;
-    Capabilities.showCookiesTab = true;
-    Capabilities.canInspectWorkers = true;
-    Capabilities.canClearCacheAndCookies = true;
-    Capabilities.canDisableCache = true;
+    Preferences.exposeDisableCache = true;
+    Preferences.exposeWorkersInspection = true;
 })();}
 
 /** Pending WebKit upstream by apavlov). Fixes iframe vs drag problem. */

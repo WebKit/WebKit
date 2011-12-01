@@ -137,6 +137,22 @@ PassRefPtr<InspectorObject> InspectorProfilerAgent::createSnapshotHeader(const S
     return header;
 }
 
+
+void InspectorProfilerAgent::causesRecompilation(ErrorString*, bool* result)
+{
+    *result = ScriptProfiler::causesRecompilation();
+}
+
+void InspectorProfilerAgent::isSampling(ErrorString*, bool* result)
+{
+    *result = ScriptProfiler::isSampling();
+}
+
+void InspectorProfilerAgent::hasHeapProfiler(ErrorString*, bool* result)
+{
+    *result = ScriptProfiler::hasHeapProfiler();
+}
+
 void InspectorProfilerAgent::enable(ErrorString*)
 {
     if (enabled())
@@ -157,8 +173,6 @@ void InspectorProfilerAgent::disable()
         return;
     m_enabled = false;
     PageScriptDebugServer::shared().recompileAllJSFunctionsSoon();
-    if (m_frontend)
-        m_frontend->profilerWasDisabled();
 }
 
 void InspectorProfilerAgent::enable(bool skipRecompile)
@@ -168,8 +182,6 @@ void InspectorProfilerAgent::enable(bool skipRecompile)
     m_enabled = true;
     if (!skipRecompile)
         PageScriptDebugServer::shared().recompileAllJSFunctionsSoon();
-    if (m_frontend)
-        m_frontend->profilerWasEnabled();
 }
 
 String InspectorProfilerAgent::getCurrentUserInitiatedProfileName(bool incrementProfileNumber)
@@ -261,7 +273,6 @@ void InspectorProfilerAgent::resetFrontendProfiles()
 void InspectorProfilerAgent::setFrontend(InspectorFrontend* frontend)
 {
     m_frontend = frontend->profiler();
-    restoreEnablement();
 }
 
 void InspectorProfilerAgent::clearFrontend()
