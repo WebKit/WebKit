@@ -1,3 +1,13 @@
+2011-12-01  Andreas Kling  <kling@webkit.org>
+
+        CSSStyleSelector: Add missing fields to constructor initializer list.
+        <http://webkit.org/b/73565>
+
+        Reviewed by Antti Koivisto.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::CSSStyleSelector):
+
 2011-12-01  Benjamin Poulain  <bpoulain@apple.com>
 
         Get rid of the unused function nameForCursorType()
