@@ -2035,6 +2035,7 @@ private:
         ASSERT(imm.isValid());
         ASSERT(imm.isUInt7());
         uint16_t* location = reinterpret_cast<uint16_t*>(code);
+        location[0] &= ~((static_cast<uint16_t>(0x7f) >> 2) << 6);
         location[0] |= (imm.getUInt7() >> 2) << 6;
         ExecutableAllocator::cacheFlush(location, sizeof(uint16_t));
     }

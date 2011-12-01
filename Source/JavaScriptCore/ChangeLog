@@ -1,3 +1,14 @@
+2011-12-01  Filip Pizlo  <fpizlo@apple.com>
+
+        ARMv7 only allows for one-shot patching of compact offsets, while the
+        JIT expects to be able to repatch
+        https://bugs.webkit.org/show_bug.cgi?id=73548
+
+        Reviewed by Oliver Hunt.
+
+        * assembler/ARMv7Assembler.h:
+        (JSC::ARMv7Assembler::setUInt7ForLoad):
+
 2011-11-30  Benjamin Poulain  <benjamin@webkit.org>
 
         URLs are encoded in UTF-8, then decoded as if they are Latin1
