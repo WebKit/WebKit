@@ -152,3 +152,14 @@ testDateParse("Dec 25, 1995, 13:30", "819898200000 + timeZoneOffset");
 testDateParse("Dec 25,1995,13:30", "819898200000 + timeZoneOffset");
 
 testDateParse("Mon Jun 20 11:00:00 CDT 2011", "1308585600000");
+
+// IE/Firefox/Opera compatibility: fallback time offset parsing
+testDateParseExact("4/13/2008 12:00 AM GMT-4", "1208059200000");
+testDateParseExact("4/13/2008 12:00 AM GMT-23", "1208127600000");
+testDateParseExact("4/13/2008 12:00 AM GMT+23", "1207962000000");
+testDateParseExact("4/13/2008 12:00 AM GMT-0023", "1208127600000");
+testDateParseExact("4/13/2008 12:00 AM GMT-24", "1208046240000");
+testDateParseExact("4/13/2008 12:00 AM GMT+24", "1208043360000");
+testDateParseExact("4/13/2008 12:00 AM GMT-0024", "1208046240000");
+testDateParseExact("4/13/2008 12:00 AM GMT-123", "1208049780000");
+testDateParseExact("4/13/2008 12:00 AM GMT-1230", "1208089800000");

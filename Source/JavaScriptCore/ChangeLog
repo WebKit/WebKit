@@ -1,3 +1,16 @@
+2011-11-30  Max Vujovic  <mvujovic@adobe.com>
+
+        Some date values not handled consistently with IE/Firefox
+        https://bugs.webkit.org/show_bug.cgi?id=14176
+
+        Reviewed by Gavin Barraclough.
+
+        Changed time zone offset parsing behavior to match IE/Firefox/Opera's in
+        implementation dependent cases like "GMT-4".
+
+        * wtf/DateMath.cpp:
+        (WTF::parseDateFromNullTerminatedCharacters):
+
 2011-11-30  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         toStringCallback and valueOfCallback do not check the entire prototype chain for convertToType callback

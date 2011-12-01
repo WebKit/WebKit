@@ -917,7 +917,10 @@ double parseDateFromNullTerminatedCharacters(const char* dateString, bool& haveT
             int sgn = (o < 0) ? -1 : 1;
             o = labs(o);
             if (*dateString != ':') {
-                offset = ((o / 100) * 60 + (o % 100)) * sgn;
+                if (o >= 24)
+                    offset = ((o / 100) * 60 + (o % 100)) * sgn;
+                else
+                    offset = o * 60 * sgn;
             } else { // GMT+05:00
                 long o2;
                 if (!parseLong(dateString, &newPosStr, 10, &o2))
