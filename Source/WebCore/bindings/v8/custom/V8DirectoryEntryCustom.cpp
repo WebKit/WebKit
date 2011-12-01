@@ -50,6 +50,10 @@ v8::Handle<v8::Value> V8DirectoryEntry::getDirectoryCallback(const v8::Arguments
 {
     INC_STATS("DOM.DirectoryEntry.getDirectory");
     DirectoryEntry* imp = V8DirectoryEntry::toNative(args.Holder());
+
+    if (args.Length() < 1)
+        return throwError("Not enough arguments", V8Proxy::TypeError);
+
     STRING_TO_V8PARAMETER_EXCEPTION_BLOCK(V8Parameter<WithUndefinedOrNullCheck>, path, args[0]);
     if (args.Length() <= 1) {
         imp->getDirectory(path);
