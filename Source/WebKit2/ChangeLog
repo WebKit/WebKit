@@ -1,3 +1,18 @@
+2011-12-01  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=73592
+        REGRESSION (r100483): Can't drag out of background window
+        -and corresponding-
+        <rdar://problem/10508870>
+
+        Reviewed by Darin Adler.
+
+        If the mouse is pressed we need to do a full, normal hit test even if the window 
+        is not active. 
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::mouseEvent):
+        (WebKit::WebPage::mouseEventSyncForTesting):
+
 2011-12-01  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Add a helper function to find the current executable's path

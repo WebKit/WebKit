@@ -1187,7 +1187,13 @@ void WebPage::mouseEvent(const WebMouseEvent& mouseEvent)
     if (!handled) {
         CurrentEvent currentEvent(mouseEvent);
 
-        handled = handleMouseEvent(mouseEvent, m_page.get(), !m_page->focusController()->isActive());
+        // We need to do a full, normal hit test during this mouse event if the page is active or if a mouse
+        // button is currently pressed. It is possible that neither of those things will be true since on 
+        // Lion when legacy scrollbars are enabled, WebKit receives mouse events all the time. If it is one 
+        // of those cases where the page is not active and the mouse is not pressed, then we can fire a more
+        // efficient scrollbars-only version of the event.
+        bool onlyUpdateScrollbars = !(m_page->focusController()->isActive() || (mouseEvent.button() != WebMouseEvent::NoButton));
+        handled = handleMouseEvent(mouseEvent, m_page.get(), onlyUpdateScrollbars);
     }
 
     send(Messages::WebPageProxy::DidReceiveEvent(static_cast<uint32_t>(mouseEvent.type()), handled));
@@ -1205,7 +1211,14 @@ void WebPage::mouseEventSyncForTesting(const WebMouseEvent& mouseEvent, bool& ha
 
     if (!handled) {
         CurrentEvent currentEvent(mouseEvent);
-        handled = handleMouseEvent(mouseEvent, m_page.get(), !m_page->focusController()->isActive());
+
+        // We need to do a full, normal hit test during this mouse event if the page is active or if a mouse
+        // button is currently pressed. It is possible that neither of those things will be true since on 
+        // Lion when legacy scrollbars are enabled, WebKit receives mouse events all the time. If it is one 
+        // of those cases where the page is not active and the mouse is not pressed, then we can fire a more
+        // efficient scrollbars-only version of the event.
+        bool onlyUpdateScrollbars = !(m_page->focusController()->isActive() || (mouseEvent.button() != WebMouseEvent::NoButton));
+        handled = handleMouseEvent(mouseEvent, m_page.get(), onlyUpdateScrollbars);
     }
 }
 
