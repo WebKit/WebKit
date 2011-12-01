@@ -1,5 +1,105 @@
 2011-12-01  Adam Roben  <aroben@apple.com>
 
+        Allow committers to use their Trac credentials to force builds on the buildbots
+
+        Fixes <http://webkit.org/b/73353>
+
+        A new class, CommitterAuth, handles authentication of WebKit committers. CommitterAuth uses
+        three files to do its job: a config file that contains a list of WebKit committer usernames,
+        an htdigest file that contains Trac credentials, and JSON file that gives the paths for
+        those two files.
+
+        Reviewed by Darin Adler.
+
+        * BuildSlaveSupport/build.webkit.org-config/committer_auth.py: Added.
+        (Error): Basic wrapper around Exception that we use for cases where we couldn't even check
+        whether credentials were valid or not.
+        (CommitterAuth.__init__): Just store the path to auth.json.
+        (CommitterAuth.auth_json): Load, parse, and return auth.json.
+        (CommitterAuth.auth_json_filename): Return the path to auth.json.
+        (CommitterAuth.authenticate): Return true if the user is a WebKit committer and their
+        credentials are valid Trac credentials. Return false otherwise or if an error occurred while
+        checking those conditions.
+        (CommitterAuth.is_webkit_committer): Return true if the user is a WebKit committer. Return
+        false otherwise or if an exception was thrown.
+        (CommitterAuth.is_webkit_trac_user): Return true if the username/password are present in the
+        Trac credentials htdigest file. Return false otherwise or if an exception was thrown.
+
+        (CommitterAuth.open_auth_json_file):
+        (CommitterAuth.open_trac_credentials_file):
+        (CommitterAuth.open_webkit_committers_file):
+        Open the specified file. These are mostly useful for testing purposes.
+
+        (CommitterAuth.trac_credentials_filename):
+        (CommitterAuth.webkit_committers_filename):
+        Return the path to the specified file by retrieving it from auth.json.
+
+        (CommitterAuth.webkit_committers): Load and parse the committers file and extract the list
+        of WebKit committers from it.
+
+        * BuildSlaveSupport/build.webkit.org-config/committer_auth_unittest.py: Added.
+        (CMStringIO.__enter__):
+        (CMStringIO.__exit__):
+        Helper class that makes it possible to use StringIO with the "with" statement.
+
+        (open_override): Helper context manager for overriding the global "open" function
+        temporarily.
+
+        (CommitterAuthTest.setUp): Set up a somewhat-mocked CommitterAuth that is used by most
+        tests.
+        (CommitterAuthTest.fake_open_function): Returns a function that can be used in place of
+        "open" to test that the expected path was opened.
+        (CommitterAuthTest.test_authentication_success): Test that committers can authenticate
+        successfully.
+        (CommitterAuthTest.test_committer_without_trac_credentials_fails): Test that committers who
+        somehow have no Trac account can't authenticate.
+
+        (CommitterAuthTest.test_fail_to_open_auth_json_file):
+        (CommitterAuthTest.test_fail_to_open_trac_credentials_file):
+        (CommitterAuthTest.test_fail_to_open_webkit_committers_file):
+        Test what happens when we can't open the three files we depend upon.
+
+        (CommitterAuthTest.test_implements_IAuth): Test that we fulfill buildbot's expectations for
+        an authentication class.
+
+        (CommitterAuthTest.test_invalid_auth_json_file):
+        (CommitterAuthTest.test_invalid_committers_file):
+        (CommitterAuthTest.test_invalid_trac_credentials_file):
+        (CommitterAuthTest.test_missing_auth_json_keys):
+        Test what happens when the three files we depend upon are invalid in some way.
+
+        (CommitterAuthTest.test_open_auth_json_file):
+        (CommitterAuthTest.test_open_trac_credentials_file):
+        (CommitterAuthTest.test_open_webkit_committers_file):
+        Test that we open the expected paths.
+
+        (CommitterAuthTest.test_trac_credentials_filename):
+        (CommitterAuthTest.test_webkit_committers_filename):
+        Test that we extract filenames out of auth.json correctly.
+
+        (CommitterAuthTest.test_non_committer_fails):
+        (CommitterAuthTest.test_unknown_user_fails):
+        (CommitterAuthTest.test_username_is_prefix_of_valid_user):
+        (CommitterAuthTest.test_wrong_password_fails):
+        Test various failed authentication attempts.
+
+        (CommitterAuthTest.test_webkit_committers): Test that we can parse the list of WebKit
+        committers out of the committers file correctly.
+
+        (CommitterAuthTest.fake_auth_json_file):
+        (CommitterAuthTest.invalid_auth_json_file):
+        (CommitterAuthTest.fake_committers_file):
+        (CommitterAuthTest.invalid_committers_file):
+        (CommitterAuthTest.fake_htdigest_file):
+        (CommitterAuthTest.invalid_htdigest_file):
+        Return various fake files for testing.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg: Specify an instance of CommitterAuth
+        to be used for authentication in the web interface, and specify that only authenticated
+        users may force builds.
+
+2011-12-01  Adam Roben  <aroben@apple.com>
+
         Add an HTDigestParser class to webkitpy
 
         Fixes <http://webkit.org/b/73575> webkitpy doesn't provide a way to parse htdigest files
