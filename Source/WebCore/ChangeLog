@@ -1,3 +1,15 @@
+2011-12-01  Florin Malita  <fmalita@google.com>
+
+        SVG Gaussian blur in 1-dimension is incorrect
+        https://bugs.webkit.org/show_bug.cgi?id=73029
+
+        Reviewed by Simon Fraser.
+
+        Ensure that the last blurBox result is stored when applying one-dimensional blurs.
+
+        * platform/graphics/filters/FEGaussianBlur.cpp:
+        (WebCore::FEGaussianBlur::platformApplyGeneric):
+
 2011-12-01  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Elements Panel edit as html looks weird with an arrow inside edit box.
