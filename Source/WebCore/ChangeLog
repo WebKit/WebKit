@@ -1,3 +1,35 @@
+2011-12-01  Jonathan Dong  <jonathan.dong@torchmobile.com.cn>
+
+        Upstream credential storage files of BlackBerry porting
+        https://bugs.webkit.org/show_bug.cgi?id=73280
+
+        Reviewed by Rob Buis.
+
+        Added the basic structure of class CredentialBackingStore
+        to persist the credential data, and generated
+        platform/network/blackberry/CredentialStorageBlackBerry.cpp,
+        to implement CredentialStorage::getFromPersistentStorage
+        for BlackBerry porting.
+        Contributed by Torch Team.
+
+        * platform/network/blackberry/CredentialBackingStore.cpp: Added.
+        (WebCore::CredentialBackingStore::instance):
+        (WebCore::CredentialBackingStore::CredentialBackingStore):
+        (WebCore::CredentialBackingStore::~CredentialBackingStore):
+        (WebCore::CredentialBackingStore::open):
+        (WebCore::CredentialBackingStore::close):
+        (WebCore::CredentialBackingStore::addLogin):
+        (WebCore::CredentialBackingStore::updateLogin):
+        (WebCore::CredentialBackingStore::hasLogin):
+        (WebCore::CredentialBackingStore::getLogin):
+        (WebCore::CredentialBackingStore::removeLogin):
+        (WebCore::CredentialBackingStore::clear):
+        (WebCore::CredentialBackingStore::encryptedString):
+        (WebCore::CredentialBackingStore::decryptedString):
+        * platform/network/blackberry/CredentialBackingStore.h: Added.
+        * platform/network/blackberry/CredentialStorageBlackBerry.cpp: Added.
+        (WebCore::CredentialStorage::getFromPersistentStorage):
+
 2011-11-30  Andreas Kling  <kling@webkit.org>
 
         StyledElement: Tidy up copyNonAttributeProperties().
