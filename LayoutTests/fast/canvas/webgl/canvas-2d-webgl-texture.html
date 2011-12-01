@@ -1,0 +1,77 @@
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script src="resources/webgl-test.js"></script>
+<script src="resources/webgl-test-utils.js"> </script>
+</head>
+<script>
+description("Checks that copying canvas results to a WebGL texture functions without error.");
+
+var wtu = WebGLTestUtils;
+
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+}
+
+var canvas;
+var gl;
+var ctx;
+
+function draw()
+{
+  ctx.fillStyle = "rgb(200, 0, 0)";
+  ctx.fillRect(0, 0, 256, 256);
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, canvas2d);
+
+  wtu.drawQuad(gl);
+  wtu.checkCanvasRect(gl, 0, 0, 1, 1, [200, 0, 0, 255], "Should have rendered red.", 1);
+
+  ctx.fillStyle = "rgb(0, 0, 200)";
+  ctx.fillRect(0, 0, 256, 256);
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, canvas2d);
+
+  wtu.drawQuad(gl);
+  wtu.checkCanvasRect(gl, 0, 0, 1, 1, [0, 0, 200, 255], "Should have rendered blue.", 1);
+
+  if (window.layoutTestController)
+      layoutTestController.notifyDone();
+}
+
+window.onload = function()
+{
+  if (window.initNonKhronosFramework)
+    window.initNonKhronosFramework(false);
+
+  canvas = document.getElementById("webgl-canvas");
+  gl = create3DContext(canvas);
+
+  canvas2d = document.getElementById("canvas-2d");
+
+  // Set a size that ensures a hardware-accelerated canvas.
+  canvas2d.width = 256;
+  canvas2d.height = 256;
+  ctx = canvas2d.getContext("2d");
+
+  var program = wtu.setupTexturedQuad(gl);
+  var bufferObjects = wtu.setupUnitQuad(gl);
+
+  var texture = gl.createTexture();
+  gl.bindTexture(gl.TEXTURE_2D, texture);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+
+  gl.uniform1i(gl.getUniformLocation(program, "tex"), 0);
+  gl.viewport(0, 0, canvas.width, canvas.height);
+
+  // Ensure that the compositor has become active.
+  setTimeout(draw, 0);
+}
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<canvas id="webgl-canvas" width="32px" height="32px"></canvas>
+<canvas id="canvas-2d" style="-webkit-transform: translateZ(0);"></canvas>
+</body>
+</html>

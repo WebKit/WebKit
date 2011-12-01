@@ -1,3 +1,22 @@
+2011-11-30  Jeff Timanus  <twiz@chromium.org>
+
+        Alter an early return that was preventing HTMLCanvasElement::didDraw notifications
+        from being triggered when accelerated compositing was enabled. The notification is
+        necessary to make sure that any cached state is cleared in the HTMLCanvasElement object.
+        To prevent performance regressions, the cached state is explicitly cleared, as the didDraw
+        machinery is not necessary for accelerated canvases.
+        https://bugs.webkit.org/show_bug.cgi?id=73257
+
+        Reviewed by Stephen White.
+
+        Test: fast/canvas/webgl/canvas-2d-webgl-texture.html
+
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::didDraw):
+        (WebCore::HTMLCanvasElement::setSurfaceSize):
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::didDraw):
+
 2011-11-30  Kentaro Hara  <haraken@chromium.org>
 
         Implement the StorageEvent constructor

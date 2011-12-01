@@ -205,7 +205,7 @@ CanvasRenderingContext* HTMLCanvasElement::getContext(const String& type, Canvas
 
 void HTMLCanvasElement::didDraw(const FloatRect& rect)
 {
-    m_copiedImage.clear(); // Clear our image snapshot if we have one.
+    clearCopiedImage();
 
     if (RenderBox* ro = renderBox()) {
         FloatRect destRect = ro->contentBoxRect();
@@ -325,7 +325,7 @@ void HTMLCanvasElement::setSurfaceSize(const IntSize& size)
     m_size = size;
     m_hasCreatedImageBuffer = false;
     m_imageBuffer.clear();
-    m_copiedImage.clear();
+    clearCopiedImage();
 }
 
 String HTMLCanvasElement::toEncodingMimeType(const String& mimeType)

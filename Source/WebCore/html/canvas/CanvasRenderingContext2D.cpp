@@ -1782,6 +1782,7 @@ void CanvasRenderingContext2D::didDraw(const FloatRect& r, unsigned options)
         RenderBox* renderBox = canvas()->renderBox();
         if (renderBox && renderBox->hasLayer() && renderBox->layer()->hasAcceleratedCompositing()) {
             renderBox->layer()->contentChanged(RenderLayer::CanvasChanged);
+            canvas()->clearCopiedImage();
             return;
         }
     }
