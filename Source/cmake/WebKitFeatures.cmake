@@ -4,14 +4,6 @@ SET(ALWAYS 2)
 
 SET(WEBKIT_FEATURES "")
 
-SET(HTML_FEATURES "")
-SET(SVG_FEATURES "")
-
-MACRO(WEBKIT_SEPARATE_FEATURES _name _value)
-        FOREACH(f ${ARGN})
-                LIST(APPEND ${f}_FEATURES "${_name}=${_value}")
-        ENDFOREACH()
-ENDMACRO(WEBKIT_SEPARATE_FEATURES)
 
 MACRO(WEBKIT_FEATURE_CHECK_DEPS _deps _deps_ok)
         SET(${_deps_ok} TRUE)
@@ -44,12 +36,7 @@ MACRO(WEBKIT_FEATURE _feature _description _type _args)
 	LIST(APPEND WEBKIT_FEATURES ${_feature})
 
 	IF (${_feature})
-		SET(${_feature} 1)
-		WEBKIT_SEPARATE_FEATURES(${_feature} 1 ${ARGN})
 		LIST(APPEND FEATURE_DEFINES ${_feature})
-	ELSE ()
-		SET(${_feature} 0)
-		WEBKIT_SEPARATE_FEATURES(${_feature} 0 ${ARGN})
 	ENDIF ()
 ENDMACRO()
 

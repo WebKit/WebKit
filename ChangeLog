@@ -1,3 +1,19 @@
+2011-12-01  Patrick Gansterer  <paroga@webkit.org>
+
+        [CMake] Make the feature defines for DOM names explicit
+        https://bugs.webkit.org/show_bug.cgi?id=72812
+
+        Reviewed by Daniel Bates.
+
+        Preprocessor defines used in WebCore/dom/make_names.pl are set via WEBKIT_FEATURE
+        for every port in the correspondig platform file. Pass an explicit list of defines
+        to the CMake macro, so we need to maintain the list only once.
+
+        * Source/cmake/OptionsBlackBerry.cmake:
+        * Source/cmake/OptionsEfl.cmake:
+        * Source/cmake/OptionsWinCE.cmake:
+        * Source/cmake/WebKitFeatures.cmake:
+
 2011-11-30  Alejandro G. Castro  <alex@igalia.com>
 
         [GTK] Add accelerated compositing compilation option
