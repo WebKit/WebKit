@@ -933,6 +933,8 @@ BUGCR10310 LINUX : svg/W3C-SVG-1.1/masking-opacity-01-b.svg = FAIL
 
 BUGWK66386 : svg/custom/repaint-shadow.svg = PASS IMAGE
 
+BUGWK73512 LINUX : svg/custom/js-late-gradient-creation.svg = PASS IMAGE
+
 // -----------------------------------------------------------------
 // Accessibility layout tests
 //
