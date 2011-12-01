@@ -65,6 +65,8 @@ foreach my $idlFile (@idlFiles) {
 my %supplementals;
 foreach my $idlFile (keys %documents) {
     $supplementals{$idlFile} = [];
+}
+foreach my $idlFile (keys %documents) {
     foreach my $dataNode (@{$documents{$idlFile}->classes}) {
         if ($dataNode->extendedAttributes->{"Supplemental"}) {
             my $targetIdlFile = $interfaceNameToIdlFile{$dataNode->extendedAttributes->{"Supplemental"}};

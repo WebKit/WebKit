@@ -1,3 +1,32 @@
+2011-12-01  Kentaro Hara  <haraken@chromium.org>
+
+        run-bindings-tests is failing on Gtk/Qt/SnowLeopard/Lion bots
+        https://bugs.webkit.org/show_bug.cgi?id=73558
+
+        Reviewed by Csaba Osztrogonác.
+
+        The cause of the bug:
+
+        foreach my $idlFile (keys %documents) {
+            $supplementals{$idlFile} = [];
+            foreach my $dataNode (...) {
+                if (...) {
+                    ...;
+                    push(@{$supplementals{$targetIdlFile}}, $idlFile);
+                    ...;
+                }
+            }
+        }
+
+        Even if we did push(@{$supplementals{$targetIdlFile}}, $idlFile),
+        the $supplementals{$targetIdlFile} can be re-initialized by
+        $supplementals{$idlFile} = [] in subsequent loops.
+        This patch fixes the bug.
+
+        Tests: bindings/scripts/test/TestInterface.idl
+
+        * bindings/scripts/resolve-supplemental.pl:
+
 2011-12-01  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: restore WebKit2 Safari menu items after capabilities refactoring regression.
