@@ -1,3 +1,25 @@
+2011-11-30  Enrica Casucci  <enrica@apple.com>
+
+        Copy/paste of the same content produces increasingly nested markup
+        https://bugs.webkit.org/show_bug.cgi?id=73497
+        <rdar://problem/10208605>
+        
+        When pasting a fragment over a selection, we perfom a DeleteSelection command
+        followed by a ReplaceSelection command. Delete selection preserves the style
+        of the selection start, leaving all the blocks containing the insertion point.
+        This patch eliminates all the nested divs that don't provide additional style,
+        avoiding the proliferation of nested divs. 
+
+        Reviewed by Darin Adler.
+
+        Tests: editing/deleting/delete-and-cleanup.html
+               editing/pasteboard/paste-without-nesting.html
+
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::removeRedundantBlocks):
+        (WebCore::DeleteSelectionCommand::doApply):
+        * editing/DeleteSelectionCommand.h:
+
 2011-11-30  Dan Bernstein  <mitz@apple.com>
 
         WebCore part of: Allow the length of a page along the pagination axis to differ from the length of the view

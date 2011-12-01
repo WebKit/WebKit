@@ -67,6 +67,7 @@ private:
     void clearTransientState();
     virtual void removeNode(PassRefPtr<Node>);
     virtual void deleteTextFromNode(PassRefPtr<Text>, unsigned, unsigned);
+    void removeRedundantBlocks();
 
     // This function provides access to original string after the correction has been deleted.
     String originalStringForAutocorrectionAtBeginningOfSelection();

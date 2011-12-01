@@ -746,6 +746,30 @@ String DeleteSelectionCommand::originalStringForAutocorrectionAtBeginningOfSelec
     return String();
 }
 
+// This method removes div elements with no attributes that have only one child or no children at all.
+void DeleteSelectionCommand::removeRedundantBlocks()
+{
+    Node* node = m_endingPosition.deprecatedNode();
+    Node* rootNode = node->rootEditableElement();
+   
+    while (node != rootNode) {
+        Node* parentNode = node->parentNode();
+        if ((parentNode && parentNode->firstChild() != parentNode->lastChild()) || !node->hasTagName(divTag)) {
+            node = parentNode;
+            continue;
+        }
+        const NamedNodeMap* attributeMap = node->attributes();
+        if (!attributeMap || attributeMap->isEmpty()) {
+            if (node == m_endingPosition.anchorNode())
+                updatePositionForNodeRemoval(m_endingPosition, node);
+            
+            CompositeEditCommand::removeNodePreservingChildren(node);
+            node = m_endingPosition.anchorNode();
+        } else
+            node = parentNode;
+    }
+}
+
 void DeleteSelectionCommand::doApply()
 {
     // If selection has not been set to a custom selection when the command was created,
@@ -810,8 +834,10 @@ void DeleteSelectionCommand::doApply()
     
     RefPtr<Node> placeholder = m_needPlaceholder ? createBreakElement(document()).get() : 0;
     
-    if (placeholder)
+    if (placeholder) {
+        removeRedundantBlocks();
         insertNodeAt(placeholder.get(), m_endingPosition);
+    }
 
     rebalanceWhitespaceAt(m_endingPosition);
 
