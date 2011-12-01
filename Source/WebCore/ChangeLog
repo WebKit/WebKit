@@ -1,5 +1,14 @@
 2011-12-01  Mark Pilgrim  <pilgrim@chromium.org>
 
+        [FileSystem API] DirectoryEntry.removeRecursively successCallback is required
+        https://bugs.webkit.org/show_bug.cgi?id=69644
+
+        Reviewed by Adam Barth.
+
+        * fileapi/DirectoryEntry.idl: remove [Optional] flag from successCallback
+
+2011-12-01  Mark Pilgrim  <pilgrim@chromium.org>
+
         [FileSystem API] DirectoryEntry.getDirectory path argument is required
         https://bugs.webkit.org/show_bug.cgi?id=69643
 
