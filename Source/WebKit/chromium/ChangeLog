@@ -1,3 +1,12 @@
+2011-12-01  Elliot Poger  <epoger@google.com>
+
+        webkit->chromium DEPS roll 111575->112463
+        https://bugs.webkit.org/show_bug.cgi?id=73231
+
+        Reviewed by Yury Semikhatsky.
+
+        * DEPS:
+
 2011-12-01  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: further align front-end configurations: get rid of saveAsAvailable preference, inline drag glass pane.
