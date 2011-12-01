@@ -3498,6 +3498,7 @@
             'platform/graphics/chromium/CrossProcessFontLoading.mm',
             'platform/graphics/chromium/DrawingBufferChromium.cpp',
             'platform/graphics/chromium/Extensions3DChromium.h',
+            'platform/graphics/chromium/FontCacheAndroid.cpp',
             'platform/graphics/chromium/FontCacheChromiumWin.cpp',
             'platform/graphics/chromium/FontCacheLinux.cpp',
             'platform/graphics/chromium/FontChromiumWin.cpp',

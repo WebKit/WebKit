@@ -1471,7 +1471,8 @@
           'sources/': [
             ['include', 'platform/graphics/opentype/OpenTypeSanitizer\\.cpp$'],
           ],
-        }],['OS=="mac" and use_skia==0', {
+        }],
+        ['OS=="mac" and use_skia==0', {
           'sources/': [
             # The Mac build is PLATFORM_CG too.  platform/graphics/cg is the
             # only place that CG files we want to build are located, and not
@@ -1479,7 +1480,8 @@
             # regexp matching their directory.
             ['include', 'platform/graphics/cg/[^/]*(?<!Win)?\\.(cpp|mm?)$'],
           ],
-        }],['OS=="mac"', {
+        }],
+        ['OS=="mac"', {
           # Necessary for Mac .mm stuff.
           'include_dirs': [
             '<(chromium_src_dir)/third_party/apple_webkit',
@@ -1637,6 +1639,21 @@
 
             # SystemInfo.cpp is useful and we don't want to copy it.
             ['include', 'platform/win/SystemInfo\\.cpp$'],
+          ],
+        }],
+        ['OS=="android"', {
+          'sources/': [
+            ['include', 'platform/graphics/chromium/ComplexTextControllerLinux\\.cpp$'],
+            ['include', 'platform/graphics/chromium/FontLinux\\.cpp$'],
+            ['include', 'platform/graphics/chromium/FontPlatformDataLinux\\.cpp$'],
+            ['include', 'platform/graphics/chromium/GlyphPageTreeNodeLinux\\.cpp$'],
+            ['include', 'platform/graphics/chromium/SimpleFontDataLinux\\.cpp$'],
+            ['include', 'platform/graphics/chromium/HarfbuzzSkia\\.cpp$'],
+            ['include', 'platform/graphics/chromium/VDMXParser\\.cpp$'],
+          ],
+        }, { # OS!="android"
+          'sources/': [
+            ['exclude', 'Android\\.cpp$'],
           ],
         }],
       ],
