@@ -355,49 +355,93 @@ AccessibilityObject* AccessibilityObject::firstAccessibleObjectFromNode(const No
     return accessibleObject;
 }
 
+static void appendChildrenToArray(AccessibilityObject* object, bool isForward, AccessibilityObject* startObject, AccessibilityObject::AccessibilityChildrenVector& results)
+{
+    AccessibilityObject::AccessibilityChildrenVector searchChildren;
+    // A table's children includes elements whose own children are also the table's children (due to the way the Mac exposes tables).
+    // The table's cells are what are desired in this case, since that's where the content resides.
+    if (object->isAccessibilityTable())
+        toAccessibilityTable(object)->cells(searchChildren);
+    else
+        searchChildren = object->children();
+
+    size_t childrenSize = searchChildren.size();
+
+    size_t startIndex = isForward ? childrenSize : 0;
+    size_t endIndex = isForward ? 0 : childrenSize;
+
+    size_t searchPosition = startObject ? searchChildren.find(startObject) : WTF::notFound;
+    if (searchPosition != WTF::notFound) {
+        if (isForward)
+            endIndex = searchPosition + 1;
+        else
+            endIndex = searchPosition;
+    }
+
+    // This is broken into two statements so that it's easier read.
+    // FIXME: Handle attachments.
+    if (isForward) {
+        for (size_t i = startIndex; i > endIndex; i--)
+            results.append(searchChildren.at(i - 1).get());
+    } else {
+        for (size_t i = startIndex; i < endIndex; i++)
+            results.append(searchChildren.at(i).get());
+    }
+}
+    
 void AccessibilityObject::findMatchingObjects(AccessibilitySearchCriteria* criteria, AccessibilityChildrenVector& results)
 {
     ASSERT(criteria);
     
     if (!criteria)
         return;
+
+    // This search mechanism only searches the elements before/after the starting object.
+    // It does this by stepping up the parent chain and at each level doing a DFS.
     
+    // If there's no start object, it means we want to search everything.
     AccessibilityObject* startObject = criteria->startObject;
-    AccessibilityChildrenVector searchStack;
-    searchStack.append(this);
+    if (!startObject)
+        startObject = this;
     
     bool isForward = criteria->searchDirection == SearchDirectionNext;
-    bool didFindStartObject = !criteria->startObject;
     
-    // FIXME: Iterate the AccessibilityObject cache creating and adding objects if nessesary.
-    while (!searchStack.isEmpty()) {
-        AccessibilityObject* searchObject = searchStack.last().get();
-        searchStack.removeLast();
-        
-        if (didFindStartObject) {
+    // In the first iteration of the loop, it will examine the children of the start object for matches.
+    // However, when going backwards, those children should not be considered, so the loop is skipped ahead.
+    AccessibilityObject* previousObject = 0;
+    if (!isForward) {
+        previousObject = startObject;
+        startObject = startObject->parentObjectUnignored();
+    }
+    
+    // The outer loop steps up the parent chain each time (unignored is important here because otherwise elements would be searched twice)
+    for (AccessibilityObject* stopSearchElement = parentObjectUnignored(); startObject != stopSearchElement; startObject = startObject->parentObjectUnignored()) {
+
+        // Only append the children after/before the previous element, so that the search does not check elements that are 
+        // already behind/ahead of start element.
+        AccessibilityChildrenVector searchStack;
+        appendChildrenToArray(startObject, isForward, previousObject, searchStack);
+
+        // This now does a DFS at the current level of the parent.
+        while (!searchStack.isEmpty()) {
+            AccessibilityObject* searchObject = searchStack.last().get();
+            searchStack.removeLast();
+            
             if (isAccessibilityObjectSearchMatch(searchObject, criteria) && isAccessibilityTextSearchMatch(searchObject, criteria)) {
                 results.append(searchObject);
-             
+                
                 // Enough results were found to stop searching.
                 if (results.size() >= criteria->resultsLimit)
                     break;
             }
-        } else if (searchObject == startObject)
-            didFindStartObject = true;
-        
-        AccessibilityChildrenVector searchChildren;
-        // A table's children includes elements whose own children are also the table's children (due to the way the Mac exposes tables).
-        // The table's cells are what are desired in this case, since that's where the content resides.
-        if (searchObject->isAccessibilityTable())
-            toAccessibilityTable(searchObject)->cells(searchChildren);
-        else
-            searchChildren = searchObject->children();
-        
-        size_t childrenSize = searchChildren.size();
-        for (size_t i = isForward ? childrenSize : 0; isForward ? i > 0 : i < childrenSize; isForward ? i-- : i++) {
-            // FIXME: Handle attachments.
-            searchStack.append(searchChildren.at(isForward ? i - 1 : i).get());
+            
+            appendChildrenToArray(searchObject, isForward, 0, searchStack);
         }
+        
+        if (results.size() >= criteria->resultsLimit)
+            break;
+
+        previousObject = startObject;
     }
 }
 

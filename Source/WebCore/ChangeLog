@@ -1,3 +1,21 @@
+2011-11-30  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Searching mechanism is too slow when finding the element.
+        https://bugs.webkit.org/show_bug.cgi?id=72523
+
+        Reviewed by Beth Dakin.
+
+        This makes the element searching mechanism much faster. Previously, searching literally went 
+        through every element, looking for the start element before "starting" the search.
+
+        Now we only go through the elements that need to be searched. This is done by going up the 
+        start object parent chain. At each level, a DFS is done. As we go up the parent chain, 
+        only the elements before/after the current element are examined.
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::appendChildrenToArray):
+        (WebCore::AccessibilityObject::findMatchingObjects):
+
 2011-11-30  Ryosuke Niwa  <rniwa@webkit.org>
 
         Cannot select RTL text inside LTR text from right to left by a mouse drag
