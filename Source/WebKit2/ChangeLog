@@ -1,3 +1,13 @@
+2011-12-01  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: restore WebKit2 Safari menu items after capabilities refactoring regression.
+        https://bugs.webkit.org/show_bug.cgi?id=73554
+
+        Reviewed by Yury Semikhatsky.
+
+        * UIProcess/WebInspectorProxy.cpp:
+        (WebKit::WebInspectorProxy::didClose):
+
 2011-11-30  Alexey Proskuryakov  <ap@apple.com>
 
         Remove an unneeded argument from FrameLoaderClient::download

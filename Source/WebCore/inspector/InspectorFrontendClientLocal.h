@@ -107,7 +107,7 @@ private:
     RefPtr<InspectorFrontendHost> m_frontendHost;
     OwnPtr<InspectorFrontendClientLocal::Settings> m_settings;
     bool m_frontendLoaded;
-    String m_evaluateOnLoad;
+    Vector<String> m_evaluateOnLoad;
     OwnPtr<InspectorBackendDispatchTask> m_dispatchTask;
 };
 

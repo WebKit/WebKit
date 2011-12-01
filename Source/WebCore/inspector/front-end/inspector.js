@@ -417,6 +417,7 @@ WebInspector._doLoadedDoneWithCapabilities = function()
 
     WebInspector.CSSCompletions.requestCSSNameCompletions();
     WebInspector.WorkerManager.loadCompleted();
+    InspectorFrontendAPI.loadCompleted();
 }
 
 WebInspector.addPanel = function(panel)

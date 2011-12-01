@@ -230,6 +230,9 @@ void WebInspectorProxy::didLoadInspectorPage()
 void WebInspectorProxy::didClose()
 {
     m_isVisible = false;
+    m_isDebuggingJavaScript = false;
+    m_isProfilingJavaScript = false;
+    m_isProfilingPage = false;
 
     if (m_isAttached) {
         // Detach here so we only need to have one code path that is responsible for cleaning up the inspector

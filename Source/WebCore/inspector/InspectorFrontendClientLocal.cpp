@@ -134,8 +134,9 @@ void InspectorFrontendClientLocal::frontendLoaded()
 {
     bringToFront();
     m_frontendLoaded = true;
-    if (!m_evaluateOnLoad.isEmpty())
-        evaluateOnLoad(m_evaluateOnLoad);
+    for (Vector<String>::iterator it = m_evaluateOnLoad.begin(); it != m_evaluateOnLoad.end(); ++it)
+        evaluateOnLoad(*it);
+    m_evaluateOnLoad.clear();
 }
 
 void InspectorFrontendClientLocal::requestAttachWindow()
@@ -195,47 +196,47 @@ void InspectorFrontendClientLocal::restoreAttachedWindowHeight()
 bool InspectorFrontendClientLocal::isDebuggingEnabled()
 {
     if (m_frontendLoaded)
-        return evaluateAsBoolean("InspectorFrontendAPI.isDebuggingEnabled()");
+        return evaluateAsBoolean("[\"isDebuggingEnabled\"]");
     return false;
 }
 
 void InspectorFrontendClientLocal::setDebuggingEnabled(bool enabled)
 {
-    evaluateOnLoad(String::format("InspectorFrontendAPI.setDebuggingEnabled(%s)", enabled ? "true" : "false"));
+    evaluateOnLoad(String::format("[\"setDebuggingEnabled\", %s]", enabled ? "true" : "false"));
 }
 
 bool InspectorFrontendClientLocal::isTimelineProfilingEnabled()
 {
     if (m_frontendLoaded)
-        return evaluateAsBoolean("InspectorFrontendAPI.isTimelineProfilingEnabled()");
+        return evaluateAsBoolean("[\"isTimelineProfilingEnabled\"]");
     return false;
 }
 
 void InspectorFrontendClientLocal::setTimelineProfilingEnabled(bool enabled)
 {
-    evaluateOnLoad(String::format("InspectorFrontendAPI.setTimelineProfilingEnabled(%s)", enabled ? "true" : "false"));
+    evaluateOnLoad(String::format("[\"setTimelineProfilingEnabled\", %s]", enabled ? "true" : "false"));
 }
 
 bool InspectorFrontendClientLocal::isProfilingJavaScript()
 {
     if (m_frontendLoaded)
-        return evaluateAsBoolean("InspectorFrontendAPI.isProfilingJavaScript()");
+        return evaluateAsBoolean("[\"isProfilingJavaScript\"]");
     return false;
 }
 
 void InspectorFrontendClientLocal::startProfilingJavaScript()
 {
-    evaluateOnLoad("InspectorFrontendAPI.startProfilingJavaScript()");
+    evaluateOnLoad("[\"startProfilingJavaScript\"]");
 }
 
 void InspectorFrontendClientLocal::stopProfilingJavaScript()
 {
-    evaluateOnLoad("InspectorFrontendAPI.stopProfilingJavaScript()");
+    evaluateOnLoad("[\"stopProfilingJavaScript\"]");
 }
 
 void InspectorFrontendClientLocal::showConsole()
 {
-    evaluateOnLoad("InspectorFrontendAPI.showConsole()");
+    evaluateOnLoad("[\"showConsole\"]");
 }
 
 unsigned InspectorFrontendClientLocal::constrainedAttachedWindowHeight(unsigned preferredHeight, unsigned totalWindowHeight)
@@ -260,9 +261,9 @@ bool InspectorFrontendClientLocal::evaluateAsBoolean(const String& expression)
 void InspectorFrontendClientLocal::evaluateOnLoad(const String& expression)
 {
     if (m_frontendLoaded)
-        m_frontendPage->mainFrame()->script()->executeScript(expression);
+        m_frontendPage->mainFrame()->script()->executeScript("InspectorFrontendAPI.dispatch(" + expression + ")");
     else
-        m_evaluateOnLoad = "setTimeout(function() { " + expression + "; }, 0)";
+        m_evaluateOnLoad.append(expression);
 }
 
 } // namespace WebCore

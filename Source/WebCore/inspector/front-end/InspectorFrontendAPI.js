@@ -28,58 +28,76 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
- InspectorFrontendAPI = {
-     isDebuggingEnabled: function()
-     {
-         return WebInspector.panels.scripts.debuggingEnabled;
-     },
+InspectorFrontendAPI = {
+    _pendingCommands: [],
 
-     setDebuggingEnabled: function(enabled)
-     {
-         if (enabled) {
-             WebInspector.panels.scripts.enableDebugging();
-             WebInspector.inspectorView.setCurrentPanel(WebInspector.panels.scripts);
-         } else
-             WebInspector.panels.scripts.disableDebugging();
-     },
+    isDebuggingEnabled: function()
+    {
+        return WebInspector.panels.scripts.debuggingEnabled;
+    },
 
-     isTimelineProfilingEnabled: function()
-     {
-         return WebInspector.panels.timeline.timelineProfilingEnabled;
-     },
+    setDebuggingEnabled: function(enabled)
+    {
+        if (enabled) {
+            WebInspector.panels.scripts.enableDebugging();
+            WebInspector.inspectorView.setCurrentPanel(WebInspector.panels.scripts);
+        } else
+            WebInspector.panels.scripts.disableDebugging();
+    },
 
-     setTimelineProfilingEnabled: function(enabled)
-     {
-         WebInspector.panels.timeline.setTimelineProfilingEnabled(enabled);
-     },
+    isTimelineProfilingEnabled: function()
+    {
+        return WebInspector.panels.timeline.timelineProfilingEnabled;
+    },
 
-     isProfilingJavaScript: function()
-     {
-         return WebInspector.CPUProfileType.instance && WebInspector.CPUProfileType.instance.isRecordingProfile();
-     },
+    setTimelineProfilingEnabled: function(enabled)
+    {
+        WebInspector.panels.timeline.setTimelineProfilingEnabled(enabled);
+    },
 
-     startProfilingJavaScript: function()
-     {
-         WebInspector.panels.profiles.enableProfiler();
-         WebInspector.inspectorView.setCurrentPanel(WebInspector.panels.profiles);
-         if (WebInspector.CPUProfileType.instance)
-             WebInspector.CPUProfileType.instance.startRecordingProfile();
-     },
+    isProfilingJavaScript: function()
+    {
+        return WebInspector.CPUProfileType.instance && WebInspector.CPUProfileType.instance.isRecordingProfile();
+    },
 
-     stopProfilingJavaScript: function()
-     {
-         if (WebInspector.CPUProfileType.instance)
-             WebInspector.CPUProfileType.instance.stopRecordingProfile();
-         WebInspector.inspectorView.setCurrentPanel(WebInspector.panels.profiles);
-     },
+    startProfilingJavaScript: function()
+    {
+        WebInspector.panels.profiles.enableProfiler();
+        WebInspector.inspectorView.setCurrentPanel(WebInspector.panels.profiles);
+        if (WebInspector.CPUProfileType.instance)
+            WebInspector.CPUProfileType.instance.startRecordingProfile();
+    },
 
-     setAttachedWindow: function(attached)
-     {
-         WebInspector.attached = attached;
-     },
+    stopProfilingJavaScript: function()
+    {
+        if (WebInspector.CPUProfileType.instance)
+            WebInspector.CPUProfileType.instance.stopRecordingProfile();
+        WebInspector.inspectorView.setCurrentPanel(WebInspector.panels.profiles);
+    },
 
-     showConsole: function()
-     {
-         WebInspector.inspectorView.setCurrentPanel(WebInspector.panels.console);
-     }
- }
+    setAttachedWindow: function(attached)
+    {
+        WebInspector.attached = attached;
+    },
+
+    showConsole: function()
+    {
+        WebInspector.inspectorView.setCurrentPanel(WebInspector.panels.console);
+    },
+
+    dispatch: function(signature)
+    {
+        if (WebInspector.panels) {
+            var methodName = signature.shift();
+            return InspectorFrontendAPI[methodName].apply(InspectorFrontendAPI, signature);
+        }
+        InspectorFrontendAPI._pendingCommands.push(signature);
+    },
+
+    loadCompleted: function()
+    {
+        for (var i = 0; i < InspectorFrontendAPI._pendingCommands.length; ++i)
+            InspectorFrontendAPI.dispatch(InspectorFrontendAPI._pendingCommands[i]);
+        InspectorFrontendAPI._pendingCommands = [];
+    }
+}
