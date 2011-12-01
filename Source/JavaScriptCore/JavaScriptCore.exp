@@ -488,7 +488,6 @@ __ZN3WTF5Mutex7tryLockEv
 __ZN3WTF5MutexC1Ev
 __ZN3WTF5MutexD1Ev
 __ZN3WTF5equalEPKNS_10StringImplEPKh
-__ZN3WTF5equalEPKNS_10StringImplEPKhj
 __ZN3WTF5equalEPKNS_10StringImplEPKtj
 __ZN3WTF5equalEPKNS_10StringImplES2_
 __ZN3WTF5yieldEv

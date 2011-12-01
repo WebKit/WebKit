@@ -15,8 +15,8 @@ FAIL canonicalize('http://www.lookout.net：80/') should be http://www.lookout.n
 PASS canonicalize('http://www‥lookout.net/') is 'http://www..lookout.net/'
 PASS canonicalize('http://www.lookout‧net/') is 'http://www.xn--lookoutnet-406e/'
 PASS canonicalize('http://www.looĸout.net/') is 'http://www.xn--looout-5bb.net/'
-FAIL canonicalize('http://www.lookout.net⩴80/') should be http://www.lookout.net::%3D80/. Was http://www.lookout.net⩴80/.
-FAIL canonicalize('http://www .lookout.net/') should be http://www%20.lookout.net/. Was http://www .lookout.net/.
+FAIL canonicalize('http://www.lookout.net⩴80/') should be http://www.lookout.net::%3D80/. Was http://www.lookout.net::=80/.
+FAIL canonicalize('http://www .lookout.net/') should be http://www%20.lookout.net/. Was http://www .lookout.net/.
 FAIL canonicalize('http:// lookout.net/') should be http://%E1%9A%80lookout.net/. Was http:/.
 FAIL canonicalize('http://lookout.net/') should be http://%1Flookout.net/. Was http://lookout.net/.
 FAIL canonicalize('http://look۝out.net/') should be http://look%DB%9Dout.net/. Was http:/.

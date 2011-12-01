@@ -557,7 +557,6 @@ bool equal(const StringImpl*, const StringImpl*);
 bool equal(const StringImpl*, const LChar*);
 inline bool equal(const StringImpl* a, const char* b) { return equal(a, reinterpret_cast<const LChar*>(b)); }
 bool equal(const StringImpl*, const LChar*, unsigned);
-inline bool equal(const StringImpl* a, const char* b, unsigned length) { return equal(a, reinterpret_cast<const LChar*>(b), length); }
 inline bool equal(const LChar* a, StringImpl* b) { return equal(b, a); }
 inline bool equal(const char* a, StringImpl* b) { return equal(b, reinterpret_cast<const LChar*>(a)); }
 bool equal(const StringImpl*, const UChar*, unsigned);

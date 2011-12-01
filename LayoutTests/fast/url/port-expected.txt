@@ -8,8 +8,8 @@ PASS canonicalize('http://www.example.com:-2/') is 'http://www.example.com:-2/'
 PASS canonicalize('http://www.example.com:80/') is 'http://www.example.com/'
 PASS canonicalize('http://www.example.com:8080/') is 'http://www.example.com:8080/'
 PASS canonicalize('http://www.example.com:/') is 'http://www.example.com/'
-FAIL canonicalize('http://www.example.com:፩/') should be http://www.example.com:%E1%8D%A9/. Was http://www.example.com:፩/.
-FAIL canonicalize('http://www.example.com:𝟖/') should be http://www.example.com:%F0%9D%9F%96/. Was http://www.example.com:𝟖/.
+FAIL canonicalize('http://www.example.com:፩/') should be http://www.example.com:%E1%8D%A9/. Was http://www.example.com:á©/.
+FAIL canonicalize('http://www.example.com:𝟖/') should be http://www.example.com:%F0%9D%9F%96/. Was http://www.example.com:ð/.
 PASS canonicalize('foobar://www.example.com:80/') is 'foobar://www.example.com:80/'
 PASS successfullyParsed is true
 
