@@ -3793,3 +3793,4 @@ BUGWK73250 DEBUG : fast/block/child-not-removed-from-parent-lineboxes-crash.html
 
 BUGWK73494 : svg/text/non-bmp-positioning-lists.svg = IMAGE+TEXT IMAGE
 
+BUGWK73514 WIN DEBUG : platform/chromium/compositing/lost-compositor-context-permanently.html = TIMEOUT
