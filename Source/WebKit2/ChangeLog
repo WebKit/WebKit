@@ -1,3 +1,18 @@
+2011-12-01  Nayan Kumar K  <nayankk@motorola.com>
+
+        [WK2][GTK] Change default-font-size and default-monospace-font-size
+        https://bugs.webkit.org/show_bug.cgi?id=73468
+
+        Reviewed by Martin Robinson.
+
+        Set 'default-font-size' property value to 16px and 'default-monospace-font-size'
+        value to 13px.
+
+        * UIProcess/API/gtk/WebKitSettings.cpp:
+        (webkit_settings_class_init): Change the default font size settings.
+        * UIProcess/API/gtk/tests/TestWebKitSettings.cpp:
+        (testWebKitSettings): Correct the test.
+
 2011-12-01  Wajahat Siddiqui  <mdwajahatali.siddiqui@motorola.com>
 
         Popup menu can get stuck in closed state when GtkMenu can't grab mouse.

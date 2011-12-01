@@ -593,7 +593,7 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
                                     g_param_spec_uint("default-font-size",
                                                       _("Default font size"),
                                                       _("The default font size used to display text."),
-                                                      0, G_MAXUINT, 12,
+                                                      0, G_MAXUINT, 16,
                                                       readWriteConstructParamFlags));
 
     /**
@@ -607,7 +607,7 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
                                     g_param_spec_uint("default-monospace-font-size",
                                                       _("Default monospace font size"),
                                                       _("The default font size used to display monospace text."),
-                                                      0, G_MAXUINT, 10,
+                                                      0, G_MAXUINT, 13,
                                                       readWriteConstructParamFlags));
 
     /**

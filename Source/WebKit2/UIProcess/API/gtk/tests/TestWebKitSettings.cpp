@@ -137,15 +137,15 @@ static void testWebKitSettings(Test*, gconstpointer)
     webkit_settings_set_pictograph_font_family(settings, "sans-serif");
     g_assert_cmpstr(webkit_settings_get_pictograph_font_family(settings), ==, "sans-serif");
 
-    // Default font size is 12.
-    g_assert_cmpuint(webkit_settings_get_default_font_size(settings), ==, 12);
+    // Default font size is 16.
+    g_assert_cmpuint(webkit_settings_get_default_font_size(settings), ==, 16);
     webkit_settings_set_default_font_size(settings, 14);
     g_assert_cmpuint(webkit_settings_get_default_font_size(settings), ==, 14);
 
-    // Default monospace font size is 10.
+    // Default monospace font size is 13.
+    g_assert_cmpuint(webkit_settings_get_default_monospace_font_size(settings), ==, 13);
+    webkit_settings_set_default_monospace_font_size(settings, 10);
     g_assert_cmpuint(webkit_settings_get_default_monospace_font_size(settings), ==, 10);
-    webkit_settings_set_default_monospace_font_size(settings, 12);
-    g_assert_cmpuint(webkit_settings_get_default_monospace_font_size(settings), ==, 12);
 
     // Default minimum font size is 0.
     g_assert_cmpuint(webkit_settings_get_minimum_font_size(settings), ==, 0);
