@@ -1,14 +1,14 @@
 This test checks that deletion does not leave unnecessary nested divs.
 
-PASS confimedMarkup is '<br>'
-PASS confimedMarkup is '<br>'
-PASS confimedMarkup is '<div id="mydiv"><br></div>'
-PASS confimedMarkup is '<br>'
-PASS confimedMarkup is '<b><i><br></i></b>'
-PASS confimedMarkup is '<b><div style="border: solid red"><i><br></i></div></b>'
-PASS confimedMarkup is '<br>'
-PASS confimedMarkup is '<br>'
-PASS confimedMarkup is '<p><br></p>'
+PASS confirmedMarkup is '<br>'
+PASS confirmedMarkup is '<br>'
+PASS confirmedMarkup is '<div id="mydiv"><br></div>'
+PASS confirmedMarkup is '<br>'
+PASS confirmedMarkup is '<b><i><br></i></b>'
+PASS confirmedMarkup is '<b><div style="border: solid red"><i><br></i></div></b>'
+PASS confirmedMarkup is '<br>'
+PASS confirmedMarkup is '<br>'
+PASS confirmedMarkup is '<p><br></p>'
 PASS successfullyParsed is true
 
 TEST COMPLETE
