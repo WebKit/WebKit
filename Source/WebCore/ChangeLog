@@ -1,3 +1,22 @@
+2011-12-01  Eric Carlson  <eric.carlson@apple.com>
+
+        HTMLTrackElement.readyState should return TextTrack "readiness state".
+        https://bugs.webkit.org/show_bug.cgi?id=73466
+
+        Reviewed by Darin Adler.
+
+        * html/HTMLTrackElement.cpp:
+        (WebCore::HTMLTrackElement::HTMLTrackElement): Don't initialize m_readyState.
+        (WebCore::HTMLTrackElement::setReadyState): Return the TextTrack state.
+        (WebCore::HTMLTrackElement::readyState): Set the TextTrack state.
+        * html/HTMLTrackElement.h: Remove m_readyState.
+
+        * html/TextTrack.cpp:
+        (WebCore::TextTrack::TextTrack): Initialize m_readinessState.
+        * html/TextTrack.h:
+        (WebCore::TextTrack::readinessState): New.
+        (WebCore::TextTrack::setReadinessState): New.
+
 2011-12-01  Kentaro Hara  <haraken@chromium.org>
 
         Unreviewed, rolling out r101669.

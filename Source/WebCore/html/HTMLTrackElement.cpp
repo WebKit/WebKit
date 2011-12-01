@@ -43,7 +43,6 @@ using namespace HTMLNames;
 
 inline HTMLTrackElement::HTMLTrackElement(const QualifiedName& tagName, Document* document)
     : HTMLElement(tagName, document)
-    , m_readyState(HTMLTrackElement::NONE)
 {
     LOG(Media, "HTMLTrackElement::HTMLTrackElement - %p", this);
     ASSERT(hasTagName(trackTag));
@@ -219,11 +218,22 @@ void HTMLTrackElement::didCompleteLoad(LoadableTextTrack*, bool loadingFailed)
     dispatchEvent(Event::create(loadingFailed ? eventNames().errorEvent : eventNames().loadEvent, false, false), ec);
 }
 
+// NOTE: The values in the TextTrack::ReadinessState enum must stay in sync with those in HTMLTrackElement::ReadyState.
+COMPILE_ASSERT(HTMLTrackElement::NONE == static_cast<HTMLTrackElement::ReadyState>(TextTrack::NotLoaded), TextTrackEnumNotLoaded_Is_Wrong_Should_Be_HTMLTrackElementEnumNONE);
+COMPILE_ASSERT(HTMLTrackElement::LOADING == static_cast<HTMLTrackElement::ReadyState>(TextTrack::Loading), TextTrackEnumLoadingIsWrong_ShouldBe_HTMLTrackElementEnumLOADING);
+COMPILE_ASSERT(HTMLTrackElement::LOADED == static_cast<HTMLTrackElement::ReadyState>(TextTrack::Loaded), TextTrackEnumLoaded_Is_Wrong_Should_Be_HTMLTrackElementEnumLOADED);
+COMPILE_ASSERT(HTMLTrackElement::TRACK_ERROR == static_cast<HTMLTrackElement::ReadyState>(TextTrack::FailedToLoad), TextTrackEnumFailedToLoad_Is_Wrong_Should_Be_HTMLTrackElementEnumTRACK_ERROR);
+
 void HTMLTrackElement::setReadyState(ReadyState state)
 {
-    m_readyState = state;
+    ensureTrack()->setReadinessState(static_cast<TextTrack::ReadinessState>(state));
     if (HTMLMediaElement* parent = mediaElement())
         return parent->textTrackReadyStateChanged(m_track.get());
+}
+
+HTMLTrackElement::ReadyState HTMLTrackElement::readyState() 
+{
+    return static_cast<ReadyState>(ensureTrack()->readinessState());
 }
     
 void HTMLTrackElement::textTrackKindChanged(TextTrack* track)

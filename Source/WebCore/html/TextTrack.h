@@ -79,11 +79,12 @@ public:
     Mode mode() const { return m_mode; }
     void setMode(unsigned short, ExceptionCode&);
 
+    enum ReadinessState { NotLoaded = 0, Loading = 1, Loaded = 2, FailedToLoad = 3 };
+    ReadinessState readinessState() const { return m_readinessState; }
+    void setReadinessState(ReadinessState state) { m_readinessState = state; }
+
     TextTrackCueList* cues();
     TextTrackCueList* activeCues() const;
-
-    void readyStateChanged();
-    void modeChanged();
 
     virtual void clearClient() { m_client = 0; }
     TextTrackClient* client() { return m_client; }
@@ -106,9 +107,10 @@ private:
     String m_kind;
     String m_label;
     String m_language;
-    TextTrack::Mode m_mode;
+    Mode m_mode;
     TextTrackClient* m_client;
     TextTrackType m_trackType;
+    ReadinessState m_readinessState;
 };
 
 } // namespace WebCore

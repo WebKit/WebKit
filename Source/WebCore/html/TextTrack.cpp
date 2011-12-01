@@ -78,6 +78,7 @@ TextTrack::TextTrack(ScriptExecutionContext* context, TextTrackClient* client, c
     , m_mode(TextTrack::HIDDEN)
     , m_client(client)
     , m_trackType(type)
+    , m_readinessState(NotLoaded)
 {
     setKind(kind);
 }

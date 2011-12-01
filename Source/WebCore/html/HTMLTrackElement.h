@@ -30,6 +30,7 @@
 
 #include "HTMLElement.h"
 #include "LoadableTextTrack.h"
+#include "TextTrack.h"
 
 namespace WebCore {
 
@@ -53,9 +54,10 @@ public:
 
     bool isDefault() const;
     void setIsDefault(bool);
-    
+
     enum ReadyState { NONE = 0, LOADING = 1, LOADED = 2, TRACK_ERROR = 3 };
-    ReadyState readyState() const { return m_readyState; }
+    ReadyState readyState();
+    void setReadyState(ReadyState);
 
     TextTrack* track();
     
@@ -63,8 +65,6 @@ public:
     virtual bool canLoadUrl(LoadableTextTrack*, const KURL&);
     virtual void didCompleteLoad(LoadableTextTrack*, bool /* loadingFailed */);
     
-    void setReadyState(ReadyState);
-
 private:
     HTMLTrackElement(const QualifiedName&, Document*);
     virtual ~HTMLTrackElement();
@@ -93,7 +93,6 @@ private:
 
     LoadableTextTrack* ensureTrack();
 
-    HTMLTrackElement::ReadyState m_readyState;
     RefPtr<LoadableTextTrack> m_track;
 };
 
