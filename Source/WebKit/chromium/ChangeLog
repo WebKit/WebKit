@@ -1,3 +1,14 @@
+2011-12-01  Jochen Eisinger  <jochen@chromium.org>
+
+        [chromium] add referrer policy to WebContextMenuData
+        https://bugs.webkit.org/show_bug.cgi?id=73567
+
+        Reviewed by Darin Fisher.
+
+        * public/WebContextMenuData.h:
+        * src/ContextMenuClientImpl.cpp:
+        (WebKit::ContextMenuClientImpl::getCustomMenuFromDefaultItems):
+
 2011-12-01  Kelly Norton  <knorton@google.com>
 
         More void functions eager to return values in RenderObject & WebFrameImpl

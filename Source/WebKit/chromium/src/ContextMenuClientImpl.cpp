@@ -305,6 +305,8 @@ PlatformMenuDescription ContextMenuClientImpl::getCustomMenuFromDefaultItems(
     if (ds)
         data.securityInfo = ds->response().securityInfo();
 
+    data.referrerPolicy = static_cast<WebReferrerPolicy>(selectedFrame->document()->referrerPolicy());
+
     // Filter out custom menu elements and add them into the data.
     populateCustomMenuItems(defaultMenu, &data);
 

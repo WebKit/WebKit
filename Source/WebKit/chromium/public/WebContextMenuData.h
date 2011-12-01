@@ -34,6 +34,7 @@
 #include "WebHistoryItem.h"
 #include "WebMenuItemInfo.h"
 #include "WebNode.h"
+#include "WebReferrerPolicy.h"
 #include "platform/WebPoint.h"
 #include "platform/WebString.h"
 #include "platform/WebURL.h"
@@ -154,6 +155,9 @@ struct WebContextMenuData {
 
     // Security information for the context.
     WebCString securityInfo;
+
+    // The referrer policy applicable to this context.
+    WebReferrerPolicy referrerPolicy;
 
     // Custom context menu items provided by the WebCore internals.
     WebVector<WebMenuItemInfo> customItems;
