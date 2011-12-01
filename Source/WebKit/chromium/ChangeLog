@@ -1,3 +1,22 @@
+2011-11-30  Takashi Toyoshima  <toyoshim@chromium.org>
+
+        Add didUpdateBufferedAmount callback to WebSocketClient API
+        https://bugs.webkit.org/show_bug.cgi?id=73306
+
+        Reviewed by Darin Fisher.
+
+        * public/WebSocketClient.h: Add didUpdateBufferedAmount and default implementations for all callbacks.
+        (WebKit::WebSocketClient::didConnect):
+        (WebKit::WebSocketClient::didReceiveMessage):
+        (WebKit::WebSocketClient::didReceiveBinaryData):
+        (WebKit::WebSocketClient::didReceiveMessageError):
+        (WebKit::WebSocketClient::didUpdateBufferedAmount):
+        (WebKit::WebSocketClient::didStartClosingHandshake):
+        (WebKit::WebSocketClient::didClose):
+        * src/WebSocketImpl.cpp:
+        (WebKit::WebSocketImpl::didUpdateBufferedAmount):
+        * src/WebSocketImpl.h:
+
 2011-11-30  Scott Violet  <sky@google.com>
 
         [chromium] Expose WebLayerTreeView::setRootLayer as a call through

@@ -68,6 +68,7 @@ public:
     virtual void didReceiveMessage(const String& message);
     virtual void didReceiveBinaryData(PassOwnPtr<Vector<char> > binaryData);
     virtual void didReceiveMessageError();
+    virtual void didUpdateBufferedAmount(unsigned long bufferedAmount);
     virtual void didStartClosingHandshake();
     virtual void didClose(unsigned long bufferedAmount, ClosingHandshakeCompletionStatus, unsigned short code, const String& reason);
 

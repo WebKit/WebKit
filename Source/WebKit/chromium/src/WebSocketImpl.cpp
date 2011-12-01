@@ -181,6 +181,15 @@ void WebSocketImpl::didReceiveMessageError()
 #endif
 }
 
+void WebSocketImpl::didUpdateBufferedAmount(unsigned long bufferedAmount)
+{
+#if ENABLE(WEB_SOCKETS)
+    m_client->didUpdateBufferedAmount(bufferedAmount);
+#else
+    ASSERT_NOT_REACHED();
+#endif
+}
+
 void WebSocketImpl::didStartClosingHandshake()
 {
 #if ENABLE(WEB_SOCKETS)

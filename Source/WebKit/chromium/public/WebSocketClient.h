@@ -46,12 +46,13 @@ public:
     };
 
     virtual ~WebSocketClient() { }
-    virtual void didConnect() = 0;
-    virtual void didReceiveMessage(const WebString& message) = 0;
-    virtual void didReceiveBinaryData(const WebData& binaryData) = 0;
-    virtual void didReceiveMessageError() = 0;
-    virtual void didStartClosingHandshake() = 0;
-    virtual void didClose(unsigned long bufferedAmount, ClosingHandshakeCompletionStatus, unsigned short code, const WebString& reason) = 0;
+    virtual void didConnect() { }
+    virtual void didReceiveMessage(const WebString& message) { }
+    virtual void didReceiveBinaryData(const WebData& binaryData) { }
+    virtual void didReceiveMessageError() { }
+    virtual void didUpdateBufferedAmount(unsigned long bufferedAmount) { }
+    virtual void didStartClosingHandshake() { }
+    virtual void didClose(unsigned long bufferedAmount, ClosingHandshakeCompletionStatus, unsigned short code, const WebString& reason) { }
 };
 
 } // namespace WebKit
