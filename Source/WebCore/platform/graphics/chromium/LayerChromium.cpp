@@ -215,7 +215,7 @@ void LayerChromium::setBounds(const IntSize& size)
     m_bounds = size;
 
     if (firstResize || m_pageScaleDirty)
-        setNeedsDisplayRect(FloatRect(0, 0, bounds().width(), bounds().height()));
+        setNeedsDisplay();
     else
         setNeedsCommit();
 

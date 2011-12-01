@@ -1,3 +1,15 @@
+2011-12-01  David Reveman  <reveman@chromium.org>
+
+        [Chromium] Use contentBounds instead of bounds for invalidation.
+        https://bugs.webkit.org/show_bug.cgi?id=73525
+
+        Reviewed by James Robinson.
+
+        Use setNeedsDisplay() instead of setNeedsDisplayRect() when possible.
+
+        * src/WebMediaPlayerClientImpl.cpp:
+        (WebKit::WebMediaPlayerClientImpl::repaint):
+
 2011-12-01  Elliot Poger  <epoger@google.com>
 
         webkit->chromium DEPS roll 111575->112463
