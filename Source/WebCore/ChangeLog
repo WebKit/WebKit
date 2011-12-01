@@ -1,3 +1,19 @@
+2011-11-30  Naveen Bobbili  <qghc36@motorola.com>
+
+        window.getMatchedCSSRules() not supporting pseudo element
+        https://bugs.webkit.org/show_bug.cgi?id=72930
+
+        Reviewed by Darin Adler.
+
+        Added functionality to retrieve CSS rules of psuedo elements using
+        getMatchedCSSRules.
+
+        Test: fast/dom/Window/getMatchedCSSRules-with-pseudo-elements.html
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::getMatchedCSSRules):
+        Retreiving CSS Rules of the appropriate pseudo element.
+
 2011-11-30  Grace Kloba  <klobag@chromium.org>
 
         [chromium] TextureManager LRU list is not fully honor the order tiles are used

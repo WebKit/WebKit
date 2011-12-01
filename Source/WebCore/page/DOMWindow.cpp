@@ -1353,7 +1353,7 @@ PassRefPtr<CSSStyleDeclaration> DOMWindow::getComputedStyle(Element* elt, const 
     return computedStyle(elt, false, pseudoElt);
 }
 
-PassRefPtr<CSSRuleList> DOMWindow::getMatchedCSSRules(Element* element, const String&, bool authorOnly) const
+PassRefPtr<CSSRuleList> DOMWindow::getMatchedCSSRules(Element* element, const String& pseudoElement, bool authorOnly) const
 {
     if (!isCurrentlyDisplayedInFrame())
         return 0;
@@ -1365,8 +1365,10 @@ PassRefPtr<CSSRuleList> DOMWindow::getMatchedCSSRules(Element* element, const St
         if (settings->crossOriginCheckInGetMatchedCSSRulesDisabled())
             rulesToInclude |= CSSStyleSelector::CrossOriginCSSRules;
     }
-
-    return m_frame->document()->styleSelector()->styleRulesForElement(element, rulesToInclude);
+    
+    PseudoId pseudoId = CSSSelector::pseudoId(CSSSelector::parsePseudoType(pseudoElement));
+ 
+    return m_frame->document()->styleSelector()->pseudoStyleRulesForElement(element, pseudoId, rulesToInclude);
 }
 
 PassRefPtr<WebKitPoint> DOMWindow::webkitConvertPointFromNodeToPage(Node* node, const WebKitPoint* p) const

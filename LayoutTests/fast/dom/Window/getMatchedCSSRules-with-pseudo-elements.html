@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style type="text/css" media="screen">
+#div1 {
+    border: 2px;
+}
+#div1:after {
+    border: 1px;
+}
+</style>
+<script src="../../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<div id="div1"></div>
+<script>
+description("Test for getMatchedCSSRules for Psuedo Elements");
+var element = document.getElementById('div1');
+var pseudoRules = window.getMatchedCSSRules(element, "after");
+var selectorText = "#div1::after";
+
+shouldBe('pseudoRules[0].selectorText', 'selectorText');
+shouldBeTrue('pseudoRules[0].style.cssText.indexOf("1px") != -1');
+
+successfullyParsed = true;
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>
