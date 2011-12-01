@@ -1,6 +1,6 @@
 <html>
 <head>
-<script src="../../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../LayoutTests/http/tests/inspector/inspector-test.js"></script>
 <script src="performance-test.js"></script>
 <script>
 
@@ -42,10 +42,10 @@ function test()
         for (var panelName in WebInspector.panels) {
             var timerCookie = timer.start("show-panel-" + panelName);
             WebInspector.showPanel(panelName);
-            layoutTestController.display();
+            InspectorTest.evaluateInPage("layoutTestController.display();");
             timer.finish(timerCookie);
         }
-        timer.done();
+        timer.done("panel-switch");
     }
 }
 </script>

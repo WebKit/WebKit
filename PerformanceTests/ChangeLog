@@ -1,3 +1,26 @@
+2011-12-01  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: chromium: move and adapt Inspector's performance tests for running with run-inspector-perf-tests.py.
+        https://bugs.webkit.org/show_bug.cgi?id=72260
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/first-open-elements.html: Renamed from LayoutTests/inspector/performance/resources/first-open-elements.html.
+        * inspector/first-open-scripts.html: Renamed from LayoutTests/inspector/performance/resources/first-open-scripts.html.
+        * inspector/inspector-startup-time.html: Renamed from LayoutTests/inspector/performance/resources/inspector-startup-time.html.
+        * inspector/network-append-30-requests.html: Renamed from LayoutTests/inspector/performance/resources/network-append-30-requests.html.
+        * inspector/performance-test.js: Renamed from LayoutTests/inspector/performance/resources/performance-test.js.
+        (initialize_TimeTracker.InspectorTest.runPerformanceTest.Timer):
+        (initialize_TimeTracker.InspectorTest.runPerformanceTest.Timer.prototype.start):
+        (initialize_TimeTracker.InspectorTest.runPerformanceTest.Timer.prototype.finish):
+        (initialize_TimeTracker.InspectorTest.runPerformanceTest.Timer.prototype._getJSHeapSize):
+        (initialize_TimeTracker.InspectorTest.runPerformanceTest.Timer.prototype.done):
+        (initialize_TimeTracker.InspectorTest.runPerformanceTest.Timer.prototype._runTest):
+        (initialize_TimeTracker.InspectorTest.runPerformanceTest.Timer.prototype._dump):
+        (initialize_TimeTracker.InspectorTest.runPerformanceTest):
+        (initialize_TimeTracker.InspectorTest.mark):
+        * inspector/show-panel.html: Renamed from LayoutTests/inspector/performance/resources/show-panel.html.
+
 2011-11-09  Adam Klein  <adamk@chromium.org>
 
         [MutationObservers] Microbenchmarks for appendChild, removeChild, and innerHTML

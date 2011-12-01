@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../LayoutTests/http/tests/inspector/inspector-test.js"></script>
 <script src="performance-test.js"></script>
 <script>
 
@@ -18,7 +18,7 @@ function inspectorIsReady()
 {
     times.push(Date.now() - startTime);
     if (Date.now() - testStartTime > 20000) {
-        layoutTestController.evaluateInWebInspector(2, "InspectorTest.dumpTestStats('inspector-startup-time', " + JSON.stringify(times) + ")")
+        layoutTestController.evaluateInWebInspector(2, "InspectorTest.dumpTestStats('inspector-startup-time', 'time', " + JSON.stringify(times) + ", 'ms')")
         layoutTestController.evaluateInWebInspector(3, "(InspectorTest.completeTest())")
         return;
     }
@@ -43,8 +43,6 @@ function test()
 
 </head>
 <body onload="onload()">
-<p>Tests Web Inspector startup time.</p>
-
 <div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
 <div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
 <div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
@@ -55,6 +53,5 @@ function test()
 <div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
 <div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
 <div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
-
 </body>
 </html>

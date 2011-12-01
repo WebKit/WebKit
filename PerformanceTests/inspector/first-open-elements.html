@@ -1,6 +1,6 @@
 <html>
 <head>
-<script src="../../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../LayoutTests/http/tests/inspector/inspector-test.js"></script>
 <script src="performance-test.js"></script>
 <script>
 
@@ -17,7 +17,7 @@ function test()
         var showPanelTimerCookie = timer.start("first-open-elements");
         InspectorTest.addBackendResponseSniffer(DOMAgent, "requestChildNodes", function() {
             timer.finish(showPanelTimerCookie);
-            timer.done();
+            timer.done("first-open");
         });
         WebInspector.showPanel("elements");
     }

@@ -1,6 +1,6 @@
 <html>
 <head>
-<script src="../../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../LayoutTests/http/tests/inspector/inspector-test.js"></script>
 <script src="performance-test.js"></script>
 <script>
 
@@ -27,7 +27,7 @@ function test()
         WebInspector.panels.network._networkLogView._reset();
         // In real life this array is cleaning up at navigation event.
         WebInspector.networkLog._resources = [];
-        InspectorTest.timer.done();
+        InspectorTest.timer.done("panel-update");
     }
 
     function test(timer)

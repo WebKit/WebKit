@@ -1,13 +1,12 @@
 <html>
 <head>
-<script src="../../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../LayoutTests/http/tests/inspector/inspector-test.js"></script>
 <script src="performance-test.js"></script>
 <script>
 
 function test()
 {
     WebInspector.showPanel("scripts");
-
     var files = WebInspector.panels.scripts._filesSelectElement;
     for (var i = 0; i < files.options.length; ++i) {
          if (files.options[i].value.indexOf("inspector-test.js") !== -1) {
@@ -20,23 +19,20 @@ function test()
     function test(timer)
     {
         WebInspector.showPanel("audits");
-
         var showPanelTimerCookie = timer.start("first-open-scripts");
         WebInspector.showPanel("scripts");
         var count = WebInspector.panels.scripts._visibleView._textViewer._mainPanel._textChunks.length;
         WebInspector.panels.scripts._visibleView._textViewer._mainPanel._expandChunks(0, count);
         WebInspector.panels.scripts._visibleView._textViewer._mainPanel._paintScheduledLines();
         timer.finish(showPanelTimerCookie);
-        timer.done();
+        timer.done("first-open");
     }
 
-    InspectorTest.runPerformanceTest(test, 5000);
+    InspectorTest.runAfterPendingDispatches(InspectorTest.runPerformanceTest.bind(null, test, 5000));
 }
 
 </script>
-
 </head>
-
 <body onload="runTest()">
 </body>
 </html>
