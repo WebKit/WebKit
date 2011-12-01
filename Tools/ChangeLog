@@ -1,3 +1,28 @@
+2011-11-30  Adam Roben  <aroben@apple.com>
+
+        Use curl for downloading builds to test slaves
+
+        Buildbot's built-in file transfer capabilities are transferring files much more slowly than
+        curl does. This seems to be due to a combination of buildbot being single-threaded (and thus
+        often busy servicing web requests, etc.) and using an IPC mechanism with fairly high
+        overhead (courtesy of the Twisted framework).
+
+        Eventually we'd like to make Buildbot's built-in transferring more efficient. In the
+        meantime we'll try using curl for downloads and keep thinking about a solution for uploads.
+        This should make the test slaves quite a bit faster, and should ease the CPU load on
+        build.webkit.org a bit.
+
+        Part of <http://webkit.org/b/73484> Mac slaves take 7+ minutes to upload or download a build
+
+        Reviewed by Mark Rowe.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg: Added the CreateWebKitBuildDirectory
+        to Test slaves. It's run just before DownloadBuiltProduct.
+        (DownloadBuiltProduct): Changed to be a normal ShellCommand that invokes curl to perform the
+        download.
+        (CreateWebKitBuildDirectory): Added. Creates the WebKitBuild directory on a slave.
+        FileDownload used to do this for us automatically.
+
 2011-11-21  Philippe Normand  <pnormand@igalia.com>
 
         [GTK] enable-webaudio websetting
