@@ -3785,3 +3785,5 @@ BUGCR105025 MAC CPU GPU : fast/canvas/webgl/css-webkit-canvas-repaint.html = IMA
 
 BUGWK73250 DEBUG : fast/block/child-not-removed-from-parent-lineboxes-crash.html = CRASH PASS
 
+BUGWK73494 : svg/text/non-bmp-positioning-lists.svg = IMAGE+TEXT IMAGE
+
