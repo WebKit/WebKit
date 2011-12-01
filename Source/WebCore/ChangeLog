@@ -1,3 +1,17 @@
+2011-11-30  Alexey Proskuryakov  <ap@apple.com>
+
+        SocketStreamHandleCFNet doesn't check for proxy errors
+        https://bugs.webkit.org/show_bug.cgi?id=71965
+
+        Reviewed by Darin Adler.
+
+        * platform/network/cf/SocketStreamHandleCFNet.cpp:
+        (WebCore::getStoredCONNECTProxyCredentials): Added a FIXME about retrieving proxy credentials.
+        (WebCore::SocketStreamHandle::addCONNECTCredentials): Added human readable messages to errors,
+        they go to Web Inspector console.
+        (WebCore::SocketStreamHandle::readStreamCallback): Handle proxy response codes other than 200
+        and 407 by failing cleanly.
+
 2011-11-30  Jeremy Apthorp  <jeremya@google.com>
 
         When the mouse is dragged out of an :active element, it should lose :hover.

@@ -310,6 +310,8 @@ void SocketStreamHandle::createStreams()
 
 static bool getStoredCONNECTProxyCredentials(const ProtectionSpace& protectionSpace, String& login, String& password)
 {
+    // FIXME (<rdar://problem/10416495>): Proxy credentials should be retrieved from AuthBrokerAgent.
+
     // Try system credential storage first, matching HTTP behavior (CFNetwork only asks the client for password if it couldn't find it in Keychain).
     Credential storedCredential = CredentialStorage::getFromPersistentStorage(protectionSpace);
     if (storedCredential.isEmpty())
@@ -344,7 +346,7 @@ void SocketStreamHandle::addCONNECTCredentials(CFHTTPMessageRef proxyResponse)
 
     if (!CFHTTPAuthenticationRequiresUserNameAndPassword(authentication.get())) {
         // That's all we can offer...
-        m_client->didFailSocketStream(this, SocketStreamError()); // FIXME: Provide a sensible error.
+        m_client->didFailSocketStream(this, SocketStreamError(0, m_url.string(), "Proxy authentication scheme is not supported for WebSockets"));
         return;
     }
 
@@ -369,7 +371,7 @@ void SocketStreamHandle::addCONNECTCredentials(CFHTTPMessageRef proxyResponse)
 
         if (!proxyAuthorizationString) {
             // Fails e.g. for NTLM auth.
-            m_client->didFailSocketStream(this, SocketStreamError()); // FIXME: Provide a sensible error.
+            m_client->didFailSocketStream(this, SocketStreamError(0, m_url.string(), "Proxy authentication scheme is not supported for WebSockets"));
             return;
         }
 
@@ -379,9 +381,9 @@ void SocketStreamHandle::addCONNECTCredentials(CFHTTPMessageRef proxyResponse)
         return;
     }
 
-    // FIXME: Ask the client if credentials could not be found.
+    // FIXME: On platforms where AuthBrokerAgent is not available, ask the client if credentials could not be found.
 
-    m_client->didFailSocketStream(this, SocketStreamError()); // FIXME: Provide a sensible error.
+    m_client->didFailSocketStream(this, SocketStreamError(0, m_url.string(), "Proxy credentials are not available"));
 }
 
 CFStringRef SocketStreamHandle::copyCFStreamDescription(void* info)
@@ -447,9 +449,20 @@ void SocketStreamHandle::readStreamCallback(CFStreamEventType type)
         if (m_connectingSubstate == WaitingForConnect) {
             if (m_connectionType == CONNECTProxy) {
                 RetainPtr<CFHTTPMessageRef> proxyResponse(AdoptCF, wkCopyCONNECTProxyResponse(m_readStream.get(), m_httpsURL.get()));
-                if (proxyResponse && (407 == CFHTTPMessageGetResponseStatusCode(proxyResponse.get()))) {
-                    addCONNECTCredentials(proxyResponse.get());
-                    return;
+                if (proxyResponse) {
+                    CFIndex proxyResponseCode = CFHTTPMessageGetResponseStatusCode(proxyResponse.get());
+                    switch (proxyResponseCode) {
+                    case 200:
+                        // Successful connection.
+                        break;
+                    case 407:
+                        addCONNECTCredentials(proxyResponse.get());
+                        return;
+                    default:
+                        m_client->didFailSocketStream(this, SocketStreamError(static_cast<int>(proxyResponseCode), m_url.string(), "Proxy connection could not be established"));
+                        platformClose();
+                        return;
+                    }
                 }
             }
         } else if (m_connectingSubstate == WaitingForCredentials)
