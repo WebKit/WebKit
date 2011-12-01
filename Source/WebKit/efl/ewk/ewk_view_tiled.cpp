@@ -196,6 +196,11 @@ static void _ewk_view_tiled_smart_zoom_weak_smooth_scale_set(Ewk_View_Smart_Data
     ewk_tiled_backing_store_zoom_weak_smooth_scale_set(smartData->backing_store, smoothScale);
 }
 
+static void _ewk_view_tiled_smart_bg_color_set(Ewk_View_Smart_Data* smartData, unsigned char red, unsigned char green, unsigned char blue, unsigned char alpha)
+{
+    ewk_tiled_backing_store_alpha_set(smartData->backing_store, alpha < 255);
+}
+
 static void _ewk_view_tiled_smart_flush(Ewk_View_Smart_Data* smartData)
 {
     ewk_tiled_backing_store_flush(smartData->backing_store);
@@ -246,6 +251,7 @@ Eina_Bool ewk_view_tiled_smart_set(Ewk_View_Smart_Class* api)
     api->zoom_set = _ewk_view_tiled_smart_zoom_set;
     api->zoom_weak_set = _ewk_view_tiled_smart_zoom_weak_set;
     api->zoom_weak_smooth_scale_set = _ewk_view_tiled_smart_zoom_weak_smooth_scale_set;
+    api->bg_color_set = _ewk_view_tiled_smart_bg_color_set;
     api->flush = _ewk_view_tiled_smart_flush;
     api->pre_render_region = _ewk_view_tiled_smart_pre_render_region;
     api->pre_render_relative_radius = _ewk_view_tiled_smart_pre_render_relative_radius;

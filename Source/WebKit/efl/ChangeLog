@@ -1,3 +1,21 @@
+2011-11-30  JungJik Lee  <jungjik.lee@samsung.com>
+
+        [EFL] Apply alpha channel into ewk_tiled_backing_store's tile objects.
+        https://bugs.webkit.org/show_bug.cgi?id=73015
+
+        Reviewed by Chang Shu.
+
+        Add alpha_set API to tiled backing store to apply alpha channel on tile objects.
+
+        * ewk/ewk_tiled_backing_store.cpp:
+        (_ewk_tiled_backing_store_tile_associate):
+        (ewk_tiled_backing_store_alpha_set):
+        * ewk/ewk_tiled_backing_store.h:
+        * ewk/ewk_view.h:
+        * ewk/ewk_view_tiled.cpp:
+        (_ewk_view_tiled_smart_bg_color_set):
+        (ewk_view_tiled_smart_set):
+
 2011-11-30  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         [EFL] Remove duplicated UA information function.

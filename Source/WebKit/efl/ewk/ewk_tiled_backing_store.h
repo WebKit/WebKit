@@ -100,6 +100,7 @@ Eina_Bool ewk_tiled_backing_store_zoom_set(Evas_Object* o, float* zoom, Evas_Coo
 Eina_Bool ewk_tiled_backing_store_zoom_weak_set(Evas_Object* o, float zoom, Evas_Coord cx, Evas_Coord cy);
 void ewk_tiled_backing_store_fix_offsets(Evas_Object* o, Evas_Coord w, Evas_Coord h);
 void ewk_tiled_backing_store_zoom_weak_smooth_scale_set(Evas_Object* o, Eina_Bool smooth_scale);
+void ewk_tiled_backing_store_alpha_set(Evas_Object* o, Eina_Bool has_alpha);
 Eina_Bool ewk_tiled_backing_store_update(Evas_Object* o, const Eina_Rectangle* update);
 void ewk_tiled_backing_store_updates_process_pre_set(Evas_Object* o, void*(*cb)(void* data, Evas_Object *o), const void* data);
 void ewk_tiled_backing_store_updates_process_post_set(Evas_Object* o, void*(*cb)(void* data, void* pre_data, Evas_Object *o), const void* data);

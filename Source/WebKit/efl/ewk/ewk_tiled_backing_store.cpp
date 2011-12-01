@@ -65,6 +65,7 @@ struct _Ewk_Tiled_Backing_Store_Data {
             Evas_Coord width, height;
             float zoom;
             bool zoomWeakSmoothScale : 1;
+            bool hasAlpha : 1;
         } tile;
         struct {
             struct {
@@ -207,6 +208,7 @@ static void _ewk_tiled_backing_store_tile_associate(Ewk_Tiled_Backing_Store_Data
     evas_object_image_fill_set
         (item->tile->image, 0, 0, item->geometry.width, item->geometry.height);
     evas_object_image_smooth_scale_set(item->tile->image, item->smooth_scale);
+    evas_object_image_alpha_set(item->tile->image, priv->view.tile.hasAlpha);
 
     if (!ewk_tile_visible_get(tile))
         evas_object_smart_member_add(tile->image, priv->self);
@@ -1732,6 +1734,12 @@ void ewk_tiled_backing_store_zoom_weak_smooth_scale_set(Evas_Object* ewkBackingS
                 _ewk_tiled_backing_store_item_smooth_scale_set
                     (item, smoothScale);
     }
+}
+
+void ewk_tiled_backing_store_alpha_set(Evas_Object* ewkBackingStore, Eina_Bool hasAlpha)
+{
+    PRIV_DATA_GET_OR_RETURN(ewkBackingStore, priv);
+    priv->view.tile.hasAlpha = hasAlpha;
 }
 
 Eina_Bool ewk_tiled_backing_store_update(Evas_Object* ewkBackingStore, const Eina_Rectangle* update)

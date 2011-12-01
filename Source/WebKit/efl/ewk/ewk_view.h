@@ -129,7 +129,7 @@ struct _Ewk_View_Smart_Class {
     Eina_Bool (*zoom_set)(Ewk_View_Smart_Data *sd, float zoom, Evas_Coord cx, Evas_Coord cy);
     Eina_Bool (*zoom_weak_set)(Ewk_View_Smart_Data *sd, float zoom, Evas_Coord cx, Evas_Coord cy);
     void (*zoom_weak_smooth_scale_set)(Ewk_View_Smart_Data *sd, Eina_Bool smooth_scale);
-    void (*bg_color_set)(Ewk_View_Smart_Data *sd, unsigned char r, unsigned char g, unsigned char b, unsigned char a);
+    void (*bg_color_set)(Ewk_View_Smart_Data *sd, unsigned char red, unsigned char green, unsigned char blue, unsigned char alpha);
     void (*flush)(Ewk_View_Smart_Data *sd);
     Eina_Bool (*pre_render_region)(Ewk_View_Smart_Data *sd, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h, float zoom);
     Eina_Bool (*pre_render_relative_radius)(Ewk_View_Smart_Data *sd, unsigned int n, float zoom);
