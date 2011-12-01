@@ -1,3 +1,9 @@
+2011-12-01  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Unreviewed. Add myself to GStreamer and WebKit2GTK+ watchlists.
+
+        * Scripts/webkitpy/common/config/watchlist:
+
 2011-12-01  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Read fonts from the jhbuild root
