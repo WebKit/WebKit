@@ -1,3 +1,40 @@
+2011-12-01  Adam Roben  <aroben@apple.com>
+
+        Add an HTDigestParser class to webkitpy
+
+        Fixes <http://webkit.org/b/73575> webkitpy doesn't provide a way to parse htdigest files
+
+        This class can be used to parse Apache's htdigest files and check whether a given
+        username/realm/password tuple is present in the file. Eventually this will be used for
+        authenticating users on build.webkit.org (<http://webkit.org/b/73353>).
+
+        Reviewed by Eric Seidel.
+
+        * Scripts/webkitpy/common/net/htdigestparser.py: Added.
+        (HTDigestParser.__init__): Stores the parsed representation of the file.
+        (HTDigestParser.authenticate): Hashes the username/realm/password tuple to generate a hashed
+        password and returns whether the resulting tuple is present in the file.
+        (HTDigestParser.entries): Just returns the parsed representation of the file.
+        (HTDigestParser.parse_file): Splits each line on colons and checks that each line has the
+        expected syntax ('username:realm:hashed_password'). If any line is invalid, we treat the
+        whole file as invalid and all authentication attempts will fail.
+
+        * Scripts/webkitpy/common/net/htdigestparser_unittest.py: Added.
+        (HTDigestParserTest.assertEntriesEqual): Helper method to assert that fake_htdigest_file,
+        optionally appended with some extra data, generates the expected entries.
+        (HTDigestParserTest.test_authenticate): Tests that tuples present in the file can
+        authenticate, and tuples not present cannot.
+        (HTDigestParserTest.test_entries): Tests that we get the expected entries from
+        fake_htdigest_file.
+
+        (HTDigestParserTest.test_empty_file):
+        (HTDigestParserTest.test_too_few_colons):
+        (HTDigestParserTest.test_too_many_colons):
+        (HTDigestParserTest.test_invalid_hash):
+        Test various forms of invalid files.
+
+        (HTDigestParserTest.fake_htdigest_file): Returns a fake valid htdigest file for testing.
+
 2011-12-01  Philippe Normand  <pnormand@igalia.com>
 
         [GTK] Make the new 64-bit Release bot part of the core set
