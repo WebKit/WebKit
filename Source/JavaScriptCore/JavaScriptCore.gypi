@@ -624,7 +624,6 @@
             'wtf/mac/MainThreadMac.mm',
             'wtf/qt/MainThreadQt.cpp',
             'wtf/qt/StringQt.cpp',
-            'wtf/qt/ThreadingQt.cpp',
             'wtf/text/AtomicString.cpp',
             'wtf/text/CString.cpp',
             'wtf/text/StringBuilder.cpp',
