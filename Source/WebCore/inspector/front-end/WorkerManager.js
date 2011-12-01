@@ -68,7 +68,8 @@ WebInspector.WorkerManager.loadCompleted = function()
         WebInspector.WorkerManager._calculateWorkerInspectorTitle();
     }
 
-    WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.MainFrameNavigated, WebInspector.workerManager._mainFrameNavigated, WebInspector.workerManager);
+    if (WebInspector.workerManager)
+        WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.MainFrameNavigated, WebInspector.workerManager._mainFrameNavigated, WebInspector.workerManager);
 }
 
 WebInspector.WorkerManager._initializeDedicatedWorkerFrontend = function(workerId)

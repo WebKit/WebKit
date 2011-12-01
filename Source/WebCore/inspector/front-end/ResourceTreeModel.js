@@ -282,7 +282,8 @@ WebInspector.ResourceTreeModel.prototype = {
 
     resourceForURL: function(url)
     {
-        return this.mainFrame.resourceForURL(url);
+        // Workers call into this with no frames available.
+        return this.mainFrame ? this.mainFrame.resourceForURL(url) : null;
     },
 
     _addFramesRecursively: function(parentFrame, frameTreePayload)
