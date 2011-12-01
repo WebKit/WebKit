@@ -859,24 +859,31 @@ Element* AccessibilityRenderObject::actionElement() const
             if (!input->disabled() && (isCheckboxOrRadio() || input->isTextButton()))
                 return input;
         } else if (node->hasTagName(buttonTag))
-            return static_cast<Element*>(node);
+            return toElement(node);
     }
 
     if (isFileUploadButton())
-        return static_cast<Element*>(m_renderer->node());
+        return toElement(m_renderer->node());
             
     if (AccessibilityObject::isARIAInput(ariaRoleAttribute()))
-        return static_cast<Element*>(m_renderer->node());
+        return toElement(m_renderer->node());
 
     if (isImageButton())
-        return static_cast<Element*>(m_renderer->node());
+        return toElement(m_renderer->node());
     
     if (m_renderer->isBoxModelObject() && toRenderBoxModelObject(m_renderer)->isMenuList())
-        return static_cast<Element*>(m_renderer->node());
+        return toElement(m_renderer->node());
 
-    AccessibilityRole role = roleValue();
-    if (role == ButtonRole || role == PopUpButtonRole)
-        return static_cast<Element*>(m_renderer->node()); 
+    switch (roleValue()) {
+    case ButtonRole:
+    case PopUpButtonRole:
+    case TabRole:
+    case MenuItemRole:
+    case ListItemRole:
+        return toElement(m_renderer->node()); 
+    default:
+        break;
+    }
     
     Element* elt = anchorElement();
     if (!elt)
