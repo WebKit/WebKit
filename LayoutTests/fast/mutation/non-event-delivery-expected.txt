@@ -1,0 +1,22 @@
+Test that Mutation Records are delivered following non-event async callbacks.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Testing mutations are delivered following Database transaction callbacks.
+PASS mutations.length is 1
+PASS mutations[0].type is "attributes"
+PASS mutations[0].attributeName is "foo"
+
+Testing mutations are delivered following Filesystem callbacks.
+PASS mutations.length is 1
+PASS mutations[0].type is "attributes"
+PASS mutations[0].attributeName is "foo"
+PASS mutations.length is 1
+PASS mutations[0].type is "attributes"
+PASS mutations[0].attributeName is "baz"
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id=description></p>
+<div id="console"></div>
+<script>
+
+window.jsTestIsAsync = true;
+var mutations;
+
+function testDatabase() {
+    var div;
+    var db;
+    var observer;
+
+    function start() {
+        debug('Testing mutations are delivered following Database transaction callbacks.');
+
+        mutations = null;
+        div = document.createElement('div');
+        observer = new WebKitMutationObserver(function(m) {
+            mutations = m;
+        });
+
+        observer.observe(div, { attributes: true, characterData: true });
+
+        db = openDatabase('DatabaseMutationDelivery', '1.0', '', 1);
+        db.transaction(mutate);
+    }
+
+    function mutate() {
+        div.setAttribute('foo', 'bar');
+        setTimeout(finish, 0);
+    }
+
+    function finish() {
+        shouldBe('mutations.length', '1');
+        shouldBe('mutations[0].type', '"attributes"');
+        shouldBe('mutations[0].attributeName', '"foo"');
+        observer.disconnect();
+        debug('');
+        runNextTest();
+    }
+
+    start();
+}
+
+function testFilesystem() {
+    var div;
+    var fileEntry;
+    var observer;
+
+    function start() {
+        debug('Testing mutations are delivered following Filesystem callbacks.');
+
+        mutations = null;
+        div = document.createElement('div');
+        observer = new WebKitMutationObserver(function(m) {
+            mutations = m;
+        });
+
+        observer.observe(div, { attributes: true, characterData: true });
+
+        webkitRequestFileSystem(TEMPORARY, 5*1024*1024, function(fs) {
+            fs.root.getFile('foo.txt', {create: true, excluse: true}, function(entry) {
+                fileEntry = entry;
+                fileEntry.getParent(mutateAfterGetParent);
+            });
+        });
+    }
+
+    function mutateAfterGetParent() {
+        div.setAttribute('foo', 'bar');
+        fileEntry.remove(mutateAfterRemove);
+    }
+
+    function mutateAfterRemove() {
+        shouldBe('mutations.length', '1');
+        shouldBe('mutations[0].type', '"attributes"');
+        shouldBe('mutations[0].attributeName', '"foo"');
+
+        mutations = null;
+        div.setAttribute('baz', 'bat');
+        setTimeout(finish, 0);
+    }
+
+    function finish() {
+        shouldBe('mutations.length', '1');
+        shouldBe('mutations[0].type', '"attributes"');
+        shouldBe('mutations[0].attributeName', '"baz"');
+
+        observer.disconnect();
+        debug('');
+        runNextTest();
+    }
+
+    start();
+}
+
+var tests = [
+    testDatabase,
+    testFilesystem
+];
+var testIndex = 0;
+
+function runNextTest() {
+    if (testIndex < tests.length)
+        tests[testIndex++]();
+    else
+        finishJSTest();
+}
+
+description('Test that Mutation Records are delivered following non-event async callbacks.');
+
+if (!window.WebKitMutationObserver)
+    testFailed('This test requires ENABLE(MUTATION_OBSERVERS)');
+else
+    runNextTest();
+
+</script>
+<script src="../js/resources/js-test-post.js"></script>
+</body>
+</html>
