@@ -1,3 +1,89 @@
+2011-11-30  David Reveman  <reveman@chromium.org>
+
+        [Chromium] Add support for painting into an SkPicture and then rasterizing into tile-sized chunks.
+        https://bugs.webkit.org/show_bug.cgi?id=71388
+
+        Reviewed by James Robinson.
+
+        Add UpdatableTexture class, which allows texture updater to
+        allocate tile specific resources and paint tiles separately.
+        Rename texture uploader classes and move them to separate files.
+
+        No new tests. Covered by existing tests.
+
+        * WebCore.gypi:
+        * platform/graphics/chromium/BitmapCanvasLayerTextureUpdater.cpp: Added.
+        (WebCore::BitmapCanvasLayerTextureUpdater::Texture::Texture):
+        (WebCore::BitmapCanvasLayerTextureUpdater::Texture::~Texture):
+        (WebCore::BitmapCanvasLayerTextureUpdater::Texture::updateRect):
+        (WebCore::BitmapCanvasLayerTextureUpdater::create):
+        (WebCore::BitmapCanvasLayerTextureUpdater::BitmapCanvasLayerTextureUpdater):
+        (WebCore::BitmapCanvasLayerTextureUpdater::~BitmapCanvasLayerTextureUpdater):
+        (WebCore::BitmapCanvasLayerTextureUpdater::createTexture):
+        (WebCore::BitmapCanvasLayerTextureUpdater::sampledTexelFormat):
+        (WebCore::BitmapCanvasLayerTextureUpdater::prepareToUpdate):
+        (WebCore::BitmapCanvasLayerTextureUpdater::updateTextureRect):
+        * platform/graphics/chromium/BitmapCanvasLayerTextureUpdater.h: Copied from Source/WebCore/platform/graphics/chromium/LayerTextureUpdater.h.
+        (WebCore::BitmapCanvasLayerTextureUpdater::Texture::textureUpdater):
+        (WebCore::BitmapCanvasLayerTextureUpdater::orientation):
+        * platform/graphics/chromium/CanvasLayerTextureUpdater.cpp: Copied from Source/WebCore/platform/graphics/chromium/cc/CCTextureUpdater.h.
+        (WebCore::CanvasLayerTextureUpdater::CanvasLayerTextureUpdater):
+        (WebCore::CanvasLayerTextureUpdater::~CanvasLayerTextureUpdater):
+        (WebCore::CanvasLayerTextureUpdater::paintContents):
+        * platform/graphics/chromium/CanvasLayerTextureUpdater.h: Copied from Source/WebCore/platform/graphics/chromium/cc/CCTextureUpdater.h.
+        (WebCore::CanvasLayerTextureUpdater::contentRect):
+        * platform/graphics/chromium/ContentLayerChromium.cpp:
+        (WebCore::ContentLayerChromium::createTextureUpdater):
+        * platform/graphics/chromium/FrameBufferSkPictureCanvasLayerTextureUpdater.cpp: Added.
+        (WebCore::FrameBuffer::FrameBuffer::FrameBuffer):
+        (WebCore::FrameBuffer::FrameBuffer::~FrameBuffer):
+        (WebCore::FrameBuffer::FrameBuffer::initialize):
+        (WebCore::FrameBufferSkPictureCanvasLayerTextureUpdater::Texture::Texture):
+        (WebCore::FrameBufferSkPictureCanvasLayerTextureUpdater::Texture::~Texture):
+        (WebCore::FrameBufferSkPictureCanvasLayerTextureUpdater::Texture::updateRect):
+        (WebCore::FrameBufferSkPictureCanvasLayerTextureUpdater::create):
+        (WebCore::FrameBufferSkPictureCanvasLayerTextureUpdater::FrameBufferSkPictureCanvasLayerTextureUpdater):
+        (WebCore::FrameBufferSkPictureCanvasLayerTextureUpdater::~FrameBufferSkPictureCanvasLayerTextureUpdater):
+        (WebCore::FrameBufferSkPictureCanvasLayerTextureUpdater::createTexture):
+        (WebCore::FrameBufferSkPictureCanvasLayerTextureUpdater::sampledTexelFormat):
+        (WebCore::FrameBufferSkPictureCanvasLayerTextureUpdater::updateTextureRect):
+        * platform/graphics/chromium/FrameBufferSkPictureCanvasLayerTextureUpdater.h: Copied from Source/WebCore/platform/graphics/chromium/LayerTextureUpdater.h.
+        (WebCore::FrameBufferSkPictureCanvasLayerTextureUpdater::Texture::textureUpdater):
+        (WebCore::FrameBufferSkPictureCanvasLayerTextureUpdater::orientation):
+        * platform/graphics/chromium/ImageLayerChromium.cpp:
+        (WebCore::ImageLayerTextureUpdater::Texture::Texture):
+        (WebCore::ImageLayerTextureUpdater::Texture::updateRect):
+        (WebCore::ImageLayerTextureUpdater::Texture::textureUpdater):
+        (WebCore::ImageLayerTextureUpdater::createTexture):
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        * platform/graphics/chromium/LayerTextureUpdater.h:
+        (WebCore::LayerTextureUpdater::Texture::~Texture):
+        (WebCore::LayerTextureUpdater::Texture::texture):
+        (WebCore::LayerTextureUpdater::Texture::prepareRect):
+        (WebCore::LayerTextureUpdater::Texture::Texture):
+        (WebCore::LayerTextureUpdater::prepareToUpdate):
+        * platform/graphics/chromium/LayerTextureUpdaterCanvas.cpp: Removed.
+        * platform/graphics/chromium/LayerTextureUpdaterCanvas.h: Removed.
+        * platform/graphics/chromium/SkPictureCanvasLayerTextureUpdater.cpp: Copied from Source/WebCore/platform/graphics/chromium/cc/CCTextureUpdater.h.
+        (WebCore::SkPictureCanvasLayerTextureUpdater::SkPictureCanvasLayerTextureUpdater):
+        (WebCore::SkPictureCanvasLayerTextureUpdater::~SkPictureCanvasLayerTextureUpdater):
+        (WebCore::SkPictureCanvasLayerTextureUpdater::prepareToUpdate):
+        (WebCore::SkPictureCanvasLayerTextureUpdater::drawPicture):
+        * platform/graphics/chromium/SkPictureCanvasLayerTextureUpdater.h: Copied from Source/WebCore/platform/graphics/chromium/cc/CCTextureUpdater.h.
+        * platform/graphics/chromium/TiledLayerChromium.cpp:
+        (WebCore::UpdatableTile::UpdatableTile):
+        (WebCore::UpdatableTile::texture):
+        (WebCore::UpdatableTile::managedTexture):
+        (WebCore::TiledLayerChromium::updateCompositorResources):
+        (WebCore::TiledLayerChromium::pushPropertiesTo):
+        (WebCore::TiledLayerChromium::createTile):
+        (WebCore::TiledLayerChromium::protectTileTextures):
+        (WebCore::TiledLayerChromium::prepareToUpdate):
+        * platform/graphics/chromium/cc/CCTextureUpdater.cpp:
+        (WebCore::CCTextureUpdater::append):
+        (WebCore::CCTextureUpdater::update):
+        * platform/graphics/chromium/cc/CCTextureUpdater.h:
+
 2011-11-30  Rafael Weinstein  <rafaelw@chromium.org>
 
         [MutationObservers] Make WebKitMutationObserver::deliverAllMutations() tolerant of re-entrant calls

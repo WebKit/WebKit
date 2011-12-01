@@ -23,69 +23,52 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+
 #include "config.h"
 
 #if USE(ACCELERATED_COMPOSITING)
 
-#include "cc/CCTextureUpdater.h"
+#include "CanvasLayerTextureUpdater.h"
 
-#include "GraphicsContext3D.h"
-#include "LayerTextureUpdater.h"
-#include "ManagedTexture.h"
-
-using namespace std;
+#include "GraphicsContext.h"
+#include "LayerPainterChromium.h"
+#include "TraceEvent.h"
 
 namespace WebCore {
 
-CCTextureUpdater::CCTextureUpdater(TextureAllocator* allocator)
-    : m_allocator(allocator)
-    , m_entryIndex(0)
-{
-    ASSERT(m_allocator);
-}
-
-CCTextureUpdater::~CCTextureUpdater()
+CanvasLayerTextureUpdater::CanvasLayerTextureUpdater(PassOwnPtr<LayerPainterChromium> painter)
+    : m_painter(painter)
 {
 }
 
-void CCTextureUpdater::append(LayerTextureUpdater::Texture* texture, const IntRect& sourceRect, const IntRect& destRect)
+CanvasLayerTextureUpdater::~CanvasLayerTextureUpdater()
 {
-    ASSERT(texture);
-
-    UpdateEntry entry;
-    entry.m_texture = texture;
-    entry.m_sourceRect = sourceRect;
-    entry.m_destRect = destRect;
-    m_entries.append(entry);
 }
 
-bool CCTextureUpdater::hasMoreUpdates() const
+void CanvasLayerTextureUpdater::paintContents(GraphicsContext& context, const IntRect& contentRect, float contentsScale)
 {
-    return m_entries.size();
-}
+    context.translate(-contentRect.x(), -contentRect.y());
+    {
+        TRACE_EVENT("LayerTextureUpdaterCanvas::paint", this, 0);
 
-bool CCTextureUpdater::update(GraphicsContext3D* context, size_t count)
-{
-    size_t maxIndex = min(m_entryIndex + count, m_entries.size());
-    for (; m_entryIndex < maxIndex; ++m_entryIndex) {
-        UpdateEntry& entry = m_entries[m_entryIndex];
-        entry.m_texture->updateRect(context, m_allocator, entry.m_sourceRect, entry.m_destRect);
+        IntRect scaledContentRect = contentRect;
+
+        if (contentsScale != 1.0) {
+            context.save();
+            context.scale(FloatSize(contentsScale, contentsScale));
+
+            FloatRect rect = contentRect;
+            rect.scale(1 / contentsScale);
+            scaledContentRect = enclosingIntRect(rect);
+        }
+
+        m_painter->paint(context, scaledContentRect);
+
+        if (contentsScale != 1.0)
+            context.restore();
     }
-
-    if (maxIndex < m_entries.size())
-        return true;
-
-    // If no entries left to process, auto-clear.
-    clear();
-    return false;
+    m_contentRect = contentRect;
 }
 
-void CCTextureUpdater::clear()
-{
-    m_entryIndex = 0;
-    m_entries.clear();
-}
-
-}
-
+} // namespace WebCore
 #endif // USE(ACCELERATED_COMPOSITING)

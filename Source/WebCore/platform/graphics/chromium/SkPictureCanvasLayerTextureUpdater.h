@@ -23,69 +23,37 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
+
+#ifndef SkPictureCanvasLayerTextureUpdater_h
+#define SkPictureCanvasLayerTextureUpdater_h
 
 #if USE(ACCELERATED_COMPOSITING)
+#if USE(SKIA)
 
-#include "cc/CCTextureUpdater.h"
+#include "CanvasLayerTextureUpdater.h"
+#include "SkPicture.h"
 
-#include "GraphicsContext3D.h"
-#include "LayerTextureUpdater.h"
-#include "ManagedTexture.h"
-
-using namespace std;
+class SkCanvas;
 
 namespace WebCore {
 
-CCTextureUpdater::CCTextureUpdater(TextureAllocator* allocator)
-    : m_allocator(allocator)
-    , m_entryIndex(0)
-{
-    ASSERT(m_allocator);
-}
+class LayerPainterChromium;
 
-CCTextureUpdater::~CCTextureUpdater()
-{
-}
+class SkPictureCanvasLayerTextureUpdater : public CanvasLayerTextureUpdater {
+public:
+    virtual ~SkPictureCanvasLayerTextureUpdater();
 
-void CCTextureUpdater::append(LayerTextureUpdater::Texture* texture, const IntRect& sourceRect, const IntRect& destRect)
-{
-    ASSERT(texture);
+protected:
+    explicit SkPictureCanvasLayerTextureUpdater(PassOwnPtr<LayerPainterChromium>);
 
-    UpdateEntry entry;
-    entry.m_texture = texture;
-    entry.m_sourceRect = sourceRect;
-    entry.m_destRect = destRect;
-    m_entries.append(entry);
-}
+    virtual void prepareToUpdate(const IntRect& contentRect, const IntSize& tileSize, int borderTexels, float contentsScale);
+    void drawPicture(SkCanvas*);
 
-bool CCTextureUpdater::hasMoreUpdates() const
-{
-    return m_entries.size();
-}
+private:
+    SkPicture m_picture; // Recording canvas.
+};
 
-bool CCTextureUpdater::update(GraphicsContext3D* context, size_t count)
-{
-    size_t maxIndex = min(m_entryIndex + count, m_entries.size());
-    for (; m_entryIndex < maxIndex; ++m_entryIndex) {
-        UpdateEntry& entry = m_entries[m_entryIndex];
-        entry.m_texture->updateRect(context, m_allocator, entry.m_sourceRect, entry.m_destRect);
-    }
-
-    if (maxIndex < m_entries.size())
-        return true;
-
-    // If no entries left to process, auto-clear.
-    clear();
-    return false;
-}
-
-void CCTextureUpdater::clear()
-{
-    m_entryIndex = 0;
-    m_entries.clear();
-}
-
-}
-
+} // namespace WebCore
+#endif // USE(SKIA)
 #endif // USE(ACCELERATED_COMPOSITING)
+#endif // SkPictureCanvasLayerTextureUpdater_h

@@ -27,13 +27,12 @@
 #define CCTextureUpdater_h
 
 #include "IntRect.h"
+#include "LayerTextureUpdater.h"
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
 class GraphicsContext3D;
-class LayerTextureUpdater;
-class ManagedTexture;
 class TextureAllocator;
 
 class CCTextureUpdater {
@@ -41,7 +40,7 @@ public:
     CCTextureUpdater(TextureAllocator*);
     ~CCTextureUpdater();
 
-    void append(ManagedTexture*, LayerTextureUpdater*, const IntRect& sourceRect, const IntRect& destRect);
+    void append(LayerTextureUpdater::Texture*, const IntRect& sourceRect, const IntRect& destRect);
 
     bool hasMoreUpdates() const;
 
@@ -54,8 +53,7 @@ public:
 
 private:
     struct UpdateEntry {
-        ManagedTexture* m_texture;
-        LayerTextureUpdater* m_updater;
+        LayerTextureUpdater::Texture* m_texture;
         IntRect m_sourceRect;
         IntRect m_destRect;
     };

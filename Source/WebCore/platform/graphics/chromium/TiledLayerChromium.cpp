@@ -52,17 +52,20 @@ namespace WebCore {
 class UpdatableTile : public CCLayerTilingData::Tile {
     WTF_MAKE_NONCOPYABLE(UpdatableTile);
 public:
-    explicit UpdatableTile(PassOwnPtr<ManagedTexture> tex) : m_tex(tex) { }
+    explicit UpdatableTile(PassOwnPtr<LayerTextureUpdater::Texture> texture) : m_texture(texture) { }
 
-    ManagedTexture* texture() { return m_tex.get(); }
+    LayerTextureUpdater::Texture* texture() { return m_texture.get(); }
+    ManagedTexture* managedTexture() { return m_texture->texture(); }
 
     bool isDirty() const { return !m_dirtyLayerRect.isEmpty(); }
     void clearDirty() { m_dirtyLayerRect = IntRect(); }
 
     // Layer-space dirty rectangle that needs to be repainted.
     IntRect m_dirtyLayerRect;
+    // Content-space rectangle that needs to be updated.
+    IntRect m_updateRect;
 private:
-    OwnPtr<ManagedTexture> m_tex;
+    OwnPtr<LayerTextureUpdater::Texture> m_texture;
 };
 
 TiledLayerChromium::TiledLayerChromium(CCLayerDelegate* delegate)
@@ -180,22 +183,19 @@ void TiledLayerChromium::updateCompositorResources(GraphicsContext3D*, CCTexture
     for (int j = top; j <= bottom; ++j) {
         for (int i = left; i <= right; ++i) {
             UpdatableTile* tile = tileAt(i, j);
+
+            // Required tiles are created in prepareToUpdate(). A tile should
+            // never be removed between the call to prepareToUpdate() and the
+            // call to updateCompositorResources().
             if (!tile)
-                tile = createTile(i, j);
-            else if (!tile->isDirty())
+                CRASH();
+
+            IntRect sourceRect = tile->m_updateRect;
+            if (tile->m_updateRect.isEmpty())
                 continue;
 
-            // Calculate page-space rectangle to copy from.
-            IntRect sourceRect = m_tiler->tileContentRect(tile);
-            const IntPoint anchor = sourceRect.location();
-            sourceRect.intersect(m_tiler->layerRectToContentRect(tile->m_dirtyLayerRect));
-            // Paint rect not guaranteed to line up on tile boundaries, so
-            // make sure that sourceRect doesn't extend outside of it.
-            sourceRect.intersect(m_paintRect);
-            if (sourceRect.isEmpty())
-                continue;
-
-            ASSERT(tile->texture()->isReserved());
+            ASSERT(tile->managedTexture()->isReserved());
+            const IntPoint anchor = m_tiler->tileContentRect(tile).location();
 
             // Calculate tile-space rectangle to upload into.
             IntRect destRect(IntPoint(sourceRect.x() - anchor.x(), sourceRect.y() - anchor.y()), sourceRect.size());
@@ -215,8 +215,7 @@ void TiledLayerChromium::updateCompositorResources(GraphicsContext3D*, CCTexture
             if (paintOffset.y() + destRect.height() > m_paintRect.height())
                 CRASH();
 
-            updater.append(tile->texture(), textureUpdater(), sourceRect, destRect);
-            tile->clearDirty();
+            updater.append(tile->texture(), sourceRect, destRect);
         }
     }
 
@@ -255,12 +254,12 @@ void TiledLayerChromium::pushPropertiesTo(CCLayerImpl* layer)
         int i = iter->first.first;
         int j = iter->first.second;
         UpdatableTile* tile = static_cast<UpdatableTile*>(iter->second.get());
-        if (!tile->texture()->isValid(m_tiler->tileSize(), m_textureFormat))
+        if (!tile->managedTexture()->isValid(m_tiler->tileSize(), m_textureFormat))
             continue;
         if (tile->isDirty())
             continue;
 
-        tiledLayer->syncTextureId(i, j, tile->texture()->textureId());
+        tiledLayer->syncTextureId(i, j, tile->managedTexture()->textureId());
     }
 }
 
@@ -278,7 +277,7 @@ UpdatableTile* TiledLayerChromium::tileAt(int i, int j) const
 
 UpdatableTile* TiledLayerChromium::createTile(int i, int j)
 {
-    RefPtr<UpdatableTile> tile = adoptRef(new UpdatableTile(ManagedTexture::create(textureManager())));
+    RefPtr<UpdatableTile> tile = adoptRef(new UpdatableTile(textureUpdater()->createTexture(textureManager())));
     m_tiler->addTile(tile, i, j);
     tile->m_dirtyLayerRect = m_tiler->tileLayerRect(tile.get());
 
@@ -326,10 +325,10 @@ void TiledLayerChromium::protectTileTextures(const IntRect& contentRect)
     for (int j = top; j <= bottom; ++j) {
         for (int i = left; i <= right; ++i) {
             UpdatableTile* tile = tileAt(i, j);
-            if (!tile || !tile->texture()->isValid(m_tiler->tileSize(), m_textureFormat))
+            if (!tile || !tile->managedTexture()->isValid(m_tiler->tileSize(), m_textureFormat))
                 continue;
 
-            tile->texture()->reserve(m_tiler->tileSize(), m_textureFormat);
+            tile->managedTexture()->reserve(m_tiler->tileSize(), m_textureFormat);
         }
     }
 }
@@ -342,6 +341,12 @@ void TiledLayerChromium::prepareToUpdate(const IntRect& contentRect)
     ASSERT(m_tiler);
 
     m_skipsDraw = false;
+
+    // Reset m_updateRect for all tiles.
+    for (CCLayerTilingData::TileMap::const_iterator iter = m_tiler->tiles().begin(); iter != m_tiler->tiles().end(); ++iter) {
+        UpdatableTile* tile = static_cast<UpdatableTile*>(iter->second.get());
+        tile->m_updateRect = IntRect();
+    }
 
     if (contentRect.isEmpty()) {
         m_requestedUpdateRect = IntRect();
@@ -366,10 +371,10 @@ void TiledLayerChromium::prepareToUpdate(const IntRect& contentRect)
             if (!tile)
                 tile = createTile(i, j);
 
-            if (!tile->texture()->isValid(m_tiler->tileSize(), m_textureFormat))
+            if (!tile->managedTexture()->isValid(m_tiler->tileSize(), m_textureFormat))
                 tile->m_dirtyLayerRect = m_tiler->tileLayerRect(tile);
 
-            if (!tile->texture()->reserve(m_tiler->tileSize(), m_textureFormat)) {
+            if (!tile->managedTexture()->reserve(m_tiler->tileSize(), m_textureFormat)) {
                 m_skipsDraw = true;
                 cleanupResources();
                 return;
@@ -394,6 +399,36 @@ void TiledLayerChromium::prepareToUpdate(const IntRect& contentRect)
     // so we grab a local reference here to hold the updater alive until the paint completes.
     RefPtr<LayerTextureUpdater> protector(textureUpdater());
     textureUpdater()->prepareToUpdate(m_paintRect, m_tiler->tileSize(), m_tiler->hasBorderTexels(), contentsScale());
+    m_tiler->contentRectToTileIndices(m_requestedUpdateRect, left, top, right, bottom);
+    for (int j = top; j <= bottom; ++j) {
+        for (int i = left; i <= right; ++i) {
+            UpdatableTile* tile = tileAt(i, j);
+
+            // Tiles are created before prepareToUpdate() is called.
+            if (!tile)
+                CRASH();
+
+            if (!tile->isDirty())
+                continue;
+
+            // Calculate content-space rectangle to copy from.
+            IntRect sourceRect = m_tiler->tileContentRect(tile);
+            sourceRect.intersect(m_tiler->layerRectToContentRect(tile->m_dirtyLayerRect));
+            // Paint rect not guaranteed to line up on tile boundaries, so
+            // make sure that sourceRect doesn't extend outside of it.
+            sourceRect.intersect(m_paintRect);
+
+            // updateCompositorResources() uses m_updateRect to determine
+            // the tiles to update so we can clear the dirty rectangle here.
+            tile->clearDirty();
+
+            tile->m_updateRect = sourceRect;
+            if (sourceRect.isEmpty())
+                continue;
+
+            tile->texture()->prepareRect(sourceRect);
+        }
+    }
 }
 
 }

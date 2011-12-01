@@ -34,9 +34,10 @@
 
 #include "ContentLayerChromium.h"
 
+#include "BitmapCanvasLayerTextureUpdater.h"
+#include "FrameBufferSkPictureCanvasLayerTextureUpdater.h"
 #include "LayerPainterChromium.h"
 #include "LayerRendererChromium.h"
-#include "LayerTextureUpdaterCanvas.h"
 #include "PlatformSupport.h"
 #include "cc/CCLayerTreeHost.h"
 #include <wtf/CurrentTime.h>
@@ -120,12 +121,12 @@ void ContentLayerChromium::createTextureUpdater(const CCLayerTreeHost* host)
 {
 #if USE(SKIA)
     if (host->settings().acceleratePainting) {
-        m_textureUpdater = LayerTextureUpdaterSkPicture::create(ContentLayerPainter::create(m_delegate));
+        m_textureUpdater = FrameBufferSkPictureCanvasLayerTextureUpdater::create(ContentLayerPainter::create(m_delegate));
         return;
     }
 #endif // USE(SKIA)
 
-    m_textureUpdater = LayerTextureUpdaterBitmap::create(ContentLayerPainter::create(m_delegate), host->layerRendererCapabilities().usingMapSub);
+    m_textureUpdater = BitmapCanvasLayerTextureUpdater::create(ContentLayerPainter::create(m_delegate), host->layerRendererCapabilities().usingMapSub);
 }
 
 }

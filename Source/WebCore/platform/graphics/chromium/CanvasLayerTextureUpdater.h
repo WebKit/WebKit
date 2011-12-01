@@ -23,69 +23,35 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
+
+#ifndef CanvasLayerTextureUpdater_h
+#define CanvasLayerTextureUpdater_h
 
 #if USE(ACCELERATED_COMPOSITING)
 
-#include "cc/CCTextureUpdater.h"
-
-#include "GraphicsContext3D.h"
 #include "LayerTextureUpdater.h"
-#include "ManagedTexture.h"
-
-using namespace std;
 
 namespace WebCore {
 
-CCTextureUpdater::CCTextureUpdater(TextureAllocator* allocator)
-    : m_allocator(allocator)
-    , m_entryIndex(0)
-{
-    ASSERT(m_allocator);
-}
+class GraphicsContext3D;
+class LayerPainterChromium;
 
-CCTextureUpdater::~CCTextureUpdater()
-{
-}
+// A LayerTextureUpdater with an internal canvas.
+class CanvasLayerTextureUpdater : public LayerTextureUpdater {
+public:
+    virtual ~CanvasLayerTextureUpdater();
 
-void CCTextureUpdater::append(LayerTextureUpdater::Texture* texture, const IntRect& sourceRect, const IntRect& destRect)
-{
-    ASSERT(texture);
+protected:
+    explicit CanvasLayerTextureUpdater(PassOwnPtr<LayerPainterChromium>);
 
-    UpdateEntry entry;
-    entry.m_texture = texture;
-    entry.m_sourceRect = sourceRect;
-    entry.m_destRect = destRect;
-    m_entries.append(entry);
-}
+    void paintContents(GraphicsContext&, const IntRect& contentRect, float contentsScale);
+    const IntRect& contentRect() const { return m_contentRect; }
 
-bool CCTextureUpdater::hasMoreUpdates() const
-{
-    return m_entries.size();
-}
+private:
+    IntRect m_contentRect;
+    OwnPtr<LayerPainterChromium> m_painter;
+};
 
-bool CCTextureUpdater::update(GraphicsContext3D* context, size_t count)
-{
-    size_t maxIndex = min(m_entryIndex + count, m_entries.size());
-    for (; m_entryIndex < maxIndex; ++m_entryIndex) {
-        UpdateEntry& entry = m_entries[m_entryIndex];
-        entry.m_texture->updateRect(context, m_allocator, entry.m_sourceRect, entry.m_destRect);
-    }
-
-    if (maxIndex < m_entries.size())
-        return true;
-
-    // If no entries left to process, auto-clear.
-    clear();
-    return false;
-}
-
-void CCTextureUpdater::clear()
-{
-    m_entryIndex = 0;
-    m_entries.clear();
-}
-
-}
-
+} // namespace WebCore
 #endif // USE(ACCELERATED_COMPOSITING)
+#endif // CanvasLayerTextureUpdater_h

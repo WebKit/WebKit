@@ -46,13 +46,21 @@ public:
 
 class FakeLayerTextureUpdater : public LayerTextureUpdater {
 public:
+    class Texture : public LayerTextureUpdater::Texture {
+    public:
+        Texture(PassOwnPtr<ManagedTexture> texture) : LayerTextureUpdater::Texture(texture) { }
+        virtual ~Texture() { }
+
+        virtual void updateRect(GraphicsContext3D*, TextureAllocator*, const IntRect&, const IntRect&) { }
+    };
+
     FakeLayerTextureUpdater() { }
     virtual ~FakeLayerTextureUpdater() { }
 
+    virtual PassOwnPtr<LayerTextureUpdater::Texture> createTexture(TextureManager* manager) { return adoptPtr(new Texture(ManagedTexture::create(manager))); }
     virtual Orientation orientation() { return BottomUpOrientation; }
     virtual SampledTexelFormat sampledTexelFormat(GC3Denum) { return SampledTexelFormatRGBA; }
     virtual void prepareToUpdate(const IntRect&, const IntSize&, int, float) { }
-    virtual void updateTextureRect(GraphicsContext3D*, TextureAllocator*, ManagedTexture*, const IntRect&, const IntRect&) { }
 };
 
 class FakeCCTiledLayerImpl : public CCTiledLayerImpl {

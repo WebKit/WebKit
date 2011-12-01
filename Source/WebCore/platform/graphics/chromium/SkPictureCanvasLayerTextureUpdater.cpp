@@ -23,69 +23,47 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+
 #include "config.h"
 
 #if USE(ACCELERATED_COMPOSITING)
+#if USE(SKIA)
 
-#include "cc/CCTextureUpdater.h"
+#include "SkPictureCanvasLayerTextureUpdater.h"
 
-#include "GraphicsContext3D.h"
-#include "LayerTextureUpdater.h"
-#include "ManagedTexture.h"
-
-using namespace std;
+#include "GraphicsContext.h"
+#include "LayerPainterChromium.h"
+#include "PlatformContextSkia.h"
+#include "SkCanvas.h"
+#include "TraceEvent.h"
 
 namespace WebCore {
 
-CCTextureUpdater::CCTextureUpdater(TextureAllocator* allocator)
-    : m_allocator(allocator)
-    , m_entryIndex(0)
-{
-    ASSERT(m_allocator);
-}
-
-CCTextureUpdater::~CCTextureUpdater()
+SkPictureCanvasLayerTextureUpdater::SkPictureCanvasLayerTextureUpdater(PassOwnPtr<LayerPainterChromium> painter)
+    : CanvasLayerTextureUpdater(painter)
 {
 }
 
-void CCTextureUpdater::append(LayerTextureUpdater::Texture* texture, const IntRect& sourceRect, const IntRect& destRect)
+SkPictureCanvasLayerTextureUpdater::~SkPictureCanvasLayerTextureUpdater()
 {
-    ASSERT(texture);
-
-    UpdateEntry entry;
-    entry.m_texture = texture;
-    entry.m_sourceRect = sourceRect;
-    entry.m_destRect = destRect;
-    m_entries.append(entry);
 }
 
-bool CCTextureUpdater::hasMoreUpdates() const
+void SkPictureCanvasLayerTextureUpdater::prepareToUpdate(const IntRect& contentRect, const IntSize& /* tileSize */, int /* borderTexels */, float contentsScale)
 {
-    return m_entries.size();
+    SkCanvas* canvas = m_picture.beginRecording(contentRect.width(), contentRect.height());
+    PlatformContextSkia platformContext(canvas);
+    platformContext.setDeferred(true);
+    GraphicsContext graphicsContext(&platformContext);
+    paintContents(graphicsContext, contentRect, contentsScale);
+    m_picture.endRecording();
 }
 
-bool CCTextureUpdater::update(GraphicsContext3D* context, size_t count)
+void SkPictureCanvasLayerTextureUpdater::drawPicture(SkCanvas* canvas)
 {
-    size_t maxIndex = min(m_entryIndex + count, m_entries.size());
-    for (; m_entryIndex < maxIndex; ++m_entryIndex) {
-        UpdateEntry& entry = m_entries[m_entryIndex];
-        entry.m_texture->updateRect(context, m_allocator, entry.m_sourceRect, entry.m_destRect);
-    }
-
-    if (maxIndex < m_entries.size())
-        return true;
-
-    // If no entries left to process, auto-clear.
-    clear();
-    return false;
+    TRACE_EVENT("SkPictureCanvasLayerTextureUpdater::drawPicture", this, 0);
+    canvas->drawPicture(m_picture);
 }
 
-void CCTextureUpdater::clear()
-{
-    m_entryIndex = 0;
-    m_entries.clear();
-}
-
-}
-
+} // namespace WebCore
+#endif // USE(SKIA)
 #endif // USE(ACCELERATED_COMPOSITING)
