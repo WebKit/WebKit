@@ -1,3 +1,37 @@
+2011-12-01  Viatcheslav Ostapenko  <ostapenko.viatcheslav@nokia.com>
+
+        [Qt] [WK2] QQuickWebView covers QML elements that should be rendered on top.
+        https://bugs.webkit.org/show_bug.cgi?id=73338
+
+        Reviewed by Noam Rosenthal.
+
+        Move painting of QQuickWebPage content from canvas afterrendering() to
+        QSGGeometryNode/QSGMaterial based paint node. Implementation uses QSGMaterialShader
+        updateState() method to draw TextureMapper graphics layers.
+        This is considered to be temporary until QSGNode::UserNodeType will be available.
+
+        * UIProcess/API/qt/qquickwebpage.cpp:
+        (QQuickWebPage::QQuickWebPage):
+        (QQuickWebPagePrivate::QQuickWebPagePrivate):
+        (PageProxyMaterialShader::attributeNames):
+        (PageProxyMaterialShader::vertexShader):
+        (PageProxyMaterialShader::fragmentShader):
+        (PageProxyMaterial::PageProxyMaterial):
+        (PageProxyMaterial::type):
+        (PageProxyMaterial::createShader):
+        (PageProxyNode::PageProxyNode):
+        (PageProxyNode::~PageProxyNode):
+        (PageProxyMaterialShader::updateState):
+        (QQuickWebPage::updatePaintNode):
+        (QQuickWebPagePrivate::resetPaintNode):
+        (QQuickWebPagePrivate::~QQuickWebPagePrivate):
+        * UIProcess/API/qt/qquickwebpage_p.h:
+        * UIProcess/API/qt/qquickwebpage_p_p.h:
+        * UIProcess/API/qt/tests/qquickwebview/tst_qquickwebview.cpp:
+        (tst_QQuickWebView::showWebView):
+        * UIProcess/qt/LayerTreeHostProxyQt.cpp:
+        (WebKit::LayerTreeHostProxy::didRenderFrame):
+
 2011-12-01  Nayan Kumar K  <nayankk@motorola.com>
 
         [WK2][GTK] Change default-font-size and default-monospace-font-size

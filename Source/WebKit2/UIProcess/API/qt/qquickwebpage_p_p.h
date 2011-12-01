@@ -36,18 +36,18 @@ class QQuickWebPage;
 class QQuickWebPagePrivate {
 public:
     QQuickWebPagePrivate(QQuickWebPage* view);
+    ~QQuickWebPagePrivate();
 
     void setPageProxy(QtWebPageProxy*);
 
-    void initializeSceneGraphConnections();
-
-    void _q_onAfterSceneRender();
     void paintToCurrentGLContext();
+    void resetPaintNode();
 
     QQuickWebPage* const q;
     QtWebPageProxy* pageProxy;
     WebKit::QtSGUpdateQueue sgUpdateQueue;
     bool paintingIsInitialized;
+    QSGNode* m_paintNode;
 };
 
 #endif // qquickwebpage_p_p_h

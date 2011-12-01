@@ -587,6 +587,7 @@ void LayerTreeHostProxy::didRenderFrame()
 {
     m_drawingAreaProxy->page()->process()->send(Messages::LayerTreeHost::RenderNextFrame(), m_drawingAreaProxy->page()->pageID());
     pushUpdateToQueue(FlushLayerChangesMessage::create());
+    updateViewport();
 }
 
 void LayerTreeHostProxy::createDirectlyCompositedImage(int64_t key, const WebKit::ShareableBitmap::Handle& handle)

@@ -49,6 +49,7 @@ private slots:
     void scrollRequest();
 
     void show();
+    void showWebView();
 
 private:
     inline QQuickWebView* webView() const;
@@ -237,6 +238,21 @@ void tst_QQuickWebView::show()
     m_window->show();
     QTest::qWait(200);
     m_window->hide();
+}
+
+void tst_QQuickWebView::showWebView()
+{
+    webView()->setSize(QSizeF(300, 400));
+
+    webView()->load(QUrl::fromLocalFile(QLatin1String(TESTS_SOURCE_DIR "/html/scroll.html")));
+    QVERIFY(waitForSignal(webView(), SIGNAL(loadSucceeded())));
+
+    m_window->show();
+    // This should not crash.
+    webView()->setVisible(true);
+    QTest::qWait(200);
+    webView()->setVisible(false);
+    QTest::qWait(200);
 }
 
 void tst_QQuickWebView::scrollRequest()

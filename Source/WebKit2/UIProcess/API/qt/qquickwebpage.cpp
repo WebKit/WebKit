@@ -27,7 +27,9 @@
 #include "qquickwebpage_p_p.h"
 #include "qquickwebview_p.h"
 #include <QtCore/QUrl>
+#include <QtDeclarative/QSGGeometryNode>
 #include <QtDeclarative/QQuickCanvas>
+#include <QtDeclarative/QSGMaterial>
 
 QQuickWebPage::QQuickWebPage(QQuickItem* parent)
     : QQuickItem(parent)
@@ -38,7 +40,6 @@ QQuickWebPage::QQuickWebPage(QQuickItem* parent)
     // We do the transform from the top left so the viewport can assume the position 0, 0
     // is always where rendering starts.
     setTransformOrigin(TopLeft);
-    d->initializeSceneGraphConnections();
 }
 
 QQuickWebPage::~QQuickWebPage()
@@ -158,29 +159,13 @@ void QQuickWebPage::touchEvent(QTouchEvent* event)
     this->event(event);
 }
 
-void QQuickWebPage::itemChange(ItemChange change, const ItemChangeData& data)
-{
-    if (change == ItemSceneChange)
-        d->initializeSceneGraphConnections();
-    QQuickItem::itemChange(change, data);
-}
-
 QQuickWebPagePrivate::QQuickWebPagePrivate(QQuickWebPage* view)
     : q(view)
     , pageProxy(0)
     , sgUpdateQueue(view)
     , paintingIsInitialized(false)
+    , m_paintNode(0)
 {
-}
-
-void QQuickWebPagePrivate::initializeSceneGraphConnections()
-{
-    if (paintingIsInitialized)
-        return;
-    if (!q->canvas())
-        return;
-    paintingIsInitialized = true;
-    QObject::connect(q->canvas(), SIGNAL(afterRendering()), q, SLOT(_q_onAfterSceneRender()), Qt::DirectConnection);
 }
 
 void QQuickWebPagePrivate::setPageProxy(QtWebPageProxy* pageProxy)
@@ -233,10 +218,107 @@ void QQuickWebPagePrivate::paintToCurrentGLContext()
     ASSERT(!glGetError());
 }
 
-void QQuickWebPagePrivate::_q_onAfterSceneRender()
+struct PageProxyMaterial;
+struct PageProxyNode;
+
+// FIXME: temporary until Qt Scenegraph will support custom painting.
+struct PageProxyMaterialShader : public QSGMaterialShader {
+    virtual void updateState(const RenderState& state, QSGMaterial* newMaterial, QSGMaterial* oldMaterial);
+    virtual char const* const* attributeNames() const
+    {
+        static char const* const attr[] = { 0 };
+        return attr;
+    }
+
+    // vertexShader and fragmentShader are no-op shaders.
+    // All real painting is gone by TextureMapper through LayerTreeHostProxy.
+    virtual const char* vertexShader() const
+    {
+        return "void main() { gl_Position = gl_Vertex; }";
+    }
+
+    virtual const char* fragmentShader() const
+    {
+        return "void main() { gl_FragColor = vec4(0.0, 0.0, 0.0, 0.0); }";
+    }
+};
+
+struct PageProxyMaterial : public QSGMaterial {
+    PageProxyMaterial(PageProxyNode* node) : m_node(node) { }
+
+    QSGMaterialType* type() const
+    {
+        static QSGMaterialType type;
+        return &type;
+    }
+
+    QSGMaterialShader* createShader() const
+    {
+        return new PageProxyMaterialShader;
+    }
+
+    PageProxyNode* m_node;
+};
+
+struct PageProxyNode : public QSGGeometryNode {
+    PageProxyNode(QQuickWebPagePrivate* page) :
+        m_pagePrivate(page)
+      , m_material(this)
+      , m_geometry(QSGGeometry::defaultAttributes_Point2D(), 4)
+    {
+        setGeometry(&m_geometry);
+        setMaterial(&m_material);
+    }
+
+    ~PageProxyNode()
+    {
+        if (m_pagePrivate)
+            m_pagePrivate->resetPaintNode();
+    }
+
+    QQuickWebPagePrivate* m_pagePrivate;
+    PageProxyMaterial m_material;
+    QSGGeometry m_geometry;
+};
+
+void PageProxyMaterialShader::updateState(const RenderState& state, QSGMaterial* newMaterial, QSGMaterial* oldMaterial)
 {
-    // TODO: Allow painting before the scene or in the middle of the scene with an FBO.
-    paintToCurrentGLContext();
+    if (!newMaterial)
+        return;
+
+    PageProxyNode* node = static_cast<PageProxyMaterial*>(newMaterial)->m_node;
+    // FIXME: Normally we wouldn't paint inside QSGMaterialShader::updateState,
+    // but this is a temporary hack until custom paint nodes are available.
+    if (node->m_pagePrivate)
+        node->m_pagePrivate->paintToCurrentGLContext();
+}
+
+QSGNode* QQuickWebPage::updatePaintNode(QSGNode* oldNode, UpdatePaintNodeData*)
+{
+    if (!(flags() & ItemHasContents)) {
+        if (oldNode)
+            delete oldNode;
+        return 0;
+    }
+
+    PageProxyNode* proxyNode = static_cast<PageProxyNode*>(oldNode);
+    if (!proxyNode) {
+        proxyNode = new PageProxyNode(d);
+        d->m_paintNode = proxyNode;
+    }
+
+    return proxyNode;
+}
+
+void QQuickWebPagePrivate::resetPaintNode()
+{
+    m_paintNode = 0;
+}
+
+QQuickWebPagePrivate::~QQuickWebPagePrivate()
+{
+    if (m_paintNode)
+        static_cast<PageProxyNode*>(m_paintNode)->m_pagePrivate = 0;
 }
 
 #include "moc_qquickwebpage_p.cpp"

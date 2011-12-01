@@ -65,11 +65,9 @@ protected:
     virtual void touchEvent(QTouchEvent*);
     virtual bool event(QEvent*);
     virtual void geometryChanged(const QRectF&, const QRectF&);
-    virtual void itemChange(ItemChange, const ItemChangeData&);
+    virtual QSGNode* updatePaintNode(QSGNode*, UpdatePaintNodeData*);
 
 private:
-    Q_PRIVATE_SLOT(d, void _q_onAfterSceneRender());
-
     QQuickWebPagePrivate* d;
     friend class QQuickWebView;
     friend class QQuickWebViewPrivate;
