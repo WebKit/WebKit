@@ -134,7 +134,7 @@
 #include "WebString.h"
 #include "WebVector.h"
 #include "WebViewClient.h"
-#include "cc/CCHeadsUpDisplay.h"
+#include "cc/CCProxy.h"
 #include <wtf/ByteArray.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/MainThread.h>
@@ -1142,12 +1142,12 @@ void WebViewImpl::animate(double frameBeginTime)
     if (webframe) {
         FrameView* view = webframe->frameView();
         if (view) {
-            if (!settings()->useThreadedCompositor() && m_layerTreeHost)
+            if (!CCProxy::hasImplThread() && m_layerTreeHost)
                 m_layerTreeHost->setAnimating(true);
 
             view->serviceScriptedAnimations(convertSecondsToDOMTimeStamp(frameBeginTime));
 
-            if (!settings()->useThreadedCompositor() && m_layerTreeHost)
+            if (!CCProxy::hasImplThread() && m_layerTreeHost)
                 m_layerTreeHost->setAnimating(false);
         }
     }
@@ -1249,7 +1249,7 @@ void WebViewImpl::themeChanged()
 void WebViewImpl::composite(bool)
 {
 #if USE(ACCELERATED_COMPOSITING)
-    if (settings()->useThreadedCompositor())
+    if (CCProxy::hasImplThread())
         m_layerTreeHost->setNeedsRedraw();
     else {
         ASSERT(isAcceleratedCompositingActive());
@@ -2783,7 +2783,7 @@ WebCore::NonCompositedContentHost* WebViewImpl::nonCompositedContentHost()
 void WebViewImpl::scheduleAnimation()
 {
     if (isAcceleratedCompositingActive()) {
-        if (settings()->useThreadedCompositor()) {
+        if (CCProxy::hasImplThread()) {
             ASSERT(m_layerTreeHost);
             m_layerTreeHost->setNeedsAnimate();
         } else
@@ -2854,7 +2854,6 @@ void WebViewImpl::setIsAcceleratedCompositingActive(bool active)
         WebCore::CCSettings ccSettings;
         ccSettings.acceleratePainting = page()->settings()->acceleratedDrawingEnabled();
         ccSettings.compositeOffscreen = settings()->compositeToTextureEnabled();
-        ccSettings.enableCompositorThread = settings()->useThreadedCompositor();
         ccSettings.showFPSCounter = settings()->showFPSCounter();
         ccSettings.showPlatformLayerTree = settings()->showPlatformLayerTree();
         ccSettings.refreshRate = screenRefreshRate(page()->mainFrame()->view());
@@ -2891,7 +2890,7 @@ PassRefPtr<GraphicsContext3D> WebViewImpl::createLayerTreeHostContext3D()
 {
     RefPtr<GraphicsContext3D> context = m_temporaryOnscreenGraphicsContext3D.release();
     if (!context) {
-        if (settings()->useThreadedCompositor())
+        if (CCProxy::hasImplThread())
             context = GraphicsContext3DPrivate::createGraphicsContextForAnotherThread(getCompositorContextAttributes(), m_page->chrome(), GraphicsContext3D::RenderDirectlyToHostWindow);
         else
             context = GraphicsContext3D::create(getCompositorContextAttributes(), m_page->chrome(), GraphicsContext3D::RenderDirectlyToHostWindow);
@@ -2959,7 +2958,7 @@ void WebViewImpl::didRecreateGraphicsContext(bool success)
 
 void WebViewImpl::scheduleComposite()
 {
-    ASSERT(!settings()->useThreadedCompositor());
+    ASSERT(!CCProxy::hasImplThread());
     m_client->scheduleComposite();
 }
 
@@ -2991,7 +2990,7 @@ WebGraphicsContext3D* WebViewImpl::graphicsContext3D()
             if (webContext && !webContext->isContextLost())
                 return webContext;
         }
-        if (settings()->useThreadedCompositor())
+        if (CCProxy::hasImplThread())
             m_temporaryOnscreenGraphicsContext3D = GraphicsContext3DPrivate::createGraphicsContextForAnotherThread(getCompositorContextAttributes(), m_page->chrome(), GraphicsContext3D::RenderDirectlyToHostWindow);
         else
             m_temporaryOnscreenGraphicsContext3D = GraphicsContext3D::create(getCompositorContextAttributes(), m_page->chrome(), GraphicsContext3D::RenderDirectlyToHostWindow);
@@ -3001,7 +3000,6 @@ WebGraphicsContext3D* WebViewImpl::graphicsContext3D()
 #endif
     return 0;
 }
-
 
 void WebViewImpl::setVisibilityState(WebPageVisibilityState visibilityState,
                                      bool isInitialState) {

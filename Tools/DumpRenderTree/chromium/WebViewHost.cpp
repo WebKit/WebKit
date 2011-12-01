@@ -37,7 +37,6 @@
 #include "TestWebPlugin.h"
 #include "TestWebWorker.h"
 #include "WebCString.h"
-#include "WebCompositor.h"
 #include "WebConsoleMessage.h"
 #include "WebContextMenuData.h"
 #include "WebDataSource.h"
@@ -48,7 +47,6 @@
 #include "WebGeolocationClientMock.h"
 #include "WebHistoryItem.h"
 #include "WebKit.h"
-#include "WebKitPlatformSupport.h"
 #include "WebNode.h"
 #include "WebPluginParams.h"
 #include "WebPopupMenu.h"
@@ -71,7 +69,6 @@
 
 #include <wtf/Assertions.h>
 #include <wtf/PassOwnPtr.h>
-#include <wtf/Threading.h>
 #include <wtf/Vector.h>
 
 using namespace WebCore;
@@ -1208,11 +1205,6 @@ WebViewHost::WebViewHost(TestShell* shell)
     , m_webWidget(0)
     , m_lastRequestedTextCheckingCompletion(0)
 {
-    WTF::initializeThreading();
-
-    m_compositorThread = adoptPtr(WebKit::webKitPlatformSupport()->createThread("Compositor"));
-    WebCompositor::setThread(m_compositorThread.get());
-
     reset();
 }
 

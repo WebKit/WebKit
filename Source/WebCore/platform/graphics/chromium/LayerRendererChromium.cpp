@@ -200,7 +200,7 @@ bool LayerRendererChromium::initialize()
         extensions->ensureEnabled("GL_CHROMIUM_map_sub");
 
     // Use the swapBuffers callback only with the threaded proxy.
-    if (settings().enableCompositorThread)
+    if (CCProxy::hasImplThread())
         m_capabilities.usingSwapCompleteCallback = extensions->supports("GL_CHROMIUM_swapbuffers_complete_callback");
     if (m_capabilities.usingSwapCompleteCallback) {
         extensions->ensureEnabled("GL_CHROMIUM_swapbuffers_complete_callback");

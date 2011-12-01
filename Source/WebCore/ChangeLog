@@ -1,3 +1,34 @@
+2011-11-18  Nat Duca  <nduca@chromium.org>
+
+        [chromium] Enable threaded compositing via CCThreadProxy::hasThread only
+        https://bugs.webkit.org/show_bug.cgi?id=70838
+
+        Reviewed by James Robinson.
+
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::initialize):
+        * platform/graphics/chromium/WebGLLayerChromium.cpp:
+        (WebCore::WebGLLayerChromium::layerRendererContext):
+        * platform/graphics/chromium/cc/CCHeadsUpDisplay.cpp:
+        (WebCore::CCHeadsUpDisplay::enabled):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.cpp:
+        (WebCore::CCLayerTreeHost::initialize):
+        (WebCore::CCLayerTreeHost::context):
+        (WebCore::CCLayerTreeHost::setNeedsAnimate):
+        (WebCore::CCLayerTreeHost::setNeedsCommit):
+        (WebCore::CCLayerTreeHost::setNeedsRedraw):
+        (WebCore::CCLayerTreeHost::composite):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.h:
+        (WebCore::CCSettings::CCSettings):
+        * platform/graphics/chromium/cc/CCProxy.cpp:
+        (WebCore::CCProxy::isMainThread):
+        (WebCore::CCProxy::isImplThread):
+        (WebCore::CCProxy::setMainThreadIsImplThread):
+        * platform/graphics/chromium/cc/CCProxy.h:
+        * platform/graphics/chromium/cc/CCSingleThreadProxy.h:
+        (WebCore::DebugScopedSetImplThread::DebugScopedSetImplThread):
+        (WebCore::DebugScopedSetImplThread::~DebugScopedSetImplThread):
+
 2011-11-30  Enrica Casucci  <enrica@apple.com>
 
         Copy/paste of the same content produces increasingly nested markup

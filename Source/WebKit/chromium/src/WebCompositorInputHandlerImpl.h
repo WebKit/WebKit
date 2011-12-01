@@ -23,37 +23,55 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebCompositorImpl_h
-#define WebCompositorImpl_h
+#ifndef WebCompositorInputHandlerImpl_h
+#define WebCompositorInputHandlerImpl_h
 
 #include "WebCompositor.h"
-
+#include "WebCompositorInputHandler.h"
+#include "cc/CCInputHandler.h"
 #include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/OwnPtr.h>
 
+namespace WTF {
+class Mutex;
+}
+
 namespace WebCore {
+class CCInputHandlerClient;
 class CCThread;
 }
 
 namespace WebKit {
 
-class WebThread;
+class WebCompositorInputHandlerClient;
 
-class WebCompositorImpl : public WebCompositor {
-    WTF_MAKE_NONCOPYABLE(WebCompositorImpl);
+// Temporarily subclassing from WebCompositor while downstream changes land.
+class WebCompositorInputHandlerImpl : public WebCompositor, public WebCore::CCInputHandler {
+    WTF_MAKE_NONCOPYABLE(WebCompositorInputHandlerImpl);
 public:
-    static bool initialized();
+    static PassOwnPtr<WebCompositorInputHandlerImpl> create(WebCore::CCInputHandlerClient*);
+    static WebCompositorInputHandler* fromIdentifier(int identifier);
+
+    virtual ~WebCompositorInputHandlerImpl();
+
+    // WebCompositor implementation
+    virtual void setClient(WebCompositorInputHandlerClient*);
+    virtual void handleInputEvent(const WebInputEvent&);
+
+    // WebCore::CCInputHandler implementation
+    virtual int identifier() const;
+    virtual void willDraw(double frameBeginTimeMs);
 
 private:
+    explicit WebCompositorInputHandlerImpl(WebCore::CCInputHandlerClient*);
 
-    friend class WebCompositor;
-    static void initialize(WebThread* implThread);
-    static void shutdown();
+    WebCompositorInputHandlerClient* m_client;
+    int m_identifier;
+    WebCore::CCInputHandlerClient* m_inputHandlerClient;
 
-    static bool s_initialized;
-    static WebCore::CCThread* s_mainThread;
-    static WebCore::CCThread* s_implThread;
+    static int s_nextAvailableIdentifier;
+    static HashSet<WebCompositorInputHandlerImpl*>* s_compositors;
 };
 
 }

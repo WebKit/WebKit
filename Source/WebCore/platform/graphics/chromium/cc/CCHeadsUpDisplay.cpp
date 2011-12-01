@@ -90,7 +90,7 @@ void CCHeadsUpDisplay::onSwapBuffers()
 bool CCHeadsUpDisplay::enabled() const
 {
     // FIXME: HUD does not work in compositor thread mode.
-    if (settings().enableCompositorThread)
+    if (CCProxy::hasImplThread())
         return false;
     return settings().showPlatformLayerTree || settings().showFPSCounter;
 }

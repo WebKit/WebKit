@@ -1,3 +1,40 @@
+2011-11-18  Nat Duca  <nduca@chromium.org>
+
+        [chromium] Enable threaded compositing via CCThreadProxy::hasThread only
+        https://bugs.webkit.org/show_bug.cgi?id=70838
+
+        Reviewed by James Robinson.
+
+        * public/WebCompositor.h:
+        * public/WebLayerTreeView.h:
+        (WebKit::WebLayerTreeView::Settings::Settings):
+        * public/WebSettings.h:
+        * src/WebCompositorImpl.cpp:
+        (WebKit::WebCompositor::initialize):
+        (WebKit::WebCompositor::shutdown):
+        (WebKit::WebCompositor::fromIdentifier):
+        * src/WebKit.cpp:
+        (WebKit::initializeWithoutV8):
+        * src/WebLayerTreeView.cpp:
+        (WebKit::WebLayerTreeView::Settings::operator CCSettings):
+        (WebKit::WebLayerTreeView::composite):
+        * src/WebLayerTreeViewImpl.cpp:
+        (WebKit::WebLayerTreeViewImpl::createLayerTreeHostContext3D):
+        * src/WebSettingsImpl.cpp:
+        (WebKit::WebSettingsImpl::WebSettingsImpl):
+        * src/WebSettingsImpl.h:
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::animate):
+        (WebKit::WebViewImpl::composite):
+        (WebKit::WebViewImpl::scheduleAnimation):
+        (WebKit::WebViewImpl::setIsAcceleratedCompositingActive):
+        (WebKit::WebViewImpl::createLayerTreeHostContext3D):
+        (WebKit::WebViewImpl::scheduleComposite):
+        (WebKit::WebViewImpl::graphicsContext3D):
+        * tests/CCLayerTreeHostTest.cpp:
+        (WTF::CCLayerTreeHostTest::CCLayerTreeHostTest):
+        (WTF::CCLayerTreeHostTest::runTest):
+
 2011-11-30  David Levin  <levin@chromium.org>
 
         [chromium] Move didUpdateLayout from WebFrameClient to WebViewClient.

@@ -37,7 +37,16 @@
 #include "cc/CCThread.h"
 #include "cc/CCThreadProxy.h"
 
+namespace {
+static int numLayerTreeInstances;
+}
+
 namespace WebCore {
+
+bool CCLayerTreeHost::anyLayerTreeHostInstanceExists()
+{
+    return numLayerTreeInstances > 0;
+}
 
 PassRefPtr<CCLayerTreeHost> CCLayerTreeHost::create(CCLayerTreeHostClient* client, const CCSettings& settings)
 {
@@ -60,12 +69,13 @@ CCLayerTreeHost::CCLayerTreeHost(CCLayerTreeHostClient* client, const CCSettings
     , m_maxPageScale(1)
 {
     ASSERT(CCProxy::isMainThread());
+    numLayerTreeInstances++;
 }
 
 bool CCLayerTreeHost::initialize()
 {
     TRACE_EVENT("CCLayerTreeHost::initialize", this, 0);
-    if (m_settings.enableCompositorThread) {
+    if (CCProxy::hasImplThread()) {
         // The HUD does not work in threaded mode. Turn it off.
         m_settings.showFPSCounter = false;
         m_settings.showPlatformLayerTree = false;
@@ -95,6 +105,7 @@ CCLayerTreeHost::~CCLayerTreeHost()
     m_proxy->stop();
     m_proxy.clear();
     clearPendingUpdate();
+    numLayerTreeInstances--;
 }
 
 void CCLayerTreeHost::deleteContentsTexturesOnImplThread(TextureAllocator* allocator)
@@ -169,7 +180,7 @@ void CCLayerTreeHost::didRecreateGraphicsContext(bool success)
 // Temporary hack until WebViewImpl context creation gets simplified
 GraphicsContext3D* CCLayerTreeHost::context()
 {
-    ASSERT(!m_settings.enableCompositorThread);
+    ASSERT(!CCProxy::hasImplThread());
     return m_proxy->context();
 }
 
@@ -200,13 +211,13 @@ void CCLayerTreeHost::setZoomAnimatorTransform(const TransformationMatrix& zoom)
 
 void CCLayerTreeHost::setNeedsAnimate()
 {
-    ASSERT(m_settings.enableCompositorThread);
+    ASSERT(CCProxy::hasImplThread());
     m_proxy->setNeedsAnimate();
 }
 
 void CCLayerTreeHost::setNeedsCommit()
 {
-    if (m_settings.enableCompositorThread) {
+    if (CCThreadProxy::implThread()) {
         TRACE_EVENT("CCLayerTreeHost::setNeedsCommit", this, 0);
         m_proxy->setNeedsCommit();
     } else
@@ -215,7 +226,7 @@ void CCLayerTreeHost::setNeedsCommit()
 
 void CCLayerTreeHost::setNeedsRedraw()
 {
-    if (m_settings.enableCompositorThread)
+    if (CCThreadProxy::implThread())
         m_proxy->setNeedsRedraw();
     else
         m_client->scheduleComposite();
@@ -295,7 +306,7 @@ TextureManager* CCLayerTreeHost::contentsTextureManager() const
 
 void CCLayerTreeHost::composite()
 {
-    ASSERT(!m_settings.enableCompositorThread);
+    ASSERT(!CCThreadProxy::implThread());
     static_cast<CCSingleThreadProxy*>(m_proxy.get())->compositeImmediately();
 }
 

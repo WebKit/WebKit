@@ -35,6 +35,7 @@
 #include "DRTDevToolsClient.h"
 #include "LayoutTestController.h"
 #include "WebArrayBufferView.h"
+#include "WebCompositor.h"
 #include "WebDataSource.h"
 #include "WebDocument.h"
 #include "WebElement.h"
@@ -42,7 +43,9 @@
 #include "WebHistoryItem.h"
 #include "WebIDBFactory.h"
 #include "WebTestingSupport.h"
+#include "WebThread.h"
 #include "WebKit.h"
+#include "WebKitPlatformSupport.h"
 #include "WebPermissions.h"
 #include "WebPoint.h"
 #include "WebRuntimeFeatures.h"
@@ -137,6 +140,15 @@ TestShell::TestShell(bool testShellMode)
 #endif
     m_printer = m_testShellMode ? TestEventPrinter::createTestShellPrinter() : TestEventPrinter::createDRTPrinter();
 
+    WTF::initializeThreading();
+
+    if (m_threadedCompositingEnabled) {
+        m_webCompositorThread = adoptPtr(WebKit::webKitPlatformSupport()->createThread("Compositor"));
+        WebCompositor::initialize(m_webCompositorThread.get());
+    } else
+        WebCompositor::initialize(0);
+
+
     // 30 second is the same as the value in Mac DRT.
     // If we use a value smaller than the timeout value of
     // (new-)run-webkit-tests, (new-)run-webkit-tests misunderstands that a
@@ -161,6 +173,8 @@ TestShell::~TestShell()
 
     // Destroy the WebView before its WebViewHost.
     m_drtDevToolsAgent->setWebView(0);
+
+    WebCompositor::shutdown();
 }
 
 void TestShell::createDRTDevToolsClient(DRTDevToolsAgent* agent)
@@ -201,7 +215,6 @@ void TestShell::resetWebSettings(WebView& webView)
     m_prefs.reset();
     m_prefs.acceleratedCompositingEnabled = true;
     m_prefs.acceleratedCompositingForVideoEnabled = m_acceleratedCompositingForVideoEnabled;
-    m_prefs.threadedCompositingEnabled = m_threadedCompositingEnabled;
     m_prefs.compositeToTexture = m_compositeToTexture;
     m_prefs.forceCompositingMode = m_forceCompositingMode;
     m_prefs.accelerated2dCanvasEnabled = m_accelerated2dCanvasEnabled;

@@ -58,7 +58,6 @@ class WebGeolocationServiceMock;
 class WebSpeechInputController;
 class WebSpeechInputControllerMock;
 class WebSpeechInputListener;
-class WebThread;
 class WebURL;
 struct WebRect;
 struct WebURLError;
@@ -359,8 +358,6 @@ private:
 
     WebKit::WebString m_lastRequestedTextCheckString;
     WebKit::WebTextCheckingCompletion* m_lastRequestedTextCheckingCompletion;
-
-    OwnPtr<WebKit::WebThread> m_compositorThread;
 
     TaskList m_taskList;
     Vector<WebKit::WebWidget*> m_popupmenus;

@@ -52,6 +52,7 @@ namespace WebKit {
 class WebDevToolsAgentClient;
 class WebFrame;
 class WebNotificationPresenter;
+class WebThread;
 class WebView;
 class WebURL;
 }
@@ -214,6 +215,7 @@ private:
     OwnPtr<TextInputController> m_textInputController;
     OwnPtr<NotificationPresenter> m_notificationPresenter;
     OwnPtr<WebViewHost> m_webViewHost;
+    OwnPtr<WebKit::WebThread> m_webCompositorThread;
 
     TestParams m_params;
     int m_timeout; // timeout value in millisecond

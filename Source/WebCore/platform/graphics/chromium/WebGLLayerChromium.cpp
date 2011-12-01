@@ -162,7 +162,7 @@ GraphicsContext3D* WebGLLayerChromium::layerRendererContext()
 {
     // FIXME: In the threaded case, paintRenderedResultsToCanvas must be
     // refactored to be asynchronous. Currently this is unimplemented.
-    if (!layerTreeHost() || layerTreeHost()->settings().enableCompositorThread)
+    if (!layerTreeHost() || CCProxy::hasImplThread())
         return 0;
     return layerTreeHost()->context();
 }

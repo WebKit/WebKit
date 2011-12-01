@@ -89,7 +89,7 @@
             'tests/TreeSynchronizerTest.cpp',
             'tests/TreeTestHelpers.cpp',
             'tests/TreeTestHelpers.h',
-            'tests/WebCompositorImplTest.cpp',
+            'tests/WebCompositorInputHandlerImplTest.cpp',
             'tests/WebFrameTest.cpp',
             'tests/WebLayerTest.cpp',
             'tests/WebPageNewSerializerTest.cpp',

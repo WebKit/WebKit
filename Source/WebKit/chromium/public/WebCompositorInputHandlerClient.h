@@ -23,40 +23,27 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebCompositor_h
-#define WebCompositor_h
-
-#include "WebCompositorInputHandler.h"
-#include "platform/WebCommon.h"
+#ifndef WebCompositorInputHandlerClient_h
+#define WebCompositorInputHandlerClient_h
 
 namespace WebKit {
 
-class WebInputEvent;
-class WebThread;
-
-#define WEBCOMPOSITOR_HAS_INITIALIZE
-
-// This class contains global routines for interacting with the
-// compositor.
-//
-// All calls to the WebCompositor must be made from the main thread.
-//
-// This class currently temporarily inherits from WebCompositorInputHandler
-// while we migrate downstream code to use WebCompositorInputHandler directly.
-class WebCompositor : public WebCompositorInputHandler {
+class WebCompositorInputHandlerClient {
 public:
-    // Initializes the compositor. Threaded compositing is enabled by passing in
-    // a non-null WebThread. No compositor classes or methods should be used
-    // prior to calling initialize.
-    WEBKIT_EXPORT static void initialize(WebThread*);
+    // Callbacks invoked from the compositor thread.
+    virtual void willShutdown() = 0;
 
-    // Shuts down the compositor. This must be called when all compositor data
-    // types have been deleted. No compositor classes or methods should be used
-    // after shutdown.
-    WEBKIT_EXPORT static void shutdown();
+    // Exactly one of the following two callbacks will be invoked after every call to WebCompositor::handleInputEvent():
+
+    // Called when the WebCompositor handled the input event and no further processing is required.
+    virtual void didHandleInputEvent() = 0;
+
+    // Called when the WebCompositor did not handle the input event. If sendToWidget is true, the input event
+    // should be forwarded to the WebWidget associated with this compositor for further processing.
+    virtual void didNotHandleInputEvent(bool sendToWidget) = 0;
 
 protected:
-    virtual ~WebCompositor() { }
+    virtual ~WebCompositorInputHandlerClient() { }
 };
 
 } // namespace WebKit
