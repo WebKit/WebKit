@@ -49,7 +49,8 @@ AccessibilityTextMarker::AccessibilityTextMarker(PlatformTextMarker marker)
 }
 
 AccessibilityTextMarker::AccessibilityTextMarker(const AccessibilityTextMarker& marker)
-    : m_textMarker(marker.platformTextMarker())
+    : JSWrappable()
+    , m_textMarker(marker.platformTextMarker())
 {
 }
 

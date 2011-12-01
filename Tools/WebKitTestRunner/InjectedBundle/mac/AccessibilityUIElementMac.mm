@@ -169,7 +169,8 @@ AccessibilityUIElement::AccessibilityUIElement(PlatformUIElement element)
 }
 
 AccessibilityUIElement::AccessibilityUIElement(const AccessibilityUIElement& other)
-    : m_element(other.m_element)
+    : JSWrappable()
+    , m_element(other.m_element)
     , m_notificationHandler(0)
 {
     [m_element retain];
@@ -1148,6 +1149,8 @@ PassRefPtr<AccessibilityUIElement> AccessibilityUIElement::verticalScrollbar() c
     BEGIN_AX_OBJC_EXCEPTIONS
     return AccessibilityUIElement::create([m_element accessibilityAttributeValue:NSAccessibilityVerticalScrollBarAttribute]);
     END_AX_OBJC_EXCEPTIONS        
+
+    return 0;
 }
 
 JSRetainPtr<JSStringRef> AccessibilityUIElement::selectedTextRange()

@@ -49,7 +49,8 @@ AccessibilityTextMarkerRange::AccessibilityTextMarkerRange(PlatformTextMarkerRan
 }
 
 AccessibilityTextMarkerRange::AccessibilityTextMarkerRange(const AccessibilityTextMarkerRange& markerRange)
-    : m_textMarkerRange(markerRange.platformTextMarkerRange())
+    : JSWrappable()
+    , m_textMarkerRange(markerRange.platformTextMarkerRange())
 {
 }
 

@@ -1,3 +1,18 @@
+2011-12-01  Dominic Mazzoni  <dmazzoni@google.com>
+
+        Fix WebKitTestRunner compile warnings with XCode 3.2
+        https://bugs.webkit.org/show_bug.cgi?id=73378
+
+        Reviewed by Chris Fleizach.
+
+        * WebKitTestRunner/InjectedBundle/AccessibilityTextMarker.cpp:
+        (WTR::AccessibilityTextMarker::AccessibilityTextMarker):
+        * WebKitTestRunner/InjectedBundle/AccessibilityTextMarkerRange.cpp:
+        (WTR::AccessibilityTextMarkerRange::AccessibilityTextMarkerRange):
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityUIElementMac.mm:
+        (WTR::AccessibilityUIElement::AccessibilityUIElement):
+        (WTR::AccessibilityUIElement::verticalScrollbar):
+
 2011-12-01  Adam Roben  <aroben@apple.com>
 
         Allow committers to use their Trac credentials to force builds on the buildbots
