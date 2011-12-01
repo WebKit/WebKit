@@ -1,3 +1,21 @@
+2011-11-28  Hans Wennborg  <hans@chromium.org>
+
+        IndexedDB: Fix reverse cursor with non-existent upper bound
+        https://bugs.webkit.org/show_bug.cgi?id=73220
+
+        Reviewed by Tony Chang.
+
+        The code previously did not properly handle the case where the
+        specified upper bound for a reverse cursor did not exist.
+
+        Test: storage/indexeddb/cursor-reverse-bug.html
+
+        * storage/IDBLevelDBBackingStore.cpp:
+        (WebCore::findGreatestKeyLessThanOrEqual):
+        (WebCore::IDBLevelDBBackingStore::openObjectStoreCursor):
+        (WebCore::IDBLevelDBBackingStore::openIndexKeyCursor):
+        (WebCore::IDBLevelDBBackingStore::openIndexCursor):
+
 2011-11-29  Hans Wennborg  <hans@chromium.org>
 
         IndexedDB: Cursor pre-fetching

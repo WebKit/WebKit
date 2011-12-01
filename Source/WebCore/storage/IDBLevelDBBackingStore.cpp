@@ -838,7 +838,7 @@ bool IDBLevelDBBackingStore::putIndexDataForRecord(int64_t databaseId, int64_t o
     return m_currentTransaction->put(indexDataKey, data);
 }
 
-static bool findGreatestKeyLessThan(LevelDBTransaction* transaction, const Vector<char>& target, Vector<char>& foundKey)
+static bool findGreatestKeyLessThanOrEqual(LevelDBTransaction* transaction, const Vector<char>& target, Vector<char>& foundKey)
 {
     OwnPtr<LevelDBIterator> it = transaction->createIterator();
     it->seek(target);
@@ -849,14 +849,20 @@ static bool findGreatestKeyLessThan(LevelDBTransaction* transaction, const Vecto
             return false;
     }
 
-    while (compareIndexKeys(it->key(), target) >= 0) {
+    while (compareIndexKeys(it->key(), target) > 0) {
         it->prev();
         if (!it->isValid())
             return false;
     }
 
-    foundKey.clear();
-    foundKey.append(it->key().begin(), it->key().end() - it->key().begin());
+    do {
+        foundKey.clear();
+        foundKey.append(it->key().begin(), it->key().end() - it->key().begin());
+
+        // There can be several index keys that compare equal. We want the last one.
+        it->next();
+    } while (it->isValid() && !compareIndexKeys(it->key(), target));
+
     return true;
 }
 
@@ -1312,23 +1318,6 @@ bool IndexCursorImpl::loadCurrentRow()
 
 }
 
-static bool findLastIndexKeyEqualTo(LevelDBTransaction* transaction, const Vector<char>& target, Vector<char>& foundKey)
-{
-    OwnPtr<LevelDBIterator> it = transaction->createIterator();
-    it->seek(target);
-
-    if (!it->isValid())
-        return false;
-
-    while (it->isValid() && !compareIndexKeys(it->key(), target)) {
-        foundKey.clear();
-        foundKey.append(it->key().begin(), it->key().end() - it->key().begin());
-        it->next();
-    }
-
-    return true;
-}
-
 PassRefPtr<IDBBackingStore::Cursor> IDBLevelDBBackingStore::openObjectStoreCursor(int64_t databaseId, int64_t objectStoreId, const IDBKeyRange* range, IDBCursor::Direction direction)
 {
     ASSERT(m_currentTransaction);
@@ -1349,16 +1338,31 @@ PassRefPtr<IDBBackingStore::Cursor> IDBLevelDBBackingStore::openObjectStoreCurso
 
     if (!upperBound) {
         cursorOptions.highKey = ObjectStoreDataKey::encode(databaseId, objectStoreId, maxIDBKey());
-        cursorOptions.highOpen = true; // Not included.
 
-        if (!cursorOptions.forward) { // We need a key that exists.
-            if (!findGreatestKeyLessThan(m_currentTransaction.get(), cursorOptions.highKey, cursorOptions.highKey))
+        if (cursorOptions.forward)
+            cursorOptions.highOpen = true; // Not included.
+        else {
+            // We need a key that exists.
+            if (!findGreatestKeyLessThanOrEqual(m_currentTransaction.get(), cursorOptions.highKey, cursorOptions.highKey))
                 return 0;
             cursorOptions.highOpen = false;
         }
     } else {
         cursorOptions.highKey = ObjectStoreDataKey::encode(databaseId, objectStoreId, *range->upper());
         cursorOptions.highOpen = range->upperOpen();
+
+        if (!cursorOptions.forward) {
+            // For reverse cursors, we need a key that exists.
+            Vector<char> foundHighKey;
+            if (!findGreatestKeyLessThanOrEqual(m_currentTransaction.get(), cursorOptions.highKey, foundHighKey))
+                return 0;
+
+            // If the target key should not be included, but we end up with a smaller key, we should include that.
+            if (cursorOptions.highOpen && compareIndexKeys(foundHighKey, cursorOptions.highKey) < 0)
+                cursorOptions.highOpen = false;
+
+            cursorOptions.highKey = foundHighKey;
+        }
     }
 
     RefPtr<ObjectStoreCursorImpl> cursor = ObjectStoreCursorImpl::create(m_currentTransaction.get(), cursorOptions);
@@ -1390,15 +1394,23 @@ PassRefPtr<IDBBackingStore::Cursor> IDBLevelDBBackingStore::openIndexKeyCursor(i
         cursorOptions.highOpen = false; // Included.
 
         if (!cursorOptions.forward) { // We need a key that exists.
-            if (!findGreatestKeyLessThan(m_currentTransaction.get(), cursorOptions.highKey, cursorOptions.highKey))
+            if (!findGreatestKeyLessThanOrEqual(m_currentTransaction.get(), cursorOptions.highKey, cursorOptions.highKey))
                 return 0;
             cursorOptions.highOpen = false;
         }
     } else {
         cursorOptions.highKey = IndexDataKey::encode(databaseId, objectStoreId, indexId, *range->upper());
-        if (!findLastIndexKeyEqualTo(m_currentTransaction.get(), cursorOptions.highKey, cursorOptions.highKey)) // Seek to the *last* key in the set of non-unique keys.
-            return 0;
         cursorOptions.highOpen = range->upperOpen();
+
+        Vector<char> foundHighKey;
+        if (!findGreatestKeyLessThanOrEqual(m_currentTransaction.get(), cursorOptions.highKey, foundHighKey)) // Seek to the *last* key in the set of non-unique keys.
+            return 0;
+
+        // If the target key should not be included, but we end up with a smaller key, we should include that.
+        if (cursorOptions.highOpen && compareIndexKeys(foundHighKey, cursorOptions.highKey) < 0)
+            cursorOptions.highOpen = false;
+
+        cursorOptions.highKey = foundHighKey;
     }
 
     RefPtr<IndexKeyCursorImpl> cursor = IndexKeyCursorImpl::create(m_currentTransaction.get(), cursorOptions);
@@ -1430,15 +1442,23 @@ PassRefPtr<IDBBackingStore::Cursor> IDBLevelDBBackingStore::openIndexCursor(int6
         cursorOptions.highOpen = false; // Included.
 
         if (!cursorOptions.forward) { // We need a key that exists.
-            if (!findGreatestKeyLessThan(m_currentTransaction.get(), cursorOptions.highKey, cursorOptions.highKey))
+            if (!findGreatestKeyLessThanOrEqual(m_currentTransaction.get(), cursorOptions.highKey, cursorOptions.highKey))
                 return 0;
             cursorOptions.highOpen = false;
         }
     } else {
         cursorOptions.highKey = IndexDataKey::encode(databaseId, objectStoreId, indexId, *range->upper());
-        if (!findLastIndexKeyEqualTo(m_currentTransaction.get(), cursorOptions.highKey, cursorOptions.highKey)) // Seek to the *last* key in the set of non-unique keys.
-            return 0;
         cursorOptions.highOpen = range->upperOpen();
+
+        Vector<char> foundHighKey;
+        if (!findGreatestKeyLessThanOrEqual(m_currentTransaction.get(), cursorOptions.highKey, foundHighKey)) // Seek to the *last* key in the set of non-unique keys.
+            return 0;
+
+        // If the target key should not be included, but we end up with a smaller key, we should include that.
+        if (cursorOptions.highOpen && compareIndexKeys(foundHighKey, cursorOptions.highKey) < 0)
+            cursorOptions.highOpen = false;
+
+        cursorOptions.highKey = foundHighKey;
     }
 
     RefPtr<IndexCursorImpl> cursor = IndexCursorImpl::create(m_currentTransaction.get(), cursorOptions);

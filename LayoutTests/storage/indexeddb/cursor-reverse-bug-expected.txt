@@ -1,0 +1,109 @@
+Test IndexedDB keys ordering and readback from cursors.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB;
+PASS indexedDB == null is false
+IDBCursor = window.IDBCursor || window.webkitIDBCursor;
+PASS IDBCursor == null is false
+IDBTransaction = window.IDBTransaction || window.webkitIDBTransaction
+PASS IDBTransaction == null is false
+IDBKeyRange = window.IDBKeyRange || window.webkitIDBKeyRange
+PASS IDBKeyRange == null is false
+
+openreq = indexedDB.open('cursor-reverse-bug')
+db = openreq.result
+verreq = db.setVersion('1')
+Deleted all object stores.
+store = db.createObjectStore('store')
+store.createIndex('index', '')
+
+populating store...
+trans = db.transaction('store', IDBTransaction.READ_WRITE)
+store = trans.objectStore('store');
+store.put(1, 1)
+store.put(2, 2)
+store.put(3, 3)
+testCursor()
+trans = db.transaction('store', IDBTransaction.READ_ONLY)
+store = trans.objectStore('store');
+index = store.index('index');
+upperBound: 7 open: false expected: 3
+storeReq = store.openCursor(IDBKeyRange.upperBound(test.upperBound, test.open), IDBCursor.PREV)
+indexReq = index.openCursor(IDBKeyRange.upperBound(test.upperBound, test.open), IDBCursor.PREV)
+indexKeyReq = index.openKeyCursor(IDBKeyRange.upperBound(test.upperBound, test.open), IDBCursor.PREV)
+cursor = event.target.result
+PASS cursor.key is test.expected
+PASS cursor.value is test.expected
+PASS cursor.primaryKey is test.expected
+cursor = event.target.result
+PASS cursor.key is test.expected
+PASS cursor.value is test.expected
+PASS cursor.primaryKey is test.expected
+cursor = event.target.result
+PASS cursor.key is test.expected
+PASS cursor.primaryKey is test.expected
+testCursor()
+trans = db.transaction('store', IDBTransaction.READ_ONLY)
+store = trans.objectStore('store');
+index = store.index('index');
+upperBound: 7 open: true expected: 3
+storeReq = store.openCursor(IDBKeyRange.upperBound(test.upperBound, test.open), IDBCursor.PREV)
+indexReq = index.openCursor(IDBKeyRange.upperBound(test.upperBound, test.open), IDBCursor.PREV)
+indexKeyReq = index.openKeyCursor(IDBKeyRange.upperBound(test.upperBound, test.open), IDBCursor.PREV)
+cursor = event.target.result
+PASS cursor.key is test.expected
+PASS cursor.value is test.expected
+PASS cursor.primaryKey is test.expected
+cursor = event.target.result
+PASS cursor.key is test.expected
+PASS cursor.value is test.expected
+PASS cursor.primaryKey is test.expected
+cursor = event.target.result
+PASS cursor.key is test.expected
+PASS cursor.primaryKey is test.expected
+testCursor()
+trans = db.transaction('store', IDBTransaction.READ_ONLY)
+store = trans.objectStore('store');
+index = store.index('index');
+upperBound: 3 open: false expected: 3
+storeReq = store.openCursor(IDBKeyRange.upperBound(test.upperBound, test.open), IDBCursor.PREV)
+indexReq = index.openCursor(IDBKeyRange.upperBound(test.upperBound, test.open), IDBCursor.PREV)
+indexKeyReq = index.openKeyCursor(IDBKeyRange.upperBound(test.upperBound, test.open), IDBCursor.PREV)
+cursor = event.target.result
+PASS cursor.key is test.expected
+PASS cursor.value is test.expected
+PASS cursor.primaryKey is test.expected
+cursor = event.target.result
+PASS cursor.key is test.expected
+PASS cursor.value is test.expected
+PASS cursor.primaryKey is test.expected
+cursor = event.target.result
+PASS cursor.key is test.expected
+PASS cursor.primaryKey is test.expected
+testCursor()
+trans = db.transaction('store', IDBTransaction.READ_ONLY)
+store = trans.objectStore('store');
+index = store.index('index');
+upperBound: 3 open: true expected: 2
+storeReq = store.openCursor(IDBKeyRange.upperBound(test.upperBound, test.open), IDBCursor.PREV)
+indexReq = index.openCursor(IDBKeyRange.upperBound(test.upperBound, test.open), IDBCursor.PREV)
+indexKeyReq = index.openKeyCursor(IDBKeyRange.upperBound(test.upperBound, test.open), IDBCursor.PREV)
+cursor = event.target.result
+PASS cursor.key is test.expected
+PASS cursor.value is test.expected
+PASS cursor.primaryKey is test.expected
+cursor = event.target.result
+PASS cursor.key is test.expected
+PASS cursor.value is test.expected
+PASS cursor.primaryKey is test.expected
+cursor = event.target.result
+PASS cursor.key is test.expected
+PASS cursor.primaryKey is test.expected
+testCursor()
+No more tests.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
