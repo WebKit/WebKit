@@ -1,3 +1,20 @@
+2011-11-30  Noel Gordon  <noel.gordon@gmail.com>
+
+        Remove ImageFrame::setSize() style nits
+        https://bugs.webkit.org/show_bug.cgi?id=73490
+
+        Reviewed by Andreas Kling.
+
+        Equality comparisons to 0 should be performed with the not operator, write
+        width() == 0 && height() == 0 as !width() && !height().
+
+        No new tests, style refactor.
+
+        * platform/image-decoders/qt/ImageFrameQt.cpp:
+        (WebCore::ImageFrame::setSize):
+        * platform/image-decoders/skia/ImageDecoderSkia.cpp:
+        (WebCore::ImageFrame::setSize):
+
 2011-11-30  Alexey Proskuryakov  <ap@apple.com>
 
         Remove an unneeded argument from FrameLoaderClient::download

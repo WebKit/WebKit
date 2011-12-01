@@ -93,9 +93,8 @@ bool ImageFrame::copyBitmapData(const ImageFrame& other)
 
 bool ImageFrame::setSize(int newWidth, int newHeight)
 {
-    // This function should only be called once, it will leak memory
-    // otherwise.
-    ASSERT(width() == 0 && height() == 0);
+    // setSize() should only be called once, it leaks memory otherwise.
+    ASSERT(!width() && !height());
 
     m_size = IntSize(newWidth, newHeight);
     m_image = QImage();
@@ -104,7 +103,6 @@ bool ImageFrame::setSize(int newWidth, int newHeight)
         return false;
 
     zeroFillPixelData();
-
     return true;
 }
 
