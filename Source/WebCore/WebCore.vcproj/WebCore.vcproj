@@ -69145,6 +69145,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\InspectorBackend.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\InspectorFrontendAPI.js"
 					>
 				</File>

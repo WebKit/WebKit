@@ -1,3 +1,38 @@
+2011-12-01  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: extract static part of the InspectorBackend from the generator.
+        https://bugs.webkit.org/show_bug.cgi?id=73562
+
+        Reviewed by Timothy Hatcher.
+
+        We should only generate the mapping between the command parameters and slots,
+        rest of the backend is static.
+
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/CodeGeneratorInspector.py:
+        (Generator.go):
+        (Generator.process_event):
+        (Generator.process_command):
+        * inspector/compile-front-end.sh:
+        * inspector/front-end/InspectorBackend.js: Added.
+        (InspectorBackendClass):
+        (InspectorBackendClass.prototype.registerCommand):
+        (InspectorBackendClass.prototype.registerEvent):
+        (InspectorBackendClass.prototype._invoke):
+        (InspectorBackendClass.prototype._sendMessageToBackend):
+        (InspectorBackendClass.prototype._wrapCallbackAndSendMessageObject):
+        (InspectorBackendClass.prototype.sendMessageObjectToBackend):
+        (InspectorBackendClass.prototype.registerDomainDispatcher):
+        (InspectorBackendClass.prototype.dispatch.messageObject.error.__proto__.getDescription):
+        (InspectorBackendClass.prototype.dispatch.messageObject.error.__proto__.toString):
+        (InspectorBackendClass.prototype.dispatch.messageObject.error.__proto__.getMessage):
+        (InspectorBackendClass.prototype.dispatch):
+        (InspectorBackendClass.prototype.reportProtocolError):
+        (InspectorBackendClass.prototype.runAfterPendingDispatches):
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/inspector.html:
+
 2011-12-01  Kentaro Hara  <haraken@chromium.org>
 
         Use the [Supplemental] IDL for webaudio attributes in Chromium

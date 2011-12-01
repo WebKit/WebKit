@@ -311,7 +311,7 @@ function AnchorBox(x, y, width, height)
 }
 
 /**
- * @param {DOMWindow} targetWindow
+ * @param {Window} targetWindow
  * @return {AnchorBox}
  */
 Element.prototype.offsetRelativeToWindow = function(targetWindow)
@@ -333,7 +333,7 @@ Element.prototype.offsetRelativeToWindow = function(targetWindow)
 }
 
 /**
- * @param {DOMWindow} targetWindow
+ * @param {Window} targetWindow
  * @return {AnchorBox}
  */
 Element.prototype.boxInWindow = function(targetWindow)

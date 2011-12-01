@@ -45,7 +45,8 @@ java -jar ~/closure/compiler.jar --summary_detail_level 3 --compilation_level SI
         --js Source/WebCore/inspector/front-end/UserMetrics.js \
         --js Source/WebCore/inspector/front-end/HandlerRegistry.js \
         --js Source/WebCore/inspector/front-end/InspectorFrontendHostStub.js \
-    --module jsmodule_sdk:25:jsmodule_common \
+    --module jsmodule_sdk:26:jsmodule_common \
+        --js Source/WebCore/inspector/front-end/InspectorBackend.js \
         --js Source/WebCore/inspector/front-end/ApplicationCacheModel.js \
         --js Source/WebCore/inspector/front-end/CompilerSourceMapping.js \
         --js Source/WebCore/inspector/front-end/ConsoleModel.js \
