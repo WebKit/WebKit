@@ -29,6 +29,7 @@
 #include "DOMStringList.h"
 #include "V8Binding.h"
 #include "V8DOMWindow.h"
+#include "V8Storage.h"
 #include "V8Utilities.h"
 #include <wtf/MathExtras.h>
 
@@ -201,6 +202,23 @@ bool OptionsObject::get(const String& key, RefPtr<DOMWindow>& value) const
         v8::Handle<v8::Object> window = V8DOMWrapper::lookupDOMWrapper(V8DOMWindow::GetTemplate(), wrapper);
         if (!window.IsEmpty())
             source = V8DOMWindow::toNative(window);
+    }
+    value = source;
+    return true;
+}
+
+bool OptionsObject::get(const String& key, RefPtr<Storage>& value) const
+{
+    v8::Local<v8::Value> v8Value;
+    if (!getKey(key, v8Value))
+        return false;
+
+    Storage* source = 0;
+    if (v8Value->IsObject()) {
+        v8::Handle<v8::Object> wrapper = v8::Handle<v8::Object>::Cast(v8Value);
+        v8::Handle<v8::Object> storage = V8DOMWrapper::lookupDOMWrapper(V8Storage::GetTemplate(), wrapper);
+        if (!storage.IsEmpty())
+            source = V8Storage::toNative(storage);
     }
     value = source;
     return true;

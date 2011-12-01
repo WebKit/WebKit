@@ -30,6 +30,7 @@
 #include "JSEventTarget.h"
 #include "JSMessagePortCustom.h"
 #include "JSNode.h"
+#include "JSStorage.h"
 #include "JSTrackCustom.h"
 #include "SerializedScriptValue.h"
 #include "ScriptValue.h"
@@ -43,7 +44,7 @@ JSDictionary::GetPropertyResult JSDictionary::tryGetProperty(const char* propert
 {
     Identifier identifier(m_exec, propertyName);
     PropertySlot slot(m_initializerObject);
-    
+
     if (!m_initializerObject->getPropertySlot(m_exec, identifier, slot))
         return NoPropertyFound;
 
@@ -116,6 +117,11 @@ void JSDictionary::convertValue(ExecState*, JSValue value, RefPtr<EventTarget>& 
 void JSDictionary::convertValue(ExecState*, JSValue value, RefPtr<Node>& result)
 {
     result = toNode(value);
+}
+
+void JSDictionary::convertValue(ExecState*, JSValue value, RefPtr<Storage>& result)
+{
+    result = toStorage(value);
 }
 
 void JSDictionary::convertValue(ExecState* exec, JSValue value, MessagePortArray& result)

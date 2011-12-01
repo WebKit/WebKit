@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+
+description("This tests the constructor for the StorageEvent DOM class.");
+
+// No initializer is passed.
+shouldBe("new StorageEvent('eventType').bubbles", "false");
+shouldBe("new StorageEvent('eventType').cancelable", "false");
+shouldBeEqualToString("new StorageEvent('eventType').key", "");
+// Note: oldValue is nullable.
+shouldBe("new StorageEvent('eventType').oldValue", "null");
+// Note: newValue is nullable.
+shouldBe("new StorageEvent('eventType').newValue", "null");
+shouldBeEqualToString("new StorageEvent('eventType').url", "");
+shouldBe("new StorageEvent('eventType').storageArea", "null");
+
+// bubbles is passed.
+shouldBe("new StorageEvent('eventType', { bubbles: false }).bubbles", "false");
+shouldBe("new StorageEvent('eventType', { bubbles: true }).bubbles", "true");
+
+// cancelable is passed.
+shouldBe("new StorageEvent('eventType', { cancelable: false }).cancelable", "false");
+shouldBe("new StorageEvent('eventType', { cancelable: true }).cancelable", "true");
+
+// key, oldValue, newValue and url is passed.
+["key", "oldValue", "newValue", "url"].forEach(function(attr) {
+    // Strings.
+    shouldBeEqualToString("new StorageEvent('eventType', { " + attr + ": 'abcde' })." + attr, "abcde");
+    shouldBeEqualToString("new StorageEvent('eventType', { " + attr + ": '' })." + attr, "");
+
+    // Non-strings.
+    shouldBeEqualToString("new StorageEvent('eventType', { " + attr + ": undefined })." + attr, "undefined");
+    shouldBeEqualToString("new StorageEvent('eventType', { " + attr + ": null })." + attr, "null");
+    shouldBeEqualToString("new StorageEvent('eventType', { " + attr + ": false })." + attr, "false");
+    shouldBeEqualToString("new StorageEvent('eventType', { " + attr + ": true })." + attr, "true");
+    shouldBeEqualToString("new StorageEvent('eventType', { " + attr + ": 12345 })." + attr, "12345");
+    shouldBeEqualToString("new StorageEvent('eventType', { " + attr + ": 18446744073709551615 })." + attr, "18446744073709552000");
+    shouldBeEqualToString("new StorageEvent('eventType', { " + attr + ": NaN })." + attr, "NaN");
+    shouldBeEqualToString("new StorageEvent('eventType', { " + attr + ": [] })." + attr, "");
+    shouldBeEqualToString("new StorageEvent('eventType', { " + attr + ": [1, 2, 3] })." + attr, "1,2,3");
+    shouldBeEqualToString("new StorageEvent('eventType', { " + attr + ": {abcde: 12345} })." + attr, "[object Object]");
+    shouldBeEqualToString("new StorageEvent('eventType', { " + attr + ": {valueOf: function () { return 'abcde'; } } })." + attr, "[object Object]");
+});
+
+// storageArea is passed.
+// Storage objects.
+shouldBe("new StorageEvent('eventType', { storageArea: localStorage }).storageArea", "localStorage");
+shouldBe("new StorageEvent('eventType', { storageArea: sessionStorage }).storageArea", "sessionStorage");
+
+// Non-Storage objects.
+var test_object = {abc: 123};
+shouldBe("new StorageEvent('eventType', { storageArea: test_object }).storageArea", "null");
+shouldBe("new StorageEvent('eventType', { storageArea: window }).storageArea", "null");
+shouldBe("new StorageEvent('eventType', { storageArea: document }).storageArea", "null");
+shouldBe("new StorageEvent('eventType', { storageArea: undefined }).storageArea", "null");
+shouldBe("new StorageEvent('eventType', { storageArea: null }).storageArea", "null");
+shouldBe("new StorageEvent('eventType', { storageArea: false }).storageArea", "null");
+shouldBe("new StorageEvent('eventType', { storageArea: true }).storageArea", "null");
+shouldBe("new StorageEvent('eventType', { storageArea: '' }).storageArea", "null");
+shouldBe("new StorageEvent('eventType', { storageArea: 'chocolate' }).storageArea", "null");
+shouldBe("new StorageEvent('eventType', { storageArea: 12345 }).storageArea", "null");
+shouldBe("new StorageEvent('eventType', { storageArea: 18446744073709551615 }).storageArea", "null");
+shouldBe("new StorageEvent('eventType', { storageArea: NaN }).storageArea", "null");
+// Note that valueOf() is not called, when the left hand side is evaluated.
+shouldBeFalse("new StorageEvent('eventType', { storageArea: {valueOf: function () { return window; } } }).storageArea == window");
+shouldBe("new StorageEvent('eventType', { get storageArea() { return 123; } }).storageArea", "null");
+shouldThrow("new StorageEvent('eventType', { get storageArea() { throw 'StorageEvent Error'; } })");
+
+// All initializers are passed.
+shouldBe("new StorageEvent('eventType', { bubbles: true, cancelable: false, key: 'abc', oldValue: 'def', newValue: 'ghi', url: 'jkl', storageArea: localStorage }).bubbles", "true");
+shouldBe("new StorageEvent('eventType', { bubbles: false, cancelable: true, key: 'abc', oldValue: 'def', newValue: 'ghi', url: 'jkl', storageArea: localStorage }).cancelable", "true");
+shouldBeEqualToString("new StorageEvent('eventType', { bubbles: true, cancelable: true, key: 'abc', oldValue: 'def', newValue: 'ghi', url: 'jkl', storageArea: localStorage }).key", "abc");
+shouldBeEqualToString("new StorageEvent('eventType', { bubbles: true, cancelable: true, key: 'abc', oldValue: 'def', newValue: 'ghi', url: 'jkl', storageArea: localStorage }).oldValue", "def");
+shouldBeEqualToString("new StorageEvent('eventType', { bubbles: true, cancelable: true, key: 'abc', oldValue: 'def', newValue: 'ghi', url: 'jkl', storageArea: localStorage }).newValue", "ghi");
+shouldBeEqualToString("new StorageEvent('eventType', { bubbles: true, cancelable: true, key: 'abc', oldValue: 'def', newValue: 'ghi', url: 'jkl', storageArea: localStorage }).url", "jkl");
+shouldBe("new StorageEvent('eventType', { bubbles: true, cancelable: true, key: 'abc', oldValue: 'def', newValue: 'ghi', url: 'jkl', storageArea: localStorage }).storageArea", "localStorage");
+</script>
+<script src="../../js/resource/js-test-post.js"></script>
+</body>
+</html>

@@ -25,12 +25,15 @@
 
 module storage {
 
-    interface StorageEvent : Event {
-        readonly attribute DOMString key;
-        readonly attribute [ConvertNullStringTo=Null] DOMString oldValue;
-        readonly attribute [ConvertNullStringTo=Null] DOMString newValue;
-        readonly attribute DOMString url;
-        readonly attribute Storage storageArea;
+    interface [
+        ConstructorTemplate=Event
+    ] StorageEvent : Event {
+        readonly attribute [InitializedByConstructor] DOMString key;
+        readonly attribute [InitializedByConstructor, ConvertNullStringTo=Null] DOMString oldValue;
+        readonly attribute [InitializedByConstructor, ConvertNullStringTo=Null] DOMString newValue;
+        readonly attribute [InitializedByConstructor] DOMString url;
+        readonly attribute [InitializedByConstructor] Storage storageArea;
+
         void initStorageEvent(in [Optional=CallWithDefaultValue] DOMString typeArg, 
                               in [Optional=CallWithDefaultValue] boolean canBubbleArg, 
                               in [Optional=CallWithDefaultValue] boolean cancelableArg, 

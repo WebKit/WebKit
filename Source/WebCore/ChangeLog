@@ -1,3 +1,35 @@
+2011-11-30  Kentaro Hara  <haraken@chromium.org>
+
+        Implement the StorageEvent constructor
+        https://bugs.webkit.org/show_bug.cgi?id=71685
+
+        Reviewed by Adam Barth.
+
+        This patch makes StorageEvent constractable.
+        The spec: http://www.whatwg.org/specs/web-apps/current-work/#storageevent
+
+        Test: fast/events/constructors/storage-event-constructor.html
+
+        * bindings/js/JSDictionary.cpp:
+        (WebCore::JSDictionary::tryGetProperty):
+        (WebCore::JSDictionary::convertValue): Returns a Storage object corresponding to a given key.
+        * bindings/js/JSDictionary.h:
+        (WebCore::JSDictionary::tryGetProperty):
+        * bindings/v8/OptionsObject.cpp:
+        (WebCore::OptionsObject::get): Ditto.
+        * bindings/v8/OptionsObject.h:
+        * storage/StorageEvent.cpp: Added an implementation of the StorageEvent constructor.
+        (WebCore::StorageEventInit::StorageEventInit):
+        (WebCore::StorageEvent::create):
+        (WebCore::StorageEvent::StorageEvent):
+        * storage/StorageEvent.h: Added a definition of StorageEventInit.
+        (WebCore::StorageEvent::key):
+        (WebCore::StorageEvent::oldValue):
+        (WebCore::StorageEvent::newValue):
+        (WebCore::StorageEvent::url):
+        (WebCore::StorageEvent::storageArea):
+        * storage/StorageEvent.idl: Added [ConstructorTemplate=Event] IDL.
+
 2011-11-30  Naveen Bobbili  <qghc36@motorola.com>
 
         window.getMatchedCSSRules() not supporting pseudo element

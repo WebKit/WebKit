@@ -38,6 +38,7 @@ namespace WebCore {
 class DOMStringList;
 class DOMWindow;
 class IDBKeyRange;
+class Storage;
 class TrackBase;
 
 class OptionsObject {
@@ -59,6 +60,7 @@ public:
     bool get(const String&, unsigned&) const;
     bool get(const String&, unsigned long long&) const;
     bool get(const String&, RefPtr<DOMWindow>&) const;
+    bool get(const String&, RefPtr<Storage>&) const;
     bool get(const String&, MessagePortArray&) const;
 #if ENABLE(VIDEO_TRACK)
     bool get(const String&, RefPtr<TrackBase>&) const;

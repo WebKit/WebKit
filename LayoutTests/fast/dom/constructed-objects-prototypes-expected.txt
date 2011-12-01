@@ -39,6 +39,8 @@ PASS (new inner.PopStateEvent()).isInner is true
 PASS (new inner.PopStateEvent()).constructor.isInner is true
 PASS (new inner.ProgressEvent()).isInner is true
 PASS (new inner.ProgressEvent()).constructor.isInner is true
+PASS (new inner.StorageEvent()).isInner is true
+PASS (new inner.StorageEvent()).constructor.isInner is true
 PASS (new inner.WebGLContextEvent()).isInner is true
 PASS (new inner.WebGLContextEvent()).constructor.isInner is true
 PASS (new inner.WebKitAnimationEvent()).isInner is true

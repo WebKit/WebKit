@@ -37,6 +37,7 @@ class EventTarget;
 class Node;
 class ScriptValue;
 class SerializedScriptValue;
+class Storage;
 class TrackBase;
 
 class JSDictionary {
@@ -81,6 +82,7 @@ private:
     static void convertValue(JSC::ExecState*, JSC::JSValue, RefPtr<DOMWindow>& result);
     static void convertValue(JSC::ExecState*, JSC::JSValue, RefPtr<EventTarget>& result);
     static void convertValue(JSC::ExecState*, JSC::JSValue, RefPtr<Node>& result);
+    static void convertValue(JSC::ExecState*, JSC::JSValue, RefPtr<Storage>& result);
     static void convertValue(JSC::ExecState*, JSC::JSValue, MessagePortArray& result);
 #if ENABLE(VIDEO_TRACK)
     static void convertValue(JSC::ExecState*, JSC::JSValue, RefPtr<TrackBase>& result);
@@ -104,7 +106,7 @@ bool JSDictionary::tryGetProperty(const char* propertyName, T* context, void (*s
 
         if (m_exec->hadException())
             return false;
-    
+
         setter(context, result);
         break;
     }

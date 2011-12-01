@@ -31,37 +31,49 @@
 
 namespace WebCore {
 
-    class Storage;
+class Storage;
 
-    class StorageEvent : public Event {
-    public:
-        static PassRefPtr<StorageEvent> create();
-        static PassRefPtr<StorageEvent> create(const AtomicString& type, const String& key, const String& oldValue, const String& newValue, const String& url, Storage* storageArea);
-        virtual ~StorageEvent();
+struct StorageEventInit : public EventInit {
+    StorageEventInit();
 
-        const String& key() const { return m_key; }
-        const String& oldValue() const { return m_oldValue; }
-        const String& newValue() const { return m_newValue; }
-        const String& url() const { return m_url; }
-        Storage* storageArea() const { return m_storageArea.get(); }
+    String key;
+    String oldValue;
+    String newValue;
+    String url;
+    RefPtr<Storage> storageArea;
+};
 
-        void initStorageEvent(const AtomicString& type, bool canBubble, bool cancelable, const String& key, const String& oldValue, const String& newValue, const String& url, Storage* storageArea);
+class StorageEvent : public Event {
+public:
+    static PassRefPtr<StorageEvent> create();
+    static PassRefPtr<StorageEvent> create(const AtomicString& type, const String& key, const String& oldValue, const String& newValue, const String& url, Storage* storageArea);
+    static PassRefPtr<StorageEvent> create(const AtomicString&, const StorageEventInit&);
+    virtual ~StorageEvent();
 
-        // Needed once we support init<blank>EventNS
-        // void initStorageEventNS(in DOMString namespaceURI, in DOMString typeArg, in boolean canBubbleArg, in boolean cancelableArg, in DOMString keyArg, in DOMString oldValueArg, in DOMString newValueArg, in DOMString urlArg, Storage storageAreaArg);
+    const String& key() const { return m_key; }
+    const String& oldValue() const { return m_oldValue; }
+    const String& newValue() const { return m_newValue; }
+    const String& url() const { return m_url; }
+    Storage* storageArea() const { return m_storageArea.get(); }
 
-        virtual const AtomicString& interfaceName() const;
+    void initStorageEvent(const AtomicString& type, bool canBubble, bool cancelable, const String& key, const String& oldValue, const String& newValue, const String& url, Storage* storageArea);
 
-    private:
-        StorageEvent();
-        StorageEvent(const AtomicString& type, const String& key, const String& oldValue, const String& newValue, const String& url, Storage* storageArea);
+    // Needed once we support init<blank>EventNS
+    // void initStorageEventNS(in DOMString namespaceURI, in DOMString typeArg, in boolean canBubbleArg, in boolean cancelableArg, in DOMString keyArg, in DOMString oldValueArg, in DOMString newValueArg, in DOMString urlArg, Storage storageAreaArg);
 
-        String m_key;
-        String m_oldValue;
-        String m_newValue;
-        String m_url;
-        RefPtr<Storage> m_storageArea;
-    };
+    virtual const AtomicString& interfaceName() const;
+
+private:
+    StorageEvent();
+    StorageEvent(const AtomicString& type, const String& key, const String& oldValue, const String& newValue, const String& url, Storage* storageArea);
+    StorageEvent(const AtomicString&, const StorageEventInit&);
+
+    String m_key;
+    String m_oldValue;
+    String m_newValue;
+    String m_url;
+    RefPtr<Storage> m_storageArea;
+};
 
 } // namespace WebCore
 
