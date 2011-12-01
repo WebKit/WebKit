@@ -46,33 +46,6 @@
         ]
     },
     {
-        "domain": "Meta",
-        "hidden": true,
-        "types": [
-            {
-                "id": "DomainCapabilities",
-                "type": "object",
-                "description": "Domain capabilities descriptor.",
-                "properties": [
-                    { "name": "domainName", "type": "string", "description": "Domain name." },
-                    { "name": "capabilities", "type": "array", "items": { "type": "string" }, "description": "List of the capabilities." }
-                ]
-            }
-        ],
-        "commands": [
-            {
-                "name": "getCapabilities",
-                "parameters": [
-                    { "name": "domainNames", "type": "array", "items":  { "type": "string" }, "description": "List of the domains to return capabilities for." }
-                ],
-                "returns": [
-                    { "name": "capabilities", "type": "array", "items": { "$ref": "DomainCapabilities"}, "description": "Array of the domain capabilities." }
-                ],
-                "description": "Returns capability descriptors for the given domain names."
-            }
-        ]
-    },
-    {
         "domain": "Page",
         "description": "Actions and events related to the inspected page belong to the page domain.",
         "types": [
@@ -1780,9 +1753,6 @@
     {
         "domain": "Debugger",
         "description": "Debugger domain exposes JavaScript debugging capabilities. It allows setting and removing breakpoints, stepping through execution, exploring stack traces, etc.",
-        "capabilities": [
-            { "name": "set-script-source", "description": "Allows setting script source live" }
-        ],
         "types": [
             {
                 "id": "BreakpointId",
@@ -1955,7 +1925,6 @@
                     { "name": "callFrames", "type": "array", "optional": true, "items": { "$ref": "CallFrame"}, "description": "New stack trace in case editing has happened while VM was stopped." },
                     { "name": "result", "type": "object", "optional": true, "description": "VM-specific description of the changes applied.", "hidden": true }
                 ],
-                "capability": "set-script-source",
                 "description": "Edits JavaScript source live."
             },
             {

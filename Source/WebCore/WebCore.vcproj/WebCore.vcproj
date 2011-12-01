@@ -68646,14 +68646,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\inspector\InspectorMetaAgent.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\inspector\InspectorMetaAgent.h"
-				>
-			</File>
-			<File
 				RelativePath="..\inspector\InspectorPageAgent.cpp"
 				>
 			</File>

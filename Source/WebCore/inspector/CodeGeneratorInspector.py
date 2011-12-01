@@ -427,7 +427,7 @@ json_api = json.loads(json_string)
 class Templates:
     frontend_domain_class = string.Template(
 """    class $domainClassName {
-    public:$domainCapabilities
+    public:
         $domainClassName(InspectorFrontendChannel* inspectorFrontendChannel) : m_inspectorFrontendChannel(inspectorFrontendChannel) { }
 ${frontendDomainMethodDeclarations}        void setInspectorFrontendChannel(InspectorFrontendChannel* inspectorFrontendChannel) { m_inspectorFrontendChannel = inspectorFrontendChannel; }
         InspectorFrontendChannel* getInspectorFrontendChannel() { return m_inspectorFrontendChannel; }
@@ -919,8 +919,6 @@ bool InspectorBackendDispatcher::getCommandName(const String& message, String* r
 
 namespace WebCore {
 
-$capabilities
-
 InspectorFrontend::InspectorFrontend(InspectorFrontendChannel* inspectorFrontendChannel)
     : m_inspectorFrontendChannel(inspectorFrontendChannel)
 $constructorInit{
@@ -946,7 +944,7 @@ InspectorBackendStub = function()
     this._domainDispatchers = {};
     this._eventArgs = {};
     this._replyArgs = {};
-$delegates$eventArgs$replyArgs$domainDispatchers$capabilities}
+$delegates$eventArgs$replyArgs$domainDispatchers}
 
 InspectorBackendStub.prototype = {
     dumpInspectorTimeStats: 0,
@@ -1202,7 +1200,6 @@ class Generator:
     backend_js_event_list = []
     backend_js_reply_list = []
     backend_js_domain_dispatcher_list = []
-    backend_js_capabilities_list = []
 
     backend_setters_list = []
     backend_constructor_init_list = []
@@ -1210,7 +1207,6 @@ class Generator:
     backend_forward_list = []
     backend_include_list = []
     frontend_constructor_init_list = []
-    frontend_capabilities_constants_list = []
 
     @staticmethod
     def go():
@@ -1226,14 +1222,6 @@ class Generator:
             agent_field_name = domain_data.agent_field_name
 
             frontend_method_declaration_lines = []
-            domain_capabilities = []
-            if "capabilities" in json_domain:
-                for json_capability in json_domain["capabilities"]:
-                    name = json_capability["name"]
-                    capability_variable_name = "capability%s" % dash_to_camelcase(name)
-                    domain_capabilities.append("\n        static const char* %s;" % capability_variable_name)
-                    Generator.frontend_capabilities_constants_list.append("const char* InspectorFrontend::%s::%s = \"%s\";" % (domain_name, capability_variable_name, name))
-                    Generator.backend_js_capabilities_list.append("    %sAgent.%s = \"%s\";\n" % (domain_name, capability_variable_name, name))
 
             if "events" in json_domain:
                 for json_event in json_domain["events"]:
@@ -1244,7 +1232,6 @@ class Generator:
             Generator.frontend_domain_class_lines.append(Templates.frontend_domain_class.substitute(None,
                 domainClassName=domain_name,
                 domainFieldName=domain_name_lower,
-                domainCapabilities=join(domain_capabilities, "\n"),
                 frontendDomainMethodDeclarations=join(frontend_method_declaration_lines, "")))
 
             if "commands" in json_domain:
@@ -1431,8 +1418,7 @@ backend_h_file.write(Templates.backend_h.substitute(None,
 
 frontend_cpp_file.write(Templates.frontend_cpp.substitute(None,
     constructorInit=join(Generator.frontend_constructor_init_list, ""),
-    methods=join(Generator.frontend_method_list, "\n"),
-    capabilities=join(Generator.frontend_capabilities_constants_list, "\n")))
+    methods=join(Generator.frontend_method_list, "\n")))
 
 backend_cpp_file.write(Templates.backend_cpp.substitute(None,
     methodNameDeclarations=join(Generator.backend_method_name_declaration_list, "\n"),
@@ -1444,8 +1430,7 @@ backend_js_file.write(Templates.backend_js.substitute(None,
     delegates=join(Generator.backend_js_initializer_list, ""),
     replyArgs=join(Generator.backend_js_reply_list, ""),
     eventArgs=join(Generator.backend_js_event_list, ""),
-    domainDispatchers=join(Generator.backend_js_domain_dispatcher_list, ""),
-    capabilities=join(Generator.backend_js_capabilities_list, "")))
+    domainDispatchers=join(Generator.backend_js_domain_dispatcher_list, "")))
 
 backend_h_file.close()
 backend_cpp_file.close()

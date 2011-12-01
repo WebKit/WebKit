@@ -53,7 +53,6 @@
 #include "InspectorFrontend.h"
 #include "InspectorFrontendClient.h"
 #include "InspectorInstrumentation.h"
-#include "InspectorMetaAgent.h"
 #include "InspectorPageAgent.h"
 #include "InspectorProfilerAgent.h"
 #include "InspectorResourceAgent.h"
@@ -135,8 +134,6 @@ InspectorController::InspectorController(Page* page, InspectorClient* inspectorC
 #if ENABLE(WORKERS)
     m_agents.append(InspectorWorkerAgent::create(m_instrumentingAgents.get(), m_state.get()));
 #endif
-
-    m_agents.append(InspectorMetaAgent::create(m_instrumentingAgents.get(), m_state.get(), &m_agents));
 
     ASSERT_ARG(inspectorClient, inspectorClient);
     m_injectedScriptManager->injectedScriptHost()->init(m_inspectorAgent
