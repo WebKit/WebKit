@@ -1,3 +1,16 @@
+2011-12-01  Wajahat Siddiqui  <mdwajahatali.siddiqui@motorola.com>
+
+        Popup menu can get stuck in closed state when GtkMenu can't grab mouse.
+        https://bugs.webkit.org/show_bug.cgi?id=56466
+
+        Add a check if popup menu is not visible due to no mouse grab,
+        Ensure WebCore is in sync with proper state.
+
+        Reviewed by Martin Robinson.
+
+        * platform/gtk/PopupMenuGtk.cpp:
+        (WebCore::PopupMenuGtk::show):
+
 2011-12-01  Eric Carlson  <eric.carlson@apple.com>
 
         When playing audio in <video>, the poster is hidden on play

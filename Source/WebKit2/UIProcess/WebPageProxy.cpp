@@ -2478,6 +2478,13 @@ NativeWebMouseEvent* WebPageProxy::currentlyProcessedMouseDownEvent()
     return m_currentlyProcessedMouseDownEvent.get();
 }
 
+#if PLATFORM(GTK)
+void WebPageProxy::failedToShowPopupMenu()
+{
+    process()->send(Messages::WebPage::FailedToShowPopupMenu(), m_pageID);
+}
+#endif
+
 void WebPageProxy::showPopupMenu(const IntRect& rect, uint64_t textDirection, const Vector<WebPopupItem>& items, int32_t selectedIndex, const PlatformPopupMenuData& data)
 {
     if (m_activePopupMenu) {

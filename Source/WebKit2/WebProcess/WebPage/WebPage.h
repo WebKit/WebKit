@@ -576,6 +576,10 @@ private:
     void didChangeSelectedIndexForActivePopupMenu(int32_t newIndex);
     void setTextForActivePopupMenu(int32_t index);
 
+#if PLATFORM(GTK)    
+    void failedToShowPopupMenu();
+#endif    
+
     void didChooseFilesForOpenPanel(const Vector<String>&);
     void didCancelForOpenPanel();
 #if ENABLE(WEB_PROCESS_SANDBOX)

@@ -2151,6 +2151,16 @@ void WebPage::setTextForActivePopupMenu(int32_t index)
     m_activePopupMenu->setTextForIndex(index);
 }
 
+#if PLATFORM(GTK)
+void WebPage::failedToShowPopupMenu()
+{
+    if (!m_activePopupMenu)
+        return;
+
+    m_activePopupMenu->client()->popupDidHide();
+}
+#endif
+
 void WebPage::didSelectItemFromActiveContextMenu(const WebContextMenuItemData& item)
 {
     if (!m_contextMenu)

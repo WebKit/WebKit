@@ -88,6 +88,11 @@ void PopupMenuGtk::show(const IntRect& rect, FrameView* view, int index)
     menuPosition.move(0, rect.height());
 
     m_popup->popUp(rect.size(), menuPosition, size, index, gtk_get_current_event());
+
+    // GTK can refuse to actually open the menu when mouse grabs fails.
+    // Ensure WebCore does not go into some pesky state.
+    if (!gtk_widget_get_visible(m_popup->platformMenu()))
+        client()->popupDidHide();
 }
 
 void PopupMenuGtk::hide()

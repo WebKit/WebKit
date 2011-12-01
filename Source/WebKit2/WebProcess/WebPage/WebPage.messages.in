@@ -145,6 +145,9 @@ messages -> WebPage {
     # Popup menu.
     DidChangeSelectedIndexForActivePopupMenu(int32_t newIndex);
     SetTextForActivePopupMenu(int32_t index);
+#if PLATFORM(GTK)    
+    FailedToShowPopupMenu();
+#endif    
     
     # Context menu.
     DidSelectItemFromActiveContextMenu(WebKit::WebContextMenuItemData menuItem);

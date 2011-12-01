@@ -595,6 +595,9 @@ private:
     virtual void valueChangedForPopupMenu(WebPopupMenuProxy*, int32_t newSelectedIndex);
     virtual void setTextFromItemForPopupMenu(WebPopupMenuProxy*, int32_t index);
     virtual NativeWebMouseEvent* currentlyProcessedMouseDownEvent();
+#if PLATFORM(GTK)
+    virtual void failedToShowPopupMenu();
+#endif    
 
     // Implemented in generated WebPageProxyMessageReceiver.cpp
     void didReceiveWebPageProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
