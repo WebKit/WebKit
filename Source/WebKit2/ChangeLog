@@ -1,3 +1,12 @@
+2011-11-30  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Buildfix for generating forwarding headers
+        https://bugs.webkit.org/show_bug.cgi?id=73446
+
+        Reviewed by Noam Rosenthal.
+
+        * DerivedSources.pri: Always create the parent directory before generating a forwarding header.
+
 2011-11-30  Dan Bernstein  <mitz@apple.com>
 
         WebKit2 part of: Allow the length of a page along the pagination axis to differ from the length of the view
