@@ -75,10 +75,10 @@ public:
     {
         return createIndex(name, keyPath, unique, false, transaction, ec);
     }
-    virtual WebIDBIndex* createIndex(const WebString& name, const WebString& keyPath, bool unique, bool multientry, const WebIDBTransaction&, WebExceptionCode&)
+    virtual WebIDBIndex* createIndex(const WebString& name, const WebString& keyPath, bool unique, bool multientry, const WebIDBTransaction& transaction, WebExceptionCode& ec)
     {
-        WEBKIT_ASSERT_NOT_REACHED();
-        return 0;
+        // FIXME: Assert not reached once implementing classes are updated.
+        return createIndex(name, keyPath, unique, transaction, ec);
     }
     // Transfers ownership of the WebIDBIndex to the caller.
     virtual WebIDBIndex* index(const WebString& name, WebExceptionCode&)

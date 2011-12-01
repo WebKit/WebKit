@@ -1,3 +1,17 @@
+2011-12-01  Hans Wennborg  <hans@chromium.org>
+
+        IndexedDB: Fix WebIDBObjectStore::createIndex() after r101602
+        https://bugs.webkit.org/show_bug.cgi?id=73543
+
+        Reviewed by Tony Gentilcore.
+
+        r101602 introduces a new signature for createIndex(). Until Chromium
+        has been updated to override that function, the default implementation
+        must call the old version.
+
+        * public/WebIDBObjectStore.h:
+        (WebKit::WebIDBObjectStore::createIndex):
+
 2011-11-30  David Reveman  <reveman@chromium.org>
 
         [Chromium] Improve tile invalidation.
