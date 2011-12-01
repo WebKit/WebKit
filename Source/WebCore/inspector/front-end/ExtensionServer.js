@@ -75,6 +75,11 @@ WebInspector.ExtensionServer = function()
 }
 
 WebInspector.ExtensionServer.prototype = {
+    hasExtensions: function()
+    {
+        return !!Object.keys(this._registeredExtensions).length;
+    },
+
     notifySearchAction: function(panelId, action, searchString)
     {
         this._postNotification(WebInspector.extensionAPI.Events.PanelSearch + panelId, action, searchString);

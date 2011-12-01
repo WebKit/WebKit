@@ -49,6 +49,7 @@ module core {
         DOMString hiddenPanels();
 
         void copyText(in DOMString text);
+        boolean canSaveAs();
         void saveAs(in DOMString fileName, in DOMString content);
 
         [Custom] DOMString platform();

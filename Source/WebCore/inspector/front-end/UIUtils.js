@@ -34,6 +34,18 @@ WebInspector.elementDragStart = function(element, dividerDrag, elementDragEnd, e
     if (WebInspector._elementDraggingEventListener || WebInspector._elementEndDraggingEventListener)
         WebInspector.elementDragEnd(event);
 
+    if (element) {
+        // Install glass pane
+        if (WebInspector._elementDraggingGlassPane)
+            WebInspector._elementDraggingGlassPane.parentElement.removeChild(WebInspector._elementDraggingGlassPane);
+
+        var glassPane = document.createElement("div");
+        glassPane.style.cssText = "position:absolute;top:0;bottom:0;left:0;right:0;opacity:0;z-index:1";
+        glassPane.id = "glass-pane-for-drag";
+        element.ownerDocument.body.appendChild(glassPane);
+        WebInspector._elementDraggingGlassPane = glassPane;
+    }
+
     WebInspector._elementDraggingEventListener = dividerDrag;
     WebInspector._elementEndDraggingEventListener = elementDragEnd;
 
@@ -54,6 +66,10 @@ WebInspector.elementDragEnd = function(event)
 
     targetDocument.body.style.removeProperty("cursor");
 
+    if (WebInspector._elementDraggingGlassPane)
+        WebInspector._elementDraggingGlassPane.parentElement.removeChild(WebInspector._elementDraggingGlassPane);
+
+    delete WebInspector._elementDraggingGlassPane;
     delete WebInspector._elementDraggingEventListener;
     delete WebInspector._elementEndDraggingEventListener;
 

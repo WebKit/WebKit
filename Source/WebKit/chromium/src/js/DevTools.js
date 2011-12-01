@@ -34,54 +34,13 @@
  */
 
 {(function () {
-    Preferences.ignoreWhitespace = false;
-    Preferences.saveAsAvailable = true;
     Preferences.useLowerCaseMenuTitlesOnWindows = true;
-    Preferences.hasExtensions = true;
     Preferences.sharedWorkersDebugNote = "Shared workers can be inspected in the Task Manager";
     Preferences.localizeUI = false;
     Preferences.applicationTitle = "Developer Tools - %s";
     Preferences.exposeDisableCache = true;
     Preferences.exposeWorkersInspection = true;
 })();}
-
-/** Pending WebKit upstream by apavlov). Fixes iframe vs drag problem. */
-(function()
-{
-    var glassPane = null;
-
-    function showGlassPane(element)
-    {
-        hideGlassPane();
-        glassPane = document.createElement("div");
-        glassPane.style.cssText = "position:absolute;top:0;bottom:0;left:0;right:0;opacity:0;z-index:1";
-        glassPane.id = "glass-pane-for-drag";
-        element.ownerDocument.body.appendChild(glassPane);
-    }
-
-    function hideGlassPane()
-    {
-        if (glassPane) {
-            glassPane.parentElement.removeChild(glassPane);
-            glassPane = null;
-        }
-    }
-
-    var originalDragStart = WebInspector.elementDragStart;
-    WebInspector.elementDragStart = function(element)
-    {
-        if (element)
-            showGlassPane(element);
-        originalDragStart.apply(this, arguments);
-    };
-
-    var originalDragEnd = WebInspector.elementDragEnd;
-    WebInspector.elementDragEnd = function()
-    {
-        originalDragEnd.apply(this, arguments);
-        hideGlassPane();
-    };
-})();
 
 WebInspector.platformExtensionAPI = function(tabId)
 {

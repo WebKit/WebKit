@@ -1254,7 +1254,7 @@ WebInspector.FrameResourceTreeElement.prototype = {
 
     _appendSaveAsAction: function(contextMenu, event)
     {
-        if (!Preferences.saveAsAvailable)
+        if (!InspectorFrontendHost.canSaveAs())
             return;
 
         if (this._resource.type !== WebInspector.Resource.Type.Document &&
@@ -1663,7 +1663,7 @@ WebInspector.ResourceRevisionTreeElement.prototype = {
         var contextMenu = new WebInspector.ContextMenu();
         contextMenu.appendItem(WebInspector.UIString("Revert to this revision"), this._revision.revertToThis.bind(this._revision));
 
-        if (Preferences.saveAsAvailable) {
+        if (InspectorFrontendHost.canSaveAs()) {
             function save()
             {
                 var fileName = this._revision.resource.displayName;

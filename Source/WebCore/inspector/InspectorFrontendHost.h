@@ -72,6 +72,7 @@ public:
     String hiddenPanels();
 
     void copyText(const String& text);
+    bool canSaveAs();
     void saveAs(const String& fileName, const String& content);
 
     // Called from [Custom] implementations.

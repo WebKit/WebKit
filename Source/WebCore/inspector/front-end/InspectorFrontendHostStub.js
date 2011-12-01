@@ -112,6 +112,11 @@ WebInspector.InspectorFrontendHostStub.prototype = {
     {
     },
 
+    canSaveAs: function(fileName, content)
+    {
+        return true;
+    },
+
     saveAs: function(fileName, content)
     {
         var builder = new WebKitBlobBuilder();

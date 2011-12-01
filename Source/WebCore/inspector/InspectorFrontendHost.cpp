@@ -214,6 +214,13 @@ void InspectorFrontendHost::copyText(const String& text)
     Pasteboard::generalPasteboard()->writePlainText(text);
 }
 
+bool InspectorFrontendHost::canSaveAs()
+{
+    if (m_client)
+        return m_client->canSaveAs();
+    return false;
+}
+
 void InspectorFrontendHost::saveAs(const String& fileName, const String& content)
 {
     if (m_client)

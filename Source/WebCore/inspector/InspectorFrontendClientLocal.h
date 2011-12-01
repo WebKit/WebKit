@@ -66,6 +66,7 @@ public:
     virtual void requestAttachWindow();
     virtual void requestDetachWindow();
     virtual void changeAttachedWindowHeight(unsigned);
+    virtual bool canSaveAs() { return false; }
     virtual void saveAs(const String&, const String&) { }
 
     virtual void attachWindow() = 0;

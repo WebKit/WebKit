@@ -1607,7 +1607,7 @@ WebInspector.StylePropertyTreeElement.prototype = {
                 var formatSetting = WebInspector.settings.colorFormat.get();
                 if (formatSetting === cf.Original)
                     format = cf.Original;
-                else if (Preferences.showColorNicknames && color.nickname)
+                else if (color.nickname)
                     format = cf.Nickname;
                 else if (formatSetting === cf.RGB)
                     format = (color.simple ? cf.RGB : cf.RGBA);

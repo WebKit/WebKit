@@ -124,6 +124,11 @@ void InspectorFrontendClientImpl::saveAs(const String& fileName, const String& c
     m_client->saveAs(fileName, content);
 }
 
+bool InspectorFrontendClientImpl::canSaveAs()
+{
+    return true;
+}
+
 void InspectorFrontendClientImpl::inspectedURLChanged(const String& url)
 {
     m_frontendPage->mainFrame()->document()->setTitle("Developer Tools - " + url);
