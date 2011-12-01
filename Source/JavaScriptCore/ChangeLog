@@ -1,3 +1,15 @@
+2011-12-01  Chao-ying Fu  <fu@mips.com>
+
+        MacroAssemblerMIPS does not implement readCallTarget
+        https://bugs.webkit.org/show_bug.cgi?id=73432
+
+        Reviewed by Zoltan Herczeg.
+
+        * assembler/MIPSAssembler.h:
+        (JSC::MIPSAssembler::readCallTarget):
+        * assembler/MacroAssemblerMIPS.h:
+        (JSC::MacroAssemblerMIPS::readCallTarget):
+
 2011-12-01  Noel Gordon  <noel.gordon@gmail.com>
 
         [chromium] Remove wtf/qt/ThreadingQt.cpp from the gyp projects
