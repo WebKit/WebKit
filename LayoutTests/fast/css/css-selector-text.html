@@ -106,6 +106,17 @@ testSelectorRoundTrip("::-webkit-slider-thumb");
 
 debug('');
 
+testSelectorRoundTrip("a::-webkit-slider-thumb");
+testSelectorRoundTrip("a ::-webkit-slider-thumb");
+testSelectorRoundTrip("[a]::-webkit-slider-thumb");
+testSelectorRoundTrip("[a] ::-webkit-slider-thumb");
+testSelectorRoundTrip(".a::-webkit-slider-thumb");
+testSelectorRoundTrip(".a ::-webkit-slider-thumb");
+testSelectorRoundTrip("#a::-webkit-slider-thumb");
+testSelectorRoundTrip("#a ::-webkit-slider-thumb");
+
+debug('');
+
 testSelectorRoundTrip('input:not([type="file"]):focus');
 testSelectorRoundTrip(':-webkit-any([type="file"])');
 testSelectorRoundTrip(':-webkit-any(:hover)');

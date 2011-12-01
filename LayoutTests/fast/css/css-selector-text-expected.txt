@@ -65,6 +65,15 @@ PASS parseThenSerializeRule('::-webkit-search-results-button { }') is '::-webkit
 PASS parseThenSerializeRule('::-webkit-search-results-decoration { }') is '::-webkit-search-results-decoration { }'
 PASS parseThenSerializeRule('::-webkit-slider-thumb { }') is '::-webkit-slider-thumb { }'
 
+PASS parseThenSerializeRule('a::-webkit-slider-thumb { }') is 'a::-webkit-slider-thumb { }'
+PASS parseThenSerializeRule('a ::-webkit-slider-thumb { }') is 'a ::-webkit-slider-thumb { }'
+PASS parseThenSerializeRule('[a]::-webkit-slider-thumb { }') is '[a]::-webkit-slider-thumb { }'
+PASS parseThenSerializeRule('[a] ::-webkit-slider-thumb { }') is '[a] ::-webkit-slider-thumb { }'
+PASS parseThenSerializeRule('.a::-webkit-slider-thumb { }') is '.a::-webkit-slider-thumb { }'
+PASS parseThenSerializeRule('.a ::-webkit-slider-thumb { }') is '.a ::-webkit-slider-thumb { }'
+PASS parseThenSerializeRule('#a::-webkit-slider-thumb { }') is '#a::-webkit-slider-thumb { }'
+PASS parseThenSerializeRule('#a ::-webkit-slider-thumb { }') is '#a ::-webkit-slider-thumb { }'
+
 PASS parseThenSerializeRule('input:not([type="file"]):focus { }') is 'input:not([type="file"]):focus { }'
 PASS parseThenSerializeRule(':-webkit-any([type="file"]) { }') is ':-webkit-any([type="file"]) { }'
 PASS parseThenSerializeRule(':-webkit-any(:hover) { }') is ':-webkit-any(:hover) { }'

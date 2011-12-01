@@ -632,6 +632,8 @@ String CSSSelector::selectorText() const
             str = tagHistoryText + " ~ " + str;
         else if (cs->relation() == CSSSelector::Child)
             str = tagHistoryText + " > " + str;
+        else if (cs->relation() == CSSSelector::ShadowDescendant)
+            str = tagHistoryText + str;
         else
             // Descendant
             str = tagHistoryText + " " + str;

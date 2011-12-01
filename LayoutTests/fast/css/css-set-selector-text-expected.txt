@@ -75,6 +75,15 @@ PASS setThenReadSelectorText('::-webkit-search-results-button') is '::-webkit-se
 PASS setThenReadSelectorText('::-webkit-search-results-decoration') is '::-webkit-search-results-decoration'
 PASS setThenReadSelectorText('::-webkit-slider-thumb') is '::-webkit-slider-thumb'
 
+PASS setThenReadSelectorText('a::-webkit-slider-thumb') is 'a::-webkit-slider-thumb'
+PASS setThenReadSelectorText('a ::-webkit-slider-thumb') is 'a ::-webkit-slider-thumb'
+PASS setThenReadSelectorText('[a]::-webkit-slider-thumb') is '[a]::-webkit-slider-thumb'
+PASS setThenReadSelectorText('[a] ::-webkit-slider-thumb') is '[a] ::-webkit-slider-thumb'
+PASS setThenReadSelectorText('.a::-webkit-slider-thumb') is '.a::-webkit-slider-thumb'
+PASS setThenReadSelectorText('.a ::-webkit-slider-thumb') is '.a ::-webkit-slider-thumb'
+PASS setThenReadSelectorText('#a::-webkit-slider-thumb') is '#a::-webkit-slider-thumb'
+PASS setThenReadSelectorText('#a ::-webkit-slider-thumb') is '#a ::-webkit-slider-thumb'
+
 PASS setThenReadSelectorText('input:not([type="file"]):focus') is 'input:not([type="file"]):focus'
 PASS setThenReadSelectorText(':-webkit-any([type="file"])') is ':-webkit-any([type="file"])'
 PASS setThenReadSelectorText(':-webkit-any(:hover)') is ':-webkit-any(:hover)'
