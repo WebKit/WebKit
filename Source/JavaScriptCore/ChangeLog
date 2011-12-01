@@ -1,3 +1,16 @@
+2011-11-30  Yuqiang Xian  <yuqiang.xian@intel.com>
+
+        32 bit DFG should handle logicalNot slow case instead of simply bailing out
+        https://bugs.webkit.org/show_bug.cgi?id=73515
+
+        Reviewed by Filip Pizlo.
+
+        This improves Kraken performance by 14%, mainly due to ~3X improvement
+        on imaging-desaturate.
+
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compileLogicalNot):
+
 2011-11-30  Max Vujovic  <mvujovic@adobe.com>
 
         Some date values not handled consistently with IE/Firefox

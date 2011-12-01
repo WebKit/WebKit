@@ -1875,31 +1875,20 @@ void SpeculativeJIT::compileLogicalNot(Node& node)
         booleanResult(resultPayload.gpr(), m_compileIndex);
         return;
     }
-    
-    JSValueOperand value(this, node.child1());
-    GPRTemporary resultPayload(this, value, false);
-    speculationCheck(JSValueRegs(value.tagGPR(), value.payloadGPR()), node.child1(), m_jit.branch32(JITCompiler::NotEqual, value.tagGPR(), TrustedImm32(JSValue::BooleanTag)));
-    m_jit.move(value.payloadGPR(), resultPayload.gpr());
-    m_jit.xor32(TrustedImm32(1), resultPayload.gpr());
-    booleanResult(resultPayload.gpr(), m_compileIndex);
 
-    // This code is moved from nonSpeculativeLogicalNot, currently unused!
-#if 0
     JSValueOperand arg1(this, node.child1());
-    GPRTemporary resultTag(this, arg1);
     GPRTemporary resultPayload(this, arg1, false);
     GPRReg arg1TagGPR = arg1.tagGPR();
     GPRReg arg1PayloadGPR = arg1.payloadGPR();
-    GPRReg resultTagGPR = resultTag.gpr();
     GPRReg resultPayloadGPR = resultPayload.gpr();
         
     arg1.use();
 
     JITCompiler::Jump fastCase = m_jit.branch32(JITCompiler::Equal, arg1TagGPR, TrustedImm32(JSValue::BooleanTag));
         
-    silentSpillAllRegisters(resultTagGPR, resultPayloadGPR);
+    silentSpillAllRegisters(resultPayloadGPR);
     callOperation(dfgConvertJSValueToBoolean, resultPayloadGPR, arg1TagGPR, arg1PayloadGPR);
-    silentFillAllRegisters(resultTagGPR, resultPayloadGPR);
+    silentFillAllRegisters(resultPayloadGPR);
     JITCompiler::Jump doNot = m_jit.jump();
         
     fastCase.link(&m_jit);
@@ -1907,9 +1896,7 @@ void SpeculativeJIT::compileLogicalNot(Node& node)
 
     doNot.link(&m_jit);
     m_jit.xor32(TrustedImm32(1), resultPayloadGPR);
-    m_jit.move(TrustedImm32(JSValue::BooleanTag), resultTagGPR);
-    jsValueResult(resultTagGPR, resultPayloadGPR, m_compileIndex, DataFormatJSBoolean, UseChildrenCalledExplicitly);
-#endif
+    booleanResult(resultPayloadGPR, m_compileIndex, UseChildrenCalledExplicitly);
 }
 
 void SpeculativeJIT::emitObjectOrOtherBranch(NodeIndex nodeIndex, BlockIndex taken, BlockIndex notTaken, void *vptr, bool needSpeculationCheck)
