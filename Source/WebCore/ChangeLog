@@ -1,3 +1,18 @@
+2011-11-30  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: totalOffsetLeft and totalOffsetTop should take scroll into account.
+        https://bugs.webkit.org/show_bug.cgi?id=73443
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/TextPrompt.js:
+        (WebInspector.TextPrompt.prototype._boxForAnchorAtStart):
+        (WebInspector.TextPrompt.SuggestBox):
+        * inspector/front-end/utilities.js:
+        (Element.prototype.totalOffsetLeft):
+        (Element.prototype.totalOffsetTop):
+        (Element.prototype.boxInWindow):
+
 2011-12-01  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: query backend for capabilities explicitly.

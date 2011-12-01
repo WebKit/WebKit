@@ -265,19 +265,33 @@ Element.prototype.createChild = function(elementName, className)
 
 DocumentFragment.prototype.createChild = Element.prototype.createChild;
 
+/**
+ * @return {number}
+ */
 Element.prototype.totalOffsetLeft = function()
 {
     var total = 0;
-    for (var element = this; element; element = element.offsetParent)
-        total += element.offsetLeft + (this !== element ? element.clientLeft : 0);
+    for (var element = this; element; element = element.offsetParent) {
+        total += element.offsetLeft 
+        if (this !== element)
+            total += element.clientLeft - element.scrollLeft;
+    }
+        
     return total;
 }
 
+/**
+ * @return {number}
+ */
 Element.prototype.totalOffsetTop = function()
 {
     var total = 0;
-    for (var element = this; element; element = element.offsetParent)
-        total += element.offsetTop + (this !== element ? element.clientTop : 0);
+    for (var element = this; element; element = element.offsetParent) {
+        total += element.offsetTop 
+        if (this !== element)
+            total += element.clientTop - element.scrollTop;
+    }
+        
     return total;
 }
 
@@ -297,6 +311,7 @@ function AnchorBox(x, y, width, height)
 }
 
 /**
+ * @param {DOMWindow} targetWindow
  * @return {AnchorBox}
  */
 Element.prototype.offsetRelativeToWindow = function(targetWindow)
@@ -318,33 +333,23 @@ Element.prototype.offsetRelativeToWindow = function(targetWindow)
 }
 
 /**
+ * @param {DOMWindow} targetWindow
  * @return {AnchorBox}
  */
-Element.prototype.boxInWindow = function(targetWindow, relativeParent)
+Element.prototype.boxInWindow = function(targetWindow)
 {
     targetWindow = targetWindow || this.ownerDocument.defaultView;
-    var bodyElement = this.ownerDocument.body;
-    relativeParent = relativeParent || bodyElement;
 
     var anchorBox = this.offsetRelativeToWindow(window);
     anchorBox.width = this.offsetWidth;
     anchorBox.height = this.offsetHeight;
 
-    var anchorElement = this;
-    while (anchorElement && anchorElement !== relativeParent && anchorElement !== bodyElement) {
-        if (anchorElement.scrollLeft)
-            anchorBox.x -= anchorElement.scrollLeft;
-        if (anchorElement.scrollTop)
-            anchorBox.y -= anchorElement.scrollTop;
-        anchorElement = anchorElement.parentElement;
-    }
-
-    var parentOffset = relativeParent.offsetRelativeToWindow(window);
-    anchorBox.x -= parentOffset.x;
-    anchorBox.y -= parentOffset.y;
     return anchorBox;
 }
 
+/**
+ * @param {string} text
+ */
 Element.prototype.setTextAndTitle = function(text)
 {
     this.textContent = text;

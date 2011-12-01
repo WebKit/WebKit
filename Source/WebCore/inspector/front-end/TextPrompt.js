@@ -374,7 +374,7 @@ WebInspector.TextPrompt.prototype = {
         var anchorElement = document.createElement("span");
         anchorElement.textContent = "\u200B";
         textRange.insertNode(anchorElement);
-        var box = anchorElement.boxInWindow(window, this._suggestBox._parentElement);
+        var box = anchorElement.boxInWindow(window);
         anchorElement.parentElement.removeChild(anchorElement);
         selection.removeAllRanges();
         selection.addRange(rangeCopy);
@@ -844,7 +844,6 @@ WebInspector.TextPromptWithHistory.prototype.__proto__ = WebInspector.TextPrompt
 WebInspector.TextPrompt.SuggestBox = function(textPrompt, inputElement, className)
 {
     this._textPrompt = textPrompt;
-    this._parentElement = inputElement.ownerDocument.body;
     this._inputElement = inputElement;
     this._selectedElement = null;
     this._boundOnScroll = this._onscrollresize.bind(this, true);
@@ -852,7 +851,8 @@ WebInspector.TextPrompt.SuggestBox = function(textPrompt, inputElement, classNam
     window.addEventListener("scroll", this._boundOnScroll, true);
     window.addEventListener("resize", this._boundOnResize, true);
 
-    this._element = this._parentElement.createChild("div", "suggest-box " + (className || ""));
+    var bodyElement = inputElement.ownerDocument.body;
+    this._element = bodyElement.createChild("div", "suggest-box " + (className || ""));
     this._element.addEventListener("mousedown", this._onboxmousedown.bind(this), true);
     this.containerElement = this._element.createChild("div", "container");
     this.contentElement = this.containerElement.createChild("div", "content");
