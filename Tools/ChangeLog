@@ -1,3 +1,33 @@
+2011-12-01  Kristóf Kosztyó  <kkristof@inf.u-szeged.hu>
+
+        tests_run0.txt gets clobbered when re-running failing tests
+        https://bugs.webkit.org/show_bug.cgi?id=63844
+
+        Reviewed by Dirk Pranke.
+
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (Manager.results_directory):
+        * Scripts/webkitpy/layout_tests/controllers/manager_worker_broker.py:
+        (AbstractWorker.__init__):
+        (_ManagerConnection.start_worker):
+        (_InlineManager.start_worker):
+        (_MultiProcessManager.start_worker):
+        (_WorkerConnection.__init__):
+        (_InlineWorkerConnection.__init__):
+        (_MultiProcessWorkerConnection.__init__):
+        * Scripts/webkitpy/layout_tests/controllers/manager_worker_broker_unittest.py:
+        (_TestWorker.__init__):
+        (_TestsMixin.test_cancel):
+        (_TestsMixin.test_done):
+        (_TestsMixin.test_unknown_message):
+        (InterfaceTest.test_managerconnection_is_abstract):
+        (InterfaceTest.test_workerconnection_is_abstract):
+        * Scripts/webkitpy/layout_tests/controllers/worker.py:
+        (Worker.__init__):
+        (Worker.safe_init):
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+        (MainTest.test_retries_directory):
+
 2011-12-01  Adam Roben  <aroben@apple.com>
 
         Buildbot fix

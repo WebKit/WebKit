@@ -625,6 +625,11 @@ class MainTest(unittest.TestCase):
                                           tests_included=True, filesystem=fs)
         self.assertEqual(user.opened_urls, ['/tmp/cwd/foo/results.html'])
 
+    def test_retries_directory(self):
+        fs = unit_test_filesystem()
+        res, out, err, user = logging_run(tests_included=True, filesystem=fs)
+        self.assertTrue('/tmp/layout-test-results/retries/tests_run0.txt' in fs.files)
+
     # These next tests test that we run the tests in ascending alphabetical
     # order per directory. HTTP tests are sharded separately from other tests,
     # so we have to test both.

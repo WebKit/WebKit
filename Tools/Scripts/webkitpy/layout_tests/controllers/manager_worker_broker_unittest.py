@@ -67,7 +67,7 @@ def make_broker(manager, worker_model, start_queue=None, stop_queue=None):
 
 
 class _TestWorker(manager_worker_broker.AbstractWorker):
-    def __init__(self, broker_connection, worker_number, options):
+    def __init__(self, broker_connection, worker_number, results_directory, options):
         self._broker_connection = broker_connection
         self._options = options
         self._worker_number = worker_number
@@ -172,7 +172,7 @@ class _TestsMixin(object):
 
     def test_cancel(self):
         self.make_broker()
-        worker = self._broker.start_worker(0)
+        worker = self._broker.start_worker(0, None)
         worker.cancel()
         self._broker.post_message('test', 1, 'hello, world')
         worker.join(0.5)
@@ -180,7 +180,7 @@ class _TestsMixin(object):
 
     def test_done(self):
         self.make_broker()
-        worker = self._broker.start_worker(0)
+        worker = self._broker.start_worker(0, None)
         self._broker.post_message('test', 1, 'hello, world')
         self._broker.post_message('stop')
         self._broker.run_message_loop()
@@ -192,7 +192,7 @@ class _TestsMixin(object):
 
     def test_unknown_message(self):
         self.make_broker()
-        worker = self._broker.start_worker(0)
+        worker = self._broker.start_worker(0, None)
         self._broker.post_message('unknown')
         self._broker.run_message_loop()
         worker.join(0.5)
@@ -234,13 +234,13 @@ class InterfaceTest(unittest.TestCase):
         # signature we expect.
         broker = make_broker(self, 'inline')
         obj = manager_worker_broker._ManagerConnection(broker._broker, None, self, None)
-        self.assertRaises(NotImplementedError, obj.start_worker, 0)
+        self.assertRaises(NotImplementedError, obj.start_worker, 0, None)
 
     def test_workerconnection_is_abstract(self):
         # Test that all the base class methods are abstract and have the
         # signature we expect.
         broker = make_broker(self, 'inline')
-        obj = manager_worker_broker._WorkerConnection(broker._broker, _TestWorker, 0, None)
+        obj = manager_worker_broker._WorkerConnection(broker._broker, _TestWorker, 0, None, None)
         self.assertRaises(NotImplementedError, obj.cancel)
         self.assertRaises(NotImplementedError, obj.is_alive)
         self.assertRaises(NotImplementedError, obj.join, None)

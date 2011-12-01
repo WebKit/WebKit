@@ -106,7 +106,7 @@ def get(port, options, client, worker_class):
 
 
 class AbstractWorker(message_broker.BrokerClient):
-    def __init__(self, worker_connection, worker_number, options):
+    def __init__(self, worker_connection, worker_number, results_directory, options):
         """The constructor should be used to do any simple initialization
         necessary, but should not do anything that creates data structures
         that cannot be Pickled or sent across processes (like opening
@@ -123,6 +123,7 @@ class AbstractWorker(message_broker.BrokerClient):
         self._options = options
         self._worker_number = worker_number
         self._name = 'worker/%d' % worker_number
+        self._results_directory = results_directory
 
     def run(self, port):
         """Callback for the worker to start executing. Typically does any
@@ -151,7 +152,7 @@ class _ManagerConnection(message_broker.BrokerConnection):
         self._options = options
         self._worker_class = worker_class
 
-    def start_worker(self, worker_number):
+    def start_worker(self, worker_number, results_directory):
         raise NotImplementedError
 
 
@@ -161,9 +162,9 @@ class _InlineManager(_ManagerConnection):
         self._port = port
         self._inline_worker = None
 
-    def start_worker(self, worker_number):
+    def start_worker(self, worker_number, results_directory):
         self._inline_worker = _InlineWorkerConnection(self._broker, self._port,
-            self._client, self._worker_class, worker_number)
+            self._client, self._worker_class, worker_number, results_directory)
         return self._inline_worker
 
     def run_message_loop(self, delay_secs=None):
@@ -182,16 +183,16 @@ class _MultiProcessManager(_ManagerConnection):
         _ManagerConnection.__init__(self, broker, options, client, worker_class)
         self._platform_name = port.real_name()
 
-    def start_worker(self, worker_number):
+    def start_worker(self, worker_number, results_directory):
         worker_connection = _MultiProcessWorkerConnection(self._broker, self._platform_name,
-            self._worker_class, worker_number, self._options)
+            self._worker_class, worker_number, results_directory, self._options)
         worker_connection.start()
         return worker_connection
 
 
 class _WorkerConnection(message_broker.BrokerConnection):
-    def __init__(self, broker, worker_class, worker_number, options):
-        self._client = worker_class(self, worker_number, options)
+    def __init__(self, broker, worker_class, worker_number, results_directory, options):
+        self._client = worker_class(self, worker_number, results_directory, options)
         self.name = self._client.name()
         message_broker.BrokerConnection.__init__(self, broker, self._client,
                                                  ANY_WORKER_TOPIC, MANAGER_TOPIC)
@@ -210,8 +211,8 @@ class _WorkerConnection(message_broker.BrokerConnection):
 
 
 class _InlineWorkerConnection(_WorkerConnection):
-    def __init__(self, broker, port, manager_client, worker_class, worker_number):
-        _WorkerConnection.__init__(self, broker, worker_class, worker_number, port.options)
+    def __init__(self, broker, port, manager_client, worker_class, worker_number, results_directory):
+        _WorkerConnection.__init__(self, broker, worker_class, worker_number, results_directory, port.options)
         self._alive = False
         self._port = port
         self._manager_client = manager_client
@@ -272,8 +273,8 @@ if multiprocessing:
 
 
 class _MultiProcessWorkerConnection(_WorkerConnection):
-    def __init__(self, broker, platform_name, worker_class, worker_number, options):
-        _WorkerConnection.__init__(self, broker, worker_class, worker_number, options)
+    def __init__(self, broker, platform_name, worker_class, worker_number, results_directory, options):
+        _WorkerConnection.__init__(self, broker, worker_class, worker_number, results_directory, options)
         self._proc = _Process(self, platform_name, options, self._client)
 
     def cancel(self):

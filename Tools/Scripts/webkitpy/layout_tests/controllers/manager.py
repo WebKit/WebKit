@@ -768,7 +768,7 @@ class Manager(object):
 
         self._printer.print_update('Starting %s ...' % grammar.pluralize('worker', num_workers))
         for worker_number in xrange(num_workers):
-            worker_connection = manager_connection.start_worker(worker_number)
+            worker_connection = manager_connection.start_worker(worker_number, self.results_directory())
             worker_state = _WorkerState(worker_number, worker_connection)
             self._worker_states[worker_connection.name] = worker_state
 
@@ -825,6 +825,13 @@ class Manager(object):
 
         # FIXME: should this be a class instead of a tuple?
         return (interrupted, keyboard_interrupted, thread_timings, self._group_stats, self._all_results)
+
+    def results_directory(self):
+        if not self._retrying:
+            return self._results_directory
+        else:
+            self._port._filesystem.maybe_make_directory(self._port._filesystem.join(self._results_directory, 'retries'))
+            return self._port._filesystem.join(self._results_directory, 'retries')
 
     def update(self):
         self.update_summary(self._current_result_summary)
