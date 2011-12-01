@@ -1,5 +1,17 @@
 2011-12-01  Martin Robinson  <mrobinson@igalia.com>
 
+        [GTK] Read fonts from the jhbuild root
+        https://bugs.webkit.org/show_bug.cgi?id=73487
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Read fonts from the jhbuild root instead of from the system. This will ensure
+        that all testers use the same fonts instead of leaving this up to luck.
+
+        * wtf/gobject/GlibUtilities.h: Add Assertions.h which was required for the WebKit2TestRunner.
+
+2011-12-01  Martin Robinson  <mrobinson@igalia.com>
+
         [GTK] Add a helper function to find the current executable's path
         https://bugs.webkit.org/show_bug.cgi?id=73473
 

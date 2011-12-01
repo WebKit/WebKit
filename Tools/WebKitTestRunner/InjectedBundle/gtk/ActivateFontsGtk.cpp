@@ -33,6 +33,7 @@
 
 #include <fontconfig/fontconfig.h>
 #include <gtk/gtk.h>
+#include <wtf/gobject/GlibUtilities.h>
 #include <wtf/gobject/GOwnPtr.h>
 
 namespace WTR {
@@ -71,62 +72,24 @@ void inititializeFontConfigSetting()
     if (!FcConfigParseAndLoad(config, reinterpret_cast<FcChar8*>(fontConfigFilename.get()), true))
         g_error("Couldn't load font configuration file from: %s", fontConfigFilename.get());
 
-    static const char *const fontDirectories[] = {
-        "/usr/share/fonts/truetype/liberation",
-        "/usr/share/fonts/truetype/ttf-liberation",
-        "/usr/share/fonts/liberation",
-        "/usr/share/fonts/truetype/ttf-dejavu",
-        "/usr/share/fonts/dejavu",
-        "/usr/share/fonts/opentype/stix",
-        "/usr/share/fonts/stix"
-    };
+    CString fontsPath = g_getenv("WEBKIT_TEST_FONTS");
+    if (fontsPath.isNull()) {
+        GOwnPtr<char> parentPath(g_path_get_dirname(getCurrentExecutablePath().data()));
+        GOwnPtr<char> alternatePath(g_build_filename(parentPath.get(), "..", "..",
+                                                     "Dependencies", "Root", "webkitgtk-test-fonts", NULL));
+        fontsPath = alternatePath.get();
+        if (!g_file_test(alternatePath.get(), static_cast<GFileTest>(G_FILE_TEST_EXISTS | G_FILE_TEST_IS_DIR)))
+            g_error("WEBKIT_TEST_FONTS environment variable not set and %s does not exist", alternatePath.get());
+    }
 
-    static const char *const fontPaths[] = {
-        "LiberationMono-BoldItalic.ttf",
-        "LiberationMono-Bold.ttf",
-        "LiberationMono-Italic.ttf",
-        "LiberationMono-Regular.ttf",
-        "LiberationSans-BoldItalic.ttf",
-        "LiberationSans-Bold.ttf",
-        "LiberationSans-Italic.ttf",
-        "LiberationSans-Regular.ttf",
-        "LiberationSerif-BoldItalic.ttf",
-        "LiberationSerif-Bold.ttf",
-        "LiberationSerif-Italic.ttf",
-        "LiberationSerif-Regular.ttf",
-        "DejaVuSans.ttf",
-        "DejaVuSerif.ttf",
-
-        // MathML tests require the STIX fonts.
-        "STIXGeneral.otf",
-        "STIXGeneralBolIta.otf",
-        "STIXGeneralBol.otf",
-        "STIXGeneralItalic.otf"
-    };
-
-    // TODO: Some tests use Lucida. We should load these as well, once it becomes
-    // clear how to install these fonts easily on Fedora.
-    for (size_t font = 0; font < G_N_ELEMENTS(fontPaths); font++) {
-        bool found = false;
-        for (size_t path = 0; path < G_N_ELEMENTS(fontDirectories); path++) {
-            GOwnPtr<gchar> fullPath(g_build_filename(fontDirectories[path], fontPaths[font], NULL));
-            if (g_file_test(fullPath.get(), G_FILE_TEST_EXISTS)) {
-                found = true;
-                if (!FcConfigAppFontAddFile(config, reinterpret_cast<const FcChar8*>(fullPath.get())))
-                    g_error("Could not load font at %s!", fullPath.get());
-                else
-                    break;
-            }
-        }
-
-        if (!found) {
-            GOwnPtr<gchar> directoriesDescription;
-            for (size_t path = 0; path < G_N_ELEMENTS(fontDirectories); path++)
-                directoriesDescription.set(g_strjoin(":", directoriesDescription.release(), fontDirectories[path], NULL));
-            g_error("Could not find font %s in %s. Either install this font or file a bug "
-                    "at http://bugs.webkit.org if it is installed in another location.",
-                    fontPaths[font], directoriesDescription.get());
-        }
+    GOwnPtr<GError> error;
+    GOwnPtr<GDir> fontsDirectory(g_dir_open(fontsPath.data(), 0, &error.outPtr()));
+    while (const char* directoryEntry = g_dir_read_name(fontsDirectory.get())) {
+        if (!g_str_has_suffix(directoryEntry, ".ttf") && !g_str_has_suffix(directoryEntry, ".otf"))
+            continue;
+        GOwnPtr<gchar> fontPath(g_build_filename(fontsPath.data(), directoryEntry, NULL));
+        if (!FcConfigAppFontAddFile(config, reinterpret_cast<const FcChar8*>(fontPath.get())))
+            g_error("Could not load font at %s!", fontPath.get());
     }
 
     // Ahem is used by many layout tests.

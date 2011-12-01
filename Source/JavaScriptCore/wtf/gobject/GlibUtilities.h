@@ -20,6 +20,7 @@
 #ifndef GlibUtilities_h
 #define GlibUtilities_h
 
+#include "Assertions.h"
 #include "CString.h"
 
 CString getCurrentExecutablePath();

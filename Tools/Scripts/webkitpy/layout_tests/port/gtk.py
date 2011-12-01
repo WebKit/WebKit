@@ -89,6 +89,7 @@ class GtkPort(WebKitPort):
         environment['TEST_RUNNER_INJECTED_BUNDLE_FILENAME'] = self._build_path('Libraries', 'libTestRunnerInjectedBundle.la')
         environment['TEST_RUNNER_TEST_PLUGIN_PATH'] = self._build_path('TestNetscapePlugin', '.libs')
         environment['WEBKIT_INSPECTOR_PATH'] = self._build_path('Programs', 'resources', 'inspector')
+        environment['WEBKIT_TEST_FONTS'] = self._build_path('..', 'Dependencies', 'Root', 'webkitgtk-test-fonts')
         return environment
 
     def _generate_all_test_configurations(self):

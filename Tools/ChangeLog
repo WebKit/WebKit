@@ -1,3 +1,21 @@
+2011-12-01  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Read fonts from the jhbuild root
+        https://bugs.webkit.org/show_bug.cgi?id=73487
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Read fonts from the jhbuild root instead of from the system. This will ensure
+        that all testers use the same fonts instead of leaving this up to luck.
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (initializeFonts): Load fonts from jhbuild root.
+        * Scripts/webkitpy/layout_tests/port/gtk.py:
+        (GtkPort.setup_environ_for_server): Pass an environment variable containing
+        the path to the jhbuild root.
+        * WebKitTestRunner/InjectedBundle/gtk/ActivateFontsGtk.cpp:
+        (WTR::inititializeFontConfigSetting): Load fonts from the jhbuild root.
+
 2011-12-01  Adam Roben  <aroben@apple.com>
 
         Teach check-webkit-style how to check the syntax of JSON files
