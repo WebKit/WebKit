@@ -26,47 +26,44 @@
 #include "config.h"
 #include "IDBPendingTransactionMonitor.h"
 #include "IDBTransactionBackendInterface.h"
+#include <wtf/ThreadSpecific.h>
+
+using WTF::ThreadSpecific;
 
 #if ENABLE(INDEXED_DATABASE)
 
 namespace WebCore {
 
-Vector<IDBTransactionBackendInterface*>* IDBPendingTransactionMonitor::m_transactions = 0;
+ThreadSpecific<Vector<IDBTransactionBackendInterface*> >& transactions()
+{
+    // FIXME: Move the Vector to ScriptExecutionContext to avoid dealing with
+    // thread-local storage.
+    AtomicallyInitializedStatic(ThreadSpecific<Vector<IDBTransactionBackendInterface*> >*, transactions = new ThreadSpecific<Vector<IDBTransactionBackendInterface*> >);
+    return *transactions;
+}
 
 void IDBPendingTransactionMonitor::addPendingTransaction(IDBTransactionBackendInterface* transaction)
 {
-    if (!m_transactions)
-        m_transactions = new Vector<IDBTransactionBackendInterface*>();
-    m_transactions->append(transaction);
+    transactions()->append(transaction);
 }
 
 void IDBPendingTransactionMonitor::removePendingTransaction(IDBTransactionBackendInterface* transaction)
 {
-    if (!m_transactions)
-        return;
-
-    size_t pos = m_transactions->find(transaction);
+    ThreadSpecific<Vector<IDBTransactionBackendInterface*> >& transactionList = transactions();
+    size_t pos = transactionList->find(transaction);
     if (pos == notFound)
         return;
 
-    m_transactions->remove(pos);
-
-    if (!m_transactions->size()) {
-        delete m_transactions;
-        m_transactions = 0;
-    }
+    transactionList->remove(pos);
 }
 
 void IDBPendingTransactionMonitor::abortPendingTransactions()
 {
-    if (!m_transactions)
-        return;
-
-    for (size_t i = 0; i < m_transactions->size(); ++i)
-        m_transactions->at(i)->abort();
-
-    delete m_transactions;
-    m_transactions = 0;
+    ThreadSpecific<Vector<IDBTransactionBackendInterface*> >& transactionList = transactions();
+    for (size_t i = 0; i < transactions()->size(); ++i)
+        transactionList->at(i)->abort();
+    // FIXME: Exercise this call to clear() in a layout test.
+    transactionList->clear();
 }
 
 };

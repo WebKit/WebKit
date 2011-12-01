@@ -1,3 +1,31 @@
+2011-11-30  David Grogan  <dgrogan@chromium.org>
+
+        Move data in IDBPendingTransactionMonitor from static to
+        ThreadSpecific.
+        https://bugs.webkit.org/show_bug.cgi?id=73389
+
+        IDBPendingTransactionMonitor previously stored transactions in
+        a static member variable so that they could be aborted if they were
+        had no work queued up when leaving script execution.  That was fine when
+        IndexedDB could only be used on the main thread, but is insufficient
+        for IndexedDB on workers.  In addition to not being thread-safe, this
+        caused pending transactions that were created from a worker thread to
+        abort when the main thread left script execution.
+
+        Reviewed by David Levin.
+
+        No new tests - IndexedDB worker tests forthcoming.
+
+        * storage/IDBPendingTransactionMonitor.cpp:
+        (WebCore::transactions):  Create the TLS.  The other methods used to
+        manage the container's memory lifetime but now we just leak it until
+        the thread shuts down in the interest of simpler code.
+        (WebCore::IDBPendingTransactionMonitor::addPendingTransaction):
+        (WebCore::IDBPendingTransactionMonitor::removePendingTransaction):
+        (WebCore::IDBPendingTransactionMonitor::abortPendingTransactions):
+
+        * storage/IDBPendingTransactionMonitor.h:
+
 2011-11-30  Leo Yang  <leo.yang@torchmobile.com.cn>
 
         Upstream platform/network/blackberry/NetworkStateNotifierBlackBerry.cpp
