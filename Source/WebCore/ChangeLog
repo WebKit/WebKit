@@ -1,3 +1,9 @@
+2011-11-30  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Unreviewed. Fix build error when NOTIFICATIONS feature is enabled.
+
+        * CMakeLists.txt:
+
 2011-11-30  Noel Gordon  <noel.gordon@gmail.com>
 
         Remove ImageFrame::setSize() style nits

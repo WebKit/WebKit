@@ -1533,6 +1533,7 @@ ENDIF ()
 IF (ENABLE_NOTIFICATIONS)
     LIST(APPEND WebCore_SOURCES
         notifications/NotificationCenter.cpp
+        notifications/NotificationController.cpp
         notifications/Notification.cpp
     )
 
