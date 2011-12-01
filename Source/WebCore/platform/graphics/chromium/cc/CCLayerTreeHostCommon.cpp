@@ -106,7 +106,7 @@ bool layerShouldBeSkipped(LayerType* layer)
 // Recursively walks the layer tree starting at the given node and computes all the
 // necessary transformations, clipRects, render surfaces, etc.
 template<typename LayerType, typename RenderSurfaceType, typename LayerSorter>
-static void calculateDrawTransformsAndVisibilityInternal(LayerType* layer, LayerType* rootLayer, const TransformationMatrix& parentMatrix, const TransformationMatrix& fullHierarchyMatrix, Vector<RefPtr<LayerType> >& renderSurfaceLayerList, Vector<RefPtr<LayerType> >& layerList, LayerSorter* layerSorter, int maxTextureSize)
+static bool calculateDrawTransformsAndVisibilityInternal(LayerType* layer, LayerType* rootLayer, const TransformationMatrix& parentMatrix, const TransformationMatrix& fullHierarchyMatrix, Vector<RefPtr<LayerType> >& renderSurfaceLayerList, Vector<RefPtr<LayerType> >& layerList, LayerSorter* layerSorter, int maxTextureSize)
 {
     typedef Vector<RefPtr<LayerType> > LayerList;
 
@@ -195,7 +195,7 @@ static void calculateDrawTransformsAndVisibilityInternal(LayerType* layer, Layer
     // via a render surface or explicitly if the parent preserves 3D), so the
     // entire subtree can be skipped if this layer is fully transparent.
     if (!drawOpacity)
-        return;
+        return false;
 
     IntSize bounds = layer->bounds();
     FloatPoint anchorPoint = layer->anchorPoint();
@@ -363,18 +363,20 @@ static void calculateDrawTransformsAndVisibilityInternal(LayerType* layer, Layer
 
     for (size_t i = 0; i < layer->children().size(); ++i) {
         LayerType* child = layer->children()[i].get();
-        calculateDrawTransformsAndVisibilityInternal<LayerType, RenderSurfaceType, LayerSorter>(child, rootLayer, sublayerMatrix, nextHierarchyMatrix, renderSurfaceLayerList, descendants, layerSorter, maxTextureSize);
+        bool drawsContent = calculateDrawTransformsAndVisibilityInternal<LayerType, RenderSurfaceType, LayerSorter>(child, rootLayer, sublayerMatrix, nextHierarchyMatrix, renderSurfaceLayerList, descendants, layerSorter, maxTextureSize);
 
-        if (child->renderSurface()) {
-            RenderSurfaceType* childRenderSurface = child->renderSurface();
-            IntRect drawableContentRect = layer->drawableContentRect();
-            drawableContentRect.unite(enclosingIntRect(childRenderSurface->drawableContentRect()));
-            layer->setDrawableContentRect(drawableContentRect);
-            descendants.append(child);
-        } else {
-            IntRect drawableContentRect = layer->drawableContentRect();
-            drawableContentRect.unite(child->drawableContentRect());
-            layer->setDrawableContentRect(drawableContentRect);
+        if (drawsContent) {
+            if (child->renderSurface()) {
+                RenderSurfaceType* childRenderSurface = child->renderSurface();
+                IntRect drawableContentRect = layer->drawableContentRect();
+                drawableContentRect.unite(enclosingIntRect(childRenderSurface->drawableContentRect()));
+                layer->setDrawableContentRect(drawableContentRect);
+                descendants.append(child);
+            } else {
+                IntRect drawableContentRect = layer->drawableContentRect();
+                drawableContentRect.unite(child->drawableContentRect());
+                layer->setDrawableContentRect(drawableContentRect);
+            }
         }
     }
 
@@ -439,19 +441,21 @@ static void calculateDrawTransformsAndVisibilityInternal(LayerType* layer, Layer
             ASSERT(renderSurfaceLayerList.last() == layer);
             renderSurfaceLayerList.removeLast();
             layer->clearRenderSurface();
-            return;
+            return false;
         }
     }
 
     // If neither this layer nor any of its children were added, early out.
     if (sortingStartIndex == descendants.size())
-        return;
+        return false;
 
     // If preserves-3d then sort all the descendants in 3D so that they can be
     // drawn from back to front. If the preserves-3d property is also set on the parent then
     // skip the sorting as the parent will sort all the descendants anyway.
     if (descendants.size() && layer->preserves3D() && (!layer->parent() || !layer->parent()->preserves3D()))
         sortLayers(&descendants.at(sortingStartIndex), descendants.end(), layerSorter);
+
+    return true;
 }
 
 // FIXME: Instead of using the following function to set visibility rects on a second
