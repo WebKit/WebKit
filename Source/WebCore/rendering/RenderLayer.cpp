@@ -3951,8 +3951,10 @@ void RenderLayer::updateHoverActiveState(const HitTestRequest& request, HitTestR
     if (activeNode && !request.active()) {
         // We are clearing the :active chain because the mouse has been released.
         for (RenderObject* curr = activeNode->renderer(); curr; curr = curr->parent()) {
-            if (curr->node() && !curr->isText())
+            if (curr->node() && !curr->isText()) {
+                curr->node()->setActive(false);
                 curr->node()->clearInActiveChain();
+            }
         }
         doc->setActiveNode(0);
     } else {
@@ -3968,6 +3970,9 @@ void RenderLayer::updateHoverActiveState(const HitTestRequest& request, HitTestR
             doc->setActiveNode(newActiveNode);
         }
     }
+    // If the mouse has just been pressed, set :active on the chain. Those (and only those)
+    // nodes should remain :active until the mouse is released.
+    bool allowActiveChanges = !activeNode && doc->activeNode();
 
     // If the mouse is down and if this is a mouse move event, we want to restrict changes in 
     // :hover/:active to only apply to elements that are in the :active chain that we froze
@@ -4010,13 +4015,13 @@ void RenderLayer::updateHoverActiveState(const HitTestRequest& request, HitTestR
 
     size_t removeCount = nodesToRemoveFromChain.size();
     for (size_t i = 0; i < removeCount; ++i) {
-        nodesToRemoveFromChain[i]->setActive(false);
         nodesToRemoveFromChain[i]->setHovered(false);
     }
 
     size_t addCount = nodesToAddToChain.size();
     for (size_t i = 0; i < addCount; ++i) {
-        nodesToAddToChain[i]->setActive(request.active());
+        if (allowActiveChanges)
+            nodesToAddToChain[i]->setActive(true);
         nodesToAddToChain[i]->setHovered(true);
     }
 }

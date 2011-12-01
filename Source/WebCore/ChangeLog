@@ -1,3 +1,19 @@
+2011-11-30  Jeremy Apthorp  <jeremya@google.com>
+
+        When the mouse is dragged out of an :active element, it should lose :hover.
+        https://bugs.webkit.org/show_bug.cgi?id=57206
+
+        Reviewed by Ryosuke Niwa.
+
+        Test: fast/css/hover-active-drag.html
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleMouseMoveEvent): Don't mark mouse-drag hit tests read-only, since they no longer are.
+        (WebCore::EventHandler::dragSourceEndedAt): Send a hit test request when the mouse goes up after a drag, so
+        RenderLayer has a chance to update the hover/active status.
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateHoverActiveState): Only allow the :active state to change on mouse down or mouse up.
+
 2011-11-30  Hans Muller  <hmuller@adobe.com>
 
         XHR 'progress' event code assumes wrongly that expectedLength >= 0

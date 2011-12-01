@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<style>
+  div { background: rgb(0, 0, 0); }
+  div:hover { background: rgb(255, 0, 0); }
+  div:hover:active { background: rgb(255, 255, 0); }
+  div:active { background: rgb(0, 255, 0); }
+  div {
+    width: 100px;
+    height: 100px;
+    border: 2px solid rgb(0, 0, 255);
+  }
+</style>
+
+<body>
+  <div id="box"></div>
+  <div id="box2"></div>
+  <pre id="description"></div>
+  <pre id="console"></pre>
+</body>
+
+<script src="../js/resources/js-test-pre.js"></script>
+<script>
+  function backgroundOf(element) {
+    return getComputedStyle(element, null).getPropertyValue("background-color")
+  }
+  function shouldHaveBackground(element, bg) {
+    background = getComputedStyle(element, null).getPropertyValue("background-color")
+    shouldBeEqualToString('background', bg)
+  }
+  if (window.layoutTestController) {
+    description("Dragging out of an element should cause it to lose :hover")
+    var box = document.getElementById('box')
+    var box2 = document.getElementById('box2')
+    layoutTestController.dumpAsText();
+
+    eventSender.dragMode = false;
+    eventSender.mouseMoveTo(50, 50)
+    shouldHaveBackground(box, 'rgb(255, 0, 0)')
+    shouldHaveBackground(box2, 'rgb(0, 0, 0)')
+
+    eventSender.mouseDown()
+    shouldHaveBackground(box, 'rgb(255, 255, 0)')
+    shouldHaveBackground(box2, 'rgb(0, 0, 0)')
+
+    eventSender.mouseMoveTo(50, 150)
+    shouldHaveBackground(box, 'rgb(0, 255, 0)')
+    shouldHaveBackground(box2, 'rgb(0, 0, 0)')
+
+    eventSender.mouseMoveTo(400, 50)
+    shouldHaveBackground(box, 'rgb(0, 255, 0)')
+    shouldHaveBackground(box2, 'rgb(0, 0, 0)')
+
+    eventSender.mouseUp()
+    shouldHaveBackground(box, 'rgb(0, 0, 0)')
+    shouldHaveBackground(box2, 'rgb(0, 0, 0)')
+  }
+</script>
