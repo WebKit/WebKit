@@ -1,3 +1,14 @@
+2011-12-01  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: front-end should open with elements panel selected upon Inspect Element action.
+        https://bugs.webkit.org/show_bug.cgi?id=73539
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/front-end/inspector.js:
+        (WebInspector.doLoadedDone.showInitialPanel):
+        (WebInspector.inspect):
+
 2011-11-30  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: totalOffsetLeft and totalOffsetTop should take scroll into account.

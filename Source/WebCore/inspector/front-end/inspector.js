@@ -404,11 +404,16 @@ WebInspector._doLoadedDoneWithCapabilities = function()
 
     this.console.enableAgent();
 
-    InspectorAgent.enable();
+    function showInitialPanel()
+    {
+        if (!WebInspector.inspectorView.currentPanel())
+            WebInspector.showPanel(WebInspector.settings.lastActivePanel.get());
+    }
+
+    InspectorAgent.enable(showInitialPanel);
     DatabaseAgent.enable();
     DOMStorageAgent.enable();
 
-    WebInspector.showPanel(WebInspector.settings.lastActivePanel.get());
 
     WebInspector.CSSCompletions.requestCSSNameCompletions();
     WebInspector.WorkerManager.loadCompleted();
@@ -778,6 +783,7 @@ WebInspector.inspect = function(payload, hints)
     var object = WebInspector.RemoteObject.fromPayload(payload);
     if (object.subtype === "node") {
         // Request node from backend and focus it.
+        WebInspector.inspectorView.setCurrentPanel(WebInspector.panels.elements);
         object.pushNodeToFrontend(WebInspector.updateFocusedNode.bind(WebInspector), object.release.bind(object));
         return;
     }
