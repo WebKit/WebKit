@@ -1,3 +1,18 @@
+2011-12-01  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Add a helper function to find the current executable's path
+        https://bugs.webkit.org/show_bug.cgi?id=73473
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Update MiniBrowser to not pass the binary directory as an environment variable.
+        This means that you can move the binaries around without it breaking.
+
+        * MiniBrowser/gtk/main.c:
+        (main): No longer set the environment variable.
+        * WebKitTestRunner/GNUmakefile.am: No longer add the directory path define.
+        * WebKitTestRunner/gtk/main.cpp:  Ditto.
+
 2011-12-01  Gustavo Noronha Silva  <gns@gnome.org>
 
         [GTK] Add freetype to our jhbuild setup

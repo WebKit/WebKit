@@ -1,3 +1,16 @@
+2011-12-01  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Add a helper function to find the current executable's path
+        https://bugs.webkit.org/show_bug.cgi?id=73473
+
+        Reviewed by Gustavo Noronha Silva.
+
+        No new tests. This should not change behavior.
+
+        * platform/gtk/FileSystemGtk.cpp:
+        (WebCore::applicationDirectoryPath): Now use the new WTF function to get the
+        current executable's path.
+
 2011-12-01  Andreas Kling  <kling@webkit.org>
 
         StyledElement: Clean up inline style accessors.

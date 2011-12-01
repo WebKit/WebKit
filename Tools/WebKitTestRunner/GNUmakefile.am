@@ -33,7 +33,6 @@ Programs_WebKitTestRunner_CPPFLAGS = \
 	-I$(srcdir)/Tools/WebKitTestRunner \
 	-I$(srcdir)/Source/WebCore/platform/gtk \
 	-I$(top_builddir)/DerivedSources/WebKit2/include \
-	-DWEBKIT_EXEC_PATH=\"${shell pwd}/$(top_builddir)/Programs/\" \
 	$(global_cppflags) \
 	$(javascriptcore_cppflags) \
 	$(GLOBALDEPS_CFLAGS) \

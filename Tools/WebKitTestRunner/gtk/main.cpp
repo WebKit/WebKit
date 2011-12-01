@@ -32,7 +32,6 @@ int main(int argc, char** argv)
 {
     gtk_init(&argc, &argv);
     // Prefer the not installed web and plugin processes.
-    g_setenv("WEBKIT_EXEC_PATH", WEBKIT_EXEC_PATH, FALSE);
     WTR::TestController controller(argc, const_cast<const char**>(argv));
     return 0;
 }
