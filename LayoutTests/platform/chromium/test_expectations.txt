@@ -3796,4 +3796,5 @@ BUGWK73494 : svg/text/non-bmp-positioning-lists.svg = IMAGE+TEXT IMAGE
 BUGWK73514 WIN DEBUG : platform/chromium/compositing/lost-compositor-context-permanently.html = TIMEOUT
 BUGWK73517 WIN DEBUG : inspector/console/console-command-clear.html = CRASH
 BUGWK73517 WIN DEBUG : inspector/debugger/script-formatter-breakpoints.html = CRASH
+BUGWK73517 WIN DEBUG : inspector/debugger/debugger-set-breakpoint-regex.html = CRASH
 BUGWK73518 DEBUG : fast/forms/select-popup-pagekeys.html = CRASH
