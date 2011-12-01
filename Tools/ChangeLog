@@ -1,3 +1,11 @@
+2011-12-01  Adam Roben  <aroben@apple.com>
+
+        Buildbot fix
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg: Moved all of the initialization of
+        BuildmasterConfig not performed by loadBuilderConfig up to the top of the file. This makes
+        it possible for build steps to reference things like the buildbotURL property of the config.
+
 2011-11-30  Adam Roben  <aroben@apple.com>
 
         Use curl for downloading builds to test slaves
