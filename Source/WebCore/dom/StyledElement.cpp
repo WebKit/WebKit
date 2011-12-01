@@ -427,13 +427,19 @@ unsigned MappedAttributeHash::hash(const MappedAttributeKey& key)
     return hasher.hash();
 }
 
-void StyledElement::copyNonAttributeProperties(const Element *sourceElement)
+void StyledElement::copyNonAttributeProperties(const Element* sourceElement)
 {
+    ASSERT(sourceElement);
+    ASSERT(sourceElement->isStyledElement());
+
     const StyledElement* source = static_cast<const StyledElement*>(sourceElement);
-    if (!source->m_inlineStyleDecl)
+    if (!source->inlineStyleDecl())
         return;
 
-    getInlineStyleDecl()->copyPropertiesAndStrictnessFrom(*source->m_inlineStyleDecl);
+    CSSInlineStyleDeclaration* inlineStyle = getInlineStyleDecl();
+    inlineStyle->copyPropertiesFrom(*source->inlineStyleDecl());
+    inlineStyle->setStrictParsing(source->inlineStyleDecl()->useStrictParsing());
+
     setIsStyleAttributeValid(source->isStyleAttributeValid());
     setIsSynchronizingStyleAttribute(source->isSynchronizingStyleAttribute());
     

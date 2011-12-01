@@ -77,7 +77,7 @@ public:
     }
 
     // Used by StyledElement::copyNonAttributeProperties().
-    void copyPropertiesAndStrictnessFrom(const CSSMutableStyleDeclaration&);
+    void copyPropertiesFrom(const CSSMutableStyleDeclaration&);
 
     typedef CSSMutableStyleDeclarationConstIterator const_iterator;
 

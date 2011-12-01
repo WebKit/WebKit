@@ -1,3 +1,28 @@
+2011-11-30  Andreas Kling  <kling@webkit.org>
+
+        StyledElement: Tidy up copyNonAttributeProperties().
+        <http://webkit.org/b/73501>
+
+        Reviewed by Antti Koivisto.
+
+        * css/CSSStyleDeclaration.h:
+
+            Made CSSStyleDeclaration non-copyable.
+
+        * css/CSSMutableStyleDeclaration.h:
+        * css/CSSMutableStyleDeclaration.cpp:
+        (WebCore::CSSMutableStyleDeclaration::copyPropertiesFrom):
+
+            copyPropertiesAndStrictnessFrom() redone as copyPropertiesFrom()
+            since we can copy the strictness bit using existing accessors.
+
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::copyNonAttributeProperties):
+
+            Use copyPropertiesFrom() and copy the strictness bit to the new
+            inline style using the dedicated accessors. Also added some
+            assertions for good measure.
+
 2011-12-01  Kentaro Hara  <haraken@chromium.org>
 
         run-bindings-tests is failing on Gtk/Qt/SnowLeopard/Lion bots

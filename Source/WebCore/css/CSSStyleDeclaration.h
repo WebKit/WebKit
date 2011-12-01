@@ -34,6 +34,7 @@ class CSSValue;
 typedef int ExceptionCode;
 
 class CSSStyleDeclaration : public RefCounted<CSSStyleDeclaration> {
+    WTF_MAKE_NONCOPYABLE(CSSStyleDeclaration);
 public:
     virtual ~CSSStyleDeclaration() { }
 
