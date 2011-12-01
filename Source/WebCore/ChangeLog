@@ -1,3 +1,27 @@
+2011-11-30  Takashi Toyoshima  <toyoshim@chromium.org>
+
+        Get rid of AllowCrossThreadAccess throughout ThreadableWebSocketChannelClientWrapper.
+        https://bugs.webkit.org/show_bug.cgi?id=73336
+
+        Reviewed by David Levin.
+
+        No new tests because it contains no functional change.
+
+        * websockets/ThreadableWebSocketChannelClientWrapper.cpp:
+        (WebCore::ThreadableWebSocketChannelClientWrapper::didConnect):
+        (WebCore::ThreadableWebSocketChannelClientWrapper::didReceiveMessage):
+        (WebCore::ThreadableWebSocketChannelClientWrapper::didReceiveBinaryData):
+        (WebCore::ThreadableWebSocketChannelClientWrapper::didUpdateBufferedAmount):
+        (WebCore::ThreadableWebSocketChannelClientWrapper::didStartClosingHandshake):
+        (WebCore::ThreadableWebSocketChannelClientWrapper::didClose):
+        (WebCore::ThreadableWebSocketChannelClientWrapper::didConnectCallback):
+        (WebCore::ThreadableWebSocketChannelClientWrapper::didReceiveMessageCallback):
+        (WebCore::ThreadableWebSocketChannelClientWrapper::didReceiveBinaryDataCallback):
+        (WebCore::ThreadableWebSocketChannelClientWrapper::didUpdateBufferedAmountCallback):
+        (WebCore::ThreadableWebSocketChannelClientWrapper::didStartClosingHandshakeCallback):
+        (WebCore::ThreadableWebSocketChannelClientWrapper::didCloseCallback):
+        * websockets/ThreadableWebSocketChannelClientWrapper.h:
+
 2011-11-30  Leo Yang  <leo.yang@torchmobile.com.cn>
 
         [BlackBerry] Add 2 cpp files to the BlackBerry build system
