@@ -1,3 +1,20 @@
+2011-12-01  Andreas Kling  <kling@webkit.org>
+
+        JSC/CSSOM: root(CSSElementStyleDeclaration) should never need to follow the element.
+        <http://webkit.org/b/73561>
+
+        Reviewed by Antti Koivisto.
+
+        A CSSElementStyleDeclaration should always either have a null element pointer,
+        or return a valid parentStyleSheet(), since having an element pointer implies
+        having an associated element sheet.
+
+        In light of this, replace the opaque-root-from-element path for style declarations
+        by an assertion.
+
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::root):
+
 2011-12-01  Patrick Gansterer  <paroga@webkit.org>
 
         [CMake] Make the feature defines for DOM names explicit

@@ -207,10 +207,8 @@ enum ParameterMissingPolicy {
             return root(parentRule);
         if (CSSStyleSheet* styleSheet = style->parentStyleSheet())
             return root(styleSheet);
-        if (style->isElementStyleDeclaration()) {
-            if (StyledElement* element = static_cast<CSSElementStyleDeclaration*>(style)->element())
-                return root(element);
-        }
+        // A style declaration with an associated element should've returned a style sheet above.
+        ASSERT(!style->isElementStyleDeclaration() || !static_cast<CSSElementStyleDeclaration*>(style)->element());
         return style;
     }
 
