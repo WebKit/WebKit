@@ -1,3 +1,19 @@
+2011-12-01  Kentaro Hara  <haraken@chromium.org>
+
+        Unreviewed, rolling out r101669.
+        http://trac.webkit.org/changeset/101669
+        https://bugs.webkit.org/show_bug.cgi?id=73394
+
+        Win build and Mac build are failing
+
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.gyp/scripts/action_derivedsourcesallinone.py:
+        (main):
+        * WebCore.gypi:
+        * bindings/scripts/generate-bindings.pl:
+        * page/DOMWindow.idl:
+        * webaudio/DOMWindowWebAudio.idl: Removed.
+
 2011-12-01  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: further align front-end configurations: get rid of saveAsAvailable preference, inline drag glass pane.
