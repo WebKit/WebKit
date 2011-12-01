@@ -446,6 +446,42 @@
       ]
     },
     {
+      'target_name': 'generate_supplemental_dependency',
+      'type': 'none',
+      'actions': [
+         {
+          'action_name': 'generateSupplementalDependency',
+          'variables': {
+            # Write sources into a file, so that the action command line won't
+            # exceed OS limits.
+            'idl_files_list': '<|(idl_files_list.tmp <@(bindings_idl_files))',
+          },
+          'inputs': [
+            '../bindings/scripts/resolve-supplemental.pl',
+            '../bindings/scripts/IDLParser.pm',
+            '<(idl_files_list)',
+            '<!@(cat <(idl_files_list))',
+          ],
+          'outputs': [
+            '<(SHARED_INTERMEDIATE_DIR)/supplemental_dependency.tmp',
+          ],
+          'action': [
+            'perl',
+            '-w',
+            '-I../bindings/scripts',
+            '../bindings/scripts/resolve-supplemental.pl',
+            '--defines',
+            '<(feature_defines) LANGUAGE_JAVASCRIPT V8_BINDING',
+            '--idlFilesList',
+            '<(idl_files_list)',
+            '--supplementalDependencyFile',
+            '<(SHARED_INTERMEDIATE_DIR)/supplemental_dependency.tmp',
+          ],
+          'message': 'Resolving [Supplemental=XXX] dependencies in all IDL files',
+        }
+      ]
+    },
+    {
       'target_name': 'webcore_bindings_sources',
       'type': 'none',
       'hard_dependency': 1,
@@ -861,15 +897,9 @@
         },
         {
           'action_name': 'derived_sources_all_in_one',
-          'variables': {
-            # Write sources into a file, so that the action command line won't
-            # exceed OS limites.
-            'idls_list_temp_file': '<|(idls_list_temp_file.tmp <@(bindings_idl_files))',
-          },
           'inputs': [
             'scripts/action_derivedsourcesallinone.py',
-            '<(idls_list_temp_file)',
-            '<!@(cat <(idls_list_temp_file))',
+            '<(SHARED_INTERMEDIATE_DIR)/supplemental_dependency.tmp',
           ],
           'outputs': [
             '<@(derived_sources_aggregate_files)',
@@ -877,7 +907,7 @@
           'action': [
             'python',
             'scripts/action_derivedsourcesallinone.py',
-            '<(idls_list_temp_file)',
+            '<(SHARED_INTERMEDIATE_DIR)/supplemental_dependency.tmp',
             '--',
             '<@(derived_sources_aggregate_files)',
           ],
@@ -930,6 +960,7 @@
             '../bindings/scripts/IDLParser.pm',
             '../bindings/scripts/IDLStructure.pm',
             '../bindings/scripts/preprocessor.pm',
+            '<(SHARED_INTERMEDIATE_DIR)/supplemental_dependency.tmp',
           ],
           'outputs': [
             # FIXME:  The .cpp file should be in webkit/bindings once
@@ -975,6 +1006,8 @@
             '--generator',
             'V8',
             '<@(generator_include_dirs)',
+            '--supplementalDependencyFile',
+            '<(SHARED_INTERMEDIATE_DIR)/supplemental_dependency.tmp',
             '<(RULE_INPUT_PATH)',
           ],
           'message': 'Generating binding from <(RULE_INPUT_PATH)',
