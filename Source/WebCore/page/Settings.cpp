@@ -229,6 +229,11 @@ Settings::Settings(Page* page)
     , m_suppressIncrementalRendering(false)
     , m_backspaceKeyNavigationEnabled(true)
     , m_visualWordMovementEnabled(false)
+#if ENABLE(VIDEO_TRACK)
+    , m_shouldDisplaySubtitles(false)
+    , m_shouldDisplayCaptions(false)
+    , m_shouldDisplayTextDescriptions(false)
+#endif
     , m_loadsImagesAutomaticallyTimer(this, &Settings::loadsImagesAutomaticallyTimerFired)
 {
     // A Frame may not have been created yet, so we initialize the AtomicString 

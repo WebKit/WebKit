@@ -1,5 +1,24 @@
 2011-12-01  Eric Carlson  <eric.carlson@apple.com>
 
+        Add Settings for text track types
+        https://bugs.webkit.org/show_bug.cgi?id=73383
+
+        Reviewed by Darin Adler.
+
+        No new tests, settings are not used yet.
+
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings): Initialize new settings.
+        * page/Settings.h:
+        (WebCore::Settings::setShouldDisplaySubtitles): New.
+        (WebCore::Settings::shouldDisplaySubtitles): Ditto.
+        (WebCore::Settings::setShouldDisplayCaptions): Ditto.
+        (WebCore::Settings::shouldDisplayCaptions): Ditto.
+        (WebCore::Settings::setShouldDisplayTextDescriptions): Ditto.
+        (WebCore::Settings::shouldDisplayTextDescriptions): Ditto.
+
+2011-12-01  Eric Carlson  <eric.carlson@apple.com>
+
         HTMLTrackElement.readyState should return TextTrack "readiness state".
         https://bugs.webkit.org/show_bug.cgi?id=73466
 
