@@ -301,7 +301,7 @@ class BuildBot(object):
             "WinCE",
             "EFL",
             "GTK.*32",
-            "GTK.*64.*Debug",  # Disallow the 64-bit Release bot which is broken.
+            "GTK.*64",
             "Qt",
             "Chromium.*(Mac|Linux|Win).*Release$",
             "Chromium.*(Mac|Linux|Win).*Release.*\(Tests",

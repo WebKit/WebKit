@@ -1,5 +1,21 @@
 2011-12-01  Philippe Normand  <pnormand@igalia.com>
 
+        [GTK] Make the new 64-bit Release bot part of the core set
+        https://bugs.webkit.org/show_bug.cgi?id=73570
+
+        Reviewed by Adam Roben.
+
+        The 64-bit Release bot re-introduced in r101676 replaces the 64-bit
+        Debug bot which was already part of the core set. The GTK
+        gardeners are willing to actively maintain it.
+
+        * Scripts/webkitpy/common/net/buildbot/buildbot.py:
+        (BuildBot.__init__):
+        * Scripts/webkitpy/common/net/buildbot/buildbot_unittest.py:
+        (test_builder_name_regexps):
+
+2011-12-01  Philippe Normand  <pnormand@igalia.com>
+
         [GTK] Buildslave switch from 32-bit Debug to 64-bit Release
         https://bugs.webkit.org/show_bug.cgi?id=73547
 
