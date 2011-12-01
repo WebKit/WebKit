@@ -1,3 +1,15 @@
+2011-11-30  Scott Violet  <sky@google.com>
+
+        [chromium] Expose WebLayerTreeView::setRootLayer as a call through
+        to same method on CCLayerTreeHost.
+        https://bugs.webkit.org/show_bug.cgi?id=73506
+
+        Reviewed by James Robinson.
+
+        * public/WebLayerTreeView.h: Adds setRootLayer.
+        * src/WebLayerTreeView.cpp: Ditto.
+        (WebKit::WebLayerTreeView::setRootLayer):
+
 2011-11-30  Alexey Proskuryakov  <ap@apple.com>
 
         Remove an unneeded argument from FrameLoaderClient::download

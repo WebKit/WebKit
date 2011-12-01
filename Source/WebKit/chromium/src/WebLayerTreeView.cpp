@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebLayerTreeView.h"
 
+#include "WebLayer.h"
 #include "WebLayerTreeViewImpl.h"
 #include "WebRect.h"
 #include "WebSize.h"
@@ -89,6 +90,14 @@ WebSize WebLayerTreeView::viewportSize() const
 bool WebLayerTreeView::compositeAndReadback(void *pixels, const WebRect& rect)
 {
     return m_private->compositeAndReadback(pixels, rect);
+}
+
+void WebLayerTreeView::setRootLayer(WebLayer *root)
+{
+    if (root)
+        m_private->setRootLayer(*root);
+    else
+        m_private->setRootLayer(PassRefPtr<LayerChromium>());
 }
 
 WebLayerTreeView::WebLayerTreeView(const PassRefPtr<CCLayerTreeHost>& node)

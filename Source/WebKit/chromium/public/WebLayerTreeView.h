@@ -92,6 +92,11 @@ public:
     // The buffer is not modified if the false is returned.
     WEBKIT_EXPORT bool compositeAndReadback(void *pixels, const WebRect&);
 
+    // Sets the root of the tree. The root is set by way of the constructor.
+    // This is typically used to explicitly set the root to null to break
+    // cycles.
+    WEBKIT_EXPORT void setRootLayer(WebLayer*);
+
 #if WEBKIT_IMPLEMENTATION
     WebLayerTreeView(const WTF::PassRefPtr<WebCore::CCLayerTreeHost>&);
     WebLayerTreeView& operator=(const WTF::PassRefPtr<WebCore::CCLayerTreeHost>&);
