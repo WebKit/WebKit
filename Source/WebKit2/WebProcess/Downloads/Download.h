@@ -80,7 +80,7 @@ public:
     uint64_t destinationID() const { return downloadID(); }
 
     void start(WebPage* initiatingWebPage);
-    void startWithHandle(WebPage* initiatingPage, WebCore::ResourceHandle*, const WebCore::ResourceRequest& initialRequest, const WebCore::ResourceResponse&);
+    void startWithHandle(WebPage* initiatingPage, WebCore::ResourceHandle*, const WebCore::ResourceResponse&);
     void cancel();
 
     uint64_t downloadID() const { return m_downloadID; }

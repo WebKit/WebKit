@@ -49,7 +49,7 @@ void Download::start(WebPage* initiatingWebPage)
     m_qtDownloader->init();
 }
 
-void Download::startWithHandle(WebPage* initiatingPage, ResourceHandle* handle, const ResourceRequest& initialRequest, const ResourceResponse& resp)
+void Download::startWithHandle(WebPage* initiatingPage, ResourceHandle* handle, const ResourceResponse& resp)
 {
     ASSERT(!m_qtDownloader);
     m_qtDownloader = new QtFileDownloader(this, adoptPtr(handle->getInternal()->m_job->release()));

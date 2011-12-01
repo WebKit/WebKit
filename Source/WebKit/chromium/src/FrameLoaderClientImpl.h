@@ -171,7 +171,6 @@ public:
     virtual bool canCachePage() const;
     virtual void download(
         WebCore::ResourceHandle*, const WebCore::ResourceRequest&,
-        const WebCore::ResourceRequest& initialRequest,
         const WebCore::ResourceResponse&);
     virtual PassRefPtr<WebCore::Frame> createFrame(
         const WebCore::KURL& url, const WTF::String& name,

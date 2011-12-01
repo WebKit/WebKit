@@ -139,7 +139,7 @@ void Download::start(WebPage* initiatingWebPage)
     didStart();
 }
 
-void Download::startWithHandle(WebPage* initiatingPage, ResourceHandle* resourceHandle, const ResourceRequest& initialRequest, const ResourceResponse&)
+void Download::startWithHandle(WebPage* initiatingPage, ResourceHandle* resourceHandle, const ResourceResponse&)
 {
     ASSERT(m_downloadClient);
     ASSERT(m_resourceHandle);

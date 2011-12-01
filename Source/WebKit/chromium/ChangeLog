@@ -1,3 +1,15 @@
+2011-11-30  Alexey Proskuryakov  <ap@apple.com>
+
+        Remove an unneeded argument from FrameLoaderClient::download
+        https://bugs.webkit.org/show_bug.cgi?id=73486
+
+        Reviewed by Andreas Kling.
+
+        * src/FrameLoaderClientImpl.cpp:
+        (WebKit::FrameLoaderClientImpl::download):
+        * src/FrameLoaderClientImpl.h:
+        Updated for the change.
+
 2011-11-30  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Implement IDBIndex multientry feature

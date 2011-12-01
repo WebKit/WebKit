@@ -1,3 +1,15 @@
+2011-11-30  Alexey Proskuryakov  <ap@apple.com>
+
+        Remove an unneeded argument from FrameLoaderClient::download
+        https://bugs.webkit.org/show_bug.cgi?id=73486
+
+        Reviewed by Andreas Kling.
+
+        * WebCoreSupport/FrameLoaderClientEfl.cpp:
+        (WebCore::FrameLoaderClientEfl::download):
+        * WebCoreSupport/FrameLoaderClientEfl.h:
+        Updated for the change.
+
 2011-11-30  JungJik Lee  <jungjik.lee@samsung.com>
 
         [EFL] Apply alpha channel into ewk_tiled_backing_store's tile objects.

@@ -53,11 +53,11 @@ void DownloadManager::startDownload(uint64_t downloadID, WebPage* initiatingPage
     m_downloads.set(downloadID, download.leakPtr());
 }
 
-void DownloadManager::convertHandleToDownload(uint64_t downloadID, WebPage* initiatingPage, ResourceHandle* handle, const ResourceRequest& request, const ResourceRequest& initialRequest, const ResourceResponse& response)
+void DownloadManager::convertHandleToDownload(uint64_t downloadID, WebPage* initiatingPage, ResourceHandle* handle, const ResourceRequest& request, const ResourceResponse& response)
 {
     OwnPtr<Download> download = Download::create(downloadID, request);
 
-    download->startWithHandle(initiatingPage, handle, initialRequest, response);
+    download->startWithHandle(initiatingPage, handle, response);
     ASSERT(!m_downloads.contains(downloadID));
     m_downloads.set(downloadID, download.leakPtr());
 }

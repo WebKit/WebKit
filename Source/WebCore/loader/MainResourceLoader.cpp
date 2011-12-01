@@ -285,13 +285,12 @@ void MainResourceLoader::continueAfterContentPolicy(PolicyAction contentPolicy, 
         }
         InspectorInstrumentation::continueWithPolicyDownload(m_frame.get(), documentLoader(), identifier(), r);
 
-        // When starting the request, we didn't know that it would result in download and not navigation. Now we know that first party didn't change.
+        // When starting the request, we didn't know that it would result in download and not navigation. Now we know that main document URL didn't change.
         // Download may use this knowledge for purposes unrelated to cookies, notably for setting file quarantine data.
         ResourceRequest request = this->request();
         frameLoader()->setOriginalURLForDownloadRequest(request);
 
-        // FIXME: Do any ports use first request argument? Most likely, it can be removed.
-        frameLoader()->client()->download(m_handle.get(), request, m_handle.get()->firstRequest(), r);
+        frameLoader()->client()->download(m_handle.get(), request, r);
 
         // It might have gone missing
         if (frameLoader())
