@@ -1,3 +1,17 @@
+2011-11-30  Hans Muller  <hmuller@adobe.com>
+
+        XHR 'progress' event code assumes wrongly that expectedLength >= 0
+        https://bugs.webkit.org/show_bug.cgi?id=36156
+
+        Reviewed by Alexey Proskuryakov
+
+        Avoid passing a negative value as the dispatchProgressEvent's total parameter and always use 0 when lengthComputable is false.
+
+        Test: http/tests/xmlhttprequest/chunked-progress-event-expectedLength.html
+
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::didReceiveData):
+
 2011-11-30  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Unreviewed. Fix build error when NOTIFICATIONS feature is enabled.

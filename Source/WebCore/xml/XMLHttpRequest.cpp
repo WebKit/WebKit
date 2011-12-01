@@ -1080,8 +1080,9 @@ void XMLHttpRequest::didReceiveData(const char* data, int len)
         m_receivedLength += len;
 
         if (m_async) {
-            bool lengthComputable = expectedLength && m_receivedLength <= expectedLength;
-            m_progressEventThrottle.dispatchProgressEvent(lengthComputable, m_receivedLength, expectedLength);
+            bool lengthComputable = expectedLength > 0 && m_receivedLength <= expectedLength;
+            unsigned long long total = lengthComputable ? expectedLength : 0;
+            m_progressEventThrottle.dispatchProgressEvent(lengthComputable, m_receivedLength, total);
         }
 
         if (m_state != LOADING)

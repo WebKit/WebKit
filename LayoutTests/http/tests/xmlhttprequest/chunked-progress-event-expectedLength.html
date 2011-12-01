@@ -1,0 +1,46 @@
+<html>
+<head>
+<title>Test case for bug 36156</title>
+</head>
+<body>
+<p> Test case for <a href="https://bugs.webkit.org/show_bug.cgi?id=36156"> bug 36156</a>: XHR 'progress' event code assumes wrongly that expectedLength >= 0</p>
+<p> Verify that the progress event total property is 0 when the expected overall length can't be computed.<p>
+<p>PASS should appear below:</p>
+<p id=console></p>
+<script type="text/javascript">
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+}
+
+function log(message)
+{
+    document.getElementById('console').appendChild(document.createTextNode(message + '\n'));
+}
+
+function test()
+{
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", "resources/chunked-transfer.php", true);
+
+    xhr.onprogress = function(e) {
+        if (e.loaded == 4 && e.total == 0 && !e.lengthComputable)
+            log("PASS");
+        else if (e.total != 0 && !e.lengthComputable)
+            log("FAIL: XMLHttpRequestProgressEvent lengthComputable=false but total is non-zero: " + e.total);
+    }
+
+    xhr.onreadystatechange = function(e) {
+        if (xhr.readyState == xhr.DONE) 
+        {
+            if (window.layoutTestController)
+                layoutTestController.notifyDone();
+        }
+    }
+
+    xhr.send();
+}
+
+test();
+</script>
+</body>
