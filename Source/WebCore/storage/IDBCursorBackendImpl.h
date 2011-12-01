@@ -61,14 +61,19 @@ public:
     virtual void update(PassRefPtr<SerializedScriptValue>, PassRefPtr<IDBCallbacks>, ExceptionCode&);
     virtual void continueFunction(PassRefPtr<IDBKey>, PassRefPtr<IDBCallbacks>, ExceptionCode&);
     virtual void deleteFunction(PassRefPtr<IDBCallbacks>, ExceptionCode&);
+    virtual void prefetchContinue(int numberToFetch, PassRefPtr<IDBCallbacks>, ExceptionCode&);
+    virtual void prefetchReset(int usedPrefetches, int unusedPrefetches);
     void close();
+    virtual void postSuccessHandlerCallback() { ASSERT_NOT_REACHED(); }
 
 private:
     IDBCursorBackendImpl(PassRefPtr<IDBBackingStore::Cursor>, IDBCursor::Direction, CursorType, IDBTransactionBackendInterface*, IDBObjectStoreBackendInterface*);
 
     static void continueFunctionInternal(ScriptExecutionContext*, PassRefPtr<IDBCursorBackendImpl>, PassRefPtr<IDBKey>, PassRefPtr<IDBCallbacks>);
+    static void prefetchContinueInternal(ScriptExecutionContext*, PassRefPtr<IDBCursorBackendImpl>, int numberToFetch, PassRefPtr<IDBCallbacks>);
 
     RefPtr<IDBBackingStore::Cursor> m_cursor;
+    RefPtr<IDBBackingStore::Cursor> m_savedCursor;
     IDBCursor::Direction m_direction;
     CursorType m_cursorType;
     RefPtr<IDBTransactionBackendInterface> m_transaction;

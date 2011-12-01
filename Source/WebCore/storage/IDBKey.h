@@ -51,6 +51,7 @@ public:
         RefPtr<IDBKey> idbKey(new IDBKey());
         idbKey->m_type = NumberType;
         idbKey->m_number = number;
+        idbKey->m_sizeEstimate += sizeof(double);
         return idbKey.release();
     }
 
@@ -59,6 +60,7 @@ public:
         RefPtr<IDBKey> idbKey(new IDBKey());
         idbKey->m_type = StringType;
         idbKey->m_string = string;
+        idbKey->m_sizeEstimate += string.length() * sizeof(UChar);
         return idbKey.release();
     }
 
@@ -67,6 +69,7 @@ public:
         RefPtr<IDBKey> idbKey(new IDBKey());
         idbKey->m_type = DateType;
         idbKey->m_date = date;
+        idbKey->m_sizeEstimate += sizeof(double);
         return idbKey.release();
     }
 
@@ -75,6 +78,10 @@ public:
         RefPtr<IDBKey> idbKey(new IDBKey());
         idbKey->m_type = ArrayType;
         idbKey->m_array = array;
+
+        for (size_t i = 0; i < array.size(); ++i)
+            idbKey->m_sizeEstimate += array[i]->m_sizeEstimate;
+
         return idbKey.release();
     }
 
@@ -121,6 +128,8 @@ public:
     bool isLessThan(const IDBKey* other) const;
     bool isEqual(const IDBKey* other) const;
 
+    size_t sizeEstimate() const { return m_sizeEstimate; }
+
     static int compareTypes(Type a, Type b)
     {
         return b - a;
@@ -137,6 +146,11 @@ private:
     String m_string;
     double m_date;
     double m_number;
+
+    size_t m_sizeEstimate;
+
+    // Very rough estimate of minimum key size overhead.
+    enum { kOverheadSize = 16 };
 };
 
 }

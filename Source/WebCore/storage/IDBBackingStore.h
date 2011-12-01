@@ -88,6 +88,7 @@ public:
 
     class Cursor : public RefCounted<Cursor> {
     public:
+        virtual PassRefPtr<Cursor> clone() = 0;
         virtual bool continueFunction(const IDBKey* = 0) = 0;
         virtual PassRefPtr<IDBKey> key() = 0;
         virtual PassRefPtr<IDBKey> primaryKey() = 0;

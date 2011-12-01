@@ -70,6 +70,8 @@ public:
     void continueFunction(PassRefPtr<IDBKey>, ExceptionCode&);
     PassRefPtr<IDBRequest> deleteFunction(ScriptExecutionContext*, ExceptionCode&);
 
+    void postSuccessHandlerCallback();
+
 protected:
     IDBCursor(PassRefPtr<IDBCursorBackendInterface>, IDBRequest*, IDBAny* source, IDBTransaction*);
 

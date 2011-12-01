@@ -337,6 +337,14 @@ bool IDBRequest::dispatchEvent(PassRefPtr<Event> event)
         targets.append(m_transaction->db());
     }
 
+    RefPtr<IDBCursor> cursorToNotify;
+    if (m_result) {
+        if (m_result->type() == IDBAny::IDBCursorType)
+            cursorToNotify = m_result->idbCursor();
+        else if (m_result->type() == IDBAny::IDBCursorWithValueType)
+            cursorToNotify = m_result->idbCursorWithValue();
+    }
+
     // FIXME: When we allow custom event dispatching, this will probably need to change.
     ASSERT(event->type() == eventNames().successEvent || event->type() == eventNames().errorEvent || event->type() == eventNames().blockedEvent);
     bool dontPreventDefault = IDBEventDispatcher::dispatch(event.get(), targets);
@@ -344,6 +352,9 @@ bool IDBRequest::dispatchEvent(PassRefPtr<Event> event)
     // If the result was of type IDBCursor, or a onBlocked event, then we'll fire again.
     if (event->type() != eventNames().blockedEvent && m_result && m_result->type() != IDBAny::IDBCursorType && m_result->type() != IDBAny::IDBCursorWithValueType)
         m_requestFinished = true;
+
+    if (cursorToNotify)
+        cursorToNotify->postSuccessHandlerCallback();
 
     if (m_transaction) {
         // If an error event and the default wasn't prevented...

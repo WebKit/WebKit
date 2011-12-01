@@ -147,6 +147,12 @@ void IDBTransactionBackendImpl::unregisterOpenCursor(IDBCursorBackendImpl* curso
     m_openCursors.remove(cursor);
 }
 
+void IDBTransactionBackendImpl::addPendingEvents(int n)
+{
+    m_pendingEvents += n;
+    ASSERT(m_pendingEvents >= 0);
+}
+
 void IDBTransactionBackendImpl::didCompleteTaskEvents()
 {
     if (m_state == Finished)

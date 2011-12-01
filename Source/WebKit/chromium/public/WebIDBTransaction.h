@@ -61,6 +61,8 @@ public:
         return 0;
     }
 
+    virtual void addPendingEvents(int) { WEBKIT_ASSERT_NOT_REACHED(); }
+
 protected:
     WebIDBTransaction() {}
 };

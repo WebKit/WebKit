@@ -89,6 +89,11 @@ void IDBCursorBackendProxy::deleteFunction(PassRefPtr<IDBCallbacks> callbacks, E
     m_idbCursor->deleteFunction(new WebIDBCallbacksImpl(callbacks), ec);
 }
 
+void IDBCursorBackendProxy::postSuccessHandlerCallback()
+{
+    m_idbCursor->postSuccessHandlerCallback();
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(INDEXED_DATABASE)

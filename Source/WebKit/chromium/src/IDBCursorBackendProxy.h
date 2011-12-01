@@ -49,6 +49,9 @@ public:
     virtual void update(PassRefPtr<WebCore::SerializedScriptValue>, PassRefPtr<WebCore::IDBCallbacks>, WebCore::ExceptionCode&);
     virtual void continueFunction(PassRefPtr<WebCore::IDBKey>, PassRefPtr<WebCore::IDBCallbacks>, WebCore::ExceptionCode&);
     virtual void deleteFunction(PassRefPtr<WebCore::IDBCallbacks>, WebCore::ExceptionCode&);
+    virtual void prefetchContinue(int numberToFetch, PassRefPtr<WebCore::IDBCallbacks>, WebCore::ExceptionCode&) { ASSERT_NOT_REACHED(); } // Only used in the backend.
+    virtual void prefetchReset(int usedPrefetches, int unusedPrefetches) { ASSERT_NOT_REACHED(); } // Only used in the backend.
+    virtual void postSuccessHandlerCallback();
 
 private:
     IDBCursorBackendProxy(PassOwnPtr<WebIDBCursor>);

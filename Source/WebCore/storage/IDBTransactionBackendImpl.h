@@ -54,6 +54,7 @@ public:
     virtual void setCallbacks(IDBTransactionCallbacks* callbacks) { m_callbacks = callbacks; }
     virtual void registerOpenCursor(IDBCursorBackendImpl*);
     virtual void unregisterOpenCursor(IDBCursorBackendImpl*);
+    virtual void addPendingEvents(int);
 
     void run();
 

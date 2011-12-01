@@ -82,6 +82,16 @@ void WebIDBCursorImpl::deleteFunction(WebIDBCallbacks* callbacks, WebExceptionCo
     m_idbCursorBackend->deleteFunction(IDBCallbacksProxy::create(adoptPtr(callbacks)), ec);
 }
 
+void WebIDBCursorImpl::prefetchContinue(int numberToFetch, WebIDBCallbacks* callbacks, WebExceptionCode& ec)
+{
+    m_idbCursorBackend->prefetchContinue(numberToFetch, IDBCallbacksProxy::create(adoptPtr(callbacks)), ec);
+}
+
+void WebIDBCursorImpl::prefetchReset(int usedPrefetches, int unusedPrefetches)
+{
+    m_idbCursorBackend->prefetchReset(usedPrefetches, unusedPrefetches);
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(INDEXED_DATABASE)

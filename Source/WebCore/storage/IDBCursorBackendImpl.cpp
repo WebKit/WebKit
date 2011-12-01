@@ -90,10 +90,8 @@ void IDBCursorBackendImpl::update(PassRefPtr<SerializedScriptValue> value, PassR
 
 void IDBCursorBackendImpl::continueFunction(PassRefPtr<IDBKey> prpKey, PassRefPtr<IDBCallbacks> prpCallbacks, ExceptionCode& ec)
 {
-    RefPtr<IDBCursorBackendImpl> cursor = this;
     RefPtr<IDBKey> key = prpKey;
-    RefPtr<IDBCallbacks> callbacks = prpCallbacks;
-    if (!m_transaction->scheduleTask(createCallbackTask(&IDBCursorBackendImpl::continueFunctionInternal, cursor, key, callbacks)))
+    if (!m_transaction->scheduleTask(createCallbackTask(&IDBCursorBackendImpl::continueFunctionInternal, this, key, prpCallbacks)))
         ec = IDBDatabaseException::NOT_ALLOWED_ERR;
 }
 
@@ -121,6 +119,67 @@ void IDBCursorBackendImpl::deleteFunction(PassRefPtr<IDBCallbacks> prpCallbacks,
     }
 
     m_objectStore->deleteFunction(m_cursor->primaryKey(), prpCallbacks, m_transaction.get(), ec);
+}
+
+void IDBCursorBackendImpl::prefetchContinue(int numberToFetch, PassRefPtr<IDBCallbacks> prpCallbacks, ExceptionCode& ec)
+{
+    if (!m_transaction->scheduleTask(createCallbackTask(&IDBCursorBackendImpl::prefetchContinueInternal, this, numberToFetch, prpCallbacks)))
+        ec = IDBDatabaseException::NOT_ALLOWED_ERR;
+}
+
+void IDBCursorBackendImpl::prefetchContinueInternal(ScriptExecutionContext*, PassRefPtr<IDBCursorBackendImpl> prpCursor, int numberToFetch, PassRefPtr<IDBCallbacks> callbacks)
+{
+    RefPtr<IDBCursorBackendImpl> cursor = prpCursor;
+
+    Vector<RefPtr<IDBKey> > foundKeys;
+    Vector<RefPtr<IDBKey> > foundPrimaryKeys;
+    Vector<RefPtr<SerializedScriptValue> > foundValues;
+
+    if (cursor->m_cursor)
+        cursor->m_savedCursor = cursor->m_cursor->clone();
+
+    const size_t kMaxSizeEstimate = 10 * 1024 * 1024;
+    size_t sizeEstimate = 0;
+
+    for (int i = 0; i < numberToFetch; ++i) {
+        if (!cursor->m_cursor || !cursor->m_cursor->continueFunction(0)) {
+            cursor->m_cursor = 0;
+            break;
+        }
+
+        foundKeys.append(cursor->m_cursor->key());
+        foundPrimaryKeys.append(cursor->m_cursor->primaryKey());
+        foundValues.append(SerializedScriptValue::createFromWire(cursor->m_cursor->value()));
+
+        sizeEstimate += cursor->m_cursor->key()->sizeEstimate();
+        sizeEstimate += cursor->m_cursor->primaryKey()->sizeEstimate();
+        sizeEstimate += cursor->m_cursor->value().length() * sizeof(UChar);
+
+        if (sizeEstimate > kMaxSizeEstimate)
+            break;
+    }
+
+    if (!foundKeys.size()) {
+        callbacks->onSuccess(SerializedScriptValue::nullValue());
+        return;
+    }
+
+    cursor->m_transaction->addPendingEvents(foundKeys.size() - 1);
+    callbacks->onSuccessWithPrefetch(foundKeys, foundPrimaryKeys, foundValues);
+}
+
+void IDBCursorBackendImpl::prefetchReset(int usedPrefetches, int unusedPrefetches)
+{
+    m_transaction->addPendingEvents(-unusedPrefetches);
+    m_cursor = m_savedCursor;
+    m_savedCursor = 0;
+
+    if (m_cursor) {
+        for (int i = 0; i < usedPrefetches; ++i) {
+            bool ok = m_cursor->continueFunction();
+            ASSERT_UNUSED(ok, ok);
+        }
+    }
 }
 
 void IDBCursorBackendImpl::close()

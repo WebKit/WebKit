@@ -49,6 +49,7 @@ public:
     virtual void setCallbacks(WebCore::IDBTransactionCallbacks*);
     virtual void registerOpenCursor(WebCore::IDBCursorBackendImpl*);
     virtual void unregisterOpenCursor(WebCore::IDBCursorBackendImpl*);
+    virtual void addPendingEvents(int) { ASSERT_NOT_REACHED(); }
 
     WebIDBTransaction* getWebIDBTransaction() const { return m_webIDBTransaction.get(); }
 

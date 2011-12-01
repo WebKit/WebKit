@@ -32,6 +32,7 @@ namespace WebCore {
 
 IDBKey::IDBKey()
     : m_type(InvalidType)
+    , m_sizeEstimate(kOverheadSize)
 {
 }
 

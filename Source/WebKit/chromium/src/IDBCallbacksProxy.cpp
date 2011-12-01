@@ -99,6 +99,23 @@ void IDBCallbacksProxy::onSuccessWithContinuation()
     m_callbacks->onSuccessWithContinuation();
 }
 
+void IDBCallbacksProxy::onSuccessWithPrefetch(const Vector<RefPtr<IDBKey> >& keys, const Vector<RefPtr<IDBKey> >& primaryKeys, const Vector<RefPtr<SerializedScriptValue> >& values)
+{
+    const size_t n = keys.size();
+
+    WebVector<WebIDBKey> webKeys(n);
+    WebVector<WebIDBKey> webPrimaryKeys(n);
+    WebVector<WebSerializedScriptValue> webValues(n);
+
+    for (size_t i = 0; i < n; ++i) {
+        webKeys[i] = WebIDBKey(keys[i]);
+        webPrimaryKeys[i] = WebIDBKey(primaryKeys[i]);
+        webValues[i] = WebSerializedScriptValue(values[i]);
+    }
+
+    m_callbacks->onSuccessWithPrefetch(webKeys, webPrimaryKeys, webValues);
+}
+
 void IDBCallbacksProxy::onBlocked()
 {
     m_callbacks->onBlocked();

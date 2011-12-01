@@ -84,6 +84,7 @@ public:
     virtual void onSuccess(PassRefPtr<IDBTransactionBackendInterface>);
     virtual void onSuccess(PassRefPtr<SerializedScriptValue>);
     virtual void onSuccessWithContinuation();
+    virtual void onSuccessWithPrefetch(const Vector<RefPtr<IDBKey> >& keys, const Vector<RefPtr<IDBKey> >& primaryKeys, const Vector<RefPtr<SerializedScriptValue> >& values) { ASSERT_NOT_REACHED(); } // Not implemented. Callback should not reach the renderer side.
     virtual void onBlocked();
 
     // ActiveDOMObject

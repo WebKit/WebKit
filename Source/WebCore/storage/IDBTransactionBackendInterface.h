@@ -57,6 +57,7 @@ public:
     virtual void setCallbacks(IDBTransactionCallbacks*) = 0;
     virtual void registerOpenCursor(IDBCursorBackendImpl*) = 0;
     virtual void unregisterOpenCursor(IDBCursorBackendImpl*) = 0;
+    virtual void addPendingEvents(int) = 0;
 };
 
 } // namespace WebCore

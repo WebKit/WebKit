@@ -26,6 +26,7 @@
 #ifndef WebIDBCallbacks_h
 #define WebIDBCallbacks_h
 
+#include "WebVector.h"
 #include "platform/WebCommon.h"
 
 namespace WebKit {
@@ -55,6 +56,7 @@ public:
     virtual void onSuccess(const WebSerializedScriptValue&) { WEBKIT_ASSERT_NOT_REACHED(); }
     virtual void onSuccessWithContinuation() { WEBKIT_ASSERT_NOT_REACHED(); }
     virtual void onBlocked() { WEBKIT_ASSERT_NOT_REACHED(); }
+    virtual void onSuccessWithPrefetch(const WebVector<WebIDBKey>& keys, const WebVector<WebIDBKey>& primaryKeys, const WebVector<WebSerializedScriptValue>& values) { WEBKIT_ASSERT_NOT_REACHED(); }
 };
 
 } // namespace WebKit

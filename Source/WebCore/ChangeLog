@@ -1,3 +1,64 @@
+2011-11-29  Hans Wennborg  <hans@chromium.org>
+
+        IndexedDB: Cursor pre-fetching
+        https://bugs.webkit.org/show_bug.cgi?id=73025
+
+        Reviewed by Darin Fisher.
+
+        No new tests. This doesn't change any semantics.
+        Actual pre-fetching will not happen in DumpRenderTree.
+        Chromium will request pre-fetching and have tests for it.
+
+        * storage/IDBBackingStore.h:
+        * storage/IDBCallbacks.h:
+        * storage/IDBCursor.cpp:
+        (WebCore::IDBCursor::continueFunction):
+        (WebCore::IDBCursor::postSuccessHandlerCallback):
+          Adds a callback that is called everytime the onsuccess handler has
+          executed on a cursor. This allows the cursor to see if a new call
+          to continue() was made in the onsuccess handler.
+        * storage/IDBCursor.h:
+        * storage/IDBCursorBackendImpl.cpp:
+        (WebCore::IDBCursorBackendImpl::continueFunction):
+        (WebCore::IDBCursorBackendImpl::prefetchContinue):
+        (WebCore::IDBCursorBackendImpl::prefetchContinueInternal):
+          This is the function that does actual pre-fetching. When called,
+          it will attempt to step the cursor up to n steps and send the
+          results back via the new onSuccessWithPrefetch() callback.
+        (WebCore::IDBCursorBackendImpl::prefetchReset):
+          This resets the cursor to the position it was at before the last
+          prefetch call.
+        * storage/IDBCursorBackendImpl.h:
+        (WebCore::IDBCursorBackendImpl::postSuccessHandlerCallback):
+        * storage/IDBCursorBackendInterface.h:
+        * storage/IDBKey.h:
+        (WebCore::IDBKey::createInvalid):
+        (WebCore::IDBKey::createNumber):
+        (WebCore::IDBKey::createString):
+        (WebCore::IDBKey::createDate):
+        (WebCore::IDBKey::createArray):
+        (WebCore::IDBKey::sizeEstimate):
+        * storage/IDBLevelDBBackingStore.cpp:
+        (WebCore::CursorOptions::CursorImplCommon::CursorImplCommon):
+        (WebCore::CursorOptions::ObjectStoreCursorImpl::clone):
+        (WebCore::CursorOptions::ObjectStoreCursorImpl::ObjectStoreCursorImpl):
+        (WebCore::CursorOptions::IndexKeyCursorImpl::clone):
+        (WebCore::CursorOptions::IndexKeyCursorImpl::IndexKeyCursorImpl):
+        (WebCore::CursorOptions::IndexCursorImpl::clone):
+        (WebCore::CursorOptions::IndexCursorImpl::IndexCursorImpl):
+        * storage/IDBRequest.cpp:
+        (WebCore::IDBRequest::dispatchEvent):
+          Update dispatchEvent() to call the postSuccessHandlerCallback()
+        * storage/IDBRequest.h:
+        (WebCore::IDBRequest::onSuccessWithPrefetch):
+        * storage/IDBTransactionBackendImpl.cpp:
+        (WebCore::IDBTransactionBackendImpl::addPendingEvents):
+          Allow for adding an arbitrary number of extra pending events.
+          When a cursor pre-fetches n elements, the transaction should
+          expect to see n extra onsuccess calls.
+        * storage/IDBTransactionBackendImpl.h:
+        * storage/IDBTransactionBackendInterface.h:
+
 2011-12-01  Philippe Normand  <pnormand@igalia.com>
 
         [GTK] WebAudio wav resources access and management

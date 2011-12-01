@@ -974,6 +974,22 @@ protected:
         , m_cursorOptions(cursorOptions)
     {
     }
+
+    CursorImplCommon(const CursorImplCommon* other)
+        : m_transaction(other->m_transaction)
+        , m_cursorOptions(other->m_cursorOptions)
+        , m_currentKey(other->m_currentKey)
+    {
+        if (other->m_iterator) {
+            m_iterator = m_transaction->createIterator();
+
+            if (other->m_iterator->isValid()) {
+                m_iterator->seek(other->m_iterator->key());
+                ASSERT(m_iterator->isValid());
+            }
+        }
+    }
+
     virtual ~CursorImplCommon() {}
 
     LevelDBTransaction* m_transaction;
@@ -1087,6 +1103,11 @@ public:
         return adoptRef(new ObjectStoreCursorImpl(transaction, cursorOptions));
     }
 
+    virtual PassRefPtr<IDBBackingStore::Cursor> clone()
+    {
+        return adoptRef(new ObjectStoreCursorImpl(this));
+    }
+
     // CursorImplCommon
     virtual String value() { return m_currentValue; }
     virtual PassRefPtr<IDBBackingStore::ObjectStoreRecordIdentifier> objectStoreRecordIdentifier() { ASSERT_NOT_REACHED(); return 0; }
@@ -1096,6 +1117,12 @@ public:
 private:
     ObjectStoreCursorImpl(LevelDBTransaction* transaction, const CursorOptions& cursorOptions)
         : CursorImplCommon(transaction, cursorOptions)
+    {
+    }
+
+    ObjectStoreCursorImpl(const ObjectStoreCursorImpl* other)
+        : CursorImplCommon(other)
+        , m_currentValue(other->m_currentValue)
     {
     }
 
@@ -1134,6 +1161,11 @@ public:
         return adoptRef(new IndexKeyCursorImpl(transaction, cursorOptions));
     }
 
+    virtual PassRefPtr<IDBBackingStore::Cursor> clone()
+    {
+        return adoptRef(new IndexKeyCursorImpl(this));
+    }
+
     // CursorImplCommon
     virtual String value() { ASSERT_NOT_REACHED(); return String(); }
     virtual PassRefPtr<IDBKey> primaryKey() { return m_primaryKey; }
@@ -1144,6 +1176,12 @@ public:
 private:
     IndexKeyCursorImpl(LevelDBTransaction* transaction, const CursorOptions& cursorOptions)
         : CursorImplCommon(transaction, cursorOptions)
+    {
+    }
+
+    IndexKeyCursorImpl(const IndexKeyCursorImpl* other)
+        : CursorImplCommon(other)
+        , m_primaryKey(other->m_primaryKey)
     {
     }
 
@@ -1197,6 +1235,11 @@ public:
         return adoptRef(new IndexCursorImpl(transaction, cursorOptions));
     }
 
+    virtual PassRefPtr<IDBBackingStore::Cursor> clone()
+    {
+        return adoptRef(new IndexCursorImpl(this));
+    }
+
     // CursorImplCommon
     virtual String value() { return m_value; }
     virtual PassRefPtr<IDBKey> primaryKey() { return m_primaryKey; }
@@ -1207,6 +1250,14 @@ public:
 private:
     IndexCursorImpl(LevelDBTransaction* transaction, const CursorOptions& cursorOptions)
         : CursorImplCommon(transaction, cursorOptions)
+    {
+    }
+
+    IndexCursorImpl(const IndexCursorImpl* other)
+        : CursorImplCommon(other)
+        , m_primaryKey(other->m_primaryKey)
+        , m_value(other->m_value)
+        , m_primaryLevelDBKey(other->m_primaryLevelDBKey)
     {
     }
 

@@ -61,6 +61,9 @@ public:
     virtual void update(PassRefPtr<SerializedScriptValue>, PassRefPtr<IDBCallbacks>, ExceptionCode&) = 0;
     virtual void continueFunction(PassRefPtr<IDBKey> key, PassRefPtr<IDBCallbacks>, ExceptionCode&) = 0;
     virtual void deleteFunction(PassRefPtr<IDBCallbacks>, ExceptionCode&) = 0;
+    virtual void prefetchContinue(int numberToFetch, PassRefPtr<IDBCallbacks>, ExceptionCode&) = 0;
+    virtual void prefetchReset(int usedPrefetches, int unusedPrefetches) = 0;
+    virtual void postSuccessHandlerCallback() = 0;
 };
 
 } // namespace WebCore
