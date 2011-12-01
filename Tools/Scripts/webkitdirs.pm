@@ -31,6 +31,7 @@
 use strict;
 use warnings;
 use Config;
+use Digest::MD5 qw(md5_hex);
 use FindBin;
 use File::Basename;
 use File::Path qw(mkpath rmtree);
@@ -83,6 +84,7 @@ my $generateDsym;
 my $isQt;
 my $qmakebin = "qmake"; # Allow override of the qmake binary from $PATH
 my $isGtk;
+my @jhbuildArgs;
 my $isWinCE;
 my $isWinCairo;
 my $isWx;
@@ -1562,12 +1564,37 @@ sub autotoolsFlag($$)
     return $prefix . '-' . $feature;
 }
 
+sub getMD5HashForFile($)
+{
+    my $file = shift;
+
+    open(FILE_CONTENTS, $file);
+
+    # Read the whole file.
+    my $contents = "";
+    while (<FILE_CONTENTS>) {
+        $contents .= $_;
+    }
+
+    close(FILE_CONTENTS);
+
+    return md5_hex($contents);
+}
+
 sub runAutogenForAutotoolsProject($@)
 {
     my ($dir, $prefix, $sourceDir, $saveArguments, $argumentsFile, @buildArgs) = @_;
 
     print "Calling autogen.sh in " . $dir . "\n\n";
     print "Installation prefix directory: $prefix\n" if(defined($prefix));
+
+    # Save md5sum for jhbuild-related files.
+    foreach my $file (qw(jhbuildrc jhbuild.modules)) {
+        my $path = join('/', $sourceDir, 'Tools', 'gtk', $file);
+        open(SUM, ">$file");
+        print SUM getMD5HashForFile($path);
+        close(SUM);
+    }
 
     if ($saveArguments) {
         # Write autogen.sh arguments to a file so that we can detect
@@ -1580,14 +1607,21 @@ sub runAutogenForAutotoolsProject($@)
     # Make the path relative since it will appear in all -I compiler flags.
     # Long argument lists cause bizarre slowdowns in libtool.
     my $relSourceDir = File::Spec->abs2rel($sourceDir) || ".";
-    if (system("$relSourceDir/autogen.sh", @buildArgs) ne 0) {
+
+    # Prefix the command with jhbuild run.
+    unshift(@buildArgs, "$relSourceDir/autogen.sh");
+    unshift(@buildArgs, @jhbuildArgs);
+
+    if (system(@buildArgs) ne 0) {
         die "Calling autogen.sh failed!\n";
     }
 }
 
-sub autogenArgumentsHaveChanged($@)
+sub mustReRunAutogen($@)
 {
-    my ($filename, @currentArguments) = @_;
+    my ($sourceDir, $filename, @currentArguments) = @_;
+
+    @jhbuildArgs = ("jhbuild", "-f", "$sourceDir/Tools/gtk/jhbuildrc", "run");
 
     if (! -e $filename) {
         return 1;
@@ -1602,6 +1636,27 @@ sub autogenArgumentsHaveChanged($@)
         print "Previous autogen arguments were: $previousArguments\n\n";
         print "New autogen arguments are: $joinedCurrentArguments\n";
         return 1;
+    }
+
+    # Now check jhbuild configuration for changes.
+    foreach my $file (qw(jhbuildrc.md5sum jhbuild.modules.md5sum)) {
+        if (! -e $file) {
+            return 1;
+        }
+
+        # Get the md5 sum of the file we're testing.
+        $file =~ m/(.+)\.md5sum/;
+        my $actualFile = join('/', $sourceDir, 'Tools', 'gtk', $1);
+        my $currentSum = getMD5HashForFile($actualFile);
+
+        # Get our previous record.
+        open(PREVIOUS_MD5, $file);
+        chomp(my $previousSum = <PREVIOUS_MD5>);
+        close(PREVIOUS_MD5);
+
+        if ($previousSum ne $currentSum) {
+            return 1;
+        }
     }
 
     return 0;
@@ -1679,19 +1734,20 @@ sub buildAutotoolsProject($@)
         runAutogenForAutotoolsProject($dir, $prefix, $sourceDir, $buildingWebKit, $autogenArgumentsFile, @buildArgs);
     }
 
-    if ($buildingWebKit and autogenArgumentsHaveChanged($autogenArgumentsFile, @buildArgs)) {
+    if ($buildingWebKit and mustReRunAutogen($sourceDir, $autogenArgumentsFile, @buildArgs)) {
         runAutogenForAutotoolsProject($dir, $prefix, $sourceDir, $buildingWebKit, $autogenArgumentsFile, @buildArgs);
     }
 
-    if (system("$make $makeArgs") ne 0) {
+    my $jhbuild = join(' ', @jhbuildArgs);
+    if (system("$jhbuild $make $makeArgs") ne 0) {
         die "\nFailed to build WebKit using '$make'!\n";
     }
 
     chdir ".." or die;
 
-    if (isGtk() && $buildingWebKit) {
+    if ($buildingWebKit) {
         my $relativeScriptsPath = relativeScriptsDir();
-        if (system("$relativeScriptsPath/../gtk/generate-gtkdoc --skip-html")) {
+        if (system("$jhbuild $relativeScriptsPath/../gtk/generate-gtkdoc --skip-html")) {
             die "\n gtkdoc did not build without warnings\n";
         }
     }

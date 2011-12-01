@@ -1,3 +1,24 @@
+2011-12-01  Gustavo Noronha Silva  <gns@gnome.org>
+
+        [GTK] Add freetype to our jhbuild setup
+        https://bugs.webkit.org/show_bug.cgi?id=73488
+
+        Reviewed by Martin Robinson.
+
+        This adds the first library to our jhbuild setup, and makes sure
+        build-webkit calls autogen.sh and make with jhbuild, so that the
+        environment is properly set.
+
+        * Scripts/webkitdirs.pm:
+        (saveSum):
+        (hashFile):
+        (runAutogenForAutotoolsProject): save md5sum of jhbuild-related files, and
+        call autogen under jhbuild run;
+        (mustRunAutogen): generalized the arguments change checking to also force
+        running autogen when jhbuild files change;
+        (buildAutotoolsProject): run make under jhbuild;
+        * gtk/jhbuild.modules: add freetype.
+
 2011-12-01  Dominic Mazzoni  <dmazzoni@google.com>
 
         Fix WebKitTestRunner compile warnings with XCode 3.2
