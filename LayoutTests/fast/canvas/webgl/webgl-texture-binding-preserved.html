@@ -19,17 +19,16 @@ if (window.layoutTestController) {
 
 var canvas;
 var context;
-var requestAnimationFrame;
 
 function draw() {
   // Draw a blue quad to the screen.  The compositor should have executed
-  // before reaching this point.  If the texture state was corruted, then 
+  // before reaching this point.  If the texture state was corrupted, then
   // a red quad will be drawn.  See crbug.com/105045.
   wtu.drawQuad(context);
 
   wtu.checkCanvasRect(context, 0, 0, 1, 1, [0, 0, 255, 255], "Should have rendered blue.", 1);
   if (window.layoutTestController)
-      layoutTestController.notifyDone();
+    layoutTestController.notifyDone();
 }
 
 window.onload = function()
@@ -39,7 +38,6 @@ window.onload = function()
   }
 
   canvas = document.getElementById("webgl-canvas");
-  canvas.width = 50; canvas.height = 50;
   context = create3DContext(canvas);
 
   requestAnimationFrame = window.webkitRequestAnimationFrame
@@ -59,7 +57,9 @@ window.onload = function()
   context.clear(context.COLOR_BUFFER_BIT | context.DEPTH_BUFFER_BIT);
 
   // We need to ensure that the compositor has run before the drawing
-  // takes place.
+  // takes place.  requestAnimationFrame was tried for this purpose,
+  // but it did not produce the failing behaviour in crbug.com/105045.
+  // A timeout of 100 ms was found to consistently reproduce the problem.
   setTimeout(draw, 100);
 }
 </script>
