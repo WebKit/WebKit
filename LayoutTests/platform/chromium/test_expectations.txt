@@ -3710,7 +3710,7 @@ BUG_CARYCLARK SNOWLEOPARD LION CPU : fast/text/international/vertical-text-glyph
 BUG_CARYCLARK SNOWLEOPARD LION CPU : fast/text/justify-ideograph-vertical.html = IMAGE
 BUG_CARYCLARK MAC CPU : fast/writing-mode/Kusa-Makura-background-canvas.html = IMAGE
 BUG_CARYCLARK MAC CPU : fast/writing-mode/border-vertical-lr.html = IMAGE
-BUG_CARYCLARK MAC CPU : fast/writing-mode/broken-ideographic-font.html = IMAGE
+BUG_CARYCLARK MAC CPU : fast/writing-mode/broken-ideographic-font.html = IMAGE+TEXT IMAGE PASS
 BUG_CARYCLARK MAC CPU : fast/writing-mode/fallback-orientation.html = IMAGE
 BUG_CARYCLARK MAC CPU : fast/writing-mode/japanese-lr-text.html = IMAGE
 BUG_CARYCLARK SNOWLEOPARD LION CPU : fast/writing-mode/japanese-rl-text-with-broken-font.html = IMAGE
