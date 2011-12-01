@@ -61,7 +61,7 @@ public:
     int viewHeight() const;
     int viewWidth() const;
     int viewLogicalWidth() const { return style()->isHorizontalWritingMode() ? viewWidth() : viewHeight(); }
-    int viewLogicalHeight() const { return style()->isHorizontalWritingMode() ? viewHeight() : viewWidth(); }
+    int viewLogicalHeight() const;
 
     float zoomFactor() const;
 
@@ -194,6 +194,8 @@ protected:
     virtual bool requiresColumns(int desiredColumnCount) const OVERRIDE;
 
 private:
+    virtual void calcColumnWidth() OVERRIDE;
+
     bool shouldRepaint(const IntRect& r) const;
 
     // These functions may only be accessed by LayoutStateMaintainer.

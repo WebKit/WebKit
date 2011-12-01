@@ -2778,6 +2778,27 @@ static PassOwnPtr<Vector<String> > toStringVector(NSArray* patterns)
     return WebPaginationModeUnpaginated;
 }
 
+- (void)_setPageLength:(CGFloat)pageLength
+{
+    Page* page = core(self);
+    if (!page)
+        return;
+
+    Page::Pagination pagination = page->pagination();
+    pagination.pageLength = pageLength;
+
+    page->setPagination(pagination);
+}
+
+- (CGFloat)_pageLength
+{
+    Page* page = core(self);
+    if (!page)
+        return 1;
+
+    return page->pagination().pageLength;
+}
+
 - (void)_setGapBetweenPages:(CGFloat)pageGap
 {
     Page* page = core(self);

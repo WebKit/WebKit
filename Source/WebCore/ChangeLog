@@ -1,3 +1,26 @@
+2011-11-30  Dan Bernstein  <mitz@apple.com>
+
+        WebCore part of: Allow the length of a page along the pagination axis to differ from the length of the view
+        https://bugs.webkit.org/show_bug.cgi?id=73476
+
+        Reviewed by Anders Carlsson.
+
+        * page/Page.cpp:
+        (WebCore::Page::setPagination): Changed to use Pagination::operator==.
+        * page/Page.h:
+        (WebCore::Page::Pagination::Pagination): Added initializer for the new pageLength member variable.
+        (WebCore::Page::Pagination::operator==): Added.
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::layoutColumns): Narrowed the scope of a local variable.
+        * rendering/RenderBlock.h: Promoted setDesiredColumnCountAndWidth() from private to protected,
+        allowing its use from RenderView::calcColumnWidth(). Made calcColumnWidth() virtual.
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::calcColumnWidth): Added. Uses the page length specified in the pagination
+        parameters to set the column width, if pages are to be laid out one next to the other.
+        (WebCore::RenderView::viewLogicalHeight): Added. Uses the page length specified in the pagination
+        parameters as the height, if pages are to be laid out one after the other.
+        * rendering/RenderView.h:
+
 2011-11-30  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Nodes are reporting that focus can be set when they really can't

@@ -268,6 +268,7 @@ public:
     void setFixedLayoutSize(const WebCore::IntSize&);
 
     void setPaginationMode(uint32_t /* WebCore::Page::Pagination::Mode */);
+    void setPageLength(double);
     void setGapBetweenPages(double);
 
     bool drawsBackground() const { return m_drawsBackground; }

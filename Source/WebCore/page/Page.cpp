@@ -677,7 +677,7 @@ void Page::setDeviceScaleFactor(float scaleFactor)
 
 void Page::setPagination(const Pagination& pagination)
 {
-    if (m_pagination.mode == pagination.mode && m_pagination.gap == pagination.gap)
+    if (m_pagination == pagination)
         return;
 
     m_pagination = pagination;

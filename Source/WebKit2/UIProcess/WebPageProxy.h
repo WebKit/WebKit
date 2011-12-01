@@ -415,6 +415,8 @@ public:
 
     void setPaginationMode(WebCore::Page::Pagination::Mode);
     WebCore::Page::Pagination::Mode paginationMode() const { return m_paginationMode; }
+    void setPageLength(double);
+    double pageLength() const { return m_pageLength; }
     void setGapBetweenPages(double);
     double gapBetweenPages() const { return m_gapBetweenPages; }
     unsigned pageCount() const { return m_pageCount; }
@@ -900,6 +902,7 @@ private:
     WebCore::IntSize m_fixedLayoutSize;
 
     WebCore::Page::Pagination::Mode m_paginationMode;
+    double m_pageLength;
     double m_gapBetweenPages;
 
     // If the process backing the web page is alive and kicking.

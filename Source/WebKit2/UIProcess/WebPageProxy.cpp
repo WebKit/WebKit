@@ -161,6 +161,7 @@ WebPageProxy::WebPageProxy(PageClient* pageClient, PassRefPtr<WebProcessProxy> p
     , m_areMemoryCacheClientCallsEnabled(true)
     , m_useFixedLayout(false)
     , m_paginationMode(Page::Pagination::Unpaginated)
+    , m_pageLength(0)
     , m_gapBetweenPages(0)
     , m_isValid(true)
     , m_isClosed(false)
@@ -1294,6 +1295,18 @@ void WebPageProxy::setPaginationMode(WebCore::Page::Pagination::Mode mode)
     if (!isValid())
         return;
     process()->send(Messages::WebPage::SetPaginationMode(mode), m_pageID);
+}
+
+void WebPageProxy::setPageLength(double pageLength)
+{
+    if (pageLength == m_pageLength)
+        return;
+
+    m_pageLength = pageLength;
+
+    if (!isValid())
+        return;
+    process()->send(Messages::WebPage::SetPageLength(pageLength), m_pageID);
 }
 
 void WebPageProxy::setGapBetweenPages(double gap)
@@ -3191,6 +3204,7 @@ WebPageCreationParameters WebPageProxy::creationParameters() const
     parameters.useFixedLayout = m_useFixedLayout;
     parameters.fixedLayoutSize = m_fixedLayoutSize;
     parameters.paginationMode = m_paginationMode;
+    parameters.pageLength = m_pageLength;
     parameters.gapBetweenPages = m_gapBetweenPages;
     parameters.userAgent = userAgent();
     parameters.sessionState = SessionState(m_backForwardList->entries(), m_backForwardList->currentIndex());

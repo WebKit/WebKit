@@ -379,6 +379,16 @@ WKPaginationMode WKPageGetPaginationMode(WKPageRef pageRef)
     return kWKPaginationModeUnpaginated;
 }
 
+void WKPageSetPageLength(WKPageRef pageRef, double pageLength)
+{
+    toImpl(pageRef)->setPageLength(pageLength);
+}
+
+double WKPageGetPageLength(WKPageRef pageRef)
+{
+    return toImpl(pageRef)->pageLength();
+}
+
 void WKPageSetGapBetweenPages(WKPageRef pageRef, double gap)
 {
     toImpl(pageRef)->setGapBetweenPages(gap);

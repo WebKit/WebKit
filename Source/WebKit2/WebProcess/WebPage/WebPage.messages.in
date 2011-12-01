@@ -122,6 +122,7 @@ messages -> WebPage {
     SetFixedLayoutSize(WebCore::IntSize size)
 
     SetPaginationMode(uint32_t mode);
+    SetPageLength(double pageLength);
     SetGapBetweenPages(double gap);
 
     # Find.

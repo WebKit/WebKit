@@ -249,6 +249,7 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     setDrawsTransparentBackground(parameters.drawsTransparentBackground);
 
     setPaginationMode(parameters.paginationMode);
+    setPageLength(parameters.pageLength);
     setGapBetweenPages(parameters.gapBetweenPages);
 
     setMemoryCacheMessagesEnabled(parameters.areMemoryCacheClientCallsEnabled);
@@ -931,6 +932,13 @@ void WebPage::setPaginationMode(uint32_t mode)
 {
     Page::Pagination pagination = m_page->pagination();
     pagination.mode = static_cast<Page::Pagination::Mode>(mode);
+    m_page->setPagination(pagination);
+}
+
+void WebPage::setPageLength(double pageLength)
+{
+    Page::Pagination pagination = m_page->pagination();
+    pagination.pageLength = pageLength;
     m_page->setPagination(pagination);
 }
 

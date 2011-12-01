@@ -185,6 +185,20 @@ bool RenderView::requiresColumns(int desiredColumnCount) const
     return RenderBlock::requiresColumns(desiredColumnCount);
 }
 
+void RenderView::calcColumnWidth()
+{
+    int columnWidth = contentLogicalWidth();
+    if (m_frameView && style()->hasInlineColumnAxis()) {
+        if (Frame* frame = m_frameView->frame()) {
+            if (Page* page = frame->page()) {
+                if (int pageLength = page->pagination().pageLength)
+                    columnWidth = pageLength;
+            }
+        }
+    }
+    setDesiredColumnCountAndWidth(1, columnWidth);
+}
+
 void RenderView::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
     // If we ever require layout but receive a paint anyway, something has gone horribly wrong.
@@ -732,6 +746,24 @@ int RenderView::viewWidth() const
         width = m_frameView->useFixedLayout() ? ceilf(style()->effectiveZoom() * float(width)) : width;
     }
     return width;
+}
+
+int RenderView::viewLogicalHeight() const
+{
+    int height = style()->isHorizontalWritingMode() ? viewHeight() : viewWidth();
+
+    if (hasColumns() && !style()->hasInlineColumnAxis()) {
+        if (Frame* frame = m_frameView->frame()) {
+            if (Page* page = frame->page()) {
+                if (frame == page->mainFrame()) {
+                    if (int pageLength = page->pagination().pageLength)
+                        height = pageLength;
+                }
+            }
+        }
+    }
+
+    return height;
 }
 
 float RenderView::zoomFactor() const

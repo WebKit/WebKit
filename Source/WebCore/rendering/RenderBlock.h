@@ -414,6 +414,8 @@ protected:
     bool simplifiedLayout();
     void simplifiedNormalFlowLayout();
 
+    void setDesiredColumnCountAndWidth(int, LayoutUnit);
+
     void computeOverflow(LayoutUnit oldClientAfterEdge, bool recomputeFloats = false);
     virtual void addOverflowFromChildren();
     void addOverflowFromFloats();
@@ -750,7 +752,6 @@ private:
 
     LayoutUnit desiredColumnWidth() const;
     unsigned desiredColumnCount() const;
-    void setDesiredColumnCountAndWidth(int count, LayoutUnit width);
 
     void paintContinuationOutlines(PaintInfo&, const LayoutPoint&);
 
@@ -769,7 +770,7 @@ private:
     // Adjust from painting offsets to the local coords of this renderer
     void offsetForContents(LayoutPoint&) const;
 
-    void calcColumnWidth();
+    virtual void calcColumnWidth();
     bool layoutColumns(bool hasSpecifiedPageLogicalHeight, LayoutUnit pageLogicalHeight, LayoutStateMaintainer&);
     void makeChildrenAnonymousColumnBlocks(RenderObject* beforeChild, RenderBlock* newBlockBox, RenderObject* newChild);
 

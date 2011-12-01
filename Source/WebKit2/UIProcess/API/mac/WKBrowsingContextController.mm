@@ -234,6 +234,16 @@ static inline NSURL *autoreleased(WKURLRef url)
     return WKPaginationModeUnpaginated;
 }
 
+- (void)setPageLength:(CGFloat)pageLength
+{
+    WKPageSetPageLength(self.pageRef, pageLength);
+}
+
+- (CGFloat)pageLength
+{
+    return WKPageGetPageLength(self.pageRef);
+}
+
 - (void)setGapBetweenPages:(CGFloat)gapBetweenPages
 {
     WKPageSetGapBetweenPages(self.pageRef, gapBetweenPages);

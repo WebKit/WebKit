@@ -35,6 +35,8 @@ typedef NSUInteger WKBrowsingContextPaginationMode;
 @interface WKBrowsingContextController (Private)
 
 @property WKBrowsingContextPaginationMode paginationMode;
+// Set to 0 to have the page length equal the view length.
+@property CGFloat pageLength;
 @property CGFloat gapBetweenPages;
 
 @property(readonly) NSUInteger pageCount;

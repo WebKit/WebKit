@@ -563,6 +563,9 @@ Could be worth adding to the API.
 
 - (void)_setPaginationMode:(WebPaginationMode)paginationMode;
 - (WebPaginationMode)_paginationMode;
+// Set to 0 to have the page length equal the view length.
+- (void)_setPageLength:(CGFloat)pageLength;
+- (CGFloat)_pageLength;
 - (void)_setGapBetweenPages:(CGFloat)pageGap;
 - (CGFloat)_gapBetweenPages;
 - (NSUInteger)_pageCount;

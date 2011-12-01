@@ -4619,10 +4619,10 @@ bool RenderBlock::layoutColumns(bool hasSpecifiedPageLogicalHeight, LayoutUnit p
     // FIXME: We don't balance properly at all in the presence of forced page breaks.  We need to understand what
     // the distance between forced page breaks is so that we can avoid making the minimum column height too tall.
     ColumnInfo* colInfo = columnInfo();
-    int desiredColumnCount = colInfo->desiredColumnCount();
     if (!hasSpecifiedPageLogicalHeight) {
         LayoutUnit columnHeight = pageLogicalHeight;
         int minColumnCount = colInfo->forcedBreaks() + 1;
+        int desiredColumnCount = colInfo->desiredColumnCount();
         if (minColumnCount >= desiredColumnCount) {
             // The forced page breaks are in control of the balancing.  Just set the column height to the
             // maximum page break distance.

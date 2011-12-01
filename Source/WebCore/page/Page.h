@@ -261,11 +261,18 @@ namespace WebCore {
 
             Pagination()
                 : mode(Unpaginated)
+                , pageLength(0)
                 , gap(0)
             {
             };
 
+            bool operator==(const Pagination& other) const
+            {
+                return mode == other.mode && pageLength == other.pageLength && gap == other.gap;
+            }
+
             Mode mode;
+            unsigned pageLength;
             unsigned gap;
         };
 
