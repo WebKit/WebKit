@@ -1,3 +1,17 @@
+2011-12-01  Wei Charles  <charles.wei@torchmobile.com.cn>
+
+        [Blackberry] Upstream BlackBerry porting of plugin framework -- part 2
+        https://bugs.webkit.org/show_bug.cgi?id=73513
+
+        Reviewed by Antonio Gomes.
+
+        No new tests for now.
+
+        * plugins/blackberry/NPCallbacksBlackBerry.cpp: Added.
+        * plugins/blackberry/NPCallbacksBlackBerry.h: Added.
+        * plugins/blackberry/PluginViewPrivateBlackBerry.cpp: Added.
+        * plugins/blackberry/PluginViewPrivateBlackBerry.h: Added.
+
 2011-12-01  Andreas Kling  <kling@webkit.org>
 
         JSC/CSSOM: root(CSSElementStyleDeclaration) should never need to follow the element.
