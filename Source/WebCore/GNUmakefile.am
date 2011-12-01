@@ -721,6 +721,13 @@ DerivedSources/WebCore/InspectorBackendDispatcher.h: DerivedSources/WebCore/Insp
 DerivedSources/WebCore/InjectedScriptSource.h: $(WebCore)/inspector/InjectedScriptSource.js
 	perl $(WebCore)/inspector/xxd.pl InjectedScriptSource_js $(WebCore)/inspector/InjectedScriptSource.js $(GENSOURCES_WEBCORE)/InjectedScriptSource.h
 
+if ENABLE_WEB_AUDIO
+# Installing HRTF database wav files
+audiodir = ${datadir}/webkitgtk-@WEBKITGTK_API_VERSION@/resources/audio/
+audio_DATA = $(WebCore)/platform/audio/resources/Composite.wav
+dist_audio_DATA = $(audio_DATA)
+endif  # END ENABLE_WEB_AUDIO
+
 # ANGLE tokenizer & parser
 DerivedSources/ANGLE/glslang.cpp: Source/ThirdParty/ANGLE/src/compiler/glslang.l
 	$(AM_V_GEN)$(FLEX) --noline --nounistd --outfile="$@" "$<"

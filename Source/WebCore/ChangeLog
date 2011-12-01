@@ -1,3 +1,19 @@
+2011-12-01  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK] WebAudio wav resources access and management
+        https://bugs.webkit.org/show_bug.cgi?id=73080
+
+        Reviewed by Martin Robinson.
+
+        For the uninstalled case we assume the user will set a
+        AUDIO_RESOURCES_PATH environment variable pointing to
+        WebCore/platform/audio/resources.
+
+        * GNUmakefile.am: Install WAV resources.
+        * platform/audio/gtk/AudioBusGtk.cpp:
+        (WebCore::AudioBus::loadPlatformResource): Support for loading
+        uninstalled resources.
+
 2011-12-01  Florin Malita  <fmalita@google.com>
 
         SVG Gaussian blur in 1-dimension is incorrect
