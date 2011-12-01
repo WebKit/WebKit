@@ -1,3 +1,15 @@
+2011-11-30  Leo Yang  <leo.yang@torchmobile.com.cn>
+
+        [BlackBerry] Add 2 cpp files to the BlackBerry build system
+        https://bugs.webkit.org/show_bug.cgi?id=73408
+
+        platform/network/blackberry/DeferredData.cpp and platform/network/blackberry/NetworkJob.cpp
+        will be added, change build system first.
+
+        Reviewed by Antonio Gomes.
+
+        * PlatformBlackBerry.cmake:
+
 2011-11-30  Gregg Tavares  <gman@google.com>
 
         Implement draft WEBGL_compressed_textures WebGL extension

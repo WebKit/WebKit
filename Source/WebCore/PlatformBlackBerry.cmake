@@ -87,7 +87,9 @@ LIST(APPEND WebCore_SOURCES
 LIST(APPEND WebCore_SOURCES
     platform/network/ProxyServer.cpp
     platform/network/blackberry/AboutData.cpp
+    platform/network/blackberry/DeferredData.cpp
     platform/network/blackberry/MultipartResponseDelegate.cpp
+    platform/network/blackberry/NetworkJob.cpp
     platform/network/blackberry/NetworkManager.cpp
     platform/network/blackberry/NetworkStateNotifierBlackBerry.cpp
     platform/network/blackberry/ProxyServerBlackBerry.cpp
