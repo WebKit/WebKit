@@ -96,7 +96,7 @@ bool JSTestNamedConstructorConstructor::getOwnPropertyDescriptor(JSObject* objec
     return getStaticValueDescriptor<JSTestNamedConstructorConstructor, JSDOMWrapper>(exec, &JSTestNamedConstructorConstructorTable, static_cast<JSTestNamedConstructorConstructor*>(object), propertyName, descriptor);
 }
 
-const ClassInfo JSTestNamedConstructorNamedConstructor::s_info = { "TestNamedConstructorConstructor", &DOMConstructorObject::s_info, 0, 0, CREATE_METHOD_TABLE(JSTestNamedConstructorNamedConstructor) };
+const ClassInfo JSTestNamedConstructorNamedConstructor::s_info = { "AudioConstructor", &DOMConstructorObject::s_info, 0, 0, CREATE_METHOD_TABLE(JSTestNamedConstructorNamedConstructor) };
 
 JSTestNamedConstructorNamedConstructor::JSTestNamedConstructorNamedConstructor(Structure* structure, JSDOMGlobalObject* globalObject)
     : DOMConstructorWithDocument(structure, globalObject)

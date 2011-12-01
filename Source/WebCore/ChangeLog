@@ -1,3 +1,40 @@
+2011-12-01  Kentaro Hara  <haraken@chromium.org>
+
+        [JSC] When XXXX has a NamedConstructor, window.XXXX should be XXXXConstructor
+        https://bugs.webkit.org/show_bug.cgi?id=73521
+
+        Reviewed by Adam Barth.
+
+        This is a regression caused by a patch of bug 73307.
+        If we replaced a custom constructor of window.XXXX (e.g. XXXX is Audio or Option)
+        with the [NamedConstructor] IDL, fast/js/global-constructors.html,
+        fast/dom/Window/window-properties.html and fast/dom/call-a-constructor-as-a-function.html
+        start to fail in JSC.
+
+        Before a patch of bug 73007: (correct behavior)
+            window.Audio => AudioConstructor
+            window.Option => OptionConstructor
+            window.HTMLAudioElement => HTMLAudioElementConstructor
+            window.HTMLOptionElement => HTMLOptionElementConstructor
+
+        After a patch of bug 73007: (wrong behavior)
+            window.Audio => HTMLAudioElementConstructor
+            window.Option => HTMLOptionElementConstructor
+            window.HTMLAudioElement => HTMLAudioElementConstructor
+            window.HTMLOptionElement => HTMLOptionElementConstructor
+
+        This patch fixes the above behavior.
+
+        Tests: bindings/scripts/test/TestNamedConstructor.idl
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateImplementation):
+        * bindings/scripts/IDLParser.pm:
+        (parseExtendedAttributes):
+        (ParseInterface):
+        * bindings/scripts/test/TestNamedConstructor.idl: The test IDL was wrong. NamedConstructor=XXXX(arguments) is a correct format.
+        * bindings/scripts/test/JS/JSTestNamedConstructor.cpp: Updated a run-bindings-tests result.
+
 2011-11-30  David Grogan  <dgrogan@chromium.org>
 
         Move data in IDBPendingTransactionMonitor from static to

@@ -31,7 +31,7 @@
 module test {
     interface [
         ActiveDOMObject,
-        NamedConstructor(in DOMString str1, in [Optional=CallWithDefaultValue] DOMString str2, in [Optional=CallWithNullValue] DOMString str3),
+        NamedConstructor=Audio(in DOMString str1, in [Optional=CallWithDefaultValue] DOMString str2, in [Optional=CallWithNullValue] DOMString str3),
         ConstructorRaisesException
     ] TestNamedConstructor {
     };

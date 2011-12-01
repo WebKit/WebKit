@@ -1437,7 +1437,7 @@ sub GenerateImplementation
         my $protoClassName = "${className}Prototype";
         GenerateConstructorDefinition(\@implContent, $className, $protoClassName, $interfaceName, $visibleClassName, $dataNode);
         if ($dataNode->extendedAttributes->{"NamedConstructor"}) {
-            GenerateConstructorDefinition(\@implContent, $className, $protoClassName, $interfaceName, $visibleClassName, $dataNode, "GeneratingNamedConstructor");
+            GenerateConstructorDefinition(\@implContent, $className, $protoClassName, $interfaceName, $dataNode->extendedAttributes->{"NamedConstructor"}, $dataNode, "GeneratingNamedConstructor");
         }
     }
 

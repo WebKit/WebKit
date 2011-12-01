@@ -166,22 +166,26 @@ sub parseExtendedAttributes
             $str =~ s/^\s*=//;
             if ($name eq "NamedConstructor") {
                 # Parse '=' name '(' arguments ')' ','?
+                my $constructorName;
                 if ($str =~ /^\s*([\w\d]+)/) {
-                    # For now ignore the name, since the name is managed by DOMWindow.idl.
+                    $constructorName = $1;
                     $str =~ s/^\s*([\w\d]+)//;
+                } else {
+                    die("Invalid extended attribute: '$str'\n");
                 }
                 if ($str =~ /^\s*\(/) {
                     # Parse '(' arguments ')' ','?
                     $str =~ s/^\s*\(//;
                     if ($str =~ /^([^)]*)\),?/) {
-                        $attrs{$name} = $1;
-                        $attrs{$name} =~ s/^(.*?)\s*$/$1/;
+                        my $signature = $1;
+                        $signature =~ s/^(.*?)\s*$/$1/;
+                        $attrs{$name} = {"ConstructorName" => $constructorName, "Signature" => $signature};
                         $str =~ s/^([^)]*)\),?//;
                     } else {
                         die("Invalid extended attribute: '$str'\n");
                     }
                 } elsif ($str =~ /^\s*,?/) {
-                    $attrs{$name} = "";
+                    $attrs{$name} = {"ConstructorName" => $constructorName, "Signature" => ""};
                     $str =~ s/^\s*,?//;
                 } else {
                     die("Invalid extended attribute: '$str'\n");
@@ -300,8 +304,8 @@ sub ParseInterface
             $newDataNode->signature(new domSignature());
             $newDataNode->signature->name("NamedConstructor");
             $newDataNode->signature->extendedAttributes($extendedAttributes);
-            parseParameters($newDataNode, $extendedAttributes->{"NamedConstructor"});
-            $extendedAttributes->{"NamedConstructor"} = 1;
+            parseParameters($newDataNode, $extendedAttributes->{"NamedConstructor"}->{"Signature"});
+            $extendedAttributes->{"NamedConstructor"} = $extendedAttributes->{"NamedConstructor"}{"ConstructorName"};
             $dataNode->constructor($newDataNode);
         }
         $dataNode->extendedAttributes($extendedAttributes);
