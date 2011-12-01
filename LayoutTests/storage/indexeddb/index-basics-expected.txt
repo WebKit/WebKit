@@ -21,7 +21,9 @@ PASS indexObject.objectStore.name is "storeName"
 PASS 'keyPath' in indexObject is true
 PASS indexObject.keyPath is "x"
 PASS 'unique' in indexObject is true
+PASS 'multientry' in indexObject is true
 PASS indexObject.unique is false
+PASS indexObject.multientry is false
 PASS 'openKeyCursor' in indexObject is true
 PASS 'openCursor' in indexObject is true
 PASS 'getKey' in indexObject is true

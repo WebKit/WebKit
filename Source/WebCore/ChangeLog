@@ -1,3 +1,45 @@
+2011-11-30  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Implement IDBIndex multientry feature
+        https://bugs.webkit.org/show_bug.cgi?id=73232
+
+        Reviewed by Tony Chang.
+
+        The multientry flag is used when populating indexes, either when the index
+        is created on an existing store or as new values are added to the store.
+        Per the spec the semantics are: if the flag is set and the index key is
+        calculated to be an array, each member of the array is used as an index key
+        instead.
+
+        Test: storage/indexeddb/index-multientry.html
+
+        * storage/IDBBackingStore.h:
+        * storage/IDBIndex.h:
+        (WebCore::IDBIndex::multientry):
+        * storage/IDBIndex.idl:
+        * storage/IDBIndexBackendImpl.cpp:
+        (WebCore::IDBIndexBackendImpl::IDBIndexBackendImpl):
+        * storage/IDBIndexBackendImpl.h:
+        (WebCore::IDBIndexBackendImpl::create):
+        (WebCore::IDBIndexBackendImpl::multientry):
+        * storage/IDBIndexBackendInterface.h:
+        * storage/IDBLevelDBBackingStore.cpp:
+        (WebCore::checkIndexAndMetaDataKey):
+        (WebCore::IDBLevelDBBackingStore::getIndexes):
+        (WebCore::IDBLevelDBBackingStore::createIndex):
+        * storage/IDBLevelDBBackingStore.h:
+        * storage/IDBLevelDBCoding.cpp:
+        * storage/IDBObjectStore.cpp:
+        (WebCore::IDBObjectStore::createIndex):
+        * storage/IDBObjectStoreBackendImpl.cpp:
+        (WebCore::IDBObjectStoreBackendImpl::putInternal):
+        (WebCore::IDBObjectStoreBackendImpl::populateIndex):
+        (WebCore::IDBObjectStoreBackendImpl::createIndex):
+        (WebCore::IDBObjectStoreBackendImpl::createIndexInternal):
+        (WebCore::IDBObjectStoreBackendImpl::loadIndexes):
+        * storage/IDBObjectStoreBackendImpl.h:
+        * storage/IDBObjectStoreBackendInterface.h:
+
 2011-11-30  David Reveman  <reveman@chromium.org>
 
         [Chromium] Add support for painting into an SkPicture and then rasterizing into tile-sized chunks.

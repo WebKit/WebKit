@@ -75,6 +75,11 @@ bool IDBIndexBackendProxy::unique()
     return m_webIDBIndex->unique();
 }
 
+bool IDBIndexBackendProxy::multientry()
+{
+    return m_webIDBIndex->multientry();
+}
+
 void IDBIndexBackendProxy::openCursor(PassRefPtr<IDBKeyRange> keyRange, unsigned short direction, PassRefPtr<IDBCallbacks> callbacks, IDBTransactionBackendInterface* transaction, ExceptionCode& ec)
 {
     // The transaction pointer is guaranteed to be a pointer to a proxy object as, in the renderer,

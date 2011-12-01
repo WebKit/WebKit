@@ -61,6 +61,11 @@ public:
         WEBKIT_ASSERT_NOT_REACHED();
         return false;
     }
+    virtual bool multientry() const
+    {
+        WEBKIT_ASSERT_NOT_REACHED();
+        return false;
+    }
 
     virtual void openObjectCursor(const WebIDBKeyRange&, unsigned short direction, WebIDBCallbacks*, const WebIDBTransaction&, WebExceptionCode&) { WEBKIT_ASSERT_NOT_REACHED(); }
     virtual void openKeyCursor(const WebIDBKeyRange&, unsigned short direction, WebIDBCallbacks*, const WebIDBTransaction&, WebExceptionCode&) { WEBKIT_ASSERT_NOT_REACHED(); }

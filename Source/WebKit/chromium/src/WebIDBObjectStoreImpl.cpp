@@ -87,9 +87,9 @@ void WebIDBObjectStoreImpl::clear(WebIDBCallbacks* callbacks, const WebIDBTransa
     m_objectStore->clear(IDBCallbacksProxy::create(adoptPtr(callbacks)), transaction.getIDBTransactionBackendInterface(), ec);
 }
 
-WebIDBIndex* WebIDBObjectStoreImpl::createIndex(const WebString& name, const WebString& keyPath, bool unique, const WebIDBTransaction& transaction, WebExceptionCode& ec)
+WebIDBIndex* WebIDBObjectStoreImpl::createIndex(const WebString& name, const WebString& keyPath, bool unique, bool multientry, const WebIDBTransaction& transaction, WebExceptionCode& ec)
 {
-    RefPtr<IDBIndexBackendInterface> index = m_objectStore->createIndex(name, keyPath, unique, transaction.getIDBTransactionBackendInterface(), ec);
+    RefPtr<IDBIndexBackendInterface> index = m_objectStore->createIndex(name, keyPath, unique, multientry, transaction.getIDBTransactionBackendInterface(), ec);
     if (!index)
         return 0;
     return new WebIDBIndexImpl(index);

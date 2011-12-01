@@ -40,7 +40,7 @@
 
 namespace WebCore {
 
-IDBIndexBackendImpl::IDBIndexBackendImpl(IDBBackingStore* backingStore, int64_t databaseId, const IDBObjectStoreBackendImpl* objectStoreBackend, int64_t id, const String& name, const String& storeName, const String& keyPath, bool unique)
+IDBIndexBackendImpl::IDBIndexBackendImpl(IDBBackingStore* backingStore, int64_t databaseId, const IDBObjectStoreBackendImpl* objectStoreBackend, int64_t id, const String& name, const String& storeName, const String& keyPath, bool unique, bool multientry)
     : m_backingStore(backingStore)
     , m_databaseId(databaseId)
     , m_objectStoreBackend(objectStoreBackend)
@@ -49,10 +49,11 @@ IDBIndexBackendImpl::IDBIndexBackendImpl(IDBBackingStore* backingStore, int64_t 
     , m_storeName(storeName)
     , m_keyPath(keyPath)
     , m_unique(unique)
+    , m_multientry(multientry)
 {
 }
 
-IDBIndexBackendImpl::IDBIndexBackendImpl(IDBBackingStore* backingStore, int64_t databaseId, const IDBObjectStoreBackendImpl* objectStoreBackend, const String& name, const String& storeName, const String& keyPath, bool unique)
+IDBIndexBackendImpl::IDBIndexBackendImpl(IDBBackingStore* backingStore, int64_t databaseId, const IDBObjectStoreBackendImpl* objectStoreBackend, const String& name, const String& storeName, const String& keyPath, bool unique, bool multientry)
     : m_backingStore(backingStore)
     , m_databaseId(databaseId)
     , m_objectStoreBackend(objectStoreBackend)
@@ -61,6 +62,7 @@ IDBIndexBackendImpl::IDBIndexBackendImpl(IDBBackingStore* backingStore, int64_t 
     , m_storeName(storeName)
     , m_keyPath(keyPath)
     , m_unique(unique)
+    , m_multientry(multientry)
 {
 }
 

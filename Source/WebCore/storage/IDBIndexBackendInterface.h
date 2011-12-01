@@ -49,6 +49,7 @@ public:
     virtual String storeName() = 0;
     virtual String keyPath() = 0;
     virtual bool unique() = 0;
+    virtual bool multientry() = 0;
 
     virtual void openCursor(PassRefPtr<IDBKeyRange>, unsigned short direction, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*, ExceptionCode&) = 0;
     virtual void openKeyCursor(PassRefPtr<IDBKeyRange>, unsigned short direction, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*, ExceptionCode&) = 0;

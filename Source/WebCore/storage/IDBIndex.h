@@ -52,6 +52,7 @@ public:
     IDBObjectStore* objectStore() const { return m_objectStore.get(); }
     String keyPath() const { return m_backend->keyPath(); }
     bool unique() const { return m_backend->unique(); }
+    bool multientry() const { return m_backend->multientry(); }
 
     // FIXME: Try to modify the code generator so this is unneeded.
     PassRefPtr<IDBRequest> openCursor(ScriptExecutionContext* context, ExceptionCode& ec) { return openCursor(context, 0, ec); }

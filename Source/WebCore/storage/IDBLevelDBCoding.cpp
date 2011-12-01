@@ -81,6 +81,7 @@
 //     <database id, 0, 0, 100, object store id, index id, 0> => utf16 index name [IndexMetaDataKey]
 //     <database id, 0, 0, 100, object store id, index id, 1> => are index keys unique [IndexMetaDataKey]
 //     <database id, 0, 0, 100, object store id, index id, 2> => utf16 key path [IndexMetaDataKey]
+//     <database id, 0, 0, 100, object store id, index id, 3> => is index multientry [IndexMetaDataKey]
 //
 //
 // Other object store and index meta-data:

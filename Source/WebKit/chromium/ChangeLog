@@ -1,3 +1,32 @@
+2011-11-30  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Implement IDBIndex multientry feature
+        https://bugs.webkit.org/show_bug.cgi?id=73232
+
+        Reviewed by Tony Chang.
+
+        Adds the multientry IDBIndex flag to the WebKit API. A version of the
+        createIndex() method without this flag is retained until all callers
+        are updated.
+
+        * public/WebIDBIndex.h:
+        (WebKit::WebIDBIndex::multientry):
+        * public/WebIDBObjectStore.h:
+        (WebKit::WebIDBObjectStore::createIndex):
+        * src/IDBIndexBackendProxy.cpp:
+        (WebKit::IDBIndexBackendProxy::multientry):
+        * src/IDBIndexBackendProxy.h:
+        * src/IDBObjectStoreBackendProxy.cpp:
+        (WebKit::IDBObjectStoreBackendProxy::createIndex):
+        * src/IDBObjectStoreBackendProxy.h:
+        * src/WebIDBIndexImpl.cpp:
+        (WebKit::WebIDBIndexImpl::multientry):
+        * src/WebIDBIndexImpl.h:
+        * src/WebIDBObjectStoreImpl.cpp:
+        (WebKit::WebIDBObjectStoreImpl::createIndex):
+        * src/WebIDBObjectStoreImpl.h:
+        (WebKit::WebIDBObjectStoreImpl::createIndex):
+
 2011-11-30  David Reveman  <reveman@chromium.org>
 
         [Chromium] Add support for painting into an SkPicture and then rasterizing into tile-sized chunks.

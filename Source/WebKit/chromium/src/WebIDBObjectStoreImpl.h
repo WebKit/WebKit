@@ -54,7 +54,9 @@ public:
     void deleteFunction(const WebIDBKey& key, WebIDBCallbacks*, const WebIDBTransaction&, WebExceptionCode&);
     void clear(WebIDBCallbacks*, const WebIDBTransaction&, WebExceptionCode&);
 
-    WebIDBIndex* createIndex(const WebString& name, const WebString& keyPath, bool unique, const WebIDBTransaction&, WebExceptionCode&);
+    // FIXME: Remove once callers are updated.
+    WebIDBIndex* createIndex(const WebString& name, const WebString& keyPath, bool unique, const WebIDBTransaction& transaction, WebExceptionCode& ec) { return createIndex(name, keyPath, unique, false, transaction, ec); }
+    WebIDBIndex* createIndex(const WebString& name, const WebString& keyPath, bool unique, bool multientry, const WebIDBTransaction&, WebExceptionCode&);
     WebIDBIndex* index(const WebString& name, WebExceptionCode&);
     void deleteIndex(const WebString& name, const WebIDBTransaction&, WebExceptionCode&);
 
