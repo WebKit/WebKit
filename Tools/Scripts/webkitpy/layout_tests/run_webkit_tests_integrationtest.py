@@ -66,7 +66,7 @@ from webkitpy.common.host_mock import MockHost
 from webkitpy.layout_tests import port
 from webkitpy.layout_tests import run_webkit_tests
 from webkitpy.layout_tests.port.test import TestPort, TestDriver, unit_test_filesystem
-from webkitpy.layout_tests.port.test_files import is_reference_html_file
+from webkitpy.layout_tests.port.base import is_reference_html_file
 from webkitpy.python24.versioning import compare_version
 from webkitpy.test.skip import skip_if
 

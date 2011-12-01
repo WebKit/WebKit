@@ -42,6 +42,8 @@ from webkitpy.common.system.executive_mock import MockExecutive
 from webkitpy.common.host_mock import MockHost
 
 from webkitpy.layout_tests.port import Port, Driver, DriverOutput
+from webkitpy.layout_tests.port.base import _is_test_file
+from webkitpy.layout_tests.port.test import TestPort
 
 import config
 import config_mock
@@ -273,6 +275,40 @@ class PortTest(unittest.TestCase):
         self.assertFalse(port.uses_test_expectations_file())
         port._filesystem = MockFileSystem({'/mock-results/test_expectations.txt': ''})
         self.assertTrue(port.uses_test_expectations_file())
+
+    def test_find_no_paths_specified(self):
+        port = TestPort()
+        layout_tests_dir = port.layout_tests_dir()
+        tests = port.find_test_files([])
+        self.assertNotEqual(len(tests), 0)
+
+    def test_find_one_test(self):
+        port = TestPort()
+        tests = port.find_test_files(['failures/expected/image.html'])
+        self.assertEqual(len(tests), 1)
+
+    def test_find_glob(self):
+        port = TestPort()
+        tests = port.find_test_files(['failures/expected/im*'])
+        self.assertEqual(len(tests), 2)
+
+    def test_find_with_skipped_directories(self):
+        port = TestPort()
+        tests = port.find_test_files('userscripts')
+        self.assertTrue('userscripts/resources/iframe.html' not in tests)
+
+    def test_find_with_skipped_directories_2(self):
+        port = TestPort()
+        tests = port.find_test_files(['userscripts/resources'])
+        self.assertEqual(tests, set([]))
+
+    def test_is_test_file(self):
+        filesystem = MockFileSystem()
+        self.assertTrue(_is_test_file(filesystem, '', 'foo.html'))
+        self.assertTrue(_is_test_file(filesystem, '', 'foo.shtml'))
+        self.assertFalse(_is_test_file(filesystem, '', 'foo.png'))
+        self.assertFalse(_is_test_file(filesystem, '', 'foo-expected.html'))
+        self.assertFalse(_is_test_file(filesystem, '', 'foo-expected-mismatch.html'))
 
 
 class VirtualTest(unittest.TestCase):

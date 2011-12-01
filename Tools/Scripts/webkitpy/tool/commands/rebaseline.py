@@ -41,7 +41,6 @@ from webkitpy.layout_tests.controllers.test_result_writer import TestResultWrite
 from webkitpy.layout_tests.models import test_failures
 from webkitpy.layout_tests.models.test_expectations import TestExpectations
 from webkitpy.layout_tests.port import builders
-from webkitpy.layout_tests.port import test_files
 from webkitpy.tool.grammar import pluralize
 from webkitpy.tool.multicommandtool import AbstractDeclarativeCommand
 
@@ -119,7 +118,7 @@ class OptimizeBaselines(AbstractDeclarativeCommand):
         self._baseline_optimizer = BaselineOptimizer(tool)
         self._port = tool.port_factory.get("chromium-win-win7")  # FIXME: This should be selectable.
 
-        for test_name in map(self._to_test_name, test_files.find(self._port, args)):
+        for test_name in map(self._to_test_name, self._port.find_test_files(args)):
             print "Optimizing %s." % test_name
             self._optimize_baseline(test_name)
 
@@ -149,7 +148,7 @@ class AnalyzeBaselines(AbstractDeclarativeCommand):
         self._baseline_optimizer = BaselineOptimizer(tool)
         self._port = tool.port_factory.get("chromium-win-win7")  # FIXME: This should be selectable.
 
-        for test_name in map(self._to_test_name, test_files.find(self._port, args)):
+        for test_name in map(self._to_test_name, self._port.find_test_files(args)):
             self._analyze_baseline(test_name)
 
 

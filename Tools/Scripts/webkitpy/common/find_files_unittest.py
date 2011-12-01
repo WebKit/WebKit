@@ -1,4 +1,4 @@
-# Copyright (C) 2010 Google Inc. All rights reserved.
+# Copyright (C) 2011 Google Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -29,44 +29,7 @@
 import sys
 import unittest
 
-from webkitpy.layout_tests.port import test
-import test_files
-
-class TestFilesTest(unittest.TestCase):
-    def test_find_no_paths_specified(self):
-        port = test.TestPort()
-        layout_tests_dir = port.layout_tests_dir()
-        tests = test_files.find(port, [])
-        self.assertNotEqual(len(tests), 0)
-
-    def test_find_one_test(self):
-        port = test.TestPort()
-        tests = test_files.find(port, ['failures/expected/image.html'])
-        self.assertEqual(len(tests), 1)
-
-    def test_find_glob(self):
-        port = test.TestPort()
-        tests = test_files.find(port, ['failures/expected/im*'])
-        self.assertEqual(len(tests), 2)
-
-    def test_find_with_skipped_directories(self):
-        port = test.TestPort()
-        tests = port.tests('userscripts')
-        self.assertTrue('userscripts/resources/iframe.html' not in tests)
-
-    def test_find_with_skipped_directories_2(self):
-        port = test.TestPort()
-        tests = test_files.find(port, ['userscripts/resources'])
-        self.assertEqual(tests, set([]))
-
-    def test_is_test_file(self):
-        port = test.TestPort()
-        fs = port._filesystem
-        self.assertTrue(test_files._is_test_file(fs, '', 'foo.html'))
-        self.assertTrue(test_files._is_test_file(fs, '', 'foo.shtml'))
-        self.assertFalse(test_files._is_test_file(fs, '', 'foo.png'))
-        self.assertFalse(test_files._is_test_file(fs, '', 'foo-expected.html'))
-        self.assertFalse(test_files._is_test_file(fs, '', 'foo-expected-mismatch.html'))
+import find_files
 
 
 class MockWinFileSystem(object):
@@ -79,7 +42,7 @@ class MockWinFileSystem(object):
 
 class TestWinNormalize(unittest.TestCase):
     def assert_filesystem_normalizes(self, filesystem):
-        self.assertEquals(test_files.normalize(filesystem, "c:\\foo",
+        self.assertEquals(find_files._normalize(filesystem, "c:\\foo",
             ['fast/html', 'fast/canvas/*', 'compositing/foo.html']),
             ['c:\\foo\\fast\html', 'c:\\foo\\fast\canvas\*', 'c:\\foo\compositing\\foo.html'])
 

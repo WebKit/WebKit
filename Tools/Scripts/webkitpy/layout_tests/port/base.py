@@ -46,6 +46,7 @@ try:
 except ImportError:
     multiprocessing = None
 
+from webkitpy.common import find_files
 from webkitpy.common.system import logutils
 from webkitpy.common.system import path
 from webkitpy.common.system.executive import ScriptError
@@ -54,7 +55,6 @@ from webkitpy.layout_tests.models.test_configuration import TestConfiguration
 from webkitpy.layout_tests.port import config as port_config
 from webkitpy.layout_tests.port import driver
 from webkitpy.layout_tests.port import http_lock
-from webkitpy.layout_tests.port import test_files
 from webkitpy.layout_tests.servers import apache_http_server
 from webkitpy.layout_tests.servers import http_server
 from webkitpy.layout_tests.servers import websocket_server
@@ -461,8 +461,13 @@ class Port(object):
 
     def tests(self, paths):
         """Return the list of tests found."""
-        # FIXME: Should test_files.find() return normalized, relative test names?
-        return set([self.relative_test_filename(f) for f in test_files.find(self, paths)])
+        # FIXME: Should port.find_test_files() return normalized, relative test names?
+        return set([self.relative_test_filename(f) for f in self.find_test_files(paths)])
+
+    def find_test_files(self, paths):
+        # When collecting test cases, skip these directories
+        skipped_directories = set(['.svn', '_svn', 'resources', 'script-tests'])
+        return find_files.find(self.filesystem, self.layout_tests_dir(), paths, skipped_directories, _is_test_file)
 
     def test_dirs(self):
         """Returns the list of top-level test directories."""
@@ -994,3 +999,22 @@ class Port(object):
     def _driver_class(self):
         """Returns the port's driver implementation."""
         raise NotImplementedError('Port._driver_class')
+
+
+# When collecting test cases, we include any file with these extensions.
+_supported_file_extensions = set(['.html', '.shtml', '.xml', '.xhtml', '.pl',
+                                 '.htm', '.php', '.svg', '.mht'])
+
+
+def is_reference_html_file(filename):
+    return filename.endswith('-expected.html') or filename.endswith('-expected-mismatch.html')
+
+
+def _has_supported_extension(filesystem, filename):
+    """Return true if filename is one of the file extensions we want to run a test on."""
+    extension = filesystem.splitext(filename)[1]
+    return extension in _supported_file_extensions
+
+
+def _is_test_file(filesystem, dirname, filename):
+    return _has_supported_extension(filesystem, filename) and not is_reference_html_file(filename)

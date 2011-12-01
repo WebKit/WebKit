@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# Copyright (C) 2010 Google Inc. All rights reserved.
+# Copyright (C) 2011 Google Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -27,12 +27,22 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-"""This module is used to find all of the layout test files used by
-run-webkit-tests. It exposes one public function - find() -
-which takes an optional list of paths. If a list is passed in, the returned
-list of test files is constrained to those found under the paths passed in,
-i.e. calling find(["LayoutTests/fast"]) will only return files
-under that directory."""
+"""This module is used to find files used by run-webkit-tests and
+perftestrunner. It exposes one public function - find() - which takes
+an optional list of paths, optional set of skipped directories and optional
+filter callback.
+
+If a list is passed in, the returned list of files is constrained to those
+found under the paths passed in. i.e. calling find(["LayoutTests/fast"])
+will only return files under that directory.
+
+If a set of skipped directories is passed in, the function will filter out
+the files lying in these directories i.e. find(["LayoutTests"], set(["fast"]))
+will return everything except files in fast subfolder.
+
+If a callback is passed in, it will be called for the each file and the file
+will be included into the result if the callback returns True.
+The callback has to take three arguments: filesystem, dirname and filename."""
 
 import time
 
@@ -42,32 +52,27 @@ from webkitpy.common.system import logutils
 _log = logutils.get_logger(__file__)
 
 
-# When collecting test cases, we include any file with these extensions.
-_supported_file_extensions = set(['.html', '.shtml', '.xml', '.xhtml', '.pl',
-                                  '.htm', '.php', '.svg', '.mht'])
-# When collecting test cases, skip these directories
-_skipped_directories = set(['.svn', '_svn', 'resources', 'script-tests'])
-
-
-def find(port, paths=None):
+def find(filesystem, base_dir, paths=None, skipped_directories=None, file_filter=None):
     """Finds the set of tests under a given list of sub-paths.
 
     Args:
-      paths: a list of path expressions relative to port.layout_tests_dir()
+      paths: a list of path expressions relative to base_dir
           to search. Glob patterns are ok, as are path expressions with
           forward slashes on Windows. If paths is empty, we look at
-          everything under the layout_tests_dir().
+          everything under the base_dir.
     """
+
+    global _skipped_directories
     paths = paths or ['*']
-    filesystem = port._filesystem
-    return normalized_find(filesystem, normalize(filesystem, port.layout_tests_dir(), paths))
+    skipped_directories = skipped_directories or set(['.svn', '_svn'])
+    return _normalized_find(filesystem, _normalize(filesystem, base_dir, paths), skipped_directories, file_filter)
 
 
-def normalize(filesystem, base_dir, paths):
+def _normalize(filesystem, base_dir, paths):
     return [filesystem.normpath(filesystem.join(base_dir, path)) for path in paths]
 
 
-def normalized_find(filesystem, paths):
+def _normalized_find(filesystem, paths, skipped_directories, file_filter):
     """Finds the set of tests under the list of paths.
 
     Args:
@@ -86,26 +91,12 @@ def normalized_find(filesystem, paths):
             paths_to_walk.add(path)
 
     # FIXME: I'm not sure there's much point in this being a set. A list would probably be faster.
-    test_files = set()
+    all_files = set()
     for path in paths_to_walk:
-        files = filesystem.files_under(path, _skipped_directories, _is_test_file)
-        test_files.update(set(files))
+        files = filesystem.files_under(path, skipped_directories, file_filter)
+        all_files.update(set(files))
 
     gather_time = time.time() - gather_start_time
     _log.debug("Test gathering took %f seconds" % gather_time)
 
-    return test_files
-
-
-def _has_supported_extension(filesystem, filename):
-    """Return true if filename is one of the file extensions we want to run a test on."""
-    extension = filesystem.splitext(filename)[1]
-    return extension in _supported_file_extensions
-
-
-def is_reference_html_file(filename):
-    return filename.endswith('-expected.html') or filename.endswith('-expected-mismatch.html')
-
-
-def _is_test_file(filesystem, dirname, filename):
-    return _has_supported_extension(filesystem, filename) and not is_reference_html_file(filename)
+    return all_files

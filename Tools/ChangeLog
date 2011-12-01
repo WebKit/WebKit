@@ -1,3 +1,80 @@
+2011-11-30  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: chromium: I'd like to add a script for running perf tests for WebInspector.
+        https://bugs.webkit.org/show_bug.cgi?id=73079
+
+        The idea is to have performance tests for WebInspector.
+        I was suggested to put these tests into PerformanceTests/inspector.
+        They produce output in a format that is suitable for chromium perf bot drawing scripts.
+
+        I'd like to reuse code for scanning folders for test files.
+        Because of the fact that original test_files.py has common and layout specific parts
+        I decided to extract the generic part and put it into webkitpy/common
+        I think the two packages with name test_files look strange but I have no idea about a better name.
+
+        Reviewed by Dirk Pranke.
+
+        * Scripts/run-inspector-perf-tests.py: Added.
+        * Scripts/webkitpy/common/find_files.py: Renamed from Tools/Scripts/webkitpy/layout_tests/port/test_files.py.
+        (find):
+        (_normalize):
+        * Scripts/webkitpy/common/find_files_unittest.py: Added.
+        (MockWinFileSystem.join):
+        (MockWinFileSystem):
+        (MockWinFileSystem.normpath):
+        (TestWinNormalize.assert_filesystem_normalizes):
+        (TestWinNormalize.test_mocked_win):
+        (TestWinNormalize):
+        (TestWinNormalize.test_win):
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        (Port.tests):
+        (Port.find_test_files):
+        (Port._driver_class):
+        (is_reference_html_file):
+        (_has_supported_extension):
+        * Scripts/webkitpy/layout_tests/port/base_unittest.py:
+        (PortTest.test_find_no_paths_specified):
+        (PortTest.test_find_one_test):
+        (PortTest.test_find_glob):
+        (PortTest.test_find_with_skipped_directories):
+        (PortTest.test_find_with_skipped_directories_2):
+        (PortTest):
+        (PortTest.test_is_test_file):
+        * Scripts/webkitpy/layout_tests/port/chromium_gpu.py:
+        (_tests):
+        * Scripts/webkitpy/layout_tests/port/test.py:
+        * Scripts/webkitpy/layout_tests/port/test_files_unittest.py: Removed.
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+        * Scripts/webkitpy/performance_tests/__init__.py: Added.
+        * Scripts/webkitpy/performance_tests/perftestsrunner.py: Added.
+        (PerfTestsRunner.__init__):
+        (PerfTestsRunner._parse_args):
+        (PerfTestsRunner._collect_tests._is_test_file):
+        (PerfTestsRunner._collect_tests):
+        (PerfTestsRunner.run):
+        (PerfTestsRunner._run_tests_set):
+        * Scripts/webkitpy/performance_tests/perftestsrunner_unittest.py: Added.
+        (MainTest.TestPort):
+        (MainTest.TestPort.create_driver):
+        (MainTest.TestDriver.run_test):
+        (MainTest.TestDriver):
+        (MainTest.TestDriver.stop):
+        (MainTest.create_runner):
+        (MainTest.run_test):
+        (MainTest.test_run_passing_test):
+        (MainTest.test_run_silent_test):
+        (MainTest.test_run_failed_test):
+        (MainTest.test_run_tonguey_test):
+        (MainTest.test_run_timeout_test):
+        (MainTest.test_run_crash_test):
+        (MainTest.test_run_test_set):
+        (MainTest.test_collect_tests):
+        (MainTest):
+        (MainTest.test_parse_args):
+        * Scripts/webkitpy/tool/commands/rebaseline.py:
+        (OptimizeBaselines.execute):
+        (AnalyzeBaselines.execute):
+
 2011-11-30  nduca@chromium.org  <nduca@chromium.org@268f45cc-cd09-0410-ab3c-d52691b4dbfc>
 
         [chromium] Enable threaded compositing via CCThreadProxy::hasThread only

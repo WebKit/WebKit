@@ -257,7 +257,7 @@ WONTFIX SKIP : failures/expected/exception.html = CRASH
 
     # FIXME: This test was only being ignored because of missing a leading '/'.
     # Fixing the typo causes several tests to assert, so disabling the test entirely.
-    # Add in a file should be ignored by test_files.find().
+    # Add in a file should be ignored by port.find_test_files().
     #files[LAYOUT_TEST_DIR + '/userscripts/resources/iframe.html'] = 'iframe'
 
     fs = MockFileSystem(files, dirs=set(['/mock-checkout']))  # Make sure at least the checkout_root exists as a directory.

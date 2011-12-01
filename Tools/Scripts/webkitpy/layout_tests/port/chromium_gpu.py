@@ -30,8 +30,6 @@ import chromium_linux
 import chromium_mac
 import chromium_win
 
-from webkitpy.layout_tests.port import test_files
-
 
 def get(host, platform=None, port_name='chromium-gpu', **kwargs):
     """Some tests have slightly different results when run while using
@@ -94,13 +92,13 @@ def _tests(port, paths):
 
         if not paths:
             # FIXME: This is a hack until we can turn of the webkit_gpu
-            # tests on the bots. If paths is empty, test_files.find()
+            # tests on the bots. If paths is empty, port.find_test_files()
             # finds *everything*. However, we have to return something,
             # or NRWT thinks there's something wrong. So, we return a single
             # short directory. See https://bugs.webkit.org/show_bug.cgi?id=72498.
             paths = ['fast/html']
 
-    return set([port.relative_test_filename(f) for f in test_files.find(port, paths)])
+    return set([port.relative_test_filename(f) for f in port.find_test_files(paths)])
 
 
 class ChromiumGpuLinuxPort(chromium_linux.ChromiumLinuxPort):
