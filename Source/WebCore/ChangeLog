@@ -1,3 +1,13 @@
+2011-11-30  Alexey Proskuryakov  <ap@apple.com>
+
+        Original page URL is not set in quarantine information when downloading using context menu Save Linked File
+        https://bugs.webkit.org/show_bug.cgi?id=73475
+        <rdar://problem/10500337>
+
+        Reviewed by Dan Bernstein.
+
+        * WebCore.exp.in: Exported FrameLoader::setOriginalURLForDownloadRequest.
+
 2011-11-30  Mark Pilgrim  <pilgrim@chromium.org>
 
         [FileSystem API] DirectoryEntry.getFile path argument is required

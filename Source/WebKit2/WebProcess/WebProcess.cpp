@@ -59,6 +59,7 @@
 #include <WebCore/CrossOriginPreflightResultCache.h>
 #include <WebCore/Font.h>
 #include <WebCore/FontCache.h>
+#include <WebCore/Frame.h>
 #include <WebCore/GCController.h>
 #include <WebCore/GlyphPageTreeNode.h>
 #include <WebCore/IconDatabase.h>
@@ -951,7 +952,10 @@ void WebProcess::downloadRequest(uint64_t downloadID, uint64_t initiatingPageID,
 {
     WebPage* initiatingPage = initiatingPageID ? webPage(initiatingPageID) : 0;
 
-    DownloadManager::shared().startDownload(downloadID, initiatingPage, request);
+    ResourceRequest requestWithOriginalURL = request;
+    initiatingPage->mainFrame()->loader()->setOriginalURLForDownloadRequest(requestWithOriginalURL);
+
+    DownloadManager::shared().startDownload(downloadID, initiatingPage, requestWithOriginalURL);
 }
 
 void WebProcess::cancelDownload(uint64_t downloadID)

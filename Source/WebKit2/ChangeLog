@@ -1,3 +1,16 @@
+2011-11-30  Alexey Proskuryakov  <ap@apple.com>
+
+        Original page URL is not set in quarantine information when downloading using context menu Save Linked File
+        https://bugs.webkit.org/show_bug.cgi?id=73475
+        <rdar://problem/10500337>
+
+        Reviewed by Dan Bernstein.
+
+        * WebProcess/WebProcess.cpp: (WebKit::WebProcess::downloadRequest): Set main document URL
+        for the request, so that CFNetwork would know where te file was downloaded. Note that this
+        is an easier case than downloading due to clicks, since we don't really need to build a host
+        only URL, and could use full page URL. However, the same function is used for consistency.
+
 2011-11-30  Igor Oliveira  <igor.oliveira@openbossa.org>
 
         [WK2][Qt] AC animation startTime is wrong
