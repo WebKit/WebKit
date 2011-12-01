@@ -690,6 +690,10 @@ BUGWK67121 DEBUG SLOW : editing/selection/move-by-word-visually-multi-space.html
 
 BUGWK63509 : editing/style/smoosh-styles-003.html = PASS IMAGE
 
+// New tests in r101575
+BUGWK73510 : editing/deleting/delete-and-cleanup.html = TEXT
+BUGWK73510 : editing/pasteboard/paste-without-nesting.html = TEXT
+
 // -----------------------------------------------------------------
 // Plugin tests
 // -----------------------------------------------------------------
