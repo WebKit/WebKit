@@ -1,3 +1,18 @@
+2011-11-30  Ken Buchanan <kenrb@chromium.org>
+
+        Crash from first letter text fragments having flows split
+        https://bugs.webkit.org/show_bug.cgi?id=72759
+
+        Reviewed by David Hyatt.
+
+        When an inline flow is split that contains a first letter block
+        and its remaining text, it can prevent the remaining text fragment
+        from getting updated if the first letter block is replaced. This
+        patch enables the text fragment to be found and updated properly.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::updateFirstLetterBlock):
+
 2011-11-30  Takashi Toyoshima  <toyoshim@chromium.org>
 
         Get rid of AllowCrossThreadAccess throughout ThreadableWebSocketChannelClientWrapper.

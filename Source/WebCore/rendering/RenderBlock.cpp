@@ -5696,6 +5696,26 @@ void RenderBlock::updateFirstLetter()
                 }
                 next = next->nextSibling();
             }
+            if (!remainingText && firstLetterContainer->isAnonymousBlock()) {
+                // The remaining text fragment could have been wrapped in a different anonymous block since creation
+                RenderObject* nextChild;
+                next = firstLetterContainer->nextSibling();
+                while (next && !remainingText) {
+                    if (next->isAnonymousBlock()) {
+                        nextChild = next->firstChild();
+                        while (nextChild) {
+                            if (nextChild->isText() && toRenderText(nextChild)->isTextFragment()
+                                && (toRenderTextFragment(nextChild)->firstLetter() == firstLetter)) {
+                                remainingText = toRenderTextFragment(nextChild);
+                                break;
+                            }
+                            nextChild = nextChild->nextSibling();
+                        }
+                    } else
+                        break;
+                    next = next->nextSibling();
+                }
+            }
             if (remainingText) {
                 ASSERT(remainingText->isAnonymous() || remainingText->node()->renderer() == remainingText);
                 // Replace the old renderer with the new one.
