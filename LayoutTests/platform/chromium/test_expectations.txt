@@ -2495,6 +2495,7 @@ BUGCR65012 LINUX : fast/dom/HTMLHeadElement/head-check.html = PASS CRASH
 BUG_VITALYR MAC : tables/mozilla/bugs/bug82946-2.html = IMAGE
 
 BUGWK70878 LINUX : http/tests/xmlhttprequest/xmlhttprequest-test-send-flag.html = PASS TIMEOUT
+BUGWK83538 WIN : http/tests/xmlhttprequest/chunked-progress-event-expectedLength.html = TEXT
 
 // Flaky failures
 BUGCR66087 WIN : fast/dom/Geolocation/timestamp.html = PASS TEXT
