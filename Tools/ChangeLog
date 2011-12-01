@@ -1,3 +1,14 @@
+2011-12-01  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK] Buildslave switch from 32-bit Debug to 64-bit Release
+        https://bugs.webkit.org/show_bug.cgi?id=73547
+
+        Reviewed by Adam Roben.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json: Rename
+        the 32-bit Debug configuration to 64-bit Release. The new slave is
+        a 64-bit machine already. The 32-bit slave will be shut down.
+
 2011-12-01  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] build-jsc should not trigger gtkdoc generation

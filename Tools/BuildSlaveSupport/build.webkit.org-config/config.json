@@ -159,8 +159,8 @@
                       "slavenames": ["gtk-linux-slave-1"]
                     },
                     {
-                      "name": "GTK Linux 32-bit Debug", "type": "BuildAndTest", "builddir": "gtk-linux-32-debug",
-                      "platform": "gtk", "configuration": "debug", "architectures": ["i386"],
+                      "name": "GTK Linux 64-bit Release", "type": "BuildAndTest", "builddir": "gtk-linux-64-release",
+                      "platform": "gtk", "configuration": "release", "architectures": ["x86_64"],
                       "slavenames": ["gtk-linux-slave-2"]
                     },
                     {
@@ -266,7 +266,7 @@
                   ],
 
     "schedulers": [ { "type": "AnyBranchScheduler", "name": "trunk", "change_filter": "trunk_filter", "treeStableTimer": 45.0,
-                      "builderNames": ["GTK Linux 32-bit Release", "GTK Linux 32-bit Debug", "GTK Linux 64-bit Debug",
+                      "builderNames": ["GTK Linux 32-bit Release", "GTK Linux 64-bit Release", "GTK Linux 64-bit Debug",
                                        "Qt Linux Release", "Qt Linux Release minimal", "Qt Linux ARMv7 Release",
                                        "Qt Windows 32-bit Release", "Qt Windows 32-bit Debug", "Qt SnowLeopard Release",
                                        "Qt Linux MIPS Release", "Qt Linux SH4 Release",
