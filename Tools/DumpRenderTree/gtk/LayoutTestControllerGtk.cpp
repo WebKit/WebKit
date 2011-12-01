@@ -827,6 +827,8 @@ void LayoutTestController::overridePreference(JSStringRef key, JSStringRef value
         propertyName = "enable-hyperlink-auditing";
     else if (g_str_equal(originalName.get(), "WebKitWebGLEnabled"))
         propertyName = "enable-webgl";
+    else if (g_str_equal(originalName.get(), "WebKitWebAudioEnabled"))
+        propertyName = "enable-webaudio";
     else if (g_str_equal(originalName.get(), "WebKitTabToLinksPreferenceKey")) {
         DumpRenderTreeSupportGtk::setLinksIncludedInFocusChain(!g_ascii_strcasecmp(valueAsString.get(), "true") || !g_ascii_strcasecmp(valueAsString.get(), "1"));
         return;

@@ -118,7 +118,8 @@ enum {
     PROP_ENABLE_HYPERLINK_AUDITING,
     PROP_ENABLE_FULLSCREEN,
     PROP_ENABLE_DNS_PREFETCHING,
-    PROP_ENABLE_WEBGL
+    PROP_ENABLE_WEBGL,
+    PROP_ENABLE_WEB_AUDIO
 };
 
 // Create a default user agent string
@@ -898,6 +899,26 @@ static void webkit_web_settings_class_init(WebKitWebSettingsClass* klass)
                                                          _("Whether WebGL content should be rendered"),
                                                          FALSE,
                                                          flags));
+    /**
+    * WebKitWebSettings:enable-webaudio:
+    *
+    * Enable or disable support for WebAudio on pages. WebAudio is an
+    * experimental proposal for allowing web pages to generate Audio
+    * WAVE data from JavaScript. The standard is currently a
+    * work-in-progress by the W3C Audio Working Group.
+    *
+    * See also https://dvcs.w3.org/hg/audio/raw-file/tip/webaudio/specification.html
+    *
+    * Since: TODO
+    */
+    g_object_class_install_property(gobject_class,
+                                    PROP_ENABLE_WEB_AUDIO,
+                                    g_param_spec_boolean("enable-webaudio",
+                                                         _("Enable WebAudio"),
+                                                         _("Whether WebAudio content should be handled"),
+                                                         FALSE,
+                                                         flags));
+
 
     /**
     * WebKitWebSettings:enable-dns-prefetching
@@ -1083,6 +1104,9 @@ static void webkit_web_settings_set_property(GObject* object, guint prop_id, con
     case PROP_ENABLE_WEBGL:
         priv->enableWebgl = g_value_get_boolean(value);
         break;
+    case PROP_ENABLE_WEB_AUDIO:
+        priv->enableWebAudio = g_value_get_boolean(value);
+        break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
         break;
@@ -1241,6 +1265,9 @@ static void webkit_web_settings_get_property(GObject* object, guint prop_id, GVa
         break;
     case PROP_ENABLE_WEBGL:
         g_value_set_boolean(value, priv->enableWebgl);
+        break;
+    case PROP_ENABLE_WEB_AUDIO:
+        g_value_set_boolean(value, priv->enableWebAudio);
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);

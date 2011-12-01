@@ -3095,6 +3095,10 @@ static void webkit_web_view_update_settings(WebKitWebView* webView)
     coreSettings->setWebGLEnabled(settingsPrivate->enableWebgl);
 #endif
 
+#if ENABLE(WEB_AUDIO)
+    coreSettings->setWebAudioEnabled(settingsPrivate->enableWebAudio);
+#endif
+
     if (Page* page = core(webView))
         page->setTabKeyCyclesThroughElements(settingsPrivate->tabKeyCyclesThroughElements);
 
@@ -3217,6 +3221,11 @@ static void webkit_web_view_settings_notify(WebKitWebSettings* webSettings, GPar
 #if ENABLE(WEBGL)
     else if (name == g_intern_string("enable-webgl"))
         settings->setWebGLEnabled(g_value_get_boolean(&value));
+#endif
+
+#if ENABLE(WEB_AUDIO)
+    else if (name == g_intern_string("enable-webaudio"))
+        settings->setWebAudioEnabled(g_value_get_boolean(&value));
 #endif
 
     else if (!g_object_class_find_property(G_OBJECT_GET_CLASS(webSettings), name))

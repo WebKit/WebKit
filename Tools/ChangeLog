@@ -1,3 +1,14 @@
+2011-11-21  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK] enable-webaudio websetting
+        https://bugs.webkit.org/show_bug.cgi?id=69836
+
+        Reviewed by Martin Robinson.
+
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
+        (LayoutTestController::overridePreference): Update WebKitGTK
+        enable-webaudio setting when a layout test requests it.
+
 2011-11-30  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: chromium: I'd like to add a script for running perf tests for WebInspector.

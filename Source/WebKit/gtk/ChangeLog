@@ -1,3 +1,21 @@
+2011-11-21  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK] enable-webaudio websetting
+        https://bugs.webkit.org/show_bug.cgi?id=69836
+
+        Reviewed by Martin Robinson.
+
+        * webkit/webkitwebsettings.cpp: New enable-webaudio boolean
+        setting, set to FALSE by default.
+        (webkit_web_settings_class_init):
+        (webkit_web_settings_set_property):
+        (webkit_web_settings_get_property):
+        * webkit/webkitwebsettingsprivate.h: Ditto.
+        * webkit/webkitwebview.cpp: Update WebCore settings when
+        enable-webaudio value changes.
+        (webkit_web_view_update_settings):
+        (webkit_web_view_settings_notify):
+
 2011-11-30  Alexey Proskuryakov  <ap@apple.com>
 
         Remove an unneeded argument from FrameLoaderClient::download
