@@ -237,7 +237,7 @@ bool HTMLVideoElement::hasAvailableVideoFrame() const
     if (!player())
         return false;
     
-    return player()->hasAvailableVideoFrame();
+    return player()->hasVideo() && player()->hasAvailableVideoFrame();
 }
 
 void HTMLVideoElement::webkitEnterFullscreen(ExceptionCode& ec)

@@ -1,5 +1,16 @@
 2011-12-01  Eric Carlson  <eric.carlson@apple.com>
 
+        When playing audio in <video>, the poster is hidden on play
+        https://bugs.webkit.org/show_bug.cgi?id=73405
+
+        Reviewed by Darin Adler.
+
+        * html/HTMLVideoElement.cpp:
+        (WebCore::HTMLVideoElement::hasAvailableVideoFrame): Don't return true if the file
+            doesn't have video.
+
+2011-12-01  Eric Carlson  <eric.carlson@apple.com>
+
         Add Settings for text track types
         https://bugs.webkit.org/show_bug.cgi?id=73383
 
