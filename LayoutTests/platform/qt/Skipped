@@ -2452,9 +2452,10 @@ fast/events/platform-wheelevent-paging-y-in-scrolling-page.html
 # https://bugs.webkit.org/show_bug.cgi?id=71766
 svg/custom/getBBox-path.svg
 
-# [Qt] http/tests/notifications/icon-does-not-exist.html makes fast/notifications/notifications-click-event.html fail
+# [Qt] http/tests/notifications tests make fast/notifications/notifications-click-event.html fail
 # https://bugs.webkit.org/show_bug.cgi?id=71693
 http/tests/notifications/icon-does-not-exist.html
+http/tests/notifications/icon-exists-show-alert-during-load.html
 
 # [Qt] http/tests/xmlhttprequest/workers/abort-exception-assert.html makes 6 fast/workers test fail
 # https://bugs.webkit.org/show_bug.cgi?id=71695
