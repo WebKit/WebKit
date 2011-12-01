@@ -225,9 +225,8 @@ void JSArray::finishCreation(JSGlobalData& globalData, const ArgList& list)
 
     size_t i = 0;
     WriteBarrier<Unknown>* vector = m_storage->m_vector;
-    ArgList::const_iterator end = list.end();
-    for (ArgList::const_iterator it = list.begin(); it != end; ++it, ++i)
-        vector[i].set(globalData, this, *it);
+    for (; i < list.size(); ++i)
+        vector[i].set(globalData, this, list.at(i));
     for (; i < initialStorage; i++)
         vector[i].clear();
 

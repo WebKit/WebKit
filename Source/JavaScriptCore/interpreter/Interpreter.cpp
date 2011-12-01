@@ -1036,9 +1036,8 @@ JSValue Interpreter::executeCall(CallFrame* callFrame, JSObject* function, CallT
     CallFrame* newCallFrame = CallFrame::create(oldEnd);
     size_t dst = 0;
     newCallFrame->uncheckedR(0) = thisValue;
-    ArgList::const_iterator end = args.end();
-    for (ArgList::const_iterator it = args.begin(); it != end; ++it)
-        newCallFrame->uncheckedR(++dst) = *it;
+    for (size_t i = 0; i < args.size(); ++i)
+        newCallFrame->uncheckedR(++dst) = args.at(i);
 
     if (callType == CallTypeJS) {
         ScopeChainNode* callDataScopeChain = callData.js.scopeChain;
@@ -1134,9 +1133,8 @@ JSObject* Interpreter::executeConstruct(CallFrame* callFrame, JSObject* construc
 
     CallFrame* newCallFrame = CallFrame::create(oldEnd);
     size_t dst = 0;
-    ArgList::const_iterator end = args.end();
-    for (ArgList::const_iterator it = args.begin(); it != end; ++it)
-        newCallFrame->uncheckedR(++dst) = *it;
+    for (size_t i = 0; i < args.size(); ++i)
+        newCallFrame->uncheckedR(++dst) = args.at(i);
 
     if (constructType == ConstructTypeJS) {
         ScopeChainNode* constructDataScopeChain = constructData.js.scopeChain;

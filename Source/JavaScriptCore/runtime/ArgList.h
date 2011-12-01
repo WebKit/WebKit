@@ -34,15 +34,15 @@ namespace JSC {
 
     class MarkedArgumentBuffer {
         WTF_MAKE_NONCOPYABLE(MarkedArgumentBuffer);
+        friend class JSGlobalData;
+        friend class ArgList;
+
     private:
         static const unsigned inlineCapacity = 8;
         typedef Vector<Register, inlineCapacity> VectorType;
         typedef HashSet<MarkedArgumentBuffer*> ListSet;
 
     public:
-        typedef VectorType::iterator iterator;
-        typedef VectorType::const_iterator const_iterator;
-
         // Constructor for a read-write list, to which you may append values.
         // FIXME: Remove all clients of this API, then remove this API.
         MarkedArgumentBuffer()
@@ -132,12 +132,6 @@ namespace JSC {
             return m_buffer[m_size - 1].jsValue();
         }
         
-        iterator begin() { return m_buffer; }
-        iterator end() { return m_buffer + m_size; }
-
-        const_iterator begin() const { return m_buffer; }
-        const_iterator end() const { return m_buffer + m_size; }
-
         static void markLists(HeapRootVisitor&, ListSet&);
 
     private:
@@ -155,8 +149,6 @@ namespace JSC {
 
     private:
         // Prohibits new / delete, which would break GC.
-        friend class JSGlobalData;
-        
         void* operator new(size_t size)
         {
             return fastMalloc(size);
@@ -176,9 +168,6 @@ namespace JSC {
     class ArgList {
         friend class JIT;
     public:
-        typedef JSValue* iterator;
-        typedef const JSValue* const_iterator;
-
         ArgList()
             : m_args(0)
             , m_argCount(0)
@@ -192,7 +181,7 @@ namespace JSC {
         }
         
         ArgList(const MarkedArgumentBuffer& args)
-            : m_args(reinterpret_cast<JSValue*>(const_cast<Register*>(args.begin())))
+            : m_args(reinterpret_cast<JSValue*>(args.m_buffer))
             , m_argCount(args.size())
         {
         }
@@ -205,16 +194,10 @@ namespace JSC {
         }
 
         bool isEmpty() const { return !m_argCount; }
-
         size_t size() const { return m_argCount; }
         
-        iterator begin() { return m_args; }
-        iterator end() { return m_args + m_argCount; }
-        
-        const_iterator begin() const { return m_args; }
-        const_iterator end() const { return m_args + m_argCount; }
-
         void getSlice(int startIndex, ArgList& result) const;
+
     private:
         JSValue* m_args;
         size_t m_argCount;

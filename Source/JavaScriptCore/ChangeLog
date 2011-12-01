@@ -1,3 +1,22 @@
+2011-11-30  Geoffrey Garen  <ggaren@apple.com>
+
+        Removed ArgList iterators.
+
+        Reviewed by Gavin Barraclough.
+        
+        Another step toward reversing the argument order.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::executeCall):
+        (JSC::Interpreter::executeConstruct): Switched from iterator to int.
+
+        * runtime/ArgList.h:
+        (JSC::ArgList::ArgList):
+        (JSC::ArgList::isEmpty): Removed iterators.
+
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::finishCreation): Switched from iterator to int.
+
 2011-11-30  Yuqiang Xian  <yuqiang.xian@intel.com>
 
         32 bit DFG should handle logicalNot slow case instead of simply bailing out
