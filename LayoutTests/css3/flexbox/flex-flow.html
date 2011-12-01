@@ -81,6 +81,18 @@ if (window.layoutTestController)
   <div data-expected-width="75" data-offset-x="100" style="width: -webkit-flex(1 0 0); -webkit-margin-end: 100px;"></div>
 </div>
 
+<div class="flexbox row-reverse">
+  <div data-expected-width="75" data-offset-x="525" style="width: -webkit-flex(1 0 0); margin: 0 auto;"></div>
+  <div data-expected-width="350" data-offset-x="175" style="width: -webkit-flex(2 0 0); -webkit-padding-start: 200px"><div data-offset-x="375"></div></div>
+  <div data-expected-width="75" data-offset-x="0" style="width: -webkit-flex(1 0 0); -webkit-margin-end: 100px;"></div>
+</div>
+
+<div class="flexbox rtl row-reverse">
+  <div data-expected-width="75" data-offset-x="0" style="width: -webkit-flex(1 0 0); margin: 0 auto;"></div>
+  <div data-expected-width="350" data-offset-x="75" style="width: -webkit-flex(2 0 0); -webkit-padding-start: 200px"><div data-offset-x="75"></div></div>
+  <div data-expected-width="75" data-offset-x="525" style="width: -webkit-flex(1 0 0); -webkit-margin-end: 100px;"></div>
+</div>
+
 <div style="position: relative;">
 <div class="flexbox column">
   <div data-expected-height="150" data-offset-y="0" style="height: -webkit-flex(1 0 0); margin: auto 200px auto 150px;"></div>

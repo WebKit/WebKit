@@ -78,6 +78,10 @@ var expectations = {
         row: {
             rtl: [[80, 0], [60, 0]],
             ltr: [[0, 0], [20, 0]]
+        },
+        'row-reverse': {
+            rtl: [[0, 0], [20, 0]],
+            ltr: [[80, 0], [60, 0]]
         }
     },
     'horizontal-bt': {
@@ -88,6 +92,10 @@ var expectations = {
         row: {
             rtl: [[80, 80], [60, 80]],
             ltr: [[0, 80], [20, 80]]
+        },
+        'row-reverse': {
+            rtl: [[0, 80], [20, 80]],
+            ltr: [[80, 80], [60, 80]]
         }
     },
     'vertical-lr': {
@@ -98,6 +106,10 @@ var expectations = {
         row: {
             rtl: [[0, 80], [0, 60]],
             ltr: [[0, 0], [0, 20]]
+        },
+        'row-reverse': {
+            rtl: [[0, 0], [0, 20]],
+            ltr: [[0, 80], [0, 60]]
         }
     },
     'vertical-rl': {
@@ -108,13 +120,17 @@ var expectations = {
         row: {
             rtl: [[80, 80], [80, 60]],
             ltr: [[80, 0], [80, 20]]
+        },
+        'row-reverse': {
+            rtl: [[80, 0], [80, 20]],
+            ltr: [[80, 80], [80, 60]]
         }
     }
 };
 
 var writingModes = ['horizontal-tb', 'horizontal-bt', 'vertical-lr', 'vertical-rl'];
-// FIXME: Test row-reverse and column-reverse.
-var flexFlows = ['row', 'column'];
+// FIXME: Test column-reverse.
+var flexFlows = ['row', 'column', 'row-reverse'];
 var directions = ['rtl', 'ltr'];
 
 function physicalWritingMode(writingMode, flexFlow, direction)

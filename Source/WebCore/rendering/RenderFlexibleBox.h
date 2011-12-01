@@ -53,6 +53,7 @@ private:
 
     bool hasOrthogonalFlow(RenderBox* child) const;
     bool isColumnFlow() const;
+    bool isReverseFlow() const;
     bool isHorizontalFlow() const;
     bool isLeftToRightFlow() const;
     Length crossAxisLength() const;
@@ -67,11 +68,9 @@ private:
     WritingMode transformedWritingMode() const;
     LayoutUnit flowAwareBorderStart() const;
     LayoutUnit flowAwareBorderBefore() const;
-    LayoutUnit flowAwareBorderAfter() const;
     LayoutUnit crossAxisBorderAndPaddingExtent() const;
     LayoutUnit flowAwarePaddingStart() const;
     LayoutUnit flowAwarePaddingBefore() const;
-    LayoutUnit flowAwarePaddingAfter() const;
     LayoutUnit flowAwareMarginStartForChild(RenderBox* child) const;
     LayoutUnit flowAwareMarginEndForChild(RenderBox* child) const;
     LayoutUnit flowAwareMarginBeforeForChild(RenderBox* child) const;

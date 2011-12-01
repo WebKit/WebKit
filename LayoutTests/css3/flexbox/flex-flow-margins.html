@@ -214,8 +214,8 @@ var logicalExpectations = {
 }
 
 var writingModes = ['horizontal-tb', 'horizontal-bt', 'vertical-lr', 'vertical-rl'];
-// FIXME: Test row-reverse and column-reverse.
-var flexFlows = ['row', 'column'];
+// FIXME: Test column-reverse.
+var flexFlows = ['row', 'column', 'row-reverse'];
 var directions = ['rtl', 'ltr'];
 var marginTypes = ['physical', 'logical'];
 
@@ -233,7 +233,7 @@ writingModes.forEach(function(writingMode) {
                 expectations = expectations[writingMode][direction];
                 var flexboxExpectations = positionAsString(expectations.flexbox);
 
-                var flexItemExpectations = asString(expectations[flexFlow]);
+                var flexItemExpectations = asString(expectations[flexFlow.replace("-reverse", "")]);
 
                 var container = document.createElement('div');
                 container.className = 'container';

@@ -90,8 +90,8 @@ var expectations = {
 }
 
 var writingModes = ['horizontal-tb', 'horizontal-bt', 'vertical-lr', 'vertical-rl'];
-// FIXME: Test row-reverse and column-reverse.
-var flexFlows = ['row', 'column'];
+// FIXME: Test column-reverse.
+var flexFlows = ['row', 'column', 'row-reverse'];
 var directions = ['rtl', 'ltr'];
 
 writingModes.forEach(function(writingMode) {
@@ -108,8 +108,12 @@ writingModes.forEach(function(writingMode) {
             container.setAttribute('data-expected-width', containerSize[0]);
             container.setAttribute('data-expected-height', containerSize[1]);
 
+            var flowDirection = direction;
+            if (flexFlow.indexOf("-reverse") != -1)
+                flowDirection = direction == "rtl" ? "ltr" : "rtl";
+
             container.innerHTML = '\n<div class="flexbox ' + flexboxClassName + '" ' + sizeAsString(containerSize) + '>\n' +
-                '<div style="width: -webkit-flex(1 105px); height: -webkit-flex(1 105px);" ' + sizeAsString([105, 105])  + ' ' + positionAsString(expectations[writingMode][direction]) + '></div>\n' +
+                '<div style="width: -webkit-flex(1 105px); height: -webkit-flex(1 105px);" ' + sizeAsString([105, 105])  + ' ' + positionAsString(expectations[writingMode][flowDirection]) + '></div>\n' +
             '</div>\n';
 
             document.body.appendChild(container);   

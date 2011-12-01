@@ -206,6 +206,11 @@ bool RenderFlexibleBox::isColumnFlow() const
     return style()->isColumnFlexFlow();
 }
 
+bool RenderFlexibleBox::isReverseFlow() const
+{
+    return style()->flexFlow() == FlowColumnReverse || style()->flexFlow() == FlowRowReverse;
+}
+
 bool RenderFlexibleBox::isHorizontalFlow() const
 {
     if (isHorizontalWritingMode())
@@ -217,7 +222,7 @@ bool RenderFlexibleBox::isLeftToRightFlow() const
 {
     if (isColumnFlow())
         return style()->writingMode() == TopToBottomWritingMode || style()->writingMode() == LeftToRightWritingMode;
-    return style()->isLeftToRightDirection();
+    return style()->isLeftToRightDirection() ^ isReverseFlow();
 }
 
 Length RenderFlexibleBox::mainAxisLengthForChild(RenderBox* child) const
@@ -309,22 +314,6 @@ LayoutUnit RenderFlexibleBox::flowAwareBorderBefore() const
     return borderTop();
 }
 
-LayoutUnit RenderFlexibleBox::flowAwareBorderAfter() const
-{
-    switch (transformedWritingMode()) {
-    case TopToBottomWritingMode:
-        return borderBottom();
-    case BottomToTopWritingMode:
-        return borderTop();
-    case LeftToRightWritingMode:
-        return borderRight();
-    case RightToLeftWritingMode:
-        return borderLeft();
-    }
-    ASSERT_NOT_REACHED();
-    return borderBottom();
-}
-
 LayoutUnit RenderFlexibleBox::crossAxisBorderAndPaddingExtent() const
 {
     return isHorizontalFlow() ? borderAndPaddingHeight() : borderAndPaddingWidth();
@@ -351,22 +340,6 @@ LayoutUnit RenderFlexibleBox::flowAwarePaddingBefore() const
     }
     ASSERT_NOT_REACHED();
     return paddingTop();
-}
-
-LayoutUnit RenderFlexibleBox::flowAwarePaddingAfter() const
-{
-    switch (transformedWritingMode()) {
-    case TopToBottomWritingMode:
-        return paddingBottom();
-    case BottomToTopWritingMode:
-        return paddingTop();
-    case LeftToRightWritingMode:
-        return paddingRight();
-    case RightToLeftWritingMode:
-        return paddingLeft();
-    }
-    ASSERT_NOT_REACHED();
-    return paddingBottom();
 }
 
 LayoutUnit RenderFlexibleBox::flowAwareMarginStartForChild(RenderBox* child) const
