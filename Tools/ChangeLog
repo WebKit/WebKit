@@ -83,6 +83,14 @@
 
 2011-12-01  Gustavo Noronha Silva  <gns@gnome.org>
 
+        Unreviewed. Fix bad file =(.
+
+        * gtk/jhbuild.modules:
+        * Scripts/webkitdirs.pm:
+        (runAutogenForAutotoolsProject):
+
+2011-12-01  Gustavo Noronha Silva  <gns@gnome.org>
+
         [GTK] Add freetype to our jhbuild setup
         https://bugs.webkit.org/show_bug.cgi?id=73488
 

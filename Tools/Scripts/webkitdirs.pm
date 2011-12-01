@@ -1591,7 +1591,7 @@ sub runAutogenForAutotoolsProject($@)
     # Save md5sum for jhbuild-related files.
     foreach my $file (qw(jhbuildrc jhbuild.modules)) {
         my $path = join('/', $sourceDir, 'Tools', 'gtk', $file);
-        open(SUM, ">$file");
+        open(SUM, ">$file.md5sum");
         print SUM getMD5HashForFile($path);
         close(SUM);
     }

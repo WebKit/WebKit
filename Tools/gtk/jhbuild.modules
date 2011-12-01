@@ -1,1 +1,31 @@
-74be16979710d4c4e7c6647856088456
+<?xml version="1.0"?>
+<!DOCTYPE moduleset SYSTEM "moduleset.dtd">
+<?xml-stylesheet type="text/xsl" href="moduleset.xsl"?>
+<moduleset>
+
+  <metamodule id="webkitgtk-testing-dependencies">
+    <dependencies>
+      <dep package="fonts"/>
+      <dep package="freetype6"/>
+    </dependencies>
+  </metamodule>
+
+  <repository type="tarball" name="github.com"
+      href="https://github.com"/>
+
+  <autotools id="fonts"
+             skip-autogen="true">
+    <branch module="downloads/mrobinson/webkitgtk-test-fonts/webkitgtk-test-fonts-0.0.1.tar.gz" version="0.0.1"
+            repo="github.com"
+            hash="sha256:df40960ec98bd23de2f6ea8f5135ffc9485929aeddb4f08be5144881a1fd3887"
+            md5sum="2c752a694f41f3ff7aed6e3015250f69" size="6635293">
+    </branch>
+  </autotools>
+
+  <tarball id="freetype6">
+    <source href="download.savannah.gnu.org/releases/freetype/freetype-2.4.2.tar.bz2" version="2.4.2"
+            hash="sha256:9a987aef8c50d9bcfdfdc9f012f8bd0de6095cc1a5524e62c1a037deb8dacbfe"
+            md5sum="647ee8ed266f9a4117c8d0a4855b3d3e"/>
+  </tarball>
+ 
+</moduleset>
