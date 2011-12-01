@@ -3335,32 +3335,18 @@ bool AccessibilityRenderObject::ariaRoleHasPresentationalChildren() const
 
 bool AccessibilityRenderObject::canSetFocusAttribute() const
 {
-    ASSERT(m_renderer);
-    Node* node = m_renderer->node();
+    Node* node = this->node();
 
     // NOTE: It would be more accurate to ask the document whether setFocusedNode() would
     // do anything.  For example, setFocusedNode() will do nothing if the current focused
     // node will not relinquish the focus.
-    if (!node || !node->isElementNode())
+    if (!node)
         return false;
 
-    if (!static_cast<Element*>(node)->isEnabledFormControl())
+    if (node->isElementNode() && !static_cast<Element*>(node)->isEnabledFormControl())
         return false;
 
-    switch (roleValue()) {
-    case WebCoreLinkRole:
-    case ImageMapLinkRole:
-    case TextFieldRole:
-    case TextAreaRole:
-    case ButtonRole:
-    case PopUpButtonRole:
-    case CheckBoxRole:
-    case RadioButtonRole:
-    case SliderRole:
-        return true;
-    default:
-        return node->supportsFocus();
-    }
+    return node->supportsFocus();
 }
     
 bool AccessibilityRenderObject::canSetExpandedAttribute() const

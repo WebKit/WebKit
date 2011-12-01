@@ -1,0 +1,41 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../../../fast/js/resources/js-test-style.css">
+<script>
+var successfullyParsed = false;
+</script>
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<a href="#">focusable link</a>
+<a>non focusable link</a>
+<a role="link" tabindex="0">focusable link</a>
+<span role="button">non focusable button</span>
+<span tabindex="0" role="button">focusable button</span>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests whether focus can be set is reported correctly based on whether the node can accept focus.");
+
+    if (window.accessibilityController) {
+
+        document.getElementById("body").focus();
+        var group = accessibilityController.focusedElement.childAtIndex(0);
+        shouldBe("group.childAtIndex(0).isFocusable", "true");
+        shouldBe("group.childAtIndex(1).isFocusable", "false");
+        shouldBe("group.childAtIndex(2).isFocusable", "true");
+        shouldBe("group.childAtIndex(3).isFocusable", "false");
+        shouldBe("group.childAtIndex(4).isFocusable", "true");
+    }
+
+    successfullyParsed = true;
+</script>
+
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

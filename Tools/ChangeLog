@@ -1,3 +1,16 @@
+2011-11-30  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Nodes are reporting that focus can be set when they really can't
+        https://bugs.webkit.org/show_bug.cgi?id=72791
+
+        Reviewed by Beth Dakin.
+
+        * DumpRenderTree/mac/AccessibilityUIElementMac.mm:
+        (AccessibilityUIElement::isFocusable):
+        * WebKitTestRunner/InjectedBundle/Bindings/AccessibilityUIElement.idl:
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityUIElementMac.mm:
+        (WTR::AccessibilityUIElement::isFocusable):
+
 2011-11-30  Alejandro G. Castro  <alex@igalia.com>
 
         Moved myself to the reviewers list.

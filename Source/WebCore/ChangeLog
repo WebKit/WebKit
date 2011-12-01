@@ -1,5 +1,20 @@
 2011-11-30  Chris Fleizach  <cfleizach@apple.com>
 
+        AX: Nodes are reporting that focus can be set when they really can't
+        https://bugs.webkit.org/show_bug.cgi?id=72791
+
+        Reviewed by Beth Dakin.
+
+        Whether focus can be set on a node shouldn't rely only on the role.
+        It should depend on whether the node supports focus.
+
+        Test: platform/mac/accessibility/supports-focus-setting.html
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::canSetFocusAttribute):
+
+2011-11-30  Chris Fleizach  <cfleizach@apple.com>
+
         WebKit does not send mouse down/up/click events to ARIA tabs
         https://bugs.webkit.org/show_bug.cgi?id=72573
 

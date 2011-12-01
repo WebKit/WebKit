@@ -1263,8 +1263,12 @@ bool AccessibilityUIElement::removeNotificationListener()
 
 bool AccessibilityUIElement::isFocusable() const
 {
-    // FIXME: implement
-    return false;
+    bool result = false;
+    BEGIN_AX_OBJC_EXCEPTIONS
+    result = [m_element accessibilityIsAttributeSettable:NSAccessibilityFocusedAttribute];
+    END_AX_OBJC_EXCEPTIONS
+    
+    return result;
 }
 
 bool AccessibilityUIElement::isSelectable() const
