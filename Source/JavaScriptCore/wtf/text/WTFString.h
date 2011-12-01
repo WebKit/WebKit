@@ -402,12 +402,20 @@ inline bool operator==(const String& a, const LChar* b) { return equal(a.impl(),
 inline bool operator==(const String& a, const char* b) { return equal(a.impl(), reinterpret_cast<const LChar*>(b)); }
 inline bool operator==(const LChar* a, const String& b) { return equal(a, b.impl()); }
 inline bool operator==(const char* a, const String& b) { return equal(reinterpret_cast<const LChar*>(a), b.impl()); }
+template<size_t inlineCapacity>
+inline bool operator==(const Vector<char, inlineCapacity>& a, const String& b) { return equal(b.impl(), a.data(), a.size()); }
+template<size_t inlineCapacity>
+inline bool operator==(const String& a, const Vector<char, inlineCapacity>& b) { return b == a; }
 
 inline bool operator!=(const String& a, const String& b) { return !equal(a.impl(), b.impl()); }
 inline bool operator!=(const String& a, const LChar* b) { return !equal(a.impl(), b); }
 inline bool operator!=(const String& a, const char* b) { return !equal(a.impl(), reinterpret_cast<const LChar*>(b)); }
 inline bool operator!=(const LChar* a, const String& b) { return !equal(a, b.impl()); }
 inline bool operator!=(const char* a, const String& b) { return !equal(reinterpret_cast<const LChar*>(a), b.impl()); }
+template<size_t inlineCapacity>
+inline bool operator!=(const Vector<char, inlineCapacity>& a, const String& b) { return !(a == b); }
+template<size_t inlineCapacity>
+inline bool operator!=(const String& a, const Vector<char, inlineCapacity>& b) { return b != a; }
 
 inline bool equalIgnoringCase(const String& a, const String& b) { return equalIgnoringCase(a.impl(), b.impl()); }
 inline bool equalIgnoringCase(const String& a, const LChar* b) { return equalIgnoringCase(a.impl(), b); }

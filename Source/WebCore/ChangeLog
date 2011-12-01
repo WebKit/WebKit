@@ -1,3 +1,39 @@
+2011-11-30  Benjamin Poulain  <benjamin@webkit.org>
+
+        URLs are encoded in UTF-8, then decoded as if they are Latin1
+        https://bugs.webkit.org/show_bug.cgi?id=71758
+
+        Reviewed by Darin Adler.
+
+        Previously, invalid URLs could have a string emanating from a
+        partial parsing of the input. The creation of the string was done
+        through the Latin1 codec regardless of the encoding of the char* url.
+
+        This caused two types of issues, URLs were evaluated as half-parsed,
+        and the coding and decoding of the string was not consistent.
+
+        This patch changes KURL::parse() to fallback on the original string
+        whenever the parsing of the URL fails.
+
+        Test: fast/url/invalid-urls-utf8.html
+
+        * platform/KURL.cpp:
+        (WebCore::KURL::KURL):
+        (WebCore::KURL::init):
+        (WebCore::KURL::parse):
+        Previously, originalString was only used as an optimization to avoid
+        the allocation of a string. Since this optimization depends on the
+        comparison of the incoming string and the encoded buffer.
+        This patches generalizes originalString to always be the original string
+        being parsed by KURL. The optimization is kept by comparing that string
+        and the final parsed result.
+        * platform/KURL.h:
+        (WebCore::KURL::parse):
+        * platform/cf/KURLCFNet.cpp:
+        (WebCore::KURL::KURL):
+        * platform/mac/KURLMac.mm:
+        (WebCore::KURL::KURL):
+
 2011-12-01  Wei Charles  <charles.wei@torchmobile.com.cn>
 
         [Blackberry] Upstream BlackBerry porting of plugin framework -- part 2

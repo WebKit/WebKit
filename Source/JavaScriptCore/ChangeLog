@@ -1,3 +1,21 @@
+2011-11-30  Benjamin Poulain  <benjamin@webkit.org>
+
+        URLs are encoded in UTF-8, then decoded as if they are Latin1
+        https://bugs.webkit.org/show_bug.cgi?id=71758
+
+        Reviewed by Darin Adler.
+
+        Add the operator == between a String and a Vector of char. The implementation
+        is the same as the comparison of String and char* but adds the length as a
+        parameter for comparing the strings.
+
+        * JavaScriptCore.exp:
+        * wtf/text/StringImpl.h:
+        (WTF::equal):
+        * wtf/text/WTFString.h:
+        (WTF::operator==):
+        (WTF::operator!=):
+
 2011-11-30  Dmitry Lomov  <dslomov@google.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=73503
