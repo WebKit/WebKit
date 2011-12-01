@@ -89,13 +89,7 @@ void TextureManager::releaseToken(TextureToken token)
 
 bool TextureManager::hasTexture(TextureToken token)
 {
-    if (m_textures.contains(token)) {
-        // If someone asks about a texture put it at the end of the LRU list.
-        m_textureLRUSet.remove(token);
-        m_textureLRUSet.add(token);
-        return true;
-    }
-    return false;
+    return m_textures.contains(token);
 }
 
 bool TextureManager::isProtected(TextureToken token)
@@ -110,6 +104,9 @@ void TextureManager::protectTexture(TextureToken token)
     TextureInfo info = m_textures.take(token);
     info.isProtected = true;
     m_textures.add(token, info);
+    // If someone protects a texture, put it at the end of the LRU list.
+    m_textureLRUSet.remove(token);
+    m_textureLRUSet.add(token);
 }
 
 void TextureManager::unprotectTexture(TextureToken token)

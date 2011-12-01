@@ -1,3 +1,16 @@
+2011-11-30  Grace Kloba  <klobag@chromium.org>
+
+        [chromium] TextureManager LRU list is not fully honor the order tiles are used
+        https://bugs.webkit.org/show_bug.cgi?id=73344
+
+        Reviewed by James Robinson.
+
+        Reorder the texture in the LRU list only when protectTexture() is called.
+
+        * platform/graphics/chromium/TextureManager.cpp:
+        (WebCore::TextureManager::hasTexture):
+        (WebCore::TextureManager::protectTexture):
+
 2011-11-30  Ken Buchanan <kenrb@chromium.org>
 
         Crash from first letter text fragments having flows split
