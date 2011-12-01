@@ -40,7 +40,7 @@ CFURLRef createCFURLFromBuffer(const CharBuffer&);
 KURL::KURL(CFURLRef url)
 {
     if (!url) {
-        parse(0, 0);
+        parse(0);
         return;
     }
 
@@ -50,7 +50,7 @@ KURL::KURL(CFURLRef url)
     CFURLGetBytes(url, reinterpret_cast<UInt8*>(bytes), bytesLength);
     bytes[bytesLength] = '\0';
     if (bytes[0] != '/') {
-        parse(bytes, 0);
+        parse(bytes);
         return;
     }
 
@@ -60,7 +60,7 @@ KURL::KURL(CFURLRef url)
     buffer[3] = 'e';
     buffer[4] = ':';
 
-    parse(buffer.data(), 0);
+    parse(buffer.data());
 }
 
 CFURLRef createCFURLFromBuffer(const CharBuffer& buffer)

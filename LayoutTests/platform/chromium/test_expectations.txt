@@ -1930,6 +1930,13 @@ BUGCR41206 : fast/history/multiple-classes-visited.html = TIMEOUT TEXT
 BUGCR41292 : fast/url/ipv4.html = TEXT
 BUGCR41292 : fast/url/anchor.html = TEXT
 
+BUGWK71758 : fast/url/invalid-urls-utf8.html = TEXT
+BUGWK71758 : fast/url/file.html = TEXT PASS
+BUGWK71758 : fast/url/file-http-base.html = TEXT PASS
+BUGWK71758 : fast/url/host.html = TEXT PASS
+BUGWK71758 : fast/url/idna2003.html = TEXT PASS
+BUGWK71758 : fast/url/port.html = TEXT PASS
+
 BUGWK33812 SKIP : fast/dom/icon-url-property.html = FAIL
 
 BUGCR42044 WIN : http/tests/security/xss-DENIED-mime-type-execute-as-html.html = PASS TIMEOUT
