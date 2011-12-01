@@ -72,6 +72,7 @@ accessibility/selection-states.html
 
 # Accessibility tests for notifications that don't exist or aren't needed on Mac OS X.
 accessibility/menu-list-sends-change-notification.html
+accessibility/multiselect-list-reports-active-option.html
 
 # Need to add functionality to DumpRenderTree to handle error pages
 fast/history/back-forward-reset-after-error-handling.html
