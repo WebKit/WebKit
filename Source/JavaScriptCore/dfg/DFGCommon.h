@@ -57,6 +57,8 @@
 #define DFG_ENABLE_JIT_BREAK_ON_EVERY_BLOCK 0
 // Emit a breakpoint into the head of every generated node, to aid debugging in GDB.
 #define DFG_ENABLE_JIT_BREAK_ON_EVERY_NODE 0
+// Emit a pair of xorPtr()'s on regT0 with the node index to make it easy to spot node boundaries in disassembled code.
+#define DFG_ENABLE_XOR_DEBUG_AID 0
 // Emit a breakpoint into the speculation failure code.
 #define DFG_ENABLE_JIT_BREAK_ON_SPECULATION_FAILURE 0
 // Log every speculation failure.

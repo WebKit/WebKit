@@ -986,6 +986,10 @@ void SpeculativeJIT::compile(BasicBlock& block)
 #if DFG_ENABLE(JIT_BREAK_ON_EVERY_NODE)
             m_jit.breakpoint();
 #endif
+#if DFG_ENABLE(XOR_DEBUG_AID)
+            m_jit.xorPtr(JITCompiler::TrustedImm32(m_compileIndex), GPRInfo::regT0);
+            m_jit.xorPtr(JITCompiler::TrustedImm32(m_compileIndex), GPRInfo::regT0);
+#endif
             checkConsistency();
             compile(node);
             if (!m_compileOkay) {

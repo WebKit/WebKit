@@ -1,3 +1,18 @@
+2011-11-30  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG should make it easier to notice node boundaries in disassembly
+        https://bugs.webkit.org/show_bug.cgi?id=73509
+
+        Rubber-stamped by Gavin Barraclough
+        
+        If you set XOR_DEBUG_AID to 1 in DFGCommon.h, a pair of xor's will
+        be emitted at node boundaries, where the immediate being xor'd is the
+        node index.
+
+        * dfg/DFGCommon.h:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
 2011-11-30  Geoffrey Garen  <ggaren@apple.com>
 
         Removed ArgList iterators.
