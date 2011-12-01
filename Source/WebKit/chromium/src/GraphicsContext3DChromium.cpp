@@ -45,10 +45,10 @@
 #include "HTMLImageElement.h"
 #include "ImageBuffer.h"
 #include "ImageData.h"
-#include "WebGraphicsContext3D.h"
 #include "WebKit.h"
 #include "WebKitPlatformSupport.h"
 #include "WebViewImpl.h"
+#include "platform/WebGraphicsContext3D.h"
 
 #include <stdio.h>
 #include <wtf/FastMalloc.h>
@@ -473,6 +473,12 @@ void GraphicsContext3DPrivate::name(t1 a1, t2 a2, t3 a3, t4 a4, t5 a5, t6 a6, t7
     m_impl->name(a1, a2, a3, a4, a5, a6, a7, a8);      \
 }
 
+#define DELEGATE_TO_IMPL_9(name, t1, t2, t3, t4, t5, t6, t7, t8, t9)       \
+void GraphicsContext3DPrivate::name(t1 a1, t2 a2, t3 a3, t4 a4, t5 a5, t6 a6, t7 a7, t8 a8, t9 a9) \
+{ \
+    m_impl->name(a1, a2, a3, a4, a5, a6, a7, a8, a9);      \
+}
+
 #define DELEGATE_TO_IMPL_9R(name, t1, t2, t3, t4, t5, t6, t7, t8, t9, rt) \
 rt GraphicsContext3DPrivate::name(t1 a1, t2 a2, t3 a3, t4 a4, t5 a5, t6 a6, t7 a7, t8 a8, t9 a9) \
 { \
@@ -533,6 +539,8 @@ DELEGATE_TO_IMPL_1(clearStencil, GC3Dint)
 DELEGATE_TO_IMPL_4(colorMask, GC3Dboolean, GC3Dboolean, GC3Dboolean, GC3Dboolean)
 DELEGATE_TO_IMPL_1(compileShader, Platform3DObject)
 
+DELEGATE_TO_IMPL_8(compressedTexImage2D, GC3Denum, GC3Dint, GC3Denum, GC3Dint, GC3Dint, GC3Dsizei, GC3Dsizei, const void*)
+DELEGATE_TO_IMPL_9(compressedTexSubImage2D, GC3Denum, GC3Dint, GC3Dint, GC3Dint, GC3Dint, GC3Dint, GC3Denum, GC3Dsizei, const void*)
 DELEGATE_TO_IMPL_8(copyTexImage2D, GC3Denum, GC3Dint, GC3Denum, GC3Dint, GC3Dint, GC3Dsizei, GC3Dsizei, GC3Dint)
 DELEGATE_TO_IMPL_8(copyTexSubImage2D, GC3Denum, GC3Dint, GC3Dint, GC3Dint, GC3Dint, GC3Dint, GC3Dsizei, GC3Dsizei)
 DELEGATE_TO_IMPL_1(cullFace, GC3Denum)
@@ -1098,6 +1106,8 @@ DELEGATE_TO_INTERNAL_1(clearStencil, GC3Dint)
 DELEGATE_TO_INTERNAL_4(colorMask, GC3Dboolean, GC3Dboolean, GC3Dboolean, GC3Dboolean)
 DELEGATE_TO_INTERNAL_1(compileShader, Platform3DObject)
 
+DELEGATE_TO_INTERNAL_8(compressedTexImage2D, GC3Denum, GC3Dint, GC3Denum, GC3Dint, GC3Dint, GC3Dsizei, GC3Dsizei, const void*)
+DELEGATE_TO_INTERNAL_9(compressedTexSubImage2D, GC3Denum, GC3Dint, GC3Dint, GC3Dint, GC3Dint, GC3Dint, GC3Denum, GC3Dsizei, const void*)
 DELEGATE_TO_INTERNAL_8(copyTexImage2D, GC3Denum, GC3Dint, GC3Denum, GC3Dint, GC3Dint, GC3Dsizei, GC3Dsizei, GC3Dint)
 DELEGATE_TO_INTERNAL_8(copyTexSubImage2D, GC3Denum, GC3Dint, GC3Dint, GC3Dint, GC3Dint, GC3Dint, GC3Dsizei, GC3Dsizei)
 DELEGATE_TO_INTERNAL_1(cullFace, GC3Denum)

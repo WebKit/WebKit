@@ -1,3 +1,17 @@
+2011-11-30  Gregg Tavares  <gman@google.com>
+
+        Implement draft WEBGL_compressed_textures WebGL extension
+        https://bugs.webkit.org/show_bug.cgi?id=72086
+
+        Reviewed by Kenneth Russell.
+
+        * public/WebGraphicsContext3D.h:
+        * src/GraphicsContext3DChromium.cpp:
+        * src/GraphicsContext3DPrivate.h:
+        * tests/MockWebGraphicsContext3D.h:
+        (WebKit::MockWebGraphicsContext3D::compressedTexImage2D):
+        (WebKit::MockWebGraphicsContext3D::compressedTexSubImage2D):
+
 2011-11-18  Nat Duca  <nduca@chromium.org>
 
         [chromium] Enable threaded compositing via CCThreadProxy::hasThread only

@@ -196,6 +196,18 @@ void GraphicsContext3D::copyTexSubImage2D(GC3Denum target, GC3Dint level, GC3Din
     m_internal->copyTexSubImage2D(target, level, xOffset, yOffset, x, y, width, height);
 }
 
+void GraphicsContext3D::compressedTexImage2D(GC3Denum target, GC3Dint level, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height, GC3Dint border, GC3Dsizei imageSize, const void* data)
+{
+    // FIXME: Add support for compressedTexImage2D.
+    // m_internal->compressedTexImage2D(target, level, internalformat, width, height, border, imageSize, data);
+}
+
+void GraphicsContext3D::compressedTexSubImage2D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset, GC3Dsizei width, GC3Dsizei height, GC3Denum format, GC3Dsizei imageSize, const void* data)
+{
+    // FIXME: Add support for compressedTexSubImage2D.
+    // m_internal->compressedTexSubImage2D(target, level, xoffset, yoffset, width, height, format, imageSize, data);
+}
+
 void GraphicsContext3D::cullFace(GC3Denum mode)
 {
     m_internal->cullFace(mode);

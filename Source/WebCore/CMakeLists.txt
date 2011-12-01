@@ -2146,6 +2146,7 @@ IF (ENABLE_WEBGL)
         ${THIRDPARTY_DIR}/ANGLE/src/compiler/VariableInfo.cpp
 
         html/canvas/WebGLBuffer.cpp
+        html/canvas/WebGLCompressedTextures.cpp
         html/canvas/WebGLContextAttributes.cpp
         html/canvas/WebGLContextEvent.cpp
         html/canvas/WebGLDebugRendererInfo.cpp
@@ -2177,6 +2178,7 @@ IF (ENABLE_WEBGL)
         html/canvas/OESVertexArrayObject.idl
         html/canvas/WebGLActiveInfo.idl
         html/canvas/WebGLBuffer.idl
+        html/canvas/WebGLCompressedTextures.idl
         html/canvas/WebGLContextAttributes.idl
         html/canvas/WebGLContextEvent.idl
         html/canvas/WebGLDebugRendererInfo.idl

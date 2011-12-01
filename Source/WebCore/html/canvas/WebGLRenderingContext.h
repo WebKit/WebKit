@@ -50,6 +50,7 @@ class OESTextureFloat;
 class OESVertexArrayObject;
 class WebGLActiveInfo;
 class WebGLBuffer;
+class WebGLCompressedTextures;
 class WebGLContextAttributes;
 class WebGLDebugRendererInfo;
 class WebGLDebugShaders;
@@ -311,6 +312,7 @@ public:
     friend class WebGLObject;
     friend class OESVertexArrayObject;
     friend class WebGLDebugShaders;
+    friend class WebGLCompressedTextures;
 
     WebGLRenderingContext(HTMLCanvasElement*, PassRefPtr<GraphicsContext3D>, GraphicsContext3D::Attributes);
     void initializeNewContext();
@@ -485,6 +487,7 @@ public:
     OwnPtr<WebKitLoseContext> m_webkitLoseContext;
     OwnPtr<WebGLDebugRendererInfo> m_webglDebugRendererInfo;
     OwnPtr<WebGLDebugShaders> m_webglDebugShaders;
+    OwnPtr<WebGLCompressedTextures> m_webglCompressedTextures;
 
     // Helpers for getParameter and others
     WebGLGetInfo getBooleanParameter(GC3Denum);

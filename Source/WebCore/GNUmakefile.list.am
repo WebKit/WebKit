@@ -4984,6 +4984,8 @@ webcore_sources += \
 	Source/WebCore/html/canvas/WebGLActiveInfo.h \
 	Source/WebCore/html/canvas/WebGLBuffer.cpp \
 	Source/WebCore/html/canvas/WebGLBuffer.h \
+	Source/WebCore/html/canvas/WebGLCompressedTextures.cpp \
+	Source/WebCore/html/canvas/WebGLCompressedTextures.h \
 	Source/WebCore/html/canvas/WebGLContextAttributes.cpp \
 	Source/WebCore/html/canvas/WebGLContextAttributes.h \
 	Source/WebCore/html/canvas/WebGLContextEvent.cpp \

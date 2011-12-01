@@ -1,3 +1,54 @@
+2011-11-30  Gregg Tavares  <gman@google.com>
+
+        Implement draft WEBGL_compressed_textures WebGL extension
+        https://bugs.webkit.org/show_bug.cgi?id=72086
+
+        Reviewed by Kenneth Russell.
+
+        No new tests. Will write final test once on hardware.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSWebGLRenderingContextCustom.cpp:
+        (WebCore::toJS):
+        * bindings/v8/custom/V8WebGLRenderingContextCustom.cpp:
+        (WebCore::toV8Object):
+        * html/canvas/WebGLCompressedTextures.cpp: Added.
+        (WebCore::WebGLCompressedTextures::WebGLCompressedTextures):
+        (WebCore::WebGLCompressedTextures::~WebGLCompressedTextures):
+        (WebCore::WebGLCompressedTextures::getName):
+        (WebCore::WebGLCompressedTextures::create):
+        (WebCore::WebGLCompressedTextures::supported):
+        (WebCore::WebGLCompressedTextures::validateCompressedTexFormat):
+        (WebCore::WebGLCompressedTextures::validateCompressedTexFuncData):
+        (WebCore::WebGLCompressedTextures::validateCompressedTexSubDimensions):
+        (WebCore::WebGLCompressedTextures::compressedTexImage2D):
+        (WebCore::WebGLCompressedTextures::compressedTexSubImage2D):
+        (WebCore::WebGLCompressedTextures::getCompressedTextureFormats):
+        * html/canvas/WebGLCompressedTextures.h: Added.
+        * html/canvas/WebGLCompressedTextures.idl: Added.
+        * html/canvas/WebGLExtension.h:
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::getExtension):
+        (WebCore::WebGLRenderingContext::getParameter):
+        (WebCore::WebGLRenderingContext::getSupportedExtensions):
+        * html/canvas/WebGLRenderingContext.h:
+        * platform/graphics/Extensions3D.h:
+        * platform/graphics/GraphicsContext3D.h:
+        * platform/graphics/efl/GraphicsContext3DEfl.cpp:
+        (WebCore::GraphicsContext3D::compressedTexImage2D):
+        (WebCore::GraphicsContext3D::compressedTexSubImage2D):
+        * platform/graphics/opengl/GraphicsContext3DOpenGL.cpp:
+        (WebCore::GraphicsContext3D::compressedTexImage2D):
+        (WebCore::GraphicsContext3D::compressedTexSubImage2D):
+        * platform/graphics/qt/GraphicsContext3DQt.cpp:
+        (WebCore::GraphicsContext3D::compressedTexImage2D):
+        (WebCore::GraphicsContext3D::compressedTexSubImage2D):
+
 2011-11-18  Nat Duca  <nduca@chromium.org>
 
         [chromium] Enable threaded compositing via CCThreadProxy::hasThread only

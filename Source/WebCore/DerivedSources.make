@@ -527,6 +527,7 @@ DOM_CLASSES = \
     WaveShaperNode \
     WebGLActiveInfo \
     WebGLBuffer \
+    WebGLCompressedTextures \
     WebGLContextAttributes \
     WebGLContextEvent \
     WebGLFramebuffer \

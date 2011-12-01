@@ -56,6 +56,7 @@
 #include "OESTextureFloat.h"
 #include "OESVertexArrayObject.h"
 #include "WebGLBuffer.h"
+#include "WebGLCompressedTextures.h"
 #include "WebGLDebugRendererInfo.h"
 #include "WebGLDebugShaders.h"
 #include "WebGLExtension.h"
@@ -193,6 +194,8 @@ static JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, WebGLExten
         return toJS(exec, globalObject, static_cast<WebGLDebugRendererInfo*>(extension));
     case WebGLExtension::WebGLDebugShadersName:
         return toJS(exec, globalObject, static_cast<WebGLDebugShaders*>(extension));
+    case WebGLExtension::WebKitWebGLCompressedTexturesName:
+        return toJS(exec, globalObject, static_cast<WebGLCompressedTextures*>(extension));
     }
     ASSERT_NOT_REACHED();
     return jsNull();

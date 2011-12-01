@@ -653,6 +653,18 @@ void GraphicsContext3D::compileShader(Platform3DObject shader)
     glCompileShader(shader);
 }
 
+void GraphicsContext3D::compressedTexImage2D(GC3Denum target, GC3Dint level, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height, GC3Dint border, GC3Dsizei imageSize, const void* data)
+{
+    m_private->m_glWidget->makeCurrent();
+    glCompressedTexImage2D(target, level, internalformat, width, height, border, imageSize, data);
+}
+
+void GraphicsContext3D::compressedTexSubImage2D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset, GC3Dsizei width, GC3Dsizei height, GC3Denum format, GC3Dsizei imageSize, const void* data)
+{
+    m_private->m_glWidget->makeCurrent();
+    glCompressedTexSubImage2D(target, level, xoffset, yoffset, width, height, format, imageSize, data);
+}
+
 void GraphicsContext3D::copyTexImage2D(GC3Denum target, GC3Dint level, GC3Denum internalformat, GC3Dint x, GC3Dint y, GC3Dsizei width, GC3Dsizei height, GC3Dint border)
 {
     m_private->m_glWidget->makeCurrent();
