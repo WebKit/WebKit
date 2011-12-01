@@ -32674,11 +32674,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\css\CSSRegionStyleRule.cpp"
+				RelativePath="..\css\WebKitCSSRegionRule.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\css\CSSRegionStyleRule.h"
+				RelativePath="..\css\WebKitCSSRegionRule.h"
 				>
 			</File>
 			<File

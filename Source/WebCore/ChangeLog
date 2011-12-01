@@ -1,3 +1,34 @@
+2011-11-30  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSSRegions]Rename CSSRegionStyleRule to WebKitCSSRegionRule
+        https://bugs.webkit.org/show_bug.cgi?id=73450
+
+        Reviewed by Andreas Kling.
+
+        No functionality changed so no new tests. The new name has the webkit prefix as required for new api.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::createRegionStylingRule):
+        * css/CSSRule.cpp:
+        (WebCore::CSSRule::cssText):
+        (WebCore::CSSRule::destroy):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::addRegionStyleRule):
+        (WebCore::CSSStyleSelector::checkRegionStyle):
+        (WebCore::RuleSet::addRulesFromSheet):
+        * css/CSSStyleSelector.h:
+        * css/WebKitCSSRegionRule.cpp: Renamed from Source/WebCore/css/CSSRegionStyleRule.cpp.
+        (WebCore::WebKitCSSRegionRule::WebKitCSSRegionRule):
+        (WebCore::WebKitCSSRegionRule::~WebKitCSSRegionRule):
+        (WebCore::WebKitCSSRegionRule::cssText):
+        * css/WebKitCSSRegionRule.h: Renamed from Source/WebCore/css/CSSRegionStyleRule.h.
+
 2011-11-30  Jeff Timanus  <twiz@chromium.org>
 
         Alter an early return that was preventing HTMLCanvasElement::didDraw notifications

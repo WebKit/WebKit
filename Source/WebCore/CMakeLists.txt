@@ -455,7 +455,6 @@ SET(WebCore_SOURCES
     css/CSSPropertyLonghand.cpp
     css/CSSPropertySourceData.cpp
     css/CSSReflectValue.cpp
-    css/CSSRegionStyleRule.cpp
     css/CSSRule.cpp
     css/CSSRuleList.cpp
     css/CSSSegmentedFontFace.cpp
@@ -492,6 +491,7 @@ SET(WebCore_SOURCES
     css/WebKitCSSKeyframeRule.cpp
     css/WebKitCSSKeyframesRule.cpp
     css/WebKitCSSMatrix.cpp
+    css/WebKitCSSRegionRule.cpp
     css/WebKitCSSTransformValue.cpp
 
     dom/ActiveDOMObject.cpp

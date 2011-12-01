@@ -2926,8 +2926,8 @@
 		8A9A587511E84C81008ACFD1 /* JSPerformance.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A9A587311E84C81008ACFD1 /* JSPerformance.h */; };
 		8A9A588711E84F37008ACFD1 /* JSPerformanceTiming.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8A9A587611E84C98008ACFD1 /* JSPerformanceTiming.cpp */; };
 		8A9A588811E84F37008ACFD1 /* JSPerformanceTiming.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A9A587711E84C98008ACFD1 /* JSPerformanceTiming.h */; };
-		8AA61CFF144D595B00F37350 /* CSSRegionStyleRule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8AA61CFD144D595B00F37350 /* CSSRegionStyleRule.cpp */; };
-		8AA61D00144D595B00F37350 /* CSSRegionStyleRule.h in Headers */ = {isa = PBXBuildFile; fileRef = 8AA61CFE144D595B00F37350 /* CSSRegionStyleRule.h */; };
+		8AA61CFF144D595B00F37350 /* WebKitCSSRegionRule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8AA61CFD144D595B00F37350 /* WebKitCSSRegionRule.cpp */; };
+		8AA61D00144D595B00F37350 /* WebKitCSSRegionRule.h in Headers */ = {isa = PBXBuildFile; fileRef = 8AA61CFE144D595B00F37350 /* WebKitCSSRegionRule.h */; };
 		8AB4BC77126FDB7100DEB727 /* IgnoreDestructiveWriteCountIncrementer.h in Headers */ = {isa = PBXBuildFile; fileRef = 8AB4BC76126FDB7100DEB727 /* IgnoreDestructiveWriteCountIncrementer.h */; };
 		8AF4E55511DC5A36000ED3DE /* PerformanceNavigation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8AF4E55211DC5A36000ED3DE /* PerformanceNavigation.cpp */; };
 		8AF4E55611DC5A36000ED3DE /* PerformanceNavigation.h in Headers */ = {isa = PBXBuildFile; fileRef = 8AF4E55311DC5A36000ED3DE /* PerformanceNavigation.h */; };
@@ -10131,8 +10131,8 @@
 		8A9A587311E84C81008ACFD1 /* JSPerformance.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSPerformance.h; sourceTree = "<group>"; };
 		8A9A587611E84C98008ACFD1 /* JSPerformanceTiming.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSPerformanceTiming.cpp; sourceTree = "<group>"; };
 		8A9A587711E84C98008ACFD1 /* JSPerformanceTiming.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSPerformanceTiming.h; sourceTree = "<group>"; };
-		8AA61CFD144D595B00F37350 /* CSSRegionStyleRule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSRegionStyleRule.cpp; sourceTree = "<group>"; };
-		8AA61CFE144D595B00F37350 /* CSSRegionStyleRule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSRegionStyleRule.h; sourceTree = "<group>"; };
+		8AA61CFD144D595B00F37350 /* WebKitCSSRegionRule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebKitCSSRegionRule.cpp; sourceTree = "<group>"; };
+		8AA61CFE144D595B00F37350 /* WebKitCSSRegionRule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKitCSSRegionRule.h; sourceTree = "<group>"; };
 		8AB4BC76126FDB7100DEB727 /* IgnoreDestructiveWriteCountIncrementer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IgnoreDestructiveWriteCountIncrementer.h; sourceTree = "<group>"; };
 		8AF4E55211DC5A36000ED3DE /* PerformanceNavigation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PerformanceNavigation.cpp; sourceTree = "<group>"; };
 		8AF4E55311DC5A36000ED3DE /* PerformanceNavigation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PerformanceNavigation.h; sourceTree = "<group>"; };
@@ -20713,8 +20713,6 @@
 				9362640A0DE1137D009D5A00 /* CSSReflectionDirection.h */,
 				BC5A12DD0DC0414800C9AFAD /* CSSReflectValue.cpp */,
 				BC5A12DE0DC0414800C9AFAD /* CSSReflectValue.h */,
-				8AA61CFD144D595B00F37350 /* CSSRegionStyleRule.cpp */,
-				8AA61CFE144D595B00F37350 /* CSSRegionStyleRule.h */,
 				A80E6CDC0A1989CA007FB8C5 /* CSSRule.cpp */,
 				A80E6CE30A1989CA007FB8C5 /* CSSRule.h */,
 				14CF7A7009F5CF9A00EB3665 /* CSSRule.idl */,
@@ -20830,6 +20828,8 @@
 				498391550F1E776900C23782 /* WebKitCSSMatrix.cpp */,
 				498391560F1E776900C23782 /* WebKitCSSMatrix.h */,
 				498391570F1E776900C23782 /* WebKitCSSMatrix.idl */,
+				8AA61CFD144D595B00F37350 /* WebKitCSSRegionRule.cpp */,
+				8AA61CFE144D595B00F37350 /* WebKitCSSRegionRule.h */,
 				50B42157146976960087E604 /* WebKitCSSShaderValue.h */,
 				BC9ADD7F0CC4092200098C4C /* WebKitCSSTransformValue.cpp */,
 				BC9ADD220CC4032600098C4C /* WebKitCSSTransformValue.h */,
@@ -24714,7 +24714,7 @@
 				9B375EDB14478A0100F3CAE5 /* MicroDataItemList.h in Headers */,
 				49AF2D6914435D050016A784 /* DisplayRefreshMonitor.h in Headers */,
 				0753860314489E9800B78452 /* CachedTextTrack.h in Headers */,
-				8AA61D00144D595B00F37350 /* CSSRegionStyleRule.h in Headers */,
+				8AA61D00144D595B00F37350 /* WebKitCSSRegionRule.h in Headers */,
 				97665013144FAA4200F6BB51 /* EventFactory.h in Headers */,
 				A0EE0DF6144F825500F80B0D /* WebGLDebugRendererInfo.h in Headers */,
 				A0EE0DF8144F825500F80B0D /* WebGLDebugShaders.h in Headers */,
@@ -27598,7 +27598,7 @@
 				49AF2D6C14435D210016A784 /* DisplayRefreshMonitorMac.cpp in Sources */,
 				49FC7A501444AF5F00A5D864 /* DisplayRefreshMonitor.cpp in Sources */,
 				0753860214489E9800B78452 /* CachedTextTrack.cpp in Sources */,
-				8AA61CFF144D595B00F37350 /* CSSRegionStyleRule.cpp in Sources */,
+				8AA61CFF144D595B00F37350 /* WebKitCSSRegionRule.cpp in Sources */,
 				9766504F144FBFFE00F6BB51 /* EventFactory.cpp in Sources */,
 				A0EE0DF5144F825500F80B0D /* WebGLDebugRendererInfo.cpp in Sources */,
 				A0EE0DF7144F825500F80B0D /* WebGLDebugShaders.cpp in Sources */,

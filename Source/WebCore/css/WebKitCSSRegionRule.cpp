@@ -29,13 +29,13 @@
 
 #include "config.h"
 
-#include "CSSRegionStyleRule.h"
+#include "WebKitCSSRegionRule.h"
 
 #include "CSSParserValues.h"
 #include "CSSRuleList.h"
 
 namespace WebCore {
-CSSRegionStyleRule::CSSRegionStyleRule(CSSStyleSheet* parent, Vector<OwnPtr<CSSParserSelector> >* selectors, PassRefPtr<CSSRuleList> rules)
+WebKitCSSRegionRule::WebKitCSSRegionRule(CSSStyleSheet* parent, Vector<OwnPtr<CSSParserSelector> >* selectors, PassRefPtr<CSSRuleList> rules)
     : CSSRule(parent, CSSRule::WEBKIT_REGION_STYLE_RULE)
     , m_ruleList(rules)
 {
@@ -45,13 +45,13 @@ CSSRegionStyleRule::CSSRegionStyleRule(CSSStyleSheet* parent, Vector<OwnPtr<CSSP
     m_selectorList.adoptSelectorVector(*selectors);
 }
 
-CSSRegionStyleRule::~CSSRegionStyleRule()
+WebKitCSSRegionRule::~WebKitCSSRegionRule()
 {
     for (unsigned index = 0; index < m_ruleList->length(); ++index)
         m_ruleList->item(index)->setParentRule(0);
 }
 
-String CSSRegionStyleRule::cssText() const
+String WebKitCSSRegionRule::cssText() const
 {
     String result = "@-webkit-region ";
 

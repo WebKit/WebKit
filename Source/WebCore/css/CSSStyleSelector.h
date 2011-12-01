@@ -46,7 +46,6 @@ class CSSFontFace;
 class CSSFontFaceRule;
 class CSSImageGeneratorValue;
 class CSSImageValue;
-class CSSRegionStyleRule;
 class CSSRuleList;
 class CSSSelector;
 class CSSStyleApplyProperty;
@@ -76,6 +75,7 @@ class StyledElement;
 class WebKitCSSKeyframeRule;
 class WebKitCSSKeyframesRule;
 class WebKitCSSFilterValue;
+class WebKitCSSRegionRule;
 class WebKitCSSShaderValue;
 
 class MediaQueryResult {
@@ -200,7 +200,7 @@ public:
 
     void addKeyframeStyle(PassRefPtr<WebKitCSSKeyframesRule>);
     void addPageStyle(PassRefPtr<CSSPageRule>);
-    void addRegionStyleRule(PassRefPtr<CSSRegionStyleRule>);
+    void addRegionStyleRule(PassRefPtr<WebKitCSSRegionRule>);
 
     bool checkRegionStyle(Element*);
 
@@ -289,7 +289,7 @@ private:
     typedef HashMap<AtomicStringImpl*, RefPtr<WebKitCSSKeyframesRule> > KeyframesRuleMap;
     KeyframesRuleMap m_keyframesRuleMap;
 
-    typedef Vector<RefPtr<CSSRegionStyleRule> > RegionStyleRules;
+    typedef Vector<RefPtr<WebKitCSSRegionRule> > RegionStyleRules;
     RegionStyleRules m_regionStyleRules;
 
 public:

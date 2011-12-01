@@ -1041,8 +1041,6 @@ webcore_sources += \
 	Source/WebCore/css/CSSReflectionDirection.h \
 	Source/WebCore/css/CSSReflectValue.cpp \
 	Source/WebCore/css/CSSReflectValue.h \
-	Source/WebCore/css/CSSRegionStyleRule.cpp \
-	Source/WebCore/css/CSSRegionStyleRule.h \
 	Source/WebCore/css/CSSRule.cpp \
 	Source/WebCore/css/CSSRule.h \
 	Source/WebCore/css/CSSRuleList.cpp \
@@ -1122,6 +1120,8 @@ webcore_sources += \
 	Source/WebCore/css/WebKitCSSKeyframesRule.h \
 	Source/WebCore/css/WebKitCSSMatrix.cpp \
 	Source/WebCore/css/WebKitCSSMatrix.h \
+	Source/WebCore/css/WebKitCSSRegionRule.cpp \
+	Source/WebCore/css/WebKitCSSRegionRule.h \
 	Source/WebCore/css/WebKitCSSShaderValue.cpp \
 	Source/WebCore/css/WebKitCSSShaderValue.h \
 	Source/WebCore/css/WebKitCSSTransformValue.cpp \

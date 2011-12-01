@@ -27,11 +27,11 @@
 #include "CSSImportRule.h"
 #include "CSSMediaRule.h"
 #include "CSSPageRule.h"
-#include "CSSRegionStyleRule.h"
 #include "CSSStyleRule.h"
 #include "CSSUnknownRule.h"
 #include "WebKitCSSKeyframeRule.h"
 #include "WebKitCSSKeyframesRule.h"
+#include "WebKitCSSRegionRule.h"
 #include "NotImplemented.h"
 
 namespace WebCore {
@@ -62,7 +62,7 @@ String CSSRule::cssText() const
     case WEBKIT_KEYFRAME_RULE:
         return static_cast<const WebKitCSSKeyframeRule*>(this)->cssText();
     case WEBKIT_REGION_STYLE_RULE:
-        return static_cast<const CSSRegionStyleRule*>(this)->cssText();
+        return static_cast<const WebKitCSSRegionRule*>(this)->cssText();
     }
     ASSERT_NOT_REACHED();
     return String();
@@ -99,7 +99,7 @@ void CSSRule::destroy()
         delete static_cast<WebKitCSSKeyframeRule*>(this);
         return;
     case WEBKIT_REGION_STYLE_RULE:
-        delete static_cast<CSSRegionStyleRule*>(this);
+        delete static_cast<WebKitCSSRegionRule*>(this);
         return;
     }
     ASSERT_NOT_REACHED();

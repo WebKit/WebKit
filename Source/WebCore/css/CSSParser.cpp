@@ -50,7 +50,6 @@
 #include "CSSPropertyNames.h"
 #include "CSSPropertySourceData.h"
 #include "CSSReflectValue.h"
-#include "CSSRegionStyleRule.h"
 #include "CSSRuleList.h"
 #include "CSSSelector.h"
 #include "CSSStyleRule.h"
@@ -80,6 +79,7 @@
 #endif
 #include "WebKitCSSKeyframeRule.h"
 #include "WebKitCSSKeyframesRule.h"
+#include "WebKitCSSRegionRule.h"
 #include "WebKitCSSTransformValue.h"
 #if ENABLE(CSS_SHADERS)
 #include "WebKitCSSShaderValue.h"
@@ -7731,9 +7731,9 @@ CSSRule* CSSParser::createRegionStylingRule(Vector<OwnPtr<CSSParserSelector> >* 
 
     m_allowImportRules = m_allowNamespaceDeclarations = false;
 
-    RefPtr<CSSRegionStyleRule> regionRule = CSSRegionStyleRule::create(m_styleSheet, regionSelector, rules);
+    RefPtr<WebKitCSSRegionRule> regionRule = WebKitCSSRegionRule::create(m_styleSheet, regionSelector, rules);
 
-    CSSRegionStyleRule* result = regionRule.get();
+    WebKitCSSRegionRule* result = regionRule.get();
     m_parsedRules.append(regionRule.release());
 
     return result;

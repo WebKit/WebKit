@@ -27,8 +27,8 @@
  * SUCH DAMAGE.
  */
 
-#ifndef CSSRegionStyleRule_h
-#define CSSRegionStyleRule_h
+#ifndef WebKitCSSRegionRule_h
+#define WebKitCSSRegionRule_h
 
 #include "CSSSelectorList.h"
 #include "CSSStyleRule.h"
@@ -42,21 +42,21 @@ namespace WebCore {
 class CSSParserSelector;
 class CSSRuleList;
 
-class CSSRegionStyleRule: public CSSRule {
+class WebKitCSSRegionRule: public CSSRule {
 public:
-    static PassRefPtr<CSSRegionStyleRule> create(CSSStyleSheet* parent, Vector<OwnPtr<CSSParserSelector> >* selectors, PassRefPtr<CSSRuleList> rules)
+    static PassRefPtr<WebKitCSSRegionRule> create(CSSStyleSheet* parent, Vector<OwnPtr<CSSParserSelector> >* selectors, PassRefPtr<CSSRuleList> rules)
     {
-        return adoptRef(new CSSRegionStyleRule(parent, selectors, rules));
+        return adoptRef(new WebKitCSSRegionRule(parent, selectors, rules));
     }
 
-    ~CSSRegionStyleRule();
+    ~WebKitCSSRegionRule();
 
     String cssText() const;
     const CSSSelectorList& selectorList() const { return m_selectorList; }
     CSSRuleList* cssRules() const { return m_ruleList.get(); }
 
 private:
-    CSSRegionStyleRule(CSSStyleSheet* parent, Vector<OwnPtr<CSSParserSelector> >* selectors, PassRefPtr<CSSRuleList> rules);
+    WebKitCSSRegionRule(CSSStyleSheet* parent, Vector<OwnPtr<CSSParserSelector> >* selectors, PassRefPtr<CSSRuleList> rules);
 
     CSSSelectorList m_selectorList;
     RefPtr<CSSRuleList> m_ruleList;

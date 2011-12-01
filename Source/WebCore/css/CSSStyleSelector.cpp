@@ -45,7 +45,6 @@
 #include "CSSPrimitiveValueMappings.h"
 #include "CSSPropertyNames.h"
 #include "CSSReflectValue.h"
-#include "CSSRegionStyleRule.h"
 #include "CSSRuleList.h"
 #include "CSSSelector.h"
 #include "CSSSelectorList.h"
@@ -108,6 +107,7 @@
 #endif
 #include "WebKitCSSKeyframeRule.h"
 #include "WebKitCSSKeyframesRule.h"
+#include "WebKitCSSRegionRule.h"
 #include "WebKitCSSTransformValue.h"
 #include "WebKitFontFamilyNames.h"
 #include "XMLNames.h"
@@ -425,7 +425,7 @@ CSSStyleSelector::CSSStyleSelector(Document* document, StyleSheetList* styleShee
         document->renderer()->style()->font().update(fontSelector());
 }
 
-void CSSStyleSelector::addRegionStyleRule(PassRefPtr<CSSRegionStyleRule> regionStyleRule)
+void CSSStyleSelector::addRegionStyleRule(PassRefPtr<WebKitCSSRegionRule> regionStyleRule)
 {
     m_regionStyleRules.append(regionStyleRule);
 }
@@ -1674,7 +1674,7 @@ bool CSSStyleSelector::checkRegionStyle(Element* e)
     m_checker.clearHasUnknownPseudoElements();
     m_checker.setPseudoStyle(NOPSEUDO);
 
-    for (Vector<RefPtr<CSSRegionStyleRule> >::iterator it = m_regionStyleRules.begin(); it != m_regionStyleRules.end(); ++it) {
+    for (Vector<RefPtr<WebKitCSSRegionRule> >::iterator it = m_regionStyleRules.begin(); it != m_regionStyleRules.end(); ++it) {
         const CSSSelectorList& regionSelectorList = (*it)->selectorList();
         for (CSSSelector* s = regionSelectorList.first(); s; s = regionSelectorList.next(s)) {
             if (m_checker.checkSelector(s, e))
@@ -1970,7 +1970,7 @@ void RuleSet::addRulesFromSheet(CSSStyleSheet* sheet, const MediaQueryEvaluator&
         } else if (rule->isKeyframesRule())
             styleSelector->addKeyframeStyle(static_cast<WebKitCSSKeyframesRule*>(rule));
         else if (rule->isRegionStyleRule() && styleSelector)
-            styleSelector->addRegionStyleRule(static_cast<CSSRegionStyleRule*>(rule));
+            styleSelector->addRegionStyleRule(static_cast<WebKitCSSRegionRule*>(rule));
     }
     if (m_autoShrinkToFitEnabled)
         shrinkToFit();
