@@ -62,29 +62,31 @@ public:
     static PassRefPtr<WebSocketChannel> create(ScriptExecutionContext* context, WebSocketChannelClient* client) { return adoptRef(new WebSocketChannel(context, client)); }
     virtual ~WebSocketChannel();
 
-    virtual bool useHixie76Protocol();
-    virtual void connect(const KURL&, const String& protocol);
-    virtual String subprotocol();
-    virtual bool send(const String& message);
-    virtual bool send(const ArrayBuffer&);
-    virtual bool send(const Blob&);
-    virtual bool send(const char* data, int length);
-    virtual unsigned long bufferedAmount() const;
-    virtual void close(int code, const String& reason); // Start closing handshake.
-    virtual void fail(const String& reason);
-    virtual void disconnect();
+    bool send(const char* data, int length);
 
-    virtual void suspend();
-    virtual void resume();
+    // ThreadableWebSocketChannel functions.
+    virtual bool useHixie76Protocol() OVERRIDE;
+    virtual void connect(const KURL&, const String& protocol) OVERRIDE;
+    virtual String subprotocol() OVERRIDE;
+    virtual bool send(const String& message) OVERRIDE;
+    virtual bool send(const ArrayBuffer&) OVERRIDE;
+    virtual bool send(const Blob&) OVERRIDE;
+    virtual unsigned long bufferedAmount() const OVERRIDE;
+    virtual void close(int code, const String& reason) OVERRIDE; // Start closing handshake.
+    virtual void fail(const String& reason) OVERRIDE;
+    virtual void disconnect() OVERRIDE;
+
+    virtual void suspend() OVERRIDE;
+    virtual void resume() OVERRIDE;
 
     // SocketStreamHandleClient functions.
-    virtual void didOpenSocketStream(SocketStreamHandle*);
-    virtual void didCloseSocketStream(SocketStreamHandle*);
-    virtual void didReceiveSocketStreamData(SocketStreamHandle*, const char*, int);
-    virtual void didUpdateBufferedAmount(SocketStreamHandle*, size_t);
-    virtual void didFailSocketStream(SocketStreamHandle*, const SocketStreamError&);
-    virtual void didReceiveAuthenticationChallenge(SocketStreamHandle*, const AuthenticationChallenge&);
-    virtual void didCancelAuthenticationChallenge(SocketStreamHandle*, const AuthenticationChallenge&);
+    virtual void didOpenSocketStream(SocketStreamHandle*) OVERRIDE;
+    virtual void didCloseSocketStream(SocketStreamHandle*) OVERRIDE;
+    virtual void didReceiveSocketStreamData(SocketStreamHandle*, const char*, int) OVERRIDE;
+    virtual void didUpdateBufferedAmount(SocketStreamHandle*, size_t bufferedAmount) OVERRIDE;
+    virtual void didFailSocketStream(SocketStreamHandle*, const SocketStreamError&) OVERRIDE;
+    virtual void didReceiveAuthenticationChallenge(SocketStreamHandle*, const AuthenticationChallenge&) OVERRIDE;
+    virtual void didCancelAuthenticationChallenge(SocketStreamHandle*, const AuthenticationChallenge&) OVERRIDE;
 
     enum CloseEventCode {
         CloseEventCodeNotSpecified = -1,

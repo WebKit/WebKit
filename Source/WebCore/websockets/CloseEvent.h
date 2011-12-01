@@ -69,7 +69,8 @@ public:
     unsigned short code() const { return m_code; }
     String reason() const { return m_reason; }
 
-    virtual const AtomicString& interfaceName() const { return eventNames().interfaceForCloseEvent; }
+    // Event function.
+    virtual const AtomicString& interfaceName() const OVERRIDE { return eventNames().interfaceForCloseEvent; }
 
 private:
     CloseEvent()

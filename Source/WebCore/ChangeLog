@@ -1,3 +1,18 @@
+2011-11-30  Takashi Toyoshima  <toyoshim@chromium.org>
+
+        Add OVERRIDE to WebSocket related sources for safe inheritances.
+        https://bugs.webkit.org/show_bug.cgi?id=73308
+
+        Reviewed by Kent Tamura.
+
+        No new tests because this change contains no functional change.
+
+        * platform/network/chromium/SocketStreamHandle.h:
+        * websockets/CloseEvent.h:
+        * websockets/WebSocket.h:
+        * websockets/WebSocketChannel.h:
+        * websockets/WorkerThreadableWebSocketChannel.h:
+
 2011-11-30  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSSRegions]Rename CSSRegionStyleRule to WebKitCSSRegionRule

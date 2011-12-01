@@ -88,27 +88,28 @@ public:
     DEFINE_ATTRIBUTE_EVENT_LISTENER(error);
     DEFINE_ATTRIBUTE_EVENT_LISTENER(close);
 
-    // EventTarget
-    virtual const AtomicString& interfaceName() const;
-    virtual ScriptExecutionContext* scriptExecutionContext() const;
+    // EventTarget functions.
+    virtual const AtomicString& interfaceName() const OVERRIDE;
+    virtual ScriptExecutionContext* scriptExecutionContext() const OVERRIDE;
 
-    virtual void contextDestroyed();
-    virtual bool canSuspend() const;
-    virtual void suspend(ReasonForSuspension);
-    virtual void resume();
-    virtual void stop();
+    // ActiveDOMObject functions.
+    virtual void contextDestroyed() OVERRIDE;
+    virtual bool canSuspend() const OVERRIDE;
+    virtual void suspend(ReasonForSuspension) OVERRIDE;
+    virtual void resume() OVERRIDE;
+    virtual void stop() OVERRIDE;
 
     using RefCounted<WebSocket>::ref;
     using RefCounted<WebSocket>::deref;
 
-    // WebSocketChannelClient
-    virtual void didConnect();
-    virtual void didReceiveMessage(const String& message);
-    virtual void didReceiveBinaryData(PassOwnPtr<Vector<char> >);
-    virtual void didReceiveMessageError();
-    virtual void didUpdateBufferedAmount(unsigned long);
-    virtual void didStartClosingHandshake();
-    virtual void didClose(unsigned long unhandledBufferedAmount, ClosingHandshakeCompletionStatus, unsigned short code, const String& reason);
+    // WebSocketChannelClient functions.
+    virtual void didConnect() OVERRIDE;
+    virtual void didReceiveMessage(const String& message) OVERRIDE;
+    virtual void didReceiveBinaryData(PassOwnPtr<Vector<char> >) OVERRIDE;
+    virtual void didReceiveMessageError() OVERRIDE;
+    virtual void didUpdateBufferedAmount(unsigned long bufferedAmount) OVERRIDE;
+    virtual void didStartClosingHandshake() OVERRIDE;
+    virtual void didClose(unsigned long unhandledBufferedAmount, ClosingHandshakeCompletionStatus, unsigned short code, const String& reason) OVERRIDE;
 
 private:
     WebSocket(ScriptExecutionContext*);

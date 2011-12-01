@@ -60,18 +60,19 @@ public:
     }
     virtual ~WorkerThreadableWebSocketChannel();
 
-    virtual bool useHixie76Protocol();
-    virtual void connect(const KURL&, const String& protocol);
-    virtual String subprotocol();
-    virtual bool send(const String& message);
-    virtual bool send(const ArrayBuffer&);
-    virtual bool send(const Blob&);
-    virtual unsigned long bufferedAmount() const;
-    virtual void close(int code, const String& reason);
-    virtual void fail(const String& reason);
-    virtual void disconnect(); // Will suppress didClose().
-    virtual void suspend();
-    virtual void resume();
+    // ThreadableWebSocketChannel functions.
+    virtual bool useHixie76Protocol() OVERRIDE;
+    virtual void connect(const KURL&, const String& protocol) OVERRIDE;
+    virtual String subprotocol() OVERRIDE;
+    virtual bool send(const String& message) OVERRIDE;
+    virtual bool send(const ArrayBuffer&) OVERRIDE;
+    virtual bool send(const Blob&) OVERRIDE;
+    virtual unsigned long bufferedAmount() const OVERRIDE;
+    virtual void close(int code, const String& reason) OVERRIDE;
+    virtual void fail(const String& reason) OVERRIDE;
+    virtual void disconnect() OVERRIDE; // Will suppress didClose().
+    virtual void suspend() OVERRIDE;
+    virtual void resume() OVERRIDE;
 
     using RefCounted<WorkerThreadableWebSocketChannel>::ref;
     using RefCounted<WorkerThreadableWebSocketChannel>::deref;
@@ -104,12 +105,13 @@ private:
         void suspend();
         void resume();
 
-        virtual void didConnect();
-        virtual void didReceiveMessage(const String& message);
-        virtual void didReceiveBinaryData(PassOwnPtr<Vector<char> >);
-        virtual void didUpdateBufferedAmount(unsigned long bufferedAmount);
-        virtual void didStartClosingHandshake();
-        virtual void didClose(unsigned long unhandledBufferedAmount, ClosingHandshakeCompletionStatus, unsigned short code, const String& reason);
+        // WebSocketChannelClient functions.
+        virtual void didConnect() OVERRIDE;
+        virtual void didReceiveMessage(const String& message) OVERRIDE;
+        virtual void didReceiveBinaryData(PassOwnPtr<Vector<char> >) OVERRIDE;
+        virtual void didUpdateBufferedAmount(unsigned long bufferedAmount) OVERRIDE;
+        virtual void didStartClosingHandshake() OVERRIDE;
+        virtual void didClose(unsigned long unhandledBufferedAmount, ClosingHandshakeCompletionStatus, unsigned short code, const String& reason) OVERRIDE;
 
     private:
         Peer(PassRefPtr<ThreadableWebSocketChannelClientWrapper>, WorkerLoaderProxy&, ScriptExecutionContext*, const String& taskMode);

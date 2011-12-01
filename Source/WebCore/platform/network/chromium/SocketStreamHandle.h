@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2009 Apple Inc. All rights reserved.
- * Copyright (C) 2009 Google Inc.  All rights reserved.
+ * Copyright (C) 2009, 2011 Google Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -51,8 +51,9 @@ namespace WebCore {
         virtual ~SocketStreamHandle();
 
     protected:
-        virtual int platformSend(const char* data, int length);
-        virtual void platformClose();
+        // SocketStreamHandleBase functions.
+        virtual int platformSend(const char* data, int length) OVERRIDE;
+        virtual void platformClose() OVERRIDE;
 
     private:
         SocketStreamHandle(const KURL&, SocketStreamHandleClient*);
