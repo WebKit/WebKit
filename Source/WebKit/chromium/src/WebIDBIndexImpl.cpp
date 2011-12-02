@@ -68,9 +68,9 @@ bool WebIDBIndexImpl::unique() const
     return m_backend->unique();
 }
 
-bool WebIDBIndexImpl::multientry() const
+bool WebIDBIndexImpl::multiEntry() const
 {
-    return m_backend->multientry();
+    return m_backend->multiEntry();
 }
 
 void WebIDBIndexImpl::openObjectCursor(const WebIDBKeyRange& keyRange, unsigned short direction, WebIDBCallbacks* callbacks, const WebIDBTransaction& transaction, WebExceptionCode& ec)

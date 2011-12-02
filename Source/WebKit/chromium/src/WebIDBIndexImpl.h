@@ -47,7 +47,7 @@ public:
     virtual WebString storeName() const;
     virtual WebString keyPath() const;
     virtual bool unique() const;
-    virtual bool multientry() const;
+    virtual bool multiEntry() const;
 
     virtual void openObjectCursor(const WebIDBKeyRange&, unsigned short direction, WebIDBCallbacks*, const WebIDBTransaction&, WebExceptionCode&); 
     virtual void openKeyCursor(const WebIDBKeyRange&, unsigned short direction, WebIDBCallbacks*, const WebIDBTransaction&, WebExceptionCode&);

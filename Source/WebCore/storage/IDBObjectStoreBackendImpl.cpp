@@ -243,12 +243,12 @@ void IDBObjectStoreBackendImpl::putInternal(ScriptExecutionContext*, PassRefPtr<
             return;
         }
 
-        if ((!index->multientry() || indexKey->type() != IDBKey::ArrayType) && !index->addingKeyAllowed(indexKey.get(), key.get())) {
+        if ((!index->multiEntry() || indexKey->type() != IDBKey::ArrayType) && !index->addingKeyAllowed(indexKey.get(), key.get())) {
             callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::CONSTRAINT_ERR, "One of the derived (from a keyPath) keys for an index does not satisfy its uniqueness requirements."));
             return;
         }
 
-       if (index->multientry() && indexKey->type() == IDBKey::ArrayType) {
+       if (index->multiEntry() && indexKey->type() == IDBKey::ArrayType) {
            for (size_t j = 0; j < indexKey->array().size(); ++j) {
                 if (!index->addingKeyAllowed(indexKey->array()[j].get(), key.get())) {
                     callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::CONSTRAINT_ERR, "One of the derived (from a keyPath) keys for an index does not satisfy its uniqueness requirements."));
@@ -294,7 +294,7 @@ void IDBObjectStoreBackendImpl::putInternal(ScriptExecutionContext*, PassRefPtr<
             continue;
         RefPtr<IDBKey> indexKey = indexKeys[i];
 
-        if (!index->multientry() || indexKey->type() != IDBKey::ArrayType) {
+        if (!index->multiEntry() || indexKey->type() != IDBKey::ArrayType) {
             if (!objectStore->m_backingStore->putIndexDataForRecord(objectStore->m_databaseId, objectStore->id(), index->id(), *indexKey, recordIdentifier.get())) {
                 // FIXME: The Indexed Database specification does not have an error code dedicated to I/O errors.
                 callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UNKNOWN_ERR, "Error writing data to stable storage."));
@@ -302,7 +302,7 @@ void IDBObjectStoreBackendImpl::putInternal(ScriptExecutionContext*, PassRefPtr<
                 return;
             }
         } else {
-            ASSERT(index->multientry());
+            ASSERT(index->multiEntry());
             ASSERT(indexKey->type() == IDBKey::ArrayType);
             for (size_t j = 0; j < indexKey->array().size(); ++j) {
                 if (!objectStore->m_backingStore->putIndexDataForRecord(objectStore->m_databaseId, objectStore->id(), index->id(), *indexKey->array()[j], recordIdentifier.get())) {
@@ -396,11 +396,11 @@ public:
         if (!indexKey)
             return true;
 
-        if (!m_index->multientry() || indexKey->type() != IDBKey::ArrayType) {
+        if (!m_index->multiEntry() || indexKey->type() != IDBKey::ArrayType) {
             if (!m_backingStore.putIndexDataForRecord(m_databaseId, m_objectStoreId, m_index->id(), *indexKey, recordIdentifier))
                 return false;
         } else {
-            ASSERT(m_index->multientry());
+            ASSERT(m_index->multiEntry());
             ASSERT(indexKey->type() == IDBKey::ArrayType);
             for (size_t i = 0; i < indexKey->array().size(); ++i) {
                 if (!m_backingStore.putIndexDataForRecord(m_databaseId, m_objectStoreId, m_index->id(), *indexKey->array()[i], recordIdentifier))
@@ -426,7 +426,7 @@ bool IDBObjectStoreBackendImpl::populateIndex(IDBBackingStore& backingStore, int
     return true;
 }
 
-PassRefPtr<IDBIndexBackendInterface> IDBObjectStoreBackendImpl::createIndex(const String& name, const String& keyPath, bool unique, bool multientry, IDBTransactionBackendInterface* transaction, ExceptionCode& ec)
+PassRefPtr<IDBIndexBackendInterface> IDBObjectStoreBackendImpl::createIndex(const String& name, const String& keyPath, bool unique, bool multiEntry, IDBTransactionBackendInterface* transaction, ExceptionCode& ec)
 {
     if (name.isNull()) {
         ec = IDBDatabaseException::NON_TRANSIENT_ERR;
@@ -441,7 +441,7 @@ PassRefPtr<IDBIndexBackendInterface> IDBObjectStoreBackendImpl::createIndex(cons
         return 0;
     }
 
-    RefPtr<IDBIndexBackendImpl> index = IDBIndexBackendImpl::create(m_backingStore.get(), m_databaseId, this, name, m_name, keyPath, unique, multientry);
+    RefPtr<IDBIndexBackendImpl> index = IDBIndexBackendImpl::create(m_backingStore.get(), m_databaseId, this, name, m_name, keyPath, unique, multiEntry);
     ASSERT(index->name() == name);
 
     RefPtr<IDBObjectStoreBackendImpl> objectStore = this;
@@ -462,7 +462,7 @@ PassRefPtr<IDBIndexBackendInterface> IDBObjectStoreBackendImpl::createIndex(cons
 void IDBObjectStoreBackendImpl::createIndexInternal(ScriptExecutionContext*, PassRefPtr<IDBObjectStoreBackendImpl> objectStore, PassRefPtr<IDBIndexBackendImpl> index, PassRefPtr<IDBTransactionBackendInterface> transaction)
 {
     int64_t id;
-    if (!objectStore->m_backingStore->createIndex(objectStore->m_databaseId, objectStore->id(), index->name(), index->keyPath(), index->unique(), index->multientry(), id)) {
+    if (!objectStore->m_backingStore->createIndex(objectStore->m_databaseId, objectStore->id(), index->name(), index->keyPath(), index->unique(), index->multiEntry(), id)) {
         transaction->abort();
         return;
     }
@@ -552,16 +552,16 @@ void IDBObjectStoreBackendImpl::loadIndexes()
     Vector<String> names;
     Vector<String> keyPaths;
     Vector<bool> uniqueFlags;
-    Vector<bool> multientryFlags;
-    m_backingStore->getIndexes(m_databaseId, m_id, ids, names, keyPaths, uniqueFlags, multientryFlags);
+    Vector<bool> multiEntryFlags;
+    m_backingStore->getIndexes(m_databaseId, m_id, ids, names, keyPaths, uniqueFlags, multiEntryFlags);
 
     ASSERT(names.size() == ids.size());
     ASSERT(keyPaths.size() == ids.size());
     ASSERT(uniqueFlags.size() == ids.size());
-    ASSERT(multientryFlags.size() == ids.size());
+    ASSERT(multiEntryFlags.size() == ids.size());
 
     for (size_t i = 0; i < ids.size(); i++)
-        m_indexes.set(names[i], IDBIndexBackendImpl::create(m_backingStore.get(), m_databaseId, this, ids[i], names[i], m_name, keyPaths[i], uniqueFlags[i], multientryFlags[i]));
+        m_indexes.set(names[i], IDBIndexBackendImpl::create(m_backingStore.get(), m_databaseId, this, ids[i], names[i], m_name, keyPaths[i], uniqueFlags[i], multiEntryFlags[i]));
 }
 
 void IDBObjectStoreBackendImpl::removeIndexFromMap(ScriptExecutionContext*, PassRefPtr<IDBObjectStoreBackendImpl> objectStore, PassRefPtr<IDBIndexBackendImpl> index)

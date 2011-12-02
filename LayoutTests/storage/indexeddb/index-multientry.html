@@ -8,7 +8,7 @@
 <div id="console"></div>
 <script>
 
-description("Test features of IndexedDB's multientry indices.");
+description("Test features of IndexedDB's multiEntry indices.");
 if (window.layoutTestController)
     layoutTestController.waitUntilDone();
 
@@ -19,7 +19,7 @@ function test()
     evalAndLog("window.IDBTransaction = window.IDBTransaction || window.webkitIDBTransaction");
     shouldBeTrue("IDBTransaction != null");
 
-    request = evalAndLog("indexedDB.open('index-multientry')");
+    request = evalAndLog("indexedDB.open('index-multiEntry')");
     request.onerror = unexpectedErrorCallback;
     request.onsuccess = function() {
         db = evalAndLog("db = event.target.result");
@@ -42,10 +42,10 @@ function prepareDatabase()
     deleteAllObjectStores(db);
 
     store = evalAndLog("store = db.createObjectStore('store')");
-    evalAndLog("store.createIndex('index', 'x', {multientry: true})");
+    evalAndLog("store.createIndex('index', 'x', {multiEntry: true})");
 
     store2 = evalAndLog("store2 = db.createObjectStore('store-unique')");
-    evalAndLog("store2.createIndex('index-unique', 'x', {multientry: true, unique: true})");
+    evalAndLog("store2.createIndex('index-unique', 'x', {multiEntry: true, unique: true})");
 }
 
 function addData()
@@ -103,7 +103,7 @@ function verifyIndexes(indexName, callback)
 function verifyUniqueConstraint()
 {
     debug("");
-    debug("Verifying unique constraint on multientry index");
+    debug("Verifying unique constraint on multiEntry index");
     transaction = evalAndLog("transaction = db.transaction(['store-unique'], IDBTransaction.READ_WRITE)");
     transaction.onabort = function () {
         debug("Transaction aborted as expected");
@@ -143,7 +143,7 @@ function createIndexOnStoreWithData()
         trans.oncomplete = function() { verifyIndexes('index-new', done); };
 
         store = evalAndLog("store = trans.objectStore('store')");
-        evalAndLog("store.createIndex('index-new', 'x', {multientry: true})");
+        evalAndLog("store.createIndex('index-new', 'x', {multiEntry: true})");
     };
 }
 

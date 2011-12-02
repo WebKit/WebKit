@@ -51,7 +51,7 @@ public:
     virtual void deleteFunction(PassRefPtr<WebCore::IDBKey>, PassRefPtr<WebCore::IDBCallbacks>, WebCore::IDBTransactionBackendInterface*, WebCore::ExceptionCode&);
     virtual void clear(PassRefPtr<WebCore::IDBCallbacks>, WebCore::IDBTransactionBackendInterface*, WebCore::ExceptionCode&);
 
-    PassRefPtr<WebCore::IDBIndexBackendInterface> createIndex(const String& name, const String& keyPath, bool unique, bool multientry, WebCore::IDBTransactionBackendInterface*, WebCore::ExceptionCode&);
+    PassRefPtr<WebCore::IDBIndexBackendInterface> createIndex(const String& name, const String& keyPath, bool unique, bool multiEntry, WebCore::IDBTransactionBackendInterface*, WebCore::ExceptionCode&);
     PassRefPtr<WebCore::IDBIndexBackendInterface> index(const String& name, WebCore::ExceptionCode&);
     void deleteIndex(const String& name, WebCore::IDBTransactionBackendInterface*, WebCore::ExceptionCode&);
 

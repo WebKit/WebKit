@@ -75,7 +75,7 @@ public:
     {
         return createIndex(name, keyPath, unique, false, transaction, ec);
     }
-    virtual WebIDBIndex* createIndex(const WebString& name, const WebString& keyPath, bool unique, bool multientry, const WebIDBTransaction& transaction, WebExceptionCode& ec)
+    virtual WebIDBIndex* createIndex(const WebString& name, const WebString& keyPath, bool unique, bool multiEntry, const WebIDBTransaction& transaction, WebExceptionCode& ec)
     {
         // FIXME: Assert not reached once implementing classes are updated.
         return createIndex(name, keyPath, unique, transaction, ec);

@@ -63,7 +63,7 @@ public:
 
     virtual void clear(PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*, ExceptionCode&) = 0;
 
-    virtual PassRefPtr<IDBIndexBackendInterface> createIndex(const String& name, const String& keyPath, bool unique, bool multientry, IDBTransactionBackendInterface*, ExceptionCode&) = 0;
+    virtual PassRefPtr<IDBIndexBackendInterface> createIndex(const String& name, const String& keyPath, bool unique, bool multiEntry, IDBTransactionBackendInterface*, ExceptionCode&) = 0;
     virtual PassRefPtr<IDBIndexBackendInterface> index(const String& name, ExceptionCode&) = 0;
     virtual void deleteIndex(const String& name, IDBTransactionBackendInterface*, ExceptionCode&) = 0;
 

@@ -1,4 +1,4 @@
-Test features of IndexedDB's multientry indices.
+Test features of IndexedDB's multiEntry indices.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
@@ -7,7 +7,7 @@ window.indexedDB = window.indexedDB || window.webkitIndexedDB
 PASS indexedDB != null is true
 window.IDBTransaction = window.IDBTransaction || window.webkitIDBTransaction
 PASS IDBTransaction != null is true
-indexedDB.open('index-multientry')
+indexedDB.open('index-multiEntry')
 db = event.target.result
 db.setVersion('1')
 
@@ -16,9 +16,9 @@ trans = event.target.result
 PASS trans !== null is true
 Deleted all object stores.
 store = db.createObjectStore('store')
-store.createIndex('index', 'x', {multientry: true})
+store.createIndex('index', 'x', {multiEntry: true})
 store2 = db.createObjectStore('store-unique')
-store2.createIndex('index-unique', 'x', {multientry: true, unique: true})
+store2.createIndex('index-unique', 'x', {multiEntry: true, unique: true})
 
 Populating stores (and indexes)
 transaction = db.transaction(['store'], IDBTransaction.READ_WRITE)
@@ -64,7 +64,7 @@ PASS cursor.value.y is "b"
 cursor = event.target.result
 PASS expected.length === 0 is true
 
-Verifying unique constraint on multientry index
+Verifying unique constraint on multiEntry index
 transaction = db.transaction(['store-unique'], IDBTransaction.READ_WRITE)
 transaction.objectStore('store-unique').put({x: [1, 2, 3], y: 'a'}, 'foo')
 success!
@@ -81,7 +81,7 @@ db.setVersion('2')
 trans = event.target.result
 PASS trans !== null is true
 store = trans.objectStore('store')
-store.createIndex('index-new', 'x', {multientry: true})
+store.createIndex('index-new', 'x', {multiEntry: true})
 
 Verifying index: index-new
 transaction = db.transaction(['store'], IDBTransaction.READ_ONLY)

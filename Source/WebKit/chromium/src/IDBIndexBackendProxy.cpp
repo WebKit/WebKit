@@ -75,9 +75,9 @@ bool IDBIndexBackendProxy::unique()
     return m_webIDBIndex->unique();
 }
 
-bool IDBIndexBackendProxy::multientry()
+bool IDBIndexBackendProxy::multiEntry()
 {
-    return m_webIDBIndex->multientry();
+    return m_webIDBIndex->multiEntry();
 }
 
 void IDBIndexBackendProxy::openCursor(PassRefPtr<IDBKeyRange> keyRange, unsigned short direction, PassRefPtr<IDBCallbacks> callbacks, IDBTransactionBackendInterface* transaction, ExceptionCode& ec)

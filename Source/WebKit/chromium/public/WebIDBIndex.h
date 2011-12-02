@@ -61,7 +61,7 @@ public:
         WEBKIT_ASSERT_NOT_REACHED();
         return false;
     }
-    virtual bool multientry() const
+    virtual bool multiEntry() const
     {
         WEBKIT_ASSERT_NOT_REACHED();
         return false;

@@ -45,7 +45,7 @@ public:
     virtual String storeName();
     virtual String keyPath();
     virtual bool unique();
-    virtual bool multientry();
+    virtual bool multiEntry();
 
     virtual void openCursor(PassRefPtr<WebCore::IDBKeyRange>, unsigned short direction, PassRefPtr<WebCore::IDBCallbacks>, WebCore::IDBTransactionBackendInterface*, WebCore::ExceptionCode&);
     virtual void openKeyCursor(PassRefPtr<WebCore::IDBKeyRange>, unsigned short direction, PassRefPtr<WebCore::IDBCallbacks>, WebCore::IDBTransactionBackendInterface*, WebCore::ExceptionCode&);

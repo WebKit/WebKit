@@ -32,7 +32,7 @@ module storage {
         readonly attribute IDBObjectStore objectStore;
         readonly attribute DOMString keyPath;
         readonly attribute boolean unique;
-        readonly attribute boolean multientry;
+        readonly attribute boolean multiEntry;
 
         [CallWith=ScriptExecutionContext] IDBRequest openCursor(in [Optional] IDBKeyRange range, in [Optional] unsigned short direction)
             raises (IDBDatabaseException);

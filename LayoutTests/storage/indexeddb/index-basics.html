@@ -53,9 +53,9 @@ function addData()
     shouldBeTrue("'keyPath' in indexObject");
     shouldBeEqualToString("indexObject.keyPath", "x");
     shouldBeTrue("'unique' in indexObject");
-    shouldBeTrue("'multientry' in indexObject");
+    shouldBeTrue("'multiEntry' in indexObject");
     shouldBeFalse("indexObject.unique");
-    shouldBeFalse("indexObject.multientry");
+    shouldBeFalse("indexObject.multiEntry");
     shouldBeTrue("'openKeyCursor' in indexObject");
     shouldBeTrue("'openCursor' in indexObject");
     shouldBeTrue("'getKey' in indexObject");

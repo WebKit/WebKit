@@ -158,12 +158,12 @@ PassRefPtr<IDBIndex> IDBObjectStore::createIndex(const String& name, const Strin
     bool unique = false;
     options.get("unique", unique);
 
-    bool multientry = false;
-    options.get("multientry", multientry);
+    bool multiEntry = false;
+    options.get("multiEntry", multiEntry);
 
-    // FIXME: When Array-type keyPaths are supported, throw exception if keyPath is Array and multientry is true.
+    // FIXME: When Array-type keyPaths are supported, throw exception if keyPath is Array and multiEntry is true.
 
-    RefPtr<IDBIndexBackendInterface> index = m_backend->createIndex(name, keyPath, unique, multientry, m_transaction->backend(), ec);
+    RefPtr<IDBIndexBackendInterface> index = m_backend->createIndex(name, keyPath, unique, multiEntry, m_transaction->backend(), ec);
     ASSERT(!index != !ec); // If we didn't get an index, we should have gotten an exception code. And vice versa.
     if (!index)
         return 0;
