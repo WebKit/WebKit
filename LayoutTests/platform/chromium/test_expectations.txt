@@ -2201,6 +2201,7 @@ BUGCR53546 WONTFIX LINUX : userscripts/user-script-video-document.html = TEXT
 
 // These tests are consistently failing on Linux, and the latter test is flaky on Win.
 BUGCR53554 : svg/W3C-SVG-1.1/fonts-elem-07-b.svg = IMAGE+TEXT IMAGE PASS
+BUGCR53554 : svg/W3C-SVG-1.1/fonts-elem-04-b.svg = IMAGE+TEXT IMAGE PASS
 BUGCR53554 WIN : svg/custom/svg-fonts-without-missing-glyph.xhtml = PASS IMAGE
 BUGCR53554 LINUX : svg/custom/svg-fonts-without-missing-glyph.xhtml = IMAGE+TEXT IMAGE
 
@@ -2663,7 +2664,7 @@ BUGWK47925 LEOPARD : compositing/plugins/composited-plugin.html = IMAGE+TEXT
 BUGWK47925 MAC : compositing/plugins/small-to-large-composited-plugin.html = TEXT
 
 BUGWK47949 LINUX WIN : compositing/reflections/nested-reflection-anchor-point.html = IMAGE+TEXT
-BUGWK47949 MAC CPU-CG : compositing/reflections/nested-reflection-anchor-point.html = IMAGE
+BUGWK47949 MAC : compositing/reflections/nested-reflection-anchor-point.html = IMAGE
 BUGWK47949 LINUX WIN : compositing/reflections/reflection-opacity.html = IMAGE+TEXT
 BUGWK47949 MAC CPU-CG : compositing/reflections/reflection-opacity.html = IMAGE
 
@@ -3751,11 +3752,13 @@ BUGALOKP : compositing/geometry/fixed-position-transform-composited-page-scale.h
 BUGALOKP : compositing/geometry/layer-due-to-layer-children-deep.html = IMAGE
 BUGALOKP : compositing/geometry/layer-due-to-layer-children.html = IMAGE
 BUGALOKP : compositing/geometry/vertical-scroll-composited.html = IMAGE
+BUGALOKP : compositing/iframes/composited-iframe-alignment.html = IMAGE
 BUGALOKP : compositing/reflections/nested-reflection-transformed.html = IMAGE
 BUGALOKP : compositing/reflections/nested-reflection-transformed2.html = IMAGE
 BUGALOKP : compositing/reflections/nested-reflection-transition.html = IMAGE
 BUGALOKP : compositing/reflections/reflection-in-composited.html = IMAGE
 BUGALOKP : compositing/scaling/tiled-layer-recursion.html = IMAGE
+BUGALOKP WIN : compositing/visibility/visibility-image-layers.html = IMAGE
 BUGALOKP MAC LINUX: compositing/shadows/shadow-drawing.html = IMAGE
 BUGALOKP : platform/chromium/compositing/huge-layer-rotated.html = IMAGE
 BUGALOKP : platform/chromium/compositing/layout-width-change.html = IMAGE
