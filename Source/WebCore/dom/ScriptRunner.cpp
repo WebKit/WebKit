@@ -52,11 +52,7 @@ ScriptRunner::~ScriptRunner()
 void ScriptRunner::queueScriptForExecution(ScriptElement* scriptElement, CachedResourceHandle<CachedScript> cachedScript, ExecutionType executionType)
 {
     ASSERT(scriptElement);
-    
-    // Temporary: intended to help debug how null CachedScript objects can even get queued for execution, which
-    // seems to sometimes happen (see http://code.google.com/p/chromium/issues/detail?id=75604 )
-    if (!cachedScript.get())
-        CRASH();
+    ASSERT(cachedScript.get());
 
     Element* element = scriptElement->element();
     ASSERT(element);

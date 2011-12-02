@@ -1,3 +1,24 @@
+2011-12-02  Gavin Peters  <gavinp@chromium.org>
+
+        Remove instrumentation tracking a fixed bug
+        https://bugs.webkit.org/show_bug.cgi?id=73471
+
+        The underlying bug is fixed (bug 72068), and this instrumentation was intrusive and using
+        memory, plus the conditional compilation made me sad.
+
+        Reviewed by Nate Chapin.
+
+        No new tests.
+
+        * dom/ScriptElement.cpp:
+        (WebCore::ScriptElement::ScriptElement):
+        (WebCore::ScriptElement::requestScript):
+        (WebCore::ScriptElement::stopLoadRequest):
+        (WebCore::ScriptElement::notifyFinished):
+        * dom/ScriptElement.h:
+        * dom/ScriptRunner.cpp:
+        (WebCore::ScriptRunner::queueScriptForExecution):
+
 2011-12-02  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Split view works weirdly in network panel when resizing, showing/hiding main element.

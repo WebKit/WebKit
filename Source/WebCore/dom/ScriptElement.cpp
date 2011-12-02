@@ -65,10 +65,6 @@ ScriptElement::ScriptElement(Element* element, bool parserInserted, bool already
     , m_willExecuteWhenDocumentFinishedParsing(false)
     , m_forceAsync(!parserInserted)
     , m_willExecuteInOrder(false)
-#if PLATFORM(CHROMIUM)
-    , m_cachedScriptState(NeverSet)
-    , m_backtraceSize(0)
-#endif
 {
     ASSERT(m_element);
 }
@@ -269,10 +265,6 @@ bool ScriptElement::requestScript(const String& sourceUrl)
     }
 
     if (m_cachedScript) {
-#if PLATFORM(CHROMIUM)      
-        ASSERT(m_cachedScriptState == NeverSet);
-        m_cachedScriptState = Set;
-#endif
         return true;
     }
 
@@ -310,12 +302,6 @@ void ScriptElement::stopLoadRequest()
     if (m_cachedScript) {
         if (!m_willBeParserExecuted)
             m_cachedScript->removeClient(this);
-#if PLATFORM(CHROMIUM)
-        ASSERT(m_cachedScriptState == Set);
-        m_cachedScriptState = ZeroedInStopLoadRequest;
-        m_backtraceSize = MaxBacktraceSize;
-        WTFGetBacktrace(m_backtrace, &m_backtraceSize);
-#endif
         m_cachedScript = 0;
     }
 }
@@ -342,12 +328,6 @@ void ScriptElement::notifyFinished(CachedResource* o)
     else
         m_element->document()->scriptRunner()->queueScriptForExecution(this, m_cachedScript, ScriptRunner::ASYNC_EXECUTION);
 
-#if PLATFORM(CHROMIUM)
-    ASSERT(m_cachedScriptState == Set);
-    m_cachedScriptState = ZeroedInNotifyFinished;
-    m_backtraceSize = MaxBacktraceSize;
-    WTFGetBacktrace(m_backtrace, &m_backtraceSize);
-#endif
     m_cachedScript = 0;
 }
 
