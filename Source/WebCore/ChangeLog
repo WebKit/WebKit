@@ -1,3 +1,17 @@
+2011-12-02  Benjamin Poulain  <bpoulain@apple.com>
+
+        Build fix for SubresourceLoader when building with Core Foundation
+        https://bugs.webkit.org/show_bug.cgi?id=73709
+
+        Reviewed by David Kilzer.
+
+        The patch r100311 removed SubresourceClient and merged it in SubresourceLoader.
+        Consequently, m_client does not exist anymore and there is no need to do the check
+        before invoking didReceiveData().
+
+        * loader/cf/SubresourceLoaderCF.cpp:
+        (WebCore::SubresourceLoader::didReceiveDataArray):
+
 2011-12-02  Andreas Kling  <kling@webkit.org>
 
         StyledElement: Simplify addCSSColor().
