@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008, 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,7 +26,9 @@
 #ifndef CSSFontSelector_h
 #define CSSFontSelector_h
 
+#include "CachedResourceHandle.h"
 #include "FontSelector.h"
+#include "Timer.h"
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
@@ -38,8 +40,8 @@ namespace WebCore {
 class CSSFontFace;
 class CSSFontFaceRule;
 class CSSSegmentedFontFace;
+class CachedFont;
 class Document;
-class CachedResourceLoader;
 class FontDescription;
 
 class CSSFontSelector : public FontSelector {
@@ -52,7 +54,7 @@ public:
 
     virtual FontData* getFontData(const FontDescription& fontDescription, const AtomicString& familyName);
 
-    void clearDocument() { m_document = 0; }
+    void clearDocument();
 
     void addFontFaceRule(const CSSFontFaceRule*);
 
@@ -61,23 +63,28 @@ public:
 
     bool isEmpty() const;
 
-    CachedResourceLoader* cachedResourceLoader() const;
-
     virtual void registerForInvalidationCallbacks(FontSelectorClient*);
     virtual void unregisterForInvalidationCallbacks(FontSelectorClient*);
 
     Document* document() const { return m_document; }
+
+    void beginLoadingFontSoon(CachedFont*);
 
 private:
     CSSFontSelector(Document*);
 
     void dispatchInvalidationCallbacks();
 
+    void beginLoadTimerFired(Timer<CSSFontSelector>*);
+
     Document* m_document;
     HashMap<String, Vector<RefPtr<CSSFontFace> >*, CaseFoldingHash> m_fontFaces;
     HashMap<String, Vector<RefPtr<CSSFontFace> >*, CaseFoldingHash> m_locallyInstalledFontFaces;
     HashMap<String, HashMap<unsigned, RefPtr<CSSSegmentedFontFace> >*, CaseFoldingHash> m_fonts;
     HashSet<FontSelectorClient*> m_clients;
+
+    Vector<CachedResourceHandle<CachedFont> > m_fontsToBeginLoading;
+    Timer<CSSFontSelector> m_beginLoadingTimer;
 };
 
 } // namespace WebCore

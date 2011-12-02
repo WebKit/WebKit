@@ -8,10 +8,3 @@
 <p>This test tries to render the following text with Ahem, loaded from a WOFF file. The text below should be a series of black boxes.</p>
 
 <p style="font-family: family1; font-size: 4em;">Failure</p>
-<script>
-    if (window.layoutTestController) {
-        layoutTestController.waitUntilDone();
-        document.body.offsetTop;
-        setTimeout(function() { layoutTestController.notifyDone(); }, 100);
-    }
-</script>

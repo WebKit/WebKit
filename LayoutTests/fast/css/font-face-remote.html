@@ -8,7 +8,7 @@
         div { width: 100px; height: 100px; background-color: red; font-family: 'remote'; font-size: 20px; color: green; }
     </style>
 </head>
-<body>
+<body onload="finished()">
     <div>
         FAIL_<br>
         XXXXX<br>
@@ -17,10 +17,16 @@
         _FAIL<br>
     </div>
     <script>
-        if (window.layoutTestController) {
+        if (window.layoutTestController)
             layoutTestController.waitUntilDone();
-            document.body.offsetTop;
-            setTimeout(function() { layoutTestController.notifyDone(); }, 100);
+
+        // Kick off loading of the font
+        document.body.offsetTop;
+
+        function finished()
+        {
+            if (window.layoutTestController)
+                layoutTestController.notifyDone();
         }
     </script>
 </body>

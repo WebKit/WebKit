@@ -37,25 +37,17 @@ WebKit nightly adding insane height to div at random.</p>
 </div>
 
 <script>
-if (window.layoutTestController) {
+if (window.layoutTestController)
     layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
-}
 
 function test()
 {
-    document.body.offsetTop;
-    setTimeout(function() {
-        var totalHeight = document.defaultView.getComputedStyle(document.getElementById("test"), null).getPropertyCSSValue("height");
-        totalHeight = totalHeight.getFloatValue(CSSPrimitiveValue.CSS_PX);
-        if (totalHeight > 150 && totalHeight < 300)
-            document.getElementById("result").innerHTML = "PASS";
-        else
-            document.getElementById("result").innerHTML = "FAIL: " + totalHeight + "px";
-
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
-    }, 100);
+    var totalHeight = document.defaultView.getComputedStyle(document.getElementById("test"), null).getPropertyCSSValue("height");
+    totalHeight = totalHeight.getFloatValue(CSSPrimitiveValue.CSS_PX);
+    if (totalHeight > 150 && totalHeight < 300)
+        document.getElementById("result").innerHTML = "PASS";
+    else
+        document.getElementById("result").innerHTML = "FAIL: " + totalHeight + "px";
 }
 </script>
 </body>

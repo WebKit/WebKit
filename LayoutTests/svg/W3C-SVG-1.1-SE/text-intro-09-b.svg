@@ -86,11 +86,4 @@
     <text font-family="SVGFreeSansASCII,sans-serif" font-weight="bold" font-size="20" x="240"
       text-anchor="middle" y="18" stroke-width="0.5" stroke="black" fill="white">DRAFT</text>
   </g>-->
-<script>
-    if (window.layoutTestController) {
-        layoutTestController.waitUntilDone();
-        document.documentElement.offsetTop;
-        setTimeout(function() { layoutTestController.notifyDone(); }, 100);
-    }
-</script>
 </svg>

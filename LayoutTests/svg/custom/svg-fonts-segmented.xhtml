@@ -37,12 +37,6 @@
 
 <!-- 'ABC' should be rendered using Times, 'def' using Courier, 'o' using the SVG Font, and 'O' again by Times -->
 <p style='font-family: TestFont; font-size: 40px; '>ABCdefoooO</p>
-<script>
-    if (window.layoutTestController) {
-        layoutTestController.waitUntilDone();
-        document.documentElement.offsetTop;
-        setTimeout(function() { layoutTestController.notifyDone(); }, 100);
-    }
-</script>
+
 </body>
 </html>

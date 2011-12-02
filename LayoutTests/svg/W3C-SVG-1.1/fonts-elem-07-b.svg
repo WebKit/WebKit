@@ -113,11 +113,4 @@
 	</g>
 	<text id="revision" x="10" y="340" font-size="40" stroke="none" fill="black">$Revision: 1.7 $</text>
 	<rect id="test-frame" x="1" y="1" width="478" height="358" fill="none" stroke="#000000"/>
-        <script>
-            if (window.layoutTestController) {
-                layoutTestController.waitUntilDone();
-                document.documentElement.offsetTop;
-                setTimeout(function() { layoutTestController.notifyDone(); }, 100);
-            }
-        </script>
 </svg>

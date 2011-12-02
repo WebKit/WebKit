@@ -1,3 +1,40 @@
+2011-12-02  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/10520670> REGRESSION (r91738): didFinishLoad is called before custom fonts have finished loading
+        https://bugs.webkit.org/show_bug.cgi?id=73688
+
+        Reviewed by Darin Adler.
+
+        The problem was that after CSSFontFaceSource::getFontData() had scheduled a 0-delay timer to
+        begin loading the font, but before that timer fired, the subresource loader appeared to have
+        had no resources waiting to be loaded, and therefore didFinishLoad could be called. This change
+        reworks the fix for <http://webkit.org/b/65123> so that while the load is still started on a
+        0-dealy timer, the subresource loader’s request count is incremented immediately, preventing
+        it from hitting 0 while the font load is scheduled to begin. The delayed load mechanism is
+        moved from CSSFontFaceSource into CSSFontSelector in order to safely handle the possibility of
+        the latter being decommissioned while waiting for font loading to begin.
+
+        * css/CSSFontFaceSource.cpp:
+        (WebCore::CSSFontFaceSource::CSSFontFaceSource): Removed initializer for m_loadStartTimer.
+        (WebCore::CSSFontFaceSource::~CSSFontFaceSource): Removed stopping of m_loadStartTimer.
+        (WebCore::CSSFontFaceSource::getFontData): Replaced code to schedule loading on a timer with
+        a call to CSSFontSelector::beginLoadingFontSoon.
+        * css/CSSFontFaceSource.h: Removed m_loadStartTimer and m_fontSelector member variables.
+        * css/CSSFontSelector.cpp:
+        (WebCore::CSSFontSelector::CSSFontSelector): Added initialized for m_beginLoadingTimer.
+        (WebCore::CSSFontSelector::~CSSFontSelector): Added call to clearDocument(), to deal with
+        anything remaining in m_fontsToBeginLoading at this time.
+        (WebCore::CSSFontSelector::clearDocument): Now stops m_beginLoadingTimer and balances
+        incrementRequestCount() calls for anything remaining in m_fontsToBeginLoading.
+        (WebCore::CSSFontSelector::beginLoadingFontSoon): Added. Schedules the actual call to
+        CachedFont::beginLoadingIfNeeded on a 0-delay timer, and meanwhile increments the request count
+        on the CachedResourceLoader, which ensures that didFinishLoad will not be called while waiting
+        for the timer to fire.
+        (WebCore::CSSFontSelector::beginLoadTimerFired): Added. Actually calls
+        CachedFont::beginLoadIfNeeded and balances the incrementRequestCount() made when the timer was
+        scheduled.
+        * css/CSSFontSelector.h:
+
 2011-12-02  David Tseng  <dtseng@google.com>
 
         Send an AXCheckedStateChanged notification when the aria-checked attribute changes.

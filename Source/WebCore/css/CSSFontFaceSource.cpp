@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008, 2010, 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -51,7 +51,6 @@ CSSFontFaceSource::CSSFontFaceSource(const String& str, CachedFont* font)
     : m_string(str)
     , m_font(font)
     , m_face(0)
-    , m_loadStartTimer(this, &CSSFontFaceSource::startLoadingTimerFired)
 #if ENABLE(SVG_FONTS)
     , m_hasExternalSVGFont(false)
 #endif
@@ -62,7 +61,6 @@ CSSFontFaceSource::CSSFontFaceSource(const String& str, CachedFont* font)
 
 CSSFontFaceSource::~CSSFontFaceSource()
 {
-    m_loadStartTimer.stop();
     if (m_font)
         m_font->removeClient(this);
     pruneTable();
@@ -177,11 +175,9 @@ SimpleFontData* CSSFontFaceSource::getFontData(const FontDescription& fontDescri
 #endif
         }
     } else {
-        // Kick off the load now. Do it on a zero-delay timer rather than synchronously, because we may be in
-        // the middle of layout, and the loader may invoke arbitrary delegate or event handler code.
-        m_fontSelector = fontSelector;
-        if (!m_loadStartTimer.isActive())
-            m_loadStartTimer.startOneShot(0);
+        // Kick off the load. Do it soon rather than now, because we may be in the middle of layout,
+        // and the loader may invoke arbitrary delegate or event handler code.
+        fontSelector->beginLoadingFontSoon(m_font.get());
 
         // This temporary font is not retained and should not be returned.
         FontCachePurgePreventer fontCachePurgePreventer;
@@ -196,17 +192,6 @@ SimpleFontData* CSSFontFaceSource::getFontData(const FontDescription& fontDescri
         doc->registerCustomFont(fontDataRawPtr);
 
     return fontDataRawPtr;
-}
-
-void CSSFontFaceSource::startLoadingTimerFired(Timer<WebCore::CSSFontFaceSource>*)
-{
-    ASSERT(m_font);
-    ASSERT(m_fontSelector);
-
-    if (CachedResourceLoader* cachedResourceLoader = m_fontSelector->cachedResourceLoader())
-        m_font->beginLoadIfNeeded(cachedResourceLoader);
-
-    m_fontSelector = nullptr;
 }
 
 #if ENABLE(SVG_FONTS)

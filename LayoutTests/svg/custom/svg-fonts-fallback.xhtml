@@ -76,12 +76,6 @@
     <!-- 'a', ' ', 'o' from TestFont2, '&#xbe2;' can't be rendered, as none of the default fonts defines it -->
     <span style='font-family: TestFont2; font-size: 40px; '>a &#xbe2; o</span><br/>
 </p>
-<script>
-    if (window.layoutTestController) {
-        layoutTestController.waitUntilDone();
-        document.documentElement.offsetTop;
-        setTimeout(function() { layoutTestController.notifyDone(); }, 100);
-    }
-</script>
+
 </body>
 </html>

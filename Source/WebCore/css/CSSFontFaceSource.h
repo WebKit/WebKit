@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008, 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -77,9 +77,6 @@ private:
     CachedResourceHandle<CachedFont> m_font; // For remote fonts, a pointer to our cached resource.
     CSSFontFace* m_face; // Our owning font face.
     HashMap<unsigned, SimpleFontData*> m_fontDataTable; // The hash key is composed of size synthetic styles.
-
-    Timer<CSSFontFaceSource> m_loadStartTimer;
-    RefPtr<CSSFontSelector> m_fontSelector;
 
 #if ENABLE(SVG_FONTS)
     RefPtr<SVGFontFaceElement> m_svgFontFaceElement;

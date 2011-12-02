@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008, 2011 Apple Inc. All rights reserved.
  *           (C) 2007, 2008 Nikolas Zimmermann <zimmermann@kde.org>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -60,6 +60,7 @@ namespace WebCore {
 
 CSSFontSelector::CSSFontSelector(Document* document)
     : m_document(document)
+    , m_beginLoadingTimer(this, &CSSFontSelector::beginLoadTimerFired)
 {
     // FIXME: An old comment used to say there was no need to hold a reference to m_document
     // because "we are guaranteed to be destroyed before the document". But there does not
@@ -71,6 +72,7 @@ CSSFontSelector::CSSFontSelector(Document* document)
 
 CSSFontSelector::~CSSFontSelector()
 {
+    clearDocument();
     fontCache()->removeClient(this);
     deleteAllValues(m_fontFaces);
     deleteAllValues(m_locallyInstalledFontFaces);
@@ -80,11 +82,6 @@ CSSFontSelector::~CSSFontSelector()
 bool CSSFontSelector::isEmpty() const
 {
     return m_fonts.isEmpty();
-}
-
-CachedResourceLoader* CSSFontSelector::cachedResourceLoader() const
-{
-    return m_document ? m_document->cachedResourceLoader() : 0;
 }
 
 void CSSFontSelector::addFontFaceRule(const CSSFontFaceRule* fontFaceRule)
@@ -578,6 +575,53 @@ FontData* CSSFontSelector::getFontData(const FontDescription& fontDescription, c
 
     // We have a face.  Ask it for a font data.  If it cannot produce one, it will fail, and the OS will take over.
     return face->getFontData(fontDescription);
+}
+
+void CSSFontSelector::clearDocument()
+{
+    if (!m_document) {
+        ASSERT(!m_beginLoadingTimer.isActive());
+        ASSERT(m_fontsToBeginLoading.isEmpty());
+        return;
+    }
+
+    m_beginLoadingTimer.stop();
+
+    CachedResourceLoader* cachedResourceLoader = m_document->cachedResourceLoader();
+    for (size_t i = 0; i < m_fontsToBeginLoading.size(); ++i) {
+        // Balances incrementRequestCount() in beginLoadingFontSoon().
+        cachedResourceLoader->decrementRequestCount(m_fontsToBeginLoading[i].get());
+    }
+
+    m_fontsToBeginLoading.clear();
+
+    m_document = 0;
+}
+
+void CSSFontSelector::beginLoadingFontSoon(CachedFont* font)
+{
+    if (!m_document)
+        return;
+
+    m_fontsToBeginLoading.append(font);
+    // Increment the request count now, in order to prevent didFinishLoad from being dispatched
+    // after this font has been requested but before it began loading. Balanced by
+    // decrementRequestCount() in beginLoadTimerFired() and in clearDocument().
+    m_document->cachedResourceLoader()->incrementRequestCount(font);
+    m_beginLoadingTimer.startOneShot(0);
+}
+
+void CSSFontSelector::beginLoadTimerFired(Timer<WebCore::CSSFontSelector>*)
+{
+    Vector<CachedResourceHandle<CachedFont> > fontsToBeginLoading;
+    fontsToBeginLoading.swap(m_fontsToBeginLoading);
+
+    CachedResourceLoader* cachedResourceLoader = m_document->cachedResourceLoader();
+    for (size_t i = 0; i < fontsToBeginLoading.size(); ++i) {
+        fontsToBeginLoading[i]->beginLoadIfNeeded(cachedResourceLoader);
+        // Balances incrementRequestCount() in beginLoadingFontSoon().
+        cachedResourceLoader->decrementRequestCount(fontsToBeginLoading[i].get());
+    }
 }
 
 }
