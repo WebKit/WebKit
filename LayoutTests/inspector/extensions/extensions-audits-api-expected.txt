@@ -16,7 +16,6 @@ category.onAuditStarted fired, results dump follows:
     createURL : <function>
     createSnippet : <function>
     createText : <function>
-    createResourceLink : <function>
     addResult : <function>
     createResult : <function>
     done : <function>
@@ -25,6 +24,7 @@ category.onAuditStarted fired, results dump follows:
         Warning : "warning"
         Severe : "severe"
     }
+    createResourceLink : <function>
 }
 {
     contents : {

@@ -820,7 +820,7 @@ WebInspector._showAnchorLocation = function(anchor)
 {
     if (WebInspector.openAnchorLocationRegistry.dispatch(anchor.href))
         return true;
-    var preferedPanel = this.panels[anchor.getAttribute("preferred_panel") || "resources"];
+    var preferedPanel = this.panels[anchor.preferredPanel || "resources"];
     if (WebInspector._showAnchorLocationInPanel(anchor, preferedPanel))
         return true;
     if (preferedPanel !== this.panels.resources && WebInspector._showAnchorLocationInPanel(anchor, this.panels.resources))

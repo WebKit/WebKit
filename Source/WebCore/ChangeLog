@@ -1,3 +1,30 @@
+2011-12-01  Andrey Kosyakov  <caseq@chromium.org>
+
+        Web Inspector: use object properties, not element attributes to pass preferred panel/line/request id in linkified anchors
+        https://bugs.webkit.org/show_bug.cgi?id=73556
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/AuditFormatters.js:
+        (WebInspector.AuditFormatters.resourceLink):
+        * inspector/front-end/ConsoleMessage.js:
+        (WebInspector.ConsoleMessageImpl.prototype._formatMessage.else.else.linkifier):
+        (WebInspector.ConsoleMessageImpl.prototype._formatMessage):
+        * inspector/front-end/DebuggerPresentationModel.js:
+        (WebInspector.DebuggerPresentationModel.Linkifier.prototype.linkifyLocation):
+        (WebInspector.DebuggerPresentationModel.Linkifier.prototype._updateAnchor):
+        * inspector/front-end/NetworkPanel.js:
+        (WebInspector.NetworkPanel.prototype._resourceByAnchor):
+        (WebInspector.NetworkDataGridNode.prototype._refreshInitiatorCell):
+        * inspector/front-end/ResourceUtils.js:
+        (WebInspector.linkifyStringAsFragment):
+        (WebInspector.linkifyResourceAsNode):
+        (WebInspector.linkifyRequestAsNode):
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.ResourcesPanel.prototype.showAnchorLocation):
+        * inspector/front-end/inspector.js:
+        (WebInspector._showAnchorLocation):
+
 2011-12-02  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: refactor InspectorBackendDispatcher so that it does not use JSON-serialized command templates.

@@ -9,9 +9,11 @@
 
 function extension_testAudits(nextTest)
 {
+    var pendingOutput = [];
+
     function onStartAuditCategory(results)
     {
-        output("category.onAuditStarted fired");
+        pendingOutput.push("category.onAuditStarted fired");
         results.addResult("Passed rule", "this rule always passes ok", results.Severity.Info);
         results.addResult("Failed rule (42)", "this rule always fails", results.Severity.Severe);
 
@@ -21,27 +23,30 @@ function extension_testAudits(nextTest)
         nestedNode.expanded = true;
         nestedNode.addChild(results.createSnippet("function rand()\n{\n    return 4;\n}"));
         nestedNode.addChild(results.createResourceLink("file:///path/to/error.html", 10));
+        webInspector.inspectedWindow.eval("location.href", function(inspectedPageURL) {
+            nestedNode.addChild(results.createResourceLink(inspectedPageURL, 20));
 
-        results.addResult("Rule with details subtree (1)", "This rule has a lot of details", results.Severity.Warning, node);
-        // Audit normally terminates when number of added rule results is equal to
-        // the rule count declared when adding a category. done() is only for
-        // emergency cases, when we know we won't be able to run the rest of the rules.
-        results.done();
+            results.addResult("Rule with details subtree (1)", "This rule has a lot of details", results.Severity.Warning, node);
+
+            // Audit normally terminates when number of added rule results is equal to
+            // the rule count declared when adding a category. done() is only for
+            // emergency cases, when we know we won't be able to run the rest of the rules.
+            results.done();
+        });
     }
     function onStartAuditFailedCategory()
     {
-        output("failedCategory.onAuditStarted fired, throwing exception");
+        pendingOutput.push("failedCategory.onAuditStarted fired, throwing exception");
         throw "oops!";
     }
     function onStartAuditDisabledCategory(results)
     {
-        output("FAIL: disabledCategory.onAuditStarted fired");
+        pendingOutput.push("FAIL: disabledCategory.onAuditStarted fired");
         results.done();
     }
 
     var category = webInspector.audits.addCategory("Extension audits", 20);
     category.onAuditStarted.addListener(onStartAuditCategory);
-    output("Added audit category.");
 
     var failedCategory = webInspector.audits.addCategory("Extension audits that fail", 2);
     failedCategory.onAuditStarted.addListener(onStartAuditFailedCategory);
@@ -49,8 +54,13 @@ function extension_testAudits(nextTest)
     var disabledCategory = webInspector.audits.addCategory("Disabled extension audits", 2);
     disabledCategory.onAuditStarted.addListener(onStartAuditDisabledCategory);
 
+    function auditsDone()
+    {
+        pendingOutput.sort().forEach(output);
+        nextTest();
+    }
     webInspector.inspectedWindow.eval("", function() {
-        extension_runAudits(nextTest);
+        extension_runAudits(auditsDone);
     });
 }
 

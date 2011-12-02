@@ -498,7 +498,6 @@ function AuditResultImpl(id)
     this.createURL = bind(this._nodeFactory, null, "url");
     this.createSnippet = bind(this._nodeFactory, null, "snippet");
     this.createText = bind(this._nodeFactory, null, "text");
-    this.createResourceLink = bind(this._nodeFactory, null, "resourceLink");
 }
 
 AuditResultImpl.prototype = {
@@ -532,6 +531,14 @@ AuditResultImpl.prototype = {
     get Severity()
     {
         return apiPrivate.audits.Severity;
+    },
+
+    createResourceLink: function(url, lineNumber)
+    {
+        return {
+            type: "resourceLink",
+            arguments: [url, lineNumber - 1]
+        };
     },
 
     _nodeFactory: function(type)

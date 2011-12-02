@@ -3,7 +3,6 @@ Tests audits support in WebInspector Extensions API
 Started extension.
 Running tests...
 RUNNING TEST: extension_testAudits
-Added audit category.
   Extension audits
     Failed rule (42)
      this rule always fails
@@ -19,7 +18,8 @@ Added audit category.
 {
     return 4;
 }
-         error.html:10
+         /path/to/error.html:10
+         extensions-audits.html:20
     Passed rule
      this rule always passes ok
   Extension audits that fail

@@ -1310,13 +1310,7 @@ WebInspector.NetworkPanel.prototype = {
 
     _resourceByAnchor: function(anchor)
     {
-        var resource;
-        if (anchor.getAttribute("request_id"))
-            resource = this.resourceById(anchor.getAttribute("request_id"));
-        if (!resource)
-            resource = this._networkLogView._resourcesByURL[anchor.href];
-
-        return resource;
+        return anchor.requestId ? this.resourceById(anchor.requestId) : this._networkLogView._resourcesByURL[anchor.href];
     },
 
     canShowAnchorLocation: function(anchor)
@@ -1902,11 +1896,8 @@ WebInspector.NetworkDataGridNode.prototype = {
             this._initiatorCell.removeChildren();
             if (this._resource.redirectSource) {
                 var redirectSource = this._resource.redirectSource;
-                var anchor = WebInspector.linkifyURLAsNode(redirectSource.url, redirectSource.url, undefined, false);
-                anchor.setAttribute("request_id", redirectSource.requestId);
-                anchor.setAttribute("preferred_panel", "network");
                 this._initiatorCell.title = redirectSource.url;
-                this._initiatorCell.appendChild(anchor);
+                this._initiatorCell.appendChild(WebInspector.linkifyRequestAsNode(redirectSource));
                 this._appendSubtitle(this._initiatorCell, WebInspector.UIString("Redirect"));
             } else if (initiator.type === "script") {
                 var topFrame = initiator.stackTrace[0];

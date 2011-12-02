@@ -340,8 +340,7 @@ WebInspector.ResourcesPanel.prototype = {
     showAnchorLocation: function(anchor)
     {
         var resource = WebInspector.resourceForURL(anchor.href);
-        var lineNumber = anchor.hasAttribute("line_number") ? parseInt(anchor.getAttribute("line_number"), 10) : undefined;
-        this.showResource(resource, lineNumber);
+        this.showResource(resource, anchor.lineNumber);
     },
 
     /**

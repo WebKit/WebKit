@@ -94,14 +94,7 @@ WebInspector.AuditFormatters = {
 
     resourceLink: function(url, line)
     {
-        var title = url.replace(/.*[\/\\]/, "") + ":" + line;
-        var a = document.createElement("a");
-        a.href = url;
-        a.title = url;
-        a.className = "console-message-url webkit-html-resource-link";
-        a.setAttribute("line_number", line);
-        a.setAttribute("preferred_panel", "scripts");
-        a.textContent = title;
-        return a;
+        // FIXME: use WebInspector.DebuggerPresentationModel.Linkifier
+        return WebInspector.linkifyResourceAsNode(url, line, "console-message-url webkit-html-resource-link");
     }
 };

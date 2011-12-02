@@ -135,8 +135,8 @@ WebInspector.linkifyStringAsFragment = function(string)
         var isExternal = !WebInspector.resourceForURL(url);
         var urlNode = WebInspector.linkifyURLAsNode(url, title, undefined, isExternal);
         if (typeof(lineNumber) !== "undefined") {
-            urlNode.setAttribute("line_number", lineNumber);
-            urlNode.setAttribute("preferred_panel", "scripts");
+            urlNode.lineNumber = lineNumber;
+            urlNode.preferredPanel = "scripts";
         }
         
         return urlNode; 
@@ -199,9 +199,20 @@ WebInspector.linkifyResourceAsNode = function(url, lineNumber, classes, tooltipT
 {
     var linkText = WebInspector.formatLinkText(url, lineNumber);
     var anchor = WebInspector.linkifyURLAsNode(url, linkText, classes, false, tooltipText);
-    anchor.setAttribute("preferred_panel", "resources");
-    if (typeof lineNumber !== "undefined")
-        anchor.setAttribute("line_number", lineNumber);
+    anchor.preferredPanel = "resources";
+    anchor.lineNumber = lineNumber;
+    return anchor;
+}
+
+/**
+ * @param {WebInspector.Resource} request
+ * @param {string=} classes
+ */
+WebInspector.linkifyRequestAsNode = function(request, classes)
+{
+    var anchor = WebInspector.linkifyURLAsNode(request.url);
+    anchor.preferredPanel = "network";
+    anchor.requestId  = request.requestId;
     return anchor;
 }
 
