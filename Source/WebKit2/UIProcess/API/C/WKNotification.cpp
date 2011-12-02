@@ -46,3 +46,7 @@ WKStringRef WKNotificationCopyBody(WKNotificationRef notification)
     return toCopiedAPI(toImpl(notification)->body());
 }
 
+uint64_t WKNotificationGetID(WKNotificationRef notification)
+{
+    return toImpl(notification)->notificationID();
+}

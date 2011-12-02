@@ -40,6 +40,9 @@ module threads {
         void show();
         void cancel();
 
+        attribute EventListener onshow;
+        // FIXME: The latest Web Notifications standard uses the onshow event listener.
+        // The ondisplay event listener should be removed when implementations change the event listener to onshow.
         attribute EventListener ondisplay;
         attribute EventListener onerror;
         attribute EventListener onclose;

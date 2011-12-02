@@ -2701,6 +2701,10 @@
 					RelativePath="..\WebProcess\Notifications\WebNotificationManager.h"
 					>
 				</File>
+				<File
+					RelativePath="..\WebProcess\Notifications\WebNotificationManager.messages.in"
+					>
+				</File>
 			</Filter>
 		</Filter>
 		<Filter
@@ -4276,6 +4280,14 @@
 			</File>
 			<File
 				RelativePath="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\WebMediaCacheManagerProxyMessages.h"
+				>
+			</File>
+			<File
+				RelativePath="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\WebNotificationManagerMessageReceiver.cpp"
+				>
+			</File>
+			<File
+				RelativePath="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\WebNotificationManagerMessages.h"
 				>
 			</File>
 			<File

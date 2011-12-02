@@ -1,3 +1,76 @@
+2011-12-01  Jon Lee  <jonlee@apple.com>
+
+        [WK2] Add further support for notifications
+        https://bugs.webkit.org/show_bug.cgi?id=73572
+        <rdar://problem/10472195>
+
+        Reviewed by Darin Adler.
+
+        * WebProcess/Notifications/WebNotificationManager.messages.in: Added. Contains messages for callbacks
+        from the notification platform.
+
+        * DerivedSources.make: Add WebNotificationManager.
+        * DerivedSources.pri: Ditto.
+        * Platform/CoreIPC/MessageID.h: Add message class.
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::didReceiveMessage): Forward calls to WebNotificationManager when needed.
+        * WebKit2.xcodeproj/project.pbxproj: Add new message files.
+        * win/WebKit2.vcproj: Adding new files to project.
+        * win/WebKit2Common.vsprops: Add Notifications to include paths
+
+        * UIProcess/WebNotification.h: Add and expose internal ID of each notification sent to the platform.
+        (WebKit::WebNotification::create):
+        (WebKit::WebNotification::notificationID):
+        (WebKit::isNotificationIDValid): Checks that the ID is not a value that might trip up the HashMaps used
+        for mapping IDs to notifications.
+        * UIProcess/WebNotification.cpp:
+        (WebKit::WebNotification::WebNotification):
+        (WebKit::WebNotification::encode):
+        (WebKit::WebNotification::decode):
+        * UIProcess/API/C/WKNotification.h: Expose notification ID to WKAPI.
+        * UIProcess/API/C/WKNotification.cpp:
+        (WKNotificationGetNotificationID):
+
+        * UIProcess/WebNotificationManagerProxy.h: Add callbacks for dispatching events back to the notification.
+        * UIProcess/WebNotificationManagerProxy.cpp:
+        (WebKit::WebNotificationManagerProxy::invalidate): Remove manager.
+        (WebKit::WebNotificationManagerProxy::show): Add manager prior to showing.
+        (WebKit::WebNotificationManagerProxy::cancel): Add manager prior to canceling.
+        (WebKit::WebNotificationManagerProxy::didDestroyNotification):
+        (WebKit::WebNotificationManagerProxy::providerDidShowNotification):
+        (WebKit::WebNotificationManagerProxy::providerDidClickNotification):
+        (WebKit::WebNotificationManagerProxy::providerDidCloseNotifications):
+        * UIProcess/API/C/WKNotificationManager.h:
+        * UIProcess/API/C/WKNotificationManager.cpp:
+        (WKNotificationManagerProviderDidShowNotification):
+        (WKNotificationManagerProviderDidClickNotification):
+        (WKNotificationManagerProviderDidCloseNotifications):
+
+        * UIProcess/WebNotificationProvider.h:
+        * UIProcess/WebNotificationProvider.cpp:
+        (WebKit::WebNotificationProvider::show):
+        (WebKit::WebNotificationProvider::cancel):
+        (WebKit::WebNotificationProvider::didDestroyNotification):
+        (WebKit::WebNotificationProvider::addNotificationManager):
+        (WebKit::WebNotificationProvider::removeNotificationManager):
+        * UIProcess/API/C/WKNotificationProvider.h: Expose add/removeNotificationManager calls
+
+        * WebProcess/Notifications/WebNotificationManager.h: Add bookkeeping to keep track of notification IDs with
+        Notification instances.
+        * WebProcess/Notifications/WebNotificationManager.cpp:
+        (WebKit::generateNotificationID):
+        (WebKit::WebNotificationManager::didReceiveMessage):
+        (WebKit::WebNotificationManager::show):
+        (WebKit::WebNotificationManager::cancel):
+        (WebKit::WebNotificationManager::didDestroyNotification):
+        (WebKit::WebNotificationManager::didShowNotification):
+        (WebKit::WebNotificationManager::didClickNotification):
+        (WebKit::WebNotificationManager::didCloseNotifications):
+
+        * UIProcess/WebNotificationManagerProxy.messages.in: Add DidDestroyNotification message.
+        * WebProcess/WebCoreSupport/WebNotificationClient.cpp:
+        (WebKit::WebNotificationClient::notificationObjectDestroyed): Implemented.
+
 2011-12-01  Goutham J  <gouthamj@motorola.com>
 
         [WEBKIT2] Fix for compilation warnings in WebContext.cpp

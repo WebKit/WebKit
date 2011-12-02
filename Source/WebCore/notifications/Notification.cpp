@@ -36,6 +36,7 @@
 #include "Notification.h"
 
 #include "Document.h"
+#include "ErrorEvent.h"
 #include "EventNames.h"
 #include "NotificationCenter.h"
 #include "NotificationContents.h"
@@ -127,6 +128,11 @@ void Notification::show()
         }
     } else
         startLoading();
+#elif PLATFORM(MAC)
+    if (m_state == Idle && m_notificationCenter->presenter()) {
+        m_notificationCenter->presenter()->show(this);
+        m_state = Showing;
+    }
 #else
     // prevent double-showing
     if (m_state == Idle && m_notificationCenter->presenter() && m_notificationCenter->presenter()->show(this))
@@ -228,6 +234,26 @@ void Notification::finishLoading()
             m_state = Showing;
     }
     unsetPendingActivity(this);
+}
+
+void Notification::dispatchShowEvent()
+{
+    dispatchEvent(Event::create(eventNames().showEvent, false, false));
+}
+
+void Notification::dispatchClickEvent()
+{
+    dispatchEvent(Event::create(eventNames().clickEvent, false, false));
+}
+
+void Notification::dispatchCloseEvent()
+{
+    dispatchEvent(Event::create(eventNames().closeEvent, false, false));
+}
+
+void Notification::dispatchErrorEvent()
+{
+    dispatchEvent(ErrorEvent::create());
 }
 
 } // namespace WebCore

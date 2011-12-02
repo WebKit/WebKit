@@ -74,6 +74,7 @@ MESSAGE_RECEIVERS = \
     WebMediaCacheManager \
     WebMediaCacheManagerProxy \
     WebNotificationManagerProxy \
+    WebNotificationManager \
     WebPage \
     WebPageProxy \
     WebProcess \

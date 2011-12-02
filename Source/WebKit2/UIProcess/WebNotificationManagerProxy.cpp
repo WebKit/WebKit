@@ -26,8 +26,10 @@
 #include "config.h"
 #include "WebNotificationManagerProxy.h"
 
+#include "ImmutableArray.h"
 #include "WebContext.h"
 #include "WebNotification.h"
+#include "WebNotificationManagerMessages.h"
 #include <WebCore/NotificationContents.h>
 
 using namespace WTF;
@@ -51,6 +53,7 @@ WebNotificationManagerProxy::~WebNotificationManagerProxy()
 
 void WebNotificationManagerProxy::invalidate()
 {
+    m_provider.removeNotificationManager(this);
 }
 
 void WebNotificationManagerProxy::initializeProvider(const WKNotificationProvider *provider)
@@ -65,13 +68,75 @@ void WebNotificationManagerProxy::didReceiveMessage(CoreIPC::Connection* connect
 
 void WebNotificationManagerProxy::show(const String& title, const String& body, uint64_t notificationID)
 {
-    RefPtr<WebNotification> notification = WebNotification::create(title, body);
+    if (!isNotificationIDValid(notificationID))
+        return;
+    
+    m_provider.addNotificationManager(this);
+
+    RefPtr<WebNotification> notification = WebNotification::create(title, body, notificationID);
+    m_notifications.set(notificationID, notification);
     m_provider.show(notification.get());
 }
 
 void WebNotificationManagerProxy::cancel(uint64_t notificationID)
 {
-    m_provider.cancel(0);
+    if (!isNotificationIDValid(notificationID))
+        return;
+
+    RefPtr<WebNotification> notification = m_notifications.get(notificationID);
+    if (!notification)
+        return;
+
+    m_provider.addNotificationManager(this);
+    m_provider.cancel(notification.get());
+}
+    
+void WebNotificationManagerProxy::didDestroyNotification(uint64_t notificationID)
+{
+    if (!isNotificationIDValid(notificationID))
+        return;
+
+    RefPtr<WebNotification> notification = m_notifications.take(notificationID);
+    if (!notification)
+        return;
+
+    m_provider.didDestroyNotification(notification.get());
+}
+
+void WebNotificationManagerProxy::providerDidShowNotification(uint64_t notificationID)
+{
+    if (!m_context)
+        return;
+    
+    m_context->sendToAllProcesses(Messages::WebNotificationManager::DidShowNotification(notificationID));
+}
+
+void WebNotificationManagerProxy::providerDidClickNotification(uint64_t notificationID)
+{
+    if (!m_context)
+        return;
+    
+    m_context->sendToAllProcesses(Messages::WebNotificationManager::DidClickNotification(notificationID));
+}
+
+
+void WebNotificationManagerProxy::providerDidCloseNotifications(ImmutableArray* notificationIDs)
+{
+    if (!m_context)
+        return;
+    
+    size_t size = notificationIDs->size();
+    
+    Vector<uint64_t> vectorNotificationIDs;
+    vectorNotificationIDs.reserveInitialCapacity(size);
+    
+    for (size_t i = 0; i < size; ++i) {
+        uint64_t notificationID = notificationIDs->at<WebUInt64>(i)->value();
+        vectorNotificationIDs.append(notificationID);
+    }
+    
+    if (vectorNotificationIDs.size())
+        m_context->sendToAllProcesses(Messages::WebNotificationManager::DidCloseNotifications(vectorNotificationIDs));
 }
 
 } // namespace WebKit

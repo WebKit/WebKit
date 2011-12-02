@@ -1,3 +1,25 @@
+2011-12-01  Jon Lee  <jonlee@apple.com>
+
+        [WK2] Add further support for notifications
+        https://bugs.webkit.org/show_bug.cgi?id=73572
+        <rdar://problem/10472195>
+
+        Reviewed by Darin Adler.
+
+        * WebCore.exp.in: Export constructor and dispatch functions
+        * dom/EventNames.h: Add show event.
+        * notifications/Notification.cpp:
+        (WebCore::Notification::show): For the Mac platform, we just forward the show() call to the
+        notification client and update the state, because we cannot get synchronous acknowledgment that the
+        notification got delivered.
+        (WebCore::Notification::dispatchShowEvent): Create simple events and dispatch to the notification.
+        (WebCore::Notification::dispatchClickEvent): Ditto.
+        (WebCore::Notification::dispatchCloseEvent): Ditto.
+        (WebCore::Notification::dispatchErrorEvent): Ditto.
+        * notifications/Notification.h: Add dispatch functions.
+        * notifications/Notification.idl: Add onshow event listener. The ondisplay event listener should be
+        removed when implementations change the event listener to onshow.
+
 2011-12-01  Max Vujovic  <mvujovic@adobe.com>
 
         Focus ring of imagemap's area element does not scale when CSS zoom style is applied

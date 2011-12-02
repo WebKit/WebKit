@@ -35,7 +35,23 @@ WKTypeID WKNotificationManagerGetTypeID()
 {
     return toAPI(WebNotificationManagerProxy::APIType);
 }
+
 void WKNotificationManagerSetProvider(WKNotificationManagerRef managerRef, const WKNotificationProvider* wkProvider)
 {
     toImpl(managerRef)->initializeProvider(wkProvider);
+}
+
+void WKNotificationManagerProviderDidShowNotification(WKNotificationManagerRef managerRef, uint64_t notificationID)
+{
+    toImpl(managerRef)->providerDidShowNotification(notificationID);
+}
+
+void WKNotificationManagerProviderDidClickNotification(WKNotificationManagerRef managerRef, uint64_t notificationID)
+{
+    toImpl(managerRef)->providerDidClickNotification(notificationID);
+}
+
+void WKNotificationManagerProviderDidCloseNotifications(WKNotificationManagerRef managerRef, WKArrayRef notificationIDs)
+{
+    toImpl(managerRef)->providerDidCloseNotifications(toImpl(notificationIDs));
 }

@@ -48,6 +48,7 @@ enum MessageClass {
     MessageClassWebInspector,
     MessageClassWebKeyValueStorageManager,
     MessageClassWebMediaCacheManager,
+    MessageClassWebNotificationManager,
     MessageClassWebPage,
     MessageClassWebProcess,
     MessageClassWebResourceCacheManager,

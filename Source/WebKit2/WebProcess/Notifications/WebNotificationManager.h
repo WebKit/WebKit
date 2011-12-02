@@ -26,11 +26,20 @@
 #ifndef WebNotificationManager_h
 #define WebNotificationManager_h
 
+#include "MessageID.h"
+#include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/RefPtr.h>
+#include <wtf/Vector.h>
+
+namespace CoreIPC {
+class ArgumentDecoder;
+class Connection;
+}
 
 namespace WebCore {
 class Notification;    
-} // namespace WebCore
+}
 
 namespace WebKit {
 
@@ -45,9 +54,28 @@ public:
 
     bool show(WebCore::Notification*, WebPage*);
     void cancel(WebCore::Notification*, WebPage*);
+    // This callback comes from WebCore, not messaged from the UI process.
+    void didDestroyNotification(WebCore::Notification*, WebPage*);
+
+    void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
 
 private:
+    // Implemented in generated WebNotificationManagerMessageReceiver.cpp
+    void didReceiveWebNotificationManagerMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
+    
+    void didShowNotification(uint64_t notificationID);
+    void didClickNotification(uint64_t notificationID);
+    void didCloseNotifications(const Vector<uint64_t>& notificationIDs);
+
     WebProcess* m_process;
+
+#if ENABLE(NOTIFICATIONS)
+    typedef HashMap<RefPtr<WebCore::Notification>, uint64_t> NotificationMap;
+    NotificationMap m_notificationMap;
+    
+    typedef HashMap<uint64_t, RefPtr<WebCore::Notification> > NotificationIDMap;
+    NotificationIDMap m_notificationIDMap;
+#endif
 };
 
 } // namespace WebKit

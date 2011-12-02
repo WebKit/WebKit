@@ -28,6 +28,7 @@
 
 #include "WKAPICast.h"
 #include "WebNotification.h"
+#include "WebNotificationManagerProxy.h"
 
 namespace WebKit {
 
@@ -45,6 +46,30 @@ void WebNotificationProvider::cancel(WebNotification* notification)
         return;
     
     m_client.cancel(toAPI(notification), m_client.clientInfo);
+}
+
+void WebNotificationProvider::didDestroyNotification(WebNotification* notification)
+{
+    if (!m_client.didDestroyNotification)
+        return;
+    
+    m_client.didDestroyNotification(toAPI(notification), m_client.clientInfo);
+}
+
+void WebNotificationProvider::addNotificationManager(WebNotificationManagerProxy* manager)
+{
+    if (!m_client.addNotificationManager)
+        return;
+    
+    m_client.addNotificationManager(toAPI(manager), m_client.clientInfo);
+}
+
+void WebNotificationProvider::removeNotificationManager(WebNotificationManagerProxy* manager)
+{
+    if (!m_client.removeNotificationManager)
+        return;
+    
+    m_client.removeNotificationManager(toAPI(manager), m_client.clientInfo);
 }
 
 } // namespace WebKit

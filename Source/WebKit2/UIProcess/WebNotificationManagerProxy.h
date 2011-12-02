@@ -29,6 +29,7 @@
 #include "APIObject.h"
 #include "MessageID.h"
 #include "WebNotificationProvider.h"
+#include <wtf/HashMap.h>
 #include <wtf/PassRefPtr.h>
 
 namespace CoreIPC {
@@ -38,6 +39,7 @@ class Connection;
 
 namespace WebKit {
 
+class ImmutableArray;
 class WebContext;
 
 class WebNotificationManagerProxy : public APIObject {
@@ -52,6 +54,10 @@ public:
 
     void initializeProvider(const WKNotificationProvider*);
     
+    void providerDidShowNotification(uint64_t notificationID);
+    void providerDidClickNotification(uint64_t notificationID);
+    void providerDidCloseNotifications(ImmutableArray* notificationIDs);
+    
     void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
 
 private:
@@ -64,9 +70,13 @@ private:
     // Message handlers
     void show(const WTF::String& title, const WTF::String& body, uint64_t notificationID);
     void cancel(uint64_t notificationID);
+    void didDestroyNotification(uint64_t notificationID);
+    
+    typedef HashMap<uint64_t, RefPtr<WebNotification> > WebNotificationMap;
     
     WebContext* m_context;
     WebNotificationProvider m_provider;
+    WebNotificationMap m_notifications;
 };
 
 } // namespace WebKit

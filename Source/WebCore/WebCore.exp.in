@@ -2008,3 +2008,11 @@ __ZNK7WebCore7IntSizecv7_NSSizeEv
 #if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
 _wkCreateVMPressureDispatchOnMainQueue
 #endif
+
+#if ENABLE(NOTIFICATIONS)
+__ZN7WebCore12NotificationC1Ev
+__ZN7WebCore12NotificationD1Ev
+__ZN7WebCore12Notification17dispatchShowEventEv
+__ZN7WebCore12Notification18dispatchClickEventEv
+__ZN7WebCore12Notification18dispatchCloseEventEv
+#endif

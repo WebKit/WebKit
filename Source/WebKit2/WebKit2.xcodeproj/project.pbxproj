@@ -260,6 +260,8 @@
 		318BE17514743DD700A8FBB2 /* WKNotificationManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 318BE17414743DD600A8FBB2 /* WKNotificationManager.cpp */; };
 		318BE17714743E6000A8FBB2 /* WKNotification.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 318BE17614743E6000A8FBB2 /* WKNotification.cpp */; };
 		318BE17914743E6F00A8FBB2 /* WKNotification.h in Headers */ = {isa = PBXBuildFile; fileRef = 318BE17814743E6A00A8FBB2 /* WKNotification.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		31BA924D148831260062EDB5 /* WebNotificationManagerMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 31BA9248148830810062EDB5 /* WebNotificationManagerMessageReceiver.cpp */; };
+		31BA924E148831260062EDB5 /* WebNotificationManagerMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 31BA9249148830810062EDB5 /* WebNotificationManagerMessages.h */; };
 		31C11AB3148452E90049A4CC /* WebNotification.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 31C11AB1148452E90049A4CC /* WebNotification.cpp */; };
 		31C11AB4148452E90049A4CC /* WebNotification.h in Headers */ = {isa = PBXBuildFile; fileRef = 31C11AB2148452E90049A4CC /* WebNotification.h */; };
 		31EA25D2134F78C0005B1452 /* NativeWebMouseEventMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 31EA25D0134F78B2005B1452 /* NativeWebMouseEventMac.mm */; };
@@ -1232,6 +1234,8 @@
 		318BE17414743DD600A8FBB2 /* WKNotificationManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKNotificationManager.cpp; sourceTree = "<group>"; };
 		318BE17614743E6000A8FBB2 /* WKNotification.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKNotification.cpp; sourceTree = "<group>"; };
 		318BE17814743E6A00A8FBB2 /* WKNotification.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKNotification.h; sourceTree = "<group>"; };
+		31BA9248148830810062EDB5 /* WebNotificationManagerMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebNotificationManagerMessageReceiver.cpp; sourceTree = "<group>"; };
+		31BA9249148830810062EDB5 /* WebNotificationManagerMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebNotificationManagerMessages.h; sourceTree = "<group>"; };
 		31C11AB1148452E90049A4CC /* WebNotification.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebNotification.cpp; sourceTree = "<group>"; };
 		31C11AB2148452E90049A4CC /* WebNotification.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebNotification.h; sourceTree = "<group>"; };
 		31EA25D0134F78B2005B1452 /* NativeWebMouseEventMac.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = NativeWebMouseEventMac.mm; sourceTree = "<group>"; };
@@ -3503,6 +3507,8 @@
 				33D3A3C51339617900709BE4 /* WebMediaCacheManagerMessages.h */,
 				33D3A3C61339617900709BE4 /* WebMediaCacheManagerProxyMessageReceiver.cpp */,
 				33D3A3C71339617900709BE4 /* WebMediaCacheManagerProxyMessages.h */,
+				31BA9248148830810062EDB5 /* WebNotificationManagerMessageReceiver.cpp */,
+				31BA9249148830810062EDB5 /* WebNotificationManagerMessages.h */,
 				318BE1651473433700A8FBB2 /* WebNotificationManagerProxyMessageReceiver.cpp */,
 				318BE1661473433700A8FBB2 /* WebNotificationManagerProxyMessages.h */,
 				C0CE729E1247E71D00BC0EC4 /* WebPageMessageReceiver.cpp */,
@@ -4034,6 +4040,7 @@
 				318BE17114743DB100A8FBB2 /* WKNotificationManager.h in Headers */,
 				318BE17914743E6F00A8FBB2 /* WKNotification.h in Headers */,
 				31C11AB4148452E90049A4CC /* WebNotification.h in Headers */,
+				31BA924E148831260062EDB5 /* WebNotificationManagerMessages.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4742,6 +4749,7 @@
 				318BE17514743DD700A8FBB2 /* WKNotificationManager.cpp in Sources */,
 				318BE17714743E6000A8FBB2 /* WKNotification.cpp in Sources */,
 				31C11AB3148452E90049A4CC /* WebNotification.cpp in Sources */,
+				31BA924D148831260062EDB5 /* WebNotificationManagerMessageReceiver.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -34,12 +34,18 @@ extern "C" {
 
 typedef void (*WKNotificationProviderShowCallback)(WKNotificationRef notification, const void* clientInfo);
 typedef void (*WKNotificationProviderCancelCallback)(WKNotificationRef notification, const void* clientInfo);
+typedef void (*WKNotificationProviderDidDestroyNotificationCallback)(WKNotificationRef notification, const void* clientInfo);
+typedef void (*WKNotificationProviderAddNotificationManagerCallback)(WKNotificationManagerRef manager, const void* clientInfo);
+typedef void (*WKNotificationProviderRemoveNotificationManagerCallback)(WKNotificationManagerRef manager, const void* clientInfo);
 
 struct WKNotificationProvider {
     int                                                       version;
     const void*                                               clientInfo;
     WKNotificationProviderShowCallback                        show;
     WKNotificationProviderCancelCallback                      cancel;
+    WKNotificationProviderDidDestroyNotificationCallback      didDestroyNotification;
+    WKNotificationProviderAddNotificationManagerCallback      addNotificationManager;
+    WKNotificationProviderRemoveNotificationManagerCallback   removeNotificationManager;
 };
 typedef struct WKNotificationProvider WKNotificationProvider;
 

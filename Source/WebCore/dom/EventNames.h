@@ -194,6 +194,8 @@ namespace WebCore {
     macro(addstream) \
     macro(removestream) \
     \
+    macro(show) \
+    \
 
 // end of DOM_EVENT_NAMES_FOR_EACH
 

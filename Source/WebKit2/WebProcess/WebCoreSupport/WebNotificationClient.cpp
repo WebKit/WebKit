@@ -64,9 +64,14 @@ void WebNotificationClient::cancel(Notification* notification)
 #endif
 }
 
-void WebNotificationClient::notificationObjectDestroyed(Notification*)
+void WebNotificationClient::notificationObjectDestroyed(Notification* notification)
 {
+#if ENABLE(NOTIFICATIONS)
+    WebProcess::shared().notificationManager().didDestroyNotification(notification, m_page);
+#else
+    UNUSED_PARAM(notification);
     notImplemented();
+#endif
 }
 
 void WebNotificationClient::requestPermission(ScriptExecutionContext*, PassRefPtr<VoidCallback>)

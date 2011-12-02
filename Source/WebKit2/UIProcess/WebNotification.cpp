@@ -37,9 +37,10 @@ WebNotification::WebNotification()
 {
 }
 
-WebNotification::WebNotification(const String& title, const String& body)
+WebNotification::WebNotification(const String& title, const String& body, uint64_t notificationID)
     : m_title(title)
     , m_body(body)
+    , m_notificationID(notificationID)
 {
 }
 
@@ -49,12 +50,12 @@ WebNotification::~WebNotification()
 
 void WebNotification::encode(CoreIPC::ArgumentEncoder* encoder) const
 {
-    encoder->encode(CoreIPC::In(m_title, m_body));
+    encoder->encode(CoreIPC::In(m_title, m_body, m_notificationID));
 }
 
 bool WebNotification::decode(CoreIPC::ArgumentDecoder* decoder, WebNotification& notification)
 {
-    return decoder->decode(CoreIPC::Out(notification.m_title, notification.m_body));
+    return decoder->decode(CoreIPC::Out(notification.m_title, notification.m_body, notification.m_notificationID));
 }
 
 } // namespace WebKit

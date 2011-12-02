@@ -37,7 +37,15 @@
 using namespace WebCore;
 
 namespace WebKit {
-    
+
+#if ENABLE(NOTIFICATIONS)
+static uint64_t generateNotificationID()
+{
+    static uint64_t uniqueNotificationID = 1;
+    return uniqueNotificationID++;
+}
+#endif
+
 WebNotificationManager::WebNotificationManager(WebProcess* process)
     : m_process(process)
 {
@@ -47,10 +55,22 @@ WebNotificationManager::~WebNotificationManager()
 {
 }
 
+void WebNotificationManager::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)
+{
+    didReceiveWebNotificationManagerMessage(connection, messageID, arguments);
+}
+
 bool WebNotificationManager::show(Notification* notification, WebPage* page)
 {
 #if ENABLE(NOTIFICATIONS)
-    m_process->connection()->send(Messages::WebNotificationManagerProxy::Show(notification->contents().title, notification->contents().body, 0), page->pageID());
+    if (!notification)
+        return true;
+    
+    uint64_t notificationID = generateNotificationID();
+    m_notificationMap.set(notification, notificationID);
+    m_notificationIDMap.set(notificationID, notification);
+    
+    m_process->connection()->send(Messages::WebNotificationManagerProxy::Show(notification->contents().title, notification->contents().body, notificationID), page->pageID());
 #endif
     return true;
 }
@@ -58,7 +78,72 @@ bool WebNotificationManager::show(Notification* notification, WebPage* page)
 void WebNotificationManager::cancel(Notification* notification, WebPage* page)
 {
 #if ENABLE(NOTIFICATIONS)
-    m_process->connection()->send(Messages::WebNotificationManagerProxy::Cancel(0), page->pageID());
+    if (!notification)
+        return;
+    
+    uint64_t notificationID = m_notificationMap.get(notification);
+    if (!notificationID)
+        return;
+    
+    m_process->connection()->send(Messages::WebNotificationManagerProxy::Cancel(notificationID), page->pageID());
+#endif
+}
+
+void WebNotificationManager::didDestroyNotification(Notification* notification, WebPage* page)
+{
+#if ENABLE(NOTIFICATIONS)
+    uint64_t notificationID = m_notificationMap.take(notification);
+    if (!notificationID)
+        return;
+
+    m_notificationIDMap.take(notificationID);
+    m_process->connection()->send(Messages::WebNotificationManagerProxy::DidDestroyNotification(notificationID), page->pageID());
+#endif
+}
+
+void WebNotificationManager::didShowNotification(uint64_t notificationID)
+{
+#if ENABLE(NOTIFICATIONS)
+    if (!isNotificationIDValid(notificationID))
+        return;
+    
+    RefPtr<Notification> notification = m_notificationIDMap.get(notificationID);
+    if (!notification)
+        return;
+
+    notification->dispatchShowEvent();
+#endif
+}
+
+void WebNotificationManager::didClickNotification(uint64_t notificationID)
+{
+#if ENABLE(NOTIFICATIONS)
+    if (!isNotificationIDValid(notificationID))
+        return;
+
+    RefPtr<Notification> notification = m_notificationIDMap.get(notificationID);
+    if (!notification)
+        return;
+
+    notification->dispatchClickEvent();
+#endif
+}
+
+void WebNotificationManager::didCloseNotifications(const Vector<uint64_t>& notificationIDs)
+{
+#if ENABLE(NOTIFICATIONS)
+    size_t count = notificationIDs.size();
+    for (size_t i = 0; i < count; ++i) {
+        uint64_t notificationID = notificationIDs[i];
+        if (!isNotificationIDValid(notificationID))
+            continue;
+
+        RefPtr<Notification> notification = m_notificationIDMap.get(notificationID);
+        if (!notification)
+            continue;
+
+        notification->dispatchCloseEvent();
+    }
 #endif
 }
 

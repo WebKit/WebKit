@@ -44,28 +44,38 @@ public:
     static const Type APIType = TypeNotification;
     
     WebNotification();
-    static PassRefPtr<WebNotification> create(const String& title, const String& body)
+    static PassRefPtr<WebNotification> create(const String& title, const String& body, uint64_t notificationID)
     {
-        return adoptRef(new WebNotification(title, body));
+        return adoptRef(new WebNotification(title, body, notificationID));
     }
     virtual ~WebNotification();
     
     const String& title() const { return m_title; }
     
     const String& body() const { return m_body; }
+    
+    uint64_t notificationID() const { return m_notificationID; }
 
     void encode(CoreIPC::ArgumentEncoder*) const;
     static bool decode(CoreIPC::ArgumentDecoder*, WebNotification&);
 
 private:
-    WebNotification(const String& title, const String& body);
+    WebNotification(const String& title, const String& body, uint64_t notificationID);
 
     virtual Type type() const { return APIType; }
     
     String m_title;
     String m_body;
+    uint64_t m_notificationID;
 };
-    
+
+inline bool isNotificationIDValid(uint64_t id)
+{
+    // This check makes sure that the ID is not equal to values needed by
+    // HashMap for bucketing.
+    return id && id != static_cast<uint64_t>(-1);
+}
+
 } // namespace WebKit
 
 #endif // WebNotification_h

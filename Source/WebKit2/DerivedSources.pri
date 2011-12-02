@@ -84,6 +84,7 @@ MESSAGE_RECEIVERS = \
     WebMediaCacheManager.messages.in \
     WebMediaCacheManagerProxy.messages.in \
     WebNotificationManagerProxy.messages.in \
+    WebNotificationManager.messages.in \
     WebFullScreenManager.messages.in \
     WebFullScreenManagerProxy.messages.in \
     WebPage/DrawingArea.messages.in \

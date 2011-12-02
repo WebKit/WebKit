@@ -638,6 +638,13 @@ void WebProcess::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::Mes
         return;
     }
 
+#if ENABLE(NOTIFICATIONS)
+    if (messageID.is<CoreIPC::MessageClassWebNotificationManager>()) {
+        m_notificationManager.didReceiveMessage(connection, messageID, arguments);
+        return;
+    }
+#endif
+    
     if (messageID.is<CoreIPC::MessageClassWebResourceCacheManager>()) {
         WebResourceCacheManager::shared().didReceiveMessage(connection, messageID, arguments);
         return;

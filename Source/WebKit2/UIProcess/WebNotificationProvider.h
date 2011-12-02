@@ -33,11 +33,16 @@
 namespace WebKit {
 
 class WebNotification;
+class WebNotificationManagerProxy;
     
 class WebNotificationProvider : public APIClient<WKNotificationProvider, kWKNotificationProviderCurrentVersion> {
 public:
     void show(WebNotification*);
     void cancel(WebNotification*);
+    void didDestroyNotification(WebNotification*);
+
+    void addNotificationManager(WebNotificationManagerProxy*);
+    void removeNotificationManager(WebNotificationManagerProxy*);
 };
 
 } // namespace WebKit
