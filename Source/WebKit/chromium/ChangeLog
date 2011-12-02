@@ -1,3 +1,14 @@
+2011-12-02  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector [chromium]: provisional fix for interactive ui tests
+        https://bugs.webkit.org/show_bug.cgi?id=73633
+
+        Reviewed by Yury Semikhatsky.
+
+        * src/js/Tests.js:
+        (.):
+        (.TestSuite.prototype._executeCodeWhenScriptsAreParsed):
+
 2011-12-01  David Levin  <levin@chromium.org>
 
         [chromium] Add WebKit API's to support the autosize algorithm in renderer process.

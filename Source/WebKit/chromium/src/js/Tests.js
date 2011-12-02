@@ -779,17 +779,10 @@ function runTests()
         new TestSuite().runTest(name);
 }
 
-var oldShowElementsPanel = WebInspector.showElementsPanel;
-WebInspector.showElementsPanel = function()
+var oldLoadCompleted = InspectorFrontendAPI.loadCompleted;
+InspectorFrontendAPI.loadCompleted = function()
 {
-    oldShowElementsPanel.call(this);
-    runTests();
-}
-
-var oldShowPanel = WebInspector.showPanel;
-WebInspector.showPanel = function(name)
-{
-    oldShowPanel.call(this, name);
+    oldLoadCompleted.call(InspectorFrontendAPI);
     runTests();
 }
 
