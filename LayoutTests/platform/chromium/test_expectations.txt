@@ -3744,7 +3744,7 @@ BUGWK72271 SNOWLEOPARD DEBUG : fast/dom/node-iterator-reference-node-moved-crash
 
 BUGWK72272 WIN : security/crypto-random-values-types.html = TEXT PASS
 
-BUGWK72279 : media/track/track-webvtt-tc004-magic-header.html = TIMEOUT PASS
+BUGWK72279 : media/track/track-webvtt-tc004-magic-header.html = TIMEOUT TEXT PASS
 
 BUGWK72376 WIN : fast/forms/file/input-file-label.html = TEXT PASS
 
