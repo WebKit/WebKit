@@ -39,6 +39,18 @@ using namespace WebCore;
 
 namespace WebKit {
 
+static inline double currentTimeForEvent(const QInputEvent* event)
+{
+    ASSERT(event);
+
+    // Use the input event timestamps if they are available.
+    // These timestamps are in milliseconds, thus convert them to seconds.
+    if (event->timestamp())
+        return static_cast<double>(event->timestamp()) / 1000;
+
+    return WTF::currentTime();
+}
+
 static WebMouseEvent::Button mouseButtonForEvent(QMouseEvent *event)
 {
     if (event->button() == Qt::LeftButton || (event->buttons() & Qt::LeftButton))
@@ -104,7 +116,7 @@ WebMouseEvent WebEventFactory::createWebMouseEvent(QMouseEvent* event, int event
     float deltaY                    = event->pos().y() - lastPos.y();
     int clickCount                  = eventClickCount;
     WebEvent::Modifiers modifiers   = modifiersForEvent(event->modifiers());
-    double timestamp                = WTF::currentTime();
+    double timestamp                = currentTimeForEvent(event);
     lastPos.set(event->localPos().x(), event->localPos().y());
 
     return WebMouseEvent(type, button, event->localPos().toPoint(), event->screenPos().toPoint(), deltaX, deltaY, 0.0f, clickCount, modifiers, timestamp);
@@ -118,7 +130,7 @@ WebWheelEvent WebEventFactory::createWebWheelEvent(QWheelEvent* e)
     float wheelTicksY                       = 0;
     WebWheelEvent::Granularity granularity  = WebWheelEvent::ScrollByPixelWheelEvent;
     WebEvent::Modifiers modifiers           = modifiersForEvent(e->modifiers());
-    double timestamp                        = WTF::currentTime();
+    double timestamp                        = currentTimeForEvent(e);
 
     // A delta that is not mod 120 indicates a device that is sending
     // fine-resolution scroll events, so use the delta as number of wheel ticks
@@ -156,7 +168,7 @@ WebKeyboardEvent WebEventFactory::createWebKeyboardEvent(QKeyEvent* event)
     int nativeVirtualKeyCode        = event->nativeVirtualKey();
     int macCharCode                 = 0;
     WebEvent::Modifiers modifiers   = modifiersForEvent(event->modifiers());
-    double timestamp                = WTF::currentTime();
+    double timestamp                = currentTimeForEvent(event);
 
     return WebKeyboardEvent(type, text, unmodifiedText, keyIdentifier, windowsVirtualKeyCode, nativeVirtualKeyCode, macCharCode, isAutoRepeat, isKeypad, isSystemKey, modifiers, timestamp);
 }
@@ -168,7 +180,7 @@ WebTouchEvent WebEventFactory::createWebTouchEvent(const QTouchEvent* event)
     WebPlatformTouchPoint::TouchPointState state = static_cast<WebPlatformTouchPoint::TouchPointState>(0);
     unsigned int id;
     WebEvent::Modifiers modifiers   = modifiersForEvent(event->modifiers());
-    double timestamp                = WTF::currentTime();
+    double timestamp                = currentTimeForEvent(event);
 
     const QList<QTouchEvent::TouchPoint>& points = event->touchPoints();
     
