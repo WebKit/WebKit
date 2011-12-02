@@ -97,6 +97,9 @@
   </autotools>
 
   <autotools id="libsoup" autogenargs="--without-gnome">
+    <dependencies>
+      <dep package="glib-networking"/>
+    </dependencies>
     <branch module="libsoup" version="2.37.2.1+git"
             repo="git.gnome.org"
             tag="5cbfc48caf76ced2e28ee06c9e40523273601dc6"/>

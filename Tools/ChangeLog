@@ -1,5 +1,12 @@
 2011-12-02  Martin Robinson  <mrobinson@igalia.com>
 
+        Try to fix the GTK+ build.
+
+        * gtk/jhbuild.modules: Properly specify the glib-networking
+        dependency for soup.
+
+2011-12-02  Martin Robinson  <mrobinson@igalia.com>
+
         Fix a syntax error in the committers.py file.
 
         * Scripts/webkitpy/common/config/committers.py: Add a missing comma.
