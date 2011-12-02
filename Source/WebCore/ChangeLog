@@ -1,3 +1,12 @@
+2011-12-02  Hajime Morrita  <morrita@chromium.org>
+
+        Unreviewed, rolling out r101772.
+        http://trac.webkit.org/changeset/101772
+
+        It didn't fix the build failure
+
+        * WebCore.vcproj/QTMovieWinCommon.vsprops:
+
 2011-12-02  MORITA Hajime  <morrita@google.com>
 
         Unreviewed attempt to build fix for r101751:
