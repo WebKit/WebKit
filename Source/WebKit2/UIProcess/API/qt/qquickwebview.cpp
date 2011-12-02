@@ -42,7 +42,8 @@ QQuickWebViewPrivate::QQuickWebViewPrivate(QQuickWebView* viewport, WKContextRef
     , confirmDialog(0)
     , promptDialog(0)
     , postTransitionState(adoptPtr(new PostTransitionState(this)))
-    , transitioningToNewPage(false)
+    , isTransitioningToNewPage(false)
+    , pageIsSuspended(false)
 {
     viewport->setFlags(QQuickItem::ItemClipsChildrenToShape);
 
@@ -109,17 +110,41 @@ void QQuickWebViewPrivate::initializeTouch(QQuickWebView* viewport)
 
 void QQuickWebViewPrivate::loadDidCommit()
 {
-    transitioningToNewPage = true;
-}
-
-void QQuickWebViewPrivate::didFinishFirstNonEmptyLayout()
-{
-    transitioningToNewPage = false;
+    // Due to entering provisional load before committing, we
+    // might actually be suspended here.
 
     if (useTraditionalDesktopBehaviour)
         return;
 
-    postTransitionState->apply();
+    isTransitioningToNewPage = true;
+}
+
+void QQuickWebViewPrivate::didFinishFirstNonEmptyLayout()
+{
+    if (useTraditionalDesktopBehaviour)
+        return;
+
+    if (!pageIsSuspended) {
+        isTransitioningToNewPage = false;
+        postTransitionState->apply();
+    }
+}
+
+void QQuickWebViewPrivate::_q_suspend()
+{
+    pageIsSuspended = true;
+}
+
+void QQuickWebViewPrivate::_q_resume()
+{
+    pageIsSuspended = false;
+
+    if (isTransitioningToNewPage) {
+        isTransitioningToNewPage = false;
+        postTransitionState->apply();
+    }
+
+    updateVisibleContentRect();
 }
 
 void QQuickWebViewPrivate::didChangeContentsSize(const QSize& newSize)
@@ -127,7 +152,8 @@ void QQuickWebViewPrivate::didChangeContentsSize(const QSize& newSize)
     if (useTraditionalDesktopBehaviour)
         return;
 
-    if (isTransitioningToNewPage()) {
+    // FIXME: We probably want to handle suspend here as well
+    if (isTransitioningToNewPage) {
         postTransitionState->contentsSize = newSize;
         return;
     }
@@ -143,7 +169,7 @@ void QQuickWebViewPrivate::didChangeViewportProperties(const WebCore::ViewportAr
 
     viewportArguments = args;
 
-    if (isTransitioningToNewPage())
+    if (isTransitioningToNewPage)
         return;
 
     interactionEngine->applyConstraints(computeViewportConstraints());
@@ -153,15 +179,6 @@ void QQuickWebViewPrivate::scrollPositionRequested(const QPoint& pos)
 {
     if (!useTraditionalDesktopBehaviour)
         interactionEngine->pagePositionRequest(pos);
-}
-
-void QQuickWebViewPrivate::_q_suspend()
-{
-}
-
-void QQuickWebViewPrivate::_q_resume()
-{
-    updateVisibleContentRect();
 }
 
 void QQuickWebViewPrivate::updateVisibleContentRect()

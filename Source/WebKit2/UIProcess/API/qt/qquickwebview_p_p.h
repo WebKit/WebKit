@@ -108,8 +108,6 @@ private:
         QSize contentsSize;
     };
 
-    bool isTransitioningToNewPage() const { return transitioningToNewPage; }
-
     void setViewInAttachedProperties(QObject*);
 
     QScopedPointer<QtWebPageEventHandler> eventHandler;
@@ -130,7 +128,8 @@ private:
 
     WebCore::ViewportArguments viewportArguments;
     OwnPtr<PostTransitionState> postTransitionState;
-    bool transitioningToNewPage;
+    bool isTransitioningToNewPage;
+    bool pageIsSuspended;
 
     bool useTraditionalDesktopBehaviour;
     QFileDialog* fileDialog;

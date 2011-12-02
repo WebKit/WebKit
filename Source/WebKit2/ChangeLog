@@ -1,5 +1,25 @@
 2011-12-02  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
+        [Qt] Do not apply the transition state before we are unsuspended
+
+        Reviewed by Simon Hausmann.
+
+        Also remove an accessor in the private, which is unneeded as
+        everything in the private class is supposed to be public or
+        only used by the private itself.
+
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewPrivate::QQuickWebViewPrivate):
+        (QQuickWebViewPrivate::loadDidCommit):
+        (QQuickWebViewPrivate::didFinishFirstNonEmptyLayout):
+        (QQuickWebViewPrivate::_q_suspend):
+        (QQuickWebViewPrivate::_q_resume):
+        (QQuickWebViewPrivate::didChangeContentsSize):
+        (QQuickWebViewPrivate::didChangeViewportProperties):
+        * UIProcess/API/qt/qquickwebview_p_p.h:
+
+2011-12-02  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
         Unreviewed buildfix, add missing include.
 
         * WebProcess/Notifications/WebNotificationManager.cpp:
