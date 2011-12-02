@@ -42,13 +42,14 @@ def get_build_path():
     def is_valid_build_directory(path):
         return os.path.exists(os.path.join(path, 'GNUmakefile'))
 
-    build_dir = top_level_path('WebKitBuild', 'Release')
-    if is_valid_build_directory(build_dir):
-        return build_dir
+    build_types = ['Release', 'Debug']
+    if '--debug' in sys.argv:
+        build_types.reverse()
 
-    build_dir = top_level_path('WebKitBuild', 'Debug')
-    if is_valid_build_directory(build_dir):
-        return build_dir
+    for build_type in build_types:
+        build_dir = top_level_path('WebKitBuild', build_type)
+        if is_valid_build_directory(build_dir):
+            return build_dir
 
     # distcheck builds in a directory named _build in the top-level path.
     build_dir = top_level_path("_build")

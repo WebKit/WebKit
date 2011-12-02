@@ -1,3 +1,14 @@
+2011-11-29  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] generate-gtkdoc should respect build type
+        https://bugs.webkit.org/show_bug.cgi?id=73296
+
+        Reviewed by Philippe Normand.
+
+        * Scripts/webkitdirs.pm:
+        (buildAutotoolsProject): Pass the --debug to the generate-gtkdoc script.
+        * gtk/common.py: If --build is passed give preference to the Debug build directory.
+
 2011-12-02  Tony Chang  <tony@chromium.org>
 
         [nrwt] fix wdiff output

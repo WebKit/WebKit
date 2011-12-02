@@ -1700,8 +1700,9 @@ sub buildAutotoolsProject($@)
     $prefix = $ENV{"WebKitInstallationPrefix"} if !defined($prefix);
     push @buildArgs, "--prefix=" . $prefix if defined($prefix);
 
-    # check if configuration is Debug
-    if ($config =~ m/debug/i) {
+    # Check if configuration is Debug.
+    my $debug = $config =~ m/debug/i;
+    if ($debug) {
         push @buildArgs, "--enable-debug";
     } else {
         push @buildArgs, "--disable-debug";
@@ -1743,8 +1744,12 @@ sub buildAutotoolsProject($@)
     chdir ".." or die;
 
     if ($buildingWebKit) {
-        my $relativeScriptsPath = relativeScriptsDir();
-        if (system("$runWithJhbuild $gtkScriptsPath/generate-gtkdoc --skip-html")) {
+        my @docGenerationOptions = ($runWithJhbuild, "$gtkScriptsPath/generate-gtkdoc", "--skip-html");
+        if ($debug) {
+            push(@docGenerationOptions, "--debug");
+        }
+
+        if (system(@docGenerationOptions)) {
             die "\n gtkdoc did not build without warnings\n";
         }
     }
