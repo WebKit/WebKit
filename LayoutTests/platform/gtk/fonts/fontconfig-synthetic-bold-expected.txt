@@ -7,5 +7,5 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 304x19
           text run at (0,0) width 304: "a b c d e f g h i j k l m n o p q r s t u v"
       RenderBlock {P} at (0,35) size 784x19
-        RenderText {#text} at (0,0) size 304x19
-          text run at (0,0) width 304: "a b c d e f g h i j k l m n o p q r s t u v"
+        RenderText {#text} at (0,0) size 336x19
+          text run at (0,0) width 336: "a b c d e f g h i j k l m n o p q r s t u v"

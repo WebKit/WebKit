@@ -1245,7 +1245,6 @@ http/tests/security/local-user-CSS-from-remote.html
 
 # LayoutTestController needs layoutTestController.displayInvalidatedRegion
 # https://bugs.webkit.org/show_bug.cgi?id=54073
-plugins/invalidate_rect.html
 plugins/windowless_plugin_paint_test.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=54389
@@ -1533,6 +1532,7 @@ svg/W3C-SVG-1.1-SE/types-dom-02-f.svg
 svg/W3C-SVG-1.1-SE/types-dom-04-b.svg
 svg/W3C-SVG-1.1-SE/types-dom-07-f.svg
 svg/W3C-SVG-1.1-SE/struct-dom-11-f.svg
+svg/W3C-SVG-1.1-SE/struct-use-11-f.svg
 tables/mozilla/marvin/backgr_layers-opacity.html
 tables/mozilla/marvin/backgr_position-table.html
 tables/mozilla/marvin/backgr_simple-table-cell.html
