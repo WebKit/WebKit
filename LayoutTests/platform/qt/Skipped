@@ -2503,3 +2503,7 @@ inspector/extensions/extensions-events.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=73493
 fast/canvas/webgl/arraybuffer-transfer-of-control.html
+
+# [Qt] fast/forms/select/listbox-in-multi-column.html fails
+# https://bugs.webkit.org/show_bug.cgi?id=73660
+fast/forms/select/listbox-in-multi-column.html
