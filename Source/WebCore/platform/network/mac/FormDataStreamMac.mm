@@ -56,7 +56,12 @@
 
 namespace WebCore {
 
-// We need to use NSMapTable instead of HashMap since this needs to be accessed from more than one thread.
+static Mutex& streamFieldsMapMutex()
+{
+    DEFINE_STATIC_LOCAL(Mutex, staticMutex, ());
+    return staticMutex;
+}
+
 static NSMapTable *streamFieldsMap()
 {
     static NSMapTable *streamFieldsMap = NSCreateMapTable(NSNonRetainedObjectMapKeyCallBacks, NSNonOwnedPointerMapValueCallBacks, 1);
@@ -79,8 +84,11 @@ void associateStreamWithResourceHandle(NSInputStream *stream, ResourceHandle* re
     if (!stream)
         return;
 
-    if (!NSMapGet(streamFieldsMap(), stream))
-        return;
+    {
+        MutexLocker locker(streamFieldsMapMutex());
+        if (!NSMapGet(streamFieldsMap(), stream))
+            return;
+    }
 
     ASSERT(!getStreamResourceHandleMap().contains((CFReadStreamRef)stream));
     getStreamResourceHandleMap().set((CFReadStreamRef)stream, resourceHandle);
@@ -247,6 +255,7 @@ static void* formCreate(CFReadStreamRef stream, void* context)
     for (size_t i = 0; i < size; ++i)
         newInfo->remainingElements.append(newInfo->formData->elements()[size - i - 1]);
 
+    MutexLocker locker(streamFieldsMapMutex());
     ASSERT(!NSMapGet(streamFieldsMap(), stream));
     NSMapInsertKnownAbsent(streamFieldsMap(), stream, newInfo);
 
@@ -263,6 +272,8 @@ static void formFinishFinalizationOnMainThread(void* context)
 static void formFinalize(CFReadStreamRef stream, void* context)
 {
     FormStreamFields* form = static_cast<FormStreamFields*>(context);
+
+    MutexLocker locker(streamFieldsMapMutex());
 
     ASSERT(form->formStream == stream);
     ASSERT(NSMapGet(streamFieldsMap(), stream) == context);
@@ -496,6 +507,7 @@ void setHTTPBody(NSMutableURLRequest *request, PassRefPtr<FormData> prpFormData)
 
 FormData* httpBodyFromStream(NSInputStream* stream)
 {
+    MutexLocker locker(streamFieldsMapMutex());
     FormStreamFields* formStream = static_cast<FormStreamFields*>(NSMapGet(streamFieldsMap(), stream));
     if (!formStream)
         return 0;

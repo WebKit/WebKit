@@ -1,3 +1,17 @@
+2011-12-02  Darin Adler  <darin@apple.com>
+
+        [Mac] Form stream data structures still not threadsafe
+        https://bugs.webkit.org/show_bug.cgi?id=73674
+
+        Reviewed by Anders Carlsson.
+
+        * platform/network/mac/FormDataStreamMac.mm:
+        (WebCore::streamFieldsMapMutex): Added. 
+        (WebCore::associateStreamWithResourceHandle): Use streamFieldsMapMutex.
+        (WebCore::formCreate): Ditto.
+        (WebCore::formFinalize): Ditto.
+        (WebCore::httpBodyFromStream): Ditto.
+
 2011-12-02  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Rename "multientry" to "multiEntry" per spec change
