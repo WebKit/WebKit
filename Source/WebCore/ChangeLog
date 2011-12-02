@@ -1,3 +1,37 @@
+2011-12-01  Shinya Kawanaka  <shinyak@google.com>
+
+        Asynchronous SpellChecker should consider multiple requests.
+        https://bugs.webkit.org/show_bug.cgi?id=72939
+
+        Reviewed by Hajime Morita.
+
+        Now SpellChecker saves a request when it is processing the previous spellcheck request.
+        If there is a request having the same root editable element, the older request is replaced by newer request.
+
+        Test: editing/spelling/spellcheck-queue.html
+
+        * editing/SpellChecker.cpp:
+        (WebCore::SpellChecker::SpellCheckRequest::SpellCheckRequest):
+          A structure to have spell check request.
+        (WebCore::SpellChecker::SpellCheckRequest::sequence):
+        (WebCore::SpellChecker::SpellCheckRequest::range):
+        (WebCore::SpellChecker::SpellCheckRequest::text):
+        (WebCore::SpellChecker::SpellCheckRequest::mask):
+        (WebCore::SpellChecker::SpellCheckRequest::rootEditableElement):
+        (WebCore::SpellChecker::SpellChecker):
+        (WebCore::SpellChecker::createRequest):
+        (WebCore::SpellChecker::timerFiredToProcessQueuedRequest):
+          When timer is fired, queued request is processed if any.
+        (WebCore::SpellChecker::canCheckAsynchronously):
+        (WebCore::SpellChecker::requestCheckingFor):
+          When the spellchecker is processing another request, the latest request is queued.
+        (WebCore::SpellChecker::invokeRequest):
+        (WebCore::SpellChecker::enqueueRequest):
+          Enqueues a request. If there is an older request whose root editable element is the same as the request,
+          it will be replaced.
+        (WebCore::SpellChecker::didCheck):
+        * editing/SpellChecker.h:
+
 2011-12-01  Takashi Toyoshima  <toyoshim@chromium.org>
 
         bufferedAmount calculation is wrong in CLOSING and CLOSED state.
