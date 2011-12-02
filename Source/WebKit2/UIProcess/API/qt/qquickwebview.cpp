@@ -50,8 +50,10 @@ QQuickWebViewPrivate::QQuickWebViewPrivate(QQuickWebView* viewport, WKContextRef
     QObject::connect(viewport, SIGNAL(visibleChanged()), viewport, SLOT(_q_onVisibleChanged()));
     pageView.reset(new QQuickWebPage(viewport));
 
+    pageClient.reset(new QtPageClient());
+
     QQuickWebPagePrivate* const pageViewPrivate = pageView.data()->d;
-    setPageProxy(new QtWebPageProxy(pageView.data(), q_ptr, contextRef, pageGroupRef));
+    setPageProxy(new QtWebPageProxy(pageView.data(), q_ptr, pageClient.data(), contextRef, pageGroupRef));
     pageViewPrivate->setPageProxy(pageProxy.data());
 
     pageLoadClient.reset(new QtWebPageLoadClient(pageProxy->pageRef(), q_ptr));
@@ -62,6 +64,9 @@ QQuickWebViewPrivate::QQuickWebViewPrivate(QQuickWebView* viewport, WKContextRef
     // Any page setting should preferrable be set before creating the page, so set them here:
     setUseTraditionalDesktopBehaviour(false);
     QWebPreferencesPrivate::get(pageProxy->preferences())->setAttribute(QWebPreferencesPrivate::AcceleratedCompositingEnabled, true);
+
+    pageClient->setEventHandler(eventHandler.data());
+    pageClient->setPageProxy(pageProxy.data());
 
     // Creates a page with the page creation parameters.
     pageProxy->init(eventHandler.data());

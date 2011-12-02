@@ -21,6 +21,7 @@
 #ifndef qquickwebview_p_p_h
 #define qquickwebview_p_p_h
 
+#include "QtPageClient.h"
 #include "QtWebPageEventHandler.h"
 #include "QtViewportInteractionEngine.h"
 #include "QtWebPageLoadClient.h"
@@ -110,6 +111,7 @@ private:
 
     void setViewInAttachedProperties(QObject*);
 
+    QScopedPointer<QtPageClient> pageClient;
     QScopedPointer<QtWebPageEventHandler> eventHandler;
 
     QScopedPointer<QtWebPageLoadClient> pageLoadClient;

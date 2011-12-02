@@ -26,7 +26,6 @@
 #include "qquickwebview_p.h"
 #include "qquickwebview_p_p.h"
 #include "qquickwebpage_p.h"
-#include "QtWebError.h"
 #include "qwebdownloaditem_p.h"
 #include "qwebdownloaditem_p_p.h"
 #include "qwebpreferences_p.h"
@@ -36,10 +35,8 @@
 #include "DrawingAreaProxyImpl.h"
 #include "qwkhistory.h"
 #include "qwkhistory_p.h"
-#include "FindIndicator.h"
-#include "LocalizedStrings.h"
-#include "NotImplemented.h"
 #include "QtDownloadManager.h"
+#include "QtPageClient.h"
 #include "QtWebPageEventHandler.h"
 #include "QtWebUndoCommand.h"
 #include "WebBackForwardList.h"
@@ -50,16 +47,9 @@
 #include "WKStringQt.h"
 #include "WKURLQt.h"
 #include <QDrag>
-#include <QGuiApplication>
-#include <QJSEngine>
 #include <QMimeData>
-#include <QStyleHints>
 #include <QUndoStack>
-#include <QtDebug>
-#include <WebCore/Cursor.h>
 #include <WebCore/DragData.h>
-#include <WebCore/FloatRect.h>
-#include <WebCore/Region.h>
 #include <WebKit2/WKFrame.h>
 #include <WebKit2/WKPageGroup.h>
 #include <WebKit2/WKRetainPtr.h>
@@ -67,14 +57,14 @@
 using namespace WebKit;
 using namespace WebCore;
 
-QtWebPageProxy::QtWebPageProxy(QQuickWebPage* qmlWebPage, QQuickWebView* qmlWebView, WKContextRef contextRef, WKPageGroupRef pageGroupRef)
+QtWebPageProxy::QtWebPageProxy(QQuickWebPage* qmlWebPage, QQuickWebView* qmlWebView, QtPageClient *pageClient, WKContextRef contextRef, WKPageGroupRef pageGroupRef)
     : m_qmlWebPage(qmlWebPage)
     , m_qmlWebView(qmlWebView)
     , m_context(contextRef ? QtWebContext::create(toImpl(contextRef)) : QtWebContext::defaultContext())
     , m_undoStack(adoptPtr(new QUndoStack(this)))
     , m_navigatorQtObjectEnabled(false)
 {
-    m_webPageProxy = m_context->createWebPage(this, toImpl(pageGroupRef));
+    m_webPageProxy = m_context->createWebPage(pageClient, toImpl(pageGroupRef));
     m_history = QWKHistoryPrivate::createHistory(this, m_webPageProxy->backForwardList());
 }
 
@@ -122,41 +112,14 @@ void QtWebPageProxy::hideContextMenu()
         activeMenu->hide();
 }
 
-void QtWebPageProxy::setCursor(const WebCore::Cursor& cursor)
-{
-    // FIXME: This is a temporary fix until we get cursor support in QML items.
-    QGuiApplication::setOverrideCursor(*cursor.platformCursor());
-}
-
-void QtWebPageProxy::setCursorHiddenUntilMouseMoves(bool hiddenUntilMouseMoves)
-{
-    notImplemented();
-}
-
 void QtWebPageProxy::setViewNeedsDisplay(const WebCore::IntRect&)
 {
     m_qmlWebPage->update();
 }
 
-void QtWebPageProxy::displayView()
-{
-    // FIXME: Implement.
-}
-
-void QtWebPageProxy::scrollView(const WebCore::IntRect& scrollRect, const WebCore::IntSize& scrollOffset)
-{
-    // FIXME: Implement.
-}
-
 WebCore::IntSize QtWebPageProxy::viewSize()
 {
     return WebCore::IntSize(m_qmlWebPage->width(), m_qmlWebPage->height());
-}
-
-bool QtWebPageProxy::isViewWindowActive()
-{
-    // FIXME: The scene graph does not have the concept of being active or not when this was written.
-    return true;
 }
 
 bool QtWebPageProxy::isViewFocused()
@@ -167,22 +130,6 @@ bool QtWebPageProxy::isViewFocused()
 bool QtWebPageProxy::isViewVisible()
 {
     return m_qmlWebView->isVisible() && m_qmlWebPage->isVisible();
-}
-
-bool QtWebPageProxy::isViewInWindow()
-{
-    // FIXME: Implement.
-    return true;
-}
-
-void QtWebPageProxy::enterAcceleratedCompositingMode(const LayerTreeContext&)
-{
-    // FIXME: Implement.
-}
-
-void QtWebPageProxy::exitAcceleratedCompositingMode()
-{
-    // FIXME: Implement.
 }
 
 void QtWebPageProxy::pageDidRequestScroll(const IntPoint& pos)
@@ -198,11 +145,6 @@ void QtWebPageProxy::didChangeContentsSize(const IntSize& newSize)
 void QtWebPageProxy::didChangeViewportProperties(const WebCore::ViewportArguments& args)
 {
     m_qmlWebView->d_func()->didChangeViewportProperties(args);
-}
-
-void QtWebPageProxy::toolTipChanged(const String&, const String& newTooltip)
-{
-    // There is not yet any UI defined for the tooltips for mobile so we ignore the change.
 }
 
 void QtWebPageProxy::registerEditCommand(PassRefPtr<WebEditCommandProxy> command, WebPageProxy::UndoOrRedo undoOrRedo)
@@ -235,31 +177,7 @@ void QtWebPageProxy::executeUndoRedo(WebPageProxy::UndoOrRedo undoOrRedo)
         m_undoStack->redo();
 }
 
-FloatRect QtWebPageProxy::convertToDeviceSpace(const FloatRect& rect)
-{
-    return rect;
-}
-
-IntPoint QtWebPageProxy::screenToWindow(const IntPoint& point)
-{
-    return point;
-}
-
-IntRect QtWebPageProxy::windowToScreen(const IntRect& rect)
-{
-    return rect;
-}
-
-FloatRect QtWebPageProxy::convertToUserSpace(const FloatRect& rect)
-{
-    return rect;
-}
-
 void QtWebPageProxy::selectionChanged(bool, bool, bool, bool)
-{
-}
-
-void QtWebPageProxy::doneWithKeyEvent(const NativeWebKeyboardEvent&, bool)
 {
 }
 
@@ -268,37 +186,9 @@ PassRefPtr<WebPopupMenuProxy> QtWebPageProxy::createPopupMenuProxy(WebPageProxy*
     return WebPopupMenuProxyQtDesktop::create(m_webPageProxy.get(), m_qmlWebView);
 }
 
-PassRefPtr<WebContextMenuProxy> QtWebPageProxy::createContextMenuProxy(WebPageProxy*)
-{
-    return WebContextMenuProxyQt::create(this);
-}
-
-void QtWebPageProxy::setFindIndicator(PassRefPtr<FindIndicator>, bool fadeOut, bool animate)
-{
-}
-
-void QtWebPageProxy::didCommitLoadForMainFrame(bool useCustomRepresentation)
-{
-}
-
-void QtWebPageProxy::didFinishLoadingDataForCustomRepresentation(const String& suggestedFilename, const CoreIPC::DataReference&)
-{
-}
-
-void QtWebPageProxy::flashBackingStoreUpdates(const Vector<IntRect>&)
-{
-    notImplemented();
-}
-
 WKPageRef QtWebPageProxy::pageRef() const
 {
     return toAPI(m_webPageProxy.get());;
-}
-
-void QtWebPageProxy::didFindZoomableArea(const IntPoint& target, const IntRect& area)
-{
-    ASSERT(m_eventHandler);
-    m_eventHandler->didFindZoomableArea(target, area);
 }
 
 void QtWebPageProxy::didReceiveMessageFromNavigatorQtObject(const String& message)
@@ -535,14 +425,6 @@ void QtWebPageProxy::renderToCurrentGLContext(const TransformationMatrix& transf
     if (drawingArea)
         drawingArea->paintToCurrentGLContext(transform, opacity);
 }
-
-#if ENABLE(TOUCH_EVENTS)
-void QtWebPageProxy::doneWithTouchEvent(const NativeWebTouchEvent& event, bool wasEventHandled)
-{
-    ASSERT(m_eventHandler);
-    m_eventHandler->doneWithTouchEvent(event, wasEventHandled);
-}
-#endif
 
 void QtWebPageProxy::setVisibleContentRectAndScale(const QRectF& visibleContentRect, float scale)
 {

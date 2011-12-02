@@ -22,14 +22,11 @@
 #define QtWebPageProxy_h
 
 #include "DrawingAreaProxy.h"
-#include "LayerTreeContext.h"
-#include "PageClient.h"
 #include "QtWebContext.h"
 #include "ShareableBitmap.h"
 #include "ViewportArguments.h"
 #include "WebPageProxy.h"
 #include <wtf/RefPtr.h>
-#include <QGraphicsView>
 #include <QMenu>
 #include <QSharedPointer>
 
@@ -37,6 +34,7 @@ QT_BEGIN_NAMESPACE
 class QUndoStack;
 QT_END_NAMESPACE
 
+class QtPageClient;
 class QQuickWebPage;
 class QQuickWebView;
 class QtWebError;
@@ -52,7 +50,7 @@ class QtWebContext;
 using namespace WebKit;
 
 // FIXME: needs focus in/out, window activation, support through viewStateDidChange().
-class QtWebPageProxy : public QObject, WebKit::PageClient {
+class QtWebPageProxy : public QObject {
     Q_OBJECT
 
 public:
@@ -70,66 +68,33 @@ public:
         WebActionCount
     };
 
-    QtWebPageProxy(QQuickWebPage*, QQuickWebView*, WKContextRef = 0, WKPageGroupRef = 0);
+    QtWebPageProxy(QQuickWebPage*, QQuickWebView*, QtPageClient*, WKContextRef = 0, WKPageGroupRef = 0);
     ~QtWebPageProxy();
 
-    virtual PassOwnPtr<DrawingAreaProxy> createDrawingAreaProxy();
+    PassOwnPtr<DrawingAreaProxy> createDrawingAreaProxy();
 
-    // PageClient
-    virtual void setViewNeedsDisplay(const WebCore::IntRect&);
-    virtual void displayView();
-    virtual void scrollView(const WebCore::IntRect& scrollRect, const WebCore::IntSize& scrollOffset);
+    void setViewNeedsDisplay(const WebCore::IntRect&);
+    WebCore::IntSize viewSize();
+    bool isViewFocused();
+    bool isViewVisible();
 
-    virtual WebCore::IntSize viewSize();
-    virtual bool isViewWindowActive();
-    virtual bool isViewFocused();
-    virtual bool isViewVisible();
-    virtual bool isViewInWindow();
+    void pageDidRequestScroll(const WebCore::IntPoint&);
+    void processDidCrash();
+    void didRelaunchProcess();
 
-#if USE(ACCELERATED_COMPOSITING)
-    virtual void enterAcceleratedCompositingMode(const LayerTreeContext&);
-    virtual void exitAcceleratedCompositingMode();
-#endif // USE(ACCELERATED_COMPOSITING)
-    virtual void pageDidRequestScroll(const WebCore::IntPoint&);
-    virtual void processDidCrash();
-    virtual void pageClosed() { }
-    virtual void didRelaunchProcess();
+    void didChangeContentsSize(const WebCore::IntSize&);
+    void didChangeViewportProperties(const WebCore::ViewportArguments&);
 
-    virtual void didChangeContentsSize(const WebCore::IntSize&);
-    virtual void didChangeViewportProperties(const WebCore::ViewportArguments&);
+    void startDrag(const WebCore::DragData&, PassRefPtr<ShareableBitmap> dragImage);
+    void registerEditCommand(PassRefPtr<WebKit::WebEditCommandProxy>, WebKit::WebPageProxy::UndoOrRedo);
+    void clearAllEditCommands();
+    bool canUndoRedo(WebPageProxy::UndoOrRedo);
+    void executeUndoRedo(WebPageProxy::UndoOrRedo);
 
-    virtual void startDrag(const WebCore::DragData&, PassRefPtr<ShareableBitmap> dragImage);
-    virtual void setCursor(const WebCore::Cursor&);
-    virtual void setCursorHiddenUntilMouseMoves(bool hiddenUntilMouseMoves);
-    virtual void toolTipChanged(const WTF::String&, const WTF::String&);
-    virtual void registerEditCommand(PassRefPtr<WebKit::WebEditCommandProxy>, WebKit::WebPageProxy::UndoOrRedo);
-    virtual void clearAllEditCommands();
-    virtual bool canUndoRedo(WebPageProxy::UndoOrRedo);
-    virtual void executeUndoRedo(WebPageProxy::UndoOrRedo);
-    virtual WebCore::FloatRect convertToDeviceSpace(const WebCore::FloatRect&);
-    virtual WebCore::FloatRect convertToUserSpace(const WebCore::FloatRect&);
-    virtual WebCore::IntPoint screenToWindow(const WebCore::IntPoint&);
-    virtual WebCore::IntRect windowToScreen(const WebCore::IntRect&);
+    void selectionChanged(bool, bool, bool, bool);
+    PassRefPtr<WebKit::WebPopupMenuProxy> createPopupMenuProxy(WebKit::WebPageProxy*);
 
-    virtual void doneWithKeyEvent(const WebKit::NativeWebKeyboardEvent&, bool wasEventHandled);
-    virtual void selectionChanged(bool, bool, bool, bool);
-    virtual PassRefPtr<WebKit::WebPopupMenuProxy> createPopupMenuProxy(WebKit::WebPageProxy*);
-    virtual PassRefPtr<WebKit::WebContextMenuProxy> createContextMenuProxy(WebKit::WebPageProxy*);
-
-    virtual void setFindIndicator(PassRefPtr<WebKit::FindIndicator>, bool fadeOut, bool animate);
-
-    virtual void didCommitLoadForMainFrame(bool useCustomRepresentation);
-    virtual void didFinishLoadingDataForCustomRepresentation(const String& suggestedFilename, const CoreIPC::DataReference&);
-    virtual double customRepresentationZoomFactor() { return 1; }
-    virtual void setCustomRepresentationZoomFactor(double) { }
-    virtual void didChangeScrollbarsForMainFrame() const { }
-
-    virtual void flashBackingStoreUpdates(const Vector<WebCore::IntRect>& updateRects);
-    virtual void findStringInCustomRepresentation(const String&, FindOptions, unsigned maxMatchCount) { }
-    virtual void countStringMatchesInCustomRepresentation(const String&, FindOptions, unsigned maxMatchCount) { }
-
-    virtual void didFindZoomableArea(const WebCore::IntPoint&, const WebCore::IntRect&);
-    virtual void didReceiveMessageFromNavigatorQtObject(const String&);
+    void didReceiveMessageFromNavigatorQtObject(const String&);
 
     bool canGoBack() const;
     void goBack();
@@ -202,7 +167,7 @@ protected:
 
 private:
 #if ENABLE(TOUCH_EVENTS)
-    virtual void doneWithTouchEvent(const NativeWebTouchEvent&, bool wasEventHandled);
+    void doneWithTouchEvent(const NativeWebTouchEvent&, bool wasEventHandled);
 #endif
 
     RefPtr<QtWebContext> m_context;

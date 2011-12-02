@@ -1,3 +1,79 @@
+2011-12-02  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
+
+        [Qt][WK2] Split the QtWebPageProxy into PageClient and QtPageProxy
+        https://bugs.webkit.org/show_bug.cgi?id=66668
+
+        Reviewed by Simon Hausmann.
+
+        Split QtPageClient out of QtWebPageProxy.
+        This client will live in QQuickWebViewPrivate and communicate directly
+        with QtWebPageProxy and QtWebPageEventHandler. The functions that need
+        anything else than these entities will need to call the proper implementation
+        through QtWebPageProxy itself.
+        With this we have a clear separation between PageClient and PageProxy, having
+        two well defined and separated entities for hooking our clients with our API layer (QtWebPageProxy)
+        and for hooking the WebPageProxy with our client implementations (QtPageClient).
+        As a positive side-effect we have a cleaner QtWebPageProxy.
+
+        * Target.pri:
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewPrivate::QQuickWebViewPrivate):
+        * UIProcess/API/qt/qquickwebview_p_p.h:
+        * UIProcess/qt/QtPageClient.cpp: Added.
+        (QtPageClient::QtPageClient):
+        (QtPageClient::~QtPageClient):
+        (QtPageClient::createDrawingAreaProxy):
+        (QtPageClient::setViewNeedsDisplay):
+        (QtPageClient::pageDidRequestScroll):
+        (QtPageClient::processDidCrash):
+        (QtPageClient::didRelaunchProcess):
+        (QtPageClient::didChangeContentsSize):
+        (QtPageClient::didChangeViewportProperties):
+        (QtPageClient::startDrag):
+        (QtPageClient::handleDownloadRequest):
+        (QtPageClient::setCursor):
+        (QtPageClient::setCursorHiddenUntilMouseMoves):
+        (QtPageClient::toolTipChanged):
+        (QtPageClient::registerEditCommand):
+        (QtPageClient::clearAllEditCommands):
+        (QtPageClient::canUndoRedo):
+        (QtPageClient::executeUndoRedo):
+        (QtPageClient::convertToDeviceSpace):
+        (QtPageClient::convertToUserSpace):
+        (QtPageClient::screenToWindow):
+        (QtPageClient::windowToScreen):
+        (QtPageClient::createPopupMenuProxy):
+        (QtPageClient::createContextMenuProxy):
+        (QtPageClient::flashBackingStoreUpdates):
+        (QtPageClient::didFindZoomableArea):
+        (QtPageClient::didReceiveMessageFromNavigatorQtObject):
+        (QtPageClient::doneWithTouchEvent):
+        (QtPageClient::displayView):
+        (QtPageClient::scrollView):
+        (QtPageClient::viewSize):
+        (QtPageClient::isViewWindowActive):
+        (QtPageClient::isViewFocused):
+        (QtPageClient::isViewVisible):
+        (QtPageClient::isViewInWindow):
+        (QtPageClient::enterAcceleratedCompositingMode):
+        (QtPageClient::exitAcceleratedCompositingMode):
+        * UIProcess/qt/QtPageClient.h: Added.
+        (QtPageClient::pageClosed):
+        (QtPageClient::doneWithKeyEvent):
+        (QtPageClient::setFindIndicator):
+        (QtPageClient::didCommitLoadForMainFrame):
+        (QtPageClient::didFinishLoadingDataForCustomRepresentation):
+        (QtPageClient::customRepresentationZoomFactor):
+        (QtPageClient::setCustomRepresentationZoomFactor):
+        (QtPageClient::didChangeScrollbarsForMainFrame):
+        (QtPageClient::findStringInCustomRepresentation):
+        (QtPageClient::countStringMatchesInCustomRepresentation):
+        (QtPageClient::setEventHandler):
+        (QtPageClient::setPageProxy):
+        * UIProcess/qt/QtWebPageProxy.cpp:
+        (QtWebPageProxy::QtWebPageProxy):
+        * UIProcess/qt/QtWebPageProxy.h:
+
 2011-12-02  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         [Qt] Do not apply the transition state before we are unsuspended
