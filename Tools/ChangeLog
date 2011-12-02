@@ -1,3 +1,22 @@
+2011-12-01  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r101711.
+        http://trac.webkit.org/changeset/101711
+        https://bugs.webkit.org/show_bug.cgi?id=73605
+
+        Broke 3 webkitpy tests (Requested by rniwa on #webkit).
+
+        * Scripts/webkitpy/style/checker.py:
+        (_all_categories):
+        (FileType):
+        (CheckerDispatcher._file_type):
+        (CheckerDispatcher._create_checker):
+        * Scripts/webkitpy/style/checker_unittest.py:
+        (CheckerDispatcherDispatchTest.assert_checker_cpp):
+        (CheckerDispatcherDispatchTest.test_cpp_paths):
+        * Scripts/webkitpy/style/checkers/jsonchecker.py: Removed.
+        * Scripts/webkitpy/style/checkers/jsonchecker_unittest.py: Removed.
+
 2011-12-01  Gustavo Noronha Silva  <gns@gnome.org>
 
         Unreviewed. Add myself to GStreamer and WebKit2GTK+ watchlists.
