@@ -1,3 +1,29 @@
+2011-12-01  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK] scrollbars interfering with fullscreen (in-window) video rendering
+        https://bugs.webkit.org/show_bug.cgi?id=73577
+
+        Reviewed by Martin Robinson.
+
+        Disable scrollbars when switching to fullscreen.
+
+        * WebCoreSupport/ChromeClientGtk.cpp:
+        (WebKit::ChromeClient::contentsSizeChanged): Ignore size changes
+        when an element is being displayed fullscreen.
+        (WebKit::ChromeClient::enterFullScreenForElement): Disable
+        scrollbars when entering fullscreen.
+        * WebCoreSupport/GtkAdjustmentWatcher.cpp: Added 2 methods to
+        enable/disable scrollbars and one method to know whether they are
+        enabled or not.
+        (WebKit::GtkAdjustmentWatcher::GtkAdjustmentWatcher):
+        (WebKit::updateAdjustmentFromScrollbar):
+        (WebKit::GtkAdjustmentWatcher::updateAdjustmentsFromScrollbars):
+        (WebKit::GtkAdjustmentWatcher::updateAdjustmentsFromScrollbarsLater):
+        (WebKit::GtkAdjustmentWatcher::disableAllScrollbars):
+        (WebKit::GtkAdjustmentWatcher::enableAllScrollbars):
+        * WebCoreSupport/GtkAdjustmentWatcher.h:
+        (WebKit::GtkAdjustmentWatcher::scrollbarsDisabled):
+
 2011-11-21  Philippe Normand  <pnormand@igalia.com>
 
         [GTK] enable-webaudio websetting

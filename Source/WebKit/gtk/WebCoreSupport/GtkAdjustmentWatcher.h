@@ -38,11 +38,15 @@ public:
     void adjustmentValueChanged(GtkAdjustment*);
     void updateAdjustmentsFromScrollbars();
     void updateAdjustmentsFromScrollbarsLater() const;
+    void disableAllScrollbars();
+    void enableAllScrollbars();
+    bool scrollbarsDisabled() const { return m_scrollbarsDisabled; };
 
 private:
     WebKitWebView* m_webView;
     GRefPtr<GtkAdjustment> m_horizontalAdjustment;
     GRefPtr<GtkAdjustment> m_verticalAdjustment;
+    bool m_scrollbarsDisabled;
     bool m_handlingGtkAdjustmentChange;
     mutable unsigned m_updateAdjustmentCallbackId;
 };

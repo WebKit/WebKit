@@ -636,6 +636,9 @@ PlatformPageClient ChromeClient::platformPageClient() const
 
 void ChromeClient::contentsSizeChanged(Frame* frame, const IntSize& size) const
 {
+    if (m_adjustmentWatcher.scrollbarsDisabled())
+        return;
+
     // We need to queue a resize request only if the size changed,
     // otherwise we get into an infinite loop!
     GtkWidget* widget = GTK_WIDGET(m_webView);
@@ -886,12 +889,14 @@ bool ChromeClient::supportsFullScreenForElement(const WebCore::Element* element,
 void ChromeClient::enterFullScreenForElement(WebCore::Element* element)
 {
     element->document()->webkitWillEnterFullScreenForElement(element);
+    m_adjustmentWatcher.disableAllScrollbars();
     element->document()->webkitDidEnterFullScreenForElement(element);
 }
 
 void ChromeClient::exitFullScreenForElement(WebCore::Element* element)
 {
     element->document()->webkitWillExitFullScreenForElement(element);
+    m_adjustmentWatcher.enableAllScrollbars();
     element->document()->webkitDidExitFullScreenForElement(element);
 }
 #endif
