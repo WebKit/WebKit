@@ -250,6 +250,16 @@ public:
     virtual void setFixedLayoutSize(const WebSize&) = 0;
 
 
+    // Auto-Resize -----------------------------------------------------------
+
+    // In auto-resize mode, the view is automatically adjusted to fit the html
+    // content within the given bounds.
+    virtual void enableAutoResizeMode(
+        bool enable,
+        const WebSize& minSize,
+        const WebSize& maxSize) = 0;
+
+
     // Media ---------------------------------------------------------------
 
     // Performs the specified action on the node at the given location.

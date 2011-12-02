@@ -176,6 +176,10 @@ public:
     virtual void enableFixedLayoutMode(bool enable);
     virtual WebSize fixedLayoutSize() const;
     virtual void setFixedLayoutSize(const WebSize&);
+    virtual void enableAutoResizeMode(
+        bool enable,
+        const WebSize& minSize,
+        const WebSize& maxSize);
     virtual void performMediaPlayerAction(
         const WebMediaPlayerAction& action,
         const WebPoint& location);
@@ -340,6 +344,21 @@ public:
         return m_contextMenuAllowed;
     }
 
+    bool shouldAutoResize() const
+    {
+        return m_shouldAutoResize;
+    }
+
+    WebCore::IntSize minAutoSize() const
+    {
+        return m_minAutoSize;
+    }
+
+    WebCore::IntSize maxAutoSize() const
+    {
+        return m_maxAutoSize;
+    }
+
     // Set the disposition for how this webview is to be initially shown.
     void setInitialNavigationPolicy(WebNavigationPolicy policy)
     {
@@ -437,6 +456,10 @@ public:
     void enterFullScreenForElement(WebCore::Element*);
     void exitFullScreenForElement(WebCore::Element*);
 
+    // Exposed for testing purposes.
+    bool hasHorizontalScrollbar();
+    bool hasVerticalScrollbar();
+
 private:
     float computePageScaleFactorWithinLimits(float scale);
     WebPoint clampOffsetAtScale(const WebPoint& offset, float scale);
@@ -479,6 +502,8 @@ private:
                                                const WebPoint& screenPoint,
                                                DragAction);
 
+    void sendResizeEventAndRepaint();
+
 #if USE(ACCELERATED_COMPOSITING)
     void setIsAcceleratedCompositingActive(bool);
     void doComposite();
@@ -499,6 +524,12 @@ private:
     InspectorClientImpl m_inspectorClientImpl;
 
     WebSize m_size;
+    // If true, automatically resize the render view around its content.
+    bool m_shouldAutoResize;
+    // The lower bound on the size when auto-resizing.
+    WebCore::IntSize m_minAutoSize;
+    // The upper bound on the size when auto-resizing.
+    WebCore::IntSize m_maxAutoSize;
 
     WebPoint m_lastMousePosition;
     OwnPtr<WebCore::Page> m_page;

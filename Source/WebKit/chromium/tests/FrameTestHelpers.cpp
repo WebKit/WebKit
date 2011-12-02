@@ -84,11 +84,13 @@ static WebViewClient* defaultWebViewClient()
     return &client;
 }
 
-WebView* createWebViewAndLoad(const std::string& url, bool enableJavascript, WebFrameClient* webFrameClient)
+WebView* createWebViewAndLoad(const std::string& url, bool enableJavascript, WebFrameClient* webFrameClient, WebViewClient* webViewClient)
 {
     if (!webFrameClient)
         webFrameClient = defaultWebFrameClient();
-    WebView* webView = WebView::create(defaultWebViewClient());
+    if (!webViewClient)
+        webViewClient = defaultWebViewClient();
+    WebView* webView = WebView::create(webViewClient);
     webView->settings()->setJavaScriptEnabled(enableJavascript);
     webView->initializeMainFrame(webFrameClient);
 

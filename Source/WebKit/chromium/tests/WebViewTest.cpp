@@ -33,16 +33,47 @@
 
 #include "Document.h"
 #include "FrameTestHelpers.h"
+#include "FrameView.h"
 #include "HTMLDocument.h"
 #include "WebDocument.h"
 #include "WebFrame.h"
+#include "WebFrameClient.h"
 #include "WebFrameImpl.h"
+#include "WebSize.h"
+#include "WebViewClient.h"
+#include "WebViewImpl.h"
 #include <gtest/gtest.h>
 #include <webkit/support/webkit_support.h>
 
 using namespace WebKit;
 
 namespace {
+
+class TestData {
+public:
+    void setWebView(WebView* webView) { m_webView = static_cast<WebViewImpl*>(webView); }
+    void setSize(const WebSize& newSize) { m_size = newSize; }
+    bool hasHorizontalScrollbar() const { return m_webView->hasHorizontalScrollbar(); }
+    bool hasVerticalScrollbar() const  { return m_webView->hasVerticalScrollbar(); }
+    int width() const { return m_size.width; }
+    int height() const { return m_size.height; }
+
+private:
+    WebSize m_size;
+    WebViewImpl* m_webView;
+};
+
+class AutoResizeWebViewClient : public WebViewClient {
+public:
+    // WebViewClient methods
+    virtual void didAutoResize(const WebSize& newSize) { m_testData.setSize(newSize); }
+
+    // Local methods
+    TestData& testData() { return m_testData; }
+
+private:
+    TestData m_testData;
+};
 
 class WebViewTest : public testing::Test {
 public:
@@ -75,6 +106,37 @@ TEST_F(WebViewTest, FocusIsInactive)
     EXPECT_FALSE(document->hasFocus());
     webView->setFocus(true);
     EXPECT_TRUE(document->hasFocus());
+
+    webView->close();
+}
+
+TEST_F(WebViewTest, AutoResizeMinimumSize)
+{
+    AutoResizeWebViewClient client;
+    FrameTestHelpers::registerMockedURLLoad(m_baseURL, "specify_size.html");
+    WebView* webView = FrameTestHelpers::createWebViewAndLoad(m_baseURL + "specify_size.html", true, 0, &client);
+    client.testData().setWebView(webView);
+    FrameTestHelpers::loadFrame(webView->mainFrame(), "javascript:document.getElementById('sizer').style.height = '56px';");
+    FrameTestHelpers::loadFrame(webView->mainFrame(), "javascript:document.getElementById('sizer').style.width = '91px';");
+
+    WebFrameImpl* frame = static_cast<WebFrameImpl*>(webView->mainFrame());
+    WebCore::FrameView* frameView = frame->frame()->view();
+    EXPECT_FALSE(frameView->layoutPending());
+    EXPECT_FALSE(frameView->needsLayout());
+
+    WebSize minSize(91, 56);
+    WebSize maxSize(403, 302);
+    webView->enableAutoResizeMode(true, minSize, maxSize);
+    EXPECT_TRUE(frameView->layoutPending());
+    EXPECT_TRUE(frameView->needsLayout());
+    frameView->layout();
+
+    EXPECT_TRUE(frame->frame()->document()->isHTMLDocument());
+
+    EXPECT_EQ(91, client.testData().width());
+    EXPECT_EQ(56, client.testData().height());
+    EXPECT_FALSE(client.testData().hasHorizontalScrollbar());
+    EXPECT_FALSE(client.testData().hasVerticalScrollbar());
 
     webView->close();
 }

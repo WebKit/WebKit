@@ -41,6 +41,7 @@ namespace WebKit {
 class WebString;
 class WebWidget;
 struct WebCursorInfo;
+struct WebSize;
 
 class WebWidgetClient {
 public:
@@ -50,6 +51,9 @@ public:
     // Called when a region of the WebWidget, given by clipRect, should be
     // scrolled by the specified dx and dy amounts.
     virtual void didScrollRect(int dx, int dy, const WebRect& clipRect) { }
+
+    // Called when the Widget has changed size as a result of an auto-resize.
+    virtual void didAutoResize(const WebSize& newSize) { }
 
     // Called when the compositor is enabled or disabled.
     // The WebCompositor identifier can be used on the compositor thread to get access

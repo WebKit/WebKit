@@ -1,3 +1,46 @@
+2011-12-01  David Levin  <levin@chromium.org>
+
+        [chromium] Add WebKit API's to support the autosize algorithm in renderer process.
+        https://bugs.webkit.org/show_bug.cgi?id=73058
+
+        Reviewed by Darin Fisher.
+
+        * public/WebView.h: Expose the auto-resize method.
+        * public/WebWidgetClient.h:
+        (WebKit::WebWidgetClient::didAutoResize):
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::createFrameView): Set the auto-resize
+        state on the new view.
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::WebViewImpl):
+        (WebKit::WebViewImpl::resize): Extracted sendResizeEventAndRepaint, so
+        that it can be used by layoutUpdated.
+        (WebKit::WebViewImpl::queueBothResizeEventAndPaint): Ditto.
+        (WebKit::WebViewImpl::hasHorizontalScrollbar): Added for testing purposes.
+        (WebKit::WebViewImpl::hasVerticalScrollbar): Ditto.
+        (WebKit::WebViewImpl::enableAutoResizeMode): Set-up auto-resize.
+        (WebKit::WebViewImpl::layoutUpdated): Handle the auto-resize case by
+        sending events and invalidation.
+        * src/WebViewImpl.h: Expose the aut-reosize information.
+        (WebKit::WebViewImpl::shouldAutoResize):
+        (WebKit::WebViewImpl::minAutoSize):
+        (WebKit::WebViewImpl::maxAutoSize):
+        * tests/FrameTestHelpers.cpp:
+        (WebKit::FrameTestHelpers::createWebViewAndLoad): Added the ability to
+        specify the WebViewClient.
+        * tests/FrameTestHelpers.h: Ditto.
+        * tests/WebViewTest.cpp: Added a simple test for auto-resize.
+        (WebKit::TestData::setWebView):
+        (WebKit::TestData::setSize): Capture the new size.
+        (WebKit::TestData::hasHorizontalScrollbar):
+        (WebKit::TestData::hasVerticalScrollbar):
+        (WebKit::TestData::width):
+        (WebKit::TestData::height):
+        (WebKit::AutoResizeWebViewClient::didAutoResize): Handle the resize event.
+        (WebKit::AutoResizeWebViewClient::testData):
+        (WebKit::TEST_F): The actual test.
+        * tests/data/specify_size.html: Added.
+
 2011-12-02  Xiyuan Xia  <xiyuan@chromium.org>
 
         [Chromium] Support adding/removing page overlay to WebView

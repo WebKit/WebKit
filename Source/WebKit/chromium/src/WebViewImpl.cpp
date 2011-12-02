@@ -56,6 +56,7 @@
 #include "Extensions3D.h"
 #include "FocusController.h"
 #include "FontDescription.h"
+#include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameSelection.h"
 #include "FrameTree.h"
@@ -334,6 +335,7 @@ WebViewImpl::WebViewImpl(WebViewClient* client)
     , m_dragClientImpl(this)
     , m_editorClientImpl(this)
     , m_inspectorClientImpl(this)
+    , m_shouldAutoResize(false)
     , m_observedNewNavigation(false)
 #ifndef NDEBUG
     , m_newNavigationLoader(0)
@@ -1041,25 +1043,15 @@ void WebViewImpl::willStartLiveResize()
 
 void WebViewImpl::resize(const WebSize& newSize)
 {
+    ASSERT(!m_shouldAutoResize);
     if (m_size == newSize)
         return;
     m_size = newSize;
 
-    if (mainFrameImpl()->frameView()) {
+    if (mainFrameImpl()->frameView())
         mainFrameImpl()->frameView()->resize(m_size.width, m_size.height);
-        mainFrameImpl()->frame()->eventHandler()->sendResizeEvent();
-    }
 
-    if (m_client) {
-        if (isAcceleratedCompositingActive()) {
-#if USE(ACCELERATED_COMPOSITING)
-            updateLayerTreeViewport();
-#endif
-        } else {
-            WebRect damagedRect(0, 0, m_size.width, m_size.height);
-            m_client->didInvalidateRect(damagedRect);
-        }
-    }
+    sendResizeEventAndRepaint();
 }
 
 void WebViewImpl::willEndLiveResize()
@@ -1297,6 +1289,16 @@ void WebViewImpl::exitFullScreenForElement(WebCore::Element* element)
 {
     if (m_client)
         m_client->exitFullScreen();
+}
+
+bool WebViewImpl::hasHorizontalScrollbar()
+{
+    return mainFrameImpl()->frameView()->horizontalScrollbar();
+}
+
+bool WebViewImpl::hasVerticalScrollbar()
+{
+    return mainFrameImpl()->frameView()->verticalScrollbar();
 }
 
 const WebInputEvent* WebViewImpl::m_currentInputEvent = 0;
@@ -2050,6 +2052,17 @@ void WebViewImpl::enableFixedLayoutMode(bool enable)
 #endif
 }
 
+void WebViewImpl::enableAutoResizeMode(bool enable, const WebSize& minSize, const WebSize& maxSize)
+{
+    m_shouldAutoResize = enable;
+    m_minAutoSize = minSize;
+    m_maxAutoSize = maxSize;
+    if (!mainFrameImpl() || !mainFrameImpl()->frame() || !mainFrameImpl()->frame()->view())
+        return;
+
+    mainFrameImpl()->frame()->view()->enableAutoSizeMode(m_shouldAutoResize, m_minAutoSize, m_maxAutoSize);
+}
+
 void WebViewImpl::setPageScaleFactorLimits(float minPageScale, float maxPageScale)
 {
     m_minimumPageScaleFactor = min(max(minPageScale, minPageScaleFactor), maxPageScaleFactor) * deviceScaleFactor();
@@ -2293,6 +2306,25 @@ WebDragOperation WebViewImpl::dragTargetDragEnterOrOver(const WebPoint& clientPo
         m_dragScrollTimer->stop();
 
     return m_dragOperation;
+}
+
+void WebViewImpl::sendResizeEventAndRepaint()
+{
+    if (mainFrameImpl()->frameView()) {
+        // Enqueues the resize event.
+        mainFrameImpl()->frame()->eventHandler()->sendResizeEvent();
+    }
+
+    if (m_client) {
+        if (isAcceleratedCompositingActive()) {
+#if USE(ACCELERATED_COMPOSITING)
+            updateLayerTreeViewport();
+#endif
+        } else {
+            WebRect damagedRect(0, 0, m_size.width, m_size.height);
+            m_client->didInvalidateRect(damagedRect);
+        }
+    }
 }
 
 unsigned long WebViewImpl::createUniqueIdentifierForRequest()
@@ -2547,6 +2579,15 @@ void WebViewImpl::layoutUpdated(WebFrameImpl* webframe)
 {
     if (!m_client || webframe != mainFrameImpl())
         return;
+
+    if (m_shouldAutoResize && mainFrameImpl()->frame() && mainFrameImpl()->frame()->view()) {
+        WebSize frameSize = mainFrameImpl()->frame()->view()->frameRect().size();
+        if (frameSize != m_size) {
+            m_size = frameSize;
+            m_client->didAutoResize(m_size);
+            sendResizeEventAndRepaint();
+        }
+    }
 
     m_client->didUpdateLayout();
 }
