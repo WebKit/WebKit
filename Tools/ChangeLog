@@ -1,3 +1,9 @@
+2011-12-02  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add Alan Stearns and Peter Linss to the contributors list.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2011-12-02  Kent Tamura  <tkent@chromium.org>
 
         [Chromium] Fix compilation warnings for ASSERT()

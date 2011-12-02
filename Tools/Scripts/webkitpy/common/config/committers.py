@@ -105,6 +105,7 @@ watchers_who_are_not_contributors = [
 
 
 contributors_who_are_not_committers = [
+    Contributor("Alan Stearns", "stearns@adobe.com", 'astearns'),
     Contributor("Alexey Marinichev", ["amarinichev@chromium.org", "amarinichev@google.com"], "amarinichev"),
     Contributor("Ami Fischman", ["fischman@chromium.org", "fischman@google.com"], "amifischman0"),
     Contributor("Andras Piroska", "pandras@inf.u-szeged.hu", "andris88"),
@@ -130,6 +131,7 @@ contributors_who_are_not_committers = [
     Contributor("Oliver Varga", ["voliver@inf.u-szeged.hu", "Varga.Oliver@stud.u-szeged.hu"], "TwistO"),
     Contributor("Peter Beverloo", "peter@chromium.org", "beverloo"),
     Contributor("Peter Gal", "galpeter@inf.u-szeged.hu", "elecro"),
+    Contributor("Peter Linss", "peter.linss@hp.com", "plinss")
     Contributor("Pierre Rossi", "pierre.rossi@gmail.com", "elproxy"),
     Contributor("Shawn Singh", "shawnsingh@chromium.org", "shawnsingh"),
     Contributor("Tab Atkins", ["tabatkins@google.com", "jackalmage@gmail.com"], "tabatkins"),
