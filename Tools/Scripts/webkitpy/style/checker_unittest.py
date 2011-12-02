@@ -53,6 +53,7 @@ from checker import StyleProcessor
 from checker import StyleProcessorConfiguration
 from checkers.changelog import ChangeLogChecker
 from checkers.cpp import CppChecker
+from checkers.jsonchecker import JSONChecker
 from checkers.python import PythonChecker
 from checkers.text import TextChecker
 from checkers.xml import XMLChecker
@@ -405,6 +406,10 @@ class CheckerDispatcherDispatchTest(unittest.TestCase):
         """Assert that the dispatched checker is a CppChecker."""
         self.assert_checker(file_path, CppChecker)
 
+    def assert_checker_json(self, file_path):
+        """Assert that the dispatched checker is a JSONChecker."""
+        self.assert_checker(file_path, JSONChecker)
+
     def assert_checker_python(self, file_path):
         """Assert that the dispatched checker is a PythonChecker."""
         self.assert_checker(file_path, PythonChecker)
@@ -466,6 +471,25 @@ class CheckerDispatcherDispatchTest(unittest.TestCase):
         checker = self.dispatch(file_path)
         self.assertEquals(checker.file_extension, file_extension)
         self.assertEquals(checker.file_path, file_path)
+
+    def test_json_paths(self):
+        """Test paths that should be checked as JSON."""
+        paths = [
+           "Source/WebCore/inspector/Inspector.json",
+           "Tools/BuildSlaveSupport/build.webkit.org-config/config.json",
+        ]
+
+        for path in paths:
+            self.assert_checker_json(path)
+
+        # Check checker attributes on a typical input.
+        file_base = "foo"
+        file_extension = "json"
+        file_path = file_base + "." + file_extension
+        self.assert_checker_json(file_path)
+        checker = self.dispatch(file_path)
+        self.assertEquals(checker._handle_style_error,
+                          self.mock_handle_style_error)
 
     def test_python_paths(self):
         """Test paths that should be checked as Python."""

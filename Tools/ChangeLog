@@ -1,3 +1,57 @@
+2011-12-01  Adam Roben  <aroben@apple.com>
+
+        Teach check-webkit-style how to check the syntax of JSON files
+
+        Fixes <http://webkit.org/b/73590> check-webkit-style doesn't flag JSON syntax errors
+
+        I previously landed this patch as r101711, but the new tests failed on Snow Leopard. This
+        patch is identical to that one except for two change: assertIn(a, b) (which is new to Python
+        2.7) has been replaced with assertTrue(a in b), and the test_missing_closing_brace test has
+        been removed, since its output differs by platform.
+
+        Reviewed by Darin Adler.
+
+        * Scripts/webkitpy/style/checker.py:
+        (_all_categories): Added JSONChecker's categories to the set of all categories.
+        (FileType): Added a JSON type. Incremented other types.
+        (CheckerDispatcher._file_type): Use the JSON file type for .json files.
+        (CheckerDispatcher._create_checker): Use a JSONChecker for JSON files.
+
+        * Scripts/webkitpy/style/checker_unittest.py:
+        (CheckerDispatcherDispatchTest.assert_checker_json): Added this helper method.
+        (CheckerDispatcherDispatchTest.test_json_paths): Added. Based on test_python_paths.
+
+        * Scripts/webkitpy/style/checkers/jsonchecker.py: Added. (I didn't name this just "json",
+        which would have matched our other checkers, because I couldn't figure out how to call
+        "json.loads" without hitting namespace conflicts.)
+        (JSONChecker.__init__): Turn of line filtering so that we always check the whole file, not
+        just the modified lines from a patch.
+        (JSONChecker.check): Try to parse the lines as JSON. Mark an error if there was an
+        exception.
+        (JSONChecker.line_number_from_json_exception): Parse the json modules exception message to
+        try to extract a line number.
+
+        * Scripts/webkitpy/style/checkers/jsonchecker_unittest.py: Added.
+        (MockErrorHandler.__init__):
+        (MockErrorHandler.turn_off_line_filtering):
+        (MockErrorHandler.__call__):
+        Helper class. Copied from xml_unittest.py.
+
+        (JSONCheckerTest.test_line_number_from_json_exception): Test the
+        line_number_from_json_exception helper method.
+
+        (JSONCheckerTest.assert_no_error):
+        (JSONCheckerTest.assert_error):
+        Helper methods to assert that we did or didn't get an error.
+
+        (JSONCheckerTest.mock_handle_style_error): Helper method.
+
+        (JSONCheckerTest.test_conflict_marker):
+        (JSONCheckerTest.test_single_quote):
+        (JSONCheckerTest.test_init):
+        (JSONCheckerTest.test_no_error):
+        Test various cases.
+
 2011-12-02  Gustavo Noronha Silva  <gns@gnome.org>
 
         [GTK] Also run DumpRenderTree under jhbuild
