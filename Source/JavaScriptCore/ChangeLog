@@ -1,3 +1,13 @@
+2011-12-02  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r101801.
+        http://trac.webkit.org/changeset/101801
+        https://bugs.webkit.org/show_bug.cgi?id=73667
+
+        Build is still broken (Requested by Ossy on #webkit).
+
+        * assembler/SH4Assembler.h:
+
 2011-12-01  Darin Adler  <darin@apple.com>
 
         Prepare to deploy pass and peek types in the HashMap class
