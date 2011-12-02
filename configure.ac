@@ -101,10 +101,18 @@ fi
 
 # Disable C++0x compat warnings for GCC >= 4.6.0 until we build
 # cleanly with that.
-if test "$CXX" = "g++"; then
-   CXX_VERSION=`$CXX -dumpversion`
-   AX_COMPARE_VERSION([$CXX_VERSION],[ge],[4.6.0],CXXFLAGS="$CXXFLAGS -Wno-c++0x-compat")
-fi
+AC_LANG_PUSH(C++)
+TMPCXXFLAGS=$CXXFLAGS
+CXXFLAGS="-Wall -Werror"
+AC_MSG_CHECKING([if we have to disable C++0x compat warnings for GCC >= 4.6.0])
+AC_TRY_COMPILE([
+namespace std {
+    class nullptr_t { };
+}
+extern std::nullptr_t nullptr;
+], [return 0;],
+CXXFLAGS="$TMPCXXFLAGS", CXXFLAGS="$TMPCXXFLAGS -Wno-c++0x-compat")
+AC_LANG_POP(C++)
 
 # pthread (not needed on Windows)
 if test "$os_win32" = "no"; then

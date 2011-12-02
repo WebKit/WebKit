@@ -1,3 +1,12 @@
+2011-12-02  Alejandro G. Castro  <alex@igalia.com>
+
+        [GTK] Improve  C++0x compat warnings check
+        https://bugs.webkit.org/show_bug.cgi?id=73642
+
+        Reviewed by Martin Robinson.
+
+        * configure.ac:
+
 2011-12-01  Nayan Kumar K  <nayankk@motorola.com>
 
         [GTK] Add compilation options to enable/disable Accelerated Compositing and to choose texture mapper implementation.
