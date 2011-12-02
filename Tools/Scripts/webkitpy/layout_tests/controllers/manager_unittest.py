@@ -316,7 +316,6 @@ class ResultSummaryTest(unittest.TestCase):
             [test_failures.FailureReftestMismatch(self.port.abspath_for_test('foo/reftest-expected.html'))])
         self.assertTrue('is_reftest' in test_dict)
         self.assertFalse('is_mismatch_reftest' in test_dict)
-        self.assertFalse('ref_file' in test_dict)
 
         test_dict = interpret_test_failures(self.port, 'foo/reftest.html',
             [test_failures.FailureReftestMismatch(self.port.abspath_for_test('foo/common.html'))])
@@ -328,7 +327,6 @@ class ResultSummaryTest(unittest.TestCase):
             [test_failures.FailureReftestMismatchDidNotOccur(self.port.abspath_for_test('foo/reftest-expected-mismatch.html'))])
         self.assertFalse('is_reftest' in test_dict)
         self.assertTrue(test_dict['is_mismatch_reftest'])
-        self.assertFalse('ref_file' in test_dict)
 
         test_dict = interpret_test_failures(self.port, 'foo/reftest.html',
             [test_failures.FailureReftestMismatchDidNotOccur(self.port.abspath_for_test('foo/common.html'))])

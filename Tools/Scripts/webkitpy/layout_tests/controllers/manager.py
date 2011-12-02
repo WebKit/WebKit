@@ -89,12 +89,10 @@ def interpret_test_failures(port, test_name, failures):
             test_dict['image_diff_percent'] = failure.diff_percent
         elif isinstance(failure, test_failures.FailureReftestMismatch):
             test_dict['is_reftest'] = True
-            if failure.reference_filename != port.reftest_expected_filename(test_name):
-                test_dict['ref_file'] = port.relative_test_filename(failure.reference_filename)
+            test_dict['ref_file'] = port.relative_test_filename(failure.reference_filename)
         elif isinstance(failure, test_failures.FailureReftestMismatchDidNotOccur):
             test_dict['is_mismatch_reftest'] = True
-            if failure.reference_filename != port.reftest_expected_mismatch_filename(test_name):
-                test_dict['ref_file'] = port.relative_test_filename(failure.reference_filename)
+            test_dict['ref_file'] = port.relative_test_filename(failure.reference_filename)
 
     if test_failures.FailureMissingResult in failure_types:
         test_dict['is_missing_text'] = True

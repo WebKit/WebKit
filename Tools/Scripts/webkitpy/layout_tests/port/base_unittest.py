@@ -328,12 +328,14 @@ class PortTest(unittest.TestCase):
         "",
         "# some comment",
         "!= test-2.html test-notref.html # more comments",
-        "== test-3.html test-ref.html"])
+        "== test-3.html test-ref.html",
+        "== test-3.html test-ref2.html",
+        "!= test-3.html test-notref.html"])
 
         reftest_list = Port._parse_reftest_list(port.host.filesystem, 'bar')
-        self.assertEqual(reftest_list, {'bar/test.html': ('==', 'bar/test-ref.html'),
-            'bar/test-2.html': ('!=', 'bar/test-notref.html'),
-            'bar/test-3.html': ('==', 'bar/test-ref.html')})
+        self.assertEqual(reftest_list, {'bar/test.html': [('==', 'bar/test-ref.html')],
+            'bar/test-2.html': [('!=', 'bar/test-notref.html')],
+            'bar/test-3.html': [('==', 'bar/test-ref.html'), ('==', 'bar/test-ref2.html'), ('!=', 'bar/test-notref.html')]})
 
 
 class VirtualTest(unittest.TestCase):

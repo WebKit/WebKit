@@ -1,3 +1,39 @@
+2011-12-01  Ryosuke Niwa  <rniwa@webkit.org>
+
+        [NRWT] reftest should support having multiple references per test
+        https://bugs.webkit.org/show_bug.cgi?id=73613
+
+        Reviewed by Dirk Pranke.
+
+        Add a support for having multiple reference files for a single test.
+
+        Because a reftest succeeds when it matches at least one of expected matches and fails when it matches
+        at least one of expected mismatches, we compare expected mismatches first in order to minimize
+        the number of reference files to open on DRT.
+
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (interpret_test_failures): Remove checks no longer applicable.
+        * Scripts/webkitpy/layout_tests/controllers/manager_unittest.py:
+        (ResultSummaryTest.test_interpret_test_failures): Ditto.
+        * Scripts/webkitpy/layout_tests/controllers/single_test_runner.py:
+        (SingleTestRunner.__init__): Remove a bunch of code and just call port.reference_files.
+        (SingleTestRunner._driver_input):
+        (SingleTestRunner.run):
+        (SingleTestRunner._run_reftest): Compare the output of the test to each reference file.
+        * Scripts/webkitpy/layout_tests/models/test_input.py:
+        (TestInput.__init__): Remove ref_file and is_mismatch_reftest because they are no longer used.
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        (Port.reference_files): Renamed from _reference_file_for. Returns a list of expectation, filename pairs.
+        (_parse_reftest_list): Now supports parsing multiple entries for a single test.
+        * Scripts/webkitpy/layout_tests/port/base_unittest.py:
+        (PortTest.test_parse_reftest_list):
+        * Scripts/webkitpy/layout_tests/port/test.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+        (MainTest.test_unexpected_failures):
+        (MainTest.test_reftest_skipped_if_unlisted): Renamed from test_missing_and_unexpected_results.
+        (EndToEndTest.test_end_to_end):
+        (EndToEndTest.test_reftest_with_two_notrefs): Added.
+
 2011-12-02  Gustavo Noronha Silva  <gns@gnome.org>
 
         Build libsoup without gnome dependencies (like keyring).

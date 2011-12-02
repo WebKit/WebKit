@@ -190,6 +190,17 @@ layer at (0,0) size 800x34
     tests.add('reftests/foo/test.html')
     tests.add('reftests/foo/test-ref.html')
 
+    tests.add('reftests/foo/multiple-match-success.html', actual_checksum='abc', actual_image='abc')
+    tests.add('reftests/foo/multiple-match-failure.html', actual_checksum='abc', actual_image='abc')
+    tests.add('reftests/foo/multiple-mismatch-success.html', actual_checksum='abc', actual_image='abc')
+    tests.add('reftests/foo/multiple-mismatch-failure.html', actual_checksum='abc', actual_image='abc')
+    tests.add('reftests/foo/multiple-both-success.html', actual_checksum='abc', actual_image='abc')
+    tests.add('reftests/foo/multiple-both-failure.html', actual_checksum='abc', actual_image='abc')
+
+    tests.add('reftests/foo/matching-ref.html', actual_checksum='abc', actual_image='abc')
+    tests.add('reftests/foo/mismatching-ref.html', actual_checksum='def', actual_image='def')
+    tests.add('reftests/foo/second-mismatching-ref.html', actual_checksum='ghi', actual_image='ghi')
+
     # The following files shouldn't be treated as reftests
     tests.add_reftest('reftests/foo/unlistedtest.html', 'reftests/foo/unlistedtest-expected.html', same_image=True)
     tests.add('reftests/foo/reference/bar/common.html')
@@ -266,6 +277,21 @@ WONTFIX SKIP : failures/expected/exception.html = CRASH
 
     add_file(files, 'reftests/foo/reftest.list', """
 == test.html test-ref.html
+
+== multiple-match-success.html mismatching-ref.html
+== multiple-match-success.html matching-ref.html
+== multiple-match-failure.html mismatching-ref.html
+== multiple-match-failure.html second-mismatching-ref.html
+!= multiple-mismatch-success.html mismatching-ref.html
+!= multiple-mismatch-success.html second-mismatching-ref.html
+!= multiple-mismatch-failure.html mismatching-ref.html
+!= multiple-mismatch-failure.html matching-ref.html
+== multiple-both-success.html matching-ref.html
+== multiple-both-success.html mismatching-ref.html
+!= multiple-both-success.html second-mismatching-ref.html
+== multiple-both-failure.html matching-ref.html
+!= multiple-both-failure.html second-mismatching-ref.html
+!= multiple-both-failure.html matching-ref.html
 """)
 
     # FIXME: This test was only being ignored because of missing a leading '/'.

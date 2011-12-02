@@ -46,7 +46,7 @@ class TestResultWriterTest(unittest.TestCase):
         port = ImageDiffTestPort()
         fs = port._filesystem
         test_name = 'failures/unexpected/reftest.html'
-        test_reference_file = fs.join(port.layout_tests_dir(), port.reftest_expected_filename(test_name))
+        test_reference_file = fs.join(port.layout_tests_dir(), 'failures/unexpected/reftest-expected.html')
         driver_output1 = DriverOutput('text1', 'image1', 'imagehash1', 'audio1')
         driver_output2 = DriverOutput('text2', 'image2', 'imagehash2', 'audio2')
         failures = [test_failures.FailureReftestMismatch(test_reference_file)]

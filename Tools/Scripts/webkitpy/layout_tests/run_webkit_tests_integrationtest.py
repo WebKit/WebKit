@@ -185,6 +185,11 @@ def get_tests_run(extra_args=None, tests_included=False, flatten_batches=False,
     return test_batches
 
 
+# Update this magic number if you add an unexpected test to webkitpy.layout_tests.port.test
+# FIXME: It's nice to have a routine in port/test.py that returns this number.
+unexpected_tests_count = 11
+
+
 class MainTest(unittest.TestCase):
     def test_accelerated_compositing(self):
         # This just tests that we recognize the command line args
@@ -426,10 +431,6 @@ class MainTest(unittest.TestCase):
         self._url_opened = None
         res, out, err, user = logging_run(tests_included=True)
 
-        # Update this magic number if you add an unexpected test to webkitpy.layout_tests.port.test
-        # FIXME: It's nice to have a routine in port/test.py that returns this number.
-        unexpected_tests_count = 8
-
         self.assertEqual(res, unexpected_tests_count)
         self.assertFalse(out.empty())
         self.assertFalse(err.empty())
@@ -450,20 +451,6 @@ class MainTest(unittest.TestCase):
         expected_token = '"unexpected":{"text-image-checksum.html":{"expected":"PASS","actual":"TEXT"},"missing_text.html":{"expected":"PASS","is_missing_text":true,"actual":"MISSING"}'
         json_string = fs.read_text_file('/tmp/layout-test-results/full_results.json')
         self.assertTrue(json_string.find(expected_token) != -1)
-        self.assertTrue(json_string.find('"num_regressions":1') != -1)
-        self.assertTrue(json_string.find('"num_flaky":0') != -1)
-        self.assertTrue(json_string.find('"num_missing":1') != -1)
-
-    def test_missing_and_unexpected_results(self):
-        # Test that we update expectations in place. If the expectation
-        # is missing, update the expected generic location.
-        fs = unit_test_filesystem()
-        res, out, err, _ = logging_run(['--no-show-results', 'reftests/foo/'], tests_included=True, filesystem=fs, record_results=True)
-        file_list = fs.written_files.keys()
-        file_list.remove('/tmp/layout-test-results/tests_run0.txt')
-        self.assertEquals(res, 1)
-        json_string = fs.read_text_file('/tmp/layout-test-results/full_results.json')
-        self.assertTrue(json_string.find('"unlistedtest.html":{"expected":"PASS","is_missing_text":true,"actual":"MISSING","is_missing_image":true}') != -1)
         self.assertTrue(json_string.find('"num_regressions":1') != -1)
         self.assertTrue(json_string.find('"num_flaky":0') != -1)
         self.assertTrue(json_string.find('"num_missing":1') != -1)
@@ -735,6 +722,17 @@ class MainTest(unittest.TestCase):
         tests_run = get_tests_run(['passes/mismatch.html'], tests_included=True, flatten_batches=True, include_reference_html=True)
         self.assertEquals(['passes/mismatch.html', 'passes/mismatch-expected-mismatch.html'], tests_run)
 
+    def test_reftest_should_not_use_naming_convention_if_not_listed_in_reftestlist(self):
+        fs = unit_test_filesystem()
+        res, out, err, _ = logging_run(['--no-show-results', 'reftests/foo/'], tests_included=True, filesystem=fs, record_results=True)
+        file_list = fs.written_files.keys()
+        file_list.remove('/tmp/layout-test-results/tests_run0.txt')
+        json_string = fs.read_text_file('/tmp/layout-test-results/full_results.json')
+        self.assertTrue(json_string.find('"unlistedtest.html":{"expected":"PASS","is_missing_text":true,"actual":"MISSING","is_missing_image":true}') != -1)
+        self.assertTrue(json_string.find('"num_regressions":4') != -1)
+        self.assertTrue(json_string.find('"num_flaky":0') != -1)
+        self.assertTrue(json_string.find('"num_missing":1') != -1)
+
     def test_additional_platform_directory(self):
         self.assertTrue(passing_run(['--additional-platform-directory', '/tmp/foo']))
         self.assertTrue(passing_run(['--additional-platform-directory', '/tmp/../foo']))
@@ -778,10 +776,6 @@ class EndToEndTest(unittest.TestCase):
         fs = unit_test_filesystem()
         res, out, err, user = logging_run(record_results=True, tests_included=True, filesystem=fs)
 
-        # Update this magic number if you add an unexpected test to webkitpy.layout_tests.port.test
-        # FIXME: It's nice to have a routine in port/test.py that returns this number.
-        unexpected_tests_count = 8
-
         self.assertEquals(res, unexpected_tests_count)
         results = self.parse_full_results(fs.files['/tmp/layout-test-results/full_results.json'])
 
@@ -790,6 +784,26 @@ class EndToEndTest(unittest.TestCase):
 
         # Check that we attempted to display the results page in a browser.
         self.assertTrue(user.opened_urls)
+
+    def test_reftest_with_two_notrefs(self):
+        # Test that we update expectations in place. If the expectation
+        # is missing, update the expected generic location.
+        fs = unit_test_filesystem()
+        res, out, err, _ = logging_run(['--no-show-results', 'reftests/foo/'], tests_included=True, filesystem=fs, record_results=True)
+        file_list = fs.written_files.keys()
+        file_list.remove('/tmp/layout-test-results/tests_run0.txt')
+        json_string = fs.read_text_file('/tmp/layout-test-results/full_results.json')
+        json = self.parse_full_results(json_string)
+        self.assertTrue("multiple-match-success.html" not in json["tests"]["reftests"]["foo"])
+        self.assertTrue("multiple-mismatch-success.html" not in json["tests"]["reftests"]["foo"])
+        self.assertTrue("multiple-both-success.html" not in json["tests"]["reftests"]["foo"])
+        self.assertEqual(json["tests"]["reftests"]["foo"]["multiple-match-failure.html"],
+            {"expected": "PASS", "ref_file": "reftests/foo/second-mismatching-ref.html", "actual": "IMAGE", 'is_reftest': True})
+        self.assertEqual(json["tests"]["reftests"]["foo"]["multiple-mismatch-failure.html"],
+            {"expected": "PASS", "ref_file": "reftests/foo/matching-ref.html", "actual": "IMAGE", "is_mismatch_reftest": True})
+        self.assertEqual(json["tests"]["reftests"]["foo"]["multiple-both-failure.html"],
+            {"expected": "PASS", "ref_file": "reftests/foo/matching-ref.html", "actual": "IMAGE", "is_mismatch_reftest": True})
+
 
 class RebaselineTest(unittest.TestCase):
     def assertBaselines(self, file_list, file, extensions, err):

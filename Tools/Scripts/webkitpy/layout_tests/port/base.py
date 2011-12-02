@@ -439,28 +439,25 @@ class Port(object):
             return None
         reftest_list_file = filesystem.read_text_file(reftest_list_path)
 
-        parsed_list = dict()
+        parsed_list = {}
         for line in reftest_list_file.split('\n'):
             line = re.sub('#.+$', '', line)
             split_line = line.split()
             if len(split_line) < 3:
                 continue
             expectation_type, test_file, ref_file = split_line
-            parsed_list[filesystem.join(test_dirpath, test_file)] = (expectation_type, filesystem.join(test_dirpath, ref_file))
+            parsed_list.setdefault(filesystem.join(test_dirpath, test_file), []).append((expectation_type, filesystem.join(test_dirpath, ref_file)))
         return parsed_list
 
-    def _reference_file_for(self, test_name, expectation):
+    def reference_files(self, test_name):
+        """Return a list of expectation (== or !=) and filename pairs"""
+
         reftest_list = self._get_reftest_list(test_name)
         if not reftest_list:
-            if expectation == '==':
-                return self.expected_filename(test_name, '.html')
-            else:
-                return self.expected_filename(test_name, '-mismatch.html')
+            expected_filenames = [('==', self.expected_filename(test_name, '.html')), ('!=', self.expected_filename(test_name, '-mismatch.html'))]
+            return [(expectation, filename) for expectation, filename in expected_filenames if self._filesystem.exists(filename)]
 
-        filename = self._filesystem.join(self.layout_tests_dir(), test_name)
-        if filename not in reftest_list or reftest_list[filename][0] != expectation:
-            return None
-        return reftest_list[filename][1]
+        return reftest_list.get(self._filesystem.join(self.layout_tests_dir(), test_name), [])
 
     def is_reftest(self, test_name):
         reftest_list = self._get_reftest_list(test_name)
@@ -469,14 +466,6 @@ class Port(object):
             return has_expected or self._filesystem.exists(self.expected_filename(test_name, '-mismatch.html'))
         filename = self._filesystem.join(self.layout_tests_dir(), test_name)
         return filename in reftest_list
-
-    def reftest_expected_filename(self, test_name):
-        """Return the filename of reference we expect the test matches."""
-        return self._reference_file_for(test_name, '==')
-
-    def reftest_expected_mismatch_filename(self, test_name):
-        """Return the filename of reference we don't expect the test matches."""
-        return self._reference_file_for(test_name, '!=')
 
     def test_to_uri(self, test_name):
         """Convert a test name to a URI."""
