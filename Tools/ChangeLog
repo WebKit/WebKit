@@ -1,3 +1,25 @@
+2011-12-02  Kentaro Hara  <haraken@chromium.org>
+
+        Move run-bindings-tests implementation to webkitpy/bindings/main.py
+        https://bugs.webkit.org/show_bug.cgi?id=73619
+
+        Reviewed by Adam Barth.
+
+        As run-bindings-tests has been growing, this patch just moves its implementation
+        to webkitpy/bindings/main.py to integrate with the rest of webkitpy.
+
+        No change in behavior.
+
+        * Scripts/run-bindings-tests:
+        (main):
+        * Scripts/webkitpy/bindings/__init__.py: Added.
+        * Scripts/webkitpy/bindings/main.py: Added.
+        (BindingsTests.__init__):
+        (BindingsTests.generate_from_idl):
+        (BindingsTests.generate_supplemental_dependency):
+        (BindingsTests.detect_changes):
+        (BindingsTests.run_tests):
+
 2011-12-01  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Tools/Scripts: eliminate find_test_files from Port class.
