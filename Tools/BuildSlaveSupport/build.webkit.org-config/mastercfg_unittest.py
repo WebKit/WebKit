@@ -64,6 +64,152 @@ class MasterCfgTest(unittest.TestCase):
         self.assertEquals(run_webkit_tests.incorrectLayoutLines, expected_incorrect_lines)
 
 
+class StubStdio(object):
+    def __init__(self, stdio):
+        self._stdio = stdio
+
+    def getText(self):
+        return self._stdio
+
+
+class StubRemoteCommand(object):
+    def __init__(self, rc, stdio):
+        self.rc = rc
+        self.logs = {'stdio': StubStdio(stdio)}
+
+
+class RunUnitTestsTest(unittest.TestCase):
+    def assertFailures(self, expected_failure_count, stdio):
+        if expected_failure_count:
+            rc = 1
+            expected_results = FAILURE
+            expected_text = '{0} unit tests failed or timed out'.format(expected_failure_count)
+        else:
+            rc = 0
+            expected_results = SUCCESS
+            expected_text = 'run-api-tests'
+
+        cmd = StubRemoteCommand(rc, stdio)
+        step = RunUnitTests()
+        step.commandComplete(cmd)
+        actual_results = step.evaluateCommand(cmd)
+        actual_failure_count = step.failedTestCount
+        actual_text = step.getText(cmd, actual_results)[0]
+
+        self.assertEqual(expected_results, actual_results)
+        self.assertEqual(expected_failure_count, actual_failure_count)
+        self.assertEqual(expected_text, actual_text)
+
+    def test_no_failures_or_timeouts(self):
+        self.assertFailures(0, """Note: Google Test filter = WebViewDestructionWithHostWindow.DestroyViewWindowWithoutClose
+[==========] Running 1 test from 1 test case.
+[----------] Global test environment set-up.
+[----------] 1 test from WebViewDestructionWithHostWindow
+[ RUN      ] WebViewDestructionWithHostWindow.DestroyViewWindowWithoutClose
+[       OK ] WebViewDestructionWithHostWindow.DestroyViewWindowWithoutClose (127 ms)
+[----------] 1 test from WebViewDestructionWithHostWindow (127 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test case ran. (127 ms total)
+[  PASSED  ] 1 test.
+""")
+
+    def test_one_failure(self):
+        self.assertFailures(1, """Note: Google Test filter = WebViewDestructionWithHostWindow.DestroyViewWindowWithoutClose
+[==========] Running 1 test from 1 test case.
+[----------] Global test environment set-up.
+[----------] 1 test from WebViewDestructionWithHostWindow
+[ RUN      ] WebViewDestructionWithHostWindow.DestroyViewWindowWithoutClose
+[       OK ] WebViewDestructionWithHostWindow.DestroyViewWindowWithoutClose (127 ms)
+[----------] 1 test from WebViewDestructionWithHostWindow (127 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test case ran. (127 ms total)
+[  PASSED  ] 1 test.
+Tests that failed:
+  WebKit2.WebKit2.CanHandleRequest
+""")
+
+    def test_multiple_failures(self):
+        self.assertFailures(4, """Note: Google Test filter = WebViewDestructionWithHostWindow.DestroyViewWindowWithoutClose
+[==========] Running 1 test from 1 test case.
+[----------] Global test environment set-up.
+[----------] 1 test from WebViewDestructionWithHostWindow
+[ RUN      ] WebViewDestructionWithHostWindow.DestroyViewWindowWithoutClose
+[       OK ] WebViewDestructionWithHostWindow.DestroyViewWindowWithoutClose (127 ms)
+[----------] 1 test from WebViewDestructionWithHostWindow (127 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test case ran. (127 ms total)
+[  PASSED  ] 1 test.
+Tests that failed:
+  WebKit2.WebKit2.CanHandleRequest
+  WebKit2.WebKit2.DocumentStartUserScriptAlertCrashTest
+  WebKit2.WebKit2.HitTestResultNodeHandle
+  WebKit2.WebKit2.InjectedBundleBasic
+""")
+
+    def test_one_timeout(self):
+        self.assertFailures(1, """Note: Google Test filter = WebViewDestructionWithHostWindow.DestroyViewWindowWithoutClose
+[==========] Running 1 test from 1 test case.
+[----------] Global test environment set-up.
+[----------] 1 test from WebViewDestructionWithHostWindow
+[ RUN      ] WebViewDestructionWithHostWindow.DestroyViewWindowWithoutClose
+[       OK ] WebViewDestructionWithHostWindow.DestroyViewWindowWithoutClose (127 ms)
+[----------] 1 test from WebViewDestructionWithHostWindow (127 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test case ran. (127 ms total)
+[  PASSED  ] 1 test.
+Tests that timed out:
+  WebKit2.WebKit2.CanHandleRequest
+""")
+
+    def test_multiple_timeouts(self):
+        self.assertFailures(4, """Note: Google Test filter = WebViewDestructionWithHostWindow.DestroyViewWindowWithoutClose
+[==========] Running 1 test from 1 test case.
+[----------] Global test environment set-up.
+[----------] 1 test from WebViewDestructionWithHostWindow
+[ RUN      ] WebViewDestructionWithHostWindow.DestroyViewWindowWithoutClose
+[       OK ] WebViewDestructionWithHostWindow.DestroyViewWindowWithoutClose (127 ms)
+[----------] 1 test from WebViewDestructionWithHostWindow (127 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test case ran. (127 ms total)
+[  PASSED  ] 1 test.
+Tests that timed out:
+  WebKit2.WebKit2.CanHandleRequest
+  WebKit2.WebKit2.DocumentStartUserScriptAlertCrashTest
+  WebKit2.WebKit2.HitTestResultNodeHandle
+  WebKit2.WebKit2.InjectedBundleBasic
+""")
+
+    def test_multiple_failures_and_timeouts(self):
+        self.assertFailures(8, """Note: Google Test filter = WebViewDestructionWithHostWindow.DestroyViewWindowWithoutClose
+[==========] Running 1 test from 1 test case.
+[----------] Global test environment set-up.
+[----------] 1 test from WebViewDestructionWithHostWindow
+[ RUN      ] WebViewDestructionWithHostWindow.DestroyViewWindowWithoutClose
+[       OK ] WebViewDestructionWithHostWindow.DestroyViewWindowWithoutClose (127 ms)
+[----------] 1 test from WebViewDestructionWithHostWindow (127 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test case ran. (127 ms total)
+[  PASSED  ] 1 test.
+Tests that failed:
+  WebKit2.WebKit2.CanHandleRequest
+  WebKit2.WebKit2.DocumentStartUserScriptAlertCrashTest
+  WebKit2.WebKit2.HitTestResultNodeHandle
+Tests that timed out:
+  WebKit2.WebKit2.InjectedBundleBasic
+  WebKit2.WebKit2.LoadCanceledNoServerRedirectCallback
+  WebKit2.WebKit2.MouseMoveAfterCrash
+  WebKit2.WebKit2.ResponsivenessTimerDoesntFireEarly
+  WebKit2.WebKit2.WebArchive
+""")
+
+
+
 # FIXME: We should run this file as part of test-webkitpy.
 # Unfortunately test-webkitpy currently requires that unittests
 # be located in a directory with a valid module name.

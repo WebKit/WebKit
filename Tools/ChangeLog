@@ -1,5 +1,40 @@
 2011-12-02  Adam Roben  <aroben@apple.com>
 
+        Teach build.webkit.org to display how many unit tests failed or timed out
+
+        Fixes <http://webkit.org/b/73659> It's hard to tell how many unit tests are failing on
+        build.webkit.org
+
+        We now display something like "5 unit tests failed or timed out". Eventually we might want
+        to split out how many failure vs. timeouts there were.
+
+        Reviewed by Darin Adler.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (TestWithFailureCount): Moved this class up to the top of the file so it is before any other
+        classes that may want to subclass it.
+        (RunUnitTests): Changed to inherit from TestWithFailureCount.
+        (RunUnitTests.countFailures): Added. Counts the number of tests following the "Tests that
+        timed out:" and "Tests that failed:" lines, if present.
+
+        * BuildSlaveSupport/build.webkit.org-config/mastercfg_unittest.py:
+        (StubStdio):
+        (StubRemoteCommand):
+        Added these two stub classes to mimic buildbot's RemoteCommand and log classes.
+
+        (RunUnitTestsTest.assertFailures): Helper method to check that we interpreted the results of
+        the test run correctly.
+
+        (RunUnitTestsTest.test_no_failures_or_timeouts):
+        (RunUnitTestsTest.test_one_failure):
+        (RunUnitTestsTest.test_multiple_failures):
+        (RunUnitTestsTest.test_one_timeout):
+        (RunUnitTestsTest.test_multiple_timeouts):
+        (RunUnitTestsTest.test_multiple_failures_and_timeouts):
+        Test various cases.
+
+2011-12-02  Adam Roben  <aroben@apple.com>
+
         Teach prepare-ChangeLog to treat master.cfg as a Python file
 
         Fixes <http://webkit.org/b/73658> prepare-ChangeLog doesn't show modified classes/functions
