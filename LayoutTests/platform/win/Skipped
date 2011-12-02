@@ -1279,6 +1279,10 @@ editing/pasteboard/onpaste-text-html-types.html
 editing/pasteboard/data-transfer-items.html
 editing/pasteboard/data-transfer-items-image-png.html
 
+# Custom MIME type support in DataTransfer not yet implemented.
+editing/pasteboard/clipboard-customData.html
+fast/events/drag-customData.html
+
 # Needs expectation update
 fast/dom/HTMLMeterElement/meter-element.html
 fast/dom/HTMLMeterElement/meter-boundary-values.html

@@ -1,3 +1,19 @@
+2011-12-02  Daniel Cheng  <dcheng@chromium.org>
+
+        [chromium] Add plumbing for supporting custom MIME types in DataTransfer.
+        https://bugs.webkit.org/show_bug.cgi?id=73594
+
+        Reviewed by David Levin.
+
+        * public/platform/WebClipboard.h:
+        (WebKit::WebClipboard::readCustomData):
+        * public/platform/WebDragData.h:
+        * src/PlatformSupport.cpp:
+        (WebCore::PlatformSupport::clipboardReadCustomData):
+        * src/WebDragData.cpp:
+        (WebKit::WebDragData::customData):
+        (WebKit::WebDragData::setCustomData):
+
 2011-12-02  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Rename "multientry" to "multiEntry" per spec change

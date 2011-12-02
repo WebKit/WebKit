@@ -3701,6 +3701,9 @@ BUG_SENORBLANCO GPU : fast/canvas/canvas-transforms-fillRect-shadow.html = TEXT
 
 BUGWK66953 : transitions/default-timing-function.html = PASS FAIL
 
+// Depends on Chromium follow up change before they will pass.
+BUGCR31037 : editing/pasteboard/clipboard-customData.html = FAIL
+
 // Need to rebaseline on win and mac.
 BUG_TONY MAC : css3/flexbox/repaint.html = PASS FAIL
 BUG_TONY MAC : css3/flexbox/repaint-rtl-column.html = PASS FAIL

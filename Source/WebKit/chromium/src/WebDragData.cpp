@@ -38,6 +38,7 @@
 #include "WebURL.h"
 #include "WebVector.h"
 
+#include <wtf/HashMap.h>
 #include <wtf/PassRefPtr.h>
 
 using namespace WebCore;
@@ -203,6 +204,28 @@ void WebDragData::setFileContent(const WebData& fileContent)
 {
     ensureMutable();
     m_private->setFileContent(fileContent);
+}
+
+WebVector<WebDragData::CustomData> WebDragData::customData() const
+{
+    ASSERT(!isNull());
+    WebVector<CustomData> customData(static_cast<size_t>(m_private->customData().size()));
+    HashMap<String, String>::const_iterator begin = m_private->customData().begin();
+    HashMap<String, String>::const_iterator end = m_private->customData().end();
+    size_t i = 0;
+    for (HashMap<String, String>::const_iterator it = begin; it != end; ++it) {
+        CustomData data = {it->first, it->second};
+        customData[i++] = data;
+    }
+    return customData;
+}
+
+void WebDragData::setCustomData(const WebVector<WebDragData::CustomData>& customData)
+{
+    ensureMutable();
+    HashMap<String, String>& customDataMap = m_private->customData();
+    for (size_t i = 0; i < customData.size(); ++i)
+        customDataMap.set(customData[i].type, customData[i].data);
 }
 
 WebDragData::WebDragData(const WTF::PassRefPtr<WebCore::ChromiumDataObject>& data)

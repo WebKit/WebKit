@@ -334,6 +334,10 @@ svg/as-image/drag-svg-as-image.html
 fast/forms/range/slider-delete-while-dragging-thumb.html
 fast/forms/select-multiple-elements-with-mouse-drag-with-options-less-than-size.html
 
+# Custom MIME type support in DataTransfer not yet implemented.
+editing/pasteboard/clipboard-customData.html
+fast/events/drag-customData.html
+
 # EventSender::dumpFilenameBeingDragged not implemented.
 # https://bugs.webkit.org/show_bug.cgi?id=61828
 fast/events/drag-image-filename.html

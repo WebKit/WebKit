@@ -105,6 +105,7 @@ public:
     static String clipboardReadPlainText(PasteboardPrivate::ClipboardBuffer);
     static void clipboardReadHTML(PasteboardPrivate::ClipboardBuffer, String*, KURL*, unsigned* fragmentStart, unsigned* fragmentEnd);
     static PassRefPtr<SharedBuffer> clipboardReadImage(PasteboardPrivate::ClipboardBuffer);
+    static String clipboardReadCustomData(PasteboardPrivate::ClipboardBuffer, const String& type);
 
     // Only the clipboardRead functions take a buffer argument because
     // Chromium currently uses a different technique to write to alternate

@@ -78,6 +78,8 @@ public:
         Buffer buffer, WebURL* pageURL, unsigned* fragmentStart,
         unsigned* fragmentEnd) { return WebString(); }
     virtual WebData readImage(Buffer) { return WebData(); }
+    virtual WebString readCustomData(
+        Buffer, const WebString& type) { return WebString(); }
 
     virtual void writePlainText(const WebString&) { }
     virtual void writeHTML(

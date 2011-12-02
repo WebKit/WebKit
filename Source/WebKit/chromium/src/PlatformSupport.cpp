@@ -202,6 +202,12 @@ PassRefPtr<SharedBuffer> PlatformSupport::clipboardReadImage(
     return webKitPlatformSupport()->clipboard()->readImage(static_cast<WebClipboard::Buffer>(buffer));
 }
 
+String PlatformSupport::clipboardReadCustomData(
+    PasteboardPrivate::ClipboardBuffer buffer, const String& type)
+{
+    return webKitPlatformSupport()->clipboard()->readCustomData(static_cast<WebClipboard::Buffer>(buffer), type);
+}
+
 void PlatformSupport::clipboardWriteSelection(const String& htmlText,
                                              const KURL& sourceURL,
                                              const String& plainText,

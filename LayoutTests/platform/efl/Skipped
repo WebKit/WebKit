@@ -134,6 +134,7 @@ fast/events/crash-on-mutate-during-drop.html
 fast/events/drag-and-drop-dataTransfer-types-nocrash.html
 fast/events/drag-and-drop-fire-drag-dragover.html
 fast/events/drag-and-drop.html
+fast/events/drag-customData.html
 fast/events/drag-selects-image.html
 fast/events/dropzone-001.html
 fast/events/dropzone-002.html

@@ -34,6 +34,7 @@
 #include "KURL.h"
 #include "PlatformString.h"
 #include "SharedBuffer.h"
+#include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
@@ -75,7 +76,7 @@ public:
     bool hasData() const;
 
     HashSet<String> types() const;
-    String getData(const String& type, bool& success);
+    String getData(const String& type, bool& success) const;
     bool setData(const String& type, const String& data);
 
     // Special handlers for URL/HTML metadata.
@@ -96,6 +97,8 @@ public:
     void setFileContentFilename(const String& fileContentFilename) { m_fileContentFilename = fileContentFilename; }
     PassRefPtr<SharedBuffer> fileContent() const { return m_fileContent; }
     void setFileContent(PassRefPtr<SharedBuffer> fileContent) { m_fileContent = fileContent; }
+    const HashMap<String, String>& customData() const { return m_customData; }
+    HashMap<String, String>& customData() { return m_customData; }
 
 private:
     explicit ChromiumDataObject(StorageMode);
@@ -118,6 +121,8 @@ private:
     String m_fileContentFilename;
     RefPtr<SharedBuffer> m_fileContent;
 
+    HashMap<String, String> m_customData;
+
     // These two are linked. Setting m_url will set m_uriList to the same
     // string value; setting m_uriList will cause its contents to be parsed
     // according to RFC 2483 and the first URL found will be set in m_url.
@@ -128,4 +133,3 @@ private:
 } // namespace WebCore
 
 #endif
-

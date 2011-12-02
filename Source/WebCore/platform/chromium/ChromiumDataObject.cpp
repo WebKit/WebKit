@@ -124,10 +124,15 @@ HashSet<String> ChromiumDataObject::types() const
     if (!m_textHtml.isEmpty())
         results.add(mimeTypeTextHTML);
 
+    for (HashMap<String, String>::const_iterator::Keys it = m_customData.begin().keys();
+         it != m_customData.end().keys(); ++it) {
+        results.add(*it);
+    }
+
     return results;
 }
 
-String ChromiumDataObject::getData(const String& type, bool& success)
+String ChromiumDataObject::getData(const String& type, bool& success) const
 {
     if (type == mimeTypeTextPlain) {
         if (m_storageMode == Pasteboard) {
@@ -165,6 +170,18 @@ String ChromiumDataObject::getData(const String& type, bool& success)
     if (type == mimeTypeDownloadURL) {
         success = !m_downloadMetadata.isEmpty();
         return m_downloadMetadata;
+    }
+
+    if (m_storageMode == Pasteboard) {
+        String data = PlatformSupport::clipboardReadCustomData(currentPasteboardBuffer(), type);
+        success = !data.isEmpty();
+        return data;
+    }
+
+    HashMap<String, String>::const_iterator it = m_customData.find(type);
+    if (it != m_customData.end()) {
+        success = true;
+        return it->second;
     }
 
     success = false;
@@ -217,7 +234,11 @@ bool ChromiumDataObject::setData(const String& type, const String& data)
         return true;
     }
 
-    return false;
+    if (type.isEmpty())
+        return false;
+
+    m_customData.set(type, data);
+    return true;
 }
 
 bool ChromiumDataObject::containsFilenames() const
@@ -256,4 +277,3 @@ ChromiumDataObject::ChromiumDataObject(const ChromiumDataObject& other)
 }
 
 } // namespace WebCore
-

@@ -32,6 +32,7 @@
 #define WebDragData_h
 
 #include "WebCommon.h"
+#include "WebString.h"
 
 #if WEBKIT_IMPLEMENTATION
 namespace WebCore { class ChromiumDataObject; }
@@ -42,7 +43,6 @@ namespace WebKit {
 
 class WebData;
 class WebDragDataPrivate;
-class WebString;
 class WebURL;
 template <typename T> class WebVector;
 
@@ -97,6 +97,13 @@ public:
 
     WEBKIT_EXPORT WebData fileContent() const;
     WEBKIT_EXPORT void setFileContent(const WebData&);
+
+    struct CustomData {
+        WebString type;
+        WebString data;
+    };
+    WEBKIT_EXPORT WebVector<CustomData> customData() const;
+    WEBKIT_EXPORT void setCustomData(const WebVector<CustomData>&);
 
 #if WEBKIT_IMPLEMENTATION
     WebDragData(const WTF::PassRefPtr<WebCore::ChromiumDataObject>&);

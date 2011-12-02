@@ -1,3 +1,21 @@
+2011-12-02  Daniel Cheng  <dcheng@chromium.org>
+
+        [chromium] Add plumbing for supporting custom MIME types in DataTransfer.
+        https://bugs.webkit.org/show_bug.cgi?id=73594
+
+        Reviewed by David Levin.
+
+        Tests: editing/pasteboard/clipboard-customData.html
+               fast/events/drag-customData.html
+
+        * platform/chromium/ChromiumDataObject.cpp:
+        (WebCore::ChromiumDataObject::types):
+        (WebCore::ChromiumDataObject::getData):
+        (WebCore::ChromiumDataObject::setData):
+        * platform/chromium/ChromiumDataObject.h:
+        (WebCore::ChromiumDataObject::customData):
+        * platform/chromium/PlatformSupport.h:
+
 2011-12-02  Darin Adler  <darin@apple.com>
 
         [Mac] Form stream data structures still not threadsafe
