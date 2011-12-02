@@ -1,3 +1,9 @@
+2011-12-02  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix GTK+ build after r101750.
+
+        * GNUmakefile.am: Add missing files.
+
 2011-12-02  Gustavo Noronha Silva  <gns@gnome.org>
 
         Unreviewed. GTK+ build fix.
