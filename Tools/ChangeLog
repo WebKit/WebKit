@@ -54,6 +54,18 @@
 
 2011-12-02  Gustavo Noronha Silva  <gns@gnome.org>
 
+        [GTK] Add glib, glib-networking, gnutls and libsoup to jhbuild
+        https://bugs.webkit.org/show_bug.cgi?id=73664
+
+        Reviewed by Martin Robinson.
+
+        This patch adds our HTTP library and its main dependencies; this
+        should not affect layout or rendering.
+
+        * gtk/jhbuild.modules:
+
+2011-12-02  Gustavo Noronha Silva  <gns@gnome.org>
+
         [GTK] Also run DumpRenderTree under jhbuild
         https://bugs.webkit.org/show_bug.cgi?id=73646
 
