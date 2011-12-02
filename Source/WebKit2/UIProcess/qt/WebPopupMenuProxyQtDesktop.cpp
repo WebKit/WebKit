@@ -34,6 +34,7 @@
 #include <QMouseEvent>
 #include <QStandardItemModel>
 #include "WebPopupItem.h"
+#include <wtf/CurrentTime.h>
 
 using namespace WebCore;
 
@@ -68,6 +69,7 @@ void WebPopupMenuProxyQtDesktop::showPopupMenu(const IntRect& rect, WebCore::Tex
 
     QMouseEvent event(QEvent::MouseButtonPress, QCursor::pos(), Qt::LeftButton,
                       Qt::LeftButton, Qt::NoModifier);
+    event.setTimestamp(static_cast<qint64>(WTF::currentTimeMS()));
     QCoreApplication::sendEvent(this, &event);
 }
 
