@@ -34,6 +34,7 @@
 #include "JSFloat64Array.h"
 #include "JSHTMLAudioElement.h"
 #include "JSHTMLCollection.h"
+#include "JSHTMLOptionElement.h"
 #include "JSHistory.h"
 #include "JSImageConstructor.h"
 #include "JSInt16Array.h"
@@ -42,7 +43,6 @@
 #include "JSLocation.h"
 #include "JSMessageChannel.h"
 #include "JSMessagePortCustom.h"
-#include "JSOptionConstructor.h"
 #include "JSUint16Array.h"
 #include "JSUint32Array.h"
 #include "JSUint8Array.h"
@@ -488,7 +488,7 @@ JSValue JSDOMWindow::image(ExecState* exec) const
 
 JSValue JSDOMWindow::option(ExecState* exec) const
 {
-    return getDOMConstructor<JSOptionConstructor>(exec, this);
+    return getDOMConstructor<JSHTMLOptionElementNamedConstructor>(exec, this);
 }
 
 #if ENABLE(VIDEO)

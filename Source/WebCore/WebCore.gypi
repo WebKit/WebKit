@@ -1933,8 +1933,6 @@
             'bindings/js/JSNodeFilterCustom.cpp',
             'bindings/js/JSNodeIteratorCustom.cpp',
             'bindings/js/JSNodeListCustom.cpp',
-            'bindings/js/JSOptionConstructor.cpp',
-            'bindings/js/JSOptionConstructor.h',
             'bindings/js/JSPeerConnectionCustom.cpp',
             'bindings/js/JSPluginElementFunctions.cpp',
             'bindings/js/JSPopStateEventCustom.cpp',

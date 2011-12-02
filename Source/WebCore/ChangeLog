@@ -1,5 +1,35 @@
 2011-12-01  Kentaro Hara  <haraken@chromium.org>
 
+        Replace a custom constructor of window.Option with the [NamedConstructor] IDL
+        https://bugs.webkit.org/show_bug.cgi?id=73498
+
+        Reviewed by Adam Barth.
+
+        Removes JSOptionConstructor.{h,cpp} and generates the constructor of window.Option
+        by the [NamedConstructor] IDL.
+
+        Tests: fast/js/custom-constructors.html
+               fast/forms/option-index.html
+               fast/forms/add-and-remove-option.html
+               fast/dom/dom-add-optionelement.html
+
+        * GNUmakefile.list.am: Removed JSOptionConstructor.{h,cpp}.
+        * Target.pri: Ditto.
+        * UseJSC.cmake: Ditto.
+        * WebCore.gypi: Ditto.
+        * WebCore.order: Ditto.
+        * WebCore.vcproj/WebCore.vcproj: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * bindings/js/JSBindingsAllInOne.cpp: Ditto.
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::option): Specifies the NamedConstructor.
+        * bindings/js/JSOptionConstructor.cpp: Removed.
+        * bindings/js/JSOptionConstructor.h: Removed.
+        * page/DOMWindow.idl: Removed the [JSCustomConstructor] IDL.
+
+2011-12-01  Kentaro Hara  <haraken@chromium.org>
+
         Replace a custom constructor of window.Audio with the [NamedConstructor] IDL
         https://bugs.webkit.org/show_bug.cgi?id=73496
 

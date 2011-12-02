@@ -327,7 +327,6 @@ v8 {
         bindings/js/JSNodeFilterCustom.cpp \
         bindings/js/JSNodeIteratorCustom.cpp \
         bindings/js/JSNodeListCustom.cpp \
-        bindings/js/JSOptionConstructor.cpp \
         bindings/js/JSPluginElementFunctions.cpp \
         bindings/js/JSPopStateEventCustom.cpp \
         bindings/js/JSProcessingInstructionCustom.cpp \
@@ -1431,7 +1430,6 @@ v8 {
         bindings/js/JSLocationCustom.h \
         bindings/js/JSNodeCustom.h \
         bindings/js/JSNodeFilterCondition.h \
-        bindings/js/JSOptionConstructor.h \
         bindings/js/JSPluginElementFunctions.h \
         bindings/js/JSStorageCustom.h \
         bindings/js/JSWorkerContextBase.h \
