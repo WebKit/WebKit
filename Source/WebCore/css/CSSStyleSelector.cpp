@@ -2218,8 +2218,8 @@ const CSSStyleSelector::MatchedStyleDeclarationCacheItem* CSSStyleSelector::find
 {
     ASSERT(hash);
 
-    MatchedStyleDeclarationCache::iterator it = m_matchStyleDeclarationCache.find(hash);
-    if (it == m_matchStyleDeclarationCache.end())
+    MatchedStyleDeclarationCache::iterator it = m_matchedStyleDeclarationCache.find(hash);
+    if (it == m_matchedStyleDeclarationCache.end())
         return 0;
     MatchedStyleDeclarationCacheItem& cacheItem = it->second;
     ASSERT(cacheItem.matchResult.isCacheable);
@@ -2246,7 +2246,12 @@ void CSSStyleSelector::addToMatchedDeclarationCache(const RenderStyle* style, co
     // The RenderStyle in the cache is really just a holder for the substructures and never used as-is.
     cacheItem.renderStyle = RenderStyle::clone(style);
     cacheItem.parentRenderStyle = RenderStyle::clone(parentStyle);
-    m_matchStyleDeclarationCache.add(hash, cacheItem);
+    m_matchedStyleDeclarationCache.add(hash, cacheItem);
+}
+    
+void CSSStyleSelector::invalidateMatchedDeclarationCache()
+{
+    m_matchedStyleDeclarationCache.clear();
 }
 
 static bool isCacheableInMatchedDeclarationCache(const RenderStyle* style, const RenderStyle* parentStyle)

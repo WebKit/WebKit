@@ -36,6 +36,7 @@
 #include "CSSPrimitiveValue.h"
 #include "CSSPropertyNames.h"
 #include "CSSSegmentedFontFace.h"
+#include "CSSStyleSelector.h"
 #include "CSSUnicodeRangeValue.h"
 #include "CSSValueKeywords.h"
 #include "CSSValueList.h"
@@ -368,7 +369,11 @@ void CSSFontSelector::dispatchInvalidationCallbacks()
         clients[i]->fontsNeedUpdate(this);
 
     // FIXME: Make Document a FontSelectorClient so that it can simply register for invalidation callbacks.
-    if (!m_document || m_document->inPageCache() || !m_document->renderer())
+    if (!m_document)
+        return;
+    if (CSSStyleSelector* styleSelector = m_document->styleSelectorIfExists())
+        styleSelector->invalidateMatchedDeclarationCache();
+    if (m_document->inPageCache() || !m_document->renderer())
         return;
     m_document->scheduleForcedStyleRecalc();
 }

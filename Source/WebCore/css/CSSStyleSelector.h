@@ -210,6 +210,8 @@ public:
     bool usesLinkRules() const { return m_features.usesLinkRules; }
 
     static bool createTransformOperations(CSSValue* inValue, RenderStyle* inStyle, RenderStyle* rootStyle, TransformOperations& outOperations);
+    
+    void invalidateMatchedDeclarationCache();
 
 #if ENABLE(CSS_FILTERS)
     bool createFilterOperations(CSSValue* inValue, RenderStyle* inStyle, RenderStyle* rootStyle, FilterOperations& outOperations);
@@ -365,7 +367,7 @@ private:
     Vector<MatchedStyleDeclaration, 64> m_matchedDecls;
 
     typedef HashMap<unsigned, MatchedStyleDeclarationCacheItem> MatchedStyleDeclarationCache;
-    MatchedStyleDeclarationCache m_matchStyleDeclarationCache;
+    MatchedStyleDeclarationCache m_matchedStyleDeclarationCache;
 
     // A buffer used to hold the set of matched rules for an element, and a temporary buffer used for
     // merge sorting.

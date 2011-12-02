@@ -1,3 +1,27 @@
+2011-12-02  Antti Koivisto  <antti@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=73520
+        REGRESSION(r101524): Article titles invisible until hover on blaze.com
+
+        Reviewed by Darin Adler.
+        
+        We need to invalidate the matched declaration cache when new web fonts are loaded.
+        Fonts in the cached RenderStyles may not be valid anymore.
+        
+        Also renamed m_matchStyleDeclarationCache -> m_matchedStyleDeclarationCache.
+        
+        Test reduction by the Reduction Fairy (aka kling).
+
+        Test: fast/css/font-face-cache-bug.html
+
+        * css/CSSFontSelector.cpp:
+        (WebCore::CSSFontSelector::dispatchInvalidationCallbacks):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::findFromMatchedDeclarationCache):
+        (WebCore::CSSStyleSelector::addToMatchedDeclarationCache):
+        (WebCore::CSSStyleSelector::invalidateMatchedDeclarationCache):
+        * css/CSSStyleSelector.h:
+
 2011-11-02  Jer Noble  <jer.noble@apple.com>
 
         MediaControls should use MediaController if present.
