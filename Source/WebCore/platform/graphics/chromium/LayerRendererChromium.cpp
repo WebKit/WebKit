@@ -187,8 +187,8 @@ bool LayerRendererChromium::initialize()
         m_capabilities.usingAcceleratedPainting = true;
 
     WebCore::Extensions3D* extensions = m_context->getExtensions();
-    m_capabilities.usingFrontBufferCached = extensions->supports("GL_CHROMIUM_front_buffer_cached");
-    if (m_capabilities.usingFrontBufferCached)
+    m_capabilities.contextHasCachedFrontBuffer = extensions->supports("GL_CHROMIUM_front_buffer_cached");
+    if (m_capabilities.contextHasCachedFrontBuffer)
         extensions->ensureEnabled("GL_CHROMIUM_front_buffer_cached");
 
     m_capabilities.usingPostSubBuffer = extensions->supports("GL_CHROMIUM_post_sub_buffer");

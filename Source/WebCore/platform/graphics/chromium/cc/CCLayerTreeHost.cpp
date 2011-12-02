@@ -92,7 +92,6 @@ bool CCLayerTreeHost::initialize()
 
     // Update m_settings based on capabilities that we got back from the renderer.
     m_settings.acceleratePainting = m_proxy->layerRendererCapabilities().usingAcceleratedPainting;
-    m_settings.discardAllTextures = m_proxy->layerRendererCapabilities().usingFrontBufferCached;
 
     m_contentsTextureManager = TextureManager::create(TextureManager::highLimitBytes(), m_proxy->layerRendererCapabilities().maxTextureSize);
     return true;
@@ -277,7 +276,7 @@ void CCLayerTreeHost::setVisible(bool visible)
 void CCLayerTreeHost::didBecomeInvisibleOnImplThread(CCLayerTreeHostImpl* hostImpl)
 {
     ASSERT(CCProxy::isImplThread());
-    if (m_settings.discardAllTextures)
+    if (m_proxy->layerRendererCapabilities().contextHasCachedFrontBuffer)
         contentsTextureManager()->evictAndDeleteAllTextures(hostImpl->contentsTextureAllocator());
     else {
         contentsTextureManager()->reduceMemoryToLimit(TextureManager::reclaimLimitBytes());

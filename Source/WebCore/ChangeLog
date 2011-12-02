@@ -1,3 +1,19 @@
+2011-12-02  Jonathan Backer  <backer@chromium.org>
+
+        [chromium] Eliminate unnecessary state on previous CL
+        https://bugs.webkit.org/show_bug.cgi?id=73661
+
+        Reviewed by Kenneth Russell.
+
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::initialize):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.cpp:
+        (WebCore::CCLayerTreeHost::initialize):
+        (WebCore::CCLayerTreeHost::didBecomeInvisibleOnImplThread):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.h:
+        (WebCore::CCSettings::CCSettings):
+        (WebCore::LayerRendererCapabilities::LayerRendererCapabilities):
+
 2011-12-02  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/10520670> REGRESSION (r91738): didFinishLoad is called before custom fonts have finished loading
