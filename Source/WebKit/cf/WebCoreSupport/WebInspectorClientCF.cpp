@@ -25,36 +25,12 @@
 
 // FIXME: On Windows, we require all WebKit source files to include config.h
 // before including any other files. Failing to include config.h will leave
-// WTF_USE_CF and WTF_USE_JSC undefined, causing build failures in this 
+// WTF_USE_CF undefined, causing build failures in this 
 // file. But Mac doesn't have a config.h for WebKit, so we can't include the 
-// Windows one here. For now we can just define WTF_USE_CF,  WTF_USE_JSC, and
+// Windows one here. For now we can just define WTF_USE_CF and
 // WTF_USE_CFNETWORK manually, but we need a better long-term solution.
 #ifndef WTF_USE_CF
 #define WTF_USE_CF 1
-#endif
-
-#ifndef WTF_USE_JSC
-#define WTF_USE_JSC 1
-#endif
-
-// Leave these set to nothing until we switch Mac and Win ports over to 
-// using the export macros.
-#define JS_EXPORT_PRIVATE
-#define WTF_EXPORT_PRIVATE
-
-#if defined(WIN32) || defined(_WIN32)
-#ifndef WTF_USE_CFNETWORK
-#define WTF_USE_CFNETWORK 1
-#endif
-#if defined(BUILDING_JavaScriptCore) || defined(BUILDING_WTF)
-#define JS_EXPORTDATA __declspec(dllexport)
-#else
-#define JS_EXPORTDATA __declspec(dllimport)
-#endif
-#define JS_EXPORTCLASS JS_EXPORTDATA
-#else
-#define JS_EXPORTDATA
-#define JS_EXPORTCLASS
 #endif
 
 #include "WebInspectorClient.h"

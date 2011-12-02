@@ -165,13 +165,13 @@ inline bool equalIgnoringCase(const String& a, const AtomicString& b) { return e
 // Define external global variables for the commonly used atomic strings.
 // These are only usable from the main thread.
 #ifndef ATOMICSTRING_HIDE_GLOBALS
-extern const JS_EXPORTDATA AtomicString nullAtom;
-extern const JS_EXPORTDATA AtomicString emptyAtom;
-extern const JS_EXPORTDATA AtomicString textAtom;
-extern const JS_EXPORTDATA AtomicString commentAtom;
-extern const JS_EXPORTDATA AtomicString starAtom;
-extern const JS_EXPORTDATA AtomicString xmlAtom;
-extern const JS_EXPORTDATA AtomicString xmlnsAtom;
+extern const WTF_EXPORTDATA AtomicString nullAtom;
+extern const WTF_EXPORTDATA AtomicString emptyAtom;
+extern const WTF_EXPORTDATA AtomicString textAtom;
+extern const WTF_EXPORTDATA AtomicString commentAtom;
+extern const WTF_EXPORTDATA AtomicString starAtom;
+extern const WTF_EXPORTDATA AtomicString xmlAtom;
+extern const WTF_EXPORTDATA AtomicString xmlnsAtom;
 
 inline AtomicString AtomicString::fromUTF8(const char* characters, size_t length)
 {

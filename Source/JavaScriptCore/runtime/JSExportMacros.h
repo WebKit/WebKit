@@ -27,44 +27,49 @@
  * properly on all platforms and compilers that WebKit builds under.
  */
 
-#ifndef ExportMacros_h
-#define ExportMacros_h
+#ifndef JSExportMacros_h
+#define JSExportMacros_h
 
-#include "Platform.h"
+#include <wtf/Platform.h>
+#include <wtf/ExportMacros.h>
 
 // See note in wtf/Platform.h for more info on EXPORT_MACROS.
 #if USE(EXPORT_MACROS)
 
-#if !PLATFORM(CHROMIUM) && OS(WINDOWS) && !COMPILER(GCC)
-#define WTF_EXPORT __declspec(dllexport)
-#define WTF_IMPORT __declspec(dllimport)
-#define WTF_HIDDEN
-#elif defined(__GNUC__) && !defined(__CC_ARM) && !defined(__ARMCC__)
-#define WTF_EXPORT __attribute__((visibility("default")))
-#define WTF_IMPORT WTF_EXPORT
-#define WTF_HIDDEN __attribute__((visibility("hidden")))
+#if defined(BUILDING_JavaScriptCore)
+#define JS_EXPORT_PRIVATE WTF_EXPORT
 #else
-#define WTF_EXPORT
-#define WTF_IMPORT
-#define WTF_HIDDEN
+#define JS_EXPORT_PRIVATE WTF_IMPORT
 #endif
+
+#define JS_EXPORT_HIDDEN WTF_HIDDEN
+#define JS_EXPORTDATA JS_EXPORT_PRIVATE
+#define JS_EXPORTCLASS JS_EXPORT_PRIVATE
 
 #else // !USE(EXPORT_MACROS)
 
-#define WTF_EXPORT
-#define WTF_IMPORT
-#define WTF_HIDDEN
+#if !PLATFORM(CHROMIUM) && OS(WINDOWS) && !defined(BUILDING_WX__) && !COMPILER(GCC)
+
+#if defined(BUILDING_JavaScriptCore)
+#define JS_EXPORTDATA __declspec(dllexport)
+#else
+#define JS_EXPORTDATA __declspec(dllimport)
+#endif
+
+#define JS_EXPORTCLASS JS_EXPORTDATA
+
+#else // !PLATFORM...
+
+#define JS_EXPORTDATA
+#define JS_EXPORTCLASS
+
+#endif // !PLATFORM...
+
+#define JS_EXPORT_PRIVATE
+#define JS_EXPORT_HIDDEN
 
 #endif // USE(EXPORT_MACROS)
 
-#if defined(BUILDING_WTF)
-#define WTF_EXPORT_PRIVATE WTF_EXPORT
-#else
-#define WTF_EXPORT_PRIVATE WTF_IMPORT
-#endif
+#define JS_INLINE JS_EXPORT_HIDDEN inline
 
-#define WTF_EXPORTDATA WTF_EXPORT_PRIVATE
-#define WTF_EXPORT_HIDDEN WTF_HIDDEN
-#define WTF_INLINE WTF_EXPORT_HIDDEN inline
-
-#endif // ExportMacros_h
+#endif // JSExportMacros_h

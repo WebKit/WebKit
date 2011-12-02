@@ -1,3 +1,17 @@
+2011-12-01  Hajime Morrita  <morrita@chromium.org>
+
+        JS_INLINE and WTF_INLINE should be visible from WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=73191
+
+        - Extracted export related macro definitions to ExportMacros.h and JSExportMacros.h
+        - Added forwarding headers which used in config.h
+
+        Reviewed by Kevin Ollivier.
+
+        * ForwardingHeaders/runtime/JSExportMacros.h: Added.
+        * ForwardingHeaders/wtf/ExportMacros.h: Added.
+        * config.h:
+
 2011-11-29  David Levin  <levin@chromium.org>
 
         Add a way to revert a variable to its previous value after leaving a scope.

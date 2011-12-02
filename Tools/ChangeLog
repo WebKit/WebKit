@@ -1,3 +1,17 @@
+2011-12-01  Hajime Morrita  <morrita@chromium.org>
+
+        JS_INLINE and WTF_INLINE should be visible from WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=73191
+
+        Reviewed by Kevin Ollivier.
+
+        Removed macro definitions which is now provided by Platform.h
+
+        * DumpRenderTree/chromium/config.h:
+        * DumpRenderTree/config.h:
+        * TestWebKitAPI/config.h:
+        * WebKitTestRunner/config.h:
+
 2011-12-01  Hayato Ito  <hayato@chromium.org>
 
         Explicitly pass tolerance=0 to port.diff_image in case of RefTestMismatch failure.
