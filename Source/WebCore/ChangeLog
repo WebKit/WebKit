@@ -1,3 +1,36 @@
+2011-12-01  Takashi Toyoshima  <toyoshim@chromium.org>
+
+        bufferedAmount calculation is wrong in CLOSING and CLOSED state.
+        https://bugs.webkit.org/show_bug.cgi?id=73404
+
+        Reviewed by Kent Tamura.
+
+        WebSocket::bufferedAmount() must return buffered frame size including
+        disposed frames which are passed via send() calls after close().
+
+        Old implementation had a problem at CLOSING state. Buffered frame size
+        was added to m_bufferedAmountAfterClose at close(). But the function
+        returns the sum of m_bufferedAmountAfterClose and internally buffered
+        frame size, or m_channel->bufferedAmount(). So, buffered frames was
+        double counted.
+
+        In new implementation, m_bufferedAmount always represents buffered
+        frame size and m_bufferedAmountAfterClose does disposed frame size.
+        As a result, bufferedAmount() implementation become just to return the
+        sum of m_bufferedAmount and m_bufferedAmountAfterClose.
+
+        Test: http/tests/websocket/tests/hybi/bufferedAmount-after-close-in-busy.html
+
+        * websockets/WebSocket.cpp: Implement new bufferedAmount handling.
+        (WebCore::saturateAdd):
+        (WebCore::WebSocket::WebSocket):
+        (WebCore::WebSocket::send):
+        (WebCore::WebSocket::close):
+        (WebCore::WebSocket::bufferedAmount):
+        (WebCore::WebSocket::didUpdateBufferedAmount):
+        (WebCore::WebSocket::didClose):
+        * websockets/WebSocket.h:
+
 2011-12-01  Kentaro Hara  <haraken@chromium.org>
 
         Replace a custom constructor of window.Option with the [NamedConstructor] IDL

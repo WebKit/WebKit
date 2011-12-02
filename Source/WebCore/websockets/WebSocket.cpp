@@ -59,6 +59,8 @@
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>
 
+using namespace std;
+
 namespace WebCore {
 
 const size_t maxReasonSizeInBytes = 123;
@@ -126,6 +128,13 @@ static String joinStrings(const Vector<String>& strings, const char* separator)
     return builder.toString();
 }
 
+static unsigned long saturateAdd(unsigned long a, unsigned long b)
+{
+    if (numeric_limits<unsigned long>::max() - a < b)
+        return numeric_limits<unsigned long>::max();
+    return a + b;
+}
+
 static bool webSocketsAvailable = false;
 
 void WebSocket::setIsAvailable(bool available)
@@ -141,6 +150,7 @@ bool WebSocket::isAvailable()
 WebSocket::WebSocket(ScriptExecutionContext* context)
     : ActiveDOMObject(context, this)
     , m_state(CONNECTING)
+    , m_bufferedAmount(0)
     , m_bufferedAmountAfterClose(0)
     , m_binaryType(BinaryTypeBlob)
     , m_useHixie76Protocol(true)
@@ -266,7 +276,8 @@ bool WebSocket::send(const String& message, ExceptionCode& ec)
     // No exception is raised if the connection was once established but has subsequently been closed.
     if (m_state == CLOSING || m_state == CLOSED) {
         size_t payloadSize = message.utf8().length();
-        m_bufferedAmountAfterClose += payloadSize + getFramingOverhead(payloadSize);
+        m_bufferedAmountAfterClose = saturateAdd(m_bufferedAmountAfterClose, payloadSize);
+        m_bufferedAmountAfterClose = saturateAdd(m_bufferedAmountAfterClose, getFramingOverhead(payloadSize));
         return false;
     }
     // FIXME: check message is valid utf8.
@@ -285,7 +296,9 @@ bool WebSocket::send(ArrayBuffer* binaryData, ExceptionCode& ec)
         return false;
     }
     if (m_state == CLOSING || m_state == CLOSED) {
-        m_bufferedAmountAfterClose += binaryData->byteLength() + getFramingOverhead(binaryData->byteLength());
+        unsigned payloadSize = binaryData->byteLength();
+        m_bufferedAmountAfterClose = saturateAdd(m_bufferedAmountAfterClose, payloadSize);
+        m_bufferedAmountAfterClose = saturateAdd(m_bufferedAmountAfterClose, getFramingOverhead(payloadSize));
         return false;
     }
     ASSERT(m_channel);
@@ -304,7 +317,8 @@ bool WebSocket::send(Blob* binaryData, ExceptionCode& ec)
     }
     if (m_state == CLOSING || m_state == CLOSED) {
         unsigned long payloadSize = static_cast<unsigned long>(binaryData->size());
-        m_bufferedAmountAfterClose += payloadSize + getFramingOverhead(payloadSize);
+        m_bufferedAmountAfterClose = saturateAdd(m_bufferedAmountAfterClose, payloadSize);
+        m_bufferedAmountAfterClose = saturateAdd(m_bufferedAmountAfterClose, getFramingOverhead(payloadSize));
         return false;
     }
     ASSERT(m_channel);
@@ -336,9 +350,6 @@ void WebSocket::close(int code, const String& reason, ExceptionCode& ec)
         return;
     }
     m_state = CLOSING;
-    m_bufferedAmountAfterClose = m_channel->bufferedAmount();
-    // didClose notification may be already queued, which we will inadvertently process while waiting for bufferedAmount() to return.
-    // In this case m_channel will be set to null during didClose() call, thus we need to test validness of m_channel here.
     if (m_channel)
         m_channel->close(code, reason);
 }
@@ -355,11 +366,7 @@ WebSocket::State WebSocket::readyState() const
 
 unsigned long WebSocket::bufferedAmount() const
 {
-    if (m_state == OPEN)
-        return m_channel->bufferedAmount();
-    else if (m_state == CLOSING)
-        return m_channel->bufferedAmount() + m_bufferedAmountAfterClose;
-    return m_bufferedAmountAfterClose;
+    return saturateAdd(m_bufferedAmount, m_bufferedAmountAfterClose);
 }
 
 String WebSocket::protocol() const
@@ -507,8 +514,10 @@ void WebSocket::didReceiveMessageError()
 
 void WebSocket::didUpdateBufferedAmount(unsigned long bufferedAmount)
 {
-    UNUSED_PARAM(bufferedAmount);
     LOG(Network, "WebSocket %p didUpdateBufferedAmount %lu", this, bufferedAmount);
+    if (m_state == CLOSED)
+        return;
+    m_bufferedAmount = bufferedAmount;
 }
 
 void WebSocket::didStartClosingHandshake()
@@ -524,7 +533,7 @@ void WebSocket::didClose(unsigned long unhandledBufferedAmount, ClosingHandshake
         return;
     bool wasClean = m_state == CLOSING && !unhandledBufferedAmount && closingHandshakeCompletion == ClosingHandshakeComplete;
     m_state = CLOSED;
-    m_bufferedAmountAfterClose += unhandledBufferedAmount;
+    m_bufferedAmount = unhandledBufferedAmount;
     ASSERT(scriptExecutionContext());
     RefPtr<CloseEvent> event = CloseEvent::create(wasClean, code, reason);
     dispatchEvent(event);

@@ -131,6 +131,7 @@ private:
     State m_state;
     KURL m_url;
     EventTargetData m_eventTargetData;
+    unsigned long m_bufferedAmount;
     unsigned long m_bufferedAmountAfterClose;
     BinaryType m_binaryType;
     bool m_useHixie76Protocol;
