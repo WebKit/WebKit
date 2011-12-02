@@ -1,3 +1,14 @@
+2011-12-02  Kent Tamura  <tkent@chromium.org>
+
+        Unreviewed, rolling out r101337.
+        http://trac.webkit.org/changeset/101337
+        https://bugs.webkit.org/show_bug.cgi?id=73189
+
+        It's a wrong way to fix the problem
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::popupOpened):
+
 2011-12-02  Kausalya Madhusudhanan  <kmadhusu@chromium.org>
 
         Added helper method to identify whether the page has custom page size style.

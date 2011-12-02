@@ -968,8 +968,8 @@ bool WebViewImpl::propagateScroll(ScrollDirection scrollDirection,
 void  WebViewImpl::popupOpened(WebCore::PopupContainer* popupContainer)
 {
     if (popupContainer->popupType() == WebCore::PopupContainer::Select) {
-        if (!m_selectPopup)
-            m_selectPopup = popupContainer;
+        ASSERT(!m_selectPopup);
+        m_selectPopup = popupContainer;
     }
 }
 
