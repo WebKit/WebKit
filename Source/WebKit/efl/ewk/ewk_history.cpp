@@ -22,15 +22,15 @@
 #include "ewk_history.h"
 
 #include "BackForwardListImpl.h"
-#include "EWebKit.h"
 #include "HistoryItem.h"
 #include "IconDatabaseBase.h"
 #include "Image.h"
 #include "IntSize.h"
 #include "Page.h"
 #include "PageGroup.h"
+#include "ewk_logging.h"
 #include "ewk_private.h"
-
+#include "ewk_util.h"
 #include <Eina.h>
 #include <eina_safety_checks.h>
 #include <wtf/text/CString.h>

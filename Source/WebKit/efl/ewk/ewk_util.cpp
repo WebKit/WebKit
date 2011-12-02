@@ -21,6 +21,7 @@
 #include "config.h"
 #include "ewk_util.h"
 
+#include "ewk_logging.h"
 #include "ewk_private.h"
 #include <eina_safety_checks.h>
 

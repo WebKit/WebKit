@@ -29,7 +29,6 @@
 #include "ContextMenuController.h"
 #include "DocumentLoader.h"
 #include "DragClientEfl.h"
-#include "EWebKit.h"
 #include "EditorClientEfl.h"
 #include "EventHandler.h"
 #include "FocusController.h"
@@ -49,9 +48,10 @@
 #include "PopupMenuClient.h"
 #include "ProgressTracker.h"
 #include "RenderTheme.h"
+#include "Settings.h"
 #include "c_instance.h"
+#include "ewk_logging.h"
 #include "ewk_private.h"
-
 #include <Ecore.h>
 #include <Eina.h>
 #include <Evas.h>

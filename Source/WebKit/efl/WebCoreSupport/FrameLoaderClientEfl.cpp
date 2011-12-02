@@ -37,7 +37,6 @@
 
 #include "APICast.h"
 #include "DocumentLoader.h"
-#include "EWebKit.h"
 #include "FormState.h"
 #include "FrameLoader.h"
 #include "FrameNetworkingContextEfl.h"
@@ -51,11 +50,12 @@
 #include "ProgressTracker.h"
 #include "RenderPart.h"
 #include "ResourceRequest.h"
+#include "Settings.h"
 #include "WebKitVersion.h"
+#include "ewk_logging.h"
 #include "ewk_private.h"
 #include <wtf/text/CString.h>
 #include <wtf/text/StringConcatenate.h>
-
 #include <Ecore_Evas.h>
 
 using namespace WebCore;

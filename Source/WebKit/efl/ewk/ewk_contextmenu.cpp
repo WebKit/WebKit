@@ -24,9 +24,7 @@
 #include "ContextMenu.h"
 #include "ContextMenuController.h"
 #include "ContextMenuItem.h"
-#include "EWebKit.h"
 #include "ewk_private.h"
-
 #include <Eina.h>
 #include <eina_safety_checks.h>
 #include <wtf/text/CString.h>

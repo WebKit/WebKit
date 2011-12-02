@@ -23,7 +23,6 @@
 #include "config.h"
 #include "EditorClientEfl.h"
 
-#include "EWebKit.h"
 #include "EditCommand.h"
 #include "Editor.h"
 #include "EventNames.h"
@@ -33,6 +32,7 @@
 #include "NotImplemented.h"
 #include "Page.h"
 #include "PlatformKeyboardEvent.h"
+#include "Settings.h"
 #include "WindowsKeyboardCodes.h"
 #include "ewk_private.h"
 

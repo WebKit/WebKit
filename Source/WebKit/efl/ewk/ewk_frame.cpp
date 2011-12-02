@@ -25,7 +25,6 @@
 #include "ewk_frame.h"
 
 #include "DocumentMarkerController.h"
-#include "EWebKit.h"
 #include "EventHandler.h"
 #include "FocusController.h"
 #include "FrameLoaderClientEfl.h"
@@ -50,11 +49,10 @@
 #include "SharedBuffer.h"
 #include "SubstituteData.h"
 #include "WindowsKeyboardCodes.h"
+#include "ewk_logging.h"
 #include "ewk_private.h"
-
 #include <Eina.h>
 #include <Evas.h>
-#include <algorithm>
 #include <eina_safety_checks.h>
 #include <wtf/text/CString.h>
 

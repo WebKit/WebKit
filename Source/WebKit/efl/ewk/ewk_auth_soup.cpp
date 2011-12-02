@@ -21,7 +21,6 @@
 #include "config.h"
 #include "ewk_auth_soup.h"
 
-#include "EWebKit.h"
 #include "ewk_auth.h"
 #include "ewk_logging.h"
 #include <glib-object.h>

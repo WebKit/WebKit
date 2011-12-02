@@ -21,9 +21,9 @@
 #include "config.h"
 #include "ewk_settings.h"
 
+#include "ApplicationCacheStorage.h"
 #include "CrossOriginPreflightResultCache.h"
 #include "DatabaseTracker.h"
-#include "EWebKit.h"
 #include "FontCache.h"
 #include "FrameView.h"
 #include "IconDatabase.h"
@@ -32,10 +32,10 @@
 #include "KURL.h"
 #include "MemoryCache.h"
 #include "PageCache.h"
-// FIXME: Why is there a directory in this include?
-#include "appcache/ApplicationCacheStorage.h"
+#include "Settings.h"
+#include "ewk_logging.h"
 #include "ewk_private.h"
-
+#include "ewk_util.h"
 #include <Eina.h>
 #include <eina_safety_checks.h>
 #include <errno.h>

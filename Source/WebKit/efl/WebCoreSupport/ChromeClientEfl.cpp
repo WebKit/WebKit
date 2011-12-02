@@ -34,12 +34,6 @@
 #include "config.h"
 #include "ChromeClientEfl.h"
 
-#if ENABLE(SQL_DATABASE)
-
-#include "DatabaseDetails.h"
-#include "DatabaseTracker.h"
-#endif
-#include "EWebKit.h"
 #include "FileChooser.h"
 #include "FileIconLoader.h"
 #include "FloatRect.h"
@@ -49,9 +43,6 @@
 #include "IntRect.h"
 #include "KURL.h"
 #include "NavigationAction.h"
-#if ENABLE(NOTIFICATIONS)
-#include "NotificationPresenterClientEfl.h"
-#endif
 #include "NotImplemented.h"
 #include "PlatformString.h"
 #include "PopupMenuEfl.h"
@@ -63,6 +54,15 @@
 #include <Ecore_Evas.h>
 #include <Evas.h>
 #include <wtf/text/CString.h>
+
+#if ENABLE(NOTIFICATIONS)
+#include "NotificationPresenterClientEfl.h"
+#endif
+
+#if ENABLE(SQL_DATABASE)
+#include "DatabaseDetails.h"
+#include "DatabaseTracker.h"
+#endif
 
 using namespace WebCore;
 

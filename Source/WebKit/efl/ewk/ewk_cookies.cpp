@@ -21,20 +21,16 @@
 #include "config.h"
 #include "ewk_cookies.h"
 
-#if USE(SOUP)
-#include "CookieJarSoup.h"
-#endif
-#include "EWebKit.h"
 #include "ResourceHandle.h"
-
 #include <Eina.h>
 #include <eina_safety_checks.h>
+#include <wtf/text/CString.h>
+
 #if USE(SOUP)
+#include "CookieJarSoup.h"
 #include <glib.h>
 #include <libsoup/soup.h>
 #endif
-#include <wtf/text/CString.h>
-
 
 Eina_Bool ewk_cookies_file_set(const char* filename)
 {

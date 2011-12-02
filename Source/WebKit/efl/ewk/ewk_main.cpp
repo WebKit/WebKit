@@ -21,16 +21,16 @@
 #include "config.h"
 #include "ewk_main.h"
 
-#include "EWebKit.h"
 #include "FileSystem.h"
 #include "Logging.h"
 #include "PageCache.h"
 #include "PageGroup.h"
 #include "ScriptController.h"
+#include "Settings.h"
+#include "ewk_logging.h"
 #include "ewk_private.h"
 #include "ewk_settings.h"
 #include "runtime/InitializeThreading.h"
-
 #include <Ecore.h>
 #include <Ecore_Evas.h>
 #include <Edje.h>

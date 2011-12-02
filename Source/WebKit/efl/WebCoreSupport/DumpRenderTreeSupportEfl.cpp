@@ -21,7 +21,6 @@
 #include "config.h"
 #include "DumpRenderTreeSupportEfl.h"
 
-#include "EWebKit.h"
 #include "FrameLoaderClientEfl.h"
 #include "ewk_private.h"
 

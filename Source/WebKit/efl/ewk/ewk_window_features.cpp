@@ -22,8 +22,8 @@
 #include "ewk_window_features.h"
 
 #include "WindowFeatures.h"
+#include "ewk_logging.h"
 #include "ewk_private.h"
-
 #include <Eina.h>
 
 /**

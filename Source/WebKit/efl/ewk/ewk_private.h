@@ -28,17 +28,14 @@
 
 #include "APICast.h"
 #include "BackForwardListImpl.h"
-#include "EWebKit.h"
 #include "Frame.h"
 #include "NP_jsobject.h"
 #include "Page.h"
-#include "Settings.h"
 #include "Widget.h"
+#include "ewk_history.h"
 #include "ewk_js.h"
-#include "ewk_logging.h"
-#include "ewk_util.h"
-
-#include <cairo.h>
+#include "ewk_view.h"
+#include <Evas.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/Vector.h>
 
