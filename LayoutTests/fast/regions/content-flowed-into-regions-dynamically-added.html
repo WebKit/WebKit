@@ -2,7 +2,7 @@
 <html>
     <!--
     Test that the content is properly flowed into dynamically added regions.
-    On success you should see that the colored boxes are displayed inside the 3 rectangles with black border.
+    On success you should see that the colored boxes are displayed inside the 3 regions with black borders.
     The green box should be displayed in left region.
     The blue box should be displayed in middle region.
     The orange box should be displayed in right region.
@@ -22,9 +22,6 @@
         <script>
             var region = document.getElementById("region");
             region.className = "regionArticle borderBox";
-
-            if (window.layoutTestController)
-                layoutTestController.dumpAsText(true);
         </script>
     </body>
 </html>
