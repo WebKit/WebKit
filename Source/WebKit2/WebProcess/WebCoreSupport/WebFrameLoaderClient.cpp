@@ -64,6 +64,7 @@
 #include <WebCore/PluginData.h>
 #include <WebCore/ProgressTracker.h>
 #include <WebCore/ResourceError.h>
+#include <WebCore/Settings.h>
 #include <WebCore/UIEventWithKeyState.h>
 #include <WebCore/Widget.h>
 #include <WebCore/WindowFeatures.h>
@@ -532,7 +533,7 @@ void WebFrameLoaderClient::dispatchDidFirstLayout()
     // Notify the UIProcess.
     webPage->send(Messages::WebPageProxy::DidFirstLayoutForFrame(m_frame->frameID(), InjectedBundleUserMessageEncoder(userData.get())));
 
-    if (m_frame == m_frame->page()->mainWebFrame())
+    if (m_frame == m_frame->page()->mainWebFrame() && !webPage->corePage()->settings()->suppressIncrementalRendering())
         webPage->drawingArea()->setLayerTreeStateIsFrozen(false);
 }
 

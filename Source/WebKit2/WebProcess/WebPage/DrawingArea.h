@@ -69,6 +69,7 @@ public:
     virtual void pageBackgroundTransparencyChanged() { }
     virtual void forceRepaint() { }
     virtual void setLayerTreeStateIsFrozen(bool) { }
+    virtual bool layerTreeStateIsFrozen() const { return false; }
 
     virtual void didInstallPageOverlay() { }
     virtual void didUninstallPageOverlay() { }

@@ -1,3 +1,24 @@
+2011-12-02  Andy Estes  <aestes@apple.com>
+
+        WebKit2: Freeze the state of the layer tree until frame load completion if incremental rendering is suppressed
+        https://bugs.webkit.org/show_bug.cgi?id=73641
+
+        Reviewed by Darin Adler.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDidFirstLayout): Do not
+        un-freeze the layer tree state if incremental rendering is suppressed.
+        * WebProcess/WebPage/DrawingArea.h:
+        (WebKit::DrawingArea::layerTreeStateIsFrozen): Add a getter for
+        m_layerTreeStateIsFrozen.
+        * WebProcess/WebPage/DrawingAreaImpl.h:
+        (WebKit::DrawingAreaImpl::layerTreeStateIsFrozen): Ditto.
+        * WebProcess/WebPage/ca/LayerTreeHostCA.cpp:
+        (WebKit::LayerTreeHostCA::initialize): WebFrameLoaderClient might have
+        tried to freeze the state of the layer tree before the layer tree host
+        was created. When creating the layer tree host, only schedule a layer
+        flush if the layer tree state isn't frozen.
+
 2011-12-02  Nayan Kumar K  <nayankk@motorola.com>
 
         [WebKit2][gtk] Add 'enable-dns-prefetching' property to WebKitSettings

@@ -54,6 +54,7 @@ private:
     virtual void setNeedsDisplay(const WebCore::IntRect&);
     virtual void scroll(const WebCore::IntRect& scrollRect, const WebCore::IntSize& scrollOffset);
     virtual void setLayerTreeStateIsFrozen(bool);
+    virtual bool layerTreeStateIsFrozen() const { return m_layerTreeStateIsFrozen; }
     virtual void forceRepaint();
 
     virtual void enableDisplayThrottling();
