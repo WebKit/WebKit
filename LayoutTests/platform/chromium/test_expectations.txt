@@ -3744,26 +3744,6 @@ BUG_CARYCLARK MAC CPU : fast/writing-mode/vertical-align-table-baseline.html = I
 BUG_CARYCLARK MAC CPU : fast/writing-mode/vertical-baseline-alignment.html = IMAGE
 BUG_CARYCLARK MAC CPU : fast/writing-mode/vertical-font-fallback.html = IMAGE
 
-BUGALOKP: compositing/color-matching/image-color-matching.html = IMAGE
-BUGALOKP: compositing/direct-image-compositing.html = IMAGE
-BUGALOKP: compositing/geometry/ancestor-overflow-change.html = IMAGE
-BUGALOKP: compositing/geometry/fixed-position-transform-composited-page-scale.html = IMAGE
-BUGALOKP: compositing/geometry/layer-due-to-layer-children-deep.html = IMAGE
-BUGALOKP: compositing/geometry/layer-due-to-layer-children.html = IMAGE
-BUGALOKP: compositing/geometry/vertical-scroll-composited.html = IMAGE
-BUGALOKP: compositing/reflections/nested-reflection-transformed.html = IMAGE
-BUGALOKP: compositing/reflections/nested-reflection-transformed2.html = IMAGE
-BUGALOKP: compositing/reflections/nested-reflection-transition.html = IMAGE
-BUGALOKP: compositing/reflections/reflection-in-composited.html = IMAGE
-BUGALOKP: compositing/scaling/tiled-layer-recursion.html = IMAGE
-BUGALOKP: compositing/shadows/shadow-drawing.html = IMAGE
-BUGALOKP: platform/chromium/compositing/huge-layer-rotated.html = IMAGE
-BUGALOKP: platform/chromium/compositing/layout-width-change.html = IMAGE
-BUGALOKP: platform/chromium/compositing/tiny-layer-rotated.html = IMAGE
-BUGALOKP GPU: media/video-layer-crash.html = IMAGE
-BUGALOKP GPU: media/video-transformed.html = IMAGE
-BUGALOKP GPU: media/video-zoom-controls.html = IMAGE
-
 BUGWK72271 MAC DEBUG : fast/loader/javascript-url-in-embed.html = PASS CRASH
 BUGWK72271 SNOWLEOPARD DEBUG : fast/dom/node-iterator-reference-node-moved-crash.html = PASS CRASH
 

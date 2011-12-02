@@ -60,10 +60,10 @@ CCLayerQuad::CCLayerQuad(const FloatQuad& quad)
 
 FloatQuad CCLayerQuad::floatQuad() const
 {
-    return FloatQuad(m_left.intersect(m_top),
+    return FloatQuad(m_bottom.intersect(m_left),
+                     m_left.intersect(m_top),
                      m_top.intersect(m_right),
-                     m_right.intersect(m_bottom),
-                     m_bottom.intersect(m_left));
+                     m_right.intersect(m_bottom));
 }
 
 void CCLayerQuad::toFloatArray(float flattened[12]) const
