@@ -24,10 +24,12 @@
        (subpath "/Library/Dictionaries")
        (subpath "/Library/Fonts")
        (subpath "/Library/Frameworks")
-       (subpath "/Library/Keychains")
        (subpath "/private/var/db/mds")
        (subpath "/private/var/db/DetachedSignatures")
        (regex #"^/private/etc/(hosts|group|passwd)$")
+
+       ;; FIXME: This should be removed when <rdar://problem/10479685> is fixed.
+       (subpath "/Library/Keychains")
 
        ;; System and user preferences
        (literal "/Library/Preferences/.GlobalPreferences.plist")
@@ -86,15 +88,9 @@
        (home-subpath "/Library/Caches/com.apple.WebProcess")
        (home-regex "/Library/Preferences/ByHost/com\.apple\.HIToolbox\.")
        (home-regex "/Library/Preferences/com\.apple\.WebProcess\.")
-       (home-subpath "/Library/Keychains")
 
-       ;; FIXME: This should be removed when <rdar://problem/9276430> is fixed.
-       (home-literal "/Library/Preferences/com.apple.LaunchServices.QuarantineEventsV2")
-       (home-literal "/Library/Preferences/com.apple.LaunchServices.QuarantineEventsV2-journal"))
-
-(allow file-read-data
-       ;; FIXME: This should be removed when <rdar://problem/9276430> is fixed.
-       (home-literal "/Library/Preferences"))
+       ;; FIXME: This should be removed when <rdar://problem/10479685> is fixed.
+       (home-subpath "/Library/Keychains"))
 
 ;; Non-user Security mds caches
 (allow file*
@@ -166,8 +162,6 @@
        (global-name "com.apple.system.opendirectoryd.api")
        (global-name "com.apple.window_proxies")
        (global-name "com.apple.windowserver.active")
-
-        ;; FIXME: This will be superfluous once <rdar://problem/10420555> is fixed.
        (global-name "com.apple.cfnetwork.AuthBrokerAgent")
 
        ;; FIXME: This should be removed when <rdar://problem/9276393> is fixed.
@@ -209,6 +203,10 @@
         (literal "/private/etc/services")
         (literal "/private/etc/host"))
 
-;; FIXME: Should be removed after <rdar://problem/9422957> is fixed
 (deny file-read* file-write* (with no-log)
-      (home-literal "/Library/Caches/Cache.db"))
+       ;; FIXME: Should be removed after <rdar://problem/9422957> is fixed.
+       (home-literal "/Library/Caches/Cache.db")
+
+       ;; FIXME: Should be removed after <rdar://problem/10463881> is fixed.
+       (home-literal "/Library/Preferences/com.apple.LaunchServices.QuarantineEventsV2")
+       (home-literal "/Library/Preferences/com.apple.LaunchServices.QuarantineEventsV2-journal"))

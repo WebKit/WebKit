@@ -1,3 +1,13 @@
+2011-12-02  Alexey Proskuryakov  <ap@apple.com>
+
+        Update sandbox rules
+        https://bugs.webkit.org/show_bug.cgi?id=73675
+        <rdar://problem/9276430>
+
+        Reviewed by Sam Weinig.
+
+        * WebProcess/com.apple.WebProcess.sb:
+
 2011-12-02  Andy Estes  <aestes@apple.com>
 
         WebKit2: Freeze the state of the layer tree until frame load completion if incremental rendering is suppressed
