@@ -3785,8 +3785,6 @@ BUGWK72904 XP : http/tests/media/video-served-as-text.html = PASS TEXT
 BUGCR105025 MAC CPU GPU : fast/canvas/webgl/css-webkit-canvas.html = IMAGE
 BUGCR105025 MAC CPU GPU : fast/canvas/webgl/css-webkit-canvas-repaint.html = IMAGE
 
-BUGWK73250 DEBUG : fast/block/child-not-removed-from-parent-lineboxes-crash.html = CRASH PASS
-
 BUGWK73494 : svg/text/non-bmp-positioning-lists.svg = IMAGE+TEXT IMAGE
 BUGWK73494 : svg/as-image/svg-non-integer-scaled-image.html = IMAGE PASS
 BUGWK73494 DEBUG : svg/hixie/perf/007.xml = PASS TIMEOUT
