@@ -17,6 +17,10 @@
       href="https://github.com"/>
   <repository type="tarball" name="sourceware.org"
       href="ftp://sourceware.org"/>
+  <repository type="tarball" name="gnupg.org"
+      href="ftp://ftp.gnupg.org"/>
+  <repository type="tarball" name="p11-glue.freedesktop.org"
+      href="http://p11-glue.freedesktop.org"/>
   <repository type="tarball" name="gnome.org"
       href="http://ftp.gnome.org"/>
   <repository type="git" name="git.gnome.org"
@@ -38,6 +42,20 @@
             hash="sha256:9a987aef8c50d9bcfdfdc9f012f8bd0de6095cc1a5524e62c1a037deb8dacbfe"
             md5sum="647ee8ed266f9a4117c8d0a4855b3d3e"/>
   </tarball>
+
+  <autotools id="libgcrypt" autogen-sh="./autogen.sh; configure">
+    <branch module="/gcrypt/libgcrypt/libgcrypt-1.5.0.tar.bz2" version="1.5.0"
+             repo="gnupg.org"
+             hash="sha256:4b62fc516004940a0571025401a0581d49199f1a76dfb5ce6fd63f50db8173fa"
+             md5sum="693f9c64d50c908bc4d6e01da3ff76d8"/>
+  </autotools>
+
+  <autotools id="p11-kit">
+    <branch module="/releases/p11-kit-0.9.tar.gz" version="0.9"
+             repo="p11-glue.freedesktop.org"
+             hash="sha256:96486f971111f976743be05f2f88b75ced7f14954fad42861b54480c889c66d0"
+             md5sum="029aa2a3a103e7eb81b4aa731b93539e"/>
+  </autotools>
 
   <autotools id="libffi" autogen-sh="configure">
     <branch module="/pub/libffi/libffi-3.0.10.tar.gz" version="3.0.10"
@@ -68,6 +86,10 @@
 
   <autotools id="gnutls"
              autogenargs="--enable-ld-version-script --enable-cxx --without-lzo --with-libgcrypt">
+    <dependencies>
+      <dep package="libgcrypt"/>
+      <dep package="p11-kit"/>
+    </dependencies>
     <branch module="/gnu/gnutls/gnutls-2.12.14.tar.bz2" version="2.12.14"
             repo="gnu.org"
             hash="sha256:5ee72ba6de7a23cf315792561954451e022dac8730149ca95f93c61e95be2ce3"
