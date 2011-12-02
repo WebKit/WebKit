@@ -1,3 +1,35 @@
+2011-12-01  Kentaro Hara  <haraken@chromium.org>
+
+        Replace a custom constructor of window.Audio with the [NamedConstructor] IDL
+        https://bugs.webkit.org/show_bug.cgi?id=73496
+
+        Reviewed by Adam Barth.
+
+        Removes JSAudioConstructor.{h,cpp} and generates the constructor of window.Audio
+        by the [NamedConstructor] IDL.
+
+        Tests: fast/js/custom-constructors.html
+               media/audio-constructor.html
+               media/audio-constructor-src.html
+               media/audio-constructor-preload.html
+               media/audio-controls-do-not-fade-out.html
+               media/audio-controls-rendering.html
+
+        * GNUmakefile.list.am: Removed JSAudioConstructor.{h,cpp}.
+        * Target.pri: Ditto.
+        * UseJSC.cmake: Ditto.
+        * WebCore.gypi: Ditto.
+        * WebCore.order: Ditto.
+        * WebCore.vcproj/WebCore.vcproj: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * bindings/js/JSBindingsAllInOne.cpp: Ditto.
+
+        * bindings/js/JSAudioConstructor.cpp: Removed.
+        * bindings/js/JSAudioConstructor.h: Removed.
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::audio): Specifies the NamedConstructor.
+        * page/DOMWindow.idl: Removed the [JSCustomConstructor] IDL.
+
 2011-12-01  Mark Pilgrim  <pilgrim@chromium.org>
 
         [FileSystem API] DirectoryEntry.removeRecursively successCallback is required

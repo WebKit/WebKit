@@ -236,12 +236,6 @@ IF (ENABLE_SVG)
     )
 ENDIF ()
 
-IF (ENABLE_VIDEO)
-    LIST(APPEND WebCore_SOURCES
-        bindings/js/JSAudioConstructor.cpp
-    )
-ENDIF ()
-
 IF (ENABLE_WEBGL)
     LIST(APPEND WebCore_SOURCES
         bindings/js/JSWebGLRenderingContextCustom.cpp

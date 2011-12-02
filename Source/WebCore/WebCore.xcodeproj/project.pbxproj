@@ -5989,8 +5989,6 @@
 		E4C279590CF9741900E97B98 /* RenderMedia.h in Headers */ = {isa = PBXBuildFile; fileRef = E4C279570CF9741900E97B98 /* RenderMedia.h */; };
 		E4D687770ED7AE3D006EA978 /* PurgeableBufferMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4D687760ED7AE3D006EA978 /* PurgeableBufferMac.cpp */; };
 		E4D687790ED7AE4F006EA978 /* PurgeableBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = E4D687780ED7AE4F006EA978 /* PurgeableBuffer.h */; };
-		E4EEFFC80D34550C00469A58 /* JSAudioConstructor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4EEFFC60D34550C00469A58 /* JSAudioConstructor.cpp */; };
-		E4EEFFC90D34550C00469A58 /* JSAudioConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = E4EEFFC70D34550C00469A58 /* JSAudioConstructor.h */; };
 		ED2BA83C09A24B91006C0AC4 /* DocumentMarker.h in Headers */ = {isa = PBXBuildFile; fileRef = ED2BA83B09A24B91006C0AC4 /* DocumentMarker.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		ED501DC60B249F2900AE18D9 /* EditorMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = ED501DC50B249F2900AE18D9 /* EditorMac.mm */; };
 		EDE3A5000C7A430600956A37 /* ColorMac.h in Headers */ = {isa = PBXBuildFile; fileRef = EDE3A4FF0C7A430600956A37 /* ColorMac.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -13357,8 +13355,6 @@
 		E4C279570CF9741900E97B98 /* RenderMedia.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderMedia.h; sourceTree = "<group>"; };
 		E4D687760ED7AE3D006EA978 /* PurgeableBufferMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PurgeableBufferMac.cpp; sourceTree = "<group>"; };
 		E4D687780ED7AE4F006EA978 /* PurgeableBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PurgeableBuffer.h; sourceTree = "<group>"; };
-		E4EEFFC60D34550C00469A58 /* JSAudioConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAudioConstructor.cpp; sourceTree = "<group>"; };
-		E4EEFFC70D34550C00469A58 /* JSAudioConstructor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSAudioConstructor.h; sourceTree = "<group>"; };
 		ED2BA83B09A24B91006C0AC4 /* DocumentMarker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DocumentMarker.h; sourceTree = "<group>"; };
 		ED501DC50B249F2900AE18D9 /* EditorMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; name = EditorMac.mm; path = mac/EditorMac.mm; sourceTree = "<group>"; };
 		EDE3A4FF0C7A430600956A37 /* ColorMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ColorMac.h; sourceTree = "<group>"; };
@@ -20046,8 +20042,6 @@
 		BCCE58B41061E925008FB35A /* Constructors */ = {
 			isa = PBXGroup;
 			children = (
-				E4EEFFC60D34550C00469A58 /* JSAudioConstructor.cpp */,
-				E4EEFFC70D34550C00469A58 /* JSAudioConstructor.h */,
 				BC6C49F10D7DBA0500FFA558 /* JSImageConstructor.cpp */,
 				BC6C49F20D7DBA0500FFA558 /* JSImageConstructor.h */,
 				A826E8AD0A1A8F2300CD1BB6 /* JSOptionConstructor.cpp */,
@@ -23121,7 +23115,6 @@
 				FDA15EA012B03EE1003A583A /* JSAudioBufferSourceNode.h in Headers */,
 				FDA15EA212B03EE1003A583A /* JSAudioChannelMerger.h in Headers */,
 				FDA15EA412B03EE1003A583A /* JSAudioChannelSplitter.h in Headers */,
-				E4EEFFC90D34550C00469A58 /* JSAudioConstructor.h in Headers */,
 				FDA15EA612B03EE1003A583A /* JSAudioContext.h in Headers */,
 				FDA15EA812B03EE1003A583A /* JSAudioDestinationNode.h in Headers */,
 				FDA15EAA12B03EE1003A583A /* JSAudioGain.h in Headers */,
@@ -26101,7 +26094,6 @@
 				FDEAAAF312B02EE400DCF33B /* JSAudioBufferSourceNodeCustom.cpp in Sources */,
 				FDA15EA112B03EE1003A583A /* JSAudioChannelMerger.cpp in Sources */,
 				FDA15EA312B03EE1003A583A /* JSAudioChannelSplitter.cpp in Sources */,
-				E4EEFFC80D34550C00469A58 /* JSAudioConstructor.cpp in Sources */,
 				FDA15EA512B03EE1003A583A /* JSAudioContext.cpp in Sources */,
 				FDEAAAF412B02EE400DCF33B /* JSAudioContextCustom.cpp in Sources */,
 				FDA15EA712B03EE1003A583A /* JSAudioDestinationNode.cpp in Sources */,

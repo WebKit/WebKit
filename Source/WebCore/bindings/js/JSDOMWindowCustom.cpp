@@ -26,13 +26,13 @@
 #include "HTMLDocument.h"
 #include "History.h"
 #include "JSArrayBuffer.h"
-#include "JSAudioConstructor.h"
 #include "JSDataView.h"
 #include "JSEvent.h"
 #include "JSEventListener.h"
 #include "JSEventSource.h"
 #include "JSFloat32Array.h"
 #include "JSFloat64Array.h"
+#include "JSHTMLAudioElement.h"
 #include "JSHTMLCollection.h"
 #include "JSHistory.h"
 #include "JSImageConstructor.h"
@@ -496,7 +496,7 @@ JSValue JSDOMWindow::audio(ExecState* exec) const
 {
     if (!MediaPlayer::isAvailable())
         return jsUndefined();
-    return getDOMConstructor<JSAudioConstructor>(exec, this);
+    return getDOMConstructor<JSHTMLAudioElementNamedConstructor>(exec, this);
 }
 #endif
 

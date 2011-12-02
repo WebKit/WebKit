@@ -1405,7 +1405,6 @@ v8 {
         bindings/js/DOMObjectHashTableMap.h \
         bindings/js/DOMWrapperWorld.h \
         bindings/js/JSArrayBufferViewHelper.h \
-        bindings/js/JSAudioConstructor.h \
         bindings/js/JSCSSStyleDeclarationCustom.h \
         bindings/js/JSCallbackData.h \
         bindings/js/JSCustomVoidCallback.h \
@@ -3100,11 +3099,6 @@ contains(DEFINES, ENABLE_VIDEO=1) {
         platform/graphics/MediaPlayer.cpp \
         rendering/RenderVideo.cpp \
         rendering/RenderMedia.cpp
-
-    !v8 {
-        SOURCES += \
-            bindings/js/JSAudioConstructor.cpp
-    }
 
     contains(DEFINES, WTF_USE_QTKIT=1) {
         INCLUDEPATH += \

@@ -1807,8 +1807,6 @@
             'bindings/js/JSArrayBufferViewHelper.h',
             'bindings/js/JSAttrCustom.cpp',
             'bindings/js/JSAudioBufferSourceNodeCustom.cpp',
-            'bindings/js/JSAudioConstructor.cpp',
-            'bindings/js/JSAudioConstructor.h',
             'bindings/js/JSAudioContextCustom.cpp',
             'bindings/js/JSAudioNodeCustom.cpp',
             'bindings/js/JSBindingsAllInOne.cpp',
