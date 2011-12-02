@@ -205,9 +205,12 @@ QtViewportInteractionEngine::Constraints QQuickWebViewPrivate::computeViewportCo
 {
     Q_Q(QQuickWebView);
 
+    QtViewportInteractionEngine::Constraints newConstraints;
     QSize availableSize = q->boundingRect().size().toSize();
 
-    Q_ASSERT(!availableSize.isEmpty());
+    // Return default values for zero sized viewport.
+    if (availableSize.isEmpty())
+        return newConstraints;
 
     WebPageProxy* wkPage = toImpl(pageProxy->pageRef());
     WebPreferences* wkPrefs = wkPage->pageGroup()->preferences();
@@ -222,8 +225,6 @@ QtViewportInteractionEngine::Constraints QQuickWebViewPrivate::computeViewportCo
     WebCore::ViewportAttributes attr = WebCore::computeViewportAttributes(viewportArguments, minimumLayoutFallbackWidth, wkPrefs->deviceWidth(), wkPrefs->deviceHeight(), wkPrefs->deviceDPI(), availableSize);
     WebCore::restrictMinimumScaleFactorToViewportSize(attr, availableSize);
     WebCore::restrictScaleFactorToInitialScaleIfNotUserScalable(attr);
-
-    QtViewportInteractionEngine::Constraints newConstraints;
 
     newConstraints.initialScale = attr.initialScale;
     newConstraints.minimumScale = attr.minimumScale;

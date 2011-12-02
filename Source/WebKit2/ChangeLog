@@ -1,3 +1,17 @@
+2011-12-02  Zalan Bujtas  <zbujtas@gmail.com>
+
+        [Qt][WK2] ASSERT at QQuickWebViewPrivate::computeViewportConstraints() when API test is exercising zero sized views.
+        https://bugs.webkit.org/show_bug.cgi?id=73441
+
+        Do not assert on empty available size, but return default constrain values instead.
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewPrivate::computeViewportConstraints):
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::dispatchViewportPropertiesDidChange):
+
 2011-12-01  Hajime Morrita  <morrita@chromium.org>
 
         JS_INLINE and WTF_INLINE should be visible from WebCore

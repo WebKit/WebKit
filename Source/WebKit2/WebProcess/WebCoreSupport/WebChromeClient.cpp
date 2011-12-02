@@ -735,7 +735,8 @@ void WebChromeClient::dispatchViewportPropertiesDidChange(const ViewportArgument
 
 #if USE(TILED_BACKING_STORE)
     // When viewport properties change, recalculate and set the new recommended layout size in case of fixed layout rendering.
-    if (m_page->useFixedLayout()) {
+    // Viewport properties have no impact on zero sized fixed viewports.
+    if (m_page->useFixedLayout() && !m_page->viewportSize().isEmpty()) {
         Settings* settings = m_page->corePage()->settings();
 
         int minimumLayoutFallbackWidth = std::max(settings->layoutFallbackWidth(), m_page->viewportSize().width());
