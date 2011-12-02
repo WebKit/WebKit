@@ -1,3 +1,30 @@
+2011-12-02  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r101794.
+        http://trac.webkit.org/changeset/101794
+        https://bugs.webkit.org/show_bug.cgi?id=73656
+
+        Broke win build (Requested by vsevik on #webkit).
+
+        * bindings/js/ScriptCallStackFactory.cpp:
+        * bindings/js/ScriptCallStackFactory.h:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateParametersCheck):
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (GenerateFunctionCallback):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::jsTestObjPrototypeFunctionCustomArgsAndException):
+        * bindings/scripts/test/V8/V8TestObj.cpp:
+        (WebCore::TestObjInternal::customArgsAndExceptionCallback):
+        * bindings/v8/ScriptCallStackFactory.cpp:
+        * bindings/v8/ScriptCallStackFactory.h:
+        * inspector/InspectorInstrumentation.cpp:
+        * inspector/InspectorInstrumentation.h:
+        * inspector/WorkerInspectorController.h:
+        * page/Console.cpp:
+        (WebCore::Console::shouldCaptureFullStackTrace):
+        * page/Console.h:
+
 2011-12-02  Raphael Kubo da Costa  <kubo@profusion.mobi>
 
         Unreviewed, revert r101347.

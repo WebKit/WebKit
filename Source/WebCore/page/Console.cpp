@@ -343,6 +343,19 @@ void Console::groupEnd()
     InspectorInstrumentation::addMessageToConsole(page(), ConsoleAPIMessageSource, EndGroupMessageType, LogMessageLevel, String(), 0, String());
 }
 
+bool Console::shouldCaptureFullStackTrace() const
+{
+#if ENABLE(INSPECTOR)
+    Page* page = this->page();
+    if (!page)
+        return false;
+
+    return page->inspectorController()->hasFrontend();
+#else
+    return false;
+#endif
+}
+
 void Console::warn(PassRefPtr<ScriptArguments> arguments, PassRefPtr<ScriptCallStack> callStack)
 {
     addMessage(LogMessageType, WarningMessageLevel, arguments, callStack);

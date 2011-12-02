@@ -82,6 +82,8 @@ public:
     void groupCollapsed(PassRefPtr<ScriptArguments>, PassRefPtr<ScriptCallStack>);
     void groupEnd();
 
+    bool shouldCaptureFullStackTrace() const;
+
     static bool shouldPrintExceptions();
     static void setShouldPrintExceptions(bool);
 

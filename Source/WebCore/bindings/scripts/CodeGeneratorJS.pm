@@ -2396,7 +2396,8 @@ sub GenerateParametersCheck
 
     if ($function->signature->extendedAttributes->{"CustomArgumentHandling"} and !$function->isStatic) {
         push(@$outputArray, "    RefPtr<ScriptArguments> scriptArguments(createScriptArguments(exec, $numParameters));\n");
-        push(@$outputArray, "    RefPtr<ScriptCallStack> callStack(createScriptCallStack(exec));\n");
+        push(@$outputArray, "    size_t maxStackSize = imp->shouldCaptureFullStackTrace() ? ScriptCallStack::maxCallStackSizeToCapture : 1;\n");
+        push(@$outputArray, "    RefPtr<ScriptCallStack> callStack(createScriptCallStack(exec, maxStackSize));\n");
         $implIncludes{"ScriptArguments.h"} = 1;
         $implIncludes{"ScriptCallStack.h"} = 1;
         $implIncludes{"ScriptCallStackFactory.h"} = 1;
