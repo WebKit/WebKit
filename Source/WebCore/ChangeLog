@@ -1,3 +1,17 @@
+2011-12-02  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r101805.
+        http://trac.webkit.org/changeset/101805
+        https://bugs.webkit.org/show_bug.cgi?id=73670
+
+        Many canvas tests started failing due to the isEmpty change
+        (Requested by darin on #webkit).
+
+        * platform/graphics/cg/PathCG.cpp:
+        (WebCore::Path::boundingRect):
+        (WebCore::Path::fastBoundingRect):
+        (WebCore::Path::isEmpty):
+
 2011-12-01  Darin Adler  <darin@apple.com>
 
         [Mac] Reference count threading violation in FormDataStreamMac.mm
