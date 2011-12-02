@@ -1,5 +1,14 @@
 2011-12-02  Eric Seidel  <eric@webkit.org>
 
+        Enable parallel testing for all Mac bots.
+
+        Unreviewed.
+
+        * Scripts/run-webkit-tests:
+        (platformIsReadyForParallelTesting):
+
+2011-12-02  Eric Seidel  <eric@webkit.org>
+
         Enable parallel testing for run-webkit-tests on Mac Lion.
         I plan to move all the machines to parallel testing shortly
         but we're starting with Lion.

@@ -77,7 +77,7 @@ sub platformIsReadyForParallelTesting()
     # should add themselves to this whitelist, e.g.:
     # return isGtk() or isQt();
     # This will likely require skipping tests or marking tests as flaky in test_expectations.txt
-    return isAppleMacWebKit() and isLion();
+    return isAppleMacWebKit();
 }
 
 my $harnessName = "old-run-webkit-tests";
