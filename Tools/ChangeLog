@@ -1,3 +1,15 @@
+2011-12-02  Kausalya Madhusudhanan  <kmadhusu@chromium.org>
+
+        Added helper method to identify whether the page has custom page size style.
+        https://bugs.webkit.org/show_bug.cgi?id=73585
+
+        Reviewed by Darin Fisher.
+
+        * DumpRenderTree/chromium/LayoutTestController.cpp:
+        (LayoutTestController::LayoutTestController):
+        (LayoutTestController::hasCustomPageSizeStyle):
+        * DumpRenderTree/chromium/LayoutTestController.h:
+
 2011-12-01  Ryosuke Niwa  <rniwa@webkit.org>
 
         [NRWT] reftest should support having multiple references per test

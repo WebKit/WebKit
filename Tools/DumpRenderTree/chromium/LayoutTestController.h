@@ -337,6 +337,10 @@ public:
     // Gets the page size and margins for a printed page.
     void pageSizeAndMarginsInPixels(const CppArgumentList&, CppVariant*);
 
+    // Returns true if the current page box has custom page size style for
+    // printing.
+    void hasCustomPageSizeStyle(const CppArgumentList&, CppVariant*);
+
     // Returns the visibililty status of a page box for printing
     void isPageBoxVisible(const CppArgumentList&, CppVariant*);
 

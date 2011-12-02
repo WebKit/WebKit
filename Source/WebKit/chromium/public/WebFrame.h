@@ -472,6 +472,9 @@ public:
     // Returns true if page box (margin boxes and page borders) is visible.
     virtual bool isPageBoxVisible(int pageIndex) = 0;
 
+    // Returns true if the page style has custom size information.
+    virtual bool hasCustomPageSizeStyle(int pageIndex) = 0;
+
     // Returns the preferred page size and margins in pixels, assuming 96
     // pixels per inch. pageSize, marginTop, marginRight, marginBottom,
     // marginLeft must be initialized to the default values that are used if

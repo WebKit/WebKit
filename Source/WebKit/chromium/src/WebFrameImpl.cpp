@@ -1476,6 +1476,11 @@ bool WebFrameImpl::isPrintScalingDisabledForPlugin(const WebNode& node)
     return pluginContainer->isPrintScalingDisabled();
 }
 
+bool WebFrameImpl::hasCustomPageSizeStyle(int pageIndex)
+{
+    return frame()->document()->styleForPage(pageIndex)->pageSizeType() != PAGE_SIZE_AUTO;
+}
+
 bool WebFrameImpl::isPageBoxVisible(int pageIndex)
 {
     return frame()->document()->isPageBoxVisible(pageIndex);

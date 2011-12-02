@@ -123,6 +123,7 @@ LayoutTestController::LayoutTestController(TestShell* shell)
     bindMethod("grantDesktopNotificationPermission", &LayoutTestController::grantDesktopNotificationPermission);
     bindMethod("hasSpellingMarker", &LayoutTestController::hasSpellingMarker);
     bindMethod("isCommandEnabled", &LayoutTestController::isCommandEnabled);
+    bindMethod("hasCustomPageSizeStyle", &LayoutTestController::hasCustomPageSizeStyle);
     bindMethod("isPageBoxVisible", &LayoutTestController::isPageBoxVisible);
     bindMethod("layerTreeAsText", &LayoutTestController::layerTreeAsText);
     bindMethod("loseCompositorContext", &LayoutTestController::loseCompositorContext);
@@ -1702,6 +1703,18 @@ void LayoutTestController::pageSizeAndMarginsInPixels(const CppArgumentList& arg
     resultString << "(" << pageSize.width << ", " << pageSize.height << ") " << marginTop << " " << marginRight << " "
                  << marginBottom << " " << marginLeft;
     result->set(resultString.str());
+}
+
+void LayoutTestController::hasCustomPageSizeStyle(const CppArgumentList& arguments, CppVariant* result)
+{
+    result->set(false);
+    int pageIndex = 0;
+    if (!parsePageNumber(arguments, 0, &pageIndex))
+        return;
+    WebFrame* frame = m_shell->webView()->mainFrame();
+    if (!frame)
+        return;
+    result->set(frame->hasCustomPageSizeStyle(pageIndex));
 }
 
 void LayoutTestController::isPageBoxVisible(const CppArgumentList& arguments, CppVariant* result)
