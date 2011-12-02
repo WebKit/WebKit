@@ -450,14 +450,24 @@ private:
                 bool isArray = isArrayPrediction(m_graph[node.child1()].prediction());
                 bool isString = isStringPrediction(m_graph[node.child1()].prediction());
                 bool isByteArray = m_graph[node.child1()].shouldSpeculateByteArray();
-                if (isArray || isString || isByteArray)
+                bool isInt8Array = m_graph[node.child1()].shouldSpeculateInt8Array();
+                bool isInt16Array = m_graph[node.child1()].shouldSpeculateInt16Array();
+                bool isInt32Array = m_graph[node.child1()].shouldSpeculateInt32Array();
+                bool isUint8Array = m_graph[node.child1()].shouldSpeculateUint8Array();
+                bool isUint16Array = m_graph[node.child1()].shouldSpeculateUint16Array();
+                bool isUint32Array = m_graph[node.child1()].shouldSpeculateUint32Array();
+                bool isFloat32Array = m_graph[node.child1()].shouldSpeculateFloat32Array();
+                bool isFloat64Array = m_graph[node.child1()].shouldSpeculateFloat64Array();
+                if (isArray || isString || isByteArray || isInt8Array || isInt16Array || isInt32Array || isUint8Array || isUint16Array || isUint32Array || isFloat32Array || isFloat64Array)
                     changed |= mergePrediction(PredictInt32);
             }
             break;
         }
             
         case GetByVal: {
-            if (node.getHeapPrediction())
+            if (m_graph[node.child1()].shouldSpeculateUint32Array())
+                changed |= mergePrediction(PredictDouble);
+            else if (node.getHeapPrediction())
                 changed |= mergePrediction(node.getHeapPrediction());
             break;
         }
@@ -571,6 +581,14 @@ private:
         case ValueToDouble:
         case GetArrayLength:
         case GetByteArrayLength:
+        case GetInt8ArrayLength:
+        case GetInt16ArrayLength:
+        case GetInt32ArrayLength:
+        case GetUint8ArrayLength:
+        case GetUint16ArrayLength:
+        case GetUint32ArrayLength:
+        case GetFloat32ArrayLength:
+        case GetFloat64ArrayLength:
         case GetStringLength: {
             // This node should never be visible at this stage of compilation. It is
             // inserted by fixup(), which follows this phase.
@@ -744,14 +762,22 @@ private:
         }
             
         case GetById: {
+            if (!isInt32Prediction(m_graph[m_compileIndex].prediction()))
+                break;
+            if (m_codeBlock->identifier(node.identifierNumber()) != m_globalData.propertyNames->length)
+                break;
             bool isArray = isArrayPrediction(m_graph[node.child1()].prediction());
             bool isString = isStringPrediction(m_graph[node.child1()].prediction());
             bool isByteArray = m_graph[node.child1()].shouldSpeculateByteArray();
-            if (!isInt32Prediction(m_graph[m_compileIndex].prediction()))
-                break;
-            if (!isArray && !isString && !isByteArray)
-                break;
-            if (m_codeBlock->identifier(node.identifierNumber()) != m_globalData.propertyNames->length)
+            bool isInt8Array = m_graph[node.child1()].shouldSpeculateInt8Array();
+            bool isInt16Array = m_graph[node.child1()].shouldSpeculateInt16Array();
+            bool isInt32Array = m_graph[node.child1()].shouldSpeculateInt32Array();
+            bool isUint8Array = m_graph[node.child1()].shouldSpeculateUint8Array();
+            bool isUint16Array = m_graph[node.child1()].shouldSpeculateUint16Array();
+            bool isUint32Array = m_graph[node.child1()].shouldSpeculateUint32Array();
+            bool isFloat32Array = m_graph[node.child1()].shouldSpeculateFloat32Array();
+            bool isFloat64Array = m_graph[node.child1()].shouldSpeculateFloat64Array();
+            if (!isArray && !isString && !isByteArray && !isInt8Array && !isInt16Array && !isInt32Array && !isUint8Array && !isUint16Array && !isUint32Array && !isFloat32Array && !isFloat64Array)
                 break;
             
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
@@ -763,6 +789,22 @@ private:
                 node.op = GetStringLength;
             else if (isByteArray)
                 node.op = GetByteArrayLength;
+            else if (isInt8Array)
+                node.op = GetInt8ArrayLength;
+            else if (isInt16Array)
+                node.op = GetInt16ArrayLength;
+            else if (isInt32Array)
+                node.op = GetInt32ArrayLength;
+            else if (isUint8Array)
+                node.op = GetUint8ArrayLength;
+            else if (isUint16Array)
+                node.op = GetUint16ArrayLength;
+            else if (isUint32Array)
+                node.op = GetUint32ArrayLength;
+            else if (isFloat32Array)
+                node.op = GetFloat32ArrayLength;
+            else if (isFloat64Array)
+                node.op = GetFloat64ArrayLength;
             else
                 ASSERT_NOT_REACHED();
             break;
@@ -1293,6 +1335,14 @@ private:
         case ArithMax:
         case ArithSqrt:
         case GetByteArrayLength:
+        case GetInt8ArrayLength:
+        case GetInt16ArrayLength:
+        case GetInt32ArrayLength:
+        case GetUint8ArrayLength:
+        case GetUint16ArrayLength:
+        case GetUint32ArrayLength:
+        case GetFloat32ArrayLength:
+        case GetFloat64ArrayLength:
         case GetCallee:
         case GetStringLength:
         case StringCharAt:

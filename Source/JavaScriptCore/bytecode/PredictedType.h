@@ -35,23 +35,31 @@ namespace JSC {
 
 class Structure;
 
-typedef uint16_t PredictedType;
-static const PredictedType PredictNone          = 0x0000; // We don't know anything yet.
-static const PredictedType PredictFinalObject   = 0x0001; // It's definitely a JSFinalObject.
-static const PredictedType PredictArray         = 0x0002; // It's definitely a JSArray.
-static const PredictedType PredictByteArray     = 0x0004; // It's definitely a JSByteArray or one of its subclasses.
-static const PredictedType PredictFunction      = 0x0008; // It's definitely a JSFunction or one of its subclasses.
-static const PredictedType PredictObjectOther   = 0x0020; // It's definitely an object but not JSFinalObject, JSArray, JSByteArray, or JSFunction.
-static const PredictedType PredictObjectMask    = 0x003f; // Bitmask used for testing for any kind of object prediction.
-static const PredictedType PredictString        = 0x0040; // It's definitely a JSString.
-static const PredictedType PredictCellOther     = 0x0080; // It's definitely a JSCell but not a subclass of JSObject and definitely not a JSString.
-static const PredictedType PredictCell          = 0x00ff; // It's definitely a JSCell.
-static const PredictedType PredictInt32         = 0x0100; // It's definitely an Int32.
-static const PredictedType PredictDouble        = 0x0200; // It's definitely a Double.
-static const PredictedType PredictNumber        = 0x0300; // It's either an Int32 or a Double.
-static const PredictedType PredictBoolean       = 0x0400; // It's definitely a Boolean.
-static const PredictedType PredictOther         = 0x4000; // It's definitely none of the above.
-static const PredictedType PredictTop           = 0x7fff; // It can be any of the above.
+typedef uint32_t PredictedType;
+static const PredictedType PredictNone          = 0x00000000; // We don't know anything yet.
+static const PredictedType PredictFinalObject   = 0x00000001; // It's definitely a JSFinalObject.
+static const PredictedType PredictArray         = 0x00000002; // It's definitely a JSArray.
+static const PredictedType PredictByteArray     = 0x00000004; // It's definitely a JSByteArray or one of its subclasses.
+static const PredictedType PredictFunction      = 0x00000008; // It's definitely a JSFunction or one of its subclasses.
+static const PredictedType PredictInt8Array     = 0x00000010; // It's definitely an Int8Array or one of its subclasses.
+static const PredictedType PredictInt16Array    = 0x00000020; // It's definitely an Int16Array or one of its subclasses.
+static const PredictedType PredictInt32Array    = 0x00000040; // It's definitely an Int32Array or one of its subclasses.
+static const PredictedType PredictUint8Array    = 0x00000080; // It's definitely an Uint8Array or one of its subclasses.
+static const PredictedType PredictUint16Array   = 0x00000100; // It's definitely an Uint16Array or one of its subclasses.
+static const PredictedType PredictUint32Array   = 0x00000200; // It's definitely an Uint32Array or one of its subclasses.
+static const PredictedType PredictFloat32Array  = 0x00000400; // It's definitely an Uint16Array or one of its subclasses.
+static const PredictedType PredictFloat64Array  = 0x00000800; // It's definitely an Uint16Array or one of its subclasses.
+static const PredictedType PredictObjectOther   = 0x00001000; // It's definitely an object but not JSFinalObject, JSArray, JSByteArray, or JSFunction.
+static const PredictedType PredictObjectMask    = 0x00001fff; // Bitmask used for testing for any kind of object prediction.
+static const PredictedType PredictString        = 0x00002000; // It's definitely a JSString.
+static const PredictedType PredictCellOther     = 0x00004000; // It's definitely a JSCell but not a subclass of JSObject and definitely not a JSString.
+static const PredictedType PredictCell          = 0x00007fff; // It's definitely a JSCell.
+static const PredictedType PredictInt32         = 0x00008000; // It's definitely an Int32.
+static const PredictedType PredictDouble        = 0x00010000; // It's definitely a Double.
+static const PredictedType PredictNumber        = 0x00018000; // It's either an Int32 or a Double.
+static const PredictedType PredictBoolean       = 0x00020000; // It's definitely a Boolean.
+static const PredictedType PredictOther         = 0x40000000; // It's definitely none of the above.
+static const PredictedType PredictTop           = 0x7fffffff; // It can be any of the above.
 
 typedef bool (*PredictionChecker)(PredictedType);
 
@@ -93,6 +101,46 @@ inline bool isFunctionPrediction(PredictedType value)
 inline bool isByteArrayPrediction(PredictedType value)
 {
     return value == PredictByteArray;
+}
+
+inline bool isInt8ArrayPrediction(PredictedType value)
+{
+    return value == PredictInt8Array;
+}
+
+inline bool isInt16ArrayPrediction(PredictedType value)
+{
+    return value == PredictInt16Array;
+}
+
+inline bool isInt32ArrayPrediction(PredictedType value)
+{
+    return value == PredictInt32Array;
+}
+
+inline bool isUint8ArrayPrediction(PredictedType value)
+{
+    return value == PredictUint8Array;
+}
+
+inline bool isUint16ArrayPrediction(PredictedType value)
+{
+    return value == PredictUint16Array;
+}
+
+inline bool isUint32ArrayPrediction(PredictedType value)
+{
+    return value == PredictUint32Array;
+}
+
+inline bool isFloat32ArrayPrediction(PredictedType value)
+{
+    return value == PredictFloat32Array;
+}
+
+inline bool isFloat64ArrayPrediction(PredictedType value)
+{
+    return value == PredictFloat64Array;
 }
 
 inline bool isArrayOrOtherPrediction(PredictedType value)

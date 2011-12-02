@@ -544,6 +544,20 @@ private:
             m_assembler.strb(src, address.base, address.u.offset, true, false);
         }
     }
+    
+    void store16(RegisterID src, ArmAddress address)
+    {
+        if (address.type == ArmAddress::HasIndex)
+            m_assembler.strh(src, address.base, address.u.index, address.u.scale);
+        else if (address.u.offset >= 0) {
+            ARMThumbImmediate armImm = ARMThumbImmediate::makeUInt12(address.u.offset);
+            ASSERT(armImm.isValid());
+            m_assembler.strh(src, address.base, armImm);
+        } else {
+            ASSERT(address.u.offset >= -255);
+            m_assembler.strh(src, address.base, address.u.offset, true, false);
+        }
+    }
 
 public:
     void load32(ImplicitAddress address, RegisterID dest)
@@ -667,6 +681,11 @@ public:
     void store8(RegisterID src, BaseIndex address)
     {
         store8(src, setupArmAddress(address));
+    }
+    
+    void store16(RegisterID src, BaseIndex address)
+    {
+        store16(src, setupArmAddress(address));
     }
 
 
@@ -874,6 +893,12 @@ public:
     void truncateDoubleToInt32(FPRegisterID src, RegisterID dest)
     {
         m_assembler.vcvt_floatingPointToSigned(fpTempRegisterAsSingle(), src);
+        m_assembler.vmov(dest, fpTempRegisterAsSingle());
+    }
+
+    void truncateDoubleToUint32(FPRegisterID src, RegisterID dest)
+    {
+        m_assembler.vcvt_floatingPointToUnsigned(fpTempRegisterAsSingle(), src);
         m_assembler.vmov(dest, fpTempRegisterAsSingle());
     }
     

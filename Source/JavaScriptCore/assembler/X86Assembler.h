@@ -1097,6 +1097,12 @@ public:
     {
         m_formatter.oneByteOp8(OP_MOV_EbGb, src, base, index, scale, offset);
     }
+    
+    void movw_rm(RegisterID src, int offset, RegisterID base, RegisterID index, int scale)
+    {
+        m_formatter.prefix(PRE_OPERAND_SIZE);
+        m_formatter.oneByteOp8(OP_MOV_EvGv, src, base, index, scale, offset);
+    }
 
     void movl_EAXm(const void* addr)
     {
@@ -1429,6 +1435,14 @@ public:
         m_formatter.prefix(PRE_SSE_F2);
         m_formatter.twoByteOp(OP2_CVTTSD2SI_GdWsd, dst, (RegisterID)src);
     }
+    
+#if CPU(X86_64)
+    void cvttsd2siq_rr(XMMRegisterID src, RegisterID dst)
+    {
+        m_formatter.prefix(PRE_SSE_F2);
+        m_formatter.twoByteOp64(OP2_CVTTSD2SI_GdWsd, dst, (RegisterID)src);
+    }
+#endif
 
     void movd_rr(XMMRegisterID src, RegisterID dst)
     {

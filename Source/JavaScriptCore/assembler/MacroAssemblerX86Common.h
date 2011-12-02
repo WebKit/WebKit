@@ -556,6 +556,33 @@ public:
         m_assembler.movb_rm(src, address.offset, address.base, address.index, address.scale);
     }
 
+    void store16(RegisterID src, BaseIndex address)
+    {
+#if CPU(X86)
+        // On 32-bit x86 we can only store from the first 4 registers;
+        // esp..edi are mapped to the 'h' registers!
+        if (src >= 4) {
+            // Pick a temporary register.
+            RegisterID temp;
+            if (address.base != X86Registers::eax && address.index != X86Registers::eax)
+                temp = X86Registers::eax;
+            else if (address.base != X86Registers::ebx && address.index != X86Registers::ebx)
+                temp = X86Registers::ebx;
+            else {
+                ASSERT(address.base != X86Registers::ecx && address.index != X86Registers::ecx);
+                temp = X86Registers::ecx;
+            }
+            
+            // Swap to the temporary register to perform the store.
+            swap(src, temp);
+            m_assembler.movw_rm(temp, address.offset, address.base, address.index, address.scale);
+            swap(src, temp);
+            return;
+        }
+#endif
+        m_assembler.movw_rm(src, address.offset, address.base, address.index, address.scale);
+    }
+
 
     // Floating-point operation:
     //
@@ -724,6 +751,21 @@ public:
         ASSERT(isSSE2Present());
         m_assembler.cvttsd2si_rr(src, dest);
     }
+    
+#if CPU(X86_64)
+    void truncateDoubleToUint32(FPRegisterID src, RegisterID dest)
+    {
+        ASSERT(isSSE2Present());
+        m_assembler.cvttsd2siq_rr(src, dest);
+    }
+#else
+    void truncateDoubleToUint32(FPRegisterID src, RegisterID dest)
+    {
+        ASSERT(isSSE2Present());
+        // FIXME: Generate correct code for a double to unsigned conversion.
+        m_assembler.cvttsd2si_rr(src, dest);
+    }
+#endif
     
     // Convert 'src' to an integer, and places the resulting 'dest'.
     // If the result is not representable as a 32 bit value, branch.

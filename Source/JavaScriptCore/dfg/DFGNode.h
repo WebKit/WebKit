@@ -238,6 +238,14 @@ static inline const char* arithNodeFlagsAsString(ArithNodeFlags flags)
     macro(GetArrayLength, NodeResultInt32) \
     macro(GetStringLength, NodeResultInt32) \
     macro(GetByteArrayLength, NodeResultInt32) \
+    macro(GetInt8ArrayLength, NodeResultInt32) \
+    macro(GetInt16ArrayLength, NodeResultInt32) \
+    macro(GetInt32ArrayLength, NodeResultInt32) \
+    macro(GetUint8ArrayLength, NodeResultInt32) \
+    macro(GetUint16ArrayLength, NodeResultInt32) \
+    macro(GetUint32ArrayLength, NodeResultInt32) \
+    macro(GetFloat32ArrayLength, NodeResultInt32) \
+    macro(GetFloat64ArrayLength, NodeResultInt32) \
     macro(GetScopeChain, NodeResultJS) \
     macro(GetScopedVar, NodeResultJS | NodeMustGenerate) \
     macro(PutScopedVar, NodeMustGenerate | NodeClobbersWorld) \
@@ -912,6 +920,46 @@ struct Node {
     bool shouldSpeculateByteArray()
     {
         return !!(prediction() & PredictByteArray);
+    }
+    
+    bool shouldSpeculateInt8Array()
+    {
+        return prediction() == PredictInt8Array;
+    }
+    
+    bool shouldSpeculateInt16Array()
+    {
+        return prediction() == PredictInt16Array;
+    }
+    
+    bool shouldSpeculateInt32Array()
+    {
+        return prediction() == PredictInt32Array;
+    }
+    
+    bool shouldSpeculateUint8Array()
+    {
+        return prediction() == PredictUint8Array;
+    }
+    
+    bool shouldSpeculateUint16Array()
+    {
+        return prediction() == PredictUint16Array;
+    }
+    
+    bool shouldSpeculateUint32Array()
+    {
+        return prediction() == PredictUint32Array;
+    }
+    
+    bool shouldSpeculateFloat32Array()
+    {
+        return prediction() == PredictFloat32Array;
+    }
+    
+    bool shouldSpeculateFloat64Array()
+    {
+        return prediction() == PredictFloat64Array;
     }
     
     bool shouldSpeculateArrayOrOther()

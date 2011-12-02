@@ -1,3 +1,70 @@
+2011-12-01  Oliver Hunt  <oliver@apple.com>
+
+        Support integer typed arrays in the DFG JIT
+        https://bugs.webkit.org/show_bug.cgi?id=73608
+
+        Reviewed by Filip Pizlo.
+
+        Add support for all the integral typed arrays in the DFG JIT.
+        Currently this loads the contents of Uint32 arrays as doubles,
+        which is clearly not as efficient as it could be, but this is
+        still in the order of 10-20x faster than the existing behaviour.
+
+        This needed us to add support for writing 16bit values to the
+        macroassembler, and also to support double<->unsigned conversion.
+
+        * assembler/ARMv7Assembler.h:
+        (JSC::ARMv7Assembler::strh):
+        (JSC::ARMv7Assembler::vcvt_floatingPointToUnsigned):
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::store16):
+        (JSC::MacroAssemblerARMv7::truncateDoubleToUint32):
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::store16):
+        (JSC::MacroAssemblerX86Common::truncateDoubleToUint32):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::movw_rm):
+        (JSC::X86Assembler::cvttsd2siq_rr):
+        * bytecode/PredictedType.cpp:
+        (JSC::predictionToString):
+        (JSC::predictionFromClassInfo):
+        * bytecode/PredictedType.h:
+        (JSC::isInt8ArrayPrediction):
+        (JSC::isInt16ArrayPrediction):
+        (JSC::isInt32ArrayPrediction):
+        (JSC::isUint8ArrayPrediction):
+        (JSC::isUint16ArrayPrediction):
+        (JSC::isUint32ArrayPrediction):
+        (JSC::isFloat32ArrayPrediction):
+        (JSC::isFloat64ArrayPrediction):
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::initialize):
+        (JSC::DFG::AbstractState::execute):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::shouldSpeculateInt8Array):
+        (JSC::DFG::Node::shouldSpeculateInt16Array):
+        (JSC::DFG::Node::shouldSpeculateInt32Array):
+        (JSC::DFG::Node::shouldSpeculateUint8Array):
+        (JSC::DFG::Node::shouldSpeculateUint16Array):
+        (JSC::DFG::Node::shouldSpeculateUint32Array):
+        (JSC::DFG::Node::shouldSpeculateFloat32Array):
+        (JSC::DFG::Node::shouldSpeculateFloat64Array):
+        * dfg/DFGPropagator.cpp:
+        (JSC::DFG::Propagator::propagateNodePredictions):
+        (JSC::DFG::Propagator::fixupNode):
+        (JSC::DFG::Propagator::performNodeCSE):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::checkArgumentTypes):
+        (JSC::DFG::SpeculativeJIT::compileGetTypedArrayLength):
+        (JSC::DFG::SpeculativeJIT::compileGetByValOnIntTypedArray):
+        (JSC::DFG::SpeculativeJIT::compilePutByValForIntTypedArray):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * runtime/JSGlobalData.h:
+
 2011-12-01  Benjamin Poulain  <benjamin@webkit.org>
 
         URLs are encoded in UTF-8, then decoded as if they are Latin1

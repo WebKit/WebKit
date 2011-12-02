@@ -1950,7 +1950,19 @@ private:
     void compileArithMul(Node&);
     void compileArithMod(Node&);
     void compileSoftModulo(Node&);
-
+    void compileGetTypedArrayLength(const TypedArrayDescriptor&, Node&, bool needsSpeculationCheck);
+    enum TypedArraySpeculationRequirements {
+        NoTypedArraySpecCheck,
+        NoTypedArrayTypeSpecCheck,
+        AllTypedArraySpecChecks
+    };
+    enum TypedArraySignedness {
+        SignedTypedArray,
+        UnsignedTypedArray
+    };
+    void compileGetByValOnIntTypedArray(const TypedArrayDescriptor&, Node&, size_t elementSize, TypedArraySpeculationRequirements, TypedArraySignedness);
+    void compilePutByValForIntTypedArray(const TypedArrayDescriptor&, GPRReg base, GPRReg property, Node&, size_t elementSize, TypedArraySpeculationRequirements, TypedArraySignedness);
+    
     // It is acceptable to have structure be equal to scratch, so long as you're fine
     // with the structure GPR being clobbered.
     template<typename T>

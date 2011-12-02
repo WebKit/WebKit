@@ -2639,6 +2639,48 @@ void SpeculativeJIT::compile(Node& node)
                 return;
             break;            
         }
+        
+        if (at(node.child1()).shouldSpeculateInt8Array()) {
+            compileGetByValOnIntTypedArray(m_jit.globalData()->int8ArrayDescriptor(), node, sizeof(int8_t), isInt8ArrayPrediction(m_state.forNode(node.child1()).m_type) ? NoTypedArrayTypeSpecCheck : AllTypedArraySpecChecks, SignedTypedArray);
+            if (!m_compileOkay)
+                return;
+            break;            
+        }
+        
+        if (at(node.child1()).shouldSpeculateInt16Array()) {
+            compileGetByValOnIntTypedArray(m_jit.globalData()->int16ArrayDescriptor(), node, sizeof(int16_t), isInt16ArrayPrediction(m_state.forNode(node.child1()).m_type) ? NoTypedArrayTypeSpecCheck : AllTypedArraySpecChecks, SignedTypedArray);
+            if (!m_compileOkay)
+                return;
+            break;            
+        }
+        
+        if (at(node.child1()).shouldSpeculateInt32Array()) {
+            compileGetByValOnIntTypedArray(m_jit.globalData()->int32ArrayDescriptor(), node, sizeof(int32_t), isInt32ArrayPrediction(m_state.forNode(node.child1()).m_type) ? NoTypedArrayTypeSpecCheck : AllTypedArraySpecChecks, SignedTypedArray);
+            if (!m_compileOkay)
+                return;
+            break;            
+        }
+        
+        if (at(node.child1()).shouldSpeculateUint8Array()) {
+            compileGetByValOnIntTypedArray(m_jit.globalData()->uint8ArrayDescriptor(), node, sizeof(uint8_t), isUint8ArrayPrediction(m_state.forNode(node.child1()).m_type) ? NoTypedArrayTypeSpecCheck : AllTypedArraySpecChecks, UnsignedTypedArray);
+            if (!m_compileOkay)
+                return;
+            break;            
+        }
+        
+        if (at(node.child1()).shouldSpeculateUint16Array()) {
+            compileGetByValOnIntTypedArray(m_jit.globalData()->uint16ArrayDescriptor(), node, sizeof(uint16_t), isUint16ArrayPrediction(m_state.forNode(node.child1()).m_type) ? NoTypedArrayTypeSpecCheck : AllTypedArraySpecChecks, UnsignedTypedArray);
+            if (!m_compileOkay)
+                return;
+            break;            
+        }
+        
+        if (at(node.child1()).shouldSpeculateUint32Array()) {
+            compileGetByValOnIntTypedArray(m_jit.globalData()->uint32ArrayDescriptor(), node, sizeof(uint32_t), isUint32ArrayPrediction(m_state.forNode(node.child1()).m_type) ? NoTypedArrayTypeSpecCheck : AllTypedArraySpecChecks, UnsignedTypedArray);
+            if (!m_compileOkay)
+                return;
+            break;            
+        }
 
         ASSERT(node.child3() == NoNode);
         SpeculateCellOperand base(this, node.child1());
@@ -2698,6 +2740,52 @@ void SpeculativeJIT::compile(Node& node)
         if (at(node.child1()).shouldSpeculateByteArray()) {
             compilePutByValForByteArray(base.gpr(), property.gpr(), node);
             break;
+        }
+        if (at(node.child1()).shouldSpeculateByteArray()) {
+            compilePutByValForByteArray(base.gpr(), property.gpr(), node);
+            break;
+        }
+        
+        if (at(node.child1()).shouldSpeculateInt8Array()) {
+            compilePutByValForIntTypedArray(m_jit.globalData()->int8ArrayDescriptor(), base.gpr(), property.gpr(), node, sizeof(int8_t), isInt8ArrayPrediction(m_state.forNode(node.child1()).m_type) ? NoTypedArrayTypeSpecCheck : AllTypedArraySpecChecks, SignedTypedArray);
+            if (!m_compileOkay)
+                return;
+            break;            
+        }
+        
+        if (at(node.child1()).shouldSpeculateInt16Array()) {
+            compilePutByValForIntTypedArray(m_jit.globalData()->int16ArrayDescriptor(), base.gpr(), property.gpr(), node, sizeof(int16_t), isInt16ArrayPrediction(m_state.forNode(node.child1()).m_type) ? NoTypedArrayTypeSpecCheck : AllTypedArraySpecChecks, SignedTypedArray);
+            if (!m_compileOkay)
+                return;
+            break;            
+        }
+        
+        if (at(node.child1()).shouldSpeculateInt32Array()) {
+            compilePutByValForIntTypedArray(m_jit.globalData()->int32ArrayDescriptor(), base.gpr(), property.gpr(), node, sizeof(int32_t), isInt32ArrayPrediction(m_state.forNode(node.child1()).m_type) ? NoTypedArrayTypeSpecCheck : AllTypedArraySpecChecks, SignedTypedArray);
+            if (!m_compileOkay)
+                return;
+            break;            
+        }
+        
+        if (at(node.child1()).shouldSpeculateUint8Array()) {
+            compilePutByValForIntTypedArray(m_jit.globalData()->uint8ArrayDescriptor(), base.gpr(), property.gpr(), node, sizeof(uint8_t), isUint8ArrayPrediction(m_state.forNode(node.child1()).m_type) ? NoTypedArrayTypeSpecCheck : AllTypedArraySpecChecks, UnsignedTypedArray);
+            if (!m_compileOkay)
+                return;
+            break;            
+        }
+        
+        if (at(node.child1()).shouldSpeculateUint16Array()) {
+            compilePutByValForIntTypedArray(m_jit.globalData()->uint16ArrayDescriptor(), base.gpr(), property.gpr(), node, sizeof(uint16_t), isUint16ArrayPrediction(m_state.forNode(node.child1()).m_type) ? NoTypedArrayTypeSpecCheck : AllTypedArraySpecChecks, UnsignedTypedArray);
+            if (!m_compileOkay)
+                return;
+            break;            
+        }
+        
+        if (at(node.child1()).shouldSpeculateUint32Array()) {
+            compilePutByValForIntTypedArray(m_jit.globalData()->uint32ArrayDescriptor(), base.gpr(), property.gpr(), node, sizeof(uint32_t), isUint32ArrayPrediction(m_state.forNode(node.child1()).m_type) ? NoTypedArrayTypeSpecCheck : AllTypedArraySpecChecks, UnsignedTypedArray);
+            if (!m_compileOkay)
+                return;
+            break;            
         }
 
         JSValueOperand value(this, node.child3());
@@ -2768,6 +2856,48 @@ void SpeculativeJIT::compile(Node& node)
         if (at(node.child1()).shouldSpeculateByteArray()) {
             compilePutByValForByteArray(base.gpr(), property.gpr(), node);
             break;
+        }
+        
+        if (at(node.child1()).shouldSpeculateInt8Array()) {
+            compilePutByValForIntTypedArray(m_jit.globalData()->int8ArrayDescriptor(), base.gpr(), property.gpr(), node, sizeof(int8_t), NoTypedArraySpecCheck, SignedTypedArray);
+            if (!m_compileOkay)
+                return;
+            break;            
+        }
+        
+        if (at(node.child1()).shouldSpeculateInt16Array()) {
+            compilePutByValForIntTypedArray(m_jit.globalData()->int16ArrayDescriptor(), base.gpr(), property.gpr(), node, sizeof(int16_t), NoTypedArraySpecCheck, SignedTypedArray);
+            if (!m_compileOkay)
+                return;
+            break;            
+        }
+        
+        if (at(node.child1()).shouldSpeculateInt32Array()) {
+            compilePutByValForIntTypedArray(m_jit.globalData()->int32ArrayDescriptor(), base.gpr(), property.gpr(), node, sizeof(int32_t), NoTypedArraySpecCheck, SignedTypedArray);
+            if (!m_compileOkay)
+                return;
+            break;            
+        }
+        
+        if (at(node.child1()).shouldSpeculateUint8Array()) {
+            compilePutByValForIntTypedArray(m_jit.globalData()->uint8ArrayDescriptor(), base.gpr(), property.gpr(), node, sizeof(uint8_t), NoTypedArraySpecCheck, UnsignedTypedArray);
+            if (!m_compileOkay)
+                return;
+            break;            
+        }
+        
+        if (at(node.child1()).shouldSpeculateUint16Array()) {
+            compilePutByValForIntTypedArray(m_jit.globalData()->uint16ArrayDescriptor(), base.gpr(), property.gpr(), node, sizeof(uint16_t), NoTypedArraySpecCheck, UnsignedTypedArray);
+            if (!m_compileOkay)
+                return;
+            break;            
+        }
+        
+        if (at(node.child1()).shouldSpeculateUint32Array()) {
+            compilePutByValForIntTypedArray(m_jit.globalData()->uint32ArrayDescriptor(), base.gpr(), property.gpr(), node, sizeof(uint32_t), NoTypedArraySpecCheck, UnsignedTypedArray);
+            if (!m_compileOkay)
+                return;
+            break;            
         }
 
         JSValueOperand value(this, node.child3());
@@ -3393,6 +3523,38 @@ void SpeculativeJIT::compile(Node& node)
         m_jit.load32(MacroAssembler::Address(baseGPR, ByteArray::offsetOfSize()), resultGPR);
         
         integerResult(resultGPR, m_compileIndex);
+        break;
+    }
+    case GetInt8ArrayLength: {
+        compileGetTypedArrayLength(m_jit.globalData()->int8ArrayDescriptor(), node, !isInt8ArrayPrediction(m_state.forNode(node.child1()).m_type));
+        break;
+    }
+    case GetInt16ArrayLength: {
+        compileGetTypedArrayLength(m_jit.globalData()->int16ArrayDescriptor(), node, !isInt16ArrayPrediction(m_state.forNode(node.child1()).m_type));
+        break;
+    }
+    case GetInt32ArrayLength: {
+        compileGetTypedArrayLength(m_jit.globalData()->int32ArrayDescriptor(), node, !isInt32ArrayPrediction(m_state.forNode(node.child1()).m_type));
+        break;
+    }
+    case GetUint8ArrayLength: {
+        compileGetTypedArrayLength(m_jit.globalData()->uint8ArrayDescriptor(), node, !isUint8ArrayPrediction(m_state.forNode(node.child1()).m_type));
+        break;
+    }
+    case GetUint16ArrayLength: {
+        compileGetTypedArrayLength(m_jit.globalData()->uint16ArrayDescriptor(), node, !isUint16ArrayPrediction(m_state.forNode(node.child1()).m_type));
+        break;
+    }
+    case GetUint32ArrayLength: {
+        compileGetTypedArrayLength(m_jit.globalData()->uint32ArrayDescriptor(), node, !isUint32ArrayPrediction(m_state.forNode(node.child1()).m_type));
+        break;
+    }
+    case GetFloat32ArrayLength: {
+        compileGetTypedArrayLength(m_jit.globalData()->float32ArrayDescriptor(), node, !isFloat32ArrayPrediction(m_state.forNode(node.child1()).m_type));
+        break;
+    }
+    case GetFloat64ArrayLength: {
+        compileGetTypedArrayLength(m_jit.globalData()->float64ArrayDescriptor(), node, !isFloat64ArrayPrediction(m_state.forNode(node.child1()).m_type));
         break;
     }
 

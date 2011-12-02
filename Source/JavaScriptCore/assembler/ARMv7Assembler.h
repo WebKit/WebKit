@@ -534,6 +534,7 @@ private:
         OP_BLX              = 0x4700,
         OP_BX               = 0x4700,
         OP_STR_reg_T1       = 0x5000,
+        OP_STRH_reg_T1      = 0x5200,
         OP_STRB_reg_T1      = 0x5400,
         OP_LDR_reg_T1       = 0x5800,
         OP_LDRH_reg_T1      = 0x5A00,
@@ -542,6 +543,7 @@ private:
         OP_LDR_imm_T1       = 0x6800,
         OP_STRB_imm_T1      = 0x7000,
         OP_LDRB_imm_T1      = 0x7800,
+        OP_STRH_imm_T1      = 0x8000,
         OP_LDRH_imm_T1      = 0x8800,
         OP_STR_imm_T2       = 0x9000,
         OP_LDR_imm_T2       = 0x9800,
@@ -614,6 +616,8 @@ private:
         OP_STRB_reg_T2  = 0xF800,
         OP_LDRB_imm_T3  = 0xF810,
         OP_LDRB_reg_T2  = 0xF810,
+        OP_STRH_imm_T3  = 0xF820,
+        OP_STRH_reg_T2  = 0xF820,
         OP_LDRH_reg_T2  = 0xF830,
         OP_LDRH_imm_T3  = 0xF830,
         OP_STR_imm_T4   = 0xF840,
@@ -622,6 +626,7 @@ private:
         OP_LDR_reg_T2   = 0xF850,
         OP_STRB_imm_T2  = 0xF880,
         OP_LDRB_imm_T2  = 0xF890,
+        OP_STRH_imm_T2  = 0xF8A0,
         OP_LDRH_imm_T2  = 0xF8B0,
         OP_STR_imm_T3   = 0xF8C0,
         OP_LDR_imm_T3   = 0xF8D0,
@@ -1439,6 +1444,65 @@ public:
         else
             m_formatter.twoWordOp12Reg4FourFours(OP_STRB_reg_T2, rn, FourFours(rt, 0, shift, rm));
     }
+    
+    // rt == ARMRegisters::pc only allowed if last instruction in IT (if then) block.
+    ALWAYS_INLINE void strh(RegisterID rt, RegisterID rn, ARMThumbImmediate imm)
+    {
+        ASSERT(rt != ARMRegisters::pc);
+        ASSERT(rn != ARMRegisters::pc);
+        ASSERT(imm.isUInt12());
+        
+        if (!((rt | rn) & 8) && imm.isUInt7())
+            m_formatter.oneWordOp5Imm5Reg3Reg3(OP_STRH_imm_T1, imm.getUInt7() >> 2, rn, rt);
+        else
+            m_formatter.twoWordOp12Reg4Reg4Imm12(OP_STRH_imm_T2, rn, rt, imm.getUInt12());
+    }
+    
+    // If index is set, this is a regular offset or a pre-indexed store;
+    // if index is not set then is is a post-index store.
+    //
+    // If wback is set rn is updated - this is a pre or post index store,
+    // if wback is not set this is a regular offset memory access.
+    //
+    // (-255 <= offset <= 255)
+    // _reg = REG[rn]
+    // _tmp = _reg + offset
+    // MEM[index ? _tmp : _reg] = REG[rt]
+    // if (wback) REG[rn] = _tmp
+    ALWAYS_INLINE void strh(RegisterID rt, RegisterID rn, int offset, bool index, bool wback)
+    {
+        ASSERT(rt != ARMRegisters::pc);
+        ASSERT(rn != ARMRegisters::pc);
+        ASSERT(index || wback);
+        ASSERT(!wback | (rt != rn));
+        
+        bool add = true;
+        if (offset < 0) {
+            add = false;
+            offset = -offset;
+        }
+        ASSERT(!(offset & ~0xff));
+        
+        offset |= (wback << 8);
+        offset |= (add   << 9);
+        offset |= (index << 10);
+        offset |= (1 << 11);
+        
+        m_formatter.twoWordOp12Reg4Reg4Imm12(OP_STRH_imm_T3, rn, rt, offset);
+    }
+    
+    // rt == ARMRegisters::pc only allowed if last instruction in IT (if then) block.
+    ALWAYS_INLINE void strh(RegisterID rt, RegisterID rn, RegisterID rm, unsigned shift = 0)
+    {
+        ASSERT(rn != ARMRegisters::pc);
+        ASSERT(!BadReg(rm));
+        ASSERT(shift <= 3);
+        
+        if (!shift && !((rt | rn | rm) & 8))
+            m_formatter.oneWordOp7Reg3Reg3Reg3(OP_STRH_reg_T1, rm, rn, rt);
+        else
+            m_formatter.twoWordOp12Reg4FourFours(OP_STRH_reg_T2, rn, FourFours(rt, 0, shift, rm));
+    }
 
     ALWAYS_INLINE void sub(RegisterID rd, RegisterID rn, ARMThumbImmediate imm)
     {
@@ -1600,6 +1664,12 @@ public:
     {
         // boolean values are 64bit (toInt, unsigned, roundZero)
         m_formatter.vfpOp(OP_VCVT_FPIVFP, OP_VCVT_FPIVFPb, true, vcvtOp(true, false, true), rd, rm);
+    }
+    
+    void vcvt_floatingPointToUnsigned(FPSingleRegisterID rd, FPDoubleRegisterID rm)
+    {
+        // boolean values are 64bit (toInt, unsigned, roundZero)
+        m_formatter.vfpOp(OP_VCVT_FPIVFP, OP_VCVT_FPIVFPb, true, vcvtOp(true, true, true), rd, rm);
     }
 
     void vdiv(FPDoubleRegisterID rd, FPDoubleRegisterID rn, FPDoubleRegisterID rm)
