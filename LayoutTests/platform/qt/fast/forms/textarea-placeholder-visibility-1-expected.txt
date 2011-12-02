@@ -13,4 +13,7 @@ layer at (10,47) size 200x46
   RenderTextControl {TEXTAREA} at (2,2) size 200x46
     RenderBlock {DIV} at (2,2) size 196x21
       RenderBR {BR} at (0,0) size 0x21
+    RenderBlock {DIV} at (2,2) size 196x21 [color=#A9A9A9]
+      RenderText {#text} at (0,0) size 86x21
+        text run at (0,0) width 86: "Placeholder"
 caret: position 0 of child 0 {BR} of child 0 {DIV} of {#shadow-root} of child 1 {TEXTAREA} of child 3 {DIV} of body
