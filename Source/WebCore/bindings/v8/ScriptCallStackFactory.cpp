@@ -31,6 +31,7 @@
 #include "config.h"
 #include "ScriptCallStackFactory.h"
 
+#include "InspectorInstrumentation.h"
 #include "InspectorValues.h"
 #include "ScriptArguments.h"
 #include "ScriptCallFrame.h"
@@ -38,10 +39,13 @@
 #include "ScriptScope.h"
 #include "ScriptValue.h"
 #include "V8Binding.h"
+#include "V8Utilities.h"
 
 #include <v8-debug.h>
 
 namespace WebCore {
+
+class ScriptExecutionContext;
 
 static ScriptCallFrame toScriptCallFrame(v8::Handle<v8::StackFrame> frame)
 {
@@ -99,6 +103,17 @@ PassRefPtr<ScriptCallStack> createScriptCallStack(size_t maxStackSize, bool empt
     v8::HandleScope handleScope;
     v8::Handle<v8::StackTrace> stackTrace(v8::StackTrace::CurrentStackTrace(maxStackSize, stackTraceOptions));
     return createScriptCallStack(stackTrace, maxStackSize, emptyStackIsAllowed);
+}
+
+PassRefPtr<ScriptCallStack> createScriptCallStack()
+{
+    size_t maxStackSize = 1;
+    if (InspectorInstrumentation::hasFrontends()) {
+        ScriptExecutionContext* scriptExecutionContext = getScriptExecutionContext();
+        if (InspectorInstrumentation::hasFrontendForScriptContext(scriptExecutionContext))
+            maxStackSize = ScriptCallStack::maxCallStackSizeToCapture;
+    }
+    return createScriptCallStack(maxStackSize);
 }
 
 PassRefPtr<ScriptArguments> createScriptArguments(const v8::Arguments& v8arguments, unsigned skipArgumentCount)

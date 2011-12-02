@@ -1,3 +1,33 @@
+2011-12-01  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Extract default call stack creation and check for front-end from console.
+        https://bugs.webkit.org/show_bug.cgi?id=73566
+
+        Reviewed by Yury Semikhatsky.
+
+        * bindings/js/ScriptCallStackFactory.cpp:
+        (WebCore::createScriptCallStack):
+        * bindings/js/ScriptCallStackFactory.h:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateParametersCheck):
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (GenerateFunctionCallback):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::jsTestObjPrototypeFunctionCustomArgsAndException):
+        * bindings/scripts/test/V8/V8TestObj.cpp:
+        (WebCore::TestObjInternal::customArgsAndExceptionCallback):
+        * bindings/v8/ScriptCallStackFactory.cpp:
+        (WebCore::createScriptCallStack):
+        * bindings/v8/ScriptCallStackFactory.h:
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::hasFrontendForScriptContext):
+        * inspector/InspectorInstrumentation.h:
+        (WebCore::InspectorInstrumentation::hasFrontendForScriptContext):
+        * inspector/WorkerInspectorController.h:
+        (WebCore::WorkerInspectorController::hasFrontend):
+        * page/Console.cpp:
+        * page/Console.h:
+
 2011-12-02  Gavin Peters  <gavinp@chromium.org>
 
         Remove instrumentation tracking a fixed bug

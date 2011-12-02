@@ -31,6 +31,7 @@
 #include "config.h"
 #include "ScriptCallStackFactory.h"
 
+#include "InspectorInstrumentation.h"
 #include "JSDOMBinding.h"
 #include "ScriptArguments.h"
 #include "ScriptCallFrame.h"
@@ -47,6 +48,8 @@
 using namespace JSC;
 
 namespace WebCore {
+
+class ScriptExecutionContext;
 
 PassRefPtr<ScriptCallStack> createScriptCallStack(size_t, bool)
 {
@@ -81,6 +84,17 @@ PassRefPtr<ScriptCallStack> createScriptCallStack(JSC::ExecState* exec, size_t m
         callFrame = callFrame->callerFrame();
     }
     return ScriptCallStack::create(frames);
+}
+
+PassRefPtr<ScriptCallStack> createScriptCallStack(JSC::ExecState* exec)
+{
+    size_t maxStackSize = 1;
+    if (InspectorInstrumentation::hasFrontends()) {
+        ScriptExecutionContext* scriptExecutionContext = static_cast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
+        if (InspectorInstrumentation::hasFrontendForScriptContext(scriptExecutionContext))
+            maxStackSize = ScriptCallStack::maxCallStackSizeToCapture;
+    }
+    return createScriptCallStack(exec, maxStackSize);
 }
 
 PassRefPtr<ScriptArguments> createScriptArguments(JSC::ExecState* exec, unsigned skipArgumentCount)

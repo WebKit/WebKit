@@ -64,6 +64,7 @@ public:
     WorkerInspectorController(WorkerContext*);
     ~WorkerInspectorController();
 
+    bool hasFrontend() const { return m_frontend; }
     void connectFrontend();
     void disconnectFrontend();
     void restoreInspectorStateFromCookie(const String& inspectorCookie);

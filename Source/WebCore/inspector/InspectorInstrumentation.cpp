@@ -44,6 +44,8 @@
 #include "InspectorDOMDebuggerAgent.h"
 #include "InspectorCSSAgent.h"
 #include "InspectorConsoleAgent.h"
+#include "InspectorController.h"
+#include "WorkerInspectorController.h"
 #include "InspectorDatabaseAgent.h"
 #include "InspectorDOMAgent.h"
 #include "InspectorDOMStorageAgent.h"
@@ -872,6 +874,26 @@ bool InspectorInstrumentation::collectingHTMLParseErrors(InstrumentingAgents* in
 {
     if (InspectorAgent* inspectorAgent = instrumentingAgents->inspectorAgent())
         return inspectorAgent->hasFrontend();
+    return false;
+}
+
+bool InspectorInstrumentation::hasFrontendForScriptContext(ScriptExecutionContext* scriptExecutionContext)
+{
+    if (!scriptExecutionContext)
+        return false;
+
+    if (scriptExecutionContext->isDocument()) {
+        Document* document = static_cast<Document*>(scriptExecutionContext);
+        Page* page = document->page();
+        return page && page->inspectorController()->hasFrontend();
+#if ENABLE(WORKERS)
+    } else {
+        WorkerContext* workerContext = static_cast<WorkerContext*>(scriptExecutionContext);
+        WorkerInspectorController* workerInspectorController = workerContext->workerInspectorController();
+        return workerInspectorController && workerInspectorController->hasFrontend();
+#endif
+    }
+
     return false;
 }
 

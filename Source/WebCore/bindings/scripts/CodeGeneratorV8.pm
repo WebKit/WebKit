@@ -1389,8 +1389,7 @@ END
     if ($function->signature->extendedAttributes->{"CustomArgumentHandling"}) {
         push(@implContentDecls, <<END);
     RefPtr<ScriptArguments> scriptArguments(createScriptArguments(args, $numParameters));
-    size_t maxStackSize = imp->shouldCaptureFullStackTrace() ? ScriptCallStack::maxCallStackSizeToCapture : 1;
-    RefPtr<ScriptCallStack> callStack(createScriptCallStack(maxStackSize));
+    RefPtr<ScriptCallStack> callStack(createScriptCallStack());
     if (!callStack)
         return v8::Undefined();
 END

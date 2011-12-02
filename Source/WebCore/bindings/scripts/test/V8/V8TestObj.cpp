@@ -858,8 +858,7 @@ static v8::Handle<v8::Value> customArgsAndExceptionCallback(const v8::Arguments&
     ExceptionCode ec = 0;
     {
     RefPtr<ScriptArguments> scriptArguments(createScriptArguments(args, 1));
-    size_t maxStackSize = imp->shouldCaptureFullStackTrace() ? ScriptCallStack::maxCallStackSizeToCapture : 1;
-    RefPtr<ScriptCallStack> callStack(createScriptCallStack(maxStackSize));
+    RefPtr<ScriptCallStack> callStack(createScriptCallStack());
     if (!callStack)
         return v8::Undefined();
     EXCEPTION_BLOCK(log*, intArg, V8log::HasInstance(MAYBE_MISSING_PARAMETER(args, 0, MissingIsUndefined)) ? V8log::toNative(v8::Handle<v8::Object>::Cast(MAYBE_MISSING_PARAMETER(args, 0, MissingIsUndefined))) : 0);
