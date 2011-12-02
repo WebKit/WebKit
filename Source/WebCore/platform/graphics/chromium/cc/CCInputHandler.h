@@ -45,7 +45,26 @@ class CCInputHandlerClient {
 public:
     virtual double currentTimeMs() const = 0;
     virtual void setNeedsRedraw() = 0;
-    virtual void scrollRootLayer(const IntSize&) = 0;
+
+    enum ScrollStatus { ScrollFailed, ScrollStarted, ScrollIgnored };
+
+    // Attempt to start scrolling a layer at a given point in window
+    // coordinates. Returns ScrollStarted if the layer at the coordinates can
+    // be scrolled, ScrollFailed if the scroll event should instead be
+    // delegated to the main thread, or ScrollIgnored if there is nothing to
+    // be scrolled at the given coordinates.
+    virtual ScrollStatus scrollBegin(const IntPoint&) = 0;
+
+    // Scroll the layer selected with scrollBegin(). If there is no room to
+    // move the layer in the requested direction, its first ancestor layer that
+    // can be scrolled will be moved instead. Should only be called if
+    // scrollBegin() returned ScrollStarted.
+    virtual void scrollBy(const IntSize&) = 0;
+
+    // Stop scrolling the layer selected with scrollBegin(). Should only be
+    // called if scrollBegin() returned ScrollStarted.
+    virtual void scrollEnd() = 0;
+
     virtual bool haveWheelEventHandlers() = 0;
     virtual void pinchGestureBegin() = 0;
     virtual void pinchGestureUpdate(float magnifyDelta, const IntPoint& anchor) = 0;

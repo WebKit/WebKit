@@ -296,15 +296,28 @@ void CCLayerTreeHostImpl::setNeedsRedraw()
     m_client->setNeedsRedrawOnImplThread();
 }
 
-void CCLayerTreeHostImpl::scrollRootLayer(const IntSize& scrollDelta)
+CCInputHandlerClient::ScrollStatus CCLayerTreeHostImpl::scrollBegin(const IntPoint&)
 {
-    TRACE_EVENT("CCLayerTreeHostImpl::scrollRootLayer", this, 0);
+    // TODO: Check for scrollable sublayers.
+    if (!m_scrollLayerImpl || !m_scrollLayerImpl->scrollable())
+        return ScrollIgnored;
+
+    return ScrollStarted;
+}
+
+void CCLayerTreeHostImpl::scrollBy(const IntSize& scrollDelta)
+{
+    TRACE_EVENT("CCLayerTreeHostImpl::scrollBy", this, 0);
     if (!m_scrollLayerImpl)
         return;
 
     m_scrollLayerImpl->scrollBy(scrollDelta);
     m_client->setNeedsCommitOnImplThread();
     m_client->setNeedsRedrawOnImplThread();
+}
+
+void CCLayerTreeHostImpl::scrollEnd()
+{
 }
 
 bool CCLayerTreeHostImpl::haveWheelEventHandlers()
@@ -335,8 +348,8 @@ void CCLayerTreeHostImpl::pinchGestureUpdate(float magnifyDelta,
 
     FloatSize move = prevScaleAnchor - newScaleAnchor;
 
-    scrollRootLayer(roundedIntSize(move));
-
+    m_scrollLayerImpl->scrollBy(roundedIntSize(move));
+    m_client->setNeedsCommitOnImplThread();
     m_client->setNeedsRedrawOnImplThread();
 }
 

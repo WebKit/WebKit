@@ -153,7 +153,9 @@ TEST_F(CCLayerTreeHostImplTest, scrollRootCallsCommitAndRedraw)
     root->setScrollPosition(IntPoint(0, 0));
     root->setMaxScrollPosition(IntSize(100, 100));
     m_hostImpl->setRootLayer(root);
-    m_hostImpl->scrollRootLayer(IntSize(0, 10));
+    EXPECT_EQ(m_hostImpl->scrollBegin(IntPoint(0, 0)), CCInputHandlerClient::ScrollStarted);
+    m_hostImpl->scrollBy(IntSize(0, 10));
+    m_hostImpl->scrollEnd();
     EXPECT_TRUE(m_didRequestRedraw);
     EXPECT_TRUE(m_didRequestCommit);
 }

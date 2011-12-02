@@ -61,7 +61,9 @@ public:
     // CCInputHandlerTarget implementation
     virtual double currentTimeMs() const;
     virtual void setNeedsRedraw();
-    virtual void scrollRootLayer(const IntSize&);
+    virtual CCInputHandlerClient::ScrollStatus scrollBegin(const IntPoint&);
+    virtual void scrollBy(const IntSize&);
+    virtual void scrollEnd();
     virtual bool haveWheelEventHandlers();
     virtual void pinchGestureBegin();
     virtual void pinchGestureUpdate(float, const IntPoint&);

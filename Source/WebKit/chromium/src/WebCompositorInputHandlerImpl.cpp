@@ -118,9 +118,19 @@ void WebCompositorInputHandlerImpl::handleInputEvent(const WebInputEvent& event)
 
     if (event.type == WebInputEvent::MouseWheel && !m_inputHandlerClient->haveWheelEventHandlers()) {
         const WebMouseWheelEvent& wheelEvent = *static_cast<const WebMouseWheelEvent*>(&event);
-        m_inputHandlerClient->scrollRootLayer(IntSize(-wheelEvent.deltaX, -wheelEvent.deltaY));
-        m_client->didHandleInputEvent();
-        return;
+        CCInputHandlerClient::ScrollStatus scrollStatus = m_inputHandlerClient->scrollBegin(IntPoint(wheelEvent.x, wheelEvent.y));
+        switch (scrollStatus) {
+        case CCInputHandlerClient::ScrollStarted:
+            m_inputHandlerClient->scrollBy(IntSize(-wheelEvent.deltaX, -wheelEvent.deltaY));
+            m_inputHandlerClient->scrollEnd();
+            m_client->didHandleInputEvent();
+            return;
+        case CCInputHandlerClient::ScrollIgnored:
+            m_client->didNotHandleInputEvent(false /* sendToWidget */);
+            return;
+        case CCInputHandlerClient::ScrollFailed:
+            break;
+        }
     }
     m_client->didNotHandleInputEvent(true /* sendToWidget */);
 }

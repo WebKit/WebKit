@@ -1,3 +1,28 @@
+2011-12-02  Sami Kyostila  <skyostil@chromium.org>
+
+        [chromium] Make CCInputHandler scrolling stateful
+        https://bugs.webkit.org/show_bug.cgi?id=73345
+
+        This change makes the scrolling part of CCInputHandler stateful by
+        replacing scrollRootLayer() with scrollBegin(), scrollBy() and
+        scrollEnd(). This is done in preparation for scrollable sublayers.
+        Specifically, scrollBegin() will allow CCLayerTreeHostImpl to perform
+        input event hit testing to find the layer to be scrolled.
+
+        Reviewed by Steve Block.
+
+        Tested in CCLayerTreeHostImplTest.
+
+        * platform/graphics/chromium/cc/CCInputHandler.h:
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.cpp:
+        (WebCore::CCLayerTreeHostImpl::CCLayerTreeHostImpl):
+        (WebCore::CCLayerTreeHostImpl::currentTimeMs):
+        (WebCore::CCLayerTreeHostImpl::setNeedsRedraw):
+        (WebCore::findInnermostScrollableLayerAtPoint):
+        (WebCore::CCLayerTreeHostImpl::scrollBegin):
+        (WebCore::CCLayerTreeHostImpl::scrollBy):
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.h:
+
 2011-12-02  Kentaro Hara  <haraken@chromium.org>
 
         Use the [Supplemental] IDL for webaudio attributes in Chromium
