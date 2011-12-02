@@ -74,10 +74,10 @@ sub platformIsReadyForParallelTesting()
     # platforms can opt-in to parallel test execution by default.
 
     # Platforms interested in dog-fooding faster test runs on their bots
-    # should add themselves to this blacklist, e.g.:
+    # should add themselves to this whitelist, e.g.:
     # return isGtk() or isQt();
     # This will likely require skipping tests or marking tests as flaky in test_expectations.txt
-    return 0;
+    return isAppleMacWebKit() and isLion();
 }
 
 my $harnessName = "old-run-webkit-tests";
