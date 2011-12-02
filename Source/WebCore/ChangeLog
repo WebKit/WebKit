@@ -1,3 +1,14 @@
+2011-12-01  Andreas Kling  <kling@webkit.org>
+
+        CSSMutableStyleDeclaration: Removed unused multiLength argument in setLengthProperty().
+        <http://webkit.org/b/73602>
+
+        Reviewed by Darin Adler.
+
+        * css/CSSMutableStyleDeclaration.cpp:
+        (WebCore::CSSMutableStyleDeclaration::setLengthProperty):
+        * css/CSSMutableStyleDeclaration.h:
+
 2011-12-01  Kentaro Hara  <haraken@chromium.org>
 
         Unreviewed, rolling out r101737.

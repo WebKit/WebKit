@@ -110,7 +110,7 @@ public:
     void removeProperty(int propertyID) { removeProperty(propertyID, true, false); }
 
     // setLengthProperty treats integers as pixels! (Needed for conversion of HTML attributes.)
-    void setLengthProperty(int propertyId, const String& value, bool important, bool multiLength = false);
+    void setLengthProperty(int propertyId, const String& value, bool important);
     void setImageProperty(int propertyId, const String& url, bool important = false);
 
     // The following parses an entire new style declaration.

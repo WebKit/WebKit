@@ -804,7 +804,7 @@ void CSSMutableStyleDeclaration::addParsedProperty(const CSSProperty& property)
 #endif
 }
 
-void CSSMutableStyleDeclaration::setLengthProperty(int propertyId, const String& value, bool important, bool /*multiLength*/)
+void CSSMutableStyleDeclaration::setLengthProperty(int propertyId, const String& value, bool important)
 {
     ASSERT(!m_iteratorCount);
 
