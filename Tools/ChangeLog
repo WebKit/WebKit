@@ -1,3 +1,17 @@
+2011-12-01  Adam Klein  <adamk@chromium.org>
+
+        Add Chromium ToT GTest build bots (and group selection support) to flakiness dashboard
+        https://bugs.webkit.org/show_bug.cgi?id=73599
+
+        Reviewed by Ojan Vafai.
+
+        * TestResultServer/static-dashboards/builders.js:
+        * TestResultServer/static-dashboards/dashboard_base.js:
+        ():
+        (htmlForTestTypeSwitcher):
+        * TestResultServer/static-dashboards/flakiness_dashboard_tests.js:
+        (testHtmlForTestTypeSwitcherGroup):
+
 2011-12-01  Ryosuke Niwa  <rniwa@webkit.org>
 
         Parse reftest.list and extract types of ref tests

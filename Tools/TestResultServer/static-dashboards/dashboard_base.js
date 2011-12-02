@@ -454,7 +454,7 @@ function currentBuilderGroup(opt_state)
     case 'ui_tests':
     case 'unit_tests':
     case 'views_unittests':
-        return G_TESTS_BUILDER_GROUP;
+        return CHROMIUM_GTESTS_BUILDER_GROUPS[state.group];
     default:
         console.log('invalid testType parameter: ' + state.testType);
     }
@@ -886,8 +886,8 @@ function htmlForTestTypeSwitcher(opt_noBuilderMenu, opt_extraHtml, opt_includeNo
         html += selectHTML('Builder', 'builder', buildersForMenu);
     }
 
-    if (isLayoutTestResults())
-        html += selectHTML('Group', 'group', Object.keys(LAYOUT_TESTS_BUILDER_GROUPS));
+    html += selectHTML('Group', 'group',
+        Object.keys(isLayoutTestResults() ? LAYOUT_TESTS_BUILDER_GROUPS : CHROMIUM_GTESTS_BUILDER_GROUPS));
 
     if (!isTreeMap())
         html += checkboxHTML('showAllRuns', 'Show all runs', g_currentState.showAllRuns);

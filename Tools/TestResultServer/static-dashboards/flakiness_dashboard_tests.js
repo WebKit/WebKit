@@ -384,6 +384,26 @@ function testHeaderForTestTableHtml()
     assertEquals(container.querySelectorAll('input').length, 5);
 }
 
+function testHtmlForTestTypeSwitcherGroup()
+{
+    var container = document.createElement('div');
+    g_currentState.testType = 'ui_tests';
+    container.innerHTML = htmlForTestTypeSwitcher();
+    var selects = container.querySelectorAll('select');
+    assertEquals(selects.length, 3);
+    var group = selects[2];
+    assertEquals(group.parentNode.textContent.indexOf('Group:'), 0);
+    assertEquals(group.children.length, 2);
+
+    g_currentState.testType = 'layout-tests';
+    container.innerHTML = htmlForTestTypeSwitcher();
+    var selects = container.querySelectorAll('select');
+    assertEquals(selects.length, 3);
+    var group = selects[2];
+    assertEquals(group.parentNode.textContent.indexOf('Group:'), 0);
+    assertEquals(group.children.length, 4);
+}
+
 function runTests()
 {
     document.body.innerHTML = '<pre id=unittest-results></pre>';
