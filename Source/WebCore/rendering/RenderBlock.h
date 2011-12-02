@@ -196,6 +196,7 @@ public:
 
     void adjustRectForColumns(LayoutRect&) const;
     virtual void adjustForColumns(LayoutSize&, const LayoutPoint&) const;
+    void adjustForColumnRect(LayoutSize& offset, const LayoutPoint& pointInContainer) const;
 
     void addContinuationWithOutline(RenderInline*);
     bool paintsContinuationOutline(RenderInline*);

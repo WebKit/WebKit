@@ -4237,49 +4237,100 @@ bool RenderBlock::hitTestFloats(const HitTestRequest& request, HitTestResult& re
     return false;
 }
 
+class ColumnRectIterator {
+    WTF_MAKE_NONCOPYABLE(ColumnRectIterator);
+public:
+    ColumnRectIterator(const RenderBlock& block)
+        : m_block(block)
+        , m_colInfo(block.columnInfo())
+        , m_direction(m_block.style()->isFlippedBlocksWritingMode() ? 1 : -1)
+        , m_isHorizontal(block.isHorizontalWritingMode())
+        , m_logicalLeft(block.logicalLeftOffsetForContent())
+    {
+        int colCount = m_colInfo->columnCount();
+        m_colIndex = colCount - 1;
+        m_currLogicalTopOffset = colCount * m_colInfo->columnHeight() * m_direction;
+        update();
+    }
+
+    void advance()
+    {
+        ASSERT(hasMore());
+        m_colIndex--;
+        update();
+    }
+
+    LayoutRect columnRect() const { return m_colRect; }
+    bool hasMore() const { return m_colIndex >= 0; }
+
+    void adjust(LayoutSize& offset) const
+    {
+        LayoutUnit currLogicalLeftOffset = (m_isHorizontal ? m_colRect.x() : m_colRect.y()) - m_logicalLeft;
+        offset += m_isHorizontal ? LayoutSize(currLogicalLeftOffset, m_currLogicalTopOffset) : LayoutSize(m_currLogicalTopOffset, currLogicalLeftOffset);
+        if (m_colInfo->progressionAxis() == ColumnInfo::BlockAxis) {
+            if (m_isHorizontal)
+                offset.expand(0, m_colRect.y() - m_block.borderTop() - m_block.paddingTop());
+            else
+                offset.expand(m_colRect.x() - m_block.borderLeft() - m_block.paddingLeft(), 0);
+        }
+    }
+
+private:
+    void update()
+    {
+        if (m_colIndex < 0)
+            return;
+
+        m_colRect = m_block.columnRectAt(const_cast<ColumnInfo*>(m_colInfo), m_colIndex);
+        m_block.flipForWritingMode(m_colRect);
+        m_currLogicalTopOffset -= (m_isHorizontal ? m_colRect.height() : m_colRect.width()) * m_direction;
+    }
+
+    const RenderBlock& m_block;
+    const ColumnInfo* const m_colInfo;
+    const int m_direction;
+    const bool m_isHorizontal;
+    const LayoutUnit m_logicalLeft;
+    int m_colIndex;
+    LayoutUnit m_currLogicalTopOffset;
+    LayoutRect m_colRect;
+};
+
 bool RenderBlock::hitTestColumns(const HitTestRequest& request, HitTestResult& result, const LayoutPoint& pointInContainer, const LayoutPoint& accumulatedOffset, HitTestAction hitTestAction)
 {
     // We need to do multiple passes, breaking up our hit testing into strips.
-    ColumnInfo* colInfo = columnInfo();
-    int colCount = columnCount(colInfo);
-    if (!colCount)
+    if (!hasColumns())
         return false;
-    LayoutUnit logicalLeft = logicalLeftOffsetForContent();
-    LayoutUnit currLogicalTopOffset = !style()->isFlippedBlocksWritingMode() ? -colCount * colInfo->columnHeight() : colCount * colInfo->columnHeight();
-    bool isHorizontal = isHorizontalWritingMode();
 
-    for (int i = colCount - 1; i >= 0; i--) {
-        LayoutRect colRect = columnRectAt(colInfo, i);
-        flipForWritingMode(colRect);
-        LayoutUnit currLogicalLeftOffset = (isHorizontal ? colRect.x() : colRect.y()) - logicalLeft;
-        LayoutUnit blockDelta =  (isHorizontal ? colRect.height() : colRect.width());
-        if (style()->isFlippedBlocksWritingMode())
-            currLogicalTopOffset -= blockDelta;
-        else
-            currLogicalTopOffset += blockDelta;
+    for (ColumnRectIterator it(*this); it.hasMore(); it.advance()) {
+        LayoutRect hitRect = result.rectForPoint(pointInContainer);
+        LayoutRect colRect = it.columnRect();
         colRect.moveBy(accumulatedOffset);
-        
-        if (colRect.intersects(result.rectForPoint(pointInContainer))) {
+        if (colRect.intersects(hitRect)) {
             // The point is inside this column.
             // Adjust accumulatedOffset to change where we hit test.
-        
-            LayoutSize offset = isHorizontal ? IntSize(currLogicalLeftOffset, currLogicalTopOffset) : LayoutSize(currLogicalTopOffset, currLogicalLeftOffset);
-            if (colInfo->progressionAxis() == ColumnInfo::BlockAxis) {
-                if (isHorizontal)
-                    offset.expand(0, colRect.y() - accumulatedOffset.y() - borderTop() - paddingTop());
-                else
-                    offset.expand(colRect.x() - accumulatedOffset.x() - borderLeft() - paddingLeft(), 0);
-            }
-
+            LayoutSize offset;
+            it.adjust(offset);
             LayoutPoint finalLocation = accumulatedOffset + offset;
-            if (result.isRectBasedTest() && !colRect.contains(result.rectForPoint(pointInContainer)))
-                hitTestContents(request, result, pointInContainer, finalLocation, hitTestAction);
-            else
+            if (!result.isRectBasedTest() || colRect.contains(hitRect))
                 return hitTestContents(request, result, pointInContainer, finalLocation, hitTestAction) || (hitTestAction == HitTestFloat && hitTestFloats(request, result, pointInContainer, finalLocation));
+
+            hitTestContents(request, result, pointInContainer, finalLocation, hitTestAction);
         }
     }
 
     return false;
+}
+
+void RenderBlock::adjustForColumnRect(LayoutSize& offset, const LayoutPoint& pointInContainer) const
+{
+    for (ColumnRectIterator it(*this); it.hasMore(); it.advance()) {
+        LayoutRect colRect = it.columnRect();
+        if (colRect.contains(pointInContainer)) {
+            it.adjust(offset);
+            return;
+        }
+    }
 }
 
 bool RenderBlock::hitTestContents(const HitTestRequest& request, HitTestResult& result, const LayoutPoint& pointInContainer, const LayoutPoint& accumulatedOffset, HitTestAction hitTestAction)

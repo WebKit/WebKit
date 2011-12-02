@@ -1,3 +1,46 @@
+2011-12-02  Yosifumi Inoue  <yosin@chromium.org>
+
+        Range sliders and spin buttons don't work with multi-columns.
+        https://bugs.webkit.org/show_bug.cgi?id=70898
+
+        Reviewed by Dan Bernstein.
+
+        This patch makes RenderBlock::hitTestColumns and
+        RenderBoxModelObject::mapAbsoluteToLocal to handle point
+        in multi-column same logic.
+
+        In multi-column, coordinate of box model rendering object is different
+        from absolute coordinate.. Columns in box model rendering object spans
+        vertically rather than horizontally.
+
+        When absolute point is represented in (column[i]+dx, column[0]+dy),
+        it is (column[0]+dx, column[0] + columnHeight + dy) in box model
+        rendering object coordinate.
+
+        Tests: fast/events/document-elementFromPoint.html
+               fast/events/offsetX-offsetY.html
+               fast/forms/number/spin-in-multi-column.html
+               fast/forms/range/slider-in-multi-column.html
+               fast/forms/select/listbox-in-multi-column.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::ColumnRectIterator::ColumnRectIterator): Added
+        (WebCore::ColumnRectIterator::advance): Added
+        (WebCore::ColumnRectIterator::columnRect): Added
+        (WebCore::ColumnRectIterator::hasMore): Added
+        (WebCore::ColumnRectIterator::adjust): Added
+        (WebCore::ColumnRectIterator::update): Added
+        (WebCore::RenderBlock::hitTestColumns): Use ColumnRectIterator.
+        (WebCore::RenderBlock::adjustForColumnRect): Added
+        * rendering/RenderBlock.h: Add adjustForColumnRect.
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::mapAbsoluteToLocalPoint): Call RenderBoxModelObject::mapAbsoluteToLocalPoint.
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::mapAbsoluteToLocalPoint): Move from RenderInline::mapAbsoluteToLocalPoint and call RenderBlock::adjustForColumnRect.
+        * rendering/RenderBoxModelObject.h: add mapAbsoluteToLocalPoint.
+        * rendering/RenderInline.cpp: Move mapAbsoluteToLocalPoint to RenderBoxModelObject.
+        * rendering/RenderInline.h: remove mapAbsoluteToLocalPoint.
+
 2011-12-02  Pavel Feldman  <pfeldman@google.com>
 
         InspectorController destruction order leads to use-after-free

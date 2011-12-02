@@ -37,6 +37,7 @@
 #include "RenderLayer.h"
 #include "RenderView.h"
 #include "Settings.h"
+#include "TransformState.h"
 #include <wtf/CurrentTime.h>
 
 using namespace std;
@@ -2715,6 +2716,35 @@ bool RenderBoxModelObject::shouldAntialiasLines(GraphicsContext* context)
     // FIXME: We may want to not antialias when scaled by an integral value,
     // and we may want to antialias when translated by a non-integral value.
     return !context->getCTM().isIdentityOrTranslationOrFlipped();
+}
+
+void RenderBoxModelObject::mapAbsoluteToLocalPoint(bool fixed, bool useTransforms, TransformState& transformState) const
+{
+    // We don't expect absoluteToLocal() to be called during layout (yet)
+    ASSERT(!view() || !view()->layoutStateEnabled());
+
+    RenderObject* o = container();
+    if (!o)
+        return;
+
+    o->mapAbsoluteToLocalPoint(fixed, useTransforms, transformState);
+
+    LayoutSize containerOffset = offsetFromContainer(o, LayoutPoint());
+
+    if (style()->position() != AbsolutePosition && style()->position() != FixedPosition && o->hasColumns()) {
+        RenderBlock* block = static_cast<RenderBlock*>(o);
+        LayoutPoint point(roundedLayoutPoint(transformState.mappedPoint()));
+        point -= containerOffset;
+        block->adjustForColumnRect(containerOffset, point);
+    }
+
+    bool preserve3D = useTransforms && (o->style()->preserves3D() || style()->preserves3D());
+    if (useTransforms && shouldUseTransformFromContainer(o)) {
+        TransformationMatrix t;
+        getTransformFromContainer(o, containerOffset, t);
+        transformState.applyTransform(t, preserve3D ? TransformState::AccumulateTransform : TransformState::FlattenTransform);
+    } else
+        transformState.move(containerOffset.width(), containerOffset.height(), preserve3D ? TransformState::AccumulateTransform : TransformState::FlattenTransform);
 }
 
 } // namespace WebCore
