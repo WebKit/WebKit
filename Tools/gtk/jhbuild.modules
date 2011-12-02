@@ -15,6 +15,8 @@
 
   <repository type="tarball" name="github.com"
       href="https://github.com"/>
+  <repository type="tarball" name="sourceware.org"
+      href="ftp://sourceware.org"/>
   <repository type="tarball" name="gnome.org"
       href="http://ftp.gnome.org"/>
   <repository type="git" name="git.gnome.org"
@@ -37,7 +39,17 @@
             md5sum="647ee8ed266f9a4117c8d0a4855b3d3e"/>
   </tarball>
 
+  <autotools id="libffi" autogen-sh="configure">
+    <branch module="/pub/libffi/libffi-3.0.10.tar.gz" version="3.0.10"
+             repo="sourceware.org"
+             hash="sha256:f01eb9027e9eb56aeaeef636649877756d475d714ef8b47f627f65bc5f3b492f"
+             md5sum="79390673f5d07a8fb342bc09b5055b6f"/>
+  </autotools>
+
   <autotools id="glib">
+    <dependencies>
+      <dep package="libffi"/>
+    </dependencies>
     <branch module="/pub/GNOME/sources/glib/2.31/glib-2.31.2.tar.xz" version="2.31.2"
             repo="gnome.org"
             hash="sha256:19d7921671a487c3c5759a57df7b8508afdbadd7764d62a47a82fff7b399032b"

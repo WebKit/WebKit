@@ -1,5 +1,13 @@
 2011-12-02  Gustavo Noronha Silva  <gns@gnome.org>
 
+        Add libffi to the jhbuild modules list as a glib dependency.
+
+        Rubber-stamped by Martin Robinson.
+
+        * gtk/jhbuild.modules:
+
+2011-12-02  Gustavo Noronha Silva  <gns@gnome.org>
+
         Build fix. Use internal pcre on glib, make gnutls a dependency of
         glib-networking, unset AR_FLAGS for jhbuild builds, and run jhbuild
         in non-interactive mode.
