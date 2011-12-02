@@ -622,12 +622,14 @@ void HTMLInputElement::updateInnerTextValue()
     if (!isTextField())
         return;
 
-    if (!suggestedValue().isNull())
+    if (!suggestedValue().isNull()) {
         setInnerTextValue(suggestedValue());
-    else if (!formControlValueMatchesRenderer()) {
+        updatePlaceholderVisibility(false);
+    } else if (!formControlValueMatchesRenderer()) {
         // Update the renderer value if the formControlValueMatchesRenderer() flag is false.
         // It protects an unacceptable renderer value from being overwritten with the DOM value.
         setInnerTextValue(visibleValue());
+        updatePlaceholderVisibility(false);
     }
 }
 
@@ -647,6 +649,7 @@ void HTMLInputElement::subtreeHasChanged()
     String value = innerTextValue();
     if (isAcceptableValue(value))
         setValueFromRenderer(sanitizeValue(convertFromVisibleValue(value)));
+    updatePlaceholderVisibility(false);
     // Recalc for :invalid and hasUnacceptableValue() change.
     setNeedsStyleRecalc();
 
@@ -1073,7 +1076,6 @@ void HTMLInputElement::setSuggestedValue(const String& value)
         return;
     setFormControlValueMatchesRenderer(false);
     m_suggestedValue = sanitizeValue(value);
-    updatePlaceholderVisibility(false);
     setNeedsStyleRecalc();
     updateInnerTextValue();
 }
@@ -1174,7 +1176,6 @@ void HTMLInputElement::setValueFromRenderer(const String& value)
         dispatchInputEvent();
     notifyFormStateChanged();
 
-    updatePlaceholderVisibility(false);
     setNeedsValidityCheck();
 
     // Clear autofill flag (and yellow background) on user edit.

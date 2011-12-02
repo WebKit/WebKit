@@ -80,7 +80,6 @@ bool TextFieldInputType::canSetSuggestedValue()
 void TextFieldInputType::setValue(const String& sanitizedValue, bool valueChanged, bool sendChangeEvent)
 {
     InputType::setValue(sanitizedValue, valueChanged, sendChangeEvent);
-    element()->updatePlaceholderVisibility(false);
 
     if (valueChanged)
         element()->updateInnerTextValue();

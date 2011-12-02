@@ -1,3 +1,30 @@
+2011-12-02  Kent Tamura  <tkent@chromium.org>
+
+        [Lion][Windows] Both of placeholder and input text are shown in <input type=number>
+        https://bugs.webkit.org/show_bug.cgi?id=73615
+
+        Reviewed by Joseph Pecoraro.
+
+        Placeholder visibility was checked by HTMLInputElement::value
+        emptiness. It should be innerTextValue emptiness because it is
+        possible that a number field has empty HTMLInputElement::value and
+        non-empty innerTextValue.
+
+        Tests: fast/forms/number/number-placeholder-with-unacceptable-value.html
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::updateInnerTextValue):
+        We should update placeholder visiblity when the innerTextValue is updated.
+        (WebCore::HTMLInputElement::subtreeHasChanged): ditto.
+        (WebCore::HTMLInputElement::setSuggestedValue):
+        We don't need to call updatePlaceholderVisibility() because updateInnerTextValue() calls it.
+        (WebCore::HTMLInputElement::setValueFromRenderer):
+        We don't need to call updatePlaceholderVisibility() because subtreeHasChanged() calls it.
+        * html/HTMLInputElement.h: Checks innerTextValue emptiness.
+        * html/TextFieldInputType.cpp:
+        (WebCore::TextFieldInputType::setValue):
+        We don't need to call updatePlaceholderVisibility() because updateInnerTextValue() calls it.
+
 2011-12-01  Alok Priyadarshi  <alokp@chromium.org>
 
         [chromium] CCLayerQuad does not return FloatQuad in correct order

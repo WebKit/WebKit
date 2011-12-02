@@ -311,7 +311,7 @@ private:
 
     virtual bool supportsPlaceholder() const;
     virtual void updatePlaceholderText();
-    virtual bool isEmptyValue() const { return value().isEmpty(); }
+    virtual bool isEmptyValue() const OVERRIDE { return innerTextValue().isEmpty(); }
     virtual bool isEmptySuggestedValue() const { return suggestedValue().isEmpty(); }
     virtual void handleFocusEvent();
     virtual void handleBlurEvent();
