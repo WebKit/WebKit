@@ -781,6 +781,10 @@
                     'include_dirs': [
                         'public/android',
                     ],
+                }, { # else: OS!="android"
+                    'sources/': [
+                        ['exclude', '/android/'],
+                    ],
                 }],
                 ['OS=="mac"', {
                     'include_dirs': [
@@ -1239,9 +1243,6 @@
                         'ImageDiff#host',
                     ],
                 },{ # OS!="android"
-                    'sources/': [
-                        ['exclude', '(Android)\\.cpp$']
-                    ],
                     'dependencies': [
                         'ImageDiff',
                         'copy_TestNetscapePlugIn',

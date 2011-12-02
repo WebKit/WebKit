@@ -1,3 +1,14 @@
+2011-12-02  Tony Chang  <tony@chromium.org>
+
+        [Chromium] GYP fix for Windows 2010 build
+        https://bugs.webkit.org/show_bug.cgi?id=73483
+
+        Reviewed by Adam Barth.
+
+        Patch by Carlos Pizano.
+
+        * WebKit.gyp: Exclude the android directory and remove a file match that doesn't match anything.
+
 2011-12-01  Alok Priyadarshi  <alokp@chromium.org>
 
         [chromium] CCLayerQuad does not return FloatQuad in correct order
