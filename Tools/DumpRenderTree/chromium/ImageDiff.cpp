@@ -50,12 +50,16 @@
 #endif
 
 // Define macro here to make ImageDiff independent of JavaScriptCore.
+#ifdef NDEBUG
+#define ASSERT(assertion) do { } while (0)
+#else
 #define ASSERT(assertion) do \
     if (!(assertion)) { \
-        fprintf(stderr, "ASSERT failed at %s:%s: " #assertion ".", __FILE__, __LINE__); \
+        fprintf(stderr, "ASSERT failed at %s:%d: " #assertion ".", __FILE__, __LINE__); \
         exit(1); \
     } \
 while (0)
+#endif
 
 using namespace std;
 
