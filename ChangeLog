@@ -1,3 +1,13 @@
+2011-12-02  Alejandro G. Castro  <alex@igalia.com>
+
+        [GTK] Fix TextureMapperCairo compilation
+        https://bugs.webkit.org/show_bug.cgi?id=73655
+
+        Reviewed by Martin Robinson.
+
+        * GNUmakefile.am: The variables need the USE part in the name.
+        * configure.ac: We can not define the variable twice.
+
 2011-12-02  Raphael Kubo da Costa  <kubo@profusion.mobi>
 
         Unreviewed, revert r101347.
