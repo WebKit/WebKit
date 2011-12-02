@@ -1,3 +1,24 @@
+2011-12-02  Raphael Kubo da Costa  <kubo@profusion.mobi>
+
+        Unreviewed, revert r101347.
+        https://bugs.webkit.org/show_bug.cgi?id=73580
+
+        It breaks the linking of Tools/ targets due to missing functions.
+
+        * PlatformEfl.cmake:
+        * platform/graphics/GraphicsLayer.cpp:
+        * platform/graphics/GraphicsLayer.h:
+        * platform/graphics/efl/GraphicsLayerEfl.cpp: Added.
+        (WebCore::GraphicsLayer::create):
+        (WebCore::GraphicsLayerEfl::GraphicsLayerEfl):
+        (WebCore::GraphicsLayerEfl::~GraphicsLayerEfl):
+        (WebCore::GraphicsLayerEfl::setNeedsDisplay):
+        (WebCore::GraphicsLayerEfl::setNeedsDisplayInRect):
+        * platform/graphics/efl/GraphicsLayerEfl.h: Added.
+        * platform/graphics/texmap/TextureMapperNode.cpp:
+        (WebCore::solveCubicBezierFunction):
+        (WebCore::solveStepsFunction):
+
 2011-12-01  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Extract default call stack creation and check for front-end from console.

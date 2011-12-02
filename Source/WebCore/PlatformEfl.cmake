@@ -55,6 +55,7 @@ LIST(APPEND WebCore_SOURCES
   platform/efl/TemporaryLinkStubs.cpp
   platform/efl/WidgetEfl.cpp
   platform/graphics/ImageSource.cpp
+  platform/graphics/efl/GraphicsLayerEfl.cpp
   platform/graphics/efl/IconEfl.cpp
   platform/graphics/efl/ImageEfl.cpp
   platform/graphics/efl/IntPointEfl.cpp
@@ -204,21 +205,6 @@ IF (ENABLE_VIDEO)
     platform/graphics/gstreamer/PlatformVideoWindowEfl.cpp
     platform/graphics/gstreamer/VideoSinkGStreamer.cpp
     platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp
-  )
-ENDIF ()
-
-IF (WTF_USE_TEXTURE_MAPPER)
-  LIST(APPEND WebCore_INCLUDE_DIRECTORIES
-    ${OPENGL_INCLUDE_DIR}
-    "${WEBCORE_DIR}/platform/graphics/texmap"
-  )
-  LIST(APPEND WebCore_SOURCES
-    platform/graphics/opengl/TextureMapperGL.cpp
-    platform/graphics/texmap/GraphicsLayerTextureMapper.cpp
-    platform/graphics/texmap/TextureMapperNode.cpp
-  )
-   LIST(APPEND WebCore_LIBRARIES
-    ${OPENGL_gl_LIBRARY}
   )
 ENDIF ()
 

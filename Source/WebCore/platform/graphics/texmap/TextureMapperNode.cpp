@@ -823,7 +823,7 @@ static inline double solveEpsilon(double duration)
     return 1.0 / (200.0 * duration);
 }
 
-static inline double solveCubicBezierFunction(double p1x, double p1y, double p2x, double p2y, double t, double duration)
+static inline double solveCubicBezierFunction(qreal p1x, qreal p1y, qreal p2x, qreal p2y, double t, double duration)
 {
     UnitBezier bezier(p1x, p1y, p2x, p2y);
     return bezier.solve(t, solveEpsilon(duration));
@@ -832,7 +832,7 @@ static inline double solveCubicBezierFunction(double p1x, double p1y, double p2x
 static inline double solveStepsFunction(int numSteps, bool stepAtStart, double t)
 {
     if (stepAtStart)
-        return fmin(1.0, (floor(numSteps * t) + 1) / numSteps);
+        return qMin(1.0, (floor(numSteps * t) + 1) / numSteps);
     return floor(numSteps * t) / numSteps;
 }
 
