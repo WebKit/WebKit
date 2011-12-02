@@ -1,3 +1,14 @@
+2011-12-01  Alok Priyadarshi  <alokp@chromium.org>
+
+        [chromium] CCLayerQuad does not return FloatQuad in correct order
+        https://bugs.webkit.org/show_bug.cgi?id=73247
+
+        Reviewed by James Robinson.
+
+        * WebKit.gypi:
+        * tests/CCLayerQuadTest.cpp: Added.
+        (WebCore::TEST):
+
 2011-11-30  Adam Klein  <adamk@chromium.org>
 
         [chromium] WebKitMutationObserver::deliverAllMutations should be exposed through the Chromium API
