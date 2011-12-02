@@ -1,3 +1,20 @@
+2011-12-01  David Levin  <levin@chromium.org>
+
+        Add a way to automatically size a single frame to fit its content.
+        https://bugs.webkit.org/show_bug.cgi?id=73420
+
+        Reviewed by Dmitry Titov.
+
+        No new functionality exposed so no new tests. (There is a Chromium
+        specific test in https://bugs.webkit.org/show_bug.cgi?id=73058.)
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::FrameView): Initialized the new variables.
+        (WebCore::FrameView::layout):
+        (WebCore::FrameView::autoSizeIfEnabled):
+        (WebCore::FrameView::enableAutoSizeMode):
+        * page/FrameView.h:
+
 2011-12-01  Hajime Morrita  <morrita@chromium.org>
 
         JS_INLINE and WTF_INLINE should be visible from WebCore
