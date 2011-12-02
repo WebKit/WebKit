@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006, 2008 Apple Inc.  All rights reserved.
+ * Copyright (C) 2005, 2006, 2008, 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -56,11 +56,11 @@
 
 namespace WebCore {
 
-typedef HashMap<CFReadStreamRef, RefPtr<FormData> > StreamFormDataMap;
-static StreamFormDataMap& getStreamFormDataMap()
+// We need to use NSMapTable instead of HashMap since this needs to be accessed from more than one thread.
+static NSMapTable *streamFieldsMap()
 {
-    DEFINE_STATIC_LOCAL(StreamFormDataMap, streamFormDataMap, ());
-    return streamFormDataMap;
+    static NSMapTable *streamFieldsMap = NSCreateMapTable(NSNonRetainedObjectMapKeyCallBacks, NSNonOwnedPointerMapValueCallBacks, 1);
+    return streamFieldsMap;
 }
 
 typedef HashMap<CFReadStreamRef, RefPtr<ResourceHandle> > StreamResourceHandleMap;
@@ -79,7 +79,7 @@ void associateStreamWithResourceHandle(NSInputStream *stream, ResourceHandle* re
     if (!stream)
         return;
 
-    if (!getStreamFormDataMap().contains((CFReadStreamRef)stream))
+    if (!NSMapGet(streamFieldsMap(), stream))
         return;
 
     ASSERT(!getStreamResourceHandleMap().contains((CFReadStreamRef)stream));
@@ -125,11 +125,12 @@ static void performDidSendDataCallback(void* context)
 static void formEventCallback(CFReadStreamRef stream, CFStreamEventType type, void* context);
 
 struct FormContext {
-    FormData* formData;
+    RefPtr<FormData> formData;
     unsigned long long streamLength;
 };
 
 struct FormStreamFields {
+    RefPtr<FormData> formData;
     SchedulePairHashSet scheduledRunLoopPairs;
     Vector<FormDataElement> remainingElements; // in reverse order
     CFReadStreamRef currentStream;
@@ -230,6 +231,7 @@ static void* formCreate(CFReadStreamRef stream, void* context)
     FormContext* formContext = static_cast<FormContext*>(context);
 
     FormStreamFields* newInfo = new FormStreamFields;
+    newInfo->formData = formContext->formData.release();
     newInfo->currentStream = NULL;
 #if ENABLE(BLOB)
     newInfo->currentStreamRangeLength = BlobDataItem::toEndOfFile;
@@ -239,26 +241,39 @@ static void* formCreate(CFReadStreamRef stream, void* context)
     newInfo->streamLength = formContext->streamLength;
     newInfo->bytesSent = 0;
 
-    FormData* formData = formContext->formData;
-
     // Append in reverse order since we remove elements from the end.
-    size_t size = formData->elements().size();
+    size_t size = newInfo->formData->elements().size();
     newInfo->remainingElements.reserveInitialCapacity(size);
     for (size_t i = 0; i < size; ++i)
-        newInfo->remainingElements.append(formData->elements()[size - i - 1]);
+        newInfo->remainingElements.append(newInfo->formData->elements()[size - i - 1]);
 
-    getStreamFormDataMap().set(stream, adoptRef(formData));
+    ASSERT(!NSMapGet(streamFieldsMap(), stream));
+    NSMapInsertKnownAbsent(streamFieldsMap(), stream, newInfo);
 
     return newInfo;
 }
 
-static void formFinalize(CFReadStreamRef stream, void* context)
+static void formFinishFinalizationOnMainThread(void* context)
 {
     OwnPtr<FormStreamFields> form = adoptPtr(static_cast<FormStreamFields*>(context));
 
-    getStreamFormDataMap().remove(stream);
-
     closeCurrentStream(form.get());
+}
+
+static void formFinalize(CFReadStreamRef stream, void* context)
+{
+    FormStreamFields* form = static_cast<FormStreamFields*>(context);
+
+    ASSERT(form->formStream == stream);
+    ASSERT(NSMapGet(streamFieldsMap(), stream) == context);
+
+    // Do this right away because the CFReadStreamRef is being deallocated.
+    // We can't wait to remove this from the map until we finish finalizing
+    // on the main thread because in theory the freed memory could be reused
+    // for a new CFReadStream before that runs.
+    NSMapRemove(streamFieldsMap(), stream);
+
+    callOnMainThread(formFinishFinalizationOnMainThread, form);
 }
 
 static Boolean formOpen(CFReadStreamRef, CFStreamError* error, Boolean* openComplete, void* context)
@@ -471,7 +486,7 @@ void setHTTPBody(NSMutableURLRequest *request, PassRefPtr<FormData> prpFormData)
     // Create and set the stream.
 
     // Pass the length along with the formData so it does not have to be recomputed.
-    FormContext formContext = { formData.release().leakRef(), length };
+    FormContext formContext = { formData.release(), length };
 
     RetainPtr<CFReadStreamRef> stream(AdoptCF, wkCreateCustomCFReadStream(formCreate, formFinalize,
         formOpen, formRead, formCanRead, formClose, formSchedule, formUnschedule,
@@ -481,7 +496,10 @@ void setHTTPBody(NSMutableURLRequest *request, PassRefPtr<FormData> prpFormData)
 
 FormData* httpBodyFromStream(NSInputStream* stream)
 {
-    return getStreamFormDataMap().get((CFReadStreamRef)stream).get();
+    FormStreamFields* formStream = static_cast<FormStreamFields*>(NSMapGet(streamFieldsMap(), stream));
+    if (!formStream)
+        return 0;
+    return formStream->formData.get();
 }
 
 } // namespace WebCore

@@ -1,3 +1,32 @@
+2011-12-01  Darin Adler  <darin@apple.com>
+
+        [Mac] Reference count threading violation in FormDataStreamMac.mm
+        https://bugs.webkit.org/show_bug.cgi?id=73627
+
+        Reviewed by Sam Weinig.
+
+        Shows up as a crash during existing layout test runs so no new tests are required.
+
+        * platform/network/mac/FormDataStreamMac.mm:
+        (WebCore::streamFieldsMap): Replaced getStreamFormDataMap with this.
+        Use an NSMapTable instead of a HashMap because we need to remove items from this
+        on a non-main thread.
+        (WebCore::associateStreamWithResourceHandle): Use NSMapGet instead of
+        HashMap::contains here.
+        (WebCore::formCreate): FormStreamFields now stores a RefPtr to the form data.
+        Added the code to fill that in. Did it in a more modern way to avoid the leakRef
+        and adoptRef that were used before. Replaced the code that set up the stream
+        form data map entry with code that sets an entry in the streamFieldsMap.
+        (WebCore::formFinishFinalizationOnMainThread): Added. Contains the work of
+        finalization that must be done on the main thread, specifically, destroying the
+        fields structure that contains objects with RefPtr in them. We can't touch these
+        reference counts on non-main threads.
+        (WebCore::formFinalize): Changed this to use NSMapRemove on the streamFieldsMap.
+        Added a callOnMainThread to finish the finalization.
+        (WebCore::setHTTPBody): Removed the leakRef, no longer needed, that used to be
+        balanced by an adoptRef in formCreate.
+        (WebCore::httpBodyFromStream): Changed to use NSMapGet.
+
 2011-12-02  Antti Koivisto  <antti@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=73520
