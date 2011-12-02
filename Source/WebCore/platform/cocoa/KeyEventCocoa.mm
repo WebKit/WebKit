@@ -32,7 +32,7 @@
 #import <wtf/ASCIICType.h>
 
 #if PLATFORM(IOS)
-#import "KeyEventCodesIPhone.h"
+#import "KeyEventCodesIOS.h"
 #endif
 
 using namespace WTF;

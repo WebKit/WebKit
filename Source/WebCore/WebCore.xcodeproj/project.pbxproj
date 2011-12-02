@@ -675,6 +675,8 @@
 		24F54EAD101FE914000AE741 /* ApplicationCacheHost.h in Headers */ = {isa = PBXBuildFile; fileRef = 24F54EAB101FE914000AE741 /* ApplicationCacheHost.h */; settings = {ATTRIBUTES = (); }; };
 		2542F4DA1166C25A00E89A86 /* UserGestureIndicator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2542F4D81166C25A00E89A86 /* UserGestureIndicator.cpp */; };
 		2542F4DB1166C25A00E89A86 /* UserGestureIndicator.h in Headers */ = {isa = PBXBuildFile; fileRef = 2542F4D91166C25A00E89A86 /* UserGestureIndicator.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		265541391489811C000DFC5D /* KeyEventCodesIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 265541371489811C000DFC5D /* KeyEventCodesIOS.h */; };
+		2655413A1489811C000DFC5D /* KeyEventIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 265541381489811C000DFC5D /* KeyEventIOS.mm */; };
 		26E98A10130A9FCA008EB7B2 /* TextCodecASCIIFastPath.h in Headers */ = {isa = PBXBuildFile; fileRef = 26E98A0F130A9FCA008EB7B2 /* TextCodecASCIIFastPath.h */; };
 		2917B5611473496C0052C9D0 /* LayerFlushScheduler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2917B55E1473496C0052C9D0 /* LayerFlushScheduler.cpp */; };
 		2917B5621473496C0052C9D0 /* LayerFlushScheduler.h in Headers */ = {isa = PBXBuildFile; fileRef = 2917B55F1473496C0052C9D0 /* LayerFlushScheduler.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3423,8 +3425,6 @@
 		A5732B0B136A161D005C8D7C /* DateComponents.h in Headers */ = {isa = PBXBuildFile; fileRef = A5732B09136A161D005C8D7C /* DateComponents.h */; };
 		A5732B0D136A16C4005C8D7C /* LocalizedDate.h in Headers */ = {isa = PBXBuildFile; fileRef = A5732B0C136A16C4005C8D7C /* LocalizedDate.h */; };
 		A5732B0F136A1715005C8D7C /* LocalizedDateNone.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5732B0E136A1715005C8D7C /* LocalizedDateNone.cpp */; };
-		A59E3C1E11580F510072928E /* KeyEventCodesIPhone.h in Headers */ = {isa = PBXBuildFile; fileRef = A59E3C1C11580F510072928E /* KeyEventCodesIPhone.h */; };
-		A59E3C1F11580F510072928E /* KeyEventIPhone.mm in Sources */ = {isa = PBXBuildFile; fileRef = A59E3C1D11580F510072928E /* KeyEventIPhone.mm */; };
 		A5ABB78713B904BC00F197E3 /* LineBreakIteratorPoolICU.h in Headers */ = {isa = PBXBuildFile; fileRef = A5ABB78613B904BC00F197E3 /* LineBreakIteratorPoolICU.h */; };
 		A5AFB34F115151A700B045CB /* StepRange.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5AFB34D115151A700B045CB /* StepRange.cpp */; };
 		A5AFB350115151A700B045CB /* StepRange.h in Headers */ = {isa = PBXBuildFile; fileRef = A5AFB34E115151A700B045CB /* StepRange.h */; };
@@ -7774,6 +7774,8 @@
 		24F54EAB101FE914000AE741 /* ApplicationCacheHost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ApplicationCacheHost.h; sourceTree = "<group>"; };
 		2542F4D81166C25A00E89A86 /* UserGestureIndicator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UserGestureIndicator.cpp; sourceTree = "<group>"; };
 		2542F4D91166C25A00E89A86 /* UserGestureIndicator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserGestureIndicator.h; sourceTree = "<group>"; };
+		265541371489811C000DFC5D /* KeyEventCodesIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = KeyEventCodesIOS.h; path = ios/KeyEventCodesIOS.h; sourceTree = "<group>"; };
+		265541381489811C000DFC5D /* KeyEventIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = KeyEventIOS.mm; path = ios/KeyEventIOS.mm; sourceTree = "<group>"; };
 		26E98A0F130A9FCA008EB7B2 /* TextCodecASCIIFastPath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextCodecASCIIFastPath.h; sourceTree = "<group>"; };
 		2917B55E1473496C0052C9D0 /* LayerFlushScheduler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LayerFlushScheduler.cpp; path = ca/LayerFlushScheduler.cpp; sourceTree = "<group>"; };
 		2917B55F1473496C0052C9D0 /* LayerFlushScheduler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LayerFlushScheduler.h; path = ca/LayerFlushScheduler.h; sourceTree = "<group>"; };
@@ -10631,8 +10633,6 @@
 		A5732B09136A161D005C8D7C /* DateComponents.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DateComponents.h; sourceTree = "<group>"; };
 		A5732B0C136A16C4005C8D7C /* LocalizedDate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocalizedDate.h; sourceTree = "<group>"; };
 		A5732B0E136A1715005C8D7C /* LocalizedDateNone.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LocalizedDateNone.cpp; sourceTree = "<group>"; };
-		A59E3C1C11580F510072928E /* KeyEventCodesIPhone.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = KeyEventCodesIPhone.h; path = iphone/KeyEventCodesIPhone.h; sourceTree = "<group>"; };
-		A59E3C1D11580F510072928E /* KeyEventIPhone.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = KeyEventIPhone.mm; path = iphone/KeyEventIPhone.mm; sourceTree = "<group>"; };
 		A5ABB78613B904BC00F197E3 /* LineBreakIteratorPoolICU.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LineBreakIteratorPoolICU.h; sourceTree = "<group>"; };
 		A5AFB34D115151A700B045CB /* StepRange.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StepRange.cpp; sourceTree = "<group>"; };
 		A5AFB34E115151A700B045CB /* StepRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StepRange.h; sourceTree = "<group>"; };
@@ -17598,13 +17598,13 @@
 			name = parser;
 			sourceTree = "<group>";
 		};
-		A59E3C1B11580F340072928E /* iphone */ = {
+		A59E3C1B11580F340072928E /* ios */ = {
 			isa = PBXGroup;
 			children = (
-				A59E3C1C11580F510072928E /* KeyEventCodesIPhone.h */,
-				A59E3C1D11580F510072928E /* KeyEventIPhone.mm */,
+				265541371489811C000DFC5D /* KeyEventCodesIOS.h */,
+				265541381489811C000DFC5D /* KeyEventIOS.mm */,
 			);
-			name = iphone;
+			name = ios;
 			sourceTree = "<group>";
 		};
 		A5C974CE11485FDA0066F2AB /* cocoa */ = {
@@ -20061,7 +20061,7 @@
 				1AE42F670AA4B8CB00C8612D /* cf */,
 				A5C974CE11485FDA0066F2AB /* cocoa */,
 				B2A015910AF6CD53006BCE0E /* graphics */,
-				A59E3C1B11580F340072928E /* iphone */,
+				A59E3C1B11580F340072928E /* ios */,
 				8CADF2A2135C7B36009EF43F /* leveldb */,
 				6582A14809999D6C00BEEB6D /* mac */,
 				59C77F101054591C00506104 /* mock */,
@@ -23604,7 +23604,6 @@
 				BCEFE1EB0DCA5F6400739219 /* JSXSLTProcessor.h in Headers */,
 				85031B440A44EFC700F992E0 /* KeyboardEvent.h in Headers */,
 				A513B3D7114B1666001C429B /* KeyEventCocoa.h in Headers */,
-				A59E3C1E11580F510072928E /* KeyEventCodesIPhone.h in Headers */,
 				316FE11A0E6E1DA700BF6088 /* KeyframeAnimation.h in Headers */,
 				BC5EBA110E823E4700B25965 /* KeyframeList.h in Headers */,
 				521D46F811AEC9B100514613 /* KillRing.h in Headers */,
@@ -24745,6 +24744,7 @@
 				5038BF2B14750F190095E0D1 /* FilterOperations.h in Headers */,
 				6E3FAD3914733F4000E42306 /* JSWebGLCompressedTextures.h in Headers */,
 				6E3FAE8F14733FDB00E42306 /* WebGLCompressedTextures.h in Headers */,
+				265541391489811C000DFC5D /* KeyEventCodesIOS.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -26694,7 +26694,6 @@
 				BCEFE1E50DCA5F3300739219 /* JSXSLTProcessorCustom.cpp in Sources */,
 				85031B430A44EFC700F992E0 /* KeyboardEvent.cpp in Sources */,
 				A513B3D8114B166A001C429B /* KeyEventCocoa.mm in Sources */,
-				A59E3C1F11580F510072928E /* KeyEventIPhone.mm in Sources */,
 				935C477009AC4D7300A6AAB4 /* KeyEventMac.mm in Sources */,
 				316FE1190E6E1DA700BF6088 /* KeyframeAnimation.cpp in Sources */,
 				BC5EBA100E823E4700B25965 /* KeyframeList.cpp in Sources */,
@@ -27619,6 +27618,7 @@
 				5038BF2A14750F190095E0D1 /* FilterOperations.cpp in Sources */,
 				6E3FAD3814733F4000E42306 /* JSWebGLCompressedTextures.cpp in Sources */,
 				6E3FAE8E14733FDB00E42306 /* WebGLCompressedTextures.cpp in Sources */,
+				2655413A1489811C000DFC5D /* KeyEventIOS.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

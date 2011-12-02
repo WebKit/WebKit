@@ -1,3 +1,24 @@
+2011-12-02  Benjamin Poulain  <bpoulain@apple.com>
+
+        Update platform/iphone to platform/ios
+        https://bugs.webkit.org/show_bug.cgi?id=73708
+
+        Reviewed by Darin Adler.
+
+        The platform is now best known as iOS, update the platform layer accordingly.
+
+        * Configurations/WebCore.xcconfig:
+        * WebCore.gypi:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/cocoa/KeyEventCocoa.mm:
+        * platform/ios/KeyEventCodesIOS.h: Renamed from Source/WebCore/platform/iphone/KeyEventCodesIPhone.h.
+        * platform/ios/KeyEventIOS.mm: Renamed from Source/WebCore/platform/iphone/KeyEventIPhone.mm.
+        (WebCore::keyIdentifierForKeyEvent):
+        (WebCore::PlatformKeyboardEvent::PlatformKeyboardEvent):
+        (WebCore::PlatformKeyboardEvent::disambiguateKeyDownEvent):
+        (WebCore::PlatformKeyboardEvent::currentCapsLockState):
+        (WebCore::PlatformKeyboardEvent::getCurrentModifierState):
+
 2011-12-02  Jonathan Backer  <backer@chromium.org>
 
         [chromium] Eliminate unnecessary state on previous CL

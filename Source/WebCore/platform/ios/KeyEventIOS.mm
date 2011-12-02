@@ -30,6 +30,7 @@
 
 #import "KeyEventCocoa.h"
 #import "Logging.h"
+#import "NotImplemented.h"
 #import "WebEvent.h"
 
 using namespace WTF;
@@ -111,7 +112,17 @@ void PlatformKeyboardEvent::disambiguateKeyDownEvent(Type type, bool backwardCom
 
 bool PlatformKeyboardEvent::currentCapsLockState()
 {
-    return 0;
+    notImplemented();
+    return false;
+}
+
+void PlatformKeyboardEvent::getCurrentModifierState(bool& shiftKey, bool& ctrlKey, bool& altKey, bool& metaKey)
+{
+    notImplemented();
+    shiftKey = false;
+    ctrlKey = false;
+    altKey = false;
+    metaKey = false;
 }
 
 }
