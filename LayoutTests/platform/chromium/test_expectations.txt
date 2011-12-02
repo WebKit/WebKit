@@ -3775,7 +3775,7 @@ BUGWK72651 LINUX DEBUG : inspector/styles/styles-add-new-rule.html = CRASH PASS 
 BUGWK72651 LINUX DEBUG : inspector/styles/styles-cancel-editing.html = CRASH PASS TIMEOUT
 BUGWK72651 LINUX DEBUG : inspector/styles/styles-change-node-while-editing.html = CRASH PASS TIMEOUT
 BUGWK72651 LINUX DEBUG : inspector/styles/styles-commit-editing.html = CRASH PASS TIMEOUT
-BUGWK72651 LINUX DEBUG : inspector/styles/styles-computed-trace.html = CRASH PASS TEXT
+BUGWK72651 LINUX DEBUG : inspector/styles/styles-computed-trace.html = CRASH PASS TEXT TIMEOUT
 BUGWK72651 LINUX DEBUG : inspector/styles/styles-disable-inherited.html = CRASH PASS TIMEOUT
 BUGWK72651 LINUX DEBUG : inspector/styles/styles-disable-then-change.html = PASS TIMEOUT
 BUGWK72651 LINUX DEBUG : inspector/styles/styles-disable-then-delete.html = CRASH PASS TIMEOUT
@@ -3812,3 +3812,5 @@ BUGWK73517 WIN DEBUG : inspector/debugger/debugger-set-breakpoint-regex.html = C
 BUGWK73517 WIN DEBUG : inspector/profiler/detailed-heapshots-dominators-expansion-preserved-when-sorting.html = CRASH TIMEOUT
 BUGWK73518 DEBUG : fast/forms/select-popup-pagekeys.html = CRASH
 BUGWK73549 : fast/text/international/hebrew-vowels.html = IMAGE+TEXT PASS
+
+BUGWK73607 GPU LINUX DEBUG : fast/canvas/canvas-overloads-strokeText.html = TIMEOUT TEXT PASS
