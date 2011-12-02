@@ -1208,8 +1208,10 @@ void RenderBlock::layoutRunsAndFloatsInRange(LineLayoutState& layoutState, Inlin
         // FIXME: Is this check necessary before the first iteration or can it be moved to the end?
         if (checkForEndLineMatch) {
             layoutState.setEndLineMatched(matchedEndLine(layoutState, resolver, cleanLineStart, cleanLineBidiStatus));
-            if (layoutState.endLineMatched())
+            if (layoutState.endLineMatched()) {
+                resolver.setPosition(InlineIterator(resolver.position().root(), 0, 0), 0);
                 break;
+            }
         }
 
         lineMidpointState.reset();
@@ -1226,6 +1228,7 @@ void RenderBlock::layoutRunsAndFloatsInRange(LineLayoutState& layoutState, Inlin
             resolver.runs().deleteRuns();
             resolver.markCurrentRunEmpty(); // FIXME: This can probably be replaced by an ASSERT (or just removed).
             layoutState.setCheckForFloatsFromLastLine(true);
+            resolver.setPosition(InlineIterator(resolver.position().root(), 0, 0), 0);
             break;
         }
         ASSERT(end != resolver.position());

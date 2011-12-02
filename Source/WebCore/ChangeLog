@@ -1,3 +1,19 @@
+2011-12-01  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION(r101268): Intermittent assertion failure in fast/block/child-not-removed-from-parent-lineboxes-crash.html
+        https://bugs.webkit.org/show_bug.cgi?id=73250
+
+        Reviewed by Darin Adler.
+
+        Reset the position when exiting early in layoutRunsAndFloatsInRange.
+
+        No new tests because we don't have a reliable reproduction for this failure.
+        However, the failure is caught by the existing fast/block/child-not-removed-from-parent-lineboxes-crash.html
+        intermittently with about 30% probability.
+
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::layoutRunsAndFloatsInRange):
+
 2011-12-01  Shinya Kawanaka  <shinyak@google.com>
 
         Asynchronous SpellChecker should consider multiple requests.
