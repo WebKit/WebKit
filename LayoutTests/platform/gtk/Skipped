@@ -1487,6 +1487,8 @@ fast/dom/Range/getClientRects.html
 # Some of these also present rounding issues and xx.00 vs xx.
 svg/as-image/img-preserveAspectRatio-support-1.html
 svg/batik/masking/maskRegions.svg
+svg/batik/text/smallFonts.svg
+svg/batik/text/xmlSpace.svg
 svg/clip-path/deep-nested-clip-in-mask-different-unitTypes.svg
 svg/css/composite-shadow-example.html
 svg/css/composite-shadow-with-opacity.html
@@ -1498,6 +1500,12 @@ svg/custom/image-with-transform-clip-filter.svg
 svg/custom/relative-sized-inner-svg.xhtml
 svg/custom/relative-sized-use-without-attributes-on-symbol.xhtml
 svg/custom/use-css-events.svg
+svg/custom/glyph-selection-lang-attribute.svg
+svg/custom/image-small-width-height.svg
+svg/custom/small-rect-scale.svg
+svg/custom/svg-fonts-fallback.xhtml
+svg/custom/svg-fonts-without-missing-glyph.xhtml
+svg/custom/use-on-clip-path-with-transformation.svg
 svg/dom/css-transforms.xhtml
 svg/filters/feColorMatrix-saturate.svg
 svg/overflow/overflow-on-inner-svg-element.svg
@@ -1508,6 +1516,11 @@ svg/W3C-SVG-1.1/extend-namespace-01-f.svg
 svg/W3C-SVG-1.1/metadata-example-01-b.svg
 svg/W3C-SVG-1.1/paths-data-03-f.svg
 svg/W3C-SVG-1.1/text-align-08-b.svg
+svg/W3C-SVG-1.1/coords-units-02-b.svg
+svg/W3C-SVG-1.1/fonts-elem-07-b.svg
+svg/W3C-SVG-1.1/fonts-glyph-03-t.svg
+svg/W3C-SVG-1.1/fonts-glyph-04-t.svg
+svg/W3C-SVG-1.1/masking-path-02-b.svg
 svg/W3C-SVG-1.1-SE/coords-dom-03-f.svg
 svg/W3C-SVG-1.1-SE/coords-dom-04-f.svg
 svg/W3C-SVG-1.1-SE/coords-units-03-b.svg
@@ -1519,6 +1532,7 @@ svg/W3C-SVG-1.1-SE/types-dom-01-b.svg
 svg/W3C-SVG-1.1-SE/types-dom-02-f.svg
 svg/W3C-SVG-1.1-SE/types-dom-04-b.svg
 svg/W3C-SVG-1.1-SE/types-dom-07-f.svg
+svg/W3C-SVG-1.1-SE/struct-dom-11-f.svg
 tables/mozilla/marvin/backgr_layers-opacity.html
 tables/mozilla/marvin/backgr_position-table.html
 tables/mozilla/marvin/backgr_simple-table-cell.html
@@ -1542,6 +1556,7 @@ tables/mozilla_expected_failures/marvin/backgr_position-table-column-group.html
 tables/mozilla_expected_failures/marvin/backgr_position-table-column.html
 tables/mozilla_expected_failures/marvin/backgr_position-table-row-group.html
 tables/mozilla_expected_failures/marvin/backgr_position-table-row.html
+
 
 # https://bugs.webkit.org/show_bug.cgi?id=73409
 fast/forms/placeholder-set-attribute.html
