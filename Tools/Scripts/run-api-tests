@@ -208,10 +208,10 @@ sub runTest($$)
     }
 
     if ($result) {
-        push @testsFailed, "$suite.$test";
+        push @testsFailed, $test;
     }
     if ($timedOut) {
-        push @testsTimedOut, "$suite.$test";
+        push @testsTimedOut, $test;
         print possiblyColored("bold yellow", "Timeout"), "\n";
     } elsif (!$verbose) {
         if ($result) {

@@ -1,3 +1,18 @@
+2011-12-02  Adam Roben  <aroben@apple.com>
+
+        Fix names of failed/timed out tests in run-api-tests output
+
+        Fixes <http://webkit.org/b/73663> run-api-tests prints suite names twice for failed or timed
+        out tests
+
+        We were ending up with the suite name doubled (e.g., "WebKit2.WebKit2.MouseMoveAfterCrash").
+
+        Reviewed by Simon Fraser.
+
+        * Scripts/run-api-tests:
+        (runTest): Don't prepend the suite name to $test. It's already been prepended at the start
+        of this function.
+
 2011-11-29  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] generate-gtkdoc should respect build type
