@@ -71,6 +71,7 @@ accessibility/aria-menubar-menuitems.html
 accessibility/selection-states.html
 
 # Accessibility tests for notifications that don't exist or aren't needed on Mac OS X.
+accessibility/aria-checkbox-sends-notification.html
 accessibility/menu-list-sends-change-notification.html
 accessibility/multiselect-list-reports-active-option.html
 

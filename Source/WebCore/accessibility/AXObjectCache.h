@@ -85,6 +85,7 @@ public:
     void detachWrapper(AccessibilityObject*);
     void attachWrapper(AccessibilityObject*);
     void childrenChanged(RenderObject*);
+    void checkedStateChanged(RenderObject*);
     void selectedChildrenChanged(RenderObject*);
     // Called by a node when text or a text equivalent (e.g. alt) attribute is changed.
     void contentChanged(RenderObject*);
@@ -181,6 +182,7 @@ inline void AXObjectCache::handleActiveDescendantChanged(RenderObject*) { }
 inline void AXObjectCache::handleAriaRoleChanged(RenderObject*) { }
 inline void AXObjectCache::detachWrapper(AccessibilityObject*) { }
 inline void AXObjectCache::attachWrapper(AccessibilityObject*) { }
+inline void AXObjectCache::checkedStateChanged(RenderObject*) { }
 inline void AXObjectCache::selectedChildrenChanged(RenderObject*) { }
 inline void AXObjectCache::postNotification(RenderObject*, AXNotification, bool postToElement, PostType) { }
 inline void AXObjectCache::postNotification(AccessibilityObject*, Document*, AXNotification, bool postToElement, PostType) { }

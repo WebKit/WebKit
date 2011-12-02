@@ -523,6 +523,11 @@ void AXObjectCache::postNotification(AccessibilityObject* object, Document* docu
         postPlatformNotification(object, notification);
 }
 
+void AXObjectCache::checkedStateChanged(RenderObject* renderer)
+{
+    postNotification(renderer, AXObjectCache::AXCheckedStateChanged, true);
+}
+
 void AXObjectCache::selectedChildrenChanged(RenderObject* renderer)
 {
     // postToElement is false so that you can pass in any child of an element and it will go up the parent tree

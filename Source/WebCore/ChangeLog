@@ -1,3 +1,20 @@
+2011-12-02  David Tseng  <dtseng@google.com>
+
+        Send an AXCheckedStateChanged notification when the aria-checked attribute changes.
+        https://bugs.webkit.org/show_bug.cgi?id=72754
+
+        Reviewed by Chris Fleizach.
+
+        Test: accessibility/aria-checkbox-sends-notification.html
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::checkedStateChanged):
+        * accessibility/AXObjectCache.h:
+        * dom/Element.cpp:
+        (WebCore::Element::updateAfterAttributeChanged):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::setChecked):
+
 2011-12-02  Grace Kloba  <klobag@chromium.org>
 
         [chromium] Recycle tile-sized textures during commit to prevent reallocations

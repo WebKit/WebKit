@@ -981,7 +981,7 @@ void HTMLInputElement::setChecked(bool nowChecked, bool sendChangeEvent)
     // RenderTextView), but it's not possible to do it at the moment
     // because of the way the code is structured.
     if (renderer() && AXObjectCache::accessibilityEnabled())
-        renderer()->document()->axObjectCache()->postNotification(renderer(), AXObjectCache::AXCheckedStateChanged, true);
+        renderer()->document()->axObjectCache()->checkedStateChanged(renderer());
 
     // Only send a change event for items in the document (avoid firing during
     // parsing) and don't send a change event for a radio button that's getting

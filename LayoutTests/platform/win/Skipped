@@ -538,6 +538,7 @@ http/tests/xmlhttprequest/access-control-basic-non-simple-allow.html
 accessibility/label-element-press.html
 
 # Accessibility tests without results or with Mac-specific results.
+accessibility/aria-checkbox-sends-notification.html
 accessibility/aria-checkbox-text.html
 accessibility/aria-combobox.html
 accessibility/aria-controls-with-tabs.html

@@ -387,6 +387,7 @@ http/tests/security/webgl-remote-read-remote-image-allowed-with-credentials.html
 ###############################################################################
 # TESTS FAILING
 ###############################################################################
+accessibility/aria-checkbox-sends-notification.html
 accessibility/aria-help.html
 accessibility/aria-hidden.html
 accessibility/aria-hidden-with-elements.html
