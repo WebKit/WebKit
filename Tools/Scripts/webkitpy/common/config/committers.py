@@ -131,7 +131,7 @@ contributors_who_are_not_committers = [
     Contributor("Oliver Varga", ["voliver@inf.u-szeged.hu", "Varga.Oliver@stud.u-szeged.hu"], "TwistO"),
     Contributor("Peter Beverloo", "peter@chromium.org", "beverloo"),
     Contributor("Peter Gal", "galpeter@inf.u-szeged.hu", "elecro"),
-    Contributor("Peter Linss", "peter.linss@hp.com", "plinss")
+    Contributor("Peter Linss", "peter.linss@hp.com", "plinss"),
     Contributor("Pierre Rossi", "pierre.rossi@gmail.com", "elproxy"),
     Contributor("Shawn Singh", "shawnsingh@chromium.org", "shawnsingh"),
     Contributor("Tab Atkins", ["tabatkins@google.com", "jackalmage@gmail.com"], "tabatkins"),
