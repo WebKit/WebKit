@@ -60,7 +60,7 @@
         begin loading the font, but before that timer fired, the subresource loader appeared to have
         had no resources waiting to be loaded, and therefore didFinishLoad could be called. This change
         reworks the fix for <http://webkit.org/b/65123> so that while the load is still started on a
-        0-dealy timer, the subresource loader’s request count is incremented immediately, preventing
+        0-delay timer, the subresource loader’s request count is incremented immediately, preventing
         it from hitting 0 while the font load is scheduled to begin. The delayed load mechanism is
         moved from CSSFontFaceSource into CSSFontSelector in order to safely handle the possibility of
         the latter being decommissioned while waiting for font loading to begin.
