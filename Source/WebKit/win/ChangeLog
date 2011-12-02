@@ -1,3 +1,14 @@
+2011-12-02  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Changes to localStorageDatabasePath don't have any effect on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=73606
+        <rdar://problem/10491296>
+
+        * WebView.cpp:
+        (WebView::notifyPreferencesChanged): Propagate local storage path change to m_page's settings.
+
 2011-11-30  Alexey Proskuryakov  <ap@apple.com>
 
         Remove an unneeded argument from FrameLoaderClient::download
