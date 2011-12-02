@@ -52,13 +52,13 @@ StringImpl* StringImpl::empty()
     return &emptyString;
 }
 
-WTF_EXPORTDATA DEFINE_GLOBAL(AtomicString, nullAtom)
-WTF_EXPORTDATA DEFINE_GLOBAL(AtomicString, emptyAtom, "")
-WTF_EXPORTDATA DEFINE_GLOBAL(AtomicString, textAtom, "#text")
-WTF_EXPORTDATA DEFINE_GLOBAL(AtomicString, commentAtom, "#comment")
-WTF_EXPORTDATA DEFINE_GLOBAL(AtomicString, starAtom, "*")
-WTF_EXPORTDATA DEFINE_GLOBAL(AtomicString, xmlAtom, "xml")
-WTF_EXPORTDATA DEFINE_GLOBAL(AtomicString, xmlnsAtom, "xmlns")
+JS_EXPORTDATA DEFINE_GLOBAL(AtomicString, nullAtom)
+JS_EXPORTDATA DEFINE_GLOBAL(AtomicString, emptyAtom, "")
+JS_EXPORTDATA DEFINE_GLOBAL(AtomicString, textAtom, "#text")
+JS_EXPORTDATA DEFINE_GLOBAL(AtomicString, commentAtom, "#comment")
+JS_EXPORTDATA DEFINE_GLOBAL(AtomicString, starAtom, "*")
+JS_EXPORTDATA DEFINE_GLOBAL(AtomicString, xmlAtom, "xml")
+JS_EXPORTDATA DEFINE_GLOBAL(AtomicString, xmlnsAtom, "xmlns")
 
 void AtomicString::init()
 {

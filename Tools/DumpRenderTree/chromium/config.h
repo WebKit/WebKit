@@ -43,11 +43,17 @@
 #define DCHECK_NE(a, b) while (false && (a) != (b)) std::cerr
 
 #include <wtf/Platform.h>
-#include <wtf/ExportMacros.h>
 
 #if OS(WINDOWS) && !COMPILER(GCC)
 // Allow 'this' to be used in base member initializer list.
 #pragma warning(disable : 4355)
+// JS_EXPORTDATA is needed to inlucde wtf/WTFString.h.
+#define JS_EXPORTDATA __declspec(dllimport)
+#else
+#define JS_EXPORTDATA
 #endif
+
+#define WTF_EXPORT_PRIVATE
+#define JS_EXPORT_PRIVATE
 
 #endif // config_h

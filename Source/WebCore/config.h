@@ -33,11 +33,53 @@
 #include <WebCore/WebCoreHeaderDetection.h>
 #endif
 
+/* See note in wtf/Platform.h for more info on EXPORT_MACROS. */
+#if USE(EXPORT_MACROS)
+
 #include <wtf/ExportMacros.h>
-#if USE(JSC)
-#include <runtime/JSExportMacros.h>
+
+#if defined(BUILDING_JavaScriptCore) || defined(BUILDING_WTF)
+#define WTF_EXPORT_PRIVATE WTF_EXPORT
+#define JS_EXPORT_PRIVATE WTF_EXPORT
+#else
+#define WTF_EXPORT_PRIVATE WTF_IMPORT
+#define JS_EXPORT_PRIVATE WTF_IMPORT
 #endif
-#include "PlatformExportMacros.h"
+
+#define JS_EXPORTDATA JS_EXPORT_PRIVATE
+#define JS_EXPORTCLASS JS_EXPORT_PRIVATE
+
+#if defined(BUILDING_WebCore) || defined(BUILDING_WebKit)
+#define WEBKIT_EXPORTDATA WTF_EXPORT
+#else
+#define WEBKIT_EXPORTDATA WTF_IMPORT
+#endif
+
+#else /* !USE(EXPORT_MACROS) */
+
+#if !PLATFORM(CHROMIUM) && OS(WINDOWS) && !defined(BUILDING_WX__) && !COMPILER(GCC)
+#if defined(BUILDING_JavaScriptCore) || defined(BUILDING_WTF)
+#define JS_EXPORTDATA __declspec(dllexport)
+#else
+#define JS_EXPORTDATA __declspec(dllimport)
+#endif
+#if defined(BUILDING_WebCore) || defined(BUILDING_WebKit)
+#define WEBKIT_EXPORTDATA __declspec(dllexport)
+#else
+#define WEBKIT_EXPORTDATA __declspec(dllimport)
+#endif
+#define WTF_EXPORT_PRIVATE
+#define JS_EXPORT_PRIVATE
+#define JS_EXPORTCLASS JS_EXPORTDATA
+#else
+#define JS_EXPORTDATA
+#define JS_EXPORTCLASS
+#define WEBKIT_EXPORTDATA
+#define WTF_EXPORT_PRIVATE
+#define JS_EXPORT_PRIVATE
+#endif
+
+#endif /* USE(EXPORT_MACROS) */
 
 #ifdef __APPLE__
 #define HAVE_FUNC_USLEEP 1
@@ -135,7 +177,20 @@
 
 #define WTF_USE_GOOGLEURL 1
 
+#if !defined(WTF_USE_V8)
+#define WTF_USE_V8 1
+#endif
+
 #endif /* PLATFORM(CHROMIUM) */
+
+#if !defined(WTF_USE_V8)
+#define WTF_USE_V8 0
+#endif /* !defined(WTF_USE_V8) */
+
+/* Using V8 implies not using JSC and vice versa */
+#if !defined(WTF_USE_JSC)
+#define WTF_USE_JSC !WTF_USE_V8
+#endif
 
 #if USE(CG)
 #ifndef CGFLOAT_DEFINED

@@ -9,8 +9,7 @@ HEADERS += \
 
 INCLUDEPATH += \
     ../../../../WebCore/platform/network \
-    ../../../../JavaScriptCore \
-    ../../../../JavaScriptCore/runtime
+    ../../../../JavaScriptCore
 
 debug {
     SOURCES += ../../../../JavaScriptCore/wtf/Assertions.cpp

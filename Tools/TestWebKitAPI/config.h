@@ -24,10 +24,6 @@
  */
 
 #include <wtf/Platform.h>
-#include <wtf/ExportMacros.h>
-#if USE(JSC)
-#include <runtime/JSExportMacros.h>
-#endif
 
 #if __APPLE__
 
@@ -40,6 +36,12 @@
 #define NOMINMAX
 
 #endif
+
+/* FIXME: Define these properly once USE(EXPORT_MACROS) is set for ports using this */
+#define JS_EXPORT_PRIVATE
+#define WTF_EXPORT_PRIVATE
+
+#define JS_EXPORTDATA
 
 #include <stdint.h>
 
