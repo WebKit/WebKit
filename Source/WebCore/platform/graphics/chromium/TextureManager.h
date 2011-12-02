@@ -69,7 +69,7 @@ public:
     void releaseToken(TextureToken);
     bool hasTexture(TextureToken);
 
-    bool requestTexture(TextureToken, IntSize, GC3Denum textureFormat);
+    bool requestTexture(TextureToken, IntSize, GC3Denum textureFormat, unsigned& textureId);
 
     void protectTexture(TextureToken);
     void unprotectTexture(TextureToken);
@@ -99,6 +99,7 @@ private:
 
     void addTexture(TextureToken, TextureInfo);
     void removeTexture(TextureToken, TextureInfo);
+    unsigned replaceTexture(TextureToken, TextureInfo);
 
     typedef HashMap<TextureToken, TextureInfo> TextureMap;
     TextureMap m_textures;

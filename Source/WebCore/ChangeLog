@@ -1,3 +1,23 @@
+2011-12-02  Grace Kloba  <klobag@chromium.org>
+
+        [chromium] Recycle tile-sized textures during commit to prevent reallocations
+        https://bugs.webkit.org/show_bug.cgi?id=70645
+
+        Reviewed by James Robinson.
+
+        Currently texture request is capped by the high limit while we reclaim the
+        textures in each commit. This triggers new tiles always allocated when scrolling.
+        The proposal is to recycle the texture during request if the total used memory
+        is about to exceed the reclaim limit.
+
+        * platform/graphics/chromium/ManagedTexture.cpp:
+        (WebCore::ManagedTexture::reserve):
+        * platform/graphics/chromium/TextureManager.cpp:
+        (WebCore::TextureManager::setMemoryLimitBytes):
+        (WebCore::TextureManager::replaceTexture):
+        (WebCore::TextureManager::requestTexture):
+        * platform/graphics/chromium/TextureManager.h:
+
 2011-12-02  Kent Tamura  <tkent@chromium.org>
 
         [Chromium] Show placeholder even if the element is focused
