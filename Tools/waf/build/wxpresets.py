@@ -95,7 +95,7 @@ def get_wxmsw_settings(wx_root, shared=False, unicode=False, debug=False, wxPyth
     if wxPython and not version_str_nodot.startswith('29'):
         ext += 'h'
         depext += 'h'
-    elif debug and not version_str_nodot.startswith('29'):
+    elif debug:
         ext += 'd'
         depext += 'd'
 

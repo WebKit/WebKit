@@ -50,6 +50,10 @@
 #include "ResourceError.h"
 #include "ResourceResponse.h"
 #include "ScriptController.h"
+#if OS(WINDOWS)
+#include "SystemInfo.h"
+#endif
+
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 

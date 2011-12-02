@@ -1,3 +1,9 @@
+2011-12-02  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Unreviewed build fixes for Windows build.
+
+        * waf/build/wxpresets.py:
+
 2011-12-01  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

@@ -1,3 +1,9 @@
+2011-12-02  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Unreviewed build fixes for Windows build.
+
+        * wscript:
+
 2011-12-02  Alejandro G. Castro  <alex@igalia.com>
 
         [GTK] Fix TextureMapperCairo compilation

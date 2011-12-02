@@ -53,6 +53,7 @@ def generate_webcore_derived_sources(conf):
     os.system('make -f %s/DerivedSources.make WebCore=%s SOURCE_ROOT=%s all FEATURE_DEFINES="%s"' % (wc_dir, wc_dir, wc_dir, conf.env["FEATURE_DEFINES"]))
     if building_on_win32:
         os.environ["PATH"] = oldpath
+    os.system('perl %s/Source/WebKit/scripts/generate-webkitversion.pl --outputDir=%s --config %s/Source/WebKit/mac/Configurations/Version.xcconfig' % (wk_root, derived_sources_dir, wk_root))
     os.chdir(olddir)
 
 def generate_jscore_derived_sources(conf):
@@ -162,6 +163,7 @@ def build(bld):
                    # so we need to use the Win port's implementation until the wx bug fix is
                    # widely available (it was fixed in 2.8.10).
                    'Source/WebCore/platform/win/SharedTimerWin.cpp',
+                   'Source/WebCore/platform/win/SystemInfo.cpp',
                    'Source/WebCore/platform/win/WebCoreInstanceHandle.cpp',
                    # Use the Windows plugin architecture
                    #'Source/WebCore/plugins/win/PluginDataWin.cpp',
