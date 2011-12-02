@@ -1,5 +1,15 @@
 2011-12-02  Adam Roben  <aroben@apple.com>
 
+        Fix for Python 2.6
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (RunUnitTests.countFailures): Removed the flags parameter to re.split, which was only added
+        in Python 2.7, and used whitespace instead of start-of-string/end-of-string markers when
+        searching for "Tests that timed out:" etc. This makes our check less strict, but it
+        shouldn't matter given the kinds of content we parse.
+
+2011-12-02  Adam Roben  <aroben@apple.com>
+
         Fix names of failed/timed out tests in run-api-tests output
 
         Fixes <http://webkit.org/b/73663> run-api-tests prints suite names twice for failed or timed
