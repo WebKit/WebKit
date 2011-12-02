@@ -4,4 +4,4 @@ layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,165) size 134x122
     RenderSVGContainer {g} at (0,165) size 134x122 [transform={m=((1.09,0.00)(0.00,1.09)) t=(0.00,0.00)}]
       RenderSVGPath {path} at (0,165) size 134x122 [fill={[type=SOLID] [color=#008000]}] [data="M 0 39403 L 103176 39403 L 103176 132091 L 0 132091 Z"]
-      RenderSVGPath {path} at (-2147483648,-2147483648) size -2147483648x-2147483648 [fill={[type=SOLID] [color=#000000]}] [data="M 0 0"]
+      RenderSVGPath {path} at (0,0) size 0x0 [fill={[type=SOLID] [color=#000000]}] [data="M 0 0"]
