@@ -1,3 +1,13 @@
+2011-12-01  Nayan Kumar K  <nayankk@motorola.com>
+
+        [GTK] Add compilation options to enable/disable Accelerated Compositing and to choose texture mapper implementation.
+        https://bugs.webkit.org/show_bug.cgi?id=73458
+
+        Reviewed by Martin Robinson.
+
+        * GNUmakefile.am: Export new compilation macros.
+        * configure.ac: Provide option to choose accelerated compositing and texture mapper variations.
+
 2011-12-01  Patrick Gansterer  <paroga@webkit.org>
 
         [CMake] Make the feature defines for DOM names explicit

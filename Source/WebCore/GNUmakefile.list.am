@@ -5076,7 +5076,9 @@ webcore_sources += \
 	Source/WebCore/platform/graphics/texmap/TextureMapperNode.cpp \
 	Source/WebCore/platform/graphics/texmap/TextureMapperNode.h \
 	Source/WebCore/platform/graphics/texmap/TextureMapperPlatformLayer.h
+if USE_TEXTURE_MAPPER_CAIRO
 webcoregtk_sources += \
 	Source/WebCore/platform/graphics/cairo/TextureMapperCairo.cpp \
 	Source/WebCore/platform/graphics/cairo/TextureMapperCairo.h
+endif  # END USE_TEXTURE_MAPPER_CAIRO
 endif  # USE_ACCELERATED_COMPOSITING

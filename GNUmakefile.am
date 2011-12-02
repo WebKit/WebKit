@@ -170,6 +170,16 @@ global_cppflags += \
 	-DWTF_USE_ACCELERATED_COMPOSITING=1
 endif
 
+if USE_TEXTURE_MAPPER_CAIRO
+global_cppflags += \
+	-DWTF_TEXTURE_MAPPER_CAIRO=1
+endif
+
+if USE_TEXTURE_MAPPER_GL
+global_cppflags += \
+	-DWTF_TEXTURE_MAPPER_OPENGL=1
+endif
+
 # ----
 # GTK+ 2.x/3.x support
 # ----

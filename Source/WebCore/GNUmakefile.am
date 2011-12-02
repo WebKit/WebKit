@@ -564,10 +564,16 @@ endif  # END ENABLE_3D_RENDERING
 # ---
 # Compile with accelerated compositing support
 # ---
-if USE_ACCELERATED_COMPOSITING
+
+if USE_TEXTURE_MAPPER_CAIRO
 webcore_cppflags += \
 	-I$(srcdir)/Source/WebCore/platform/graphics/texmap
-endif  # USE_ACCELERATED_COMPOSITING
+endif  # END USE_TEXTURE_MAPPER_CAIRO
+
+if USE_TEXTURE_MAPPER_GL
+webcore_cppflags += \
+	-I$(srcdir)/Source/WebCore/platform/graphics/texmap
+endif  # END USETEXTURE_MAPPER_GL
 
 # ---
 # MHTML support

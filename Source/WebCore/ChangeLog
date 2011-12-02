@@ -1,3 +1,16 @@
+2011-12-01  Nayan Kumar K  <nayankk@motorola.com>
+
+        [GTK] Add compilation options to enable/disable Accelerated Compositing and to choose texture mapper implementation.
+        https://bugs.webkit.org/show_bug.cgi?id=73458
+
+        Reviewed by Martin Robinson.
+
+        No new tests added as this patch doesn't affect any functionality.
+
+        * GNUmakefile.am: Guard the include files.
+        * GNUmakefile.list.am: Guard the compilation of few files.
+        * platform/graphics/GraphicsLayer.h: Guard the typedef of GraphicsLayer.
+
 2011-12-01  Andrey Kosyakov  <caseq@chromium.org>
 
         Web Inspector: use object properties, not element attributes to pass preferred panel/line/request id in linkified anchors
