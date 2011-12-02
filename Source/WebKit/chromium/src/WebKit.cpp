@@ -37,9 +37,11 @@
 #include "Settings.h"
 #include "TextEncoding.h"
 #include "V8Binding.h"
+#include "WebKitMutationObserver.h"
 #include "WebKitPlatformSupport.h"
 #include "WebMediaPlayerClientImpl.h"
 #include "WebSocket.h"
+#include "WebThread.h"
 #include "WorkerContextExecutionProxy.h"
 #include "v8.h"
 
@@ -49,6 +51,22 @@
 #include <wtf/text/AtomicString.h>
 
 namespace WebKit {
+
+#if ENABLE(MUTATION_OBSERVERS)
+namespace {
+
+class EndOfTaskRunner : public WebThread::TaskObserver {
+public:
+    virtual void didProcessTask()
+    {
+        WebCore::WebKitMutationObserver::deliverAllMutations();
+    }
+};
+
+} // namespace
+
+static WebThread::TaskObserver* s_endOfTaskRunner = 0;
+#endif // ENABLE(MUTATION_OBSERVERS)
 
 // Make sure we are not re-initialized in the same address space.
 // Doing so may cause hard to reproduce crashes.
@@ -73,6 +91,12 @@ void initialize(WebKitPlatformSupport* webKitPlatformSupport)
     v8::V8::SetEntropySource(&generateEntropy);
     v8::V8::Initialize();
     WebCore::V8BindingPerIsolateData::ensureInitialized(v8::Isolate::GetCurrent());
+
+#if ENABLE(MUTATION_OBSERVERS)
+    ASSERT(!s_endOfTaskRunner);
+    s_endOfTaskRunner = new EndOfTaskRunner;
+    webKitPlatformSupport->currentThread()->addTaskObserver(s_endOfTaskRunner);
+#endif
 }
 
 void initializeWithoutV8(WebKitPlatformSupport* webKitPlatformSupport)
@@ -101,6 +125,13 @@ void initializeWithoutV8(WebKitPlatformSupport* webKitPlatformSupport)
 
 void shutdown()
 {
+#if ENABLE(MUTATION_OBSERVERS)
+    if (s_endOfTaskRunner) {
+        s_webKitPlatformSupport->currentThread()->removeTaskObserver(s_endOfTaskRunner);
+        delete s_endOfTaskRunner;
+        s_endOfTaskRunner = 0;
+    }
+#endif
     s_webKitPlatformSupport = 0;
 }
 

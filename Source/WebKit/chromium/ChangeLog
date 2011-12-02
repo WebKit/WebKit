@@ -1,3 +1,28 @@
+2011-11-30  Adam Klein  <adamk@chromium.org>
+
+        [chromium] WebKitMutationObserver::deliverAllMutations should be exposed through the Chromium API
+        https://bugs.webkit.org/show_bug.cgi?id=71242
+
+        Reviewed by Darin Fisher.
+
+        Relanding, depends on http://codereview.chromium.org/8748015/
+        to fix a sandboxing issue on Chromium/Linux.
+
+        Add addTaskObserver and removeTaskObserver to WebThread,
+        along with a new WebThread::TaskObserver interface.
+
+        For mutation observers, add a TaskObserver to the main thread
+        to deliver mutations after each task runs.
+
+        The Chromium implementation of the new WebThread methods is in
+        http://codereview.chromium.org/8586038/.
+
+        * public/platform/WebThread.h:
+        (WebKit::WebThread::TaskObserver::~TaskObserver):
+        * src/WebKit.cpp:
+        (WebKit::initialize):
+        (WebKit::shutdown):
+
 2011-12-02  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r101833.
