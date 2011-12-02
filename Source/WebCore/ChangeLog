@@ -1,3 +1,10 @@
+2011-12-02  MORITA Hajime  <morrita@google.com>
+
+        Unreviewed attempt to build fix for r101751:
+        Adding an include path to make PlatformExportMacros.h visibile from QTMovieWin.
+
+        * WebCore.vcproj/QTMovieWinCommon.vsprops:
+
 2011-12-01  Andrey Kosyakov  <caseq@chromium.org>
 
         Web Inspector: [Extensions API] pass preferred resource line number to extension's open resource handler
