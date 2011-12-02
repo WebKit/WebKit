@@ -937,7 +937,7 @@ $methods
 
 $delegates
 $eventArgs
-$replyArgs$domainDispatchers
+$domainDispatchers
 """)
 
     param_container_access_code = """
@@ -961,7 +961,6 @@ class Generator:
     frontend_method_list = []
     backend_js_initializer_list = []
     backend_js_event_list = []
-    backend_js_reply_list = []
     backend_js_domain_dispatcher_list = []
 
     backend_setters_list = []
@@ -1107,10 +1106,10 @@ class Generator:
                 agent_call_param_list.append(param)
 
                 js_bind_type = param_raw_type.get_js_bind_type()
-                js_param_text = "\"%s\": {\"optional\": %s, \"type\": \"%s\"}" % (
+                js_param_text = "{\"name\": \"%s\", \"type\": \"%s\", \"optional\": %s}" % (
                     json_param_name,
-                    ("true" if ("optional" in json_parameter and json_parameter["optional"]) else "false"),
-                    js_bind_type)
+                    js_bind_type,
+                    ("true" if ("optional" in json_parameter and json_parameter["optional"]) else "false"))
 
                 js_param_list.append(js_param_text)
 
@@ -1154,7 +1153,7 @@ class Generator:
             responseCook=response_cook_text))
         Generator.backend_method_name_declaration_list.append("    \"%s.%s\"," % (domain_name, json_command_name))
 
-        Generator.backend_js_initializer_list.append("InspectorBackend.registerCommand(\"%s.%s\", {%s}, %s);\n" % (domain_name, json_command_name, js_parameters_text, js_reply_list))
+        Generator.backend_js_initializer_list.append("InspectorBackend.registerCommand(\"%s.%s\", [%s], %s);\n" % (domain_name, json_command_name, js_parameters_text, js_reply_list))
 
 Generator.go()
 
@@ -1191,7 +1190,6 @@ backend_cpp_file.write(Templates.backend_cpp.substitute(None,
 
 backend_js_file.write(Templates.backend_js.substitute(None,
     delegates=join(Generator.backend_js_initializer_list, ""),
-    replyArgs=join(Generator.backend_js_reply_list, ""),
     eventArgs=join(Generator.backend_js_event_list, ""),
     domainDispatchers=join(Generator.backend_js_domain_dispatcher_list, "")))
 

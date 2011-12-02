@@ -2242,7 +2242,6 @@
                     { "name": "value", "type": "boolean" }
                 ]
             }
-
         ],
         "events": [
             {

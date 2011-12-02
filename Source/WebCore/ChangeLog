@@ -1,3 +1,21 @@
+2011-12-02  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: refactor InspectorBackendDispatcher so that it does not use JSON-serialized command templates.
+        https://bugs.webkit.org/show_bug.cgi?id=73569
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/CodeGeneratorInspector.py:
+        (Generator.process_command):
+        * inspector/Inspector.json:
+        * inspector/front-end/InspectorBackend.js:
+        (InspectorBackendClass.prototype._wrap.callback):
+        (InspectorBackendClass.prototype._wrap):
+        (InspectorBackendClass.prototype.registerCommand):
+        (InspectorBackendClass.prototype._invoke):
+        (InspectorBackendClass.prototype._sendMessageToBackend):
+        (InspectorBackendClass.prototype._wrapCallbackAndSendMessageObject):
+
 2011-12-02  Yosifumi Inoue  <yosin@chromium.org>
 
         Range sliders and spin buttons don't work with multi-columns.

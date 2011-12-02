@@ -45,24 +45,29 @@ function InspectorBackendClass()
 }
 
 InspectorBackendClass.prototype = {
-    _wrap: function(callback)
+    _wrap: function(callback, method)
     {
         var callbackId = this._lastCallbackId++;
-        this._callbacks[callbackId] = callback || function() {};
+        if (!callback)
+            callback = function() {};
+
+        this._callbacks[callbackId] = callback;
+        callback.methodName = method;
+        if (this.dumpInspectorTimeStats)
+            callback.sendRequestTime = Date.now();
+        
         return callbackId;
     },
 
     registerCommand: function(method, signature, replyArgs)
     {
-        var domainAndFunction = method.split(".");
-        var agentName = domainAndFunction[0] + "Agent";
+        var domainAndMethod = method.split(".");
+        var agentName = domainAndMethod[0] + "Agent";
         if (!window[agentName])
             window[agentName] = {};
 
-        var request = { method: method, params: signature };
-        var requestString = JSON.stringify(request);
-        window[agentName][domainAndFunction[1]] = this._sendMessageToBackend.bind(this, requestString);
-        window[agentName][domainAndFunction[1]]["invoke"] = this._invoke.bind(this, requestString);
+        window[agentName][domainAndMethod[1]] = this._sendMessageToBackend.bind(this, method, signature);
+        window[agentName][domainAndMethod[1]]["invoke"] = this._invoke.bind(this, method, signature);
         this._replyArgs[method] = replyArgs;
     },
 
@@ -71,69 +76,60 @@ InspectorBackendClass.prototype = {
         this._eventArgs[eventName] = params;
     },
 
-    _invoke: function(requestString, args, callback)
+    _invoke: function(method, signature, args, callback)
     {
-        var request = JSON.parse(requestString);
-        request.params = args;
-        this._wrapCallbackAndSendMessageObject(request, callback);
+        this._wrapCallbackAndSendMessageObject(method, args, callback);
     },
 
-    _sendMessageToBackend: function()
+    _sendMessageToBackend: function(method, signature, vararg)
     {
-        var args = Array.prototype.slice.call(arguments);
-        var request = JSON.parse(args.shift());
-        var callback = (args.length && typeof args[args.length - 1] === "function") ? args.pop() : 0;
-        var domainAndMethod = request.method.split(".");
-        var agentMethod = domainAndMethod[0] + "Agent." + domainAndMethod[1];
+        var args = Array.prototype.slice.call(arguments, 2);
+        var callback = (args.length && typeof args[args.length - 1] === "function") ? args.pop() : null;
 
+        var params = {};
         var hasParams = false;
-        if (request.params) {
-            for (var key in request.params) {
-                var typeName = request.params[key].type;
-                var optionalFlag = request.params[key]["optional"];
+        for (var i = 0; i < signature.length; ++i) {
+            var param = signature[i];
+            var paramName = param["name"];
+            var typeName = param["type"];
+            var optionalFlag = param["optional"];
 
-                if (args.length === 0 && !optionalFlag) {
-                    console.error("Protocol Error: Invalid number of arguments for method '" + agentMethod + "' call. It must have the next arguments '" + JSON.stringify(request.params) + "'.");
-                    return;
-                }
-
-                var value = args.shift();
-                if (optionalFlag && typeof value === "undefined") {
-                    delete request.params[key];
-                    continue;
-                }
-
-                if (typeof value !== typeName) {
-                    console.error("Protocol Error: Invalid type of argument '" + key + "' for method '" + agentMethod + "' call. It must be '" + typeName + "' but it is '" + typeof value + "'.");
-                    return;
-                }
-
-                request.params[key] = value;
-                hasParams = true;
+            if (!args.length && !optionalFlag) {
+                console.error("Protocol Error: Invalid number of arguments for method '" + method + "' call. It must have the following arguments '" + JSON.stringify(signature) + "'.");
+                return;
             }
-            if (!hasParams)
-                delete request.params;
+
+            var value = args.shift();
+            if (optionalFlag && typeof value === "undefined") {
+                continue;
+            }
+
+            if (typeof value !== typeName) {
+                console.error("Protocol Error: Invalid type of argument '" + paramName + "' for method '" + method + "' call. It must be '" + typeName + "' but it is '" + typeof value + "'.");
+                return;
+            }
+
+            params[paramName] = value;
+            hasParams = true;
         }
 
         if (args.length === 1 && !callback) {
             if (typeof args[0] !== "undefined") {
-                console.error("Protocol Error: Optional callback argument for method '" + agentMethod + "' call must be a function but its type is '" + typeof args[0] + "'.");
+                console.error("Protocol Error: Optional callback argument for method '" + method + "' call must be a function but its type is '" + typeof args[0] + "'.");
                 return;
             }
         }
 
-        this._wrapCallbackAndSendMessageObject(request, callback);
+        this._wrapCallbackAndSendMessageObject(method, hasParams ? params : null, callback);
     },
 
-    _wrapCallbackAndSendMessageObject: function(messageObject, callback)
+    _wrapCallbackAndSendMessageObject: function(method, params, callback)
     {
-        messageObject.id = this._wrap(callback);
-
-        var wrappedCallback = this._callbacks[messageObject.id];
-        wrappedCallback.methodName = messageObject.method;
-
-        if (this.dumpInspectorTimeStats)
-            wrappedCallback.sendRequestTime = Date.now();
+        var messageObject = {};
+        messageObject.method = method;
+        if (params)
+            messageObject.params = params;
+        messageObject.id = this._wrap(callback, method);
 
         if (this.dumpInspectorProtocolMessages)
             console.log("frontend: " + JSON.stringify(messageObject));
