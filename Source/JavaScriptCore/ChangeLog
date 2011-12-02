@@ -1,3 +1,121 @@
+2011-12-01  Darin Adler  <darin@apple.com>
+
+        Prepare to deploy pass and peek types in the HashMap class
+        https://bugs.webkit.org/show_bug.cgi?id=73477
+
+        Reviewed by Adam Roben.
+
+        This patch adds private typedefs inside the HashMap class,
+        and uses them as appropriate. A future patch will actually
+        tie those typedefs to hash traits, which will allow us to
+        make HashMap work with OwnPtr mapped values and to optimize
+        how HashMap works with RefPtr mapped values.
+
+        Also changed the hash translator and adapter struct templates
+        to use template functions to simplify them and make them more
+        flexible.
+
+        Also removed some unused template arguments.
+
+        This goes out of its way to not change behavior. Future patches
+        will change the peek type to be a reference type, which will
+        reduce reference count churn a bit for hash tables with RefPtr
+        mapped values, and then do further optimizations for RefPtr
+        and OwnPtr by getting types from the hash traits.
+
+        * wtf/HashMap.h: Added MappedPassInType, MappedPassOutType,
+        and MappedPeekType typedefs, and used them for the arguments
+        and return types of the get, set, add, take, and inlineAdd
+        functions.
+        (WTF::HashMapTranslator): Changed this struct template to take
+        fewer arguments, and changed its member functions to be
+        function templates instead. This allows the compiler to
+        determine types more flexibly and also simplifies use of it.
+        (WTF::HashMapTranslatorAdapter): Ditto.
+        (WTF::HashMap::find): Updated to use new HashMapTranslatorAdapter.
+        Also reduced the arguments passed to the HashTable function template.
+        (WTF::HashMap::contains): Ditto.
+        (WTF::HashMap::inlineAdd): Ditto. Also take MappedPassInType.
+        (WTF::HashMap::set): Ditto.
+        (WTF::HashMap::add): Ditto.
+        (WTF::HashMap::inlineGet): Ditto, but return MappedPeekType.
+        (WTF::HashMap::get): Ditto.
+        (WTF::HashMap::take): Ditto, but return MappedPassOutType and use
+        that type in the implementation.
+        (WTF::deleteAllValues): Removed unneeded template arguments from
+        call to deleteAllPairSeconds.
+        (WTF::deleteAllKeys): Removed unneeded template arguments from
+        call to deleteAllPairFirsts.
+
+        * wtf/HashSet.h:
+        (WTF::IdentityExtractor): Changed this to be a struct rather than
+        a struct template, and replaced the extract function with a function
+        template. This allows the compiler to deduce the type.
+        (WTF::HashSetTranslatorAdapter): Changed this struct template to take
+        fewer arguments, and changed its member functions to be
+        function templates instead. This allows the compiler to
+        determine types more flexibly and also simplifies use of it.
+        (WTF::HashSet::find): Updated to use new HashSetTranslatorAdapter.
+        Also reduced the arguments passed to the HashTable function template.
+        (WTF::HashSet::contains): Ditto.
+        (WTF::HashSet::add): Ditto.
+
+        * wtf/HashTable.h:
+        (WTF::IdentityHashTranslator): Changed this struct template to take
+        fewer arguments, and changed its member functions to be
+        function templates instead. This allows the compiler to
+        determine types more flexibly and also simplifies use of it.
+        (WTF::HashTable::add): Reduced arguments passed to the function template.
+        (WTF::HashTable::find): Ditto, also reversed the template arguments so the
+        translator comes first so the compiler can deduce the other type.
+        (WTF::HashTable::contains): Ditto.
+        (WTF::HashTable::lookup): Ditto.
+        (WTF::HashTable::lookupForWriting): Ditto.
+        (WTF::HashTable::checkKey): Ditto.
+        (WTF::HashTable::fullLookupForWriting): Ditto.
+        (WTF::HashTable::add): Ditto.
+        (WTF::HashTable::addPassingHashCode): Ditto.
+        (WTF::HashTable::find): Ditto.
+        (WTF::HashTable::contains): Ditto.
+
+        * wtf/ListHashSet.h:
+        (WTF::ListHashSetNodeHashFunctions): Changed this struct template to take
+        fewer arguments, and changed its member functions to be function templates
+        instead. This allows the compiler to determine types more flexibly and
+        also simplifies use of it.
+        (WTF::ListHashSet::find): Reduced the arguments passed to the HashTable
+        functon template.
+        (WTF::ListHashSetTranslatorAdapter): Changed this struct template in the
+        same way we changed ListHashSetNodeHashFunctions above.
+        (WTF::ListHashSetTranslatorAdapter::equal):
+        (WTF::::contains):
+        (WTF::::add):
+        (WTF::::insertBefore):
+
+        * wtf/RefPtrHashMap.h: Updated comments. Removed the
+        RefPtrHashMapRawKeyTranslator struct template; we can use the
+        HashMapTranslator struct template from HashMap.h instead now that
+        it is more flexible. Added MappedPassInType, MappedPassOutType,
+        and MappedPeekType typedefs, and used them for the arguments
+        and return types of the get, inlineGet, set, add, take, and inlineAdd
+        functions. Changed the name of the RawKeyTranslator type to
+        Translator since it's now a class that can handle both raw keys
+        and conventional keys.
+        (WTF::HashMap::find): Changed to use Translator instead of RawKeyTranslator.
+        Reduced the arguments passed to the HashTable function template.
+        (WTF::HashMap::contains): Ditto.
+        (WTF::HashMap::inlineAdd): Ditto. Also take MappedPassInType.
+        (WTF::HashMap::set): Ditto.
+        (WTF::HashMap::add): Ditto.
+        (WTF::HashMap::inlineGet): Ditto, but return MappedPeekType.
+        (WTF::HashMap::get): Ditto.
+        (WTF::HashMap::take): Ditto, but return MappedPassOutType and use
+        that type in the implementation.
+        (WTF::deleteAllValues): Removed unneeded template arguments from
+        call to deleteAllPairSeconds.
+        (WTF::deleteAllKeys): Removed unneeded template arguments from
+        call to deleteAllPairFirsts.
+
 2011-12-02  Zoltan Herczeg  <zherczeg@webkit.org>
 
         MacroAssemblerSH4 does not implement readCallTarget

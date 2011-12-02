@@ -33,6 +33,7 @@
 namespace WTF {
 
 #define DUMP_HASHTABLE_STATS 0
+
 // Enables internal WTF consistency checks that are invoked automatically. Non-WTF callers can call checkTableConsistency() even if internal checks are disabled.
 #define CHECK_HASHTABLE_CONSISTENCY 0
 
@@ -278,11 +279,11 @@ namespace WTF {
     template<typename T> struct Mover<T, true> { static void move(T& from, T& to) { hashTableSwap(from, to); } };
     template<typename T> struct Mover<T, false> { static void move(T& from, T& to) { to = from; } };
 
-    template<typename Key, typename Value, typename HashFunctions> class IdentityHashTranslator {
+    template<typename HashFunctions> class IdentityHashTranslator {
     public:
-        static unsigned hash(const Key& key) { return HashFunctions::hash(key); }
-        static bool equal(const Key& a, const Key& b) { return HashFunctions::equal(a, b); }
-        static void translate(Value& location, const Key&, const Value& value) { location = value; }
+        template<typename T> static unsigned hash(const T& key) { return HashFunctions::hash(key); }
+        template<typename T> static bool equal(const T& a, const T& b) { return HashFunctions::equal(a, b); }
+        template<typename T, typename U> static void translate(T& location, const U&, const T& value) { location = value; }
     };
 
     template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
@@ -293,7 +294,7 @@ namespace WTF {
         typedef Traits ValueTraits;
         typedef Key KeyType;
         typedef Value ValueType;
-        typedef IdentityHashTranslator<Key, Value, HashFunctions> IdentityTranslatorType;
+        typedef IdentityHashTranslator<HashFunctions> IdentityTranslatorType;
 
         HashTable();
         ~HashTable() 
@@ -318,21 +319,21 @@ namespace WTF {
         int capacity() const { return m_tableSize; }
         bool isEmpty() const { return !m_keyCount; }
 
-        pair<iterator, bool> add(const ValueType& value) { return add<KeyType, ValueType, IdentityTranslatorType>(Extractor::extract(value), value); }
+        pair<iterator, bool> add(const ValueType& value) { return add<IdentityTranslatorType>(Extractor::extract(value), value); }
 
         // A special version of add() that finds the object by hashing and comparing
         // with some other type, to avoid the cost of type conversion if the object is already
         // in the table.
-        template<typename T, typename Extra, typename HashTranslator> pair<iterator, bool> add(const T& key, const Extra&);
-        template<typename T, typename Extra, typename HashTranslator> pair<iterator, bool> addPassingHashCode(const T& key, const Extra&);
+        template<typename HashTranslator, typename T, typename Extra> pair<iterator, bool> add(const T& key, const Extra&);
+        template<typename HashTranslator, typename T, typename Extra> pair<iterator, bool> addPassingHashCode(const T& key, const Extra&);
 
-        iterator find(const KeyType& key) { return find<KeyType, IdentityTranslatorType>(key); }
-        const_iterator find(const KeyType& key) const { return find<KeyType, IdentityTranslatorType>(key); }
-        bool contains(const KeyType& key) const { return contains<KeyType, IdentityTranslatorType>(key); }
+        iterator find(const KeyType& key) { return find<IdentityTranslatorType>(key); }
+        const_iterator find(const KeyType& key) const { return find<IdentityTranslatorType>(key); }
+        bool contains(const KeyType& key) const { return contains<IdentityTranslatorType>(key); }
 
-        template <typename T, typename HashTranslator> iterator find(const T&);
-        template <typename T, typename HashTranslator> const_iterator find(const T&) const;
-        template <typename T, typename HashTranslator> bool contains(const T&) const;
+        template<typename HashTranslator, typename T> iterator find(const T&);
+        template<typename HashTranslator, typename T> const_iterator find(const T&) const;
+        template<typename HashTranslator, typename T> bool contains(const T&) const;
 
         void remove(const KeyType&);
         void remove(iterator);
@@ -344,8 +345,8 @@ namespace WTF {
         static bool isDeletedBucket(const ValueType& value) { return KeyTraits::isDeletedValue(Extractor::extract(value)); }
         static bool isEmptyOrDeletedBucket(const ValueType& value) { return isEmptyBucket(value) || isDeletedBucket(value); }
 
-        ValueType* lookup(const Key& key) { return lookup<Key, IdentityTranslatorType>(key); }
-        template<typename T, typename HashTranslator> ValueType* lookup(const T&);
+        ValueType* lookup(const Key& key) { return lookup<IdentityTranslatorType>(key); }
+        template<typename HashTranslator, typename T> ValueType* lookup(const T&);
 
 #if !ASSERT_DISABLED
         void checkTableConsistency() const;
@@ -367,11 +368,11 @@ namespace WTF {
         typedef pair<ValueType*, bool> LookupType;
         typedef pair<LookupType, unsigned> FullLookupType;
 
-        LookupType lookupForWriting(const Key& key) { return lookupForWriting<Key, IdentityTranslatorType>(key); };
-        template<typename T, typename HashTranslator> FullLookupType fullLookupForWriting(const T&);
-        template<typename T, typename HashTranslator> LookupType lookupForWriting(const T&);
+        LookupType lookupForWriting(const Key& key) { return lookupForWriting<IdentityTranslatorType>(key); };
+        template<typename HashTranslator, typename T> FullLookupType fullLookupForWriting(const T&);
+        template<typename HashTranslator, typename T> LookupType lookupForWriting(const T&);
 
-        template<typename T, typename HashTranslator> void checkKey(const T&);
+        template<typename HashTranslator, typename T> void checkKey(const T&);
 
         void removeAndInvalidateWithoutEntryConsistencyCheck(ValueType*);
         void removeAndInvalidate(ValueType*);
@@ -452,7 +453,7 @@ namespace WTF {
 #if ASSERT_DISABLED
 
     template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
-    template<typename T, typename HashTranslator>
+    template<typename HashTranslator, typename T>
     inline void HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::checkKey(const T&)
     {
     }
@@ -460,7 +461,7 @@ namespace WTF {
 #else
 
     template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
-    template<typename T, typename HashTranslator>
+    template<typename HashTranslator, typename T>
     void HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::checkKey(const T& key)
     {
         if (!HashFunctions::safeToCompareToEmptyOrDeleted)
@@ -475,10 +476,10 @@ namespace WTF {
 #endif
 
     template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
-    template<typename T, typename HashTranslator>
+    template<typename HashTranslator, typename T>
     inline Value* HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::lookup(const T& key)
     {
-        checkKey<T, HashTranslator>(key);
+        checkKey<HashTranslator>(key);
 
         int k = 0;
         int sizeMask = m_tableSizeMask;
@@ -522,11 +523,11 @@ namespace WTF {
     }
 
     template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
-    template<typename T, typename HashTranslator>
+    template<typename HashTranslator, typename T>
     inline typename HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::LookupType HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::lookupForWriting(const T& key)
     {
         ASSERT(m_table);
-        checkKey<T, HashTranslator>(key);
+        checkKey<HashTranslator>(key);
 
         int k = 0;
         ValueType* table = m_table;
@@ -574,11 +575,11 @@ namespace WTF {
     }
 
     template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
-    template<typename T, typename HashTranslator>
+    template<typename HashTranslator, typename T>
     inline typename HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::FullLookupType HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::fullLookupForWriting(const T& key)
     {
         ASSERT(m_table);
-        checkKey<T, HashTranslator>(key);
+        checkKey<HashTranslator>(key);
 
         int k = 0;
         ValueType* table = m_table;
@@ -651,10 +652,10 @@ namespace WTF {
     }
 
     template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
-    template<typename T, typename Extra, typename HashTranslator>
+    template<typename HashTranslator, typename T, typename Extra>
     inline pair<typename HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::iterator, bool> HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::add(const T& key, const Extra& extra)
     {
-        checkKey<T, HashTranslator>(key);
+        checkKey<HashTranslator>(key);
 
         invalidateIterators();
 
@@ -736,10 +737,10 @@ namespace WTF {
     }
 
     template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
-    template<typename T, typename Extra, typename HashTranslator>
+    template<typename HashTranslator, typename T, typename Extra>
     inline pair<typename HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::iterator, bool> HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::addPassingHashCode(const T& key, const Extra& extra)
     {
-        checkKey<T, HashTranslator>(key);
+        checkKey<HashTranslator>(key);
 
         invalidateIterators();
 
@@ -748,7 +749,7 @@ namespace WTF {
 
         internalCheckTableConsistency();
 
-        FullLookupType lookupResult = fullLookupForWriting<T, HashTranslator>(key);
+        FullLookupType lookupResult = fullLookupForWriting<HashTranslator>(key);
 
         ValueType* entry = lookupResult.first.first;
         bool found = lookupResult.first.second;
@@ -794,13 +795,13 @@ namespace WTF {
     }
 
     template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
-    template <typename T, typename HashTranslator> 
+    template <typename HashTranslator, typename T> 
     typename HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::iterator HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::find(const T& key)
     {
         if (!m_table)
             return end();
 
-        ValueType* entry = lookup<T, HashTranslator>(key);
+        ValueType* entry = lookup<HashTranslator>(key);
         if (!entry)
             return end();
 
@@ -808,13 +809,13 @@ namespace WTF {
     }
 
     template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
-    template <typename T, typename HashTranslator> 
+    template <typename HashTranslator, typename T> 
     typename HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::const_iterator HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::find(const T& key) const
     {
         if (!m_table)
             return end();
 
-        ValueType* entry = const_cast<HashTable*>(this)->lookup<T, HashTranslator>(key);
+        ValueType* entry = const_cast<HashTable*>(this)->lookup<HashTranslator>(key);
         if (!entry)
             return end();
 
@@ -822,13 +823,13 @@ namespace WTF {
     }
 
     template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
-    template <typename T, typename HashTranslator> 
+    template <typename HashTranslator, typename T> 
     bool HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::contains(const T& key) const
     {
         if (!m_table)
             return false;
 
-        return const_cast<HashTable*>(this)->lookup<T, HashTranslator>(key);
+        return const_cast<HashTable*>(this)->lookup<HashTranslator>(key);
     }
 
     template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
