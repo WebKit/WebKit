@@ -499,7 +499,7 @@ sub get_function_line_ranges($$)
     return get_function_line_ranges_for_javascript($file_handle, $file_name) if $file_name =~ /\.js$/;
     return get_selector_line_ranges_for_css($file_handle, $file_name) if $file_name =~ /\.css$/;
     return get_function_line_ranges_for_perl($file_handle, $file_name) if $file_name =~ /\.p[lm]$/;
-    return get_function_line_ranges_for_python($file_handle, $file_name) if $file_name =~ /\.py$/;
+    return get_function_line_ranges_for_python($file_handle, $file_name) if $file_name =~ /\.py$/ or $file_name =~ /master\.cfg$/;
 
     # Try to determine the source language based on the script interpreter.
 

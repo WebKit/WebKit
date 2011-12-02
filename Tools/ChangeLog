@@ -1,3 +1,16 @@
+2011-12-02  Adam Roben  <aroben@apple.com>
+
+        Teach prepare-ChangeLog to treat master.cfg as a Python file
+
+        Fixes <http://webkit.org/b/73658> prepare-ChangeLog doesn't show modified classes/functions
+        in buildbot's master.cfg
+
+        Reviewed by Darin Adler.
+
+        * Scripts/prepare-ChangeLog:
+        (get_function_line_ranges): Use get_function_line_ranges_for_python if the filename is
+        master.cfg.
+
 2011-12-02  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Create a wrapper script that knows how to install jhbuild and run commands with it
