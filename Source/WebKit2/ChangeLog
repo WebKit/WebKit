@@ -1,3 +1,16 @@
+2011-12-01  Goutham J  <gouthamj@motorola.com>
+
+        [WEBKIT2] Fix for compilation warnings in WebContext.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=69080
+
+        Fix compilation warning in WebKit2 builds.
+
+        Reviewed by Hajime Morita.
+
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::processDidFinishLaunching):
+        (WebKit::WebContext::startMemorySampler):
+
 2011-12-01  Beth Dakin  <bdakin@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=73592
