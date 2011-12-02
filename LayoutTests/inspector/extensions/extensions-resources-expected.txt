@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 146: don't panic!
+CONSOLE MESSAGE: line 11: don't panic!
 Tests resource-related methods of WebInspector extension API
 
 
@@ -71,8 +71,11 @@ resource added:
 RUNNING TEST: extension_testOpenResourceHandler
 handleOpenResource() invoked [this should only appear once!]: 
 {
-    url : .../extensions-resources.html
-    type : "document"
+    0 : {
+        url : .../extensions-resources.html
+        type : "document"
+    }
+    1 : 11
 }
 RUNNING TEST: extension_testSetResourceContent
 div.test width after stylesheet edited (should be 126): 126

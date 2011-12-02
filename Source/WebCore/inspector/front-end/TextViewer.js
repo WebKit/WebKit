@@ -303,10 +303,11 @@ WebInspector.TextViewer.prototype = {
         var contextMenu = new WebInspector.ContextMenu();
         var target = event.target.enclosingNodeOrSelfWithClass("webkit-line-number");
         if (target)
-            this._delegate.populateLineGutterContextMenu(target.lineNumber, contextMenu);
-        else
-            this._delegate.populateTextAreaContextMenu(contextMenu);
-
+            this._delegate.populateLineGutterContextMenu(contextMenu, target.lineNumber);
+        else {
+            target = this._mainPanel._enclosingLineRowOrSelf(event.target);
+            this._delegate.populateTextAreaContextMenu(contextMenu, target && target.lineNumber);
+        }
         var fileName = this._delegate.suggestedFileName();
         if (fileName)
             contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Save as..." : "Save As..."), InspectorFrontendHost.saveAs.bind(InspectorFrontendHost, fileName, this._textModel.text));
@@ -353,9 +354,9 @@ WebInspector.TextViewerDelegate.prototype = {
 
     cancelEditing: function() { },
 
-    populateLineGutterContextMenu: function(lineNumber, contextMenu) { },
+    populateLineGutterContextMenu: function(contextMenu, lineNumber) { },
 
-    populateTextAreaContextMenu: function(contextMenu) { },
+    populateTextAreaContextMenu: function(contextMenu, lineNumber) { },
 
     suggestedFileName: function() { }
 }

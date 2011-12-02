@@ -62,7 +62,7 @@ WebInspector.HandlerRegistry.prototype = {
      */
     dispatch: function(data)
     {
-        this.dispatchToHandler(this._activeHandler, data);
+        return this.dispatchToHandler(this._activeHandler, data);
     },
 
     /**

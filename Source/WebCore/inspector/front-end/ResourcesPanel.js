@@ -1238,7 +1238,7 @@ WebInspector.FrameResourceTreeElement.prototype = {
         var contextMenu = new WebInspector.ContextMenu();
         contextMenu.appendItem(WebInspector.openLinkExternallyLabel(), WebInspector.openResource.bind(WebInspector, this._resource.url, false));
         this._appendOpenInNetworkPanelAction(contextMenu, event);
-        WebInspector.populateResourceContextMenu(contextMenu, this._resource.url);
+        WebInspector.populateResourceContextMenu(contextMenu, this._resource.url, null);
         this._appendSaveAsAction(contextMenu, event);
         contextMenu.show(event);
     },

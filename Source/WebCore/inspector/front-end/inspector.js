@@ -805,20 +805,20 @@ WebInspector.updateFocusedNode = function(nodeId)
     this.panels.elements.revealAndSelectNode(nodeId);
 }
 
-WebInspector.populateResourceContextMenu = function(contextMenu, url)
+WebInspector.populateResourceContextMenu = function(contextMenu, url, preferredLineNumber)
 {
     var registry = WebInspector.openAnchorLocationRegistry;
     // Skip 0th handler, as it's 'Use default panel' one.
     for (var i = 1; i < registry.handlerNames.length; ++i) {
         var handler = registry.handlerNames[i];
         contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Open using %s" : "Open Using %s", handler),
-            registry.dispatchToHandler.bind(registry, handler, url));
+            registry.dispatchToHandler.bind(registry, handler, { url: url, preferredLineNumber: preferredLineNumber }));
     }
 }
 
 WebInspector._showAnchorLocation = function(anchor)
 {
-    if (WebInspector.openAnchorLocationRegistry.dispatch(anchor.href))
+    if (WebInspector.openAnchorLocationRegistry.dispatch({ url: anchor.href, lineNumber: anchor.lineNumber}))
         return true;
     var preferedPanel = this.panels[anchor.preferredPanel || "resources"];
     if (WebInspector._showAnchorLocationInPanel(anchor, preferedPanel))

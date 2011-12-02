@@ -6,6 +6,10 @@
 <script type="text/javascript" src="resources/test-script.js"></script>
 
 <script type="text/javascript">
+function logMessage()
+{
+    console.log("don't panic!");
+}
 
 function initialize_ExtensionResourceTests()
 {
@@ -120,10 +124,10 @@ function extension_testOnResourceAdded(nextTest)
 
 function extension_testOpenResourceHandler(nextTest)
 {
-    function handleOpenResource(resource)
+    function handleOpenResource(resource, lineNumber)
     {
         output("handleOpenResource() invoked [this should only appear once!]: ");
-        dumpObject(resource, { url: "url" });
+        dumpObject(Array.prototype.slice.call(arguments), { url: "url" });
         webInspector.panels.setOpenResourceHandler(null);
         evaluateOnFrontend("InspectorTest.clickOnURL(); reply()", nextTest);
     }
@@ -139,11 +143,6 @@ function addResource()
     var script = document.createElement("script");
     script.src = "data:application/javascript," + escape("function test_func(){};");
     document.head.appendChild(script);
-}
-
-function logMessage()
-{
-    console.log("don't panic!");
 }
 
 </script>

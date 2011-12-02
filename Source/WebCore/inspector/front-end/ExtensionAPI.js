@@ -305,7 +305,7 @@ Panels.prototype = {
         else {
             function callbackWrapper(message)
             {
-                callback.call(null, message.resource);
+                callback.call(null, message.resource, message.lineNumber);
             }
             extensionServer.registerHandler(events.OpenResource, callbackWrapper);
         }
@@ -537,7 +537,7 @@ AuditResultImpl.prototype = {
     {
         return {
             type: "resourceLink",
-            arguments: [url, lineNumber - 1]
+            arguments: [url, lineNumber && lineNumber - 1]
         };
     },
 

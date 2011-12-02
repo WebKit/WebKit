@@ -1,3 +1,36 @@
+2011-12-01  Andrey Kosyakov  <caseq@chromium.org>
+
+        Web Inspector: [Extensions API] pass preferred resource line number to extension's open resource handler
+        https://bugs.webkit.org/show_bug.cgi?id=73084
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/ExtensionAPI.js:
+        (injectedExtensionAPI.Panels.prototype.setOpenResourceHandler.else.callbackWrapper):
+        (injectedExtensionAPI.Panels.prototype.setOpenResourceHandler):
+        * inspector/front-end/ExtensionServer.js:
+        (WebInspector.ExtensionServer.prototype._handleOpenURL):
+        * inspector/front-end/HandlerRegistry.js:
+        (get WebInspector.HandlerRegistry.prototype.set dispatch):
+        * inspector/front-end/JavaScriptSourceFrame.js:
+        (WebInspector.JavaScriptSourceFrame.prototype.populateTextAreaContextMenu):
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.FrameResourceTreeElement.prototype._handleContextMenuEvent):
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype.populateLineGutterContextMenu):
+        (WebInspector.SourceFrame.prototype.populateTextAreaContextMenu):
+        (WebInspector.TextViewerDelegateForSourceFrame.prototype.populateLineGutterContextMenu):
+        (WebInspector.TextViewerDelegateForSourceFrame.prototype.populateTextAreaContextMenu):
+        * inspector/front-end/TextViewer.js:
+        (WebInspector.TextViewer.prototype._contextMenu):
+        (WebInspector.TextViewerDelegate.prototype.populateLineGutterContextMenu):
+        (WebInspector.TextViewerDelegate.prototype.populateTextAreaContextMenu):
+        * inspector/front-end/externs.js:
+        (WebInspector.populateResourceContextMenu):
+        * inspector/front-end/inspector.js:
+        (WebInspector.populateResourceContextMenu):
+        (WebInspector._showAnchorLocation):
+
 2011-12-01  Nayan Kumar K  <nayankk@motorola.com>
 
         [GTK] Add compilation options to enable/disable Accelerated Compositing and to choose texture mapper implementation.

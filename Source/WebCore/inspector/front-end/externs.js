@@ -113,7 +113,7 @@ WebInspector.openResource = function(url, external) {}
 
 WebInspector.openRequestInNetworkPanel = function(request) {}
 
-WebInspector.populateResourceContextMenu = function(contextMenu, url) {}
+WebInspector.populateResourceContextMenu = function(contextMenu, url, preferredLineNumber) {}
 
 WebInspector.evaluateInConsole = function(expression) {}
 
