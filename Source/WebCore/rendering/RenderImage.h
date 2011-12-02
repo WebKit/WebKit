@@ -53,6 +53,10 @@ public:
 
     void highQualityRepaintTimerFired(Timer<RenderImage>*);
 
+    void setIsGeneratedContent(bool generated = true) { m_isGeneratedContent = generated; }
+
+    bool isGeneratedContent() const { return m_isGeneratedContent; }
+
 protected:
     virtual bool needsPreferredWidthsRecalculation() const;
     virtual RenderBox* embeddedContentBox() const;
@@ -99,6 +103,7 @@ private:
     OwnPtr<RenderImageResource> m_imageResource;
     bool m_needsToSetSizeForAltText;
     bool m_didIncrementVisuallyNonEmptyPixelCount;
+    bool m_isGeneratedContent;
 
     friend class RenderImageScaleObserver;
 };

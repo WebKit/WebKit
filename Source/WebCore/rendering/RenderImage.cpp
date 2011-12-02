@@ -54,6 +54,7 @@ RenderImage::RenderImage(Node* node)
     : RenderReplaced(node, IntSize())
     , m_needsToSetSizeForAltText(false)
     , m_didIncrementVisuallyNonEmptyPixelCount(false)
+    , m_isGeneratedContent(false)
 {
     updateAltText();
 }

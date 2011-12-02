@@ -1,3 +1,32 @@
+2011-12-02  Leo Yang  <leo.yang@torchmobile.com.cn>
+
+        image element with src attribute can't be replaced by content: url() style
+        https://bugs.webkit.org/show_bug.cgi?id=42840
+
+        ImageLoader were updating renderer even if the renderer's image is
+        style generated content. This was wrong because if an image element
+        with src attribute and style="content: url(...)" attribute the
+        src image might override content image. The correct behavior should
+        be showing content image.
+
+        This patch is differentiating style generated RenderImage from the
+        normal RenderImage and keeps the RenderImageSource untouched if the
+        renderer is generated content.
+
+        Reviewed by Darin Adler.
+
+        Test: fast/images/image-css3-content-data.html
+
+        * loader/ImageLoader.cpp:
+        (WebCore::ImageLoader::renderImageResource):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::RenderImage):
+        * rendering/RenderImage.h:
+        (WebCore::RenderImage::setIsGeneratedContent):
+        (WebCore::RenderImage::isGeneratedContent):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::createObject):
+
 2011-12-01  David Levin  <levin@chromium.org>
 
         Add a way to automatically size a single frame to fit its content.

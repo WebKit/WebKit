@@ -112,9 +112,10 @@ RenderObject* RenderObject::createObject(Node* node, RenderStyle* style)
     if (contentData && !contentData->next() && contentData->isImage() && doc != node) {
         RenderImage* image = new (arena) RenderImage(node);
         image->setStyle(style);
-        if (const StyleImage* styleImage = static_cast<const ImageContentData*>(contentData)->image())
+        if (const StyleImage* styleImage = static_cast<const ImageContentData*>(contentData)->image()) {
             image->setImageResource(RenderImageResourceStyleImage::create(const_cast<StyleImage*>(styleImage)));
-        else
+            image->setIsGeneratedContent();
+        } else
             image->setImageResource(RenderImageResource::create());
         return image;
     }
