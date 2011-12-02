@@ -19,6 +19,8 @@ use FindBin;
 use lib $FindBin::Bin;
 use webkitdirs;
 
+delete $ENV{AR_FLAGS} if exists $ENV{AR_FLAGS};
+
 chdir(relativeScriptsDir() . "/../gtk") or die $!;
 
 print "Updating GTK+ port dependencies using jhbuild...\n";

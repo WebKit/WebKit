@@ -1,3 +1,13 @@
+2011-12-02  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Build fix. Use internal pcre on glib, make gnutls a dependency of
+        glib-networking, unset AR_FLAGS for jhbuild builds, and run jhbuild
+        in non-interactive mode.
+
+        * Scripts/update-webkitgtk-libs:
+        * gtk/jhbuild.modules:
+        * gtk/run-with-jhbuild:
+
 2011-12-02  Adam Roben  <aroben@apple.com>
 
         Fix for Python 2.6

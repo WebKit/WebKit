@@ -9,7 +9,6 @@
       <dep package="freetype6"/>
       <dep package="glib"/>
       <dep package="glib-networking"/>
-      <dep package="gnutls"/>
       <dep package="libsoup"/>
     </dependencies>
   </metamodule>
@@ -38,7 +37,7 @@
             md5sum="647ee8ed266f9a4117c8d0a4855b3d3e"/>
   </tarball>
 
-  <autotools id="glib" autogenargs="--with-pcre=system">
+  <autotools id="glib">
     <branch module="/pub/GNOME/sources/glib/2.31/glib-2.31.2.tar.xz" version="2.31.2"
             repo="gnome.org"
             hash="sha256:19d7921671a487c3c5759a57df7b8508afdbadd7764d62a47a82fff7b399032b"
@@ -46,6 +45,9 @@
   </autotools>
 
   <autotools id="glib-networking">
+    <dependencies>
+      <dep package="gnutls"/>
+    </dependencies>
     <branch module="/pub/GNOME/sources/glib-networking/2.31/glib-networking-2.31.2.tar.xz" version="2.31.2"
             repo="gnome.org"
             hash="sha256:03e3a2881d2626d1206e72972531661037fe0d32e745bf9b2f63c0d6f5e32a9c"

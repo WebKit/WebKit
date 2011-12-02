@@ -55,7 +55,7 @@ jhbuild_path = common.top_level_path('WebKitBuild', 'Dependencies', 'Root', 'bin
 if not os.path.exists(jhbuild_path):
     install_and_run_jhbuild()
 
-process = subprocess.Popen([jhbuild_path, '-f', common.top_level_path('Tools', 'gtk', 'jhbuildrc'), 'run'] + sys.argv[1:])
+process = subprocess.Popen([jhbuild_path, '--no-interact', '-f', common.top_level_path('Tools', 'gtk', 'jhbuildrc'), 'run'] + sys.argv[1:])
 process.wait()
 sys.exit(process.returncode)
 
