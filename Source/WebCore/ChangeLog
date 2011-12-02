@@ -1,3 +1,10 @@
+2011-12-02  Pavel Feldman  <pfeldman@google.com>
+
+        Not reviewed: remove console.timeStamp from the inspector backend dispatcher.
+
+        * inspector/front-end/InspectorBackend.js:
+        (InspectorBackendClass.prototype.sendMessageObjectToBackend):
+
 2011-12-02  Hajime Morrita  <morrita@chromium.org>
 
         Unreviewed, rolling out r101751 and r101775.

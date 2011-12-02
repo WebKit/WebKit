@@ -145,7 +145,6 @@ InspectorBackendClass.prototype = {
 
     sendMessageObjectToBackend: function(messageObject)
     {
-        console.timeStamp(messageObject.method);
         var message = JSON.stringify(messageObject);
         InspectorFrontendHost.sendMessageToBackend(message);
     },
