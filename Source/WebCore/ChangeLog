@@ -1,5 +1,22 @@
 2011-12-02  Kent Tamura  <tkent@chromium.org>
 
+        [Chromium] Show placeholder even if the element is focused
+        https://bugs.webkit.org/show_bug.cgi?id=73629
+
+        Reviewed by Hajime Morita.
+
+        No new tests. Need to update some existing placeholder tests.
+
+        * rendering/RenderThemeChromiumMac.h: Add shouldShowPlaceholderWhenFocused().
+        * rendering/RenderThemeChromiumMac.mm:
+        (WebCore::RenderThemeChromiumMac::shouldShowPlaceholderWhenFocused):
+        Returns true.
+        * rendering/RenderThemeChromiumSkia.cpp:
+        (WebCore::RenderThemeChromiumSkia::shouldShowPlaceholderWhenFocused): ditto.
+        * rendering/RenderThemeChromiumSkia.h: Add shouldShowPlaceholderWhenFocused().
+
+2011-12-02  Kent Tamura  <tkent@chromium.org>
+
         [Lion][Windows] Both of placeholder and input text are shown in <input type=number>
         https://bugs.webkit.org/show_bug.cgi?id=73615
 

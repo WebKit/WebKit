@@ -540,6 +540,11 @@ int RenderThemeChromiumSkia::menuListInternalPadding(RenderStyle* style, int pad
     return padding;
 }
 
+bool RenderThemeChromiumSkia::shouldShowPlaceholderWhenFocused() const
+{
+    return true;
+}
+
 #if ENABLE(PROGRESS_TAG)
 
 //

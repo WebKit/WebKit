@@ -120,6 +120,11 @@ void RenderThemeChromiumMac::updateActiveState(NSCell* cell, const RenderObject*
         [cell setControlTint:tint];
 }
 
+bool RenderThemeChromiumMac::shouldShowPlaceholderWhenFocused() const
+{
+    return true;
+}
+
 #if ENABLE(VIDEO)
 
 void RenderThemeChromiumMac::adjustMediaSliderThumbSize(RenderStyle* style) const

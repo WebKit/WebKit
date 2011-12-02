@@ -151,11 +151,13 @@ class RenderThemeChromiumSkia : public RenderTheme {
         IntRect progressValueRectFor(RenderProgress*, const IntRect&) const;
 #endif
 
-    private:
-        int menuListInternalPadding(RenderStyle*, int paddingType) const;
-        bool paintMediaButtonInternal(GraphicsContext*, const IntRect&, Image*);
-        IntRect convertToPaintingRect(RenderObject* inputRenderer, const RenderObject* partRenderer, IntRect partRect, const IntRect& localOffset) const;
-    };
+private:
+    virtual bool shouldShowPlaceholderWhenFocused() const OVERRIDE;
+
+    int menuListInternalPadding(RenderStyle*, int paddingType) const;
+    bool paintMediaButtonInternal(GraphicsContext*, const IntRect&, Image*);
+    IntRect convertToPaintingRect(RenderObject* inputRenderer, const RenderObject* partRenderer, IntRect partRect, const IntRect& localOffset) const;
+};
 
 } // namespace WebCore
 

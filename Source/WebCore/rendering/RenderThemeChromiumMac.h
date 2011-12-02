@@ -57,9 +57,11 @@ protected:
 
     virtual int popupInternalPaddingLeft(RenderStyle*) const;
     virtual int popupInternalPaddingRight(RenderStyle*) const;
+
 private:
     virtual void updateActiveState(NSCell*, const RenderObject*);
     virtual String extraDefaultStyleSheet();
+    virtual bool shouldShowPlaceholderWhenFocused() const OVERRIDE;
 };
 
 } // namespace WebCore
