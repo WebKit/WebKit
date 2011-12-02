@@ -1582,3 +1582,8 @@ fast/text/ipa-tone-letters.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=73493
 fast/canvas/webgl/arraybuffer-transfer-of-control.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=73653
+fast/events/offsetX-offsetY.html
+fast/forms/number/spin-in-multi-column.html
+fast/forms/range/slider-in-multi-column.html
