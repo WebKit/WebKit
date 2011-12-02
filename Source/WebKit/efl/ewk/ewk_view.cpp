@@ -51,7 +51,6 @@
 #include "RenderTheme.h"
 #include "c_instance.h"
 #include "ewk_private.h"
-#include "ewk_protocol_handler.h"
 
 #include <Ecore.h>
 #include <Eina.h>
@@ -131,10 +130,6 @@ struct _Ewk_View_Private_Data {
     WebCore::Frame* mainFrame;
     WebCore::ViewportArguments viewportArguments;
     Ewk_History* history;
-    struct {
-        void* context;
-        Ewk_View_Resource_Handler_Cb function;
-    } customResourceHandler;
     struct {
         Ewk_Menu menu;
         WebCore::PopupMenuClient* menuClient;
@@ -3699,46 +3694,6 @@ Eina_Bool ewk_view_js_object_add(Evas_Object* ewkView, Ewk_JS_Object* object, co
 #else
     return false;
 #endif // ENABLE(NETSCAPE_PLUGIN_API)
-}
-
-Eina_Bool ewk_view_protocol_handler_set(Evas_Object* ewkView, const char** protocols, Ewk_View_Resource_Handler_Cb handler, void* context)
-{
-    EWK_VIEW_SD_GET(ewkView, smartData);
-    EWK_VIEW_PRIV_GET(smartData, priv);
-
-    if (!handler)
-        return false;
-
-    priv->customResourceHandler.function = handler;
-    priv->customResourceHandler.context = context;
-
-    return ewk_custom_protocol_handler_set(protocols);
-}
-
-Eina_Bool ewk_view_protocol_handler_unset(Evas_Object* ewkView)
-{
-    EWK_VIEW_SD_GET(ewkView, smartData);
-    EWK_VIEW_PRIV_GET(smartData, priv);
-    Eina_Bool ret = ewk_custom_protocol_handler_all_unset();
-
-    if (ret) {
-        priv->customResourceHandler.function = 0;
-        priv->customResourceHandler.context = 0;
-    }
-
-    return ret;
-}
-
-void* ewk_view_protocol_handler_resource_get(Evas_Object* ewkView, size_t* bytesRead, char** mime, const char* file)
-{
-    EWK_VIEW_SD_GET(ewkView, smartData);
-    EWK_VIEW_PRIV_GET(smartData, priv);
-
-    Ewk_View_Resource_Handler_Cb function = priv->customResourceHandler.function;
-    if (function)
-        return function(file, bytesRead, mime, priv->customResourceHandler.context);
-
-    return 0;
 }
 
 /**

@@ -2231,25 +2231,6 @@ EAPI Ewk_View_Mode ewk_view_mode_get(const Evas_Object *o);
  */
 EAPI Eina_Bool ewk_view_js_object_add(Evas_Object *o, Ewk_JS_Object *obj, const char *obj_name);
 
-/**
- * Register a new protocol handler for handling an specific protocol (scheme).
- *
- * @param o view.
- * @param protocols the protocols that will be handled.
- * @param handler the function that will be executed for the protocols
- * @param ctxt the handler context
- * @return @c EINA_TRUE if success, @c EINA_FALSE if not.
- */
-EAPI Eina_Bool ewk_view_protocol_handler_set(Evas_Object* o, const char** protocol, Ewk_View_Resource_Handler_Cb handler, void* ctxt);
-
-/**
- * Remove the custom protocol handler.
- *
- * @param o view.
- * @return @c EINA_TRUE if success, @c EINA_FALSE if not.
- */
-EAPI Eina_Bool ewk_view_protocol_handler_unset(Evas_Object* o);
-
 /// Defines the page visibility status.
 enum _Ewk_Page_Visibility_State {
     EWK_PAGE_VISIBILITY_STATE_VISIBLE,

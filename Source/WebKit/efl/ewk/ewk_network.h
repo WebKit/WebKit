@@ -54,6 +54,19 @@ EAPI const char      *ewk_network_proxy_uri_get(void);
  */
 EAPI void             ewk_network_state_notifier_online_set(Eina_Bool online);
 
+typedef struct _SoupSession SoupSession;
+
+/**
+ * Returns the default @c SoupSession used by all views.
+ *
+ * This function is meaningful only if WebKit has been compiled with the
+ * @c Soup network backend.
+ *
+ * @return The default @c SoupSession in use, or @c NULL if another network
+ *         backend was used.
+ */
+EAPI SoupSession*     ewk_network_default_soup_session_get(void);
+
 #ifdef __cplusplus
 }
 #endif

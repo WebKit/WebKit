@@ -145,7 +145,6 @@ void ewk_view_popup_new(Evas_Object* o, WebCore::PopupMenuClient* client, int se
 void ewk_view_viewport_attributes_set(Evas_Object* o, const WebCore::ViewportArguments& arguments);
 
 void ewk_view_download_request(Evas_Object* o, Ewk_Download* download);
-void* ewk_view_protocol_handler_resource_get(Evas_Object* o, size_t* bytesRead, char** mime, const char* file);
 
 void ewk_view_editor_client_contents_changed(Evas_Object* o);
 void ewk_view_editor_client_selection_changed(Evas_Object* o);

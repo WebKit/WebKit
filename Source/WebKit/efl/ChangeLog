@@ -1,3 +1,39 @@
+2011-12-01  Raphael Kubo da Costa  <kubo@profusion.mobi>
+
+        [EFL] Remove the ewk_protocol_handler-related code
+        https://bugs.webkit.org/show_bug.cgi?id=73018
+
+        Reviewed by Martin Robinson.
+
+        This functionality has been broken since r99364, which stopped setting
+        the "webkit-resource" property needed by
+        ewk_protocol_handler_soup.cpp.
+
+        After giving it some thought, it looks clear that this code should not
+        be in ewk at all: it is very backend-specific (even in the function
+        signatures it expects), and it only allows callers to register schemes
+        once and provide a single handler to all of them, which does not make
+        much sense.
+
+        Client code using WebKit-EFL with the soup backend should be
+        responsible for creating their own request handlers (ie. subclass
+        SoupRequest) instead.
+
+        For that to be possible, a function which returns the default
+        SoupSession used by WebKit has been added.
+
+        * CMakeListsEfl.txt:
+        * ewk/ewk_network.cpp:
+        (ewk_network_default_soup_session_get):
+        * ewk/ewk_network.h:
+        * ewk/ewk_private.h:
+        * ewk/ewk_protocol_handler.cpp: Removed.
+        * ewk/ewk_protocol_handler.h: Removed.
+        * ewk/ewk_protocol_handler_soup.cpp: Removed.
+        * ewk/ewk_protocol_handler_soup.h: Removed.
+        * ewk/ewk_view.cpp:
+        * ewk/ewk_view.h:
+
 2011-11-30  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Unreviewed. Fix build error when NOTIFICATIONS feature is enabled.

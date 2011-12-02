@@ -74,3 +74,12 @@ void ewk_network_state_notifier_online_set(Eina_Bool online)
 {
     WebCore::networkStateNotifier().setOnLine(online);
 }
+
+SoupSession* ewk_network_default_soup_session_get()
+{
+#if USE(SOUP)
+    return WebCore::ResourceHandle::defaultSession();
+#else
+    return 0;
+#endif
+}
