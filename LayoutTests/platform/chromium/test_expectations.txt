@@ -3641,12 +3641,12 @@ BUGWK71673 WIN LINUX : svg/zoom/page/zoom-img-preserveAspectRatio-support-1.html
 
 BUGWK71278 SLOW WIN : fast/events/dispatch-message-string-data.html = PASS
 
-BUGWK71282 WIN DEBUG : inspector/extensions = CRASH PASS TIMEOUT
-BUGWK71282 WIN DEBUG : http/tests/inspector/extensions-headers.html = CRASH PASS TIMEOUT
-BUGWK71282 WIN DEBUG : http/tests/inspector/extensions-network-redirect.html = CRASH PASS TIMEOUT
-BUGWK71282 WIN DEBUG : http/tests/inspector/extensions-useragent.html = CRASH PASS TIMEOUT
-
-BUGWK71084 WIN DEBUG SLOW : http/tests/inspector/extensions-ignore-cache.html = PASS
+BUGWK71282 : inspector/extensions = CRASH PASS TIMEOUT
+BUGWK71282 : http/tests/inspector/extensions-headers.html = CRASH PASS TIMEOUT
+BUGWK71282 : http/tests/inspector/extensions-network-redirect.html = CRASH PASS TIMEOUT
+BUGWK71282 : http/tests/inspector/extensions-useragent.html = CRASH PASS TIMEOUT
+BUGWK71282 : http/tests/inspector/extensions-ignore-cache.html = CRASH PASS TIMEOUT
+// BUGWK71084 SLOW : http/tests/inspector/extensions-ignore-cache.html = PASS
 
 BUGWK70044 : svg/filters/invalidate-on-child-layout.svg = TEXT IMAGE IMAGE+TEXT
 
@@ -3827,3 +3827,5 @@ BUGWK73549 : fast/text/international/hebrew-vowels.html = IMAGE+TEXT PASS
 BUGWK73607 GPU LINUX DEBUG : fast/canvas/canvas-overloads-strokeText.html = TIMEOUT TEXT PASS
 
 BUGWK73681 SLOW : http/tests/appcache/video.html = PASS
+
+BUGWK73692 WIN : media/event-attributes.html = TEXT PASS
