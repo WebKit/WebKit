@@ -1,3 +1,10 @@
+2011-12-02  MORITA Hajime  <morrita@google.com>
+
+        Unreviewed, another attempt to build fix for r101751:
+        Adding an include path to make PlatformExportMacros.h visibile from QTMovieWin.
+
+        * WebCore.vcproj/QTMovieWinCommon.vsprops:
+
 2011-12-02  Hajime Morrita  <morrita@chromium.org>
 
         Unreviewed, rolling out r101772.
