@@ -1,3 +1,17 @@
+2011-12-02  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Split view works weirdly in network panel when resizing, showing/hiding main element.
+        https://bugs.webkit.org/show_bug.cgi?id=73650
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/SplitView.js:
+        (WebInspector.SplitView.prototype._updateResizer):
+        (WebInspector.SplitView.prototype.hideMainElement):
+        (WebInspector.SplitView.prototype.showMainElement):
+        (WebInspector.SplitView.prototype.onResize):
+        (WebInspector.SplitView.prototype._restoreSidebarWidth):
+
 2011-12-02  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r101783.

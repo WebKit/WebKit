@@ -130,7 +130,7 @@ WebInspector.SplitView.prototype = {
 
     _updateResizer: function()
     {
-        if (this._resizable)
+        if (this.resizable)
             this.sidebarResizerElement.removeStyleClass("hidden");
         else
             this.sidebarResizerElement.addStyleClass("hidden");
@@ -279,6 +279,12 @@ WebInspector.SplitView.prototype = {
 
         this.mainElement.addStyleClass("hidden");
         this.sidebarElement.addStyleClass("maximized");
+        
+        if (this.hasLeftSidebar)
+            this.sidebarElement.style.right = "0px";
+        else
+            this.sidebarElement.style.left = "0px";
+        
         this._mainElementHidden = true;
         this._updateResizer();
         this._restoreSidebarWidth();
@@ -291,6 +297,12 @@ WebInspector.SplitView.prototype = {
 
         this.mainElement.removeStyleClass("hidden");
         this.sidebarElement.removeStyleClass("maximized");
+        
+        if (this.hasLeftSidebar)
+            this.sidebarElement.style.right = "";
+        else
+            this.sidebarElement.style.left = "";
+
         this._mainElementHidden = false;
         this._updateResizer();
         this._restoreSidebarWidth();
@@ -330,6 +342,9 @@ WebInspector.SplitView.prototype = {
     onResize: function()
     {
         this._totalWidth = this.element.offsetWidth;
+
+        if (this._mainElementHidden)
+            this._sidebarWidth = this._totalWidth;
     },
 
     /**
@@ -390,7 +405,8 @@ WebInspector.SplitView.prototype = {
     _restoreSidebarWidth: function()
     {
         if (this._mainElementHidden) {
-            this._innerSetSidebarWidth(this._totalWidth);
+            this.sidebarElement.style.width = "";
+            this._sidebarWidth = this._totalWidth;
             return;
         }
 
