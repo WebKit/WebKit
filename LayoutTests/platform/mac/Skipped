@@ -494,6 +494,10 @@ fast/text/international/locale-sensitive-fonts.html
 # Pointer Lock is not implemented.
 pointer-lock/
 
+# Placeholder is not rendered since the patch in the following bug. It seems a DRT-only problem.
+# https://bugs.webkit.org/show_bug.cgi?id=67408
+fast/forms/textarea-placeholder-set-attribute.html
+
 # https://bugs.webkit.org/show_bug.cgi?id=72435
 fast/dom/Window/window-postmessage-arrays.html
 

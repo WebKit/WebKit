@@ -4,6 +4,16 @@
 
 BUGWK64526 DEBUG: svg/animations/svgtransform-animation-1.html = CRASH PASS
 
+// Need rebaseline.
+BUGWK67408 : fast/forms/input-placeholder-visibility-1.html = FAIL
+BUGWK67408 : fast/forms/input-placeholder-visibility-3.html = FAIL
+BUGWK67408 : fast/forms/placeholder-position.html = FAIL
+BUGWK67408 : fast/forms/placeholder-pseudo-style.html = FAIL
+BUGWK67408 : fast/forms/search-styled.html = FAIL
+BUGWK67408 : fast/forms/textarea-placeholder-pseudo-style.html = FAIL
+BUGWK67408 : fast/forms/textarea-placeholder-visibility-1.html = FAIL
+BUGWK67408 : fast/forms/textarea-placeholder-visibility-2.html = FAIL
+
 // Slow tests
 // FIXME: File bugs.
 BUG_QT_SLOW SLOW DEBUG: editing/selection/empty-cell-right-click.html = PASS

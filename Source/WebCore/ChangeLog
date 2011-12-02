@@ -1,3 +1,24 @@
+2011-12-01  Kent Tamura  <tkent@chromium.org>
+
+        REGRESSION(r90971): Placeholder text of input control is rendered
+        over positioned elements with z-index:0.
+        https://bugs.webkit.org/show_bug.cgi?id=67408
+
+        Reviewed by Darin Adler.
+
+        The bug was caused by "position:relative" in the default style of
+        -webkit-input-placeholder. If there were other positioned elements
+        with z-index:0, a placeholder might be rendered over them.
+
+        "position:relative" is not needed because RenderTextControlSingleLine
+        and RenderTextControlMultipleLine lay out the placeholder renderer by
+        custom layout code.
+
+        Tests: fast/forms/placeholder-with-positioned-element.html
+
+        * css/html.css:
+        (::-webkit-input-placeholder): Remove position:relative.
+
 2011-12-01  Andreas Kling  <kling@webkit.org>
 
         CSSMutableStyleDeclaration: Removed unused multiLength argument in setLengthProperty().

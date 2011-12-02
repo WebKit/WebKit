@@ -505,7 +505,6 @@ textarea {
     color: darkGray;
     display: block !important;
     pointer-events: none !important;
-    position: relative !important;
 }
 
 input::-webkit-input-placeholder, isindex::-webkit-input-placeholder {

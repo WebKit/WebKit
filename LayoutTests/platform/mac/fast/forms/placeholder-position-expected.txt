@@ -49,78 +49,76 @@ layer at (0,0) size 800x600
       RenderBR {BR} at (129,342) size 0x0
 layer at (21,13) size 98x13
   RenderBlock {DIV} at (0,0) size 98x13
+layer at (21,13) size 98x13
+  RenderBlock {DIV} at (11,3) size 98x13 [color=#A9A9A9]
+    RenderText {#text} at (1,0) size 63x13
+      text run at (1,0) width 63: "placeholder"
 layer at (13,36) size 119x13
   RenderBlock {DIV} at (3,3) size 119x13
+layer at (13,36) size 119x13
+  RenderBlock {DIV} at (3,3) size 119x13 [color=#A9A9A9]
+    RenderText {#text} at (1,0) size 63x13
+      text run at (1,0) width 63: "placeholder"
 layer at (21,59) size 98x13
   RenderBlock {DIV} at (0,0) size 98x13
+layer at (21,59) size 98x13
+  RenderBlock {DIV} at (11,3) size 98x13 [color=#A9A9A9]
+    RenderText {#text} at (34,0) size 63x13
+      text run at (34,0) width 63: "placeholder"
 layer at (35,82) size 84x13
   RenderBlock {DIV} at (0,0) size 84x13
+layer at (35,82) size 84x13
+  RenderBlock {DIV} at (25,3) size 84x13 [color=#A9A9A9]
+    RenderText {#text} at (1,0) size 63x13
+      text run at (1,0) width 63: "placeholder"
 layer at (10,102) size 161x32 clip at (11,103) size 159x30
   RenderTextControl {TEXTAREA} at (2,94) size 161x32 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 155x13
+    RenderBlock {DIV} at (3,3) size 155x13 [color=#A9A9A9]
+      RenderText {#text} at (0,0) size 63x13
+        text run at (0,0) width 63: "placeholder"
 layer at (13,141) size 119x13
   RenderBlock {DIV} at (3,3) size 119x13
+layer at (13,141) size 119x13
+  RenderBlock {DIV} at (3,3) size 119x13 [color=#A9A9A9]
+    RenderText {#text} at (1,0) size 63x13
+      text run at (1,0) width 63: "placeholder"
 layer at (10,175) size 161x45 clip at (11,176) size 159x43
   RenderTextControl {TEXTAREA} at (2,167) size 161x45 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,16) size 155x13
+    RenderBlock {DIV} at (3,16) size 155x13 [color=#A9A9A9]
+      RenderText {#text} at (0,0) size 63x13
+        text run at (0,0) width 63: "placeholder"
 layer at (19,233) size 164x18
   RenderBlock {DIV} at (6,6) size 164x18
+layer at (19,233) size 164x18
+  RenderBlock {DIV} at (6,6) size 164x18 [color=#A9A9A9]
+    RenderText {#text} at (1,0) size 85x18
+      text run at (1,0) width 85: "placeholder"
 layer at (13,267) size 119x25
   RenderBlock {DIV} at (3,3) size 119x25
     RenderText {#text} at (1,6) size 30x13
       text run at (1,6) width 30: "Value"
 layer at (146,267) size 119x25
   RenderBlock {DIV} at (3,3) size 119x25
+layer at (146,267) size 119x25
+  RenderBlock {DIV} at (3,3) size 119x25 [color=#A9A9A9]
+    RenderText {#text} at (1,6) size 63x13
+      text run at (1,6) width 63: "placeholder"
 layer at (13,302) size 119x13
   RenderBlock {DIV} at (3,3) size 119x13
     RenderText {#text} at (44,0) size 31x13
       text run at (44,0) width 31: "Value"
 layer at (146,302) size 119x13
   RenderBlock {DIV} at (3,3) size 119x13
-layer at (279,302) size 119x13
-  RenderBlock {DIV} at (3,3) size 119x13
-layer at (21,13) size 98x13
-  RenderBlock (relative positioned) {DIV} at (11,3) size 98x13 [color=#A9A9A9]
-    RenderText {#text} at (1,0) size 63x13
-      text run at (1,0) width 63: "placeholder"
-layer at (13,36) size 119x13
-  RenderBlock (relative positioned) {DIV} at (3,3) size 119x13 [color=#A9A9A9]
-    RenderText {#text} at (1,0) size 63x13
-      text run at (1,0) width 63: "placeholder"
-layer at (21,59) size 98x13
-  RenderBlock (relative positioned) {DIV} at (11,3) size 98x13 [color=#A9A9A9]
-    RenderText {#text} at (34,0) size 63x13
-      text run at (34,0) width 63: "placeholder"
-layer at (35,82) size 84x13
-  RenderBlock (relative positioned) {DIV} at (25,3) size 84x13 [color=#A9A9A9]
-    RenderText {#text} at (1,0) size 63x13
-      text run at (1,0) width 63: "placeholder"
-layer at (13,105) size 155x13
-  RenderBlock (relative positioned) {DIV} at (3,3) size 155x13 [color=#A9A9A9]
-    RenderText {#text} at (0,0) size 63x13
-      text run at (0,0) width 63: "placeholder"
-layer at (13,141) size 119x13
-  RenderBlock (relative positioned) {DIV} at (3,3) size 119x13 [color=#A9A9A9]
-    RenderText {#text} at (1,0) size 63x13
-      text run at (1,0) width 63: "placeholder"
-layer at (13,191) size 155x13
-  RenderBlock (relative positioned) {DIV} at (3,16) size 155x13 [color=#A9A9A9]
-    RenderText {#text} at (0,0) size 63x13
-      text run at (0,0) width 63: "placeholder"
-layer at (19,233) size 164x18
-  RenderBlock (relative positioned) {DIV} at (6,6) size 164x18 [color=#A9A9A9]
-    RenderText {#text} at (1,0) size 85x18
-      text run at (1,0) width 85: "placeholder"
-layer at (146,267) size 119x25
-  RenderBlock (relative positioned) {DIV} at (3,3) size 119x25 [color=#A9A9A9]
-    RenderText {#text} at (1,6) size 63x13
-      text run at (1,6) width 63: "placeholder"
 layer at (146,302) size 119x13
-  RenderBlock (relative positioned) {DIV} at (3,3) size 119x13 [color=#A9A9A9]
+  RenderBlock {DIV} at (3,3) size 119x13 [color=#A9A9A9]
     RenderText {#text} at (28,0) size 63x13
       text run at (28,0) width 63: "placeholder"
 layer at (279,302) size 119x13
-  RenderBlock (relative positioned) {DIV} at (3,3) size 119x13 [color=#A9A9A9]
+  RenderBlock {DIV} at (3,3) size 119x13
+layer at (279,302) size 119x13
+  RenderBlock {DIV} at (3,3) size 119x13 [color=#A9A9A9]
     RenderText {#text} at (28,0) size 63x13
       text run at (28,0) width 63: "placeholder"
 layer at (10,322) size 125x33
@@ -128,6 +126,6 @@ layer at (10,322) size 125x33
 layer at (13,339) size 119x13
   RenderBlock {DIV} at (3,17) size 119x13
 layer at (13,339) size 119x13
-  RenderBlock (relative positioned) {DIV} at (3,17) size 119x13 [color=#A9A9A9]
+  RenderBlock {DIV} at (3,17) size 119x13 [color=#A9A9A9]
     RenderText {#text} at (1,0) size 63x13
       text run at (1,0) width 63: "placeholder"
