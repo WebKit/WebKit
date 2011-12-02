@@ -943,7 +943,7 @@ class Port(object):
         """Returns a string of HTML indicating the word-level diff of the
         contents of the two filenames. Returns an empty string if word-level
         diffing isn't available."""
-        if not self._wdiff_available:
+        if not self.wdiff_available():
             return ""
         try:
             # It's possible to raise a ScriptError we pass wdiff invalid paths.

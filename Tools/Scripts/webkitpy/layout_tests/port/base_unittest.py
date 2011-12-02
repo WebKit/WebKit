@@ -147,6 +147,12 @@ class PortTest(unittest.TestCase):
         # However wdiff should not be available after running wdiff_text if wdiff is missing.
         self.assertFalse(port._wdiff_available)
 
+    def test_wdiff_text(self):
+        port = self.make_port()
+        port.wdiff_available = lambda: True
+        port._run_wdiff = lambda a, b: 'PASS'
+        self.assertEqual('PASS', port.wdiff_text(None, None))
+
     def test_diff_text(self):
         port = self.make_port()
         # Make sure that we don't run into decoding exceptions when the
