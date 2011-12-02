@@ -67,43 +67,44 @@ public:
             return;
 
         CSSInlineStyleDeclaration* inlineDecl = toCSSInlineStyleDeclaration(s_currentDecl);
-        s_mutationRecipients = MutationObserverInterestGroup::createForAttributesMutation(inlineDecl->element(), HTMLNames::styleAttr);
-        if (s_mutationRecipients->isEmpty()) {
-            s_mutationRecipients.clear();
+        m_mutationRecipients = MutationObserverInterestGroup::createForAttributesMutation(inlineDecl->element(), HTMLNames::styleAttr);
+        if (m_mutationRecipients->isEmpty()) {
+            m_mutationRecipients.clear();
             return;
         }
 
-        AtomicString oldValue = s_mutationRecipients->isOldValueRequested() ? inlineDecl->element()->getAttribute(HTMLNames::styleAttr) : nullAtom;
-        s_mutation = MutationRecord::createAttributes(inlineDecl->element(), HTMLNames::styleAttr, oldValue);
+        AtomicString oldValue = m_mutationRecipients->isOldValueRequested() ? inlineDecl->element()->getAttribute(HTMLNames::styleAttr) : nullAtom;
+        m_mutation = MutationRecord::createAttributes(inlineDecl->element(), HTMLNames::styleAttr, oldValue);
     }
 
     ~StyleAttributeMutationScope()
     {
         --s_scopeCount;
-        if (!s_scopeCount)
-            s_currentDecl = 0;
+        if (s_scopeCount)
+            return;
+
+        s_currentDecl = 0;
+        if (m_mutation && s_shouldDeliver)
+            m_mutationRecipients->enqueueMutationRecord(m_mutation);
     }
 
     void enqueueMutationRecord()
     {
-        if (!s_mutation)
-            return;
-        s_mutationRecipients->enqueueMutationRecord(s_mutation);
-        s_mutation.clear();
-        s_mutationRecipients.clear();
+        s_shouldDeliver = true;
     }
 
 private:
     static unsigned s_scopeCount;
-    static OwnPtr<MutationObserverInterestGroup> s_mutationRecipients;
-    static RefPtr<MutationRecord> s_mutation;
     static CSSMutableStyleDeclaration* s_currentDecl;
+    static bool s_shouldDeliver;
+
+    OwnPtr<MutationObserverInterestGroup> m_mutationRecipients;
+    RefPtr<MutationRecord> m_mutation;
 };
 
 unsigned StyleAttributeMutationScope::s_scopeCount = 0;
-OwnPtr<MutationObserverInterestGroup> StyleAttributeMutationScope::s_mutationRecipients;
-RefPtr<MutationRecord> StyleAttributeMutationScope::s_mutation;
 CSSMutableStyleDeclaration* StyleAttributeMutationScope::s_currentDecl = 0;
+bool StyleAttributeMutationScope::s_shouldDeliver = false;
 
 } // namespace
 #endif // ENABLE(MUTATION_OBSERVERS)
