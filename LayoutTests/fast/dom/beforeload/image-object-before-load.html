@@ -14,7 +14,7 @@
         function checkObject()
         {
             var style = getComputedStyle(document.getElementsByTagName("object")[0], null);
-            if (style.width != "0px" || style.height != "0px")
+            if (style.width != "auto" || style.height != "auto")
                 print("FAIL", "red");
 
             if (window.layoutTestController)

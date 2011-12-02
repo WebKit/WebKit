@@ -1,3 +1,17 @@
+2011-11-28  Alexander Pavlov  <apavlov@chromium.org>
+
+        Inline non-replaced elements are reported to have zero width and height
+        https://bugs.webkit.org/show_bug.cgi?id=61117
+
+        Reviewed by Antti Koivisto.
+
+        According to http://www.w3.org/TR/CSS21/visudet.html, the "width" and "height" properties
+        do not apply for inline non-replaced elements and should have their initial value of "auto"
+        as their computed values.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+
 2011-12-02  Sami Kyostila  <skyostil@chromium.org>
 
         [chromium] Make CCInputHandler scrolling stateful

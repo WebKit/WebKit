@@ -92,7 +92,7 @@ rect: style.getPropertyValue(font-variant) : normal
 rect: style.getPropertyCSSValue(font-variant) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(font-weight) : normal
 rect: style.getPropertyCSSValue(font-weight) : [object CSSPrimitiveValue]
-rect: style.getPropertyValue(height) : 0px
+rect: style.getPropertyValue(height) : auto
 rect: style.getPropertyCSSValue(height) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(image-rendering) : auto
 rect: style.getPropertyCSSValue(image-rendering) : [object CSSPrimitiveValue]
@@ -190,7 +190,7 @@ rect: style.getPropertyValue(white-space) : normal
 rect: style.getPropertyCSSValue(white-space) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(widows) : 2
 rect: style.getPropertyCSSValue(widows) : [object CSSPrimitiveValue]
-rect: style.getPropertyValue(width) : 0px
+rect: style.getPropertyValue(width) : auto
 rect: style.getPropertyCSSValue(width) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(word-break) : normal
 rect: style.getPropertyCSSValue(word-break) : [object CSSPrimitiveValue]
@@ -596,7 +596,7 @@ g: style.getPropertyValue(font-variant) : normal
 g: style.getPropertyCSSValue(font-variant) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(font-weight) : normal
 g: style.getPropertyCSSValue(font-weight) : [object CSSPrimitiveValue]
-g: style.getPropertyValue(height) : 0px
+g: style.getPropertyValue(height) : auto
 g: style.getPropertyCSSValue(height) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(image-rendering) : auto
 g: style.getPropertyCSSValue(image-rendering) : [object CSSPrimitiveValue]
@@ -694,7 +694,7 @@ g: style.getPropertyValue(white-space) : normal
 g: style.getPropertyCSSValue(white-space) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(widows) : 2
 g: style.getPropertyCSSValue(widows) : [object CSSPrimitiveValue]
-g: style.getPropertyValue(width) : 0px
+g: style.getPropertyValue(width) : auto
 g: style.getPropertyCSSValue(width) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(word-break) : normal
 g: style.getPropertyCSSValue(word-break) : [object CSSPrimitiveValue]

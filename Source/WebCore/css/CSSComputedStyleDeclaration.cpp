@@ -1524,8 +1524,13 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
         }
 #endif
         case CSSPropertyHeight:
-            if (renderer)
+            if (renderer) {
+                // According to http://www.w3.org/TR/CSS2/visudet.html#the-height-property,
+                // the "height" property does not apply for non-replaced inline elements.
+                if (!renderer->isReplaced() && renderer->isInline())
+                    return primitiveValueCache->createIdentifierValue(CSSValueAuto);
                 return zoomAdjustedPixelValue(sizingBox(renderer).height(), style.get(), primitiveValueCache);
+            }
             return zoomAdjustedPixelValueForLength(style->height(), style.get(), primitiveValueCache);
         case CSSPropertyWebkitHighlight:
             if (style->highlight() == nullAtom)
@@ -1774,8 +1779,13 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
         case CSSPropertyWidows:
             return primitiveValueCache->createValue(style->widows(), CSSPrimitiveValue::CSS_NUMBER);
         case CSSPropertyWidth:
-            if (renderer)
+            if (renderer) {
+                // According to http://www.w3.org/TR/CSS2/visudet.html#the-width-property,
+                // the "width" property does not apply for non-replaced inline elements.
+                if (!renderer->isReplaced() && renderer->isInline())
+                    return primitiveValueCache->createIdentifierValue(CSSValueAuto);
                 return zoomAdjustedPixelValue(sizingBox(renderer).width(), style.get(), primitiveValueCache);
+            }
             return zoomAdjustedPixelValueForLength(style->width(), style.get(), primitiveValueCache);
         case CSSPropertyWordBreak:
             return primitiveValueCache->createValue(style->wordBreak());
