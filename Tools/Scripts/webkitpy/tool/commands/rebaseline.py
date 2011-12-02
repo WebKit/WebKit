@@ -111,14 +111,11 @@ class OptimizeBaselines(AbstractDeclarativeCommand):
             if not self._baseline_optimizer.optimize(baseline_name):
                 print "Hueristics failed to optimize %s" % baseline_name
 
-    def _to_test_name(self, file_name): 
-        return self._tool.filesystem.relpath(file_name, self._port.layout_tests_dir())
-
     def execute(self, options, args, tool):
         self._baseline_optimizer = BaselineOptimizer(tool)
         self._port = tool.port_factory.get("chromium-win-win7")  # FIXME: This should be selectable.
 
-        for test_name in map(self._to_test_name, self._port.find_test_files(args)):
+        for test_name in self._port.tests(args):
             print "Optimizing %s." % test_name
             self._optimize_baseline(test_name)
 
@@ -141,14 +138,11 @@ class AnalyzeBaselines(AbstractDeclarativeCommand):
             directories_by_result = self._baseline_optimizer.directories_by_result(baseline_name)
             self._print(baseline_name, directories_by_result)
 
-    def _to_test_name(self, file_name): 
-        return self._tool.filesystem.relpath(file_name, self._port.layout_tests_dir())
-
     def execute(self, options, args, tool):
         self._baseline_optimizer = BaselineOptimizer(tool)
         self._port = tool.port_factory.get("chromium-win-win7")  # FIXME: This should be selectable.
 
-        for test_name in map(self._to_test_name, self._port.find_test_files(args)):
+        for test_name in self._port.tests(args):
             self._analyze_baseline(test_name)
 
 

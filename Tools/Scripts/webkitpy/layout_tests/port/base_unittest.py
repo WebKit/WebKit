@@ -42,8 +42,6 @@ from webkitpy.common.system.executive_mock import MockExecutive
 from webkitpy.common.host_mock import MockHost
 
 from webkitpy.layout_tests.port import Port, Driver, DriverOutput
-from webkitpy.layout_tests.port.base import _is_test_file
-from webkitpy.layout_tests.port.base import _parse_reftest_list
 from webkitpy.layout_tests.port.test import TestPort
 
 import config
@@ -280,43 +278,43 @@ class PortTest(unittest.TestCase):
     def test_find_no_paths_specified(self):
         port = TestPort()
         layout_tests_dir = port.layout_tests_dir()
-        tests = port.find_test_files([])
+        tests = port.tests([])
         self.assertNotEqual(len(tests), 0)
 
     def test_find_one_test(self):
         port = TestPort()
-        tests = port.find_test_files(['failures/expected/image.html'])
+        tests = port.tests(['failures/expected/image.html'])
         self.assertEqual(len(tests), 1)
 
     def test_find_glob(self):
         port = TestPort()
-        tests = port.find_test_files(['failures/expected/im*'])
+        tests = port.tests(['failures/expected/im*'])
         self.assertEqual(len(tests), 2)
 
     def test_find_with_skipped_directories(self):
         port = TestPort()
-        tests = port.find_test_files('userscripts')
+        tests = port.tests('userscripts')
         self.assertTrue('userscripts/resources/iframe.html' not in tests)
 
     def test_find_with_skipped_directories_2(self):
         port = TestPort()
-        tests = port.find_test_files(['userscripts/resources'])
+        tests = port.tests(['userscripts/resources'])
         self.assertEqual(tests, set([]))
 
     def test_is_test_file(self):
         filesystem = MockFileSystem()
-        self.assertTrue(_is_test_file(filesystem, '', 'foo.html'))
-        self.assertTrue(_is_test_file(filesystem, '', 'foo.shtml'))
-        self.assertTrue(_is_test_file(filesystem, '', 'test-ref-test.html'))
-        self.assertFalse(_is_test_file(filesystem, '', 'foo.png'))
-        self.assertFalse(_is_test_file(filesystem, '', 'foo-expected.html'))
-        self.assertFalse(_is_test_file(filesystem, '', 'foo-expected-mismatch.html'))
-        self.assertFalse(_is_test_file(filesystem, '', 'foo-ref.html'))
-        self.assertFalse(_is_test_file(filesystem, '', 'foo-notref.html'))
-        self.assertFalse(_is_test_file(filesystem, '', 'foo-notref.xht'))
-        self.assertFalse(_is_test_file(filesystem, '', 'foo-ref.xhtml'))
-        self.assertFalse(_is_test_file(filesystem, '', 'ref-foo.html'))
-        self.assertFalse(_is_test_file(filesystem, '', 'notref-foo.xhr'))
+        self.assertTrue(Port._is_test_file(filesystem, '', 'foo.html'))
+        self.assertTrue(Port._is_test_file(filesystem, '', 'foo.shtml'))
+        self.assertTrue(Port._is_test_file(filesystem, '', 'test-ref-test.html'))
+        self.assertFalse(Port._is_test_file(filesystem, '', 'foo.png'))
+        self.assertFalse(Port._is_test_file(filesystem, '', 'foo-expected.html'))
+        self.assertFalse(Port._is_test_file(filesystem, '', 'foo-expected-mismatch.html'))
+        self.assertFalse(Port._is_test_file(filesystem, '', 'foo-ref.html'))
+        self.assertFalse(Port._is_test_file(filesystem, '', 'foo-notref.html'))
+        self.assertFalse(Port._is_test_file(filesystem, '', 'foo-notref.xht'))
+        self.assertFalse(Port._is_test_file(filesystem, '', 'foo-ref.xhtml'))
+        self.assertFalse(Port._is_test_file(filesystem, '', 'ref-foo.html'))
+        self.assertFalse(Port._is_test_file(filesystem, '', 'notref-foo.xhr'))
 
     def test_parse_reftest_list(self):
         port = TestPort()
@@ -326,10 +324,11 @@ class PortTest(unittest.TestCase):
         "!= test-2.html test-notref.html # more comments",
         "== test-3.html test-ref.html"])
 
-        reftest_list = _parse_reftest_list(port.host.filesystem, 'bar')
+        reftest_list = Port._parse_reftest_list(port.host.filesystem, 'bar')
         self.assertEqual(reftest_list, {'bar/test.html': ('==', 'bar/test-ref.html'),
             'bar/test-2.html': ('!=', 'bar/test-notref.html'),
             'bar/test-3.html': ('==', 'bar/test-ref.html')})
+
 
 class VirtualTest(unittest.TestCase):
     """Tests that various methods expected to be virtual are."""

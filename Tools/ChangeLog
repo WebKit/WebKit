@@ -1,3 +1,45 @@
+2011-12-01  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Tools/Scripts: eliminate find_test_files from Port class.
+        https://bugs.webkit.org/show_bug.cgi?id=73553
+
+        rebaseline.py and chromium_gpu.py use Port.find_test_files() the same way as it is used in Port.tests()
+        I'd like to replace all calls to find_test_files with tests and eliminate find_tests_files.
+        Also I'll move _is_test_file() and related functions close to Port.tests().
+
+        Reviewed by Dirk Pranke.
+
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        (Port.tests):
+        (Port.is_reference_html_file):
+        (Port._has_supported_extension):
+        (Port._is_test_file):
+        * Scripts/webkitpy/layout_tests/port/base_unittest.py:
+        (PortTest.test_find_no_paths_specified):
+        (PortTest.test_find_one_test):
+        (PortTest.test_find_glob):
+        (PortTest.test_find_with_skipped_directories):
+        (PortTest.test_find_with_skipped_directories_2):
+        (PortTest.test_is_test_file):
+        * Scripts/webkitpy/layout_tests/port/chromium_gpu.py:
+        (_default_tests_paths):
+        (ChromiumGpuLinuxPort.tests):
+        (ChromiumGpuCgMacPort.tests):
+        (ChromiumGpuMacPort.tests):
+        * Scripts/webkitpy/layout_tests/port/chromium_gpu_unittest.py:
+        (ChromiumGpuTest.test_default_tests_paths.test_paths):
+        (ChromiumGpuTest.test_default_tests_paths):
+        (ChromiumGpuTest.test_test_files.test_paths):
+        (ChromiumGpuTest):
+        (ChromiumGpuTest.test_test_files):
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+        (get_tests_run.RecordingTestDriver.run_test):
+        * Scripts/webkitpy/tool/commands/rebaseline.py:
+        (OptimizeBaselines._optimize_baseline):
+        (OptimizeBaselines.execute):
+        (AnalyzeBaselines._analyze_baseline):
+        (AnalyzeBaselines.execute):
+
 2011-12-01  Hajime Morrita  <morrita@chromium.org>
 
         JS_INLINE and WTF_INLINE should be visible from WebCore

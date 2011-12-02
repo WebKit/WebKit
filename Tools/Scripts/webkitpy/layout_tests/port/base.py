@@ -429,8 +429,25 @@ class Port(object):
     def _get_reftest_list(self, test_name):
         dirname = self._filesystem.join(self.layout_tests_dir(), self._filesystem.dirname(test_name))
         if dirname not in self._reftest_list:
-            self._reftest_list[dirname] = _parse_reftest_list(self._filesystem, dirname)
+            self._reftest_list[dirname] = Port._parse_reftest_list(self._filesystem, dirname)
         return self._reftest_list[dirname]
+
+    @staticmethod
+    def _parse_reftest_list(filesystem, test_dirpath):
+        reftest_list_path = filesystem.join(test_dirpath, 'reftest.list')
+        if not filesystem.isfile(reftest_list_path):
+            return None
+        reftest_list_file = filesystem.read_text_file(reftest_list_path)
+
+        parsed_list = dict()
+        for line in reftest_list_file.split('\n'):
+            line = re.sub('#.+$', '', line)
+            split_line = line.split()
+            if len(split_line) < 3:
+                continue
+            expectation_type, test_file, ref_file = split_line
+            parsed_list[filesystem.join(test_dirpath, test_file)] = (expectation_type, filesystem.join(test_dirpath, ref_file))
+        return parsed_list
 
     def _reference_file_for(self, test_name, expectation):
         reftest_list = self._get_reftest_list(test_name)
@@ -490,13 +507,34 @@ class Port(object):
 
     def tests(self, paths):
         """Return the list of tests found."""
-        # FIXME: Should port.find_test_files() return normalized, relative test names?
-        return set([self.relative_test_filename(f) for f in self.find_test_files(paths)])
-
-    def find_test_files(self, paths):
         # When collecting test cases, skip these directories
         skipped_directories = set(['.svn', '_svn', 'resources', 'script-tests', 'reference', 'reftest'])
-        return find_files.find(self.filesystem, self.layout_tests_dir(), paths, skipped_directories, _is_test_file)
+        files = find_files.find(self.filesystem, self.layout_tests_dir(), paths, skipped_directories, Port._is_test_file)
+        return set([self.relative_test_filename(f) for f in files])
+
+    # When collecting test cases, we include any file with these extensions.
+    _supported_file_extensions = set(['.html', '.shtml', '.xml', '.xhtml', '.pl',
+                                      '.htm', '.php', '.svg', '.mht'])
+
+    @staticmethod
+    def is_reference_html_file(filesystem, dirname, filename):
+        if filename.startswith('ref-') or filename.endswith('notref-'):
+            return True
+        filename_wihout_ext, unused = filesystem.splitext(filename)
+        for suffix in ['-expected', '-expected-mismatch', '-ref', '-notref']:
+            if filename_wihout_ext.endswith(suffix):
+                return True
+        return False
+
+    @staticmethod
+    def _has_supported_extension(filesystem, filename):
+        """Return true if filename is one of the file extensions we want to run a test on."""
+        extension = filesystem.splitext(filename)[1]
+        return extension in Port._supported_file_extensions
+
+    @staticmethod
+    def _is_test_file(filesystem, dirname, filename):
+        return Port._has_supported_extension(filesystem, filename) and not Port.is_reference_html_file(filesystem, dirname, filename)
 
     def test_dirs(self):
         """Returns the list of top-level test directories."""
@@ -1028,44 +1066,3 @@ class Port(object):
     def _driver_class(self):
         """Returns the port's driver implementation."""
         raise NotImplementedError('Port._driver_class')
-
-
-# When collecting test cases, we include any file with these extensions.
-_supported_file_extensions = set(['.html', '.shtml', '.xml', '.xhtml', '.pl', '.htm', '.php', '.svg', '.mht'])
-
-
-def is_reference_html_file(filesystem, dirname, filename):
-    if filename.startswith('ref-') or filename.endswith('notref-'):
-        return True
-    filename_wihout_ext, unused = filesystem.splitext(filename)
-    for suffix in ['-expected', '-expected-mismatch', '-ref', '-notref']:
-        if filename_wihout_ext.endswith(suffix):
-            return True
-    return False
-
-
-def _has_supported_extension(filesystem, filename):
-    """Return true if filename is one of the file extensions we want to run a test on."""
-    extension = filesystem.splitext(filename)[1]
-    return extension in _supported_file_extensions
-
-
-def _is_test_file(filesystem, dirname, filename):
-    return _has_supported_extension(filesystem, filename) and not is_reference_html_file(filesystem, dirname, filename)
-
-
-def _parse_reftest_list(filesystem, test_dirpath):
-    reftest_list_path = filesystem.join(test_dirpath, 'reftest.list')
-    if not filesystem.isfile(reftest_list_path):
-        return None
-    reftest_list_file = filesystem.read_text_file(reftest_list_path)
-
-    parsed_list = dict()
-    for line in reftest_list_file.split('\n'):
-        line = re.sub('#.+$', '', line)
-        split_line = line.split()
-        if len(split_line) < 3:
-            continue
-        expectation_type, test_file, ref_file = split_line
-        parsed_list[filesystem.join(test_dirpath, test_file)] = (expectation_type, filesystem.join(test_dirpath, ref_file))
-    return parsed_list

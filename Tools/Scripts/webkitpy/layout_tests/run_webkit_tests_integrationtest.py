@@ -65,8 +65,8 @@ from webkitpy.common.host_mock import MockHost
 
 from webkitpy.layout_tests import port
 from webkitpy.layout_tests import run_webkit_tests
+from webkitpy.layout_tests.port import Port
 from webkitpy.layout_tests.port.test import TestPort, TestDriver, unit_test_filesystem
-from webkitpy.layout_tests.port.base import is_reference_html_file
 from webkitpy.python24.versioning import compare_version
 from webkitpy.test.skip import skip_if
 
@@ -168,7 +168,7 @@ def get_tests_run(extra_args=None, tests_included=False, flatten_batches=False,
             # is explicitly given.
             filesystem = self._port.host.filesystem
             dirname, filename = filesystem.split(test_name)
-            if include_reference_html or not is_reference_html_file(filesystem, dirname, filename):
+            if include_reference_html or not Port.is_reference_html_file(filesystem, dirname, filename):
                 self._current_test_batch.append(test_name)
             return TestDriver.run_test(self, test_input)
 

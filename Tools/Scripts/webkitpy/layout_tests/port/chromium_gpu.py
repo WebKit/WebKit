@@ -74,31 +74,30 @@ def _set_gpu_options(port, graphics_type='gpu'):
         port._options.builder_name += ' - GPU'
 
 
-def _tests(port, paths):
+def _default_tests_paths(port):
+    paths = []
+    if (port.name() != 'chromium-gpu-mac-leopard' and
+        port.name() != 'chromium-gpu-cg-mac-leopard'):
+        # Only run tests requiring accelerated compositing on platforms that
+        # support it.
+        # FIXME: we should add the above paths here as well but let's test
+        # the waters with media first.
+        paths += ['media']
+
+    if not port.name().startswith('chromium-gpu-cg-mac'):
+        # Canvas is not yet accelerated on the Mac, so there's no point
+        # in running the tests there.
+        paths += ['fast/canvas', 'canvas/philip']
+
     if not paths:
-        paths = []
-        if (port.name() != 'chromium-gpu-mac-leopard' and
-            port.name() != 'chromium-gpu-cg-mac-leopard'):
-            # Only run tests requiring accelerated compositing on platforms that
-            # support it.
-            # FIXME: we should add the above paths here as well but let's test
-            # the waters with media first.
-            paths += ['media']
+        # FIXME: This is a hack until we can turn of the webkit_gpu
+        # tests on the bots. If paths is empty, port.tests()
+        # finds *everything*. However, we have to return something,
+        # or NRWT thinks there's something wrong. So, we return a single
+        # short directory. See https://bugs.webkit.org/show_bug.cgi?id=72498.
+        paths = ['fast/html']
 
-        if not port.name().startswith('chromium-gpu-cg-mac'):
-            # Canvas is not yet accelerated on the Mac, so there's no point
-            # in running the tests there.
-            paths += ['fast/canvas', 'canvas/philip']
-
-        if not paths:
-            # FIXME: This is a hack until we can turn of the webkit_gpu
-            # tests on the bots. If paths is empty, port.find_test_files()
-            # finds *everything*. However, we have to return something,
-            # or NRWT thinks there's something wrong. So, we return a single
-            # short directory. See https://bugs.webkit.org/show_bug.cgi?id=72498.
-            paths = ['fast/html']
-
-    return set([port.relative_test_filename(f) for f in port.find_test_files(paths)])
+    return paths
 
 
 class ChromiumGpuLinuxPort(chromium_linux.ChromiumLinuxPort):
@@ -112,7 +111,8 @@ class ChromiumGpuLinuxPort(chromium_linux.ChromiumLinuxPort):
                 chromium_linux.ChromiumLinuxPort.baseline_search_path(self))
 
     def tests(self, paths):
-        return _tests(self, paths)
+        paths = paths or _default_tests_paths(self)
+        return chromium_linux.ChromiumLinuxPort.tests(self, paths)
 
 
 class ChromiumGpuCgMacPort(chromium_mac.ChromiumMacPort):
@@ -125,7 +125,8 @@ class ChromiumGpuCgMacPort(chromium_mac.ChromiumMacPort):
                 chromium_mac.ChromiumMacPort.baseline_search_path(self))
 
     def tests(self, paths):
-        return _tests(self, paths)
+        paths = paths or _default_tests_paths(self)
+        return chromium_mac.ChromiumMacPort.tests(self, paths)
 
 
 class ChromiumGpuMacPort(chromium_mac.ChromiumMacPort):
@@ -138,7 +139,8 @@ class ChromiumGpuMacPort(chromium_mac.ChromiumMacPort):
                 chromium_mac.ChromiumMacPort.baseline_search_path(self))
 
     def tests(self, paths):
-        return _tests(self, paths)
+        paths = paths or _default_tests_paths(self)
+        return chromium_mac.ChromiumMacPort.tests(self, paths)
 
 
 class ChromiumGpuWinPort(chromium_win.ChromiumWinPort):
@@ -151,4 +153,5 @@ class ChromiumGpuWinPort(chromium_win.ChromiumWinPort):
                 chromium_win.ChromiumWinPort.baseline_search_path(self))
 
     def tests(self, paths):
-        return _tests(self, paths)
+        paths = paths or _default_tests_paths(self)
+        return chromium_win.ChromiumWinPort.tests(self, paths)

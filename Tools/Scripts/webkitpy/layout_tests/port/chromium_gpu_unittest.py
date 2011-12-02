@@ -32,6 +32,7 @@ import chromium_gpu
 from webkitpy.tool.mocktool import MockOptions
 from webkitpy.common.host_mock import MockHost
 from webkitpy.layout_tests.port import port_testcase
+from webkitpy.common.system.filesystem_mock import MockFileSystem
 
 
 class ChromiumGpuTest(unittest.TestCase):
@@ -114,6 +115,34 @@ class ChromiumGpuTest(unittest.TestCase):
         self.assertEquals('gpu-cg', port.graphics_type())
         port = host.port_factory.get('chromium-gpu-mac')
         self.assertEquals('gpu', port.graphics_type())
+
+    def test_default_tests_paths(self):
+        host = MockHost()
+
+        def test_paths(port_name):
+            return chromium_gpu._default_tests_paths(host.port_factory.get(port_name))
+
+        self.assertEqual(test_paths('chromium-gpu-linux'), ['media', 'fast/canvas', 'canvas/philip'])
+        self.assertEqual(test_paths('chromium-gpu-mac-leopard'), ['fast/canvas', 'canvas/philip'])
+        self.assertEqual(test_paths('chromium-gpu-cg-mac-leopard'), ['fast/html'])
+
+    def test_test_files(self):
+        host = MockHost()
+        files = {
+            '/mock-checkout/LayoutTests/canvas/philip/test.html': '',
+            '/mock-checkout/LayoutTests/fast/canvas/test.html': '',
+            '/mock-checkout/LayoutTests/fast/html/test.html': '',
+            '/mock-checkout/LayoutTests/media/test.html': '',
+            '/mock-checkout/LayoutTests/foo/bar.html': '',
+        }
+        host.filesystem = MockFileSystem(files)
+
+        def test_paths(port_name):
+            return host.port_factory.get(port_name).tests([])
+
+        self.assertEqual(test_paths('chromium-gpu-linux'), set(['canvas/philip/test.html', 'fast/canvas/test.html', 'media/test.html']))
+        self.assertEqual(test_paths('chromium-gpu-mac-leopard'), set(['canvas/philip/test.html', 'fast/canvas/test.html']))
+        self.assertEqual(test_paths('chromium-gpu-cg-mac-leopard'), set(['fast/html/test.html']))
 
 
 if __name__ == '__main__':
