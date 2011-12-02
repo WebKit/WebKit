@@ -159,13 +159,19 @@ class ChromiumMacPort(chromium.ChromiumPort):
             return self._filesystem.join(self.get_option('build_directory'),
                                          *comps)
         base = self.path_from_chromium_base()
-        if self._filesystem.exists(self._filesystem.join(base, 'out')):
-            return self._filesystem.join(base, 'out', *comps)
-        if self._filesystem.exists(self._filesystem.join(base, 'xcodebuild', *comps)):
-            return self._filesystem.join(base, 'xcodebuild', *comps)
+        path = self._filesystem.join(base, 'out', *comps)
+        if self._filesystem.exists(path):
+            return path
+
+        path = self._filesystem.join(base, 'xcodebuild', *comps)
+        if self._filesystem.exists(path):
+            return path
+
         base = self.path_from_webkit_base()
-        if self._filesystem.exists(self._filesystem.join(base, 'out')):
-            return self._filesystem.join(base, 'out', *comps)
+        path = self._filesystem.join(base, 'out', *comps)
+        if self._filesystem.exists(path):
+            return path
+
         return self._filesystem.join(base, 'xcodebuild', *comps)
 
     def check_wdiff(self, logging=True):
