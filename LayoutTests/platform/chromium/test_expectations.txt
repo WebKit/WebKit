@@ -1936,6 +1936,9 @@ BUGWK71758 : fast/url/file-http-base.html = TEXT PASS
 BUGWK71758 : fast/url/host.html = TEXT PASS
 BUGWK71758 : fast/url/idna2003.html = TEXT PASS
 BUGWK71758 : fast/url/port.html = TEXT PASS
+// ^--- When completed please restore this block:
+// // Started failing at r58152
+// BUGWK38038 : fast/url/file-http-base.html = TEXT
 
 BUGWK33812 SKIP : fast/dom/icon-url-property.html = FAIL
 
@@ -1948,9 +1951,6 @@ BUGCR29737 BUGCR30048 BUGJAMESR LINUX WIN : svg/filters/shadow-on-rect-with-filt
 
 // New layoutTestController function added at r57993
 BUGCR42696 : http/tests/xmlhttprequest/cross-origin-authorization-with-embedder.html = TIMEOUT
-
-// Started failing at r58152
-BUGWK38038 : fast/url/file-http-base.html = TEXT
 
 // WebKit roll 58304:58400
 // Skip since not relevant
