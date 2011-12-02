@@ -3805,7 +3805,7 @@ BUGWK73494 DEBUG : svg/hixie/perf/007.xml = PASS TIMEOUT
 
 BUGWK73514 WIN DEBUG : platform/chromium/compositing/lost-compositor-context-permanently.html = TIMEOUT
 BUGWK73517 WIN DEBUG : inspector/console/console-command-clear.html = CRASH
-BUGWK73517 WIN DEBUG : inspector/debugger/script-formatter-breakpoints.html = CRASH TIMEOUT TEXT
+BUGWK73517 DEBUG : inspector/debugger/script-formatter-breakpoints.html = CRASH TIMEOUT TEXT
 BUGWK73517 WIN DEBUG : http/tests/inspector/search/search-in-non-existing-resource.html = CRASH TIMEOUT
 BUGWK73517 WIN DEBUG : inspector/debugger/debugger-activation-crash2.html = CRASH TIMEOUT TEXT
 BUGWK73517 WIN DEBUG : inspector/debugger/debugger-set-breakpoint-regex.html = CRASH TIMEOUT TEXT
