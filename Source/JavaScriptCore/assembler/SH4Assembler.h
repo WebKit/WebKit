@@ -1506,6 +1506,14 @@ public:
         return readPCrelativeAddress((*(reinterpret_cast<uint16_t*>(code)) & 0xff), reinterpret_cast<uint16_t*>(code));
     }
 
+    static FunctionPtr readCallTarget(CodeLocationCall call)
+    {
+        uint16_t* instructionPtr = call.dataLocation();
+        instructionPtr -= 3;
+        uint32_t addr = readPCrelativeAddress((*instructionPtr & 0xff), instructionPtr);
+        return FunctionPtr(reinterpret_cast<void(*)()>(addr));
+    }
+
     PassRefPtr<ExecutableMemoryHandle> executableCopy(JSGlobalData& globalData)
     {
         return m_buffer.executableCopy(globalData);
