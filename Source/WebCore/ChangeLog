@@ -1,3 +1,19 @@
+2011-12-01  Max Vujovic  <mvujovic@adobe.com>
+
+        Focus ring of imagemap's area element does not scale when CSS zoom style is applied
+        https://bugs.webkit.org/show_bug.cgi?id=73595
+
+        Reviewed by Darin Adler.
+
+        Tests: fast/images/imagemap-focus-ring-zoom-style-expected.html
+               fast/images/imagemap-focus-ring-zoom-style.html
+
+        * html/HTMLAreaElement.cpp:
+        (WebCore::HTMLAreaElement::computePath):
+        The computePath method now uses the RenderObject's effectiveZoom 
+        instead of the Frame's page zoom to compute the path for the area
+        element's focus ring.
+
 2011-12-01  Kent Tamura  <tkent@chromium.org>
 
         REGRESSION(r90971): Placeholder text of input control is rendered

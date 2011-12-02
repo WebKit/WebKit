@@ -107,7 +107,7 @@ Path HTMLAreaElement::computePath(RenderObject* obj) const
         size = obj->absoluteOutlineBounds().size();
     
     Path p = getRegion(size);
-    float zoomFactor = document()->frame()->pageZoomFactor();
+    float zoomFactor = obj->style()->effectiveZoom();
     if (zoomFactor != 1.0f) {
         AffineTransform zoomTransform;
         zoomTransform.scale(zoomFactor);
