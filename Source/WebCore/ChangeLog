@@ -1,3 +1,17 @@
+2011-12-02  Tom Sepez  <tsepez@chromium.org>
+
+        Content-security-policy script-src not enforced on workers.
+        https://bugs.webkit.org/show_bug.cgi?id=73240
+
+        Reviewed by Adam Barth.
+
+        Add a CSP check in AbstractWorker.cpp as part of resolving URL.
+        
+        Test: http/tests/security/contentSecurityPolicy/worker-script-src.html
+
+        * workers/AbstractWorker.cpp:
+        (WebCore::AbstractWorker::resolveURL):
+
 2011-12-02  Daniel Cheng  <dcheng@chromium.org>
 
         [chromium] Add plumbing for supporting custom MIME types in DataTransfer.

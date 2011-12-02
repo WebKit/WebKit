@@ -34,6 +34,7 @@
 
 #include "AbstractWorker.h"
 
+#include "ContentSecurityPolicy.h"
 #include "ErrorEvent.h"
 #include "Event.h"
 #include "EventException.h"
@@ -81,6 +82,11 @@ KURL AbstractWorker::resolveURL(const String& url, ExceptionCode& ec)
     }
 
     if (!scriptExecutionContext()->securityOrigin()->canRequest(scriptURL)) {
+        ec = SECURITY_ERR;
+        return KURL();
+    }
+
+    if (scriptExecutionContext()->contentSecurityPolicy() && !scriptExecutionContext()->contentSecurityPolicy()->allowScriptFromSource(scriptURL)) {
         ec = SECURITY_ERR;
         return KURL();
     }

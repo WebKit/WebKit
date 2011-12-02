@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="X-WebKit-CSP" content="script-src 'unsafe-inline'"/>
+<script>
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+}
+</script>
+</head>
+<body>
+<script>
+try {
+    var foo = new Worker('http://127.0.0.1:8000/security/contentSecurityPolicy/resources/alert-fail.js');
+} catch (e) {
+   alert(e);
+}
+</script>
+</body>
+</html>
