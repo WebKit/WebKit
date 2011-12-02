@@ -1,3 +1,9 @@
+2011-12-02  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Also pass --no-interact to jhbuild when updating dependencies.
+
+        * Scripts/update-webkitgtk-libs:
+
 2011-12-02  Alice Boxhall  <aboxhall@chromium.org>
 
         Make _build_path check more thoroughly that build paths exist.
