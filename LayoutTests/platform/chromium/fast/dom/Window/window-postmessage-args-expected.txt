@@ -2,8 +2,8 @@ Test that the second argument of window.postMessage is ignored or triggers an er
 
 PASS: Posting message ('1', 1): threw exception TypeError: TransferArray argument must be an object
 PASS: Posting message ('1', 1): threw exception TypeError: TransferArray argument must be an object
-PASS: Posting message ('2', ): threw exception TypeError: TransferArray argument must be an object
-PASS: Posting message ('2', ): threw exception TypeError: TransferArray argument must be an object
+PASS: Posting message ('2', c): threw exception TypeError: TransferArray argument must be an object
+PASS: Posting message ('2', c): threw exception TypeError: TransferArray argument must be an object
 PASS: Posting message ('3', [object Object]): threw exception TypeError: TransferArray argument has no length attribute
 PASS: Posting message ('3', [object Object]): threw exception TypeError: TransferArray argument has no length attribute
 PASS: Posting message ('4', [object DOMWindow]) did not throw an exception
@@ -16,13 +16,13 @@ PASS: Posting message ('7', [object MessagePort],[object MessagePort]) did not t
 PASS: Posting message ('7', [object MessagePort],[object MessagePort]) did not throw an exception
 PASS: Posting message ('2147483648', null) did not throw an exception
 PASS: Posting message ('2147483648', null) did not throw an exception
-PASS: Posting message ('[object MessagePort]', [object MessagePort],[object MessagePort]): threw exception Error: DATA_CLONE_ERR: DOM Exception 25
+PASS: Posting message ('[object MessagePort]', [object MessagePort],[object MessagePort]) did not throw an exception
 PASS: Posting message ('[object MessagePort]', [object MessagePort],[object MessagePort]) did not throw an exception
 PASS: Posting message ('[object MessagePort],[object MessagePort]', [object MessagePort],[object MessagePort]) did not throw an exception
 PASS: Posting message ('[object ArrayBuffer]', [object ArrayBuffer]) did not throw an exception
 PASS: arrayBuffer neutered
 PASS: view neutered
-PASS: Posting message ('done', *) did not throw an exception
+PASS: Posting message ('done', undefined) did not throw an exception
 Received message '4' with 0 ports.
 Received message '4' with 0 ports.
 Received message '5' with 0 ports.
@@ -33,6 +33,7 @@ Received message '7' with 2 ports.
 Received message '7' with 2 ports.
 Received message '2147483648' with 0 ports.
 Received message '2147483648' with 0 ports.
+Received message '[object MessagePort]' with 2 ports.
 Received message '[object MessagePort]' with 2 ports.
 Received message '[object MessagePort],[object MessagePort]' with 2 ports.
 Received message '[object ArrayBuffer]' with 0 ports.

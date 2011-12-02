@@ -286,7 +286,7 @@ v8::Handle<v8::Value> V8DOMWindow::removeEventListenerCallback(const v8::Argumen
     return v8::Undefined();
 }
 
-static v8::Handle<v8::Value> handlePostMessageCallback(const v8::Arguments& args, bool doTransfer)
+static v8::Handle<v8::Value> handlePostMessageCallback(const v8::Arguments& args, bool extendedTransfer)
 {
     DOMWindow* window = V8DOMWindow::toNative(args.Holder());
 
@@ -303,11 +303,10 @@ static v8::Handle<v8::Value> handlePostMessageCallback(const v8::Arguments& args
     {
         v8::TryCatch tryCatch;
         if (args.Length() > 2) {
-            if (!extractTransferables(args[1], portArray, arrayBufferArray))
+            if (!extractTransferables(args[2], portArray, arrayBufferArray))
                 return v8::Undefined();
-            targetOrigin = toWebCoreStringWithNullOrUndefinedCheck(args[2]);
-        } else
-            targetOrigin = toWebCoreStringWithNullOrUndefinedCheck(args[1]);
+        } 
+        targetOrigin = toWebCoreStringWithNullOrUndefinedCheck(args[1]);
 
         if (tryCatch.HasCaught())
             return v8::Undefined();
@@ -317,8 +316,8 @@ static v8::Handle<v8::Value> handlePostMessageCallback(const v8::Arguments& args
     bool didThrow = false;
     RefPtr<SerializedScriptValue> message =
         SerializedScriptValue::create(args[0],
-                                      doTransfer ? &portArray : 0,
-                                      doTransfer ? &arrayBufferArray : 0,
+                                      &portArray,
+                                      extendedTransfer ? &arrayBufferArray : 0,
                                       didThrow);
     if (didThrow)
         return v8::Undefined();

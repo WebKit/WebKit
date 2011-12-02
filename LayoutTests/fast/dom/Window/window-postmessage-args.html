@@ -29,9 +29,9 @@ function tryPostMessageFunction(postMessageFunction, first, second, third, shoul
             postMessageFunction(first, second);
         else
             postMessageFunction(first, second, third);
-        console.innerHTML += (shouldFail ? "FAIL" : "PASS") + ": Posting message ('" + first + "', " + second + ") did not throw an exception<br>";
+        console.innerHTML += (shouldFail ? "FAIL" : "PASS") + ": Posting message ('" + first + "', " + third + ") did not throw an exception<br>";
    } catch (e) {
-        console.innerHTML += (shouldFail ? "PASS" : "FAIL") + ": Posting message ('" + first + "', " + second + "): threw exception " + e + "<br>";
+        console.innerHTML += (shouldFail ? "PASS" : "FAIL") + ": Posting message ('" + first + "', " + third + "): threw exception " + e + "<br>";
    }
 }
 
@@ -42,27 +42,27 @@ function tryPostMessage(first, second, third, shouldFail) {
 
 document.getElementById("description").innerHTML = "Test that the second argument of window.postMessage is ignored or triggers an error if it is not a message port. You should see PASS message '1' through '7', followed by 'done', with messages 4-7 received below.<br><br>";
 
-tryPostMessage('1', 1, '*', true);
-tryPostMessage('2', "", '*', true);
-tryPostMessage('3', { x: 1 }, '*', true);
-tryPostMessage('4', window, '*');  // Passes because window has a "length" attribute of value '0', so it looks like an array
-tryPostMessage('5', null, '*');
-tryPostMessage('6', void 0, '*');
+tryPostMessage('1', '*', 1, true);
+tryPostMessage('2', '*', 'c', true);
+tryPostMessage('3', '*', { x: 1 }, true);
+tryPostMessage('4', '*', window);  // Passes because window has a "length" attribute of value '0', so it looks like an array
+tryPostMessage('5', '*', null);
+tryPostMessage('6', '*', void 0);
 var channel1 = new MessageChannel;
-tryPostMessageFunction(window.postMessage, '7', [channel1.port1, channel1.port2], '*');
+tryPostMessageFunction(window.postMessage, '7', '*', [channel1.port1, channel1.port2]);
 var channel2 = new MessageChannel;
-tryPostMessageFunction(window.webkitPostMessage, '7', [channel2.port1, channel2.port2], '*');
+tryPostMessageFunction(window.webkitPostMessage, '7', '*', [channel2.port1, channel2.port2]);
 var channel3 = new MessageChannel;
-tryPostMessage(2147483648, null, '*');
-tryPostMessageFunction(window.postMessage, channel3.port1, [channel3.port1, channel3.port2], '*', true);
+tryPostMessage(2147483648, '*', null);
+tryPostMessageFunction(window.postMessage, channel3.port1, '*', [channel3.port1, channel3.port2]);
 var channel4 = new MessageChannel;
-tryPostMessageFunction(window.webkitPostMessage, channel4.port1, [channel4.port1, channel4.port2], '*');
+tryPostMessageFunction(window.webkitPostMessage, channel4.port1, '*', [channel4.port1, channel4.port2]);
 var channel5 = new MessageChannel;
-tryPostMessageFunction(window.webkitPostMessage, [channel5.port1, channel5.port2], [channel5.port1, channel5.port2], '*');
+tryPostMessageFunction(window.webkitPostMessage, [channel5.port1, channel5.port2], '*', [channel5.port1, channel5.port2]);
 
 var arrayBuffer = new ArrayBuffer(30);
 var int8View = new Int8Array(arrayBuffer, 2, 10);
-tryPostMessageFunction(window.webkitPostMessage, arrayBuffer, [arrayBuffer], '*');
+tryPostMessageFunction(window.webkitPostMessage, arrayBuffer, '*', [arrayBuffer]);
 if (!(arrayBuffer.byteLength === 0)) {
     console.innerHTML += "FAIL: arrayBuffer not neutered; byteLength = " + arrayBuffer.byteLength + "<br>";
 }

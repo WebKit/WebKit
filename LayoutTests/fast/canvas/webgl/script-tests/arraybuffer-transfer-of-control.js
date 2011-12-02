@@ -241,7 +241,7 @@ function checkEmptyArray(testName, array)
 function wrapSend(testName, message, xfer)
 {
     try {
-        window.webkitPostMessage(message, xfer, '*');
+        window.webkitPostMessage(message, '*', xfer);
     } catch (e) {
         testFailed(testName + ": could not webkitPostMessage: " + e);
         doneTest();
@@ -253,7 +253,7 @@ function wrapSend(testName, message, xfer)
 function wrapFailSend(testName, message, xfer)
 {
     try {
-        window.webkitPostMessage(message, xfer, '*');
+        window.webkitPostMessage(message, '*', xfer);
     } catch (e) {
         return true;
     }

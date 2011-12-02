@@ -42,7 +42,7 @@
 
 namespace WebCore {
 
-static v8::Handle<v8::Value> handlePostMessageCallback(const v8::Arguments& args, bool doTransfer)
+static v8::Handle<v8::Value> handlePostMessageCallback(const v8::Arguments& args, bool extendedTransfer)
 {
     MessagePort* messagePort = V8MessagePort::toNative(args.Holder());
     MessagePortArray portArray;
@@ -54,8 +54,8 @@ static v8::Handle<v8::Value> handlePostMessageCallback(const v8::Arguments& args
     bool didThrow = false;
     RefPtr<SerializedScriptValue> message =
         SerializedScriptValue::create(args[0],
-                                      doTransfer ? &portArray : 0,
-                                      doTransfer ? &arrayBufferArray : 0,
+                                      &portArray,
+                                      extendedTransfer ? &arrayBufferArray : 0,
                                       didThrow);
     if (didThrow)
         return v8::Undefined();

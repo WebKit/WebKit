@@ -1,3 +1,21 @@
+2011-12-01  Dmitry Lomov  <dslomov@google.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=73589
+        [V8][Chromium] Adjust postMessage to the latest "implementation-ready" spec.
+        - postMessage should support transfer of MessagePorts
+        - the order of arguments to Window::postMessage and Window::webkitPostMessage should be (msg, targetOrigin [, transfer])
+
+        Reviewed by David Levin.
+
+        * bindings/v8/custom/V8DOMWindowCustom.cpp:
+        (WebCore::handlePostMessageCallback):
+        * bindings/v8/custom/V8DedicatedWorkerContextCustom.cpp:
+        (WebCore::handlePostMessageCallback):
+        * bindings/v8/custom/V8MessagePortCustom.cpp:
+        (WebCore::handlePostMessageCallback):
+        * bindings/v8/custom/V8WorkerCustom.cpp:
+        (WebCore::handlePostMessageCallback):
+
 2011-12-02  Enrica Casucci  <enrica@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=73497
