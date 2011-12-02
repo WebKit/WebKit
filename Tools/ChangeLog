@@ -1,5 +1,11 @@
 2011-12-02  Gustavo Noronha Silva  <gns@gnome.org>
 
+        Build libsoup without gnome dependencies (like keyring).
+
+        * gtk/jhbuild.modules:
+
+2011-12-02  Gustavo Noronha Silva  <gns@gnome.org>
+
         Also build gcrypt and p11-kit, and make them dependencies of
         gnutls.
 

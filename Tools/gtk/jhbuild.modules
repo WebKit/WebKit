@@ -96,7 +96,7 @@
             md5sum="555687a7ffefba0bd9de1e71cb61402c"/>
   </autotools>
 
-  <autotools id="libsoup">
+  <autotools id="libsoup" autogenargs="--without-gnome">
     <branch module="libsoup" version="2.37.2.1+git"
             repo="git.gnome.org"
             tag="5cbfc48caf76ced2e28ee06c9e40523273601dc6"/>
