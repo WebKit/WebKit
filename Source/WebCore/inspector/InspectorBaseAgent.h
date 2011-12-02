@@ -50,7 +50,7 @@ public:
     virtual void clearFrontend() { }
     virtual void restore() { }
     virtual void registerInDispatcher(InspectorBackendDispatcher*) = 0;
-    virtual void getAgentCapabilities(InspectorArray*) { };
+    virtual void discardAgent() { }
 
     String name() { return m_name; }
 private:

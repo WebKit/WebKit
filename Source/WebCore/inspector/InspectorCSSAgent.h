@@ -66,6 +66,7 @@ public:
 
     bool forcePseudoState(Element*, CSSSelector::PseudoType);
     virtual void clearFrontend();
+    virtual void discardAgent();
     void reset();
 
     void getComputedStyleForNode(ErrorString*, int nodeId, const RefPtr<InspectorArray>* forcedPseudoClasses, RefPtr<InspectorArray>* style);

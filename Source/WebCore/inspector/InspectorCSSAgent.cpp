@@ -198,16 +198,20 @@ InspectorCSSAgent::InspectorCSSAgent(InstrumentingAgents* instrumentingAgents, I
 
 InspectorCSSAgent::~InspectorCSSAgent()
 {
+    ASSERT(!m_domAgent);
     m_instrumentingAgents->setInspectorCSSAgent(0);
-    // DOM agent should be destroyed after CSS agent.
-    m_domAgent->setDOMListener(0);
-    m_domAgent = 0;
     reset();
 }
 
 void InspectorCSSAgent::clearFrontend()
 {
     clearPseudoState(true);
+}
+
+void InspectorCSSAgent::discardAgent()
+{
+    m_domAgent->setDOMListener(0);
+    m_domAgent = 0;
 }
 
 void InspectorCSSAgent::reset()

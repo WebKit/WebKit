@@ -3771,28 +3771,6 @@ BUGWK72631 LINUX : fast/filesystem/file-writer-abort.html = CRASH PASS
 BUGWK72631 MAC DEBUG : fast/filesystem/file-writer-abort.html = CRASH PASS
 BUGWK72631 WIN DEBUG : fast/filesystem/file-writer-abort-depth.html = CRASH PASS
 
-BUGWK72651 LINUX DEBUG : http/tests/inspector/styles/styles-redirected-css.html = CRASH PASS
-BUGWK72651 LINUX DEBUG : inspector/elements/dom-agent-query-selector.html = CRASH PASS
-// SLOW on next line is from bug WK60109.
-BUGWK72651 SLOW LINUX DEBUG : inspector/elements/edit-dom-actions.html = CRASH PASS
-BUGWK72651 LINUX DEBUG : inspector/elements/modify-chardata.html = CRASH PASS TIMEOUT
-BUGWK72651 LINUX DEBUG : inspector/styles/media-queries.html = CRASH PASS
-BUGWK72651 LINUX DEBUG : inspector/styles/metrics-box-sizing.html = CRASH PASS TIMEOUT
-BUGWK72651 LINUX DEBUG : inspector/styles/show-user-agent-styles.html = CRASH PASS TIMEOUT
-BUGWK72651 LINUX DEBUG : inspector/styles/styles-add-blank-property.html = CRASH PASS TIMEOUT
-BUGWK72651 LINUX DEBUG : inspector/styles/styles-add-invalid-property.html = CRASH PASS TIMEOUT
-BUGWK72651 LINUX DEBUG : inspector/styles/styles-add-new-rule.html = CRASH PASS TIMEOUT
-BUGWK72651 LINUX DEBUG : inspector/styles/styles-cancel-editing.html = CRASH PASS TIMEOUT
-BUGWK72651 LINUX DEBUG : inspector/styles/styles-change-node-while-editing.html = CRASH PASS TIMEOUT
-BUGWK72651 LINUX DEBUG : inspector/styles/styles-commit-editing.html = CRASH PASS TIMEOUT
-BUGWK72651 LINUX DEBUG : inspector/styles/styles-computed-trace.html = CRASH PASS TEXT TIMEOUT
-BUGWK72651 LINUX DEBUG : inspector/styles/styles-disable-inherited.html = CRASH PASS TIMEOUT
-BUGWK72651 LINUX DEBUG : inspector/styles/styles-disable-then-change.html = PASS TIMEOUT
-BUGWK72651 LINUX DEBUG : inspector/styles/styles-disable-then-delete.html = CRASH PASS TIMEOUT
-BUGWK72651 LINUX DEBUG : inspector/styles/styles-iframe.html = CRASH PASS
-BUGWK72651 LINUX DEBUG : inspector/styles/styles-new-API.html = CRASH PASS TEXT
-BUGWK72651 LINUX DEBUG : inspector/styles/styles-update-from-js.html = CRASH PASS TIMEOUT
-BUGWK72651 LINUX DEBUG : inspector/styles/styles-url-linkify.html = CRASH PASS
 BUGWK73133 LINUX : inspector/elements/remove-node.html = PASS CRASH
 
 BUGWK72728 LEOPARD CPU-CG : canvas/philip/tests/2d.imageData.put.unchanged.html = TEXT

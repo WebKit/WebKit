@@ -1,3 +1,23 @@
+2011-12-02  Pavel Feldman  <pfeldman@google.com>
+
+        InspectorController destruction order leads to use-after-free
+        https://bugs.webkit.org/show_bug.cgi?id=73582
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/InspectorBaseAgent.h:
+        (WebCore::InspectorBaseAgentInterface::discardAgent):
+        * inspector/InspectorCSSAgent.cpp:
+        (WebCore::InspectorCSSAgent::~InspectorCSSAgent):
+        (WebCore::InspectorCSSAgent::discardAgent):
+        * inspector/InspectorCSSAgent.h:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::~InspectorController):
+        * inspector/InspectorDOMDebuggerAgent.cpp:
+        (WebCore::InspectorDOMDebuggerAgent::~InspectorDOMDebuggerAgent):
+        (WebCore::InspectorDOMDebuggerAgent::discardAgent):
+        * inspector/InspectorDOMDebuggerAgent.h:
+
 2011-12-02  Leo Yang  <leo.yang@torchmobile.com.cn>
 
         image element with src attribute can't be replaced by content: url() style

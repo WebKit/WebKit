@@ -151,6 +151,9 @@ InspectorController::InspectorController(Page* page, InspectorClient* inspectorC
 
 InspectorController::~InspectorController()
 {
+    for (Agents::iterator it = m_agents.begin(); it != m_agents.end(); ++it)
+        (*it)->discardAgent();
+
     ASSERT(!m_inspectorClient);
 }
 
