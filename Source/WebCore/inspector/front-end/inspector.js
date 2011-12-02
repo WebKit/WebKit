@@ -307,6 +307,7 @@ WebInspector.Events = {
 
 WebInspector.loaded = function()
 {
+    InspectorBackend.loadFromJSONIfNeeded();
     if ("page" in WebInspector.queryParamsObject) {
         var page = WebInspector.queryParamsObject.page;
         var host = "host" in WebInspector.queryParamsObject ? WebInspector.queryParamsObject.host : window.location.host;
@@ -371,6 +372,9 @@ WebInspector._doLoadedDoneWithCapabilities = function()
     InspectorBackend.registerInspectorDispatcher(this);
 
     this.cssModel = new WebInspector.CSSStyleModel();
+    this.timelineManager = new WebInspector.TimelineManager();
+    InspectorBackend.registerDatabaseDispatcher(new WebInspector.DatabaseDispatcher());
+    InspectorBackend.registerDOMStorageDispatcher(new WebInspector.DOMStorageDispatcher());
 
     this.searchController = new WebInspector.SearchController();
     this.advancedSearchController = new WebInspector.AdvancedSearchController();

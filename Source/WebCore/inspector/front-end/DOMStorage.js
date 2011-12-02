@@ -91,5 +91,3 @@ WebInspector.DOMStorageDispatcher.prototype = {
         WebInspector.panels.resources.updateDOMStorage(storageId);
     }
 }
-
-InspectorBackend.registerDOMStorageDispatcher(new WebInspector.DOMStorageDispatcher());

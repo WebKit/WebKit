@@ -42,6 +42,7 @@ function InspectorBackendClass()
 
     this.dumpInspectorTimeStats = false;
     this.dumpInspectorProtocolMessages = false;
+    this._initialized = false;
 }
 
 InspectorBackendClass.prototype = {
@@ -69,11 +70,15 @@ InspectorBackendClass.prototype = {
         window[agentName][domainAndMethod[1]] = this._sendMessageToBackend.bind(this, method, signature);
         window[agentName][domainAndMethod[1]]["invoke"] = this._invoke.bind(this, method, signature);
         this._replyArgs[method] = replyArgs;
+
+        this._initialized = true;
     },
 
     registerEvent: function(eventName, params)
     {
         this._eventArgs[eventName] = params;
+
+        this._initialized = true;
     },
 
     _invoke: function(method, signature, args, callback)
@@ -275,6 +280,79 @@ InspectorBackendClass.prototype = {
             for (var id = 0; id < scripts.length; ++id)
                  scripts[id].call(this);
         }
+    },
+
+    loadFromJSONIfNeeded: function()
+    {
+        if (this._initialized)
+            return;
+
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", "../Inspector.json", false);
+        xhr.send(null);
+    
+        var schema = JSON.parse(xhr.responseText);
+        var jsTypes = { integer: "number", array: "object" };
+        var rawTypes = {};
+    
+        var domains = schema["domains"];
+        for (var i = 0; i < domains.length; ++i) {
+            var domain = domains[i];
+            for (var j = 0; domain.types && j < domain.types.length; ++j) {
+                var type = domain.types[j];
+                rawTypes[domain.domain + "." + type.id] = jsTypes[type.type] || type.type;
+            }
+        }
+    
+        var result = [];
+        for (var i = 0; i < domains.length; ++i) {
+            var domain = domains[i];
+
+            var commands = domain["commands"] || [];    
+            for (var j = 0; j < commands.length; ++j) {
+                var command = commands[j];
+                var parameters = command["parameters"];
+                var paramsText = [];
+                for (var k = 0; parameters && k < parameters.length; ++k) {
+                    var parameter = parameters[k];
+    
+                    var type;
+                    if (parameter.type)
+                        type = jsTypes[parameter.type] || parameter.type;
+                    else {
+                        var ref = parameter["$ref"];
+                        if (ref.indexOf(".") !== -1)
+                            type = rawTypes[ref];
+                        else
+                            type = rawTypes[domain.domain + "." + ref];
+                    }
+    
+                    var text = "{\"name\": \"" + parameter.name + "\", \"type\": \"" + type + "\", \"optional\": " + (parameter.optional ? "true" : "false") + "}";
+                    paramsText.push(text);
+                }
+    
+                var returnsText = [];
+                var returns = command["returns"] || [];
+                for (var k = 0; k < returns.length; ++k) {
+                    var parameter = returns[k];
+                    returnsText.push("\"" + parameter.name + "\"");
+                }
+                result.push("InspectorBackend.registerCommand(\"" + domain.domain + "." + command.name + "\", [" + paramsText.join(", ") + "], [" + returnsText.join(", ") + "]);");
+            }
+    
+            for (var j = 0; domain.events && j < domain.events.length; ++j) {
+                var event = domain.events[j];
+                var paramsText = [];
+                for (var k = 0; event.parameters && k < event.parameters.length; ++k) {
+                    var parameter = event.parameters[k];
+                    paramsText.push("\"" + parameter.name + "\"");
+                }
+                result.push("InspectorBackend.registerEvent(\"" + domain.domain + "." + event.name + "\", [" + paramsText.join(", ") + "]);");
+            }
+    
+            result.push("InspectorBackend.register" + domain.domain + "Dispatcher = InspectorBackend.registerDomainDispatcher.bind(InspectorBackend, \"" + domain.domain + "\");");
+        }
+        eval(result.join("\n"));
     }
 }
 

@@ -1,3 +1,21 @@
+2011-12-02  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: introduce backend stub generation from JSON for the standalone development / remote front-ends.
+        https://bugs.webkit.org/show_bug.cgi?id=73636
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/front-end/DOMStorage.js:
+        * inspector/front-end/Database.js:
+        * inspector/front-end/InspectorBackend.js:
+        (InspectorBackendClass):
+        (InspectorBackendClass.prototype.registerCommand):
+        (InspectorBackendClass.prototype.registerEvent):
+        (InspectorBackendClass.prototype.runAfterPendingDispatches):
+        (InspectorBackendClass.prototype.loadFromJSONIfNeeded):
+        * inspector/front-end/TimelineManager.js:
+        * inspector/front-end/inspector.js:
+
 2011-12-02  MORITA Hajime  <morrita@google.com>
 
         Unreviewed, another attempt to build fix for r101751:

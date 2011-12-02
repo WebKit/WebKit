@@ -46,6 +46,9 @@ WebInspector.TimelineManager.EventTypes = {
 }
 
 WebInspector.TimelineManager.prototype = {
+    /**
+     * @param {number=} maxCallStackDepth
+     */
     start: function(maxCallStackDepth)
     {
         this._enablementCount++;
@@ -94,4 +97,7 @@ WebInspector.TimelineDispatcher.prototype = {
     }
 }
 
-WebInspector.timelineManager = new WebInspector.TimelineManager();
+/**
+ * @type {WebInspector.TimelineManager}
+ */
+WebInspector.timelineManager;

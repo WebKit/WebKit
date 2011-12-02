@@ -149,5 +149,3 @@ WebInspector.DatabaseDispatcher.prototype = {
              callback(errorObj);
     }
 }
-
-InspectorBackend.registerDatabaseDispatcher(new WebInspector.DatabaseDispatcher());
