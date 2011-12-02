@@ -26,50 +26,50 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PageOverlay_h
-#define PageOverlay_h
+#ifndef PageOverlayList_h
+#define PageOverlayList_h
 
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 class GraphicsContext;
-class GraphicsLayer;
-class GraphicsLayerClient;
 }
 
 namespace WebKit {
+class PageOverlay;
 class WebPageOverlay;
 class WebViewImpl;
-struct WebRect;
 
-class PageOverlay {
+class PageOverlayList {
 public:
-    static PassOwnPtr<PageOverlay> create(WebViewImpl*, WebPageOverlay*);
+    static PassOwnPtr<PageOverlayList> create(WebViewImpl*);
 
-    ~PageOverlay() { }
+    ~PageOverlayList();
 
-    WebPageOverlay* overlay() const { return m_overlay; }
-    void setOverlay(WebPageOverlay* overlay) { m_overlay = overlay; }
+    bool empty() const { return !m_pageOverlays.size(); }
 
-    int zOrder() const { return m_zOrder; }
-    void setZOrder(int zOrder) { m_zOrder = zOrder; }
+    // Adds/removes a PageOverlay for given client.
+    // Returns true if a PageOverlay is added/removed.
+    bool add(WebPageOverlay*, int /* zOrder */);
+    bool remove(WebPageOverlay*);
 
-    void clear();
     void update();
     void paintWebFrame(WebCore::GraphicsContext&);
 
 private:
-    PageOverlay(WebViewImpl*, WebPageOverlay*);
-    void invalidateWebFrame();
+    typedef Vector<OwnPtr<PageOverlay>, 2> PageOverlays;
+
+    explicit PageOverlayList(WebViewImpl*);
+
+    // Returns the index of the client found. Otherwise, returns WTF::notFound.
+    size_t find(WebPageOverlay*);
 
     WebViewImpl* m_viewImpl;
-    WebPageOverlay* m_overlay;
-    OwnPtr<WebCore::GraphicsLayer> m_layer;
-    OwnPtr<WebCore::GraphicsLayerClient> m_layerClient;
-    int m_zOrder;
+    PageOverlays m_pageOverlays;
 };
 
 } // namespace WebKit
 
-#endif // PageOverlay_h
+#endif // PageOverlayList_h

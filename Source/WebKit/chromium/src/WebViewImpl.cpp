@@ -1256,8 +1256,8 @@ void WebViewImpl::composite(bool)
         if (!page())
             return;
 
-        if (m_pageOverlay)
-            m_pageOverlay->update();
+        if (m_pageOverlays)
+            m_pageOverlays->update();
 
         m_layerTreeHost->composite();
     }
@@ -2610,21 +2610,22 @@ void WebViewImpl::setIgnoreInputEvents(bool newValue)
     m_ignoreInputEvents = newValue;
 }
 
-void WebViewImpl::setPageOverlayClient(PageOverlay::PageOverlayClient* pageOverlayClient)
+void WebViewImpl::addPageOverlay(WebPageOverlay* overlay, int zOrder)
 {
-    if (pageOverlayClient) {
-        if (!m_pageOverlay)
-            m_pageOverlay = PageOverlay::create(this, pageOverlayClient);
-        else
-            m_pageOverlay->setClient(pageOverlayClient);
-        m_pageOverlay->update();
+    if (!m_pageOverlays)
+        m_pageOverlays = PageOverlayList::create(this);
+
+    m_pageOverlays->add(overlay, zOrder);
+    setRootLayerNeedsDisplay();
+}
+
+void WebViewImpl::removePageOverlay(WebPageOverlay* overlay)
+{
+    if (m_pageOverlays && m_pageOverlays->remove(overlay)) {
         setRootLayerNeedsDisplay();
-    } else {
-        if (m_pageOverlay) {
-            m_pageOverlay->clear();
-            m_pageOverlay = nullptr;
-            setRootLayerNeedsDisplay();
-        }
+
+        if (m_pageOverlays->empty())
+            m_pageOverlays = nullptr;
     }
 }
 
@@ -2870,8 +2871,8 @@ void WebViewImpl::setIsAcceleratedCompositingActive(bool active)
             m_client->didActivateCompositor(m_layerTreeHost->compositorIdentifier());
             m_isAcceleratedCompositingActive = true;
             m_compositorCreationFailed = false;
-            if (m_pageOverlay)
-                m_pageOverlay->update();
+            if (m_pageOverlays)
+                m_pageOverlays->update();
         } else {
             m_layerTreeHost.clear();
             m_nonCompositedContentHost.clear();
@@ -2952,8 +2953,8 @@ void WebViewImpl::didRecreateGraphicsContext(bool success)
         return;
     }
 
-    if (m_pageOverlay)
-        m_pageOverlay->update();
+    if (m_pageOverlays)
+        m_pageOverlays->update();
 }
 
 void WebViewImpl::scheduleComposite()

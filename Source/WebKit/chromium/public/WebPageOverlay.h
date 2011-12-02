@@ -26,50 +26,23 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PageOverlay_h
-#define PageOverlay_h
+#ifndef WebPageOverlay_h
+#define WebPageOverlay_h
 
-#include <wtf/OwnPtr.h>
-#include <wtf/PassOwnPtr.h>
-
-namespace WebCore {
-class GraphicsContext;
-class GraphicsLayer;
-class GraphicsLayerClient;
-}
+#include "WebCanvas.h"
+#include "WebRect.h"
 
 namespace WebKit {
-class WebPageOverlay;
-class WebViewImpl;
-struct WebRect;
 
-class PageOverlay {
+class WebPageOverlay {
 public:
-    static PassOwnPtr<PageOverlay> create(WebViewImpl*, WebPageOverlay*);
+    // Paints page overlay contents.
+    virtual void paintPageOverlay(WebCanvas*) = 0;
 
-    ~PageOverlay() { }
-
-    WebPageOverlay* overlay() const { return m_overlay; }
-    void setOverlay(WebPageOverlay* overlay) { m_overlay = overlay; }
-
-    int zOrder() const { return m_zOrder; }
-    void setZOrder(int zOrder) { m_zOrder = zOrder; }
-
-    void clear();
-    void update();
-    void paintWebFrame(WebCore::GraphicsContext&);
-
-private:
-    PageOverlay(WebViewImpl*, WebPageOverlay*);
-    void invalidateWebFrame();
-
-    WebViewImpl* m_viewImpl;
-    WebPageOverlay* m_overlay;
-    OwnPtr<WebCore::GraphicsLayer> m_layer;
-    OwnPtr<WebCore::GraphicsLayerClient> m_layerClient;
-    int m_zOrder;
+protected:
+    virtual ~WebPageOverlay() { }
 };
 
 } // namespace WebKit
 
-#endif // PageOverlay_h
+#endif // WebPageOverlay_h

@@ -1,3 +1,55 @@
+2011-12-02  Xiyuan Xia  <xiyuan@chromium.org>
+
+        [Chromium] Support adding/removing page overlay to WebView
+        https://bugs.webkit.org/show_bug.cgi?id=73235
+
+        Reviewed by James Robinson.
+
+        * WebKit.gyp:
+        * public/WebPageOverlay.h: Added.
+        (WebKit::WebPageOverlay::~WebPageOverlay):
+        * public/WebView.h:
+        * src/PageOverlay.cpp:
+        (WebKit::PageOverlay::create):
+        (WebKit::PageOverlay::PageOverlay):
+        (WebKit::OverlayGraphicsLayerClientImpl::create):
+        (WebKit::OverlayGraphicsLayerClientImpl::paintContents):
+        (WebKit::OverlayGraphicsLayerClientImpl::OverlayGraphicsLayerClientImpl):
+        (WebKit::PageOverlay::update):
+        (WebKit::PageOverlay::paintWebFrame):
+        (WebKit::PageOverlay::invalidateWebFrame):
+        * src/PageOverlay.h:
+        (WebKit::PageOverlay::overlay):
+        (WebKit::PageOverlay::setOverlay):
+        (WebKit::PageOverlay::zOrder):
+        (WebKit::PageOverlay::setZOrder):
+        * src/PageOverlayList.cpp: Added.
+        (WebKit::PageOverlayList::create):
+        (WebKit::PageOverlayList::PageOverlayList):
+        (WebKit::PageOverlayList::~PageOverlayList):
+        (WebKit::PageOverlayList::add):
+        (WebKit::PageOverlayList::remove):
+        (WebKit::PageOverlayList::update):
+        (WebKit::PageOverlayList::paintWebFrame):
+        (WebKit::PageOverlayList::find):
+        * src/PageOverlayList.h: Added.
+        (WebKit::PageOverlayList::empty):
+        * src/WebDevToolsAgentImpl.cpp:
+        (WebKit::WebDevToolsAgentImpl::paintPageOverlay):
+        (WebKit::WebDevToolsAgentImpl::highlight):
+        (WebKit::WebDevToolsAgentImpl::hideHighlight):
+        * src/WebDevToolsAgentImpl.h:
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::paintWithContext):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::composite):
+        (WebKit::WebViewImpl::addPageOverlay):
+        (WebKit::WebViewImpl::removePageOverlay):
+        (WebKit::WebViewImpl::setIsAcceleratedCompositingActive):
+        (WebKit::WebViewImpl::didRecreateGraphicsContext):
+        * src/WebViewImpl.h:
+        (WebKit::WebViewImpl::pageOverlays):
+
 2011-12-01  Jochen Eisinger  <jochen@chromium.org>
 
         [chromium] add referrer policy to WebContextMenuData

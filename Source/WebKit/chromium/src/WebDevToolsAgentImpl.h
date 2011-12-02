@@ -33,8 +33,8 @@
 
 #include "InspectorClient.h"
 
-#include "PageOverlay.h"
 #include "WebDevToolsAgentPrivate.h"
+#include "WebPageOverlay.h"
 
 #include <wtf/Forward.h>
 #include <wtf/OwnPtr.h>
@@ -62,7 +62,7 @@ struct WebDevToolsMessageData;
 
 class WebDevToolsAgentImpl : public WebDevToolsAgentPrivate,
                              public WebCore::InspectorClient,
-                             public PageOverlay::PageOverlayClient {
+                             public WebPageOverlay {
 public:
     WebDevToolsAgentImpl(WebViewImpl* webViewImpl, WebDevToolsAgentClient* client);
     virtual ~WebDevToolsAgentImpl();
@@ -97,8 +97,8 @@ public:
 
     int hostId() { return m_hostId; }
 
-    // PageOverlayClient
-    virtual void paintPageOverlay(WebCore::GraphicsContext&);
+    // WebPageOverlay
+    virtual void paintPageOverlay(WebCanvas*);
 
 private:
     WebCore::InspectorController* inspectorController();

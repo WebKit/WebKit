@@ -32,7 +32,9 @@
 #include "GraphicsLayer.h"
 #include "GraphicsLayerClient.h"
 #include "Page.h"
+#include "PlatformContextSkia.h"
 #include "Settings.h"
+#include "WebPageOverlay.h"
 #include "WebViewClient.h"
 #include "WebViewImpl.h"
 
@@ -40,23 +42,37 @@ using namespace WebCore;
 
 namespace WebKit {
 
-PassOwnPtr<PageOverlay> PageOverlay::create(WebViewImpl* viewImpl, PageOverlayClient* client)
+namespace {
+
+WebCanvas* ToWebCanvas(GraphicsContext* gc)
 {
-    return adoptPtr(new PageOverlay(viewImpl, client));
+#if WEBKIT_USING_SKIA
+    return gc->platformContext()->canvas();
+#elif WEBKIT_USING_CG
+    return gc->platformContext();
+#endif
 }
 
-PageOverlay::PageOverlay(WebViewImpl* viewImpl, PageOverlayClient* client)
+} // namespace
+
+PassOwnPtr<PageOverlay> PageOverlay::create(WebViewImpl* viewImpl, WebPageOverlay* overlay)
+{
+    return adoptPtr(new PageOverlay(viewImpl, overlay));
+}
+
+PageOverlay::PageOverlay(WebViewImpl* viewImpl, WebPageOverlay* overlay)
     : m_viewImpl(viewImpl)
-    , m_client(client)
+    , m_overlay(overlay)
+    , m_zOrder(0)
 {
 }
 
 #if USE(ACCELERATED_COMPOSITING)
 class OverlayGraphicsLayerClientImpl : public WebCore::GraphicsLayerClient {
 public:
-    static PassOwnPtr<OverlayGraphicsLayerClientImpl*> create(WebViewImpl* webViewImpl, PageOverlay::PageOverlayClient* pageOverlayClient)
+    static PassOwnPtr<OverlayGraphicsLayerClientImpl*> create(WebViewImpl* webViewImpl, WebPageOverlay* overlay)
     {
-        return adoptPtr(new OverlayGraphicsLayerClientImpl(webViewImpl, pageOverlayClient));
+        return adoptPtr(new OverlayGraphicsLayerClientImpl(webViewImpl, overlay));
     }
 
     virtual ~OverlayGraphicsLayerClientImpl() { }
@@ -65,9 +81,11 @@ public:
 
     virtual void notifySyncRequired(const GraphicsLayer*) { }
 
-    virtual void paintContents(const GraphicsLayer*, GraphicsContext& context, GraphicsLayerPaintingPhase, const IntRect& inClip)
+    virtual void paintContents(const GraphicsLayer*, GraphicsContext& gc, GraphicsLayerPaintingPhase, const IntRect& inClip)
     {
-        m_pageOverlayClient->paintPageOverlay(context);
+        gc.save();
+        m_overlay->paintPageOverlay(ToWebCanvas(&gc));
+        gc.restore();
     }
 
     virtual float deviceScaleFactor() const
@@ -91,13 +109,13 @@ public:
     }
 
 private:
-    explicit OverlayGraphicsLayerClientImpl(WebViewImpl* webViewImpl, PageOverlay::PageOverlayClient* pageOverlayClient)
-        : m_pageOverlayClient(pageOverlayClient)
+    OverlayGraphicsLayerClientImpl(WebViewImpl* webViewImpl, WebPageOverlay* overlay)
+        : m_overlay(overlay)
         , m_webViewImpl(webViewImpl)
     {
     }
 
-    PageOverlay::PageOverlayClient* m_pageOverlayClient;
+    WebPageOverlay* m_overlay;
     WebViewImpl* m_webViewImpl;
 };
 #endif
@@ -121,13 +139,20 @@ void PageOverlay::update()
 
 #if USE(ACCELERATED_COMPOSITING)
     if (!m_layer) {
-        m_layerClient = OverlayGraphicsLayerClientImpl::create(m_viewImpl, m_client);
+        m_layerClient = OverlayGraphicsLayerClientImpl::create(m_viewImpl, m_overlay);
         m_layer = GraphicsLayer::create(m_layerClient.get());
         m_layer->setName("WebViewImpl page overlay content");
         m_layer->setDrawsContent(true);
-        const WebSize& size = m_viewImpl->size();
-        m_layer->setSize(IntSize(size.width, size.height));
     }
+
+    FloatSize size(m_viewImpl->size());
+    if (size != m_layer->size()) {
+        // Triggers re-adding to root layer to ensure that we are on top of
+        // scrollbars.
+        m_layer->removeFromParent();
+        m_layer->setSize(size);
+    }
+
     m_viewImpl->setOverlayLayer(m_layer.get());
     m_layer->setNeedsDisplay();
 #endif
@@ -135,13 +160,16 @@ void PageOverlay::update()
 
 void PageOverlay::paintWebFrame(GraphicsContext& gc)
 {
-    if (!m_viewImpl->isAcceleratedCompositingActive())
-        m_client->paintPageOverlay(gc);
+    if (!m_viewImpl->isAcceleratedCompositingActive()) {
+        gc.save();
+        m_overlay->paintPageOverlay(ToWebCanvas(&gc));
+        gc.restore();
+    }
 }
 
 void PageOverlay::invalidateWebFrame()
 {
-    // PageOverlayClient does the actual painting of the overlay.
+    // WebPageOverlay does the actual painting of the overlay.
     // Here we just make sure to invalidate.
     if (!m_viewImpl->isAcceleratedCompositingActive()) {
         // FIXME: able to invalidate a smaller rect.

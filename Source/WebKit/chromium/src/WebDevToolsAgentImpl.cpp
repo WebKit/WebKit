@@ -42,8 +42,8 @@
 #include "MemoryCache.h"
 #include "Page.h"
 #include "PageGroup.h"
-#include "PageOverlay.h"
 #include "PageScriptDebugServer.h"
+#include "painting/GraphicsContextBuilder.h"
 #include "PlatformString.h"
 #include "ResourceError.h"
 #include "ResourceRequest.h"
@@ -272,22 +272,23 @@ void WebDevToolsAgentImpl::bringFrontendToFront()
 {
 }
 
-// PageOverlayClient
-void WebDevToolsAgentImpl::paintPageOverlay(GraphicsContext& gc)
+// WebPageOverlay
+void WebDevToolsAgentImpl::paintPageOverlay(WebCanvas* canvas)
 {
     InspectorController* ic = inspectorController();
     if (ic)
-        ic->drawHighlight(gc);
+        ic->drawHighlight(GraphicsContextBuilder(canvas).context());
 }
 
 void WebDevToolsAgentImpl::highlight()
 {
-    m_webViewImpl->setPageOverlayClient(this);
+    // Use 99 as a big z-order number so that highlight is above other overlays.
+    m_webViewImpl->addPageOverlay(this, 99);
 }
 
 void WebDevToolsAgentImpl::hideHighlight()
 {
-    m_webViewImpl->setPageOverlayClient(0);
+    m_webViewImpl->removePageOverlay(this);
 }
 
 bool WebDevToolsAgentImpl::sendMessageToFrontend(const String& message)

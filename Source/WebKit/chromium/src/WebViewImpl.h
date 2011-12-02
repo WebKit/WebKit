@@ -47,7 +47,7 @@
 #include "InspectorClientImpl.h"
 #include "IntRect.h"
 #include "NotificationPresenterImpl.h"
-#include "PageOverlay.h"
+#include "PageOverlayList.h"
 #include "UserMediaClientImpl.h"
 #include "cc/CCLayerTreeHost.h"
 #include <wtf/OwnPtr.h>
@@ -227,6 +227,8 @@ public:
                                     unsigned inactiveBackgroundColor,
                                     unsigned inactiveForegroundColor);
     virtual void performCustomContextMenuAction(unsigned action);
+    virtual void addPageOverlay(WebPageOverlay*, int /* zOrder */);
+    virtual void removePageOverlay(WebPageOverlay*);
 
     // CCLayerTreeHostClient
     virtual void animateAndLayout(double frameBeginTime);
@@ -242,8 +244,7 @@ public:
     void setIgnoreInputEvents(bool newValue);
     WebDevToolsAgentPrivate* devToolsAgentPrivate() { return m_devToolsAgent.get(); }
 
-    PageOverlay* pageOverlay() const { return m_pageOverlay.get(); }
-    void setPageOverlayClient(PageOverlay::PageOverlayClient*);
+    PageOverlayList* pageOverlays() const { return m_pageOverlays.get(); }
 
     void setOverlayLayer(WebCore::GraphicsLayer*);
 
@@ -579,7 +580,7 @@ private:
     RefPtr<WebCore::PopupContainer> m_selectPopup;
 
     OwnPtr<WebDevToolsAgentPrivate> m_devToolsAgent;
-    OwnPtr<PageOverlay> m_pageOverlay;
+    OwnPtr<PageOverlayList> m_pageOverlays;
 
     // Whether the webview is rendering transparently.
     bool m_isTransparent;

@@ -2063,8 +2063,8 @@ void WebFrameImpl::paintWithContext(GraphicsContext& gc, const WebRect& rect)
     if (m_frame->document() && frameView()) {
         gc.clip(dirtyRect);
         frameView()->paint(&gc, dirtyRect);
-        if (viewImpl()->pageOverlay())
-            viewImpl()->pageOverlay()->paintWebFrame(gc);
+        if (viewImpl()->pageOverlays())
+            viewImpl()->pageOverlays()->paintWebFrame(gc);
     } else
         gc.fillRect(dirtyRect, Color::white, ColorSpaceDeviceRGB);
     gc.restore();
