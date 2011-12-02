@@ -1,3 +1,9 @@
+2011-12-02  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Unreviewed. GTK+ build fix.
+
+        * GNUmakefile.am:
+
 2011-12-02  Zalan Bujtas  <zbujtas@gmail.com>
 
         [Qt][WK2] ASSERT at QQuickWebViewPrivate::computeViewportConstraints() when API test is exercising zero sized views.
