@@ -40,7 +40,10 @@ class AbstractStep(object):
         return self.cached_lookup(state, "changed_files")
 
     _well_known_keys = {
-        "bug_title": lambda self, state: self._tool.bugs.fetch_bug(state["bug_id"]).title(),
+        # FIXME: Should this use state.get('bug_id') or state.get('patch').bug_id() like UpdateChangeLogsWithReviewer does?
+        "bug": lambda self, state: self._tool.bugs.fetch_bug(state["bug_id"]),
+        # bug_title can either be a new title given by the user, or one from an existing bug.
+        "bug_title": lambda self, state: self.cached_lookup(state, 'bug').title(),
         "changed_files": lambda self, state: self._tool.scm().changed_files(self._options.git_commit),
         "diff": lambda self, state: self._tool.scm().create_patch(self._options.git_commit, changed_files=self._changed_files(state)),
         # Absolute path to ChangeLog files.

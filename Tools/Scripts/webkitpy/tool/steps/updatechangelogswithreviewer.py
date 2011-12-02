@@ -43,6 +43,8 @@ class UpdateChangeLogsWithReviewer(AbstractStep):
         ]
 
     def _guess_reviewer_from_bug(self, bug_id):
+        # FIXME: It's unclear if it would be safe to use self.cached_lookup(state, 'bug')
+        # here as we don't currently have a way to invalidate a bug after making changes (like ObsoletePatches does).
         patches = self._tool.bugs.fetch_bug(bug_id).reviewed_patches()
         if not patches:
             log("%s on bug %s, cannot infer reviewer." % ("No reviewed patches", bug_id))

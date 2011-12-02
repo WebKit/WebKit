@@ -43,6 +43,8 @@ class CloseBug(AbstractStep):
             return
         # Check to make sure there are no r? or r+ patches on the bug before closing.
         # Assume that r- patches are just previous patches someone forgot to obsolete.
+        # FIXME: Should this use self.cached_lookup('bug')?  It's unclear if
+        # state["patch"].bug_id() always equals state['bug_id'].
         patches = self._tool.bugs.fetch_bug(state["patch"].bug_id()).patches()
         for patch in patches:
             if patch.review() == "?" or patch.review() == "+":

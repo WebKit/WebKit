@@ -388,7 +388,7 @@ class MockBugzilla(object):
         pass
 
     def reopen_bug(self, bug_id, message):
-        pass
+        log("MOCK reopen_bug %s with comment '%s'" % (bug_id, message))
 
     def close_bug_as_fixed(self, bug_id, message):
         pass

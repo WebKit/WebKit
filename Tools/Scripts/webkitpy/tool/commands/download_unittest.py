@@ -242,6 +242,11 @@ MOCK: user.open_url: file://...
 Was that diff correct?
 Building WebKit
 Committed r49824: <http://trac.webkit.org/changeset/49824>
+MOCK reopen_bug 50000 with comment 'Reverted r852 for reason:
+
+Reason
+
+Committed r49824: <http://trac.webkit.org/changeset/49824>'
 """
         self.assert_execute_outputs(Rollout(), [852, "Reason"], options=self._default_options(), expected_stderr=expected_stderr)
 

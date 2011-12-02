@@ -31,10 +31,8 @@ import unittest
 from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.common.config.ports import WebKitPort
 from webkitpy.tool.mocktool import MockOptions, MockTool
-from webkitpy.tool.steps.update import Update
-from webkitpy.tool.steps.runtests import RunTests
-from webkitpy.tool.steps.promptforbugortitle import PromptForBugOrTitle
 
+from webkitpy.tool import steps
 
 class StepsTest(unittest.TestCase):
     def _step_options(self):
@@ -59,22 +57,53 @@ class StepsTest(unittest.TestCase):
         options = self._step_options()
         options.update = True
         expected_stderr = "Updating working directory\n"
-        OutputCapture().assert_outputs(self, self._run_step, [Update, tool, options], expected_stderr=expected_stderr)
+        OutputCapture().assert_outputs(self, self._run_step, [steps.Update, tool, options], expected_stderr=expected_stderr)
 
     def test_prompt_for_bug_or_title_step(self):
         tool = MockTool()
         tool.user.prompt = lambda message: 50000
-        self._run_step(PromptForBugOrTitle, tool=tool)
+        self._run_step(steps.PromptForBugOrTitle, tool=tool)
+
+    def _post_diff_options(self):
+        options = self._step_options()
+        options.git_commit = None
+        options.description = None
+        options.comment = None
+        options.review = True
+        options.request_commit = False
+        options.open_bug = True
+        return options
+
+    def _assert_step_output_with_bug(self, step, bug_id, expected_stderr, options=None):
+        state = {'bug_id': bug_id}
+        OutputCapture().assert_outputs(self, self._run_step, [step, MockTool(), options, state], expected_stderr=expected_stderr)
+
+    def _assert_post_diff_output_for_bug(self, step, bug_id, expected_stderr):
+        self._assert_step_output_with_bug(step, bug_id, expected_stderr, self._post_diff_options())
+
+    def test_post_diff(self):
+        expected_stderr = "MOCK add_patch_to_bug: bug_id=78, description=Patch, mark_for_review=True, mark_for_commit_queue=False, mark_for_landing=False\nMOCK: user.open_url: http://example.com/78\n"
+        self._assert_post_diff_output_for_bug(steps.PostDiff, 78, expected_stderr)
+
+    def test_post_diff_for_commit(self):
+        expected_stderr = "MOCK add_patch_to_bug: bug_id=78, description=Patch for landing, mark_for_review=False, mark_for_commit_queue=False, mark_for_landing=True\n"
+        self._assert_post_diff_output_for_bug(steps.PostDiffForCommit, 78, expected_stderr)
+
+    def test_ensure_bug_is_open_and_assigned(self):
+        expected_stderr = "MOCK reopen_bug 50004 with comment 'Reopening to attach new patch.'\n"
+        self._assert_step_output_with_bug(steps.EnsureBugIsOpenAndAssigned, 50004, expected_stderr)
+        expected_stderr = "MOCK reassign_bug: bug_id=50002, assignee=None\n"
+        self._assert_step_output_with_bug(steps.EnsureBugIsOpenAndAssigned, 50002, expected_stderr)
 
     def test_runtests_args(self):
         mock_options = self._step_options()
-        step = RunTests(MockTool(log_executive=True), mock_options)
+        step = steps.RunTests(MockTool(log_executive=True), mock_options)
         # FIXME: We shouldn't use a real port-object here, but there is too much to mock at the moment.
         mock_port = WebKitPort()
         mock_port.name = lambda: "Mac"
         tool = MockTool(log_executive=True)
         tool.port = lambda: mock_port
-        step = RunTests(tool, mock_options)
+        step = steps.RunTests(tool, mock_options)
         expected_stderr = """Running Python unit tests
 MOCK run_and_throw_if_fail: ['Tools/Scripts/test-webkitpy'], cwd=/mock-checkout
 Running Perl unit tests

@@ -95,7 +95,7 @@ extra comment
         self.assert_execute_outputs(AttachToBug(), [50000, "path/to/file.txt"], options=options, expected_stderr=expected_stderr)
 
     def test_land_safely(self):
-        expected_stderr = "Obsoleting 2 old patches on bug 50000\nMOCK add_patch_to_bug: bug_id=50000, description=Patch for landing, mark_for_review=False, mark_for_commit_queue=False, mark_for_landing=True\n"
+        expected_stderr = "Obsoleting 2 old patches on bug 50000\nMOCK reassign_bug: bug_id=50000, assignee=None\nMOCK add_patch_to_bug: bug_id=50000, description=Patch for landing, mark_for_review=False, mark_for_commit_queue=False, mark_for_landing=True\n"
         self.assert_execute_outputs(LandSafely(), [50000], expected_stderr=expected_stderr)
 
     def test_prepare_diff_with_arg(self):

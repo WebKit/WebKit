@@ -216,6 +216,7 @@ class Post(AbstractPatchUploadingCommand):
         steps.ConfirmDiff,
         steps.ObsoletePatches,
         steps.SuggestReviewers,
+        steps.EnsureBugIsOpenAndAssigned,
         steps.PostDiff,
     ]
 
@@ -233,6 +234,7 @@ class LandSafely(AbstractPatchUploadingCommand):
         steps.UpdateChangeLogsWithReviewer,
         steps.ValidateChangeLogs,
         steps.ObsoletePatches,
+        steps.EnsureBugIsOpenAndAssigned,
         steps.PostDiffForCommit,
     ]
 
@@ -267,6 +269,7 @@ class Upload(AbstractPatchUploadingCommand):
         steps.ConfirmDiff,
         steps.ObsoletePatches,
         steps.SuggestReviewers,
+        steps.EnsureBugIsOpenAndAssigned,
         steps.PostDiff,
     ]
     long_help = """upload uploads the current diff to bugs.webkit.org.

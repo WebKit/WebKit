@@ -1,3 +1,39 @@
+2011-12-01  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        webkit-patch post, post-commits, upload should warn when posting to a closed bug, and offer to reopen it
+        https://bugs.webkit.org/show_bug.cgi?id=32006
+
+        I decided not to make it warn, and just have it re-open the bug.
+        That's not that different from today's behavior which will
+        just silently attach the patch.
+
+        This patch makes behavior between upload and land-safely consistent
+        (previously one would assign patches and the other would not)
+        as well as adds the ability for both to ensure that the bug is open.
+
+        To test this I had to add a few more methods to MockBugzilla which
+        (positively) affected a few other test results.
+
+        I also made AbstractStep keep a cached copy of the Bug object
+        and used the cached copy where appropriate (including for 'bug_title').
+        This should reduce the number of bug fetches we perform.
+
+        * Scripts/webkitpy/tool/commands/download_unittest.py:
+        * Scripts/webkitpy/tool/commands/upload.py:
+        * Scripts/webkitpy/tool/commands/upload_unittest.py:
+        * Scripts/webkitpy/tool/mocktool.py:
+        * Scripts/webkitpy/tool/steps/__init__.py:
+        * Scripts/webkitpy/tool/steps/abstractstep.py:
+        * Scripts/webkitpy/tool/steps/closebug.py:
+        * Scripts/webkitpy/tool/steps/ensurebugisopenandassigned.py: Added.
+        * Scripts/webkitpy/tool/steps/postdiff.py:
+        * Scripts/webkitpy/tool/steps/postdiffforcommit.py:
+        * Scripts/webkitpy/tool/steps/preparechangelog.py:
+        * Scripts/webkitpy/tool/steps/steps_unittest.py:
+        * Scripts/webkitpy/tool/steps/updatechangelogswithreviewer.py:
+
 2011-12-02  Gustavo Noronha Silva  <gns@gnome.org>
 
         Also pass --no-interact to jhbuild when updating dependencies.
