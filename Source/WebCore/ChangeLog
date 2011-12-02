@@ -1,3 +1,144 @@
+2011-11-02  Jer Noble  <jer.noble@apple.com>
+
+        MediaControls should use MediaController if present.
+        https://bugs.webkit.org/show_bug.cgi?id=71410
+
+        Reviewed by Eric Carlson.
+
+        No new tests; covered by existing tests.
+
+        Add support for individual media controls to control the MediaController of their associated
+        HTMLMediaElement, if present.
+
+        The video spec requires that UA provided media controls be implemented in terms of their 
+        HTMLMediaElement's MediaController, if present.  So for each of the media controls, modify 
+        their constructor to take a Document* instead of an HTMLMediaElement, and add an setter
+        taking a MediaControllerInterface.
+
+        Now that MediaControls have an abstract interface instead of an HTMLMediaElement, use toParentMediaElement
+        to find the controllingVideoElement.
+        * accessibility/AccessibilityMediaControls.cpp:
+        (WebCore::AccessibilityMediaControlsContainer::controllingVideoElement):
+
+        Pass the MediaController or the HTMLMediaElement when setting up the elements controls.
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::createMediaControls):
+        (WebCore::HTMLMediaElement::setMediaController):
+
+        The following functions have only constructor changes:
+        * html/shadow/MediaControlElements.cpp:
+        (WebCore::MediaControlElement::MediaControlElement):
+        (WebCore::MediaControlPanelElement::MediaControlPanelElement):
+        (WebCore::MediaControlPanelElement::create):
+        (WebCore::MediaControlTimelineContainerElement::MediaControlTimelineContainerElement):
+        (WebCore::MediaControlTimelineContainerElement::create):
+        (WebCore::MediaControlVolumeSliderContainerElement::MediaControlVolumeSliderContainerElement):
+        (WebCore::MediaControlVolumeSliderContainerElement::create):
+        (WebCore::MediaControlStatusDisplayElement::MediaControlStatusDisplayElement):
+        (WebCore::MediaControlStatusDisplayElement::create):
+        (WebCore::MediaControlInputElement::MediaControlInputElement):
+        (WebCore::MediaControlMuteButtonElement::MediaControlMuteButtonElement):
+        (WebCore::MediaControlMuteButtonElement::defaultEventHandler):
+        (WebCore::MediaControlPanelMuteButtonElement::MediaControlPanelMuteButtonElement):
+        (WebCore::MediaControlPanelMuteButtonElement::create):
+        (WebCore::MediaControlVolumeSliderMuteButtonElement::MediaControlVolumeSliderMuteButtonElement):
+        (WebCore::MediaControlVolumeSliderMuteButtonElement::create):
+        (WebCore::MediaControlPlayButtonElement::MediaControlPlayButtonElement):
+        (WebCore::MediaControlPlayButtonElement::create):
+        (WebCore::MediaControlSeekButtonElement::MediaControlSeekButtonElement):
+        (WebCore::MediaControlSeekForwardButtonElement::MediaControlSeekForwardButtonElement):
+        (WebCore::MediaControlSeekForwardButtonElement::create):
+        (WebCore::MediaControlSeekBackButtonElement::MediaControlSeekBackButtonElement):
+        (WebCore::MediaControlSeekBackButtonElement::create):
+        (WebCore::MediaControlRewindButtonElement::MediaControlRewindButtonElement):
+        (WebCore::MediaControlRewindButtonElement::create):
+        (WebCore::MediaControlReturnToRealtimeButtonElement::MediaControlReturnToRealtimeButtonElement):
+        (WebCore::MediaControlReturnToRealtimeButtonElement::create):
+        (WebCore::MediaControlToggleClosedCaptionsButtonElement::MediaControlToggleClosedCaptionsButtonElement):
+        (WebCore::MediaControlToggleClosedCaptionsButtonElement::create):
+        (WebCore::MediaControlTimelineElement::MediaControlTimelineElement):
+        (WebCore::MediaControlTimelineElement::create):
+        (WebCore::MediaControlVolumeSliderElement::MediaControlVolumeSliderElement):
+        (WebCore::MediaControlVolumeSliderElement::create):
+        (WebCore::MediaControlVolumeSliderElement::defaultEventHandler):
+        (WebCore::MediaControlFullscreenVolumeSliderElement::MediaControlFullscreenVolumeSliderElement):
+        (WebCore::MediaControlFullscreenVolumeSliderElement::create):
+        (WebCore::MediaControlFullscreenButtonElement::MediaControlFullscreenButtonElement):
+        (WebCore::MediaControlFullscreenButtonElement::create):
+        (WebCore::MediaControlFullscreenVolumeMinButtonElement::MediaControlFullscreenVolumeMinButtonElement):
+        (WebCore::MediaControlFullscreenVolumeMinButtonElement::create):
+        (WebCore::MediaControlFullscreenVolumeMaxButtonElement::MediaControlFullscreenVolumeMaxButtonElement):
+        (WebCore::MediaControlFullscreenVolumeMaxButtonElement::create):
+        (WebCore::MediaControlTimeDisplayElement::MediaControlTimeDisplayElement):
+        (WebCore::MediaControlTimeRemainingDisplayElement::create):
+        (WebCore::MediaControlTimeRemainingDisplayElement::MediaControlTimeRemainingDisplayElement):
+        (WebCore::MediaControlCurrentTimeDisplayElement::create):
+        (WebCore::MediaControlCurrentTimeDisplayElement::MediaControlCurrentTimeDisplayElement):
+        * html/shadow/MediaControlRootElement.cpp:
+        (WebCore::MediaControlRootElement::MediaControlRootElement):
+        (WebCore::MediaControls::create):
+        (WebCore::MediaControlRootElement::create):
+        * html/shadow/MediaControlRootElement.h:
+        * html/shadow/MediaControls.cpp:
+        (WebCore::MediaControls::MediaControls):
+        * html/shadow/MediaControls.h:
+
+        The following functions now call MediaControllerInterface instead of HTMLMediaElement directly:
+        * html/shadow/MediaControlElements.h:
+        (WebCore::MediaControlStatusDisplayElement::update):
+        (WebCore::MediaControlMuteButtonElement::updateDisplayType):
+        (WebCore::MediaControlPlayButtonElement::defaultEventHandler):
+        (WebCore::MediaControlPlayButtonElement::updateDisplayType):
+        (WebCore::MediaControlSeekButtonElement::startTimer):
+        (WebCore::MediaControlSeekButtonElement::stopTimer):
+        (WebCore::MediaControlSeekButtonElement::nextRate):
+        (WebCore::MediaControlSeekButtonElement::seekTimerFired):
+        (WebCore::MediaControlRewindButtonElement::defaultEventHandler):
+        (WebCore::MediaControlReturnToRealtimeButtonElement::defaultEventHandler):
+        (WebCore::MediaControlToggleClosedCaptionsButtonElement::defaultEventHandler):
+        (WebCore::MediaControlToggleClosedCaptionsButtonElement::updateDisplayType):
+        (WebCore::MediaControlTimelineElement::defaultEventHandler):
+        (WebCore::MediaControlFullscreenButtonElement::defaultEventHandler):
+        (WebCore::MediaControlFullscreenVolumeMinButtonElement::defaultEventHandler):
+        (WebCore::MediaControlFullscreenVolumeMaxButtonElement::defaultEventHandler):
+        * html/shadow/MediaControlRootElement.cpp:
+        (WebCore::MediaControlRootElement::reset):
+        (WebCore::MediaControlRootElement::playbackStarted):
+        (WebCore::MediaControlRootElement::playbackProgressed):
+        (WebCore::MediaControlRootElement::playbackStopped):
+        (WebCore::MediaControlRootElement::updateTimeDisplay):
+        (WebCore::MediaControlRootElement::loadedMetadata):
+        (WebCore::MediaControlRootElement::changedVolume):
+        (WebCore::MediaControlRootElement::enteredFullscreen):
+        (WebCore::MediaControlRootElement::showVolumeSlider):
+        (WebCore::MediaControlRootElement::defaultEventHandler):
+        (WebCore::MediaControlRootElement::startHideFullscreenControlsTimer):
+        (WebCore::MediaControlRootElement::hideFullscreenControlsTimerFired):
+        * html/shadow/MediaControlRootElementChromium.cpp:
+        (WebCore::MediaControlRootElementChromium::MediaControlRootElementChromium):
+        (WebCore::MediaControls::create):
+        (WebCore::MediaControlRootElementChromium::create):
+        (WebCore::MediaControlRootElementChromium::reset):
+        (WebCore::MediaControlRootElementChromium::playbackStarted):
+        (WebCore::MediaControlRootElementChromium::playbackProgressed):
+        (WebCore::MediaControlRootElementChromium::playbackStopped):
+        (WebCore::MediaControlRootElementChromium::updateTimeDisplay):
+        (WebCore::MediaControlRootElementChromium::defaultEventHandler):
+        (WebCore::MediaControlRootElementChromium::changedVolume):
+        (WebCore::MediaControlRootElementChromium::showVolumeSlider):
+        * html/shadow/MediaControlRootElementChromium.h:
+
+        The following functions set the current MediaControllerInterface.
+        * html/shadow/MediaControlRootElement.cpp:
+        (WebCore::MediaControlRootElement::setMediaController):
+        * html/shadow/MediaControlElements.h:
+        (WebCore::MediaControlElement::setMediaController):
+        (WebCore::MediaControlElement::mediaController):
+        (WebCore::MediaControlInputElement::setMediaController):
+        (WebCore::MediaControlInputElement::mediaController):
+        * html/shadow/MediaControlRootElementChromium.cpp:
+        (WebCore::MediaControlRootElementChromium::setMediaController):
+
 2011-12-02  Stephen Chenney  <schenney@chromium.org>
 
         REGRESSION (r91125): Polyline tool in google docs is broken

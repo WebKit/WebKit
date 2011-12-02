@@ -35,6 +35,7 @@
 
 #include "AXObjectCache.h"
 #include "HTMLInputElement.h"
+#include "HTMLMediaElement.h"
 #include "HTMLNames.h"
 #include "LocalizedStrings.h"
 #include "MediaControlElements.h"
@@ -222,7 +223,7 @@ bool AccessibilityMediaControlsContainer::controllingVideoElement() const
 
     MediaControlTimeDisplayElement* element = static_cast<MediaControlTimeDisplayElement*>(m_renderer->node());
 
-    return element->mediaElement()->isVideo();
+    return toParentMediaElement(element)->isVideo();
 }
 
 const String AccessibilityMediaControlsContainer::elementTypeName() const

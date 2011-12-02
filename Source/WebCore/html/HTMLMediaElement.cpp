@@ -3250,9 +3250,11 @@ bool HTMLMediaElement::createMediaControls()
         return true;
 
     ExceptionCode ec;
-    RefPtr<MediaControls> controls = MediaControls::create(this);
+    RefPtr<MediaControls> controls = MediaControls::create(document());
     if (!controls)
         return false;
+
+    controls->setMediaController(m_mediaController ? m_mediaController.get() : static_cast<MediaControllerInterface*>(this));
 
     ensureShadowRoot()->appendChild(controls, ec);
     return true;
@@ -3389,6 +3391,9 @@ void HTMLMediaElement::setController(PassRefPtr<MediaController> controller)
         m_mediaController->removeMediaElement(this);
 
     m_mediaController = controller;
+
+    if (hasMediaControls())
+        mediaControls()->setMediaController(m_mediaController ? m_mediaController.get() : static_cast<MediaControllerInterface*>(this));
 
     if (m_mediaController)
         m_mediaController->addMediaElement(this);

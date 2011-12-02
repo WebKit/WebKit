@@ -38,9 +38,9 @@ using namespace std;
 
 namespace WebCore {
 
-MediaControlRootElementChromium::MediaControlRootElementChromium(HTMLMediaElement* mediaElement)
-    : MediaControls(mediaElement)
-    , m_mediaElement(mediaElement)
+MediaControlRootElementChromium::MediaControlRootElementChromium(Document* document)
+    : MediaControls(document)
+    , m_mediaController(0)
     , m_playButton(0)
     , m_currentTimeDisplay(0)
     , m_timeline(0)
@@ -54,37 +54,37 @@ MediaControlRootElementChromium::MediaControlRootElementChromium(HTMLMediaElemen
 {
 }
 
-PassRefPtr<MediaControls> MediaControls::create(HTMLMediaElement* mediaElement)
+PassRefPtr<MediaControls> MediaControls::create(Document* document)
 {
-    return MediaControlRootElementChromium::create(mediaElement);
+    return MediaControlRootElementChromium::create(document);
 }
 
-PassRefPtr<MediaControlRootElementChromium> MediaControlRootElementChromium::create(HTMLMediaElement* mediaElement)
+PassRefPtr<MediaControlRootElementChromium> MediaControlRootElementChromium::create(Document* document)
 {
-    if (!mediaElement->document()->page())
+    if (!document->page())
         return 0;
 
-    RefPtr<MediaControlRootElementChromium> controls = adoptRef(new MediaControlRootElementChromium(mediaElement));
+    RefPtr<MediaControlRootElementChromium> controls = adoptRef(new MediaControlRootElementChromium(document));
 
-    RefPtr<MediaControlPanelElement> panel = MediaControlPanelElement::create(mediaElement);
+    RefPtr<MediaControlPanelElement> panel = MediaControlPanelElement::create(document);
 
     ExceptionCode ec;
 
-    RefPtr<MediaControlPlayButtonElement> playButton = MediaControlPlayButtonElement::create(mediaElement);
+    RefPtr<MediaControlPlayButtonElement> playButton = MediaControlPlayButtonElement::create(document);
     controls->m_playButton = playButton.get();
     panel->appendChild(playButton.release(), ec, true);
     if (ec)
         return 0;
 
-    RefPtr<MediaControlTimelineContainerElement> timelineContainer = MediaControlTimelineContainerElement::create(mediaElement);
+    RefPtr<MediaControlTimelineContainerElement> timelineContainer = MediaControlTimelineContainerElement::create(document);
 
-    RefPtr<MediaControlTimelineElement> timeline = MediaControlTimelineElement::create(mediaElement, controls.get());
+    RefPtr<MediaControlTimelineElement> timeline = MediaControlTimelineElement::create(document, controls.get());
     controls->m_timeline = timeline.get();
     timelineContainer->appendChild(timeline.release(), ec, true);
     if (ec)
         return 0;
 
-    RefPtr<MediaControlCurrentTimeDisplayElement> currentTimeDisplay = MediaControlCurrentTimeDisplayElement::create(mediaElement);
+    RefPtr<MediaControlCurrentTimeDisplayElement> currentTimeDisplay = MediaControlCurrentTimeDisplayElement::create(document);
     controls->m_currentTimeDisplay = currentTimeDisplay.get();
     timelineContainer->appendChild(currentTimeDisplay.release(), ec, true);
     if (ec)
@@ -95,15 +95,15 @@ PassRefPtr<MediaControlRootElementChromium> MediaControlRootElementChromium::cre
     if (ec)
         return 0;
 
-    RefPtr<MediaControlPanelMuteButtonElement> panelMuteButton = MediaControlPanelMuteButtonElement::create(mediaElement, controls.get());
+    RefPtr<MediaControlPanelMuteButtonElement> panelMuteButton = MediaControlPanelMuteButtonElement::create(document, controls.get());
     controls->m_panelMuteButton = panelMuteButton.get();
     panel->appendChild(panelMuteButton.release(), ec, true);
     if (ec)
         return 0;
 
-    RefPtr<MediaControlVolumeSliderContainerElement> volumeSliderContainer = MediaControlVolumeSliderContainerElement::create(mediaElement);
+    RefPtr<MediaControlVolumeSliderContainerElement> volumeSliderContainer = MediaControlVolumeSliderContainerElement::create(document);
 
-    RefPtr<MediaControlVolumeSliderElement> slider = MediaControlVolumeSliderElement::create(mediaElement);
+    RefPtr<MediaControlVolumeSliderElement> slider = MediaControlVolumeSliderElement::create(document);
     controls->m_volumeSlider = slider.get();
     volumeSliderContainer->appendChild(slider.release(), ec, true);
     if (ec)
@@ -120,6 +120,31 @@ PassRefPtr<MediaControlRootElementChromium> MediaControlRootElementChromium::cre
         return 0;
 
     return controls.release();
+}
+
+void MediaControlRootElementChromium::setMediaController(MediaControllerInterface* controller)
+{
+    if (m_mediaController == controller)
+        return;
+    m_mediaController = controller;
+
+    if (m_playButton)
+        m_playButton->setMediaController(controller);
+    if (m_currentTimeDisplay)
+        m_currentTimeDisplay->setMediaController(controller);
+    if (m_timeline)
+        m_timeline->setMediaController(controller);
+    if (m_timelineContainer)
+        m_timelineContainer->setMediaController(controller);
+    if (m_panelMuteButton)
+        m_panelMuteButton->setMediaController(controller);
+    if (m_volumeSlider)
+        m_volumeSlider->setMediaController(controller);
+    if (m_volumeSliderContainer)
+        m_volumeSliderContainer->setMediaController(controller);
+    if (m_panel)
+        m_panel->setMediaController(controller);
+    reset();
 }
 
 void MediaControlRootElementChromium::show()
@@ -150,16 +175,16 @@ void MediaControlRootElementChromium::reset()
 
     updateStatusDisplay();
 
-    float duration = m_mediaElement->duration();
+    float duration = m_mediaController->duration();
     m_timeline->setDuration(duration);
     m_timelineContainer->show();
-    m_timeline->setPosition(m_mediaElement->currentTime());
+    m_timeline->setPosition(m_mediaController->currentTime());
     updateTimeDisplay();
 
     m_panelMuteButton->show();
 
     if (m_volumeSlider)
-        m_volumeSlider->setVolume(m_mediaElement->volume());
+        m_volumeSlider->setVolume(m_mediaController->volume());
 
     makeOpaque();
 }
@@ -167,31 +192,31 @@ void MediaControlRootElementChromium::reset()
 void MediaControlRootElementChromium::playbackStarted()
 {
     m_playButton->updateDisplayType();
-    m_timeline->setPosition(m_mediaElement->currentTime());
+    m_timeline->setPosition(m_mediaController->currentTime());
     updateTimeDisplay();
 }
 
 void MediaControlRootElementChromium::playbackProgressed()
 {
-    m_timeline->setPosition(m_mediaElement->currentTime());
+    m_timeline->setPosition(m_mediaController->currentTime());
     updateTimeDisplay();
 
-    if (!m_isMouseOverControls && m_mediaElement->hasVideo())
+    if (!m_isMouseOverControls && m_mediaController->hasVideo())
         makeTransparent();
 }
 
 void MediaControlRootElementChromium::playbackStopped()
 {
     m_playButton->updateDisplayType();
-    m_timeline->setPosition(m_mediaElement->currentTime());
+    m_timeline->setPosition(m_mediaController->currentTime());
     updateTimeDisplay();
     makeOpaque();
 }
 
 void MediaControlRootElementChromium::updateTimeDisplay()
 {
-    float now = m_mediaElement->currentTime();
-    float duration = m_mediaElement->duration();
+    float now = m_mediaController->currentTime();
+    float duration = m_mediaController->duration();
 
     Page* page = document()->page();
     if (!page)
@@ -245,7 +270,7 @@ void MediaControlRootElementChromium::defaultEventHandler(Event* event)
     if (event->type() == eventNames().mouseoverEvent) {
         if (!containsRelatedTarget(event)) {
             m_isMouseOverControls = true;
-            if (!m_mediaElement->canPlay())
+            if (!m_mediaController->canPlay())
                 makeOpaque();
         }
     } else if (event->type() == eventNames().mouseoutEvent) {
@@ -265,7 +290,7 @@ void MediaControlRootElementChromium::changedMute()
 
 void MediaControlRootElementChromium::changedVolume()
 {
-    m_volumeSlider->setVolume(m_mediaElement->volume());
+    m_volumeSlider->setVolume(m_mediaController->volume());
 }
 
 void MediaControlRootElementChromium::enteredFullscreen()
@@ -278,7 +303,7 @@ void MediaControlRootElementChromium::exitedFullscreen()
 
 void MediaControlRootElementChromium::showVolumeSlider()
 {
-    if (!m_mediaElement->hasAudio())
+    if (!m_mediaController->hasAudio())
         return;
 
     m_volumeSliderContainer->show();

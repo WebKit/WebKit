@@ -68,9 +68,11 @@ class RenderMedia;
 
 class MediaControlRootElement : public MediaControls {
 public:
-    static PassRefPtr<MediaControlRootElement> create(HTMLMediaElement*);
+    static PassRefPtr<MediaControlRootElement> create(Document*);
 
     // MediaControls implementation.
+    void setMediaController(MediaControllerInterface*);
+
     void show();
     void hide();
     void makeOpaque();
@@ -99,7 +101,7 @@ public:
     virtual bool shouldHideControls();
 
 private:
-    MediaControlRootElement(HTMLMediaElement*);
+    MediaControlRootElement(Document*);
 
     virtual void defaultEventHandler(Event*);
     void hideFullscreenControlsTimerFired(Timer<MediaControlRootElement>*);
@@ -110,7 +112,7 @@ private:
 
     bool containsRelatedTarget(Event*);
 
-    HTMLMediaElement* m_mediaElement;
+    MediaControllerInterface* m_mediaController;
 
     MediaControlRewindButtonElement* m_rewindButton;
     MediaControlPlayButtonElement* m_playButton;

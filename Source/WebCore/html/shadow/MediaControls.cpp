@@ -36,8 +36,8 @@
 
 namespace WebCore {
 
-MediaControls::MediaControls(HTMLMediaElement* mediaElement)
-    : HTMLDivElement(HTMLNames::divTag, mediaElement->document())
+MediaControls::MediaControls(Document* document)
+    : HTMLDivElement(HTMLNames::divTag, document)
 {
 }
 

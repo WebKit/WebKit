@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-class HTMLMediaElement;
+class MediaControllerInterface;
 
 class MediaControls : public HTMLDivElement {
   public:
@@ -41,7 +41,9 @@ class MediaControls : public HTMLDivElement {
 
     // This function is to be implemented in your port-specific media
     // controls implementation.
-    static PassRefPtr<MediaControls> create(HTMLMediaElement*);
+    static PassRefPtr<MediaControls> create(Document*);
+
+    virtual void setMediaController(MediaControllerInterface*) = 0;
 
     virtual void show() = 0;
     virtual void hide() = 0;
@@ -71,7 +73,7 @@ class MediaControls : public HTMLDivElement {
     virtual bool shouldHideControls() = 0;
 
 protected:
-    MediaControls(HTMLMediaElement*);
+    MediaControls(Document*);
 
 private:
     MediaControls();

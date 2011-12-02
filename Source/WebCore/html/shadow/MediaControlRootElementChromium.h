@@ -34,8 +34,8 @@
 
 namespace WebCore {
 
+class Document;
 class HTMLInputElement;
-class HTMLMediaElement;
 class Event;
 class MediaControlPanelMuteButtonElement;
 class MediaControlPlayButtonElement;
@@ -49,6 +49,7 @@ class MediaControlMuteButtonElement;
 class MediaControlVolumeSliderElement;
 class MediaControlVolumeSliderContainerElement;
 class MediaControlPanelElement;
+class MediaControllerInterface;
 class MediaPlayer;
 
 class RenderBox;
@@ -56,9 +57,11 @@ class RenderMedia;
 
 class MediaControlRootElementChromium : public MediaControls {
 public:
-    static PassRefPtr<MediaControlRootElementChromium> create(HTMLMediaElement*);
+    static PassRefPtr<MediaControlRootElementChromium> create(Document*);
 
     // MediaControls implementation.
+    void setMediaController(MediaControllerInterface*);
+
     void show();
     void hide();
     void makeOpaque();
@@ -87,7 +90,7 @@ public:
     virtual bool shouldHideControls();
 
 private:
-    MediaControlRootElementChromium(HTMLMediaElement*);
+    MediaControlRootElementChromium(Document*);
 
     virtual void defaultEventHandler(Event*);
 
@@ -95,7 +98,7 @@ private:
 
     bool containsRelatedTarget(Event*);
 
-    HTMLMediaElement* m_mediaElement;
+    MediaControllerInterface* m_mediaController;
 
     MediaControlPlayButtonElement* m_playButton;
     MediaControlCurrentTimeDisplayElement* m_currentTimeDisplay;
