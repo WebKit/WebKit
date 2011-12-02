@@ -1,3 +1,13 @@
+2011-12-02  Gustavo Noronha Silva  <gns@gnome.org>
+
+        [GTK] Also run DumpRenderTree under jhbuild
+        https://bugs.webkit.org/show_bug.cgi?id=73646
+
+        Reviewed by Martin Robinson.
+
+        * Scripts/webkitpy/layout_tests/port/gtk.py:
+        (GtkDriver.cmd_line):
+
 2011-12-02  Hajime Morrita  <morrita@chromium.org>
 
         Unreviewed, rolling out r101751 and r101775.

@@ -68,6 +68,10 @@ class GtkDriver(WebKitDriver):
             self._xvfb_process.wait()
             self._xvfb_process = None
 
+    def cmd_line(self):
+        config_path = self._port.path_from_webkit_base("Tools", "gtk", "jhbuildrc")
+        return ["jhbuild", "-f", config_path, "run"] + WebKitDriver.cmd_line(self)
+
 
 class GtkPort(WebKitPort):
     port_name = "gtk"
