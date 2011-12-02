@@ -125,6 +125,15 @@
     color: white;
 }
 
+.network-log-grid tr.highlighted-row {
+    -webkit-animation: "network-row-highlight-fadeout" 2s 0s;
+}
+
+@-webkit-keyframes network-row-highlight-fadeout {
+    from {background-color: rgba(56, 121, 217, 1); }
+    to { background-color: rgba(56, 121, 217, 0); }
+}
+
 .network-header-subtitle {
     color: gray;
 }

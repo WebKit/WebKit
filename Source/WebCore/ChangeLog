@@ -1,3 +1,15 @@
+2011-12-02  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Network panel row highlighting does not work.
+        https://bugs.webkit.org/show_bug.cgi?id=73644
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/networkLogView.css:
+        (.network-log-grid tr.highlighted-row):
+        (from):
+        (to):
+
 2011-12-02  Pavel Feldman  <pfeldman@google.com>
 
         Not reviewed: remove console.timeStamp from the inspector backend dispatcher.
