@@ -70,10 +70,11 @@ def write_test_result(port, test_name, driver_output,
             # FIXME: This work should be done earlier in the pipeline (e.g., when we compare images for non-ref tests).
             # FIXME: We should always have 2 images here.
             if driver_output.image and expected_driver_output.image:
-                image_diff = port.diff_image(driver_output.image, expected_driver_output.image)[0]
-                # Non-chromium ports return 'None' since they don't implement diff_image.
-                if image_diff is not None:
+                image_diff = port.diff_image(driver_output.image, expected_driver_output.image, tolerance=0)[0]
+                if image_diff:
                     writer.write_image_diff_files(image_diff)
+                else:
+                    _log.warn('Can not get image diff. ImageDiff program might not work correctly.')
             writer.copy_file(failure.reference_filename)
         elif isinstance(failure, test_failures.FailureReftestMismatchDidNotOccur):
             writer.write_image_files(driver_output.image, expected_image=None)

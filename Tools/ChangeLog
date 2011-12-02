@@ -1,3 +1,30 @@
+2011-12-01  Hayato Ito  <hayato@chromium.org>
+
+        Explicitly pass tolerance=0 to port.diff_image in case of RefTestMismatch failure.
+        https://bugs.webkit.org/show_bug.cgi?id=73406
+
+        Reviewed by Ryosuke Niwa.
+
+        WebKitPort's image_diff uses tolerance='0.1' in default.
+        When reftests fail, we should use tolerace=0 when diff-ing images.
+
+        Since ImageDiff on chromium port doesn't use tolerance value as of now,
+        this change doesn't affect chromium port's behavior.
+
+        * Scripts/webkitpy/layout_tests/controllers/test_result_writer.py:
+        (write_test_result):
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        (Port.diff_image):
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        (ChromiumPort.diff_image):
+        * Scripts/webkitpy/layout_tests/port/test.py:
+        (TestPort.diff_image):
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+        (WebKitPort.diff_image):
+        (WebKitPort._start_image_diff_process):
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+        (MainTest.test_tolerance.ImageDiffTestPort.diff_image):
+
 2011-12-01  Adam Klein  <adamk@chromium.org>
 
         Add Chromium ToT GTest build bots (and group selection support) to flakiness dashboard

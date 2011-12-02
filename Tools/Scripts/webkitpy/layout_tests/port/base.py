@@ -260,7 +260,7 @@ class Port(object):
         """Return whether the two audio files are *not* equal."""
         return expected_audio != actual_audio
 
-    def diff_image(self, expected_contents, actual_contents, tolerance=0):
+    def diff_image(self, expected_contents, actual_contents, tolerance=None):
         """Compare two images and return a tuple of an image diff, and a percentage difference (0-100).
 
         |tolerance| should be a percentage value (0.0 - 100.0).

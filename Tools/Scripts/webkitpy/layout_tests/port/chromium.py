@@ -165,8 +165,11 @@ class ChromiumPort(Port):
         return self._check_file_exists(image_diff_path, 'image diff exe',
                                        override_step, logging)
 
-    def diff_image(self, expected_contents, actual_contents):
+    def diff_image(self, expected_contents, actual_contents, tolerance=None):
         # FIXME: need unit tests for this.
+
+        # tolerance is not used in chromium. Make sure caller doesn't pass tolerance other than zero or None.
+        assert (tolerance is None) or tolerance == 0
 
         # If only one of them exists, return that one.
         if not actual_contents and not expected_contents:

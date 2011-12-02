@@ -157,7 +157,7 @@ class WebKitPort(Port):
             return False
         return True
 
-    def diff_image(self, expected_contents, actual_contents):
+    def diff_image(self, expected_contents, actual_contents, tolerance=None):
         # Handle the case where the test didn't actually generate an image.
         # FIXME: need unit tests for this.
         if not actual_contents and not expected_contents:
@@ -167,17 +167,18 @@ class WebKitPort(Port):
             # Maybe we should throw an exception?
             return (True, 0)
 
-        process = self._start_image_diff_process(expected_contents, actual_contents)
+        process = self._start_image_diff_process(expected_contents, actual_contents, tolerance=tolerance)
         return self._read_image_diff(process)
 
-    def _start_image_diff_process(self, expected_contents, actual_contents):
+    def _start_image_diff_process(self, expected_contents, actual_contents, tolerance=None):
         # FIXME: There needs to be a more sane way of handling default
         # values for options so that you can distinguish between a default
         # value of None and a default value that wasn't set.
-        if self.get_option('tolerance') is not None:
-            tolerance = self.get_option('tolerance')
-        else:
-            tolerance = 0.1
+        if tolerance is None:
+            if self.get_option('tolerance') is not None:
+                tolerance = self.get_option('tolerance')
+            else:
+                tolerance = 0.1
         command = [self._path_to_image_diff(), '--tolerance', str(tolerance)]
         process = server_process.ServerProcess(self, 'ImageDiff', command)
 

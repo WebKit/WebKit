@@ -665,7 +665,7 @@ class MainTest(unittest.TestCase):
 
     def test_tolerance(self):
         class ImageDiffTestPort(TestPort):
-            def diff_image(self, expected_contents, actual_contents):
+            def diff_image(self, expected_contents, actual_contents, tolerance=None):
                 self.tolerance_used_for_diff_image = self._options.tolerance
                 return (True, 1)
 

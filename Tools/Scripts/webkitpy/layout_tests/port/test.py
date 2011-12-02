@@ -354,7 +354,7 @@ class TestPort(Port):
     def default_configuration(self):
         return 'Release'
 
-    def diff_image(self, expected_contents, actual_contents):
+    def diff_image(self, expected_contents, actual_contents, tolerance=None):
         diffed = actual_contents != expected_contents
         if diffed:
             return ["< %s\n---\n> %s\n" % (expected_contents, actual_contents), 1]
