@@ -69,8 +69,8 @@ class GtkDriver(WebKitDriver):
             self._xvfb_process = None
 
     def cmd_line(self):
-        config_path = self._port.path_from_webkit_base("Tools", "gtk", "jhbuildrc")
-        return ["jhbuild", "-f", config_path, "run"] + WebKitDriver.cmd_line(self)
+        wrapper_path = self._port.path_from_webkit_base("Tools", "gtk", "run-with-jhbuild")
+        return [wrapper_path] + WebKitDriver.cmd_line(self)
 
 
 class GtkPort(WebKitPort):

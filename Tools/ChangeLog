@@ -1,3 +1,21 @@
+2011-12-02  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Create a wrapper script that knows how to install jhbuild and run commands with it
+        https://bugs.webkit.org/show_bug.cgi?id=73669
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Add a wrapper script that knows how to install jhbuild and also to wrap commands
+        in the jhbuild shell.
+
+        * Scripts/webkitdirs.pm:
+        (runAutogenForAutotoolsProject): Use the new wrapper script.
+        (mustReRunAutogen): Ditto.
+        (buildAutotoolsProject): Ditto.
+        * Scripts/webkitpy/layout_tests/port/gtk.py:
+        (GtkDriver.cmd_line): Ditto.
+        * gtk/run-with-jhbuild: Added.
+
 2011-12-01  Adam Roben  <aroben@apple.com>
 
         Teach check-webkit-style how to check the syntax of JSON files

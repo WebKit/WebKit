@@ -84,7 +84,6 @@ my $generateDsym;
 my $isQt;
 my $qmakebin = "qmake"; # Allow override of the qmake binary from $PATH
 my $isGtk;
-my @jhbuildArgs;
 my $isWinCE;
 my $isWinCairo;
 my $isWx;
@@ -1610,8 +1609,7 @@ sub runAutogenForAutotoolsProject($@)
 
     # Prefix the command with jhbuild run.
     unshift(@buildArgs, "$relSourceDir/autogen.sh");
-    unshift(@buildArgs, @jhbuildArgs);
-
+    unshift(@buildArgs, "$sourceDir/Tools/gtk/run-with-jhbuild");
     if (system(@buildArgs) ne 0) {
         die "Calling autogen.sh failed!\n";
     }
@@ -1620,8 +1618,6 @@ sub runAutogenForAutotoolsProject($@)
 sub mustReRunAutogen($@)
 {
     my ($sourceDir, $filename, @currentArguments) = @_;
-
-    @jhbuildArgs = ("jhbuild", "-f", "$sourceDir/Tools/gtk/jhbuildrc", "run");
 
     if (! -e $filename) {
         return 1;
@@ -1738,8 +1734,9 @@ sub buildAutotoolsProject($@)
         runAutogenForAutotoolsProject($dir, $prefix, $sourceDir, $buildingWebKit, $autogenArgumentsFile, @buildArgs);
     }
 
-    my $jhbuild = join(' ', @jhbuildArgs);
-    if (system("$jhbuild $make $makeArgs") ne 0) {
+    my $gtkScriptsPath = "$sourceDir/Tools/gtk";
+    my $runWithJhbuild = "$gtkScriptsPath/run-with-jhbuild";
+    if (system("$runWithJhbuild $make $makeArgs") ne 0) {
         die "\nFailed to build WebKit using '$make'!\n";
     }
 
@@ -1747,7 +1744,7 @@ sub buildAutotoolsProject($@)
 
     if ($buildingWebKit) {
         my $relativeScriptsPath = relativeScriptsDir();
-        if (system("$jhbuild $relativeScriptsPath/../gtk/generate-gtkdoc --skip-html")) {
+        if (system("$runWithJhbuild $gtkScriptsPath/generate-gtkdoc --skip-html")) {
             die "\n gtkdoc did not build without warnings\n";
         }
     }
