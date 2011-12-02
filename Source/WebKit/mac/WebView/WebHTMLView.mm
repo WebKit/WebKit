@@ -201,6 +201,16 @@ static WebMenuTarget* target;
 - (BOOL)receivedUnhandledCommand;
 @end
 
+@interface WebLayerHostingFlippedView : NSView
+@end
+
+@implementation WebLayerHostingFlippedView
+- (BOOL)isFlipped
+{
+    return YES;
+}
+@end
+
 // if YES, do the standard NSView hit test (which can't give the right result when HTML overlaps a view)
 static BOOL forceNSViewHitTest;
 
@@ -5439,7 +5449,7 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
 - (void)attachRootLayer:(CALayer*)layer
 {
     if (!_private->layerHostingView) {
-        NSView* hostingView = [[NSView alloc] initWithFrame:[self bounds]];
+        NSView* hostingView = [[WebLayerHostingFlippedView alloc] initWithFrame:[self bounds]];
 #ifndef BUILDING_ON_LEOPARD
         [hostingView setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable)];
 #endif
