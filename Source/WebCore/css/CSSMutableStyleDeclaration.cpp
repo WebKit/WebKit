@@ -737,14 +737,6 @@ bool CSSMutableStyleDeclaration::setProperty(int propertyID, double value, CSSPr
     return true;
 }
 
-void CSSMutableStyleDeclaration::setStringProperty(int propertyId, const String &value, CSSPrimitiveValue::UnitTypes type, bool important)
-{
-    ASSERT(!m_iteratorCount);
-
-    setPropertyInternal(CSSProperty(propertyId, CSSPrimitiveValue::create(value, type), important));
-    setNeedsStyleRecalc();
-}
-
 void CSSMutableStyleDeclaration::setImageProperty(int propertyId, const String& url, bool important)
 {
     ASSERT(!m_iteratorCount);

@@ -1,3 +1,13 @@
+2011-12-01  Andreas Kling  <kling@webkit.org>
+
+        CSSMutableStyleDeclaration: Remove unused function setStringProperty().
+        <http://webkit.org/b/73597>
+
+        Reviewed by Darin Adler.
+
+        * css/CSSMutableStyleDeclaration.cpp:
+        * css/CSSMutableStyleDeclaration.h:
+
 2011-12-01  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION(r101268): Intermittent assertion failure in fast/block/child-not-removed-from-parent-lineboxes-crash.html
