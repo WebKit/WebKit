@@ -371,32 +371,27 @@ static String parseColorStringWithCrazyLegacyRules(const String& colorString)
 // Color parsing that matches HTML's "rules for parsing a legacy color value"
 void StyledElement::addCSSColor(Attribute* attribute, int id, const String& attributeValue)
 {
-    // The empty string doesn't apply a color. (Just whitespace does, which is why this check occurs before trimming.)
-    if (!attributeValue.length())
+    // An empty string doesn't apply a color. (One containing only whitespace does, which is why this check occurs before stripping.)
+    if (attributeValue.isEmpty())
         return;
-    
-    String color = attributeValue.stripWhiteSpace();
+
+    String colorString = attributeValue.stripWhiteSpace();
 
     // "transparent" doesn't apply a color either.
-    if (equalIgnoringCase(color, "transparent"))
+    if (equalIgnoringCase(colorString, "transparent"))
         return;
 
     if (!attribute->decl())
         createMappedDecl(attribute);
 
-    // If the string is a named CSS color, use that color.
-    Color foundColor;
-    foundColor.setNamedColor(color);
-    if (foundColor.isValid()) {
-        attribute->decl()->setProperty(id, color, false);
+    // If the string is a named CSS color or a 3/6-digit hex color, use that.
+    Color parsedColor(colorString);
+    if (parsedColor.isValid()) {
+        attribute->decl()->setProperty(id, colorString, false);
         return;
     }
 
-    // If the string is a 3 or 6-digit hex color, use that color.
-    if (color[0] == '#' && (color.length() == 4 || color.length() == 7) && attribute->decl()->setProperty(id, color, false))
-        return;
-
-    attribute->decl()->setProperty(id, parseColorStringWithCrazyLegacyRules(color), false);
+    attribute->decl()->setProperty(id, parseColorStringWithCrazyLegacyRules(colorString), false);
 }
 
 void StyledElement::createMappedDecl(Attribute* attr)

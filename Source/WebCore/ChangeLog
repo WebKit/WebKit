@@ -1,3 +1,17 @@
+2011-12-02  Andreas Kling  <kling@webkit.org>
+
+        StyledElement: Simplify addCSSColor().
+        <http://webkit.org/b/73703>
+
+        Reviewed by Darin Adler.
+
+        The Color(const String&) constructor handles both named and 3/6-digit
+        hex colors, so there's no need to handle those separately here.
+        Also tweaked some comments and minor things.
+
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::addCSSColor):
+
 2011-12-02  Benjamin Poulain  <bpoulain@apple.com>
 
         Update platform/iphone to platform/ios
