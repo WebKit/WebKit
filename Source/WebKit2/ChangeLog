@@ -1,3 +1,9 @@
+2011-12-02  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Unreviewed buildfix, add missing include.
+
+        * WebProcess/Notifications/WebNotificationManager.cpp:
+
 2011-12-02  Hajime Morrita  <morrita@chromium.org>
 
         Unreviewed, rolling out r101751 and r101775.

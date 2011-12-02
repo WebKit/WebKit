@@ -30,6 +30,7 @@
 #include "WebProcess.h"
 
 #if ENABLE(NOTIFICATIONS)
+#include "WebNotification.h"
 #include "WebNotificationManagerProxyMessages.h"
 #include <WebCore/Notification.h>
 #endif
