@@ -1,3 +1,16 @@
+2011-12-02  Enrica Casucci  <enrica@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=73497
+        This is a followup to the patch submitted for the bug above.
+        Tha patch was landed in r101575 and I missed to make one of the changes
+        suggested by the reviewer that had pointed out that the code was still
+        making use of the deprecatedNode method.
+
+        Unreviewed.
+
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::removeRedundantBlocks): Changed deprecatedNode to containerNode.
+
 2011-12-02  Tom Sepez  <tsepez@chromium.org>
 
         Content-security-policy script-src not enforced on workers.
