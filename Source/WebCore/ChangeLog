@@ -1,3 +1,99 @@
+2011-12-02  Kentaro Hara  <haraken@chromium.org>
+
+        Use the [Supplemental] IDL for webaudio attributes in Chromium
+        https://bugs.webkit.org/show_bug.cgi?id=73394
+
+        Reviewed by Adam Barth.
+
+        - Overview: Using the [Supplemental] IDL, this patch moves the attribute
+        declarations of webaudio from DOMWindow.idl into a new IDL file
+        webaudio/DOMWindowWebAudio.idl, which helps make webaudio a self-contained
+        feature (aka a module).
+
+        - This patch changes the build flow of WebCore.gyp as follows:
+
+            Previous build flow:
+                foreach $idl (all IDL files) {
+                    generate-bindings.pl depends on $idl;
+                    generate-bindings.pl reads $idl;
+                    generate-bindings.pl generates .h and .cpp files for $idl;
+                }
+
+            New build flow (See the discussions in bug 72138 for more details):
+                resolve-supplemental.pl depends on all IDL files;
+                resolve-supplemental.pl reads all IDL files;
+                resolve-supplemental.pl resolves the dependency of [Supplemental=XXXX];
+                resolve-supplemental.pl outputs supplemental_dependency.tmp;
+                foreach $idl (all IDL files) {
+                    generate-bindings.pl depends on $idl and supplemental_dependency.tmp;
+                    generate-bindings.pl reads $idl;
+                    generate-bindings.pl reads supplemental_dependency.tmp;
+                    generate-bindings.pl generates .h and .cpp files for $idl, including all attributes in IDL files whilementing $idl;
+                }
+
+        - This patch introduces a temporary IDL, [Supplemented]. The [Supplemented] IDL
+        will be removed after build scripts for all platforms support the [Supplemental] IDL.
+        The motivation for the [Supplemented] IDL is as follows:
+
+        In order to support the [Supplemental] IDL, we need to
+        (1) run resolve-supplemental.pl and generate supplemental_dependency.tmp
+        (2) and run generate-bindings.pl with the supplemental_dependency.tmp.
+
+        This build flow requires a change on the following build scripts,
+        but changing all the build scripts all at once without any regression is too difficult:
+
+            - DerivedSources.make
+            - DerivedSources.pri
+            - GNUmakefile.am
+            - PlatformBlackBerry.cmake
+            - UseJSC.cmake
+            - UseV8.cmake
+            - WebCore.vcproj/MigrateScripts
+            - WebCore.vcproj/WebCore.vcproj
+            - bindings/gobject/GNUmakefile.am
+            - WebCore.gyp/WebCore.gyp
+
+        Thus, we are planning to change the build scripts one by one, which implies that
+        we need to allow the temporary state in which some build scripts support [Supplemental] IDL
+        but others do not. To accomplish this, we introduce a temporary IDL, [Supplemented].
+        The [Supplemented] IDL on an attribute means that the attribute is marked with [Supplemental]
+        in another IDL file somewhere, like this:
+
+            DOMWindowWebAudio.idl:
+                interface [
+                    Supplemental=DOMWindow
+                ] DOMWindowWebAudio {
+                    attribute attr1;
+                    attribute attr2;
+                };
+
+            DOMWindow.idl:
+                interface [
+                ] DOMWindow {
+                    attribute [Supplemented] attr1; // This line will be removed after all build scripts support the [Su IDL
+                    attribute [Supplemented] attr2; // This line will be removed after all build scripts support the [Su IDL.
+                    attribute attr3;
+                    attribute attr4;
+                };
+
+        Assuming these IDL files, this patch implements the following logic in generate-bindings.pl:
+
+            - If a given build script supports the [Supplemental] IDL,
+            generate-bindings.pl ignores all attributes with the [Supplemented] IDL.
+            - Otherwise, generate-bindings.pl treats all attributes with the [Supplemented] IDL
+            as normal attributes and instead ignores all attributes with the [Supplemental] IDL
+            (i.e. generate-bindings.pl generates nothing from the IDL file with the [Supplemental] IDL).
+
+        Tests: webaudio/*
+
+        * WebCore.gyp/WebCore.gyp: Describes the build flow that I described above.
+        * WebCore.gyp/scripts/action_derivedsourcesallinone.py:
+        (main): Reads the IDL file names from the input file (i.e. supplemental_dependency.tmp), which are described at the first column of each line in the input file.
+        * WebCore.gypi: Added DOMWindowWebAudio.idl.
+        * bindings/scripts/generate-bindings.pl: As a temporary solution, if the platform does not support the [Supplemental] IDL, the perl script ignores the [Supplemental] IDL and instead uses the [Supplemented] IDL. Otherwise, the perl script ignores the [Supplemented] IDL and instead uses the [Supplemental] IDL.
+        * page/DOMWindow.idl: Added the [Supplemented] IDL to webaudio-related attributes. As I described above, the [Supplemented] IDL will be removed after all platforms support the [Supplemental] IDL.
+        * webaudio/DOMWindowWebAudio.idl: Added. Describes the [Supplemental=DOMWindow] IDL. The attributes in this IDL file should be treated as if they are written in DOMWindow.idl.
+
 2011-12-02  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Network panel row highlighting does not work.

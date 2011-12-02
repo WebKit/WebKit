@@ -32,12 +32,12 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-# action_derivedsourceslist.py generates a single cpp file that includes
+# action_derivedsourcesallinone.py generates a single cpp file that includes
 # all v8 bindings cpp files generated from idls. Files can be assigned into
 # multiple output files, to reduce maximum compilation unit size and allow
 # parallel compilation.
 #
-# usage: action_derivedsourceslist.py IDL_FILES_LIST -- OUTPUT_FILE1 OUTPUT_FILE2 ...
+# usage: action_derivedsourcesallinone.py IDL_FILES_LIST -- OUTPUT_FILE1 OUTPUT_FILE2 ...
 #
 # Note that IDL_FILES_LIST is a text file containing the IDL file paths.
 
@@ -186,7 +186,9 @@ def main(args):
     outputFileNames = args[inOutBreakIndex+1:]
 
     inputFile = open(inputFileName, 'r')
-    idlFileNames = inputFile.read().split('\n')
+    idlFileNames = []
+    for line in inputFile:
+        idlFileNames.append(line[:-1].split(' ')[0])
     inputFile.close()
 
     filesMetaData = extractMetaData(idlFileNames)
