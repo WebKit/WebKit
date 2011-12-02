@@ -1,3 +1,46 @@
+2011-12-01  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Parse reftest.list and extract types of ref tests
+        https://bugs.webkit.org/show_bug.cgi?id=66837
+
+        Reviewed by Dirk Pranke.
+
+        Add support for reftest.list to base port.
+
+        * Scripts/webkitpy/common/find_files.py:
+        (find):
+        * Scripts/webkitpy/layout_tests/controllers/single_test_runner.py:
+        (SingleTestRunner.__init__):
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        (Port.__init__): Initialize self._reftest_list. It's a dictionary mapping from a test directory
+        to a dictionary of {test path: ("==" or "!=", reference file path)}
+        (Port._get_reftest_list): Added; calls test_file.parse_reftest_list to fill self._reftest_list.
+        (Port._reference_file_for): Added; obtains the reference file name given a test name.
+        (Port.is_reftest): Added; Calls _reference_file_for.
+        (Port.reftest_expected_filename): Calls _reference_file_for.
+        (Port.reftest_expected_mismatch_filename): Ditto.
+        (Port.find_test_files):
+        (is_reference_html_file): Treat any file that starts with ref- or notref- or ends with
+        -expected, -expected-mismach, -ref, or -notref as a reference file.
+        (_is_test_file):
+        (_parse_reftest_list): Added.
+        * Scripts/webkitpy/layout_tests/port/base_unittest.py:
+        (PortTest.test_is_test_file):
+        (PortTest.test_parse_reftest_list):
+        * Scripts/webkitpy/layout_tests/port/dryrun.py:
+        (DryrunDriver.run_test):
+        * Scripts/webkitpy/layout_tests/port/test.py:
+        (unit_test_filesystem.add_test_file):
+        (unit_test_filesystem.add_file):
+        (unit_test_filesystem):
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+        (get_tests_run.RecordingTestDriver.run_test):
+        (MainTest.test_unexpected_failures):
+        (MainTest.test_missing_and_unexpected_results):
+        (EndToEndTest.test_end_to_end):
+        * Scripts/webkitpy/to_be_moved/rebaseline_chromium_webkit_tests.py:
+        (Rebaseliner._compile_rebaselining_tests):
+
 2011-12-01  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r101711.

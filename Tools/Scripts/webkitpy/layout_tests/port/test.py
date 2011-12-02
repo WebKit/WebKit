@@ -187,6 +187,13 @@ layer at (0,0) size 800x34
     tests.add_reftest('failures/unexpected/reftest.html', 'failures/unexpected/reftest-expected.html', same_image=False)
     tests.add_reftest('failures/unexpected/mismatch.html', 'failures/unexpected/mismatch-expected-mismatch.html', same_image=True)
     # FIXME: Add a reftest which crashes.
+    tests.add('reftests/foo/test.html')
+    tests.add('reftests/foo/test-ref.html')
+
+    # The following files shouldn't be treated as reftests
+    tests.add_reftest('reftests/foo/unlistedtest.html', 'reftests/foo/unlistedtest-expected.html', same_image=True)
+    tests.add('reftests/foo/reference/bar/common.html')
+    tests.add('reftests/foo/reftest/bar/shared.html')
 
     tests.add('websocket/tests/passes/text.html')
 
@@ -213,23 +220,25 @@ def unit_test_filesystem(files=None):
     test_list = unit_test_list()
     files = files or {}
 
-    def add_file(files, test, suffix, contents):
+    def add_test_file(files, test, suffix, contents):
         dirname = test.name[0:test.name.rfind('/')]
         base = test.base
-        path = LAYOUT_TEST_DIR + '/' + dirname + '/' + base + suffix
-        files[path] = contents
+        add_file(files, dirname + '/' + base + suffix, contents)
+
+    def add_file(files, file_name, contents):
+        files[LAYOUT_TEST_DIR + '/' + file_name] = contents
 
     # Add each test and the expected output, if any.
     for test in test_list.tests.values():
-        add_file(files, test, '.html', '')
+        add_test_file(files, test, '.html', '')
         if test.is_reftest:
             continue
         if test.actual_audio:
-            add_file(files, test, '-expected.wav', test.expected_audio)
+            add_test_file(files, test, '-expected.wav', test.expected_audio)
             continue
 
-        add_file(files, test, '-expected.txt', test.expected_text)
-        add_file(files, test, '-expected.png', test.expected_image)
+        add_test_file(files, test, '-expected.txt', test.expected_text)
+        add_test_file(files, test, '-expected.png', test.expected_image)
 
 
     # Add the test_expectations file.
@@ -254,6 +263,10 @@ WONTFIX SKIP : failures/expected/hang.html = TIMEOUT
 WONTFIX SKIP : failures/expected/keyboard.html = CRASH
 WONTFIX SKIP : failures/expected/exception.html = CRASH
 """
+
+    add_file(files, 'reftests/foo/reftest.list', """
+== test.html test-ref.html
+""")
 
     # FIXME: This test was only being ignored because of missing a leading '/'.
     # Fixing the typo causes several tests to assert, so disabling the test entirely.

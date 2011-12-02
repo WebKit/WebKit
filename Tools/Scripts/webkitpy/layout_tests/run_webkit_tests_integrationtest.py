@@ -36,8 +36,8 @@ from __future__ import with_statement
 import codecs
 import itertools
 import logging
-import os
 import Queue
+import re
 import sys
 import thread
 import time
@@ -166,7 +166,9 @@ def get_tests_run(extra_args=None, tests_included=False, flatten_batches=False,
             # In case of reftest, one test calls the driver's run_test() twice.
             # We should not add a reference html used by reftests to tests unless include_reference_html parameter
             # is explicitly given.
-            if include_reference_html or not is_reference_html_file(test_input.test_name):
+            filesystem = self._port.host.filesystem
+            dirname, filename = filesystem.split(test_name)
+            if include_reference_html or not is_reference_html_file(filesystem, dirname, filename):
                 self._current_test_batch.append(test_name)
             return TestDriver.run_test(self, test_input)
 
@@ -426,7 +428,7 @@ class MainTest(unittest.TestCase):
 
         # Update this magic number if you add an unexpected test to webkitpy.layout_tests.port.test
         # FIXME: It's nice to have a routine in port/test.py that returns this number.
-        unexpected_tests_count = 7
+        unexpected_tests_count = 8
 
         self.assertEqual(res, unexpected_tests_count)
         self.assertFalse(out.empty())
@@ -448,8 +450,22 @@ class MainTest(unittest.TestCase):
         expected_token = '"unexpected":{"text-image-checksum.html":{"expected":"PASS","actual":"TEXT"},"missing_text.html":{"expected":"PASS","is_missing_text":true,"actual":"MISSING"}'
         json_string = fs.read_text_file('/tmp/layout-test-results/full_results.json')
         self.assertTrue(json_string.find(expected_token) != -1)
-        self.assertTrue(json_string.find('"num_regression":1') == -1)
-        self.assertTrue(json_string.find('"num_flaky":1') == -1)
+        self.assertTrue(json_string.find('"num_regressions":1') != -1)
+        self.assertTrue(json_string.find('"num_flaky":0') != -1)
+        self.assertTrue(json_string.find('"num_missing":1') != -1)
+
+    def test_missing_and_unexpected_results(self):
+        # Test that we update expectations in place. If the expectation
+        # is missing, update the expected generic location.
+        fs = unit_test_filesystem()
+        res, out, err, _ = logging_run(['--no-show-results', 'reftests/foo/'], tests_included=True, filesystem=fs, record_results=True)
+        file_list = fs.written_files.keys()
+        file_list.remove('/tmp/layout-test-results/tests_run0.txt')
+        self.assertEquals(res, 1)
+        json_string = fs.read_text_file('/tmp/layout-test-results/full_results.json')
+        self.assertTrue(json_string.find('"unlistedtest.html":{"expected":"PASS","is_missing_text":true,"actual":"MISSING","is_missing_image":true}') != -1)
+        self.assertTrue(json_string.find('"num_regressions":1') != -1)
+        self.assertTrue(json_string.find('"num_flaky":0') != -1)
         self.assertTrue(json_string.find('"num_missing":1') != -1)
 
     def test_missing_and_unexpected_results_with_custom_exit_code(self):
@@ -762,8 +778,11 @@ class EndToEndTest(unittest.TestCase):
         fs = unit_test_filesystem()
         res, out, err, user = logging_run(record_results=True, tests_included=True, filesystem=fs)
 
-        # Seven tests should fail, so the return code should be 7.
-        self.assertEquals(res, 7)
+        # Update this magic number if you add an unexpected test to webkitpy.layout_tests.port.test
+        # FIXME: It's nice to have a routine in port/test.py that returns this number.
+        unexpected_tests_count = 8
+
+        self.assertEquals(res, unexpected_tests_count)
         results = self.parse_full_results(fs.files['/tmp/layout-test-results/full_results.json'])
 
         # Check to ensure we're passing back image diff %age correctly.

@@ -68,17 +68,15 @@ class SingleTestRunner:
             return
 
         reftest_expected_filename = port.reftest_expected_filename(self._test_name)
-        if fs.exists(reftest_expected_filename):
+        if reftest_expected_filename and fs.exists(reftest_expected_filename):
             self._is_reftest = True
             self._reference_filename = reftest_expected_filename
 
         reftest_expected_mismatch_filename = port.reftest_expected_mismatch_filename(self._test_name)
-        if fs.exists(reftest_expected_mismatch_filename):
+        if reftest_expected_mismatch_filename and fs.exists(reftest_expected_mismatch_filename):
             if self._is_reftest:
-                _log.error('It is not allowed that one test file has both'
-                           ' expected.html file and expected-mismatch.html file'
-                           ' at the same time. Please remove either %s or %s.',
-                           reftest_expected_filename, reftest_expected_mismatch_filename)
+                _log.error('One test file cannot have both match and mismatch references. Please remove either %s or %s',
+                    reftest_expected_filename, reftest_expected_mismatch_filename)
             else:
                 self._is_reftest = True
                 self._is_mismatch_reftest = True

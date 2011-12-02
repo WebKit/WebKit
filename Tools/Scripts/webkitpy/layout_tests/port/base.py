@@ -36,6 +36,7 @@ import cgi
 import difflib
 import errno
 import os
+import re
 
 from webkitpy.common.memoized import memoized
 
@@ -147,6 +148,7 @@ class Port(object):
 
         self.set_option_default('configuration', self.default_configuration())
         self._test_configuration = None
+        self._reftest_list = {}
         self._multiprocessing_is_available = (multiprocessing is not None)
         self._results_directory = None
 
@@ -424,13 +426,40 @@ class Port(object):
         text = self._filesystem.read_binary_file(baseline_path)
         return text.replace("\r\n", "\n")
 
+    def _get_reftest_list(self, test_name):
+        dirname = self._filesystem.join(self.layout_tests_dir(), self._filesystem.dirname(test_name))
+        if dirname not in self._reftest_list:
+            self._reftest_list[dirname] = _parse_reftest_list(self._filesystem, dirname)
+        return self._reftest_list[dirname]
+
+    def _reference_file_for(self, test_name, expectation):
+        reftest_list = self._get_reftest_list(test_name)
+        if not reftest_list:
+            if expectation == '==':
+                return self.expected_filename(test_name, '.html')
+            else:
+                return self.expected_filename(test_name, '-mismatch.html')
+
+        filename = self._filesystem.join(self.layout_tests_dir(), test_name)
+        if filename not in reftest_list or reftest_list[filename][0] != expectation:
+            return None
+        return reftest_list[filename][1]
+
+    def is_reftest(self, test_name):
+        reftest_list = self._get_reftest_list(test_name)
+        if not reftest_list:
+            has_expected = self._filesystem.exists(self.expected_filename(test_name, '.html'))
+            return has_expected or self._filesystem.exists(self.expected_filename(test_name, '-mismatch.html'))
+        filename = self._filesystem.join(self.layout_tests_dir(), test_name)
+        return filename in reftest_list
+
     def reftest_expected_filename(self, test_name):
         """Return the filename of reference we expect the test matches."""
-        return self.expected_filename(test_name, '.html')
+        return self._reference_file_for(test_name, '==')
 
     def reftest_expected_mismatch_filename(self, test_name):
         """Return the filename of reference we don't expect the test matches."""
-        return self.expected_filename(test_name, '-mismatch.html')
+        return self._reference_file_for(test_name, '!=')
 
     def test_to_uri(self, test_name):
         """Convert a test name to a URI."""
@@ -466,7 +495,7 @@ class Port(object):
 
     def find_test_files(self, paths):
         # When collecting test cases, skip these directories
-        skipped_directories = set(['.svn', '_svn', 'resources', 'script-tests'])
+        skipped_directories = set(['.svn', '_svn', 'resources', 'script-tests', 'reference', 'reftest'])
         return find_files.find(self.filesystem, self.layout_tests_dir(), paths, skipped_directories, _is_test_file)
 
     def test_dirs(self):
@@ -1002,12 +1031,17 @@ class Port(object):
 
 
 # When collecting test cases, we include any file with these extensions.
-_supported_file_extensions = set(['.html', '.shtml', '.xml', '.xhtml', '.pl',
-                                 '.htm', '.php', '.svg', '.mht'])
+_supported_file_extensions = set(['.html', '.shtml', '.xml', '.xhtml', '.pl', '.htm', '.php', '.svg', '.mht'])
 
 
-def is_reference_html_file(filename):
-    return filename.endswith('-expected.html') or filename.endswith('-expected-mismatch.html')
+def is_reference_html_file(filesystem, dirname, filename):
+    if filename.startswith('ref-') or filename.endswith('notref-'):
+        return True
+    filename_wihout_ext, unused = filesystem.splitext(filename)
+    for suffix in ['-expected', '-expected-mismatch', '-ref', '-notref']:
+        if filename_wihout_ext.endswith(suffix):
+            return True
+    return False
 
 
 def _has_supported_extension(filesystem, filename):
@@ -1017,4 +1051,21 @@ def _has_supported_extension(filesystem, filename):
 
 
 def _is_test_file(filesystem, dirname, filename):
-    return _has_supported_extension(filesystem, filename) and not is_reference_html_file(filename)
+    return _has_supported_extension(filesystem, filename) and not is_reference_html_file(filesystem, dirname, filename)
+
+
+def _parse_reftest_list(filesystem, test_dirpath):
+    reftest_list_path = filesystem.join(test_dirpath, 'reftest.list')
+    if not filesystem.isfile(reftest_list_path):
+        return None
+    reftest_list_file = filesystem.read_text_file(reftest_list_path)
+
+    parsed_list = dict()
+    for line in reftest_list_file.split('\n'):
+        line = re.sub('#.+$', '', line)
+        split_line = line.split()
+        if len(split_line) < 3:
+            continue
+        expectation_type, test_file, ref_file = split_line
+        parsed_list[filesystem.join(test_dirpath, test_file)] = (expectation_type, filesystem.join(test_dirpath, ref_file))
+    return parsed_list

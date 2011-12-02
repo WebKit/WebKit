@@ -251,9 +251,7 @@ class Rebaseliner(object):
 
         fs = self._target_port._filesystem
         for test in self._rebaselining_tests:
-            test_abspath = self._target_port.abspath_for_test(test)
-            if (fs.exists(self._target_port.reftest_expected_filename(test_abspath)) or
-                fs.exists(self._target_port.reftest_expected_mismatch_filename(test_abspath))):
+            if self._target_port.is_reftest(test):
                 _log.error('%s seems to be a reftest. We can not rebase for reftests.', test)
                 self._rebaselining_tests = set()
                 return False

@@ -112,9 +112,7 @@ class DryrunDriver(Driver):
     def run_test(self, driver_input):
         start_time = time.time()
         fs = self._port._filesystem
-        if (fs.exists(self._port.reftest_expected_filename(driver_input.test_name)) or
-            fs.exists(self._port.reftest_expected_mismatch_filename(driver_input.test_name)) or
-            driver_input.test_name.endswith('-expected.html')):
+        if (self._port.is_reftest(driver_input.test_name) or driver_input.test_name.endswith('-expected.html')):
             text = 'test-text'
             image = 'test-image'
             checksum = 'test-checksum'

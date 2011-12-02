@@ -43,6 +43,7 @@ from webkitpy.common.host_mock import MockHost
 
 from webkitpy.layout_tests.port import Port, Driver, DriverOutput
 from webkitpy.layout_tests.port.base import _is_test_file
+from webkitpy.layout_tests.port.base import _parse_reftest_list
 from webkitpy.layout_tests.port.test import TestPort
 
 import config
@@ -306,10 +307,29 @@ class PortTest(unittest.TestCase):
         filesystem = MockFileSystem()
         self.assertTrue(_is_test_file(filesystem, '', 'foo.html'))
         self.assertTrue(_is_test_file(filesystem, '', 'foo.shtml'))
+        self.assertTrue(_is_test_file(filesystem, '', 'test-ref-test.html'))
         self.assertFalse(_is_test_file(filesystem, '', 'foo.png'))
         self.assertFalse(_is_test_file(filesystem, '', 'foo-expected.html'))
         self.assertFalse(_is_test_file(filesystem, '', 'foo-expected-mismatch.html'))
+        self.assertFalse(_is_test_file(filesystem, '', 'foo-ref.html'))
+        self.assertFalse(_is_test_file(filesystem, '', 'foo-notref.html'))
+        self.assertFalse(_is_test_file(filesystem, '', 'foo-notref.xht'))
+        self.assertFalse(_is_test_file(filesystem, '', 'foo-ref.xhtml'))
+        self.assertFalse(_is_test_file(filesystem, '', 'ref-foo.html'))
+        self.assertFalse(_is_test_file(filesystem, '', 'notref-foo.xhr'))
 
+    def test_parse_reftest_list(self):
+        port = TestPort()
+        port.host.filesystem.files['bar/reftest.list'] = "\n".join(["== test.html test-ref.html",
+        "",
+        "# some comment",
+        "!= test-2.html test-notref.html # more comments",
+        "== test-3.html test-ref.html"])
+
+        reftest_list = _parse_reftest_list(port.host.filesystem, 'bar')
+        self.assertEqual(reftest_list, {'bar/test.html': ('==', 'bar/test-ref.html'),
+            'bar/test-2.html': ('!=', 'bar/test-notref.html'),
+            'bar/test-3.html': ('==', 'bar/test-ref.html')})
 
 class VirtualTest(unittest.TestCase):
     """Tests that various methods expected to be virtual are."""
