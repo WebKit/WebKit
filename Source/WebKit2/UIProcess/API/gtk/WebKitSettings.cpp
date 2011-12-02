@@ -101,6 +101,7 @@ enum {
     PROP_ENABLE_DEVELOPER_EXTRAS,
     PROP_ENABLE_RESIZABLE_TEXT_AREAS,
     PROP_ENABLE_TABS_TO_LINKS,
+    PROP_ENABLE_DNS_PREFETCHING,
     PROP_ENABLE_CARET_BROWSING,
 };
 
@@ -189,6 +190,9 @@ static void webKitSettingsSetProperty(GObject* object, guint propId, const GValu
         break;
     case PROP_ENABLE_TABS_TO_LINKS:
         webkit_settings_set_enable_tabs_to_links(settings, g_value_get_boolean(value));
+        break;
+    case PROP_ENABLE_DNS_PREFETCHING:
+        webkit_settings_set_enable_dns_prefetching(settings, g_value_get_boolean(value));
         break;
     case PROP_ENABLE_CARET_BROWSING:
         webkit_settings_set_enable_caret_browsing(settings, g_value_get_boolean(value));
@@ -284,6 +288,9 @@ static void webKitSettingsGetProperty(GObject* object, guint propId, GValue* val
         break;
     case PROP_ENABLE_TABS_TO_LINKS:
         g_value_set_boolean(value, webkit_settings_get_enable_tabs_to_links(settings));
+        break;
+    case PROP_ENABLE_DNS_PREFETCHING:
+        g_value_set_boolean(value, webkit_settings_get_enable_dns_prefetching(settings));
         break;
     case PROP_ENABLE_CARET_BROWSING:
         g_value_set_boolean(value, webkit_settings_get_enable_caret_browsing(settings));
@@ -692,6 +699,20 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
                                                          _("Enable tabs to links"),
                                                          _("Whether to enable tabs to links"),
                                                          TRUE,
+                                                         readWriteConstructParamFlags));
+
+    /**
+     * WebKitSettings:enable-dns-prefetching:
+     *
+     * Determines whether or not to prefetch domain names. DNS prefetching attempts
+     * to resolve domain names before a user tries to follow a link.
+     */
+    g_object_class_install_property(gObjectClass,
+                                    PROP_ENABLE_DNS_PREFETCHING,
+                                    g_param_spec_boolean("enable-dns-prefetching",
+                                                         _("Enable DNS prefetching"),
+                                                         _("Whether to enable DNS prefetching"),
+                                                         FALSE,
                                                          readWriteConstructParamFlags));
 
     /**
@@ -1753,6 +1774,41 @@ void webkit_settings_set_enable_tabs_to_links(WebKitSettings* settings, gboolean
 
     WKPreferencesSetTabsToLinks(priv->preferences.get(), enabled);
     g_object_notify(G_OBJECT(settings), "enable-tabs-to-links");
+}
+
+/**
+ * webkit_settings_get_enable_dns_prefetching:
+ * @settings: a #WebKitSettings
+ *
+ * Get the #WebKitSettings:enable-dns-prefetching property.
+ *
+ * Returns: %TRUE If DNS prefetching is enabled or %FALSE otherwise.
+ */
+gboolean webkit_settings_get_enable_dns_prefetching(WebKitSettings* settings)
+{
+    g_return_val_if_fail(WEBKIT_IS_SETTINGS(settings), FALSE);
+
+    return WKPreferencesGetDNSPrefetchingEnabled(settings->priv->preferences.get());
+}
+
+/**
+ * webkit_settings_set_enable_dns_prefetching:
+ * @settings: a #WebKitSettings
+ * @enabled: Value to be set
+ *
+ * Set the #WebKitSettings:enable-dns-prefetching property.
+ */
+void webkit_settings_set_enable_dns_prefetching(WebKitSettings* settings, gboolean enabled)
+{
+    g_return_if_fail(WEBKIT_IS_SETTINGS(settings));
+
+    WebKitSettingsPrivate* priv = settings->priv;
+    bool currentValue = WKPreferencesGetDNSPrefetchingEnabled(priv->preferences.get());
+    if (currentValue == enabled)
+        return;
+
+    WKPreferencesSetDNSPrefetchingEnabled(priv->preferences.get(), enabled);
+    g_object_notify(G_OBJECT(settings), "enable-dns-prefetching");
 }
 
 /**
