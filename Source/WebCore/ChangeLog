@@ -1,3 +1,19 @@
+2011-12-02  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r101783.
+        http://trac.webkit.org/changeset/101783
+        https://bugs.webkit.org/show_bug.cgi?id=73652
+
+        Broke chromium win build. (Requested by vsevik on #webkit).
+
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.gyp/scripts/action_derivedsourcesallinone.py:
+        (main):
+        * WebCore.gypi:
+        * bindings/scripts/generate-bindings.pl:
+        * page/DOMWindow.idl:
+        * webaudio/DOMWindowWebAudio.idl: Removed.
+
 2011-11-28  Alexander Pavlov  <apavlov@chromium.org>
 
         Inline non-replaced elements are reported to have zero width and height
