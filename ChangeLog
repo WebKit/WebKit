@@ -1,3 +1,12 @@
+2011-12-02  Martin Robinson  <mrobinson@igalia.com>
+
+        Try to fix the GTK+ debug bot. As discussed with other GTK+
+        hackers recently. It makes sense to just remove G_DISABLE_DEPRECATIONS
+        now in WebKit. The flag itself is now deprecated in GLib in favor of
+        the gcc attribute.
+
+        * GNUmakefile.am: Remove G_DISABLE_DEPRECATED.
+
 2011-12-02  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Unreviewed build fixes for Windows build.
