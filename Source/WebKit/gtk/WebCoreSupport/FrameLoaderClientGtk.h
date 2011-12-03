@@ -75,6 +75,7 @@ namespace WebKit {
         virtual void dispatchDidCancelClientRedirect();
         virtual void dispatchWillPerformClientRedirect(const WebCore::KURL&, double, double);
         virtual void dispatchDidChangeLocationWithinPage();
+        virtual void dispatchDidNavigateWithinPage();
         virtual void dispatchDidPushStateWithinPage();
         virtual void dispatchDidReplaceStateWithinPage();
         virtual void dispatchDidPopStateWithinPage();

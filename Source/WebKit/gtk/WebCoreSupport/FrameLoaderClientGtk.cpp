@@ -792,19 +792,41 @@ void FrameLoaderClient::dispatchDidChangeLocationWithinPage()
         g_object_notify(G_OBJECT(webView), "uri");
 }
 
+void FrameLoaderClient::dispatchDidNavigateWithinPage()
+{
+    WebKitWebView* webView = getViewFromFrame(m_frame);
+    WebKitWebFrame* mainFrame = webView->priv->mainFrame;
+    WebKitWebDataSource* dataSource = webkit_web_frame_get_data_source(mainFrame);
+    bool loaderCompleted = !webkit_web_data_source_is_loading(dataSource);
+
+    if (!loaderCompleted)
+        return;
+
+    // No provisional load started, because:
+    // - It will break (no provisional data source at this point).
+    // - There's no provisional load going on anyway, the URI is being
+    //   programatically changed.
+    // FIXME: this is not ideal, but it seems safer than changing our
+    // current contract with the clients about provisional data
+    // sources not being '0' during the provisional load stage.
+    dispatchDidCommitLoad();
+    dispatchDidFinishLoad();
+}
+
 void FrameLoaderClient::dispatchDidPushStateWithinPage()
 {
-    notImplemented();
+    dispatchDidNavigateWithinPage();
 }
 
 void FrameLoaderClient::dispatchDidReplaceStateWithinPage()
 {
-    notImplemented();
+    dispatchDidNavigateWithinPage();
 }
 
 void FrameLoaderClient::dispatchDidPopStateWithinPage()
 {
-    notImplemented();
+    // No need to do anything, we already called
+    // dispatchDidNavigateWithinPage() in PushStateWithinPage().
 }
 
 void FrameLoaderClient::dispatchWillClose()

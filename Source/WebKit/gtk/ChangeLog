@@ -1,3 +1,26 @@
+2011-12-03  Xan Lopez  <xlopez@igalia.com>
+
+        [GTK] Implement History API FrameLoaderClient methods
+        https://bugs.webkit.org/show_bug.cgi?id=59017
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Fake the load process when the new HTML5 History APIs are
+        used. Otherwise the UA does not have a chance of updating the URL
+        entry, back/forward buttons, etc.
+
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::FrameLoaderClient::dispatchDidNavigateWithinPage): fake a
+        load process.
+        (WebKit::FrameLoaderClient::dispatchDidPushStateWithinPage): call
+        dispatchDidNavigateWithinPage.
+        (WebKit::FrameLoaderClient::dispatchDidReplaceStateWithinPage):
+        ditto.
+        (WebKit::FrameLoaderClient::dispatchDidPopStateWithinPage): do
+        nothing, because push was already called, but note this in a
+        comment.
+        * WebCoreSupport/FrameLoaderClientGtk.h: add the new method.
+
 2011-12-02  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] Fullscreen controller support for the new WebKit Fullscreen API
