@@ -844,7 +844,7 @@ bool CSSParser::parseValue(int propId, bool important)
     if (id == CSSValueInherit) {
         if (num != 1)
             return false;
-        addProperty(propId, CSSInheritedValue::create(), important);
+        addProperty(propId, cssValuePool()->createInheritedValue(), important);
         return true;
     }
     else if (id == CSSValueInitial) {

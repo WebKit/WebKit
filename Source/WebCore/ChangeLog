@@ -1,5 +1,22 @@
 2011-12-03  Andreas Kling  <kling@webkit.org>
 
+        Keep CSSInheritedValue in the CSS value pool.
+        <http://webkit.org/b/73747>
+
+        Reviewed by Antti Koivisto.
+
+        We only need one CSSInheritedValue instance per document, so cache it
+        in CSSValuePool and have the parser create it through there.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        * css/CSSValuePool.cpp:
+        (WebCore::CSSValuePool::CSSValuePool):
+        (WebCore::CSSValuePool::createInheritedValue):
+        * css/CSSValuePool.h:
+
+2011-12-03  Andreas Kling  <kling@webkit.org>
+
         Rename CSSPrimitiveValueCache to CSSValuePool.
         <http://webkit.org/b/73742>
 

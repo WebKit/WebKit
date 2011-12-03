@@ -26,6 +26,7 @@
 #ifndef CSSValuePool_h
 #define CSSValuePool_h
 
+#include "CSSInheritedValue.h"
 #include "CSSPrimitiveValue.h"
 #include <wtf/HashMap.h>
 #include <wtf/RefPtr.h>
@@ -37,6 +38,7 @@ public:
     static PassRefPtr<CSSValuePool> create() { return adoptRef(new CSSValuePool); }
     ~CSSValuePool();
 
+    PassRefPtr<CSSInheritedValue> createInheritedValue();
     PassRefPtr<CSSPrimitiveValue> createIdentifierValue(int identifier);
     PassRefPtr<CSSPrimitiveValue> createColorValue(unsigned rgbValue);
     PassRefPtr<CSSPrimitiveValue> createValue(double value, CSSPrimitiveValue::UnitTypes);
@@ -45,6 +47,8 @@ public:
 
 private:
     CSSValuePool();
+
+    RefPtr<CSSInheritedValue> m_inheritedValue;
 
     typedef HashMap<int, RefPtr<CSSPrimitiveValue> > IdentifierValueCache;
     IdentifierValueCache m_identifierValueCache;
