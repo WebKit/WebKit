@@ -97,14 +97,23 @@ TEST_F(WebViewTest, FocusIsInactive)
     WebView* webView = FrameTestHelpers::createWebViewAndLoad(m_baseURL + "visible_iframe.html");
 
     webView->setFocus(true);
+    webView->setIsActive(true);
     WebFrameImpl* frame = static_cast<WebFrameImpl*>(webView->mainFrame());
     EXPECT_TRUE(frame->frame()->document()->isHTMLDocument());
 
     WebCore::HTMLDocument* document = static_cast<WebCore::HTMLDocument*>(frame->frame()->document());
     EXPECT_TRUE(document->hasFocus());
     webView->setFocus(false);
+    webView->setIsActive(false);
     EXPECT_FALSE(document->hasFocus());
     webView->setFocus(true);
+    webView->setIsActive(true);
+    EXPECT_TRUE(document->hasFocus());
+    webView->setFocus(true);
+    webView->setIsActive(false);
+    EXPECT_FALSE(document->hasFocus());
+    webView->setFocus(false);
+    webView->setIsActive(true);
     EXPECT_TRUE(document->hasFocus());
 
     webView->close();

@@ -1,3 +1,19 @@
+2011-12-02  Nate Chapin  <japhet@chromium.org>
+
+        Don't call FocusController:setActive() in 
+        WebViewImpl::setFocus(), since being active and
+        being focused are different concepts and chromium
+        now properly sends setActive IPCs on all platforms.
+        https://bugs.webkit.org/show_bug.cgi?id=73687
+
+        Reviewed by Eric Seidel.
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::setFocus):
+        * tests/WebViewTest.cpp: Test how different combinations of
+            setIsActive() and setFocus() affect whether the document
+            has focus.
+
 2011-12-02  Dave Michael  <dmichael@chromium.org>
 
         Add WebArrayBuffer to chromium API

@@ -1423,7 +1423,6 @@ void WebViewImpl::mouseCaptureLost()
 void WebViewImpl::setFocus(bool enable)
 {
     m_page->focusController()->setFocused(enable);
-    m_page->focusController()->setActive(enable);
     if (enable) {
         RefPtr<Frame> focusedFrame = m_page->focusController()->focusedFrame();
         if (focusedFrame) {
