@@ -1,3 +1,13 @@
+2011-12-02  Eric Seidel  <eric@webkit.org>
+
+        Enable parallel testing for Win and Gtk bots
+        after confirming with Lucas and Martin the bots should be OK.
+
+        Unreviewed. (I ran the idea by Lucas and Martin.)
+
+        * Scripts/run-webkit-tests:
+        (platformIsReadyForParallelTesting):
+
 2011-12-02  Martin Robinson  <mrobinson@igalia.com>
 
         Try to fix the GTK+ build.
