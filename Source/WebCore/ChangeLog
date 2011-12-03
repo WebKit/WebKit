@@ -1,3 +1,13 @@
+2011-12-02  Dmitry Lomov  <dslomov@google.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=73691
+        [JSC] Implement correct order of window.postMessage arguments.
+
+        Reviewed by Geoffrey Garen.
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::handlePostMessage):
+
 2011-12-02  Stephen Chenney  <schenney@chromium.org>
 
         REGRESSION (r91125): Polyline tool in google docs is broken
