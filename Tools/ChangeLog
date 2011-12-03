@@ -1,3 +1,13 @@
+2011-12-03  Philippe Normand  <pnormand@igalia.com>
+
+        Another GTK build fix after r101922.
+
+        Rubber-stamped by Martin James Robinson.
+
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
+        (LayoutTestController::pathToLocalResource): return value needs to
+        be a URI.
+
 2011-12-03  Martin Robinson  <mrobinson@igalia.com>
 
         Small fix for my previous patch. Do not try to delete a member

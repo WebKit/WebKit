@@ -207,7 +207,8 @@ JSStringRef LayoutTestController::pathToLocalResource(JSContextRef context, JSSt
 
     const char* layoutTestsSuffix = urlCString.get() + strlen("file:///tmp/");
     GOwnPtr<char> testPath(g_build_filename(getTopLevelPath().data(), layoutTestsSuffix, NULL));
-    return JSStringCreateWithUTF8CString(testPath.get());
+    GOwnPtr<char> testURI(g_filename_to_uri(testPath.get(), 0, 0));
+    return JSStringCreateWithUTF8CString(testURI.get());
 }
 
 void LayoutTestController::queueLoad(JSStringRef url, JSStringRef target)
