@@ -1,3 +1,82 @@
+2011-12-03  Mary Wu  <mary.wu@torchmobile.com.cn>
+
+        Upstream 4 files into WebCore/platform/blackberry
+        https://bugs.webkit.org/show_bug.cgi?id=73614
+
+        Reviewed by Eric Seidel.
+
+        * platform/blackberry/CursorBlackBerry.cpp: Added.
+        (WebCore::AllCursors::AllCursors):
+        (WebCore::getCursor):
+        (WebCore::Cursor::Cursor):
+        (WebCore::Cursor::~Cursor):
+        (WebCore::Cursor::operator=):
+        (WebCore::aliasCursor):
+        (WebCore::cellCursor):
+        (WebCore::columnResizeCursor):
+        (WebCore::contextMenuCursor):
+        (WebCore::copyCursor):
+        (WebCore::crossCursor):
+        (WebCore::eastResizeCursor):
+        (WebCore::eastWestResizeCursor):
+        (WebCore::grabbingCursor):
+        (WebCore::grabCursor):
+        (WebCore::handCursor):
+        (WebCore::helpCursor):
+        (WebCore::iBeamCursor):
+        (WebCore::moveCursor):
+        (WebCore::noDropCursor):
+        (WebCore::noneCursor):
+        (WebCore::northEastResizeCursor):
+        (WebCore::northEastSouthWestResizeCursor):
+        (WebCore::northResizeCursor):
+        (WebCore::northSouthResizeCursor):
+        (WebCore::northWestResizeCursor):
+        (WebCore::northWestSouthEastResizeCursor):
+        (WebCore::notAllowedCursor):
+        (WebCore::pointerCursor):
+        (WebCore::progressCursor):
+        (WebCore::rowResizeCursor):
+        (WebCore::southEastResizeCursor):
+        (WebCore::southResizeCursor):
+        (WebCore::southWestResizeCursor):
+        (WebCore::verticalTextCursor):
+        (WebCore::waitCursor):
+        (WebCore::westResizeCursor):
+        (WebCore::zoomInCursor):
+        (WebCore::zoomOutCursor):
+        (WebCore::middlePanningCursor):
+        (WebCore::eastPanningCursor):
+        (WebCore::northPanningCursor):
+        (WebCore::northEastPanningCursor):
+        (WebCore::northWestPanningCursor):
+        (WebCore::southPanningCursor):
+        (WebCore::southEastPanningCursor):
+        (WebCore::southWestPanningCursor):
+        (WebCore::westPanningCursor):
+        * platform/blackberry/DragDataBlackBerry.cpp: Added.
+        (WebCore::DragData::canSmartReplace):
+        (WebCore::DragData::containsColor):
+        (WebCore::DragData::containsCompatibleContent):
+        (WebCore::DragData::containsFiles):
+        (WebCore::DragData::containsPlainText):
+        (WebCore::DragData::containsURL):
+        (WebCore::DragData::asFilenames):
+        (WebCore::DragData::asColor):
+        (WebCore::DragData::asPlainText):
+        (WebCore::DragData::asURL):
+        (WebCore::DragData::asFragment):
+        * platform/blackberry/DragImageBlackBerry.cpp: Added.
+        (WebCore::createDragImageFromImage):
+        (WebCore::createDragImageIconForCachedImage):
+        (WebCore::deleteDragImage):
+        (WebCore::dissolveDragImageToFraction):
+        (WebCore::scaleDragImage):
+        (WebCore::dragImageSize):
+        * platform/blackberry/EventLoopBlackBerry.cpp: Added.
+        (WebCore::EventLoop::platformInit):
+        (WebCore::EventLoop::cycle):
+
 2011-12-03  Andreas Kling  <kling@webkit.org>
 
         Cache CSSInitialValue instances per-document.
