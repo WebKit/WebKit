@@ -80,7 +80,7 @@ def write_test_result(port, test_name, driver_output,
             writer.write_image_files(driver_output.image, expected_image=None)
             writer.copy_file(failure.reference_filename)
         else:
-            assert isinstance(failure, (test_failures.FailureTimeout,))
+            assert isinstance(failure, (test_failures.FailureTimeout, test_failures.FailureReftestNoImagesGenerated))
 
 
 class TestResultWriter(object):

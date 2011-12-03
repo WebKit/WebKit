@@ -34,7 +34,7 @@ from webkitpy.layout_tests.port.test import TestPort
 
 class TestResultWriterTest(unittest.TestCase):
 
-    def test_reftest_diff_imaget(self):
+    def test_reftest_diff_image(self):
         """A write_test_result should call port.diff_image with tolerance=0 in case of FailureReftestMismatch."""
         used_tolerance_values = []
 

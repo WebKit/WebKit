@@ -59,8 +59,7 @@ def determine_result_type(failure_list):
         is_text_failure = FailureTextMismatch in failure_types
         is_image_failure = (FailureImageHashIncorrect in failure_types or
                             FailureImageHashMismatch in failure_types)
-        is_reftest_failure = (FailureReftestMismatch in failure_types or
-                              FailureReftestMismatchDidNotOccur in failure_types)
+        is_reftest_failure = set((FailureReftestMismatch, FailureReftestMismatchDidNotOccur, FailureReftestNoImagesGenerated)).intersection(failure_types)
         is_audio_failure = (FailureAudioMismatch in failure_types)
         if is_text_failure and is_image_failure:
             return test_expectations.IMAGE_PLUS_TEXT
@@ -205,6 +204,17 @@ class FailureReftestMismatchDidNotOccur(TestFailure):
         return "Mismatch with the reference did not occur"
 
 
+class FailureReftestNoImagesGenerated(TestFailure):
+    """Both the reftest and the -expected html file didn't generate pixel results."""
+
+    def __init__(self, reference_filename=None):
+        self.reference_filename = reference_filename
+
+    @staticmethod
+    def message():
+        return "Reftest didn't generate pixel results."
+
+
 class FailureMissingAudio(TestFailure):
     """Actual result image was missing."""
 
@@ -227,4 +237,4 @@ ALL_FAILURE_CLASSES = (FailureTimeout, FailureCrash, FailureMissingResult,
                        FailureTextMismatch, FailureMissingImageHash,
                        FailureMissingImage, FailureImageHashMismatch,
                        FailureImageHashIncorrect, FailureReftestMismatch,
-                       FailureReftestMismatchDidNotOccur)
+                       FailureReftestMismatchDidNotOccur, FailureReftestNoImagesGenerated)

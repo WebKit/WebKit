@@ -1,3 +1,28 @@
+2011-12-02  Tony Chang  <tony@chromium.org>
+
+        [NRWT] reftest asserts intermittently on the Qt-WK2 bot
+        https://bugs.webkit.org/show_bug.cgi?id=73453
+
+        Reviewed by Ryosuke Niwa.
+
+        We used to assert if a ref test didn't generate pixel results. Instead, just claim it is a failing test.
+        The verbose output will include the failure reason.
+
+        * Scripts/webkitpy/layout_tests/controllers/single_test_runner.py: Don't assert, return FailureReftestNoImagesGenerated instead.
+        * Scripts/webkitpy/layout_tests/controllers/test_result_writer.py:
+        (write_test_result):
+        * Scripts/webkitpy/layout_tests/controllers/test_result_writer_unittest.py: Remove stray letter t.
+        * Scripts/webkitpy/layout_tests/models/test_failures.py: Add a new failure type: FailureReftestNoImagesGenerated
+        (determine_result_type):
+        (FailureReftestNoImagesGenerated.__init__):
+        (FailureReftestNoImagesGenerated):
+        (FailureReftestNoImagesGenerated.message):
+        * Scripts/webkitpy/layout_tests/port/test.py: Add a test case for integration tests.
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py: Update test counts.
+        (MainTest.test_run_singly_actually_runs_tests):
+        (MainTest.test_unexpected_failures):
+        (EndToEndTest.test_end_to_end):
+
 2011-12-02  Ryosuke Niwa  <rniwa@webkit.org>
 
         ChangeLog should be able to parse annotated changelogs

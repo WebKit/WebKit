@@ -187,7 +187,7 @@ def get_tests_run(extra_args=None, tests_included=False, flatten_batches=False,
 
 # Update this magic number if you add an unexpected test to webkitpy.layout_tests.port.test
 # FIXME: It's nice to have a routine in port/test.py that returns this number.
-unexpected_tests_count = 11
+unexpected_tests_count = 12
 
 
 class MainTest(unittest.TestCase):
@@ -383,7 +383,7 @@ class MainTest(unittest.TestCase):
 
     def test_run_singly_actually_runs_tests(self):
         res, _, _, _ = logging_run(['--run-singly', 'failures/unexpected'])
-        self.assertEquals(res, 7)
+        self.assertEquals(res, 8)
 
     def test_single_file(self):
         # FIXME: We should consider replacing more of the get_tests_run()-style tests

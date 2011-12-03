@@ -296,9 +296,9 @@ class SingleTestRunner:
         if failures:
             return TestResult(self._test_name, failures, total_test_time, has_stderr)
 
-        assert(driver_output1.image_hash or driver_output2.image_hash)
-
-        if mismatch:
+        if not driver_output1.image_hash and not driver_output2.image_hash:
+            failures.append(test_failures.FailureReftestNoImagesGenerated(reference_filename))
+        elif mismatch:
             if driver_output1.image_hash == driver_output2.image_hash:
                 failures.append(test_failures.FailureReftestMismatchDidNotOccur(reference_filename))
         elif driver_output1.image_hash != driver_output2.image_hash:
