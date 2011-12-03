@@ -29,20 +29,20 @@ namespace WebCore {
 
 CSSValueList::CSSValueList(ClassType classType, bool isSpaceSeparated)
     : CSSValue(classType)
-    , m_isSpaceSeparated(isSpaceSeparated)
 {
+    m_isSpaceSeparatedValueList = isSpaceSeparated;
 }
 
 CSSValueList::CSSValueList(bool isSpaceSeparated)
     : CSSValue(ValueListClass)
-    , m_isSpaceSeparated(isSpaceSeparated)
 {
+    m_isSpaceSeparatedValueList = isSpaceSeparated;
 }
 
 CSSValueList::CSSValueList(CSSParserValueList* list)
     : CSSValue(ValueListClass)
-    , m_isSpaceSeparated(true)
 {
+    m_isSpaceSeparatedValueList = true;
     if (list) {
         size_t size = list->size();
         for (unsigned i = 0; i < size; ++i)
@@ -88,7 +88,7 @@ bool CSSValueList::hasValue(CSSValue* val) const
 
 PassRefPtr<CSSValueList> CSSValueList::copy()
 {
-    PassRefPtr<CSSValueList> newList = m_isSpaceSeparated ? createSpaceSeparated() : createCommaSeparated();
+    PassRefPtr<CSSValueList> newList = isSpaceSeparated() ? createSpaceSeparated() : createCommaSeparated();
     for (size_t index = 0; index < m_values.size(); index++)
         newList->append(m_values[index]);
     return newList;
@@ -101,7 +101,7 @@ String CSSValueList::customCssText() const
     unsigned size = m_values.size();
     for (unsigned i = 0; i < size; i++) {
         if (!result.isEmpty()) {
-            if (m_isSpaceSeparated)
+            if (isSpaceSeparated())
                 result += " ";
             else
                 result += ", ";

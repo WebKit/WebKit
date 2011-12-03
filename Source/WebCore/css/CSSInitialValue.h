@@ -45,7 +45,7 @@ private:
     CSSInitialValue(bool implicit)
         : CSSValue(InitialClass)
     {
-        m_isImplicit = implicit;
+        m_isImplicitInitialValue = implicit;
     }
 
     static PassRefPtr<CSSInitialValue> create(bool implicit)

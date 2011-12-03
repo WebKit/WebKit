@@ -65,8 +65,9 @@ private:
     explicit CSSValueList(bool isSpaceSeparated);
     explicit CSSValueList(CSSParserValueList*);
 
+    bool isSpaceSeparated() const { return m_isSpaceSeparatedValueList; }
+
     Vector<RefPtr<CSSValue> > m_values;
-    bool m_isSpaceSeparated;
 };
 
 // Objects of this class are intended to be stack-allocated and scoped to a single function.

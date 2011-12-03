@@ -68,7 +68,7 @@ public:
     bool isFontValue() const { return m_classType == FontClass; }
     bool isImageGeneratorValue() const { return m_classType >= CanvasClass && m_classType <= RadialGradientClass; }
     bool isImageValue() const { return m_classType == ImageClass || m_classType == CursorImageClass; }
-    bool isImplicitInitialValue() const { return m_classType == InitialClass && m_isImplicit; }
+    bool isImplicitInitialValue() const { return m_classType == InitialClass && m_isImplicitInitialValue; }
     bool isInheritedValue() const { return m_classType == InheritedClass; }
     bool isInitialValue() const { return m_classType == InitialClass; }
     bool isReflectValue() const { return m_classType == ReflectClass; }
@@ -151,7 +151,8 @@ protected:
         : m_primitiveUnitType(0)
         , m_hasCachedCSSText(false)
         , m_isQuirkValue(false)
-        , m_isImplicit(false)
+        , m_isImplicitInitialValue(false)
+        , m_isSpaceSeparatedValueList(false)
         , m_classType(classType)
     {
     }
@@ -174,7 +175,10 @@ protected:
     bool m_isQuirkValue : 1;
 
     // CSSInitialValue bits:
-    bool m_isImplicit : 1;
+    bool m_isImplicitInitialValue : 1;
+
+    // CSSValueList bits:
+    bool m_isSpaceSeparatedValueList : 1;
 
 private:
     unsigned char m_classType : ClassTypeBits; // ClassType

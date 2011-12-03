@@ -1,3 +1,29 @@
+2011-12-03  Andreas Kling  <kling@webkit.org>
+
+        Shrink CSSValueList.
+        <http://webkit.org/b/73732>
+
+        Reviewed by Antti Koivisto.
+
+        Packed CSSValueList::m_isSpaceSeparated into the CSSValue bit field
+        and renamed it to m_isSpaceSeparatedValue, shrinking CSSValueList
+        by one CPU word.
+
+        Also renamed CSSValue::m_isImplicit to m_isImplicitInitialValue
+        for good measure.
+
+        * css/CSSInitialValue.h:
+        (WebCore::CSSInitialValue::CSSInitialValue):
+        * css/CSSValue.h:
+        (WebCore::CSSValue::isImplicitInitialValue):
+        (WebCore::CSSValue::CSSValue):
+        * css/CSSValueList.cpp:
+        (WebCore::CSSValueList::CSSValueList):
+        (WebCore::CSSValueList::copy):
+        (WebCore::CSSValueList::customCssText):
+        * css/CSSValueList.h:
+        (WebCore::CSSValueList::isSpaceSeparated):
+
 2011-12-02  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] Fullscreen controller support for the new WebKit Fullscreen API
