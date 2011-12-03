@@ -1,3 +1,32 @@
+2011-12-02  David Grogan  <dgrogan@chromium.org>
+
+        Grant workers experimental access to IndexedDB.
+        https://bugs.webkit.org/show_bug.cgi?id=73609
+
+        Reviewed by Nate Chapin.
+
+        No new tests - there will be chromium ui tests that depend on
+        webkit.org/b/73297.
+
+        * storage/IDBFactory.cpp:
+        (WebCore::IDBFactory::open): Call new function,
+        IDBFactoryBackendInterface::openFromWorker.
+        * storage/IDBFactoryBackendImpl.cpp:
+        (WebCore::IDBFactoryBackendImpl::open):
+        (WebCore::IDBFactoryBackendImpl::openFromWorker):
+        (WebCore::IDBFactoryBackendImpl::openInternal):
+        * storage/IDBFactoryBackendImpl.h:
+        * storage/IDBFactoryBackendInterface.h:
+        * workers/WorkerContext.cpp:
+        (WebCore::WorkerContext::webkitIndexedDB): Stores
+        IDBFactoryBackendInterface, implemented by IDBFactoryBackendProxy in
+        chromium, in the WorkerContext.  For the Document case it is stored in
+        the PageGroup.  Storing it in the WorkerContext causes more memory
+        churn, but that should be trivial.  I don't know of any better
+        alternatives.
+        * workers/WorkerContext.h:
+        * workers/WorkerContext.idl:
+
 2011-12-02  Aaron Colwell  <acolwell@chromium.org>
 
         Fix mixed content handling for video in Chromium by having

@@ -40,6 +40,7 @@ namespace WebCore {
 class Frame;
 class IDBDatabase;
 class SecurityOrigin;
+class WorkerContext;
 
 typedef int ExceptionCode;
 
@@ -53,7 +54,9 @@ public:
     virtual ~IDBFactoryBackendInterface() { }
 
     virtual void getDatabaseNames(PassRefPtr<IDBCallbacks>, PassRefPtr<SecurityOrigin>, Frame*, const String& dataDir) = 0;
-    virtual void open(const String& name, PassRefPtr<IDBCallbacks>, PassRefPtr<SecurityOrigin>, Frame*, const String& dataDir) = 0;
+
+    virtual void open(const String& name, IDBCallbacks*, PassRefPtr<SecurityOrigin>, Frame*, const String& dataDir) = 0;
+    virtual void openFromWorker(const String& name, IDBCallbacks*, PassRefPtr<SecurityOrigin>, WorkerContext*, const String& dataDir) = 0;
     virtual void deleteDatabase(const String& name, PassRefPtr<IDBCallbacks>, PassRefPtr<SecurityOrigin>, Frame*, const String& dataDir) = 0;
 };
 

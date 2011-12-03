@@ -1,3 +1,19 @@
+2011-12-02  David Grogan  <dgrogan@chromium.org>
+
+        Grant workers experimental access to IndexedDB.
+        https://bugs.webkit.org/show_bug.cgi?id=73609
+
+        Reviewed by Nate Chapin.
+
+        * src/IDBFactoryBackendProxy.cpp:
+        (WebKit::IDBFactoryBackendProxy::allowIDBFromWorkerThread): Return
+        true while behind a runtime flag, and while we figure out how to check
+        permission in a thread-safe manner.
+        (WebKit::IDBFactoryBackendProxy::openFromWorker): Using the webFrame
+        from the worker seems to satisfy the weak condition in chromium that
+        neither it nor it's associated RenderView is NULL.
+        * src/IDBFactoryBackendProxy.h:
+
 2011-12-01  James Robinson  <jamesr@chromium.org>
 
         [chromium] Move WebLayer APIs to platform directory

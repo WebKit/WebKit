@@ -86,6 +86,8 @@
 #include "ExceptionCode.h"
 #endif
 
+#include "IDBFactory.h"
+
 namespace WebCore {
 
 class CloseWorkerContextTask : public ScriptExecutionContext::Task {
@@ -520,6 +522,19 @@ void WorkerContext::notifyObserversOfStop()
         iter = m_workerObservers.begin();
     }
 }
+
+#if ENABLE(INDEXED_DATABASE)
+IDBFactory* WorkerContext::webkitIndexedDB() const
+{
+    if (!securityOrigin()->canAccessDatabase())
+        return 0;
+    if (!m_idbFactoryBackendInterface)
+        m_idbFactoryBackendInterface = IDBFactoryBackendInterface::create();
+    if (!m_idbFactory)
+        m_idbFactory = IDBFactory::create(m_idbFactoryBackendInterface.get());
+    return m_idbFactory.get();
+}
+#endif
 
 WorkerEventQueue* WorkerContext::eventQueue() const
 {

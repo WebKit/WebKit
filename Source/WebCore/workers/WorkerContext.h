@@ -55,6 +55,7 @@ namespace WebCore {
     class EntrySync;
     class ErrorCallback;
     class FileSystemCallback;
+    class IDBFactory;
     class NotificationCenter;
     class ScheduledAction;
     class WorkerInspectorController;
@@ -173,6 +174,9 @@ namespace WebCore {
         void registerObserver(Observer*);
         void unregisterObserver(Observer*);
         void notifyObserversOfStop();
+#if ENABLE(INDEXED_DATABASE)
+        IDBFactory* webkitIndexedDB() const;
+#endif
 
     protected:
         WorkerContext(const KURL&, const String&, WorkerThread*);
@@ -218,6 +222,12 @@ namespace WebCore {
         HashSet<Observer*> m_workerObservers;
 
         OwnPtr<WorkerEventQueue> m_eventQueue;
+
+#if ENABLE(INDEXED_DATABASE)
+        mutable RefPtr<IDBFactory> m_idbFactory;
+        mutable RefPtr<IDBFactoryBackendInterface> m_idbFactoryBackendInterface;
+#endif
+
     };
 
 } // namespace WebCore

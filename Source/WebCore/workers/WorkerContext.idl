@@ -126,6 +126,20 @@ module threads {
         attribute Float32ArrayConstructor Float32Array; // Usable with new operator
         attribute Float64ArrayConstructor Float64Array; // Usable with new operator
         attribute DataViewConstructor DataView; // Usable with new operator
+#if defined(ENABLE_INDEXED_DATABASE) && ENABLE_INDEXED_DATABASE
+        readonly attribute [EnabledAtRuntime] IDBFactory webkitIndexedDB;
+
+        attribute [EnabledAtRuntime] IDBCursorConstructor webkitIDBCursor;
+        attribute [EnabledAtRuntime] IDBDatabaseConstructor webkitIDBDatabase;
+        attribute [EnabledAtRuntime] IDBDatabaseErrorConstructor webkitIDBDatabaseError;
+        attribute [EnabledAtRuntime] IDBDatabaseExceptionConstructor webkitIDBDatabaseException;
+        attribute [EnabledAtRuntime] IDBFactoryConstructor webkitIDBFactory;
+        attribute [EnabledAtRuntime] IDBIndexConstructor webkitIDBIndex;
+        attribute [EnabledAtRuntime] IDBKeyRangeConstructor webkitIDBKeyRange;
+        attribute [EnabledAtRuntime] IDBObjectStoreConstructor webkitIDBObjectStore;
+        attribute [EnabledAtRuntime] IDBRequestConstructor webkitIDBRequest;
+        attribute [EnabledAtRuntime] IDBTransactionConstructor webkitIDBTransaction;
+#endif
     };
 
 }

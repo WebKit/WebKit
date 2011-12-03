@@ -31,6 +31,7 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "CrossThreadTask.h"
 #include "DOMStringList.h"
 #include "IDBDatabaseBackendProxy.h"
 #include "IDBDatabaseError.h"
@@ -45,6 +46,12 @@
 #include "WebPermissionClient.h"
 #include "WebVector.h"
 #include "WebViewImpl.h"
+#include "WebWorkerBase.h"
+#include "WorkerContext.h"
+#include "WorkerLoaderProxy.h"
+#include "WorkerScriptController.h"
+#include "WorkerThread.h"
+
 
 using namespace WebCore;
 
@@ -78,7 +85,25 @@ void IDBFactoryBackendProxy::getDatabaseNames(PassRefPtr<IDBCallbacks> callbacks
     m_webIDBFactory->getDatabaseNames(new WebIDBCallbacksImpl(callbacks), origin, webFrame, dataDir);
 }
 
-void IDBFactoryBackendProxy::open(const String& name, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<SecurityOrigin> prpOrigin, Frame* frame, const String& dataDir)
+bool IDBFactoryBackendProxy::allowIDBFromWorkerThread(WorkerContext*, const String&, const WebSecurityOrigin&)
+{
+    return true;
+}
+
+void IDBFactoryBackendProxy::openFromWorker(const String& name, IDBCallbacks* callbacks, PassRefPtr<SecurityOrigin> prpOrigin, WorkerContext* context, const String& dataDir)
+{
+    WebSecurityOrigin origin(prpOrigin);
+    if (!allowIDBFromWorkerThread(context, name, origin)) {
+        callbacks->onError(WebIDBDatabaseError(0, "The user denied permission to access the database."));
+        return;
+    }
+    WorkerLoaderProxy* workerLoaderProxy = &context->thread()->workerLoaderProxy();
+    NewWebWorkerBase* webWorker = static_cast<NewWebWorkerBase*>(workerLoaderProxy);
+    WebFrame* webFrame = webWorker->view()->mainFrame();
+    m_webIDBFactory->open(name, new WebIDBCallbacksImpl(callbacks), origin, webFrame, dataDir);
+}
+
+void IDBFactoryBackendProxy::open(const String& name, IDBCallbacks* callbacks, PassRefPtr<SecurityOrigin> prpOrigin, Frame* frame, const String& dataDir)
 {
     WebSecurityOrigin origin(prpOrigin);
     WebFrameImpl* webFrame = WebFrameImpl::fromFrame(frame);

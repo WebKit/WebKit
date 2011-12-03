@@ -80,9 +80,9 @@ void IDBFactoryBackendImpl::removeIDBBackingStore(const String& fileIdentifier)
     m_backingStoreMap.remove(fileIdentifier);
 }
 
-void IDBFactoryBackendImpl::getDatabaseNames(PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<SecurityOrigin> securityOrigin, Frame*, const String& dataDir)
+void IDBFactoryBackendImpl::getDatabaseNames(PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<SecurityOrigin> securityOrigin, Frame*, const String& dataDirectory)
 {
-    RefPtr<IDBBackingStore> backingStore = openBackingStore(securityOrigin, dataDir);
+    RefPtr<IDBBackingStore> backingStore = openBackingStore(securityOrigin, dataDirectory);
     if (!backingStore) {
         callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UNKNOWN_ERR, "Internal error."));
         return;
@@ -98,31 +98,17 @@ void IDBFactoryBackendImpl::getDatabaseNames(PassRefPtr<IDBCallbacks> callbacks,
     callbacks->onSuccess(databaseNames.release());
 }
 
-void IDBFactoryBackendImpl::open(const String& name, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<SecurityOrigin> securityOrigin, Frame*, const String& dataDir)
+void IDBFactoryBackendImpl::open(const String& name, IDBCallbacks* callbacks, PassRefPtr<SecurityOrigin> securityOrigin, Frame*, const String& dataDirectory)
 {
-    const String uniqueIdentifier = computeUniqueIdentifier(name, securityOrigin.get());
-
-    IDBDatabaseBackendMap::iterator it = m_databaseBackendMap.find(uniqueIdentifier);
-    if (it != m_databaseBackendMap.end()) {
-        // If it's already been opened, we have to wait for any pending
-        // setVersion calls to complete.
-        it->second->openConnection(callbacks);
-        return;
-    }
-
-    // FIXME: Everything from now on should be done on another thread.
-    RefPtr<IDBBackingStore> backingStore = openBackingStore(securityOrigin, dataDir);
-    if (!backingStore) {
-        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UNKNOWN_ERR, "Internal error."));
-        return;
-    }
-
-    RefPtr<IDBDatabaseBackendImpl> databaseBackend = IDBDatabaseBackendImpl::create(name, backingStore.get(), m_transactionCoordinator.get(), this, uniqueIdentifier);
-    callbacks->onSuccess(databaseBackend.get());
-    m_databaseBackendMap.set(uniqueIdentifier, databaseBackend.get());
+    openInternal(name, callbacks, securityOrigin, dataDirectory);
 }
 
-void IDBFactoryBackendImpl::deleteDatabase(const String& name, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<SecurityOrigin> securityOrigin, Frame*, const String& dataDir)
+void IDBFactoryBackendImpl::openFromWorker(const String& name, IDBCallbacks* callbacks, PassRefPtr<SecurityOrigin> securityOrigin, WorkerContext*, const String& dataDirectory)
+{
+    openInternal(name, callbacks, securityOrigin, dataDirectory);
+}
+
+void IDBFactoryBackendImpl::deleteDatabase(const String& name, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<SecurityOrigin> securityOrigin, Frame*, const String& dataDirectory)
 {
     const String uniqueIdentifier = computeUniqueIdentifier(name, securityOrigin.get());
 
@@ -135,7 +121,7 @@ void IDBFactoryBackendImpl::deleteDatabase(const String& name, PassRefPtr<IDBCal
     }
 
     // FIXME: Everything from now on should be done on another thread.
-    RefPtr<IDBBackingStore> backingStore = openBackingStore(securityOrigin, dataDir);
+    RefPtr<IDBBackingStore> backingStore = openBackingStore(securityOrigin, dataDirectory);
     if (!backingStore) {
         callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UNKNOWN_ERR, "Internal error."));
         return;
@@ -146,7 +132,7 @@ void IDBFactoryBackendImpl::deleteDatabase(const String& name, PassRefPtr<IDBCal
     databaseBackend->deleteDatabase(callbacks);
 }
 
-PassRefPtr<IDBBackingStore> IDBFactoryBackendImpl::openBackingStore(PassRefPtr<SecurityOrigin> securityOrigin, const String& dataDir)
+PassRefPtr<IDBBackingStore> IDBFactoryBackendImpl::openBackingStore(PassRefPtr<SecurityOrigin> securityOrigin, const String& dataDirectory)
 {
     const String fileIdentifier = computeFileIdentifier(securityOrigin.get());
 
@@ -156,7 +142,7 @@ PassRefPtr<IDBBackingStore> IDBFactoryBackendImpl::openBackingStore(PassRefPtr<S
         backingStore = it2->second;
     else {
 #if USE(LEVELDB)
-        backingStore = IDBLevelDBBackingStore::open(securityOrigin.get(), dataDir, fileIdentifier, this);
+        backingStore = IDBLevelDBBackingStore::open(securityOrigin.get(), dataDirectory, fileIdentifier, this);
 #else
         ASSERT_NOT_REACHED();
 #endif
@@ -166,6 +152,31 @@ PassRefPtr<IDBBackingStore> IDBFactoryBackendImpl::openBackingStore(PassRefPtr<S
         return backingStore.release();
 
     return 0;
+}
+
+void IDBFactoryBackendImpl::openInternal(const String& name, IDBCallbacks* callbacks, PassRefPtr<SecurityOrigin> prpSecurityOrigin, const String& dataDirectory)
+{
+    RefPtr<SecurityOrigin> securityOrigin = prpSecurityOrigin;
+    const String uniqueIdentifier = computeUniqueIdentifier(name, securityOrigin.get());
+
+    IDBDatabaseBackendMap::iterator it = m_databaseBackendMap.find(uniqueIdentifier);
+    if (it != m_databaseBackendMap.end()) {
+        // If it's already been opened, we have to wait for any pending
+        // setVersion calls to complete.
+        it->second->openConnection(callbacks);
+        return;
+    }
+
+    // FIXME: Everything from now on should be done on another thread.
+    RefPtr<IDBBackingStore> backingStore = openBackingStore(securityOrigin, dataDirectory);
+    if (!backingStore) {
+        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UNKNOWN_ERR, "Internal error."));
+        return;
+    }
+
+    RefPtr<IDBDatabaseBackendImpl> databaseBackend = IDBDatabaseBackendImpl::create(name, backingStore.get(), m_transactionCoordinator.get(), this, uniqueIdentifier);
+    callbacks->onSuccess(RefPtr<IDBDatabaseBackendInterface>(databaseBackend.get()).release());
+    m_databaseBackendMap.set(uniqueIdentifier, databaseBackend.get());
 }
 
 } // namespace WebCore

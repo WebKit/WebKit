@@ -46,6 +46,9 @@
 #include "Page.h"
 #include "PageGroup.h"
 #include "SecurityOrigin.h"
+#include "WorkerContext.h"
+#include "WorkerLoaderProxy.h"
+#include "WorkerThread.h"
 
 namespace WebCore {
 
@@ -79,23 +82,23 @@ PassRefPtr<IDBRequest> IDBFactory::getDatabaseNames(ScriptExecutionContext* cont
 
 PassRefPtr<IDBRequest> IDBFactory::open(ScriptExecutionContext* context, const String& name, ExceptionCode& ec)
 {
-    if (!context->isDocument()) {
-        // FIXME: make this work with workers.
-        return 0;
-    }
-
-    Document* document = static_cast<Document*>(context);
-    if (!document->frame() || !document->page())
-        return 0;
+    ASSERT(context->isDocument() || context->isWorkerContext());
 
     if (name.isNull()) {
         ec = IDBDatabaseException::NON_TRANSIENT_ERR;
         return 0;
     }
-
-    RefPtr<IDBRequest> request = IDBRequest::create(document, IDBAny::create(this), 0);
-    GroupSettings* groupSettings = document->page()->group().groupSettings();
-    m_backend->open(name, request, document->securityOrigin(), document->frame(), groupSettings->indexedDBDatabasePath());
+    if (context->isDocument()) {
+        Document* document = static_cast<Document*>(context);
+        if (!document->frame() || !document->page())
+            return 0;
+        Frame* frame = document->frame();
+        RefPtr<IDBRequest> request = IDBRequest::create(context, IDBAny::create(this), 0);
+        m_backend->open(name, request.get(), context->securityOrigin(), frame, String());
+        return request;
+    }
+    RefPtr<IDBRequest> request = IDBRequest::create(context, IDBAny::create(this), 0);
+    m_backend->openFromWorker(name, request.get(), context->securityOrigin(), static_cast<WorkerContext*>(context), String());
     return request;
 }
 

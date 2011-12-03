@@ -66,7 +66,7 @@ void WebIDBFactoryImpl::getDatabaseNames(WebIDBCallbacks* callbacks, const WebSe
 
 void WebIDBFactoryImpl::open(const WebString& name, WebIDBCallbacks* callbacks, const WebSecurityOrigin& origin, WebFrame*, const WebString& dataDir)
 {
-    m_idbFactoryBackend->open(name, IDBCallbacksProxy::create(adoptPtr(callbacks)), origin, 0, dataDir);
+    m_idbFactoryBackend->open(name, IDBCallbacksProxy::create(adoptPtr(callbacks)).get(), origin, 0, dataDir);
 }
 
 void WebIDBFactoryImpl::deleteDatabase(const WebString& name, WebIDBCallbacks* callbacks, const WebSecurityOrigin& origin, WebFrame*, const WebString& dataDir)

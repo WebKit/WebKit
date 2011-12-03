@@ -56,12 +56,15 @@ public:
     void removeIDBBackingStore(const String& fileIdentifier);
 
     virtual void getDatabaseNames(PassRefPtr<IDBCallbacks>, PassRefPtr<SecurityOrigin>, Frame*, const String& dataDir);
-    virtual void open(const String& name, PassRefPtr<IDBCallbacks>, PassRefPtr<SecurityOrigin>, Frame*, const String& dataDir);
+
+    virtual void open(const String& name, IDBCallbacks*, PassRefPtr<SecurityOrigin>, Frame*, const String& dataDir);
+    virtual void openFromWorker(const String& name, IDBCallbacks*, PassRefPtr<SecurityOrigin>, WorkerContext*, const String& dataDir);
     virtual void deleteDatabase(const String& name, PassRefPtr<IDBCallbacks>, PassRefPtr<SecurityOrigin>, Frame*, const String& dataDir);
 
 private:
     IDBFactoryBackendImpl();
     PassRefPtr<IDBBackingStore> openBackingStore(PassRefPtr<SecurityOrigin>, const String& dataDir);
+    void openInternal(const String& name, IDBCallbacks*, PassRefPtr<SecurityOrigin>, const String& dataDir);
 
     typedef HashMap<String, IDBDatabaseBackendImpl*> IDBDatabaseBackendMap;
     IDBDatabaseBackendMap m_databaseBackendMap;
