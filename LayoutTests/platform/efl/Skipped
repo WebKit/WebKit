@@ -1371,7 +1371,6 @@ http/tests/multipart/load-last-non-html-frame.php
 http/tests/history/back-with-fragment-change.php
 
 # Failing http tests (via GTK+)
-http/tests/cookies/double-quoted-value-with-semi-colon.html
 http/tests/loading/bad-scheme-subframe.html
 http/tests/loading/bad-server-subframe.html
 http/tests/loading/gmail-assert-on-load.html

@@ -561,7 +561,6 @@ http/tests/appcache/origin-delete.html
 http/tests/appcache/origins-with-appcache.html
 # LayoutTestController::applicationCacheDiskUsageForOrigin isn't implemented - https://bugs.webkit.org/show_bug.cgi?id=57127
 http/tests/appcache/origin-usage.html
-http/tests/cookies/double-quoted-value-with-semi-colon.html
 http/tests/loading/bad-scheme-subframe.html
 http/tests/loading/bad-server-subframe.html
 # Needed to cover the fix for <rdar://problem/6727495>
@@ -719,10 +718,6 @@ http/tests/xmlhttprequest/origin-whitelisting-removal.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=55682
 fast/images/support-broken-image-delegate.html
-
-# Fails because of new behaviour enforced by libsoup
-# See: https://bugzilla.gnome.org/show_bug.cgi?id=603825
-fast/cookies/local-file-can-set-cookies.html
 
 # Fail due to an extra "CONSOLE MESSAGE: line 1: SyntaxError: Parse error"
 fast/loader/onload-willSendRequest-null-for-script.html
