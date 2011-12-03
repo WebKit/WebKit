@@ -43,10 +43,14 @@ class TestRunner:
         if not is_valid_build_directory(build_directory):
             build_directory = os.path.join(top_level, 'WebKitBuild', 'Debug')
 
+        self._gtk_tools_directory = os.path.join(top_level, "Tools", "gtk")
         self._programs_path = os.path.join(build_directory, "Programs")
         self._tests = []
         for test_dir in self.TEST_DIRS:
-            for test_file in os.listdir(os.path.join(self._programs_path, test_dir)):
+            absolute_test_dir = os.path.join(self._programs_path, test_dir)
+            if not os.path.isdir(absolute_test_dir):
+                continue
+            for test_file in os.listdir(absolute_test_dir):
                 test_relative_path = os.path.join(test_dir, test_file)
                 if test_relative_path in self.SKIPPED:
                     sys.stdout.write("Skipping test %s\n" % (test_relative_path))
@@ -70,8 +74,9 @@ class TestRunner:
         def _error_handler(error):
             exit_status[0] = error.exit_code
 
+        jhbuild_path = os.path.join(self._gtk_tools_directory, "run-with-jhbuild")
         for test in self._tests:
-            out = self._executive.run_command(['gtester', test], env=test_env,
+            out = self._executive.run_command([jhbuild_path ,'gtester', test], env=test_env,
                                               error_handler=_error_handler)
             sys.stdout.write(out)
             sys.stdout.flush()

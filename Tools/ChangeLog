@@ -1,3 +1,15 @@
+2011-12-03  Philippe Normand  <pnormand@igalia.com>
+
+        GTK API tests build fix. Run the tests inside jhbuild.
+
+        Rubber-stamped by Gustavo Noronha Silva.
+
+        * Scripts/run-gtk-tests:
+        (TestRunner.__init__):
+        (TestRunner.run._error_handler):
+        (TestRunner):
+        (TestRunner.run):
+
 2011-12-03  Martin Robinson  <mrobinson@igalia.com>
 
         Small build fix. Properly specify the path to the locally installed jhbuild.
