@@ -850,7 +850,7 @@ bool CSSParser::parseValue(int propId, bool important)
     else if (id == CSSValueInitial) {
         if (num != 1)
             return false;
-        addProperty(propId, CSSInitialValue::createExplicit(), important);
+        addProperty(propId, cssValuePool()->createExplicitInitialValue(), important);
         return true;
     }
 
@@ -2019,7 +2019,7 @@ bool CSSParser::parseValue(int propId, bool important)
         if (parseShorthand(propId, properties, 3, important)) {
             // The CSS3 Borders and Backgrounds specification says that border also resets border-image. It's as
             // though a value of none was specified for the image.
-            addProperty(CSSPropertyBorderImage, CSSInitialValue::createImplicit(), important);
+            addProperty(CSSPropertyBorderImage, cssValuePool()->createImplicitInitialValue(), important);
             return true;
         }
         return false;
@@ -2301,14 +2301,14 @@ bool CSSParser::parseFillShorthand(int propId, const int* properties, int numPro
                     return false;
 
                 if (!parsedProperty[i] && properties[i] != CSSPropertyBackgroundColor) {
-                    addFillValue(values[i], CSSInitialValue::createImplicit());
+                    addFillValue(values[i], cssValuePool()->createImplicitInitialValue());
                     if (properties[i] == CSSPropertyBackgroundPosition || properties[i] == CSSPropertyWebkitMaskPosition)
-                        addFillValue(positionYValue, CSSInitialValue::createImplicit());
+                        addFillValue(positionYValue, cssValuePool()->createImplicitInitialValue());
                     if (properties[i] == CSSPropertyBackgroundRepeat || properties[i] == CSSPropertyWebkitMaskRepeat)
-                        addFillValue(repeatYValue, CSSInitialValue::createImplicit());
+                        addFillValue(repeatYValue, cssValuePool()->createImplicitInitialValue());
                     if ((properties[i] == CSSPropertyBackgroundOrigin || properties[i] == CSSPropertyWebkitMaskOrigin) && !parsedProperty[i]) {
                         // If background-origin wasn't present, then reset background-clip also.
-                        addFillValue(clipValue, CSSInitialValue::createImplicit());
+                        addFillValue(clipValue, cssValuePool()->createImplicitInitialValue());
                     }
                 }
                 parsedProperty[i] = false;
@@ -2336,7 +2336,7 @@ bool CSSParser::parseFillShorthand(int propId, const int* properties, int numPro
                         if (parseBackgroundClip(parserValue, val1, cssValuePool()))
                             addFillValue(clipValue, val1.release()); // The property parsed successfully.
                         else
-                            addFillValue(clipValue, CSSInitialValue::createImplicit()); // Some value was used for origin that is not supported by clip. Just reset clip instead.
+                            addFillValue(clipValue, cssValuePool()->createImplicitInitialValue()); // Some value was used for origin that is not supported by clip. Just reset clip instead.
                     }
                     if (properties[i] == CSSPropertyBackgroundClip || properties[i] == CSSPropertyWebkitMaskClip) {
                         // Update clipValue
@@ -2356,14 +2356,14 @@ bool CSSParser::parseFillShorthand(int propId, const int* properties, int numPro
     // Fill in any remaining properties with the initial value.
     for (i = 0; i < numProperties; ++i) {
         if (!parsedProperty[i]) {
-            addFillValue(values[i], CSSInitialValue::createImplicit());
+            addFillValue(values[i], cssValuePool()->createImplicitInitialValue());
             if (properties[i] == CSSPropertyBackgroundPosition || properties[i] == CSSPropertyWebkitMaskPosition)
-                addFillValue(positionYValue, CSSInitialValue::createImplicit());
+                addFillValue(positionYValue, cssValuePool()->createImplicitInitialValue());
             if (properties[i] == CSSPropertyBackgroundRepeat || properties[i] == CSSPropertyWebkitMaskRepeat)
-                addFillValue(repeatYValue, CSSInitialValue::createImplicit());
+                addFillValue(repeatYValue, cssValuePool()->createImplicitInitialValue());
             if ((properties[i] == CSSPropertyBackgroundOrigin || properties[i] == CSSPropertyWebkitMaskOrigin) && !parsedProperty[i]) {
                 // If background-origin wasn't present, then reset background-clip also.
-                addFillValue(clipValue, CSSInitialValue::createImplicit());
+                addFillValue(clipValue, cssValuePool()->createImplicitInitialValue());
             }
         }
     }
@@ -2443,7 +2443,7 @@ bool CSSParser::parseAnimationShorthand(bool important)
             m_valueList->next();
             for (i = 0; i < numProperties; ++i) {
                 if (!parsedProperty[i])
-                    addAnimationValue(values[i], CSSInitialValue::createImplicit());
+                    addAnimationValue(values[i], cssValuePool()->createImplicitInitialValue());
                 parsedProperty[i] = false;
             }
             if (!m_valueList->current())
@@ -2470,7 +2470,7 @@ bool CSSParser::parseAnimationShorthand(bool important)
     // Fill in any remaining properties with the initial value.
     for (i = 0; i < numProperties; ++i) {
         if (!parsedProperty[i])
-            addAnimationValue(values[i], CSSInitialValue::createImplicit());
+            addAnimationValue(values[i], cssValuePool()->createImplicitInitialValue());
     }
 
     // Now add all of the properties we found.
@@ -2501,7 +2501,7 @@ bool CSSParser::parseTransitionShorthand(bool important)
             m_valueList->next();
             for (i = 0; i < numProperties; ++i) {
                 if (!parsedProperty[i])
-                    addAnimationValue(values[i], CSSInitialValue::createImplicit());
+                    addAnimationValue(values[i], cssValuePool()->createImplicitInitialValue());
                 parsedProperty[i] = false;
             }
             if (!m_valueList->current())
@@ -2528,7 +2528,7 @@ bool CSSParser::parseTransitionShorthand(bool important)
     // Fill in any remaining properties with the initial value.
     for (i = 0; i < numProperties; ++i) {
         if (!parsedProperty[i])
-            addAnimationValue(values[i], CSSInitialValue::createImplicit());
+            addAnimationValue(values[i], cssValuePool()->createImplicitInitialValue());
     }
 
     // Now add all of the properties we found.
@@ -2569,7 +2569,7 @@ bool CSSParser::parseShorthand(int propId, const int *properties, int numPropert
     ImplicitScope implicitScope(this, PropertyImplicit);
     for (int i = 0; i < numProperties; ++i) {
         if (!fnd[i])
-            addProperty(properties[i], CSSInitialValue::createImplicit(), important);
+            addProperty(properties[i], cssValuePool()->createImplicitInitialValue(), important);
     }
 
     return true;

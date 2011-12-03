@@ -30,13 +30,11 @@ class CSSInitialValue : public CSSValue {
 public:
     static PassRefPtr<CSSInitialValue> createExplicit()
     {
-        static CSSInitialValue* explicitValue = create(false).leakRef();
-        return explicitValue;
+        return adoptRef(new CSSInitialValue(/* implicit */ false));
     }
     static PassRefPtr<CSSInitialValue> createImplicit()
     {
-        static CSSInitialValue* explicitValue = create(true).leakRef();
-        return explicitValue;
+        return adoptRef(new CSSInitialValue(/* implicit */ true));
     }
 
     String customCssText() const;
@@ -46,11 +44,6 @@ private:
         : CSSValue(InitialClass)
     {
         m_isImplicitInitialValue = implicit;
-    }
-
-    static PassRefPtr<CSSInitialValue> create(bool implicit)
-    {
-        return adoptRef(new CSSInitialValue(implicit));
     }
 };
 

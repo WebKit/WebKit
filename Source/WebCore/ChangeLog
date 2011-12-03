@@ -1,5 +1,32 @@
 2011-12-03  Andreas Kling  <kling@webkit.org>
 
+        Cache CSSInitialValue instances per-document.
+        <http://webkit.org/b/73745>
+
+        Reviewed by Oliver Hunt.
+
+        Test: http/tests/security/cross-origin-css-primitive.html
+
+        Have CSSValuePool manage the caching of CSSInitialValue objects.
+
+        * css/CSSInitialValue.h:
+        (WebCore::CSSInitialValue::createExplicit):
+        (WebCore::CSSInitialValue::createImplicit):
+        (WebCore::CSSInitialValue::CSSInitialValue):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::parseFillShorthand):
+        (WebCore::CSSParser::parseAnimationShorthand):
+        (WebCore::CSSParser::parseTransitionShorthand):
+        (WebCore::CSSParser::parseShorthand):
+        * css/CSSValuePool.cpp:
+        (WebCore::CSSValuePool::CSSValuePool):
+        (WebCore::CSSValuePool::createImplicitInitialValue):
+        (WebCore::CSSValuePool::createExplicitInitialValue):
+        * css/CSSValuePool.h:
+
+2011-12-03  Andreas Kling  <kling@webkit.org>
+
         Keep CSSInheritedValue in the CSS value pool.
         <http://webkit.org/b/73747>
 

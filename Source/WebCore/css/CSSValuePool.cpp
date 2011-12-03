@@ -31,6 +31,8 @@ namespace WebCore {
 
 CSSValuePool::CSSValuePool()
     : m_inheritedValue(CSSInheritedValue::create())
+    , m_implicitInitialValue(CSSInitialValue::createImplicit())
+    , m_explicitInitialValue(CSSInitialValue::createExplicit())
     , m_colorTransparent(CSSPrimitiveValue::createColor(Color::transparent))
     , m_colorWhite(CSSPrimitiveValue::createColor(Color::white))
     , m_colorBlack(CSSPrimitiveValue::createColor(Color::black))
@@ -47,6 +49,16 @@ CSSValuePool::~CSSValuePool()
 PassRefPtr<CSSInheritedValue> CSSValuePool::createInheritedValue()
 {
     return m_inheritedValue;
+}
+
+PassRefPtr<CSSInitialValue> CSSValuePool::createImplicitInitialValue()
+{
+    return m_implicitInitialValue;
+}
+
+PassRefPtr<CSSInitialValue> CSSValuePool::createExplicitInitialValue()
+{
+    return m_explicitInitialValue;
 }
 
 PassRefPtr<CSSPrimitiveValue> CSSValuePool::createIdentifierValue(int ident)

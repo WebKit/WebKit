@@ -15,15 +15,17 @@ if (window.layoutTestController) {
 .a { color: rgb(255,255,255); }
 .a { color: rgba(0,0,0,255); }
 .a { color: rgba(0,0,0,0); }
+.a { color: inherit; }
+.a { color: initial; }
 </style>
 <script>
-primitives = new Array();
+values = new Array();
 var rules = document.getElementsByTagName('style')[0].sheet.cssRules;
 for(i = 0 ; i < rules.length; ++i) {
     var val = rules[i].style.getPropertyCSSValue('color');
     if (!val)
         val =  rules[i].style.getPropertyCSSValue('width');
-    primitives.push(val);
+    values.push(val);
     val.foo = 1;
 }
 </script>
