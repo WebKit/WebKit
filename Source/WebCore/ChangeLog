@@ -1,3 +1,23 @@
+2011-12-02  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r101731.
+        http://trac.webkit.org/changeset/101731
+        https://bugs.webkit.org/show_bug.cgi?id=73706
+
+        Broke copy and paste in chromium. (Requested by dcheng on #webkit).
+
+        * editing/SpellChecker.cpp:
+        (WebCore::SpellChecker::SpellChecker):
+        (WebCore::SpellChecker::initRequest):
+        (WebCore::SpellChecker::clearRequest):
+        (WebCore::SpellChecker::canCheckAsynchronously):
+        (WebCore::SpellChecker::isBusy):
+        (WebCore::SpellChecker::isValid):
+        (WebCore::SpellChecker::requestCheckingFor):
+        (WebCore::SpellChecker::doRequestCheckingFor):
+        (WebCore::SpellChecker::didCheck):
+        * editing/SpellChecker.h:
+
 2011-12-02  Fady Samuel  <fsamuel@chromium.org>
 
         When page scaling is in use position:fixed has incorrect results

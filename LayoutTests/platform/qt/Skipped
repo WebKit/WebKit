@@ -1005,7 +1005,6 @@ editing/spelling/spelling-attribute-at-child.html
 
 # EditorClient::requestCheckingOfString() is not implemented
 editing/spelling/spellcheck-paste.html
-editing/spelling/spellcheck-queue.html
 
 # [Qt][GTK] editing/spelling/spellcheck-async.html fails
 # https://bugs.webkit.org/show_bug.cgi?id=73003

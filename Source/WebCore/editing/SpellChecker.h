@@ -28,8 +28,6 @@
 
 #include "PlatformString.h"
 #include "TextChecking.h"
-#include "Timer.h"
-#include <wtf/Deque.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Vector.h>
@@ -49,28 +47,24 @@ public:
     ~SpellChecker();
 
     bool isAsynchronousEnabled() const;
+    bool canCheckAsynchronously(Range*) const;
+    bool isBusy() const;
+    bool isValid(int sequence) const;
     bool isCheckable(Range*) const;
     void requestCheckingFor(TextCheckingTypeMask, PassRefPtr<Range>);
     void didCheck(int sequence, const Vector<TextCheckingResult>&);
 
 private:
-    class SpellCheckRequest;
-    typedef Deque<RefPtr<SpellCheckRequest> > RequestQueue;
-
-    bool canCheckAsynchronously(Range*) const;
-    PassRefPtr<SpellCheckRequest> createRequest(TextCheckingTypeMask, PassRefPtr<Range>);
+    bool initRequest(PassRefPtr<Range>);
+    void clearRequest();
+    void doRequestCheckingFor(TextCheckingTypeMask, PassRefPtr<Range>);
     TextCheckerClient* client() const;
-    void timerFiredToProcessQueuedRequest(Timer<SpellChecker>*);
-    void invokeRequest(PassRefPtr<SpellCheckRequest>);
-    void enqueueRequest(PassRefPtr<SpellCheckRequest>);
 
     Frame* m_frame;
-    int m_lastRequestedSequence;
 
-    Timer<SpellChecker> m_timerToProcessQueuedRequest;
-
-    RefPtr<SpellCheckRequest> m_processingRequest;
-    RequestQueue m_requestQueue;
+    RefPtr<Range> m_requestRange;
+    String m_requestText;
+    int m_requestSequence;
 };
 
 } // namespace WebCore
