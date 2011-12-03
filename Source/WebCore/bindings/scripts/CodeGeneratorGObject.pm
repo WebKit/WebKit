@@ -379,52 +379,46 @@ sub GenerateProperty {
         $convertFunction = "WTF::String::fromUTF8";
     }
 
-    my $getterExpressionPrefix = $codeGenerator->GetterExpressionPrefix(\%implIncludes, $interfaceName, $attribute);
-    my $setterExpressionPrefix = $codeGenerator->SetterExpressionPrefix(\%implIncludes, $interfaceName, $attribute);
+    my ($getterFunctionName, @getterArguments) = $codeGenerator->GetterExpression(\%implIncludes, $interfaceName, $attribute);
+    my ($setterFunctionName, @setterArguments) = $codeGenerator->SetterExpression(\%implIncludes, $interfaceName, $attribute);
 
-    my $getterContentHead;
-    my $setterContentHead;
     if ($attribute->signature->extendedAttributes->{"ImplementedBy"}) {
         my $implementedBy = $attribute->signature->extendedAttributes->{"ImplementedBy"};
         $implIncludes{"${implementedBy}.h"} = 1;
-        $getterContentHead = "${implementedBy}::${getterExpressionPrefix}coreSelf";
-        $setterContentHead = "${implementedBy}::${setterExpressionPrefix}coreSelf, ${convertFunction}(g_value_get_$gtype(value))";
+        push(@setterArguments, "${convertFunction}(g_value_get_$gtype(value))");
+        unshift(@getterArguments, "coreSelf");
+        unshift(@setterArguments, "coreSelf");
+        $getterFunctionName = "${implementedBy}::$getterFunctionName";
+        $setterFunctionName = "${implementedBy}::$setterFunctionName";
     } else {
-        $getterContentHead = "coreSelf->$getterExpressionPrefix";
-        $setterContentHead = "coreSelf->$setterExpressionPrefix${convertFunction}(g_value_get_$gtype(value))";
+        push(@setterArguments, "${convertFunction}(g_value_get_$gtype(value))");
+        $getterFunctionName = "coreSelf->$getterFunctionName";
+        $setterFunctionName = "coreSelf->$setterFunctionName";
     }
+    push(@getterArguments, "ec") if @{$attribute->getterExceptions};
+    push(@setterArguments, "ec") if @{$attribute->setterExceptions};
 
     if (grep {$_ eq $attribute} @writeableProperties) {
         push(@txtSetProps, "#if ${conditionalString}\n") if $conditionalString;
         push(@txtSetProps, "    case ${propEnum}:\n    {\n");
         push(@txtSetProps, "        WebCore::ExceptionCode ec = 0;\n") if @{$attribute->setterExceptions};
-        push(@txtSetProps, "        ${setterContentHead}");
-        push(@txtSetProps, ", ec") if @{$attribute->setterExceptions};
-        push(@txtSetProps, ");\n");
+        push(@txtSetProps, "        ${setterFunctionName}(" . join(", ", @setterArguments) . ");\n");
         push(@txtSetProps, "        break;\n    }\n");
         push(@txtSetProps, "#endif /* ${conditionalString} */\n") if $conditionalString;
     }
 
     push(@txtGetProps, "#if ${conditionalString}\n") if $conditionalString;
     push(@txtGetProps, "    case ${propEnum}:\n    {\n");
-
-    my $exception = "";
-    if (@{$attribute->getterExceptions}) {
-        $exception = "ec";
-        push(@txtGetProps, "        WebCore::ExceptionCode ec = 0;\n");
-    }
+    push(@txtGetProps, "        WebCore::ExceptionCode ec = 0;\n") if @{$attribute->getterExceptions};
 
     my $postConvertFunction = "";
     my $done = 0;
     if ($gtype eq "string") {
-        push(@txtGetProps, "        g_value_take_string(value, convertToUTF8String(${getterContentHead}" . ($getterContentHead !~ /\($/ && $exception ? ", $exception" : "$exception") . ")));\n");
+        push(@txtGetProps, "        g_value_take_string(value, convertToUTF8String(${getterFunctionName}(" . join(", ", @getterArguments) . ")));\n");
         $done = 1;
     } elsif ($gtype eq "object") {
-        $txtGetProp = << "EOF";
-        RefPtr<WebCore::${propType}> ptr = coreSelf->${getPropNameFunction}(${exception});
-        g_value_set_object(value, WebKit::kit(ptr.get()));
-EOF
-        push(@txtGetProps, $txtGetProp);
+        push(@txtGetProps, "        RefPtr<WebCore::${propType}> ptr = coreSelf->${getPropNameFunction}(" . (@{$attribute->getterExceptions} ? "ec" : "") . ");\n");
+        push(@txtGetProps, "        g_value_set_object(value, WebKit::kit(ptr.get()));\n");
         $done = 1;
     }
 
@@ -438,9 +432,9 @@ EOF
         if ($attribute->signature->extendedAttributes->{"ImplementedBy"}) {
             my $implementedBy = $attribute->signature->extendedAttributes->{"ImplementedBy"};
             $implIncludes{"${implementedBy}.h"} = 1;
-            push(@txtGetProps, "        g_value_set_$_gtype(value, ${convertFunction}${implementedBy}::${getterExpressionPrefix}coreSelf, ${exception})${postConvertFunction});\n");
+            push(@txtGetProps, "        g_value_set_$_gtype(value, ${convertFunction}${getterFunctionName}(" . join(", ", @getterArguments) .  ")${postConvertFunction});\n");
         } else {
-            push(@txtGetProps, "        g_value_set_$_gtype(value, ${convertFunction}coreSelf->${getterExpressionPrefix}${exception})${postConvertFunction});\n");
+            push(@txtGetProps, "        g_value_set_$_gtype(value, ${convertFunction}${getterFunctionName}(" . join(", ", @getterArguments) . ")${postConvertFunction});\n");
         }
     }
 
@@ -742,7 +736,7 @@ sub GenerateFunction {
 
     my $functionSig = "${className}* self";
 
-    my $callImplParams = "";
+    my @callImplParams;
 
     # skip some custom functions for now
     my $isCustomFunction = $function->signature->extendedAttributes->{"Custom"} ||
@@ -770,11 +764,7 @@ sub GenerateFunction {
         if ($paramIsGDOMType || ($paramIDLType eq "DOMString") || ($paramIDLType eq "CompareHow")) {
             $paramName = "converted_" . $paramName;
         }
-        if ($callImplParams) {
-            $callImplParams .= ", $paramName";
-        } else {
-            $callImplParams = "$paramName";
-        }
+        push(@callImplParams, $paramName);
     }
 
     # Not quite sure what to do with this yet, but we need to take into
@@ -782,8 +772,7 @@ sub GenerateFunction {
     # actual implementation.
     if ($function->signature->extendedAttributes->{"NeedsUserGestureCheck"}) {
         $functionSig .= ", gboolean isUserGesture";
-        $callImplParams .= ", " if $callImplParams;
-        $callImplParams .= "false";
+        push(@callImplParams, "false");
     }
 
     if ($returnType ne "void" && $returnValueIsGDOMType && $functionSigType ne "DOMObject") {
@@ -911,19 +900,15 @@ sub GenerateFunction {
             $assign = "${returnType} res = ";
         }
     }
-    my $exceptions = "";
+
     if (@{$function->raisesExceptions}) {
-        push(@cBody, "    WebCore::ExceptionCode ec = 0;\n");
-        if (${callImplParams} ne "") {
-            $exceptions = ", ec";
-        } else {
-            $exceptions = "ec";
-        }
+        push(@cBody, "    WebCore::ExceptionCode ec = 0;\n") ;
+        push(@callImplParams, "ec");
     }
 
     if ($functionHasCustomReturn) {
+        push(@cBody, "    bool ok = item->${functionSigName}(" . join(", ", @callImplParams) . ");\n");
         my $customNodeAppendChild = << "EOF";
-    bool ok = item->${functionSigName}(${callImplParams}${exceptions});
     if (ok)
     {
         ${returnType} res = WebKit::kit($returnParamName);
@@ -946,43 +931,50 @@ EOF
     } elsif ($functionSigType eq "DOMString") {
         my $getterContentHead;
         if ($prefix) {
-            my $getterExpressionPrefix = $codeGenerator->GetterExpressionPrefix(\%implIncludes, $interfaceName, $function);
+            my ($functionName, @arguments) = $codeGenerator->GetterExpression(\%implIncludes, $interfaceName, $function);
+            push(@arguments, @callImplParams);
             if ($function->signature->extendedAttributes->{"ImplementedBy"}) {
                 my $implementedBy = $function->signature->extendedAttributes->{"ImplementedBy"};
                 $implIncludes{"${implementedBy}.h"} = 1;
-                my $item = !$callImplParams && !$exceptions ? "item" : "item, ";
-                $getterContentHead = "${assign}convertToUTF8String(${implementedBy}::$getterExpressionPrefix$item${exceptions}));\n";
+                unshift(@arguments, "item");
+                $functionName = "${implementedBy}::${functionName}";
             } else {
-                $getterContentHead = "${assign}convertToUTF8String(item->$getterExpressionPrefix${exceptions}));\n";
+                $functionName = "item->${functionName}";
             }
+            $getterContentHead = "${assign}convertToUTF8String(${functionName}(" . join(", ", @arguments) . "));\n";
         } else {
-            $getterContentHead = "${assign}convertToUTF8String(item->${functionSigName}(${callImplParams}${exceptions}));\n";
+            $getterContentHead = "${assign}convertToUTF8String(item->${functionSigName}(" . join(", ", @callImplParams) . "));\n";
         }
         push(@cBody, "    ${getterContentHead}");
     } else {
         my $contentHead;
         if ($prefix eq "get_") {
-            my $getterExpressionPrefix = $codeGenerator->GetterExpressionPrefix(\%implIncludes, $interfaceName, $function);
+            my ($functionName, @arguments) = $codeGenerator->GetterExpression(\%implIncludes, $interfaceName, $function);
+            push(@arguments, @callImplParams);
             if ($function->signature->extendedAttributes->{"ImplementedBy"}) {
                 my $implementedBy = $function->signature->extendedAttributes->{"ImplementedBy"};
                 $implIncludes{"${implementedBy}.h"} = 1;
-                my $item = !$callImplParams && !$exceptions ? "item" : "item, ";
-                $contentHead = "${assign}${assignPre}${implementedBy}::$getterExpressionPrefix$item${callImplParams}${exceptions}${assignPost});\n";
+                unshift(@arguments, "item");
+                $functionName = "${implementedBy}::${functionName}";
             } else {
-                $contentHead = "${assign}${assignPre}item->$getterExpressionPrefix${callImplParams}${exceptions}${assignPost});\n";
+                $functionName = "item->${functionName}";
             }
+            $contentHead = "${assign}${assignPre}${functionName}(" . join(", ", @arguments) . "${assignPost});\n";
         } elsif ($prefix eq "set_") {
-            my $setterExpressionPrefix = $codeGenerator->SetterExpressionPrefix(\%implIncludes, $interfaceName, $function);
+            my ($functionName, @arguments) = $codeGenerator->SetterExpression(\%implIncludes, $interfaceName, $function);
+            push(@arguments, @callImplParams);
             if ($function->signature->extendedAttributes->{"ImplementedBy"}) {
                 my $implementedBy = $function->signature->extendedAttributes->{"ImplementedBy"};
                 $implIncludes{"${implementedBy}.h"} = 1;
-                my $item = !$callImplParams && !$exceptions ? "item" : "item, ";
-                $contentHead = "${assign}${assignPre}${implementedBy}::$setterExpressionPrefix$item${callImplParams}${exceptions}${assignPost});\n";
+                unshift(@arguments, "item");
+                $functionName = "${implementedBy}::${functionName}";
+                $contentHead = "${assign}${assignPre}${functionName}(" . join(", ", @arguments) . "${assignPost});\n";
             } else {
-                $contentHead = "${assign}${assignPre}item->$setterExpressionPrefix${callImplParams}${exceptions}${assignPost});\n";
+                $functionName = "item->${functionName}";
+                $contentHead = "${assign}${assignPre}${functionName}(" . join(", ", @arguments) . "${assignPost});\n";
             }
         } else {
-            $contentHead = "${assign}${assignPre}item->${functionSigName}(${callImplParams}${exceptions}${assignPost});\n";
+            $contentHead = "${assign}${assignPre}item->${functionSigName}(" . join(", ", @callImplParams) . "${assignPost});\n";
         }
         push(@cBody, "    ${contentHead}");
         

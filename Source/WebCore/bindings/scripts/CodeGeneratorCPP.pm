@@ -702,37 +702,32 @@ sub GenerateImplementation
             # - GETTER
             my $getterSig = "$attributeType $className\:\:$attributeName() const\n";
             my $hasGetterException = @{$attribute->getterExceptions};
-            my $getterContentHead;
-            my $getterExpressionPrefix = $codeGenerator->GetterExpressionPrefix(\%implIncludes, $interfaceName, $attribute);
+            my ($functionName, @arguments) = $codeGenerator->GetterExpression(\%implIncludes, $interfaceName, $attribute);
+            push(@arguments, "ec") if $hasGetterException;
             if ($attribute->signature->extendedAttributes->{"ImplementedBy"}) {
                 my $implementedBy = $attribute->signature->extendedAttributes->{"ImplementedBy"};
                 $implIncludes{"${implementedBy}.h"} = 1;
-                $getterContentHead = "${implementedBy}::${getterExpressionPrefix}impl()";
+                unshift(@arguments, "impl()");
+                $functionName = "${implementedBy}::${functionName}";
             } else {
-                $getterContentHead = "impl()->${getterExpressionPrefix}";
+                $functionName = "impl()->${functionName}";
             }
-            my $getterContentTail = ")";
 
             # Special cases
+            my $getterContentHead = "";
+            my $getterContentTail = "";
             my @customGetterContent = (); 
             if ($attribute->signature->extendedAttributes->{"ConvertToString"}) {
-                $getterContentHead = "WTF::String::number(" . $getterContentHead;
-                $getterContentTail .= ")";
+                $getterContentHead = "WTF::String::number(";
+                $getterContentTail = ")";
             } elsif ($attribute->signature->type eq "SerializedScriptValue") {
-                $getterContentHead = "$getterContentHead";
-                $getterContentTail .= "->toString()";                
+                $getterContentTail = "->toString()";
             } elsif (ConversionNeeded($attribute->signature->type)) {
-                $getterContentHead = "toWebKit(WTF::getPtr($getterContentHead";
-                $getterContentTail .= "))";
+                $getterContentHead = "toWebKit(WTF::getPtr(";
+                $getterContentTail = "))";
             }
 
-            my $getterContent;
-            if ($hasGetterException) {
-                $getterContent = $getterContentHead . ($getterContentHead =~ /\($/ ? "ec" : ", ec") . $getterContentTail;
-            } else {
-                $getterContent = $getterContentHead . $getterContentTail;
-            }
-
+            my $getterContent = "${getterContentHead}${functionName}(" . join(", ", @arguments) . ")${getterContentTail}";
             my $attributeConditionalString = GenerateConditionalString($attribute->signature);
             push(@implContent, "#if ${attributeConditionalString}\n") if $attributeConditionalString;
 
@@ -779,15 +774,19 @@ sub GenerateImplementation
                 push(@implContent, AddEarlyReturnStatement());
 
                 push(@implContent, "    $exceptionInit\n") if $hasSetterException;
-                my $ec = $hasSetterException ? ", ec" : "";
-                my $setterExpressionPrefix = $codeGenerator->SetterExpressionPrefix(\%implIncludes, $interfaceName, $attribute);
+
+                my ($functionName, @arguments) = $codeGenerator->SetterExpression(\%implIncludes, $interfaceName, $attribute);
+                push(@arguments, $arg);
+                push(@arguments, "ec") if $hasSetterException;
                 if ($attribute->signature->extendedAttributes->{"ImplementedBy"}) {
                     my $implementedBy = $attribute->signature->extendedAttributes->{"ImplementedBy"};
                     $implIncludes{"${implementedBy}.h"} = 1;
-                    push(@implContent, "    ${implementedBy}::${setterExpressionPrefix}impl(), ${arg}${ec});\n");
+                    unshift(@arguments, "impl()");
+                    $functionName = "${implementedBy}::${functionName}";
                 } else {
-                    push(@implContent, "    impl()->$setterExpressionPrefix$arg$ec);\n");
+                    $functionName = "impl()->${functionName}";
                 }
+                push(@implContent, "    ${functionName}(" . join(", ", @arguments) . ");\n");
                 push(@implContent, "    $exceptionRaiseOnError\n") if $hasSetterException;
                 push(@implContent, "}\n\n");
             }

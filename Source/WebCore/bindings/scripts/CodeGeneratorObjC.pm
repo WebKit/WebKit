@@ -1200,7 +1200,8 @@ sub GenerateImplementation
             # - GETTER
             my $getterSig = "- ($attributeType)$attributeInterfaceName\n";
 
-            my $getterExpressionPrefix = $codeGenerator->GetterExpressionPrefix(\%implIncludes, $interfaceName, $attribute);
+            my ($functionName, @arguments) = $codeGenerator->GetterExpression(\%implIncludes, $interfaceName, $attribute);
+            my $getterExpressionPrefix = "$functionName(" . join(", ", @arguments);
 
             # FIXME: Special case attribute ownerDocument to call document. This makes it return the
             # document when called on the document itself. Legacy behavior, see <https://bugs.webkit.org/show_bug.cgi?id=10889>.
@@ -1442,16 +1443,19 @@ sub GenerateImplementation
                     $getterContentHead = "$getterExpressionPrefix";
                     push(@implContent, "    IMPL->$coreSetterName($arg);\n");
                 } else {
-                    my $setterExpressionPrefix = $codeGenerator->SetterExpressionPrefix(\%implIncludes, $interfaceName, $attribute);
-                    my $ec = $hasSetterException ? ", ec" : "";
+                    my ($functionName, @arguments) = $codeGenerator->SetterExpression(\%implIncludes, $interfaceName, $attribute);
+                    push(@arguments, $arg);
+                    push(@arguments, "ec") if $hasSetterException;
                     push(@implContent, "    $exceptionInit\n") if $hasSetterException;
                     if ($attribute->signature->extendedAttributes->{"ImplementedBy"}) {
                         my $implementedBy = $attribute->signature->extendedAttributes->{"ImplementedBy"};
                         $implIncludes{"${implementedBy}.h"} = 1;
-                        push(@implContent, "    ${implementedBy}::${setterExpressionPrefix}IMPL, ${arg}${ec});\n");
+                        unshift(@arguments, "IMPL");
+                        $functionName = "${implementedBy}::${functionName}";
                     } else {
-                        push(@implContent, "    IMPL->$setterExpressionPrefix$arg$ec);\n");
+                        $functionName = "IMPL->${functionName}";
                     }
+                    push(@implContent, "    ${functionName}(" . join(", ", @arguments) . ");\n");
                     push(@implContent, "    $exceptionRaiseOnError\n") if $hasSetterException;
                 }
 

@@ -873,20 +873,19 @@ END
     }
 
     my $returnType = GetTypeFromSignature($attribute->signature);
-
     my $getterString;
     if ($getterStringUsesImp) {
-        my $getterExpressionPrefix = $codeGenerator->GetterExpressionPrefix(\%implIncludes, $interfaceName, $attribute);
+        my ($functionName, @arguments) = $codeGenerator->GetterExpression(\%implIncludes, $interfaceName, $attribute);
+        push(@arguments, "ec") if $useExceptions;
         if ($attribute->signature->extendedAttributes->{"ImplementedBy"}) {
             my $implementedBy = $attribute->signature->extendedAttributes->{"ImplementedBy"};
             AddToImplIncludes("${implementedBy}.h");
-            $getterString = "${implementedBy}::${getterExpressionPrefix}imp";
-            $getterString .= ", ec" if $useExceptions;
+            unshift(@arguments, "imp");
+            $functionName = "${implementedBy}::${functionName}";
         } else {
-            $getterString = "imp->$getterExpressionPrefix";
-            $getterString .= "ec" if $useExceptions;
+            $functionName = "imp->${functionName}";
         }
-        $getterString .= ")";
+        $getterString = "${functionName}(" . join(", ", @arguments) . ")";
     } else {
         $getterString = "impInstance";
     }
@@ -1124,18 +1123,22 @@ END
             } else {
                 push(@implContentDecls, "    imp->set$implSetterFunctionName(V8DOMWrapper::getEventListener(value, true, ListenerFindOrCreate)");
             }
+            push(@implContentDecls, ", ec") if $useExceptions;
+            push(@implContentDecls, ");\n");
         } else {
-            my $setterExpressionPrefix = $codeGenerator->SetterExpressionPrefix(\%implIncludes, $interfaceName, $attribute);
+            my ($functionName, @arguments) = $codeGenerator->SetterExpression(\%implIncludes, $interfaceName, $attribute);
+            push(@arguments, $result);
+            push(@arguments, "ec") if $useExceptions;
             if ($attribute->signature->extendedAttributes->{"ImplementedBy"}) {
                 my $implementedBy = $attribute->signature->extendedAttributes->{"ImplementedBy"};
                 AddToImplIncludes("${implementedBy}.h");
-                push(@implContentDecls, "    ${implementedBy}::${setterExpressionPrefix}imp, $result");
+                unshift(@arguments, "imp");
+                $functionName = "${implementedBy}::${functionName}";
             } else {
-                push(@implContentDecls, "    imp->$setterExpressionPrefix$result");
+                $functionName = "imp->${functionName}";
             }
+            push(@implContentDecls, "    ${functionName}(" . join(", ", @arguments) . ");\n");
         }
-        push(@implContentDecls, ", ec") if $useExceptions;
-        push(@implContentDecls, ");\n");
     }
 
     if ($useExceptions) {

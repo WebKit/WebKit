@@ -1769,17 +1769,17 @@ sub GenerateImplementation
                             push(@implContent, "    JSValue result =  " . NativeToJSValue($attribute->signature, 0, $implClassName, "imp.$implGetterFunctionName()", "castedThis") . ";\n");
                         }
                     } else {
-                        my $getterExpressionPrefix = $codeGenerator->GetterExpressionPrefix(\%implIncludes, $interfaceName, $attribute);
-                        my $getterExpression;
+                        my ($functionName, @arguments) = $codeGenerator->GetterExpression(\%implIncludes, $interfaceName, $attribute);
                         if ($attribute->signature->extendedAttributes->{"ImplementedBy"}) {
                             my $implementedBy = $attribute->signature->extendedAttributes->{"ImplementedBy"};
                             $implIncludes{"${implementedBy}.h"} = 1;
-                            $getterExpression = "${implementedBy}::${getterExpressionPrefix}imp)";
+                            $functionName = "${implementedBy}::${functionName}";
+                            unshift(@arguments, "imp");
                         } else {
-                            $getterExpression = "imp->" . $getterExpressionPrefix . ")";
+                            $functionName = "imp->${functionName}";
                         }
 
-                        my $jsType = NativeToJSValue($attribute->signature, 0, $implClassName, $getterExpression, "castedThis");
+                        my $jsType = NativeToJSValue($attribute->signature, 0, $implClassName, "${functionName}(" . join(", ", @arguments) . ")", "castedThis");
                         push(@implContent, "    $implClassName* imp = static_cast<$implClassName*>(castedThis->impl());\n");
                         if ($codeGenerator->IsSVGAnimatedType($type)) {
                             push(@implContent, "    RefPtr<$type> obj = $jsType;\n");
@@ -1991,16 +1991,18 @@ sub GenerateImplementation
                                     }
                                 }
                             } else {
-                                my $setterExpressionPrefix = $codeGenerator->SetterExpressionPrefix(\%implIncludes, $interfaceName, $attribute);
+                                my ($functionName, @arguments) = $codeGenerator->SetterExpression(\%implIncludes, $interfaceName, $attribute);
+                                push(@arguments, $nativeValue);
                                 if ($attribute->signature->extendedAttributes->{"ImplementedBy"}) {
                                     my $implementedBy = $attribute->signature->extendedAttributes->{"ImplementedBy"};
                                     $implIncludes{"${implementedBy}.h"} = 1;
-                                    push(@implContent, "    ${implementedBy}::${setterExpressionPrefix}imp, $nativeValue");
+                                    unshift(@arguments, "imp");
+                                    $functionName = "${implementedBy}::${functionName}";
                                 } else {
-                                    push(@implContent, "    imp->$setterExpressionPrefix$nativeValue");
+                                    $functionName = "imp->${functionName}";
                                 }
-                                push(@implContent, ", ec") if @{$attribute->setterExceptions};
-                                push(@implContent, ");\n");
+                                push(@arguments, "ec") if @{$attribute->setterExceptions};
+                                push(@implContent, "    ${functionName}(" . join(", ", @arguments) . ");\n");
                                 push(@implContent, "    setDOMException(exec, ec);\n") if @{$attribute->setterExceptions};
                             }
                         }
@@ -2011,10 +2013,10 @@ sub GenerateImplementation
                     }
                 }
             }
-            
+
             if ($dataNode->extendedAttributes->{"ReplaceableConstructor"}) {
                 my $constructorFunctionName = "setJS" . $interfaceName . "Constructor";
-                
+
                 push(@implContent, "void ${constructorFunctionName}(ExecState* exec, JSObject* thisObject, JSValue value)\n");
                 push(@implContent, "{\n");
                 if ($dataNode->extendedAttributes->{"CheckDomainSecurity"}) {
