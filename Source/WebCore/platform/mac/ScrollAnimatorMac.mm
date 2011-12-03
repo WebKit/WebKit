@@ -31,6 +31,7 @@
 
 #include "BlockExceptions.h" 
 #include "FloatPoint.h"
+#include "NSScrollerImpDetails.h"
 #include "PlatformGestureEvent.h"
 #include "PlatformWheelEvent.h"
 #include "ScrollView.h"
@@ -209,7 +210,7 @@ static NSSize abs(NSSize size)
         return NSZeroPoint;
 
     WebCore::Scrollbar* scrollbar = 0;
-    if (wkScrollbarPainterIsHorizontal((WKScrollbarPainterRef)scrollerImp))
+    if ([scrollerImp isHorizontal])
         scrollbar = _animator->scrollableArea()->horizontalScrollbar();
     else 
         scrollbar = _animator->scrollableArea()->verticalScrollbar();
@@ -236,7 +237,7 @@ static NSSize abs(NSSize size)
     if (!_animator)
         return;
 
-    wkSetScrollbarPainterControllerStyle((WKScrollbarPainterControllerRef)scrollerImpPair, newRecommendedScrollerStyle);
+    [scrollerImpPair setScrollerStyle:newRecommendedScrollerStyle];
     _animator->updateScrollerStyle();
 }
 
@@ -264,7 +265,7 @@ static NSSize abs(NSSize size)
     _scrollerPainter = scrollerPainter;
     _part = part;
     _animator = scrollAnimator;
-    _initialAlpha = _part == WebCore::ThumbPart ? wkScrollbarPainterKnobAlpha(_scrollerPainter.get()) : wkScrollbarPainterTrackAlpha(_scrollerPainter.get());
+    _initialAlpha = _part == WebCore::ThumbPart ? [_scrollerPainter.get() knobAlpha] : [_scrollerPainter.get() trackAlpha];
     _newAlpha = newAlpha;
     
     return self;    
@@ -284,9 +285,9 @@ static NSSize abs(NSSize size)
         currentAlpha = progress;
     
     if (_part == WebCore::ThumbPart)
-        wkSetScrollbarPainterKnobAlpha(_scrollerPainter.get(), currentAlpha);
+        [_scrollerPainter.get() setKnobAlpha:currentAlpha];
     else
-        wkSetScrollbarPainterTrackAlpha(_scrollerPainter.get(), currentAlpha);
+        [_scrollerPainter.get() setTrackAlpha:currentAlpha];
 
     // Invalidate the scrollbars so that they paint the animation
     if (WebCore::Scrollbar* verticalScrollbar = _animator->scrollableArea()->verticalScrollbar())
@@ -386,9 +387,9 @@ static NSSize abs(NSSize size)
         scrollbarPartAnimation = nil;
     }
 
-    if (part == WebCore::ThumbPart && !wkScrollbarPainterIsHorizontal(scrollerPainter)) {
+    if (part == WebCore::ThumbPart && ![scrollerPainter isHorizontal]) {
         if (newAlpha == 1) {
-            IntRect thumbRect = IntRect(wkScrollbarPainterKnobRect(scrollerPainter));
+            IntRect thumbRect = IntRect([scrollerPainter rectForPart:NSScrollerKnob]);
             _animator->setVisibleScrollerThumbRect(thumbRect);
         } else
             _animator->setVisibleScrollerThumbRect(IntRect());
@@ -412,7 +413,7 @@ static NSSize abs(NSSize size)
         return;
 
     WKScrollbarPainterRef scrollerPainter = (WKScrollbarPainterRef)scrollerImp;
-    if (wkScrollbarPainterIsHorizontal(scrollerPainter))
+    if ([scrollerImp isHorizontal])
         [self setUpAnimation:_horizontalKnobAnimation scrollerPainter:scrollerPainter part:WebCore::ThumbPart animateAlphaTo:newKnobAlpha duration:duration];
     else
         [self setUpAnimation:_verticalKnobAnimation scrollerPainter:scrollerPainter part:WebCore::ThumbPart animateAlphaTo:newKnobAlpha duration:duration];
@@ -424,7 +425,7 @@ static NSSize abs(NSSize size)
         return;
 
     WKScrollbarPainterRef scrollerPainter = (WKScrollbarPainterRef)scrollerImp;
-    if (wkScrollbarPainterIsHorizontal(scrollerPainter))
+    if ([scrollerImp isHorizontal])
         [self setUpAnimation:_horizontalTrackAnimation scrollerPainter:scrollerPainter part:WebCore::BackTrackPart animateAlphaTo:newTrackAlpha duration:duration];
     else
         [self setUpAnimation:_verticalTrackAnimation scrollerPainter:scrollerPainter part:WebCore::BackTrackPart animateAlphaTo:newTrackAlpha duration:duration];
@@ -480,7 +481,10 @@ ScrollAnimatorMac::ScrollAnimatorMac(ScrollableArea* scrollableArea)
 
 #if USE(WK_SCROLLBAR_PAINTER)
     m_scrollbarPainterControllerDelegate.adoptNS([[ScrollbarPainterControllerDelegate alloc] initWithScrollAnimator:this]);
-    m_scrollbarPainterController = wkMakeScrollbarPainterController(m_scrollbarPainterControllerDelegate.get());
+    m_scrollbarPainterController = [[[NSClassFromString(@"NSScrollerImpPair") alloc] init] autorelease];
+    [m_scrollbarPainterController.get() setDelegate:m_scrollbarPainterControllerDelegate.get()];
+    [m_scrollbarPainterController.get() setScrollerStyle:wkRecommendedScrollerStyle()];
+
     m_scrollbarPainterDelegate.adoptNS([[ScrollbarPainterDelegate alloc] initWithScrollAnimator:this]);
 #endif
 }
@@ -490,7 +494,7 @@ ScrollAnimatorMac::~ScrollAnimatorMac()
 #if USE(WK_SCROLLBAR_PAINTER)
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     [m_scrollbarPainterControllerDelegate.get() scrollAnimatorDestroyed];
-    [(id)m_scrollbarPainterController.get() setDelegate:nil];
+    [m_scrollbarPainterController.get() setDelegate:nil];
     [m_scrollbarPainterDelegate.get() scrollAnimatorDestroyed];
     [m_scrollAnimationHelperDelegate.get() scrollAnimatorDestroyed];
     END_BLOCK_OBJC_EXCEPTIONS;
@@ -610,7 +614,7 @@ void ScrollAnimatorMac::notityPositionChanged()
     // isn't really scrolling in that case. We should only pass the message on to the
     // ScrollbarPainterController when we're really scrolling on an active page.
     if (scrollableArea()->isOnActivePage())
-        wkContentAreaScrolled(m_scrollbarPainterController.get());
+    [m_scrollbarPainterController.get() contentAreaScrolled];
 #endif
     ScrollAnimator::notityPositionChanged();
 }
@@ -620,7 +624,7 @@ void ScrollAnimatorMac::contentAreaWillPaint() const
     if (!scrollableArea()->isOnActivePage()) 
         return;
 #if USE(WK_SCROLLBAR_PAINTER)
-    wkContentAreaWillPaint(m_scrollbarPainterController.get());
+    [m_scrollbarPainterController.get() contentAreaWillDraw];
 #endif
 }
 
@@ -629,7 +633,7 @@ void ScrollAnimatorMac::mouseEnteredContentArea() const
     if (!scrollableArea()->isOnActivePage()) 
         return;
 #if USE(WK_SCROLLBAR_PAINTER)
-    wkMouseEnteredContentArea(m_scrollbarPainterController.get());
+    [m_scrollbarPainterController.get() mouseEnteredContentArea];
 #endif
 }
 
@@ -638,7 +642,7 @@ void ScrollAnimatorMac::mouseExitedContentArea() const
     if (!scrollableArea()->isOnActivePage()) 
         return;
 #if USE(WK_SCROLLBAR_PAINTER)
-    wkMouseExitedContentArea(m_scrollbarPainterController.get());
+    [m_scrollbarPainterController.get() mouseExitedContentArea];
 #endif
 }
 
@@ -647,7 +651,7 @@ void ScrollAnimatorMac::mouseMovedInContentArea() const
     if (!scrollableArea()->isOnActivePage()) 
         return;
 #if USE(WK_SCROLLBAR_PAINTER)
-    wkMouseMovedInContentArea(m_scrollbarPainterController.get());
+    [m_scrollbarPainterController.get() mouseMovedInContentArea];
 #endif
 }
 
@@ -656,7 +660,7 @@ void ScrollAnimatorMac::willStartLiveResize()
     if (!scrollableArea()->isOnActivePage()) 
          return;
 #if USE(WK_SCROLLBAR_PAINTER)
-    wkWillStartLiveResize(m_scrollbarPainterController.get());
+    [m_scrollbarPainterController.get() startLiveResize];
 #endif
 }
 
@@ -665,7 +669,7 @@ void ScrollAnimatorMac::contentsResized() const
     if (!scrollableArea()->isOnActivePage()) 
           return;
 #if USE(WK_SCROLLBAR_PAINTER)
-    wkContentAreaResized(m_scrollbarPainterController.get());
+    [m_scrollbarPainterController.get() contentAreaDidResize];
 #endif
 }
 
@@ -674,7 +678,7 @@ void ScrollAnimatorMac::willEndLiveResize()
     if (!scrollableArea()->isOnActivePage()) 
          return;
 #if USE(WK_SCROLLBAR_PAINTER)
-    wkWillEndLiveResize(m_scrollbarPainterController.get());
+    [m_scrollbarPainterController.get() endLiveResize];
 #endif
 }
 
@@ -683,7 +687,7 @@ void ScrollAnimatorMac::contentAreaDidShow() const
     if (!scrollableArea()->isOnActivePage()) 
          return;
 #if USE(WK_SCROLLBAR_PAINTER)
-    wkContentAreaDidShow(m_scrollbarPainterController.get());
+    [m_scrollbarPainterController.get() windowOrderedIn];
 #endif
 }
 
@@ -692,7 +696,7 @@ void ScrollAnimatorMac::contentAreaDidHide() const
     if (!scrollableArea()->isOnActivePage()) 
          return;
 #if USE(WK_SCROLLBAR_PAINTER)
-    wkContentAreaDidHide(m_scrollbarPainterController.get());
+    [m_scrollbarPainterController.get() windowOrderedOut];
 #endif
 }
 
@@ -701,7 +705,7 @@ void ScrollAnimatorMac::didBeginScrollGesture() const
     if (!scrollableArea()->isOnActivePage()) 
         return;
 #if USE(WK_SCROLLBAR_PAINTER)
-    wkDidBeginScrollGesture(m_scrollbarPainterController.get());
+    [m_scrollbarPainterController.get() beginScrollGesture];
 #endif
 }
 
@@ -710,7 +714,7 @@ void ScrollAnimatorMac::didEndScrollGesture() const
     if (!scrollableArea()->isOnActivePage()) 
          return;   
 #if USE(WK_SCROLLBAR_PAINTER)
-    wkDidEndScrollGesture(m_scrollbarPainterController.get());
+    [m_scrollbarPainterController.get() endScrollGesture];
 #endif
 }
 
@@ -718,10 +722,10 @@ void ScrollAnimatorMac::didAddVerticalScrollbar(Scrollbar* scrollbar)
 {
 #if USE(WK_SCROLLBAR_PAINTER)
     WKScrollbarPainterRef painter = static_cast<WebCore::ScrollbarThemeMac*>(WebCore::ScrollbarTheme::nativeTheme())->painterForScrollbar(scrollbar);
-    wkScrollbarPainterSetDelegate(painter, m_scrollbarPainterDelegate.get());
-    wkSetPainterForPainterController(m_scrollbarPainterController.get(), painter, false);
+    [painter setDelegate:m_scrollbarPainterDelegate.get()];
+    [m_scrollbarPainterController.get() setVerticalScrollerImp:painter];
     if (scrollableArea()->inLiveResize())
-        wkSetScrollbarPainterKnobAlpha(painter, 1);
+        [painter setKnobAlpha:1];
 #else
     UNUSED_PARAM(scrollbar);
 #endif
@@ -731,8 +735,8 @@ void ScrollAnimatorMac::willRemoveVerticalScrollbar(Scrollbar* scrollbar)
 {
 #if USE(WK_SCROLLBAR_PAINTER)
     WKScrollbarPainterRef painter = static_cast<WebCore::ScrollbarThemeMac*>(WebCore::ScrollbarTheme::nativeTheme())->painterForScrollbar(scrollbar);
-    wkScrollbarPainterSetDelegate(painter, nil);
-    wkSetPainterForPainterController(m_scrollbarPainterController.get(), nil, false);
+    [painter setDelegate:nil];
+    [m_scrollbarPainterController.get() setVerticalScrollerImp:nil];
 #else
     UNUSED_PARAM(scrollbar);
 #endif
@@ -742,10 +746,10 @@ void ScrollAnimatorMac::didAddHorizontalScrollbar(Scrollbar* scrollbar)
 {
 #if USE(WK_SCROLLBAR_PAINTER)
     WKScrollbarPainterRef painter = static_cast<WebCore::ScrollbarThemeMac*>(WebCore::ScrollbarTheme::nativeTheme())->painterForScrollbar(scrollbar);
-    wkScrollbarPainterSetDelegate(painter, m_scrollbarPainterDelegate.get());
-    wkSetPainterForPainterController(m_scrollbarPainterController.get(), painter, true);
+    [painter setDelegate:m_scrollbarPainterDelegate.get()];
+    [m_scrollbarPainterController.get() setHorizontalScrollerImp:painter];
     if (scrollableArea()->inLiveResize())
-        wkSetScrollbarPainterKnobAlpha(painter, 1);
+        [painter setKnobAlpha:1];
 #else
     UNUSED_PARAM(scrollbar);
 #endif
@@ -755,8 +759,8 @@ void ScrollAnimatorMac::willRemoveHorizontalScrollbar(Scrollbar* scrollbar)
 {
 #if USE(WK_SCROLLBAR_PAINTER)
     WKScrollbarPainterRef painter = static_cast<WebCore::ScrollbarThemeMac*>(WebCore::ScrollbarTheme::nativeTheme())->painterForScrollbar(scrollbar);
-    wkScrollbarPainterSetDelegate(painter, nil);
-    wkSetPainterForPainterController(m_scrollbarPainterController.get(), nil, true);
+    [painter setDelegate:nil];
+    [m_scrollbarPainterController.get() setHorizontalScrollerImp:nil];
 #else
     UNUSED_PARAM(scrollbar);
 #endif
@@ -1268,16 +1272,16 @@ void ScrollAnimatorMac::updateScrollerStyle()
     }
 
     ScrollbarThemeMac* macTheme = (ScrollbarThemeMac*)ScrollbarTheme::nativeTheme();
-    int newStyle = wkScrollbarPainterControllerStyle(m_scrollbarPainterController.get());
+    NSScrollerStyle newStyle = [m_scrollbarPainterController.get() scrollerStyle];
 
     if (Scrollbar* verticalScrollbar = scrollableArea()->verticalScrollbar()) {
-        WKScrollbarPainterRef oldVerticalPainter = wkVerticalScrollbarPainterForController(m_scrollbarPainterController.get());
-        WKScrollbarPainterRef newVerticalPainter = wkMakeScrollbarReplacementPainter(oldVerticalPainter,
-                                                                                     newStyle,
-                                                                                     verticalScrollbar->controlSize(),
-                                                                                     false);
+        WKScrollbarPainterRef oldVerticalPainter = [m_scrollbarPainterController.get() verticalScrollerImp];
+        WKScrollbarPainterRef newVerticalPainter = [NSClassFromString(@"NSScrollerImp") scrollerImpWithStyle:newStyle 
+                                                                                    controlSize:(NSControlSize)verticalScrollbar->controlSize() 
+                                                                                    horizontal:NO 
+                                                                                    replacingScrollerImp:oldVerticalPainter];
         macTheme->setNewPainterForScrollbar(verticalScrollbar, newVerticalPainter);
-        wkSetPainterForPainterController(m_scrollbarPainterController.get(), newVerticalPainter, false);
+        [m_scrollbarPainterController.get() setVerticalScrollerImp:newVerticalPainter];
 
         // The different scrollbar styles have different thicknesses, so we must re-set the 
         // frameRect to the new thickness, and the re-layout below will ensure the position
@@ -1287,13 +1291,13 @@ void ScrollAnimatorMac::updateScrollerStyle()
     }
 
     if (Scrollbar* horizontalScrollbar = scrollableArea()->horizontalScrollbar()) {
-        WKScrollbarPainterRef oldHorizontalPainter = wkHorizontalScrollbarPainterForController(m_scrollbarPainterController.get());
-        WKScrollbarPainterRef newHorizontalPainter = wkMakeScrollbarReplacementPainter(oldHorizontalPainter,
-                                                                                       newStyle,
-                                                                                       horizontalScrollbar->controlSize(),
-                                                                                       true);
+        WKScrollbarPainterRef oldHorizontalPainter = [m_scrollbarPainterController.get() horizontalScrollerImp];
+        WKScrollbarPainterRef newHorizontalPainter = [NSClassFromString(@"NSScrollerImp") scrollerImpWithStyle:newStyle 
+                                                                                    controlSize:(NSControlSize)horizontalScrollbar->controlSize() 
+                                                                                    horizontal:YES 
+                                                                                    replacingScrollerImp:oldHorizontalPainter];
         macTheme->setNewPainterForScrollbar(horizontalScrollbar, newHorizontalPainter);
-        wkSetPainterForPainterController(m_scrollbarPainterController.get(), newHorizontalPainter, true);
+        [m_scrollbarPainterController.get() setVerticalScrollerImp:newHorizontalPainter];
 
         // The different scrollbar styles have different thicknesses, so we must re-set the 
         // frameRect to the new thickness, and the re-layout below will ensure the position
@@ -1327,7 +1331,10 @@ void ScrollAnimatorMac::stopScrollbarPaintTimer()
 
 void ScrollAnimatorMac::initialScrollbarPaintTimerFired(Timer<ScrollAnimatorMac>*)
 {
-    wkScrollbarPainterForceFlashScrollers(m_scrollbarPainterController.get());
+    // To force the scrollbars to flash, we have to call hide first. Otherwise, the ScrollbarPainterController
+    // might think that the scrollbars are already showing and bail early.
+    [m_scrollbarPainterController.get() hideOverlayScrollers];
+    [m_scrollbarPainterController.get() flashScrollers];
 }
 #endif
 

@@ -28,6 +28,7 @@
 
 #include "ImageBuffer.h"
 #include "LocalCurrentGraphicsContext.h"
+#include "NSScrollerImpDetails.h"
 #include "PlatformMouseEvent.h"
 #include "ScrollAnimatorMac.h"
 #include "ScrollView.h"
@@ -158,7 +159,7 @@ void ScrollbarThemeMac::registerScrollbar(Scrollbar* scrollbar)
 {
 #if USE(WK_SCROLLBAR_PAINTER)
     bool isHorizontal = scrollbar->orientation() == HorizontalScrollbar;
-    WKScrollbarPainterRef scrollbarPainter = wkMakeScrollbarPainter(scrollbar->controlSize(), isHorizontal);
+    WKScrollbarPainterRef scrollbarPainter = [NSClassFromString(@"NSScrollerImp") scrollerImpWithStyle:wkRecommendedScrollerStyle() controlSize:(NSControlSize)scrollbar->controlSize() horizontal:isHorizontal replacingScrollerImp:nil];
     scrollbarMap()->add(scrollbar, scrollbarPainter);
     updateEnabledState(scrollbar);
     updateScrollbarOverlayStyle(scrollbar);
@@ -213,7 +214,8 @@ void ScrollbarThemeMac::preferencesChanged()
 int ScrollbarThemeMac::scrollbarThickness(ScrollbarControlSize controlSize)
 {
 #if USE(WK_SCROLLBAR_PAINTER)
-    return wkScrollbarThickness(controlSize);
+    WKScrollbarPainterRef scrollbarPainter = (WKScrollbarPainterRef)[NSClassFromString(@"NSScrollerImp") scrollerImpWithStyle:wkRecommendedScrollerStyle() controlSize:controlSize horizontal:NO replacingScrollerImp:nil];
+    return [scrollbarPainter trackBoxWidth];
 #else
     return cScrollbarThickness[controlSize];
 #endif
@@ -222,30 +224,27 @@ int ScrollbarThemeMac::scrollbarThickness(ScrollbarControlSize controlSize)
 bool ScrollbarThemeMac::usesOverlayScrollbars() const
 {
 #if USE(WK_SCROLLBAR_PAINTER)
-    return wkScrollbarPainterUsesOverlayScrollers();
+    return wkRecommendedScrollerStyle() == NSScrollerStyleOverlay;
 #else
     return false;
 #endif
 }
 
-#if USE(WK_SCROLLBAR_PAINTER)
-static inline wkScrollerKnobStyle toScrollbarPainterKnobStyle(ScrollbarOverlayStyle style)
-{
-    switch (style) {
-    case ScrollbarOverlayStyleDark:
-        return wkScrollerKnobStyleDark;
-    case ScrollbarOverlayStyleLight:
-        return wkScrollerKnobStyleLight;
-    default:
-        return wkScrollerKnobStyleDefault;
-    }
-}
-#endif
-
 void ScrollbarThemeMac::updateScrollbarOverlayStyle(Scrollbar* scrollbar)
 {
 #if USE(WK_SCROLLBAR_PAINTER)
-    wkSetScrollbarPainterKnobStyle(painterForScrollbar(scrollbar), toScrollbarPainterKnobStyle(scrollbar->scrollableArea()->scrollbarOverlayStyle()));
+    WKScrollbarPainterRef painter = painterForScrollbar(scrollbar);
+    switch (scrollbar->scrollableArea()->scrollbarOverlayStyle()) {
+    case ScrollbarOverlayStyleDefault:
+        [painter setKnobStyle:NSScrollerKnobStyleDefault];
+        break;
+    case ScrollbarOverlayStyleDark:
+        [painter setKnobStyle:NSScrollerKnobStyleDark];
+        break;
+    case ScrollbarOverlayStyleLight:
+        [painter setKnobStyle:NSScrollerKnobStyleLight];
+        break;
+    }
 #else
     UNUSED_PARAM(scrollbar);
 #endif
@@ -278,7 +277,9 @@ bool ScrollbarThemeMac::hasThumb(Scrollbar* scrollbar)
 {
     int minLengthForThumb;
 #if USE(WK_SCROLLBAR_PAINTER)
-    minLengthForThumb = wkScrollbarMinimumTotalLengthNeededForThumb(scrollbarMap()->get(scrollbar).get());
+    WKScrollbarPainterRef painter = scrollbarMap()->get(scrollbar).get();
+    minLengthForThumb = [painter knobMinLength] + [painter trackOverlapEndInset] + [painter knobOverlapEndInset]
+        + 2 * ([painter trackEndInset] + [painter knobEndInset]);
 #else
     minLengthForThumb = 2 * cButtonInset[scrollbar->controlSize()] + cThumbMinLength[scrollbar->controlSize()] + 1;
 #endif
@@ -419,7 +420,7 @@ IntRect ScrollbarThemeMac::trackRect(Scrollbar* scrollbar, bool painting)
 int ScrollbarThemeMac::minimumThumbLength(Scrollbar* scrollbar)
 {
 #if USE(WK_SCROLLBAR_PAINTER)
-    return wkScrollbarMinimumThumbLength(scrollbarMap()->get(scrollbar).get());
+    return [scrollbarMap()->get(scrollbar).get() knobMinLength];
 #else
     return cThumbMinLength[scrollbar->controlSize()];
 #endif
@@ -460,11 +461,35 @@ static int scrollbarPartToHIPressedState(ScrollbarPart part)
 void ScrollbarThemeMac::updateEnabledState(Scrollbar* scrollbar)
 {
 #if USE(WK_SCROLLBAR_PAINTER)
-    wkScrollbarPainterSetEnabled(scrollbarMap()->get(scrollbar).get(), scrollbar->enabled());
+    [scrollbarMap()->get(scrollbar).get() setEnabled:scrollbar->enabled()];
 #else
     UNUSED_PARAM(scrollbar);
 #endif
 }
+
+#if USE(WK_SCROLLBAR_PAINTER)
+static void scrollbarPainterPaint(WKScrollbarPainterRef scrollbarPainter, bool enabled, double value, CGFloat proportion, CGRect frameRect)
+{
+    [scrollbarPainter setEnabled:enabled];
+    [scrollbarPainter setBoundsSize: NSSizeFromCGSize(frameRect.size)];
+    [scrollbarPainter setDoubleValue:value];
+    [scrollbarPainter setKnobProportion:proportion];
+
+    // The scrollbar's frameRect includes a side inset for overlay scrollers, so we have to use the 
+    // trackWidth for drawKnobSlotInRect
+    NSRect trackRect;
+    if ([scrollbarPainter isHorizontal])
+        trackRect = NSMakeRect(0, 0, frameRect.size.width, [scrollbarPainter trackWidth]);
+    else
+        trackRect = NSMakeRect(0, 0, [scrollbarPainter trackWidth], frameRect.size.height);
+    [scrollbarPainter drawKnobSlotInRect:trackRect highlight:NO];
+
+    // If the scrollbar is not enabled, then there is nothing to scroll to, and we shouldn't
+    // call drawKnob.
+    if (enabled)
+        [scrollbarPainter drawKnob];
+}
+#endif
 
 bool ScrollbarThemeMac::paint(Scrollbar* scrollbar, GraphicsContext* context, const IntRect& damageRect)
 {
@@ -496,7 +521,7 @@ bool ScrollbarThemeMac::paint(Scrollbar* scrollbar, GraphicsContext* context, co
     context->clip(damageRect);
     context->translate(scrollbar->frameRect().x(), scrollbar->frameRect().y());
     LocalCurrentGraphicsContext localContext(context);
-    wkScrollbarPainterPaint(scrollbarMap()->get(scrollbar).get(),
+    scrollbarPainterPaint(scrollbarMap()->get(scrollbar).get(),
                             scrollbar->enabled(),
                             value,
                             (static_cast<CGFloat>(scrollbar->visibleSize()) - overhang) / scrollbar->totalSize(),
