@@ -890,6 +890,10 @@ void ChromeClient::enterFullScreenForElement(WebCore::Element* element)
 {
     element->document()->webkitWillEnterFullScreenForElement(element);
     m_adjustmentWatcher.disableAllScrollbars();
+#if ENABLE(VIDEO)
+    if (element->tagName() == "VIDEO")
+        enterFullscreenForNode(static_cast<Node*>(element));
+#endif
     element->document()->webkitDidEnterFullScreenForElement(element);
 }
 
@@ -897,6 +901,10 @@ void ChromeClient::exitFullScreenForElement(WebCore::Element* element)
 {
     element->document()->webkitWillExitFullScreenForElement(element);
     m_adjustmentWatcher.enableAllScrollbars();
+#if ENABLE(VIDEO)
+    if (element->tagName() == "VIDEO")
+        webViewExitFullscreen(m_webView);
+#endif
     element->document()->webkitDidExitFullScreenForElement(element);
 }
 #endif

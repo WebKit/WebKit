@@ -1,3 +1,17 @@
+2011-12-02  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] Fullscreen controller support for the new WebKit Fullscreen API
+        https://bugs.webkit.org/show_bug.cgi?id=66968
+
+        Reviewed by Martin Robinson.
+
+        If the element being fullscreened is a video use the native
+        fullscreen controls.
+
+        * WebCoreSupport/ChromeClientGtk.cpp:
+        (WebKit::ChromeClient::enterFullScreenForElement):
+        (WebKit::ChromeClient::exitFullScreenForElement):
+
 2011-12-01  Philippe Normand  <pnormand@igalia.com>
 
         [GTK] scrollbars interfering with fullscreen (in-window) video rendering

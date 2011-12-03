@@ -1588,3 +1588,6 @@ fast/forms/range/slider-in-multi-column.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=73666
 http/tests/websocket/tests/hybi/bufferedAmount-after-close-in-busy.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=73583
+fullscreen/video-controls-override.html

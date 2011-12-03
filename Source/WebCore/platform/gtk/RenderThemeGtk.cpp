@@ -481,7 +481,7 @@ String RenderThemeGtk::extraMediaControlsStyleSheet()
 #if ENABLE(FULLSCREEN_API)
 String RenderThemeGtk::extraFullScreenStyleSheet()
 {
-    return String(fullscreenQuickTimeUserAgentStyleSheet, sizeof(fullscreenQuickTimeUserAgentStyleSheet));
+    return String();
 }
 #endif
 

@@ -1,3 +1,16 @@
+2011-12-02  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] Fullscreen controller support for the new WebKit Fullscreen API
+        https://bugs.webkit.org/show_bug.cgi?id=66968
+
+        Reviewed by Martin Robinson.
+
+        * GNUmakefile.am: Don't use the Quicktime fullscreen CSS anymore,
+        it wasn't suited for GTK in the first place anyway.
+        * platform/gtk/RenderThemeGtk.cpp:
+        (WebCore::RenderThemeGtk::extraFullScreenStyleSheet): Simply reuse
+        GTK CSS.
+
 2011-12-03  Alejandro G. Castro  <alex@igalia.com>
 
         [GTK] TextureMapperNode should not use Qt types and functions
