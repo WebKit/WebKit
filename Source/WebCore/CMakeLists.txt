@@ -450,7 +450,6 @@ SET(WebCore_SOURCES
     css/CSSParser.cpp
     css/CSSParserValues.cpp
     css/CSSPrimitiveValue.cpp
-    css/CSSPrimitiveValueCache.cpp
     css/CSSProperty.cpp
     css/CSSPropertyLonghand.cpp
     css/CSSPropertySourceData.cpp
@@ -469,6 +468,7 @@ SET(WebCore_SOURCES
     css/CSSUnicodeRangeValue.cpp
     css/CSSValue.cpp
     css/CSSValueList.cpp
+    css/CSSValuePool.cpp
     css/CSSWrapShapes.cpp
     css/FontFamilyValue.cpp
     css/FontFeatureValue.cpp

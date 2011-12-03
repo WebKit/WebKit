@@ -42,7 +42,7 @@ namespace WebCore {
 class CSSBorderImageSliceValue;
 class CSSMutableStyleDeclaration;
 class CSSPrimitiveValue;
-class CSSPrimitiveValueCache;
+class CSSValuePool;
 class CSSProperty;
 class CSSRule;
 class CSSRuleList;
@@ -75,7 +75,7 @@ public:
 
     Document* findDocument() const;
 
-    CSSPrimitiveValueCache* primitiveValueCache() const { return m_primitiveValueCache.get(); }
+    CSSValuePool* cssValuePool() const { return m_cssValuePool.get(); }
 
     void addProperty(int propId, PassRefPtr<CSSValue>, bool important, bool implicit = false);
     void rollbackLastProperties(int num);
@@ -279,7 +279,7 @@ public:
     CSSProperty** m_parsedProperties;
     CSSSelectorList* m_selectorListForParseSelector;
 
-    RefPtr<CSSPrimitiveValueCache> m_primitiveValueCache;
+    RefPtr<CSSValuePool> m_cssValuePool;
     unsigned m_numParsedProperties;
     unsigned m_maxParsedProperties;
     unsigned m_numParsedPropertiesBeforeMarginBox;

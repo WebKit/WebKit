@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CSSPrimitiveValueCache_h
-#define CSSPrimitiveValueCache_h
+#ifndef CSSValuePool_h
+#define CSSValuePool_h
 
 #include "CSSPrimitiveValue.h"
 #include <wtf/HashMap.h>
@@ -32,10 +32,10 @@
 
 namespace WebCore {
 
-class CSSPrimitiveValueCache : public RefCounted<CSSPrimitiveValueCache> {
+class CSSValuePool : public RefCounted<CSSValuePool> {
 public:
-    static PassRefPtr<CSSPrimitiveValueCache> create() { return adoptRef(new CSSPrimitiveValueCache); }
-    ~CSSPrimitiveValueCache();
+    static PassRefPtr<CSSValuePool> create() { return adoptRef(new CSSValuePool); }
+    ~CSSValuePool();
 
     PassRefPtr<CSSPrimitiveValue> createIdentifierValue(int identifier);
     PassRefPtr<CSSPrimitiveValue> createColorValue(unsigned rgbValue);
@@ -44,7 +44,7 @@ public:
     template<typename T> static PassRefPtr<CSSPrimitiveValue> createValue(T value) { return CSSPrimitiveValue::create(value); }
 
 private:
-    CSSPrimitiveValueCache();
+    CSSValuePool();
 
     typedef HashMap<int, RefPtr<CSSPrimitiveValue> > IdentifierValueCache;
     IdentifierValueCache m_identifierValueCache;

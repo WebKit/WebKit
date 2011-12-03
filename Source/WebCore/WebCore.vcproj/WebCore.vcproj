@@ -32626,14 +32626,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\css\CSSPrimitiveValueCache.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\css\CSSPrimitiveValueCache.h"
-				>
-			</File>
-			<File
 				RelativePath="..\css\CSSProperty.cpp"
 				>
 			</File>
@@ -32799,6 +32791,14 @@
 			</File>
 			<File
 				RelativePath="..\css\CSSValueList.h"
+				>
+			</File>
+			<File
+				RelativePath="..\css\CSSValuePool.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\css\CSSValuePool.h"
 				>
 			</File>
 			<File

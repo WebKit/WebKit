@@ -24,12 +24,12 @@
  */
 
 #include "config.h"
-#include "CSSPrimitiveValueCache.h"
+#include "CSSValuePool.h"
 #include "CSSValueKeywords.h"
 
 namespace WebCore {
 
-CSSPrimitiveValueCache::CSSPrimitiveValueCache()
+CSSValuePool::CSSValuePool()
     : m_colorTransparent(CSSPrimitiveValue::createColor(Color::transparent))
     , m_colorWhite(CSSPrimitiveValue::createColor(Color::white))
     , m_colorBlack(CSSPrimitiveValue::createColor(Color::black))
@@ -39,11 +39,11 @@ CSSPrimitiveValueCache::CSSPrimitiveValueCache()
 {
 }
 
-CSSPrimitiveValueCache::~CSSPrimitiveValueCache()
+CSSValuePool::~CSSValuePool()
 {
 }
 
-PassRefPtr<CSSPrimitiveValue> CSSPrimitiveValueCache::createIdentifierValue(int ident)
+PassRefPtr<CSSPrimitiveValue> CSSValuePool::createIdentifierValue(int ident)
 {
     if (ident <= 0 || ident >= numCSSValueKeywords)
         return CSSPrimitiveValue::createIdentifier(ident);
@@ -55,7 +55,7 @@ PassRefPtr<CSSPrimitiveValue> CSSPrimitiveValueCache::createIdentifierValue(int 
     return entry.first->second;
 }
 
-PassRefPtr<CSSPrimitiveValue> CSSPrimitiveValueCache::createColorValue(unsigned rgbValue)
+PassRefPtr<CSSPrimitiveValue> CSSValuePool::createColorValue(unsigned rgbValue)
 {
     // These are the empty and deleted values of the hash table.
     if (rgbValue == Color::transparent)
@@ -78,7 +78,7 @@ PassRefPtr<CSSPrimitiveValue> CSSPrimitiveValueCache::createColorValue(unsigned 
     return entry.first->second;
 }
 
-PassRefPtr<CSSPrimitiveValue> CSSPrimitiveValueCache::createValue(double value, CSSPrimitiveValue::UnitTypes type)
+PassRefPtr<CSSPrimitiveValue> CSSValuePool::createValue(double value, CSSPrimitiveValue::UnitTypes type)
 {
     // Small positive integers repeat often.
     static const int maximumCacheableValue = 256;

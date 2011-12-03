@@ -1,5 +1,149 @@
 2011-12-03  Andreas Kling  <kling@webkit.org>
 
+        Rename CSSPrimitiveValueCache to CSSValuePool.
+        <http://webkit.org/b/73742>
+
+        Reviewed by Antti Koivisto.
+
+        CSSPrimitiveValueCache -> CSSValuePool
+        Document::primitiveValueCache() -> Document::cssValuePool()
+
+        This is in preparation for sharing more than just primitive values.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (AddIncludesForType):
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::valueForNinePieceImageSlice):
+        (WebCore::valueForNinePieceImageQuad):
+        (WebCore::valueForNinePieceImageRepeat):
+        (WebCore::valueForNinePieceImage):
+        (WebCore::zoomAdjustedPixelValue):
+        (WebCore::zoomAdjustedNumberValue):
+        (WebCore::zoomAdjustedPixelValueForLength):
+        (WebCore::valueForReflection):
+        (WebCore::getPositionOffsetValue):
+        (WebCore::CSSComputedStyleDeclaration::currentColorOrValidColor):
+        (WebCore::getBorderRadiusCornerValue):
+        (WebCore::computedTransform):
+        (WebCore::CSSComputedStyleDeclaration::valueForFilter):
+        (WebCore::valueForGridTrackList):
+        (WebCore::getDelayValue):
+        (WebCore::getDurationValue):
+        (WebCore::createLineBoxContainValue):
+        (WebCore::CSSComputedStyleDeclaration::getFontSizeCSSValuePreferringKeyword):
+        (WebCore::CSSComputedStyleDeclaration::valueForShadow):
+        (WebCore::valueForFamily):
+        (WebCore::renderTextDecorationFlagsToCSSValue):
+        (WebCore::fillRepeatToCSSValue):
+        (WebCore::fillSizeToCSSValue):
+        (WebCore::contentToCSSValue):
+        (WebCore::counterToCSSValue):
+        (WebCore::fontFamilyFromStyle):
+        (WebCore::lineHeightFromStyle):
+        (WebCore::fontSizeFromStyle):
+        (WebCore::fontStyleFromStyle):
+        (WebCore::fontVariantFromStyle):
+        (WebCore::fontWeightFromStyle):
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/CSSParser.cpp:
+        (WebCore::parseColorValue):
+        (WebCore::parseSimpleLengthValue):
+        (WebCore::CSSParser::setStyleSheet):
+        (WebCore::CSSParser::createPrimitiveNumericValue):
+        (WebCore::CSSParser::createPrimitiveStringValue):
+        (WebCore::CSSParser::parseValidPrimitive):
+        (WebCore::CSSParser::parseValue):
+        (WebCore::parseBackgroundClip):
+        (WebCore::CSSParser::parseFillShorthand):
+        (WebCore::CSSParser::parsePage):
+        (WebCore::CSSParser::parseSizeParameter):
+        (WebCore::CSSParser::parseContent):
+        (WebCore::CSSParser::parseAttr):
+        (WebCore::CSSParser::parseBackgroundColor):
+        (WebCore::CSSParser::parseFillPositionX):
+        (WebCore::CSSParser::parseFillPositionY):
+        (WebCore::CSSParser::parseFillPositionComponent):
+        (WebCore::CSSParser::parseFillPosition):
+        (WebCore::CSSParser::parseFillRepeat):
+        (WebCore::CSSParser::parseFillSize):
+        (WebCore::CSSParser::parseFillProperty):
+        (WebCore::CSSParser::parseAnimationDirection):
+        (WebCore::CSSParser::parseAnimationFillMode):
+        (WebCore::CSSParser::parseAnimationIterationCount):
+        (WebCore::CSSParser::parseAnimationName):
+        (WebCore::CSSParser::parseAnimationPlayState):
+        (WebCore::CSSParser::parseAnimationProperty):
+        (WebCore::CSSParser::parseAnimationTimingFunction):
+        (WebCore::CSSParser::parseGridTrackList):
+        (WebCore::CSSParser::parseDashboardRegions):
+        (WebCore::CSSParser::parseCounterContent):
+        (WebCore::CSSParser::parseShape):
+        (WebCore::CSSParser::parseWrapShape):
+        (WebCore::CSSParser::parseFont):
+        (WebCore::CSSParser::parseFontFamily):
+        (WebCore::CSSParser::parseFontStyle):
+        (WebCore::CSSParser::parseFontVariant):
+        (WebCore::CSSParser::parseFontWeight):
+        (WebCore::CSSParser::parseColor):
+        (WebCore::ShadowParseContext::ShadowParseContext):
+        (WebCore::ShadowParseContext::commitLength):
+        (WebCore::ShadowParseContext::commitStyle):
+        (WebCore::CSSParser::parseShadow):
+        (WebCore::CSSParser::parseReflect):
+        (WebCore::CSSParser::parseFlex):
+        (WebCore::BorderImageParseContext::BorderImageParseContext):
+        (WebCore::CSSParser::parseBorderImage):
+        (WebCore::CSSParser::parseBorderImageRepeat):
+        (WebCore::BorderImageSliceParseContext::BorderImageSliceParseContext):
+        (WebCore::BorderImageSliceParseContext::commitNumber):
+        (WebCore::BorderImageSliceParseContext::commitBorderImageSlice):
+        (WebCore::CSSParser::parseBorderImageSlice):
+        (WebCore::BorderImageQuadParseContext::BorderImageQuadParseContext):
+        (WebCore::BorderImageQuadParseContext::commitNumber):
+        (WebCore::BorderImageQuadParseContext::commitBorderImageQuad):
+        (WebCore::CSSParser::parseBorderImageQuad):
+        (WebCore::CSSParser::parseBorderRadius):
+        (WebCore::CSSParser::parseAspectRatio):
+        (WebCore::CSSParser::parseCounter):
+        (WebCore::parseDeprecatedGradientPoint):
+        (WebCore::parseDeprecatedGradientColorStop):
+        (WebCore::CSSParser::parseDeprecatedGradient):
+        (WebCore::valueFromSideKeyword):
+        (WebCore::parseGradientColorOrKeyword):
+        (WebCore::CSSParser::parseLinearGradient):
+        (WebCore::CSSParser::parseRadialGradient):
+        (WebCore::CSSParser::parseCrossfade):
+        (WebCore::CSSParser::parseCustomFilter):
+        (WebCore::CSSParser::parseFilter):
+        (WebCore::CSSParser::parseFlowThread):
+        (WebCore::CSSParser::parseRegionThread):
+        (WebCore::CSSParser::parseTextEmphasisStyle):
+        (WebCore::CSSParser::parseFontFeatureSettings):
+        * css/CSSParser.h:
+        (WebCore::CSSParser::cssValuePool):
+        * css/CSSValuePool.cpp: Renamed from Source/WebCore/css/CSSPrimitiveValueCache.cpp.
+        (WebCore::CSSValuePool::CSSValuePool):
+        (WebCore::CSSValuePool::~CSSValuePool):
+        (WebCore::CSSValuePool::createIdentifierValue):
+        (WebCore::CSSValuePool::createColorValue):
+        (WebCore::CSSValuePool::createValue):
+        * css/CSSValuePool.h: Renamed from Source/WebCore/css/CSSPrimitiveValueCache.h.
+        (WebCore::CSSValuePool::create):
+        (WebCore::CSSValuePool::createValue):
+        * css/mediaControlsGtk.css:
+        (audio::-webkit-media-controls-volume-slider, video::-webkit-media-controls-volume-slider):
+        * dom/Document.cpp:
+        (WebCore::Document::cssValuePool):
+        * dom/Document.h:
+
+2011-12-03  Andreas Kling  <kling@webkit.org>
+
         Shrink CSSValueList.
         <http://webkit.org/b/73732>
 

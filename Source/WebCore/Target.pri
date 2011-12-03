@@ -415,7 +415,6 @@ SOURCES += \
     css/CSSParser.cpp \
     css/CSSParserValues.cpp \
     css/CSSPrimitiveValue.cpp \
-    css/CSSPrimitiveValueCache.cpp \
     css/CSSProperty.cpp \
     css/CSSPropertyLonghand.cpp \
     css/CSSPropertySourceData.cpp \
@@ -434,6 +433,7 @@ SOURCES += \
     css/CSSUnicodeRangeValue.cpp \
     css/CSSValue.cpp \
     css/CSSValueList.cpp \
+    css/CSSValuePool.cpp \
     css/CSSWrapShapes.cpp \
     css/FontFamilyValue.cpp \
     css/FontFeatureValue.cpp \
@@ -1508,7 +1508,6 @@ HEADERS += \
     css/CSSParser.h \
     css/CSSParserValues.h \
     css/CSSPrimitiveValue.h \
-    css/CSSPrimitiveValueCache.h \
     css/CSSProperty.h \
     css/CSSPropertyLonghand.h \
     css/CSSReflectValue.h \
@@ -1527,6 +1526,7 @@ HEADERS += \
     css/CSSValue.cpp \
     css/CSSValue.h \
     css/CSSValueList.h \
+    css/CSSValuePool.h \
     css/CSSWrapShapes.h \
     css/FontFamilyValue.h \
     css/FontFeatureValue.h \

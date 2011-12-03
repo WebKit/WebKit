@@ -30,7 +30,6 @@
 #include "CSSLineBoxContainValue.h"
 #include "CSSMutableStyleDeclaration.h"
 #include "CSSPrimitiveValue.h"
-#include "CSSPrimitiveValueCache.h"
 #include "CSSPrimitiveValueMappings.h"
 #include "CSSProperty.h"
 #include "CSSPropertyNames.h"
@@ -38,6 +37,7 @@
 #include "CSSSelector.h"
 #include "CSSTimingFunctionValue.h"
 #include "CSSValueList.h"
+#include "CSSValuePool.h"
 #include "ContentData.h"
 #include "CounterContent.h"
 #include "CursorList.h"
@@ -353,7 +353,7 @@ static int valueForRepeatRule(int rule)
     }
 }
 
-static PassRefPtr<CSSBorderImageSliceValue> valueForNinePieceImageSlice(const NinePieceImage& image, CSSPrimitiveValueCache* primitiveValueCache)
+static PassRefPtr<CSSBorderImageSliceValue> valueForNinePieceImageSlice(const NinePieceImage& image, CSSValuePool* cssValuePool)
 {
     // Create the slices.
     RefPtr<CSSPrimitiveValue> top;
@@ -362,9 +362,9 @@ static PassRefPtr<CSSBorderImageSliceValue> valueForNinePieceImageSlice(const Ni
     RefPtr<CSSPrimitiveValue> left;
 
     if (image.imageSlices().top().isPercent())
-        top = primitiveValueCache->createValue(image.imageSlices().top().value(), CSSPrimitiveValue::CSS_PERCENTAGE);
+        top = cssValuePool->createValue(image.imageSlices().top().value(), CSSPrimitiveValue::CSS_PERCENTAGE);
     else
-        top = primitiveValueCache->createValue(image.imageSlices().top().value(), CSSPrimitiveValue::CSS_NUMBER);
+        top = cssValuePool->createValue(image.imageSlices().top().value(), CSSPrimitiveValue::CSS_NUMBER);
 
     if (image.imageSlices().right() == image.imageSlices().top() && image.imageSlices().bottom() == image.imageSlices().top()
         && image.imageSlices().left() == image.imageSlices().top()) {
@@ -373,26 +373,26 @@ static PassRefPtr<CSSBorderImageSliceValue> valueForNinePieceImageSlice(const Ni
         left = top;
     } else {
         if (image.imageSlices().right().isPercent())
-            right = primitiveValueCache->createValue(image.imageSlices().right().value(), CSSPrimitiveValue::CSS_PERCENTAGE);
+            right = cssValuePool->createValue(image.imageSlices().right().value(), CSSPrimitiveValue::CSS_PERCENTAGE);
         else
-            right = primitiveValueCache->createValue(image.imageSlices().right().value(), CSSPrimitiveValue::CSS_NUMBER);
+            right = cssValuePool->createValue(image.imageSlices().right().value(), CSSPrimitiveValue::CSS_NUMBER);
 
         if (image.imageSlices().bottom() == image.imageSlices().top() && image.imageSlices().right() == image.imageSlices().left()) {
             bottom = top;
             left = right;
         } else {
             if (image.imageSlices().bottom().isPercent())
-                bottom = primitiveValueCache->createValue(image.imageSlices().bottom().value(), CSSPrimitiveValue::CSS_PERCENTAGE);
+                bottom = cssValuePool->createValue(image.imageSlices().bottom().value(), CSSPrimitiveValue::CSS_PERCENTAGE);
             else
-                bottom = primitiveValueCache->createValue(image.imageSlices().bottom().value(), CSSPrimitiveValue::CSS_NUMBER);
+                bottom = cssValuePool->createValue(image.imageSlices().bottom().value(), CSSPrimitiveValue::CSS_NUMBER);
 
             if (image.imageSlices().left() == image.imageSlices().right())
                 left = right;
             else {
                 if (image.imageSlices().left().isPercent())
-                    left = primitiveValueCache->createValue(image.imageSlices().left().value(), CSSPrimitiveValue::CSS_PERCENTAGE);
+                    left = cssValuePool->createValue(image.imageSlices().left().value(), CSSPrimitiveValue::CSS_PERCENTAGE);
                 else
-                    left = primitiveValueCache->createValue(image.imageSlices().left().value(), CSSPrimitiveValue::CSS_NUMBER);
+                    left = cssValuePool->createValue(image.imageSlices().left().value(), CSSPrimitiveValue::CSS_NUMBER);
             }
         }
     }
@@ -403,10 +403,10 @@ static PassRefPtr<CSSBorderImageSliceValue> valueForNinePieceImageSlice(const Ni
     quad->setBottom(bottom);
     quad->setLeft(left);
 
-    return CSSBorderImageSliceValue::create(primitiveValueCache->createValue(quad.release()), image.fill());
+    return CSSBorderImageSliceValue::create(cssValuePool->createValue(quad.release()), image.fill());
 }
 
-static PassRefPtr<CSSPrimitiveValue> valueForNinePieceImageQuad(const LengthBox& box, CSSPrimitiveValueCache* primitiveValueCache)
+static PassRefPtr<CSSPrimitiveValue> valueForNinePieceImageQuad(const LengthBox& box, CSSValuePool* cssValuePool)
 {
     // Create the slices.
     RefPtr<CSSPrimitiveValue> top;
@@ -415,9 +415,9 @@ static PassRefPtr<CSSPrimitiveValue> valueForNinePieceImageQuad(const LengthBox&
     RefPtr<CSSPrimitiveValue> left;
 
     if (box.top().isRelative())
-        top = primitiveValueCache->createValue(box.top().value(), CSSPrimitiveValue::CSS_NUMBER);
+        top = cssValuePool->createValue(box.top().value(), CSSPrimitiveValue::CSS_NUMBER);
     else
-        top = primitiveValueCache->createValue(box.top());
+        top = cssValuePool->createValue(box.top());
 
     if (box.right() == box.top() && box.bottom() == box.top() && box.left() == box.top()) {
         right = top;
@@ -425,26 +425,26 @@ static PassRefPtr<CSSPrimitiveValue> valueForNinePieceImageQuad(const LengthBox&
         left = top;
     } else {
         if (box.right().isRelative())
-            right = primitiveValueCache->createValue(box.right().value(), CSSPrimitiveValue::CSS_NUMBER);
+            right = cssValuePool->createValue(box.right().value(), CSSPrimitiveValue::CSS_NUMBER);
         else
-            right = primitiveValueCache->createValue(box.right());
+            right = cssValuePool->createValue(box.right());
 
         if (box.bottom() == box.top() && box.right() == box.left()) {
             bottom = top;
             left = right;
         } else {
             if (box.bottom().isRelative())
-                bottom = primitiveValueCache->createValue(box.bottom().value(), CSSPrimitiveValue::CSS_NUMBER);
+                bottom = cssValuePool->createValue(box.bottom().value(), CSSPrimitiveValue::CSS_NUMBER);
             else
-                bottom = primitiveValueCache->createValue(box.bottom());
+                bottom = cssValuePool->createValue(box.bottom());
 
             if (box.left() == box.right())
                 left = right;
             else {
                 if (box.left().isRelative())
-                    left = primitiveValueCache->createValue(box.left().value(), CSSPrimitiveValue::CSS_NUMBER);
+                    left = cssValuePool->createValue(box.left().value(), CSSPrimitiveValue::CSS_NUMBER);
                 else
-                    left = primitiveValueCache->createValue(box.left());
+                    left = cssValuePool->createValue(box.left());
             }
         }
     }
@@ -455,26 +455,26 @@ static PassRefPtr<CSSPrimitiveValue> valueForNinePieceImageQuad(const LengthBox&
     quad->setBottom(bottom);
     quad->setLeft(left);
 
-    return primitiveValueCache->createValue(quad.release());
+    return cssValuePool->createValue(quad.release());
 }
 
-static PassRefPtr<CSSValue> valueForNinePieceImageRepeat(const NinePieceImage& image, CSSPrimitiveValueCache* primitiveValueCache)
+static PassRefPtr<CSSValue> valueForNinePieceImageRepeat(const NinePieceImage& image, CSSValuePool* cssValuePool)
 {
     RefPtr<CSSPrimitiveValue> horizontalRepeat;
     RefPtr<CSSPrimitiveValue> verticalRepeat;
 
-    horizontalRepeat = primitiveValueCache->createIdentifierValue(valueForRepeatRule(image.horizontalRule()));
+    horizontalRepeat = cssValuePool->createIdentifierValue(valueForRepeatRule(image.horizontalRule()));
     if (image.horizontalRule() == image.verticalRule())
         verticalRepeat = horizontalRepeat;
     else
-        verticalRepeat = primitiveValueCache->createIdentifierValue(valueForRepeatRule(image.verticalRule()));
-    return primitiveValueCache->createValue(Pair::create(horizontalRepeat.release(), verticalRepeat.release()));
+        verticalRepeat = cssValuePool->createIdentifierValue(valueForRepeatRule(image.verticalRule()));
+    return cssValuePool->createValue(Pair::create(horizontalRepeat.release(), verticalRepeat.release()));
 }
 
-static PassRefPtr<CSSValue> valueForNinePieceImage(const NinePieceImage& image, CSSPrimitiveValueCache* primitiveValueCache)
+static PassRefPtr<CSSValue> valueForNinePieceImage(const NinePieceImage& image, CSSValuePool* cssValuePool)
 {
     if (!image.hasImage())
-        return primitiveValueCache->createIdentifierValue(CSSValueNone);
+        return cssValuePool->createIdentifierValue(CSSValueNone);
 
     // Image first.
     RefPtr<CSSValue> imageValue;
@@ -482,52 +482,52 @@ static PassRefPtr<CSSValue> valueForNinePieceImage(const NinePieceImage& image, 
         imageValue = image.image()->cssValue();
 
     // Create the image slice.
-    RefPtr<CSSBorderImageSliceValue> imageSlices = valueForNinePieceImageSlice(image, primitiveValueCache);
+    RefPtr<CSSBorderImageSliceValue> imageSlices = valueForNinePieceImageSlice(image, cssValuePool);
 
     // Create the border area slices.
-    RefPtr<CSSValue> borderSlices = valueForNinePieceImageQuad(image.borderSlices(), primitiveValueCache);
+    RefPtr<CSSValue> borderSlices = valueForNinePieceImageQuad(image.borderSlices(), cssValuePool);
 
     // Create the border outset.
-    RefPtr<CSSValue> outset = valueForNinePieceImageQuad(image.outset(), primitiveValueCache);
+    RefPtr<CSSValue> outset = valueForNinePieceImageQuad(image.outset(), cssValuePool);
 
     // Create the repeat rules.
-    RefPtr<CSSValue> repeat = valueForNinePieceImageRepeat(image, primitiveValueCache);
+    RefPtr<CSSValue> repeat = valueForNinePieceImageRepeat(image, cssValuePool);
 
     return CSSBorderImageValue::create(imageValue.release(), imageSlices.release(), borderSlices.release(), outset.release(), repeat);
 }
 
-inline static PassRefPtr<CSSPrimitiveValue> zoomAdjustedPixelValue(int value, const RenderStyle* style, CSSPrimitiveValueCache* primitiveValueCache)
+inline static PassRefPtr<CSSPrimitiveValue> zoomAdjustedPixelValue(int value, const RenderStyle* style, CSSValuePool* cssValuePool)
 {
-    return primitiveValueCache->createValue(adjustForAbsoluteZoom(value, style), CSSPrimitiveValue::CSS_PX);
+    return cssValuePool->createValue(adjustForAbsoluteZoom(value, style), CSSPrimitiveValue::CSS_PX);
 }
 
-inline static PassRefPtr<CSSPrimitiveValue> zoomAdjustedNumberValue(double value, const RenderStyle* style, CSSPrimitiveValueCache* primitiveValueCache)
+inline static PassRefPtr<CSSPrimitiveValue> zoomAdjustedNumberValue(double value, const RenderStyle* style, CSSValuePool* cssValuePool)
 {
-    return primitiveValueCache->createValue(value / style->effectiveZoom(), CSSPrimitiveValue::CSS_NUMBER);
+    return cssValuePool->createValue(value / style->effectiveZoom(), CSSPrimitiveValue::CSS_NUMBER);
 }
 
-static PassRefPtr<CSSValue> zoomAdjustedPixelValueForLength(const Length& length, const RenderStyle* style, CSSPrimitiveValueCache* primitiveValueCache)
+static PassRefPtr<CSSValue> zoomAdjustedPixelValueForLength(const Length& length, const RenderStyle* style, CSSValuePool* cssValuePool)
 {
     if (length.isFixed())
-        return zoomAdjustedPixelValue(length.value(), style, primitiveValueCache);
-    return primitiveValueCache->createValue(length);
+        return zoomAdjustedPixelValue(length.value(), style, cssValuePool);
+    return cssValuePool->createValue(length);
 }
 
-static PassRefPtr<CSSValue> valueForReflection(const StyleReflection* reflection, const RenderStyle* style, CSSPrimitiveValueCache* primitiveValueCache)
+static PassRefPtr<CSSValue> valueForReflection(const StyleReflection* reflection, const RenderStyle* style, CSSValuePool* cssValuePool)
 {
     if (!reflection)
-        return primitiveValueCache->createIdentifierValue(CSSValueNone);
+        return cssValuePool->createIdentifierValue(CSSValueNone);
 
     RefPtr<CSSPrimitiveValue> offset;
     if (reflection->offset().isPercent())
-        offset = primitiveValueCache->createValue(reflection->offset().percent(), CSSPrimitiveValue::CSS_PERCENTAGE);
+        offset = cssValuePool->createValue(reflection->offset().percent(), CSSPrimitiveValue::CSS_PERCENTAGE);
     else
-        offset = zoomAdjustedPixelValue(reflection->offset().value(), style, primitiveValueCache);
+        offset = zoomAdjustedPixelValue(reflection->offset().value(), style, cssValuePool);
 
-    return CSSReflectValue::create(reflection->direction(), offset.release(), valueForNinePieceImage(reflection->mask(), primitiveValueCache));
+    return CSSReflectValue::create(reflection->direction(), offset.release(), valueForNinePieceImage(reflection->mask(), cssValuePool));
 }
 
-static PassRefPtr<CSSValue> getPositionOffsetValue(RenderStyle* style, int propertyID, CSSPrimitiveValueCache* primitiveValueCache)
+static PassRefPtr<CSSValue> getPositionOffsetValue(RenderStyle* style, int propertyID, CSSValuePool* cssValuePool)
 {
     if (!style)
         return 0;
@@ -552,44 +552,44 @@ static PassRefPtr<CSSValue> getPositionOffsetValue(RenderStyle* style, int prope
 
     if (style->position() == AbsolutePosition || style->position() == FixedPosition) {
         if (l.type() == WebCore::Fixed)
-            return zoomAdjustedPixelValue(l.value(), style, primitiveValueCache);
-        return primitiveValueCache->createValue(l);
+            return zoomAdjustedPixelValue(l.value(), style, cssValuePool);
+        return cssValuePool->createValue(l);
     }
 
     if (style->position() == RelativePosition)
         // FIXME: It's not enough to simply return "auto" values for one offset if the other side is defined.
         // In other words if left is auto and right is not auto, then left's computed value is negative right().
         // So we should get the opposite length unit and see if it is auto.
-        return primitiveValueCache->createValue(l);
+        return cssValuePool->createValue(l);
 
-    return primitiveValueCache->createIdentifierValue(CSSValueAuto);
+    return cssValuePool->createIdentifierValue(CSSValueAuto);
 }
 
 PassRefPtr<CSSPrimitiveValue> CSSComputedStyleDeclaration::currentColorOrValidColor(RenderStyle* style, const Color& color) const
 {
     // This function does NOT look at visited information, so that computed style doesn't expose that.
-    CSSPrimitiveValueCache* primitiveValueCache = m_node->document()->cssPrimitiveValueCache().get();
+    CSSValuePool* cssValuePool = m_node->document()->cssValuePool().get();
     if (!color.isValid())
-        return primitiveValueCache->createColorValue(style->color().rgb());
-    return primitiveValueCache->createColorValue(color.rgb());
+        return cssValuePool->createColorValue(style->color().rgb());
+    return cssValuePool->createColorValue(color.rgb());
 }
 
-static PassRefPtr<CSSValue> getBorderRadiusCornerValue(LengthSize radius, const RenderStyle* style, CSSPrimitiveValueCache* primitiveValueCache)
+static PassRefPtr<CSSValue> getBorderRadiusCornerValue(LengthSize radius, const RenderStyle* style, CSSValuePool* cssValuePool)
 {
     RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
     if (radius.width() == radius.height()) {
         if (radius.width().type() == Percent)
-            return primitiveValueCache->createValue(radius.width().percent(), CSSPrimitiveValue::CSS_PERCENTAGE);
-        return zoomAdjustedPixelValue(radius.width().value(), style, primitiveValueCache);
+            return cssValuePool->createValue(radius.width().percent(), CSSPrimitiveValue::CSS_PERCENTAGE);
+        return zoomAdjustedPixelValue(radius.width().value(), style, cssValuePool);
     }
     if (radius.width().type() == Percent)
-        list->append(primitiveValueCache->createValue(radius.width().percent(), CSSPrimitiveValue::CSS_PERCENTAGE));
+        list->append(cssValuePool->createValue(radius.width().percent(), CSSPrimitiveValue::CSS_PERCENTAGE));
     else
-        list->append(zoomAdjustedPixelValue(radius.width().value(), style, primitiveValueCache));
+        list->append(zoomAdjustedPixelValue(radius.width().value(), style, cssValuePool));
     if (radius.height().type() == Percent)
-        list->append(primitiveValueCache->createValue(radius.height().percent(), CSSPrimitiveValue::CSS_PERCENTAGE));
+        list->append(cssValuePool->createValue(radius.height().percent(), CSSPrimitiveValue::CSS_PERCENTAGE));
     else
-        list->append(zoomAdjustedPixelValue(radius.height().value(), style, primitiveValueCache));
+        list->append(zoomAdjustedPixelValue(radius.height().value(), style, cssValuePool));
     return list.release();
 }
 
@@ -607,10 +607,10 @@ static inline bool hasCompositedLayer(RenderObject* renderer)
     return renderer && renderer->hasLayer() && toRenderBoxModelObject(renderer)->layer()->isComposited();
 }
 
-static PassRefPtr<CSSValue> computedTransform(RenderObject* renderer, const RenderStyle* style, CSSPrimitiveValueCache* primitiveValueCache)
+static PassRefPtr<CSSValue> computedTransform(RenderObject* renderer, const RenderStyle* style, CSSValuePool* cssValuePool)
 {
     if (!renderer || style->transform().operations().isEmpty())
-        return primitiveValueCache->createIdentifierValue(CSSValueNone);
+        return cssValuePool->createIdentifierValue(CSSValueNone);
 
     IntRect box = sizingBox(renderer);
 
@@ -624,34 +624,34 @@ static PassRefPtr<CSSValue> computedTransform(RenderObject* renderer, const Rend
     if (transform.isAffine()) {
         transformVal = WebKitCSSTransformValue::create(WebKitCSSTransformValue::MatrixTransformOperation);
 
-        transformVal->append(primitiveValueCache->createValue(transform.a(), CSSPrimitiveValue::CSS_NUMBER));
-        transformVal->append(primitiveValueCache->createValue(transform.b(), CSSPrimitiveValue::CSS_NUMBER));
-        transformVal->append(primitiveValueCache->createValue(transform.c(), CSSPrimitiveValue::CSS_NUMBER));
-        transformVal->append(primitiveValueCache->createValue(transform.d(), CSSPrimitiveValue::CSS_NUMBER));
-        transformVal->append(zoomAdjustedNumberValue(transform.e(), style, primitiveValueCache));
-        transformVal->append(zoomAdjustedNumberValue(transform.f(), style, primitiveValueCache));
+        transformVal->append(cssValuePool->createValue(transform.a(), CSSPrimitiveValue::CSS_NUMBER));
+        transformVal->append(cssValuePool->createValue(transform.b(), CSSPrimitiveValue::CSS_NUMBER));
+        transformVal->append(cssValuePool->createValue(transform.c(), CSSPrimitiveValue::CSS_NUMBER));
+        transformVal->append(cssValuePool->createValue(transform.d(), CSSPrimitiveValue::CSS_NUMBER));
+        transformVal->append(zoomAdjustedNumberValue(transform.e(), style, cssValuePool));
+        transformVal->append(zoomAdjustedNumberValue(transform.f(), style, cssValuePool));
     } else {
         transformVal = WebKitCSSTransformValue::create(WebKitCSSTransformValue::Matrix3DTransformOperation);
 
-        transformVal->append(primitiveValueCache->createValue(transform.m11(), CSSPrimitiveValue::CSS_NUMBER));
-        transformVal->append(primitiveValueCache->createValue(transform.m12(), CSSPrimitiveValue::CSS_NUMBER));
-        transformVal->append(primitiveValueCache->createValue(transform.m13(), CSSPrimitiveValue::CSS_NUMBER));
-        transformVal->append(primitiveValueCache->createValue(transform.m14(), CSSPrimitiveValue::CSS_NUMBER));
+        transformVal->append(cssValuePool->createValue(transform.m11(), CSSPrimitiveValue::CSS_NUMBER));
+        transformVal->append(cssValuePool->createValue(transform.m12(), CSSPrimitiveValue::CSS_NUMBER));
+        transformVal->append(cssValuePool->createValue(transform.m13(), CSSPrimitiveValue::CSS_NUMBER));
+        transformVal->append(cssValuePool->createValue(transform.m14(), CSSPrimitiveValue::CSS_NUMBER));
 
-        transformVal->append(primitiveValueCache->createValue(transform.m21(), CSSPrimitiveValue::CSS_NUMBER));
-        transformVal->append(primitiveValueCache->createValue(transform.m22(), CSSPrimitiveValue::CSS_NUMBER));
-        transformVal->append(primitiveValueCache->createValue(transform.m23(), CSSPrimitiveValue::CSS_NUMBER));
-        transformVal->append(primitiveValueCache->createValue(transform.m24(), CSSPrimitiveValue::CSS_NUMBER));
+        transformVal->append(cssValuePool->createValue(transform.m21(), CSSPrimitiveValue::CSS_NUMBER));
+        transformVal->append(cssValuePool->createValue(transform.m22(), CSSPrimitiveValue::CSS_NUMBER));
+        transformVal->append(cssValuePool->createValue(transform.m23(), CSSPrimitiveValue::CSS_NUMBER));
+        transformVal->append(cssValuePool->createValue(transform.m24(), CSSPrimitiveValue::CSS_NUMBER));
 
-        transformVal->append(primitiveValueCache->createValue(transform.m31(), CSSPrimitiveValue::CSS_NUMBER));
-        transformVal->append(primitiveValueCache->createValue(transform.m32(), CSSPrimitiveValue::CSS_NUMBER));
-        transformVal->append(primitiveValueCache->createValue(transform.m33(), CSSPrimitiveValue::CSS_NUMBER));
-        transformVal->append(primitiveValueCache->createValue(transform.m34(), CSSPrimitiveValue::CSS_NUMBER));
+        transformVal->append(cssValuePool->createValue(transform.m31(), CSSPrimitiveValue::CSS_NUMBER));
+        transformVal->append(cssValuePool->createValue(transform.m32(), CSSPrimitiveValue::CSS_NUMBER));
+        transformVal->append(cssValuePool->createValue(transform.m33(), CSSPrimitiveValue::CSS_NUMBER));
+        transformVal->append(cssValuePool->createValue(transform.m34(), CSSPrimitiveValue::CSS_NUMBER));
 
-        transformVal->append(zoomAdjustedNumberValue(transform.m41(), style, primitiveValueCache));
-        transformVal->append(zoomAdjustedNumberValue(transform.m42(), style, primitiveValueCache));
-        transformVal->append(zoomAdjustedNumberValue(transform.m43(), style, primitiveValueCache));
-        transformVal->append(primitiveValueCache->createValue(transform.m44(), CSSPrimitiveValue::CSS_NUMBER));
+        transformVal->append(zoomAdjustedNumberValue(transform.m41(), style, cssValuePool));
+        transformVal->append(zoomAdjustedNumberValue(transform.m42(), style, cssValuePool));
+        transformVal->append(zoomAdjustedNumberValue(transform.m43(), style, cssValuePool));
+        transformVal->append(cssValuePool->createValue(transform.m44(), CSSPrimitiveValue::CSS_NUMBER));
     }
 
     RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
@@ -663,10 +663,10 @@ static PassRefPtr<CSSValue> computedTransform(RenderObject* renderer, const Rend
 #if ENABLE(CSS_FILTERS)
 PassRefPtr<CSSValue> CSSComputedStyleDeclaration::valueForFilter(RenderStyle* style) const
 {
-    CSSPrimitiveValueCache* primitiveValueCache = m_node->document()->cssPrimitiveValueCache().get();
+    CSSValuePool* cssValuePool = m_node->document()->cssValuePool().get();
 
     if (style->filter().operations().isEmpty())
-        return primitiveValueCache->createIdentifierValue(CSSValueNone);
+        return cssValuePool->createIdentifierValue(CSSValueNone);
 
     RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
 
@@ -679,66 +679,66 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::valueForFilter(RenderStyle* st
         case FilterOperation::REFERENCE: {
             ReferenceFilterOperation* referenceOperation = static_cast<ReferenceFilterOperation*>(filterOperation);
             filterValue = WebKitCSSFilterValue::create(WebKitCSSFilterValue::ReferenceFilterOperation);
-            filterValue->append(primitiveValueCache->createValue(referenceOperation->reference(), CSSPrimitiveValue::CSS_STRING));
+            filterValue->append(cssValuePool->createValue(referenceOperation->reference(), CSSPrimitiveValue::CSS_STRING));
             break;
         }
         case FilterOperation::GRAYSCALE: {
             BasicColorMatrixFilterOperation* colorMatrixOperation = static_cast<BasicColorMatrixFilterOperation*>(filterOperation);
             filterValue = WebKitCSSFilterValue::create(WebKitCSSFilterValue::GrayscaleFilterOperation);
-            filterValue->append(primitiveValueCache->createValue(colorMatrixOperation->amount(), CSSPrimitiveValue::CSS_NUMBER));
+            filterValue->append(cssValuePool->createValue(colorMatrixOperation->amount(), CSSPrimitiveValue::CSS_NUMBER));
             break;
         }
         case FilterOperation::SEPIA: {
             BasicColorMatrixFilterOperation* colorMatrixOperation = static_cast<BasicColorMatrixFilterOperation*>(filterOperation);
             filterValue = WebKitCSSFilterValue::create(WebKitCSSFilterValue::SepiaFilterOperation);
-            filterValue->append(primitiveValueCache->createValue(colorMatrixOperation->amount(), CSSPrimitiveValue::CSS_NUMBER));
+            filterValue->append(cssValuePool->createValue(colorMatrixOperation->amount(), CSSPrimitiveValue::CSS_NUMBER));
             break;
         }
         case FilterOperation::SATURATE: {
             BasicColorMatrixFilterOperation* colorMatrixOperation = static_cast<BasicColorMatrixFilterOperation*>(filterOperation);
             filterValue = WebKitCSSFilterValue::create(WebKitCSSFilterValue::SaturateFilterOperation);
-            filterValue->append(primitiveValueCache->createValue(colorMatrixOperation->amount(), CSSPrimitiveValue::CSS_NUMBER));
+            filterValue->append(cssValuePool->createValue(colorMatrixOperation->amount(), CSSPrimitiveValue::CSS_NUMBER));
             break;
         }
         case FilterOperation::HUE_ROTATE: {
             BasicColorMatrixFilterOperation* colorMatrixOperation = static_cast<BasicColorMatrixFilterOperation*>(filterOperation);
             filterValue = WebKitCSSFilterValue::create(WebKitCSSFilterValue::HueRotateFilterOperation);
-            filterValue->append(primitiveValueCache->createValue(colorMatrixOperation->amount(), CSSPrimitiveValue::CSS_DEG));
+            filterValue->append(cssValuePool->createValue(colorMatrixOperation->amount(), CSSPrimitiveValue::CSS_DEG));
             break;
         }
         case FilterOperation::INVERT: {
             BasicComponentTransferFilterOperation* componentTransferOperation = static_cast<BasicComponentTransferFilterOperation*>(filterOperation);
             filterValue = WebKitCSSFilterValue::create(WebKitCSSFilterValue::InvertFilterOperation);
-            filterValue->append(primitiveValueCache->createValue(componentTransferOperation->amount(), CSSPrimitiveValue::CSS_NUMBER));
+            filterValue->append(cssValuePool->createValue(componentTransferOperation->amount(), CSSPrimitiveValue::CSS_NUMBER));
             break;
         }
         case FilterOperation::OPACITY: {
             BasicComponentTransferFilterOperation* componentTransferOperation = static_cast<BasicComponentTransferFilterOperation*>(filterOperation);
             filterValue = WebKitCSSFilterValue::create(WebKitCSSFilterValue::OpacityFilterOperation);
-            filterValue->append(primitiveValueCache->createValue(componentTransferOperation->amount(), CSSPrimitiveValue::CSS_NUMBER));
+            filterValue->append(cssValuePool->createValue(componentTransferOperation->amount(), CSSPrimitiveValue::CSS_NUMBER));
             break;
         }
         case FilterOperation::GAMMA: {
             GammaFilterOperation* gammaOperation = static_cast<GammaFilterOperation*>(filterOperation);
             filterValue = WebKitCSSFilterValue::create(WebKitCSSFilterValue::GammaFilterOperation);
-            filterValue->append(primitiveValueCache->createValue(gammaOperation->amplitude(), CSSPrimitiveValue::CSS_NUMBER));
-            filterValue->append(primitiveValueCache->createValue(gammaOperation->exponent(), CSSPrimitiveValue::CSS_NUMBER));
-            filterValue->append(primitiveValueCache->createValue(gammaOperation->offset(), CSSPrimitiveValue::CSS_NUMBER));
+            filterValue->append(cssValuePool->createValue(gammaOperation->amplitude(), CSSPrimitiveValue::CSS_NUMBER));
+            filterValue->append(cssValuePool->createValue(gammaOperation->exponent(), CSSPrimitiveValue::CSS_NUMBER));
+            filterValue->append(cssValuePool->createValue(gammaOperation->offset(), CSSPrimitiveValue::CSS_NUMBER));
             break;
         }
         case FilterOperation::BLUR: {
             BlurFilterOperation* blurOperation = static_cast<BlurFilterOperation*>(filterOperation);
             filterValue = WebKitCSSFilterValue::create(WebKitCSSFilterValue::BlurFilterOperation);
-            filterValue->append(zoomAdjustedPixelValue(blurOperation->stdDeviationX().value(), style, primitiveValueCache));
-            filterValue->append(zoomAdjustedPixelValue(blurOperation->stdDeviationY().value(), style, primitiveValueCache));
+            filterValue->append(zoomAdjustedPixelValue(blurOperation->stdDeviationX().value(), style, cssValuePool));
+            filterValue->append(zoomAdjustedPixelValue(blurOperation->stdDeviationY().value(), style, cssValuePool));
             break;
         }
         case FilterOperation::SHARPEN: {
             SharpenFilterOperation* sharpenOperation = static_cast<SharpenFilterOperation*>(filterOperation);
             filterValue = WebKitCSSFilterValue::create(WebKitCSSFilterValue::SharpenFilterOperation);
-            filterValue->append(primitiveValueCache->createValue(sharpenOperation->amount(), CSSPrimitiveValue::CSS_NUMBER));
-            filterValue->append(zoomAdjustedPixelValue(sharpenOperation->radius().value(), style, primitiveValueCache));
-            filterValue->append(primitiveValueCache->createValue(sharpenOperation->threshold(), CSSPrimitiveValue::CSS_NUMBER));
+            filterValue->append(cssValuePool->createValue(sharpenOperation->amount(), CSSPrimitiveValue::CSS_NUMBER));
+            filterValue->append(zoomAdjustedPixelValue(sharpenOperation->radius().value(), style, cssValuePool));
+            filterValue->append(cssValuePool->createValue(sharpenOperation->threshold(), CSSPrimitiveValue::CSS_NUMBER));
             break;
         }
         case FilterOperation::DROP_SHADOW: {
@@ -760,22 +760,22 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::valueForFilter(RenderStyle* st
             if (customOperation->vertexShader())
                 shadersList->append(customOperation->vertexShader()->cssValue());
             else
-                shadersList->append(primitiveValueCache->createIdentifierValue(CSSValueNone));
+                shadersList->append(cssValuePool->createIdentifierValue(CSSValueNone));
             if (customOperation->fragmentShader())
                 shadersList->append(customOperation->fragmentShader()->cssValue());
             else
-                shadersList->append(primitiveValueCache->createIdentifierValue(CSSValueNone));
+                shadersList->append(cssValuePool->createIdentifierValue(CSSValueNone));
             filterValue->append(shadersList.release());
             
             RefPtr<CSSValueList> meshParameters = CSSValueList::createSpaceSeparated();
-            meshParameters->append(primitiveValueCache->createValue(customOperation->meshRows(), CSSPrimitiveValue::CSS_NUMBER));
-            meshParameters->append(primitiveValueCache->createValue(customOperation->meshColumns(), CSSPrimitiveValue::CSS_NUMBER));
-            meshParameters->append(primitiveValueCache->createValue(customOperation->meshBoxType()));
+            meshParameters->append(cssValuePool->createValue(customOperation->meshRows(), CSSPrimitiveValue::CSS_NUMBER));
+            meshParameters->append(cssValuePool->createValue(customOperation->meshColumns(), CSSPrimitiveValue::CSS_NUMBER));
+            meshParameters->append(cssValuePool->createValue(customOperation->meshBoxType()));
             
             // FIXME: The specification doesn't have any "attached" identifier. Should we add one?
             // https://bugs.webkit.org/show_bug.cgi?id=72700
             if (customOperation->meshType() == CustomFilterOperation::DETACHED)
-                meshParameters->append(primitiveValueCache->createIdentifierValue(CSSValueDetached));
+                meshParameters->append(cssValuePool->createIdentifierValue(CSSValueDetached));
             
             filterValue->append(meshParameters.release());
             
@@ -794,40 +794,40 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::valueForFilter(RenderStyle* st
 #endif
 
 #if ENABLE(CSS_GRID_LAYOUT)
-static PassRefPtr<CSSValue> valueForGridTrackList(const Length& trackLength, const RenderStyle* style, CSSPrimitiveValueCache* primitiveValueCache)
+static PassRefPtr<CSSValue> valueForGridTrackList(const Length& trackLength, const RenderStyle* style, CSSValuePool* cssValuePool)
 {
     if (trackLength.isPercent())
-        return primitiveValueCache->createValue(trackLength);
+        return cssValuePool->createValue(trackLength);
     if (trackLength.isAuto())
-        return primitiveValueCache->createIdentifierValue(CSSValueAuto);
+        return cssValuePool->createIdentifierValue(CSSValueAuto);
     if (trackLength.isUndefined())
-        return primitiveValueCache->createIdentifierValue(CSSValueNone);
-    return zoomAdjustedPixelValue(trackLength.value(), style, primitiveValueCache);
+        return cssValuePool->createIdentifierValue(CSSValueNone);
+    return zoomAdjustedPixelValue(trackLength.value(), style, cssValuePool);
 }
 #endif
 
-static PassRefPtr<CSSValue> getDelayValue(const AnimationList* animList, CSSPrimitiveValueCache* primitiveValueCache)
+static PassRefPtr<CSSValue> getDelayValue(const AnimationList* animList, CSSValuePool* cssValuePool)
 {
     RefPtr<CSSValueList> list = CSSValueList::createCommaSeparated();
     if (animList) {
         for (size_t i = 0; i < animList->size(); ++i)
-            list->append(primitiveValueCache->createValue(animList->animation(i)->delay(), CSSPrimitiveValue::CSS_S));
+            list->append(cssValuePool->createValue(animList->animation(i)->delay(), CSSPrimitiveValue::CSS_S));
     } else {
         // Note that initialAnimationDelay() is used for both transitions and animations
-        list->append(primitiveValueCache->createValue(Animation::initialAnimationDelay(), CSSPrimitiveValue::CSS_S));
+        list->append(cssValuePool->createValue(Animation::initialAnimationDelay(), CSSPrimitiveValue::CSS_S));
     }
     return list.release();
 }
 
-static PassRefPtr<CSSValue> getDurationValue(const AnimationList* animList, CSSPrimitiveValueCache* primitiveValueCache)
+static PassRefPtr<CSSValue> getDurationValue(const AnimationList* animList, CSSValuePool* cssValuePool)
 {
     RefPtr<CSSValueList> list = CSSValueList::createCommaSeparated();
     if (animList) {
         for (size_t i = 0; i < animList->size(); ++i)
-            list->append(primitiveValueCache->createValue(animList->animation(i)->duration(), CSSPrimitiveValue::CSS_S));
+            list->append(cssValuePool->createValue(animList->animation(i)->duration(), CSSPrimitiveValue::CSS_S));
     } else {
         // Note that initialAnimationDuration() is used for both transitions and animations
-        list->append(primitiveValueCache->createValue(Animation::initialAnimationDuration(), CSSPrimitiveValue::CSS_S));
+        list->append(cssValuePool->createValue(Animation::initialAnimationDuration(), CSSPrimitiveValue::CSS_S));
     }
     return list.release();
 }
@@ -864,10 +864,10 @@ static PassRefPtr<CSSValue> getTimingFunctionValue(const AnimationList* animList
     return list.release();
 }
 
-static PassRefPtr<CSSValue> createLineBoxContainValue(CSSPrimitiveValueCache* primitiveValueCache, unsigned lineBoxContain)
+static PassRefPtr<CSSValue> createLineBoxContainValue(CSSValuePool* cssValuePool, unsigned lineBoxContain)
 {
     if (!lineBoxContain)
-        return primitiveValueCache->createIdentifierValue(CSSValueNone);
+        return cssValuePool->createIdentifierValue(CSSValueNone);
     return CSSLineBoxContainValue::create(lineBoxContain);
 }
 
@@ -923,13 +923,13 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getFontSizeCSSValuePreferringK
     if (!style)
         return 0;
 
-    CSSPrimitiveValueCache* primitiveValueCache = m_node->document()->cssPrimitiveValueCache().get();
+    CSSValuePool* cssValuePool = m_node->document()->cssValuePool().get();
 
     if (int keywordSize = style->fontDescription().keywordSize())
-        return primitiveValueCache->createIdentifierValue(cssIdentifierForFontSizeKeyword(keywordSize));
+        return cssValuePool->createIdentifierValue(cssIdentifierForFontSizeKeyword(keywordSize));
 
 
-    return zoomAdjustedPixelValue(style->fontDescription().computedPixelSize(), style.get(), primitiveValueCache);
+    return zoomAdjustedPixelValue(style->fontDescription().computedPixelSize(), style.get(), cssValuePool);
 }
 
 bool CSSComputedStyleDeclaration::useFixedFontDefaultSize() const
@@ -946,20 +946,20 @@ bool CSSComputedStyleDeclaration::useFixedFontDefaultSize() const
 
 PassRefPtr<CSSValue> CSSComputedStyleDeclaration::valueForShadow(const ShadowData* shadow, int id, RenderStyle* style) const
 {
-    CSSPrimitiveValueCache* primitiveValueCache = m_node->document()->cssPrimitiveValueCache().get();
+    CSSValuePool* cssValuePool = m_node->document()->cssValuePool().get();
     if (!shadow)
-        return primitiveValueCache->createIdentifierValue(CSSValueNone);
+        return cssValuePool->createIdentifierValue(CSSValueNone);
 
     CSSPropertyID propertyID = static_cast<CSSPropertyID>(id);
 
     RefPtr<CSSValueList> list = CSSValueList::createCommaSeparated();
     for (const ShadowData* s = shadow; s; s = s->next()) {
-        RefPtr<CSSPrimitiveValue> x = zoomAdjustedPixelValue(s->x(), style, primitiveValueCache);
-        RefPtr<CSSPrimitiveValue> y = zoomAdjustedPixelValue(s->y(), style, primitiveValueCache);
-        RefPtr<CSSPrimitiveValue> blur = zoomAdjustedPixelValue(s->blur(), style, primitiveValueCache);
-        RefPtr<CSSPrimitiveValue> spread = propertyID == CSSPropertyTextShadow ? PassRefPtr<CSSPrimitiveValue>() : zoomAdjustedPixelValue(s->spread(), style, primitiveValueCache);
-        RefPtr<CSSPrimitiveValue> style = propertyID == CSSPropertyTextShadow || s->style() == Normal ? PassRefPtr<CSSPrimitiveValue>() : primitiveValueCache->createIdentifierValue(CSSValueInset);
-        RefPtr<CSSPrimitiveValue> color = primitiveValueCache->createColorValue(s->color().rgb());
+        RefPtr<CSSPrimitiveValue> x = zoomAdjustedPixelValue(s->x(), style, cssValuePool);
+        RefPtr<CSSPrimitiveValue> y = zoomAdjustedPixelValue(s->y(), style, cssValuePool);
+        RefPtr<CSSPrimitiveValue> blur = zoomAdjustedPixelValue(s->blur(), style, cssValuePool);
+        RefPtr<CSSPrimitiveValue> spread = propertyID == CSSPropertyTextShadow ? PassRefPtr<CSSPrimitiveValue>() : zoomAdjustedPixelValue(s->spread(), style, cssValuePool);
+        RefPtr<CSSPrimitiveValue> style = propertyID == CSSPropertyTextShadow || s->style() == Normal ? PassRefPtr<CSSPrimitiveValue>() : cssValuePool->createIdentifierValue(CSSValueInset);
+        RefPtr<CSSPrimitiveValue> color = cssValuePool->createColorValue(s->color().rgb());
         list->prepend(ShadowValue::create(x.release(), y.release(), blur.release(), spread.release(), style.release(), color.release()));
     }
     return list.release();
@@ -987,85 +987,85 @@ static int identifierForFamily(const AtomicString& family)
     return 0;
 }
 
-static PassRefPtr<CSSPrimitiveValue> valueForFamily(const AtomicString& family, CSSPrimitiveValueCache* primitiveValueCache)
+static PassRefPtr<CSSPrimitiveValue> valueForFamily(const AtomicString& family, CSSValuePool* cssValuePool)
 {
     if (int familyIdentifier = identifierForFamily(family))
-        return primitiveValueCache->createIdentifierValue(familyIdentifier);
-    return primitiveValueCache->createValue(family.string(), CSSPrimitiveValue::CSS_STRING);
+        return cssValuePool->createIdentifierValue(familyIdentifier);
+    return cssValuePool->createValue(family.string(), CSSPrimitiveValue::CSS_STRING);
 }
 
-static PassRefPtr<CSSValue> renderTextDecorationFlagsToCSSValue(int textDecoration, CSSPrimitiveValueCache* primitiveValueCache)
+static PassRefPtr<CSSValue> renderTextDecorationFlagsToCSSValue(int textDecoration, CSSValuePool* cssValuePool)
 {
     RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
     if (textDecoration & UNDERLINE)
-        list->append(primitiveValueCache->createIdentifierValue(CSSValueUnderline));
+        list->append(cssValuePool->createIdentifierValue(CSSValueUnderline));
     if (textDecoration & OVERLINE)
-        list->append(primitiveValueCache->createIdentifierValue(CSSValueOverline));
+        list->append(cssValuePool->createIdentifierValue(CSSValueOverline));
     if (textDecoration & LINE_THROUGH)
-        list->append(primitiveValueCache->createIdentifierValue(CSSValueLineThrough));
+        list->append(cssValuePool->createIdentifierValue(CSSValueLineThrough));
     if (textDecoration & BLINK)
-        list->append(primitiveValueCache->createIdentifierValue(CSSValueBlink));
+        list->append(cssValuePool->createIdentifierValue(CSSValueBlink));
 
     if (!list->length())
-        return primitiveValueCache->createIdentifierValue(CSSValueNone);
+        return cssValuePool->createIdentifierValue(CSSValueNone);
     return list;
 }
 
-static PassRefPtr<CSSValue> fillRepeatToCSSValue(EFillRepeat xRepeat, EFillRepeat yRepeat, CSSPrimitiveValueCache* primitiveValueCache)
+static PassRefPtr<CSSValue> fillRepeatToCSSValue(EFillRepeat xRepeat, EFillRepeat yRepeat, CSSValuePool* cssValuePool)
 {
     // For backwards compatibility, if both values are equal, just return one of them. And
     // if the two values are equivalent to repeat-x or repeat-y, just return the shorthand.
     if (xRepeat == yRepeat)
-        return primitiveValueCache->createValue(xRepeat);
+        return cssValuePool->createValue(xRepeat);
     if (xRepeat == RepeatFill && yRepeat == NoRepeatFill)
-        return primitiveValueCache->createIdentifierValue(CSSValueRepeatX);
+        return cssValuePool->createIdentifierValue(CSSValueRepeatX);
     if (xRepeat == NoRepeatFill && yRepeat == RepeatFill)
-        return primitiveValueCache->createIdentifierValue(CSSValueRepeatY);
+        return cssValuePool->createIdentifierValue(CSSValueRepeatY);
 
     RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
-    list->append(primitiveValueCache->createValue(xRepeat));
-    list->append(primitiveValueCache->createValue(yRepeat));
+    list->append(cssValuePool->createValue(xRepeat));
+    list->append(cssValuePool->createValue(yRepeat));
     return list.release();
 }
 
-static PassRefPtr<CSSValue> fillSizeToCSSValue(const FillSize& fillSize, CSSPrimitiveValueCache* primitiveValueCache)
+static PassRefPtr<CSSValue> fillSizeToCSSValue(const FillSize& fillSize, CSSValuePool* cssValuePool)
 {
     if (fillSize.type == Contain)
-        return primitiveValueCache->createIdentifierValue(CSSValueContain);
+        return cssValuePool->createIdentifierValue(CSSValueContain);
 
     if (fillSize.type == Cover)
-        return primitiveValueCache->createIdentifierValue(CSSValueCover);
+        return cssValuePool->createIdentifierValue(CSSValueCover);
 
     if (fillSize.size.height().isAuto())
-        return primitiveValueCache->createValue(fillSize.size.width());
+        return cssValuePool->createValue(fillSize.size.width());
 
     RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
-    list->append(primitiveValueCache->createValue(fillSize.size.width()));
-    list->append(primitiveValueCache->createValue(fillSize.size.height()));
+    list->append(cssValuePool->createValue(fillSize.size.width()));
+    list->append(cssValuePool->createValue(fillSize.size.height()));
     return list.release();
 }
 
-static PassRefPtr<CSSValue> contentToCSSValue(const RenderStyle* style, CSSPrimitiveValueCache* primitiveValueCache)
+static PassRefPtr<CSSValue> contentToCSSValue(const RenderStyle* style, CSSValuePool* cssValuePool)
 {
     RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
     for (const ContentData* contentData = style->contentData(); contentData; contentData = contentData->next()) {
         if (contentData->isCounter()) {
             const CounterContent* counter = static_cast<const CounterContentData*>(contentData)->counter();
             ASSERT(counter);
-            list->append(primitiveValueCache->createValue(counter->identifier(), CSSPrimitiveValue::CSS_COUNTER_NAME));
+            list->append(cssValuePool->createValue(counter->identifier(), CSSPrimitiveValue::CSS_COUNTER_NAME));
         } else if (contentData->isImage()) {
             const StyleImage* image = static_cast<const ImageContentData*>(contentData)->image();
             ASSERT(image);
             list->append(image->cssValue());
         } else if (contentData->isText())
-            list->append(primitiveValueCache->createValue(static_cast<const TextContentData*>(contentData)->text(), CSSPrimitiveValue::CSS_STRING));
+            list->append(cssValuePool->createValue(static_cast<const TextContentData*>(contentData)->text(), CSSPrimitiveValue::CSS_STRING));
     }
     if (!style->regionThread().isNull())
-        list->append(primitiveValueCache->createValue(style->regionThread(), CSSPrimitiveValue::CSS_STRING));
+        list->append(cssValuePool->createValue(style->regionThread(), CSSPrimitiveValue::CSS_STRING));
     return list.release();
 }
 
-static PassRefPtr<CSSValue> counterToCSSValue(const RenderStyle* style, int propertyID, CSSPrimitiveValueCache* primitiveValueCache)
+static PassRefPtr<CSSValue> counterToCSSValue(const RenderStyle* style, int propertyID, CSSValuePool* cssValuePool)
 {
     const CounterDirectiveMap* map = style->counterDirectives();
     if (!map)
@@ -1073,9 +1073,9 @@ static PassRefPtr<CSSValue> counterToCSSValue(const RenderStyle* style, int prop
 
     RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
     for (CounterDirectiveMap::const_iterator it = map->begin(); it != map->end(); ++it) {
-        list->append(primitiveValueCache->createValue(it->first.get(), CSSPrimitiveValue::CSS_STRING));
+        list->append(cssValuePool->createValue(it->first.get(), CSSPrimitiveValue::CSS_STRING));
         short number = propertyID == CSSPropertyCounterIncrement ? it->second.m_incrementValue : it->second.m_resetValue;
-        list->append(primitiveValueCache->createValue((double)number, CSSPrimitiveValue::CSS_NUMBER));
+        list->append(cssValuePool->createValue((double)number, CSSPrimitiveValue::CSS_NUMBER));
     }
     return list.release();
 }
@@ -1089,72 +1089,72 @@ static void logUnimplementedPropertyID(int propertyID)
     LOG_ERROR("WebKit does not yet implement getComputedStyle for '%s'.", getPropertyName(static_cast<CSSPropertyID>(propertyID)));
 }
 
-static PassRefPtr<CSSValueList> fontFamilyFromStyle(RenderStyle* style, CSSPrimitiveValueCache* primitiveValueCache)
+static PassRefPtr<CSSValueList> fontFamilyFromStyle(RenderStyle* style, CSSValuePool* cssValuePool)
 {
     const FontFamily& firstFamily = style->fontDescription().family();
     RefPtr<CSSValueList> list = CSSValueList::createCommaSeparated();
     for (const FontFamily* family = &firstFamily; family; family = family->next())
-        list->append(valueForFamily(family->family(), primitiveValueCache));
+        list->append(valueForFamily(family->family(), cssValuePool));
     return list.release();
 }
 
-static PassRefPtr<CSSPrimitiveValue> lineHeightFromStyle(RenderStyle* style, CSSPrimitiveValueCache* primitiveValueCache)
+static PassRefPtr<CSSPrimitiveValue> lineHeightFromStyle(RenderStyle* style, CSSValuePool* cssValuePool)
 {
     Length length = style->lineHeight();
     if (length.isNegative())
-        return primitiveValueCache->createIdentifierValue(CSSValueNormal);
+        return cssValuePool->createIdentifierValue(CSSValueNormal);
     if (length.isPercent())
         // This is imperfect, because it doesn't include the zoom factor and the real computation
         // for how high to be in pixels does include things like minimum font size and the zoom factor.
         // On the other hand, since font-size doesn't include the zoom factor, we really can't do
         // that here either.
-        return zoomAdjustedPixelValue(static_cast<int>(length.percent() * style->fontDescription().specifiedSize()) / 100, style, primitiveValueCache);
-    return zoomAdjustedPixelValue(length.value(), style, primitiveValueCache);
+        return zoomAdjustedPixelValue(static_cast<int>(length.percent() * style->fontDescription().specifiedSize()) / 100, style, cssValuePool);
+    return zoomAdjustedPixelValue(length.value(), style, cssValuePool);
 }
 
-static PassRefPtr<CSSPrimitiveValue> fontSizeFromStyle(RenderStyle* style, CSSPrimitiveValueCache* primitiveValueCache)
+static PassRefPtr<CSSPrimitiveValue> fontSizeFromStyle(RenderStyle* style, CSSValuePool* cssValuePool)
 {
-    return zoomAdjustedPixelValue(style->fontDescription().computedPixelSize(), style, primitiveValueCache);
+    return zoomAdjustedPixelValue(style->fontDescription().computedPixelSize(), style, cssValuePool);
 }
 
-static PassRefPtr<CSSPrimitiveValue> fontStyleFromStyle(RenderStyle* style, CSSPrimitiveValueCache* primitiveValueCache)
+static PassRefPtr<CSSPrimitiveValue> fontStyleFromStyle(RenderStyle* style, CSSValuePool* cssValuePool)
 {
     if (style->fontDescription().italic())
-        return primitiveValueCache->createIdentifierValue(CSSValueItalic);
-    return primitiveValueCache->createIdentifierValue(CSSValueNormal);
+        return cssValuePool->createIdentifierValue(CSSValueItalic);
+    return cssValuePool->createIdentifierValue(CSSValueNormal);
 }
 
-static PassRefPtr<CSSPrimitiveValue> fontVariantFromStyle(RenderStyle* style, CSSPrimitiveValueCache* primitiveValueCache)
+static PassRefPtr<CSSPrimitiveValue> fontVariantFromStyle(RenderStyle* style, CSSValuePool* cssValuePool)
 {
     if (style->fontDescription().smallCaps())
-        return primitiveValueCache->createIdentifierValue(CSSValueSmallCaps);
-    return primitiveValueCache->createIdentifierValue(CSSValueNormal);
+        return cssValuePool->createIdentifierValue(CSSValueSmallCaps);
+    return cssValuePool->createIdentifierValue(CSSValueNormal);
 }
 
-static PassRefPtr<CSSPrimitiveValue> fontWeightFromStyle(RenderStyle* style, CSSPrimitiveValueCache* primitiveValueCache)
+static PassRefPtr<CSSPrimitiveValue> fontWeightFromStyle(RenderStyle* style, CSSValuePool* cssValuePool)
 {
     switch (style->fontDescription().weight()) {
     case FontWeight100:
-        return primitiveValueCache->createIdentifierValue(CSSValue100);
+        return cssValuePool->createIdentifierValue(CSSValue100);
     case FontWeight200:
-        return primitiveValueCache->createIdentifierValue(CSSValue200);
+        return cssValuePool->createIdentifierValue(CSSValue200);
     case FontWeight300:
-        return primitiveValueCache->createIdentifierValue(CSSValue300);
+        return cssValuePool->createIdentifierValue(CSSValue300);
     case FontWeightNormal:
-        return primitiveValueCache->createIdentifierValue(CSSValueNormal);
+        return cssValuePool->createIdentifierValue(CSSValueNormal);
     case FontWeight500:
-        return primitiveValueCache->createIdentifierValue(CSSValue500);
+        return cssValuePool->createIdentifierValue(CSSValue500);
     case FontWeight600:
-        return primitiveValueCache->createIdentifierValue(CSSValue600);
+        return cssValuePool->createIdentifierValue(CSSValue600);
     case FontWeightBold:
-        return primitiveValueCache->createIdentifierValue(CSSValueBold);
+        return cssValuePool->createIdentifierValue(CSSValueBold);
     case FontWeight800:
-        return primitiveValueCache->createIdentifierValue(CSSValue800);
+        return cssValuePool->createIdentifierValue(CSSValue800);
     case FontWeight900:
-        return primitiveValueCache->createIdentifierValue(CSSValue900);
+        return cssValuePool->createIdentifierValue(CSSValue900);
     }
     ASSERT_NOT_REACHED();
-    return primitiveValueCache->createIdentifierValue(CSSValueNormal);
+    return cssValuePool->createIdentifierValue(CSSValueNormal);
 }
 
 PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int propertyID, EUpdateLayout updateLayout) const
@@ -1182,7 +1182,7 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
     if (!style)
         return 0;
 
-    CSSPrimitiveValueCache* primitiveValueCache = node->document()->cssPrimitiveValueCache().get();
+    CSSValuePool* cssValuePool = node->document()->cssValuePool().get();
 
     propertyID = CSSProperty::resolveDirectionAwareProperty(propertyID, style->direction(), style->writingMode());
 
@@ -1191,18 +1191,18 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             break;
 
         case CSSPropertyBackgroundColor:
-            return primitiveValueCache->createColorValue(m_allowVisitedStyle? style->visitedDependentColor(CSSPropertyBackgroundColor).rgb() : style->backgroundColor().rgb());
+            return cssValuePool->createColorValue(m_allowVisitedStyle? style->visitedDependentColor(CSSPropertyBackgroundColor).rgb() : style->backgroundColor().rgb());
         case CSSPropertyBackgroundImage:
         case CSSPropertyWebkitMaskImage: {
             const FillLayer* layers = propertyID == CSSPropertyWebkitMaskImage ? style->maskLayers() : style->backgroundLayers();
             if (!layers)
-                return primitiveValueCache->createIdentifierValue(CSSValueNone);
+                return cssValuePool->createIdentifierValue(CSSValueNone);
 
             if (!layers->next()) {
                 if (layers->image())
                     return layers->image()->cssValue();
 
-                return primitiveValueCache->createIdentifierValue(CSSValueNone);
+                return cssValuePool->createIdentifierValue(CSSValueNone);
             }
 
             RefPtr<CSSValueList> list = CSSValueList::createCommaSeparated();
@@ -1210,7 +1210,7 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
                 if (currLayer->image())
                     list->append(currLayer->image()->cssValue());
                 else
-                    list->append(primitiveValueCache->createIdentifierValue(CSSValueNone));
+                    list->append(cssValuePool->createIdentifierValue(CSSValueNone));
             }
             return list.release();
         }
@@ -1219,11 +1219,11 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
         case CSSPropertyWebkitMaskSize: {
             const FillLayer* layers = propertyID == CSSPropertyWebkitMaskSize ? style->maskLayers() : style->backgroundLayers();
             if (!layers->next())
-                return fillSizeToCSSValue(layers->size(), primitiveValueCache);
+                return fillSizeToCSSValue(layers->size(), cssValuePool);
 
             RefPtr<CSSValueList> list = CSSValueList::createCommaSeparated();
             for (const FillLayer* currLayer = layers; currLayer; currLayer = currLayer->next())
-                list->append(fillSizeToCSSValue(currLayer->size(), primitiveValueCache));
+                list->append(fillSizeToCSSValue(currLayer->size(), cssValuePool));
 
             return list.release();
         }
@@ -1231,11 +1231,11 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
         case CSSPropertyWebkitMaskRepeat: {
             const FillLayer* layers = propertyID == CSSPropertyWebkitMaskRepeat ? style->maskLayers() : style->backgroundLayers();
             if (!layers->next())
-                return fillRepeatToCSSValue(layers->repeatX(), layers->repeatY(), primitiveValueCache);
+                return fillRepeatToCSSValue(layers->repeatX(), layers->repeatY(), cssValuePool);
 
             RefPtr<CSSValueList> list = CSSValueList::createCommaSeparated();
             for (const FillLayer* currLayer = layers; currLayer; currLayer = currLayer->next())
-                list->append(fillRepeatToCSSValue(currLayer->repeatX(), currLayer->repeatY(), primitiveValueCache));
+                list->append(fillRepeatToCSSValue(currLayer->repeatX(), currLayer->repeatY(), cssValuePool));
 
             return list.release();
         }
@@ -1243,11 +1243,11 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
         case CSSPropertyWebkitMaskComposite: {
             const FillLayer* layers = propertyID == CSSPropertyWebkitMaskComposite ? style->maskLayers() : style->backgroundLayers();
             if (!layers->next())
-                return primitiveValueCache->createValue(layers->composite());
+                return cssValuePool->createValue(layers->composite());
 
             RefPtr<CSSValueList> list = CSSValueList::createCommaSeparated();
             for (const FillLayer* currLayer = layers; currLayer; currLayer = currLayer->next())
-                list->append(primitiveValueCache->createValue(currLayer->composite()));
+                list->append(cssValuePool->createValue(currLayer->composite()));
 
             return list.release();
         }
@@ -1255,11 +1255,11 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
         case CSSPropertyWebkitMaskAttachment: {
             const FillLayer* layers = propertyID == CSSPropertyWebkitMaskAttachment ? style->maskLayers() : style->backgroundLayers();
             if (!layers->next())
-                return primitiveValueCache->createValue(layers->attachment());
+                return cssValuePool->createValue(layers->attachment());
 
             RefPtr<CSSValueList> list = CSSValueList::createCommaSeparated();
             for (const FillLayer* currLayer = layers; currLayer; currLayer = currLayer->next())
-                list->append(primitiveValueCache->createValue(currLayer->attachment()));
+                list->append(cssValuePool->createValue(currLayer->attachment()));
 
             return list.release();
         }
@@ -1273,13 +1273,13 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             bool isClip = propertyID == CSSPropertyBackgroundClip || propertyID == CSSPropertyWebkitBackgroundClip || propertyID == CSSPropertyWebkitMaskClip;
             if (!layers->next()) {
                 EFillBox box = isClip ? layers->clip() : layers->origin();
-                return primitiveValueCache->createValue(box);
+                return cssValuePool->createValue(box);
             }
 
             RefPtr<CSSValueList> list = CSSValueList::createCommaSeparated();
             for (const FillLayer* currLayer = layers; currLayer; currLayer = currLayer->next()) {
                 EFillBox box = isClip ? currLayer->clip() : currLayer->origin();
-                list->append(primitiveValueCache->createValue(box));
+                list->append(cssValuePool->createValue(box));
             }
 
             return list.release();
@@ -1289,16 +1289,16 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             const FillLayer* layers = propertyID == CSSPropertyWebkitMaskPosition ? style->maskLayers() : style->backgroundLayers();
             if (!layers->next()) {
                 RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
-                list->append(primitiveValueCache->createValue(layers->xPosition()));
-                list->append(primitiveValueCache->createValue(layers->yPosition()));
+                list->append(cssValuePool->createValue(layers->xPosition()));
+                list->append(cssValuePool->createValue(layers->yPosition()));
                 return list.release();
             }
 
             RefPtr<CSSValueList> list = CSSValueList::createCommaSeparated();
             for (const FillLayer* currLayer = layers; currLayer; currLayer = currLayer->next()) {
                 RefPtr<CSSValueList> positionList = CSSValueList::createSpaceSeparated();
-                positionList->append(primitiveValueCache->createValue(currLayer->xPosition()));
-                positionList->append(primitiveValueCache->createValue(currLayer->yPosition()));
+                positionList->append(cssValuePool->createValue(currLayer->xPosition()));
+                positionList->append(cssValuePool->createValue(currLayer->yPosition()));
                 list->append(positionList);
             }
 
@@ -1308,11 +1308,11 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
         case CSSPropertyWebkitMaskPositionX: {
             const FillLayer* layers = propertyID == CSSPropertyWebkitMaskPositionX ? style->maskLayers() : style->backgroundLayers();
             if (!layers->next())
-                return primitiveValueCache->createValue(layers->xPosition());
+                return cssValuePool->createValue(layers->xPosition());
 
             RefPtr<CSSValueList> list = CSSValueList::createCommaSeparated();
             for (const FillLayer* currLayer = layers; currLayer; currLayer = currLayer->next())
-                list->append(primitiveValueCache->createValue(currLayer->xPosition()));
+                list->append(cssValuePool->createValue(currLayer->xPosition()));
 
             return list.release();
         }
@@ -1320,129 +1320,129 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
         case CSSPropertyWebkitMaskPositionY: {
             const FillLayer* layers = propertyID == CSSPropertyWebkitMaskPositionY ? style->maskLayers() : style->backgroundLayers();
             if (!layers->next())
-                return primitiveValueCache->createValue(layers->yPosition());
+                return cssValuePool->createValue(layers->yPosition());
 
             RefPtr<CSSValueList> list = CSSValueList::createCommaSeparated();
             for (const FillLayer* currLayer = layers; currLayer; currLayer = currLayer->next())
-                list->append(primitiveValueCache->createValue(currLayer->yPosition()));
+                list->append(cssValuePool->createValue(currLayer->yPosition()));
 
             return list.release();
         }
         case CSSPropertyBorderCollapse:
             if (style->borderCollapse())
-                return primitiveValueCache->createIdentifierValue(CSSValueCollapse);
-            return primitiveValueCache->createIdentifierValue(CSSValueSeparate);
+                return cssValuePool->createIdentifierValue(CSSValueCollapse);
+            return cssValuePool->createIdentifierValue(CSSValueSeparate);
         case CSSPropertyBorderSpacing: {
             RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
-            list->append(zoomAdjustedPixelValue(style->horizontalBorderSpacing(), style.get(), primitiveValueCache));
-            list->append(zoomAdjustedPixelValue(style->verticalBorderSpacing(), style.get(), primitiveValueCache));
+            list->append(zoomAdjustedPixelValue(style->horizontalBorderSpacing(), style.get(), cssValuePool));
+            list->append(zoomAdjustedPixelValue(style->verticalBorderSpacing(), style.get(), cssValuePool));
             return list.release();
         }
         case CSSPropertyWebkitBorderHorizontalSpacing:
-            return zoomAdjustedPixelValue(style->horizontalBorderSpacing(), style.get(), primitiveValueCache);
+            return zoomAdjustedPixelValue(style->horizontalBorderSpacing(), style.get(), cssValuePool);
         case CSSPropertyWebkitBorderVerticalSpacing:
-            return zoomAdjustedPixelValue(style->verticalBorderSpacing(), style.get(), primitiveValueCache);
+            return zoomAdjustedPixelValue(style->verticalBorderSpacing(), style.get(), cssValuePool);
         case CSSPropertyBorderImageSource:
             if (style->borderImageSource())
                 return style->borderImageSource()->cssValue();
-            return primitiveValueCache->createIdentifierValue(CSSValueNone);
+            return cssValuePool->createIdentifierValue(CSSValueNone);
         case CSSPropertyBorderTopColor:
-            return m_allowVisitedStyle ? primitiveValueCache->createColorValue(style->visitedDependentColor(CSSPropertyBorderTopColor).rgb()) : currentColorOrValidColor(style.get(), style->borderTopColor());
+            return m_allowVisitedStyle ? cssValuePool->createColorValue(style->visitedDependentColor(CSSPropertyBorderTopColor).rgb()) : currentColorOrValidColor(style.get(), style->borderTopColor());
         case CSSPropertyBorderRightColor:
-            return m_allowVisitedStyle ? primitiveValueCache->createColorValue(style->visitedDependentColor(CSSPropertyBorderRightColor).rgb()) : currentColorOrValidColor(style.get(), style->borderRightColor());
+            return m_allowVisitedStyle ? cssValuePool->createColorValue(style->visitedDependentColor(CSSPropertyBorderRightColor).rgb()) : currentColorOrValidColor(style.get(), style->borderRightColor());
         case CSSPropertyBorderBottomColor:
-            return m_allowVisitedStyle ? primitiveValueCache->createColorValue(style->visitedDependentColor(CSSPropertyBorderBottomColor).rgb()) : currentColorOrValidColor(style.get(), style->borderBottomColor());
+            return m_allowVisitedStyle ? cssValuePool->createColorValue(style->visitedDependentColor(CSSPropertyBorderBottomColor).rgb()) : currentColorOrValidColor(style.get(), style->borderBottomColor());
         case CSSPropertyBorderLeftColor:
-            return m_allowVisitedStyle ? primitiveValueCache->createColorValue(style->visitedDependentColor(CSSPropertyBorderLeftColor).rgb()) : currentColorOrValidColor(style.get(), style->borderLeftColor());
+            return m_allowVisitedStyle ? cssValuePool->createColorValue(style->visitedDependentColor(CSSPropertyBorderLeftColor).rgb()) : currentColorOrValidColor(style.get(), style->borderLeftColor());
         case CSSPropertyBorderTopStyle:
-            return primitiveValueCache->createValue(style->borderTopStyle());
+            return cssValuePool->createValue(style->borderTopStyle());
         case CSSPropertyBorderRightStyle:
-            return primitiveValueCache->createValue(style->borderRightStyle());
+            return cssValuePool->createValue(style->borderRightStyle());
         case CSSPropertyBorderBottomStyle:
-            return primitiveValueCache->createValue(style->borderBottomStyle());
+            return cssValuePool->createValue(style->borderBottomStyle());
         case CSSPropertyBorderLeftStyle:
-            return primitiveValueCache->createValue(style->borderLeftStyle());
+            return cssValuePool->createValue(style->borderLeftStyle());
         case CSSPropertyBorderTopWidth:
-            return zoomAdjustedPixelValue(style->borderTopWidth(), style.get(), primitiveValueCache);
+            return zoomAdjustedPixelValue(style->borderTopWidth(), style.get(), cssValuePool);
         case CSSPropertyBorderRightWidth:
-            return zoomAdjustedPixelValue(style->borderRightWidth(), style.get(), primitiveValueCache);
+            return zoomAdjustedPixelValue(style->borderRightWidth(), style.get(), cssValuePool);
         case CSSPropertyBorderBottomWidth:
-            return zoomAdjustedPixelValue(style->borderBottomWidth(), style.get(), primitiveValueCache);
+            return zoomAdjustedPixelValue(style->borderBottomWidth(), style.get(), cssValuePool);
         case CSSPropertyBorderLeftWidth:
-            return zoomAdjustedPixelValue(style->borderLeftWidth(), style.get(), primitiveValueCache);
+            return zoomAdjustedPixelValue(style->borderLeftWidth(), style.get(), cssValuePool);
         case CSSPropertyBottom:
-            return getPositionOffsetValue(style.get(), CSSPropertyBottom, primitiveValueCache);
+            return getPositionOffsetValue(style.get(), CSSPropertyBottom, cssValuePool);
         case CSSPropertyWebkitBoxAlign:
-            return primitiveValueCache->createValue(style->boxAlign());
+            return cssValuePool->createValue(style->boxAlign());
         case CSSPropertyWebkitBoxDirection:
-            return primitiveValueCache->createValue(style->boxDirection());
+            return cssValuePool->createValue(style->boxDirection());
         case CSSPropertyWebkitBoxFlex:
-            return primitiveValueCache->createValue(style->boxFlex(), CSSPrimitiveValue::CSS_NUMBER);
+            return cssValuePool->createValue(style->boxFlex(), CSSPrimitiveValue::CSS_NUMBER);
         case CSSPropertyWebkitBoxFlexGroup:
-            return primitiveValueCache->createValue(style->boxFlexGroup(), CSSPrimitiveValue::CSS_NUMBER);
+            return cssValuePool->createValue(style->boxFlexGroup(), CSSPrimitiveValue::CSS_NUMBER);
         case CSSPropertyWebkitBoxLines:
-            return primitiveValueCache->createValue(style->boxLines());
+            return cssValuePool->createValue(style->boxLines());
         case CSSPropertyWebkitBoxOrdinalGroup:
-            return primitiveValueCache->createValue(style->boxOrdinalGroup(), CSSPrimitiveValue::CSS_NUMBER);
+            return cssValuePool->createValue(style->boxOrdinalGroup(), CSSPrimitiveValue::CSS_NUMBER);
         case CSSPropertyWebkitBoxOrient:
-            return primitiveValueCache->createValue(style->boxOrient());
+            return cssValuePool->createValue(style->boxOrient());
         case CSSPropertyWebkitBoxPack: {
             EBoxAlignment boxPack = style->boxPack();
             ASSERT(boxPack != BSTRETCH);
             ASSERT(boxPack != BBASELINE);
             if (boxPack == BJUSTIFY || boxPack== BBASELINE)
                 return 0;
-            return primitiveValueCache->createValue(boxPack);
+            return cssValuePool->createValue(boxPack);
         }
         case CSSPropertyWebkitBoxReflect:
-            return valueForReflection(style->boxReflect(), style.get(), primitiveValueCache);
+            return valueForReflection(style->boxReflect(), style.get(), cssValuePool);
         case CSSPropertyBoxShadow:
         case CSSPropertyWebkitBoxShadow:
             return valueForShadow(style->boxShadow(), propertyID, style.get());
         case CSSPropertyCaptionSide:
-            return primitiveValueCache->createValue(style->captionSide());
+            return cssValuePool->createValue(style->captionSide());
         case CSSPropertyClear:
-            return primitiveValueCache->createValue(style->clear());
+            return cssValuePool->createValue(style->clear());
         case CSSPropertyColor:
-            return primitiveValueCache->createColorValue(m_allowVisitedStyle ? style->visitedDependentColor(CSSPropertyColor).rgb() : style->color().rgb());
+            return cssValuePool->createColorValue(m_allowVisitedStyle ? style->visitedDependentColor(CSSPropertyColor).rgb() : style->color().rgb());
         case CSSPropertyWebkitPrintColorAdjust:
-            return primitiveValueCache->createValue(style->printColorAdjust());
+            return cssValuePool->createValue(style->printColorAdjust());
         case CSSPropertyWebkitColumnAxis:
-            return primitiveValueCache->createValue(style->columnAxis());
+            return cssValuePool->createValue(style->columnAxis());
         case CSSPropertyWebkitColumnCount:
             if (style->hasAutoColumnCount())
-                return primitiveValueCache->createIdentifierValue(CSSValueAuto);
-            return primitiveValueCache->createValue(style->columnCount(), CSSPrimitiveValue::CSS_NUMBER);
+                return cssValuePool->createIdentifierValue(CSSValueAuto);
+            return cssValuePool->createValue(style->columnCount(), CSSPrimitiveValue::CSS_NUMBER);
         case CSSPropertyWebkitColumnGap:
             if (style->hasNormalColumnGap())
-                return primitiveValueCache->createIdentifierValue(CSSValueNormal);
-            return zoomAdjustedPixelValue(style->columnGap(), style.get(), primitiveValueCache);
+                return cssValuePool->createIdentifierValue(CSSValueNormal);
+            return zoomAdjustedPixelValue(style->columnGap(), style.get(), cssValuePool);
         case CSSPropertyWebkitColumnRuleColor:
-            return m_allowVisitedStyle ? primitiveValueCache->createColorValue(style->visitedDependentColor(CSSPropertyOutlineColor).rgb()) : currentColorOrValidColor(style.get(), style->columnRuleColor());
+            return m_allowVisitedStyle ? cssValuePool->createColorValue(style->visitedDependentColor(CSSPropertyOutlineColor).rgb()) : currentColorOrValidColor(style.get(), style->columnRuleColor());
         case CSSPropertyWebkitColumnRuleStyle:
-            return primitiveValueCache->createValue(style->columnRuleStyle());
+            return cssValuePool->createValue(style->columnRuleStyle());
         case CSSPropertyWebkitColumnRuleWidth:
-            return zoomAdjustedPixelValue(style->columnRuleWidth(), style.get(), primitiveValueCache);
+            return zoomAdjustedPixelValue(style->columnRuleWidth(), style.get(), cssValuePool);
         case CSSPropertyWebkitColumnSpan:
             if (style->columnSpan())
-                return primitiveValueCache->createIdentifierValue(CSSValueAll);
-            return primitiveValueCache->createValue(1, CSSPrimitiveValue::CSS_NUMBER);
+                return cssValuePool->createIdentifierValue(CSSValueAll);
+            return cssValuePool->createValue(1, CSSPrimitiveValue::CSS_NUMBER);
         case CSSPropertyWebkitColumnBreakAfter:
-            return primitiveValueCache->createValue(style->columnBreakAfter());
+            return cssValuePool->createValue(style->columnBreakAfter());
         case CSSPropertyWebkitColumnBreakBefore:
-            return primitiveValueCache->createValue(style->columnBreakBefore());
+            return cssValuePool->createValue(style->columnBreakBefore());
         case CSSPropertyWebkitColumnBreakInside:
-            return primitiveValueCache->createValue(style->columnBreakInside());
+            return cssValuePool->createValue(style->columnBreakInside());
         case CSSPropertyWebkitColumnWidth:
             if (style->hasAutoColumnWidth())
-                return primitiveValueCache->createIdentifierValue(CSSValueAuto);
-            return zoomAdjustedPixelValue(style->columnWidth(), style.get(), primitiveValueCache);
+                return cssValuePool->createIdentifierValue(CSSValueAuto);
+            return zoomAdjustedPixelValue(style->columnWidth(), style.get(), cssValuePool);
         case CSSPropertyWebkitRegionBreakAfter:
-            return primitiveValueCache->createValue(style->regionBreakAfter());
+            return cssValuePool->createValue(style->regionBreakAfter());
         case CSSPropertyWebkitRegionBreakBefore:
-            return primitiveValueCache->createValue(style->regionBreakBefore());
+            return cssValuePool->createValue(style->regionBreakBefore());
         case CSSPropertyWebkitRegionBreakInside:
-            return primitiveValueCache->createValue(style->regionBreakInside());
+            return cssValuePool->createValue(style->regionBreakInside());
         case CSSPropertyCursor: {
             RefPtr<CSSValueList> list;
             CursorList* cursors = style->cursors();
@@ -1452,7 +1452,7 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
                     if (StyleImage* image = cursors->at(i).image())
                         list->append(image->cssValue());
             }
-            RefPtr<CSSValue> value = primitiveValueCache->createValue(style->cursor());
+            RefPtr<CSSValue> value = cssValuePool->createValue(style->cursor());
             if (list) {
                 list->append(value);
                 return list.release();
@@ -1460,33 +1460,33 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             return value.release();
         }
         case CSSPropertyDirection:
-            return primitiveValueCache->createValue(style->direction());
+            return cssValuePool->createValue(style->direction());
         case CSSPropertyDisplay:
-            return primitiveValueCache->createValue(style->display());
+            return cssValuePool->createValue(style->display());
         case CSSPropertyEmptyCells:
-            return primitiveValueCache->createValue(style->emptyCells());
+            return cssValuePool->createValue(style->emptyCells());
         case CSSPropertyWebkitFlexOrder:
-            return primitiveValueCache->createValue(style->flexOrder(), CSSPrimitiveValue::CSS_NUMBER);
+            return cssValuePool->createValue(style->flexOrder(), CSSPrimitiveValue::CSS_NUMBER);
         case CSSPropertyWebkitFlexPack:
-            return primitiveValueCache->createValue(style->flexPack());
+            return cssValuePool->createValue(style->flexPack());
         case CSSPropertyWebkitFlexAlign:
-            return primitiveValueCache->createValue(style->flexAlign());
+            return cssValuePool->createValue(style->flexAlign());
         case CSSPropertyWebkitFlexFlow:
-            return primitiveValueCache->createValue(style->flexFlow());
+            return cssValuePool->createValue(style->flexFlow());
         case CSSPropertyFloat:
-            return primitiveValueCache->createValue(style->floating());
+            return cssValuePool->createValue(style->floating());
         case CSSPropertyFont: {
             RefPtr<FontValue> computedFont = FontValue::create();
-            computedFont->style = fontStyleFromStyle(style.get(), primitiveValueCache);
-            computedFont->variant = fontVariantFromStyle(style.get(), primitiveValueCache);
-            computedFont->weight = fontWeightFromStyle(style.get(), primitiveValueCache);
-            computedFont->size = fontSizeFromStyle(style.get(), primitiveValueCache);
-            computedFont->lineHeight = lineHeightFromStyle(style.get(), primitiveValueCache);
-            computedFont->family = fontFamilyFromStyle(style.get(), primitiveValueCache);
+            computedFont->style = fontStyleFromStyle(style.get(), cssValuePool);
+            computedFont->variant = fontVariantFromStyle(style.get(), cssValuePool);
+            computedFont->weight = fontWeightFromStyle(style.get(), cssValuePool);
+            computedFont->size = fontSizeFromStyle(style.get(), cssValuePool);
+            computedFont->lineHeight = lineHeightFromStyle(style.get(), cssValuePool);
+            computedFont->family = fontFamilyFromStyle(style.get(), cssValuePool);
             return computedFont.release();
         }
         case CSSPropertyFontFamily: {
-            RefPtr<CSSValueList> fontFamilyList = fontFamilyFromStyle(style.get(), primitiveValueCache);
+            RefPtr<CSSValueList> fontFamilyList = fontFamilyFromStyle(style.get(), cssValuePool);
             // If there's only a single family, return that as a CSSPrimitiveValue.
             // NOTE: Gecko always returns this as a comma-separated CSSPrimitiveValue string.
             if (fontFamilyList->length() == 1)
@@ -1494,17 +1494,17 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             return fontFamilyList.release();
         }
         case CSSPropertyFontSize:
-            return fontSizeFromStyle(style.get(), primitiveValueCache);
+            return fontSizeFromStyle(style.get(), cssValuePool);
         case CSSPropertyFontStyle:
-            return fontStyleFromStyle(style.get(), primitiveValueCache);
+            return fontStyleFromStyle(style.get(), cssValuePool);
         case CSSPropertyFontVariant:
-            return fontVariantFromStyle(style.get(), primitiveValueCache);
+            return fontVariantFromStyle(style.get(), cssValuePool);
         case CSSPropertyFontWeight:
-            return fontWeightFromStyle(style.get(), primitiveValueCache);
+            return fontWeightFromStyle(style.get(), cssValuePool);
         case CSSPropertyWebkitFontFeatureSettings: {
             const FontFeatureSettings* featureSettings = style->fontDescription().featureSettings();
             if (!featureSettings || !featureSettings->size())
-                return primitiveValueCache->createIdentifierValue(CSSValueNormal);
+                return cssValuePool->createIdentifierValue(CSSValueNormal);
             RefPtr<CSSValueList> list = CSSValueList::createCommaSeparated();
             for (unsigned i = 0; i < featureSettings->size(); ++i) {
                 const FontFeature& feature = featureSettings->at(i);
@@ -1516,11 +1516,11 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
 #if ENABLE(CSS_GRID_LAYOUT)
         case CSSPropertyWebkitGridColumns: {
             Length gridColumns = style->gridColumns();
-            return valueForGridTrackList(gridColumns, style.get(), primitiveValueCache);
+            return valueForGridTrackList(gridColumns, style.get(), cssValuePool);
         }
         case CSSPropertyWebkitGridRows: {
             Length gridRows = style->gridRows();
-            return valueForGridTrackList(gridRows, style.get(), primitiveValueCache);
+            return valueForGridTrackList(gridRows, style.get(), cssValuePool);
         }
 #endif
         case CSSPropertyHeight:
@@ -1528,20 +1528,20 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
                 // According to http://www.w3.org/TR/CSS2/visudet.html#the-height-property,
                 // the "height" property does not apply for non-replaced inline elements.
                 if (!renderer->isReplaced() && renderer->isInline())
-                    return primitiveValueCache->createIdentifierValue(CSSValueAuto);
-                return zoomAdjustedPixelValue(sizingBox(renderer).height(), style.get(), primitiveValueCache);
+                    return cssValuePool->createIdentifierValue(CSSValueAuto);
+                return zoomAdjustedPixelValue(sizingBox(renderer).height(), style.get(), cssValuePool);
             }
-            return zoomAdjustedPixelValueForLength(style->height(), style.get(), primitiveValueCache);
+            return zoomAdjustedPixelValueForLength(style->height(), style.get(), cssValuePool);
         case CSSPropertyWebkitHighlight:
             if (style->highlight() == nullAtom)
-                return primitiveValueCache->createIdentifierValue(CSSValueNone);
-            return primitiveValueCache->createValue(style->highlight(), CSSPrimitiveValue::CSS_STRING);
+                return cssValuePool->createIdentifierValue(CSSValueNone);
+            return cssValuePool->createValue(style->highlight(), CSSPrimitiveValue::CSS_STRING);
         case CSSPropertyWebkitHyphens:
-            return primitiveValueCache->createValue(style->hyphens());
+            return cssValuePool->createValue(style->hyphens());
         case CSSPropertyWebkitHyphenateCharacter:
             if (style->hyphenationString().isNull())
-                return primitiveValueCache->createIdentifierValue(CSSValueAuto);
-            return primitiveValueCache->createValue(style->hyphenationString(), CSSPrimitiveValue::CSS_STRING);
+                return cssValuePool->createIdentifierValue(CSSValueAuto);
+            return cssValuePool->createValue(style->hyphenationString(), CSSPrimitiveValue::CSS_STRING);
         case CSSPropertyWebkitHyphenateLimitAfter:
             if (style->hyphenationLimitAfter() < 0)
                 return CSSPrimitiveValue::createIdentifier(CSSValueAuto);
@@ -1556,157 +1556,157 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             return CSSPrimitiveValue::create(style->hyphenationLimitLines(), CSSPrimitiveValue::CSS_NUMBER);
         case CSSPropertyWebkitBorderFit:
             if (style->borderFit() == BorderFitBorder)
-                return primitiveValueCache->createIdentifierValue(CSSValueBorder);
-            return primitiveValueCache->createIdentifierValue(CSSValueLines);
+                return cssValuePool->createIdentifierValue(CSSValueBorder);
+            return cssValuePool->createIdentifierValue(CSSValueLines);
         case CSSPropertyImageRendering:
             return CSSPrimitiveValue::create(style->imageRendering());
         case CSSPropertyLeft:
-            return getPositionOffsetValue(style.get(), CSSPropertyLeft, primitiveValueCache);
+            return getPositionOffsetValue(style.get(), CSSPropertyLeft, cssValuePool);
         case CSSPropertyLetterSpacing:
             if (!style->letterSpacing())
-                return primitiveValueCache->createIdentifierValue(CSSValueNormal);
-            return zoomAdjustedPixelValue(style->letterSpacing(), style.get(), primitiveValueCache);
+                return cssValuePool->createIdentifierValue(CSSValueNormal);
+            return zoomAdjustedPixelValue(style->letterSpacing(), style.get(), cssValuePool);
         case CSSPropertyWebkitLineClamp:
             if (style->lineClamp().isNone())
-                return primitiveValueCache->createIdentifierValue(CSSValueNone);
-            return primitiveValueCache->createValue(style->lineClamp().value(), style->lineClamp().isPercentage() ? CSSPrimitiveValue::CSS_PERCENTAGE : CSSPrimitiveValue::CSS_NUMBER);
+                return cssValuePool->createIdentifierValue(CSSValueNone);
+            return cssValuePool->createValue(style->lineClamp().value(), style->lineClamp().isPercentage() ? CSSPrimitiveValue::CSS_PERCENTAGE : CSSPrimitiveValue::CSS_NUMBER);
         case CSSPropertyLineHeight:
-            return lineHeightFromStyle(style.get(), primitiveValueCache);
+            return lineHeightFromStyle(style.get(), cssValuePool);
         case CSSPropertyListStyleImage:
             if (style->listStyleImage())
                 return style->listStyleImage()->cssValue();
-            return primitiveValueCache->createIdentifierValue(CSSValueNone);
+            return cssValuePool->createIdentifierValue(CSSValueNone);
         case CSSPropertyListStylePosition:
-            return primitiveValueCache->createValue(style->listStylePosition());
+            return cssValuePool->createValue(style->listStylePosition());
         case CSSPropertyListStyleType:
-            return primitiveValueCache->createValue(style->listStyleType());
+            return cssValuePool->createValue(style->listStyleType());
         case CSSPropertyWebkitLocale:
             if (style->locale().isNull())
-                return primitiveValueCache->createIdentifierValue(CSSValueAuto);
-            return primitiveValueCache->createValue(style->locale(), CSSPrimitiveValue::CSS_STRING);
+                return cssValuePool->createIdentifierValue(CSSValueAuto);
+            return cssValuePool->createValue(style->locale(), CSSPrimitiveValue::CSS_STRING);
         case CSSPropertyMarginTop: {
             Length marginTop = style->marginTop();
             if (marginTop.isPercent())
-                return primitiveValueCache->createValue(marginTop);
-            return zoomAdjustedPixelValue(marginTop.value(), style.get(), primitiveValueCache);
+                return cssValuePool->createValue(marginTop);
+            return zoomAdjustedPixelValue(marginTop.value(), style.get(), cssValuePool);
         }
         case CSSPropertyMarginRight: {
             Length marginRight = style->marginRight();
             if (marginRight.isPercent())
-                return primitiveValueCache->createValue(marginRight);
-            return zoomAdjustedPixelValue(marginRight.value(), style.get(), primitiveValueCache);
+                return cssValuePool->createValue(marginRight);
+            return zoomAdjustedPixelValue(marginRight.value(), style.get(), cssValuePool);
         }
         case CSSPropertyMarginBottom: {
             Length marginBottom = style->marginBottom();
             if (marginBottom.isPercent())
-                return primitiveValueCache->createValue(marginBottom);
-            return zoomAdjustedPixelValue(marginBottom.value(), style.get(), primitiveValueCache);
+                return cssValuePool->createValue(marginBottom);
+            return zoomAdjustedPixelValue(marginBottom.value(), style.get(), cssValuePool);
         }
         case CSSPropertyMarginLeft: {
             Length marginLeft = style->marginLeft();
             if (marginLeft.isPercent())
-                return primitiveValueCache->createValue(marginLeft);
-            return zoomAdjustedPixelValue(marginLeft.value(), style.get(), primitiveValueCache);
+                return cssValuePool->createValue(marginLeft);
+            return zoomAdjustedPixelValue(marginLeft.value(), style.get(), cssValuePool);
         }
         case CSSPropertyWebkitMarqueeDirection:
-            return primitiveValueCache->createValue(style->marqueeDirection());
+            return cssValuePool->createValue(style->marqueeDirection());
         case CSSPropertyWebkitMarqueeIncrement:
-            return primitiveValueCache->createValue(style->marqueeIncrement());
+            return cssValuePool->createValue(style->marqueeIncrement());
         case CSSPropertyWebkitMarqueeRepetition:
             if (style->marqueeLoopCount() < 0)
-                return primitiveValueCache->createIdentifierValue(CSSValueInfinite);
-            return primitiveValueCache->createValue(style->marqueeLoopCount(), CSSPrimitiveValue::CSS_NUMBER);
+                return cssValuePool->createIdentifierValue(CSSValueInfinite);
+            return cssValuePool->createValue(style->marqueeLoopCount(), CSSPrimitiveValue::CSS_NUMBER);
         case CSSPropertyWebkitMarqueeStyle:
-            return primitiveValueCache->createValue(style->marqueeBehavior());
+            return cssValuePool->createValue(style->marqueeBehavior());
         case CSSPropertyWebkitUserModify:
-            return primitiveValueCache->createValue(style->userModify());
+            return cssValuePool->createValue(style->userModify());
         case CSSPropertyMaxHeight: {
             const Length& maxHeight = style->maxHeight();
             if (maxHeight.isUndefined())
-                return primitiveValueCache->createIdentifierValue(CSSValueNone);
-            return primitiveValueCache->createValue(maxHeight);
+                return cssValuePool->createIdentifierValue(CSSValueNone);
+            return cssValuePool->createValue(maxHeight);
         }
         case CSSPropertyMaxWidth: {
             const Length& maxWidth = style->maxWidth();
             if (maxWidth.isUndefined())
-                return primitiveValueCache->createIdentifierValue(CSSValueNone);
-            return primitiveValueCache->createValue(maxWidth);
+                return cssValuePool->createIdentifierValue(CSSValueNone);
+            return cssValuePool->createValue(maxWidth);
         }
         case CSSPropertyMinHeight:
-            return primitiveValueCache->createValue(style->minHeight());
+            return cssValuePool->createValue(style->minHeight());
         case CSSPropertyMinWidth:
-            return primitiveValueCache->createValue(style->minWidth());
+            return cssValuePool->createValue(style->minWidth());
         case CSSPropertyOpacity:
-            return primitiveValueCache->createValue(style->opacity(), CSSPrimitiveValue::CSS_NUMBER);
+            return cssValuePool->createValue(style->opacity(), CSSPrimitiveValue::CSS_NUMBER);
         case CSSPropertyOrphans:
-            return primitiveValueCache->createValue(style->orphans(), CSSPrimitiveValue::CSS_NUMBER);
+            return cssValuePool->createValue(style->orphans(), CSSPrimitiveValue::CSS_NUMBER);
         case CSSPropertyOutlineColor:
-            return m_allowVisitedStyle ? primitiveValueCache->createColorValue(style->visitedDependentColor(CSSPropertyOutlineColor).rgb()) : currentColorOrValidColor(style.get(), style->outlineColor());
+            return m_allowVisitedStyle ? cssValuePool->createColorValue(style->visitedDependentColor(CSSPropertyOutlineColor).rgb()) : currentColorOrValidColor(style.get(), style->outlineColor());
         case CSSPropertyOutlineOffset:
-            return zoomAdjustedPixelValue(style->outlineOffset(), style.get(), primitiveValueCache);
+            return zoomAdjustedPixelValue(style->outlineOffset(), style.get(), cssValuePool);
         case CSSPropertyOutlineStyle:
             if (style->outlineStyleIsAuto())
-                return primitiveValueCache->createIdentifierValue(CSSValueAuto);
-            return primitiveValueCache->createValue(style->outlineStyle());
+                return cssValuePool->createIdentifierValue(CSSValueAuto);
+            return cssValuePool->createValue(style->outlineStyle());
         case CSSPropertyOutlineWidth:
-            return zoomAdjustedPixelValue(style->outlineWidth(), style.get(), primitiveValueCache);
+            return zoomAdjustedPixelValue(style->outlineWidth(), style.get(), cssValuePool);
         case CSSPropertyOverflow:
-            return primitiveValueCache->createValue(max(style->overflowX(), style->overflowY()));
+            return cssValuePool->createValue(max(style->overflowX(), style->overflowY()));
         case CSSPropertyOverflowX:
-            return primitiveValueCache->createValue(style->overflowX());
+            return cssValuePool->createValue(style->overflowX());
         case CSSPropertyOverflowY:
-            return primitiveValueCache->createValue(style->overflowY());
+            return cssValuePool->createValue(style->overflowY());
         case CSSPropertyPaddingTop:
             if (renderer && renderer->isBox())
-                return zoomAdjustedPixelValue(toRenderBox(renderer)->paddingTop(false), style.get(), primitiveValueCache);
-            return primitiveValueCache->createValue(style->paddingTop());
+                return zoomAdjustedPixelValue(toRenderBox(renderer)->paddingTop(false), style.get(), cssValuePool);
+            return cssValuePool->createValue(style->paddingTop());
         case CSSPropertyPaddingRight:
             if (renderer && renderer->isBox())
-                return zoomAdjustedPixelValue(toRenderBox(renderer)->paddingRight(false), style.get(), primitiveValueCache);
-            return primitiveValueCache->createValue(style->paddingRight());
+                return zoomAdjustedPixelValue(toRenderBox(renderer)->paddingRight(false), style.get(), cssValuePool);
+            return cssValuePool->createValue(style->paddingRight());
         case CSSPropertyPaddingBottom:
             if (renderer && renderer->isBox())
-                return zoomAdjustedPixelValue(toRenderBox(renderer)->paddingBottom(false), style.get(), primitiveValueCache);
-            return primitiveValueCache->createValue(style->paddingBottom());
+                return zoomAdjustedPixelValue(toRenderBox(renderer)->paddingBottom(false), style.get(), cssValuePool);
+            return cssValuePool->createValue(style->paddingBottom());
         case CSSPropertyPaddingLeft:
             if (renderer && renderer->isBox())
-                return zoomAdjustedPixelValue(toRenderBox(renderer)->paddingLeft(false), style.get(), primitiveValueCache);
-            return primitiveValueCache->createValue(style->paddingLeft());
+                return zoomAdjustedPixelValue(toRenderBox(renderer)->paddingLeft(false), style.get(), cssValuePool);
+            return cssValuePool->createValue(style->paddingLeft());
         case CSSPropertyPageBreakAfter:
-            return primitiveValueCache->createValue(style->pageBreakAfter());
+            return cssValuePool->createValue(style->pageBreakAfter());
         case CSSPropertyPageBreakBefore:
-            return primitiveValueCache->createValue(style->pageBreakBefore());
+            return cssValuePool->createValue(style->pageBreakBefore());
         case CSSPropertyPageBreakInside: {
             EPageBreak pageBreak = style->pageBreakInside();
             ASSERT(pageBreak != PBALWAYS);
             if (pageBreak == PBALWAYS)
                 return 0;
-            return primitiveValueCache->createValue(style->pageBreakInside());
+            return cssValuePool->createValue(style->pageBreakInside());
         }
         case CSSPropertyPosition:
-            return primitiveValueCache->createValue(style->position());
+            return cssValuePool->createValue(style->position());
         case CSSPropertyRight:
-            return getPositionOffsetValue(style.get(), CSSPropertyRight, primitiveValueCache);
+            return getPositionOffsetValue(style.get(), CSSPropertyRight, cssValuePool);
         case CSSPropertyTableLayout:
-            return primitiveValueCache->createValue(style->tableLayout());
+            return cssValuePool->createValue(style->tableLayout());
         case CSSPropertyTextAlign:
-            return primitiveValueCache->createValue(style->textAlign());
+            return cssValuePool->createValue(style->textAlign());
         case CSSPropertyTextDecoration:
-            return renderTextDecorationFlagsToCSSValue(style->textDecoration(), primitiveValueCache);
+            return renderTextDecorationFlagsToCSSValue(style->textDecoration(), cssValuePool);
         case CSSPropertyWebkitTextDecorationsInEffect:
-            return renderTextDecorationFlagsToCSSValue(style->textDecorationsInEffect(), primitiveValueCache);
+            return renderTextDecorationFlagsToCSSValue(style->textDecorationsInEffect(), cssValuePool);
         case CSSPropertyWebkitTextFillColor:
             return currentColorOrValidColor(style.get(), style->textFillColor());
         case CSSPropertyWebkitTextEmphasisColor:
             return currentColorOrValidColor(style.get(), style->textEmphasisColor());
         case CSSPropertyWebkitTextEmphasisPosition:
-            return primitiveValueCache->createValue(style->textEmphasisPosition());
+            return cssValuePool->createValue(style->textEmphasisPosition());
         case CSSPropertyWebkitTextEmphasisStyle:
             switch (style->textEmphasisMark()) {
             case TextEmphasisMarkNone:
-                return primitiveValueCache->createIdentifierValue(CSSValueNone);
+                return cssValuePool->createIdentifierValue(CSSValueNone);
             case TextEmphasisMarkCustom:
-                return primitiveValueCache->createValue(style->textEmphasisCustomMark(), CSSPrimitiveValue::CSS_STRING);
+                return cssValuePool->createValue(style->textEmphasisCustomMark(), CSSPrimitiveValue::CSS_STRING);
             case TextEmphasisMarkAuto:
                 ASSERT_NOT_REACHED();
                 // Fall through
@@ -1716,110 +1716,110 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             case TextEmphasisMarkTriangle:
             case TextEmphasisMarkSesame: {
                 RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
-                list->append(primitiveValueCache->createValue(style->textEmphasisFill()));
-                list->append(primitiveValueCache->createValue(style->textEmphasisMark()));
+                list->append(cssValuePool->createValue(style->textEmphasisFill()));
+                list->append(cssValuePool->createValue(style->textEmphasisMark()));
                 return list.release();
             }
             }
         case CSSPropertyTextIndent:
-            return primitiveValueCache->createValue(style->textIndent());
+            return cssValuePool->createValue(style->textIndent());
         case CSSPropertyTextShadow:
             return valueForShadow(style->textShadow(), propertyID, style.get());
         case CSSPropertyTextRendering:
-            return primitiveValueCache->createValue(style->fontDescription().textRenderingMode());
+            return cssValuePool->createValue(style->fontDescription().textRenderingMode());
         case CSSPropertyTextOverflow:
             if (style->textOverflow())
-                return primitiveValueCache->createIdentifierValue(CSSValueEllipsis);
-            return primitiveValueCache->createIdentifierValue(CSSValueClip);
+                return cssValuePool->createIdentifierValue(CSSValueEllipsis);
+            return cssValuePool->createIdentifierValue(CSSValueClip);
         case CSSPropertyWebkitTextSecurity:
-            return primitiveValueCache->createValue(style->textSecurity());
+            return cssValuePool->createValue(style->textSecurity());
         case CSSPropertyWebkitTextSizeAdjust:
             if (style->textSizeAdjust())
-                return primitiveValueCache->createIdentifierValue(CSSValueAuto);
-            return primitiveValueCache->createIdentifierValue(CSSValueNone);
+                return cssValuePool->createIdentifierValue(CSSValueAuto);
+            return cssValuePool->createIdentifierValue(CSSValueNone);
         case CSSPropertyWebkitTextStrokeColor:
             return currentColorOrValidColor(style.get(), style->textStrokeColor());
         case CSSPropertyWebkitTextStrokeWidth:
-            return zoomAdjustedPixelValue(style->textStrokeWidth(), style.get(), primitiveValueCache);
+            return zoomAdjustedPixelValue(style->textStrokeWidth(), style.get(), cssValuePool);
         case CSSPropertyTextTransform:
-            return primitiveValueCache->createValue(style->textTransform());
+            return cssValuePool->createValue(style->textTransform());
         case CSSPropertyTop:
-            return getPositionOffsetValue(style.get(), CSSPropertyTop, primitiveValueCache);
+            return getPositionOffsetValue(style.get(), CSSPropertyTop, cssValuePool);
         case CSSPropertyUnicodeBidi:
-            return primitiveValueCache->createValue(style->unicodeBidi());
+            return cssValuePool->createValue(style->unicodeBidi());
         case CSSPropertyVerticalAlign:
             switch (style->verticalAlign()) {
                 case BASELINE:
-                    return primitiveValueCache->createIdentifierValue(CSSValueBaseline);
+                    return cssValuePool->createIdentifierValue(CSSValueBaseline);
                 case MIDDLE:
-                    return primitiveValueCache->createIdentifierValue(CSSValueMiddle);
+                    return cssValuePool->createIdentifierValue(CSSValueMiddle);
                 case SUB:
-                    return primitiveValueCache->createIdentifierValue(CSSValueSub);
+                    return cssValuePool->createIdentifierValue(CSSValueSub);
                 case SUPER:
-                    return primitiveValueCache->createIdentifierValue(CSSValueSuper);
+                    return cssValuePool->createIdentifierValue(CSSValueSuper);
                 case TEXT_TOP:
-                    return primitiveValueCache->createIdentifierValue(CSSValueTextTop);
+                    return cssValuePool->createIdentifierValue(CSSValueTextTop);
                 case TEXT_BOTTOM:
-                    return primitiveValueCache->createIdentifierValue(CSSValueTextBottom);
+                    return cssValuePool->createIdentifierValue(CSSValueTextBottom);
                 case TOP:
-                    return primitiveValueCache->createIdentifierValue(CSSValueTop);
+                    return cssValuePool->createIdentifierValue(CSSValueTop);
                 case BOTTOM:
-                    return primitiveValueCache->createIdentifierValue(CSSValueBottom);
+                    return cssValuePool->createIdentifierValue(CSSValueBottom);
                 case BASELINE_MIDDLE:
-                    return primitiveValueCache->createIdentifierValue(CSSValueWebkitBaselineMiddle);
+                    return cssValuePool->createIdentifierValue(CSSValueWebkitBaselineMiddle);
                 case LENGTH:
-                    return primitiveValueCache->createValue(style->verticalAlignLength());
+                    return cssValuePool->createValue(style->verticalAlignLength());
             }
             ASSERT_NOT_REACHED();
             return 0;
         case CSSPropertyVisibility:
-            return primitiveValueCache->createValue(style->visibility());
+            return cssValuePool->createValue(style->visibility());
         case CSSPropertyWhiteSpace:
-            return primitiveValueCache->createValue(style->whiteSpace());
+            return cssValuePool->createValue(style->whiteSpace());
         case CSSPropertyWidows:
-            return primitiveValueCache->createValue(style->widows(), CSSPrimitiveValue::CSS_NUMBER);
+            return cssValuePool->createValue(style->widows(), CSSPrimitiveValue::CSS_NUMBER);
         case CSSPropertyWidth:
             if (renderer) {
                 // According to http://www.w3.org/TR/CSS2/visudet.html#the-width-property,
                 // the "width" property does not apply for non-replaced inline elements.
                 if (!renderer->isReplaced() && renderer->isInline())
-                    return primitiveValueCache->createIdentifierValue(CSSValueAuto);
-                return zoomAdjustedPixelValue(sizingBox(renderer).width(), style.get(), primitiveValueCache);
+                    return cssValuePool->createIdentifierValue(CSSValueAuto);
+                return zoomAdjustedPixelValue(sizingBox(renderer).width(), style.get(), cssValuePool);
             }
-            return zoomAdjustedPixelValueForLength(style->width(), style.get(), primitiveValueCache);
+            return zoomAdjustedPixelValueForLength(style->width(), style.get(), cssValuePool);
         case CSSPropertyWordBreak:
-            return primitiveValueCache->createValue(style->wordBreak());
+            return cssValuePool->createValue(style->wordBreak());
         case CSSPropertyWordSpacing:
-            return zoomAdjustedPixelValue(style->wordSpacing(), style.get(), primitiveValueCache);
+            return zoomAdjustedPixelValue(style->wordSpacing(), style.get(), cssValuePool);
         case CSSPropertyWordWrap:
-            return primitiveValueCache->createValue(style->wordWrap());
+            return cssValuePool->createValue(style->wordWrap());
         case CSSPropertyWebkitLineBreak:
-            return primitiveValueCache->createValue(style->khtmlLineBreak());
+            return cssValuePool->createValue(style->khtmlLineBreak());
         case CSSPropertyWebkitNbspMode:
-            return primitiveValueCache->createValue(style->nbspMode());
+            return cssValuePool->createValue(style->nbspMode());
         case CSSPropertyWebkitMatchNearestMailBlockquoteColor:
-            return primitiveValueCache->createValue(style->matchNearestMailBlockquoteColor());
+            return cssValuePool->createValue(style->matchNearestMailBlockquoteColor());
         case CSSPropertyResize:
-            return primitiveValueCache->createValue(style->resize());
+            return cssValuePool->createValue(style->resize());
         case CSSPropertyWebkitFontSmoothing:
-            return primitiveValueCache->createValue(style->fontDescription().fontSmoothing());
+            return cssValuePool->createValue(style->fontDescription().fontSmoothing());
         case CSSPropertyZIndex:
             if (style->hasAutoZIndex())
-                return primitiveValueCache->createIdentifierValue(CSSValueAuto);
-            return primitiveValueCache->createValue(style->zIndex(), CSSPrimitiveValue::CSS_NUMBER);
+                return cssValuePool->createIdentifierValue(CSSValueAuto);
+            return cssValuePool->createValue(style->zIndex(), CSSPrimitiveValue::CSS_NUMBER);
         case CSSPropertyZoom:
-            return primitiveValueCache->createValue(style->zoom(), CSSPrimitiveValue::CSS_NUMBER);
+            return cssValuePool->createValue(style->zoom(), CSSPrimitiveValue::CSS_NUMBER);
         case CSSPropertyBoxSizing:
             if (style->boxSizing() == CONTENT_BOX)
-                return primitiveValueCache->createIdentifierValue(CSSValueContentBox);
-            return primitiveValueCache->createIdentifierValue(CSSValueBorderBox);
+                return cssValuePool->createIdentifierValue(CSSValueContentBox);
+            return cssValuePool->createIdentifierValue(CSSValueBorderBox);
 #if ENABLE(DASHBOARD_SUPPORT)
         case CSSPropertyWebkitDashboardRegion:
         {
             const Vector<StyleDashboardRegion>& regions = style->dashboardRegions();
             unsigned count = regions.size();
             if (count == 1 && regions[0].type == StyleDashboardRegion::None)
-                return primitiveValueCache->createIdentifierValue(CSSValueNone);
+                return cssValuePool->createIdentifierValue(CSSValueNone);
 
             RefPtr<DashboardRegion> firstRegion;
             DashboardRegion* previousRegion = 0;
@@ -1829,10 +1829,10 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
 
                 region->m_label = styleRegion.label;
                 LengthBox offset = styleRegion.offset;
-                region->setTop(zoomAdjustedPixelValue(offset.top().value(), style.get(), primitiveValueCache));
-                region->setRight(zoomAdjustedPixelValue(offset.right().value(), style.get(), primitiveValueCache));
-                region->setBottom(zoomAdjustedPixelValue(offset.bottom().value(), style.get(), primitiveValueCache));
-                region->setLeft(zoomAdjustedPixelValue(offset.left().value(), style.get(), primitiveValueCache));
+                region->setTop(zoomAdjustedPixelValue(offset.top().value(), style.get(), cssValuePool));
+                region->setRight(zoomAdjustedPixelValue(offset.right().value(), style.get(), cssValuePool));
+                region->setBottom(zoomAdjustedPixelValue(offset.bottom().value(), style.get(), cssValuePool));
+                region->setLeft(zoomAdjustedPixelValue(offset.left().value(), style.get(), cssValuePool));
                 region->m_isRectangle = (styleRegion.type == StyleDashboardRegion::Rectangle);
                 region->m_isCircle = (styleRegion.type == StyleDashboardRegion::Circle);
 
@@ -1842,27 +1842,27 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
                     firstRegion = region;
                 previousRegion = region.get();
             }
-            return primitiveValueCache->createValue(firstRegion.release());
+            return cssValuePool->createValue(firstRegion.release());
         }
 #endif
         case CSSPropertyWebkitAnimationDelay:
-            return getDelayValue(style->animations(), primitiveValueCache);
+            return getDelayValue(style->animations(), cssValuePool);
         case CSSPropertyWebkitAnimationDirection: {
             RefPtr<CSSValueList> list = CSSValueList::createCommaSeparated();
             const AnimationList* t = style->animations();
             if (t) {
                 for (size_t i = 0; i < t->size(); ++i) {
                     if (t->animation(i)->direction())
-                        list->append(primitiveValueCache->createIdentifierValue(CSSValueAlternate));
+                        list->append(cssValuePool->createIdentifierValue(CSSValueAlternate));
                     else
-                        list->append(primitiveValueCache->createIdentifierValue(CSSValueNormal));
+                        list->append(cssValuePool->createIdentifierValue(CSSValueNormal));
                 }
             } else
-                list->append(primitiveValueCache->createIdentifierValue(CSSValueNormal));
+                list->append(cssValuePool->createIdentifierValue(CSSValueNormal));
             return list.release();
         }
         case CSSPropertyWebkitAnimationDuration:
-            return getDurationValue(style->animations(), primitiveValueCache);
+            return getDurationValue(style->animations(), cssValuePool);
         case CSSPropertyWebkitAnimationFillMode: {
             RefPtr<CSSValueList> list = CSSValueList::createCommaSeparated();
             const AnimationList* t = style->animations();
@@ -1870,21 +1870,21 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
                 for (size_t i = 0; i < t->size(); ++i) {
                     switch (t->animation(i)->fillMode()) {
                     case AnimationFillModeNone:
-                        list->append(primitiveValueCache->createIdentifierValue(CSSValueNone));
+                        list->append(cssValuePool->createIdentifierValue(CSSValueNone));
                         break;
                     case AnimationFillModeForwards:
-                        list->append(primitiveValueCache->createIdentifierValue(CSSValueForwards));
+                        list->append(cssValuePool->createIdentifierValue(CSSValueForwards));
                         break;
                     case AnimationFillModeBackwards:
-                        list->append(primitiveValueCache->createIdentifierValue(CSSValueBackwards));
+                        list->append(cssValuePool->createIdentifierValue(CSSValueBackwards));
                         break;
                     case AnimationFillModeBoth:
-                        list->append(primitiveValueCache->createIdentifierValue(CSSValueBoth));
+                        list->append(cssValuePool->createIdentifierValue(CSSValueBoth));
                         break;
                     }
                 }
             } else
-                list->append(primitiveValueCache->createIdentifierValue(CSSValueNone));
+                list->append(cssValuePool->createIdentifierValue(CSSValueNone));
             return list.release();
         }
         case CSSPropertyWebkitAnimationIterationCount: {
@@ -1894,12 +1894,12 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
                 for (size_t i = 0; i < t->size(); ++i) {
                     int iterationCount = t->animation(i)->iterationCount();
                     if (iterationCount == Animation::IterationCountInfinite)
-                        list->append(primitiveValueCache->createIdentifierValue(CSSValueInfinite));
+                        list->append(cssValuePool->createIdentifierValue(CSSValueInfinite));
                     else
-                        list->append(primitiveValueCache->createValue(iterationCount, CSSPrimitiveValue::CSS_NUMBER));
+                        list->append(cssValuePool->createValue(iterationCount, CSSPrimitiveValue::CSS_NUMBER));
                 }
             } else
-                list->append(primitiveValueCache->createValue(Animation::initialAnimationIterationCount(), CSSPrimitiveValue::CSS_NUMBER));
+                list->append(cssValuePool->createValue(Animation::initialAnimationIterationCount(), CSSPrimitiveValue::CSS_NUMBER));
             return list.release();
         }
         case CSSPropertyWebkitAnimationName: {
@@ -1907,9 +1907,9 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             const AnimationList* t = style->animations();
             if (t) {
                 for (size_t i = 0; i < t->size(); ++i)
-                    list->append(primitiveValueCache->createValue(t->animation(i)->name(), CSSPrimitiveValue::CSS_STRING));
+                    list->append(cssValuePool->createValue(t->animation(i)->name(), CSSPrimitiveValue::CSS_STRING));
             } else
-                list->append(primitiveValueCache->createIdentifierValue(CSSValueNone));
+                list->append(cssValuePool->createIdentifierValue(CSSValueNone));
             return list.release();
         }
         case CSSPropertyWebkitAnimationPlayState: {
@@ -1919,129 +1919,129 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
                 for (size_t i = 0; i < t->size(); ++i) {
                     int prop = t->animation(i)->playState();
                     if (prop == AnimPlayStatePlaying)
-                        list->append(primitiveValueCache->createIdentifierValue(CSSValueRunning));
+                        list->append(cssValuePool->createIdentifierValue(CSSValueRunning));
                     else
-                        list->append(primitiveValueCache->createIdentifierValue(CSSValuePaused));
+                        list->append(cssValuePool->createIdentifierValue(CSSValuePaused));
                 }
             } else
-                list->append(primitiveValueCache->createIdentifierValue(CSSValueRunning));
+                list->append(cssValuePool->createIdentifierValue(CSSValueRunning));
             return list.release();
         }
         case CSSPropertyWebkitAnimationTimingFunction:
             return getTimingFunctionValue(style->animations());
         case CSSPropertyWebkitAppearance:
-            return primitiveValueCache->createValue(style->appearance());
+            return cssValuePool->createValue(style->appearance());
         case CSSPropertyWebkitAspectRatio:
             if (!style->hasAspectRatio())
-                return primitiveValueCache->createIdentifierValue(CSSValueNone);
+                return cssValuePool->createIdentifierValue(CSSValueNone);
             return CSSAspectRatioValue::create(style->aspectRatioNumerator(), style->aspectRatioDenominator());
         case CSSPropertyWebkitBackfaceVisibility:
-            return primitiveValueCache->createIdentifierValue((style->backfaceVisibility() == BackfaceVisibilityHidden) ? CSSValueHidden : CSSValueVisible);
+            return cssValuePool->createIdentifierValue((style->backfaceVisibility() == BackfaceVisibilityHidden) ? CSSValueHidden : CSSValueVisible);
         case CSSPropertyWebkitBorderImage:
-            return valueForNinePieceImage(style->borderImage(), primitiveValueCache);
+            return valueForNinePieceImage(style->borderImage(), cssValuePool);
         case CSSPropertyBorderImageOutset:
-            return valueForNinePieceImageQuad(style->borderImage().outset(), primitiveValueCache);
+            return valueForNinePieceImageQuad(style->borderImage().outset(), cssValuePool);
         case CSSPropertyBorderImageRepeat:
-            return valueForNinePieceImageRepeat(style->borderImage(), primitiveValueCache);
+            return valueForNinePieceImageRepeat(style->borderImage(), cssValuePool);
         case CSSPropertyBorderImageSlice:
-            return valueForNinePieceImageSlice(style->borderImage(), primitiveValueCache);
+            return valueForNinePieceImageSlice(style->borderImage(), cssValuePool);
         case CSSPropertyBorderImageWidth:
-            return valueForNinePieceImageQuad(style->borderImage().borderSlices(), primitiveValueCache);
+            return valueForNinePieceImageQuad(style->borderImage().borderSlices(), cssValuePool);
         case CSSPropertyWebkitMaskBoxImage:
-            return valueForNinePieceImage(style->maskBoxImage(), primitiveValueCache);
+            return valueForNinePieceImage(style->maskBoxImage(), cssValuePool);
         case CSSPropertyWebkitMaskBoxImageOutset:
-            return valueForNinePieceImageQuad(style->maskBoxImage().outset(), primitiveValueCache);
+            return valueForNinePieceImageQuad(style->maskBoxImage().outset(), cssValuePool);
         case CSSPropertyWebkitMaskBoxImageRepeat:
-            return valueForNinePieceImageRepeat(style->maskBoxImage(), primitiveValueCache);
+            return valueForNinePieceImageRepeat(style->maskBoxImage(), cssValuePool);
         case CSSPropertyWebkitMaskBoxImageSlice:
-            return valueForNinePieceImageSlice(style->maskBoxImage(), primitiveValueCache);
+            return valueForNinePieceImageSlice(style->maskBoxImage(), cssValuePool);
         case CSSPropertyWebkitMaskBoxImageWidth:
-            return valueForNinePieceImageQuad(style->maskBoxImage().borderSlices(), primitiveValueCache);
+            return valueForNinePieceImageQuad(style->maskBoxImage().borderSlices(), cssValuePool);
         case CSSPropertyWebkitMaskBoxImageSource:
             if (style->maskBoxImageSource())
                 return style->maskBoxImageSource()->cssValue();
-            return primitiveValueCache->createIdentifierValue(CSSValueNone);
+            return cssValuePool->createIdentifierValue(CSSValueNone);
         case CSSPropertyWebkitFontSizeDelta:
             // Not a real style property -- used by the editing engine -- so has no computed value.
             break;
         case CSSPropertyWebkitMarginBottomCollapse:
         case CSSPropertyWebkitMarginAfterCollapse:
-            return primitiveValueCache->createValue(style->marginAfterCollapse());
+            return cssValuePool->createValue(style->marginAfterCollapse());
         case CSSPropertyWebkitMarginTopCollapse:
         case CSSPropertyWebkitMarginBeforeCollapse:
-            return primitiveValueCache->createValue(style->marginBeforeCollapse());
+            return cssValuePool->createValue(style->marginBeforeCollapse());
         case CSSPropertyWebkitPerspective:
             if (!style->hasPerspective())
-                return primitiveValueCache->createIdentifierValue(CSSValueNone);
-            return zoomAdjustedPixelValue(style->perspective(), style.get(), primitiveValueCache);
+                return cssValuePool->createIdentifierValue(CSSValueNone);
+            return zoomAdjustedPixelValue(style->perspective(), style.get(), cssValuePool);
         case CSSPropertyWebkitPerspectiveOrigin: {
             RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
             if (renderer) {
                 IntRect box = sizingBox(renderer);
-                list->append(zoomAdjustedPixelValue(style->perspectiveOriginX().calcMinValue(box.width()), style.get(), primitiveValueCache));
-                list->append(zoomAdjustedPixelValue(style->perspectiveOriginY().calcMinValue(box.height()), style.get(), primitiveValueCache));
+                list->append(zoomAdjustedPixelValue(style->perspectiveOriginX().calcMinValue(box.width()), style.get(), cssValuePool));
+                list->append(zoomAdjustedPixelValue(style->perspectiveOriginY().calcMinValue(box.height()), style.get(), cssValuePool));
             }
             else {
-                list->append(zoomAdjustedPixelValueForLength(style->perspectiveOriginX(), style.get(), primitiveValueCache));
-                list->append(zoomAdjustedPixelValueForLength(style->perspectiveOriginY(), style.get(), primitiveValueCache));
+                list->append(zoomAdjustedPixelValueForLength(style->perspectiveOriginX(), style.get(), cssValuePool));
+                list->append(zoomAdjustedPixelValueForLength(style->perspectiveOriginY(), style.get(), cssValuePool));
 
             }
             return list.release();
         }
         case CSSPropertyWebkitRtlOrdering:
-            return primitiveValueCache->createIdentifierValue(style->rtlOrdering() ? CSSValueVisual : CSSValueLogical);
+            return cssValuePool->createIdentifierValue(style->rtlOrdering() ? CSSValueVisual : CSSValueLogical);
 #if ENABLE(TOUCH_EVENTS)
         case CSSPropertyWebkitTapHighlightColor:
             return currentColorOrValidColor(style.get(), style->tapHighlightColor());
 #endif
         case CSSPropertyWebkitUserDrag:
-            return primitiveValueCache->createValue(style->userDrag());
+            return cssValuePool->createValue(style->userDrag());
         case CSSPropertyWebkitUserSelect:
-            return primitiveValueCache->createValue(style->userSelect());
+            return cssValuePool->createValue(style->userSelect());
         case CSSPropertyBorderBottomLeftRadius:
-            return getBorderRadiusCornerValue(style->borderBottomLeftRadius(), style.get(), primitiveValueCache);
+            return getBorderRadiusCornerValue(style->borderBottomLeftRadius(), style.get(), cssValuePool);
         case CSSPropertyBorderBottomRightRadius:
-            return getBorderRadiusCornerValue(style->borderBottomRightRadius(), style.get(), primitiveValueCache);
+            return getBorderRadiusCornerValue(style->borderBottomRightRadius(), style.get(), cssValuePool);
         case CSSPropertyBorderTopLeftRadius:
-            return getBorderRadiusCornerValue(style->borderTopLeftRadius(), style.get(), primitiveValueCache);
+            return getBorderRadiusCornerValue(style->borderTopLeftRadius(), style.get(), cssValuePool);
         case CSSPropertyBorderTopRightRadius:
-            return getBorderRadiusCornerValue(style->borderTopRightRadius(), style.get(), primitiveValueCache);
+            return getBorderRadiusCornerValue(style->borderTopRightRadius(), style.get(), cssValuePool);
         case CSSPropertyClip: {
             if (!style->hasClip())
-                return primitiveValueCache->createIdentifierValue(CSSValueAuto);
+                return cssValuePool->createIdentifierValue(CSSValueAuto);
             RefPtr<Rect> rect = Rect::create();
-            rect->setTop(zoomAdjustedPixelValue(style->clip().top().value(), style.get(), primitiveValueCache));
-            rect->setRight(zoomAdjustedPixelValue(style->clip().right().value(), style.get(), primitiveValueCache));
-            rect->setBottom(zoomAdjustedPixelValue(style->clip().bottom().value(), style.get(), primitiveValueCache));
-            rect->setLeft(zoomAdjustedPixelValue(style->clip().left().value(), style.get(), primitiveValueCache));
-            return primitiveValueCache->createValue(rect.release());
+            rect->setTop(zoomAdjustedPixelValue(style->clip().top().value(), style.get(), cssValuePool));
+            rect->setRight(zoomAdjustedPixelValue(style->clip().right().value(), style.get(), cssValuePool));
+            rect->setBottom(zoomAdjustedPixelValue(style->clip().bottom().value(), style.get(), cssValuePool));
+            rect->setLeft(zoomAdjustedPixelValue(style->clip().left().value(), style.get(), cssValuePool));
+            return cssValuePool->createValue(rect.release());
         }
         case CSSPropertySpeak:
-            return primitiveValueCache->createValue(style->speak());
+            return cssValuePool->createValue(style->speak());
         case CSSPropertyWebkitTransform:
-            return computedTransform(renderer, style.get(), primitiveValueCache);
+            return computedTransform(renderer, style.get(), cssValuePool);
         case CSSPropertyWebkitTransformOrigin: {
             RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
             if (renderer) {
                 IntRect box = sizingBox(renderer);
-                list->append(zoomAdjustedPixelValue(style->transformOriginX().calcMinValue(box.width()), style.get(), primitiveValueCache));
-                list->append(zoomAdjustedPixelValue(style->transformOriginY().calcMinValue(box.height()), style.get(), primitiveValueCache));
+                list->append(zoomAdjustedPixelValue(style->transformOriginX().calcMinValue(box.width()), style.get(), cssValuePool));
+                list->append(zoomAdjustedPixelValue(style->transformOriginY().calcMinValue(box.height()), style.get(), cssValuePool));
                 if (style->transformOriginZ() != 0)
-                    list->append(zoomAdjustedPixelValue(style->transformOriginZ(), style.get(), primitiveValueCache));
+                    list->append(zoomAdjustedPixelValue(style->transformOriginZ(), style.get(), cssValuePool));
             } else {
-                list->append(zoomAdjustedPixelValueForLength(style->transformOriginX(), style.get(), primitiveValueCache));
-                list->append(zoomAdjustedPixelValueForLength(style->transformOriginY(), style.get(), primitiveValueCache));
+                list->append(zoomAdjustedPixelValueForLength(style->transformOriginX(), style.get(), cssValuePool));
+                list->append(zoomAdjustedPixelValueForLength(style->transformOriginY(), style.get(), cssValuePool));
                 if (style->transformOriginZ() != 0)
-                    list->append(zoomAdjustedPixelValue(style->transformOriginZ(), style.get(), primitiveValueCache));
+                    list->append(zoomAdjustedPixelValue(style->transformOriginZ(), style.get(), cssValuePool));
             }
             return list.release();
         }
         case CSSPropertyWebkitTransformStyle:
-            return primitiveValueCache->createIdentifierValue((style->transformStyle3D() == TransformStyle3DPreserve3D) ? CSSValuePreserve3d : CSSValueFlat);
+            return cssValuePool->createIdentifierValue((style->transformStyle3D() == TransformStyle3DPreserve3D) ? CSSValuePreserve3d : CSSValueFlat);
         case CSSPropertyWebkitTransitionDelay:
-            return getDelayValue(style->transitions(), primitiveValueCache);
+            return getDelayValue(style->transitions(), cssValuePool);
         case CSSPropertyWebkitTransitionDuration:
-            return getDurationValue(style->transitions(), primitiveValueCache);
+            return getDurationValue(style->transitions(), cssValuePool);
         case CSSPropertyWebkitTransitionProperty: {
             RefPtr<CSSValueList> list = CSSValueList::createCommaSeparated();
             const AnimationList* t = style->transitions();
@@ -2050,69 +2050,69 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
                     int prop = t->animation(i)->property();
                     RefPtr<CSSValue> propertyValue;
                     if (prop == cAnimateNone)
-                        propertyValue = primitiveValueCache->createIdentifierValue(CSSValueNone);
+                        propertyValue = cssValuePool->createIdentifierValue(CSSValueNone);
                     else if (prop == cAnimateAll)
-                        propertyValue = primitiveValueCache->createIdentifierValue(CSSValueAll);
+                        propertyValue = cssValuePool->createIdentifierValue(CSSValueAll);
                     else
-                        propertyValue = primitiveValueCache->createValue(getPropertyName(static_cast<CSSPropertyID>(prop)), CSSPrimitiveValue::CSS_STRING);
+                        propertyValue = cssValuePool->createValue(getPropertyName(static_cast<CSSPropertyID>(prop)), CSSPrimitiveValue::CSS_STRING);
                     list->append(propertyValue);
                 }
             } else
-                list->append(primitiveValueCache->createIdentifierValue(CSSValueAll));
+                list->append(cssValuePool->createIdentifierValue(CSSValueAll));
             return list.release();
         }
         case CSSPropertyWebkitTransitionTimingFunction:
             return getTimingFunctionValue(style->transitions());
         case CSSPropertyPointerEvents:
-            return primitiveValueCache->createValue(style->pointerEvents());
+            return cssValuePool->createValue(style->pointerEvents());
         case CSSPropertyWebkitColorCorrection:
-            return primitiveValueCache->createValue(style->colorSpace());
+            return cssValuePool->createValue(style->colorSpace());
         case CSSPropertyWebkitLineGrid:
             if (style->lineGrid().isNull())
-                return primitiveValueCache->createIdentifierValue(CSSValueNone);
-            return primitiveValueCache->createValue(style->lineGrid(), CSSPrimitiveValue::CSS_STRING);
+                return cssValuePool->createIdentifierValue(CSSValueNone);
+            return cssValuePool->createValue(style->lineGrid(), CSSPrimitiveValue::CSS_STRING);
         case CSSPropertyWebkitLineGridSnap:
             return CSSPrimitiveValue::create(style->lineGridSnap());
         case CSSPropertyWebkitWritingMode:
-            return primitiveValueCache->createValue(style->writingMode());
+            return cssValuePool->createValue(style->writingMode());
         case CSSPropertyWebkitTextCombine:
-            return primitiveValueCache->createValue(style->textCombine());
+            return cssValuePool->createValue(style->textCombine());
         case CSSPropertyWebkitTextOrientation:
             return CSSPrimitiveValue::create(style->fontDescription().textOrientation());
         case CSSPropertyWebkitLineBoxContain:
-            return createLineBoxContainValue(primitiveValueCache, style->lineBoxContain());
+            return createLineBoxContainValue(cssValuePool, style->lineBoxContain());
         case CSSPropertyContent:
-            return contentToCSSValue(style.get(), primitiveValueCache);
+            return contentToCSSValue(style.get(), cssValuePool);
         case CSSPropertyCounterIncrement:
-            return counterToCSSValue(style.get(), propertyID, primitiveValueCache);
+            return counterToCSSValue(style.get(), propertyID, cssValuePool);
         case CSSPropertyCounterReset:
-            return counterToCSSValue(style.get(), propertyID, primitiveValueCache);
+            return counterToCSSValue(style.get(), propertyID, cssValuePool);
         case CSSPropertyWebkitFlowInto:
             if (style->flowThread().isNull())
-                return primitiveValueCache->createIdentifierValue(CSSValueAuto);
-            return primitiveValueCache->createValue(style->flowThread(), CSSPrimitiveValue::CSS_STRING);
+                return cssValuePool->createIdentifierValue(CSSValueAuto);
+            return cssValuePool->createValue(style->flowThread(), CSSPrimitiveValue::CSS_STRING);
         case CSSPropertyWebkitFlowFrom:
             if (style->regionThread().isNull())
-                return primitiveValueCache->createIdentifierValue(CSSValueNone);
-            return primitiveValueCache->createValue(style->regionThread(), CSSPrimitiveValue::CSS_STRING);
+                return cssValuePool->createIdentifierValue(CSSValueNone);
+            return cssValuePool->createValue(style->regionThread(), CSSPrimitiveValue::CSS_STRING);
         case CSSPropertyWebkitRegionOverflow:
-            return primitiveValueCache->createValue(style->regionOverflow());
+            return cssValuePool->createValue(style->regionOverflow());
         case CSSPropertyWebkitWrapFlow:
-            return primitiveValueCache->createValue(style->wrapFlow());
+            return cssValuePool->createValue(style->wrapFlow());
         case CSSPropertyWebkitWrapMargin:
-            return primitiveValueCache->createValue(style->wrapMargin());
+            return cssValuePool->createValue(style->wrapMargin());
         case CSSPropertyWebkitWrapPadding:
-            return primitiveValueCache->createValue(style->wrapPadding());
+            return cssValuePool->createValue(style->wrapPadding());
         case CSSPropertyWebkitWrapShapeInside:
             if (!style->wrapShapeInside())
-                return primitiveValueCache->createIdentifierValue(CSSValueAuto);
-            return primitiveValueCache->createValue(style->wrapShapeInside());
+                return cssValuePool->createIdentifierValue(CSSValueAuto);
+            return cssValuePool->createValue(style->wrapShapeInside());
         case CSSPropertyWebkitWrapShapeOutside:
             if (!style->wrapShapeOutside())
-                return primitiveValueCache->createIdentifierValue(CSSValueAuto);
-            return primitiveValueCache->createValue(style->wrapShapeOutside());
+                return cssValuePool->createIdentifierValue(CSSValueAuto);
+            return cssValuePool->createValue(style->wrapShapeOutside());
         case CSSPropertyWebkitWrapThrough:
-            return primitiveValueCache->createValue(style->wrapThrough());
+            return cssValuePool->createValue(style->wrapThrough());
 #if ENABLE(CSS_FILTERS)
         case CSSPropertyWebkitFilter:
             return valueForFilter(style.get());

@@ -32,10 +32,10 @@
 #include "Attr.h"
 #include "Attribute.h"
 #include "CDATASection.h"
-#include "CSSPrimitiveValueCache.h"
 #include "CSSStyleSelector.h"
 #include "CSSStyleSheet.h"
 #include "CSSValueKeywords.h"
+#include "CSSValuePool.h"
 #include "CachedCSSStyleSheet.h"
 #include "CachedResourceLoader.h"
 #include "Chrome.h"
@@ -1750,11 +1750,11 @@ void Document::pageSizeAndMarginsInPixels(int pageIndex, IntSize& pageSize, int&
     marginLeft = style->marginLeft().isAuto() ? marginLeft : style->marginLeft().calcValue(width);
 }
 
-PassRefPtr<CSSPrimitiveValueCache> Document::cssPrimitiveValueCache() const
+PassRefPtr<CSSValuePool> Document::cssValuePool() const
 {
-    if (!m_cssPrimitiveValueCache)
-        m_cssPrimitiveValueCache = CSSPrimitiveValueCache::create();
-    return m_cssPrimitiveValueCache;
+    if (!m_cssValuePool)
+        m_cssValuePool = CSSValuePool::create();
+    return m_cssValuePool;
 }
 
 void Document::setIsViewSource(bool isViewSource)

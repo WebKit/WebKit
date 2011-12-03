@@ -1025,8 +1025,6 @@ webcore_sources += \
 	Source/WebCore/css/CSSParserValues.h \
 	Source/WebCore/css/CSSPrimitiveValue.cpp \
 	Source/WebCore/css/CSSPrimitiveValue.h \
-	Source/WebCore/css/CSSPrimitiveValueCache.cpp \
-	Source/WebCore/css/CSSPrimitiveValueCache.h \
 	Source/WebCore/css/CSSPrimitiveValueMappings.h \
 	Source/WebCore/css/CSSProperty.cpp \
 	Source/WebCore/css/CSSProperty.h \
@@ -1068,6 +1066,8 @@ webcore_sources += \
 	Source/WebCore/css/CSSValue.h \
 	Source/WebCore/css/CSSValueList.cpp \
 	Source/WebCore/css/CSSValueList.h \
+	Source/WebCore/css/CSSValuePool.cpp \
+	Source/WebCore/css/CSSValuePool.h \
 	Source/WebCore/css/DashboardRegion.h \
 	Source/WebCore/css/FontFamilyValue.cpp \
 	Source/WebCore/css/FontFamilyValue.h \

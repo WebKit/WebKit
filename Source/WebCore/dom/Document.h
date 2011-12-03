@@ -59,10 +59,10 @@ namespace WebCore {
 class AXObjectCache;
 class Attr;
 class CDATASection;
-class CSSPrimitiveValueCache;
 class CSSStyleDeclaration;
 class CSSStyleSelector;
 class CSSStyleSheet;
+class CSSValuePool;
 class CachedCSSStyleSheet;
 class CachedResourceLoader;
 class CachedScript;
@@ -449,7 +449,7 @@ public:
     virtual bool isMediaDocument() const { return false; }
     virtual bool isFrameSet() const { return false; }
     
-    PassRefPtr<CSSPrimitiveValueCache> cssPrimitiveValueCache() const;
+    PassRefPtr<CSSValuePool> cssValuePool() const;
     
     CSSStyleSelector* styleSelectorIfExists() const { return m_styleSelector.get(); }
 
@@ -1182,7 +1182,7 @@ private:
     bool m_hasDirtyStyleSelector;
     Vector<OwnPtr<FontData> > m_customFonts;
 
-    mutable RefPtr<CSSPrimitiveValueCache> m_cssPrimitiveValueCache;
+    mutable RefPtr<CSSValuePool> m_cssValuePool;
 
     Frame* m_frame;
     OwnPtr<CachedResourceLoader> m_cachedResourceLoader;
