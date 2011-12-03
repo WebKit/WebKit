@@ -102,6 +102,8 @@ PassOwnPtr<GraphicsLayer> RenderLayerBacking::createGraphicsLayer(const String& 
     OwnPtr<GraphicsLayer> graphicsLayer = GraphicsLayer::create(this);
 #ifndef NDEBUG
     graphicsLayer->setName(name);
+#else
+    UNUSED_PARAM(name);
 #endif
     graphicsLayer->setMaintainsPixelAlignment(compositor()->keepLayersPixelAligned());
     return graphicsLayer.release();
