@@ -1,3 +1,18 @@
+2011-12-02  David Levin  <levin@chromium.org>
+
+        Rename WTF class from TemporarilyChange to TemporaryChange.
+        https://bugs.webkit.org/show_bug.cgi?id=73479
+
+        Reviewed by Eric Seidel.
+
+        * ForwardingHeaders/wtf/TemporarilyChange.h: Removed.
+        * ForwardingHeaders/wtf/TemporaryChange.h: Added.
+        * page/FrameView.cpp:
+        (WebCore::FrameView::forceLayoutParentViewIfNeeded):
+        (WebCore::FrameView::layout):
+        (WebCore::FrameView::setScrollPosition):
+        (WebCore::FrameView::autoSizeIfEnabled):
+
 2011-12-02  Armand Navabi  <armand.navabi@gmail.com>
 
         ASSERT fails in updateState ACTION_DRAW case

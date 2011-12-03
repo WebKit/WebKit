@@ -65,7 +65,7 @@
 #include "TextResourceDecoder.h"
 
 #include <wtf/CurrentTime.h>
-#include <wtf/TemporarilyChange.h>
+#include <wtf/TemporaryChange.h>
 
 #if USE(ACCELERATED_COMPOSITING)
 #include "RenderLayerCompositor.h"
@@ -902,7 +902,7 @@ inline void FrameView::forceLayoutParentViewIfNeeded()
         return;
 
     ASSERT(!m_inLayoutParentView);
-    TemporarilyChange<bool> resetInLayoutParentView(m_inLayoutParentView, true);
+    TemporaryChange<bool> resetInLayoutParentView(m_inLayoutParentView, true);
 
     // Clear needs-size-negotiation flag in RenderSVGRoot, so the next call to our
     // layout() method won't fire the size negotiation logic again.
@@ -977,7 +977,7 @@ void FrameView::layout(bool allowSubtree)
     RenderObject* root;
 
     {
-        TemporarilyChange<bool> changeSchedulingEnabled(m_layoutSchedulingEnabled, false);
+        TemporaryChange<bool> changeSchedulingEnabled(m_layoutSchedulingEnabled, false);
 
         if (!m_nestedLayoutCount && !m_inSynchronousPostLayout && m_hasPendingPostLayoutTasks && !inSubframeLayoutWithFrameFlattening) {
             // This is a new top-level layout. If there are any remaining tasks from the previous
@@ -1016,7 +1016,7 @@ void FrameView::layout(bool allowSubtree)
     FontCachePurgePreventer fontCachePurgePreventer;
     RenderLayer* layer;
     {
-        TemporarilyChange<bool> changeSchedulingEnabled(m_layoutSchedulingEnabled, false);
+        TemporaryChange<bool> changeSchedulingEnabled(m_layoutSchedulingEnabled, false);
 
         m_nestedLayoutCount++;
 
@@ -1688,7 +1688,7 @@ void FrameView::scrollElementToRect(Element* element, const IntRect& rect)
 
 void FrameView::setScrollPosition(const IntPoint& scrollPoint)
 {
-    TemporarilyChange<bool> changeInProgrammaticScroll(m_inProgrammaticScroll, true);
+    TemporaryChange<bool> changeInProgrammaticScroll(m_inProgrammaticScroll, true);
     m_maintainScrollPositionAnchor = 0;
     ScrollView::setScrollPosition(scrollPoint);
 }
@@ -2312,7 +2312,7 @@ void FrameView::autoSizeIfEnabled()
     if (m_inAutoSize)
         return;
 
-    TemporarilyChange<bool> changeInAutoSize(m_inAutoSize, true);
+    TemporaryChange<bool> changeInAutoSize(m_inAutoSize, true);
 
     Document* document = frame()->document();
     if (!document)

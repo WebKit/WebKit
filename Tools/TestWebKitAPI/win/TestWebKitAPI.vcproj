@@ -640,7 +640,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\Tests\WTF\TemporarilyChange.cpp"
+					RelativePath="..\Tests\WTF\TemporaryChange.cpp"
 					>
 				</File>
 				<File

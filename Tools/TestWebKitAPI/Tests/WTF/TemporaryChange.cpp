@@ -25,18 +25,18 @@
 
 #include "config.h"
 
-#include <wtf/TemporarilyChange.h>
+#include <wtf/TemporaryChange.h>
 
 namespace TestWebKitAPI {
 
-TEST(WTF, TemporarilyChangeNested)
+TEST(WTF, TemporaryChangeNested)
 {
     bool originallyFalse = false;
     {
-        TemporarilyChange<bool> change1OriginallyFalse(originallyFalse, true);
+        TemporaryChange<bool> change1OriginallyFalse(originallyFalse, true);
         EXPECT_TRUE(originallyFalse);
         {
-            TemporarilyChange<bool> change2OriginallyFalse(originallyFalse, false);
+            TemporaryChange<bool> change2OriginallyFalse(originallyFalse, false);
             EXPECT_FALSE(originallyFalse);
         }
         EXPECT_TRUE(originallyFalse);

@@ -207,7 +207,7 @@
             'wtf/StdLibExtras.h',
             'wtf/StringExtras.h',
             'wtf/StringHasher.h',
-            'wtf/TemporarilyChange.h',
+            'wtf/TemporaryChange.h',
             'wtf/ThreadSafeRefCounted.h',
             'wtf/ThreadSpecific.h',
             'wtf/ThreadRestrictionVerifier.h',

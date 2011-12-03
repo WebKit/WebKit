@@ -23,34 +23,34 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef TemporarilyChange_h
-#define TemporarilyChange_h
+#ifndef TemporaryChange_h
+#define TemporaryChange_h
 
 #include "Noncopyable.h"
 
 namespace WTF {
 
-// TemporarilyChange<> is useful for setting a variable to a new value only within a
-// particular scope. An TemporarilyChange<> object changes a variable to its original
+// TemporaryChange<> is useful for setting a variable to a new value only within a
+// particular scope. An TemporaryChange<> object changes a variable to its original
 // value upon destruction, making it an alternative to writing "var = false;"
 // or "var = oldVal;" at all of a block's exit points.
 //
-// This should be obvious, but note that an TemporarilyChange<> instance should have a
+// This should be obvious, but note that an TemporaryChange<> instance should have a
 // shorter lifetime than its scopedVariable, to prevent invalid memory writes
-// when the TemporarilyChange<> object is destroyed.
+// when the TemporaryChange<> object is destroyed.
 
 template<typename T>
-class TemporarilyChange {
-    WTF_MAKE_NONCOPYABLE(TemporarilyChange);
+class TemporaryChange {
+    WTF_MAKE_NONCOPYABLE(TemporaryChange);
 public:
-    TemporarilyChange(T& scopedVariable, T newValue)
+    TemporaryChange(T& scopedVariable, T newValue)
         : m_scopedVariable(scopedVariable)
         , m_originalValue(scopedVariable)
     {
         m_scopedVariable = newValue;
     }
 
-    ~TemporarilyChange()
+    ~TemporaryChange()
     {
         m_scopedVariable = m_originalValue;
     }
@@ -63,6 +63,6 @@ private:
 
 }
 
-using WTF::TemporarilyChange;
+using WTF::TemporaryChange;
 
 #endif

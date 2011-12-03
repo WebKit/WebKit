@@ -1,3 +1,17 @@
+2011-12-02  David Levin  <levin@chromium.org>
+
+        Rename WTF class from TemporarilyChange to TemporaryChange.
+        https://bugs.webkit.org/show_bug.cgi?id=73479
+
+        Reviewed by Eric Seidel.
+
+        * JavaScriptCore.gypi:
+        * JavaScriptCore.vcproj/WTF/WTF.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * wtf/TemporaryChange.h: Renamed from Source/JavaScriptCore/wtf/TemporarilyChange.h.
+        (WTF::TemporaryChange::TemporaryChange):
+        (WTF::TemporaryChange::~TemporaryChange):
+
 2011-12-02  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         REGRESSION (r99754): All layout tests crash on Windows
