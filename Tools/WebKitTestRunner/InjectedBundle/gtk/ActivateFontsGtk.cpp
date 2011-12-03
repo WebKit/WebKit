@@ -52,6 +52,20 @@ void initializeGtkSettings()
                  "gtk-xft-rgba", "none", NULL);
 }
 
+static CString getTopLevelPath()
+{
+    if (const char* topLevelDirectory = g_getenv("WEBKIT_TOP_LEVEL"))
+        return topLevelDirectory;
+
+    // If the environment variable wasn't provided then assume we were built into
+    // WebKitBuild/Debug or WebKitBuild/Release. Obviously this will fail if the build
+    // directory is non-standard, but we can't do much more about this.
+    GOwnPtr<char> parentPath(g_path_get_dirname(getCurrentExecutablePath().data()));
+    GOwnPtr<char> layoutTestsPath(g_build_filename(parentPath.get(), "..", "..", "..", NULL));
+    GOwnPtr<char> absoluteTopLevelPath(realpath(layoutTestsPath.get(), 0));
+    return absoluteTopLevelPath.get();
+}
+
 void inititializeFontConfigSetting()
 {
     FcInit();
@@ -72,22 +86,18 @@ void inititializeFontConfigSetting()
     if (!FcConfigParseAndLoad(config, reinterpret_cast<FcChar8*>(fontConfigFilename.get()), true))
         g_error("Couldn't load font configuration file from: %s", fontConfigFilename.get());
 
-    CString fontsPath = g_getenv("WEBKIT_TEST_FONTS");
-    if (fontsPath.isNull()) {
-        GOwnPtr<char> parentPath(g_path_get_dirname(getCurrentExecutablePath().data()));
-        GOwnPtr<char> alternatePath(g_build_filename(parentPath.get(), "..", "..",
-                                                     "Dependencies", "Root", "webkitgtk-test-fonts", NULL));
-        fontsPath = alternatePath.get();
-        if (!g_file_test(alternatePath.get(), static_cast<GFileTest>(G_FILE_TEST_EXISTS | G_FILE_TEST_IS_DIR)))
-            g_error("WEBKIT_TEST_FONTS environment variable not set and %s does not exist", alternatePath.get());
-    }
+    CString topLevelPath = getTopLevelPath();
+    GOwnPtr<char> fontsPath(g_build_filename(topLevelPath.data(), "WebKitBuild", "Dependencies",
+                                             "Root", "webkitgtk-test-fonts", NULL));
+    if (!g_file_test(fontsPath.get(), static_cast<GFileTest>(G_FILE_TEST_EXISTS | G_FILE_TEST_IS_DIR)))
+        g_error("Could not locate test fonts at %s. Is WEBKIT_TOP_LEVEL set?", fontsPath.get());
 
     GOwnPtr<GError> error;
-    GOwnPtr<GDir> fontsDirectory(g_dir_open(fontsPath.data(), 0, &error.outPtr()));
+    GOwnPtr<GDir> fontsDirectory(g_dir_open(fontsPath.get(), 0, &error.outPtr()));
     while (const char* directoryEntry = g_dir_read_name(fontsDirectory.get())) {
         if (!g_str_has_suffix(directoryEntry, ".ttf") && !g_str_has_suffix(directoryEntry, ".otf"))
             continue;
-        GOwnPtr<gchar> fontPath(g_build_filename(fontsPath.data(), directoryEntry, NULL));
+        GOwnPtr<gchar> fontPath(g_build_filename(fontsPath.get(), directoryEntry, NULL));
         if (!FcConfigAppFontAddFile(config, reinterpret_cast<const FcChar8*>(fontPath.get())))
             g_error("Could not load font at %s!", fontPath.get());
     }

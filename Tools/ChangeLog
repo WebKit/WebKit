@@ -1,3 +1,34 @@
+2011-12-03  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK][DRT] Normalize file:///tmp/LayoutTests in LayoutTestController::pathToLocalResource()
+        https://bugs.webkit.org/show_bug.cgi?id=67256
+
+        Reviewed by Philippe Normand.
+
+        Implement LayoutTestController::pathToLocalResource for GTK+. Instead of passing 
+        WEBKIT_TEST_FONTS to the GTK+ test harnesses, pass a more generic WEBKIT_TOP_LEVEL,
+        which points to the more generic top-level path of the WebKit checkout. This code is
+        duplicated between WK1 and WK2 harnesses because we do not currently have a way to
+        share code here.
+
+        If WEBKIT_TOP_LEVEL is not provided, we search for the top level based on the binary
+        location. This will cause the fallback to fail if you build into a non-typical location
+        or even fake it with a symlink. In this case it's important to use the environment variable.
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (getTopLevelPath): Added.
+        (initializeFonts): Use the new helper to get the font path.
+        * DumpRenderTree/gtk/DumpRenderTreeGtk.h: Expose the new helper.
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
+        (LayoutTestController::pathToLocalResource):Use the new helper to normalize
+        test paths.
+        * Scripts/webkitpy/layout_tests/port/gtk.py:
+        (GtkPort.setup_environ_for_server):Pass the top-level path of the
+        checkout instead of passing the font path.
+        * WebKitTestRunner/InjectedBundle/gtk/ActivateFontsGtk.cpp:
+        (WTR::getTopLevelPath): Added this helper.
+        (WTR::inititializeFontConfigSetting): Use the helper to find the font path.
+
 2011-12-02  David Levin  <levin@chromium.org>
 
         Rename WTF class from TemporarilyChange to TemporaryChange.

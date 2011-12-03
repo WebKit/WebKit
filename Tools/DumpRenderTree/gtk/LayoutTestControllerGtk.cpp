@@ -201,8 +201,13 @@ void LayoutTestController::notifyDone()
 
 JSStringRef LayoutTestController::pathToLocalResource(JSContextRef context, JSStringRef url)
 {
-    // Function introduced in r28690. This may need special-casing on Windows.
-    return JSStringRetain(url); // Do nothing on Unix.
+    GOwnPtr<char> urlCString(JSStringCopyUTF8CString(url));
+    if (!g_str_has_prefix(urlCString.get(), "file:///tmp/LayoutTests/"))
+        return url;
+
+    const char* layoutTestsSuffix = urlCString.get() + strlen("file:///tmp/");
+    GOwnPtr<char> testPath(g_build_filename(getTopLevelPath().data(), layoutTestsSuffix));
+    return JSStringCreateWithUTF8CString(testPath.get());
 }
 
 void LayoutTestController::queueLoad(JSStringRef url, JSStringRef target)
