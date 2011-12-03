@@ -1,3 +1,16 @@
+2011-12-02  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r101906.
+        http://trac.webkit.org/changeset/101906
+        https://bugs.webkit.org/show_bug.cgi?id=73736
+
+        Failing chromium webkit_unit_tests (Requested by scheib on
+        #webkit).
+
+        * WebKit.gypi:
+        * tests/DispatchEventTest.cpp: Removed.
+        * tests/data/event_target.html: Removed.
+
 2011-12-02  Dave Michael  <dmichael@chromium.org>
 
         Add a unit test for creating, listening for, and dispatching events

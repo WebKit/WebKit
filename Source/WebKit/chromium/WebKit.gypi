@@ -69,7 +69,6 @@
             'tests/CCSchedulerStateMachineTest.cpp',
             'tests/CCSchedulerTestCommon.h',
             'tests/CCThreadTaskTest.cpp',
-            'tests/DispatchEventTest.cpp',
             'tests/FloatQuadTest.cpp',
             'tests/FrameTestHelpers.cpp',
             'tests/FrameTestHelpers.h',
