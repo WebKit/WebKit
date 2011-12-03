@@ -1,3 +1,16 @@
+2011-12-03  Alejandro G. Castro  <alex@igalia.com>
+
+        [GTK] TextureMapperNode should not use Qt types and functions
+        https://bugs.webkit.org/show_bug.cgi?id=73713
+
+        Replace qreal with double and qMin with std::min.
+
+        Reviewed by Noam Rosenthal.
+
+        * platform/graphics/texmap/TextureMapperNode.cpp:
+        (WebCore::solveCubicBezierFunction):
+        (WebCore::solveStepsFunction):
+
 2011-12-03  Dan Winship  <danw@gnome.org>
 
         [GTK] Remove lots of code that is now unnecessary after
