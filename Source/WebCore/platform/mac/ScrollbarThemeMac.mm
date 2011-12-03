@@ -45,8 +45,8 @@ using namespace WebCore;
 
 namespace WebCore {
 
-#if USE(WK_SCROLLBAR_PAINTER)
-typedef HashMap<Scrollbar*, RetainPtr<WKScrollbarPainterRef> > ScrollbarPainterMap;
+#if USE(SCROLLBAR_PAINTER)
+typedef HashMap<Scrollbar*, RetainPtr<ScrollbarPainter> > ScrollbarPainterMap;
 #else
 typedef HashSet<Scrollbar*> ScrollbarPainterMap;
 #endif
@@ -80,7 +80,7 @@ static ScrollbarPainterMap* scrollbarMap()
         return;
     ScrollbarPainterMap::iterator end = scrollbarMap()->end();
     for (ScrollbarPainterMap::iterator it = scrollbarMap()->begin(); it != end; ++it) {
-#if USE(WK_SCROLLBAR_PAINTER)
+#if USE(SCROLLBAR_PAINTER)
         it->first->styleChanged();
         it->first->invalidate();
 #else
@@ -118,7 +118,7 @@ static int cRealButtonLength[] = { 28, 21 };
 static int cButtonHitInset[] = { 3, 2 };
 // cRealButtonLength - cButtonInset
 static int cButtonLength[] = { 14, 10 };
-#if !USE(WK_SCROLLBAR_PAINTER)
+#if !USE(SCROLLBAR_PAINTER)
 static int cScrollbarThickness[] = { 15, 11 };
 static int cButtonInset[] = { 14, 11 };
 static int cThumbMinLength[] = { 26, 20 };
@@ -131,7 +131,7 @@ static float gInitialButtonDelay = 0.5f;
 static float gAutoscrollButtonDelay = 0.05f;
 static bool gJumpOnTrackClick = false;
 
-#if USE(WK_SCROLLBAR_PAINTER)
+#if USE(SCROLLBAR_PAINTER)
 static ScrollbarButtonsPlacement gButtonPlacement = ScrollbarButtonsNone;
 #else
 static ScrollbarButtonsPlacement gButtonPlacement = ScrollbarButtonsDoubleEnd;
@@ -139,7 +139,7 @@ static ScrollbarButtonsPlacement gButtonPlacement = ScrollbarButtonsDoubleEnd;
 
 static void updateArrowPlacement()
 {
-#if USE(WK_SCROLLBAR_PAINTER)
+#if USE(SCROLLBAR_PAINTER)
     return;
 #endif
     NSString *buttonPlacement = [[NSUserDefaults standardUserDefaults] objectForKey:@"AppleScrollBarVariant"];
@@ -157,9 +157,9 @@ static void updateArrowPlacement()
 
 void ScrollbarThemeMac::registerScrollbar(Scrollbar* scrollbar)
 {
-#if USE(WK_SCROLLBAR_PAINTER)
+#if USE(SCROLLBAR_PAINTER)
     bool isHorizontal = scrollbar->orientation() == HorizontalScrollbar;
-    WKScrollbarPainterRef scrollbarPainter = [NSClassFromString(@"NSScrollerImp") scrollerImpWithStyle:wkRecommendedScrollerStyle() controlSize:(NSControlSize)scrollbar->controlSize() horizontal:isHorizontal replacingScrollerImp:nil];
+    ScrollbarPainter scrollbarPainter = [NSClassFromString(@"NSScrollerImp") scrollerImpWithStyle:wkRecommendedScrollerStyle() controlSize:(NSControlSize)scrollbar->controlSize() horizontal:isHorizontal replacingScrollerImp:nil];
     scrollbarMap()->add(scrollbar, scrollbarPainter);
     updateEnabledState(scrollbar);
     updateScrollbarOverlayStyle(scrollbar);
@@ -173,15 +173,15 @@ void ScrollbarThemeMac::unregisterScrollbar(Scrollbar* scrollbar)
     scrollbarMap()->remove(scrollbar);
 }
 
-#if USE(WK_SCROLLBAR_PAINTER)
-void ScrollbarThemeMac::setNewPainterForScrollbar(Scrollbar* scrollbar, WKScrollbarPainterRef newPainter)
+#if USE(SCROLLBAR_PAINTER)
+void ScrollbarThemeMac::setNewPainterForScrollbar(Scrollbar* scrollbar, ScrollbarPainter newPainter)
 {
     scrollbarMap()->set(scrollbar, newPainter);
     updateEnabledState(scrollbar);
     updateScrollbarOverlayStyle(scrollbar);
 }
 
-WKScrollbarPainterRef ScrollbarThemeMac::painterForScrollbar(Scrollbar* scrollbar)
+ScrollbarPainter ScrollbarThemeMac::painterForScrollbar(Scrollbar* scrollbar)
 {
     return scrollbarMap()->get(scrollbar).get();
 }
@@ -213,8 +213,8 @@ void ScrollbarThemeMac::preferencesChanged()
 
 int ScrollbarThemeMac::scrollbarThickness(ScrollbarControlSize controlSize)
 {
-#if USE(WK_SCROLLBAR_PAINTER)
-    WKScrollbarPainterRef scrollbarPainter = (WKScrollbarPainterRef)[NSClassFromString(@"NSScrollerImp") scrollerImpWithStyle:wkRecommendedScrollerStyle() controlSize:controlSize horizontal:NO replacingScrollerImp:nil];
+#if USE(SCROLLBAR_PAINTER)
+    ScrollbarPainter scrollbarPainter = [NSClassFromString(@"NSScrollerImp") scrollerImpWithStyle:wkRecommendedScrollerStyle() controlSize:controlSize horizontal:NO replacingScrollerImp:nil];
     return [scrollbarPainter trackBoxWidth];
 #else
     return cScrollbarThickness[controlSize];
@@ -223,7 +223,7 @@ int ScrollbarThemeMac::scrollbarThickness(ScrollbarControlSize controlSize)
 
 bool ScrollbarThemeMac::usesOverlayScrollbars() const
 {
-#if USE(WK_SCROLLBAR_PAINTER)
+#if USE(SCROLLBAR_PAINTER)
     return wkRecommendedScrollerStyle() == NSScrollerStyleOverlay;
 #else
     return false;
@@ -232,8 +232,8 @@ bool ScrollbarThemeMac::usesOverlayScrollbars() const
 
 void ScrollbarThemeMac::updateScrollbarOverlayStyle(Scrollbar* scrollbar)
 {
-#if USE(WK_SCROLLBAR_PAINTER)
-    WKScrollbarPainterRef painter = painterForScrollbar(scrollbar);
+#if USE(SCROLLBAR_PAINTER)
+    ScrollbarPainter painter = painterForScrollbar(scrollbar);
     switch (scrollbar->scrollableArea()->scrollbarOverlayStyle()) {
     case ScrollbarOverlayStyleDefault:
         [painter setKnobStyle:NSScrollerKnobStyleDefault];
@@ -276,8 +276,8 @@ bool ScrollbarThemeMac::hasButtons(Scrollbar* scrollbar)
 bool ScrollbarThemeMac::hasThumb(Scrollbar* scrollbar)
 {
     int minLengthForThumb;
-#if USE(WK_SCROLLBAR_PAINTER)
-    WKScrollbarPainterRef painter = scrollbarMap()->get(scrollbar).get();
+#if USE(SCROLLBAR_PAINTER)
+    ScrollbarPainter painter = scrollbarMap()->get(scrollbar).get();
     minLengthForThumb = [painter knobMinLength] + [painter trackOverlapEndInset] + [painter knobOverlapEndInset]
         + 2 * ([painter trackEndInset] + [painter knobEndInset]);
 #else
@@ -419,7 +419,7 @@ IntRect ScrollbarThemeMac::trackRect(Scrollbar* scrollbar, bool painting)
 
 int ScrollbarThemeMac::minimumThumbLength(Scrollbar* scrollbar)
 {
-#if USE(WK_SCROLLBAR_PAINTER)
+#if USE(SCROLLBAR_PAINTER)
     return [scrollbarMap()->get(scrollbar).get() knobMinLength];
 #else
     return cThumbMinLength[scrollbar->controlSize()];
@@ -460,15 +460,15 @@ static int scrollbarPartToHIPressedState(ScrollbarPart part)
 
 void ScrollbarThemeMac::updateEnabledState(Scrollbar* scrollbar)
 {
-#if USE(WK_SCROLLBAR_PAINTER)
+#if USE(SCROLLBAR_PAINTER)
     [scrollbarMap()->get(scrollbar).get() setEnabled:scrollbar->enabled()];
 #else
     UNUSED_PARAM(scrollbar);
 #endif
 }
 
-#if USE(WK_SCROLLBAR_PAINTER)
-static void scrollbarPainterPaint(WKScrollbarPainterRef scrollbarPainter, bool enabled, double value, CGFloat proportion, CGRect frameRect)
+#if USE(SCROLLBAR_PAINTER)
+static void scrollbarPainterPaint(ScrollbarPainter scrollbarPainter, bool enabled, double value, CGFloat proportion, CGRect frameRect)
 {
     [scrollbarPainter setEnabled:enabled];
     [scrollbarPainter setBoundsSize: NSSizeFromCGSize(frameRect.size)];
@@ -493,7 +493,7 @@ static void scrollbarPainterPaint(WKScrollbarPainterRef scrollbarPainter, bool e
 
 bool ScrollbarThemeMac::paint(Scrollbar* scrollbar, GraphicsContext* context, const IntRect& damageRect)
 {
-#if USE(WK_SCROLLBAR_PAINTER)
+#if USE(SCROLLBAR_PAINTER)
     float value = 0;
     float overhang = 0;
 

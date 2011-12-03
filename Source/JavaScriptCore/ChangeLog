@@ -1,3 +1,18 @@
+2011-12-02  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 93445
+
+    2011-08-19  Beth Dakin  <bdakin@apple.com>
+
+            https://bugs.webkit.org/show_bug.cgi?id=66590
+            Re-name scrollbar painter types
+
+            Reviewed by Sam Weinig.
+
+            WTF_USE_WK_SCROLLBAR_PAINTER is now WTF_USE_SCROLLBAR_PAINTER since WK no longer 
+            applies.
+            * wtf/Platform.h:
+
 2011-10-26  Lucas Forschler  <lforschler@apple.com>
 
     Merge fix for 10351765.
