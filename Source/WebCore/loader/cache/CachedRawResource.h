@@ -30,7 +30,8 @@ namespace WebCore {
 
 class CachedRawResource : public CachedResource {
 public:
-    CachedRawResource(ResourceRequest&);
+    explicit CachedRawResource(ResourceRequest&);
+    CachedRawResource(ResourceRequest&, Type);
 
     // FIXME: AssociatedURLLoader shouldn't be a DocumentThreadableLoader and therefore shouldn't
     // use CachedRawResource. However, it is, and it needs to be able to defer loading.

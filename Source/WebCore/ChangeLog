@@ -1,3 +1,34 @@
+2011-12-02  Aaron Colwell  <acolwell@chromium.org>
+
+        Fix mixed content handling for video in Chromium by having
+        CachedResourceLoader & SubresourceLoader use the 
+        ResourceRequest::TargetType when determining if a RawResource can
+        be requested.
+        https://bugs.webkit.org/show_bug.cgi?id=72178
+
+        Reviewed by Adam Barth.
+
+        Tests: http/tests/security/mixedContent/insecure-video-in-iframe.html
+               http/tests/security/mixedContent/insecure-video-in-main-frame.html
+               http/tests/security/mixedContent/redirect-http-to-https-video-in-main-frame.html
+               http/tests/security/mixedContent/redirect-https-to-http-video-in-main-frame.html
+
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::willSendRequest):
+        * loader/cache/CachedRawResource.cpp:
+        (WebCore::CachedRawResource::CachedRawResource):
+        * loader/cache/CachedRawResource.h:
+        * loader/cache/CachedResource.cpp:
+        (WebCore::defaultPriorityForResourceType):
+        (WebCore::cachedResourceTypeToTargetType):
+        (WebCore::CachedResource::targetTypeToCachedResourceType):
+        * loader/cache/CachedResource.h:
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::createResource):
+        (WebCore::CachedResourceLoader::checkInsecureContent):
+        (WebCore::CachedResourceLoader::canRequest):
+        (WebCore::CachedResourceLoader::requestResource):
+
 2011-12-02  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r101731.

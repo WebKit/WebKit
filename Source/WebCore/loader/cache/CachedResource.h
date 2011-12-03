@@ -79,6 +79,9 @@ public:
 #if ENABLE(CSS_SHADERS)
         , ShaderResource
 #endif
+#if ENABLE(VIDEO)
+        , MediaResource
+#endif
     };
 
     enum Status {
@@ -238,6 +241,8 @@ public:
     virtual void didSendData(unsigned long long /* bytesSent */, unsigned long long /* totalBytesToBeSent */) { }
 #if PLATFORM(CHROMIUM)
     virtual void didDownloadData(int) { }
+
+    static Type targetTypeToCachedResourceType(ResourceRequest::TargetType);
 #endif
 
     void setLoadFinishTime(double finishTime) { m_loadFinishTime = finishTime; }

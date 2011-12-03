@@ -88,6 +88,10 @@ static CachedResource* createResource(CachedResource::Type type, ResourceRequest
     case CachedResource::LinkSubresource:
         return new CachedResource(request, CachedResource::LinkSubresource);
 #endif
+#if ENABLE(VIDEO)
+    case CachedResource::MediaResource:
+        return new CachedRawResource(request, CachedResource::MediaResource);
+#endif
 #if ENABLE(VIDEO_TRACK)
     case CachedResource::TextTrackResource:
         return new CachedTextTrack(request);
@@ -253,6 +257,9 @@ bool CachedResourceLoader::checkInsecureContent(CachedResource::Type type, const
             if (!f->loader()->checkIfRunInsecureContent(m_document->securityOrigin(), url))
                 return false;
         break;
+#if ENABLE(VIDEO)
+    case CachedResource::MediaResource:
+#endif
 #if ENABLE(VIDEO_TRACK)
     case CachedResource::TextTrackResource:
 #endif
@@ -303,6 +310,9 @@ bool CachedResourceLoader::canRequest(CachedResource::Type type, const KURL& url
     case CachedResource::LinkPrefetch:
     case CachedResource::LinkPrerender:
     case CachedResource::LinkSubresource:
+#endif
+#if ENABLE(VIDEO)
+    case CachedResource::MediaResource:
 #endif
 #if ENABLE(VIDEO_TRACK)
     case CachedResource::TextTrackResource:
@@ -369,8 +379,11 @@ bool CachedResourceLoader::canRequest(CachedResource::Type type, const KURL& url
     case CachedResource::LinkSubresource:
 #endif
         break;
+#if ENABLE(VIDEO)
+    case CachedResource::MediaResource:
 #if ENABLE(VIDEO_TRACK)
     case CachedResource::TextTrackResource:
+#endif
         // Cues aren't called out in the CPS spec yet, but they only work with a media element
         // so use the media policy.
         if (!m_document->contentSecurityPolicy()->allowMediaFromSource(url))
@@ -402,7 +415,14 @@ CachedResource* CachedResourceLoader::requestResource(CachedResource::Type type,
     if (!url.isValid())
         return 0;
 
-    if (!canRequest(type, url, forPreload))
+    CachedResource::Type requestTypeForCanRequest = type;
+
+#if PLATFORM(CHROMIUM)
+    if (requestTypeForCanRequest == CachedResource::RawResource)
+        requestTypeForCanRequest = CachedResource::targetTypeToCachedResourceType(request.targetType());
+#endif
+
+    if (!canRequest(requestTypeForCanRequest, url, forPreload))
         return 0;
 
     if (memoryCache()->disabled()) {
