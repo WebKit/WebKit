@@ -66,6 +66,7 @@ namespace JSC {
         }
         
         virtual ~JSFunction();
+        virtual void vtableAnchor(); // FIXME: Remove this once optimizations no longer rely on testing vtables
 
         const UString& name(ExecState*);
         const UString displayName(ExecState*);

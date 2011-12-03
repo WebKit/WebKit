@@ -154,6 +154,20 @@ void JSGlobalData::storeVPtrs()
     JSCell* jsFunction = new (storage) JSFunction(JSCell::VPtrStealingHack);
     CLOBBER_MEMORY();
     JSGlobalData::jsFunctionVPtr = jsFunction->vptr();
+
+    // Until we fully remove our reliance on vptrs, we need to make sure that everybody that 
+    // we think has a unique virtual pointer actually does.
+    if (jsFinalObjectVPtr == jsArrayVPtr
+        || jsFinalObjectVPtr == jsByteArrayVPtr
+        || jsFinalObjectVPtr == jsStringVPtr
+        || jsFinalObjectVPtr == jsFunctionVPtr
+        || jsArrayVPtr == jsByteArrayVPtr
+        || jsArrayVPtr == jsStringVPtr
+        || jsArrayVPtr == jsFunctionVPtr
+        || jsByteArrayVPtr == jsStringVPtr
+        || jsByteArrayVPtr == jsFunctionVPtr
+        || jsStringVPtr == jsFunctionVPtr)
+        CRASH();
 }
 
 JSGlobalData::JSGlobalData(GlobalDataType globalDataType, ThreadStackType threadStackType, HeapSize heapSize)

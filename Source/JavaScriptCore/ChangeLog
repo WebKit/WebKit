@@ -1,3 +1,23 @@
+2011-12-02  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        REGRESSION (r99754): All layout tests crash on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=72305
+
+        Reviewed by Geoffrey Garen.
+
+        Fixes a crash in release builds on Windows.  Windows was optimizing the out-of-line virtual destructor in 
+        JSFunction away, which left it with no virtual functions.  Its vtable ptr was then identical to that of 
+        a different class, therefore the optimization in the visitChildren helper function in MarkedStack.cpp was calling an 
+        incorrect version of visitChildren on the object, which left its children unmarked, causing them to be 
+        collected when they were still reachable.
+
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::vtableAnchor): Add a virtual function to JSFunction that Visual Studio can't optimize away.
+        * runtime/JSFunction.h:
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::storeVPtrs): Add checks to make sure that all virtual pointers that we rely on for optimization
+        purposes are distinct from one another.
+
 2011-12-02  Oliver Hunt  <oliver@apple.com>
 
         Improve float array support in the DFG JIT

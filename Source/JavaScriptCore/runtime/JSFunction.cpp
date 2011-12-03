@@ -118,6 +118,11 @@ JSFunction::~JSFunction()
     ASSERT(vptr() == JSGlobalData::jsFunctionVPtr);
 }
 
+void JSFunction::vtableAnchor()
+{
+    fprintf(stderr, "We need something here that Visual Studio can't optimize away.\n");
+}
+
 void createDescriptorForThrowingProperty(ExecState* exec, PropertyDescriptor& descriptor, const char* message)
 {
     JSValue thrower = createTypeErrorFunction(exec, message);
