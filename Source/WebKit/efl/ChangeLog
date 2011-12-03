@@ -1,3 +1,15 @@
+2011-12-02  JungJik Lee  <jungjik.lee@samsung.com>
+
+        [EFL] Remove entry pointer before freeing it from matrix.
+        https://bugs.webkit.org/show_bug.cgi?id=73625
+
+        Reviewed by Ryosuke Niwa.
+
+        To prevent leaving dangling pointer on the matrix, remove the entry before freeing it.
+
+        * ewk/ewk_tiled_matrix.cpp:
+        (ewk_tile_matrix_free):
+
 2011-12-01  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL] Cleanup includes to reduce code complexity.

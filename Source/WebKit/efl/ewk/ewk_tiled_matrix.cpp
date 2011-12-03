@@ -302,7 +302,8 @@ void ewk_tile_matrix_free(Ewk_Tile_Matrix* tileMatrix)
     ewk_tile_unused_cache_freeze(tileMatrix->tilieUnusedCache);
     ewk_tile_matrix_invalidate(tileMatrix);
     entry = EINA_INLIST_CONTAINER_GET(tileMatrix->matrices, Ewk_Tile_Matrix_Entry);
-    eina_matrixsparse_free(entry->matrix);    
+    tileMatrix->matrices = eina_inlist_remove(tileMatrix->matrices, (Eina_Inlist *)entry);
+    eina_matrixsparse_free(entry->matrix);
     free(entry);
     tileMatrix->matrices = 0;
 
