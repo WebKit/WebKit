@@ -1,3 +1,13 @@
+2011-12-02  James Wei <james.wei@intel.com> & Xingnan Wang <xingnan.wang@intel.com>
+
+        -Implement the SSE optimization for vsmul and vadd.
+        https://bugs.webkit.org/show_bug.cgi?id=73182
+
+        Reviewed by Kenneth Russell.
+
+        * platform/audio/VectorMath.cpp:
+        (WebCore:VectorMath):
+
 2011-12-02  David Grogan  <dgrogan@chromium.org>
 
         Grant workers experimental access to IndexedDB.
