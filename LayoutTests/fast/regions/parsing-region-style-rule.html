@@ -54,7 +54,7 @@
         var cssRules = document.styleSheets[0].cssRules;
         for (var idx = 0; idx < cssRules.length; idx++) {
             var cssRule = cssRules.item(idx);
-            if (cssRule.type == CSSRule.WEBKIT_REGION_STYLE_RULE)
+            if (cssRule.type == CSSRule.WEBKIT_REGION_RULE)
                 actualRegionStyleRulesText.push(cssRule.cssText);
         }
 

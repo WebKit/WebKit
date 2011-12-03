@@ -239,7 +239,7 @@ public:
     CSSRule* createStyleRule(Vector<OwnPtr<CSSParserSelector> >* selectors);
     CSSRule* createFontFaceRule();
     CSSRule* createPageRule(PassOwnPtr<CSSParserSelector> pageSelector);
-    CSSRule* createRegionStylingRule(Vector<OwnPtr<CSSParserSelector> >* regionSelector, CSSRuleList* rules);
+    CSSRule* createRegionRule(Vector<OwnPtr<CSSParserSelector> >* regionSelector, CSSRuleList* rules);
     CSSRule* createMarginAtRule(CSSSelector::MarginBoxType marginBox);
     void startDeclarationsForMarginBox();
     void endDeclarationsForMarginBox();

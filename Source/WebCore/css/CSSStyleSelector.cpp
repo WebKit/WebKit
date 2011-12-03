@@ -430,7 +430,7 @@ CSSStyleSelector::CSSStyleSelector(Document* document, StyleSheetList* styleShee
         document->renderer()->style()->font().update(fontSelector());
 }
 
-void CSSStyleSelector::addRegionStyleRule(PassRefPtr<WebKitCSSRegionRule> regionStyleRule)
+void CSSStyleSelector::addRegionRule(PassRefPtr<WebKitCSSRegionRule> regionStyleRule)
 {
     m_regionStyleRules.append(regionStyleRule);
 }
@@ -1974,8 +1974,8 @@ void RuleSet::addRulesFromSheet(CSSStyleSheet* sheet, const MediaQueryEvaluator&
             styleSelector->fontSelector()->addFontFaceRule(fontFaceRule);
         } else if (rule->isKeyframesRule())
             styleSelector->addKeyframeStyle(static_cast<WebKitCSSKeyframesRule*>(rule));
-        else if (rule->isRegionStyleRule() && styleSelector)
-            styleSelector->addRegionStyleRule(static_cast<WebKitCSSRegionRule*>(rule));
+        else if (rule->isRegionRule() && styleSelector)
+            styleSelector->addRegionRule(static_cast<WebKitCSSRegionRule*>(rule));
     }
     if (m_autoShrinkToFitEnabled)
         shrinkToFit();

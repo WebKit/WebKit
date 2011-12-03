@@ -36,7 +36,7 @@
 
 namespace WebCore {
 WebKitCSSRegionRule::WebKitCSSRegionRule(CSSStyleSheet* parent, Vector<OwnPtr<CSSParserSelector> >* selectors, PassRefPtr<CSSRuleList> rules)
-    : CSSRule(parent, CSSRule::WEBKIT_REGION_STYLE_RULE)
+    : CSSRule(parent, CSSRule::WEBKIT_REGION_RULE)
     , m_ruleList(rules)
 {
     for (unsigned index = 0; index < m_ruleList->length(); ++index)

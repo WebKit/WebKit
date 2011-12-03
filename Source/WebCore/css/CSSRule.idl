@@ -39,7 +39,7 @@ module css {
         const unsigned short PAGE_RULE = 6;
         const unsigned short WEBKIT_KEYFRAMES_RULE = 8;
         const unsigned short WEBKIT_KEYFRAME_RULE = 9;
-        const unsigned short WEBKIT_REGION_STYLE_RULE = 10;
+        const unsigned short WEBKIT_REGION_RULE = 10;
 
         readonly attribute unsigned short   type;
 

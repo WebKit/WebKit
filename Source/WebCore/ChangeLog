@@ -1,3 +1,35 @@
+2011-12-02  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSSRegions]More renaming for region style rules.
+        https://bugs.webkit.org/show_bug.cgi?id=73526
+
+        Reviewed by Eric Seidel.
+
+        Rename isRegionStyleRule() -> isRegionRule()
+        WEBKIT_REGION_STYLE_RULE -> WEBKIT_REGION_RULE.
+
+        * bindings/objc/DOMCSS.mm:
+        (kitClass):
+        * bindings/v8/custom/V8CSSRuleCustom.cpp:
+        (WebCore::toV8):
+        * css/CSSGrammar.y:
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::createRegionRule):
+        * css/CSSParser.h:
+        * css/CSSRule.cpp:
+        (WebCore::CSSRule::cssText):
+        (WebCore::CSSRule::destroy):
+        * css/CSSRule.h:
+        (WebCore::CSSRule::isRegionRule):
+        * css/CSSRule.idl:
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::addRegionRule):
+        (WebCore::RuleSet::addRulesFromSheet):
+        * css/CSSStyleSelector.h:
+        * css/WebKitCSSRegionRule.cpp:
+        (WebCore::WebKitCSSRegionRule::WebKitCSSRegionRule):
+        * css/tokenizer.flex:
+
 2011-12-02  Tom Sepez  <tsepez@chromium.org>
 
         XSSAuditor includes more terminating characters when truncating

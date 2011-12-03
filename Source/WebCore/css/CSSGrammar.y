@@ -141,7 +141,7 @@ static int cssyylex(YYSTYPE* yylval, void* parser)
 %token WEBKIT_VALUE_SYM
 %token WEBKIT_MEDIAQUERY_SYM
 %token WEBKIT_SELECTOR_SYM
-%token WEBKIT_REGION_STYLE_RULE_SYM
+%token WEBKIT_REGION_RULE_SYM
 %token <marginBox> TOPLEFTCORNER_SYM
 %token <marginBox> TOPLEFT_SYM
 %token <marginBox> TOPCENTER_SYM
@@ -797,9 +797,9 @@ region_selector:
 ;
 
 region:
-    WEBKIT_REGION_STYLE_RULE_SYM WHITESPACE region_selector '{' maybe_space block_rule_list save_block {
+    WEBKIT_REGION_RULE_SYM WHITESPACE region_selector '{' maybe_space block_rule_list save_block {
         if ($3)
-            $$ = static_cast<CSSParser*>(parser)->createRegionStylingRule($3, $6);
+            $$ = static_cast<CSSParser*>(parser)->createRegionRule($3, $6);
         else
             $$ = 0;
     }

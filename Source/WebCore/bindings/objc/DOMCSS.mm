@@ -89,7 +89,7 @@ Class kitClass(WebCore::CSSRule* impl)
             return [DOMWebKitCSSKeyframesRule class];
         case DOM_WEBKIT_KEYFRAME_RULE:
             return [DOMWebKitCSSKeyframeRule class];
-        case DOM_WEBKIT_REGION_STYLE_RULE:
+        case DOM_WEBKIT_REGION_RULE:
             return [DOMCSSUnknownRule class];
     }
     ASSERT_NOT_REACHED();

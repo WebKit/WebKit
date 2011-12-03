@@ -80,7 +80,7 @@ nthfunc         "nth-"("child"|"of-type"|"last-child"|"last-of-type")
 "@-webkit-selector"     {yyTok = WEBKIT_SELECTOR_SYM; return yyTok; }
 "@-webkit-keyframes"    {yyTok = WEBKIT_KEYFRAMES_SYM; return yyTok; }
 "@-webkit-keyframe-rule" {yyTok = WEBKIT_KEYFRAME_RULE_SYM; return yyTok; }
-"@-webkit-region"       {yyTok = WEBKIT_REGION_STYLE_RULE_SYM; return yyTok;}
+"@-webkit-region"       {yyTok = WEBKIT_REGION_RULE_SYM; return yyTok;}
 
 "@"{ident}              {yyTok = ATKEYWORD; return yyTok; }
 

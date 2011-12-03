@@ -200,7 +200,7 @@ public:
 
     void addKeyframeStyle(PassRefPtr<WebKitCSSKeyframesRule>);
     void addPageStyle(PassRefPtr<CSSPageRule>);
-    void addRegionStyleRule(PassRefPtr<WebKitCSSRegionRule>);
+    void addRegionRule(PassRefPtr<WebKitCSSRegionRule>);
 
     bool checkRegionStyle(Element*);
 

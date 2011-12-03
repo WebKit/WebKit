@@ -7724,7 +7724,7 @@ void CSSParser::setReusableRegionSelectorVector(Vector<OwnPtr<CSSParserSelector>
         m_reusableRegionSelectorVector.swap(*selectors);
 }
 
-CSSRule* CSSParser::createRegionStylingRule(Vector<OwnPtr<CSSParserSelector> >* regionSelector, CSSRuleList* rules)
+CSSRule* CSSParser::createRegionRule(Vector<OwnPtr<CSSParserSelector> >* regionSelector, CSSRuleList* rules)
 {
     if (!regionSelector || !rules)
         return 0;
