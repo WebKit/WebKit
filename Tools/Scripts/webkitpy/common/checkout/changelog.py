@@ -111,9 +111,10 @@ class ChangeLogEntry(object):
     # e.g. git-svn-id: http://svn.webkit.org/repository/webkit/trunk@96161 268f45cc-cd09-0410-ab3c-d52691b4dbfc
     svn_id_regexp = r'git-svn-id: http://svn.webkit.org/repository/webkit/trunk@(?P<svnid>\d+) '
 
-    def __init__(self, contents, committer_list=CommitterList()):
+    def __init__(self, contents, committer_list=CommitterList(), revision=None):
         self._contents = contents
         self._committer_list = committer_list
+        self._revision = revision
         self._parse_entry()
 
     @staticmethod
@@ -185,6 +186,9 @@ class ChangeLogEntry(object):
 
     def author_text(self):
         return self._author_text
+
+    def revision(self):
+        return self._revision
 
     def author_name(self):
         return self._authors[0]['name']
@@ -259,6 +263,15 @@ class ChangeLog(object):
             entry_lines.append(line)
         return None # We never found a date line!
 
+    svn_blame_regexp = re.compile(r'^(\s*(?P<revision>\d+) [^ ]+)\s(?P<line>.*?\n)')
+
+    @staticmethod
+    def _separate_revision_and_line(line):
+        match = ChangeLog.svn_blame_regexp.match(line)
+        if not match:
+            return None, line
+        return int(match.group('revision')), match.group('line')
+
     @staticmethod
     def parse_entries_from_file(changelog_file):
         """changelog_file must be a file-like object which returns
@@ -266,20 +279,35 @@ class ChangeLog(object):
         to pass file objects to this class."""
         date_line_regexp = re.compile(ChangeLogEntry.date_line_regexp)
         rolled_over_regexp = re.compile(ChangeLogEntry.rolled_over_regexp)
-        entry_lines = []
-        # The first line should be a date line.
-        first_line = changelog_file.readline()
-        assert(isinstance(first_line, unicode))
-        if not date_line_regexp.match(first_line):
-            raise StopIteration
-        entry_lines.append(first_line)
 
+        # The first line should be a date line.
+        revision, first_line = ChangeLog._separate_revision_and_line(changelog_file.readline())
+        assert(isinstance(first_line, unicode))
+        if not date_line_regexp.match(ChangeLog.svn_blame_regexp.sub('', first_line)):
+            raise StopIteration
+
+        entry_lines = [first_line]
+        revisions_in_entry = {revision: 1} if revision != None else None
         for line in changelog_file:
-            if date_line_regexp.match(line) or rolled_over_regexp.match(line):
+            if revisions_in_entry:
+                revision, line = ChangeLog._separate_revision_and_line(line)
+
+            if rolled_over_regexp.match(line):
+                break
+
+            if date_line_regexp.match(line):
+                most_probable_revision = max(revisions_in_entry, key=revisions_in_entry.__getitem__) if revisions_in_entry else None
                 # Remove the extra newline at the end
-                yield ChangeLogEntry(''.join(entry_lines[:-1]))
+                yield ChangeLogEntry(''.join(entry_lines[:-1]), revision=most_probable_revision)
                 entry_lines = []
+                revisions_in_entry = {revision: 0}
+
             entry_lines.append(line)
+            if revisions_in_entry:
+                revisions_in_entry[revision] = revisions_in_entry.get(revision, 0) + 1
+
+        most_probable_revision = max(revisions_in_entry, key=revisions_in_entry.__getitem__) if revisions_in_entry else None
+        yield ChangeLogEntry(''.join(entry_lines[:-1]), revision=most_probable_revision)
 
     def latest_entry(self):
         # ChangeLog files are always UTF-8, we read them in as such to support Reviewers with unicode in their names.

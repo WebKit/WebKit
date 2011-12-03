@@ -251,6 +251,52 @@ class ChangeLogTest(unittest.TestCase):
         self.assertEquals(parsed_entries[7].reviewer_text(), None)
         self.assertEquals(parsed_entries[8].reviewer_text(), 'Darin Adler')
 
+    def test_parse_log_entries_from_annotated_file(self):
+        changelog_file = StringIO(u'''100000 ossy@webkit.org 2011-11-11  Csaba Osztrogon\u00e1c  <ossy@webkit.org>
+100000 ossy@webkit.org 
+100000 ossy@webkit.org         100,000 !!!
+100000 ossy@webkit.org 
+100000 ossy@webkit.org         Reviewed by Zoltan Herczeg.
+100000 ossy@webkit.org 
+100000 ossy@webkit.org         * ChangeLog: Point out revision 100,000.
+100000 ossy@webkit.org
+93798 ap@apple.com 2011-08-25  Alexey Proskuryakov  <ap@apple.com>
+93798 ap@apple.com 
+93798 ap@apple.com         Fix build when GCC 4.2 is not installed.
+93798 ap@apple.com 
+93798 ap@apple.com         * gtest/xcode/Config/CompilerVersion.xcconfig: Copied from Source/WebCore/Configurations/CompilerVersion.xcconfig.
+93798 ap@apple.com         * gtest/xcode/Config/General.xcconfig:
+93798 ap@apple.com         Use the same compiler version as other projects do.
+93798 ap@apple.com
+99491 andreas.kling@nokia.com 2011-11-03  Andreas Kling  <kling@webkit.org>
+99491 andreas.kling@nokia.com 
+99190 andreas.kling@nokia.com         Unreviewed build fix, sigh.
+99190 andreas.kling@nokia.com 
+99190 andreas.kling@nokia.com         * css/CSSFontFaceRule.h:
+99190 andreas.kling@nokia.com         * css/CSSMutableStyleDeclaration.h:
+99190 andreas.kling@nokia.com 
+99190 andreas.kling@nokia.com 2011-11-03  Andreas Kling  <kling@webkit.org>
+99190 andreas.kling@nokia.com 
+99187 andreas.kling@nokia.com         Unreviewed build fix, out-of-line StyleSheet::parentStyleSheet()
+99187 andreas.kling@nokia.com         again since there's a cycle in the includes between CSSRule/StyleSheet.
+99187 andreas.kling@nokia.com 
+99187 andreas.kling@nokia.com         * css/StyleSheet.cpp:
+99187 andreas.kling@nokia.com         (WebCore::StyleSheet::parentStyleSheet):
+99187 andreas.kling@nokia.com         * css/StyleSheet.h:
+99187 andreas.kling@nokia.com 
+''')
+        parsed_entries = list(ChangeLog.parse_entries_from_file(changelog_file))
+        self.assertEquals(parsed_entries[0].revision(), 100000)
+        self.assertEquals(parsed_entries[0].reviewer_text(), "Zoltan Herczeg")
+        self.assertEquals(parsed_entries[0].author_name(), u"Csaba Osztrogon\u00e1c")
+        self.assertEquals(parsed_entries[0].author_email(), "ossy@webkit.org")
+        self.assertEquals(parsed_entries[1].revision(), 93798)
+        self.assertEquals(parsed_entries[1].author_name(), "Alexey Proskuryakov")
+        self.assertEquals(parsed_entries[2].revision(), 99190)
+        self.assertEquals(parsed_entries[2].author_name(), "Andreas Kling")
+        self.assertEquals(parsed_entries[3].revision(), 99187)
+        self.assertEquals(parsed_entries[3].author_name(), "Andreas Kling")
+
     def _assert_parse_reviewer_text_and_list(self, text, expected_reviewer_text, expected_reviewer_text_list=None):
         reviewer_text, reviewer_text_list = ChangeLogEntry._parse_reviewer_text(text)
         self.assertEquals(reviewer_text, expected_reviewer_text)

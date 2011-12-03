@@ -218,6 +218,9 @@ class SCM:
     def last_svn_commit_log(self):
         self._subclass_must_implement()
 
+    def svn_blame(self, path):
+        self._subclass_must_implement()
+
     # Subclasses must indicate if they support local commits,
     # but the SCM baseclass will only call local_commits methods when this is true.
     @staticmethod

@@ -401,6 +401,9 @@ class Git(SCM, SVNRepository):
     def last_svn_commit_log(self):
         return self.run(['git', 'svn', 'log', '--limit=1'])
 
+    def svn_blame(self, path):
+        return self.run(['git', 'svn', 'blame', path])
+
     # Git-specific methods:
     def _branch_ref_exists(self, branch_ref):
         return self.run(['git', 'show-ref', '--quiet', '--verify', branch_ref], return_exit_code=True) == 0

@@ -1,3 +1,21 @@
+2011-12-02  Ryosuke Niwa  <rniwa@webkit.org>
+
+        ChangeLog should be able to parse annotated changelogs
+        https://bugs.webkit.org/show_bug.cgi?id=72703
+
+        Reviewed by Eric Seidel.
+
+        Make parse_entries_from_file aware of svn blame annotation such as "100000 ossy@webkit.org ",
+        and extract the revision number for each entry.
+
+        Also add a support to extract "svn blame" result from svn/git checkout to scm classes.
+
+        * Scripts/webkitpy/common/checkout/changelog.py:
+        * Scripts/webkitpy/common/checkout/changelog_unittest.py:
+        * Scripts/webkitpy/common/checkout/scm/git.py:
+        * Scripts/webkitpy/common/checkout/scm/scm.py:
+        * Scripts/webkitpy/common/checkout/scm/svn.py:
+
 2011-12-02  Eric Seidel  <eric@webkit.org>
 
         Enable parallel testing for Win and Gtk bots
