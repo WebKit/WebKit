@@ -1,3 +1,15 @@
+2011-12-02  Viatcheslav Ostapenko  <ostapenko.viatcheslav@nokia.com>
+
+        [Qt] [WK2] MiniBrowser --touch asserts in debug build
+        https://bugs.webkit.org/show_bug.cgi?id=73697
+
+        Reviewed by Eric Seidel.
+
+        Add missing guard to QtViewportInteractionEngine::itemSizeChanged().
+
+        * UIProcess/qt/QtViewportInteractionEngine.cpp:
+        (WebKit::QtViewportInteractionEngine::itemSizeChanged):
+
 2011-12-02  Fady Samuel  <fsamuel@chromium.org>
 
         When page scaling is in use position:fixed has incorrect results

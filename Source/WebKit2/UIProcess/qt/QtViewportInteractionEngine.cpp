@@ -517,6 +517,7 @@ void QtViewportInteractionEngine::itemSizeChanged()
     if (m_suspendCount)
         return;
 
+    ViewportUpdateDeferrer guard(this);
     ensureContentWithinViewportBoundary();
 }
 
