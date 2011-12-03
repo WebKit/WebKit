@@ -2510,3 +2510,9 @@ fast/canvas/webgl/arraybuffer-transfer-of-control.html
 # [Qt] fast/forms/select/listbox-in-multi-column.html fails
 # https://bugs.webkit.org/show_bug.cgi?id=73660
 fast/forms/select/listbox-in-multi-column.html
+
+# New test introduced in r101883 fail
+# https://bugs.webkit.org/show_bug.cgi?id=72178
+http/tests/security/mixedContent/insecure-video-in-main-frame.html
+http/tests/security/mixedContent/redirect-http-to-https-video-in-main-frame.html
+http/tests/security/mixedContent/redirect-https-to-http-video-in-main-frame.html
