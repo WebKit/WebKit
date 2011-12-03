@@ -106,7 +106,7 @@ void CCSchedulerStateMachine::updateState(Action action)
         if (m_insideVSync)
             m_lastFrameNumberWhereDrawWasCalled = m_currentFrameNumber;
         if (m_commitState == COMMIT_STATE_WAITING_FOR_FIRST_DRAW) {
-            ASSERT(m_needsCommit);
+            ASSERT(m_needsCommit || !m_visible);
             m_commitState = COMMIT_STATE_IDLE;
         }
         return;
