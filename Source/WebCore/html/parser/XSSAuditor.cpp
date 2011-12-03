@@ -73,7 +73,7 @@ static bool isRequiredForInjection(UChar c)
 
 static bool isTerminatingCharacter(UChar c) 
 {
-    return (c == '&' || c == '/' || c == '"' || c == '\'');
+    return (c == '&' || c == '/' || c == '"' || c == '\'' || c == '<');
 }
 
 static bool isHTMLQuote(UChar c)
@@ -487,12 +487,13 @@ bool XSSAuditor::eraseDangerousAttributesIfInjected(HTMLToken& token)
         // by enclosing them in a string literal terminated later by the page's own
         // closing punctuation. Since the snippet has not been parsed, the vector
         // may also try to introduce these via entities. As a result, we'd like to
-        // stop before the first "//", the first entity, or the first quote not
-        // immediately following the first equals sign (taking whitespace into
-        // consideration). To keep things simpler, we don't try to distinguish
+        // stop before the first "//", the first <!--, the first entity, or the first
+        // quote not immediately following the first equals sign (taking whitespace
+        // into consideration). To keep things simpler, we don't try to distinguish
         // between entity-introducing amperands vs. other uses, nor do we bother to
-        // check for a second slash for a comment, stoping instead on any ampersand
-        // or slash.
+        // check for a second slash for a comment, nor do we bother to check for
+        // !-- following a less-than sign. We stop instead on any ampersand
+        // slash, or less-than sign.
         String decodedSnippet = decodedSnippetForAttribute(token, attribute);
         size_t position;
         if ((position = decodedSnippet.find("=")) != notFound

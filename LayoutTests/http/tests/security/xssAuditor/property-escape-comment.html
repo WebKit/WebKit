@@ -13,5 +13,7 @@ if (window.layoutTestController) {
 </iframe>
 <iframe src="http://localhost:8000/security/xssAuditor/resources/echo-property.pl?q=%22%20onload=%22alert(2)/">
 </iframe>
+<iframe src="http://localhost:8000/security/xssAuditor/resources/echo-property.pl?clutter=%3cdiv%3e&q=%22%20%22%20onload=alert(3)<!--">
+</iframe>
 </body>
 </html>
