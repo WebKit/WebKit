@@ -1,3 +1,16 @@
+2011-12-03  ChangSeok Oh  <shivamidow@gmail.com>
+
+        [EFL] Revise ewk_view_fixed_layout_size_set
+        https://bugs.webkit.org/show_bug.cgi?id=73401
+
+        Reviewed by Eric Seidel.
+
+        Improve readability and replace forceLayout to setNeedsLayout,
+        since it sometimes causes double drawing.
+
+        * ewk/ewk_view.cpp:
+        (ewk_view_fixed_layout_size_set):
+
 2011-12-02  JungJik Lee  <jungjik.lee@samsung.com>
 
         [EFL] Remove entry pointer before freeing it from matrix.

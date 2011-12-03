@@ -1159,22 +1159,23 @@ void ewk_view_fixed_layout_size_set(Evas_Object* ewkView, Evas_Coord width, Evas
     EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv);
 
     WebCore::FrameView* view = priv->mainFrame->view();
-    if (width <= 0 && height <= 0) {
+    if (!view)
+        return;
+
+    WebCore::IntSize layoutSize(width, height);
+    if (layoutSize.width() <= 0 && layoutSize.height() <= 0) {
         if (!view->useFixedLayout())
             return;
         view->setUseFixedLayout(false);
     } else {
-        WebCore::IntSize size = view->fixedLayoutSize();
-        if (size.width() == width && size.height() == height)
+        WebCore::IntSize fixedLayoutSize = view->fixedLayoutSize();
+        if (fixedLayoutSize == layoutSize)
             return;
-        if (view)
-            view->setFixedLayoutSize(WebCore::IntSize(width, height));
+        view->setFixedLayoutSize(layoutSize);
+        view->setUseFixedLayout(true);
     }
 
-    if (!view)
-        return;
-    view->setUseFixedLayout(true);
-    view->forceLayout();
+    view->setNeedsLayout();
 }
 
 void ewk_view_fixed_layout_size_get(const Evas_Object* ewkView, Evas_Coord* width, Evas_Coord* height)
