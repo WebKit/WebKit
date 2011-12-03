@@ -1,3 +1,31 @@
+2011-12-02  Dave Michael  <dmichael@chromium.org>
+
+        Add WebArrayBuffer to chromium API
+        https://bugs.webkit.org/show_bug.cgi?id=73593
+
+        Reviewed by Darin Fisher.
+
+        * WebKit.gyp:
+        * public/WebArrayBuffer.h: Added.
+        (WebKit::WebArrayBuffer::~WebArrayBuffer):
+        (WebKit::WebArrayBuffer::WebArrayBuffer):
+        (WebKit::WebArrayBuffer::operator=):
+        (WebKit::WebArrayBuffer::isNull):
+        * public/WebBindings.h:
+        * src/WebArrayBuffer.cpp: Added.
+        (WebKit::WebArrayBuffer::create):
+        (WebKit::WebArrayBuffer::reset):
+        (WebKit::WebArrayBuffer::assign):
+        (WebKit::WebArrayBuffer::data):
+        (WebKit::WebArrayBuffer::byteLength):
+        (WebKit::WebArrayBuffer::toV8Value):
+        (WebKit::WebArrayBuffer::WebArrayBuffer):
+        (WebKit::WebArrayBuffer::operator=):
+        (WebKit::WebArrayBuffer::operator WTF::PassRefPtr<WTF::ArrayBuffer>):
+        * src/WebBindings.cpp:
+        (WebKit::getArrayBufferImpl):
+        (WebKit::WebBindings::getArrayBuffer):
+
 2011-12-02  David Grogan  <dgrogan@chromium.org>
 
         Grant workers experimental access to IndexedDB.

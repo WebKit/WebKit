@@ -46,6 +46,7 @@ template <class T> class Local;
 
 namespace WebKit {
 
+class WebArrayBuffer;
 class WebArrayBufferView;
 class WebDragData;
 class WebElement;
@@ -142,6 +143,10 @@ public:
     // Return true (success) if the given npobj is a range object.
     // If so, return that range as a WebRange object.
     WEBKIT_EXPORT static bool getRange(NPObject* range, WebRange*);
+
+    // Return true (success) if the given npobj is an ArrayBuffer object.
+    // If so, return it as a WebArrayBuffer object.
+    WEBKIT_EXPORT static bool getArrayBuffer(NPObject* arrayBuffer, WebArrayBuffer*);
 
     // Return true (success) if the given npobj is an ArrayBufferView object.
     // If so, return it as a WebArrayBufferView object.
