@@ -465,7 +465,7 @@ private:
         }
             
         case GetByVal: {
-            if (m_graph[node.child1()].shouldSpeculateUint32Array())
+            if (m_graph[node.child1()].shouldSpeculateUint32Array() || m_graph[node.child1()].shouldSpeculateFloat32Array() || m_graph[node.child1()].shouldSpeculateFloat64Array())
                 changed |= mergePrediction(PredictDouble);
             else if (node.getHeapPrediction())
                 changed |= mergePrediction(node.getHeapPrediction());

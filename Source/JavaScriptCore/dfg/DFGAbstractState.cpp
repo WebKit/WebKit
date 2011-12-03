@@ -467,6 +467,18 @@ bool AbstractState::execute(NodeIndex nodeIndex)
             forNode(nodeIndex).set(PredictDouble);
             break;
         }
+        if (m_graph[node.child1()].shouldSpeculateFloat32Array()) {
+            forNode(node.child1()).filter(PredictFloat32Array);
+            forNode(node.child2()).filter(PredictInt32);
+            forNode(nodeIndex).set(PredictDouble);
+            break;
+        }
+        if (m_graph[node.child1()].shouldSpeculateFloat64Array()) {
+            forNode(node.child1()).filter(PredictFloat64Array);
+            forNode(node.child2()).filter(PredictInt32);
+            forNode(nodeIndex).set(PredictDouble);
+            break;
+        }
         forNode(node.child1()).filter(PredictArray);
         forNode(node.child2()).filter(PredictInt32);
         forNode(nodeIndex).makeTop();
@@ -520,6 +532,18 @@ bool AbstractState::execute(NodeIndex nodeIndex)
         }
         if (m_graph[node.child1()].shouldSpeculateUint32Array()) {
             forNode(node.child1()).filter(PredictUint32Array);
+            forNode(node.child2()).filter(PredictInt32);
+            forNode(node.child3()).filter(PredictNumber);
+            break;
+        }
+        if (m_graph[node.child1()].shouldSpeculateFloat32Array()) {
+            forNode(node.child1()).filter(PredictFloat32Array);
+            forNode(node.child2()).filter(PredictInt32);
+            forNode(node.child3()).filter(PredictNumber);
+            break;
+        }
+        if (m_graph[node.child1()].shouldSpeculateFloat64Array()) {
+            forNode(node.child1()).filter(PredictFloat64Array);
             forNode(node.child2()).filter(PredictInt32);
             forNode(node.child3()).filter(PredictNumber);
             break;

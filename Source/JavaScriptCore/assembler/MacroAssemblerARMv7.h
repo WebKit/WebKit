@@ -711,6 +711,16 @@ public:
         m_assembler.vldr(dest, base, offset);
     }
 
+    void loadDouble(BaseIndex address, FPRegisterID dest)
+    {
+        ASSERT_NOT_REACHED();
+    }
+    
+    void loadFloat(BaseIndex address, FPRegisterID dest)
+    {
+        ASSERT_NOT_REACHED();
+    }
+
     void moveDouble(FPRegisterID src, FPRegisterID dest)
     {
         if (src != dest)
@@ -742,6 +752,20 @@ public:
     {
         move(ImmPtr(address), addressTempRegister);
         storeDouble(src, addressTempRegister);
+    }
+
+    void storeDouble(FPRegisterID src, BaseIndex address)
+    {
+        move(address.index, addressTempRegister);
+        mul32(TrustedImm32(address.scale), addressTempRegister, addressTempRegister);
+        storeDouble(src, Address(addressTempRegister, address.offset));
+    }
+    
+    void storeFloat(FPRegisterID src, BaseIndex address)
+    {
+        move(address.index, addressTempRegister);
+        mul32(TrustedImm32(address.scale), addressTempRegister, addressTempRegister);
+        storeDouble(ARMRegisters::asSingle(src), Address(addressTempRegister, address.offset));
     }
 
     void addDouble(FPRegisterID src, FPRegisterID dest)
@@ -838,6 +862,16 @@ public:
         load32(address.m_ptr, dataTempRegister);
         m_assembler.vmov(fpTempRegisterAsSingle(), dataTempRegister);
         m_assembler.vcvt_signedToFloatingPoint(dest, fpTempRegisterAsSingle());
+    }
+    
+    void convertFloatToDouble(FPRegisterID src, FPRegisterID dst)
+    {
+        ASSERT_NOT_REACHED();
+    }
+    
+    void convertDoubleToFloat(FPRegisterID src, FPRegisterID dst)
+    {
+        ASSERT_NOT_REACHED();
     }
 
     Jump branchDouble(DoubleCondition cond, FPRegisterID left, FPRegisterID right)

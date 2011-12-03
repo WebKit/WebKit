@@ -1,3 +1,57 @@
+2011-12-02  Oliver Hunt  <oliver@apple.com>
+
+        Improve float array support in the DFG JIT
+        https://bugs.webkit.org/show_bug.cgi?id=73722
+
+        Reviewed by Gavin Barraclough.
+
+        Add basic support for float typed arrays in JSC.  This is currently
+        less optimal than it could be in the following ways:
+         * float32Array1[0] = float32Array2[0] (eg. an element by element copy) 
+           promotes float to double and then back to float.
+         * float64Array[0] will always perform NaN tests in order to prevent
+           signalling NaNs from entering the engine.
+
+        We also don't support Float32Array on ARMv7
+
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::loadDouble):
+        (JSC::MacroAssemblerARMv7::loadFloat):
+        (JSC::MacroAssemblerARMv7::storeDouble):
+        (JSC::MacroAssemblerARMv7::storeFloat):
+        (JSC::MacroAssemblerARMv7::convertFloatToDouble):
+        (JSC::MacroAssemblerARMv7::convertDoubleToFloat):
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::loadDouble):
+        (JSC::MacroAssemblerX86Common::loadFloat):
+        (JSC::MacroAssemblerX86Common::storeDouble):
+        (JSC::MacroAssemblerX86Common::storeFloat):
+        (JSC::MacroAssemblerX86Common::convertDoubleToFloat):
+        (JSC::MacroAssemblerX86Common::convertFloatToDouble):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::cvtsd2ss_rr):
+        (JSC::X86Assembler::cvtss2sd_rr):
+        (JSC::X86Assembler::movsd_rm):
+        (JSC::X86Assembler::movss_rm):
+        (JSC::X86Assembler::movsd_mr):
+        (JSC::X86Assembler::movss_mr):
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::execute):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::shouldSpeculateFloat32Array):
+        * dfg/DFGPropagator.cpp:
+        (JSC::DFG::Propagator::propagateNodePredictions):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compilePutByValForIntTypedArray):
+        (JSC::DFG::SpeculativeJIT::compileGetByValOnFloatTypedArray):
+        (JSC::DFG::SpeculativeJIT::compilePutByValForFloatTypedArray):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::fillSpeculateIntInternal):
+        (JSC::DFG::SpeculativeJIT::compile):
+
 2011-12-02  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r101801.

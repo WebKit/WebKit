@@ -155,6 +155,7 @@ private:
         OP_CALL_rel32                   = 0xE8,
         OP_JMP_rel32                    = 0xE9,
         PRE_SSE_F2                      = 0xF2,
+        PRE_SSE_F3                      = 0xF3,
         OP_HLT                          = 0xF4,
         OP_GROUP3_EbIb                  = 0xF6,
         OP_GROUP3_Ev                    = 0xF7,
@@ -165,11 +166,15 @@ private:
     typedef enum {
         OP2_MOVSD_VsdWsd    = 0x10,
         OP2_MOVSD_WsdVsd    = 0x11,
+        OP2_MOVSS_VsdWsd    = 0x10,
+        OP2_MOVSS_WsdVsd    = 0x11,
         OP2_CVTSI2SD_VsdEd  = 0x2A,
         OP2_CVTTSD2SI_GdWsd = 0x2C,
         OP2_UCOMISD_VsdWsd  = 0x2E,
         OP2_ADDSD_VsdWsd    = 0x58,
         OP2_MULSD_VsdWsd    = 0x59,
+        OP2_CVTSD2SS_VsdWsd = 0x5A,
+        OP2_CVTSS2SD_VsdWsd = 0x5A,
         OP2_SUBSD_VsdWsd    = 0x5C,
         OP2_DIVSD_VsdWsd    = 0x5E,
         OP2_SQRTSD_VsdWsd   = 0x51,
@@ -1435,6 +1440,18 @@ public:
         m_formatter.prefix(PRE_SSE_F2);
         m_formatter.twoByteOp(OP2_CVTTSD2SI_GdWsd, dst, (RegisterID)src);
     }
+
+    void cvtsd2ss_rr(XMMRegisterID src, XMMRegisterID dst)
+    {
+        m_formatter.prefix(PRE_SSE_F2);
+        m_formatter.twoByteOp(OP2_CVTSD2SS_VsdWsd, dst, (RegisterID)src);
+    }
+
+    void cvtss2sd_rr(XMMRegisterID src, XMMRegisterID dst)
+    {
+        m_formatter.prefix(PRE_SSE_F3);
+        m_formatter.twoByteOp(OP2_CVTSS2SD_VsdWsd, dst, (RegisterID)src);
+    }
     
 #if CPU(X86_64)
     void cvttsd2siq_rr(XMMRegisterID src, RegisterID dst)
@@ -1481,11 +1498,35 @@ public:
         m_formatter.prefix(PRE_SSE_F2);
         m_formatter.twoByteOp(OP2_MOVSD_WsdVsd, (RegisterID)src, base, offset);
     }
-
+    
+    void movsd_rm(XMMRegisterID src, int offset, RegisterID base, RegisterID index, int scale)
+    {
+        m_formatter.prefix(PRE_SSE_F2);
+        m_formatter.twoByteOp(OP2_MOVSD_WsdVsd, (RegisterID)src, base, index, scale, offset);
+    }
+    
+    void movss_rm(XMMRegisterID src, int offset, RegisterID base, RegisterID index, int scale)
+    {
+        m_formatter.prefix(PRE_SSE_F3);
+        m_formatter.twoByteOp(OP2_MOVSD_WsdVsd, (RegisterID)src, base, index, scale, offset);
+    }
+    
     void movsd_mr(int offset, RegisterID base, XMMRegisterID dst)
     {
         m_formatter.prefix(PRE_SSE_F2);
         m_formatter.twoByteOp(OP2_MOVSD_VsdWsd, (RegisterID)dst, base, offset);
+    }
+
+    void movsd_mr(int offset, RegisterID base, RegisterID index, int scale, XMMRegisterID dst)
+    {
+        m_formatter.prefix(PRE_SSE_F2);
+        m_formatter.twoByteOp(OP2_MOVSD_VsdWsd, dst, base, index, scale, offset);
+    }
+    
+    void movss_mr(int offset, RegisterID base, RegisterID index, int scale, XMMRegisterID dst)
+    {
+        m_formatter.prefix(PRE_SSE_F3);
+        m_formatter.twoByteOp(OP2_MOVSD_VsdWsd, dst, base, index, scale, offset);
     }
 
 #if !CPU(X86_64)

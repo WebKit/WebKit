@@ -600,11 +600,46 @@ public:
         ASSERT(isSSE2Present());
         m_assembler.movsd_mr(address.offset, address.base, dest);
     }
+    
+    void loadDouble(BaseIndex address, FPRegisterID dest)
+    {
+        ASSERT(isSSE2Present());
+        m_assembler.movsd_mr(address.offset, address.base, address.index, address.scale, dest);
+    }
+    void loadFloat(BaseIndex address, FPRegisterID dest)
+    {
+        ASSERT(isSSE2Present());
+        m_assembler.movss_mr(address.offset, address.base, address.index, address.scale, dest);
+    }
 
     void storeDouble(FPRegisterID src, ImplicitAddress address)
     {
         ASSERT(isSSE2Present());
         m_assembler.movsd_rm(src, address.offset, address.base);
+    }
+    
+    void storeDouble(FPRegisterID src, BaseIndex address)
+    {
+        ASSERT(isSSE2Present());
+        m_assembler.movsd_rm(src, address.offset, address.base, address.index, address.scale);
+    }
+    
+    void storeFloat(FPRegisterID src, BaseIndex address)
+    {
+        ASSERT(isSSE2Present());
+        m_assembler.movss_rm(src, address.offset, address.base, address.index, address.scale);
+    }
+    
+    void convertDoubleToFloat(FPRegisterID src, FPRegisterID dst)
+    {
+        ASSERT(isSSE2Present());
+        m_assembler.cvtsd2ss_rr(src, dst);
+    }
+
+    void convertFloatToDouble(FPRegisterID src, FPRegisterID dst)
+    {
+        ASSERT(isSSE2Present());
+        m_assembler.cvtss2sd_rr(src, dst);
     }
 
     void addDouble(FPRegisterID src, FPRegisterID dest)

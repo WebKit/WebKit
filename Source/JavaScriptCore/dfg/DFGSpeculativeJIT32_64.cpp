@@ -2681,6 +2681,20 @@ void SpeculativeJIT::compile(Node& node)
                 return;
             break;            
         }
+        
+        if (at(node.child1()).shouldSpeculateFloat32Array()) {
+            compileGetByValOnFloatTypedArray(m_jit.globalData()->float32ArrayDescriptor(), node, sizeof(float), isFloat32ArrayPrediction(m_state.forNode(node.child1()).m_type) ? NoTypedArrayTypeSpecCheck : AllTypedArraySpecChecks);
+            if (!m_compileOkay)
+                return;
+            break;            
+        }
+        
+        if (at(node.child1()).shouldSpeculateFloat64Array()) {
+            compileGetByValOnFloatTypedArray(m_jit.globalData()->float64ArrayDescriptor(), node, sizeof(double), isFloat64ArrayPrediction(m_state.forNode(node.child1()).m_type) ? NoTypedArrayTypeSpecCheck : AllTypedArraySpecChecks);
+            if (!m_compileOkay)
+                return;
+            break;            
+        }
 
         ASSERT(node.child3() == NoNode);
         SpeculateCellOperand base(this, node.child1());
@@ -2783,6 +2797,20 @@ void SpeculativeJIT::compile(Node& node)
         
         if (at(node.child1()).shouldSpeculateUint32Array()) {
             compilePutByValForIntTypedArray(m_jit.globalData()->uint32ArrayDescriptor(), base.gpr(), property.gpr(), node, sizeof(uint32_t), isUint32ArrayPrediction(m_state.forNode(node.child1()).m_type) ? NoTypedArrayTypeSpecCheck : AllTypedArraySpecChecks, UnsignedTypedArray);
+            if (!m_compileOkay)
+                return;
+            break;            
+        }
+        
+        if (at(node.child1()).shouldSpeculateFloat32Array()) {
+            compilePutByValForFloatTypedArray(m_jit.globalData()->float32ArrayDescriptor(), base.gpr(), property.gpr(), node, sizeof(float), isFloat32ArrayPrediction(m_state.forNode(node.child1()).m_type) ? NoTypedArrayTypeSpecCheck : AllTypedArraySpecChecks);
+            if (!m_compileOkay)
+                return;
+            break;            
+        }
+        
+        if (at(node.child1()).shouldSpeculateFloat64Array()) {
+            compilePutByValForFloatTypedArray(m_jit.globalData()->float64ArrayDescriptor(), base.gpr(), property.gpr(), node, sizeof(double), isFloat64ArrayPrediction(m_state.forNode(node.child1()).m_type) ? NoTypedArrayTypeSpecCheck : AllTypedArraySpecChecks);
             if (!m_compileOkay)
                 return;
             break;            
@@ -2895,6 +2923,20 @@ void SpeculativeJIT::compile(Node& node)
         
         if (at(node.child1()).shouldSpeculateUint32Array()) {
             compilePutByValForIntTypedArray(m_jit.globalData()->uint32ArrayDescriptor(), base.gpr(), property.gpr(), node, sizeof(uint32_t), NoTypedArraySpecCheck, UnsignedTypedArray);
+            if (!m_compileOkay)
+                return;
+            break;            
+        }
+        
+        if (at(node.child1()).shouldSpeculateFloat32Array()) {
+            compilePutByValForFloatTypedArray(m_jit.globalData()->float32ArrayDescriptor(), base.gpr(), property.gpr(), node, sizeof(float), NoTypedArraySpecCheck);
+            if (!m_compileOkay)
+                return;
+            break;            
+        }
+        
+        if (at(node.child1()).shouldSpeculateFloat64Array()) {
+            compilePutByValForFloatTypedArray(m_jit.globalData()->float64ArrayDescriptor(), base.gpr(), property.gpr(), node, sizeof(double), NoTypedArraySpecCheck);
             if (!m_compileOkay)
                 return;
             break;            

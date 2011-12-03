@@ -954,7 +954,11 @@ struct Node {
     
     bool shouldSpeculateFloat32Array()
     {
-        return prediction() == PredictFloat32Array;
+#if CPU(X86) || CPU(X86_64)
+        return !!(prediction() & PredictFloat32Array);
+#else
+        return false;
+#endif
     }
     
     bool shouldSpeculateFloat64Array()
