@@ -671,17 +671,18 @@ WebView* WebFrameImpl::view() const
     return viewImpl();
 }
 
-void WebFrameImpl::clearOpener()
-{
-    m_frame->loader()->setOpener(0);
-}
-
 WebFrame* WebFrameImpl::opener() const
 {
     Frame* opener = 0;
     if (m_frame)
         opener = m_frame->loader()->opener();
     return fromFrame(opener);
+}
+
+void WebFrameImpl::setOpener(const WebFrame* frame)
+{
+    m_frame->loader()->setOpener(frame ?
+        static_cast<const WebFrameImpl*>(frame)->m_frame : 0);
 }
 
 WebFrame* WebFrameImpl::parent() const

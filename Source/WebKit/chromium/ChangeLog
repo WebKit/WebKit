@@ -1,3 +1,16 @@
+2011-12-02  Karl Koscher  <supersat@chromium.org>
+
+        [chromium] add setOpener method to WebFrame
+        https://bugs.webkit.org/show_bug.cgi?id=73379
+
+        Reviewed by Darin Fisher.
+
+        * public/WebFrame.h:
+        (WebKit::WebFrame::clearOpener): now an inline call to setOpener(0)
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::setOpener): sets window.opener
+        * src/WebFrameImpl.h:
+
 2011-12-02  Kent Tamura  <tkent@chromium.org>
 
         Unreviewed, rolling out r101337.

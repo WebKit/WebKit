@@ -188,9 +188,12 @@ public:
     // Returns the frame that opened this frame or 0 if there is none.
     virtual WebFrame* opener() const = 0;
 
+    // Sets the frame that opened this one or 0 if there is none.
+    virtual void setOpener(const WebFrame*) = 0;
+
     // Reset the frame that opened this frame to 0.
     // This is executed between layout tests runs
-    virtual void clearOpener() = 0;
+    void clearOpener() { setOpener(0); }
 
     // Returns the parent frame or 0 if this is a top-most frame.
     virtual WebFrame* parent() const = 0;

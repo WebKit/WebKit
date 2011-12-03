@@ -83,7 +83,7 @@ public:
     virtual bool hasVerticalScrollbar() const;
     virtual WebView* view() const;
     virtual WebFrame* opener() const;
-    virtual void clearOpener();
+    virtual void setOpener(const WebFrame*);
     virtual WebFrame* parent() const;
     virtual WebFrame* top() const;
     virtual WebFrame* firstChild() const;
