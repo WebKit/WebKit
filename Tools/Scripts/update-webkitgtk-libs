@@ -23,9 +23,14 @@ delete $ENV{AR_FLAGS} if exists $ENV{AR_FLAGS};
 
 chdir(relativeScriptsDir() . "/../gtk") or die $!;
 
+my @ensureJhbuildArgs = ("./run-with-jhbuild", "echo", "Ensured jhbuild setup.");
+if (system(@ensureJhbuildArgs) != 0) {
+    die "Failed to ensure jhbuild installed.\n";
+}
+
 print "Updating GTK+ port dependencies using jhbuild...\n";
 my @jhbuildArgs = ("../../WebKitBuild/Dependencies/Root/bin/jhbuild", "--no-interact", "-f", "jhbuildrc");
 push(@jhbuildArgs, @ARGV[1..-1]);
 if (system(@jhbuildArgs) != 0) {
-    die "Running jhbuild failed."
+    die "Running jhbuild failed.\n"
 }

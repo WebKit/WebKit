@@ -1,3 +1,12 @@
+2011-12-03  Martin Robinson  <mrobinson@igalia.com>
+
+        Fix the update-webkitgtk-libs script to properly trigger a jhbuild installation
+        when run for the first time.
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * Scripts/update-webkitgtk-libs: Fix first run.
+
 2011-12-03  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, GTK build fix after r101922.
