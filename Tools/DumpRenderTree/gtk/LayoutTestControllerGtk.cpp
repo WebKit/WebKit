@@ -206,7 +206,7 @@ JSStringRef LayoutTestController::pathToLocalResource(JSContextRef context, JSSt
         return url;
 
     const char* layoutTestsSuffix = urlCString.get() + strlen("file:///tmp/");
-    GOwnPtr<char> testPath(g_build_filename(getTopLevelPath().data(), layoutTestsSuffix));
+    GOwnPtr<char> testPath(g_build_filename(getTopLevelPath().data(), layoutTestsSuffix, NULL));
     return JSStringCreateWithUTF8CString(testPath.get());
 }
 
