@@ -1,5 +1,15 @@
 2011-12-03  Martin Robinson  <mrobinson@igalia.com>
 
+        Small fix for my previous patch. Do not try to delete a member
+        of a dictionary that does not exist.
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * gtk/run-with-jhbuild:
+        (install_and_run_jhbuild):
+
+2011-12-03  Martin Robinson  <mrobinson@igalia.com>
+
         Fix jhbuild installation for people who have unusual MAKE environment
         variables such as 'make -j4' as the jhbuild build does not handle it.
 

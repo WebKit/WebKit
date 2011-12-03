@@ -39,7 +39,8 @@ def install_and_run_jhbuild():
     # jhbuild is really unhappy about having MAKE defined to something like 'make -j4'
     # so we just undefine it here.
     env_without_make = dict(os.environ)
-    del env_without_make['MAKE']
+    if 'MAKE' in env_without_make:
+        del env_without_make['MAKE']
 
     process = subprocess.Popen(['./autogen.sh', '--prefix=%s' % installation_prefix],
                                cwd=jhbuild_source_path, env=env_without_make)
