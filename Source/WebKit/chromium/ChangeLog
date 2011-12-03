@@ -1,3 +1,20 @@
+2011-12-02  Dave Michael  <dmichael@chromium.org>
+
+        Add a unit test for creating, listening for, and dispatching events
+        via the chromium API.
+        https://bugs.webkit.org/show_bug.cgi?id=72988
+
+        Reviewed by Darin Fisher.
+
+        * WebKit.gypi:
+        * tests/DispatchEventTest.cpp: Added.
+        (WebKit::MockListener::MockListener):
+        (WebKit::MockListener::~MockListener):
+        (WebKit::MockListener::events):
+        (WebKit::DispatchEventTest::DispatchEventTest):
+        (WebKit::DispatchEventTest::TearDown):
+        (WebKit::TEST_F):
+
 2011-12-02  Nate Chapin  <japhet@chromium.org>
 
         Don't call FocusController:setActive() in 
