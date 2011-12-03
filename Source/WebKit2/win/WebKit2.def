@@ -169,6 +169,7 @@ EXPORTS
         ?rangeFromLocationAndLength@TextIterator@WebCore@@SA?AV?$PassRefPtr@VRange@WebCore@@@WTF@@PAVElement@2@HH_N@Z
         ?removeShadowRoot@Element@WebCore@@QAEXXZ
         ?scrollElementToRect@FrameView@WebCore@@QAEXPAVElement@2@ABVIntRect@2@@Z
+        ?setShouldLayoutFixedElementsRelativeToFrame@FrameView@WebCore@@QAEX_N@Z
         ?setDOMException@WebCore@@YAXPAVExecState@JSC@@H@Z
         ?setMockScrollbarsEnabled@Settings@WebCore@@SAX_N@Z
         ?setPagination@Page@WebCore@@QAEXABUPagination@12@@Z

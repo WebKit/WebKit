@@ -104,6 +104,7 @@ public:
     PassRefPtr<Range> rangeFromLocationAndLength(Element* scope, int rangeLocation, int rangeLength, ExceptionCode&);
     unsigned locationFromRange(Element* scope, const Range*, ExceptionCode&);
     unsigned lengthFromRange(Element* scope, const Range*, ExceptionCode&);
+    void setShouldLayoutFixedElementsRelativeToFrame(Document*, bool, ExceptionCode&);
 
     void setUnifiedTextCheckingEnabled(Document*, bool, ExceptionCode&);
     bool unifiedTextCheckingEnabled(Document*, ExceptionCode&);

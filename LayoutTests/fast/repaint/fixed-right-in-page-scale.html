@@ -1,0 +1,56 @@
+<html>
+<head>
+    <style>
+        ::-webkit-scrollbar {
+            width: 0px;
+            height: 0px;
+        }
+    </style>
+    <script>
+      window.enablePixelTesting = true;
+      if (window.internals)
+          window.internals.setShouldLayoutFixedElementsRelativeToFrame(document, true);
+
+      function scroll() {
+          window.scrollTo(100,100);
+      }
+
+      function scaleWithEventSender() {
+          var scaleFactor = 2.0;
+          var scaleOffset = 0;
+          if (window.eventSender) {
+             eventSender.scalePageBy(scaleFactor, scaleOffset, scaleOffset);
+          }
+      }
+
+      function test() {
+          scaleWithEventSender();
+          scroll();
+      }
+    </script>
+    <script src="../js/resources/js-test-pre.js"></script>
+</head>
+<body style="height:2000px; width: 2000px; margin:0px;" onload="test();">
+    <div style="position: fixed; top: -100px; right: 100px; z-index: 1">
+        <div style="left:0; top:0; width:100px; height:100px; position:absolute; background:yellow;"></div>
+        <div style="left:100px; top:0; width:100px; height:100px; position:absolute; background:green;"></div>
+
+        <div style="left:0; top:100px; width:100px; height:100px; position:absolute; background:black;"></div>
+        <div style="left:100px; top:100px; width:100px; height:100px; position:absolute; background:blue;"></div>
+    </div>
+    <div style="position: absolute; width:300px; height:300px; top: 0px; left: 300px" id="grid">
+        <div style="float:left; width:100px; height:100px; background:yellow;"></div>
+        <div style="float:left; width:100px; height:100px; background:green;"></div>
+        <div style="float:left; width:100px; height:100px; background:blue;"></div>
+
+        <div style="float:left; width:100px; height:100px; background: green;"></div>
+        <div style="float:left; width:100px; height:100px; background:blue;"></div>
+        <div style="float:left; width:100px; height:100px; background:yellow;"></div>
+
+        <div style="float:left; width:100px; height:100px; background:blue;"></div>
+        <div style="float:left; width:100px; height:100px; background:yellow;"></div>
+        <div style="float:left; width:100px; height:100px; background:green;"></div>
+    </div>
+    <div id="console"></div>
+</body>
+</html>

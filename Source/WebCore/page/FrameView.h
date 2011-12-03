@@ -196,6 +196,9 @@ public:
     int scrollYForFixedPosition() const;
     IntSize scrollOffsetForFixedPosition() const;
 
+    bool shouldLayoutFixedElementsRelativeToFrame() const { return m_shouldLayoutFixedElementsRelativeToFrame; }
+    void setShouldLayoutFixedElementsRelativeToFrame(bool);
+
     void beginDeferredRepaints();
     void endDeferredRepaints();
     void checkStopDelayingDeferredRepaints();
@@ -411,9 +414,9 @@ private:
     bool m_cannotBlitToWindow;
     bool m_isOverlapped;
     bool m_contentIsOpaque;
+    bool m_shouldLayoutFixedElementsRelativeToFrame;
     unsigned m_slowRepaintObjectCount;
     unsigned m_fixedObjectCount;
-
     int m_borderX;
     int m_borderY;
 

@@ -83,6 +83,7 @@ _ZN7WebCore10ScrollView23setScrollbarsSuppressedEbb;
 _ZN7WebCore8Settings24setMockScrollbarsEnabledEb;
 _ZN7WebCore9FrameView17paintControlTintsEv;
 _ZN7WebCore9FrameView19scrollElementToRectEPNS_7ElementERKNS_7IntRectE;
+_ZN7WebCore9FrameView43setShouldLayoutFixedElementsRelativeToFrameEb;
 local:
 _Z*;
 cti*;

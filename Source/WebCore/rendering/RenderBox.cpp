@@ -631,6 +631,11 @@ LayoutRect RenderBox::reflectedRect(const LayoutRect& r) const
     return result;
 }
 
+bool RenderBox::shouldLayoutFixedElementRelativeToFrame(Frame* frame, FrameView* frameView) const
+{
+    return style() && style()->position() == FixedPosition && container()->isRenderView() && frame && frameView && frameView->shouldLayoutFixedElementsRelativeToFrame();
+}
+
 bool RenderBox::includeVerticalScrollbarSize() const
 {
     return hasOverflowClip() && !layer()->hasOverlayScrollbars()
@@ -2317,6 +2322,12 @@ void RenderBox::computeBlockDirectionMargins(RenderBlock* containingBlock)
 LayoutUnit RenderBox::containingBlockLogicalWidthForPositioned(const RenderBoxModelObject* containingBlock, RenderRegion* region,
     LayoutUnit offsetFromLogicalTopOfFirstPage, bool checkForPerpendicularWritingMode) const
 {
+    // Container for position:fixed is the frame.
+    Frame* frame = view() ? view()->frame(): 0;
+    FrameView* frameView = view() ? view()->frameView() : 0;
+    if (shouldLayoutFixedElementRelativeToFrame(frame, frameView))
+        return (view()->isHorizontalWritingMode() ? frameView->visibleWidth() : frameView->visibleHeight()) / frame->frameScaleFactor();
+
     if (checkForPerpendicularWritingMode && containingBlock->isHorizontalWritingMode() != isHorizontalWritingMode())
         return containingBlockLogicalHeightForPositioned(containingBlock, false);
 
@@ -2369,6 +2380,11 @@ LayoutUnit RenderBox::containingBlockLogicalWidthForPositioned(const RenderBoxMo
 
 LayoutUnit RenderBox::containingBlockLogicalHeightForPositioned(const RenderBoxModelObject* containingBlock, bool checkForPerpendicularWritingMode) const
 {
+    Frame* frame = view() ? view()->frame(): 0;
+    FrameView* frameView = view() ? view()->frameView() : 0;
+    if (shouldLayoutFixedElementRelativeToFrame(frame, frameView))
+        return (view()->isHorizontalWritingMode() ? frameView->visibleHeight() : frameView->visibleWidth()) / frame->frameScaleFactor();
+
     if (checkForPerpendicularWritingMode && containingBlock->isHorizontalWritingMode() != isHorizontalWritingMode())
         return containingBlockLogicalWidthForPositioned(containingBlock, 0, 0, false);
 

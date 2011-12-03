@@ -577,6 +577,17 @@ unsigned Internals::lengthFromRange(Element* scope, const Range* range, Exceptio
     return length;
 }
 
+void Internals::setShouldLayoutFixedElementsRelativeToFrame(Document* document, bool enabled, ExceptionCode& ec)
+{
+    if (!document || !document->view()) {
+        ec = INVALID_ACCESS_ERR;
+        return;
+    }
+
+    FrameView* frameView = document->view();
+    frameView->setShouldLayoutFixedElementsRelativeToFrame(enabled);
+}
+
 void Internals::setUnifiedTextCheckingEnabled(Document* document, bool enabled, ExceptionCode& ec)
 {
     if (!document || !document->frame() || !document->frame()->settings()) {

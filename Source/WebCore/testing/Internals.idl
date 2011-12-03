@@ -77,6 +77,7 @@ module window {
         unsigned long locationFromRange(in Element scope, in Range range) raises (DOMException);
         unsigned long lengthFromRange(in Element scope, in Range range) raises (DOMException);
 
+        void setShouldLayoutFixedElementsRelativeToFrame(in Document document, in boolean enabled) raises(DOMException);
         void setUnifiedTextCheckingEnabled(in Document document, in boolean enabled) raises (DOMException);
         boolean unifiedTextCheckingEnabled(in Document document) raises (DOMException);
     };

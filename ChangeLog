@@ -1,3 +1,12 @@
+2011-12-02  Fady Samuel  <fsamuel@chromium.org>
+
+        When page scaling is in use position:fixed has incorrect results
+        https://bugs.webkit.org/show_bug.cgi?id=68617
+
+        Reviewed by Simon Fraser.
+
+        * Source/autotools/symbols.filter:
+
 2011-12-02  Martin Robinson  <mrobinson@igalia.com>
 
         Try to fix the GTK+ debug bot. As discussed with other GTK+

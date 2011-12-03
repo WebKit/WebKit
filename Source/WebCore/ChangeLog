@@ -1,3 +1,42 @@
+2011-12-02  Fady Samuel  <fsamuel@chromium.org>
+
+        When page scaling is in use position:fixed has incorrect results
+        https://bugs.webkit.org/show_bug.cgi?id=68617
+
+        Reviewed by Simon Fraser.
+
+        Add the option for position:fixed elements to be fixed to the frame
+        instead of the layout rectangle of the document.
+
+        Tests: fast/repaint/fixed-in-page-scale.html
+               fast/repaint/fixed-right-bottom-in-page-scale.html
+               fast/repaint/fixed-right-in-page-scale.html
+
+        * WebCore.exp.in:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::reset):
+        (WebCore::FrameView::scrollXForFixedPosition):
+        (WebCore::FrameView::scrollYForFixedPosition):
+          If position:fixed elements are relative to the frame, disregard the
+          drag factor.
+        (WebCore::FrameView::setShouldLayoutFixedElementsRelativeToFrame):
+        * page/FrameView.h:
+        (WebCore::FrameView::shouldLayoutFixedElementsRelativeToFrame):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::shouldLayoutFixedElementRelativeToFrame):
+        (WebCore::RenderBox::containingBlockLogicalWidthForPositioned):
+        (WebCore::RenderBox::containingBlockLogicalHeightForPositioned):
+          If position:fixed elements are relative to the frame, their container
+          is the frame instead of the layout rect of the document. 
+          This allows proper positioning of these elements to the right and
+          bottom.
+        * rendering/RenderBox.h:
+        * testing/Internals.cpp:
+        (WebCore::Internals::setShouldLayoutFixedElementsRelativeToFrame):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+          Allow enabling and disabling the new behavior in layout tests.
+
 2011-12-02  Benjamin Poulain  <bpoulain@apple.com>
 
         Build fix for SubresourceLoader when building with Core Foundation
