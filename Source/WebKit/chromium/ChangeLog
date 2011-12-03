@@ -1,3 +1,59 @@
+2011-12-01  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Move WebLayer APIs to platform directory
+        https://bugs.webkit.org/show_bug.cgi?id=73610
+
+        Reviewed by Darin Fisher.
+
+        * public/WebContentLayer.h:
+        * public/WebContentLayerClient.h:
+        * public/WebExternalTextureLayer.h:
+        * public/WebLayer.h:
+        * public/WebLayerClient.h:
+        * public/WebLayerTreeView.h:
+        * public/WebLayerTreeViewClient.h:
+        * public/platform/WebContentLayer.h: Copied from Source/WebKit/chromium/public/WebContentLayer.h.
+        (WebKit::WebContentLayer::WebContentLayer):
+        (WebKit::WebContentLayer::~WebContentLayer):
+        (WebKit::WebContentLayer::operator=):
+        * public/platform/WebContentLayerClient.h: Copied from Source/WebKit/chromium/public/WebContentLayerClient.h.
+        (WebKit::WebContentLayerClient::~WebContentLayerClient):
+        * public/platform/WebExternalTextureLayer.h: Copied from Source/WebKit/chromium/public/WebExternalTextureLayer.h.
+        (WebKit::WebExternalTextureLayer::WebExternalTextureLayer):
+        (WebKit::WebExternalTextureLayer::~WebExternalTextureLayer):
+        (WebKit::WebExternalTextureLayer::operator=):
+        * public/platform/WebLayer.h: Copied from Source/WebKit/chromium/public/WebLayer.h.
+        (WebKit::WebLayer::WebLayer):
+        (WebKit::WebLayer::~WebLayer):
+        (WebKit::WebLayer::operator=):
+        (WebKit::WebLayer::isNull):
+        (WebKit::WebLayer::to):
+        (WebKit::WebLayer::toConst):
+        (WebKit::WebLayer::unwrap):
+        (WebKit::WebLayer::constUnwrap):
+        (WebKit::operator==):
+        (WebKit::operator!=):
+        * public/platform/WebLayerClient.h: Copied from Source/WebKit/chromium/public/WebLayerClient.h.
+        (WebKit::WebLayerClient::~WebLayerClient):
+        * public/platform/WebLayerTreeView.h: Copied from Source/WebKit/chromium/public/WebLayerTreeView.h.
+        (WebKit::WebLayerTreeView::Settings::Settings):
+        (WebKit::WebLayerTreeView::WebLayerTreeView):
+        (WebKit::WebLayerTreeView::~WebLayerTreeView):
+        (WebKit::WebLayerTreeView::operator=):
+        (WebKit::operator==):
+        (WebKit::operator!=):
+        * public/platform/WebLayerTreeViewClient.h: Copied from Source/WebKit/chromium/public/WebLayerTreeViewClient.h.
+        (WebKit::WebLayerTreeViewClient::~WebLayerTreeViewClient):
+        * public/platform/WebPrivatePtr.h:
+        * src/WebContentLayer.cpp:
+        * src/WebContentLayerImpl.cpp:
+        * src/WebExternalTextureLayer.cpp:
+        * src/WebExternalTextureLayerImpl.cpp:
+        * src/WebLayer.cpp:
+        * src/WebLayerImpl.cpp:
+        * src/WebLayerTreeView.cpp:
+        * src/WebLayerTreeViewImpl.h:
+
 2011-12-02  Karl Koscher  <supersat@chromium.org>
 
         [chromium] add setOpener method to WebFrame

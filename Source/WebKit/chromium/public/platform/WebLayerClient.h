@@ -23,37 +23,26 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebLayerTreeViewImpl_h
-#define WebLayerTreeViewImpl_h
-
-#include "platform/WebLayerTreeView.h"
-#include "cc/CCLayerTreeHost.h"
-#include <wtf/PassRefPtr.h>
+#ifndef WebLayerClient_h
+#define WebLayerClient_h
 
 namespace WebKit {
-class WebLayer;
-class WebLayerTreeViewClient;
 
-class WebLayerTreeViewImpl : public WebCore::CCLayerTreeHost, public WebCore::CCLayerTreeHostClient {
+class WebLayerClient {
 public:
-    static PassRefPtr<WebLayerTreeViewImpl> create(WebLayerTreeViewClient*, const WebLayer& root, const WebLayerTreeView::Settings&);
+    // Notifies the client that the layer has changed in a way that needs a
+    // compositing pass to visually update. The client should eventually call
+    // WebLayerTreeView::composite.
+    // Note: some complex operations (e.g layer reparenting) can cause this to
+    // be called while the layer tree is in an inconsistent state, so to get
+    // correct results, WebLayerTreeView::composite should be called after the
+    // operation has finished (e.g. by posting a task).
+    virtual void notifyNeedsComposite() = 0;
 
-private:
-    WebLayerTreeViewImpl(WebLayerTreeViewClient*, const WebLayer& root, const WebLayerTreeView::Settings&);
-    virtual ~WebLayerTreeViewImpl();
-    virtual void animateAndLayout(double frameBeginTime);
-    virtual void applyScrollAndScale(const WebCore::IntSize& scrollDelta, float pageScale);
-    virtual PassRefPtr<WebCore::GraphicsContext3D> createLayerTreeHostContext3D();
-    virtual void didRecreateGraphicsContext(bool success);
-    virtual void didCommitAndDrawFrame();
-    virtual void didCompleteSwapBuffers();
-
-    // Only used in the single threaded path.
-    virtual void scheduleComposite();
-
-    WebLayerTreeViewClient* m_client;
+protected:
+    virtual ~WebLayerClient() { }
 };
 
 } // namespace WebKit
 
-#endif // WebLayerTreeViewImpl_h
+#endif // WebLayerClient_h

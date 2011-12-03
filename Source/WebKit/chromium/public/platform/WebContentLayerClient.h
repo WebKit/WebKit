@@ -23,37 +23,26 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebLayerTreeViewImpl_h
-#define WebLayerTreeViewImpl_h
+#ifndef WebContentLayerClient_h
+#define WebContentLayerClient_h
 
-#include "platform/WebLayerTreeView.h"
-#include "cc/CCLayerTreeHost.h"
-#include <wtf/PassRefPtr.h>
+#include "WebCanvas.h"
 
 namespace WebKit {
-class WebLayer;
-class WebLayerTreeViewClient;
+struct WebRect;
 
-class WebLayerTreeViewImpl : public WebCore::CCLayerTreeHost, public WebCore::CCLayerTreeHostClient {
+class WebContentLayerClient {
 public:
-    static PassRefPtr<WebLayerTreeViewImpl> create(WebLayerTreeViewClient*, const WebLayer& root, const WebLayerTreeView::Settings&);
+    // Paints the content area for the layer, typically dirty rects submitted
+    // through WebContentLayer::setNeedsDisplay, submitting drawing commands
+    // through the WebCanvas.
+    // The canvas is already clipped to the |clip| rect.
+    virtual void paintContents(WebCanvas*, const WebRect& clip) = 0;
 
-private:
-    WebLayerTreeViewImpl(WebLayerTreeViewClient*, const WebLayer& root, const WebLayerTreeView::Settings&);
-    virtual ~WebLayerTreeViewImpl();
-    virtual void animateAndLayout(double frameBeginTime);
-    virtual void applyScrollAndScale(const WebCore::IntSize& scrollDelta, float pageScale);
-    virtual PassRefPtr<WebCore::GraphicsContext3D> createLayerTreeHostContext3D();
-    virtual void didRecreateGraphicsContext(bool success);
-    virtual void didCommitAndDrawFrame();
-    virtual void didCompleteSwapBuffers();
-
-    // Only used in the single threaded path.
-    virtual void scheduleComposite();
-
-    WebLayerTreeViewClient* m_client;
+protected:
+    virtual ~WebContentLayerClient() { }
 };
 
 } // namespace WebKit
 
-#endif // WebLayerTreeViewImpl_h
+#endif // WebContentLayerClient_h

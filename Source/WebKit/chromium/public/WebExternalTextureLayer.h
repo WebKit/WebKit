@@ -23,58 +23,5 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebExternalTextureLayer_h
-#define WebExternalTextureLayer_h
+#include "platform/WebExternalTextureLayer.h"
 
-#include "WebLayer.h"
-#include "platform/WebCommon.h"
-#include "platform/WebFloatRect.h"
-
-namespace WebKit {
-class WebExternalTextureLayerImpl;
-class WebLayerClient;
-
-// This class represents a layer that renders a texture that is generated
-// externally (not managed by the WebLayerTreeView).
-// The texture will be used by the WebLayerTreeView during compositing passes.
-// When in single-thread mode, this means during WebLayerTreeView::composite().
-// When using the threaded compositor, this can mean at an arbitrary time until
-// the WebLayerTreeView is destroyed.
-class WebExternalTextureLayer : public WebLayer {
-public:
-    WEBKIT_EXPORT static WebExternalTextureLayer create(WebLayerClient*);
-
-    WebExternalTextureLayer() { }
-    WebExternalTextureLayer(const WebExternalTextureLayer& layer) : WebLayer(layer) { }
-    virtual ~WebExternalTextureLayer() { }
-    WebExternalTextureLayer& operator=(const WebExternalTextureLayer& layer)
-    {
-        WebLayer::assign(layer);
-        return *this;
-    }
-
-    // Sets the texture id that represents the layer, in the namespace of the
-    // compositor context.
-    WEBKIT_EXPORT void setTextureId(unsigned);
-    WEBKIT_EXPORT unsigned textureId() const;
-
-    // Sets whether or not the texture should be flipped in the Y direction when
-    // rendered.
-    WEBKIT_EXPORT void setFlipped(bool);
-    WEBKIT_EXPORT bool flipped() const;
-
-    // Sets the rect in UV space of the texture that is mapped to the layer
-    // bounds.
-    WEBKIT_EXPORT void setUVRect(const WebFloatRect&);
-    WEBKIT_EXPORT WebFloatRect uvRect() const;
-
-#if WEBKIT_IMPLEMENTATION
-    WebExternalTextureLayer(const WTF::PassRefPtr<WebExternalTextureLayerImpl>&);
-    WebExternalTextureLayer& operator=(const WTF::PassRefPtr<WebExternalTextureLayerImpl>&);
-    operator WTF::PassRefPtr<WebExternalTextureLayerImpl>() const;
-#endif
-};
-
-} // namespace WebKit
-
-#endif // WebExternalTextureLayer_h

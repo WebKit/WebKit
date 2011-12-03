@@ -23,44 +23,5 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebLayerTreeViewClient_h
-#define WebLayerTreeViewClient_h
+#include "platform/WebLayerTreeViewClient.h"
 
-namespace WebKit {
-class WebGraphicsContext3D;
-struct WebSize;
-class WebThread;
-
-class WebLayerTreeViewClient {
-public:
-    // Updates animation and layout. This is called before the compositing pass
-    // so that layers can be updated at the given frame time.
-    virtual void animateAndLayout(double frameBeginTime) = 0;
-
-    // Applies a scroll delta to the root layer, which is bundled with a page
-    // scale factor that may apply a CSS transform on the whole document (used
-    // for mobile-device pinch zooming). This is triggered by events sent to the
-    // compositor thread through the WebCompositor interface.
-    virtual void applyScrollAndScale(const WebSize& scrollDelta, float scaleFactor) = 0;
-
-    // Creates a 3D context suitable for the compositing. This may be called
-    // more than once if the context gets lost.
-    virtual WebGraphicsContext3D* createContext3D() = 0;
-
-    // Signals a successful rebinding of the 3D context (e.g. after a lost
-    // context event).
-    virtual void didRebindGraphicsContext(bool success) = 0;
-
-    // Schedules a compositing pass, meaning the client should call
-    // WebLayerTreeView::composite at a later time. This is only called if the
-    // compositor thread is disabled; when enabled, the compositor will
-    // internally schedule a compositing pass when needed.
-    virtual void scheduleComposite() = 0;
-
-protected:
-    virtual ~WebLayerTreeViewClient() { }
-};
-
-} // namespace WebKit
-
-#endif // WebLayerTreeViewClient_h

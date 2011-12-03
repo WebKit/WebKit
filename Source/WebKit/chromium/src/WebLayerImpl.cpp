@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WebLayerImpl.h"
 
-#include "WebLayerClient.h"
+#include "platform/WebLayerClient.h"
 
 using namespace WebCore;
 

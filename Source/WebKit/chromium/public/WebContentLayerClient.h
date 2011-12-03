@@ -23,26 +23,5 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebContentLayerClient_h
-#define WebContentLayerClient_h
+#include "platform/WebContentLayerClient.h"
 
-#include "platform/WebCanvas.h"
-
-namespace WebKit {
-struct WebRect;
-
-class WebContentLayerClient {
-public:
-    // Paints the content area for the layer, typically dirty rects submitted
-    // through WebContentLayer::setNeedsDisplay, submitting drawing commands
-    // through the WebCanvas.
-    // The canvas is already clipped to the |clip| rect.
-    virtual void paintContents(WebCanvas*, const WebRect& clip) = 0;
-
-protected:
-    virtual ~WebContentLayerClient() { }
-};
-
-} // namespace WebKit
-
-#endif // WebContentLayerClient_h

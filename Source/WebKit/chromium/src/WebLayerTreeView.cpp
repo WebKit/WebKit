@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "WebLayerTreeView.h"
+#include "platform/WebLayerTreeView.h"
 
 #include "WebLayer.h"
 #include "WebLayerTreeViewImpl.h"

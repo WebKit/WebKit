@@ -26,9 +26,9 @@
 #include "config.h"
 #include "WebExternalTextureLayerImpl.h"
 
+#include "platform/WebLayerClient.h"
 #include "GraphicsContext.h"
 #include "WebCanvas.h"
-#include "WebLayerClient.h"
 
 using namespace WebCore;
 

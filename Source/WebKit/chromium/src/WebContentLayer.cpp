@@ -24,10 +24,10 @@
  */
 
 #include "config.h"
-#include "WebContentLayer.h"
+#include "platform/WebContentLayer.h"
 
+#include "platform/WebFloatRect.h"
 #include "WebContentLayerImpl.h"
-#include "WebFloatRect.h"
 
 namespace WebKit {
 

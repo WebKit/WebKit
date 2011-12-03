@@ -24,10 +24,10 @@
  */
 
 #include "config.h"
-#include "WebExternalTextureLayer.h"
+#include "platform/WebExternalTextureLayer.h"
 
+#include "platform/WebFloatRect.h"
 #include "WebExternalTextureLayerImpl.h"
-#include "WebFloatRect.h"
 
 namespace WebKit {
 

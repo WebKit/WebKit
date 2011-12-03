@@ -31,6 +31,8 @@
 #ifndef WebPrivatePtr_h
 #define WebPrivatePtr_h
 
+#include "WebCommon.h"
+
 #if WEBKIT_IMPLEMENTATION
 #include <wtf/PassRefPtr.h>
 #endif

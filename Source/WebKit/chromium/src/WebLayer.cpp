@@ -24,13 +24,13 @@
  */
 
 #include "config.h"
-#include "WebLayer.h"
+#include "platform/WebLayer.h"
 
+#include "platform/WebFloatPoint.h"
 #include "Color.h"
 #include "LayerChromium.h"
 #include "SkMatrix44.h"
 #include "TransformationMatrix.h"
-#include "WebFloatPoint.h"
 #include "WebLayerImpl.h"
 #include "WebSize.h"
 

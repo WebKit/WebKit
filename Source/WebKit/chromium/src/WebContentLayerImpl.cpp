@@ -26,11 +26,11 @@
 #include "config.h"
 #include "WebContentLayerImpl.h"
 
+#include "platform/WebContentLayerClient.h"
+#include "platform/WebLayerClient.h"
+#include "platform/WebRect.h"
 #include "GraphicsContext.h"
 #include "WebCanvas.h"
-#include "WebContentLayerClient.h"
-#include "WebLayerClient.h"
-#include "WebRect.h"
 #if WEBKIT_USING_SKIA
 #include "PlatformContextSkia.h"
 #endif
