@@ -1,3 +1,32 @@
+2011-12-02  Stephen Chenney  <schenney@chromium.org>
+
+        REGRESSION (r91125): Polyline tool in google docs is broken
+        https://bugs.webkit.org/show_bug.cgi?id=65796
+
+        Reviewed by Darin Adler.
+
+        Work around a bug in CoreGraphics, that caused incorrect bounds for paths
+        consisting only of move-to elements. This causes problems in SVG, when the enormous
+        bounds prevented the drawing of things behind.
+
+        Tests: svg/custom/path-moveto-only-rendering.svg
+               svg/custom/subpaths-moveto-only-rendering.svg
+
+        * platform/graphics/cg/PathCG.cpp:
+        (WebCore::PathIsEmptyOrSingleMoveTester::PathIsEmptyOrSingleMoveTester): Class to
+        test for isEmpty accoridng ot the same rules as other platforms.
+        (WebCore::PathIsEmptyOrSingleMoveTester::isEmpty): Query the result
+        (WebCore::PathIsEmptyOrSingleMoveTester::testPathElement): Path iterator method
+        (WebCore::PathHasOnlyMoveToTester::PathHasOnlyMoveToTester): Class to test whether a
+        path contains only move-to elements, and hence should have null bounds.
+        (WebCore::PathHasOnlyMoveToTester::hasOnlyMoveTo): Query the result
+        (WebCore::PathHasOnlyMoveToTester::testPathElement): Path iterator method.
+        (WebCore::Path::boundingRect): Modified to check for move-to only paths
+        (WebCore::Path::fastBoundingRect): Modified to check for move-to only paths
+        (WebCore::Path::isEmpty): Now uses the method that matches other platforms.
+        (WebCore::Path::hasCurrentPoint): Now uses CGPathIsEmpty directly
+        (WebCore::Path::transform) : Now uses CGPathIsEmpty directly
+
 2011-12-02  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSSRegions]More renaming for region style rules.
