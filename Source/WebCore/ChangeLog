@@ -1,3 +1,22 @@
+2011-12-02  Tony Chang  <tony@chromium.org>
+
+        Need to implement flex-flow: column-reverse
+        https://bugs.webkit.org/show_bug.cgi?id=73504
+
+        Reviewed by David Hyatt.
+
+        We can't just change the direction of the FlexOrderIterator because we want the overflow to be
+        on the top. We can't just position them in the reverse location since we don't know where the
+        bottom edge is until we've layed out the flex items. So we do an extra pass, but it should be
+        fast since we're not laying out, just moving.
+
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::flowAwareBorderEnd):
+        (WebCore::RenderFlexibleBox::flowAwarePaddingEnd):
+        (WebCore::RenderFlexibleBox::layoutAndPlaceChildren):
+        (WebCore::RenderFlexibleBox::layoutColumnReverse): Do an extra pass to reposition flexitems in the reverse order.
+        * rendering/RenderFlexibleBox.h:
+
 2011-12-02  Stephen Chenney  <schenney@chromium.org>
 
         Divide by zero for zero-length arcs

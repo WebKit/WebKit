@@ -73,25 +73,32 @@ var containerSize = [100, 100];
 var expectations = {
     'horizontal-tb': {
         rtl: [-5, 0],
-        ltr: [0, 0]
+        ltr: [0, 0],
+        'rtl-column-reverse': [-5, -5],
+        'ltr-column-reverse': [0, -5],
     },
     'horizontal-bt': {
         rtl: [-5, -5],
-        ltr: [0, -5]
+        ltr: [0, -5],
+        'rtl-column-reverse': [-5, 0],
+        'ltr-column-reverse': [0, 0],
     },
     'vertical-lr': {
         rtl: [0, -5],
-        ltr: [0, 0]
+        ltr: [0, 0],
+        'rtl-column-reverse': [-5, -5],
+        'ltr-column-reverse': [-5, 0],
     },
     'vertical-rl': {
         rtl: [-5, -5],
-        ltr: [-5, 0]
+        ltr: [-5, 0],
+        'rtl-column-reverse': [0, -5],
+        'ltr-column-reverse': [0, 0],
     }
 }
 
 var writingModes = ['horizontal-tb', 'horizontal-bt', 'vertical-lr', 'vertical-rl'];
-// FIXME: Test column-reverse.
-var flexFlows = ['row', 'column', 'row-reverse'];
+var flexFlows = ['row', 'column', 'row-reverse', 'column-reverse'];
 var directions = ['rtl', 'ltr'];
 
 writingModes.forEach(function(writingMode) {
@@ -109,8 +116,11 @@ writingModes.forEach(function(writingMode) {
             container.setAttribute('data-expected-height', containerSize[1]);
 
             var flowDirection = direction;
-            if (flexFlow.indexOf("-reverse") != -1)
+            // row-reverse is the same as flipping the writing direction.
+            if (flexFlow == "row-reverse")
                 flowDirection = direction == "rtl" ? "ltr" : "rtl";
+            else if (flexFlow == "column-reverse")
+                flowDirection = direction + "-column-reverse";
 
             container.innerHTML = '\n<div class="flexbox ' + flexboxClassName + '" ' + sizeAsString(containerSize) + '>\n' +
                 '<div style="width: -webkit-flex(1 105px); height: -webkit-flex(1 105px);" ' + sizeAsString([105, 105])  + ' ' + positionAsString(expectations[writingMode][flowDirection]) + '></div>\n' +

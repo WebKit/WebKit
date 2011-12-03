@@ -68,9 +68,11 @@ private:
     WritingMode transformedWritingMode() const;
     LayoutUnit flowAwareBorderStart() const;
     LayoutUnit flowAwareBorderBefore() const;
+    LayoutUnit flowAwareBorderEnd() const;
     LayoutUnit crossAxisBorderAndPaddingExtent() const;
     LayoutUnit flowAwarePaddingStart() const;
     LayoutUnit flowAwarePaddingBefore() const;
+    LayoutUnit flowAwarePaddingEnd() const;
     LayoutUnit flowAwareMarginStartForChild(RenderBox* child) const;
     LayoutUnit flowAwareMarginEndForChild(RenderBox* child) const;
     LayoutUnit flowAwareMarginBeforeForChild(RenderBox* child) const;
@@ -96,6 +98,7 @@ private:
     bool runFreeSpaceAllocationAlgorithm(FlexOrderIterator&, LayoutUnit& availableFreeSpace, float& totalPositiveFlexibility, float& totalNegativeFlexibility, InflexibleFlexItemSize&, WTF::Vector<LayoutUnit>& childSizes);
     void setLogicalOverrideSize(RenderBox* child, LayoutUnit childPreferredSize);
     void layoutAndPlaceChildren(FlexOrderIterator&, const WTF::Vector<LayoutUnit>& childSizes, LayoutUnit availableFreeSpace, float totalPositiveFlexibility);
+    void layoutColumnReverse(FlexOrderIterator&, const WTF::Vector<LayoutUnit>& childSizes, LayoutUnit availableFreeSpace, float totalPositiveFlexibility);
     void alignChildren(FlexOrderIterator&, LayoutUnit maxAscent);
 };
 

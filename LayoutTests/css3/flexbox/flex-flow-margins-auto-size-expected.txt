@@ -10,6 +10,10 @@ horizontal-tb rtl row-reverse
 PASS
 horizontal-tb ltr row-reverse
 PASS
+horizontal-tb rtl column-reverse
+PASS
+horizontal-tb ltr column-reverse
+PASS
 horizontal-bt rtl row
 PASS
 horizontal-bt ltr row
@@ -21,6 +25,10 @@ PASS
 horizontal-bt rtl row-reverse
 PASS
 horizontal-bt ltr row-reverse
+PASS
+horizontal-bt rtl column-reverse
+PASS
+horizontal-bt ltr column-reverse
 PASS
 vertical-lr rtl row
 FAIL:
@@ -64,6 +72,20 @@ Expected 90 for width, but got 60.
 <div class="container" data-expected-width="90" data-expected-height="90"><div class="flexbox vertical-lr ltr row-reverse" data-offset-x="40" data-offset-y="10">
 <div style="width: -webkit-flex(1 20px); height: -webkit-flex(1 20px);" data-expected-width="20" data-expected-height="20" data-offset-x="48" data-offset-y="23"></div>
 </div></div>
+vertical-lr rtl column-reverse
+FAIL:
+Expected 90 for width, but got 60. 
+
+<div class="container" data-expected-width="90" data-expected-height="90"><div class="flexbox vertical-lr rtl column-reverse" data-offset-x="40" data-offset-y="10">
+<div style="width: -webkit-flex(1 20px); height: -webkit-flex(1 20px);" data-expected-width="20" data-expected-height="20" data-offset-x="48" data-offset-y="23"></div>
+</div></div>
+vertical-lr ltr column-reverse
+FAIL:
+Expected 90 for width, but got 60. 
+
+<div class="container" data-expected-width="90" data-expected-height="90"><div class="flexbox vertical-lr ltr column-reverse" data-offset-x="40" data-offset-y="10">
+<div style="width: -webkit-flex(1 20px); height: -webkit-flex(1 20px);" data-expected-width="20" data-expected-height="20" data-offset-x="48" data-offset-y="23"></div>
+</div></div>
 vertical-rl rtl row
 FAIL:
 Expected 90 for width, but got 60. 
@@ -104,6 +126,20 @@ FAIL:
 Expected 90 for width, but got 60. 
 
 <div class="container" data-expected-width="90" data-expected-height="90"><div class="flexbox vertical-rl ltr row-reverse" data-offset-x="40" data-offset-y="10">
+<div style="width: -webkit-flex(1 20px); height: -webkit-flex(1 20px);" data-expected-width="20" data-expected-height="20" data-offset-x="48" data-offset-y="23"></div>
+</div></div>
+vertical-rl rtl column-reverse
+FAIL:
+Expected 90 for width, but got 60. 
+
+<div class="container" data-expected-width="90" data-expected-height="90"><div class="flexbox vertical-rl rtl column-reverse" data-offset-x="40" data-offset-y="10">
+<div style="width: -webkit-flex(1 20px); height: -webkit-flex(1 20px);" data-expected-width="20" data-expected-height="20" data-offset-x="48" data-offset-y="23"></div>
+</div></div>
+vertical-rl ltr column-reverse
+FAIL:
+Expected 90 for width, but got 60. 
+
+<div class="container" data-expected-width="90" data-expected-height="90"><div class="flexbox vertical-rl ltr column-reverse" data-offset-x="40" data-offset-y="10">
 <div style="width: -webkit-flex(1 20px); height: -webkit-flex(1 20px);" data-expected-width="20" data-expected-height="20" data-offset-x="48" data-offset-y="23"></div>
 </div></div>
 

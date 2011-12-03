@@ -22,6 +22,14 @@ horizontal-tb ltr row-reverse physical
 PASS
 horizontal-tb ltr row-reverse logical
 PASS
+horizontal-tb rtl row-reverse physical
+PASS
+horizontal-tb rtl row-reverse logical
+PASS
+horizontal-tb ltr row-reverse physical
+PASS
+horizontal-tb ltr row-reverse logical
+PASS
 horizontal-bt rtl row physical
 PASS
 horizontal-bt rtl row logical
@@ -37,6 +45,14 @@ PASS
 horizontal-bt ltr column physical
 PASS
 horizontal-bt ltr column logical
+PASS
+horizontal-bt rtl row-reverse physical
+PASS
+horizontal-bt rtl row-reverse logical
+PASS
+horizontal-bt ltr row-reverse physical
+PASS
+horizontal-bt ltr row-reverse logical
 PASS
 horizontal-bt rtl row-reverse physical
 PASS
@@ -70,6 +86,14 @@ vertical-lr ltr row-reverse physical
 PASS
 vertical-lr ltr row-reverse logical
 PASS
+vertical-lr rtl row-reverse physical
+PASS
+vertical-lr rtl row-reverse logical
+PASS
+vertical-lr ltr row-reverse physical
+PASS
+vertical-lr ltr row-reverse logical
+PASS
 vertical-rl rtl row physical
 PASS
 vertical-rl rtl row logical
@@ -85,6 +109,14 @@ PASS
 vertical-rl ltr column physical
 PASS
 vertical-rl ltr column logical
+PASS
+vertical-rl rtl row-reverse physical
+PASS
+vertical-rl rtl row-reverse logical
+PASS
+vertical-rl ltr row-reverse physical
+PASS
+vertical-rl ltr row-reverse logical
 PASS
 vertical-rl rtl row-reverse physical
 PASS
