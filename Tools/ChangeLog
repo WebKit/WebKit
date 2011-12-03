@@ -1,5 +1,15 @@
 2011-12-03  Martin Robinson  <mrobinson@igalia.com>
 
+        Fix jhbuild installation for people who have unusual MAKE environment
+        variables such as 'make -j4' as the jhbuild build does not handle it.
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * gtk/run-with-jhbuild:
+        (install_and_run_jhbuild): Remove any MAKE environment variable before building jhbuild.
+
+2011-12-03  Martin Robinson  <mrobinson@igalia.com>
+
         Fix the update-webkitgtk-libs script to properly trigger a jhbuild installation
         when run for the first time.
 

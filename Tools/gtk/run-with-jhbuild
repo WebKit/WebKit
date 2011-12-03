@@ -36,12 +36,18 @@ def install_and_run_jhbuild():
         if process.returncode != 0:
             raise Exception('jhbuild git clone failed with return code: %i' % process.returncode)
 
-    process = subprocess.Popen(['./autogen.sh', '--prefix=%s' % installation_prefix], cwd=jhbuild_source_path)
+    # jhbuild is really unhappy about having MAKE defined to something like 'make -j4'
+    # so we just undefine it here.
+    env_without_make = dict(os.environ)
+    del env_without_make['MAKE']
+
+    process = subprocess.Popen(['./autogen.sh', '--prefix=%s' % installation_prefix],
+                               cwd=jhbuild_source_path, env=env_without_make)
     process.wait()
     if process.returncode != 0:
         raise Exception('jhbuild configure failed with return code: %i' % process.returncode)
 
-    process = subprocess.Popen(['make', 'install'], cwd=jhbuild_source_path)
+    process = subprocess.Popen(['make', 'install'], cwd=jhbuild_source_path, env=env_without_make)
     process.wait()
     if process.returncode != 0:
         raise Exception('jhbuild configure failed with return code: %i' % process.returncode)
