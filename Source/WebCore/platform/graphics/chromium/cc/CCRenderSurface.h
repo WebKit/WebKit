@@ -54,7 +54,7 @@ public:
     bool prepareContentsTexture(LayerRendererChromium*);
     void releaseContentsTexture();
     void cleanupResources();
-    void draw(LayerRendererChromium*, const IntRect& targetSurfaceRect);
+    void draw(LayerRendererChromium*, const FloatRect& surfaceDamageRect);
 
     String name() const;
     void dumpSurface(TextStream&, int indent) const;

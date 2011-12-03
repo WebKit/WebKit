@@ -73,14 +73,12 @@ struct CCSettings {
             , compositeOffscreen(false)
             , showFPSCounter(false)
             , showPlatformLayerTree(false)
-            , useDamageTracker(false)
             , refreshRate(0) { }
 
     bool acceleratePainting;
     bool compositeOffscreen;
     bool showFPSCounter;
     bool showPlatformLayerTree;
-    bool useDamageTracker;
     double refreshRate;
 };
 
@@ -89,7 +87,7 @@ struct LayerRendererCapabilities {
     LayerRendererCapabilities()
         : bestTextureFormat(0)
         , contextHasCachedFrontBuffer(false)
-        , usingPostSubBuffer(false)
+        , usingPartialSwap(false)
         , usingMapSub(false)
         , usingAcceleratedPainting(false)
         , usingSetVisibility(false)
@@ -98,7 +96,7 @@ struct LayerRendererCapabilities {
 
     GC3Denum bestTextureFormat;
     bool contextHasCachedFrontBuffer;
-    bool usingPostSubBuffer;
+    bool usingPartialSwap;
     bool usingMapSub;
     bool usingAcceleratedPainting;
     bool usingSetVisibility;

@@ -53,6 +53,7 @@
 #include "TrackingTextureAllocator.h"
 #include "TreeSynchronizer.h"
 #include "WebGLLayerChromium.h"
+#include "cc/CCDamageTracker.h"
 #include "cc/CCLayerImpl.h"
 #include "cc/CCLayerTreeHostCommon.h"
 #include "cc/CCProxy.h"
@@ -105,6 +106,21 @@ static TransformationMatrix screenMatrix(int x, int y, int width, int height)
     screen.scale3d(0.5, 0.5, 0.5);
 
     return screen;
+}
+
+static TransformationMatrix computeScreenSpaceTransformForSurface(CCLayerImpl* renderSurfaceLayer)
+{
+    // The layer's screen space transform can be written as:
+    //   layerScreenSpaceTransform = surfaceScreenSpaceTransform * layerOriginTransform
+    // So, to compute the surface screen space, we can do:
+    //   surfaceScreenSpaceTransform = layerScreenSpaceTransform * inverse(layerOriginTransform)
+
+    TransformationMatrix layerOriginTransform = renderSurfaceLayer->drawTransform();
+    layerOriginTransform.translate(-0.5 * renderSurfaceLayer->bounds().width(), -0.5 * renderSurfaceLayer->bounds().height());
+    TransformationMatrix surfaceScreenSpaceTransform = renderSurfaceLayer->screenSpaceTransform();
+    surfaceScreenSpaceTransform.multiply(layerOriginTransform.inverse());
+
+    return surfaceScreenSpaceTransform;
 }
 
 #if USE(SKIA)
@@ -191,9 +207,12 @@ bool LayerRendererChromium::initialize()
     if (m_capabilities.contextHasCachedFrontBuffer)
         extensions->ensureEnabled("GL_CHROMIUM_front_buffer_cached");
 
-    m_capabilities.usingPostSubBuffer = extensions->supports("GL_CHROMIUM_post_sub_buffer");
-    if (m_capabilities.usingPostSubBuffer)
+    m_capabilities.usingPartialSwap = extensions->supports("GL_CHROMIUM_post_sub_buffer");
+    if (m_capabilities.usingPartialSwap)
         extensions->ensureEnabled("GL_CHROMIUM_post_sub_buffer");
+    // FIXME: eventually we would like to have usingPartialSwap enabled by default,
+    //        whenever it is supported. For now, we force it off.
+    m_capabilities.usingPartialSwap = false;
 
     m_capabilities.usingMapSub = extensions->supports("GL_CHROMIUM_map_sub");
     if (m_capabilities.usingMapSub)
@@ -317,9 +336,29 @@ void LayerRendererChromium::drawLayers()
         copyOffscreenTextureToDisplay();
 }
 
+void LayerRendererChromium::trackDamageForAllSurfaces(CCLayerImpl* rootDrawLayer, const CCLayerList& renderSurfaceLayerList)
+{
+    // For now, we use damage tracking to compute a global scissor. To do this, we must
+    // compute all damage tracking before drawing anything, so that we know the root
+    // damage rect. The root damage rect is then used to scissor each surface.
+
+    ASSERT(m_capabilities.usingPartialSwap);
+
+    for (int surfaceIndex = renderSurfaceLayerList.size() - 1; surfaceIndex >= 0 ; --surfaceIndex) {
+        CCLayerImpl* renderSurfaceLayer = renderSurfaceLayerList[surfaceIndex].get();
+        CCRenderSurface* renderSurface = renderSurfaceLayer->renderSurface();
+        ASSERT(renderSurface);
+        renderSurface->damageTracker()->updateDamageRectForNextFrame(renderSurface->layerList(), renderSurfaceLayer->id(), renderSurfaceLayer->maskLayer());
+    }
+}
+
 void LayerRendererChromium::drawLayersOntoRenderSurfaces(CCLayerImpl* rootDrawLayer, const CCLayerList& renderSurfaceLayerList)
 {
     TRACE_EVENT("LayerRendererChromium::drawLayersOntoRenderSurfaces", this, 0);
+
+    if (m_capabilities.usingPartialSwap)
+        trackDamageForAllSurfaces(rootDrawLayer, renderSurfaceLayerList);
+    m_rootDamageRect = rootDrawLayer->renderSurface()->damageTracker()->currentDamageRect();
 
     // Update the contents of the render surfaces. We traverse the render surfaces
     // from back to front to guarantee that nested render surfaces get rendered in
@@ -332,16 +371,31 @@ void LayerRendererChromium::drawLayersOntoRenderSurfaces(CCLayerImpl* rootDrawLa
 
         if (useRenderSurface(renderSurface)) {
 
+            FloatRect surfaceDamageRect;
+            if (m_capabilities.usingPartialSwap) {
+                // For now, we conservatively use the root damage as the damage for all
+                // surfaces, except perspective transforms.
+                TransformationMatrix screenSpaceTransform = computeScreenSpaceTransformForSurface(renderSurfaceLayer);
+                if (screenSpaceTransform.hasPerspective()) {
+                    // Perspective projections do not play nice with mapRect of inverse transforms.
+                    // In this uncommon case, its simpler to just redraw the entire surface.
+                    surfaceDamageRect = renderSurface->contentRect();
+                } else {
+                    TransformationMatrix inverseScreenSpaceTransform = screenSpaceTransform.inverse();
+                    surfaceDamageRect = inverseScreenSpaceTransform.mapRect(m_rootDamageRect);
+                }
+            }
+
             if (renderSurfaceLayer != rootDrawLayer) {
-                GLC(m_context.get(), m_context->disable(GraphicsContext3D::SCISSOR_TEST));
+                if (m_capabilities.usingPartialSwap)
+                    setScissorToRect(enclosingIntRect(surfaceDamageRect));
                 GLC(m_context.get(), m_context->clearColor(0, 0, 0, 0));
                 GLC(m_context.get(), m_context->clear(GraphicsContext3D::COLOR_BUFFER_BIT));
-                GLC(m_context.get(), m_context->enable(GraphicsContext3D::SCISSOR_TEST));
             }
 
             const CCLayerList& layerList = renderSurface->layerList();
             for (unsigned layerIndex = 0; layerIndex < layerList.size(); ++layerIndex)
-                drawLayer(layerList[layerIndex].get(), renderSurface);
+                drawLayer(layerList[layerIndex].get(), renderSurface, surfaceDamageRect);
         }
     }
 
@@ -392,20 +446,20 @@ void LayerRendererChromium::drawLayersInternal()
     // Bind the common vertex attributes used for drawing all the layers.
     m_sharedGeometry->prepareForDraw();
 
-    GLC(m_context.get(), m_context->disable(GraphicsContext3D::SCISSOR_TEST));
     GLC(m_context.get(), m_context->disable(GraphicsContext3D::DEPTH_TEST));
     GLC(m_context.get(), m_context->disable(GraphicsContext3D::CULL_FACE));
 
     useRenderSurface(m_defaultRenderSurface);
 
     // Clear to blue to make it easier to spot unrendered regions.
+    if (m_capabilities.usingPartialSwap)
+        setScissorToRect(enclosingIntRect(m_rootDamageRect));
     m_context->clearColor(0, 0, 1, 1);
     m_context->colorMask(true, true, true, true);
     m_context->clear(GraphicsContext3D::COLOR_BUFFER_BIT);
 
     GLC(m_context.get(), m_context->enable(GraphicsContext3D::BLEND));
     GLC(m_context.get(), m_context->blendFunc(GraphicsContext3D::ONE, GraphicsContext3D::ONE_MINUS_SRC_ALPHA));
-    GLC(m_context.get(), m_context->enable(GraphicsContext3D::SCISSOR_TEST));
 
     drawLayersOntoRenderSurfaces(rootDrawLayer, renderSurfaceLayerList);
 
@@ -487,9 +541,17 @@ void LayerRendererChromium::swapBuffers()
     TRACE_EVENT("LayerRendererChromium::swapBuffers", this, 0);
     // We're done! Time to swapbuffers!
 
-    // Note that currently this has the same effect as swapBuffers; we should
-    // consider exposing a different entry point on GraphicsContext3D.
-    m_context->prepareTexture();
+    if (m_capabilities.usingPartialSwap) {
+        // If supported, we can save significant bandwidth by only swapping the damaged/scissored region (clamped to the viewport)
+        IntRect subBuffer = enclosingIntRect(m_rootDamageRect);
+        subBuffer.intersect(IntRect(IntPoint::zero(), viewportSize()));
+        Extensions3DChromium* extensions3DChromium = static_cast<Extensions3DChromium*>(m_context->getExtensions());
+        int flippedYPosOfRectBottom = viewportHeight() - subBuffer.y() - subBuffer.height();
+        extensions3DChromium->postSubBufferCHROMIUM(subBuffer.x(), flippedYPosOfRectBottom, subBuffer.width(), subBuffer.height());
+    } else
+        // Note that currently this has the same effect as swapBuffers; we should
+        // consider exposing a different entry point on GraphicsContext3D.
+        m_context->prepareTexture();
 
     m_headsUpDisplay->onSwapBuffers();
 }
@@ -582,10 +644,10 @@ bool LayerRendererChromium::useRenderSurface(CCRenderSurface* renderSurface)
     return true;
 }
 
-void LayerRendererChromium::drawLayer(CCLayerImpl* layer, CCRenderSurface* targetSurface)
+void LayerRendererChromium::drawLayer(CCLayerImpl* layer, CCRenderSurface* targetSurface, const FloatRect& surfaceDamageRect)
 {
     if (CCLayerTreeHostCommon::renderSurfaceContributesToTarget<CCLayerImpl>(layer, targetSurface->owningLayerId())) {
-        layer->renderSurface()->draw(this, layer->getDrawRect());
+        layer->renderSurface()->draw(this, surfaceDamageRect);
         layer->renderSurface()->releaseContentsTexture();
         return;
     }
@@ -593,7 +655,13 @@ void LayerRendererChromium::drawLayer(CCLayerImpl* layer, CCRenderSurface* targe
     if (layer->visibleLayerRect().isEmpty())
         return;
 
-    if (layer->usesLayerClipping())
+    if (layer->usesLayerClipping() && m_capabilities.usingPartialSwap) {
+        FloatRect clipAndDamageRect(layer->clipRect());
+        clipAndDamageRect.intersect(surfaceDamageRect);
+        setScissorToRect(enclosingIntRect(clipAndDamageRect));
+    } else if (m_capabilities.usingPartialSwap)
+        setScissorToRect(enclosingIntRect(surfaceDamageRect));
+    else if (layer->usesLayerClipping())
         setScissorToRect(layer->clipRect());
     else
         GLC(m_context.get(), m_context->disable(GraphicsContext3D::SCISSOR_TEST));

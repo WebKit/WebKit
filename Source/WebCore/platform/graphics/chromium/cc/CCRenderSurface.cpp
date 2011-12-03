@@ -101,7 +101,7 @@ void CCRenderSurface::releaseContentsTexture()
     m_contentsTexture->unreserve();
 }
 
-void CCRenderSurface::draw(LayerRendererChromium* layerRenderer, const IntRect&)
+void CCRenderSurface::draw(LayerRendererChromium* layerRenderer, const FloatRect& surfaceDamageRect)
 {
     if (m_skipsDraw || !m_contentsTexture)
         return;
@@ -115,7 +115,13 @@ void CCRenderSurface::draw(LayerRendererChromium* layerRenderer, const IntRect&)
     if (!m_maskLayer && m_owningLayer->replicaLayer())
         replicaMaskLayer = m_owningLayer->replicaLayer()->maskLayer();
 
-    if (m_owningLayer->parent() && m_owningLayer->parent()->usesLayerClipping())
+    if (m_owningLayer->parent() && m_owningLayer->parent()->usesLayerClipping() && layerRenderer->capabilities().usingPartialSwap) {
+        FloatRect clipAndDamageRect = m_clipRect;
+        clipAndDamageRect.intersect(surfaceDamageRect);
+        layerRenderer->setScissorToRect(enclosingIntRect(clipAndDamageRect));
+    } else if (layerRenderer->capabilities().usingPartialSwap)
+        layerRenderer->setScissorToRect(enclosingIntRect(surfaceDamageRect));
+    else if (m_owningLayer->parent() && m_owningLayer->parent()->usesLayerClipping())
         layerRenderer->setScissorToRect(m_clipRect);
     else
         GLC(layerRenderer->context(), layerRenderer->context()->disable(GraphicsContext3D::SCISSOR_TEST));

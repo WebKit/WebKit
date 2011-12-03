@@ -165,7 +165,9 @@ private:
 
     void drawLayersInternal();
     void drawLayersOntoRenderSurfaces(CCLayerImpl* rootDrawLayer, const CCLayerList& renderSurfaceLayerList);
-    void drawLayer(CCLayerImpl*, CCRenderSurface*);
+    void drawLayer(CCLayerImpl*, CCRenderSurface*, const FloatRect&);
+
+    void trackDamageForAllSurfaces(CCLayerImpl* rootDrawLayer, const CCLayerList& renderSurfaceLayerList);
 
     ManagedTexture* getOffscreenLayerTexture();
     void copyOffscreenTextureToDisplay();
@@ -243,6 +245,8 @@ private:
     FloatQuad m_sharedGeometryQuad;
 
     bool m_isViewportChanged;
+
+    FloatRect m_rootDamageRect;
 };
 
 // Setting DEBUG_GL_CALLS to 1 will call glGetError() after almost every GL

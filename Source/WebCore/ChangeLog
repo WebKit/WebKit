@@ -1,3 +1,30 @@
+2011-12-02  Shawn Singh  <shawnsingh@chromium.org>
+
+        [chromium] Scissor rect optimization for chromium compositor
+        https://bugs.webkit.org/show_bug.cgi?id=67341
+
+        Reviewed by James Robinson.
+
+        Mostly covered by damage tracker tests. Currently this relies on
+        manually running layout tests, because this patch requires partial
+        swaps that are not supported by DumpRenderTree. The feature
+        automatically disables if partial swap is not supported.
+
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::initialize):
+        (WebCore::LayerRendererChromium::trackDamageForAllSurfaces):
+        (WebCore::LayerRendererChromium::drawLayersOntoRenderSurfaces):
+        (WebCore::LayerRendererChromium::drawLayersInternal):
+        (WebCore::LayerRendererChromium::swapBuffers):
+        (WebCore::LayerRendererChromium::drawLayer):
+        * platform/graphics/chromium/LayerRendererChromium.h:
+        * platform/graphics/chromium/cc/CCLayerTreeHost.h:
+        (WebCore::CCSettings::CCSettings):
+        (WebCore::LayerRendererCapabilities::LayerRendererCapabilities):
+        * platform/graphics/chromium/cc/CCRenderSurface.cpp:
+        (WebCore::CCRenderSurface::draw):
+        * platform/graphics/chromium/cc/CCRenderSurface.h:
+
 2011-12-02  Dmitry Lomov  <dslomov@google.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=73691
