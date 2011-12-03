@@ -248,9 +248,18 @@ bool SVGPathParser::parseArcToSegment()
 
     // If rx = 0 or ry = 0 then this arc is treated as a straight line segment (a "lineto") joining the endpoints.
     // http://www.w3.org/TR/SVG/implnote.html#ArcOutOfRangeParameters
+    // If the current point and target point for the arc are identical, it should be treated as a zero length
+    // path. This ensures continuity in animations.
     rx = fabsf(rx);
     ry = fabsf(ry);
-    if (!rx || !ry) {
+    bool arcIsZeroLength = false;
+    if (m_pathParsingMode == NormalizedParsing) {
+        if (m_mode == RelativeCoordinates)
+            arcIsZeroLength = targetPoint == FloatPoint::zero();
+        else
+            arcIsZeroLength = targetPoint == m_currentPoint;
+    }
+    if (!rx || !ry || arcIsZeroLength) {
         if (m_pathParsingMode == NormalizedParsing) {
             if (m_mode == RelativeCoordinates)
                 m_currentPoint += targetPoint;

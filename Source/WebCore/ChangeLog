@@ -1,3 +1,21 @@
+2011-12-02  Stephen Chenney  <schenney@chromium.org>
+
+        Divide by zero for zero-length arcs
+        https://bugs.webkit.org/show_bug.cgi?id=73021
+
+        Reviewed by Nikolas Zimmermann.
+
+        A zero-length path produces divide by zero, resulting in nothing being
+        drawn. This change modifies the behavior to produce a zero-length line
+        which will generate correct linecaps.
+
+        Test: svg/stroke/zero-length-arc-linecaps-rendering.svg
+
+        * svg/SVGPathParser.cpp:
+        (WebCore::SVGPathParser::parseArcToSegment): Catch the case of
+        zero-length arcs and convert them to lines (the same as would happen
+        for zero arc radii).
+
 2011-12-02  James Wei <james.wei@intel.com> & Xingnan Wang <xingnan.wang@intel.com>
 
         -Implement the SSE optimization for vsmul and vadd.
