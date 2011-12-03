@@ -2201,7 +2201,7 @@ BUGCR53546 WONTFIX LINUX : userscripts/user-script-video-document.html = TEXT
 
 // These tests are consistently failing on Linux, and the latter test is flaky on Win.
 BUGCR53554 : svg/W3C-SVG-1.1/fonts-elem-07-b.svg = IMAGE+TEXT IMAGE PASS
-BUGCR53554 : svg/W3C-SVG-1.1/fonts-elem-04-b.svg = TEXT PASS
+BUGCR53554 : svg/W3C-SVG-1.1/fonts-elem-04-b.svg = IMAGE+TEXT IMAGE TEXT PASS
 BUGCR53554 WIN : svg/custom/svg-fonts-without-missing-glyph.xhtml = PASS IMAGE
 BUGCR53554 LINUX : svg/custom/svg-fonts-without-missing-glyph.xhtml = IMAGE+TEXT IMAGE
 
