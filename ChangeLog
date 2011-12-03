@@ -1,3 +1,13 @@
+2011-12-03  Dan Winship  <danw@gnome.org>
+
+        [GTK] Update required libsoup version
+        https://bugs.webkit.org/show_bug.cgi?id=71611
+
+        Reviewed by Martin Robinson.
+
+        * configure.ac: require libsoup 2.37.2.1 for SoupRequestHTTP API
+        changes
+
 2011-12-02  Fady Samuel  <fsamuel@chromium.org>
 
         When page scaling is in use position:fixed has incorrect results

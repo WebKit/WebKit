@@ -73,13 +73,14 @@ void ResourceResponse::updateFromSoupMessage(SoupMessage* soupMessage)
     m_soupFlags = soup_message_get_flags(soupMessage);
 
     String contentType;
-    if (sniffedContentType().isEmpty())
-        contentType = soup_message_headers_get_one(soupMessage->response_headers, "Content-Type");
+    const char* officialType = soup_message_headers_get_one(soupMessage->response_headers, "Content-Type");
+    if (!m_sniffedContentType.isEmpty() && m_sniffedContentType != officialType)
+        contentType = m_sniffedContentType;
     else
-        contentType = this->sniffedContentType();
+        contentType = officialType;
     setMimeType(extractMIMETypeFromMediaType(contentType));
-
     setTextEncodingName(extractCharsetFromMediaType(contentType));
+
     setExpectedContentLength(soup_message_headers_get_content_length(soupMessage->response_headers));
     setHTTPStatusText(soupMessage->reason_phrase);
     setSuggestedFilename(filenameFromHTTPContentDisposition(httpHeaderField("Content-Disposition")));

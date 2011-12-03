@@ -109,12 +109,9 @@ namespace WebCore {
 #endif
 #if USE(SOUP)
             , m_cancelled(false)
-            , m_finished(false)
-            , m_finishedHandler(0)
             , m_buffer(0)
             , m_bodySize(0)
             , m_bodyDataSent(0)
-            , m_gotChunkHandler(0)
 #endif
 #if PLATFORM(QT)
             , m_job(0)
@@ -189,8 +186,6 @@ namespace WebCore {
         GRefPtr<SoupMessage> m_soupMessage;
         ResourceResponse m_response;
         bool m_cancelled;
-        bool m_finished;
-        gulong m_finishedHandler;
         GRefPtr<SoupRequest> m_soupRequest;
         GRefPtr<GInputStream> m_inputStream;
         GRefPtr<GCancellable> m_cancellable;
@@ -199,7 +194,6 @@ namespace WebCore {
         unsigned long m_bodySize;
         unsigned long m_bodyDataSent;
         RefPtr<NetworkingContext> m_context;
-        gulong m_gotChunkHandler;
 #endif
 #if PLATFORM(QT)
         QNetworkReplyHandler* m_job;
