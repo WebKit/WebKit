@@ -706,7 +706,7 @@ static JSValue handlePostMessage(DOMWindow* impl, ExecState* exec, bool doTransf
 {
     MessagePortArray messagePorts;
     if (exec->argumentCount() > 2)
-        fillMessagePortArray(exec, exec->argument(2), messagePorts);
+        fillMessagePortArray(exec, exec->argument(1), messagePorts);
     if (exec->hadException())
         return jsUndefined();
 
@@ -716,7 +716,7 @@ static JSValue handlePostMessage(DOMWindow* impl, ExecState* exec, bool doTransf
     if (exec->hadException())
         return jsUndefined();
 
-    String targetOrigin = valueToStringWithUndefinedOrNullCheck(exec, exec->argument(1));
+    String targetOrigin = valueToStringWithUndefinedOrNullCheck(exec, exec->argument((exec->argumentCount() == 2) ? 1 : 2));
     if (exec->hadException())
         return jsUndefined();
 
