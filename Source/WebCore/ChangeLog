@@ -1,3 +1,24 @@
+2011-12-04  Ryosuke Niwa  <rniwa@webkit.org>
+
+        HIERARCHY_REQUEST_ERR check in checkAcceptChild should be optimized for newChild without children
+        https://bugs.webkit.org/show_bug.cgi?id=73737
+
+        Reviewed by Darin Adler.
+
+        It turned out that 50-70% of nodes inserted by DOM APIs such as insertBefore and appendChild
+        don't have any descendent nodes. Optimize isDescendantOf which is used by checkAcceptChild for this case.
+        On a test case attached on the bug, we see a 40% improvement.
+
+        Also optimize for cases where either new child or new parent but not both are in document as suggested
+        by Erik Arvidsson. This appears to happen about 40-70% of the time, and the symmetric difference between
+        the two cases is about 50% so it's worth implementing both optimizations.
+
+        Unfortunately no tests because we still have a O(n) algorithm somewhere.
+
+        * dom/Node.cpp:
+        (WebCore::Node::isDescendantOf):
+        (WebCore::Node::contains):
+
 2011-12-04  Andreas Kling  <kling@webkit.org>
 
         CSSValuePool: Inline trivial getters.

@@ -1348,8 +1348,10 @@ void Node::checkAddChild(Node *newChild, ExceptionCode& ec)
 bool Node::isDescendantOf(const Node *other) const
 {
     // Return true if other is an ancestor of this, otherwise false
-    if (!other)
+    if (!other || !other->firstChild() || inDocument() != other->inDocument())
         return false;
+    if (other == other->document())
+        return document() == other && this != document() && inDocument();
     for (const ContainerNode* n = parentNode(); n; n = n->parentNode()) {
         if (n == other)
             return true;
@@ -1361,8 +1363,6 @@ bool Node::contains(const Node* node) const
 {
     if (!node)
         return false;
-    if (document() == this)
-        return node->document() == this && node->inDocument();
     return this == node || node->isDescendantOf(this);
 }
 
