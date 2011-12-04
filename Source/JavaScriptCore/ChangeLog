@@ -1,3 +1,26 @@
+2011-12-04  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG should optimize strict equality
+        https://bugs.webkit.org/show_bug.cgi?id=73764
+
+        Reviewed by Oliver Hunt.
+        
+        1% speed-up on V8.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compare):
+        (JSC::DFG::SpeculativeJIT::compileStrictEqForConstant):
+        (JSC::DFG::SpeculativeJIT::compileStrictEq):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compileIntegerCompare):
+        (JSC::DFG::SpeculativeJIT::compileDoubleCompare):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compileIntegerCompare):
+        (JSC::DFG::SpeculativeJIT::compileDoubleCompare):
+        (JSC::DFG::SpeculativeJIT::compile):
+
 2011-12-03  Darin Adler  <darin@apple.com>
 
         Use HashMap<OwnPtr> for ScriptSampleRecordMap

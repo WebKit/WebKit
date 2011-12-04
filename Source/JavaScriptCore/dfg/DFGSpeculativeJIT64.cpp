@@ -1775,41 +1775,31 @@ void SpeculativeJIT::compileObjectEquality(Node& node, void* vptr, PredictionChe
     jsValueResult(resultGPR, m_compileIndex, DataFormatJSBoolean);
 }
 
-// Returns true if the compare is fused with a subsequent branch.
-bool SpeculativeJIT::compare(Node& node, MacroAssembler::RelationalCondition condition, MacroAssembler::DoubleCondition doubleCondition, S_DFGOperation_EJJ operation)
+void SpeculativeJIT::compileIntegerCompare(Node& node, MacroAssembler::RelationalCondition condition)
 {
-    if (compilePeepHoleBranch(node, condition, doubleCondition, operation))
-        return true;
-
-    if (Node::shouldSpeculateInteger(at(node.child1()), at(node.child2()))) {
-        SpeculateIntegerOperand op1(this, node.child1());
-        SpeculateIntegerOperand op2(this, node.child2());
-        GPRTemporary result(this, op1, op2);
-        
-        m_jit.compare32(condition, op1.gpr(), op2.gpr(), result.gpr());
-        
-        // If we add a DataFormatBool, we should use it here.
-        m_jit.or32(TrustedImm32(ValueFalse), result.gpr());
-        jsValueResult(result.gpr(), m_compileIndex, DataFormatJSBoolean);
-    } else if (Node::shouldSpeculateNumber(at(node.child1()), at(node.child2()))) {
-        SpeculateDoubleOperand op1(this, node.child1());
-        SpeculateDoubleOperand op2(this, node.child2());
-        GPRTemporary result(this);
-        
-        m_jit.move(TrustedImm32(ValueTrue), result.gpr());
-        MacroAssembler::Jump trueCase = m_jit.branchDouble(doubleCondition, op1.fpr(), op2.fpr());
-        m_jit.xorPtr(Imm32(true), result.gpr());
-        trueCase.link(&m_jit);
-
-        jsValueResult(result.gpr(), m_compileIndex, DataFormatJSBoolean);
-    } else if (node.op == CompareEq && Node::shouldSpeculateFinalObject(at(node.child1()), at(node.child2())))
-        compileObjectEquality(node, m_jit.globalData()->jsFinalObjectVPtr, isFinalObjectPrediction);
-    else if (node.op == CompareEq && Node::shouldSpeculateArray(at(node.child1()), at(node.child2())))
-        compileObjectEquality(node, m_jit.globalData()->jsArrayVPtr, isArrayPrediction);
-    else
-        nonSpeculativeNonPeepholeCompare(node, condition, operation);
+    SpeculateIntegerOperand op1(this, node.child1());
+    SpeculateIntegerOperand op2(this, node.child2());
+    GPRTemporary result(this, op1, op2);
     
-    return false;
+    m_jit.compare32(condition, op1.gpr(), op2.gpr(), result.gpr());
+    
+    // If we add a DataFormatBool, we should use it here.
+    m_jit.or32(TrustedImm32(ValueFalse), result.gpr());
+    jsValueResult(result.gpr(), m_compileIndex, DataFormatJSBoolean);
+}
+
+void SpeculativeJIT::compileDoubleCompare(Node& node, MacroAssembler::DoubleCondition condition)
+{
+    SpeculateDoubleOperand op1(this, node.child1());
+    SpeculateDoubleOperand op2(this, node.child2());
+    GPRTemporary result(this);
+    
+    m_jit.move(TrustedImm32(ValueTrue), result.gpr());
+    MacroAssembler::Jump trueCase = m_jit.branchDouble(condition, op1.fpr(), op2.fpr());
+    m_jit.xorPtr(Imm32(true), result.gpr());
+    trueCase.link(&m_jit);
+    
+    jsValueResult(result.gpr(), m_compileIndex, DataFormatJSBoolean);
 }
 
 void SpeculativeJIT::compileValueAdd(Node& node)
@@ -2598,7 +2588,7 @@ void SpeculativeJIT::compile(Node& node)
         break;
 
     case CompareStrictEq:
-        if (nonSpeculativeStrictEq(node))
+        if (compileStrictEq(node))
             return;
         break;
 

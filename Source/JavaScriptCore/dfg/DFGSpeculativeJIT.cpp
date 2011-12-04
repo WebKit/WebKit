@@ -2189,6 +2189,179 @@ void SpeculativeJIT::compileArithMod(Node& node)
     doubleResult(result.fpr(), m_compileIndex);
 }
 
+// Returns true if the compare is fused with a subsequent branch.
+bool SpeculativeJIT::compare(Node& node, MacroAssembler::RelationalCondition condition, MacroAssembler::DoubleCondition doubleCondition, S_DFGOperation_EJJ operation)
+{
+    if (compilePeepHoleBranch(node, condition, doubleCondition, operation))
+        return true;
+
+    if (Node::shouldSpeculateInteger(at(node.child1()), at(node.child2())))
+        compileIntegerCompare(node, condition);
+    else if (Node::shouldSpeculateNumber(at(node.child1()), at(node.child2())))
+        compileDoubleCompare(node, doubleCondition);
+    else if (node.op == CompareEq && Node::shouldSpeculateFinalObject(at(node.child1()), at(node.child2())))
+        compileObjectEquality(node, m_jit.globalData()->jsFinalObjectVPtr, isFinalObjectPrediction);
+    else if (node.op == CompareEq && Node::shouldSpeculateArray(at(node.child1()), at(node.child2())))
+        compileObjectEquality(node, m_jit.globalData()->jsArrayVPtr, isArrayPrediction);
+    else
+        nonSpeculativeNonPeepholeCompare(node, condition, operation);
+    
+    return false;
+}
+
+bool SpeculativeJIT::compileStrictEqForConstant(Node& node, NodeIndex value, JSValue constant)
+{
+    JSValueOperand op1(this, value);
+    
+    NodeIndex branchNodeIndex = detectPeepHoleBranch();
+    if (branchNodeIndex != NoNode) {
+        Node& branchNode = at(branchNodeIndex);
+        BlockIndex taken = branchNode.takenBlockIndex();
+        BlockIndex notTaken = branchNode.notTakenBlockIndex();
+        MacroAssembler::RelationalCondition condition = MacroAssembler::Equal;
+        
+        // The branch instruction will branch to the taken block.
+        // If taken is next, switch taken with notTaken & invert the branch condition so we can fall through.
+        if (taken == (m_block + 1)) {
+            condition = MacroAssembler::NotEqual;
+            BlockIndex tmp = taken;
+            taken = notTaken;
+            notTaken = tmp;
+        }
+
+#if USE(JSVALUE64)
+        addBranch(m_jit.branchPtr(condition, op1.gpr(), MacroAssembler::TrustedImmPtr(bitwise_cast<void*>(JSValue::encode(constant)))), taken);
+#else
+        GPRReg payloadGPR = op1.payloadGPR();
+        GPRReg tagGPR = op1.tagGPR();
+        if (condition == MacroAssembler::Equal) {
+            // Drop down if not equal, go elsewhere if equal.
+            MacroAssembler::Jump notEqual = m_jit.branch32(MacroAssembler::NotEqual, tagGPR, MacroAssembler::Imm32(constant.tag()));
+            addBranch(m_jit.branch32(MacroAssembler::Equal, payloadGPR, MacroAssembler::Imm32(constant.payload())), taken);
+            notEqual.link(&m_jit);
+        } else {
+            // Drop down if equal, go elsehwere if not equal.
+            addBranch(m_jit.branch32(MacroAssembler::NotEqual, tagGPR, MacroAssembler::Imm32(constant.tag())), taken);
+            addBranch(m_jit.branch32(MacroAssembler::NotEqual, payloadGPR, MacroAssembler::Imm32(constant.payload())), taken);
+        }
+#endif
+        
+        if (notTaken != (m_block + 1))
+            addBranch(m_jit.jump(), notTaken);
+        
+        use(node.child1());
+        use(node.child2());
+        m_compileIndex = branchNodeIndex;
+        return true;
+    }
+    
+    GPRTemporary result(this);
+    
+#if USE(JSVALUE64)
+    GPRReg op1GPR = op1.gpr();
+    GPRReg resultGPR = result.gpr();
+    m_jit.move(MacroAssembler::TrustedImmPtr(bitwise_cast<void*>(ValueFalse)), resultGPR);
+    MacroAssembler::Jump notEqual = m_jit.branchPtr(MacroAssembler::NotEqual, op1GPR, MacroAssembler::TrustedImmPtr(bitwise_cast<void*>(JSValue::encode(constant))));
+    m_jit.or32(MacroAssembler::Imm32(1), resultGPR);
+    notEqual.link(&m_jit);
+    jsValueResult(resultGPR, m_compileIndex, DataFormatJSBoolean);
+#else
+    GPRReg op1PayloadGPR = op1.payloadGPR();
+    GPRReg op1TagGPR = op1.tagGPR();
+    GPRReg resultGPR = result.gpr();
+    m_jit.move(Imm32(0), resultGPR);
+    MacroAssembler::JumpList notEqual;
+    notEqual.append(m_jit.branch32(MacroAssembler::NotEqual, op1TagGPR, MacroAssembler::Imm32(constant.tag())));
+    notEqual.append(m_jit.branch32(MacroAssembler::NotEqual, op1PayloadGPR, MacroAssembler::Imm32(constant.payload())));
+    m_jit.move(Imm32(1), resultGPR);
+    notEqual.link(&m_jit);
+    booleanResult(resultGPR, m_compileIndex);
+#endif
+    
+    return false;
+}
+
+bool SpeculativeJIT::compileStrictEq(Node& node)
+{
+    // 1) If either operand is a constant and that constant is not a double, integer,
+    //    or string, then do a JSValue comparison.
+    
+    if (isJSConstant(node.child1())) {
+        JSValue value = valueOfJSConstant(node.child1());
+        if (!value.isNumber() && !value.isString())
+            return compileStrictEqForConstant(node, node.child2(), value);
+    }
+    
+    if (isJSConstant(node.child2())) {
+        JSValue value = valueOfJSConstant(node.child2());
+        if (!value.isNumber() && !value.isString())
+            return compileStrictEqForConstant(node, node.child1(), value);
+    }
+    
+    // 2) If the operands are predicted integer, do an integer comparison.
+    
+    if (Node::shouldSpeculateInteger(at(node.child1()), at(node.child2()))) {
+        NodeIndex branchNodeIndex = detectPeepHoleBranch();
+        if (branchNodeIndex != NoNode) {
+            compilePeepHoleIntegerBranch(node, branchNodeIndex, MacroAssembler::Equal);
+            use(node.child1());
+            use(node.child2());
+            m_compileIndex = branchNodeIndex;
+            return true;
+        }
+        compileIntegerCompare(node, MacroAssembler::Equal);
+        return false;
+    }
+    
+    // 3) If the operands are predicted double, do a double comparison.
+    
+    if (Node::shouldSpeculateNumber(at(node.child1()), at(node.child2()))) {
+        NodeIndex branchNodeIndex = detectPeepHoleBranch();
+        if (branchNodeIndex != NoNode) {
+            compilePeepHoleDoubleBranch(node, branchNodeIndex, MacroAssembler::DoubleEqual);
+            use(node.child1());
+            use(node.child2());
+            m_compileIndex = branchNodeIndex;
+            return true;
+        }
+        compileDoubleCompare(node, MacroAssembler::DoubleEqual);
+        return false;
+    }
+    
+    // 4) If the operands are predicted final object or array, then do a final object
+    //    or array comparison.
+    
+    if (Node::shouldSpeculateFinalObject(at(node.child1()), at(node.child2()))) {
+        NodeIndex branchNodeIndex = detectPeepHoleBranch();
+        if (branchNodeIndex != NoNode) {
+            compilePeepHoleObjectEquality(node, branchNodeIndex, m_jit.globalData()->jsFinalObjectVPtr, isFinalObjectPrediction);
+            use(node.child1());
+            use(node.child2());
+            m_compileIndex = branchNodeIndex;
+            return true;
+        }
+        compileObjectEquality(node, m_jit.globalData()->jsFinalObjectVPtr, isFinalObjectPrediction);
+        return false;
+    }
+    
+    if (Node::shouldSpeculateArray(at(node.child1()), at(node.child2()))) {
+        NodeIndex branchNodeIndex = detectPeepHoleBranch();
+        if (branchNodeIndex != NoNode) {
+            compilePeepHoleObjectEquality(node, branchNodeIndex, m_jit.globalData()->jsArrayVPtr, isArrayPrediction);
+            use(node.child1());
+            use(node.child2());
+            m_compileIndex = branchNodeIndex;
+            return true;
+        }
+        compileObjectEquality(node, m_jit.globalData()->jsArrayVPtr, isArrayPrediction);
+        return false;
+    }
+    
+    // 5) Fall back to non-speculative strict equality.
+    
+    return nonSpeculativeStrictEq(node);
+}
+
 } } // namespace JSC::DFG
 
 #endif

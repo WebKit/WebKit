@@ -1942,6 +1942,13 @@ private:
     void emitObjectOrOtherBranch(NodeIndex value, BlockIndex taken, BlockIndex notTaken, void *vptr, bool needSpeculationCheck);
     void emitBranch(Node&);
     
+    void compileIntegerCompare(Node&, MacroAssembler::RelationalCondition);
+    void compileDoubleCompare(Node&, MacroAssembler::DoubleCondition);
+    
+    bool compileStrictEqForConstant(Node&, NodeIndex value, JSValue constant);
+    
+    bool compileStrictEq(Node&);
+    
     void compileGetCharCodeAt(Node&);
     void compileGetByValOnString(Node&);
     void compileValueToInt32(Node&);

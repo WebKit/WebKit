@@ -1750,43 +1750,30 @@ void SpeculativeJIT::compileObjectEquality(Node& node, void* vptr, PredictionChe
     booleanResult(resultPayloadGPR, m_compileIndex);
 }
 
-// Returns true if the compare is fused with a subsequent branch.
-bool SpeculativeJIT::compare(Node& node, MacroAssembler::RelationalCondition condition, MacroAssembler::DoubleCondition doubleCondition, S_DFGOperation_EJJ operation)
+void SpeculativeJIT::compileIntegerCompare(Node& node, MacroAssembler::RelationalCondition condition)
 {
-    if (compilePeepHoleBranch(node, condition, doubleCondition, operation))
-        return true;
-
-    if (Node::shouldSpeculateFinalObject(at(node.child1()), at(node.child2())))
-        compileObjectEquality(node, m_jit.globalData()->jsFinalObjectVPtr, isFinalObjectPrediction);
-    else if (Node::shouldSpeculateArray(at(node.child1()), at(node.child2())))
-        compileObjectEquality(node, m_jit.globalData()->jsArrayVPtr, isArrayPrediction);
-    else if (!at(node.child1()).shouldSpeculateNumber() && !at(node.child2()).shouldSpeculateNumber())
-        nonSpeculativeNonPeepholeCompare(node, condition, operation);
-    else if ((at(node.child1()).shouldSpeculateNumber() || at(node.child2()).shouldSpeculateNumber()) && !Node::shouldSpeculateInteger(at(node.child1()), at(node.child2()))) {
-        // Normal case, not fused to branch.
-        SpeculateDoubleOperand op1(this, node.child1());
-        SpeculateDoubleOperand op2(this, node.child2());
-        GPRTemporary resultPayload(this);
-        
-        m_jit.move(Imm32(1), resultPayload.gpr());
-        MacroAssembler::Jump trueCase = m_jit.branchDouble(doubleCondition, op1.fpr(), op2.fpr());
-        m_jit.move(Imm32(0), resultPayload.gpr());
-        trueCase.link(&m_jit);
-
-        booleanResult(resultPayload.gpr(), m_compileIndex);
-    } else {
-        // Normal case, not fused to branch.
-        SpeculateIntegerOperand op1(this, node.child1());
-        SpeculateIntegerOperand op2(this, node.child2());
-        GPRTemporary resultPayload(this);
-        
-        m_jit.compare32(condition, op1.gpr(), op2.gpr(), resultPayload.gpr());
-        
-        // If we add a DataFormatBool, we should use it here.
-        booleanResult(resultPayload.gpr(), m_compileIndex);
-    }
+    SpeculateIntegerOperand op1(this, node.child1());
+    SpeculateIntegerOperand op2(this, node.child2());
+    GPRTemporary resultPayload(this);
     
-    return false;
+    m_jit.compare32(condition, op1.gpr(), op2.gpr(), resultPayload.gpr());
+    
+    // If we add a DataFormatBool, we should use it here.
+    booleanResult(resultPayload.gpr(), m_compileIndex);
+}
+
+void SpeculativeJIT::compileDoubleCompare(Node& node, MacroAssembler::DoubleCondition condition)
+{
+    SpeculateDoubleOperand op1(this, node.child1());
+    SpeculateDoubleOperand op2(this, node.child2());
+    GPRTemporary resultPayload(this);
+    
+    m_jit.move(Imm32(1), resultPayload.gpr());
+    MacroAssembler::Jump trueCase = m_jit.branchDouble(condition, op1.fpr(), op2.fpr());
+    m_jit.move(Imm32(0), resultPayload.gpr());
+    trueCase.link(&m_jit);
+    
+    booleanResult(resultPayload.gpr(), m_compileIndex);
 }
 
 void SpeculativeJIT::compileValueAdd(Node& node)
@@ -2593,7 +2580,7 @@ void SpeculativeJIT::compile(Node& node)
         break;
 
     case CompareStrictEq:
-        if (nonSpeculativeStrictEq(node))
+        if (compileStrictEq(node))
             return;
         break;
 
