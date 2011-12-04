@@ -487,6 +487,60 @@ static void testWebkitAtkComboBox()
     g_object_unref(webView);
 }
 
+static gchar* loadingEventsResult = 0;
+
+static void updateLoadingEventsResult(const gchar* signalName)
+{
+    g_assert(signalName);
+
+    gchar* previousResult = loadingEventsResult;
+    loadingEventsResult = g_strdup_printf("%s|%s", previousResult, signalName);
+    g_free(previousResult);
+}
+
+static gboolean documentLoadingEventCallback(GSignalInvocationHint *signalHint, guint numParamValues, const GValue *paramValues, gpointer data)
+{
+    // At least we should receive the instance emitting the signal.
+    if (numParamValues < 1)
+        return TRUE;
+
+    GSignalQuery signal_query;
+    g_signal_query(signalHint->signal_id, &signal_query);
+
+    updateLoadingEventsResult(signal_query.signal_name);
+    return TRUE;
+}
+
+static void testWebkitAtkDocumentLoadingEvents()
+{
+    WebKitWebView* webView = WEBKIT_WEB_VIEW(webkit_web_view_new());
+    g_object_ref_sink(webView);
+    GtkAllocation allocation = { 0, 0, 800, 600 };
+    gtk_widget_size_allocate(GTK_WIDGET(webView), &allocation);
+    webkit_web_view_load_string(webView, contents, 0, 0, 0);
+
+    /* Trigger the creation of the full accessibility hierarchy by
+       asking for the webArea object, so we can listen to events. */
+    getWebAreaObject(webView);
+
+    /* Connect globally to see those events during a reload, since the
+       document after that will be different than what we have now. */
+    guint loadCompleteListenerId = atk_add_global_event_listener(documentLoadingEventCallback, "ATK:AtkDocument:load-complete");
+    guint reloadListenerId = atk_add_global_event_listener(documentLoadingEventCallback, "ATK:AtkDocument:reload");
+
+    /* Reload, so we can see those load events happening. */
+    loadingEventsResult = g_strdup("");
+    webkit_web_view_reload(webView);
+
+    atk_remove_global_event_listener(loadCompleteListenerId);
+    atk_remove_global_event_listener(reloadListenerId);
+
+    g_assert_cmpstr(loadingEventsResult, ==, "|reload|load-complete");
+
+    g_free(loadingEventsResult);
+    g_object_unref(webView);
+}
+
 static void testWebkitAtkEmbeddedObjects()
 {
     WebKitWebView* webView = WEBKIT_WEB_VIEW(webkit_web_view_new());
@@ -1719,6 +1773,7 @@ int main(int argc, char** argv)
     g_test_add_func("/webkit/atk/caretOffsets", testWebkitAtkCaretOffsets);
     g_test_add_func("/webkit/atk/caretOffsetsAndExtranousWhiteSpaces", testWebkitAtkCaretOffsetsAndExtranousWhiteSpaces);
     g_test_add_func("/webkit/atk/comboBox", testWebkitAtkComboBox);
+    g_test_add_func("/webkit/atk/documentLoadingEvents", testWebkitAtkDocumentLoadingEvents);
     g_test_add_func("/webkit/atk/embeddedObjects", testWebkitAtkEmbeddedObjects);
     g_test_add_func("/webkit/atk/getTextAtOffset", testWebkitAtkGetTextAtOffset);
     g_test_add_func("/webkit/atk/getTextAtOffsetForms", testWebkitAtkGetTextAtOffsetForms);

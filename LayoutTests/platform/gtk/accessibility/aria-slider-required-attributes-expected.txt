@@ -1,6 +1,5 @@
 Accessibility object emitted "focus-event = 1" / Name: "(No name)" / Role: 50
 Accessibility object emitted "state-change:focused = 1" / Name: "(No name)" / Role: 50
-Accessibility object emitted "load-complete" / Name: "(No name)" / Role: 80
 Accessibility object emitted "state-change:busy = 0" / Name: "(No name)" / Role: 80
 Accessibility object emitted "property-change:accessible-value" / Name: "(No name)" / Role: 50
 Accessibility object emitted "property-change:accessible-value" / Name: "(No name)" / Role: 50

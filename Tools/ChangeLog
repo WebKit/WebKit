@@ -1,3 +1,16 @@
+2011-12-03  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        [GTK] Don't log document events in DRT
+        https://bugs.webkit.org/show_bug.cgi?id=73746
+
+        Reviewed by Martin Robinson.
+
+        Stop connecting globally to document-related events.
+
+        * DumpRenderTree/gtk/AccessibilityCallbacks.cpp:
+        (connectAccessibilityCallbacks): Removed connections.
+        (disconnectAccessibilityCallbacks): Removed disconnections.
+
 2011-12-03  Dan Bernstein  <mitz@apple.com>
 
         Added a test for <rdar://problem/10523721> Crash at WebCore::SubresourceLoader::releaseResources

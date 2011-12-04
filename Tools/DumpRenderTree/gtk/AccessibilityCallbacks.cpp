@@ -43,10 +43,6 @@ static guint childrenChangedListenerId = 0;
 static guint propertyChangedListenerId = 0;
 static guint visibleDataChangedListenerId = 0;
 
-static guint loadCompleteListenerId = 0;
-static guint loadStoppedListenerId = 0;
-static guint reloadListenerId = 0;
-
 static void printAccessibilityEvent(AtkObject* accessible, const gchar* signalName)
 {
     // Sanity check.
@@ -103,27 +99,6 @@ static gboolean axObjectEventListener(GSignalInvocationHint *signalHint,
     return TRUE;
 }
 
-static gboolean axDocumentEventListener(GSignalInvocationHint *signalHint,
-                                        guint numParamValues,
-                                        const GValue *paramValues,
-                                        gpointer data)
-{
-    // At least we should receive the instance emitting the signal.
-    if (numParamValues < 1)
-        return TRUE;
-
-    AtkObject* accessible = ATK_OBJECT(g_value_get_object(&paramValues[0]));
-    if (!accessible || !ATK_IS_DOCUMENT(accessible))
-        return TRUE;
-
-    GSignalQuery signal_query;
-    g_signal_query(signalHint->signal_id, &signal_query);
-
-    printAccessibilityEvent(accessible, signal_query.signal_name);
-
-    return TRUE;
-}
-
 void connectAccessibilityCallbacks()
 {
     // Ensure no callbacks are connected before.
@@ -147,11 +122,6 @@ void connectAccessibilityCallbacks()
     AtkObject* dummyNoOpAxObject = atk_no_op_object_new(dummyAxObject);
     g_object_unref(G_OBJECT(dummyNoOpAxObject));
     g_object_unref(dummyAxObject);
-
-    // Add global listeners for AtkDocument's signals.
-    loadCompleteListenerId = atk_add_global_event_listener(axDocumentEventListener, "Gtk:AtkDocument:load-complete");
-    loadStoppedListenerId = atk_add_global_event_listener(axDocumentEventListener, "Gtk:AtkDocument:load-stopped");
-    reloadListenerId = atk_add_global_event_listener(axDocumentEventListener, "Gtk:AtkDocument:reload");
 }
 
 void disconnectAccessibilityCallbacks()
@@ -180,20 +150,6 @@ void disconnectAccessibilityCallbacks()
     if (visibleDataChangedListenerId) {
         atk_remove_global_event_listener(visibleDataChangedListenerId);
         visibleDataChangedListenerId = 0;
-    }
-
-    // AtkDocument signals.
-    if (loadCompleteListenerId) {
-        atk_remove_global_event_listener(loadCompleteListenerId);
-        loadCompleteListenerId = 0;
-    }
-    if (loadStoppedListenerId) {
-        atk_remove_global_event_listener(loadStoppedListenerId);
-        loadStoppedListenerId = 0;
-    }
-    if (reloadListenerId) {
-        atk_remove_global_event_listener(reloadListenerId);
-        reloadListenerId = 0;
     }
 }
 

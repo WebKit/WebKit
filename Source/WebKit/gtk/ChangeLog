@@ -1,3 +1,25 @@
+2011-12-03  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Removing document related events from DRT
+
+        [GTK] Don't log document events in DRT
+        https://bugs.webkit.org/show_bug.cgi?id=73746
+
+        Reviewed by Martin Robinson.
+
+        New unit test to check events when reloading a document. This
+        replaces the former document-reload-events.html layout test.
+
+        * tests/testatk.c:
+        (updateLoadingEventsResult): New, updates a global variable to
+        allow checking later on that the right signals were emmitted.
+        (documentLoadingEventCallback): New, global listener for load-complete
+        and reload signals over the document object (the web area).
+        (testWebkitAtkDocumentLoadingEvents): New unit test, globally
+        connects to document-related signals and check they are properly
+        emitted when reloading the web view.
+        (main): Added new test.
+
 2011-12-03  Xan Lopez  <xlopez@igalia.com>
 
         [GTK] Implement History API FrameLoaderClient methods

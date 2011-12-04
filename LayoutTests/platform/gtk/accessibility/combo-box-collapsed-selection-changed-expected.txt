@@ -26,8 +26,6 @@ Accessibility object emitted "state-change:focused = 0" / Name: "bar" / Role: 34
 Accessibility object emitted "state-change:selected = 1" / Name: "foo" / Role: 34
 Accessibility object emitted "focus-event = 1" / Name: "foo" / Role: 34
 Accessibility object emitted "state-change:focused = 1" / Name: "foo" / Role: 34
-Accessibility object emitted "load-complete" / Name: "(No name)" / Role: 80
-Accessibility object emitted "state-change:busy = 0" / Name: "(No name)" / Role: 80
 
 This tests that the 'state-changed:selected' signal is emitted when arrowing through the options of a combobox while collapsed.
 

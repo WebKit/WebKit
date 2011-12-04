@@ -1360,10 +1360,6 @@ fast/harness/sample-fail-mismatch-reftest.html
 # Need layoutTestController.setShouldStayOnPageAfterHandlingBeforeUnload
 fast/loader/form-submission-after-beforeunload-cancel.html
 
-# https://bugs.webkit.org/show_bug.cgi?id=67398
-platform/gtk/accessibility/combo-box-collapsed-selection-changed.html
-platform/gtk/accessibility/document-reload-events.html
-
 # https://bugs.webkit.org/show_bug.cgi?id=67713
 accessibility/textbox-role-reports-selection.html
 
