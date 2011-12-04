@@ -1,3 +1,17 @@
+2011-12-04  Kangil Han  <kangil.han@samsung.com>
+
+        [EFL] Fix broken UTF-8 characters issue on editor command.
+        https://bugs.webkit.org/show_bug.cgi?id=73516
+
+        Reviewed by Ryosuke Niwa.
+
+        The issue has been described that Korean character is broken on pasting copied text.
+        In my analysis, this is from lack of format change between C style UTF-8 character pointer and C++ style String reference.
+        Therefore, this patch will convert types to resolve the problem.
+
+        * ewk/ewk_view.cpp:
+        (_ewk_view_editor_command):
+
 2011-12-03  ChangSeok Oh  <shivamidow@gmail.com>
 
         [EFL] Revise ewk_view_fixed_layout_size_set

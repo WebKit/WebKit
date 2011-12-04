@@ -1419,7 +1419,7 @@ char* ewk_view_selection_get(const Evas_Object* ewkView)
 
 static Eina_Bool _ewk_view_editor_command(Ewk_View_Private_Data* priv, const char* command, const char* value = 0)
 {
-    return priv->page->focusController()->focusedOrMainFrame()->editor()->command(WTF::String::fromUTF8(command)).execute(value);
+    return priv->page->focusController()->focusedOrMainFrame()->editor()->command(WTF::String::fromUTF8(command)).execute(WTF::String::fromUTF8(value));
 }
 
 Eina_Bool ewk_view_execute_editor_command(Evas_Object* ewkView, const Ewk_Editor_Command command, const char* value)
