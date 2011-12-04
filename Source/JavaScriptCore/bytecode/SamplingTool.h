@@ -211,7 +211,7 @@ namespace JSC {
         unsigned m_size;
     };
 
-    typedef WTF::HashMap<ScriptExecutable*, ScriptSampleRecord*> ScriptSampleRecordMap;
+    typedef HashMap<ScriptExecutable*, OwnPtr<ScriptSampleRecord> > ScriptSampleRecordMap;
 
     class SamplingThread {
     public:
@@ -287,18 +287,11 @@ namespace JSC {
             , m_sampleCount(0)
             , m_opcodeSampleCount(0)
 #if ENABLE(CODEBLOCK_SAMPLING)
-            , m_scopeSampleMap(adoptPtr(new ScriptSampleRecordMap()))
+            , m_scopeSampleMap(adoptPtr(new ScriptSampleRecordMap))
 #endif
         {
             memset(m_opcodeSamples, 0, sizeof(m_opcodeSamples));
             memset(m_opcodeSamplesInCTIFunctions, 0, sizeof(m_opcodeSamplesInCTIFunctions));
-        }
-
-        ~SamplingTool()
-        {
-#if ENABLE(CODEBLOCK_SAMPLING)
-            deleteAllValues(*m_scopeSampleMap);
-#endif
         }
 
         void setup();

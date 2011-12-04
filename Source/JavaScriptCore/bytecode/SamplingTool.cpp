@@ -303,7 +303,7 @@ void SamplingTool::notifyOfScope(JSGlobalData& globalData, ScriptExecutable* scr
 {
 #if ENABLE(CODEBLOCK_SAMPLING)
     MutexLocker locker(m_scriptSampleMapMutex);
-    m_scopeSampleMap->set(script, new ScriptSampleRecord(globalData, script));
+    m_scopeSampleMap->set(script, adoptPtr(new ScriptSampleRecord(globalData, script)));
 #else
     UNUSED_PARAM(globalData);
     UNUSED_PARAM(script);
@@ -412,7 +412,7 @@ void SamplingTool::dump(ExecState* exec)
     Vector<ScriptSampleRecord*> codeBlockSamples(scopeCount);
     ScriptSampleRecordMap::iterator iter = m_scopeSampleMap->begin();
     for (int i = 0; i < scopeCount; ++i, ++iter)
-        codeBlockSamples[i] = iter->second;
+        codeBlockSamples[i] = iter->second.get();
 
     qsort(codeBlockSamples.begin(), scopeCount, sizeof(ScriptSampleRecord*), compareScriptSampleRecords);
 
