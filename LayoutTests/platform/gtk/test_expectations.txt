@@ -78,7 +78,6 @@ BUGWK71655 : fast/frames/flattening/frameset-flattening-simple.html = PASS TEXT
 BUGWK72698 : media/audio-garbage-collect.html = PASS TEXT
 
 BUGWK72694 : fast/canvas/canvas-lineWidth.html = PASS TEXT
-BUGWK73768 : fast/forms/file/file-input-reset.html = PASS TEXT
 
 // End of Flaky tests
 
