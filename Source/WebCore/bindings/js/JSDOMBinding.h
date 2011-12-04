@@ -22,8 +22,8 @@
 #ifndef JSDOMBinding_h
 #define JSDOMBinding_h
 
+#include "CSSImportRule.h"
 #include "CSSMutableStyleDeclaration.h"
-#include "CSSRule.h"
 #include "CSSStyleSheet.h"
 #include "JSDOMGlobalObject.h"
 #include "JSDOMWrapper.h"

@@ -64,7 +64,7 @@ CSSStyleSheet::CSSStyleSheet(Node* parentNode, const String& href, const KURL& b
     ASSERT(isAcceptableCSSStyleSheetParent(parentNode));
 }
 
-CSSStyleSheet::CSSStyleSheet(CSSRule* ownerRule, const String& href, const KURL& baseURL, const String& charset)
+CSSStyleSheet::CSSStyleSheet(CSSImportRule* ownerRule, const String& href, const KURL& baseURL, const String& charset)
     : StyleSheet(ownerRule, href, baseURL)
     , m_charset(charset)
     , m_loadCompleted(false)

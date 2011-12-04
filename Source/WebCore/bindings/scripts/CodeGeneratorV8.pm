@@ -180,6 +180,10 @@ sub AddIncludesForType
         AddToImplIncludes("PlatformString.h");
     }
 
+    if ($type eq "CSSStyleSheet" or $type eq "StyleSheet") {
+        AddToImplIncludes("CSSImportRule.h");
+    }
+
     if ($type eq "CSSStyleDeclaration") {
         AddToImplIncludes("CSSMutableStyleDeclaration.h");
     }

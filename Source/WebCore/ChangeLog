@@ -1,5 +1,32 @@
 2011-12-03  Andreas Kling  <kling@webkit.org>
 
+        CSSStyleSheet: Parent rule can only ever be @import, enforce this at compile time.
+        <http://webkit.org/b/73725>
+
+        Reviewed by Darin Adler.
+
+        Made StyleSheet::m_parentRule a CSSImportRule* rather than a CSSRule*
+        and updated getters, setters and constructors accordingly.
+
+        There is no change in behavior, this simply enforces the status quo.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSDOMBinding.h:
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (AddIncludesForType):
+        * css/CSSStyleSheet.cpp:
+        (WebCore::CSSStyleSheet::CSSStyleSheet):
+        * css/CSSStyleSheet.h:
+        (WebCore::CSSStyleSheet::create):
+        (WebCore::CSSStyleSheet::ownerRule):
+        * css/StyleSheet.cpp:
+        (WebCore::StyleSheet::StyleSheet):
+        * css/StyleSheet.h:
+        (WebCore::StyleSheet::parentRule):
+        (WebCore::StyleSheet::setParentRule):
+
+2011-12-03  Andreas Kling  <kling@webkit.org>
+
         Unreviewed, revert accidental change from r101932.
 
         * bindings/scripts/CodeGeneratorV8.pm:

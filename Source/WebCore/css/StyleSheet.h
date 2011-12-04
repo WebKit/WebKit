@@ -28,8 +28,7 @@
 
 namespace WebCore {
 
-class CachedCSSStyleSheet;
-class CSSRule;
+class CSSImportRule;
 class MediaList;
 class Node;
 
@@ -45,8 +44,8 @@ public:
 
     StyleSheet* parentStyleSheet() const;
 
-    CSSRule* parentRule() const { return m_parentRule; }
-    void setParentRule(CSSRule* rule) { m_parentRule = rule; }
+    CSSImportRule* parentRule() const { return m_parentRule; }
+    void setParentRule(CSSImportRule* rule) { m_parentRule = rule; }
 
     // Note that href is the URL that started the redirect chain that led to
     // this style sheet. This property probably isn't useful for much except
@@ -73,11 +72,11 @@ public:
 
 protected:
     StyleSheet(Node* ownerNode, const String& href, const KURL& finalURL);
-    StyleSheet(CSSRule* parentRule, const String& href, const KURL& finalURL);
+    StyleSheet(CSSImportRule* parentRule, const String& href, const KURL& finalURL);
 
 private:
     bool m_disabled;
-    CSSRule* m_parentRule;
+    CSSImportRule* m_parentRule;
     Node* m_parentNode;
     String m_originalURL;
     KURL m_finalURL;

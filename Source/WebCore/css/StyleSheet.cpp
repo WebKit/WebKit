@@ -20,7 +20,7 @@
 #include "config.h"
 #include "StyleSheet.h"
 
-#include "CSSRule.h"
+#include "CSSImportRule.h"
 #include "CSSStyleSheet.h"
 #include "Document.h"
 #include "MediaList.h"
@@ -37,7 +37,7 @@ StyleSheet::StyleSheet(Node* parentNode, const String& originalURL, const KURL& 
 {
 }
 
-StyleSheet::StyleSheet(CSSRule* parentRule, const String& originalURL, const KURL& finalURL)
+StyleSheet::StyleSheet(CSSImportRule* parentRule, const String& originalURL, const KURL& finalURL)
     : m_disabled(false)
     , m_parentRule(parentRule)
     , m_parentNode(0)
