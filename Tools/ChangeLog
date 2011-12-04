@@ -1,3 +1,22 @@
+2011-12-04  Sam Weinig  <sam@webkit.org>
+
+        Add tests for RetainPtr::adoptNS/adoptCF
+        https://bugs.webkit.org/show_bug.cgi?id=73470
+
+        Reviewed by Adam Roben and Darin Adler.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WTF/cf/RetainPtr.cpp: Added.
+        (TestWebKitAPI::TEST):
+        Test that adopting using adoptCF creates a RetainPtr with a
+        value whose retain count is 1.
+
+        * TestWebKitAPI/Tests/WTF/ns: Added.
+        * TestWebKitAPI/Tests/WTF/ns/RetainPtr.mm: Added.
+        (TestWebKitAPI::TEST):
+        Test that adopting using adoptNS creates a RetainPtr with a
+        value whose retain count is 1.
+
 2011-12-04  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Include cairo, pixman and gnome-icon-theme in the jhbuild modules

@@ -623,14 +623,18 @@
 			<Filter
 				Name="WTF"
 				>
-                                <Filter
-                                        Name="cf"
-                                        >
-                                        <File
-                                                RelativePath="..\Tests\WTF\cf\RetainPtrHashing.cpp"
-                                                >
-                                        </File>
-                                </Filter>
+				<Filter
+						Name="cf"
+						>
+						<File
+								RelativePath="..\Tests\WTF\cf\RetainPtrHashing.cpp"
+								>
+						</File>
+						<File
+								RelativePath="..\Tests\WTF\cf\RetainPtr.cpp"
+								>
+						</File>
+				</Filter>
 				<File
 					RelativePath="..\Tests\WTF\CheckedArithmeticOperations.cpp"
 					>
