@@ -3759,13 +3759,13 @@ BUGALOKP : compositing/reflections/nested-reflection-transition.html = IMAGE
 BUGALOKP : compositing/reflections/reflection-in-composited.html = IMAGE
 BUGALOKP : compositing/scaling/tiled-layer-recursion.html = IMAGE
 BUGALOKP WIN : compositing/visibility/visibility-image-layers.html = IMAGE
-BUGALOKP MAC LINUX: compositing/shadows/shadow-drawing.html = IMAGE
+BUGALOKP MAC LINUX : compositing/shadows/shadow-drawing.html = IMAGE
 BUGALOKP : platform/chromium/compositing/huge-layer-rotated.html = IMAGE
 BUGALOKP : platform/chromium/compositing/layout-width-change.html = IMAGE
 BUGALOKP : platform/chromium/compositing/tiny-layer-rotated.html = IMAGE
-BUGALOKP GPU: media/video-layer-crash.html = IMAGE
-BUGALOKP GPU: media/video-transformed.html = IMAGE
-BUGALOKP GPU: media/video-zoom-controls.html = IMAGE
+BUGALOKP GPU : media/video-layer-crash.html = IMAGE
+BUGALOKP GPU : media/video-transformed.html = IMAGE
+BUGALOKP GPU : media/video-zoom-controls.html = IMAGE
 
 BUGWK72271 MAC DEBUG : fast/loader/javascript-url-in-embed.html = PASS CRASH
 BUGWK72271 SNOWLEOPARD DEBUG : fast/dom/node-iterator-reference-node-moved-crash.html = PASS CRASH
@@ -3835,3 +3835,4 @@ BUGWK73607 GPU LINUX DEBUG : fast/canvas/canvas-overloads-strokeText.html = TIME
 BUGWK73681 : http/tests/appcache/video.html = TIMEOUT PASS
 
 BUGWK73692 WIN : media/event-attributes.html = TEXT PASS
+
