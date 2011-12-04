@@ -6,6 +6,7 @@
       </g>
     </svg>
     <div id="log"></div>
+    <script src="../../fast/css/getComputedStyle/resources/property-names.js"/>
     <script><![CDATA[
       if (window.layoutTestController)
           layoutTestController.dumpAsText();
@@ -22,16 +23,12 @@
       
         for (var x = 0; x < style.length; x++) {
           var name = style.item(x);
+          if (propertiesToSkip[name])
+            continue;
           var value = style.getPropertyValue(name);
           var cssValue = style.getPropertyCSSValue(name);
-          // "-webkit-tap-highlight-color" is only available on the ports
-          // which have enabled TOUCH_EVENTS flag. We test it in layout test
-          // fast/events/touch/tap-highlight-color.html.
-          if (name != "-webkit-dashboard-region" &&
-              name != "-webkit-tap-highlight-color") {
-            debugLog(elementId + ": style.getPropertyValue(" + name + ") : " + value);
-            debugLog(elementId + ": style.getPropertyCSSValue(" + name + ") : " + cssValue);
-          }
+          debugLog(elementId + ": style.getPropertyValue(" + name + ") : " + value);
+          debugLog(elementId + ": style.getPropertyCSSValue(" + name + ") : " + cssValue);
         }
       }
       

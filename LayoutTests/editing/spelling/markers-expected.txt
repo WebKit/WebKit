@@ -1,0 +1,19 @@
+Grammar Error Only
+PASS internals.markerCountForNode(e.firstChild, "spelling") is 0
+PASS internals.markerCountForNode(e.firstChild, "grammar") is 1
+PASS range.toString() is "a"
+Spelling Error Only
+PASS internals.markerCountForNode(e.firstChild, "spelling") is 1
+PASS range.toString() is "zz"
+PASS internals.markerCountForNode(e.firstChild, "grammar") is 0
+Grammar and Spelling Error
+PASS internals.markerCountForNode(e.firstChild, "spelling") is 1
+PASS range.toString() is "zz"
+PASS internals.markerCountForNode(e.firstChild, "grammar") is 1
+PASS range.toString() is "orange,zz,apple."
+PASS successfullyParsed is true
+
+TEST COMPLETE
+I have a issue.
+zz.
+orange,zz,apple.

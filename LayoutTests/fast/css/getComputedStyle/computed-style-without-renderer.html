@@ -1,17 +1,7 @@
 <html>
 <head>
+    <script src="resources/property-names.js"></script>
     <script>
-        var others = [
-            "background-position-x",
-            "background-position-y",
-            "border-spacing",
-            "overflow",
-            "-webkit-mask-position-x",
-            "-webkit-mask-position-y",
-            "-webkit-match-nearest-mail-blockquote-color",
-            "-webkit-text-size-adjust",
-        ];
-
         if (window.layoutTestController)
             layoutTestController.dumpAsText();
 
@@ -28,14 +18,11 @@
             if (!properties) {
                 for (var i = 0; i != style.length; ++i) {
                     var name = style.item(i);
-                    // "-webkit-tap-highlight-color" is only available on the
-                    // ports which have enabled TOUCH_EVENTS flag. We test it in
-                    // layout test fast/events/touch/tap-highlight-color.html.
-                    if (name != "-webkit-dashboard-region" &&
-                        name != "-webkit-tap-highlight-color")
-                        log("    " + name + ": " + style.getPropertyValue(name));
+                    if (propertiesToSkip[name])
+                        continue;
+                    log("    " + name + ": " + style.getPropertyValue(name));
                 }
-                properties = others;
+                properties = hiddenComputedStyleProperties;
             }
 
             for (var i = 0; i != properties.length; ++i) {
