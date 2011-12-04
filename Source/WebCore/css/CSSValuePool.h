@@ -39,9 +39,9 @@ public:
     static PassRefPtr<CSSValuePool> create() { return adoptRef(new CSSValuePool); }
     ~CSSValuePool();
 
-    PassRefPtr<CSSInheritedValue> createInheritedValue();
-    PassRefPtr<CSSInitialValue> createImplicitInitialValue();
-    PassRefPtr<CSSInitialValue> createExplicitInitialValue();
+    PassRefPtr<CSSInheritedValue> createInheritedValue() { return m_inheritedValue; }
+    PassRefPtr<CSSInitialValue> createImplicitInitialValue() { return m_implicitInitialValue; }
+    PassRefPtr<CSSInitialValue> createExplicitInitialValue() { return m_explicitInitialValue; }
     PassRefPtr<CSSPrimitiveValue> createIdentifierValue(int identifier);
     PassRefPtr<CSSPrimitiveValue> createColorValue(unsigned rgbValue);
     PassRefPtr<CSSPrimitiveValue> createValue(double value, CSSPrimitiveValue::UnitTypes);

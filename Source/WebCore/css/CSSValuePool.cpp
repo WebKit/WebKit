@@ -46,21 +46,6 @@ CSSValuePool::~CSSValuePool()
 {
 }
 
-PassRefPtr<CSSInheritedValue> CSSValuePool::createInheritedValue()
-{
-    return m_inheritedValue;
-}
-
-PassRefPtr<CSSInitialValue> CSSValuePool::createImplicitInitialValue()
-{
-    return m_implicitInitialValue;
-}
-
-PassRefPtr<CSSInitialValue> CSSValuePool::createExplicitInitialValue()
-{
-    return m_explicitInitialValue;
-}
-
 PassRefPtr<CSSPrimitiveValue> CSSValuePool::createIdentifierValue(int ident)
 {
     if (ident <= 0 || ident >= numCSSValueKeywords)

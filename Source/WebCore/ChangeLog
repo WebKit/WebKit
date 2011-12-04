@@ -1,3 +1,16 @@
+2011-12-04  Andreas Kling  <kling@webkit.org>
+
+        CSSValuePool: Inline trivial getters.
+        <http://webkit.org/b/73763>
+
+        Reviewed by Anders Carlsson.
+
+        * css/CSSValuePool.cpp:
+        * css/CSSValuePool.h:
+        (WebCore::CSSValuePool::createInheritedValue): Inlined.
+        (WebCore::CSSValuePool::createImplicitInitialValue): Ditto.
+        (WebCore::CSSValuePool::createExplicitInitialValue): Ditto.
+
 2011-12-03  Noel Gordon  <noel.gordon@gmail.com>
 
         Fix WebPImageDecoder decoder leak.
