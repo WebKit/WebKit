@@ -779,3 +779,7 @@ void LayoutTestController::setBackingScaleFactor(double)
 {
     notImplemented();
 }
+
+void LayoutTestController::simulateDesktopNotificationClick(JSStringRef title)
+{
+}

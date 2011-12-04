@@ -141,6 +141,9 @@ public:
 
     void grantDesktopNotificationPermission(JSStringRef origin);
     bool checkDesktopNotificationPermission(JSStringRef origin);
+    void ignoreDesktopNotificationPermissionRequests();
+    bool areDesktopNotificationPermissionRequestsIgnored() const { return m_areDesktopNotificationPermissionRequestsIgnored; }
+    void simulateDesktopNotificationClick(JSStringRef title);
 
     bool elementDoesAutoCompleteForElementWithId(JSStringRef id);
 
@@ -413,6 +416,7 @@ private:
     bool m_deferMainResourceDataLoad;
     bool m_shouldPaintBrokenImage;
     bool m_shouldStayOnPageAfterHandlingBeforeUnload;
+    bool m_areDesktopNotificationPermissionRequestsIgnored;
 
     std::string m_authenticationUsername;
     std::string m_authenticationPassword; 

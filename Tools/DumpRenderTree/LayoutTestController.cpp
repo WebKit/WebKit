@@ -92,6 +92,7 @@ LayoutTestController::LayoutTestController(const std::string& testPathOrURL, con
     , m_shouldStayOnPageAfterHandlingBeforeUnload(false)
     , m_testPathOrURL(testPathOrURL)
     , m_expectedPixelHash(expectedPixelHash)
+    , m_areDesktopNotificationPermissionRequestsIgnored(false)
 {
 }
 
@@ -2244,6 +2245,21 @@ static bool setGlobalFlagCallback(JSContextRef context, JSObjectRef thisObject, 
     return true;
 }
 
+static JSValueRef ignoreDesktopNotificationPermissionRequestsCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    controller->ignoreDesktopNotificationPermissionRequests();
+    return JSValueMakeUndefined(context);
+}
+
+static JSValueRef simulateDesktopNotificationClickCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject)); 
+    JSRetainPtr<JSStringRef> title(Adopt, JSValueToStringCopy(context, arguments[0], exception));
+    controller->simulateDesktopNotificationClick(title.get());
+    return JSValueMakeUndefined(context);
+}
+
 static JSValueRef setMinimumTimerIntervalCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     if (argumentCount < 1)
@@ -2373,6 +2389,7 @@ JSStaticFunction* LayoutTestController::staticFunctions()
         { "grantDesktopNotificationPermission", grantDesktopNotificationPermissionCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete }, 
         { "hasSpellingMarker", hasSpellingMarkerCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "hasGrammarMarker", hasGrammarMarkerCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "ignoreDesktopNotificationPermissionRequests", ignoreDesktopNotificationPermissionRequestsCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "isCommandEnabled", isCommandEnabledCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "isPageBoxVisible", isPageBoxVisibleCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "keepWebHistory", keepWebHistoryCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
@@ -2464,6 +2481,7 @@ JSStaticFunction* LayoutTestController::staticFunctions()
         { "setXSSAuditorEnabled", setXSSAuditorEnabledCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setAsynchronousSpellCheckingEnabled", setAsynchronousSpellCheckingEnabledCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "showWebInspector", showWebInspectorCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "simulateDesktopNotificationClick", simulateDesktopNotificationClickCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "testOnscreen", testOnscreenCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "testRepaint", testRepaintCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "waitForPolicyDelegate", waitForPolicyDelegateCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
@@ -2542,6 +2560,11 @@ bool LayoutTestController::checkDesktopNotificationPermission(JSStringRef origin
             return true;
     }
     return false;
+}
+
+void LayoutTestController::ignoreDesktopNotificationPermissionRequests()
+{
+    m_areDesktopNotificationPermissionRequestsIgnored = false;
 }
 
 void LayoutTestController::waitToDumpWatchdogTimerFired()
