@@ -90,9 +90,9 @@ LayoutTestController::LayoutTestController(const std::string& testPathOrURL, con
     , m_deferMainResourceDataLoad(true)
     , m_shouldPaintBrokenImage(true)
     , m_shouldStayOnPageAfterHandlingBeforeUnload(false)
+    , m_areDesktopNotificationPermissionRequestsIgnored(false)
     , m_testPathOrURL(testPathOrURL)
     , m_expectedPixelHash(expectedPixelHash)
-    , m_areDesktopNotificationPermissionRequestsIgnored(false)
 {
 }
 

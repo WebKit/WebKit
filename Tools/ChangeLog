@@ -1,3 +1,12 @@
+2011-12-04  Xan Lopez  <xlopez@igalia.com>
+
+        Fix compiler warning in LayoutTestController
+
+        Reviewed by Philippe Normand.
+
+        * DumpRenderTree/LayoutTestController.cpp:
+        (LayoutTestController::LayoutTestController): fix warning.
+
 2011-12-04  Alexandre Mazari  <scaroo@gmail.com>
 
         Add missing methods used by fast/notifications tests to LayoutTestController
