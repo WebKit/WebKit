@@ -284,7 +284,7 @@ namespace JSC {
 #endif
 #endif
 
-        HashMap<OpaqueJSClass*, OpaqueJSClassContextData*> opaqueJSClassData;
+        HashMap<OpaqueJSClass*, OwnPtr<OpaqueJSClassContextData> > opaqueJSClassData;
 
         JSGlobalObject* dynamicGlobalObject;
 

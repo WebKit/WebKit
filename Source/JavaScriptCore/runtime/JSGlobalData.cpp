@@ -354,7 +354,7 @@ JSGlobalData::~JSGlobalData()
     fastDelete(const_cast<HashTable*>(stringTable));
     fastDelete(const_cast<HashTable*>(stringConstructorTable));
 
-    deleteAllValues(opaqueJSClassData);
+    opaqueJSClassData.clear();
 
     delete emptyList;
 

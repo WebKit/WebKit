@@ -1,5 +1,20 @@
 2011-12-03  Darin Adler  <darin@apple.com>
 
+        Use HashMap<OwnPtr> for the opaqueJSClassData map
+        https://bugs.webkit.org/show_bug.cgi?id=73759
+
+        Reviewed by Andreas Kling.
+
+        * API/JSClassRef.cpp:
+        (OpaqueJSClass::contextData): Update types.
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::~JSGlobalData): Add an explicit clear of opaqueJSClassData to keep the
+        timing the same. If we didn't care about the order of operations, we could remove this, too.
+        * runtime/JSGlobalData.h: Use OwnPtr instead of raw pointer for the mapped type in the
+        opaqueJSClassData map.
+
+2011-12-03  Darin Adler  <darin@apple.com>
+
         Change HashMap implementation to use the pass type and peek type from traits for the mapped value
         https://bugs.webkit.org/show_bug.cgi?id=72474
 
