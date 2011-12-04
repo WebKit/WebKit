@@ -1592,3 +1592,7 @@ fullscreen/video-controls-override.html
 http/tests/security/mixedContent/insecure-video-in-main-frame.html
 http/tests/security/mixedContent/redirect-http-to-https-video-in-main-frame.html
 http/tests/security/mixedContent/redirect-https-to-http-video-in-main-frame.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=73769
+svg/text/text-style-recalc-crash.html
+
