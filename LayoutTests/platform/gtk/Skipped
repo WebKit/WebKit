@@ -1599,3 +1599,5 @@ svg/text/text-style-recalc-crash.html
 # https://bugs.webkit.org/show_bug.cgi?id=73768
 fast/forms/file/file-input-reset.html
 
+# https://bugs.webkit.org/show_bug.cgi?id=73771
+platform/gtk/fonts/custom-font-missing-glyphs.html
