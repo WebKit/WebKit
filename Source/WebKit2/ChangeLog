@@ -1,3 +1,21 @@
+2011-12-04  Philippe Normand  <pnormand@igalia.com>
+
+        [WK2][GTK] enable-fullscreen WebSettings
+        https://bugs.webkit.org/show_bug.cgi?id=73774
+
+        Reviewed by Martin Robinson.
+
+        * UIProcess/API/gtk/WebKitSettings.cpp:
+        (webKitSettingsSetProperty):
+        (webKitSettingsGetProperty):
+        (webkit_settings_class_init):
+        (webkit_settings_set_enable_fullscreen):
+        (webkit_settings_get_enable_fullscreen):
+        * UIProcess/API/gtk/WebKitSettings.h:
+        * UIProcess/API/gtk/docs/webkit2gtk-sections.txt:
+        * UIProcess/API/gtk/tests/TestWebKitSettings.cpp:
+        (testWebKitSettings):
+
 2011-12-02  Viatcheslav Ostapenko  <ostapenko.viatcheslav@nokia.com>
 
         [Qt] [WK2] MiniBrowser --touch asserts in debug build

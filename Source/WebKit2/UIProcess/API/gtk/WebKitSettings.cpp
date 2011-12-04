@@ -103,6 +103,7 @@ enum {
     PROP_ENABLE_TABS_TO_LINKS,
     PROP_ENABLE_DNS_PREFETCHING,
     PROP_ENABLE_CARET_BROWSING,
+    PROP_ENABLE_FULLSCREEN
 };
 
 static void webKitSettingsSetProperty(GObject* object, guint propId, const GValue* value, GParamSpec* paramSpec)
@@ -196,6 +197,9 @@ static void webKitSettingsSetProperty(GObject* object, guint propId, const GValu
         break;
     case PROP_ENABLE_CARET_BROWSING:
         webkit_settings_set_enable_caret_browsing(settings, g_value_get_boolean(value));
+        break;
+    case PROP_ENABLE_FULLSCREEN:
+        webkit_settings_set_enable_fullscreen(settings, g_value_get_boolean(value));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propId, paramSpec);
@@ -294,6 +298,9 @@ static void webKitSettingsGetProperty(GObject* object, guint propId, GValue* val
         break;
     case PROP_ENABLE_CARET_BROWSING:
         g_value_set_boolean(value, webkit_settings_get_enable_caret_browsing(settings));
+        break;
+    case PROP_ENABLE_FULLSCREEN:
+        g_value_set_boolean(value, webkit_settings_get_enable_fullscreen(settings));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propId, paramSpec);
@@ -725,6 +732,22 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
                                     g_param_spec_boolean("enable-caret-browsing",
                                                          _("Enable Caret Browsing"),
                                                          _("Whether to enable accessibility enhanced keyboard navigation"),
+                                                         FALSE,
+                                                         readWriteConstructParamFlags));
+
+    /**
+     * WebKitSettings:enable-fullscreen:
+     *
+     * Whether to enable the Javascript Fullscreen API. The API
+     * allows any HTML element to request fullscreen display. See also
+     * the current draft of the spec:
+     * http://dvcs.w3.org/hg/fullscreen/raw-file/tip/Overview.html
+     */
+    g_object_class_install_property(gObjectClass,
+                                    PROP_ENABLE_FULLSCREEN,
+                                    g_param_spec_boolean("enable-fullscreen",
+                                                         _("Enable Fullscreen"),
+                                                         _("Whether to enable the Javascriipt Fullscreen API"),
                                                          FALSE,
                                                          readWriteConstructParamFlags));
 
@@ -1672,6 +1695,26 @@ void webkit_settings_set_enable_private_browsing(WebKitSettings* settings, gbool
 }
 
 /**
+ * webkit_settings_set_enable_fullscreen
+ * @settings: a #WebKitSettings
+ * @enabled: Value to be set
+ *
+ * Set the #WebKitSettings:enable-fullscreen property.
+ */
+void webkit_settings_set_enable_fullscreen(WebKitSettings* settings, gboolean enabled)
+{
+    g_return_if_fail(WEBKIT_IS_SETTINGS(settings));
+
+    WebKitSettingsPrivate* priv = settings->priv;
+    bool currentValue = WKPreferencesGetFullScreenEnabled(priv->preferences.get());
+    if (currentValue == enabled)
+        return;
+
+    WKPreferencesSetFullScreenEnabled(priv->preferences.get(), enabled);
+    g_object_notify(G_OBJECT(settings), "enable-fullscreen");
+}
+
+/**
  * webkit_settings_get_enable_developer_extras:
  * @settings: a #WebKitSettings
  *
@@ -1844,4 +1887,19 @@ void webkit_settings_set_enable_caret_browsing(WebKitSettings* settings, gboolea
 
     WKPreferencesSetCaretBrowsingEnabled(priv->preferences.get(), enabled);
     g_object_notify(G_OBJECT(settings), "enable-caret-browsing");
+}
+
+/**
+ * webkit_settings_get_enable_fullscreen:
+ * @settings: a #WebKitSettings
+ *
+ * Get the #WebKitSettings:enable-fullscreen property.
+ *
+ * Returns: %TRUE If fullscreen support is enabled or %FALSE otherwise.
+ */
+gboolean webkit_settings_get_enable_fullscreen(WebKitSettings* settings)
+{
+    g_return_val_if_fail(WEBKIT_IS_SETTINGS(settings), FALSE);
+
+    return WKPreferencesGetFullScreenEnabled(settings->priv->preferences.get());
 }
