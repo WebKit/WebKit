@@ -1,3 +1,10 @@
+2011-12-03  Andreas Kling  <kling@webkit.org>
+
+        Unreviewed, revert accidental change from r101932.
+
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (AddIncludesForType):
+
 2011-12-03  Mary Wu  <mary.wu@torchmobile.com.cn>
 
         Upstream 4 files into WebCore/platform/blackberry
