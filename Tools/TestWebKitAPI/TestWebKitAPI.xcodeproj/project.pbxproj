@@ -27,6 +27,7 @@
 		37200B9213A16230007A4FAD /* VectorReverse.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37200B9113A16230007A4FAD /* VectorReverse.cpp */; };
 		3722C8691461E03E00C45D00 /* RenderedImageFromDOMRange.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3722C8681461E03E00C45D00 /* RenderedImageFromDOMRange.mm */; };
 		3799AD3A14120A43005EB0C6 /* StringByEvaluatingJavaScriptFromString.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3799AD3914120A43005EB0C6 /* StringByEvaluatingJavaScriptFromString.mm */; };
+		37A6895F148A9B50005100FA /* SubresourceErrorCrash.mm in Sources */ = {isa = PBXBuildFile; fileRef = 37A6895D148A9B50005100FA /* SubresourceErrorCrash.mm */; };
 		37DC678D140D7C5000ABCCDB /* DOMRangeOfString.mm in Sources */ = {isa = PBXBuildFile; fileRef = 37DC678B140D7C5000ABCCDB /* DOMRangeOfString.mm */; };
 		37DC6791140D7D7600ABCCDB /* DOMRangeOfString.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 37DC678F140D7D3A00ABCCDB /* DOMRangeOfString.html */; };
 		4BFDFFA71314776C0061F24B /* HitTestResultNodeHandle_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4BFDFFA61314776C0061F24B /* HitTestResultNodeHandle_Bundle.cpp */; };
@@ -165,6 +166,7 @@
 		37200B9113A16230007A4FAD /* VectorReverse.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VectorReverse.cpp; path = WTF/VectorReverse.cpp; sourceTree = "<group>"; };
 		3722C8681461E03E00C45D00 /* RenderedImageFromDOMRange.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RenderedImageFromDOMRange.mm; sourceTree = "<group>"; };
 		3799AD3914120A43005EB0C6 /* StringByEvaluatingJavaScriptFromString.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = StringByEvaluatingJavaScriptFromString.mm; sourceTree = "<group>"; };
+		37A6895D148A9B50005100FA /* SubresourceErrorCrash.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SubresourceErrorCrash.mm; sourceTree = "<group>"; };
 		37DC678B140D7C5000ABCCDB /* DOMRangeOfString.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMRangeOfString.mm; sourceTree = "<group>"; };
 		37DC678F140D7D3A00ABCCDB /* DOMRangeOfString.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = DOMRangeOfString.html; sourceTree = "<group>"; };
 		4BFDFFA61314776C0061F24B /* HitTestResultNodeHandle_Bundle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HitTestResultNodeHandle_Bundle.cpp; sourceTree = "<group>"; };
@@ -482,6 +484,7 @@
 				939BA91614103412001A01BD /* DeviceScaleFactorOnBack.mm */,
 				3722C8681461E03E00C45D00 /* RenderedImageFromDOMRange.mm */,
 				3799AD3914120A43005EB0C6 /* StringByEvaluatingJavaScriptFromString.mm */,
+				37A6895D148A9B50005100FA /* SubresourceErrorCrash.mm */,
 			);
 			path = mac;
 			sourceTree = "<group>";
@@ -664,6 +667,7 @@
 				C0C5D3BE14598B6F00A802A6 /* GetBackingScaleFactor.mm in Sources */,
 				3722C8691461E03E00C45D00 /* RenderedImageFromDOMRange.mm in Sources */,
 				0BCD856A1485C98B00EA2003 /* TemporaryChange.cpp in Sources */,
+				37A6895F148A9B50005100FA /* SubresourceErrorCrash.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -1,3 +1,13 @@
+2011-12-03  Dan Bernstein  <mitz@apple.com>
+
+        Added a test for <rdar://problem/10523721> Crash at WebCore::SubresourceLoader::releaseResources
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/mac/SubresourceErrorCrash.mm: Added.
+        (TestWebKitAPI::TEST):
+
 2011-12-03  Philippe Normand  <pnormand@igalia.com>
 
         Another GTK build fix after r101922.

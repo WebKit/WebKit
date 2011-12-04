@@ -1,3 +1,14 @@
+2011-12-03  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/10523721> Crash at WebCore::SubresourceLoader::releaseResources
+        Reviewed by Darin Adler.
+
+        * WebView/WebView.mm:
+        (-[WebView _removeObjectForIdentifier:]): Changed the CFRelease(self) into
+        a WebCFAutorelease(self). This prevents re-entry into this method due to
+        the WebView closing and canceling all subresource loads, including the
+        one we have just removed.
+
 2011-12-02  David Levin  <levin@chromium.org>
 
         Rename WTF class from TemporarilyChange to TemporaryChange.

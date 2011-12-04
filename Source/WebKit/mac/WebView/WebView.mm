@@ -6062,9 +6062,10 @@ static inline uint64_t roundUpToPowerOf2(uint64_t num)
     _private->identifierMap.remove(identifier);
     
     // If the identifier map is now empty it means we're no longer loading anything
-    // and we should release the web view.
+    // and we should release the web view. Autorelease rather than release in order to
+    // avoid re-entering this method beneath -dealloc with the same identifier. <rdar://problem/10523721>
     if (_private->identifierMap.isEmpty())
-        CFRelease(self);
+        WebCFAutorelease(self);
 }
 
 - (void)_retrieveKeyboardUIModeFromPreferences:(NSNotification *)notification
