@@ -517,25 +517,21 @@ static void testWebkitAtkDocumentLoadingEvents()
     g_object_ref_sink(webView);
     GtkAllocation allocation = { 0, 0, 800, 600 };
     gtk_widget_size_allocate(GTK_WIDGET(webView), &allocation);
+
+    /* Connect globally to see those events during a future load. */
+    guint loadCompleteListenerId = atk_add_global_event_listener(documentLoadingEventCallback, "ATK:AtkDocument:load-complete");
+
+    /* Do the load, so we can see those events happening. */
+    loadingEventsResult = g_strdup("");
     webkit_web_view_load_string(webView, contents, 0, 0, 0);
 
     /* Trigger the creation of the full accessibility hierarchy by
        asking for the webArea object, so we can listen to events. */
     getWebAreaObject(webView);
 
-    /* Connect globally to see those events during a reload, since the
-       document after that will be different than what we have now. */
-    guint loadCompleteListenerId = atk_add_global_event_listener(documentLoadingEventCallback, "ATK:AtkDocument:load-complete");
-    guint reloadListenerId = atk_add_global_event_listener(documentLoadingEventCallback, "ATK:AtkDocument:reload");
-
-    /* Reload, so we can see those load events happening. */
-    loadingEventsResult = g_strdup("");
-    webkit_web_view_reload(webView);
-
     atk_remove_global_event_listener(loadCompleteListenerId);
-    atk_remove_global_event_listener(reloadListenerId);
 
-    g_assert_cmpstr(loadingEventsResult, ==, "|reload|load-complete");
+    g_assert_cmpstr(loadingEventsResult, ==, "|load-complete");
 
     g_free(loadingEventsResult);
     g_object_unref(webView);

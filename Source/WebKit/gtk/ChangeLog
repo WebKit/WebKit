@@ -1,3 +1,21 @@
+2011-12-04  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        [Gtk] Check for the load-complete event only in the unit tests.
+
+        There is currently a known issue happening in debug builds when
+        reloading the webview if it was loaded before through the function
+        webkit_web_view_load_string, resulting in a ASSERT failing (see
+        bug 50331) so we can't check for the reload event here, since it
+        makes the test to fail. Fortunately, checking for load-complete
+        event is a good enough test, so this small patch is about that.
+
+        Rubber-stamped by Philippe Normand.
+
+        * tests/testatk.c:
+        (testWebkitAtkDocumentLoadingEvents): Don't load and then reload
+        to check events, just load once and check whether the
+        'load-complete' event has happened.
+
 2011-12-03  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Removing document related events from DRT
