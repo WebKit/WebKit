@@ -45,6 +45,9 @@ WEBPImageDecoder::WEBPImageDecoder(ImageSource::AlphaOption alphaOption,
 
 WEBPImageDecoder::~WEBPImageDecoder()
 {
+    if (m_decoder)
+        WebPIDelete(m_decoder);
+    m_decoder = 0;
 }
 
 bool WEBPImageDecoder::isSizeAvailable()

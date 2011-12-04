@@ -1,3 +1,17 @@
+2011-12-03  Noel Gordon  <noel.gordon@gmail.com>
+
+        Fix WebPImageDecoder decoder leak.
+        https://bugs.webkit.org/show_bug.cgi?id=73756
+
+        Reviewed by Andreas Kling.
+
+        Delete the m_decoder member in the destructor if needed with WebPIDelete.
+
+        No new tests, it's valgrind territory.
+
+        * platform/image-decoders/webp/WEBPImageDecoder.cpp:
+        (WebCore::WEBPImageDecoder::~WEBPImageDecoder):
+
 2011-12-03  Andreas Kling  <kling@webkit.org>
 
         CSSStyleSheet: Parent rule can only ever be @import, enforce this at compile time.
