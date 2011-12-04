@@ -203,7 +203,7 @@ JSStringRef LayoutTestController::pathToLocalResource(JSContextRef context, JSSt
 {
     GOwnPtr<char> urlCString(JSStringCopyUTF8CString(url));
     if (!g_str_has_prefix(urlCString.get(), "file:///tmp/LayoutTests/"))
-        return url;
+        return JSStringRetain(url);
 
     const char* layoutTestsSuffix = urlCString.get() + strlen("file:///tmp/");
     GOwnPtr<char> testPath(g_build_filename(getTopLevelPath().data(), layoutTestsSuffix, NULL));

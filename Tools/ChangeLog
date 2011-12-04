@@ -1,3 +1,12 @@
+2011-12-04  Philippe Normand  <pnormand@igalia.com>
+
+        Another GTK build fix after r101922.
+
+        Rubber-stamped by Martin Robinson.
+
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
+        (LayoutTestController::pathToLocalResource): Plug possible String ref leak.
+
 2011-12-04  Xan Lopez  <xlopez@igalia.com>
 
         Fix compiler warning in LayoutTestController
