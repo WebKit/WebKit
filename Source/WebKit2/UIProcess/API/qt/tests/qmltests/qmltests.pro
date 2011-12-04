@@ -16,18 +16,17 @@ DEFINES += QUICK_TEST_SOURCE_DIR=\"\\\"$$PWD\\\"\"
 DEFINES += IMPORT_DIR=\"\\\"$${ROOT_BUILD_DIR}$${QMAKE_DIR_SEP}imports\\\"\"
 
 OTHER_FILES += \
-    WebView/tst_javaScriptDialogs.qml \
-    WebView/tst_properties.qml \
-    WebView/tst_loadFail.qml \
-    WebView/tst_loadProgress.qml \
-    WebView/tst_loadProgressSignal.qml \
-    WebView/tst_loadZeroSizeView.qml \
-    WebView/tst_preferences.qml \
-    WebView/tst_loadHtml.qml \
-    WebView/tst_download.qml \
-    WebView/tst_geopermission.qml \
+    DesktopBehavior/DesktopWebView.qml \
     DesktopBehavior/tst_linkHovered.qml \
+    DesktopBehavior/tst_loadHtml.qml \
     DesktopBehavior/tst_messaging.qml \
     DesktopBehavior/tst_navigationRequested.qml \
-    DesktopBehavior/tst_loadHtml.qml \
-    DesktopBehavior/DesktopWebView.qml
+    WebView/tst_download.qml \
+    WebView/tst_geopermission.qml \
+    WebView/tst_javaScriptDialogs.qml \
+    WebView/tst_loadFail.qml \
+    WebView/tst_loadHtml.qml \
+    WebView/tst_loadProgress.qml \
+    WebView/tst_loadProgressSignal.qml \
+    WebView/tst_preferences.qml \
+    WebView/tst_properties.qml

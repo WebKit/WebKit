@@ -1,3 +1,14 @@
+2011-12-04  Gopal Raghavan  <gopal.1.raghavan@nokia.com>
+
+        [Qt] cleanup qmltests.pro
+        https://bugs.webkit.org/show_bug.cgi?id=73718
+
+        Reviewed by Simon Hausmann.
+
+        Removed unused file WebView/tst_loadZeroSizeView.qml and reordered file list.
+
+        * UIProcess/API/qt/tests/qmltests/qmltests.pro:
+
 2011-12-04  Philippe Normand  <pnormand@igalia.com>
 
         [WK2][GTK] enable-fullscreen WebSettings
