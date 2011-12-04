@@ -668,7 +668,7 @@ BUGWK55560 : editing/input/setting-input-value-cancel-ime-composition.html = TEX
 BUGCR77706 : editing/spelling/grammar.html = FAIL
 
 // Needs grammar checking.
-BUGWK71792 : editing/spelling/markers.html = MISSING
+BUGWK71792 : editing/spelling/markers.html = FAIL MISSING
 
 // Flaky
 BUGCR79854 : editing/execCommand/delete-empty-container.html = PASS TEXT
@@ -3379,8 +3379,7 @@ BUGWK66795 LINUX MAC SLOW : fast/js/reentrant-caching.html = PASS
 
 BUGWK66873 SLOW WIN RELEASE : http/tests/loading/redirect-methods.html = PASS TEXT
 
-BUGWK66888 DEBUG : svg/animations/svginteger-animation-1.html = PASS TEXT
-BUGWK73710 LEOPARD CPU-CG : svg/animations/svginteger-animation-1.html = PASS TEXT CRASH
+BUGWK66888 DEBUG : svg/animations/svginteger-animation-1.html = PASS TEXT CRASH
 
 BUGWK66900 LINUX DEBUG : fast/writing-mode/japanese-rl-text-with-broken-font.html = PASS IMAGE+TEXT
 BUGWK66900 SNOWLEOPARD CPU-CG : fast/writing-mode/japanese-rl-text-with-broken-font.html = PASS IMAGE+TEXT
