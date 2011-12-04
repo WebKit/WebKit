@@ -1,27 +1,12 @@
 <!DOCTYPE html>
-
 <html>
 <head>
-<style> 
-.resultsDiv {
-    position: absolute;
-    top: 0px;
-    left: 0px;
-    -moz-column-width: 13em;
-    -webkit-column-width: 13em;
-    -moz-column-gap: 5em;
-    -webkit-column-gap: 5em;
-    height: 400px;
-}
-</style>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 </head>
 <body>
 <div>This tests proper handling of unicode-bidi: plaintext. You should not see any red.</div>
 
-<div style="position:relative">
-<div class="resultsDiv">
-<div style="color: red; unicode-bidi: -webkit-plaintext;">
+<div style="unicode-bidi: -webkit-plaintext; unicode-bidi: -moz-plaintext; unicode-bidi: plaintext;">
 !hello.
 <br>
 !שלום.
@@ -30,7 +15,7 @@ hello, לוי!
 <br>
 שלום, WebKit!
 </div>
-<pre style="color: red; margin: 0;" dir="auto">
+<pre dir="auto">
 a
 (
 שלום, WebKit!
@@ -38,24 +23,6 @@ hello, לוי!
 )
 </pre>
 </div>
-</div>
 
-<div style="position: relative;">
-<div style="color:green;" class="resultsDiv" dir=ltr>
-!hello.<br>
-<span dir=rtl>
-!שלום.
-</span><br>
-<span dir=ltr>
-hello, לוי!
-</span><br>
-<span dir=rtl>
-שלום, WebKit!</span><br>
-<pre style="color: green; margin: 0;">
-a
-(
-!WebKit ,שלום
-hello, לוי!
-)
-</pre>
-</div>
+</body>
+</html>

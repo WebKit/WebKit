@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head>
+<body>
+<div>This tests proper handling of unicode-bidi: plaintext. You should not see any red.</div>
+
+<div dir=ltr>
+!hello.<br>
+<span dir=rtl>
+!שלום.
+</span><br>
+<span dir=ltr>
+hello, לוי!
+</span><br>
+<span dir=rtl>
+שלום, WebKit!</span><br>
+<pre>
+a
+(
+!WebKit ,שלום
+hello, לוי!
+)
+</pre>
+</div>
+
+</body>
+</html>

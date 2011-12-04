@@ -2,14 +2,10 @@
 <html><head>
 <title>Test cases for unicode-bidi:isolate</title>
 <style>
-  .test {
-    position: relative;
-    color: red;
-    z-index: -1;
-    height: 0px; /* Remove height: 0px to see side-by-side comparisons. */
-  }
   .isolate {
     unicode-bidi: -webkit-isolate;
+    unicode-bidi: -moz-isolate;
+    unicode-bidi: isolate;
   }
 </style>
 </head><body>
@@ -19,18 +15,12 @@ opposite-to-base isolate followed by number.
   <div class="test">
     <span class="isolate">&#x05D0;</span> (3 reviews)
   </div>
-  <div class="reference">
-    <span dir="ltr">&#x05D0;</span> (3 reviews)
-  </div>
 </div>
 <hr>
 opposite-to-base isolate with opposite-to-base text before it with neutrals in between.
 <div>
   <div class="test">
     &#x05D0;: <span class="isolate">&#x05D1;</span>
-  </div>
-  <div class="reference">
-    <span dir="ltr">&#x05D0;</span>: <span dir="ltr">&#x05D1;</span>
   </div>
 </div>
 <hr>
@@ -39,18 +29,12 @@ opposite-to-base isolate with opposite-to-base text before it and nothing in bet
   <div class="test">
     &#x05D0;<span class="isolate">&#x05D1;</span>
   </div>
-  <div class="reference">
-    <bdo dir="ltr">&#x05D0;&#x05D1;</bdo>
-  </div>
 </div>
 <hr>
 two opposite-to-base isolates with neutrals in between.
 <div>
   <div class="test">
     <span class="isolate">&#x05D0;</span> = <span class="isolate">&#x05D1;</span>
-  </div>
-  <div class="reference">
-    <span dir="ltr">&#x05D0;</span> = <span dir="ltr">&#x05D1;</span>
   </div>
 </div>
 <hr>
@@ -59,18 +43,12 @@ two opposite-to-base isolates with nothing in between.
   <div class="test">
     <span class="isolate">&#x05D0;</span><span class="isolate">&#x05D1;</span>
   </div>
-  <div class="reference">
-    <bdo dir="ltr">&#x05D0;&#x05D1;</bdo>
-  </div>
 </div>
 <hr>
 same-as-base isolate preceded by opposite-to-base text and followed by number
 <div dir="rtl">
   <div class="test">
     see <span class="isolate">&#x05D0;</span><sup>3</sup>
-  </div>
-  <div class="reference">
-    see <span dir="ltr">&#x05D0;</span><sup>3</sup>
   </div>
 </div>
 <hr>
@@ -79,9 +57,6 @@ same-as-base isolate surrounded by opposite-to-base text
   <div class="test">
     with <span class="isolate">&#x05D0;</span>=<span class="isolate">&#x05D1;</span> everywhere
   </div>
-  <div class="reference">
-    with <span dir="ltr">&#x05D0;</span>=<span dir="ltr">&#x05D1;</span> everywhere
-  </div>
 </div>
 <hr>
 chimeric isolate surrounded by chimeric text
@@ -89,29 +64,12 @@ chimeric isolate surrounded by chimeric text
   <div class="test">
     about <span class="isolate">that &#x05D0;</span> - &#x05D1;
   </div>
-  <div class="reference">
-    about that <span dir="ltr">&#x05D0;</span> - &#x05D1;
-  </div>
-</div>
-<hr>
-same-as-base isolate containing &lt;br&gt; surrounded by opposite-to-base text
-<!-- FIXME: This subtest may be invalid, see https://bugs.webkit.org/show_bug.cgi?id=50912#c30 -->
-<div dir="rtl">
-  <div class="test">
-    things to do: (1) <span class="isolate">&#x05D0;<br></span> (2) sleep
-  </div>
-  <div class="reference">
-    <span dir="ltr">things to do: (1) &#x05D0;</span><br><span dir="ltr"> (2) sleep</span>
-  </div>
 </div>
 <hr>
 nested chimeric isolates surrounded by chimeric text
 <div>
   <div class="test">
     about <span class="isolate">that <span class="isolate">strange &#x05D0;</span> - &#x05D1;</span> - &#x05D2;
-  </div>
-  <div class="reference">
-    about that strange <span dir="ltr">&#x05D0;</span> - <span dir="ltr">&#x05D1;</span> - &#x05D2;
   </div>
 </div>
 </body></html>
