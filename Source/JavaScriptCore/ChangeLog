@@ -1,3 +1,23 @@
+2011-12-03  Darin Adler  <darin@apple.com>
+
+        Change HashMap implementation to use the pass type and peek type from traits for the mapped value
+        https://bugs.webkit.org/show_bug.cgi?id=72474
+
+        Reviewed by Anders Carlsson.
+
+        * wtf/HashMap.h: Added ReferenceTypeMaker struct template. Get PassInType, PassOutType,
+        and PeekType from the traits of the mapped value instead of hard-coding them here.
+        Changed inlineAdd to take a reference to the PassInType instead of the PassInType itself,
+        to accomodate a PassInType that can't be copied. Use the store, peek, and passOut
+        functions from the traits as well.
+
+        * wtf/HashTraits.h: Updated GenericHashTraits and HashTraits for OwnPtr to include
+        PassInType, PassOutType, PeekType, store, passOut, and peek. Before this, the file had
+        an earlier version that was just PassType, PeekType, pass, and peek. Also commented
+        the HashTraits for RefPtr to foreshadow some work we can do there.
+
+        * wtf/RefPtrHashMap.h: Same changes as HashMap.h.
+
 2011-12-02  David Levin  <levin@chromium.org>
 
         Rename WTF class from TemporarilyChange to TemporaryChange.

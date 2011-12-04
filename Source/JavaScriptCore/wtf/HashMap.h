@@ -27,6 +27,13 @@ namespace WTF {
 
     template<typename PairType> struct PairFirstExtractor;
 
+    template<typename T> struct ReferenceTypeMaker {
+        typedef T& ReferenceType;
+    };
+    template<typename T> struct ReferenceTypeMaker<T&> {
+        typedef T& ReferenceType;
+    };
+
     template<typename KeyArg, typename MappedArg, typename HashArg = typename DefaultHash<KeyArg>::Hash,
         typename KeyTraitsArg = HashTraits<KeyArg>, typename MappedTraitsArg = HashTraits<MappedArg> >
     class HashMap {
@@ -42,10 +49,12 @@ namespace WTF {
         typedef typename ValueTraits::TraitType ValueType;
 
     private:
-        typedef const MappedType& MappedPassInType;
-        typedef MappedType MappedPassOutType;
-        typedef MappedType MappedPeekType;
-        
+        typedef typename MappedTraits::PassInType MappedPassInType;
+        typedef typename MappedTraits::PassOutType MappedPassOutType;
+        typedef typename MappedTraits::PeekType MappedPeekType;
+
+        typedef typename ReferenceTypeMaker<MappedPassInType>::ReferenceType MappedPassInReferenceType;
+
         typedef HashArg HashFunctions;
 
         typedef HashTable<KeyType, ValueType, PairFirstExtractor<ValueType>,
@@ -108,7 +117,7 @@ namespace WTF {
         void checkConsistency() const;
 
     private:
-        pair<iterator, bool> inlineAdd(const KeyType&, MappedPassInType);
+        pair<iterator, bool> inlineAdd(const KeyType&, MappedPassInReferenceType);
 
         HashTableType m_impl;
     };
@@ -124,7 +133,7 @@ namespace WTF {
         template<typename T, typename U, typename V> static void translate(T& location, const U& key, const V& mapped)
         {
             location.first = key;
-            location.second = mapped;
+            ValueTraits::SecondTraits::store(mapped, location.second);
         }
     };
 
@@ -135,7 +144,7 @@ namespace WTF {
         template<typename T, typename U, typename V> static void translate(T& location, const U& key, const V& mapped, unsigned hashCode)
         {
             Translator::translate(location.first, key, hashCode);
-            location.second = mapped;
+            ValueTraits::SecondTraits::store(mapped, location.second);
         }
     };
 
@@ -231,7 +240,7 @@ namespace WTF {
 
     template<typename T, typename U, typename V, typename W, typename X>
     inline pair<typename HashMap<T, U, V, W, X>::iterator, bool>
-    HashMap<T, U, V, W, X>::inlineAdd(const KeyType& key, MappedPassInType mapped) 
+    HashMap<T, U, V, W, X>::inlineAdd(const KeyType& key, MappedPassInReferenceType mapped) 
     {
         return m_impl.template add<HashMapTranslator<ValueTraits, HashFunctions> >(key, mapped);
     }
@@ -242,8 +251,8 @@ namespace WTF {
     {
         pair<iterator, bool> result = inlineAdd(key, mapped);
         if (!result.second) {
-            // add call above didn't change anything, so set the mapped value
-            result.first->second = mapped;
+            // The inlineAdd call above found an existing hash table entry; we need to set the mapped value.
+            MappedTraits::store(mapped, result.first->second);
         }
         return result;
     }
@@ -269,8 +278,8 @@ namespace WTF {
     {
         ValueType* entry = const_cast<HashTableType&>(m_impl).lookup(key);
         if (!entry)
-            return MappedTraits::emptyValue();
-        return entry->second;
+            return MappedTraits::peek(MappedTraits::emptyValue());
+        return MappedTraits::peek(entry->second);
     }
 
     template<typename T, typename U, typename V, typename W, typename X>
@@ -298,11 +307,10 @@ namespace WTF {
     typename HashMap<T, U, V, W, MappedTraits>::MappedPassOutType
     HashMap<T, U, V, W, MappedTraits>::take(const KeyType& key)
     {
-        // This can probably be made more efficient to avoid ref/deref churn.
         iterator it = find(key);
         if (it == end())
-            return MappedTraits::emptyValue();
-        MappedPassOutType result = it->second;
+            return MappedTraits::passOut(MappedTraits::emptyValue());
+        MappedPassOutType result = MappedTraits::passOut(it->second);
         remove(it);
         return result;
     }
@@ -312,7 +320,6 @@ namespace WTF {
     {
         m_impl.checkTableConsistency();
     }
-
 
     template<typename T, typename U, typename V, typename W, typename X>
     bool operator==(const HashMap<T, U, V, W, X>& a, const HashMap<T, U, V, W, X>& b)

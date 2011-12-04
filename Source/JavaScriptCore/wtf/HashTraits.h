@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2005, 2006, 2007, 2008, 2011 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -56,11 +56,23 @@ namespace WTF {
 
     template<typename T> struct GenericHashTraits : GenericHashTraitsBase<IsInteger<T>::value, T> {
         typedef T TraitType;
+
         static T emptyValue() { return T(); }
-        typedef const T& PassType;
-        static const T& pass(const T& value) { return value; }
-        typedef const T& PeekType;
-        static const T& peek(const T& value) { return value; }
+
+        // Type for functions that take ownership, such as add.
+        // The store function either not be called or called once to store something passed in.
+        // The value passed to the store function will be either PassInType or PassInType&.
+        typedef const T& PassInType;
+        static void store(const T& value, T& storage) { storage = value; }
+
+        // Type for return value of functions that transfer ownership, such as take. 
+        typedef T PassOutType;
+        static PassOutType passOut(const T& value) { return value; }
+
+        // Type for return value of functions that do not transfer ownership, such as get.
+        // FIXME: We should change this type to const T& for better performance.
+        typedef T PeekType;
+        static PeekType peek(const T& value) { return value; }
     };
 
     template<typename T> struct HashTraits : GenericHashTraits<T> { };
@@ -99,13 +111,25 @@ namespace WTF {
 
     template<typename P> struct HashTraits<OwnPtr<P> > : SimpleClassHashTraits<OwnPtr<P> > {
         static std::nullptr_t emptyValue() { return nullptr; }
-        typedef PassOwnPtr<P> PassType;
-        static PassOwnPtr<P> pass(const OwnPtr<P>& value) { return value.release(); }
+
+        typedef PassOwnPtr<P> PassInType;
+        static void store(PassOwnPtr<P> value, OwnPtr<P>& storage) { storage = value; }
+
+        typedef PassOwnPtr<P> PassOutType;
+        static PassOwnPtr<P> passOut(OwnPtr<P>& value) { return value.release(); }
+
         typedef typename OwnPtr<P>::PtrType PeekType;
         static PeekType peek(const OwnPtr<P>& value) { return value.get(); }
         static PeekType peek(std::nullptr_t) { return 0; }
     };
-    template<typename P> struct HashTraits<RefPtr<P> > : SimpleClassHashTraits<RefPtr<P> > { };
+
+    template<typename P> struct HashTraits<RefPtr<P> > : SimpleClassHashTraits<RefPtr<P> > {
+        // FIXME: We should change PassInType to PassRefPtr for better performance.
+        // FIXME: We should change PassOutType to PassRefPtr for better performance.
+        // FIXME: We could consider changing PeekType to a raw pointer so callers don't need to
+        // call get; doing so will require updating many call sites.
+    };
+
     template<> struct HashTraits<String> : SimpleClassHashTraits<String> { };
 
     // special traits for pairs, helpful for their use in HashMap implementation
