@@ -3836,3 +3836,4 @@ BUGWK73681 : http/tests/appcache/video.html = TIMEOUT PASS
 
 BUGWK73692 WIN : media/event-attributes.html = TEXT PASS
 
+BUGWK73766 : css3/unicode-bidi-isolate-aharon-failing.html = FAIL

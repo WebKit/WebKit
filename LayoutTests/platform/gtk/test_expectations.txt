@@ -78,3 +78,5 @@ BUGWK71655 : fast/frames/flattening/frameset-flattening-simple.html = PASS TEXT
 BUGWK72698 : media/audio-garbage-collect.html = PASS TEXT
 
 // End of Flaky tests
+
+BUGWK73766 : css3/unicode-bidi-isolate-aharon-failing.html = FAIL
