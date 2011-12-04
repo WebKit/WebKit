@@ -5,10 +5,13 @@
 
   <metamodule id="webkitgtk-testing-dependencies">
     <dependencies>
+      <dep package="cairo"/>
       <dep package="fonts"/>
+      <dep package="fontconfig"/>
       <dep package="freetype6"/>
       <dep package="glib"/>
       <dep package="glib-networking"/>
+      <dep package="gnome-icon-theme"/>
       <dep package="libsoup"/>
     </dependencies>
   </metamodule>
@@ -21,12 +24,35 @@
       href="ftp://ftp.gnupg.org"/>
   <repository type="tarball" name="p11-glue.freedesktop.org"
       href="http://p11-glue.freedesktop.org"/>
-  <repository type="tarball" name="gnome.org"
+  <repository type="tarball" name="ftp.gnome.org"
       href="http://ftp.gnome.org"/>
   <repository type="git" name="git.gnome.org"
       href="git://git.gnome.org/"/>
   <repository type="tarball" name="gnu.org"
       href="http://ftp.gnu.org/"/>
+  <repository type="tarball" name="cairographics.org"
+      href="http://cairographics.org"/>
+  <repository type="tarball" name="freedesktop.org"
+      href="http://www.freedesktop.org"/>
+
+  <autotools id="cairo" autogen-sh="configure">
+    <dependencies>
+      <dep package="pixman"/>
+    </dependencies>
+    <branch module="releases/cairo-1.10.2.tar.gz" version="1.10.2"
+            repo="cairographics.org"
+            hash="sha256:32018c7998358eebc2ad578ff8d8559d34fc80252095f110a572ed23d989fc41"
+            md5sum="f101a9e88b783337b20b2e26dfd26d5f">
+    </branch>
+  </autotools>
+
+  <autotools id="pixman" autogen-sh="configure">
+    <branch module="releases/pixman-0.24.0.tar.gz" version="0.24.0"
+            repo="cairographics.org"
+            hash="sha256:a5647c7158f103eedff5fba799018f4169f6b26b573ab7685812ebc9a1c5d2e4"
+            md5sum="a2d0b120509bdccb10aa7f4bec3730e4">
+    </branch>
+  </autotools>
 
   <autotools id="fonts"
              skip-autogen="true">
@@ -69,7 +95,7 @@
       <dep package="libffi"/>
     </dependencies>
     <branch module="/pub/GNOME/sources/glib/2.31/glib-2.31.2.tar.xz" version="2.31.2"
-            repo="gnome.org"
+            repo="ftp.gnome.org"
             hash="sha256:19d7921671a487c3c5759a57df7b8508afdbadd7764d62a47a82fff7b399032b"
             md5sum="1cbdf314d7c87916a0c3dce83ac0285f"/>
   </autotools>
@@ -79,7 +105,7 @@
       <dep package="gnutls"/>
     </dependencies>
     <branch module="/pub/GNOME/sources/glib-networking/2.31/glib-networking-2.31.2.tar.xz" version="2.31.2"
-            repo="gnome.org"
+            repo="ftp.gnome.org"
             hash="sha256:03e3a2881d2626d1206e72972531661037fe0d32e745bf9b2f63c0d6f5e32a9c"
             md5sum="b649b457bd9fd5e0e9b9c4dcb1a74a37"/>
   </autotools>
@@ -103,6 +129,22 @@
     <branch module="libsoup" version="2.37.2.1+git"
             repo="git.gnome.org"
             tag="5cbfc48caf76ced2e28ee06c9e40523273601dc6"/>
+  </autotools>
+
+  <autotools id="fontconfig" autogen-sh="configure">
+    <branch module="software/fontconfig/release/fontconfig-2.8.0.tar.gz" version="2.8.0"
+            repo="freedesktop.org"
+            hash="sha256:fa2a1c6eea654d9fce7a4b1220f10c99cdec848dccaf1625c01f076b31382335"
+            md5sum="77e15a92006ddc2adbb06f840d591c0e">
+    </branch>
+  </autotools>
+
+  <autotools id="gnome-icon-theme" autogen-sh="configure">
+    <branch module="pub/GNOME/sources/gnome-icon-theme/3.2/gnome-icon-theme-3.2.1.tar.xz" version="3.2.1"
+            repo="ftp.gnome.org"
+            hash="sha256:a7f0a8b17e91ac338fdbc01ac59a8738e9c1e201de492c070d43aacf291a8959"
+            md5sum="40be1e5a6eae11181311a6fc432cf892">
+    </branch>
   </autotools>
 
 </moduleset>
