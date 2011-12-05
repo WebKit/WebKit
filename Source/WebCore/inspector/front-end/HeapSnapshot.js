@@ -236,6 +236,11 @@ WebInspector.HeapSnapshotEdge.prototype = {
         return this._type() === this._snapshot._edgeHiddenType;
     },
 
+    get isWeak()
+    {
+        return this._type() === this._snapshot._edgeWeakType;
+    },
+
     get isInternal()
     {
         return this._type() === this._snapshot._edgeInternalType;
@@ -279,6 +284,7 @@ WebInspector.HeapSnapshotEdge.prototype = {
         switch (this.type) {
         case "context": return "->" + this.name;
         case "element": return "[" + this.name + "]";
+        case "weak": return "[[" + this.name + "]]";
         case "property":
             return this.name.indexOf(" ") === -1 ? "." + this.name : "[\"" + this.name + "\"]";
         case "shortcut":
@@ -302,7 +308,7 @@ WebInspector.HeapSnapshotEdge.prototype = {
 
     get _hasStringName()
     {
-        return !this.isElement && !this.isHidden;
+        return !this.isElement && !this.isHidden && !this.isWeak;
     },
 
     get _name()
@@ -399,6 +405,11 @@ WebInspector.HeapSnapshotRetainerEdge.prototype = {
     get isShortcut()
     {
         return this._edge.isShortcut;
+    },
+
+    get isWeak()
+    {
+        return this._edge.isWeak;
     },
 
     get name()
@@ -695,6 +706,7 @@ WebInspector.HeapSnapshot.prototype = {
         this._edgeHiddenType = this._edgeTypes.indexOf("hidden");
         this._edgeInternalType = this._edgeTypes.indexOf("internal");
         this._edgeShortcutType = this._edgeTypes.indexOf("shortcut");
+        this._edgeWeakType = this._edgeTypes.indexOf("weak");
         this._edgeInvisibleType = this._edgeTypes.length;
         this._edgeTypes.push("invisible");
 
@@ -1406,8 +1418,12 @@ WebInspector.HeapSnapshotPathFinder.prototype = {
     {
         var result = [];
         for (var iter = this._snapshot.rootNode.edges; iter.hasNext(); iter.next()) {
-            if (!filter || filter(iter.edge.node))
+            if (!filter) {
+                if (!iter.edge.isShortcut)
+                    result[iter.edge.nodeIndex] = true;
+            } else if (filter(iter.edge.node)) {
                 result[iter.edge.nodeIndex] = true;
+            }
         }
         return result;
     },
@@ -1450,6 +1466,7 @@ WebInspector.HeapSnapshotPathFinder.prototype = {
     {
         return edge.isInvisible
             || (this._skipHidden && (edge.isHidden || edge.node.isHidden))
+            || edge.isWeak
             || this._hasInPath(edge.nodeIndex);
     },
 
