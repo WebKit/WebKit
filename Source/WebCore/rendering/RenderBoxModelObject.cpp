@@ -918,7 +918,7 @@ void RenderBoxModelObject::calculateBackgroundImageGeometry(const FillLayer* fil
     destRect.intersect(paintRect);
 }
 
-static LayoutUnit computeBorderImageSide(Length borderSlice, LayoutUnit borderSide, LayoutUnit imageSide, LayoutUnit boxExtent)
+static int computeBorderImageSide(Length borderSlice, int borderSide, int imageSide, int boxExtent)
 {
     if (borderSlice.isRelative())
         return borderSlice.value() * borderSide;
@@ -947,10 +947,10 @@ bool RenderBoxModelObject::paintNinePieceImage(GraphicsContext* graphicsContext,
     int imageWidth = imageSize.width();
     int imageHeight = imageSize.height();
 
-    int topSlice = min<LayoutUnit>(imageHeight, ninePieceImage.imageSlices().top().calcValue(imageHeight));
-    int rightSlice = min<LayoutUnit>(imageWidth, ninePieceImage.imageSlices().right().calcValue(imageWidth));
-    int bottomSlice = min<LayoutUnit>(imageHeight, ninePieceImage.imageSlices().bottom().calcValue(imageHeight));
-    int leftSlice = min<LayoutUnit>(imageWidth, ninePieceImage.imageSlices().left().calcValue(imageWidth));
+    int topSlice = min<int>(imageHeight, ninePieceImage.imageSlices().top().calcValue(imageHeight));
+    int rightSlice = min<int>(imageWidth, ninePieceImage.imageSlices().right().calcValue(imageWidth));
+    int bottomSlice = min<int>(imageHeight, ninePieceImage.imageSlices().bottom().calcValue(imageHeight));
+    int leftSlice = min<int>(imageWidth, ninePieceImage.imageSlices().left().calcValue(imageWidth));
     
     ENinePieceImageRule hRule = ninePieceImage.horizontalRule();
     ENinePieceImageRule vRule = ninePieceImage.verticalRule();

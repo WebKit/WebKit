@@ -6269,7 +6269,7 @@ void CSSStyleSelector::mapNinePieceImageWidth(CSSValue* value, NinePieceImage& i
         return;
 
     // Get our zoom value.
-    float zoom = useSVGZoomRules() ? 1.0f : style()->effectiveZoom();
+    float zoom = useSVGZoomRules(m_element) ? 1.0f : style()->effectiveZoom();
 
     // Retrieve the primitive value.
     CSSPrimitiveValue* borderWidths = static_cast<CSSPrimitiveValue*>(value);
@@ -6282,28 +6282,28 @@ void CSSStyleSelector::mapNinePieceImageWidth(CSSValue* value, NinePieceImage& i
     else if (slices->top()->primitiveType() == CSSPrimitiveValue::CSS_PERCENTAGE)
         box.m_top = Length(slices->top()->getDoubleValue(CSSPrimitiveValue::CSS_PERCENTAGE), Percent);
     else
-        box.m_top = slices->top()->computeLength<Length>(style(), rootElementStyle(), zoom);
+        box.m_top = Length(slices->top()->computeLengthIntForLength(style(), m_rootElementStyle, zoom), Fixed);
 
     if (slices->right()->primitiveType() == CSSPrimitiveValue::CSS_NUMBER)
         box.m_right = Length(slices->right()->getIntValue(), Relative);
     else if (slices->right()->primitiveType() == CSSPrimitiveValue::CSS_PERCENTAGE)
         box.m_right = Length(slices->right()->getDoubleValue(CSSPrimitiveValue::CSS_PERCENTAGE), Percent);
     else
-        box.m_right = slices->right()->computeLength<Length>(style(), rootElementStyle(), zoom);
+        box.m_right = Length(slices->right()->computeLengthIntForLength(style(), m_rootElementStyle, zoom), Fixed);
 
     if (slices->bottom()->primitiveType() == CSSPrimitiveValue::CSS_NUMBER)
         box.m_bottom = Length(slices->bottom()->getIntValue(), Relative);
     else if (slices->bottom()->primitiveType() == CSSPrimitiveValue::CSS_PERCENTAGE)
         box.m_bottom = Length(slices->bottom()->getDoubleValue(CSSPrimitiveValue::CSS_PERCENTAGE), Percent);
     else
-        box.m_bottom = slices->bottom()->computeLength<Length>(style(), rootElementStyle(), zoom);
+        box.m_bottom = Length(slices->bottom()->computeLengthIntForLength(style(), m_rootElementStyle, zoom), Fixed);
 
     if (slices->left()->primitiveType() == CSSPrimitiveValue::CSS_NUMBER)
         box.m_left = Length(slices->left()->getIntValue(), Relative);
     else if (slices->left()->primitiveType() == CSSPrimitiveValue::CSS_PERCENTAGE)
         box.m_left = Length(slices->left()->getDoubleValue(CSSPrimitiveValue::CSS_PERCENTAGE), Percent);
     else
-        box.m_left = slices->left()->computeLength<Length>(style(), rootElementStyle(), zoom);
+        box.m_left = Length(slices->left()->computeLengthIntForLength(style(), m_rootElementStyle, zoom), Fixed);
 
     image.setBorderSlices(box);
 }
@@ -7058,6 +7058,7 @@ void CSSStyleSelector::loadPendingImages()
                     if (maskImage.image() && maskImage.image()->isPendingImage()) {
                         CSSImageValue* imageValue = static_cast<StylePendingImage*>(maskImage.image())->cssImageValue();
                         reflection->setMask(NinePieceImage(imageValue->cachedImage(cachedResourceLoader), maskImage.imageSlices(), maskImage.fill(), maskImage.borderSlices(), maskImage.horizontalRule(), maskImage.verticalRule()));
+                    }
                 }
                 break;
             }

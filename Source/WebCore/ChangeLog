@@ -1,3 +1,14 @@
+2011-12-05  Lucas Forschler  <lforschler@apple.com>
+
+        Fixes to the branch made by Simon to get us building again.
+        
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::mapNinePieceImageWidth):
+        (WebCore::CSSStyleSelector::loadPendingImages):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::computeBorderImageSide):
+        (WebCore::RenderBoxModelObject::paintNinePieceImage):
+
 2011-12-02  Lucas Forschler  <lforschler@apple.com>
 
     Merge 90959
