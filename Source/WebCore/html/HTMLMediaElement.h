@@ -62,6 +62,9 @@ class TimeRanges;
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
 class Widget;
 #endif
+#if PLATFORM(MAC)
+class DisplaySleepDisabler;
+#endif
 
 // FIXME: The inheritance from MediaPlayerClient here should be private inheritance.
 // But it can't be until the Chromium WebMediaPlayerClientImpl class is fixed so it
@@ -557,6 +560,10 @@ private:
     String m_mediaGroup;
     friend class MediaController;
     RefPtr<MediaController> m_mediaController;
+
+#if PLATFORM(MAC)
+    OwnPtr<DisplaySleepDisabler> m_sleepDisabler;
+#endif
 };
 
 #if ENABLE(VIDEO_TRACK)

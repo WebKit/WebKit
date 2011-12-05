@@ -1,3 +1,15 @@
+2011-12-03  Jer Noble  <jer.noble@apple.com>
+
+        <video> elements should disable the system and display sleep when playing on OS X.
+        https://bugs.webkit.org/show_bug.cgi?id=73730
+        <rdar://problem/9502155>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Allow the WebProcess to make connections to the PowerManagement control mach server.
+
+        * WebProcess/com.apple.WebProcess.sb:
+
 2011-12-04  Sam Weinig  <sam@webkit.org>
 
         Move code for connections to/from the UIProcess/WebProcess into WebConnection subclasses

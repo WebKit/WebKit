@@ -163,6 +163,7 @@
        (global-name "com.apple.window_proxies")
        (global-name "com.apple.windowserver.active")
        (global-name "com.apple.cfnetwork.AuthBrokerAgent")
+       (global-name "com.apple.PowerManagement.control")
 
        ;; FIXME: This should be removed when <rdar://problem/9276393> is fixed.
        (global-name "com.apple.metadata.mds"))
