@@ -5913,20 +5913,18 @@ void CSSStyleSelector::mapFillSize(CSSPropertyID, FillLayer* layer, CSSValue* va
     }
 
     Pair* pair = primitiveValue->getPairValue();
-    if (!pair || !pair->first() || !pair->second())
-        return;
-    
-    CSSPrimitiveValue* first = static_cast<CSSPrimitiveValue*>(pair->first());
-    CSSPrimitiveValue* second = static_cast<CSSPrimitiveValue*>(pair->second());
+
+    CSSPrimitiveValue* first = pair ? static_cast<CSSPrimitiveValue*>(pair->first()) : primitiveValue;
+    CSSPrimitiveValue* second = pair ? static_cast<CSSPrimitiveValue*>(pair->second()) : 0;
     
     Length firstLength, secondLength;
     int firstType = first->primitiveType();
-    int secondType = second->primitiveType();
-    
+    int secondType = second ? second->primitiveType() : 0;
+
     float zoomFactor = m_style->effectiveZoom();
 
-    if (firstType == CSSPrimitiveValue::CSS_UNKNOWN)
-        firstLength = Length(Auto);
+    if (first->getIdent() == CSSValueAuto)
+        firstLength = Length();
     else if (CSSPrimitiveValue::isUnitTypeLength(firstType))
         firstLength = Length(first->computeLengthIntForLength(style(), m_rootElementStyle, zoomFactor), Fixed);
     else if (firstType == CSSPrimitiveValue::CSS_PERCENTAGE)
@@ -5934,8 +5932,8 @@ void CSSStyleSelector::mapFillSize(CSSPropertyID, FillLayer* layer, CSSValue* va
     else
         return;
 
-    if (secondType == CSSPrimitiveValue::CSS_UNKNOWN)
-        secondLength = Length(Auto);
+    if (!second || second->getIdent() == CSSValueAuto)
+        secondLength = Length();
     else if (CSSPrimitiveValue::isUnitTypeLength(secondType))
         secondLength = Length(second->computeLengthIntForLength(style(), m_rootElementStyle, zoomFactor), Fixed);
     else if (secondType == CSSPrimitiveValue::CSS_PERCENTAGE)
