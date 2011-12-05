@@ -376,7 +376,7 @@ void KURL::init(const KURL& base, const String& relative, const TextEncoding& en
     if (rel.contains('\\') && !(protocolIsJavaScript(rel) || protocolIs(rel, "data")))
         rel = substituteBackslashes(rel);
 
-    bool allASCII = charactersAreAllASCII(rel.characters(), rel.length());
+    bool allASCII = rel.containsOnlyASCII();
     CharBuffer strBuffer;
     char* str;
     size_t len;

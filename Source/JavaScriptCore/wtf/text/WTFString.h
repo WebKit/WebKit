@@ -61,7 +61,7 @@ struct StringHash;
 
 // Declarations of string operations
 
-bool charactersAreAllASCII(const UChar*, size_t);
+template<typename CharType> inline bool charactersAreAllASCII(const CharType* characters, size_t length);
 WTF_EXPORT_PRIVATE int charactersToIntStrict(const LChar*, size_t, bool* ok = 0, int base = 10);
 WTF_EXPORT_PRIVATE int charactersToIntStrict(const UChar*, size_t, bool* ok = 0, int base = 10);
 WTF_EXPORT_PRIVATE unsigned charactersToUIntStrict(const LChar*, size_t, bool* ok = 0, int base = 10);
@@ -373,7 +373,7 @@ public:
         return WTF::Unicode::LeftToRight;
     }
 
-    bool containsOnlyASCII() const { return charactersAreAllASCII(characters(), length()); }
+    bool containsOnlyASCII() const;
     bool containsOnlyLatin1() const;
     bool containsOnlyWhitespace() const { return !m_impl || m_impl->containsOnlyWhitespace(); }
 
@@ -482,12 +482,26 @@ inline bool String::containsOnlyLatin1() const
 inline NSString* nsStringNilIfEmpty(const String& str) {  return str.isEmpty() ? nil : (NSString*)str; }
 #endif
 
-inline bool charactersAreAllASCII(const UChar* characters, size_t length)
+template<typename CharType>
+inline bool charactersAreAllASCII(const CharType* characters, size_t length)
 {
-    UChar ored = 0;
+    CharType ored = 0;
     for (size_t i = 0; i < length; ++i)
         ored |= characters[i];
-    return !(ored & 0xFF80);
+
+    CharType lowBits = 0x7F;
+    return !(ored & ~lowBits);
+}
+
+inline bool String::containsOnlyASCII() const
+{
+    if (isEmpty())
+        return true;
+
+    if (is8Bit())
+        return charactersAreAllASCII(characters8(), m_impl->length());
+
+    return charactersAreAllASCII(characters16(), m_impl->length());
 }
 
 WTF_EXPORT_PRIVATE int codePointCompare(const String&, const String&);

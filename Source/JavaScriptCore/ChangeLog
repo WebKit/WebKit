@@ -1,3 +1,16 @@
+2011-12-05  Benjamin Poulain  <benjamin@webkit.org>
+
+        Update String::containsOnlyASCII() to handle 8 bits strings
+        https://bugs.webkit.org/show_bug.cgi?id=73799
+
+        Reviewed by Darin Adler.
+
+        Implement String::containsOnlyASCII() so that it does not
+        call String::characters().
+
+        * wtf/text/WTFString.h:
+        (WTF::String::containsOnlyASCII):
+
 2011-12-05  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed build fix for non-DFG platforms.

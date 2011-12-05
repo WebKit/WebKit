@@ -50,12 +50,6 @@ using std::min;
 namespace WebCore
 {
 
-// FIXME: consider adding to WebKit String class
-static bool charactersAreAllASCII(const String& s)
-{
-    return WTF::charactersAreAllASCII(s.characters(), s.length());
-}
-
 // When asked for a CJK font with a native name under a non-CJK locale or
 // asked for a CJK font with a Romanized name under a CJK locale,
 // |GetTextFace| (after |CreateFont*|) returns a 'bogus' value (e.g. Arial).
@@ -216,7 +210,7 @@ static bool LookupAltName(const String& name, String& altName)
     // use |lower| only for ASCII names 
     // For non-ASCII names, we don't want to invoke an expensive 
     // and unnecessary |lower|. 
-    if (charactersAreAllASCII(name)) {
+    if (name.containsOnlyASCII()) {
         isAscii = true;
         n = name.lower();
     } else

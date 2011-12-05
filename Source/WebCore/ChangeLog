@@ -1,3 +1,20 @@
+2011-12-05  Benjamin Poulain  <benjamin@webkit.org>
+
+        Update String::containsOnlyASCII() to handle 8 bits strings
+        https://bugs.webkit.org/show_bug.cgi?id=73799
+
+        Reviewed by Darin Adler.
+
+        When possible, change the call sites from charactersAreAllASCII()
+        to the optimized version String::containsOnlyASCII().
+
+        * platform/KURL.cpp:
+        (WebCore::KURL::init):
+        * platform/cf/BinaryPropertyList.cpp:
+        (WebCore::BinaryPropertyListPlan::writeStringObject):
+        * platform/graphics/chromium/FontCacheChromiumWin.cpp:
+        (WebCore::FontCodepage::if):
+
 2011-12-01  Vangelis Kokkevis  <vangelis@chromium.org>
 
         [chromium] Use ANGLE's texture_usage and texture_storage extensions when allocating compositor textures

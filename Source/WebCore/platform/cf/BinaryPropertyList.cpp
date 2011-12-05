@@ -285,10 +285,9 @@ static size_t markerPlusLengthByteCount(size_t length)
 
 void BinaryPropertyListPlan::writeStringObject(const String& string)
 {
-    const UChar* characters = string.characters();
     unsigned length = string.length();
     m_byteCount += markerPlusLengthByteCount(length) + length;
-    if (!charactersAreAllASCII(characters, length))
+    if (!string.containsOnlyASCII())
         m_byteCount += length;
 }
 
