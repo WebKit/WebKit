@@ -1,3 +1,27 @@
+2011-12-05  Noel Gordon  <noel.gordon@gmail.com>
+
+        ImageDecoder setSize() should check for backing store allocation failure
+        https://bugs.webkit.org/show_bug.cgi?id=72864
+
+        Reviewed by Adam Barth.
+
+        The backing store of a decoded image is a Vector<PixelData> on the affected
+        ports. And Vector<> provides a resize capacity member that returns false if
+        memory allocation fails.
+
+        setSize() should be called once only during an image decode - add an ASSERT
+        for that. Resize the backing store capacity to the requested image size and
+        return false if memory allocation fails.
+
+        ImageDecoder::isOverSize(width, height) is called to check that the decoded
+        width and height won't overflow 'width x height x sizeof(PixelData)' before
+        calls to setSize(). Refer to http://webkit.org/b/48634
+
+        No new tests. Covered by fast/images/size-failure.html
+
+        * platform/image-decoders/ImageDecoder.cpp:
+        (WebCore::ImageFrame::setSize):
+
 2011-12-04  Andreas Kling  <kling@webkit.org>
 
         CSSStyleSheet can't be reparented, enforce this at compile time.

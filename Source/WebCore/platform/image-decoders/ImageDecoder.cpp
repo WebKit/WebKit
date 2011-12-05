@@ -189,14 +189,16 @@ bool ImageFrame::copyBitmapData(const ImageFrame& other)
 
 bool ImageFrame::setSize(int newWidth, int newHeight)
 {
-    // NOTE: This has no way to check for allocation failure if the requested
-    // size was too big...
-    m_backingStore.resize(newWidth * newHeight);
+    ASSERT(!width() && !height());
+    size_t backingStoreSize = newWidth * newHeight;
+    if (!m_backingStore.tryReserveCapacity(backingStoreSize))
+        return false;
+    // Vector<> m_backingStore is used as a buffer of bytes only, and is accessed
+    // via the m_bytes member only. There is no need to resize() m_backingStore.
     m_bytes = m_backingStore.data();
     m_size = IntSize(newWidth, newHeight);
 
     zeroFillPixelData();
-
     return true;
 }
 
