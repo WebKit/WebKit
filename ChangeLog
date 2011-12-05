@@ -1,3 +1,12 @@
+2011-12-05  Alexander Færøy  <alexander.faeroy@nokia.com>
+
+        [Qt] Add Source/qtwebkitversion.h to .gitignore
+        https://bugs.webkit.org/show_bug.cgi?id=73823
+
+        Reviewed by Tor Arne Vestbø.
+
+        * .gitignore:
+
 2011-12-03  Dan Winship  <danw@gnome.org>
 
         [GTK] Update required libsoup version
