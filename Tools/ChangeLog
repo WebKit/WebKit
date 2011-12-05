@@ -1,3 +1,16 @@
+2011-12-05  Dirk Pranke  <dpranke@chromium.org>
+
+        run-webkit-tests: limit --child-processes properly on apple mac
+        https://bugs.webkit.org/show_bug.cgi?id=73856
+
+        Reviewed by Adam Roben.
+
+        Fix typos in r102013 so that we correctly pass --child-processes=1 on
+        the apple mac bots temporarily.
+
+        * Scripts/run-webkit-tests:
+        (platformIsReadyForParallelTesting):
+
 2011-12-05  Ryosuke Niwa  <rniwa@webkit.org>
 
         Temporarily set --child-process=1 on Mac because 20+ tests are timing out
