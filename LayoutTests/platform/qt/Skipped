@@ -2516,3 +2516,7 @@ fast/forms/select/listbox-in-multi-column.html
 http/tests/security/mixedContent/insecure-video-in-main-frame.html
 http/tests/security/mixedContent/redirect-http-to-https-video-in-main-frame.html
 http/tests/security/mixedContent/redirect-https-to-http-video-in-main-frame.html
+
+# [Qt] REGRESSION(101967): It made editing/style/iframe-onload-crash-mac.html timeout
+# https://bugs.webkit.org/show_bug.cgi?id=73802
+editing/style/iframe-onload-crash-mac.html
