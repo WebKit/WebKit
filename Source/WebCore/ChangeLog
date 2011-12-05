@@ -1,5 +1,23 @@
 2011-12-05  Chris Fleizach  <cfleizach@apple.com>
 
+        AX: aria-hidden doesn't work on iframe elements
+        https://bugs.webkit.org/show_bug.cgi?id=73857
+
+        Reviewed by Darin Adler.
+
+        Test: platform/mac/accessibility/iframe-aria-hidden.html
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::addAttachmentChildren):
+        (WebCore::AccessibilityRenderObject::addChildren):
+        * accessibility/AccessibilityRenderObject.h:
+        * accessibility/AccessibilityScrollView.cpp:
+        (WebCore::AccessibilityScrollView::accessibilityIsIgnored):
+        (WebCore::AccessibilityScrollView::addChildren):
+        * accessibility/AccessibilityScrollView.h:
+
+2011-12-05  Chris Fleizach  <cfleizach@apple.com>
+
         AX: web search mechanism does not work with frames
         https://bugs.webkit.org/show_bug.cgi?id=73836
 

@@ -1,0 +1,40 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../../../fast/js/resources/js-test-style.css">
+<script>
+var successfullyParsed = false;
+</script>
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<iframe aria-hidden="true" id="iframe" src="resources/cake.png" width="400" height="500" scrolling="auto" frameborder="1">fall back content</iframe>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that aria-hidden will affect the visibility of the web area and scroll view.");
+
+    if (window.accessibilityController) {
+
+        document.getElementById("body").focus();
+
+        // Get the iframe reference.
+        var body = accessibilityController.focusedElement;
+        shouldBe("body.childrenCount", "3");
+        shouldBe("body.childAtIndex(0).childrenCount", "0");
+
+        document.getElementById("iframe").setAttribute("aria-hidden", "false");
+        shouldBe("body.childrenCount", "4");
+        shouldBe("body.childAtIndex(0).childAtIndex(0).childAtIndex(0).role", "'AXRole: AXWebArea'");
+    }
+
+    successfullyParsed = true;
+</script>
+
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

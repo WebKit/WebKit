@@ -3500,6 +3500,21 @@ void AccessibilityRenderObject::addTextFieldChildren()
     m_children.append(axSpinButton);
 }
 
+void AccessibilityRenderObject::addAttachmentChildren()
+{
+    if (!isAttachment())
+        return;
+
+    // FrameView's need to be inserted into the AX hierarchy when encountered.
+    Widget* widget = widgetForAttachmentView();
+    if (!widget || !widget->isFrameView())
+        return;
+    
+    AccessibilityObject* axWidget = axObjectCache()->getOrCreate(widget);
+    if (!axWidget->accessibilityIsIgnored())
+        m_children.append(axWidget);
+}
+    
 void AccessibilityRenderObject::addChildren()
 {
     // If the need to add more children in addition to existing children arises, 
@@ -3534,13 +3549,7 @@ void AccessibilityRenderObject::addChildren()
         }
     }
     
-    // FrameView's need to be inserted into the AX hierarchy when encountered.
-    if (isAttachment()) {
-        Widget* widget = widgetForAttachmentView();
-        if (widget && widget->isFrameView())
-            m_children.append(axObjectCache()->getOrCreate(widget));
-    }
-    
+    addAttachmentChildren();
     addImageMapChildren();
     addTextFieldChildren();
 }

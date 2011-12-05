@@ -129,14 +129,23 @@ void AccessibilityScrollView::clearChildren()
     m_verticalScrollbar = 0;
     m_horizontalScrollbar = 0;
 }
+
+bool AccessibilityScrollView::accessibilityIsIgnored() const
+{
+    AccessibilityObject* webArea = webAreaObject();
+    if (!webArea)
+        return true;
     
+    return webArea->accessibilityIsIgnored();
+}
+
 void AccessibilityScrollView::addChildren()
 {
     ASSERT(!m_haveChildren);
     m_haveChildren = true;
     
     AccessibilityObject* webArea = webAreaObject();
-    if (webArea)
+    if (webArea && !webArea->accessibilityIsIgnored())
         m_children.append(webArea);
     
     updateScrollbars();

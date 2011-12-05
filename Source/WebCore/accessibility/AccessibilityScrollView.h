@@ -43,7 +43,7 @@ public:
 private:
     AccessibilityScrollView(ScrollView*);
     
-    virtual bool accessibilityIsIgnored() const { return false; }
+    virtual bool accessibilityIsIgnored() const;
     virtual bool isAccessibilityScrollView() const { return true; }
     virtual bool isEnabled() const { return true; }
     
