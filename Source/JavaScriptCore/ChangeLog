@@ -1,3 +1,48 @@
+2011-12-05  Michael Saboff  <msaboff@apple.com>
+
+        8 bit string work slows down Kraken json-stringify-tinderbox
+        https://bugs.webkit.org/show_bug.cgi?id=73457
+
+        Added 8 bit path to StringBuilder.  StringBuilder starts
+        assuming 8 bit contents and gets converted to 16 bit upon
+        seeing the first 16 bit character or string.  Split
+        appendUninitialiezed into an inlined fast and function call
+        slow case.
+
+        Factored out the processing of the UString argument from
+        Stringifier::appendQuotedString() to a static templated function
+        based on character size.
+
+        This change eliminates 5% of the 7% slowdown to json-stringify-tinderbox.
+        This change introduces a 4.8% slowdown to json-parse-financial.
+        This slowdown will be addressed in a subsequent patch to StringImpl::equal.
+
+        Reviewed by Oliver Hunt.
+
+        * runtime/JSONObject.cpp:
+        (JSC::appendStringToUStringBuilder):
+        (JSC::Stringifier::appendQuotedString):
+        * wtf/text/StringBuilder.cpp:
+        (WTF::StringBuilder::resize):
+        (WTF::StringBuilder::allocateBuffer):
+        (WTF::StringBuilder::allocateBufferUpConvert):
+        (WTF::LChar):
+        (WTF::UChar):
+        (WTF::StringBuilder::reserveCapacity):
+        (WTF::StringBuilder::appendUninitialized):
+        (WTF::StringBuilder::appendUninitializedSlow):
+        (WTF::StringBuilder::append):
+        (WTF::StringBuilder::shrinkToFit):
+        * wtf/text/StringBuilder.h:
+        (WTF::StringBuilder::StringBuilder):
+        (WTF::StringBuilder::append):
+        (WTF::StringBuilder::operator[]):
+        (WTF::StringBuilder::characters8):
+        (WTF::StringBuilder::characters16):
+        (WTF::StringBuilder::charactersBlah):
+        (WTF::LChar):
+        (WTF::UChar):
+
 2011-12-01  Gavin Barraclough  <barraclough@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=73624

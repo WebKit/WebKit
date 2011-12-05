@@ -35,6 +35,8 @@ class StringBuilder {
 public:
     StringBuilder()
         : m_length(0)
+        , m_is8Bit(true)
+        , m_bufferCharacters8(0)
     {
     }
 
@@ -45,15 +47,23 @@ public:
 
     void append(const String& string)
     {
+        if (!string.length())
+            return;
+
         // If we're appending to an empty string, and there is not buffer
         // (in case reserveCapacity has been called) then just retain the
         // string.
         if (!m_length && !m_buffer) {
             m_string = string;
             m_length = string.length();
+            m_is8Bit = m_string.is8Bit();
             return;
         }
-        append(string.characters(), string.length());
+
+        if (string.is8Bit())
+            append(string.characters8(), string.length());
+        else
+            append(string.characters16(), string.length());
     }
 
     void append(const char* characters)
@@ -64,16 +74,20 @@ public:
 
     void append(UChar c)
     {
-        if (m_buffer && m_length < m_buffer->length() && m_string.isNull())
-            m_bufferCharacters[m_length++] = c;
+        if (m_buffer && !m_is8Bit && m_length < m_buffer->length() && m_string.isNull())
+            m_bufferCharacters16[m_length++] = c;
         else
             append(&c, 1);
     }
 
     void append(char c)
     {
-        if (m_buffer && m_length < m_buffer->length() && m_string.isNull())
-            m_bufferCharacters[m_length++] = (unsigned char)c;
+        if (m_buffer && m_length < m_buffer->length() && m_string.isNull()) {
+            if (m_is8Bit)
+                m_bufferCharacters8[m_length++] = (LChar)c;
+            else
+                m_bufferCharacters16[m_length++] = (LChar)c;
+        }
         else
             append(&c, 1);
     }
@@ -110,9 +124,33 @@ public:
     UChar operator[](unsigned i) const
     {
         ASSERT(i < m_length);
-        return characters()[i];
+        if (m_is8Bit)
+            return characters8()[i];
+        return characters16()[i];
     }
 
+    const LChar* characters8() const
+    {
+        ASSERT(m_is8Bit);
+        if (!m_length)
+            return 0;
+        if (!m_string.isNull())
+            return m_string.characters8();
+        ASSERT(m_buffer);
+        return m_buffer->characters8();
+    }
+
+    const UChar* characters16() const
+    {
+        ASSERT(!m_is8Bit);
+        if (!m_length)
+            return 0;
+        if (!m_string.isNull())
+            return m_string.characters16();
+        ASSERT(m_buffer);
+        return m_buffer->characters16();
+    }
+    
     const UChar* characters() const
     {
         if (!m_length)
@@ -122,7 +160,7 @@ public:
         ASSERT(m_buffer);
         return m_buffer->characters();
     }
-
+    
     void clear()
     {
         m_length = 0;
@@ -131,16 +169,42 @@ public:
     }
 
 private:
+    void allocateBuffer(const LChar* currentCharacters, unsigned requiredLength);
     void allocateBuffer(const UChar* currentCharacters, unsigned requiredLength);
+    void allocateBufferUpConvert(const LChar* currentCharacters, unsigned requiredLength);
+    template <typename CharType>
     void reallocateBuffer(unsigned requiredLength);
-    UChar* appendUninitialized(unsigned length);
+    template <typename CharType>
+    ALWAYS_INLINE CharType* appendUninitialized(unsigned length);
+    template <typename CharType>
+    CharType* appendUninitializedSlow(unsigned length);
+    template <typename CharType>
+    ALWAYS_INLINE CharType * getBufferCharacters();
     void reifyString();
 
     unsigned m_length;
     String m_string;
     RefPtr<StringImpl> m_buffer;
-    UChar* m_bufferCharacters;
+    bool m_is8Bit;
+    union {
+        LChar* m_bufferCharacters8;
+        UChar* m_bufferCharacters16;
+    };
 };
+
+template <>
+ALWAYS_INLINE LChar* StringBuilder::getBufferCharacters<LChar>()
+{
+    ASSERT(m_is8Bit);
+    return m_bufferCharacters8;
+}
+
+template <>
+ALWAYS_INLINE UChar* StringBuilder::getBufferCharacters<UChar>()
+{
+    ASSERT(!m_is8Bit);
+    return m_bufferCharacters16;
+}    
 
 } // namespace WTF
 
