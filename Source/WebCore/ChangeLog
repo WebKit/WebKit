@@ -1,3 +1,18 @@
+2011-12-05  Timothy Hatcher  <timothy@apple.com>
+
+        Keep both InspectorBackend.js and InspectorBackendStub.js in Release builds after
+        they have been combined into inspector.js.
+
+        The InspectorBackend.js file split out of the generated InspectorBackendStub.js
+        in r101670, and both files are needed to be useful.
+
+        https://webkit.org/b/73839
+
+        Reviewed by Joseph Pecoraro and Brian Weinstein.
+
+        * WebCore.xcodeproj/project.pbxproj: Pass -not -name "InspectorBackend*.js" to find
+        instead of -not -name InspectorBackendStub.js.
+
 2011-12-05  Mikhail Naganov  <mnaganov@chromium.org>
 
         Web Inspector: [Chromium] Heap profiler should designate weak references.
