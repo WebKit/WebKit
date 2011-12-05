@@ -7673,11 +7673,8 @@ void CSSParser::updateSpecifiersWithElementName(const AtomicString& namespacePre
         return;
     }
 
-    // No need to create an extra element name selector if we are matching any element
-    // in any namespace.
-    if (elementName == starAtom && m_defaultNamespace == starAtom)
-        return;
-
+    // For shadow-ID pseudo-elements to be correctly matched, the ShadowDescendant combinator has to be used.
+    // We therefore create a new Selector with that combinator here in any case, even if matching any (host) element in any namespace (i.e. '*').
     OwnPtr<CSSParserSelector> elementNameSelector = adoptPtr(new CSSParserSelector);
     elementNameSelector->setTag(tag);
     lastShadowDescendant->setTagHistory(elementNameSelector.release());

@@ -97,23 +97,31 @@ testSelectorRoundTrip(":-webkit-drag");
 
 debug('');
 
-testSelectorRoundTrip("::-webkit-file-upload-button");
-testSelectorRoundTrip("::-webkit-search-cancel-button");
-testSelectorRoundTrip("::-webkit-search-decoration");
-testSelectorRoundTrip("::-webkit-search-results-button");
-testSelectorRoundTrip("::-webkit-search-results-decoration");
-testSelectorRoundTrip("::-webkit-slider-thumb");
+shouldBe("parseThenSerializeRule('::-webkit-file-upload-button { }')", "'*::-webkit-file-upload-button { }'");
+shouldBe("parseThenSerializeRule('::-webkit-search-cancel-button { }')", "'*::-webkit-search-cancel-button { }'");
+shouldBe("parseThenSerializeRule('::-webkit-search-decoration { }')", "'*::-webkit-search-decoration { }'");
+shouldBe("parseThenSerializeRule('::-webkit-search-results-button { }')", "'*::-webkit-search-results-button { }'");
+shouldBe("parseThenSerializeRule('::-webkit-search-results-decoration { }')", "'*::-webkit-search-results-decoration { }'");
+shouldBe("parseThenSerializeRule('::-webkit-slider-thumb { }')", "'*::-webkit-slider-thumb { }'");
 
 debug('');
 
 testSelectorRoundTrip("a::-webkit-slider-thumb");
-testSelectorRoundTrip("a ::-webkit-slider-thumb");
+shouldBe("parseThenSerializeRule('a ::-webkit-slider-thumb { }')", "'a *::-webkit-slider-thumb { }'");
 testSelectorRoundTrip("[a]::-webkit-slider-thumb");
-testSelectorRoundTrip("[a] ::-webkit-slider-thumb");
+shouldBe("parseThenSerializeRule('[a] ::-webkit-slider-thumb { }')", "'[a] *::-webkit-slider-thumb { }'");
 testSelectorRoundTrip(".a::-webkit-slider-thumb");
-testSelectorRoundTrip(".a ::-webkit-slider-thumb");
+shouldBe("parseThenSerializeRule('.a ::-webkit-slider-thumb { }')", "'.a *::-webkit-slider-thumb { }'");
 testSelectorRoundTrip("#a::-webkit-slider-thumb");
-testSelectorRoundTrip("#a ::-webkit-slider-thumb");
+shouldBe("parseThenSerializeRule('#a ::-webkit-slider-thumb { }')", "'#a *::-webkit-slider-thumb { }'");
+shouldBe("parseThenSerializeRule('* ::-webkit-slider-thumb { }')", "'* *::-webkit-slider-thumb { }'");
+
+debug('');
+
+testSelectorRoundTrip("a[b]::-webkit-slider-thumb");
+testSelectorRoundTrip("a.b::-webkit-slider-thumb");
+testSelectorRoundTrip("a#b::-webkit-slider-thumb");
+testSelectorRoundTrip("a[b].c#d::-webkit-slider-thumb");
 
 debug('');
 

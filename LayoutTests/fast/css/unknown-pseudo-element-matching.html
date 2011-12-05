@@ -18,6 +18,7 @@ var NAMESPACE_DECLARATION = '@namespace "http://example.com/foo/namespace";\n@na
 var SELECTOR_TEST_PROPERTIES = ' { height: 1px; -webkit-appearance: none; }';
 var SELECTORS = [
 '::-webkit-slider-thumb',
+'*::-webkit-slider-thumb',
 'input::-webkit-slider-thumb',
 '#foo::-webkit-slider-thumb',
 'input#foo::-webkit-slider-thumb',
@@ -27,9 +28,11 @@ var SELECTORS = [
 var DISABLED_SELECTORS = SELECTORS.map(function(selector) { return selector + ':disabled'; });
 var HOVER_SELECTORS = SELECTORS.map(function(selector) { return selector + ':hover'; });
 var DESCENDANT_ID_SELECTORS = SELECTORS.map(function(selector) { return '#baz ' + selector; });
-DESCENDANT_ID_SELECTORS.shift();
 var DESCENDANT_CLASS_SELECTORS = SELECTORS.map(function(selector) { return '.qux ' + selector; });
-DESCENDANT_CLASS_SELECTORS.shift();
+var DIRECT_SIBLING_ID_SELECTORS = SELECTORS.map(function(selector) { return '#sib + ' + selector; });
+var INDIRECT_SIBLING_ID_SELECTORS = SELECTORS.map(function(selector) { return '#sib ~ ' + selector; });
+var DIRECT_SIBLING_CLASS_SELECTORS = SELECTORS.map(function(selector) { return '.ling + ' + selector; });
+var INDIRECT_SIBLING_CLASS_SELECTORS = SELECTORS.map(function(selector) { return '.ling ~ ' + selector; });
 
 // convenience constants
 var MATCH = true;
@@ -66,12 +69,16 @@ function runTest()
 {
     head = document.getElementsByTagName('head')[0];
     input = document.getElementsByTagName('input')[0];
+    testContainer = document.getElementById('baz');
     logDiv = document.getElementById('log');
     log('Basic selector tests:');
     runSelectorTest(MATCH, '::-webkit-slider-thumb');
+    runSelectorTest(MATCH, '*::-webkit-slider-thumb');
     runSelectorTest(NO_MATCH, '::-webkit-slider-thumb', WITH_NAMESPACES);
     runSelectorTest(MATCH, '*|::-webkit-slider-thumb', WITH_NAMESPACES);
+    runSelectorTest(MATCH, '*|*::-webkit-slider-thumb', WITH_NAMESPACES);
     runSelectorTest(MATCH, 'html|::-webkit-slider-thumb', WITH_NAMESPACES);
+    runSelectorTest(MATCH, 'html|*::-webkit-slider-thumb', WITH_NAMESPACES);
     runSelectorTest(MATCH, '#foo::-webkit-slider-thumb');
     runSelectorTest(MATCH, '.bar::-webkit-slider-thumb');
     runSelectorTest(NO_MATCH, '#foo::-webkit-slider-thumb', WITH_NAMESPACES);
@@ -107,7 +114,13 @@ function runTest()
     log('<br>Should match when combined with descendant selectors:');
     DESCENDANT_ID_SELECTORS.forEach(expectMatch);
     DESCENDANT_CLASS_SELECTORS.forEach(expectMatch);
-    input.parentNode.removeChild(input);
+    log('<br>Should match when combined with sibling selectors:');
+    DIRECT_SIBLING_ID_SELECTORS.forEach(expectMatch);
+    INDIRECT_SIBLING_ID_SELECTORS.forEach(expectMatch);
+    DIRECT_SIBLING_CLASS_SELECTORS.forEach(expectMatch);
+    INDIRECT_SIBLING_CLASS_SELECTORS.forEach(expectMatch);
+
+    testContainer.parentNode.removeChild(testContainer);
 }
 
 function expectNoMatch(selector) {
@@ -123,6 +136,7 @@ function expectMatch(selector) {
 <body onload="runTest()">
     <p>Tests various selector combinations, containing unknown pseudo element selectors.</p>
     <div id="baz" class="qux">
+        <span id="sib" class="ling">Sibling</span>
         <input id="foo" class="bar" type="range">
     </div>
     <div id="log"></div>
