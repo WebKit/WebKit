@@ -42,7 +42,7 @@
 
                 run("trackElement.src = 'captions-webvtt/tc004-webvtt-file.vtt'");
                 testExpected("video.textTracks.length", 1);
-                testExpected("trackElement.readyState", HTMLTrackElement.NONE);
+                testExpected("trackElement.readyState", HTMLTrackElement.LOADING);
             }
 
         </script>

@@ -28,6 +28,7 @@
 #if ENABLE(VIDEO_TRACK)
 #include "HTMLTrackElement.h"
 
+#include "ContentSecurityPolicy.h"
 #include "Event.h"
 #include "HTMLMediaElement.h"
 #include "HTMLNames.h"
@@ -41,6 +42,17 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
+#if !LOG_DISABLED
+static String urlForLogging(const KURL& url)
+{
+    static const unsigned maximumURLLengthForLogging = 128;
+    
+    if (url.string().length() < maximumURLLengthForLogging)
+        return url.string();
+    return url.string().substring(0, maximumURLLengthForLogging) + "...";
+}
+#endif
+    
 inline HTMLTrackElement::HTMLTrackElement(const QualifiedName& tagName, Document* document)
     : HTMLElement(tagName, document)
 {
@@ -192,10 +204,21 @@ void HTMLTrackElement::scheduleLoad()
     if (!fastHasAttribute(srcAttr))
         return;
 
-    ensureTrack()->scheduleLoad(getNonEmptyURLAttribute(srcAttr));
+    // 4.8.10.12.3 Sourcing out-of-band text tracks
+
+    // 1. Set the text track readiness state to loading.
+    setReadyState(HTMLTrackElement::LOADING);
+
+    KURL url = getNonEmptyURLAttribute(srcAttr);
+    if (!canLoadUrl(url)) {
+        didCompleteLoad(ensureTrack(), HTMLTrackElement::Failure);
+        return;
+    }
+
+    ensureTrack()->scheduleLoad(url);
 }
 
-bool HTMLTrackElement::canLoadUrl(LoadableTextTrack*, const KURL& url)
+bool HTMLTrackElement::canLoadUrl(const KURL& url)
 {
     if (!RuntimeEnabledFeatures::webkitVideoTrackEnabled())
         return false;
@@ -204,18 +227,52 @@ bool HTMLTrackElement::canLoadUrl(LoadableTextTrack*, const KURL& url)
     if (!parent)
         return false;
 
-    if (!parent->isSafeToLoadURL(url, HTMLMediaElement::Complain))
+    // 4.8.10.12.3 Sourcing out-of-band text tracks
+
+    // 4. Download: If URL is not the empty string, perform a potentially CORS-enabled fetch of URL, with the
+    // mode being the state of the media element's crossorigin content attribute, the origin being the
+    // origin of the media element's Document, and the default origin behaviour set to fail.
+    if (url.isEmpty())
         return false;
+
+    if (!document()->contentSecurityPolicy()->allowMediaFromSource(url)) {
+        DEFINE_STATIC_LOCAL(String, consoleMessage, ("Text track load denied by Content Security Policy."));
+        document()->addConsoleMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, consoleMessage);
+        LOG(Media, "HTMLTrackElement::canLoadUrl(%s) -> rejected by Content Security Policy", urlForLogging(url).utf8().data());
+        return false;
+    }
     
     return dispatchBeforeLoadEvent(url.string());
 }
 
-void HTMLTrackElement::didCompleteLoad(LoadableTextTrack*, bool loadingFailed)
+void HTMLTrackElement::didCompleteLoad(LoadableTextTrack*, LoadStatus status)
 {
-    loadingFailed ? setReadyState(HTMLTrackElement::TRACK_ERROR) : setReadyState(HTMLTrackElement::LOADED);
-
     ExceptionCode ec = 0;
-    dispatchEvent(Event::create(loadingFailed ? eventNames().errorEvent : eventNames().loadEvent, false, false), ec);
+
+    // 4.8.10.12.3 Sourcing out-of-band text tracks (continued)
+    
+    // 4. Download: ...
+    // If the fetching algorithm fails for any reason (network error, the server returns an error 
+    // code, a cross-origin check fails, etc), or if URL is the empty string or has the wrong origin 
+    // as determined by the condition at the start of this step, or if the fetched resource is not in
+    // a supported format, then queue a task to first change the text track readiness state to failed
+    // to load and then fire a simple event named error at the track element; and then, once that task
+    // is queued, move on to the step below labeled monitoring.
+
+    if (status == Failure) {
+        setReadyState(HTMLTrackElement::TRACK_ERROR);
+        dispatchEvent(Event::create(eventNames().errorEvent, false, false), ec);
+        return;
+    }
+
+    // If the fetching algorithm does not fail, then the final task that is queued by the networking
+    // task source must run the following steps:
+    //     1. Change the text track readiness state to loaded.
+    setReadyState(HTMLTrackElement::LOADED);
+
+    //     2. If the file was successfully processed, fire a simple event named load at the 
+    //        track element.
+    dispatchEvent(Event::create(eventNames().loadEvent, false, false), ec);
 }
 
 // NOTE: The values in the TextTrack::ReadinessState enum must stay in sync with those in HTMLTrackElement::ReadyState.
@@ -235,7 +292,15 @@ HTMLTrackElement::ReadyState HTMLTrackElement::readyState()
 {
     return static_cast<ReadyState>(ensureTrack()->readinessState());
 }
+
+const AtomicString& HTMLTrackElement::mediaElementCrossOriginAttribute() const
+{
+    if (HTMLMediaElement* parent = mediaElement())
+        return parent->fastGetAttribute(HTMLNames::crossoriginAttr);
     
+    return nullAtom;
+}
+
 void HTMLTrackElement::textTrackKindChanged(TextTrack* track)
 {
     if (HTMLMediaElement* parent = mediaElement())

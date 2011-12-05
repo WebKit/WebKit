@@ -368,6 +368,7 @@ webaudio
 # VIDEO_TRACK is disabled for now
 media/track
 fast/events/constructors/track-event-constructor.html
+http/tests/security/text-track-crossorigin.html
 
 # CSS Filters is disabled
 css3/filters

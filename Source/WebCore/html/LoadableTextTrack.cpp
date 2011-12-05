@@ -57,28 +57,36 @@ void LoadableTextTrack::clearClient()
 
 void LoadableTextTrack::scheduleLoad(const KURL& url)
 {
+    if (url == m_url)
+        return;
+
+    // 4.8.10.12.3 Sourcing out-of-band text tracks (continued)
+
+    // 2. Let URL be the track URL of the track element.
     m_url = url;
+    
+    // 3. Asynchronously run the remaining steps, while continuing with whatever task 
+    // was responsible for creating the text track or changing the text track mode.
     if (!m_loadTimer.isActive())
         m_loadTimer.startOneShot(0);
 }
 
 void LoadableTextTrack::loadTimerFired(Timer<LoadableTextTrack>*)
 {
-    if (!m_trackElement)
-        return;
-
-    m_trackElement->setReadyState(HTMLTrackElement::LOADING);
-    
     if (m_loader)
         m_loader->cancelLoad();
 
-    if (!m_trackElement->canLoadUrl(this, m_url)) {
-        m_trackElement->setReadyState(HTMLTrackElement::TRACK_ERROR);
+    if (!m_trackElement)
         return;
-    }
 
+    // 4.8.10.12.3 Sourcing out-of-band text tracks (continued)
+
+    // 4. Download: If URL is not the empty string, perform a potentially CORS-enabled fetch of URL, with the
+    // mode being the state of the media element's crossorigin content attribute, the origin being the
+    // origin of the media element's Document, and the default origin behaviour set to fail.
     m_loader = TextTrackLoader::create(this, static_cast<ScriptExecutionContext*>(m_trackElement->document()));
-    m_loader->load(m_url);
+    if (!m_loader->load(m_url, m_trackElement->mediaElementCrossOriginAttribute()))
+        m_trackElement->didCompleteLoad(this, HTMLTrackElement::Failure);
 }
 
 void LoadableTextTrack::newCuesAvailable(TextTrackLoader* loader)
@@ -103,10 +111,6 @@ void LoadableTextTrack::newCuesAvailable(TextTrackLoader* loader)
 void LoadableTextTrack::cueLoadingStarted(TextTrackLoader* loader)
 {
     ASSERT_UNUSED(loader, m_loader == loader);
-    
-    if (!m_trackElement)
-        return;
-    m_trackElement->setReadyState(HTMLTrackElement::LOADING);
 }
 
 void LoadableTextTrack::cueLoadingCompleted(TextTrackLoader* loader, bool loadingFailed)
@@ -115,7 +119,8 @@ void LoadableTextTrack::cueLoadingCompleted(TextTrackLoader* loader, bool loadin
 
     if (!m_trackElement)
         return;
-    m_trackElement->didCompleteLoad(this, loadingFailed);
+
+    m_trackElement->didCompleteLoad(this, loadingFailed ? HTMLTrackElement::Failure : HTMLTrackElement::Success);
 }
 
 void LoadableTextTrack::fireCueChangeEvent()

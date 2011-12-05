@@ -31,9 +31,11 @@
 
 #include "CachedResourceLoader.h"
 #include "CachedTextTrack.h"
+#include "CrossOriginAccessControl.h"
 #include "Document.h"
 #include "Logging.h"
 #include "ResourceHandle.h"
+#include "SecurityOrigin.h"
 #include "SharedBuffer.h"
 #include "WebVTTParser.h"
 
@@ -139,14 +141,31 @@ void TextTrackLoader::didReceiveData(CachedResource* resource)
     processNewCueData(resource);
 }
 
+void TextTrackLoader::corsPolicyPreventedLoad()
+{
+    DEFINE_STATIC_LOCAL(String, consoleMessage, ("Cross-origin text track load denied by Cross-Origin Resource Sharing policy."));
+    Document* document = static_cast<Document*>(m_scriptExecutionContext);
+    document->addConsoleMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, consoleMessage);
+    m_state = Failed;
+}
+
 void TextTrackLoader::notifyFinished(CachedResource* resource)
 {
     ASSERT(m_cachedCueData == resource);
 
-    processNewCueData(resource);
+    Document* document = static_cast<Document*>(m_scriptExecutionContext);
+    if (!m_crossOriginMode.isNull()
+        && !document->securityOrigin()->canRequest(resource->response().url())
+        && !resource->passesAccessControlCheck(document->securityOrigin())) {
 
-    if (m_state != Failed)
-        m_state = resource->errorOccurred() ? Failed : Finished;
+        corsPolicyPreventedLoad();
+    }
+
+    if (m_state != Failed) {
+        processNewCueData(resource);
+        if (m_state != Failed)
+            m_state = resource->errorOccurred() ? Failed : Finished;
+    }
 
     if (!m_cueLoadTimer.isActive())
         m_cueLoadTimer.startOneShot(0);
@@ -154,17 +173,29 @@ void TextTrackLoader::notifyFinished(CachedResource* resource)
     cancelLoad();
 }
 
-bool TextTrackLoader::load(const KURL& url)
+bool TextTrackLoader::load(const KURL& url, const String& crossOriginMode)
 {
+    cancelLoad();
+
     if (!m_client->shouldLoadCues(this))
         return false;
-    
-    cancelLoad();
-    
+
     ASSERT(m_scriptExecutionContext->isDocument());
     Document* document = static_cast<Document*>(m_scriptExecutionContext);
-    
     ResourceRequest cueRequest(document->completeURL(url));
+
+    if (!crossOriginMode.isNull()) {
+        m_crossOriginMode = crossOriginMode;
+        StoredCredentials allowCredentials = equalIgnoringCase(crossOriginMode, "use-credentials") ? AllowStoredCredentials : DoNotAllowStoredCredentials;
+        updateRequestForAccessControl(cueRequest, document->securityOrigin(), allowCredentials);
+    } else {
+        // Cross-origin resources that are not suitably CORS-enabled may not load.
+        if (!document->securityOrigin()->canRequest(url)) {
+            corsPolicyPreventedLoad();
+            return false;
+        }
+    }
+
     CachedResourceLoader* cachedResourceLoader = document->cachedResourceLoader();
     m_cachedCueData = static_cast<CachedTextTrack*>(cachedResourceLoader->requestTextTrack(cueRequest));
     if (m_cachedCueData)

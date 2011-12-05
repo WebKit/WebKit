@@ -61,7 +61,7 @@ public:
     }
     virtual ~TextTrackLoader();
     
-    bool load(const KURL&);
+    bool load(const KURL&, const String& crossOriginMode);
     void cancelLoad();
     void getNewCues(Vector<RefPtr<TextTrackCue> >& outputCues);
     
@@ -78,6 +78,7 @@ private:
     
     void processNewCueData(CachedResource*);
     void cueLoadTimerFired(Timer<TextTrackLoader>*);
+    void corsPolicyPreventedLoad();
 
     enum State { Idle, Loading, Finished, Failed };
     
@@ -86,6 +87,7 @@ private:
     CachedResourceHandle<CachedTextTrack> m_cachedCueData;
     ScriptExecutionContext* m_scriptExecutionContext;
     Timer<TextTrackLoader> m_cueLoadTimer;
+    String m_crossOriginMode;
     State m_state;
     unsigned m_parseOffset;
     bool m_newCuesAvailable;

@@ -447,6 +447,7 @@ fast/dom/MicroData
 # https://bugs.webkit.org/show_bug.cgi?id=43668
 media/track
 fast/events/constructors/track-event-constructor.html
+http/tests/security/text-track-crossorigin.html
 
 # Tests for MediaSource API. Feature is not yet functional.
 # https://bugs.webkit.org/show_bug.cgi?id=64731

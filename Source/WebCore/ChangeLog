@@ -1,3 +1,38 @@
+2011-12-05  Eric Carlson  <eric.carlson@apple.com>
+
+        Out-of-band text tracks may only load from same origin as the media element's Document's origin
+        https://bugs.webkit.org/show_bug.cgi?id=73184
+
+        Reviewed by Sam Weinig.
+
+        Test: http/tests/security/text-track-crossorigin.html
+
+        * html/HTMLTrackElement.cpp:
+        (WebCore::urlForLogging): Debug-only function for logging urls.
+        (WebCore::HTMLTrackElement::scheduleLoad): Call canLoadUrl() before passing control off to
+            the Track.
+        (WebCore::HTMLTrackElement::canLoadUrl): Don't ask HTMLMediaElement to validate the url, the
+            requirements for <track> are different from <video>.
+        (WebCore::HTMLTrackElement::didCompleteLoad): Change bool param to enum.
+        (WebCore::HTMLTrackElement::mediaElementCrossOriginAttribute): New, return parent 'crossorigin' 
+            attribute value.
+        * html/HTMLTrackElement.h:
+
+        * html/LoadableTextTrack.cpp:
+        (WebCore::LoadableTextTrack::scheduleLoad): Add comments from the spec.
+        (WebCore::LoadableTextTrack::loadTimerFired): Always cancel pending loads. Let the caller know 
+            if the loader refuses the url immediately.
+        (WebCore::LoadableTextTrack::cueLoadingStarted): The <track> deals with readyState.
+        (WebCore::LoadableTextTrack::cueLoadingCompleted): HTMLTrackElement::didCompleteLoad takes
+            an enum, not a bool.
+
+        * loader/TextTrackLoader.cpp:
+        (WebCore::TextTrackLoader::corsPolicyPreventedLoad): New, log the error and set m_state.
+        (WebCore::TextTrackLoader::notifyFinished): Check for CORS failure.
+        (WebCore::TextTrackLoader::load): Take media element cross-origin attribute as a param so we
+            can make the correct checks.
+        * loader/TextTrackLoader.h:
+
 2011-12-05  Roland Steiner  <rolandsteiner@chromium.org>
 
         "Raw" pseudo selectors don't match if immediately after a child or descendant combinator

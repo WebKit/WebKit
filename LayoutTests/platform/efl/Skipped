@@ -1098,6 +1098,8 @@ webaudio
 
 # The EFL port has no support for <track> with *.vtt
 media/track
+fast/events/constructors/track-event-constructor.html
+http/tests/security/text-track-crossorigin.html
 
 # The EFL port has no support for loading a PDF as an image
 fast/images/pdf-as-background.html

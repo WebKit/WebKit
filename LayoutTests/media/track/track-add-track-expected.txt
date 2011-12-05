@@ -5,7 +5,7 @@ RUN(trackElement = document.createElement('track'))
 RUN(video.appendChild(trackElement))
 RUN(trackElement.src = 'captions-webvtt/tc004-webvtt-file.vtt')
 EXPECTED (video.textTracks.length == '1') OK
-EXPECTED (trackElement.readyState == '0') OK
+EXPECTED (trackElement.readyState == '1') OK
 EVENT(addtrack)
 EXPECTED (event.target == '[object TextTrackList]') OK
 EXPECTED (event instanceof window.TrackEvent == 'true') OK

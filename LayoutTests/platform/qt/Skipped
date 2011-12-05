@@ -2443,6 +2443,7 @@ fast/viewport/viewport-warnings-3.html
 
 # track not functional yet.
 fast/events/constructors/track-event-constructor.html
+http/tests/security/text-track-crossorigin.html
 
 # Skip because this platform does not support a paging mouse wheel event
 fast/events/platform-wheelevent-paging-x-in-non-scrolling-div.html

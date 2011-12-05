@@ -60,11 +60,14 @@ public:
     void setReadyState(ReadyState);
 
     TextTrack* track();
-    
+
     void scheduleLoad();
-    virtual bool canLoadUrl(LoadableTextTrack*, const KURL&);
-    virtual void didCompleteLoad(LoadableTextTrack*, bool /* loadingFailed */);
-    
+
+    enum LoadStatus { Failure, Success };
+    virtual void didCompleteLoad(LoadableTextTrack*, LoadStatus);
+
+    const AtomicString& mediaElementCrossOriginAttribute() const;
+
 private:
     HTMLTrackElement(const QualifiedName&, Document*);
     virtual ~HTMLTrackElement();
@@ -92,6 +95,7 @@ private:
     virtual void textTrackRemoveCue(TextTrack*, PassRefPtr<TextTrackCue>);
 
     LoadableTextTrack* ensureTrack();
+    virtual bool canLoadUrl(const KURL&);
 
     RefPtr<LoadableTextTrack> m_track;
 };
