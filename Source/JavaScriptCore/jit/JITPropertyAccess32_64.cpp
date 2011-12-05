@@ -1123,8 +1123,8 @@ void JIT::resetPatchPutById(RepatchBuffer& repatchBuffer, StructureStubInfo* stu
     else
         repatchBuffer.relink(stubInfo->callReturnLocation, cti_op_put_by_id);
     repatchBuffer.repatch(stubInfo->hotPathBegin.dataLabelPtrAtOffset(patchOffsetPutByIdStructure), reinterpret_cast<void*>(-1));
-    repatchBuffer.repatch(stubInfo->hotPathBegin.dataLabelCompactAtOffset(patchOffsetPutByIdPropertyMapOffset1), 0);
-    repatchBuffer.repatch(stubInfo->hotPathBegin.dataLabelCompactAtOffset(patchOffsetPutByIdPropertyMapOffset2), 0);
+    repatchBuffer.repatch(stubInfo->hotPathBegin.dataLabel32AtOffset(patchOffsetPutByIdPropertyMapOffset1), 0);
+    repatchBuffer.repatch(stubInfo->hotPathBegin.dataLabel32AtOffset(patchOffsetPutByIdPropertyMapOffset2), 0);
 }
 
 } // namespace JSC

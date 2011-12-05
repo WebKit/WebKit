@@ -1,5 +1,16 @@
 2011-12-05  Filip Pizlo  <fpizlo@apple.com>
 
+        Old JIT emits 32-bit offsets for put_by_id but sometimes patches them as if they
+        were compact offsets
+        https://bugs.webkit.org/show_bug.cgi?id=73861
+
+        Reviewed by Gavin Barraclough.
+
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::resetPatchPutById):
+
+2011-12-05  Filip Pizlo  <fpizlo@apple.com>
+
         Unreviewed, build fixes for ARM.
 
         * assembler/AbstractMacroAssembler.h:
