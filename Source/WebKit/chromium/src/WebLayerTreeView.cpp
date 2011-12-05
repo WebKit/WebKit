@@ -26,10 +26,10 @@
 #include "config.h"
 #include "platform/WebLayerTreeView.h"
 
-#include "WebLayer.h"
 #include "WebLayerTreeViewImpl.h"
 #include "WebRect.h"
 #include "WebSize.h"
+#include "platform/WebLayer.h"
 #include "cc/CCLayerTreeHost.h"
 
 using namespace WebCore;

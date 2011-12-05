@@ -30,12 +30,12 @@
 #include "GraphicsContext3DPrivate.h"
 #include "LayerChromium.h"
 #include "WebGraphicsContext3D.h"
-#include "WebLayer.h"
-#include "WebLayerTreeView.h"
-#include "WebLayerTreeViewClient.h"
 #include "WebSize.h"
 #include "WebThread.h"
 #include "cc/CCThreadProxy.h"
+#include "platform/WebLayer.h"
+#include "platform/WebLayerTreeView.h"
+#include "platform/WebLayerTreeViewClient.h"
 
 using namespace WebCore;
 

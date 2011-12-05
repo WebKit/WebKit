@@ -1,3 +1,24 @@
+2011-12-02  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Remove forwarding headers for WebLayer APIs
+        https://bugs.webkit.org/show_bug.cgi?id=73729
+
+        Reviewed by Adam Barth.
+
+        These are no longer necessary.
+
+        * WebKit.gyp:
+        * public/WebContentLayer.h: Removed.
+        * public/WebContentLayerClient.h: Removed.
+        * public/WebExternalTextureLayer.h: Removed.
+        * public/WebLayer.h: Removed.
+        * public/WebLayerClient.h: Removed.
+        * public/WebLayerTreeView.h: Removed.
+        * public/WebLayerTreeViewClient.h: Removed.
+        * src/WebLayerTreeView.cpp:
+        * src/WebLayerTreeViewImpl.cpp:
+        * tests/WebLayerTest.cpp:
+
 2011-12-05  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Unreviewed, fixed chromium DEPS syntax.

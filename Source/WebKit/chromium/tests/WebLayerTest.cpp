@@ -23,16 +23,16 @@
  */
 
 #include "config.h"
-#include "WebLayer.h"
+#include "platform/WebLayer.h"
 
-#include "WebContentLayer.h"
-#include "WebContentLayerClient.h"
-#include "WebExternalTextureLayer.h"
 #include "WebFloatPoint.h"
 #include "WebFloatRect.h"
-#include "WebLayerClient.h"
 #include "WebRect.h"
 #include "WebSize.h"
+#include "platform/WebContentLayer.h"
+#include "platform/WebContentLayerClient.h"
+#include "platform/WebExternalTextureLayer.h"
+#include "platform/WebLayerClient.h"
 
 #include <gmock/gmock.h>
 
