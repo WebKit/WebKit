@@ -158,7 +158,7 @@ public:
     void addLayoutOverflow(const IntRect&);
     void addVisualOverflow(const IntRect&);
     
-    void addShadowOverflow();
+    void addBoxShadowAndBorderOverflow();
     void addOverflowFromChild(RenderBox* child) { addOverflowFromChild(child, IntSize(child->x(), child->y())); }
     void addOverflowFromChild(RenderBox* child, const IntSize& delta);
     void clearLayoutOverflow();

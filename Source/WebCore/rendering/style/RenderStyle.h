@@ -357,6 +357,37 @@ public:
             return true;
         return hasBackgroundImage();
     }
+    
+    void getImageOutsets(const NinePieceImage&, int& top, int& right, int& bottom, int& left) const;
+    bool hasBorderImageOutsets() const
+    {
+        return borderImage().hasImage() && borderImage().outset().nonZero();
+    }
+    void getBorderImageOutsets(int& top, int& right, int& bottom, int& left) const
+    {
+        return getImageOutsets(borderImage(), top, right, bottom, left);
+    }
+    void getBorderImageHorizontalOutsets(int& left, int& right) const
+    {
+        return getImageHorizontalOutsets(borderImage(), left, right);
+    }
+    void getBorderImageVerticalOutsets(int& top, int& bottom) const
+    {
+        return getImageVerticalOutsets(borderImage(), top, bottom);
+    }
+    void getBorderImageInlineDirectionOutsets(int& logicalLeft, int& logicalRight) const
+    {
+        return getImageInlineDirectionOutsets(borderImage(), logicalLeft, logicalRight);
+    }
+    void getBorderImageBlockDirectionOutsets(int& logicalTop, int& logicalBottom) const
+    {
+        return getImageBlockDirectionOutsets(borderImage(), logicalTop, logicalBottom);
+    }
+    
+    void getMaskBoxImageOutsets(int& top, int& right, int& bottom, int& left) const
+    {
+        return getImageOutsets(maskBoxImage(), top, right, bottom, left);
+    }
 
     bool visuallyOrdered() const { return inherited_flags._visuallyOrdered; }
     void setVisuallyOrdered(bool b) { inherited_flags._visuallyOrdered = b; }
@@ -1345,6 +1376,18 @@ private:
     void getShadowBlockDirectionExtent(const ShadowData* shadow, int& logicalTop, int& logicalBottom) const
     {
         return isHorizontalWritingMode() ? getShadowVerticalExtent(shadow, logicalTop, logicalBottom) : getShadowHorizontalExtent(shadow, logicalTop, logicalBottom);
+    }
+
+    // Helpers for obtaining border image outsets for overflow.
+    void getImageHorizontalOutsets(const NinePieceImage&, int& left, int& right) const;
+    void getImageVerticalOutsets(const NinePieceImage&, int& top, int& bottom) const;
+    void getImageInlineDirectionOutsets(const NinePieceImage& image, int& logicalLeft, int& logicalRight) const
+    {
+        return isHorizontalWritingMode() ? getImageHorizontalOutsets(image, logicalLeft, logicalRight) : getImageVerticalOutsets(image, logicalLeft, logicalRight);
+    }
+    void getImageBlockDirectionOutsets(const NinePieceImage& image, int& logicalTop, int& logicalBottom) const
+    {
+        return isHorizontalWritingMode() ? getImageVerticalOutsets(image, logicalTop, logicalBottom) : getImageHorizontalOutsets(image, logicalTop, logicalBottom);
     }
 
     // Color accessors are all private to make sure callers use visitedDependentColor instead to access them.

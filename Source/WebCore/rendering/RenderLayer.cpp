@@ -3492,24 +3492,12 @@ void RenderLayer::calculateRects(const RenderLayer* rootLayer, const IntRect& pa
         }
 
         // If we establish a clip at all, then go ahead and make sure our background
-        // rect is intersected with our layer's bounds.
-        // FIXME: This could be changed to just use generic visual overflow.
-        // See https://bugs.webkit.org/show_bug.cgi?id=37467 for more information.
-        if (const ShadowData* boxShadow = renderer()->style()->boxShadow()) {
-            IntRect overflow = layerBounds;
-            do {
-                if (boxShadow->style() == Normal) {
-                    IntRect shadowRect = layerBounds;
-                    shadowRect.move(boxShadow->x(), boxShadow->y());
-                    shadowRect.inflate(boxShadow->blur() + boxShadow->spread());
-                    overflow.unite(shadowRect);
-                }
-
-                boxShadow = boxShadow->next();
-            } while (boxShadow);
-            backgroundRect.intersect(overflow);
-        } else
-            backgroundRect.intersect(layerBounds);
+        // rect is intersected with our layer's bounds including our visual overflow,
+        // since any visual overflow like box-shadow or border-outset is not clipped by overflow:auto/hidden.
+        IntRect layerBoundsWithVisualOverflow = renderBox()->visualOverflowRect();
+        renderBox()->flipForWritingMode(layerBoundsWithVisualOverflow); // Layers are in physical coordinates, so the overflow has to be flipped.
+        layerBoundsWithVisualOverflow.move(x, y);
+        backgroundRect.intersect(layerBoundsWithVisualOverflow);
     }
 }
 
@@ -3613,9 +3601,10 @@ IntRect RenderLayer::localBoundingBox() const
     } else {
         RenderBox* box = renderBox();
         ASSERT(box);
-        if (box->hasMask())
+        if (box->hasMask()) {
             result = box->maskClipRect();
-        else {
+            box->flipForWritingMode(result); // The mask clip rect is in physical coordinates, so we have to flip, since localBoundingBox is not.
+        } else {
             IntRect bbox = box->borderBoxRect();
             result = bbox;
             IntRect overflowRect = box->visualOverflowRect();

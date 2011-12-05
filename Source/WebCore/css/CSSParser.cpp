@@ -1384,6 +1384,15 @@ bool CSSParser::parseValue(int propId, bool important)
         }
         break;
     }
+    case CSSPropertyBorderImageOutset:
+    case CSSPropertyWebkitMaskBoxImageOutset: {
+        RefPtr<CSSPrimitiveValue> result;
+        if (parseBorderImageOutset(result)) {
+            addProperty(propId, result, important);
+            return true;
+        }
+        break;
+    }
     case CSSPropertyBorderImageRepeat:
     case CSSPropertyWebkitMaskBoxImageRepeat: {
         RefPtr<CSSValue> result;
@@ -1405,7 +1414,7 @@ bool CSSParser::parseValue(int propId, bool important)
     case CSSPropertyBorderImageWidth:
     case CSSPropertyWebkitMaskBoxImageWidth: {
         RefPtr<CSSPrimitiveValue> result;
-        if (parseBorderImageWidth(propId, result)) {
+        if (parseBorderImageWidth(result)) {
             addProperty(propId, result, important);
             return true;
         }
@@ -4770,12 +4779,14 @@ struct BorderImageParseContext {
     , m_allowBreak(false)
     , m_allowSlash(false)
     , m_allowWidth(false)
+    , m_allowOutset(false)
     , m_allowRepeat(false)
     {}
 
     bool allowBreak() const { return m_allowBreak; }
     bool allowSlash() const { return m_allowSlash; }
     bool allowWidth() const { return m_allowWidth; }
+    bool allowOutset() const { return m_allowOutset; }
     bool allowRepeat() const { return m_allowRepeat; }
 
     void commitImage(PassRefPtr<CSSValue> image) { m_image = image; }
@@ -4784,24 +4795,38 @@ struct BorderImageParseContext {
         m_imageSlice = slice;
         m_allowBreak = m_allowSlash = m_allowRepeat = true;
     }
-    void commitSlash() { m_allowBreak = m_allowSlash = m_allowRepeat = false; m_allowWidth = true; }
+    void commitSlash()
+    {
+        m_allowBreak = m_allowSlash = m_allowRepeat = false;
+        if (!m_borderSlice)
+            m_allowWidth = true;
+        else
+            m_allowOutset = true;
+    }
     void commitBorderWidth(PassRefPtr<CSSPrimitiveValue> slice)
     {
         m_borderSlice = slice;
         m_allowBreak = m_allowRepeat = true;
         m_allowWidth = false;
+        m_allowSlash = true;
+    }
+    void commitBorderOutset(PassRefPtr<CSSPrimitiveValue> outset)
+    {
+        m_outset = outset;
+        m_allowBreak = m_allowRepeat = true;
+        m_allowWidth = m_allowOutset = m_allowSlash = false;
     }
     void commitRepeat(PassRefPtr<CSSValue> repeat)
     {
         m_repeat = repeat;
-        m_allowRepeat = m_allowSlash = m_allowWidth = false;
+        m_allowRepeat = m_allowSlash = m_allowWidth = m_allowOutset = false;
         m_allowBreak = true;
     }
 
     PassRefPtr<CSSValue> commitBorderImage()
     {
         // Make our new border image value now.
-        return CSSBorderImageValue::create(m_image, m_imageSlice, m_borderSlice, m_repeat);
+        return CSSBorderImageValue::create(m_image, m_imageSlice, m_borderSlice, m_outset, m_repeat);
     }
     
     CSSPrimitiveValueCache* m_primitiveValueCache;
@@ -4809,11 +4834,13 @@ struct BorderImageParseContext {
     bool m_allowBreak;
     bool m_allowSlash;
     bool m_allowWidth;
+    bool m_allowOutset;
     bool m_allowRepeat;
 
     RefPtr<CSSValue> m_image;
     RefPtr<CSSBorderImageSliceValue> m_imageSlice;
     RefPtr<CSSPrimitiveValue> m_borderSlice;
+    RefPtr<CSSPrimitiveValue> m_outset;
 
     RefPtr<CSSValue> m_repeat;
 };
@@ -4821,6 +4848,7 @@ struct BorderImageParseContext {
 bool CSSParser::parseBorderImage(int propId, RefPtr<CSSValue>& result)
 {
     // Look for an image initially. If the first value is not a URI or the keyword "none", then we're done.
+    ShorthandScope scope(this, propId);
     BorderImageParseContext context(primitiveValueCache());
     CSSParserValue* val = m_valueList->current();
     if (val->unit == CSSPrimitiveValue::CSS_URI && m_styleSheet) {
@@ -4850,9 +4878,15 @@ bool CSSParser::parseBorderImage(int propId, RefPtr<CSSValue>& result)
             context.commitSlash();
         } else if (context.allowWidth()) {
             RefPtr<CSSPrimitiveValue> borderSlice;
-            if (!parseBorderImageWidth(propId, borderSlice))
+            if (!parseBorderImageWidth(borderSlice))
                 return false;
             context.commitBorderWidth(borderSlice.release());
+            continue;
+        } else if (context.allowOutset()) {
+            RefPtr<CSSPrimitiveValue> borderOutset;
+            if (!parseBorderImageOutset(borderOutset))
+                return false;
+            context.commitBorderOutset(borderOutset.release());
             continue;
         } else if (context.allowRepeat()) {
             RefPtr<CSSValue> repeat;
@@ -5020,9 +5054,9 @@ bool CSSParser::parseBorderImageSlice(int propId, RefPtr<CSSBorderImageSliceValu
     return false;
 }
 
-class BorderImageWidthParseContext {
+class BorderImageQuadParseContext {
 public:
-    BorderImageWidthParseContext(CSSPrimitiveValueCache* primitiveValueCache)
+    BorderImageQuadParseContext(CSSPrimitiveValueCache* primitiveValueCache)
     : m_primitiveValueCache(primitiveValueCache)
     , m_allowNumber(true)
     , m_allowFinalCommit(false)
@@ -5058,7 +5092,7 @@ public:
     void setAllowFinalCommit() { m_allowFinalCommit = true; }
     void setTop(PassRefPtr<CSSPrimitiveValue> val) { m_top = val; }
 
-    PassRefPtr<CSSPrimitiveValue> commitBorderImageWidth()
+    PassRefPtr<CSSPrimitiveValue> commitBorderImageQuad()
     {
         // We need to clone and repeat values for any omissions.
         ASSERT(m_top);
@@ -5097,14 +5131,14 @@ private:
     RefPtr<CSSPrimitiveValue> m_left;
 };
 
-bool CSSParser::parseBorderImageWidth(int propId, RefPtr<CSSPrimitiveValue>& result)
+bool CSSParser::parseBorderImageQuad(Units validUnits, RefPtr<CSSPrimitiveValue>& result)
 {
-    BorderImageWidthParseContext context(primitiveValueCache());
+    BorderImageQuadParseContext context(primitiveValueCache());
     CSSParserValue* val;
     while ((val = m_valueList->current())) {
-        if (context.allowNumber() && (validUnit(val, FLength | FInteger | FNonNeg | FPercent, true) || val->id == CSSValueAuto)) {
+        if (context.allowNumber() && (validUnit(val, validUnits, true) || val->id == CSSValueAuto)) {
             context.commitNumber(val);
-        } else if (propId == CSSPropertyBorderImageWidth || propId == CSSPropertyWebkitMaskBoxImageWidth) {
+        } else if (!inShorthand()) {
             // If we're not parsing a shorthand then we are invalid.
             return false;
         } else
@@ -5114,10 +5148,20 @@ bool CSSParser::parseBorderImageWidth(int propId, RefPtr<CSSPrimitiveValue>& res
 
     if (context.allowFinalCommit()) {
         // Need to fully commit as a single value.
-        result = context.commitBorderImageWidth();
+        result = context.commitBorderImageQuad();
         return true;
     }
     return false;
+}
+
+bool CSSParser::parseBorderImageWidth(RefPtr<CSSPrimitiveValue>& result)
+{
+    return parseBorderImageQuad(FLength | FInteger | FNonNeg | FPercent, result);
+}
+
+bool CSSParser::parseBorderImageOutset(RefPtr<CSSPrimitiveValue>& result)
+{
+    return parseBorderImageQuad(FLength | FInteger | FNonNeg, result);
 }
 
 static void completeBorderRadii(RefPtr<CSSPrimitiveValue> radii[4])
