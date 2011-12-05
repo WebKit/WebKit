@@ -573,11 +573,9 @@ PassRefPtr<CSSValue> CSSMutableStyleDeclaration::getPropertyCSSValue(int propert
 bool CSSMutableStyleDeclaration::removeShorthandProperty(int propertyID, bool notifyChanged)
 {
     CSSPropertyLonghand longhand = longhandForProperty(propertyID);
-    if (longhand.length()) {
-        removePropertiesInSet(longhand.properties(), longhand.length(), notifyChanged);
-        return true;
-    }
-    return false;
+    if (!longhand.length())
+        return false;
+    return removePropertiesInSet(longhand.properties(), longhand.length(), notifyChanged);
 }
 
 String CSSMutableStyleDeclaration::removeProperty(int propertyID, bool notifyChanged, bool returnText)
@@ -969,12 +967,12 @@ void CSSMutableStyleDeclaration::removeBlockProperties()
     removePropertiesInSet(blockProperties, numBlockProperties);
 }
 
-void CSSMutableStyleDeclaration::removePropertiesInSet(const int* set, unsigned length, bool notifyChanged)
+bool CSSMutableStyleDeclaration::removePropertiesInSet(const int* set, unsigned length, bool notifyChanged)
 {
     ASSERT(!m_iteratorCount);
 
     if (m_properties.isEmpty())
-        return;
+        return false;
 
 #if ENABLE(MUTATION_OBSERVERS)
     StyleAttributeMutationScope mutationScope(this);
@@ -1002,14 +1000,14 @@ void CSSMutableStyleDeclaration::removePropertiesInSet(const int* set, unsigned 
     bool changed = newProperties.size() != m_properties.size();
     m_properties = newProperties;
 
-    if (!changed || !notifyChanged)
-        return;
-
+    if (notifyChanged) {
 #if ENABLE(MUTATION_OBSERVERS)
-    mutationScope.enqueueMutationRecord();
+        mutationScope.enqueueMutationRecord();
 #endif
+        setNeedsStyleRecalc();
+    }
 
-    setNeedsStyleRecalc();
+    return changed;
 }
 
 PassRefPtr<CSSMutableStyleDeclaration> CSSMutableStyleDeclaration::makeMutable()

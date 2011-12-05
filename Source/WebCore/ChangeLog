@@ -1,3 +1,23 @@
+2011-12-04  Andreas Kling  <kling@webkit.org>
+
+        border-width: initial and border-color: initial cannot be removed via CSSOM.
+        <http://webkit.org/b/68551>
+
+        Reviewed by Darin Adler.
+
+        Test: fast/css/cssom-remove-shorthand-property.html
+
+        When asked to remove a shorthand property, we should toss out both the
+        sub-properties of that shorthand as well as the shorthand itself, should the
+        declaration contain it. The latter part was missing in our implementation.
+
+        * css/CSSMutableStyleDeclaration.h:
+        * css/CSSMutableStyleDeclaration.cpp:
+        (WebCore::CSSMutableStyleDeclaration::removePropertiesInSet):
+        (WebCore::CSSMutableStyleDeclaration::removeShorthandProperty):
+
+            Changed to return true only if something was actually removed.
+
 2011-12-04  Ryosuke Niwa  <rniwa@webkit.org>
 
         HIERARCHY_REQUEST_ERR check in checkAcceptChild should be optimized for newChild without children

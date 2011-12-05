@@ -165,7 +165,7 @@ private:
     void setPropertyInternal(const CSSProperty&, CSSProperty* slot = 0);
     String removeProperty(int propertyID, bool notifyChanged, bool returnText);
     bool removeShorthandProperty(int propertyID, bool notifyChanged);
-    void removePropertiesInSet(const int* set, unsigned length, bool notifyChanged);
+    bool removePropertiesInSet(const int* set, unsigned length, bool notifyChanged);
 
     Vector<CSSProperty>::const_iterator findPropertyWithId(int propertyId) const;
     Vector<CSSProperty>::iterator findPropertyWithId(int propertyId);

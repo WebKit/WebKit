@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+
+shorthandProperties = [
+    "font",
+    "border-top",
+    "border-right",
+    "border-bottom",
+    "border-left",
+    "border",
+    "border-color",
+    "border-style",
+    "border-width",
+    "background-position",
+    "background-repeat",
+    "border-spacing",
+    "list-style",
+    "margin",
+    "outline",
+    "padding",
+    "background",
+    "overflow",
+    "border-radius"
+];
+
+element = document.createElement('span');
+
+function canSetProperty(propertyName) {
+    element.style.setProperty(propertyName, 'initial');
+    return element.style.getPropertyValue(propertyName) == 'initial';
+}
+
+function canRemoveProperty(propertyName) {
+    element.style.removeProperty(propertyName);
+    return element.style.getPropertyValue(propertyName) != 'initial';
+}
+
+description("Tests that shorthand properties can be removed via CSSOM.");
+
+for (i = 0; i < shorthandProperties.length; ++i) {
+    var propertyName = shorthandProperties[i];
+
+    shouldBe("canSetProperty('" + propertyName + "')", "true");
+    shouldBe("canRemoveProperty('" + propertyName + "')", "true");
+}
+
+</script>
+<script src="../js/resources/js-test-post.js"></script>
+</body>
+</html>
