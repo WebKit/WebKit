@@ -816,7 +816,6 @@ BUGCR62433 WIN : fast/images/gif-loop-count.html = IMAGE
 // SVG TESTS
 // -----------------------------------------------------------------
 
-BUGWK73677 : svg/stroke/zero-length-arc-linecaps-rendering.svg = PASS IMAGE
 
 BUGCR8763 MAC : svg/custom/use-on-g-containing-foreignObject-and-image.svg = IMAGE
 
