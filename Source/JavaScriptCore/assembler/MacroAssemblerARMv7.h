@@ -713,12 +713,16 @@ public:
 
     void loadDouble(BaseIndex address, FPRegisterID dest)
     {
-        ASSERT_NOT_REACHED();
+        UNUSED_PARAM(address);
+        UNUSED_PARAM(dest);
+        unreachableForPlatform();
     }
     
     void loadFloat(BaseIndex address, FPRegisterID dest)
     {
-        ASSERT_NOT_REACHED();
+        UNUSED_PARAM(address);
+        UNUSED_PARAM(dest);
+        unreachableForPlatform();
     }
 
     void moveDouble(FPRegisterID src, FPRegisterID dest)
@@ -765,7 +769,7 @@ public:
     {
         move(address.index, addressTempRegister);
         mul32(TrustedImm32(address.scale), addressTempRegister, addressTempRegister);
-        storeDouble(ARMRegisters::asSingle(src), Address(addressTempRegister, address.offset));
+        storeDouble(src, Address(addressTempRegister, address.offset));
     }
 
     void addDouble(FPRegisterID src, FPRegisterID dest)
@@ -866,12 +870,16 @@ public:
     
     void convertFloatToDouble(FPRegisterID src, FPRegisterID dst)
     {
-        ASSERT_NOT_REACHED();
+        UNUSED_PARAM(src);
+        UNUSED_PARAM(dst);
+        unreachableForPlatform();
     }
     
     void convertDoubleToFloat(FPRegisterID src, FPRegisterID dst)
     {
-        ASSERT_NOT_REACHED();
+        UNUSED_PARAM(src);
+        UNUSED_PARAM(dst);
+        unreachableForPlatform();
     }
 
     Jump branchDouble(DoubleCondition cond, FPRegisterID left, FPRegisterID right)

@@ -1,3 +1,16 @@
+2011-12-05  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, build fixes for ARM.
+
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::AbstractMacroAssembler::unreachableForPlatform):
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::loadDouble):
+        (JSC::MacroAssemblerARMv7::loadFloat):
+        (JSC::MacroAssemblerARMv7::storeFloat):
+        (JSC::MacroAssemblerARMv7::convertFloatToDouble):
+        (JSC::MacroAssemblerARMv7::convertDoubleToFloat):
+
 2011-12-05  Benjamin Poulain  <benjamin@webkit.org>
 
         Update String::containsOnlyLatin1() to avoid converting to 16 bits
