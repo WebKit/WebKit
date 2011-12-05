@@ -31,7 +31,7 @@
 #include "config.h"
 #include "WebThemeEngineDRTWin.h"
 
-#include "WebRect.h"
+#include "platform/WebRect.h"
 #include "WebThemeControlDRTWin.h"
 #include "third_party/skia/include/core/SkRect.h"
 

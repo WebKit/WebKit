@@ -32,7 +32,7 @@
 #include "SkMatrix44.h"
 #include "TransformationMatrix.h"
 #include "WebLayerImpl.h"
-#include "WebSize.h"
+#include "platform/WebSize.h"
 
 using namespace WebCore;
 

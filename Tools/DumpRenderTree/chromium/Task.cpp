@@ -32,7 +32,7 @@
 #include "Task.h"
 
 #include "WebKit.h"
-#include "WebKitPlatformSupport.h"
+#include "platform/WebKitPlatformSupport.h"
 
 WebTask::WebTask(TaskList* list)
     : m_taskList(list)

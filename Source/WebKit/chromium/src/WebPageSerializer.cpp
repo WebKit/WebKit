@@ -43,14 +43,14 @@
 #include "PageSerializer.h"
 #include "Vector.h"
 
-#include "WebCString.h"
+#include "platform/WebCString.h"
 #include "WebFrame.h"
 #include "WebFrameImpl.h"
 #include "WebPageSerializerClient.h"
 #include "WebPageSerializerImpl.h"
-#include "WebString.h"
-#include "WebURL.h"
-#include "WebVector.h"
+#include "platform/WebString.h"
+#include "platform/WebURL.h"
+#include "platform/WebVector.h"
 #include "WebView.h"
 #include "WebViewImpl.h"
 

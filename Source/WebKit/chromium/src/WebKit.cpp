@@ -38,10 +38,10 @@
 #include "TextEncoding.h"
 #include "V8Binding.h"
 #include "WebKitMutationObserver.h"
-#include "WebKitPlatformSupport.h"
+#include "platform/WebKitPlatformSupport.h"
 #include "WebMediaPlayerClientImpl.h"
 #include "WebSocket.h"
-#include "WebThread.h"
+#include "platform/WebThread.h"
 #include "WorkerContextExecutionProxy.h"
 #include "v8.h"
 

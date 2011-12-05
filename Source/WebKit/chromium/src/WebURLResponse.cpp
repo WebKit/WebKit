@@ -29,16 +29,16 @@
  */
 
 #include "config.h"
-#include "WebURLResponse.h"
+#include "platform/WebURLResponse.h"
 
 #include "ResourceResponse.h"
 #include "ResourceLoadTiming.h"
 
-#include "WebHTTPHeaderVisitor.h"
-#include "WebHTTPLoadInfo.h"
-#include "WebString.h"
-#include "WebURL.h"
-#include "WebURLLoadTiming.h"
+#include "platform/WebHTTPHeaderVisitor.h"
+#include "platform/WebHTTPLoadInfo.h"
+#include "platform/WebString.h"
+#include "platform/WebURL.h"
+#include "platform/WebURLLoadTiming.h"
 #include "WebURLResponsePrivate.h"
 
 #include <wtf/RefPtr.h>

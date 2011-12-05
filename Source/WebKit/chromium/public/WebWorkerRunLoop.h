@@ -25,7 +25,7 @@
 #ifndef WebWorkerRunLoop_h
 #define WebWorkerRunLoop_h
 
-#include "WebCommon.h"
+#include "platform/WebCommon.h"
 
 namespace WebCore {
 class WorkerRunLoop;

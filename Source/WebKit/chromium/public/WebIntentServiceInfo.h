@@ -31,9 +31,9 @@
 #ifndef WebIntentServiceInfo_h
 #define WebIntentServiceInfo_h
 
-#include "WebCommon.h"
-#include "WebString.h"
-#include "WebURL.h"
+#include "platform/WebCommon.h"
+#include "platform/WebString.h"
+#include "platform/WebURL.h"
 
 namespace WebKit {
 

@@ -29,7 +29,7 @@
  */
 
 #include "config.h"
-#include "WebHTTPBody.h"
+#include "platform/WebHTTPBody.h"
 
 #include "FormData.h"
 

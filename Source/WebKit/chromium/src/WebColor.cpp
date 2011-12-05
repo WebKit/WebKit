@@ -29,13 +29,13 @@
  */
 
 #include "config.h"
-#include "WebColor.h"
+#include "platform/WebColor.h"
 
 #include "Color.h"
 #include "CSSValueKeywords.h"
 #include "RenderTheme.h"
 #include "UnusedParam.h"
-#include "WebColorName.h"
+#include "platform/WebColorName.h"
 
 using namespace::WebCore;
 

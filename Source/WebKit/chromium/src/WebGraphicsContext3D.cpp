@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "WebGraphicsContext3D.h"
+#include "platform/WebGraphicsContext3D.h"
 
 #include "GrGLInterface.h"
 

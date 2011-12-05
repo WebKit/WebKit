@@ -47,7 +47,7 @@
 #include "WebInputEvent.h"
 #include "WebInputEventConversion.h"
 #include "WebRange.h"
-#include "WebRect.h"
+#include "platform/WebRect.h"
 #include "WebViewClient.h"
 #include "WebWidgetClient.h"
 

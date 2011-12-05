@@ -31,7 +31,7 @@
 #ifndef WebUnitTests_h
 #define WebUnitTests_h
 
-#include "WebCommon.h"
+#include "platform/WebCommon.h"
 
 namespace WebKit {
 

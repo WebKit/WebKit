@@ -46,7 +46,7 @@
 #include "ImageBuffer.h"
 #include "ImageData.h"
 #include "WebKit.h"
-#include "WebKitPlatformSupport.h"
+#include "platform/WebKitPlatformSupport.h"
 #include "WebViewImpl.h"
 #include "platform/WebGraphicsContext3D.h"
 

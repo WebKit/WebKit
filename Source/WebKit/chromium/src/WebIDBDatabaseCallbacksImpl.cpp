@@ -29,7 +29,7 @@
 #if ENABLE(INDEXED_DATABASE)
 
 #include "IDBDatabaseCallbacks.h"
-#include "WebString.h"
+#include "platform/WebString.h"
 
 using namespace WebCore;
 

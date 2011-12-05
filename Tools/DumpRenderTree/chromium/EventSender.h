@@ -41,7 +41,7 @@
 #include "Task.h"
 #include "WebDragOperation.h"
 #include "WebInputEvent.h"
-#include "WebPoint.h"
+#include "platform/WebPoint.h"
 
 class TestShell;
 

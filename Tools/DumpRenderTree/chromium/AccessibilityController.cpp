@@ -34,7 +34,7 @@
 #include "TestShell.h"
 #include "WebAccessibilityObject.h"
 #include "WebFrame.h"
-#include "WebString.h"
+#include "platform/WebString.h"
 #include "WebView.h"
 
 using namespace WebKit;

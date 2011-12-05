@@ -32,10 +32,10 @@
 #define WebViewImpl_h
 
 #include "WebNavigationPolicy.h"
-#include "WebPoint.h"
-#include "WebRect.h"
-#include "WebSize.h"
-#include "WebString.h"
+#include "platform/WebPoint.h"
+#include "platform/WebRect.h"
+#include "platform/WebSize.h"
+#include "platform/WebString.h"
 #include "WebView.h"
 
 #include "ChromeClientImpl.h"

@@ -34,7 +34,7 @@
 #include "SpeechInputListener.h"
 #include "WebSpeechInputControllerMock.h"
 #include "WebSpeechInputListener.h"
-#include "WebString.h"
+#include "platform/WebString.h"
 #include <wtf/OwnPtr.h>
 
 #if ENABLE(INPUT_SPEECH)

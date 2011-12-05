@@ -39,7 +39,7 @@
 #include "WorkerMessagingProxy.h"
 #include "WorkerObjectProxy.h"
 
-#include "WebFileSystem.h"
+#include "platform/WebFileSystem.h"
 #include "WebWorkerBase.h"
 #include "WebWorkerClient.h"
 #include <wtf/OwnPtr.h>

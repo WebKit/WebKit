@@ -29,10 +29,10 @@
  */
 
 #include "config.h"
-#include "WebSerializedScriptValue.h"
+#include "platform/WebSerializedScriptValue.h"
 
 #include "SerializedScriptValue.h"
-#include "WebString.h"
+#include "platform/WebString.h"
 
 using namespace WebCore;
 

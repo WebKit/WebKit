@@ -35,9 +35,9 @@
 #include "StorageArea.h"
 
 #include "WebKit.h"
-#include "WebKitPlatformSupport.h"
-#include "WebString.h"
-#include "WebURL.h"
+#include "platform/WebKitPlatformSupport.h"
+#include "platform/WebString.h"
+#include "platform/WebURL.h"
 
 namespace WebCore {
 

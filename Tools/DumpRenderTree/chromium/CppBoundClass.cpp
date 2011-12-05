@@ -44,7 +44,7 @@
 
 #include "WebBindings.h"
 #include "WebFrame.h"
-#include "WebString.h"
+#include "platform/WebString.h"
 #include <wtf/Assertions.h>
 #include <wtf/OwnPtr.h>
 

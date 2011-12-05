@@ -33,8 +33,8 @@
 
 #include "KURL.h"
 #include "SecurityOrigin.h"
-#include "WebString.h"
-#include "WebURL.h"
+#include "platform/WebString.h"
+#include "platform/WebURL.h"
 #include <wtf/PassRefPtr.h>
 
 using namespace WebCore;

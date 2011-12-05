@@ -27,9 +27,9 @@
 #include "TestWebPlugin.h"
 
 #include "WebFrame.h"
-#include "WebGraphicsContext3D.h"
+#include "platform/WebGraphicsContext3D.h"
 #include "WebKit.h"
-#include "WebKitPlatformSupport.h"
+#include "platform/WebKitPlatformSupport.h"
 #include "WebPluginContainer.h"
 #include "WebPluginParams.h"
 #include <wtf/Assertions.h>

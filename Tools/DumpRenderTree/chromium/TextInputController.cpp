@@ -36,8 +36,8 @@
 #include "WebCompositionUnderline.h"
 #include "WebFrame.h"
 #include "WebRange.h"
-#include "WebString.h"
-#include "WebVector.h"
+#include "platform/WebString.h"
+#include "platform/WebVector.h"
 #include "WebView.h"
 #include <string>
 #include <wtf/StringExtras.h>

@@ -47,9 +47,9 @@
 #include "GeolocationError.h"
 #include "GeolocationPosition.h"
 #include "HTMLInputElement.h"
-#include "IconURL.h"
 #include "IDBFactoryBackendInterface.h"
 #include "IDBKey.h"
+#include "IconURL.h"
 #include "MediaPlayer.h"
 #include "MediaStreamSource.h"
 #include "NotificationPresenter.h"
@@ -68,12 +68,10 @@
 #include "WebAccessibilityNotification.h"
 #include "WebAccessibilityObject.h"
 #include "WebApplicationCacheHost.h"
-#include "WebClipboard.h"
 #include "WebCursorInfo.h"
 #include "WebEditingAction.h"
 #include "WebFileError.h"
 #include "WebFileInfo.h"
-#include "WebFileSystem.h"
 #include "WebFontDescription.h"
 #include "WebGeolocationError.h"
 #include "WebGeolocationPosition.h"
@@ -95,12 +93,14 @@
 #include "WebTextCheckingResult.h"
 #include "WebVideoFrame.h"
 #include "WebView.h"
+#include "platform/WebClipboard.h"
+#include "platform/WebFileSystem.h"
 #include <wtf/Assertions.h>
 #include <wtf/text/StringImpl.h>
 
 #if OS(DARWIN)
 #include "PlatformSupport.h"
-#include "mac/WebThemeEngine.h"
+#include "platform/mac/WebThemeEngine.h"
 #endif
 
 #define COMPILE_ASSERT_MATCHING_ENUM(webkit_name, webcore_name) \

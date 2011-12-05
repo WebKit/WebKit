@@ -35,7 +35,7 @@
 #include "IDBKeyPath.h"
 #include "SerializedScriptValue.h"
 #include "WebIDBKeyPath.h"
-#include "WebSerializedScriptValue.h"
+#include "platform/WebSerializedScriptValue.h"
 
 using namespace WebCore;
 

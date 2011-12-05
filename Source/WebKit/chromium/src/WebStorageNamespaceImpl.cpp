@@ -33,7 +33,7 @@
 
 #include "SecurityOrigin.h"
 #include "WebStorageAreaImpl.h"
-#include "WebString.h"
+#include "platform/WebString.h"
 
 namespace WebKit {
 

@@ -32,9 +32,9 @@
 #define WebPopupMenuImpl_h
 
 #include "FramelessScrollViewClient.h"
-#include "WebPoint.h"
+#include "platform/WebPoint.h"
 #include "WebPopupMenu.h"
-#include "WebSize.h"
+#include "platform/WebSize.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/RefCounted.h>
 

@@ -36,7 +36,7 @@
 #include "RenderObject.h"
 #include "RenderTextControlSingleLine.h"
 #include "TextControlInnerElements.h"
-#include "WebString.h"
+#include "platform/WebString.h"
 #include <wtf/PassRefPtr.h>
 
 using namespace WebCore;

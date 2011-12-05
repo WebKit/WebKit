@@ -38,7 +38,7 @@
 #include "WebExternalPopupMenu.h"
 #include "WebMenuItemInfo.h"
 #include "WebPopupMenuInfo.h"
-#include "WebVector.h"
+#include "platform/WebVector.h"
 #include "WebViewClient.h"
 
 using namespace WebCore;

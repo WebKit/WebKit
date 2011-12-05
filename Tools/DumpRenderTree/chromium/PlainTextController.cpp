@@ -35,7 +35,7 @@
 #include "TestShell.h"
 #include "WebBindings.h"
 #include "WebRange.h"
-#include "WebString.h"
+#include "platform/WebString.h"
 
 using namespace WebKit;
 

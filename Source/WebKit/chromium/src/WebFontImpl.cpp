@@ -37,10 +37,10 @@
 #include "GraphicsContext.h"
 #include "painting/GraphicsContextBuilder.h"
 #include "TextRun.h"
-#include "WebFloatPoint.h"
-#include "WebFloatRect.h"
+#include "platform/WebFloatPoint.h"
+#include "platform/WebFloatRect.h"
 #include "WebFontDescription.h"
-#include "WebRect.h"
+#include "platform/WebRect.h"
 #include "WebTextRun.h"
 
 #include <skia/ext/platform_canvas.h>

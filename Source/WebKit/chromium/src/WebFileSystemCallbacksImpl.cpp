@@ -37,9 +37,9 @@
 #include "FileMetadata.h"
 #include "ScriptExecutionContext.h"
 #include "WebFileInfo.h"
-#include "WebFileSystem.h"
+#include "platform/WebFileSystem.h"
 #include "WebFileSystemEntry.h"
-#include "WebString.h"
+#include "platform/WebString.h"
 #include "WorkerAsyncFileSystemChromium.h"
 #include <wtf/Vector.h>
 

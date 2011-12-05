@@ -29,7 +29,7 @@
 #include "Page.h"
 #include "Scrollbar.h"
 #include "ScrollbarTheme.h"
-#include "WebRect.h"
+#include "platform/WebRect.h"
 #include "WebScrollbarImpl.h"
 
 using namespace WebCore;

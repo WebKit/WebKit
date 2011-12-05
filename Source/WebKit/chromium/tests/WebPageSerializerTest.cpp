@@ -33,10 +33,10 @@
 
 #include "WebFrame.h"
 #include "WebFrameClient.h"
-#include "WebString.h"
-#include "WebURL.h"
-#include "WebURLRequest.h"
-#include "WebURLResponse.h"
+#include "platform/WebString.h"
+#include "platform/WebURL.h"
+#include "platform/WebURLRequest.h"
+#include "platform/WebURLResponse.h"
 #include "WebView.h"
 
 #include <googleurl/src/gurl.h>

@@ -34,7 +34,7 @@
 #include "Editor.h"
 #include "Vector.h"
 #include "WebCompositionUnderline.h"
-#include "WebVector.h"
+#include "platform/WebVector.h"
 
 namespace WebKit {
 

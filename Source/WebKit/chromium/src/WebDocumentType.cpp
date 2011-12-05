@@ -32,7 +32,7 @@
 #include "WebDocumentType.h"
 
 #include "DocumentType.h"
-#include "WebString.h"
+#include "platform/WebString.h"
 
 #include <wtf/PassRefPtr.h>
 

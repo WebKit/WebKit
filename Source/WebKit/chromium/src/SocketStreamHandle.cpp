@@ -36,12 +36,12 @@
 #include "Logging.h"
 #include "NotImplemented.h"
 #include "SocketStreamHandleClient.h"
-#include "WebData.h"
+#include "platform/WebData.h"
 #include "WebKit.h"
-#include "WebKitPlatformSupport.h"
-#include "WebSocketStreamHandle.h"
-#include "WebSocketStreamHandleClient.h"
-#include "WebURL.h"
+#include "platform/WebKitPlatformSupport.h"
+#include "platform/WebSocketStreamHandle.h"
+#include "platform/WebSocketStreamHandleClient.h"
+#include "platform/WebURL.h"
 #include <wtf/PassOwnPtr.h>
 
 using namespace WebKit;

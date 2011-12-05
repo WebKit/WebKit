@@ -32,9 +32,9 @@
 #define WebFileSystemCallbacksImpl_h
 
 #include "AsyncFileSystem.h"
-#include "WebFileSystem.h"
+#include "platform/WebFileSystem.h"
 #include "WebFileSystemCallbacks.h"
-#include "WebVector.h"
+#include "platform/WebVector.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 

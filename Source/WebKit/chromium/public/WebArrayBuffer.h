@@ -31,8 +31,8 @@
 #ifndef WebArrayBuffer_h
 #define WebArrayBuffer_h
 
-#include "WebCommon.h"
-#include "WebPrivatePtr.h"
+#include "platform/WebCommon.h"
+#include "platform/WebPrivatePtr.h"
 
 #if WEBKIT_USING_V8
 namespace v8 {

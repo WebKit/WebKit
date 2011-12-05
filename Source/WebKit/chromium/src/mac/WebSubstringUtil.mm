@@ -44,7 +44,7 @@
 #include "RenderObject.h"
 #include "RenderStyle.h"
 #include "TextIterator.h"
-#include "WebRect.h"
+#include "platform/WebRect.h"
 
 #import <Cocoa/Cocoa.h>
 

@@ -32,8 +32,8 @@
 #define WebFileChooserCompletionImpl_h
 
 #include "WebFileChooserCompletion.h"
-#include "WebString.h"
-#include "WebVector.h"
+#include "platform/WebString.h"
+#include "platform/WebVector.h"
 
 #include "FileChooser.h"
 #include <wtf/PassRefPtr.h>

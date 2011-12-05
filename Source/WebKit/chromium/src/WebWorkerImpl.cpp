@@ -47,8 +47,8 @@
 
 #include "PlatformMessagePortChannel.h"
 #include "WebMessagePortChannel.h"
-#include "WebString.h"
-#include "WebURL.h"
+#include "platform/WebString.h"
+#include "platform/WebURL.h"
 #include "WebWorkerClient.h"
 
 using namespace WebCore;

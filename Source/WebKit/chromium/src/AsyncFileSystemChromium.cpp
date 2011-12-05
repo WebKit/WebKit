@@ -35,12 +35,11 @@
 #include "AsyncFileSystemCallbacks.h"
 #include "AsyncFileWriterChromium.h"
 #include "WebFileInfo.h"
-#include "WebFileSystem.h"
 #include "WebFileSystemCallbacksImpl.h"
 #include "WebFileWriter.h"
 #include "WebKit.h"
-#include "WebKitPlatformSupport.h"
-
+#include "platform/WebFileSystem.h"
+#include "platform/WebKitPlatformSupport.h"
 #include <wtf/text/CString.h>
 
 namespace WebCore {

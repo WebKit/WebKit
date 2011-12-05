@@ -34,9 +34,9 @@
 #include "WebFrame.h"
 #include "WebFrameClient.h"
 #include "WebSettings.h"
-#include "WebString.h"
-#include "WebURLRequest.h"
-#include "WebURLResponse.h"
+#include "platform/WebString.h"
+#include "platform/WebURLRequest.h"
+#include "platform/WebURLResponse.h"
 #include "WebView.h"
 #include "WebViewClient.h"
 #include <googleurl/src/gurl.h>

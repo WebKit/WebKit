@@ -32,9 +32,9 @@
 #include "SecurityOrigin.h"
 #include "StorageAreaProxy.h"
 #include "WebKit.h"
-#include "WebKitPlatformSupport.h"
+#include "platform/WebKitPlatformSupport.h"
 #include "WebStorageNamespace.h"
-#include "WebString.h"
+#include "platform/WebString.h"
 #include "WebViewClient.h"
 #include "WebViewImpl.h"
 

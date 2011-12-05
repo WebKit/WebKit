@@ -30,7 +30,7 @@
 #include "platform/WebLayerClient.h"
 #include "platform/WebRect.h"
 #include "GraphicsContext.h"
-#include "WebCanvas.h"
+#include "platform/WebCanvas.h"
 #if WEBKIT_USING_SKIA
 #include "PlatformContextSkia.h"
 #endif

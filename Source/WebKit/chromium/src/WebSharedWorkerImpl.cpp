@@ -43,8 +43,8 @@
 #include "WorkerInspectorController.h"
 
 #include "WebMessagePortChannel.h"
-#include "WebString.h"
-#include "WebURL.h"
+#include "platform/WebString.h"
+#include "platform/WebURL.h"
 
 using namespace WebCore;
 

@@ -45,10 +45,10 @@
 
 #include "TestShell.h"
 #include "WebContextMenuData.h"
-#include "WebDragData.h"
+#include "platform/WebDragData.h"
 #include "WebDragOperation.h"
-#include "WebPoint.h"
-#include "WebString.h"
+#include "platform/WebPoint.h"
+#include "platform/WebString.h"
 #include "WebTouchPoint.h"
 #include "WebView.h"
 #include "webkit/support/webkit_support.h"

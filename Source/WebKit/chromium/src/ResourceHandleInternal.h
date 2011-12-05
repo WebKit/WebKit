@@ -32,9 +32,9 @@
 #define ResourceHandleInternal_h
 
 #include "ResourceRequest.h"
-#include "WebCommon.h"
-#include "WebURLLoader.h"
-#include "WebURLLoaderClient.h"
+#include "platform/WebCommon.h"
+#include "platform/WebURLLoader.h"
+#include "platform/WebURLLoaderClient.h"
 
 namespace WebCore {
 

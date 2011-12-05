@@ -51,7 +51,7 @@
 #include "bridge/c/c_utility.h"
 #endif
 #include "WebArrayBuffer.h"
-#include "WebArrayBufferView.h"
+#include "platform/WebArrayBufferView.h"
 #include "WebElement.h"
 #include "WebRange.h"
 

@@ -35,9 +35,9 @@
 #include "ClipboardChromium.h"
 #include "Frame.h"
 #include "NativeImageSkia.h"
-#include "WebCommon.h"
-#include "WebDragData.h"
-#include "WebImage.h"
+#include "platform/WebCommon.h"
+#include "platform/WebDragData.h"
+#include "platform/WebImage.h"
 #include "WebViewClient.h"
 #include "WebViewImpl.h"
 

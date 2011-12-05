@@ -40,8 +40,8 @@
 #include "V8Proxy.h"
 #include "WebDevToolsFrontendClient.h"
 #include "WebDevToolsFrontendImpl.h"
-#include "WebFloatPoint.h"
-#include "WebString.h"
+#include "platform/WebFloatPoint.h"
+#include "platform/WebString.h"
 
 using namespace WebCore;
 

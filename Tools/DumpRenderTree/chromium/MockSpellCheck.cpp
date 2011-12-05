@@ -31,7 +31,7 @@
 #include "config.h"
 #include "MockSpellCheck.h"
 
-#include "WebString.h"
+#include "platform/WebString.h"
 #include <wtf/ASCIICType.h>
 #include <wtf/Assertions.h>
 #include <wtf/text/WTFString.h>

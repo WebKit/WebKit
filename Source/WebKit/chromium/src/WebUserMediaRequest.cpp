@@ -42,8 +42,8 @@
 #include "UserMediaRequest.h"
 #include "WebMediaStreamSource.h"
 #include "WebSecurityOrigin.h"
-#include "WebString.h"
-#include "WebVector.h"
+#include "platform/WebString.h"
+#include "platform/WebVector.h"
 #include <wtf/Vector.h>
 
 using namespace WebCore;

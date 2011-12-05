@@ -34,9 +34,9 @@
 #include "BMPImageDecoder.h"
 #include "ICOImageDecoder.h"
 #include "SharedBuffer.h"
-#include "WebData.h"
-#include "WebImage.h"
-#include "WebSize.h"
+#include "platform/WebData.h"
+#include "platform/WebImage.h"
+#include "platform/WebSize.h"
 
 #if WEBKIT_USING_SKIA
 #include <wtf/OwnPtr.h>

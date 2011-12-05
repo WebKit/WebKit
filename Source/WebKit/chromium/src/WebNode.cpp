@@ -44,8 +44,8 @@
 #include "WebDocument.h"
 #include "WebFrameImpl.h"
 #include "WebNodeList.h"
-#include "WebString.h"
-#include "WebVector.h"
+#include "platform/WebString.h"
+#include "platform/WebVector.h"
 
 #include "markup.h"
 

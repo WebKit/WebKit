@@ -43,10 +43,10 @@
 
 #include "CppBoundClass.h"
 #include "Task.h"
-#include "WebArrayBufferView.h"
-#include "WebString.h"
+#include "platform/WebArrayBufferView.h"
+#include "platform/WebString.h"
 #include "WebTextDirection.h"
-#include "WebURL.h"
+#include "platform/WebURL.h"
 #include <wtf/Deque.h>
 #include <wtf/OwnPtr.h>
 

@@ -36,9 +36,9 @@
 #include "SerializedScriptValue.h"
 
 #include "WebKit.h"
-#include "WebKitPlatformSupport.h"
+#include "platform/WebKitPlatformSupport.h"
 #include "WebMessagePortChannel.h"
-#include "WebString.h"
+#include "platform/WebString.h"
 
 using namespace WebKit;
 

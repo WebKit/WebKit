@@ -41,8 +41,8 @@
 #include "WebFrameImpl.h"
 #include "WebPermissionClient.h"
 #include "WebStorageArea.h"
-#include "WebString.h"
-#include "WebURL.h"
+#include "platform/WebString.h"
+#include "platform/WebURL.h"
 #include "WebViewImpl.h"
 
 namespace WebCore {

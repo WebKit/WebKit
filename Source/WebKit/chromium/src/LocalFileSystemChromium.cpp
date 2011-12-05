@@ -41,7 +41,7 @@
 #include "FileSystemCallbacks.h"
 #include "PlatformString.h"
 #include "WebFileError.h"
-#include "WebFileSystem.h"
+#include "platform/WebFileSystem.h"
 #include "WebFileSystemCallbacksImpl.h"
 #include "WebFrameClient.h"
 #include "WebFrameImpl.h"

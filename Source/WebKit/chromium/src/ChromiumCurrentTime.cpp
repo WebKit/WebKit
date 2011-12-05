@@ -32,7 +32,7 @@
 #include <wtf/CurrentTime.h>
 
 #include "WebKit.h"
-#include "WebKitPlatformSupport.h"
+#include "platform/WebKitPlatformSupport.h"
 
 namespace WTF {
 

@@ -36,8 +36,8 @@
 #include "PlatformString.h"
 #include "ScriptExecutionContext.h"
 #include "WebFileError.h"
-#include "WebFileSystem.h"
-#include "WebVector.h"
+#include "platform/WebFileSystem.h"
+#include "platform/WebVector.h"
 #include "WorkerContext.h"
 #include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>

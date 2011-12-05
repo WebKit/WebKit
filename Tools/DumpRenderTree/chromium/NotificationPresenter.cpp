@@ -34,12 +34,12 @@
 #if ENABLE(NOTIFICATIONS)
 
 #include "WebKit.h"
-#include "WebKitPlatformSupport.h"
+#include "platform/WebKitPlatformSupport.h"
 #include "WebNotification.h"
 #include "WebNotificationPermissionCallback.h"
 #include "WebSecurityOrigin.h"
-#include "WebString.h"
-#include "WebURL.h"
+#include "platform/WebString.h"
+#include "platform/WebURL.h"
 #include "googleurl/src/gurl.h"
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>

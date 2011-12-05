@@ -36,9 +36,9 @@
 #include "NotImplemented.h"
 #include "Page.h"
 #include "WebDevToolsAgentImpl.h"
-#include "WebRect.h"
-#include "WebURL.h"
-#include "WebURLRequest.h"
+#include "platform/WebRect.h"
+#include "platform/WebURL.h"
+#include "platform/WebURLRequest.h"
 #include "WebViewClient.h"
 #include "WebViewImpl.h"
 #include <wtf/Vector.h>

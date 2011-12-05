@@ -34,7 +34,7 @@
 #if ENABLE(MEDIA_STREAM)
 
 #include "MediaStreamDescriptor.h"
-#include "WebPeerConnectionHandlerClient.h"
+#include "platform/WebPeerConnectionHandlerClient.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/text/WTFString.h>

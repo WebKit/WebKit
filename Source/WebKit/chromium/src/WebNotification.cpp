@@ -37,9 +37,9 @@
 #include "Notification.h"
 #include "UserGestureIndicator.h"
 
-#include "WebString.h"
+#include "platform/WebString.h"
 #include "WebTextDirection.h"
-#include "WebURL.h"
+#include "platform/WebURL.h"
 
 #include <wtf/PassRefPtr.h>
 

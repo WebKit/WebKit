@@ -32,7 +32,7 @@
 #define WebIconLoadingCompletionImpl_h
 
 #include "FileIconLoader.h"
-#include "WebData.h"
+#include "platform/WebData.h"
 #include "WebIconLoadingCompletion.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>

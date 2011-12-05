@@ -36,7 +36,7 @@
 
 #include "WebElement.h"
 #include "WebFrameImpl.h"
-#include "WebString.h"
+#include "platform/WebString.h"
 
 using namespace WebCore;
 

@@ -31,7 +31,7 @@
 #include "config.h"
 #include "WebEntities.h"
 
-#include "WebString.h"
+#include "platform/WebString.h"
 
 #include <string.h>
 #include <wtf/HashMap.h>

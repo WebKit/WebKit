@@ -150,14 +150,14 @@
 #include "WebPerformance.h"
 #include "WebPlugin.h"
 #include "WebPluginContainerImpl.h"
-#include "WebPoint.h"
+#include "platform/WebPoint.h"
 #include "WebRange.h"
-#include "WebRect.h"
+#include "platform/WebRect.h"
 #include "WebScriptSource.h"
 #include "WebSecurityOrigin.h"
-#include "WebSize.h"
-#include "WebURLError.h"
-#include "WebVector.h"
+#include "platform/WebSize.h"
+#include "platform/WebURLError.h"
+#include "platform/WebVector.h"
 #include "WebViewImpl.h"
 #include "XPathResult.h"
 #include "markup.h"
@@ -174,7 +174,7 @@
 #include "V8DirectoryEntry.h"
 #include "V8DOMFileSystem.h"
 #include "V8FileEntry.h"
-#include "WebFileSystem.h"
+#include "platform/WebFileSystem.h"
 #endif
 
 using namespace WebCore;

@@ -36,7 +36,7 @@
 #include "PlatformString.h"
 #include "SecurityOrigin.h"
 #include "SpeechInputClientMock.h"
-#include "WebRect.h"
+#include "platform/WebRect.h"
 #include "WebSecurityOrigin.h"
 #include <wtf/PassOwnPtr.h>
 

@@ -32,14 +32,14 @@
 
 #include "WebFrame.h"
 #include "WebFrameClient.h"
-#include "WebString.h"
-#include "WebURL.h"
-#include "WebURLLoader.h"
-#include "WebURLLoaderClient.h"
 #include "WebURLLoaderOptions.h"
-#include "WebURLRequest.h"
-#include "WebURLResponse.h"
 #include "WebView.h"
+#include "platform/WebString.h"
+#include "platform/WebURL.h"
+#include "platform/WebURLLoader.h"
+#include "platform/WebURLLoaderClient.h"
+#include "platform/WebURLRequest.h"
+#include "platform/WebURLResponse.h"
 
 #include <googleurl/src/gurl.h>
 #include <gtest/gtest.h>

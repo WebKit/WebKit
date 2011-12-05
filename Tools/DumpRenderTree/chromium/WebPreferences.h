@@ -32,8 +32,8 @@
 #define WebPreferences_h
 
 #include "WebSettings.h"
-#include "WebString.h"
-#include "WebURL.h"
+#include "platform/WebString.h"
+#include "platform/WebURL.h"
 #include <wtf/HashMap.h>
 
 namespace WebKit {

@@ -1,3 +1,253 @@
+2011-12-05  Adam Barth  <abarth@webkit.org>
+
+        [Chromium] Remove no-longer-used forwarding headers in the WebKit API
+        https://bugs.webkit.org/show_bug.cgi?id=73845
+
+        Reviewed by Darin Fisher.
+
+        Delete unused forwarding headers and update includes to the new header
+        locations.
+
+        * WebKit.gyp:
+        * bridge/PeerConnectionHandlerInternal.cpp:
+        * bridge/PeerConnectionHandlerInternal.h:
+        * public/WebArrayBuffer.h:
+        * public/WebArrayBufferView.h: Removed.
+        * public/WebAudioBus.h: Removed.
+        * public/WebAudioDevice.h: Removed.
+        * public/WebBlobData.h: Removed.
+        * public/WebBlobRegistry.h: Removed.
+        * public/WebCString.h: Removed.
+        * public/WebCanvas.h: Removed.
+        * public/WebClipboard.h: Removed.
+        * public/WebColor.h: Removed.
+        * public/WebColorName.h: Removed.
+        * public/WebCommon.h: Removed.
+        * public/WebCompositorInputHandler.h:
+        * public/WebCookie.h: Removed.
+        * public/WebCookieJar.h: Removed.
+        * public/WebData.h: Removed.
+        * public/WebDragData.h: Removed.
+        * public/WebFileSystem.h: Removed.
+        * public/WebFloatPoint.h: Removed.
+        * public/WebFloatQuad.h: Removed.
+        * public/WebFloatRect.h: Removed.
+        * public/WebGamepad.h: Removed.
+        * public/WebGamepads.h: Removed.
+        * public/WebGraphicsContext3D.h: Removed.
+        * public/WebHTTPBody.h: Removed.
+        * public/WebHTTPHeaderVisitor.h: Removed.
+        * public/WebHTTPLoadInfo.h: Removed.
+        * public/WebIDBCallbacks.h:
+        * public/WebImage.h: Removed.
+        * public/WebIntent.h:
+        * public/WebIntentServiceInfo.h:
+        * public/WebKitPlatformSupport.h: Removed.
+        * public/WebLocalizedString.h: Removed.
+        * public/WebMediaStreamDescriptor.h: Removed.
+        * public/WebMimeRegistry.h: Removed.
+        * public/WebNonCopyable.h: Removed.
+        * public/WebPageOverlay.h:
+        * public/WebPeerConnectionHandler.h: Removed.
+        * public/WebPeerConnectionHandlerClient.h: Removed.
+        * public/WebPoint.h: Removed.
+        * public/WebPrivateOwnPtr.h: Removed.
+        * public/WebPrivatePtr.h: Removed.
+        * public/WebRect.h: Removed.
+        * public/WebSerializedScriptValue.h: Removed.
+        * public/WebSize.h: Removed.
+        * public/WebSocketStreamError.h: Removed.
+        * public/WebSocketStreamHandle.h: Removed.
+        * public/WebSocketStreamHandleClient.h: Removed.
+        * public/WebString.h: Removed.
+        * public/WebThread.h: Removed.
+        * public/WebThreadSafeData.h: Removed.
+        * public/WebURL.h: Removed.
+        * public/WebURLError.h: Removed.
+        * public/WebURLLoadTiming.h: Removed.
+        * public/WebURLLoader.h: Removed.
+        * public/WebURLLoaderClient.h: Removed.
+        * public/WebURLRequest.h: Removed.
+        * public/WebURLResponse.h: Removed.
+        * public/WebVector.h: Removed.
+        * public/WebWorkerRunLoop.h:
+        * public/android/WebThemeEngine.h: Removed.
+        * public/linux/WebFontFamily.h: Removed.
+        * public/linux/WebThemeEngine.h: Removed.
+        * public/mac/WebThemeEngine.h: Removed.
+        * public/win/WebThemeEngine.h: Removed.
+        * src/ApplicationCacheHost.cpp:
+        * src/ApplicationCacheHostInternal.h:
+        * src/AssertMatchingEnums.cpp:
+        * src/AssociatedURLLoader.cpp:
+        * src/AssociatedURLLoader.h:
+        * src/AsyncFileSystemChromium.cpp:
+        * src/AsyncFileWriterChromium.cpp:
+        * src/AudioDestinationChromium.cpp:
+        * src/AudioDestinationChromium.h:
+        * src/AutofillPopupMenuClient.cpp:
+        * src/BlobRegistryProxy.cpp:
+        * src/CCThreadImpl.cpp:
+        * src/ChromeClientImpl.cpp:
+        * src/ChromiumCurrentTime.cpp:
+        * src/ChromiumOSRandomSource.cpp:
+        * src/ChromiumThreading.cpp:
+        * src/CompositionUnderlineBuilder.h:
+        * src/CompositionUnderlineVectorBuilder.h:
+        * src/ContextMenuClientImpl.cpp:
+        * src/DragClientImpl.cpp:
+        * src/DragScrollTimer.h:
+        * src/ExternalPopupMenu.cpp:
+        * src/FrameLoaderClientImpl.cpp:
+        * src/GraphicsContext3DChromium.cpp:
+        * src/IDBCallbacksProxy.cpp:
+        * src/IDBCursorBackendProxy.cpp:
+        * src/IDBFactoryBackendProxy.cpp:
+        * src/IDBObjectStoreBackendProxy.cpp:
+        * src/InspectorClientImpl.cpp:
+        * src/InspectorFrontendClientImpl.cpp:
+        * src/LocalFileSystemChromium.cpp:
+        * src/LocalizedStrings.cpp:
+        * src/NotificationPresenterImpl.cpp:
+        * src/PlatformMessagePortChannel.cpp:
+        * src/PlatformSupport.cpp:
+        * src/ResourceHandle.cpp:
+        * src/ResourceHandleInternal.h:
+        * src/ScrollbarGroup.cpp:
+        * src/SharedWorkerRepository.cpp:
+        * src/SocketStreamHandle.cpp:
+        * src/SpeechInputClientImpl.cpp:
+        * src/StorageAreaProxy.cpp:
+        * src/StorageEventDispatcherChromium.cpp:
+        * src/StorageNamespaceProxy.cpp:
+        * src/WebAccessibilityObject.cpp:
+        * src/WebAnimationControllerImpl.cpp:
+        * src/WebArrayBufferView.cpp:
+        * src/WebAttribute.cpp:
+        * src/WebAudioBus.cpp:
+        * src/WebBindings.cpp:
+        * src/WebBlobData.cpp:
+        * src/WebCString.cpp:
+        * src/WebColor.cpp:
+        * src/WebCommon.cpp:
+        * src/WebCompositorImpl.cpp:
+        * src/WebCompositorInputHandlerImpl.cpp:
+        * src/WebContentLayerImpl.cpp:
+        * src/WebDOMEventListenerPrivate.h:
+        * src/WebDOMMessageEvent.cpp:
+        * src/WebDOMStringList.cpp:
+        * src/WebData.cpp:
+        * src/WebDataSourceImpl.cpp:
+        * src/WebDatabase.cpp:
+        * src/WebDevToolsAgentImpl.cpp:
+        * src/WebDocument.cpp:
+        * src/WebDocumentType.cpp:
+        * src/WebDragData.cpp:
+        * src/WebEntities.cpp:
+        * src/WebExternalTextureLayerImpl.cpp:
+        * src/WebFileChooserCompletionImpl.h:
+        * src/WebFileSystemCallbacksImpl.cpp:
+        * src/WebFileSystemCallbacksImpl.h:
+        * src/WebFloatQuad.cpp:
+        * src/WebFontImpl.cpp:
+        * src/WebFormElement.cpp:
+        * src/WebFrameImpl.cpp:
+        * src/WebGeolocationError.cpp:
+        * src/WebGeolocationPermissionRequest.cpp:
+        * src/WebGraphicsContext3D.cpp:
+        * src/WebHTTPBody.cpp:
+        * src/WebHTTPLoadInfo.cpp:
+        * src/WebHistoryItem.cpp:
+        * src/WebIDBCallbacksImpl.cpp:
+        * src/WebIDBCursorImpl.h:
+        * src/WebIDBDatabaseCallbacksImpl.cpp:
+        * src/WebIDBDatabaseCallbacksImpl.h:
+        * src/WebIDBDatabaseError.cpp:
+        * src/WebIDBDatabaseImpl.h:
+        * src/WebIDBIndexImpl.h:
+        * src/WebIDBKey.cpp:
+        * src/WebIDBKeyPath.cpp:
+        * src/WebIDBObjectStoreImpl.cpp:
+        * src/WebIDBObjectStoreImpl.h:
+        * src/WebIDBTransactionImpl.h:
+        * src/WebIconLoadingCompletionImpl.h:
+        * src/WebImageCG.cpp:
+        * src/WebImageDecoder.cpp:
+        * src/WebImageSkia.cpp:
+        * src/WebInputElement.cpp:
+        * src/WebKit.cpp:
+        * src/WebLabelElement.cpp:
+        * src/WebLayer.cpp:
+        * src/WebLayerTreeView.cpp:
+        * src/WebLayerTreeViewImpl.cpp:
+        * src/WebMediaPlayerClientImpl.cpp:
+        * src/WebMediaStreamDescriptor.cpp:
+        * src/WebMediaStreamRegistry.cpp:
+        * src/WebMediaStreamSource.cpp:
+        * src/WebNode.cpp:
+        * src/WebNotification.cpp:
+        * src/WebOptionElement.cpp:
+        * src/WebPageSerializer.cpp:
+        * src/WebPageSerializerImpl.cpp:
+        * src/WebPageSerializerImpl.h:
+        * src/WebPluginContainerImpl.cpp:
+        * src/WebPluginListBuilderImpl.cpp:
+        * src/WebPluginLoadObserver.h:
+        * src/WebPopupMenuImpl.cpp:
+        * src/WebPopupMenuImpl.h:
+        * src/WebRange.cpp:
+        * src/WebRegularExpression.cpp:
+        * src/WebScriptController.cpp:
+        * src/WebScrollbarImpl.cpp:
+        * src/WebSecurityOrigin.cpp:
+        * src/WebSecurityPolicy.cpp:
+        * src/WebSelectElement.cpp:
+        * src/WebSerializedScriptValue.cpp:
+        * src/WebSettingsImpl.cpp:
+        * src/WebSharedWorkerImpl.cpp:
+        * src/WebSocketImpl.cpp:
+        * src/WebSocketImpl.h:
+        * src/WebSpeechInputControllerMockImpl.cpp:
+        * src/WebSpeechInputControllerMockImpl.h:
+        * src/WebStorageAreaImpl.cpp:
+        * src/WebStorageEventDispatcherImpl.cpp:
+        * src/WebStorageNamespaceImpl.cpp:
+        * src/WebString.cpp:
+        * src/WebTextCheckingCompletionImpl.cpp:
+        * src/WebThreadSafeData.cpp:
+        * src/WebURL.cpp:
+        * src/WebURLError.cpp:
+        * src/WebURLLoadTiming.cpp:
+        * src/WebURLRequest.cpp:
+        * src/WebURLResponse.cpp:
+        * src/WebURLResponsePrivate.h:
+        * src/WebUserMediaRequest.cpp:
+        * src/WebViewImpl.cpp:
+        * src/WebViewImpl.h:
+        * src/WebWorkerClientImpl.cpp:
+        * src/WebWorkerClientImpl.h:
+        * src/WebWorkerImpl.cpp:
+        * src/WorkerAsyncFileSystemChromium.cpp:
+        * src/WorkerAsyncFileWriterChromium.cpp:
+        * src/WorkerFileSystemCallbacksBridge.cpp:
+        * src/WorkerFileSystemCallbacksBridge.h:
+        * src/WorkerFileWriterCallbacksBridge.cpp:
+        * src/WrappedResourceRequest.h:
+        * src/WrappedResourceResponse.h:
+        * src/mac/WebSubstringUtil.mm:
+        * tests/AssociatedURLLoaderTest.cpp:
+        * tests/CCLayerTreeHostTest.cpp:
+        * tests/FrameTestHelpers.cpp:
+        * tests/MockWebGraphicsContext3D.h:
+        * tests/PopupMenuTest.cpp:
+        * tests/RunAllTests.cpp:
+        * tests/WebLayerTest.cpp:
+        * tests/WebPageNewSerializerTest.cpp:
+        * tests/WebPageSerializerTest.cpp:
+        * tests/WebURLRequestTest.cpp:
+        * tests/WebUnitTests.h:
+        * tests/WebViewTest.cpp:
+
 2011-12-05  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Set opaque flag for ImageLayerChromium

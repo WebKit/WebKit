@@ -37,7 +37,7 @@
 #include "TextIterator.h"
 #include "WebFrameImpl.h"
 #include "WebNode.h"
-#include "WebString.h"
+#include "platform/WebString.h"
 #include <wtf/PassRefPtr.h>
 
 using namespace WebCore;

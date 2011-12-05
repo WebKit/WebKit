@@ -47,7 +47,7 @@
 #ifndef WebThemeEngineDRTWin_h
 #define WebThemeEngineDRTWin_h
 
-#include "win/WebThemeEngine.h"
+#include "platform/win/WebThemeEngine.h"
 #include <wtf/Noncopyable.h>
 
 class WebThemeEngineDRTWin : public WebKit::WebThemeEngine {

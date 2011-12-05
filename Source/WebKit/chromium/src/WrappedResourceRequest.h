@@ -31,7 +31,7 @@
 #ifndef WrappedResourceRequest_h
 #define WrappedResourceRequest_h
 
-#include "WebURLRequest.h"
+#include "platform/WebURLRequest.h"
 #include "WebURLRequestPrivate.h"
 
 namespace WebKit {

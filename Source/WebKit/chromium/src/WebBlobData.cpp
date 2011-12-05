@@ -29,7 +29,7 @@
  */
 
 #include "config.h"
-#include "WebBlobData.h"
+#include "platform/WebBlobData.h"
 
 #include "BlobData.h"
 #include <wtf/PassOwnPtr.h>

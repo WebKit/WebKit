@@ -32,8 +32,8 @@
 #include "AudioBus.h"
 #include "AudioDestination.h"
 #include "AudioSourceProvider.h"
-#include "WebAudioDevice.h"
-#include "WebVector.h"
+#include "platform/WebAudioDevice.h"
+#include "platform/WebVector.h"
 
 namespace WebKit { class WebAudioDevice; }
 

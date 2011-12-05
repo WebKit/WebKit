@@ -38,8 +38,8 @@
 #include "SerializedScriptValue.h"
 #include "WebFrame.h"
 #include "WebFrameImpl.h"
-#include "WebSerializedScriptValue.h"
-#include "WebString.h"
+#include "platform/WebSerializedScriptValue.h"
+#include "platform/WebString.h"
 
 #if USE(V8)
 #include "V8Proxy.h"

@@ -39,7 +39,7 @@
 #include "WebIDBKey.h"
 #include "WebIDBObjectStore.h"
 #include "WebIDBTransactionImpl.h"
-#include "WebSerializedScriptValue.h"
+#include "platform/WebSerializedScriptValue.h"
 
 using namespace WebCore;
 

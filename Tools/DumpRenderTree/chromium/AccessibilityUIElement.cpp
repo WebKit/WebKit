@@ -32,9 +32,9 @@
 #include "AccessibilityUIElement.h"
 
 #include "WebAccessibilityObject.h"
-#include "WebCString.h"
-#include "WebRect.h"
-#include "WebString.h"
+#include "platform/WebCString.h"
+#include "platform/WebRect.h"
+#include "platform/WebString.h"
 #include <wtf/Assertions.h>
 
 using namespace WebKit;

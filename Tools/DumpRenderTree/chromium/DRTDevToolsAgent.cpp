@@ -33,7 +33,7 @@
 
 #include "DRTDevToolsClient.h"
 
-#include "WebCString.h"
+#include "platform/WebCString.h"
 #include "WebDevToolsAgent.h"
 #include "WebView.h"
 #include "webkit/support/webkit_support.h"

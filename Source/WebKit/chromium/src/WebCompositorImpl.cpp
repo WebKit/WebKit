@@ -29,7 +29,7 @@
 
 #include "CCThreadImpl.h"
 #include "WebKit.h"
-#include "WebKitPlatformSupport.h"
+#include "platform/WebKitPlatformSupport.h"
 #include "WebCompositorClient.h"
 #include "WebInputEvent.h"
 #include "cc/CCLayerTreeHost.h"

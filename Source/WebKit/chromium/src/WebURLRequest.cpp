@@ -29,13 +29,13 @@
  */
 
 #include "config.h"
-#include "WebURLRequest.h"
+#include "platform/WebURLRequest.h"
 
 #include "ResourceRequest.h"
 
-#include "WebHTTPBody.h"
-#include "WebHTTPHeaderVisitor.h"
-#include "WebURL.h"
+#include "platform/WebHTTPBody.h"
+#include "platform/WebHTTPHeaderVisitor.h"
+#include "platform/WebURL.h"
 #include "WebURLRequestPrivate.h"
 
 using namespace WebCore;

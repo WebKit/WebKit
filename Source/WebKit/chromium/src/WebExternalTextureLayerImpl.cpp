@@ -28,7 +28,7 @@
 
 #include "platform/WebLayerClient.h"
 #include "GraphicsContext.h"
-#include "WebCanvas.h"
+#include "platform/WebCanvas.h"
 
 using namespace WebCore;
 

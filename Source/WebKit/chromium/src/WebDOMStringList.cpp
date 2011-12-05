@@ -32,7 +32,7 @@
 #include "WebDOMStringList.h"
 
 #include "DOMStringList.h"
-#include "WebString.h"
+#include "platform/WebString.h"
 
 using namespace WebCore;
 

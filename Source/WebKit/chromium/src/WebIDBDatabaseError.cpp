@@ -34,7 +34,7 @@
 #if ENABLE(INDEXED_DATABASE)
 
 #include "IDBDatabaseError.h"
-#include "WebString.h"
+#include "platform/WebString.h"
 
 using namespace WebCore;
 

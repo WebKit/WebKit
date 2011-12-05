@@ -42,10 +42,10 @@
 #include "RenderTheme.h"
 #include "WebAutofillClient.h"
 #include "WebNode.h"
-#include "WebString.h"
-#include "WebVector.h"
 #include "WebViewClient.h"
 #include "WebViewImpl.h"
+#include "platform/WebString.h"
+#include "platform/WebVector.h"
 
 using namespace WebCore;
 

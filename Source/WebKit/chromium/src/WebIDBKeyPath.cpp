@@ -29,8 +29,8 @@
 #if ENABLE(INDEXED_DATABASE)
 
 #include "IDBKeyPath.h"
-#include "WebString.h"
-#include "WebVector.h"
+#include "platform/WebString.h"
+#include "platform/WebVector.h"
 #include <wtf/Vector.h>
 
 using namespace WebCore;

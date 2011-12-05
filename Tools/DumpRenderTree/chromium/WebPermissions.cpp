@@ -33,8 +33,8 @@
 
 #include "LayoutTestController.h"
 #include "TestShell.h"
-#include "WebCString.h"
-#include "WebURL.h"
+#include "platform/WebCString.h"
+#include "platform/WebURL.h"
 
 WebPermissions::WebPermissions(TestShell* shell)
     : m_shell(shell)

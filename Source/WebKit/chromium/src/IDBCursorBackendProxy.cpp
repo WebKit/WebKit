@@ -34,7 +34,7 @@
 #include "SerializedScriptValue.h"
 #include "WebIDBCallbacksImpl.h"
 #include "WebIDBKey.h"
-#include "WebSerializedScriptValue.h"
+#include "platform/WebSerializedScriptValue.h"
 
 using namespace WebCore;
 

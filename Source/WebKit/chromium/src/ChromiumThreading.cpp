@@ -32,7 +32,7 @@
 #include <wtf/chromium/ChromiumThreading.h>
 
 #include "WebKit.h"
-#include "WebKitPlatformSupport.h"
+#include "platform/WebKitPlatformSupport.h"
 
 #include <wtf/MainThread.h>
 

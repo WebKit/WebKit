@@ -31,7 +31,7 @@
 #include "WebCompositorInputHandlerClient.h"
 #include "WebInputEvent.h"
 #include "WebKit.h"
-#include "WebKitPlatformSupport.h"
+#include "platform/WebKitPlatformSupport.h"
 #include "cc/CCProxy.h"
 #include <wtf/ThreadingPrimitives.h>
 

@@ -35,7 +35,7 @@
 #include "V8DOMMap.h"
 #include "V8Proxy.h"
 
-#include "WebString.h"
+#include "platform/WebString.h"
 
 using namespace WebCore;
 

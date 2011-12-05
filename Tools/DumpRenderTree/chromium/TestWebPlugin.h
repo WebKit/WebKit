@@ -27,7 +27,7 @@
 #define TestWebPlugin_h
 
 #include "WebPlugin.h"
-#include "WebRect.h"
+#include "platform/WebRect.h"
 
 namespace WebKit {
 class WebGraphicsContext3D;

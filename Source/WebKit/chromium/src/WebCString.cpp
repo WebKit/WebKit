@@ -29,12 +29,11 @@
  */
 
 #include "config.h"
-#include "WebCString.h"
+#include "platform/WebCString.h"
 
 #include "TextEncoding.h"
+#include "platform/WebString.h"
 #include <wtf/text/CString.h>
-
-#include "WebString.h"
 
 namespace WebKit {
 

@@ -36,50 +36,50 @@
 #include "Chrome.h"
 #include "ChromeClientImpl.h"
 #include "Page.h"
-#include "WebAudioBus.h"
-#include "WebClipboard.h"
-#include "WebCookie.h"
-#include "WebCookieJar.h"
-#include "WebData.h"
-#include "WebDragData.h"
 #include "WebFileUtilities.h"
 #include "WebFrameClient.h"
 #include "WebFrameImpl.h"
 #include "WebIDBKey.h"
-#include "WebImage.h"
 #include "WebKit.h"
-#include "WebKitPlatformSupport.h"
-#include "WebMimeRegistry.h"
 #include "WebPluginContainerImpl.h"
 #include "WebPluginListBuilderImpl.h"
 #include "WebSandboxSupport.h"
-#include "WebSerializedScriptValue.h"
 #include "WebScreenInfo.h"
-#include "WebString.h"
-#include "WebURL.h"
-#include "WebVector.h"
 #include "WebViewClient.h"
 #include "WebViewImpl.h"
 #include "WebWorkerClientImpl.h"
 #include "WebWorkerRunLoop.h"
+#include "platform/WebAudioBus.h"
+#include "platform/WebClipboard.h"
+#include "platform/WebCookie.h"
+#include "platform/WebCookieJar.h"
+#include "platform/WebData.h"
+#include "platform/WebDragData.h"
+#include "platform/WebImage.h"
+#include "platform/WebKitPlatformSupport.h"
+#include "platform/WebMimeRegistry.h"
+#include "platform/WebSerializedScriptValue.h"
+#include "platform/WebString.h"
+#include "platform/WebURL.h"
+#include "platform/WebVector.h"
 
 #if USE(CG)
 #include <CoreGraphics/CGContext.h>
 #endif
 
 #if OS(WINDOWS)
-#include "WebRect.h"
-#include "win/WebThemeEngine.h"
+#include "platform/WebRect.h"
+#include "platform/win/WebThemeEngine.h"
 #endif
 
 #if OS(DARWIN)
-#include "mac/WebThemeEngine.h"
+#include "platform/mac/WebThemeEngine.h"
 #elif OS(UNIX) && !OS(ANDROID)
-#include "linux/WebThemeEngine.h"
+#include "platform/linux/WebThemeEngine.h"
 #include "WebFontInfo.h"
 #include "WebFontRenderStyle.h"
 #elif OS(ANDROID)
-#include "android/WebThemeEngine.h"
+#include "platform/android/WebThemeEngine.h"
 #endif
 
 #if WEBKIT_USING_SKIA

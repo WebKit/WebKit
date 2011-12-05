@@ -37,10 +37,10 @@
 #include "PeerConnectionHandlerClient.h"
 #include "SecurityOrigin.h"
 #include "WebKit.h"
-#include "WebKitPlatformSupport.h"
-#include "WebMediaStreamDescriptor.h"
-#include "WebPeerConnectionHandler.h"
-#include "WebPeerConnectionHandlerClient.h"
+#include "platform/WebKitPlatformSupport.h"
+#include "platform/WebMediaStreamDescriptor.h"
+#include "platform/WebPeerConnectionHandler.h"
+#include "platform/WebPeerConnectionHandlerClient.h"
 #include <wtf/PassOwnPtr.h>
 
 namespace WebCore {

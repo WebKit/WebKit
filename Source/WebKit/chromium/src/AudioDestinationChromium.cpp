@@ -33,7 +33,7 @@
 #include "AudioDestinationChromium.h"
 
 #include "WebKit.h"
-#include "WebKitPlatformSupport.h"
+#include "platform/WebKitPlatformSupport.h"
 
 using namespace WebKit;
 

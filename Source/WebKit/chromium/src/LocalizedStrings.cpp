@@ -35,9 +35,9 @@
 #include "NotImplemented.h"
 
 #include "WebKit.h"
-#include "WebKitPlatformSupport.h"
-#include "WebLocalizedString.h"
-#include "WebString.h"
+#include "platform/WebKitPlatformSupport.h"
+#include "platform/WebLocalizedString.h"
+#include "platform/WebString.h"
 
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>

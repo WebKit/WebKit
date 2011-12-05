@@ -27,8 +27,8 @@
 #include "platform/WebLayerTreeView.h"
 
 #include "WebLayerTreeViewImpl.h"
-#include "WebRect.h"
-#include "WebSize.h"
+#include "platform/WebRect.h"
+#include "platform/WebSize.h"
 #include "platform/WebLayer.h"
 #include "cc/CCLayerTreeHost.h"
 

@@ -32,7 +32,7 @@
 #include <base/test/test_suite.h>
 
 #include "WebKit.h"
-#include "WebKitPlatformSupport.h"
+#include "platform/WebKitPlatformSupport.h"
 #include <webkit/support/webkit_support.h>
 
 #if defined(WEBKIT_DLL_UNITTEST)

@@ -31,7 +31,7 @@
 #include "Geolocation.h"
 #include "SecurityOrigin.h"
 #include "WebSecurityOrigin.h"
-#include "WebURL.h"
+#include "platform/WebURL.h"
 
 using namespace WebCore;
 

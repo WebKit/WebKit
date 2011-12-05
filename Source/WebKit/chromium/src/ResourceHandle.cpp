@@ -38,12 +38,12 @@
 #include "SharedBuffer.h"
 
 #include "WebKit.h"
-#include "WebKitPlatformSupport.h"
-#include "WebURLError.h"
-#include "WebURLLoader.h"
-#include "WebURLLoaderClient.h"
-#include "WebURLRequest.h"
-#include "WebURLResponse.h"
+#include "platform/WebKitPlatformSupport.h"
+#include "platform/WebURLError.h"
+#include "platform/WebURLLoader.h"
+#include "platform/WebURLLoaderClient.h"
+#include "platform/WebURLRequest.h"
+#include "platform/WebURLResponse.h"
 #include "WrappedResourceRequest.h"
 #include "WrappedResourceResponse.h"
 

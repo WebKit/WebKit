@@ -32,8 +32,8 @@
 #include "ApplicationCacheHost.h"
 
 #include "ApplicationCacheHostInternal.h"
-#include "DocumentLoader.h"
 #include "DOMApplicationCache.h"
+#include "DocumentLoader.h"
 #include "Frame.h"
 #include "InspectorApplicationCacheAgent.h"
 #include "InspectorInstrumentation.h"
@@ -42,12 +42,12 @@
 #include "SecurityOrigin.h"
 #include "Settings.h"
 #include "WebFrameImpl.h"
-#include "WebURL.h"
-#include "WebURLError.h"
-#include "WebURLResponse.h"
-#include "WebVector.h"
 #include "WrappedResourceRequest.h"
 #include "WrappedResourceResponse.h"
+#include "platform/WebURL.h"
+#include "platform/WebURLError.h"
+#include "platform/WebURLResponse.h"
+#include "platform/WebVector.h"
 
 using namespace WebKit;
 

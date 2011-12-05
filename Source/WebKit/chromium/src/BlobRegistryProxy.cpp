@@ -37,11 +37,11 @@
 #include "BlobData.h"
 #include "KURL.h"
 #include "ResourceHandle.h"
-#include "WebBlobData.h"
-#include "WebBlobRegistry.h"
 #include "WebKit.h"
-#include "WebKitPlatformSupport.h"
-#include "WebURL.h"
+#include "platform/WebBlobData.h"
+#include "platform/WebBlobRegistry.h"
+#include "platform/WebKitPlatformSupport.h"
+#include "platform/WebURL.h"
 #include <wtf/MainThread.h>
 #include <wtf/StdLibExtras.h>
 

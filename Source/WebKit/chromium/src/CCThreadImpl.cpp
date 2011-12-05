@@ -26,8 +26,8 @@
 #include "CCThreadImpl.h"
 
 #include "WebKit.h"
-#include "WebKitPlatformSupport.h"
-#include "WebThread.h"
+#include "platform/WebKitPlatformSupport.h"
+#include "platform/WebThread.h"
 #include "cc/CCCompletionEvent.h"
 #include <stdint.h>
 

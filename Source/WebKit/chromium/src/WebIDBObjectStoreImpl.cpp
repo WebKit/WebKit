@@ -37,7 +37,7 @@
 #include "WebIDBKey.h"
 #include "WebIDBKeyRange.h"
 #include "WebIDBTransaction.h"
-#include "WebSerializedScriptValue.h"
+#include "platform/WebSerializedScriptValue.h"
 
 using namespace WebCore;
 

@@ -36,8 +36,8 @@
 #include "SecurityOrigin.h"
 #include "SecurityPolicy.h"
 
-#include "WebString.h"
-#include "WebURL.h"
+#include "platform/WebString.h"
+#include "platform/WebURL.h"
 
 using namespace WebCore;
 

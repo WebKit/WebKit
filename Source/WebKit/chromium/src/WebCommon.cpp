@@ -29,7 +29,7 @@
  */
 
 #include "config.h"
-#include "WebCommon.h"
+#include "platform/WebCommon.h"
 
 #include <wtf/Assertions.h>
 

@@ -23,7 +23,7 @@
  */
 
 #include "config.h"
-#include "WebAudioBus.h"
+#include "platform/WebAudioBus.h"
 
 #if ENABLE(WEB_AUDIO)
 #include "AudioBus.h"

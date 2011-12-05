@@ -31,7 +31,7 @@
 #ifndef WebDOMEventListenerPrivate_h
 #define WebDOMEventListenerPrivate_h
 
-#include "WebString.h"
+#include "platform/WebString.h"
 
 #include <wtf/Vector.h>
 

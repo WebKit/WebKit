@@ -31,7 +31,7 @@
 #ifndef WebSocketImpl_h
 #define WebSocketImpl_h
 
-#include "WebCommon.h"
+#include "platform/WebCommon.h"
 #include "WebSocket.h"
 #include "WebSocketChannelClient.h"
 #include "WebSocketClient.h"

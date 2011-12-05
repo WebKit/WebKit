@@ -29,14 +29,14 @@
  */
 
 #include "config.h"
-#include "WebDragData.h"
+#include "platform/WebDragData.h"
 
 #include "ChromiumDataObject.h"
 #include "ClipboardMimeTypes.h"
-#include "WebData.h"
-#include "WebString.h"
-#include "WebURL.h"
-#include "WebVector.h"
+#include "platform/WebData.h"
+#include "platform/WebString.h"
+#include "platform/WebURL.h"
+#include "platform/WebVector.h"
 
 #include <wtf/HashMap.h>
 #include <wtf/PassRefPtr.h>

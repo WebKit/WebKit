@@ -29,7 +29,7 @@
  */
 
 #include "config.h"
-#include "WebFloatQuad.h"
+#include "platform/WebFloatQuad.h"
 
 namespace WebKit {
 

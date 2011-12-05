@@ -43,11 +43,11 @@ class WebSocketChannel {
 } // namespace WebCore
 #endif
 
-#include "WebData.h"
+#include "platform/WebData.h"
 #include "WebDocument.h"
 #include "WebSocketClient.h"
-#include "WebString.h"
-#include "WebURL.h"
+#include "platform/WebString.h"
+#include "platform/WebURL.h"
 
 using namespace WebCore;
 

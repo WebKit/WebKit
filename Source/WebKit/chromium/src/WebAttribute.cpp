@@ -32,9 +32,8 @@
 #include "WebAttribute.h"
 
 #include "Attribute.h"
+#include "platform/WebString.h"
 #include <wtf/PassRefPtr.h>
-
-#include "WebString.h"
 
 using namespace WebCore;
 

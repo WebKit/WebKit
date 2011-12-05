@@ -39,15 +39,15 @@
 #include "WebApplicationCacheHost.h"
 #include "WebDataSource.h"
 #include "WebFrameImpl.h"
-#include "WebHTTPHeaderVisitor.h"
 #include "WebKit.h"
-#include "WebKitPlatformSupport.h"
-#include "WebURLError.h"
-#include "WebURLLoaderClient.h"
-#include "WebURLRequest.h"
 #include "WrappedResourceRequest.h"
 #include "WrappedResourceResponse.h"
 #include "XMLHttpRequest.h"
+#include "platform/WebHTTPHeaderVisitor.h"
+#include "platform/WebKitPlatformSupport.h"
+#include "platform/WebURLError.h"
+#include "platform/WebURLLoaderClient.h"
+#include "platform/WebURLRequest.h"
 
 using namespace WebCore;
 using namespace WTF;

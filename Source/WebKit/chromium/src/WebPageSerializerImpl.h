@@ -41,8 +41,8 @@
 #include "WebEntities.h"
 #include "WebPageSerializer.h"
 #include "WebPageSerializerClient.h"
-#include "WebString.h"
-#include "WebURL.h"
+#include "platform/WebString.h"
+#include "platform/WebURL.h"
 
 namespace WebCore {
 class Document;

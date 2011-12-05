@@ -1,3 +1,40 @@
+2011-12-05  Adam Barth  <abarth@webkit.org>
+
+        [Chromium] Remove no-longer-used forwarding headers in the WebKit API
+        https://bugs.webkit.org/show_bug.cgi?id=73845
+
+        Reviewed by Darin Fisher.
+
+        Update includes to point to the new header locations.
+
+        * DumpRenderTree/chromium/AccessibilityController.cpp:
+        * DumpRenderTree/chromium/AccessibilityUIElement.cpp:
+        * DumpRenderTree/chromium/CppBoundClass.cpp:
+        * DumpRenderTree/chromium/DRTDevToolsAgent.cpp:
+        * DumpRenderTree/chromium/DRTDevToolsAgent.h:
+        * DumpRenderTree/chromium/DRTDevToolsClient.h:
+        * DumpRenderTree/chromium/EventSender.cpp:
+        * DumpRenderTree/chromium/EventSender.h:
+        * DumpRenderTree/chromium/GamepadController.h:
+        * DumpRenderTree/chromium/LayoutTestController.cpp:
+        * DumpRenderTree/chromium/LayoutTestController.h:
+        * DumpRenderTree/chromium/MockSpellCheck.cpp:
+        * DumpRenderTree/chromium/NotificationPresenter.cpp:
+        * DumpRenderTree/chromium/PlainTextController.cpp:
+        * DumpRenderTree/chromium/Task.cpp:
+        * DumpRenderTree/chromium/TestNavigationController.h:
+        * DumpRenderTree/chromium/TestShell.cpp:
+        * DumpRenderTree/chromium/TestWebPlugin.cpp:
+        * DumpRenderTree/chromium/TestWebPlugin.h:
+        * DumpRenderTree/chromium/TextInputController.cpp:
+        * DumpRenderTree/chromium/WebPermissions.cpp:
+        * DumpRenderTree/chromium/WebPreferences.h:
+        * DumpRenderTree/chromium/WebThemeEngineDRTMac.h:
+        * DumpRenderTree/chromium/WebThemeEngineDRTMac.mm:
+        * DumpRenderTree/chromium/WebThemeEngineDRTWin.cpp:
+        * DumpRenderTree/chromium/WebThemeEngineDRTWin.h:
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+
 2011-12-05  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add Aharon Lanin to the contributors list.

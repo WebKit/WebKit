@@ -29,14 +29,14 @@
  */
 
 #include "config.h"
-#include "WebImage.h"
+#include "platform/WebImage.h"
 
 #include "Image.h"
 #include "ImageSource.h"
 #include "SharedBuffer.h"
 
-#include "WebData.h"
-#include "WebSize.h"
+#include "platform/WebData.h"
+#include "platform/WebSize.h"
 
 #include <CoreGraphics/CGImage.h>
 

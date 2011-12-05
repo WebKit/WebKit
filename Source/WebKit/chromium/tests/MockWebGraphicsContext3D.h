@@ -27,7 +27,7 @@
 #define MockWebGraphicsContext3D_h
 
 #include "GraphicsContext3D.h"
-#include "WebGraphicsContext3D.h"
+#include "platform/WebGraphicsContext3D.h"
 
 namespace WebKit {
 
