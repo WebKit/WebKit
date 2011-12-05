@@ -1,3 +1,22 @@
+2011-12-05  Chris Fleizach  <cfleizach@apple.com>
+
+        platform/mac/accessibility/search-when-element-starts-in-table.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=73751
+
+        When encountering a table, the rows() and not the cells() should be queried (otherwise
+        we can end up finding the element we started with).
+
+        When searching in reverse, we also need to account for searching elements within the
+        parent hierarchy. because technically it is "behind" the start element.
+
+        Reviewed by Darin Adler.
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::appendChildrenToArray):
+        (WebCore::AccessibilityObject::objectMatchesSearchCriteriaWithResultLimit):
+        (WebCore::AccessibilityObject::findMatchingObjects):
+        * accessibility/AccessibilityObject.h:
+
 2011-12-02  Jer Noble  <jer.noble@apple.com>
 
         <video> elements should disable the system and display sleep when playing on OS X.

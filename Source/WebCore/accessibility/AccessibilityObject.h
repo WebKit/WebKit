@@ -690,7 +690,8 @@ protected:
     virtual bool isDetached() const { return true; }
     static bool isAccessibilityObjectSearchMatch(AccessibilityObject*, AccessibilitySearchCriteria*);
     static bool isAccessibilityTextSearchMatch(AccessibilityObject*, AccessibilitySearchCriteria*);
-
+    static bool objectMatchesSearchCriteriaWithResultLimit(AccessibilityObject*, AccessibilitySearchCriteria*, AccessibilityChildrenVector&);
+    
 #if PLATFORM(GTK)
     bool allowsTextRanges() const;
     unsigned getLengthForTextRange() const;

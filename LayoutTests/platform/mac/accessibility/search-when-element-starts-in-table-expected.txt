@@ -11,7 +11,14 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 PASS resultElement.role is 'AXRole: AXHeading'
 PASS resultElement.title is 'AXTitle: outside heading'
 PASS resultElement.role is 'AXRole: '
+PASS resultElement.role is 'AXRole: AXHeading'
 PASS resultElement.role is 'AXRole: AXCell'
+PASS resultElement.role is 'AXRole: AXRow'
+PASS resultElement.role is 'AXRole: AXStaticText'
+PASS resultElement.stringValue is 'AXValue: Column'
+PASS resultElement.role is 'AXRole: AXCell'
+PASS resultElement.rowIndexRange() is '{0, 1}'
+PASS resultElement.columnIndexRange() is '{0, 1}'
 PASS successfullyParsed is true
 
 TEST COMPLETE

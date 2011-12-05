@@ -359,9 +359,9 @@ static void appendChildrenToArray(AccessibilityObject* object, bool isForward, A
 {
     AccessibilityObject::AccessibilityChildrenVector searchChildren;
     // A table's children includes elements whose own children are also the table's children (due to the way the Mac exposes tables).
-    // The table's cells are what are desired in this case, since that's where the content resides.
+    // The rows from the table should be queried, since those are direct descendants of the table, and they contain content.
     if (object->isAccessibilityTable())
-        toAccessibilityTable(object)->cells(searchChildren);
+        searchChildren = toAccessibilityTable(object)->rows();
     else
         searchChildren = object->children();
 
@@ -388,7 +388,21 @@ static void appendChildrenToArray(AccessibilityObject* object, bool isForward, A
             results.append(searchChildren.at(i).get());
     }
 }
+
+// Returns true if the number of results is now >= the number of results desired.
+bool AccessibilityObject::objectMatchesSearchCriteriaWithResultLimit(AccessibilityObject* object, AccessibilitySearchCriteria* criteria, AccessibilityChildrenVector& results)
+{
+    if (isAccessibilityObjectSearchMatch(object, criteria) && isAccessibilityTextSearchMatch(object, criteria)) {
+        results.append(object);
+        
+        // Enough results were found to stop searching.
+        if (results.size() >= criteria->resultsLimit)
+            return true;
+    }
     
+    return false;
+}
+
 void AccessibilityObject::findMatchingObjects(AccessibilitySearchCriteria* criteria, AccessibilityChildrenVector& results)
 {
     ASSERT(criteria);
@@ -427,18 +441,17 @@ void AccessibilityObject::findMatchingObjects(AccessibilitySearchCriteria* crite
             AccessibilityObject* searchObject = searchStack.last().get();
             searchStack.removeLast();
             
-            if (isAccessibilityObjectSearchMatch(searchObject, criteria) && isAccessibilityTextSearchMatch(searchObject, criteria)) {
-                results.append(searchObject);
-                
-                // Enough results were found to stop searching.
-                if (results.size() >= criteria->resultsLimit)
-                    break;
-            }
+            if (objectMatchesSearchCriteriaWithResultLimit(searchObject, criteria, results))
+                break;
             
             appendChildrenToArray(searchObject, isForward, 0, searchStack);
         }
         
         if (results.size() >= criteria->resultsLimit)
+            break;
+
+        // When moving backwards, the parent object needs to be checked, because technically it's "before" the starting element.
+        if (!isForward && objectMatchesSearchCriteriaWithResultLimit(startObject, criteria, results))
             break;
 
         previousObject = startObject;
