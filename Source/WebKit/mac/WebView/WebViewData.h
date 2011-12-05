@@ -68,7 +68,7 @@ public:
         return adoptPtr(new LayerFlushController(webView));
     }
     
-    virtual void flushLayers();
+    virtual bool flushLayers();
     
     void scheduleLayerFlush();
     void invalidateObserver();

@@ -6182,7 +6182,7 @@ static inline uint64_t roundUpToPowerOf2(uint64_t num)
        until the time is right (essentially when there are no more pending layouts).
     
 */
-void LayerFlushController::flushLayers()
+bool LayerFlushController::flushLayers()
 {
     NSWindow *window = [m_webView window];
     
@@ -6198,20 +6198,23 @@ void LayerFlushController::flushLayers()
         viewsNeedDisplay = [window viewsNeedDisplay];
 
     if (viewsNeedDisplay)
-        return;
+        return false;
 
     if ([m_webView _syncCompositingChanges]) {
-        m_layerFlushScheduler.invalidate();
         // AppKit may have disabled screen updates, thinking an upcoming window flush will re-enable them.
         // In case setNeedsDisplayInRect() has prevented the window from needing to be flushed, re-enable screen
         // updates here.
         if (![window isFlushWindowDisabled])
             [window _enableScreenUpdatesIfNeeded];
-    } else {
-        // Since the WebView does not need display, -viewWillDraw will not be called. Perform pending layout now,
-        // so that the layers draw with up-to-date layout. 
-        [m_webView _viewWillDrawInternal];
+
+        return true;
     }
+
+    // Since the WebView does not need display, -viewWillDraw will not be called. Perform pending layout now,
+    // so that the layers draw with up-to-date layout. 
+    [m_webView _viewWillDrawInternal];
+
+    return false;
 }
 
 - (void)_scheduleCompositingLayerSync

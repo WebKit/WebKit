@@ -1,3 +1,17 @@
+2011-12-05  Anders Carlsson  <andersca@apple.com>
+
+        Make LayerFlushSchedulerClient::flushLayers indicate whether the flush was successful or not
+        https://bugs.webkit.org/show_bug.cgi?id=73862
+
+        Reviewed by Andy Estes.
+
+        Remove the call to LayerFlushScheduler::invalidate and return true instead. Return false for the cases
+        where we don't want the layer flush scheduler to be invalidated.
+
+        * WebView/WebView.mm:
+        (LayerFlushController::flushLayers):
+        * WebView/WebViewData.h:
+
 2011-12-05  Eric Carlson  <eric.carlson@apple.com>
 
         Add WebKit preferences for text track settings

@@ -48,10 +48,16 @@ LayerFlushScheduler::~LayerFlushScheduler()
 
 void LayerFlushScheduler::runLoopObserverCallback(CFRunLoopObserverRef, CFRunLoopActivity, void* context)
 {
-    LayerFlushScheduler* layerFlushScheduler = static_cast<LayerFlushScheduler*>(context);
-    ASSERT(layerFlushScheduler->m_runLoopObserver);
-    ASSERT(!layerFlushScheduler->m_isSuspended);
-    layerFlushScheduler->m_client->flushLayers();
+    static_cast<LayerFlushScheduler*>(context)->runLoopObserverCallback();
+}
+
+void LayerFlushScheduler::runLoopObserverCallback()
+{
+    ASSERT(m_runLoopObserver);
+    ASSERT(!m_isSuspended);
+
+    if (m_client->flushLayers())
+        invalidate();
 }
 
 void LayerFlushScheduler::schedule()

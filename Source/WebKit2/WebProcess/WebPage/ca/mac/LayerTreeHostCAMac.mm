@@ -118,19 +118,18 @@ void LayerTreeHostCAMac::resumeRendering()
     [[NSNotificationCenter defaultCenter] postNotificationName:@"NSCAViewRenderDidResumeNotification" object:nil userInfo:[NSDictionary dictionaryWithObject:root forKey:@"layer"]];
 }
 
-void LayerTreeHostCAMac::flushLayers()
+bool LayerTreeHostCAMac::flushLayers()
 {
     // This gets called outside of the normal event loop so wrap in an autorelease pool
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     performScheduledLayerFlush();
     [pool drain];
+
+    return true;
 }
 
 void LayerTreeHostCAMac::didPerformScheduledLayerFlush()
 {
-    // We successfully flushed the pending layer changes, remove the run loop observer.
-    m_layerFlushScheduler.invalidate();
-
     LayerTreeHostCA::didPerformScheduledLayerFlush();
 }
 

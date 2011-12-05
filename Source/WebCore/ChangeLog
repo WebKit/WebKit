@@ -1,3 +1,18 @@
+2011-12-05  Anders Carlsson  <andersca@apple.com>
+
+        Make LayerFlushSchedulerClient::flushLayers indicate whether the flush was successful or not
+        https://bugs.webkit.org/show_bug.cgi?id=73862
+
+        Reviewed by Andy Estes.
+
+        Change LayerFlushSchedulerClient::flushLayers to return a boolean. If it returns true, the flush was
+        successful and the run loop observer will be invalidated.
+
+        * platform/graphics/ca/LayerFlushScheduler.h:
+        * platform/graphics/ca/LayerFlushSchedulerClient.h:
+        * platform/graphics/ca/mac/LayerFlushSchedulerMac.cpp:
+        (WebCore::LayerFlushScheduler::runLoopObserverCallback):
+
 2011-12-05  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Set opaque flag for ImageLayerChromium

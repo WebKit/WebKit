@@ -53,6 +53,7 @@ private:
 #if PLATFORM(MAC)
     RetainPtr<CFRunLoopObserverRef> m_runLoopObserver;
     static void runLoopObserverCallback(CFRunLoopObserverRef, CFRunLoopActivity, void* context);
+    void runLoopObserverCallback();
 #endif
 };
 

@@ -57,7 +57,7 @@ private:
     virtual void didPerformScheduledLayerFlush();
     
     // LayerFlushSchedulerClient
-    virtual void flushLayers();
+    virtual bool flushLayers();
 
     RetainPtr<WKCARemoteLayerClientRef> m_remoteLayerClient;
     WebCore::LayerFlushScheduler m_layerFlushScheduler;
