@@ -3790,7 +3790,7 @@ BUGWK72598 : css3/images/cross-fade-blending.html = IMAGE
 
 BUGWK72631 LINUX : fast/filesystem/file-writer-abort.html = CRASH PASS
 BUGWK72631 MAC DEBUG : fast/filesystem/file-writer-abort.html = CRASH PASS
-BUGWK72631 WIN DEBUG : fast/filesystem/file-writer-abort-depth.html = CRASH PASS
+BUGWK72631 WIN : fast/filesystem/file-writer-abort-depth.html = CRASH PASS
 
 BUGWK73133 LINUX : inspector/elements/remove-node.html = PASS CRASH
 
