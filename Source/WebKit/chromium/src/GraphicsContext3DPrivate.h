@@ -312,6 +312,9 @@ public:
     // GL_CHROMIUM_iosurface
     void texImageIOSurface2DCHROMIUM(GC3Denum target, GC3Dint width, GC3Dint height, GC3Duint ioSurfaceId, GC3Duint plane);
 
+    // GL_EXT_texture_storage
+    void texStorage2DEXT(GC3Denum target, GC3Dint levels, GC3Duint internalformat, GC3Dint width, GC3Dint height);
+
 private:
     GraphicsContext3DPrivate(WebKit::WebViewImpl*, PassOwnPtr<WebKit::WebGraphicsContext3D>, GraphicsContext3D::Attributes);
 

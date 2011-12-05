@@ -46,6 +46,8 @@ public:
     //   GL_CHROMIUM_rate_limit_offscreen_context
     //   GL_CHROMIUM_paint_framebuffer_canvas
     //   GL_CHROMIUM_iosurface (Mac OS X specific)
+    //   GL_ANGLE_texture_usage
+    //   GL_EXT_texture_storage
 
     // Extensions3D methods.
     virtual bool supports(const String&);
@@ -63,7 +65,14 @@ public:
     enum {
         // GL_CHROMIUM_map_sub (enums inherited from GL_ARB_vertex_buffer_object)
         READ_ONLY = 0x88B8,
-        WRITE_ONLY = 0x88B9
+        WRITE_ONLY = 0x88B9,
+
+        // GL_ANGLE_texture_usage
+        GL_TEXTURE_USAGE_ANGLE = 0x93A2,
+        GL_FRAMEBUFFER_ATTACHMENT_ANGLE = 0x93A3,
+
+        // GL_EXT_texture_storage
+        BGRA8_EXT = 0x93A1
     };
 
     // GL_CHROMIUM_post_sub_buffer
@@ -96,6 +105,9 @@ public:
     // To avoid needing to expose extraneous enums, assumes internal format
     // RGBA, format BGRA, and type UNSIGNED_INT_8_8_8_8_REV.
     void texImageIOSurface2DCHROMIUM(unsigned target, int width, int height, uint32_t ioSurfaceId, unsigned plane);
+
+    // GL_EXT_texture_storage
+    void texStorage2DEXT(unsigned target, int levels, unsigned internalformat, int width, int height);
 
 private:
     // Instances of this class are strictly owned by the GraphicsContext3D implementation and do not

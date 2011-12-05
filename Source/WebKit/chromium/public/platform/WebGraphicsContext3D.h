@@ -381,6 +381,11 @@ public:
     // GL_CHROMIUM_iosurface
     virtual void texImageIOSurface2DCHROMIUM(WGC3Denum target, WGC3Dint width, WGC3Dint height, WGC3Duint ioSurfaceId, WGC3Duint plane) { }
 
+    // GL_EXT_texture_storage
+    virtual void texStorage2DEXT(WGC3Denum target, WGC3Dint levels, WGC3Duint internalformat,
+                                 WGC3Dint width, WGC3Dint height) { }
+
+
 #if WEBKIT_USING_SKIA
     GrGLInterface* createGrGLInterface();
 #endif

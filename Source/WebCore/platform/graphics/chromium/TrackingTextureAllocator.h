@@ -45,11 +45,18 @@ public:
 
     size_t currentMemoryUseBytes() const { return m_currentMemoryUseBytes; }
 
+    enum TextureUsageHint { Any, FramebufferAttachment };
+
+    void setTextureUsageHint(TextureUsageHint hint) { m_textureUsageHint = hint; }
+    void setUseTextureStorageExt(bool useStorageExt) { m_useTextureStorageExt = useStorageExt; }
+
 protected:
     explicit TrackingTextureAllocator(PassRefPtr<GraphicsContext3D>);
 
     RefPtr<GraphicsContext3D> m_context;
     size_t m_currentMemoryUseBytes;
+    TextureUsageHint m_textureUsageHint;
+    bool m_useTextureStorageExt;
 };
 
 }

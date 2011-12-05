@@ -150,6 +150,11 @@ void Extensions3DChromium::texImageIOSurface2DCHROMIUM(unsigned target, int widt
     m_private->texImageIOSurface2DCHROMIUM(target, width, height, ioSurfaceId, plane);
 }
 
+void Extensions3DChromium::texStorage2DEXT(unsigned int target, int levels, unsigned int internalFormat, int width, int height)
+{
+    m_private->texStorage2DEXT(target, levels, internalFormat, width, height);
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(WEBGL)

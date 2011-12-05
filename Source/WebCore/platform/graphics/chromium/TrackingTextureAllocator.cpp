@@ -26,6 +26,7 @@
 
 #include "TrackingTextureAllocator.h"
 
+#include "Extensions3DChromium.h"
 #include "IntRect.h"
 #include "LayerRendererChromium.h" // For the GLC() macro
 
@@ -34,12 +35,36 @@ namespace WebCore {
 TrackingTextureAllocator::TrackingTextureAllocator(PassRefPtr<GraphicsContext3D> context)
     : m_context(context)
     , m_currentMemoryUseBytes(0)
+    , m_textureUsageHint(Any)
+    , m_useTextureStorageExt(false)
 {
 }
 
 TrackingTextureAllocator::~TrackingTextureAllocator()
 {
     ASSERT(!m_currentMemoryUseBytes);
+}
+
+static GC3Denum textureToStorageFormat(GC3Denum textureFormat)
+{
+    GC3Denum storageFormat = Extensions3D::RGBA8_OES;
+    switch (textureFormat) {
+    case GraphicsContext3D::RGBA:
+        break;
+    case Extensions3D::BGRA_EXT:
+        storageFormat = Extensions3DChromium::BGRA8_EXT;
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+        break;
+    }
+
+    return storageFormat;
+}
+
+static bool isTextureFormatSupportedForStorage(GC3Denum format)
+{
+    return (format == GraphicsContext3D::RGBA || format == Extensions3D::BGRA_EXT);
 }
 
 unsigned TrackingTextureAllocator::createTexture(const IntSize& size, GC3Denum format)
@@ -55,7 +80,15 @@ unsigned TrackingTextureAllocator::createTexture(const IntSize& size, GC3Denum f
     // NPOT textures in GL ES only work when the wrap mode is set to GraphicsContext3D::CLAMP_TO_EDGE.
     GLC(m_context.get(), m_context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_WRAP_S, GraphicsContext3D::CLAMP_TO_EDGE));
     GLC(m_context.get(), m_context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_WRAP_T, GraphicsContext3D::CLAMP_TO_EDGE));
-    GLC(m_context.get(), m_context->texImage2DResourceSafe(GraphicsContext3D::TEXTURE_2D, 0, format, size.width(), size.height(), 0, format, GraphicsContext3D::UNSIGNED_BYTE));
+
+    if (m_textureUsageHint == FramebufferAttachment)
+        GLC(m_context.get(), m_context->texParameteri(GraphicsContext3D::TEXTURE_2D, Extensions3DChromium::GL_TEXTURE_USAGE_ANGLE, Extensions3DChromium::GL_FRAMEBUFFER_ATTACHMENT_ANGLE));
+    if (m_useTextureStorageExt && isTextureFormatSupportedForStorage(format)) {
+        Extensions3DChromium* extensions = static_cast<Extensions3DChromium*>(m_context->getExtensions());
+        GC3Denum storageFormat = textureToStorageFormat(format);
+        extensions->texStorage2DEXT(GraphicsContext3D::TEXTURE_2D, 1, storageFormat, size.width(), size.height());
+    } else
+        GLC(m_context.get(), m_context->texImage2DResourceSafe(GraphicsContext3D::TEXTURE_2D, 0, format, size.width(), size.height(), 0, format, GraphicsContext3D::UNSIGNED_BYTE));
     return textureId;
 }
 

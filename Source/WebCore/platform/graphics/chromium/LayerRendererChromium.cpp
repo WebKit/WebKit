@@ -240,6 +240,14 @@ bool LayerRendererChromium::initialize()
         extensions->ensureEnabled("GL_CHROMIUM_iosurface");
     }
 
+    m_capabilities.usingTextureUsageHint = extensions->supports("GL_ANGLE_texture_usage");
+    if (m_capabilities.usingTextureUsageHint)
+        extensions->ensureEnabled("GL_ANGLE_texture_usage");
+
+    m_capabilities.usingTextureStorageExtension = extensions->supports("GL_EXT_texture_storage");
+    if (m_capabilities.usingTextureStorageExtension)
+        extensions->ensureEnabled("GL_EXT_texture_storage");
+
     GLC(m_context.get(), m_context->getIntegerv(GraphicsContext3D::MAX_TEXTURE_SIZE, &m_capabilities.maxTextureSize));
     m_capabilities.bestTextureFormat = PlatformColor::bestTextureFormat(m_context.get());
 
@@ -740,6 +748,13 @@ bool LayerRendererChromium::initializeSharedObjects()
     m_renderSurfaceTextureManager = TextureManager::create(TextureManager::highLimitBytes(), m_capabilities.maxTextureSize);
     m_contentsTextureAllocator = TrackingTextureAllocator::create(m_context.get());
     m_renderSurfaceTextureAllocator = TrackingTextureAllocator::create(m_context.get());
+    if (m_capabilities.usingTextureUsageHint)
+        m_renderSurfaceTextureAllocator->setTextureUsageHint(TrackingTextureAllocator::FramebufferAttachment);
+    if (m_capabilities.usingTextureStorageExtension) {
+        m_contentsTextureAllocator->setUseTextureStorageExt(true);
+        m_renderSurfaceTextureAllocator->setUseTextureStorageExt(true);
+    }
+
     return true;
 }
 

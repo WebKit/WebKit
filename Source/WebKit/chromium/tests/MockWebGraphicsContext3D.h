@@ -251,6 +251,9 @@ public:
     virtual void deleteRenderbuffer(WebGLId) { }
     virtual void deleteShader(WebGLId) { }
     virtual void deleteTexture(WebGLId) { }
+
+    virtual void texStorage2DEXT(WGC3Denum target, WGC3Dint levels, WGC3Duint internalformat,
+                                 WGC3Dint width, WGC3Dint height) { }
 };
 
 } // namespace WebKit

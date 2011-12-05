@@ -92,6 +92,8 @@ struct LayerRendererCapabilities {
         , usingAcceleratedPainting(false)
         , usingSetVisibility(false)
         , usingSwapCompleteCallback(false)
+        , usingTextureUsageHint(false)
+        , usingTextureStorageExtension(false)
         , maxTextureSize(0) { }
 
     GC3Denum bestTextureFormat;
@@ -101,6 +103,8 @@ struct LayerRendererCapabilities {
     bool usingAcceleratedPainting;
     bool usingSetVisibility;
     bool usingSwapCompleteCallback;
+    bool usingTextureUsageHint;
+    bool usingTextureStorageExtension;
     int maxTextureSize;
 };
 

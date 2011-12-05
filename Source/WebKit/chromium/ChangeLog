@@ -1,3 +1,20 @@
+2011-12-01  Vangelis Kokkevis  <vangelis@chromium.org>
+
+        Use ANGLE's texture_usage and texture_storage extensions when allocating compositor textures.
+        https://bugs.webkit.org/show_bug.cgi?id=73621
+
+        Add the necessary entry points and enums to GraphicsContext3D.
+
+        Reviewed by Kenneth Russell.
+
+        * public/platform/WebGraphicsContext3D.h:
+        * src/Extensions3DChromium.cpp:
+        (WebCore::Extensions3DChromium::texStorage2DEXT):
+        * src/GraphicsContext3DChromium.cpp:
+        * src/GraphicsContext3DPrivate.h:
+        * tests/MockWebGraphicsContext3D.h:
+        (WebKit::MockWebGraphicsContext3D::texStorage2DEXT):
+
 2011-12-05  Adam Barth  <abarth@webkit.org>
 
         Another attempted build fix.

@@ -1,3 +1,31 @@
+2011-12-01  Vangelis Kokkevis  <vangelis@chromium.org>
+
+        [chromium] Use ANGLE's texture_usage and texture_storage extensions when allocating compositor textures
+        https://bugs.webkit.org/show_bug.cgi?id=73621
+
+        When the extensions are available, compositor textures are allocated via
+        glTexStorage2DEXT instead of glTexImage2D to eliminate creation of unnecessary
+        mip levels on the service side. In addition, the GL_FRAMEBUFFER_ATTACHMENT_ANGLE
+        is specified for all textures used by RenderSurfaces to eliminate the need for
+        a system memory bitmap allocation.
+
+        Reviewed by Kenneth Russell.
+
+        * platform/graphics/chromium/Extensions3DChromium.h:
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::initialize):
+        (WebCore::LayerRendererChromium::initializeSharedObjects):
+        * platform/graphics/chromium/TrackingTextureAllocator.cpp:
+        (WebCore::TrackingTextureAllocator::TrackingTextureAllocator):
+        (WebCore::textureToStorageFormat):
+        (WebCore::isTextureFormatSupportedForStorage):
+        (WebCore::TrackingTextureAllocator::createTexture):
+        * platform/graphics/chromium/TrackingTextureAllocator.h:
+        (WebCore::TrackingTextureAllocator::setTextureUsageHint):
+        (WebCore::TrackingTextureAllocator::setUseTextureStorageExt):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.h:
+        (WebCore::LayerRendererCapabilities::LayerRendererCapabilities):
+
 2011-12-05  Chris Fleizach  <cfleizach@apple.com>
 
         AX: aria-hidden doesn't work on iframe elements
