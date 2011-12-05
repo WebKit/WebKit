@@ -3807,9 +3807,3 @@ BUGWK73692 WIN LEOPARD : media/event-attributes.html = TEXT PASS
 BUGWK73766 : css3/unicode-bidi-isolate-aharon-failing.html = FAIL
 
 BUGWK73838 LEOPARD DEBUG : animations/animation-add-events-in-handler.html = CRASH
-
-// Needs a rebaseline.
-BUGWK34758 WIN : fast/table/027.html = IMAGE
-BUGWK34758 WIN : fast/table/027-vertical.html = IMAGE
-BUGWK34758 WIN : tables/mozilla/bugs/bug14929.html = IMAGE
-BUGWK34758 WIN : tables/mozilla/bugs/bug2947.html = IMAGE
