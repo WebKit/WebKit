@@ -31,9 +31,9 @@
 #ifndef WebFontInfo_h
 #define WebFontInfo_h
 
-#include "../linux/WebFontFamily.h"
 #include "../linux/WebFontRenderStyle.h"
 #include "../platform/WebCString.h"
+#include "../platform/linux/WebFontFamily.h"
 
 #include <string.h>
 #include <unistd.h>
