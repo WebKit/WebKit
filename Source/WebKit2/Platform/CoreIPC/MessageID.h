@@ -73,6 +73,9 @@ enum MessageClass {
     MessageClassWebProcessProxy,
     MessageClassWebResourceCacheManagerProxy,
 
+    // Messages sent to a WebConnection
+    MessageClassWebConnectionLegacy,
+
     // Messages sent by the UI process to the plug-in process.
     MessageClassPluginProcess,
 

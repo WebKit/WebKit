@@ -34,6 +34,7 @@
 #include "SharedMemory.h"
 #include "TextCheckerState.h"
 #include "VisitedLinkTable.h"
+#include "WebConnectionToUIProcess.h"
 #include "WebGeolocationManager.h"
 #include "WebIconDatabaseProxy.h"
 #include "WebPageGroupProxy.h"
@@ -77,7 +78,7 @@ public:
 
     void initialize(CoreIPC::Connection::Identifier, RunLoop*);
 
-    CoreIPC::Connection* connection() const { return m_connection.get(); }
+    CoreIPC::Connection* connection() const { return m_connection->connection(); }
     RunLoop* runLoop() const { return m_runLoop; }
 
     WebPage* webPage(uint64_t pageID) const;
@@ -198,24 +199,26 @@ private:
     virtual void terminate();
 
     // CoreIPC::Connection::Client
+    friend class WebConnectionToUIProcess;
     virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
     virtual void didReceiveSyncMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*, OwnPtr<CoreIPC::ArgumentEncoder>&);
     virtual void didClose(CoreIPC::Connection*);
     virtual void didReceiveInvalidMessage(CoreIPC::Connection*, CoreIPC::MessageID);
     virtual void syncMessageSendTimedOut(CoreIPC::Connection*);
+#if PLATFORM(WIN)
+    virtual Vector<HWND> windowsToReceiveSentMessagesWhileWaitingForSyncReply();
+#endif
 
     // CoreIPC::Connection::QueueClient
     virtual bool willProcessMessageOnClientRunLoop(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
 
-#if PLATFORM(WIN)
-    Vector<HWND> windowsToReceiveSentMessagesWhileWaitingForSyncReply();
-#endif
 
     // Implemented in generated WebProcessMessageReceiver.cpp
     bool willProcessWebProcessMessageOnClientRunLoop(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
     void didReceiveWebProcessMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
 
-    RefPtr<CoreIPC::Connection> m_connection;
+    RefPtr<WebConnectionToUIProcess> m_connection;
+
     HashMap<uint64_t, RefPtr<WebPage> > m_pageMap;
     HashMap<uint64_t, RefPtr<WebPageGroupProxy> > m_pageGroupMap;
     RefPtr<InjectedBundle> m_injectedBundle;

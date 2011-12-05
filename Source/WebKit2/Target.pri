@@ -203,6 +203,7 @@ HEADERS += \
     UIProcess/TiledDrawingAreaProxy.h \
     UIProcess/VisitedLinkProvider.h \
     UIProcess/WebApplicationCacheManagerProxy.h \
+    UIProcess/WebConnectionToWebProcess.h \
     UIProcess/WebContext.h \
     UIProcess/WebContextInjectedBundleClient.h \
     UIProcess/WebContextMenuProxy.h \
@@ -345,6 +346,7 @@ HEADERS += \
     WebProcess/WebPage/WebOpenPanelResultListener.h \
     WebProcess/WebPage/WebPage.h \
     WebProcess/WebPage/WebPageGroupProxy.h \
+    WebProcess/WebConnectionToUIProcess.h \
     WebProcess/WebProcess.h \
     WebProcess/qt/QtBuiltinBundle.h \
     WebProcess/qt/QtBuiltinBundlePage.h
@@ -516,6 +518,7 @@ SOURCES += \
     UIProcess/VisitedLinkProvider.cpp \
     UIProcess/WebApplicationCacheManagerProxy.cpp \
     UIProcess/WebBackForwardList.cpp \
+    UIProcess/WebConnectionToWebProcess.cpp \
     UIProcess/WebContext.cpp \
     UIProcess/WebContextInjectedBundleClient.cpp \
     UIProcess/WebContextMenuProxy.cpp \
@@ -687,6 +690,7 @@ SOURCES += \
     WebProcess/WebPage/qt/WebInspectorQt.cpp \
     WebProcess/WebPage/qt/LayerTreeHostQt.cpp \
     WebProcess/WebPage/qt/WebPageQt.cpp \
+    WebProcess/WebConnectionToUIProcess.cpp \
     WebProcess/WebProcess.cpp \
     WebProcess/qt/QtBuiltinBundle.cpp \
     WebProcess/qt/QtBuiltinBundlePage.cpp \

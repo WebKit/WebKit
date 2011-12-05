@@ -26,13 +26,13 @@
 #ifndef WebProcessProxy_h
 #define WebProcessProxy_h
 
-#include "Connection.h"
 #include "PlatformProcessIdentifier.h"
 #include "PluginInfoStore.h"
 #include "ProcessLauncher.h"
 #include "ProcessModel.h"
 #include "ResponsivenessTimer.h"
 #include "ThreadLauncher.h"
+#include "WebConnectionToWebProcess.h"
 #include "WebPageProxy.h"
 #include "WebProcessProxyMessages.h"
 #include <WebCore/LinkHash.h>
@@ -74,8 +74,9 @@ public:
     { 
         ASSERT(m_connection);
         
-        return m_connection.get(); 
+        return m_connection->connection(); 
     }
+    WebConnection* webConnection() const { return m_connection.get(); }
 
     WebContext* context() const { return m_context.get(); }
 
@@ -148,14 +149,14 @@ private:
 #endif
 
     // CoreIPC::Connection::Client
+    friend class WebConnectionToWebProcess;
     virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
     virtual void didReceiveSyncMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*, OwnPtr<CoreIPC::ArgumentEncoder>&);
     virtual void didClose(CoreIPC::Connection*);
     virtual void didReceiveInvalidMessage(CoreIPC::Connection*, CoreIPC::MessageID);
     virtual void syncMessageSendTimedOut(CoreIPC::Connection*);
-
 #if PLATFORM(WIN)
-    Vector<HWND> windowsToReceiveSentMessagesWhileWaitingForSyncReply();
+    virtual Vector<HWND> windowsToReceiveSentMessagesWhileWaitingForSyncReply();
 #endif
 
     // ResponsivenessTimer::Client
@@ -175,7 +176,10 @@ private:
     void didReceiveSyncWebProcessProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder* arguments, OwnPtr<CoreIPC::ArgumentEncoder>& reply);
 
     ResponsivenessTimer m_responsivenessTimer;
-    RefPtr<CoreIPC::Connection> m_connection;
+    
+    // This is not a CoreIPC::Connection so that we can wrap the CoreIPC::Connection in
+    // an API object.
+    RefPtr<WebConnectionToWebProcess> m_connection;
 
     Vector<std::pair<CoreIPC::Connection::OutgoingMessage, unsigned> > m_pendingMessages;
     RefPtr<ProcessLauncher> m_processLauncher;
@@ -215,7 +219,7 @@ bool WebProcessProxy::sendSync(const U& message, const typename U::Reply& reply,
     if (!m_connection)
         return false;
 
-    return m_connection->sendSync(message, reply, destinationID, timeout);
+    return connection()->sendSync(message, reply, destinationID, timeout);
 }
     
 } // namespace WebKit

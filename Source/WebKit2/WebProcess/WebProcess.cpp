@@ -161,13 +161,7 @@ void WebProcess::initialize(CoreIPC::Connection::Identifier serverIdentifier, Ru
 {
     ASSERT(!m_connection);
 
-    m_connection = CoreIPC::Connection::createClientConnection(serverIdentifier, this, runLoop);
-    m_connection->setDidCloseOnConnectionWorkQueueCallback(didCloseOnConnectionWorkQueue);
-    m_connection->setShouldExitOnSyncMessageSendFailure(true);
-    m_connection->addQueueClient(this);
-
-    m_connection->open();
-
+    m_connection = WebConnectionToUIProcess::create(this, serverIdentifier, runLoop);
     m_runLoop = runLoop;
 
     startRandomCrashThreadIfRequested();
@@ -339,7 +333,7 @@ void WebProcess::addVisitedLink(WebCore::LinkHash linkHash)
 {
     if (isLinkVisited(linkHash))
         return;
-    m_connection->send(Messages::WebContext::AddVisitedLinkHash(linkHash), 0);
+    connection()->send(Messages::WebContext::AddVisitedLinkHash(linkHash), 0);
 }
 
 void WebProcess::setCacheModel(uint32_t cm)
@@ -555,7 +549,7 @@ bool WebProcess::shouldTerminate()
 
     // FIXME: the ShouldTerminate message should also send termination parameters, such as any session cookies that need to be preserved.
     bool shouldTerminate = false;
-    if (m_connection->sendSync(Messages::WebProcessProxy::ShouldTerminate(), Messages::WebProcessProxy::ShouldTerminate::Reply(shouldTerminate), 0)
+    if (connection()->sendSync(Messages::WebProcessProxy::ShouldTerminate(), Messages::WebProcessProxy::ShouldTerminate::Reply(shouldTerminate), 0)
         && !shouldTerminate)
         return false;
 
@@ -570,7 +564,6 @@ void WebProcess::terminate()
 #endif
 
     // Invalidate our connection.
-    m_connection->removeQueueClient(this);
     m_connection->invalidate();
     m_connection = nullptr;
 
@@ -729,7 +722,7 @@ void WebProcess::removeWebFrame(uint64_t frameID)
     if (!m_connection)
         return;
 
-    m_connection->send(Messages::WebProcessProxy::DidDestroyFrame(frameID), 0);
+    connection()->send(Messages::WebProcessProxy::DidDestroyFrame(frameID), 0);
 }
 
 WebPageGroupProxy* WebProcess::webPageGroup(uint64_t pageGroupID)
@@ -809,7 +802,7 @@ void WebProcess::getSitesWithPluginData(const Vector<String>& pluginPaths, uint6
     Vector<String> sites;
     copyToVector(sitesSet, sites);
 
-    m_connection->send(Messages::WebContext::DidGetSitesWithPluginData(sites, callbackID), 0);
+    connection()->send(Messages::WebContext::DidGetSitesWithPluginData(sites, callbackID), 0);
 }
 
 void WebProcess::clearPluginSiteData(const Vector<String>& pluginPaths, const Vector<String>& sites, uint64_t flags, uint64_t maxAgeInSeconds, uint64_t callbackID)
@@ -831,7 +824,7 @@ void WebProcess::clearPluginSiteData(const Vector<String>& pluginPaths, const Ve
             netscapePluginModule->clearSiteData(sites[i], flags, maxAgeInSeconds);
     }
 
-    m_connection->send(Messages::WebContext::DidClearPluginSiteData(callbackID), 0);
+    connection()->send(Messages::WebContext::DidClearPluginSiteData(callbackID), 0);
 }
 #endif
     
@@ -940,7 +933,7 @@ void WebProcess::getWebCoreStatistics(uint64_t callbackID)
     // Get WebCore memory cache statistics
     getWebCoreMemoryCacheStatistics(data.webCoreCacheStatistics);
     
-    m_connection->send(Messages::WebContext::DidGetWebCoreStatistics(data, callbackID), 0);
+    connection()->send(Messages::WebContext::DidGetWebCoreStatistics(data, callbackID), 0);
 }
 
 void WebProcess::garbageCollectJavaScriptObjects()

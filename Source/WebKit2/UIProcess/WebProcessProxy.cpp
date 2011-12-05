@@ -145,7 +145,7 @@ bool WebProcessProxy::sendMessage(CoreIPC::MessageID messageID, PassOwnPtr<CoreI
     if (!m_connection)
         return false;
 
-    return m_connection->sendMessage(messageID, arguments, messageSendFlags);
+    return connection()->sendMessage(messageID, arguments, messageSendFlags);
 }
 
 bool WebProcessProxy::isLaunching() const
@@ -364,14 +364,8 @@ void WebProcessProxy::didReceiveInvalidMessage(CoreIPC::Connection*, CoreIPC::Me
     // only be hit in the case of a misbehaving web process.
     fprintf(stderr, "Receive an invalid message from the web process with message ID %x\n", messageID.toInt());
 
-    // We received an invalid message from the web process, invalidate our connection and kill it.
-    m_connection->invalidate();
-
+    // Terminate the WebProcesses.
     terminate();
-
-    // Since we've invalidated the connection we'll never get a Connection::Client::didClose
-    // callback so we'll explicitly call it here instead.
-    didClose(m_connection.get());
 }
 
 void WebProcessProxy::syncMessageSendTimedOut(CoreIPC::Connection*)
@@ -408,19 +402,12 @@ void WebProcessProxy::didFinishLaunching(CoreIPC::Connection::Identifier connect
 {
     ASSERT(!m_connection);
     
-    m_connection = CoreIPC::Connection::createServerConnection(connectionIdentifier, this, RunLoop::main());
-#if OS(DARWIN)
-    m_connection->setShouldCloseConnectionOnMachExceptions();
-#elif PLATFORM(QT)
-    m_connection->setShouldCloseConnectionOnProcessTermination(processIdentifier());
-#endif
-
-    m_connection->open();
+    m_connection = WebConnectionToWebProcess::create(this, connectionIdentifier, RunLoop::main());
     
     for (size_t i = 0; i < m_pendingMessages.size(); ++i) {
         CoreIPC::Connection::OutgoingMessage& outgoingMessage = m_pendingMessages[i].first;
         unsigned messageSendFlags = m_pendingMessages[i].second;
-        m_connection->sendMessage(outgoingMessage.messageID(), adoptPtr(outgoingMessage.arguments()), messageSendFlags);
+        connection()->sendMessage(outgoingMessage.messageID(), adoptPtr(outgoingMessage.arguments()), messageSendFlags);
     }
 
     m_pendingMessages.clear();

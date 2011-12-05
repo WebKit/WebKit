@@ -57,11 +57,11 @@ public:
         ChildProcess& m_childProcess;
     };
 
+    static void didCloseOnConnectionWorkQueue(WorkQueue&, CoreIPC::Connection*);
+
 protected:
     explicit ChildProcess(double terminationTimeout);
     ~ChildProcess();
-
-    static void didCloseOnConnectionWorkQueue(WorkQueue&, CoreIPC::Connection*);
 
 private:
     void terminationTimerFired();

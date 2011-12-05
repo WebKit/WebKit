@@ -1238,6 +1238,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\Shared\CoreIPCSupport\WebConnectionMessageKinds.h"
+					>
+				</File>
+				<File
 					RelativePath="..\Shared\CoreIPCSupport\WebContextMessageKinds.h"
 					>
 				</File>
@@ -1552,6 +1556,14 @@
 			>
 			<File
 				RelativePath="..\WebProcess\WebKitMain.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\WebProcess\WebConnectionToUIProcess.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\WebProcess\WebConnectionToUIProcess.h"
 				>
 			</File>
 			<File
@@ -2812,6 +2824,14 @@
 			</File>
 			<File
 				RelativePath="..\UIProcess\WebBackForwardList.h"
+				>
+			</File>
+			<File
+				RelativePath="..\UIProcess\WebConnectionToWebProcess.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\UIProcess\WebConnectionToWebProcess.h"
 				>
 			</File>
 			<File

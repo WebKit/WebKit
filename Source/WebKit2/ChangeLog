@@ -1,3 +1,77 @@
+2011-12-04  Sam Weinig  <sam@webkit.org>
+
+        Move code for connections to/from the UIProcess/WebProcess into WebConnection subclasses
+        https://bugs.webkit.org/show_bug.cgi?id=73779
+
+        Reviewed by Anders Carlsson.
+
+        To allow for API objects representing the connection going to/from the UIProcess/WebProcess,
+        this patch separates out the connections into WebConnection subclasses.  It does not yet
+        expose a way to access these connections, and is therefore not yet testable.
+
+        * GNUmakefile.am:
+        * Target.pri:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * win/WebKit2.vcproj:
+        Add new files.
+
+        * Platform/CoreIPC/MessageID.h:
+        * Shared/CoreIPCSupport/WebConnectionMessageKinds.h: Added.
+        Add a new message type for communicating between WebConnections.
+
+        * Shared/ChildProcess.h:
+        Make helper public so that WebConnectionToWebProcess can use it.
+
+        * UIProcess/WebConnectionToWebProcess.cpp: Added.
+        (WebKit::WebConnectionToWebProcess::create):
+        (WebKit::WebConnectionToWebProcess::WebConnectionToWebProcess):
+        (WebKit::WebConnectionToWebProcess::invalidate):
+        (WebKit::WebConnectionToWebProcess::postMessage):
+        (WebKit::WebConnectionToWebProcess::didReceiveMessage):
+        (WebKit::WebConnectionToWebProcess::didReceiveSyncMessage):
+        (WebKit::WebConnectionToWebProcess::didClose):
+        (WebKit::WebConnectionToWebProcess::didReceiveInvalidMessage):
+        (WebKit::WebConnectionToWebProcess::syncMessageSendTimedOut):
+        (WebKit::WebConnectionToWebProcess::windowsToReceiveSentMessagesWhileWaitingForSyncReply):
+        * UIProcess/WebConnectionToWebProcess.h: Added.
+        (WebKit::WebConnectionToWebProcess::connection):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::sendMessage):
+        (WebKit::WebProcessProxy::didReceiveInvalidMessage):
+        (WebKit::WebProcessProxy::didFinishLaunching):
+        * UIProcess/WebProcessProxy.h:
+        (WebKit::WebProcessProxy::connection):
+        (WebKit::WebProcessProxy::webConnection):
+        (WebKit::WebProcessProxy::sendSync):
+        Thread connection code through WebConnectionToWebProcess.
+
+        * WebProcess/WebConnectionToUIProcess.cpp: Added.
+        (WebKit::WebConnectionToUIProcess::create):
+        (WebKit::WebConnectionToUIProcess::WebConnectionToUIProcess):
+        (WebKit::WebConnectionToUIProcess::invalidate):
+        (WebKit::WebConnectionToUIProcess::postMessage):
+        (WebKit::WebConnectionToUIProcess::didReceiveMessage):
+        (WebKit::WebConnectionToUIProcess::didReceiveSyncMessage):
+        (WebKit::WebConnectionToUIProcess::didClose):
+        (WebKit::WebConnectionToUIProcess::didReceiveInvalidMessage):
+        (WebKit::WebConnectionToUIProcess::syncMessageSendTimedOut):
+        (WebKit::WebConnectionToUIProcess::windowsToReceiveSentMessagesWhileWaitingForSyncReply):
+        (WebKit::WebConnectionToUIProcess::willProcessMessageOnClientRunLoop):
+        * WebProcess/WebConnectionToUIProcess.h: Added.
+        (WebKit::WebConnectionToUIProcess::connection):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initialize):
+        (WebKit::WebProcess::addVisitedLink):
+        (WebKit::WebProcess::shouldTerminate):
+        (WebKit::WebProcess::terminate):
+        (WebKit::WebProcess::removeWebFrame):
+        (WebKit::WebProcess::getSitesWithPluginData):
+        (WebKit::WebProcess::clearPluginSiteData):
+        (WebKit::WebProcess::getWebCoreStatistics):
+        * WebProcess/WebProcess.h:
+        (WebKit::WebProcess::connection):
+        Thread connection code through WebConnectionToUIProcess.
+
 2011-12-05  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         [Qt] Remove viewModeChanged() from QQuickWebView
