@@ -1,3 +1,19 @@
+2011-12-05  Hugo Parente Lima  <hugo.lima@openbossa.org>
+
+        Last mouse event could be lost if a JS call to eventSender.leapForward is made
+        https://bugs.webkit.org/show_bug.cgi?id=73366
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Empty the entire event queue when requested besides using
+        sendEvent instead of postEvent to make sure all events were
+        delivered.
+
+        * WebKitTestRunner/qt/EventSenderProxyQt.cpp:
+        (WTR::EventSenderProxy::EventSenderProxy):
+        (WTR::EventSenderProxy::sendOrQueueEvent):
+        (WTR::EventSenderProxy::replaySavedEvents):
+
 2011-12-05  Adam Barth  <abarth@webkit.org>
 
         [Chromium] Remove no-longer-used forwarding headers in the WebKit API

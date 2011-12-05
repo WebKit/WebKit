@@ -50,7 +50,7 @@ struct WTREventQueue {
 
 static WTREventQueue eventQueue[1024];
 static unsigned endOfQueue;
-static unsigned startOfQueue;
+static bool isReplayingEvents;
 
 EventSenderProxy::EventSenderProxy(TestController* testController)
     : m_testController(testController)
@@ -68,7 +68,7 @@ EventSenderProxy::EventSenderProxy(TestController* testController)
 {
     memset(eventQueue, 0, sizeof(eventQueue));
     endOfQueue = 0;
-    startOfQueue = 0;
+    isReplayingEvents = false;
 }
 
 static Qt::MouseButton getMouseButton(unsigned button)
@@ -398,32 +398,36 @@ void EventSenderProxy::sendTouchEvent(QEvent::Type type)
 
 void EventSenderProxy::sendOrQueueEvent(QEvent* event)
 {
-    if (endOfQueue == startOfQueue && !eventQueue[endOfQueue].m_delay) {
+    if (!endOfQueue && !eventQueue[endOfQueue].m_delay) {
         m_testController->mainWebView()->sendEvent(event);
         delete event;
         return;
     }
 
     eventQueue[endOfQueue++].m_event = event;
-    eventQueue[endOfQueue].m_delay = 0;
     replaySavedEvents();
 }
 
 void EventSenderProxy::replaySavedEvents()
 {
-    if (startOfQueue < endOfQueue) {
-        while (!eventQueue[startOfQueue].m_delay && startOfQueue < endOfQueue) {
-            QEvent* ev = eventQueue[startOfQueue++].m_event;
-            m_testController->mainWebView()->postEvent(ev);
-        }
-        if (startOfQueue == endOfQueue) {
-            startOfQueue = 0;
-            endOfQueue = 0;
-        } else {
-            QTest::qWait(eventQueue[startOfQueue].m_delay);
-            eventQueue[startOfQueue].m_delay = 0;
-        }
+    if (isReplayingEvents)
+        return;
+
+    isReplayingEvents = true;
+    int i = 0;
+
+    while (i < endOfQueue) {
+        WTREventQueue& ev = eventQueue[i];
+        if (ev.m_delay)
+            QTest::qWait(ev.m_delay);
+        i++;
+        m_testController->mainWebView()->sendEvent(ev.m_event);
+        delete ev.m_event;
+        ev.m_delay = 0;
     }
+
+    endOfQueue = 0;
+    isReplayingEvents = false;
 }
 
 } // namespace WTR
