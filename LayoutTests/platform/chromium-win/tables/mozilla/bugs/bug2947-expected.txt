@@ -17,23 +17,23 @@ layer at (0,0) size 785x1116
       RenderTable {TABLE} at (0,74) size 608x387 [border: (1px dotted #000080)]
         RenderTableSection {TBODY} at (1,1) size 606x385
           RenderTableRow {TR} at (0,2) size 606x24
-            RenderTableCell {TD} at (2,2) size 143x24 [border: (1px solid #008000)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (2,2) size 149x24 [border: (1px solid #008000)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 7x19
                 text run at (2,2) width 7: "a"
-            RenderTableCell {TD} at (147,2) size 154x24 [border: (1px solid #008000)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (153,2) size 149x24 [border: (1px solid #008000)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 8x19
                 text run at (2,2) width 8: "b"
-            RenderTableCell {TD} at (303,2) size 144x24 [border: (1px solid #008000)] [r=0 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (304,2) size 149x24 [border: (1px solid #008000)] [r=0 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 7x19
                 text run at (2,2) width 7: "c"
-            RenderTableCell {TD} at (449,2) size 155x24 [border: (1px solid #008000)] [r=0 c=3 rs=1 cs=1]
+            RenderTableCell {TD} at (455,2) size 149x24 [border: (1px solid #008000)] [r=0 c=3 rs=1 cs=1]
               RenderText {#text} at (2,2) size 8x19
                 text run at (2,2) width 8: "d"
           RenderTableRow {TR} at (0,28) size 606x24
-            RenderTableCell {TD} at (2,28) size 299x24 [border: (1px solid #008000)] [r=1 c=0 rs=1 cs=2]
+            RenderTableCell {TD} at (2,28) size 300x24 [border: (1px solid #008000)] [r=1 c=0 rs=1 cs=2]
               RenderText {#text} at (2,2) size 21x19
                 text run at (2,2) width 21: "eee"
-            RenderTableCell {TD} at (303,28) size 301x24 [border: (1px solid #008000)] [r=1 c=2 rs=1 cs=2]
+            RenderTableCell {TD} at (304,28) size 300x24 [border: (1px solid #008000)] [r=1 c=2 rs=1 cs=2]
               RenderText {#text} at (2,2) size 4x19
                 text run at (2,2) width 4: "f"
           RenderTableRow {TR} at (0,54) size 606x329
@@ -50,23 +50,23 @@ layer at (0,0) size 785x1116
       RenderTable {TABLE} at (0,567) size 609x387 [border: (1px dotted #000080)]
         RenderTableSection {TBODY} at (1,1) size 607x385
           RenderTableRow {TR} at (0,2) size 607x24
-            RenderTableCell {TD} at (2,2) size 144x24 [border: (1px solid #008000)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (2,2) size 150x24 [border: (1px solid #008000)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 7x19
                 text run at (2,2) width 7: "a"
-            RenderTableCell {TD} at (148,2) size 154x24 [border: (1px solid #008000)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (154,2) size 149x24 [border: (1px solid #008000)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 8x19
                 text run at (2,2) width 8: "b"
-            RenderTableCell {TD} at (304,2) size 144x24 [border: (1px solid #008000)] [r=0 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (305,2) size 149x24 [border: (1px solid #008000)] [r=0 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 7x19
                 text run at (2,2) width 7: "c"
-            RenderTableCell {TD} at (450,2) size 155x24 [border: (1px solid #008000)] [r=0 c=3 rs=1 cs=1]
+            RenderTableCell {TD} at (456,2) size 149x24 [border: (1px solid #008000)] [r=0 c=3 rs=1 cs=1]
               RenderText {#text} at (2,2) size 8x19
                 text run at (2,2) width 8: "d"
           RenderTableRow {TR} at (0,28) size 607x24
-            RenderTableCell {TD} at (2,28) size 300x24 [border: (1px solid #008000)] [r=1 c=0 rs=1 cs=2]
+            RenderTableCell {TD} at (2,28) size 301x24 [border: (1px solid #008000)] [r=1 c=0 rs=1 cs=2]
               RenderText {#text} at (2,2) size 21x19
                 text run at (2,2) width 21: "eee"
-            RenderTableCell {TD} at (304,28) size 301x24 [border: (1px solid #008000)] [r=1 c=2 rs=1 cs=2]
+            RenderTableCell {TD} at (305,28) size 300x24 [border: (1px solid #008000)] [r=1 c=2 rs=1 cs=2]
               RenderText {#text} at (2,2) size 4x19
                 text run at (2,2) width 4: "f"
           RenderTableRow {TR} at (0,54) size 607x329

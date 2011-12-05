@@ -1,3 +1,19 @@
+2011-12-05  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        TD width in precentage doesn't work.
+        https://bugs.webkit.org/show_bug.cgi?id=34758
+
+        Reviewed by David Hyatt.
+
+        Test: fast/table/colspan-with-all-percent-cells.html
+
+        * rendering/AutoTableLayout.cpp:
+        (WebCore::AutoTableLayout::calcEffectiveLogicalWidth):
+        In the case where all our columns have percent lengths, split the colspan
+        logical width using the percentages from the lengths. This should be properly
+        handled by the massive 'else' case but it is not and I did not feel like refactor
+        that due to massive compatibility issues that would arise.
+
 2011-12-05  Chris Fleizach  <cfleizach@apple.com>
 
         platform/mac/accessibility/search-when-element-starts-in-table.html is failing
