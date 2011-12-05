@@ -303,6 +303,7 @@ committers_unable_to_review = [
     Committer("Pratik Solanki", "psolanki@apple.com", "psolanki"),
     Committer("Qi Zhang", ["qi.2.zhang@nokia.com", "qi.zhang02180@gmail.com"], "qi"),
     Committer("Rafael Antognolli", "antognolli@profusion.mobi", "antognolli"),
+    Committer("Raphael Kubo da Costa", ["kubo@profusion.mobi", "rakuco@FreeBSD.org"], "rakuco"),
     Committer("Ravi Kasibhatla", "ravi.kasibhatla@motorola.com", "kphanee"),
     Committer("Renata Hodovan", "reni@webkit.org", "reni"),
     Committer("Robert Hogan", ["robert@webkit.org", "robert@roberthogan.net", "lists@roberthogan.net"], "mwenge"),
