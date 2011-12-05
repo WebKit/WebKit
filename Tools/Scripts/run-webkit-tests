@@ -73,11 +73,10 @@ sub platformIsReadyForParallelTesting()
     # To reduce the failure burden during the transition individual
     # platforms can opt-in to parallel test execution by default.
 
-    # Platforms interested in dog-fooding faster test runs on their bots
-    # should add themselves to this whitelist, e.g.:
-    # return isGtk() or isQt();
-    # This will likely require skipping tests or marking tests as flaky in test_expectations.txt
-    return isAppleMacWebKit() or isGtk() or isAppleWinWebKit();
+    # We believe all platforms are ready for default parallel testing except
+    # Qt, as Qt runs more than one build-slave per-server.
+    # Ossy has asked me to blacklist Qt for now.
+    return !isQt();
 }
 
 my $harnessName = "old-run-webkit-tests";

@@ -1,3 +1,15 @@
+2011-12-04  Eric Seidel  <eric@webkit.org>
+
+        After success with Mac, Win and Gtk, turning on parallel testing
+        by default for all platforms (except Qt).
+
+        We'll add more platforms to the blacklist if we see problems.
+
+        Unreviewed.
+
+        * Scripts/run-webkit-tests:
+        (platformIsReadyForParallelTesting):
+
 2011-12-04  Sam Weinig  <sam@webkit.org>
 
         Add tests for RetainPtr::adoptNS/adoptCF
