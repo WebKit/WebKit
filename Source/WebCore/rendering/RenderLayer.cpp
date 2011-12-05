@@ -2373,7 +2373,7 @@ void RenderLayer::drawPlatformResizerImage(GraphicsContext* context, IntRect res
         DEFINE_STATIC_LOCAL(Image*, resizeCornerImageHiRes, (Image::loadPlatformResource("textAreaResizeCorner@2x").leakRef()));
         resizeCornerImage = resizeCornerImageHiRes;
         cornerResizerSize = resizeCornerImage->size();
-        cornerResizerSize.scale(0.5);
+        cornerResizerSize.scale(0.5f);
     } else {
         DEFINE_STATIC_LOCAL(Image*, resizeCornerImageLoRes, (Image::loadPlatformResource("textAreaResizeCorner").leakRef()));
         resizeCornerImage = resizeCornerImageLoRes;
