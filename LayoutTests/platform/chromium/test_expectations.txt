@@ -3756,9 +3756,9 @@ BUGALOKP MAC LINUX : compositing/shadows/shadow-drawing.html = IMAGE
 BUGALOKP : platform/chromium/compositing/huge-layer-rotated.html = IMAGE
 BUGALOKP : platform/chromium/compositing/layout-width-change.html = IMAGE
 BUGALOKP : platform/chromium/compositing/tiny-layer-rotated.html = IMAGE
-BUGALOKP GPU : media/video-layer-crash.html = IMAGE
-BUGALOKP GPU : media/video-transformed.html = IMAGE
-BUGALOKP GPU : media/video-zoom-controls.html = IMAGE
+BUGALOKP GPU GPU-CG : media/video-layer-crash.html = IMAGE
+BUGALOKP GPU GPU-CG : media/video-transformed.html = IMAGE
+BUGALOKP GPU GPU-CG : media/video-zoom-controls.html = IMAGE
 
 BUGWK72271 MAC DEBUG : fast/loader/javascript-url-in-embed.html = PASS CRASH
 BUGWK72271 SNOWLEOPARD DEBUG : fast/dom/node-iterator-reference-node-moved-crash.html = PASS CRASH
