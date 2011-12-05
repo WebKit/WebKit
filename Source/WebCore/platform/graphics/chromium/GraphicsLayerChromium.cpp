@@ -350,6 +350,7 @@ void GraphicsLayerChromium::setContentsToImage(Image* image)
         }
         ImageLayerChromium* imageLayer = static_cast<ImageLayerChromium*>(m_contentsLayer.get());
         imageLayer->setContents(image);
+        imageLayer->setOpaque(image->isBitmapImage() && !image->currentFrameHasAlpha());
         updateContentsRect();
     } else {
         if (m_contentsLayer) {

@@ -75,6 +75,7 @@
             'tests/IDBBindingUtilitiesTest.cpp',
             'tests/IDBKeyPathTest.cpp',
             'tests/IDBLevelDBCodingTest.cpp',
+            'tests/ImageLayerChromiumTest.cpp',
             'tests/InnerGestureRecognizerTest.cpp',
             'tests/KeyboardTest.cpp',
             'tests/KURLTest.cpp',
