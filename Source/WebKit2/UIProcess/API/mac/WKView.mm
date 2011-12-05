@@ -123,6 +123,7 @@ struct WKViewInterpretKeyEventsParameters {
 - (void)_setPluginComplexTextInputState:(PluginComplexTextInputState)pluginComplexTextInputState;
 - (void)_disableComplexTextInputIfNecessary;
 - (BOOL)_shouldUseTiledDrawingArea;
+- (void)_accessibilityRegisterUIProcessTokens;
 @end
 
 @interface WKViewData : NSObject {
@@ -1818,13 +1819,7 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
         [self _updateWindowVisibility];
         [self _updateWindowAndViewFrames];
         
-        // Initialize remote accessibility when the window connection has been established.
-        NSData *remoteElementToken = WKAXRemoteTokenForElement(self);
-        NSData *remoteWindowToken = WKAXRemoteTokenForElement([self accessibilityAttributeValue:NSAccessibilityWindowAttribute]);
-        CoreIPC::DataReference elementToken = CoreIPC::DataReference(reinterpret_cast<const uint8_t*>([remoteElementToken bytes]), [remoteElementToken length]);
-        CoreIPC::DataReference windowToken = CoreIPC::DataReference(reinterpret_cast<const uint8_t*>([remoteWindowToken bytes]), [remoteWindowToken length]);
-        _data->_page->registerUIProcessAccessibilityTokens(elementToken, windowToken);
-            
+        [self _accessibilityRegisterUIProcessTokens];            
     } else {
         _data->_page->viewStateDidChange(WebPageProxy::ViewIsVisible);
         _data->_page->viewStateDidChange(WebPageProxy::ViewWindowIsActive | WebPageProxy::ViewIsInWindow);
@@ -1988,6 +1983,16 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
     _data->_page->viewStateDidChange(WebPageProxy::ViewIsVisible);
 }
 
+- (void)_accessibilityRegisterUIProcessTokens
+{
+    // Initialize remote accessibility when the window connection has been established.
+    NSData *remoteElementToken = WKAXRemoteTokenForElement(self);
+    NSData *remoteWindowToken = WKAXRemoteTokenForElement([self accessibilityAttributeValue:NSAccessibilityWindowAttribute]);
+    CoreIPC::DataReference elementToken = CoreIPC::DataReference(reinterpret_cast<const uint8_t*>([remoteElementToken bytes]), [remoteElementToken length]);
+    CoreIPC::DataReference windowToken = CoreIPC::DataReference(reinterpret_cast<const uint8_t*>([remoteWindowToken bytes]), [remoteWindowToken length]);
+    _data->_page->registerUIProcessAccessibilityTokens(elementToken, windowToken);
+}
+
 - (void)_updateRemoteAccessibilityRegistration:(BOOL)registerProcess
 {
     // When the tree is connected/disconnected, the remote accessibility registration
@@ -2126,6 +2131,7 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
 
 - (void)_didRelaunchProcess
 {
+    [self _accessibilityRegisterUIProcessTokens];
 }
 
 - (void)_setCursor:(NSCursor *)cursor

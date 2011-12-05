@@ -1,3 +1,19 @@
+2011-12-05  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: WK2: AX hierarchy is not restored after web process crash
+        https://bugs.webkit.org/show_bug.cgi?id=73870
+
+        The accessibility tokens that need to be sent between UI and Web process
+        were not being sent by the UI process -> the web process when the web
+        process crashed.
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView viewDidMoveToWindow]):
+        (-[WKView _accessibilityRegisterUIProcessTokens]):
+        (-[WKView _didRelaunchProcess]):
+
 2011-12-05  Alexey Proskuryakov  <ap@apple.com>
 
         REGRESSION: Full keyboard access doesn't work if enabled before Safari started
