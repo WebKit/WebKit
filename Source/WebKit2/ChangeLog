@@ -1,3 +1,13 @@
+2011-12-05  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        [Qt] Remove viewModeChanged() from QQuickWebView
+        https://bugs.webkit.org/show_bug.cgi?id=73828
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * UIProcess/API/qt/qquickwebview_p.h: viewModeChanged is not used
+        and we should not expose it.
+
 2011-12-05  Eric Carlson  <eric.carlson@apple.com>
 
         WebKit2 part of: Add WebKit preferences for text track settings

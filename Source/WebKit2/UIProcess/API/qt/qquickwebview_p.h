@@ -111,7 +111,6 @@ Q_SIGNALS:
     void urlChanged(const QUrl& url);
     void messageReceived(const QVariantMap& message);
     void linkHovered(const QUrl& url, const QString& title);
-    void viewModeChanged();
     void navigationStateChanged();
     void navigationRequested(QObject* request);
 
