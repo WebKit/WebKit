@@ -1643,12 +1643,15 @@
         }],
         ['OS=="android"', {
           'sources/': [
+            ['include', 'platform/chromium/ClipboardChromiumLinux\\.cpp$'],
+            ['include', 'platform/chromium/FileSystemChromiumLinux\\.cpp$'],
             ['include', 'platform/graphics/chromium/ComplexTextControllerLinux\\.cpp$'],
             ['include', 'platform/graphics/chromium/FontLinux\\.cpp$'],
             ['include', 'platform/graphics/chromium/FontPlatformDataLinux\\.cpp$'],
             ['include', 'platform/graphics/chromium/GlyphPageTreeNodeLinux\\.cpp$'],
-            ['include', 'platform/graphics/chromium/SimpleFontDataLinux\\.cpp$'],
             ['include', 'platform/graphics/chromium/HarfbuzzSkia\\.cpp$'],
+            ['exclude', 'platform/graphics/chromium/IconChromium\\.cpp$'],
+            ['include', 'platform/graphics/chromium/SimpleFontDataLinux\\.cpp$'],
             ['include', 'platform/graphics/chromium/VDMXParser\\.cpp$'],
           ],
         }, { # OS!="android"

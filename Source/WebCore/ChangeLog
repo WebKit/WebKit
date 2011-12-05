@@ -1,3 +1,28 @@
+2011-12-05  Peter Beverloo  <peter@chromium.org>
+
+        [Chromium] Add Android keycodes and build Linux clipboard/filesystem files.
+        https://bugs.webkit.org/show_bug.cgi?id=73672
+
+        Add the KeyCodeConversionAndroid.cpp file, which is a partial re-land
+        of an older file from the Android port:
+        http://trac.webkit.org/browser/trunk/WebCore/platform/android/KeyEventAndroid.cpp?rev=56704
+
+        Add IconChromiumAndroid.cpp which nullifies the rendering of icons in
+        file upload boxes, which is not something we want to support now. Also
+        include ClipboardChromiumLinux.cpp and FileSystemChromiumLinux.cpp
+        as their functionality can be re-used for Android.
+
+        Reviewed by Adam Barth.
+
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.gypi:
+        * platform/chromium/KeyCodeConversionAndroid.cpp: Added.
+        (WebCore::windowsKeyCodeForKeyEvent):
+        * platform/graphics/chromium/IconChromiumAndroid.cpp: Added.
+        (WebCore::Icon::Icon):
+        (WebCore::Icon::~Icon):
+        (WebCore::Icon::paint):
+
 2011-12-05  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Sam Weinig.
