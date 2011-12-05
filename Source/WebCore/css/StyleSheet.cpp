@@ -30,8 +30,8 @@ namespace WebCore {
 
 StyleSheet::StyleSheet(Node* parentNode, const String& originalURL, const KURL& finalURL)
     : m_disabled(false)
-    , m_parentRule(0)
-    , m_parentNode(parentNode)
+    , m_ownerRule(0)
+    , m_ownerNode(parentNode)
     , m_originalURL(originalURL)
     , m_finalURL(finalURL)
 {
@@ -39,8 +39,8 @@ StyleSheet::StyleSheet(Node* parentNode, const String& originalURL, const KURL& 
 
 StyleSheet::StyleSheet(CSSImportRule* parentRule, const String& originalURL, const KURL& finalURL)
     : m_disabled(false)
-    , m_parentRule(parentRule)
-    , m_parentNode(0)
+    , m_ownerRule(parentRule)
+    , m_ownerNode(0)
     , m_originalURL(originalURL)
     , m_finalURL(finalURL)
 {
@@ -55,7 +55,7 @@ StyleSheet::~StyleSheet()
 StyleSheet* StyleSheet::parentStyleSheet() const
 {
     ASSERT(isCSSStyleSheet());
-    return m_parentRule ? m_parentRule->parentStyleSheet() : 0;
+    return m_ownerRule ? m_ownerRule->parentStyleSheet() : 0;
 }
 
 void StyleSheet::setMedia(PassRefPtr<MediaList> media)
@@ -76,9 +76,9 @@ KURL StyleSheet::baseURL() const
         return m_finalURL;
     if (StyleSheet* parentSheet = parentStyleSheet())
         return parentSheet->baseURL();
-    if (!m_parentNode)
+    if (!m_ownerNode)
         return KURL();
-    return m_parentNode->document()->baseURL();
+    return m_ownerNode->document()->baseURL();
 }
 
 void StyleSheet::setDisabled(bool disabled)

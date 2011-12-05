@@ -1,5 +1,45 @@
 2011-12-04  Andreas Kling  <kling@webkit.org>
 
+        CSSStyleSheet can't be reparented, enforce this at compile time.
+        <http://webkit.org/b/73793>
+
+        Reviewed by Benjamin Poulain.
+
+        * css/StyleSheet.h:
+        (WebCore::StyleSheet::clearOwnerRule):
+
+            Changed setParentRule(CSSImportRule*) to clearOwnerRule() to document and
+            enforce the fact that style sheets should never be reparented after creation.
+
+        (WebCore::StyleSheet::ownerRule):
+
+            Renamed parentRule() to ownerRule() to match the CSSOM name.
+
+        (WebCore::StyleSheet::ownerNode):
+        (WebCore::StyleSheet::clearOwnerNode):
+
+            Also renamed StyleSheet::m_parentNode to m_ownerNode to match its accessors.
+
+        * css/CSSStyleSheet.h:
+
+            Removed ownerRule() as we now inherit it from StyleSheet.
+
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::root):
+        * css/CSSImportRule.cpp:
+        (WebCore::CSSImportRule::~CSSImportRule):
+        (WebCore::CSSImportRule::setCSSStyleSheet):
+        * css/StyleSheet.cpp:
+        (WebCore::StyleSheet::StyleSheet):
+        (WebCore::StyleSheet::parentStyleSheet):
+        (WebCore::StyleSheet::baseURL):
+        * inspector/InspectorStyleSheet.cpp:
+        (WebCore::fillMediaListChain):
+
+            Update call sites to use the new names.
+
+2011-12-04  Andreas Kling  <kling@webkit.org>
+
         border-width: initial and border-color: initial cannot be removed via CSSOM.
         <http://webkit.org/b/68551>
 

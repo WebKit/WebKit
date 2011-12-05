@@ -194,8 +194,8 @@ enum ParameterMissingPolicy {
 
     inline void* root(StyleSheet* styleSheet)
     {
-        if (styleSheet->parentRule())
-            return root(styleSheet->parentRule());
+        if (styleSheet->ownerRule())
+            return root(styleSheet->ownerRule());
         if (styleSheet->ownerNode())
             return root(styleSheet->ownerNode());
         return styleSheet;

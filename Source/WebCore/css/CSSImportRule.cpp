@@ -50,7 +50,7 @@ CSSImportRule::~CSSImportRule()
     if (m_lstMedia)
         m_lstMedia->setParentStyleSheet(0);
     if (m_styleSheet)
-        m_styleSheet->setParentRule(0);
+        m_styleSheet->clearOwnerRule();
     if (m_cachedSheet)
         m_cachedSheet->removeClient(&m_styleSheetClient);
 }
@@ -58,7 +58,7 @@ CSSImportRule::~CSSImportRule()
 void CSSImportRule::setCSSStyleSheet(const String& href, const KURL& baseURL, const String& charset, const CachedCSSStyleSheet* sheet)
 {
     if (m_styleSheet)
-        m_styleSheet->setParentRule(0);
+        m_styleSheet->clearOwnerRule();
     m_styleSheet = CSSStyleSheet::create(this, href, baseURL, charset);
 
     bool crossOriginCSS = false;

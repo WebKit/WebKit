@@ -212,7 +212,7 @@ static void fillMediaListChain(CSSRule* rule, InspectorArray* mediaArray)
                         sourceURL = "";
                     mediaArray->pushObject(buildMediaObject(mediaList, styleSheet->ownerNode() ? MediaListSourceLinkedSheet : MediaListSourceInlineSheet, sourceURL));
                 }
-                parentRule = styleSheet->parentRule();
+                parentRule = styleSheet->ownerRule();
                 if (parentRule)
                     break;
                 styleSheet = styleSheet->parentStyleSheet();
