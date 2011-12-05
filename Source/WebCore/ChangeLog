@@ -1,3 +1,19 @@
+2011-12-05  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r101983.
+        http://trac.webkit.org/changeset/101983
+        https://bugs.webkit.org/show_bug.cgi?id=73827
+
+        It broke all tests on GTK and on Qt in debug mode (Requested
+        by Ossy on #webkit).
+
+        * dom/Document.h:
+        (WebCore::Node::Node):
+        * dom/Node.cpp:
+        (WebCore::Node::~Node):
+        * dom/Node.h:
+        (WebCore::Node::inDocument):
+
 2011-12-05  Roland Steiner  <rolandsteiner@chromium.org>
 
         <style scoped>: Add 'scoped' attribute
