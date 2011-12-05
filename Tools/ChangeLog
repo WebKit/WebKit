@@ -1,3 +1,15 @@
+2011-12-05  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Temporarily set --child-process=1 on Mac because 20+ tests are timing out
+        https://bugs.webkit.org/show_bug.cgi?id=73840
+
+        Reviewed by Simon Fraser.
+
+        Temporarily go back to single process mode on Mac.
+
+        * Scripts/run-webkit-tests:
+        (platformIsReadyForParallelTesting):
+
 2011-12-05  Adam Roben  <aroben@apple.com>
 
         Redeploy apple-macpro-7 and apple-xserve-1

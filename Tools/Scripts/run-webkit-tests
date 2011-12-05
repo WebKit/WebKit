@@ -76,7 +76,7 @@ sub platformIsReadyForParallelTesting()
     # We believe all platforms are ready for default parallel testing except
     # Qt, as Qt runs more than one build-slave per-server.
     # Ossy has asked me to blacklist Qt for now.
-    return !isQt();
+    return !isQt() and !isMac();
 }
 
 my $harnessName = "old-run-webkit-tests";
