@@ -213,6 +213,8 @@ void WebProcess::initializeWebProcess(const WebProcessCreationParameters& parame
 
     m_textCheckerState = parameters.textCheckerState;
 
+    m_fullKeyboardAccessEnabled = parameters.fullKeyboardAccessEnabled;
+
     for (size_t i = 0; i < parameters.urlSchemesRegistererdAsEmptyDocument.size(); ++i)
         registerURLSchemeAsEmptyDocument(parameters.urlSchemesRegistererdAsEmptyDocument[i]);
 

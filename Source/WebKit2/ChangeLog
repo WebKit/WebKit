@@ -1,3 +1,13 @@
+2011-12-05  Alexey Proskuryakov  <ap@apple.com>
+
+        REGRESSION: Full keyboard access doesn't work if enabled before Safari started
+        https://bugs.webkit.org/show_bug.cgi?id=73864
+
+        Reviewed by Darin Adler.
+
+        * WebProcess/WebProcess.cpp: (WebKit::WebProcess::initializeWebProcess): Actually use the
+        parameter passed at process creation.
+
 2011-12-05  Anders Carlsson  <andersca@apple.com>
 
         Make LayerFlushSchedulerClient::flushLayers indicate whether the flush was successful or not
