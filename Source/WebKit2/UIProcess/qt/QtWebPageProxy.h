@@ -100,7 +100,7 @@ public:
     void goBack();
     bool canGoForward() const;
     void goForward();
-    bool canStop() const;
+    bool loading() const;
     void stop();
     bool canReload() const;
     void reload();

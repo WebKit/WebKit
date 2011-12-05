@@ -576,10 +576,10 @@ bool QQuickWebView::canGoForward() const
     return d->pageProxy->canGoForward();
 }
 
-bool QQuickWebView::canStop() const
+bool QQuickWebView::loading() const
 {
     Q_D(const QQuickWebView);
-    return d->pageProxy->canStop();
+    return d->pageProxy->loading();
 }
 
 bool QQuickWebView::canReload() const

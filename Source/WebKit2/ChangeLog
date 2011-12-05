@@ -1,3 +1,24 @@
+2011-12-05  Michael Brüning  <michael.bruning@nokia.com>
+
+        [Qt] Rename QQuickWebView::canStop property to just loading 
+        https://bugs.webkit.org/show_bug.cgi?id=73813
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Renamed canStop property of QQuickWebView and QtWebPageProxy
+        to loading and updated tests.
+
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebView::loading):
+        * UIProcess/API/qt/qquickwebview_p.h:
+        * UIProcess/API/qt/tests/qquickwebview/tst_qquickwebview.cpp:
+        (tst_QQuickWebView::navigationStatusAtStartup):
+        (LoadStartedCatcher::onLoadStarted):
+        (tst_QQuickWebView::stopEnabledAfterLoadStarted):
+        * UIProcess/qt/QtWebPageProxy.cpp:
+        (QtWebPageProxy::loading):
+        * UIProcess/qt/QtWebPageProxy.h:
+
 2011-12-03  Jer Noble  <jer.noble@apple.com>
 
         <video> elements should disable the system and display sleep when playing on OS X.

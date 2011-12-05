@@ -219,7 +219,7 @@ void QtWebPageProxy::goForward()
     m_webPageProxy->goForward();
 }
 
-bool QtWebPageProxy::canStop() const
+bool QtWebPageProxy::loading() const
 {
     RefPtr<WebKit::WebFrameProxy> mainFrame = m_webPageProxy->mainFrame();
     return mainFrame && !(WebFrameProxy::LoadStateFinished == mainFrame->loadState());

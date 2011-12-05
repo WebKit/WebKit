@@ -92,7 +92,7 @@ void tst_QQuickWebView::navigationStatusAtStartup()
 
     QCOMPARE(webView()->canGoForward(), false);
 
-    QCOMPARE(webView()->canStop(), false);
+    QCOMPARE(webView()->loading(), false);
 
     QCOMPARE(webView()->canReload(), false);
 }
@@ -111,7 +111,7 @@ public slots:
     {
         QMetaObject::invokeMethod(this, "finished", Qt::QueuedConnection);
 
-        QCOMPARE(m_webView->canStop(), true);
+        QCOMPARE(m_webView->loading(), true);
     }
 
 signals:
@@ -123,13 +123,13 @@ private:
 
 void tst_QQuickWebView::stopEnabledAfterLoadStarted()
 {
-    QCOMPARE(webView()->canStop(), false);
+    QCOMPARE(webView()->loading(), false);
 
     LoadStartedCatcher catcher(webView());
     webView()->load(QUrl::fromLocalFile(QLatin1String(TESTS_SOURCE_DIR "/html/basic_page.html")));
     waitForSignal(&catcher, SIGNAL(finished()));
 
-    QCOMPARE(webView()->canStop(), true);
+    QCOMPARE(webView()->loading(), true);
 
     waitForSignal(webView(), SIGNAL(loadSucceeded()));
 }

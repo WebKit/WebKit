@@ -141,7 +141,7 @@ Rectangle {
 
                 Image {
                     anchors.centerIn: parent
-                    source: webView.canStop ? "../icons/stop.png" : "../icons/refresh.png"
+                    source: webView.loading ? "../icons/stop.png" : "../icons/refresh.png"
                 }
 
                 MouseArea {
@@ -149,7 +149,7 @@ Rectangle {
                     onPressed: { parent.color = "#cfcfcf" }
                     onReleased: { parent.color = "#efefef" }
                     onClicked: {
-                        if (webView.canStop) {
+                        if (webView.loading) {
                             console.log("stop loading")
                             webView.stop()
                         } else {

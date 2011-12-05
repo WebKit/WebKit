@@ -53,7 +53,7 @@ class QWEBKIT_EXPORT QQuickWebView : public QQuickItem {
     Q_PROPERTY(int loadProgress READ loadProgress NOTIFY loadProgressChanged)
     Q_PROPERTY(bool canGoBack READ canGoBack NOTIFY navigationStateChanged FINAL)
     Q_PROPERTY(bool canGoForward READ canGoForward NOTIFY navigationStateChanged FINAL)
-    Q_PROPERTY(bool canStop READ canStop NOTIFY navigationStateChanged FINAL)
+    Q_PROPERTY(bool loading READ loading NOTIFY navigationStateChanged FINAL)
     Q_PROPERTY(bool canReload READ canReload NOTIFY navigationStateChanged FINAL)
     Q_PROPERTY(QWebPreferences* preferences READ preferences CONSTANT FINAL)
     Q_PROPERTY(QQuickWebPage* page READ page CONSTANT FINAL)
@@ -82,7 +82,7 @@ public:
 
     bool canGoBack() const;
     bool canGoForward() const;
-    bool canStop() const;
+    bool loading() const;
     bool canReload() const;
 
     QWebPreferences* preferences() const;
