@@ -62,7 +62,6 @@ struct StringHash;
 // Declarations of string operations
 
 bool charactersAreAllASCII(const UChar*, size_t);
-bool charactersAreAllLatin1(const UChar*, size_t);
 WTF_EXPORT_PRIVATE int charactersToIntStrict(const LChar*, size_t, bool* ok = 0, int base = 10);
 WTF_EXPORT_PRIVATE int charactersToIntStrict(const UChar*, size_t, bool* ok = 0, int base = 10);
 WTF_EXPORT_PRIVATE unsigned charactersToUIntStrict(const LChar*, size_t, bool* ok = 0, int base = 10);
@@ -375,7 +374,7 @@ public:
     }
 
     bool containsOnlyASCII() const { return charactersAreAllASCII(characters(), length()); }
-    bool containsOnlyLatin1() const { return charactersAreAllLatin1(characters(), length()); }
+    bool containsOnlyLatin1() const;
     bool containsOnlyWhitespace() const { return !m_impl || m_impl->containsOnlyWhitespace(); }
 
     // Hash table deleted values, which are only constructed and never copied or destroyed.
@@ -460,6 +459,21 @@ inline const UChar* String::getCharacters<UChar>() const
     return characters16();
 }
 
+inline bool String::containsOnlyLatin1() const
+{
+    if (isEmpty())
+        return true;
+
+    if (is8Bit())
+        return true;
+
+    const UChar* characters = characters16();
+    UChar ored = 0;
+    for (size_t i = 0; i < m_impl->length(); ++i)
+        ored |= characters[i];
+    return !(ored & 0xFF00);
+}
+
 
 #ifdef __OBJC__
 // This is for situations in WebKit where the long standing behavior has been
@@ -474,14 +488,6 @@ inline bool charactersAreAllASCII(const UChar* characters, size_t length)
     for (size_t i = 0; i < length; ++i)
         ored |= characters[i];
     return !(ored & 0xFF80);
-}
-
-inline bool charactersAreAllLatin1(const UChar* characters, size_t length)
-{
-    UChar ored = 0;
-    for (size_t i = 0; i < length; ++i)
-        ored |= characters[i];
-    return !(ored & 0xFF00);
 }
 
 WTF_EXPORT_PRIVATE int codePointCompare(const String&, const String&);
@@ -610,7 +616,6 @@ using WTF::emptyString;
 using WTF::append;
 using WTF::appendNumber;
 using WTF::charactersAreAllASCII;
-using WTF::charactersAreAllLatin1;
 using WTF::charactersToIntStrict;
 using WTF::charactersToUIntStrict;
 using WTF::charactersToInt64Strict;

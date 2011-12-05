@@ -1,3 +1,19 @@
+2011-12-05  Benjamin Poulain  <benjamin@webkit.org>
+
+        Update String::containsOnlyLatin1() to avoid converting to 16 bits
+        https://bugs.webkit.org/show_bug.cgi?id=73797
+
+        Reviewed by Andreas Kling.
+
+        When the String use 8bits StringImpl, there is no need to iterate
+        over the string.
+
+        The function charactersAreAllLatin1() is removed because it is not
+        used anywhere.
+
+        * wtf/text/WTFString.h:
+        (WTF::String::containsOnlyLatin1):
+
 2011-12-05  Michael Saboff  <msaboff@apple.com>
 
         8 bit string work slows down Kraken json-stringify-tinderbox
