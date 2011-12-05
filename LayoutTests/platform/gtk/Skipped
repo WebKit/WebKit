@@ -1215,6 +1215,7 @@ media/event-attributes.html
 # https://bugs.webkit.org/show_bug.cgi?id=50740
 editing/spelling/spelling-backspace-between-lines.html
 editing/spelling/spellcheck-paste.html
+editing/spelling/spellcheck-queue.html
 
 # For https://bugs.webkit.org/show_bug.cgi?id=50758
 # These require DRT setSerializeHTTPLoads implementation to be reliable.

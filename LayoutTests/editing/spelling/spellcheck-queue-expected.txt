@@ -1,0 +1,18 @@
+For Bug 72939: Asynchronous SpellChecker should consider multiple requests.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+PASS INPUT has a marker on 'zz apple orange'
+PASS TEXTAREA has a marker on 'zz apple orange'
+PASS DIV has a marker on 'zz apple orange'
+PASS INPUT has a marker on 'zz apple orange'
+PASS TEXTAREA has a marker on 'zz apple orange'
+PASS DIV has a marker on 'zz apple orange'
+PASS INPUT has a marker on 'zz apple orange'
+PASS TEXTAREA has a marker on 'zz apple orange'
+PASS DIV has a marker on 'zz apple orange'
+

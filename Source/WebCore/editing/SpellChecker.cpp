@@ -45,9 +45,35 @@
 
 namespace WebCore {
 
+class SpellChecker::SpellCheckRequest : public RefCounted<SpellChecker::SpellCheckRequest> {
+public:
+    SpellCheckRequest(int sequence, PassRefPtr<Range> range, const String& text, TextCheckingTypeMask mask)
+        : m_sequence(sequence)
+        , m_range(range)
+        , m_text(text)
+        , m_mask(mask)
+        , m_rootEditableElement(m_range->startContainer()->rootEditableElement())
+    {
+    }
+
+    int sequence() const { return m_sequence; }
+    Range* range() const { return m_range.get(); }
+    const String& text() const { return m_text; }
+    TextCheckingTypeMask mask() const { return m_mask; }
+    Element* rootEditableElement() const { return m_rootEditableElement; }
+
+private:
+    int m_sequence;
+    RefPtr<Range> m_range;
+    String m_text;
+    TextCheckingTypeMask m_mask;
+    Element* m_rootEditableElement;
+};
+
 SpellChecker::SpellChecker(Frame* frame)
     : m_frame(frame)
-    , m_requestSequence(0)
+    , m_lastRequestedSequence(0)
+    , m_timerToProcessQueuedRequest(this, &SpellChecker::timerFiredToProcessQueuedRequest)
 {
 }
 
@@ -63,25 +89,24 @@ TextCheckerClient* SpellChecker::client() const
     return page->editorClient()->textChecker();
 }
 
-bool SpellChecker::initRequest(PassRefPtr<Range> range)
+PassRefPtr<SpellChecker::SpellCheckRequest> SpellChecker::createRequest(TextCheckingTypeMask mask, PassRefPtr<Range> range)
 {
     ASSERT(canCheckAsynchronously(range.get()));
 
     String text = range->text();
     if (!text.length())
-        return false;
+        return PassRefPtr<SpellCheckRequest>();
 
-    m_requestRange = range;
-    m_requestText = text;
-    m_requestSequence++;
-
-    return true;
+    return adoptRef(new SpellCheckRequest(++m_lastRequestedSequence, range, text, mask));
 }
 
-void SpellChecker::clearRequest()
+void SpellChecker::timerFiredToProcessQueuedRequest(Timer<SpellChecker>*)
 {
-    m_requestRange.clear();
-    m_requestText = String();
+    ASSERT(!m_requestQueue.isEmpty());
+    if (m_requestQueue.isEmpty())
+        return;
+
+    invokeRequest(m_requestQueue.takeFirst());
 }
 
 bool SpellChecker::isAsynchronousEnabled() const
@@ -91,17 +116,7 @@ bool SpellChecker::isAsynchronousEnabled() const
 
 bool SpellChecker::canCheckAsynchronously(Range* range) const
 {
-    return client() && isCheckable(range) && isAsynchronousEnabled() && !isBusy();
-}
-
-bool SpellChecker::isBusy() const
-{
-    return m_requestRange.get();
-}
-
-bool SpellChecker::isValid(int sequence) const
-{
-    return m_requestRange.get() && m_requestText.length() && m_requestSequence == sequence;
+    return client() && isCheckable(range) && isAsynchronousEnabled();
 }
 
 bool SpellChecker::isCheckable(Range* range) const
@@ -114,16 +129,39 @@ void SpellChecker::requestCheckingFor(TextCheckingTypeMask mask, PassRefPtr<Rang
     if (!canCheckAsynchronously(range.get()))
         return;
 
-    doRequestCheckingFor(mask, range);
+    RefPtr<SpellCheckRequest> request(createRequest(mask, range));
+    if (!request)
+        return;
+
+    if (m_timerToProcessQueuedRequest.isActive() || m_processingRequest) {
+        enqueueRequest(request.release());
+        return;
+    }
+
+    invokeRequest(request.release());
 }
 
-void SpellChecker::doRequestCheckingFor(TextCheckingTypeMask mask, PassRefPtr<Range> range)
+void SpellChecker::invokeRequest(PassRefPtr<SpellCheckRequest> request)
 {
-    ASSERT(canCheckAsynchronously(range.get()));
+    ASSERT(!m_processingRequest);
 
-    if (!initRequest(range))
+    m_processingRequest = request;
+    client()->requestCheckingOfString(this, m_processingRequest->sequence(), m_processingRequest->mask(), m_processingRequest->text());
+}
+
+void SpellChecker::enqueueRequest(PassRefPtr<SpellCheckRequest> request)
+{
+    ASSERT(request);
+
+    for (RequestQueue::iterator it = m_requestQueue.begin(); it != m_requestQueue.end(); ++it) {
+        if (request->rootEditableElement() != (*it)->rootEditableElement())
+            continue;
+
+        *it = request;
         return;
-    client()->requestCheckingOfString(this, m_requestSequence, mask, m_requestText);
+    }
+
+    m_requestQueue.append(request);
 }
 
 static bool forwardIterator(PositionIterator& iterator, int distance)
@@ -159,16 +197,16 @@ static DocumentMarker::MarkerType toMarkerType(TextCheckingType type)
 // Currenntly ignoring TextCheckingResult::details but should be handled. See Bug 56368.
 void SpellChecker::didCheck(int sequence, const Vector<TextCheckingResult>& results)
 {
-    if (!isValid(sequence))
-        return;
+    ASSERT(m_processingRequest);
 
-    if (!isCheckable(m_requestRange.get())) {
-        clearRequest();
+    ASSERT(m_processingRequest->sequence() == sequence);
+    if (m_processingRequest->sequence() != sequence) {
+        m_requestQueue.clear();
         return;
     }
 
     int startOffset = 0;
-    PositionIterator start = m_requestRange->startPosition();
+    PositionIterator start = m_processingRequest->range()->startPosition();
     for (size_t i = 0; i < results.size(); ++i) {
         if (results[i].type != TextCheckingTypeSpelling && results[i].type != TextCheckingTypeGrammar)
             continue;
@@ -186,17 +224,19 @@ void SpellChecker::didCheck(int sequence, const Vector<TextCheckingResult>& resu
         // spellings in the background. To avoid adding markers to the words modified by users or
         // JavaScript applications, retrieve the words in the specified region and compare them with
         // the original ones.
-        RefPtr<Range> range = Range::create(m_requestRange->ownerDocument(), start, end);
+        RefPtr<Range> range = Range::create(m_processingRequest->range()->ownerDocument(), start, end);
         // FIXME: Use textContent() compatible string conversion.
         String destination = range->text();
-        String source = m_requestText.substring(results[i].location, results[i].length);
+        String source = m_processingRequest->text().substring(results[i].location, results[i].length);
         if (destination == source)
-            m_requestRange->ownerDocument()->markers()->addMarker(range.get(), toMarkerType(results[i].type));
+            m_processingRequest->range()->ownerDocument()->markers()->addMarker(range.get(), toMarkerType(results[i].type));
 
         startOffset = results[i].location;
     }
 
-    clearRequest();
+    m_processingRequest.clear();
+    if (!m_requestQueue.isEmpty())
+        m_timerToProcessQueuedRequest.startOneShot(0);
 }
 
 
