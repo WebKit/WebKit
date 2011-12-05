@@ -62,6 +62,7 @@ WebInspector.CompilerSourceMapping.prototype = {
 WebInspector.ClosureCompilerSourceMappingPayload = function()
 {
     this.mappings = "";
+    this.sourceRoot = "";
     this.sources = [];
 }
 
