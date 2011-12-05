@@ -86,7 +86,7 @@ bool setUpStaticFunctionSlot(ExecState* exec, const HashEntry* entry, JSObject* 
         JSFunction* function;
         JSGlobalObject* globalObject = thisObj->globalObject();
 #if ENABLE(JIT)
-        if (entry->generator() || entry->intrinsic() != DFG::NoIntrinsic)
+        if (exec->globalData().canUseJIT() && (entry->generator() || entry->intrinsic() != DFG::NoIntrinsic))
             function = JSFunction::create(exec, globalObject, entry->functionLength(), propertyName, exec->globalData().getHostFunction(entry->function(), entry->generator(), entry->intrinsic()));
         else
 #endif

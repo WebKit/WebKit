@@ -3704,6 +3704,7 @@ skip_id_custom_self:
     }
     DEFINE_OPCODE(op_loop_hint) {
         // This is a no-op unless we intend on doing OSR from the interpreter.
+        vPC += OPCODE_LENGTH(op_loop_hint);
         NEXT_INSTRUCTION();
     }
     DEFINE_OPCODE(op_loop_if_true) {

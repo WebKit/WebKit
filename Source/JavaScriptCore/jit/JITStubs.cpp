@@ -760,7 +760,7 @@ __asm void ctiOpThrowNotCaught()
 JITThunks::JITThunks(JSGlobalData* globalData)
     : m_hostFunctionStubMap(adoptPtr(new HostFunctionStubMap))
 {
-    if (!globalData->executableAllocator.isValid())
+    if (!globalData->canUseJIT())
         return;
 
     m_executableMemory = JIT::compileCTIMachineTrampolines(globalData, &m_trampolineStructure);

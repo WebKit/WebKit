@@ -414,10 +414,15 @@ JSGlobalData*& JSGlobalData::sharedInstanceInternal()
 #if ENABLE(JIT)
 NativeExecutable* JSGlobalData::getHostFunction(NativeFunction function, NativeFunction constructor)
 {
+#if ENABLE(INTERPRETER)
+    if (!canUseJIT())
+        return NativeExecutable::create(*this, function, constructor);
+#endif
     return jitStubs->hostFunctionStub(this, function, constructor);
 }
 NativeExecutable* JSGlobalData::getHostFunction(NativeFunction function, ThunkGenerator generator, DFG::Intrinsic intrinsic)
 {
+    ASSERT(canUseJIT());
     return jitStubs->hostFunctionStub(this, function, generator, intrinsic);
 }
 #else

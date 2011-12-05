@@ -183,6 +183,7 @@ namespace JSC {
 #if ENABLE(JIT)
         static NativeExecutable* create(JSGlobalData& globalData, MacroAssemblerCodeRef callThunk, NativeFunction function, MacroAssemblerCodeRef constructThunk, NativeFunction constructor, DFG::Intrinsic intrinsic)
         {
+            ASSERT(globalData.canUseJIT());
             NativeExecutable* executable;
             if (!callThunk) {
                 executable = new (allocateCell<NativeExecutable>(globalData.heap)) NativeExecutable(globalData, function, constructor);
@@ -194,9 +195,12 @@ namespace JSC {
             globalData.heap.addFinalizer(executable, &finalize);
             return executable;
         }
-#else
+#endif
+
+#if ENABLE(INTERPRETER)
         static NativeExecutable* create(JSGlobalData& globalData, NativeFunction function, NativeFunction constructor)
         {
+            ASSERT(!globalData.canUseJIT());
             NativeExecutable* executable = new (allocateCell<NativeExecutable>(globalData.heap)) NativeExecutable(globalData, function, constructor);
             executable->finishCreation(globalData);
             globalData.heap.addFinalizer(executable, &finalize);
@@ -221,6 +225,7 @@ namespace JSC {
 #if ENABLE(JIT)
         void finishCreation(JSGlobalData& globalData, JITCode callThunk, JITCode constructThunk, DFG::Intrinsic intrinsic)
         {
+            ASSERT(globalData.canUseJIT());
             Base::finishCreation(globalData);
             m_jitCodeForCall = callThunk;
             m_jitCodeForConstruct = constructThunk;
@@ -233,7 +238,15 @@ namespace JSC {
 #endif
         }
 #endif
-        
+
+#if ENABLE(INTERPRETER)
+        void finishCreation(JSGlobalData& globalData)
+        {
+            ASSERT(!globalData.canUseJIT());
+            Base::finishCreation(globalData);
+        }
+#endif
+
         static void finalize(JSCell*);
  
     private:

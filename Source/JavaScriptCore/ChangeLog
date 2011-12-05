@@ -1,3 +1,21 @@
+2011-12-01  Gavin Barraclough  <barraclough@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=73624
+        JIT + INTERPRETER builds are broken
+
+        Reviewed by Geoff Garen, Sam Weinig.
+
+        These don't fallback to the interpreter correctly.
+        Thunk creation assumes that is the JIT is compiled in, then it is enabled.
+
+        * jit/JITStubs.cpp:
+        (JSC::JITThunks::JITThunks):
+        * runtime/Executable.h:
+        (JSC::NativeExecutable::create):
+        (JSC::NativeExecutable::finishCreation):
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::getHostFunction):
+
 2011-12-05  Zoltan Herczeg  <zherczeg@webkit.org>
 
         MacroAssemblerSH4 does not implement readCallTarget
