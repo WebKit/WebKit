@@ -32,7 +32,7 @@
 
 vars = {
   'chromium_svn': 'http://src.chromium.org/svn/trunk/src',
-  'chromium_rev': '112940',
+  'chromium_rev': '112974'
   'nacl_svn': 'http://src.chromium.org/native_client/trunk',
   'nacl_rev': '7169',
 }

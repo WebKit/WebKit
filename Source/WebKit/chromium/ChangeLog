@@ -1,3 +1,9 @@
+2011-12-05  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Unreviewed.  Rolled DEPS.
+
+        * DEPS:
+
 2011-12-05  Eric Carlson  <eric.carlson@apple.com>
 
         WebKit/chromium part of: Add WebKit preferences for text track settings
