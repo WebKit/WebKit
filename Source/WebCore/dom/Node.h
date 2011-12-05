@@ -388,7 +388,7 @@ public:
     // node tree, false otherwise.
     bool inDocument() const 
     { 
-        ASSERT(m_document || !getFlag(InDocumentFlag));
+        ASSERT(document() || !getFlag(InDocumentFlag));
         return getFlag(InDocumentFlag);
     }
 
