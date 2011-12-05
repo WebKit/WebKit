@@ -105,6 +105,7 @@ watchers_who_are_not_contributors = [
 
 
 contributors_who_are_not_committers = [
+    Contributor("Aharon Lanin", "aharon@google.com"),
     Contributor("Alan Stearns", "stearns@adobe.com", 'astearns'),
     Contributor("Alexey Marinichev", ["amarinichev@chromium.org", "amarinichev@google.com"], "amarinichev"),
     Contributor("Ami Fischman", ["fischman@chromium.org", "fischman@google.com"], "amifischman0"),

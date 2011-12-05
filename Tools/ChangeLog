@@ -1,3 +1,9 @@
+2011-12-05  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add Aharon Lanin to the contributors list.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2011-12-05  Jarred Nicholls  <jarred@sencha.com>
 
         Moving myself from contributors to committers.
