@@ -3530,7 +3530,6 @@ BUGWK68982 : svg/custom/transformed-pattern-clamp-svg-root.svg = IMAGE PASS
 
 BUGWK69060 WIN LINUX : fast/repaint/selection-clear.html = IMAGE+TEXT
 
-BUGWK69062 WIN : compositing/shadows/shadow-drawing.html = IMAGE
 
 BUGWK69070 MAC CPU-CG : svg/filters/animate-fill.svg = IMAGE
 
