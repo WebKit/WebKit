@@ -1758,6 +1758,11 @@ public:
         m_assembler.nop();
     }
 
+    static FunctionPtr readCallTarget(CodeLocationCall call)
+    {
+        return FunctionPtr(reinterpret_cast<void(*)()>(SH4Assembler::readCallTarget(call.dataLocation())));
+    }
+
 protected:
     SH4Assembler::Condition SH4Condition(RelationalCondition cond)
     {

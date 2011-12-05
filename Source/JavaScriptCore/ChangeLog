@@ -1,3 +1,15 @@
+2011-12-05  Zoltan Herczeg  <zherczeg@webkit.org>
+
+        MacroAssemblerSH4 does not implement readCallTarget
+        https://bugs.webkit.org/show_bug.cgi?id=73434
+
+        Reviewed by Csaba Osztrogonác.
+
+        * assembler/MacroAssemblerSH4.h: Support for SH4.
+        (JSC::MacroAssemblerSH4::readCallTarget):
+        * assembler/SH4Assembler.h:
+        (JSC::SH4Assembler::readCallTarget):
+
 2011-12-04  Filip Pizlo  <fpizlo@apple.com>
 
         DFG should optimize strict equality
