@@ -228,6 +228,9 @@ void WebPreferences::initializeDefaultSettings()
     CFDictionaryAddValue(defaults, CFSTR(WebKitShowsToolTipOverTruncatedTextPreferenceKey), kCFBooleanFalse);
     CFDictionaryAddValue(defaults, CFSTR(WebKitPDFDisplayModePreferenceKey), CFSTR("1"));
     CFDictionaryAddValue(defaults, CFSTR(WebKitPDFScaleFactorPreferenceKey), CFSTR("0"));
+    CFDictionaryAddValue(defaults, CFSTR(WebKitShouldDisplaySubtitlesPreferenceKey), kCFBooleanFalse);
+    CFDictionaryAddValue(defaults, CFSTR(WebKitShouldDisplayCaptionsPreferenceKey), kCFBooleanFalse);
+    CFDictionaryAddValue(defaults, CFSTR(WebKitShouldDisplayTextDescriptionsPreferenceKey), kCFBooleanFalse);
 
     RetainPtr<CFStringRef> linkBehaviorStringRef(AdoptCF, CFStringCreateWithFormat(0, 0, CFSTR("%d"), WebKitEditableLinkDefaultBehavior));
     CFDictionaryAddValue(defaults, CFSTR(WebKitEditableLinkBehaviorPreferenceKey), linkBehaviorStringRef.get());
@@ -1648,4 +1651,73 @@ void WebPreferences::didRemoveFromWebView()
         IWebNotificationCenter* nc = WebNotificationCenter::defaultCenterInternal();
         nc->postNotificationName(webPreferencesRemovedNotification(), static_cast<IWebPreferences*>(this), 0);
     }
+}
+
+HRESULT WebPreferences::shouldDisplaySubtitles(BOOL* enabled)
+{
+#if ENABLE(VIDEO_TRACK)
+    if (!enabled)
+        return E_POINTER;
+
+    *enabled = boolValueForKey(CFSTR(WebKitShouldDisplaySubtitlesPreferenceKey));
+    return S_OK;
+#else
+    return E_NOTIMPL;
+#endif
+}
+
+HRESULT WebPreferences::setShouldDisplaySubtitles(BOOL enabled)
+{
+#if ENABLE(VIDEO_TRACK)
+    setBoolValue(CFSTR(WebKitShouldDisplaySubtitlesPreferenceKey), enabled);
+    return S_OK;
+#else
+    return E_NOTIMPL;
+#endif
+}
+
+HRESULT WebPreferences::shouldDisplayCaptions(BOOL* enabled)
+{
+#if ENABLE(VIDEO_TRACK)
+    if (!enabled)
+        return E_POINTER;
+
+    *enabled = boolValueForKey(CFSTR(WebKitShouldDisplayCaptionsPreferenceKey));
+    return S_OK;
+#else
+    return E_NOTIMPL;
+#endif
+}
+
+HRESULT WebPreferences::setShouldDisplayCaptions(BOOL enabled)
+{
+#if ENABLE(VIDEO_TRACK)
+    setBoolValue(CFSTR(WebKitShouldDisplayCaptionsPreferenceKey), enabled);
+    return S_OK;
+#else
+    return E_NOTIMPL;
+#endif
+}
+
+HRESULT WebPreferences::shouldDisplayTextDescriptions(BOOL* enabled)
+{
+#if ENABLE(VIDEO_TRACK)
+    if (!enabled)
+        return E_POINTER;
+
+    *enabled = boolValueForKey(CFSTR(WebKitShouldDisplayTextDescriptionsPreferenceKey));
+    return S_OK;
+#else
+    return E_NOTIMPL;
+#endif
+}
+
+HRESULT WebPreferences::setShouldDisplayTextDescriptions(BOOL enabled)
+{
+#if ENABLE(VIDEO_TRACK)
+    setBoolValue(CFSTR(WebKitShouldDisplayTextDescriptionsPreferenceKey), enabled);
+    return S_OK;
+#else
+    return E_NOTIMPL;
+#endif
 }

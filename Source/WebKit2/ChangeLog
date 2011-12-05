@@ -1,3 +1,25 @@
+2011-12-05  Eric Carlson  <eric.carlson@apple.com>
+
+        WebKit2 part of: Add WebKit preferences for text track settings
+        https://bugs.webkit.org/show_bug.cgi?id=73721
+
+        Reviewed by John Sullivan.
+
+        * Shared/WebPreferencesStore.h: Declared shouldDisplaySubtitles, shouldDisplayCaptions, and
+        shouldDisplayTextDescriptions properties with macros. All default to false.
+
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetShouldDisplaySubtitles): Added.
+        (WKPreferencesGetShouldDisplaySubtitles): Ditto.
+        (WKPreferencesSetShouldDisplayCaptions): Ditto.
+        (WKPreferencesGetShouldDisplayCaptions): Ditto.
+        (WKPreferencesSetShouldDisplayTextDescriptions): Ditto.
+        (WKPreferencesGetShouldDisplayTextDescriptions): Ditto.
+        * UIProcess/API/C/WKPreferences.h:
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences): Updates WebCore settings from WebKit2 prefs.
+
 2011-12-04  Gopal Raghavan  <gopal.1.raghavan@nokia.com>
 
         [Qt] cleanup qmltests.pro

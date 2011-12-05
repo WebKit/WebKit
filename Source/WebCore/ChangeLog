@@ -1,3 +1,19 @@
+2011-12-05  Eric Carlson  <eric.carlson@apple.com>
+
+        WebCore part of: Add WebKit preferences for text track settings
+        https://bugs.webkit.org/show_bug.cgi?id=73721
+
+        Reviewed by John Sullivan.
+
+        No new tests yet, still nothing to test.
+
+        * page/Settings.cpp:
+        (WebCore::Settings::setShouldDisplaySubtitles): Move the setters to the .cpp file so they
+            aren't inlined.
+        (WebCore::Settings::setShouldDisplayCaptions): Ditto.
+        (WebCore::Settings::setShouldDisplayTextDescriptions): Ditto.
+        * page/Settings.h:
+
 2011-12-05  Noel Gordon  <noel.gordon@gmail.com>
 
         ImageDecoder setSize() should check for backing store allocation failure

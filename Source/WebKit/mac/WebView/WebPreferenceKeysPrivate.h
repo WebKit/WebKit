@@ -111,6 +111,9 @@
 #define WebKitMediaPlaybackRequiresUserGesturePreferenceKey @"WebKitMediaPlaybackRequiresUserGesture"
 #define WebKitMediaPlaybackAllowsInlinePreferenceKey @"WebKitMediaPlaybackAllowsInline"
 #define WebKitMockScrollbarsEnabledPreferenceKey @"WebKitMockScrollbarsEnabled"
+#define WebKitShouldDisplaySubtitlesPreferenceKey @"WebKitShouldDisplaySubtitles"
+#define WebKitShouldDisplayCaptionsPreferenceKey @"WebKitShouldDisplayCaptions"
+#define WebKitShouldDisplayTextDescriptionsPreferenceKey @"WebKitShouldDisplayTextDescriptions"
 
 // These are private both because callers should be using the cover methods and because the
 // cover methods themselves are private.

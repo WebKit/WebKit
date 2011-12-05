@@ -1,3 +1,27 @@
+2011-12-05  Eric Carlson  <eric.carlson@apple.com>
+
+        WebKit/mac part of: Add WebKit preferences for text track settings
+        https://bugs.webkit.org/show_bug.cgi?id=73721
+
+        Reviewed by John Sullivan.
+
+        * Interfaces/IWebPreferences.idl: Declare getters and setters for new properties.
+
+        * WebPreferenceKeysPrivate.h: Added #define for shouldDisplaySubtitles, shouldDisplayCaptions, 
+        and shouldDisplayTextDescriptions properties.
+
+        * WebPreferences.cpp:
+        (WebPreferences::setShouldDisplaySubtitles): Added.
+        (WebPreferences::shouldDisplaySubtitles): Ditto.
+        (WebPreferences::setShouldDisplayCaptions): Ditto.
+        (WebPreferences::shouldDisplayCaptions): Ditto.
+        (WebPreferences::setShouldDisplayTextDescriptions): Ditto.
+        (WebPreferences::shouldDisplayTextDescriptions): Ditto.
+        * WebPreferences.h: Declare new methods.
+
+        * WebView.cpp:
+        (WebView::notifyPreferencesChanged): Updates WebCore settings from WebKit prefs.
+
 2011-12-02  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Darin Adler.

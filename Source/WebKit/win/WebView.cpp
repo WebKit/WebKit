@@ -4584,6 +4584,23 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
     settings->setFixedFontFamily(AtomicString(str, SysStringLen(str)));
     SysFreeString(str);
 
+#if ENABLE(VIDEO_TRACK)
+    hr = preferences->shouldDisplaySubtitles(&enabled);
+    if (FAILED(hr))
+        return hr;
+    settings->setShouldDisplaySubtitles(enabled);
+
+    hr = preferences->shouldDisplayCaptions(&enabled);
+    if (FAILED(hr))
+        return hr;
+    settings->setShouldDisplayCaptions(enabled);
+
+    hr = preferences->shouldDisplayTextDescriptions(&enabled);
+    if (FAILED(hr))
+        return hr;
+    settings->setShouldDisplayTextDescriptions(enabled);
+#endif
+
     COMPtr<IWebPreferencesPrivate> prefsPrivate(Query, preferences);
     if (prefsPrivate) {
         hr = prefsPrivate->localStorageDatabasePath(&str);

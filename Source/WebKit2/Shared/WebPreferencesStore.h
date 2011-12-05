@@ -98,6 +98,9 @@ namespace WebKit {
     macro(SuppressIncrementalRendering, suppressIncrementalRendering, Bool, bool, false) \
     macro(BackspaceKeyNavigationEnabled, backspaceKeyNavigationEnabled, Bool, bool, true) \
     macro(CaretBrowsingEnabled, caretBrowsingEnabled, Bool, bool, false) \
+    macro(ShouldDisplaySubtitles, shouldDisplaySubtitles, Bool, bool, false) \
+    macro(ShouldDisplayCaptions, shouldDisplayCaptions, Bool, bool, false) \
+    macro(ShouldDisplayTextDescriptions, shouldDisplayTextDescriptions, Bool, bool, false) \
     \
 
 #define FOR_EACH_WEBKIT_DOUBLE_PREFERENCE(macro) \

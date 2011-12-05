@@ -387,6 +387,9 @@ static WebCacheModel cacheModelForMainBundle(void)
         [NSNumber numberWithBool:NO],   WebKitWebAudioEnabledPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitSuppressIncrementalRenderingKey,
         [NSNumber numberWithBool:YES],  WebKitBackspaceKeyNavigationEnabledKey,
+        [NSNumber numberWithBool:NO],   WebKitShouldDisplaySubtitlesPreferenceKey,
+        [NSNumber numberWithBool:NO],   WebKitShouldDisplayCaptionsPreferenceKey,
+        [NSNumber numberWithBool:NO],   WebKitShouldDisplayTextDescriptionsPreferenceKey,
 
         [NSNumber numberWithLongLong:ApplicationCacheStorage::noQuota()], WebKitApplicationCacheTotalQuota,
         [NSNumber numberWithLongLong:ApplicationCacheStorage::noQuota()], WebKitApplicationCacheDefaultOriginQuota,
@@ -1572,6 +1575,36 @@ static NSString *classIBCreatorID = nil;
 - (BOOL)backspaceKeyNavigationEnabled
 {
     return [self _boolValueForKey:WebKitBackspaceKeyNavigationEnabledKey];
+}
+
+- (void)setShouldDisplaySubtitles:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitShouldDisplaySubtitlesPreferenceKey];
+}
+
+- (BOOL)shouldDisplaySubtitles
+{
+    return [self _boolValueForKey:WebKitShouldDisplaySubtitlesPreferenceKey];
+}
+
+- (void)setShouldDisplayCaptions:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitShouldDisplayCaptionsPreferenceKey];
+}
+
+- (BOOL)shouldDisplayCaptions
+{
+    return [self _boolValueForKey:WebKitShouldDisplayCaptionsPreferenceKey];
+}
+
+- (void)setShouldDisplayTextDescriptions:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitShouldDisplayTextDescriptionsPreferenceKey];
+}
+
+- (BOOL)shouldDisplayTextDescriptions
+{
+    return [self _boolValueForKey:WebKitShouldDisplayTextDescriptionsPreferenceKey];
 }
 
 @end

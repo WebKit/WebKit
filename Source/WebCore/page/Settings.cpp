@@ -836,4 +836,21 @@ bool Settings::mockScrollbarsEnabled()
     return gMockScrollbarsEnabled;
 }
 
+#if ENABLE(VIDEO_TRACK)
+void Settings::setShouldDisplaySubtitles(bool flag)
+{
+    m_shouldDisplaySubtitles = flag;
+}
+
+void Settings::setShouldDisplayCaptions(bool flag)
+{
+    m_shouldDisplayCaptions = flag;
+}
+
+void Settings::setShouldDisplayTextDescriptions(bool flag)
+{
+    m_shouldDisplayTextDescriptions = flag;
+}
+#endif
+
 } // namespace WebCore

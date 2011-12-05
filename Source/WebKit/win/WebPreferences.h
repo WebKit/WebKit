@@ -295,6 +295,24 @@ public:
     virtual HRESULT STDMETHODCALLTYPE avFoundationEnabled(
     /* [retval][out] */ BOOL*);
 
+    virtual HRESULT STDMETHODCALLTYPE setShouldDisplaySubtitles(
+    /* [in] */ BOOL);
+
+    virtual HRESULT STDMETHODCALLTYPE shouldDisplaySubtitles(
+    /* [retval][out] */ BOOL*);
+
+    virtual HRESULT STDMETHODCALLTYPE setShouldDisplayCaptions(
+    /* [in] */ BOOL);
+
+    virtual HRESULT STDMETHODCALLTYPE shouldDisplayCaptions(
+    /* [retval][out] */ BOOL*);
+
+    virtual HRESULT STDMETHODCALLTYPE setShouldDisplayTextDescriptions(
+    /* [in] */ BOOL);
+
+    virtual HRESULT STDMETHODCALLTYPE shouldDisplayTextDescriptions(
+    /* [retval][out] */ BOOL*);
+
     // IWebPreferencesPrivate
     virtual HRESULT STDMETHODCALLTYPE setDeveloperExtrasEnabled(
         /* [in] */ BOOL);

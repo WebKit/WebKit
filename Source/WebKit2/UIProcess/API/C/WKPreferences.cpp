@@ -671,3 +671,33 @@ bool WKPreferencesGetCaretBrowsingEnabled(WKPreferencesRef preferencesRef)
 {
     return toImpl(preferencesRef)->caretBrowsingEnabled();
 }
+
+void WKPreferencesSetShouldDisplaySubtitles(WKPreferencesRef preferencesRef, bool enabled)
+{
+    toImpl(preferencesRef)->setShouldDisplaySubtitles(enabled);
+}
+
+bool WKPreferencesGetShouldDisplaySubtitles(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->shouldDisplaySubtitles();
+}
+
+void WKPreferencesSetShouldDisplayCaptions(WKPreferencesRef preferencesRef, bool enabled)
+{
+    toImpl(preferencesRef)->setShouldDisplayCaptions(enabled);
+}
+
+bool WKPreferencesGetShouldDisplayCaptions(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->shouldDisplayCaptions();
+}
+
+void WKPreferencesSetShouldDisplayTextDescriptions(WKPreferencesRef preferencesRef, bool enabled)
+{
+    toImpl(preferencesRef)->setShouldDisplayTextDescriptions(enabled);
+}
+
+bool WKPreferencesGetShouldDisplayTextDescriptions(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->shouldDisplayTextDescriptions();
+}

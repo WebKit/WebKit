@@ -1496,6 +1496,12 @@ static bool needsSelfRetainWhileLoadingQuirk()
     settings->setSuppressIncrementalRendering([preferences suppressIncrementalRendering]);
     settings->setBackspaceKeyNavigationEnabled([preferences backspaceKeyNavigationEnabled]);
 
+#if ENABLE(VIDEO_TRACK)
+    settings->setShouldDisplaySubtitles([preferences shouldDisplaySubtitles]);
+    settings->setShouldDisplayCaptions([preferences shouldDisplayCaptions]);
+    settings->setShouldDisplayTextDescriptions([preferences shouldDisplayTextDescriptions]);
+#endif
+
     // Application Cache Preferences are stored on the global cache storage manager, not in Settings.
     [WebApplicationCache setDefaultOriginQuota:[preferences applicationCacheDefaultOriginQuota]];
 

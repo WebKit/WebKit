@@ -181,6 +181,18 @@ WK_EXPORT bool WKPreferencesGetBackspaceKeyNavigationEnabled(WKPreferencesRef pr
 WK_EXPORT void WKPreferencesSetCaretBrowsingEnabled(WKPreferencesRef preferencesRef, bool enabled);
 WK_EXPORT bool WKPreferencesGetCaretBrowsingEnabled(WKPreferencesRef preferencesRef);
 
+// Defaults to false
+WK_EXPORT void WKPreferencesSetShouldDisplaySubtitles(WKPreferencesRef preferencesRef, bool enabled);
+WK_EXPORT bool WKPreferencesGetShouldDisplaySubtitles(WKPreferencesRef preferencesRef);
+
+// Defaults to false
+WK_EXPORT void WKPreferencesSetShouldDisplayCaptions(WKPreferencesRef preferencesRef, bool enabled);
+WK_EXPORT bool WKPreferencesGetShouldDisplayCaptions(WKPreferencesRef preferencesRef);
+
+// Defaults to false
+WK_EXPORT void WKPreferencesSetShouldDisplayTextDescriptions(WKPreferencesRef preferencesRef, bool enabled);
+WK_EXPORT bool WKPreferencesGetShouldDisplayTextDescriptions(WKPreferencesRef preferencesRef);
+
 #ifdef __cplusplus
 }
 #endif

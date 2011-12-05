@@ -124,6 +124,9 @@ public:
     virtual void setEnableScrollAnimator(bool);
     virtual void setHixie76WebSocketProtocolEnabled(bool);
     virtual void setVisualWordMovementEnabled(bool);
+    virtual void setShouldDisplaySubtitles(bool);
+    virtual void setShouldDisplayCaptions(bool);
+    virtual void setShouldDisplayTextDescriptions(bool);
 
 private:
     WebCore::Settings* m_settings;

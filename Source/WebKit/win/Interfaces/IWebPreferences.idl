@@ -205,4 +205,13 @@ interface IWebPreferences : IUnknown
 
     HRESULT pictographFontFamily([out, retval] BSTR* family);
     HRESULT setPictographFontFamily([in] BSTR family);
+
+    HRESULT setShouldDisplaySubtitles(BOOL shouldDisplaySubtitles);
+    HRESULT shouldDisplaySubtitles(BOOL *shouldDisplaySubtitles);
+
+    HRESULT setShouldDisplayCaptions(BOOL shouldDisplayCaptions);
+    HRESULT shouldDisplayCaptions(BOOL *shouldDisplayCaptions);
+
+    HRESULT setShouldDisplayTextDescriptions(BOOL shouldDisplayTextDescriptions);
+    HRESULT shouldDisplayTextDescriptions(BOOL *shouldDisplayTextDescriptions);
 }

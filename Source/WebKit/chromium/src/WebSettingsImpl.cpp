@@ -465,4 +465,32 @@ void WebSettingsImpl::setVisualWordMovementEnabled(bool enabled)
     m_settings->setVisualWordMovementEnabled(enabled);
 }
 
+void WebSettingsImpl::setShouldDisplaySubtitles(bool enabled)
+{
+#if ENABLE(VIDEO_TRACK)
+    m_settings->setShouldDisplaySubtitles(enabled);
+#else
+    UNUSED_PARAM(enabled);
+#endif
+}
+
+void WebSettingsImpl::setShouldDisplayCaptions(bool enabled)
+{
+#if ENABLE(VIDEO_TRACK)
+    m_settings->setShouldDisplayCaptions(enabled);
+#else
+    UNUSED_PARAM(enabled);
+#endif
+}
+
+void WebSettingsImpl::setShouldDisplayTextDescriptions(bool enabled)
+{
+#if ENABLE(VIDEO_TRACK)
+    m_settings->setShouldDisplayTextDescriptions(enabled);
+#else
+    UNUSED_PARAM(enabled);
+#endif
+}
+
+
 } // namespace WebKit
