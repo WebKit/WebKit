@@ -1,3 +1,20 @@
+2011-12-05  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        On Windows, filenames not properly preserved when copied into a file list exposed by Event.dataTransfer
+        https://bugs.webkit.org/show_bug.cgi?id=73841
+        <rdar://problem/10521879>
+
+        No test since repro case involves dropping a file onto the WebView.
+        
+        Calling characters() explicitly causes a non-terminated string buffer to get passed back
+        to the String() constructor that expects a terminated buffer. The characters() call isn't
+        necessary at all, since we have a String and the method we're calling expects a String.
+
+        * platform/win/ClipboardWin.cpp:
+        (WebCore::ClipboardWin::files): Remove characters() since it doesn't null terminate.
+
 2011-12-05  Timothy Hatcher  <timothy@apple.com>
 
         Keep both InspectorBackend.js and InspectorBackendStub.js in Release builds after

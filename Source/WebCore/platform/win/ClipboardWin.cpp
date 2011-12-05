@@ -572,7 +572,7 @@ PassRefPtr<FileList> ClipboardWin::files() const
         return files.release();
     Vector<String> filesVector = m_dragDataMap.get(cfHDropFormat()->cfFormat);
     for (Vector<String>::iterator it = filesVector.begin(); it != filesVector.end(); ++it)
-        files->append(File::create((*it).characters()));
+        files->append(File::create(*it));
     return files.release();
 #endif
 }
