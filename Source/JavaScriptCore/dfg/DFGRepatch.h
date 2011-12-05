@@ -50,7 +50,7 @@ void dfgResetPutByID(RepatchBuffer&, StructureStubInfo&);
 namespace JSC {
 
 class RepatchBuffer;
-class StructureStubInfo;
+struct StructureStubInfo;
 
 namespace DFG {
 
