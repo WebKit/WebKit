@@ -1,3 +1,24 @@
+2011-12-05  Kristóf Kosztyó  <kkristof@inf.u-szeged.hu>
+
+        NRWT should handle duplicated expectations
+        https://bugs.webkit.org/show_bug.cgi?id=69750
+
+        Reviewed by Dirk Pranke.
+
+        * Scripts/webkitpy/layout_tests/models/test_expectations.py:
+        (TestExpectations.__init__):
+        (TestExpectations._report_errors):
+        (TestExpectations._add_expectations):
+        * Scripts/webkitpy/layout_tests/models/test_expectations_unittest.py:
+        (test_add_skipped_tests):
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        (Port.skipped_tests):
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+        (WebKitPort.test_expectations):
+        (WebKitPort.skipped_tests):
+        * Scripts/webkitpy/layout_tests/port/webkit_unittest.py:
+        (test_test_expectations):
+
 2011-12-04  Eric Seidel  <eric@webkit.org>
 
         After success with Mac, Win and Gtk, turning on parallel testing

@@ -609,6 +609,9 @@ class Port(object):
     def skipped_layout_tests(self):
         return []
 
+    def skipped_tests(self):
+        return []
+
     def skips_layout_test(self, test_name):
         """Figures out if the givent test is being skipped or not.
 

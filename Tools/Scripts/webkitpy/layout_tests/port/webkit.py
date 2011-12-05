@@ -360,25 +360,12 @@ class WebKitPort(Port):
 
     def test_expectations(self):
         # This allows ports to use a combination of test_expectations.txt files and Skipped lists.
-        expectations = self._skipped_list_as_expectations()
+        expectations = ''
         expectations_path = self.path_to_test_expectations_file()
         if self._filesystem.exists(expectations_path):
             _log.debug("Using test_expectations.txt: %s" % expectations_path)
-            expectations = self._filesystem.read_text_file(expectations_path) + '\n' + expectations
+            expectations = self._filesystem.read_text_file(expectations_path)
         return expectations
-
-    def _skipped_list_as_expectations(self):
-        # Each Skipped file contains a list of files
-        # or directories to be skipped during the test run. The total list
-        # of tests to skipped is given by the contents of the generic
-        # Skipped file found in platform/X plus a version-specific file
-        # found in platform/X-version. Duplicate entries are allowed.
-        # This routine reads those files and turns contents into the
-        # format expected by test_expectations.
-
-        tests_to_skip = self.skipped_layout_tests()
-        skip_lines = map(lambda test_path: "BUG_SKIPPED SKIP : %s = FAIL" % test_path, tests_to_skip)
-        return "\n".join(skip_lines)
 
     def skipped_layout_tests(self):
         # Use a set to allow duplicates
@@ -386,6 +373,9 @@ class WebKitPort(Port):
         tests_to_skip.update(self._tests_for_other_platforms())
         tests_to_skip.update(self._skipped_tests_for_unsupported_features())
         return tests_to_skip
+
+    def skipped_tests(self):
+        return self.skipped_layout_tests()
 
     def _build_path(self, *comps):
         # --root is used for running with a pre-built root (like from a nightly zip).

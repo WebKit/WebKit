@@ -256,6 +256,13 @@ BUG_OVERRIDE : failures/expected/text.html = CRASH
                                                      'failures/expected/text.html') in
                          self._exp.get_tests_with_result_type(SKIP))
 
+    def test_add_skipped_tests(self):
+        port = MockHost().port_factory.get('qt')
+        port._filesystem.files[port._filesystem.join(port.layout_tests_dir(), 'platform/qt/Skipped')] = 'failures/expected/text.html'
+        port._filesystem.files[port._filesystem.join(port.layout_tests_dir(), 'failures/expected/text.html')] = 'foo'
+        self.assertRaises(ParseError, TestExpectations, port, 'failures/expected/text.html\n', 'BUGX : failures/expected/text.html = text\n', None, True)
+
+
 class ExpectationSyntaxTests(Base):
     def test_missing_expectation(self):
         # This is missing the expectation.

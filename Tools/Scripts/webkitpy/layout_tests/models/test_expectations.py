@@ -697,9 +697,11 @@ class TestExpectations(object):
         self._parser = TestExpectationParser(port, tests, is_lint_mode)
         self._port = port
         self._test_configuration_converter = TestConfigurationConverter(port.all_test_configurations(), port.configuration_specifier_macros())
+        self._skipped_tests_warnings = []
 
         self._expectations = TestExpectationParser.tokenize_list(expectations)
         self._add_expectations(self._expectations, overrides_allowed=False)
+        self._add_skipped_tests(port.skipped_tests())
 
         if overrides:
             overrides_expectations = TestExpectationParser.tokenize_list(overrides)
@@ -783,6 +785,9 @@ class TestExpectations(object):
             for warning in expectation.warnings:
                 warnings.append("Line:%s %s %s" % (expectation.line_number, warning, expectation.name if expectation.expectations else expectation.original_string))
 
+        for warning in self._skipped_tests_warnings:
+            warnings.append(warning)
+
         if len(errors) or len(warnings):
             webkit_base_path = self._port.webkit_base()
             test_expectation_path = self._port.path_to_test_expectations_file()
@@ -826,3 +831,15 @@ class TestExpectations(object):
             self._parser.parse(expectation_line)
             if self._test_config in expectation_line.matching_configurations:
                 self._model.add_expectation_line(expectation_line, overrides_allowed)
+
+    def _add_skipped_tests(self, tests_to_skip):
+        if not tests_to_skip:
+            return
+        for index, test in enumerate(self._expectations, start=1):
+            if test.name and test.name in tests_to_skip:
+                self._skipped_tests_warnings.append('The %s test from test_expectations.txt in line %d is also in Skipped!' %
+                            (test.name, index))
+        skipped_tests = '\n'.join(map(lambda test_path: 'BUG_SKIPPED SKIP : %s = FAIL' % test_path, tests_to_skip))
+        for test in TestExpectationParser.tokenize_list(skipped_tests):
+            self._parser.parse(test)
+            self._model.add_expectation_line(test, overrides_allowed=True)
