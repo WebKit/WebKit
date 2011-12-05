@@ -47,6 +47,8 @@ public:
     Image* image() const; // Returns the nullImage() if the image is not available yet.
     bool hasImage() const { return m_image.get(); }
 
+    Image* brokenImage(float deviceScaleFactor) const;
+
     bool canRender(float multiplier) const { return !errorOccurred() && !imageSize(multiplier).isEmpty(); }
 
     // These are only used for SVGImage right now

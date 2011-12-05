@@ -595,6 +595,8 @@ private:
     void updateScrollCornerStyle();
     void updateResizerStyle();
 
+    void drawPlatformResizerImage(GraphicsContext*, IntRect resizerCornerRect);
+
     void updatePagination();
     bool isPaginated() const { return m_isPaginated; }
 

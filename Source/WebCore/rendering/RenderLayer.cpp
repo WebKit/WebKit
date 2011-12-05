@@ -2363,6 +2363,27 @@ void RenderLayer::paintScrollCorner(GraphicsContext* context, int tx, int ty, co
         context->fillRect(absRect, Color::white, box->style()->colorSpace());
 }
 
+void RenderLayer::drawPlatformResizerImage(GraphicsContext* context, IntRect resizerCornerRect)
+{
+    float deviceScaleFactor = Page::deviceScaleFactor(renderer()->frame());
+
+    RefPtr<Image> resizeCornerImage;
+    IntSize cornerResizerSize;
+    if (deviceScaleFactor >= 2) {
+        DEFINE_STATIC_LOCAL(Image*, resizeCornerImageHiRes, (Image::loadPlatformResource("textAreaResizeCorner@2x").leakRef()));
+        resizeCornerImage = resizeCornerImageHiRes;
+        cornerResizerSize = resizeCornerImage->size();
+        cornerResizerSize.scale(0.5);
+    } else {
+        DEFINE_STATIC_LOCAL(Image*, resizeCornerImageLoRes, (Image::loadPlatformResource("textAreaResizeCorner").leakRef()));
+        resizeCornerImage = resizeCornerImageLoRes;
+        cornerResizerSize = resizeCornerImage->size();
+    }
+
+    IntRect imageRect(resizerCornerRect.maxXMaxYCorner() - cornerResizerSize, cornerResizerSize);
+    context->drawImage(resizeCornerImage.get(), renderer()->style()->colorSpace(), imageRect);
+}
+
 void RenderLayer::paintResizer(GraphicsContext* context, int tx, int ty, const IntRect& damageRect)
 {
     if (renderer()->style()->resize() == RESIZE_NONE)
@@ -2386,10 +2407,7 @@ void RenderLayer::paintResizer(GraphicsContext* context, int tx, int ty, const I
         return;
     }
 
-    // Paint the resizer control.
-    DEFINE_STATIC_LOCAL(RefPtr<Image>, resizeCornerImage, (Image::loadPlatformResource("textAreaResizeCorner")));
-    IntPoint imagePoint(absRect.maxX() - resizeCornerImage->width(), absRect.maxY() - resizeCornerImage->height());
-    context->drawImage(resizeCornerImage.get(), box->style()->colorSpace(), imagePoint);
+    drawPlatformResizerImage(context, absRect);
 
     // Draw a frame around the resizer (1px grey line) if there are any scrollbars present.
     // Clipping will exclude the right and bottom edges of this frame.
