@@ -31,6 +31,8 @@ import platform
 
 # We use this instead of calls to platform directly to allow mocking.
 class PlatformInfo(object):
+    def __init__(self, executive):
+        self._executive = executive
 
     def display_name(self):
         # platform.platform() returns Darwin information for Mac, which is just confusing.
@@ -41,3 +43,9 @@ class PlatformInfo(object):
         # Linux-2.6.18-194.3.1.el5-i686-with-redhat-5.5-Final
         # Windows-2008ServerR2-6.1.7600
         return platform.platform()
+
+    def total_bytes_memory(self):
+        system_name = platform.system()
+        if system_name == "Darwin":
+            return int(self._executive.run_command(["sysctl", "-n", "hw.memsize"]))
+        return None

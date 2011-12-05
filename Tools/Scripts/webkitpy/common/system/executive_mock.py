@@ -74,6 +74,9 @@ class MockExecutive(object):
             raise ScriptError("MOCK ScriptError", output=output)
         return output
 
+    def cpu_count(self):
+        return 2
+
 
 class MockExecutive2(object):
     def __init__(self, output='', exit_code=0, exception=None,

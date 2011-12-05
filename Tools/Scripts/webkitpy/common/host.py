@@ -52,7 +52,7 @@ class Host(object):
         self.executive = executive.Executive()
         self.filesystem = filesystem.FileSystem()
         self.user = user.User()
-        self.platform = platforminfo.PlatformInfo()
+        self.platform = platforminfo.PlatformInfo(self.executive)
         self.workspace = workspace.Workspace(self.filesystem, self.executive)
         self.web = web.Web()
 

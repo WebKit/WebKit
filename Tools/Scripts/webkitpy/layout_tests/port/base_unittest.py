@@ -34,7 +34,7 @@ import unittest
 from webkitpy.common.system.executive import Executive, ScriptError
 from webkitpy.common.system import executive_mock
 from webkitpy.common.system.filesystem_mock import MockFileSystem
-from webkitpy.common.system import outputcapture
+from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.common.system.path import abspath_to_uri
 from webkitpy.thirdparty.mock import Mock
 from webkitpy.tool.mocktool import MockOptions
@@ -52,6 +52,21 @@ class PortTest(unittest.TestCase):
     def make_port(self, host=None, **kwargs):
         host = host or MockHost()
         return Port(host, **kwargs)
+
+    def test_default_child_processes(self):
+        port = self.make_port()
+        self.assertEqual(port.default_child_processes(), 2)
+        bytes_for_drt = 300 * 1024 * 1024
+
+        port.host.platform.total_bytes_memory = lambda: bytes_for_drt
+        expected_stdout = "This machine could support 2 child processes, but only has enough memory for 1.\n"
+        child_processes = OutputCapture().assert_outputs(self, port.default_child_processes, (), expected_stdout=expected_stdout)
+        self.assertEqual(child_processes, 1)
+
+        port.host.platform.total_bytes_memory = lambda: bytes_for_drt - 1
+        expected_stdout = "This machine could support 2 child processes, but only has enough memory for 0.\n"
+        child_processes = OutputCapture().assert_outputs(self, port.default_child_processes, (), expected_stdout=expected_stdout)
+        self.assertEqual(child_processes, 0)
 
     def test_format_wdiff_output_as_html(self):
         output = "OUTPUT %s %s %s" % (Port._WDIFF_DEL, Port._WDIFF_ADD, Port._WDIFF_END)
@@ -82,7 +97,7 @@ class PortTest(unittest.TestCase):
 
     def test_pretty_patch_os_error(self):
         port = self.make_port(executive=executive_mock.MockExecutive2(exception=OSError))
-        oc = outputcapture.OutputCapture()
+        oc = OutputCapture()
         oc.capture_output()
         self.assertEqual(port.pretty_patch_text("patch.txt"),
                          port._pretty_patch_error_html)
