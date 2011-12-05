@@ -3195,6 +3195,9 @@ BUGWK68469 SKIP : css3/filters = PASS
 // MutationObservers not yet enabled.
 BUGWK68729 SKIP : fast/mutation = PASS
 
+// <style scoped> not yet enabled.
+BUGWK49142 SKIP: fast/css/style-scoped = PASS
+
 BUGCR85755 : fast/js/exception-properties.html = TEXT
 
 BUGWK62430 LINUX WIN : fast/dom/HTMLProgressElement/indeterminate-progress-001.html = FAIL

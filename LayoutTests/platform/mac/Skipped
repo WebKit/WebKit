@@ -419,6 +419,9 @@ webarchive/loading/mainresource-null-mimetype-crash.html
 # CSS Grid Layout is not yet enabled. http://webkit.org/b/60731
 fast/css-grid-layout
 
+# <style scoped> is not yet enabled. http://webkit.org/b/49142
+fast/css/style-scoped
+
 # JSC does not support setIsolatedWorldSecurityOrigin (http://webkit.org/b/61540)
 http/tests/security/isolatedWorld/cross-origin-xhr.html
 

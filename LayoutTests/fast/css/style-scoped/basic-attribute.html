@@ -1,0 +1,124 @@
+<html>
+<head>
+    <link rel="stylesheet" href="../../js/resources/js-test-style.css">
+    <script src="../../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+    <p>Basic test for the &lt;style scoped&gt; attribute.</p>
+    <div id="scope">
+        <style id="global1"></style>
+        <style scoped='scoped' id="scoped1"></style>
+    </div>
+
+    <div id="console"></div>
+
+    <script>
+        function testBooleanAttribute(elem, attr)
+        {
+            var val = elem.getAttribute(attr);
+            if (val === null)
+                return false
+            if (val === '' || val === attr)
+                return true;
+            throw "Illegal value for boolean attribute!";
+        }
+
+        var scope = document.getElementById('scope');
+
+        var global1 = document.getElementById('global1');
+        var scoped1 = document.getElementById('scoped1');
+
+        var global2 = document.createElement('style');
+        var scoped2 = document.createElement('style');
+        scoped2.setAttribute('scoped', 'scoped');
+        var scoped3 = document.createElement('style');
+        scoped3.scoped = true;
+
+        debug("--- Initial ---");
+        shouldBeNull("global1.getAttribute('scoped')");
+        shouldBeFalse("global1.scoped");
+        shouldBeNull("global2.getAttribute('scoped')");
+        shouldBeFalse("global2.scoped");
+        shouldBeTrue("testBooleanAttribute(scoped1, 'scoped')");
+        shouldBeTrue("scoped1.scoped");
+        shouldBeTrue("testBooleanAttribute(scoped2, 'scoped')");
+        shouldBeTrue("scoped2.scoped");
+        shouldBeTrue("testBooleanAttribute(scoped3, 'scoped')");
+        shouldBeTrue("scoped3.scoped");
+
+        debug("--- After insertion into tree ---")
+        scope.appendChild(global2);
+        scope.appendChild(scoped2);
+        scope.appendChild(scoped3);
+
+        shouldBeNull("global1.getAttribute('scoped')");
+        shouldBeFalse("global1.scoped");
+        shouldBeNull("global2.getAttribute('scoped')");
+        shouldBeFalse("global2.scoped");
+        shouldBeTrue("testBooleanAttribute(scoped1, 'scoped')");
+        shouldBeTrue("scoped1.scoped");
+        shouldBeTrue("testBooleanAttribute(scoped2, 'scoped')");
+        shouldBeTrue("scoped2.scoped");
+        shouldBeTrue("testBooleanAttribute(scoped3, 'scoped')");
+        shouldBeTrue("scoped3.scoped");
+
+        debug("--- Inverting 'scoped' attribute while in tree ---");
+        scoped1.scoped = null;
+        scoped2.scoped = false;
+        scoped3.removeAttribute('scoped');
+        global1.scoped = true;
+        global2.setAttribute('scoped', 'scoped');
+
+        shouldBeTrue("testBooleanAttribute(global1, 'scoped')");
+        shouldBeTrue("global1.scoped");
+        shouldBeTrue("testBooleanAttribute(global2, 'scoped')");
+        shouldBeTrue("global2.scoped");
+        shouldBeNull("scoped1.getAttribute('scoped')");
+        shouldBeFalse("scoped1.scoped");
+        shouldBeNull("scoped2.getAttribute('scoped')");
+        shouldBeFalse("scoped2.scoped");
+        shouldBeNull("scoped3.getAttribute('scoped')");
+        shouldBeFalse("scoped3.scoped");
+
+        debug("--- After removal from tree (attribute is still inverted) ---");
+        scope.removeChild(global1);
+        scope.removeChild(global2);
+        scope.removeChild(scoped1);
+        scope.removeChild(scoped2);
+        scope.removeChild(scoped3);
+
+        shouldBeTrue("testBooleanAttribute(global1, 'scoped')");
+        shouldBeTrue("global1.scoped");
+        shouldBeTrue("testBooleanAttribute(global2, 'scoped')");
+        shouldBeTrue("global2.scoped");
+        shouldBeNull("scoped1.getAttribute('scoped')");
+        shouldBeFalse("scoped1.scoped");
+        shouldBeNull("scoped2.getAttribute('scoped')");
+        shouldBeFalse("scoped2.scoped");
+        shouldBeNull("scoped3.getAttribute('scoped')");
+        shouldBeFalse("scoped3.scoped");
+
+        debug("--- Inverting 'scoped' attribute again, while outside tree ---");
+        scoped1.scoped = true;
+        scoped2.scoped = true;
+        scoped3.setAttribute('scoped', 'scoped');
+        global1.scoped = false;
+        global2.removeAttribute('scoped');
+
+        shouldBeNull("global1.getAttribute('scoped')");
+        shouldBeFalse("global1.scoped");
+        shouldBeNull("global2.getAttribute('scoped')");
+        shouldBeFalse("global2.scoped");
+        shouldBeTrue("testBooleanAttribute(scoped1, 'scoped')");
+        shouldBeTrue("scoped1.scoped");
+        shouldBeTrue("testBooleanAttribute(scoped2, 'scoped')");
+        shouldBeTrue("scoped2.scoped");
+        shouldBeTrue("testBooleanAttribute(scoped3, 'scoped')");
+        shouldBeTrue("scoped3.scoped");
+
+        debug("--- DONE ---");
+        var successfullyParsed = true;
+    </script>
+    <script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

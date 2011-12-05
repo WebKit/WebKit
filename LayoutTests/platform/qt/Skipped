@@ -160,6 +160,9 @@ svg/custom/svg-disallowed-in-dashboard-object.html
 # CSS Grid Layout is not yet enabled. http://webkit.org/b/60731
 fast/css-grid-layout
 
+# <style scoped> is not yet enabled. http://webkit.org/b/49142
+fast/css/style-scoped
+
 # CSS Regions support not yet enabled. http://webkit.org/b/57312
 fast/regions
 

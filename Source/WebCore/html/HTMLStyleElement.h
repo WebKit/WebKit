@@ -37,6 +37,12 @@ public:
 
     void setType(const AtomicString&);
 
+#if ENABLE(STYLE_SCOPED)
+    bool scoped() const;
+    void setScoped(bool);
+    Element* scopingElement() const;
+#endif
+
     using StyleElement::sheet;
 
     bool disabled() const;

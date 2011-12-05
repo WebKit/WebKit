@@ -1,0 +1,62 @@
+Basic test for the <style scoped> attribute.
+
+--- Initial ---
+PASS global1.getAttribute('scoped') is null
+PASS global1.scoped is false
+PASS global2.getAttribute('scoped') is null
+PASS global2.scoped is false
+PASS testBooleanAttribute(scoped1, 'scoped') is true
+PASS scoped1.scoped is true
+PASS testBooleanAttribute(scoped2, 'scoped') is true
+PASS scoped2.scoped is true
+PASS testBooleanAttribute(scoped3, 'scoped') is true
+PASS scoped3.scoped is true
+--- After insertion into tree ---
+PASS global1.getAttribute('scoped') is null
+PASS global1.scoped is false
+PASS global2.getAttribute('scoped') is null
+PASS global2.scoped is false
+PASS testBooleanAttribute(scoped1, 'scoped') is true
+PASS scoped1.scoped is true
+PASS testBooleanAttribute(scoped2, 'scoped') is true
+PASS scoped2.scoped is true
+PASS testBooleanAttribute(scoped3, 'scoped') is true
+PASS scoped3.scoped is true
+--- Inverting 'scoped' attribute while in tree ---
+PASS testBooleanAttribute(global1, 'scoped') is true
+PASS global1.scoped is true
+PASS testBooleanAttribute(global2, 'scoped') is true
+PASS global2.scoped is true
+PASS scoped1.getAttribute('scoped') is null
+PASS scoped1.scoped is false
+PASS scoped2.getAttribute('scoped') is null
+PASS scoped2.scoped is false
+PASS scoped3.getAttribute('scoped') is null
+PASS scoped3.scoped is false
+--- After removal from tree (attribute is still inverted) ---
+PASS testBooleanAttribute(global1, 'scoped') is true
+PASS global1.scoped is true
+PASS testBooleanAttribute(global2, 'scoped') is true
+PASS global2.scoped is true
+PASS scoped1.getAttribute('scoped') is null
+PASS scoped1.scoped is false
+PASS scoped2.getAttribute('scoped') is null
+PASS scoped2.scoped is false
+PASS scoped3.getAttribute('scoped') is null
+PASS scoped3.scoped is false
+--- Inverting 'scoped' attribute again, while outside tree ---
+PASS global1.getAttribute('scoped') is null
+PASS global1.scoped is false
+PASS global2.getAttribute('scoped') is null
+PASS global2.scoped is false
+PASS testBooleanAttribute(scoped1, 'scoped') is true
+PASS scoped1.scoped is true
+PASS testBooleanAttribute(scoped2, 'scoped') is true
+PASS scoped2.scoped is true
+PASS testBooleanAttribute(scoped3, 'scoped') is true
+PASS scoped3.scoped is true
+--- DONE ---
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

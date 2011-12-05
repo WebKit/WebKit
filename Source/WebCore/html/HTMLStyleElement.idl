@@ -22,6 +22,7 @@ module html {
 
     interface HTMLStyleElement : HTMLElement {
         attribute boolean disabled;
+        attribute [Conditional=STYLE_SCOPED] boolean scoped;
         attribute [Reflect] DOMString media;
         attribute [Reflect] DOMString type;
 

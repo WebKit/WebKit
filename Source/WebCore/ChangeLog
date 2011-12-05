@@ -1,3 +1,23 @@
+2011-12-05  Roland Steiner  <rolandsteiner@chromium.org>
+
+        <style scoped>: Add 'scoped' attribute
+        https://bugs.webkit.org/show_bug.cgi?id=67718
+
+        Add 'scoped' attribute to IDL and attribute list,
+        implement and test setting/resetting of the attribute.
+
+        Reviewed by Antti Koivisto.
+
+        Test: fast/css/style-scoped/basic-attribute.html
+
+        * html/HTMLAttributeNames.in:
+        * html/HTMLStyleElement.cpp:
+        (WebCore::HTMLStyleElement::scoped):
+        (WebCore::HTMLStyleElement::setScoped):
+        (WebCore::HTMLStyleElement::scopingElement):
+        * html/HTMLStyleElement.h:
+        * html/HTMLStyleElement.idl:
+
 2011-12-05  Hajime Morrita  <morrita@chromium.org>
 
         [Refactoring] Accessing Node::m_document should be minimized.
