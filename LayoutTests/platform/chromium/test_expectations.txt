@@ -2851,16 +2851,6 @@ BUGCR77494 LINUX WIN : fast/repaint/layout-state-scrolloffset3.html = FAIL
 // Not included in tests modified by 81992, but started failing at same time:
 BUGCR77494 LINUX WIN : fast/repaint/transform-replaced-shadows.html = IMAGE
 
-// Need rebaseline.
-BUGWK67408 : fast/forms/input-placeholder-visibility-1.html = FAIL
-BUGWK67408 : fast/forms/input-placeholder-visibility-3.html = FAIL
-BUGWK67408 : fast/forms/placeholder-position.html = FAIL
-BUGWK67408 : fast/forms/placeholder-pseudo-style.html = FAIL
-BUGWK67408 : fast/forms/search-styled.html = FAIL
-BUGWK67408 : fast/forms/textarea-placeholder-pseudo-style.html = FAIL
-BUGWK67408 : fast/forms/textarea-placeholder-visibility-1.html = FAIL
-BUGWK67408 : fast/forms/textarea-placeholder-visibility-2.html = FAIL
-
 // Regression since r82001.
 BUGCR77619 SNOWLEOPARD : plugins/plugin-javascript-access.html = TEXT
 
