@@ -1,3 +1,20 @@
+2011-12-05  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: web search mechanism does not work with frames
+        https://bugs.webkit.org/show_bug.cgi?id=73836
+
+        Reviewed by Beth Dakin.
+
+        This allows searching for, and within, frames for elements using the accessibility
+        search mechanism.
+
+        Test: platform/mac/accessibility/search-with-frames.html
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::isAccessibilityObjectSearchMatch):
+        (WebCore::appendAccessibilityObject):
+        (WebCore::appendChildrenToArray):
+
 2011-12-05  Anders Carlsson  <andersca@apple.com>
 
         Make LayerFlushSchedulerClient::flushLayers indicate whether the flush was successful or not

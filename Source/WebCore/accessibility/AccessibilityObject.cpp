@@ -132,9 +132,8 @@ bool AccessibilityObject::isAccessibilityObjectSearchMatch(AccessibilityObject* 
         return criteria->startObject
             && !axObject->hasSameFontColor(criteria->startObject->renderer());
         
-    // FIXME: Handle this search key.
     case FrameSearchKey:
-        return false;
+        return axObject->isWebArea();
         
     case GraphicSearchKey:
         return axObject->isImage();
@@ -355,6 +354,25 @@ AccessibilityObject* AccessibilityObject::firstAccessibleObjectFromNode(const No
     return accessibleObject;
 }
 
+static void appendAccessibilityObject(AccessibilityObject* object, AccessibilityObject::AccessibilityChildrenVector& results)
+{
+    // Find the next descendant of this attachment object so search can continue through frames.
+    if (object->isAttachment()) {
+        Widget* widget = object->widgetForAttachmentView();
+        if (!widget || !widget->isFrameView())
+            return;
+        
+        Document* doc = static_cast<FrameView*>(widget)->frame()->document();
+        if (!doc || !doc->renderer())
+            return;
+        
+        object = object->axObjectCache()->getOrCreate(doc->renderer());
+    }
+
+    if (object)
+        results.append(object);
+}
+    
 static void appendChildrenToArray(AccessibilityObject* object, bool isForward, AccessibilityObject* startObject, AccessibilityObject::AccessibilityChildrenVector& results)
 {
     AccessibilityObject::AccessibilityChildrenVector searchChildren;
@@ -379,13 +397,12 @@ static void appendChildrenToArray(AccessibilityObject* object, bool isForward, A
     }
 
     // This is broken into two statements so that it's easier read.
-    // FIXME: Handle attachments.
     if (isForward) {
         for (size_t i = startIndex; i > endIndex; i--)
-            results.append(searchChildren.at(i - 1).get());
+            appendAccessibilityObject(searchChildren.at(i - 1).get(), results);
     } else {
         for (size_t i = startIndex; i < endIndex; i++)
-            results.append(searchChildren.at(i).get());
+            appendAccessibilityObject(searchChildren.at(i).get(), results);
     }
 }
 

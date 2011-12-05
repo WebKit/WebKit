@@ -1,0 +1,111 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../../../fast/js/resources/js-test-style.css">
+<script>
+var successfullyParsed = false;
+</script>
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<iframe width=500 height=500 id="frame1" title="frame1"></iframe>
+<iframe width=500 height=500 id="frame2" title="frame2"></iframe>
+<iframe width=500 height=500 id="frame3" title="frame3"></iframe>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+    window.layoutTestController.waitUntilDone();
+
+    // We have to play some games to get these frames to load their sources in a timely fashion.
+    document.getElementById("frame1").src = "data:text/html,<body id='body1'><button id=button1>button1</button><BR><BR><BR></body>";
+    document.getElementById("frame2").src = "data:text/html,<body>text<BR><BR><BR></body>";
+    document.getElementById("frame3").src = "data:text/html,<body><button id=button3>button3</button><BR><BR><BR></body>";
+
+</script>
+<script>
+   for (var k = 1; k <= 3; k++) {
+
+      // This block adds sub frames to each of the frames, with some content in them. 
+      // When the last frame loads, it runs the test.
+
+      document.getElementById("frame" + k).onload = function(e) { 
+          var ifrm = document.createElement("iframe"); 
+          ifrm.setAttribute("name", e.target.id + "a");
+
+          if (e.target.id == "frame2") {
+              ifrm.setAttribute("src", "data:text/html,<body><button id=button2>button2</button></body>"); 
+          } else {
+              ifrm.setAttribute("src", "data:text/html,<body>text</body>"); 
+          }
+
+          ifrm.style.width = "200"; 
+          ifrm.style.height = "200"; 
+          this.contentDocument.childNodes[0].childNodes[1].appendChild(ifrm); 
+          if (e.target.id == "frame3") {
+             ifrm.onload = function() {
+                 runTest();
+             };
+          }
+       };
+    }
+
+</script>
+
+<script>
+
+    description("This tests whether searching works to find frames and to find elements within frames.");
+
+function runTest() {
+    if (window.accessibilityController) {
+
+        document.getElementById("body").focus();
+        var body = accessibilityController.focusedElement;
+
+        // Search for the buttons. This tests searching through the frames.
+        searchKey = "AXButtonSearchKey";
+        resultElement = body.uiElementForSearchPredicate("", true, searchKey, "");
+        shouldBe("resultElement.role", "'AXRole: AXButton'");
+        shouldBe("resultElement.title", "'AXTitle: button1'");
+
+        resultElement = body.uiElementForSearchPredicate(resultElement, true, searchKey, "");
+        shouldBe("resultElement.role", "'AXRole: AXButton'");
+        shouldBe("resultElement.title", "'AXTitle: button2'");
+
+        resultElement = body.uiElementForSearchPredicate(resultElement, true, searchKey, "");
+        shouldBe("resultElement.role", "'AXRole: AXButton'");
+        shouldBe("resultElement.title", "'AXTitle: button3'");
+
+        // Now search backwards.
+        resultElement = body.uiElementForSearchPredicate(resultElement, false, searchKey, "");
+        shouldBe("resultElement.role", "'AXRole: AXButton'");
+        shouldBe("resultElement.title", "'AXTitle: button2'");
+
+        // Search for the frames. First one is frame1
+        searchKey = "AXFrameSearchKey";
+        resultElement = body.uiElementForSearchPredicate("", true, searchKey, "");
+        shouldBe("resultElement.role", "'AXRole: AXWebArea'");
+        shouldBe("resultElement.description", "'AXDescription: frame1'");
+
+        // Next we should find the frame inside of frame1.
+        resultElement = body.uiElementForSearchPredicate(resultElement, true, searchKey, "");
+        shouldBe("resultElement.role", "'AXRole: AXWebArea'");
+        shouldBe("resultElement.description", "'AXDescription: frame1a'");
+
+        // Then we should find the frame after frame1.
+        resultElement = body.uiElementForSearchPredicate(resultElement, true, searchKey, "");
+        shouldBe("resultElement.role", "'AXRole: AXWebArea'");
+        shouldBe("resultElement.description", "'AXDescription: frame2'");
+    }
+
+    successfullyParsed = true;
+    window.layoutTestController.notifyDone();
+}
+
+</script>
+
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>
