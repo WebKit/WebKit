@@ -3827,3 +3827,5 @@ BUGWK73681 : http/tests/appcache/video.html = TIMEOUT PASS
 BUGWK73692 WIN LEOPARD : media/event-attributes.html = TEXT PASS
 
 BUGWK73766 : css3/unicode-bidi-isolate-aharon-failing.html = FAIL
+
+BUGWK73838 LEOPARD DEBUG : animations/animation-add-events-in-handler.html = CRASH
