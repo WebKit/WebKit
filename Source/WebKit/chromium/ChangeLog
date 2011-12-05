@@ -1,5 +1,11 @@
 2011-12-05  Vsevolod Vlasov  <vsevik@chromium.org>
 
+        Unreviewed, fixed chromium DEPS syntax.
+
+        * DEPS:
+
+2011-12-05  Vsevolod Vlasov  <vsevik@chromium.org>
+
         Unreviewed.  Rolled DEPS.
 
         * DEPS:
