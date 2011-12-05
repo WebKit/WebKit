@@ -1,3 +1,9 @@
+2011-12-05  Jarred Nicholls  <jarred@sencha.com>
+
+        Moving myself from contributors to committers.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2011-12-05  Raphael Kubo da Costa  <kubo@profusion.mobi>
 
         Add myself as a committer.
