@@ -1,3 +1,15 @@
+2011-12-05  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        [Qt] Make the UI of the MiniBrowser slightly nicer
+
+        Rubberstamped by Simon Hausmann.
+
+        - Add proper padding
+        - Show feedback when pressing on the toolbar icons
+        - Make the text entry better looking
+
+        * MiniBrowser/qt/qml/BrowserWindow.qml:
+
 2011-12-05  Kristóf Kosztyó  <kkristof@inf.u-szeged.hu>
 
         NRWT should handle duplicated expectations

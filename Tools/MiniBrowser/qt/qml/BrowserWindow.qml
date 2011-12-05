@@ -48,7 +48,7 @@ Rectangle {
     Rectangle {
         id: navigationBar
         color: "#efefef"
-        height: 30
+        height: 38
         anchors {
             top: parent.top
             left: parent.left
@@ -56,13 +56,22 @@ Rectangle {
         }
 
         Row {
+            height: parent.height - 6
+            anchors {
+                verticalCenter: parent.verticalCenter
+                left: parent.left
+                leftMargin: 3
+            }
+            spacing: 3
             id: controlsRow
-            spacing: 4
             Rectangle {
                 id: backButton
-                height: navigationBar.height - 2
+                height: parent.height
                 width: height
                 color: "#efefef"
+                radius: 6
+
+                property alias enabled: webView.canGoBack
 
                 Image {
                     anchors.centerIn: parent
@@ -71,24 +80,32 @@ Rectangle {
 
                 Rectangle {
                     anchors.fill: parent
-                    color: reloadButton.color
+                    color: parent.color
+                    radius: parent.radius
                     opacity: 0.8
-                    visible: !webView.canGoBack
+                    visible: !parent.enabled
                 }
 
                 MouseArea {
                     anchors.fill: parent
+                    onPressed: { if (parent.enabled) parent.color = "#cfcfcf" }
+                    onReleased: { parent.color = "#efefef" }
                     onClicked: {
-                        console.log("going back")
-                        webView.goBack()
+                        if (parent.enabled) {
+                            console.log("MiniBrowser: Going backward in session history.")
+                            webView.goBack()
+                        }
                     }
                 }
             }
             Rectangle {
                 id: forwardButton
-                height: navigationBar.height - 2
+                height: parent.height
                 width: height
                 color: "#efefef"
+                radius: 6
+
+                property alias enabled: webView.canGoForward
 
                 Image {
                     anchors.centerIn: parent
@@ -97,24 +114,30 @@ Rectangle {
 
                 Rectangle {
                     anchors.fill: parent
-                    color: forwardButton.color
+                    color: parent.color
+                    radius: parent.radius
                     opacity: 0.8
-                    visible: !webView.canGoForward
+                    visible: !parent.enabled
                 }
 
                 MouseArea {
                     anchors.fill: parent
+                    onPressed: { if (parent.enabled) parent.color = "#cfcfcf" }
+                    onReleased: { parent.color = "#efefef" }
                     onClicked: {
-                        console.log("going forward")
-                        webView.goForward()
+                        if (parent.enabled) {
+                            console.log("MiniBrowser: Going forward in session history.")
+                            webView.goForward()
+                        }
                     }
                 }
             }
             Rectangle {
                 id: reloadButton
-                height: navigationBar.height - 2
+                height: parent.height
                 width: height
                 color: "#efefef"
+                radius: 6
 
                 Image {
                     anchors.centerIn: parent
@@ -123,6 +146,8 @@ Rectangle {
 
                 MouseArea {
                     anchors.fill: parent
+                    onPressed: { parent.color = "#cfcfcf" }
+                    onReleased: { parent.color = "#efefef" }
                     onClicked: {
                         if (webView.canStop) {
                             console.log("stop loading")
@@ -137,12 +162,14 @@ Rectangle {
         }
         Rectangle {
             color: "white"
-            height: navigationBar.height - 4
+            height: 26
             border.width: 1
+            border.color: "#bfbfbf"
+            radius: 3
             anchors {
                 left: controlsRow.right
                 right: parent.right
-                margins: 2
+                margins: 6
                 verticalCenter: parent.verticalCenter
             }
             Rectangle {
@@ -151,25 +178,25 @@ Rectangle {
                     bottom: parent.bottom
                     left: parent.left
                 }
+                radius: 3
                 width: parent.width / 100 * webView.loadProgress
                 color: "blue"
                 opacity: 0.3
                 visible: webView.loadProgress != 100
             }
-
             TextInput {
                 id: addressLine
                 clip: true
                 selectByMouse: true
                 font {
-                    pointSize: 14
-                    family: "Helvetica"
+                    pointSize: 11
+                    family: "Sans"
                 }
                 anchors {
                     verticalCenter: parent.verticalCenter
                     left: parent.left
                     right: parent.right
-                    margins: 2
+                    margins: 6
                 }
 
                 Keys.onReturnPressed:{
