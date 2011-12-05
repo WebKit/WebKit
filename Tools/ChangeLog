@@ -1,3 +1,19 @@
+2011-12-05  Adam Roben  <aroben@apple.com>
+
+        Redeploy apple-macpro-7 and apple-xserve-1
+
+        These slaves have been sitting idle since we removed our Leopard builders in r97496.
+
+        Fixes <http://webkit.org/b/73829> REGRESSION (r97496): apple-macpro-7 and apple-xserve-1 are
+        sitting idle
+
+        Reviewed by Sam Weinig.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json: Re-added apple-macpro-7 and
+        apple-xserve-1. The former is now doing "SnowLeopard Intel Debug (WebKit2 Tests)", which
+        allows apple-xserve-9 to be a build-only slave, and the latter is doing "Lion Intel Debug
+        (WebKit2 Tests)".
+
 2011-12-05  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         [Qt] Make the UI of the MiniBrowser slightly nicer
