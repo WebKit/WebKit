@@ -77,7 +77,7 @@ void LayerTreeHostCA::initialize()
 
     platformInitialize(m_layerTreeContext);
 
-    setLayerFlushSchedulingEnabled(!m_webPage->drawingArea()->layerTreeStateIsFrozen());
+    setLayerFlushSchedulingEnabled(!m_webPage->drawingArea() || !m_webPage->drawingArea()->layerTreeStateIsFrozen());
     scheduleLayerFlush();
 }
 

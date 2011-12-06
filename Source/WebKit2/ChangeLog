@@ -1,3 +1,18 @@
+2011-12-06  Andy Estes  <aestes@apple.com>
+
+        REGRESSION (r101838): Crash in LayerTreeHostCA::initialize() when accelerated drawing is enabled
+        https://bugs.webkit.org/show_bug.cgi?id=73955
+
+        Reviewed by Anders Carlsson.
+
+        * WebProcess/WebPage/ca/LayerTreeHostCA.cpp:
+        (WebKit::LayerTreeHostCA::initialize): m_webPage->drawingArea() will be
+        null here if we are initializing the layer tree host in DrawingArea's
+        ctor (as is the case when accelerated drawing is enabled), before
+        WebPage has set its m_drawingArea pointer. Since the layer tree cannot
+        have been frozen at this point, it's safe to enable layer flush
+        scheduling if drawingArea() is null.
+
 2011-12-06  Alexander Færøy  <alexander.faeroy@nokia.com>
 
         [Qt] Fix assertion in QtViewportInteractionEngine.cpp:468
