@@ -1,5 +1,24 @@
 2011-12-05  Darin Adler  <darin@apple.com>
 
+        Use HashMap<OwnPtr> in CrossOriginPreflightResultCache
+        https://bugs.webkit.org/show_bug.cgi?id=73785
+
+        Reviewed by Andreas Kling.
+
+        * loader/CrossOriginPreflightResultCache.cpp:
+        (WebCore::CrossOriginPreflightResultCache::appendEntry): Changed code to use set
+        instead of add, since it wants to replace existing entries. Also removed leakPtr
+        and removed the FIXME that documented the memory leak now fixed here.
+        (WebCore::CrossOriginPreflightResultCache::canSkipPreflight): Removed unneeded
+        std:: prefix here and also unneeded explicit delete call.
+        (WebCore::CrossOriginPreflightResultCache::empty): Removed unneeded deleteAllValues
+        call here.
+
+        * loader/CrossOriginPreflightResultCache.h: Make mapped value of the
+        CrossOriginPreflightResultHashMap be OwnPtr instead of raw pointer.
+
+2011-12-05  Darin Adler  <darin@apple.com>
+
         Some small improvements to ContainerNode.h
         https://bugs.webkit.org/show_bug.cgi?id=73786
 
