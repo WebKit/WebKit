@@ -508,7 +508,7 @@ bool QtViewportInteractionEngine::pinchGestureActive() const
 
 void QtViewportInteractionEngine::pinchGestureStarted(const QPointF& pinchCenterInContentCoordinates)
 {
-    ASSERT(m_suspendCount);
+    ASSERT(!m_suspendCount);
 
     if (!m_constraints.isUserScalable)
         return;

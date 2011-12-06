@@ -1,3 +1,15 @@
+2011-12-06  Alexander Færøy  <alexander.faeroy@nokia.com>
+
+        [Qt] Fix assertion in QtViewportInteractionEngine.cpp:468
+        https://bugs.webkit.org/show_bug.cgi?id=73914
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        m_suspendCount should always be zero when a pinch gesture is started.
+
+        * UIProcess/qt/QtViewportInteractionEngine.cpp:
+        (WebKit::QtViewportInteractionEngine::pinchGestureStarted):
+
 2011-12-06  Simon Fraser  <simon.fraser@apple.com>
 
         UI process crashes if the Web Process crashes on launch
