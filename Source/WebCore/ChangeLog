@@ -1,5 +1,23 @@
 2011-12-05  Lucas Forschler  <lforschler@apple.com>
 
+    Merge 95051.
+    This restored a broken Changelog, which isn't necessary for the branch anyway.
+
+    2011-09-13  Beth Dakin  <bdakin@apple.com>
+
+            https://bugs.webkit.org/show_bug.cgi?id=67885
+            Outline for the high-resolution broken image icon draws at 2x
+            -and corresponding-
+            <rdar://problem/10104637>
+
+            Reviewed by Dan Bernstein.
+
+            Scaled the image size to account for the deviceScaleFactor. 
+            * rendering/RenderImage.cpp:
+            (WebCore::RenderImage::imageSizeForError):
+
+2011-12-05  Lucas Forschler  <lforschler@apple.com>
+
     Merge 95048
 
     2011-09-13  Beth Dakin  <bdakin@apple.com>
