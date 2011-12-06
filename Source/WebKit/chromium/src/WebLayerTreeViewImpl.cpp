@@ -29,13 +29,13 @@
 #include "CCThreadImpl.h"
 #include "GraphicsContext3DPrivate.h"
 #include "LayerChromium.h"
-#include "platform/WebGraphicsContext3D.h"
-#include "platform/WebSize.h"
-#include "platform/WebThread.h"
 #include "cc/CCThreadProxy.h"
+#include "platform/WebGraphicsContext3D.h"
 #include "platform/WebLayer.h"
 #include "platform/WebLayerTreeView.h"
 #include "platform/WebLayerTreeViewClient.h"
+#include "platform/WebSize.h"
+#include "platform/WebThread.h"
 
 using namespace WebCore;
 

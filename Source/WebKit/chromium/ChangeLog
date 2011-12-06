@@ -1,3 +1,18 @@
+2011-12-05  James Robinson  <jamesr@chromium.org>
+
+        Rollout http://trac.webkit.org/changeset/102019, dependent has not
+        landed in chromium
+
+        * WebKit.gyp:
+        * public/WebContentLayer.h: Added.
+        * public/WebExternalTextureLayer.h: Added.
+        * public/WebLayer.h: Added.
+        * public/WebLayerClient.h: Added.
+        * public/WebLayerTreeView.h: Added.
+        * public/WebLayerTreeViewClient.h: Added.
+        * src/WebLayerTreeView.cpp:
+        * src/WebLayerTreeViewImpl.cpp:
+
 2011-12-05  Dana Jansens  <danakj@chromium.org>
 
         Set opaque flag for WebGLLayerChromium
