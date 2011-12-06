@@ -297,7 +297,7 @@ static inline void checkEncodedString(const String& url)
 {
     UNUSED_PARAM(url);
     ASSERT(url.containsOnlyASCII());
-    ASSERT(!url.isEmpty() || isSchemeFirstChar(url[0]));
+    ASSERT(url.isEmpty() || isSchemeFirstChar(url[0]));
 }
 
 inline bool KURL::protocolIs(const String& string, const char* protocol)

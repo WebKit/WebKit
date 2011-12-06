@@ -1,3 +1,10 @@
+2011-12-06  Andreas Kling  <kling@webkit.org>
+
+        Unreviewed assertion fix for r102123.
+
+        * platform/KURL.cpp:
+        (WebCore::checkEncodedString):
+
 2011-12-06  Benjamin Poulain  <benjamin@webkit.org>
 
         Simplify KURL's checkEncodedString()
