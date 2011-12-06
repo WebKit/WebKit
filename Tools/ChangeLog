@@ -1,5 +1,17 @@
 2011-12-05  Eric Seidel  <eric@webkit.org>
 
+        Up the "expected ram for each DRT instance" to 400MB instead of 300MB
+        in hopes of making the Snow Leopard bot stop timing out.
+
+        Unreviewed.
+
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        (Port.default_child_processes):
+        * Scripts/webkitpy/layout_tests/port/base_unittest.py:
+        (PortTest.test_default_child_processes):
+
+2011-12-05  Eric Seidel  <eric@webkit.org>
+
         NRWT creates too many workers on RAM-limited machines
         https://bugs.webkit.org/show_bug.cgi?id=73847
 

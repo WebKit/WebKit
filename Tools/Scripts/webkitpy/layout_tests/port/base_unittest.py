@@ -56,7 +56,7 @@ class PortTest(unittest.TestCase):
     def test_default_child_processes(self):
         port = self.make_port()
         self.assertEqual(port.default_child_processes(), 2)
-        bytes_for_drt = 300 * 1024 * 1024
+        bytes_for_drt = 400 * 1024 * 1024
 
         port.host.platform.total_bytes_memory = lambda: bytes_for_drt
         expected_stdout = "This machine could support 2 child processes, but only has enough memory for 1.\n"
