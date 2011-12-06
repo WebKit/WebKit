@@ -193,8 +193,7 @@ bool ImageFrame::setSize(int newWidth, int newHeight)
     size_t backingStoreSize = newWidth * newHeight;
     if (!m_backingStore.tryReserveCapacity(backingStoreSize))
         return false;
-    // Vector<> m_backingStore is used as a buffer of bytes only, and is accessed
-    // via the m_bytes member only. There is no need to resize() m_backingStore.
+    m_backingStore.resize(backingStoreSize);
     m_bytes = m_backingStore.data();
     m_size = IntSize(newWidth, newHeight);
 

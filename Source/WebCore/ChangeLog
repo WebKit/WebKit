@@ -1,3 +1,21 @@
+2011-12-05  Noel Gordon  <noel.gordon@gmail.com>
+
+        [GTK] GIF image test crashes on 32- and 64-bit Release
+        https://bugs.webkit.org/show_bug.cgi?id=73812
+
+        Reviewed by Adam Barth.
+
+        Call resize() on the image pixel backing store after allocation to see if
+        that stops the GIF image decoder animation tests crashes on GTK.
+
+        No new tests, covered by exiting tests ...
+          fast/backgrounds/animated-gif-as-background.html
+          fast/images/dont-crash-with-null-gif-frames.html
+          fast/images/gif-loop-count.html
+
+        * platform/image-decoders/ImageDecoder.cpp:
+        (WebCore::ImageFrame::setSize):
+
 2011-12-05  Erik Arvidsson  <arv@chromium.org>
 
         Could save a lot of memory in CharacterData by not always storing a String
