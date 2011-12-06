@@ -34,9 +34,9 @@ class CrashLogs(object):
     def __init__(self, filesystem):
         self._filesystem = filesystem
 
-    def find_newest_log(self, process_name):
+    def find_newest_log(self, process_name, pid=None):
         if sys.platform == "darwin":
-            return self._find_newest_log_darwin(process_name)
+            return self._find_newest_log_darwin(process_name, pid)
 
     def _log_directory_darwin(self):
         log_directory = self._filesystem.expanduser("~")
@@ -47,7 +47,7 @@ class CrashLogs(object):
             log_directory = self._filesystem.join(log_directory, "CrashReporter")
         return log_directory
 
-    def _find_newest_log_darwin(self, process_name):
+    def _find_newest_log_darwin(self, process_name, pid):
         def is_crash_log(fs, dirpath, basename):
             return basename.startswith(process_name + "_") and basename.endswith(".crash")
 
@@ -55,4 +55,13 @@ class CrashLogs(object):
         logs = self._filesystem.files_under(log_directory, file_filter=is_crash_log)
         if not logs:
             return None
-        return self._filesystem.read_text_file(sorted(logs)[-1])
+        for path in reversed(sorted(logs)):
+            if pid is not None:
+                try:
+                    app_description = self._filesystem.getxattr(path, 'app_description')
+                    if not app_description.startswith('%s[%d] version ' % (process_name, pid)):
+                        continue
+                except KeyError:
+                    # The file doesn't have the app_description extended attribute for some reason.
+                    continue
+            return self._filesystem.read_text_file(path)

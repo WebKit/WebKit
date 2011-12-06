@@ -372,11 +372,17 @@ and displayes the status of each builder."""
 
 class CrashLog(AbstractDeclarativeCommand):
     name = "crash-log"
-    argument_names = "PROCESS_NAME"
+    help_text = "Print the newest crash log for the given process"
+    long_help = """Finds the newest crash log matching the given process name
+and PID and prints it to stdout."""
+    argument_names = "PROCESS_NAME [PID]"
 
     def execute(self, options, args, tool):
         crash_logs = CrashLogs(tool.filesystem)
-        print crash_logs.find_newest_log(args[0])
+        pid = None
+        if len(args) > 1:
+            pid = int(args[1])
+        print crash_logs.find_newest_log(args[0], pid)
 
 
 class SkippedPorts(AbstractDeclarativeCommand):

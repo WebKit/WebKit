@@ -1,5 +1,42 @@
 2011-12-06  Adam Roben  <aroben@apple.com>
 
+        Add a pid parameter to CrashLogs.find_newest_log
+
+        When a PID is passed, only crash logs corresponding to a crashed process with that PID are
+        considered.
+
+        Fixes <http://webkit.org/b/73942> webkitpy provides no way to specify the PID of the crashed
+        process whose crash log you want to find
+
+        Reviewed by Dirk Pranke.
+
+        * Scripts/webkitpy/common/system/crashlogs.py:
+        (CrashLogs.find_newest_log): Added an optional pid parameter.
+        (CrashLogs._find_newest_log_darwin): Added a pid parameter. When specified, we look at each
+        candidate log's app_description extended attribute to see if that log corresponds to a
+        crashed process with the specified PID.
+
+        * Scripts/webkitpy/common/system/crashlogs_unittest.py:
+        (CrashLogsTest.test_find_newest_log_darwin): Added a few more mock crash logs with various
+        contents and PIDs. Added tests that show that the pid parameter to find_newest_log is
+        respected. Also fixed an erroneous use of assertTrue instead of assertEqual.
+
+        * Scripts/webkitpy/common/system/filesystem.py:
+        (FileSystem.getxattr): Added. On Darwin, calls through to the xattr module. On other
+        systems, raises a KeyError, mimicking the behavior on Darwin when the given attribute isn't
+        present.
+
+        * Scripts/webkitpy/common/system/filesystem_mock.py:
+        (MockFileSystem.__init__): Added an optional xattrs parameter. Documented other parameters.
+        (MockFileSystem.getxattr): Added. Just pulls the given attribute out of the xattrs
+        dictionary.
+
+        * Scripts/webkitpy/tool/commands/queries.py:
+        (CrashLog): Added help text. Added an optional PID parameter.
+        (CrashLog.execute): Pass the PID, if any, through to find_newest_log.
+
+2011-12-06  Adam Roben  <aroben@apple.com>
+
         Wait for Crash Reporter to finish even when it lets the crashed process die quickly
 
         NRWT was only waiting for Crash Reporter in cases where it was keeping the crashed process

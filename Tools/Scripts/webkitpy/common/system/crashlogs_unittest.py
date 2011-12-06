@@ -33,10 +33,24 @@ class CrashLogsTest(unittest.TestCase):
     def test_find_log_darwin(self):
         if sys.platform != "darwin":
             return
+        older_mock_crash_report = "Older Mock Crash Report"
         mock_crash_report = "Mock Crash Report"
+        newer_mock_crash_report = "Newer Mock Crash Report"
         files = {}
+        files['/Users/mock/Library/Logs/DiagnosticReports/TextMate_2011-06-13-150718_quadzen.crash'] = older_mock_crash_report
         files['/Users/mock/Library/Logs/DiagnosticReports/TextMate_2011-06-13-150719_quadzen.crash'] = mock_crash_report
-        filesystem = MockFileSystem(files)
+        files['/Users/mock/Library/Logs/DiagnosticReports/TextMate_2011-06-13-150720_quadzen.crash'] = newer_mock_crash_report
+        xattrs = {}
+        xattrs['/Users/mock/Library/Logs/DiagnosticReports/TextMate_2011-06-13-150718_quadzen.crash'] = {}
+        xattrs['/Users/mock/Library/Logs/DiagnosticReports/TextMate_2011-06-13-150719_quadzen.crash'] = {'app_description': 'TextMate[28530] version ??? (???)'}
+        xattrs['/Users/mock/Library/Logs/DiagnosticReports/TextMate_2011-06-13-150720_quadzen.crash'] = {'app_description': 'TextMate[28529] version ??? (???)'}
+        filesystem = MockFileSystem(files, xattrs=xattrs)
         crash_logs = CrashLogs(filesystem)
         log = crash_logs.find_newest_log("TextMate")
-        self.assertTrue(log, mock_crash_report)
+        self.assertEqual(log, newer_mock_crash_report)
+        log = crash_logs.find_newest_log("TextMate", 28529)
+        self.assertEqual(log, newer_mock_crash_report)
+        log = crash_logs.find_newest_log("TextMate", 28530)
+        self.assertEqual(log, mock_crash_report)
+        log = crash_logs.find_newest_log("TextMate", 28531)
+        self.assertEqual(log, None)

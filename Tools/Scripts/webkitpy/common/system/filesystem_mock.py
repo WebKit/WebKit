@@ -36,7 +36,7 @@ from webkitpy.common.system import ospath
 
 
 class MockFileSystem(object):
-    def __init__(self, files=None, dirs=None, cwd='/'):
+    def __init__(self, files=None, dirs=None, cwd='/', xattrs=None):
         """Initializes a "mock" filesystem that can be used to completely
         stub out a filesystem.
 
@@ -44,6 +44,9 @@ class MockFileSystem(object):
             files: a dict of filenames -> file contents. A file contents
                 value of None is used to indicate that the file should
                 not exist.
+            dirs: a sequence of directory names
+            cwd: the path against which relative paths should be resolved.
+            xattrs: a dict of filenames -> dict of attribute names -> values.
         """
         self.files = files or {}
         self.written_files = {}
@@ -57,6 +60,9 @@ class MockFileSystem(object):
             while not d in self.dirs:
                 self.dirs.add(d)
                 d = self.dirname(d)
+        self.xattrs = {} if xattrs is None else xattrs
+        for f in self.xattrs:
+            assert f in self.files, f
 
     def _get_sep(self):
         return self._sep
@@ -146,6 +152,9 @@ class MockFileSystem(object):
 
     def getcwd(self):
         return self.cwd
+
+    def getxattr(self, path, attribute_name):
+        return self.xattrs[path][attribute_name]
 
     def glob(self, glob_string):
         # FIXME: This handles '*', but not '?', '[', or ']'.
