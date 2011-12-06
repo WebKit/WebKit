@@ -264,7 +264,8 @@ static void copyASCII(const String& string, char* dest)
         memcpy(dest, string.characters8(), string.length());
     else {
         const UChar* src = string.characters16();
-        for (size_t i = 0; i < string.length(); i++)
+        size_t length = string.length();
+        for (size_t i = 0; i < length; i++)
             dest[i] = static_cast<char>(src[i]);
     }
 }

@@ -1,3 +1,13 @@
+2011-12-06  Benjamin Poulain  <benjamin@webkit.org>
+
+        Put length in its own variable in KURL copyASCII
+        https://bugs.webkit.org/show_bug.cgi?id=73928
+
+        Reviewed by Darin Adler.
+
+        * platform/KURL.cpp:
+        (WebCore::copyASCII):
+
 2011-12-06  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Set opaque flag for ImageLayerChromium
