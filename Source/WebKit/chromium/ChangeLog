@@ -1,5 +1,15 @@
 2011-12-05  Adam Barth  <abarth@webkit.org>
 
+        [Chromium] Chromium fails to compile due to missing WebContentLayerClient.h
+        https://bugs.webkit.org/show_bug.cgi?id=73881
+
+        This patch adds a forwarding header to fix the downstream Windows build:
+        http://build.chromium.org/p/chromium.webkit/builders/Win%20Builder/builds/12955/steps/compile/logs/stdio
+
+        * public/WebContentLayerClient.h: Added.
+
+2011-12-05  Adam Barth  <abarth@webkit.org>
+
         Add a shim to fix the downstream Chromium compile.  The real fix should
         be made downstream via http://codereview.chromium.org/8801036/, but the
         Chromium tree is closed at the moment.
