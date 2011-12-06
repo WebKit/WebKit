@@ -170,7 +170,20 @@ public:
     {
         deleteAllValues(m_values);
     }
-    
+
+    KeyframeValueList& operator=(const KeyframeValueList& other)
+    {
+        KeyframeValueList copy(other);
+        swap(copy);
+        return *this;
+    }
+
+    void swap(KeyframeValueList& other)
+    {
+        std::swap(m_property, other.m_property);
+        m_values.swap(other.m_values);
+    }
+
     AnimatedPropertyID property() const { return m_property; }
 
     size_t size() const { return m_values.size(); }

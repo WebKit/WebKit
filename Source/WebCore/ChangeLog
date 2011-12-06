@@ -1,3 +1,16 @@
+2011-12-05  Yong Li  <yoli@rim.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=73683
+        Implement KeyframeValueList::operator=() and KeyframeValueList::swap().
+
+        Reviewed by Darin Adler.
+
+        No new tests as no functional change.
+
+        * platform/graphics/GraphicsLayer.h: 
+        (WebCore::KeyframeValueList::operator=): Added
+        (WebCore::KeyframeValueList::swap): Added
+
 2011-12-05  Adrienne Walker  <enne@google.com>
 
         [chromium] setNeedsCommit on non-composited host layers should trigger commit
