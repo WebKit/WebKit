@@ -1,3 +1,18 @@
+2011-12-06  Shinya Kawanaka  <shinyak@google.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=73889
+        TextCheckingParagraph::offsetTo should not have a side effect.
+
+        Reviewed by Hajime Morita.
+
+        Since TextCheckingParagraph::offsetTo had a side effect, its cache often became inconsistent.
+        This is likely to cause a bug when changing SpellChecker and Editor.
+
+        No new tests. Covered by existing tests.
+
+        * editing/TextCheckingHelper.cpp:
+        (WebCore::TextCheckingParagraph::offsetTo):
+
 2011-12-06  Eric Penner  <epenner@google.com>
 
         [chromium] Set texture limits as multiples of viewport size instead of hardcoded values

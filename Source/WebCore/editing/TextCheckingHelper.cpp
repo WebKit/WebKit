@@ -157,7 +157,7 @@ PassRefPtr<Range> TextCheckingParagraph::subrange(int characterOffset, int chara
 int TextCheckingParagraph::offsetTo(const Position& position, ExceptionCode& ec) const
 {
     ASSERT(m_checkingRange);
-    RefPtr<Range> range = offsetAsRange();
+    RefPtr<Range> range = offsetAsRange()->cloneRange(ASSERT_NO_EXCEPTION);
     range->setEnd(position.containerNode(), position.computeOffsetInContainerNode(), ec);
     if (ec)
         return 0;
