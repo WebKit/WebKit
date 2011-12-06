@@ -1718,7 +1718,6 @@ fast/backgrounds/body-generated-image-propagated-to-root.html
 fast/backgrounds/gradient-background-leakage.html
 fast/backgrounds/mask-composite.html
 fast/backgrounds/opacity-on-document-element.html
-fast/backgrounds/positioned-root.html
 fast/backgrounds/quirks-mode-line-box-backgrounds.html
 fast/backgrounds/repeat/mask-negative-offset-repeat.html
 fast/backgrounds/repeat/negative-offset-repeat-transformed.html
@@ -1750,7 +1749,6 @@ fast/backgrounds/size/contain-and-cover.html
 fast/backgrounds/size/zero.html
 fast/backgrounds/solid-color-context-restore.html
 fast/backgrounds/svg-as-mask.html
-fast/backgrounds/table-root.html
 fast/block/basic/001.html
 fast/block/basic/002.html
 fast/block/basic/003.html
@@ -2815,7 +2813,6 @@ fast/forms/option-strip-whitespace.html
 fast/forms/option-text-clip.html
 fast/forms/password-doubleclick-selection.html
 fast/forms/password-placeholder-text-security.html
-fast/forms/password-placeholder.html
 fast/forms/placeholder-set-attribute.html
 fast/forms/placeholder-set-value.html
 fast/forms/placeholder-stripped.html
@@ -4060,7 +4057,6 @@ http/tests/navigation/onload-navigation-iframe-2.html
 http/tests/navigation/redirect-preserves-referrer.html
 http/tests/security/canvas-remote-read-data-url-svg-image.html
 http/tests/security/canvas-remote-read-svg-image.html
-http/tests/security/contentSecurityPolicy/directive-parsing.html
 http/tests/security/contentSecurityPolicy/script-src-none-inline-event.html
 http/tests/security/contentSecurityPolicy/script-src-redirect.html
 http/tests/security/cross-frame-access-callback-explicit-domain-DENY.html
@@ -4259,8 +4255,6 @@ svg/css/shadow-with-negative-offset.svg
 svg/css/text-gradient-shadow.svg
 svg/custom/SVGMatrix-interface.svg
 svg/custom/SVGNumber-interface.svg
-svg/custom/SVGPaint-mutate-attribute.svg
-svg/custom/SVGPaint-mutate-inline-style.svg
 svg/custom/SVGPoint-interface.svg
 svg/custom/SVGPoint-matrixTransform.svg
 svg/custom/SVGRect-interface.svg
@@ -4482,7 +4476,6 @@ svg/custom/repaint-on-image-bounds-change.svg
 svg/custom/repaint-shadow.svg
 svg/custom/repaint-stroke-width-changes.svg
 svg/custom/resource-client-removal.svg
-svg/custom/rgbcolor-syntax.svg
 svg/custom/root-container-opacity-clip-viewBox.svg
 svg/custom/rootelement.svg
 svg/custom/rootmost-svg-xy-attrs.xhtml
@@ -6452,7 +6445,6 @@ plugins/get-url-that-the-resource-load-delegate-will-disallow.html
 plugins/get-url-with-iframe-target.html
 plugins/geturlnotify-during-document-teardown.html
 plugins/iframe-plugin-bgcolor.html
-plugins/invalidate_rect.html
 plugins/keyboard-events.html
 plugins/nested-plugin-objects.html
 plugins/netscape-plugin-setwindow-size-2.html
@@ -6982,6 +6974,7 @@ fast/multicol/pagination-h-vertical-lr.html
 fast/multicol/pagination-v-horizontal-tb.html
 fast/multicol/pagination-v-vertical-rl.html
 fast/text/justify-padding-distribution.html
+fast/css-generated-content/nested-tables-with-before-after-content-crash.html
 
 # [Qt] editing/pasteboard/4242293-1.html fails with Qt5
 # https://bugs.webkit.org/show_bug.cgi?id=73417
