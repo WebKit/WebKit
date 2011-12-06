@@ -60,10 +60,14 @@ namespace WTF {
         typedef HashTable<KeyType, ValueType, PairFirstExtractor<ValueType>,
             HashFunctions, ValueTraits, KeyTraits> HashTableType;
 
+        class HashMapKeysProxy;
+        class HashMapValuesProxy;
+
     public:
         typedef HashTableIteratorAdapter<HashTableType, ValueType> iterator;
         typedef HashTableConstIteratorAdapter<HashTableType, ValueType> const_iterator;
 
+    public:
         void swap(HashMap&);
 
         int size() const;
@@ -75,6 +79,12 @@ namespace WTF {
         iterator end();
         const_iterator begin() const;
         const_iterator end() const;
+
+        HashMapKeysProxy& keys() { return static_cast<HashMapKeysProxy&>(*this); }
+        const HashMapKeysProxy& keys() const { return static_cast<const HashMapKeysProxy&>(*this); }
+
+        HashMapValuesProxy& values() { return static_cast<HashMapValuesProxy&>(*this); }
+        const HashMapValuesProxy& values() const { return static_cast<const HashMapValuesProxy&>(*this); }
 
         iterator find(const KeyType&);
         const_iterator find(const KeyType&) const;
@@ -118,6 +128,76 @@ namespace WTF {
 
     private:
         pair<iterator, bool> inlineAdd(const KeyType&, MappedPassInReferenceType);
+
+        class HashMapKeysProxy : private HashMap {
+        public:
+            typedef typename HashMap::iterator::Keys iterator;
+            typedef typename HashMap::const_iterator::Keys const_iterator;
+            
+            iterator begin()
+            {
+                return HashMap::begin().keys();
+            }
+            
+            iterator end()
+            {
+                return HashMap::end().keys();
+            }
+
+            const_iterator begin() const
+            {
+                return HashMap::begin().keys();
+            }
+            
+            const_iterator end() const
+            {
+                return HashMap::end().keys();
+            }
+
+        private:
+            friend class HashMap;
+
+            // These are intentionally not implemented.
+            HashMapKeysProxy();
+            HashMapKeysProxy(const HashMapKeysProxy&);
+            HashMapKeysProxy& operator=(const HashMapKeysProxy&);
+            ~HashMapKeysProxy();
+        };
+
+        class HashMapValuesProxy : private HashMap {
+        public:
+            typedef typename HashMap::iterator::Values iterator;
+            typedef typename HashMap::const_iterator::Values const_iterator;
+            
+            iterator begin()
+            {
+                return HashMap::begin().values();
+            }
+            
+            iterator end()
+            {
+                return HashMap::end().values();
+            }
+
+            const_iterator begin() const
+            {
+                return HashMap::begin().values();
+            }
+            
+            const_iterator end() const
+            {
+                return HashMap::end().values();
+            }
+
+        private:
+            friend class HashMap;
+
+            // These are intentionally not implemented.
+            HashMapValuesProxy();
+            HashMapValuesProxy(const HashMapValuesProxy&);
+            HashMapValuesProxy& operator=(const HashMapValuesProxy&);
+            ~HashMapValuesProxy();
+        };
 
         HashTableType m_impl;
     };

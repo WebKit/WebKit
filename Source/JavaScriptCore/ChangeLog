@@ -1,3 +1,11 @@
+2011-12-05  Anders Carlsson  <andersca@apple.com>
+
+        Add HashMap::keys() and HashMap::values() for easy iteration of hash map keys and values in C++11.
+
+        Reviewed by Darin Adler.
+
+        * wtf/HashMap.h:
+
 2011-12-05  Michael Saboff  <msaboff@apple.com>
 
         Create StringImpl::empty() as an 8 bit string
