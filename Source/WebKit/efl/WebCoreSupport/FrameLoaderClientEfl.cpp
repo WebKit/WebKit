@@ -230,8 +230,16 @@ void FrameLoaderClientEfl::frameLoaderDestroyed()
     delete this;
 }
 
-void FrameLoaderClientEfl::dispatchDidReceiveResponse(DocumentLoader*, unsigned long, const ResourceResponse& response)
+void FrameLoaderClientEfl::dispatchDidReceiveResponse(DocumentLoader* loader, unsigned long, const ResourceResponse& response)
 {
+#if USE(SOUP)
+    // Update our knowledge of request soup flags - some are only set
+    // after the request is done.
+    loader->request().setSoupMessageFlags(response.soupMessageFlags());
+#else
+    UNUSED_PARAM(loader);
+#endif
+
     m_response = response;
 }
 

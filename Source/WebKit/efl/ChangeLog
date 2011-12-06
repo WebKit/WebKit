@@ -1,3 +1,17 @@
+2011-12-05  Raphael Kubo da Costa  <kubo@profusion.mobi>
+
+        [EFL] Do not lose message flags when converting to/from Soup Requests/Responses
+        https://bugs.webkit.org/show_bug.cgi?id=73924
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Apply the same change added to the GTK+ port in r55086 to prevent
+        soup message flags from being lost by updating the request flags when
+        a response is received.
+
+        * WebCoreSupport/FrameLoaderClientEfl.cpp:
+        (WebCore::FrameLoaderClientEfl::dispatchDidReceiveResponse):
+
 2011-12-04  Kangil Han  <kangil.han@samsung.com>
 
         [EFL] Fix broken UTF-8 characters issue on editor command.
