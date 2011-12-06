@@ -291,6 +291,11 @@ inline const RenderView* toRenderView(const RenderObject* object)
 void toRenderView(const RenderView*);
 
 
+ALWAYS_INLINE RenderView* RenderObject::view() const
+{
+    return toRenderView(document()->renderer());
+}
+
 // Stack-based class to assist with LayoutState push/pop
 class LayoutStateMaintainer {
     WTF_MAKE_NONCOPYABLE(LayoutStateMaintainer);

@@ -516,6 +516,7 @@ public:
     
     virtual void updateDragState(bool dragOn);
 
+    // Inlined into RenderView.h for performance and to avoid a cyclic dependency.
     RenderView* view() const;
 
     // Returns true if this renderer is rooted, and optionally returns the hosting view (the root of the hierarchy).

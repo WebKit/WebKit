@@ -1,5 +1,30 @@
 2011-12-06  Julien Chaffraix  <jchaffraix@webkit.org>
 
+        Inline RenderObject::view()
+        https://bugs.webkit.org/show_bug.cgi?id=73733
+
+        Reviewed by Darin Adler.
+
+        Micro-performance optimization, no change in behavior.
+
+        RenderObject::view() is super hot and is taking ~4-5% of the time in some
+        benchmarks as it is called several hundred thousands times. For some reason,
+        the compiler did not inline it even though it is very simple in release builds.
+
+        * WebCore.exp.in: Removed RenderObject::view() as it is inlined now.
+
+        * rendering/RenderObject.cpp: Moved the implementation from here ...
+        * rendering/RenderView.h:
+        (WebCore::RenderObject::view): ... to here to avoid a cyclic
+        dependency between RenderObject and RenderView. Also marked the
+        function as ALWAYS_INLINE.
+
+        * rendering/RenderObject.h:
+        * rendering/svg/RenderSVGResourceContainer.cpp:
+        Added #include "RenderView.h" as the code checks for view() during repaint.
+
+2011-12-06  Julien Chaffraix  <jchaffraix@webkit.org>
+
         CSS Grid Layout: Add support for parsing multiple grid-columns or grid-rows
         https://bugs.webkit.org/show_bug.cgi?id=73272
 

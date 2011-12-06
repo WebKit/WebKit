@@ -2122,11 +2122,6 @@ LayoutRect RenderObject::localCaretRect(InlineBox*, int, LayoutUnit* extraWidthT
     return LayoutRect();
 }
 
-RenderView* RenderObject::view() const
-{
-    return toRenderView(document()->renderer());
-}
-
 bool RenderObject::isRooted(RenderView** view)
 {
     RenderObject* o = this;
