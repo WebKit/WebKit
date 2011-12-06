@@ -1,3 +1,33 @@
+2011-12-05  Darin Adler  <darin@apple.com>
+
+        Convert JSClassRef to use HashMap<OwnPtr>
+        https://bugs.webkit.org/show_bug.cgi?id=73780
+
+        Reviewed by Andreas Kling.
+
+        * API/JSCallbackObjectFunctions.h:
+        (JSC::JSCallbackObject::getOwnPropertyNames): Use get() on the hash map
+        entries because the hash map now has an OwnPtr instead of a raw pointer.
+
+        * API/JSClassRef.cpp:
+        (OpaqueJSClass::OpaqueJSClass): No need to initialize m_staticValues and
+        m_staticFunctions since they are now OwnPtr. Use adoptPtr when allocating.
+        Removed the code that gets and deletes existing entries, and just use set,
+        which now handles deletion automatically due to it being OwnPtr.
+        (OpaqueJSClass::~OpaqueJSClass): Replaced code to do all the deletion
+        with assertion-only NDEBUG-only code.
+        (OpaqueJSClassContextData::OpaqueJSClassContextData): Use adoptPtr when
+        allocating. Use OwnPtr when adding. Removed unneeded code to set
+        staticValues and staticFunctions to 0. Removed unneeded destructor.
+        (OpaqueJSClass::staticValues): Added get call. Also removed unneeded local.
+        (OpaqueJSClass::staticFunctions): Ditto.
+        (OpaqueJSClass::prototype): Added use of adoptPtr.
+
+        * API/JSClassRef.h: Made the static values and static functions tables
+        use OwnPtr for the entries. Also used OwnPtr for the pointers to the
+        tables themselves. Also removed ~OpaqueJSClassContextData(), letting
+        the compiler generate it.
+
 2011-12-05  Oliver Hunt  <oliver@apple.com>
 
         Land uncommitted bit of float array support

@@ -71,38 +71,30 @@ OpaqueJSClass::OpaqueJSClass(const JSClassDefinition* definition, OpaqueJSClass*
     , hasInstance(definition->hasInstance)
     , convertToType(definition->convertToType)
     , m_className(tryCreateStringFromUTF8(definition->className))
-    , m_staticValues(0)
-    , m_staticFunctions(0)
 {
     initializeThreading();
 
     if (const JSStaticValue* staticValue = definition->staticValues) {
-        m_staticValues = new OpaqueJSClassStaticValuesTable();
+        m_staticValues = adoptPtr(new OpaqueJSClassStaticValuesTable);
         while (staticValue->name) {
             UString valueName = tryCreateStringFromUTF8(staticValue->name);
             if (!valueName.isNull()) {
                 // Use a local variable here to sidestep an RVCT compiler bug.
-                StaticValueEntry* entry = new StaticValueEntry(staticValue->getProperty, staticValue->setProperty, staticValue->attributes);
-                StringImpl* impl = valueName.impl();
-                StaticValueEntry* existingEntry = m_staticValues->get(impl);
-                m_staticValues->set(impl, entry);
-                delete existingEntry;
+                OwnPtr<StaticValueEntry> entry = adoptPtr(new StaticValueEntry(staticValue->getProperty, staticValue->setProperty, staticValue->attributes));
+                m_staticValues->set(valueName.impl(), entry.release());
             }
             ++staticValue;
         }
     }
 
     if (const JSStaticFunction* staticFunction = definition->staticFunctions) {
-        m_staticFunctions = new OpaqueJSClassStaticFunctionsTable();
+        m_staticFunctions = adoptPtr(new OpaqueJSClassStaticFunctionsTable);
         while (staticFunction->name) {
             UString functionName = tryCreateStringFromUTF8(staticFunction->name);
             if (!functionName.isNull()) {
                 // Use a local variable here to sidestep an RVCT compiler bug.
-                StaticFunctionEntry* entry = new StaticFunctionEntry(staticFunction->callAsFunction, staticFunction->attributes);
-                StringImpl* impl = functionName.impl();
-                StaticFunctionEntry* existingEntry = m_staticFunctions->get(impl);
-                m_staticFunctions->set(impl, entry);
-                delete existingEntry;
+                OwnPtr<StaticFunctionEntry> entry = adoptPtr(new StaticFunctionEntry(staticFunction->callAsFunction, staticFunction->attributes));
+                m_staticFunctions->set(functionName.impl(), entry.release());
             }
             ++staticFunction;
         }
@@ -117,23 +109,19 @@ OpaqueJSClass::~OpaqueJSClass()
     // The empty string is shared across threads & is an identifier, in all other cases we should have done a deep copy in className(), below. 
     ASSERT(!m_className.length() || !m_className.impl()->isIdentifier());
 
+#ifndef NDEBUG
     if (m_staticValues) {
         OpaqueJSClassStaticValuesTable::const_iterator end = m_staticValues->end();
-        for (OpaqueJSClassStaticValuesTable::const_iterator it = m_staticValues->begin(); it != end; ++it) {
+        for (OpaqueJSClassStaticValuesTable::const_iterator it = m_staticValues->begin(); it != end; ++it)
             ASSERT(!it->first->isIdentifier());
-            delete it->second;
-        }
-        delete m_staticValues;
     }
 
     if (m_staticFunctions) {
         OpaqueJSClassStaticFunctionsTable::const_iterator end = m_staticFunctions->end();
-        for (OpaqueJSClassStaticFunctionsTable::const_iterator it = m_staticFunctions->begin(); it != end; ++it) {
+        for (OpaqueJSClassStaticFunctionsTable::const_iterator it = m_staticFunctions->begin(); it != end; ++it)
             ASSERT(!it->first->isIdentifier());
-            delete it->second;
-        }
-        delete m_staticFunctions;
     }
+#endif
     
     if (prototypeClass)
         JSClassRelease(prototypeClass);
@@ -162,41 +150,25 @@ OpaqueJSClassContextData::OpaqueJSClassContextData(JSC::JSGlobalData&, OpaqueJSC
     : m_class(jsClass)
 {
     if (jsClass->m_staticValues) {
-        staticValues = new OpaqueJSClassStaticValuesTable;
+        staticValues = adoptPtr(new OpaqueJSClassStaticValuesTable);
         OpaqueJSClassStaticValuesTable::const_iterator end = jsClass->m_staticValues->end();
         for (OpaqueJSClassStaticValuesTable::const_iterator it = jsClass->m_staticValues->begin(); it != end; ++it) {
             ASSERT(!it->first->isIdentifier());
             // Use a local variable here to sidestep an RVCT compiler bug.
-            StaticValueEntry* entry = new StaticValueEntry(it->second->getProperty, it->second->setProperty, it->second->attributes);
-            staticValues->add(StringImpl::create(it->first->characters(), it->first->length()), entry);
+            OwnPtr<StaticValueEntry> entry = adoptPtr(new StaticValueEntry(it->second->getProperty, it->second->setProperty, it->second->attributes));
+            staticValues->add(StringImpl::create(it->first->characters(), it->first->length()), entry.release());
         }
-    } else
-        staticValues = 0;
+    }
 
     if (jsClass->m_staticFunctions) {
-        staticFunctions = new OpaqueJSClassStaticFunctionsTable;
+        staticFunctions = adoptPtr(new OpaqueJSClassStaticFunctionsTable);
         OpaqueJSClassStaticFunctionsTable::const_iterator end = jsClass->m_staticFunctions->end();
         for (OpaqueJSClassStaticFunctionsTable::const_iterator it = jsClass->m_staticFunctions->begin(); it != end; ++it) {
             ASSERT(!it->first->isIdentifier());
             // Use a local variable here to sidestep an RVCT compiler bug.
-            StaticFunctionEntry* entry = new StaticFunctionEntry(it->second->callAsFunction, it->second->attributes);
-            staticFunctions->add(StringImpl::create(it->first->characters(), it->first->length()), entry);
+            OwnPtr<StaticFunctionEntry> entry = adoptPtr(new StaticFunctionEntry(it->second->callAsFunction, it->second->attributes));
+            staticFunctions->add(StringImpl::create(it->first->characters(), it->first->length()), entry.release());
         }
-            
-    } else
-        staticFunctions = 0;
-}
-
-OpaqueJSClassContextData::~OpaqueJSClassContextData()
-{
-    if (staticValues) {
-        deleteAllValues(*staticValues);
-        delete staticValues;
-    }
-
-    if (staticFunctions) {
-        deleteAllValues(*staticFunctions);
-        delete staticFunctions;
     }
 }
 
@@ -216,14 +188,12 @@ UString OpaqueJSClass::className()
 
 OpaqueJSClassStaticValuesTable* OpaqueJSClass::staticValues(JSC::ExecState* exec)
 {
-    OpaqueJSClassContextData& jsClassData = contextData(exec);
-    return jsClassData.staticValues;
+    return contextData(exec).staticValues.get();
 }
 
 OpaqueJSClassStaticFunctionsTable* OpaqueJSClass::staticFunctions(JSC::ExecState* exec)
 {
-    OpaqueJSClassContextData& jsClassData = contextData(exec);
-    return jsClassData.staticFunctions;
+    return contextData(exec).staticFunctions.get();
 }
 
 /*!
@@ -248,11 +218,11 @@ JSObject* OpaqueJSClass::prototype(ExecState* exec)
         if (!prototypeClass)
             prototypeClass = OpaqueJSClass::create(&kJSClassDefinitionEmpty).leakRef();
         if (!prototypeClass->m_staticFunctions)
-            prototypeClass->m_staticFunctions = new OpaqueJSClassStaticFunctionsTable;
+            prototypeClass->m_staticFunctions = adoptPtr(new OpaqueJSClassStaticFunctionsTable);
         const Identifier& toString = exec->propertyNames().toString;
         const Identifier& valueOf = exec->propertyNames().valueOf;
-        prototypeClass->m_staticFunctions->add(StringImpl::create(toString.characters(), toString.length()), new StaticFunctionEntry(&JSCallbackFunction::toStringCallback, 0));
-        prototypeClass->m_staticFunctions->add(StringImpl::create(valueOf.characters(), valueOf.length()), new StaticFunctionEntry(&JSCallbackFunction::valueOfCallback, 0));
+        prototypeClass->m_staticFunctions->add(StringImpl::create(toString.characters(), toString.length()), adoptPtr(new StaticFunctionEntry(&JSCallbackFunction::toStringCallback, 0)));
+        prototypeClass->m_staticFunctions->add(StringImpl::create(valueOf.characters(), valueOf.length()), adoptPtr(new StaticFunctionEntry(&JSCallbackFunction::valueOfCallback, 0)));
     }
 
     if (!prototypeClass)

@@ -439,7 +439,7 @@ void JSCallbackObject<Parent>::getOwnPropertyNames(JSObject* object, ExecState* 
             iterator end = staticValues->end();
             for (iterator it = staticValues->begin(); it != end; ++it) {
                 StringImpl* name = it->first.get();
-                StaticValueEntry* entry = it->second;
+                StaticValueEntry* entry = it->second.get();
                 if (entry->getProperty && (!(entry->attributes & kJSPropertyAttributeDontEnum) || (mode == IncludeDontEnumProperties)))
                     propertyNames.add(Identifier(exec, name));
             }
@@ -450,7 +450,7 @@ void JSCallbackObject<Parent>::getOwnPropertyNames(JSObject* object, ExecState* 
             iterator end = staticFunctions->end();
             for (iterator it = staticFunctions->begin(); it != end; ++it) {
                 StringImpl* name = it->first.get();
-                StaticFunctionEntry* entry = it->second;
+                StaticFunctionEntry* entry = it->second.get();
                 if (!(entry->attributes & kJSPropertyAttributeDontEnum) || (mode == IncludeDontEnumProperties))
                     propertyNames.add(Identifier(exec, name));
             }

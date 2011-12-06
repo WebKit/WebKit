@@ -59,8 +59,8 @@ public:
     JSPropertyAttributes attributes;
 };
 
-typedef HashMap<RefPtr<StringImpl>, StaticValueEntry*> OpaqueJSClassStaticValuesTable;
-typedef HashMap<RefPtr<StringImpl>, StaticFunctionEntry*> OpaqueJSClassStaticFunctionsTable;
+typedef HashMap<RefPtr<StringImpl>, OwnPtr<StaticValueEntry> > OpaqueJSClassStaticValuesTable;
+typedef HashMap<RefPtr<StringImpl>, OwnPtr<StaticFunctionEntry> > OpaqueJSClassStaticFunctionsTable;
 
 struct OpaqueJSClass;
 
@@ -70,7 +70,6 @@ struct OpaqueJSClassContextData {
     WTF_MAKE_NONCOPYABLE(OpaqueJSClassContextData); WTF_MAKE_FAST_ALLOCATED;
 public:
     OpaqueJSClassContextData(JSC::JSGlobalData&, OpaqueJSClass*);
-    ~OpaqueJSClassContextData();
 
     // It is necessary to keep OpaqueJSClass alive because of the following rare scenario:
     // 1. A class is created and used, so its context data is stored in JSGlobalData hash map.
@@ -80,8 +79,8 @@ public:
     // 4. When it is used, the old context data is found in JSGlobalData and used.
     RefPtr<OpaqueJSClass> m_class;
 
-    OpaqueJSClassStaticValuesTable* staticValues;
-    OpaqueJSClassStaticFunctionsTable* staticFunctions;
+    OwnPtr<OpaqueJSClassStaticValuesTable> staticValues;
+    OwnPtr<OpaqueJSClassStaticFunctionsTable> staticFunctions;
     JSC::Weak<JSC::JSObject> cachedPrototype;
 };
 
@@ -121,8 +120,8 @@ private:
 
     // UStrings in these data members should not be put into any IdentifierTable.
     JSC::UString m_className;
-    OpaqueJSClassStaticValuesTable* m_staticValues;
-    OpaqueJSClassStaticFunctionsTable* m_staticFunctions;
+    OwnPtr<OpaqueJSClassStaticValuesTable> m_staticValues;
+    OwnPtr<OpaqueJSClassStaticFunctionsTable> m_staticFunctions;
 };
 
 #endif // JSClassRef_h
