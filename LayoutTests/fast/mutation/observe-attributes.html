@@ -22,22 +22,28 @@ function testBasic() {
 
         mutations = null;
         div = document.createElement('div');
+        div.setAttribute('bar', 'foo');
+
         observer = new WebKitMutationObserver(function(m) {
             mutations = m;
         });
 
         observer.observe(div, { attributes: true, characterData: true });
         div.setAttribute('foo', 'bar');
+        div.removeAttribute('bar');
         setTimeout(checkDisconnectAndMutate, 0);
     }
 
     function checkDisconnectAndMutate() {
         debug('...can attribute changes be observed at all');
 
-        shouldBe('mutations.length', '1');
+        shouldBe('mutations.length', '2');
         shouldBe('mutations[0].type', '"attributes"');
         shouldBe('mutations[0].attributeName', '"foo"');
         shouldBe('mutations[0].attributeNamespace', 'null');
+        shouldBe('mutations[1].type', '"attributes"');
+        shouldBe('mutations[1].attributeName', '"bar"');
+        shouldBe('mutations[1].attributeNamespace', 'null');
 
         mutations = null;
         observer.disconnect();
@@ -303,23 +309,30 @@ function testOldValue() {
         debug('Testing basic oldValue delivery.');
         mutations = null;
         div = document.createElement('div');
+        div.setAttribute('bar', 'boo');
+        
         observer = new WebKitMutationObserver(function(mutations) {
             window.mutations = mutations;
         });
         observer.observe(div, { attributes: true, attributeOldValue: true });
         div.setAttribute('foo', 'bar');
         div.setAttribute('foo', 'baz');
+        div.removeAttribute('bar');
+        div.removeAttribute('non-existant');
         setTimeout(finish, 0);
     }
 
     function finish() {
-        shouldBe('mutations.length', '2');
+        shouldBe('mutations.length', '3');
         shouldBe('mutations[0].type', '"attributes"');
         shouldBe('mutations[0].attributeName', '"foo"');
         shouldBe('mutations[0].oldValue', 'null');
         shouldBe('mutations[1].type', '"attributes"');
         shouldBe('mutations[1].attributeName', '"foo"');
         shouldBe('mutations[1].oldValue', '"bar"');
+        shouldBe('mutations[2].type', '"attributes"');
+        shouldBe('mutations[2].attributeName', '"bar"');
+        shouldBe('mutations[2].oldValue', '"boo"');
         observer.disconnect();
         debug('');
         runNextTest();

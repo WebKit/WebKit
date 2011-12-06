@@ -180,13 +180,25 @@ void Element::copyNonAttributeProperties(const Element*)
 {
 }
 
+#if ENABLE(MUTATION_OBSERVERS)
+static void enqueueAttributesMutationRecord(Element* target, const QualifiedName& attributeName, const AtomicString& oldValue)
+{
+    OwnPtr<MutationObserverInterestGroup> mutationRecipients = MutationObserverInterestGroup::createForAttributesMutation(target, attributeName);
+    mutationRecipients->enqueueMutationRecord(MutationRecord::createAttributes(target, attributeName, oldValue));
+}
+#endif
+
 void Element::removeAttribute(const QualifiedName& name, ExceptionCode& ec)
 {
     if (m_attributeMap) {
         ec = 0;
-        m_attributeMap->removeNamedItem(name, ec);
+        RefPtr<Node> attrNode = m_attributeMap->removeNamedItem(name, ec);
         if (ec == NOT_FOUND_ERR)
             ec = 0;
+#if ENABLE(MUTATION_OBSERVERS)
+        else
+            enqueueAttributesMutationRecord(this, name, attrNode->nodeValue());
+#endif
     }
 }
 
@@ -615,14 +627,6 @@ const AtomicString& Element::getAttributeNS(const String& namespaceURI, const St
 {
     return getAttribute(QualifiedName(nullAtom, localName, namespaceURI));
 }
-
-#if ENABLE(MUTATION_OBSERVERS)
-static void enqueueAttributesMutationRecord(Element* target, const QualifiedName& attributeName, const AtomicString& oldValue)
-{
-    OwnPtr<MutationObserverInterestGroup> mutationRecipients = MutationObserverInterestGroup::createForAttributesMutation(target, attributeName);
-    mutationRecipients->enqueueMutationRecord(MutationRecord::createAttributes(target, attributeName, oldValue));
-}
-#endif
 
 void Element::setAttribute(const AtomicString& name, const AtomicString& value, ExceptionCode& ec)
 {
@@ -1542,9 +1546,13 @@ void Element::removeAttribute(const String& name, ExceptionCode& ec)
 
     if (m_attributeMap) {
         ec = 0;
-        m_attributeMap->removeNamedItem(localName, ec);
+        RefPtr<Node> attrNode = m_attributeMap->removeNamedItem(localName, ec);
         if (ec == NOT_FOUND_ERR)
             ec = 0;
+#if ENABLE(MUTATION_OBSERVERS)
+        else
+            enqueueAttributesMutationRecord(this, QualifiedName(nullAtom, localName, nullAtom), attrNode->nodeValue());
+#endif
     }
     
     InspectorInstrumentation::didRemoveDOMAttr(document(), this, name);
