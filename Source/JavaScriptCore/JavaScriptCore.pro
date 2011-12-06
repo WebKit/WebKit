@@ -7,13 +7,19 @@
 TEMPLATE = subdirs
 CONFIG += ordered
 
-derived_sources.file = DerivedSources.pri
-target.file = Target.pri
+WTF.file = wtf/wtf.pro
+WTF.makefile = Makefile.WTF
+SUBDIRS += WTF
 
-SUBDIRS = derived_sources target
+!v8 {
+    derived_sources.file = DerivedSources.pri
+    target.file = Target.pri
 
-addStrictSubdirOrderBetween(derived_sources, target)
+    SUBDIRS += derived_sources target
 
-jsc.file = jsc.pro
-jsc.makefile = Makefile.jsc
-SUBDIRS += jsc
+    addStrictSubdirOrderBetween(derived_sources, target)
+
+    jsc.file = jsc.pro
+    jsc.makefile = Makefile.jsc
+    SUBDIRS += jsc
+}

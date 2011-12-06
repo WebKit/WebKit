@@ -1,3 +1,14 @@
+2011-12-06  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] build-jsc script doesn't work
+        https://bugs.webkit.org/show_bug.cgi?id=73910
+
+        Reviewed by Tor Arne Vestbø.
+
+        * JavaScriptCore.pro: Build WTF before JavaScriptCore and JSC
+        (moved from top-level WebKit.pro). Also add v8 scopes to only build
+        WTF during v8 builds.
+
 2011-12-05  Anders Carlsson  <andersca@apple.com>
 
         Add HashMap::keys() and HashMap::values() for easy iteration of hash map keys and values in C++11.
