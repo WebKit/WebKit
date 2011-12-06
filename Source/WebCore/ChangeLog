@@ -1,3 +1,14 @@
+2011-12-05  Benjamin Poulain  <bpoulain@apple.com>
+
+        Upstream htmlSelectMultipleItems needed for <select multiple> by iOS
+        https://bugs.webkit.org/show_bug.cgi?id=73734
+
+        Reviewed by David Kilzer.
+
+        * platform/DefaultLocalizationStrategy.cpp:
+        (WebCore::DefaultLocalizationStrategy::htmlSelectMultipleItems):
+        * platform/DefaultLocalizationStrategy.h:
+
 2011-12-05  Darin Adler  <darin@apple.com>
 
         Use HashMap<OwnPtr> in CrossOriginPreflightResultCache

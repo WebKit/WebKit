@@ -169,7 +169,10 @@ public:
     virtual String keygenMenuItem1024();
     virtual String keygenMenuItem2048();
     virtual String keygenKeychainItemName(const String& host);
-#endif
+#if PLATFORM(IOS)
+    virtual String htmlSelectMultipleItems(int);
+#endif // PLATFORM(IOS)
+#endif // PLATFORM(MAC)
     virtual String imageTitle(const String& filename, const IntSize&);
     virtual String mediaElementLoadingStateText();
     virtual String mediaElementLiveBroadcastStateText();
