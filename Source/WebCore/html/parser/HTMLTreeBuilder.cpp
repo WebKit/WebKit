@@ -2313,7 +2313,7 @@ void HTMLTreeBuilder::processEndTag(AtomicHTMLToken& token)
         processEndTag(token);
         break;
     case InForeignContentMode:
-        if (m_tree.currentElement()->namespaceURI() == SVGNames::svgNamespaceURI)
+        if (m_tree.currentNode()->namespaceURI() == SVGNames::svgNamespaceURI)
             adjustSVGTagNameCase(token);
 
         if (token.name() == SVGNames::scriptTag && m_tree.currentNode()->hasTagName(SVGNames::scriptTag)) {

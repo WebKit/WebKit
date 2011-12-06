@@ -1,3 +1,17 @@
+2011-12-05  Florin Malita  <fmalita@google.com>
+
+        Heap-buffer-overflow in WebCore::HTMLTreeBuilder::processEndTag
+        https://bugs.webkit.org/show_bug.cgi?id=73765
+
+        Reviewed by Adam Barth.
+
+        Test: fast/parser/foreign-content-crash.html
+
+        Use m_tree.currentNode() instead of m_tree.currentElement() as the top node is not always an Element.
+
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::processEndTag):
+
 2011-12-05  Stephen White  <senorblanco@chromium.org>
 
         Allow the ImageBuffers used by SVG filters to be accelerated
