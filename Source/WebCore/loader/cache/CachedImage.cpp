@@ -113,15 +113,15 @@ void CachedImage::allClientsRemoved()
         m_decodedDataDeletionTimer.startOneShot(interval);
 }
 
-Image* CachedImage::brokenImage(float deviceScaleFactor) const
+pair<Image*, float> CachedImage::brokenImage(float deviceScaleFactor) const
 {
     if (deviceScaleFactor >= 2) {
         DEFINE_STATIC_LOCAL(Image*, brokenImageHiRes, (Image::loadPlatformResource("missingImage@2x").leakRef()));
-        return brokenImageHiRes;
+        return make_pair(brokenImageHiRes, 2);
     }
 
     DEFINE_STATIC_LOCAL(Image*, brokenImageLoRes, (Image::loadPlatformResource("missingImage").leakRef()));
-    return brokenImageLoRes;
+    return make_pair(brokenImageLoRes, 1);
 }
 
 bool CachedImage::willPaintBrokenImage() const
@@ -137,7 +137,7 @@ Image* CachedImage::image() const
         // Returning the 1x broken image is non-ideal, but we cannot reliably access the appropriate
         // deviceScaleFactor from here. It is critical that callers use CachedImage::brokenImage() 
         // when they need the real, deviceScaleFactor-appropriate broken image icon. 
-        return brokenImage(1);
+        return brokenImage(1).first;
     }
 
     if (m_image)
