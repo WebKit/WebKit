@@ -93,9 +93,12 @@ void initialize(WebKitPlatformSupport* webKitPlatformSupport)
     WebCore::V8BindingPerIsolateData::ensureInitialized(v8::Isolate::GetCurrent());
 
 #if ENABLE(MUTATION_OBSERVERS)
-    ASSERT(!s_endOfTaskRunner);
-    s_endOfTaskRunner = new EndOfTaskRunner;
-    webKitPlatformSupport->currentThread()->addTaskObserver(s_endOfTaskRunner);
+    // currentThread will always be non-null in production, but can be null in Chromium unit tests.
+    if (WebThread* currentThread = webKitPlatformSupport->currentThread()) {
+        ASSERT(!s_endOfTaskRunner);
+        s_endOfTaskRunner = new EndOfTaskRunner;
+        currentThread->addTaskObserver(s_endOfTaskRunner);
+    }
 #endif
 }
 
@@ -127,6 +130,7 @@ void shutdown()
 {
 #if ENABLE(MUTATION_OBSERVERS)
     if (s_endOfTaskRunner) {
+        ASSERT(s_webKitPlatformSupport->currentThread());
         s_webKitPlatformSupport->currentThread()->removeTaskObserver(s_endOfTaskRunner);
         delete s_endOfTaskRunner;
         s_endOfTaskRunner = 0;

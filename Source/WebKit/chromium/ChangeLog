@@ -1,3 +1,18 @@
+2011-12-06  Adam Klein  <adamk@chromium.org>
+
+        [chromium] Guard access to WebKitPlatformSupport::currentThread with a null check
+        https://bugs.webkit.org/show_bug.cgi?id=73937
+
+        Reviewed by Adam Barth.
+
+        Though |currentThread| is never null in production code, it is null in
+        unit tests (such as Chromium's unit_tests) that call WebKit::initialize()
+        without first constructing a MessageLoop.
+
+        * src/WebKit.cpp:
+        (WebKit::initialize):
+        (WebKit::shutdown):
+
 2011-12-06  Alexandre Elias  <aelias@google.com>
 
         [chromium] Apply sent deltas on finishCommit
