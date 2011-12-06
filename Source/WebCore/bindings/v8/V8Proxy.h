@@ -264,8 +264,6 @@ namespace WebCore {
         static void reportUnsafeAccessTo(Frame* target);
 
     private:
-        static void didLeaveScriptContext();
-
         void resetIsolatedWorlds();
 
         PassOwnPtr<v8::ScriptData> precompileScript(v8::Handle<v8::String>, CachedScript*);

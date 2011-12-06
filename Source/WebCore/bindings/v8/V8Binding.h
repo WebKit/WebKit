@@ -145,8 +145,8 @@ namespace WebCore {
         void setDOMDataStore(DOMDataStore* store) { m_domDataStore = store; }
 
         int recursionLevel() const { return m_recursionLevel; }
-        void incrementRecursionLevel() { ++m_recursionLevel; }
-        void decrementRecursionLevel() { --m_recursionLevel; }
+        int incrementRecursionLevel() { return ++m_recursionLevel; }
+        int decrementRecursionLevel() { return --m_recursionLevel; }
 
 #ifndef NDEBUG
         GlobalHandleMap& globalHandleMap() { return m_globalHandleMap; }
@@ -176,13 +176,6 @@ namespace WebCore {
 #ifndef NDEBUG
         GlobalHandleMap m_globalHandleMap;
 #endif
-    };
-
-    class V8RecursionScope {
-        WTF_MAKE_NONCOPYABLE(V8RecursionScope);
-    public:
-        V8RecursionScope() { V8BindingPerIsolateData::current()->incrementRecursionLevel(); }
-        ~V8RecursionScope() { V8BindingPerIsolateData::current()->decrementRecursionLevel(); }
     };
 
     class ConstructorMode {

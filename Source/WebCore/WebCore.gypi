@@ -2139,6 +2139,8 @@
             'bindings/v8/V8NodeFilterCondition.h',
             'bindings/v8/V8Proxy.cpp',
             'bindings/v8/V8Proxy.h',
+            'bindings/v8/V8RecursionScope.cpp',
+            'bindings/v8/V8RecursionScope.h',
             'bindings/v8/V8Utilities.cpp',
             'bindings/v8/V8Utilities.h',
             'bindings/v8/V8WindowErrorHandler.cpp',

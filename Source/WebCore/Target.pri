@@ -134,6 +134,7 @@ v8 {
         bindings/v8/V8NPUtils.cpp \
         bindings/v8/V8NodeFilterCondition.cpp \
         bindings/v8/V8Proxy.cpp \
+        bindings/v8/V8RecursionScope.cpp \
         bindings/v8/V8Utilities.cpp \
         bindings/v8/V8WindowErrorHandler.cpp \
         bindings/v8/V8WorkerContextEventListener.cpp \
@@ -1389,6 +1390,7 @@ v8 {
         bindings/v8/V8NPObject.h \
         bindings/v8/V8NPUtils.h \
         bindings/v8/V8Proxy.h \
+        bindings/v8/V8RecursionScope.h \
         bindings/v8/V8Utilities.h \
         bindings/v8/V8WindowErrorHandler.h \
         bindings/v8/V8WorkerContextEventListener.h \

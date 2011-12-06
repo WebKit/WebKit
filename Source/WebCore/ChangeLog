@@ -1,3 +1,38 @@
+2011-12-05  Adam Klein  <adamk@chromium.org>
+
+        V8RecursionScope should call didLeaveScriptContext when recursionLevel reaches zero
+        https://bugs.webkit.org/show_bug.cgi?id=73867
+
+        Reviewed by Adam Barth.
+
+        Moved V8RecursionScope into its own file, and moved
+        V8Proxy::didLeaveScriptContext into that file, along with a static
+        recursionLevel accessor, hiding the V8BindingPerIsolateData methods
+        from V8Proxy.
+
+        This will make it easy and less error-prone to use V8RecursionScope
+        properly. I plan to make use of it in V8LazyEventListener to fix
+        https://bugs.webkit.org/show_bug.cgi?id=73492.
+
+        No new tests, refactoring only.
+
+        * Target.pri:
+        * UseV8.cmake:
+        * WebCore.gypi:
+        * bindings/v8/V8Binding.h:
+        (WebCore::V8BindingPerIsolateData::incrementRecursionLevel): return the new recursion level.
+        (WebCore::V8BindingPerIsolateData::decrementRecursionLevel): return the new recursion level.
+        * bindings/v8/V8Proxy.cpp: remove didLeaveScriptContext.
+        (WebCore::V8Proxy::runScript): remove explicit call to didLeaveScriptContext.
+        (WebCore::V8Proxy::instrumentedCallFunction): remove explicit call to didLeaveScriptContext.
+        * bindings/v8/V8Proxy.h: remove didLeaveScriptContext.
+        * bindings/v8/V8RecursionScope.cpp: Added.
+        (WebCore::V8RecursionScope::didLeaveScriptContext): copied from V8Proxy.cpp.
+        * bindings/v8/V8RecursionScope.h: Added.
+        (WebCore::V8RecursionScope::V8RecursionScope):
+        (WebCore::V8RecursionScope::~V8RecursionScope):
+        (WebCore::V8RecursionScope::recursionLevel):
+
 2011-12-05  Benjamin Poulain  <bpoulain@apple.com>
 
         Build fix for SecurityOrigin.cpp when neither BLOB nor FILE_SYSTEM are defined

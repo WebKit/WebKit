@@ -42,7 +42,6 @@
 #include "Frame.h"
 #include "FrameLoaderClient.h"
 #include "IDBFactoryBackendInterface.h"
-#include "IDBPendingTransactionMonitor.h"
 #include "InspectorInstrumentation.h"
 #include "Page.h"
 #include "PlatformSupport.h"
@@ -57,7 +56,7 @@
 #include "V8DOMWindow.h"
 #include "V8HiddenPropertyName.h"
 #include "V8IsolatedContext.h"
-#include "WebKitMutationObserver.h"
+#include "V8RecursionScope.h"
 #include "WorkerContext.h"
 #include "WorkerContextExecutionProxy.h"
 
@@ -173,11 +172,6 @@ static void handleFatalErrorInV8()
     // FIXME: We temporarily deal with V8 internal error situations
     // such as out-of-memory by crashing the renderer.
     CRASH();
-}
-
-static int recursionLevel()
-{
-    return V8BindingPerIsolateData::current()->recursionLevel();
 }
 
 static v8::Local<v8::Value> handleMaxRecursionDepthExceeded()
@@ -390,7 +384,7 @@ v8::Local<v8::Value> V8Proxy::runScript(v8::Handle<v8::Script> script)
         return notHandledByInterceptor();
 
     V8GCController::checkMemoryUsage();
-    if (recursionLevel() >= kMaxRecursionDepth)
+    if (V8RecursionScope::recursionLevel() >= kMaxRecursionDepth)
         return handleMaxRecursionDepthExceeded();
 
     if (handleOutOfMemory())
@@ -407,8 +401,6 @@ v8::Local<v8::Value> V8Proxy::runScript(v8::Handle<v8::Script> script)
         V8RecursionScope recursionScope;
         result = script->Run();
     }
-
-    didLeaveScriptContext();
 
     if (handleOutOfMemory())
         ASSERT(result.IsEmpty());
@@ -439,7 +431,7 @@ v8::Local<v8::Value> V8Proxy::instrumentedCallFunction(Page* page, v8::Handle<v8
 {
     V8GCController::checkMemoryUsage();
 
-    if (recursionLevel() >= kMaxRecursionDepth)
+    if (V8RecursionScope::recursionLevel() >= kMaxRecursionDepth)
         return handleMaxRecursionDepthExceeded();
 
     InspectorInstrumentationCookie cookie;
@@ -459,9 +451,6 @@ v8::Local<v8::Value> V8Proxy::instrumentedCallFunction(Page* page, v8::Handle<v8
         V8RecursionScope recursionScope;
         result = function->Call(receiver, argc, args);
     }
-
-    // FIXME: Instrument any work that takes place when script exits to c++ (e.g. Mutation Observers).
-    didLeaveScriptContext();
 
     InspectorInstrumentation::didCallFunction(cookie);
 
@@ -550,23 +539,6 @@ V8Proxy* V8Proxy::retrieve(ScriptExecutionContext* context)
     if (!context || !context->isDocument())
         return 0;
     return retrieve(static_cast<Document*>(context)->frame());
-}
-
-void V8Proxy::didLeaveScriptContext()
-{
-    if (recursionLevel())
-        return;
-
-#if ENABLE(INDEXED_DATABASE)
-    // If we've just left a script context and indexed database has been
-    // instantiated, we must let its transaction coordinator know so it can terminate
-    // any not-yet-started transactions.
-    IDBPendingTransactionMonitor::abortPendingTransactions();
-#endif // ENABLE(INDEXED_DATABASE)
-
-#if ENABLE(MUTATION_OBSERVERS)
-    WebCore::WebKitMutationObserver::deliverAllMutations();
-#endif
 }
 
 void V8Proxy::resetIsolatedWorlds()
