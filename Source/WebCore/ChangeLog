@@ -1,3 +1,21 @@
+2011-12-06  Adrienne Walker  <enne@google.com>
+
+        [chromium] Don't crash if tile upload happens without painting first
+        https://bugs.webkit.org/show_bug.cgi?id=73939
+
+        Reviewed by James Robinson.
+
+        Remove at least one place (in ImageLayerChromium) where this could
+        happen.
+
+        Although this shouldn't happen, we should be robust to it in the
+        chance that other code causes it to.
+
+        * platform/graphics/chromium/ImageLayerChromium.cpp:
+        (WebCore::ImageLayerChromium::paintContentsIfDirty):
+        * platform/graphics/chromium/TiledLayerChromium.cpp:
+        (WebCore::TiledLayerChromium::updateCompositorResources):
+
 2011-12-06  Ruben  <chromium@hybridsource.org>
 
         Enable web audio by default on non-Mac POSIX platforms

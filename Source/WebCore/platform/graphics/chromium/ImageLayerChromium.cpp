@@ -178,9 +178,6 @@ void ImageLayerChromium::paintContentsIfDirty()
         }
     }
 
-    if (visibleLayerRect().isEmpty())
-        return;
-
     prepareToUpdate(visibleLayerRect());
 }
 
