@@ -46,8 +46,8 @@ StringImpl* StringImpl::empty()
     // into the zero-page.
     // Replace this with 'reinterpret_cast<UChar*>(static_cast<intptr_t>(1))' once
     // PCRE goes away.
-    static UChar emptyUCharData = 0;
-    DEFINE_STATIC_LOCAL(StringImpl, emptyString, (&emptyUCharData, 0, ConstructStaticString));
+    static LChar emptyLCharData = 0;
+    DEFINE_STATIC_LOCAL(StringImpl, emptyString, (&emptyLCharData, 0, ConstructStaticString));
     WTF_ANNOTATE_BENIGN_RACE(&emptyString, "Benign race on StringImpl::emptyString reference counter");
     return &emptyString;
 }

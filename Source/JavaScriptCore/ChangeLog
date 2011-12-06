@@ -1,3 +1,13 @@
+2011-12-05  Michael Saboff  <msaboff@apple.com>
+
+        Create StringImpl::empty() as an 8 bit string
+        https://bugs.webkit.org/show_bug.cgi?id=73871
+
+        Reviewed by Oliver Hunt.
+
+        * wtf/text/StringStatics.cpp:
+        (WTF::StringImpl::empty): Changed to be an 8 bit string.
+
 2011-12-05  Darin Adler  <darin@apple.com>
 
         Convert JSClassRef to use HashMap<OwnPtr>
