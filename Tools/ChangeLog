@@ -1,3 +1,23 @@
+2011-12-05  Raphael Kubo da Costa  <kubo@profusion.mobi>
+
+        webkit.py: Really fix the printing of StringImpl now that 8-bit strings are present.
+        https://bugs.webkit.org/show_bug.cgi?id=73878
+
+        Reviewed by Tony Chang.
+
+        r98624 turned StringImpl::m_data into StringImpl::{m_data8,m_data16}.
+        r98785 made webkit.py always use m_data16, which does not work when
+        the string is an 8-bit string (such as KURL::string()).
+
+        I was not able to directly call StringImpl::is8Bit() in the Python
+        code, so I just reproduced the implementation there.
+
+        * gdb/webkit.py:
+        (WTFStringPrinter.is_8bit): Reproduced StringImpl::is8Bit().
+        (WTFStringPrinter.to_string):
+        (JSCUStringPrinter.is_8bit): Reproduced StringImpl::is8Bit().
+        (JSCUStringPrinter.to_string):
+
 2011-12-05  Eric Seidel  <eric@webkit.org>
 
         Up the "expected ram for each DRT instance" to 400MB instead of 300MB

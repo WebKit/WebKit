@@ -107,11 +107,19 @@ class WTFStringPrinter(StringPrinter):
             return 0
         return self.val['m_impl']['m_ptr']['m_length']
 
+    def is_8bit(self):
+        return self.val['m_impl']['m_ptr']['m_hashAndFlags'] & self.val['m_impl']['m_ptr']['s_hashFlag8BitBuffer']
+
     def to_string(self):
         if self.get_length() == 0:
             return '(null)'
 
-        return ustring_to_string(self.val['m_impl']['m_ptr']['m_data16'],
+        if self.is_8bit():
+            data_member = 'm_data8'
+        else:
+            data_member = 'm_data16'
+
+        return ustring_to_string(self.val['m_impl']['m_ptr'][data_member],
                                  self.get_length())
 
 
@@ -122,11 +130,19 @@ class JSCUStringPrinter(StringPrinter):
             return 0
         return self.val['m_impl']['m_ptr']['m_length']
 
+    def is_8bit(self):
+        return self.val['m_impl']['m_ptr']['m_hashAndFlags'] & self.val['m_impl']['m_ptr']['s_hashFlag8BitBuffer']
+
     def to_string(self):
         if self.get_length() == 0:
             return ''
 
-        return ustring_to_string(self.val['m_impl']['m_ptr']['m_data16'],
+        if self.is_8bit():
+            data_member = 'm_data8'
+        else:
+            data_member = 'm_data16'
+
+        return ustring_to_string(self.val['m_impl']['m_ptr'][data_member],
                                  self.get_length())
 
 
