@@ -1,3 +1,20 @@
+2011-12-05  Darin Adler  <darin@apple.com>
+
+        Change CSSFontSelector to use HashMap<OwnPtr>
+        https://bugs.webkit.org/show_bug.cgi?id=73781
+
+        Reviewed by Dan Bernstein.
+
+        * css/CSSFontSelector.cpp:
+        (WebCore::CSSFontSelector::~CSSFontSelector): Removed calls to deleteAllValues.
+        (WebCore::CSSFontSelector::addFontFaceRule): Updated to use OwnPtr instead of raw
+        pointer for the entry in m_fontFaces and m_locallyInstalledFontFaces.
+        (WebCore::CSSFontSelector::getFontData): Updated to use OwnPtr instead of raw
+        pointer for the entry in m_fonts. Also removed an unneeded std:: prefix.
+
+        * css/CSSFontSelector.h: Made m_fontFaces, m_locallyInstalledFontFaces, and m_fonts
+        be HashMap<OwnPtr>.
+
 2011-12-05  Adam Klein  <adamk@chromium.org>
 
         V8RecursionScope should call didLeaveScriptContext when recursionLevel reaches zero

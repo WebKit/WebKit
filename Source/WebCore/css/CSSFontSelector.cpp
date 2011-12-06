@@ -56,6 +56,8 @@
 #include "SVGNames.h"
 #endif
 
+using namespace std;
+
 namespace WebCore {
 
 CSSFontSelector::CSSFontSelector(Document* document)
@@ -74,9 +76,6 @@ CSSFontSelector::~CSSFontSelector()
 {
     clearDocument();
     fontCache()->removeClient(this);
-    deleteAllValues(m_fontFaces);
-    deleteAllValues(m_locallyInstalledFontFaces);
-    deleteAllValues(m_fonts);
 }
 
 bool CSSFontSelector::isEmpty() const
@@ -320,20 +319,16 @@ void CSSFontSelector::addFontFaceRule(const CSSFontFaceRule* fontFaceRule)
         if (familyName.isEmpty())
             continue;
 
-        Vector<RefPtr<CSSFontFace> >* familyFontFaces = m_fontFaces.get(familyName);
+        OwnPtr<Vector<RefPtr<CSSFontFace> > >& familyFontFaces = m_fontFaces.add(familyName, nullptr).first->second;
         if (!familyFontFaces) {
-            familyFontFaces = new Vector<RefPtr<CSSFontFace> >;
-            m_fontFaces.set(familyName, familyFontFaces);
+            familyFontFaces = adoptPtr(new Vector<RefPtr<CSSFontFace> >);
 
             ASSERT(!m_locallyInstalledFontFaces.contains(familyName));
-            Vector<RefPtr<CSSFontFace> >* familyLocallyInstalledFaces;
 
             Vector<unsigned> locallyInstalledFontsTraitsMasks;
             fontCache()->getTraitsInFamily(familyName, locallyInstalledFontsTraitsMasks);
-            unsigned numLocallyInstalledFaces = locallyInstalledFontsTraitsMasks.size();
-            if (numLocallyInstalledFaces) {
-                familyLocallyInstalledFaces = new Vector<RefPtr<CSSFontFace> >;
-                m_locallyInstalledFontFaces.set(familyName, familyLocallyInstalledFaces);
+            if (unsigned numLocallyInstalledFaces = locallyInstalledFontsTraitsMasks.size()) {
+                OwnPtr<Vector<RefPtr<CSSFontFace> > > familyLocallyInstalledFaces = adoptPtr(new Vector<RefPtr<CSSFontFace> >);
 
                 for (unsigned i = 0; i < numLocallyInstalledFaces; ++i) {
                     RefPtr<CSSFontFace> locallyInstalledFontFace = CSSFontFace::create(static_cast<FontTraitsMask>(locallyInstalledFontsTraitsMasks[i]), true);
@@ -341,6 +336,8 @@ void CSSFontSelector::addFontFaceRule(const CSSFontFaceRule* fontFaceRule)
                     ASSERT(locallyInstalledFontFace->isValid());
                     familyLocallyInstalledFaces->append(locallyInstalledFontFace);
                 }
+
+                m_locallyInstalledFontFaces.set(familyName, familyLocallyInstalledFaces.release());
             }
         }
 
@@ -522,19 +519,16 @@ FontData* CSSFontSelector::getFontData(const FontDescription& fontDescription, c
         return fontDataForGenericFamily(m_document, fontDescription, familyName);
     }
 
-    HashMap<unsigned, RefPtr<CSSSegmentedFontFace> >* segmentedFontFaceCache = m_fonts.get(family);
-    if (!segmentedFontFaceCache) {
-        segmentedFontFaceCache = new HashMap<unsigned, RefPtr<CSSSegmentedFontFace> >;
-        m_fonts.set(family, segmentedFontFaceCache);
-    }
+    OwnPtr<HashMap<unsigned, RefPtr<CSSSegmentedFontFace> > >& segmentedFontFaceCache = m_fonts.add(family, nullptr).first->second;
+    if (!segmentedFontFaceCache)
+        segmentedFontFaceCache = adoptPtr(new HashMap<unsigned, RefPtr<CSSSegmentedFontFace> >);
 
     FontTraitsMask traitsMask = fontDescription.traitsMask();
 
-    RefPtr<CSSSegmentedFontFace> face = segmentedFontFaceCache->get(traitsMask);
-
+    RefPtr<CSSSegmentedFontFace>& face = segmentedFontFaceCache->add(traitsMask, 0).first->second;
     if (!face) {
         face = CSSSegmentedFontFace::create(this);
-        segmentedFontFaceCache->set(traitsMask, face);
+
         // Collect all matching faces and sort them in order of preference.
         Vector<CSSFontFace*, 32> candidateFontFaces;
         for (int i = familyFontFaces->size() - 1; i >= 0; --i) {
@@ -567,7 +561,7 @@ FontData* CSSFontSelector::getFontData(const FontDescription& fontDescription, c
         }
 
         desiredTraitsMaskForComparison = traitsMask;
-        std::stable_sort(candidateFontFaces.begin(), candidateFontFaces.end(), compareFontFaces);
+        stable_sort(candidateFontFaces.begin(), candidateFontFaces.end(), compareFontFaces);
         unsigned numCandidates = candidateFontFaces.size();
         for (unsigned i = 0; i < numCandidates; ++i)
             face->appendFontFace(candidateFontFaces[i]);
