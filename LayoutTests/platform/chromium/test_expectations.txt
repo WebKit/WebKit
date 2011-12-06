@@ -3822,3 +3822,5 @@ BUGWK73905 GPU LINUX : media/video-transformed.html = IMAGE
 BUGWK73905 GPU LINUX : media/video-zoom-controls.html = IMAGE
 BUGWK73905 GPU WIN : media/video-layer-crash.html = TEXT
 
+BUGWK73933 DEBUG : svg/W3C-SVG-1.1-SE/struct-dom-11-f.svg = TIMEOUT PASS
+
