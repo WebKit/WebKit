@@ -83,6 +83,8 @@ void WebConnectionToWebProcess::didReceiveSyncMessage(CoreIPC::Connection* conne
 
 void WebConnectionToWebProcess::didClose(CoreIPC::Connection* connection)
 {
+    RefPtr<WebConnectionToWebProcess> protector(this);
+
     m_process->didClose(connection);
 
     // Tell the API client that the connection closed.

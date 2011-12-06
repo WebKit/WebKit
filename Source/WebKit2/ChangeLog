@@ -1,3 +1,17 @@
+2011-12-06  Simon Fraser  <simon.fraser@apple.com>
+
+        UI process crashes if the Web Process crashes on launch
+        https://bugs.webkit.org/show_bug.cgi?id=73943
+
+        Reviewed by Sam Weinig.
+        
+        When the Web Process crashes on launch, the WebConnectionToWebProcess
+        object was getting deleted inside of didClose. Add a protector to
+        prevent this.
+
+        * UIProcess/WebConnectionToWebProcess.cpp:
+        (WebKit::WebConnectionToWebProcess::didClose):
+
 2011-12-06  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         [Qt] Fix page overlay rendering with AC.
