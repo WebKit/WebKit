@@ -145,6 +145,7 @@ PlatformLayer* DrawingBuffer::platformLayer()
     if (!m_platformLayer) {
         m_platformLayer = WebGLLayerChromium::create(0);
         m_platformLayer->setDrawingBuffer(this);
+        m_platformLayer->setOpaque(!m_context->getContextAttributes().alpha);
     }
 
     return m_platformLayer.get();

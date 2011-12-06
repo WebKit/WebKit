@@ -1,3 +1,15 @@
+2011-12-05  Dana Jansens  <danakj@chromium.org>
+
+        Set opaque flag for WebGLLayerChromium
+        https://bugs.webkit.org/show_bug.cgi?id=73876
+
+        Reviewed by James Robinson.
+
+        New unit test in tests/WebGLLayerChromiumTest.cpp
+
+        * platform/graphics/chromium/DrawingBufferChromium.cpp:
+        (WebCore::DrawingBuffer::platformLayer):
+
 2011-12-05  Benjamin Poulain  <bpoulain@apple.com>
 
         Upstream the Cursor implementation of iOS

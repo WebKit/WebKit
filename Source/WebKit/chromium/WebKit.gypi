@@ -93,6 +93,7 @@
             'tests/TreeTestHelpers.h',
             'tests/WebCompositorInputHandlerImplTest.cpp',
             'tests/WebFrameTest.cpp',
+            'tests/WebGLLayerChromiumTest.cpp',
             'tests/WebLayerTest.cpp',
             'tests/WebPageNewSerializerTest.cpp',
             'tests/WebPageSerializerTest.cpp',

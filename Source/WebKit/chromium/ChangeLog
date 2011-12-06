@@ -1,3 +1,23 @@
+2011-12-05  Dana Jansens  <danakj@chromium.org>
+
+        Set opaque flag for WebGLLayerChromium
+        https://bugs.webkit.org/show_bug.cgi?id=73876
+
+        Reviewed by James Robinson.
+
+        * WebKit.gypi:
+        * tests/WebGLLayerChromiumTest.cpp: Added.
+        (WebKit::CompositorMockWebGraphicsContext3D::create):
+        (WebKit::CompositorMockWebGraphicsContext3D::makeContextCurrent):
+        (WebKit::CompositorMockWebGraphicsContext3D::createProgram):
+        (WebKit::CompositorMockWebGraphicsContext3D::createShader):
+        (WebKit::CompositorMockWebGraphicsContext3D::getShaderiv):
+        (WebKit::CompositorMockWebGraphicsContext3D::getProgramiv):
+        (WebKit::CompositorMockWebGraphicsContext3D::getContextAttributes):
+        (WebKit::CompositorMockWebGraphicsContext3D::CompositorMockWebGraphicsContext3D):
+        (WebKit::createGraphicsContext):
+        (WebKit::TEST):
+
 2011-12-05  Adrienne Walker  <enne@google.com>
 
         [chromium] setNeedsCommit on non-composited host layers should trigger commit
