@@ -54,9 +54,6 @@
 #include "CSSTimingFunctionValue.h"
 #include "CSSValueList.h"
 #include "CursorList.h"
-#if ENABLE(CSS_FILTERS)
-#include "FilterOperation.h"
-#endif
 #include "FontFamilyValue.h"
 #include "FontFeatureValue.h"
 #include "FontValue.h"
@@ -102,9 +99,6 @@
 #include "TransformationMatrix.h"
 #include "TranslateTransformOperation.h"
 #include "UserAgentStyleSheets.h"
-#if ENABLE(CSS_FILTERS)
-#include "WebKitCSSFilterValue.h"
-#endif
 #include "WebKitCSSKeyframeRule.h"
 #include "WebKitCSSKeyframesRule.h"
 #include "WebKitCSSRegionRule.h"
@@ -113,6 +107,11 @@
 #include "XMLNames.h"
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
+
+#if ENABLE(CSS_FILTERS)
+#include "FilterOperation.h"
+#include "WebKitCSSFilterValue.h"
+#endif
 
 #if ENABLE(DASHBOARD_SUPPORT)
 #include "DashboardRegion.h"
@@ -203,17 +202,15 @@ class RuleSet {
     WTF_MAKE_NONCOPYABLE(RuleSet);
 public:
     RuleSet();
-    ~RuleSet();
 
-    typedef HashMap<AtomicStringImpl*, Vector<RuleData>*> AtomRuleMap;
+    typedef HashMap<AtomicStringImpl*, OwnPtr<Vector<RuleData> > > AtomRuleMap;
 
     void addRulesFromSheet(CSSStyleSheet*, const MediaQueryEvaluator&, CSSStyleSelector* = 0);
 
     void addStyleRule(CSSStyleRule* item);
     void addRule(CSSStyleRule* rule, CSSSelector* sel);
     void addPageRule(CSSPageRule*);
-    void addToRuleSet(AtomicStringImpl* key, AtomRuleMap& map,
-                      CSSStyleRule* rule, CSSSelector* sel);
+    void addToRuleSet(AtomicStringImpl* key, AtomRuleMap&, CSSStyleRule*, CSSSelector*);
     void shrinkToFit();
     void disableAutoShrinkToFit() { m_autoShrinkToFitEnabled = false; }
 
@@ -1858,25 +1855,14 @@ RuleSet::RuleSet()
 {
 }
 
-RuleSet::~RuleSet()
+void RuleSet::addToRuleSet(AtomicStringImpl* key, AtomRuleMap& map, CSSStyleRule* rule, CSSSelector* selector)
 {
-    deleteAllValues(m_idRules);
-    deleteAllValues(m_classRules);
-    deleteAllValues(m_shadowPseudoElementRules);
-    deleteAllValues(m_tagRules);
-}
-
-
-void RuleSet::addToRuleSet(AtomicStringImpl* key, AtomRuleMap& map,
-                              CSSStyleRule* rule, CSSSelector* sel)
-{
-    if (!key) return;
-    Vector<RuleData>* rules = map.get(key);
-    if (!rules) {
-        rules = new Vector<RuleData>;
-        map.set(key, rules);
-    }
-    rules->append(RuleData(rule, sel, m_ruleCount++));
+    if (!key)
+        return;
+    OwnPtr<Vector<RuleData> >& rules = map.add(key, nullptr).first->second;
+    if (!rules)
+        rules = adoptPtr(new Vector<RuleData>);
+    rules->append(RuleData(rule, selector, m_ruleCount++));
 }
 
 void RuleSet::addRule(CSSStyleRule* rule, CSSSelector* sel)

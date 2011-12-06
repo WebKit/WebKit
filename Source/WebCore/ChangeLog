@@ -1,3 +1,14 @@
+2011-12-05  Darin Adler  <darin@apple.com>
+
+        Change RuleSet to use HashMap<OwnPtr>
+        https://bugs.webkit.org/show_bug.cgi?id=73783
+
+        Reviewed by Andreas Kling.
+
+        * css/CSSStyleSelector.cpp: Make RuleSet::AtomRuleMap use OwnPtr for the mapped values.
+        (WebCore::RuleSet::addToRuleSet): Use add instead of get/set to set up a new entry in the
+        map or find the old entry in the map.
+
 2011-12-05  Mario Sanchez Prada  <msanchez@igalia.com>
 
         [GTK] Move emissions of AtkDocument signals down to WebCore
