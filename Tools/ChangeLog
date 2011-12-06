@@ -1,3 +1,23 @@
+2011-12-05  Alexander Færøy  <alexander.faeroy@nokia.com>
+
+        [Qt] MiniBrowser should default to touch behavior
+        https://bugs.webkit.org/show_bug.cgi?id=73863
+
+        Reviewed by Chang Shu.
+
+        MiniBrowser currently defaults to the traditional desktop behaviour
+        instead of touch behaviour which is prefered.
+
+        * MiniBrowser/qt/BrowserWindow.cpp:
+        (BrowserWindow::BrowserWindow):
+        * MiniBrowser/qt/MiniBrowserApplication.cpp:
+        (printHelp):
+        (MiniBrowserApplication::handleUserOptions):
+        * MiniBrowser/qt/MiniBrowserApplication.h:
+        (WindowOptions::WindowOptions):
+        (WindowOptions::setUseTraditionalDesktopBehavior):
+        (WindowOptions::useTraditionalDesktopBehavior):
+
 2011-12-05  Raphael Kubo da Costa  <kubo@profusion.mobi>
 
         webkit.py: Really fix the printing of StringImpl now that 8-bit strings are present.

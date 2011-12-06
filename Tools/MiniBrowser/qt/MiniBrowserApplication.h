@@ -41,14 +41,14 @@
 class WindowOptions : public QObject {
     Q_OBJECT
     Q_PROPERTY(bool printLoadedUrls READ printLoadedUrls)
-    Q_PROPERTY(bool useTouchWebView READ useTouchWebView)
+    Q_PROPERTY(bool useTraditionalDesktopBehavior READ useTraditionalDesktopBehavior)
     Q_PROPERTY(bool startMaximized READ startMaximized)
 
 public:
     WindowOptions(QObject* parent = 0)
         : QObject(parent)
         , m_printLoadedUrls(false)
-        , m_useTouchWebView(false)
+        , m_useTraditionalDesktopBehavior(false)
         , m_startMaximized(false)
         , m_windowSize(QSize(980, 735))
     {
@@ -56,8 +56,8 @@ public:
 
     void setPrintLoadedUrls(bool enabled) { m_printLoadedUrls = enabled; }
     bool printLoadedUrls() const { return m_printLoadedUrls; }
-    void setUseTouchWebView(bool enabled) { m_useTouchWebView = enabled; }
-    bool useTouchWebView() const { return m_useTouchWebView; }
+    void setUseTraditionalDesktopBehavior(bool enabled) { m_useTraditionalDesktopBehavior = enabled; }
+    bool useTraditionalDesktopBehavior() const { return m_useTraditionalDesktopBehavior; }
     void setStartMaximized(bool enabled) { m_startMaximized = enabled; }
     bool startMaximized() const { return m_startMaximized; }
     void setStartFullScreen(bool enabled) { m_startFullScreen = enabled; }
@@ -67,7 +67,7 @@ public:
 
 private:
     bool m_printLoadedUrls;
-    bool m_useTouchWebView;
+    bool m_useTraditionalDesktopBehavior;
     bool m_startMaximized;
     bool m_startFullScreen;
     QSize m_windowSize;

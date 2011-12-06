@@ -51,7 +51,7 @@ BrowserWindow::BrowserWindow(WindowOptions* options)
     engine()->rootContext()->setContextProperty("options", options);
     setSource(QUrl("qrc:/qml/BrowserWindow.qml"));
     connect(rootObject(), SIGNAL(pageTitleChanged(QString)), this, SLOT(setWindowTitle(QString)));
-    if (!options->useTouchWebView())
+    if (options->useTraditionalDesktopBehavior())
         webView()->experimental()->setUseTraditionalDesktopBehaviour(true);
     if (options->startFullScreen())
         showFullScreen();

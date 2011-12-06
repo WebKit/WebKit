@@ -168,7 +168,7 @@ void MiniBrowserApplication::sendTouchEvent(QWindow* targetWindow)
 static void printHelp(const QString& programName)
 {
     qDebug() << "Usage:" << programName.toLatin1().data()
-         << "[--touch]"
+         << "[--desktop]"
          << "[-r list]"
          << "[--robot-timeout seconds]"
          << "[--robot-extra-time seconds]"
@@ -192,7 +192,7 @@ void MiniBrowserApplication::handleUserOptions()
         appQuit(0);
     }
 
-    m_windowOptions.setUseTouchWebView(takeOptionFlag(&args, "--touch"));
+    m_windowOptions.setUseTraditionalDesktopBehavior(takeOptionFlag(&args, "--desktop"));
     m_windowOptions.setPrintLoadedUrls(takeOptionFlag(&args, "-v"));
     m_windowOptions.setStartMaximized(takeOptionFlag(&args, "--maximize"));
     m_windowOptions.setStartFullScreen(takeOptionFlag(&args, "-f"));
