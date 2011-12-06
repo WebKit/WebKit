@@ -297,9 +297,6 @@ void TextureMapperNode::renderContent(TextureMapper* textureMapper, GraphicsLaye
     if (!textureMapper)
         return;
 
-    if (m_currentContent.contentType == MediaContentType)
-        return;
-
     // FIXME: Add directly composited images.
     FloatRect dirtyRect = m_currentContent.needsDisplay ? entireRect() : m_currentContent.needsDisplayRect;
 
@@ -384,16 +381,6 @@ void TextureMapperNode::paintSelf(const TextureMapperPaintOptions& options)
     float opacity = options.isSurface ? 1 : options.opacity;
     FloatRect targetRect = this->targetRect();
 
-    if (m_currentContent.contentType == MediaContentType && m_currentContent.media) {
-        if (m_state.replicaLayer && !options.isSurface)
-            m_currentContent.media->paintToTextureMapper(options.textureMapper, targetRect,
-                                                         TransformationMatrix(m_transforms.target).multiply(m_state.replicaLayer->m_transforms.local),
-                                                         opacity * m_state.replicaLayer->m_opacity,
-                                                         replicaMaskTexture ? replicaMaskTexture.get() : maskTexture.get());
-        m_currentContent.media->paintToTextureMapper(options.textureMapper, targetRect, m_transforms.target, opacity, options.isSurface ? 0 : maskTexture.get());
-        return;
-    }
-
 #if USE(TILED_BACKING_STORE)
     Vector<ExternallyManagedTile> tilesToPaint;
 
@@ -446,6 +433,15 @@ void TextureMapperNode::paintSelf(const TextureMapperPaintOptions& options)
 
         const FloatRect rect = targetRectForTileRect(targetRect, m_ownedTiles[i].rect);
         options.textureMapper->drawTexture(*texture, rect, m_transforms.target, opacity, options.isSurface ? 0 : maskTexture.get());
+    }
+
+    if (m_currentContent.contentType == MediaContentType && m_currentContent.media) {
+        if (m_state.replicaLayer && !options.isSurface)
+            m_currentContent.media->paintToTextureMapper(options.textureMapper, targetRect,
+                                                         TransformationMatrix(m_transforms.target).multiply(m_state.replicaLayer->m_transforms.local),
+                                                         opacity * m_state.replicaLayer->m_opacity,
+                                                         replicaMaskTexture ? replicaMaskTexture.get() : maskTexture.get());
+        m_currentContent.media->paintToTextureMapper(options.textureMapper, targetRect, m_transforms.target, opacity, options.isSurface ? 0 : maskTexture.get());
     }
 }
 

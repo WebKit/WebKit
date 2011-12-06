@@ -45,7 +45,7 @@ public:
 
     // reimps from GraphicsLayer.h
     virtual void setNeedsDisplay();
-    virtual void setContentsNeedsDisplay() { setNeedsDisplay(); };
+    virtual void setContentsNeedsDisplay();
     virtual void setNeedsDisplayInRect(const FloatRect&);
     virtual void setParent(GraphicsLayer* layer);
     virtual bool setChildren(const Vector<GraphicsLayer*>&);

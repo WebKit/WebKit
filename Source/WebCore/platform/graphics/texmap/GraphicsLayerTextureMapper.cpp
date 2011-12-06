@@ -67,6 +67,15 @@ void GraphicsLayerTextureMapper::setNeedsDisplay()
 
 /* \reimp (GraphicsLayer.h)
 */
+void GraphicsLayerTextureMapper::setContentsNeedsDisplay()
+{
+    if (!node()->media())
+        m_pendingContent.needsDisplay = true;
+    notifyChange(TextureMapperNode::DisplayChange);
+}
+
+/* \reimp (GraphicsLayer.h)
+*/
 void GraphicsLayerTextureMapper::setNeedsDisplayInRect(const FloatRect& rect)
 {
     if (m_pendingContent.needsDisplay)

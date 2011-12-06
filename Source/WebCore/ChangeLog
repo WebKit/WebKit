@@ -1,3 +1,22 @@
+2011-12-06  Huang Dongsung  <luxtella@company100.net>
+
+        [TexMap][QT] Draw the borders of media and webgl elements in TexMap.
+        https://bugs.webkit.org/show_bug.cgi?id=73817
+
+        GraphicsContext3D only draws the content of the WebGL canvas, not the additional
+        CSS such as the borders. TextureMapper should render the content of a
+        media/webgl layer before drawing the actual canvas.
+        This makes LayoutTests/compositing/webgl/webgl-reflection.html work.
+
+        Reviewed by Noam Rosenthal.
+
+        * platform/graphics/texmap/GraphicsLayerTextureMapper.cpp:
+        (WebCore::GraphicsLayerTextureMapper::setContentsNeedsDisplay):
+        * platform/graphics/texmap/GraphicsLayerTextureMapper.h:
+        * platform/graphics/texmap/TextureMapperNode.cpp:
+        (WebCore::TextureMapperNode::renderContent):
+        (WebCore::TextureMapperNode::paintSelf):
+
 2011-12-06  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r102043.
