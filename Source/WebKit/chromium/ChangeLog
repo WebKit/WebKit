@@ -1,5 +1,11 @@
 2011-12-05  James Robinson  <jamesr@chromium.org>
 
+        chromium build fix
+
+        * src/WebLayerTreeView.cpp:
+
+2011-12-05  James Robinson  <jamesr@chromium.org>
+
         Rollout http://trac.webkit.org/changeset/102019, dependent has not
         landed in chromium
 
