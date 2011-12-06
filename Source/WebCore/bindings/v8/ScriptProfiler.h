@@ -63,6 +63,7 @@ public:
     static bool isSampling() { return true; }
     static bool hasHeapProfiler() { return true; }
     static void initialize();
+    static unsigned domNodeCount();
 };
 
 } // namespace WebCore

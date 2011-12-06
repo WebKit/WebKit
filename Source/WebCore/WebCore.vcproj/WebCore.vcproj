@@ -68534,6 +68534,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\inspector\InspectorMemoryAgent.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\inspector\InspectorMemoryAgent.h"
+				>
+			</File>
+			<File
 				RelativePath="..\inspector\InspectorPageAgent.cpp"
 				>
 			</File>

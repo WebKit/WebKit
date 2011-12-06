@@ -46,6 +46,18 @@
         ]
     },
     {
+        "domain": "Memory",
+        "hidden": true,
+        "commands": [
+            {
+                "name": "getDOMNodeCount",
+                "returns": [
+                    { "name": "count", "type": "integer" }
+                ]
+            }
+        ]
+    },
+    {
         "domain": "Page",
         "description": "Actions and events related to the inspected page belong to the page domain.",
         "types": [

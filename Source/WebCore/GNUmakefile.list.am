@@ -2067,6 +2067,8 @@ webcore_sources += \
 	Source/WebCore/inspector/InspectorFrontendHost.h \
 	Source/WebCore/inspector/InspectorInstrumentation.cpp \
 	Source/WebCore/inspector/InspectorInstrumentation.h \
+	Source/WebCore/inspector/InspectorMemoryAgent.cpp \
+	Source/WebCore/inspector/InspectorMemoryAgent.h \
 	Source/WebCore/inspector/InspectorPageAgent.cpp \
 	Source/WebCore/inspector/InspectorPageAgent.h \
 	Source/WebCore/inspector/InspectorProfilerAgent.cpp \

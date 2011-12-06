@@ -2755,6 +2755,8 @@
             'inspector/InspectorFrontendHost.h',
             'inspector/InspectorInstrumentation.cpp',
             'inspector/InspectorInstrumentation.h',
+            'inspector/InspectorMemoryAgent.cpp',
+            'inspector/InspectorMemoryAgent.h',
             'inspector/InspectorPageAgent.cpp',
             'inspector/InspectorPageAgent.h',
             'inspector/InspectorProfilerAgent.cpp',

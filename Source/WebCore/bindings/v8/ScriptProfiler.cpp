@@ -35,6 +35,7 @@
 #include "InspectorValues.h"
 #include "RetainedDOMInfo.h"
 #include "V8Binding.h"
+#include "V8DOMMap.h"
 #include "V8Node.h"
 
 #include <v8-profiler.h>
@@ -143,6 +144,45 @@ void ScriptProfiler::initialize()
 #if ENABLE(INSPECTOR)
     v8::HeapProfiler::DefineWrapperClass(v8DOMSubtreeClassId, &retainedDOMInfo);
 #endif // ENABLE(INSPECTOR)
+}
+
+namespace {
+
+class CounterVisitor : public DOMWrapperMap<Node>::Visitor {
+public:
+    CounterVisitor() : m_count(0) { }
+
+    void visitDOMWrapper(DOMDataStore* store, Node* node, v8::Persistent<v8::Object> wrapper)
+    {
+        Node* rootNode = node;
+        while (rootNode->parentNode())
+            rootNode = rootNode->parentNode();
+
+        if (m_roots.contains(rootNode))
+            return;
+        m_roots.add(rootNode);
+
+        Node* currentNode = rootNode;
+        while ((currentNode = currentNode->traverseNextNode(rootNode)))
+            ++m_count;
+    }
+
+    unsigned nodeCount()
+    {
+        return m_count;
+    }
+private:
+    HashSet<Node*> m_roots;
+    unsigned m_count;
+};
+
+} // namespace
+
+unsigned ScriptProfiler::domNodeCount()
+{
+    CounterVisitor counterVisitor;
+    visitDOMNodes(&counterVisitor);
+    return counterVisitor.nodeCount();
 }
 
 

@@ -58,6 +58,8 @@ public:
     static bool causesRecompilation() { return true; }
     static bool isSampling() { return false; }
     static bool hasHeapProfiler() { return false; }
+    // FIXME: Implement this counter for JSC. See bug 73936 for more details.
+    static unsigned domNodeCount() { return 0; }
 };
 
 } // namespace WebCore
