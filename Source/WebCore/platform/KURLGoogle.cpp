@@ -341,22 +341,6 @@ const String& KURLGooglePrivate::string() const
 
 // KURL ------------------------------------------------------------------------
 
-// Creates with null-terminated string input representing an absolute URL.
-// WebCore generally calls this only with hardcoded strings, so the input is
-// ASCII. We treat it as UTF-8 just in case.
-KURL::KURL(ParsedURLStringTag, const char *url)
-{
-    // FIXME The Mac code checks for beginning with a slash and converts it to
-    // file: URL. We will want to add this as well once we can compile on a
-    // system like that.
-    m_url.init(KURL(), url, strlen(url), 0);
-
-    // The one-argument constructors should never generate a null string.
-    // This is a funny quirk of KURL.cpp (probably a bug) which we preserve.
-    if (m_url.utf8String().isNull())
-        m_url.setAscii(CString("", 0));
-}
-
 // Initializes with a string representing an absolute URL. No encoding
 // information is specified. This generally happens when a KURL is converted
 // to a string and then converted back. In this case, the URL is already

@@ -507,7 +507,7 @@ PassRefPtr<LegacyWebArchive> LegacyWebArchive::create(const String& markupString
     // it's possible to have a response without a URL here
     // <rdar://problem/5454935>
     if (responseURL.isNull())
-        responseURL = KURL(ParsedURLString, "");
+        responseURL = KURL(ParsedURLString, emptyString());
         
     PassRefPtr<ArchiveResource> mainResource = ArchiveResource::create(utf8Buffer(markupString), responseURL, response.mimeType(), "UTF-8", frame->tree()->uniqueName());
 

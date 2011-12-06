@@ -1,5 +1,32 @@
 2011-12-05  Benjamin Poulain  <benjamin@webkit.org>
 
+        Get rid of KURL::KURL(ParsedURLStringTag, const char*);
+        https://bugs.webkit.org/show_bug.cgi?id=73792
+
+        Reviewed by Andreas Kling.
+
+        In all cases where the constructor is used, the constructor
+        taking a String is as effective because the string is valid and converted
+        to String for m_string.
+
+        This patch remove the constructor KURL::KURL(ParsedURLStringTag, const char*)
+        and change the call sites that were using that constructor to build
+        empty URLs.
+
+        * dom/Document.cpp:
+        (WebCore::Document::initSecurityContext):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::init):
+        * loader/archive/cf/LegacyWebArchive.cpp:
+        (WebCore::LegacyWebArchive::create):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::createWindow):
+        * platform/KURL.cpp:
+        * platform/KURL.h:
+        * platform/KURLGoogle.cpp:
+
+2011-12-05  Benjamin Poulain  <benjamin@webkit.org>
+
         Remove methods declared but never implemented with GOOGLEURL
         https://bugs.webkit.org/show_bug.cgi?id=73795
 

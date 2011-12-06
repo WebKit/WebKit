@@ -320,12 +320,6 @@ void KURL::invalidate()
     m_fragmentEnd = 0;
 }
 
-KURL::KURL(ParsedURLStringTag, const char* url)
-{
-    parse(url);
-    ASSERT(url == m_string);
-}
-
 KURL::KURL(ParsedURLStringTag, const String& url)
 {
     parse(url);

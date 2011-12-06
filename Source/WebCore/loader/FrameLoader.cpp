@@ -220,7 +220,7 @@ void FrameLoader::init()
     // This somewhat odd set of steps gives the frame an initial empty document.
     // It would be better if this could be done with even fewer steps.
     m_stateMachine.advanceTo(FrameLoaderStateMachine::CreatingInitialEmptyDocument);
-    setPolicyDocumentLoader(m_client->createDocumentLoader(ResourceRequest(KURL(ParsedURLString, "")), SubstituteData()).get());
+    setPolicyDocumentLoader(m_client->createDocumentLoader(ResourceRequest(KURL(ParsedURLString, emptyString())), SubstituteData()).get());
     setProvisionalDocumentLoader(m_policyDocumentLoader.get());
     setState(FrameStateProvisional);
     m_provisionalDocumentLoader->setResponse(ResourceResponse(KURL(), "text/html", 0, String(), String()));

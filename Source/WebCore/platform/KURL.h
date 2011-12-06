@@ -73,7 +73,6 @@ public:
     // The argument is an absolute URL string. The string is assumed to be output of KURL::string() called on a valid
     // KURL object, or indiscernible from such.
     // It is usually best to avoid repeatedly parsing a string, unless memory saving outweigh the possible slow-downs.
-    KURL(ParsedURLStringTag, const char*);
     KURL(ParsedURLStringTag, const String&);
     KURL(ParsedURLStringTag, const URLString&);
 #if USE(GOOGLEURL)

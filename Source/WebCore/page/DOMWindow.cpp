@@ -1813,7 +1813,7 @@ Frame* DOMWindow::createWindow(const String& urlString, const AtomicString& fram
     // For whatever reason, Firefox uses the first frame to determine the outgoingReferrer. We replicate that behavior here.
     String referrer = firstFrame->loader()->outgoingReferrer();
 
-    KURL completedURL = urlString.isEmpty() ? KURL(ParsedURLString, "") : firstFrame->document()->completeURL(urlString);
+    KURL completedURL = urlString.isEmpty() ? KURL(ParsedURLString, emptyString()) : firstFrame->document()->completeURL(urlString);
     ResourceRequest request(completedURL, referrer);
     FrameLoader::addHTTPOriginIfNeeded(request, firstFrame->loader()->outgoingOrigin());
     FrameLoadRequest frameRequest(activeWindow->securityOrigin(), request, frameName);
