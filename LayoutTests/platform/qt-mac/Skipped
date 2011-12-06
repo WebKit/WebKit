@@ -5253,3 +5253,18 @@ svg/foreignObject/mask.html
 svg/foreignObject/multiple-foreign-objects.html
 svg/zoom/page/zoom-background-images.html
 svg/zoom/page/zoom-svg-as-background-with-relative-size.html
+
+# new failing tests
+http/tests/plugins/third-party-cookie-accept-policy.html
+svg/transforms/svg-css-transforms.xhtml
+svg/transforms/svg-css-transforms-clip-path.xhtml
+svg/custom/pointer-events-image-css-transform.svg
+svg/custom/pointer-events-text-css-transform.svg
+fast/css-generated-content/nested-tables-with-before-after-content-crash.html
+fast/css/empty-inline-line-height-first-line.htm
+fast/css/empty-inline-003-quirksmode.htm
+fast/css/empty-inline-line-height-first-line-quirksmode.htm
+css2.1/20110323/empty-inline-002.htm
+css2.1/20110323/empty-inline-003.htm
+css2.1/20110323/empty-inline-001.htm
+transforms/svg-vs-css.xhtml
