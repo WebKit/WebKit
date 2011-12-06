@@ -6,8 +6,6 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 Got notification: CheckedStateChanged
 Got notification: CheckedStateChanged
-Got notification: LayoutComplete
-Got notification: LayoutComplete
 PASS successfullyParsed is true
 
 TEST COMPLETE
