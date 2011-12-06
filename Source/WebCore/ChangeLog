@@ -1,3 +1,14 @@
+2011-12-05  Benjamin Poulain  <bpoulain@apple.com>
+
+        Build fix for SecurityOrigin.cpp when neither BLOB nor FILE_SYSTEM are defined
+
+        Reviewed by David Kilzer.
+
+        When neither BLOB nor FILE_SYSTEM are defined, the parameter is unused.
+
+        * page/SecurityOrigin.cpp:
+        (WebCore::shouldUseInnerURL):
+
 2011-12-05  Darin Adler  <darin@apple.com>
 
         Change RuleSet to use HashMap<OwnPtr>

@@ -73,6 +73,7 @@ static bool shouldUseInnerURL(const KURL& url)
     if (url.protocolIs("filesystem"))
         return true;
 #endif
+    UNUSED_PARAM(url);
     return false;
 }
 
