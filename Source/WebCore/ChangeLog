@@ -1,3 +1,20 @@
+2011-12-06  Jarred Nicholls  <jarred@sencha.com>
+
+        getComputedStyle returns wrong value for margin-*
+        https://bugs.webkit.org/show_bug.cgi?id=73334
+
+        margin-* getComputedStyle values should return the "used" absolute value when there is a renderer
+        and the specified value is relative (percentage, auto, etc.).
+        When there is no renderer, the specified value should be returned.
+        See http://dev.w3.org/csswg/cssom/#resolved-values.
+
+        Reviewed by Darin Adler.
+
+        Test: fast/css/getComputedStyle/getComputedStyle-resolved-values.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+
 2011-12-06  Alexey Proskuryakov  <ap@apple.com>
 
         REGRESSION (WebKit2): Kill ring is not cleared when selection changes

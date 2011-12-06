@@ -1586,27 +1586,35 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             return cssValuePool->createValue(style->locale(), CSSPrimitiveValue::CSS_STRING);
         case CSSPropertyMarginTop: {
             Length marginTop = style->marginTop();
-            if (marginTop.isPercent())
-                return cssValuePool->createValue(marginTop);
-            return zoomAdjustedPixelValue(marginTop.value(), style.get(), cssValuePool);
+            if (marginTop.isFixed() || !renderer || !renderer->isBox())
+                return zoomAdjustedPixelValueForLength(marginTop, style.get(), cssValuePool);
+            return zoomAdjustedPixelValue(toRenderBox(renderer)->marginTop(), style.get(), cssValuePool);
         }
         case CSSPropertyMarginRight: {
             Length marginRight = style->marginRight();
+            if (marginRight.isFixed() || !renderer || !renderer->isBox())
+                return zoomAdjustedPixelValueForLength(marginRight, style.get(), cssValuePool);
+            int value;
             if (marginRight.isPercent())
-                return cssValuePool->createValue(marginRight);
-            return zoomAdjustedPixelValue(marginRight.value(), style.get(), cssValuePool);
+                // RenderBox gives a marginRight() that is the distance between the right-edge of the child box
+                // and the right-edge of the containing box, when display == BLOCK. Let's calculate the absolute
+                // value of the specified margin-right % instead of relying on RenderBox's marginRight() value.
+                value = marginRight.calcMinValue(toRenderBox(renderer)->containingBlockLogicalWidthForContent());
+            else
+                value = toRenderBox(renderer)->marginRight();
+            return zoomAdjustedPixelValue(value, style.get(), cssValuePool);
         }
         case CSSPropertyMarginBottom: {
             Length marginBottom = style->marginBottom();
-            if (marginBottom.isPercent())
-                return cssValuePool->createValue(marginBottom);
-            return zoomAdjustedPixelValue(marginBottom.value(), style.get(), cssValuePool);
+            if (marginBottom.isFixed() || !renderer || !renderer->isBox())
+                return zoomAdjustedPixelValueForLength(marginBottom, style.get(), cssValuePool);
+            return zoomAdjustedPixelValue(toRenderBox(renderer)->marginBottom(), style.get(), cssValuePool);
         }
         case CSSPropertyMarginLeft: {
             Length marginLeft = style->marginLeft();
-            if (marginLeft.isPercent())
-                return cssValuePool->createValue(marginLeft);
-            return zoomAdjustedPixelValue(marginLeft.value(), style.get(), cssValuePool);
+            if (marginLeft.isFixed() || !renderer || !renderer->isBox())
+                return zoomAdjustedPixelValueForLength(marginLeft, style.get(), cssValuePool);
+            return zoomAdjustedPixelValue(toRenderBox(renderer)->marginLeft(), style.get(), cssValuePool);
         }
         case CSSPropertyWebkitMarqueeDirection:
             return cssValuePool->createValue(style->marqueeDirection());
