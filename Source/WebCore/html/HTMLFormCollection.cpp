@@ -170,23 +170,11 @@ void HTMLFormCollection::updateNameCache() const
             const AtomicString& idAttrVal = element->getIdAttribute();
             const AtomicString& nameAttrVal = element->getAttribute(nameAttr);
             if (!idAttrVal.isEmpty()) {
-                // add to id cache
-                Vector<Element*>* idVector = info()->idCache.get(idAttrVal.impl());
-                if (!idVector) {
-                    idVector = new Vector<Element*>;
-                    info()->idCache.add(idAttrVal.impl(), idVector);
-                }
-                idVector->append(element);
+                append(info()->idCache, idAttrVal, element);
                 foundInputElements.add(idAttrVal.impl());
             }
             if (!nameAttrVal.isEmpty() && idAttrVal != nameAttrVal) {
-                // add to name cache
-                Vector<Element*>* nameVector = info()->nameCache.get(nameAttrVal.impl());
-                if (!nameVector) {
-                    nameVector = new Vector<Element*>;
-                    info()->nameCache.add(nameAttrVal.impl(), nameVector);
-                }
-                nameVector->append(element);
+                append(info()->nameCache, nameAttrVal, element);
                 foundInputElements.add(nameAttrVal.impl());
             }
         }
@@ -196,24 +184,10 @@ void HTMLFormCollection::updateNameCache() const
         HTMLImageElement* element = f->m_imageElements[i];
         const AtomicString& idAttrVal = element->getIdAttribute();
         const AtomicString& nameAttrVal = element->getAttribute(nameAttr);
-        if (!idAttrVal.isEmpty() && !foundInputElements.contains(idAttrVal.impl())) {
-            // add to id cache
-            Vector<Element*>* idVector = info()->idCache.get(idAttrVal.impl());
-            if (!idVector) {
-                idVector = new Vector<Element*>;
-                info()->idCache.add(idAttrVal.impl(), idVector);
-            }
-            idVector->append(element);
-        }
-        if (!nameAttrVal.isEmpty() && idAttrVal != nameAttrVal && !foundInputElements.contains(nameAttrVal.impl())) {
-            // add to name cache
-            Vector<Element*>* nameVector = info()->nameCache.get(nameAttrVal.impl());
-            if (!nameVector) {
-                nameVector = new Vector<Element*>;
-                info()->nameCache.add(nameAttrVal.impl(), nameVector);
-            }
-            nameVector->append(element);
-        }
+        if (!idAttrVal.isEmpty() && !foundInputElements.contains(idAttrVal.impl()))
+            append(info()->idCache, idAttrVal, element);
+        if (!nameAttrVal.isEmpty() && idAttrVal != nameAttrVal && !foundInputElements.contains(nameAttrVal.impl()))
+            append(info()->nameCache, nameAttrVal, element);
     }
 
     info()->hasNameCache = true;

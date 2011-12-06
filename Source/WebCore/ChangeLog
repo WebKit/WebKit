@@ -1,3 +1,29 @@
+2011-12-06  Darin Adler  <darin@apple.com>
+
+        Use HashMap<OwnPtr> in CollectionCache
+        https://bugs.webkit.org/show_bug.cgi?id=73784
+
+        Reviewed by Andreas Kling.
+
+        * html/CollectionCache.cpp:
+        (WebCore::CollectionCache::copyCacheMap): Use adoptPtr.
+        (WebCore::CollectionCache::reset): Removed now-unneeded calls to deleteAllValues.
+        (WebCore::append): Added. Helper function for appending elements to the maps from
+        the collection cache.
+
+        * html/CollectionCache.h: Changed mapped type in NodeCacheMap to OwnPtr.
+        Added append function.
+
+        * html/HTMLCollection.cpp:
+        (WebCore::nameShouldBeVisibleInDocumentAll): Added, to factor out common code in
+        two functions below.
+        (WebCore::HTMLCollection::checkForNameMatch): Changed to call nameShouldBeVisibleInDocumentAll.
+        (WebCore::HTMLCollection::updateNameCache): Ditto. Also updated cache code to use the append
+        function, so it will work with OwnPtr. Also eliminated an unneeded get call before
+        each hash table add; we do both at once in the new append function.
+        * html/HTMLFormCollection.cpp:
+        (WebCore::HTMLFormCollection::updateNameCache): More of the same.
+
 2011-12-06  Yury Semikhatsky  <yurys@chromium.org>
 
         [Chromium] Web Inspector: getFunctionLocation should return scriptId as String not as int

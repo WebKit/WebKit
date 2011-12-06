@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2011 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -21,6 +21,9 @@
 #include "config.h"
 #include "CollectionCache.h"
 
+#include <wtf/PassOwnPtr.h>
+#include <wtf/text/AtomicString.h>
+
 namespace WebCore {
 
 CollectionCache::CollectionCache()
@@ -34,7 +37,7 @@ inline void CollectionCache::copyCacheMap(NodeCacheMap& dest, const NodeCacheMap
     ASSERT(dest.isEmpty());
     NodeCacheMap::const_iterator end = src.end();
     for (NodeCacheMap::const_iterator it = src.begin(); it != end; ++it)
-        dest.add(it->first, new Vector<Element*>(*it->second));
+        dest.add(it->first, adoptPtr(new Vector<Element*>(*it->second)));
 }
 
 CollectionCache::CollectionCache(const CollectionCache& other)
@@ -65,12 +68,6 @@ void CollectionCache::swap(CollectionCache& other)
     std::swap(hasNameCache, other.hasNameCache);
 }
 
-CollectionCache::~CollectionCache()
-{
-    deleteAllValues(idCache);
-    deleteAllValues(nameCache);
-}
-
 void CollectionCache::reset()
 {
     current = 0;
@@ -78,9 +75,7 @@ void CollectionCache::reset()
     length = 0;
     hasLength = false;
     elementsArrayPosition = 0;
-    deleteAllValues(idCache);
     idCache.clear();
-    deleteAllValues(nameCache);
     nameCache.clear();
     hasNameCache = false;
 }
@@ -92,5 +87,13 @@ void CollectionCache::checkConsistency()
     nameCache.checkConsistency();
 }
 #endif
+
+void append(CollectionCache::NodeCacheMap& map, const AtomicString& key, Element* element)
+{
+    OwnPtr<Vector<Element*> >& vector = map.add(key.impl(), nullptr).first->second;
+    if (!vector)
+        vector = adoptPtr(new Vector<Element*>);
+    vector->append(element);
+}
 
 } // namespace WebCore

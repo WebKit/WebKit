@@ -40,14 +40,13 @@ public:
         swap(tmp);
         return *this;
     }
-    ~CollectionCache();
 
     void reset();
     void swap(CollectionCache&);
 
     void checkConsistency();
 
-    typedef HashMap<AtomicStringImpl*, Vector<Element*>*> NodeCacheMap;
+    typedef HashMap<AtomicStringImpl*, OwnPtr<Vector<Element*> > > NodeCacheMap;
 
     uint64_t version;
     Element* current;
@@ -63,8 +62,10 @@ private:
     static void copyCacheMap(NodeCacheMap&, const NodeCacheMap&);
 };
 
+void append(CollectionCache::NodeCacheMap&, const AtomicString&, Element*);
+    
 #if ASSERT_DISABLED
-    inline void CollectionCache::checkConsistency() { }
+inline void CollectionCache::checkConsistency() { }
 #endif
 
 } // namespace

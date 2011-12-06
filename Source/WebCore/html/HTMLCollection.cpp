@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2011 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -266,6 +266,19 @@ Node* HTMLCollection::nextItem() const
      return retval;
 }
 
+static inline bool nameShouldBeVisibleInDocumentAll(HTMLElement* element)
+{
+    // The document.all collection returns only certain types of elements by name,
+    // although it returns any type of element by id.
+    return element->hasLocalName(appletTag)
+        || element->hasLocalName(embedTag)
+        || element->hasLocalName(formTag)
+        || element->hasLocalName(imgTag)
+        || element->hasLocalName(inputTag)
+        || element->hasLocalName(objectTag)
+        || element->hasLocalName(selectTag);
+}
+
 bool HTMLCollection::checkForNameMatch(Element* element, bool checkName, const AtomicString& name) const
 {
     if (!element->isHTMLElement())
@@ -275,13 +288,7 @@ bool HTMLCollection::checkForNameMatch(Element* element, bool checkName, const A
     if (!checkName)
         return e->getIdAttribute() == name;
 
-    // document.all returns only images, forms, applets, objects and embeds
-    // by name (though everything by id)
-    if (m_type == DocAll && 
-        !(e->hasLocalName(imgTag) || e->hasLocalName(formTag) ||
-          e->hasLocalName(appletTag) || e->hasLocalName(objectTag) ||
-          e->hasLocalName(embedTag) || e->hasLocalName(inputTag) ||
-          e->hasLocalName(selectTag)))
+    if (m_type == DocAll && !nameShouldBeVisibleInDocumentAll(e))
         return false;
 
     return e->getAttribute(nameAttr) == name && e->getIdAttribute() != name;
@@ -325,29 +332,10 @@ void HTMLCollection::updateNameCache() const
         HTMLElement* e = toHTMLElement(element);
         const AtomicString& idAttrVal = e->getIdAttribute();
         const AtomicString& nameAttrVal = e->getAttribute(nameAttr);
-        if (!idAttrVal.isEmpty()) {
-            // add to id cache
-            Vector<Element*>* idVector = m_info->idCache.get(idAttrVal.impl());
-            if (!idVector) {
-                idVector = new Vector<Element*>;
-                m_info->idCache.add(idAttrVal.impl(), idVector);
-            }
-            idVector->append(e);
-        }
-        if (!nameAttrVal.isEmpty() && idAttrVal != nameAttrVal
-            && (m_type != DocAll || 
-                (e->hasLocalName(imgTag) || e->hasLocalName(formTag) ||
-                 e->hasLocalName(appletTag) || e->hasLocalName(objectTag) ||
-                 e->hasLocalName(embedTag) || e->hasLocalName(inputTag) ||
-                 e->hasLocalName(selectTag)))) {
-            // add to name cache
-            Vector<Element*>* nameVector = m_info->nameCache.get(nameAttrVal.impl());
-            if (!nameVector) {
-                nameVector = new Vector<Element*>;
-                m_info->nameCache.add(nameAttrVal.impl(), nameVector);
-            }
-            nameVector->append(e);
-        }
+        if (!idAttrVal.isEmpty())
+            append(m_info->idCache, idAttrVal, e);
+        if (!nameAttrVal.isEmpty() && idAttrVal != nameAttrVal && (m_type != DocAll || nameShouldBeVisibleInDocumentAll(e)))
+            append(m_info->nameCache, nameAttrVal, e);
     }
 
     m_info->hasNameCache = true;
