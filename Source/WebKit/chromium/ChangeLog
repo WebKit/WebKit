@@ -1,3 +1,10 @@
+2011-12-06  Adam Barth  <abarth@webkit.org>
+
+        Remove forwarding header now that downstream has been fixed to refer to
+        the actual location of this header.
+
+        * public/WebRect.h: Removed.
+
 2011-12-06  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Unreviewed, rolling out r102091.
