@@ -1,3 +1,20 @@
+2011-12-05  Tony Chang  <tony@chromium.org>
+
+        small refactor of RenderFlexibleBox
+        https://bugs.webkit.org/show_bug.cgi?id=73854
+
+        Reviewed by Darin Adler.
+
+        No new tests, just a refactor.
+
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::isLeftToRightFlow): Inline isReverseFlow since it's only used in one place.
+        (WebCore::RenderFlexibleBox::layoutAndPlaceChildren): Rename startEdge
+        to mainAxisOffset.  Rename logicalTop to crossAxisOffset.  Get rid of
+        logicalLeft local variable since it's confusing.  Move shouldFlipMainAxis
+        out of the for loop to avoid computing it each iteration.
+        * rendering/RenderFlexibleBox.h:
+
 2011-12-05  Florin Malita  <fmalita@google.com>
 
         Heap-buffer-overflow in WebCore::HTMLTreeBuilder::processEndTag

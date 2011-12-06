@@ -206,11 +206,6 @@ bool RenderFlexibleBox::isColumnFlow() const
     return style()->isColumnFlexFlow();
 }
 
-bool RenderFlexibleBox::isReverseFlow() const
-{
-    return style()->flexFlow() == FlowColumnReverse || style()->flexFlow() == FlowRowReverse;
-}
-
 bool RenderFlexibleBox::isHorizontalFlow() const
 {
     if (isHorizontalWritingMode())
@@ -222,7 +217,7 @@ bool RenderFlexibleBox::isLeftToRightFlow() const
 {
     if (isColumnFlow())
         return style()->writingMode() == TopToBottomWritingMode || style()->writingMode() == LeftToRightWritingMode;
-    return style()->isLeftToRightDirection() ^ isReverseFlow();
+    return style()->isLeftToRightDirection() ^ (style()->flexFlow() == FlowRowReverse);
 }
 
 Length RenderFlexibleBox::mainAxisLengthForChild(RenderBox* child) const
@@ -598,12 +593,13 @@ void RenderFlexibleBox::setLogicalOverrideSize(RenderBox* child, LayoutUnit chil
 
 void RenderFlexibleBox::layoutAndPlaceChildren(FlexOrderIterator& iterator, const WTF::Vector<LayoutUnit>& childSizes, LayoutUnit availableFreeSpace, float totalPositiveFlexibility)
 {
-    LayoutUnit startEdge = flowAwareBorderStart() + flowAwarePaddingStart();
-    startEdge += initialPackingOffset(availableFreeSpace, totalPositiveFlexibility, style()->flexPack());
+    LayoutUnit mainAxisOffset = flowAwareBorderStart() + flowAwarePaddingStart();
+    mainAxisOffset += initialPackingOffset(availableFreeSpace, totalPositiveFlexibility, style()->flexPack());
 
-    LayoutUnit logicalTop = flowAwareBorderBefore() + flowAwarePaddingBefore();
+    LayoutUnit crossAxisOffset = flowAwareBorderBefore() + flowAwarePaddingBefore();
     LayoutUnit totalMainExtent = mainAxisExtent();
     LayoutUnit maxAscent = 0, maxDescent = 0; // Used when flex-align: baseline.
+    bool shouldFlipMainAxis = !isColumnFlow() && !isLeftToRightFlow();
     size_t i = 0;
     for (RenderBox* child = iterator.first(); child; child = iterator.next(), ++i) {
         LayoutUnit childPreferredSize = childSizes[i] + mainAxisBorderAndPaddingExtentForChild(child);
@@ -624,20 +620,20 @@ void RenderFlexibleBox::layoutAndPlaceChildren(FlexOrderIterator& iterator, cons
         } else if (crossAxisLength().isAuto())
             setCrossAxisExtent(std::max(crossAxisExtent(), crossAxisBorderAndPaddingExtent() + crossAxisMarginExtentForChild(child) + crossAxisExtentForChild(child) + scrollbarLogicalHeight()));
 
-        startEdge += flowAwareMarginStartForChild(child);
+        mainAxisOffset += flowAwareMarginStartForChild(child);
 
         LayoutUnit childMainExtent = mainAxisExtentForChild(child);
-        bool shouldFlipMainAxis = !isColumnFlow() && !isLeftToRightFlow();
-        LayoutUnit logicalLeft = shouldFlipMainAxis ? totalMainExtent - startEdge - childMainExtent : startEdge;
+        IntPoint childLocation(shouldFlipMainAxis ? totalMainExtent - mainAxisOffset - childMainExtent : mainAxisOffset,
+            crossAxisOffset + flowAwareMarginBeforeForChild(child));
 
         // FIXME: Supporting layout deltas.
-        setFlowAwareLocationForChild(child, IntPoint(logicalLeft, logicalTop + flowAwareMarginBeforeForChild(child)));
-        startEdge += childMainExtent + flowAwareMarginEndForChild(child);
+        setFlowAwareLocationForChild(child, childLocation);
+        mainAxisOffset += childMainExtent + flowAwareMarginEndForChild(child);
 
-        startEdge += packingSpaceBetweenChildren(availableFreeSpace, totalPositiveFlexibility, style()->flexPack(), childSizes.size());
+        mainAxisOffset += packingSpaceBetweenChildren(availableFreeSpace, totalPositiveFlexibility, style()->flexPack(), childSizes.size());
 
         if (isColumnFlow())
-            setLogicalHeight(startEdge);
+            setLogicalHeight(mainAxisOffset);
     }
 
     if (style()->flexFlow() == FlowColumnReverse) {

@@ -53,7 +53,6 @@ private:
 
     bool hasOrthogonalFlow(RenderBox* child) const;
     bool isColumnFlow() const;
-    bool isReverseFlow() const;
     bool isHorizontalFlow() const;
     bool isLeftToRightFlow() const;
     Length crossAxisLength() const;
