@@ -278,9 +278,9 @@ public:
         return takeLeading<isHTMLSpace>();
     }
 
-    String takeLeadingNonWhitespace()
+    void skipLeadingNonWhitespace()
     {
-        return takeLeading<isNotHTMLSpace>();
+        skipLeading<isNotHTMLSpace>();
     }
 
     String takeRemaining()
@@ -2464,7 +2464,7 @@ ReprocessBuffer:
         ASSERT(insertionMode() == InHeadMode);
         String leadingWhitespace = buffer.takeLeadingWhitespace();
         if (!leadingWhitespace.isEmpty())
-            m_tree.insertTextNode(leadingWhitespace);
+            m_tree.insertTextNode(leadingWhitespace, AllWhitespace);
         if (buffer.isEmpty())
             return;
         defaultForInHead();
@@ -2474,7 +2474,7 @@ ReprocessBuffer:
         ASSERT(insertionMode() == AfterHeadMode);
         String leadingWhitespace = buffer.takeLeadingWhitespace();
         if (!leadingWhitespace.isEmpty())
-            m_tree.insertTextNode(leadingWhitespace);
+            m_tree.insertTextNode(leadingWhitespace, AllWhitespace);
         if (buffer.isEmpty())
             return;
         defaultForAfterHead();
@@ -2509,13 +2509,13 @@ ReprocessBuffer:
         ASSERT(insertionMode() == InColumnGroupMode);
         String leadingWhitespace = buffer.takeLeadingWhitespace();
         if (!leadingWhitespace.isEmpty())
-            m_tree.insertTextNode(leadingWhitespace);
+            m_tree.insertTextNode(leadingWhitespace, AllWhitespace);
         if (buffer.isEmpty())
             return;
         if (!processColgroupEndTagForInColumnGroup()) {
             ASSERT(isParsingFragment());
             // The spec tells us to drop these characters on the floor.
-            buffer.takeLeadingNonWhitespace();
+            buffer.skipLeadingNonWhitespace();
             if (buffer.isEmpty())
                 return;
         }
@@ -2540,7 +2540,7 @@ ReprocessBuffer:
         ASSERT(insertionMode() == InHeadNoscriptMode);
         String leadingWhitespace = buffer.takeLeadingWhitespace();
         if (!leadingWhitespace.isEmpty())
-            m_tree.insertTextNode(leadingWhitespace);
+            m_tree.insertTextNode(leadingWhitespace, AllWhitespace);
         if (buffer.isEmpty())
             return;
         defaultForInHeadNoscript();
@@ -2552,7 +2552,7 @@ ReprocessBuffer:
         ASSERT(insertionMode() == InFramesetMode || insertionMode() == AfterFramesetMode || insertionMode() == AfterAfterFramesetMode);
         String leadingWhitespace = buffer.takeRemainingWhitespace();
         if (!leadingWhitespace.isEmpty())
-            m_tree.insertTextNode(leadingWhitespace);
+            m_tree.insertTextNode(leadingWhitespace, AllWhitespace);
         // FIXME: We should generate a parse error if we skipped over any
         // non-whitespace characters.
         break;
@@ -2575,7 +2575,7 @@ ReprocessBuffer:
         String leadingWhitespace = buffer.takeRemainingWhitespace();
         if (!leadingWhitespace.isEmpty()) {
             m_tree.reconstructTheActiveFormattingElements();
-            m_tree.insertTextNode(leadingWhitespace);
+            m_tree.insertTextNode(leadingWhitespace, AllWhitespace);
         }
         // FIXME: We should generate a parse error if we skipped over any
         // non-whitespace characters.
@@ -2727,7 +2727,7 @@ void HTMLTreeBuilder::defaultForInTableText()
         // FIXME: parse error
         HTMLConstructionSite::RedirectToFosterParentGuard redirecter(m_tree);
         m_tree.reconstructTheActiveFormattingElements();
-        m_tree.insertTextNode(characters);
+        m_tree.insertTextNode(characters, NotAllWhitespace);
         m_framesetOk = false;
         setInsertionMode(m_originalInsertionMode);
         prepareToReprocessToken();

@@ -1,3 +1,29 @@
+2011-12-05  Erik Arvidsson  <arv@chromium.org>
+
+        Could save a lot of memory in CharacterData by not always storing a String
+        https://bugs.webkit.org/show_bug.cgi?id=72404
+
+        Reviewed by Ojan Vafai.
+
+        When a Text node is created by the parser we check if the string is all whitespace
+        and if so we put it in the AtomicString table so that all future identical whitespace
+        strings can share the StringImpl.
+
+        No new tests. Covered by existing tests.
+
+        * html/parser/HTMLConstructionSite.cpp:
+        (WebCore::HTMLNames::isAllWhitespace):
+        (WebCore::HTMLConstructionSite::insertTextNode):
+
+            If we do not know whether the string is all whitespace this now checks the string
+            If the string is all whitespace we create an AtomicString for it.
+
+        * html/parser/HTMLConstructionSite.h:
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::ExternalCharacterTokenBuffer::skipLeadingNonWhitespace): We never cared about the return value here.
+        (WebCore::HTMLTreeBuilder::processCharacterBuffer): Pass WhitespaceMode in the case we know whether the string is all whitespace or not.
+        (WebCore::HTMLTreeBuilder::defaultForInTableText): Ditto.
+
 2011-12-05  Benjamin Poulain  <benjamin@webkit.org>
 
         Update KURL's copy copyASCII to avoid String::characters()

@@ -37,6 +37,12 @@
 
 namespace WebCore {
 
+enum WhitespaceMode {
+    AllWhitespace,
+    NotAllWhitespace,
+    WhitespaceUnknown
+};
+
 class AtomicHTMLToken;
 class Document;
 class Element;
@@ -61,7 +67,7 @@ public:
     void insertHTMLBodyElement(AtomicHTMLToken&);
     void insertHTMLFormElement(AtomicHTMLToken&, bool isDemoted = false);
     void insertScriptElement(AtomicHTMLToken&);
-    void insertTextNode(const String&);
+    void insertTextNode(const String&, WhitespaceMode = WhitespaceUnknown);
     void insertForeignElement(AtomicHTMLToken&, const AtomicString& namespaceURI);
 
     void insertHTMLHtmlStartTagBeforeHTML(AtomicHTMLToken&);

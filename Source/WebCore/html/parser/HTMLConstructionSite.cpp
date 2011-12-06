@@ -37,6 +37,7 @@
 #include "HTMLFormElement.h"
 #include "HTMLHtmlElement.h"
 #include "HTMLNames.h"
+#include "HTMLParserIdioms.h"
 #include "HTMLScriptElement.h"
 #include "HTMLToken.h"
 #include "HTMLTokenizer.h"
@@ -77,6 +78,11 @@ bool causesFosterParenting(const QualifiedName& tagName)
         || tagName == tfootTag
         || tagName == theadTag
         || tagName == trTag;
+}
+
+inline bool isAllWhitespace(const String& string)
+{
+    return string.isAllSpecialCharacters<isHTMLSpace>();
 }
 
 } // namespace
@@ -332,13 +338,18 @@ void HTMLConstructionSite::insertForeignElement(AtomicHTMLToken& token, const At
         m_openElements.push(element);
 }
 
-void HTMLConstructionSite::insertTextNode(const String& characters)
+void HTMLConstructionSite::insertTextNode(const String& characters, WhitespaceMode whitespaceMode)
 {
     AttachmentSite site;
     site.parent = currentNode();
     site.nextChild = 0;
     if (shouldFosterParent())
         findFosterSite(site);
+
+    // Strings composed entirely of whitespace are likely to be repeated.
+    // Turn them into AtomicString so we share a single string for each.
+    bool shouldUseAtomicString = whitespaceMode == AllWhitespace
+        || (whitespaceMode == WhitespaceUnknown && isAllWhitespace(characters));
 
     unsigned currentPosition = 0;
 
@@ -354,10 +365,12 @@ void HTMLConstructionSite::insertTextNode(const String& characters)
     }
 
     while (currentPosition < characters.length()) {
-        RefPtr<Text> textNode = Text::createWithLengthLimit(site.parent->document(), characters, currentPosition);
+        RefPtr<Text> textNode = Text::createWithLengthLimit(site.parent->document(), shouldUseAtomicString ? AtomicString(characters).string() : characters, currentPosition);
         // If we have a whole string of unbreakable characters the above could lead to an infinite loop. Exceeding the length limit is the lesser evil.
-        if (!textNode->length())
-            textNode = Text::create(site.parent->document(), characters.substring(currentPosition));
+        if (!textNode->length()) {
+            String substring = characters.substring(currentPosition);
+            textNode = Text::create(site.parent->document(), shouldUseAtomicString ? AtomicString(substring).string() : substring);
+        }
 
         currentPosition += textNode->length();
         ASSERT(currentPosition <= characters.length());
