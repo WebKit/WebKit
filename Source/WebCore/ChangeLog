@@ -1,3 +1,14 @@
+2011-12-06  Yury Semikhatsky  <yurys@chromium.org>
+
+        [Chromium] Web Inspector: getFunctionLocation should return scriptId as String not as int
+        https://bugs.webkit.org/show_bug.cgi?id=73892
+
+        Reviewed by Pavel Feldman.
+
+        * bindings/v8/custom/V8InjectedScriptHostCustom.cpp:
+        (WebCore::V8InjectedScriptHost::functionLocationCallback): scriptId should be a string not a number
+        * inspector/Inspector.json: removed unused parameter
+
 2011-11-21  Balazs Kelemen  <kbalazs@webkit.org>
 
         Enable ParallelJobs by default

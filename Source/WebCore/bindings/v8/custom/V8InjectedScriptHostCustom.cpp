@@ -167,7 +167,7 @@ v8::Handle<v8::Value> V8InjectedScriptHost::functionLocationCallback(const v8::A
     v8::Local<v8::Object> result = v8::Object::New();
     result->Set(v8::String::New("lineNumber"), v8::Integer::New(lineNumber));
     result->Set(v8::String::New("columnNumber"), v8::Integer::New(columnNumber));
-    result->Set(v8::String::New("scriptId"), function->GetScriptId());
+    result->Set(v8::String::New("scriptId"), function->GetScriptId()->ToString());
     return result;
 }
 
