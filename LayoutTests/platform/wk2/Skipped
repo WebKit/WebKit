@@ -877,6 +877,14 @@ http/tests/cache/history-only-cached-subresource-loads-max-age-https.html
 # https://bugs.webkit.org/show_bug.cgi?id=64313
 loader/load-defer-resume-crash.html
 
+# [WK2] New tests introduced in 100895 fail
+# https://bugs.webkit.org/show_bug.cgi?id=73913
+http/tests/security/referrer-policy-https-always.html
+http/tests/security/referrer-policy-https-origin.html
+http/tests/security/referrer-policy-redirect.html
+http/tests/security/referrer-policy-https-never.html
+http/tests/security/referrer-policy-https-default.html
+
 ### END OF (1) Classified failures with bug reports
 ########################################
 
