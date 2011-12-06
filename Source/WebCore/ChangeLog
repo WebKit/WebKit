@@ -1,3 +1,19 @@
+2011-12-06  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Set opaque flag for ImageLayerChromium
+        https://bugs.webkit.org/show_bug.cgi?id=72964
+
+        Reviewed by James Robinson.
+
+        Unit test in tests/ImageLayerChromiumTest.cpp.
+
+        * platform/graphics/chromium/GraphicsLayerChromium.cpp:
+        (WebCore::GraphicsLayerChromium::setContentsToImage):
+        * platform/graphics/chromium/GraphicsLayerChromium.h:
+        (WebCore::GraphicsLayerChromium::contentsLayer):
+        * platform/graphics/chromium/ImageLayerChromium.cpp:
+        (WebCore::ImageLayerChromium::setContents):
+
 2011-12-06  Alexandre Elias  <aelias@google.com>
 
         [chromium] Apply sent deltas on finishCommit

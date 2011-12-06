@@ -101,10 +101,14 @@
         ],
 
         'conditions': [
+            ['use_skia == 1', {
+                'webkit_unittest_files': [
+                    'tests/DragImageTest.cpp',
+                    'tests/ImageLayerChromiumTest.cpp',
+                ],
+            }],
             ['OS=="win"', {
                 'webkit_unittest_files': [
-                    # FIXME: Port DragImageTest to Mac.
-                    'tests/DragImageTest.cpp',
                     # FIXME: Port PopupMenuTest to Linux and Mac.
                     'tests/PopupMenuTest.cpp',
                     'tests/TransparencyWinTest.cpp',
@@ -121,8 +125,6 @@
             }],
             ['toolkit_uses_gtk == 1', {
                 'webkit_unittest_files': [
-                    # FIXME: Port DragImageTest to Mac.
-                    'tests/DragImageTest.cpp',
                     'tests/WebInputEventFactoryTestGtk.cpp',
                 ],
             }],

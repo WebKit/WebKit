@@ -1,3 +1,31 @@
+2011-12-06  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Set opaque flag for ImageLayerChromium
+        https://bugs.webkit.org/show_bug.cgi?id=72964
+
+        Reviewed by James Robinson.
+
+        * WebKit.gypi:
+        * tests/DragImageTest.cpp:
+        (WebCore::TestImage::TestImage):
+        (WebCore::TestImage::nativeImageForCurrentFrame):
+        * tests/ImageLayerChromiumTest.cpp: Added.
+        (WebCore::MockGraphicsLayerClient::notifyAnimationStarted):
+        (WebCore::MockGraphicsLayerClient::notifySyncRequired):
+        (WebCore::MockGraphicsLayerClient::paintContents):
+        (WebCore::MockGraphicsLayerClient::showDebugBorders):
+        (WebCore::MockGraphicsLayerClient::showRepaintCounter):
+        (WebCore::TestImage::create):
+        (WebCore::TestImage::TestImage):
+        (WebCore::TestImage::isBitmapImage):
+        (WebCore::TestImage::currentFrameHasAlpha):
+        (WebCore::TestImage::size):
+        (WebCore::TestImage::nativeImageForCurrentFrame):
+        (WebCore::TestImage::destroyDecodedData):
+        (WebCore::TestImage::decodedSize):
+        (WebCore::TestImage::draw):
+        (WebCore::TEST):
+
 2011-12-06  Adam Klein  <adamk@chromium.org>
 
         [chromium] Guard access to WebKitPlatformSupport::currentThread with a null check
