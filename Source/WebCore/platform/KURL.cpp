@@ -427,14 +427,14 @@ void KURL::init(const KURL& base, const String& relative, const TextEncoding& en
     CharBuffer parseBuffer;
 
     if (absolute) {
-        parse(str, relative);
+        parse(str, &relative);
     } else {
         // If the base is empty or opaque (e.g. data: or javascript:), then the URL is invalid
         // unless the relative URL is a single fragment.
         if (!base.isHierarchical()) {
             if (str[0] == '#') {
                 appendASCII(base.m_string.left(base.m_queryEnd), str, len, parseBuffer);
-                parse(parseBuffer.data(), relative);
+                parse(parseBuffer.data(), &relative);
             } else {
                 m_string = relative;
                 invalidate();
@@ -451,13 +451,13 @@ void KURL::init(const KURL& base, const String& relative, const TextEncoding& en
         case '#': {
             // must be fragment-only reference
             appendASCII(base.m_string.left(base.m_queryEnd), str, len, parseBuffer);
-            parse(parseBuffer.data(), relative);
+            parse(parseBuffer.data(), &relative);
             break;
         }
         case '?': {
             // query-only reference, special case needed for non-URL results
             appendASCII(base.m_string.left(base.m_pathEnd), str, len, parseBuffer);
-            parse(parseBuffer.data(), relative);
+            parse(parseBuffer.data(), &relative);
             break;
         }
         case '/':
@@ -465,11 +465,11 @@ void KURL::init(const KURL& base, const String& relative, const TextEncoding& en
             if (str[1] == '/') {
                 // net-path
                 appendASCII(base.m_string.left(base.m_schemeEnd + 1), str, len, parseBuffer);
-                parse(parseBuffer.data(), relative);
+                parse(parseBuffer.data(), &relative);
             } else {
                 // abs-path
                 appendASCII(base.m_string.left(base.m_portEnd), str, len, parseBuffer);
-                parse(parseBuffer.data(), relative);
+                parse(parseBuffer.data(), &relative);
             }
             break;
         default:
@@ -544,7 +544,7 @@ void KURL::init(const KURL& base, const String& relative, const TextEncoding& en
                 // of the relative reference; this will also add a null terminator
                 strncpy(bufferPos, relStringPos, bufferSize - (bufferPos - bufferStart));
 
-                parse(parseBuffer.data(), relative);
+                parse(parseBuffer.data(), &relative);
 
                 ASSERT(strlen(parseBuffer.data()) + 1 <= parseBuffer.size());
                 break;
@@ -1054,7 +1054,7 @@ void KURL::parse(const String& string)
     CharBuffer buffer(string.length() + 1);
     copyASCII(string, buffer.data());
     buffer[string.length()] = '\0';
-    parse(buffer.data(), string);
+    parse(buffer.data(), &string);
 }
 
 static inline bool equal(const char* a, size_t lenA, const char* b, size_t lenB)
@@ -1111,18 +1111,18 @@ static bool isNonFileHierarchicalScheme(const char* scheme, size_t schemeLength)
     return false;
 }
 
-void KURL::parse(const char* url, const String& originalString)
+void KURL::parse(const char* url, const String* originalString)
 {
     if (!url || url[0] == '\0') {
         // valid URL must be non-empty
-        m_string = !originalString.isNull() ? originalString : url;
+        m_string = originalString ? *originalString : url;
         invalidate();
         return;
     }
 
     if (!isSchemeFirstChar(url[0])) {
         // scheme must start with an alphabetic character
-        m_string = !originalString.isNull() ? originalString : url;
+        m_string = originalString ? *originalString : url;
         invalidate();
         return;
     }
@@ -1132,7 +1132,7 @@ void KURL::parse(const char* url, const String& originalString)
         schemeEnd++;
 
     if (url[schemeEnd] != ':') {
-        m_string = !originalString.isNull() ? originalString : url;
+        m_string = originalString ? *originalString : url;
         invalidate();
         return;
     }
@@ -1198,7 +1198,7 @@ void KURL::parse(const char* url, const String& originalString)
             hostStart = userStart;
         } else {
             // invalid character
-            m_string = !originalString.isNull() ? originalString : url;
+            m_string = originalString ? *originalString : url;
             invalidate();
             return;
         }
@@ -1214,7 +1214,7 @@ void KURL::parse(const char* url, const String& originalString)
                 hostEnd++;
             else {
                 // invalid character
-                m_string = !originalString.isNull() ? originalString : url;
+                m_string = originalString ? *originalString : url;
                 invalidate();
                 return;
             }
@@ -1235,7 +1235,7 @@ void KURL::parse(const char* url, const String& originalString)
 
         if (!isPathSegmentEndChar(url[portEnd])) {
             // invalid character
-            m_string = !originalString.isNull() ? originalString : url;
+            m_string = originalString ? *originalString : url;
             invalidate();
             return;
         }
@@ -1414,8 +1414,8 @@ void KURL::parse(const char* url, const String& originalString)
 
     // If we didn't end up actually changing the original string and
     // it was already in a String, reuse it to avoid extra allocation.
-    if (originalString == buffer)
-        m_string = originalString;
+    if (originalString && *originalString == buffer)
+        m_string = *originalString;
     else
         m_string = String(buffer.data(), m_fragmentEnd);
 

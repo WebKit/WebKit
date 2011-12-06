@@ -244,7 +244,7 @@ private:
     // optimization: When the source is the same as the fixed-up string,
     // it will use the passed-in string instead of allocating a new one.
     void parse(const String&);
-    void parse(const char* url, const String& originalString = String());
+    void parse(const char* url, const String* originalString = 0);
 
     String m_string;
     bool m_isValid : 1;

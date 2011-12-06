@@ -1,3 +1,20 @@
+2011-12-06  Viatcheslav Ostapenko  <ostapenko.viatcheslav@nokia.com>
+
+        [Qt] [WK2] MiniBrowser assert on startup in debug build after r101713
+        https://bugs.webkit.org/show_bug.cgi?id=73874
+
+        This change partially reverts r101713 restoring original behaviour for
+        KUrl creation from empty string and fixes asserts in debug build.
+
+        Reviewed by Alexey Proskuryakov.
+
+        No new tests. Tests from r101713 pass.
+
+        * platform/KURL.cpp:
+        (WebCore::KURL::init):
+        (WebCore::KURL::parse):
+        * platform/KURL.h:
+
 2011-12-06  Andreas Kling  <kling@webkit.org>
 
         Use HashMap<OwnPtr> for EventListenerMap's internal map.
