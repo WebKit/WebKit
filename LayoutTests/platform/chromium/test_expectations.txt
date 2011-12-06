@@ -3818,3 +3818,7 @@ BUGWK73905 GPU LINUX : media/video-layer-crash.html = IMAGE+TEXT
 BUGWK73905 GPU LINUX : media/video-transformed.html = IMAGE
 BUGWK73905 GPU LINUX : media/video-zoom-controls.html = IMAGE
 BUGWK73905 GPU WIN : media/video-layer-crash.html = TEXT
+
+// Mutation observers caused crash on linux debug:
+BUGWK73919 LINUX DEBUG : inspector/debugger/dom-breakpoints.html = CRASH
+
