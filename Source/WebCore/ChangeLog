@@ -1,3 +1,20 @@
+2011-12-05  Benjamin Poulain  <benjamin@webkit.org>
+
+        Update KURL's copy copyASCII to avoid String::characters()
+        https://bugs.webkit.org/show_bug.cgi?id=73794
+
+        Reviewed by Andreas Kling.
+
+        When the String is already on 8 bits, we can simply copy the
+        data. In the 16 bits case, everything remains the same.
+
+        * platform/KURL.cpp:
+        (WebCore::copyASCII):
+        (WebCore::appendASCII):
+        (WebCore::KURL::init):
+        (WebCore::KURL::parse):
+        (WebCore::KURL::copyToBuffer):
+
 2011-12-05  Yong Li  <yoli@rim.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=73683

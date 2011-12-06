@@ -255,16 +255,24 @@ static inline bool isSchemeCharacterMatchIgnoringCase(char character, char schem
 // Copies the source to the destination, assuming all the source characters are
 // ASCII. The destination buffer must be large enough. Null characters are allowed
 // in the source string, and no attempt is made to null-terminate the result.
-static void copyASCII(const UChar* src, int length, char* dest)
+static void copyASCII(const String& string, char* dest)
 {
-    for (int i = 0; i < length; i++)
-        dest[i] = static_cast<char>(src[i]);
+    if (string.isEmpty())
+        return;
+
+    if (string.is8Bit())
+        memcpy(dest, string.characters8(), string.length());
+    else {
+        const UChar* src = string.characters16();
+        for (size_t i = 0; i < string.length(); i++)
+            dest[i] = static_cast<char>(src[i]);
+    }
 }
 
 static void appendASCII(const String& base, const char* rel, size_t len, CharBuffer& buffer)
 {
     buffer.resize(base.length() + len + 1);
-    copyASCII(base.characters(), base.length(), buffer.data());
+    copyASCII(base, buffer.data());
     memcpy(buffer.data() + base.length(), rel, len);
     buffer[buffer.size() - 1] = '\0';
 }
@@ -377,7 +385,7 @@ void KURL::init(const KURL& base, const String& relative, const TextEncoding& en
     if (allASCII) {
         len = rel.length();
         strBuffer.resize(len + 1);
-        copyASCII(rel.characters(), len, strBuffer.data());
+        copyASCII(rel, strBuffer.data());
         strBuffer[len] = 0;
         str = strBuffer.data();
     } else {
@@ -476,10 +484,8 @@ void KURL::init(const KURL& base, const String& relative, const TextEncoding& en
                 char* bufferStart = bufferPos;
 
                 // first copy everything before the path from the base
-                unsigned baseLength = base.m_string.length();
-                const UChar* baseCharacters = base.m_string.characters();
-                CharBuffer baseStringBuffer(baseLength);
-                copyASCII(baseCharacters, baseLength, baseStringBuffer.data());
+                CharBuffer baseStringBuffer(base.m_string.length());
+                copyASCII(base.m_string, baseStringBuffer.data());
                 const char* baseString = baseStringBuffer.data();
                 const char* baseStringStart = baseString;
                 const char* pathStart = baseStringStart + base.m_portEnd;
@@ -1046,7 +1052,7 @@ void KURL::parse(const String& string)
     checkEncodedString(string);
 
     CharBuffer buffer(string.length() + 1);
-    copyASCII(string.characters(), string.length(), buffer.data());
+    copyASCII(string, buffer.data());
     buffer[string.length()] = '\0';
     parse(buffer.data(), string);
 }
@@ -1717,7 +1723,7 @@ void KURL::copyToBuffer(CharBuffer& buffer) const
     // FIXME: This throws away the high bytes of all the characters in the string!
     // That's fine for a valid URL, which is all ASCII, but not for invalid URLs.
     buffer.resize(m_string.length());
-    copyASCII(m_string.characters(), m_string.length(), buffer.data());
+    copyASCII(m_string, buffer.data());
 }
 
 bool protocolIs(const String& url, const char* protocol)
