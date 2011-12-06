@@ -236,9 +236,6 @@ private:
     static bool protocolIs(const String&, const char*);
 #if USE(GOOGLEURL)
     friend class KURLGooglePrivate;
-    void parse(const char* url, const String& originalString = String()) { parse(url, &originalString); };
-    void parse(const char* url, const String* originalString);  // KURLMac calls this.
-    void copyToBuffer(Vector<char, 512>& buffer) const;  // KURLCFNet uses this.
     KURLGooglePrivate m_url;
 #else  // !USE(GOOGLEURL)
     void init(const KURL&, const String&, const TextEncoding&);

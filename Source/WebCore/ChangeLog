@@ -1,3 +1,12 @@
+2011-12-05  Benjamin Poulain  <benjamin@webkit.org>
+
+        Remove methods declared but never implemented with GOOGLEURL
+        https://bugs.webkit.org/show_bug.cgi?id=73795
+
+        Reviewed by Adam Barth.
+
+        * platform/KURL.h:
+
 2011-12-05  Darin Adler  <darin@apple.com>
 
         Change CSSFontSelector to use HashMap<OwnPtr>
