@@ -1,3 +1,10 @@
+2011-12-06  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Unreviewed chromium expectations update.
+
+        * tests/KURLTest.cpp:
+        (ComponentCase::TEST):
+
 2011-12-06  Eric Penner  <epenner@google.com>
 
         [chromium] Set texture limits as multiples of viewport size instead of hardcoded values
