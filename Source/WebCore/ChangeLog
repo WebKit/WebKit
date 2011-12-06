@@ -1,3 +1,64 @@
+2011-12-05  Benjamin Poulain  <bpoulain@apple.com>
+
+        Upstream the Cursor implementation of iOS
+        https://bugs.webkit.org/show_bug.cgi?id=73724
+
+        Reviewed by David Kilzer.
+
+        iOS does not need to support the Cursor of WebKit. For compatibility, Cursor
+        is implemented as an empty class on the platform.
+
+        * Configurations/WebCore.xcconfig:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/Cursor.h:
+        (WebCore::Cursor::Cursor):
+        * platform/ios/CursorIOS.cpp: Added.
+        (WebCore::cursor):
+        (WebCore::pointerCursor):
+        (WebCore::crossCursor):
+        (WebCore::handCursor):
+        (WebCore::moveCursor):
+        (WebCore::iBeamCursor):
+        (WebCore::waitCursor):
+        (WebCore::helpCursor):
+        (WebCore::eastResizeCursor):
+        (WebCore::northResizeCursor):
+        (WebCore::northEastResizeCursor):
+        (WebCore::northWestResizeCursor):
+        (WebCore::southResizeCursor):
+        (WebCore::southEastResizeCursor):
+        (WebCore::southWestResizeCursor):
+        (WebCore::westResizeCursor):
+        (WebCore::northSouthResizeCursor):
+        (WebCore::eastWestResizeCursor):
+        (WebCore::northEastSouthWestResizeCursor):
+        (WebCore::northWestSouthEastResizeCursor):
+        (WebCore::columnResizeCursor):
+        (WebCore::rowResizeCursor):
+        (WebCore::middlePanningCursor):
+        (WebCore::eastPanningCursor):
+        (WebCore::northPanningCursor):
+        (WebCore::northEastPanningCursor):
+        (WebCore::northWestPanningCursor):
+        (WebCore::southPanningCursor):
+        (WebCore::southEastPanningCursor):
+        (WebCore::southWestPanningCursor):
+        (WebCore::westPanningCursor):
+        (WebCore::verticalTextCursor):
+        (WebCore::cellCursor):
+        (WebCore::contextMenuCursor):
+        (WebCore::noDropCursor):
+        (WebCore::notAllowedCursor):
+        (WebCore::progressCursor):
+        (WebCore::aliasCursor):
+        (WebCore::zoomInCursor):
+        (WebCore::zoomOutCursor):
+        (WebCore::copyCursor):
+        (WebCore::noneCursor):
+        (WebCore::grabCursor):
+        (WebCore::grabbingCursor):
+        (WebCore::determineHotSpot):
+
 2011-12-05  Noel Gordon  <noel.gordon@gmail.com>
 
         [GTK] GIF image test crashes on 32- and 64-bit Release

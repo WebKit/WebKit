@@ -45,7 +45,7 @@ typedef HICON HCURSOR;
 #include "PlatformCursor.h"
 #endif
 
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) && !PLATFORM(IOS)
 #ifdef __OBJC__
 @class NSCursor;
 #else
@@ -81,7 +81,7 @@ namespace WebCore {
         HCURSOR m_nativeCursor;
     };
     typedef RefPtr<SharedCursor> PlatformCursor;
-#elif PLATFORM(MAC)
+#elif PLATFORM(MAC) && !PLATFORM(IOS)
     typedef NSCursor *PlatformCursor;
 #elif PLATFORM(GTK)
     typedef GRefPtr<GdkCursor> PlatformCursor;
@@ -150,10 +150,13 @@ namespace WebCore {
         static const Cursor& fromType(Cursor::Type);
 
         Cursor()
+#if !PLATFORM(IOS)
             : m_platformCursor(0)
+#endif
         {
         }
 
+#if !PLATFORM(IOS)
         Cursor(Image*, const IntPoint& hotSpot);
         Cursor(const Cursor&);
         ~Cursor();
@@ -184,6 +187,7 @@ namespace WebCore {
 #else
         mutable RetainPtr<NSCursor> m_platformCursor;
 #endif
+#endif // !PLATFORM(IOS)
     };
 
     IntPoint determineHotSpot(Image*, const IntPoint& specifiedHotSpot);
