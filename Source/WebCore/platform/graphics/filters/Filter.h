@@ -32,6 +32,7 @@ class FilterEffect;
 
 class Filter : public RefCounted<Filter> {
 public:
+    Filter() : m_renderingMode(Unaccelerated) { }
     virtual ~Filter() { }
 
     void setSourceImage(PassOwnPtr<ImageBuffer> sourceImage) { m_sourceImage = sourceImage; }
@@ -39,6 +40,9 @@ public:
 
     FloatSize filterResolution() const { return m_filterResolution; }
     void setFilterResolution(const FloatSize& filterResolution) { m_filterResolution = filterResolution; }
+
+    RenderingMode renderingMode() const { return m_renderingMode; }
+    void setRenderingMode(RenderingMode renderingMode) { m_renderingMode = renderingMode; }
 
     virtual float applyHorizontalScale(float value) const { return value * m_filterResolution.width(); }
     virtual float applyVerticalScale(float value) const { return value * m_filterResolution.height(); }
@@ -51,6 +55,7 @@ public:
 private:
     OwnPtr<ImageBuffer> m_sourceImage;
     FloatSize m_filterResolution;
+    RenderingMode m_renderingMode;
 };
 
 } // namespace WebCore

@@ -52,7 +52,7 @@ void SVGImageBufferTools::calculateTransformationToOutermostSVGCoordinateSystem(
     }
 }
 
-bool SVGImageBufferTools::createImageBuffer(const FloatRect& absoluteTargetRect, const FloatRect& clampedAbsoluteTargetRect, OwnPtr<ImageBuffer>& imageBuffer, ColorSpace colorSpace)
+bool SVGImageBufferTools::createImageBuffer(const FloatRect& absoluteTargetRect, const FloatRect& clampedAbsoluteTargetRect, OwnPtr<ImageBuffer>& imageBuffer, ColorSpace colorSpace, RenderingMode renderingMode)
 {
     IntSize imageSize(roundedImageBufferSize(clampedAbsoluteTargetRect.size()));
     IntSize unclampedImageSize(SVGImageBufferTools::roundedImageBufferSize(absoluteTargetRect.size()));
@@ -61,7 +61,7 @@ bool SVGImageBufferTools::createImageBuffer(const FloatRect& absoluteTargetRect,
     if (imageSize.isEmpty())
         return false;
 
-    OwnPtr<ImageBuffer> image = ImageBuffer::create(imageSize, colorSpace);
+    OwnPtr<ImageBuffer> image = ImageBuffer::create(imageSize, colorSpace, renderingMode);
     if (!image)
         return false;
 

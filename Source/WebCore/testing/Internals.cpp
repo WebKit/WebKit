@@ -314,6 +314,16 @@ void Internals::setAcceleratedDrawingEnabled(Document* document, bool enabled, E
     document->settings()->setAcceleratedDrawingEnabled(enabled);
 }
 
+void Internals::setAcceleratedFiltersEnabled(Document* document, bool enabled, ExceptionCode& ec)
+{
+    if (!document || !document->settings()) {
+        ec = INVALID_ACCESS_ERR;
+        return;
+    }
+
+    document->settings()->setAcceleratedFiltersEnabled(enabled);
+}
+
 void Internals::setEnableScrollAnimator(Document* document, bool enabled, ExceptionCode& ec)
 {
     if (!document || !document->settings()) {

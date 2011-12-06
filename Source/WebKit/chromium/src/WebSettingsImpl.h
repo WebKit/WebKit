@@ -109,6 +109,7 @@ public:
     virtual void setLegacyAccelerated2dCanvasEnabled(bool);
     virtual void setMinimumAccelerated2dCanvasSize(int);
     virtual void setAcceleratedDrawingEnabled(bool);
+    virtual void setAcceleratedFiltersEnabled(bool);
     virtual void setMemoryInfoEnabled(bool);
     virtual void setHyperlinkAuditingEnabled(bool);
     virtual void setAsynchronousSpellCheckingEnabled(bool);

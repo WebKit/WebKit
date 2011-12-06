@@ -358,6 +358,11 @@ void WebSettingsImpl::setAcceleratedDrawingEnabled(bool enabled)
     m_settings->setAcceleratedDrawingEnabled(enabled);
 }
 
+void WebSettingsImpl::setAcceleratedFiltersEnabled(bool enabled)
+{
+    m_settings->setAcceleratedFiltersEnabled(enabled);
+}
+
 void WebSettingsImpl::setAccelerated2dCanvasEnabled(bool enabled)
 {
     m_settings->setAccelerated2dCanvasEnabled(enabled);

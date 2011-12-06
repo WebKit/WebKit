@@ -1,3 +1,45 @@
+2011-12-05  Stephen White  <senorblanco@chromium.org>
+
+        Allow the ImageBuffers used by SVG filters to be accelerated
+        https://bugs.webkit.org/show_bug.cgi?id=73842
+
+        Reviewed by Kenneth Russell.
+
+        Regressions covered by existing SVG tests; new functionality to be
+        tested by the API exposed on Internals.
+
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+        * page/Settings.h:
+        (WebCore::Settings::setAcceleratedFiltersEnabled):
+        (WebCore::Settings::acceleratedFiltersEnabled):
+        * platform/graphics/filters/FETile.cpp:
+        (WebCore::FETile::platformApplySoftware):
+        * platform/graphics/filters/Filter.h:
+        (WebCore::Filter::Filter):
+        (WebCore::Filter::renderingMode):
+        (WebCore::Filter::setRenderingMode):
+        * platform/graphics/filters/FilterEffect.cpp:
+        (WebCore::FilterEffect::asImageBuffer):
+        (WebCore::FilterEffect::createImageBufferResult):
+        * platform/graphics/skia/ImageBufferSkia.cpp:
+        (WebCore::ImageBuffer::platformTransformColorSpace):
+        * rendering/svg/RenderSVGResourceClipper.cpp:
+        (WebCore::RenderSVGResourceClipper::applyClippingToContext):
+        * rendering/svg/RenderSVGResourceFilter.cpp:
+        (WebCore::RenderSVGResourceFilter::applyResource):
+        * rendering/svg/RenderSVGResourceMasker.cpp:
+        (WebCore::RenderSVGResourceMasker::applyResource):
+        * rendering/svg/RenderSVGResourcePattern.cpp:
+        (WebCore::RenderSVGResourcePattern::createTileImage):
+        * rendering/svg/SVGImageBufferTools.cpp:
+        (WebCore::SVGImageBufferTools::createImageBuffer):
+        * rendering/svg/SVGImageBufferTools.h:
+        * testing/Internals.cpp:
+        (WebCore::Internals::setAcceleratedFiltersEnabled):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2011-12-05  Benjamin Poulain  <bpoulain@apple.com>
 
         Upstream htmlSelectMultipleItems needed for <select multiple> by iOS

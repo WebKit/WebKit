@@ -1,3 +1,15 @@
+2011-12-05  Stephen White  <senorblanco@chromium.org>
+
+        Allow the ImageBuffers used by SVG filters to be accelerated
+        https://bugs.webkit.org/show_bug.cgi?id=73842
+
+        Reviewed by Kenneth Russell.
+
+        * public/WebSettings.h:
+        * src/WebSettingsImpl.cpp:
+        (WebKit::WebSettingsImpl::setAcceleratedFiltersEnabled):
+        * src/WebSettingsImpl.h:
+
 2011-12-05  Adam Barth  <abarth@webkit.org>
 
         [Chromium] Chromium fails to compile due to missing WebContentLayerClient.h

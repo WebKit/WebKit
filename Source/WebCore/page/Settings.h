@@ -301,6 +301,9 @@ namespace WebCore {
         void setAcceleratedDrawingEnabled(bool enabled) { m_acceleratedDrawingEnabled = enabled; }
         bool acceleratedDrawingEnabled() const { return m_acceleratedDrawingEnabled; }
 
+        void setAcceleratedFiltersEnabled(bool enabled) { m_acceleratedFiltersEnabled = enabled; }
+        bool acceleratedFiltersEnabled() const { return m_acceleratedFiltersEnabled; }
+
         void setAcceleratedCompositingEnabled(bool);
         bool acceleratedCompositingEnabled() const { return m_acceleratedCompositingEnabled; }
 
@@ -573,6 +576,7 @@ namespace WebCore {
         bool m_allowScriptsToCloseWindows : 1;
         bool m_canvasUsesAcceleratedDrawing : 1;
         bool m_acceleratedDrawingEnabled : 1;
+        bool m_acceleratedFiltersEnabled : 1;
         bool m_downloadableBinaryFontsEnabled : 1;
         bool m_xssAuditorEnabled : 1;
         bool m_acceleratedCompositingEnabled : 1;

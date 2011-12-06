@@ -178,6 +178,10 @@ void ImageBuffer::drawPattern(GraphicsContext* context, const FloatRect& srcRect
 
 void ImageBuffer::platformTransformColorSpace(const Vector<int>& lookUpTable)
 {
+    // FIXME: Disable color space conversions on accelerated canvases (for now).
+    if (m_data.m_platformContext.isAccelerated()) 
+        return;
+
     const SkBitmap& bitmap = *context()->platformContext()->bitmap();
     if (bitmap.isNull())
         return;

@@ -79,6 +79,7 @@ public:
     void setEnableCompositingForFixedPosition(Document*, bool enabled, ExceptionCode&);
     void setEnableCompositingForScrollableFrames(Document*, bool enabled, ExceptionCode&);
     void setAcceleratedDrawingEnabled(Document*, bool enabled, ExceptionCode&);
+    void setAcceleratedFiltersEnabled(Document*, bool enabled, ExceptionCode&);
 
     void setEnableScrollAnimator(Document*, bool enabled, ExceptionCode&);
     void setZoomAnimatorTransform(Document*, float scale, float tx, float ty, ExceptionCode&);
