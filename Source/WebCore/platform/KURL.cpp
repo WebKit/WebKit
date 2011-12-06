@@ -293,19 +293,12 @@ static int findFirstOf(const UChar* s, int sLen, int startPos, const char* toFin
     return -1;
 }
 
-#ifndef NDEBUG
-static void checkEncodedString(const String& url)
+static inline void checkEncodedString(const String& url)
 {
-    for (unsigned i = 0; i < url.length(); ++i)
-        ASSERT(!(url[i] & ~0x7F));
-
-    ASSERT(!url.length() || isSchemeFirstChar(url[0]));
+    UNUSED_PARAM(url);
+    ASSERT(url.containsOnlyASCII());
+    ASSERT(!url.isEmpty() || isSchemeFirstChar(url[0]));
 }
-#else
-static inline void checkEncodedString(const String&)
-{
-}
-#endif
 
 inline bool KURL::protocolIs(const String& string, const char* protocol)
 {
