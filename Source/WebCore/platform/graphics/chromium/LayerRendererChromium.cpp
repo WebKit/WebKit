@@ -331,13 +331,18 @@ void LayerRendererChromium::drawLayers()
         return;
 
     size_t contentsMemoryUseBytes = m_contentsTextureAllocator->currentMemoryUseBytes();
-    m_renderSurfaceTextureManager->setMemoryLimitBytes(TextureManager::highLimitBytes() - contentsMemoryUseBytes);
+    size_t maxLimit = TextureManager::highLimitBytes(viewportSize());
+    size_t reclaimLimit = TextureManager::reclaimLimitBytes(viewportSize());
+
+    m_renderSurfaceTextureManager->setMaxMemoryLimitBytes(maxLimit - contentsMemoryUseBytes);
+
     drawLayersInternal();
 
-    if (TextureManager::reclaimLimitBytes() > contentsMemoryUseBytes)
-        m_renderSurfaceTextureManager->reduceMemoryToLimit(TextureManager::reclaimLimitBytes() - contentsMemoryUseBytes);
+    if (reclaimLimit > contentsMemoryUseBytes)
+        m_renderSurfaceTextureManager->setPreferredMemoryLimitBytes(reclaimLimit - contentsMemoryUseBytes);
     else
-        m_renderSurfaceTextureManager->reduceMemoryToLimit(0);
+        m_renderSurfaceTextureManager->setPreferredMemoryLimitBytes(0);
+
     m_renderSurfaceTextureManager->deleteEvictedTextures(m_renderSurfaceTextureAllocator.get());
 
     if (settings().compositeOffscreen)
@@ -745,7 +750,9 @@ bool LayerRendererChromium::initializeSharedObjects()
 
     GLC(m_context.get(), m_context->flush());
 
-    m_renderSurfaceTextureManager = TextureManager::create(TextureManager::highLimitBytes(), m_capabilities.maxTextureSize);
+    m_renderSurfaceTextureManager = TextureManager::create(TextureManager::highLimitBytes(viewportSize()),
+                                                           TextureManager::reclaimLimitBytes(viewportSize()),
+                                                           m_capabilities.maxTextureSize);
     m_contentsTextureAllocator = TrackingTextureAllocator::create(m_context.get());
     m_renderSurfaceTextureAllocator = TrackingTextureAllocator::create(m_context.get());
     if (m_capabilities.usingTextureUsageHint)

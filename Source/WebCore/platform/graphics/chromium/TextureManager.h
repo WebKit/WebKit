@@ -49,21 +49,22 @@ protected:
 class TextureManager {
     WTF_MAKE_NONCOPYABLE(TextureManager);
 public:
-    static PassOwnPtr<TextureManager> create(size_t memoryLimitBytes, int maxTextureSize)
+    static PassOwnPtr<TextureManager> create(size_t maxMemoryLimitBytes, size_t preferredMemoryLimitBytes, int maxTextureSize)
     {
-        return adoptPtr(new TextureManager(memoryLimitBytes, maxTextureSize));
+        return adoptPtr(new TextureManager(maxMemoryLimitBytes, preferredMemoryLimitBytes, maxTextureSize));
     }
 
     // Absolute maximum limit for texture allocations for this instance.
-    static size_t highLimitBytes();
-    // Preferred texture size limit. Can be exceeded if needed.
-    static size_t reclaimLimitBytes();
+    static size_t highLimitBytes(const IntSize& viewportSize);
+    // Preferred texture size limit given the viewport size.
+    static size_t reclaimLimitBytes(const IntSize& viewportSize);
     // The maximum texture memory usage when asked to release textures.
-    static size_t lowLimitBytes();
+    static size_t lowLimitBytes(const IntSize& viewport);
 
     static size_t memoryUseBytes(const IntSize&, GC3Denum format);
 
-    void setMemoryLimitBytes(size_t);
+    void setMaxMemoryLimitBytes(size_t);
+    void setPreferredMemoryLimitBytes(size_t);
 
     TextureToken getToken();
     void releaseToken(TextureToken);
@@ -85,7 +86,7 @@ public:
     size_t currentMemoryUseBytes() const { return m_memoryUseBytes; }
 
 private:
-    TextureManager(size_t memoryLimitBytes, int maxTextureSize);
+    TextureManager(size_t maxMemoryLimitBytes, size_t preferredMemoryLimitBytes, int maxTextureSize);
 
     struct TextureInfo {
         IntSize size;
@@ -105,7 +106,8 @@ private:
     TextureMap m_textures;
     ListHashSet<TextureToken> m_textureLRUSet;
 
-    size_t m_memoryLimitBytes;
+    size_t m_maxMemoryLimitBytes;
+    size_t m_preferredMemoryLimitBytes;
     size_t m_memoryUseBytes;
     int m_maxTextureSize;
     TextureToken m_nextToken;

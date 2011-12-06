@@ -93,7 +93,9 @@ bool CCLayerTreeHost::initialize()
     // Update m_settings based on capabilities that we got back from the renderer.
     m_settings.acceleratePainting = m_proxy->layerRendererCapabilities().usingAcceleratedPainting;
 
-    m_contentsTextureManager = TextureManager::create(TextureManager::highLimitBytes(), m_proxy->layerRendererCapabilities().maxTextureSize);
+    m_contentsTextureManager = TextureManager::create(TextureManager::highLimitBytes(viewportSize()),
+                                                      TextureManager::reclaimLimitBytes(viewportSize()),
+                                                      m_proxy->layerRendererCapabilities().maxTextureSize);
     return true;
 }
 
@@ -126,7 +128,7 @@ void CCLayerTreeHost::beginCommitOnImplThread(CCLayerTreeHostImpl* hostImpl)
     ASSERT(CCProxy::isImplThread());
     TRACE_EVENT("CCLayerTreeHost::commitTo", this, 0);
 
-    contentsTextureManager()->reduceMemoryToLimit(TextureManager::reclaimLimitBytes());
+    contentsTextureManager()->reduceMemoryToLimit(TextureManager::reclaimLimitBytes(viewportSize()));
     contentsTextureManager()->deleteEvictedTextures(hostImpl->contentsTextureAllocator());
 }
 
@@ -233,6 +235,8 @@ void CCLayerTreeHost::setNeedsRedraw()
 
 void CCLayerTreeHost::setViewport(const IntSize& viewportSize)
 {
+    contentsTextureManager()->setMaxMemoryLimitBytes(TextureManager::highLimitBytes(viewportSize));
+    contentsTextureManager()->setPreferredMemoryLimitBytes(TextureManager::reclaimLimitBytes(viewportSize));
     m_viewportSize = viewportSize;
     setNeedsCommit();
 }
@@ -263,7 +267,7 @@ void CCLayerTreeHost::setVisible(bool visible)
 
     m_visible = visible;
     if (!visible) {
-        m_contentsTextureManager->reduceMemoryToLimit(TextureManager::lowLimitBytes());
+        m_contentsTextureManager->reduceMemoryToLimit(TextureManager::lowLimitBytes(viewportSize()));
         m_contentsTextureManager->unprotectAllTextures();
     }
 
@@ -279,7 +283,7 @@ void CCLayerTreeHost::didBecomeInvisibleOnImplThread(CCLayerTreeHostImpl* hostIm
     if (m_proxy->layerRendererCapabilities().contextHasCachedFrontBuffer)
         contentsTextureManager()->evictAndDeleteAllTextures(hostImpl->contentsTextureAllocator());
     else {
-        contentsTextureManager()->reduceMemoryToLimit(TextureManager::reclaimLimitBytes());
+        contentsTextureManager()->reduceMemoryToLimit(TextureManager::reclaimLimitBytes(viewportSize()));
         contentsTextureManager()->deleteEvictedTextures(hostImpl->contentsTextureAllocator());
     }
 }

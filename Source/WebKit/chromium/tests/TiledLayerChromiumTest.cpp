@@ -114,7 +114,7 @@ private:
 
 TEST(TiledLayerChromiumTest, pushDirtyTiles)
 {
-    OwnPtr<TextureManager> textureManager = TextureManager::create(4*1024*1024, 1024);
+    OwnPtr<TextureManager> textureManager = TextureManager::create(4*1024*1024, 2*1024*1024, 1024);
     RefPtr<FakeTiledLayerChromium> layer = adoptRef(new FakeTiledLayerChromium(textureManager.get()));
     DebugScopedSetImplThread implThread;
     RefPtr<FakeCCTiledLayerImpl> layerImpl = adoptRef(new FakeCCTiledLayerImpl(0));

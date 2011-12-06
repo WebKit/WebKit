@@ -1,3 +1,30 @@
+2011-12-06  Eric Penner  <epenner@google.com>
+
+        [chromium] Set texture limits as multiples of viewport size instead of hardcoded values
+        https://bugs.webkit.org/show_bug.cgi?id=72202
+
+        Reviewed by James Robinson.
+
+        * platform/graphics/chromium/LayerRendererChromium.cpp: 
+        (WebCore::LayerRendererChromium::drawLayers): added viewport param
+        (WebCore::LayerRendererChromium::initializeSharedObjects): ditto 
+        * platform/graphics/chromium/TextureManager.cpp: 
+        (WebCore::TextureManager::highLimitBytes): calculated based on viewport
+        (WebCore::TextureManager::reclaimLimitBytes): ditto
+        (WebCore::TextureManager::lowLimitBytes): ditto
+        (WebCore::TextureManager::TextureManager): added viewport param
+        (WebCore::TextureManager::setMaxMemoryLimitBytes): changed name
+        (WebCore::TextureManager::setPreferredMemoryLimitBytes): added function
+        (WebCore::TextureManager::requestTexture): added viewport param
+        * platform/graphics/chromium/TextureManager.h: ditto
+        (WebCore::TextureManager::create): ditto
+        * platform/graphics/chromium/cc/CCLayerTreeHost.cpp: ditto
+        (WebCore::CCLayerTreeHost::initialize): ditto
+        (WebCore::CCLayerTreeHost::beginCommitOnImplThread): ditto
+        (WebCore::CCLayerTreeHost::setViewport): ditto
+        (WebCore::CCLayerTreeHost::setVisible): ditto
+        (WebCore::CCLayerTreeHost::didBecomeInvisibleOnImplThread): ditto
+
 2011-12-06  Huang Dongsung  <luxtella@company100.net>
 
         [TexMap][QT] Draw the borders of media and webgl elements in TexMap.

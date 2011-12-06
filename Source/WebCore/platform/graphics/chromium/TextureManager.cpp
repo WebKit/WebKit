@@ -30,21 +30,55 @@
 
 #include "LayerRendererChromium.h"
 
+using namespace std;
+
 namespace WebCore {
 
-size_t TextureManager::highLimitBytes()
+
+namespace {
+size_t memoryLimitBytes(size_t viewportMultiplier, const IntSize& viewportSize, size_t minMegabytes, size_t maxMegabytes)
 {
-    return 128 * 1024 * 1024;
+    if (viewportSize.isEmpty())
+        return minMegabytes * 1024 * 1024;
+    return max(minMegabytes * 1024 * 1024, min(maxMegabytes * 1024 * 1024, viewportMultiplier * TextureManager::memoryUseBytes(viewportSize, GraphicsContext3D::RGBA)));
+}
 }
 
-size_t TextureManager::reclaimLimitBytes()
+size_t TextureManager::highLimitBytes(const IntSize& viewportSize)
 {
-    return 64 * 1024 * 1024;
+    size_t viewportMultiplier, minMegabytes, maxMegabytes;
+    viewportMultiplier = 8;
+#if OS(ANDROID)
+    minMegabytes = 24;
+    maxMegabytes = 32;
+#else
+    minMegabytes = 64;
+    maxMegabytes = 128;
+#endif
+    return memoryLimitBytes(viewportMultiplier, viewportSize, minMegabytes, maxMegabytes);
 }
 
-size_t TextureManager::lowLimitBytes()
+size_t TextureManager::reclaimLimitBytes(const IntSize& viewportSize)
 {
-    return 3 * 1024 * 1024;
+    size_t viewportMultiplier, minMegabytes, maxMegabytes;
+    viewportMultiplier = 4;
+#if OS(ANDROID)
+    minMegabytes = 9;
+    maxMegabytes = 32;
+#else
+    minMegabytes = 32;
+    maxMegabytes = 64;
+#endif
+    return memoryLimitBytes(viewportMultiplier, viewportSize, minMegabytes, maxMegabytes);
+}
+
+size_t TextureManager::lowLimitBytes(const IntSize& viewportSize)
+{
+    size_t viewportMultiplier, minMegabytes, maxMegabytes;
+    viewportMultiplier = 1;
+    minMegabytes = 2;
+    maxMegabytes = 3;
+    return memoryLimitBytes(viewportMultiplier, viewportSize, minMegabytes, maxMegabytes);
 }
 
 size_t TextureManager::memoryUseBytes(const IntSize& size, GC3Denum textureFormat)
@@ -60,19 +94,26 @@ size_t TextureManager::memoryUseBytes(const IntSize& size, GC3Denum textureForma
 }
 
 
-TextureManager::TextureManager(size_t memoryLimitBytes, int maxTextureSize)
-    : m_memoryLimitBytes(memoryLimitBytes)
+TextureManager::TextureManager(size_t maxMemoryLimitBytes, size_t preferredMemoryLimitBytes, int maxTextureSize)
+    : m_maxMemoryLimitBytes(maxMemoryLimitBytes)
+    , m_preferredMemoryLimitBytes(preferredMemoryLimitBytes)
     , m_memoryUseBytes(0)
     , m_maxTextureSize(maxTextureSize)
     , m_nextToken(1)
 {
 }
 
-void TextureManager::setMemoryLimitBytes(size_t memoryLimitBytes)
+void TextureManager::setMaxMemoryLimitBytes(size_t memoryLimitBytes)
 {
     reduceMemoryToLimit(memoryLimitBytes);
     ASSERT(currentMemoryUseBytes() <= memoryLimitBytes);
-    m_memoryLimitBytes = memoryLimitBytes;
+    m_maxMemoryLimitBytes = memoryLimitBytes;
+}
+
+void TextureManager::setPreferredMemoryLimitBytes(size_t memoryLimitBytes)
+{
+    reduceMemoryToLimit(memoryLimitBytes);
+    m_preferredMemoryLimitBytes = memoryLimitBytes;
 }
 
 TextureToken TextureManager::getToken()
@@ -243,11 +284,11 @@ bool TextureManager::requestTexture(TextureToken token, IntSize size, unsigned f
     }
 
     size_t memoryRequiredBytes = memoryUseBytes(size, format);
-    if (memoryRequiredBytes > m_memoryLimitBytes)
+    if (memoryRequiredBytes > m_maxMemoryLimitBytes)
         return false;
 
-    reduceMemoryToLimit(m_memoryLimitBytes - memoryRequiredBytes);
-    if (m_memoryUseBytes + memoryRequiredBytes > m_memoryLimitBytes)
+    reduceMemoryToLimit(m_maxMemoryLimitBytes - memoryRequiredBytes);
+    if (m_memoryUseBytes + memoryRequiredBytes > m_maxMemoryLimitBytes)
         return false;
 
     TextureInfo info;
@@ -260,7 +301,7 @@ bool TextureManager::requestTexture(TextureToken token, IntSize size, unsigned f
 #endif
     // Avoid churning by reusing the texture if it is about to be reclaimed and
     // it has the same size and format as the requesting texture.
-    if (m_memoryUseBytes + memoryRequiredBytes > reclaimLimitBytes()) {
+    if (m_memoryUseBytes + memoryRequiredBytes > m_preferredMemoryLimitBytes) {
         textureId = replaceTexture(token, info);
         if (textureId)
             return true;
