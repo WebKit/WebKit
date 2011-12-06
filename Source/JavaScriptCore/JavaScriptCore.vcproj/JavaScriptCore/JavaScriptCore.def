@@ -14,6 +14,7 @@ EXPORTS
     ??0JSLock@JSC@@QAE@PAVExecState@1@@Z
     ??0MD5@WTF@@QAE@XZ
     ??0Mutex@WTF@@QAE@XZ
+    ??0ParallelEnvironment@WTF@@QAE@P6AXPAX@ZIH@Z
     ??0RefCountedLeakCounter@WTF@@QAE@PBD@Z
     ??0RegExpObject@JSC@@IAE@PAVJSGlobalObject@1@PAVStructure@1@PAVRegExp@1@@Z
     ??0SHA1@WTF@@QAE@XZ
@@ -130,6 +131,7 @@ EXPORTS
     ?currentThread@WTF@@YAIXZ
     ?currentThreadIsHoldingLock@JSLock@JSC@@SA_NXZ
     ?currentTime@WTF@@YANXZ
+	?execute@ParallelEnvironment@WTF@@QAEXPAX@Z
     ?data@CString@WTF@@QBEPBDXZ
     ?dateToDaysFrom1970@WTF@@YANHHH@Z
     ?dayInMonthFromDayInYear@WTF@@YAHH_N@Z

@@ -1,3 +1,44 @@
+2011-11-21  Balazs Kelemen  <kbalazs@webkit.org>
+
+        Enable ParallelJobs by default
+        https://bugs.webkit.org/show_bug.cgi?id=70032
+
+        Reviewed by Zoltan Herczeg.
+
+        Covered by existing tests.
+
+        According to measurements on Mac and Linux it is a
+        considerable speedup for SVG on multicore.
+
+        Remove the ENABLE(PARALLEL_JOBS) guard. Fix the Windows build
+        by qualifying ParallelJobs with the WTF namespace (otherwise
+        MSVC believes it belongs to WebCore which is likely a compiler bug).
+
+        * platform/graphics/filters/FEConvolveMatrix.cpp:
+        (WebCore::FEConvolveMatrix::setInteriorPixelsWorker):
+        (WebCore::FEConvolveMatrix::platformApplySoftware):
+        * platform/graphics/filters/FEConvolveMatrix.h:
+        * platform/graphics/filters/FEGaussianBlur.cpp:
+        (WebCore::FEGaussianBlur::platformApplyWorker):
+        (WebCore::FEGaussianBlur::platformApply):
+        * platform/graphics/filters/FEGaussianBlur.h:
+        * platform/graphics/filters/FELighting.cpp:
+        (WebCore::FELighting::platformApplyGenericWorker):
+        (WebCore::FELighting::platformApplyGeneric):
+        * platform/graphics/filters/FELighting.h:
+        * platform/graphics/filters/FEMorphology.cpp:
+        (WebCore::FEMorphology::platformApplyWorker):
+        (WebCore::FEMorphology::platformApply):
+        * platform/graphics/filters/FEMorphology.h:
+        * platform/graphics/filters/FETurbulence.cpp:
+        (WebCore::FETurbulence::fillRegionWorker):
+        (WebCore::FETurbulence::platformApplySoftware):
+        * platform/graphics/filters/FETurbulence.h:
+        * platform/graphics/filters/arm/FELightingNEON.cpp:
+        (WebCore::FELighting::platformApplyNeonWorker):
+        * platform/graphics/filters/arm/FELightingNEON.h:
+        (WebCore::FELighting::platformApplyNeon):
+
 2011-12-06  Andreas Kling  <kling@webkit.org>
 
         Unreviewed assertion fix for r102123.

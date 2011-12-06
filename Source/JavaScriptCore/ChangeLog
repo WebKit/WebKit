@@ -1,3 +1,31 @@
+2011-11-21  Balazs Kelemen  <kbalazs@webkit.org>
+
+        Enable ParallelJobs by default
+        https://bugs.webkit.org/show_bug.cgi?id=70032
+
+        Reviewed by Zoltan Herczeg.
+
+        According to measurements on Mac and Linux it is a
+        considerable speedup for SVG on multicore.
+
+        Remove the ENABLE(PARALLEL_JOBS) guard.
+        Fix build on Windows and Chromium.
+
+        * JavaScriptCore.gypi:  Add the files to the build. It was
+        missing for the gyp build system.
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        Export symbols.
+        * wtf/ParallelJobs.h:
+        * wtf/ParallelJobsGeneric.cpp:
+        (WTF::ParallelEnvironment::ParallelEnvironment):
+        (WTF::ParallelEnvironment::execute):
+        Deinline these to avoid exporting a lot of symbols.
+        These are non-trivial and called only once on a given object
+        so it doesn't seems to be worthwile to inline them.
+        Additionally fix a signed-unsigned comparison in the constructor.
+        * wtf/ParallelJobsGeneric.h:
+        * wtf/Platform.h:
+
 2011-12-06  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] build-jsc script doesn't work

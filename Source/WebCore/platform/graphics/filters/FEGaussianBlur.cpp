@@ -139,7 +139,6 @@ inline void FEGaussianBlur::platformApplyGeneric(ByteArray* srcPixelArray, ByteA
 
 }
 
-#if ENABLE(PARALLEL_JOBS)
 void FEGaussianBlur::platformApplyWorker(PlatformApplyParameters* parameters)
 {
     IntSize paintSize(parameters->width, parameters->height);
@@ -151,17 +150,15 @@ void FEGaussianBlur::platformApplyWorker(PlatformApplyParameters* parameters)
         parameters->kernelSizeX, parameters->kernelSizeY, paintSize);
 #endif
 }
-#endif
 
 inline void FEGaussianBlur::platformApply(ByteArray* srcPixelArray, ByteArray* tmpPixelArray, unsigned kernelSizeX, unsigned kernelSizeY, IntSize& paintSize)
 {
-#if ENABLE(PARALLEL_JOBS)
     int scanline = 4 * paintSize.width();
     int extraHeight = 3 * kernelSizeY * 0.5f;
     int optimalThreadNumber = (paintSize.width() * paintSize.height()) / (s_minimalRectDimension + extraHeight * paintSize.width());
 
     if (optimalThreadNumber > 1) {
-        ParallelJobs<PlatformApplyParameters> parallelJobs(&platformApplyWorker, optimalThreadNumber);
+        WTF::ParallelJobs<PlatformApplyParameters> parallelJobs(&platformApplyWorker, optimalThreadNumber);
 
         int jobs = parallelJobs.numberOfJobs();
         if (jobs > 1) {
@@ -220,8 +217,8 @@ inline void FEGaussianBlur::platformApply(ByteArray* srcPixelArray, ByteArray* t
             }
             return;
         }
+        // Fallback to single threaded mode.
     }
-#endif // PARALLEL_JOBS
 
     // The selection here eventually should happen dynamically on some platforms.
 #if CPU(ARM_NEON) && COMPILER(GCC)

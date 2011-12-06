@@ -33,11 +33,7 @@
 #include "RefPtr.h"
 #include <wtf/Vector.h>
 
-#if ENABLE(PARALLEL_JOBS)
-
 // Usage:
-//
-// #if ENABLE(PARALLEL_JOBS)
 //
 //     // Initialize parallel jobs
 //     ParallelJobs<TypeOfParameter> parallelJobs(&worker [, requestedNumberOfJobs]);
@@ -52,11 +48,6 @@
 //     // Execute parallel jobs
 //     parallelJobs.execute();
 //
-// #else
-//
-//     inlineFunction(args...);
-//
-// #endif // ENABLE(PARALLEL_JOBS)
 
 #if ENABLE(THREADING_GENERIC)
 #include "ParallelJobsGeneric.h"
@@ -110,7 +101,5 @@ private:
 } // namespace WTF
 
 using WTF::ParallelJobs;
-
-#endif // ENABLE(PARALLEL_JOBS)
 
 #endif // ParallelJobs_h
