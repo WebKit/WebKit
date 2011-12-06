@@ -1,3 +1,20 @@
+2011-12-06  Filip Pizlo  <fpizlo@apple.com>
+
+        GC zapping logic could benefit from some more assertions
+        https://bugs.webkit.org/show_bug.cgi?id=73947
+
+        Reviewed by Gavin Barraclough.
+        
+        - If you're in a zapped block and you're zapped, then your mark bit should
+          never be set.
+          
+        - If you're being marked, then you should never be zapped.
+
+        * heap/MarkedBlock.h:
+        (JSC::MarkedBlock::isLive):
+        * runtime/Structure.h:
+        (JSC::MarkStack::internalAppend):
+
 2011-12-06  Oliver Hunt  <oliver@apple.com>
 
         Don't allocate register in typedarray control flow

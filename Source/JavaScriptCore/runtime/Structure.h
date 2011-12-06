@@ -356,6 +356,10 @@ namespace JSC {
         m_visitCount++;
         if (Heap::testAndSetMarked(cell) || !cell->structure())
             return;
+        
+        // Should never attempt to mark something that is zapped.
+        ASSERT(!cell->isZapped());
+        
         m_stack.append(cell);
     }
 
