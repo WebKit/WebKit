@@ -1,3 +1,15 @@
+2011-12-06  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r102102.
+        http://trac.webkit.org/changeset/102102
+        https://bugs.webkit.org/show_bug.cgi?id=73925
+
+        Causes segmentation fault on chromium unit_tests,
+        content_unittests, sync_unit_tests (Requested by vsevik on
+        #webkit).
+
+        * features.gypi:
+
 2011-12-06  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Unreviewed chromium expectations update.

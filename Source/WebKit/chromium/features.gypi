@@ -115,7 +115,7 @@
       'enable_touch_events%': 1,
       'use_skia%': 0,
       'enable_touch_icon_loading%' : 0,
-      'enable_mutation_observers%': 1,
+      'enable_mutation_observers%': 0,
     },
     'use_accelerated_compositing%': '<(use_accelerated_compositing)',
     'enable_skia_text%': '<(enable_skia_text)',
