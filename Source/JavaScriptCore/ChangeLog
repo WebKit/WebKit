@@ -1,3 +1,18 @@
+2011-12-06  Michael Saboff  <msaboff@apple.com>
+
+        r102146 from 73875 broke fast/js/encode-URI-test.html
+        https://bugs.webkit.org/show_bug.cgi?id=73950
+
+        Reviewed by Gavin Barraclough.
+
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::globalFuncUnescape): Restructured to handle
+        the %uHHHH case to output the resulting character
+        and continue so that a failure in finding 4 hex
+        digits will fall through and output the '%'.
+        Due to style check, changed the temporary
+        character variable to a more descriptive name.
+
 2011-12-06  Filip Pizlo  <fpizlo@apple.com>
 
         GC zapping logic could benefit from some more assertions

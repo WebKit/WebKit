@@ -646,19 +646,21 @@ EncodedJSValue JSC_HOST_CALL globalFuncUnescape(ExecState* exec)
     
     if (str.is8Bit()) {
         const LChar* characters = str.characters8();
-
+        LChar convertedLChar;
         while (k < len) {
             const LChar* c = characters + k;
             if (c[0] == '%' && k <= len - 6 && c[1] == 'u') {
                 if (isASCIIHexDigit(c[2]) && isASCIIHexDigit(c[3]) && isASCIIHexDigit(c[4]) && isASCIIHexDigit(c[5])) {
                     builder.append(Lexer<UChar>::convertUnicode(c[2], c[3], c[4], c[5]));
-                    k += 5;
+                    k += 6;
+                    continue;
                 }
             } else if (c[0] == '%' && k <= len - 3 && isASCIIHexDigit(c[1]) && isASCIIHexDigit(c[2])) {
-                builder.append(Lexer<LChar>::convertHex(c[1], c[2]));
+                convertedLChar = LChar(Lexer<LChar>::convertHex(c[1], c[2]));
+                c = &convertedLChar;
                 k += 2;
-            } else
-                builder.append(*c);
+            }
+            builder.append(*c);
             k++;
         }        
     } else {
@@ -666,16 +668,16 @@ EncodedJSValue JSC_HOST_CALL globalFuncUnescape(ExecState* exec)
 
         while (k < len) {
             const UChar* c = characters + k;
-            UChar u;
+            UChar convertedUChar;
             if (c[0] == '%' && k <= len - 6 && c[1] == 'u') {
                 if (isASCIIHexDigit(c[2]) && isASCIIHexDigit(c[3]) && isASCIIHexDigit(c[4]) && isASCIIHexDigit(c[5])) {
-                    u = Lexer<UChar>::convertUnicode(c[2], c[3], c[4], c[5]);
-                    c = &u;
+                    convertedUChar = Lexer<UChar>::convertUnicode(c[2], c[3], c[4], c[5]);
+                    c = &convertedUChar;
                     k += 5;
                 }
             } else if (c[0] == '%' && k <= len - 3 && isASCIIHexDigit(c[1]) && isASCIIHexDigit(c[2])) {
-                u = UChar(Lexer<UChar>::convertHex(c[1], c[2]));
-                c = &u;
+                convertedUChar = UChar(Lexer<UChar>::convertHex(c[1], c[2]));
+                c = &convertedUChar;
                 k += 2;
             }
             k++;
