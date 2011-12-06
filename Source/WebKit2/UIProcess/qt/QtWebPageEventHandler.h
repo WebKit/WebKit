@@ -52,6 +52,7 @@ public:
     void handleDoubleTapEvent(const QTouchEvent::TouchPoint&);
 
     void didFindZoomableArea(const WebCore::IntPoint& target, const WebCore::IntRect& area);
+    void focusEditableArea(const WebCore::IntRect& caret, const WebCore::IntRect& area);
     void doneWithTouchEvent(const NativeWebTouchEvent&, bool wasEventHandled);
     void resetGestureRecognizers();
 

@@ -91,7 +91,8 @@ public:
     void pinchGestureRequestUpdate(const QPointF& pinchCenterInContentCoordinates, qreal totalScaleFactor);
     void pinchGestureEnded();
 
-    void zoomToAreaGestureEnded(const QPointF& touchPoint, const QRectF& endArea);
+    void zoomToAreaGestureEnded(const QPointF& touchPoint, const QRectF& targetArea);
+    void focusEditableArea(const QRectF& caretArea, const QRectF& targetArea);
 
 Q_SIGNALS:
     void contentSuspendRequested();
@@ -112,6 +113,9 @@ private:
 
     qreal cssScaleFromItem(qreal);
     qreal itemScaleFromCSS(qreal);
+    qreal itemCoordFromCSS(qreal);
+    QRectF itemRectFromCSS(const QRectF&);
+
     qreal innerBoundedCSSScale(qreal);
     qreal outerBoundedCSSScale(qreal);
 

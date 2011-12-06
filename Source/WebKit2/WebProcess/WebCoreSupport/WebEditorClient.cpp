@@ -38,12 +38,14 @@
 #include <WebCore/EditCommand.h>
 #include <WebCore/FocusController.h>
 #include <WebCore/Frame.h>
+#include <WebCore/FrameView.h>
 #include <WebCore/HTMLInputElement.h>
 #include <WebCore/HTMLNames.h>
 #include <WebCore/HTMLTextAreaElement.h>
 #include <WebCore/KeyboardEvent.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/Page.h>
+#include <WebCore/TextIterator.h>
 #include <WebCore/UserTypingGestureIndicator.h>
 
 using namespace WebCore;
@@ -180,6 +182,27 @@ void WebEditorClient::respondToChangedSelection(Frame* frame)
     m_page->injectedBundleEditorClient().didChangeSelection(m_page, WebViewDidChangeSelectionNotification.impl());
     if (!frame)
         return;
+
+#if PLATFORM(QT)
+    bool selectionIsNone = frame->selection()->isNone();
+    Element* scope = frame->selection()->rootEditableElement();
+
+    RefPtr<Range> range;
+    if (scope && !selectionIsNone && (range = frame->selection()->selection().firstRange())) {
+        size_t location = 0;
+        size_t length = 0;
+
+        TextIterator::getLocationAndLengthFromRange(scope, range.get(), location, length);
+
+        ExceptionCode ec = 0;
+        RefPtr<Range> tempRange = range->cloneRange(ec);
+        tempRange->setStart(tempRange->startContainer(ec), tempRange->startOffset(ec) + location, ec);
+        IntRect caretRect = frame->view()->contentsToWindow(frame->editor()->firstRectForRange(tempRange.get()));
+        IntRect nodeRect = frame->view()->contentsToWindow(scope->getRect());
+
+        m_page->send(Messages::WebPageProxy::FocusEditableArea(caretRect, nodeRect));
+    }
+#endif
 
     m_page->send(Messages::WebPageProxy::EditorStateChanged(m_page->editorState()));
 

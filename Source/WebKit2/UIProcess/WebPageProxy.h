@@ -692,6 +692,7 @@ private:
 #if PLATFORM(QT)
     void didChangeContentsSize(const WebCore::IntSize&);
     void didFindZoomableArea(const WebCore::IntPoint&, const WebCore::IntRect&);
+    void focusEditableArea(const WebCore::IntRect& caret, const WebCore::IntRect&);
 #endif
 #if ENABLE(TOUCH_EVENTS)
     void needTouchEvents(bool);

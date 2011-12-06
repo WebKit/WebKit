@@ -80,6 +80,7 @@ public:
     virtual void findStringInCustomRepresentation(const String&, FindOptions, unsigned maxMatchCount) { }
     virtual void countStringMatchesInCustomRepresentation(const String&, FindOptions, unsigned maxMatchCount) { }
     virtual void didFindZoomableArea(const WebCore::IntPoint&, const WebCore::IntRect&);
+    virtual void focusEditableArea(const WebCore::IntRect&, const WebCore::IntRect&);
     virtual void didReceiveMessageFromNavigatorQtObject(const String&);
     virtual void handleDownloadRequest(DownloadProxy*);
 

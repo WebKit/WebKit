@@ -1,3 +1,32 @@
+2011-12-06  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        [Qt] Add initial support for focusing when entering edit mode.
+
+        Reviewed by Simon Hausmann.
+
+        Next step would be to properly upstream our EditorState code.
+
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::focusEditableArea):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/qt/QtPageClient.cpp:
+        (QtPageClient::focusEditableArea):
+        * UIProcess/qt/QtPageClient.h:
+        * UIProcess/qt/QtViewportInteractionEngine.cpp:
+        (WebKit::QtViewportInteractionEngine::itemCoordFromCSS):
+        (WebKit::QtViewportInteractionEngine::itemRectFromCSS):
+        (WebKit::QtViewportInteractionEngine::focusEditableArea):
+        (WebKit::QtViewportInteractionEngine::zoomToAreaGestureEnded):
+        * UIProcess/qt/QtViewportInteractionEngine.h:
+        * UIProcess/qt/QtWebPageEventHandler.cpp:
+        (QtWebPageEventHandler::focusEditableArea):
+        * UIProcess/qt/QtWebPageEventHandler.h:
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+        (WebKit::WebEditorClient::respondToChangedSelection):
+        (WebKit::WebEditorClient::setInputMethodState):
+
 2011-12-06  Alexander Færøy  <alexander.faeroy@nokia.com>
 
         [Qt] Fix assertion in QtWebPageEventHandler.cpp

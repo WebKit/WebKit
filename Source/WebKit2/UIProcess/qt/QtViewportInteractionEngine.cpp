@@ -94,6 +94,23 @@ inline qreal QtViewportInteractionEngine::itemScaleFromCSS(qreal cssScale)
     return cssScale * m_constraints.devicePixelRatio;
 }
 
+inline qreal QtViewportInteractionEngine::itemCoordFromCSS(qreal value)
+{
+    return value * m_constraints.devicePixelRatio;
+}
+
+inline QRectF QtViewportInteractionEngine::itemRectFromCSS(const QRectF& cssRect)
+{
+    QRectF itemRect;
+
+    itemRect.setX(itemCoordFromCSS(cssRect.x()));
+    itemRect.setY(itemCoordFromCSS(cssRect.y()));
+    itemRect.setWidth(itemCoordFromCSS(cssRect.width()));
+    itemRect.setHeight(itemCoordFromCSS(cssRect.height()));
+
+    return itemRect;
+}
+
 QtViewportInteractionEngine::QtViewportInteractionEngine(const QQuickItem* viewport, QQuickItem* content)
     : m_viewport(viewport)
     , m_content(content)
@@ -309,6 +326,40 @@ QRectF QtViewportInteractionEngine::computePosRangeForItemAtScale(qreal itemScal
     return QRectF(QPointF(0, 0), QSizeF(horizontalRange, verticalRange));
 }
 
+void QtViewportInteractionEngine::focusEditableArea(const QRectF& caretArea, const QRectF& targetArea)
+{
+    QRectF endArea = itemRectFromCSS(targetArea);
+
+    qreal endItemScale = itemScaleFromCSS(innerBoundedCSSScale(2.0));
+    const QRectF viewportRect = m_viewport->boundingRect();
+
+    qreal x;
+    const qreal borderOffset = 10;
+    if ((endArea.width() + borderOffset) * endItemScale <= viewportRect.width()) {
+        // Center the input field in the middle of the view, if it is smaller than
+        // the view at the scale target.
+        x = viewportRect.center().x() - endArea.width() * endItemScale / 2.0;
+    } else {
+        // Ensure that the caret always has borderOffset contents pixels to the right
+        // of it, and secondarily (if possible), that the area has borderOffset
+        // contents pixels to the left of it.
+        qreal caretOffset = itemCoordFromCSS(caretArea.x()) - endArea.x();
+        x = qMin(viewportRect.width() - (caretOffset + borderOffset) * endItemScale, borderOffset * endItemScale);
+    }
+
+    const QPointF hotspot = QPointF(endArea.x(), endArea.center().y());
+    const QPointF viewportHotspot = QPointF(x, /* FIXME: visibleCenter */ viewportRect.center().y());
+
+    QPointF endPosition = hotspot * endItemScale - viewportHotspot;
+    QRectF endPosRange = computePosRangeForItemAtScale(endItemScale);
+
+    endPosition = boundPosition(endPosRange.topLeft(), endPosition, endPosRange.bottomRight());
+
+    QRectF endVisibleContentRect(endPosition / endItemScale, viewportRect.size() / endItemScale);
+
+    animateItemRectVisible(endVisibleContentRect);
+}
+
 void QtViewportInteractionEngine::zoomToAreaGestureEnded(const QPointF& touchPoint, const QRectF& targetArea)
 {
     if (!targetArea.isValid())
@@ -318,11 +369,7 @@ void QtViewportInteractionEngine::zoomToAreaGestureEnded(const QPointF& touchPoi
         return;
 
     const int margin = 10; // We want at least a little bit or margin.
-    QRectF endArea = targetArea.adjusted(-margin, -margin, margin, margin);
-    endArea.setX(endArea.x() * m_constraints.devicePixelRatio);
-    endArea.setY(endArea.y() * m_constraints.devicePixelRatio);
-    endArea.setWidth(endArea.width() * m_constraints.devicePixelRatio);
-    endArea.setHeight(endArea.height() * m_constraints.devicePixelRatio);
+    QRectF endArea = itemRectFromCSS(targetArea.adjusted(-margin, -margin, margin, margin));
 
     const QRectF viewportRect = m_viewport->boundingRect();
 

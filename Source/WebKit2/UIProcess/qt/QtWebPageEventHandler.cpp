@@ -385,4 +385,12 @@ void QtWebPageEventHandler::didFindZoomableArea(const IntPoint& target, const In
     m_interactionEngine->zoomToAreaGestureEnded(QPointF(target), QRectF(area));
 }
 
+void QtWebPageEventHandler::focusEditableArea(const IntRect& caret, const IntRect& area)
+{
+    if (!m_interactionEngine)
+        return;
+
+    m_interactionEngine->focusEditableArea(QRectF(caret), QRectF(area));
+}
+
 #include "moc_QtWebPageEventHandler.cpp"
