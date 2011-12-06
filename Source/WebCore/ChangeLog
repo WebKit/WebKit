@@ -1,3 +1,16 @@
+2011-12-06  Gavin Barraclough  <barraclough@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=68328
+        The generator and intrinsic fields in HashTableValue/HashEntry and associated structures and methods are redundant
+
+        Reviewed by Geoff Garen.
+
+        Intrinsic is no longer in the DFG namespace, is always in the
+        hash table. Removed ThunkGenerator.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHashTable):
+
 2011-12-06  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Unreviewed, rolling out r102091.

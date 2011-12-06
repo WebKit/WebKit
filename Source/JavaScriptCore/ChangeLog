@@ -1,3 +1,44 @@
+2011-12-06  Gavin Barraclough  <barraclough@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=68328
+        The generator and intrinsic fields in HashTableValue/HashEntry and associated structures and methods are redundant
+
+        Reviewed by Geoff Garen.
+
+        Move the instrinsic enum out of the DFG, into runtime. Add entires for all host functions
+        that have an intrinsic in the form of a generated thunk. Remove the thunk pointer from the
+        hashtable, and make Intrinsic field no longer ifdef on JIT/DFG. In getHostFunction select
+        a thunk genertaor to use based on the Intrinsic.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * create_hash_table:
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleCall):
+        (JSC::DFG::ByteCodeParser::handleIntrinsic):
+        * dfg/DFGCapabilities.h:
+        * dfg/DFGIntrinsic.h: Removed.
+        * jit/JITStubs.cpp:
+        (JSC::JITThunks::hostFunctionStub):
+        * jit/JITStubs.h:
+        * runtime/Executable.cpp:
+        (JSC::ExecutableBase::intrinsic):
+        (JSC::NativeExecutable::intrinsic):
+        * runtime/Executable.h:
+        (JSC::ExecutableBase::intrinsicFor):
+        (JSC::NativeExecutable::create):
+        (JSC::NativeExecutable::finishCreation):
+        * runtime/Intrinsic.h: Copied from Source/JavaScriptCore/dfg/DFGIntrinsic.h.
+        * runtime/JSGlobalData.cpp:
+        (JSC::thunkGeneratorForIntrinsic):
+        (JSC::JSGlobalData::getHostFunction):
+        * runtime/JSGlobalData.h:
+        * runtime/Lookup.cpp:
+        (JSC::HashTable::createTable):
+        (JSC::setUpStaticFunctionSlot):
+        * runtime/Lookup.h:
+        (JSC::HashEntry::initialize):
+        (JSC::HashEntry::intrinsic):
+
 2011-12-06  Michael Saboff  <msaboff@apple.com>
 
         Add 8 bit paths to global object functions

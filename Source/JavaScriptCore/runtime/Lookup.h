@@ -22,7 +22,7 @@
 #define Lookup_h
 
 #include "CallFrame.h"
-#include "DFGIntrinsic.h"
+#include "Intrinsic.h"
 #include "Identifier.h"
 #include "JSGlobalObject.h"
 #include "PropertySlot.h"
@@ -36,12 +36,7 @@ namespace JSC {
         unsigned char attributes; // JSObject attributes
         intptr_t value1;
         intptr_t value2;
-#if ENABLE(JIT)
-        ThunkGenerator generator;
-#if ENABLE(DFG_JIT)
-        DFG::Intrinsic intrinsic;
-#endif
-#endif
+        Intrinsic intrinsic;
     };
 
     // FIXME: There is no reason this get function can't be simpler.
@@ -52,25 +47,13 @@ namespace JSC {
     class HashEntry {
         WTF_MAKE_FAST_ALLOCATED;
     public:
-        void initialize(StringImpl* key, unsigned char attributes, intptr_t v1, intptr_t v2
-#if ENABLE(JIT)
-                        , ThunkGenerator generator = 0
-#if ENABLE(DFG_JIT)
-                        , DFG::Intrinsic intrinsic = DFG::NoIntrinsic
-#endif
-#endif
-                        )
+        void initialize(StringImpl* key, unsigned char attributes, intptr_t v1, intptr_t v2, Intrinsic intrinsic)
         {
             m_key = key;
             m_attributes = attributes;
             m_u.store.value1 = v1;
             m_u.store.value2 = v2;
-#if ENABLE(JIT)
-            m_u.function.generator = generator;
-#if ENABLE(DFG_JIT)
             m_u.function.intrinsic = intrinsic;
-#endif
-#endif
             m_next = 0;
         }
 
@@ -79,18 +62,12 @@ namespace JSC {
 
         unsigned char attributes() const { return m_attributes; }
 
-#if ENABLE(JIT)
-        ThunkGenerator generator() const { ASSERT(m_attributes & Function); return m_u.function.generator; }
-        DFG::Intrinsic intrinsic() const
+        Intrinsic intrinsic() const
         {
             ASSERT(m_attributes & Function);
-#if ENABLE(DFG_JIT)
             return m_u.function.intrinsic;
-#else
-            return DFG::NoIntrinsic;
-#endif
         }
-#endif
+
         NativeFunction function() const { ASSERT(m_attributes & Function); return m_u.function.functionValue; }
         unsigned char functionLength() const { ASSERT(m_attributes & Function); return static_cast<unsigned char>(m_u.function.length); }
 
@@ -114,12 +91,7 @@ namespace JSC {
             struct {
                 NativeFunction functionValue;
                 intptr_t length; // number of arguments for function
-#if ENABLE(JIT)
-                ThunkGenerator generator;
-#if ENABLE(DFG_JIT)
-                DFG::Intrinsic intrinsic;
-#endif
-#endif
+                Intrinsic intrinsic;
             } function;
             struct {
                 GetFunction get;

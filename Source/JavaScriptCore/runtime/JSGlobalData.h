@@ -30,7 +30,7 @@
 #define JSGlobalData_h
 
 #include "CachedTranscendentalFunction.h"
-#include "DFGIntrinsic.h"
+#include "Intrinsic.h"
 #include "DateInstanceCache.h"
 #include "ExecutableAllocator.h"
 #include "Heap.h"
@@ -246,7 +246,7 @@ namespace JSC {
         {
             return jitStubs->ctiStub(this, generator);
         }
-        NativeExecutable* getHostFunction(NativeFunction, ThunkGenerator, DFG::Intrinsic);
+        NativeExecutable* getHostFunction(NativeFunction, Intrinsic);
 #endif
         NativeExecutable* getHostFunction(NativeFunction, NativeFunction constructor);
 

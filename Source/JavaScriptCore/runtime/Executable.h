@@ -154,17 +154,15 @@ namespace JSC {
             return hasJITCodeForConstruct();
         }
 
-#if ENABLE(DFG_JIT)
         // Intrinsics are only for calls, currently.
-        DFG::Intrinsic intrinsic() const;
+        Intrinsic intrinsic() const;
         
-        DFG::Intrinsic intrinsicFor(CodeSpecializationKind kind) const
+        Intrinsic intrinsicFor(CodeSpecializationKind kind) const
         {
             if (isCall(kind))
                 return intrinsic();
-            return DFG::NoIntrinsic;
+            return NoIntrinsic;
         }
-#endif
 
     protected:
         JITCode m_jitCodeForCall;
@@ -181,7 +179,7 @@ namespace JSC {
         typedef ExecutableBase Base;
 
 #if ENABLE(JIT)
-        static NativeExecutable* create(JSGlobalData& globalData, MacroAssemblerCodeRef callThunk, NativeFunction function, MacroAssemblerCodeRef constructThunk, NativeFunction constructor, DFG::Intrinsic intrinsic)
+        static NativeExecutable* create(JSGlobalData& globalData, MacroAssemblerCodeRef callThunk, NativeFunction function, MacroAssemblerCodeRef constructThunk, NativeFunction constructor, Intrinsic intrinsic)
         {
             ASSERT(globalData.canUseJIT());
             NativeExecutable* executable;
@@ -217,13 +215,11 @@ namespace JSC {
         
         static const ClassInfo s_info;
 
-#if ENABLE(DFG_JIT)
-        DFG::Intrinsic intrinsic() const;
-#endif
+        Intrinsic intrinsic() const;
 
     protected:
 #if ENABLE(JIT)
-        void finishCreation(JSGlobalData& globalData, JITCode callThunk, JITCode constructThunk, DFG::Intrinsic intrinsic)
+        void finishCreation(JSGlobalData& globalData, JITCode callThunk, JITCode constructThunk, Intrinsic intrinsic)
         {
             ASSERT(globalData.canUseJIT());
             Base::finishCreation(globalData);
@@ -231,11 +227,7 @@ namespace JSC {
             m_jitCodeForConstruct = constructThunk;
             m_jitCodeForCallWithArityCheck = callThunk.addressForCall();
             m_jitCodeForConstructWithArityCheck = constructThunk.addressForCall();
-#if ENABLE(DFG_JIT)
             m_intrinsic = intrinsic;
-#else
-            UNUSED_PARAM(intrinsic);
-#endif
         }
 #endif
 
@@ -244,6 +236,7 @@ namespace JSC {
         {
             ASSERT(!globalData.canUseJIT());
             Base::finishCreation(globalData);
+            m_intrinsic = NoIntrinsic;
         }
 #endif
 
@@ -260,7 +253,7 @@ namespace JSC {
         NativeFunction m_function;
         NativeFunction m_constructor;
         
-        DFG::Intrinsic m_intrinsic;
+        Intrinsic m_intrinsic;
     };
 
     class ScriptExecutable : public ExecutableBase {

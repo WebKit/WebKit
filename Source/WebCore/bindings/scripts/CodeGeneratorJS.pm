@@ -3119,16 +3119,6 @@ sub GenerateHashTable
     }
 
     # Dump the hash table
-    push(@implContent, "#if ENABLE(JIT)\n");
-    push(@implContent, "#define THUNK_GENERATOR(generator) , generator\n");
-    push(@implContent, "#else\n");
-    push(@implContent, "#define THUNK_GENERATOR(generator)\n");
-    push(@implContent, "#endif\n");
-    push(@implContent, "#if ENABLE(DFG_JIT)\n");
-    push(@implContent, "#define INTRINSIC(intrinsic) , intrinsic\n");
-    push(@implContent, "#else\n");
-    push(@implContent, "#define INTRINSIC(intrinsic)\n");
-    push(@implContent, "#endif\n");
     push(@implContent, "\nstatic const HashTableValue $nameEntries\[\] =\n\{\n");
     $i = 0;
     foreach my $key (@{$keys}) {
@@ -3148,13 +3138,12 @@ sub GenerateHashTable
         } else {
             $targetType = "static_cast<PropertySlot::GetValueFunc>";
         }
-        push(@implContent, "    { \"$key\", @$specials[$i], (intptr_t)" . $targetType . "(@$value1[$i]), (intptr_t)@$value2[$i] THUNK_GENERATOR(0) INTRINSIC(DFG::NoIntrinsic) },\n");
+        push(@implContent, "    { \"$key\", @$specials[$i], (intptr_t)" . $targetType . "(@$value1[$i]), (intptr_t)@$value2[$i], NoIntrinsic },\n");
         push(@implContent, "#endif\n") if $conditional;
         ++$i;
     }
-    push(@implContent, "    { 0, 0, 0, 0 THUNK_GENERATOR(0) INTRINSIC(DFG::NoIntrinsic) }\n");
+    push(@implContent, "    { 0, 0, 0, 0, NoIntrinsic }\n");
     push(@implContent, "};\n\n");
-    push(@implContent, "#undef THUNK_GENERATOR\n");
     my $compactSizeMask = $numEntries - 1;
     push(@implContent, "static const HashTable $name = { $compactSize, $compactSizeMask, $nameEntries, 0 };\n");
 }

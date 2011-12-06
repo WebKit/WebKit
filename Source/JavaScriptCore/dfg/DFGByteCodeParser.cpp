@@ -902,7 +902,7 @@ void ByteCodeParser::handleCall(Interpreter* interpreter, Instruction* currentIn
             nextOffset += OPCODE_LENGTH(op_call_put_result);
         }
         JSFunction* expectedFunction;
-        DFG::Intrinsic intrinsic;
+        Intrinsic intrinsic;
         bool certainAboutExpectedFunction;
         if (callType == ConstantFunction) {
             expectedFunction = m_graph.valueOfFunctionConstant(m_codeBlock, callTarget);
@@ -1225,7 +1225,6 @@ bool ByteCodeParser::handleIntrinsic(bool usesResult, int resultOperand, Intrins
     }
 
     default:
-        ASSERT(intrinsic == NoIntrinsic);
         return false;
     }
 }

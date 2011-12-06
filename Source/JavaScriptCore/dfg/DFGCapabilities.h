@@ -26,7 +26,7 @@
 #ifndef DFGCapabilities_h
 #define DFGCapabilities_h
 
-#include "DFGIntrinsic.h"
+#include "Intrinsic.h"
 #include "DFGNode.h"
 #include "Executable.h"
 #include "Heuristics.h"

@@ -412,6 +412,36 @@ JSGlobalData*& JSGlobalData::sharedInstanceInternal()
 }
 
 #if ENABLE(JIT)
+static ThunkGenerator thunkGeneratorForIntrinsic(Intrinsic intrinsic)
+{
+    switch (intrinsic) {
+    case CharCodeAtIntrinsic:
+        return charCodeAtThunkGenerator;
+    case CharAtIntrinsic:
+        return charAtThunkGenerator;
+    case FromCharCodeIntrinsic:
+        return fromCharCodeThunkGenerator;
+    case SqrtIntrinsic:
+        return sqrtThunkGenerator;
+    case PowIntrinsic:
+        return powThunkGenerator;
+    case AbsIntrinsic:
+        return absThunkGenerator;
+    case FloorIntrinsic:
+        return floorThunkGenerator;
+    case CeilIntrinsic:
+        return ceilThunkGenerator;
+    case RoundIntrinsic:
+        return roundThunkGenerator;
+    case ExpIntrinsic:
+        return expThunkGenerator;
+    case LogIntrinsic:
+        return logThunkGenerator;
+    default:
+        return 0;
+    }
+}
+
 NativeExecutable* JSGlobalData::getHostFunction(NativeFunction function, NativeFunction constructor)
 {
 #if ENABLE(INTERPRETER)
@@ -420,10 +450,10 @@ NativeExecutable* JSGlobalData::getHostFunction(NativeFunction function, NativeF
 #endif
     return jitStubs->hostFunctionStub(this, function, constructor);
 }
-NativeExecutable* JSGlobalData::getHostFunction(NativeFunction function, ThunkGenerator generator, DFG::Intrinsic intrinsic)
+NativeExecutable* JSGlobalData::getHostFunction(NativeFunction function, Intrinsic intrinsic)
 {
     ASSERT(canUseJIT());
-    return jitStubs->hostFunctionStub(this, function, generator, intrinsic);
+    return jitStubs->hostFunctionStub(this, function, intrinsic != NoIntrinsic ? thunkGeneratorForIntrinsic(intrinsic) : 0, intrinsic);
 }
 #else
 NativeExecutable* JSGlobalData::getHostFunction(NativeFunction function, NativeFunction constructor)

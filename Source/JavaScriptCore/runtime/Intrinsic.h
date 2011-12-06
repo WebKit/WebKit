@@ -23,10 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DFGIntrinsic_h
-#define DFGIntrinsic_h
+#ifndef Intrinsic_h
+#define Intrinsic_h
 
-namespace JSC { namespace DFG {
+namespace JSC {
 
 enum Intrinsic {
     NoIntrinsic,
@@ -37,9 +37,16 @@ enum Intrinsic {
     ArrayPushIntrinsic,
     ArrayPopIntrinsic,
     CharCodeAtIntrinsic,
-    CharAtIntrinsic
+    CharAtIntrinsic,
+    FromCharCodeIntrinsic,
+    PowIntrinsic,
+    FloorIntrinsic,
+    CeilIntrinsic,
+    RoundIntrinsic,
+    ExpIntrinsic,
+    LogIntrinsic,
 };
 
-} } // namespace JSC::DFG
+} // namespace JSC
 
-#endif // DFGIntrinsic_h
+#endif // Intrinsic_h

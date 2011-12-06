@@ -31,7 +31,7 @@
 #define JITStubs_h
 
 #include "CallData.h"
-#include "DFGIntrinsic.h"
+#include "Intrinsic.h"
 #include "MacroAssemblerCodeRef.h"
 #include "Register.h"
 #include "ThunkGenerators.h"
@@ -300,7 +300,7 @@ namespace JSC {
         MacroAssemblerCodeRef ctiStub(JSGlobalData*, ThunkGenerator);
 
         NativeExecutable* hostFunctionStub(JSGlobalData*, NativeFunction, NativeFunction constructor);
-        NativeExecutable* hostFunctionStub(JSGlobalData*, NativeFunction, ThunkGenerator, DFG::Intrinsic);
+        NativeExecutable* hostFunctionStub(JSGlobalData*, NativeFunction, ThunkGenerator, Intrinsic);
 
         void clearHostFunctionStubs();
 

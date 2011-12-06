@@ -250,16 +250,6 @@ sub output() {
         print "\nnamespace JSC {\n";
     }
     my $count = scalar @keys + 1;
-    print "#if ENABLE(JIT)\n";
-    print "#define THUNK_GENERATOR(generator) , generator\n";
-    print "#else\n";
-    print "#define THUNK_GENERATOR(generator)\n";
-    print "#endif\n";
-    print "#if ENABLE(DFG_JIT)\n";
-    print "#define INTRINSIC(intrinsic) , intrinsic\n";
-    print "#else\n";
-    print "#define INTRINSIC(intrinsic)\n";
-    print "#endif\n";
     print "\nstatic const struct HashTableValue ${nameEntries}\[$count\] = {\n";
     my $i = 0;
     foreach my $key (@keys) {
@@ -279,67 +269,33 @@ sub output() {
             $firstValue = $values[$i]{"value"};
             $secondValue = "0";
         }
-        my $thunkGenerator = "0";
-        my $intrinsic = "DFG::NoIntrinsic";
-        if ($key eq "charCodeAt") {
-            $thunkGenerator = "charCodeAtThunkGenerator";
-            $intrinsic = "DFG::CharCodeAtIntrinsic";
-        }
-        if ($key eq "charAt") {
-            $thunkGenerator = "charAtThunkGenerator";
-            $intrinsic = "DFG::CharAtIntrinsic";
-        }
-        if ($key eq "fromCharCode") {
-            $thunkGenerator = "fromCharCodeThunkGenerator";
-        }
+
+        my $intrinsic = "NoIntrinsic";
+        $intrinsic = "CharCodeAtIntrinsic" if ($key eq "charCodeAt");
+        $intrinsic = "CharAtIntrinsic" if ($key eq "charAt");
+        $intrinsic = "FromCharCodeIntrinsic" if ($key eq "fromCharCode");
         if ($name eq "mathTable") {
-            if ($key eq "min") {
-                $intrinsic = "DFG::MinIntrinsic";
-            }
-            if ($key eq "max") {
-                $intrinsic = "DFG::MaxIntrinsic";
-            }
-            if ($key eq "sqrt") {
-                $thunkGenerator = "sqrtThunkGenerator";
-                $intrinsic = "DFG::SqrtIntrinsic";
-            }
-            if ($key eq "pow") {
-                $thunkGenerator = "powThunkGenerator";
-            }
-            if ($key eq "abs") {
-                $thunkGenerator = "absThunkGenerator";
-                $intrinsic = "DFG::AbsIntrinsic";
-            }
-            if ($key eq "floor") {
-                $thunkGenerator = "floorThunkGenerator";
-            }
-            if ($key eq "ceil") {
-                $thunkGenerator = "ceilThunkGenerator";
-            }
-            if ($key eq "round") {
-                $thunkGenerator = "roundThunkGenerator";
-            }
-            if ($key eq "exp") {
-                $thunkGenerator = "expThunkGenerator";
-            }
-            if ($key eq "log") {
-                $thunkGenerator = "logThunkGenerator";
-            }
+            $intrinsic = "MinIntrinsic" if ($key eq "min");
+            $intrinsic = "MaxIntrinsic" if ($key eq "max");
+            $intrinsic = "SqrtIntrinsic" if ($key eq "sqrt");
+            $intrinsic = "PowIntrinsic" if ($key eq "pow");
+            $intrinsic = "AbsIntrinsic" if ($key eq "abs");
+            $intrinsic = "FloorIntrinsic" if ($key eq "floor");
+            $intrinsic = "CeilIntrinsic" if ($key eq "ceil");
+            $intrinsic = "RoundIntrinsic" if ($key eq "round");
+            $intrinsic = "ExpIntrinsic" if ($key eq "exp");
+            $intrinsic = "LogIntrinsic" if ($key eq "log");
         }
         if ($name eq "arrayPrototypeTable") {
-            if ($key eq "push") {
-                $intrinsic = "DFG::ArrayPushIntrinsic";
-            }
-            if ($key eq "pop") {
-                $intrinsic = "DFG::ArrayPopIntrinsic";
-            }
+            $intrinsic = "ArrayPushIntrinsic" if ($key eq "push");
+            $intrinsic = "ArrayPopIntrinsic" if ($key eq "pop");
         }
-        print "   { \"$key\", $attrs[$i], (intptr_t)" . $castStr . "($firstValue), (intptr_t)$secondValue THUNK_GENERATOR($thunkGenerator) INTRINSIC($intrinsic) },\n";
+
+        print "   { \"$key\", $attrs[$i], (intptr_t)" . $castStr . "($firstValue), (intptr_t)$secondValue, $intrinsic },\n";
         $i++;
     }
-    print "   { 0, 0, 0, 0 THUNK_GENERATOR(0) INTRINSIC(DFG::NoIntrinsic) }\n";
+    print "   { 0, 0, 0, 0, NoIntrinsic }\n";
     print "};\n\n";
-    print "#undef THUNK_GENERATOR\n";
     print "extern const struct HashTable $name =\n";
     print "    \{ $compactSize, $compactHashSizeMask, $nameEntries, 0 \};\n";
     print "} // namespace\n";

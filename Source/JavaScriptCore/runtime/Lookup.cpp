@@ -46,14 +46,7 @@ void HashTable::createTable(JSGlobalData* globalData) const
             entry = entry->next();
         }
 
-        entry->initialize(identifier, values[i].attributes, values[i].value1, values[i].value2
-#if ENABLE(JIT)
-                          , values[i].generator
-#if ENABLE(DFG_JIT)
-                          , values[i].intrinsic
-#endif
-#endif
-                          );
+        entry->initialize(identifier, values[i].attributes, values[i].value1, values[i].value2, values[i].intrinsic);
     }
     table = entries;
 }
@@ -86,8 +79,8 @@ bool setUpStaticFunctionSlot(ExecState* exec, const HashEntry* entry, JSObject* 
         JSFunction* function;
         JSGlobalObject* globalObject = thisObj->globalObject();
 #if ENABLE(JIT)
-        if (exec->globalData().canUseJIT() && (entry->generator() || entry->intrinsic() != DFG::NoIntrinsic))
-            function = JSFunction::create(exec, globalObject, entry->functionLength(), propertyName, exec->globalData().getHostFunction(entry->function(), entry->generator(), entry->intrinsic()));
+        if (exec->globalData().canUseJIT() && entry->intrinsic() != NoIntrinsic)
+            function = JSFunction::create(exec, globalObject, entry->functionLength(), propertyName, exec->globalData().getHostFunction(entry->function(), entry->intrinsic()));
         else
 #endif
             function = JSFunction::create(exec, globalObject, entry->functionLength(), propertyName, entry->function());
