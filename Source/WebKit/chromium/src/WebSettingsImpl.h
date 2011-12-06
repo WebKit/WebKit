@@ -128,12 +128,15 @@ public:
     virtual void setShouldDisplaySubtitles(bool);
     virtual void setShouldDisplayCaptions(bool);
     virtual void setShouldDisplayTextDescriptions(bool);
+    virtual void setPerTilePainting(bool);
+    virtual bool perTilePainting() const { return m_perTilePainting; }
 
 private:
     WebCore::Settings* m_settings;
     bool m_compositeToTextureEnabled;
     bool m_showFPSCounter;
     bool m_showPlatformLayerTree;
+    bool m_perTilePainting;
 };
 
 } // namespace WebKit

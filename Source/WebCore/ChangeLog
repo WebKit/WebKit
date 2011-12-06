@@ -1,3 +1,37 @@
+2011-12-06  David Reveman  <reveman@chromium.org>
+
+        [Chromium] Implement tile-sized painting using SkPicture.
+        https://bugs.webkit.org/show_bug.cgi?id=71869
+
+        Reviewed by James Robinson.
+
+        Add texture uploader that paints tile-sized chunks using SkPicture
+        recording and playback. Expose setting which allows this texture
+        updater to be enabled.
+
+        No new tests. Covered by existing tests.
+
+        * WebCore.gypi:
+        * platform/graphics/chromium/BitmapSkPictureCanvasLayerTextureUpdater.cpp: Added.
+        (WebCore::BitmapSkPictureCanvasLayerTextureUpdater::Texture::Texture):
+        (WebCore::BitmapSkPictureCanvasLayerTextureUpdater::Texture::prepareRect):
+        (WebCore::BitmapSkPictureCanvasLayerTextureUpdater::Texture::updateRect):
+        (WebCore::BitmapSkPictureCanvasLayerTextureUpdater::create):
+        (WebCore::BitmapSkPictureCanvasLayerTextureUpdater::BitmapSkPictureCanvasLayerTextureUpdater):
+        (WebCore::BitmapSkPictureCanvasLayerTextureUpdater::~BitmapSkPictureCanvasLayerTextureUpdater):
+        (WebCore::BitmapSkPictureCanvasLayerTextureUpdater::createTexture):
+        (WebCore::BitmapSkPictureCanvasLayerTextureUpdater::sampledTexelFormat):
+        (WebCore::BitmapSkPictureCanvasLayerTextureUpdater::prepareToUpdate):
+        (WebCore::BitmapSkPictureCanvasLayerTextureUpdater::paintContentsRect):
+        (WebCore::BitmapSkPictureCanvasLayerTextureUpdater::updateTextureRect):
+        * platform/graphics/chromium/BitmapSkPictureCanvasLayerTextureUpdater.h: Added.
+        (WebCore::BitmapSkPictureCanvasLayerTextureUpdater::Texture::textureUpdater):
+        (WebCore::BitmapSkPictureCanvasLayerTextureUpdater::orientation):
+        * platform/graphics/chromium/ContentLayerChromium.cpp:
+        (WebCore::ContentLayerChromium::createTextureUpdater):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.h:
+        (WebCore::CCSettings::CCSettings):
+
 2011-12-06  Adrienne Walker  <enne@google.com>
 
         [chromium] Don't crash if tile upload happens without painting first

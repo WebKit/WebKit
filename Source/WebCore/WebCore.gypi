@@ -3483,6 +3483,8 @@
             'platform/graphics/cg/TransformationMatrixCG.cpp',
             'platform/graphics/chromium/BitmapCanvasLayerTextureUpdater.cpp',
             'platform/graphics/chromium/BitmapCanvasLayerTextureUpdater.h',
+            'platform/graphics/chromium/BitmapSkPictureCanvasLayerTextureUpdater.cpp',
+            'platform/graphics/chromium/BitmapSkPictureCanvasLayerTextureUpdater.h',
             'platform/graphics/chromium/Canvas2DLayerChromium.cpp',
             'platform/graphics/chromium/Canvas2DLayerChromium.h',
             'platform/graphics/chromium/CanvasLayerChromium.cpp',

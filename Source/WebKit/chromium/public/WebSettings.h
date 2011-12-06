@@ -133,6 +133,8 @@ public:
     virtual void setEnableScrollAnimator(bool) = 0;
     virtual void setHixie76WebSocketProtocolEnabled(bool) = 0;
     virtual void setVisualWordMovementEnabled(bool) = 0;
+    virtual void setPerTilePainting(bool) = 0;
+    virtual bool perTilePainting() const = 0;
 
 protected:
     ~WebSettings() { }

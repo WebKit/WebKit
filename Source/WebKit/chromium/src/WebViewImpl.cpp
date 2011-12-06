@@ -2898,9 +2898,12 @@ void WebViewImpl::setIsAcceleratedCompositingActive(bool active)
         ccSettings.showFPSCounter = settings()->showFPSCounter();
         ccSettings.showPlatformLayerTree = settings()->showPlatformLayerTree();
         ccSettings.refreshRate = screenRefreshRate(page()->mainFrame()->view());
+
         ASSERT(ccSettings.refreshRate >= 0);
         if (!ccSettings.refreshRate)
             ccSettings.refreshRate = defaultRefreshRate;
+
+        ccSettings.perTilePainting = settings()->perTilePainting();
 
         m_nonCompositedContentHost = NonCompositedContentHost::create(WebViewImplContentPainter::create(this));
         m_layerTreeHost = CCLayerTreeHost::create(this, ccSettings);

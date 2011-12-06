@@ -1,3 +1,22 @@
+2011-12-06  David Reveman  <reveman@chromium.org>
+
+        [Chromium] Implement tile-sized painting using SkPicture.
+        https://bugs.webkit.org/show_bug.cgi?id=71869
+
+        Reviewed by James Robinson.
+
+        Add perTilePainting setting that is used by compositor to determine
+        what texture uploader to use.
+
+        * public/WebSettings.h:
+        * src/WebSettingsImpl.cpp:
+        (WebKit::WebSettingsImpl::WebSettingsImpl):
+        (WebKit::WebSettingsImpl::setPerTilePainting):
+        * src/WebSettingsImpl.h:
+        (WebKit::WebSettingsImpl::perTilePainting):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::setIsAcceleratedCompositingActive):
+
 2011-12-06  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Set opaque flag for ImageLayerChromium

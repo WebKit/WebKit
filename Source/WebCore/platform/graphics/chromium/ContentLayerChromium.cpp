@@ -35,6 +35,7 @@
 #include "ContentLayerChromium.h"
 
 #include "BitmapCanvasLayerTextureUpdater.h"
+#include "BitmapSkPictureCanvasLayerTextureUpdater.h"
 #include "FrameBufferSkPictureCanvasLayerTextureUpdater.h"
 #include "LayerPainterChromium.h"
 #include "LayerRendererChromium.h"
@@ -118,6 +119,11 @@ void ContentLayerChromium::createTextureUpdater(const CCLayerTreeHost* host)
 #if USE(SKIA)
     if (host->settings().acceleratePainting) {
         m_textureUpdater = FrameBufferSkPictureCanvasLayerTextureUpdater::create(ContentLayerPainter::create(m_delegate));
+        return;
+    }
+
+    if (host->settings().perTilePainting) {
+        m_textureUpdater = BitmapSkPictureCanvasLayerTextureUpdater::create(ContentLayerPainter::create(m_delegate), host->layerRendererCapabilities().usingMapSub);
         return;
     }
 #endif // USE(SKIA)

@@ -50,6 +50,7 @@ WebSettingsImpl::WebSettingsImpl(Settings* settings)
     , m_compositeToTextureEnabled(false)
     , m_showFPSCounter(false)
     , m_showPlatformLayerTree(false)
+    , m_perTilePainting(false)
 {
     ASSERT(settings);
 }
@@ -497,5 +498,10 @@ void WebSettingsImpl::setShouldDisplayTextDescriptions(bool enabled)
 #endif
 }
 
+
+void WebSettingsImpl::setPerTilePainting(bool enabled)
+{
+    m_perTilePainting = enabled;
+}
 
 } // namespace WebKit
