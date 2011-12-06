@@ -238,7 +238,7 @@
 	/>
   <UserMacro
 		Name="ENABLE_STYLE_SCOPED"
-		Value="ENABLE_STYLE_SCOPED"
+		Value=""
 		PerformEnvironmentSet="true"
 	/>
   <UserMacro

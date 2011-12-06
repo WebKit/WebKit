@@ -1,3 +1,13 @@
+2011-12-06  Roland Steiner  <rolandsteiner@chromium.org>
+
+        <style scoped>: disable on Windows by default
+        https://bugs.webkit.org/show_bug.cgi?id=73893
+
+        Reviewed by Andreas Kling.
+
+        * win/tools/vsprops/FeatureDefines.vsprops:
+        * win/tools/vsprops/FeatureDefinesCairo.vsprops:
+
 2011-11-20  Roland Steiner  <rolandsteiner@chromium.org>
 
         <style scoped>: add ENABLE(STYLE_SCOPED) flag to WebKit
