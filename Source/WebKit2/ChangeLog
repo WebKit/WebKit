@@ -1,3 +1,17 @@
+2011-12-06  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        [Qt] Fix page overlay rendering with AC.
+        https://bugs.webkit.org/show_bug.cgi?id=73935
+
+        Reviewed by Noam Rosenthal.
+
+        The inspector node highlight would display old highlights as well
+        since the overlay is normally rendered right after the page on top
+        of the same graphics context.
+
+        * WebProcess/WebPage/qt/LayerTreeHostQt.cpp:
+        (WebKit::LayerTreeHostQt::paintContents):
+
 2011-12-06  Michael Brüning  <michael.bruning@nokia.com>
 
         [qt][wk2] Tests of QQuickWebView assert in debug builds when destroying QQuickWebViewPrivate 

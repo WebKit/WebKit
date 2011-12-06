@@ -356,6 +356,8 @@ void LayerTreeHostQt::paintContents(const WebCore::GraphicsLayer* graphicsLayer,
     }
 
     if (graphicsLayer == m_pageOverlayLayer) {
+        // Overlays contain transparent contents and won't clear the context as part of their rendering, so we do it here.
+        graphicsContext.clearRect(clipRect);
         m_webPage->drawPageOverlay(graphicsContext, clipRect);
         return;
     }
