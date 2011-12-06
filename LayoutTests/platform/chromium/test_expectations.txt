@@ -1166,7 +1166,7 @@ BUGWK66467 : fast/dom/HTMLInputElement/input-image-alt-text.html = FAIL
 
 // This test isn't hanging, it just takes 12-13 seconds to run.
 BUGCR30536 SLOW LINUX WIN : http/tests/misc/acid3.html = FAIL // See "SVG Tests" section too
-BUGCR30536 SLOW MAC : http/tests/misc/acid3.html = PASS
+BUGCR30536 SLOW MAC : http/tests/misc/acid3.html = IMAGE+TEXT PASS
 BUGCR30536 : http/tests/misc/favicon-as-image.html = FAIL
 
 // Has failed for Chromium since it was first checked in.  (Lighttpd related?)
