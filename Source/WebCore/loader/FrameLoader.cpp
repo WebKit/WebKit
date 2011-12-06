@@ -35,6 +35,7 @@
 #include "config.h"
 #include "FrameLoader.h"
 
+#include "AXObjectCache.h"
 #include "ApplicationCacheHost.h"
 #include "BackForwardController.h"
 #include "BeforeUnloadEvent.h"
@@ -1114,6 +1115,12 @@ void FrameLoader::prepareForLoadStart()
     if (Page* page = m_frame->page())
         page->progress()->progressStarted(m_frame);
     m_client->dispatchDidStartProvisionalLoad();
+
+    // Notify accessibility.
+    if (AXObjectCache::accessibilityEnabled()) {
+        AXObjectCache::AXLoadingEvent loadingEvent = loadType() == FrameLoadTypeReload ? AXObjectCache::AXLoadingReloaded : AXObjectCache::AXLoadingStarted;
+        m_frame->document()->axObjectCache()->frameLoadingEventNotification(m_frame, loadingEvent);
+    }
 }
 
 void FrameLoader::setupForReplace()
@@ -2269,10 +2276,19 @@ void FrameLoader::checkLoadCompleteForThisFrame()
                 page->progress()->progressCompleted(m_frame);
 
             const ResourceError& error = dl->mainDocumentError();
-            if (!error.isNull())
+
+            AXObjectCache::AXLoadingEvent loadingEvent;
+            if (!error.isNull()) {
                 m_client->dispatchDidFailLoad(error);
-            else
+                loadingEvent = AXObjectCache::AXLoadingFailed;
+            } else {
                 m_client->dispatchDidFinishLoad();
+                loadingEvent = AXObjectCache::AXLoadingFinished;
+            }
+
+            // Notify accessibility.
+            if (AXObjectCache::accessibilityEnabled())
+                m_frame->document()->axObjectCache()->frameLoadingEventNotification(m_frame, loadingEvent);
 
             return;
         }

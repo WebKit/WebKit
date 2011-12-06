@@ -544,6 +544,20 @@ void AXObjectCache::nodeTextChangeNotification(RenderObject* renderer, AXTextCha
     AccessibilityObject* obj = getOrCreate(renderer);
     nodeTextChangePlatformNotification(obj, textChange, offset, text);
 }
+
+void AXObjectCache::frameLoadingEventNotification(Frame* frame, AXLoadingEvent loadingEvent)
+{
+    if (!frame)
+        return;
+
+    // Delegate on the right platform
+    RenderView* contentRenderer = frame->contentRenderer();
+    if (!contentRenderer)
+        return;
+
+    AccessibilityObject* obj = getOrCreate(contentRenderer);
+    frameLoadingEventPlatformNotification(obj, loadingEvent);
+}
 #endif
 
 #if HAVE(ACCESSIBILITY)

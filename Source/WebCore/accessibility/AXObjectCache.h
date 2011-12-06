@@ -149,11 +149,21 @@ public:
 
     void nodeTextChangeNotification(RenderObject*, AXTextChange, unsigned offset, const String&);
 
+    enum AXLoadingEvent {
+        AXLoadingStarted,
+        AXLoadingReloaded,
+        AXLoadingFailed,
+        AXLoadingFinished
+    };
+
+    void frameLoadingEventNotification(Frame*, AXLoadingEvent);
+
     bool nodeHasRole(Node*, const AtomicString& role);
 
 protected:
     void postPlatformNotification(AccessibilityObject*, AXNotification);
     void nodeTextChangePlatformNotification(AccessibilityObject*, AXTextChange, unsigned offset, const String&);
+    void frameLoadingEventPlatformNotification(AccessibilityObject*, AXLoadingEvent);
 
 private:
     Document* m_document;
@@ -189,6 +199,8 @@ inline void AXObjectCache::postNotification(AccessibilityObject*, Document*, AXN
 inline void AXObjectCache::postPlatformNotification(AccessibilityObject*, AXNotification) { }
 inline void AXObjectCache::nodeTextChangeNotification(RenderObject*, AXTextChange, unsigned, const String&) { }
 inline void AXObjectCache::nodeTextChangePlatformNotification(AccessibilityObject*, AXTextChange, unsigned, const String&) { }
+inline void AXObjectCache::frameLoadingEventNotification(Frame*, AXLoadingEvent) { }
+inline void AXObjectCache::frameLoadingEventPlatformNotification(AccessibilityObject*, AXLoadingEvent) { }
 inline void AXObjectCache::handleFocusedUIElementChanged(RenderObject*, RenderObject*) { }
 inline void AXObjectCache::handleScrolledToAnchor(const Node*) { }
 inline void AXObjectCache::contentChanged(RenderObject*) { }

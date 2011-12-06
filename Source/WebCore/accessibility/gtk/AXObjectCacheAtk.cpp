@@ -181,13 +181,40 @@ static void emitTextChanged(AccessibilityObject* object, AXObjectCache::AXTextCh
 
 void AXObjectCache::nodeTextChangePlatformNotification(AccessibilityObject* object, AXTextChange textChange, unsigned offset, const String& text)
 {
-    // Sanity check
     if (!object || !object->isAccessibilityRenderObject() || text.isEmpty())
         return;
 
     Node* node = object->node();
     RefPtr<Range> range = Range::create(node->document(), node->parentNode(), 0, node, 0);
     emitTextChanged(object, textChange, offset + TextIterator::rangeLength(range.get()), text);
+}
+
+void AXObjectCache::frameLoadingEventPlatformNotification(AccessibilityObject* object, AXLoadingEvent loadingEvent)
+{
+    if (!object)
+        return;
+
+    AtkObject* axObject = object->wrapper();
+    if (!axObject || !ATK_IS_DOCUMENT(axObject))
+        return;
+
+    switch (loadingEvent) {
+    case AXObjectCache::AXLoadingStarted:
+        g_signal_emit_by_name(axObject, "state-change", "busy", true);
+        break;
+    case AXObjectCache::AXLoadingReloaded:
+        g_signal_emit_by_name(axObject, "state-change", "busy", true);
+        g_signal_emit_by_name(axObject, "reload");
+        break;
+    case AXObjectCache::AXLoadingFailed:
+        g_signal_emit_by_name(axObject, "load-stopped");
+        g_signal_emit_by_name(axObject, "state-change", "busy", false);
+        break;
+    case AXObjectCache::AXLoadingFinished:
+        g_signal_emit_by_name(axObject, "load-complete");
+        g_signal_emit_by_name(axObject, "state-change", "busy", false);
+        break;
+    }
 }
 
 void AXObjectCache::handleFocusedUIElementChanged(RenderObject* oldFocusedRender, RenderObject* newFocusedRender)

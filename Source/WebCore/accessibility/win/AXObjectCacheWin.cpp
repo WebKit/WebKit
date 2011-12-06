@@ -111,6 +111,10 @@ void AXObjectCache::nodeTextChangePlatformNotification(AccessibilityObject*, AXT
 {
 }
 
+void AXObjectCache::frameLoadingEventPlatformNotification(AccessibilityObject*, AXLoadingEvent)
+{
+}
+
 AXID AXObjectCache::platformGenerateAXID() const
 {
     static AXID lastUsedID = 0;
