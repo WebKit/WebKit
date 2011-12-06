@@ -212,13 +212,13 @@ void CCLayerTreeHostImpl::setPageScaleFactorAndLimits(float pageScale, float min
 
     float pageScaleChange = pageScale / m_pageScale;
     m_pageScale = pageScale;
-    m_sentPageScaleDelta = 1;
-
-    // Clamp delta to limits and refresh display matrix.
-    setPageScaleDelta(m_pageScaleDelta);
-    applyPageScaleDeltaToScrollLayer();
 
     adjustScrollsForPageScaleChange(pageScaleChange);
+
+    // Clamp delta to limits and refresh display matrix.
+    setPageScaleDelta(m_pageScaleDelta / m_sentPageScaleDelta);
+    m_sentPageScaleDelta = 1;
+    applyPageScaleDeltaToScrollLayer();
 }
 
 void CCLayerTreeHostImpl::adjustScrollsForPageScaleChange(float pageScaleChange)
@@ -255,7 +255,7 @@ void CCLayerTreeHostImpl::setPageScaleDelta(float delta)
 void CCLayerTreeHostImpl::applyPageScaleDeltaToScrollLayer()
 {
     if (m_scrollLayerImpl)
-        m_scrollLayerImpl->setPageScaleDelta(m_pageScaleDelta * m_sentPageScaleDelta);
+        m_scrollLayerImpl->setPageScaleDelta(m_pageScaleDelta);
 }
 
 void CCLayerTreeHostImpl::updateMaxScrollPosition()
@@ -370,8 +370,6 @@ PassOwnPtr<CCScrollAndScaleSet> CCLayerTreeHostImpl::processScrollDeltas()
     }
 
     m_sentPageScaleDelta = scrollInfo->pageScaleDelta = m_pageScaleDelta;
-    m_pageScale = m_pageScale * m_sentPageScaleDelta;
-    setPageScaleDelta(1);
 
     // FIXME: track scrolls from layers other than the root
     CCLayerTreeHostCommon::ScrollUpdateInfo scroll;
@@ -379,12 +377,7 @@ PassOwnPtr<CCScrollAndScaleSet> CCLayerTreeHostImpl::processScrollDeltas()
     scroll.scrollDelta = m_scrollLayerImpl->scrollDelta();
     scrollInfo->scrolls.append(scroll);
 
-    m_scrollLayerImpl->setScrollPosition(m_scrollLayerImpl->scrollPosition() + m_scrollLayerImpl->scrollDelta());
-    m_scrollLayerImpl->setPosition(m_scrollLayerImpl->position() - m_scrollLayerImpl->scrollDelta());
-    m_scrollLayerImpl->setSentScrollDelta(m_scrollLayerImpl->scrollDelta());
-    m_scrollLayerImpl->setScrollDelta(IntSize());
-
-    adjustScrollsForPageScaleChange(m_sentPageScaleDelta);
+    m_scrollLayerImpl->setSentScrollDelta(scroll.scrollDelta);
 
     return scrollInfo.release();
 }

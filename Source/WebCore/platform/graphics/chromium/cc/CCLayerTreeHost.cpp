@@ -140,17 +140,18 @@ void CCLayerTreeHost::beginCommitOnImplThread(CCLayerTreeHostImpl* hostImpl)
 void CCLayerTreeHost::finishCommitOnImplThread(CCLayerTreeHostImpl* hostImpl)
 {
     ASSERT(CCProxy::isImplThread());
-    hostImpl->setSourceFrameNumber(frameNumber());
-    hostImpl->setHaveWheelEventHandlers(m_haveWheelEventHandlers);
-    hostImpl->setZoomAnimatorTransform(m_zoomAnimatorTransform);
-    hostImpl->setViewport(viewportSize());
-    hostImpl->setPageScaleFactorAndLimits(pageScale(), m_minPageScale, m_maxPageScale);
 
     // Synchronize trees, if one exists at all...
     if (rootLayer())
         hostImpl->setRootLayer(TreeSynchronizer::synchronizeTrees(rootLayer(), hostImpl->rootLayer()));
     else
         hostImpl->setRootLayer(0);
+
+    hostImpl->setSourceFrameNumber(frameNumber());
+    hostImpl->setHaveWheelEventHandlers(m_haveWheelEventHandlers);
+    hostImpl->setZoomAnimatorTransform(m_zoomAnimatorTransform);
+    hostImpl->setViewport(viewportSize());
+    hostImpl->setPageScaleFactorAndLimits(pageScale(), m_minPageScale, m_maxPageScale);
 
     m_frameNumber++;
 }

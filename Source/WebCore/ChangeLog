@@ -1,3 +1,40 @@
+2011-12-06  Alexandre Elias  <aelias@google.com>
+
+        [chromium] Apply sent deltas on finishCommit
+        https://bugs.webkit.org/show_bug.cgi?id=73884
+
+        Reviewed by James Robinson.
+
+        This moves scroll and pageScale "sent" deltas to be applied to
+        the layer at the end of the commit, instead of the beginning.
+
+        This has several advantages, especially for page scale:
+        - When pageScale changes, no longer any need to change the scroll's
+        coordinate space at beginning of commit, which is complex and prone to
+        bugs (this fixes a problem where we were forgetting to modify the
+        scrollPosition before).
+        - No need for non-commit-related code to consider the "sent" values.
+        m_pageScale is now always the content scale factor, and
+        m_pageScaleDelta is the scale to be on the impl-side matrix.
+        - This will make it easy to send arbitrary fake or future delta
+        values for example while pinch zooming out.
+
+        The scroll logic is similarly altered for consistency's sake.  Note that
+        I also moved the tree synchronize to the beginning of finishCommit
+        in order to avoid having to change the pageScale coordinate space of
+        sentScrollDelta in adjustScrollsForPageScaleChange().
+
+        No new tests. (Refactoring of existing code.)
+
+        * platform/graphics/chromium/LayerChromium.cpp:
+        (WebCore::LayerChromium::pushPropertiesTo):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.cpp:
+        (WebCore::CCLayerTreeHost::finishCommitOnImplThread):
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.cpp:
+        (WebCore::CCLayerTreeHostImpl::setPageScaleFactorAndLimits):
+        (WebCore::CCLayerTreeHostImpl::applyPageScaleDeltaToScrollLayer):
+        (WebCore::CCLayerTreeHostImpl::processScrollDeltas):
+
 2011-12-06  Gavin Barraclough  <barraclough@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=68328

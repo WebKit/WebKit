@@ -125,25 +125,20 @@ TEST_F(CCLayerTreeHostImplTest, scrollDeltaRepeatedScrolls)
     OwnPtr<CCScrollAndScaleSet> scrollInfo;
 
     scrollInfo = m_hostImpl->processScrollDeltas();
-    ASSERT_EQ(root->scrollPosition(), scrollPosition + scrollDelta);
     ASSERT_EQ(scrollInfo->scrolls.size(), 1u);
     EXPECT_EQ(root->sentScrollDelta(), scrollDelta);
     expectContains(*scrollInfo.get(), root->id(), scrollDelta);
-    expectClearedScrollDeltasRecursive(root.get());
 
     IntSize scrollDelta2(-5, 27);
     root->scrollBy(scrollDelta2);
     scrollInfo = m_hostImpl->processScrollDeltas();
-    ASSERT_EQ(root->scrollPosition(), scrollPosition + scrollDelta + scrollDelta2);
     ASSERT_EQ(scrollInfo->scrolls.size(), 1u);
-    expectContains(*scrollInfo.get(), root->id(), scrollDelta2);
-    expectClearedScrollDeltasRecursive(root.get());
+    EXPECT_EQ(root->sentScrollDelta(), scrollDelta + scrollDelta2);
+    expectContains(*scrollInfo.get(), root->id(), scrollDelta + scrollDelta2);
 
     root->scrollBy(IntSize());
     scrollInfo = m_hostImpl->processScrollDeltas();
-    ASSERT_EQ(root->scrollPosition(), scrollPosition + scrollDelta + scrollDelta2);
-    ASSERT_EQ(scrollInfo->scrolls.size(), 0u);
-    expectClearedScrollDeltasRecursive(root.get());
+    EXPECT_EQ(root->sentScrollDelta(), scrollDelta + scrollDelta2);
 }
 
 TEST_F(CCLayerTreeHostImplTest, scrollRootCallsCommitAndRedraw)
