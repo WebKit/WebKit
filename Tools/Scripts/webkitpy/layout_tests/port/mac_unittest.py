@@ -108,8 +108,11 @@ java/
 
         self.assert_name(None, '10.7', 'mac-lion')
         self.assert_name(None, '10.7.3', 'mac-lion')
-        self.assert_name(None, '10.8', 'mac-future')
         self.assert_name('mac', '10.7.3', 'mac-lion')
+
+        self.assert_name(None, '10.9', 'mac-future')
+        self.assert_name('mac', '10.9', 'mac-future')
+        self.assert_name('mac-future', '10.9', 'mac-future')
 
         self.assertRaises(AssertionError, self.assert_name, None, '10.3.1', 'should-raise-assertion-so-this-value-does-not-matter')
 

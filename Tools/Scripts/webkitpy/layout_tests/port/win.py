@@ -75,8 +75,8 @@ class WinPort(ApplePort):
             return self._version_string_from_windows_version_tuple(version_tuple)
 
     def __init__(self, host, **kwargs):
-        ApplePort.__init__(self, host, **kwargs)
         self._operating_system = 'win'
+        ApplePort.__init__(self, host, **kwargs)
 
     def compare_text(self, expected_text, actual_text):
         # Sanity was restored in WK2, so we don't need this hack there.

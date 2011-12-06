@@ -70,7 +70,8 @@ class ApplePort(WebKitPort):
             self._version = self._detect_version(os_version_string) or self.FUTURE_VERSION
             self._name = self.port_name + '-' + self._version
         else:
-            assert port_name in self.VERSION_FALLBACK_ORDER, "%s is not in %s" % (port_name, self.VERSION_FALLBACK_ORDER)
+            allowed_port_names = self.VERSION_FALLBACK_ORDER + [self._operating_system + "-future"]
+            assert port_name in allowed_port_names, "%s is not in %s" % (port_name, allowed_port_names)
             self._version = self._strip_port_name_prefix(port_name)
 
     # FIXME: A more sophisitcated version of this function should move to WebKitPort and replace all calls to name().

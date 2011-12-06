@@ -1,3 +1,35 @@
+2011-12-06  Adam Barth  <abarth@webkit.org>
+
+        NRWT fails on unreleased versions of Mac OS X
+        https://bugs.webkit.org/show_bug.cgi?id=72748
+
+        Reviewed by Dirk Pranke.
+
+        Hopefully this patch will make NRWT work on future versions on Mac OS X.
+        Most of the infrastructure was already in place, but there were some
+        asserts that failed.  I've tested this patch by haxoring the version
+        detection logic to simulate an unknown version.  We might need to
+        iterate based on feedback from folks with a real future version.
+
+        * Scripts/webkitpy/layout_tests/port/apple.py:
+        (ApplePort.__init__):
+            - mac-future is an allowed port_name that's used internally by
+              webkitpy to represent future versions of Mac OS X.
+        * Scripts/webkitpy/layout_tests/port/mac_unittest.py:
+        (test_versions):
+            - Test that we don't throw exceptions when dealing with future
+              versions of Mac OS X.
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+        (WebKitPort._expectations_from_skipped_files):
+            - Demote this logging message to "debug".  It's expected that
+              mac-future doesn't have a Skipped file.
+        * Scripts/webkitpy/layout_tests/port/mac.py:
+        (MacPort.__init__):
+        * Scripts/webkitpy/layout_tests/port/win.py:
+        (WinPort.__init__):
+            - Re-order some code in these constructors so that
+              self._operating_system is available to the ApplePort constructor.
+
 2011-12-06  Tommy Widenflycht  <tommyw@google.com>
 
         Added myself as a committer.
