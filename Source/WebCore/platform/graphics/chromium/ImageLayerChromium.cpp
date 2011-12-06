@@ -164,6 +164,7 @@ void ImageLayerChromium::setContents(Image* contents)
     m_contents = contents;
     m_imageForCurrentFrame = m_contents->nativeImageForCurrentFrame();
     setNeedsDisplay();
+    setOpaque(!m_contents->currentFrameHasAlpha());
 }
 
 void ImageLayerChromium::paintContentsIfDirty()

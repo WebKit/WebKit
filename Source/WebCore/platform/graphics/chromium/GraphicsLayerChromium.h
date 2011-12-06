@@ -101,9 +101,6 @@ public:
     virtual void paintContents(GraphicsContext&, const IntRect& clip);
     virtual void notifySyncRequired();
 
-    // Exposed for tests.
-    LayerChromium* contentsLayer() const { return m_contentsLayer.get(); }
-
 private:
     void updateOpacityOnLayer();
 
@@ -131,6 +128,7 @@ private:
     void updateContentsScale();
 
     void setupContentsLayer(LayerChromium*);
+    LayerChromium* contentsLayer() const { return m_contentsLayer.get(); }
     float contentsScale() const;
 
     String m_nameBase;
