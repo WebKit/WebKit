@@ -1,3 +1,15 @@
+2011-12-06  Michael Brüning  <michael.bruning@nokia.com>
+
+        [qt][wk2] Tests of QQuickWebView assert in debug builds when destroying QQuickWebViewPrivate 
+        https://bugs.webkit.org/show_bug.cgi?id=73907 
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * UIProcess/API/qt/qquickwebview.cpp: Disconnect signals from
+        QtViewportInteractionEngine in ~QQuickWebViewPrivate.
+        (QQuickWebViewPrivate::~QQuickWebViewPrivate):
+        * UIProcess/API/qt/qquickwebview_p_p.h: Remove empty inline implementation of ~QQuickWebViewPrivate.
+
 2011-12-06  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         [Qt] Add initial support for focusing when entering edit mode.

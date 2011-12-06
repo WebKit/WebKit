@@ -72,6 +72,12 @@ QQuickWebViewPrivate::QQuickWebViewPrivate(QQuickWebView* viewport, WKContextRef
     pageProxy->init(eventHandler.data());
 }
 
+QQuickWebViewPrivate::~QQuickWebViewPrivate()
+{
+    if (interactionEngine)
+        interactionEngine->disconnect();
+}
+
 void QQuickWebViewPrivate::enableMouseEvents()
 {
     Q_Q(QQuickWebView);

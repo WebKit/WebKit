@@ -49,7 +49,7 @@ class QQuickWebViewPrivate {
 
 public:
     QQuickWebViewPrivate(QQuickWebView* viewport, WKContextRef contextRef = 0, WKPageGroupRef pageGroupRef = 0);
-    virtual ~QQuickWebViewPrivate() { }
+    virtual ~QQuickWebViewPrivate(); 
     void setPageProxy(QtWebPageProxy*);
     void initializeTouch(QQuickWebView* viewport);
     void initializeDesktop(QQuickWebView* viewport);
