@@ -4803,33 +4803,24 @@ struct BorderImageParseContext {
         m_image = image;
         m_canAdvance = true;
         m_allowCommit = true;
-        m_allowImage = false;
-        m_allowSlash = false;
-        m_requireWidth = false;
-        m_requireOutset = false;
+        m_allowImage = m_allowSlash = m_requireWidth = m_requireOutset = false;
         m_allowImageSlice = !m_imageSlice;
         m_allowRepeat = !m_repeat;
     }
+
     void commitImageSlice(PassRefPtr<CSSBorderImageSliceValue> slice)
     {
         m_imageSlice = slice;
         m_canAdvance = true;
-        m_allowCommit = true;
-        m_allowSlash = true;
-        m_allowImageSlice = false;
-        m_requireWidth = false;
-        m_requireOutset = false;
+        m_allowCommit = m_allowSlash = true;
+        m_allowImageSlice = m_requireWidth = m_requireOutset = false;
         m_allowImage = !m_image;
         m_allowRepeat = !m_repeat;
     }
     void commitSlash()
     {
         m_canAdvance = true;
-        m_allowCommit = false;
-        m_allowImage = false;
-        m_allowImageSlice = false;
-        m_allowRepeat = false;
-        m_allowSlash = false;
+        m_allowCommit = m_allowImage = m_allowImageSlice = m_allowRepeat = m_allowSlash = false;
         if (!m_borderSlice) {
             m_requireWidth = true;
             m_requireOutset = false;
@@ -4842,11 +4833,8 @@ struct BorderImageParseContext {
     {
         m_borderSlice = slice;
         m_canAdvance = true;
-        m_allowCommit = true;
-        m_allowSlash = true;
-        m_allowImageSlice = false;
-        m_requireWidth = false;
-        m_requireOutset = false;
+        m_allowCommit = m_allowSlash = true;
+        m_allowImageSlice = m_requireWidth = m_requireOutset = false;
         m_allowImage = !m_image;
         m_allowRepeat = !m_repeat;
     }
@@ -4855,10 +4843,7 @@ struct BorderImageParseContext {
         m_outset = outset;
         m_canAdvance = true;
         m_allowCommit = true;
-        m_allowImageSlice = false;
-        m_allowSlash = false;
-        m_requireWidth = false;
-        m_requireOutset = false;
+        m_allowImageSlice = m_allowSlash = m_requireWidth = m_requireOutset = false;
         m_allowImage = !m_image;
         m_allowRepeat = !m_repeat;
     }
@@ -4867,10 +4852,7 @@ struct BorderImageParseContext {
         m_repeat = repeat;
         m_canAdvance = true;
         m_allowCommit = true;
-        m_allowRepeat = false;
-        m_allowSlash = false;
-        m_requireWidth = false;
-        m_requireOutset = false;
+        m_allowRepeat = m_allowSlash = m_requireWidth = m_requireOutset = false;
         m_allowImageSlice = !m_imageSlice;
         m_allowImage = !m_image;
     }
@@ -4907,6 +4889,8 @@ bool CSSParser::parseBorderImage(int propId, RefPtr<CSSValue>& result)
     ShorthandScope scope(this, propId);
     BorderImageParseContext context(primitiveValueCache());
     while (CSSParserValue* val = m_valueList->current()) {
+        context.setCanAdvance(false);
+
         if (!context.canAdvance() && context.allowSlash() && val->unit == CSSParserValue::Operator && val->iValue == '/')
             context.commitSlash();
         
@@ -4949,10 +4933,10 @@ bool CSSParser::parseBorderImage(int propId, RefPtr<CSSValue>& result)
                 context.commitBorderOutset(borderOutset.release());
         } 
         
-        if (context.canAdvance()) {
-            m_valueList->next();
-            context.setCanAdvance(false);
-        }
+        if (!context.canAdvance())
+            return false;
+
+        m_valueList->next();
     }
 
     if (context.allowCommit()) {
