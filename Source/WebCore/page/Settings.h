@@ -490,13 +490,13 @@ namespace WebCore {
         bool visualWordMovementEnabled() const { return m_visualWordMovementEnabled; }
 
 #if ENABLE(VIDEO_TRACK)
-        void setShouldDisplaySubtitles(bool);
+        void setShouldDisplaySubtitles(bool flag) { m_shouldDisplaySubtitles = flag; }
         bool shouldDisplaySubtitles() const { return m_shouldDisplaySubtitles; }
 
-        void setShouldDisplayCaptions(bool);
+        void setShouldDisplayCaptions(bool flag) { m_shouldDisplayCaptions = flag; }
         bool shouldDisplayCaptions() const { return m_shouldDisplayCaptions; }
 
-        void setShouldDisplayTextDescriptions(bool);
+        void setShouldDisplayTextDescriptions(bool flag) { m_shouldDisplayTextDescriptions = flag; }
         bool shouldDisplayTextDescriptions() const { return m_shouldDisplayTextDescriptions; }
 #endif
 

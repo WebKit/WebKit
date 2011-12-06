@@ -1,3 +1,18 @@
+2011-12-06  Eric Carlson  <eric.carlson@apple.com>
+
+        Revert WebCore track Settings changes made in r101977
+        https://bugs.webkit.org/show_bug.cgi?id=73879
+
+        Reviewed by Sam Weinig.
+
+        No new tests yet, still nothing to test.
+
+        * page/Settings.cpp: Move the preference setters back into the .h file.
+        * page/Settings.h:
+        (WebCore::Settings::setShouldDisplaySubtitles):
+        (WebCore::Settings::setShouldDisplayCaptions):
+        (WebCore::Settings::setShouldDisplayTextDescriptions):
+
 2011-12-06  Andreas Kling  <kling@webkit.org>
 
         MediaList: Remove constructor that takes a CSSImportRule*.
