@@ -1528,7 +1528,7 @@ public:
     // The initial value is 'none' for grid tracks.
     static Vector<Length> initialGridTrackValue()
     {
-        static Vector<Length> defaultLength;
+        DEFINE_STATIC_LOCAL(Vector<Length>, defaultLength, ());
         // We need to manually add the Length here as the Length(0) is 'auto'.
         if (!defaultLength.size())
             defaultLength.append(Length(Undefined));
