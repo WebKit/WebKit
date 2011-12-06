@@ -1994,14 +1994,10 @@ void Editor::markAllMisspellingsAndBadGrammarInRanges(TextCheckingTypeMask textC
     // There shouldn't be pending autocorrection at this moment.
     ASSERT(!m_spellingCorrector->hasPendingCorrection());
 
-    bool shouldMarkSpelling = textCheckingOptions & TextCheckingTypeSpelling;
     bool shouldMarkGrammar = textCheckingOptions & TextCheckingTypeGrammar;
-    bool shouldPerformReplacement = textCheckingOptions & TextCheckingTypeReplacement;
     bool shouldShowCorrectionPanel = textCheckingOptions & TextCheckingTypeShowCorrectionPanel;
-    bool shouldCheckForCorrection = shouldShowCorrectionPanel || (textCheckingOptions & TextCheckingTypeCorrection);
 
     // This function is called with selections already expanded to word boundaries.
-    ExceptionCode ec = 0;
     if (!client() || !spellingRange || (shouldMarkGrammar && !grammarRange))
         return;
 
@@ -2013,35 +2009,11 @@ void Editor::markAllMisspellingsAndBadGrammarInRanges(TextCheckingTypeMask textC
     if (!isSpellCheckingEnabledFor(editableNode))
         return;
 
-    // Expand the range to encompass entire paragraphs, since text checking needs that much context.
-    int selectionOffset = 0;
-    int ambiguousBoundaryOffset = -1;
-    bool selectionChanged = false;
-    bool restoreSelectionAfterChange = false;
-    bool adjustSelectionForParagraphBoundaries = false;
-
     TextCheckingParagraph spellingParagraph(spellingRange);
     TextCheckingParagraph grammarParagraph(shouldMarkGrammar ? grammarRange : 0);
 
     if (shouldMarkGrammar ? (spellingParagraph.isRangeEmpty() && grammarParagraph.isEmpty()) : spellingParagraph.isEmpty())
         return;
-
-    if (shouldPerformReplacement || shouldMarkSpelling || shouldCheckForCorrection) {
-        if (m_frame->selection()->selectionType() == VisibleSelection::CaretSelection) {
-            // Attempt to save the caret position so we can restore it later if needed
-            Position caretPosition = m_frame->selection()->end();
-            int offset = spellingParagraph.offsetTo(caretPosition, ec);
-            if (!ec) {
-                selectionOffset = offset;
-                restoreSelectionAfterChange = true;
-                if (selectionOffset > 0 && (selectionOffset > spellingParagraph.textLength() || spellingParagraph.textCharAt(selectionOffset - 1) == newlineCharacter))
-                    adjustSelectionForParagraphBoundaries = true;
-                if (selectionOffset > 0 && selectionOffset <= spellingParagraph.textLength() && isAmbiguousBoundaryCharacter(spellingParagraph.textCharAt(selectionOffset - 1)))
-                    ambiguousBoundaryOffset = selectionOffset - 1;
-            }
-        }
-    }
-
 
     bool asynchronous = m_frame && m_frame->settings() && m_frame->settings()->asynchronousSpellCheckingEnabled() && !shouldShowCorrectionPanel;
     if (asynchronous) {
@@ -2059,7 +2031,37 @@ void Editor::markAllMisspellingsAndBadGrammarInRanges(TextCheckingTypeMask textC
     else
         checkTextOfParagraph(textChecker(), spellingParagraph.textCharacters(), spellingParagraph.textLength(), 
                                             resolveTextCheckingTypeMask(textCheckingOptions), results);
-        
+
+    markAndReplaceFor(textCheckingOptions, results, spellingParagraph, grammarParagraph);
+}
+
+void Editor::markAndReplaceFor(TextCheckingTypeMask textCheckingOptions, const Vector<TextCheckingResult>& results, const TextCheckingParagraph& spellingParagraph, const TextCheckingParagraph& grammarParagraph)
+{
+    bool shouldMarkSpelling = textCheckingOptions & TextCheckingTypeSpelling;
+    bool shouldMarkGrammar = textCheckingOptions & TextCheckingTypeGrammar;
+    bool shouldPerformReplacement = textCheckingOptions & TextCheckingTypeReplacement;
+    bool shouldShowCorrectionPanel = textCheckingOptions & TextCheckingTypeShowCorrectionPanel;
+    bool shouldCheckForCorrection = shouldShowCorrectionPanel || (textCheckingOptions & TextCheckingTypeCorrection);
+
+    // Expand the range to encompass entire paragraphs, since text checking needs that much context.
+    int selectionOffset = 0;
+    int ambiguousBoundaryOffset = -1;
+    bool selectionChanged = false;
+    bool restoreSelectionAfterChange = false;
+    bool adjustSelectionForParagraphBoundaries = false;
+
+    if (shouldPerformReplacement || shouldMarkSpelling || shouldCheckForCorrection) {
+        if (m_frame->selection()->selectionType() == VisibleSelection::CaretSelection) {
+            // Attempt to save the caret position so we can restore it later if needed
+            Position caretPosition = m_frame->selection()->end();
+            selectionOffset = spellingParagraph.offsetTo(caretPosition, ASSERT_NO_EXCEPTION);
+            restoreSelectionAfterChange = true;
+            if (selectionOffset > 0 && (selectionOffset > spellingParagraph.textLength() || spellingParagraph.textCharAt(selectionOffset - 1) == newlineCharacter))
+                adjustSelectionForParagraphBoundaries = true;
+            if (selectionOffset > 0 && selectionOffset <= spellingParagraph.textLength() && isAmbiguousBoundaryCharacter(spellingParagraph.textCharAt(selectionOffset - 1)))
+                ambiguousBoundaryOffset = selectionOffset - 1;
+        }
+    }
 
     // If this checking is only for showing correction panel, we shouldn't bother to mark misspellings.
     if (shouldShowCorrectionPanel)
@@ -2084,7 +2086,7 @@ void Editor::markAllMisspellingsAndBadGrammarInRanges(TextCheckingTypeMask textC
             RefPtr<Range> misspellingRange = spellingParagraph.subrange(resultLocation, resultLength);
             if (!m_spellingCorrector->isSpellingMarkerAllowed(misspellingRange))
                 continue;
-            misspellingRange->startContainer(ec)->document()->markers()->addMarker(misspellingRange.get(), DocumentMarker::Spelling);
+            misspellingRange->startContainer()->document()->markers()->addMarker(misspellingRange.get(), DocumentMarker::Spelling);
         } else if (shouldMarkGrammar && result->type == TextCheckingTypeGrammar && grammarParagraph.checkingRangeCovers(resultLocation, resultLength)) {
             ASSERT(resultLength > 0 && resultLocation >= 0);
             for (unsigned j = 0; j < result->details.size(); j++) {
@@ -2092,7 +2094,7 @@ void Editor::markAllMisspellingsAndBadGrammarInRanges(TextCheckingTypeMask textC
                 ASSERT(detail->length > 0 && detail->location >= 0);
                 if (grammarParagraph.checkingRangeCovers(resultLocation + detail->location, detail->length)) {
                     RefPtr<Range> badGrammarRange = grammarParagraph.subrange(resultLocation + detail->location, detail->length);
-                    grammarRange->startContainer(ec)->document()->markers()->addMarker(badGrammarRange.get(), DocumentMarker::Grammar, detail->userDescription);
+                    badGrammarRange->startContainer()->document()->markers()->addMarker(badGrammarRange.get(), DocumentMarker::Grammar, detail->userDescription);
                 }
             }
         } else if (resultLocation + resultLength <= spellingRangeEndOffset && resultLocation + resultLength >= spellingParagraph.checkingStart()
@@ -2178,10 +2180,11 @@ void Editor::markAllMisspellingsAndBadGrammarInRanges(TextCheckingTypeMask textC
     }
 
     if (selectionChanged) {
+        TextCheckingParagraph extendedParagraph(spellingParagraph);
         // Restore the caret position if we have made any replacements
-        spellingParagraph.expandRangeToNextEnd();
-        if (restoreSelectionAfterChange && selectionOffset >= 0 && selectionOffset <= spellingParagraph.rangeLength()) {
-            RefPtr<Range> selectionRange = spellingParagraph.subrange(0, selectionOffset);
+        extendedParagraph.expandRangeToNextEnd();
+        if (restoreSelectionAfterChange && selectionOffset >= 0 && selectionOffset <= extendedParagraph.rangeLength()) {
+            RefPtr<Range> selectionRange = extendedParagraph.subrange(0, selectionOffset);
             m_frame->selection()->moveTo(selectionRange->endPosition(), DOWNSTREAM);
             if (adjustSelectionForParagraphBoundaries)
                 m_frame->selection()->modify(FrameSelection::AlterationMove, DirectionForward, CharacterGranularity);
