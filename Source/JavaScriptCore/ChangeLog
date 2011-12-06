@@ -1,3 +1,28 @@
+2011-12-06  Michael Saboff  <msaboff@apple.com>
+
+        Add 8 bit paths to global object functions
+        https://bugs.webkit.org/show_bug.cgi?id=73875
+
+        Added 8 bit paths for converions methods.
+
+        This is worth 1.5% on kraken audio-oscillator,
+        1.6% on stanford-crypto-ccm and 2.5% on
+        stanford-crypto-sha256-iterative.  See bug for
+        a full report.
+
+        Reviewed by Oliver Hunt.
+
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::decode): Split into a templated helper.
+        (JSC::parseInt): Split into a templated helper.
+        (JSC::parseFloat): Added an 8 bit path
+        (JSC::globalFuncEscape): Added 8 bit path
+        (JSC::globalFuncUnescape): Added 8 bit path
+        * runtime/JSStringBuilder.h:
+        (JSC::JSStringBuilder::append): New append for LChar
+        * wtf/text/StringBuilder.h:
+        (WTF::StringBuilder::append): New append for LChar
+
 2011-11-21  Balazs Kelemen  <kbalazs@webkit.org>
 
         Enable ParallelJobs by default

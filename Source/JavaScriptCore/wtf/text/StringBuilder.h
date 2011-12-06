@@ -80,6 +80,17 @@ public:
             append(&c, 1);
     }
 
+    void append(LChar c)
+    {
+        if (m_buffer && m_length < m_buffer->length() && m_string.isNull()) {
+            if (m_is8Bit)
+                m_bufferCharacters8[m_length++] = c;
+            else
+                m_bufferCharacters16[m_length++] = c;
+        } else
+            append(&c, 1);
+    }
+    
     void append(char c)
     {
         if (m_buffer && m_length < m_buffer->length() && m_string.isNull()) {

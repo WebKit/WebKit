@@ -72,6 +72,19 @@ public:
         }
     }
 
+    void append(const LChar* str, size_t len)
+    {
+        if (m_is8Bit) {
+            m_okay &= buffer8.tryAppend(str, len);
+            return;
+        }
+        m_okay &= buffer8.tryReserveCapacity(buffer16.size() + len);
+        for (size_t i = 0; i < len; i++) {
+            UChar u = str[i];
+            m_okay &= buffer16.tryAppend(&u, 1);
+        }
+    }
+    
     void append(const UChar* str, size_t len)
     {
         if (m_is8Bit)
