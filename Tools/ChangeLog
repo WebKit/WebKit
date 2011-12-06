@@ -1,3 +1,39 @@
+2011-12-06  Adam Roben  <aroben@apple.com>
+
+        Wait for Crash Reporter to finish even when it lets the crashed process die quickly
+
+        NRWT was only waiting for Crash Reporter in cases where it was keeping the crashed process
+        alive beyond the normal timeout limit. In cases where the crashed process was able to die
+        faster, NRWT would assume that Crash Reporter had finished even though it often was still
+        running, which would lead to an incorrect crash log being picked up.
+
+        Part of <http://webkit.org/b/71380> NRWT incorrectly associates crash logs with tests
+
+        Reviewed by Dirk Pranke.
+
+        * Scripts/webkitpy/layout_tests/port/server_process.py:
+        (ServerProcess._reset):
+        (ServerProcess.write):
+        (ServerProcess._check_for_crash): Changed to use new set_crashed function instead of setting
+        .crashed directly. Added wait_for_crash_reporter parameter, which we pass along to
+        set_crashed.
+
+        (ServerProcess._handle_timeout): Fixed a logic error that would cause .crashed and
+        .timed_out both to be set to True in cases where Crash Reporter took a long time to run. Now
+        we bail out of handling the failure as a timeout if we find out that the process in fact
+        crashed. We tell _check_for_crash not to wait for Crash Reporter because we've already done
+        so.
+        (ServerProcess.set_crashed): Added. When the process crashes, we wait for Crash Reporter to
+        finish running (unless directed otherwise) so we can be sure the crash log has been saved to
+        disk.
+
+        * Scripts/webkitpy/layout_tests/port/server_process_unittest.py:
+        (TrivialMockPort.is_crash_reporter): Added.
+
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+        (WebKitDriver._check_for_driver_crash): Changed to use set_crashed. (This also fixed a typo
+        that would have partially broken crash detection on Windows, if NRWT worked on Windows.)
+
 2011-12-06  Adam Barth  <abarth@webkit.org>
 
         NRWT fails on unreleased versions of Mac OS X

@@ -501,7 +501,7 @@ class WebKitDriver(Driver):
         if error_line == "#CRASHED\n":
             # This is used on Windows to report that the process has crashed
             # See http://trac.webkit.org/changeset/65537.
-            self._server_process.crash = True
+            self._server_process.set_crashed(True)
         elif error_line == "#CRASHED - WebProcess\n":
             # WebKitTestRunner uses this to report that the WebProcess subprocess crashed.
             self._subprocess_crashed("WebProcess")

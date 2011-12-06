@@ -70,7 +70,7 @@ class ServerProcess:
         self._proc = None
         self._output = str()  # bytesarray() once we require Python 2.6
         self._error = str()  # bytesarray() once we require Python 2.6
-        self.crashed = False
+        self.set_crashed(False)
         self.timed_out = False
 
     def process_name(self):
@@ -128,7 +128,7 @@ class ServerProcess:
         except IOError, e:
             self.stop()
             # stop() calls _reset(), so we have to set crashed to True after calling stop().
-            self.crashed = True
+            self.set_crashed(True)
 
     def _pop_stdout_line_if_ready(self):
         index_after_newline = self._output.find('\n') + 1
@@ -178,9 +178,9 @@ class ServerProcess:
 
         return self._read(deadline, retrieve_bytes_from_stdout_buffer)
 
-    def _check_for_crash(self):
+    def _check_for_crash(self, wait_for_crash_reporter=True):
         if self._proc.poll() != None:
-            self.crashed = True
+            self.set_crashed(True, wait_for_crash_reporter)
             self.handle_interrupt()
 
     def _log(self, message):
@@ -207,11 +207,11 @@ class ServerProcess:
 
     def _handle_timeout(self):
         self._executive.wait_newest(self._port.is_crash_reporter)
-        if not self.crashed:
-            self._check_for_crash()
+        self._check_for_crash(wait_for_crash_reporter=False)
+        if self.crashed:
+            return
         self.timed_out = True
-        if not self.crashed:
-            self._sample()
+        self._sample()
 
     def _split_string_after_index(self, string, index):
         return string[:index], string[index:]
@@ -288,3 +288,9 @@ class ServerProcess:
                 self._executive.kill_process(self._proc.pid)
                 _log.warning('killed')
         self._reset()
+
+    def set_crashed(self, crashed, wait_for_crash_reporter=True):
+        self.crashed = crashed
+        if not self.crashed or not wait_for_crash_reporter:
+            return
+        self._executive.wait_newest(self._port.is_crash_reporter)
