@@ -27,8 +27,6 @@
 #include "LayerChromium.h"
 
 #include "CCLayerTreeTestCommon.h"
-#include "LayerPainterChromium.h"
-#include "NonCompositedContentHost.h"
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
@@ -52,30 +50,6 @@ public:
     MOCK_CONST_METHOD0(preserves3D, bool());
     MOCK_METHOD2(paintContents, void(GraphicsContext&, const IntRect&));
     MOCK_METHOD0(notifySyncRequired, void());
-};
-
-class MockLayerPainterChromium : public LayerPainterChromium {
-public:
-    virtual void paint(GraphicsContext&, const IntRect&) { }
-};
-
-class MockNonCompositedContentHost : public NonCompositedContentHost {
-public:
-    static PassOwnPtr<MockNonCompositedContentHost> create()
-    {
-        return adoptPtr(new MockNonCompositedContentHost);
-    }
-
-    MOCK_METHOD1(notifySyncRequired, void(const GraphicsLayer*));
-
-private:
-    MockNonCompositedContentHost()
-        : NonCompositedContentHost(adoptPtr(new MockLayerPainterChromium()))
-    {
-        m_scrollLayer = GraphicsLayer::create(0);
-        setScrollLayer(m_scrollLayer.get());
-    }
-    OwnPtr<GraphicsLayer> m_scrollLayer;
 };
 
 class LayerChromiumWithInstrumentedDestructor : public LayerChromium {
@@ -646,8 +620,10 @@ TEST_F(LayerChromiumTest, checkPropertyChangeCausesCorrectBehavior)
     EXECUTE_AND_VERIFY_NOTIFY_SYNC_BEHAVIOR(mockDelegate, 0, testLayer->setDelegate(&mockDelegate));
     EXECUTE_AND_VERIFY_NOTIFY_SYNC_BEHAVIOR(mockDelegate, 0, testLayer->setName("Test Layer"));
     EXECUTE_AND_VERIFY_NOTIFY_SYNC_BEHAVIOR(mockDelegate, 0, testLayer->setVisibleLayerRect(IntRect(0, 0, 40, 50)));
+    EXECUTE_AND_VERIFY_NOTIFY_SYNC_BEHAVIOR(mockDelegate, 0, testLayer->setScrollPosition(IntPoint(10, 10)));
     EXECUTE_AND_VERIFY_NOTIFY_SYNC_BEHAVIOR(mockDelegate, 0, testLayer->setUsesLayerClipping(true));
     EXECUTE_AND_VERIFY_NOTIFY_SYNC_BEHAVIOR(mockDelegate, 0, testLayer->setIsNonCompositedContent(true));
+    EXECUTE_AND_VERIFY_NOTIFY_SYNC_BEHAVIOR(mockDelegate, 0, testLayer->setReplicaLayer(dummyLayer.get()));
     EXECUTE_AND_VERIFY_NOTIFY_SYNC_BEHAVIOR(mockDelegate, 0, testLayer->setDrawOpacity(0.5f));
     EXECUTE_AND_VERIFY_NOTIFY_SYNC_BEHAVIOR(mockDelegate, 0, testLayer->setClipRect(IntRect(3, 3, 8, 8)));
     EXECUTE_AND_VERIFY_NOTIFY_SYNC_BEHAVIOR(mockDelegate, 0, testLayer->setTargetRenderSurface(0));
@@ -658,21 +634,19 @@ TEST_F(LayerChromiumTest, checkPropertyChangeCausesCorrectBehavior)
 
     // Next, test properties that should call setNeedsCommit (but not setNeedsDisplay)
     // These properties should indirectly call notifySyncRequired, but the needsDisplay flag should not change.
-    // All properties need to be set to new values in order for setNeedsCommit
-    // to be called.
+    // Note that for many of these properties it is important to test setting the property to a value that
+    // is different than what the constructor initializes it to.
     EXECUTE_AND_VERIFY_NOTIFY_SYNC_BEHAVIOR(mockDelegate, 1, testLayer->setAnchorPoint(FloatPoint(1.23f, 4.56f)));
     EXECUTE_AND_VERIFY_NOTIFY_SYNC_BEHAVIOR(mockDelegate, 1, testLayer->setAnchorPointZ(0.7f));
     EXECUTE_AND_VERIFY_NOTIFY_SYNC_BEHAVIOR(mockDelegate, 1, testLayer->setBackgroundColor(Color(0.4f, 0.4f, 0.4f)));
     EXECUTE_AND_VERIFY_NOTIFY_SYNC_BEHAVIOR(mockDelegate, 1, testLayer->setMasksToBounds(true));
     EXECUTE_AND_VERIFY_NOTIFY_SYNC_BEHAVIOR(mockDelegate, 1, testLayer->setMaskLayer(dummyLayer.get()));
     EXECUTE_AND_VERIFY_NOTIFY_SYNC_BEHAVIOR(mockDelegate, 1, testLayer->setOpacity(0.5f));
-    EXECUTE_AND_VERIFY_NOTIFY_SYNC_BEHAVIOR(mockDelegate, 1, testLayer->setOpaque(true));
+    EXECUTE_AND_VERIFY_NOTIFY_SYNC_BEHAVIOR(mockDelegate, 1, testLayer->setOpaque(false));
     EXECUTE_AND_VERIFY_NOTIFY_SYNC_BEHAVIOR(mockDelegate, 1, testLayer->setPosition(FloatPoint(4.0f, 9.0f)));
-    EXECUTE_AND_VERIFY_NOTIFY_SYNC_BEHAVIOR(mockDelegate, 1, testLayer->setReplicaLayer(dummyLayer.get()));
-    EXECUTE_AND_VERIFY_NOTIFY_SYNC_BEHAVIOR(mockDelegate, 1, testLayer->setSublayerTransform(TransformationMatrix(0, 0, 0, 0, 0, 0)));
+    EXECUTE_AND_VERIFY_NOTIFY_SYNC_BEHAVIOR(mockDelegate, 1, testLayer->setSublayerTransform(TransformationMatrix()));
     EXECUTE_AND_VERIFY_NOTIFY_SYNC_BEHAVIOR(mockDelegate, 1, testLayer->setScrollable(true));
-    EXECUTE_AND_VERIFY_NOTIFY_SYNC_BEHAVIOR(mockDelegate, 1, testLayer->setScrollPosition(IntPoint(10, 10)));
-    EXECUTE_AND_VERIFY_NOTIFY_SYNC_BEHAVIOR(mockDelegate, 1, testLayer->setTransform(TransformationMatrix(0, 0, 0, 0, 0, 0)));
+    EXECUTE_AND_VERIFY_NOTIFY_SYNC_BEHAVIOR(mockDelegate, 1, testLayer->setTransform(TransformationMatrix()));
     EXECUTE_AND_VERIFY_NOTIFY_SYNC_BEHAVIOR(mockDelegate, 1, testLayer->setDoubleSided(false));
 
     // The above tests should not have caused a change to the needsDisplay flag.
@@ -684,20 +658,6 @@ TEST_F(LayerChromiumTest, checkPropertyChangeCausesCorrectBehavior)
     EXPECT_TRUE(testLayer->needsDisplay());
 
     // FIXME: need to add a test for setLayerTreeHost with a non-null stubbed CCLayerTreeHost.
-}
-
-TEST_F(LayerChromiumTest, checkNonCompositedContentPropertyChangeCausesCommit)
-{
-    OwnPtr<MockNonCompositedContentHost> nonCompositedContentHost = MockNonCompositedContentHost::create();
-
-    GraphicsLayer* rootLayer = nonCompositedContentHost->topLevelRootLayer();
-
-    EXPECT_CALL(*nonCompositedContentHost, notifySyncRequired(_)).Times(1);
-    rootLayer->platformLayer()->setScrollPosition(IntPoint(1, 1));
-    Mock::VerifyAndClearExpectations(nonCompositedContentHost.get());
-
-    EXPECT_CALL(*nonCompositedContentHost, notifySyncRequired(_)).Times(AtLeast(1));
-    nonCompositedContentHost->setViewport(IntSize(30, 30), IntSize(20, 20), IntPoint(10, 10), 1);
 }
 
 } // namespace

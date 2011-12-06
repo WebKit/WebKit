@@ -59,10 +59,9 @@ public:
     void protectVisibleTileTextures();
     GraphicsLayer* topLevelRootLayer() const { return m_graphicsLayer.get(); }
 
-protected:
+private:
     explicit NonCompositedContentHost(PassOwnPtr<LayerPainterChromium> contentPaint);
 
-private:
     // GraphicsLayerClient
     virtual void notifyAnimationStarted(const GraphicsLayer*, double time);
     virtual void notifySyncRequired(const GraphicsLayer*);

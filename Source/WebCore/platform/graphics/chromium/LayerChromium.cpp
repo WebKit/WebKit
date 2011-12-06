@@ -120,6 +120,10 @@ void LayerChromium::setLayerTreeHost(CCLayerTreeHost* host)
 
 void LayerChromium::setNeedsCommit()
 {
+    // Call notifySyncRequired(), which for non-root layers plumbs through to
+    // call setRootLayerNeedsDisplay() on the WebView, which will cause LayerRendererChromium
+    // to render a frame.
+    // This function has no effect on root layers.
     if (m_delegate)
         m_delegate->notifySyncRequired();
 }
@@ -243,110 +247,6 @@ void LayerChromium::setChildren(const Vector<RefPtr<LayerChromium> >& children)
     size_t listSize = children.size();
     for (size_t i = 0; i < listSize; i++)
         addChild(children[i]);
-}
-
-void LayerChromium::setAnchorPoint(const FloatPoint& anchorPoint)
-{
-    if (m_anchorPoint == anchorPoint)
-        return;
-    m_anchorPoint = anchorPoint;
-    setNeedsCommit();
-}
-
-void LayerChromium::setAnchorPointZ(float anchorPointZ)
-{
-    if (m_anchorPointZ == anchorPointZ)
-        return;
-    m_anchorPointZ = anchorPointZ;
-    setNeedsCommit();
-}
-
-void LayerChromium::setBackgroundColor(const Color& backgroundColor)
-{
-    if (m_backgroundColor == backgroundColor)
-        return;
-    m_backgroundColor = backgroundColor;
-    setNeedsCommit();
-}
-
-void LayerChromium::setMasksToBounds(bool masksToBounds)
-{
-    if (m_masksToBounds == masksToBounds)
-        return;
-    m_masksToBounds = masksToBounds;
-    setNeedsCommit();
-}
-
-void LayerChromium::setMaskLayer(LayerChromium* maskLayer)
-{
-    if (m_maskLayer == maskLayer)
-        return;
-    m_maskLayer = maskLayer;
-    setNeedsCommit();
-}
-
-void LayerChromium::setOpacity(float opacity)
-{
-    if (m_opacity == opacity)
-        return;
-    m_opacity = opacity;
-    setNeedsCommit();
-}
-
-void LayerChromium::setOpaque(bool opaque)
-{
-    if (m_opaque == opaque)
-        return;
-    m_opaque = opaque;
-    setNeedsCommit();
-}
-
-void LayerChromium::setPosition(const FloatPoint& position)
-{
-    if (m_position == position)
-        return;
-    m_position = position;
-    setNeedsCommit();
-}
-
-void LayerChromium::setSublayerTransform(const TransformationMatrix& sublayerTransform)
-{
-    if (m_sublayerTransform == sublayerTransform)
-        return;
-    m_sublayerTransform = sublayerTransform;
-    setNeedsCommit();
-}
-
-void LayerChromium::setTransform(const TransformationMatrix& transform)
-{
-    if (m_transform == transform)
-        return;
-    m_transform = transform;
-    setNeedsCommit();
-}
-
-void LayerChromium::setScrollPosition(const IntPoint& scrollPosition)
-{
-    if (m_scrollPosition == scrollPosition)
-        return;
-    m_scrollPosition = scrollPosition;
-    setNeedsCommit();
-}
-
-void LayerChromium::setScrollable(bool scrollable)
-{
-    if (m_scrollable == scrollable)
-        return;
-    m_scrollable = scrollable;
-    setNeedsCommit();
-}
-
-void LayerChromium::setDoubleSided(bool doubleSided)
-{
-    if (m_doubleSided == doubleSided)
-        return;
-    m_doubleSided = doubleSided;
-    setNeedsCommit();
 }
 
 LayerChromium* LayerChromium::parent() const

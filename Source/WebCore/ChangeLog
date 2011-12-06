@@ -1,3 +1,42 @@
+2011-12-06  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Unreviewed, rolling out r102091.
+        http://trac.webkit.org/changeset/102091
+        https://bugs.webkit.org/show_bug.cgi?id=73711
+
+        Caused Clang Linux compile failure.
+
+        * platform/graphics/chromium/GraphicsLayerChromium.cpp:
+        (WebCore::GraphicsLayerChromium::setAnchorPoint):
+        (WebCore::GraphicsLayerChromium::setTransform):
+        (WebCore::GraphicsLayerChromium::setChildrenTransform):
+        (WebCore::GraphicsLayerChromium::setMasksToBounds):
+        (WebCore::GraphicsLayerChromium::setBackgroundColor):
+        (WebCore::GraphicsLayerChromium::clearBackgroundColor):
+        (WebCore::GraphicsLayerChromium::setContentsOpaque):
+        (WebCore::GraphicsLayerChromium::setBackfaceVisibility):
+        (WebCore::GraphicsLayerChromium::setOpacity):
+        * platform/graphics/chromium/LayerChromium.cpp:
+        (WebCore::LayerChromium::setNeedsCommit):
+        * platform/graphics/chromium/LayerChromium.h:
+        (WebCore::LayerChromium::setAnchorPoint):
+        (WebCore::LayerChromium::setAnchorPointZ):
+        (WebCore::LayerChromium::setBackgroundColor):
+        (WebCore::LayerChromium::setMasksToBounds):
+        (WebCore::LayerChromium::setMaskLayer):
+        (WebCore::LayerChromium::setOpacity):
+        (WebCore::LayerChromium::setOpaque):
+        (WebCore::LayerChromium::setPosition):
+        (WebCore::LayerChromium::setSublayerTransform):
+        (WebCore::LayerChromium::setTransform):
+        (WebCore::LayerChromium::setScrollPosition):
+        (WebCore::LayerChromium::setScrollable):
+        (WebCore::LayerChromium::setDoubleSided):
+        (WebCore::LayerChromium::setReplicaLayer):
+        * platform/graphics/chromium/NonCompositedContentHost.cpp:
+        (WebCore::NonCompositedContentHost::notifySyncRequired):
+        * platform/graphics/chromium/NonCompositedContentHost.h:
+
 2011-12-06  Dana Jansens  <danakj@chromium.org>
 
         [Chromium] Make root layer always opaque

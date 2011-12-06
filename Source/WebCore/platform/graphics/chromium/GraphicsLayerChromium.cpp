@@ -173,6 +173,9 @@ void GraphicsLayerChromium::setPosition(const FloatPoint& point)
 
 void GraphicsLayerChromium::setAnchorPoint(const FloatPoint3D& point)
 {
+    if (point == m_anchorPoint)
+        return;
+
     GraphicsLayer::setAnchorPoint(point);
     updateAnchorPoint();
 }
@@ -191,12 +194,18 @@ void GraphicsLayerChromium::setTransform(const TransformationMatrix& transform)
     // Call this method first to assign contents scale to LayerChromium so the painter can apply the scale transform.
     updateContentsScale();
 
+    if (transform == m_transform)
+        return;
+
     GraphicsLayer::setTransform(transform);
     updateTransform();
 }
 
 void GraphicsLayerChromium::setChildrenTransform(const TransformationMatrix& transform)
 {
+    if (transform == m_childrenTransform)
+        return;
+
     GraphicsLayer::setChildrenTransform(transform);
     updateChildrenTransform();
 }
@@ -212,6 +221,9 @@ void GraphicsLayerChromium::setPreserves3D(bool preserves3D)
 
 void GraphicsLayerChromium::setMasksToBounds(bool masksToBounds)
 {
+    if (masksToBounds == m_masksToBounds)
+        return;
+
     GraphicsLayer::setMasksToBounds(masksToBounds);
     updateMasksToBounds();
 }
@@ -227,6 +239,9 @@ void GraphicsLayerChromium::setDrawsContent(bool drawsContent)
 
 void GraphicsLayerChromium::setBackgroundColor(const Color& color)
 {
+    if (m_backgroundColorSet && m_backgroundColor == color)
+        return;
+
     GraphicsLayer::setBackgroundColor(color);
 
     m_contentsLayerHasBackgroundColor = true;
@@ -235,12 +250,18 @@ void GraphicsLayerChromium::setBackgroundColor(const Color& color)
 
 void GraphicsLayerChromium::clearBackgroundColor()
 {
+    if (!m_backgroundColorSet)
+        return;
+
     GraphicsLayer::clearBackgroundColor();
     m_contentsLayer->setBackgroundColor(static_cast<RGBA32>(0));
 }
 
 void GraphicsLayerChromium::setContentsOpaque(bool opaque)
 {
+    if (m_contentsOpaque == opaque)
+        return;
+
     GraphicsLayer::setContentsOpaque(opaque);
     updateContentsOpaque();
 }
@@ -260,6 +281,9 @@ void GraphicsLayerChromium::setMaskLayer(GraphicsLayer* maskLayer)
 
 void GraphicsLayerChromium::setBackfaceVisibility(bool visible)
 {
+    if (m_backfaceVisibility == visible)
+        return;
+
     GraphicsLayer::setBackfaceVisibility(visible);
     updateBackfaceVisibility();
 }
@@ -267,6 +291,10 @@ void GraphicsLayerChromium::setBackfaceVisibility(bool visible)
 void GraphicsLayerChromium::setOpacity(float opacity)
 {
     float clampedOpacity = max(min(opacity, 1.0f), 0.0f);
+
+    if (m_opacity == clampedOpacity)
+        return;
+
     GraphicsLayer::setOpacity(clampedOpacity);
     primaryLayer()->setOpacity(opacity);
 }
