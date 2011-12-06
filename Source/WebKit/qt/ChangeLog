@@ -1,3 +1,16 @@
+2011-12-06  Zeno Albisser  <zeno@webkit.org>
+
+        [Qt][Mac] Building debug version only fails.
+        https://bugs.webkit.org/show_bug.cgi?id=73895
+
+        WebKit pro/pri files should not explicitly adjust
+        the debug_and_release settings.
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * declarative/experimental/experimental.pri:
+        * declarative/public.pri:
+
 2011-12-02  Hajime Morrita  <morrita@chromium.org>
 
         Unreviewed, rolling out r101751 and r101775.

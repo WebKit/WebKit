@@ -11,8 +11,6 @@ TARGET.module_name = QtWebKit
 
 CONFIG += qt plugin
 
-win32|mac:!wince*:!win32-msvc:!macx-xcode:CONFIG += debug_and_release
-
 QMLDIRFILE = $${_PRO_FILE_PWD_}/qmldir
 copy2build.input = QMLDIRFILE
 copy2build.output = $${ROOT_BUILD_DIR}/imports/$${TARGET.module_name}/qmldir
