@@ -1,3 +1,11 @@
+2011-12-05  Adam Barth  <abarth@webkit.org>
+
+        Add a shim to fix the downstream Chromium compile.  The real fix should
+        be made downstream via http://codereview.chromium.org/8801036/, but the
+        Chromium tree is closed at the moment.
+
+        * public/WebRect.h: Added.
+
 2011-12-01  Vangelis Kokkevis  <vangelis@chromium.org>
 
         Use ANGLE's texture_usage and texture_storage extensions when allocating compositor textures.
