@@ -1734,8 +1734,8 @@ void SpeculativeJIT::compileGetByValOnFloatTypedArray(const TypedArrayDescriptor
     FPRTemporary result(this);
     FPRReg resultReg = result.fpr();
     ASSERT(speculationRequirements != NoTypedArraySpecCheck);
-    MacroAssembler::Jump inBounds = m_jit.branch32(MacroAssembler::Below, propertyReg, MacroAssembler::Address(baseReg, descriptor.m_lengthOffset));
     GPRTemporary scratch(this);
+    MacroAssembler::Jump inBounds = m_jit.branch32(MacroAssembler::Below, propertyReg, MacroAssembler::Address(baseReg, descriptor.m_lengthOffset));
     m_jit.move(MacroAssembler::Imm32(0), scratch.gpr());
     m_jit.convertInt32ToDouble(scratch.gpr(), resultReg);
     MacroAssembler::Jump outOfBounds = m_jit.jump();
