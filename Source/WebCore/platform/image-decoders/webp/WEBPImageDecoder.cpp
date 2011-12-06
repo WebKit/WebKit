@@ -85,26 +85,31 @@ bool WEBPImageDecoder::decode(bool onlySize)
     if (failed())
         return false;
 
-    const size_t dataSize = m_data->size();
-    if (dataSize < sizeOfHeader)
-        return true;
-
-    int width, height;
     const uint8_t* dataBytes = reinterpret_cast<const uint8_t*>(m_data->data());
-    if (!WebPGetInfo(dataBytes, dataSize, &width, &height))
-        return setFailed();
-    if (!ImageDecoder::isSizeAvailable() && !setSize(width, height))
-        return setFailed();
+    const size_t dataSize = m_data->size();
+
+    if (!ImageDecoder::isSizeAvailable()) {
+        if (dataSize < sizeOfHeader)
+            return false;
+        int width, height;
+        if (!WebPGetInfo(dataBytes, dataSize, &width, &height))
+            return setFailed();
+        if (!setSize(width, height))
+            return setFailed();
+    }
+
+    ASSERT(ImageDecoder::isSizeAvailable());
     if (onlySize)
         return true;
+    int width = size().width();
+    int height = size().height();
 
     bool allDataReceived = isAllDataReceived();
     int stride = width * bytesPerPixel;
     ASSERT(!m_frameBufferCache.isEmpty());
     ImageFrame& buffer = m_frameBufferCache[0];
+
     if (buffer.status() == ImageFrame::FrameEmpty) {
-        ASSERT(width == size().width());
-        ASSERT(height == size().height());
         if (!buffer.setSize(width, height))
             return setFailed();
         buffer.setStatus(allDataReceived ? ImageFrame::FrameComplete : ImageFrame::FramePartial);
@@ -113,6 +118,7 @@ bool WEBPImageDecoder::decode(bool onlySize)
         buffer.setOriginalFrameRect(IntRect(IntPoint(), size()));
         m_rgbOutput.resize(height * stride);
     }
+
     int newLastVisibleRow = 0; // Last completed row.
     if (allDataReceived) {
         if (!WebPDecodeRGBInto(dataBytes, dataSize, m_rgbOutput.data(), m_rgbOutput.size(), stride))
@@ -132,12 +138,14 @@ bool WEBPImageDecoder::decode(bool onlySize)
         ASSERT(newLastVisibleRow >= 0);
         ASSERT(newLastVisibleRow <= height);
     }
+
     // FIXME: remove this data copy.
     for (int y = m_lastVisibleRow; y < newLastVisibleRow; ++y) {
         const uint8_t* const src = &m_rgbOutput[y * stride];
         for (int x = 0; x < width; ++x)
             buffer.setRGBA(x, y, src[bytesPerPixel * x + 0], src[bytesPerPixel * x + 1], src[bytesPerPixel * x + 2], 0xff);
     }
+
     m_lastVisibleRow = newLastVisibleRow;
     if (m_lastVisibleRow == height)
          buffer.setStatus(ImageFrame::FrameComplete);
