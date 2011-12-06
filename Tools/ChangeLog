@@ -1,3 +1,9 @@
+2011-12-06  Tommy Widenflycht  <tommyw@google.com>
+
+        Added myself as a committer.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2011-12-06  Peter Beverloo  <peter@chromium.org>
 
         Added myself as a committer.
