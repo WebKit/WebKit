@@ -670,22 +670,26 @@ FloatQuad TransformationMatrix::mapQuad(const FloatQuad& q) const
 
 TransformationMatrix& TransformationMatrix::scaleNonUniform(double sx, double sy)
 {
-    TransformationMatrix mat;
-    mat.m_matrix[0][0] = sx;
-    mat.m_matrix[1][1] = sy;
-
-    multiply(mat);
+    m_matrix[0][0] *= sx;
+    m_matrix[0][1] *= sx;
+    m_matrix[0][2] *= sx;
+    m_matrix[0][3] *= sx;
+    
+    m_matrix[1][0] *= sy;
+    m_matrix[1][1] *= sy;
+    m_matrix[1][2] *= sy;
+    m_matrix[1][3] *= sy;
     return *this;
 }
 
 TransformationMatrix& TransformationMatrix::scale3d(double sx, double sy, double sz)
 {
-    TransformationMatrix mat;
-    mat.m_matrix[0][0] = sx;
-    mat.m_matrix[1][1] = sy;
-    mat.m_matrix[2][2] = sz;
-
-    multiply(mat);
+    scaleNonUniform(sx, sy);
+    
+    m_matrix[2][0] *= sz;
+    m_matrix[2][1] *= sz;
+    m_matrix[2][2] *= sz;
+    m_matrix[2][3] *= sz;
     return *this;
 }
 

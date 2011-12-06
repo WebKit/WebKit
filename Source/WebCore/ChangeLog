@@ -1,3 +1,16 @@
+2011-12-06  Mike Reed  <reed@google.com>
+
+        optimize TransformationMatrix::scale by not calling through to generic multiply
+        https://bugs.webkit.org/show_bug.cgi?id=73830
+
+        Reviewed by Kenneth Russell.
+
+        No new tests. Optimization only, existing tests exercise the code
+
+        * platform/graphics/transforms/TransformationMatrix.cpp:
+        (WebCore::TransformationMatrix::scaleNonUniform):
+        (WebCore::TransformationMatrix::scale3d):
+
 2011-12-06  Eric Carlson  <eric.carlson@apple.com>
 
         Revert WebCore track Settings changes made in r101977
