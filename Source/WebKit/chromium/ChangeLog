@@ -1,3 +1,19 @@
+2011-12-05  Adrienne Walker  <enne@google.com>
+
+        [chromium] setNeedsCommit on non-composited host layers should trigger commit
+        https://bugs.webkit.org/show_bug.cgi?id=73711
+
+        Reviewed by James Robinson.
+
+        Add some tests to make sure that modifying the noncomposited content
+        host triggers commits.
+
+        Properties that trigger setNeedsCommit should only do so when the
+        property changes. Additionally, make more property changes properly
+        trigger commits.
+
+        * tests/LayerChromiumTest.cpp:
+
 2011-12-05  Stephen White  <senorblanco@chromium.org>
 
         Allow the ImageBuffers used by SVG filters to be accelerated

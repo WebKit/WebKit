@@ -31,6 +31,7 @@
 #include "GraphicsLayer.h"
 #include "LayerChromium.h"
 #include "LayerPainterChromium.h"
+#include "cc/CCLayerTreeHost.h"
 
 namespace WebCore {
 
@@ -119,6 +120,9 @@ void NonCompositedContentHost::notifyAnimationStarted(const GraphicsLayer*, doub
 
 void NonCompositedContentHost::notifySyncRequired(const GraphicsLayer*)
 {
+    CCLayerTreeHost* layerTreeHost = m_graphicsLayer->platformLayer()->layerTreeHost();
+    if (layerTreeHost)
+        layerTreeHost->setNeedsCommit();
 }
 
 void NonCompositedContentHost::paintContents(const GraphicsLayer*, GraphicsContext& context, GraphicsLayerPaintingPhase, const IntRect& clipRect)

@@ -83,64 +83,64 @@ public:
     void setChildren(const Vector<RefPtr<LayerChromium> >&);
     const Vector<RefPtr<LayerChromium> >& children() const { return m_children; }
 
-    void setAnchorPoint(const FloatPoint& anchorPoint) { m_anchorPoint = anchorPoint; setNeedsCommit(); }
+    void setAnchorPoint(const FloatPoint&);
     FloatPoint anchorPoint() const { return m_anchorPoint; }
 
-    void setAnchorPointZ(float anchorPointZ) { m_anchorPointZ = anchorPointZ; setNeedsCommit(); }
+    void setAnchorPointZ(float);
     float anchorPointZ() const { return m_anchorPointZ; }
 
-    void setBackgroundColor(const Color& color) { m_backgroundColor = color; setNeedsCommit(); }
+    void setBackgroundColor(const Color&);
     Color backgroundColor() const { return m_backgroundColor; }
 
     void setBounds(const IntSize&);
     const IntSize& bounds() const { return m_bounds; }
     virtual IntSize contentBounds() const { return bounds(); }
 
-    void setMasksToBounds(bool masksToBounds) { m_masksToBounds = masksToBounds; setNeedsCommit(); }
+    void setMasksToBounds(bool);
     bool masksToBounds() const { return m_masksToBounds; }
 
     void setName(const String&);
     const String& name() const { return m_name; }
 
-    void setMaskLayer(LayerChromium* maskLayer) { m_maskLayer = maskLayer; setNeedsCommit(); }
+    void setMaskLayer(LayerChromium*);
     LayerChromium* maskLayer() const { return m_maskLayer.get(); }
 
     virtual void setNeedsDisplayRect(const FloatRect& dirtyRect);
     void setNeedsDisplay() { setNeedsDisplayRect(FloatRect(FloatPoint(), contentBounds())); }
     virtual bool needsDisplay() const { return m_needsDisplay; }
 
-    void setOpacity(float opacity) { m_opacity = opacity; setNeedsCommit(); }
+    void setOpacity(float);
     float opacity() const { return m_opacity; }
 
-    void setOpaque(bool opaque) { m_opaque = opaque; setNeedsCommit(); }
+    void setOpaque(bool);
     bool opaque() const { return m_opaque; }
 
-    void setPosition(const FloatPoint& position) { m_position = position;  setNeedsCommit(); }
+    void setPosition(const FloatPoint&);
     FloatPoint position() const { return m_position; }
 
-    void setSublayerTransform(const TransformationMatrix& transform) { m_sublayerTransform = transform; setNeedsCommit(); }
+    void setSublayerTransform(const TransformationMatrix&);
     const TransformationMatrix& sublayerTransform() const { return m_sublayerTransform; }
 
     TransformationMatrix zoomAnimatorTransform() const { return TransformationMatrix(); }
 
-    void setTransform(const TransformationMatrix& transform) { m_transform = transform; setNeedsCommit(); }
+    void setTransform(const TransformationMatrix&);
     const TransformationMatrix& transform() const { return m_transform; }
 
     const IntRect& visibleLayerRect() const { return m_visibleLayerRect; }
     void setVisibleLayerRect(const IntRect& visibleLayerRect) { m_visibleLayerRect = visibleLayerRect; }
 
+    void setScrollPosition(const IntPoint&);
     const IntPoint& scrollPosition() const { return m_scrollPosition; }
-    void setScrollPosition(const IntPoint& scrollPosition) { m_scrollPosition = scrollPosition; }
 
+    void setScrollable(bool);
     bool scrollable() const { return m_scrollable; }
-    void setScrollable(bool scrollable) { m_scrollable = true;  setNeedsCommit(); }
 
     IntSize scrollDelta() const { return IntSize(); }
 
     float pageScaleDelta() const { return 1; }
 
+    void setDoubleSided(bool);
     bool doubleSided() const { return m_doubleSided; }
-    void setDoubleSided(bool doubleSided) { m_doubleSided = doubleSided; setNeedsCommit(); }
 
     void setPreserves3D(bool preserve3D) { m_preserves3D = preserve3D; }
     bool preserves3D() const { return m_preserves3D; }
@@ -155,7 +155,7 @@ public:
 
     void setDelegate(CCLayerDelegate* delegate) { m_delegate = delegate; }
 
-    void setReplicaLayer(LayerChromium* layer) { m_replicaLayer = layer; }
+    void setReplicaLayer(LayerChromium* layer) { m_replicaLayer = layer; setNeedsCommit(); }
     LayerChromium* replicaLayer() const { return m_replicaLayer.get(); }
 
     // These methods typically need to be overwritten by derived classes.
