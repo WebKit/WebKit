@@ -57,7 +57,7 @@ WebInspector.AuditsPanel = function()
 
     this._constructCategories();
 
-    this._launcherView = new WebInspector.AuditLauncherView(this.initiateAudit.bind(this));
+    this._launcherView = new WebInspector.AuditLauncherView(this.initiateAudit.bind(this), this.terminateAudit.bind(this));
     for (var id in this.categoriesById)
         this._launcherView.addCategory(this.categoriesById[id]);
 
@@ -131,21 +131,27 @@ WebInspector.AuditsPanel.prototype = {
         for (var i = 0; i < categories.length; ++i)
             rulesRemaining += categories[i].ruleCount;
 
+        this._progressMonitor.setTotalWork(rulesRemaining);
+
         var results = [];
         var mainResourceURL = WebInspector.inspectedPageURL;
 
         function ruleResultReadyCallback(categoryResult, ruleResult)
         {
+            if (this._progressMonitor.canceled)
+                return;
+
             if (ruleResult && ruleResult.children)
                 categoryResult.addRuleResult(ruleResult);
 
             --rulesRemaining;
+            this._progressMonitor.worked(1);
 
-            if (!rulesRemaining && resultCallback)
+            if (this._progressMonitor.done() && resultCallback)
                 resultCallback(mainResourceURL, results);
         }
 
-        if (!rulesRemaining) {
+        if (this._progressMonitor.done()) {
             resultCallback(mainResourceURL, results);
             return;
         }
@@ -154,7 +160,7 @@ WebInspector.AuditsPanel.prototype = {
             var category = categories[i];
             var result = new WebInspector.AuditCategoryResult(category);
             results.push(result);
-            category.run(resources, ruleResultReadyCallback.bind(null, result));
+            category.run(resources, ruleResultReadyCallback.bind(this, result), this._progressMonitor);
         }
     },
 
@@ -170,14 +176,16 @@ WebInspector.AuditsPanel.prototype = {
         var resultTreeElement = new WebInspector.AuditResultSidebarTreeElement(results, mainResourceURL, ordinal);
         this.auditResultsTreeElement.appendChild(resultTreeElement);
         resultTreeElement.revealAndSelect();
-        if (launcherCallback)
+        if (!this._progressMonitor.canceled && launcherCallback)
             launcherCallback();
     },
 
-    initiateAudit: function(categoryIds, runImmediately, launcherCallback)
+    initiateAudit: function(categoryIds, progressElement, runImmediately, launcherCallback)
     {
         if (!categoryIds || !categoryIds.length)
             return;
+
+        this._progressMonitor = new WebInspector.AuditProgressMonitor(progressElement);
 
         var categories = [];
         for (var i = 0; i < categoryIds.length; ++i)
@@ -194,6 +202,12 @@ WebInspector.AuditsPanel.prototype = {
             this._reloadResources(initiateAuditCallback.bind(this, categories, launcherCallback));
 
         WebInspector.userMetrics.AuditsStarted.record();
+    },
+
+    terminateAudit: function(launcherCallback)
+    {
+        this._progressMonitor.canceled = true;
+        launcherCallback();
     },
 
     _reloadResources: function(callback)
@@ -292,11 +306,11 @@ WebInspector.AuditCategory.prototype = {
         this._rules.push(rule);
     },
 
-    run: function(resources, callback)
+    run: function(resources, callback, progressMonitor)
     {
         this._ensureInitialized();
         for (var i = 0; i < this._rules.length; ++i)
-            this._rules[i].run(resources, callback);
+            this._rules[i].run(resources, callback, progressMonitor);
     },
 
     _ensureInitialized: function()
@@ -346,14 +360,17 @@ WebInspector.AuditRule.prototype = {
         this._severity = severity;
     },
 
-    run: function(resources, callback)
+    run: function(resources, callback, progressMonitor)
     {
+        if (progressMonitor.canceled)
+            return;
+
         var result = new WebInspector.AuditRuleResult(this.displayName);
         result.severity = this._severity;
-        this.doRun(resources, result, callback);
+        this.doRun(resources, result, callback, progressMonitor);
     },
 
-    doRun: function(resources, result, callback)
+    doRun: function(resources, result, callback, progressMonitor)
     {
         throw new Error("doRun() not implemented");
     }
@@ -455,6 +472,67 @@ WebInspector.AuditRuleResult.prototype = {
             b = document.createTextNode(b);
         a.appendChild(b);
         return a;
+    }
+}
+
+/**
+ * @constructor
+ * @param {Element} progressElement
+ */
+WebInspector.AuditProgressMonitor = function(progressElement)
+{
+    this._element = progressElement;
+    this.setTotalWork(WebInspector.AuditProgressMonitor.INDETERMINATE);
+}
+
+WebInspector.AuditProgressMonitor.INDETERMINATE = -1;
+
+WebInspector.AuditProgressMonitor.prototype = {
+    setTotalWork: function(total)
+    {
+        if (this.canceled || this._total === total)
+            return;
+        this._total = total;
+        this._value = 0;
+        this._element.max = total;
+        if (total === WebInspector.AuditProgressMonitor.INDETERMINATE)
+            this._element.removeAttribute("value");
+        else
+            this._element.value = 0;
+    },
+
+    worked: function(items)
+    {
+        if (this.canceled || this.indeterminate || this.done())
+            return;
+        this._value += items;
+        if (this._value > this._total)
+            this._value = this._total;
+        this._element.value = this._value;
+    },
+
+    get indeterminate()
+    {
+        return this._total === WebInspector.AuditProgressMonitor.INDETERMINATE;
+    },
+
+    done: function()
+    {
+        return !this.indeterminate && (this.canceled || this._value === this._total);
+    },
+
+    get canceled()
+    {
+        return !!this._canceled;
+    },
+
+    set canceled(x)
+    {
+        if (this._canceled === x)
+            return;
+        if (x)
+            this.setTotalWork(WebInspector.AuditProgressMonitor.INDETERMINATE);
+        this._canceled = x;
     }
 }
 

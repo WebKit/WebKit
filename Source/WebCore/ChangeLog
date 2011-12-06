@@ -1,3 +1,57 @@
+2011-12-05  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: [Audits] Implement "Stop" button and progress bar instead of spinner.
+        https://bugs.webkit.org/show_bug.cgi?id=73626
+
+        Reviewed by Yury Semikhatsky.
+
+        * English.lproj/localizedStrings.js:
+        * inspector/front-end/AuditLauncherView.js:
+        (WebInspector.AuditLauncherView):
+        (WebInspector.AuditLauncherView.prototype._setAuditRunning):
+        (WebInspector.AuditLauncherView.prototype._launchButtonClicked):
+        (WebInspector.AuditLauncherView.prototype._createLauncherUI):
+        (WebInspector.AuditLauncherView.prototype._updateResourceProgress):
+        (WebInspector.AuditLauncherView.prototype._updateButton):
+        * inspector/front-end/AuditRules.js:
+        (WebInspector.AuditRules.GzipRule.prototype.doRun):
+        (WebInspector.AuditRules.CombineExternalResourcesRule.prototype.doRun):
+        (WebInspector.AuditRules.MinimizeDnsLookupsRule.prototype.doRun):
+        (WebInspector.AuditRules.UnusedCssRule.prototype.doRun.evalCallback.selectorsCallback):
+        (WebInspector.AuditRules.UnusedCssRule.prototype.doRun.evalCallback.documentLoaded):
+        (WebInspector.AuditRules.UnusedCssRule.prototype.doRun.evalCallback):
+        (WebInspector.AuditRules.UnusedCssRule.prototype.doRun.styleSheetCallback):
+        (WebInspector.AuditRules.UnusedCssRule.prototype.doRun.allStylesCallback):
+        (WebInspector.AuditRules.UnusedCssRule.prototype.doRun):
+        (WebInspector.AuditRules.CacheControlRule.prototype.doRun):
+        (WebInspector.AuditRules.ImageDimensionsRule.prototype.doRun):
+        (WebInspector.AuditRules.CssInHeadRule.prototype.doRun):
+        (WebInspector.AuditRules.CssInHeadRule.prototype.doRun.externalStylesheetsReceived):
+        (WebInspector.AuditRules.CssInHeadRule.prototype.doRun.inlineStylesReceived):
+        (WebInspector.AuditRules.CssInHeadRule.prototype.doRun.onDocumentAvailable):
+        (WebInspector.AuditRules.StylesScriptsOrderRule.prototype.doRun):
+        (WebInspector.AuditRules.StylesScriptsOrderRule.prototype.doRun.cssBeforeInlineReceived):
+        (WebInspector.AuditRules.StylesScriptsOrderRule.prototype.doRun.lateStylesReceived):
+        (WebInspector.AuditRules.StylesScriptsOrderRule.prototype.doRun.onDocumentAvailable):
+        (WebInspector.AuditRules.CookieRuleBase.prototype.doRun.resultCallback):
+        (WebInspector.AuditRules.CookieRuleBase.prototype.doRun):
+        * inspector/front-end/AuditsPanel.js:
+        (WebInspector.AuditsPanel):
+        (WebInspector.AuditsPanel.prototype._executeAudit.ruleResultReadyCallback):
+        (WebInspector.AuditsPanel.prototype._executeAudit):
+        (WebInspector.AuditsPanel.prototype._auditFinishedCallback):
+        (WebInspector.AuditsPanel.prototype.terminateAudit):
+        (WebInspector.AuditCategory.prototype.run):
+        (WebInspector.AuditRule.prototype.run):
+        (WebInspector.AuditRule.prototype.doRun):
+        (WebInspector.AuditProgressMonitor):
+        (WebInspector.AuditProgressMonitor.prototype.setTotalWork):
+        (WebInspector.AuditProgressMonitor.prototype.worked):
+        (WebInspector.AuditProgressMonitor.prototype.get indeterminate):
+        (WebInspector.AuditProgressMonitor.prototype.done):
+        (WebInspector.AuditProgressMonitor.prototype.get canceled):
+        (WebInspector.AuditProgressMonitor.prototype.set canceled):
+
 2011-12-06  Viatcheslav Ostapenko  <ostapenko.viatcheslav@nokia.com>
 
         [Qt] [WK2] MiniBrowser assert on startup in debug build after r101713
