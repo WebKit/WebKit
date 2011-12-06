@@ -1,3 +1,22 @@
+2011-12-06  Andreas Kling  <kling@webkit.org>
+
+        MediaList: Remove constructor that takes a CSSImportRule*.
+        <http://webkit.org/b/73833>
+
+        Reviewed by Antti Koivisto.
+
+        * css/MediaList.h:
+        * css/MediaList.cpp:
+
+            Remove MediaList(CSSImportRule*, ...) constructor.
+
+        * css/CSSImportRule.cpp:
+        (WebCore::CSSImportRule::CSSImportRule):
+
+            Have CSSImportRule construct its MediaList by passing the parent
+            style sheet, which is exactly what the old constructor accomplished.
+            Also assert that we're always created with a non-null parent sheet.
+
 2011-12-06  Jarred Nicholls  <jarred@sencha.com>
 
         getComputedStyle returns wrong value for margin-*

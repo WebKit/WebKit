@@ -41,10 +41,6 @@ public:
     {
         return adoptRef(new MediaList(0, false));
     }
-    static PassRefPtr<MediaList> create(CSSImportRule* parentRule, const String& media)
-    {
-        return adoptRef(new MediaList(parentRule, media));
-    }
     static PassRefPtr<MediaList> create(CSSStyleSheet* parentSheet, const String& media)
     {
         return adoptRef(new MediaList(parentSheet, media, false));
@@ -91,7 +87,6 @@ public:
 private:
     MediaList(CSSStyleSheet* parentSheet, bool fallbackToDescription);
     MediaList(CSSStyleSheet* parentSheet, const String& media, bool fallbackToDescription);
-    MediaList(CSSImportRule* parentRule, const String& media);
 
     void notifyChanged();
 

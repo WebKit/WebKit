@@ -83,17 +83,6 @@ MediaList::MediaList(CSSStyleSheet* parentStyleSheet, const String& media, bool 
         setMediaText("invalid", ec);
 }
 
-MediaList::MediaList(CSSImportRule* parentRule, const String& media)
-    : m_fallback(false)
-    , m_parentStyleSheet(parentRule->parentStyleSheet())
-    , m_lastLine(0)
-{
-    ExceptionCode ec = 0;
-    setMediaText(media, ec);
-    if (ec)
-        setMediaText("invalid", ec);
-}
-
 MediaList::~MediaList()
 {
     deleteAllValues(m_queries);
