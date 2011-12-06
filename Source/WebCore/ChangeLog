@@ -1,3 +1,26 @@
+2011-12-06  Andreas Kling  <kling@webkit.org>
+
+        Use HashMap<OwnPtr> for EventListenerMap's internal map.
+        <http://webkit.org/b/73761>
+
+        Reviewed by Benjamin Poulain.
+
+        Changed the value type of EventListenerMap::m_hashMap to OwnPtr<EventListenerVector>.
+        This means we no longer need to manually delete the vectors when taking them out of
+        the map, which makes the code a little prettier.
+
+        A few tweaks were necessary; release() instead of leakPtr() when switching modes
+        and adoptPtr()/get() sprinkled as needed.
+
+        * dom/EventListenerMap.h:
+        * dom/EventListenerMap.cpp:
+        (WebCore::EventListenerMap::clear):
+        (WebCore::EventListenerMap::add):
+        (WebCore::EventListenerMap::remove):
+        (WebCore::EventListenerMap::find):
+        (WebCore::EventListenerMap::removeFirstEventListenerCreatedFromMarkup):
+        (WebCore::EventListenerMap::copyEventListenersNotCreatedFromMarkupToTarget):
+
 2011-12-05  Rafael Weinstein  <rafaelw@chromium.org>
 
         [MutationObservers] Support 'attributes' mutation records for element.removeAttribute

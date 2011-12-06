@@ -73,10 +73,9 @@ void EventListenerMap::clear()
 {
     ASSERT(!m_activeIteratorCount);
 
-    if (m_hashMap) {
-        deleteAllValues(*m_hashMap);
+    if (m_hashMap)
         m_hashMap.clear();
-    } else {
+    else {
         m_singleEventListenerType = nullAtom;
         m_singleEventListenerVector.clear();
     }
@@ -117,16 +116,16 @@ bool EventListenerMap::add(const AtomicString& eventType, PassRefPtr<EventListen
         // of that type, so create the hash map and move the first listener vector there.
         ASSERT(!m_hashMap);
         m_hashMap = adoptPtr(new EventListenerHashMap);
-        m_hashMap->add(m_singleEventListenerType, m_singleEventListenerVector.leakPtr());
+        m_hashMap->add(m_singleEventListenerType, m_singleEventListenerVector.release());
         m_singleEventListenerType = nullAtom;
     }
 
     if (m_hashMap) {
-        pair<EventListenerHashMap::iterator, bool> result = m_hashMap->add(eventType, 0);
+        pair<EventListenerHashMap::iterator, bool> result = m_hashMap->add(eventType, nullptr);
         if (result.second)
-            result.first->second = new EventListenerVector;
+            result.first->second = adoptPtr(new EventListenerVector);
 
-        return addListenerToVector(result.first->second, listener, useCapture);
+        return addListenerToVector(result.first->second.get(), listener, useCapture);
     }
 
     if (!m_singleEventListenerVector) {
@@ -167,11 +166,9 @@ bool EventListenerMap::remove(const AtomicString& eventType, EventListener* list
     if (it == m_hashMap->end())
         return false;
 
-    bool wasRemoved = removeListenerFromVector(it->second, listener, useCapture, indexOfRemovedListener);
-    if (it->second->isEmpty()) {
-        delete it->second;
+    bool wasRemoved = removeListenerFromVector(it->second.get(), listener, useCapture, indexOfRemovedListener);
+    if (it->second->isEmpty())
         m_hashMap->remove(it);
-    }
     return wasRemoved;
 }
 
@@ -183,7 +180,7 @@ EventListenerVector* EventListenerMap::find(const AtomicString& eventType)
         EventListenerHashMap::iterator it = m_hashMap->find(eventType);
         if (it == m_hashMap->end())
             return 0;
-        return it->second;
+        return it->second.get();
     }
 
     if (m_singleEventListenerType == eventType)
@@ -217,15 +214,13 @@ void EventListenerMap::removeFirstEventListenerCreatedFromMarkup(const AtomicStr
         EventListenerHashMap::iterator result = m_hashMap->find(eventType);
         ASSERT(result != m_hashMap->end());
 
-        EventListenerVector* listenerVector = result->second;
+        EventListenerVector* listenerVector = result->second.get();
         ASSERT(listenerVector);
 
         removeFirstListenerCreatedFromMarkup(listenerVector);
 
-        if (listenerVector->isEmpty()) {
-            delete listenerVector;
+        if (listenerVector->isEmpty())
             m_hashMap->remove(result);
-        }
 
         return;
     }
@@ -257,7 +252,7 @@ void EventListenerMap::copyEventListenersNotCreatedFromMarkupToTarget(EventTarge
     if (m_hashMap) {
         EventListenerHashMap::iterator end = m_hashMap->end();
         for (EventListenerHashMap::iterator it = m_hashMap->begin(); it != end; ++it)
-            copyListenersNotCreatedFromMarkupToTarget(it->first, it->second, target);
+            copyListenersNotCreatedFromMarkupToTarget(it->first, it->second.get(), target);
         return;
     }
 

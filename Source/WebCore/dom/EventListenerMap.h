@@ -69,7 +69,7 @@ private:
     struct EventListenerHashMapTraits : HashTraits<WTF::AtomicString> {
         static const int minimumTableSize = 32;
     };
-    typedef HashMap<AtomicString, EventListenerVector*, AtomicStringHash, EventListenerHashMapTraits> EventListenerHashMap;
+    typedef HashMap<AtomicString, OwnPtr<EventListenerVector>, AtomicStringHash, EventListenerHashMapTraits> EventListenerHashMap;
 
     OwnPtr<EventListenerHashMap> m_hashMap;
 
