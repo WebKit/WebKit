@@ -382,6 +382,7 @@ http/tests/security/mixedContent/insecure-image-in-iframe.html
 http/tests/security/mixedContent/insecure-image-in-main-frame.html
 http/tests/security/mixedContent/insecure-plugin-in-iframe.html
 http/tests/security/mixedContent/insecure-script-in-iframe.html
+http/tests/security/mixedContent/insecure-video-in-iframe.html
 http/tests/security/mixedContent/redirect-http-to-https-iframe-in-main-frame.html
 http/tests/security/mixedContent/redirect-http-to-https-script-in-iframe.html
 http/tests/security/mixedContent/redirect-https-to-http-iframe-in-main-frame.html
