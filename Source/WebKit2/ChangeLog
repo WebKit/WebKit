@@ -1,3 +1,13 @@
+2011-12-06  Alexander Færøy  <alexander.faeroy@nokia.com>
+
+        [Qt] Fix assertion in QtWebPageEventHandler.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=73908
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * UIProcess/qt/QtViewportInteractionEngine.cpp:
+        (WebKit::QtViewportInteractionEngine::QtViewportInteractionEngine):
+
 2011-12-05  Igor Oliveira  <igor.oliveira@openbossa.org>
 
         [Qt][WK2] Frame is not being showed in the screen when frameLoadCompleted is called

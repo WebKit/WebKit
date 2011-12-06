@@ -99,7 +99,7 @@ QtViewportInteractionEngine::QtViewportInteractionEngine(const QQuickItem* viewp
     , m_content(content)
     , m_suspendCount(0)
     , m_scaleAnimation(new ScaleAnimation(this))
-    , m_pinchStartScale(1.f)
+    , m_pinchStartScale(-1)
 {
     reset();
 
