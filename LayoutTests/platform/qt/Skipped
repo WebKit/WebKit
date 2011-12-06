@@ -316,6 +316,7 @@ editing/pasteboard/drag-selected-image-to-contenteditable.html
 editing/pasteboard/drop-link.html
 editing/pasteboard/drop-text-without-selection.html
 editing/pasteboard/emacs-ctrl-a-k-y.html
+editing/pasteboard/emacs-ctrl-k-with-move.html
 editing/pasteboard/emacs-ctrl-k-y-001.html
 editing/pasteboard/smart-drag-drop.html
 editing/pasteboard/subframe-dragndrop-1.html

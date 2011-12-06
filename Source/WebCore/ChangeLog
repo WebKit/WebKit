@@ -1,3 +1,16 @@
+2011-12-06  Alexey Proskuryakov  <ap@apple.com>
+
+        REGRESSION (WebKit2): Kill ring is not cleared when selection changes
+        https://bugs.webkit.org/show_bug.cgi?id=73888
+        <rdar://problem/10532310>
+
+        Reviewed by Mark Rowe.
+
+        Test: editing/pasteboard/emacs-ctrl-k-with-move.html
+
+        * editing/Editor.cpp: (WebCore::Editor::respondToChangedSelection): Moved the code to clear
+        kill ring from Mac WebKit, as it's needed in all Mac ports at least.
+
 2011-12-06  Darin Adler  <darin@apple.com>
 
         Use HashMap<OwnPtr> in CollectionCache

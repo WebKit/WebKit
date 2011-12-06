@@ -1,3 +1,16 @@
+2011-12-06  Alexey Proskuryakov  <ap@apple.com>
+
+        REGRESSION (WebKit2): Kill ring is not cleared when selection changes
+        https://bugs.webkit.org/show_bug.cgi?id=73888
+        <rdar://problem/10532310>
+
+        Reviewed by Mark Rowe.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView becomeFirstResponder]): Added a FIXME comment.
+        (-[WebHTMLView _selectionChanged]): Moved the code to clear kill ring to WebCore. The rest
+        of kill ring implementation is there, so it makes no sense to have this call in WebKits.
+
 2011-12-05  Anders Carlsson  <andersca@apple.com>
 
         Make LayerFlushSchedulerClient::flushLayers indicate whether the flush was successful or not

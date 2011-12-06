@@ -196,12 +196,14 @@ WONTFIX SKIP : fast/forms/search-event-delay.html = PASS TEXT
 // keybindings but they currently do not.
 WONTFIX WIN LINUX SKIP : editing/pasteboard/emacs-cntl-y-001.html = FAIL
 WONTFIX WIN LINUX SKIP : editing/pasteboard/emacs-ctrl-a-k-y.html = FAIL
+WONTFIX WIN LINUX SKIP : editing/pasteboard/emacs-ctrl-k-with-move.html = FAIL
 WONTFIX WIN LINUX SKIP : editing/pasteboard/emacs-ctrl-k-y-001.html = FAIL
 WONTFIX WIN LINUX SKIP : editing/input/emacs-ctrl-o.html = FAIL
 
 // These tests should pass on Mac
 BUGRNIWA MAC : editing/pasteboard/emacs-cntl-y-001.html = PASS FAIL
 BUGRNIWA MAC : editing/pasteboard/emacs-ctrl-a-k-y.html = PASS FAIL
+BUGRNIWA MAC : editing/pasteboard/emacs-ctrl-k-with-move.html = FAIL
 BUGRNIWA MAC : editing/pasteboard/emacs-ctrl-k-y-001.html = PASS FAIL
 BUGRNIWA MAC : editing/input/emacs-ctrl-o.html = PASS FAIL
 

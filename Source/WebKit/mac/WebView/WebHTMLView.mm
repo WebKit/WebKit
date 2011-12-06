@@ -3771,6 +3771,7 @@ static PassRefPtr<KeyboardEvent> currentKeyboardEvent(Frame* coreFrame)
     [self _updateSecureInputState];
     _private->_forceUpdateSecureInputState = NO;
 
+    // FIXME: Kill ring handling is mostly in WebCore, so this call should also be moved there.
     frame->editor()->setStartNewKillRingSequence(true);
 
     Page* page = frame->page();
@@ -5011,8 +5012,6 @@ static BOOL writingDirectionKeyBindingsEnabled()
 {
     [self _updateSelectionForInputManager];
     [self _updateFontPanel];
-    if (Frame* coreFrame = core([self _frame]))
-        coreFrame->editor()->setStartNewKillRingSequence(true);
 }
 
 - (void)_updateFontPanel

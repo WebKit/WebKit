@@ -484,6 +484,7 @@ void Editor::respondToChangedSelection(const VisibleSelection& oldSelection)
 {
     if (client())
         client()->respondToChangedSelection(m_frame);
+    setStartNewKillRingSequence(true);
     m_deleteButtonController->respondToChangedSelection(oldSelection);
     m_spellingCorrector->respondToChangedSelection(oldSelection);
 }
