@@ -1,3 +1,59 @@
+2011-12-06  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        CSS Grid Layout: Add support for parsing multiple grid-columns or grid-rows
+        https://bugs.webkit.org/show_bug.cgi?id=73272
+
+        Reviewed by Tony Chang.
+
+        Test: fast/css-grid-layout/grid-columns-rows-get-set-multiple.html
+
+        Updated our supported syntax to match the following:
+        <track-list> := [ <track-breadth> ]+ | 'none'
+        <track-breadth> := <length> | <percentage> | 'auto'
+        (the naming loosely matches the specification)
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::valueForGridTrackBreadth): Added function to handle a breadth
+        (extended with 'auto' that the spec puts in <track-minmax>).
+
+        (WebCore::valueForGridTrackList): Create a space seperated list of
+        track breadth or none.
+
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue): Updated
+        to use the new functions.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseGridTrackList): Extended the function to
+        match the new syntax.
+
+        * css/CSSStyleApplyProperty.cpp:
+        (WebCore::CSSStyleApplyProperty::CSSStyleApplyProperty): Removed our
+        simple implementation. Replaced by the CSSStyleSelector functions.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::createGridTrackBreadth):
+        (WebCore::createGridTrackList):
+        Added those 2 functions to convert the CSSPrimitiveValue to a Vector
+        as expected by RenderStyle.
+
+        (WebCore::CSSStyleSelector::applyProperty): Added our 2 properties
+        now that it is not handled by CSSStyleApplyProperty.
+
+        * rendering/style/RenderStyle.h:
+        (WebCore::InheritedFlags::gridColumns):
+        (WebCore::InheritedFlags::gridRows):
+        (WebCore::InheritedFlags::setGridColumns):
+        (WebCore::InheritedFlags::setGridRows):
+        (WebCore::InheritedFlags::initialGridColumns):
+        (WebCore::InheritedFlags::initialGridRows):
+        Updated the previous methods to take a Vector of Length.
+
+        (WebCore::InheritedFlags::initialGridTrackValue):
+        Needed function to return a Vector with one 'none' Length (the initial
+        value per the specification).
+
+        * rendering/style/StyleGridData.h: Updated to use a Vector.
+
 2011-12-06  David Reveman  <reveman@chromium.org>
 
         [Chromium] Implement tile-sized painting using SkPicture.

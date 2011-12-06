@@ -729,8 +729,8 @@ public:
     bool isColumnFlexFlow() const { return flexFlow() == FlowColumn || flexFlow() == FlowColumnReverse; }
 
 #if ENABLE(CSS_GRID_LAYOUT)
-    Length gridColumns() const { return rareNonInheritedData->m_grid->m_gridColumns; }
-    Length gridRows() const { return rareNonInheritedData->m_grid->m_gridRows; }
+    const Vector<Length>& gridColumns() const { return rareNonInheritedData->m_grid->m_gridColumns; }
+    const Vector<Length>& gridRows() const { return rareNonInheritedData->m_grid->m_gridRows; }
 #endif
 
     const ShadowData* boxShadow() const { return rareNonInheritedData->m_boxShadow.get(); }
@@ -1146,8 +1146,8 @@ public:
     void setFlexAlign(EFlexAlign a) { SET_VAR(rareNonInheritedData.access()->m_flexibleBox, m_flexAlign, a); }
     void setFlexFlow(EFlexFlow flow) { SET_VAR(rareNonInheritedData.access()->m_flexibleBox, m_flexFlow, flow); }
 #if ENABLE(CSS_GRID_LAYOUT)
-    void setGridColumns(Length length) { SET_VAR(rareNonInheritedData.access()->m_grid, m_gridColumns, length); }
-    void setGridRows(Length length) { SET_VAR(rareNonInheritedData.access()->m_grid, m_gridRows, length); }
+    void setGridColumns(const Vector<Length>& lengths) { SET_VAR(rareNonInheritedData.access()->m_grid, m_gridColumns, lengths); }
+    void setGridRows(const Vector<Length>& lengths) { SET_VAR(rareNonInheritedData.access()->m_grid, m_gridRows, lengths); }
 #endif
 
     void setMarqueeIncrement(const Length& f) { SET_VAR(rareNonInheritedData.access()->m_marquee, increment, f); }
@@ -1525,8 +1525,17 @@ public:
     static PrintColorAdjust initialPrintColorAdjust() { return PrintColorAdjustEconomy; }
 
 #if ENABLE(CSS_GRID_LAYOUT)
-    static Length initialGridColumns() { return Length(Undefined); }
-    static Length initialGridRows() { return Length(Undefined); }
+    // The initial value is 'none' for grid tracks.
+    static Vector<Length> initialGridTrackValue()
+    {
+        static Vector<Length> defaultLength;
+        // We need to manually add the Length here as the Length(0) is 'auto'.
+        if (!defaultLength.size())
+            defaultLength.append(Length(Undefined));
+        return defaultLength;
+    }
+    static Vector<Length> initialGridColumns() { return initialGridTrackValue(); }
+    static Vector<Length> initialGridRows() { return initialGridTrackValue(); }
 #endif
 
     static const AtomicString& initialLineGrid() { return nullAtom; }

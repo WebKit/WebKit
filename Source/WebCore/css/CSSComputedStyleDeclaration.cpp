@@ -794,15 +794,28 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::valueForFilter(RenderStyle* st
 #endif
 
 #if ENABLE(CSS_GRID_LAYOUT)
-static PassRefPtr<CSSValue> valueForGridTrackList(const Length& trackLength, const RenderStyle* style, CSSValuePool* cssValuePool)
+static PassRefPtr<CSSValue> valueForGridTrackBreadth(const Length& trackLength, const RenderStyle* style, CSSValuePool* cssValuePool)
 {
     if (trackLength.isPercent())
         return cssValuePool->createValue(trackLength);
     if (trackLength.isAuto())
         return cssValuePool->createIdentifierValue(CSSValueAuto);
-    if (trackLength.isUndefined())
-        return cssValuePool->createIdentifierValue(CSSValueNone);
     return zoomAdjustedPixelValue(trackLength.value(), style, cssValuePool);
+}
+
+static PassRefPtr<CSSValue> valueForGridTrackList(const Vector<Length>& trackLengths, const RenderStyle* style, CSSValuePool* cssValuePool)
+{
+    // We should have at least an element!
+    ASSERT(trackLengths.size());
+
+    // Handle the 'none' case here.
+    if (trackLengths.size() == 1 && trackLengths[0].isUndefined())
+        return cssValuePool->createIdentifierValue(CSSValueNone);
+
+    RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
+    for (size_t i = 0; i < trackLengths.size(); ++i)
+        list->append(valueForGridTrackBreadth(trackLengths[i], style, cssValuePool));
+    return list.release();
 }
 #endif
 
@@ -1515,12 +1528,10 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
         }
 #if ENABLE(CSS_GRID_LAYOUT)
         case CSSPropertyWebkitGridColumns: {
-            Length gridColumns = style->gridColumns();
-            return valueForGridTrackList(gridColumns, style.get(), cssValuePool);
+            return valueForGridTrackList(style->gridColumns(), style.get(), cssValuePool);
         }
         case CSSPropertyWebkitGridRows: {
-            Length gridRows = style->gridRows();
-            return valueForGridTrackList(gridRows, style.get(), cssValuePool);
+            return valueForGridTrackList(style->gridRows(), style.get(), cssValuePool);
         }
 #endif
         case CSSPropertyHeight:

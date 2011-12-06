@@ -1331,11 +1331,6 @@ CSSStyleApplyProperty::CSSStyleApplyProperty()
     setPropertyHandler(CSSPropertyBottom, ApplyPropertyLength<&RenderStyle::bottom, &RenderStyle::setBottom, &RenderStyle::initialOffset, AutoEnabled>::createHandler());
     setPropertyHandler(CSSPropertyLeft, ApplyPropertyLength<&RenderStyle::left, &RenderStyle::setLeft, &RenderStyle::initialOffset, AutoEnabled>::createHandler());
 
-#if ENABLE(CSS_GRID_LAYOUT)
-    setPropertyHandler(CSSPropertyWebkitGridColumns, ApplyPropertyLength<&RenderStyle::gridColumns, &RenderStyle::setGridColumns, &RenderStyle::initialGridColumns, AutoEnabled, IntrinsicDisabled, MinIntrinsicDisabled, NoneEnabled, UndefinedEnabled>::createHandler());
-    setPropertyHandler(CSSPropertyWebkitGridRows, ApplyPropertyLength<&RenderStyle::gridRows, &RenderStyle::setGridRows, &RenderStyle::initialGridRows, AutoEnabled, IntrinsicDisabled, MinIntrinsicDisabled, NoneEnabled, UndefinedEnabled>::createHandler());
-#endif
-
     setPropertyHandler(CSSPropertyWidth, ApplyPropertyLength<&RenderStyle::width, &RenderStyle::setWidth, &RenderStyle::initialSize, AutoEnabled, IntrinsicEnabled, MinIntrinsicEnabled, NoneDisabled, UndefinedDisabled, FlexWidth>::createHandler());
     setPropertyHandler(CSSPropertyHeight, ApplyPropertyLength<&RenderStyle::height, &RenderStyle::setHeight, &RenderStyle::initialSize, AutoEnabled, IntrinsicEnabled, MinIntrinsicEnabled, NoneDisabled, UndefinedDisabled, FlexHeight>::createHandler());
 

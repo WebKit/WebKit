@@ -1,0 +1,52 @@
+Test that setting and getting grid-columns and grid-rows works as expected
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Test getting |display| set through CSS
+PASS getComputedStyle(gridWithFixedElement, '').getPropertyValue('-webkit-grid-columns') is '7px 11px'
+PASS getComputedStyle(gridWithFixedElement, '').getPropertyValue('-webkit-grid-rows') is '17px 2px'
+PASS getComputedStyle(gridWithPercentElement, '').getPropertyValue('-webkit-grid-columns') is '53% 99%'
+PASS getComputedStyle(gridWithPercentElement, '').getPropertyValue('-webkit-grid-rows') is '27% 52%'
+PASS getComputedStyle(gridWithAutoElement, '').getPropertyValue('-webkit-grid-columns') is 'auto auto'
+PASS getComputedStyle(gridWithAutoElement, '').getPropertyValue('-webkit-grid-rows') is 'auto auto'
+PASS getComputedStyle(gridWithEMElement, '').getPropertyValue('-webkit-grid-columns') is '100px 120px'
+PASS getComputedStyle(gridWithEMElement, '').getPropertyValue('-webkit-grid-rows') is '150px 170px'
+PASS getComputedStyle(gridWithThreeItems, '').getPropertyValue('-webkit-grid-columns') is '15px auto 100px'
+PASS getComputedStyle(gridWithThreeItems, '').getPropertyValue('-webkit-grid-rows') is '120px 18px auto'
+
+Test the initial value
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-columns') is 'none'
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-rows') is 'none'
+
+Test getting and setting display through JS
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-columns') is '18px 22px'
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-rows') is '66px 70px'
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-columns') is '55% 80%'
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-rows') is '40% 63%'
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-columns') is 'auto auto'
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-rows') is 'auto auto'
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-columns') is 'auto 160px 22px'
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-rows') is '56% 100px auto'
+
+Test getting wrong values set from CSS
+PASS getComputedStyle(gridWithNoneAndAuto, '').getPropertyValue('-webkit-grid-columns') is 'none'
+PASS getComputedStyle(gridWithNoneAndAuto, '').getPropertyValue('-webkit-grid-rows') is 'none'
+PASS getComputedStyle(gridWithNoneAndFixed, '').getPropertyValue('-webkit-grid-columns') is 'none'
+PASS getComputedStyle(gridWithNoneAndFixed, '').getPropertyValue('-webkit-grid-rows') is 'none'
+
+Test setting and getting wrong values from JS
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-columns') is 'none'
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-rows') is 'none'
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-columns') is 'none'
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-rows') is 'none'
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-columns') is 'none'
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-rows') is 'none'
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-columns') is 'none'
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-rows') is 'none'
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-columns') is 'none'
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-rows') is 'none'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

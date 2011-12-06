@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+.gridWithFixed {
+    display: -webkit-grid;
+    -webkit-grid-columns: 7px 11px;
+    -webkit-grid-rows: 17px 2px;
+}
+
+.gridWithPercent {
+    display: -webkit-grid;
+    -webkit-grid-columns: 53% 99%;
+    -webkit-grid-rows: 27% 52%;
+}
+.gridWithAuto {
+    display: -webkit-grid;
+    -webkit-grid-columns: auto auto;
+    -webkit-grid-rows: auto auto;
+}
+.gridWithEM {
+    display: -webkit-grid;
+    -webkit-grid-columns: 10em 12em;
+    -webkit-grid-rows: 15em 17em;
+    font: 10px Ahem;
+}
+.gridWithNoneAndAuto {
+    display: -webkit-grid;
+    -webkit-grid-columns: none auto;
+    -webkit-grid-rows: none auto;
+}
+.gridNoneWithAndFixed {
+    display: -webkit-grid;
+    -webkit-grid-columns: none 15px;
+    -webkit-grid-rows: none 22px;
+}
+.gridWithThreeItems {
+    display: -webkit-grid;
+    -webkit-grid-columns: 15px auto 10em;
+    -webkit-grid-rows: 12em 18px auto;
+    font: 10px Ahem;
+}
+</style>
+<script src="../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<div class="gridWithFixed" id="gridWithFixedElement"></div>
+<div class="gridWithPercent" id="gridWithPercentElement"></div>
+<div class="gridWithAuto" id="gridWithAutoElement"></div>
+<div class="gridWithEM" id="gridWithEMElement"></div>
+<div class="gridWithNoneAndAuto" id="gridWithNoneAndAuto"></div>
+<div class="gridWithNoneAndFixed" id="gridWithNoneAndFixed"></div>
+<div class="gridWithThreeItems" id="gridWithThreeItems"></div>
+<script src="resources/grid-columns-rows-get-set-multiple.js"></script>
+<script src="../js/resources/js-test-post.js"></script>
+</body>
+</html>

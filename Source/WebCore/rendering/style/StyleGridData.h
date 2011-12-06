@@ -31,6 +31,7 @@
 #include "Length.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
@@ -51,8 +52,8 @@ public:
 
     // FIXME: For the moment, we only support a subset of the grammar which correspond to:
     // 'auto' | <length> | <percentage> | 'none'
-    Length m_gridColumns;
-    Length m_gridRows;
+    Vector<Length> m_gridColumns;
+    Vector<Length> m_gridRows;
 
 private:
     StyleGridData();

@@ -26,6 +26,12 @@ PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-columns') is '
 PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-rows') is '40%'
 PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-columns') is 'auto'
 PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-rows') is 'auto'
+
+Test setting grid-columns and grid-rows back to 'none' through JS
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-columns') is '18px'
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-rows') is '66px'
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-columns') is 'none'
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-rows') is 'none'
 PASS successfullyParsed is true
 
 TEST COMPLETE

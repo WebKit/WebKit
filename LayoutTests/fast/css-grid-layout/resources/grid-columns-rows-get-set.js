@@ -48,3 +48,14 @@ element.style.webkitGridColumns = "auto";
 element.style.webkitGridRows = "auto";
 shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-columns')", "'auto'");
 shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-rows')", "'auto'");
+
+debug("");
+debug("Test setting grid-columns and grid-rows back to 'none' through JS");
+element.style.webkitGridColumns = "18px";
+element.style.webkitGridRows = "66px";
+shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-columns')", "'18px'");
+shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-rows')", "'66px'");
+element.style.webkitGridColumns = "none";
+element.style.webkitGridRows = "none";
+shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-columns')", "'none'");
+shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-rows')", "'none'");

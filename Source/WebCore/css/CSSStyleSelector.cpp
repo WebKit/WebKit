@@ -2506,6 +2506,61 @@ bool CSSStyleSelector::useSVGZoomRules()
     return m_element && m_element->isSVGElement();
 }
 
+#if ENABLE(CSS_GRID_LAYOUT)
+
+static bool createGridTrackBreadth(CSSPrimitiveValue* primitiveValue, CSSStyleSelector* selector, Length& length)
+{
+    if (primitiveValue->getIdent() == CSSValueAuto) {
+        length = Length();
+        return true;
+    }
+
+    int type = primitiveValue->primitiveType();
+    if (CSSPrimitiveValue::isUnitTypeLength(type)) {
+        length = primitiveValue->computeLength<Length>(selector->style(), selector->rootElementStyle(), selector->style()->effectiveZoom());
+        length.setQuirk(primitiveValue->isQuirkValue());
+        return true;
+    }
+
+    if (type == CSSPrimitiveValue::CSS_PERCENTAGE) {
+        length = Length(primitiveValue->getDoubleValue(), Percent);
+        return true;
+    }
+
+    return false;
+}
+
+static bool createGridTrackList(CSSValue* value, Vector<Length>& lengths, CSSStyleSelector* selector)
+{
+    // Handle 'none'.
+    if (value->isPrimitiveValue()) {
+        CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
+        if (primitiveValue->getIdent() == CSSValueNone) {
+            lengths.append(Length(Undefined));
+            return true;
+        }
+        return false;
+    }
+
+    if (value->isValueList()) {
+        for (CSSValueListIterator i = value; i.hasMore(); i.advance()) {
+            CSSValue* currValue = i.value();
+            if (!currValue->isPrimitiveValue())
+                return false;
+
+            Length length;
+            if (!createGridTrackBreadth(static_cast<CSSPrimitiveValue*>(currValue), selector, length))
+                return false;
+
+            lengths.append(length);
+        }
+        return true;
+    }
+
+    return false;
+}
+#endif
+
 void CSSStyleSelector::applyProperty(int id, CSSValue *value)
 {
     bool isInherit = m_parentNode && value->isInheritedValue();
@@ -3761,6 +3816,22 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         return;
     }
 #endif
+#if ENABLE(CSS_GRID_LAYOUT)
+    case CSSPropertyWebkitGridColumns: {
+        Vector<Length> lengths;
+        if (!createGridTrackList(value, lengths, this))
+            return;
+        m_style->setGridColumns(lengths);
+        return;
+    }
+    case CSSPropertyWebkitGridRows: {
+        Vector<Length> lengths;
+        if (!createGridTrackList(value, lengths, this))
+            return;
+        m_style->setGridRows(lengths);
+        return;
+    }
+#endif
 
     // These properties are implemented in the CSSStyleApplyProperty lookup table.
     case CSSPropertyColor:
@@ -3824,10 +3895,6 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSSPropertyWebkitFlexFlow:
     case CSSPropertyFontStyle:
     case CSSPropertyFontVariant:
-#if ENABLE(CSS_GRID_LAYOUT)
-    case CSSPropertyWebkitGridColumns:
-    case CSSPropertyWebkitGridRows:
-#endif
     case CSSPropertyTextRendering:
     case CSSPropertyWebkitTextOrientation:
     case CSSPropertyWebkitFontSmoothing:

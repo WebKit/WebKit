@@ -3526,16 +3526,26 @@ bool CSSParser::parseAnimationProperty(int propId, RefPtr<CSSValue>& result)
 bool CSSParser::parseGridTrackList(int propId, bool important)
 {
     CSSParserValue* value = m_valueList->current();
-    if (value->id == CSSValueNone || value->id == CSSValueAuto) {
+    if (value->id == CSSValueNone) {
+        if (m_valueList->next())
+            return false;
+
         addProperty(propId, cssValuePool()->createIdentifierValue(value->id), important);
         return true;
     }
 
-    if (validUnit(value, FLength | FPercent, m_strict)) {
-        addProperty(propId, createPrimitiveNumericValue(value), important);
-        return true;
+    RefPtr<CSSValueList> values = CSSValueList::createSpaceSeparated();
+    while (value) {
+        bool valid = validUnit(value, FLength | FPercent, m_strict) || value->id == CSSValueAuto;
+        if (!valid)
+            return false;
+
+        RefPtr<CSSPrimitiveValue> primitiveValue = value->id == CSSValueAuto ? cssValuePool()->createIdentifierValue(CSSValueAuto) : createPrimitiveNumericValue(value);
+        values->append(primitiveValue.release());
+        value = m_valueList->next();
     }
-    return false;
+    addProperty(propId, values.release(), important);
+    return true;
 }
 #endif
 
