@@ -124,6 +124,11 @@ Image* CachedImage::brokenImage(float deviceScaleFactor) const
     return brokenImageLoRes;
 }
 
+bool CachedImage::willPaintBrokenImage() const
+{
+    return errorOccurred() && m_shouldPaintBrokenImage;
+}
+
 Image* CachedImage::image() const
 {
     ASSERT(!isPurgeable());
