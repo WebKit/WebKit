@@ -1095,7 +1095,7 @@
             'include_dirs+++': ['../dom'],
           },
         }],
-        ['(OS=="linux" or OS=="win") and "WTF_USE_WEBAUDIO_FFTW=1" in feature_defines', {
+        ['OS != "mac" and OS != "android" and "WTF_USE_WEBAUDIO_FFTW=1" in feature_defines', {
           'include_dirs': [
             '<(chromium_src_dir)/third_party/fftw/api',
           ],
@@ -1308,7 +1308,7 @@
             'include_dirs++': ['../dom'],
           },
         }],
-        ['(OS=="linux" or OS=="win") and "WTF_USE_WEBAUDIO_FFTW=1" in feature_defines', {
+        ['OS != "mac" and OS != "android" and "WTF_USE_WEBAUDIO_FFTW=1" in feature_defines', {
           # This directory needs to be on the include path for multiple sub-targets of webcore.
           'direct_dependent_settings': {
             'include_dirs': [
@@ -1316,7 +1316,7 @@
             ],
           },
         }],
-        ['(OS=="mac" or OS=="linux" or OS=="win") and "WTF_USE_WEBAUDIO_FFMPEG=1" in feature_defines', {
+        ['OS != "android" and "WTF_USE_WEBAUDIO_FFMPEG=1" in feature_defines', {
           # This directory needs to be on the include path for multiple sub-targets of webcore.
           'direct_dependent_settings': {
             'include_dirs': [
@@ -1943,7 +1943,7 @@
             'include_dirs+++': ['../dom'],
           },
         }],
-        ['OS=="linux" and "WTF_USE_WEBAUDIO_FFTW=1" in feature_defines', {
+        ['os_posix == 1 and OS != "mac" and OS != "android" and "WTF_USE_WEBAUDIO_FFTW=1" in feature_defines', {
           # FIXME: (kbr) figure out how to make these dependencies
           # work in a cross-platform way. Attempts to use
           # "link_settings" and "libraries" in conjunction with the

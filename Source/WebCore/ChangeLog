@@ -1,3 +1,14 @@
+2011-12-06  Ruben  <chromium@hybridsource.org>
+
+        Enable web audio by default on non-Mac POSIX platforms
+        https://bugs.webkit.org/show_bug.cgi?id=73491
+
+        Reviewed by Tony Chang.
+
+        No new tests, just changing gyp includes.
+
+        * WebCore.gyp/WebCore.gyp:
+
 2011-12-06  Benjamin Poulain  <benjamin@webkit.org>
 
         Put length in its own variable in KURL copyASCII
