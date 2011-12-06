@@ -104,8 +104,10 @@ void LayerTreeHostQt::setLayerFlushSchedulingEnabled(bool layerFlushingEnabled)
 
     m_layerFlushSchedulingEnabled = layerFlushingEnabled;
 
-    if (m_layerFlushSchedulingEnabled)
+    if (m_layerFlushSchedulingEnabled) {
+        scheduleLayerFlush();
         return;
+    }
 
     cancelPendingLayerFlush();
 }

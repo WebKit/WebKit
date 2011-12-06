@@ -1,3 +1,20 @@
+2011-12-05  Igor Oliveira  <igor.oliveira@openbossa.org>
+
+        [Qt][WK2] Frame is not being showed in the screen when frameLoadCompleted is called
+        https://bugs.webkit.org/show_bug.cgi?id=73850
+
+        WebKit2 has a mechanism to prevent  the composited layer tree of the outgoing page 
+        from being torn down or updated until the incoming page has layout. However, for simple 
+        pages, when the frame is loaded the page is not rendered in the screen.
+
+        This patch fixes this bug calling LayerTreeHostQt::scheduleLayerFlush when m_layerFlushSchedulingEnabled
+        is true.
+
+        Reviewed by Noam Rosenthal.
+
+        * WebProcess/WebPage/qt/LayerTreeHostQt.cpp:
+        (WebKit::LayerTreeHostQt::setLayerFlushSchedulingEnabled):
+
 2011-12-05  Chris Fleizach  <cfleizach@apple.com>
 
         AX: WK2: AX hierarchy is not restored after web process crash
