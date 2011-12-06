@@ -26,6 +26,7 @@ Page reloaded.
             request : {
                 method : "GET"
                 url : "http://127.0.0.1:8000/inspector/inspector-test.js"
+                httpVersion : "HTTP/1.1"
                 headers : <object>
                 queryString : [
                 ]
@@ -58,12 +59,13 @@ Page reloaded.
                         secure : false
                     }
                 ]
-                headersSize : -1
+                headersSize : <number>
                 bodySize : <number>
             }
             response : {
                 status : 304
                 statusText : "Not Modified"
+                httpVersion : "HTTP/1.1"
                 headers : <object>
                 cookies : [
                     {
@@ -96,10 +98,11 @@ Page reloaded.
                 ]
                 content : {
                     size : <number>
+                    compression : <number>
                     mimeType : "text/plain"
                 }
                 redirectURL : ""
-                headersSize : -1
+                headersSize : <number>
                 bodySize : <number>
             }
             cache : {
@@ -113,26 +116,29 @@ Page reloaded.
             request : {
                 method : "GET"
                 url : "http://127.0.0.1:8000/inspector/resource-har-conversion.html"
+                httpVersion : "HTTP/1.1"
                 headers : <object>
                 queryString : [
                 ]
                 cookies : [
                 ]
-                headersSize : -1
+                headersSize : <number>
                 bodySize : <number>
             }
             response : {
                 status : 200
                 statusText : "OK"
+                httpVersion : "HTTP/1.1"
                 headers : <object>
                 cookies : [
                 ]
                 content : {
                     size : <number>
+                    compression : <number>
                     mimeType : "text/html"
                 }
                 redirectURL : ""
-                headersSize : -1
+                headersSize : <number>
                 bodySize : <number>
             }
             cache : {
@@ -146,26 +152,29 @@ Page reloaded.
             request : {
                 method : "GET"
                 url : "http://127.0.0.1:8000/inspector/resources-test.js"
+                httpVersion : "HTTP/1.1"
                 headers : <object>
                 queryString : [
                 ]
                 cookies : [
                 ]
-                headersSize : -1
+                headersSize : <number>
                 bodySize : <number>
             }
             response : {
                 status : 304
                 statusText : "Not Modified"
+                httpVersion : "HTTP/1.1"
                 headers : <object>
                 cookies : [
                 ]
                 content : {
                     size : <number>
+                    compression : <number>
                     mimeType : "text/plain"
                 }
                 redirectURL : ""
-                headersSize : -1
+                headersSize : <number>
                 bodySize : <number>
             }
             cache : {
@@ -179,12 +188,13 @@ Page reloaded.
             request : {
                 method : "POST"
                 url : "http://127.0.0.1:8000/inspector/resources/post-target.cgi"
+                httpVersion : "HTTP/1.1"
                 headers : <object>
                 queryString : [
                 ]
                 cookies : [
                 ]
-                headersSize : -1
+                headersSize : <number>
                 bodySize : <number>
                 postData : {
                     mimeType : "text/xml"
@@ -194,15 +204,17 @@ Page reloaded.
             response : {
                 status : 200
                 statusText : "OK"
+                httpVersion : "HTTP/1.1"
                 headers : <object>
                 cookies : [
                 ]
                 content : {
                     size : <number>
+                    compression : <number>
                     mimeType : "application/xml"
                 }
                 redirectURL : ""
-                headersSize : -1
+                headersSize : <number>
                 bodySize : <number>
             }
             cache : {
