@@ -1,3 +1,15 @@
+2011-12-06  Dana Jansens  <danakj@chromium.org>
+
+        [Chromium] Make root layer always opaque
+        https://bugs.webkit.org/show_bug.cgi?id=70564
+
+        Reviewed by James Robinson.
+
+        * platform/graphics/chromium/NonCompositedContentHost.cpp:
+        (WebCore::NonCompositedContentHost::NonCompositedContentHost):
+        * platform/graphics/chromium/cc/CCTiledLayerImpl.cpp:
+        (WebCore::CCTiledLayerImpl::draw):
+
 2011-12-06  Noel Gordon  <noel.gordon@gmail.com>
 
         WebPImageDecoder computes image width and height multiple times

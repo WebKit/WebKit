@@ -44,6 +44,7 @@ NonCompositedContentHost::NonCompositedContentHost(PassOwnPtr<LayerPainterChromi
 #endif
     m_graphicsLayer->setDrawsContent(true);
     m_graphicsLayer->platformLayer()->setIsNonCompositedContent(true);
+    m_graphicsLayer->platformLayer()->setOpaque(true);
 }
 
 NonCompositedContentHost::~NonCompositedContentHost()

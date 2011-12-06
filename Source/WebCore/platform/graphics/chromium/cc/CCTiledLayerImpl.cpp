@@ -138,10 +138,6 @@ void CCTiledLayerImpl::draw(LayerRendererChromium* layerRenderer)
         layerQuad.inflateAntiAliasingDistance();
     }
 
-    GraphicsContext3D* context = layerRenderer->context();
-    if (isNonCompositedContent())
-        GLC(context, context->disable(GraphicsContext3D::BLEND));
-
     switch (m_sampledTexelFormat) {
     case LayerTextureUpdater::SampledTexelFormatRGBA:
         if (useAA) {
@@ -174,9 +170,6 @@ void CCTiledLayerImpl::draw(LayerRendererChromium* layerRenderer)
     default:
         ASSERT_NOT_REACHED();
     }
-
-    if (isNonCompositedContent())
-        GLC(context, context->enable(GraphicsContext3D::BLEND));
 }
 
 void CCTiledLayerImpl::setTilingData(const CCLayerTilingData& tiler)
