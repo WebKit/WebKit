@@ -1,3 +1,23 @@
+2011-12-06  Kentaro Hara  <haraken@chromium.org>
+
+        [Refactoring] In webkitpy/bindings/main.py, replace subprocess.Popen() with Executive
+        https://bugs.webkit.org/show_bug.cgi?id=73637
+
+        Reviewed by Adam Barth.
+
+        This patch replaces subprocess.Popen() with Executive, similar to other
+        Python scripts in webkitpy/. I manually confirmed that run-bindings-tests
+        works well for cases where no exception is raised, no exception is raised
+        but diff is found, and ScriptError is raised.
+
+        * Scripts/run-bindings-tests:
+        (main):
+        * Scripts/webkitpy/bindings/main.py: Replaces subprocess.Popen() with Executive.
+        (BindingsTests.__init__):
+        (BindingsTests.generate_from_idl):
+        (BindingsTests.generate_supplemental_dependency):
+        (BindingsTests.detect_changes):
+
 2011-12-05  Alexander Færøy  <alexander.faeroy@nokia.com>
 
         [Qt] MiniBrowser should default to touch behavior

@@ -30,13 +30,15 @@ import subprocess
 import sys
 import tempfile
 from webkitpy.common.checkout.scm.detection import detect_scm_system
+from webkitpy.common.system.executive import ScriptError
 
 
 class BindingsTests:
 
-    def __init__(self, reset_results, generators):
+    def __init__(self, reset_results, generators, executive):
         self.reset_results = reset_results
         self.generators = generators
+        self.executive = executive
 
     def generate_from_idl(self, generator, idl_file, output_directory, supplemental_dependency_file):
         cmd = ['perl', '-w',
@@ -50,11 +52,14 @@ class BindingsTests:
                '--supplementalDependencyFile', supplemental_dependency_file,
                idl_file]
 
-        process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-        exit_code = process.wait()
-        output = process.communicate()[0]
-        if output:
-            print output
+        exit_code = 0
+        try:
+            output = self.executive.run_command(cmd)
+            if output:
+                print output
+        except ScriptError, e:
+            print e.message_with_output()
+            exit_code = e.exit_code
         return exit_code
 
     def generate_supplemental_dependency(self, input_directory, supplemental_dependency_file):
@@ -72,12 +77,15 @@ class BindingsTests:
                '--idlFilesList', idl_files_list[1],
                '--defines', '',
                '--supplementalDependencyFile', supplemental_dependency_file]
-        process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-        exit_code = process.wait()
-        output = process.communicate()[0]
-        if output:
-            print output
 
+        exit_code = 0
+        try:
+            output = self.executive.run_command(cmd)
+            if output:
+                print output
+        except ScriptError, e:
+            print e.message_with_output()
+            exit_code = e.exit_code
         os.remove(idl_files_list[1])
         return exit_code
 
@@ -90,16 +98,19 @@ class BindingsTests:
                    os.path.join(reference_directory, output_file),
                    os.path.join(work_directory, output_file)]
 
-            process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-            process.wait()
-            output = process.communicate()[0]
-            if output:
+            exit_code = 0
+            try:
+                output = self.executive.run_command(cmd)
+            except ScriptError, e:
+                output = e.message_with_output()
+                exit_code = e.exit_code
+
+            if exit_code or output:
                 print 'FAIL: (%s) %s' % (generator, output_file)
                 print output
                 changes_found = True
             else:
                 print 'PASS: (%s) %s' % (generator, output_file)
-
         return changes_found
 
     def run_tests(self, generator, input_directory, reference_directory, supplemental_dependency_file):

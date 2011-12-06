@@ -29,6 +29,7 @@
 # patch. This makes it easier to track and review changes in generated code.
 
 import sys
+from webkitpy.common.system import executive
 
 def main(argv):
     """Runs WebCore bindings code generators on test IDL files and compares
@@ -50,7 +51,7 @@ def main(argv):
 
     from webkitpy.bindings.main import BindingsTests
 
-    BindingsTests(reset_results, generators).main()
+    BindingsTests(reset_results, generators, executive.Executive()).main()
 
 
 if __name__ == '__main__':
