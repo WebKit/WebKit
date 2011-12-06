@@ -404,16 +404,17 @@ Node::~Node()
     if (renderer())
         detach();
 
-    if (AXObjectCache::accessibilityEnabled() && m_document && m_document->axObjectCacheExists())
-        m_document->axObjectCache()->removeNodeForUse(this);
+    Document* doc = m_document;
+    if (AXObjectCache::accessibilityEnabled() && doc && doc->axObjectCacheExists())
+        doc->axObjectCache()->removeNodeForUse(this);
     
     if (m_previous)
         m_previous->setNextSibling(0);
     if (m_next)
         m_next->setPreviousSibling(0);
 
-    if (m_document)
-        m_document->guardDeref();
+    if (doc)
+        doc->guardDeref();
 }
 
 #ifdef NDEBUG

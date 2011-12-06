@@ -1,3 +1,21 @@
+2011-12-06  Hajime Morrita  <morrita@chromium.org>
+
+        [Refactoring] Accessing Node::m_document should be minimized.
+        https://bugs.webkit.org/show_bug.cgi?id=73800
+
+        Reviewed by Kent Tamura.
+
+        No new tests. No behavioral change.
+
+        Replaced m_document reference with the document() accessor
+        or temporaril variables. This is a preparation for using
+        m_document space to point a shadow root pointer.
+
+        * dom/Document.h:
+        (WebCore::Node::Node):
+        * dom/Node.cpp:
+        (WebCore::Node::~Node):
+
 2011-12-06  Shinya Kawanaka  <shinyak@google.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=73889
