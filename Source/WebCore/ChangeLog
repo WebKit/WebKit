@@ -1,3 +1,31 @@
+2011-12-05  Darin Adler  <darin@apple.com>
+
+        Some small improvements to ContainerNode.h
+        https://bugs.webkit.org/show_bug.cgi?id=73786
+
+        Reviewed by Alexey Proskuryakov.
+
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::suspendPostAttachCallbacks): Added a FIXME comment about the
+        peculiar behavior of this function. Somehow the post-attach suspend state is both
+        global and specific to a certain Page object. That can't be right. If it was truly
+        global then this would be a static member function. If it was truly per-page, then
+        the related functions could not be static.
+
+        * dom/ContainerNode.h: Removed some unneeded argument names. Moved the hasChildNodes
+        function up with the other basic getters. Put the other getters, childNodeCount and
+        childNode, right after the basic getters. Used ASSERT_NO_EXCEPTION in all the basic
+        mutation functions so they can be used in a cleaner fashion in C++ code where we have
+        some reason to know an exception won't occur. Grouped all the overrides of functions
+        from Node into a single paragraph and used the OVERRIDE macro on all of them. Made the
+        queuePostAttachCallback and postAttachCallbacksAreSuspended functions protected.
+
+        * dom/Element.h: Moved the include of ExceptionCodePlaceholder.h into ContainerNode.h.
+
+        * dom/Node.cpp:
+        (WebCore::Node::lazyAttach): Use hasChildNodes instead of firstChild for clarity.
+        (WebCore::Node::isDescendantOf): Ditto.
+
 2011-12-05  Benjamin Poulain  <benjamin@webkit.org>
 
         Get rid of KURL::KURL(ParsedURLStringTag, const char*);

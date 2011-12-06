@@ -26,7 +26,6 @@
 #define Element_h
 
 #include "Document.h"
-#include "ExceptionCodePlaceholder.h"
 #include "FragmentScriptingPermission.h"
 #include "NamedNodeMap.h"
 #include "ScrollTypes.h"

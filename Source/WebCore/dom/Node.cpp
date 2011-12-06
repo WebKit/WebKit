@@ -931,7 +931,7 @@ void Node::setNeedsStyleRecalc(StyleChangeType changeType)
 void Node::lazyAttach(ShouldSetAttached shouldSetAttached)
 {
     for (Node* n = this; n; n = n->traverseNextNode(this)) {
-        if (n->firstChild())
+        if (n->hasChildNodes())
             n->setChildNeedsStyleRecalc();
         n->setStyleChange(FullStyleChange);
         if (shouldSetAttached == SetAttached)
@@ -1348,7 +1348,7 @@ void Node::checkAddChild(Node *newChild, ExceptionCode& ec)
 bool Node::isDescendantOf(const Node *other) const
 {
     // Return true if other is an ancestor of this, otherwise false
-    if (!other || !other->firstChild() || inDocument() != other->inDocument())
+    if (!other || !other->hasChildNodes() || inDocument() != other->inDocument())
         return false;
     if (other == other->document())
         return document() == other && this != document() && inDocument();
