@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+<script src="../../fast/js/resources/js-test-post-function.js"></script>
+<script src="resources/shared.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+
+description("Test IndexedDB deleteIndex method");
+if (window.layoutTestController)
+    layoutTestController.waitUntilDone();
+
+function test()
+{
+    indexedDB = evalAndLog("indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB;");
+    shouldBeFalse("indexedDB == null");
+    IDBDatabaseException = evalAndLog("IDBDatabaseException = window.IDBDatabaseException || window.webkitIDBDatabaseException;");
+    shouldBeFalse("IDBDatabaseException == null");
+
+    request = evalAndLog("indexedDB.open('deleteIndex')");
+    request.onsuccess = openSuccess;
+    request.onerror = unexpectedErrorCallback;
+}
+
+function openSuccess()
+{
+    db = evalAndLog("db = event.target.result");
+
+    request = evalAndLog("request = db.setVersion('1')");
+    request.onsuccess = twiddleIndexes;
+    request.onerror = unexpectedErrorCallback;
+}
+
+function twiddleIndexes()
+{
+    transaction = evalAndLog("transaction = event.target.result;");
+    transaction.onerror = unexpectedErrorCallback;
+    transaction.onabort = unexpectedAbortCallback;
+    transaction.oncomplete = postTwiddling;
+    deleteAllObjectStores(db);
+
+    objectStore = evalAndLog("objectStore = db.createObjectStore('foo');");
+    evalAndExpectException("objectStore.deleteIndex('first')", "IDBDatabaseException.NOT_FOUND_ERR");
+    shouldThrow("objectStore.deleteIndex()"); // TypeError: not enough arguments.
+    index = evalAndLog("index = objectStore.createIndex('first', 'first');");
+    evalAndExpectException("objectStore.deleteIndex('FIRST')", "IDBDatabaseException.NOT_FOUND_ERR");
+    index = evalAndLog("index = objectStore.createIndex('second', 'second');");
+    returnValue = evalAndLog("returnValue = objectStore.deleteIndex('first');");
+    shouldBe("returnValue", "undefined");
+}
+
+function postTwiddling()
+{
+    evalAndExpectException("db.createObjectStore('bar');", "IDBDatabaseException.NOT_ALLOWED_ERR");
+    evalAndExpectException("objectStore.deleteIndex('second')", "IDBDatabaseException.NOT_ALLOWED_ERR");
+    done();
+}
+
+test();
+
+</script>
+</body>
+</html>

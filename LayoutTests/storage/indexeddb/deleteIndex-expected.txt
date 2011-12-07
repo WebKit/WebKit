@@ -1,0 +1,36 @@
+Test IndexedDB deleteIndex method
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB;
+PASS indexedDB == null is false
+IDBDatabaseException = window.IDBDatabaseException || window.webkitIDBDatabaseException;
+PASS IDBDatabaseException == null is false
+indexedDB.open('deleteIndex')
+db = event.target.result
+request = db.setVersion('1')
+transaction = event.target.result;
+Deleted all object stores.
+objectStore = db.createObjectStore('foo');
+Expecting exception from objectStore.deleteIndex('first')
+PASS Exception was thrown.
+PASS code is IDBDatabaseException.NOT_FOUND_ERR
+PASS objectStore.deleteIndex() threw exception TypeError: Not enough arguments.
+index = objectStore.createIndex('first', 'first');
+Expecting exception from objectStore.deleteIndex('FIRST')
+PASS Exception was thrown.
+PASS code is IDBDatabaseException.NOT_FOUND_ERR
+index = objectStore.createIndex('second', 'second');
+returnValue = objectStore.deleteIndex('first');
+PASS returnValue is undefined
+Expecting exception from db.createObjectStore('bar');
+PASS Exception was thrown.
+PASS code is IDBDatabaseException.NOT_ALLOWED_ERR
+Expecting exception from objectStore.deleteIndex('second')
+PASS Exception was thrown.
+PASS code is IDBDatabaseException.NOT_ALLOWED_ERR
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
