@@ -1,3 +1,12 @@
+2011-12-07  Adam Klein  <adamk@chromium.org>
+
+        Use HashMap<Node*, OwnPtr<...>> in ChildListMutationScope
+        https://bugs.webkit.org/show_bug.cgi?id=73964
+
+        Reviewed by Ryosuke Niwa.
+
+        * wtf/HashTraits.h: Add passOut(std::nullptr_t) to allow callers to use HashMap::take on an entry whose value is null.
+
 2011-12-07  Filip Pizlo  <fpizlo@apple.com>
 
         Non-Mac devices should benefit from a larger heap

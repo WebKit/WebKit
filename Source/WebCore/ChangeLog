@@ -1,3 +1,18 @@
+2011-12-07  Adam Klein  <adamk@chromium.org>
+
+        Use HashMap<Node*, OwnPtr<...>> in ChildListMutationScope
+        https://bugs.webkit.org/show_bug.cgi?id=73964
+
+        Reviewed by Ryosuke Niwa.
+
+        No new tests, refactoring only.
+
+        * dom/ChildListMutationScope.cpp:
+        (WebCore::ChildListMutationAccumulator::MutationAccumulationRouter::childAdded):
+        (WebCore::ChildListMutationAccumulator::MutationAccumulationRouter::willRemoveChild):
+        (WebCore::ChildListMutationAccumulator::MutationAccumulationRouter::incrementScopingLevel):
+        (WebCore::ChildListMutationAccumulator::MutationAccumulationRouter::decrementScopingLevel):
+
 2011-12-07  Andreas Kling  <kling@webkit.org>
 
         RenderLayer::updateZOrderLists(): Inline early-return condition.
