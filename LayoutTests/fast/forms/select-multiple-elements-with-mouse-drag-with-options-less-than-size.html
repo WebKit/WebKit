@@ -54,7 +54,6 @@ if (window.eventSender) {
     debug("Dragging with addSelectionKey")
     eventSender.mouseDown();
     eventSender.mouseUp();
-    eventSender.leapForward(500);
     eventSender.mouseMoveTo(x, y + (optionHeight * 2));
     eventSender.mouseDown(0, ["addSelectionKey"]);
     eventSender.mouseMoveTo(x, y + (optionHeight * 4));
