@@ -121,6 +121,10 @@ public:
     void setRegionRangeForBox(const RenderBox*, LayoutUnit offsetFromLogicalTopOfFirstPage);
     void getRegionRangeForBox(const RenderBox*, RenderRegion*& startRegion, RenderRegion*& endRegion) const;
 
+    void clearRenderObjectCustomStyle(const RenderObject*,
+                                      const RenderRegion* oldStartRegion = 0, const RenderRegion* oldEndRegion = 0,
+                                      const RenderRegion* newStartRegion = 0, const RenderRegion* newEndRegion = 0);
+
 private:
     virtual const char* renderName() const { return "RenderFlowThread"; }
 
@@ -130,6 +134,8 @@ private:
     void checkInvalidRegions();
 
     bool shouldRepaint(const LayoutRect&) const;
+
+    void clearRenderRegionRangeMap();
 
     typedef ListHashSet<RenderObject*> FlowThreadChildList;
     FlowThreadChildList m_flowThreadChildList;

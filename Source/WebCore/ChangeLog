@@ -1,3 +1,65 @@
+2011-12-07  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSSRegions]Add support for background-color in region styling
+        https://bugs.webkit.org/show_bug.cgi?id=71488
+
+        Reviewed by David Hyatt.
+
+        Tests: fast/regions/region-style-block-background-color.html
+               fast/regions/region-style-block-background-color2.html
+               fast/regions/region-style-image-background-color.html
+               fast/regions/region-style-inline-background-color.html
+
+        * WebCore.exp.in:
+        * css/CSSStyleSelector.cpp:
+        (WebCore::RuleData::regionStyleRule):
+        (WebCore::CSSStyleSelector::CSSStyleSelector):
+        (WebCore::CSSStyleSelector::addMatchedDeclaration):
+        (WebCore::CSSStyleSelector::matchRules):
+        (WebCore::CSSStyleSelector::matchAllRules):
+        (WebCore::CSSStyleSelector::initForRegionStyling):
+        (WebCore::CSSStyleSelector::styleForElement):
+        (WebCore::CSSStyleSelector::pseudoStyleForElement):
+        (WebCore::RuleData::RuleData):
+        (WebCore::RuleSet::RuleSet):
+        (WebCore::RuleSet::addToRuleSet):
+        (WebCore::CSSStyleSelector::applyDeclarations):
+        (WebCore::isValidRegionStyleProperty):
+        (WebCore::CSSStyleSelector::applyProperty):
+        * css/CSSStyleSelector.h:
+        (WebCore::CSSStyleSelector::setRegionForStyling):
+        (WebCore::CSSStyleSelector::regionForStyling):
+        (WebCore::CSSStyleSelector::applyPropertyToRegionStyle):
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::clearRenderRegionRangeMap):
+        (WebCore::RenderFlowThread::~RenderFlowThread):
+        (WebCore::RenderFlowThread::layout):
+        (WebCore::RenderFlowThread::clearRenderObjectCustomStyle):
+        (WebCore::RenderFlowThread::setRegionRangeForBox):
+        * rendering/RenderFlowThread.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::CurrentRenderRegionMaintainer::CurrentRenderRegionMaintainer):
+        (WebCore::CurrentRenderRegionMaintainer::~CurrentRenderRegionMaintainer):
+        (WebCore::RenderLayer::paint):
+        (WebCore::RenderLayer::hitTest):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::style):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::canHaveRegionStyle):
+        * rendering/RenderObjectChildList.cpp:
+        (WebCore::RenderObjectChildList::removeChildNode):
+        * rendering/RenderRegion.cpp:
+        (WebCore::RenderRegion::layout):
+        (WebCore::RenderRegion::renderObjectRegionStyle):
+        (WebCore::RenderRegion::computeStyleInRegion):
+        (WebCore::RenderRegion::clearObjectStyleInRegion):
+        * rendering/RenderRegion.h:
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::RenderView):
+        * rendering/RenderView.h:
+        (WebCore::RenderView::currentRenderRegion):
+        (WebCore::RenderView::setCurrentRenderRegion):
+
 2011-12-01  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Extract default call stack creation and check for front-end from console.

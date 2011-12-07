@@ -31,6 +31,7 @@
 namespace WebCore {
 
 class RenderFlowThread;
+class RenderRegion;
 class RenderWidget;
 
 #if USE(ACCELERATED_COMPOSITING)
@@ -186,8 +187,11 @@ public:
     RenderFlowThread* currentRenderFlowThread() const { return m_currentRenderFlowThread; }
     void setCurrentRenderFlowThread(RenderFlowThread* flowThread) { m_currentRenderFlowThread = flowThread; }
 
+    RenderRegion* currentRenderRegion() const { return m_currentRenderRegion; }
+    void setCurrentRenderRegion(RenderRegion* region) { m_currentRenderRegion = region; }
+
     void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
-    
+
 protected:
     virtual void mapLocalToContainer(RenderBoxModelObject* repaintContainer, bool useTransforms, bool fixed, TransformState&, bool* wasFixed = 0) const;
     virtual void mapAbsoluteToLocalPoint(bool fixed, bool useTransforms, TransformState&) const;
@@ -273,6 +277,7 @@ private:
 #endif
     OwnPtr<RenderFlowThreadList> m_renderFlowThreadList;
     RenderFlowThread* m_currentRenderFlowThread;
+    RenderRegion* m_currentRenderRegion;
 };
 
 inline RenderView* toRenderView(RenderObject* object)

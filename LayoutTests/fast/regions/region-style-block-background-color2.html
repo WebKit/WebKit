@@ -1,0 +1,179 @@
+<!doctype html>
+<html>
+    <!--
+    Test for https://bugs.webkit.org/show_bug.cgi?id=71488 (Add support for background-color in region styling).
+    Test setting the background-color property using region styling for boxes.
+    You should not see any red background below.
+    -->
+    <head>
+        <style>
+            p { background-color: red; }
+            .regionBox { width: 280px; height: 50px; }
+            .regionBox1 { width: 280px; height: 30px; }
+            .regionBox2 { width: 280px; height: 100px; }
+
+            #article1 { -webkit-flow-into: flow1; }
+            .region1 { -webkit-flow-from: flow1; }
+            @-webkit-region #region1 { p { background-color: green; } }
+
+            .article2 { -webkit-flow-into: flow2; }
+            .region2 { -webkit-flow-from: flow2; }
+            #p2 { background-color: lime; width: 280px; }
+            @-webkit-region .region2 { p { background-color: green; } }
+
+            #article3 { -webkit-flow-into: flow3; }
+            #region31, #region32 { -webkit-flow-from: flow3; }
+            @-webkit-region #region31 { p { background-color: green; } }
+            @-webkit-region #region32 { p { background-color: lime; } }
+
+            #article4 { -webkit-flow-into: flow4; }
+            #region41, #region42 { -webkit-flow-from: flow4; }
+            @-webkit-region #region41 { p { background-color: green; } }
+            @-webkit-region #region42 { p { background-color: lime; } }
+
+            #article5 { -webkit-flow-into: flow5; }
+            #region51, #region52 { -webkit-flow-from: flow5; }
+            @-webkit-region #region51 { p { background-color: green; } }
+            @-webkit-region #region52 { p { background-color: lime; } }
+
+            #article6 { -webkit-flow-into: flow6; }
+            #region61, #region62 { -webkit-flow-from: flow6; }
+            @-webkit-region #region61 { p { background-color: green; } }
+            @-webkit-region #region62 { p { background-color: lime; } }
+
+            #article7 { -webkit-flow-into: flow7; }
+            #region71, #region72 { -webkit-flow-from: flow7; }
+            @-webkit-region #region71 { p { background-color: green; } }
+            @-webkit-region #region72 { p { background-color: lime; } }
+        </style>
+    </head>
+    <body onload="runTests()">
+        <!-- Style paragraph in a new region -->
+        <div id="article1">
+            <p>Green background text styled in region1.</p>
+        </div>
+        <div id="region1" class="regionBox1"></div>
+        <!-- Paragraph styled in region, flow removed -->
+        <div class="article2">
+            <p id="p2">Lime background text styled out region2.</p>
+        </div>
+        <div class="region2 regionBox"></div>
+        <!-- Paragraphs styled in different regions. 
+        The first para is removed and appended to the flow.
+        Both paragraphs will be styled again in the opposite regions.-->
+        <div id="article3">
+            <p id="p3">Lime background text styled in region32.</p>
+            <p>Green background text styled in region31.</p>
+        </div>
+        <div id="region31" class="regionBox"></div>
+        <div id="region32" class="regionBox1"></div>
+        <!-- Paragraph styled in first region. A new paragrash is inserted before in the flow, 
+        pushing the first paragrash in the second region.-->
+        <div id="article4">
+            <p id="p4">Lime background text styled in region42.</p>
+        </div>
+        <div id="region41" class="regionBox"></div>
+        <div id="region42" class="regionBox1"></div>
+        <!-- Two paragraphs styled in different regions. After the first region height increases,
+        both paragraphs are placed and styled in the first region.-->
+        <div id="article5">
+            <p>Green background text styled in region51.</p>
+            <p>Green background text styled in region51.</p>
+        </div>
+        <div id="region51" class="regionBox"></div>
+        <div id="region52" class="regionBox1"></div>
+        <!-- Two paragraphs styled in the first region. After the first region height decreases,
+        the first paragraph is styled in the first region while the second paragraph is styled
+        in the second region.
+        -->
+        <div id="article6">
+            <p>Green background text styled in region61.</p>
+            <p>Lime background text styled in region62.</p>
+        </div>
+        <div id="region61" class="regionBox2"></div>
+        <div id="region62" class="regionBox1"></div>
+        <!-- Two paragraphs styled in the first region. The height of first region is 
+        decreased/increased and in the end, the second paragraph ends up in the second region.-->
+        <div id="article7">
+            <p>Green background text styled in region71.</p>
+            <p>Lime background text styled in region72.</p>
+        </div>
+        <div id="region71" class="regionBox2"></div>
+        <div id="region72" class="regionBox1"></div>
+        <script>
+            if (window.layoutTestController)
+                window.layoutTestController.waitUntilDone();
+
+            function testFlow1()
+            {
+                var region1 = document.getElementById("region1");
+                region1.className = "region1 regionBox";
+            }
+
+            function testFlow2()
+            {
+                var article2 = document.getElementsByClassName("article2")[0];
+                article2.className = "";
+                var region2 = document.getElementsByClassName("region2 regionBox")[0];
+                region2.className = "";
+            }
+
+            function testFlow3()
+            {
+                var p = document.getElementById("p3");
+                var parent = p.parentNode;
+                parent.removeChild(p);
+                parent.appendChild(p);
+            }
+
+            function testFlow4()
+            {
+                var p = document.getElementById("p4");
+                var p1 = document.createElement("p");
+                var content = document.createTextNode("Green background text styled in region41.");
+                p1.appendChild(content);
+                p.parentNode.insertBefore(p1, p);
+            }
+
+            function testFlow5()
+            {
+                document.getElementById("region51").style.height = "100px";
+                document.getElementById("region52").style.height = "10px";
+            }
+
+            function testFlow6()
+            {
+                document.getElementById("region61").style.height = "50px";
+            }
+
+            function testFlow71()
+            {
+                document.getElementById("region71").style.height = "50px";
+            }
+
+            function testFlow72()
+            {
+                document.getElementById("region71").style.height = "100px";
+            }
+
+            function testFlow73()
+            {
+                document.getElementById("region71").style.height = "50px";
+                if (window.layoutTestController)
+                    window.layoutTestController.notifyDone();
+            }
+
+            function runTests() {
+                testFlow1();
+                testFlow2();
+                testFlow3();
+                testFlow4();
+                testFlow5();
+                testFlow6();
+                testFlow71();
+                setTimeout(testFlow72, 100);
+                setTimeout(testFlow73, 200);
+            }
+        </script>
+    </body>
+</html>

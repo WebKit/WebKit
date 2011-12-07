@@ -147,7 +147,7 @@ void RenderRegion::layout()
         if (regionRect().width() != contentWidth() || regionRect().height() != contentHeight())
             m_flowThread->invalidateRegions();
     }
-    
+
     // FIXME: We need to find a way to set up overflow properly. Our flow thread hasn't gotten a layout
     // yet, so we can't look to it for correct information. It's possible we could wait until after the RenderFlowThread
     // gets a layout, and then try to propagate overflow information back to the region, and then mark for a second layout.
@@ -240,6 +240,40 @@ LayoutUnit RenderRegion::offsetFromLogicalTopOfFirstPage() const
     if (m_flowThread->isHorizontalWritingMode())
         return regionRect().y();
     return regionRect().x();
+}
+
+RenderStyle* RenderRegion::renderObjectRegionStyle(const RenderObject* renderObject) const
+{
+    RenderObjectRegionStyleMap::const_iterator it = m_renderObjectRegionStyle.find(renderObject);
+    return (it != m_renderObjectRegionStyle.end()) ? it->second.get() : 0;
+}
+
+void RenderRegion::computeStyleInRegion(const RenderObject* object)
+{
+    ASSERT(object);
+    ASSERT(object->view());
+    ASSERT(object->view()->document());
+    ASSERT(!object->isAnonymous());
+    ASSERT(object->node() && object->node()->isElementNode());
+
+    Element* element = toElement(object->node());
+    RefPtr<RenderStyle> renderObjectStyle = object->view()->document()->styleSelector()->styleForElement(element, 0, false, false, this);
+    m_renderObjectRegionStyle.set(object, renderObjectStyle);
+
+    if (!object->hasBoxDecorations()) {
+        RenderBox* box = const_cast<RenderBox*>(toRenderBox(object));
+        RenderStyle* styleInRegion = renderObjectRegionStyle(object);
+        ASSERT(styleInRegion);
+
+        bool hasBoxDecorations = object->isTableCell() || styleInRegion->hasBackground() || styleInRegion->hasBorder() || styleInRegion->hasAppearance() || styleInRegion->boxShadow();
+        box->setHasBoxDecorations(hasBoxDecorations);
+    }
+}
+
+void RenderRegion::clearObjectStyleInRegion(const RenderObject* object)
+{
+    ASSERT(object);
+    m_renderObjectRegionStyle.remove(object);
 }
 
 } // namespace WebCore

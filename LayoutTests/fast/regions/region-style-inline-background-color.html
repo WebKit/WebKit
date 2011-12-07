@@ -1,0 +1,38 @@
+<!doctype html>
+<html>
+    <!--
+    Test for https://bugs.webkit.org/show_bug.cgi?id=71488 (Add support for background-color in region styling).
+    Setting the background color is not enabled for inline elements.
+    You should not see any red background below.
+    -->
+    <head>
+        <style>
+            .regionBox { width: 280px; height: 50px; }
+
+            #article1 { -webkit-flow-into: flow1; }
+            #region1 { -webkit-flow-from: flow1; }
+            #span1 { background-color: green; }
+            @-webkit-region #region { span { background-color: red; } }
+
+            #article2 { -webkit-flow-into: flow2; }
+            #region2 { -webkit-flow-from: flow2; }
+            #span2 { display: block; background-color: green; }
+            @-webkit-region #region2 { span { background-color: red; } }
+
+        </style>
+    </head>
+    <body>
+        <div id="article1">
+            <span id="span1">Green background span not styled in region.</span>
+        </div>
+        <div id="region1" class="regionBox"></div>
+
+        <div id="article2">
+            <span id="span2">Green background span not styled in region.</span>
+        </div>
+        <div id="region2" class="regionBox"></div>
+        <script>
+            document.getElementById("span2").style.display = "inline";
+        </script>
+    </body>
+</html>
