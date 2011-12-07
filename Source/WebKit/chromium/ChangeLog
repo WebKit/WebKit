@@ -1,3 +1,16 @@
+2011-12-07  Jonathan Backer  <backer@chromium.org>
+
+        [chromium] Plumb damage from WebExternalTextureLayer and WebPluginContainer to CCDamageTracker
+        https://bugs.webkit.org/show_bug.cgi?id=73485
+
+        Reviewed by Darin Fisher.
+
+        * public/platform/WebExternalTextureLayer.h:
+        * src/WebExternalTextureLayer.cpp:
+        (WebKit::WebExternalTextureLayer::invalidateRect):
+        * src/WebPluginContainerImpl.cpp:
+        (WebKit::WebPluginContainerImpl::commitBackingTexture):
+
 2011-12-06  Dirk Pranke  <dpranke@chromium.org>
 
         Fix typo in WebKit.gyp introduced in previous change.

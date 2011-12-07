@@ -38,6 +38,7 @@ class PluginLayerChromium : public LayerChromium {
 public:
     static PassRefPtr<PluginLayerChromium> create(CCLayerDelegate* = 0);
     virtual bool drawsContent() const { return true; }
+    virtual void updateCompositorResources(GraphicsContext3D*, CCTextureUpdater&);
 
     virtual PassRefPtr<CCLayerImpl> createCCLayerImpl();
 
@@ -55,6 +56,8 @@ public:
 
     virtual void pushPropertiesTo(CCLayerImpl*);
 
+    void invalidateRect(const FloatRect& dirtyRect);
+
 protected:
     explicit PluginLayerChromium(CCLayerDelegate*);
 
@@ -65,6 +68,7 @@ private:
     int m_ioSurfaceWidth;
     int m_ioSurfaceHeight;
     uint32_t m_ioSurfaceId;
+    FloatRect m_dirtyRect;
 };
 
 }

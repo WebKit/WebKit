@@ -66,6 +66,11 @@ WebFloatRect WebExternalTextureLayer::uvRect() const
     return WebFloatRect(constUnwrap<WebExternalTextureLayerImpl>()->uvRect());
 }
 
+void WebExternalTextureLayer::invalidateRect(const WebFloatRect& updateRect)
+{
+    unwrap<WebExternalTextureLayerImpl>()->invalidateRect(updateRect);
+}
+
 WebExternalTextureLayer::WebExternalTextureLayer(const PassRefPtr<WebExternalTextureLayerImpl>& node)
     : WebLayer(node)
 {

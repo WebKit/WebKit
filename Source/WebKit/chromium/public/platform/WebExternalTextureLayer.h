@@ -68,6 +68,10 @@ public:
     WEBKIT_EXPORT void setUVRect(const WebFloatRect&);
     WEBKIT_EXPORT WebFloatRect uvRect() const;
 
+    // Marks a region of the layer as needing a display. These regions are
+    // collected in a union until the display occurs.
+    WEBKIT_EXPORT void invalidateRect(const WebFloatRect&);
+
 #if WEBKIT_IMPLEMENTATION
     WebExternalTextureLayer(const WTF::PassRefPtr<WebExternalTextureLayerImpl>&);
     WebExternalTextureLayer& operator=(const WTF::PassRefPtr<WebExternalTextureLayerImpl>&);

@@ -369,8 +369,8 @@ void WebPluginContainerImpl::setBackingIOSurfaceId(int width,
 void WebPluginContainerImpl::commitBackingTexture()
 {
 #if USE(ACCELERATED_COMPOSITING)
-    if (platformLayer())
-        platformLayer()->setNeedsDisplay();
+    if (m_platformLayer.get())
+        m_platformLayer->invalidateRect(FloatRect(FloatPoint(), m_platformLayer->bounds()));
 #endif
 }
 

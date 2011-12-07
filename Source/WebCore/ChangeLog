@@ -1,3 +1,15 @@
+2011-12-07  Jonathan Backer  <backer@chromium.org>
+
+        [chromium] Plumb damage from WebExternalTextureLayer and WebPluginContainer to CCDamageTracker
+        https://bugs.webkit.org/show_bug.cgi?id=73485
+
+        Reviewed by Darin Fisher.
+
+        * platform/graphics/chromium/PluginLayerChromium.cpp:
+        (WebCore::PluginLayerChromium::updateCompositorResources):
+        (WebCore::PluginLayerChromium::invalidateRect):
+        * platform/graphics/chromium/PluginLayerChromium.h:
+
 2011-12-07  Mary Wu  <mary.wu@torchmobile.com.cn>
 
         Upstream 5 files into WebCore/platform/blackberry
