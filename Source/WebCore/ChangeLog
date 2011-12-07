@@ -1,3 +1,20 @@
+2011-12-07  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/10542095> Focus rings are not drawn around push buttons, radio buttons and checkboxes
+
+        Reviewed by Darin Adler.
+
+        Instead of relying on -setShowsFirstResponder: to make -drawWithFrame:inView: draw the focus
+        ring, use -drawFocusRingMaskWithFrame:inView:.
+
+        * platform/mac/ThemeMac.mm:
+        (-[NSCell _web_drawFocusRingWithFrame:inView:]): Added. Sets up the focus ring style and a
+        transparency layer, then uses -drawFocusRingMaskWithFrame:inView: to draw the focus ring.
+        (WebCore::updateStates): Eliminated calls to get and set showsFirstResponder.
+        (WebCore::paintCheckbox): Changed to use -_web_drawFocusRingWithFrame:inView:.
+        (WebCore::paintRadio): Ditto.
+        (WebCore::paintButton): Ditto.
+
 2011-12-07  Brian Salomon  <bsalomon@google.com>
 
         [CHROMIUM/SKIA] Handle put[Un/Pre]multipliedImageData conversions in Skia rather than ImageBuffer
