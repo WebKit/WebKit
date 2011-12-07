@@ -15,8 +15,10 @@ onload = function() {
     document.body.innerHTML = "Crash test passed";
 };
 
-if (window.layoutTestController)
+if (window.layoutTestController) {
     layoutTestController.dumpAsText();
+    layoutTestController.setEditingBehavior('win');
+}
 </script>
 
 <textarea dir=ltr title="0|0" id="test_move_by_word">At where are you</textarea>

@@ -59,6 +59,10 @@ public:
 
     // On Mac, when processing a contextual click, the object being clicked upon should be selected.
     bool shouldSelectOnContextualMenuClick() const { return m_type == EditingMacBehavior; }
+    
+    // On Windows, moving caret left or right by word moves the caret by word in visual order. 
+    // It moves the caret by word in logical order in other platforms.
+    bool shouldMoveLeftRightByWordInVisualOrder() const { return m_type == EditingWindowsBehavior; }
 
     // On Mac and Windows, pressing backspace (when it isn't handled otherwise) should navigate back.
     bool shouldNavigateBackOnBackspace() const { return m_type != EditingUnixBehavior; }

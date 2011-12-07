@@ -17,7 +17,7 @@ onload = function() {
     var i;
     for (i = 0; i < 5; ++i) {
         var start = test.selectionStart;
-        sel.modify("move", "right", "-webkit-visual-word");
+        sel.modify("move", "right", "word");
         var wordBreak;
         if (i >= wordBreaks.length)
             wordBreak = wordBreaks[wordBreaks.length - 1];
@@ -33,8 +33,10 @@ onload = function() {
         testPassed("Pass");
 }
 
-if (window.layoutTestController)
+if (window.layoutTestController) {
     layoutTestController.dumpAsText();
+    layoutTestController.setEditingBehavior('win');
+}
 </script>
 
 <textarea title = "5 10 17 27" dir=ltr id="test_move_by_word"></textarea>

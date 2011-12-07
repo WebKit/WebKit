@@ -572,8 +572,6 @@ VisiblePosition FrameSelection::modifyExtendingRight(TextGranularity granularity
         // FIXME: implement all of the above?
         pos = modifyExtendingForward(granularity);
         break;
-    case WebKitVisualWordGranularity:
-        break;
     }
     return pos;
 }
@@ -613,8 +611,6 @@ VisiblePosition FrameSelection::modifyExtendingForward(TextGranularity granulari
         else
             pos = endOfDocument(pos);
         break;
-    case WebKitVisualWordGranularity:
-        break;
     }
     
     return pos;
@@ -634,7 +630,8 @@ VisiblePosition FrameSelection::modifyMovingRight(TextGranularity granularity)
             pos = VisiblePosition(m_selection.extent(), m_selection.affinity()).right(true);
         break;
     case WordGranularity:
-        if (visualWordMovementEnabled()) {
+        if (visualWordMovementEnabled()
+            || (m_frame && m_frame->editor()->behavior().shouldMoveLeftRightByWordInVisualOrder())) {
             pos = rightWordPosition(VisiblePosition(m_selection.extent(), m_selection.affinity()));
             break;
         }
@@ -649,9 +646,6 @@ VisiblePosition FrameSelection::modifyMovingRight(TextGranularity granularity)
         break;
     case LineBoundary:
         pos = rightBoundaryOfLine(startForPlatform(), directionOfEnclosingBlock());
-        break;
-    case WebKitVisualWordGranularity:
-        pos = rightWordPosition(VisiblePosition(m_selection.extent(), m_selection.affinity()));
         break;
     }
     return pos;
@@ -701,8 +695,6 @@ VisiblePosition FrameSelection::modifyMovingForward(TextGranularity granularity)
         else
             pos = endOfDocument(pos);
         break;
-    case WebKitVisualWordGranularity:
-        break;
     }
     return pos;
 }
@@ -742,8 +734,6 @@ VisiblePosition FrameSelection::modifyExtendingLeft(TextGranularity granularity)
     case ParagraphBoundary:
     case DocumentBoundary:
         pos = modifyExtendingBackward(granularity);
-        break;
-    case WebKitVisualWordGranularity:
         break;
     }
     return pos;
@@ -789,8 +779,6 @@ VisiblePosition FrameSelection::modifyExtendingBackward(TextGranularity granular
         else
             pos = startOfDocument(pos);
         break;
-    case WebKitVisualWordGranularity:
-        break;
     }
     return pos;
 }
@@ -809,7 +797,8 @@ VisiblePosition FrameSelection::modifyMovingLeft(TextGranularity granularity)
             pos = VisiblePosition(m_selection.extent(), m_selection.affinity()).left(true);
         break;
     case WordGranularity:
-        if (visualWordMovementEnabled()) {
+        if (visualWordMovementEnabled()
+            || (m_frame && m_frame->editor()->behavior().shouldMoveLeftRightByWordInVisualOrder())) {
             pos = leftWordPosition(VisiblePosition(m_selection.extent(), m_selection.affinity()));
             break;
         }
@@ -824,9 +813,6 @@ VisiblePosition FrameSelection::modifyMovingLeft(TextGranularity granularity)
         break;
     case LineBoundary:
         pos = leftBoundaryOfLine(startForPlatform(), directionOfEnclosingBlock());
-        break;
-    case WebKitVisualWordGranularity:
-        pos = leftWordPosition(VisiblePosition(m_selection.extent(), m_selection.affinity()));
         break;
     }
     return pos;
@@ -869,8 +855,6 @@ VisiblePosition FrameSelection::modifyMovingBackward(TextGranularity granularity
             pos = startOfEditableContent(pos);
         else
             pos = startOfDocument(pos);
-        break;
-    case WebKitVisualWordGranularity:
         break;
     }
     return pos;

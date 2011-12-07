@@ -155,7 +155,7 @@ function moveByWord(sel, test, searchDirection, dir)
     positions.push({ node: sel.anchorNode, offset: sel.anchorOffset });
 
     while (1) {
-        sel.modify("move", searchDirection, "-webkit-visual-word");
+        sel.modify("move", searchDirection, "word");
         if (prevNode == sel.anchorNode && prevOffset == sel.anchorOffset)
             break;
         positions.push({ node: sel.anchorNode, offset: sel.anchorOffset });
@@ -178,7 +178,7 @@ function moveByWordOnEveryChar(sel, test, searchDirection, dir)
     while (1) {
         var positions = [];
         positions.push({ node: sel.anchorNode, offset: sel.anchorOffset });
-        sel.modify("move", searchDirection, "-webkit-visual-word");
+        sel.modify("move", searchDirection, "word");
 
         var position = { node: sel.anchorNode, offset: sel.anchorOffset };
 

@@ -15,8 +15,10 @@ onload = function() {
     }
 };
 
-if (window.layoutTestController)
+if (window.layoutTestController) {
     layoutTestController.dumpAsText();
+    layoutTestController.setEditingBehavior('win');
+}
 </script>
 <div id="console"></div>
 <div id="testMoveByWord">

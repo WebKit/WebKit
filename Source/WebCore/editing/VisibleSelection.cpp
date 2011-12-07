@@ -386,8 +386,6 @@ void VisibleSelection::setStartAndEndFromBaseAndExtentRespectingGranularity(Text
             m_start = startOfSentence(VisiblePosition(m_start, m_affinity)).deepEquivalent();
             m_end = endOfSentence(VisiblePosition(m_end, m_affinity)).deepEquivalent();
             break;
-        case WebKitVisualWordGranularity:
-            break;
     }
     
     // Make sure we do not have a dangling start or end.

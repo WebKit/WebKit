@@ -1,3 +1,50 @@
+2011-12-07  Xiaomei Ji  <xji@chromium.org>
+
+        Turn on move caret by word visually for Windows platform.
+        https://bugs.webkit.org/show_bug.cgi?id=59652
+
+        Reviewed by Ryosuke Niwa.
+
+        We already support (arrow key) moving cursor by character in visual order.
+        This patch implements (ctrl/alt-arrow) moving cursor by word in visual order (in Windows).
+        It matches Firefox's default behavior.
+
+        Without this patch, ctrl(alt for mac)-arrow key or
+        selection.modify("move", "left"/"right", "word") moves cursor by word in logical order. 
+
+        IE implements moving cursor by logical order for both arrow key and ctrl-arrow key.
+        Firefox implements moving cursor by visual order for both operations.
+        From Chromium bug report, native speakers would like moving cursor by visual order since it
+        is more intuitive.
+
+        The patch is only enabled for Windows (by EditingBehavior) because current implementation
+        matches Windows' native behavior.
+        For exmaple, if the logical text is "abc def hij", the cursor positions are
+        "|abc |def |hij|" no matter pressing ctrl-left-arrow or ctrl-right-arrow.
+
+        Mac and Linux's native behavior is slightly different. In which, when pressing
+        ctrl-left-arrow, the cursor positions are "|abc |def |hij|". When pressing ctrl-right-arrow,
+        the cursor positions are "|abc| def| hij|". We will implement it next.
+
+        Test: editing/selection/move-left-right-by-word-mac.html
+
+        * editing/EditingBehavior.h:
+        (WebCore::EditingBehavior::shouldMoveLeftRightByWordInVisualOrder):
+        * editing/FrameSelection.cpp: Remove experimental enum WebKitVisualWordGranularity.
+        (WebCore::FrameSelection::modifyExtendingRight):
+        (WebCore::FrameSelection::modifyExtendingForward):
+        (WebCore::FrameSelection::modifyMovingRight):
+        (WebCore::FrameSelection::modifyMovingForward):
+        (WebCore::FrameSelection::modifyExtendingLeft):
+        (WebCore::FrameSelection::modifyExtendingBackward):
+        (WebCore::FrameSelection::modifyMovingLeft):
+        (WebCore::FrameSelection::modifyMovingBackward):
+        * editing/TextGranularity.h: Remove experimental enum WebKitVisualWordGranularity.
+        * editing/VisibleSelection.cpp: Remove experimental enum WebKitVisualWordGranularity.
+        (WebCore::VisibleSelection::setStartAndEndFromBaseAndExtentRespectingGranularity):
+        * page/DOMSelection.cpp: Remove experimental experimental flag -webkit-visual-word.
+        (WebCore::DOMSelection::modify):
+
 2011-12-07  Jonathan Backer  <backer@chromium.org>
 
         [chromium] Plumb damage from WebExternalTextureLayer and WebPluginContainer to CCDamageTracker

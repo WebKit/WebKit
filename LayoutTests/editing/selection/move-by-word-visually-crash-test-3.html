@@ -9,8 +9,10 @@ onload = function() {
     }
 };
 
-if (window.layoutTestController)
+if (window.layoutTestController) {
     layoutTestController.dumpAsText();
+    layoutTestController.setEditingBehavior('win');
+}
 </script>
 <video></video><meter><image class="test_move_by_word" title="0|0">
 

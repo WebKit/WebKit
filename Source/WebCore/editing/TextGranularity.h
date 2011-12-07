@@ -39,10 +39,7 @@ enum TextGranularity {
     SentenceBoundary,
     LineBoundary,
     ParagraphBoundary,
-    DocumentBoundary,
-    // FIXME: this is added temporarily for experiment with visually move
-    // caret by wordGranularity. Once all patches are landed, it should be removed.
-    WebKitVisualWordGranularity
+    DocumentBoundary
 };
 
 }
