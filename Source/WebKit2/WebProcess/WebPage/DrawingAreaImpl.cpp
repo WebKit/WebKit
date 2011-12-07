@@ -706,7 +706,10 @@ void DrawingAreaImpl::display(UpdateInfo& updateInfo)
         
         updateInfo.updateRectBounds = bounds;
     graphicsContext->scale(FloatSize(m_webPage->corePage()->deviceScaleFactor(), m_webPage->corePage()->deviceScaleFactor()));
-
+#if USE(CG)
+    graphicsContext->setBaseCTM(graphicsContext->getCTM());
+#endif
+    
         graphicsContext->translate(-bounds.x(), -bounds.y());
 
         for (size_t i = 0; i < rects.size(); ++i) {

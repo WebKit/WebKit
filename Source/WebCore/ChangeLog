@@ -1,5 +1,33 @@
 2011-12-06  Lucas Forschler  <lforschler@apple.com>
 
+    Merge 97886
+
+    2011-10-19  Beth Dakin  <bdakin@apple.com>
+
+            https://bugs.webkit.org/show_bug.cgi?id=70396
+            Focus rings are too thin in HiDPI in WebKit2
+            -and corresponding-
+            <rdar://problem/10086876>
+
+            Reviewed by Dan Bernstein.
+
+            Rename wkSetPatternBaseCTM to wkSetBaseCTM
+            * WebCore.exp.in:
+            * platform/mac/WebCoreSystemInterface.h:
+            * platform/mac/WebCoreSystemInterface.mm:
+
+            New CG-only function calls into wkSetBaseCTM.
+            * platform/graphics/GraphicsContext.h:
+            * platform/graphics/cg/GraphicsContextCG.cpp:
+            (WebCore::GraphicsContext::setBaseCTM):
+
+            Call GraphicsContext::setBaseCTM() rather than calling into WebKitSystemInterface 
+            directly.
+            * platform/graphics/cg/ImageCG.cpp:
+            (WebCore::Image::drawPattern):
+
+2011-12-06  Lucas Forschler  <lforschler@apple.com>
+
     Merge 97517
 
     2011-10-14  Beth Dakin  <bdakin@apple.com>

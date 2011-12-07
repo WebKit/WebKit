@@ -276,6 +276,7 @@ namespace WebCore {
 
         void setIsAcceleratedContext(bool);
         bool isAcceleratedContext() const;
+        void setBaseCTM(const AffineTransform&);
 #endif
 
         void save();

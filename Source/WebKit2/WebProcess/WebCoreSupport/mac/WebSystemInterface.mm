@@ -83,6 +83,7 @@ void InitWebCoreSystemInterface(void)
         INIT(QTGetSitesInMediaDownloadCache);
         INIT(QTClearMediaDownloadCacheForSite);
         INIT(QTClearMediaDownloadCache);
+        INIT(SetBaseCTM);
         INIT(SetCGFontRenderingMode);
         INIT(SetCONNECTProxyAuthorizationForStream);
         INIT(SetCONNECTProxyForStream);
@@ -93,7 +94,6 @@ void InitWebCoreSystemInterface(void)
         INIT(SetHTTPPipeliningMinimumFastLanePriority);
         INIT(SetNSURLConnectionDefersCallbacks);
         INIT(SetNSURLRequestShouldContentSniff);
-        INIT(SetPatternBaseCTM);
         INIT(SetPatternPhaseInUserSpace);
         INIT(SetUpFontCache);
         INIT(SignalCFReadStreamEnd);
