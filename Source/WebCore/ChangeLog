@@ -1,3 +1,47 @@
+2011-12-06  Adrienne Walker  <enne@google.com>
+
+        [chromium] setNeedsCommit on non-composited host layers should trigger commit
+        https://bugs.webkit.org/show_bug.cgi?id=73711
+
+        Reviewed by James Robinson.
+
+        Pipe non-composited content host syncs to setNeedsCommit.
+
+        Since now the NonCompositedContentHost generates setNeedsCommit, don't
+        call it unnecessarily, e.g. calling setBackgroundColor to the same
+        color each frame should not retrigger more commits.
+
+        * platform/graphics/chromium/GraphicsLayerChromium.cpp:
+        (WebCore::GraphicsLayerChromium::setAnchorPoint):
+        (WebCore::GraphicsLayerChromium::setTransform):
+        (WebCore::GraphicsLayerChromium::setChildrenTransform):
+        (WebCore::GraphicsLayerChromium::setMasksToBounds):
+        (WebCore::GraphicsLayerChromium::setBackgroundColor):
+        (WebCore::GraphicsLayerChromium::clearBackgroundColor):
+        (WebCore::GraphicsLayerChromium::setContentsOpaque):
+        (WebCore::GraphicsLayerChromium::setBackfaceVisibility):
+        (WebCore::GraphicsLayerChromium::setOpacity):
+        * platform/graphics/chromium/LayerChromium.cpp:
+        (WebCore::LayerChromium::setNeedsCommit):
+        (WebCore::LayerChromium::setAnchorPoint):
+        (WebCore::LayerChromium::setAnchorPointZ):
+        (WebCore::LayerChromium::setBackgroundColor):
+        (WebCore::LayerChromium::setMasksToBounds):
+        (WebCore::LayerChromium::setMaskLayer):
+        (WebCore::LayerChromium::setOpacity):
+        (WebCore::LayerChromium::setOpaque):
+        (WebCore::LayerChromium::setPosition):
+        (WebCore::LayerChromium::setSublayerTransform):
+        (WebCore::LayerChromium::setTransform):
+        (WebCore::LayerChromium::setScrollPosition):
+        (WebCore::LayerChromium::setScrollable):
+        (WebCore::LayerChromium::setDoubleSided):
+        * platform/graphics/chromium/LayerChromium.h:
+        (WebCore::LayerChromium::setReplicaLayer):
+        * platform/graphics/chromium/NonCompositedContentHost.cpp:
+        (WebCore::NonCompositedContentHost::notifySyncRequired):
+        * platform/graphics/chromium/NonCompositedContentHost.h:
+
 2011-12-06  Kenichi Ishibashi  <bashi@chromium.org>
 
         [Chromium] unknown characters symbol on \n in complex script text (RTL and LTR)
