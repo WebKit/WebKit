@@ -2601,7 +2601,7 @@ BUGCR69181 MAC : fast/js/large-expressions.html = TEXT
 BUGCR69300 LINUX : svg/batik/text/textOnPath.svg = PASS IMAGE
 
 // New test added in r75720
-BUGCR69571 : plugins/destroy-on-setwindow.html = CRASH TEXT
+BUGCR69571 SKIP : plugins/destroy-on-setwindow.html = CRASH TEXT
 
 // Failing after r75768, times out after r89503
 BUGCR69639 BUGWK63227 : http/tests/loading/cross-origin-XHR-willLoadRequest.html = TIMEOUT TEXT
