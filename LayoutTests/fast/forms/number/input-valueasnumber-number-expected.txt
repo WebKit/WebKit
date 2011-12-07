@@ -1,0 +1,59 @@
+Tests for .valueAsNumber with <input type=number>.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS valueAsNumberFor("0") is 0
+PASS valueAsNumberFor("0.2") is 0.2
+PASS valueAsNumberFor(".2") is 0.2
+PASS valueAsNumberFor("10") is 10
+PASS valueAsNumberFor("01") is 1
+PASS valueAsNumberFor("-0") is 0
+PASS valueAsNumberFor("-1.2") is -1.2
+PASS valueAsNumberFor("1.2E10") is 1.2E10
+PASS valueAsNumberFor("1.2E-10") is 1.2E-10
+PASS valueAsNumberFor("1.2E+10") is 1.2E10
+PASS valueAsNumberFor("123456789012345678901234567890123456789") is 1.2345678901234568E+38
+PASS valueAsNumberFor("0.12345678901234567890123456789012345678901234567890") is 0.123456789012345678
+valueAsNumber for invalid string values:
+PASS isNaN(valueAsNumberFor("")) is true
+PASS isNaN(valueAsNumberFor("abc")) is true
+PASS isNaN(valueAsNumberFor("0xff")) is true
+PASS isNaN(valueAsNumberFor("+1")) is true
+PASS isNaN(valueAsNumberFor(" 10")) is true
+PASS isNaN(valueAsNumberFor("10 ")) is true
+PASS isNaN(valueAsNumberFor(".")) is true
+PASS isNaN(valueAsNumberFor("1E")) is true
+PASS isNaN(valueAsNumberFor("NaN")) is true
+PASS isNaN(valueAsNumberFor("nan")) is true
+PASS isNaN(valueAsNumberFor("Inf")) is true
+PASS isNaN(valueAsNumberFor("inf")) is true
+PASS isNaN(valueAsNumberFor("Infinity")) is true
+PASS isNaN(valueAsNumberFor("infinity")) is true
+Too huge exponent to support
+PASS isNaN(valueAsNumberFor("1.2E65535")) is true
+Tests for the valueAsNumber setter:
+PASS setValueAsNumberAndGetValue(0) is "0"
+PASS setValueAsNumberAndGetValue(10) is "10"
+PASS setValueAsNumberAndGetValue(01) is "1"
+PASS setValueAsNumberAndGetValue(-0) is "0"
+PASS setValueAsNumberAndGetValue(-1.2) is "-1.2"
+PASS setValueAsNumberAndGetValue(1.2e10) is "12000000000"
+PASS setValueAsNumberAndGetValue(1.2e-10) is "1.2e-10"
+PASS setValueAsNumberAndGetValue(1.2345678901234567e+38) is "1.2345678901234567e+38"
+PASS setValueAsNumberAndGetValue("-3.40282346e+38") is "-3.40282346e+38"
+PASS setValueAsNumberAndGetValue("-3.40282348e+38") threw exception Error: INVALID_STATE_ERR: DOM Exception 11.
+PASS setValueAsNumberAndGetValue("3.40282346e+38") is "3.40282346e+38"
+PASS setValueAsNumberAndGetValue("3.40282348e+38") threw exception Error: INVALID_STATE_ERR: DOM Exception 11.
+Tests to set invalid values to valueAsNumber:
+PASS setValueAsNumberAndGetValue(null) is "0"
+PASS setValueAsNumberAndGetValue("foo") threw exception Error: NOT_SUPPORTED_ERR: DOM Exception 9.
+PASS setValueAsNumberAndGetValue(NaN) threw exception Error: NOT_SUPPORTED_ERR: DOM Exception 9.
+PASS setValueAsNumberAndGetValue(Number.NaN) threw exception Error: NOT_SUPPORTED_ERR: DOM Exception 9.
+PASS setValueAsNumberAndGetValue(Infinity) threw exception Error: NOT_SUPPORTED_ERR: DOM Exception 9.
+PASS setValueAsNumberAndGetValue(Number.POSITIVE_INFINITY) threw exception Error: NOT_SUPPORTED_ERR: DOM Exception 9.
+PASS setValueAsNumberAndGetValue(Number.NEGATIVE_INFINITY) threw exception Error: NOT_SUPPORTED_ERR: DOM Exception 9.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<input type=number id=number value=0 style="padding-right: 30px;">
+<script>
+description('Test for a bug that spin buttons did not work if a number input has large padding-right value.');
+
+var numberInput = document.getElementById('number');
+if (window.eventSender) {
+    // Move the cursor on the upper button.
+    eventSender.mouseMoveTo(numberInput.offsetLeft + numberInput.offsetWidth - 10, numberInput.offsetTop + numberInput.offsetHeight / 4);
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+    shouldBe('numberInput.value', '"1"');
+} else {
+    document.getElementById('console').innerHTML = 'No eventSender. Please click the up or down arrow button and check if the value increases or decreses.';
+}
+</script>
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

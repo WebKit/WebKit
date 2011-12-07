@@ -1287,7 +1287,7 @@ fast/html/set-text-direction.html
 fast/harness/override-preferences-2.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=58020
-fast/forms/input-number-large-padding.html
+fast/forms/number/input-number-large-padding.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=58309
 fast/canvas/DrawImageSinglePixelStretch.html

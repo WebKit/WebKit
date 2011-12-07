@@ -2,21 +2,6 @@ description('This test aims to check for rangeUnderflow flag with input fields')
 
 var input = document.createElement('input');
 
-function checkUnderflow(value, min, disabled)
-{
-    input.value = value;
-    input.min = min;
-    input.disabled = !!disabled;
-    var underflow = input.validity.rangeUnderflow;
-    var resultText = 'The value "' + input.value + '" ' +
-        (underflow ? 'undeflows' : 'doesn\'t underflow') +
-        ' the minimum value "' + input.min + '"' + (disabled ? ' when disabled.' : '.');
-    if (underflow)
-        testPassed(resultText);
-    else
-        testFailed(resultText);
-}
-
 function checkNotUnderflow(value, min, disabled)
 {
     input.value = value;
@@ -36,31 +21,3 @@ function checkNotUnderflow(value, min, disabled)
 debug('Type=text');
 input.type = 'text';  // No underflow for type=text.
 checkNotUnderflow('99', '100');
-
-// ----------------------------------------------------------------
-debug('');
-debug('Type=number');
-input.type = 'number';
-input.max = '';
-// No underflow cases
-input.type = 'number';
-checkNotUnderflow('101', '100');  // Very normal case.
-checkNotUnderflow('-99', '-100');
-checkNotUnderflow('101', '1E+2');
-checkNotUnderflow('1.01', '1.00');
-checkNotUnderflow('abc', '100');  // Invalid value.
-checkNotUnderflow('', '1');  // No value.
-checkNotUnderflow('-1', '');  // No min.
-checkNotUnderflow('-1', 'xxx');  // Invalid min.
-// The following case should be rangeUnderflow==true ideally.  But the "double" type doesn't have enough precision.
-checkNotUnderflow('0.999999999999999999999999999999999999999998', '0.999999999999999999999999999999999999999999');
-
-// Underflow cases
-checkUnderflow('99', '100');
-checkUnderflow('-101', '-100');
-checkUnderflow('99', '1E+2');
-input.max = '100';  // value < min && value > max
-checkUnderflow('101', '200');
-
-// Disabled
-checkNotUnderflow('99', '1E+2', true);

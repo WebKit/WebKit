@@ -1099,15 +1099,15 @@ printing/page-format-data.html
 
 # Implement spinbutton support in RenderThemeSafari 
 # https://bugs.webkit.org/show_bug.cgi?id=54662
-fast/forms/input-appearance-number-rtl.html
-fast/forms/input-appearance-spinbutton-disabled-readonly.html
-fast/forms/input-appearance-spinbutton-layer.html
-fast/forms/input-appearance-spinbutton-visibility.html
-fast/forms/input-number-events.html
-fast/forms/input-number-large-padding.html
-fast/forms/input-number-size.html
-fast/forms/input-spinbutton-capturing.html
-fast/forms/spin-button-gets-disabled-or-readonly.html
+fast/forms/number/input-appearance-number-rtl.html
+fast/forms/number/input-appearance-spinbutton-disabled-readonly.html
+fast/forms/number/input-appearance-spinbutton-layer.html
+fast/forms/number/input-appearance-spinbutton-visibility.html
+fast/forms/number/input-number-events.html
+fast/forms/number/input-number-large-padding.html
+fast/forms/number/input-number-size.html
+fast/forms/number/input-spinbutton-capturing.html
+fast/forms/number/spin-button-gets-disabled-or-readonly.html
 
 # Color input is not yet enabled.
 fast/forms/color

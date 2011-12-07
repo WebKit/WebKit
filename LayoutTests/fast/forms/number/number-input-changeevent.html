@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>This test ensures change event is fired for input[type=number] when the user reverts the change made by a script.</p>
+<div id="console"></div>
+<div><input id="test" type="number" onchange="numberOfChangeEventsFired++;"><input id="dummy"></div>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script>
+
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+
+var numberOfChangeEventsFired = 0;
+var test = document.getElementById('test');
+var dummy = document.getElementById('dummy');
+test.focus();
+
+if (window.eventSender) {
+    shouldBe("eventSender.keyDown('1');eventSender.keyDown('2');dummy.focus();numberOfChangeEventsFired", '1');
+    shouldBe("test.value = '34';numberOfChangeEventsFired", '1');
+    shouldBe("test.focus();test.value = '34';document.execCommand('SelectAll');\n"
+    + "eventSender.keyDown('1');eventSender.keyDown('2');dummy.focus();numberOfChangeEventsFired", '2');
+    test.parentNode.style.display = 'none';
+}
+
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

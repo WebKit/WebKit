@@ -1603,7 +1603,7 @@ editing/undo/redo-style.html
 editing/undo/replace-text-in-node-preserving-markers-crash.html
 editing/undo/undo-indent.html
 fast/events/frame-click-focus.html
-fast/forms/input-appearance-number-rtl.html
+fast/forms/number/input-appearance-number-rtl.html
 
 # Qt result was added by r91977, but it fails on Qt-WK2 platform
 svg/W3C-SVG-1.1-SE/struct-use-11-f.svg

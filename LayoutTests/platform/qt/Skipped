@@ -2337,9 +2337,9 @@ fast/loader/frame-creation-removal.html
 # [Qt] REGRESSION(r93937): 4 failing and 3 flaky tests
 # https://bugs.webkit.org/show_bug.cgi?id=67118
 # Flaky
-fast/forms/input-number-large-padding.html
-fast/forms/input-spinbutton-capturing.html
-fast/forms/input-number-events.html
+fast/forms/number/input-number-large-padding.html
+fast/forms/number/input-spinbutton-capturing.html
+fast/forms/number/input-number-events.html
 
 # [Qt] Two tests failed after r94037
 # https://bugs.webkit.org/show_bug.cgi?id=67188

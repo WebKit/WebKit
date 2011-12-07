@@ -593,10 +593,6 @@ fast/forms/input-appearance-readonly.html
 fast/forms/input-changing-value.html
 fast/forms/input-maxlength-ime-completed.html
 fast/forms/input-maxlength-unsupported.html
-fast/forms/input-number-blur-twice.html
-fast/forms/input-number-commit-valid-only.html
-fast/forms/input-number-keyoperation.html
-fast/forms/input-number-unacceptable-style.html
 fast/forms/input-placeholder-visibility-2.html
 fast/forms/input-placeholder-visibility-3.html
 fast/forms/input-text-maxlength.html
@@ -604,6 +600,10 @@ fast/forms/input-text-paste-maxlength.html
 fast/forms/input-value-sanitization.html
 fast/forms/listbox-deselect-scroll.html
 fast/forms/listbox-select-all.html
+fast/forms/number/input-number-blur-twice.html
+fast/forms/number/input-number-commit-valid-only.html
+fast/forms/number/input-number-keyoperation.html
+fast/forms/number/input-number-unacceptable-style.html
 fast/forms/password-placeholder-text-security.html
 fast/forms/paste-into-textarea.html
 fast/forms/plaintext-mode-1.html
@@ -1192,11 +1192,11 @@ editing/deleting/deletionUI-single-instance.html
 fast/dom/Element/id-in-deletebutton.html
 
 # webkit-efl's <input type="number"> is not a spinbutton
-fast/forms/input-number-events.html
-fast/forms/input-number-large-padding.html
-fast/forms/input-number-size.html
-fast/forms/input-spinbutton-capturing.html
-fast/forms/spin-button-gets-disabled-or-readonly.html
+fast/forms/number/input-number-events.html
+fast/forms/number/input-number-large-padding.html
+fast/forms/number/input-number-size.html
+fast/forms/number/input-spinbutton-capturing.html
+fast/forms/number/spin-button-gets-disabled-or-readonly.html
 
 # This test is out-dated since r95899.
 # https://bugs.webkit.org/show_bug.cgi?id=65709

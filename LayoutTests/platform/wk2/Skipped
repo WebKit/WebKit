@@ -1106,7 +1106,7 @@ fast/forms/search-disabled-readonly.html
 fast/forms/ValidityState-valueMissing-002.html
 fast/frames/focus-controller-crash-change-event.html
 svg/custom/focus-event-handling-keyboard.xhtml
-fast/forms/number-input-changeevent.html
+fast/forms/number/number-input-changeevent.html
 
 # eventSender.contextClick() is unimplemented
 editing/spelling/spellcheck-input-search-crash.html

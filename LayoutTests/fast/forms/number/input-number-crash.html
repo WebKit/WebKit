@@ -1,0 +1,26 @@
+<html>
+    <head>
+        <script>
+            function test()
+            {
+                if (window.layoutTestController)
+                    layoutTestController.dumpAsText();
+                var input = document.getElementById("test");
+                var x = input.offsetLeft + input.offsetWidth - 8;
+                var y = input.offsetTop + input.offsetHeight - 7;
+                if (window.eventSender) {
+                    eventSender.mouseMoveTo(x, y);
+                    eventSender.mouseDown();
+                    eventSender.mouseUp();
+                }
+            }
+        </script>
+        <style>
+            #test { width: 100px; }
+        </style>
+    </head>
+    <body onload="test()">
+        This tests that we don't crash when the renderer goes away during event handling.<br>
+        <input type="number" id="test" onclick="event.target.style.display='none'">
+    </body>
+</html>

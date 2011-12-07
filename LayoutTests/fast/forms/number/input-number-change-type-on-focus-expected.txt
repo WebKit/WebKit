@@ -1,0 +1,12 @@
+Bug 46950: Assertion failure by changing type from type=number in focus event.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+PASS Not crashed.
+PASS mouseDownCount is 1
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

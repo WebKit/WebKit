@@ -2217,8 +2217,8 @@ BUGWK44770 LINUX WIN : svg/repaint/filter-repaint.svg = CRASH IMAGE+TEXT
 // Not focusing an anchor when tab is pressed.
 BUGWK45061 : fast/forms/focus2.html = TIMEOUT FAIL
 
-BUGCR54330 MAC : fast/forms/input-spinbutton-capturing.html = PASS TEXT
-BUGCR54331 MAC : fast/forms/input-number-events.html = PASS TEXT
+BUGCR54330 MAC : fast/forms/number/input-spinbutton-capturing.html = PASS TEXT
+BUGCR54331 MAC : fast/forms/number/input-number-events.html = PASS TEXT
 BUGCR54333 LINUX WIN : fast/replaced/embed-display-none.html = PASS TIMEOUT
 
 // WebKit r67068
@@ -3278,7 +3278,7 @@ BUGCR88894 SLOW WIN : http/tests/cache/subresource-expiration-2.html = PASS
 
 BUGCR88911 LEOPARD : fast/css/stylesheet-candidate-nodes-crash.xhtml = TEXT
 BUGCR88911 LEOPARD : fast/dom/getElementsByClassName/011.xml = TEXT
-BUGCR88911 LEOPARD : fast/forms/input-number-unacceptable-style.html = TEXT
+BUGCR88911 LEOPARD : fast/forms/number/input-number-unacceptable-style.html = TEXT
 BUGCR88911 LEOPARD : fast/parser/external-entities.xml = TEXT
 BUGCR88911 LEOPARD : fast/text/find-kana.html = TEXT
 BUGCR88911 LEOPARD : fast/xsl/mozilla-tests.xml = TEXT
@@ -3576,9 +3576,9 @@ BUGWK70066 SKIP : fast/hidpi = TIMEOUT
 BUGWK70151 : fast/css/clip-text-in-scaled-div.html = FAIL
 
 // Flaky tests from ~r97647
-BUGWK70298 WIN LINUX : fast/forms/input-number-events.html = TEXT PASS
-BUGWK70298 : fast/forms/input-number-large-padding.html = TEXT PASS
-BUGWK70298 WIN LINUX : fast/forms/input-spinbutton-capturing.html = TEXT PASS
+BUGWK70298 WIN LINUX : fast/forms/number/input-number-events.html = TEXT PASS
+BUGWK70298 : fast/forms/number/input-number-large-padding.html = TEXT PASS
+BUGWK70298 WIN LINUX : fast/forms/number/input-spinbutton-capturing.html = TEXT PASS
 BUGWK70298 : fast/images/pdf-as-background.html = FAIL TIMEOUT PASS
 BUGWK70298 : fast/table/border-collapsing/cached-69296.html = IMAGE PASS
 BUGWK70298 : http/tests/security/xssAuditor/cookie-injection.html = TEXT PASS
