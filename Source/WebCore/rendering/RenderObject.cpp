@@ -1723,10 +1723,11 @@ StyleDifference RenderObject::adjustStyleDifference(StyleDifference diff, unsign
     return diff;
 }
 
-RenderStyle* RenderObject::style() const
+RenderStyle* RenderObject::styleSlowCase() const
 {
-    if (!inRenderFlowThread()
-        || !canHaveRegionStyle()
+    ASSERT(inRenderFlowThread());
+
+    if (!canHaveRegionStyle()
         || !((view() && view()->currentRenderRegion() && view()->currentRenderRegion()->hasCustomRegionStyle())))
         return m_style.get();
 

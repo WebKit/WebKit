@@ -1,3 +1,21 @@
+2011-12-07  Andreas Kling  <kling@webkit.org>
+
+        RenderObject::style(): Inline early-return condition.
+        <http://webkit.org/b/74019>
+
+        Reviewed by Anders Carlsson.
+
+        style() was very hot (6.1%) when scrolling around on youtube.com,
+        and 100% of the calls were taking the early return path.
+
+        Inlined the !isRenderFlowThread() check and renamed the function to
+        styleSlowCase().
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::styleSlowCase):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::style):
+
 2011-12-07  Adam Klein  <adamk@chromium.org>
 
         Use HashMap<Node*, OwnPtr<...>> in ChildListMutationScope
