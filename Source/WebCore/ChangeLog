@@ -1,3 +1,9 @@
+2011-12-07  Jessie Berlin  <jberlin@apple.com>
+
+        Mac build fix after r102235.
+
+        * WebCore.exp.in:
+
 2011-11-30  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] V8 debug build fixes.
