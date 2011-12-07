@@ -1,5 +1,17 @@
 2011-12-07  Lucas Forschler  <lforschler@apple.com>
 
+    Merge 98435
+
+    2011-10-25  Ryosuke Niwa  <rniwa@webkit.org>
+
+            GTK build fix attempt after r98413 and r98416.
+
+            * PluginProcess/PluginControllerProxy.cpp:
+            (WebKit::PluginControllerProxy::paint):
+            (WebKit::PluginControllerProxy::geometryDidChange):
+
+2011-12-07  Lucas Forschler  <lforschler@apple.com>
+
     Merge 98416
 
     2011-10-25  Anders Carlsson  <andersca@apple.com>
