@@ -310,7 +310,7 @@ void webkitInit()
     JSC::initializeThreading();
     WTF::initializeMainThread();
 
-    WebCore::InitializeLoggingChannelsIfNecessary();
+    WebCore::initializeLoggingChannelsIfNecessary();
 
     // We make sure the text codecs have been initialized, because
     // that may only be done by the main thread.

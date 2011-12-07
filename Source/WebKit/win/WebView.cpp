@@ -2622,7 +2622,7 @@ HRESULT STDMETHODCALLTYPE WebView::initWithFrame(
 
     static bool didOneTimeInitialization;
     if (!didOneTimeInitialization) {
-        InitializeLoggingChannelsIfNecessary();
+        initializeLoggingChannelsIfNecessary();
 #if ENABLE(SQL_DATABASE)
         WebKitInitializeWebDatabasesIfNecessary();
 #endif

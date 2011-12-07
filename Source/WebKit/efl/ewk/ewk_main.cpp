@@ -160,7 +160,7 @@ Eina_Bool _ewk_init_body(void)
 #endif
 
     WebCore::ScriptController::initializeThreading();
-    WebCore::InitializeLoggingChannelsIfNecessary();
+    WebCore::initializeLoggingChannelsIfNecessary();
     WebCore::Settings::setDefaultMinDOMTimerInterval(0.004);
 
     // Page cache capacity (in pages). Comment from Mac port:

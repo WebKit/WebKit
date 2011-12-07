@@ -43,7 +43,7 @@ static inline void initializeWithUserDefault(WTFLogChannel& channel)
     }
 }
 
-void InitializeLoggingChannelsIfNecessary()
+void initializeLoggingChannelsIfNecessary()
 {
     static bool haveInitializedLoggingChannels = false;
     if (haveInitializedLoggingChannels)

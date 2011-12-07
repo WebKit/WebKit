@@ -154,7 +154,7 @@ WebProcess::WebProcess()
     WebPlatformStrategies::initialize();
 #endif // USE(PLATFORM_STRATEGIES)
 
-    WebCore::InitializeLoggingChannelsIfNecessary();
+    WebCore::initializeLoggingChannelsIfNecessary();
 }
 
 void WebProcess::initialize(CoreIPC::Connection::Identifier serverIdentifier, RunLoop* runLoop)

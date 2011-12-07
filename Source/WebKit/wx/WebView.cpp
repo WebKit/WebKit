@@ -387,7 +387,7 @@ bool wxWebView::Create(wxWindow* parent, int id, const wxPoint& position,
 
     m_impl = new WebViewPrivate();
 
-    WebCore::InitializeLoggingChannelsIfNecessary();    
+    WebCore::initializeLoggingChannelsIfNecessary();    
     WebCore::HTMLFrameOwnerElement* parentFrame = 0;
 
     WebCore::EditorClientWx* editorClient = new WebCore::EditorClientWx();

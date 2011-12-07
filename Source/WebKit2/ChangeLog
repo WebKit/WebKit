@@ -1,3 +1,15 @@
+2011-12-07  Mary Wu  <mary.wu@torchmobile.com.cn>
+
+        Change function name InitializeLoggingChannelsIfNecessary to follow coding style guideline
+        https://bugs.webkit.org/show_bug.cgi?id=73986
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::WebContext):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::WebProcess):
+
 2011-12-07  Zalan Bujtas  <zbujtas@gmail.com>
 
         [Qt][WK2] Enable page cache.

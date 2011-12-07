@@ -28,7 +28,7 @@
 
 namespace WebCore {
 
-void InitializeLoggingChannelsIfNecessary()
+void initializeLoggingChannelsIfNecessary()
 {
     static bool didInitializeLoggingChannels = false;
     if (didInitializeLoggingChannels)

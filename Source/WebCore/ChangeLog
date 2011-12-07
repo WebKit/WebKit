@@ -1,3 +1,26 @@
+2011-12-07  Mary Wu  <mary.wu@torchmobile.com.cn>
+
+        Change function name InitializeLoggingChannelsIfNecessary to follow coding style guideline
+        https://bugs.webkit.org/show_bug.cgi?id=73986
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Just function name change, no new tests.
+
+        * platform/Logging.h:
+        * platform/efl/LoggingEfl.cpp:
+        (WebCore::initializeLoggingChannelsIfNecessary):
+        * platform/gtk/LoggingGtk.cpp:
+        (WebCore::initializeLoggingChannelsIfNecessary):
+        * platform/mac/LoggingMac.mm:
+        (WebCore::initializeLoggingChannelsIfNecessary):
+        * platform/qt/LoggingQt.cpp:
+        (WebCore::initializeLoggingChannelsIfNecessary):
+        * platform/win/LoggingWin.cpp:
+        (WebCore::initializeLoggingChannelsIfNecessary):
+        * platform/wx/LoggingWx.cpp:
+        (WebCore::initializeLoggingChannelsIfNecessary):
+
 2011-12-07  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSSRegions]Add support for background-color in region styling

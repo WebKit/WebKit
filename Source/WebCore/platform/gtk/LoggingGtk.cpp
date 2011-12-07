@@ -29,7 +29,7 @@ namespace WebCore {
 
 // Inspired by the code used by the Qt port
 
-void InitializeLoggingChannelsIfNecessary()
+void initializeLoggingChannelsIfNecessary()
 {
     static bool didInitializeLoggingChannels = false;
     if (didInitializeLoggingChannels)

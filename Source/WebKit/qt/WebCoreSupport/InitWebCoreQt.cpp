@@ -51,7 +51,7 @@ void initializeWebCoreQt()
     if (initialized)
         return;
 
-    WebCore::InitializeLoggingChannelsIfNecessary();
+    WebCore::initializeLoggingChannelsIfNecessary();
     ScriptController::initializeThreading();
     WTF::initializeMainThread();
     WebCore::SecurityPolicy::setLocalLoadPolicy(WebCore::SecurityPolicy::AllowLocalLoadsForLocalAndSubstituteData);

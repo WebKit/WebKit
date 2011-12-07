@@ -1,3 +1,13 @@
+2011-12-07  Mary Wu  <mary.wu@torchmobile.com.cn>
+
+        Change function name InitializeLoggingChannelsIfNecessary to follow coding style guideline
+        https://bugs.webkit.org/show_bug.cgi?id=73986
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * WebView/WebView.mm:
+        (-[WebView _commonInitializationWithFrameName:groupName:]):
+
 2011-12-06  Alexey Proskuryakov  <ap@apple.com>
 
         REGRESSION (WebKit2): Kill ring is not cleared when selection changes

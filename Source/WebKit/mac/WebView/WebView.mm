@@ -714,7 +714,7 @@ static NSString *leakOutlookQuirksUserScriptContents()
     static bool didOneTimeInitialization = false;
     if (!didOneTimeInitialization) {
         WebKitInitializeLoggingChannelsIfNecessary();
-        WebCore::InitializeLoggingChannelsIfNecessary();
+        WebCore::initializeLoggingChannelsIfNecessary();
         [WebHistoryItem initWindowWatcherIfNecessary];
 #if ENABLE(SQL_DATABASE)
         WebKitInitializeDatabasesIfNecessary();

@@ -68,7 +68,7 @@ static inline void initializeWithUserDefault(WTFLogChannel& channel)
         channel.state = WTFLogChannelOff;
 }
 
-void InitializeLoggingChannelsIfNecessary()
+void initializeLoggingChannelsIfNecessary()
 {
     static bool haveInitializedLoggingChannels = false;
     if (haveInitializedLoggingChannels)

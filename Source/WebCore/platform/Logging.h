@@ -60,7 +60,7 @@ namespace WebCore {
     extern WTFLogChannel LogProgress;
     extern WTFLogChannel LogFileAPI;
 
-    void InitializeLoggingChannelsIfNecessary();
+    void initializeLoggingChannelsIfNecessary();
     WTFLogChannel* getChannelFromName(const String& channelName);
 }
 
