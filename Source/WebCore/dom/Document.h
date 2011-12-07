@@ -1114,7 +1114,7 @@ public:
     unsigned wheelEventHandlerCount() const { return m_wheelEventHandlerCount; }
     void didAddWheelEventHandler();
     void didRemoveWheelEventHandler();
-    
+
     bool visualUpdatesAllowed() const;
 
 #if ENABLE(MICRODATA)
@@ -1123,6 +1123,9 @@ public:
 #endif
     
     bool isInDocumentWrite() { return m_writeRecursionDepth > 0; }
+
+    void suspendScheduledTasks();
+    void resumeScheduledTasks();
 
 protected:
     Document(Frame*, const KURL&, bool isXHTML, bool isHTML);
@@ -1170,6 +1173,10 @@ private:
     PassRefPtr<NodeList> handleZeroPadding(const HitTestRequest&, HitTestResult&) const;
 
     void loadEventDelayTimerFired(Timer<Document>*);
+
+    void pendingTasksTimerFired(Timer<Document>*);
+
+    static void didReceiveTask(void*);
 
 #if ENABLE(PAGE_VISIBILITY_API)
     PageVisibilityState visibilityState() const;
@@ -1433,6 +1440,9 @@ private:
 #if ENABLE(REQUEST_ANIMATION_FRAME)
     OwnPtr<ScriptedAnimationController> m_scriptedAnimationController;
 #endif
+
+    Timer<Document> m_pendingTasksTimer;
+    Vector<OwnPtr<Task> > m_pendingTasks;
 };
 
 // Put these methods here, because they require the Document definition, but we really want to inline them.

@@ -1,3 +1,28 @@
+2011-12-07  Yong Li  <yoli@rim.com>
+
+        Defer ScriptExecutionContext::Task's in Document when page loading is deferred.
+        Schedule them with timer when page loading is resumed. The tasks will be performed
+        in the original order. This fixes the problem that database callbacks could be missed
+        when page loading was deferred.
+        https://bugs.webkit.org/show_bug.cgi?id=49401
+ 
+
+        Reviewed by Darin Adler.
+
+        Manual test added: ManualTests/database-callback-deferred.html. 
+
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        (WebCore::Document::didReceiveTask):
+        (WebCore::Document::postTask):
+        (WebCore::Document::pendingTasksTimerFired):
+        (WebCore::Document::suspendScheduledTasks):
+        (WebCore::Document::resumeScheduledTasks):
+        * dom/Document.h:
+        * page/PageGroupLoadDeferrer.cpp:
+        (WebCore::PageGroupLoadDeferrer::PageGroupLoadDeferrer):
+        (WebCore::PageGroupLoadDeferrer::~PageGroupLoadDeferrer):
+
 2011-12-07  Andreas Kling  <kling@webkit.org>
 
         RenderObject::style(): Inline early-return condition.

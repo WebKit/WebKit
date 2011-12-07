@@ -7,6 +7,7 @@
  * Copyright (C) 2008, 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  * Copyright (C) 2008, 2009, 2011 Google Inc. All rights reserved.
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
+ * Copyright (C) Research In Motion Limited 2010-2011. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -429,6 +430,7 @@ Document::Document(Frame* frame, const KURL& url, bool isXHTML, bool isHTML)
     , m_writeRecursionIsTooDeep(false)
     , m_writeRecursionDepth(0)
     , m_wheelEventHandlerCount(0)
+    , m_pendingTasksTimer(this, &Document::pendingTasksTimerFired)
 {
     m_document = this;
 
@@ -4704,22 +4706,59 @@ public:
     OwnPtr<ScriptExecutionContext::Task> task;
 };
 
-static void performTask(void* ctx)
+void Document::didReceiveTask(void* untypedContext)
 {
     ASSERT(isMainThread());
 
-    PerformTaskContext* context = reinterpret_cast<PerformTaskContext*>(ctx);
+    OwnPtr<PerformTaskContext> context = adoptPtr(static_cast<PerformTaskContext*>(untypedContext));
     ASSERT(context);
 
-    if (Document* document = context->documentReference->document())
-        context->task->performTask(document);
+    Document* document = context->documentReference->document();
+    if (!document)
+        return;
 
-    delete context;
+    Page* page = document->page();
+    if ((page && page->defersLoading()) || !document->m_pendingTasks.isEmpty()) {
+        document->m_pendingTasks.append(context->task.release());
+        return;
+    }
+
+    context->task->performTask(document);
 }
 
 void Document::postTask(PassOwnPtr<Task> task)
 {
-    callOnMainThread(performTask, new PerformTaskContext(m_weakReference, task));
+    callOnMainThread(didReceiveTask, new PerformTaskContext(m_weakReference, task));
+}
+
+void Document::pendingTasksTimerFired(Timer<Document>*)
+{
+    while (!m_pendingTasks.isEmpty()) {
+        OwnPtr<Task> task = m_pendingTasks[0].release();
+        m_pendingTasks.remove(0);
+        task->performTask(this);
+    }
+}
+
+void Document::suspendScheduledTasks()
+{
+    suspendScriptedAnimationControllerCallbacks();
+    suspendActiveDOMObjects(ActiveDOMObject::WillShowDialog);
+    scriptRunner()->suspend();
+    m_pendingTasksTimer.stop();
+    if (m_parser)
+        m_parser->suspendScheduledTasks();
+}
+
+void Document::resumeScheduledTasks()
+{
+    if (m_parser)
+        m_parser->resumeScheduledTasks();
+    if (!m_pendingTasks.isEmpty())
+        m_pendingTasksTimer.startOneShot(0);
+    scriptRunner()->resume();
+    resumeActiveDOMObjects();
+    resumeScriptedAnimationControllerCallbacks();
 }
 
 void Document::suspendScriptedAnimationControllerCallbacks()

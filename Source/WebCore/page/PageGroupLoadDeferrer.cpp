@@ -48,13 +48,8 @@ PageGroupLoadDeferrer::PageGroupLoadDeferrer(Page* page, bool deferSelf)
                 // windows or sheets, which is exactly when PageGroupLoadDeferrer is used.
                 // NOTE: if PageGroupLoadDeferrer is ever used for tasks other than showing a modal window or sheet,
                 // the constructor will need to take a ActiveDOMObject::ReasonForSuspension.
-                for (Frame* frame = otherPage->mainFrame(); frame; frame = frame->tree()->traverseNext()) {
-                    frame->document()->suspendScriptedAnimationControllerCallbacks();
-                    frame->document()->suspendActiveDOMObjects(ActiveDOMObject::WillShowDialog);
-                    frame->document()->scriptRunner()->suspend();
-                    if (DocumentParser* parser = frame->document()->parser())
-                        parser->suspendScheduledTasks();
-                }
+                for (Frame* frame = otherPage->mainFrame(); frame; frame = frame->tree()->traverseNext())
+                    frame->document()->suspendScheduledTasks();
             }
         }
     }
@@ -71,13 +66,8 @@ PageGroupLoadDeferrer::~PageGroupLoadDeferrer()
         if (Page* page = m_deferredFrames[i]->page()) {
             page->setDefersLoading(false);
 
-            for (Frame* frame = page->mainFrame(); frame; frame = frame->tree()->traverseNext()) {
-                frame->document()->resumeActiveDOMObjects();
-                frame->document()->resumeScriptedAnimationControllerCallbacks();
-                frame->document()->scriptRunner()->resume();
-                if (DocumentParser* parser = frame->document()->parser())
-                    parser->resumeScheduledTasks();
-            }
+            for (Frame* frame = page->mainFrame(); frame; frame = frame->tree()->traverseNext())
+                frame->document()->resumeScheduledTasks();
         }
     }
 }
