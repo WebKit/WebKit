@@ -1,3 +1,15 @@
+2011-12-07  Adam Klein  <adamk@chromium.org>
+
+        [MutationObservers] Enable in Chromium trunk
+        https://bugs.webkit.org/show_bug.cgi?id=73851
+
+        Reviewed by Ojan Vafai.
+
+        Re-landing after fixing Chromium unit test crashes in r102171
+        and inspector debugger crash in r102264.
+
+        * features.gypi:
+
 2011-12-07  Jonathan Backer  <backer@chromium.org>
 
         [chromium] Plumb damage from WebExternalTextureLayer and WebPluginContainer to CCDamageTracker

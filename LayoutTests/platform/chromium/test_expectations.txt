@@ -3192,9 +3192,6 @@ BUGWK57312 : fast/regions = PASS FAIL MISSING
 // CSS Filters support not yet enabled
 BUGWK68469 SKIP : css3/filters = PASS
 
-// MutationObservers not yet enabled.
-BUGWK68729 SKIP : fast/mutation = PASS
-
 // <style scoped> not yet enabled.
 BUGWK49142 SKIP : fast/css/style-scoped = PASS
 
