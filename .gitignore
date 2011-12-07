@@ -51,7 +51,10 @@ Source/WebKit/chromium/*.mk
 Source/WebKit/chromium/*.ninja
 Source/WebKit/chromium/*.sln
 Source/WebKit/chromium/*.vcproj*
+Source/WebKit/chromium/All.xcodeproj
 Source/WebKit/chromium/WebKit.xcodeproj
+Source/WebKit/chromium/WebKitUnitTests.xcodeproj
+Tools/Tools.xcodeproj
 Tools/DumpRenderTree/DumpRenderTree.gyp/DumpRenderTree.xcodeproj
 
 # Ignore status files that manage Chromium dependencies.

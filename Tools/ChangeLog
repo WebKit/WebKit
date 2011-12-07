@@ -1,3 +1,20 @@
+2011-12-06  Dirk Pranke  <dpranke@chromium.org>
+
+        binaries in webkit.gyp should be split into a new file to break circular dependencies on webkit_support
+        https://bugs.webkit.org/show_bug.cgi?id=73382
+
+        Reviewed by Tony Chang.
+
+        XCode (and hence GYP) can't handle circular dependencies between
+        files (and projects). Accordingly, although the binaries in
+        WebKit.gyp depend on webkit_support and webkit_support depends
+        on webkit, we don't mention the latter dependency in the file.
+        To fix this, this change moves the binaries like DRT into a new
+        GYP file, and modifies gyp_webkit to build from that file
+        instead of WebKit.gyp.
+
+        * Tools.gyp: Added.
+
 2011-12-06  Adam Roben  <aroben@apple.com>
 
         Add a pid parameter to CrashLogs.find_newest_log

@@ -1,3 +1,15 @@
+2011-12-06  Dirk Pranke  <dpranke@chromium.org>
+
+        Add Tools/Tool.xcodeproj,
+        Source/WebKit/chromium/WebKitUnitTests.xcodeproj,
+        Source/WebKit/chromium/All.xcodeproj to .gitignore
+
+        https://bugs.webkit.org/show_bug.cgi?id=73823
+
+        Reviewed by Tony Chang.
+
+        * .gitignore:
+
 2011-12-06  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] build-jsc script doesn't work
