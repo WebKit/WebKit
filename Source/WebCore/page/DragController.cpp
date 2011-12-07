@@ -440,7 +440,7 @@ bool DragController::concludeEditDrag(DragData* dragData)
         RefPtr<Range> innerRange = innerFrame->selection()->toNormalizedRange();
         RefPtr<CSSStyleDeclaration> style = m_documentUnderMouse->createCSSStyleDeclaration();
         ExceptionCode ec;
-        style->setProperty("color", color.serialized(), ec);
+        style->setProperty(CSSPropertyColor, color.serialized(), false, ec);
         if (!innerFrame->editor()->shouldApplyStyle(style.get(), innerRange.get()))
             return false;
         m_client->willPerformDragDestinationAction(DragDestinationActionEdit, dragData);

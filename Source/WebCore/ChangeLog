@@ -1,3 +1,34 @@
+2011-12-07  Alexey Proskuryakov  <ap@apple.com>
+
+        Handling of !important in inline style sets is broken
+        https://bugs.webkit.org/show_bug.cgi?id=73941
+
+        Reviewed by Dave Hyatt.
+
+        This behavior was introduced in bug 8223 to match IE and Firefox. But it doesn't appear that we're matching
+        any browser today, and CSSOM spec agrees with them.
+
+        * WebCore.exp.in: Don't export CSSStyleDeclaration::setProperty(), no one is using it.
+
+        * bindings/js/JSCSSStyleDeclarationCustom.cpp: (WebCore::JSCSSStyleDeclaration::putDelegate): Use regular
+        setProperty(), not the incorrect version that's being removed. Properties set via IDL attributes are never
+        important.
+
+        * bindings/v8/custom/V8CSSStyleDeclarationCustom.cpp: (WebCore::V8CSSStyleDeclaration::namedPropertySetter):
+        Made the same fix for v8. Why did v8 bindings authors copy/paste the code?!
+
+        * css/CSSStyleDeclaration.cpp:
+        * css/CSSStyleDeclaration.h:
+        Removed a version of setProperty() that attempted to parse the value and extract !important from it.
+
+        * html/ImageDocument.cpp:
+        (WebCore::ImageDocument::resizeImageToFit):
+        (WebCore::ImageDocument::restoreImageSize):
+        (WebCore::ImageDocument::windowSizeChanged):
+        * page/DragController.cpp:
+        (WebCore::DragController::concludeEditDrag):
+        We never needed to use this version of setProperty() here, it was just unnecessarily slower.
+
 2011-12-07  Xianzhu Wang  <wangxianzhu@chromium.org>
 
         In FontCacheAndroid.cpp should keep the pointer valid returned from CString::data()

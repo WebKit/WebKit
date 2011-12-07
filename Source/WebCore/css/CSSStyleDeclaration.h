@@ -65,7 +65,6 @@ public:
     virtual int getPropertyShorthand(int propertyID) const = 0;
     virtual bool isPropertyImplicit(int propertyID) const = 0;
 
-    void setProperty(const String& propertyName, const String& value, ExceptionCode&);
     void setProperty(const String& propertyName, const String& value, const String& priority, ExceptionCode&);
     String removeProperty(const String& propertyName, ExceptionCode&);
     virtual void setProperty(int propertyId, const String& value, bool important, ExceptionCode&) = 0;

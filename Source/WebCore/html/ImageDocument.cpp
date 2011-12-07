@@ -254,7 +254,7 @@ void ImageDocument::resizeImageToFit()
     m_imageElement->setHeight(static_cast<int>(imageSize.height() * scale));
     
     ExceptionCode ec;
-    m_imageElement->style()->setProperty("cursor", "-webkit-zoom-in", ec);
+    m_imageElement->style()->setProperty(CSSPropertyCursor, "-webkit-zoom-in", false, ec);
 }
 
 void ImageDocument::imageClicked(int x, int y)
@@ -309,9 +309,9 @@ void ImageDocument::restoreImageSize()
     
     ExceptionCode ec;
     if (imageFitsInWindow())
-        m_imageElement->style()->removeProperty("cursor", ec);
+        m_imageElement->style()->removeProperty(CSSPropertyCursor, ec);
     else
-        m_imageElement->style()->setProperty("cursor", "-webkit-zoom-out", ec);
+        m_imageElement->style()->setProperty(CSSPropertyCursor, "-webkit-zoom-out", false, ec);
         
     m_didShrinkImage = false;
 }
@@ -344,9 +344,9 @@ void ImageDocument::windowSizeChanged()
         ExceptionCode ec;
         
         if (fitsInWindow)
-            m_imageElement->style()->removeProperty("cursor", ec);
+            m_imageElement->style()->removeProperty(CSSPropertyCursor, ec);
         else
-            m_imageElement->style()->setProperty("cursor", "-webkit-zoom-out", ec);
+            m_imageElement->style()->setProperty(CSSPropertyCursor, "-webkit-zoom-out", false, ec);
         return;
     }
     

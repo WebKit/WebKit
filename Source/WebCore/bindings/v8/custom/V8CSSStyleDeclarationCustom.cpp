@@ -203,13 +203,7 @@ v8::Handle<v8::Value> V8CSSStyleDeclaration::namedPropertySetter(v8::Local<v8::S
         propertyValue.append("px");
 
     ExceptionCode ec = 0;
-    int importantIndex = propertyValue.find("!important", 0, false);
-    bool important = false;
-    if (importantIndex != -1) {
-        important = true;
-        propertyValue = propertyValue.left(importantIndex - 1);
-    }
-    imp->setProperty(propInfo->propID, propertyValue, important, ec);
+    imp->setProperty(propInfo->propID, propertyValue, false, ec);
 
     if (ec)
         throwError(ec);

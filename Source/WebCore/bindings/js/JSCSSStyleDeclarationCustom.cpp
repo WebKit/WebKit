@@ -176,7 +176,7 @@ bool JSCSSStyleDeclaration::putDelegate(ExecState* exec, const Identifier& prope
     if (pixelOrPos)
         propValue += "px";
     ExceptionCode ec = 0;
-    impl()->setProperty(prop, propValue, ec);
+    impl()->setProperty(prop, propValue, emptyString(), ec);
     setDOMException(exec, ec);
     return true;
 }
