@@ -37,13 +37,13 @@
 <ul>
   <li>ASSERT(expression) - for use during development to ensure that unexpected conditions do not occur. If the expression evaluates to false then abort execution and break into the debugger.
   </li>
-  <li>ASSERT_UNREACHED() - for use when a certain branch of code should never be executed.
+  <li>ASSERT_NOT_REACHED() - for use when a certain branch of code should never be executed.
     <pre class="code">
 if (condition) {
   ...
 } else {
     <span class="comment">// This should never happen.</span>
-    ASSERT_UNREACHED();
+    ASSERT_NOT_REACHED();
 }
 </pre>
   </li>

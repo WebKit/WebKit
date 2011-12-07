@@ -1,3 +1,15 @@
+2011-12-07  Daniel Bates  <dbates@webkit.org>
+
+        ASSERT_UNREACHED() should be ASSERT_NOT_REACHED() on assertion-guidelines.html
+        https://bugs.webkit.org/show_bug.cgi?id=74006
+
+        Reviewed by Antonio Gomes.
+
+        As far I can tell, we've never had an ASSERT_UNREACHED(). We do have an
+        ASSERT_NOT_REACHED().
+
+        * coding/assertion-guidelines.html:
+
 2011-11-30  Ryosuke Niwa  <rniwa@webkit.org>
 
         commit-review-policy.html should make clear committers shouldn't land patches without authors' consent
