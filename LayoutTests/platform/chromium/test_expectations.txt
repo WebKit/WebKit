@@ -692,10 +692,6 @@ BUGWK67121 DEBUG SLOW : editing/selection/move-by-word-visually-multi-space.html
 
 BUGWK63509 : editing/style/smoosh-styles-003.html = PASS IMAGE
 
-// New tests in r101575
-BUGWK73510 : editing/deleting/delete-and-cleanup.html = TEXT
-BUGWK73510 : editing/pasteboard/paste-without-nesting.html = TEXT
-
 // -----------------------------------------------------------------
 // Plugin tests
 // -----------------------------------------------------------------
@@ -1063,7 +1059,7 @@ BUGWK70748 CPU : fast/borders/fieldsetBorderRadius.html = IMAGE
 BUGWK70748 CPU : fast/borders/mixed-border-styles-radius2.html = IMAGE
 BUGWK70748 CPU : fast/borders/mixed-border-styles-radius.html = IMAGE
 BUGWK70748 CPU : fast/box-shadow/basic-shadows.html = IMAGE
-BUGWK70748 CPU : fast/box-shadow/border-radius-big.html = IMAGE
+BUGWK70748 WIN CPU : fast/box-shadow/border-radius-big.html = IMAGE
 BUGWK70748 CPU : fast/box-shadow/inset-box-shadows.html = IMAGE
 BUGWK70748 CPU : fast/box-shadow/inset.html = IMAGE
 BUGWK70748 CPU : fast/box-shadow/inset-with-extraordinary-radii-and-border.html = IMAGE
@@ -1110,15 +1106,15 @@ BUGWK70748 CPU LEOPARD : svg/W3C-SVG-1.1/masking-path-05-f.svg = IMAGE
 // the image change should be very slight (only in low-bits of color components)
 //
 BUGCR105305 CPU : fast/backgrounds/size/contain-and-cover-zoomed.html = IMAGE
-BUGCR105305 CPU : fast/canvas/canvas-text-alignment.html = IMAGE
+BUGCR105305 LINUX SNOWLEOPARD CPU : fast/canvas/canvas-text-alignment.html = IMAGE
 BUGCR105305 CPU GPU : media/audio-repaint.html = IMAGE
-BUGCR105305 CPU : svg/W3C-SVG-1.1/pservers-grad-11-b.svg = IMAGE
+BUGCR105305 LINUX SNOWLEOPARD CPU : svg/W3C-SVG-1.1/pservers-grad-11-b.svg = IMAGE
 BUGCR105305 CPU : svg/css/composite-shadow-text.svg = IMAGE
 BUGCR105305 CPU : svg/css/text-gradient-shadow.svg = IMAGE
 BUGCR105305 CPU : svg/custom/gradient-stroke-width.svg = IMAGE
 BUGCR105305 CPU : svg/custom/nested-pattern-boundingBoxModeContent.svg = IMAGE
 BUGCR105305 CPU : svg/custom/pattern-with-transformation.svg = IMAGE
-BUGCR105305 CPU : svg/text/text-gradient-positioning.svg = IMAGE
+BUGCR105305 LINUX SNOWLEOPARD CPU : svg/text/text-gradient-positioning.svg = IMAGE
 BUGCR105305 : svg/text/selection-background-color.xhtml = PASS CRASH IMAGE
 BUGCR105305 : svg/text/selection-styles.xhtml = PASS CRASH IMAGE
 BUGCR105305 MAC : fast/borders/border-image-rotate-transform.html = IMAGE
@@ -1488,9 +1484,9 @@ BUGCR104128 CPU : fast/canvas/shadow-offset-6.html = IMAGE
 BUGCR104128 CPU : fast/canvas/shadow-offset-7.html = IMAGE
 BUGCR104128 CPU : fast/repaint/box-shadow-h.html = IMAGE
 BUGCR104128 CPU : fast/repaint/box-shadow-v.html = IMAGE
-BUGCR104128 CPU : fast/repaint/text-shadow-horizontal.html = IMAGE
-BUGCR104128 CPU : fast/repaint/text-shadow.html = IMAGE
-BUGCR104128 CPU : fast/text/shadow-no-blur.html = IMAGE
+BUGCR104128 LINUX SNOWLEOPARD CPU : fast/repaint/text-shadow-horizontal.html = IMAGE
+BUGCR104128 LINUX SNOWLEOPARD CPU : fast/repaint/text-shadow.html = IMAGE
+BUGCR104128 LINUX SNOWLEOPARD CPU : fast/text/shadow-no-blur.html = IMAGE
 BUGCR104128 WIN LINUX SNOWLEOPARD CPU : fast/text/shadow-translucent-fill.html = IMAGE
 BUGCR104128 CPU : fast/text/stroking-decorations.html = IMAGE
 BUGCR104128 WIN LINUX SNOWLEOPARD CPU : fast/text/stroking.html = IMAGE
@@ -1500,8 +1496,8 @@ BUGCR104128 CPU : svg/css/shadow-with-negative-offset.svg = IMAGE
 BUGCR104128 CPU : transitions/svg-text-shadow-transition.html = IMAGE
 
 // rebaseline after skia rev. 2735 lands (improved luminance computation)
-BUGCR105271 CPU : fast/css/shadow-multiple.html = IMAGE
-BUGCR105271 CPU : fast/multicol/shadow-breaking.html = IMAGE
+BUGCR105271 WIN CPU : fast/css/shadow-multiple.html = IMAGE
+BUGCR105271 WIN CPU : fast/multicol/shadow-breaking.html = IMAGE
 
 // Linux pixeltest failure: alpha=0.5 red (1,0,0) atop yellow (1,1,0) is
 // coming out with with a slightly-less-than-100% red channel. This test fails
@@ -2271,7 +2267,7 @@ BUGCR60651 : fast/canvas/webgl/uniform-location.html = TIMEOUT TEXT
 
 // Seems to have been crashing intermittently for as long as we have test history.
 BUGCR62741 WIN LINUX SNOWLEOPARD DEBUG : svg/clip-path/clip-path-text-and-stroke.svg = PASS CRASH
-BUGWK68270 LEOPARD CPU DEBUG : svg/clip-path/clip-path-text-and-stroke.svg = IMAGE
+BUGWK68270 LEOPARD CPU DEBUG : svg/clip-path/clip-path-text-and-stroke.svg = IMAGE CRASH
 
 // nodesFromRect() removed from Document.idl and test skipped on other platforms at r68345.
 BUGWK46596 : fast/dom/nodesFromRect-basic.html = TIMEOUT
@@ -3006,8 +3002,6 @@ BUGWK60125 : fast/files/create-blob-url-crash.html = PASS CRASH
 BUGDPRANKE : fast/dom/Document/document-reopen.html = PASS TEXT
 BUGDPRANKE : fast/parser/javascript-url-compat-mode.html = PASS TEXT
 
-BUGCR80301 LEOPARD : fast/canvas/canvas-largedraws.html = TIMEOUT
-
 BUGWK60115 LEOPARD : fast/text/shadow-translucent-fill.html = IMAGE
 BUGWK60115 MAC CPU-CG : fast/transforms/shadows.html = PASS IMAGE
 BUGWK60115 WIN : svg/css/shadow-changes.svg = IMAGE
@@ -3446,30 +3440,18 @@ BUGCR33287 CPU : fast/canvas/set-colors.html = TEXT
 
 // Tests that are known to exhibit IMAGE or IMAGE+TEXT failures on Mac10.5 with GPU-Skia graphics.
 BUGWK68437 LEOPARD GPU : fast/canvas/arc360.html = IMAGE
-BUGWK68437 LEOPARD GPU : fast/canvas/canvas-before-css.html = IMAGE
-BUGWK68437 LEOPARD GPU : fast/canvas/canvas-resize-reset.html = IMAGE
-BUGWK68437 LEOPARD GPU : fast/canvas/canvas-size-change-after-layout.html = IMAGE
 BUGWK68437 LEOPARD GPU : fast/canvas/canvas-text-alignment.html = IMAGE
 BUGWK68437 LEOPARD GPU : fast/canvas/canvas-transforms-during-path.html = IMAGE
-BUGWK68437 LEOPARD GPU : fast/canvas/canvas-zoom.html = IMAGE
-BUGWK68437 LEOPARD GPU : fast/canvas/canvasDrawingIntoSelf.html = IMAGE
-BUGWK68437 LEOPARD GPU : fast/canvas/drawImage-with-globalAlpha.html = IMAGE
-BUGWK68437 LEOPARD GPU : fast/canvas/drawImage.html = IMAGE
 BUGWK68437 LEOPARD GPU : fast/canvas/fillrect-gradient-zero-stops.html = IMAGE
 BUGWK68437 LEOPARD GPU : fast/canvas/fillrect_gradient.html = IMAGE
 BUGWK68437 LEOPARD GPU : fast/canvas/image-object-in-canvas.html = IMAGE
 BUGWK68437 LEOPARD GPU : fast/canvas/image-pattern-rotate.html = IMAGE
 BUGWK68437 LEOPARD GPU : fast/canvas/patternfill-repeat.html = IMAGE
 BUGWK68437 LEOPARD GPU : fast/canvas/setWidthResetAfterForcedRender.html = IMAGE
-BUGWK68437 LEOPARD GPU : fast/canvas/shadow-offset-1.html = IMAGE
-BUGWK68437 LEOPARD GPU : fast/canvas/shadow-offset-2.html = IMAGE
-BUGWK68437 LEOPARD GPU : fast/canvas/shadow-offset-3.html = IMAGE
 BUGWK68437 LEOPARD GPU : fast/canvas/shadow-offset-4.html = IMAGE
 BUGWK68437 LEOPARD GPU : fast/canvas/shadow-offset-5.html = IMAGE
 BUGWK68437 LEOPARD GPU : fast/canvas/shadow-offset-6.html = IMAGE
 BUGWK68437 LEOPARD GPU : fast/canvas/shadow-offset-7.html = IMAGE
-BUGWK68437 LEOPARD GPU : fast/canvas/toDataURL-alpha.html = IMAGE
-BUGWK68437 LEOPARD GPU : fast/canvas/zero-size-fill-rect.html = IMAGE
 
 // Tests that are known to exhibit IMAGE or IMAGE+TEXT failures on Mac10.5 with CPU-Skia graphics.
 BUGWK68437 LEOPARD CPU : printing/return-from-printing-mode.html = IMAGE
@@ -3702,9 +3684,6 @@ BUG_SENORBLANCO GPU : fast/canvas/canvas-transforms-fillRect-shadow.html = TEXT
 
 BUGWK66953 : transitions/default-timing-function.html = PASS FAIL
 
-// Depends on Chromium follow up change before they will pass.
-BUGCR31037 : editing/pasteboard/clipboard-customData.html = FAIL
-
 // Need to rebaseline on win and mac.
 BUG_TONY MAC : css3/flexbox/repaint.html = PASS FAIL
 BUG_TONY MAC : css3/flexbox/repaint-rtl-column.html = PASS FAIL
@@ -3787,9 +3766,6 @@ BUGWK72761 : accessibility/anonymous-render-block-in-continuation-causes-crash.h
 
 BUGWK72904 XP : http/tests/media/video-served-as-text.html = PASS TEXT
 
-BUGCR105025 MAC CPU GPU : fast/canvas/webgl/css-webkit-canvas.html = IMAGE
-BUGCR105025 MAC CPU GPU : fast/canvas/webgl/css-webkit-canvas-repaint.html = IMAGE
-
 BUGWK73494 : svg/text/non-bmp-positioning-lists.svg = IMAGE+TEXT IMAGE
 BUGWK73494 : svg/as-image/svg-non-integer-scaled-image.html = IMAGE PASS
 BUGWK73494 DEBUG : svg/hixie/perf/007.xml = PASS TIMEOUT
@@ -3803,7 +3779,6 @@ BUGWK73517 WIN DEBUG : http/tests/inspector/search/search-in-non-existing-resour
 BUGWK73517 WIN DEBUG : inspector/debugger/debugger-activation-crash2.html = CRASH TIMEOUT TEXT
 BUGWK73517 WIN DEBUG : inspector/debugger/debugger-set-breakpoint-regex.html = CRASH TIMEOUT TEXT
 BUGWK73517 WIN DEBUG : inspector/profiler/detailed-heapshots-dominators-expansion-preserved-when-sorting.html = CRASH TIMEOUT
-BUGWK73518 DEBUG : fast/forms/select-popup-pagekeys.html = CRASH
 BUGWK73549 : fast/text/international/hebrew-vowels.html = IMAGE+TEXT PASS
 
 BUGWK73607 GPU LINUX DEBUG : fast/canvas/canvas-overloads-strokeText.html = TIMEOUT TEXT PASS
