@@ -785,6 +785,9 @@ double WebPage::pageScaleFactor() const
 
 void WebPage::setDeviceScaleFactor(float scaleFactor)
 {
+    if (scaleFactor == m_page->deviceScaleFactor())
+        return;
+
     m_page->setDeviceScaleFactor(scaleFactor);
 }
 

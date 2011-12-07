@@ -60,6 +60,7 @@ public:
     void setPluginReturnsNonretainedLayer(bool pluginReturnsNonretainedLayer) { m_pluginReturnsNonretainedLayer = pluginReturnsNonretainedLayer; }
 
     mach_port_t compositingRenderServerPort();
+    double contentsScaleFactor();
 
 #ifndef NP_NO_CARBON
     WindowRef windowRef() const;
