@@ -1,3 +1,15 @@
+2011-12-07  Balazs Kelemen  <kbalazs@webkit.org>
+
+        ShareableBitmapGtk.cpp has no reason to exist
+        https://bugs.webkit.org/show_bug.cgi?id=74011
+
+        Reviewed by Martin Robinson.
+
+        Remove this file since the real implementation is
+        exists in ShareableBitmapCairo.cpp.
+
+        * Shared/gtk/ShareableBitmapGtk.cpp: Removed.
+
 2011-12-07  Mary Wu  <mary.wu@torchmobile.com.cn>
 
         Change function name InitializeLoggingChannelsIfNecessary to follow coding style guideline
