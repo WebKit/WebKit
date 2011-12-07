@@ -540,6 +540,10 @@ void BuiltInPDFView::windowVisibilityChanged(bool)
 {
 }
 
+void BuiltInPDFView::contentsScaleFactorChanged(float)
+{
+}
+
 uint64_t BuiltInPDFView::pluginComplexTextInputIdentifier() const
 {
     return 0;

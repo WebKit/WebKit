@@ -28,14 +28,18 @@ function runTest()
     document.body.appendChild(plugin1);
     
     shouldBe("plugin1.contentsScaleFactor", "1.0");
+    shouldBe("plugin1.cachedContentsScaleFactor", "1.0");
 
     // Now change the backing scale factor.
     layoutTestController.setBackingScaleFactor(2, function() {
+        shouldBe("plugin1.contentsScaleFactor", "2.0");
+        shouldBe("plugin1.cachedContentsScaleFactor", "2.0");
     
         plugin2 = createTestPlugin('contents-scale-factor');
         document.body.appendChild(plugin2);
     
         shouldBe("plugin2.contentsScaleFactor", "2.0");
+        shouldBe("plugin2.cachedContentsScaleFactor", "2.0");
 
         layoutTestController.notifyDone();
     });
