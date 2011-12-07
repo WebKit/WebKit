@@ -266,7 +266,7 @@ After changing grandparent's 'color' and the parent's 'font-size' inherited prop
 
 After changing the parent's 'display' property to 'block', so that the child gets a renderer:
     height: 100px
-    margin-left: 385px
+    margin-left: 384px
     width: 384px
 
 After changing the parent's 'display' property back to 'none':
