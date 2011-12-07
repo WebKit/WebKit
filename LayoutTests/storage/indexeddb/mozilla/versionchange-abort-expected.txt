@@ -1,0 +1,23 @@
+Test IndexedDB's aborting setVersion
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB;
+PASS indexedDB == null is false
+indexedDB.open(name, description)
+db = event.target.result
+initialVersion = db.version;
+request = db.setVersion('2')
+Deleted all object stores.
+objectStore = db.createObjectStore('foo');
+PASS db.objectStoreNames.length is 1
+index = objectStore.createIndex('bar', 'baz');
+PASS objectStore.indexNames.length is 1
+event.target.transaction.abort();
+PASS db.version is initialVersion
+PASS db.objectStoreNames.length is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
