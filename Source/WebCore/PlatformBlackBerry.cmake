@@ -86,7 +86,6 @@ LIST(APPEND WebCore_SOURCES
 # Networking sources
 LIST(APPEND WebCore_SOURCES
     platform/network/ProxyServer.cpp
-    platform/network/blackberry/AboutData.cpp
     platform/network/blackberry/DeferredData.cpp
     platform/network/blackberry/MultipartResponseDelegate.cpp
     platform/network/blackberry/NetworkJob.cpp
@@ -181,7 +180,6 @@ LIST(APPEND WebCore_SOURCES
     platform/image-decoders/ico/ICOImageDecoder.cpp
     platform/image-decoders/png/PNGImageDecoder.cpp
     platform/image-encoders/JPEGImageEncoder.cpp
-    platform/network/blackberry/AboutData.cpp
     platform/network/blackberry/MultipartResponseDelegate.cpp
     platform/network/blackberry/NetworkManager.cpp
     platform/network/blackberry/NetworkStateNotifierBlackBerry.cpp

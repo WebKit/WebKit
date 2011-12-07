@@ -46,6 +46,7 @@ LIST(APPEND WebKit_SOURCES
     blackberry/Api/WebPage.cpp
     blackberry/Api/WebPageGroupLoadDeferrer.cpp
     blackberry/Api/WebSettings.cpp
+    blackberry/WebCoreSupport/AboutData.cpp
     blackberry/WebCoreSupport/CacheClientBlackBerry.cpp
     blackberry/WebCoreSupport/ChromeClientBlackBerry.cpp
     blackberry/WebCoreSupport/ClientExtension.cpp
@@ -190,4 +191,28 @@ ADD_CUSTOM_TARGET (
     COMMAND cat ${JS_FILES} > ${DERIVED_SOURCES_WEBCORE_DIR}/javascript.js
     DEPENDS ${WebCore_LIBRARY_NAME}
     COMMENT "Web Inspector resources building..."
+)
+
+# Generate contents for AboutData.cpp
+ADD_CUSTOM_COMMAND(
+    OUTPUT ${DERIVED_SOURCES_WEBCORE_DIR}/AboutDataHaveFeatures.cpp
+    MAIN_DEPENDENCY ${WEBKIT_DIR}/blackberry/WebCoreSupport/AboutDataHaveFeatures.in ${WEBKIT_DIR}/blackberry/WebCoreSupport/generateAboutDataFeatures.pl
+    COMMAND ${PERL_EXECUTABLE} ${WEBKIT_DIR}/blackberry/WebCoreSupport/generateAboutDataFeatures.pl HAVE ${WEBKIT_DIR}/blackberry/WebCoreSupport/AboutDataHaveFeatures.in ${DERIVED_SOURCES_WEBCORE_DIR}/AboutDataHaveFeatures.cpp
+)
+
+ADD_CUSTOM_COMMAND(
+    OUTPUT ${DERIVED_SOURCES_WEBCORE_DIR}/AboutDataEnableFeatures.cpp
+    MAIN_DEPENDENCY ${WEBKIT_DIR}/blackberry/WebCoreSupport/AboutDataEnableFeatures.in ${WEBKIT_DIR}/blackberry/WebCoreSupport/generateAboutDataFeatures.pl
+    COMMAND ${PERL_EXECUTABLE} ${WEBKIT_DIR}/blackberry/WebCoreSupport/generateAboutDataFeatures.pl ENABLE ${WEBKIT_DIR}/blackberry/WebCoreSupport/AboutDataEnableFeatures.in ${DERIVED_SOURCES_WEBCORE_DIR}/AboutDataEnableFeatures.cpp
+)
+
+ADD_CUSTOM_COMMAND(
+    OUTPUT ${DERIVED_SOURCES_WEBCORE_DIR}/AboutDataUseFeatures.cpp
+    MAIN_DEPENDENCY ${WEBKIT_DIR}/blackberry/WebCoreSupport/AboutDataUseFeatures.in ${WEBKIT_DIR}/blackberry/WebCoreSupport/generateAboutDataFeatures.pl
+    COMMAND ${PERL_EXECUTABLE} ${WEBKIT_DIR}/blackberry/WebCoreSupport/generateAboutDataFeatures.pl USE ${WEBKIT_DIR}/blackberry/WebCoreSupport/AboutDataUseFeatures.in ${DERIVED_SOURCES_WEBCORE_DIR}/AboutDataUseFeatures.cpp
+)
+
+ADD_CUSTOM_TARGET(
+    aboutFeatures ALL
+    DEPENDS ${DERIVED_SOURCES_WEBCORE_DIR}/AboutDataHaveFeatures.cpp ${DERIVED_SOURCES_WEBCORE_DIR}/AboutDataEnableFeatures.cpp ${DERIVED_SOURCES_WEBCORE_DIR}/AboutDataUseFeatures.cpp
 )

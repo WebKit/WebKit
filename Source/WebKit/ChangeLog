@@ -1,3 +1,22 @@
+2011-12-06  Leo Yang  <leo.yang@torchmobile.com.cn>
+
+        Upstream about: feature in WebKit/blackberry/WebCoreSupport/
+        https://bugs.webkit.org/show_bug.cgi?id=73612
+
+        Reviewed by Antonio Gomes.
+
+        * blackberry/CMakeListsBlackBerry.txt:
+        * blackberry/WebCoreSupport/AboutData.cpp: Added.
+        (WebCore::numberToHTMLTr):
+        (WebCore::configPage):
+        (WebCore::cacheTypeStatisticToHTMLTr):
+        (WebCore::memoryPage):
+        * blackberry/WebCoreSupport/AboutData.h: Added.
+        * blackberry/WebCoreSupport/AboutDataEnableFeatures.in: Added.
+        * blackberry/WebCoreSupport/AboutDataHaveFeatures.in: Added.
+        * blackberry/WebCoreSupport/AboutDataUseFeatures.in: Added.
+        * blackberry/WebCoreSupport/generateAboutDataFeatures.pl: Added.
+
 2011-12-01  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL] Cleanup includes to reduce code complexity.

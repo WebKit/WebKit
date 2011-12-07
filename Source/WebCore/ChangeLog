@@ -1,3 +1,13 @@
+2011-12-06  Leo Yang  <leo.yang@torchmobile.com.cn>
+
+        Upstream about: feature in WebKit/blackberry/WebCoreSupport/
+        https://bugs.webkit.org/show_bug.cgi?id=73612
+
+        Reviewed by Antonio Gomes.
+
+        * PlatformBlackBerry.cmake: Move platform/network/blackberry/AboutData.{h, cpp}
+                                    to WebKit/blackberry/WebCoreSupport
+
 2011-12-06  Benjamin Poulain  <bpoulain@apple.com>
 
         WebKit Mac does not build without CONTEXT MENU
