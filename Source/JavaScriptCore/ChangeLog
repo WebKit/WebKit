@@ -1,3 +1,14 @@
+2011-12-06  Sam Weinig  <sam@webkit.org>
+
+        Remove unintentional type name shadowing in the Interpreter
+        https://bugs.webkit.org/show_bug.cgi?id=73963
+
+        Reviewed by Oliver Hunt.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::prepareForRepeatCall): Replace the parameter name FunctionExecutable,
+        which shadows the FunctionExecutable type name, with functionExecutable.
+
 2011-12-06  Michael Saboff  <msaboff@apple.com>
 
         r102146 from 73875 broke fast/js/encode-URI-test.html

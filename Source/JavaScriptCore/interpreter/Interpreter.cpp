@@ -1215,7 +1215,7 @@ JSObject* Interpreter::executeConstruct(CallFrame* callFrame, JSObject* construc
     return checkedReturn(asObject(result));
 }
 
-CallFrameClosure Interpreter::prepareForRepeatCall(FunctionExecutable* FunctionExecutable, CallFrame* callFrame, JSFunction* function, int argumentCountIncludingThis, ScopeChainNode* scopeChain)
+CallFrameClosure Interpreter::prepareForRepeatCall(FunctionExecutable* functionExecutable, CallFrame* callFrame, JSFunction* function, int argumentCountIncludingThis, ScopeChainNode* scopeChain)
 {
     ASSERT(!scopeChain->globalData->exception);
     
@@ -1238,13 +1238,13 @@ CallFrameClosure Interpreter::prepareForRepeatCall(FunctionExecutable* FunctionE
     for (int i = 0; i < argumentCountIncludingThis; ++i)
         newCallFrame->uncheckedR(dst++) = jsUndefined();
     
-    JSObject* error = FunctionExecutable->compileForCall(callFrame, scopeChain);
+    JSObject* error = functionExecutable->compileForCall(callFrame, scopeChain);
     if (error) {
         throwError(callFrame, error);
         m_registerFile.shrink(oldEnd);
         return CallFrameClosure();
     }
-    CodeBlock* codeBlock = &FunctionExecutable->generatedBytecodeForCall();
+    CodeBlock* codeBlock = &functionExecutable->generatedBytecodeForCall();
 
     newCallFrame = slideRegisterWindowForCall(codeBlock, &m_registerFile, newCallFrame, argumentCountIncludingThis + RegisterFile::CallFrameHeaderSize, argumentCountIncludingThis);
     if (UNLIKELY(!newCallFrame)) {
@@ -1254,7 +1254,7 @@ CallFrameClosure Interpreter::prepareForRepeatCall(FunctionExecutable* FunctionE
     }
     newCallFrame->init(codeBlock, 0, scopeChain, callFrame->addHostCallFrameFlag(), argumentCountIncludingThis, function);  
     scopeChain->globalData->topCallFrame = newCallFrame;
-    CallFrameClosure result = { callFrame, newCallFrame, function, FunctionExecutable, scopeChain->globalData, oldEnd, scopeChain, codeBlock->m_numParameters, argumentCountIncludingThis };
+    CallFrameClosure result = { callFrame, newCallFrame, function, functionExecutable, scopeChain->globalData, oldEnd, scopeChain, codeBlock->m_numParameters, argumentCountIncludingThis };
     return result;
 }
 
