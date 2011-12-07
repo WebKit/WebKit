@@ -1,5 +1,16 @@
 2011-12-07  Lucas Forschler  <lforschler@apple.com>
 
+    Merge 98437
+
+    2011-10-25  Ryosuke Niwa  <rniwa@webkit.org>
+
+            C/C++ needs ; after each statement.
+
+            * PluginProcess/PluginControllerProxy.cpp:
+            (WebKit::PluginControllerProxy::geometryDidChange):
+
+2011-12-07  Lucas Forschler  <lforschler@apple.com>
+
     Merge 98435
 
     2011-10-25  Ryosuke Niwa  <rniwa@webkit.org>

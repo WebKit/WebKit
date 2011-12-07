@@ -455,7 +455,7 @@ void PluginControllerProxy::geometryDidChange(const IntRect& frameRect, const In
         m_plugin->contentsScaleFactorChanged(m_contentsScaleFactor);
     }
 #else
-    UNUSED_PARAM(contentsScaleFactor)
+    UNUSED_PARAM(contentsScaleFactor);
 #endif
 
     platformGeometryDidChange();
