@@ -50,7 +50,7 @@
             }
         </script>
     </head>
-    <body>
+    <body onload="enableAllTextTracks()">
         <p>Tests that line terminators \r, \n, or \r\n are properly parsed, even when there is no newline at eof.</p>
         <video>
             <track src="captions-webvtt/tc003-newlines.vtt" onload="trackLoaded()">

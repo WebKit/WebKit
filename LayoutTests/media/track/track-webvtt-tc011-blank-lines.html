@@ -64,7 +64,7 @@
             }
         </script>
     </head>
-    <body>
+    <body onload="enableAllTextTracks()">
     <p>Tests that cues are not affected by multiple newlines \n, \r, and \r\n and that cue not properly separated are treated as one big cue.</p>
         <video>
             <track src="captions-webvtt/tc011-cues.vtt" onload="trackLoaded()">

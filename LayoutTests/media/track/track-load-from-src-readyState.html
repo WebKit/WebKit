@@ -24,6 +24,7 @@
             testExpected("track.readyState", HTMLTrackElement.NONE);
             track.addEventListener("load", function () { trackLoaded(); }, true);
             track.src = "captions-webvtt/tc004-webvtt-file.vtt";   
+            track.mode = TextTrack.HIDDEN;
 
         </script>
     </body>

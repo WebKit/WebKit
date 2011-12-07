@@ -64,7 +64,7 @@
             }
         </script>
     </head>
-    <body>
+    <body onload="enableAllTextTracks()">
         <p>Tests cue timings that do not contain hours (they are optional), and tests various syntax errors in timings without hours.</p>
         <video>
             <track src="captions-webvtt/tc008-timings-no-hour.vtt" onload="trackLoaded()">

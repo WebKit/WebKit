@@ -65,7 +65,7 @@
             }
         </script>
     </head>
-    <body>
+    <body onload="enableAllTextTracks()">
         <p>Tests that any text other than "-->" is recognized as optional cue identifier.</p>
         <video>
             <track src="captions-webvtt/tc006-cue-id.vtt" onload="trackLoaded()">

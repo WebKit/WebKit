@@ -65,7 +65,7 @@
             }
         </script>
     </head>
-    <body>
+    <body onload="enableAllTextTracks()">
         <p>Tests empty cue identifiers (they are optional), but makes sure "-->" found leads to discarded cue.</p>
         <video>
             <track src="captions-webvtt/tc007-cue-no-id.vtt" onload="trackLoaded()">

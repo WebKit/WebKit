@@ -20,8 +20,6 @@
             
             function testTrack(i)
             {
-                findMediaElement();
-                
                 var expected = 
                 {
                     length : 2,
@@ -51,7 +49,7 @@
             }
         </script>
     </head>
-    <body>
+    <body onload="enableAllTextTracks()">
         <p>Tests that the optional comment area under the "WEBVTT" file header is properly ignored.  Also, default settings and styling are currently ignored (treated as faulty cues).</p>
         <video>
             <track src="captions-webvtt/tc005-default-styles.vtt" onload="trackLoaded()">

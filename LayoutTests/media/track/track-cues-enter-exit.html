@@ -5,12 +5,7 @@
 
         <script src=../media-file.js></script>
         <script src=../video-test.js></script>
-    </head>
-    <body>
-        <p>Tests that TextTrack's cues are indexed and updated in order during video playback. Test uses the enter and exits events on TextTrackCue.</p>
-        <video controls>
-            <track id="testTrack" src="captions-webvtt/cues-chrono-order.vtt" kind="captions" onload="loaded()">
-        </video>
+
         <script>            
 
         var cueCount = 0;
@@ -71,9 +66,17 @@
             attemptTests();
         }
 
-        findMediaElement();
-        video.src = findMediaFile("video", "../content/test");
-        
+        function start()
+        {
+            findMediaElement();
+            video.src = findMediaFile("video", "../content/test");
+        }
         </script>
+    </head>
+    <body onload="start()">
+        <p>Tests that TextTrack's cues are indexed and updated in order during video playback. Test uses the enter and exits events on TextTrackCue.</p>
+        <video controls>
+            <track id="testTrack" src="captions-webvtt/cues-chrono-order.vtt" kind="captions" onload="loaded()" default>
+        </video>
     </body>
 </html>

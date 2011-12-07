@@ -5,12 +5,7 @@
 
         <script src=../media-file.js></script>
         <script src=../video-test.js></script>
-    </head>
-    <body>
-        <p>Tests TextTrack's activeCues are indexed and updated during video playback.</p>
-        <video controls>
-            <track id="testTrack" src="captions-webvtt/cues-overlapping.vtt" kind="subtitles" onload="loaded()">
-        </video>
+
         <script>            
             
         var seekedCount = 0;
@@ -47,7 +42,7 @@
                 endTest();
         }
     
-        waitForEvent('seeked', seeked );
+        waitForEvent('seeked', seeked);
 
         waitForEvent('canplaythrough',
             function () 
@@ -63,9 +58,17 @@
             attemptTests();
         }
 
-        findMediaElement();
-        video.src = findMediaFile("video", "../content/test");
-        
+        function start()
+        {
+            findMediaElement();
+            video.src = findMediaFile("video", "../content/test");
+        }
         </script>
+    </head>
+    <body onload="start()">
+        <p>Tests TextTrack's activeCues are indexed and updated during video playback.</p>
+        <video controls>
+            <track id="testTrack" src="captions-webvtt/cues-overlapping.vtt" kind="subtitles" onload="loaded()" default>
+        </video>
     </body>
 </html>

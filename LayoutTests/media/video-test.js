@@ -254,7 +254,7 @@ function testTracks(expected)
     tracks = video.textTracks;
     testExpected("tracks.length", expected.length);
 
-    for (i = 0; i < tracks.length; i++) {
+    for (var i = 0; i < tracks.length; i++) {
         consoleWrite("<br>*** Testing text track " + i);
 
         track = tracks[i];
@@ -271,7 +271,7 @@ function testCues(index, expected)
 
     cues = video.textTracks[index].cues;
     testExpected("cues.length", expected.length);
-    for (i = 0; i < cues.length; i++) {
+    for (var i = 0; i < cues.length; i++) {
         for (j = 0; j < expected.tests.length; j++) {
             var test = expected.tests[j];
             testExpected("cues[" + i + "]." + test.property, test.values[i]);
@@ -284,4 +284,13 @@ function allTestsEnded()
     numberOfTrackTests--;
     if (numberOfTrackTests == 0)
         endTest();
+}
+
+function enableAllTextTracks()
+{
+    findMediaElement();
+    for (var i = 0; i < video.textTracks.length; i++) {
+        if (video.textTracks[i].mode == TextTrack.DISABLED)
+            video.textTracks[i].mode = TextTrack.HIDDEN;
+    }
 }
