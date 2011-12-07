@@ -1858,3 +1858,14 @@ fast/multicol/pagination-v-vertical-lr.html5lib
 # [Qt][WK2] fast/forms/access-key-for-all-elements.html fails
 # https://bugs.webkit.org/show_bug.cgi?id=73917
 fast/forms/access-key-for-all-elements.html
+
+# [Qt][WK2] REGRESSION(102228): lot of test failures after enabled page cache
+# https://bugs.webkit.org/show_bug.cgi?id=73999
+fast/forms/state-restore-radio-group.html
+fast/forms/state-restore-to-non-autocomplete-form.html
+fast/forms/state-restore-to-non-edited-controls.html
+fast/forms/state-save-of-detached-control.html
+fast/history/history-back-initial-vs-final-url.html
+http/tests/history/back-to-post.php
+http/tests/navigation/post-frames-goback1.html
+http/tests/navigation/postredirect-frames-goback1.html
