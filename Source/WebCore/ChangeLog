@@ -1,3 +1,16 @@
+2011-12-06  Mary Wu  <mary.wu@torchmobile.com.cn>
+
+        upstream BlackBerry porting of KURL/Logging
+        https://bugs.webkit.org/show_bug.cgi?id=73524
+
+        Reviewed by Antonio Gomes.
+
+        * platform/blackberry/KURLBlackBerry.cpp: Added.
+        (WebCore::KURL::fileSystemPath):
+        * platform/blackberry/LoggingBlackBerry.cpp: Added.
+        (WebCore::initializeWithUserDefault):
+        (WebCore::InitializeLoggingChannelsIfNecessary):
+
 2011-12-06  Leo Yang  <leo.yang@torchmobile.com.cn>
 
         [BlackBerry] Remove redundant files in PlatformBlackBerry.cmake
