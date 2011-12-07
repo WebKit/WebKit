@@ -882,10 +882,7 @@ PassRefPtr<WebImage> WebPage::snapshotInViewCoordinates(const IntRect& rect, Ima
         return 0;
     
     OwnPtr<WebCore::GraphicsContext> graphicsContext = snapshot->bitmap()->createGraphicsContext();
-    graphicsContext->scale(FloatSize(deviceScaleFactor, deviceScaleFactor));
-#if USE(CG)
-    graphicsContext->setBaseCTM(graphicsContext->getCTM());
-#endif
+    graphicsContext->applyDeviceScaleFactor(deviceScaleFactor);
     graphicsContext->translate(-rect.x(), -rect.y());
 
     frameView->updateLayoutAndStyleIfNeededRecursive();
@@ -911,10 +908,7 @@ PassRefPtr<WebImage> WebPage::scaledSnapshotInDocumentCoordinates(const IntRect&
         return 0;
 
     OwnPtr<WebCore::GraphicsContext> graphicsContext = snapshot->bitmap()->createGraphicsContext();
-    graphicsContext->scale(FloatSize(combinedScaleFactor, combinedScaleFactor));
-#if USE(CG)
-    graphicsContext->setBaseCTM(graphicsContext->getCTM());
-#endif
+    graphicsContext->applyDeviceScaleFactor(combinedScaleFactor);
     graphicsContext->translate(-rect.x(), -rect.y());
 
     frameView->updateLayoutAndStyleIfNeededRecursive();

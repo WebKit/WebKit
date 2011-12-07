@@ -276,7 +276,6 @@ namespace WebCore {
 
         void setIsAcceleratedContext(bool);
         bool isAcceleratedContext() const;
-        void setBaseCTM(const AffineTransform&);
 #endif
 
         void save();
@@ -416,6 +415,11 @@ namespace WebCore {
         void concatCTM(const AffineTransform&);
         void setCTM(const AffineTransform&);
         AffineTransform getCTM() const;
+
+        // This function applies the device scale factor to the context, making the context capable of
+        // acting as a base-level context for a HiDPI environment.
+        void applyDeviceScaleFactor(float);
+        void platformApplyDeviceScaleFactor();
 
 #if OS(WINCE) && !PLATFORM(QT)
         void setBitmap(PassRefPtr<SharedBitmap>);

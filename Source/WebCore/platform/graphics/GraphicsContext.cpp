@@ -740,4 +740,16 @@ void GraphicsContext::adjustLineToPixelBoundaries(FloatPoint& p1, FloatPoint& p2
     }
 }
 
+#if !USE(CG)
+void GraphicsContext::platformApplyDeviceScaleFactor()
+{
+}
+#endif
+
+void GraphicsContext::applyDeviceScaleFactor(float deviceScaleFactor)
+{
+    scale(FloatSize(deviceScaleFactor, deviceScaleFactor));
+    platformApplyDeviceScaleFactor();
+}
+
 }
