@@ -44,6 +44,8 @@
 #include "InspectorDOMDebuggerAgent.h"
 #include "InspectorCSSAgent.h"
 #include "InspectorConsoleAgent.h"
+#include "InspectorController.h"
+#include "WorkerInspectorController.h"
 #include "InspectorDatabaseAgent.h"
 #include "InspectorDOMAgent.h"
 #include "InspectorDOMStorageAgent.h"
@@ -873,6 +875,25 @@ bool InspectorInstrumentation::collectingHTMLParseErrors(InstrumentingAgents* in
     if (InspectorAgent* inspectorAgent = instrumentingAgents->inspectorAgent())
         return inspectorAgent->hasFrontend();
     return false;
+}
+
+bool InspectorInstrumentation::hasFrontendForScriptContext(ScriptExecutionContext* scriptExecutionContext)
+{
+    if (!scriptExecutionContext)
+        return false;
+
+#if ENABLE(WORKERS)
+    if (scriptExecutionContext->isWorkerContext()) {
+        WorkerContext* workerContext = static_cast<WorkerContext*>(scriptExecutionContext);
+        WorkerInspectorController* workerInspectorController = workerContext->workerInspectorController();
+        return workerInspectorController && workerInspectorController->hasFrontend();
+    }
+#endif
+
+    ASSERT(scriptExecutionContext->isDocument());
+    Document* document = static_cast<Document*>(scriptExecutionContext);
+    Page* page = document->page();
+    return page && page->inspectorController()->hasFrontend();
 }
 
 void InspectorInstrumentation::pauseOnNativeEventIfNeeded(InstrumentingAgents* instrumentingAgents, const String& categoryType, const String& eventName, bool synchronous)
