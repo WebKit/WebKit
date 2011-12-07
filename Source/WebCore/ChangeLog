@@ -1,3 +1,19 @@
+2011-12-06  Benjamin Poulain  <bpoulain@apple.com>
+
+        WebKit Mac does not build without CONTEXT MENU
+        https://bugs.webkit.org/show_bug.cgi?id=73962
+
+        Reviewed by Pavel Feldman.
+
+        In the patch r100903, the symbols were exported under ENABLE(CONTEXT_MENUS)
+        because the feature is triggered from the menus.
+
+        The implementation has no dependency on the context menu but is necessary to build
+        when the inspector is enabled.
+        This patch moves the exported symbols from ENABLE(CONTEXT_MENUS) to ENABLE(INSPECTOR).
+
+        * WebCore.exp.in:
+
 2011-12-06  Adrienne Walker  <enne@google.com>
 
         [chromium] setNeedsCommit on non-composited host layers should trigger commit
