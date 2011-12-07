@@ -45,7 +45,6 @@ using namespace std;
 
 namespace WebCore {
 
-#if ENABLE(MUTATION_OBSERVERS)
 namespace {
 
 class StyleAttributeMutationScope {
@@ -63,6 +62,7 @@ public:
         ASSERT(!s_currentDecl);
         s_currentDecl = decl;
 
+#if ENABLE(MUTATION_OBSERVERS)
         if (!s_currentDecl->isInlineStyleDeclaration())
             return;
 
@@ -75,6 +75,7 @@ public:
 
         AtomicString oldValue = m_mutationRecipients->isOldValueRequested() ? inlineDecl->element()->getAttribute(HTMLNames::styleAttr) : nullAtom;
         m_mutation = MutationRecord::createAttributes(inlineDecl->element(), HTMLNames::styleAttr, oldValue);
+#endif
     }
 
     ~StyleAttributeMutationScope()
@@ -83,31 +84,57 @@ public:
         if (s_scopeCount)
             return;
 
-        s_currentDecl = 0;
+#if ENABLE(MUTATION_OBSERVERS)
         if (m_mutation && s_shouldDeliver)
             m_mutationRecipients->enqueueMutationRecord(m_mutation);
+        s_shouldDeliver = false;
+#endif
+
+        if (!s_shouldNotifyInspector) {
+            s_currentDecl = 0;
+            return;
+        }
+
+        CSSInlineStyleDeclaration* inlineDecl = toCSSInlineStyleDeclaration(s_currentDecl);
+        s_currentDecl = 0;
+        s_shouldNotifyInspector = false;
+        if (inlineDecl->element()->document())
+            InspectorInstrumentation::didInvalidateStyleAttr(inlineDecl->element()->document(), inlineDecl->element());
     }
 
+#if ENABLE(MUTATION_OBSERVERS)
     void enqueueMutationRecord()
     {
         s_shouldDeliver = true;
+    }
+#endif
+
+    void didInvalidateStyleAttr()
+    {
+        ASSERT(s_currentDecl->isInlineStyleDeclaration());
+        s_shouldNotifyInspector = true;
     }
 
 private:
     static unsigned s_scopeCount;
     static CSSMutableStyleDeclaration* s_currentDecl;
+    static bool s_shouldNotifyInspector;
+#if ENABLE(MUTATION_OBSERVERS)
     static bool s_shouldDeliver;
 
     OwnPtr<MutationObserverInterestGroup> m_mutationRecipients;
     RefPtr<MutationRecord> m_mutation;
+#endif
 };
 
 unsigned StyleAttributeMutationScope::s_scopeCount = 0;
 CSSMutableStyleDeclaration* StyleAttributeMutationScope::s_currentDecl = 0;
+bool StyleAttributeMutationScope::s_shouldNotifyInspector = false;
+#if ENABLE(MUTATION_OBSERVERS)
 bool StyleAttributeMutationScope::s_shouldDeliver = false;
+#endif
 
 } // namespace
-#endif // ENABLE(MUTATION_OBSERVERS)
 
 CSSMutableStyleDeclaration::CSSMutableStyleDeclaration()
     : CSSStyleDeclaration(0)
@@ -620,8 +647,7 @@ void CSSMutableStyleDeclaration::setNeedsStyleRecalc()
         else {
             element->setNeedsStyleRecalc(InlineStyleChange);
             element->invalidateStyleAttribute();
-            if (Document* document = element->document())
-                InspectorInstrumentation::didInvalidateStyleAttr(document, element);
+            StyleAttributeMutationScope(this).didInvalidateStyleAttr();
         }
         return;
     }

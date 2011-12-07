@@ -652,7 +652,7 @@ function testAttributeFilterNonHTMLDocument() {
 }
 
 function testStyleAttributePropertyAccess() {
-    var svgDoc, div, path;
+    var div, path;
     var observer;
 
     function start() {
@@ -704,7 +704,7 @@ function testStyleAttributePropertyAccess() {
 }
 
 function testStyleAttributePropertyAccessOldValue() {
-    var svgDoc, div, path;
+    var div, path;
     var observer;
 
     function start() {
@@ -755,6 +755,37 @@ function testStyleAttributePropertyAccessOldValue() {
     start();
 }
 
+function testStyleAttributePropertyAccessIgnoreNoop() {
+    var div, path;
+    var observer;
+
+    function start() {
+        debug('Testing that a no-op style property mutation does not create Mutation Records.');
+
+        mutations = null;
+        observer = new WebKitMutationObserver(function(m) {
+            mutations = m;
+        });
+
+        div = document.createElement('div');
+        div.setAttribute('style', 'color: yellow; width: 100px; ');
+        observer.observe(div, { attributes: true });
+        div.style.removeProperty('height');
+
+        setTimeout(finish, 0);
+    }
+
+    function finish() {
+        shouldBe('mutations', 'null');
+
+        observer.disconnect();
+        debug('');
+        runNextTest();
+    }
+
+    start();
+}
+
 var tests = [
     testBasic,
     testWrongType,
@@ -772,7 +803,8 @@ var tests = [
     testAttributeFilterNonHTMLElement,
     testAttributeFilterNonHTMLDocument,
     testStyleAttributePropertyAccess,
-    testStyleAttributePropertyAccessOldValue
+    testStyleAttributePropertyAccessOldValue,
+    testStyleAttributePropertyAccessIgnoreNoop
 ];
 var testIndex = 0;
 

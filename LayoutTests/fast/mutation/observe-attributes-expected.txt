@@ -186,6 +186,9 @@ PASS mutations[2].oldValue is "color: red; width: 200px; "
 ...mutation record created.
 PASS mutations is null
 
+Testing that a no-op style property mutation does not create Mutation Records.
+PASS mutations is null
+
 PASS successfullyParsed is true
 
 TEST COMPLETE

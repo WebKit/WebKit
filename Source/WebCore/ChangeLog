@@ -1,3 +1,24 @@
+2011-12-07  Adam Klein  <adamk@chromium.org>
+
+        Layout Test inspector/debugger/dom-breakpoints.html fails on chromium linux debug with ENABLE(MUTATION_OBSERVERS)
+        https://bugs.webkit.org/show_bug.cgi?id=73919
+
+        Reviewed by Ojan Vafai.
+
+        Use StyleAttributeMutationScope to manage DOM breakpoints for style property changes.
+
+        Instead of calling InspectorInstrumentation::didInvalidateStyleAttr()
+        directly in setNeedsStyleRecalc, set a bool in the current
+        StyleAttributeMutationScope, and delay the call until the scope's
+        counter runs down to zero. This keeps the inspector JS from re-entering
+        CSSMutableStyleDeclaration until all StyleAttributeMutationScope work is done.
+
+        Also fix a small bug in StyleAttributeMutationScope, where
+        s_shouldDeliver wasn't getting reset properly to false.
+
+        * css/CSSMutableStyleDeclaration.cpp:
+        (WebCore::CSSMutableStyleDeclaration::setNeedsStyleRecalc):
+
 2011-12-07  Ken Buchanan <kenrb@chromium.org>
 
         Crash from multicol spans with layers
