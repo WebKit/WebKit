@@ -1,5 +1,19 @@
 2011-12-07  Andreas Kling  <kling@webkit.org>
 
+        Micro-optimize ScrollView::visibleContentRect().
+        <http://webkit.org/b/74001>
+
+        Reviewed by Anders Carlsson.
+
+        Reorder the scrollbar exclusion code to minimize the number of virtual calls
+        to ScrollableArea::verticalScrollbar(), ScrollableArea::horizontalScrollbar()
+        and Scrollbar::isOverlayScrollbar().
+
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::visibleContentRect):
+
+2011-12-07  Andreas Kling  <kling@webkit.org>
+
         ApplyPropertyBorderImage: Remove unneeded template argument for mapNinePieceImage().
         <http://webkit.org/b/73998>
 

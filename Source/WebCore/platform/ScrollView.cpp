@@ -231,10 +231,15 @@ IntRect ScrollView::visibleContentRect(bool includeScrollbars) const
     if (!m_fixedVisibleContentRect.isEmpty())
         return m_fixedVisibleContentRect;
 
-    int verticalScrollbarWidth = verticalScrollbar() && !verticalScrollbar()->isOverlayScrollbar()
-        && !includeScrollbars ? verticalScrollbar()->width() : 0;
-    int horizontalScrollbarHeight = horizontalScrollbar() && !horizontalScrollbar()->isOverlayScrollbar()
-        && !includeScrollbars ? horizontalScrollbar()->height() : 0;
+    int verticalScrollbarWidth = 0;
+    int horizontalScrollbarHeight = 0;
+
+    if (!includeScrollbars) {
+        if (Scrollbar* verticalBar = verticalScrollbar())
+            verticalScrollbarWidth = !verticalBar->isOverlayScrollbar() ? verticalBar->width() : 0;
+        if (Scrollbar* horizontalBar = horizontalScrollbar())
+            horizontalScrollbarHeight = !horizontalBar->isOverlayScrollbar() ? horizontalBar->height() : 0;
+    }
 
     return IntRect(m_scrollOffset.width(),
                    m_scrollOffset.height(),
