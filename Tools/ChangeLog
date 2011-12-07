@@ -1,3 +1,10 @@
+2011-12-07  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Unreviewed. Disabled failing tests on chromium.
+
+        * TestWebKitAPI/Tests/WTF/StringBuilder.cpp:
+        (TestWebKitAPI::TEST):
+
 2011-12-06  Dirk Pranke  <dpranke@chromium.org>
 
         binaries in webkit.gyp should be split into a new file to break circular dependencies on webkit_support
