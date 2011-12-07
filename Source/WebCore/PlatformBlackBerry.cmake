@@ -180,11 +180,6 @@ LIST(APPEND WebCore_SOURCES
     platform/image-decoders/ico/ICOImageDecoder.cpp
     platform/image-decoders/png/PNGImageDecoder.cpp
     platform/image-encoders/JPEGImageEncoder.cpp
-    platform/network/blackberry/MultipartResponseDelegate.cpp
-    platform/network/blackberry/NetworkManager.cpp
-    platform/network/blackberry/NetworkStateNotifierBlackBerry.cpp
-    platform/network/blackberry/ResourceErrorBlackBerry.cpp
-    platform/network/blackberry/ResourceRequestBlackBerry.cpp
     platform/text/blackberry/StringBlackBerry.cpp
 )
 
