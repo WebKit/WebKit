@@ -1,3 +1,16 @@
+2011-12-07  Peter Beverloo  <peter@chromium.org>
+
+        [Chromium] Fix project file generation for the Android bot after r102201
+        https://bugs.webkit.org/show_bug.cgi?id=73996
+
+        The gyp refactoring in r102201 was didn't explicitly exclude
+        the Android operating system in Tools/Tools.gyp, which broke
+        as gcc_version is not defined for that configuration.
+
+        Reviewed by Andreas Kling.
+
+        * Tools.gyp:
+
 2011-12-07  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Unreviewed. Disabled failing tests on chromium.

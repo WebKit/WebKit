@@ -374,7 +374,7 @@
                         },
                     }],
                 }],
-                ['os_posix==1 and OS!="mac" and gcc_version==46', {
+                ['os_posix==1 and OS!="mac" and OS!="android" and gcc_version==46', {
                     'target_defaults': {
                         # Disable warnings about c++0x compatibility, as some names (such
                         # as nullptr) conflict with upcoming c++0x types.
