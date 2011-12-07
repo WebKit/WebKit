@@ -330,11 +330,12 @@ private:
     void mapAnimationProperty(Animation*, CSSValue*);
     void mapAnimationTimingFunction(Animation*, CSSValue*);
 
+public:
     void mapNinePieceImage(CSSPropertyID, CSSValue*, NinePieceImage&);
     void mapNinePieceImageSlice(CSSValue*, NinePieceImage&);
     LengthBox mapNinePieceImageQuad(CSSValue*);
     void mapNinePieceImageRepeat(CSSValue*, NinePieceImage&);
-
+private:
     bool canShareStyleWithControl(StyledElement*) const;
 
     void applyProperty(int id, CSSValue*);

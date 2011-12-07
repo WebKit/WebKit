@@ -631,6 +631,80 @@ public:
     }
 };
 
+enum BorderImageModifierType { Outset, Repeat, Slice, Width };
+template <BorderImageType type, BorderImageModifierType modifier>
+class ApplyPropertyBorderImageModifier {
+private:
+    static inline const NinePieceImage& getValue(RenderStyle* style) { return type == Image ? style->borderImage() : style->maskBoxImage(); }
+    static inline void setValue(RenderStyle* style, const NinePieceImage& value) { return type == Image ? style->setBorderImage(value) : style->setMaskBoxImage(value); }
+public:
+    static void applyInheritValue(CSSStyleSelector* selector)
+    {
+        NinePieceImage image(getValue(selector->style()));
+        switch (modifier) {
+        case Outset:
+            image.copyOutsetFrom(getValue(selector->parentStyle()));
+            break;
+        case Repeat:
+            image.copyRepeatFrom(getValue(selector->parentStyle()));
+            break;
+        case Slice:
+            image.copyImageSlicesFrom(getValue(selector->parentStyle()));
+            break;
+        case Width:
+            image.copyBorderSlicesFrom(getValue(selector->parentStyle()));
+            break;
+        }
+        setValue(selector->style(), image);
+    }
+
+    static void applyInitialValue(CSSStyleSelector* selector)
+    {
+        NinePieceImage image(getValue(selector->style()));
+        switch (modifier) {
+        case Outset:
+            image.setOutset(LengthBox());
+            break;
+        case Repeat:
+            image.setHorizontalRule(StretchImageRule);
+            image.setVerticalRule(StretchImageRule);
+            break;
+        case Slice:
+            // Masks have a different initial value for slices. Preserve the value of 0 for backwards compatibility.
+            image.setImageSlices(type == Image ? LengthBox(Length(100, Percent), Length(100, Percent), Length(100, Percent), Length(100, Percent)) : LengthBox());
+            image.setFill(false);
+            break;
+        case Width:
+            // Masks have a different initial value for widths. They use an 'auto' value rather than trying to fit to the border.
+            image.setBorderSlices(type == Image ? LengthBox(Length(1, Relative), Length(1, Relative), Length(1, Relative), Length(1, Relative)) : LengthBox());
+            break;
+        }
+        setValue(selector->style(), image);
+    }
+
+    static void applyValue(CSSStyleSelector* selector, CSSValue* value)
+    {
+        NinePieceImage image(getValue(selector->style()));
+        switch (modifier) {
+        case Outset:
+            image.setOutset(selector->mapNinePieceImageQuad(value));
+            break;
+        case Repeat:
+            selector->mapNinePieceImageRepeat(value, image);
+            break;
+        case Slice:
+            selector->mapNinePieceImageSlice(value, image);
+            break;
+        case Width:
+            image.setBorderSlices(selector->mapNinePieceImageQuad(value));
+            break;
+        }
+        setValue(selector->style(), image);
+    }
+
+    static PropertyHandler createHandler() { return PropertyHandler(&applyInheritValue, &applyInitialValue, &applyValue); }
+};
+
 enum CounterBehavior {Increment = 0, Reset};
 template <CounterBehavior counterBehavior>
 class ApplyPropertyCounter {
@@ -1279,6 +1353,15 @@ CSSStyleApplyProperty::CSSStyleApplyProperty()
     setPropertyHandler(CSSPropertyBorderImage, ApplyPropertyBorderImage<Image, CSSPropertyBorderImage, &RenderStyle::borderImage, &RenderStyle::setBorderImage, &CSSStyleSelector::mapNinePieceImage>::createHandler());
     setPropertyHandler(CSSPropertyWebkitBorderImage, ApplyPropertyBorderImage<Image, CSSPropertyWebkitBorderImage, &RenderStyle::borderImage, &RenderStyle::setBorderImage, &CSSStyleSelector::mapNinePieceImage>::createHandler());
     setPropertyHandler(CSSPropertyWebkitMaskBoxImage, ApplyPropertyBorderImage<Mask, CSSPropertyWebkitMaskBoxImage, &RenderStyle::maskBoxImage, &RenderStyle::setMaskBoxImage, &CSSStyleSelector::mapNinePieceImage>::createHandler());
+
+    setPropertyHandler(CSSPropertyBorderImageOutset, ApplyPropertyBorderImageModifier<Image, Outset>::createHandler());
+    setPropertyHandler(CSSPropertyWebkitMaskBoxImageOutset, ApplyPropertyBorderImageModifier<Mask, Outset>::createHandler());
+    setPropertyHandler(CSSPropertyBorderImageRepeat, ApplyPropertyBorderImageModifier<Image, Repeat>::createHandler());
+    setPropertyHandler(CSSPropertyWebkitMaskBoxImageRepeat, ApplyPropertyBorderImageModifier<Mask, Repeat>::createHandler());
+    setPropertyHandler(CSSPropertyBorderImageSlice, ApplyPropertyBorderImageModifier<Image, Slice>::createHandler());
+    setPropertyHandler(CSSPropertyWebkitMaskBoxImageSlice, ApplyPropertyBorderImageModifier<Mask, Slice>::createHandler());
+    setPropertyHandler(CSSPropertyBorderImageWidth, ApplyPropertyBorderImageModifier<Image, Width>::createHandler());
+    setPropertyHandler(CSSPropertyWebkitMaskBoxImageWidth, ApplyPropertyBorderImageModifier<Mask, Width>::createHandler());
 
     setPropertyHandler(CSSPropertyBorderTopLeftRadius, ApplyPropertyBorderRadius<&RenderStyle::borderTopLeftRadius, &RenderStyle::setBorderTopLeftRadius, &RenderStyle::initialBorderRadius>::createHandler());
     setPropertyHandler(CSSPropertyBorderTopRightRadius, ApplyPropertyBorderRadius<&RenderStyle::borderTopRightRadius, &RenderStyle::setBorderTopRightRadius, &RenderStyle::initialBorderRadius>::createHandler());

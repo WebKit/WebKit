@@ -1,3 +1,24 @@
+2011-12-06  Luke Macpherson   <macpherson@chromium.org>
+
+        Implement remaining border-image and webkit-maskbox-image properties in CSSStyleApplyProperty.
+        https://bugs.webkit.org/show_bug.cgi?id=73391
+
+        Reviewed by Hajime Morita.
+
+        No new tests / refacoring only.
+
+        * css/CSSStyleApplyProperty.cpp:
+        (WebCore::ApplyPropertyBorderImageModifier::getValue):
+        (WebCore::ApplyPropertyBorderImageModifier::setValue):
+        (WebCore::ApplyPropertyBorderImageModifier::applyInheritValue):
+        (WebCore::ApplyPropertyBorderImageModifier::applyInitialValue):
+        (WebCore::ApplyPropertyBorderImageModifier::applyValue):
+        (WebCore::ApplyPropertyBorderImageModifier::createHandler):
+        (WebCore::CSSStyleApplyProperty::CSSStyleApplyProperty):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        * css/CSSStyleSelector.h:
+
 2011-12-06  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: introduce a memory agent stub.

@@ -3170,78 +3170,6 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSSPropertyWebkitAppearance:
         HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(appearance, Appearance)
         return;
-    case CSSPropertyBorderImageOutset:
-    case CSSPropertyWebkitMaskBoxImageOutset: {
-        bool isBorderImage = id == CSSPropertyBorderImageOutset;
-        NinePieceImage image(isBorderImage ? m_style->borderImage() : m_style->maskBoxImage());
-        if (isInherit)
-            image.copyOutsetFrom(isBorderImage ? m_parentStyle->borderImage() : m_parentStyle->maskBoxImage());
-        else if (isInitial)
-            image.setOutset(LengthBox());
-        else
-            image.setOutset(mapNinePieceImageQuad(value));
-
-        if (isBorderImage)
-            m_style->setBorderImage(image);
-        else
-            m_style->setMaskBoxImage(image);
-        return;
-    }
-    case CSSPropertyBorderImageRepeat:
-    case CSSPropertyWebkitMaskBoxImageRepeat: {
-        bool isBorderImage = id == CSSPropertyBorderImageRepeat;
-        NinePieceImage image(isBorderImage ? m_style->borderImage() : m_style->maskBoxImage());
-        if (isInherit)
-            image.copyRepeatFrom(isBorderImage ? m_parentStyle->borderImage() : m_parentStyle->maskBoxImage());
-        else if (isInitial) {
-            image.setHorizontalRule(StretchImageRule);
-            image.setVerticalRule(StretchImageRule);
-        } else
-            mapNinePieceImageRepeat(value, image);
-
-        if (isBorderImage)
-            m_style->setBorderImage(image);
-        else
-            m_style->setMaskBoxImage(image);
-        return;
-    }
-    case CSSPropertyBorderImageSlice:
-    case CSSPropertyWebkitMaskBoxImageSlice: {
-        bool isBorderImage = id == CSSPropertyBorderImageSlice;
-        NinePieceImage image(isBorderImage ? m_style->borderImage() : m_style->maskBoxImage());
-        if (isInherit)
-            image.copyImageSlicesFrom(isBorderImage ? m_parentStyle->borderImage() : m_parentStyle->maskBoxImage());
-        else if (isInitial) {
-            // Masks have a different initial value for slices. Preserve the value of 0 for backwards compatibility.
-            image.setImageSlices(isBorderImage ? LengthBox(Length(100, Percent), Length(100, Percent), Length(100, Percent), Length(100, Percent)) : LengthBox());
-            image.setFill(false);
-        } else
-            mapNinePieceImageSlice(value, image);
-
-        if (isBorderImage)
-            m_style->setBorderImage(image);
-        else
-            m_style->setMaskBoxImage(image);
-        return;
-    }
-    case CSSPropertyBorderImageWidth:
-    case CSSPropertyWebkitMaskBoxImageWidth: {
-        bool isBorderImage = id == CSSPropertyBorderImageWidth;
-        NinePieceImage image(isBorderImage ? m_style->borderImage() : m_style->maskBoxImage());
-        if (isInherit)
-            image.copyBorderSlicesFrom(isBorderImage ? m_parentStyle->borderImage() : m_parentStyle->maskBoxImage());
-        else if (isInitial) {
-            // Masks have a different initial value for slices. They use an 'auto' value rather than trying to fit to the border.
-            image.setBorderSlices(isBorderImage ? LengthBox(Length(1, Relative), Length(1, Relative), Length(1, Relative), Length(1, Relative)) : LengthBox());
-        } else
-            image.setBorderSlices(mapNinePieceImageQuad(value));
-
-        if (isBorderImage)
-            m_style->setBorderImage(image);
-        else
-            m_style->setMaskBoxImage(image);
-        return;
-    }
     case CSSPropertyImageRendering:
         HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(imageRendering, ImageRendering);
         return;
@@ -3872,6 +3800,14 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSSPropertyBorderImage:
     case CSSPropertyWebkitBorderImage:
     case CSSPropertyWebkitMaskBoxImage:
+    case CSSPropertyBorderImageOutset:
+    case CSSPropertyWebkitMaskBoxImageOutset:
+    case CSSPropertyBorderImageRepeat:
+    case CSSPropertyWebkitMaskBoxImageRepeat:
+    case CSSPropertyBorderImageSlice:
+    case CSSPropertyWebkitMaskBoxImageSlice:
+    case CSSPropertyBorderImageWidth:
+    case CSSPropertyWebkitMaskBoxImageWidth:
     case CSSPropertyBorderTop:
     case CSSPropertyBorderRight:
     case CSSPropertyBorderBottom:
