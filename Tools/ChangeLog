@@ -1,5 +1,14 @@
 2011-11-30  Simon Hausmann  <simon.hausmann@nokia.com>
 
+        [Qt] Fix debug shlib build with V8.
+
+        Reviewed by Tor Arne Vestbø.
+
+        * qmake/mkspecs/features/qtwebkit.prf: Don't link jscore with
+        v8 builds.
+
+2011-11-30  Simon Hausmann  <simon.hausmann@nokia.com>
+
         [Qt] V8 build fixes.
 
         Reviewed by Tor Arne Vestbø.

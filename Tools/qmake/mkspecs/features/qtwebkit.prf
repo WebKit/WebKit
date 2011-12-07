@@ -28,7 +28,9 @@ config_step {
 
     force_static_libs_as_shared {
         !no_webkit2: LIBS += -lwebkit2
-        LIBS += -lwebcore -ljscore -lwtf
+        LIBS += -lwebcore
+        !v8: LIBS += -ljscore
+        LIBS += -lwtf
     }
 }
 
