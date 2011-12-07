@@ -1,3 +1,16 @@
+2011-12-06  Benjamin Poulain  <benjamin@webkit.org>
+
+        Simplify KURL's checkEncodedString()
+        https://bugs.webkit.org/show_bug.cgi?id=73890
+
+        Reviewed by Andreas Kling.
+
+        The Macro UNUSED_PARAM is not supposed to be used for this case,
+        use ASSERT_UNUSED instead.
+
+        * platform/KURL.cpp:
+        (WebCore::checkEncodedString):
+
 2011-12-06  Ryosuke Niwa  <rniwa@webkit.org>
 
         The code to create a NodeListsNodeData is duplicated everywhere

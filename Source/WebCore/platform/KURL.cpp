@@ -296,9 +296,8 @@ static int findFirstOf(const UChar* s, int sLen, int startPos, const char* toFin
 
 static inline void checkEncodedString(const String& url)
 {
-    UNUSED_PARAM(url);
-    ASSERT(url.containsOnlyASCII());
-    ASSERT(url.isEmpty() || isSchemeFirstChar(url[0]));
+    ASSERT_UNUSED(url, url.containsOnlyASCII());
+    ASSERT_UNUSED(url, url.isEmpty() || isSchemeFirstChar(url[0]));
 }
 
 inline bool KURL::protocolIs(const String& string, const char* protocol)
