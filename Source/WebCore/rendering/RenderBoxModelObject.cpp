@@ -942,7 +942,19 @@ bool RenderBoxModelObject::paintNinePieceImage(GraphicsContext* graphicsContext,
 
     // FIXME: border-image is broken with full page zooming when tiling has to happen, since the tiling function
     // doesn't have any understanding of the zoom that is in effect on the tile.
-    styleImage->setImageContainerSize(rect.size());
+    int topOutset;
+    int rightOutset;
+    int bottomOutset;
+    int leftOutset;
+    style->getImageOutsets(ninePieceImage, topOutset, rightOutset, bottomOutset, leftOutset);
+
+    int topWithOutset = rect.y() - topOutset;
+    int bottomWithOutset = rect.maxY() + bottomOutset;
+    int leftWithOutset = rect.x() - leftOutset;
+    int rightWithOutset = rect.maxX() + rightOutset;
+    IntRect borderImageRect = IntRect(leftWithOutset, topWithOutset, rightWithOutset - leftWithOutset, bottomWithOutset - topWithOutset);
+
+    styleImage->setImageContainerSize(borderImageRect.size());
     IntSize imageSize = styleImage->imageSize(this, 1.0f);
     int imageWidth = imageSize.width();
     int imageHeight = imageSize.height();
@@ -955,18 +967,6 @@ bool RenderBoxModelObject::paintNinePieceImage(GraphicsContext* graphicsContext,
     ENinePieceImageRule hRule = ninePieceImage.horizontalRule();
     ENinePieceImageRule vRule = ninePieceImage.verticalRule();
    
-    int topOutset;
-    int rightOutset;
-    int bottomOutset;
-    int leftOutset;
-    style->getImageOutsets(ninePieceImage, topOutset, rightOutset, bottomOutset, leftOutset);
-
-    int topWithOutset = rect.y() - topOutset;
-    int bottomWithOutset = rect.maxY() + bottomOutset;
-    int leftWithOutset = rect.x() - leftOutset;
-    int rightWithOutset = rect.maxX() + rightOutset;
-    IntRect borderImageRect = IntRect(leftWithOutset, topWithOutset, rightWithOutset - leftWithOutset, bottomWithOutset - topWithOutset);
-    
     int topWidth = computeBorderImageSide(ninePieceImage.borderSlices().top(), style->borderTopWidth(), topSlice, borderImageRect.height());
     int rightWidth = computeBorderImageSide(ninePieceImage.borderSlices().right(), style->borderRightWidth(), rightSlice, borderImageRect.width());
     int bottomWidth = computeBorderImageSide(ninePieceImage.borderSlices().bottom(), style->borderBottomWidth(), bottomSlice, borderImageRect.height());
@@ -995,7 +995,18 @@ bool RenderBoxModelObject::paintNinePieceImage(GraphicsContext* graphicsContext,
 
     RefPtr<Image> image = styleImage->image(this, imageSize);
     ColorSpace colorSpace = style->colorSpace();
-
+    
+    float destinationWidth = borderImageRect.width() - leftWidth - rightWidth;
+    float destinationHeight = borderImageRect.height() - topWidth - bottomWidth;
+    
+    float sourceWidth = imageWidth - leftSlice - rightSlice;
+    float sourceHeight = imageHeight - topSlice - bottomSlice;
+    
+    float leftSideScale = drawLeft ? (float)leftWidth / leftSlice : 1;
+    float rightSideScale = drawRight ? (float)rightWidth / rightSlice : 1;
+    float topSideScale = drawTop ? (float)topWidth / topSlice : 1;
+    float bottomSideScale = drawBottom ? (float)bottomWidth / bottomSlice : 1;
+    
     if (drawLeft) {
         // Paint the top and bottom left corners.
 
@@ -1014,9 +1025,9 @@ bool RenderBoxModelObject::paintNinePieceImage(GraphicsContext* graphicsContext,
         // Paint the left edge.
         // Have to scale and tile into the border rect.
         graphicsContext->drawTiledImage(image.get(), colorSpace, IntRect(borderImageRect.x(), borderImageRect.y() + topWidth, leftWidth,
-                                        borderImageRect.height() - topWidth - bottomWidth),
-                                        IntRect(0, topSlice, leftSlice, imageHeight - topSlice - bottomSlice),
-                                        Image::StretchTile, (Image::TileRule)vRule, op);
+                                        destinationHeight),
+                                        IntRect(0, topSlice, leftSlice, sourceHeight),
+                                        FloatSize(leftSideScale, leftSideScale), Image::StretchTile, (Image::TileRule)vRule, op);
     }
 
     if (drawRight) {
@@ -1035,30 +1046,53 @@ bool RenderBoxModelObject::paintNinePieceImage(GraphicsContext* graphicsContext,
 
         // Paint the right edge.
         graphicsContext->drawTiledImage(image.get(), colorSpace, IntRect(borderImageRect.maxX() - rightWidth, borderImageRect.y() + topWidth, rightWidth,
-                                        borderImageRect.height() - topWidth - bottomWidth),
-                                        IntRect(imageWidth - rightSlice, topSlice, rightSlice, imageHeight - topSlice - bottomSlice),
+                                        destinationHeight),
+                                        IntRect(imageWidth - rightSlice, topSlice, rightSlice, sourceHeight),
+                                        FloatSize(rightSideScale, rightSideScale),
                                         Image::StretchTile, (Image::TileRule)vRule, op);
     }
 
     // Paint the top edge.
     if (drawTop)
-        graphicsContext->drawTiledImage(image.get(), colorSpace, IntRect(borderImageRect.x() + leftWidth, borderImageRect.y(), borderImageRect.width() - leftWidth - rightWidth, topWidth),
-                                        IntRect(leftSlice, 0, imageWidth - rightSlice - leftSlice, topSlice),
-                                        (Image::TileRule)hRule, Image::StretchTile, op);
+        graphicsContext->drawTiledImage(image.get(), colorSpace, IntRect(borderImageRect.x() + leftWidth, borderImageRect.y(), destinationWidth, topWidth),
+                                        IntRect(leftSlice, 0, sourceWidth, topSlice),
+                                        FloatSize(topSideScale, topSideScale), (Image::TileRule)hRule, Image::StretchTile, op);
 
     // Paint the bottom edge.
     if (drawBottom)
         graphicsContext->drawTiledImage(image.get(), colorSpace, IntRect(borderImageRect.x() + leftWidth, borderImageRect.maxY() - bottomWidth,
-                                        borderImageRect.width() - leftWidth - rightWidth, bottomWidth),
-                                        IntRect(leftSlice, imageHeight - bottomSlice, imageWidth - rightSlice - leftSlice, bottomSlice),
+                                        destinationWidth, bottomWidth),
+                                        IntRect(leftSlice, imageHeight - bottomSlice, sourceWidth, bottomSlice),
+                                        FloatSize(bottomSideScale, bottomSideScale),
                                         (Image::TileRule)hRule, Image::StretchTile, op);
 
     // Paint the middle.
-    if (drawMiddle)
-        graphicsContext->drawTiledImage(image.get(), colorSpace, IntRect(borderImageRect.x() + leftWidth, borderImageRect.y() + topWidth, borderImageRect.width() - leftWidth - rightWidth,
-                                        borderImageRect.height() - topWidth - bottomWidth),
-                                        IntRect(leftSlice, topSlice, imageWidth - rightSlice - leftSlice, imageHeight - topSlice - bottomSlice),
-                                        (Image::TileRule)hRule, (Image::TileRule)vRule, op);
+    if (drawMiddle) {
+        FloatSize middleScaleFactor(1, 1);
+        if (drawTop)
+            middleScaleFactor.setWidth(topSideScale);
+        else if (drawBottom)
+            middleScaleFactor.setWidth(bottomSideScale);
+        if (drawLeft)
+            middleScaleFactor.setHeight(leftSideScale);
+        else if (drawRight)
+            middleScaleFactor.setHeight(rightSideScale);
+            
+        // For "stretch" rules, just override the scale factor and replace. We only had to do this for the
+        // center tile, since sides don't even use the scale factor unless they have a rule other than "stretch".
+        // The middle however can have "stretch" specified in one axis but not the other, so we have to
+        // correct the scale here.
+        if (hRule == StretchImageRule)
+            middleScaleFactor.setWidth(destinationWidth / sourceWidth);
+            
+        if (vRule == StretchImageRule)
+            middleScaleFactor.setHeight(destinationHeight / sourceHeight);
+        
+        graphicsContext->drawTiledImage(image.get(), colorSpace,
+            IntRect(borderImageRect.x() + leftWidth, borderImageRect.y() + topWidth, destinationWidth, destinationHeight),
+            IntRect(leftSlice, topSlice, sourceWidth, sourceHeight),
+            middleScaleFactor, (Image::TileRule)hRule, (Image::TileRule)vRule, op);
+    }
 
     return true;
 }
