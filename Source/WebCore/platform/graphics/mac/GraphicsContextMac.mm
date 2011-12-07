@@ -82,9 +82,13 @@ void GraphicsContext::drawFocusRing(const Vector<IntRect>& rects, int width, int
 }
 
 
-static NSColor* createPatternColor(NSString* name, NSColor* defaultColor, bool& usingDot)
+static NSColor* createPatternColor(NSString* firstChoiceName, NSString* secondChoiceName, NSColor* defaultColor, bool& usingDot)
 {
-    NSImage *image = [NSImage imageNamed:name];
+    // Eventually we should be able to get rid of the secondChoiceName. For the time being we need both to keep
+    // this working on all platforms.
+    NSImage *image = [NSImage imageNamed:firstChoiceName];
+    if (!image)
+        image = [NSImage imageNamed:secondChoiceName];
     ASSERT(image); // if image is not available, we want to know
     NSColor *color = (image ? [NSColor colorWithPatternImage:image] : nil);
     if (color)
@@ -111,7 +115,7 @@ void GraphicsContext::drawLineForTextChecking(const FloatPoint& point, float wid
         {
             // Constants for spelling pattern color.
             static bool usingDotForSpelling = false;
-            DEFINE_STATIC_LOCAL(RetainPtr<NSColor>, spellingPatternColor, (createPatternColor(@"SpellingDot", [NSColor redColor], usingDotForSpelling)));
+            DEFINE_STATIC_LOCAL(RetainPtr<NSColor>, spellingPatternColor, (createPatternColor(@"NSSpellingDot", @"SpellingDot", [NSColor redColor], usingDotForSpelling)));
             usingDot = usingDotForSpelling;
             patternColor = spellingPatternColor.get();
             break;
@@ -120,7 +124,7 @@ void GraphicsContext::drawLineForTextChecking(const FloatPoint& point, float wid
         {
             // Constants for grammar pattern color.
             static bool usingDotForGrammar = false;
-            DEFINE_STATIC_LOCAL(RetainPtr<NSColor>, grammarPatternColor, (createPatternColor(@"GrammarDot", [NSColor greenColor], usingDotForGrammar)));
+            DEFINE_STATIC_LOCAL(RetainPtr<NSColor>, grammarPatternColor, (createPatternColor(@"NSGrammarDot", @"GrammarDot", [NSColor greenColor], usingDotForGrammar)));
             usingDot = usingDotForGrammar;
             patternColor = grammarPatternColor.get();
             break;
@@ -131,7 +135,7 @@ void GraphicsContext::drawLineForTextChecking(const FloatPoint& point, float wid
         {
             // Constants for spelling pattern color.
             static bool usingDotForSpelling = false;
-            DEFINE_STATIC_LOCAL(RetainPtr<NSColor>, spellingPatternColor, (createPatternColor(@"CorrectionDot", [NSColor blueColor], usingDotForSpelling)));
+            DEFINE_STATIC_LOCAL(RetainPtr<NSColor>, spellingPatternColor, (createPatternColor(@"NSCorrectionDot", @"CorrectionDot", [NSColor blueColor], usingDotForSpelling)));
             usingDot = usingDotForSpelling;
             patternColor = spellingPatternColor.get();
             break;
