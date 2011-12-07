@@ -1,3 +1,17 @@
+2011-12-07  Andreas Kling  <kling@webkit.org>
+
+        ApplyPropertyBorderImage: Remove unneeded template argument for mapNinePieceImage().
+        <http://webkit.org/b/73998>
+
+        Reviewed by Antti Koivisto.
+
+        Have ApplyPropertyBorderImage call mapNinePieceImage() directly now that it's
+        public (instead of passing it as a template argument.)
+
+        * css/CSSStyleApplyProperty.cpp:
+        (WebCore::ApplyPropertyBorderImage::applyValue):
+        (WebCore::CSSStyleApplyProperty::CSSStyleApplyProperty):
+
 2011-12-07  Jessie Berlin  <jberlin@apple.com>
 
         Mac build fix after r102235.

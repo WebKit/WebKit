@@ -611,8 +611,7 @@ enum BorderImageType { Image = 0, Mask };
 template <BorderImageType borderImageType,
           CSSPropertyID property,
           const NinePieceImage& (RenderStyle::*getterFunction)() const,
-          void (RenderStyle::*setterFunction)(const NinePieceImage&),
-          void (CSSStyleSelector::*mapNinePieceImage)(CSSPropertyID, CSSValue*, NinePieceImage&)>
+          void (RenderStyle::*setterFunction)(const NinePieceImage&)>
 class ApplyPropertyBorderImage {
 public:
     static void applyValue(CSSStyleSelector* selector, CSSValue* value)
@@ -620,7 +619,7 @@ public:
         NinePieceImage image;
         if (borderImageType == Mask)
             image.setMaskDefaults();
-        (selector->*mapNinePieceImage)(property, value, image);
+        selector->mapNinePieceImage(property, value, image);
         (selector->style()->*setterFunction)(image);
     }
 
@@ -1350,9 +1349,9 @@ CSSStyleApplyProperty::CSSStyleApplyProperty()
     setPropertyHandler(CSSPropertyBorderColor, ApplyPropertyExpanding<SuppressValue, CSSPropertyBorderTopColor, CSSPropertyBorderRightColor, CSSPropertyBorderBottomColor, CSSPropertyBorderLeftColor>::createHandler());
     setPropertyHandler(CSSPropertyBorder, ApplyPropertyExpanding<SuppressValue, CSSPropertyBorderStyle, CSSPropertyBorderWidth, CSSPropertyBorderColor>::createHandler());
 
-    setPropertyHandler(CSSPropertyBorderImage, ApplyPropertyBorderImage<Image, CSSPropertyBorderImage, &RenderStyle::borderImage, &RenderStyle::setBorderImage, &CSSStyleSelector::mapNinePieceImage>::createHandler());
-    setPropertyHandler(CSSPropertyWebkitBorderImage, ApplyPropertyBorderImage<Image, CSSPropertyWebkitBorderImage, &RenderStyle::borderImage, &RenderStyle::setBorderImage, &CSSStyleSelector::mapNinePieceImage>::createHandler());
-    setPropertyHandler(CSSPropertyWebkitMaskBoxImage, ApplyPropertyBorderImage<Mask, CSSPropertyWebkitMaskBoxImage, &RenderStyle::maskBoxImage, &RenderStyle::setMaskBoxImage, &CSSStyleSelector::mapNinePieceImage>::createHandler());
+    setPropertyHandler(CSSPropertyBorderImage, ApplyPropertyBorderImage<Image, CSSPropertyBorderImage, &RenderStyle::borderImage, &RenderStyle::setBorderImage>::createHandler());
+    setPropertyHandler(CSSPropertyWebkitBorderImage, ApplyPropertyBorderImage<Image, CSSPropertyWebkitBorderImage, &RenderStyle::borderImage, &RenderStyle::setBorderImage>::createHandler());
+    setPropertyHandler(CSSPropertyWebkitMaskBoxImage, ApplyPropertyBorderImage<Mask, CSSPropertyWebkitMaskBoxImage, &RenderStyle::maskBoxImage, &RenderStyle::setMaskBoxImage>::createHandler());
 
     setPropertyHandler(CSSPropertyBorderImageOutset, ApplyPropertyBorderImageModifier<Image, Outset>::createHandler());
     setPropertyHandler(CSSPropertyWebkitMaskBoxImageOutset, ApplyPropertyBorderImageModifier<Mask, Outset>::createHandler());
