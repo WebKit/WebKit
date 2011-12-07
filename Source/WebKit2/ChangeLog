@@ -1,3 +1,16 @@
+2011-12-07  Zalan Bujtas  <zbujtas@gmail.com>
+
+        [Qt][WK2] Enable page cache.
+        https://bugs.webkit.org/show_bug.cgi?id=73938
+
+        Enable WebCore's page cache for Qt port by setting its capacity to 20. This is temporary 
+        and will be replaced by a computed value based on CacheMode. See bug#73918.
+
+        Reviewed by Simon Hausmann.
+
+        * WebProcess/qt/WebProcessQt.cpp:
+        (WebKit::WebProcess::platformSetCacheModel):
+
 2011-12-06  Andy Estes  <aestes@apple.com>
 
         REGRESSION (r101838): Crash in LayerTreeHostCA::initialize() when accelerated drawing is enabled

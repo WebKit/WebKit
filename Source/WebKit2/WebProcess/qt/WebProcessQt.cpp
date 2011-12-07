@@ -35,17 +35,23 @@
 #include <QNetworkAccessManager>
 #include <QNetworkCookieJar>
 #include <WebCore/CookieJarQt.h>
+#include <WebCore/PageCache.h>
 #include <WebCore/RuntimeEnabledFeatures.h>
 
 #if defined(Q_OS_MACX)
 #include <dispatch/dispatch.h>
 #endif
 
+using namespace WebCore;
+
 namespace WebKit {
+
+static const int DefaultPageCacheCapacity = 20;
 
 void WebProcess::platformSetCacheModel(CacheModel)
 {
-    // FIXME: Implement.
+    // FIXME: see bug 73918
+    pageCache()->setCapacity(DefaultPageCacheCapacity);
 }
 
 void WebProcess::platformClearResourceCaches(ResourceCachesToClear)
