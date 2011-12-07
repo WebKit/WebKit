@@ -1,3 +1,18 @@
+2011-12-07  Filip Pizlo  <fpizlo@apple.com>
+
+        Non-Mac devices should benefit from a larger heap
+        https://bugs.webkit.org/show_bug.cgi?id=74015
+
+        Reviewed by Geoff Garen.
+        
+        Removed the ENABLE(LARGE_HEAP) option from Platform.h, since it was only used in
+        Heap.cpp, and got in the way of having more granular, per-platform control over
+        what the heap size should be. Bumped the heap size to 8MB on iOS (was 512KB).
+
+        * heap/Heap.cpp:
+        (JSC::GCTimer::heapSizeForHint):
+        * wtf/Platform.h:
+
 2011-11-30  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] V8 build fixes.

@@ -1015,14 +1015,6 @@
 #endif
 #endif
 
-#ifndef ENABLE_LARGE_HEAP
-#if CPU(X86) || CPU(X86_64)
-#define ENABLE_LARGE_HEAP 1
-#else
-#define ENABLE_LARGE_HEAP 0
-#endif
-#endif
-
 #if !defined(ENABLE_PAN_SCROLLING) && OS(WINDOWS)
 #define ENABLE_PAN_SCROLLING 1
 #endif

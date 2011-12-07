@@ -42,7 +42,13 @@ namespace JSC {
 
 namespace { 
 
+#if CPU(X86) || CPU(X86_64)
 static const size_t largeHeapSize = 16 * 1024 * 1024;
+#elif PLATFORM(IOS)
+static const size_t largeHeapSize = 8 * 1024 * 1024;
+#else
+static const size_t largeHeapSize = 512 * 1024;
+#endif
 static const size_t smallHeapSize = 512 * 1024;
 
 #if ENABLE(GC_LOGGING)
@@ -141,15 +147,10 @@ struct GCCounter {
 
 static size_t heapSizeForHint(HeapSize heapSize)
 {
-#if ENABLE(LARGE_HEAP)
     if (heapSize == LargeHeap)
         return largeHeapSize;
     ASSERT(heapSize == SmallHeap);
     return smallHeapSize;
-#else
-    ASSERT_UNUSED(heapSize, heapSize == LargeHeap || heapSize == SmallHeap);
-    return smallHeapSize;
-#endif
 }
 
 static inline bool isValidSharedInstanceThreadState()
