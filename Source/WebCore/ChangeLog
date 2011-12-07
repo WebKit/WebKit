@@ -1,3 +1,30 @@
+2011-12-06  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Avoid calling calculateRects in RenderLayer::paintLayer when the rectangles are not needed
+        https://bugs.webkit.org/show_bug.cgi?id=73754
+
+        Reviewed by Simon Fraser.
+
+        Performance change, no change in behavior.
+
+        RenderLayer::paintLayer can easily be called a million time when scrolling on a big table with
+        td { overflow: hidden; }. We would spend a lot of time recomputing the rectangles that we never
+        unused for painting as our layer was not self-painting (clipping layer only) and we did not paint
+        some overlay scrollbars.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paintLayer):
+        Simplified and moved the shouldPaint logic earlier in the function. Now the branches
+        are checking the same boolean which makes the logic more obvious. A consequence of
+        filling shouldPaint earlier is that we call |calculateRects| only if there is a chance
+        the rectangles will used. Also cached the result of isSelfPaintingLayer() in a local
+        variable (isSelfPaintingLayer() is fairly expensive due to several virtual calls).
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::paintIntoLayer):
+        For coherency, applied the same optimizations here too: added an early return instead
+        of conditionaly call |calculateRects| as we don't have to restore any clip.
+
 2011-12-06  Benjamin Poulain  <benjamin@webkit.org>
 
         Simplify KURL's checkEncodedString()

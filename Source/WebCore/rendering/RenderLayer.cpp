@@ -2798,12 +2798,21 @@ void RenderLayer::paintLayer(RenderLayer* rootLayer, GraphicsContext* p,
         m_paintingInsideReflection = false;
     }
 
-    // Calculate the clip rects we should use.
+    bool isSelfPaintingLayer = this->isSelfPaintingLayer();
+    bool isPaintingOverlayScrollbars = paintFlags & PaintLayerPaintingOverlayScrollbars;
+    // Outline always needs to be painted even if we have no visible content.
+    bool shouldPaintOutline = isSelfPaintingLayer && !isPaintingOverlayScrollbars;
+    bool shouldPaintContent = m_hasVisibleContent && isSelfPaintingLayer && !isPaintingOverlayScrollbars;
+
+    // Calculate the clip rects we should use only when we need them.
     LayoutRect layerBounds;
     ClipRect damageRect, clipRectToApply, outlineRect;
-    calculateRects(rootLayer, region, paintDirtyRect, layerBounds, damageRect, clipRectToApply, outlineRect, localPaintFlags & PaintLayerTemporaryClipRects);
-    LayoutPoint paintOffset = toPoint(layerBounds.location() - renderBoxLocation());
-                             
+    LayoutPoint paintOffset;
+    if (shouldPaintContent || shouldPaintOutline || isPaintingOverlayScrollbars) {
+        calculateRects(rootLayer, region, paintDirtyRect, layerBounds, damageRect, clipRectToApply, outlineRect, localPaintFlags & PaintLayerTemporaryClipRects);
+        paintOffset = toPoint(layerBounds.location() - renderBoxLocation());
+    }
+
     // Ensure our lists are up-to-date.
     updateLayerListsIfNeeded();
 
@@ -2818,14 +2827,12 @@ void RenderLayer::paintLayer(RenderLayer* rootLayer, GraphicsContext* p,
     if (paintingRoot && !renderer()->isDescendantOf(paintingRoot))
         paintingRootForRenderer = paintingRoot;
 
-    if (overlapTestRequests && isSelfPaintingLayer())
+    if (overlapTestRequests && isSelfPaintingLayer)
         performOverlapTests(*overlapTestRequests, rootLayer, this);
 
-    bool paintingOverlayScrollbars = paintFlags & PaintLayerPaintingOverlayScrollbars;
-
     // We want to paint our layer, but only if we intersect the damage rect.
-    bool shouldPaint = intersectsDamageRect(layerBounds, damageRect.rect(), rootLayer) && m_hasVisibleContent && isSelfPaintingLayer();
-    if (shouldPaint && !selectionOnly && !damageRect.isEmpty() && !paintingOverlayScrollbars) {
+    shouldPaintContent &= intersectsDamageRect(layerBounds, damageRect.rect(), rootLayer);
+    if (shouldPaintContent && !selectionOnly) {
         // Begin transparency layers lazily now that we know we have to paint something.
         if (haveTransparency)
             beginTransparencyLayers(p, rootLayer, paintBehavior);
@@ -2846,7 +2853,7 @@ void RenderLayer::paintLayer(RenderLayer* rootLayer, GraphicsContext* p,
     paintList(m_negZOrderList, rootLayer, p, paintDirtyRect, paintBehavior, paintingRoot, region, overlapTestRequests, localPaintFlags);
 
     // Now establish the appropriate clip and paint our child RenderObjects.
-    if (shouldPaint && !clipRectToApply.isEmpty() && !paintingOverlayScrollbars) {
+    if (shouldPaintContent && !clipRectToApply.isEmpty()) {
         // Begin transparency layers lazily now that we know we have to paint something.
         if (haveTransparency)
             beginTransparencyLayers(p, rootLayer, paintBehavior);
@@ -2870,8 +2877,8 @@ void RenderLayer::paintLayer(RenderLayer* rootLayer, GraphicsContext* p,
         // Now restore our clip.
         restoreClip(p, paintDirtyRect, clipRectToApply);
     }
-    
-    if (!outlineRect.isEmpty() && isSelfPaintingLayer() && !paintingOverlayScrollbars) {
+
+    if (shouldPaintOutline && !outlineRect.isEmpty()) {
         // Paint our own outline
         PaintInfo paintInfo(p, outlineRect.rect(), PaintPhaseSelfOutline, false, paintingRootForRenderer, region, 0);
         clipToRect(rootLayer, p, paintDirtyRect, outlineRect, DoNotIncludeSelfForBorderRadius);
@@ -2885,7 +2892,7 @@ void RenderLayer::paintLayer(RenderLayer* rootLayer, GraphicsContext* p,
     // Now walk the sorted list of children with positive z-indices.
     paintList(m_posZOrderList, rootLayer, p, paintDirtyRect, paintBehavior, paintingRoot, region, overlapTestRequests, localPaintFlags);
         
-    if (renderer()->hasMask() && shouldPaint && !selectionOnly && !damageRect.isEmpty() && !paintingOverlayScrollbars) {
+    if (shouldPaintContent && renderer()->hasMask() && !selectionOnly) {
         clipToRect(rootLayer, p, paintDirtyRect, damageRect, DoNotIncludeSelfForBorderRadius); // Mask painting will handle clipping to self.
 
         // Paint the mask.
@@ -2896,7 +2903,7 @@ void RenderLayer::paintLayer(RenderLayer* rootLayer, GraphicsContext* p,
         restoreClip(p, paintDirtyRect, damageRect);
     }
 
-    if (paintingOverlayScrollbars) {
+    if (isPaintingOverlayScrollbars) {
         clipToRect(rootLayer, p, paintDirtyRect, damageRect);
         paintOverflowControls(p, paintOffset, damageRect.rect(), true);
         restoreClip(p, paintDirtyRect, damageRect);

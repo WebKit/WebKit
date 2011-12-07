@@ -1096,12 +1096,15 @@ void RenderLayerBacking::paintIntoLayer(RenderLayer* rootLayer, GraphicsContext*
     FontCachePurgePreventer fontCachePurgePreventer;
     
     m_owningLayer->updateLayerListsIfNeeded();
-    
+
+    bool shouldPaintContent = (m_owningLayer->hasVisibleContent() || m_owningLayer->hasVisibleDescendant()) && m_owningLayer->isSelfPaintingLayer();
+    if (!shouldPaintContent)
+        return;
+
     // Calculate the clip rects we should use.
     LayoutRect layerBounds;
     ClipRect damageRect, clipRectToApply, outlineRect;
     m_owningLayer->calculateRects(rootLayer, 0, paintDirtyRect, layerBounds, damageRect, clipRectToApply, outlineRect); // FIXME: Incorrect for CSS regions.
-
     LayoutPoint paintOffset = toPoint(layerBounds.location() - m_owningLayer->renderBoxLocation());
 
     // If this layer's renderer is a child of the paintingRoot, we render unconditionally, which
@@ -1112,9 +1115,7 @@ void RenderLayerBacking::paintIntoLayer(RenderLayer* rootLayer, GraphicsContext*
     if (paintingRoot && !renderer()->isDescendantOf(paintingRoot))
         paintingRootForRenderer = paintingRoot;
 
-    bool shouldPaint = (m_owningLayer->hasVisibleContent() || m_owningLayer->hasVisibleDescendant()) && m_owningLayer->isSelfPaintingLayer();
-
-    if (shouldPaint && (paintingPhase & GraphicsLayerPaintBackground)) {
+    if (paintingPhase & GraphicsLayerPaintBackground) {
         // Paint our background first, before painting any child layers.
         // Establish the clip used to paint our background.
         m_owningLayer->clipToRect(rootLayer, context, paintDirtyRect, damageRect, DoNotIncludeSelfForBorderRadius);
@@ -1132,7 +1133,7 @@ void RenderLayerBacking::paintIntoLayer(RenderLayer* rootLayer, GraphicsContext*
     bool forceBlackText = paintBehavior & PaintBehaviorForceBlackText;
     bool selectionOnly  = paintBehavior & PaintBehaviorSelectionOnly;
 
-    if (shouldPaint && (paintingPhase & GraphicsLayerPaintForeground)) {
+    if (paintingPhase & GraphicsLayerPaintForeground) {
         // Set up the clip used when painting our children.
         m_owningLayer->clipToRect(rootLayer, context, paintDirtyRect, clipRectToApply);
         PaintInfo paintInfo(context, clipRectToApply.rect(), 
@@ -1168,8 +1169,8 @@ void RenderLayerBacking::paintIntoLayer(RenderLayer* rootLayer, GraphicsContext*
         // Now walk the sorted list of children with positive z-indices.
         m_owningLayer->paintList(m_owningLayer->posZOrderList(), rootLayer, context, paintDirtyRect, paintBehavior, paintingRoot, 0, 0, 0);
     }
-    
-    if (shouldPaint && (paintingPhase & GraphicsLayerPaintMask)) {
+
+    if (paintingPhase & GraphicsLayerPaintMask) {
         if (renderer()->hasMask() && !selectionOnly && !damageRect.isEmpty()) {
             m_owningLayer->clipToRect(rootLayer, context, paintDirtyRect, damageRect, DoNotIncludeSelfForBorderRadius);
 
