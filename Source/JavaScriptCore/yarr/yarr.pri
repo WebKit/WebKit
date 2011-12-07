@@ -5,7 +5,9 @@
 # -------------------------------------------------------------------
 
 SOURCES += \
-    yarr/YarrInterpreter.cpp \
-    yarr/YarrPattern.cpp \
-    yarr/YarrSyntaxChecker.cpp
+    $$PWD/YarrInterpreter.cpp \
+    $$PWD/YarrPattern.cpp \
+    $$PWD/YarrSyntaxChecker.cpp
 
+# For UString.h
+v8: INCLUDEPATH += $$PWD/../runtime

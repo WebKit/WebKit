@@ -9,7 +9,7 @@ TEMPLATE = lib
 DEFINES += BUILDING_WebCore
 
 load(webcore)
-load(javascriptcore)
+!v8: load(javascriptcore)
 load(wtf)
 
 CONFIG += staticlib

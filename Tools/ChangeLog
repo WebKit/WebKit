@@ -1,3 +1,15 @@
+2011-11-30  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] V8 build fixes.
+
+        Reviewed by Tor Arne Vestbø.
+
+        * qmake/mkspecs/features/javascriptcore.prf: Don't add
+        Source/Thirdparty to the include search path here.
+        * qmake/mkspecs/features/webcore.prf: Instead it belongs here, because it's
+        used when building WebCore as well as using it, because header files like
+        GraphicsContext3D.h include stuff from ThirdParty.
+
 2011-12-07  Peter Beverloo  <peter@chromium.org>
 
         [Chromium] Fix project file generation for the Android bot after r102201

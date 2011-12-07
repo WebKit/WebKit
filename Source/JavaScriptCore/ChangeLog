@@ -1,3 +1,13 @@
+2011-11-30  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] V8 build fixes.
+
+        Reviewed by Tor Arne Vestbø.
+
+        * yarr/yarr.pri: Don't rely on Source/JavaScriptCore being in
+        VPATH. Prefix SOURCES correctly and make sure that runtime/ is
+        in the include search path when building with v8.
+
 2011-12-06  Filip Pizlo  <fpizlo@apple.com>
 
         Zapping a block that is Marked leads to dead objects being mistaken for live ones

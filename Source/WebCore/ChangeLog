@@ -1,3 +1,11 @@
+2011-11-30  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] V8 build fixes.
+
+        Reviewed by Tor Arne Vestbø.
+
+        * Target.pri: Don't load(javascriptcore) if we're building with v8.
+
 2011-12-07  Mary Wu  <mary.wu@torchmobile.com.cn>
 
         Change function name InitializeLoggingChannelsIfNecessary to follow coding style guideline

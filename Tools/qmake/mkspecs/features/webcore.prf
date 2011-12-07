@@ -102,6 +102,7 @@ WEBCORE_INCLUDEPATH = \
     $$SOURCE_DIR/WebCore/workers \
     $$SOURCE_DIR/WebCore/xml \
     $$SOURCE_DIR/WebCore/xml/parser \
+    $$SOURCE_DIR/ThirdParty \
     $$WEBCORE_INCLUDEPATH
 
 WEBCORE_INCLUDEPATH = \
