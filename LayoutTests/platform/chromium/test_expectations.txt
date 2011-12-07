@@ -2653,6 +2653,12 @@ BUGCR71783 : scrollbars/custom-scrollbar-with-incomplete-style.html = IMAGE
 // GPU
 //
 
+// This test expects that putImageData followed by getImageData at the same location
+// will return the exact same pixel values. However, the spec allows some fuzziness
+// due to conversion to/from premultiplied-alpha. When we do the conversions on the
+// GPU we may be off by one in r, g, and/or b.
+BUGWK73952 GPU : canvas/philip/tests/2d.imageData.put.unchanged.html = TEXT
+
 // Will need windows and linux baselines
 
 BUGWK47923 : compositing/geometry/limit-layer-bounds-opacity-transition.html = TIMEOUT
