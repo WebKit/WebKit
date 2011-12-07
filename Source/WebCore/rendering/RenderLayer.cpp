@@ -2365,7 +2365,7 @@ void RenderLayer::paintScrollCorner(GraphicsContext* context, int tx, int ty, co
 
 void RenderLayer::drawPlatformResizerImage(GraphicsContext* context, IntRect resizerCornerRect)
 {
-    float deviceScaleFactor = Page::deviceScaleFactor(renderer()->frame());
+    float deviceScaleFactor = WebCore::deviceScaleFactor(renderer()->frame());
 
     RefPtr<Image> resizeCornerImage;
     IntSize cornerResizerSize;
