@@ -714,17 +714,21 @@ void PluginView::viewGeometryDidChange()
     if (!m_isInitialized || !m_plugin || !parent())
         return;
 
-    IntRect rect; 
- 
-    if (m_plugin->wantsWindowRelativeCoordinates()) { 
-        // Get the frame rect in window coordinates. 
-        rect = parent()->contentsToWindow(frameRect()); 
-        } else { 
-        // FIXME: The plug-in shouldn't know its location relative to its parent frame. 
-        rect = frameRect(); 
-    } 
- 
-    m_plugin->deprecatedGeometryDidChange(rect, clipRectInWindowCoordinates());
+    if (m_plugin->wantsWindowRelativeCoordinates()) {
+        // Get the frame rect in window coordinates.
+        IntRect rect = parent()->contentsToWindow(frameRect());
+        m_plugin->deprecatedGeometryDidChange(rect, clipRectInWindowCoordinates());
+        return;
+    }
+
+    // FIXME: Just passing a translation matrix isn't good enough.
+    IntPoint locationInWindowCoordinates = parent()->contentsToRootView(frameRect().location());
+    AffineTransform transform = AffineTransform::translation(locationInWindowCoordinates.x(), locationInWindowCoordinates.y());
+
+    // FIXME: The clip rect isn't correct.
+    IntRect clipRect = boundsRect();
+    m_plugin->geometryDidChange(size(), clipRect, transform);
+
 }
 
 void PluginView::viewVisibilityDidChange()

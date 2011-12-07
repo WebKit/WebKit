@@ -575,6 +575,12 @@ void NetscapePlugin::deprecatedGeometryDidChange(const IntRect& frameRect, const
     callSetWindow();
 }
 
+void NetscapePlugin::geometryDidChange(const IntSize& pluginSize, const IntRect& clipRect, const AffineTransform& pluginToRootViewTransform)
+{
+    // FIXME: This isn't called yet.
+    ASSERT_NOT_REACHED();
+}
+
 void NetscapePlugin::visibilityDidChange()
 {
     ASSERT(m_isStarted);
