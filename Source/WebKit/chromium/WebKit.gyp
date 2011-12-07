@@ -1545,7 +1545,7 @@
                         'sources': ['../../../Tools/DumpRenderTree/chromium/LayoutTestHelperWin.cpp'],
                     }],
                 }],
-                ['OS="mac"', {
+                ['OS=="mac"', {
                     'targets': [{
                         'target_name': 'LayoutTestHelper',
                         'type': 'executable',
