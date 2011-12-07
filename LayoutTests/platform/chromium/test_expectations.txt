@@ -3824,3 +3824,10 @@ BUGWK73905 GPU WIN : media/video-layer-crash.html = TEXT
 
 BUGWK73933 DEBUG : svg/W3C-SVG-1.1-SE/struct-dom-11-f.svg = TIMEOUT PASS
 
+BUGWK73991 WIN7 VISTA RELEASE : fast/text/international/complex-character-based-fallback.html = IMAGE+TEXT
+BUGWK73991 WIN7 VISTA RELEASE : fast/text/international/danda-space.html = IMAGE+TEXT
+BUGWK73991 WIN7 VISTA RELEASE : fast/text/international/thai-baht-space.html = IMAGE+TEXT
+BUGWK73991 WIN7 VISTA RELEASE : fast/text/international/chromium-complex-text-non-printable.html = IMAGE
+BUGWK73991 WIN7 VISTA RELEASE : platform/win/fast/text/uniscribe-missing-glyph.html = IMAGE
+BUGWK73991 WIN7 VISTA RELEASE : fast/text/international/bidi-neutral-run.html = TEXT
+BUGWK73991 WIN7 VISTA RELEASE : fast/text/international/thai-line-breaks.html = TEXT
