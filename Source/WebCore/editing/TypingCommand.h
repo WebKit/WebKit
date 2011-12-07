@@ -65,11 +65,7 @@ public:
     static void insertLineBreak(Document*, Options);
     static void insertParagraphSeparator(Document*, Options);
     static void insertParagraphSeparatorInQuotedContent(Document*);
-    static bool isOpenForMoreTypingCommand(const EditCommand*);
-    static void closeTyping(EditCommand*);
-    
-    bool isOpenForMoreTyping() const { return m_openForMoreTyping; }
-    void closeTyping() { m_openForMoreTyping = false; }
+    static void closeTyping(Frame*);
 
     void insertText(const String &text, bool selectInsertedText);
     void insertTextRunWithoutNewlines(const String &text, bool selectInsertedText);
@@ -96,7 +92,11 @@ private:
 
     bool smartDelete() const { return m_smartDelete; }
     void setSmartDelete(bool smartDelete) { m_smartDelete = smartDelete; }
-    
+    bool isOpenForMoreTyping() const { return m_openForMoreTyping; }
+    void closeTyping() { m_openForMoreTyping = false; }
+
+    static TypingCommand* lastTypingCommandIfStillOpenForTyping(Frame*);
+
     virtual void doApply();
     virtual EditAction editingAction() const;
     virtual bool isTypingCommand() const;

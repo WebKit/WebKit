@@ -1,3 +1,33 @@
+2011-12-07  Ryosuke Niwa  <rniwa@webkit.org>
+
+        TypingCommand duplicates code to obtain the last typing command
+        https://bugs.webkit.org/show_bug.cgi?id=73984
+
+        Reviewed by Kent Tamura.
+
+        Extracted lastTypingCommandIfStillOpenForTyping out of isOpenForMoreTypingCommand
+        and a bunch of TypingCommand static member functions.
+
+        Also made more member functions of TypingCommand private.
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::setComposition):
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::setSelection):
+        * editing/TypingCommand.cpp:
+        (WebCore::TypingCommand::deleteSelection):
+        (WebCore::TypingCommand::deleteKeyPressed):
+        (WebCore::TypingCommand::forwardDeleteKeyPressed):
+        (WebCore::TypingCommand::insertText):
+        (WebCore::TypingCommand::insertLineBreak):
+        (WebCore::TypingCommand::insertParagraphSeparatorInQuotedContent):
+        (WebCore::TypingCommand::insertParagraphSeparator):
+        (WebCore::TypingCommand::lastTypingCommandIfStillOpenForTyping):
+        (WebCore::TypingCommand::closeTyping):
+        * editing/TypingCommand.h:
+        (WebCore::TypingCommand::isOpenForMoreTyping):
+        (WebCore::TypingCommand::closeTyping):
+
 2011-12-06  Mary Wu  <mary.wu@torchmobile.com.cn>
 
         upstream BlackBerry porting of KURL/Logging

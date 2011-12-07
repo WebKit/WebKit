@@ -1425,7 +1425,7 @@ void Editor::setComposition(const String& text, SetCompositionMode mode)
 
     if (mode == CancelComposition) {
         // An open typing command that disagrees about current selection would cause issues with typing later on.
-        TypingCommand::closeTyping(m_lastEditCommand.get());
+        TypingCommand::closeTyping(m_frame);
     }
 
     setIgnoreCompositionSelectionChange(false);

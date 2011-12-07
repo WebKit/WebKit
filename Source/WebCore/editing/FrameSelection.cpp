@@ -264,7 +264,7 @@ void FrameSelection::setSelection(const VisibleSelection& newSelection, SetSelec
     m_granularity = granularity;
 
     if (closeTyping)
-        TypingCommand::closeTyping(m_frame->editor()->lastEditCommand());
+        TypingCommand::closeTyping(m_frame);
 
     if (shouldClearTypingStyle)
         clearTypingStyle();
