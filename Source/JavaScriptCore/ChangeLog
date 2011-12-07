@@ -1,3 +1,13 @@
+2011-12-06  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG 32_64 call linking does not handle non-cell callees correctly
+        https://bugs.webkit.org/show_bug.cgi?id=73965
+
+        Reviewed by Sam Weinig.
+
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitCall):
+
 2011-12-06  Sam Weinig  <sam@webkit.org>
 
         Remove unintentional type name shadowing in the Interpreter

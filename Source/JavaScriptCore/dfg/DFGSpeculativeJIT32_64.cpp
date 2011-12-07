@@ -1303,9 +1303,10 @@ void SpeculativeJIT::emitCall(Node& node)
     GPRReg resultTagGPR = resultTag.gpr();
 
     JITCompiler::DataLabelPtr targetToCheck;
-    JITCompiler::Jump slowPath;
+    JITCompiler::JumpList slowPath;
 
-    slowPath = m_jit.branchPtrWithPatch(MacroAssembler::NotEqual, calleePayloadGPR, targetToCheck);
+    slowPath.append(m_jit.branchPtrWithPatch(MacroAssembler::NotEqual, calleePayloadGPR, targetToCheck));
+    slowPath.append(m_jit.branch32(MacroAssembler::NotEqual, calleeTagGPR, TrustedImm32(JSValue::CellTag)));
     m_jit.loadPtr(MacroAssembler::Address(calleePayloadGPR, OBJECT_OFFSETOF(JSFunction, m_scopeChain)), resultPayloadGPR);
     m_jit.storePtr(resultPayloadGPR, payloadOfCallData(RegisterFile::ScopeChain));
     m_jit.store32(MacroAssembler::TrustedImm32(JSValue::CellTag), tagOfCallData(RegisterFile::ScopeChain));
