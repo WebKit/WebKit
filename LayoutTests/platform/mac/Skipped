@@ -515,3 +515,6 @@ fast/canvas/webgl/webgl-texture-binding-preserved.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=73493
 fast/canvas/webgl/arraybuffer-transfer-of-control.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=73974
+fast/canvas/webgl/canvas-2d-webgl-texture.html
