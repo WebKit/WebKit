@@ -110,6 +110,9 @@ public:
     void setUnifiedTextCheckingEnabled(Document*, bool, ExceptionCode&);
     bool unifiedTextCheckingEnabled(Document*, ExceptionCode&);
 
+    int lastSpellCheckRequestSequence(Document*, ExceptionCode&);
+    int lastSpellCheckProcessedSequence(Document*, ExceptionCode&);
+
     static const char* internalsId;
 
 private:

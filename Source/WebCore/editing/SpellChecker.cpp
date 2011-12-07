@@ -72,7 +72,8 @@ private:
 
 SpellChecker::SpellChecker(Frame* frame)
     : m_frame(frame)
-    , m_lastRequestedSequence(0)
+    , m_lastRequestSequence(0)
+    , m_lastProcessedSequence(0)
     , m_timerToProcessQueuedRequest(this, &SpellChecker::timerFiredToProcessQueuedRequest)
 {
 }
@@ -97,7 +98,7 @@ PassRefPtr<SpellChecker::SpellCheckRequest> SpellChecker::createRequest(TextChec
     if (!text.length())
         return PassRefPtr<SpellCheckRequest>();
 
-    return adoptRef(new SpellCheckRequest(++m_lastRequestedSequence, range, text, mask));
+    return adoptRef(new SpellCheckRequest(++m_lastRequestSequence, range, text, mask));
 }
 
 void SpellChecker::timerFiredToProcessQueuedRequest(Timer<SpellChecker>*)
@@ -198,7 +199,6 @@ static DocumentMarker::MarkerType toMarkerType(TextCheckingType type)
 void SpellChecker::didCheck(int sequence, const Vector<TextCheckingResult>& results)
 {
     ASSERT(m_processingRequest);
-
     ASSERT(m_processingRequest->sequence() == sequence);
     if (m_processingRequest->sequence() != sequence) {
         m_requestQueue.clear();
@@ -233,6 +233,9 @@ void SpellChecker::didCheck(int sequence, const Vector<TextCheckingResult>& resu
 
         startOffset = results[i].location;
     }
+
+    if (m_lastProcessedSequence < sequence)
+        m_lastProcessedSequence = sequence;
 
     m_processingRequest.clear();
     if (!m_requestQueue.isEmpty())

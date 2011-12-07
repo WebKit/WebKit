@@ -1,3 +1,30 @@
+2011-12-07  Shinya Kawanaka  <shinyak@google.com>
+
+        Internals should have a method to reutrn the max sequence number of spellcheck reqeust.
+        https://bugs.webkit.org/show_bug.cgi?id=73511
+
+        Reviewed by Hajime Morita.
+
+        Internal state of SpellChecker should be able to be exposed for testing SpellChecker.
+        This patch will enable us to know asynchronous spellcheck has finished or not.
+
+        Test: editing/spelling/spellcheck-sequencenum.html
+
+        * editing/SpellChecker.cpp:
+        (WebCore::SpellChecker::SpellChecker):
+        (WebCore::SpellChecker::createRequest):
+        (WebCore::SpellChecker::didCheck):
+        * editing/SpellChecker.h:
+        (WebCore::SpellChecker::lastRequestSequence):
+          Interface to take SpellCheck sequence numbers.
+        (WebCore::SpellChecker::lastProcessedSequence): ditto.
+        * testing/Internals.cpp:
+        (WebCore::spellchecker):
+        (WebCore::Internals::lastSpellCheckRequestSequence):
+        (WebCore::Internals::lastSpellCheckProcessedSequence):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2011-12-07  Ryosuke Niwa  <rniwa@webkit.org>
 
         TypingCommand duplicates code to obtain the last typing command

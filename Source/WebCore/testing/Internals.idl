@@ -81,6 +81,9 @@ module window {
         void setShouldLayoutFixedElementsRelativeToFrame(in Document document, in boolean enabled) raises(DOMException);
         void setUnifiedTextCheckingEnabled(in Document document, in boolean enabled) raises (DOMException);
         boolean unifiedTextCheckingEnabled(in Document document) raises (DOMException);
+
+        long lastSpellCheckRequestSequence(in Document document) raises (DOMException);
+        long lastSpellCheckProcessedSequence(in Document document) raises (DOMException);
     };
 }
 

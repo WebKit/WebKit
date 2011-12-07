@@ -48,6 +48,7 @@
 #include "Settings.h"
 #include "ShadowContentElement.h"
 #include "ShadowRoot.h"
+#include "SpellChecker.h"
 #include "TextIterator.h"
 
 #if ENABLE(GESTURE_EVENTS)
@@ -90,6 +91,14 @@ static bool markerTypesFrom(const String& markerType, DocumentMarker::MarkerType
         return false;
 
     return true;
+}
+
+static SpellChecker* spellchecker(Document* document)
+{
+    if (!document || !document->frame() || !document->frame()->editor())
+        return 0;
+
+    return document->frame()->editor()->spellChecker();
 }
 
 const char* Internals::internalsId = "internals";
@@ -616,6 +625,30 @@ bool Internals::unifiedTextCheckingEnabled(Document* document, ExceptionCode& ec
     }
 
     return document->frame()->settings()->unifiedTextCheckerEnabled();
+}
+
+int Internals::lastSpellCheckRequestSequence(Document* document, ExceptionCode& ec)
+{
+    SpellChecker* checker = spellchecker(document);
+
+    if (!checker) {
+        ec = INVALID_ACCESS_ERR;
+        return -1;
+    }
+
+    return checker->lastRequestSequence();
+}
+
+int Internals::lastSpellCheckProcessedSequence(Document* document, ExceptionCode& ec)
+{
+    SpellChecker* checker = spellchecker(document);
+
+    if (!checker) {
+        ec = INVALID_ACCESS_ERR;
+        return -1;
+    }
+
+    return checker->lastProcessedSequence();
 }
 
 }

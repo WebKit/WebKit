@@ -53,6 +53,16 @@ public:
     void requestCheckingFor(TextCheckingTypeMask, PassRefPtr<Range>);
     void didCheck(int sequence, const Vector<TextCheckingResult>&);
 
+    int lastRequestSequence() const
+    {
+        return m_lastRequestSequence;
+    }
+
+    int lastProcessedSequence() const
+    {
+        return m_lastProcessedSequence;
+    }
+
 private:
     class SpellCheckRequest;
     typedef Deque<RefPtr<SpellCheckRequest> > RequestQueue;
@@ -65,7 +75,8 @@ private:
     void enqueueRequest(PassRefPtr<SpellCheckRequest>);
 
     Frame* m_frame;
-    int m_lastRequestedSequence;
+    int m_lastRequestSequence;
+    int m_lastProcessedSequence;
 
     Timer<SpellChecker> m_timerToProcessQueuedRequest;
 

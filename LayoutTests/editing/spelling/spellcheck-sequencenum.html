@@ -1,0 +1,136 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+<script src="resources/js-test-selection-shared.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+description('For Bug 73511: Internals should have a method to return the max sequence number of spellcheck request.');
+
+if (window.layoutTestController) {
+    layoutTestController.waitUntilDone();
+    layoutTestController.setAsynchronousSpellCheckingEnabled(true);
+}
+
+var testRoot = document.createElement("div");
+document.body.insertBefore(testRoot, document.body.firstChild);
+
+var source = document.createElement("div");
+source.innerHTML = "foo bar";
+testRoot.appendChild(source);
+
+function createInput(testRoot) {
+    var e = document.createElement('input');
+    e.setAttribute("type", "text");
+    testRoot.appendChild(e);
+
+    return e;
+}
+
+function createTextArea(testRoot) {
+    var e = document.createElement("textarea");
+    testRoot.appendChild(e);
+
+    return e;
+}
+
+function createContentEditable(testRoot) {
+    var e = document.createElement("div");
+    e.setAttribute("contentEditable", "true");
+    testRoot.appendChild(e);
+
+    return e;
+}
+
+var destinations = [
+    createInput(testRoot),
+    createTextArea(testRoot),
+    createContentEditable(testRoot),
+];
+
+var sel = window.getSelection();
+
+var tests = [];
+for (var i = 0; i < destinations.length; ++i) {
+    var t = function(i) {
+        return function() {
+            if (!window.internals)
+                 return;
+            var sequence = internals.lastSpellCheckRequestSequence(document);
+            var processed = internals.lastSpellCheckProcessedSequence(document);
+            copyAndPaste(source, destinations[i]);
+            verify(sequence, processed);
+        }
+    }(i);
+    tests.push(t);
+}
+
+function verifyIfAny()
+{
+    var next = tests.shift();
+    if (next) {
+        next();
+        return;
+    }
+
+    testRoot.style.display = "none";
+    if (window.layoutTestController) {
+        layoutTestController.setAsynchronousSpellCheckingEnabled(false);
+        layoutTestController.notifyDone();
+    }
+}
+
+function copyAndPaste(source, dest)
+{
+    sel.selectAllChildren(source);
+    document.execCommand("Copy");
+
+    if (dest instanceof HTMLInputElement || dest instanceof HTMLTextAreaElement) {
+        dest.value = "";
+        dest.focus();
+    } else {
+        dest.innerHTML = "";
+        sel.selectAllChildren(dest);
+    }
+    document.execCommand("Paste");
+}
+
+function verify(sequence, processed)
+{
+    var nretry = 10;
+    var nsleep = 1;
+    function trial() {
+        var newSequence = internals.lastSpellCheckRequestSequence(document);
+        var newProcessed = internals.lastSpellCheckProcessedSequence(document);
+
+        var verified = newSequence >= sequence && newProcessed >= processed && newSequence == newProcessed;
+        if (verified) {
+            testPassed("SpellCheck sequence seems working correctly.");
+            verifyIfAny();
+            return;
+        }
+
+        nretry--;
+        if (0 == nretry) {
+            testFailed("SpellCheck sequence didn't increase.");
+            verifyIfAny();
+            return;
+        }
+
+        nsleep *= 2;
+        window.setTimeout(trial, nsleep);
+    };
+    trial();
+}
+
+verifyIfAny();
+
+var successfullyParsed = true;
+
+</script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>
