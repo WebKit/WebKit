@@ -1,5 +1,19 @@
 2011-11-30  Simon Hausmann  <simon.hausmann@nokia.com>
 
+        [Qt] V8 debug build fixes.
+
+        Reviewed by Tor Arne Vestbø.
+
+        * Target.pri: Add missing files to the build.
+        * loader/SubresourceLoader.cpp: Add missing CString.h header file inclusion,
+        that is implicitly included with Chromium builds and only needed in ASSERTS
+        in debug builds.
+        * loader/cache/CachedResource.cpp: Ditto.
+        * page/FrameTree.cpp: Ditto.
+        * platform/graphics/MediaPlayer.cpp: Ditto.
+
+2011-11-30  Simon Hausmann  <simon.hausmann@nokia.com>
+
         [Qt] V8 build fixes.
 
         Reviewed by Tor Arne Vestbø.

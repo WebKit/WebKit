@@ -29,6 +29,7 @@
 #include <stdarg.h>
 #include <wtf/StringExtras.h>
 #include <wtf/Vector.h>
+#include <wtf/text/CString.h>
 
 using std::swap;
 

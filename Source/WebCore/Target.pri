@@ -98,6 +98,7 @@ v8 {
         bindings/v8/DOMData.cpp \
         bindings/v8/DOMDataStore.cpp \
         bindings/v8/NPV8Object.cpp \
+        bindings/v8/NPObjectWrapper.cpp \
         bindings/v8/OptionsObject.cpp \
         bindings/v8/PageScriptDebugServer.cpp \
         bindings/v8/RetainedDOMInfo.cpp \
@@ -1352,6 +1353,7 @@ v8 {
         bindings/v8/npruntime_impl.h \
         bindings/v8/npruntime_priv.h \
         bindings/v8/NPV8Object.h \
+        bindings/v8/NPObjectWrapper.h \
         bindings/v8/OwnHandle.h \
         bindings/v8/PageScriptDebugServer.h \
         bindings/v8/RetainedDOMInfo.h \
