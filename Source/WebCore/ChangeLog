@@ -1,3 +1,26 @@
+2011-12-06  Ryosuke Niwa  <rniwa@webkit.org>
+
+        The code to create a NodeListsNodeData is duplicated everywhere
+        https://bugs.webkit.org/show_bug.cgi?id=73961
+
+        Reviewed by Darin Adler.
+
+        Extracted the logic to create NodeListsNodeData as NodeRareData::ensureNodeLists.
+
+        * dom/Document.cpp:
+        (WebCore::Document::getItems):
+        * dom/Node.cpp:
+        (WebCore::Node::childNodes):
+        (WebCore::Node::registerDynamicNodeList):
+        (WebCore::Node::getElementsByTagName):
+        (WebCore::Node::getElementsByTagNameNS):
+        (WebCore::Node::getElementsByName):
+        (WebCore::Node::getElementsByClassName):
+        * dom/NodeRareData.h:
+        (WebCore::NodeRareData::ensureNodeLists):
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::labels):
+
 2011-12-06  Leo Yang  <leo.yang@torchmobile.com.cn>
 
         Upstream about: feature in WebKit/blackberry/WebCoreSupport/

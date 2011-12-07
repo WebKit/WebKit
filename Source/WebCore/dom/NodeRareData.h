@@ -126,6 +126,12 @@ public:
     void clearNodeLists() { m_nodeLists.clear(); }
     void setNodeLists(PassOwnPtr<NodeListsNodeData> lists) { m_nodeLists = lists; }
     NodeListsNodeData* nodeLists() const { return m_nodeLists.get(); }
+    NodeListsNodeData* ensureNodeLists(Node* node)
+    {
+        if (!m_nodeLists)
+            createNodeLists(node);
+        return m_nodeLists.get();
+    }
 
     short tabIndex() const { return m_tabIndex; }
     void setTabIndexExplicitly(short index) { m_tabIndex = index; m_tabIndexWasSetExplicitly = true; }
@@ -225,6 +231,8 @@ protected:
     void setNeedsFocusAppearanceUpdateSoonAfterAttach(bool needs) { m_needsFocusAppearanceUpdateSoonAfterAttach = needs; }
 
 private:
+    void createNodeLists(Node*);
+
     TreeScope* m_treeScope;
     OwnPtr<NodeListsNodeData> m_nodeLists;
     OwnPtr<EventTargetData> m_eventTargetData;

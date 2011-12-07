@@ -623,16 +623,10 @@ void Node::setNodeValue(const String& /*nodeValue*/, ExceptionCode& ec)
 
 PassRefPtr<NodeList> Node::childNodes()
 {
-    NodeRareData* data = ensureRareData();
-    if (!data->nodeLists()) {
-        data->setNodeLists(NodeListsNodeData::create());
-        if (treeScope())
-            treeScope()->addNodeListCache();
-    }
-
-    if (!data->nodeLists()->m_childNodeListCaches)
-        data->nodeLists()->m_childNodeListCaches = DynamicNodeList::Caches::create();
-    return ChildNodeList::create(this, data->nodeLists()->m_childNodeListCaches.get());
+    NodeListsNodeData* nodeLists = ensureRareData()->ensureNodeLists(this);
+    if (!nodeLists->m_childNodeListCaches)
+        nodeLists->m_childNodeListCaches = DynamicNodeList::Caches::create();
+    return ChildNodeList::create(this, nodeLists->m_childNodeListCaches.get());
 }
 
 Node *Node::lastDescendant() const
@@ -1005,16 +999,12 @@ unsigned Node::nodeIndex() const
 void Node::registerDynamicNodeList(DynamicNodeList* list)
 {
     NodeRareData* data = ensureRareData();
-    if (!data->nodeLists()) {
-        data->setNodeLists(NodeListsNodeData::create());
-        treeScope()->addNodeListCache();
-    } else if (!treeScope() || !treeScope()->hasNodeListCaches()) {
-        // We haven't been receiving notifications while there were no registered lists, so the cache is invalid now.
+    // We haven't been receiving notifications while there were no registered lists, so the cache is invalid now.
+    if (data->nodeLists() && (!treeScope() || !treeScope()->hasNodeListCaches()))
         data->nodeLists()->invalidateCaches();
-    }
 
     if (list->hasOwnCaches())
-        data->nodeLists()->m_listsWithCaches.add(list);
+        data->ensureNodeLists(this)->m_listsWithCaches.add(list);
 }
 
 void Node::unregisterDynamicNodeList(DynamicNodeList* list)
@@ -1667,19 +1657,13 @@ PassRefPtr<NodeList> Node::getElementsByTagName(const AtomicString& localName)
     if (localName.isNull())
         return 0;
 
-    NodeRareData* data = ensureRareData();
-    if (!data->nodeLists()) {
-        data->setNodeLists(NodeListsNodeData::create());
-        treeScope()->addNodeListCache();
-    }
-
     String name = localName;
     if (document()->isHTMLDocument())
         name = localName.lower();
 
     AtomicString localNameAtom = name;
 
-    pair<NodeListsNodeData::TagNodeListCache::iterator, bool> result = data->nodeLists()->m_tagNodeListCache.add(localNameAtom, 0);
+    pair<NodeListsNodeData::TagNodeListCache::iterator, bool> result = ensureRareData()->ensureNodeLists(this)->m_tagNodeListCache.add(localNameAtom, 0);
     if (!result.second)
         return PassRefPtr<TagNodeList>(result.first->second);
 
@@ -1696,19 +1680,14 @@ PassRefPtr<NodeList> Node::getElementsByTagNameNS(const AtomicString& namespaceU
     if (namespaceURI == starAtom)
         return getElementsByTagName(localName);
 
-    NodeRareData* data = ensureRareData();
-    if (!data->nodeLists()) {
-        data->setNodeLists(NodeListsNodeData::create());
-        treeScope()->addNodeListCache();
-    }
-
     String name = localName;
     if (document()->isHTMLDocument())
         name = localName.lower();
 
     AtomicString localNameAtom = name;
 
-    pair<NodeListsNodeData::TagNodeListCacheNS::iterator, bool> result = data->nodeLists()->m_tagNodeListCacheNS.add(QualifiedName(nullAtom, localNameAtom, namespaceURI).impl(), 0);
+    pair<NodeListsNodeData::TagNodeListCacheNS::iterator, bool> result
+        = ensureRareData()->ensureNodeLists(this)->m_tagNodeListCacheNS.add(QualifiedName(nullAtom, localNameAtom, namespaceURI).impl(), 0);
     if (!result.second)
         return PassRefPtr<TagNodeList>(result.first->second);
 
@@ -1719,13 +1698,7 @@ PassRefPtr<NodeList> Node::getElementsByTagNameNS(const AtomicString& namespaceU
 
 PassRefPtr<NodeList> Node::getElementsByName(const String& elementName)
 {
-    NodeRareData* data = ensureRareData();
-    if (!data->nodeLists()) {
-        data->setNodeLists(NodeListsNodeData::create());
-        treeScope()->addNodeListCache();
-    }
-
-    pair<NodeListsNodeData::NameNodeListCache::iterator, bool> result = data->nodeLists()->m_nameNodeListCache.add(elementName, 0);
+    pair<NodeListsNodeData::NameNodeListCache::iterator, bool> result = ensureRareData()->ensureNodeLists(this)->m_nameNodeListCache.add(elementName, 0);
     if (!result.second)
         return PassRefPtr<NodeList>(result.first->second);
 
@@ -1736,13 +1709,8 @@ PassRefPtr<NodeList> Node::getElementsByName(const String& elementName)
 
 PassRefPtr<NodeList> Node::getElementsByClassName(const String& classNames)
 {
-    NodeRareData* data = ensureRareData();
-    if (!data->nodeLists()) {
-        data->setNodeLists(NodeListsNodeData::create());
-        treeScope()->addNodeListCache();
-    }
-
-    pair<NodeListsNodeData::ClassNodeListCache::iterator, bool> result = data->nodeLists()->m_classNodeListCache.add(classNames, 0);
+    pair<NodeListsNodeData::ClassNodeListCache::iterator, bool> result
+        = ensureRareData()->ensureNodeLists(this)->m_classNodeListCache.add(classNames, 0);
     if (!result.second)
         return PassRefPtr<NodeList>(result.first->second);
 
@@ -3039,6 +3007,14 @@ HTMLPropertiesCollection* Node::properties()
     return ensureRareData()->properties(this);
 }
 #endif
+
+void NodeRareData::createNodeLists(Node* node)
+{
+    ASSERT(node);
+    setNodeLists(NodeListsNodeData::create());
+    if (TreeScope* treeScope = node->treeScope())
+        treeScope->addNodeListCache();
+}
 
 } // namespace WebCore
 

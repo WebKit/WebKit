@@ -492,17 +492,12 @@ PassRefPtr<NodeList> HTMLFormControlElement::labels()
     if (!document())
         return 0;
 
-    NodeRareData* data = Node::ensureRareData();
-    if (!data->nodeLists()) {
-        data->setNodeLists(NodeListsNodeData::create());
-        treeScope()->addNodeListCache();
-    }
-
-    if (data->nodeLists()->m_labelsNodeListCache)
-        return data->nodeLists()->m_labelsNodeListCache;
+    NodeListsNodeData* nodeLists = Node::ensureRareData()->ensureNodeLists(this);
+    if (nodeLists->m_labelsNodeListCache)
+        return nodeLists->m_labelsNodeListCache;
 
     RefPtr<LabelsNodeList> list = LabelsNodeList::create(this);
-    data->nodeLists()->m_labelsNodeListCache = list.get();
+    nodeLists->m_labelsNodeListCache = list.get();
     return list.release();
 }
 
