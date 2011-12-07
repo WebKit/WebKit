@@ -1,5 +1,11 @@
 2011-12-07  Dan Bernstein  <mitz@apple.com>
 
+        Fixed the definition of BUTTON_CELL_DRAW_WITH_FRAME_DRAWS_FOCUS_RING from r102246.
+
+        * platform/mac/ThemeMac.mm: Added parentheses.
+
+2011-12-07  Dan Bernstein  <mitz@apple.com>
+
         <rdar://problem/10542095> Focus rings are not drawn around push buttons, radio buttons and checkboxes
 
         Reviewed by Darin Adler.
