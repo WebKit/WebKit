@@ -540,7 +540,7 @@ void UniscribeHelper::fillRuns()
                                            0, // fNeutralOverride    :1;
                                            0, // fNumericOverride    :1;
                                            0, // fLegacyBidiClass    :1;
-                                           0, // fMergeNeutralItems  :1;
+                                           1, // fMergeNeutralItems  :1;
                                            0};// fReserved           :7;
     // Calling ScriptApplyDigitSubstitution( 0, &inputControl, &inputState)
     // here would be appropriate if we wanted to set the language ID, and get
@@ -574,23 +574,6 @@ void UniscribeHelper::fillRuns()
                                             &inputControl, &inputState,
                                             &m_runs[0], &m_scriptTags[0],
                                             &numberOfItems);
-            if (SUCCEEDED(hr)) {
-                // Pack consecutive runs, the script tag of which are
-                // SCRIPT_TAG_UNKNOWN, to reduce the number of runs.
-                for (int i = 0; i < numberOfItems; ++i) {
-                    if (m_scriptTags[i] == SCRIPT_TAG_UNKNOWN) {
-                        int j = 1;
-                        while (i + j < numberOfItems && m_scriptTags[i + j] == SCRIPT_TAG_UNKNOWN)
-                            ++j;
-                        if (--j) {
-                            m_runs.remove(i + 1, j);
-                            m_scriptTags.remove(i + 1, j);
-                            numberOfItems -= j;
-                        }
-                    }
-                }
-                m_scriptTags.resize(numberOfItems);
-            }
         } else {
             hr = ScriptItemize(m_input, m_inputLength,
                                static_cast<int>(m_runs.size()) - 1,

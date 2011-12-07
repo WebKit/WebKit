@@ -1,3 +1,18 @@
+2011-12-06  Kenichi Ishibashi  <bashi@chromium.org>
+
+        [Chromium] unknown characters symbol on \n in complex script text (RTL and LTR)
+        https://bugs.webkit.org/show_bug.cgi?id=73806
+
+        Reviewed by Tony Chang.
+
+        Sets fMergeNeutralItems to 1 instead of merging script items based on their tags.
+
+        Tests: platform/chromium/fast/text/international/chromium-complex-text-non-printable-expected.html
+               platform/chromium/fast/text/international/chromium-complex-text-non-printable.html
+
+        * platform/graphics/chromium/UniscribeHelper.cpp:
+        (WebCore::UniscribeHelper::fillRuns): Removed a block which merges script items.
+
 2011-12-06  Luke Macpherson   <macpherson@chromium.org>
 
         Implement remaining border-image and webkit-maskbox-image properties in CSSStyleApplyProperty.
