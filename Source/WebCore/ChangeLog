@@ -1,3 +1,20 @@
+2011-12-06  Shinya Kawanaka  <shinyak@google.com>
+
+        Refactoring: Editor::markAllMisspellingsAndBadGrammarInRanges should be refactored.
+        https://bugs.webkit.org/show_bug.cgi?id=73628
+
+        Reviewed by Hajime Morita.
+
+        Extracted a code for adding markers and replacing misspelled words from WebCore::Editor::markAllMisspellingsAndBadGrammarInRanges.
+
+        No new tests. covered by existing tests.
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::markAllMisspellingsAndBadGrammarInRanges):
+          Extracted a code for adding markers and replacing missplled words, and moved to markAndReplaceFor.
+        (WebCore::Editor::markAndReplaceFor):
+        * editing/Editor.h:
+
 2011-12-06  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Avoid calling calculateRects in RenderLayer::paintLayer when the rectangles are not needed

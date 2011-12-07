@@ -62,6 +62,8 @@ class SimpleFontData;
 class SpellChecker;
 class Text;
 class TextCheckerClient;
+class TextCheckingParagraph;
+struct TextCheckingResult;
 class TextEvent;
 
 struct CompositionUnderline {
@@ -403,6 +405,7 @@ private:
     void writeSelectionToPasteboard(Pasteboard*);
     void revealSelectionAfterEditingOperation();
     void markMisspellingsOrBadGrammar(const VisibleSelection&, bool checkSpelling, RefPtr<Range>& firstMisspellingRange);
+    void markAndReplaceFor(TextCheckingTypeMask, const Vector<TextCheckingResult>&, const TextCheckingParagraph& spellingParagraph, const TextCheckingParagraph& grammarParagraph);
     TextCheckingTypeMask resolveTextCheckingTypeMask(TextCheckingTypeMask);
 
     void selectComposition();
