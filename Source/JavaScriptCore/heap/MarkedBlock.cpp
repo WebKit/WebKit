@@ -141,16 +141,47 @@ void MarkedBlock::zapFreeList(FreeCell* firstFreeCell)
 {
     HEAP_LOG_BLOCK_STATE_TRANSITION(this);
 
+    if (m_state == Marked) {
+        // If the block is in the Marked state then we know that:
+        // 1) It was not used for allocation during the previous allocation cycle.
+        // 2) It may have dead objects, and we only know them to be dead by the
+        //    fact that their mark bits are unset.
+        // Hence if the block is Marked we need to leave it Marked.
+        
+        ASSERT(!firstFreeCell);
+        
+        return;
+    }
+    
+    if (m_state == Zapped) {
+        // If the block is in the Zapped state then we know that someone already
+        // zapped it for us. This could not have happened during a GC, but might
+        // be the result of someone having done a GC scan to perform some operation
+        // over all live objects (or all live blocks). It also means that somebody
+        // had allocated in this block since the last GC, swept all dead objects
+        // onto the free list, left the block in the FreeListed state, then the heap
+        // scan happened, and canonicalized the block, leading to all dead objects
+        // being zapped. Therefore, it is safe for us to simply do nothing, since
+        // dead objects will have 0 in their vtables and live objects will have
+        // non-zero vtables, which is consistent with the block being zapped.
+        
+        ASSERT(!firstFreeCell);
+        
+        return;
+    }
+    
+    ASSERT(m_state == FreeListed);
+    
     // Roll back to a coherent state for Heap introspection. Cells newly
     // allocated from our free list are not currently marked, so we need another
     // way to tell what's live vs dead. We use zapping for that.
-
+    
     FreeCell* next;
     for (FreeCell* current = firstFreeCell; current; current = next) {
         next = current->next;
         reinterpret_cast<JSCell*>(current)->zap();
     }
-
+    
     m_state = Zapped;
 }
 

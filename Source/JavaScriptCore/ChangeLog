@@ -1,5 +1,28 @@
 2011-12-06  Filip Pizlo  <fpizlo@apple.com>
 
+        Zapping a block that is Marked leads to dead objects being mistaken for live ones
+        https://bugs.webkit.org/show_bug.cgi?id=73982
+
+        Reviewed by Geoff Garen.
+        
+        Changed the zapping code to ignore blocks that are Marked or Zapped. Additionally,
+        the code asserts that:
+        
+        - If we zap a Marked or Zapped block then the free list is empty, because this
+          can only happen if the block was never free-listed.
+          
+        - Zapping can only happen for Marked, Zapped, or FreeListed blocks, since Allocated
+          blocks are those that cannot be referred to by SizeClass::currentBlock (since
+          SizeClass::currentBlock only refers to blocks that are candidates for allocation,
+          and Allocated blocks are those who have been exhausted by allocation and will not
+          be allocated from again), and New blocks cannot be referred to by anything except
+          during a brief window inside the allocation slow-path.
+
+        * heap/MarkedBlock.cpp:
+        (JSC::MarkedBlock::zapFreeList):
+
+2011-12-06  Filip Pizlo  <fpizlo@apple.com>
+
         DFG 32_64 call linking does not handle non-cell callees correctly
         https://bugs.webkit.org/show_bug.cgi?id=73965
 
