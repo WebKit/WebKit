@@ -1,3 +1,15 @@
+2011-12-07  Xianzhu Wang  <wangxianzhu@chromium.org>
+
+        In FontCacheAndroid.cpp should keep the pointer valid returned from CString::data()
+        https://bugs.webkit.org/show_bug.cgi?id=73849
+
+        The changed code has been covered by many existing layout tests.
+
+        Reviewed by Adam Barth.
+
+        * platform/graphics/chromium/FontCacheAndroid.cpp:
+        (WebCore::FontCache::createFontPlatformData):
+
 2011-12-07  Xiaomei Ji  <xji@chromium.org>
 
         Turn on move caret by word visually for Windows platform.

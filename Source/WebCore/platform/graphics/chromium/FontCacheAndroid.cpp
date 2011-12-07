@@ -147,13 +147,16 @@ void FontCache::getTraitsInFamily(const AtomicString& familyName, Vector<unsigne
 FontPlatformData* FontCache::createFontPlatformData(const FontDescription& fontDescription, const AtomicString& family)
 {
     const char* name = 0;
+    CString nameString; // Keeps name valid within scope of this function in case that name is from a family.
 
     // If a fallback font is being created (e.g. "-webkit-monospace"), convert
     // it in to the fallback name (e.g. "monospace").
     if (!family.length() || family.startsWith("-webkit-"))
         name = getFallbackFontName(fontDescription);
-    else
-        name = family.string().utf8().data();
+    else {
+        nameString = family.string().utf8();
+        name = nameString.data();
+    }
 
     int style = SkTypeface::kNormal;
     if (fontDescription.weight() >= FontWeightBold)
