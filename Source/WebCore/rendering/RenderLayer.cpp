@@ -4092,11 +4092,8 @@ void RenderLayer::dirtyNormalFlowList()
 #endif
 }
 
-void RenderLayer::updateZOrderLists()
+void RenderLayer::updateZOrderListsSlowCase()
 {
-    if (!isStackingContext() || !m_zOrderListsDirty)
-        return;
-
 #if USE(ACCELERATED_COMPOSITING)
     bool includeHiddenLayers = compositor()->inCompositingMode();
 #else

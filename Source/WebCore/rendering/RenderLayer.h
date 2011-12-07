@@ -544,6 +544,8 @@ public:
     void setContainsDirtyOverlayScrollbars(bool dirtyScrollbars) { m_containsDirtyOverlayScrollbars = dirtyScrollbars; }
 
 private:
+    void updateZOrderListsSlowCase();
+
     void computeRepaintRects(IntPoint* offsetFromRoot = 0);
     void clearRepaintRects();
 
@@ -843,6 +845,13 @@ private:
 
     Page* m_scrollableAreaPage; // Page on which this is registered as a scrollable area.
 };
+
+inline void RenderLayer::updateZOrderLists()
+{
+    if (!m_zOrderListsDirty || !isStackingContext())
+        return;
+    updateZOrderListsSlowCase();
+}
 
 } // namespace WebCore
 

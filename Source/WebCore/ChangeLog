@@ -1,3 +1,22 @@
+2011-12-07  Andreas Kling  <kling@webkit.org>
+
+        RenderLayer::updateZOrderLists(): Inline early-return condition.
+        <http://webkit.org/b/74013>
+
+        Reviewed by Anders Carlsson.
+
+        updateZOrderLists() was hot (1.2%) when scrolling around on youtube.com,
+        and 85% of the calls were taking the early return path.
+
+        Inlined the two checks for the early return and renamed the function
+        to updateZOrderListsSlowCase(). Also reversed their order to avoid the
+        virtual call (RenderObject::isRenderView()) if possible.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateZOrderListsSlowCase):
+        * rendering/RenderLayer.h:
+        (WebCore::RenderLayer::updateZOrderLists):
+
 2011-12-07  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r102244.
