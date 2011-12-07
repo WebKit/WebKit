@@ -464,7 +464,7 @@ void RenderBlock::splitBlocks(RenderBlock* fromBlock, RenderBlock* toBlock,
     // them from |this| and place them in the clone.
     if (!beforeChild && isAfterContent(lastChild()))
         beforeChild = lastChild();
-    moveChildrenTo(cloneBlock, beforeChild, 0);
+    moveChildrenTo(cloneBlock, beforeChild, 0, true);
     
     // Hook |clone| up as the continuation of the middle block.
     if (!cloneBlock->isAnonymousBlock())
@@ -506,8 +506,7 @@ void RenderBlock::splitBlocks(RenderBlock* fromBlock, RenderBlock* toBlock,
 
         // Now we need to take all of the children starting from the first child
         // *after* currChild and append them all to the clone.
-        RenderObject* afterContent = isAfterContent(cloneBlock->lastChild()) ? cloneBlock->lastChild() : 0;
-        blockCurr->moveChildrenTo(cloneBlock, currChild->nextSibling(), 0, afterContent);
+        blockCurr->moveChildrenTo(cloneBlock, currChild->nextSibling(), 0, true);
 
         // Keep walking up the chain.
         currChild = curr;
@@ -519,7 +518,7 @@ void RenderBlock::splitBlocks(RenderBlock* fromBlock, RenderBlock* toBlock,
 
     // Now take all the children after currChild and remove them from the fromBlock
     // and put them in the toBlock.
-    fromBlock->moveChildrenTo(toBlock, currChild->nextSibling(), 0);
+    fromBlock->moveChildrenTo(toBlock, currChild->nextSibling(), 0, true);
 }
 
 void RenderBlock::splitFlow(RenderObject* beforeChild, RenderBlock* newBlockBox,
@@ -555,7 +554,7 @@ void RenderBlock::splitFlow(RenderObject* beforeChild, RenderBlock* newBlockBox,
     block->setChildrenInline(false);
     
     if (madeNewBeforeBlock)
-        block->moveChildrenTo(pre, boxFirst, 0);
+        block->moveChildrenTo(pre, boxFirst, 0, true);
 
     splitBlocks(pre, post, newBlockBox, beforeChild, oldCont);
 

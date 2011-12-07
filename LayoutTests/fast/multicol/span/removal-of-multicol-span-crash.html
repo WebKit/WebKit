@@ -1,0 +1,24 @@
+<style>
+body { -webkit-column-width: 0; }
+#container { position: relative; }
+.hardware:last-of-type { -webkit-column-span: all; }
+</style>
+
+<script>
+    function clear() {
+        document.documentElement.removeChild(document.body);
+        document.documentElement.innerHTML='PASS, if no exception or crash';
+        if (window.layoutTestController) {
+            layoutTestController.notifyDone();
+        }
+    }
+    setTimeout("clear();", 0);
+    if (window.layoutTestController) {
+        layoutTestController.waitUntilDone();
+        layoutTestController.dumpAsText();
+    }
+</script>
+<body>
+<div id="container">
+    <div class="hardware box">
+</body>
