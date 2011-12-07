@@ -1,3 +1,32 @@
+2011-12-07  Mary Wu  <mary.wu@torchmobile.com.cn>
+
+        Upstream 5 files into WebCore/platform/blackberry
+        https://bugs.webkit.org/show_bug.cgi?id=73632
+
+        Reviewed by Rob Buis.
+
+        Initial upstream, no new tests.
+
+        * PlatformBlackBerry.cmake: Remove two empty files from build list.
+        * platform/blackberry/PopupMenuBlackBerry.cpp: Added.
+        (WebCore::PopupMenuBlackBerry::PopupMenuBlackBerry):
+        (WebCore::PopupMenuBlackBerry::~PopupMenuBlackBerry):
+        (WebCore::PopupMenuBlackBerry::show):
+        (WebCore::PopupMenuBlackBerry::hide):
+        (WebCore::PopupMenuBlackBerry::updateFromElement):
+        (WebCore::PopupMenuBlackBerry::disconnectClient):
+        * platform/blackberry/PopupMenuBlackBerry.h: Added.
+        (WebCore::PopupMenuBlackBerry::client):
+        * platform/blackberry/ScrollbarThemeBlackBerry.cpp: Added.
+        (WebCore::ScrollbarTheme::nativeTheme):
+        * platform/blackberry/SearchPopupMenuBlackBerry.cpp: Added.
+        (WebCore::SearchPopupMenuBlackBerry::SearchPopupMenuBlackBerry):
+        (WebCore::SearchPopupMenuBlackBerry::popupMenu):
+        (WebCore::SearchPopupMenuBlackBerry::enabled):
+        (WebCore::SearchPopupMenuBlackBerry::saveRecentSearches):
+        (WebCore::SearchPopupMenuBlackBerry::loadRecentSearches):
+        * platform/blackberry/SearchPopupMenuBlackBerry.h: Added.
+
 2011-12-07  Dan Bernstein  <mitz@apple.com>
 
         Fixed the definition of BUTTON_CELL_DRAW_WITH_FRAME_DRAWS_FOCUS_RING from r102246.
