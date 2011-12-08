@@ -227,17 +227,29 @@ bool NetscapePluginModule::tryLoad()
     // in Flash and QuickTime on Windows).
 #if PLUGIN_ARCHITECTURE(MAC)
 #ifndef NP_NO_CARBON
+
+#if COMPILER(CLANG)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+#endif
+
     // Plugins (at least QT) require that you call UseResFile on the resource file before loading it.
     ResFileRefNum currentResourceFile = CurResFile();
     
     ResFileRefNum pluginResourceFile = m_module->bundleResourceMap();
     UseResFile(pluginResourceFile);
+
 #endif
     bool result = initializeFuncPtr(netscapeBrowserFuncs()) == NPERR_NO_ERROR && getEntryPointsFuncPtr(&m_pluginFuncs) == NPERR_NO_ERROR;
 
 #ifndef NP_NO_CARBON
     // Restore the resource file.
     UseResFile(currentResourceFile);
+
+#if COMPILER(CLANG)
+#pragma clang diagnostic pop
+#endif
+
 #endif
 
     return result;

@@ -67,6 +67,12 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
 @implementation WebNetscapePluginPackage
 
 #ifndef __LP64__
+
+#if COMPILER(CLANG)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+#endif
+
 + (void)initialize
 {
     // The Shockwave plugin requires a valid file in CurApRefNum.
@@ -92,6 +98,11 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
         UseResFile(savedCurResFile);
     }
 }
+
+#if COMPILER(CLANG)
+#pragma clang diagnostic pop
+#endif
+
 #endif
 
 - (ResFileRefNum)openResourceFile

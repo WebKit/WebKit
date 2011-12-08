@@ -72,6 +72,12 @@ static NSInteger shim_NSApplication_RunModalForWindow(id self, SEL _cmd, NSWindo
 }
 
 #ifndef __LP64__
+
+#if COMPILER(CLANG)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+#endif
+
 static void shimDebugger(void)
 {
     if (!pluginProcessShimCallbacks.shouldCallRealDebugger())
@@ -129,6 +135,10 @@ DYLD_INTERPOSE(shimModalDialog, ModalDialog);
 DYLD_INTERPOSE(shimAlert, Alert);
 DYLD_INTERPOSE(shimShowWindow, ShowWindow);
 DYLD_INTERPOSE(shimHideWindow, HideWindow);
+
+#if COMPILER(CLANG)
+#pragma clang diagnostic pop
+#endif
 
 #endif
 

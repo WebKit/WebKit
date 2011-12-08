@@ -1,3 +1,13 @@
+2011-12-07  Mark Rowe  <mrowe@apple.com>
+
+        Fix the 32-bit build.
+
+        Ignore some warnings that only occur in 32-bit.
+
+        * PluginProcess/mac/PluginProcessShim.mm:
+        * Shared/Plugins/Netscape/NetscapePluginModule.cpp:
+        (WebKit::NetscapePluginModule::tryLoad):
+
 2011-12-07  Balazs Kelemen  <kbalazs@webkit.org>
 
         ShareableBitmapGtk.cpp has no reason to exist
