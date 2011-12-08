@@ -1,3 +1,14 @@
+2011-12-08  Benjamin Poulain  <bpoulain@apple.com>
+
+        Add a platform EventLoop for iOS
+        https://bugs.webkit.org/show_bug.cgi?id=74043
+
+        Reviewed by David Kilzer.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/ios/EventLoopIOS.mm: Added.
+        (WebCore::EventLoop::cycle):
+
 2011-12-08  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: return node counts on the document / detached root basis
