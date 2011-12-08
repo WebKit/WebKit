@@ -1,3 +1,10 @@
+2011-12-07  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed buildfix after r102262.
+
+        * Api/qwebelement.cpp:
+        (QWebElement::setStyleProperty):
+
 2011-12-07  Mary Wu  <mary.wu@torchmobile.com.cn>
 
         Change function name InitializeLoggingChannelsIfNecessary to follow coding style guideline

@@ -916,7 +916,7 @@ void QWebElement::setStyleProperty(const QString &name, const QString &value)
         return;
 
     ExceptionCode exception = 0;
-    style->setProperty(name, value, exception);
+    style->setProperty(name, value,emptyString(), exception);
 }
 
 /*!
