@@ -1,3 +1,17 @@
+2011-12-08  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: WebKit API addition of IDBObjectStore.count() and IDBIndex.count()
+        https://bugs.webkit.org/show_bug.cgi?id=73685
+
+        Reviewed by Darin Fisher.
+
+        Implementation to follow - this just extends the WebKit API.
+
+        * public/WebIDBIndex.h:
+        (WebKit::WebIDBIndex::count):
+        * public/WebIDBObjectStore.h:
+        (WebKit::WebIDBObjectStore::count):
+
 2011-12-07  Alexandre Elias  <aelias@google.com>
 
         [chromium] Add page-scale animation support to Impl thread
