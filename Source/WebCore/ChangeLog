@@ -1,3 +1,18 @@
+2011-12-07  Kenichi Ishibashi  <bashi@chromium.org>
+
+        Refactor CSSParser::parseFontFaceSrc()
+        https://bugs.webkit.org/show_bug.cgi?id=73989
+
+        Reviewed by Darin Adler.
+
+        Test: fast/css/font-face-src-parsing.html
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseFontFaceSrcURI): Added.
+        (WebCore::CSSParser::parseFontFaceSrcLocal): Added.
+        (WebCore::CSSParser::parseFontFaceSrc): Rewrote.
+        * css/CSSParser.h:
+
 2011-12-07  Xingnan Wang  <xingnan.wang@intel.com>
 
         Implement the SSE optimization in SincResampler::process()

@@ -4364,41 +4364,63 @@ bool CSSParser::parseFontWeight(bool important)
     return false;
 }
 
-static bool isValidFormatFunction(CSSParserValue* val)
+bool CSSParser::parseFontFaceSrcURI(CSSValueList* valueList)
 {
-    CSSParserValueList* args = val->function->args.get();
-    return equalIgnoringCase(val->function->name, "format(") && (args->current()->unit == CSSPrimitiveValue::CSS_STRING || args->current()->unit == CSSPrimitiveValue::CSS_IDENT);
+    // FIXME: The completeURL call should be done when using the CSSFontFaceSrcValue,
+    // not when creating it.
+    RefPtr<CSSFontFaceSrcValue> uriValue(CSSFontFaceSrcValue::create(m_styleSheet->completeURL(m_valueList->current()->string)));
+
+    CSSParserValue* value = m_valueList->next();
+    if (!value) {
+        valueList->append(uriValue.release());
+        return true;
+    }
+    if (value->unit == CSSParserValue::Operator && value->iValue == ',') {
+        m_valueList->next();
+        valueList->append(uriValue.release());
+        return true;
+    }
+
+    if (value->unit != CSSParserValue::Function || !equalIgnoringCase(value->function->name, "format("))
+        return false;
+
+    // FIXME: http://www.w3.org/TR/2011/WD-css3-fonts-20111004/ says that format() contains a comma-separated list of strings,
+    // but CSSFontFaceSrcValue stores only one format. Allowing one format for now.
+    CSSParserValueList* args = value->function->args.get();
+    if (!args || args->size() != 1 || (args->current()->unit != CSSPrimitiveValue::CSS_STRING && args->current()->unit != CSSPrimitiveValue::CSS_IDENT))
+        return false;
+    uriValue->setFormat(args->current()->string);
+    valueList->append(uriValue.release());
+    value = m_valueList->next();
+    if (value && value->unit == CSSParserValue::Operator && value->iValue == ',')
+        m_valueList->next();
+    return true;
 }
 
-static bool parseFontFaceSrcFunction(CSSParserValue* value, bool& expectComma, bool& allowFormat, RefPtr<CSSFontFaceSrcValue>& uriValue, RefPtr<CSSFontFaceSrcValue>& parsedValue)
+bool CSSParser::parseFontFaceSrcLocal(CSSValueList* valueList)
 {
-    CSSParserValueList* args = value->function->args.get();
+    CSSParserValueList* args = m_valueList->current()->function->args.get();
     if (!args || !args->size())
         return false;
 
-    if (equalIgnoringCase(value->function->name, "local(") && !expectComma) {
-        expectComma = true;
-        allowFormat = false;
-        uriValue.clear();
-        if (args->current()->unit == CSSPrimitiveValue::CSS_STRING)
-            parsedValue = CSSFontFaceSrcValue::createLocal(args->current()->string);
-        else if (args->current()->unit == CSSPrimitiveValue::CSS_IDENT) {
-            StringBuilder builder;
-            for (CSSParserValue* localValue = args->current(); localValue; localValue = args->next()) {
-                if (localValue->unit != CSSPrimitiveValue::CSS_IDENT)
-                    return false;
-                if (!builder.isEmpty())
-                    builder.append(' ');
-                builder.append(localValue->string);
-            }
-            parsedValue = CSSFontFaceSrcValue::createLocal(builder.toString());
+    if (args->size() == 1 && args->current()->unit == CSSPrimitiveValue::CSS_STRING)
+        valueList->append(CSSFontFaceSrcValue::createLocal(args->current()->string));
+    else if (args->current()->unit == CSSPrimitiveValue::CSS_IDENT) {
+        StringBuilder builder;
+        for (CSSParserValue* localValue = args->current(); localValue; localValue = args->next()) {
+            if (localValue->unit != CSSPrimitiveValue::CSS_IDENT)
+                return false;
+            if (!builder.isEmpty())
+                builder.append(' ');
+            builder.append(localValue->string);
         }
-    } else if (args->size() == 1 && allowFormat && uriValue && isValidFormatFunction(value)) {
-        expectComma = true;
-        allowFormat = false;
-        uriValue->setFormat(args->current()->string);
-        uriValue.clear();
-        parsedValue.clear();
+        valueList->append(CSSFontFaceSrcValue::createLocal(builder.toString()));
+    } else
+        return false;
+
+    if (CSSParserValue* value = m_valueList->next()) {
+        if (value->unit == CSSParserValue::Operator && value->iValue == ',')
+            m_valueList->next();
     }
     return true;
 }
@@ -4406,53 +4428,23 @@ static bool parseFontFaceSrcFunction(CSSParserValue* value, bool& expectComma, b
 bool CSSParser::parseFontFaceSrc()
 {
     RefPtr<CSSValueList> values(CSSValueList::createCommaSeparated());
-    CSSParserValue* val;
-    bool expectComma = false;
-    bool allowFormat = false;
-    bool failed = false;
-    RefPtr<CSSFontFaceSrcValue> uriValue;
-    while ((val = m_valueList->current())) {
-        RefPtr<CSSFontFaceSrcValue> parsedValue;
-        if (val->unit == CSSPrimitiveValue::CSS_URI && !expectComma && m_styleSheet) {
-            // FIXME: The completeURL call should be done when using the CSSFontFaceSrcValue,
-            // not when creating it.
-            parsedValue = CSSFontFaceSrcValue::create(m_styleSheet->completeURL(val->string));
-            uriValue = parsedValue;
-            allowFormat = true;
-            expectComma = true;
-        } else if (val->unit == CSSParserValue::Function) {
-            if (!parseFontFaceSrcFunction(val, expectComma, allowFormat, uriValue, parsedValue)) {
-                failed = true;
-                break;
-            }
-            if (parsedValue)
-                values->append(parsedValue.release());
-            m_valueList->next();
-            continue;
-        } else if (val->unit == CSSParserValue::Operator && val->iValue == ',' && expectComma) {
-            expectComma = false;
-            allowFormat = false;
-            uriValue.clear();
-            m_valueList->next();
-            continue;
-        }
 
-        if (parsedValue)
-            values->append(parsedValue.release());
-        else {
-            failed = true;
-            break;
-        }
-        m_valueList->next();
+    while (CSSParserValue* value = m_valueList->current()) {
+        if (value->unit == CSSPrimitiveValue::CSS_URI && m_styleSheet) {
+            if (!parseFontFaceSrcURI(values.get()))
+                return false;
+        } else if (value->unit == CSSParserValue::Function && equalIgnoringCase(value->function->name, "local(")) {
+            if (!parseFontFaceSrcLocal(values.get()))
+                return false;
+        } else
+            return false;
     }
+    if (!values->length())
+        return false;
 
-    if (values->length() && !failed) {
-        addProperty(CSSPropertySrc, values.release(), m_important);
-        m_valueList->next();
-        return true;
-    }
-
-    return false;
+    addProperty(CSSPropertySrc, values.release(), m_important);
+    m_valueList->next();
+    return true;
 }
 
 bool CSSParser::parseFontFaceUnicodeRange()

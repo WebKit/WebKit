@@ -345,6 +345,9 @@ private:
     bool parseSize(int propId, bool important);
     SizeParameterType parseSizeParameter(CSSValueList* parsedValues, CSSParserValue* value, SizeParameterType prevParamType);
 
+    bool parseFontFaceSrcURI(CSSValueList*);
+    bool parseFontFaceSrcLocal(CSSValueList*);
+
     UChar* m_data;
     UChar* yytext;
     UChar* yy_c_buf_p;
