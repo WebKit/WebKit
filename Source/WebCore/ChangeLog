@@ -1,5 +1,14 @@
 2011-12-07  Lucas Forschler  <lforschler@apple.com>
 
+        Fix a compiler error about implicit conversion from 64 to 32bit int.
+
+        Reviewed by Beth Dakin.
+
+        * platform/mac/ScrollAnimatorMac.mm:
+        (-[ScrollbarPainterDelegate scrollerImp:animateUIStateTransitionWithDuration:]):
+
+2011-12-07  Lucas Forschler  <lforschler@apple.com>
+
     Merge 99493
 
     2011-11-07  Beth Dakin  <bdakin@apple.com>

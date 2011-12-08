@@ -513,14 +513,14 @@ enum FeatureToAnimate {
                                                                     animate:UIStateTransition
                                                                     scrollAnimator:_animator
                                                                     animateFrom:[scrollerPainter uiStateTransitionProgress]
-                                                                    animateTo:1.0 
+                                                                    animateTo:1.0f 
                                                                     duration:duration]);
         [scrollbarPartAnimation.get() setAnimationBlockingMode:NSAnimationNonblocking];
     } else {
         // If we don't need to initialize the animation, just reset the values in case they have changed.
         [scrollbarPartAnimation.get() setScrollbarPainter:scrollerPainter];
         [scrollbarPartAnimation.get() setStartValue:[scrollerPainter uiStateTransitionProgress]];
-        [scrollbarPartAnimation.get() setEndValue:1.0];
+        [scrollbarPartAnimation.get() setEndValue:1.0f];
         [scrollbarPartAnimation.get() setDuration:duration];
     }
     [scrollbarPartAnimation.get() startAnimation];
