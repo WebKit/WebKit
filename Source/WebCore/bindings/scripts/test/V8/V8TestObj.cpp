@@ -1139,12 +1139,18 @@ static v8::Handle<v8::Value> methodWithCallbackAndOptionalArgCallback(const v8::
     return v8::Handle<v8::Value>();
 }
 
+#if ENABLE(Condition1)
+
 static v8::Handle<v8::Value> conditionalMethod1Callback(const v8::Arguments& args)
 {
     INC_STATS("DOM.TestObj.conditionalMethod1");
     TestObj* imp = V8TestObj::toNative(args.Holder());
     return v8String(imp->conditionalMethod1());
 }
+
+#endif // ENABLE(Condition1)
+
+#if ENABLE(Condition1) && ENABLE(Condition2)
 
 static v8::Handle<v8::Value> conditionalMethod2Callback(const v8::Arguments& args)
 {
@@ -1154,6 +1160,10 @@ static v8::Handle<v8::Value> conditionalMethod2Callback(const v8::Arguments& arg
     return v8::Handle<v8::Value>();
 }
 
+#endif // ENABLE(Condition1) && ENABLE(Condition2)
+
+#if ENABLE(Condition1) || ENABLE(Condition2)
+
 static v8::Handle<v8::Value> conditionalMethod3Callback(const v8::Arguments& args)
 {
     INC_STATS("DOM.TestObj.conditionalMethod3");
@@ -1161,6 +1171,8 @@ static v8::Handle<v8::Value> conditionalMethod3Callback(const v8::Arguments& arg
     imp->conditionalMethod3();
     return v8::Handle<v8::Value>();
 }
+
+#endif // ENABLE(Condition1) || ENABLE(Condition2)
 
 static v8::Handle<v8::Value> overloadedMethod1Callback(const v8::Arguments& args)
 {
@@ -1285,6 +1297,8 @@ static v8::Handle<v8::Value> classMethodWithOptionalCallback(const v8::Arguments
     return v8::Integer::New(TestObj::classMethodWithOptional(arg));
 }
 
+#if ENABLE(Condition1)
+
 static v8::Handle<v8::Value> overloadedMethod11Callback(const v8::Arguments& args)
 {
     INC_STATS("DOM.TestObj.overloadedMethod11");
@@ -1294,6 +1308,10 @@ static v8::Handle<v8::Value> overloadedMethod11Callback(const v8::Arguments& arg
     TestObj::overloadedMethod1(arg);
     return v8::Handle<v8::Value>();
 }
+
+#endif // ENABLE(Condition1)
+
+#if ENABLE(Condition1)
 
 static v8::Handle<v8::Value> overloadedMethod12Callback(const v8::Arguments& args)
 {
@@ -1305,6 +1323,10 @@ static v8::Handle<v8::Value> overloadedMethod12Callback(const v8::Arguments& arg
     return v8::Handle<v8::Value>();
 }
 
+#endif // ENABLE(Condition1)
+
+#if ENABLE(Condition1)
+
 static v8::Handle<v8::Value> overloadedMethod1Callback(const v8::Arguments& args)
 {
     INC_STATS("DOM.TestObj.overloadedMethod1");
@@ -1315,6 +1337,8 @@ static v8::Handle<v8::Value> overloadedMethod1Callback(const v8::Arguments& args
     V8Proxy::throwTypeError();
     return notHandledByInterceptor();
 }
+
+#endif // ENABLE(Condition1)
 
 static v8::Handle<v8::Value> enabledAtRuntimeMethod1Callback(const v8::Arguments& args)
 {
@@ -1591,7 +1615,9 @@ static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestObjTemplate(v8::Persi
     proto->Set(v8::String::New("customArgsAndException"), v8::FunctionTemplate::New(TestObjInternal::customArgsAndExceptionCallback, v8::Handle<v8::Value>(), customArgsAndExceptionSignature));
     desc->Set(v8::String::New("classMethod"), v8::FunctionTemplate::New(TestObjInternal::classMethodCallback, v8::Handle<v8::Value>(), v8::Local<v8::Signature>()));
     desc->Set(v8::String::New("classMethodWithOptional"), v8::FunctionTemplate::New(TestObjInternal::classMethodWithOptionalCallback, v8::Handle<v8::Value>(), v8::Local<v8::Signature>()));
+#if ENABLE(Condition1)
     desc->Set(v8::String::New("overloadedMethod1"), v8::FunctionTemplate::New(TestObjInternal::overloadedMethod1Callback, v8::Handle<v8::Value>(), v8::Local<v8::Signature>()));
+#endif // ENABLE(Condition1)
     if (RuntimeEnabledFeatures::enabledAtRuntimeMethod1Enabled())
         proto->Set(v8::String::New("enabledAtRuntimeMethod1"), v8::FunctionTemplate::New(TestObjInternal::enabledAtRuntimeMethod1Callback, v8::Handle<v8::Value>(), defaultSignature));
     if (RuntimeEnabledFeatures::featureNameEnabled())

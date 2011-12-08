@@ -1288,6 +1288,8 @@ sub GenerateOverloadedFunctionCallback
     # declaration in the IDL.
 
     my $name = $function->signature->name;
+    my $conditionalString = GenerateConditionalString($function->signature);
+    push(@implContentDecls, "#if ${conditionalString}\n\n") if $conditionalString;
     push(@implContentDecls, <<END);
 static v8::Handle<v8::Value> ${name}Callback(const v8::Arguments& args)
 {
@@ -1304,6 +1306,7 @@ END
     return notHandledByInterceptor();
 END
     push(@implContentDecls, "}\n\n");
+    push(@implContentDecls, "#endif // ${conditionalString}\n\n") if $conditionalString;
 }
 
 sub GenerateFunctionCallback
@@ -1331,6 +1334,8 @@ sub GenerateFunctionCallback
         return;
     }
 
+    my $conditionalString = GenerateConditionalString($function->signature);
+    push(@implContentDecls, "#if ${conditionalString}\n\n") if $conditionalString;
     push(@implContentDecls, <<END);
 static v8::Handle<v8::Value> ${name}Callback(const v8::Arguments& args)
 {
@@ -1425,6 +1430,7 @@ END
     }
 
     push(@implContentDecls, "}\n\n");
+    push(@implContentDecls, "#endif // ${conditionalString}\n\n") if $conditionalString;
 }
 
 sub GenerateArgumentsCountCheck
@@ -2614,9 +2620,14 @@ END
             next;
         }
 
+        my $conditionalString = GenerateConditionalString($function->signature);
+        push(@implContent, "#if ${conditionalString}\n") if $conditionalString;
+
         push(@implContent, <<END);
     ${conditional}$template->Set(v8::String::New("$name"), v8::FunctionTemplate::New($callback, v8::Handle<v8::Value>(), ${signature})$property_attributes);
 END
+
+        push(@implContent, "#endif // ${conditionalString}\n") if $conditionalString;
         $num_callbacks++;
     }
 
