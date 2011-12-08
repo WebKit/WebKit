@@ -31,6 +31,7 @@
 #include "LayerRendererChromium.h"
 #include "TraceEvent.h"
 #include "cc/CCLayerTreeHost.h"
+#include "cc/CCPageScaleAnimation.h"
 #include "cc/CCThreadTask.h"
 #include <wtf/CurrentTime.h>
 
@@ -84,6 +85,45 @@ GraphicsContext3D* CCLayerTreeHostImpl::context()
 
 void CCLayerTreeHostImpl::animate(double frameBeginTimeMs)
 {
+    if (!m_pageScaleAnimation)
+        return;
+
+    IntSize scrollTotal = toSize(m_scrollLayerImpl->scrollPosition() + m_scrollLayerImpl->scrollDelta());
+
+    setPageScaleDelta(m_pageScaleAnimation->pageScaleAtTime(frameBeginTimeMs) / m_pageScale);
+    IntSize nextScroll = m_pageScaleAnimation->scrollOffsetAtTime(frameBeginTimeMs);
+    nextScroll.scale(1 / m_pageScaleDelta);
+    m_scrollLayerImpl->scrollBy(nextScroll - scrollTotal);
+    m_client->setNeedsRedrawOnImplThread();
+
+    if (m_pageScaleAnimation->isAnimationCompleteAtTime(frameBeginTimeMs)) {
+        m_pageScaleAnimation.clear();
+        m_client->setNeedsCommitOnImplThread();
+    }
+}
+
+void CCLayerTreeHostImpl::startPageScaleAnimation(const IntSize& targetPosition, bool anchorPoint, float pageScale, double durationMs)
+{
+    if (!m_scrollLayerImpl)
+        return;
+
+    IntSize scrollTotal = toSize(m_scrollLayerImpl->scrollPosition() + m_scrollLayerImpl->scrollDelta());
+    scrollTotal.scale(m_pageScaleDelta);
+    float scaleTotal = m_pageScale * m_pageScaleDelta;
+    IntSize scaledContentSize = m_scrollLayerImpl->children()[0]->contentBounds();
+    scaledContentSize.scale(m_pageScaleDelta);
+
+    m_pageScaleAnimation = CCPageScaleAnimation::create(scrollTotal, scaleTotal, m_viewportSize, scaledContentSize, currentTimeMs());
+
+    if (anchorPoint) {
+        IntSize windowAnchor(targetPosition);
+        windowAnchor.scale(scaleTotal / pageScale);
+        windowAnchor -= scrollTotal;
+        m_pageScaleAnimation->zoomWithAnchor(windowAnchor, pageScale, durationMs);
+    } else
+        m_pageScaleAnimation->zoomTo(targetPosition, pageScale, durationMs);
+
+    m_client->setNeedsRedrawOnImplThread();
 }
 
 void CCLayerTreeHostImpl::drawLayers()
@@ -364,7 +404,7 @@ PassOwnPtr<CCScrollAndScaleSet> CCLayerTreeHostImpl::processScrollDeltas()
 {
     OwnPtr<CCScrollAndScaleSet> scrollInfo = adoptPtr(new CCScrollAndScaleSet());
     bool didMove = m_scrollLayerImpl && (!m_scrollLayerImpl->scrollDelta().isZero() || m_pageScaleDelta != 1.0f);
-    if (!didMove || m_pinchGestureActive) {
+    if (!didMove || m_pinchGestureActive || m_pageScaleAnimation) {
         m_sentPageScaleDelta = scrollInfo->pageScaleDelta = 1;
         return scrollInfo.release();
     }

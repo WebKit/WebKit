@@ -37,6 +37,7 @@ class GrContext;
 namespace WebCore {
 
 class CCCompletionEvent;
+class CCPageScaleAnimation;
 class CCLayerImpl;
 class LayerRendererChromium;
 class TextureAllocator;
@@ -110,6 +111,8 @@ public:
     void setPageScaleFactorAndLimits(float pageScale, float minPageScale, float maxPageScale);
     float pageScale() const { return m_pageScale; }
 
+    void startPageScaleAnimation(const IntSize& targetPosition, bool anchorPoint, float pageScale, double durationMs);
+
     const CCSettings& settings() const { return m_settings; }
 
     PassOwnPtr<CCScrollAndScaleSet> processScrollDeltas();
@@ -140,6 +143,8 @@ private:
     float m_minPageScale, m_maxPageScale;
 
     bool m_pinchGestureActive;
+
+    OwnPtr<CCPageScaleAnimation> m_pageScaleAnimation;
 };
 
 };

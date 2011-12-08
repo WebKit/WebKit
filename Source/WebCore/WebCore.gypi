@@ -3611,6 +3611,8 @@
             'platform/graphics/chromium/cc/CCLayerTreeHost.h',
             'platform/graphics/chromium/cc/CCLayerTreeHostImpl.cpp',
             'platform/graphics/chromium/cc/CCLayerTreeHostImpl.h',
+            'platform/graphics/chromium/cc/CCPageScaleAnimation.cpp',
+            'platform/graphics/chromium/cc/CCPageScaleAnimation.h',
             'platform/graphics/chromium/cc/CCPluginLayerImpl.cpp',
             'platform/graphics/chromium/cc/CCPluginLayerImpl.h',
             'platform/graphics/chromium/cc/CCProxy.cpp',

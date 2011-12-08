@@ -1,3 +1,42 @@
+2011-12-07  Alexandre Elias  <aelias@google.com>
+
+        [chromium] Add page-scale animation support to Impl thread
+        https://bugs.webkit.org/show_bug.cgi?id=72996
+
+        Reviewed by James Robinson.
+
+        This adds a new math helper class to compute the progress of the
+        animation, and code in the CCLayerTreeHostImpl to apply the animation
+        frame by frame.
+
+        No new tests. (https://bugs.webkit.org/show_bug.cgi?id=71529 filed.)
+
+        * WebCore.gypi:
+        * platform/graphics/chromium/cc/CCInputHandler.h:
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.cpp:
+        (WebCore::CCLayerTreeHostImpl::animate):
+        (WebCore::CCLayerTreeHostImpl::startPageScaleAnimation):
+        (WebCore::CCLayerTreeHostImpl::processScrollDeltas):
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.h:
+        * platform/graphics/chromium/cc/CCPageScaleAnimation.cpp: Added.
+        (WebCore::CCPageScaleAnimation::CCPageScaleAnimation):
+        (WebCore::CCPageScaleAnimation::initialize):
+        (WebCore::CCPageScaleAnimation::zoomTo):
+        (WebCore::CCPageScaleAnimation::zoomWithAnchor):
+        (WebCore::CCPageScaleAnimation::zoomElsewhere):
+        (WebCore::CCPageScaleAnimation::scrollOffsetAtTime):
+        (WebCore::CCPageScaleAnimation::pageScaleAtTime):
+        (WebCore::CCPageScaleAnimation::isAnimationCompleteAtTime):
+        (WebCore::CCPageScaleAnimation::progressRatioForTime):
+        (WebCore::CCPageScaleAnimation::scrollOffsetAtRatio):
+        (WebCore::CCPageScaleAnimation::pageScaleAtRatio):
+        * platform/graphics/chromium/cc/CCPageScaleAnimation.h: Added.
+        (WebCore::CCPageScaleAnimation::startTime):
+        (WebCore::CCPageScaleAnimation::duration):
+        (WebCore::CCPageScaleAnimation::endTime):
+        (WebCore::CCPageScaleAnimation::finalScrollOffset):
+        (WebCore::CCPageScaleAnimation::finalPageScale):
+
 2011-12-07  Shinya Kawanaka  <shinyak@google.com>
 
         Editor::markAndReplaceFor should take Range instead of TextCheckingParagraph.

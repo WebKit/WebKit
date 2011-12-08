@@ -70,6 +70,11 @@ public:
     virtual void pinchGestureUpdate(float magnifyDelta, const IntPoint& anchor) = 0;
     virtual void pinchGestureEnd() = 0;
 
+    virtual void startPageScaleAnimation(const IntSize& targetPosition,
+                                         bool anchorPoint,
+                                         float pageScale,
+                                         double durationMs) = 0;
+
 protected:
     CCInputHandlerClient() { }
     virtual ~CCInputHandlerClient() { }

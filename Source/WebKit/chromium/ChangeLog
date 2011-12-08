@@ -1,3 +1,28 @@
+2011-12-07  Alexandre Elias  <aelias@google.com>
+
+        [chromium] Add page-scale animation support to Impl thread
+        https://bugs.webkit.org/show_bug.cgi?id=72996
+
+        Reviewed by James Robinson.
+
+        This adds a new math helper class to compute the progress of the
+        animation, and code in the CCLayerTreeHostImpl to apply the animation
+        frame by frame.
+
+        No new tests. (https://bugs.webkit.org/show_bug.cgi?id=71529 filed.)
+
+        * public/WebCompositor.h:
+        * public/WebInputEvent.h:
+        (WebKit::WebPageScaleAnimationEvent::WebPageScaleAnimationEvent):
+        * public/android/WebInputEventFactory.h:
+        * src/WebCompositorImpl.cpp:
+        (WebKit::WebCompositorImpl::handlePageScaleAnimationEvent):
+        * src/WebCompositorImpl.h:
+        * src/WebPopupMenuImpl.cpp:
+        (WebKit::WebPopupMenuImpl::handleInputEvent):
+        * src/android/WebInputEventFactory.cpp:
+        (WebKit::WebInputEventFactory::pageScaleAnimationEvent):
+
 2011-12-07  Fady Samuel  <fsamuel@chromium.org>
 
         [Chromium] Plumb DPI info into PlatformScreen
