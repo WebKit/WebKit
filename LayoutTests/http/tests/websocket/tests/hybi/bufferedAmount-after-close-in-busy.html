@@ -28,7 +28,7 @@ function createBlobWithLength(length)
     return builder.getBlob();
 }
 
-var ws = new WebSocket("ws://localhost:8880/websocket/tests/hybi/simple");
+var ws = new WebSocket("ws://localhost:8880/websocket/tests/hybi/echo");
 
 var bufferedAmountBeforeClose = 0;
 var bufferedAmountAfterClose = 0;
