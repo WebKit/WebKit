@@ -1,3 +1,56 @@
+2011-12-08  Adam Roben  <aroben@apple.com>
+
+        Make finding crash logs by PID work on Snow Leopard
+
+        Crash Reporter on Snow Leopard doesn't set the "app_description" extended attribute that we
+        were using to check the PID of the crashed process. (Crash Reporter on Lion does.) Now we
+        read the first line of the crash log and pull the PID out of there.
+
+        Fixes <http://webkit.org/b/74094> "webkit-patch crash-log <process> <PID>" doesn't work on
+        Snow Leopard
+
+        Reviewed by Darin Adler.
+
+        * Scripts/webkitpy/common/system/crashlogs.py:
+        (CrashLogs._find_newest_log_darwin): Read the first line of the crash log to get the process
+        name and PID for the log, rather than checking the Lion-only app_description extended
+        attribute. We now also reject the log if the process name doesn't match what we expect.
+
+        * Scripts/webkitpy/common/system/crashlogs_unittest.py:
+        (make_mock_crash_report_darwin): Added. Returns a mock crash report given a process name and
+        PID.
+        (CrashLogsTest.assertLinesEqual): Added. This is a compatibility shim around
+        unittest.TestCase.assertMultiLineEqual, which didn't exist before Python 2.7.
+        (CrashLogsTest.test_find_log_darwin): Made the mock crash reports more believable by using
+        the new make_mock_crash_report_darwin function. Also added tests for files that can't be
+        read, files that actually contain a crash log for some other process, and files that are
+        misformatted.
+
+        * Scripts/webkitpy/common/system/filesystem.py: Removed FileSystem.getxattr, which is now
+        unused.
+
+        * Scripts/webkitpy/common/system/filesystem_mock.py:
+        (MockFileSystem.__init__): Removed xattr support, which is now unused.
+        (MockFileSystem.open_text_file_for_reading): Changed to actually pass the file's data to
+        ReadableTextFileObject. This function was completely broken before!
+        (ReadableBinaryFileObject.__init__): Made the data parameter non-optional to try to prevent
+        bugs like the above.
+        (ReadableTextFileObject.__init__): Added. Wraps the data in a StringIO object so we can do
+        things like readline() and seek().
+
+        (ReadableTextFileObject.close):
+        (ReadableTextFileObject.read):
+        Added. We override the superclass implementation to account for using a StringIO object.
+
+        (ReadableTextFileObject.readline):
+        (ReadableTextFileObject.seek):
+        Added. These just call through to StringIO.
+
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+        (MainTest.test_crash_log):
+        (MainTest.test_web_process_crash_log):
+        Changed to use make_mock_crash_report_darwin.
+
 2011-12-06  Jon Lee  <jonlee@apple.com>
 
         [WK2] Add permissions support (73960)

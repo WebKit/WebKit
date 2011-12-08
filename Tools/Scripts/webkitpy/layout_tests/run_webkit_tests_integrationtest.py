@@ -61,6 +61,7 @@ SHOULD_TEST_PROCESSES = multiprocessing and sys.platform not in ('cygwin', 'win3
 
 from webkitpy.common import array_stream
 from webkitpy.common.system import outputcapture
+from webkitpy.common.system.crashlogs_unittest import make_mock_crash_report_darwin
 from webkitpy.common.host_mock import MockHost
 
 from webkitpy.layout_tests import port
@@ -494,7 +495,7 @@ class MainTest(unittest.TestCase):
         self.assertTrue(fs.read_text_file('/tmp/layout-test-results/full_results.json').find('"num_regressions":0') != -1)
 
     def test_crash_log(self):
-        mock_crash_report = 'mock-crash-report'
+        mock_crash_report = make_mock_crash_report_darwin('DumpRenderTree', 12345)
         fs = unit_test_filesystem()
         fs.write_text_file('/Users/mock/Library/Logs/DiagnosticReports/DumpRenderTree_2011-06-13-150719_quadzen.crash', mock_crash_report)
         res, buildbot_output, regular_output, user = logging_run([
@@ -510,7 +511,7 @@ class MainTest(unittest.TestCase):
         self.assertEquals(fs.read_text_file('/tmp/layout-test-results/failures/unexpected/crash-with-stderr-crash-log.txt'), expected_crash_log)
 
     def test_web_process_crash_log(self):
-        mock_crash_report = 'mock-crash-report'
+        mock_crash_report = make_mock_crash_report_darwin('WebProcess', 12345)
         fs = unit_test_filesystem()
         fs.write_text_file('/Users/mock/Library/Logs/DiagnosticReports/WebProcess_2011-06-13-150719_quadzen.crash', mock_crash_report)
         res, buildbot_output, regular_output, user = logging_run([

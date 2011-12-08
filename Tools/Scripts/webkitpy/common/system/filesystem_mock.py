@@ -26,6 +26,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import StringIO
 import errno
 import hashlib
 import os
@@ -36,7 +37,7 @@ from webkitpy.common.system import ospath
 
 
 class MockFileSystem(object):
-    def __init__(self, files=None, dirs=None, cwd='/', xattrs=None):
+    def __init__(self, files=None, dirs=None, cwd='/'):
         """Initializes a "mock" filesystem that can be used to completely
         stub out a filesystem.
 
@@ -44,9 +45,6 @@ class MockFileSystem(object):
             files: a dict of filenames -> file contents. A file contents
                 value of None is used to indicate that the file should
                 not exist.
-            dirs: a sequence of directory names
-            cwd: the path against which relative paths should be resolved.
-            xattrs: a dict of filenames -> dict of attribute names -> values.
         """
         self.files = files or {}
         self.written_files = {}
@@ -60,9 +58,6 @@ class MockFileSystem(object):
             while not d in self.dirs:
                 self.dirs.add(d)
                 d = self.dirname(d)
-        self.xattrs = {} if xattrs is None else xattrs
-        for f in self.xattrs:
-            assert f in self.files, f
 
     def _get_sep(self):
         return self._sep
@@ -152,9 +147,6 @@ class MockFileSystem(object):
 
     def getcwd(self):
         return self.cwd
-
-    def getxattr(self, path, attribute_name):
-        return self.xattrs[path][attribute_name]
 
     def glob(self, glob_string):
         # FIXME: This handles '*', but not '?', '[', or ']'.
@@ -289,7 +281,7 @@ class MockFileSystem(object):
     def open_text_file_for_reading(self, path):
         if self.files[path] is None:
             self._raise_not_found(path)
-        return ReadableTextFileObject(self, path)
+        return ReadableTextFileObject(self, path, self.files[path])
 
     def open_text_file_for_writing(self, path):
         return WritableTextFileObject(self, path)
@@ -362,7 +354,7 @@ class WritableTextFileObject(WritableBinaryFileObject):
 
 
 class ReadableBinaryFileObject(object):
-    def __init__(self, fs, path, data=""):
+    def __init__(self, fs, path, data):
         self.fs = fs
         self.path = path
         self.closed = False
@@ -387,5 +379,18 @@ class ReadableBinaryFileObject(object):
 
 
 class ReadableTextFileObject(ReadableBinaryFileObject):
-    def read(self, bytes=None):
-        return ReadableBinaryFileObject.read(self, bytes).decode('utf-8')
+    def __init__(self, fs, path, data):
+        super(ReadableTextFileObject, self).__init__(fs, path, StringIO.StringIO(data))
+
+    def close(self):
+        self.data.close()
+        super(ReadableTextFileObject, self).close()
+
+    def read(self, bytes=-1):
+        return self.data.read(bytes)
+
+    def readline(self, length=None):
+        return self.data.readline(length)
+
+    def seek(self, offset, whence=os.SEEK_SET):
+        self.data.seek(offset, whence)

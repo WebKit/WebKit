@@ -26,6 +26,9 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from __future__ import with_statement
+
+import os
 import re
 import sys
 
@@ -55,13 +58,21 @@ class CrashLogs(object):
         logs = self._filesystem.files_under(log_directory, file_filter=is_crash_log)
         if not logs:
             return None
+        first_line_regex = re.compile(r'^Process:\s+(?P<process_name>.*) \[(?P<pid>\d+)\]$')
         for path in reversed(sorted(logs)):
-            if pid is not None:
-                try:
-                    app_description = self._filesystem.getxattr(path, 'app_description')
-                    if not app_description.startswith('%s[%d] version ' % (process_name, pid)):
+            try:
+                with self._filesystem.open_text_file_for_reading(path) as f:
+                    first_line = f.readline()
+
+                    match = first_line_regex.match(first_line)
+                    if not match:
                         continue
-                except KeyError:
-                    # The file doesn't have the app_description extended attribute for some reason.
-                    continue
-            return self._filesystem.read_text_file(path)
+                    if match.group('process_name') != process_name:
+                        continue
+                    if pid is not None and int(match.group('pid')) != pid:
+                        continue
+
+                    f.seek(0, os.SEEK_SET)
+                    return f.read()
+            except IOError:
+                continue

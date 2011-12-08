@@ -119,14 +119,6 @@ class FileSystem(object):
     def getcwd(self):
         return os.getcwd()
 
-    def getxattr(self, path, attribute_name):
-        if sys.platform != 'darwin':
-            # We only know how to read extended attributes on Darwin. Darwin raises a KeyError when
-            # the attribute doesn't exist, so mimic that.
-            raise KeyError(attribute_name)
-        import xattr
-        return xattr.getxattr(path, attribute_name)
-
     def glob(self, path):
         return glob.glob(path)
 
