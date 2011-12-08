@@ -93,6 +93,7 @@ void BrowserWindow::updateVisualMockTouchPoints(const QList<QWindowSystemInterfa
             QDeclarativeComponent touchMockPointComponent(engine(), QUrl("qrc:/qml/MockTouchPoint.qml"));
             mockTouchPointItem = qobject_cast<QQuickItem*>(touchMockPointComponent.create());
             mockTouchPointItem->setObjectName(mockTouchPointIdentifier);
+            mockTouchPointItem->setProperty("pointId", QVariant(touchPoint.id));
             mockTouchPointItem->setParent(rootObject());
             mockTouchPointItem->setParentItem(rootObject());
         }

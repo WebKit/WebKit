@@ -28,7 +28,10 @@
 import QtQuick 2.0
 
 Item {
+    id: mockTouchPoint
+
     property bool pressed: false
+    property int pointId: 0
 
     Image {
         source: "../icons/touchpoint.png"
@@ -38,6 +41,11 @@ Item {
 
         Behavior on opacity {
             NumberAnimation { duration: 200 }
+        }
+
+        Text {
+            text: mockTouchPoint.pointId
+            anchors.centerIn: parent
         }
     }
 }
