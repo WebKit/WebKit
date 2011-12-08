@@ -866,7 +866,7 @@ protected:
     virtual LayoutRect outlineBoundsForRepaint(RenderBoxModelObject* /*repaintContainer*/, LayoutPoint* /*cachedOffsetToRepaintContainer*/ = 0) const { return LayoutRect(); }
 
 private:
-    RenderStyle* styleSlowCase() const;
+    RenderStyle* styleInRegion() const;
     RenderStyle* firstLineStyleSlowCase() const;
     StyleDifference adjustStyleDifference(StyleDifference, unsigned contextSensitiveProperties) const;
 
@@ -1037,7 +1037,7 @@ inline RenderStyle* RenderObject::style() const
 {
     if (!inRenderFlowThread())
         return m_style.get();
-    return styleSlowCase();
+    return styleInRegion();
 }
 
 inline void makeMatrixRenderable(TransformationMatrix& matrix, bool has3DRendering)

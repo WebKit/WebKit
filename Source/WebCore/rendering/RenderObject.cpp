@@ -1718,7 +1718,7 @@ StyleDifference RenderObject::adjustStyleDifference(StyleDifference diff, unsign
     return diff;
 }
 
-RenderStyle* RenderObject::styleSlowCase() const
+RenderStyle* RenderObject::styleInRegion() const
 {
     ASSERT(inRenderFlowThread());
 

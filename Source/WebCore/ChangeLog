@@ -1,5 +1,17 @@
 2011-12-08  Andreas Kling  <kling@webkit.org>
 
+        RenderObject: Rename styleSlowCase() to styleInRegion().
+
+        Rubber-stamped by David Hyatt.
+
+        * WebCore.exp.in:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::styleInRegion):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::style):
+
+2011-12-08  Andreas Kling  <kling@webkit.org>
+
         Optimize RenderObject::containingBlock().
         <http://webkit.org/b/74109>
 
