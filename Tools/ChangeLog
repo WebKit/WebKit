@@ -1,3 +1,13 @@
+2011-12-08  Dirk Pranke  <dpranke@chromium.org>
+
+        fix build-webkit --chromium after breakage in r102201
+        https://bugs.webkit.org/show_bug.cgi?id=74031
+
+        Reviewed by Tony Chang.
+
+        * Scripts/webkitdirs.pm:
+        (buildChromium):
+
 2011-12-08  Kentaro Hara  <haraken@chromium.org>
 
         Unreviewed, rolling out r102280.
