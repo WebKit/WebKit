@@ -179,6 +179,7 @@ private:
     void releaseRenderSurfaceTextures();
 
     bool useRenderSurface(CCRenderSurface*);
+    void clearSurfaceForDebug(CCLayerImpl* renderSurfaceLayer, CCLayerImpl* rootDrawLayer, const FloatRect& surfaceDamageRect);
 
     bool makeContextCurrent();
 

@@ -365,6 +365,28 @@ void LayerRendererChromium::trackDamageForAllSurfaces(CCLayerImpl* rootDrawLayer
     }
 }
 
+void LayerRendererChromium::clearSurfaceForDebug(CCLayerImpl* renderSurfaceLayer, CCLayerImpl* rootDrawLayer, const FloatRect& surfaceDamageRect)
+{
+    // Non-root layers should clear their entire contents to transparent. The root layer
+    // is cleared to blue to easily see regions that were not drawn on the screen. If we
+    // are using partial swap / scissor optimization, then the surface should only
+    // clear the damaged region, so that we don't accidentally clear un-changed portions
+    // of the screen.
+
+    if (renderSurfaceLayer != rootDrawLayer)
+        GLC(m_context.get(), m_context->clearColor(0, 0, 0, 0));
+    else
+        GLC(m_context.get(), m_context->clearColor(0, 0, 1, 1));
+
+    if (m_capabilities.usingPartialSwap)
+        setScissorToRect(enclosingIntRect(surfaceDamageRect));
+    else
+        GLC(m_context.get(), m_context->disable(GraphicsContext3D::SCISSOR_TEST));
+
+    m_context->clear(GraphicsContext3D::COLOR_BUFFER_BIT);
+    GLC(m_context.get(), m_context->enable(GraphicsContext3D::SCISSOR_TEST));
+}
+
 void LayerRendererChromium::drawLayersOntoRenderSurfaces(CCLayerImpl* rootDrawLayer, const CCLayerList& renderSurfaceLayerList)
 {
     TRACE_EVENT("LayerRendererChromium::drawLayersOntoRenderSurfaces", this, 0);
@@ -399,12 +421,8 @@ void LayerRendererChromium::drawLayersOntoRenderSurfaces(CCLayerImpl* rootDrawLa
                 }
             }
 
-            if (renderSurfaceLayer != rootDrawLayer) {
-                if (m_capabilities.usingPartialSwap)
-                    setScissorToRect(enclosingIntRect(surfaceDamageRect));
-                GLC(m_context.get(), m_context->clearColor(0, 0, 0, 0));
-                GLC(m_context.get(), m_context->clear(GraphicsContext3D::COLOR_BUFFER_BIT));
-            }
+            // FIXME: eventually we should place this under a debug flag.
+            clearSurfaceForDebug(renderSurfaceLayer, rootDrawLayer, surfaceDamageRect);
 
             const CCLayerList& layerList = renderSurface->layerList();
             for (unsigned layerIndex = 0; layerIndex < layerList.size(); ++layerIndex)
@@ -461,16 +479,7 @@ void LayerRendererChromium::drawLayersInternal()
 
     GLC(m_context.get(), m_context->disable(GraphicsContext3D::DEPTH_TEST));
     GLC(m_context.get(), m_context->disable(GraphicsContext3D::CULL_FACE));
-
-    useRenderSurface(m_defaultRenderSurface);
-
-    // Clear to blue to make it easier to spot unrendered regions.
-    if (m_capabilities.usingPartialSwap)
-        setScissorToRect(enclosingIntRect(m_rootDamageRect));
-    m_context->clearColor(0, 0, 1, 1);
-    m_context->colorMask(true, true, true, true);
-    m_context->clear(GraphicsContext3D::COLOR_BUFFER_BIT);
-
+    GLC(m_context.get(), m_context->colorMask(true, true, true, true));
     GLC(m_context.get(), m_context->enable(GraphicsContext3D::BLEND));
     GLC(m_context.get(), m_context->blendFunc(GraphicsContext3D::ONE, GraphicsContext3D::ONE_MINUS_SRC_ALPHA));
 
