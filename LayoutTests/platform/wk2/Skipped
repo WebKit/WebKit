@@ -687,6 +687,13 @@ editing/selection/5195166-1.html
 editing/selection/collapse-selection-in-bidi.html
 editing/selection/context-menu-text-selection.html
 editing/selection/directionality-after-undo-replace.html
+editing/selection/move-by-word-visually-crash-test-4.html
+editing/selection/move-by-word-visually-crash-test-3.html
+editing/selection/move-left-right-by-word-mac.html
+editing/selection/move-by-word-visually-crash-test-1.html
+editing/selection/move-by-word-visually-crash-test-textarea.html
+editing/selection/move-by-word-visually-crash-test-2.html
+editing/selection/move-by-word-visually-textarea.html
 editing/selection/programmatic-selection-on-mac-is-directionless.html
 editing/execCommand/query-command-state.html
 editing/execCommand/query-text-alignment.html
