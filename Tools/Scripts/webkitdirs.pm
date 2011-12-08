@@ -2081,10 +2081,10 @@ sub buildChromium($@)
     my $result = 1;
     if (isDarwin() && !isChromiumAndroid() && !isChromiumMacMake()) {
         # Mac build - builds the root xcode project.
-        $result = buildXCodeProject("Source/WebKit/chromium/WebKit", $clean, "-configuration", configuration(), @options);
+        $result = buildXCodeProject("Source/WebKit/chromium/All", $clean, "-configuration", configuration(), @options);
     } elsif (isCygwin() || isWindows()) {
         # Windows build - builds the root visual studio solution.
-        $result = buildChromiumVisualStudioProject("Source/WebKit/chromium/WebKit.sln", $clean);
+        $result = buildChromiumVisualStudioProject("Source/WebKit/chromium/All.sln", $clean);
     } elsif (isLinux() || isChromiumAndroid() || isChromiumMacMake) {
         # Linux build - build using make.
         $result = buildChromiumMakefile("all", $clean, @options);

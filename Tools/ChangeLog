@@ -1,3 +1,18 @@
+2011-12-07  Dirk Pranke  <dpranke@chromium.org>
+
+        fix build-webkit --chromium after breakage in r102201
+        https://bugs.webkit.org/show_bug.cgi?id=74031
+
+        Reviewed by Tony Chang.
+
+        r102201 introduced a change to the chromium build that splits
+        the executables out of WebKit.gyp into other gyp files, and adds
+        a new "All.gyp" that builds everything. However, I forgot to
+        update the build script to use All.gyp.
+
+        * Scripts/webkitdirs.pm:
+        (buildChromium):
+
 2011-12-07  Tom Zakrajsek  <tomz@codeaurora.org>
 
         Moved myself to the committers list.
