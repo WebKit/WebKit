@@ -96,12 +96,10 @@ inline static void debugGLCommand(const char* command, int line)
     ASSERT_NOT_REACHED();
 }
 
-#define DEBUG_GL_COMMANDS
-
-#ifdef DEBUG_GL_COMMANDS
+#ifndef NDEBUG
 #define GL_CMD(x) {x, debugGLCommand(#x, __LINE__); }
 #else
-#define GL_CMD(x) x
+#define GL_CMD(x) x;
 #endif
 
 struct TextureMapperGLData {

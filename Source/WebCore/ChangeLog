@@ -1,3 +1,14 @@
+2011-12-08  Nayan Kumar K  <nayankk@motorola.com>
+
+        Define DEBUG_GL_COMMANDS only in debug builds.
+        https://bugs.webkit.org/show_bug.cgi?id=74083
+
+        Reviewed by Noam Rosenthal.
+
+        No tests added as this change does not affect functionality.
+
+        * platform/graphics/opengl/TextureMapperGL.cpp:
+
 2011-12-08  Ryosuke Niwa  <rniwa@webkit.org>
 
         CompositeEditCommand should not be kept alive for undo and redo
