@@ -30,8 +30,21 @@
 #import "Frame.h"
 #import "FrameView.h"
 #import "Page.h"
+#import "NotImplemented.h"
 
 namespace WebCore {
+
+int screenHorizontalDPI(Widget*)
+{
+    notImplemented();
+    return 0;
+}
+
+int screenVerticalDPI(Widget*)
+{
+    notImplemented();
+    return 0;
+}
 
 int screenDepth(Widget*)
 {

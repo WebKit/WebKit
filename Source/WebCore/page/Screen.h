@@ -44,6 +44,8 @@ namespace WebCore {
         Frame* frame() const;
         void disconnectFrame();
 
+        unsigned horizontalDPI() const;
+        unsigned verticalDPI() const;
         unsigned height() const;
         unsigned width() const;
         unsigned colorDepth() const;

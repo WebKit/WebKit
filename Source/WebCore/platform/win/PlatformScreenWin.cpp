@@ -27,11 +27,12 @@
 #include "config.h"
 #include "PlatformScreen.h"
 
-#include "HostWindow.h"
-#include "IntRect.h"
 #include "FloatRect.h"
 #include "Frame.h"
 #include "FrameView.h"
+#include "HostWindow.h"
+#include "IntRect.h"
+#include "NotImplemented.h"
 #include "Page.h"
 #include <windows.h>
 
@@ -63,6 +64,18 @@ static DEVMODE deviceInfoForWidget(Widget* widget)
 #endif
 
     return deviceInfo;
+}
+
+int screenHorizontalDPI(Widget* widget)
+{
+    notImplemented();
+    return 0;
+}
+
+int screenVerticalDPI(Widget* widget)
+{
+    notImplemented();
+    return 0;
 }
 
 int screenDepth(Widget* widget)

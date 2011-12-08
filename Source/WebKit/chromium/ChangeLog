@@ -1,3 +1,29 @@
+2011-12-07  Fady Samuel  <fsamuel@chromium.org>
+
+        [Chromium] Plumb DPI info into PlatformScreen
+        https://bugs.webkit.org/show_bug.cgi?id=70556
+
+        Reviewed by Darin Fisher.
+        
+        Make DPI information accessible from WebKit through
+        PlatformScreen. This is useful when making scaling 
+        computations on various devices (e.g. Viewport meta tag).
+
+        This patch adds DPI plumbing on Chromium Win/Mac/Linux
+        platforms.
+
+        * public/WebScreenInfo.h:
+        (WebKit::WebScreenInfo::WebScreenInfo):
+        * src/PlatformSupport.cpp:
+        (WebCore::PlatformSupport::screenHorizontalDPI):
+        (WebCore::PlatformSupport::screenVerticalDPI):
+        * src/mac/WebScreenInfoFactory.mm:
+        (WebKit::WebScreenInfoFactory::screenInfo):
+        * src/win/WebScreenInfoFactory.cpp:
+        (WebKit::WebScreenInfoFactory::screenInfo):
+        * src/x11/WebScreenInfoFactory.cpp:
+        (WebKit::WebScreenInfoFactory::screenInfo):
+
 2011-12-07  Alexandre Elias  <aelias@google.com>
 
         [chromium] Preserve original pageScale limits in WebViewImpl

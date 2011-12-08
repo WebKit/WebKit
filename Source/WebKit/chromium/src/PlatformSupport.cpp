@@ -1052,6 +1052,22 @@ int PlatformSupport::highUsageDeltaMB()
     return static_cast<int>(webKitPlatformSupport()->highUsageDeltaMB());
 }
 
+int PlatformSupport::screenHorizontalDPI(Widget* widget)
+{
+    WebWidgetClient* client = toWebWidgetClient(widget);
+    if (!client)
+        return 0;
+    return client->screenInfo().horizontalDPI;
+}
+
+int PlatformSupport::screenVerticalDPI(Widget* widget)
+{
+    WebWidgetClient* client = toWebWidgetClient(widget);
+    if (!client)
+        return 0;
+    return client->screenInfo().verticalDPI;
+}
+
 int PlatformSupport::screenDepth(Widget* widget)
 {
     WebWidgetClient* client = toWebWidgetClient(widget);

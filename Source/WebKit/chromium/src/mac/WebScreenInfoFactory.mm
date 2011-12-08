@@ -76,6 +76,15 @@ WebScreenInfo WebScreenInfoFactory::screenInfo(NSView* view)
     NSString *colorSpace = NSColorSpaceFromDepth([[NSScreen deepestScreen] depth]);
 
     WebScreenInfo results;
+
+    // FIXME: Currently Mac seems to always report 72dpi. Need to find a way to
+    // report the true screen dpi.
+    NSWindow* window = [view window];
+    NSDictionary* deviceDescription = [window deviceDescription];
+    NSSize deviceDPI = [[deviceDescription valueForKey:NSDeviceResolution] sizeValue];
+    results.horizontalDPI = static_cast<int>(deviceDPI.width);
+    results.verticalDPI = static_cast<int>(deviceDPI.height);
+
     results.depth =
         NSBitsPerPixelFromDepth([[NSScreen deepestScreen] depth]);
     results.depthPerComponent =

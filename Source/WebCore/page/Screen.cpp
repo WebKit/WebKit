@@ -53,6 +53,20 @@ void Screen::disconnectFrame()
     m_frame = 0;
 }
 
+unsigned Screen::horizontalDPI() const
+{
+    if (!m_frame)
+        return 0;
+    return static_cast<unsigned>(screenHorizontalDPI(m_frame->view()));
+}
+
+unsigned Screen::verticalDPI() const
+{
+    if (!m_frame)
+        return 0;
+    return static_cast<unsigned>(screenVerticalDPI(m_frame->view()));
+}
+
 unsigned Screen::height() const
 {
     if (!m_frame)

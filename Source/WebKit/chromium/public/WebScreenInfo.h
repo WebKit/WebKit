@@ -36,6 +36,12 @@
 namespace WebKit {
 
 struct WebScreenInfo {
+    // The horizontal screen dpi.
+    int horizontalDPI;
+
+    // The vertical screen dpi.
+    int verticalDPI;
+
     // The screen depth in bits per pixel
     int depth;
 
@@ -67,7 +73,9 @@ struct WebScreenInfo {
     double refreshRate;
 
     WebScreenInfo()
-        : depth(0)
+        : horizontalDPI(0)
+        , verticalDPI(0)
+        , depth(0)
         , depthPerComponent(0)
         , isMonochrome(false)
         , refreshRate(0) { }

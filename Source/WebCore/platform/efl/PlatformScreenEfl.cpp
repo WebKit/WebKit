@@ -42,6 +42,18 @@
 #include <wtf/text/CString.h>
 
 namespace WebCore {
+ 
+int screenHorizontalDPI(Widget* widget)
+{
+    notImplemented();
+    return 0;
+}
+
+int screenVerticalDPI(Widget* widget)
+{
+    notImplemented();
+    return 0;
+}
 
 int screenDepth(Widget* widget)
 {

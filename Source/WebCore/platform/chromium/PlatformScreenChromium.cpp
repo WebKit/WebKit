@@ -36,6 +36,16 @@
 
 namespace WebCore {
 
+int screenHorizontalDPI(Widget* widget)
+{
+    return PlatformSupport::screenHorizontalDPI(widget);
+}
+
+int screenVerticalDPI(Widget* widget)
+{
+    return PlatformSupport::screenVerticalDPI(widget);
+}
+
 int screenDepth(Widget* widget)
 {
     return PlatformSupport::screenDepth(widget);

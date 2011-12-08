@@ -47,6 +47,8 @@ namespace WebCore {
     class FloatRect;
     class Widget;
 
+    int screenHorizontalDPI(Widget*);
+    int screenVerticalDPI(Widget*);
     int screenDepth(Widget*);
     int screenDepthPerComponent(Widget*);
     bool screenIsMonochrome(Widget*);

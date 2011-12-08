@@ -35,12 +35,25 @@
 #include "Frame.h"
 #include "FrameView.h"
 #include "HostWindow.h"
+#include "NotImplemented.h"
 #include "Widget.h"
 #include "QWebPageClient.h"
 #include <QApplication>
 #include <QDesktopWidget>
 
 namespace WebCore {
+
+int screenHorizontalDPI(Widget* widget)
+{
+    notImplemented();
+    return 0;
+}
+
+int screenVerticalDPI(Widget* widget)
+{
+    notImplemented();
+    return 0;
+}
 
 static int screenNumber(Widget* w)
 {

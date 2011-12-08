@@ -60,7 +60,11 @@ WebScreenInfo WebScreenInfoFactory::screenInfo(HWND window)
     devMode.dmDriverExtra = 0;
     EnumDisplaySettings(monitorInfo.szDevice, ENUM_CURRENT_SETTINGS, &devMode);
 
+    HDC hdc = GetDC(0);
+
     WebScreenInfo results;
+    results.horizontalDPI = GetDeviceCaps(hdc, LOGPIXELSX);
+    results.verticalDPI = GetDeviceCaps(hdc, LOGPIXELSY);
     results.depth = devMode.dmBitsPerPel;
     results.depthPerComponent = devMode.dmBitsPerPel / 3;  // Assumes RGB
     results.isMonochrome = devMode.dmColor == DMCOLOR_MONOCHROME;

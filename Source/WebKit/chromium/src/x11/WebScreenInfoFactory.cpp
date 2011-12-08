@@ -34,6 +34,7 @@
 #include "WebScreenInfo.h"
 
 #include <X11/Xlib.h>
+#include <stdio.h>
 
 namespace WebKit {
 
@@ -43,6 +44,7 @@ namespace WebKit {
 // function, but it appears to return stale data after the screen is resized.
 WebScreenInfo WebScreenInfoFactory::screenInfo(Display* display, int screenNumber)
 {
+    const float inchesPerMillimeter = 25.4;
     // XDisplayWidth() and XDisplayHeight() return cached values. To ensure that
     // we return the correct dimensions after the screen is resized, query the
     // root window's geometry each time.
@@ -54,6 +56,14 @@ WebScreenInfo WebScreenInfoFactory::screenInfo(Display* display, int screenNumbe
         display, root, &rootRet, &x, &y, &width, &height, &border, &depth);
 
     WebScreenInfo results;
+    int displayWidth = DisplayWidth(display, screenNumber);
+    int displayWidthInMillimeters = DisplayWidthMM(display, screenNumber);
+    results.horizontalDPI = static_cast<int>(inchesPerMillimeter * displayWidth / displayWidthInMillimeters);
+
+    int displayHeight = DisplayHeight(display, screenNumber);
+    int displayHeightInMillimeters = DisplayHeightMM(display, screenNumber);
+    results.verticalDPI = static_cast<int>(inchesPerMillimeter * displayHeight / displayHeightInMillimeters);
+
     // FIXME: Not all screens use 8bpp.
     results.depthPerComponent = 8;
     results.depth = depth;

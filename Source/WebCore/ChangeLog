@@ -1,3 +1,42 @@
+2011-12-07  Fady Samuel  <fsamuel@chromium.org>
+
+        [Chromium] Plumb DPI info into PlatformScreen
+        https://bugs.webkit.org/show_bug.cgi?id=70556
+
+        Reviewed by Darin Fisher.
+
+        Make DPI information accessible from WebKit through
+        PlatformScreen. This is useful when making scaling 
+        computations on various devices (e.g. Viewport meta tag).
+
+        This patch adds DPI plumbing on Chromium Win/Mac/Linux
+        platforms.
+
+        * page/Screen.cpp:
+        (WebCore::Screen::horizontalDPI):
+        (WebCore::Screen::verticalDPI):
+        * page/Screen.h:
+        * platform/PlatformScreen.h:
+        * platform/chromium/PlatformScreenChromium.cpp:
+        (WebCore::screenHorizontalDPI):
+        (WebCore::screenVerticalDPI):
+        * platform/chromium/PlatformSupport.h:
+        * platform/efl/PlatformScreenEfl.cpp:
+        (WebCore::screenHorizontalDPI):
+        (WebCore::screenVerticalDPI):
+        * platform/gtk/PlatformScreenGtk.cpp:
+        (WebCore::screenHorizontalDPI):
+        (WebCore::screenVerticalDPI):
+        * platform/mac/PlatformScreenMac.mm:
+        (WebCore::screenHorizontalDPI):
+        (WebCore::screenVerticalDPI):
+        * platform/qt/PlatformScreenQt.cpp:
+        (WebCore::screenHorizontalDPI):
+        (WebCore::screenVerticalDPI):
+        * platform/win/PlatformScreenWin.cpp:
+        (WebCore::screenHorizontalDPI):
+        (WebCore::screenVerticalDPI):
+
 2011-12-07  Aaron Colwell  <acolwell@chromium.org>
 
         Revert mixed content handling for video fix and follow-up test expectations & Skipped changes.

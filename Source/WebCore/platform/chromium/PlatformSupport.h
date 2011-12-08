@@ -240,6 +240,8 @@ public:
     static bool sandboxEnabled();
 
     // Screen -------------------------------------------------------------
+    static int screenHorizontalDPI(Widget*);
+    static int screenVerticalDPI(Widget*);
     static int screenDepth(Widget*);
     static int screenDepthPerComponent(Widget*);
     static bool screenIsMonochrome(Widget*);
