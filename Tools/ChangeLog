@@ -1,3 +1,19 @@
+2011-12-08  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 101532
+
+    2011-11-29  Beth Dakin  <bdakin@apple.com>
+
+            https://bugs.webkit.org/show_bug.cgi?id=72751
+            WebKit2.MouseMoveAfterCrash API test is failing 
+
+            Reviewed by Sam Weinig.
+
+            Like DumpRenderTree, the NSWindow should act as an active window.
+            * TestWebKitAPI/mac/PlatformWebViewMac.mm:
+            (-[ActiveOffscreenWindow isKeyWindow]):
+            (TestWebKitAPI::PlatformWebView::PlatformWebView):
+
 2011-12-06  Lucas Forschler  <lforschler@apple.com>
 
     Merge 98413
